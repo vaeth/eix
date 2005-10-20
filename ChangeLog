@@ -1,0 +1,233 @@
+# ChangeLog for eix - Ebuild IndeX for portage
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Formatstring(Conditions): If a "else" was missing, the if-true part was
+	  linked to if-false.
+	- Changed the arch-part of the dbheader from char[16] to string.
+	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=104083 - once again:
+	  unsigned int vs. vector::size_type
+	- Moved from #define in basicio.h to a namespace io with generic
+	  read/write-functions for POD and {read,write}_string for strings.
+	  Slowly moving other read/write-code into that namespace.
+	- Bumped to 0.3.1
+	- eix-sync hides output of emerge --sync and update-eix per default. Added
+	  cli-options -v, -h, -q
+	- Fixed a non-existing bug :) http://bugs.gentoo.org/show_bug.cgi?id=97462
+	- Fixed a rather *extrem* bug: The read-only-what-we-need-to-check-if-the-package-matches
+	  wasn't used at all! This brings an extrem speedup.
+	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=105935
+	- I just love auto_ptr!
+
+*eix-0.3.0
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Moved explodeShit(..) into a class with static members. Changed
+	  RegExClass to Regex and changed some internals. Category was merged into
+	  PackageDatabase. Removed 'this->' and ; after methods.
+	- After having a nice talk with Kyuu, I added
+	  LOCAL_PORTAGE_CONFIG=true/false to eixrc. It's possible to tell eix to
+	  ignore all local configuration like /etc/portage and ACCEPT_KEYWORDS.
+	  Yes, I know that this could be done by a alias in $SHELL.
+	- Fixed (think) http://bugs.gentoo.org/show_bug.cgi?id=103836. offset_type wasn't
+	  off_t everywhere.
+
+*eix-0.3.0_beta
+*eix-0.2.7
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- PortageInstalledPackages now catches a exception thrown by BasicVersion
+	  and prints the message rather then dying. For example, lockfiles in
+	  /var/db/pkg are no longer lethal for eix.
+	- Did the same to Mask parsing (don't die, but print an error)
+	- Added target and gcc-version to the output of both, eix -V and
+	  update-eix -V.
+	- Fixed a bug in the cdb-code: munmap was called for bad pointers.
+	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=97914 (Thanks to
+	  David Held <andukar@andukar.org> for the patch.
+	- Fixed compilation-problems http://bugs.gentoo.org/show_bug.cgi?id=98218.
+	  Patch by Cyrille Mescam <titi@oboulo.com>.
+	- Masks like '>app-portage/eix-0.2*' are finally accepted by update-eix.
+	- Finally changed our formatstring-code! We are no longer parsing the
+	  string every time we need to print something. It's now parsed into a
+	  list of structs which is much faster processed.
+	- Fixed compile-errors about undefined flags from varsreader once and for all!
+	- Started working on diff-eix (part of our 'esync' functionality)
+	- More progress with diff-eix - currently WIP (work in progress)
+	- Added IF-ELSE-FI constructs to the formatstrings (this could be the
+	  final state of my featuritis ..)
+	- Rewrote our stability-calculation-thingy, KEYWORDS="-* ~ARCH" is now
+	  reported as TESTING (yellow color)
+	- Read /etc/portage/package.{unmask,mask} on-the-fly
+	- Honour ACCEPT_KEYWORDS correctly and started working on code for
+	  package.keywords
+	- Finished package.keywords code and basic diff-eix stuff.
+	- Added sbin-script eix-sync. It's our esync!
+
+*eix-0.2.6
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fixed an old bug in our parameter-parsing. The first flag after an
+	  implicit OR was ignored.
+
+*eix-0.2.5
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=88148
+	- Committed reviewed manpage (Thanks Legoguy)
+	- Overlay reading: Check result of explodePkgFilename before using it
+	- Added --version/-V options
+	- Added patch from http://bugs.gentoo.org/show_bug.cgi?id=89376
+	  by Mike Gardiner <obz@gentoo.org>
+	- Rewrote big parts of update-eix. We now have different classes for
+	  different portage cache-backends.
+	- Added a more descriptive section about ~/.eirx to the manpage.
+
+*eix-0.2.2 (2005/03/26)
+
+	Wolfgang Frisch <xororand at users.sourceforge.net>:
+	- Applied patch: gentoo releases == 0 now are accepted & changed metadata
+	  cache directory to /var/cache/edb/dep/$PORTDIR
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Made the fsm recognize references to variables in declarations .. i.e.
+	  USE="${USE} -kde".  This is important for proper make.conf/make.defaults
+	  parsing.
+	- Created CascadingProfile as a subclass of PortageSettings
+	- Added maskings from profile
+	- Added system-profile-stuff (somewhat depends on virtual/ packages ..)
+	- Removed split of category into rootcat-subcat
+	- And some other pretty radical changes
+	- Rewrote args.cc (OOP'ish :) and added bash-completion
+	- User root no longer needed to update database
+	- Moved some functionality into separate toolkits.
+	- Added ~-operator to class Mask
+
+*eix-0.2.1 (2005/02/24)
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Removed deprecated Constructor from ExBasic and changed all calls
+	- Removed big ugly patternmachting from portagedb.cc and moved to
+	  criteria.cc (now even more ugly :) -- added wildcards.cc for wildcards-matching.
+	- Moved DBQuery from portagedb.cc to filedb.cc
+	- Moved PortageInstalledPackages to portageconf.cc and made it pseudo-caching
+	- Removed getopt-stuff from main.cc -- this is now recursively done in
+	  criteria.cc (with help from args.cc )
+	- Various other small cleanups/fixes ..
+	- Added --dump, --quiet and --dup-versions; Use xororand formatstring.cc
+	  for output of results
+
+	Wolfgang Frisch <xororand at users.sourceforge.net>:
+	- Added a wiki: http://eixwiki.unfoog.de
+	- Added parameter -l,--lineversions for printing versions line-by-line
+	  like "etcat -v"
+	- Added format strings to allow customized output. See manpage and
+	  http://eixwiki.unfoog.de/index.php/Usage#Format_strings
+	- Yet another 'version number sorting'-fix. Now: 1.2a < 1.2b
+	- Moved Portage settings parts from PortageDB to new class PortageSettings
+
+*eix-0.2.0
+
+	Beholders_Eye (Gentoo Forums)
+	- Fixed two warnings
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fixed various bugs
+
+	Wolfgang Frisch <xororand at users.sourceforge.net>:
+	- 'eix -u' crashed when it met files like abc.ebuild.xyz in overlay
+	  package directories. This has been fixed.
+
+*eix-0.2.0_beta (2005/02/12)
+
+	Wolfgang Frisch <xororand at users.sourceforge.net>:
+	- Fixed a reported bug in version.cc: Some package versions were omitted
+	  in eix-0.2.0_alpha and probably in earlier versions too. Example: A
+	  package with 2.1 and 2.1.1 only showed 2.1.
+	- Fixed a small issue with handling files like "abc.ebuild.xyz" in portage
+	  overlay directories
+
+	Kay Ramon "YakS" Sauter <yaks-gentoo at users.sourceforge.net>:
+	- Added man page
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Included minor fixes from Christian Heim <christian.th.heim at gmx.de>
+	- Big cleanups in readoverlay to fix 2 major bugs
+	  http://bugs.gentoo.org/show_bug.cgi?id=80241 and
+	  http://forums.gentoo.org/viewtopic.php?p=2005152#2005152
+	- Added -I to search only installed packages. If no search pattern is
+	  given it prints all installed packages.
+	- Changed version.cc, added a test for version.cc, added 'keys' for
+	  packages/versions from overlays and moved cleaned some classes(moved
+	  attributes to private/protected).
+
+*eix-0.2.0_alpha (2005/02/01)
+
+	xororand <xororand at users.sourceforge.net>:
+	- Fixed a "versions reported twice"-bug
+	- Added --fuzzy search option to allow unsharp search queries (no regular
+	  expressions).
+	- Closed memory leaks
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Constructed a FSM (finite state machine) to replace the regex-massacre
+	  in varsreader.cc.
+	- Fixed the "-S does not search the name, just the description"-bug and
+	  added warnings if keyUndefined occurs while updating the db
+	- Rewrote package::getStability(..) so it can distinguish between ppc and
+	  ppc64, x86 and x86-obsd .. and so on
+	- Converted the db-read/write code to use c-style FILE*, fread, fwrite. This fixes
+	  the ppc-problem described in http://forums.gentoo.org/viewtopic.php?p=2036103#2036103
+	  Thanks meyerm for testing :)
+	xororand <xororand at users.sourceforge.net>:
+	- Fixed: packages with ebuilds in multiple overlays are no longer reported twice
+	- Increased loading speed of the database
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Various updates to autoconf-stuff including --with-cachefile=FILE for configure
+	  and update of VERSION in configure.in
+	- Show "file:line" when throwing a exception
+	- Rewrote get_arch()
+
+*eix-0.1.4 (2005/01/22)
+
+	xororand <xororand at users.sourceforge.net>:
+	- Added: multi-line entries in ebuild and/or /etc/make.conf are parsed
+	  variables declared without double quotation marks are recognized correctly
+	  as well as tab characters in PORTDIR_OVERLAY
+	- Versions which are not tested on your architecture (arch not in KEYWORDS)
+	  are now shown by default (previously: only with -v)
+	  I changed the prefix for such versions from [M~] to [-]
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Cleaned the command line parser to use the quasi-standard getopts() which
+	  is used by almost any Unix program.
+	  eix -s is now default, so you can simply type "eix REGEXP" to search for packages.
+
+	xororand <xororand at users.sourceforge.net>:
+	- added support for /etc/portage/categories
+
+*eix-0.1.3 (2005/01/17)
+
+	xororand <xororand at users.sourceforge.net>:
+	- Fixed bug: multiple spaces in PORTDIR_OVERLAY (/etc/make.conf) were
+	  interpreted as / overlays
+	- Fixed: Version numbers should finally be sorted properly.
+	  Explanation: In 0.1.2 versions were only splitted in [primary, e.g. |
+	  1.2.3][suffix | _alpha5][gentoo-release | -r2]
+	  Now, the primary string is also splitted into integers => 2.6.2 < 2.6.10
+	- Added more detail to the error messages in version.cc (in hopes to
+	  resolve kay's problem)
+
+*eix-0.1.2 (2005/01/13)
+
+	xororand <xororand at users.sourceforge.net>:
+	- Bekks removed the unnecessary libstdc++v3 dependency from the ebuild
+	- The currently installed version of each package is now displayed again
+	  Note: Slotted versions are still not supported
+	- Corrected a bug of 0.1.0: All versions are displayed again
+	- The -v parameter now also shows "arch masked" package versions, e.g. [M~]1.2.3-r4
+	- Reverted to the old get_arch code because of an error on an amd64 system
+	- Fixed a small bug in command-line parsing
+
+*eix-0.1.0 (2005/01/09)
+
+	xororand <xororand at users.sourceforge.net>:
+	- Renamed portagedb to eix

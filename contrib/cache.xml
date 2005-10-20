@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cache current="9">
+	<head style="cache.css">Format of the eix cache file version <current/>.</head>
+
+	<body>
+		<h2>Eix cache file format (Version <current/>)</h2>
+
+		<section title="Special datatypes">
+			<p>Datatypes that are especially defined for eix and that are used more
+				than once.</p>
+
+			<block name="list">
+				<p>A list stores maximal <strong>(8 * sizeof(unsigned short))^2 - 1</strong>
+					elements of one type. Strings
+					are, for example, lists of characters.</p>
+				<format>
+					<field type="unsigned short" name="lenght"/>
+					<field type="*" name="whatever it's, that should be stored"/>
+				</format>
+			</block>
+		</section>
+
+		<section  title="Overall Layout">
+			<p>The index file consists of a header, followed by categories. Byte-order depends one the system.</p>
+
+			<block name="Header">
+				<p>This header holds information about the cache.</p>
+				<format>
+					<field type="unsigned int" name="version"/>
+					<field type="string"       name="architecture"/>
+					<field type="unsigned int" name="number of categories"/>
+					<field type="unsigned int" name="number of packages"/>
+					<field type="list/string"  name="directories (overlays + PORTDIR)"/>
+				</format>
+			</block>
+
+			<block name="Category">
+				<p>The category-frames contain the name of category, followed by a
+					list of packages.</p>
+
+				<format>
+					<field type="string" name="name of category"/>
+					<field type="list/Package" name="packages in this category"/>
+				</format>
+
+				<block name="Package">
+					<format>
+						<field type="long" name="offset to the next package"/>
+						<field type="string" name="name"/>
+						<field type="string" name="description"/>
+						<field type="string" name="homepage"/>
+						<field type="string" name="licenses"/>
+						<field type="list/Version" name="list of versions"/>
+					</format>
+
+					<block name="Version">
+						<p>For versions, the following data is stored.</p>
+						<format>
+							<field type="string" name="full version"/>
+							<field type="char" name="stability bitmask">
+								<bitmask>
+									<mask value="0x00" name="undefined (should not occur)"/>
+									<mask value="0x01" name="stable   (ARCH)"/>
+									<mask value="0x02" name="unstable (~ARCH)"/>
+									<mask value="0x04" name="-* before (-/~)ARCH"/>
+									<mask value="0x08" name="-ARCH"/>
+									<mask value="0x10" name="ARCH is not mentioned and no -* is present"/>
+									<mask value="0x20" name="masked by package.mask"/>
+									<mask value="0x40" name="masked by profile"/>
+									<mask value="0x80" name="version of package is a
+										system-package"/>
+								</bitmask>
+							</field>
+							<field type="string" name="primary part of the
+								version (primary part of 1.2.3_alpha5-r3 is
+								1.2.3)"/>
+							<field type="int" name="type of suffix">
+								<enumeration>
+									<enum value="0" name="_alpha"/>
+									<enum value="1" name="_beta"/>
+									<enum value="2" name="_pre"/>
+									<enum value="3" name="_rc"/>
+									<enum value="4" name="no suffix"/>
+									<enum value="5" name="_p"/>
+								</enumeration>
+							</field>
+							<field type="int" name="version of suffix (for _alpha5
+								it's 5)"/>
+							<field type="char" name="gentoos revision (for 0.1-r2
+								it's 2)"/>
+							<field type="unsigned short int" name="index for
+								directory-list in cache-header"/>
+						</format>
+					</block>
+				</block>
+			</block>
+		</section>
+
+		<foot>Copyright 2005 <nobr>Emil Beinroth &lt;emilbeinroth@gmx.net&gt;</nobr> and
+			<nobr>Wolfgang Frisch &lt;xororand@users.sourceforge.net&gt;.</nobr> This
+			document was released under the GNU FDL.</foot>
+	</body>
+</cache>

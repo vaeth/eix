@@ -1,0 +1,121 @@
+/***************************************************************************
+ *   eix is a small utility for searching ebuilds in the                   *
+ *   Gentoo Linux portage system. It uses indexing to allow quick searches *
+ *   in package descriptions with regular expressions.                     *
+ *                                                                         *
+ *   https://sourceforge.net/projects/eix                                  *
+ *                                                                         *
+ *   Copyright (c)                                                         *
+ *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
+ *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
+#include "../config.h"
+#include "cli.h"
+
+Matchatom *
+parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter>::iterator end)
+{
+	/* Our root Matchatom. */
+	Matchatom   *root    = new Matchatom();
+	Matchatom   *current = root;
+	PackageTest *test    = new PackageTest(&varpkg_db);
+
+	bool need_logical_operator = false;
+	while(arg != end)
+	{
+		// Check for logical operator {{{
+		if(need_logical_operator)
+		{
+			// finalize
+			current->setTest(test);
+			current->finalize();
+
+			if(**arg == 'a') {
+				current = current->AND();
+				++arg;
+			}
+			else if(**arg == 'o') {
+				current = current->OR();
+				++arg;
+			}
+			else
+			{
+				current = current->AND();
+			}
+
+			need_logical_operator = false;
+			test = new PackageTest(&varpkg_db);
+			continue;
+		}
+		// }}}
+
+		switch(**arg)
+		{
+			// Check local options {{{
+			case 'I': test->installed = true;    break;
+			case 'D': test->dup_versions = true; break;
+			case '!': test->invert = true;       break;
+			// }}}
+
+			// Check for field-designators {{{
+			case 's': test->field = PackageTest::NAME;          break;
+			case 'C': test->field = PackageTest::CATEGORY;      break;
+			case 'A': test->field = PackageTest::CATEGORY_NAME; break;
+			case 'S': test->field = PackageTest::DESCRIPTION;   break;
+			case 'L': test->field = PackageTest::LICENSE;       break;
+			case 'H': test->field = PackageTest::HOMEPAGE;      break;
+			// }}}
+
+			// Check for algorithms {{{
+			// TODO: You can scare small children with the following code!
+			case 'f': 
+					  if(++arg != end
+						 && arg->type == Parameter::ARGUMENT
+						 && is_numeric(arg->arg))
+					  {
+						  test->setAlgorithm(new FuzzyAlgorithm(atoi(arg->arg)));
+					  }
+					  else
+					  {
+						  test->setAlgorithm(new FuzzyAlgorithm(LEVENSHTEIN_DISTANCE));
+						  arg--;
+					  }
+					  break;
+			case 'r': test->setAlgorithm(new RegexAlgorithm());
+					  break;
+			case 'e': test->setAlgorithm(new ESMAlgorithm());
+					  break;
+			case 'p': test->setAlgorithm(new WildcardAlgorithm());
+					  break;
+			// }}}
+
+			// String arguments .. finally! {{{
+			case -1:  test->setPattern(arg->arg);
+					  break;
+			// }}}
+		}
+
+		++arg;
+	}
+	current->setTest(test);
+	current->finalize();
+	return root;
+}
+
+// vim:set foldmethod=marker foldlevel=0:

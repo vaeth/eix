@@ -1,0 +1,35 @@
+body {
+	padding: 10px;
+	font-family: verdana, sans-serif;
+}
+
+div, p, table, ul {
+	margin-left: 3em;
+}
+
+span.type {
+}
+
+span.name {
+	font-weight: bold;
+}
+
+h2, h3 {
+	color: gray;
+}
+
+.format {
+	list-style: none;
+	background-color: #EEE;
+	padding: 10px;
+}
+	
+.bitmask {
+	list-style: none;
+	padding: 10px;
+}
+
+.enumeration {
+	list-style: none;
+	padding: 10px;
+}

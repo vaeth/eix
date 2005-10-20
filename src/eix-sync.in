@@ -1,0 +1,119 @@
+#!/bin/bash
+# Author: Emil Beinroth <emilbeinroth@gmx.net>
+
+###########################################################################
+#   eix is a small utility for searching ebuilds in the                   #
+#   Gentoo Linux portage system. It uses indexing to allow quick searches #
+#   in package descriptions with regular expressions.                     #
+#                                                                         #
+#   https://sourceforge.net/projects/eix                                  #
+#                                                                         #
+#   Copyright (c)                                                         #
+#     Wolfgang Frisch <xororand@users.sourceforge.net>                    #
+#     Emil Beinroth <emilbeinroth@gmx.net>                                #
+#                                                                         #
+#   This program is free software; you can redistribute it and/or modify  #
+#   it under the terms of the GNU General Public License as published by  #
+#   the Free Software Foundation; either version 2 of the License, or     #
+#   (at your option) any later version.                                   #
+#                                                                         #
+#   This program is distributed in the hope that it will be useful,       #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with this program; if not, write to the                         #
+#   Free Software Foundation, Inc.,                                       #
+#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
+###########################################################################
+
+source /sbin/functions.sh
+
+# print message and die a horrible death
+function die() {
+  eerror "$@"
+  exit 1
+}
+
+# Run command -- if be_verbose=false, redirect 1,2 to /dev/null and use ebegin/eend (instead of einfo)
+function run_command() {
+  if ${be_verbose}; then
+    einfo "${1}"
+    shift 1
+    eval "${@}"
+    return "${?}"
+  else
+    ebegin "${1}"
+    shift 1
+    eval "${@}" &>/dev/null
+    ret=${?}
+    eend ${ret} "Problems running ${@}"
+    return "${ret}"
+  fi
+}
+
+function print_version() {
+  cat<<END
+$(basename "${0}") [options] - Call 'emerge --sync/--metadata' and show updates. (@PACKAGE_STRING@)
+-h   Show this extremely useful text
+-v   Don't suppress output of update-eix and emerge
+-q   Be quiet (close stdout)
+-m   Run emerge --metadata instead of emerge --sync
+END
+}
+
+# Get options from cli
+be_verbose=false
+emerge_arg="--sync"
+while getopts "hvqm" option; do
+  case "${option}" in
+    h ) print_version
+        exit 0
+    ;;
+    v ) be_verbose=true
+    ;;
+    q ) exec 1>/dev/null
+    ;;
+    m ) emerge_arg="--metadata"
+    ;;
+    * ) print_version
+        exit 1
+    ;;
+  esac
+done
+
+# Check rootness
+[ "$UID" -eq 0 ] || die "You need to be root."
+
+# If the cache-file doesn't exists, or uses an obsolete format, we create it.
+if [ ! -f "/var/cache/eix" ] || ! eix --is-current; then
+  run_command "eix-cache doesn't exist or uses obsolete format. Running update-eix!"  "update-eix" || exit 1 
+fi
+
+
+# Update tree and overlays
+run_command "Running emerge ${emerge_arg}" "emerge ${emerge_arg}" || exit 1 
+
+if [ -e "/etc/eix-sync-overlays" ]; then
+  while read i; do
+    i=${i%%#*}
+    if [ "$i" ]; then
+      if [ "$i" = "*" ]; then
+        run_command "Syncing all portage overlays" gensync -a   || exit 1
+      else
+        run_command "Syncing portage overlay '$i'" gensync "$i" || exit 1
+      fi
+    fi
+  done < /etc/eix-sync-overlays
+fi
+
+# Copy cache, create new cache and diff
+cp "/var/cache/eix" "/tmp/eix.$$" || die "Error while copying cache-file to a save location."
+run_command "Running update-eix" "update-eix" || exit 1 
+diff-eix "/tmp/eix.$$" || die "Error while diffing."
+rm "/tmp/eix.$$" || die "Can't remove tempfile /tmp/eix.$$"
+
+exit 0 # Goodbye
+
+# vim:set expandtab:
