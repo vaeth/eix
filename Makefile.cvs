@@ -3,6 +3,8 @@ default: all
 all:
 	aclocal
 	autoheader
-	automake
+	libtoolize --force --copy
+	automake -afc
 	autoconf
+	rm -rf autom4te.cache/
 
