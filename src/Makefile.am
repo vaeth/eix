@@ -80,4 +80,4 @@ diff_eix_LDADD = database/libdatabase.a \
 
 
 eix-sync: eix-sync.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," eix-sync.in > eix-sync
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," $(srcdir)/eix-sync.in > eix-sync

@@ -14,4 +14,4 @@ libcache_a_SOURCES = base.h \
 					 cache-map.cc
 
 cache-map.cc:
-	./generate-cachemap.sh > cache-map.cc
+	$(srcdir)/generate-cachemap.sh > cache-map.cc
