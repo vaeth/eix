@@ -40,11 +40,12 @@ Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic)
 		throw ExBasic("Can't open %s: %s", filename.c_str(), strerror(errno));
 
 	// Skip the first 4 lines
-	for( linenr=0;linenr<8; linenr++ )
+	for( linenr=0;linenr<6; linenr++ )
 	{
 		is.ignore(10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
 		if( is.fail() ) throw ExBasic("Can't read cache file %s: %s", filename.c_str(), strerror(errno));
 	}
+	
 	// Read the keywords line
 	// and remove KEYWORDS= from that line
 	getline(is, linebuf);
@@ -80,8 +81,8 @@ void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
 		switch( linenr )
 		{
 			case 1:  pkg->licenses = linebuf; break;
-			case 10: pkg->homepage = linebuf; break;
-			case 20: pkg->desc     = linebuf; is.close();
+			case 11: pkg->desc     = linebuf; break;
+			case 14: pkg->homepage = linebuf; is.close();;
 			return;
 		}
 	}
