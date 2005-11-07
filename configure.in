@@ -1,4 +1,4 @@
-AC_INIT(eix, 0.4.9, http://sourceforge.net/projects/eix/)
+AC_INIT(eix, 0.5_beta, http://sourceforge.net/projects/eix/)
 AC_CANONICAL_TARGET
 
 AM_CONFIG_HEADER(config.h)
@@ -109,4 +109,4 @@ AC_OUTPUT(Makefile manpage/Makefile
 
 echo ""
 echo " $PACKAGE version $VERSION configured successfully."
-echo " Good luck with 'make' :)" 
+echo " Good luck with make :)" 

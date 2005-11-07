@@ -1,8 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-	Christian Heim <phreak at gentoo.org>:
-	- Fixing flat-utils.cc to support portage's new (maybe in 2.0.54)
-	  cache format.
+*eix-0.5_beta
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Formatstring(Conditions): If a "else" was missing, the if-true part was
