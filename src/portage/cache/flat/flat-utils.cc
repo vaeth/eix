@@ -39,18 +39,14 @@ Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic)
 	if(!is.is_open())
 		throw ExBasic("Can't open %s: %s", filename.c_str(), strerror(errno));
 
-	// Skip the first 4 lines
-	for( linenr=0;linenr<6; linenr++ )
+	// Skip the first 8 lines
+	for( linenr=0;linenr<8; linenr++ )
 	{
 		is.ignore(10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
 		if( is.fail() ) throw ExBasic("Can't read cache file %s: %s", filename.c_str(), strerror(errno));
 	}
-	
 	// Read the keywords line
-	// and remove KEYWORDS= from that line
 	getline(is, linebuf);
-	std::string::size_type pos = linebuf.find('=');
-	linebuf.erase(0, pos+1);
 	is.close();
 
 	return Keywords::get_type(arch, linebuf);
@@ -65,8 +61,8 @@ void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
 
 	if(!is.is_open()) throw ExBasic("Can't open %s: %s", filename, strerror(errno));
 
-	// Skip the first line
-	for( linenr=0;linenr<1; linenr++ )
+	// Skip the first 5 lines
+	for( linenr=0;linenr<5; linenr++ )
 	{
 		is.ignore( 10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
 		if( is.fail() ) throw ExBasic("Can't read metadata cache file: %s", filename);
@@ -75,15 +71,12 @@ void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
 	// Read the rest
 	for(; getline(is, linebuf); linenr++)
 	{
-		// Remove the varname from current linebuf
-		std::string::size_type pos = linebuf.find('=');
-		linebuf.erase(0, pos+1);
 		switch( linenr )
 		{
-			case 1:  pkg->licenses = linebuf; break;
-			case 11: pkg->desc     = linebuf; break;
-			case 14: pkg->homepage = linebuf; is.close();;
-			return;
+			case 5: pkg->homepage = linebuf; break;
+			case 6: pkg->licenses = linebuf; break;
+			case 7: pkg->desc     = linebuf; is.close();
+					return;
 		}
 	}
 	is.close();
