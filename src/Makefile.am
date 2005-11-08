@@ -39,10 +39,10 @@ sbin_SCRIPTS = eix-sync
 
 # The search-tool for our database
 eix_SOURCES = eix.cc \
-			  search/searchtests.h \
 			  varsreader.cc varsreader.h \
 			  cachetable.h \
 			  search/packagetest.cc search/packagetest.h \
+			  search/algorithms.cc \
 			  search/dbmatchcriteria.h \
 			  search/queryparser.h \
 			  cli.cc cli.h \

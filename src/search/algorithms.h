@@ -29,6 +29,7 @@
 #define __ALGORITHMS_H__
 
 #include <fnmatch.h>
+#include <eixTk/levenshtein.h>
 
 /** That's how every Algorithm will look like. */
 class BaseAlgorithm {
@@ -81,6 +82,11 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 	protected:
 		int max_levenshteindistance;
 
+		/** FIXME: We need to have a package->levenshtein mapping that we can
+		 * access from the static FuzzyAlgorithm::compare.
+		 * I really don't know how to do this .. */
+		static map<string, int> levenshtein_map;
+
 	public:
 		FuzzyAlgorithm(int max) {
 			max_levenshteindistance = max;
@@ -91,16 +97,18 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 			bool ok = (d <= max_levenshteindistance);
 			if(ok)
 			{
-				// FIXME: BAH
+				levenshtein_map[p->category + "/" + p->name] = d;
 			}
 			return ok;
 		}
 		
-		void sort(vector<Package*>::iterator &begin, vector<Package*>::iterator &end)  {
-#if 0
-			algorithm::sort(begin, end, FuzzyAlgorithm::comparator);
-#endif
-			// FIXME: BAH
+		static bool compare(Package *p1, Package *p2)  {
+			return (levenshtein_map[p1->category + "/" + p1->name]
+					< levenshtein_map[p2->category + "/" + p2->name]);
+		}
+
+		static bool sort_by_levenshtein() {
+			return levenshtein_map.size() > 0;
 		}
 };
 

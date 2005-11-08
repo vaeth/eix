@@ -39,7 +39,6 @@
 #include <portage/package.h>
 
 #include <eixTk/exceptions.h>
-#include <eixTk/levenshtein.h>
 
 #include <search/algorithms.h>
 

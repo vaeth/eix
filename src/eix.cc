@@ -172,8 +172,6 @@ static struct LocalOptions {
 		 show_version,
 		 dump_eixrc,
 		 do_debug,
-		 /** Should result be sorted by Package::fuzzy_rating? */
-		 sort_by_fuzzy_rating,
 		 ignore_etc_portage,
 		 is_current;
 	char *use_this_cache;
@@ -257,7 +255,7 @@ setup_defaults()
 void 
 print_overlay_table(DBHeader &header)
 {
-	for(int i = 0;
+	for(int i = 1;
 		i < header.countOverlays();
 		i++)
 	{
@@ -265,7 +263,7 @@ print_overlay_table(DBHeader &header)
 		{
 			cout << format.color_overlaykey;
 		}
-		printf("[%i] ", i + 1);
+		printf("[%i] ", i);
 		if( !format.no_color )
 		{
 			cout << AnsiColor(AnsiColor::acDefault, 0);
@@ -369,11 +367,9 @@ run_eix(int argc, char** argv)
 		return 1;
 	}
 
-	if(rc_options.sort_by_fuzzy_rating) {
-#if 0
-		/* Sort the found matches by rating */
-		sort(matches.begin(), matches.end(), fuzzy_comparator);
-#endif
+	/* Sort the found matches by rating */
+	if(FuzzyAlgorithm::sort_by_levenshtein()) {
+		sort(matches.begin(), matches.end(), FuzzyAlgorithm::compare);
 	}
 
 	PortageSettings portagesettings;
