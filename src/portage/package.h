@@ -43,7 +43,7 @@ class Package : public vector<Version*> {
 		typedef unsigned short size_type;
 
 		enum InputStatus {
-			NONE = 0, NAME = 1, DESCRIPTION = 2, HOMEPAGE = 3, LICENSE = 4, VERSIONS = 5, ALL = 5
+			NONE = 0, NAME = 1, DESCRIPTION = 2, PROVIDE = 3, HOMEPAGE = 4, LICENSE = 5, VERSIONS = 6, ALL = 7
 		};
 
 	protected:
@@ -61,7 +61,7 @@ class Package : public vector<Version*> {
 		bool is_system_package;      /**< True if every version is in the system-profile. */
 
 		/** Package properties (stored in db) */
-		string category, name, desc, homepage, licenses, installed_versions;
+		string category, name, desc, homepage, licenses, installed_versions, provide;
 	
 	public:
 		/** Constructor */

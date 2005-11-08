@@ -265,6 +265,7 @@ int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name, void (
 			pkg->desc     = mapping["DESCRIPTION"];
 			pkg->homepage = mapping["HOMEPAGE"];
 			pkg->licenses = mapping["LICENSE"];
+			pkg->provide  = mapping["PROVIDE"];
 		}
 
 		/* Make version and add it to package. */

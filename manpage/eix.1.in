@@ -123,6 +123,9 @@ i.e. "http://sourceforge.net/projects/eix"
 .TP
 .BR -L ", " --license
 i.e. "GPL-2"
+.TP
+.BR -P ", " --provide
+i.e. "virtual/blackbox"
 .\" }}}
 
 .\" {{{ -------- Match algorithms
@@ -356,6 +359,9 @@ Use CATEGORY_NAME as default matchfield if the string match the given regex.
 .TP
 .BR MATCH_HOMEPAGE_IF " " (string)
 Use HOMEPAGE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_PROVIDE_IF " " (string)
+Use PROVIDE as default matchfield if the string match the given regex.
 .TP
 .BR MATCH_ORDER " " (string)
 Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.

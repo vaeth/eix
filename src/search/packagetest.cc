@@ -31,6 +31,7 @@ void
 PackageTest::calculateNeeds() {
 	map<MatchField,Package::InputStatus> smap;
 	smap[HOMEPAGE]      = Package::VERSIONS;
+	smap[PROVIDE]       = Package::PROVIDE;
 	smap[LICENSE]       = Package::LICENSE;
 	smap[DESCRIPTION]   = Package::DESCRIPTION;
 	smap[CATEGORY]      = Package::NAME;
@@ -51,6 +52,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "CATEGORY")      ret = CATEGORY;
 	else if(p == "CATEGORY_NAME") ret = CATEGORY_NAME;
 	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
+	else if(p == "PROVIDE")       ret = PROVIDE;
 	else if(p == "DEFAULT")       ret = DEFAULT;
 	else THROW("Can't find MatchField called %s.", p.c_str());
 	return ret;

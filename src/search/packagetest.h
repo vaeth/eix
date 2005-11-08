@@ -53,11 +53,12 @@ class PackageTest {
 			NONE          = 0x00, /* Search in name */
 			NAME          = 0x01, /* Search in name */
 			DESCRIPTION   = 0x02, /* Search in description */
-			LICENSE       = 0x04, /* Search in license */
-			CATEGORY      = 0x08, /* Search in category */
-			CATEGORY_NAME = 0x10, /* Search in category/name */
-			HOMEPAGE      = 0x20, /* Search in homepage */
-			DEFAULT       = 0x40
+			PROVIDE       = 0x04, /* Search in provides */
+			LICENSE       = 0x08, /* Search in license */
+			CATEGORY      = 0x10, /* Search in category */
+			CATEGORY_NAME = 0x20, /* Search in category/name */
+			HOMEPAGE      = 0x40, /* Search in homepage */
+			DEFAULT       = 0x80
 		} field; /**< What to match. */
 
 		bool installed, dup_versions, invert;
@@ -109,6 +110,8 @@ class PackageTest {
 					return (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg);
 				case HOMEPAGE:
 					return (*algorithm)(pkg->homepage.c_str(), pkg);
+				case PROVIDE:
+					return (*algorithm)(pkg->provide.c_str(), pkg);
 				default:
 					THROW("Hu? - I don't know what field I shall match!");
 			}

@@ -73,10 +73,11 @@ void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
 	{
 		switch( linenr )
 		{
-			case 5: pkg->homepage = linebuf; break;
-			case 6: pkg->licenses = linebuf; break;
-			case 7: pkg->desc     = linebuf; is.close();
-					return;
+			case 5:  pkg->homepage = linebuf; break;
+			case 6:  pkg->licenses = linebuf; break;
+			case 7:  pkg->desc     = linebuf; break;
+			case 13: pkg->provide  = linebuf; is.close();
+					 return;
 		}
 	}
 	is.close();

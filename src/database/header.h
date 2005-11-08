@@ -45,7 +45,7 @@ class DBHeader {
 
 	public:
 		/** Current version of database-format. */
-		static const int DBVERSION = 10;
+		static const int DBVERSION = 11;
 
 		int version; /**< Version of the db. */
 		string arch; /**< Architecture. */

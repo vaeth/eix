@@ -103,6 +103,7 @@ dump_help(int exit_code)
 			"	 -s, --name			   name (default)\n"
 			"	 -H, --homepage		   homepage\n"
 			"	 -L, --license		   license\n"
+			"	 -P, --provide		   provides\n"
 			"\n"
 			"  Type of Pattern:\n"
 			"	 -r, --regex		   Pattern is a regexp (default)\n"
@@ -220,6 +221,7 @@ static struct Option long_options[] = {
 	{ "descriptions",  'S', Option::NONE, NULL },
 	{ "license",	   'L', Option::NONE, NULL },
 	{ "homepage",	   'H', Option::NONE, NULL },
+	{ "provide",	   'P', Option::NONE, NULL },
 
 	// What to do with the next one
 	{ "or",			   'o', Option::NONE, NULL },

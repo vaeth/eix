@@ -85,6 +85,7 @@ parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter
 			case 'S': test->field = PackageTest::DESCRIPTION;   break;
 			case 'L': test->field = PackageTest::LICENSE;       break;
 			case 'H': test->field = PackageTest::HOMEPAGE;      break;
+			case 'P': test->field = PackageTest::PROVIDE;       break;
 			// }}}
 
 			// Check for algorithms {{{

@@ -151,6 +151,9 @@ get_package_property(void *void_entity, string &name) throw(ExBasic)
 	else if(name == "installedversions") {
 		return entity->installed_versions;
 	}
+	else if(name == "provide") {
+		return entity->provide;
+	}
 	else if(name == "overlaykey") {
 		stringstream ss;
 		string ret;

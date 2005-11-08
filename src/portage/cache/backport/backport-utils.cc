@@ -77,5 +77,6 @@ void readBackportCachefile(Package *pkg, const char *filename) throw (ExBasic)
 	pkg->homepage = cf["HOMEPAGE"];
 	pkg->licenses = cf["LICENSE"];
 	pkg->desc     = cf["DESCRIPTION"];
+	pkg->provide  = cf["PROVIDE"];
 }
 

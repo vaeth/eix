@@ -83,6 +83,7 @@ void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char 
 			pkg->homepage = ebuild["HOMEPAGE"];
 			pkg->licenses = ebuild["LICENSE"];
 			pkg->desc     = ebuild["DESCRIPTION"];
+			pkg->provide  = ebuild["PROVIDE"];
 
 			have_onetime_info = true;
 		}

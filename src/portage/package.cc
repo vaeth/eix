@@ -65,6 +65,10 @@ void Package::readNeeded(InputStatus we_want)
 			if(we_want == Package::DESCRIPTION)
 				break;
 		case Package::DESCRIPTION:
+			provide = io::read_string(stream);
+			if(we_want == Package::PROVIDE)
+				break;
+		case Package::PROVIDE:
 			homepage = io::read_string( stream);
 			if(we_want == Package::HOMEPAGE)
 				break;
@@ -78,6 +82,7 @@ void Package::readNeeded(InputStatus we_want)
 			for(size_type i = 0; i<n; i++ ) {
 				addVersion(new Version( stream ));
 			}
+		case Package::VERSIONS:
 		case Package::ALL:
 			break;
 	}
@@ -110,6 +115,7 @@ void Package::write( FILE *output ) throw(ExBasic)
 
 	io::write_string(output, name);
 	io::write_string(output, desc);
+	io::write_string(output, provide);
 	io::write_string(output, homepage);
 	io::write_string(output, licenses);
 

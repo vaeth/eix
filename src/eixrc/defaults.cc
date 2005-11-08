@@ -76,6 +76,7 @@ eixrc.addDefault(
 			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
 			"     (green)Homepage:()            <homepage>\n"
 			"     (green)Description:()         <description>\n"
+			"     (green)Provides:()            {provide}<provide>{else}none{}\n"
 			"     (green)License:()             <licenses>\n", "Defines the verbose output for eix (-v).")
 		);
 
@@ -143,14 +144,15 @@ eixrc.addDefault(
 				value, "Use " #field "as default matchfield if the stringstring match the given regex.") \
 			)
 
-MATCH_IF(NAME,          ".*");
+MATCH_IF(NAME,          "");
 MATCH_IF(DESCRIPTION,   "");
 MATCH_IF(LICENSE,       "");
 MATCH_IF(CATEGORY,      "");
 MATCH_IF(CATEGORY_NAME, "/");
 MATCH_IF(HOMEPAGE,      "");
+MATCH_IF(PROVIDE,       "^virtual/");
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MATCH_ORDER",
-			"CATEGORY_NAME NAME","Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.")
+			"PROVIDE CATEGORY_NAME NAME","Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.")
 		);
