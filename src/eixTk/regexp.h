@@ -52,12 +52,12 @@ class Regex {
 			compiled = false;
 		}
 
-		Regex(const char *regex, int eflags = 0) throw(ExBasic) {
+		Regex(const char *regex, int eflags = REG_ICASE) throw(ExBasic) {
 			compiled = false;
 			compile(regex, eflags);
 		}
 
-		void compile(const char *regex, int eflags = 0) throw(ExBasic) {
+		void compile(const char *regex, int eflags = REG_ICASE) throw(ExBasic) {
 			if(compiled) {
 				regfree(&re);
 			}

@@ -40,28 +40,33 @@ parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter
 	while(arg != end)
 	{
 		// Check for logical operator {{{
-		if(need_logical_operator)
 		{
-			// finalize
-			current->setTest(test);
-			current->finalize();
+			Matchatom *next = NULL;
 
-			if(**arg == 'a') {
-				current = current->AND();
-				++arg;
-			}
-			else if(**arg == 'o') {
-				current = current->OR();
-				++arg;
-			}
-			else
+			if(**arg == 'a')
 			{
-				current = current->AND();
+				next = current->AND();
+				++arg;
+			}
+			else if(**arg == 'o')
+			{
+				next = current->OR();
+				++arg;
+			}
+			else if(need_logical_operator)
+			{
+				next = current->AND();
 			}
 
-			need_logical_operator = false;
-			test = new PackageTest(&varpkg_db);
-			continue;
+			if(next != NULL)
+			{
+				current->setTest(test);
+				current->finalize();
+				need_logical_operator = false;
+				current = next;
+				test = new PackageTest(&varpkg_db);
+				continue;
+			}
 		}
 		// }}}
 
@@ -83,7 +88,6 @@ parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter
 			// }}}
 
 			// Check for algorithms {{{
-			// TODO: You can scare small children with the following code!
 			case 'f': 
 					  if(++arg != end
 						 && arg->type == Parameter::ARGUMENT
@@ -107,6 +111,7 @@ parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter
 
 			// String arguments .. finally! {{{
 			case -1:  test->setPattern(arg->arg);
+					  need_logical_operator = true;
 					  break;
 			// }}}
 		}

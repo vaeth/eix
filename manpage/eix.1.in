@@ -88,7 +88,9 @@ Define the verbose layout for results as I<FORMAT>
 .SS Options for expressions
 .TP
 .BR -I ", " --installed
-Only match installed packages
+Only match installed packages. Please don't use this as a replacement for qlist -ICv or
+equery, it's not the same. This only show packages that could be installed and that are
+installed. Packages that are installed, but no longer in portage are not listed here.
 .TP
 .BR -D ", " --dup-versions
 Only match packages with duplicated versions
@@ -309,7 +311,8 @@ Set a list of overlays that are excluded from the index (separators are [\\n\\r\
 
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (Strings)
-Set the type of the cache used by portage.
+Set the type of the cache used by portage. If you don't know what this is, just leave it
+alone.
 .TP
 .SS
 .BR cdb
@@ -334,6 +337,30 @@ Default for B<OVERLAY_CACHE_METHOD>.
 .BR LOCAL_PORTAGE_CONFIG " " (true/false)
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
 environment.
+.TP
+.\" {{{ Default Matchfields for different strings.
+.BR MATCH_NAME_IF " " (string)
+Use NAME as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_DESCRIPTION_IF " " (string)
+Use DESCRIPTION as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_LICENSE_IF " " (string)
+Use LICENSE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_CATEGORY_IF " " (string)
+Use CATEGORY as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_CATEGORY_NAME_IF " " (string)
+Use CATEGORY_NAME as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_HOMEPAGE_IF " " (string)
+Use HOMEPAGE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_ORDER " " (string)
+Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
+.TP
+.\" }}}
 .\" }}}
 
 .\" {{{ -------- @EIX_CACHEFILE@ 
