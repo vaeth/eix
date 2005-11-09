@@ -25,6 +25,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+/* we use strndup */
+#define _GNU_SOURCE
+
 #include "stringutils.h"
 		
 Regex re_fn2ver(".*-\\([^a-zA-Z].*\\)", 0);

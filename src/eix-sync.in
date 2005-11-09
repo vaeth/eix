@@ -116,4 +116,4 @@ rm "/tmp/eix.$$" || die "Can't remove tempfile /tmp/eix.$$"
 
 exit 0 # Goodbye
 
-# vim:set expandtab:
+# vim:set expandtab sw=2 ts=4:
