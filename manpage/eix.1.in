@@ -239,6 +239,9 @@ the highest stable version
 .TP
 .BR system
 expands to "system" if this package is in the system-profile
+.TP
+.BR provide
+the packages PROVIDE-string
 .\" }}}
 
 .\" {{{ -------- Colors 
