@@ -43,7 +43,7 @@ class Package : public vector<Version*> {
 		typedef unsigned short size_type;
 
 		enum InputStatus {
-			NONE = 0, NAME = 1, DESCRIPTION = 2, PROVIDE = 3, HOMEPAGE = 4, LICENSE = 5, VERSIONS = 6, ALL = 7
+			NONE = 0, NAME = 1, DESCRIPTION = 2, PROVIDE = 3, HOMEPAGE = 4, LICENSE = 5, VERSIONS = 6, ALL = 6
 		};
 
 	protected:

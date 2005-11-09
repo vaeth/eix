@@ -82,7 +82,6 @@ void Package::readNeeded(InputStatus we_want)
 			for(size_type i = 0; i<n; i++ ) {
 				addVersion(new Version( stream ));
 			}
-		case Package::VERSIONS:
 		case Package::ALL:
 			break;
 	}
