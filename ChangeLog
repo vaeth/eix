@@ -4,6 +4,7 @@
 	- Fixed a small bug regarding -o/-a and atoms with a pattern .. thanks to
 	  leonie for bringing this to my attention.
 	- Added PROVIDE; bumped db-version
+	- Fixing http://bugs.gentoo.org/show_bug.cgi?id=111927
 
 *eix-0.5_beta
 

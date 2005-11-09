@@ -68,12 +68,14 @@ Node           *format_new, *format_delete, *format_changed;
 static void
 print_help(int ret)
 {
-	fprintf(stderr,
-			"diff-eix [options] old-cache [new-cache]\n"
+	printf( "diff-eix [options] old-cache [new-cache]\n"
+			"\n"
+			" -n, --nocolor           don't use colors in output\n"
+			"     --force-color       force colors on things that are not a terminal\n"
+			"     --dump              dump variables to stdout\n"
 			"\n"
 			" -h, --help              show a short help screen\n"
 			" -V, --version           show version-string\n"
-			" --dump                  dump variables to stdout\n"
 			"\n"
 			"If you omit the new-cache parameter, we'll use the default cache-file ("EIX_CACHEFILE").\n"
 			"\n"

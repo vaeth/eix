@@ -84,27 +84,26 @@ check_db_permissions()
 static void
 print_help(void)
 {
-	fprintf(stderr,
-"%s [options]\n"
-"\n"
-" -h, --help              show a short help screen\n"
-" -V, --version           show version-string\n"
-"     --dump              show eixrc-variables\n"
-"\n"
-" -q, --quiet             produce no output\n"
-"\n"
-"     --exclude-overlay   exclude a overlay from the update-process.\n"
-"\n"
+	printf( "%s [options]\n"
+			"\n"
+			" -h, --help              show a short help screen\n"
+			" -V, --version           show version-string\n"
+			"     --dump              show eixrc-variables\n"
+			"\n"
+			" -q, --quiet             produce no output\n"
+			"\n"
+			"     --exclude-overlay   exclude a overlay from the update-process.\n"
+			"\n"
 #if 0
-"     --print-masks       print masks (if you are no developer, you probably won't need this)\n" 
-"\n"
+			"     --print-masks       print masks (if you are no developer, you probably won't need this)\n" 
+			"\n"
 #endif
-"You can contact the developers in #eix on irc.freenode.net or on\n"
-"the sourceforge-page "PACKAGE_BUGREPORT".\n"
-"There is also a wiki at "EIX_WIKI".\n"
-"This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n",
-			program_name);
+			"You can contact the developers in #eix on irc.freenode.net or on\n"
+			"the sourceforge-page "PACKAGE_BUGREPORT".\n"
+			"There is also a wiki at "EIX_WIKI".\n"
+			"This program is covered by the GNU General Public License. See COPYING for\n"
+			"further information.\n",
+		program_name);
 
 	exit(0);
 }
