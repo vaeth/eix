@@ -42,8 +42,6 @@
 
 #include <search/algorithms.h>
 
-#define FNMATCH_FLAGS FNM_CASEFOLD
-
 /* And M is for "match".
  * So those are things you can match .. */
 class PackageTest {

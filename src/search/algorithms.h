@@ -28,8 +28,22 @@
 #ifndef __ALGORITHMS_H__
 #define __ALGORITHMS_H__
 
+/* FNM_CASEFOLD is a gnu extension .. */
+#if !defined _GNU_SOURCE
+#define _GNU_SOURCE
+#endif /* !defined _GNU_SOURCE */
+
 #include <fnmatch.h>
 #include <eixTk/levenshtein.h>
+
+/* Check if we have FNM_CASEFOLD .. 
+ * fnmatch(3) tells me that this is a GNU extensions */
+#if defined FNM_CASEFOLD
+#define FNMATCH_FLAGS FNM_CASEFOLD
+#else
+#define FNMATCH_FLAGS 0
+#define FNMATCH_FLAGS FNM_CASEFOLD
+#endif /* defined FNM_CASEFOLD */
 
 /** That's how every Algorithm will look like. */
 class BaseAlgorithm {

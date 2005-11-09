@@ -26,13 +26,39 @@
  ***************************************************************************/
 
 /* we use strndup */
+#if !defined _GNU_SOURCE
 #define _GNU_SOURCE
+#endif /* !defined _GNU_SOURCE */
 
 #include "stringutils.h"
-		
+
 Regex re_fn2ver(".*-\\([^a-zA-Z].*\\)", 0);
 Regex re_fn2name("\\(.*\\)-[^a-zA-Z].*", 0);
 Regex re_fn2name_ver("\\(.*\\)-\\([^a-zA-Z].*\\)", 0);
+
+#if !defined HAVE_STRNDUP
+/* If we don't have strndup, we use our own ..
+ * darwin (macos) doesn't have strndup, it's a GNU extension
+ * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
+
+#include <stdlib.h>
+
+char *
+strndup(const char *s, size_t n)
+{
+	char       *r = NULL;
+	const char *p = s;
+	while(*p++ && n--);
+	n = p - s - 1;
+	r = (char *) malloc(n + 1);
+	if(r != NULL)
+	{
+		memcpy(r, s, n);
+		r[n] = 0;
+	}
+	return r;
+}
+#endif /* !defined HAVE_STRNDUP */
 
 char *
 ExplodeAtom::getVersion(const char* filename)

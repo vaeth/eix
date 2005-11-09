@@ -26,9 +26,12 @@
  ***************************************************************************/
 
 /* we use strndup */
+#if !defined _GNU_SOURCE
 #define _GNU_SOURCE
+#endif /* !defined _GNU_SOURCE */
 
 #include "mask.h"
+#include <eixTk/stringutils.h> /* to get strndup on macos */
 #include <portage/keywords.h>
 
 #include <eixTk/regexp.h>

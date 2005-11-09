@@ -28,12 +28,19 @@
 #ifndef __STRINGUTILS_H__
 #define __STRINGUTILS_H__
 
+#include "../../config.h"
+
 #include <eixTk/regexp.h> 
 
 #include <string>
 #include <vector>
 
 using namespace std;
+
+#if !defined HAVE_STRNDUP
+/** strndup in case we don't have one. */
+char *strndup(const char *s, size_t n);
+#endif /* !defined HAVE_STRNDUP */
 
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {

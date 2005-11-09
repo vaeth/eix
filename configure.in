@@ -5,8 +5,11 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE()
 
 dnl Look for basic functions
-AC_CHECK_FUNCS([regcomp strchr strcspn strdup strerror strndup strstr strspn strtol strrchr fnmatch memset], ,
+AC_CHECK_FUNCS([regcomp strchr strcspn strdup strerror strstr strspn strtol strrchr fnmatch memset], ,
 			   AC_MSG_ERROR(We really need those functions ..))
+
+dnl Well define our own strndup if we don't have one
+AC_CHECK_FUNCS(strndup, , )
 
 AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then
