@@ -60,6 +60,13 @@ void Version::read( FILE *is )
 	// read primary string
 	primary = io::read_string(is);
 
+	// read primsplit
+	unsigned char i = io::read<unsigned char>(is);
+	while(i--)
+	{
+		primsplit.push_back(io::read<unsigned short>(is));
+	}
+
 	// read suffixlevel,suffixnum,gentoorelease
 	suffixlevel = io::read<char>(is);
 	suffixnum = io::read<int>(is);
@@ -79,6 +86,15 @@ void Version::write( FILE *os )
 
 	// write primary string
 	io::write_string( os, primary );
+
+	// write primsplit
+	io::write<unsigned char>(os, (unsigned char)primsplit.size());
+	for(vector<unsigned short>::iterator it = primsplit.begin();
+			it != primsplit.end();
+			++it)
+	{
+		io::write<unsigned short>(os, *it);
+	}
 
 	// write suffixlevel,suffixnum,gentoorelease
 	io::write<char>(os, suffixlevel);
