@@ -75,6 +75,18 @@ class EixRc : public map<string,string> {
 				rc.useMap(this);
 				rc.read(EIX_SYSTEMRC);
 				rc.read(eixrc.c_str()); 
+
+				// look for stuff from ENV
+				for(unsigned int i = 0;
+					i<defaults.size();
+					++i)
+				{
+					char *val = getenv(defaults[i].key.c_str());
+					if(val != NULL)
+					{
+						(*this)[defaults[i].key] = string(val);
+					}
+				}
 			}
 		}
 		

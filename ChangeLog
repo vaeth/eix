@@ -7,6 +7,7 @@
 	- Fixing http://bugs.gentoo.org/show_bug.cgi?id=111927
 	- Added our own strndup-implementation that will be used for ppc-macos
 	  See http://bugs.gentoo.org/show_bug.cgi?id=111912
+	- Finally, environment variables can be used to override eixrc-stuff.
 
 *eix-0.5_beta
 
