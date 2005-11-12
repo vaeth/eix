@@ -75,7 +75,7 @@ AC_ARG_WITH(max-levenshtein-distance,[  --with-max-levenshtein-distance=N  Maxim
 AC_DEFINE_UNQUOTED(LEVENSHTEIN_DISTANCE, $LEVENSHTEIN_DISTANCE, Maximal levenshtein-distance for matches)
 AC_DEFINE_UNQUOTED(LEVENSHTEIN_DISTANCE_STR, "$LEVENSHTEIN_DISTANCE", Maximal levenshtein-distance for matches (as string))
 
-EIX_WIKI="http://eixwiki.unfoog.de"
+EIX_WIKI="http://dev.croup.de/proj/eix"
 
 AC_DEFINE_UNQUOTED(EIX_WIKI, "$EIX_WIKI", Location of eix-wiki)
 
