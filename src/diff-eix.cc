@@ -71,7 +71,7 @@ print_help(int ret)
 	printf( "diff-eix [options] old-cache [new-cache]\n"
 			"\n"
 			" -n, --nocolor           don't use colors in output\n"
-			"     --force-color       force colors on things that are not a terminal\n"
+			" -F, --force-color       force colors on things that are not a terminal\n"
 			"     --dump              dump variables to stdout\n"
 			"\n"
 			" -h, --help              show a short help screen\n"
@@ -104,7 +104,7 @@ static struct Option long_options[] = {
 	{"version",      'V',           Option::BOOLEAN_T, (void *) &cli_show_version},
 	{"dump",         O_DUMP,        Option::BOOLEAN_T, (void *) &cli_dump_eixrc },
 	{"nocolor",      'n',           Option::BOOLEAN_T, (void *) &(format_string.no_color) },
-	{"force-color",  O_FORCE_COLOR, Option::BOOLEAN_F, (void *) &(format_string.no_color) },
+	{"force-color",  'F',           Option::BOOLEAN_F, (void *) &(format_string.no_color) },
 	{0,              0,             Option::NONE,      NULL }
 };
 

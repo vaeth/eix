@@ -51,7 +51,7 @@ Print version and exit.
 Disables the use of ANSI color codes. This is useful for terminals that do not support ANSI colors.
 (This is automatically turned on if stdout is no tty, but can be overridden by using --force-color)
 .TP
-.BR --force-color
+.BR -F ", " --force-color
 The opposite of --nocolor.
 .\" }}}
 

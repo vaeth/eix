@@ -183,7 +183,7 @@ static struct Option long_options[] = {
 	{ "quiet",		  'q',	   Option::BOOLEAN,		 (void *) &rc_options.be_quiet },
 
 	{ "nocolor",	  'n',	   Option::BOOLEAN_T,	 (void *) &format.no_color },
-	{ "force-color",  O_COLOR, Option::BOOLEAN_F,	 (void *) &format.no_color },
+	{ "force-color",  'F',	   Option::BOOLEAN_F,	 (void *) &format.no_color },
 	{ "versionlines", 'l',	   Option::BOOLEAN_T,	 (void *) &format.style_version_lines },
 	
 	{ "verbose",	  'v',	   Option::BOOLEAN,		 (void *) &rc_options.verbose_output },
