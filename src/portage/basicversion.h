@@ -87,11 +87,11 @@ class BasicVersion {
 			return !(*this == right);
 		}
 
-		virtual bool BasicVersion::operator>= ( const BasicVersion& right ) {
+		virtual bool operator>= ( const BasicVersion& right ) {
 			return ( (*this>right) || (*this==right) );
 		}
 
-		virtual bool BasicVersion::operator<= ( const BasicVersion& right ) {
+		virtual bool operator<= ( const BasicVersion& right ) {
 			return ( (*this<right) || (*this==right) );
 		}
 

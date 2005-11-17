@@ -114,7 +114,7 @@ class PortageSettings : public map<string,string> {
 		}
 		
 		/** Read maskings & unmaskings from the profile as well as user-defined ones */
-		MaskList *PortageSettings::getMasks();
+		MaskList *getMasks();
 
 		/** Return vector of all possible all categories.
 		 * Reads categories on first call. */
