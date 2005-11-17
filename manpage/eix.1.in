@@ -27,8 +27,11 @@ A I<EXPRESSION> can be:
 .SH "DESCRIPTION"
 B<update-eix> generates a binary cache from your local portage-tree and overlays.
 B<eix> searches this cache for packages that match the criteria you specified.
-B<diff-eix> compares two binary caches and finds packages that were added, removed or for which the highest stable versions has changed.
-B<eix-sync> runs B<emerge --sync> and B<update-eix>, it then compares the new cache with the old cache using B<diff-eix>.
+B<diff-eix> compares two binary caches and finds packages that were added, removed or for
+which the highest stable versions has changed.
+B<eix-sync> runs B<emerge --sync> (or B<emerge --metadata>) and B<update-eix>, it then
+compares the new cache with the old cache using B<diff-eix>, while redirecting all output
+from B<emerge> and B<update-eix> to I</var/log/eix-sync.log> for cleanliness.
 .\" }}}
 
 .\" {{{ OPTIONS
@@ -148,7 +151,8 @@ for further information. Be sure to use single quotes around patterns (to preven
 shell from intercepting any wildcards).
 .TP
 .BR -r ", " --regex
-pattern is a regexp. -r is default, so you actually not need to type -r. For further information, please read
+pattern is a regexp. -r is default, so you actually not need to type -r. For further
+information, please read
 .BR regex (7).
 Again, be sure to use single quotes around patterns. (Default)
 .\" }}}

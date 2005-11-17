@@ -46,7 +46,7 @@ function run_command() {
   else
     ebegin "${1}"
     shift 1
-    eval "${@}" &>/dev/null
+    eval "${@}" &>1 >> /var/log/eix-sync.log
     ret=${?}
     eend ${ret} "Problems running ${@}"
     return "${ret}"
@@ -73,7 +73,7 @@ while getopts "hvqm" option; do
     ;;
     v ) be_verbose=true
     ;;
-    q ) exec 1>/dev/null
+    q ) exec >> /var/log/eix-sync.log
     ;;
     m ) emerge_arg="--metadata"
     ;;
@@ -91,6 +91,8 @@ if [ ! -f "/var/cache/eix" ] || ! eix --is-current; then
   run_command "eix-cache doesn't exist or uses obsolete format. Running update-eix!"  "update-eix" || exit 1 
 fi
 
+# Clean out eix-sync.log:
+echo > /var/log/eix-sync.log
 
 # Update tree and overlays
 run_command "Running emerge ${emerge_arg}" "emerge ${emerge_arg}" || exit 1 
