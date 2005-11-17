@@ -81,7 +81,7 @@ dump_help(int exit_code)
 			"   Output:\n"
 			"     -q, --quiet           no output of any kind\n"
 			"     -n, --nocolor         do not use ANSI color codes\n"
-			"         --force-color     force colorful output\n"
+			"     -F, --force-color     force colorful output\n"
 			"     -c, --compact         compact search results\n"
 			"     -v, --verbose         verbose search results\n"
 			"     -l, --versionlines    print available versions line-by-line\n"
