@@ -217,7 +217,7 @@ static struct Option long_options[] = {
 	{ "name",		   's', Option::NONE, NULL },
 	{ "category",	   'C', Option::NONE, NULL },
 	{ "category-name", 'A', Option::NONE, NULL },
-	{ "descriptions",  'S', Option::NONE, NULL },
+	{ "description",   'S', Option::NONE, NULL },
 	{ "license",	   'L', Option::NONE, NULL },
 	{ "homepage",	   'H', Option::NONE, NULL },
 	{ "provide",	   'P', Option::NONE, NULL },

@@ -9,6 +9,7 @@
 	  See http://bugs.gentoo.org/show_bug.cgi?id=111912
 	- Finally, environment variables can be used to override eixrc-stuff.
 	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=111865, thanks JeR
+	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=112776
 
 *eix-0.5_beta
 
