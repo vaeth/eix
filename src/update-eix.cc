@@ -195,7 +195,11 @@ run_update_eix(int argc, char *argv[])
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
-	table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str());
+	if( find(excluded_overlays.begin(), excluded_overlays.end(),
+				portage_settings["PORTDIR"]) == excluded_overlays.end())
+		table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str());
+	else
+		INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
 
 	for(unsigned int i = 0; i<portage_settings.overlays.size(); ++i)
 	{
