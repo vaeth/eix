@@ -62,7 +62,7 @@ class Regex {
 				regfree(&re);
 			}
 			compiled = false;
-			if(regcomp(&re, regex, eflags) != 0) {
+			if(regcomp(&re, regex, eflags|REG_EXTENDED) != 0) {
 				throw(ExBasic("regcomp(): %s", strerror(errno)));
 			}
 			compiled = true;

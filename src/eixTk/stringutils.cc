@@ -32,9 +32,9 @@
 
 #include "stringutils.h"
 
-Regex re_fn2ver(".*-\\([^a-zA-Z].*\\)", 0);
-Regex re_fn2name("\\(.*\\)-[^a-zA-Z].*", 0);
-Regex re_fn2name_ver("\\(.*\\)-\\([^a-zA-Z].*\\)", 0);
+Regex re_fn2ver(".*-([^a-zA-Z].*)", 0);
+Regex re_fn2name("(.*)-[^a-zA-Z].*", 0);
+Regex re_fn2name_ver("(.*)-([^a-zA-Z].*)", 0);
 
 #if !defined HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..

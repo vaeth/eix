@@ -75,9 +75,9 @@ Mask::getMaskOperator(Mask::Operator type)
 /***************************************************************************/
 /* TODO: How about making this one expression? (appro) */
 /* Regular expressions, used by splitMaskString */
-Regex re_mask1("\\([~<=>]*\\)\\([a-z0-9-]\\+\\)/\\(.*\\)", 0);
-Regex re_rest2name( "\\(.*\\)-[^a-zA-Z].*", 0 );
-Regex re_rest2ver(".*-\\([^a-zA-Z].*\\)", 0);
+Regex re_mask1("([~<=>]*)([a-z0-9-]+)/(.*)", 0);
+Regex re_rest2name( "(.*)-[^a-zA-Z].*", 0 );
+Regex re_rest2ver(".*-([^a-zA-Z].*)", 0);
 /***************************************************************************/
 
 /** Constructor. */

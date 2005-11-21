@@ -40,7 +40,7 @@ static char* suffixlevels[] = { "_alpha", "_beta", "_pre", "_rc", "", "_p" };
 static const char numsuffixlevels = 6;
 
 /** This regular expression is used to split of primary version strings form the rest */
-Regex regex_ver_primary("\\([^_-]\\+\\).*", 0);
+Regex regex_ver_primary("([^_-]+).*", 0);
 
 /** Tests if the primary version string can be split into integers */
 inline bool canSplitPrimary( string& primary )
