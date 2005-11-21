@@ -35,9 +35,11 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <endian.h>
+//#include <endian.h>
 #include <stdint.h>
 #include <unistd.h>
+
+#include <config.h>
 
 #define INFO(...) printf(__VA_ARGS__)
 
@@ -46,7 +48,8 @@
 
 using namespace std;
 
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if defined(WORDS_BIGENDIAN)
+/* For the big-endian machines */
 #define UINT32_PACK(out,in)   uint32_pack(out,in) 
 #define UINT32_UNPACK(in,out) uint32_unpack(in,out) 
 
@@ -68,13 +71,14 @@ inline static void uint32_unpack(const char *in, uint32_t *out) {
 		(uint32_t)(unsigned char)in[0];
 }
 
-#elif __BYTE_ORDER == __LITTLE_ENDIAN /* __BYTE_ORDER == __BIG_ENDIAN */
+#else  /* defined(WORDS_BIGENDIAN) */
+/* This is for the little-endian pppl */
 
 /* Adopted from python-cdb (which adopted it from libowfat) */
 #define UINT32_PACK(out,in) (*(uint32_t*)(out)=(*(uint32_t*)&in))
 #define UINT32_UNPACK(in,out) (*((uint32_t*)out)=*(uint32_t*)(in))
 
-#endif /* __BYTE_ORDER == __LITTLE_ENDIAN */
+#endif /* defined(WORDS_BIGENDIAN) */
 
 #define STARTING_HASH 5381
 

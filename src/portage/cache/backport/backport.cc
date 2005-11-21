@@ -32,12 +32,14 @@
 #include <string.h>
 #include <dirent.h>
 
+#include <config.h>
+
 /* Path to portage cache */
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
 
 using namespace std;
 
-static int cachefiles_seclector (const struct dirent* dent)
+static int cachefiles_seclector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strchr(dent->d_name, '-') != 0);

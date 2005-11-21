@@ -11,6 +11,8 @@
 	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=111865, thanks JeR
 	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=112776
 	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=112806
+	- Applied patches for scandir, sed and byteorder from
+	  http://bugs.gentoo.org/show_bug.cgi?id=111912
 
 *eix-0.5_beta
 

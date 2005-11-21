@@ -4,6 +4,13 @@ AC_CANONICAL_TARGET
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE()
 
+
+AC_LANG_CPLUSPLUS
+
+AC_PROG_LN_S
+AC_PROG_CXX
+AM_PROG_LIBTOOL
+
 dnl Look for basic functions
 AC_CHECK_FUNCS([regcomp strchr strcspn strdup strerror strstr strspn strtol strrchr fnmatch memset], ,
 			   AC_MSG_ERROR(We really need those functions ..))
@@ -15,6 +22,35 @@ AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then
 	  AC_MSG_ERROR([error. sed is required to build the manpage.])
 fi
+
+dnl Check what type of argument scandir wants
+AC_MSG_CHECKING(if scandir argument is const struct dirent * or struct dirent *)
+AC_TRY_COMPILE([ #include <dirent.h>
+],
+[
+  const char * dir = 0;
+  struct dirent ***namelist = 0;
+  int (*select)(const struct dirent *) = 0;
+  scandir(dir, namelist, select, alphasort);
+],
+[AC_MSG_RESULT(const struct dirent *); SCANDIR_ARG3="const struct dirent *"],
+	AC_TRY_COMPILE([ #include <dirent.h>
+	],
+	[
+	  const char * dir = 0;
+	  struct dirent ***namelist = 0;
+	  int (*select)(struct dirent *) = 0;
+	  scandir(dir, namelist, select, alphasort);
+	],
+	[AC_MSG_RESULT(struct dirent *); SCANDIR_ARG3="struct dirent *"],
+	AC_MSG_ERROR(none of them .. I don't know how to call scandir)
+	)
+)
+
+AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
+
+dnl Check endianess
+AC_C_BIGENDIAN
 
 #AC_CHECK_FUNCS([munmap], , 
 #			   AC_MSG_ERROR(No munmap, no eix.))
@@ -40,12 +76,6 @@ fi
 
 #AC_HEADER_DIRENT 
 #AC_HEADER_STDBOOL 
-
-AC_LANG_CPLUSPLUS
-
-AC_PROG_LN_S
-AC_PROG_CXX
-AM_PROG_LIBTOOL
 
 AM_CFLAGS=""
 AM_CXXFLAGS=""

@@ -1,4 +1,9 @@
-#!/bin/sh
+#!/bin/bash
+
+function to_classname () {
+	echo -n ${1:0:1} | tr 'a-z' 'A-Z'
+	echo "${1:1}Cache"
+}
 
 cache_names="backport cdb flat none"
 
@@ -19,7 +24,7 @@ BasicCache *get_cache(string name) {
 END
 
 for cache_name in $cache_names; do
-	cache_class=$(echo "$cache_name" | sed 's,.,\U&,')Cache
+	cache_class=$(to_classname "$cache_name")
 
 	cat<<END
 	if (name == "$cache_name") {

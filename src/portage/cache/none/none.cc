@@ -32,15 +32,17 @@
 
 #include <dirent.h>
 
+#include <config.h>
+
 using namespace std;
 
-static int package_seclector (const struct dirent* dent)
+static int package_seclector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strcmp(dent->d_name, "CVS") != 0);
 }
 
-static int ebuild_seclector (const struct dirent* dent)
+static int ebuild_seclector (SCANDIR_ARG3 dent)
 {
 		return package_seclector(dent);
 }
