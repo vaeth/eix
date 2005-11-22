@@ -92,6 +92,7 @@ bool pushback_files(string &dir_path, vector<string> &into, const char *exclude[
 			continue;
 		into.push_back(dir_path + dir_entry->d_name);
 	}
+	closedir(dir);
 	return true;
 }
 

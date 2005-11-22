@@ -41,6 +41,15 @@ class CacheTable {
 		vector<BasicCache*> cache_table;
 
 	public:
+		~CacheTable() {
+			for(vector<BasicCache*>::iterator i = cache_table.begin();
+				i != cache_table.end();
+				++i)
+			{
+				delete *i;
+			}
+		}
+
 		int addCache(string directory, string cache_name) {
 			BasicCache *cache = get_cache(cache_name);
 			if(cache) {

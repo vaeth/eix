@@ -13,6 +13,9 @@
 	- Applied patch from http://bugs.gentoo.org/show_bug.cgi?id=112806
 	- Applied patches for scandir, sed, byteorder and regex from
 	  http://bugs.gentoo.org/show_bug.cgi?id=111912
+	- Fixed some small memory-leaks - valgrind reports one more that leads
+	  into the glibc (getpwnam) .. but this is really a leak. See
+	  --run-glibc-freeres in valgrind(1).
 
 *eix-0.5_beta
 

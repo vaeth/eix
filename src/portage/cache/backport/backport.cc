@@ -84,6 +84,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 			/* Free old split */
 			free(aux[0]);
 			free(aux[1]);
+			memset(aux, '\0', sizeof(char*) * 2);
 
 			/* If this is the last file we break so we can get the full
 			 * information after this while-loop. If we still have more files
@@ -97,6 +98,8 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 				throw(ExBasic("Can't split %s into package and version.", dents[i]->d_name));
 			}
 		} while(strcmp(aux[0], pkg->name.c_str()) == 0);
+		free(aux[0]);
+		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
 		readBackportCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->toString()).c_str() );

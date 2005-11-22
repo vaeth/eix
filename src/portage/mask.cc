@@ -109,7 +109,7 @@ void Mask::splitMaskString( string strMask ) throw(ExBasic)
 	/* split strm into compararator, cat, subcat, rest */
 	if( regexec( re_mask1.get(), strm, 4, rm, 0  ) == 0 ) {
 		OOM_ASSERT(comp_operator = strndup( &(strm[rm[1].rm_so]), rm[1].rm_eo - rm[1].rm_so));
-		OOM_ASSERT(_category      = strndup( &(strm[rm[2].rm_so]), rm[2].rm_eo - rm[2].rm_so));
+		OOM_ASSERT(_category     = strndup( &(strm[rm[2].rm_so]), rm[2].rm_eo - rm[2].rm_so));
 		OOM_ASSERT(rest          = strndup( &(strm[rm[3].rm_so]), rm[3].rm_eo - rm[3].rm_so));
 	} else
 		throw ExBasic("Unable to split mask \"%s\" into compararator-category-rest", strm);
