@@ -53,7 +53,8 @@ class Version : public BasicVersion, public Keywords {
 		unsigned short overlay_key;
 
 		bool operator == (const Version &v) {
-			return ((BasicVersion)*this) == ((BasicVersion)*&v) && overlay_key == v.overlay_key;
+			return (((BasicVersion)*this) == ((BasicVersion)v)
+					&& overlay_key == v.overlay_key);
 		}
 
 		bool operator == (const BasicVersion &v) {
