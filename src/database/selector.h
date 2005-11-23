@@ -28,7 +28,6 @@
 #ifndef __DBSELECTOR_H__
 #define __DBSELECTOR_H__
 
-#include <database/basicio.h>
 #include <database/header.h>
 
 #include <search/dbmatchcriteria.h>

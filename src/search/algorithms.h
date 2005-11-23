@@ -34,7 +34,9 @@
 #endif /* !defined _GNU_SOURCE */
 
 #include <fnmatch.h>
+
 #include <eixTk/levenshtein.h>
+#include <eixTk/regexp.h> 
 
 /* Check if we have FNM_CASEFOLD .. 
  * fnmatch(3) tells me that this is a GNU extensions */

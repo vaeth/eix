@@ -141,18 +141,18 @@ eixrc.addDefault(
 #define MATCH_IF(field, value)                                                                       \
 	eixrc.addDefault(                                                                               \
 			EixRcOption(EixRcOption::STRING, "MATCH_" #field "_IF",                                  \
-				value, "Use " #field "as default matchfield if the stringstring match the given regex.") \
+				value, "Use " #field "as default matchfield if the search string match the given extended regex.") \
 			)
 
-MATCH_IF(NAME,          "");
-MATCH_IF(DESCRIPTION,   "");
-MATCH_IF(LICENSE,       "");
-MATCH_IF(CATEGORY,      "");
+MATCH_IF(NAME,          ".*");
+MATCH_IF(DESCRIPTION,   ".*");
+MATCH_IF(LICENSE,       ".*");
+MATCH_IF(CATEGORY,      ".*");
 MATCH_IF(CATEGORY_NAME, "/");
-MATCH_IF(HOMEPAGE,      "");
+MATCH_IF(HOMEPAGE,      ".*");
 MATCH_IF(PROVIDE,       "^virtual/");
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MATCH_ORDER",
-			"PROVIDE CATEGORY_NAME NAME","Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.")
+			"PROVIDE CATEGORY_NAME NAME","Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.")
 		);

@@ -30,8 +30,6 @@
 
 #include "../../config.h"
 
-#include <eixTk/regexp.h> 
-
 #include <string>
 #include <vector>
 

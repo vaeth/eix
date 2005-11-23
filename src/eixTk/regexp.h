@@ -28,11 +28,7 @@
 #ifndef __REGEXCLASS_H__
 #define __REGEXCLASS_H__
 
-#include <eixTk/exceptions.h>
-
-#include <sys/types.h>
 #include <regex.h>
-#include <stdlib.h>
 #include <string>
 
 using namespace std;
@@ -52,18 +48,20 @@ class Regex {
 			compiled = false;
 		}
 
-		Regex(const char *regex, int eflags = REG_ICASE) throw(ExBasic) {
+		Regex(const char *regex, int eflags = REG_ICASE) {
 			compiled = false;
 			compile(regex, eflags);
 		}
 
-		void compile(const char *regex, int eflags = REG_ICASE) throw(ExBasic) {
+		void compile(const char *regex, int eflags = REG_ICASE) {
 			if(compiled) {
 				regfree(&re);
 			}
 			compiled = false;
-			if(regcomp(&re, regex, eflags|REG_EXTENDED) != 0) {
-				throw(ExBasic("regcomp(): %s", strerror(errno)));
+			int errcode = regcomp(&re, regex, eflags|REG_EXTENDED);
+			if(errcode != 0) {
+				fprintf(stderr, "regcomp(\"%s\"): %s\n", regex, get_error(errcode).c_str());
+				exit(1);
 			}
 			compiled = true;
 		}
@@ -78,6 +76,12 @@ class Regex {
 		/** Gets the internal regular expression structure. */
 		const regex_t *get() {
 			return (const regex_t *) &re;
+		}
+
+		string get_error(int code) {
+			char buf[512];
+			regerror(code, static_cast<const regex_t*>(&re), buf, 511);
+			return string(buf);
 		}
 };
 

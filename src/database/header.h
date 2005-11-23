@@ -28,7 +28,6 @@
 #ifndef __DBHEADER_H__
 #define __DBHEADER_H__
 
-#include <stdio.h>
 #include <vector>
 #include <string>
 

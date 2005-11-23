@@ -28,8 +28,10 @@
 #ifndef __VARSREADER_H__
 #define __VARSREADER_H__
 
+// OOM_ASSERT
 #include <eixTk/exceptions.h>
 
+// mmap and stat stuff
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
