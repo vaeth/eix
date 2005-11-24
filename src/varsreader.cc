@@ -46,7 +46,7 @@
 
 #include <fnmatch.h>
 
-inline bool is_incremental(const char *key, char **incremental_keys)
+bool VarsReader::isIncremental(const char *key)
 {
 	if(incremental_keys == NULL)
 		return false;
@@ -67,18 +67,7 @@ inline bool is_incremental(const char *key, char **incremental_keys)
 		break; \
 	} \
 	else { \
-		string l_key(key_begin, key_len); \
-		if(parse_flags & APPEND_VALUES \
-				&& is_incremental(l_key.c_str(), (char **) incremental_keys)) { \
-			if( (*vars)[l_key].size() == 0) { \
-				(*vars)[l_key] = value; \
-			} \
-			else { \
-				(*vars)[l_key].append(" " + value); \
-			} \
-		} else { \
-			(*vars)[l_key] = value; \
-		} \
+		(*vars)[string(key_begin, key_len)] = value; \
 	} \
 } while(0)
 
@@ -360,4 +349,57 @@ void VarsReader::initFsm()
 	STATE = state_JUMP_WHITESPACE;
 	x = filebuffer;
 	key_len = 0;
+}
+
+bool VarsReader::read(const char *filename)
+{
+	struct stat st;
+	int fd = 0;
+	fd = open(filename, O_RDONLY);
+	if(fd == -1)
+		return false;
+	if(fstat(fd, &st)) {
+		close(fd);
+		return false;
+	}
+	if(st.st_size == 0) {
+		close(fd);
+		return true;
+	}
+	filebuffer = (char *) mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	ASSERT(filebuffer != MAP_FAILED,
+			"Can't map file %s.", filename);
+	filebuffer_end = filebuffer + st.st_size;
+	close(fd);
+
+	initFsm();
+	if(parse_flags & APPEND_VALUES)
+	{
+		// parse file into separate map and append values which keys are in
+		// incremental_keys .. other keys are just replaced.
+		map<string,string> *old_values = vars;
+		map<string,string> new_values;
+		vars = &new_values;
+		runFsm();
+		for(map<string,string>::iterator i = new_values.begin();
+			i != new_values.end();
+			++i)
+		{
+			if((*old_values)[i->first].size() == 0)
+			{
+				(*old_values)[i->first] = i->second;
+			}
+			else if(isIncremental(i->first.c_str()))
+			{
+				(*old_values)[i->first].append(" " + i->second);
+			}
+		}
+		vars = old_values;
+	}
+	else
+	{
+		runFsm();
+	}
+	munmap(filebuffer, st.st_size);
+	return true;
 }

@@ -61,7 +61,7 @@ class AnsiColor {
 		AnsiColor(const Color fg = acNone, const bool light = false) : fg(fg), light(light) { }
 
 		string asString() {
-			int len = 100;
+			static const int len = 100;
 			char buf[len];
 			if( fg!=acNone ) {
 				if(fg == acDefault) {

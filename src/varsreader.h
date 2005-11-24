@@ -192,6 +192,8 @@ class VarsReader{
 		 * and returns if the state is STOP. */
 		void runFsm();
 
+		bool isIncremental(const char *key);
+
 	public:
 		static const short
 			NONE,          /**< Flag: No flags set; normal behavior. */
@@ -220,31 +222,7 @@ class VarsReader{
 
 		/** Read file.
 		 * @return true if the file was successfully read. */
-		bool read(const char *filename) {
-			struct stat st;
-			int fd = 0;
-			fd = open(filename, O_RDONLY);
-			if(fd == -1)
-				return false;
-			if(fstat(fd, &st)) {
-				close(fd);
-				return false;
-			}
-			if(st.st_size == 0) {
-				close(fd);
-				return true;
-			}
-			filebuffer = (char *) mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
-			ASSERT(filebuffer != MAP_FAILED,
-					"Can't map file %s.", filename);
-			filebuffer_end = filebuffer + st.st_size;
-			close(fd);
-
-			initFsm();
-			runFsm();
-			munmap(filebuffer, st.st_size);
-			return true;
-		}
+		bool read(const char *filename);
 
 		/** Use a supplied map for variables. */
 		void useMap(map<string,string> *vars_map) {
