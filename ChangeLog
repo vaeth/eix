@@ -16,6 +16,8 @@
 	- Fixed some small memory-leaks - valgrind reports one more that leads
 	  into the glibc (getpwnam) .. but this is really a leak. See
 	  --run-glibc-freeres in valgrind(1).
+	- Rewrite BasicVersion (much more efficient) and fixes
+	  http://dev.croup.de/proj/eix/ticket/1
 
 *eix-0.5_beta
 

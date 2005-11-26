@@ -1,105 +1,108 @@
-/***************************************************************************
- *   eix is a small utility for searching ebuilds in the                   *
- *   Gentoo Linux portage system. It uses indexing to allow quick searches *
- *   in package descriptions with regular expressions.                     *
- *                                                                         *
- *   https://sourceforge.net/projects/eix                                  *
- *                                                                         *
- *   Copyright (c)                                                         *
- *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
- *     Emil Beinroth <emilbeinroth@gmx.net>                                *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+#ifndef __BASICVERSION_H__
+#define __BASICVERSION_H__
 
-#ifndef __VERSIONS_H__
-#define __VERSIONS_H__
-
-#include <eixTk/exceptions.h>
-
-#include <vector>
+#include <iostream>
 #include <string>
-#include <stdio.h>
+#include <vector>
 
 using namespace std;
 
-/** The BasicVersion class provides proper version number sorting (gentoo specific).
- * @see http://www.gentoo.org/proj/en/devrel/handbook/handbook.xml?part=2&chap=1#doc_chap2 */
-class BasicVersion {
-
+/** Parse and represent a portage version-string. */
+class BasicVersion
+{
 	public:
-		friend class Mask;
+		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
+		static const char *suffixlevels[];
+		/** Index in suffixlevels where versions without a index are located. */
+		static const char no_suffixlevel;
+		/** Number of elements in suffixlevels. */
+		static const int  suffix_level_count;
+
+		/** Parse the version-string pointed to by str.
+		 * If str is NULL, no parsing is done. */
+		BasicVersion(const char *str = NULL);
+
+		/** Preset everything with defaults. */
+		void defaults();
+		
+		/** Parse the version-string pointed to by str. */
+		void parseVersion(const char *str, int n = 0);
+
+		/** Compares the split primsplit numbers of another BasicVersion instances to itself. */
+		int comparePrimary(const BasicVersion& basic_version) const;
+
+		const string& toString() const;
+
+		bool operator <  (const BasicVersion& right) const;
+		bool operator >  (const BasicVersion& right) const;
+		bool operator == (const BasicVersion& right) const;
+		bool operator != (const BasicVersion& right) const;
+		bool operator >= (const BasicVersion& right) const;
+		bool operator <= (const BasicVersion& right) const;
+
+		unsigned char get_primarychar() const;
+		unsigned char get_suffixlevel() const;
+		unsigned int  get_suffixnum() const;
+		unsigned char get_gentoorelease() const;
+
+		friend ostream& operator<< (ostream& os, BasicVersion& e);
 
 	protected:
-		/** Split a version string into its components */
-		void parseVersion(const char* str, unsigned int n) throw(ExBasic);
+		/** The full version-string. */
+		string                 full;
+		/** Splitted primsplit-version. */
+		vector<unsigned short> primsplit;
+		/** Optional one-character suffix of primsplit. */
+		unsigned char          primarychar;
 
-		/** Split a version string into its components */
-		void parseVersion(const char* str) throw(ExBasic) {
-			parseVersion(str, strlen(str));
-		}
+		/** Index of optional suffix in suffixlevels. */
+		unsigned char          suffixlevel;
+		/** BasicVersion of suffix. */
+		unsigned int           suffixnum;
 
-		/* the following version variables are listed in descending significance */
-		string primary;                   /**< version string, e.g. "1.3.5" */
-		vector<unsigned short> primsplit; /**< primary string splitted into e.g. {1,3,5} [can be empty] */
-		char suffixlevel;                 /**< suffix level, see char** suffix_levels */
-		unsigned int suffixnum;           /**< trailing number after suffix, e.g. pre20041220 -> "20041220" */
-		unsigned char gentoorelease;      /**< gentoo-specific release number */
-		string full;                      /**< full version string */
+		/** The optional gentoo-revision. */
+		unsigned char          gentoorelease;
 
-	public:
-		/** Default constructor, does nothing */
-		BasicVersion();
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		BasicVersion( const char* str ) throw(ExBasic);
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		BasicVersion( string str ) throw(ExBasic);
+		/** Parse the primsplit-part of a version-string.
+		 * Return pointer to the end of the primsplit-version.
+		 * Thus, if this returns a pointer to '\0', there is nothing more to parse. */
+		const char *parse_primary(const char *str);
 
-		virtual ~BasicVersion() {
-		}
+		/** Parse everything that is not the primsplit-part of a version-string.
+		 * All prefixes and other stuff. */
+		const char *parse_suffix(const char *str);
 
-		string &toString() {
-			return full;
-		}
-
-		/** Compares the split primary numbers of two BasicVersion instances.
-		 * If the primary string(s) could not be split, it does a simple std::string.compare() */
-		int comparePrimary(const BasicVersion& basic_version);
-
-		/** Comparison operator */
-		virtual bool operator< ( const BasicVersion& right );
-		virtual bool operator> ( const BasicVersion& right );
-		virtual bool operator==( const BasicVersion& right );
-		virtual bool operator!=( const BasicVersion& right ) {
-			return !(*this == right);
-		}
-
-		virtual bool operator>= ( const BasicVersion& right ) {
-			return ( (*this>right) || (*this==right) );
-		}
-
-		virtual bool operator<= ( const BasicVersion& right ) {
-			return ( (*this<right) || (*this==right) );
-		}
-
-		friend ostream& operator<< (ostream& os, BasicVersion& e) {
-			os << e.toString(); 
-			return os;
-		}
+	private:
 };
 
+inline unsigned char 
+BasicVersion::get_primarychar() const
+{
+	return primarychar;
+}
 
-#endif /* __VERSIONS_H__ */
+inline unsigned char
+BasicVersion::get_suffixlevel() const
+{
+	return suffixlevel;
+}
+
+inline unsigned int
+BasicVersion::get_suffixnum() const
+{
+	return suffixnum;
+}
+
+inline unsigned char
+BasicVersion::get_gentoorelease() const
+{
+	return gentoorelease;
+}
+
+inline ostream& 
+operator<< (ostream& os, BasicVersion& e)
+{
+	return (os << e.toString());
+}
+
+#endif /* __BASICVERSION_H__ */

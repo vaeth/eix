@@ -36,7 +36,7 @@ Version::Version( const char* str ) : BasicVersion( str )
 }
 
 /** Constructor, calls BasicVersion::parseVersion( str ) */
-Version::Version( string str ) : BasicVersion( str )
+Version::Version( string str ) : BasicVersion( str.c_str() )
 {
 	overlay_key = 0;
 }
@@ -57,8 +57,10 @@ void Version::read( FILE *is )
 	// read stability & masking
 	_mask = io::read<Keywords::Type>(is);
 
+#if 0
 	// read primary string
 	primary = io::read_string(is);
+#endif
 
 	// read primsplit
 	unsigned char i = io::read<unsigned char>(is);
@@ -66,11 +68,12 @@ void Version::read( FILE *is )
 	{
 		primsplit.push_back(io::read<unsigned short>(is));
 	}
+	primarychar = io::read<unsigned char>(is);
 
 	// read suffixlevel,suffixnum,gentoorelease
-	suffixlevel = io::read<char>(is);
-	suffixnum = io::read<int>(is);
-	gentoorelease = io::read<char>(is);
+	suffixlevel   = io::read<unsigned char>(is);
+	suffixnum     = io::read<unsigned int>(is);
+	gentoorelease = io::read<unsigned char>(is);
 
 	overlay_key = io::read<short>(is);
 }
@@ -84,8 +87,10 @@ void Version::write( FILE *os )
 	// write stability & masking
 	io::write<Keywords::Type>(os, _mask);
 
+#if 0
 	// write primary string
 	io::write_string( os, primary );
+#endif
 
 	// write primsplit
 	io::write<unsigned char>(os, (unsigned char)primsplit.size());
@@ -96,10 +101,12 @@ void Version::write( FILE *os )
 		io::write<unsigned short>(os, *it);
 	}
 
+	io::write<unsigned char>(os, primarychar);
+
 	// write suffixlevel,suffixnum,gentoorelease
-	io::write<char>(os, suffixlevel);
-	io::write<int>(os, suffixnum);
-	io::write<char>(os, gentoorelease);
+	io::write<unsigned char>(os, suffixlevel);
+	io::write<unsigned int>(os, suffixnum);
+	io::write<unsigned char>(os, gentoorelease);
 
 	io::write<short>(os, overlay_key);
 }
