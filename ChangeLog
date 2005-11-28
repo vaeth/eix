@@ -18,6 +18,7 @@
 	  --run-glibc-freeres in valgrind(1).
 	- Rewrite BasicVersion (much more efficient) and fixes
 	  http://dev.croup.de/proj/eix/ticket/1
+	- Fix http://bugs.gentoo.org/show_bug.cgi?id=113735
 
 *eix-0.5_beta
 

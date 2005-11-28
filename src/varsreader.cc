@@ -385,13 +385,14 @@ bool VarsReader::read(const char *filename)
 			i != new_values.end();
 			++i)
 		{
-			if((*old_values)[i->first].size() == 0)
-			{
-				(*old_values)[i->first] = i->second;
-			}
-			else if(isIncremental(i->first.c_str()))
+			if((*old_values)[i->first].size() > 0 
+			   && isIncremental(i->first.c_str()))
 			{
 				(*old_values)[i->first].append(" " + i->second);
+			}
+			else
+			{
+				(*old_values)[i->first] = i->second;
 			}
 		}
 		vars = old_values;
