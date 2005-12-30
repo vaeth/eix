@@ -69,38 +69,41 @@ is_numeric(char *str)
  * @param str String that should be trimmed
  * @param delims characters that should me removed
  * @return trimmed string */
-inline string
-ltrim(string str, const char *delims = " \t\r\n")
+inline void
+ltrim(string *str, const char *delims = " \t\r\n")
 {
 	// trim leading whitespace
-	string::size_type  notwhite = str.find_first_not_of(delims);
+	string::size_type  notwhite = str->find_first_not_of(delims);
 	if(notwhite != string::npos)
-		str.erase(0,notwhite);
-	return str;
+		str->erase(0, notwhite);
+	else
+		str->clear();
 }
 
 /** Trim characters on right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed
  * @return trimmed string */
-inline string 
-rtrim(string str, const char *delims = " \t\r\n")
+inline void
+rtrim(string *str, const char *delims = " \t\r\n")
 {
 	// trim trailing whitespace
-	string::size_type  notwhite = str.find_last_not_of(delims);
+	string::size_type  notwhite = str->find_last_not_of(delims);
 	if(notwhite != string::npos)
-		str.erase(notwhite+1);
-	return str;
+		str->erase(notwhite+1);
+	else
+		str->clear();
 }
 
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed
  * @return trimmed string */
-inline string
-trim(string str, const char *delims = " \t\r\n")
+inline void
+trim(string *str, const char *delims = " \t\r\n")
 {
-	return rtrim(ltrim(str, delims), delims);
+	ltrim(str, delims);
+	rtrim(str, delims);
 }
 
 /** Split a string into multiple strings. 

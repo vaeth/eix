@@ -1,6 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fixed trim/rtrim/ltrim: strings that only contain trim-characters are
+	  cleared now. This fixes all the 'Unable to split mask "" ..' bugs.
+
+*eix-0.5
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fixed a small bug regarding -o/-a and atoms with a pattern .. thanks to
 	  leonie for bringing this to my attention.
 	- Added PROVIDE; bumped db-version

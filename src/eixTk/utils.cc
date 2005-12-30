@@ -50,7 +50,7 @@ bool pushback_lines(const char *file, vector<string> *v)
 	if( ifstr.is_open() ) {
 		do {
 			getline(ifstr, line);
-			line = trim(line);
+			trim(&line);
 			if(line.size() == 0 || line[0] == '#')
 				continue;
 			v->push_back(line);

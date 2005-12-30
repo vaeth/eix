@@ -43,7 +43,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mas
 	if(mask_file.is_open()) {
 		string line;
 		while(getline(mask_file, line)) {
-			line = trim(line);
+			trim(&line);
 			if(line.size() == 0 || line[0] == '#')
 				continue;
 			try {
@@ -161,7 +161,7 @@ bool PortageUserConfig::readKeywords() {
 	if(mask_file.is_open()) {
 		string line;
 		while(getline(mask_file, line)) {
-			line = trim(line);
+			trim(&line);
 			if(line.size() == 0 || line[0] == '#')
 				continue;
 			try {

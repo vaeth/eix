@@ -69,7 +69,7 @@ bool CascadingProfile::getParentProfile(string &path_buffer)
 	/* while there are lines in the file */
 	while(getline(ifstr, _buf))
 	{
-		_buf = trim(_buf, "\t\n\r ");
+		trim(&_buf);
 		/* If it's a comment or a empty line continue with the next line */
 		if(_buf.size() == 0 || _buf[0] == '#')
 			continue;
