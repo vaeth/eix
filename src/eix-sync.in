@@ -94,8 +94,12 @@ fi
 # Clean out eix-sync.log:
 echo > /var/log/eix-sync.log
 
+# Cleaning old cache
+# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
+run_command "Removing old portage-cache in /var/cache/edb/dep/*" "rm -fr /var/cache/edb/dep/*" || exit 1
+
 # Update tree and overlays
-run_command "Running emerge ${emerge_arg}" "emerge ${emerge_arg}" || exit 1 
+run_command "Running emerge ${emerge_arg}" "emerge ${emerge_arg}" || exit 1
 
 if [ -e "/etc/eix-sync-overlays" ]; then
   while read i; do

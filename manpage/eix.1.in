@@ -29,7 +29,7 @@ B<update-eix> generates a binary cache from your local portage-tree and overlays
 B<eix> searches this cache for packages that match the criteria you specified.
 B<diff-eix> compares two binary caches and finds packages that were added, removed or for
 which the highest stable versions has changed.
-B<eix-sync> runs B<emerge --sync> (or B<emerge --metadata>) and B<update-eix>, it then
+B<eix-sync> removes the old dep-cache (see B<HISTORY>), runs B<emerge --sync> (or B<emerge --metadata>) and B<update-eix>, it then
 compares the new cache with the old cache using B<diff-eix>, while redirecting all output
 from B<emerge> and B<update-eix> to I</var/log/eix-sync.log> for cleanliness.
 .\" }}}
@@ -397,6 +397,10 @@ portage is also called portagedb, which was a bit confusing for everyone.
 The functionality of update-eix was once triggered by using the -u switch on
 eix. It was than separated to provide better maintainability. Thus update-eix
 came to life.
+
+The new portage-versions (>=2.1_pre1) doen't remove the old dep-cache, thus eix would
+always find packages that are not in portage anymore. To circumvent this, eix-sync
+deletes the old cache (rm -fr /var/cache/edb/dep/*).
 .\" }}}
 
 .\" {{{ AUTHORS 

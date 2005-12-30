@@ -3,6 +3,10 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fixed trim/rtrim/ltrim: strings that only contain trim-characters are
 	  cleared now. This fixes all the 'Unable to split mask "" ..' bugs.
+	- portage-2.1 introduced big changes to the depcache-handling, the old
+	  cache is no longer removed. Old entries are not removed. But update-eix
+	  needs the cache to be ok, thus eix-sync removes the old depcache in
+	  /var/cache/edb/dep.
 
 *eix-0.5
 
