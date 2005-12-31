@@ -75,7 +75,7 @@ Mask::getMaskOperator(Mask::Operator type)
 /***************************************************************************/
 /* TODO: How about making this one expression? (appro) */
 /* Regular expressions, used by splitMaskString */
-Regex re_mask1("([~<=>]*)([a-z0-9-]+)/(.*)", 0);
+Regex re_mask1("^([~<=>]*)([a-z0-9-]+)/([^ \t]+)$", 0);
 Regex re_rest2name( "(.*)-[^a-zA-Z].*", 0 );
 Regex re_rest2ver(".*-([^a-zA-Z].*)", 0);
 /***************************************************************************/
@@ -112,7 +112,7 @@ void Mask::splitMaskString( string strMask ) throw(ExBasic)
 		OOM_ASSERT(_category     = strndup( &(strm[rm[2].rm_so]), rm[2].rm_eo - rm[2].rm_so));
 		OOM_ASSERT(rest          = strndup( &(strm[rm[3].rm_so]), rm[3].rm_eo - rm[3].rm_so));
 	} else
-		throw ExBasic("Unable to split mask \"%s\" into compararator-category-rest", strm);
+		throw ExBasic("Unable to split into compararator (optional), category and rest.");
 
 	// determine comparison operator
 	int i = 0;
@@ -123,7 +123,7 @@ void Mask::splitMaskString( string strMask ) throw(ExBasic)
 		}
 	}
 	if(operators[i].str == NULL) {
-		throw ExBasic("Unkown operator \"%s\" in \"%s\"", comp_operator, strm);
+		throw ExBasic("Unkown operator \"%s\".", comp_operator);
 	}
 
 	// split rest into name / version
@@ -132,7 +132,7 @@ void Mask::splitMaskString( string strMask ) throw(ExBasic)
 		if( regexec( re_rest2name.get(), rest, 2, rm, 0 ) == 0 )
 			OOM_ASSERT(_name = strndup( &(rest[rm[1].rm_so]), rm[1].rm_eo - rm[1].rm_so));
 		else
-			throw ExBasic("Unable to split \"%s\" from mask \"%s\" into name-version.", rest, strm);
+			throw ExBasic("Unable to split \"%s\" into name-version (version is optional).", rest, strm);
 	}
 	else {
 		OOM_ASSERT(_name = strdup( rest ));

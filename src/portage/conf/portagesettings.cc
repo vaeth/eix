@@ -57,7 +57,9 @@ bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mas
 				}
 			}
 			catch(ExBasic e) {
-				cerr << e << endl;
+				cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
+				     << "   " << e.getMessage() << endl;
+
 			}
 		}
 		mask_file.close();
@@ -178,7 +180,8 @@ bool PortageUserConfig::readKeywords() {
 				}
 			}
 			catch(ExBasic e) {
-				cerr << e << endl;
+				cerr << "-- Invalid line in /etc/portage/package.keywords: \"" << line << "\"" << endl
+				     << "   " << e.getMessage() << endl;
 			}
 		}
 		mask_file.close();

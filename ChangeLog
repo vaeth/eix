@@ -7,6 +7,9 @@
 	  cache is no longer removed. Old entries are not removed. But update-eix
 	  needs the cache to be ok, thus eix-sync removes the old depcache in
 	  /var/cache/edb/dep.
+	- More verbose output if problems with files in /etc/portage/ or the
+	  profile pop up.
+	  This should stop reports like http://bugs.gentoo.org/show_bug.cgi?id=116592
 
 *eix-0.5
 
