@@ -47,6 +47,8 @@
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #endif /* defined FNM_CASEFOLD */
 
+#define UNUSED(p) ((void)(p))
+
 /** That's how every Algorithm will look like. */
 class BaseAlgorithm {
 
@@ -78,6 +80,7 @@ class RegexAlgorithm : public BaseAlgorithm {
 		}
 
 		bool operator () (const char *s, Package *p) {
+			UNUSED(s); UNUSED(p);
 			return !regexec(re.get(), s, 0, NULL, 0);
 		}
 };
@@ -87,6 +90,7 @@ class ESMAlgorithm : public BaseAlgorithm {
 
 	public:
 		bool operator () (const char *s, Package *p) {
+			UNUSED(p);
 			return !strcmp(search_string.c_str(), s);
 		}
 };
@@ -133,6 +137,7 @@ class WildcardAlgorithm : public BaseAlgorithm {
 
 	public:
 		bool operator () (const char *s, Package *p) {
+			UNUSED(p);
 			return !fnmatch(search_string.c_str(), (char *)s, FNM_CASEFOLD);
 		}
 };

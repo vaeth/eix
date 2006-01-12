@@ -73,19 +73,19 @@ parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter
 		switch(**arg)
 		{
 			// Check local options {{{
-			case 'I': test->installed = true;    break;
-			case 'D': test->dup_versions = true; break;
-			case '!': test->invert = true;       break;
+			case 'I': test->Installed();    break;
+			case 'D': test->DuplVersions(); break;
+			case '!': test->Invert();       break;
 			// }}}
 
 			// Check for field-designators {{{
-			case 's': test->field = PackageTest::NAME;          break;
-			case 'C': test->field = PackageTest::CATEGORY;      break;
-			case 'A': test->field = PackageTest::CATEGORY_NAME; break;
-			case 'S': test->field = PackageTest::DESCRIPTION;   break;
-			case 'L': test->field = PackageTest::LICENSE;       break;
-			case 'H': test->field = PackageTest::HOMEPAGE;      break;
-			case 'P': test->field = PackageTest::PROVIDE;       break;
+			case 's': *test |= PackageTest::NAME;          break;
+			case 'C': *test |= PackageTest::CATEGORY;      break;
+			case 'A': *test |= PackageTest::CATEGORY_NAME; break;
+			case 'S': *test |= PackageTest::DESCRIPTION;   break;
+			case 'L': *test |= PackageTest::LICENSE;       break;
+			case 'H': *test |= PackageTest::HOMEPAGE;      break;
+			case 'P': *test |= PackageTest::PROVIDE;       break;
 			// }}}
 
 			// Check for algorithms {{{

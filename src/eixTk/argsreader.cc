@@ -34,8 +34,6 @@
 
 using namespace std;
 
-#define INFO(...) fprintf(stderr, __VA_ARGS__)
-
 #define __ASSERT(x, ...) do { \
 	if(!(x)) { \
 		fprintf(stderr, __VA_ARGS__); exit(1); \

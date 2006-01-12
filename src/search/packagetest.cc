@@ -27,6 +27,23 @@
 
 #include "packagetest.h"
 
+const PackageTest::MatchField PackageTest::NONE          = 0x00, /* Search in name */
+	  PackageTest::NAME          = 0x01, /* Search in name */
+	  PackageTest::DESCRIPTION   = 0x02, /* Search in description */
+	  PackageTest::PROVIDE       = 0x04, /* Search in provides */
+	  PackageTest::LICENSE       = 0x08, /* Search in license */
+	  PackageTest::CATEGORY      = 0x10, /* Search in category */
+	  PackageTest::CATEGORY_NAME = 0x20, /* Search in category/name */
+	  PackageTest::HOMEPAGE      = 0x40; /* Search in homepage */
+
+PackageTest::PackageTest(VarDbPkg *vdb)
+{
+	vardbpkg = vdb;
+	field    = PackageTest::NONE;
+	need     = Package::NONE;
+	invert   = installed = dup_versions = false;
+}
+
 void
 PackageTest::calculateNeeds() {
 	map<MatchField,Package::InputStatus> smap;
@@ -38,7 +55,18 @@ PackageTest::calculateNeeds() {
 	smap[CATEGORY_NAME] = Package::NAME;
 	smap[NAME]          = Package::NAME;
 
-	need = smap[field];
+	need = Package::NONE;
+
+	for(MatchField x = HOMEPAGE;
+		x > NONE;
+		x >>= 1)
+	{
+		if (x & field)
+		{
+			need = smap[x];
+			break;
+		}
+	}
 }
 
 PackageTest::MatchField
@@ -53,12 +81,11 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "CATEGORY_NAME") ret = CATEGORY_NAME;
 	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
 	else if(p == "PROVIDE")       ret = PROVIDE;
-	else if(p == "DEFAULT")       ret = DEFAULT;
 	else THROW("Can't find MatchField called %s.", p.c_str());
 	return ret;
 }
 
-PackageTest::MatchField 
+PackageTest::MatchField
 PackageTest::get_matchfield(const char *p) throw(ExBasic)
 {
 	EixRc &rc = get_eixrc();
@@ -75,3 +102,83 @@ PackageTest::get_matchfield(const char *p) throw(ExBasic)
 	}
 	return NAME;
 }
+
+void
+PackageTest::setPattern(const char *p)
+{
+	if(algorithm.get() == NULL)
+	{
+		algorithm = auto_ptr<BaseAlgorithm>(new RegexAlgorithm());
+	}
+
+	if(field == NONE)
+	{
+		field = PackageTest::get_matchfield(p);
+	}
+
+	algorithm->setString(p);
+}
+
+/** Return true if pkg matches test. */
+bool
+PackageTest::stringMatch(Package *pkg) const
+{
+	pkg->readNeeded(need);
+
+	if(field & NAME && (*algorithm)(pkg->name.c_str(), pkg))
+	{
+		return true;
+	}
+
+	if(field & DESCRIPTION && (*algorithm)(pkg->desc.c_str(), pkg))
+	{
+		return true;
+	}
+
+	if(field & LICENSE && (*algorithm)(pkg->licenses.c_str(), pkg))
+	{
+		return true;
+	}
+
+	if(field & CATEGORY && (*algorithm)(pkg->category.c_str(), pkg))
+	{
+		return true;
+	}
+
+	if(field & CATEGORY_NAME && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg))
+	{
+		return true;
+	}
+
+	if(field & HOMEPAGE && (*algorithm)(pkg->homepage.c_str(), pkg))
+	{
+		return true;
+	}
+
+	if(field & PROVIDE && (*algorithm)(pkg->provide.c_str(), pkg))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool
+PackageTest::match(Package *pkg) const
+{
+	bool is_match = true;
+	if(algorithm.get() != NULL) {
+		is_match = stringMatch(pkg);
+	}
+
+	/* Honour the C_O_INSTALLED, C_O_DUP_VERSIONS and the C_O_INVERT flags. */
+	if(installed && is_match) {
+		is_match = vardbpkg->isInstalled(pkg);
+	}
+
+	if(dup_versions && is_match)
+		is_match = pkg->have_duplicate_versions;
+
+	return (invert ? !is_match : is_match);
+}
+

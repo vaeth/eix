@@ -42,110 +42,93 @@
 
 #include <search/algorithms.h>
 
-/* And M is for "match".
- * So those are things you can match .. */
+/** Test a package if it matches some criteria. */
 class PackageTest {
 
 	public:
-		enum MatchField {
-			NONE          = 0x00, /* Search in name */
-			NAME          = 0x01, /* Search in name */
-			DESCRIPTION   = 0x02, /* Search in description */
-			PROVIDE       = 0x04, /* Search in provides */
-			LICENSE       = 0x08, /* Search in license */
-			CATEGORY      = 0x10, /* Search in category */
-			CATEGORY_NAME = 0x20, /* Search in category/name */
-			HOMEPAGE      = 0x40, /* Search in homepage */
-			DEFAULT       = 0x80
-		} field; /**< What to match. */
+		typedef char MatchField;
+		const static MatchField NONE          , /* Search in name */
+		                        NAME          , /* Search in name */
+		                        DESCRIPTION   , /* Search in description */
+		                        PROVIDE       , /* Search in provides */
+		                        LICENSE       , /* Search in license */
+		                        CATEGORY      , /* Search in category */
+		                        CATEGORY_NAME , /* Search in category/name */
+		                        HOMEPAGE      ; /* Search in homepage */
 
+		/** Set default values. */
+		PackageTest(VarDbPkg *vdb = NULL);
+
+		void setAlgorithm(BaseAlgorithm *p);
+		void setPattern(const char *p);
+
+		bool match(Package *pkg) const;
+
+		/** Compile regex and/or calculate needs. */
+		void finalize();
+
+		void Installed();
+		void DuplVersions();
+		void Invert();
+
+		MatchField operator |= (const MatchField m);
+
+	protected:
+
+	private:
+		/* What to match. */
+		MatchField field;
+		/** Lookup stuff about installed packages here. */
+		VarDbPkg *vardbpkg;
+		/** What we need to read so we can do our testing. */
+		Package::InputStatus    need;      
+		/** Our string matching algorithm. */
+		auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, dup_versions, invert;
 
 		static MatchField name2field(const string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
 
-	private:
-		Package::InputStatus    need;      /**< What we need to check. */
-		auto_ptr<BaseAlgorithm> algorithm; /**< Our string matching algorithm. */
+		bool stringMatch(Package *pkg) const;
 
-	public:
-		void setAlgorithm(BaseAlgorithm *p) {
-			algorithm = auto_ptr<BaseAlgorithm>(p);
-		}
-
-		void setPattern(const char *p) {
-			if(algorithm.get() == NULL)
-			{
-				algorithm = auto_ptr<BaseAlgorithm>(new RegexAlgorithm());
-			}
-
-			if(field == NONE)
-			{
-				field = PackageTest::get_matchfield(p);
-			}
-
-			algorithm->setString(p);
-		}
-
-	protected:
 		/** Get the Fetched-value that is required to determin */
 		void calculateNeeds();
-
-		/** Return true if pkg matches test. */
-		bool stringMatch(Package *pkg) throw(ExBasic){
-			pkg->readNeeded(need);
-
-			switch(field) {
-				case NAME:
-					return (*algorithm)(pkg->name.c_str(), pkg);
-				case DESCRIPTION:
-					return (*algorithm)(pkg->desc.c_str(), pkg);
-				case LICENSE: 
-					return (*algorithm)(pkg->licenses.c_str(), pkg);
-				case CATEGORY:
-					return (*algorithm)(pkg->category.c_str(), pkg);
-				case CATEGORY_NAME:
-					return (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg);
-				case HOMEPAGE:
-					return (*algorithm)(pkg->homepage.c_str(), pkg);
-				case PROVIDE:
-					return (*algorithm)(pkg->provide.c_str(), pkg);
-				default:
-					THROW("Hu? - I don't know what field I shall match!");
-			}
-		}
-
-	public:
-		VarDbPkg *vardbpkg; /**< Lookup stuff about installed packages here. */
-
-		/** Set default values. */
-		PackageTest(VarDbPkg *vdb = NULL) {
-			vardbpkg = vdb;
-			field    = NONE;
-			need     = Package::NONE;
-			invert   = installed = dup_versions = false;
-		}
-
-		bool match(Package *pkg) {
-			bool is_match = true;
-			if(algorithm.get() != NULL) {
-				is_match = stringMatch(pkg);
-			}
-
-			/* Honour the C_O_INSTALLED, C_O_DUP_VERSIONS and the C_O_INVERT flags. */
-			if(installed && is_match) {
-				is_match = vardbpkg->isInstalled(pkg);
-			}
-
-			if(dup_versions && is_match)
-				is_match = pkg->have_duplicate_versions;
-
-			return (invert ? !is_match : is_match);
-		}
-
-		/** Compile regex and/or calculate needs. */
-		void finalize() {
-			calculateNeeds();
-		}
 };
+
+inline void 
+PackageTest::setAlgorithm(BaseAlgorithm *p)
+{
+	algorithm = auto_ptr<BaseAlgorithm>(p);
+}
+
+inline void
+PackageTest::finalize()
+{
+	calculateNeeds();
+}
+
+inline void
+PackageTest::Installed()
+{
+	installed = !installed;
+}
+
+inline void
+PackageTest::DuplVersions()
+{
+	dup_versions = !dup_versions;
+}
+
+inline void
+PackageTest::Invert()
+{
+	invert = !invert;
+}
+
+inline PackageTest::MatchField
+PackageTest::operator |= (const MatchField m)
+{
+	return field |= m;
+}
+
 #endif /* __PACKAGETEST_H__ */

@@ -47,10 +47,10 @@ namespace io {
 	/** Read a string of the format { unsigned short len; char[] string; (without the 0) } */
 	inline std::string read_string(FILE *fp) {
 		unsigned short len = read<short>(fp);
-		char buf[len + 1];
-		buf[len] = 0;
-		fread((void*)buf, sizeof(char), len, (fp));
-		return std::string(buf);
+		auto_ptr<char> buf(new char[len + 1]);
+		buf.get()[len] = 0;
+		fread((void*)(buf.get()), sizeof(char), len, (fp));
+		return std::string(buf.get());
 	}
 
 	/** Write a string in the format { unsigned short len; char[] string; (without the 0) } */
@@ -60,6 +60,6 @@ namespace io {
 		fwrite((const void*)(str.c_str()), sizeof(char), len, (fp));
 	}
 
-};
+}
 
 #endif /* EIX__IO_H__ */
