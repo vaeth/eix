@@ -44,6 +44,14 @@ BasicVersion::parseVersion(const char *str, int n)
 			cerr << "Garbage at end of version string: " << str << endl;
 		}
 	}
+
+	// Let's remove useless 0 at the end
+	for(vector<unsigned short>::reverse_iterator ri = primsplit.rbegin();
+		ri != primsplit.rend() && *ri == 0;
+		ri++)
+	{
+		primsplit.pop_back();
+	}
 }
 
 const string&
