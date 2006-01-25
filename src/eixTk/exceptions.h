@@ -40,10 +40,6 @@ using namespace std;
 class ExBasic {
 
 	public:
-		string _file; /**< File where the exception is constructed. */
-		int    _line; /**< Line where the exception is constructed. */
-		string _func; /**< Function where the exception is constructed. */
-		string _msg;  /**< The actual message. */
 
 		/** Constructor exception with variable arguments. */
 		ExBasic(const string file, const int line, const char *func, const char *fmt, ...) {
@@ -53,20 +49,28 @@ class ExBasic {
 			vsnprintf(buf, 1024, fmt, ap);
 			va_end(ap);
 
-			_msg  = buf;
-			_file = file;
-			_line = line;
-			_func = func;
+			m_msg  = buf;
+			m_file = file;
+			m_line = line;
+			m_func = func;
 		}
 
-		string &getMessage() {
-			return _msg;
+		const string &getMessage() const {
+			return m_msg;
 		}
 
 		friend ostream& operator<< (ostream& os, ExBasic& e) {
-			os << e._func << ": " << e._msg;
+			os << e.m_func << ": " << e.m_msg;
 			return os;
 		}
+
+	protected:
+		string m_file; /**< File where the exception is constructed. */
+		int    m_line; /**< Line where the exception is constructed. */
+		string m_func; /**< Function where the exception is constructed. */
+		string m_msg;  /**< The actual message. */
+
+	private:
 };
 
 #define ExBasic(...) ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__)
@@ -79,5 +83,15 @@ class ExBasic {
 } while(0)
 
 #define WARNING(...) do { fprintf(stderr, __VA_ARGS__); fputc('\n', stderr); } while(0)
+
+// Provide a common look for error-messages for parse-errors in
+// portage.{mask,keywords,..}
+void inline
+portage_parse_error(const string &file, const int line_nr, const string& line, const ExBasic &e)
+{
+	cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \"" 
+	     << line << "\"" << endl
+	     << "   " << e.getMessage() << endl;
+}
 
 #endif /* __EXCEPTIONS_H__ */
