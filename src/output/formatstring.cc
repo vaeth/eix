@@ -72,7 +72,7 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 			case Node::IF:
 				{
 					ConditionBlock *ief = (ConditionBlock*)root;
-					bool ok;
+					bool ok = false;
 					try {
 						ok = get_property(entity, ief->variable.name) == ief->text.text;
 					}
@@ -233,8 +233,8 @@ FormatParser::state_IF()
 	}
 
 	string textbuffer;
-	char parse_modus;
 	static const char single_quote = '\'', double_quote = '"', plain = ' ';
+	char parse_modus = plain;
 	
 	if(*band_position == double_quote) {
 		parse_modus = double_quote;
