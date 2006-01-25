@@ -79,7 +79,7 @@ print_version(PrintFormat *fmt, Version *version)
 	if (fmt->style_version_lines)
 		cout << "\r\t\t";
 
-	cout << *version;
+	cout << version->getFull();
 }
 
 void
@@ -175,7 +175,7 @@ get_package_property(void *void_entity, string &name) throw(ExBasic)
 		if(best == NULL) {
 			return "";
 		}
-		return best->toString();
+		return best->getFull();
 	}
 
 	throw(ExBasic("Unknown property '%s'.", name.c_str()));

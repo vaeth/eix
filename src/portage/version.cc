@@ -51,8 +51,8 @@ Version::Version(FILE *stream)
 /** Read a Version instance from the eix db */
 void Version::read( FILE *is )
 {
-	// read full string
-	full = io::read_string(is);
+	// read m_full string
+	m_full = io::read_string(is);
 
 	// read stability & masking
 	_mask = io::read<Keywords::Type>(is);
@@ -62,18 +62,18 @@ void Version::read( FILE *is )
 	primary = io::read_string(is);
 #endif
 
-	// read primsplit
+	// read m_primsplit
 	unsigned char i = io::read<unsigned char>(is);
 	while(i--)
 	{
-		primsplit.push_back(io::read<unsigned short>(is));
+		m_primsplit.push_back(io::read<unsigned short>(is));
 	}
-	primarychar = io::read<unsigned char>(is);
+	m_primarychar = io::read<unsigned char>(is);
 
-	// read suffixlevel,suffixnum,gentoorelease
-	suffixlevel   = io::read<unsigned char>(is);
-	suffixnum     = io::read<unsigned int>(is);
-	gentoorelease = io::read<unsigned char>(is);
+	// read m_suffixlevel,m_suffixnum,m_gentoorelease
+	m_suffixlevel   = io::read<unsigned char>(is);
+	m_suffixnum     = io::read<unsigned int>(is);
+	m_gentoorelease = io::read<unsigned char>(is);
 
 	overlay_key = io::read<short>(is);
 }
@@ -81,8 +81,8 @@ void Version::read( FILE *is )
 /** Write a Version instance to the eix db */
 void Version::write( FILE *os )
 {
-	// write full string
-	io::write_string( os, full );
+	// write m_full string
+	io::write_string( os, m_full );
 
 	// write stability & masking
 	io::write<Keywords::Type>(os, _mask);
@@ -92,21 +92,21 @@ void Version::write( FILE *os )
 	io::write_string( os, primary );
 #endif
 
-	// write primsplit
-	io::write<unsigned char>(os, (unsigned char)primsplit.size());
-	for(vector<unsigned short>::iterator it = primsplit.begin();
-			it != primsplit.end();
+	// write m_primsplit
+	io::write<unsigned char>(os, (unsigned char)m_primsplit.size());
+	for(vector<unsigned short>::iterator it = m_primsplit.begin();
+			it != m_primsplit.end();
 			++it)
 	{
 		io::write<unsigned short>(os, *it);
 	}
 
-	io::write<unsigned char>(os, primarychar);
+	io::write<unsigned char>(os, m_primarychar);
 
-	// write suffixlevel,suffixnum,gentoorelease
-	io::write<unsigned char>(os, suffixlevel);
-	io::write<unsigned int>(os, suffixnum);
-	io::write<unsigned char>(os, gentoorelease);
+	// write m_suffixlevel,m_suffixnum,m_gentoorelease
+	io::write<unsigned char>(os, m_suffixlevel);
+	io::write<unsigned int>(os, m_suffixnum);
+	io::write<unsigned char>(os, m_gentoorelease);
 
 	io::write<short>(os, overlay_key);
 }

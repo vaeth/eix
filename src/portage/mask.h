@@ -101,7 +101,7 @@ class Mask : public BasicVersion {
 		vector<Version*> getMatches(Package &pkg);
 
 		const char *getVersion() {
-			return ((BasicVersion*)this)->toString().c_str();
+			return ((BasicVersion*)this)->getFull();
 		}
 
 		const char *getName() {

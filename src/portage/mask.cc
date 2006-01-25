@@ -191,9 +191,9 @@ bool Mask::test(Version& ve, BasicVersion *bv)
 			return false;
 		case maskOpRevisions:
 			if( bv->comparePrimary(ve) == 0
-					&& ( bv->get_primarychar() == ve.get_primarychar() )
-					&& ( bv->get_suffixlevel() == ve.get_suffixlevel() )
-					&& ( bv->get_suffixnum() == ve.get_suffixnum() ) )
+					&& ( bv->getPrimarychar() == ve.getPrimarychar() )
+					&& ( bv->getSuffixlevel() == ve.getSuffixlevel() )
+					&& ( bv->getSuffixnum() == ve.getSuffixnum() ) )
 				return true;
 			return false;
 	}
@@ -204,7 +204,7 @@ void Mask::expand(Package *pkg) {
 	/* Test every version if our mask-strings would match. */
 	vector<Version*>::iterator vi = pkg->begin();
 	while(vi != pkg->end()) {
-		if(strncmp((*vi)->toString().c_str(), getVersion(), _wcpos) == 0) {
+		if(strncmp((*vi)->getFull(), getVersion(), _wcpos) == 0) {
 			/* For every matching version, expand and apply to every version. */
 			vector<Version*>::iterator _vi = pkg->begin();
 			while(_vi != pkg->end()) {
@@ -222,7 +222,7 @@ Mask::getMatches(Package &pkg) {
 	if(_wcpos != 0) {
 		/* Test every version. */
 		for(vector<Version*>::iterator version = pkg.begin(); version != pkg.end(); ++version) {
-			if(strncmp((*version)->toString().c_str(), getVersion(), _wcpos) == 0) {
+			if(strncmp((*version)->getFull(), getVersion(), _wcpos) == 0) {
 				for(vector<Version*>::iterator v = pkg.begin(); v != pkg.end(); ++v) {
 					if(test(**v, (BasicVersion*)*version))
 						ret.push_back(*v);

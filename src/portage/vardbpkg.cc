@@ -33,7 +33,6 @@
 
 #include <dirent.h>
 
-inline bool basicVersion_comparator(const BasicVersion &v1, const BasicVersion &v2);
 inline static void sort_installed(map<string,vector<BasicVersion> > *maping);
 
 /** Find installed versions of packet "name" in category "category".
@@ -76,7 +75,7 @@ string VarDbPkg::getInstalledString(Package *p)
 		return "";
 	}
 	for(;;) {
-		ret.append(it->toString());
+		ret.append(it->getFull());
 		if(++it == vec->end()) {
 			break;
 		}
@@ -137,17 +136,12 @@ void VarDbPkg::readCategory(string category)
 	sort_installed(installed[category]);
 }
 
-inline bool basicVersion_comparator(const BasicVersion &v1, const BasicVersion &v2)
-{
-	return ((BasicVersion)v1 < (BasicVersion)v2);
-}
-
 inline static void sort_installed(map<string,vector<BasicVersion> > *maping)
 {
 	map<string,vector<BasicVersion> >::iterator it = maping->begin();
 	while(it != maping->end())
 	{
-		sort(it->second.begin(), it->second.end(), basicVersion_comparator);
+		sort(it->second.begin(), it->second.end());
 		++it;
 	}
 }

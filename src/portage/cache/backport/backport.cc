@@ -102,7 +102,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		readBackportCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->toString()).c_str() );
+		readBackportCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
 	}
 
 	if(numfiles > 0)

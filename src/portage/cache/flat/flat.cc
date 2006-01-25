@@ -103,7 +103,7 @@ int FlatCache::readCategory(vector<Package*> &vec, const string &cat_name, void 
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		readCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->toString()).c_str() );
+		readCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
 	}
 
 	if(numfiles > 0)
