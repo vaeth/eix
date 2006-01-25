@@ -152,6 +152,39 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 			OOM_ASSERT(m);
 			(*this)[m->getCategory()][m->getName()].push_back(m);
 		}
+
+		void remove(Mask *m) {
+			MaskList::iterator it = this->find(m->getCategory());
+			if(it != end())
+			{
+				map<string,vector<Mask*> >::iterator t = it->second.find(m->getName());
+
+				if(t != it->second.end())
+				{
+					for(vector<Mask*>::iterator mi = t->second.begin();
+						mi != t->second.end();
+						++mi)
+					{
+						if(**mi == *m)
+						{
+							delete *mi;
+							t->second.erase(mi);
+							break;
+						}
+					}
+					if(t->second.size() == 0)
+					{
+						// Now empty
+						it->second.erase(t);
+					}
+				}
+				if(it->second.size() == 0)
+				{
+					// Now empty
+					this->erase(it);
+				}
+			}
+		}
 		
 		friend ostream& operator<< (ostream& os, MaskList& mlist) {
 			for(MaskList::iterator it = mlist.begin(); it != mlist.end(); ++it) {
