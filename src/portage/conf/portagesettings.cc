@@ -59,7 +59,6 @@ bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mas
 			catch(ExBasic e) {
 				cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
 				     << "   " << e.getMessage() << endl;
-
 			}
 		}
 		mask_file.close();

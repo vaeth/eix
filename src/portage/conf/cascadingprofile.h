@@ -46,9 +46,6 @@ class CascadingProfile {
 				 system_allowed, /**< Packages that are not in system profile but only allowed to have specific versions.*/
 				 package_masks; /**< Masks from package.masks */
 
-		/** push_back all files matching char* file to vector lines. */
-		void collectLines(const char* file, vector<string> *lines);
-
 		/** Cycle through profile.
 		 * Look for parent profile of the profile pointed to by path_buffer Write the path for the new
 		 * profile into path_buffer and return true Return false if there is no parent profile.

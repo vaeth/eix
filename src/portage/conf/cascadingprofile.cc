@@ -44,16 +44,6 @@
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 
-#if 0
-#define MASKMAP_REMOVE(m) do { map<string, vector<Mask*> >::iterator it = (m).begin(); \
-	for( ;it != (m).end(); ++it) { \
-		for(unsigned int i = 0; i<it->second.size(); ++i) { \
-			delete it->second[i]; \
-		} \
-	} \
-} while(0);
-#endif
-
 /** Look for parent profile of the profile pointed to by path_buffer. Write
  * the path for the new profile into path_buffer and return true; Return false
  * if there is no parent profile. */
@@ -81,45 +71,63 @@ bool CascadingProfile::getParentProfile(string &path_buffer)
 	return false;
 }
 
-void CascadingProfile::collectLines(const char* file, vector<string> *lines)
-{
-	/* Get all lines */
-	for(unsigned int i = 0; i<_profile_files.size(); i++)
-		if( strcmp(strrchr(_profile_files[i].c_str(), '/'), file) == 0)
-			(void) pushback_lines(_profile_files[i].c_str(), lines);
-}
-
 void CascadingProfile::readPackages()
 {
-	vector<string> lines;
-	collectLines("/packages", &lines);
+	for(unsigned int n = 0;
+		n<_profile_files.size();
+		n++)
+	{
+		if(strcmp(strrchr(_profile_files[n].c_str(), '/'), "/packages") == 0)
+		{
+			vector<string> lines;
+			(void) pushback_lines(_profile_files[n].c_str(), &lines, false);
 
-	/* Cycle through and get rid of comments ..
-	 * lines beginning with '*' are system-packages
-	 * all others are masked by profile .. if they don't match :) */
-	Mask *m = NULL;
-	for(unsigned int i = 0; i<lines.size(); i++) {
-		switch(lines[i][0]) {
-			case '*': 
-				try {
-					m = new Mask(lines[i].substr(1), Mask::maskInSystem) ;
-				}
-				catch(ExBasic e) {
-					cerr << e << endl;
+			for(unsigned int i = 0; i<lines.size(); i++)
+			{
+				if(lines[i].size() == 0)
 					continue;
-				}
-				system.add(m);
-				break;
-			default:
+
 				try {
-					m = new Mask(lines[i], Mask::maskAllowedByProfile);
+					/* Cycle through and get rid of comments ..
+					 * lines beginning with '*' are system-packages
+					 * all others are masked by profile .. if they don't match :) */
+					const char *p = lines[i].c_str();
+					bool remove = (*p == '-');
+
+					if (remove)
+					{
+						++p;
+					}
+
+					Mask     *m = NULL;
+					MaskList *ml = NULL;
+					switch(*p)
+					{
+						case '*': 
+							++p;
+							m = new Mask(p, Mask::maskInSystem) ;
+							ml = &system;
+							break;
+						default:
+							m = new Mask(p, Mask::maskAllowedByProfile);
+							ml = &system_allowed;
+							break;
+					}
+
+					if (remove)
+					{
+						ml->remove(m);
+					}
+					else 
+					{
+						ml->add(m);
+					}
 				}
-				catch(ExBasic e) {
-					cerr << e << endl;
-					continue;
+				catch(ExBasic e)
+				{
+					portage_parse_error(_profile_files[n], i + 1, lines[i], e);
 				}
-				system_allowed.add(m);
-				break;
+			}
 		}
 	}
 }
@@ -148,18 +156,30 @@ void CascadingProfile::readMakeDefaults()
 
 void CascadingProfile::readPackageMasks()
 {
-	vector<string> lines;
-	collectLines("/package.mask", &lines);
-	for(unsigned int i = 0; i<lines.size(); i++) {
-		Mask *m = NULL;
-		try {
-			m = new Mask(lines[i], Mask::maskMask);
+	for(unsigned int n = 0;
+		n<_profile_files.size();
+		n++)
+	{
+		vector<string> lines;
+		if(strcmp(strrchr(_profile_files[n].c_str(), '/'), "package.mask") == 0)
+		{
+			(void) pushback_lines(_profile_files[n].c_str(), &lines);
 		}
-		catch(ExBasic e) {
-			cerr << e << endl;
-			continue;
+
+		for(unsigned int i = 0; i<lines.size(); i++) {
+			if(lines[i].size() == 0)
+				continue;
+
+			Mask *m = NULL;
+			try {
+				m = new Mask(lines[i], Mask::maskMask);
+			}
+			catch(ExBasic e) {
+				portage_parse_error(_profile_files[n], i + 1, lines[i], e);
+				continue;
+			}
+			package_masks.add(m);
 		}
-		package_masks.add(m);
 	}
 }
 
