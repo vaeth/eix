@@ -137,6 +137,8 @@ AC_OUTPUT(Makefile manpage/Makefile
 		  src/portage/conf/Makefile
 
 		  src/output/Makefile
+
+		  src/search/Makefile
 		  
 		  contrib/Makefile)
 

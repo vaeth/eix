@@ -12,6 +12,8 @@
 	  This should stop reports like http://bugs.gentoo.org/show_bug.cgi?id=116592
 	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=117407 and removed a
 	  compilation-error for -pedantic -ansi -W -Wall -Werror
+	- Moved the code in ExplodeAtom from regex to short, _fast_ and hand-written
+	  parser-code.
 
 *eix-0.5
 

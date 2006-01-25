@@ -37,10 +37,6 @@
 
 #include <eixTk/regexp.h> 
 
-Regex re_fn2ver(".*-([^a-zA-Z].*)", 0);
-Regex re_fn2name("(.*)-[^a-zA-Z].*", 0);
-Regex re_fn2name_ver("(.*)-([^a-zA-Z].*)", 0);
-
 #if !defined HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
@@ -65,51 +61,61 @@ strndup(const char *s, size_t n)
 }
 #endif /* !defined HAVE_STRNDUP */
 
-char *
-ExplodeAtom::getVersion(const char* filename)
+inline const char*
+get_start_of_version(const char* filename)
 {
-	regmatch_t matchptr[2];
-	char *ret = NULL;
-	if(regexec(re_fn2ver.get(), filename, 2, matchptr, 0) == 0) {
-		OOM_ASSERT(ret =
-				strndup( &(filename[matchptr[1].rm_so]),
-					matchptr[1].rm_eo-matchptr[1].rm_so)
-				);
+	const char *x = NULL;
+	while(*filename)
+	{
+		if(*filename++ == '-'
+		   && (*filename >= 48
+			   && *filename <= 57)) 
+		{
+			x = filename;
+		}
 	}
-	return ret;
+
+	return x;
 }
 
 char *
-ExplodeAtom::getName(const char* filename)
+ExplodeAtom::split_version(const char* filename)
 {
-	regmatch_t matchptr[2];
-	char *ret = NULL;
-	if(regexec(re_fn2name.get(), filename, 2, matchptr, 0) == 0) {
-		OOM_ASSERT(ret =
-				strndup( &(filename[matchptr[1].rm_so]),
-					matchptr[1].rm_eo-matchptr[1].rm_so	 )
-				);
+	const char *x = get_start_of_version(filename);
+
+	if(x)
+	{
+		return strdup(x);
 	}
-	return ret;
+
+	return NULL;
+}
+
+char *
+ExplodeAtom::split_name(const char* filename)
+{
+	const char *x = get_start_of_version(filename);
+
+	if(x)
+	{
+		return strndup(filename, ((x - 1) - filename));
+	}
+
+	return NULL;
 }
 
 char **
-ExplodeAtom::getNameVersion(const char* filename)
+ExplodeAtom::split(const char* filename)
 {
-	regmatch_t matchptr[3];
 	static char* out[2] = { NULL, NULL };
-	if(regexec(re_fn2name_ver.get(), filename, 3, matchptr, 0) == 0) {
-		OOM_ASSERT(out[0] =
-				strndup( &(filename[matchptr[1].rm_so]),
-					matchptr[1].rm_eo-matchptr[1].rm_so )
-				);
-		OOM_ASSERT(out[1] =
-				strndup( &(filename[matchptr[2].rm_so]),
-					matchptr[2].rm_eo-matchptr[2].rm_so )
-				);
-		return out;
+	const char *x = get_start_of_version(filename);
+
+	if(x)
+	{
+		out[0] = strndup(filename, ((x - 1) - filename));
+		out[1] = strdup(x);
 	}
-	return NULL;
+	return out;
 }
 
 vector<string>

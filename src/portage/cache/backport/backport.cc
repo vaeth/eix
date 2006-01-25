@@ -57,7 +57,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 		Version *version;
 
 		/* Split string into package and version, and catch any errors. */
-		aux = ExplodeAtom::getNameVersion(dents[i]->d_name);
+		aux = ExplodeAtom::split(dents[i]->d_name);
 		if(aux == NULL)
 		{
 			error_callback("Can't split '%s' into package and version.", dents[i]->d_name);
@@ -93,7 +93,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 				break;
 
 			/* Split new filename into package and version, and catch any errors. */
-			aux = ExplodeAtom::getNameVersion(dents[i]->d_name);
+			aux = ExplodeAtom::split(dents[i]->d_name);
 			if(aux == NULL) {
 				throw(ExBasic("Can't split %s into package and version.", dents[i]->d_name));
 			}

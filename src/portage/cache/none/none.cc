@@ -73,7 +73,7 @@ void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char 
 		*dotptr = '\0';
 
 		/* Check if we can split it */
-		char* ver = ExplodeAtom::getVersion(list[i]->d_name);
+		char* ver = ExplodeAtom::split_version(list[i]->d_name);
 		if(ver == NULL) {
 			error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
 			continue;

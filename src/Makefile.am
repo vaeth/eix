@@ -26,7 +26,7 @@
 ###########################################################################
 
 # Build our toolkits
-SUBDIRS = eixTk database portage output
+SUBDIRS = eixTk database portage output search
 
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags eix-sync
@@ -41,18 +41,15 @@ sbin_SCRIPTS = eix-sync
 eix_SOURCES = eix.cc \
 			  varsreader.cc varsreader.h \
 			  cachetable.h \
-			  search/packagetest.cc search/packagetest.h \
-			  search/algorithms.cc \
-			  search/dbmatchcriteria.h \
-			  search/queryparser.h \
 			  cli.cc cli.h \
-			  global.cc
+			  global.cc global.h
 
 eix_LDADD = database/libdatabase.a \
 			portage/conf/libportageconf.a \
 			portage/libportage.a \
 			output/liboutput.a \
-			eixTk/libeixTk.a
+			eixTk/libeixTk.a \
+			search/libsearch.a
 
 # The update-tool for our database
 update_eix_SOURCES = update-eix.cc \

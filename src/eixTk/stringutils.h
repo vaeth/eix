@@ -45,19 +45,19 @@ class ExplodeAtom {
 	public:
 
 		/** Get the version-string of a Atom (e.g. get 1.2.3 from foobar-1.2.3).  */
-		static char *getVersion(const char* filename);
+		static char *split_version(const char* filename);
 
 		/** Get the name-string of a Atom (e.g. get foobar from foobar-1.2.3).  */
-		static char *getName(const char* filename);
+		static char *split_name(const char* filename);
 		
 		/** Get name and version from a Atom (e.g. foobar and 1.2.3 from foobar-1.2.3).
 		 * @warn You'll get a pointer to a static array of 2 pointer to char. */
-		static char **getNameVersion(const char* filename);
+		static char **split(const char* filename);
 };
 
 /** Check string if it only contains digits. */
 inline bool
-is_numeric(char *str)
+is_numeric(const char *str)
 {
 	while( (*str) )
 		if( !isdigit(*str++) )

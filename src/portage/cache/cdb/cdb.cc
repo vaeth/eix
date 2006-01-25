@@ -256,7 +256,7 @@ int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name, void (
 		}
 
 		/* Split string into package and version, and catch any errors. */
-		char **aux = ExplodeAtom::getNameVersion(key.c_str());
+		char **aux = ExplodeAtom::split(key.c_str());
 		if(aux == NULL) {
 			error_callback("Can't split '%s' into package and version.", key.c_str());
 			continue;

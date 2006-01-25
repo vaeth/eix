@@ -120,7 +120,7 @@ void VarDbPkg::readCategory(string category)
 	{
 		if(package_entry->d_name[0] == '.')
 			continue; /* Don't want dot-stuff */
-		char **aux = ExplodeAtom::getNameVersion( package_entry->d_name);
+		char **aux = ExplodeAtom::split( package_entry->d_name);
 		if(aux == NULL)
 			continue;
 		try {
