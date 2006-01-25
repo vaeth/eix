@@ -43,7 +43,7 @@
 using namespace std;
 
 /** push_back every line of file into v. */
-bool pushback_lines(const char *file, vector<string> *v)
+bool pushback_lines(const char *file, vector<string> *v, bool removed_empty)
 {
 	string line;
 	ifstream ifstr(file);
@@ -51,7 +51,15 @@ bool pushback_lines(const char *file, vector<string> *v)
 		do {
 			getline(ifstr, line);
 			trim(&line);
-			if(line.size() == 0 || line[0] == '#')
+
+			// strip #blaaa
+			string::size_type x = line.find_first_of("#");
+			if(x != string::npos)
+			{
+				line.erase(x);
+			}
+
+			if(line.size() == 0 && removed_empty)
 				continue;
 			v->push_back(line);
 			if( ifstr.bad() )

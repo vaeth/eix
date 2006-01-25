@@ -36,7 +36,7 @@
 using namespace std;
 
 /** push_back every line of file into v. */
-bool pushback_lines(const char *file, vector<string> *v);
+bool pushback_lines(const char *file, vector<string> *v, bool removed_empty = true);
 
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if the don't match any
