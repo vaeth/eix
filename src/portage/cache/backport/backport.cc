@@ -45,9 +45,9 @@ static int cachefiles_seclector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, void (*error_callback)(const char *fmt, ...))
+int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name)
 {
-	string catpath = PORTAGE_CACHE_PATH + _scheme + cat_name; 
+	string catpath = PORTAGE_CACHE_PATH + m_scheme + cat_name; 
 	struct dirent **dents;
 	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_seclector, alphasort);
 	char **aux = NULL;
@@ -60,7 +60,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 		aux = ExplodeAtom::split(dents[i]->d_name);
 		if(aux == NULL)
 		{
-			error_callback("Can't split '%s' into package and version.", dents[i]->d_name);
+			m_error_callback("Can't split '%s' into package and version.", dents[i]->d_name);
 			++i;
 			continue;
 		}
@@ -78,8 +78,8 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name, v
 			pkg->addVersion(version);
 
 			/* Read stability from cachefile */
-			version->set( backportCacheGetKeywords(_arch, catpath + "/" + dents[i]->d_name));
-			version->overlay_key = _overlay_key;
+			version->set( backportCacheGetKeywords(m_arch, catpath + "/" + dents[i]->d_name));
+			version->overlay_key = m_overlay_key;
 
 			/* Free old split */
 			free(aux[0]);

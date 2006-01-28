@@ -251,6 +251,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 		short key = dbheader.addOverlay(cache->getScheme());
 		cache->setKey(key);
 		cache->setArch(portage_settings["ARCH"]);
+		cache->setErrorCallback(error_callback);
 
 		INFO("[%i] %s (cache: %s)\n", key, cache->getScheme().c_str(), cache->getType());
 		INFO("     Reading ");
@@ -261,7 +262,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 		/* iterator through categories */
 		for(PackageDatabase::mapiter m = package_tree.begin(); m != package_tree.end(); ++m) {
 			++percent_status;
-			cache->readCategory(m->second, m->first, error_callback);
+			cache->readCategory(m->second, m->first);
 		}
 	}
 

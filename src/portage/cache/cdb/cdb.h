@@ -33,9 +33,9 @@
 class CdbCache : public BasicCache {
 
 	public:
-		int readCategory(vector<Package*> &vec, const string &cat_name, void (*error_callback)(const char *fmt, ...));
+		int readCategory(vector<Package*> &vec, const string &cat_name);
 
-		const char *getType() {
+		const char *getType() const {
 			return "cdb";
 		}
 };

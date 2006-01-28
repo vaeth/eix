@@ -237,9 +237,9 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 	return true;
 }
 
-int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name, void (*error_callback)(const char *fmt, ...))
+int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name)
 {
-	string cdbfile = PORTAGE_CACHE_PATH + _scheme + cat_name + ".cdb";
+	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + cat_name + ".cdb";
 	uint32_t dlen;
 	char *data;
 	string key;
@@ -251,14 +251,14 @@ int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name, void (
 		key = cdb.get(&dlen, (void **)&data);
 		map<string,string> mapping;
 		if( ! unpickle_get_mapping(data, dlen, mapping)) {
-			error_callback("Problems with %s .. skipping.", key.c_str());
+			m_error_callback("Problems with %s .. skipping.", key.c_str());
 			continue;
 		}
 
 		/* Split string into package and version, and catch any errors. */
 		char **aux = ExplodeAtom::split(key.c_str());
 		if(aux == NULL) {
-			error_callback("Can't split '%s' into package and version.", key.c_str());
+			m_error_callback("Can't split '%s' into package and version.", key.c_str());
 			continue;
 		}
 		/* Search for existing package */
@@ -277,8 +277,8 @@ int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name, void (
 		pkg->addVersion(version);
 
 		/* Read stability */
-		version->set(_arch, mapping["KEYWORDS"]);
-		version->overlay_key = _overlay_key;
+		version->set(m_arch, mapping["KEYWORDS"]);
+		version->overlay_key = m_overlay_key;
 
 		/* Free split */
 		free(aux[0]);

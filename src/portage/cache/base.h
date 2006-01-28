@@ -30,76 +30,60 @@
 
 #include <portage/package.h>
 
-/** Parent class of every cache that eix can use. */
+// Add package to vector
+Package *addPackage(vector<Package*> &v, const string &cat, const string pkg);
+
+// Find Package and return pointer to it.
+Package *findPackage(vector<Package*> &v, const char *pkg);
+
+// Remove and delete Package. */
+bool deletePackage(vector<Package*> &v, string pkg);
+
+// Parent class of every cache that eix can use. */
 class BasicCache {
 
-	protected:
-		string _scheme;
-		short  _overlay_key;
-		string _arch;
-
 	public:
-		/** Set scheme for this cache. */
-		void setScheme(string scheme) {
-			_scheme = scheme;
-		}
-
-		/** Set overlay-key. */
-		void setKey(short key) {
-			_overlay_key = key;
-		}
-
-		/** Set arch for system. */
-		void setArch(string &arch) {
-			_arch = arch;
-		}
-
-		Package *addPackage(vector<Package*> &v, const string &cat_name, const string name) {
-			Package *p = new Package(cat_name, name);
-			OOM_ASSERT(p);
-			v.push_back(p);
-			return p;
-		}
-
-		/** Find Package and return pointer to it.
-		 *  Returns NULL if not found. */
-		Package *findPackage(vector<Package*> &v, const char *name) {
-			Package *ret = NULL;
-			for(vector<Package*>::iterator i = v.begin(); i != v.end(); ++i) {
-				if((*i)->name == name) {
-					ret = *i;
-				}
-			}
-			return ret;
-		}
-
-		/** Remove and delete Package. */
-		bool deletePackage(vector<Package*> &v, string name) {
-			bool ret = false;
-			for(vector<Package*>::iterator i = v.begin(); i != v.end(); ++i) {
-				if((*i)->name == name) {
-					delete *i;
-					v.erase(i);
-					ret = true;
-					break;
-				}
-			}
-			return false;
-		}
-
-		/* Virtual deconstructor. */
+		// Virtual deconstructor. */
 		virtual ~BasicCache() {}
 
-		/** Read Cache for a category with a little from portageif. */
-		virtual int readCategory(vector<Package*> &vec, const string &cat_name, void (*error_callback)(const char *fmt, ...)) = 0;
-
-		/** Return name of Cache.*/
-		virtual const char *getType() = 0;
-
-		/** Get scheme for this cache. */
-		string getScheme() {
-			return _scheme;
+		// Set scheme for this cache. */
+		void setScheme(string scheme) {
+			m_scheme = scheme;
 		}
+
+		// Set overlay-key. */
+		void setKey(short key) {
+			m_overlay_key = key;
+		}
+
+		// Set arch for system. */
+		void setArch(string &arch) {
+			m_arch = arch;
+		}
+
+		// Return name of Cache.*/
+		virtual const char *getType() const = 0;
+
+		// Set arch for system. */
+		void setErrorCallback(void (*error_callback)(const char *fmt, ...)) {
+			m_error_callback = error_callback;
+		}
+
+		// Read Cache for a category with a little from portageif. */
+		virtual int readCategory(vector<Package*> &vec, const string &cat) = 0;
+
+		// Get scheme for this cache. */
+		string getScheme() const {
+			return m_scheme;
+		}
+
+	protected:
+		string m_scheme;
+		short  m_overlay_key;
+		string m_arch;
+		void (*m_error_callback)(const char *fmt, ...);
+
+	public:
 };
 
 #endif /* __BASICCACHE_H__ */

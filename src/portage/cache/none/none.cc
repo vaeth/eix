@@ -47,7 +47,7 @@ static int ebuild_seclector (SCANDIR_ARG3 dent)
 		return package_seclector(dent);
 }
 
-void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles, void (*error_callback)(const char *fmt, ...))
+void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
 {
 	bool have_onetime_info = false;
 
@@ -75,7 +75,7 @@ void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char 
 		/* Check if we can split it */
 		char* ver = ExplodeAtom::split_version(list[i]->d_name);
 		if(ver == NULL) {
-			error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
+			m_error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
 			continue;
 		}
 
@@ -92,8 +92,8 @@ void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char 
 
 		/* Make version and add it to package. */
 		Version *version = new Version(ver);
-		version->overlay_key = _overlay_key;
-		version->set(_arch, ebuild["KEYWORDS"]);
+		version->overlay_key = m_overlay_key;
+		version->set(m_arch, ebuild["KEYWORDS"]);
 		pkg->addVersion(version);
 		free(ver);
 	}
@@ -103,11 +103,11 @@ void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char 
 	}
 }
 
-int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name, void (*error_callback)(const char *fmt, ...))
+int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name)
 {
 	struct dirent **packages= NULL;
 
-	string catpath = _scheme + "/" + cat_name; 
+	string catpath = m_scheme + "/" + cat_name; 
 	int numpackages = scandir(catpath.c_str(),
 			&packages, package_seclector, alphasort);
 
@@ -120,7 +120,7 @@ int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name, void 
 				&files, ebuild_seclector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackage(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles, error_callback);
+			readPackage(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);
