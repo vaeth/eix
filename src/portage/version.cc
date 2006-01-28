@@ -55,7 +55,7 @@ void Version::read( FILE *is )
 	m_full = io::read_string(is);
 
 	// read stability & masking
-	_mask = io::read<Keywords::Type>(is);
+	m_mask = io::read<Keywords::Type>(is);
 
 #if 0
 	// read primary string
@@ -85,7 +85,7 @@ void Version::write( FILE *os )
 	io::write_string( os, m_full );
 
 	// write stability & masking
-	io::write<Keywords::Type>(os, _mask);
+	io::write<Keywords::Type>(os, m_mask);
 
 #if 0
 	// write primary string

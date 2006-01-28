@@ -48,11 +48,11 @@ class Keywords {
 			SYSTEM_PACKAGE    ;
 
 	protected:
-		Type _mask;
+		Type m_mask;
 
 	public:
 		Keywords(Type t = KEY_MINUSKEYWORD) {
-			_mask = t;
+			m_mask = t;
 		}
 
 		static Type get_type(string arch, string keywords) {
@@ -88,60 +88,60 @@ class Keywords {
 		}
 			
 		void set(Type t) {
-			_mask = t;
+			m_mask = t;
 		}
 
 		Type get() {
-			return _mask;
+			return m_mask;
 		}
 
 		/** Return true if version is marked stable. */
-		bool isStable()               { return _mask & KEY_STABLE; }
+		bool isStable()               { return m_mask & KEY_STABLE; }
 		/** Return true if version is unstable. */
-		bool isUnstable()             { return _mask & KEY_UNSTABLE; }
+		bool isUnstable()             { return m_mask & KEY_UNSTABLE; }
 		/** Return true if version is masked by -* keyword. */
-		bool isMinusAsterisk()        { return _mask & KEY_MINUSASTERISK; }
+		bool isMinusAsterisk()        { return m_mask & KEY_MINUSASTERISK; }
 		/** Return true if version is masked by -keyword. */
-		bool isMinusKeyword()         { return _mask & KEY_MINUSKEYWORD; }
+		bool isMinusKeyword()         { return m_mask & KEY_MINUSKEYWORD; }
 		/** Return true if version is masked by missing keyword. */
-		bool isMissingKeyword()       { return _mask == KEY_MISSINGKEYWORD; }
+		bool isMissingKeyword()       { return m_mask == KEY_MISSINGKEYWORD; }
 
 		bool isHardMasked()  { return isPackageMask() || isProfileMask(); }
 		/** Return true if version is masked by profile. */
-		bool isProfileMask() { return _mask & PROFILE_MASK; }
+		bool isProfileMask() { return m_mask & PROFILE_MASK; }
 		/** Return true if version is masked by a package.mask. */
-		bool isPackageMask() { return _mask & PACKAGE_MASK; }
+		bool isPackageMask() { return m_mask & PACKAGE_MASK; }
 		/** Return true if version is part of a package that is a system-package. */
-		bool isSystem()      { return _mask & SYSTEM_PACKAGE; }
+		bool isSystem()      { return m_mask & SYSTEM_PACKAGE; }
 
-		void operator |= (const Keywords::Type &t)     { _mask |= t; }
-		void operator &= (const Keywords::Type &t)     { _mask &= t; }
+		void operator |= (const Keywords::Type &t)     { m_mask |= t; }
+		void operator &= (const Keywords::Type &t)     { m_mask &= t; }
 
 		void print() {
 			printf("< %c%c%c%c%c%c%c >\n",
-					(_mask & KEY_STABLE) ? '#' : '.',
-					(_mask & KEY_UNSTABLE) ? '~' : '.',
-					(_mask & KEY_MINUSASTERISK) ? '*' : '.',
-					(_mask & KEY_MINUSKEYWORD) ? '-' : '.',
-					(_mask & PACKAGE_MASK) ? 'M' : '.',
-					(_mask & PROFILE_MASK) ? 'P' : '.',
-					(_mask & SYSTEM_PACKAGE) ? 'S' : '.');
+					(m_mask & KEY_STABLE) ? '#' : '.',
+					(m_mask & KEY_UNSTABLE) ? '~' : '.',
+					(m_mask & KEY_MINUSASTERISK) ? '*' : '.',
+					(m_mask & KEY_MINUSKEYWORD) ? '-' : '.',
+					(m_mask & PACKAGE_MASK) ? 'M' : '.',
+					(m_mask & PROFILE_MASK) ? 'P' : '.',
+					(m_mask & SYSTEM_PACKAGE) ? 'S' : '.');
 		}
 
 #if 0
 		string recreateString(string &arch) {
 			string ret;
-			if(_mask & KEY_STABLE) {
+			if(m_mask & KEY_STABLE) {
 				ret.append(arch);
 			}
-			if(_mask & KEY_UNSTABLE) {
+			if(m_mask & KEY_UNSTABLE) {
 				ret.append(" ~");
 				ret.append(arch);
 			}
-			if(_mask & KEY_MINUSASTERISK) {
+			if(m_mask & KEY_MINUSASTERISK) {
 				ret.append(" -*");
 			}
-			if(_mask & KEY_MINUSKEYWORD) {
+			if(m_mask & KEY_MINUSKEYWORD) {
 				ret.append(" -");
 				ret.append(arch);
 			}
