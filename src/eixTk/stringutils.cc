@@ -61,17 +61,17 @@ strndup(const char *s, size_t n)
 }
 #endif /* !defined HAVE_STRNDUP */
 
-inline const char*
-get_start_of_version(const char* filename)
+const char *
+ExplodeAtom::get_start_of_version(const char* str)
 {
 	const char *x = NULL;
-	while(*filename)
+	while(*str)
 	{
-		if(*filename++ == '-'
-		   && (*filename >= 48
-			   && *filename <= 57)) 
+		if(*str++ == '-'
+		   && (*str >= 48
+			   && *str <= 57)) 
 		{
-			x = filename;
+			x = str;
 		}
 	}
 
@@ -79,9 +79,9 @@ get_start_of_version(const char* filename)
 }
 
 char *
-ExplodeAtom::split_version(const char* filename)
+ExplodeAtom::split_version(const char* str)
 {
-	const char *x = get_start_of_version(filename);
+	const char *x = get_start_of_version(str);
 
 	if(x)
 	{
@@ -92,27 +92,27 @@ ExplodeAtom::split_version(const char* filename)
 }
 
 char *
-ExplodeAtom::split_name(const char* filename)
+ExplodeAtom::split_name(const char* str)
 {
-	const char *x = get_start_of_version(filename);
+	const char *x = get_start_of_version(str);
 
 	if(x)
 	{
-		return strndup(filename, ((x - 1) - filename));
+		return strndup(str, ((x - 1) - str));
 	}
 
 	return NULL;
 }
 
 char **
-ExplodeAtom::split(const char* filename)
+ExplodeAtom::split(const char* str)
 {
 	static char* out[2] = { NULL, NULL };
-	const char *x = get_start_of_version(filename);
+	const char *x = get_start_of_version(str);
 
 	if(x)
 	{
-		out[0] = strndup(filename, ((x - 1) - filename));
+		out[0] = strndup(str, ((x - 1) - str));
 		out[1] = strdup(x);
 	}
 	return out;

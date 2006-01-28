@@ -44,15 +44,17 @@ char *strndup(const char *s, size_t n);
 class ExplodeAtom {
 	public:
 
+		const char *get_start_of_version(const char* str);
+
 		/** Get the version-string of a Atom (e.g. get 1.2.3 from foobar-1.2.3).  */
-		static char *split_version(const char* filename);
+		static char *split_version(const char* str);
 
 		/** Get the name-string of a Atom (e.g. get foobar from foobar-1.2.3).  */
-		static char *split_name(const char* filename);
+		static char *split_name(const char* str);
 		
 		/** Get name and version from a Atom (e.g. foobar and 1.2.3 from foobar-1.2.3).
 		 * @warn You'll get a pointer to a static array of 2 pointer to char. */
-		static char **split(const char* filename);
+		static char **split(const char* str);
 };
 
 /** Check string if it only contains digits. */
