@@ -42,9 +42,10 @@ char *strndup(const char *s, size_t n);
 
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {
+
 	public:
 
-		const char *get_start_of_version(const char* str);
+		static const char *get_start_of_version(const char* str);
 
 		/** Get the version-string of a Atom (e.g. get 1.2.3 from foobar-1.2.3).  */
 		static char *split_version(const char* str);
