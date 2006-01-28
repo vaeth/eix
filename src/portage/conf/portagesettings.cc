@@ -150,7 +150,7 @@ MaskList *PortageSettings::getMasks()
 bool PortageUserConfig::readKeywords() {
 	/* Prepend a ~ to every token. 
 	 * FIXME: So do we only care for ARCH or do we also care for ACCEPT_KEYWORDS? */
-	vector<string> splitted = split_string((*_psettings)["ARCH"], "\t \n\r");
+	vector<string> splitted = split_string((*m_settings)["ARCH"], "\t \n\r");
 	for(vector<string>::iterator it = splitted.begin(); it != splitted.end(); ++it) {
 		if(strchr("-~", (*it)[0]) == NULL) {
 			*it = "~" + *it;
@@ -158,40 +158,42 @@ bool PortageUserConfig::readKeywords() {
 	}
 	string fscked_arch = join_vector(splitted);
 
-	ifstream mask_file("/etc/portage/package.keywords");
-	if(mask_file.is_open()) {
-		string line;
-		while(getline(mask_file, line)) {
-			trim(&line);
-			if(line.size() == 0 || line[0] == '#')
-				continue;
-			try {
-				string::size_type i = line.find_first_of("\t ");
-				if(i == string::npos) {
-					KeywordMask *m = new KeywordMask(line, Mask::maskTypeNone);
-					m->keywords = fscked_arch;
-					_keywords.add(m);
-				}
-				else {
-					KeywordMask *m = new KeywordMask(line.substr(0, i), Mask::maskTypeNone);
-					m->keywords = line.substr(i + 1);
-					_keywords.add(m);
-				}
+	vector<string> lines;
+	pushback_lines("/etc/portage/package.keywords", &lines, false);
+
+	for(unsigned int i = 0;
+		i<lines.size();
+		i++)
+	{
+		if(lines[i].size() == 0)
+		{
+			continue;
+		}
+
+		try {
+			string::size_type n = lines[i].find_first_of("\t ");
+			if(n == string::npos) {
+				KeywordMask *m = new KeywordMask(lines[i], Mask::maskTypeNone);
+				m->keywords = fscked_arch;
+				m_keywords.add(m);
 			}
-			catch(ExBasic e) {
-				cerr << "-- Invalid line in /etc/portage/package.keywords: \"" << line << "\"" << endl
-				     << "   " << e.getMessage() << endl;
+			else {
+				KeywordMask *m = new KeywordMask(lines[i].substr(0, n),
+				                                 Mask::maskTypeNone);
+				m->keywords = lines[i].substr(n + 1);
+				m_keywords.add(m);
 			}
 		}
-		mask_file.close();
-		return true;
+		catch(ExBasic e) {
+			portage_parse_error("/etc/portage/package.keywords", i, lines[i], e);
+		}
 	}
-	return false;
+	return true;
 }
 
 void PortageUserConfig::setMasks(Package *p) {
 	/* Set hardmasks */
-	for(MaskList::viterator it = _mask.get(p)->begin(); it != _mask.get(p)->end(); ++it) {
+	for(MaskList::viterator it = m_mask.get(p)->begin(); it != m_mask.get(p)->end(); ++it) {
 		(*it)->checkMask(*p, false, false);
 	}
 }
@@ -206,7 +208,7 @@ static inline void apply_keywords(Version &v, Keywords::Type t) {
 }
 
 void PortageUserConfig::setStability(Package *p, Keywords kw) {
-	vector<Mask*>        *keyword_masks =  _keywords.get(p);
+	vector<Mask*>        *keyword_masks =  m_keywords.get(p);
 	map<Version*,string>  sorted_by_versions;
 
 	vector<Mask*>::iterator  it = keyword_masks->begin();
@@ -224,18 +226,9 @@ void PortageUserConfig::setStability(Package *p, Keywords kw) {
 				sorted_by_versions[*v].append(" " + ((KeywordMask*) *it)->keywords);
 			}
 		}
-
-#if 0
-		// HU? I shouldn't take crack ..
-		for(map<Version*,string>::iterator i = sorted_by_versions.begin();
-			i != sorted_by_versions.end();
-			++i)
-		{
-		}
-#endif
 	}
 
-	string arch = (*_psettings)["ARCH"];
+	string arch = (*m_settings)["ARCH"];
 
 	for(Package::iterator i = p->begin();
 		i != p->end();

@@ -57,19 +57,19 @@ class PortageSettings;
 
 class PortageUserConfig {
 	private:
-		PortageSettings *_psettings;
-		MaskList         _mask;
-		MaskList         _keywords;
+		PortageSettings *m_settings;
+		MaskList         m_mask;
+		MaskList         m_keywords;
 
 		bool readKeywords();
 		bool readMasks() {
-			bool ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &_mask);
-			return    grab_masks("/etc/portage/package.mask", Mask::maskMask, &_mask) && ok;
+			bool ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &m_mask);
+			return    grab_masks("/etc/portage/package.mask", Mask::maskMask, &m_mask) && ok;
 		}
 
 	public:
 		PortageUserConfig(PortageSettings *psettings) {
-			_psettings = psettings;
+			m_settings = psettings;
 			readKeywords();
 			readMasks();
 		}
@@ -77,7 +77,6 @@ class PortageUserConfig {
 		void setMasks(Package *p);
 		void setStability(Package *p, Keywords kw);
 };
-
 
 class PortageUserConfig;
 

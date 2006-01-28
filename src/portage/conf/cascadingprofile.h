@@ -38,13 +38,17 @@
 /** Access to the cascading profile pointed to by /etc/make.profile. */
 class CascadingProfile {
 
-	protected:
-		vector<string>      _profile_files; /**< List of files in profile. */
-		map<string,string> *_make_defaults; /**< Map of variables found in make.defaults-files. */
+	public:
 
-		MaskList system, /**< Packages in system profile. */
-				 system_allowed, /**< Packages that are not in system profile but only allowed to have specific versions.*/
-				 package_masks; /**< Masks from package.masks */
+	protected:
+		vector<string>      m_profile_files; /**< List of files in profile. */
+		map<string,string> *m_make_defaults; /**< Map of variables found in make.defaults-files. */
+
+		MaskList m_system;         /**< Packages in m_system profile. */
+		MaskList m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
+		MaskList m_package_masks;  /**< Masks from package.masks */
+
+	private:
 
 		/** Cycle through profile.
 		 * Look for parent profile of the profile pointed to by path_buffer Write the path for the new
@@ -57,10 +61,12 @@ class CascadingProfile {
 		 * profile_files. */
 		void listProfile(void) throw(ExBasic);
 
+		void readFiles();
+
 		/** Read all "packages" files found in profile.
-		 * Populate system and system_allowed. */
-		void readPackages();
-		void readPackageMasks();
+		 * Populate m_system and m_system_allowed. */
+		void readPackages(const string &line);
+		void readPackageMasks(const string &line);
 
 		/** Read all "make.defaults" files found in profile.
 		 * Use make_defaults as map for parser. */
@@ -68,25 +74,25 @@ class CascadingProfile {
 
 	public:
 		CascadingProfile(map<string,string> *mapping) {
-			_make_defaults = mapping;
+			m_make_defaults = mapping;
+
 			listProfile();
-			readPackages();
-			readPackageMasks();
 			readMakeDefaults();
+			readFiles();
 		}
 
-		/** Get all system packages. */
+		/** Get all m_system packages. */
 		MaskList *getSystemPackages() {
-			return &system;
+			return &m_system;
 		}
 
-		/** Get packages that are not in system profile but only allowed to have specific versions .*/
+		/** Get packages that are not in m_system profile but only allowed to have specific versions .*/
 		MaskList *getAllowedPackages() {
-			return &system_allowed;
+			return &m_system_allowed;
 		}
 
 		MaskList *getPackageMasks() {
-			return &(package_masks);
+			return &(m_package_masks);
 		}
 };
 
