@@ -260,7 +260,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 		percent_status.start(package_tree.countCategories());
 
 		/* iterator through categories */
-		for(PackageDatabase::mapiter m = package_tree.begin(); m != package_tree.end(); ++m) {
+		for(PackageDatabase::category_iterator m = package_tree.begin(); m != package_tree.end(); ++m) {
 			++percent_status;
 			cache->readCategory(m->second, m->first);
 		}

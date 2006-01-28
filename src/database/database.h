@@ -61,8 +61,8 @@ class PackageDatabase {
 		map<string, vector<Package*> > _packages;
 
 	public:
-		typedef map<string, vector<Package*> >::iterator mapiter;
-		typedef vector<Package*>::iterator               pkgiter;
+		typedef map<string, vector<Package*> >::iterator category_iterator;
+		typedef vector<Package*>::iterator               package_iterator;
 
 		/** Build skeleton.  */
 		PackageDatabase(vector<string> *categories) {
@@ -76,21 +76,21 @@ class PackageDatabase {
 
 		/** Free all packages. */
 		~PackageDatabase() {
-			for(mapiter m = _packages.begin(); m != _packages.end(); ++m) {
-				for(pkgiter p = m->second.begin(); p != m->second.end(); ++p) {
+			for(category_iterator m = _packages.begin(); m != _packages.end(); ++m) {
+				for(package_iterator p = m->second.begin(); p != m->second.end(); ++p) {
 					delete *p;
 				}
 			}
 		}
 
-		pkgiter find(pkgiter first, pkgiter last, const string& n) {
+		package_iterator find(package_iterator first, package_iterator last, const string& n) {
 			while(first != last && (*first)->name != n) ++first;
 			return first;
 		}
 
 		void checkMasks(MaskList *masks) {
-			for(mapiter m = _packages.begin(); m != _packages.end(); ++m) {
-				for(pkgiter p = m->second.begin(); p != m->second.end(); ++p) {
+			for(category_iterator m = _packages.begin(); m != _packages.end(); ++m) {
+				for(package_iterator p = m->second.begin(); p != m->second.end(); ++p) {
 					for(MaskList::viterator vit = masks->get(*p)->begin(); vit != masks->get(*p)->end(); ++vit) {
 						(*vit)->checkMask(**p, false, false);
 					}
@@ -100,7 +100,7 @@ class PackageDatabase {
 
 		/** Find Package in Category. */
 		Package *findPackage(string &category, string &name) {
-			pkgiter i = _packages[category].begin();
+			package_iterator i = _packages[category].begin();
 			i = find(i, _packages[category].end(), name);
 			if(i != _packages[category].end()) {
 				return *i;
@@ -117,7 +117,7 @@ class PackageDatabase {
 		}
 
 		bool deletePackage(string &category, string &name) {
-			pkgiter i = _packages[category].begin();
+			package_iterator i = _packages[category].begin();
 			i = find(i, _packages[category].end(), name);
 			if(i != _packages[category].end()) {
 				delete *i;
@@ -128,19 +128,19 @@ class PackageDatabase {
 		}
 
 		/** Return iterator pointed to begining of categories. */
-		mapiter begin() {
+		category_iterator begin() {
 			return _packages.begin();
 		}
 
 		/** Return iterator pointed to end of categories. */
-		mapiter end() {
+		category_iterator end() {
 			return _packages.end();
 		}
 
 		/** Return number of Packages. */
 		vector<Package*>::size_type countPackages() {
 			vector<Package*>::size_type i = 0;
-			for(mapiter it = _packages.begin(); it != _packages.end(); ++it) {
+			for(category_iterator it = _packages.begin(); it != _packages.end(); ++it) {
 				i += it->second.size();
 			}
 			return i;
@@ -153,7 +153,7 @@ class PackageDatabase {
 
 		/** Write PackageDatabase to file pointed to by stream. */
 		size_t write(FILE *stream) {
-			for(mapiter c = _packages.begin(); c != _packages.end(); ++c) {
+			for(category_iterator c = _packages.begin(); c != _packages.end(); ++c) {
 				/* Write category-header followed by a list of the packages. */
 				vector<Package>::size_type s = c->second.size();
 				CategoryHeader::write(stream, c->first, s);
@@ -161,7 +161,7 @@ class PackageDatabase {
 				io::write_string(stream,  c->first);
 				DB_WRITE_GENERIC(stream, s, vector<Package>::size_type);
 #endif
-				for(pkgiter p = c->second.begin(); p != c->second.end(); ++p) {
+				for(package_iterator p = c->second.begin(); p != c->second.end(); ++p) {
 					/* write package to stream */
 					(*p)->write(stream);
 				}

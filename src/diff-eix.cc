@@ -134,11 +134,11 @@ void
 diff_and_remove(PackageDatabase *db1, PackageDatabase *db2, PortageSettings &psettings, void (*callback)(Package *p1, Package *p2))
 {
 	Keywords accepted_keywords = psettings.getAcceptKeywords();
-	for(PackageDatabase::mapiter cat = db1->begin();
+	for(PackageDatabase::category_iterator cat = db1->begin();
 		cat != db1->end();
 		++cat)
 	{
-		PackageDatabase::pkgiter pkg1 = cat->second.begin();
+		PackageDatabase::package_iterator pkg1 = cat->second.begin();
 		while(pkg1 != cat->second.end())
 		{
 			Package *pkg2 = db2->findPackage((*pkg1)->category, (*pkg1)->name);
