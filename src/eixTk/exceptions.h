@@ -30,9 +30,12 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <errno.h>
 #include <stdarg.h>
+
+#include <eixTk/stringutils.h>
 
 using namespace std;
 
@@ -89,9 +92,18 @@ class ExBasic {
 void inline
 portage_parse_error(const string &file, const int line_nr, const string& line, const ExBasic &e)
 {
-	cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \"" 
-	     << line << "\"" << endl
-	     << "   " << e.getMessage() << endl;
+	cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \""
+	     << line << "\"" << endl;
+
+	// Indent the message correctly
+	vector<string> lines = split_string(e.getMessage(), "\n", false);
+	for(vector<string>::iterator i = lines.begin();
+		i != lines.end();
+		++i)
+	{
+		cerr << "    " << *i << endl;
+	}
+	cerr << endl;
 }
 
 #endif /* __EXCEPTIONS_H__ */
