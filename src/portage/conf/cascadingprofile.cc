@@ -172,7 +172,7 @@ void CascadingProfile::readMakeDefaults()
 
 void CascadingProfile::readPackageMasks(const string &line)
 {
-	m_package_masks.add(new Mask(line, Mask::maskMask));
+	m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */

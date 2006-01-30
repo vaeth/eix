@@ -47,7 +47,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mas
 			if(line.size() == 0 || line[0] == '#')
 				continue;
 			try {
-				Mask *m = new Mask(line, type);
+				Mask *m = new Mask(line.c_str(), type);
 				OOM_ASSERT(m);
 				if(cat_map) {
 					cat_map->add(m);
@@ -173,12 +173,12 @@ bool PortageUserConfig::readKeywords() {
 		try {
 			string::size_type n = lines[i].find_first_of("\t ");
 			if(n == string::npos) {
-				KeywordMask *m = new KeywordMask(lines[i], Mask::maskTypeNone);
+				KeywordMask *m = new KeywordMask(lines[i].c_str(), Mask::maskTypeNone);
 				m->keywords = fscked_arch;
 				m_keywords.add(m);
 			}
 			else {
-				KeywordMask *m = new KeywordMask(lines[i].substr(0, n),
+				KeywordMask *m = new KeywordMask(lines[i].substr(0, n).c_str(),
 				                                 Mask::maskTypeNone);
 				m->keywords = lines[i].substr(n + 1);
 				m_keywords.add(m);
@@ -193,7 +193,10 @@ bool PortageUserConfig::readKeywords() {
 
 void PortageUserConfig::setMasks(Package *p) {
 	/* Set hardmasks */
-	for(MaskList::viterator it = m_mask.get(p)->begin(); it != m_mask.get(p)->end(); ++it) {
+	for(MaskList::viterator it = m_mask.get(p)->begin();
+		it != m_mask.get(p)->end();
+		++it) 
+	{
 		(*it)->checkMask(*p, false, false);
 	}
 }
@@ -218,7 +221,7 @@ void PortageUserConfig::setStability(Package *p, Keywords kw) {
 			it != keyword_masks->end();
 			++it) 
 		{
-			vector<Version*> matches = (*it)->getMatches(*p);
+			vector<Version*> matches = (*it)->match(*p);
 			for(vector<Version*>::iterator  v = matches.begin();
 				v != matches.end();
 				++v) 

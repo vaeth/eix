@@ -41,21 +41,17 @@
 
 using namespace std;
 
-typedef struct {
-	char *str;
-	Mask::Operator op;
-} OperatorTable;
-
-/** Data-driven programming is nice :) */
-static OperatorTable operators[] = {
-	{ "",   Mask::maskOpAll },
-	{ "<" , Mask::maskOpLess },
+/** Data-driven programming is nice :).
+ * Must be in order .. no previous operator is allowed to be a prefix of a
+ * following operator. */
+Mask::OperatorTable Mask::operators[] = {
 	{ "<=", Mask::maskOpLessEqual },
-	{ "=" , Mask::maskOpEqual },
+	{ "<" , Mask::maskOpLess },
 	{ ">=", Mask::maskOpGreaterEqual },
-	{ "~" , Mask::maskOpRevisions },
 	{ ">" , Mask::maskOpGreater },
-	{ NULL, Mask::maskOpAll /* doesn't matter */ }
+	{ "=" , Mask::maskOpEqual },
+	{ "~" , Mask::maskOpRevisions },
+	{ ""  , Mask::maskOpAll /* this must be the last one */ }
 };
 
 const char *
@@ -72,139 +68,154 @@ Mask::getMaskOperator(Mask::Operator type)
 					maskoperator isn't in the table. */
 }
 
-/***************************************************************************/
-/* TODO: How about making this one expression? (appro) */
-/* Regular expressions, used by splitMaskString */
-Regex re_mask1("^([~<=>]*)([a-z0-9-]+)/([^ \t]+)$", 0);
-Regex re_rest2name( "(.*)-[^a-zA-Z].*", 0 );
-Regex re_rest2ver(".*-([^a-zA-Z].*)", 0);
-/***************************************************************************/
-
 /** Constructor. */
-Mask::Mask( string strMask, Type type)
+Mask::Mask(const char *str, Type type)
 {
-	_category = _name = NULL;
-	_wcpos = 0;
-	_type = type;
-	splitMaskString( strMask );
-}
-
-/** Deconstructor, frees rootcat, subcat, name, ver */
-Mask::~Mask()
-{
-	free(_category);
-	free(_name);
+	m_is_wildcard = false;
+	m_type = type;
+	parseMask(str);
 }
 
 /** split a "mask string" into its components */
-void Mask::splitMaskString( string strMask ) throw(ExBasic)
+void
+Mask::parseMask(const char *str) throw(ExBasic)
 {
-	regmatch_t rm[6];
-	const char *strm = strMask.c_str();
-	char *comp_operator = NULL,
-		 *rest = NULL,
-		 *wildcardptr = NULL,
-		 *ver = NULL;
-
-	/* split strm into compararator, cat, subcat, rest */
-	if( regexec( re_mask1.get(), strm, 4, rm, 0  ) == 0 ) {
-		OOM_ASSERT(comp_operator = strndup( &(strm[rm[1].rm_so]), rm[1].rm_eo - rm[1].rm_so));
-		OOM_ASSERT(_category     = strndup( &(strm[rm[2].rm_so]), rm[2].rm_eo - rm[2].rm_so));
-		OOM_ASSERT(rest          = strndup( &(strm[rm[3].rm_so]), rm[3].rm_eo - rm[3].rm_so));
-	} else
-		throw ExBasic("Unable to split into compararator (optional), category and rest.");
-
 	// determine comparison operator
 	int i = 0;
-	for( ;operators[i].str != NULL; ++i) {
-		if( strcmp(comp_operator, operators[i].str) == 0 ) {
-			_op = operators[i].op;
+	for(; operators[i].str != NULL; ++i)
+	{
+		if(strncmp(str, operators[i].str,
+		           strlen(operators[i].str)) == 0)
+		{
+			m_operator = operators[i].op;
 			break;
 		}
 	}
-	if(operators[i].str == NULL) {
-		throw ExBasic("Unkown operator \"%s\".", comp_operator);
-	}
 
-	// split rest into name / version
-	if( regexec( re_rest2ver.get(), rest, 2, rm, 0 ) == 0 ) {
-		OOM_ASSERT(ver = strndup( &(rest[rm[1].rm_so]), rm[1].rm_eo - rm[1].rm_so));
-		if( regexec( re_rest2name.get(), rest, 2, rm, 0 ) == 0 )
-			OOM_ASSERT(_name = strndup( &(rest[rm[1].rm_so]), rm[1].rm_eo - rm[1].rm_so));
+	// Skip the operator-part
+	str += strlen(operators[i].str);
+
+	// Get the category
+	const char *p = str;
+	while(*p != '/')
+	{
+		if(!isalnum(*p) && *p != '-')
+		{
+			throw ExBasic("Can't read category.");
+		}
+		++p;
+	}
+	m_category = string(str, p - str);
+
+	// Skip category-part
+	str = p + 1;
+
+	// Get the rest (name-version|name)
+	if(m_operator != maskOpAll)
+	{
+		// There must be a version somewhere
+		p = ExplodeAtom::get_start_of_version(str);
+
+		if(p == NULL)
+		{
+			throw ExBasic("You have a operator "
+			              "but we can't find a version-part.");
+		}
+
+		m_name = string(str, (p - 1) - str);
+		str = p;
+
+		// Check for wildcard-version
+		const char *wildcard = strchr(str, '*');
+
+		if(wildcard && wildcard[1] != '\0')
+		{
+			throw ExBasic("A '*' is only valid at the end of a version-string.");
+		}
+
+		// Only the = operator can have a wildcard-version
+		if(m_operator != maskOpEqual && wildcard)
+		{
+			// A finer error-reporting
+			if(m_operator != maskOpRevisions)
+			{
+				throw ExBasic("A wildcard is only valid with the = operator.");
+			}
+			else
+			{
+				throw ExBasic(
+					"A wildcard is only valid with the = operator.\n"
+					"Portage would also accept something like ~app-shells/bash-3*,\n"
+					"but behave just like ~app-shells/bash-3."
+					);
+			}
+		}
+
+		if(wildcard)
+		{
+			m_is_wildcard = true;
+			m_full = string(str, strlen(str) - 1);
+		}
 		else
-			throw ExBasic("Unable to split \"%s\" into name-version (version is optional).", rest, strm);
-	}
-	else {
-		OOM_ASSERT(_name = strdup( rest ));
-		OOM_ASSERT(ver = strdup(""));
-	}
-
-	if((wildcardptr = strchr( ver, '*' )) == NULL) {
-		/* If there is a version we need to parse it. */
-		if(_op != maskOpAll) {
-			parseVersion(ver);
+		{
+			parseVersion(str);
 		}
 	}
-	else {
-		_wcpos = (wildcardptr - ver);
-		parseVersion(ver, _wcpos);
+	else
+	{
+		// Everything else is the package-name
+		m_name = string(str);
 	}
-
-	// clean up
-	free(ver);
-	free(rest);
-	free(comp_operator);
 }
 
 /** Tests if the mask applies to a Version.
  * @param name name of package (NULL if shall not be tested)
  * @param category category of package (NULL if shall not be tested)
  * @return true if applies. */
-bool Mask::test(Version& ve, BasicVersion *bv)
+bool
+Mask::test(BasicVersion *bv)
 {
-	if(bv == NULL) {
-		bv = this;
+	if(m_is_wildcard)
+	{
+		return strncmp(m_full.c_str(), bv->getFull(),
+		               m_full.size()) == 0;
 	}
 
-	switch(_op) {
+	switch(m_operator)
+	{
 		case maskOpAll:
 			return true;
+
 		case maskOpLess:
-			if( ve < *bv)
-				return true;
-			return false;
+			return (*bv < static_cast<BasicVersion>(*this));
+
 		case maskOpLessEqual:
-			if( ve <= *bv)
-				return true;
-			return false;
+			return (*bv <= static_cast<BasicVersion>(*this));
+
 		case maskOpEqual:
-			if( ve == *bv)
-				return true;
-			return false;
+			return (*bv == static_cast<BasicVersion>(*this));
+
 		case maskOpGreaterEqual:
-			if( ve >= *bv)
-				return true;
-			return false;
+			return (*bv >= static_cast<BasicVersion>(*this));
+
 		case maskOpGreater:
-			if( ve > *bv)
-				return true;
-			return false;
+			return (*bv > static_cast<BasicVersion>(*this));
+
 		case maskOpRevisions:
-			if( bv->comparePrimary(ve) == 0
-					&& ( bv->getPrimarychar() == ve.getPrimarychar() )
-					&& ( bv->getSuffixlevel() == ve.getSuffixlevel() )
-					&& ( bv->getSuffixnum() == ve.getSuffixnum() ) )
-				return true;
-			return false;
+			return (comparePrimary(*bv) == 0
+			        && (getPrimarychar() == bv->getPrimarychar() )
+			        && (getSuffixlevel() == bv->getSuffixlevel() )
+			        && (getSuffixnum() == bv->getSuffixnum() ) );
 	}
-	return false; /* Never reached */
+	return false; // Never reached
 }
 
+#if 0
 void Mask::expand(Package *pkg) {
 	/* Test every version if our mask-strings would match. */
 	vector<Version*>::iterator vi = pkg->begin();
 	while(vi != pkg->end()) {
-		if(strncmp((*vi)->getFull(), getVersion(), _wcpos) == 0) {
+		if(strncmp((*vi)->getFull(), getVersion(), m_wcpos) == 0) {
 			/* For every matching version, expand and apply to every version. */
 			vector<Version*>::iterator _vi = pkg->begin();
 			while(_vi != pkg->end()) {
@@ -215,27 +226,19 @@ void Mask::expand(Package *pkg) {
 		++vi;
 	}
 }
+#endif
 
 vector<Version*>
-Mask::getMatches(Package &pkg) {
+Mask::match(Package &pkg)
+{
 	vector<Version*> ret;
-	if(_wcpos != 0) {
-		/* Test every version. */
-		for(vector<Version*>::iterator version = pkg.begin(); version != pkg.end(); ++version) {
-			if(strncmp((*version)->getFull(), getVersion(), _wcpos) == 0) {
-				for(vector<Version*>::iterator v = pkg.begin(); v != pkg.end(); ++v) {
-					if(test(**v, (BasicVersion*)*version))
-						ret.push_back(*v);
-				}
-			}
-		}
-		vector<Version*>::iterator new_end = unique(ret.begin(), ret.end());
-		ret.erase(new_end, ret.end());
-	}
-	else {
-		for(vector<Version*>::iterator version = pkg.begin(); version != pkg.end(); ++version) {
-			if(test(**version, this))
-				ret.push_back(*version);
+	for(Package::iterator it = pkg.begin();
+		it != pkg.end();
+		++it)
+	{
+		if(test(*it))
+		{
+			ret.push_back(*it);
 		}
 	}
 	return ret;
@@ -245,63 +248,55 @@ Mask::getMatches(Package &pkg) {
 void 
 Mask::checkMask(Package& pkg, const bool check_category, const bool check_name)
 {
-	if((check_name && pkg.name.c_str() != _name)
-		|| (check_category && pkg.category.c_str() != _category))
+	if((check_name && pkg.name.c_str() != m_name)
+		|| (check_category && pkg.category.c_str() != m_category))
 		return;
 
-	/* If we have a wildcard we need to expand it first.
-	 * TODO: cleanup and perhaps rethink the whole thing */
-	if(_wcpos != 0) {
-		expand(&pkg);
-	}
-	else {
-		vector<Version*>::iterator vi = pkg.begin();
-		while(vi != pkg.end()) {
-			apply(*(*vi++));
-		}
+	for(Package::iterator i = pkg.begin();
+		i != pkg.end();
+		++i)
+	{
+		apply(*i);
 	}
 }
 
 /** Sets the stability & masked members of ve according to the mask.
  * @param ve Version instance to be set
  * @param name name of package (NULL if shall not be tested) */
-void Mask::apply(Version& ve, BasicVersion *bv)
+void Mask::apply(Version *ve)
 {
-	if(bv == NULL) {
-		bv = this;
-	}
 	/* Don't do sensless checking. */
-	if(        (_type == maskUnmask
-				&& !ve.isPackageMask())     /* Unmask but is not masked */
-			|| (_type == maskMask
-				&& ve.isPackageMask())      /* Mask but is already masked */
-			|| (_type == maskAllowedByProfile
-				&& ve.isProfileMask())      /* Won't change anything cause already masked by profile */
-			|| (_type == maskInSystem
-				&& ve.isSystem()
-				&& ve.isProfileMask())
-			|| (_type == maskTypeNone)      /* We have nothing to masked. */
+	if(        (m_type == maskUnmask
+				&& !ve->isPackageMask())     /* Unmask but is not masked */
+			|| (m_type == maskMask
+				&& ve->isPackageMask())      /* Mask but is already masked */
+			|| (m_type == maskAllowedByProfile
+				&& ve->isProfileMask())      /* Won't change anything cause already masked by profile */
+			|| (m_type == maskInSystem
+				&& ve->isSystem()
+				&& ve->isProfileMask())
+			|| (m_type == maskTypeNone)      /* We have nothing to masked. */
 			)
 		return;
 
-	switch(_type) {
+	switch(m_type) {
 		case maskUnmask:
-			if(test(ve, bv))
-				ve &= ~Keywords::PACKAGE_MASK;
+			if(test(ve))
+				*ve &= ~Keywords::PACKAGE_MASK;
 			return;
 		case maskMask:
-			if(test(ve, bv))
-				ve |= Keywords::PACKAGE_MASK;
+			if(test(ve))
+				*ve |= Keywords::PACKAGE_MASK;
 			return;
 		case maskInSystem:
-			if( test(ve, bv) )
-				ve |= Keywords::SYSTEM_PACKAGE;
+			if( test(ve) )
+				*ve |= Keywords::SYSTEM_PACKAGE;
 			else
-				ve |= Keywords::PROFILE_MASK;
+				*ve |= Keywords::PROFILE_MASK;
 			return;
 		case maskAllowedByProfile:
-			if(!test(ve, bv))
-				ve |= Keywords::PROFILE_MASK;
+			if(!test(ve))
+				*ve |= Keywords::PROFILE_MASK;
 			return;
 		case maskTypeNone:
 			return;

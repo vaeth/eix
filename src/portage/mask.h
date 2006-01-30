@@ -35,9 +35,15 @@
 
 using namespace std;
 
+//  >app-shells/bash-3*      <- NOT ALLOWED
+//  ~app-shells/bash-3*      <- OK, BUT DOESN'T SELECT bash-3.0-r12; SELECT
+//                              ONLY ~app-shells/bash-3
+//  =app-shells/bash-3*      <- OK
+
 /** A class for parsing masking definitions
  * like those in the profile and /etc/portage/package.(un)mask */
 class Mask : public BasicVersion {
+
 	public:
 		/** Describes the type of a mask.
 		 * Nothing specific, entry in "packages"-file but not in
@@ -57,26 +63,34 @@ class Mask : public BasicVersion {
 			maskOpRevisions
 		} Operator;
 
+		typedef struct {
+			char *str;
+			Mask::Operator op;
+		} OperatorTable;
+
+		static OperatorTable operators[];
+
 	private:
-		Operator _op; /**< Operator for mask. */
-		Type _type;   /**< Mask type for this mask. */
-		int _wcpos;   /**< Position to asterisk in version-string. */
-		char *_category, /**< category */
-			 *_name;     /**< package name */
+		Operator m_operator; /**< Operator for mask. */
+		Type m_type;   /**< Mask type for this mask. */
+		bool m_is_wildcard;
+
+		string m_category, /**< category */
+			   m_name;     /**< package name */
 
 		/** split a "mask string" into its components
 		 * @param str_mask the string to be dissected
 		 * @throw ExBasic on errors */
-		void splitMaskString(string str_mask) throw(ExBasic);
+		void parseMask(const char *str) throw(ExBasic);
 
 		/** Sets the stability & masked members of ve according to the mask
 		 * @param ve Version instance to be set */
-		void apply(Version& ve, BasicVersion *bv = NULL);
+		void apply(Version *ve);
 
 		/** Tests if the mask applies to a Version.
 		 * @param ve test this version
 		 * @return true if applies. */
-		bool test(Version& ve, BasicVersion *bv = NULL);
+		bool test(BasicVersion *bv);
 
 		void expand(Package *pkg);
 
@@ -84,32 +98,31 @@ class Mask : public BasicVersion {
 
 	public:
 		/** Parse mask-string. */
-		Mask(string strMask, Type type);
+		Mask(const char *str, Type type);
 
-		/** Free category, name, ver */
-		~Mask();
-
+#if 0
 		/** Tests if the mask matches a certain cat/pkg pair.
 		 * @param name name of package (NULL if shall not be tested)
 		 * @param category category of package (NULL if shall not be tested) */
 		bool catpkgTest(const char *name, const char *category) {
-			return !((name && strcmp(name, _name))
-					|| (category && strcmp(category, _category)));
+			return !((name && strcmp(name, m_name))
+					|| (category && strcmp(category, m_category)));
 		}
+#endif
 
 
-		vector<Version*> getMatches(Package &pkg);
+		vector<Version*> match(Package &pkg);
 
 		const char *getVersion() {
-			return ((BasicVersion*)this)->getFull();
+			return m_full.c_str();
 		}
 
 		const char *getName() {
-			return _name;
+			return m_name.c_str();
 		}
 
 		const char *getCategory() {
-			return _category;
+			return m_category.c_str();
 		}
 
 		/** Sets the stability members of all version in package according to the mask.
@@ -118,17 +131,14 @@ class Mask : public BasicVersion {
 		 * @param check_category true if category should be tested */
 		void checkMask(Package& pkg, const bool check_category, const bool check_name);
 		
-		bool test(Package &pkg, Version &v);
-			
 		/** Print mask. */
 		friend ostream& operator<< (ostream& os, Mask& m);
 };
 
 class KeywordMask : public Mask {
 	public:
-		KeywordMask(string strMask, Type type)
-		: Mask(strMask, type) {
-		}
+
+		KeywordMask(const char *str, Type type) : Mask(str, type) {}
 
 		string keywords;
 };
@@ -201,14 +211,14 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 };
 
 inline ostream& operator<< (ostream& os, Mask& m) {
-	switch(m._type) {
+	switch(m.m_type) {
 		case Mask::maskTypeNone:          os << string("None       "); break;
 		case Mask::maskAllowedByProfile:  os << string("Allowed    "); break;
 		case Mask::maskInSystem:          os << string("inSystem   "); break;
 		case Mask::maskMask:              os << string("Mask       "); break;
 		case Mask::maskUnmask:            os << string("Unmask     "); break;
 	}
-	switch(m._op) {
+	switch(m.m_operator) {
 		case Mask::maskOpAll:          os << string("  "); break;
 		case Mask::maskOpEqual:        os << string(" ="); break;
 		case Mask::maskOpLess:         os << string(" <"); break;
