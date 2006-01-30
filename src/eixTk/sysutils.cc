@@ -25,7 +25,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "sysutils.h"
+#include <eixTk/exceptions.h>
 
 #include <sys/types.h>
 #include <pwd.h>
@@ -50,18 +50,6 @@ static bool check_user_in_grp_struct(struct group *grp)
 	if(is_on_list(grp->gr_mem, pwd->pw_name))
 		return true;
 	return false;
-}
-
-bool is_writable(const char *db_file) throw(ExBasic)
-{
-	struct stat stat_buf;
-	if(stat(db_file, &stat_buf) != 0) {
-		throw(ExBasic("DB-File %s not found. ", db_file));
-	}
-	gid_t g;
-	return (get_gid_of("portage", &g)
-			&& (stat_buf.st_mode & (S_IWGRP|S_IRGRP)) == (S_IWGRP|S_IRGRP)
-			&& stat_buf.st_gid == g );
 }
 
 bool user_in_group(const char *group_name)
@@ -89,6 +77,19 @@ bool get_gid_of(const char *name, gid_t *g)
 		return false;
 	*g = grp->gr_gid;
 	return true;
+}
+
+
+bool is_writable(const char *file) throw(ExBasic)
+{
+	struct stat stat_buf;
+	if(stat(file, &stat_buf) != 0) {
+		throw(ExBasic("file %s not found. ", file));
+	}
+	gid_t g;
+	return (get_gid_of("portage", &g)
+			&& (stat_buf.st_mode & (S_IWGRP|S_IRGRP)) == (S_IWGRP|S_IRGRP)
+			&& stat_buf.st_gid == g );
 }
 
 /** Return mtime of file. */

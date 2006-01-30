@@ -28,12 +28,12 @@
 #ifndef __SYSUTILS_H__
 #define __SYSUTILS_H__
 
-#include <eixTk/exceptions.h>
+class ExBasic;
 
 #include <unistd.h>
 
-/** Return false if the db_file is not writable/readable by users in the group portage. */
-bool is_writable(const char *db_file) throw(ExBasic);
+/** Return false if the file is not writable/readable by users in the group portage. */
+bool is_writable(const char *file) throw(ExBasic);
 
 /** Return true if the current user is in the group_name. */
 bool user_in_group(const char *group_name);
