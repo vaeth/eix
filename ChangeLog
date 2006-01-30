@@ -16,6 +16,8 @@
 	  parser-code.
 	- Added a compare(..) method to basicversion. This compare-method is used
 	  in all other comparators, thus decreasing LOC and a bit more efficient.
+	- Rewrote big parts of Mask; Be more verbose about parse-errors; Correctly
+	  parse wildcard-stuff; Remove regular-expression stuff;
 
 *eix-0.5
 
