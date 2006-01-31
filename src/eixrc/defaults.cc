@@ -119,12 +119,12 @@ eixrc.addDefault(
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTDIR_CACHE_METHOD",
-			"flat","Portage cache-backend that should be used for PORTDIR (flat/cdb/none).")
+			"backport","Portage cache-backend that should be used for PORTDIR (flat/cdb/none/backport).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERLAY_CACHE_METHOD",
-			"none","Portage cache-backend that should be used for the overlays (flat/cdb/none).")
+			"none","Portage cache-backend that should be used for the overlays (flat/cdb/none/backport).")
 		);
 
 eixrc.addDefault(

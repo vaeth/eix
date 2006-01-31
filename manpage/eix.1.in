@@ -333,11 +333,11 @@ cache-backend for portage (cdb with cpickle'd dictionaries as values).
 .SS
 .BR flat
 You are using the default cache-backend (plain text files).
-Default for B<PORTDIR_CACHE_METHOD>.
 .TP
 .SS
 .BR backport 
-If you are using that backport (from portage-3 to portage-2) you should use this one.
+If you are using that backport-stuff (from portage-3 to portage-2) you should use this one.
+Default for B<PORTDIR_CACHE_METHOD>.
 .TP
 .SS
 .BR none

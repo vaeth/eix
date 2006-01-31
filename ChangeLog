@@ -18,6 +18,7 @@
 	  in all other comparators, thus decreasing LOC and a bit more efficient.
 	- Rewrote big parts of Mask; Be more verbose about parse-errors; Correctly
 	  parse wildcard-stuff; Remove regular-expression stuff;
+	- Backport-cache is now default for PORTDIR_CACHE_METHOD.
 
 *eix-0.5
 
