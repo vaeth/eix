@@ -105,10 +105,10 @@ PortageSettings::PortageSettings()
 		(*this)["ACCEPT_KEYWORDS"].append(string(" ") + getenv("ACCEPT_KEYWORDS"));
 	}
 	
-	_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
-	_accepted_keyword = resolve_plus_minus(_accepted_keyword);
-	(*this)["ACCEPT_KEYWORDS"] = join_vector(_accepted_keyword);
-	_accepted_keywords.set((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
+	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
+	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
+	(*this)["ACCEPT_KEYWORDS"] = join_vector(m_accepted_keyword);
+	m_accepted_keywords.set((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
 }
 		
 PortageSettings::~PortageSettings()
@@ -125,25 +125,25 @@ PortageSettings::~PortageSettings()
  * Reads categories on first call. */
 vector<string> *PortageSettings::getCategories()
 {
-	if(_categories.size() == 0) {
+	if(m_categories.size() == 0) {
 		/* Merge categories from /etc/portage/categories and
 		 * portdir/profile/categories */
-		pushback_lines(USER_CATEGORIES_FILE, &_categories);
-		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &_categories);
-		sort(_categories.begin(), _categories.end());
-		unique(_categories.begin(),_categories.end());
+		pushback_lines(USER_CATEGORIES_FILE, &m_categories);
+		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
+		sort(m_categories.begin(), m_categories.end());
+		unique(m_categories.begin(),m_categories.end());
 	}
-	return &_categories;
+	return &m_categories;
 }
 
 /** Read maskings & unmaskings as well as user-defined ones */
 MaskList *PortageSettings::getMasks()
 {
-	if(_masks.size() == 0) {
-		if(!grab_masks(string((*this)["PORTDIR"]+"profiles/package.mask").c_str(), Mask::maskMask, &_masks) )
+	if(m_masks.size() == 0) {
+		if(!grab_masks(string((*this)["PORTDIR"]+"profiles/package.mask").c_str(), Mask::maskMask, &m_masks) )
 			WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
 	}
-	return &(_masks);
+	return &(m_masks);
 }
 
 

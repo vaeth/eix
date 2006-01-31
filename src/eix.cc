@@ -1,28 +1,28 @@
 /***************************************************************************
- *	 eix is a small utility for searching ebuilds in the				   *
- *	 Gentoo Linux portage system. It uses indexing to allow quick searches *
- *	 in package descriptions with regular expressions.					   *
- *																		   *
- *	 https://sourceforge.net/projects/eix								   *
- *																		   *
- *	 Copyright (c)														   *
- *	   Wolfgang Frisch <xororand@users.sourceforge.net>					   *
- *	   Emil Beinroth <emilbeinroth@gmx.net>								   *
- *																		   *
- *	 This program is free software; you can redistribute it and/or modify  *
- *	 it under the terms of the GNU General Public License as published by  *
- *	 the Free Software Foundation; either version 2 of the License, or	   *
- *	 (at your option) any later version.								   *
- *																		   *
- *	 This program is distributed in the hope that it will be useful,	   *
- *	 but WITHOUT ANY WARRANTY; without even the implied warranty of		   *
- *	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the		   *
- *	 GNU General Public License for more details.						   *
- *																		   *
- *	 You should have received a copy of the GNU General Public License	   *
- *	 along with this program; if not, write to the						   *
- *	 Free Software Foundation, Inc.,									   *
- *	 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.			   *
+ *   eix is a small utility for searching ebuilds in the                   *
+ *   Gentoo Linux portage system. It uses indexing to allow quick searches *
+ *   in package descriptions with regular expressions.                     *
+ *                                                                         *
+ *   https://sourceforge.net/projects/eix                                  *
+ *                                                                         *
+ *   Copyright (c)                                                         *
+ *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
+ *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
 #include "../config.h"
@@ -124,7 +124,7 @@ dump_help(int exit_code)
 }
 
 /** On segfault: show some instructions to help us find the bug. */
-void 
+void
 sig_handler(int sig)
 {
 	if(sig == SIGSEGV)
@@ -145,19 +145,21 @@ sig_handler(int sig)
 /*	If you want to add a new parameter to eix just insert a line into
  *	long_options. If you only want a longopt, add a new define.
  *
- *	-- ebeinroth 
+ *	-- ebeinroth
  */
 
-#define O_FMT				 256
-#define O_FMT_VERBOSE		 257
-#define O_FMT_COMPACT		 258
-#define O_EXC_OVERLAY		 259
-#define O_DUMP				 260
-#define O_COLOR				 261
-#define O_IGNORE_ETC_PORTAGE 262
-#define O_USE				 263
-#define O_CURRENT			 264
-#define O_NORC				 267
+enum cli_options {
+	O_FMT = 256,
+	O_FMT_VERBOSE,
+	O_FMT_COMPACT,
+	O_EXC_OVERLAY,
+	O_DUMP,
+	O_COLOR,
+	O_IGNORE_ETC_PORTAGE,
+	O_USE,
+	O_CURRENT,
+	O_NORC
+};
 
 char *format_normal, *format_verbose, *format_compact;
 
@@ -180,51 +182,51 @@ static struct LocalOptions {
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
 	// Global options
-	{ "quiet",		  'q',	   Option::BOOLEAN,		 (void *) &rc_options.be_quiet },
+	{ "quiet",        'q',     Option::BOOLEAN,      (void *) &rc_options.be_quiet },
 
-	{ "nocolor",	  'n',	   Option::BOOLEAN_T,	 (void *) &format.no_color },
-	{ "force-color",  'F',	   Option::BOOLEAN_F,	 (void *) &format.no_color },
-	{ "versionlines", 'l',	   Option::BOOLEAN_T,	 (void *) &format.style_version_lines },
-	
-	{ "verbose",	  'v',	   Option::BOOLEAN,		 (void *) &rc_options.verbose_output },
-	{ "compact",	  'c',	   Option::BOOLEAN,		 (void *) &rc_options.compact_output },
-	{ "help",		  'h',	   Option::BOOLEAN_T,	 (void *) &rc_options.show_help },
-	{ "version",	  'V',	   Option::BOOLEAN_T,	 (void *) &rc_options.show_version },
-	{ "dump",		  O_DUMP,  Option::BOOLEAN_T,	 (void *) &rc_options.dump_eixrc },
-	{ "debug",		  'd',	   Option::BOOLEAN_T,	 (void *) &rc_options.do_debug },
-	
-	{ "use",		  O_USE,   Option::STRING,		 (void *) &rc_options.use_this_cache},
+	{ "nocolor",      'n',     Option::BOOLEAN_T,    (void *) &format.no_color },
+	{ "force-color",  'F',     Option::BOOLEAN_F,    (void *) &format.no_color },
+	{ "versionlines", 'l',     Option::BOOLEAN_T,    (void *) &format.style_version_lines },
+
+	{ "verbose",      'v',     Option::BOOLEAN,      (void *) &rc_options.verbose_output },
+	{ "compact",      'c',     Option::BOOLEAN,      (void *) &rc_options.compact_output },
+	{ "help",         'h',     Option::BOOLEAN_T,    (void *) &rc_options.show_help },
+	{ "version",      'V',     Option::BOOLEAN_T,    (void *) &rc_options.show_version },
+	{ "dump",         O_DUMP,  Option::BOOLEAN_T,    (void *) &rc_options.dump_eixrc },
+	{ "debug",        'd',     Option::BOOLEAN_T,    (void *) &rc_options.do_debug },
+
+	{ "use",          O_USE,   Option::STRING,       (void *) &rc_options.use_this_cache},
 	{ "is-current",   O_CURRENT, Option::BOOLEAN_T,  (void *) &rc_options.is_current},
-	
+
 	{ "ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T, (void *) &rc_options.ignore_etc_portage },
 
-	{ "format",			O_FMT,		   Option::STRING,	 (void *) &(format_normal) },
-	{ "format-verbose", O_FMT_VERBOSE, Option::STRING,	 (void *) &(format_verbose) },
-	{ "format-compact", O_FMT_COMPACT, Option::STRING,	 (void *) &(format_compact) },
+	{ "format",         O_FMT,         Option::STRING,   (void *) &(format_normal) },
+	{ "format-verbose", O_FMT_VERBOSE, Option::STRING,   (void *) &(format_verbose) },
+	{ "format-compact", O_FMT_COMPACT, Option::STRING,   (void *) &(format_compact) },
 
 	// Options for criteria
-	{ "installed",	   'I', Option::NONE, NULL },
+	{ "installed",     'I', Option::NONE, NULL },
 	{ "dup-versions",  'D', Option::NONE, NULL },
-	{ "not",		   '!', Option::NONE, NULL },
+	{ "not",           '!', Option::NONE, NULL },
 
 	// Algorithms for a criteria
-	{ "fuzzy",		   'f', Option::NONE, NULL },
-	{ "regex",		   'r', Option::NONE, NULL },
-	{ "exact",		   'e', Option::NONE, NULL },
-	{ "pattern",	   'p', Option::NONE, NULL },
+	{ "fuzzy",         'f', Option::NONE, NULL },
+	{ "regex",         'r', Option::NONE, NULL },
+	{ "exact",         'e', Option::NONE, NULL },
+	{ "pattern",       'p', Option::NONE, NULL },
 
 	// What to match in this criteria
-	{ "name",		   's', Option::NONE, NULL },
-	{ "category",	   'C', Option::NONE, NULL },
+	{ "name",          's', Option::NONE, NULL },
+	{ "category",      'C', Option::NONE, NULL },
 	{ "category-name", 'A', Option::NONE, NULL },
 	{ "description",   'S', Option::NONE, NULL },
-	{ "license",	   'L', Option::NONE, NULL },
-	{ "homepage",	   'H', Option::NONE, NULL },
-	{ "provide",	   'P', Option::NONE, NULL },
+	{ "license",       'L', Option::NONE, NULL },
+	{ "homepage",      'H', Option::NONE, NULL },
+	{ "provide",       'P', Option::NONE, NULL },
 
 	// What to do with the next one
-	{ "or",			   'o', Option::NONE, NULL },
-	{ "and",		   'a', Option::NONE, NULL },
+	{ "or",            'o', Option::NONE, NULL },
+	{ "and",           'a', Option::NONE, NULL },
 
 	{ 0 , 0, Option::NONE, NULL }
 };
@@ -238,22 +240,22 @@ setup_defaults()
 	// Setup defaults
 	(void) memset(&rc_options, 0, sizeof(rc_options));
 
-	format_verbose			   = (char*) rc["FORMAT_VERBOSE"].c_str();
-	format_compact			   = (char*) rc["FORMAT_COMPACT"].c_str();
-	format_normal			   = (char*) rc["FORMAT"].c_str();
+	format_verbose             = (char*) rc["FORMAT_VERBOSE"].c_str();
+	format_compact             = (char*) rc["FORMAT_COMPACT"].c_str();
+	format_normal              = (char*) rc["FORMAT"].c_str();
 
-	format.color_masked		   = rc["COLOR_MASKED"];
-	format.color_unstable	   = rc["COLOR_UNSTABLE"];
-	format.color_stable		   = rc["COLOR_STABLE"];
+	format.color_masked        = rc["COLOR_MASKED"];
+	format.color_unstable      = rc["COLOR_UNSTABLE"];
+	format.color_stable        = rc["COLOR_STABLE"];
 	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
 
-	format.no_color			   = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
+	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 
 	rc_options.use_this_cache = EIX_CACHEFILE;
 }
 
-void 
+void
 print_overlay_table(DBHeader &header)
 {
 	for(int i = 1;
@@ -385,7 +387,7 @@ run_eix(int argc, char** argv)
 		accepted_keywords = portagesettings.getAcceptKeywords();
 	}
 
-	bool need_overlay_table = false; 
+	bool need_overlay_table = false;
 	for(vector<Package*>::iterator it = matches.begin();
 		it != matches.end();
 		++it)

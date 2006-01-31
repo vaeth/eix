@@ -83,13 +83,14 @@ class PortageUserConfig;
 /** Holds Portage's settings, e.g. masks, categories, overlay paths.
  * Reads needed files if content is requested .. so don't worry about initialization :) */
 class PortageSettings : public map<string,string> {
+
 	private:
-		vector<string> _categories; /**< Vector of all allowed categories. */
-		vector<string> _accepted_keyword;
+		vector<string> m_categories; /**< Vector of all allowed categories. */
+		vector<string> m_accepted_keyword;
 
 		/** Mapping of category->masks (first all masks, then all unmasks) */
-		MaskList _masks;  
-		Keywords _accepted_keywords;
+		MaskList m_masks;  
+		Keywords m_accepted_keywords;
 
 	public:
 		/** Your cascading profile. */
@@ -105,11 +106,11 @@ class PortageSettings : public map<string,string> {
 		~PortageSettings();
 
 		vector<string> &getAcceptKeyword() {
-			return _accepted_keyword;
+			return m_accepted_keyword;
 		}
 		
 		Keywords getAcceptKeywords() {
-			return _accepted_keywords;
+			return m_accepted_keywords;
 		}
 		
 		/** Read maskings & unmaskings from the profile as well as user-defined ones */

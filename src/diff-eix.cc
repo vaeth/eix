@@ -68,22 +68,24 @@ Node           *format_new, *format_delete, *format_changed;
 static void
 print_help(int ret)
 {
-	printf( "diff-eix [options] old-cache [new-cache]\n"
-			"\n"
-			" -n, --nocolor           don't use colors in output\n"
-			" -F, --force-color       force colors on things that are not a terminal\n"
-			"     --dump              dump variables to stdout\n"
-			"\n"
-			" -h, --help              show a short help screen\n"
-			" -V, --version           show version-string\n"
-			"\n"
-			"If you omit the new-cache parameter, we'll use the default cache-file ("EIX_CACHEFILE").\n"
-			"\n"
-			"You can contact the developers in #eix on irc.freenode.net or on\n"
-			"the sourceforge-page "PACKAGE_BUGREPORT".\n"
-			"There is also a wiki at "EIX_WIKI".\n"
-			"This program is covered by the GNU General Public License. See COPYING for\n"
-			"further information.\n");
+	printf( 
+		"diff-eix [options] old-cache [new-cache]\n"
+		"\n"
+		" -n, --nocolor           don't use colors in output\n"
+		" -F, --force-color       force colors on things that are not a terminal\n"
+		"     --dump              dump variables to stdout\n"
+		"\n"
+		" -h, --help              show a short help screen\n"
+		" -V, --version           show version-string\n"
+		"\n"
+		"If you omit the new-cache parameter, we'll use the default cache-file ("EIX_CACHEFILE").\n"
+		"\n"
+		"You can contact the developers in #eix on irc.freenode.net or on\n"
+		"the sourceforge-page "PACKAGE_BUGREPORT".\n"
+		"There is also a wiki at "EIX_WIKI".\n"
+		"This program is covered by the GNU General Public License. See COPYING for\n"
+		"further information.\n"
+		);
 
 	if(ret != -1) {
 		exit(ret);
@@ -94,8 +96,10 @@ bool cli_show_help    = false,
 	 cli_show_version = false,
 	 cli_dump_eixrc   = false;
 
-#define O_DUMP        300
-#define O_FORCE_COLOR 301
+enum cli_options {
+	O_DUMP = 300,
+	O_FORCE_COLOR
+};
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {

@@ -108,10 +108,12 @@ print_help(void)
 	exit(0);
 }
 
-#define O_DUMP          260
-#define EXCLUDE_OVERLAY 266
-#define ONLY_NEEDED     267
-#define O_PRINT_MASKS   268
+enum cli_options {
+	O_DUMP = 260,
+	O_EXCLUDE,
+	ONLY_NEEDED,
+	O_PRINT_MASKS
+};
 
 bool quiet = false,
 	 show_help = false,
@@ -126,7 +128,7 @@ static struct Option long_options[] = {
 	{"dump",           O_DUMP,           Option::BOOLEAN_T, (void *) &dump_eixrc },
 	{"help",           'h',              Option::BOOLEAN_T, (void *) &show_help }, /* show a short help screen */
 	{"version",        'V',              Option::BOOLEAN_T, (void *) &show_version},
-	{"exclude-overlay", EXCLUDE_OVERLAY, Option::NONE,       NULL }, /* exclude a overlay from the update-process. */
+	{"exclude-overlay", O_EXCLUDE,       Option::NONE,       NULL }, /* exclude a overlay from the update-process. */
 	{"print-masks",     O_PRINT_MASKS,   Option::BOOLEAN_T, (void *) &print_masks_only },
 	{ 0 ,              0 ,               Option::NONE,       NULL }
 };
@@ -148,7 +150,7 @@ run_update_eix(int argc, char *argv[])
 	{
 		switch(current_param->opt)
 		{
-			case EXCLUDE_OVERLAY:
+			case O_EXCLUDE:
 				++current_param;
 				if(! (current_param != argreader.end()
 					  && current_param->type == Parameter::ARGUMENT)) {
