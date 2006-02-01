@@ -119,7 +119,7 @@ eixrc.addDefault(
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTDIR_CACHE_METHOD",
-			"backport","Portage cache-backend that should be used for PORTDIR (flat/cdb/none/backport).")
+			PORTDIR_CACHE_METHOD ,"Portage cache-backend that should be used for PORTDIR (flat/cdb/none/backport).")
 		);
 
 eixrc.addDefault(

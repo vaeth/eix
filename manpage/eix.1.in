@@ -323,6 +323,9 @@ Set a list of overlays that are excluded from the index (separators are [\\n\\r\
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (Strings)
 Set the type of the cache used by portage. If you don't know what this is, just leave it
 alone.
+B<PORTDIR_CACHE_METHOD> defaults to I<@PORTDIR_CACHE_METHOD@>, B<OVERLAY_CACHE_METHOD> to
+I<none>.
+
 .TP
 .SS
 .BR cdb
@@ -337,12 +340,10 @@ You are using the default cache-backend (plain text files).
 .SS
 .BR backport 
 If you are using that backport-stuff (from portage-3 to portage-2) you should use this one.
-Default for B<PORTDIR_CACHE_METHOD>.
 .TP
 .SS
 .BR none
 No cache-backend. Get the information from the ebuilds.
-Default for B<OVERLAY_CACHE_METHOD>.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true/false)
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
