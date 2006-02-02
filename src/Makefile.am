@@ -31,7 +31,7 @@ SUBDIRS = eixTk database portage output search
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags eix-sync
 
-EXTRA_DIST = eix-sync.in
+EXTRA_DIST = eix-sync.in eixrc/defaults.cc eixrc/eixrc.h
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix

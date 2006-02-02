@@ -1,5 +1,7 @@
 CLEANFILES = cppcomplete.tags tags cache-map.cc
 
+EXTRA_DIST = generate-cachemap.sh
+
 INCLUDES = -I$(top_srcdir)/src
 
 noinst_LIBRARIES = libcache.a
@@ -11,7 +13,7 @@ libcache_a_SOURCES = base.h base.cc \
 					 cdb/cdb.h cdb/cdb.cc \
 					 backport/backport.cc backport/backport.h \
 					 backport/backport-utils.cc backport/backport-utils.h \
-					 cache-map.cc
+					 cache-map.cc cache-map.h
 
 cache-map.cc:
 	$(srcdir)/generate-cachemap.sh > cache-map.cc
