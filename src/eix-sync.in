@@ -60,13 +60,15 @@ $(basename "${0}") [options] - Call 'emerge --sync/--metadata' and show updates.
 -v   Don't suppress output of update-eix and emerge
 -q   Be quiet (close stdout)
 -m   Run emerge --metadata instead of emerge --sync
+-r   Really recreate the dep-cache (rm -fr /var/cache/edb/dep/*)
 END
 }
 
 # Get options from cli
+recreate_cache=false
 be_verbose=false
 emerge_arg="--sync"
-while getopts "hvqm" option; do
+while getopts "hvqmr" option; do
   case "${option}" in
     h ) print_version
         exit 0
@@ -76,6 +78,8 @@ while getopts "hvqm" option; do
     q ) exec >> /var/log/eix-sync.log
     ;;
     m ) emerge_arg="--metadata"
+    ;;
+    r ) recreate_cache=true
     ;;
     * ) print_version
         exit 1
@@ -94,9 +98,11 @@ fi
 # Clean out eix-sync.log:
 echo > /var/log/eix-sync.log
 
-# Cleaning old cache
-# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
-run_command "Removing old portage-cache in /var/cache/edb/dep/*" "rm -fr /var/cache/edb/dep/*" || exit 1
+if ${recreate_cache}; then
+  # Cleaning old cache
+  # portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
+  run_command "Removing old portage-cache in /var/cache/edb/dep/*" "rm -fr /var/cache/edb/dep/*" || exit 1
+fi
 
 # Update tree and overlays
 run_command "Running emerge ${emerge_arg}" "emerge ${emerge_arg}" || exit 1
