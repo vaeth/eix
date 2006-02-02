@@ -46,7 +46,7 @@ function run_command() {
   else
     ebegin "${1}"
     shift 1
-    eval "${@}" &>1 >> /var/log/eix-sync.log
+    eval "${@}" 2>&1 >> /var/log/eix-sync.log
     ret=${?}
     eend ${ret} "Problems running ${@}"
     return "${ret}"
