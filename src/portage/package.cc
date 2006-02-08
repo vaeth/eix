@@ -139,13 +139,14 @@ bool Package::checkDuplicates(Version *version)
 	if(version == NULL) {
 		for(unsigned int i = 0; i<size(); ++i)
 			for(unsigned int j = 0; j<size(); ++j)
-				if(i != j && *((*this)[i]) == *((*this)[j])) {
+				if(i != j
+				   && *(BasicVersion*)((*this)[i]) == *(BasicVersion*)((*this)[j])) {
 					return true;
 				}
 	}
 	else {
 		for(unsigned int i = 0; i<size(); ++i)
-			if( *((*this)[i]) == *version ) {
+			if( *(BasicVersion*)((*this)[i]) == *(BasicVersion*)version ) {
 				return true;
 			}
 	}

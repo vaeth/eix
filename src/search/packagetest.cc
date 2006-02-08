@@ -67,6 +67,16 @@ PackageTest::calculateNeeds() {
 			break;
 		}
 	}
+
+	if(installed && need < Package::NAME)
+	{
+		need = Package::NAME;
+	}
+
+	if(dup_versions && need < Package::VERSIONS)
+	{
+		need = Package::VERSIONS;
+	}
 }
 
 PackageTest::MatchField
@@ -123,8 +133,6 @@ PackageTest::setPattern(const char *p)
 bool
 PackageTest::stringMatch(Package *pkg) const
 {
-	pkg->readNeeded(need);
-
 	if(field & NAME && (*algorithm)(pkg->name.c_str(), pkg))
 	{
 		return true;
@@ -167,6 +175,9 @@ bool
 PackageTest::match(Package *pkg) const
 {
 	bool is_match = true;
+
+	pkg->readNeeded(need);
+
 	if(algorithm.get() != NULL) {
 		is_match = stringMatch(pkg);
 	}
@@ -176,8 +187,9 @@ PackageTest::match(Package *pkg) const
 		is_match = vardbpkg->isInstalled(pkg);
 	}
 
-	if(dup_versions && is_match)
+	if(dup_versions && is_match) {
 		is_match = pkg->have_duplicate_versions;
+	}
 
 	return (invert ? !is_match : is_match);
 }
