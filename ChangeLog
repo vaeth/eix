@@ -2,6 +2,8 @@
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Added metadata as cache-method.
+	- Added a workaround for http://bugs.gentoo.org/show_bug.cgi?id=114628
+	  Looks like the problems isn't eix, but some part of the toolchain.
 
 *eix-0.5.1
 

@@ -137,11 +137,11 @@ split_string(const string &str, const char *at, bool ignore_empty)
 string
 join_vector(vector<string> &vec, string glue)
 {
-	string ret;
 	vector<string>::iterator it = vec.begin();
 	if(it == vec.end()) {
 		return "";
 	}
+	string ret;
 	for(;;) {
 		ret.append(*it);
 		if(++it == vec.end()) {
