@@ -270,7 +270,7 @@ yellow.
 .\" {{{ FILES 
 .SH "FILES"
 .LP
-.\" {{{ -------- /etc/eixrc 
+.\" {{{ -------- /etc/eix-sync-overlays
 .SS /etc/eix-sync-overlays
 A list of overlays that should be synced using B<gensync> from
 B<app-portage/gentoolkit-dev>. A line that only contains an asterisk causes eix-sync to sync
