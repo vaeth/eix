@@ -143,7 +143,7 @@ join_vector(vector<string> &vec, string glue)
 		return "";
 	}
 	for(;;) {
-		ret.append(*it);
+		ret.append(string(*it));
 		if(++it == vec.end()) {
 			break;
 		}
