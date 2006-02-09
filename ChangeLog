@@ -1,6 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Added metadata as cache-method.
+
+*eix-0.5.1
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fixed trim/rtrim/ltrim: strings that only contain trim-characters are
 	  cleared now. This fixes all the 'Unable to split mask "" ..' bugs.
 	- portage-2.1 introduced big changes to the depcache-handling, the old

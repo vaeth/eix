@@ -345,6 +345,10 @@ If you are using that backport-stuff (from portage-3 to portage-2) you should us
 .BR none
 No cache-backend. Get the information from the ebuilds.
 .TP
+.SS
+.BR metadata
+Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
+.TP
 .BR LOCAL_PORTAGE_CONFIG " " (true/false)
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
 environment.
