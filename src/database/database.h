@@ -43,7 +43,7 @@ class PackageDatabase {
 
 	private:
 		/** Contains all categories. */
-		map<string, vector<Package*> > _packages;
+		map<string, vector<Package*> > m_packages;
 
 	public:
 		typedef map<string, vector<Package*> >::iterator category_iterator;
@@ -52,16 +52,15 @@ class PackageDatabase {
 		/** Build skeleton.  */
 		PackageDatabase(vector<string> *categories) {
 			for(vector<string>::iterator it = categories->begin(); it != categories->end(); ++it) {
-				_packages[*it] = vector<Package*>(0);
+				m_packages[*it] = vector<Package*>(0);
 			}
 		}
 
-		PackageDatabase() {
-		}
+		PackageDatabase() { }
 
 		/** Free all packages. */
 		~PackageDatabase() {
-			for(category_iterator m = _packages.begin(); m != _packages.end(); ++m) {
+			for(category_iterator m = m_packages.begin(); m != m_packages.end(); ++m) {
 				for(package_iterator p = m->second.begin(); p != m->second.end(); ++p) {
 					delete *p;
 				}
@@ -74,7 +73,7 @@ class PackageDatabase {
 		}
 
 		void checkMasks(MaskList *masks) {
-			for(category_iterator m = _packages.begin(); m != _packages.end(); ++m) {
+			for(category_iterator m = m_packages.begin(); m != m_packages.end(); ++m) {
 				for(package_iterator p = m->second.begin(); p != m->second.end(); ++p) {
 					for(MaskList::viterator vit = masks->get(*p)->begin(); vit != masks->get(*p)->end(); ++vit) {
 						(*vit)->checkMask(**p, false, false);
@@ -85,9 +84,9 @@ class PackageDatabase {
 
 		/** Find Package in Category. */
 		Package *findPackage(string &category, string &name) {
-			package_iterator i = _packages[category].begin();
-			i = find(i, _packages[category].end(), name);
-			if(i != _packages[category].end()) {
+			package_iterator i = m_packages[category].begin();
+			i = find(i, m_packages[category].end(), name);
+			if(i != m_packages[category].end()) {
 				return *i;
 			}
 			return NULL;
@@ -97,16 +96,16 @@ class PackageDatabase {
 		Package *newPackage(string category, string name) {
 			Package *c = new Package(category, name) ;
 			OOM_ASSERT(c);
-			_packages[category].push_back(c);
+			m_packages[category].push_back(c);
 			return c;
 		}
 
 		bool deletePackage(string &category, string &name) {
-			package_iterator i = _packages[category].begin();
-			i = find(i, _packages[category].end(), name);
-			if(i != _packages[category].end()) {
+			package_iterator i = m_packages[category].begin();
+			i = find(i, m_packages[category].end(), name);
+			if(i != m_packages[category].end()) {
 				delete *i;
-				_packages[category].erase(i);
+				m_packages[category].erase(i);
 				return true;
 			}
 			return false;
@@ -114,18 +113,18 @@ class PackageDatabase {
 
 		/** Return iterator pointed to begining of categories. */
 		category_iterator begin() {
-			return _packages.begin();
+			return m_packages.begin();
 		}
 
 		/** Return iterator pointed to end of categories. */
 		category_iterator end() {
-			return _packages.end();
+			return m_packages.end();
 		}
 
 		/** Return number of Packages. */
 		vector<Package*>::size_type countPackages() {
 			vector<Package*>::size_type i = 0;
-			for(category_iterator it = _packages.begin(); it != _packages.end(); ++it) {
+			for(category_iterator it = m_packages.begin(); it != m_packages.end(); ++it) {
 				i += it->second.size();
 			}
 			return i;
@@ -133,12 +132,12 @@ class PackageDatabase {
 
 		/** Return number of categories. */
 		map<string, vector<Package*> >::size_type countCategories() {
-			return _packages.size();
+			return m_packages.size();
 		}
 
 		/** Write PackageDatabase to file pointed to by stream. */
 		size_t write(FILE *stream) {
-			for(category_iterator c = _packages.begin(); c != _packages.end(); ++c) {
+			for(category_iterator c = m_packages.begin(); c != m_packages.end(); ++c) {
 				/* Write category-header followed by a list of the packages. */
 				vector<Package>::size_type s = c->second.size();
 				io::write_category_header(stream, c->first, s);
@@ -170,7 +169,7 @@ class PackageDatabase {
 					OOM_ASSERT(pkg);
 					pkg->category = name;
 					pkg->readMissing();
-					_packages[name].push_back(pkg);
+					m_packages[name].push_back(pkg);
 				}
 			}
 			return header->numcategories;
