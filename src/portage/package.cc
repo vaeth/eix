@@ -27,7 +27,7 @@
 
 #include "package.h"
 
-#include <database/basicio.h>
+#include <database/io.h>
 #include <database/database.h>
 
 #include <fstream>
@@ -80,7 +80,7 @@ void Package::readNeeded(InputStatus we_want)
 			size_type n;
 			n = io::read<size_type>(stream);
 			for(size_type i = 0; i<n; i++ ) {
-				addVersion(new Version( stream ));
+				addVersion(io::read_version(stream));
 			}
 		case Package::ALL:
 			break;
@@ -122,9 +122,12 @@ void Package::write( FILE *output ) throw(ExBasic)
 	size_type n = size();
 	io::write<size_type>(output, n);
 
-	vector<Version*>::iterator vi = begin();
-	while(vi != end())
-		(*vi++)->write(output);
+	for(vector<Version*>::iterator i = begin();
+		i != end();
+		++i)
+	{
+		io::write_version(output, *i);
+	}
 
 	off_t pkg_end = ftello(output);
 	fseek(output, offset_position, SEEK_SET);

@@ -30,6 +30,7 @@
 
 #include <iostream>
 
+#include <database/io.h>
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
 
@@ -37,17 +38,13 @@
 class Version : public BasicVersion, public Keywords {
 
 	public:
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version( const char* str );
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version( string str );
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(FILE *stream);
+		friend void     io::write_version(FILE *fp, const Version *v);
+		friend Version *io::read_version(FILE *fp);
 
-		/** Read a Version instance from the eix db */
-		void read( FILE *is );
-		/** Write a Version instance to the eix db */
-		void write( FILE *os );
+		Version() : overlay_key(0) {}
+
+		/** Constructor, calls BasicVersion::parseVersion( str ) */
+		Version(const char* str) : BasicVersion(str), overlay_key(0) {}
 
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		unsigned short overlay_key;

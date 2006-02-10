@@ -34,24 +34,9 @@
 #include <portage/mask.h>
 
 #include <database/header.h>
-#include <database/basicio.h>
+#include <database/io.h>
 
 using namespace std;
-
-class CategoryHeader {
-	public:
-		typedef unsigned int size_type;
-
-		static size_type read(FILE *stream, string &name) {
-			name = io::read_string(stream);
-			return io::read<size_type>(stream);
-		}
-
-		static void write(FILE *stream, const string &name, const size_type size) {
-			io::write_string(stream,  name);
-			io::write<size_type>(stream, size);
-		}
-};
 
 /** Body of a database. */
 class PackageDatabase {
@@ -156,7 +141,7 @@ class PackageDatabase {
 			for(category_iterator c = _packages.begin(); c != _packages.end(); ++c) {
 				/* Write category-header followed by a list of the packages. */
 				vector<Package>::size_type s = c->second.size();
-				CategoryHeader::write(stream, c->first, s);
+				io::write_category_header(stream, c->first, s);
 #if 0
 				io::write_string(stream,  c->first);
 				DB_WRITE_GENERIC(stream, s, vector<Package>::size_type);
@@ -174,7 +159,7 @@ class PackageDatabase {
 			string                      name;
 
 			for(unsigned int i = 0; i < header->numcategories; i++) {
-				size = CategoryHeader::read(stream, name);
+				size = io::read_category_header(stream, name);
 #if 0
 				io::read_string(stream,  name);
 				DB_READ_GENERIC(stream, size, vector<Package>::size_type);

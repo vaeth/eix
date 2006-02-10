@@ -25,88 +25,52 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "version.h"
+#ifndef EIX__IO_H__
+#define EIX__IO_H__
 
-#include <database/basicio.h>
+#include <string>
 
-/** Constructor, calls BasicVersion::parseVersion( str ) */
-Version::Version( const char* str ) : BasicVersion( str )
-{
-	overlay_key = 0;
-}
+class Version;
 
-/** Constructor, calls BasicVersion::parseVersion( str ) */
-Version::Version( string str ) : BasicVersion( str.c_str() )
-{
-	overlay_key = 0;
-}
+namespace io {
 
-Version::Version(FILE *stream)
-{
-	overlay_key = 0;
-	read(stream);
-}
-/***********************************************************************************/
-
-/** Read a Version instance from the eix db */
-void Version::read( FILE *is )
-{
-	// read m_full string
-	m_full = io::read_string(is);
-
-	// read stability & masking
-	m_mask = io::read<Keywords::Type>(is);
-
-#if 0
-	// read primary string
-	primary = io::read_string(is);
-#endif
-
-	// read m_primsplit
-	unsigned char i = io::read<unsigned char>(is);
-	while(i--)
+	/// Read any POD.
+	template<typename _Tp> _Tp 
+	read(FILE *fp) 
 	{
-		m_primsplit.push_back(io::read<unsigned short>(is));
-	}
-	m_primarychar = io::read<unsigned char>(is);
-
-	// read m_suffixlevel,m_suffixnum,m_gentoorelease
-	m_suffixlevel   = io::read<unsigned char>(is);
-	m_suffixnum     = io::read<unsigned int>(is);
-	m_gentoorelease = io::read<unsigned char>(is);
-
-	overlay_key = io::read<short>(is);
-}
-
-/** Write a Version instance to the eix db */
-void Version::write( FILE *os )
-{
-	// write m_full string
-	io::write_string( os, m_full );
-
-	// write stability & masking
-	io::write<Keywords::Type>(os, m_mask);
-
-#if 0
-	// write primary string
-	io::write_string( os, primary );
-#endif
-
-	// write m_primsplit
-	io::write<unsigned char>(os, (unsigned char)m_primsplit.size());
-	for(vector<unsigned short>::iterator it = m_primsplit.begin();
-			it != m_primsplit.end();
-			++it)
-	{
-		io::write<unsigned short>(os, *it);
+		_Tp ret;
+		fread((void*)&(ret), sizeof(_Tp), 1, fp);
+		return ret;
 	}
 
-	io::write<unsigned char>(os, m_primarychar);
+	/// Write any POD.
+	template<typename _Tp> void 
+	write(FILE *fp, const _Tp t) 
+	{
+		fwrite((const void*)&(t), sizeof(_Tp), 1, fp);
+	}
 
-	// write m_suffixlevel,m_suffixnum,m_gentoorelease
-	io::write<unsigned char>(os, m_suffixlevel);
-	io::write<unsigned int>(os, m_suffixnum);
-	io::write<unsigned char>(os, m_gentoorelease);
+	/// Read a string of the format { unsigned short len; char[] string;
+	// (without the 0) }
+	std::string read_string(FILE *fp);
 
-	io::write<short>(os, overlay_key);
+	/// Write a string in the format { unsigned short len; char[] string;
+	// (without the 0) }
+	void write_string(FILE *fp, const std::string &str);
+
+
+	/// Read a version from fp
+	Version *read_version(FILE *fp);
+
+	// Write a version to fp
+	void write_version(FILE *fp, const Version *v);
+
+
+	// Read a category-header from fp
+	unsigned int read_category_header(FILE *fp, std::string &name);
+
+	// Write a category-header to fp
+	void write_category_header(FILE *fp, const std::string &name, unsigned int size);
 }
+
+#endif /* EIX__IO_H__ */

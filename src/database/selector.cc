@@ -34,26 +34,26 @@ DatabaseMatchIterator::next()
 {
 	/* Read until we have 0 packages left in this category, then read the
 	 * category-header and reset the pkg-counter. */
-	if(_pkgs-- == 0) {
-		if(_cats-- == 0) {
+	if(m_pkgs-- == 0) {
+		if(m_cats-- == 0) {
 			return NULL;
 		}
-		_pkgs = CategoryHeader::read(_input, _catname);
+		m_pkgs = io::read_category_header(m_input, m_catname);
 		return next();
 	}
 
 	/* Read offset so we can jump the package if we need to. */
 	Package::offset_type next_pkg;
-	off_t begin_pkg = ftello(_input);
-	next_pkg = io::read<Package::offset_type>(_input);
+	off_t begin_pkg = ftello(m_input);
+	next_pkg = io::read<Package::offset_type>(m_input);
 
-	Package *pkg = new Package(_input);
-	pkg->category = _catname;
-	if(_criterium->match(pkg)) {
+	Package *pkg = new Package(m_input);
+	pkg->category = m_catname;
+	if(m_criterium->match(pkg)) {
 		pkg->readMissing();
 		return pkg;
 	}
 	delete pkg;
-	fseeko(_input, begin_pkg + next_pkg , SEEK_SET);
+	fseeko(m_input, begin_pkg + next_pkg , SEEK_SET);
 	return next();
 }

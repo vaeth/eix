@@ -38,22 +38,22 @@
 class DatabaseMatchIterator {
 
 	private:
-		DBHeader        *_header;    /**< Header of the database. */
-		Matchatom *_criterium; /**< Criterium to match the packages. */
-		FILE            *_input;     /**< Input stream for database. */
+		DBHeader        *m_header;    /**< Header of the database. */
+		Matchatom *m_criterium; /**< Criterium to match the packages. */
+		FILE            *m_input;     /**< Input stream for database. */
 
-		string       _catname; /**< Name of current category. */
-		unsigned int _pkgs,    /**< Packages left in the current category. */
-					 _cats;    /**< Categories left in database. */
+		string       m_catname; /**< Name of current category. */
+		unsigned int m_pkgs,    /**< Packages left in the current category. */
+					 m_cats;    /**< Categories left in database. */
 
 	public:
 		/** Set header, tree and matcher you want to use. */
 		DatabaseMatchIterator(DBHeader *header, FILE *istream, Matchatom *criterium) {
-			_header    = header;
-			_input     = istream;
-			_criterium = criterium;
-			_pkgs      = 0;
-			_cats      = header->numcategories;
+			m_header    = header;
+			m_input     = istream;
+			m_criterium = criterium;
+			m_pkgs      = 0;
+			m_cats      = header->numcategories;
 		}
 
 		/** Get next matching package or NULL if no more packages match. */
