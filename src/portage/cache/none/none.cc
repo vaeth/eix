@@ -36,18 +36,18 @@
 
 using namespace std;
 
-static int package_seclector (SCANDIR_ARG3 dent)
+static int package_selector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strcmp(dent->d_name, "CVS") != 0);
 }
 
-static int ebuild_seclector (SCANDIR_ARG3 dent)
+static int ebuild_selector (SCANDIR_ARG3 dent)
 {
-		return package_seclector(dent);
+		return package_selector(dent);
 }
 
-void NoneCache::readPackage(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
+void NoneCache::readPackages(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
 {
 	bool have_onetime_info = false;
 
@@ -109,7 +109,7 @@ int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name)
 
 	string catpath = m_scheme + "/" + cat_name; 
 	int numpackages = scandir(catpath.c_str(),
-			&packages, package_seclector, alphasort);
+			&packages, package_selector, alphasort);
 
 	for(int i = 0; i<numpackages; ++i)
 	{
@@ -117,10 +117,10 @@ int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name)
 		string pkg_path = catpath + "/" + packages[i]->d_name;
 
 		int numfiles = scandir(pkg_path.c_str(),
-				&files, ebuild_seclector, alphasort);
+				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackage(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			readPackages(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);

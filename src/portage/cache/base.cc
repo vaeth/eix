@@ -28,7 +28,7 @@
 #include "base.h"
 
 Package *
-addPackage(vector<Package*> &v, const string &cat, const string pkg)
+addPackage(vector<Package*> &v, const string &cat, const string &pkg)
 {
 	Package *p = new Package(cat, pkg);
 	OOM_ASSERT(p);
@@ -53,7 +53,7 @@ findPackage(vector<Package*> &v, const char *pkg)
 }
 
 bool
-deletePackage(vector<Package*> &v, string pkg)
+deletePackage(vector<Package*> &v, const string &pkg)
 {
 	bool ret = false;
 	for(vector<Package*>::iterator i = v.begin();

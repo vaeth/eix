@@ -31,13 +31,13 @@
 #include <portage/package.h>
 
 // Add package to vector
-Package *addPackage(vector<Package*> &v, const string &cat, const string pkg);
+Package *addPackage(vector<Package*> &v, const string &cat, const string &pkg);
 
 // Find Package and return pointer to it.
 Package *findPackage(vector<Package*> &v, const char *pkg);
 
 // Remove and delete Package. */
-bool deletePackage(vector<Package*> &v, string pkg);
+bool deletePackage(vector<Package*> &v, const string &pkg);
 
 // Parent class of every cache that eix can use. */
 class BasicCache {
@@ -57,7 +57,7 @@ class BasicCache {
 		}
 
 		// Set arch for system. */
-		void setArch(string &arch) {
+		void setArch(const string &arch) {
 			m_arch = arch;
 		}
 

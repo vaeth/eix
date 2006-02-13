@@ -33,7 +33,7 @@
 class NoneCache : public BasicCache {
 
 	private:
-		void readPackage(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles);
+		void readPackages(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles);
 
 	public:
 		int readCategory(vector<Package*> &vec, const string &cat_name);

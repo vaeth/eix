@@ -40,7 +40,7 @@
 
 using namespace std;
 
-static int cachefiles_seclector (SCANDIR_ARG3 dent)
+static int cachefiles_selector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strchr(dent->d_name, '-') != 0);
@@ -50,7 +50,7 @@ int MetadataCache::readCategory(vector<Package*> &vec, const string &cat_name)
 {
 	string catpath = m_scheme + METADATA_PATH + cat_name;
 	struct dirent **dents;
-	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_seclector, alphasort);
+	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;
 
 	for(int i=0; i<numfiles;)
