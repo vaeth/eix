@@ -137,25 +137,30 @@ class FormatParser {
 };
 
 class PrintFormat {
+
 	public:
 		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, string &property);
 		typedef string (*GetProperty)  (void *entity, string &property);
 
 	protected:
-		FormatParser   _parser;
-		PrintProperty  _print_property;
-		GetProperty    _get_property;
-		Node          *_root;
+		FormatParser   m_parser;
+		PrintProperty  m_print_property;
+		GetProperty    m_get_property;
+		Node          *m_root;
+
+		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
 	public:
 		bool no_color,            /**< Shall we use colors? */
 			 style_version_lines; /**< Shall we show versions linewise? */
 
-	public:
-		PrintFormat(GetProperty get_callback, PrintProperty print_callback) {
-			_get_property   = get_callback;
-			_print_property = print_callback;
-		}
+		string color_masked,     /**< Color for masked versions */
+			   color_unstable,   /**< Color for unstable versions */
+			   color_stable,     /**< Color for stable versions */
+			   color_overlaykey; /**< Color for the overlay key */
+
+		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
+			: m_get_property(get_callback), m_print_property(print_callback) { }
 
 		void setupColors() {
 			color_masked     = AnsiColor(color_masked).asString();
@@ -164,28 +169,30 @@ class PrintFormat {
 			color_overlaykey = AnsiColor(color_overlaykey).asString();
 		}
 
-		string color_masked,     /**< Color for masked versions */
-			   color_unstable,   /**< Color for unstable versions */
-			   color_stable,     /**< Color for stable versions */
-			   color_overlaykey; /**< Color for the overlay key */
-
-		void print(void *entity, PrintProperty print_property = NULL, GetProperty get_property = NULL, Node *root = NULL) {
-			recPrint(entity,
-			             print_property ? print_property : _print_property,
-			             get_property ? get_property : _get_property,
-			             root ? root : _root );
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root) {
+			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
 		}
 
-		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
+		void print(void *entity, Node *root) {
+			recPrint(entity, m_print_property, m_get_property, root);
+			fputc('\n', stdout);
+		}
+
+		void print(void *entity) {
+			recPrint(entity, m_print_property, m_get_property, m_root);
+			fputc('\n', stdout);
+		}
 
 		void setFormat(const char *fmt) throw(ExBasic) {
-			_root = parseFormat(fmt);
+			m_root = parseFormat(fmt);
 		}
 
 		Node *parseFormat(const char *fmt) throw(ExBasic) {
-			return _parser.start(fmt, !no_color);
+			return m_parser.start(fmt, !no_color);
 		}
+
+	private:
 };
 
 #endif /* __FORMATSTRING_H__ */

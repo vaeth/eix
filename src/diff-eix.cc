@@ -178,11 +178,11 @@ print_diff_new_old(Package *np, Package *op)
 {
 	if(np == NULL) {
 		op->installed_versions = varpkg_db.getInstalledString(op);
-		format_string.print(op, NULL, NULL, format_delete);
+		format_string.print(op, format_delete);
 	}
 	else if(op == NULL) {
 		np->installed_versions = varpkg_db.getInstalledString(np);
-		format_string.print(np, NULL, NULL, format_new);
+		format_string.print(np, format_new);
 	}
 	else {
 		Package *p[2];

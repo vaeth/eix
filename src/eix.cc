@@ -410,7 +410,7 @@ run_eix(int argc, char** argv)
 			need_overlay_table = true;
 		}
 
-		format.print(*it, NULL, NULL, NULL);
+		format.print(*it);
 	}
 
 	if(need_overlay_table)
