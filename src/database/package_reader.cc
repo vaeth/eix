@@ -25,39 +25,77 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __DBSELECTOR_H__
-#define __DBSELECTOR_H__
-
-#include <database/header.h>
-
-#include <search/dbmatchcriteria.h>
+#include "package_reader.h"
 
 #include <portage/package.h>
+#include <portage/version.h>
 
-/** Select packages that matches a Matchatom. */
-class DatabaseMatchIterator {
+#include <database/io.h>
 
-	private:
-		DBHeader        *m_header;    /**< Header of the database. */
-		Matchatom *m_criterium; /**< Criterium to match the packages. */
-		FILE            *m_input;     /**< Input stream for database. */
+void 
+PackageReader::read(Attributes need)
+{
+	if(m_have >= need) // Already got this one.
+		return;
 
-		string       m_catname; /**< Name of current category. */
-		unsigned int m_pkgs,    /**< Packages left in the current category. */
-					 m_cats;    /**< Categories left in database. */
+	switch(m_have) 
+	{
+		case NONE:
+			m_pkg->name = io::read_string(m_fp);
+			if(need == NAME)
+				break;
+		case NAME:
+			m_pkg->desc = io::read_string(m_fp);
+			if(need == DESCRIPTION)
+				break;
+		case DESCRIPTION:
+			m_pkg->provide = io::read_string(m_fp);
+			if(need == PROVIDE)
+				break;
+		case PROVIDE:
+			m_pkg->homepage = io::read_string( m_fp);
+			if(need == HOMEPAGE)
+				break;
+		case HOMEPAGE:
+			m_pkg->licenses = io::read_string( m_fp);
+			if(need == LICENSE)
+				break;
+		case LICENSE:
+			size_type n;
+			n = io::read<size_type>(m_fp);
+			for(size_type i = 0; i<n; i++ ) {
+				m_pkg->addVersion(io::read_version(m_fp));
+			}
+		case ALL:
+			break;
+	}
+	m_have = need;
+}
 
-	public:
-		/** Set header, tree and matcher you want to use. */
-		DatabaseMatchIterator(DBHeader *header, FILE *istream, Matchatom *criterium) {
-			m_header    = header;
-			m_input     = istream;
-			m_criterium = criterium;
-			m_pkgs      = 0;
-			m_cats      = header->numcategories;
+void
+PackageReader::skip()
+{
+	fseeko(m_fp, m_next , SEEK_SET);
+	m_pkg.reset();
+}
+
+bool
+PackageReader::next()
+{
+	if(m_cat_size-- == 0)
+	{
+		if(m_frames-- == 0) 
+		{
+			return false;
 		}
+		m_cat_size = io::read_category_header(m_fp, m_cat_name);
+		return next();
+	}
 
-		/** Get next matching package or NULL if no more packages match. */
-		Package *next();
-};
+	m_next =  ftello(m_fp) + io::read<offset_type>(m_fp);
+	m_have = NONE;
+	m_pkg.reset(new Package());
+	m_pkg->category = m_cat_name;
 
-#endif /* __DBSELECTOR_H__ */
+	return true;
+}

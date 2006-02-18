@@ -11,4 +11,4 @@ noinst_LIBRARIES = libdatabase.a
 libdatabase_a_SOURCES = io.h io.cc \
 						database.h   \
 						header.cc header.h     \
-						selector.cc selector.h
+						package_reader.cc package_reader.h

@@ -34,6 +34,7 @@
 #include <portage/mask.h>
 
 #include <database/header.h>
+#include <database/package_reader.h>
 #include <database/io.h>
 
 using namespace std;
@@ -154,23 +155,13 @@ class PackageDatabase {
 		}
 
 		unsigned int read(DBHeader *header, FILE *stream) {
-			vector<Package*>::size_type size;
-			string                      name;
+			PackageReader reader(stream, header->numcategories);
+			Package *p = NULL;
 
-			for(unsigned int i = 0; i < header->numcategories; i++) {
-				size = io::read_category_header(stream, name);
-#if 0
-				io::read_string(stream,  name);
-				DB_READ_GENERIC(stream, size, vector<Package>::size_type);
-#endif
-				for(unsigned int i = 0; i<size; i++) {
-					fseeko(stream, sizeof(Package::offset_type) , SEEK_CUR);
-					Package *pkg = new Package(stream);
-					OOM_ASSERT(pkg);
-					pkg->category = name;
-					pkg->readMissing();
-					m_packages[name].push_back(pkg);
-				}
+			while(reader.next())
+			{
+				p = reader.release();
+				m_packages[p->name].push_back(p);
 			}
 			return header->numcategories;
 		}

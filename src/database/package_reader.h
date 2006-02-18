@@ -25,35 +25,79 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "selector.h"
+#ifndef __PACKAGE_READER_H__
+#define __PACKAGE_READER_H__
 
-#include <database/database.h>
+#include <stdio.h>
+#include <unistd.h>
 
-Package *
-DatabaseMatchIterator::next()
+#include <iostream>
+
+class Package;
+
+/// Forward-iterate for packages stored in the cachefile.
+class PackageReader {
+
+	public:
+		enum Attributes {
+			NONE = 0,
+			NAME, DESCRIPTION, PROVIDE, HOMEPAGE, LICENSE, VERSIONS,
+			ALL = 6
+		};
+
+		typedef unsigned short size_type;
+		typedef off_t          offset_type;
+
+		/// Initialize with file-stream and number of packages.
+		PackageReader(FILE *fp, unsigned int size) 
+			: m_fp(fp), m_frames(size), m_cat_size(0) { }
+
+		/// Read attributes from the database into the current package.
+		void read(Attributes need = ALL);
+
+		/// Get pointer to the package.
+		// It's possible that some attributes of the package are not yet read
+		// from the database.
+		Package *get() const;
+
+		/// Skip the current package.
+		// The current package is deleted and the file pointer is moved to the
+		// next package.
+		void skip();
+
+		/// Release the package.
+		// Complete the current package, and release it.
+		Package *release();
+
+		/// Return true if there is a next package.
+		// Read the package-header.
+		bool next();
+
+	protected:
+		FILE             *m_fp;
+
+		unsigned int      m_frames;
+		unsigned int      m_cat_size;
+		std::string       m_cat_name;
+
+		off_t             m_next;
+		Attributes        m_have;
+		std::auto_ptr<Package> m_pkg;
+
+	private:
+};
+
+inline Package *
+PackageReader::get() const
 {
-	/* Read until we have 0 packages left in this category, then read the
-	 * category-header and reset the pkg-counter. */
-	if(m_pkgs-- == 0) {
-		if(m_cats-- == 0) {
-			return NULL;
-		}
-		m_pkgs = io::read_category_header(m_input, m_catname);
-		return next();
-	}
-
-	/* Read offset so we can jump the package if we need to. */
-	Package::offset_type next_pkg;
-	off_t begin_pkg = ftello(m_input);
-	next_pkg = io::read<Package::offset_type>(m_input);
-
-	Package *pkg = new Package(m_input);
-	pkg->category = m_catname;
-	if(m_criterium->match(pkg)) {
-		pkg->readMissing();
-		return pkg;
-	}
-	delete pkg;
-	fseeko(m_input, begin_pkg + next_pkg , SEEK_SET);
-	return next();
+	return m_pkg.get();
 }
+
+inline Package *
+PackageReader::release()
+{
+	read();
+	return m_pkg.release();
+}
+
+#endif /* __PACKAGE_READER_H__ */
