@@ -42,7 +42,7 @@
 #include <cli.h>
 
 #include <database/header.h>
-#include <database/selector.h>
+#include <database/package_reader.h>
 
 #include <signal.h> /* signal handlers */
 #include <vector>
@@ -340,7 +340,6 @@ run_eix(int argc, char** argv)
 
 	vector<Package*> matches;
 	DBHeader header;
-	int match_count = 0;
 
 	try {
 		/* Open database file */
@@ -358,11 +357,17 @@ run_eix(int argc, char** argv)
 			exit(1);
 		}
 
-		DatabaseMatchIterator db_selector(&header, fp, query);
-		Package *p = NULL;
-		while((p = db_selector.next()) != NULL) {
-			++match_count;
-			matches.push_back(p);
+		PackageReader reader(fp, header.numcategories);
+		while(reader.next())
+		{
+			if(query->match(&reader))
+			{
+				matches.push_back(reader.release());
+			}
+			else
+			{
+				reader.skip();
+			}
 		}
 	}
 	catch(ExBasic& e) {
@@ -419,7 +424,7 @@ run_eix(int argc, char** argv)
 	}
 
 	fputs("\n", stdout);
-	printf("Found %i matches\n", match_count);
+	printf("Found %i matches\n", matches.size());
 
 	return EXIT_SUCCESS;
 }

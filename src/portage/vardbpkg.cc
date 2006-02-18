@@ -63,7 +63,6 @@ vector<BasicVersion> *VarDbPkg::getInstalledVector(string category, string name)
  * @return all installed versions concatenated to a emptry string. */
 string VarDbPkg::getInstalledString(Package *p)
 {
-	p->readNeeded(Package::NAME);
 	vector<BasicVersion> *vec = getInstalledVector(p->category, p->name);
 	if(vec == 0) {
 		return (string(""));
@@ -87,7 +86,6 @@ string VarDbPkg::getInstalledString(Package *p)
 /** Returns true if a Package installed. */
 bool VarDbPkg::isInstalled(Package *p, BasicVersion *v)
 {
-	p->readNeeded(Package::NAME);
 	if(v == NULL)
 		return ( getInstalledVector( p->category, p->name ) );
 

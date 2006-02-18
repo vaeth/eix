@@ -42,14 +42,6 @@ class Package : public vector<Version*> {
 		typedef off_t          offset_type;
 		typedef unsigned short size_type;
 
-		enum InputStatus {
-			NONE = 0, NAME = 1, DESCRIPTION = 2, PROVIDE = 3, HOMEPAGE = 4, LICENSE = 5, VERSIONS = 6, ALL = 6
-		};
-
-	protected:
-		InputStatus have;    /**< What we already have .. */
-		FILE        *stream; /**< FILE-stream for the database. */
-
 	public:
 		/** True if duplicated versions are found in for this package.
 		 * That means i.e. the version 0.2 is found in two overlays. */
@@ -64,19 +56,18 @@ class Package : public vector<Version*> {
 		string category, name, desc, homepage, licenses, installed_versions, provide;
 	
 	public:
-		/** Constructor */
-		Package(FILE *is = NULL);
+		/// Preset with defaults
+		Package()
+		{ defaults(); }
 
-		Package(string c, string n) {
-			category = c;
-			name = n;
-			defaults();
-		}
+		/// Fill in name and category and preset with defaults
+		Package(string c, string n) 
+			: category(c), name(n)
+		{ defaults(); }
 
 		void defaults() {
 			is_system_package = false;
 			have_same_overlay_key = true;
-			have = Package::NONE;
 			have_duplicate_versions = false;
 		}
 
@@ -89,14 +80,6 @@ class Package : public vector<Version*> {
 
 		/** Adds a version to "the versions" vector, */
 		void addVersion(Version *vex);
-
-		/** Read all missing stuff from db. */
-		void readMissing() {
-			readNeeded(ALL);
-		}
-
-		/** Read needed values from db. */
-		void readNeeded(InputStatus we_want);
 
 		/** Check if a package has duplicated versions. */
 		bool checkDuplicates(Version *version = NULL);

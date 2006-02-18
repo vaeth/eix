@@ -36,7 +36,7 @@
 #include <global.h>
 
 #include <portage/vardbpkg.h>
-#include <portage/package.h>
+#include <database/package_reader.h>
 
 #include <eixTk/exceptions.h>
 
@@ -62,7 +62,7 @@ class PackageTest {
 		void setAlgorithm(BaseAlgorithm *p);
 		void setPattern(const char *p);
 
-		bool match(Package *pkg) const;
+		bool match(PackageReader *pkg) const;
 
 		/** Compile regex and/or calculate needs. */
 		void finalize();
@@ -81,7 +81,7 @@ class PackageTest {
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
 		/** What we need to read so we can do our testing. */
-		Package::InputStatus    need;      
+		PackageReader::Attributes need;      
 		/** Our string matching algorithm. */
 		auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, dup_versions, invert;

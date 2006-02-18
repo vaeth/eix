@@ -29,34 +29,16 @@
 #define __CRITERIA_H__
 
 #include <search/packagetest.h>
-#include <portage/package.h>
+#include <database/package_reader.h>
 
 using namespace std;
-
-#if 0
-/* I'am sure this could be made by using function-pointers .. */
-#define CYCLE_MATCH(_flags, _data, _pkg) do { \
-	if((_flags & NAME) && MATCH_WITH(_data, _pkg->name.c_str(), _pkg)) \
-	return true; \
-	if((_flags & DESCRIPTION) && MATCH_WITH(_data, _pkg->desc.c_str(), _pkg)) \
-	return true; \
-	if((_flags & LICENSE) && MATCH_WITH(_data, _pkg->licenses.c_str(), _pkg)) \
-	return true; \
-	if((_flags & CATEGORY) && MATCH_WITH(_data, (_pkg->category).c_str(), _pkg)) \
-	return true; \
-	if((_flags & CATEGORY_NAME) && MATCH_WITH(_data, (_pkg->category + "/" + _pkg->name).c_str(), _pkg)) \
-	return true; \
-	if((_flags & HOMEPAGE) && MATCH_WITH(_data, _pkg->homepage.c_str(), _pkg)) \
-	return true; \
-} while(0)
-#endif
 
 /** Recursively match packages agains a chain of tests. */
 class Matchatom {
 
 	private:
 		auto_ptr<Matchatom> or_chain,  /**< OR'ed criteria */
-			                      and_chain; /**< AND'ed criteria */
+		                    and_chain; /**< AND'ed criteria */
 		auto_ptr<PackageTest>        test;      /**< Test for this criteria. */
 
 	public:
@@ -89,7 +71,7 @@ class Matchatom {
 		/** Check if this criteria matches.
 		 * @param p Package to match
 		 * @return true if match; else false */
-		bool match(Package *p) {
+		bool match(PackageReader *p) {
 			bool is_match = test->match(p);
 
 			/* Check AND/OR'ed criteria */

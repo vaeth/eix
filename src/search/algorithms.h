@@ -38,6 +38,8 @@
 #include <eixTk/levenshtein.h>
 #include <eixTk/regexp.h> 
 
+#include <portage/package.h> 
+
 /* Check if we have FNM_CASEFOLD .. 
  * fnmatch(3) tells me that this is a GNU extensions */
 #if defined FNM_CASEFOLD

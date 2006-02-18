@@ -40,22 +40,22 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 {
 	vardbpkg = vdb;
 	field    = PackageTest::NONE;
-	need     = Package::NONE;
+	need     = PackageReader::NONE;
 	invert   = installed = dup_versions = false;
 }
 
 void
 PackageTest::calculateNeeds() {
-	map<MatchField,Package::InputStatus> smap;
-	smap[HOMEPAGE]      = Package::VERSIONS;
-	smap[PROVIDE]       = Package::PROVIDE;
-	smap[LICENSE]       = Package::LICENSE;
-	smap[DESCRIPTION]   = Package::DESCRIPTION;
-	smap[CATEGORY]      = Package::NAME;
-	smap[CATEGORY_NAME] = Package::NAME;
-	smap[NAME]          = Package::NAME;
+	map<MatchField,PackageReader::Attributes> smap;
+	smap[HOMEPAGE]      = PackageReader::VERSIONS;
+	smap[PROVIDE]       = PackageReader::PROVIDE;
+	smap[LICENSE]       = PackageReader::LICENSE;
+	smap[DESCRIPTION]   = PackageReader::DESCRIPTION;
+	smap[CATEGORY]      = PackageReader::NAME;
+	smap[CATEGORY_NAME] = PackageReader::NAME;
+	smap[NAME]          = PackageReader::NAME;
 
-	need = Package::NONE;
+	need = PackageReader::NONE;
 
 	for(MatchField x = HOMEPAGE;
 		x > NONE;
@@ -68,14 +68,14 @@ PackageTest::calculateNeeds() {
 		}
 	}
 
-	if(installed && need < Package::NAME)
+	if(installed && need < PackageReader::NAME)
 	{
-		need = Package::NAME;
+		need = PackageReader::NAME;
 	}
 
-	if(dup_versions && need < Package::VERSIONS)
+	if(dup_versions && need < PackageReader::VERSIONS)
 	{
-		need = Package::VERSIONS;
+		need = PackageReader::VERSIONS;
 	}
 }
 
@@ -172,25 +172,24 @@ PackageTest::stringMatch(Package *pkg) const
 }
 
 bool
-PackageTest::match(Package *pkg) const
+PackageTest::match(PackageReader *pkg) const
 {
 	bool is_match = true;
 
-	pkg->readNeeded(need);
+	pkg->read(need);
 
 	if(algorithm.get() != NULL) {
-		is_match = stringMatch(pkg);
+		is_match = stringMatch(pkg->get());
 	}
 
 	/* Honour the C_O_INSTALLED, C_O_DUP_VERSIONS and the C_O_INVERT flags. */
 	if(installed && is_match) {
-		is_match = vardbpkg->isInstalled(pkg);
+		is_match = vardbpkg->isInstalled(pkg->get());
 	}
 
 	if(dup_versions && is_match) {
-		is_match = pkg->have_duplicate_versions;
+		is_match = pkg->get()->have_duplicate_versions;
 	}
 
 	return (invert ? !is_match : is_match);
 }
-

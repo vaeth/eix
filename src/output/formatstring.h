@@ -160,7 +160,7 @@ class PrintFormat {
 			   color_overlaykey; /**< Color for the overlay key */
 
 		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
-			: m_get_property(get_callback), m_print_property(print_callback) { }
+			: m_print_property(print_callback), m_get_property(get_callback) { }
 
 		void setupColors() {
 			color_masked     = AnsiColor(color_masked).asString();

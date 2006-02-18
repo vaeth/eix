@@ -34,58 +34,12 @@
 #include <dirent.h>
 #include <unistd.h>
 
-/** Constructor */
-Package::Package(FILE *is)
-{
-	stream = is;
-	defaults();
-}
-
 /** Deconstructor */
 Package::~Package()
 {
 	for(size_type i = 0; i < size(); ++i) {
 		delete (*this)[i];
 	}
-}
-
-/** Read needed values from db.  */
-void Package::readNeeded(InputStatus we_want)
-{
-	if(have >= we_want) /* Already got this one. */
-		return;
-
-	switch(have) {
-		case Package::NONE:
-			name = io::read_string(stream);
-			if(we_want == Package::NAME)
-				break;
-		case Package::NAME:
-			desc = io::read_string(stream);
-			if(we_want == Package::DESCRIPTION)
-				break;
-		case Package::DESCRIPTION:
-			provide = io::read_string(stream);
-			if(we_want == Package::PROVIDE)
-				break;
-		case Package::PROVIDE:
-			homepage = io::read_string( stream);
-			if(we_want == Package::HOMEPAGE)
-				break;
-		case Package::HOMEPAGE:
-			licenses = io::read_string( stream);
-			if(we_want == Package::LICENSE)
-				break;
-		case Package::LICENSE:
-			size_type n;
-			n = io::read<size_type>(stream);
-			for(size_type i = 0; i<n; i++ ) {
-				addVersion(io::read_version(stream));
-			}
-		case Package::ALL:
-			break;
-	}
-	have = we_want;
 }
 
 /** Comparator for version-pointers. */
