@@ -44,10 +44,9 @@ class DBHeader {
 
 	public:
 		/** Current version of database-format. */
-		static const int DBVERSION = 12;
+		static const int current = 12;
 
 		int version; /**< Version of the db. */
-		string arch; /**< Architecture. */
 		unsigned int numcategories; /**< Number of categories. */
 		unsigned int numpackages;   /**< Number of packages. */
 
@@ -68,7 +67,7 @@ class DBHeader {
 		bool read(FILE *stream);
 
 		bool isCurrent() {
-			return version == DBVERSION;
+			return version == DBHeader::current;
 		}
 };
 #endif /* __DBHEADER_H__ */

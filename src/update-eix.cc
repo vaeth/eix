@@ -243,8 +243,6 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 	DBHeader dbheader;
 	PackageDatabase package_tree(portage_settings.getCategories());
 
-	dbheader.arch = portage_settings["ARCH"];
-
 	for(vector<BasicCache*>::iterator it = cache_table.begin();
 			it != cache_table.end(); ++it)
 	{

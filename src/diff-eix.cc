@@ -123,7 +123,7 @@ load_db(const char *file, DBHeader *header, PackageDatabase *body)
 
 	header->read(stream);
 	if(!header->isCurrent()) {
-		fprintf(stderr, "%s uses an obsolete database format (%i, current is %i).\n", file, header->version, DBHeader::DBVERSION);
+		fprintf(stderr, "%s uses an obsolete database format (%i, current is %i).\n", file, header->version, DBHeader::current);
 		exit(1);
 	}
 	body->read(header, stream);

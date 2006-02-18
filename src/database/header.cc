@@ -53,11 +53,8 @@ DBHeader::addOverlay(string overlay)
 bool
 DBHeader::write(FILE *stream)
 {
-	/* We can't reference static const. */
-	int local_version = DBVERSION;
-	io::write(stream, local_version);
+	io::write(stream, DBHeader::current);
 
-	io::write_string(stream, arch);
 	io::write<int>(stream, numcategories);
 	io::write<int>(stream, numpackages);
 
@@ -72,15 +69,7 @@ bool
 DBHeader::read(FILE *stream)
 {
 	version = io::read<int>(stream);
-#if 0
-	if(version != DBHeader::DBVERSION) {
-		throw(ExBasic("Obsolete database file version %i (current version %i)\n"
-					"Run 'update-eix' to update the db.",
-					version, DBHeader::DBVERSION));
-	}
-#endif
 
-	arch = io::read_string(stream);
 	numcategories = io::read<int>(stream);
 	numpackages = io::read<int>(stream);
 
