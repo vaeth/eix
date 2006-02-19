@@ -160,7 +160,8 @@ class PackageDatabase {
 
 			while(reader.next())
 			{
-				m_packages[p->name].push_back(reader.release());
+				p = reader.release();
+				m_packages[p->name].push_back(p);
 			}
 			return header->numcategories;
 		}
