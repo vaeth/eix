@@ -268,9 +268,19 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 
 	/* Now apply all masks .. */
 	INFO("Applying masks ..\n");
-	package_tree.checkMasks(portage_settings.profile->getAllowedPackages());
-	package_tree.checkMasks(portage_settings.profile->getSystemPackages());
-	package_tree.checkMasks(portage_settings.getMasks());
+	for(PackageDatabase::category_iterator c = package_tree.begin();
+		c != package_tree.end();
+		++c) 
+	{
+		for(PackageDatabase::package_iterator p = c->second.begin();
+			p != c->second.end();
+			++p) 
+		{
+			apply_masks(portage_settings.profile->getAllowedPackages(), *p);
+			apply_masks(portage_settings.profile->getSystemPackages(), *p);
+			apply_masks(portage_settings.getMasks(), *p);
+		}
+	}
 
 	/* And write database back to disk .. */
 	FILE *database_stream = fopen(EIX_CACHEFILE, "wb");

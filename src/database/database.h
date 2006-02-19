@@ -73,16 +73,6 @@ class PackageDatabase {
 			return first;
 		}
 
-		void checkMasks(MaskList *masks) {
-			for(category_iterator m = m_packages.begin(); m != m_packages.end(); ++m) {
-				for(package_iterator p = m->second.begin(); p != m->second.end(); ++p) {
-					for(MaskList::viterator vit = masks->get(*p)->begin(); vit != masks->get(*p)->end(); ++vit) {
-						(*vit)->checkMask(**p, false, false);
-					}
-				}
-			}
-		}
-
 		/** Find Package in Category. */
 		Package *findPackage(string &category, string &name) {
 			package_iterator i = m_packages[category].begin();

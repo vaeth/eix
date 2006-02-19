@@ -233,4 +233,15 @@ inline ostream& operator<< (ostream& os, Mask& m) {
 	return os;
 }
 
+inline void 
+apply_masks(MaskList *masks, Package *p)
+{
+	for(MaskList::viterator m = masks->get(p)->begin();
+		m != masks->get(p)->end();
+		++m)
+	{
+		(*m)->checkMask(*p, false, false);
+	}
+}
+
 #endif /* __MASK_H__ */
