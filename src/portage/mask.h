@@ -100,17 +100,6 @@ class Mask : public BasicVersion {
 		/** Parse mask-string. */
 		Mask(const char *str, Type type);
 
-#if 0
-		/** Tests if the mask matches a certain cat/pkg pair.
-		 * @param name name of package (NULL if shall not be tested)
-		 * @param category category of package (NULL if shall not be tested) */
-		bool catpkgTest(const char *name, const char *category) {
-			return !((name && strcmp(name, m_name))
-					|| (category && strcmp(category, m_category)));
-		}
-#endif
-
-
 		vector<Version*> match(Package &pkg);
 
 		const char *getVersion() {
