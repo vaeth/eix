@@ -61,14 +61,14 @@ class PackageDatabase : public map<string, Category> {
 		bool deletePackage(const string &category, const string &name);
 
 		/** Return number of Packages. */
-		Category::size_type countPackages();
+		Category::size_type countPackages() const;
 
 		/** Return number of categories. */
-		size_type countCategories() 
+		size_type countCategories() const
 		{ return size(); }
 
 		// Write package-tree to fp
-		size_t write(FILE *fp);
+		size_t write(FILE *fp) const;
 
 		unsigned int read(DBHeader *header, FILE *fp);
 };

@@ -92,10 +92,10 @@ PackageDatabase::deletePackage(const string &category, const string &name)
 }
 
 Category::size_type
-PackageDatabase::countPackages() 
+PackageDatabase::countPackages() const
 {
 	Category::size_type i = 0;
-	for(iterator it = begin(); it != end(); ++it) 
+	for(const_iterator it = begin(); it != end(); ++it) 
 	{
 		i += it->second.size();
 	}
@@ -103,14 +103,14 @@ PackageDatabase::countPackages()
 }
 
 size_t
-PackageDatabase::write(FILE *fp)
+PackageDatabase::write(FILE *fp) const
 {
-	for(iterator ci = begin(); ci != end(); ++ci) 
+	for(const_iterator ci = begin(); ci != end(); ++ci) 
 	{
 		// Write category-header followed by a list of the packages.
 		io::write_category_header(fp, ci->first, ci->second.size());
 
-		for(Category::iterator p = ci->second.begin();
+		for(Category::const_iterator p = ci->second.begin();
 			p != ci->second.end();
 			++p) 
 		{
