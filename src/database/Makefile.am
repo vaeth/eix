@@ -9,6 +9,6 @@ INCLUDES = -I$(top_srcdir)/src
 noinst_LIBRARIES = libdatabase.a
 
 libdatabase_a_SOURCES = io.h io.cc \
-						database.h   \
+						database.h database.cc \
 						header.cc header.h     \
 						package_reader.cc package_reader.h

@@ -25,8 +25,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __DBBODY_H__
-#define __DBBODY_H__
+#ifndef __DATABASE_H__
+#define __DATABASE_H__
 
 #include <map>
 #include <string>
@@ -51,22 +51,12 @@ class PackageDatabase {
 		typedef vector<Package*>::iterator               package_iterator;
 
 		/** Build skeleton.  */
-		PackageDatabase(vector<string> *categories) {
-			for(vector<string>::iterator it = categories->begin(); it != categories->end(); ++it) {
-				m_packages[*it] = vector<Package*>(0);
-			}
-		}
+		PackageDatabase(vector<string> *categories);
 
 		PackageDatabase() { }
 
 		/** Free all packages. */
-		~PackageDatabase() {
-			for(category_iterator m = m_packages.begin(); m != m_packages.end(); ++m) {
-				for(package_iterator p = m->second.begin(); p != m->second.end(); ++p) {
-					delete *p;
-				}
-			}
-		}
+		~PackageDatabase();
 
 		package_iterator find(package_iterator first, package_iterator last, const string& n) {
 			while(first != last && (*first)->name != n) ++first;
@@ -132,10 +122,6 @@ class PackageDatabase {
 				/* Write category-header followed by a list of the packages. */
 				vector<Package>::size_type s = c->second.size();
 				io::write_category_header(stream, c->first, s);
-#if 0
-				io::write_string(stream,  c->first);
-				DB_WRITE_GENERIC(stream, s, vector<Package>::size_type);
-#endif
 				for(package_iterator p = c->second.begin(); p != c->second.end(); ++p) {
 					/* write package to stream */
 					(*p)->write(stream);
@@ -157,4 +143,4 @@ class PackageDatabase {
 		}
 };
 
-#endif /* __DBBODY_H__ */
+#endif /* __DATABASE_H__ */
