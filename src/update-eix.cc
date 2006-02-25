@@ -241,7 +241,8 @@ void
 update(CacheTable &cache_table, PortageSettings &portage_settings)
 {
 	DBHeader dbheader;
-	PackageDatabase package_tree(portage_settings.getCategories());
+	vector<string> *categories = portage_settings.getCategories();
+	PackageDatabase package_tree;
 
 	for(vector<BasicCache*>::iterator it = cache_table.begin();
 			it != cache_table.end(); ++it)
@@ -257,22 +258,25 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 		INFO("     Reading ");
 
 		PercentStatus percent_status;
-		percent_status.start(package_tree.countCategories());
+		percent_status.start(categories->size());
 
 		/* iterator through categories */
-		for(PackageDatabase::category_iterator m = package_tree.begin(); m != package_tree.end(); ++m) {
+		for(vector<string>::iterator ci = categories->begin();
+			ci != categories->end();
+			++ci)
+		{
 			++percent_status;
-			cache->readCategory(m->second, m->first);
+			cache->readCategory(package_tree[*ci], *ci);
 		}
 	}
 
 	/* Now apply all masks .. */
 	INFO("Applying masks ..\n");
-	for(PackageDatabase::category_iterator c = package_tree.begin();
+	for(PackageDatabase::iterator c = package_tree.begin();
 		c != package_tree.end();
 		++c) 
 	{
-		for(PackageDatabase::package_iterator p = c->second.begin();
+		for(Category::iterator p = c->second.begin();
 			p != c->second.end();
 			++p) 
 		{

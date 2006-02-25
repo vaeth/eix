@@ -30,6 +30,7 @@
 
 #include <map>
 #include <string>
+#include <stdexcept>
 
 #include <portage/mask.h>
 
@@ -39,108 +40,37 @@
 
 using namespace std;
 
-/** Body of a database. */
-class PackageDatabase {
-
-	private:
-		/** Contains all categories. */
-		map<string, vector<Package*> > m_packages;
+class Category : public vector<Package*> {
 
 	public:
-		typedef map<string, vector<Package*> >::iterator category_iterator;
-		typedef vector<Package*>::iterator               package_iterator;
+		~Category();
 
-		/** Build skeleton.  */
-		PackageDatabase(vector<string> *categories);
+		iterator find(const string &name);
 
-		PackageDatabase() { }
+		const_iterator find(const string &name) const
+		{ return const_iterator(find(name)); }
+};
 
-		/** Free all packages. */
-		~PackageDatabase();
+/** Body of a database. */
+class PackageDatabase : public map<string, Category> {
 
-		package_iterator find(package_iterator first, package_iterator last, const string& n) {
-			while(first != last && (*first)->name != n) ++first;
-			return first;
-		}
-
+	public:
 		/** Find Package in Category. */
-		Package *findPackage(string &category, string &name) {
-			package_iterator i = m_packages[category].begin();
-			i = find(i, m_packages[category].end(), name);
-			if(i != m_packages[category].end()) {
-				return *i;
-			}
-			return NULL;
-		}
+		Package *findPackage(const string &category, const string &name) const;
 
-		/** Make new Package in a category. */
-		Package *newPackage(string category, string name) {
-			Package *c = new Package(category, name) ;
-			OOM_ASSERT(c);
-			m_packages[category].push_back(c);
-			return c;
-		}
-
-		bool deletePackage(string &category, string &name) {
-			package_iterator i = m_packages[category].begin();
-			i = find(i, m_packages[category].end(), name);
-			if(i != m_packages[category].end()) {
-				delete *i;
-				m_packages[category].erase(i);
-				return true;
-			}
-			return false;
-		}
-
-		/** Return iterator pointed to begining of categories. */
-		category_iterator begin() {
-			return m_packages.begin();
-		}
-
-		/** Return iterator pointed to end of categories. */
-		category_iterator end() {
-			return m_packages.end();
-		}
+		bool deletePackage(const string &category, const string &name);
 
 		/** Return number of Packages. */
-		vector<Package*>::size_type countPackages() {
-			vector<Package*>::size_type i = 0;
-			for(category_iterator it = m_packages.begin(); it != m_packages.end(); ++it) {
-				i += it->second.size();
-			}
-			return i;
-		}
+		Category::size_type countPackages();
 
 		/** Return number of categories. */
-		map<string, vector<Package*> >::size_type countCategories() {
-			return m_packages.size();
-		}
+		size_type countCategories() 
+		{ return size(); }
 
-		/** Write PackageDatabase to file pointed to by stream. */
-		size_t write(FILE *stream) {
-			for(category_iterator c = m_packages.begin(); c != m_packages.end(); ++c) {
-				/* Write category-header followed by a list of the packages. */
-				vector<Package>::size_type s = c->second.size();
-				io::write_category_header(stream, c->first, s);
-				for(package_iterator p = c->second.begin(); p != c->second.end(); ++p) {
-					/* write package to stream */
-					(*p)->write(stream);
-				}
-			}
-			return countPackages();
-		}
+		// Write package-tree to fp
+		size_t write(FILE *fp);
 
-		unsigned int read(DBHeader *header, FILE *stream) {
-			PackageReader reader(stream, header->numcategories);
-			Package *p = NULL;
-
-			while(reader.next())
-			{
-				p = reader.release();
-				m_packages[p->name].push_back(p);
-			}
-			return header->numcategories;
-		}
+		unsigned int read(DBHeader *header, FILE *fp);
 };
 
 #endif /* __DATABASE_H__ */

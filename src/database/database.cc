@@ -27,28 +27,111 @@
 
 #include "database.h"
 
-PackageDatabase::PackageDatabase(vector<string> *categories) 
+Category::~Category()
 {
-	for(vector<string>::iterator it = categories->begin();
-		it != categories->end();
-		++it) 
+	for(iterator p = begin();
+		p != end();
+		++p) 
 	{
-		m_packages[*it] = vector<Package*>(0);
+		delete *p;
 	}
 }
 
-PackageDatabase::~PackageDatabase() 
+Category::iterator
+Category::find(const string &name)
 {
-	for(category_iterator m = m_packages.begin();
-		m != m_packages.end();
-		++m) 
+	iterator i = begin();
+	for(; i != end(); ++i)
 	{
-		for(package_iterator p = m->second.begin();
-			p != m->second.end();
-			++p) 
+		if((*i)->name == name)
+			break;
+	}
+	return i;
+}
+
+
+Package *
+PackageDatabase::findPackage(const string &category, const string &name) const 
+{
+	try 
+	{
+		Category::const_iterator i = at(category).find(name);
+		if(i != at(category).end()) 
 		{
-			delete *p;
+			return *i;
 		}
 	}
+	catch(out_of_range &e)
+	{ }
+	return NULL;
+}
+
+bool 
+PackageDatabase::deletePackage(const string &category, const string &name) 
+{
+	try 
+	{
+		Category::iterator i = at(category).find(name);
+		if(i != at(category).end()) 
+		{
+			delete *i;
+			at(category).erase(i);
+			// Check if the category is empty after deleting the
+			// package.
+			iterator it = find(category);
+			if(it->second.size() == 0)
+			{
+				erase(it);
+			}
+			return true;
+		}
+	}
+	catch(out_of_range &e)
+	{ }
+	return false;
+}
+
+Category::size_type
+PackageDatabase::countPackages() 
+{
+	Category::size_type i = 0;
+	for(iterator it = begin(); it != end(); ++it) 
+	{
+		i += it->second.size();
+	}
+	return i;
+}
+
+size_t
+PackageDatabase::write(FILE *fp)
+{
+	for(iterator ci = begin(); ci != end(); ++ci) 
+	{
+		// Write category-header followed by a list of the packages.
+		io::write_category_header(fp, ci->first, ci->second.size());
+
+		for(Category::iterator p = ci->second.begin();
+			p != ci->second.end();
+			++p) 
+		{
+			// write package to fp
+			(*p)->write(fp);
+		}
+	}
+	return countPackages();
+}
+
+unsigned int 
+PackageDatabase::read(DBHeader *header, FILE *fp) 
+{
+	PackageReader reader(fp, header->numcategories);
+	Package *p = NULL;
+
+	while(reader.next())
+	{
+		p = reader.release();
+		at(p->category).push_back(p);
+	}
+	return header->numcategories;
 }
 
