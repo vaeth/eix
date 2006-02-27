@@ -32,14 +32,11 @@
 
 #include <fstream>
 
-#include <dirent.h>
-#include <unistd.h>
-
 /** Deconstructor */
 Package::~Package()
 {
-	for(size_type i = 0; i < size(); ++i) {
-		delete (*this)[i];
+	for(iterator i = begin(); i != end(); ++i) {
+		delete *i;
 	}
 }
 
@@ -51,44 +48,10 @@ versionComparator(BasicVersion *v1, BasicVersion *v2)
 	return (*v1 < *v2);
 }
 
-/** Write the package to an eix db */
-void Package::write( FILE *output ) throw(ExBasic)
+void
+Package::sort()
 {
-	/* I didn't like the size-calculation, so now we are:
-	 * - writing the package
-	 * - seeking back to the position where the offset should be written 
-	 * - write the offset (we already know where the package ends!) 
-	 * - seek forward to the end of the package. 
-	 *
-	 * I think this needs to prove itself .. so I'll keep an eye on it.
-	 *   -- Emil Beinroth */
-
-	sort(begin(), end(), versionComparator);
-	off_t offset_position = ftello(output);
-	fseek(output, sizeof(offset_type), SEEK_CUR);
-
-	io::write_string(output, name);
-	io::write_string(output, desc);
-	io::write_string(output, provide);
-	io::write_string(output, homepage);
-	io::write_string(output, licenses);
-
-	// write all version entries
-	size_type n = size();
-	io::write<size_type>(output, n);
-
-	for(vector<Version*>::iterator i = begin();
-		i != end();
-		++i)
-	{
-		io::write_version(output, *i);
-	}
-
-	off_t pkg_end = ftello(output);
-	fseek(output, offset_position, SEEK_SET);
-	off_t v = (pkg_end - offset_position);
-	io::write<offset_type>(output, v);
-	fseek(output, pkg_end, SEEK_SET);
+	::sort(begin(), end(), versionComparator);
 }
 
 /** Check if a package has duplicated versions. */

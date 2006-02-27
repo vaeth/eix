@@ -151,7 +151,7 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 		}
 
 		void add(Mask *m) 
-		{ at(m->getCategory()).at(m->getName()).push_back(m); }
+		{ (*this)[m->getCategory()][m->getName()].push_back(m); }
 
 		void remove(Mask *m) 
 		{

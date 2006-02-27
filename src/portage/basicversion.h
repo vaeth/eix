@@ -67,12 +67,19 @@ class BasicVersion {
 		bool operator >= (const BasicVersion& right) const;
 		bool operator <= (const BasicVersion& right) const;
 
+
+
 		// Getters for protected members
-		unsigned char getPrimarychar() const;
-		unsigned char getSuffixlevel() const;
-		unsigned int  getSuffixnum() const;
-		unsigned char getGentoorelease() const;
-		const char   *getFull() const;
+		unsigned char getPrimarychar() const
+		{ return m_primarychar; }
+		unsigned char getSuffixlevel() const
+		{ return m_suffixlevel; }
+		unsigned int  getSuffixnum() const
+		{ return m_suffixnum; }
+		unsigned char getGentooRevision() const
+		{ return m_gentoorevision; }
+		const char   *getFull() const
+		{ return m_full.c_str(); }
 
 	protected:
 		/** The m_full version-string. */
@@ -88,7 +95,7 @@ class BasicVersion {
 		unsigned int           m_suffixnum;
 
 		/** The optional gentoo-revision. */
-		unsigned char          m_gentoorelease;
+		unsigned char          m_gentoorevision;
 
 		/** Parse the m_primsplit-part of a version-string.
 		 * Return pointer to the end of the m_primsplit-version.
@@ -101,35 +108,5 @@ class BasicVersion {
 
 	private:
 };
-
-inline unsigned char 
-BasicVersion::getPrimarychar() const
-{
-	return m_primarychar;
-}
-
-inline unsigned char
-BasicVersion::getSuffixlevel() const
-{
-	return m_suffixlevel;
-}
-
-inline unsigned int
-BasicVersion::getSuffixnum() const
-{
-	return m_suffixnum;
-}
-
-inline unsigned char
-BasicVersion::getGentoorelease() const
-{
-	return m_gentoorelease;
-}
-
-inline const char *
-BasicVersion::getFull() const
-{
-	return m_full.c_str();
-}
 
 #endif /* __BASICVERSION_H__ */

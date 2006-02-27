@@ -72,7 +72,8 @@ class Package : public vector<Version*> {
 			: category(c), name(n)
 		{ defaults(); }
 
-		void defaults() {
+		void defaults() 
+		{
 			is_system_package = false;
 			have_same_overlay_key = true;
 			have_duplicate_versions = false;
@@ -81,9 +82,7 @@ class Package : public vector<Version*> {
 		/** De-constructor, delete content of Version-vector. */
 		~Package();
 
-		/** Write the package to an eix db.
-		 * @param os An FILE-stream to which the package entry should be written */
-		void write(FILE *os) throw (ExBasic);
+		void sort();
 
 		/** Adds a version to "the versions" vector, */
 		void addVersion(Version *vex);

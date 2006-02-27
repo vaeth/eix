@@ -30,6 +30,7 @@
 
 #include <string>
 
+class Package;
 class Version;
 
 namespace io {
@@ -71,6 +72,10 @@ namespace io {
 
 	// Write a category-header to fp
 	void write_category_header(FILE *fp, const std::string &name, unsigned int size);
+
+
+	// Write package to stream
+	void write_package(FILE *fp, const Package &pkg);
 }
 
 #endif /* EIX__IO_H__ */

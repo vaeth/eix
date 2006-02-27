@@ -28,11 +28,11 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
-#include <iostream>
-
 #include <database/io.h>
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
+
+#include <iostream>
 
 /** Version expands the BasicVersion class by portagedb stability keys */
 class Version : public BasicVersion, public Keywords {
@@ -41,22 +41,24 @@ class Version : public BasicVersion, public Keywords {
 		friend void     io::write_version(FILE *fp, const Version *v);
 		friend Version *io::read_version(FILE *fp);
 
-		Version() : overlay_key(0) {}
-
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : BasicVersion(str), overlay_key(0) {}
-
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		unsigned short overlay_key;
 
-		bool operator == (const Version &v) {
+		Version() : overlay_key(0) 
+		{ }
+
+		/** Constructor, calls BasicVersion::parseVersion( str ) */
+		Version(const char* str) : BasicVersion(str), overlay_key(0) 
+		{ }
+
+		bool operator == (const Version &v) const
+		{ 
 			return (((BasicVersion)*this) == ((BasicVersion)v)
-					&& overlay_key == v.overlay_key);
+			        && overlay_key == v.overlay_key); 
 		}
 
-		bool operator == (const BasicVersion &v) {
-			return ((BasicVersion)*this) == v;
-		}
+		bool operator == (const BasicVersion &v) const
+		{ return ((BasicVersion)*this) == v; }
 };
 
 #endif /* __VERSION_H__ */

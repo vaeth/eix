@@ -49,7 +49,7 @@ BasicVersion::defaults()
 	m_primarychar   = '\0';
 	m_suffixlevel   = no_suffixlevel;
 	m_suffixnum     = 0;
-	m_gentoorelease = 0;
+	m_gentoorevision = 0;
 }
 
 void
@@ -154,8 +154,8 @@ BasicVersion::compare(const BasicVersion &basic_version) const
 	if( m_suffixnum < basic_version.m_suffixnum ) return -1;
 	if( m_suffixnum > basic_version.m_suffixnum ) return  1;
 
-	if( m_gentoorelease < basic_version.m_gentoorelease ) return -1;
-	if( m_gentoorelease > basic_version.m_gentoorelease ) return  1;
+	if( m_gentoorevision < basic_version.m_gentoorevision ) return -1;
+	if( m_gentoorevision > basic_version.m_gentoorevision ) return  1;
 
 	return 0;
 }
@@ -224,11 +224,11 @@ BasicVersion::parseSuffix(const char *str)
 	if(!strncmp("-r", str, 2))
 	{
 		str += 2;
-		m_gentoorelease = strtol(str, (char **)&str, 10);
+		m_gentoorevision = strtol(str, (char **)&str, 10);
 	}
 	else
 	{
-		m_gentoorelease = 0;
+		m_gentoorevision = 0;
 	}
 	return str;
 }

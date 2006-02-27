@@ -25,7 +25,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <portage/package.h>
 #include <portage/version.h>
+#include <database/package_reader.h>
+
+#include <dirent.h>
+#include <unistd.h>
 
 /** Read a string of the format { unsigned short len; char[] string;
  * (without the 0) } */
@@ -70,10 +75,10 @@ io::read_version(FILE *fp)
 
 	v->m_primarychar = io::read<unsigned char>(fp);
 
-	// read m_suffixlevel,m_suffixnum,m_gentoorelease
+	// read m_suffixlevel,m_suffixnum,m_gentoorevision
 	v->m_suffixlevel   = io::read<unsigned char>(fp);
 	v->m_suffixnum     = io::read<unsigned int>(fp);
-	v->m_gentoorelease = io::read<unsigned char>(fp);
+	v->m_gentoorevision = io::read<unsigned char>(fp);
 
 	v->overlay_key = io::read<short>(fp);
 
@@ -101,10 +106,10 @@ io::write_version(FILE *fp, const Version *v)
 
 	io::write<unsigned char>(fp, v->m_primarychar);
 
-	// write m_suffixlevel,m_suffixnum,m_gentoorelease
+	// write m_suffixlevel,m_suffixnum,m_gentoorevision
 	io::write<unsigned char>(fp, v->m_suffixlevel);
 	io::write<unsigned int>(fp, v->m_suffixnum);
-	io::write<unsigned char>(fp, v->m_gentoorelease);
+	io::write<unsigned char>(fp, v->m_gentoorevision);
 
 	io::write<short>(fp, v->overlay_key);
 }
@@ -121,4 +126,34 @@ io::write_category_header(FILE *fp, const std::string &name, unsigned int size)
 {
 	io::write_string(fp,  name);
 	io::write<unsigned int>(fp, size);
+}
+
+
+void 
+io::write_package(FILE *fp, const Package &pkg)
+{
+	off_t offset_position = ftello(fp);
+	fseek(fp, sizeof(PackageReader::offset_type), SEEK_CUR);
+
+	io::write_string(fp, pkg.name);
+	io::write_string(fp, pkg.desc);
+	io::write_string(fp, pkg.provide);
+	io::write_string(fp, pkg.homepage);
+	io::write_string(fp, pkg.licenses);
+
+	// write all version entries
+	io::write<PackageReader::size_type>(fp, pkg.size());
+
+	for(Package::const_iterator i = pkg.begin();
+		i != pkg.end();
+		++i)
+	{
+		io::write_version(fp, *i);
+	}
+
+	off_t pkg_end = ftello(fp);
+	fseek(fp, offset_position, SEEK_SET);
+	off_t v = (pkg_end - offset_position);
+	io::write<PackageReader::offset_type>(fp, v);
+	fseek(fp, pkg_end, SEEK_SET);
 }

@@ -120,7 +120,8 @@ PackageDatabase::write(FILE *fp) const
 			++p) 
 		{
 			// write package to fp
-			(*p)->write(fp);
+			(*p)->sort();
+			io::write_package(fp, **p);
 		}
 	}
 	return countPackages();
