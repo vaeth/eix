@@ -31,8 +31,6 @@
 #include <eixTk/exceptions.h>
 #include <portage/conf/cascadingprofile.h>
 
-//#include <portage/mask.h>
-
 #include <portage/keywords.h>
 
 #include <map>
