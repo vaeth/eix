@@ -26,9 +26,11 @@
  ***************************************************************************/
 
 #include "flat.h"
+#include "flat-utils.h"
 
-#include <portage/cache/flat/flat-utils.h>
-#include <eixTk/stringutils.h>
+//#include <eixTk/stringutils.h>
+#include <portage/package.h>
+#include <portage/version.h>
 
 #include <string.h>
 #include <dirent.h>

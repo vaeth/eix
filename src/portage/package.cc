@@ -27,10 +27,11 @@
 
 #include "package.h"
 
+#include <portage/version.h>
 #include <database/io.h>
-#include <database/database.h>
 
 #include <fstream>
+
 #include <dirent.h>
 #include <unistd.h>
 
@@ -135,4 +136,20 @@ void Package::addVersion(Version *version)
 	}
 
 	push_back(version);
+}
+
+Version *
+Package::best() 
+{
+	Version *ret = NULL;
+	for(reverse_iterator ri = rbegin();
+		ri != rend();
+		++ri)
+	{
+		if((*ri)->isStable() && !(*ri)->isHardMasked()) {
+			ret = *ri;
+			break;
+		}
+	}
+	return ret;
 }

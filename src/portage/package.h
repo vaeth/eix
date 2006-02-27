@@ -28,9 +28,12 @@
 #ifndef __PACKAGE_H__
 #define __PACKAGE_H__
 
-#include <portage/version.h>
-
 #include <eixTk/exceptions.h>
+
+#include <vector>
+#include <string>
+
+class Version;
 
 using namespace std;
 
@@ -47,10 +50,14 @@ class Package : public vector<Version*> {
 		 * That means i.e. the version 0.2 is found in two overlays. */
 		bool have_duplicate_versions;
 
-		unsigned short overlay_key;  /**< Key for Portagedb.overlays/overlaylist from header. */
+		/** Key for Portagedb.overlays/overlaylist from header. */
+		unsigned short overlay_key;
 
-		bool have_same_overlay_key;  /**< True if all versions come from one overlay. */
-		bool is_system_package;      /**< True if every version is in the system-profile. */
+		/** True if all versions come from one overlay. */
+		bool have_same_overlay_key;
+
+		/** True if every version is in the system-profile. */
+		bool is_system_package;
 
 		/** Package properties (stored in db) */
 		string category, name, desc, homepage, licenses, installed_versions, provide;
@@ -84,19 +91,7 @@ class Package : public vector<Version*> {
 		/** Check if a package has duplicated versions. */
 		bool checkDuplicates(Version *version = NULL);
 
-		Version *best() {
-			Version *ret = NULL;
-			for(reverse_iterator ri = rbegin();
-				ri != rend();
-				++ri)
-			{
-				if((*ri)->isStable() && !(*ri)->isHardMasked()) {
-					ret = *ri;
-					break;
-				}
-			}
-			return ret;
-		}
+		Version *best();
 };
 
 #endif /* __PACKAGE_H__ */

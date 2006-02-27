@@ -30,7 +30,10 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/conf/cascadingprofile.h>
-#include <portage/mask.h>
+
+//#include <portage/mask.h>
+
+#include <portage/keywords.h>
 
 #include <map>
 #include <string>
@@ -39,6 +42,9 @@
 /* Files for categories the user defined and categories from the official tree */
 #define USER_CATEGORIES_FILE    "/etc/portage/categories"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
+
+class Mask;
+class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
 bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mask*> *mask_vec);
@@ -120,17 +126,7 @@ class PortageSettings : public map<string,string> {
 		 * Reads categories on first call. */
 		vector<string> *getCategories();
 
-		void setStability(Package *pkg, Keywords &kw) {
-			Package::iterator t = pkg->begin();
-			for(; t != pkg->end(); ++t) {
-				if((*t)->get() & kw.get()) {
-					**t |= Keywords::KEY_STABLE;
-				}
-				else {
-					**t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
-				}
-			}
-		}
+		void setStability(Package *pkg, Keywords &kw);
 };
 
 #endif

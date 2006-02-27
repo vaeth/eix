@@ -28,10 +28,14 @@
 #ifndef __MASK_H__
 #define __MASK_H__
 
+#include <eixTk/exceptions.h>
+#include <portage/basicversion.h>
+
 #include <map>
 #include <string>
 
-#include <portage/package.h>
+class Version;
+class Package;
 
 using namespace std;
 
@@ -102,17 +106,14 @@ class Mask : public BasicVersion {
 
 		vector<Version*> match(Package &pkg);
 
-		const char *getVersion() {
-			return m_full.c_str();
-		}
+		const char *getVersion() 
+		{ return m_full.c_str(); }
 
-		const char *getName() {
-			return m_name.c_str();
-		}
+		const char *getName() 
+		{ return m_name.c_str(); }
 
-		const char *getCategory() {
-			return m_category.c_str();
-		}
+		const char *getCategory()
+		{ return m_category.c_str(); }
 
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
@@ -127,7 +128,8 @@ class Mask : public BasicVersion {
 class KeywordMask : public Mask {
 	public:
 
-		KeywordMask(const char *str, Type type) : Mask(str, type) {}
+		KeywordMask(const char *str, Type type) : Mask(str, type)
+		{ }
 
 		string keywords;
 };
@@ -137,7 +139,8 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 	public:
 		typedef vector<Mask*>::iterator viterator;
 
-		~MaskList() {
+		~MaskList() 
+		{
 			for(MaskList::iterator it = begin(); it != end(); ++it) {
 				for(map<string,vector<Mask*> >::iterator t = it->second.begin(); t != it->second.end(); ++t) {
 					for(unsigned int i = 0; i<t->second.size(); ++i) {
@@ -147,12 +150,11 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 			}
 		}
 
-		void add(Mask *m) {
-			OOM_ASSERT(m);
-			(*this)[m->getCategory()][m->getName()].push_back(m);
-		}
+		void add(Mask *m) 
+		{ at(m->getCategory()).at(m->getName()).push_back(m); }
 
-		void remove(Mask *m) {
+		void remove(Mask *m) 
+		{
 			MaskList::iterator it = this->find(m->getCategory());
 			if(it != end())
 			{
@@ -185,7 +187,8 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 			}
 		}
 		
-		friend ostream& operator<< (ostream& os, MaskList& mlist) {
+		friend ostream& operator<< (ostream& os, MaskList& mlist)
+		{
 			for(MaskList::iterator it = mlist.begin(); it != mlist.end(); ++it) {
 				for(map<string,vector<Mask*> >::iterator t = it->second.begin(); t != it->second.end(); ++t) {
 					for(unsigned int i = 0; i<t->second.size(); ++i) {
@@ -199,7 +202,8 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 		vector<Mask*> *get(Package *p);
 };
 
-inline ostream& operator<< (ostream& os, Mask& m) {
+inline ostream& operator<< (ostream& os, Mask& m) 
+{
 	switch(m.m_type) {
 		case Mask::maskTypeNone:          os << string("None       "); break;
 		case Mask::maskAllowedByProfile:  os << string("Allowed    "); break;

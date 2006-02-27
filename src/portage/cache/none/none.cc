@@ -29,6 +29,7 @@
 
 #include <varsreader.h>
 #include <portage/package.h>
+#include <portage/version.h>
 
 #include <dirent.h>
 

@@ -27,6 +27,11 @@
 
 #include "database.h"
 
+#include <portage/package.h>
+#include <database/header.h>
+#include <database/package_reader.h>
+#include <database/io.h>
+
 Category::~Category()
 {
 	for(iterator p = begin();

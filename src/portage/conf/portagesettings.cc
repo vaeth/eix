@@ -29,13 +29,16 @@
 
 #include "portagesettings.h"
 
-#include <fstream>
 #include <portage/mask.h>
+#include <portage/package.h>
+#include <portage/version.h>
 
 #include <eixTk/utils.h>
 #include <eixTk/stringutils.h>
 
 #include <varsreader.h>
+
+#include <fstream>
 
 bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mask*> *mask_vec)
 {
@@ -201,7 +204,8 @@ void PortageUserConfig::setMasks(Package *p) {
 	}
 }
 
-static inline void apply_keywords(Version &v, Keywords::Type t) {
+inline void apply_keywords(Version &v, Keywords::Type t) 
+{
 	if(v.get() & t) {
 		v |= Keywords::KEY_STABLE;
 	}
@@ -265,5 +269,19 @@ void PortageUserConfig::setStability(Package *p, Keywords kw) {
 
 		}
 		apply_keywords(**i, lkw.get());
+	}
+}
+
+void 
+PortageSettings::setStability(Package *pkg, Keywords &kw) 
+{
+	Package::iterator t = pkg->begin();
+	for(; t != pkg->end(); ++t) {
+		if((*t)->get() & kw.get()) {
+			**t |= Keywords::KEY_STABLE;
+		}
+		else {
+			**t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+		}
 	}
 }

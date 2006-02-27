@@ -33,6 +33,8 @@
 #include "mask.h"
 #include <eixTk/stringutils.h> /* to get strndup on macos */
 #include <portage/keywords.h>
+#include <portage/package.h>
+#include <portage/version.h>
 
 #include <eixTk/regexp.h>
 #include <eixTk/exceptions.h>
@@ -209,24 +211,6 @@ Mask::test(BasicVersion *bv)
 	}
 	return false; // Never reached
 }
-
-#if 0
-void Mask::expand(Package *pkg) {
-	/* Test every version if our mask-strings would match. */
-	vector<Version*>::iterator vi = pkg->begin();
-	while(vi != pkg->end()) {
-		if(strncmp((*vi)->getFull(), getVersion(), m_wcpos) == 0) {
-			/* For every matching version, expand and apply to every version. */
-			vector<Version*>::iterator _vi = pkg->begin();
-			while(_vi != pkg->end()) {
-				apply(**_vi, (BasicVersion *)*vi);
-				++_vi;
-			}
-		}
-		++vi;
-	}
-}
-#endif
 
 vector<Version*>
 Mask::match(Package &pkg)

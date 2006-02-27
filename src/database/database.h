@@ -30,13 +30,11 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include <stdexcept>
 
-#include <portage/mask.h>
-
-#include <database/header.h>
-#include <database/package_reader.h>
-#include <database/io.h>
+class Package;
+class DBHeader;
 
 using namespace std;
 
