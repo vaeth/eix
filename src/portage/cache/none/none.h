@@ -33,14 +33,13 @@
 class NoneCache : public BasicCache {
 
 	private:
-		void readPackages(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles);
+		void readPackage(Category &vec, const std::string &cat_name, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles);
 
 	public:
-		int readCategory(vector<Package*> &vec, const string &cat_name);
+		int readCategory(Category &vec, const std::string &cat_name);
 
-		const char *getType() const {
-			return "none";
-		}
+		const char *getType() const 
+		{ return "none"; }
 };
 
 #endif /* __NOCACHE_H__ */

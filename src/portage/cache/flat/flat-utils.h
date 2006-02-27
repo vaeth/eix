@@ -36,9 +36,9 @@
 
 using namespace std;
 
-Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic);
+Keywords::Type get_keywords(string arch, string filename) throw (ExBasic);
 
 /** Read a metadata cache file. */
-void readCachefile(Package *pkg, const char *filename) throw (ExBasic);
+void read_file(Package *pkg, const char *filename) throw (ExBasic);
 
 #endif /* __FLATCACHEUTILS_H__ */

@@ -26,26 +26,37 @@
  ***************************************************************************/
 
 #include "metadata-utils.h"
+
 #include <eixTk/stringutils.h>
+#include <portage/package.h>
+
+#include <fstream>
+
+using namespace std;
 
 /** Read the stability on 'arch' from a metadata cache file. */
-Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic)
+Keywords::Type
+metadata_get_keywords(const string &filename, const string &arch) throw (ExBasic)
 {
 	// NOTE: Switched from std::istream::getline to std::getline
-	string linebuf;
-	int linenr;
 	ifstream is(filename.c_str());
 
 	if(!is.is_open())
 		throw ExBasic("Can't open %s: %s", filename.c_str(), strerror(errno));
 
+	int linenr;
 	// Skip the first 8 lines
 	for( linenr=0;linenr<8; linenr++ )
 	{
-		is.ignore(10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
-		if( is.fail() ) throw ExBasic("Can't read cache file %s: %s", filename.c_str(), strerror(errno));
+		// 10000 is an arbitrary value, assuming that no line is longer
+		is.ignore(10000, '\n' );
+		if(is.fail())
+			throw ExBasic("Can't read cache file %s: %s",
+			              filename.c_str(), strerror(errno));
 	}
+
 	// Read the keywords line
+	string linebuf;
 	getline(is, linebuf);
 	is.close();
 
@@ -53,25 +64,28 @@ Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic)
 }
 
 /** Read a metadata cache file. */
-void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
+void 
+read_metadata(const char *filename, Package *pkg) throw (ExBasic)
 {
-	string linebuf;
-	int linenr;
 	ifstream is(filename);
+	if(!is.is_open())
+		throw ExBasic("Can't open %s: %s", filename, strerror(errno));
 
-	if(!is.is_open()) throw ExBasic("Can't open %s: %s", filename, strerror(errno));
-
+	int linenr;
 	// Skip the first 5 lines
-	for( linenr=0;linenr<5; linenr++ )
+	for(linenr = 0; linenr < 5; ++linenr)
 	{
-		is.ignore( 10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
+		// 10000 is an arbitrary value, assuming that no line is longer than
+		// 10000 chars
+		is.ignore( 10000, '\n' );
 		if( is.fail() ) throw ExBasic("Can't read metadata cache file: %s", filename);
 	}
 
+	string linebuf;
 	// Read the rest
-	for(; getline(is, linebuf); linenr++)
+	for(; getline(is, linebuf); ++linenr)
 	{
-		switch( linenr )
+		switch(linenr)
 		{
 			case 5:  pkg->homepage = linebuf; break;
 			case 6:  pkg->licenses = linebuf; break;
@@ -82,4 +96,3 @@ void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
 	}
 	is.close();
 }
-

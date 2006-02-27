@@ -28,7 +28,7 @@
 #include "none.h"
 
 #include <varsreader.h>
-#include <eixTk/stringutils.h>
+#include <portage/package.h>
 
 #include <dirent.h>
 
@@ -47,7 +47,7 @@ static int ebuild_selector (SCANDIR_ARG3 dent)
 		return package_selector(dent);
 }
 
-void NoneCache::readPackages(vector<Package*> &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
+void NoneCache::readPackage(Category &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
 {
 	bool have_onetime_info = false;
 
@@ -103,7 +103,7 @@ void NoneCache::readPackages(vector<Package*> &vec, const string &cat_name, char
 	}
 }
 
-int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name)
+int NoneCache::readCategory(Category &vec, const string &cat_name)
 {
 	struct dirent **packages= NULL;
 
@@ -120,7 +120,7 @@ int NoneCache::readCategory(vector<Package*> &vec, const string &cat_name)
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackages(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			readPackage(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);

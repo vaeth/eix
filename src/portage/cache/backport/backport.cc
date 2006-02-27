@@ -26,26 +26,85 @@
  ***************************************************************************/
 
 #include "backport.h"
-#include <portage/cache/backport/backport-utils.h>
-#include <eixTk/stringutils.h>
+
+//#include <eixTk/stringutils.h>
+#include <portage/package.h>
+#include <portage/version.h>
+
+#include <map>
+#include <fstream>
 
 #include <string.h>
 #include <dirent.h>
 
 #include <config.h>
 
+using namespace std;
+
 /* Path to portage cache */
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
 
-using namespace std;
+static int
+get_map_from_cache(const char *file, map<string,string> &x)
+{
+	string lbuf;
+	ifstream is(file);
+	if(!is.is_open())
+		return -1;
 
-static int cachefiles_selector (SCANDIR_ARG3 dent)
+	while(getline(is, lbuf))
+	{
+		string::size_type p = lbuf.find_first_of("=");
+		if(p == string::npos)
+			continue;
+		x[lbuf.substr(0, p)] = lbuf.substr(p + 1);
+	}
+	is.close();
+	return x.size();
+}
+
+/** Read the stability on 'arch' from a metadata cache file. */
+static Keywords::Type 
+get_keywords(const string &filename, const string &arch) throw (ExBasic)
+{
+	map<string,string> cf;
+	
+	if( get_map_from_cache(filename.c_str(), cf) < 0 )
+	{
+		throw ExBasic("Can't read cache file %s: %s",
+				filename.c_str(),
+				strerror(errno));
+	}
+
+	return Keywords::get_type(arch, cf["KEYWORDS"]);
+}
+
+/** Read a metadata cache file. */
+static void 
+read_file(const char *filename, Package *pkg) throw (ExBasic)
+{
+	map<string,string> cf;
+	
+	if( get_map_from_cache(filename, cf) < 0 )
+	{
+		throw ExBasic("Can't read cache file %s: %s",
+		              filename, strerror(errno));
+	}
+
+	pkg->homepage = cf["HOMEPAGE"];
+	pkg->licenses = cf["LICENSE"];
+	pkg->desc     = cf["DESCRIPTION"];
+	pkg->provide  = cf["PROVIDE"];
+}
+
+static int 
+cachefiles_selector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name)
+int BackportCache::readCategory(Category &vec, const string &cat_name)
 {
 	string catpath = PORTAGE_CACHE_PATH + m_scheme + cat_name; 
 	struct dirent **dents;
@@ -78,7 +137,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name)
 			pkg->addVersion(version);
 
 			/* Read stability from cachefile */
-			version->set( backportCacheGetKeywords(m_arch, catpath + "/" + dents[i]->d_name));
+			version->set(get_keywords(catpath + "/" + dents[i]->d_name, m_arch));
 			version->overlay_key = m_overlay_key;
 
 			/* Free old split */
@@ -102,7 +161,7 @@ int BackportCache::readCategory(vector<Package*> &vec, const string &cat_name)
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		readBackportCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
+		read_file(string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str(), pkg);
 	}
 
 	if(numfiles > 0)

@@ -33,11 +33,10 @@
 class CdbCache : public BasicCache {
 
 	public:
-		int readCategory(vector<Package*> &vec, const string &cat_name);
+		int readCategory(Category &vec, const std::string &cat_name);
 
-		const char *getType() const {
-			return "cdb";
-		}
+		const char *getType() const 
+		{ return "cdb"; }
 };
 
 #endif /* __CDB_H__ */

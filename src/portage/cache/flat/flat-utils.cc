@@ -29,7 +29,7 @@
 #include <eixTk/stringutils.h>
 
 /** Read the stability on 'arch' from a metadata cache file. */
-Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic)
+Keywords::Type get_keywords(string arch, string filename) throw (ExBasic)
 {
 	// NOTE: Switched from std::istream::getline to std::getline
 	string linebuf;
@@ -53,7 +53,7 @@ Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic)
 }
 
 /** Read a metadata cache file. */
-void readCachefile(Package *pkg, const char *filename) throw (ExBasic)
+void read_file(Package *pkg, const char *filename) throw (ExBasic)
 {
 	string linebuf;
 	int linenr;

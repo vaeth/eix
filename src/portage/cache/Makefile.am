@@ -12,7 +12,6 @@ libcache_a_SOURCES = base.h base.cc \
 					 none/none.cc none/none.h \
 					 cdb/cdb.h cdb/cdb.cc \
 					 backport/backport.cc backport/backport.h \
-					 backport/backport-utils.cc backport/backport-utils.h \
 					 metadata/metadata-utils.cc metadata/metadata-utils.h \
 					 metadata/metadata.cc metadata/metadata.h \
 					 cache-map.cc cache-map.h

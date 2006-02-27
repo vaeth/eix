@@ -27,8 +27,13 @@
 
 #include "base.h"
 
+#include <portage/package.h>
+#include <database/database.h>
+
+using namespace std;
+
 Package *
-addPackage(vector<Package*> &v, const string &cat, const string &pkg)
+addPackage(Category &v, const string &cat, const string &pkg)
 {
 	Package *p = new Package(cat, pkg);
 	OOM_ASSERT(p);
@@ -37,10 +42,10 @@ addPackage(vector<Package*> &v, const string &cat, const string &pkg)
 }
 
 Package *
-findPackage(vector<Package*> &v, const char *pkg)
+findPackage(Category &v, const char *pkg)
 {
 	Package *ret = NULL;
-	for(vector<Package*>::iterator i = v.begin();
+	for(Category::iterator i = v.begin();
 		i != v.end();
 		++i)
 	{
@@ -53,10 +58,10 @@ findPackage(vector<Package*> &v, const char *pkg)
 }
 
 bool
-deletePackage(vector<Package*> &v, const string &pkg)
+deletePackage(Category &v, const string &pkg)
 {
 	bool ret = false;
-	for(vector<Package*>::iterator i = v.begin();
+	for(Category::iterator i = v.begin();
 		i != v.end();
 		++i)
 	{

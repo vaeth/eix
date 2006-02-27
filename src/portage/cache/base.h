@@ -28,59 +28,58 @@
 #ifndef __BASICCACHE_H__
 #define __BASICCACHE_H__
 
-#include <portage/package.h>
+#include <string>
+
+class Category;
+class Package;
 
 // Add package to vector
-Package *addPackage(vector<Package*> &v, const string &cat, const string &pkg);
+Package *addPackage(Category &v, const std::string &cat, const std::string &pkg);
 
 // Find Package and return pointer to it.
-Package *findPackage(vector<Package*> &v, const char *pkg);
+Package *findPackage(Category &v, const char *pkg);
 
 // Remove and delete Package. */
-bool deletePackage(vector<Package*> &v, const string &pkg);
+bool deletePackage(Category &v, const std::string &pkg);
 
 // Parent class of every cache that eix can use. */
 class BasicCache {
 
 	public:
 		// Virtual deconstructor. */
-		virtual ~BasicCache() {}
+		virtual ~BasicCache()
+		{ }
 
 		// Set scheme for this cache. */
-		void setScheme(string scheme) {
-			m_scheme = scheme;
-		}
+		void setScheme(std::string scheme) 
+		{ m_scheme = scheme; }
 
 		// Set overlay-key. */
-		void setKey(short key) {
-			m_overlay_key = key;
-		}
+		void setKey(short key)
+		{ m_overlay_key = key; }
 
 		// Set arch for system. */
-		void setArch(const string &arch) {
-			m_arch = arch;
-		}
+		void setArch(const std::string &arch) 
+		{ m_arch = arch; }
+
+		// Set arch for system. */
+		void setErrorCallback(void (*error_callback)(const char *fmt, ...))
+		{ m_error_callback = error_callback; }
+
+		// Get scheme for this cache. */
+		std::string getScheme() const 
+		{ return m_scheme; }
 
 		// Return name of Cache.*/
 		virtual const char *getType() const = 0;
 
-		// Set arch for system. */
-		void setErrorCallback(void (*error_callback)(const char *fmt, ...)) {
-			m_error_callback = error_callback;
-		}
-
 		// Read Cache for a category with a little from portageif. */
-		virtual int readCategory(vector<Package*> &vec, const string &cat) = 0;
-
-		// Get scheme for this cache. */
-		string getScheme() const {
-			return m_scheme;
-		}
+		virtual int readCategory(Category &vec, const std::string &cat) = 0;
 
 	protected:
-		string m_scheme;
+		std::string m_scheme;
 		short  m_overlay_key;
-		string m_arch;
+		std::string m_arch;
 		void (*m_error_callback)(const char *fmt, ...);
 
 	public:

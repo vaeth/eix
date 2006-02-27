@@ -26,7 +26,9 @@
  ***************************************************************************/
 
 #include "cdb.h"
-#include <eixTk/stringutils.h>
+
+//#include <eixTk/stringutils.h>
+#include <portage/package.h>
 
 #include <map>
 
@@ -35,18 +37,15 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-//#include <endian.h>
 #include <stdint.h>
 #include <unistd.h>
 
 #include <config.h>
 
-#define INFO(...) printf(__VA_ARGS__)
+using namespace std;
 
 /* Path to portage cache */
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
-
-using namespace std;
 
 #if defined(WORDS_BIGENDIAN)
 /* For the big-endian machines */
@@ -237,7 +236,7 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 	return true;
 }
 
-int CdbCache::readCategory(vector<Package*> &vec, const string &cat_name)
+int CdbCache::readCategory(Category &vec, const string &cat_name)
 {
 	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + cat_name + ".cdb";
 	uint32_t dlen;

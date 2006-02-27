@@ -46,7 +46,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int FlatCache::readCategory(vector<Package*> &vec, const string &cat_name)
+int FlatCache::readCategory(Category &vec, const string &cat_name)
 {
 	string catpath = PORTAGE_CACHE_PATH + m_scheme + cat_name; 
 	struct dirent **dents;
@@ -79,7 +79,7 @@ int FlatCache::readCategory(vector<Package*> &vec, const string &cat_name)
 			pkg->addVersion(version);
 
 			/* Read stability from cachefile */
-			version->set( cacheGetKeywords(m_arch, catpath + "/" + dents[i]->d_name));
+			version->set( get_keywords(m_arch, catpath + "/" + dents[i]->d_name));
 			version->overlay_key = m_overlay_key;
 
 			/* Free old split */
@@ -103,7 +103,7 @@ int FlatCache::readCategory(vector<Package*> &vec, const string &cat_name)
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		readCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
+		read_file(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
 	}
 
 	if(numfiles > 0)

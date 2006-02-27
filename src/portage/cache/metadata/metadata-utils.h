@@ -30,15 +30,13 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/keywords.h>
-#include <portage/package.h>
 
-#include <fstream>
+#include <string>
 
-using namespace std;
+class Package;
 
-Keywords::Type cacheGetKeywords(string arch, string filename) throw (ExBasic);
+Keywords::Type metadata_get_keywords(const string &filename, const string &arch) throw (ExBasic);
 
-/** Read a metadata cache file. */
-void readCachefile(Package *pkg, const char *filename) throw (ExBasic);
+void read_metadata(const char *filename, Package *pkg) throw (ExBasic);
 
 #endif /* __METADATAUTILS_H__ */

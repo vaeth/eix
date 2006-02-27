@@ -34,8 +34,8 @@
 
 using namespace std;
 
-/** A class to represent a package in portage It contains various information about a package,
- * including a list of versions.  */
+/** A class to represent a package in portage It contains various information
+ * about a package, including a list of versions. */
 class Package : public vector<Version*> {
 
 	public:

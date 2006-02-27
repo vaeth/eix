@@ -30,9 +30,8 @@
 class BackportCache : public BasicCache {
 
 	public:
-		int readCategory(vector<Package*> &vec, const string &cat_name);
+		int readCategory(Category &vec, const std::string &cat_name);
 
-		const char *getType() const {
-			return "backport";
-		}
+		const char *getType() const 
+		{ return "backport"; }
 };

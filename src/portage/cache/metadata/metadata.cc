@@ -29,16 +29,18 @@
 #include "metadata-utils.h"
 
 #include <eixTk/stringutils.h>
+#include <portage/package.h>
+#include <portage/version.h>
 
 #include <string.h>
 #include <dirent.h>
 
 #include <config.h>
 
+using namespace std;
+
 /* Path to portage cache */
 #define METADATA_PATH "/metadata/cache/"
-
-using namespace std;
 
 static int cachefiles_selector (SCANDIR_ARG3 dent)
 {
@@ -46,7 +48,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int MetadataCache::readCategory(vector<Package*> &vec, const string &cat_name)
+int MetadataCache::readCategory(Category &vec, const string &cat_name)
 {
 	string catpath = m_scheme + METADATA_PATH + cat_name;
 	struct dirent **dents;
@@ -79,7 +81,7 @@ int MetadataCache::readCategory(vector<Package*> &vec, const string &cat_name)
 			pkg->addVersion(version);
 
 			/* Read stability from cachefile */
-			version->set( cacheGetKeywords(m_arch, catpath + "/" + dents[i]->d_name));
+			version->set(metadata_get_keywords(catpath + "/" + dents[i]->d_name, m_arch));
 			version->overlay_key = m_overlay_key;
 
 			/* Free old split */
@@ -103,7 +105,7 @@ int MetadataCache::readCategory(vector<Package*> &vec, const string &cat_name)
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		readCachefile(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
+		read_metadata(string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str(), pkg);
 	}
 
 	if(numfiles > 0)
