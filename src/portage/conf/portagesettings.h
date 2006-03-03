@@ -67,8 +67,9 @@ class PortageUserConfig {
 
 		bool readKeywords();
 		bool readMasks() {
-			bool ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &m_mask);
-			return    grab_masks("/etc/portage/package.mask", Mask::maskMask, &m_mask) && ok;
+			bool mask_ok = grab_masks("/etc/portage/package.mask", Mask::maskMask, &m_mask);
+			bool unmask_ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &m_mask);
+			return mask_ok && unmask_ok;
 		}
 
 	public:
