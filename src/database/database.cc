@@ -54,6 +54,17 @@ Category::find(const string &name)
 	return i;
 }
 
+Category::const_iterator
+Category::find(const string &name) const
+{
+	const_iterator i = begin();
+	for(; i != end(); ++i)
+	{
+		if((*i)->name == name)
+			break;
+	}
+	return i;
+}
 
 Package *
 PackageDatabase::findPackage(const string &category, const string &name) const 
@@ -136,8 +147,7 @@ PackageDatabase::read(DBHeader *header, FILE *fp)
 	while(reader.next())
 	{
 		p = reader.release();
-		at(p->category).push_back(p);
+		(*this)[p->category].push_back(p);
 	}
 	return header->numcategories;
 }
-

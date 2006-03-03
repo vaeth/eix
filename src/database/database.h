@@ -44,9 +44,7 @@ class Category : public vector<Package*> {
 		~Category();
 
 		iterator find(const string &name);
-
-		const_iterator find(const string &name) const
-		{ return const_iterator(find(name)); }
+		const_iterator find(const string &name) const;
 };
 
 /** Body of a database. */
