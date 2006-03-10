@@ -249,12 +249,12 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 	{
 		BasicCache *cache = *it;
 		/* Build database from scratch. */
-		short key = dbheader.addOverlay(cache->getScheme());
+		short key = dbheader.addOverlay(cache->getPath());
 		cache->setKey(key);
 		cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%i] %s (cache: %s)\n", key, cache->getScheme().c_str(), cache->getType());
+		INFO("[%i] %s (cache: %s)\n", key, cache->getPath().c_str(), cache->getType());
 		INFO("     Reading ");
 
 		PercentStatus percent_status;

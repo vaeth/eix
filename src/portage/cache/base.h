@@ -67,7 +67,7 @@ class BasicCache {
 		{ m_error_callback = error_callback; }
 
 		// Get scheme for this cache. */
-		std::string getScheme() const 
+		std::string getPath() const 
 		{ return m_scheme; }
 
 		// Return name of Cache.*/
