@@ -101,7 +101,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	const char *p = str;
 	while(*p != '/')
 	{
-		if(!isalnum(*p) && *p != '-')
+		if(*p == '\0')
 		{
 			throw ExBasic("Can't read category.");
 		}
