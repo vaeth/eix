@@ -1,0 +1,40 @@
+#!/bin/bash
+
+proj="eix"
+svnroot="http://dev.croup.de/repos/${proj}"
+
+usage() {
+	echo "Usage: mkrelease"
+}
+
+die() {
+	echo $1
+	exit ${2:-1}
+}
+
+ver=$(grep AC_INIT configure.in | awk '{ print $2 }')
+ver=${ver/,}
+
+echo "Creating release tag... "
+
+svn copy ${svnroot}/trunk ${svnroot}/tags/release-${ver} \
+	-m "Tagging the ${ver} release of the ${proj} project" &>/dev/null || die "svn copy failed"
+
+
+echo "Running autotools..."
+
+make -f Makefile.cvs &>/dev/null || die "make failed"
+mkdir build &>/dev/null
+pushd build/ &>/dev/null || die "popd failed"
+
+echo "Make dist tarball..."
+../configure &>/dev/null || die "configure failed"
+make dist &>/dev/null || die "make dist failed"
+
+for i in *.tar*; do
+	md5sum $i > $i.md5
+done
+
+echo "Tarball ist at `pwd`"
+
+popd &>/dev/null || die "popd failed"

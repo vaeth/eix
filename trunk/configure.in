@@ -1,0 +1,112 @@
+AC_INIT(eix, 0.5.2, http://sourceforge.net/projects/eix/)
+AC_CANONICAL_TARGET
+
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE()
+
+AC_LANG_CPLUSPLUS
+
+AC_PROG_LN_S
+AC_PROG_CXX
+AM_PROG_LIBTOOL
+
+dnl Look for basic functions
+AC_CHECK_FUNCS([regcomp strchr strcspn strdup strerror strstr strspn strtol strrchr fnmatch memset], ,
+			   AC_MSG_ERROR(We really need those functions ..))
+
+dnl Well define our own strndup if we don't have one
+AC_CHECK_FUNCS(strndup, , )
+
+AC_CHECK_PROGS(regex_cmd, sed)
+if test x$regex_cmd = "x"; then
+	  AC_MSG_ERROR([error. sed is required to build the manpage.])
+fi
+
+dnl Check what type of argument scandir wants
+AC_MSG_CHECKING(if scandir argument is const struct dirent * or struct dirent *)
+AC_TRY_COMPILE([ #include <dirent.h>
+],
+[
+  const char * dir = 0;
+  struct dirent ***namelist = 0;
+  int (*select)(const struct dirent *) = 0;
+  scandir(dir, namelist, select, alphasort);
+],
+[AC_MSG_RESULT(const struct dirent *); SCANDIR_ARG3="const struct dirent *"],
+	AC_TRY_COMPILE([ #include <dirent.h>
+	],
+	[
+	  const char * dir = 0;
+	  struct dirent ***namelist = 0;
+	  int (*select)(struct dirent *) = 0;
+	  scandir(dir, namelist, select, alphasort);
+	],
+	[AC_MSG_RESULT(struct dirent *); SCANDIR_ARG3="struct dirent *"],
+	AC_MSG_ERROR(none of them .. I don't know how to call scandir)
+	)
+)
+
+AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
+
+
+AC_ARG_WITH(portdir-cache-method,[  --with-portdir-cache-method=STR  default PORTDIR_CACHE_METHOD],
+		[PORTDIR_CACHE_METHOD=$withval],
+		[PORTDIR_CACHE_METHOD=metadata])
+
+AC_DEFINE_UNQUOTED(PORTDIR_CACHE_METHOD, "$PORTDIR_CACHE_METHOD", default PORTDIR_CACHE_METHOD)
+AC_SUBST(PORTDIR_CACHE_METHOD)
+
+dnl Check endianess
+AC_C_BIGENDIAN
+
+AM_CFLAGS=""
+AM_CXXFLAGS=""
+
+EIX_CACHEFILE="/var/cache/eix"
+LEVENSHTEIN_DISTANCE=2
+EIX_WIKI="http://dev.croup.de/proj/eix"
+
+AC_DEFINE_UNQUOTED(EIX_CACHEFILE, "$EIX_CACHEFILE", Location of the cachefile)
+
+AC_DEFINE_UNQUOTED(LEVENSHTEIN_DISTANCE, $LEVENSHTEIN_DISTANCE, Maximal levenshtein-distance for matches)
+AC_DEFINE_UNQUOTED(LEVENSHTEIN_DISTANCE_STR, "$LEVENSHTEIN_DISTANCE", Maximal levenshtein-distance for matches (as string))
+
+AC_DEFINE_UNQUOTED(EIX_WIKI, "$EIX_WIKI", Location of eix-wiki)
+
+AC_DEFINE_UNQUOTED(TARGET, "$target", Target system)
+
+# AC_SUBST(EXTRA_CXXFLAGS)
+AC_SUBST(EIX_CACHEFILE)
+AC_SUBST(LEVENSHTEIN_DISTANCE)
+AC_SUBST(EIX_WIKI)
+
+AC_SUBST(PACKAGE_STRING)
+AC_SUBST(AM_CXXFLAGS)
+
+if test "x$GCC" != x; then
+	AC_MSG_CHECKING(gcc version)
+	gcc_v=`${CC} -dumpversion`
+	AC_DEFINE_UNQUOTED(GCC_VERSION, "$gcc_v", Version of gcc)
+	AC_MSG_RESULT($gcc_v)
+fi
+
+dnl Done!
+AC_OUTPUT(Makefile manpage/Makefile
+		  src/Makefile
+		  src/eixTk/Makefile
+
+		  src/database/Makefile
+
+		  src/portage/Makefile
+		  src/portage/cache/Makefile
+		  src/portage/conf/Makefile
+
+		  src/output/Makefile
+
+		  src/search/Makefile
+		  
+		  contrib/Makefile)
+
+echo ""
+echo " $PACKAGE version $VERSION configured successfully."
+echo " Good luck with make :)" 

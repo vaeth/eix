@@ -1,0 +1,436 @@
+.TH "eix" "1" "April 6th, 2005" "@PACKAGE_STRING@" ""
+.\" {{{ NAME
+.SH "NAME"
+.B eix
+- a set of utilities for searching, diffing and updating a binary cache of your local portage-trees
+.\" }}}
+
+.\" {{{ SYNOPSIS 
+.SH "SYNOPSIS"
+.BR eix
+[I<common options>] [I<OPTIONS>] I<EXPRESSION...>
+.PP
+A I<EXPRESSION> can be:
+    I<EXPRESSION> [B<-a>|B<-o>] I<EXPRESSION>
+    [I<local options>] I<PATTERN>
+
+.BR update-eix
+[I<common options>] [B<--exclude-overlay> I<DIR>]
+
+.BR diff-eix
+[I<common options>] I<OLD-CACHE> [I<NEW-CACHE>]
+
+.BR eix-sync
+.\" }}}
+
+.\" {{{ DESCRIPTION
+.SH "DESCRIPTION"
+B<update-eix> generates a binary cache from your local portage-tree and overlays.
+B<eix> searches this cache for packages that match the criteria you specified.
+B<diff-eix> compares two binary caches and finds packages that were added, removed or for
+which the highest stable versions has changed.
+B<eix-sync> removes the old dep-cache (see B<HISTORY>), runs B<emerge --sync> (or B<emerge --metadata>) and B<update-eix>, it then
+compares the new cache with the old cache using B<diff-eix>, while redirecting all output
+from B<emerge> and B<update-eix> to I</var/log/eix-sync.log> for cleanliness.
+.\" }}}
+
+.\" {{{ OPTIONS
+.SH "OPTIONS"
+.\" {{{ -------- Common options
+.SS Common options
+These options are common to all programs in the eix-suite.
+.TP
+.BR -q ", " --quiet
+Produce no output on stderr and stdout (fatal errors which occur at the
+beginning of execution are printed to stderr, regardless of this option).
+.TP
+.BR --dump
+Show defaults for eixrc-variables.
+.TP
+.BR -V ", " --version
+Print version and exit.
+.TP
+.BR -n ", " --nocolor
+Disables the use of ANSI color codes. This is useful for terminals that do not support ANSI colors.
+(This is automatically turned on if stdout is no tty, but can be overridden by using --force-color)
+.TP
+.BR -F ", " --force-color
+The opposite of --nocolor.
+.\" }}}
+
+.\" {{{ -------- Output options
+.SS Output options
+.TP
+.BR -l ", " --versionlines
+Prints available versions in a (vertical) list.
+.TP
+.BR -c ", " --compact
+Causes eix to use a compact layout for search results. Useful for obtaining a better
+overview in the case of a long list of results, and also to help speed up searching over
+slow connections such as a serial console.
+.TP
+.BR -v ", " --verbose
+Use a verbose layout with additional information about search results such as the license
+of a package.
+.\" }}}
+
+.\" {{{ -------- Defining layouts
+.SS Defining layouts \fP(see B<FORMATSTRING> below)
+.TP
+.BR --format " " I<FORMAT>
+Define the normal layout for results as I<FORMAT>
+.TP
+.BR --format-compact " " I<FORMAT>
+Define the compact layout for results as I<FORMAT>
+.TP
+.BR --format-verbose " " I<FORMAT>
+Define the verbose layout for results as I<FORMAT>
+.\" }}}
+
+.\" {{{ -------- Options for expressions
+.SS Options for expressions
+.TP
+.BR -I ", " --installed
+Only match installed packages. Please don't use this as a replacement for qlist -ICv or
+equery, it's not the same. This only show packages that could be installed and that are
+installed. Packages that are installed, but no longer in portage are not listed here.
+.TP
+.BR -D ", " --dup-versions
+Only match packages with duplicated versions
+(for example, sys-foo/bar-0.2.1 exists both in the official portage tree and a local
+overlay)
+.TP
+.BR -! ", " --not
+Invert the expression given
+.\" }}}
+
+.\" {{{ -------- Operation selection
+.SS Operation selection
+.TP
+Define the fields that the expression should be tested on. Multiple fields may be used.
+.TP
+.BR -s ", " --name
+i.e. "eix" (default)
+.TP
+.BR -S ", " --description
+i.e. "Small utility for searching .."
+.TP
+.BR -C ", " --category
+i.e. "app-portage"
+.TP
+.BR -A ", " --category-name
+i.e. "app-portage/eix"
+.TP
+.BR -H ", " --homepage
+i.e. "http://sourceforge.net/projects/eix"
+.TP
+.BR -L ", " --license
+i.e. "GPL-2"
+.TP
+.BR -P ", " --provide
+i.e. "virtual/blackbox"
+.\" }}}
+
+.\" {{{ -------- Match algorithms
+.SS "Match algorithms"
+.TP
+.BR -e ", " --exact
+Pattern is an exact string. For example, "eix -e gcc" will only show packages
+with the name "gcc".
+.TP
+.BR -f " [" I<N> "], " --fuzzy " [" I<N> "]"
+Do a fuzzy search with a maximal levenshtein-distance of I<N> (default @LEVENSHTEIN_DISTANCE@).
+Note that this command slows down search speed.
+.TP
+.BR -p ", " --pattern
+pattern is a wildcard-pattern. See
+.BR fnmatch (3)
+and/or
+.BR glob (7)
+for further information. Be sure to use single quotes around patterns (to prevent the
+shell from intercepting any wildcards).
+.TP
+.BR -r ", " --regex
+pattern is a regexp. -r is default, so you actually not need to type -r. For further
+information, please read
+.BR regex (7).
+Again, be sure to use single quotes around patterns. (Default)
+.\" }}}
+.\" }}}
+
+.\" {{{ OUTPUT
+.SH OUTPUT
+If you used gentoo for more than a week you're probably going to immediately
+recognize the format of the versions-strings. Nevertheless, we are going to
+explain them here.
+.TP
+.BR [P]2.95.3-r8
+If a mask for the package was found in the packages-files from your profile, but this
+version does not match it, the version is determined to be "masked by profile".
+.TP
+.BR [M]4.0.0_alpha20050213
+The version matches a mask from /etc/portage/package.mask, $PORTDIR/profiles/package.mask
+or a package.mask from your profile. Portage calls this "masked by package.mask".
+.TP
+.BR *3.4.3-r2
+That version is "masked by -* keyword".
+.TP
+.BR !3.3.3
+This means the version is "masked by missing keyword".
+.TP
+.BR -0.8.14
+Masked by -ARCH.
+.TP
+.BR ~3.3.5.20050130
+The version would be "masked by ~keyword".
+.TP
+.BR 3.3.1
+.RS
+Finally, this would be a stable version.
+.\" }}}
+
+.\" {{{ FORMATSTRING 
+.SH FORMATSTRING
+.LP
+A formatstring can contain conditional blocks, package properties, colors and
+normal strings.
+
+.\" {{{ -------- Conditional blocks
+.SS Conditional blocks
+Conditions are very simple: A property is expanded and the resulting string is
+tested against another string. If they are the same, the condition is true and
+the block is executed. Conditions can be negated so that the else-part is
+executed if the conditions is true, and the if-part if the condition is false.
+The else-part can be also be completely left out.
+.TP
+.BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {}
+Execute I<TCODE> if the string resulting from expanding I<VARIABLE> is equal to
+I<STRING>.
+The B<!> would negate the behavior.
+
+.TP
+.BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {else} I<FCODE> {}
+Execute I<TCODE> if the string resulting from expanding I<VARIABLE> is equal to
+I<STRING>.  If it's not, execute I<FCODE>.
+.\" }}}
+
+.\" {{{ -------- Package properties
+.SS Package properties
+Names that refer to specific properties of the package that is currently
+printed. If used to print a property, the name B<must be enclosed in square brackets>
+(i.e. "<name>").
+.TP
+.BR name ", " category ", " homepage ", " licenses
+The name, category, homepage and licenses for the current package.
+.TP
+.BR availableversions
+All versions that could be installed for this package, separated by spaces. The
+versions are printed in the according colors.
+.TP
+.BR installedversions
+All installed versions (-l changes output accordingly).
+.TP
+.BR compactflags
+If the package is installed a "I", else "N".
+This property is kept only because of backward compatibility reasons. It
+could be easily replaced by using "B<Conditional blocks>".
+.TP
+.BR overlaykey
+if all versions are in the same overlay this expands to "[overlaykey]"
+.TP
+.BR best
+the highest stable version 
+.TP
+.BR system
+expands to "system" if this package is in the system-profile
+.TP
+.BR provide
+the packages PROVIDE-string
+.\" }}}
+
+.\" {{{ -------- Colors 
+.SS Colors
+.TP
+(I<NAME>,I<BRIGHTNESS>)
+If I<BRIGHTNESS> is 1, eix prints the corresponding 'light' (bold) color for
+I<NAME>, or normal color if I<BRIGHTNESS> is 0.
+Available colors are:
+I<default black red green yellow blue purple cyan gray>
+.\" }}}
+
+.\" {{{ -------- Example 
+.SS Example:
+.TP
+{installedversions}(yellow,1){else}(yellow,0){}<name>()
+If the package is installed, print the name in bright yellow, else in normal
+yellow.
+.\" }}}
+.\" }}}
+
+.\" {{{ FILES 
+.SH "FILES"
+.LP
+.\" {{{ -------- /etc/eix-sync-overlays
+.SS /etc/eix-sync-overlays
+A list of overlays that should be synced using B<gensync> from
+B<app-portage/gentoolkit-dev>. A line that only contains an asterisk causes eix-sync to sync
+all overlays, using gensync -a.
+.\" }}}
+
+.\" {{{ -------- /etc/eixrc 
+.SS /etc/eixrc 
+Global configuration file. ~/.eixrc overrides this file.
+.\" }}}
+
+.\" {{{ -------- ~/.eixrc 
+.SS ~/.eixrc 
+Per-user configuration file.
+.TP
+.BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (Strings)
+Define the normal, compact and verbose layout for results printed by B<eix> (See
+B<FORMATSTRING>)
+
+.TP
+.BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (Strings)
+Define the format for packages that were added, removed or for which the highest
+stable versions has changed. This is only used by B<diff-eix> (See
+B<FORMATSTRING>)
+
+.TP
+.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_OVERLAYKEY "  " (Strings)
+Define the color for masked versions, stable versions, unstable versions and the
+overlay-key.
+Use the same syntax as you would inside ().
+See B<FORMATSTRING>.
+
+.TP
+.BR FORCE_USECOLORS "  " (true/false)
+Use colors even when stdout is not a terminal.
+
+.TP
+.BR STYLE_VERSION_LINES "  " (true/false)
+Turns --versionlines on.
+
+.TP
+.BR LEVENSHTEIN_DISTANCE "  " (Integer)
+Set default levenshtein-distance.
+
+.TP
+.BR EXCLUDE_OVERLAY "  " (String)
+Set a list of overlays that are excluded from the index (separators are [\\n\\r\\t ]).
+
+.TP
+.BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (Strings)
+Set the type of the cache used by portage. If you don't know what this is, just leave it
+alone.
+B<PORTDIR_CACHE_METHOD> defaults to I<@PORTDIR_CACHE_METHOD@>, B<OVERLAY_CACHE_METHOD> to
+I<none>.
+
+.TP
+.SS
+.BR cdb
+You are using the cdb-module from
+I<http://forums.gentoo.org/viewtopic-t-261580.html> as
+cache-backend for portage (cdb with cpickle'd dictionaries as values).
+.TP
+.SS
+.BR flat
+You are using the default cache-backend (plain text files).
+.TP
+.SS
+.BR backport 
+If you are using that backport-stuff (from portage-3 to portage-2) you should use this one.
+.TP
+.SS
+.BR none
+No cache-backend. Get the information from the ebuilds.
+.TP
+.SS
+.BR metadata
+Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
+.TP
+.BR LOCAL_PORTAGE_CONFIG " " (true/false)
+If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
+environment.
+.TP
+.\" {{{ Default Matchfields for different strings.
+.BR MATCH_NAME_IF " " (string)
+Use NAME as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_DESCRIPTION_IF " " (string)
+Use DESCRIPTION as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_LICENSE_IF " " (string)
+Use LICENSE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_CATEGORY_IF " " (string)
+Use CATEGORY as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_CATEGORY_NAME_IF " " (string)
+Use CATEGORY_NAME as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_HOMEPAGE_IF " " (string)
+Use HOMEPAGE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_PROVIDE_IF " " (string)
+Use PROVIDE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_ORDER " " (string)
+Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
+.TP
+.\" }}}
+.\" }}}
+
+.\" {{{ -------- @EIX_CACHEFILE@ 
+.SS @EIX_CACHEFILE@
+This is the binary database for eix.
+.\" }}}
+.\" }}}
+
+.\" {{{ BUGS
+.SH "BUGS"
+.LP
+There are no bugs, just random features.
+.\" }}}
+
+.\" {{{ HISTORY 
+.SH "HISTORY"
+.LP
+B<eix> was formerly known as B<portagedb>. The name was changed because a part of
+portage is also called portagedb, which was a bit confusing for everyone.
+
+The functionality of update-eix was once triggered by using the -u switch on
+eix. It was than separated to provide better maintainability. Thus update-eix
+came to life.
+
+The new portage-versions (>=2.1_pre1) doen't remove the old dep-cache, thus eix would
+always find packages that are not in portage anymore. To circumvent this, eix-sync
+deletes the old cache (rm -fr /var/cache/edb/dep/*).
+.\" }}}
+
+.\" {{{ AUTHORS 
+.SH "AUTHORS"
+.LP
+Emil Beinroth <emilbeinroth at gmx.net> (developer, current maintainer)
+
+Wolfgang Frisch <xororand at users.sourceforge.net> (developer, initial author)
+
+Roland Wittmann <linuxcommando at users.sourceforge.net> (developer)
+.\" }}}
+
+.\" {{{ SEE ALSO 
+.SH "SEE ALSO"
+.BR portage (5),
+.\" Match-algorithms
+.BR fnmatch (3),
+.BR regex (7),
+.\" Other search-utils
+.BR emerge (1),
+.BR esearch (1),
+.BR qsearch (1),
+.\" Related software .. e.g. stuff we use
+.BR gensync (1)
+.LP
+Further information can be found in our WiKi at \fI@EIX_WIKI@\fR.
+.\" }}}
+.\" vim:set tw=90 expandtab foldenable foldmethod=marker foldlevel=0 :
