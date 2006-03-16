@@ -69,42 +69,51 @@ Category::find(const string &name) const
 Package *
 PackageDatabase::findPackage(const string &category, const string &name) const 
 {
-	try 
+	const_iterator i = begin();
+	for(; i != end(); ++i)
 	{
-		Category::const_iterator i = at(category).find(name);
-		if(i != at(category).end()) 
+		if(i->first == category)
+			break;
+	}
+
+	if(i != end())
+	{
+		Category::const_iterator p = i->second.find(name);
+		if(p != i->second.end()) 
 		{
-			return *i;
+			return *p;
 		}
 	}
-	catch(out_of_range &e)
-	{ }
 	return NULL;
 }
 
 bool 
 PackageDatabase::deletePackage(const string &category, const string &name) 
 {
-	try 
+	iterator i = begin();
+	for(; i != end(); ++i)
 	{
-		Category::iterator i = at(category).find(name);
-		if(i != at(category).end()) 
-		{
-			delete *i;
-			at(category).erase(i);
-			// Check if the category is empty after deleting the
-			// package.
-			iterator it = find(category);
-			if(it->second.size() == 0)
-			{
-				erase(it);
-			}
-			return true;
-		}
+		if(i->first == category)
+			break;
 	}
-	catch(out_of_range &e)
-	{ }
-	return false;
+
+	if(i == end())
+		return false;
+
+	Category::iterator p = i->second.find(name);
+
+	if(p == i->second.end()) 
+		return false;
+
+	i->second.erase(p);
+
+	// Check if the category is empty after deleting the
+	// package.
+	if(i->second.size() == 0) 
+	{
+		erase(i);
+	}
+	return true;
 }
 
 Category::size_type
