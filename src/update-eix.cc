@@ -35,7 +35,8 @@
 #include <eixTk/utils.h>
 
 #include <database/header.h>
-#include <database/database.h>
+#include <database/io.h>
+#include <portage/packagetree.h>
 
 #include <cachetable.h>
 
@@ -48,6 +49,8 @@
 #include <signal.h>   /* signal handlers */
 
 #define INFO(...) printf(__VA_ARGS__)
+
+using namespace std;
 
 char *program_name = NULL;
 void sig_handler(int sig);
@@ -143,7 +146,7 @@ run_update_eix(int argc, char *argv[])
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
-	vector<Parameter>::iterator current_param = argreader.begin();
+	ArgumentReader::iterator current_param = argreader.begin();
 
 	/* Read options. */
 	while(current_param != argreader.end())
@@ -242,12 +245,13 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 {
 	DBHeader dbheader;
 	vector<string> *categories = portage_settings.getCategories();
-	PackageDatabase package_tree;
+	PackageTree package_tree;
 
-	for(vector<BasicCache*>::iterator it = cache_table.begin();
-			it != cache_table.end(); ++it)
+	for(eix::ptr_list<BasicCache>::iterator it = cache_table.begin();
+		it != cache_table.end();
+		++it)
 	{
-		BasicCache *cache = *it;
+		BasicCache *cache = it.ptr();
 		/* Build database from scratch. */
 		short key = dbheader.addOverlay(cache->getPath());
 		cache->setKey(key);
@@ -266,23 +270,23 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 			++ci)
 		{
 			++percent_status;
-			cache->readCategory(package_tree[*ci], *ci);
+			cache->readCategory(*package_tree[*ci]);
 		}
 	}
 
 	/* Now apply all masks .. */
 	INFO("Applying masks ..\n");
-	for(PackageDatabase::iterator c = package_tree.begin();
+	for(PackageTree::iterator c = package_tree.begin();
 		c != package_tree.end();
 		++c) 
 	{
-		for(Category::iterator p = c->second.begin();
-			p != c->second.end();
+		for(Category::iterator p = c->begin();
+			p != c->end();
 			++p) 
 		{
-			apply_masks(portage_settings.profile->getAllowedPackages(), *p);
-			apply_masks(portage_settings.profile->getSystemPackages(), *p);
-			apply_masks(portage_settings.getMasks(), *p);
+			apply_masks(portage_settings.profile->getAllowedPackages(), p.ptr());
+			apply_masks(portage_settings.profile->getSystemPackages(), p.ptr());
+			apply_masks(portage_settings.getMasks(), p.ptr());
 		}
 	}
 
@@ -290,13 +294,15 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 	FILE *database_stream = fopen(EIX_CACHEFILE, "wb");
 	ASSERT(database_stream, "Can't open the database file %s for writing (mode = 'wb')", EIX_CACHEFILE);
 
-	dbheader.numpackages   = package_tree.countPackages();
-	dbheader.numcategories = package_tree.countCategories();
-	dbheader.write(database_stream);
-	package_tree.write(database_stream);
+	dbheader.size = package_tree.countCategories();
+
+	io::write_header(database_stream, dbheader);
+	io::write_packagetree(database_stream, package_tree);
+
 	fclose(database_stream);
 
-	INFO("Database contains %i packages in %i categories.\n", dbheader.numpackages, dbheader.numcategories);
+	INFO("Database contains %i packages in %i categories.\n",
+		package_tree.countPackages(), dbheader.size);
 }
 
 /** On segfault: show some instructions to help us find the bug. */

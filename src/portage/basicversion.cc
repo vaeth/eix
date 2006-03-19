@@ -29,6 +29,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 const char *BasicVersion::suffixlevels[]     = { "alpha", "beta", "pre", "rc", "", "p" };
 const char  BasicVersion::no_suffixlevel     = 4;
 const int   BasicVersion::suffix_level_count = sizeof(suffixlevels)/sizeof(char*);

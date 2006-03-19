@@ -338,46 +338,41 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
-	vector<Package*> matches;
+	eix::ptr_list<Package> matches;
+
+	/* Open database file */
+	FILE *fp = fopen(rc_options.use_this_cache, "rb");
+	if(!fp) {
+		fprintf(stderr, "Can't open the database file %s for reading (mode = 'rb')\n"
+				"Did you forget to create it with 'update-eix'?\n", rc_options.use_this_cache);
+		exit(1);
+	}
+
 	DBHeader header;
 
-	try {
-		/* Open database file */
-		FILE *fp = fopen(rc_options.use_this_cache, "rb");
-		if(!fp) {
-			fprintf(stderr, "Can't open the database file %s for reading (mode = 'rb')\n"
-					"Did you forget to create it with 'update-eix'?\n", rc_options.use_this_cache);
-			exit(1);
-		}
-
-		header.read(fp);
-		if(!header.isCurrent()) {
-			fprintf(stderr, "Your database-file uses an obsolete format (%i, current is %i).\n"
-					"Please run 'update-eix' and try again.\n", header.version, DBHeader::current);
-			exit(1);
-		}
-
-		PackageReader reader(fp, header.numcategories);
-		while(reader.next())
-		{
-			if(query->match(&reader))
-			{
-				matches.push_back(reader.release());
-			}
-			else
-			{
-				reader.skip();
-			}
-		}
+	io::read_header(fp, header);
+	if(!header.isCurrent()) {
+		fprintf(stderr, "Your database-file uses an obsolete format (%i, current is %i).\n"
+				"Please run 'update-eix' and try again.\n", header.version, DBHeader::current);
+		exit(1);
 	}
-	catch(ExBasic& e) {
-		cerr << e.getMessage() << endl;
-		return 1;
+
+	PackageReader reader(fp, header.size);
+	while(reader.next())
+	{
+		if(query->match(&reader))
+		{
+			matches.push_back(reader.release());
+		}
+		else
+		{
+			reader.skip();
+		}
 	}
 
 	/* Sort the found matches by rating */
 	if(FuzzyAlgorithm::sort_by_levenshtein()) {
-		sort(matches.begin(), matches.end(), FuzzyAlgorithm::compare);
+		matches.sort(FuzzyAlgorithm::compare);
 	}
 
 	PortageSettings portagesettings;
@@ -393,29 +388,29 @@ run_eix(int argc, char** argv)
 	}
 
 	bool need_overlay_table = false;
-	for(vector<Package*>::iterator it = matches.begin();
+	for(eix::ptr_list<Package>::iterator it = matches.begin();
 		it != matches.end();
 		++it)
 	{
 		/* Add individual maskings from this machines /etc/portage/ */
 		if(!rc_options.ignore_etc_portage) {
-			portagesettings.user_config->setMasks(*it);
-			portagesettings.user_config->setStability(*it, accepted_keywords);
+			portagesettings.user_config->setMasks(it.ptr());
+			portagesettings.user_config->setStability(it.ptr(), accepted_keywords);
 		}
 		else {
-			portagesettings.setStability(*it, accepted_keywords);
+			portagesettings.setStability(it.ptr(), accepted_keywords);
 		}
 
-		(*it)->installed_versions = varpkg_db.getInstalledString(*it);
+		it->installed_versions = varpkg_db.getInstalledString(it.ptr());
 
 		if( !need_overlay_table
-			&& (!(*it)->have_same_overlay_key
-				|| (*it)->overlay_key != 0) )
+			&& (!it->have_same_overlay_key
+				|| it->overlay_key != 0) )
 		{
 			need_overlay_table = true;
 		}
 
-		format.print(*it);
+		format.print(it.ptr());
 	}
 
 	if(need_overlay_table)
@@ -425,6 +420,12 @@ run_eix(int argc, char** argv)
 
 	fputs("\n", stdout);
 	printf("Found %i matches\n", matches.size());
+
+	// Delete old query
+	delete query;
+
+	// Delete matches
+	matches.delete_and_clear();
 
 	return EXIT_SUCCESS;
 }
@@ -438,7 +439,7 @@ int is_current_dbversion(const char *filename) {
 				"Did you forget to create it with 'update-eix'?\n", filename);
 		return 1;
 	}
-	header.read(fp);
+	io::read_header(fp, header);
 	fclose(fp);
 
 	return header.isCurrent() ? 0 : 1;

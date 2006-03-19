@@ -29,22 +29,18 @@
 #define __PACKAGE_H__
 
 #include <eixTk/exceptions.h>
+#include <eixTk/ptr_list.h>
 
-#include <vector>
+#include <list>
 #include <string>
 
 class Version;
 
-using namespace std;
-
 /** A class to represent a package in portage It contains various information
  * about a package, including a list of versions. */
-class Package : public vector<Version*> {
-
-	public:
-		typedef off_t          offset_type;
-		typedef unsigned short size_type;
-
+class Package 
+: public eix::ptr_list<Version> 
+{
 	public:
 		/** True if duplicated versions are found in for this package.
 		 * That means i.e. the version 0.2 is found in two overlays. */
@@ -60,17 +56,19 @@ class Package : public vector<Version*> {
 		bool is_system_package;
 
 		/** Package properties (stored in db) */
-		string category, name, desc, homepage, licenses, installed_versions, provide;
+		std::string category, name, desc, homepage, licenses, installed_versions, provide;
 	
-	public:
 		/// Preset with defaults
 		Package()
 		{ defaults(); }
 
 		/// Fill in name and category and preset with defaults
-		Package(string c, string n) 
+		Package(std::string c, std::string n) 
 			: category(c), name(n)
 		{ defaults(); }
+
+		/** De-constructor, delete content of Version-list. */
+		~Package();
 
 		void defaults() 
 		{
@@ -79,18 +77,16 @@ class Package : public vector<Version*> {
 			have_duplicate_versions = false;
 		}
 
-		/** De-constructor, delete content of Version-vector. */
-		~Package();
-
-		void sort();
-
-		/** Adds a version to "the versions" vector, */
+		/** Adds a version to "the versions" list, */
 		void addVersion(Version *vex);
 
 		/** Check if a package has duplicated versions. */
-		bool checkDuplicates(Version *version = NULL);
+		bool checkDuplicates(Version *version);
 
 		Version *best();
+
+	protected:
+		void sortedPushBack(Version *v);
 };
 
 #endif /* __PACKAGE_H__ */

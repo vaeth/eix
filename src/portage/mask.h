@@ -29,6 +29,7 @@
 #define __MASK_H__
 
 #include <eixTk/exceptions.h>
+#include <eixTk/ptr_list.h>
 #include <portage/basicversion.h>
 
 #include <map>
@@ -36,8 +37,6 @@
 
 class Version;
 class Package;
-
-using namespace std;
 
 //  >app-shells/bash-3*      <- NOT ALLOWED
 //  ~app-shells/bash-3*      <- OK, BUT DOESN'T SELECT bash-3.0-r12; SELECT
@@ -79,7 +78,7 @@ class Mask : public BasicVersion {
 		Type m_type;   /**< Mask type for this mask. */
 		bool m_is_wildcard;
 
-		string m_category, /**< category */
+		std::string m_category, /**< category */
 			   m_name;     /**< package name */
 
 		/** split a "mask string" into its components
@@ -104,7 +103,7 @@ class Mask : public BasicVersion {
 		/** Parse mask-string. */
 		Mask(const char *str, Type type);
 
-		vector<Version*> match(Package &pkg);
+		eix::ptr_list<Version> match(Package &pkg);
 
 		const char *getVersion() 
 		{ return m_full.c_str(); }
@@ -122,7 +121,7 @@ class Mask : public BasicVersion {
 		void checkMask(Package& pkg, const bool check_category, const bool check_name);
 		
 		/** Print mask. */
-		friend ostream& operator<< (ostream& os, Mask& m);
+		friend std::ostream& operator<< (std::ostream& os, Mask& m);
 };
 
 class KeywordMask : public Mask {
@@ -131,20 +130,27 @@ class KeywordMask : public Mask {
 		KeywordMask(const char *str, Type type) : Mask(str, type)
 		{ }
 
-		string keywords;
+		std::string keywords;
 };
 
-class MaskList : public map<string,map<string,vector<Mask*> > > {
+class MaskList : public std::map<std::string, std::map<std::string, eix::ptr_list<Mask> > > {
 
 	public:
-		typedef vector<Mask*>::iterator viterator;
+		typedef eix::ptr_list<Mask>::iterator mask_iterator;
 
 		~MaskList() 
 		{
-			for(MaskList::iterator it = begin(); it != end(); ++it) {
-				for(map<string,vector<Mask*> >::iterator t = it->second.begin(); t != it->second.end(); ++t) {
-					for(unsigned int i = 0; i<t->second.size(); ++i) {
-						delete (t->second[i]);
+			for(iterator it = begin(); it != end(); ++it) 
+			{
+				for(std::map<std::string,eix::ptr_list<Mask> >::iterator t = it->second.begin();
+					t != it->second.end();
+					++t) 
+				{
+					for(eix::ptr_list<Mask>::iterator p = t->second.begin();
+						p != t->second.end();
+						++p)
+					{
+						delete p.ptr();
 					}
 				}
 			}
@@ -158,17 +164,17 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 			MaskList::iterator it = this->find(m->getCategory());
 			if(it != end())
 			{
-				map<string,vector<Mask*> >::iterator t = it->second.find(m->getName());
+				std::map<std::string, eix::ptr_list<Mask> >::iterator t = it->second.find(m->getName());
 
 				if(t != it->second.end())
 				{
-					for(vector<Mask*>::iterator mi = t->second.begin();
+					for(eix::ptr_list<Mask>::iterator mi = t->second.begin();
 						mi != t->second.end();
 						++mi)
 					{
-						if(**mi == *m)
+						if(*mi == *m)
 						{
-							delete *mi;
+							delete mi.ptr();
 							t->second.erase(mi);
 							break;
 						}
@@ -187,53 +193,59 @@ class MaskList : public map<string,map<string,vector<Mask*> > > {
 			}
 		}
 		
-		friend ostream& operator<< (ostream& os, MaskList& mlist)
+		friend std::ostream& operator<< (std::ostream& os, MaskList& mlist)
 		{
 			for(MaskList::iterator it = mlist.begin(); it != mlist.end(); ++it) {
-				for(map<string,vector<Mask*> >::iterator t = it->second.begin(); t != it->second.end(); ++t) {
-					for(unsigned int i = 0; i<t->second.size(); ++i) {
-						os << *(t->second[i]) << endl;
+				for(std::map<std::string,eix::ptr_list<Mask> >::iterator t = it->second.begin();
+					t != it->second.end();
+					++t) 
+				{
+					for(eix::ptr_list<Mask>::iterator p = t->second.begin();
+						p != t->second.end();
+						++p)
+					{
+						os << *p << std::endl;
 					}
 				}
 			}
 			return os;
 		}
 
-		vector<Mask*> *get(Package *p);
+		eix::ptr_list<Mask> *get(Package *p);
 };
 
-inline ostream& operator<< (ostream& os, Mask& m) 
+inline std::ostream& operator<< (std::ostream& os, Mask& m) 
 {
 	switch(m.m_type) {
-		case Mask::maskTypeNone:          os << string("None       "); break;
-		case Mask::maskAllowedByProfile:  os << string("Allowed    "); break;
-		case Mask::maskInSystem:          os << string("inSystem   "); break;
-		case Mask::maskMask:              os << string("Mask       "); break;
-		case Mask::maskUnmask:            os << string("Unmask     "); break;
+		case Mask::maskTypeNone:          os << "None       "; break;
+		case Mask::maskAllowedByProfile:  os << "Allowed    "; break;
+		case Mask::maskInSystem:          os << "inSystem   "; break;
+		case Mask::maskMask:              os << "Mask       "; break;
+		case Mask::maskUnmask:            os << "Unmask     "; break;
 	}
 	switch(m.m_operator) {
-		case Mask::maskOpAll:          os << string("  "); break;
-		case Mask::maskOpEqual:        os << string(" ="); break;
-		case Mask::maskOpLess:         os << string(" <"); break;
-		case Mask::maskOpLessEqual:    os << string("<="); break;
-		case Mask::maskOpGreaterEqual: os << string(">="); break;
-		case Mask::maskOpGreater:      os << string(" >"); break;
-		case Mask::maskOpRevisions:    os << string(" ~"); break;
+		case Mask::maskOpAll:          os << "  "; break;
+		case Mask::maskOpEqual:        os << " ="; break;
+		case Mask::maskOpLess:         os << " <"; break;
+		case Mask::maskOpLessEqual:    os << "<="; break;
+		case Mask::maskOpGreaterEqual: os << ">="; break;
+		case Mask::maskOpGreater:      os << " >"; break;
+		case Mask::maskOpRevisions:    os << " ~"; break;
 	}
-	os << string(m.getCategory()) + "/" + m.getName();
+	os << m.getCategory() << "/" << m.getName();
 	if(m.getVersion() && strcmp(m.getVersion(), ""))
-		os << string("-") + m.getVersion();
+		os << "-" << m.getVersion();
 	return os;
 }
 
 inline void 
 apply_masks(MaskList *masks, Package *p)
 {
-	for(MaskList::viterator m = masks->get(p)->begin();
+	for(MaskList::mask_iterator m = masks->get(p)->begin();
 		m != masks->get(p)->end();
 		++m)
 	{
-		(*m)->checkMask(*p, false, false);
+		m->checkMask(*p, false, false);
 	}
 }
 

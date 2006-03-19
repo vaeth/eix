@@ -40,6 +40,8 @@
 
 #include <fstream>
 
+using namespace std;
+
 bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mask*> *mask_vec)
 {
 	ifstream mask_file(file);
@@ -128,7 +130,7 @@ PortageSettings::~PortageSettings()
  * Reads categories on first call. */
 vector<string> *PortageSettings::getCategories()
 {
-	if(m_categories.size() == 0) {
+	if(m_categories.empty()) {
 		/* Merge categories from /etc/portage/categories and
 		 * portdir/profile/categories */
 		pushback_lines(USER_CATEGORIES_FILE, &m_categories);
@@ -142,7 +144,7 @@ vector<string> *PortageSettings::getCategories()
 /** Read maskings & unmaskings as well as user-defined ones */
 MaskList *PortageSettings::getMasks()
 {
-	if(m_masks.size() == 0) {
+	if(m_masks.empty()) {
 		if(!grab_masks(string((*this)["PORTDIR"]+"profiles/package.mask").c_str(), Mask::maskMask, &m_masks) )
 			WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
 	}
@@ -196,11 +198,11 @@ bool PortageUserConfig::readKeywords() {
 
 void PortageUserConfig::setMasks(Package *p) {
 	/* Set hardmasks */
-	for(MaskList::viterator it = m_mask.get(p)->begin();
+	for(MaskList::mask_iterator it = m_mask.get(p)->begin();
 		it != m_mask.get(p)->end();
 		++it) 
 	{
-		(*it)->checkMask(*p, false, false);
+		it->checkMask(*p, false, false);
 	}
 }
 
@@ -215,23 +217,25 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 }
 
 void PortageUserConfig::setStability(Package *p, Keywords kw) {
-	vector<Mask*>        *keyword_masks =  m_keywords.get(p);
+	eix::ptr_list<Mask> *keyword_masks =  m_keywords.get(p);
 	map<Version*,string>  sorted_by_versions;
 
-	vector<Mask*>::iterator  it = keyword_masks->begin();
-	if(it != keyword_masks->end())
+	if(keyword_masks->empty())
+		return;
+
+	
+	for(eix::ptr_list<Mask>::iterator  it = keyword_masks->begin();
+		it != keyword_masks->end();
+		++it) 
 	{
-		for(;
-			it != keyword_masks->end();
-			++it) 
+		eix::ptr_list<Version> matches = it->match(*p);
+
+		for(eix::ptr_list<Version>::iterator  v = matches.begin();
+			v != matches.end();
+			++v) 
 		{
-			vector<Version*> matches = (*it)->match(*p);
-			for(vector<Version*>::iterator  v = matches.begin();
-				v != matches.end();
-				++v) 
-			{
-				sorted_by_versions[*v].append(" " + ((KeywordMask*) *it)->keywords);
-			}
+			// FIXME: Evil cast
+			sorted_by_versions[v.ptr()].append(" " + ((KeywordMask&)*it).keywords);
 		}
 	}
 
@@ -243,8 +247,8 @@ void PortageUserConfig::setStability(Package *p, Keywords kw) {
 	{
 		Keywords lkw(kw.get());
 
-		string skw = sorted_by_versions[*i];
-		if(skw.size() > 0)
+		string skw = sorted_by_versions[i.ptr()];
+		if(skw.empty() == false)
 		{
 			vector<string> kv = split_string(skw);
 			kv.erase(unique(kv.begin(), kv.end()), kv.end());
@@ -268,7 +272,7 @@ void PortageUserConfig::setStability(Package *p, Keywords kw) {
 			}
 
 		}
-		apply_keywords(**i, lkw.get());
+		apply_keywords(*i, lkw.get());
 	}
 }
 
@@ -277,11 +281,11 @@ PortageSettings::setStability(Package *pkg, Keywords &kw)
 {
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {
-		if((*t)->get() & kw.get()) {
-			**t |= Keywords::KEY_STABLE;
+		if(t->get() & kw.get()) {
+			*t |= Keywords::KEY_STABLE;
 		}
 		else {
-			**t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+			*t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
 		}
 	}
 }

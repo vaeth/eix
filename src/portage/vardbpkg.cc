@@ -33,6 +33,8 @@
 
 #include <dirent.h>
 
+using namespace std;
+
 inline static void sort_installed(map<string,vector<BasicVersion> > *maping);
 
 /** Find installed versions of packet "name" in category "category".

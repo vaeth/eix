@@ -22,6 +22,8 @@
 
 #include <vector>
 
+using namespace std;
+
 /**
  * Calculates the Levenshtein distance of two strings
  * @param str_a string a

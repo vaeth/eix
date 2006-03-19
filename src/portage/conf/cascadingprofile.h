@@ -41,8 +41,8 @@ class CascadingProfile {
 	public:
 
 	protected:
-		vector<string>      m_profile_files; /**< List of files in profile. */
-		map<string,string> *m_make_defaults; /**< Map of variables found in make.defaults-files. */
+		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
+		std::map<std::string,std::string> *m_make_defaults; /**< Map of variables found in make.defaults-files. */
 
 		MaskList m_system;         /**< Packages in m_system profile. */
 		MaskList m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
@@ -55,7 +55,7 @@ class CascadingProfile {
 		 * profile into path_buffer and return true Return false if there is no parent profile.
 		 * @param path_buffer Path to the profile (new profile is written into this thing)
 		 * @return false if there is no parent profile */
-		bool getParentProfile(string &path_buffer);
+		bool getParentProfile(std::string &path_buffer);
 
 		/** Cycle through profile and put path to files into
 		 * profile_files. */
@@ -65,15 +65,15 @@ class CascadingProfile {
 
 		/** Read all "packages" files found in profile.
 		 * Populate m_system and m_system_allowed. */
-		void readPackages(const string &line);
-		void readPackageMasks(const string &line);
+		void readPackages(const std::string &line);
+		void readPackageMasks(const std::string &line);
 
 		/** Read all "make.defaults" files found in profile.
 		 * Use make_defaults as map for parser. */
 		void readMakeDefaults();
 
 	public:
-		CascadingProfile(map<string,string> *mapping) {
+		CascadingProfile(std::map<std::string,std::string> *mapping) {
 			m_make_defaults = mapping;
 
 			listProfile();

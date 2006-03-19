@@ -68,14 +68,14 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 							continue;
 						default:
 							/* some longopt */
-							push_back(Parameter(lookupLongOpt(ptr, opt_table), NULL));
+							push_back(Parameter(lookup_longopt(ptr, opt_table), NULL));
 							continue;
 					}
 				default:
 					/* some shortopts */
 					int c = 0;
 					while(ptr[c] != '\0')
-						push_back(Parameter(lookupShortOpt(ptr[c++], opt_table), NULL));
+						push_back(Parameter(lookup_shortopt(ptr[c++], opt_table), NULL));
 					continue;
 			}
 		push_back(Parameter(0, ptr));
@@ -84,7 +84,8 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 	foldAndRemove(opt_table);
 }
 
-Option *ArgumentReader::lookupTOption(const int opt, struct Option *opt_table)
+Option *
+ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 {
 	while( (opt_table->longopt || opt_table->shortopt) )
 	{
@@ -98,7 +99,8 @@ Option *ArgumentReader::lookupTOption(const int opt, struct Option *opt_table)
 /** Return shortopt for longopt stored in opt.
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
-int ArgumentReader::lookupLongOpt(const char *long_opt, struct Option *opt_table)
+int 
+ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
 {
 	while( (opt_table->longopt || opt_table->shortopt) )
 	{
@@ -113,7 +115,8 @@ int ArgumentReader::lookupLongOpt(const char *long_opt, struct Option *opt_table
 /** Check if short_opt is a known option.
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
-int ArgumentReader::lookupShortOpt(const char short_opt, struct Option *opt_table)
+int
+ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 {
 	while( (opt_table->longopt || opt_table->shortopt) )
 	{
@@ -125,21 +128,21 @@ int ArgumentReader::lookupShortOpt(const char short_opt, struct Option *opt_tabl
 	exit(-1);
 }
 
-void ArgumentReader::foldAndRemove(struct Option *opt_table)
+void 
+ArgumentReader::foldAndRemove(struct Option *opt_table)
 {
-	vector<Parameter>::iterator it = begin();
-	while(it != end())
+	for(ArgumentReader::iterator it = begin();
+		it != end();
+		++it)
 	{
 		if(it->type == Parameter::ARGUMENT)
 		{
-			++it;
 			continue;
 		}
 
-		Option *c = lookupTOption(it->opt, opt_table);
+		Option *c = lookup_option(it->opt, opt_table);
 		if(c == NULL || c->type == Option::NONE)
 		{
-			++it;
 			continue;
 		}
 		switch(c->type)
@@ -155,31 +158,25 @@ void ArgumentReader::foldAndRemove(struct Option *opt_table)
 						*(bool *)(c->ptr) = false;
 					else
 						*(bool *)(c->ptr) = ! *(bool *)(c->ptr);
-					erase(it);
+					it = erase(it);
 				}
-				else
-					++it;
 				continue;
 			case Option::INTEGER:
 				if(c->ptr != NULL)
 				{
 					++(*(int *)(c->ptr));
-					erase(it);
+					it = erase(it);
 				}
-				else
-					++it;
 				continue;
 			case Option::STRING:
 				if(c->ptr != NULL)
 				{
-					erase(it);
+					it = erase(it);
 					__ASSERT(it != end(), "Missing parameter to --%s\n", c->longopt);
 					__ASSERT(it->type == Parameter::ARGUMENT, "Missing parameter to --%s\n", c->longopt);
 					*(char **)(c->ptr) = it->arg;
-					erase(it);
+					it = erase(it);
 				}
-				else
-					++it;
 				continue;
 		}
 	}

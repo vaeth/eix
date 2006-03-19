@@ -25,12 +25,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __EIXRC_GLOBALS_H__
-#define __EIXRC_GLOBALS_H__
+#ifndef __PACKAGETREE_H__
+#define __PACKAGETREE_H__
 
-#include <eixrc/eixrc.h>
+#include <map>
+#include <string>
+#include <list>
 
-/** Return a static eixrc. */
-EixRc &get_eixrc();
+#include <eixTk/ptr_list.h>
 
-#endif /* __EIXRC-GLOBALS_H__ */
+class Package;
+class DBHeader;
+
+class Category : public eix::ptr_list<Package> {
+
+	public:
+		Category(std::string name)
+		{ m_name = name; }
+
+		Package *findPackage(const std::string &name) const;
+		bool deletePackage(const std::string &name);
+		Package *addPackage(std::string name);
+
+		const std::string &name() const
+		{ return m_name; }
+
+	protected:
+		std::string m_name;
+};
+
+class PackageTree : public eix::ptr_list<Category> {
+
+	public:
+		Package *findPackage(const std::string &category, const std::string &name) const;
+		bool deletePackage(const std::string &category, const std::string &name);
+
+		Category *operator [] (const std::string name);
+
+		unsigned int countPackages() const;
+		unsigned int countCategories() const
+		{ return size(); }
+};
+
+#endif /* __PACKAGETREE_H__ */

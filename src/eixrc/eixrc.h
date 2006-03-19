@@ -46,8 +46,8 @@ class EixRcOption {
 	public:
 		static const char STRING = 0, INTEGER = 1, BOOLEAN = 2;
 		char type;
-		string key, value, description;
-		EixRcOption(char t, string name, string val, string desc) {
+		std::string key, value, description;
+		EixRcOption(char t, std::string name, std::string val, std::string desc) {
 			type = t;
 			key = name;
 			value = val;
@@ -55,10 +55,10 @@ class EixRcOption {
 		}
 };
 
-class EixRc : public map<string,string> {
+class EixRc : public std::map<std::string,std::string> {
 
 	private:
-		vector<EixRcOption> defaults;
+		std::vector<EixRcOption> defaults;
 
 	public:
 		void read(void) {
@@ -67,7 +67,7 @@ class EixRc : public map<string,string> {
 				WARNING("No $HOME found in environment.");
 			else
 			{
-				string eixrc(home);
+				std::string eixrc(home);
 				eixrc.append(EIX_USERRC);
 
 				VarsReader rc(VarsReader::SUBST_VARS
@@ -84,7 +84,7 @@ class EixRc : public map<string,string> {
 					char *val = getenv(defaults[i].key.c_str());
 					if(val != NULL)
 					{
-						(*this)[defaults[i].key] = string(val);
+						(*this)[defaults[i].key] = std::string(val);
 					}
 				}
 			}
@@ -92,7 +92,7 @@ class EixRc : public map<string,string> {
 		
 		void clear() {
 			defaults.clear();
-			((map<string,string>*) this)->clear();
+			((std::map<std::string,std::string>*) this)->clear();
 		}
 
 		void addDefault(EixRcOption option) {

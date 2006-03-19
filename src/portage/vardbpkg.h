@@ -40,25 +40,25 @@ class Package;
 class VarDbPkg {
 	private:
 		/** Mapping of [category][package] to list versions. */
-		map<string, map<string, vector<BasicVersion> >* > installed;
-		string _directory; /**< This is the db-directory. */
+		std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* > installed;
+		std::string _directory; /**< This is the db-directory. */
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULL if not found .. else pointer to vector of versions. */
-		vector<BasicVersion> *getInstalledVector(string category, string name);
+		std::vector<BasicVersion> *getInstalledVector(std::string category, std::string name);
 
 		/** Read category from db-directory.
 		 * @param category read this category. */
-		void readCategory(string category);
+		void readCategory(std::string category);
 
 	public:
 		/** Default constructor. */
-		VarDbPkg(string directory) {
+		VarDbPkg(std::string directory) {
 			_directory = directory;
 		}
 
 		~VarDbPkg() {
-			map<string, map<string, vector<BasicVersion> >* >::iterator it = installed.begin();
+			std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* >::iterator it = installed.begin();
 			while(it != installed.end()) {
 				delete it++->second;
 			}
@@ -67,7 +67,7 @@ class VarDbPkg {
 		/** Find installed versions of packet "name" in category "category".
 		 * @param p the Package you would like the info for
 		 * @return string with installed versions */
-		string getInstalledString(Package *p);
+		std::string getInstalledString(Package *p);
 
 		/** Returns true if a Package installed. 
 		 * @param p Check for this Package.

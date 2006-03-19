@@ -28,6 +28,8 @@
 #include "flat-utils.h"
 #include <eixTk/stringutils.h>
 
+using namespace std;
+
 /** Read the stability on 'arch' from a metadata cache file. */
 Keywords::Type get_keywords(string arch, string filename) throw (ExBasic)
 {

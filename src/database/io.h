@@ -32,6 +32,8 @@
 
 class Package;
 class Version;
+class PackageTree;
+class DBHeader;
 
 namespace io {
 
@@ -76,6 +78,13 @@ namespace io {
 
 	// Write package to stream
 	void write_package(FILE *fp, const Package &pkg);
+
+
+	void write_header(FILE *fp, const DBHeader &hdr);
+	void read_header(FILE *fp, DBHeader &hdr);
+
+	void write_packagetree(FILE *fp, const PackageTree &pkg);
+	void read_packagetree(FILE *fp, unsigned int size, PackageTree &tree);
 }
 
 #endif /* EIX__IO_H__ */

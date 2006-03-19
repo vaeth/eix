@@ -29,6 +29,7 @@
 
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/packagetree.h>
 
 #include <map>
 
@@ -236,9 +237,9 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 	return true;
 }
 
-int CdbCache::readCategory(Category &vec, const string &cat_name)
+int CdbCache::readCategory(Category &vec)
 {
-	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + cat_name + ".cdb";
+	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + vec.name() + ".cdb";
 	uint32_t dlen;
 	char *data;
 	string key;
@@ -261,10 +262,10 @@ int CdbCache::readCategory(Category &vec, const string &cat_name)
 			continue;
 		}
 		/* Search for existing package */
-		Package *pkg = findPackage(vec, aux[0]);
+		Package *pkg = vec.findPackage(aux[0]);
 		/* If none was found create one */
 		if(pkg == NULL) {
-			pkg = addPackage(vec, cat_name, aux[0]);
+			pkg = vec.addPackage(aux[0]);
 			pkg->desc     = mapping["DESCRIPTION"];
 			pkg->homepage = mapping["HOMEPAGE"];
 			pkg->licenses = mapping["LICENSE"];

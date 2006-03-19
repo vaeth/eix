@@ -212,17 +212,17 @@ Mask::test(BasicVersion *bv)
 	return false; // Never reached
 }
 
-vector<Version*>
+eix::ptr_list<Version>
 Mask::match(Package &pkg)
 {
-	vector<Version*> ret;
+	eix::ptr_list<Version> ret;
 	for(Package::iterator it = pkg.begin();
 		it != pkg.end();
 		++it)
 	{
-		if(test(*it))
+		if(test(it.ptr()))
 		{
-			ret.push_back(*it);
+			ret.push_back(it.ptr());
 		}
 	}
 	return ret;
@@ -240,7 +240,7 @@ Mask::checkMask(Package& pkg, const bool check_category, const bool check_name)
 		i != pkg.end();
 		++i)
 	{
-		apply(*i);
+		apply(i.ptr());
 	}
 }
 
@@ -287,6 +287,6 @@ void Mask::apply(Version *ve)
 	}
 }
 
-vector<Mask*> *MaskList::get(Package *p) {
+eix::ptr_list<Mask> *MaskList::get(Package *p) {
 	return &((*this)[p->category][p->name]);
 }

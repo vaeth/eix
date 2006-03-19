@@ -55,10 +55,10 @@
 class BaseAlgorithm {
 
 	protected:
-		string search_string;
+		std::string search_string;
 
 	public:
-		virtual void setString(string s) {
+		virtual void setString(std::string s) {
 			search_string = s;
 		}
 
@@ -76,7 +76,7 @@ class RegexAlgorithm : public BaseAlgorithm {
 		Regex re;
 
 	public:
-		void setString(string s) {
+		void setString(std::string s) {
 			search_string = s;
 			re.compile(search_string.c_str());
 		}
@@ -107,7 +107,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		/** FIXME: We need to have a package->levenshtein mapping that we can
 		 * access from the static FuzzyAlgorithm::compare.
 		 * I really don't know how to do this .. */
-		static map<string, int> levenshtein_map;
+		static std::map<std::string, int> levenshtein_map;
 
 	public:
 		FuzzyAlgorithm(int max) {

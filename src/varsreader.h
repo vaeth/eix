@@ -38,14 +38,13 @@
 #include <string>
 #include <map>
 
-using namespace std;
-
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
-class VarsReader{
+class VarsReader {
+
 	private:
 		/** Kepper of the holy state. */
-		enum tSTATE {
+		enum States {
 			state_STOP,
 			state_JUMP_NOISE,
 			state_JUMP_COMMENT,
@@ -159,7 +158,7 @@ class VarsReader{
 
 		char *x;         /**< Pointer to current position in filebuffer. */
 
-		string value;     /**< Buffy for value */
+		std::string value;     /**< Buffy for value */
 
 		short parse_flags; /**< Flags for configuration of parser. */
 
@@ -169,7 +168,7 @@ class VarsReader{
 		const char **incremental_keys; /**< c-array of pattern for keys which values
 										 should be prepended to the new value. */
 		/** Mapping of key to value. */
-		map<string,string> *vars;
+		std::map<std::string,std::string> *vars;
 
 		/** Init the FSM.
 		 * Mallocs buffer for file and reads it into this buffer.
@@ -206,7 +205,7 @@ class VarsReader{
 		VarsReader(short flags) {
 			parse_flags = flags;
 			if( ! (parse_flags & INTO_MAP) ) {
-				vars = new map<string,string>;
+				vars = new std::map<std::string,std::string>;
 			}
 		}
 
@@ -221,7 +220,7 @@ class VarsReader{
 		bool read(const char *filename);
 
 		/** Use a supplied map for variables. */
-		void useMap(map<string,string> *vars_map) {
+		void useMap(std::map<std::string,std::string> *vars_map) {
 			vars = vars_map;
 		}
 
@@ -231,7 +230,7 @@ class VarsReader{
 		}
 
 		/** Operator that helps us to be used like a map. */
-		string& operator[] (string key) {
+		std::string& operator[] (std::string key) {
 			return (*vars)[key];
 		}
 };

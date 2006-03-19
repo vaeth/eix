@@ -41,6 +41,8 @@
 /* Buffer size for the readlink-call */
 #define READLINK_BUFFER 128
 
+using namespace std;
+
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 

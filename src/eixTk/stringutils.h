@@ -33,8 +33,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 #if !defined HAVE_STRNDUP
 /** strndup in case we don't have one. */
 char *strndup(const char *s, size_t n);
@@ -73,11 +71,11 @@ is_numeric(const char *str)
  * @param delims characters that should me removed
  * @return trimmed string */
 inline void
-ltrim(string *str, const char *delims = " \t\r\n")
+ltrim(std::string *str, const char *delims = " \t\r\n")
 {
 	// trim leading whitespace
-	string::size_type  notwhite = str->find_first_not_of(delims);
-	if(notwhite != string::npos)
+	std::string::size_type notwhite = str->find_first_not_of(delims);
+	if(notwhite != std::string::npos)
 		str->erase(0, notwhite);
 	else
 		str->clear();
@@ -88,11 +86,11 @@ ltrim(string *str, const char *delims = " \t\r\n")
  * @param delims characters that should me removed
  * @return trimmed string */
 inline void
-rtrim(string *str, const char *delims = " \t\r\n")
+rtrim(std::string *str, const char *delims = " \t\r\n")
 {
 	// trim trailing whitespace
-	string::size_type  notwhite = str->find_last_not_of(delims);
-	if(notwhite != string::npos)
+	std::string::size_type  notwhite = str->find_last_not_of(delims);
+	if(notwhite != std::string::npos)
 		str->erase(notwhite+1);
 	else
 		str->clear();
@@ -103,7 +101,7 @@ rtrim(string *str, const char *delims = " \t\r\n")
  * @param delims characters that should me removed
  * @return trimmed string */
 inline void
-trim(string *str, const char *delims = " \t\r\n")
+trim(std::string *str, const char *delims = " \t\r\n")
 {
 	ltrim(str, delims);
 	rtrim(str, delims);
@@ -113,11 +111,11 @@ trim(string *str, const char *delims = " \t\r\n")
  * @param str Reference to the string that should be splitted.
  * @param at  Split at the occurrence of any these characters.
  * @return    vector of strings. */
-vector<string> split_string(const string &str, const char *at = " \t\r\n", bool ignore_empty = true);
+std::vector<std::string> split_string(const std::string &str, const char *at = " \t\r\n", bool ignore_empty = true);
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
-string join_vector(vector<string> &vec, string glue = " ");
+std::string join_vector(std::vector<std::string> &vec, std::string glue = " ");
 
 /** Resolve a vector of -/+ keywords.
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
@@ -125,6 +123,6 @@ string join_vector(vector<string> &vec, string glue = " ");
  * @param warn_plus  If true, warn if keywords begin with a '+'.
  * @param order      If true, only remove keywords that come before the according -keyword. 
  * @return           Reference to cleaned vector (it anyway the same vector you gave us). */
-vector<string>& resolve_plus_minus(vector<string> &v, bool warn_plus = true, bool order = true);
+std::vector<std::string>& resolve_plus_minus(std::vector<std::string> &v, bool warn_plus = true, bool order = true);
 
 #endif /* __STRINGUTILS_H__ */

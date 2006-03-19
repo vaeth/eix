@@ -11,4 +11,5 @@ libportage_a_SOURCES = basicversion.cc basicversion.h \
 					   version.h \
 					   package.cc package.h \
 					   keywords.cc keywords.h \
-					   vardbpkg.cc vardbpkg.h
+					   vardbpkg.cc vardbpkg.h \
+					   packagetree.cc packagetree.h

@@ -31,22 +31,20 @@
 #include <search/packagetest.h>
 #include <database/package_reader.h>
 
-using namespace std;
-
 /** Recursively match packages agains a chain of tests. */
 class Matchatom {
 
 	private:
-		auto_ptr<Matchatom> or_chain,  /**< OR'ed criteria */
+		std::auto_ptr<Matchatom> or_chain,  /**< OR'ed criteria */
 		                    and_chain; /**< AND'ed criteria */
-		auto_ptr<PackageTest>        test;      /**< Test for this criteria. */
+		std::auto_ptr<PackageTest>        test;      /**< Test for this criteria. */
 
 	public:
 		/** Create a new Matchatom, link it as OR to this criteria and set basic setting.
 		 * @return the new criteria
 		 * @note guaranted successfull */
 		Matchatom *OR() {
-			or_chain = auto_ptr<Matchatom>(new Matchatom());
+			or_chain = std::auto_ptr<Matchatom>(new Matchatom());
 			return or_chain.get();
 		}
 
@@ -54,17 +52,17 @@ class Matchatom {
 		 * @return the new criteria
 		 * @note guaranted successfull */
 		Matchatom *AND() {
-			and_chain = auto_ptr<Matchatom>(new Matchatom());
+			and_chain = std::auto_ptr<Matchatom>(new Matchatom());
 			return and_chain.get();
 		}
 
 		/** Set the PackageTest for this Matchatom. */
 		void setTest(PackageTest *gtest) {
-			test = auto_ptr<PackageTest>(gtest);
+			test = std::auto_ptr<PackageTest>(gtest);
 			test->finalize();
 		}
 
-		void finalize() throw(string) {
+		void finalize() throw(std::string) {
 			// Please move along, nothin' to see here!
 		}
 

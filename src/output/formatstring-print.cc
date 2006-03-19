@@ -30,6 +30,8 @@
 
 #include <sstream>
 
+using namespace std;
+
 void
 print_version(PrintFormat *fmt, Version *version)
 {
@@ -85,15 +87,15 @@ print_version(PrintFormat *fmt, Version *version)
 void
 print_versions(PrintFormat *fmt, Package* p)
 {
-	vector<Version*>::iterator version_it = p->begin();
+	Package::iterator version_it = p->begin();
 	while(version_it != p->end()) {
-		print_version(fmt, *version_it);
+		print_version(fmt, version_it.ptr());
 
-		if(!p->have_same_overlay_key && (*version_it)->overlay_key) {
+		if(!p->have_same_overlay_key && version_it->overlay_key) {
 			if( ! fmt->no_color )
 				cout << fmt->color_overlaykey;
 
-			cout << "[" << (*version_it)->overlay_key << "] ";
+			cout << "[" << version_it->overlay_key << "] ";
 		}
 
 		if(++version_it != p->end() && !fmt->style_version_lines)

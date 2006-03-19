@@ -25,50 +25,32 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __CACHEDIRECTORY_H__
-#define __CACHEDIRECTORY_H__
+#ifndef __CACHETABLE_H__
+#define __CACHETABLE_H__
 
 #include <portage/cache/cache-map.h>
+#include <eixTk/ptr_list.h>
+
 #include <string>
-#include <map>
 
-class CacheTable {
-
+class CacheTable 
+	: public eix::ptr_list<BasicCache> 
+{
 	public:
-		char *arch;
+		~CacheTable() 
+		{ delete_and_clear(); }
 
-	private:
-		vector<BasicCache*> cache_table;
-
-	public:
-		~CacheTable() {
-			for(vector<BasicCache*>::iterator i = cache_table.begin();
-				i != cache_table.end();
-				++i)
-			{
-				delete *i;
-			}
-		}
-
-		int addCache(string directory, string cache_name) {
+		void addCache(std::string directory, std::string cache_name) 
+		{
 			BasicCache *cache = get_cache(cache_name);
-			if(cache) {
-				cache->setScheme(directory);
-				cache_table.push_back(cache);
+			if(cache == NULL) 
+			{
+				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory.c_str()));
 			}
-			else {
-				throw(ExBasic("Unknown cache '%s' for scheme '%s'!", cache_name.c_str(), directory.c_str()));
-			}
-			return 1;
-		}
 
-		vector<BasicCache*>::iterator end() {
-			return cache_table.end();
-		}
-
-		vector<BasicCache*>::iterator begin() {
-			return cache_table.begin();
+			cache->setScheme(directory);
+			push_back(cache);
 		}
 };
 
-#endif /* __CACHEDIRECTORY_H__ */
+#endif /* __CACHETABLE_H__ */

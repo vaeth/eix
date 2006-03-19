@@ -28,10 +28,11 @@
 #include "base.h"
 
 #include <portage/package.h>
-#include <database/database.h>
+#include <portage/packagetree.h>
 
 using namespace std;
 
+#if 0
 Package *
 addPackage(Category &v, const string &cat, const string &pkg)
 {
@@ -74,3 +75,4 @@ deletePackage(Category &v, const string &pkg)
 	}
 	return false;
 }
+#endif

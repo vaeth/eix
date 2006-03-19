@@ -28,9 +28,7 @@
 #ifndef __ARGSREADER_H__
 #define __ARGSREADER_H__
 
-#include <vector>
-
-using namespace std;
+#include <list>
 
 /** Maps longopt->shortopt. */
 typedef struct Option {
@@ -50,11 +48,13 @@ typedef struct Option {
 
 /** Represents a parameter. */
 class Parameter {
+
 	public:
 		static const char ARGUMENT = 1, /**< Class represents an argument. */
 					 OPTION = 2;        /**< Class represents a option (shortopt or longopt). */
 
 		char type; /**< Type of arguemnt. ARGUMENT or OPTION. */
+
 		int  opt;  /**< If type is OPTION this holds the option-key. */
 		char *arg; /**< If type is ARGUMENT this is the string we got. */
 
@@ -72,36 +72,33 @@ class Parameter {
 			}
 		}
 
-		int& operator * () {
-			return opt;
-		}
+		int& operator * () 
+		{ return opt; }
 };
 
 /** Main class for argument parsing. */
-class ArgumentReader : public vector<Parameter> {
+class ArgumentReader : public std::list<Parameter> {
 
 	public:
 		char *name; /**< Name of called program. */
 
-		/** Reads arguments into vector of TParameters. */
+		/** Reads arguments into std::list of TParameters. */
 		ArgumentReader(int argc, char **argv, struct Option opt_table[]);
 
 	private:
-		struct Option *a_table; /**< Table for options. */
-
 		/** Return shortopt for longopt stored in opt.
 		 * @return shortopt */
-		int lookupLongOpt(const char *long_opt, struct Option *opt_table);
+		static int lookup_longopt(const char *long_opt, struct Option *opt_table);
 
 		/** Check if short_opt is a known option.
 		 * @return shortopt */
-		int lookupShortOpt(const char short_opt, struct Option *opt_table);
+		static int lookup_shortopt(const char short_opt, struct Option *opt_table);
 
 		/** Return Option from internal table. */
-		Option *lookupTOption(const int opt, struct Option *opt_table);
+		static Option *lookup_option(const int opt, struct Option *opt_table);
 
-		/** Fold parameter-vector so that a option with an arguments has its argument set
-		 * internal rather than lying around after it in the vector.
+		/** Fold parameter-list so that a option with an arguments has its argument set
+		 * internal rather than lying around after it in the list.
 		 * Options which are booleans and integers will be removed and their
 		 * values increased, flipped, set true or whatever. */
 		void foldAndRemove(struct Option *opt_table);

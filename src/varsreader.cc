@@ -48,6 +48,8 @@
 
 #include <fnmatch.h>
 
+using namespace std;
+
 bool VarsReader::isIncremental(const char *key)
 {
 	if(incremental_keys == NULL)

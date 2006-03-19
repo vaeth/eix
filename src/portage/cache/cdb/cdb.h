@@ -33,7 +33,7 @@
 class CdbCache : public BasicCache {
 
 	public:
-		int readCategory(Category &vec, const std::string &cat_name);
+		int readCategory(Category &vec);
 
 		const char *getType() const 
 		{ return "cdb"; }

@@ -27,6 +27,8 @@
 
 #include "packagetest.h"
 
+using namespace std;
+
 const PackageTest::MatchField PackageTest::NONE          = 0x00, /* Search in name */
 	  PackageTest::NAME          = 0x01, /* Search in name */
 	  PackageTest::DESCRIPTION   = 0x02, /* Search in description */

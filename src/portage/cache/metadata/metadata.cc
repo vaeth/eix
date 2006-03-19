@@ -31,6 +31,7 @@
 #include <eixTk/stringutils.h>
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/packagetree.h>
 
 #include <string.h>
 #include <dirent.h>
@@ -48,9 +49,9 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int MetadataCache::readCategory(Category &vec, const string &cat_name)
+int MetadataCache::readCategory(Category &vec)
 {
-	string catpath = m_scheme + METADATA_PATH + cat_name;
+	string catpath = m_scheme + METADATA_PATH + vec.name();
 	struct dirent **dents;
 	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;
@@ -69,11 +70,11 @@ int MetadataCache::readCategory(Category &vec, const string &cat_name)
 		}
 
 		/* Search for existing package */
-		Package *pkg = findPackage(vec, aux[0]);
+		Package *pkg = vec.findPackage(aux[0]);
 
 		/* If none was found create one */
 		if(pkg == NULL)
-			pkg = addPackage(vec, cat_name, aux[0]);
+			pkg = vec.addPackage(aux[0]);
 
 		do {
 			/* Make version and add it to package. */

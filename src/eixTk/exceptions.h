@@ -37,15 +37,13 @@
 
 #include <eixTk/stringutils.h>
 
-using namespace std;
-
 /** The exception for everything. */
 class ExBasic {
 
 	public:
 
 		/** Constructor exception with variable arguments. */
-		ExBasic(const string file, const int line, const char *func, const char *fmt, ...) {
+		ExBasic(const std::string file, const int line, const char *func, const char *fmt, ...) {
 			va_list ap;
 			va_start(ap, fmt);
 			char buf[1025];
@@ -58,20 +56,18 @@ class ExBasic {
 			m_func = func;
 		}
 
-		const string &getMessage() const {
+		const std::string &getMessage() const {
 			return m_msg;
 		}
 
-		friend ostream& operator<< (ostream& os, ExBasic& e) {
-			os << e.m_func << ": " << e.m_msg;
-			return os;
-		}
+		friend std::ostream& operator<< (std::ostream& os, ExBasic& e) 
+		{ return os << e.m_func << ": " << e.m_msg; }
 
 	protected:
-		string m_file; /**< File where the exception is constructed. */
+		std::string m_file; /**< File where the exception is constructed. */
 		int    m_line; /**< Line where the exception is constructed. */
-		string m_func; /**< Function where the exception is constructed. */
-		string m_msg;  /**< The actual message. */
+		std::string m_func; /**< Function where the exception is constructed. */
+		std::string m_msg;  /**< The actual message. */
 
 	private:
 };
@@ -90,20 +86,20 @@ class ExBasic {
 // Provide a common look for error-messages for parse-errors in
 // portage.{mask,keywords,..}
 void inline
-portage_parse_error(const string &file, const int line_nr, const string& line, const ExBasic &e)
+portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const ExBasic &e)
 {
-	cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \""
-	     << line << "\"" << endl;
+	std::cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \""
+	     << line << "\"" << std::endl;
 
 	// Indent the message correctly
-	vector<string> lines = split_string(e.getMessage(), "\n", false);
-	for(vector<string>::iterator i = lines.begin();
+	std::vector<std::string> lines = split_string(e.getMessage(), "\n", false);
+	for(std::vector<std::string>::iterator i = lines.begin();
 		i != lines.end();
 		++i)
 	{
-		cerr << "    " << *i << endl;
+		std::cerr << "    " << *i << std::endl;
 	}
-	cerr << endl;
+	std::cerr << std::endl;
 }
 
 #endif /* __EXCEPTIONS_H__ */

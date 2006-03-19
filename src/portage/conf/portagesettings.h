@@ -45,10 +45,10 @@ class Mask;
 class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mask*> *mask_vec);
+bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, std::vector<Mask*> *mask_vec);
 
 /** Grab Mask from file and add to category->vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, vector<Mask*> *mask_vec) {
+inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec) {
 	return grab_masks(file, type, NULL , mask_vec);
 }
 
@@ -87,11 +87,11 @@ class PortageUserConfig;
 
 /** Holds Portage's settings, e.g. masks, categories, overlay paths.
  * Reads needed files if content is requested .. so don't worry about initialization :) */
-class PortageSettings : public map<string,string> {
+class PortageSettings : public std::map<std::string,std::string> {
 
 	private:
-		vector<string> m_categories; /**< Vector of all allowed categories. */
-		vector<string> m_accepted_keyword;
+		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
+		std::vector<std::string> m_accepted_keyword;
 
 		/** Mapping of category->masks (first all masks, then all unmasks) */
 		MaskList m_masks;  
@@ -102,7 +102,7 @@ class PortageSettings : public map<string,string> {
 		CascadingProfile  *profile;
 		PortageUserConfig *user_config;
 
-		vector<string> overlays; /**< Location of the portage overlays */
+		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
 		PortageSettings();
@@ -110,7 +110,7 @@ class PortageSettings : public map<string,string> {
 		/** Free memory. */
 		~PortageSettings();
 
-		vector<string> &getAcceptKeyword() {
+		std::vector<std::string> &getAcceptKeyword() {
 			return m_accepted_keyword;
 		}
 		
@@ -123,7 +123,7 @@ class PortageSettings : public map<string,string> {
 
 		/** Return vector of all possible all categories.
 		 * Reads categories on first call. */
-		vector<string> *getCategories();
+		std::vector<std::string> *getCategories();
 
 		void setStability(Package *pkg, Keywords &kw);
 };

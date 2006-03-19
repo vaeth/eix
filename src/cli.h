@@ -31,8 +31,6 @@
 #include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>
 
-using namespace std;
-
-Matchatom *parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter>::iterator end);
+Matchatom *parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::iterator end);
 
 #endif /* __CLI_H__ */

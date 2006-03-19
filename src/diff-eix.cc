@@ -39,7 +39,7 @@
 #include <eixTk/utils.h>
 
 #include <database/header.h>
-#include <database/database.h>
+#include <portage/packagetree.h>
 
 #include <portage/vardbpkg.h>
 #include <portage/conf/portagesettings.h>
@@ -57,13 +57,14 @@
 #define INFO(...) fprintf(stderr, __VA_ARGS__)
 #define ERROR(ret, ...) do { fprintf(stderr, __VA_ARGS__); fputc('\n', stdout); exit(ret); } while(0)
 
+using namespace std;
+
 void   signal_handler(int sig);
 
 PortageSettings portagesettings;
 PrintFormat     format_string(get_package_property, print_package_property);
 VarDbPkg        varpkg_db("/var/db/pkg/");
 Node           *format_new, *format_delete, *format_changed;
-
 
 static void
 print_help(int ret)
@@ -113,7 +114,7 @@ static struct Option long_options[] = {
 };
 
 void
-load_db(const char *file, DBHeader *header, PackageDatabase *body)
+load_db(const char *file, DBHeader *header, PackageTree *body)
 {
 	FILE *stream = fopen(file, "rb");
 	if(!stream) {
@@ -121,40 +122,45 @@ load_db(const char *file, DBHeader *header, PackageDatabase *body)
 					file));
 	}
 
-	header->read(stream);
+	io::read_header(stream, *header);
 	if(!header->isCurrent()) {
 		fprintf(stderr, "%s uses an obsolete database format (%i, current is %i).\n", file, header->version, DBHeader::current);
 		exit(1);
 	}
-	body->read(header, stream);
-}
 
+	io::read_packagetree(stream, header->size, *body);
+}
 
 /* Diff everything from old-tree with the according package from new-tree.
  * They diff if
  * a) the package does not exist in the new tree :) or
  * b) the new package has a different best-match than the old. */
 void
-diff_and_remove(PackageDatabase *db1, PackageDatabase *db2, PortageSettings &psettings, void (*callback)(Package *p1, Package *p2))
+diff_and_remove(PackageTree *tree1, PackageTree *tree2, PortageSettings &psettings, void (*callback)(Package *p1, Package *p2))
 {
 	Keywords accepted_keywords = psettings.getAcceptKeywords();
-	for(PackageDatabase::iterator cat = db1->begin();
-		cat != db1->end();
+
+	for(PackageTree::iterator cat = tree1->begin();
+		cat != tree1->end();
 		++cat)
 	{
-		Category::iterator pkg1 = cat->second.begin();
-		while(pkg1 != cat->second.end())
+
+		for(Category::iterator pkg1 = cat->begin();
+			pkg1 != cat->end();
+			++pkg1)
 		{
-			Package *pkg2 = db2->findPackage((*pkg1)->category, (*pkg1)->name);
-			psettings.user_config->setMasks(*pkg1);
-			psettings.user_config->setStability(*pkg1, accepted_keywords);
+			Package *pkg2 = tree2->findPackage(pkg1->category, pkg1->name);
+
+			psettings.user_config->setMasks(pkg1.ptr());
+			psettings.user_config->setStability(pkg1.ptr(), accepted_keywords);
+
 			if(pkg2 == NULL) {
-				callback(*pkg1, NULL);
+				callback(pkg1.ptr(), NULL);
 			}
 			else {
 				psettings.user_config->setMasks(pkg2);
 				psettings.user_config->setStability(pkg2, accepted_keywords);
-				Version *old_best = (*pkg1)->best();
+				Version *old_best = pkg1->best();
 				Version *new_best = pkg2->best();
 				if( ( (old_best == NULL
 								&& new_best != NULL)
@@ -164,11 +170,10 @@ diff_and_remove(PackageDatabase *db1, PackageDatabase *db2, PortageSettings &pse
 							&& new_best != NULL
 							&& *old_best != *new_best))
 				{
-					callback(*pkg1, pkg2);
+					callback(pkg1.ptr(), pkg2);
 				}
-				db2->deletePackage(pkg2->category, pkg2->name);
+				tree2->deletePackage(pkg2->category, pkg2->name);
 			}
-			db1->deletePackage((*pkg1)->category, (*pkg1)->name);
 		}
 	}
 }
@@ -211,7 +216,7 @@ run_diff_eix(int argc, char *argv[])
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
-	vector<Parameter>::iterator current_param = argreader.begin();
+	ArgumentReader::iterator current_param = argreader.begin();
 
 	if(cli_show_help)
 		print_help(0);
@@ -246,9 +251,11 @@ run_diff_eix(int argc, char *argv[])
 	string varname;
 	try {
 		varname = "DIFF_FORMAT_NEW";
-		format_new     = format_string.parseFormat(eixrc["DIFF_FORMAT_NEW"].c_str());
+		format_new = format_string.parseFormat(eixrc["DIFF_FORMAT_NEW"].c_str());
+
 		varname = "DIFF_FORMAT_DELETE";
-		format_delete  = format_string.parseFormat(eixrc["DIFF_FORMAT_DELETE"].c_str());
+		format_delete = format_string.parseFormat(eixrc["DIFF_FORMAT_DELETE"].c_str());
+
 		varname = "DIFF_FORMAT_CHANGED";
 		format_changed = format_string.parseFormat(eixrc["DIFF_FORMAT_CHANGED"].c_str());
 	}
@@ -266,11 +273,11 @@ run_diff_eix(int argc, char *argv[])
 	format_string.setupColors();
 
 	DBHeader old_header;
-	PackageDatabase old_tree;
+	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);
 
 	DBHeader new_header;
-	PackageDatabase new_tree;
+	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree);
 
 

@@ -33,6 +33,7 @@
 class Category;
 class Package;
 
+#if 0
 // Add package to vector
 Package *addPackage(Category &v, const std::string &cat, const std::string &pkg);
 
@@ -41,6 +42,7 @@ Package *findPackage(Category &v, const char *pkg);
 
 // Remove and delete Package. */
 bool deletePackage(Category &v, const std::string &pkg);
+#endif
 
 // Parent class of every cache that eix can use. */
 class BasicCache {
@@ -74,7 +76,7 @@ class BasicCache {
 		virtual const char *getType() const = 0;
 
 		// Read Cache for a category with a little from portageif. */
-		virtual int readCategory(Category &vec, const std::string &cat) = 0;
+		virtual int readCategory(Category &vec) = 0;
 
 	protected:
 		std::string m_scheme;

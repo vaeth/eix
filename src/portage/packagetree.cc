@@ -25,138 +25,107 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "database.h"
+#include "packagetree.h"
 
 #include <portage/package.h>
 #include <database/header.h>
 #include <database/package_reader.h>
 #include <database/io.h>
 
-Category::~Category()
-{
-	for(iterator p = begin();
-		p != end();
-		++p) 
-	{
-		delete *p;
-	}
-}
-
-Category::iterator
-Category::find(const string &name)
-{
-	iterator i = begin();
-	for(; i != end(); ++i)
-	{
-		if((*i)->name == name)
-			break;
-	}
-	return i;
-}
-
-Category::const_iterator
-Category::find(const string &name) const
-{
-	const_iterator i = begin();
-	for(; i != end(); ++i)
-	{
-		if((*i)->name == name)
-			break;
-	}
-	return i;
-}
+using namespace std;
 
 Package *
-PackageDatabase::findPackage(const string &category, const string &name) const 
+Category::findPackage(const string &name) const
 {
-	const_iterator i = begin();
-	for(; i != end(); ++i)
+	for(const_iterator i = begin(); i != end(); ++i)
 	{
-		if(i->first == category)
-			break;
-	}
-
-	if(i != end())
-	{
-		Category::const_iterator p = i->second.find(name);
-		if(p != i->second.end()) 
-		{
-			return *p;
-		}
+		if(i->name == name)
+			return i.ptr();
 	}
 	return NULL;
 }
 
 bool 
-PackageDatabase::deletePackage(const string &category, const string &name) 
+Category::deletePackage(const string &name)
+{
+	for(iterator i = begin(); i != end(); ++i)
+	{
+		if(i->name == name)
+		{
+			delete i.ptr();
+			erase(i);
+			return true;
+		}
+	}
+	return false;
+}
+
+Package *
+Category::addPackage(string name)
+{
+	Package *p = new Package(m_name, name);
+	push_back(p);
+	return p;
+}
+
+Package *
+PackageTree::findPackage(const string &category, const string &name) const 
+{
+	for(const_iterator i = begin(); i != end(); ++i)
+	{
+		if(i->name() == category)
+			return i->findPackage(name);
+	}
+
+	return NULL;
+}
+
+bool 
+PackageTree::deletePackage(const string &category, const string &name) 
 {
 	iterator i = begin();
 	for(; i != end(); ++i)
 	{
-		if(i->first == category)
+		if(i->name() == category)
 			break;
 	}
 
 	if(i == end())
 		return false;
 
-	Category::iterator p = i->second.find(name);
-
-	if(p == i->second.end()) 
-		return false;
-
-	i->second.erase(p);
+	bool ret = i->deletePackage(name); 
 
 	// Check if the category is empty after deleting the
 	// package.
-	if(i->second.size() == 0) 
-	{
+	if(i->empty()) 
 		erase(i);
-	}
-	return true;
+
+	return ret;
 }
 
-Category::size_type
-PackageDatabase::countPackages() const
+unsigned int
+PackageTree::countPackages() const
 {
-	Category::size_type i = 0;
-	for(const_iterator it = begin(); it != end(); ++it) 
+	Category::size_type ret = 0;
+	for(const_iterator i = begin(); i != end(); ++i) 
 	{
-		i += it->second.size();
+		ret += i->size();
 	}
-	return i;
+	return ret;
 }
 
-size_t
-PackageDatabase::write(FILE *fp) const
+Category *
+PackageTree::operator [] (const string name)
 {
-	for(const_iterator ci = begin(); ci != end(); ++ci) 
+	for(iterator i = begin();
+		i != end();
+		++i)
 	{
-		// Write category-header followed by a list of the packages.
-		io::write_category_header(fp, ci->first, ci->second.size());
-
-		for(Category::const_iterator p = ci->second.begin();
-			p != ci->second.end();
-			++p) 
-		{
-			// write package to fp
-			(*p)->sort();
-			io::write_package(fp, **p);
-		}
+		if(i->name() == name)
+			return i.ptr();
 	}
-	return countPackages();
-}
 
-unsigned int 
-PackageDatabase::read(DBHeader *header, FILE *fp) 
-{
-	PackageReader reader(fp, header->numcategories);
-	Package *p = NULL;
-
-	while(reader.next())
-	{
-		p = reader.release();
-		(*this)[p->category].push_back(p);
-	}
-	return header->numcategories;
+	Category *p = new Category(name);
+	push_back(p);
+	return p;
 }

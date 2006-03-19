@@ -27,10 +27,17 @@
 
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/packagetree.h>
+
+#include <database/header.h>
 #include <database/package_reader.h>
+
+#include <eixTk/auto_ptr.h>
 
 #include <dirent.h>
 #include <unistd.h>
+
+using namespace std;
 
 /** Read a string of the format { unsigned short len; char[] string;
  * (without the 0) } */
@@ -38,7 +45,7 @@ std::string
 io::read_string(FILE *fp) 
 {
 	unsigned short len = read<short>(fp);
-	auto_ptr<char> buf(new char[len + 1]);
+	eix::simple_array_auto_ptr<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
 	fread((void*)(buf.get()), sizeof(char), len, (fp));
 	return std::string(buf.get());
@@ -148,7 +155,7 @@ io::write_package(FILE *fp, const Package &pkg)
 		i != pkg.end();
 		++i)
 	{
-		io::write_version(fp, *i);
+		io::write_version(fp, i.ptr());
 	}
 
 	off_t pkg_end = ftello(fp);
@@ -156,4 +163,58 @@ io::write_package(FILE *fp, const Package &pkg)
 	off_t v = (pkg_end - offset_position);
 	io::write<PackageReader::offset_type>(fp, v);
 	fseek(fp, pkg_end, SEEK_SET);
+}
+
+
+void 
+io::write_header(FILE *fp, const DBHeader &hdr)
+{
+	io::write(fp, DBHeader::current);
+	io::write<int>(fp, hdr.size);
+
+	io::write<short>(fp, hdr.countOverlays());
+	for(int i = 0; i<hdr.countOverlays(); i++)
+		io::write_string(fp, hdr.getOverlay(i));
+}
+
+void
+io::read_header(FILE *fp, DBHeader &hdr)
+{
+	hdr.version = io::read<int>(fp);
+	hdr.size = io::read<int>(fp);
+
+	unsigned short overlay_sz = io::read<short>(fp);
+	while(overlay_sz--)
+		hdr.addOverlay(io::read_string(fp));
+}
+
+void
+io::write_packagetree(FILE *fp, const PackageTree &tree)
+{
+	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci) 
+	{
+		// Write category-header followed by a list of the packages.
+		io::write_category_header(fp, ci->name(), ci->size());
+
+		for(Category::iterator p = ci->begin();
+			p != ci->end();
+			++p) 
+		{
+			// write package to fp
+			io::write_package(fp, *p);
+		}
+	}
+}
+
+void 
+io::read_packagetree(FILE *fp, unsigned int size, PackageTree &tree)
+{
+	PackageReader reader(fp, size);
+	Package *p = NULL;
+
+	while(reader.next())
+	{
+		p = reader.release();
+		tree[p->category]->push_back(p);
+	}
 }

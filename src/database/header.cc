@@ -32,9 +32,11 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
 
+using namespace std;
+
 /** Get string for key from directory-table. */
 string
-DBHeader::getOverlay(short key)
+DBHeader::getOverlay(short key) const
 {
 	if(key > (short) overlays.size())
 		return string("");
@@ -47,35 +49,4 @@ DBHeader::addOverlay(string overlay)
 {
 	overlays.push_back(overlay);
 	return (short) overlays.size() - 1;
-}
-
-
-bool
-DBHeader::write(FILE *stream)
-{
-	io::write(stream, DBHeader::current);
-
-	io::write<int>(stream, numcategories);
-	io::write<int>(stream, numpackages);
-
-	unsigned short overlay_sz = overlays.size();
-	io::write<short>(stream, overlay_sz);
-	for(int i = 0; i<overlay_sz; i++)
-		io::write_string(stream, overlays[i]);
-	return true;
-}
-
-bool
-DBHeader::read(FILE *stream)
-{
-	version = io::read<int>(stream);
-
-	numcategories = io::read<int>(stream);
-	numpackages = io::read<int>(stream);
-
-	unsigned short overlay_sz = io::read<short>(stream);
-	overlays.resize(overlay_sz);
-	for(int i = 0; i<overlay_sz; i++)
-		overlays[i] = io::read_string(stream);
-	return true;
 }

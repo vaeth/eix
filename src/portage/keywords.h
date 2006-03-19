@@ -31,8 +31,6 @@
 #include <eixTk/stringutils.h>
 #include <vector>
 
-using namespace std;
-
 class Keywords {
 	public:
 		typedef char Type;
@@ -55,10 +53,10 @@ class Keywords {
 			m_mask = t;
 		}
 
-		static Type get_type(string arch, string keywords) {
+		static Type get_type(std::string arch, std::string keywords) {
 			Type mask = KEY_MISSINGKEYWORD;
-			vector<string> arr_keywords = split_string(keywords);
-			for(vector<string>::iterator it = arr_keywords.begin(); it != arr_keywords.end(); ++it) {
+			std::vector<std::string> arr_keywords = split_string(keywords);
+			for(std::vector<std::string>::iterator it = arr_keywords.begin(); it != arr_keywords.end(); ++it) {
 				switch((*it)[0]) {
 					case '~':
 						if(it->substr(1) == arch) {
@@ -83,7 +81,7 @@ class Keywords {
 			return mask;
 		}
 
-		void set(string arch, string keywords) {
+		void set(std::string arch, std::string keywords) {
 			set(get_type(arch, keywords));
 		}
 			
@@ -127,31 +125,6 @@ class Keywords {
 					(m_mask & PROFILE_MASK) ? 'P' : '.',
 					(m_mask & SYSTEM_PACKAGE) ? 'S' : '.');
 		}
-
-#if 0
-		string recreateString(string &arch) {
-			string ret;
-			if(m_mask & KEY_STABLE) {
-				ret.append(arch);
-			}
-			if(m_mask & KEY_UNSTABLE) {
-				ret.append(" ~");
-				ret.append(arch);
-			}
-			if(m_mask & KEY_MINUSASTERISK) {
-				ret.append(" -*");
-			}
-			if(m_mask & KEY_MINUSKEYWORD) {
-				ret.append(" -");
-				ret.append(arch);
-			}
-			return trim(ret);
-		}
-#endif
 };
-
-#if 0
-TYPE getStability(vector<string> accepted_keywords, string &keywords);
-#endif
 
 #endif /* __STABILITY_H__ */

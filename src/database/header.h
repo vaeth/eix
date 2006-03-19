@@ -31,8 +31,6 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 /** Representation of a database-header.
  * Contains your arch, the version of the db, the number of packages/categories
  * and a table of key->directory mappings. */
@@ -40,34 +38,25 @@ class DBHeader {
 
 	private:
 		/** The mapping from key->directory. */
-		vector<string> overlays;
+		std::vector<std::string> overlays;
 
 	public:
 		/** Current version of database-format. */
-		static const int current = 12;
+		static const int current = 13;
 
 		int version; /**< Version of the db. */
-		unsigned int numcategories; /**< Number of categories. */
-		unsigned int numpackages;   /**< Number of packages. */
+		unsigned int size; /**< Number of categories. */
 
 		/** Get string for key from directory-table. */
-		string getOverlay(short key);
-
-		short countOverlays() {
-			return overlays.size();
-		}
+		std::string getOverlay(short key) const;
 
 		/** Add overlay to directory-table and return key. */
-		short addOverlay(string overlay);
+		short addOverlay(std::string overlay);
 
-		/** Write the database-header to FILE-stream. */
-		bool write(FILE *stream);
+		short countOverlays() const 
+		{ return overlays.size(); }
 
-		/** Read database-header from FILE-stream. */
-		bool read(FILE *stream);
-
-		bool isCurrent() {
-			return version == DBHeader::current;
-		}
+		bool isCurrent() 
+		{ return version == DBHeader::current; }
 };
 #endif /* __DBHEADER_H__ */

@@ -31,58 +31,43 @@
 #include <regex.h>
 #include <string>
 
-using namespace std;
+/// Handles regular expressions.
+// It is normally used within global scope so that a regular expression doesn't
+// have to be compiled with every instance of a class using it.
 
-/** Handles regular expressions.
- * It is normally used within global scope so that a regular expression doesn't
- * have to be compiled with every instance of a class using it.  */
-class Regex {
-
-	private:
-		regex_t re;       /**< The actual regular expression (GNU C Library) */
-		bool    compiled; /**< Is the regex already compiled? */
+class Regex
+{
 
 	public:
-		/** Compile a regular expression. */
-		Regex() {
-			compiled = false;
-		}
+		/// Initalize class.
+		Regex()
+			: m_compiled(false)
+		{ }
 
-		Regex(const char *regex, int eflags = REG_ICASE) {
-			compiled = false;
-			compile(regex, eflags);
-		}
+		/// Initalize and compile regular expression.
+		Regex(const char *regex, int eflags = REG_ICASE)
+			: m_compiled(false)
+		{ compile(regex, eflags); }
 
-		void compile(const char *regex, int eflags = REG_ICASE) {
-			if(compiled) {
-				regfree(&re);
-			}
-			compiled = false;
-			int errcode = regcomp(&re, regex, eflags|REG_EXTENDED);
-			if(errcode != 0) {
-				fprintf(stderr, "regcomp(\"%s\"): %s\n", regex, get_error(errcode).c_str());
-				exit(1);
-			}
-			compiled = true;
-		}
+		/// Free the regular expression.
+		~Regex();
 
-		/** Free the regular expression. */
-		~Regex() {
-			if(compiled) {
-				regfree(&re);
-			}
-		}
+		/// Compile a regular expression.
+		void compile(const char *regex, int eflags = REG_ICASE);
 
-		/** Gets the internal regular expression structure. */
-		const regex_t *get() {
-			return (const regex_t *) &re;
-		}
+		/// Gets the internal regular expression structure.
+		const regex_t *get()
+		{ return &m_re; }
 
-		string get_error(int code) {
-			char buf[512];
-			regerror(code, static_cast<const regex_t*>(&re), buf, 511);
-			return string(buf);
-		}
+		/// Get regular expression error for a error-code.
+		std::string get_error(int code);
+
+	protected:
+		/// The actual regular expression (GNU C Library).
+		regex_t m_re;
+
+		/// Is the regex already compiled?
+		bool m_compiled;
 };
 
 #endif

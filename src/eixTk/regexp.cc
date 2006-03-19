@@ -25,48 +25,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __DATABASE_H__
-#define __DATABASE_H__
-
-#include <map>
-#include <string>
-#include <vector>
-#include <stdexcept>
-
-class Package;
-class DBHeader;
+#include "regexp.h"
 
 using namespace std;
 
-class Category : public vector<Package*> {
+Regex::~Regex() 
+{
+	if(m_compiled)
+		regfree(&m_re);
+}
 
-	public:
-		~Category();
+void 
+Regex::compile(const char *regex, int eflags) 
+{
+	if(m_compiled) {
+		regfree(&m_re);
+		m_compiled = false;
+	}
 
-		iterator find(const string &name);
-		const_iterator find(const string &name) const;
-};
+	int errcode = regcomp(&m_re, regex, eflags|REG_EXTENDED);
+	if(errcode != 0) {
+		fprintf(stderr, "regcomp(\"%s\"): %s\n", regex, get_error(errcode).c_str());
+		exit(1);
+	}
 
-/** Body of a database. */
-class PackageDatabase : public map<string, Category> {
+	m_compiled = true;
+}
 
-	public:
-		/** Find Package in Category. */
-		Package *findPackage(const string &category, const string &name) const;
+string 
+Regex::get_error(int code) 
+{
+	char buf[512];
+	regerror(code, static_cast<const regex_t*>(&m_re), buf, 511);
+	return string(buf);
+}
 
-		bool deletePackage(const string &category, const string &name);
-
-		/** Return number of Packages. */
-		Category::size_type countPackages() const;
-
-		/** Return number of categories. */
-		size_type countCategories() const
-		{ return size(); }
-
-		// Write package-tree to fp
-		size_t write(FILE *fp) const;
-
-		unsigned int read(DBHeader *header, FILE *fp);
-};
-
-#endif /* __DATABASE_H__ */

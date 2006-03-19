@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.5.4
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Introducing eix::ptr_list and eix::ptr_iterator.
+	- Cleaning headers: no using namespace.
+
+*eix-0.5.3
+
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Added metadata as cache-method.
 	- Added a workaround for http://bugs.gentoo.org/show_bug.cgi?id=114628

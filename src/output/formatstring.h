@@ -35,8 +35,6 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/ansicolor.h>
 
-using namespace std;
-
 class Node {
 	public:
 		enum Type { TEXT, VARIABLE, IF } type;
@@ -53,18 +51,18 @@ class Node {
 
 class Text : public Node {
 	public:
-		string text;
+		std::string text;
 
-		Text(string t = "") : Node(TEXT) {
+		Text(std::string t = "") : Node(TEXT) {
 			text = t;
 		}
 };
 
 class Property : public Node {
 	public:
-		string name;
+		std::string name;
 
-		Property(string n = "") : Node(VARIABLE) {
+		Property(std::string n = "") : Node(VARIABLE) {
 			name = n;
 		}
 };
@@ -99,12 +97,12 @@ class FormatParser {
 			IF, ELSE, FI
 		};
 
-		stack<Node*>  keller;
+		std::stack<Node*>  keller;
 		ParserState   state;
 		const char   *band;
 		char         *band_position;
 		bool          enable_colors;
-		string        last_error;
+		std::string        last_error;
 
 		/* Decide what state should be used to parse the current type of token. */
 		ParserState state_START();
@@ -139,8 +137,8 @@ class FormatParser {
 class PrintFormat {
 
 	public:
-		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, string &property);
-		typedef string (*GetProperty)  (void *entity, string &property);
+		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, std::string &property);
+		typedef std::string (*GetProperty)  (void *entity, std::string &property);
 
 	protected:
 		FormatParser   m_parser;
@@ -154,7 +152,7 @@ class PrintFormat {
 		bool no_color,            /**< Shall we use colors? */
 			 style_version_lines; /**< Shall we show versions linewise? */
 
-		string color_masked,     /**< Color for masked versions */
+		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,   /**< Color for unstable versions */
 			   color_stable,     /**< Color for stable versions */
 			   color_overlaykey; /**< Color for the overlay key */

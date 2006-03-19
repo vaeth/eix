@@ -61,6 +61,8 @@ strndup(const char *s, size_t n)
 }
 #endif /* !defined HAVE_STRNDUP */
 
+using namespace std;
+
 const char *
 ExplodeAtom::get_start_of_version(const char* str)
 {

@@ -83,10 +83,10 @@ class PackageTest {
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;      
 		/** Our string matching algorithm. */
-		auto_ptr<BaseAlgorithm> algorithm;
+		std::auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, dup_versions, invert;
 
-		static MatchField name2field(const string &p) throw(ExBasic);
+		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
 
 		bool stringMatch(Package *pkg) const;
@@ -98,7 +98,7 @@ class PackageTest {
 inline void 
 PackageTest::setAlgorithm(BaseAlgorithm *p)
 {
-	algorithm = auto_ptr<BaseAlgorithm>(p);
+	algorithm = std::auto_ptr<BaseAlgorithm>(p);
 }
 
 inline void

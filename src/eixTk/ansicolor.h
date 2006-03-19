@@ -31,8 +31,6 @@
 #include <iostream>
 #include <map>
 
-using namespace std;
-
 /** A class for using ANSI color codes
  * @note Currently only handles foreground color.
  * Example:
@@ -42,7 +40,6 @@ using namespace std;
  * @endcode
  */
 class AnsiColor {
-	private:
 
 	public:
 		/** The various colors, acNone is the default color */
@@ -60,7 +57,8 @@ class AnsiColor {
 		 * defaults to no color output */
 		AnsiColor(const Color fg = acNone, const bool light = false) : fg(fg), light(light) { }
 
-		string asString() {
+		std::string asString() 
+		{
 			static const int len = 100;
 			char buf[len];
 			if( fg!=acNone ) {
@@ -71,11 +69,12 @@ class AnsiColor {
 					snprintf(buf, len, "\x1B[%d;%dm", (int)light, (int)fg);
 				}
 			}
-			return string(buf);
+			return std::string(buf);
 		}
 
-		static Color name_to_color(string name) {
-			map<string,AnsiColor::Color> color_map;
+		static std::map<std::string,AnsiColor::Color>& init_map_once()
+		{
+			static std::map<std::string,AnsiColor::Color> color_map;
 			color_map["default"] = AnsiColor::acDefault;
 			color_map["black"]   = AnsiColor::acBlack;
 			color_map["red"]     = AnsiColor::acRed;
@@ -85,37 +84,26 @@ class AnsiColor {
 			color_map["purple"]  = AnsiColor::acPurple;
 			color_map["cyan"]    = AnsiColor::acCyan;
 			color_map["gray"]    = AnsiColor::acGray;
+			return color_map;
+		}
 
+		static Color name_to_color(std::string name)
+		{
+			static std::map<std::string,AnsiColor::Color> &color_map = init_map_once();
 			return color_map[name];
 		}
 
 		/** Prints the current color to an ostream */
-		friend ostream& operator<< (ostream& os, AnsiColor ac)
+		friend std::ostream& operator<< (std::ostream& os, AnsiColor ac);
+
+		AnsiColor(std::string color_name) throw (ExBasic) 
 		{
-			if( ac.fg!=acNone )
-			{
-				if( ac.fg==acDefault )
-					os << "\x1B[0m";
-				os << "\x1B[" << (int)ac.light;
-				if( ac.fg!=acDefault )
-					os << ";" << (int)ac.fg;
-				os << 'm';
-			}
-			return os;
-		}
-
-#if 0
-		/** Compares two AnsiColors by fg and light
-		 * @see fg, light */
-		bool operator == (AnsiColor&ac) { return (ac.fg == fg) && (ac.light == light); }
-#endif
-
-		AnsiColor(string color_name) throw (ExBasic) {
 			light = false;
 
 			// look for brightness attribute
-			string::size_type comma_pos = color_name.rfind(',');
-			if(comma_pos != string::npos) {
+			std::string::size_type comma_pos = color_name.rfind(',');
+			if(comma_pos != std::string::npos) 
+			{
 				if(color_name[comma_pos+1] == '1') {
 					light = true;
 				}
@@ -131,5 +119,20 @@ class AnsiColor {
 			fg = name_to_color(color_name);
 		}
 };
+
+inline std::ostream& 
+operator<< (std::ostream& os, AnsiColor ac)
+{
+	if( ac.fg != AnsiColor::acNone )
+	{
+		if( ac.fg== AnsiColor::acDefault )
+			os << "\x1B[0m";
+		os << "\x1B[" << (int)ac.light;
+		if( ac.fg!= AnsiColor::acDefault )
+			os << ";" << (int)ac.fg;
+		os << 'm';
+	}
+	return os;
+}
 
 #endif /* __ANSICOLOR_H__ */

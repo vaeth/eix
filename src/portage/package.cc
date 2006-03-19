@@ -36,45 +36,25 @@
 Package::~Package()
 {
 	for(iterator i = begin(); i != end(); ++i) {
-		delete *i;
+		delete i.ptr();
 	}
-}
-
-/** Comparator for version-pointers. */
-inline
-bool
-versionComparator(BasicVersion *v1, BasicVersion *v2)
-{
-	return (*v1 < *v2);
-}
-
-void
-Package::sort()
-{
-	::sort(begin(), end(), versionComparator);
 }
 
 /** Check if a package has duplicated versions. */
-bool Package::checkDuplicates(Version *version)
+bool 
+Package::checkDuplicates(Version *version)
 {
-	if(version == NULL) {
-		for(unsigned int i = 0; i<size(); ++i)
-			for(unsigned int j = 0; j<size(); ++j)
-				if(i != j
-				   && *(BasicVersion*)((*this)[i]) == *(BasicVersion*)((*this)[j])) {
-					return true;
-				}
-	}
-	else {
-		for(unsigned int i = 0; i<size(); ++i)
-			if( *(BasicVersion*)((*this)[i]) == *(BasicVersion*)version ) {
-				return true;
-			}
+	for(iterator i = begin(); i != end(); ++i)
+	{
+		if(dynamic_cast<BasicVersion&>(*i) == dynamic_cast<BasicVersion&>(*version))
+		{
+			return true;
+		}
 	}
 	return false;
 }
 
-/** Adds a version to "the versions" vector. */
+/** Adds a version to "the versions" list. */
 void Package::addVersion(Version *version)
 {
 	/* if the same version is in various places it should be shown.
@@ -85,7 +65,7 @@ void Package::addVersion(Version *version)
 
 	/* This should remain with two if .. so we can guarante that
 	 * versions.size() == 0 in the else. */
-	if(size() != 0) {
+	if(empty() == false) {
 		if(overlay_key != version->overlay_key)
 			have_same_overlay_key = false;
 		
@@ -98,7 +78,21 @@ void Package::addVersion(Version *version)
 		is_system_package = version->isSystem();
 	}
 
-	push_back(version);
+	sortedPushBack(version);
+}
+
+void 
+Package::sortedPushBack(Version *v)
+{
+	for(iterator i = begin(); i != end(); ++i)
+	{
+		if(*v < *i)
+		{
+			insert(i, v);
+			return;
+		}
+	}
+	push_back(v);
 }
 
 Version *
@@ -109,8 +103,9 @@ Package::best()
 		ri != rend();
 		++ri)
 	{
-		if((*ri)->isStable() && !(*ri)->isHardMasked()) {
-			ret = *ri;
+		if(ri->isStable() && !ri->isHardMasked()) 
+		{
+			ret = ri.ptr();
 			break;
 		}
 	}

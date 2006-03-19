@@ -30,6 +30,7 @@
 #include <varsreader.h>
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/packagetree.h>
 
 #include <dirent.h>
 
@@ -48,15 +49,15 @@ static int ebuild_selector (SCANDIR_ARG3 dent)
 		return package_selector(dent);
 }
 
-void NoneCache::readPackage(Category &vec, const string &cat_name, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
+void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
 {
 	bool have_onetime_info = false;
 
-	Package *pkg = findPackage(vec, pkg_name);
+	Package *pkg = vec.findPackage(pkg_name);
 	if( (pkg) )
 		have_onetime_info = true;
 	else
-		pkg = addPackage(vec, cat_name, pkg_name);
+		pkg = vec.addPackage(pkg_name);
 
 	for(int i = 0; i<numfiles; ++i)
 	{
@@ -100,15 +101,15 @@ void NoneCache::readPackage(Category &vec, const string &cat_name, char *pkg_nam
 	}
 
 	if(!have_onetime_info) {
-		deletePackage(vec, pkg_name);
+		vec.deletePackage(pkg_name);
 	}
 }
 
-int NoneCache::readCategory(Category &vec, const string &cat_name)
+int NoneCache::readCategory(Category &vec)
 {
 	struct dirent **packages= NULL;
 
-	string catpath = m_scheme + "/" + cat_name; 
+	string catpath = m_scheme + "/" + vec.name(); 
 	int numpackages = scandir(catpath.c_str(),
 			&packages, package_selector, alphasort);
 
@@ -121,7 +122,7 @@ int NoneCache::readCategory(Category &vec, const string &cat_name)
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackage(vec, cat_name, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);

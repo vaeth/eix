@@ -29,7 +29,7 @@
 #include "cli.h"
 
 Matchatom *
-parse_cli(VarDbPkg &varpkg_db, vector<Parameter>::iterator arg, vector<Parameter>::iterator end)
+parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();

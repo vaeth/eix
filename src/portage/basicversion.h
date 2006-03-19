@@ -31,8 +31,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 /** Parse and represent a portage version-string. */
 class BasicVersion {
 	public:
@@ -83,9 +81,9 @@ class BasicVersion {
 
 	protected:
 		/** The m_full version-string. */
-		string                 m_full;
+		std::string             m_full;
 		/** Splitted m_primsplit-version. */
-		vector<unsigned short> m_primsplit;
+		std::vector<unsigned short> m_primsplit;
 		/** Optional one-character suffix of m_primsplit. */
 		unsigned char          m_primarychar;
 
