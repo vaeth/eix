@@ -57,7 +57,7 @@ class AnsiColor {
 		 * defaults to no color output */
 		AnsiColor(const Color fg = acNone, const bool light = false) : fg(fg), light(light) { }
 
-		std::string asString() 
+		std::string asString()
 		{
 			static const int len = 100;
 			char buf[len];
@@ -96,13 +96,13 @@ class AnsiColor {
 		/** Prints the current color to an ostream */
 		friend std::ostream& operator<< (std::ostream& os, AnsiColor ac);
 
-		AnsiColor(std::string color_name) throw (ExBasic) 
+		AnsiColor(std::string color_name) throw (ExBasic)
 		{
 			light = false;
 
 			// look for brightness attribute
 			std::string::size_type comma_pos = color_name.rfind(',');
-			if(comma_pos != std::string::npos) 
+			if(comma_pos != std::string::npos)
 			{
 				if(color_name[comma_pos+1] == '1') {
 					light = true;
@@ -120,7 +120,7 @@ class AnsiColor {
 		}
 };
 
-inline std::ostream& 
+inline std::ostream&
 operator<< (std::ostream& os, AnsiColor ac)
 {
 	if( ac.fg != AnsiColor::acNone )

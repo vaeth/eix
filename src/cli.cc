@@ -89,7 +89,7 @@ parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::ite
 			// }}}
 
 			// Check for algorithms {{{
-			case 'f': 
+			case 'f':
 					  if(++arg != end
 						 && arg->type == Parameter::ARGUMENT
 						 && is_numeric(arg->arg))

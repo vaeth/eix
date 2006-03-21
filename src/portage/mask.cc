@@ -229,7 +229,7 @@ Mask::match(Package &pkg)
 }
 
 /** Sets the stability members of all version in package according to the mask. */
-void 
+void
 Mask::checkMask(Package& pkg, const bool check_category, const bool check_name)
 {
 	if((check_name && pkg.name.c_str() != m_name)

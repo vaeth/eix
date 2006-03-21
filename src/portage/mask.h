@@ -105,10 +105,10 @@ class Mask : public BasicVersion {
 
 		eix::ptr_list<Version> match(Package &pkg);
 
-		const char *getVersion() 
+		const char *getVersion()
 		{ return m_full.c_str(); }
 
-		const char *getName() 
+		const char *getName()
 		{ return m_name.c_str(); }
 
 		const char *getCategory()
@@ -119,7 +119,7 @@ class Mask : public BasicVersion {
 		 * @param check_name     true if name should be tested
 		 * @param check_category true if category should be tested */
 		void checkMask(Package& pkg, const bool check_category, const bool check_name);
-		
+
 		/** Print mask. */
 		friend std::ostream& operator<< (std::ostream& os, Mask& m);
 };

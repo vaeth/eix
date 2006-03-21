@@ -44,17 +44,17 @@ class Version : public BasicVersion, public Keywords {
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		unsigned short overlay_key;
 
-		Version() : overlay_key(0) 
+		Version() : overlay_key(0)
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : BasicVersion(str), overlay_key(0) 
+		Version(const char* str) : BasicVersion(str), overlay_key(0)
 		{ }
 
 		bool operator == (const Version &v) const
-		{ 
+		{
 			return (((BasicVersion)*this) == ((BasicVersion)v)
-			        && overlay_key == v.overlay_key); 
+			        && overlay_key == v.overlay_key);
 		}
 
 		bool operator == (const BasicVersion &v) const

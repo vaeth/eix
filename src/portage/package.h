@@ -38,8 +38,8 @@ class Version;
 
 /** A class to represent a package in portage It contains various information
  * about a package, including a list of versions. */
-class Package 
-: public eix::ptr_list<Version> 
+class Package
+: public eix::ptr_list<Version>
 {
 	public:
 		/** True if duplicated versions are found in for this package.
@@ -57,20 +57,20 @@ class Package
 
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, installed_versions, provide;
-	
+
 		/// Preset with defaults
 		Package()
 		{ defaults(); }
 
 		/// Fill in name and category and preset with defaults
-		Package(std::string c, std::string n) 
+		Package(std::string c, std::string n)
 			: category(c), name(n)
 		{ defaults(); }
 
 		/** De-constructor, delete content of Version-list. */
 		~Package();
 
-		void defaults() 
+		void defaults()
 		{
 			is_system_package = false;
 			have_same_overlay_key = true;

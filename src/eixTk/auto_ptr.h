@@ -39,9 +39,9 @@ namespace eix {
 			{ }
 
 			~auto_list()
-			{ 
+			{
 				if(m_p)
-					delete[] m_p; 
+					delete[] m_p;
 			}
 
 			_type* get() const

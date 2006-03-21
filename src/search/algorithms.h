@@ -36,11 +36,11 @@
 #include <fnmatch.h>
 
 #include <eixTk/levenshtein.h>
-#include <eixTk/regexp.h> 
+#include <eixTk/regexp.h>
 
-#include <portage/package.h> 
+#include <portage/package.h>
 
-/* Check if we have FNM_CASEFOLD .. 
+/* Check if we have FNM_CASEFOLD ..
  * fnmatch(3) tells me that this is a GNU extensions */
 #if defined FNM_CASEFOLD
 #define FNMATCH_FLAGS FNM_CASEFOLD
@@ -123,7 +123,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 			}
 			return ok;
 		}
-		
+
 		static bool compare(Package *p1, Package *p2)  {
 			return (levenshtein_map[p1->category + "/" + p1->name]
 					< levenshtein_map[p2->category + "/" + p2->name]);

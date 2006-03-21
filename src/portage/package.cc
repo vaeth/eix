@@ -41,7 +41,7 @@ Package::~Package()
 }
 
 /** Check if a package has duplicated versions. */
-bool 
+bool
 Package::checkDuplicates(Version *version)
 {
 	for(iterator i = begin(); i != end(); ++i)
@@ -68,7 +68,7 @@ void Package::addVersion(Version *version)
 	if(empty() == false) {
 		if(overlay_key != version->overlay_key)
 			have_same_overlay_key = false;
-		
+
 		if(is_system_package) {
 			is_system_package = version->isSystem();
 		}
@@ -81,7 +81,7 @@ void Package::addVersion(Version *version)
 	sortedPushBack(version);
 }
 
-void 
+void
 Package::sortedPushBack(Version *v)
 {
 	for(iterator i = begin(); i != end(); ++i)
@@ -96,14 +96,14 @@ Package::sortedPushBack(Version *v)
 }
 
 Version *
-Package::best() 
+Package::best()
 {
 	Version *ret = NULL;
 	for(reverse_iterator ri = rbegin();
 		ri != rend();
 		++ri)
 	{
-		if(ri->isStable() && !ri->isHardMasked()) 
+		if(ri->isStable() && !ri->isHardMasked())
 		{
 			ret = ri.ptr();
 			break;

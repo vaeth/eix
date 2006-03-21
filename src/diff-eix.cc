@@ -69,7 +69,7 @@ Node           *format_new, *format_delete, *format_changed;
 static void
 print_help(int ret)
 {
-	printf( 
+	printf(
 		"diff-eix [options] old-cache [new-cache]\n"
 		"\n"
 		" -n, --nocolor           don't use colors in output\n"

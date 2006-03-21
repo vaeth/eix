@@ -50,8 +50,8 @@ using namespace std;
 
 #if defined(WORDS_BIGENDIAN)
 /* For the big-endian machines */
-#define UINT32_PACK(out,in)   uint32_pack(out,in) 
-#define UINT32_UNPACK(in,out) uint32_unpack(in,out) 
+#define UINT32_PACK(out,in)   uint32_pack(out,in)
+#define UINT32_UNPACK(in,out) uint32_unpack(in,out)
 
 /* Adopted from python-cdb (which adopted it from libowfat :) */
 inline static void uint32_pack(char *out, uint32_t in);
@@ -107,7 +107,7 @@ class Cdb {
 		void init() {
 			uint32_t record_end_offset;
 			UINT32_UNPACK((char *)cdb_data, &record_end_offset);
-			cdb_records_end = (uint32_t *)((char *)cdb_data + record_end_offset); 
+			cdb_records_end = (uint32_t *)((char *)cdb_data + record_end_offset);
 			current = cdb_data + (2 * 256);
 			is_ready = true;
 		}
@@ -149,7 +149,7 @@ class Cdb {
 		}
 
 		bool end() {
-			return current >= cdb_records_end; 
+			return current >= cdb_records_end;
 		}
 
 		bool isReady() {
@@ -168,7 +168,7 @@ class Cdb {
 
 #define PROTO	 ((char)0x80) /* identify pickle protocol */
 
-#define NEXT        (*data++) 
+#define NEXT        (*data++)
 #define MOVE(x)     (data += x)
 #define IS_END      (data >= data_end)
 

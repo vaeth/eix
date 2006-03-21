@@ -65,7 +65,7 @@ metadata_get_keywords(const string &filename, const string &arch) throw (ExBasic
 }
 
 /** Read a metadata cache file. */
-void 
+void
 read_metadata(const char *filename, Package *pkg) throw (ExBasic)
 {
 	ifstream is(filename);

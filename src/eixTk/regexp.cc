@@ -29,14 +29,14 @@
 
 using namespace std;
 
-Regex::~Regex() 
+Regex::~Regex()
 {
 	if(m_compiled)
 		regfree(&m_re);
 }
 
-void 
-Regex::compile(const char *regex, int eflags) 
+void
+Regex::compile(const char *regex, int eflags)
 {
 	if(m_compiled) {
 		regfree(&m_re);
@@ -52,8 +52,8 @@ Regex::compile(const char *regex, int eflags)
 	m_compiled = true;
 }
 
-string 
-Regex::get_error(int code) 
+string
+Regex::get_error(int code)
 {
 	char buf[512];
 	regerror(code, static_cast<const regex_t*>(&m_re), buf, 511);

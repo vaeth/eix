@@ -36,10 +36,10 @@
 
 template<typename _type>
 class MaskList
-	: public std::map<std::string, std::map<std::string, eix::ptr_list<_type> > > 
+	: public std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >
 {
 	public:
-		typedef typename std::map<std::string, std::map<std::string, eix::ptr_list<_type> > > 
+		typedef typename std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >
 			super;
 
 		typedef typename std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >::iterator
@@ -54,19 +54,19 @@ class MaskList
 		typedef typename std::map<std::string,eix::ptr_list<_type> >::const_iterator
 			const_cat_iterator;
 
-		typedef typename eix::ptr_list<_type>::iterator 
+		typedef typename eix::ptr_list<_type>::iterator
 			mask_iterator;
 
-		typedef typename eix::ptr_list<_type>::const_iterator 
+		typedef typename eix::ptr_list<_type>::const_iterator
 			const_mask_iterator;
 
 		~MaskList()
 		{
-			for(iterator it = super::begin(); it != super::end(); ++it) 
+			for(iterator it = super::begin(); it != super::end(); ++it)
 			{
 				for(cat_iterator t = it->second.begin();
 					t != it->second.end();
-					++t) 
+					++t)
 				{
 					t->second.delete_and_clear();
 				}
@@ -74,10 +74,10 @@ class MaskList
 		}
 
 
-		void add(_type *m) 
+		void add(_type *m)
 		{ (*this)[m->getCategory()][m->getName()].push_back(m); }
 
-		void remove(_type *m) 
+		void remove(_type *m)
 		{
 			iterator it = super::find(m->getCategory());
 			if(it == super::end())
@@ -109,7 +109,7 @@ class MaskList
 				this->erase(it);
 			}
 		}
-		
+
 		const eix::ptr_list<_type> *get(const Package *p) const
 		{
 			const_iterator it = super::find(p->category);

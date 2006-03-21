@@ -41,8 +41,8 @@ using namespace std;
 
 /** Read a string of the format { unsigned short len; char[] string;
  * (without the 0) } */
-std::string 
-io::read_string(FILE *fp) 
+std::string
+io::read_string(FILE *fp)
 {
 	unsigned short len = read<short>(fp);
 	eix::auto_list<char> buf(new char[len + 1]);
@@ -53,8 +53,8 @@ io::read_string(FILE *fp)
 
 /** Write a string in the format { unsigned short len; char[] string;
  * (without the 0) } */
-void 
-io::write_string(FILE *fp, const std::string &str) 
+void
+io::write_string(FILE *fp, const std::string &str)
 {
 	unsigned short len = str.size();
 	write<short>(fp, len);
@@ -92,7 +92,7 @@ io::read_version(FILE *fp)
 	return v;
 }
 
-void 
+void
 io::write_version(FILE *fp, const Version *v)
 {
 	// write m_full string
@@ -128,7 +128,7 @@ io::read_category_header(FILE *fp, std::string &name)
 	return io::read<unsigned int>(fp);
 }
 
-void 
+void
 io::write_category_header(FILE *fp, const std::string &name, unsigned int size)
 {
 	io::write_string(fp,  name);
@@ -136,7 +136,7 @@ io::write_category_header(FILE *fp, const std::string &name, unsigned int size)
 }
 
 
-void 
+void
 io::write_package(FILE *fp, const Package &pkg)
 {
 	off_t offset_position = ftello(fp);
@@ -166,7 +166,7 @@ io::write_package(FILE *fp, const Package &pkg)
 }
 
 
-void 
+void
 io::write_header(FILE *fp, const DBHeader &hdr)
 {
 	io::write(fp, DBHeader::current);
@@ -191,14 +191,14 @@ io::read_header(FILE *fp, DBHeader &hdr)
 void
 io::write_packagetree(FILE *fp, const PackageTree &tree)
 {
-	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci) 
+	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
 	{
 		// Write category-header followed by a list of the packages.
 		io::write_category_header(fp, ci->name(), ci->size());
 
 		for(Category::iterator p = ci->begin();
 			p != ci->end();
-			++p) 
+			++p)
 		{
 			// write package to fp
 			io::write_package(fp, *p);
@@ -206,7 +206,7 @@ io::write_packagetree(FILE *fp, const PackageTree &tree)
 	}
 }
 
-void 
+void
 io::read_packagetree(FILE *fp, unsigned int size, PackageTree &tree)
 {
 	PackageReader reader(fp, size);

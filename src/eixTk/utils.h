@@ -55,7 +55,7 @@ class PercentStatus {
 	public:
 		/** Calculacte step-width.
 		 * @param max number of steps you want to do. */
-		PercentStatus(unsigned int max = 0) 
+		PercentStatus(unsigned int max = 0)
 		{
 			if(max != 0) {
 				start(max);
@@ -63,7 +63,7 @@ class PercentStatus {
 		}
 
 		/** Start status. */
-		void start(unsigned int max) 
+		void start(unsigned int max)
 		{
 			m_max = max;
 			m_run = 0;
@@ -72,9 +72,9 @@ class PercentStatus {
 		}
 
 		/** Print next step. */
-		void operator ++() 
+		void operator ++()
 		{
-			if(++m_run == m_max) 
+			if(++m_run == m_max)
 			{
 				puts("\b\b\b\b" "100%");
 				fflush(stdout);

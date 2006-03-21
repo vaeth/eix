@@ -38,8 +38,8 @@ class DBHeader;
 namespace io {
 
 	/// Read any POD.
-	template<typename _Tp> _Tp 
-	read(FILE *fp) 
+	template<typename _Tp> _Tp
+	read(FILE *fp)
 	{
 		_Tp ret;
 		fread((void*)&(ret), sizeof(_Tp), 1, fp);
@@ -47,8 +47,8 @@ namespace io {
 	}
 
 	/// Write any POD.
-	template<typename _Tp> void 
-	write(FILE *fp, const _Tp t) 
+	template<typename _Tp> void
+	write(FILE *fp, const _Tp t)
 	{
 		fwrite((const void*)&(t), sizeof(_Tp), 1, fp);
 	}

@@ -152,7 +152,7 @@ class VarsReader {
 		/** Resolve references to a variable in declaration of a variable. */
 		void resolveReference();
 
-		
+
 		unsigned int key_len; /**< Lenght of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
 
@@ -164,7 +164,7 @@ class VarsReader {
 
 	protected:
 		char *filebuffer, /**< The filebuffer everyone is taking about. */
-			 *filebuffer_end; /**< Marks the end of the filebuffer. */ 
+			 *filebuffer_end; /**< Marks the end of the filebuffer. */
 		const char **incremental_keys; /**< c-array of pattern for keys which values
 										 should be prepended to the new value. */
 		/** Mapping of key to value. */

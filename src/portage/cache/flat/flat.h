@@ -35,7 +35,7 @@ class FlatCache : public BasicCache {
 	public:
 		int readCategory(Category &vec);
 
-		const char *getType() const 
+		const char *getType() const
 		{ return "flat"; }
 };
 

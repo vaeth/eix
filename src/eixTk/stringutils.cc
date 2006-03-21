@@ -32,10 +32,10 @@
 
 #include "stringutils.h"
 
-// OOM_ASSERT 
+// OOM_ASSERT
 #include <eixTk/exceptions.h>
 
-#include <eixTk/regexp.h> 
+#include <eixTk/regexp.h>
 
 #if !defined HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
@@ -71,7 +71,7 @@ ExplodeAtom::get_start_of_version(const char* str)
 	{
 		if(*str++ == '-'
 		   && (*str >= 48
-			   && *str <= 57)) 
+			   && *str <= 57))
 		{
 			x = str;
 		}
@@ -154,8 +154,8 @@ join_vector(vector<string> &vec, string glue)
 	return ret;
 }
 
-inline 
-bool 
+inline
+bool
 vec_clean(vector<string>::iterator begin, vector<string>::iterator end, string s)
 {
 	bool found = false;
@@ -172,11 +172,11 @@ vec_clean(vector<string>::iterator begin, vector<string>::iterator end, string s
 string
 resolve_plus_minus(string &v, bool warn_plus, bool order)
 {
-	vector<string> splitted = split_string(v); 
+	vector<string> splitted = split_string(v);
 	return join_vector(resolve_plus_minus(splitted, warn_plus, order));
 }
 
-vector<string>& 
+vector<string>&
 resolve_plus_minus(vector<string> &v, bool warn_plus, bool order)
 {
 	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it) {

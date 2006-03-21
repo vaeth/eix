@@ -75,8 +75,8 @@ bool VarsReader::isIncremental(const char *key)
 	} \
 } while(0)
 
-const short 
-VarsReader::NONE          = 0x00, /**< Flag: No flags set; normal behavior. */	
+const short
+VarsReader::NONE          = 0x00, /**< Flag: No flags set; normal behavior. */
 	VarsReader::ONLY_KEYWORDS = 0x01, /**< Flag: Only read "KEYWORDS" once, than exit the parser. */
 	VarsReader::SUBST_VARS    = 0x02, /**< Flag: Allow references to variable in declarations
 							of a variable. i.e.  USE="${USE} -kde" */
@@ -154,7 +154,7 @@ void VarsReader::FIND_ASSIGNMENT()
 void VarsReader::EVAL_VALUE()
 {
 	NEXT_INPUT;
-	VALUE_CLEAR; 
+	VALUE_CLEAR;
 	switch(INPUT) {
 		case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE);
 		case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE);
@@ -284,7 +284,7 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 	}
 	switch(INPUT) {
 		case '"':   NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:    NEXT_INPUT; NEXT_INPUT; 
+		default:    NEXT_INPUT; NEXT_INPUT;
 	}
 }
 
@@ -389,7 +389,7 @@ bool VarsReader::read(const char *filename)
 			i != new_values.end();
 			++i)
 		{
-			if((*old_values)[i->first].size() > 0 
+			if((*old_values)[i->first].size() > 0
 			   && isIncremental(i->first.c_str()))
 			{
 				(*old_values)[i->first].append(" " + i->second);

@@ -21,18 +21,18 @@ class StringMatcher;
 
 			Matchatom->or = new Matchatom
 			Matchatom = Matchatom->and
-			
+
 		switch option:
 			case !:
 				Matchatom->negate = true
 				break
-				
+
 			case [property-designator]:
 				new PropertyMatcher
 				option-iterator = PropertyMatcher->parse (option-iterator)
 				need_logical_operator = true
 				break
-			
+
 			default:
 				new StringMatcher
 				option-iterator = StringMatcher->parse (option-iterator)
@@ -48,7 +48,7 @@ class QueryParser {
 		/** Parse the complete list of parameters into a chain of NODEs. */
 		Matchatom *parse(OptionIterator begin, OptionIterator end) {
 			Matchatom *root = new Matchatom();
-			Matchatom *current = root; 
+			Matchatom *current = root;
 
 			bool need_logical_operator = false;
 			for(; begin != end; ++begin)
@@ -82,7 +82,7 @@ class QueryParser {
 					current->or = new Matchatom();
 					current = current->next_or;
 				}
-					
+
 				switch(*begin)
 				{
 					case '!':
@@ -94,7 +94,7 @@ class QueryParser {
 					case INSTALLED:
 						current->installed_versions = true;
 						break;
-					
+
 					default:
 						new StringMatcher
 						option-iterator = StringMatcher->parse (option-iterator)

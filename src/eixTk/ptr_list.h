@@ -49,19 +49,19 @@ namespace eix {
 				: base_iterator(iter)
 			{ }
 
-			ptr_iterator& operator=(const base_iterator& iter) 
+			ptr_iterator& operator=(const base_iterator& iter)
 			{ return static_cast<ptr_iterator&>( base_iterator::operator=(iter)); }
 
-			type& operator*() 
+			type& operator*()
 			{ return *base_iterator::operator*(); }
 
-			const type& operator*() const 
+			const type& operator*() const
 			{ return *base_iterator::operator*(); }
 
-			type* operator->() 
+			type* operator->()
 			{ return *base_iterator::operator->(); }
 
-			const type* operator->() const 
+			const type* operator->() const
 			{ return *base_iterator::operator->(); }
 
 			type* ptr()

@@ -109,13 +109,13 @@ PortageSettings::PortageSettings()
 	if(getenv("ACCEPT_KEYWORDS")) {
 		(*this)["ACCEPT_KEYWORDS"].append(string(" ") + getenv("ACCEPT_KEYWORDS"));
 	}
-	
+
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
 	(*this)["ACCEPT_KEYWORDS"] = join_vector(m_accepted_keyword);
 	m_accepted_keywords.set((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
 }
-		
+
 PortageSettings::~PortageSettings()
 {
 	if(profile) {
@@ -153,7 +153,7 @@ MaskList<Mask> *PortageSettings::getMasks()
 
 
 bool PortageUserConfig::readKeywords() {
-	/* Prepend a ~ to every token. 
+	/* Prepend a ~ to every token.
 	 * FIXME: So do we only care for ARCH or do we also care for ACCEPT_KEYWORDS? */
 	vector<string> splitted = split_string((*m_settings)["ARCH"], "\t \n\r");
 	for(vector<string>::iterator it = splitted.begin(); it != splitted.end(); ++it) {
@@ -200,7 +200,7 @@ void PortageUserConfig::setMasks(Package *p) {
 	m_mask.applyMasks(p);
 }
 
-inline void apply_keywords(Version &v, Keywords::Type t) 
+inline void apply_keywords(Version &v, Keywords::Type t)
 {
 	if(v.get() & t) {
 		v |= Keywords::KEY_STABLE;
@@ -210,7 +210,7 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 	}
 }
 
-void 
+void
 PortageUserConfig::setStability(Package *p, Keywords kw)
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
@@ -220,13 +220,13 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 	{
 		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
 			it != keyword_masks->end();
-			++it) 
+			++it)
 		{
 			eix::ptr_list<Version> matches = it->match(*p);
 
 			for(eix::ptr_list<Version>::iterator  v = matches.begin();
 				v != matches.end();
-				++v) 
+				++v)
 			{
 				sorted_by_versions[v.ptr()].append(" " + it->keywords);
 			}
@@ -270,8 +270,8 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 	}
 }
 
-void 
-PortageSettings::setStability(Package *pkg, Keywords &kw) 
+void
+PortageSettings::setStability(Package *pkg, Keywords &kw)
 {
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {

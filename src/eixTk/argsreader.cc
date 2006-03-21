@@ -99,7 +99,7 @@ ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 /** Return shortopt for longopt stored in opt.
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
-int 
+int
 ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
 {
 	while( (opt_table->longopt || opt_table->shortopt) )
@@ -128,7 +128,7 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 	exit(-1);
 }
 
-void 
+void
 ArgumentReader::foldAndRemove(struct Option *opt_table)
 {
 	for(ArgumentReader::iterator it = begin();

@@ -32,13 +32,13 @@
 
 #include <database/io.h>
 
-void 
+void
 PackageReader::read(Attributes need)
 {
 	if(m_have >= need) // Already got this one.
 		return;
 
-	switch(m_have) 
+	switch(m_have)
 	{
 		case NONE:
 			m_pkg->name = io::read_string(m_fp);
@@ -103,7 +103,7 @@ PackageReader::next()
 {
 	if(m_cat_size-- == 0)
 	{
-		if(m_frames-- == 0) 
+		if(m_frames-- == 0)
 		{
 			return false;
 		}

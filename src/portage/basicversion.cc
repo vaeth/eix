@@ -105,7 +105,7 @@ int BasicVersion::comparePrimary(const BasicVersion& basic_version) const
 
 	if(x < 0)
 		return -1;
-	
+
 	return 0;
 }
 
@@ -212,7 +212,7 @@ BasicVersion::parseSuffix(const char *str)
 				// get suffix-level number .. "_pre123"
 				// I don't really understand why this wants a "char **", and
 				// not a "const char **"
-				m_suffixnum = strtol(str, (char **)&str, 10); 
+				m_suffixnum = strtol(str, (char **)&str, 10);
 				break;
 			}
 		}

@@ -64,11 +64,11 @@ get_map_from_cache(const char *file, map<string,string> &x)
 }
 
 /** Read the stability on 'arch' from a metadata cache file. */
-static Keywords::Type 
+static Keywords::Type
 get_keywords(const string &filename, const string &arch) throw (ExBasic)
 {
 	map<string,string> cf;
-	
+
 	if( get_map_from_cache(filename.c_str(), cf) < 0 )
 	{
 		throw ExBasic("Can't read cache file %s: %s",
@@ -80,11 +80,11 @@ get_keywords(const string &filename, const string &arch) throw (ExBasic)
 }
 
 /** Read a metadata cache file. */
-static void 
+static void
 read_file(const char *filename, Package *pkg) throw (ExBasic)
 {
 	map<string,string> cf;
-	
+
 	if( get_map_from_cache(filename, cf) < 0 )
 	{
 		throw ExBasic("Can't read cache file %s: %s",
@@ -97,7 +97,7 @@ read_file(const char *filename, Package *pkg) throw (ExBasic)
 	pkg->provide  = cf["PROVIDE"];
 }
 
-static int 
+static int
 cachefiles_selector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
@@ -106,7 +106,7 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 
 int BackportCache::readCategory(Category &vec)
 {
-	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name(); 
+	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;
 	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;

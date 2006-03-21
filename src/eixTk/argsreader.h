@@ -94,7 +94,7 @@ class Parameter {
 			}
 		}
 
-		int& operator * () 
+		int& operator * ()
 		{ return opt; }
 };
 

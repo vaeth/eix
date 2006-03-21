@@ -45,7 +45,7 @@ Category::findPackage(const string &name) const
 	return NULL;
 }
 
-bool 
+bool
 Category::deletePackage(const string &name)
 {
 	for(iterator i = begin(); i != end(); ++i)
@@ -69,7 +69,7 @@ Category::addPackage(string name)
 }
 
 Package *
-PackageTree::findPackage(const string &category, const string &name) const 
+PackageTree::findPackage(const string &category, const string &name) const
 {
 	for(const_iterator i = begin(); i != end(); ++i)
 	{
@@ -80,8 +80,8 @@ PackageTree::findPackage(const string &category, const string &name) const
 	return NULL;
 }
 
-bool 
-PackageTree::deletePackage(const string &category, const string &name) 
+bool
+PackageTree::deletePackage(const string &category, const string &name)
 {
 	iterator i = begin();
 	for(; i != end(); ++i)
@@ -93,11 +93,11 @@ PackageTree::deletePackage(const string &category, const string &name)
 	if(i == end())
 		return false;
 
-	bool ret = i->deletePackage(name); 
+	bool ret = i->deletePackage(name);
 
 	// Check if the category is empty after deleting the
 	// package.
-	if(i->empty()) 
+	if(i->empty())
 		erase(i);
 
 	return ret;
@@ -107,7 +107,7 @@ unsigned int
 PackageTree::countPackages() const
 {
 	Category::size_type ret = 0;
-	for(const_iterator i = begin(); i != end(); ++i) 
+	for(const_iterator i = begin(); i != end(); ++i)
 	{
 		ret += i->size();
 	}

@@ -98,7 +98,7 @@ print_help(void)
 			"     --exclude-overlay   exclude a overlay from the update-process.\n"
 			"\n"
 #if 0
-			"     --print-masks       print masks (if you are no developer, you probably won't need this)\n" 
+			"     --print-masks       print masks (if you are no developer, you probably won't need this)\n"
 			"\n"
 #endif
 			"You can contact the developers in #eix on irc.freenode.net or on\n"
@@ -132,7 +132,7 @@ static struct Option long_options[] = {
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 
 	 Option("exclude-overlay", O_EXCLUDE), /* exclude a overlay from the update-process. */
-	 Option(0 ,                0) 
+	 Option(0 ,                0)
 };
 
 int
@@ -270,11 +270,11 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 	INFO("Applying masks ..\n");
 	for(PackageTree::iterator c = package_tree.begin();
 		c != package_tree.end();
-		++c) 
+		++c)
 	{
 		for(Category::iterator p = c->begin();
 			p != c->end();
-			++p) 
+			++p)
 		{
 			portage_settings.profile->getAllowedPackages()->applyMasks(p.ptr());
 			portage_settings.profile->getSystemPackages()->applyMasks(p.ptr());

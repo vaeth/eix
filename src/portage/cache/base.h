@@ -53,7 +53,7 @@ class BasicCache {
 		{ }
 
 		// Set scheme for this cache. */
-		void setScheme(std::string scheme) 
+		void setScheme(std::string scheme)
 		{ m_scheme = scheme; }
 
 		// Set overlay-key. */
@@ -61,7 +61,7 @@ class BasicCache {
 		{ m_overlay_key = key; }
 
 		// Set arch for system. */
-		void setArch(const std::string &arch) 
+		void setArch(const std::string &arch)
 		{ m_arch = arch; }
 
 		// Set arch for system. */
@@ -69,7 +69,7 @@ class BasicCache {
 		{ m_error_callback = error_callback; }
 
 		// Get scheme for this cache. */
-		std::string getPath() const 
+		std::string getPath() const
 		{ return m_scheme; }
 
 		// Return name of Cache.*/

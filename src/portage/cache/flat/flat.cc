@@ -50,7 +50,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 
 int FlatCache::readCategory(Category &vec)
 {
-	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name(); 
+	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;
 	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;

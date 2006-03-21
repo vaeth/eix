@@ -94,7 +94,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> m_accepted_keyword;
 
 		/** Mapping of category->masks (first all masks, then all unmasks) */
-		MaskList<Mask> m_masks;  
+		MaskList<Mask> m_masks;
 		Keywords m_accepted_keywords;
 
 	public:
@@ -113,11 +113,11 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> &getAcceptKeyword() {
 			return m_accepted_keyword;
 		}
-		
+
 		Keywords getAcceptKeywords() {
 			return m_accepted_keywords;
 		}
-		
+
 		/** Read maskings & unmaskings from the profile as well as user-defined ones */
 		MaskList<Mask> *getMasks();
 

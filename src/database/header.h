@@ -53,10 +53,10 @@ class DBHeader {
 		/** Add overlay to directory-table and return key. */
 		short addOverlay(std::string overlay);
 
-		short countOverlays() const 
+		short countOverlays() const
 		{ return overlays.size(); }
 
-		bool isCurrent() 
+		bool isCurrent()
 		{ return version == DBHeader::current; }
 };
 #endif /* __DBHEADER_H__ */

@@ -129,7 +129,7 @@ void CascadingProfile::readPackages(const string &line)
 	MaskList<Mask> *ml = NULL;
 	switch(*p)
 	{
-		case '*': 
+		case '*':
 			++p;
 			m = new Mask(p, Mask::maskInSystem) ;
 			ml = &m_system;
@@ -145,7 +145,7 @@ void CascadingProfile::readPackages(const string &line)
 		ml->remove(m);
 		delete m;
 	}
-	else 
+	else
 	{
 		ml->add(m);
 	}

@@ -32,7 +32,8 @@
 #include <vector>
 
 /** Parse and represent a portage version-string. */
-class BasicVersion {
+class BasicVersion
+{
 	public:
 		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
 		static const char *suffixlevels[];
@@ -47,11 +48,12 @@ class BasicVersion {
 
 		/** Preset everything with defaults. */
 		void defaults();
-		
+
 		/** Parse the version-string pointed to by str. */
 		void parseVersion(const char *str, int n = 0);
 
-		/** Compares the split m_primsplit numbers of another BasicVersion instances to itself. */
+		/// Compares the split m_primsplit numbers of another BasicVersion
+		// instances to itself.
 		int comparePrimary(const BasicVersion& basic_version) const;
 
 		/// Compare the m_full version.
@@ -64,8 +66,6 @@ class BasicVersion {
 		bool operator != (const BasicVersion& right) const;
 		bool operator >= (const BasicVersion& right) const;
 		bool operator <= (const BasicVersion& right) const;
-
-
 
 		// Getters for protected members
 		unsigned char getPrimarychar() const
@@ -82,13 +82,16 @@ class BasicVersion {
 	protected:
 		/** The m_full version-string. */
 		std::string             m_full;
+
 		/** Splitted m_primsplit-version. */
 		std::vector<unsigned short> m_primsplit;
+
 		/** Optional one-character suffix of m_primsplit. */
 		unsigned char          m_primarychar;
 
 		/** Index of optional suffix in suffixlevels. */
 		unsigned char          m_suffixlevel;
+
 		/** BasicVersion of suffix. */
 		unsigned int           m_suffixnum;
 

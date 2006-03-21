@@ -33,17 +33,17 @@
 
 #include <string>
 
-class CacheTable 
-	: public eix::ptr_list<BasicCache> 
+class CacheTable
+	: public eix::ptr_list<BasicCache>
 {
 	public:
-		~CacheTable() 
+		~CacheTable()
 		{ delete_and_clear(); }
 
-		void addCache(std::string directory, std::string cache_name) 
+		void addCache(std::string directory, std::string cache_name)
 		{
 			BasicCache *cache = get_cache(cache_name);
-			if(cache == NULL) 
+			if(cache == NULL)
 			{
 				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory.c_str()));
 			}

@@ -81,7 +81,7 @@ class PackageTest {
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
 		/** What we need to read so we can do our testing. */
-		PackageReader::Attributes need;      
+		PackageReader::Attributes need;
 		/** Our string matching algorithm. */
 		std::auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, dup_versions, invert;
@@ -95,7 +95,7 @@ class PackageTest {
 		void calculateNeeds();
 };
 
-inline void 
+inline void
 PackageTest::setAlgorithm(BaseAlgorithm *p)
 {
 	algorithm = std::auto_ptr<BaseAlgorithm>(p);

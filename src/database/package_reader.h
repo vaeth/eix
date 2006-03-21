@@ -49,7 +49,7 @@ class PackageReader {
 		typedef off_t          offset_type;
 
 		/// Initialize with file-stream and number of packages.
-		PackageReader(FILE *fp, unsigned int size) 
+		PackageReader(FILE *fp, unsigned int size)
 			: m_fp(fp), m_frames(size), m_cat_size(0) { }
 
 		/// Read attributes from the database into the current package.

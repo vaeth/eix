@@ -74,7 +74,7 @@ class EixRc : public std::map<std::string,std::string> {
 						|VarsReader::INTO_MAP);
 				rc.useMap(this);
 				rc.read(EIX_SYSTEMRC);
-				rc.read(eixrc.c_str()); 
+				rc.read(eixrc.c_str());
 
 				// look for stuff from ENV
 				for(unsigned int i = 0;
@@ -89,7 +89,7 @@ class EixRc : public std::map<std::string,std::string> {
 				}
 			}
 		}
-		
+
 		void clear() {
 			defaults.clear();
 			((std::map<std::string,std::string>*) this)->clear();

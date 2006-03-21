@@ -50,7 +50,7 @@ get_escape(char *p)
 	return string(p, 1);
 }
 
-void 
+void
 PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root)
 {
 	for(;
@@ -225,7 +225,7 @@ FormatParser::state_IF()
 		return ERROR;
 	}
 	++band_position;
-	
+
 	band_position = seek_character(band_position);
 	if(!*band_position) {
 		last_error = "Run into end-of-string while looking for right-hand of condition.";
@@ -235,7 +235,7 @@ FormatParser::state_IF()
 	string textbuffer;
 	static const char single_quote = '\'', double_quote = '"', plain = ' ';
 	char parse_modus = plain;
-	
+
 	if(*band_position == double_quote) {
 		parse_modus = double_quote;
 		++band_position;
@@ -316,7 +316,7 @@ FormatParser::state_FI()
 	else {
 		((ConditionBlock*)p)->if_false = q;
 	}
-	((ConditionBlock*)p)->final = true; 
+	((ConditionBlock*)p)->final = true;
 	keller.push(p);
 	return START;
 }

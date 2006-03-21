@@ -69,7 +69,7 @@ class VarDbPkg {
 		 * @return string with installed versions */
 		std::string getInstalledString(Package *p);
 
-		/** Returns true if a Package installed. 
+		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
 		 * @param v If not NULL, check for this BasicVersion. */
 		bool isInstalled(Package *p, BasicVersion *v = NULL);

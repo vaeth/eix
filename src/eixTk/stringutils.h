@@ -50,7 +50,7 @@ class ExplodeAtom {
 
 		/** Get the name-string of a Atom (e.g. get foobar from foobar-1.2.3).  */
 		static char *split_name(const char* str);
-		
+
 		/** Get name and version from a Atom (e.g. foobar and 1.2.3 from foobar-1.2.3).
 		 * @warn You'll get a pointer to a static array of 2 pointer to char. */
 		static char **split(const char* str);
@@ -107,7 +107,7 @@ trim(std::string *str, const char *delims = " \t\r\n")
 	rtrim(str, delims);
 }
 
-/** Split a string into multiple strings. 
+/** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.
  * @param at  Split at the occurrence of any these characters.
  * @return    vector of strings. */
@@ -121,7 +121,7 @@ std::string join_vector(std::vector<std::string> &vec, std::string glue = " ");
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
  * are found, they (and the -keyword) are removed.
  * @param warn_plus  If true, warn if keywords begin with a '+'.
- * @param order      If true, only remove keywords that come before the according -keyword. 
+ * @param order      If true, only remove keywords that come before the according -keyword.
  * @return           Reference to cleaned vector (it anyway the same vector you gave us). */
 std::vector<std::string>& resolve_plus_minus(std::vector<std::string> &v, bool warn_plus = true, bool order = true);
 

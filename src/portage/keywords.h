@@ -84,7 +84,7 @@ class Keywords {
 		void set(std::string arch, std::string keywords) {
 			set(get_type(arch, keywords));
 		}
-			
+
 		void set(Type t) {
 			m_mask = t;
 		}
@@ -115,15 +115,15 @@ class Keywords {
 		void operator |= (const Keywords::Type &t)     { m_mask |= t; }
 		void operator &= (const Keywords::Type &t)     { m_mask &= t; }
 
-		void print() {
+		static void print(Type t) {
 			printf("< %c%c%c%c%c%c%c >\n",
-					(m_mask & KEY_STABLE) ? '#' : '.',
-					(m_mask & KEY_UNSTABLE) ? '~' : '.',
-					(m_mask & KEY_MINUSASTERISK) ? '*' : '.',
-					(m_mask & KEY_MINUSKEYWORD) ? '-' : '.',
-					(m_mask & PACKAGE_MASK) ? 'M' : '.',
-					(m_mask & PROFILE_MASK) ? 'P' : '.',
-					(m_mask & SYSTEM_PACKAGE) ? 'S' : '.');
+					(t & KEY_STABLE) ? '#' : '.',
+					(t & KEY_UNSTABLE) ? '~' : '.',
+					(t & KEY_MINUSASTERISK) ? '*' : '.',
+					(t & KEY_MINUSKEYWORD) ? '-' : '.',
+					(t & PACKAGE_MASK) ? 'M' : '.',
+					(t & PROFILE_MASK) ? 'P' : '.',
+					(t & SYSTEM_PACKAGE) ? 'S' : '.');
 		}
 };
 
