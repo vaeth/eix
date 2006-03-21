@@ -182,53 +182,53 @@ static struct LocalOptions {
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
 	// Global options
-	{ "quiet",        'q',     Option::BOOLEAN,      (void *) &rc_options.be_quiet },
+	Option("quiet",        'q',     Option::BOOLEAN,       &rc_options.be_quiet),
 
-	{ "nocolor",      'n',     Option::BOOLEAN_T,    (void *) &format.no_color },
-	{ "force-color",  'F',     Option::BOOLEAN_F,    (void *) &format.no_color },
-	{ "versionlines", 'l',     Option::BOOLEAN_T,    (void *) &format.style_version_lines },
+	Option("nocolor",      'n',     Option::BOOLEAN_T,     &format.no_color),
+	Option("force-color",  'F',     Option::BOOLEAN_F,     &format.no_color),
+	Option("versionlines", 'l',     Option::BOOLEAN_T,     &format.style_version_lines),
 
-	{ "verbose",      'v',     Option::BOOLEAN,      (void *) &rc_options.verbose_output },
-	{ "compact",      'c',     Option::BOOLEAN,      (void *) &rc_options.compact_output },
-	{ "help",         'h',     Option::BOOLEAN_T,    (void *) &rc_options.show_help },
-	{ "version",      'V',     Option::BOOLEAN_T,    (void *) &rc_options.show_version },
-	{ "dump",         O_DUMP,  Option::BOOLEAN_T,    (void *) &rc_options.dump_eixrc },
-	{ "debug",        'd',     Option::BOOLEAN_T,    (void *) &rc_options.do_debug },
+	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
+	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
+	Option("help",         'h',     Option::BOOLEAN_T,     &rc_options.show_help),
+	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
+	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
+	Option("debug",        'd',     Option::BOOLEAN_T,     &rc_options.do_debug),
 
-	{ "use",          O_USE,   Option::STRING,       (void *) &rc_options.use_this_cache},
-	{ "is-current",   O_CURRENT, Option::BOOLEAN_T,  (void *) &rc_options.is_current},
+	Option("use",          O_USE,     Option::STRING,      &rc_options.use_this_cache),
+	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
 
-	{ "ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T, (void *) &rc_options.ignore_etc_portage },
+	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
 
-	{ "format",         O_FMT,         Option::STRING,   (void *) &(format_normal) },
-	{ "format-verbose", O_FMT_VERBOSE, Option::STRING,   (void *) &(format_verbose) },
-	{ "format-compact", O_FMT_COMPACT, Option::STRING,   (void *) &(format_compact) },
+	Option("format",         O_FMT,         Option::STRING,   &format_normal),
+	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
+	Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact),
 
 	// Options for criteria
-	{ "installed",     'I', Option::NONE, NULL },
-	{ "dup-versions",  'D', Option::NONE, NULL },
-	{ "not",           '!', Option::NONE, NULL },
+	Option("installed",     'I'),
+	Option("dup-versions",  'D'),
+	Option("not",           '!'),
 
 	// Algorithms for a criteria
-	{ "fuzzy",         'f', Option::NONE, NULL },
-	{ "regex",         'r', Option::NONE, NULL },
-	{ "exact",         'e', Option::NONE, NULL },
-	{ "pattern",       'p', Option::NONE, NULL },
+	Option("fuzzy",         'f'),
+	Option("regex",         'r'),
+	Option("exact",         'e'),
+	Option("pattern",       'p'),
 
 	// What to match in this criteria
-	{ "name",          's', Option::NONE, NULL },
-	{ "category",      'C', Option::NONE, NULL },
-	{ "category-name", 'A', Option::NONE, NULL },
-	{ "description",   'S', Option::NONE, NULL },
-	{ "license",       'L', Option::NONE, NULL },
-	{ "homepage",      'H', Option::NONE, NULL },
-	{ "provide",       'P', Option::NONE, NULL },
+	Option("name",          's'),
+	Option("category",      'C'),
+	Option("category-name", 'A'),
+	Option("description",   'S'),
+	Option("license",       'L'),
+	Option("homepage",      'H'),
+	Option("provide",       'P'),
 
 	// What to do with the next one
-	{ "or",            'o', Option::NONE, NULL },
-	{ "and",           'a', Option::NONE, NULL },
+	Option("or",            'o'),
+	Option("and",           'a'),
 
-	{ 0 , 0, Option::NONE, NULL }
+	Option(0 , 0)
 };
 
 /** Setup default values for all global variables. */

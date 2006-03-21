@@ -32,18 +32,40 @@
 
 /** Maps longopt->shortopt. */
 typedef struct Option {
+
+	enum Type {
+		NONE = 0, /**< No type set (will not be removed on fold) */
+		BOOLEAN_T = 1, /**< Boolean. Will be set to true if found. */
+		BOOLEAN_F = 2, /**< Boolean. Will be set to false if found. */
+		BOOLEAN = 3,   /**< Boolean. Will be flipped if found. */
+		INTEGER = 4,   /**< Int. Increase value if found. */
+		STRING = 5     /**< String. Set if found (warn if already set) */
+	} type;
+
+	Option(const char *l, int s, enum Type t, int *i)
+		: type(t), longopt(l), shortopt(s), integer(i)
+	{ }
+
+	Option(const char *l, int s, enum Type t, bool *b)
+		: type(t), longopt(l), shortopt(s), boolean(b)
+	{ }
+
+	Option(const char *l, int s, enum Type t, char **c)
+		: type(t), longopt(l), shortopt(s), str(c)
+	{ }
+
+	Option(const char *l, int s)
+		: type(NONE), longopt(l), shortopt(s)
+	{ }
+
 	const char *longopt; /**< longopt of this pair. */
 	const int  shortopt; /**< shortopt of this pair. */
 
-	static const char NONE = 0, /**< No type set (will not be removed on fold) */
-				 BOOLEAN_T = 1, /**< Boolean. Will be set to true if found. */
-				 BOOLEAN_F = 2, /**< Boolean. Will be set to false if found. */
-				 BOOLEAN = 3,   /**< Boolean. Will be flipped if found. */
-				 INTEGER = 4,   /**< Int. Increase value if found. */
-				 STRING = 5;    /**< String. Set if found (warn if already set) */
-
-	const char type; /**< Type of variable. */
-	void       *ptr; /**< Pointer to variable of argument. */
+	union { /**< Pointer to variable of argument. */
+		int   *integer;
+		bool  *boolean;
+		char **str;
+	};
 };
 
 /** Represents a parameter. */

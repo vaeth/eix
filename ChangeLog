@@ -3,6 +3,7 @@
 *eix-0.5.5
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix fstream.ignore-stuff in metadata and flat.
+	- Redone a part of argsreader.h Option .. looks *much* cleaner now.
 
 *eix-0.5.4
 

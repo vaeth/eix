@@ -150,33 +150,36 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 			case Option::BOOLEAN_F:
 			case Option::BOOLEAN_T:
 			case Option::BOOLEAN:
-				if(c->ptr != NULL)
+				if(c->boolean != NULL)
 				{
 					if(c->type == Option::BOOLEAN_T)
-						*(bool *)(c->ptr) = true;
+						*c->boolean = true;
 					else if(c->type == Option::BOOLEAN_F)
-						*(bool *)(c->ptr) = false;
+						*c->boolean = false;
 					else
-						*(bool *)(c->ptr) = ! *(bool *)(c->ptr);
+						*c->boolean = ! *c->boolean;
 					it = erase(it);
 				}
 				continue;
 			case Option::INTEGER:
-				if(c->ptr != NULL)
+				if(c->integer != NULL)
 				{
-					++(*(int *)(c->ptr));
+					++*c->integer;
 					it = erase(it);
 				}
 				continue;
 			case Option::STRING:
-				if(c->ptr != NULL)
+				if(c->str != NULL)
 				{
 					it = erase(it);
 					__ASSERT(it != end(), "Missing parameter to --%s\n", c->longopt);
 					__ASSERT(it->type == Parameter::ARGUMENT, "Missing parameter to --%s\n", c->longopt);
-					*(char **)(c->ptr) = it->arg;
+					*c->str = it->arg;
 					it = erase(it);
 				}
+				continue;
+			case Option::NONE:
+			default:
 				continue;
 		}
 	}

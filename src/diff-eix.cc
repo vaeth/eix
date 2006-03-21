@@ -105,12 +105,13 @@ enum cli_options {
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
 
-	{"help",         'h',           Option::BOOLEAN_T, (void *) &cli_show_help }, /* show a short help screen */
-	{"version",      'V',           Option::BOOLEAN_T, (void *) &cli_show_version},
-	{"dump",         O_DUMP,        Option::BOOLEAN_T, (void *) &cli_dump_eixrc },
-	{"nocolor",      'n',           Option::BOOLEAN_T, (void *) &(format_string.no_color) },
-	{"force-color",  'F',           Option::BOOLEAN_F, (void *) &(format_string.no_color) },
-	{0,              0,             Option::NONE,      NULL }
+	Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help), /* show a short help screen */
+	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
+	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
+	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_string.no_color)),
+	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_string.no_color)),
+
+	Option(0, 0)
 };
 
 void

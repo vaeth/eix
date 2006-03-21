@@ -122,22 +122,17 @@ bool quiet = false,
 	 show_help = false,
 	 show_version = false,
 	 dump_eixrc = false;
-#if 0
-	 print_masks_only = false;
-#endif
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
 
-	{"quiet",          'q',              Option::BOOLEAN,   (void *) &quiet }, /* produce no output */
-	{"dump",           O_DUMP,           Option::BOOLEAN_T, (void *) &dump_eixrc },
-	{"help",           'h',              Option::BOOLEAN_T, (void *) &show_help }, /* show a short help screen */
-	{"version",        'V',              Option::BOOLEAN_T, (void *) &show_version},
-	{"exclude-overlay", O_EXCLUDE,       Option::NONE,       NULL }, /* exclude a overlay from the update-process. */
-#if 0
-	{"print-masks",     O_PRINT_MASKS,   Option::BOOLEAN_T, (void *) &print_masks_only },
-#endif
-	{ 0 ,              0 ,               Option::NONE,       NULL }
+	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet), /* produce no output */
+	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
+	 Option("help",           'h',     Option::BOOLEAN_T, &show_help), /* show a short help screen */
+	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
+
+	 Option("exclude-overlay", O_EXCLUDE), /* exclude a overlay from the update-process. */
+	 Option(0 ,                0) 
 };
 
 int
@@ -194,15 +189,6 @@ run_update_eix(int argc, char *argv[])
 
 	INFO("Reading Portage settings ..\n");
 	PortageSettings portage_settings;
-
-#if 0
-	if(print_masks_only) {
-		cout << *(portage_settings.profile->getAllowedPackages());
-		cout << *(portage_settings.profile->getSystemPackages());
-		cout << *(portage_settings.getMasks());
-		exit(0);
-	}
-#endif
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
