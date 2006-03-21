@@ -178,13 +178,12 @@ bool PortageUserConfig::readKeywords() {
 		try {
 			string::size_type n = lines[i].find_first_of("\t ");
 			if(n == string::npos) {
-				KeywordMask *m = new KeywordMask(lines[i].c_str(), Mask::maskTypeNone);
+				KeywordMask *m = new KeywordMask(lines[i].c_str());
 				m->keywords = fscked_arch;
 				m_keywords.add(m);
 			}
 			else {
-				KeywordMask *m = new KeywordMask(lines[i].substr(0, n).c_str(),
-				                                 Mask::maskTypeNone);
+				KeywordMask *m = new KeywordMask(lines[i].substr(0, n).c_str());
 				m->keywords = lines[i].substr(n + 1);
 				m_keywords.add(m);
 			}
@@ -217,7 +216,7 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
 	map<Version*,string> sorted_by_versions;
 
-	if(keyword_masks != NULL && keyword_masks->empty())
+	if(keyword_masks != NULL && keyword_masks->empty() == false)
 	{
 		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
 			it != keyword_masks->end();

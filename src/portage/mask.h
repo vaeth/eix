@@ -127,7 +127,7 @@ class Mask : public BasicVersion {
 class KeywordMask : public Mask {
 	public:
 
-		KeywordMask(const char *str, Type type) : Mask(str, type)
+		KeywordMask(const char *str) : Mask(str, maskTypeNone)
 		{ }
 
 		std::string keywords;
