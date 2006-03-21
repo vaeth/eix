@@ -16,4 +16,5 @@ libeixTk_a_SOURCES = ansicolor.h \
 					 sysutils.cc sysutils.h \
 					 levenshtein.cc levenshtein.h \
 					 utils.cc utils.h \
-					 ptr_list.h auto_ptr.h
+					 ptr_list.h auto_ptr.h \
+					 test.h
