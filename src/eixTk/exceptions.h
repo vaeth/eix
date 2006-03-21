@@ -56,9 +56,11 @@ class ExBasic {
 			m_func = func;
 		}
 
-		const std::string &getMessage() const {
-			return m_msg;
-		}
+		const std::string &getMessage() const throw()
+		{ return m_msg; }
+
+		const char *what() const
+		{ return m_msg.c_str(); }
 
 		friend std::ostream& operator<< (std::ostream& os, ExBasic& e) 
 		{ return os << e.m_func << ": " << e.m_msg; }

@@ -215,21 +215,22 @@ void
 PortageUserConfig::setStability(Package *p, Keywords kw)
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
-	if(keyword_masks == NULL || keyword_masks->empty())
-		return;
-
 	map<Version*,string> sorted_by_versions;
-	for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
-		it != keyword_masks->end();
-		++it) 
-	{
-		eix::ptr_list<Version> matches = it->match(*p);
 
-		for(eix::ptr_list<Version>::iterator  v = matches.begin();
-			v != matches.end();
-			++v) 
+	if(keyword_masks != NULL && keyword_masks->empty())
+	{
+		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
+			it != keyword_masks->end();
+			++it) 
 		{
-			sorted_by_versions[v.ptr()].append(" " + it->keywords);
+			eix::ptr_list<Version> matches = it->match(*p);
+
+			for(eix::ptr_list<Version>::iterator  v = matches.begin();
+				v != matches.end();
+				++v) 
+			{
+				sorted_by_versions[v.ptr()].append(" " + it->keywords);
+			}
 		}
 	}
 
