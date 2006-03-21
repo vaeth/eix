@@ -58,7 +58,8 @@ class PackageReader {
 		/// Get pointer to the package.
 		// It's possible that some attributes of the package are not yet read
 		// from the database.
-		Package *get() const;
+		Package *get() const
+		{ return m_pkg; }
 
 		/// Skip the current package.
 		// The current package is deleted and the file pointer is moved to the
@@ -69,35 +70,25 @@ class PackageReader {
 		// Complete the current package, and release it.
 		Package *release();
 
+		/// Free the current Package and reset pointer to p.
+		void reset(Package *p = NULL);
+
 		/// Return true if there is a next package.
 		// Read the package-header.
 		bool next();
 
 	protected:
-		FILE             *m_fp;
+		FILE         *m_fp;
 
-		unsigned int      m_frames;
-		unsigned int      m_cat_size;
-		std::string       m_cat_name;
+		unsigned int  m_frames;
+		unsigned int  m_cat_size;
+		std::string   m_cat_name;
 
-		off_t             m_next;
-		Attributes        m_have;
-		std::auto_ptr<Package> m_pkg;
+		off_t         m_next;
+		Attributes    m_have;
+		Package      *m_pkg;
 
 	private:
 };
-
-inline Package *
-PackageReader::get() const
-{
-	return m_pkg.get();
-}
-
-inline Package *
-PackageReader::release()
-{
-	read();
-	return m_pkg.release();
-}
 
 #endif /* __PACKAGE_READER_H__ */

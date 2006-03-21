@@ -45,7 +45,7 @@ class Mask;
 class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, std::vector<Mask*> *mask_vec);
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec);
 
 /** Grab Mask from file and add to category->vector<Mask*>. */
 inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec) {
@@ -53,7 +53,7 @@ inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *ma
 }
 
 /** Grab Mask from file and add to vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map) {
+inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map) {
 	return grab_masks(file, type, cat_map, NULL);
 }
 
@@ -61,9 +61,9 @@ class PortageSettings;
 
 class PortageUserConfig {
 	private:
-		PortageSettings *m_settings;
-		MaskList         m_mask;
-		MaskList         m_keywords;
+		PortageSettings      *m_settings;
+		MaskList<Mask>        m_mask;
+		MaskList<KeywordMask> m_keywords;
 
 		bool readKeywords();
 		bool readMasks() {
@@ -94,7 +94,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> m_accepted_keyword;
 
 		/** Mapping of category->masks (first all masks, then all unmasks) */
-		MaskList m_masks;  
+		MaskList<Mask> m_masks;  
 		Keywords m_accepted_keywords;
 
 	public:
@@ -119,7 +119,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		}
 		
 		/** Read maskings & unmaskings from the profile as well as user-defined ones */
-		MaskList *getMasks();
+		MaskList<Mask> *getMasks();
 
 		/** Return vector of all possible all categories.
 		 * Reads categories on first call. */

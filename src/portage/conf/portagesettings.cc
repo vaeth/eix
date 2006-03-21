@@ -42,7 +42,7 @@
 
 using namespace std;
 
-bool grab_masks(const char *file, Mask::Type type, MaskList *cat_map, vector<Mask*> *mask_vec)
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec)
 {
 	ifstream mask_file(file);
 	if(mask_file.is_open()) {
@@ -142,7 +142,7 @@ vector<string> *PortageSettings::getCategories()
 }
 
 /** Read maskings & unmaskings as well as user-defined ones */
-MaskList *PortageSettings::getMasks()
+MaskList<Mask> *PortageSettings::getMasks()
 {
 	if(m_masks.empty()) {
 		if(!grab_masks(string((*this)["PORTDIR"]+"profiles/package.mask").c_str(), Mask::maskMask, &m_masks) )
@@ -198,12 +198,7 @@ bool PortageUserConfig::readKeywords() {
 
 void PortageUserConfig::setMasks(Package *p) {
 	/* Set hardmasks */
-	for(MaskList::mask_iterator it = m_mask.get(p)->begin();
-		it != m_mask.get(p)->end();
-		++it) 
-	{
-		it->checkMask(*p, false, false);
-	}
+	m_mask.applyMasks(p);
 }
 
 inline void apply_keywords(Version &v, Keywords::Type t) 
@@ -216,15 +211,15 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 	}
 }
 
-void PortageUserConfig::setStability(Package *p, Keywords kw) {
-	eix::ptr_list<Mask> *keyword_masks =  m_keywords.get(p);
-	map<Version*,string>  sorted_by_versions;
-
-	if(keyword_masks->empty())
+void 
+PortageUserConfig::setStability(Package *p, Keywords kw)
+{
+	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
+	if(keyword_masks == NULL || keyword_masks->empty())
 		return;
 
-	
-	for(eix::ptr_list<Mask>::iterator  it = keyword_masks->begin();
+	map<Version*,string> sorted_by_versions;
+	for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
 		it != keyword_masks->end();
 		++it) 
 	{
@@ -234,8 +229,7 @@ void PortageUserConfig::setStability(Package *p, Keywords kw) {
 			v != matches.end();
 			++v) 
 		{
-			// FIXME: Evil cast
-			sorted_by_versions[v.ptr()].append(" " + ((KeywordMask&)*it).keywords);
+			sorted_by_versions[v.ptr()].append(" " + it->keywords);
 		}
 	}
 

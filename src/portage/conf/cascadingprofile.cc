@@ -125,8 +125,8 @@ void CascadingProfile::readPackages(const string &line)
 		++p;
 	}
 
-	Mask     *m = NULL;
-	MaskList *ml = NULL;
+	Mask *m = NULL;
+	MaskList<Mask> *ml = NULL;
 	switch(*p)
 	{
 		case '*': 

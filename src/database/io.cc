@@ -45,7 +45,7 @@ std::string
 io::read_string(FILE *fp) 
 {
 	unsigned short len = read<short>(fp);
-	eix::simple_array_auto_ptr<char> buf(new char[len + 1]);
+	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
 	fread((void*)(buf.get()), sizeof(char), len, (fp));
 	return std::string(buf.get());

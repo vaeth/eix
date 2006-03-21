@@ -30,6 +30,7 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/mask.h>
+#include <portage/mask_list.h>
 
 #include <map>
 #include <string>
@@ -44,9 +45,9 @@ class CascadingProfile {
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
 		std::map<std::string,std::string> *m_make_defaults; /**< Map of variables found in make.defaults-files. */
 
-		MaskList m_system;         /**< Packages in m_system profile. */
-		MaskList m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
-		MaskList m_package_masks;  /**< Masks from package.masks */
+		MaskList<Mask> m_system;         /**< Packages in m_system profile. */
+		MaskList<Mask> m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
+		MaskList<Mask> m_package_masks;  /**< Masks from package.masks */
 
 	private:
 
@@ -82,16 +83,16 @@ class CascadingProfile {
 		}
 
 		/** Get all m_system packages. */
-		MaskList *getSystemPackages() {
+		MaskList<Mask> *getSystemPackages() {
 			return &m_system;
 		}
 
 		/** Get packages that are not in m_system profile but only allowed to have specific versions .*/
-		MaskList *getAllowedPackages() {
+		MaskList<Mask> *getAllowedPackages() {
 			return &m_system_allowed;
 		}
 
-		MaskList *getPackageMasks() {
+		MaskList<Mask> *getPackageMasks() {
 			return &(m_package_masks);
 		}
 };

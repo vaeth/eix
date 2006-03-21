@@ -47,7 +47,7 @@ class PackageTest {
 
 	public:
 		typedef char MatchField;
-		const static MatchField NONE          , /* Search in name */
+		static const MatchField NONE          , /* Search in name */
 		                        NAME          , /* Search in name */
 		                        DESCRIPTION   , /* Search in description */
 		                        PROVIDE       , /* Search in provides */

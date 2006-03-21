@@ -73,10 +73,29 @@ PackageReader::read(Attributes need)
 }
 
 void
+PackageReader::reset(Package *p)
+{
+	if(m_pkg)
+	{
+		delete m_pkg;
+	}
+	m_pkg = p;
+}
+
+void
 PackageReader::skip()
 {
 	fseeko(m_fp, m_next , SEEK_SET);
-	m_pkg.reset();
+	reset();
+}
+
+Package *
+PackageReader::release()
+{
+	read();
+	Package *p = m_pkg;
+	m_pkg = NULL;
+	return p;
 }
 
 bool
@@ -94,7 +113,7 @@ PackageReader::next()
 
 	m_next =  ftello(m_fp) + io::read<offset_type>(m_fp);
 	m_have = NONE;
-	m_pkg.reset(new Package());
+	reset(new Package());
 	m_pkg->category = m_cat_name;
 
 	return true;

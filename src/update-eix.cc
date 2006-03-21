@@ -121,8 +121,10 @@ enum cli_options {
 bool quiet = false,
 	 show_help = false,
 	 show_version = false,
-	 dump_eixrc = false,
+	 dump_eixrc = false;
+#if 0
 	 print_masks_only = false;
+#endif
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
@@ -132,7 +134,9 @@ static struct Option long_options[] = {
 	{"help",           'h',              Option::BOOLEAN_T, (void *) &show_help }, /* show a short help screen */
 	{"version",        'V',              Option::BOOLEAN_T, (void *) &show_version},
 	{"exclude-overlay", O_EXCLUDE,       Option::NONE,       NULL }, /* exclude a overlay from the update-process. */
+#if 0
 	{"print-masks",     O_PRINT_MASKS,   Option::BOOLEAN_T, (void *) &print_masks_only },
+#endif
 	{ 0 ,              0 ,               Option::NONE,       NULL }
 };
 
@@ -191,12 +195,14 @@ run_update_eix(int argc, char *argv[])
 	INFO("Reading Portage settings ..\n");
 	PortageSettings portage_settings;
 
+#if 0
 	if(print_masks_only) {
 		cout << *(portage_settings.profile->getAllowedPackages());
 		cout << *(portage_settings.profile->getSystemPackages());
 		cout << *(portage_settings.getMasks());
 		exit(0);
 	}
+#endif
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
@@ -284,9 +290,9 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 			p != c->end();
 			++p) 
 		{
-			apply_masks(portage_settings.profile->getAllowedPackages(), p.ptr());
-			apply_masks(portage_settings.profile->getSystemPackages(), p.ptr());
-			apply_masks(portage_settings.getMasks(), p.ptr());
+			portage_settings.profile->getAllowedPackages()->applyMasks(p.ptr());
+			portage_settings.profile->getSystemPackages()->applyMasks(p.ptr());
+			portage_settings.getMasks()->applyMasks(p.ptr());
 		}
 	}
 

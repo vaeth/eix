@@ -286,7 +286,3 @@ void Mask::apply(Version *ve)
 			return;
 	}
 }
-
-eix::ptr_list<Mask> *MaskList::get(Package *p) {
-	return &((*this)[p->category][p->name]);
-}

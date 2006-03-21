@@ -30,26 +30,25 @@
 
 namespace eix {
 
-	template<typename _Type>
-	class simple_array_auto_ptr
+	template<typename _type>
+	class auto_list
 	{
-
 		public:
-			simple_array_auto_ptr(_Type *p)
+			auto_list(_type *p)
 				: m_p(p)
 			{ }
 
-			~simple_array_auto_ptr()
+			~auto_list()
 			{ 
 				if(m_p)
 					delete[] m_p; 
 			}
 
-			_Type* get() const
+			_type* get() const
 			{ return m_p; }
 
 		protected:
-			_Type* m_p;
+			_type* m_p;
 	};
 
 }

@@ -85,7 +85,7 @@ class ExBasic {
 
 // Provide a common look for error-messages for parse-errors in
 // portage.{mask,keywords,..}
-void inline
+inline void
 portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const ExBasic &e)
 {
 	std::cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \""
