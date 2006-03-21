@@ -21,5 +21,6 @@ do
 	
 	./configure CXXFLAGS="-Wall -W -Werror -g3 -ggdb3" || die
 	make clean all || die
+	make check || die
 
 done
