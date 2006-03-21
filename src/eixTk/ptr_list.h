@@ -81,32 +81,28 @@ namespace eix {
 			typedef ptr_iterator<
 				type,
 				std::list<type*>,
-				std::_List_iterator<type*>
+				typename std::list<type*>::iterator
 			> iterator;
 
 			/// Constant access iterator.
 			typedef ptr_iterator<
 				type,
 				std::list<type*>,
-				std::_List_const_iterator<type*>
+				typename std::list<type*>::const_iterator
 			> const_iterator;
 
 			/// Reverse access iterator.
 			typedef ptr_iterator<
 				type,
 				std::list<type*>,
-				std::reverse_iterator<
-					std::_List_iterator<type*>
-				>
+				typename std::list<type*>::reverse_iterator
 			> reverse_iterator;
 
 			/// Constant reverse access iterator.
 			typedef ptr_iterator<
 				type,
 				std::list<type*>,
-				std::reverse_iterator<
-					std::_List_const_iterator<type*> 
-				>
+				typename std::list<type*>::reverse_iterator
 			> const_reverse_iterator;
 
 			void delete_and_clear()
