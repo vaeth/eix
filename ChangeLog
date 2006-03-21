@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.5.5
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fix fstream.ignore-stuff in metadata and flat.
+
 *eix-0.5.4
 
 	Emil Beinroth <emilbeinroth at gmx.net>:

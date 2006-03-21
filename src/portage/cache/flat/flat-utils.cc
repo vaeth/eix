@@ -28,6 +28,9 @@
 #include "flat-utils.h"
 #include <eixTk/stringutils.h>
 
+#include <fstream>
+#include <limits>
+
 using namespace std;
 
 /** Read the stability on 'arch' from a metadata cache file. */
@@ -44,7 +47,7 @@ Keywords::Type get_keywords(string arch, string filename) throw (ExBasic)
 	// Skip the first 8 lines
 	for( linenr=0;linenr<8; linenr++ )
 	{
-		is.ignore(10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
+		is.ignore(numeric_limits<int>::max(), '\n');
 		if( is.fail() ) throw ExBasic("Can't read cache file %s: %s", filename.c_str(), strerror(errno));
 	}
 	// Read the keywords line
@@ -66,7 +69,7 @@ void read_file(Package *pkg, const char *filename) throw (ExBasic)
 	// Skip the first 5 lines
 	for( linenr=0;linenr<5; linenr++ )
 	{
-		is.ignore( 10000, '\n' ); // 10000 is an arbitrary value, assuming that no line is longer than 10000 chars
+		is.ignore(numeric_limits<int>::max(), '\n');
 		if( is.fail() ) throw ExBasic("Can't read metadata cache file: %s", filename);
 	}
 

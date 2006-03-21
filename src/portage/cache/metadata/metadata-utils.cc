@@ -31,6 +31,7 @@
 #include <portage/package.h>
 
 #include <fstream>
+#include <limits>
 
 using namespace std;
 
@@ -49,7 +50,7 @@ metadata_get_keywords(const string &filename, const string &arch) throw (ExBasic
 	for( linenr=0;linenr<8; linenr++ )
 	{
 		// 10000 is an arbitrary value, assuming that no line is longer
-		is.ignore(10000, '\n' );
+		is.ignore(numeric_limits<int>::max(), '\n');
 		if(is.fail())
 			throw ExBasic("Can't read cache file %s: %s",
 			              filename.c_str(), strerror(errno));
@@ -75,9 +76,7 @@ read_metadata(const char *filename, Package *pkg) throw (ExBasic)
 	// Skip the first 5 lines
 	for(linenr = 0; linenr < 5; ++linenr)
 	{
-		// 10000 is an arbitrary value, assuming that no line is longer than
-		// 10000 chars
-		is.ignore( 10000, '\n' );
+		is.ignore(numeric_limits<int>::max(), '\n');
 		if( is.fail() ) throw ExBasic("Can't read metadata cache file: %s", filename);
 	}
 
