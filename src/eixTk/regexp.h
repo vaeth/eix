@@ -28,6 +28,7 @@
 #ifndef __REGEXCLASS_H__
 #define __REGEXCLASS_H__
 
+#include <sys/types.h>
 #include <regex.h>
 #include <string>
 
