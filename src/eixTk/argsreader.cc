@@ -131,20 +131,22 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 void
 ArgumentReader::foldAndRemove(struct Option *opt_table)
 {
-	for(ArgumentReader::iterator it = begin();
-		it != end();
-		++it)
+	ArgumentReader::iterator it = begin();
+	while(it != end())
 	{
 		if(it->type == Parameter::ARGUMENT)
 		{
+			++it;
 			continue;
 		}
 
 		Option *c = lookup_option(it->opt, opt_table);
 		if(c == NULL || c->type == Option::NONE)
 		{
+			++it;
 			continue;
 		}
+
 		switch(c->type)
 		{
 			case Option::BOOLEAN_F:
@@ -180,6 +182,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 				continue;
 			case Option::NONE:
 			default:
+				++it;
 				continue;
 		}
 	}
