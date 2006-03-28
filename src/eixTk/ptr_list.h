@@ -102,7 +102,7 @@ namespace eix {
 			typedef ptr_iterator<
 				type,
 				std::list<type*>,
-				typename std::list<type*>::reverse_iterator
+				typename std::list<type*>::const_reverse_iterator
 			> const_reverse_iterator;
 
 			void delete_and_clear()

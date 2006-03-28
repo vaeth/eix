@@ -150,7 +150,7 @@ run_update_eix(int argc, char *argv[])
 	/* Read options. */
 	while(current_param != argreader.end())
 	{
-		switch(current_param->opt)
+		switch(**current_param)
 		{
 			case O_EXCLUDE:
 				++current_param;
@@ -160,7 +160,7 @@ run_update_eix(int argc, char *argv[])
 							distance(argreader.begin(), current_param));
 					exit(1);
 				}
-				excluded_overlays.push_back(current_param->arg);
+				excluded_overlays.push_back(current_param->m_argument);
 				break;
 		}
 		++current_param;
@@ -262,7 +262,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 			++ci)
 		{
 			++percent_status;
-			cache->readCategory(*package_tree[*ci]);
+			cache->readCategory(package_tree[*ci]);
 		}
 	}
 

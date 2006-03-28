@@ -183,18 +183,18 @@ void
 print_diff_new_old(Package *np, Package *op)
 {
 	if(np == NULL) {
-		op->installed_versions = varpkg_db.getInstalledString(op);
+		op->installed_versions = varpkg_db.getInstalledString(*op);
 		format_string.print(op, format_delete);
 	}
 	else if(op == NULL) {
-		np->installed_versions = varpkg_db.getInstalledString(np);
+		np->installed_versions = varpkg_db.getInstalledString(*np);
 		format_string.print(np, format_new);
 	}
 	else {
 		Package *p[2];
 		p[0] = op;
 		p[1] = np;
-		op->installed_versions = np->installed_versions = varpkg_db.getInstalledString(np);
+		op->installed_versions = np->installed_versions = varpkg_db.getInstalledString(*np);
 		format_string.print(p, print_diff_package_property, get_diff_package_property, format_changed);
 	}
 }
@@ -240,13 +240,13 @@ run_diff_eix(int argc, char *argv[])
 		print_help(1);
 		ERROR(1, "Missing cache-file.\n");
 	}
-	old_file = current_param->arg;
+	old_file = current_param->m_argument;
 	++current_param;
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
 		new_file = EIX_CACHEFILE;
 	}
 	else {
-		new_file = current_param->arg;
+		new_file = current_param->m_argument;
 	}
 
 	string varname;

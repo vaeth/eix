@@ -92,9 +92,9 @@ parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::ite
 			case 'f':
 					  if(++arg != end
 						 && arg->type == Parameter::ARGUMENT
-						 && is_numeric(arg->arg))
+						 && is_numeric(arg->m_argument))
 					  {
-						  test->setAlgorithm(new FuzzyAlgorithm(atoi(arg->arg)));
+						  test->setAlgorithm(new FuzzyAlgorithm(atoi(arg->m_argument)));
 					  }
 					  else
 					  {
@@ -111,7 +111,7 @@ parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::ite
 			// }}}
 
 			// String arguments .. finally! {{{
-			case -1:  test->setPattern(arg->arg);
+			case -1:  test->setPattern(arg->m_argument);
 					  need_logical_operator = true;
 					  break;
 			// }}}

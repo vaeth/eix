@@ -401,7 +401,7 @@ run_eix(int argc, char** argv)
 			portagesettings.setStability(it.ptr(), accepted_keywords);
 		}
 
-		it->installed_versions = varpkg_db.getInstalledString(it.ptr());
+		it->installed_versions = varpkg_db.getInstalledString(*it);
 
 		if( !need_overlay_table
 			&& (!it->have_same_overlay_key

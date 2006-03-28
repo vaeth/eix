@@ -215,6 +215,6 @@ io::read_packagetree(FILE *fp, unsigned int size, PackageTree &tree)
 	while(reader.next())
 	{
 		p = reader.release();
-		tree[p->category]->push_back(p);
+		tree[p->category].push_back(p);
 	}
 }
