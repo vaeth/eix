@@ -55,7 +55,6 @@
 #include <signal.h>   /* signal handlers */
 
 #define INFO(...) fprintf(stderr, __VA_ARGS__)
-#define ERROR(ret, ...) do { fprintf(stderr, __VA_ARGS__); fputc('\n', stdout); exit(ret); } while(0)
 
 using namespace std;
 
@@ -117,92 +116,129 @@ static struct Option long_options[] = {
 void
 load_db(const char *file, DBHeader *header, PackageTree *body)
 {
-	FILE *stream = fopen(file, "rb");
-	if(!stream) {
-		throw(ExBasic("Can't open the database file %s for reading (mode = 'rb')\n",
-					file));
+	FILE *fp = fopen(file, "rb");
+
+	if(fp == NULL) {
+		throw(ExBasic("Can't open the database file %s for reading (mode = 'rb')\n", file));
 	}
 
-	io::read_header(stream, *header);
+	io::read_header(fp, *header);
 	if(!header->isCurrent()) {
-		fprintf(stderr, "%s uses an obsolete database format (%i, current is %i).\n", file, header->version, DBHeader::current);
+		fprintf(stderr, "%s uses an obsolete database format (%i, current is %i).\n",
+				file, header->version, DBHeader::current);
 		exit(1);
 	}
 
-	io::read_packagetree(stream, header->size, *body);
+	io::read_packagetree(fp, header->size, *body);
+	fclose(fp);
 }
+
+class DiffTrees
+{
+	public:
+		typedef void (*lost_func) (Package *p);
+		typedef void (*found_func) (Package *p);
+		typedef void (*changed_func) (Package *p1, Package *p2);
+
+		lost_func lost_package;
+		found_func found_package;
+		changed_func changed_package;
+
+		/// Diff the trees and run callbacks
+		void diff(PackageTree &old_tree, PackageTree &new_tree, PortageSettings &psettings)
+		{
+			Keywords accepted_keywords = psettings.getAcceptKeywords();
+
+			// Diff every category from the old tree with the category from the new tree
+			for(PackageTree::iterator old_cat = old_tree.begin();
+				old_cat != old_tree.end();
+				++old_cat)
+			{
+				diff_category(*old_cat, new_tree[old_cat->name()]);
+			}
+
+			// Know we've only new package in the new_tree
+			for(PackageTree::iterator new_cat = new_tree.begin();
+				new_cat != new_tree.end();
+				++new_cat)
+			{
+				// Print packages as new
+				for_each(new_cat->begin(), new_cat->end(), found_package);
+			}
+		}
+
+		/// Diff two categories and run callbacks.
+		// Remove already diffed packages.
+		void diff_category(Category &old_cat, Category &new_cat)
+		{
+			Category::iterator old_pkg = old_cat.begin();
+
+			while(old_pkg != old_cat.end())
+			{
+				Category::iterator new_pkg = new_cat.find(old_pkg->name);
+
+				// Lost a package
+				if(new_pkg == new_cat.end())
+					lost_package(old_pkg.ptr());
+
+				// Best version differs
+				else if(best_differs(*old_pkg, *new_pkg))
+					changed_package(old_pkg.ptr(), new_pkg.ptr());
+
+				// Remove the new package
+				if(new_pkg != new_cat.end())
+				{
+					delete new_pkg.ptr();
+					new_cat.erase(new_pkg);
+				}
+
+				// Remove the old packages
+				delete old_pkg.ptr();
+				old_pkg = old_cat.erase(old_pkg);
+			}
+		}
+
+		/// Return true if the best versions of both packages differ.
+		bool best_differs(const Package &p1, const Package &p2)
+		{
+				Version *old_best = p1.best();
+				Version *new_best = p2.best();
+
+				return (old_best == NULL && new_best != NULL)
+				    || (old_best != NULL && new_best == NULL)
+				    || (old_best != NULL && new_best != NULL && *old_best != *new_best);
+		}
+};
 
 /* Diff everything from old-tree with the according package from new-tree.
  * They diff if
  * a) the package does not exist in the new tree :) or
  * b) the new package has a different best-match than the old. */
+
 void
-diff_and_remove(PackageTree *tree1, PackageTree *tree2, PortageSettings &psettings, void (*callback)(Package *p1, Package *p2))
+print_changed_package(Package *op, Package *np)
 {
-	Keywords accepted_keywords = psettings.getAcceptKeywords();
+	Package *p[2];
+	p[0] = op;
+	p[1] = np;
+	op->installed_versions = np->installed_versions
+		= varpkg_db.getInstalledString(*np);
 
-	for(PackageTree::iterator cat = tree1->begin();
-		cat != tree1->end();
-		++cat)
-	{
-
-		for(Category::iterator pkg1 = cat->begin();
-			pkg1 != cat->end();
-			++pkg1)
-		{
-			Package *pkg2 = tree2->findPackage(pkg1->category, pkg1->name);
-
-			psettings.user_config->setMasks(pkg1.ptr());
-			psettings.user_config->setStability(pkg1.ptr(), accepted_keywords);
-
-			if(pkg2 == NULL) {
-				callback(pkg1.ptr(), NULL);
-			}
-			else {
-				psettings.user_config->setMasks(pkg2);
-				psettings.user_config->setStability(pkg2, accepted_keywords);
-				Version *old_best = pkg1->best();
-				Version *new_best = pkg2->best();
-				if( ( (old_best == NULL
-								&& new_best != NULL)
-							|| (old_best != NULL
-								&& new_best == NULL) )
-						|| (old_best != NULL
-							&& new_best != NULL
-							&& *old_best != *new_best))
-				{
-					callback(pkg1.ptr(), pkg2);
-				}
-				tree2->deletePackage(pkg2->category, pkg2->name);
-			}
-		}
-	}
+	format_string.print(p, print_diff_package_property, get_diff_package_property, format_changed);
 }
 
 void
-print_diff_new_old(Package *np, Package *op)
+print_found_package(Package *p)
 {
-	if(np == NULL) {
-		op->installed_versions = varpkg_db.getInstalledString(*op);
-		format_string.print(op, format_delete);
-	}
-	else if(op == NULL) {
-		np->installed_versions = varpkg_db.getInstalledString(*np);
-		format_string.print(np, format_new);
-	}
-	else {
-		Package *p[2];
-		p[0] = op;
-		p[1] = np;
-		op->installed_versions = np->installed_versions = varpkg_db.getInstalledString(*np);
-		format_string.print(p, print_diff_package_property, get_diff_package_property, format_changed);
-	}
+	p->installed_versions = varpkg_db.getInstalledString(*p);
+	format_string.print(p, format_new);
 }
 
 void
-print_diff_old_new(Package *op, Package *np)
+print_lost_package(Package *p)
 {
-	print_diff_new_old(np, op);
+	p->installed_versions = varpkg_db.getInstalledString(*p);
+	format_string.print(p, format_delete);
 }
 
 
@@ -238,8 +274,9 @@ run_diff_eix(int argc, char *argv[])
 
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
 		print_help(1);
-		ERROR(1, "Missing cache-file.\n");
+		throw(ExBasic("Missing cache-file."));
 	}
+
 	old_file = current_param->m_argument;
 	++current_param;
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
@@ -284,8 +321,12 @@ run_diff_eix(int argc, char *argv[])
 
 	INFO("Diffing databases (%i - %i packages)\n", old_tree.countPackages(), new_tree.countPackages());
 
-	diff_and_remove(&old_tree, &new_tree, portagesettings, print_diff_old_new);
-	diff_and_remove(&new_tree, &old_tree, portagesettings, print_diff_new_old);
+	DiffTrees differ;
+	differ.lost_package    = print_lost_package;
+	differ.found_package   = print_found_package;
+	differ.changed_package = print_changed_package;
+
+	differ.diff(old_tree, new_tree, portagesettings);
 
 	return 0;
 }
