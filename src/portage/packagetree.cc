@@ -68,6 +68,20 @@ Category::addPackage(string name)
 	return p;
 }
 
+Category::iterator 
+Category::find(const std::string &name)
+{
+	iterator i = begin(); 
+	for(;
+		i != end();
+		++i)
+	{
+		if(i->name == name)
+			return i;
+	}
+	return i;
+}
+
 Package *
 PackageTree::findPackage(const string &category, const string &name) const
 {
@@ -114,7 +128,7 @@ PackageTree::countPackages() const
 	return ret;
 }
 
-Category *
+Category &
 PackageTree::operator [] (const string name)
 {
 	for(iterator i = begin();
@@ -122,10 +136,10 @@ PackageTree::operator [] (const string name)
 		++i)
 	{
 		if(i->name() == name)
-			return i.ptr();
+			return *i;
 	}
 
 	Category *p = new Category(name);
 	push_back(p);
-	return p;
+	return *p;
 }

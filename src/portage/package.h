@@ -83,7 +83,7 @@ class Package
 		/** Check if a package has duplicated versions. */
 		bool checkDuplicates(Version *version);
 
-		Version *best();
+		Version *best() const;
 
 	protected:
 		void sortedPushBack(Version *v);

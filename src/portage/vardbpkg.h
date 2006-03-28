@@ -67,7 +67,7 @@ class VarDbPkg {
 		/** Find installed versions of packet "name" in category "category".
 		 * @param p the Package you would like the info for
 		 * @return string with installed versions */
-		std::string getInstalledString(Package *p);
+		std::string getInstalledString(const Package &p);
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.

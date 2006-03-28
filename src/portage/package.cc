@@ -32,7 +32,7 @@
 
 #include <fstream>
 
-/** Deconstructor */
+/** Destructor */
 Package::~Package()
 {
 	for(iterator i = begin(); i != end(); ++i) {
@@ -96,10 +96,10 @@ Package::sortedPushBack(Version *v)
 }
 
 Version *
-Package::best()
+Package::best() const
 {
 	Version *ret = NULL;
-	for(reverse_iterator ri = rbegin();
+	for(const_reverse_iterator ri = rbegin();
 		ri != rend();
 		++ri)
 	{

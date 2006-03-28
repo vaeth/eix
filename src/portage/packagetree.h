@@ -43,12 +43,17 @@ class Category : public eix::ptr_list<Package> {
 		Category(std::string name)
 		{ m_name = name; }
 
+		~Category()
+		{ delete_and_clear(); }
+
 		Package *findPackage(const std::string &name) const;
 		bool deletePackage(const std::string &name);
 		Package *addPackage(std::string name);
 
 		const std::string &name() const
 		{ return m_name; }
+
+		iterator find(const std::string &name);
 
 	protected:
 		std::string m_name;
@@ -57,10 +62,13 @@ class Category : public eix::ptr_list<Package> {
 class PackageTree : public eix::ptr_list<Category> {
 
 	public:
+		~PackageTree()
+		{ delete_and_clear(); }
+
 		Package *findPackage(const std::string &category, const std::string &name) const;
 		bool deletePackage(const std::string &category, const std::string &name);
 
-		Category *operator [] (const std::string name);
+		Category &operator [] (const std::string name);
 
 		unsigned int countPackages() const;
 		unsigned int countCategories() const
