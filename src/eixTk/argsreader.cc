@@ -48,7 +48,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 	{
 		if(seen_escape)
 		{
-			push_back(Parameter(0, argv[i]));
+			push_back(Parameter(argv[i]));
 			continue;
 		}
 
@@ -68,17 +68,17 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 							continue;
 						default:
 							/* some longopt */
-							push_back(Parameter(lookup_longopt(ptr, opt_table), NULL));
+							push_back(Parameter(lookup_longopt(ptr, opt_table)));
 							continue;
 					}
 				default:
 					/* some shortopts */
 					int c = 0;
 					while(ptr[c] != '\0')
-						push_back(Parameter(lookup_shortopt(ptr[c++], opt_table), NULL));
+						push_back(Parameter(lookup_shortopt(ptr[c++], opt_table)));
 					continue;
 			}
-		push_back(Parameter(0, ptr));
+		push_back(Parameter(ptr));
 	}
 
 	foldAndRemove(opt_table);
@@ -140,7 +140,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 			continue;
 		}
 
-		Option *c = lookup_option(it->opt, opt_table);
+		Option *c = lookup_option(it->m_option, opt_table);
 		if(c == NULL || c->type == Option::NONE)
 		{
 			++it;
@@ -176,7 +176,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 					it = erase(it);
 					__ASSERT(it != end(), "Missing parameter to --%s\n", c->longopt);
 					__ASSERT(it->type == Parameter::ARGUMENT, "Missing parameter to --%s\n", c->longopt);
-					*c->str = it->arg;
+					*c->str = it->m_argument;
 					it = erase(it);
 				}
 				continue;
