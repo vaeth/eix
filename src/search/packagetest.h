@@ -59,19 +59,28 @@ class PackageTest {
 		/** Set default values. */
 		PackageTest(VarDbPkg *vdb = NULL);
 
-		void setAlgorithm(BaseAlgorithm *p);
+		void setAlgorithm(BaseAlgorithm *p)
+		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
+
 		void setPattern(const char *p);
 
 		bool match(PackageReader *pkg) const;
 
 		/** Compile regex and/or calculate needs. */
-		void finalize();
+		void finalize()
+		{ calculateNeeds(); }
 
-		void Installed();
-		void DuplVersions();
-		void Invert();
+		void Installed()
+		{ installed = !installed; }
 
-		MatchField operator |= (const MatchField m);
+		void DuplVersions()
+		{ dup_versions = !dup_versions; }
+
+		void Invert()
+		{ invert = !invert; }
+
+		MatchField operator |= (const MatchField m)
+		{ return field |= m; }
 
 	protected:
 
@@ -94,41 +103,5 @@ class PackageTest {
 		/** Get the Fetched-value that is required to determin */
 		void calculateNeeds();
 };
-
-inline void
-PackageTest::setAlgorithm(BaseAlgorithm *p)
-{
-	algorithm = std::auto_ptr<BaseAlgorithm>(p);
-}
-
-inline void
-PackageTest::finalize()
-{
-	calculateNeeds();
-}
-
-inline void
-PackageTest::Installed()
-{
-	installed = !installed;
-}
-
-inline void
-PackageTest::DuplVersions()
-{
-	dup_versions = !dup_versions;
-}
-
-inline void
-PackageTest::Invert()
-{
-	invert = !invert;
-}
-
-inline PackageTest::MatchField
-PackageTest::operator |= (const MatchField m)
-{
-	return field |= m;
-}
 
 #endif /* __PACKAGETEST_H__ */

@@ -6,5 +6,4 @@ INCLUDES = -I$(top_srcdir)/src
 
 libsearch_a_SOURCES = algorithms.cc algorithms.h \
                       dbmatchcriteria.h \
-                      packagetest.cc packagetest.h \
-                      queryparser.h
+                      packagetest.cc packagetest.h
