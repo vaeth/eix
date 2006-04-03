@@ -135,6 +135,14 @@ vector<string> *PortageSettings::getCategories()
 		 * portdir/profile/categories */
 		pushback_lines(USER_CATEGORIES_FILE, &m_categories);
 		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
+		for(vector<string>::iterator i = overlays.begin();
+			i != overlays.end();
+			++i)
+		{
+			pushback_lines((*i + "/" + PORTDIR_CATEGORIES_FILE).c_str(), 
+			               &m_categories);
+		}
+
 		sort(m_categories.begin(), m_categories.end());
 		unique(m_categories.begin(),m_categories.end());
 	}
