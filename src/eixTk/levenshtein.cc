@@ -30,7 +30,7 @@ using namespace std;
  * @param str_b string b
  * @return int Levenshtein distance of str_a <> str_b
  */
-int get_levenshtein_distance( const char *str_a, const char *str_b )
+int get_levenshtein_distance(const char *str_a, const char *str_b)
 {
 	int n,m;
 	int cost;
@@ -60,8 +60,8 @@ int get_levenshtein_distance( const char *str_a, const char *str_b )
 	{
 		for( int j=1; j<=m; j++ )
 		{
-			char ci = str_a[i-1];
-			char cj = str_b[j-1];
+			char ci = tolower(str_a[i-1]);
+			char cj = tolower(str_b[j-1]);
 			cost = (ci==cj) ? 0:1;
 
 			int a = matrix[i-1][j] + 1;
@@ -74,4 +74,3 @@ int get_levenshtein_distance( const char *str_a, const char *str_b )
 
 	return matrix[n][m];
 }
-

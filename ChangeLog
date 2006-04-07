@@ -6,6 +6,7 @@
 	- Redone a part of argsreader.h Option .. looks *much* cleaner now.
 	- Fixed http://dev.croup.de/proj/eix/ticket/3 - profiles can contain
 	  profiles/categories
+	- fuzzy-search is now ignore-case.
 
 *eix-0.5.4
 
