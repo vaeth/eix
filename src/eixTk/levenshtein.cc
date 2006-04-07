@@ -20,6 +20,7 @@
 
 #include "levenshtein.h"
 
+#include <ctype.h>
 #include <vector>
 
 using namespace std;
