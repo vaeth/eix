@@ -394,14 +394,14 @@ run_eix(int argc, char** argv)
 	{
 		/* Add individual maskings from this machines /etc/portage/ */
 		if(!rc_options.ignore_etc_portage) {
-			portagesettings.user_config->setMasks(it.ptr());
-			portagesettings.user_config->setStability(it.ptr(), accepted_keywords);
+			portagesettings.user_config->setMasks(*it);
+			portagesettings.user_config->setStability(*it, accepted_keywords);
 		}
 		else {
-			portagesettings.setStability(it.ptr(), accepted_keywords);
+			portagesettings.setStability(*it, accepted_keywords);
 		}
 
-		it->installed_versions = varpkg_db.getInstalledString(*it);
+		it->installed_versions = varpkg_db.getInstalledString(**it);
 
 		if( !need_overlay_table
 			&& (!it->have_same_overlay_key
@@ -410,7 +410,7 @@ run_eix(int argc, char** argv)
 			need_overlay_table = true;
 		}
 
-		format.print(it.ptr());
+		format.print(*it);
 	}
 
 	if(need_overlay_table)

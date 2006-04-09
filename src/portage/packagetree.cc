@@ -40,7 +40,7 @@ Category::findPackage(const string &name) const
 	for(const_iterator i = begin(); i != end(); ++i)
 	{
 		if(i->name == name)
-			return i.ptr();
+			return *i;
 	}
 	return NULL;
 }
@@ -52,7 +52,7 @@ Category::deletePackage(const string &name)
 	{
 		if(i->name == name)
 		{
-			delete i.ptr();
+			delete *i;
 			erase(i);
 			return true;
 		}
@@ -136,7 +136,7 @@ PackageTree::operator [] (const string name)
 		++i)
 	{
 		if(i->name() == name)
-			return *i;
+			return **i;
 	}
 
 	Category *p = new Category(name);

@@ -220,9 +220,9 @@ Mask::match(Package &pkg)
 		it != pkg.end();
 		++it)
 	{
-		if(test(it.ptr()))
+		if(test(*it))
 		{
-			ret.push_back(it.ptr());
+			ret.push_back(*it);
 		}
 	}
 	return ret;
@@ -240,7 +240,7 @@ Mask::checkMask(Package& pkg, const bool check_category, const bool check_name)
 		i != pkg.end();
 		++i)
 	{
-		apply(i.ptr());
+		apply(*i);
 	}
 }
 

@@ -89,7 +89,7 @@ print_versions(PrintFormat *fmt, Package* p)
 {
 	Package::iterator version_it = p->begin();
 	while(version_it != p->end()) {
-		print_version(fmt, version_it.ptr());
+		print_version(fmt, *version_it);
 
 		if(!p->have_same_overlay_key && version_it->overlay_key) {
 			if( ! fmt->no_color )

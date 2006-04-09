@@ -32,10 +32,16 @@
 
 namespace eix {
 
-	/// An iterator type to iterate through a container containing pointers of the
-	// given data type but retrieving references to them.
-	// Taken from the obby-project (http://darcs.0x539.de/libobby) and extended.
+	template<typename _Iterator>
+	void delete_all(_Iterator b, _Iterator e)
+	{
+		for(; b != e; ++e)
+			delete *e;
+	}
 
+	/// An iterator type to iterate through a container containing pointers of the
+	// given data type. The special thing is the operator-> returns the same as the operator*.
+	// Taken from the obby-project (http://darcs.0x539.de/libobby) and extended.
 	template<typename type, typename container, typename base_iterator>
 	class ptr_iterator
 		: public base_iterator
@@ -52,31 +58,23 @@ namespace eix {
 			ptr_iterator& operator=(const base_iterator& iter)
 			{ return static_cast<ptr_iterator&>( base_iterator::operator=(iter)); }
 
-			type& operator*()
-			{ return *base_iterator::operator*(); }
-
-			const type& operator*() const
-			{ return *base_iterator::operator*(); }
-
 			type* operator->()
 			{ return *base_iterator::operator->(); }
 
 			const type* operator->() const
 			{ return *base_iterator::operator->(); }
-
-			type* ptr()
-			{ return base_iterator::operator*(); }
-
-			const type* ptr() const
-			{ return base_iterator::operator*(); }
 	};
 
 	/// A list that only stores pointers to type.
 	template<typename type>
 	class ptr_list
-		: public std::list<type*>
+		: virtual public std::list<type*>
 	{
 		public:
+			using std::list<type*>::begin;
+			using std::list<type*>::end;
+			using std::list<type*>::clear;
+
 			/// Normal access iterator.
 			typedef ptr_iterator<
 				type,
@@ -107,13 +105,8 @@ namespace eix {
 
 			void delete_and_clear()
 			{
-				for(iterator i = std::list<type*>::begin();
-					i != std::list<type*>::end();
-					++i)
-				{
-					delete i.ptr();
-				}
-				std::list<type*>::clear();
+				delete_all(begin(), end());
+				clear();
 			}
 	};
 

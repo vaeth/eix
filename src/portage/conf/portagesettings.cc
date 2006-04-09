@@ -236,7 +236,7 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 				v != matches.end();
 				++v)
 			{
-				sorted_by_versions[v.ptr()].append(" " + it->keywords);
+				sorted_by_versions[*v].append(" " + it->keywords);
 			}
 		}
 	}
@@ -249,7 +249,7 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 	{
 		Keywords lkw(kw.get());
 
-		string skw = sorted_by_versions[i.ptr()];
+		string skw = sorted_by_versions[*i];
 		if(skw.empty() == false)
 		{
 			vector<string> kv = split_string(skw);
@@ -274,7 +274,7 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 			}
 
 		}
-		apply_keywords(*i, lkw.get());
+		apply_keywords(**i, lkw.get());
 	}
 }
 
@@ -284,10 +284,10 @@ PortageSettings::setStability(Package *pkg, Keywords &kw)
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {
 		if(t->get() & kw.get()) {
-			*t |= Keywords::KEY_STABLE;
+			**t |= Keywords::KEY_STABLE;
 		}
 		else {
-			*t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+			**t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
 		}
 	}
 }

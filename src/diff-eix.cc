@@ -154,7 +154,7 @@ class DiffTrees
 				old_cat != old_tree.end();
 				++old_cat)
 			{
-				diff_category(*old_cat, new_tree[old_cat->name()]);
+				diff_category(**old_cat, new_tree[old_cat->name()]);
 			}
 
 			// Know we've only new package in the new_tree
@@ -179,21 +179,21 @@ class DiffTrees
 
 				// Lost a package
 				if(new_pkg == new_cat.end())
-					lost_package(old_pkg.ptr());
+					lost_package(*old_pkg);
 
 				// Best version differs
-				else if(best_differs(*old_pkg, *new_pkg))
-					changed_package(old_pkg.ptr(), new_pkg.ptr());
+				else if(best_differs(**old_pkg, **new_pkg))
+					changed_package(*old_pkg, *new_pkg);
 
 				// Remove the new package
 				if(new_pkg != new_cat.end())
 				{
-					delete new_pkg.ptr();
+					delete *new_pkg;
 					new_cat.erase(new_pkg);
 				}
 
 				// Remove the old packages
-				delete old_pkg.ptr();
+				delete *old_pkg;
 				old_pkg = old_cat.erase(old_pkg);
 			}
 		}

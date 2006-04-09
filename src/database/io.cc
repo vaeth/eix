@@ -155,7 +155,7 @@ io::write_package(FILE *fp, const Package &pkg)
 		i != pkg.end();
 		++i)
 	{
-		io::write_version(fp, i.ptr());
+		io::write_version(fp, *i);
 	}
 
 	off_t pkg_end = ftello(fp);
@@ -201,7 +201,7 @@ io::write_packagetree(FILE *fp, const PackageTree &tree)
 			++p)
 		{
 			// write package to fp
-			io::write_package(fp, *p);
+			io::write_package(fp, **p);
 		}
 	}
 }

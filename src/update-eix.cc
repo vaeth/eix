@@ -243,7 +243,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 		it != cache_table.end();
 		++it)
 	{
-		BasicCache *cache = it.ptr();
+		BasicCache *cache = *it;
 		/* Build database from scratch. */
 		short key = dbheader.addOverlay(cache->getPath());
 		cache->setKey(key);
@@ -276,9 +276,9 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 			p != c->end();
 			++p)
 		{
-			portage_settings.profile->getAllowedPackages()->applyMasks(p.ptr());
-			portage_settings.profile->getSystemPackages()->applyMasks(p.ptr());
-			portage_settings.getMasks()->applyMasks(p.ptr());
+			portage_settings.profile->getAllowedPackages()->applyMasks(*p);
+			portage_settings.profile->getSystemPackages()->applyMasks(*p);
+			portage_settings.getMasks()->applyMasks(*p);
 		}
 	}
 

@@ -35,9 +35,7 @@
 /** Destructor */
 Package::~Package()
 {
-	for(iterator i = begin(); i != end(); ++i) {
-		delete i.ptr();
-	}
+	delete_and_clear();
 }
 
 /** Check if a package has duplicated versions. */
@@ -46,7 +44,7 @@ Package::checkDuplicates(Version *version)
 {
 	for(iterator i = begin(); i != end(); ++i)
 	{
-		if(dynamic_cast<BasicVersion&>(*i) == dynamic_cast<BasicVersion&>(*version))
+		if(dynamic_cast<BasicVersion&>(**i) == dynamic_cast<BasicVersion&>(*version))
 		{
 			return true;
 		}
@@ -86,7 +84,7 @@ Package::sortedPushBack(Version *v)
 {
 	for(iterator i = begin(); i != end(); ++i)
 	{
-		if(*v < *i)
+		if(*v < **i)
 		{
 			insert(i, v);
 			return;
@@ -105,7 +103,7 @@ Package::best() const
 	{
 		if(ri->isStable() && !ri->isHardMasked())
 		{
-			ret = ri.ptr();
+			ret = *ri;
 			break;
 		}
 	}

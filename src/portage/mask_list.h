@@ -91,9 +91,9 @@ class MaskList
 				mi != t->second.end();
 				++mi)
 			{
-				if(*mi == *m)
+				if(**mi == *m)
 				{
-					delete mi.ptr();
+					delete *mi;
 					t->second.erase(mi);
 					break;
 				}
