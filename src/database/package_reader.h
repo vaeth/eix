@@ -33,7 +33,11 @@
 
 #include <iostream>
 
+#if 0
 class Package;
+#else
+#include <portage/package.h>
+#endif
 
 /// Forward-iterate for packages stored in the cachefile.
 class PackageReader {
