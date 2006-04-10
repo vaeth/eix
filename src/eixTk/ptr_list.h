@@ -35,8 +35,8 @@ namespace eix {
 	template<typename _Iterator>
 	void delete_all(_Iterator b, _Iterator e)
 	{
-		for(; b != e; ++e)
-			delete *e;
+		for(; b != e; ++b)
+			delete *b;
 	}
 
 	/// An iterator type to iterate through a container containing pointers of the
