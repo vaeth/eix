@@ -237,7 +237,7 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 	return true;
 }
 
-int CdbCache::readCategory(Category &vec)
+int CdbCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + vec.name() + ".cdb";
 	uint32_t dlen;

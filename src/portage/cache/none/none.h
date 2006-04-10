@@ -36,7 +36,7 @@ class NoneCache : public BasicCache {
 		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles);
 
 	public:
-		int readCategory(Category &vec);
+		int readCategory(Category &vec) throw(ExBasic);
 
 		const char *getType() const
 		{ return "none"; }

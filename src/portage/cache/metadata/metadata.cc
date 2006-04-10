@@ -49,7 +49,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int MetadataCache::readCategory(Category &vec)
+int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = m_scheme + METADATA_PATH + vec.name();
 	struct dirent **dents;

@@ -48,7 +48,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int FlatCache::readCategory(Category &vec)
+int FlatCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;

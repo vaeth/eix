@@ -28,21 +28,18 @@
 #include "package.h"
 
 #include <portage/version.h>
-#include <database/io.h>
 
-#include <fstream>
-
-/** Destructor */
 Package::~Package()
 {
 	delete_and_clear();
 }
 
+
 /** Check if a package has duplicated versions. */
 bool
-Package::checkDuplicates(Version *version)
+Package::checkDuplicates(Version *version) const
 {
-	for(iterator i = begin(); i != end(); ++i)
+	for(const_iterator i = begin(); i != end(); ++i)
 	{
 		if(dynamic_cast<BasicVersion&>(**i) == dynamic_cast<BasicVersion&>(*version))
 		{

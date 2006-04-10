@@ -28,6 +28,7 @@
 #ifndef __BASICCACHE_H__
 #define __BASICCACHE_H__
 
+#include <eixTk/exceptions.h>
 #include <string>
 
 class Category;
@@ -76,7 +77,7 @@ class BasicCache {
 		virtual const char *getType() const = 0;
 
 		// Read Cache for a category with a little from portageif. */
-		virtual int readCategory(Category &vec) = 0;
+		virtual int readCategory(Category &vec) throw(ExBasic) = 0;
 
 	protected:
 		std::string m_scheme;

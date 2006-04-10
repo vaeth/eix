@@ -28,10 +28,8 @@
 #ifndef __PACKAGE_H__
 #define __PACKAGE_H__
 
-#include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
 
-#include <list>
 #include <string>
 
 class Version;
@@ -39,7 +37,7 @@ class Version;
 /** A class to represent a package in portage It contains various information
  * about a package, including a list of versions. */
 class Package
-: public eix::ptr_list<Version>
+	: public eix::ptr_list<Version>
 {
 	public:
 		/** True if duplicated versions are found in for this package.
@@ -70,23 +68,23 @@ class Package
 		/** De-constructor, delete content of Version-list. */
 		~Package();
 
+		/** Adds a version to "the versions" list, */
+		void addVersion(Version *vex);
+
+		Version *best() const;
+
+	protected:
+		/** Check if a package has duplicated versions. */
+		bool checkDuplicates(Version *version) const;
+
+		void sortedPushBack(Version *v);
+
 		void defaults()
 		{
 			is_system_package = false;
 			have_same_overlay_key = true;
 			have_duplicate_versions = false;
 		}
-
-		/** Adds a version to "the versions" list, */
-		void addVersion(Version *vex);
-
-		/** Check if a package has duplicated versions. */
-		bool checkDuplicates(Version *version);
-
-		Version *best() const;
-
-	protected:
-		void sortedPushBack(Version *v);
 };
 
 #endif /* __PACKAGE_H__ */

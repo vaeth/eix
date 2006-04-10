@@ -33,7 +33,7 @@
 class CdbCache : public BasicCache {
 
 	public:
-		int readCategory(Category &vec);
+		int readCategory(Category &vec) throw(ExBasic);
 
 		const char *getType() const
 		{ return "cdb"; }
