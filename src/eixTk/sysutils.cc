@@ -30,6 +30,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 static bool is_on_list (char *const *list, const char *member)

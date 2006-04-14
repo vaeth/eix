@@ -38,7 +38,11 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+
+#if !defined(__OpenBSD__)
 #include <stdint.h>
+#endif
+
 #include <unistd.h>
 
 #include <config.h>
