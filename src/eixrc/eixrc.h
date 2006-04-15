@@ -113,7 +113,7 @@ class EixRc : public std::map<std::string,std::string> {
 				i<defaults.size();
 				++i)
 			{
-				char *typestring = "";
+				const char *typestring = "UNKNOWN";
 				switch(defaults[i].type) {
 					case EixRcOption::BOOLEAN: typestring = "BOOLEAN";
 								  break;

@@ -175,7 +175,6 @@ static struct LocalOptions {
 		 do_debug,
 		 ignore_etc_portage,
 		 is_current;
-	char *use_this_cache;
 } rc_options;
 
 /** Arguments and shortopts. */
@@ -194,7 +193,6 @@ static struct Option long_options[] = {
 	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
 	Option("debug",        'd',     Option::BOOLEAN_T,     &rc_options.do_debug),
 
-	Option("use",          O_USE,     Option::STRING,      &rc_options.use_this_cache),
 	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
@@ -249,8 +247,6 @@ setup_defaults()
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
-
-	rc_options.use_this_cache = EIX_CACHEFILE;
 }
 
 void
@@ -287,7 +283,7 @@ run_eix(int argc, char** argv)
 
 	// Only check if the versions uses the current layout
 	if(rc_options.is_current) {
-		return is_current_dbversion(rc_options.use_this_cache);
+		return is_current_dbversion(EIX_CACHEFILE);
 	}
 
 	// Dump eixrc-stuff
@@ -339,10 +335,10 @@ run_eix(int argc, char** argv)
 	eix::ptr_list<Package> matches;
 
 	/* Open database file */
-	FILE *fp = fopen(rc_options.use_this_cache, "rb");
+	FILE *fp = fopen(EIX_CACHEFILE, "rb");
 	if(!fp) {
-		fprintf(stderr, "Can't open the database file %s for reading (mode = 'rb')\n"
-				"Did you forget to create it with 'update-eix'?\n", rc_options.use_this_cache);
+		fprintf(stderr, "Can't open the database file "EIX_CACHEFILE" for reading (mode = 'rb')\n"
+				"Did you forget to create it with 'update-eix'?\n");
 		exit(1);
 	}
 
