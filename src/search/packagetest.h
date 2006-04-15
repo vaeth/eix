@@ -73,9 +73,6 @@ class PackageTest {
 		void Installed()
 		{ installed = !installed; }
 
-		void DuplVersions()
-		{ dup_versions = !dup_versions; }
-
 		void Invert()
 		{ invert = !invert; }
 
@@ -93,7 +90,7 @@ class PackageTest {
 		PackageReader::Attributes need;
 		/** Our string matching algorithm. */
 		std::auto_ptr<BaseAlgorithm> algorithm;
-		bool installed, dup_versions, invert;
+		bool installed, invert;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);

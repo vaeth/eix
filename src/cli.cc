@@ -74,7 +74,6 @@ parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::ite
 		{
 			// Check local options {{{
 			case 'I': test->Installed();    break;
-			case 'D': test->DuplVersions(); break;
 			case '!': test->Invert();       break;
 			// }}}
 
