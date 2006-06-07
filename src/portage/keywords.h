@@ -49,11 +49,11 @@ class Keywords {
 		Type m_mask;
 
 	public:
-		Keywords(Type t = KEY_MINUSKEYWORD) {
-			m_mask = t;
-		}
+		Keywords(Type t = KEY_MINUSKEYWORD)
+		{ m_mask = t; }
 
-		static Type get_type(std::string arch, std::string keywords) {
+		static Type get_type(std::string arch, std::string keywords)
+		{
 			Type mask = KEY_MISSINGKEYWORD;
 			std::vector<std::string> arr_keywords = split_string(keywords);
 			for(std::vector<std::string>::iterator it = arr_keywords.begin(); it != arr_keywords.end(); ++it) {
@@ -81,50 +81,47 @@ class Keywords {
 			return mask;
 		}
 
-		void set(std::string arch, std::string keywords) {
-			set(get_type(arch, keywords));
-		}
+		void set(std::string arch, std::string keywords)
+		{ set(get_type(arch, keywords)); }
 
-		void set(Type t) {
-			m_mask = t;
-		}
+		void set(Type t)
+		{ m_mask = t; }
 
-		Type get() {
-			return m_mask;
-		}
+		Type get() const
+		{ return m_mask; }
 
 		/** Return true if version is marked stable. */
-		bool isStable()               { return m_mask & KEY_STABLE; }
+		bool isStable() const
+		{ return m_mask & KEY_STABLE; }
 		/** Return true if version is unstable. */
-		bool isUnstable()             { return m_mask & KEY_UNSTABLE; }
+		bool isUnstable() const
+		{ return m_mask & KEY_UNSTABLE; }
 		/** Return true if version is masked by -* keyword. */
-		bool isMinusAsterisk()        { return m_mask & KEY_MINUSASTERISK; }
+		bool isMinusAsterisk() const
+		{ return m_mask & KEY_MINUSASTERISK; }
 		/** Return true if version is masked by -keyword. */
-		bool isMinusKeyword()         { return m_mask & KEY_MINUSKEYWORD; }
+		bool isMinusKeyword() const
+		{ return m_mask & KEY_MINUSKEYWORD; }
 		/** Return true if version is masked by missing keyword. */
-		bool isMissingKeyword()       { return m_mask == KEY_MISSINGKEYWORD; }
+		bool isMissingKeyword() const
+		{ return m_mask == KEY_MISSINGKEYWORD; }
 
-		bool isHardMasked()  { return isPackageMask() || isProfileMask(); }
+		bool isHardMasked() const
+		{ return isPackageMask() || isProfileMask(); }
 		/** Return true if version is masked by profile. */
-		bool isProfileMask() { return m_mask & PROFILE_MASK; }
+		bool isProfileMask() const
+		{ return m_mask & PROFILE_MASK; }
 		/** Return true if version is masked by a package.mask. */
-		bool isPackageMask() { return m_mask & PACKAGE_MASK; }
+		bool isPackageMask() const
+		{ return m_mask & PACKAGE_MASK; }
 		/** Return true if version is part of a package that is a system-package. */
-		bool isSystem()      { return m_mask & SYSTEM_PACKAGE; }
+		bool isSystem() const
+		{ return m_mask & SYSTEM_PACKAGE; }
 
-		void operator |= (const Keywords::Type &t)     { m_mask |= t; }
-		void operator &= (const Keywords::Type &t)     { m_mask &= t; }
-
-		static void print(Type t) {
-			printf("< %c%c%c%c%c%c%c >\n",
-					(t & KEY_STABLE) ? '#' : '.',
-					(t & KEY_UNSTABLE) ? '~' : '.',
-					(t & KEY_MINUSASTERISK) ? '*' : '.',
-					(t & KEY_MINUSKEYWORD) ? '-' : '.',
-					(t & PACKAGE_MASK) ? 'M' : '.',
-					(t & PROFILE_MASK) ? 'P' : '.',
-					(t & SYSTEM_PACKAGE) ? 'S' : '.');
-		}
+		void operator |= (const Keywords::Type &t)
+		{ m_mask |= t; }
+		void operator &= (const Keywords::Type &t)
+		{ m_mask &= t; }
 };
 
 #endif /* __STABILITY_H__ */

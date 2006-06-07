@@ -56,24 +56,9 @@ Mask::OperatorTable Mask::operators[] = {
 	{ ""  , Mask::maskOpAll /* this must be the last one */ }
 };
 
-const char *
-Mask::getMaskOperator(Mask::Operator type)
-{
-	int i = 0;
-	for( ;operators[i].str != NULL; ++i) {
-		if( type == operators[i].op ) {
-			return operators[i].str;
-			break;
-		}
-	}
-	return NULL; /* Should never be reached because we already thrown up if the
-					maskoperator isn't in the table. */
-}
-
 /** Constructor. */
 Mask::Mask(const char *str, Type type)
 {
-	m_is_wildcard = false;
 	m_type = type;
 	parseMask(str);
 }
@@ -155,7 +140,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 
 		if(wildcard)
 		{
-			m_is_wildcard = true;
+			m_operator = maskOpGlob;
 			m_full = string(str, strlen(str) - 1);
 		}
 		else
@@ -175,18 +160,16 @@ Mask::parseMask(const char *str) throw(ExBasic)
  * @param category category of package (NULL if shall not be tested)
  * @return true if applies. */
 bool
-Mask::test(BasicVersion *bv)
+Mask::test(BasicVersion *bv) const
 {
-	if(m_is_wildcard)
-	{
-		return strncmp(m_full.c_str(), bv->getFull(),
-		               m_full.size()) == 0;
-	}
-
 	switch(m_operator)
 	{
 		case maskOpAll:
 			return true;
+
+		case maskOpGlob:
+			return strncmp(m_full.c_str(), bv->getFull(),
+					m_full.size()) == 0;
 
 		case maskOpLess:
 			return (*bv < static_cast<BasicVersion>(*this));
@@ -213,7 +196,7 @@ Mask::test(BasicVersion *bv)
 }
 
 eix::ptr_list<Version>
-Mask::match(Package &pkg)
+Mask::match(Package &pkg) const
 {
 	eix::ptr_list<Version> ret;
 	for(Package::iterator it = pkg.begin();

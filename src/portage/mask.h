@@ -63,7 +63,7 @@ class Mask : public BasicVersion {
 			maskOpAll, maskOpEqual,
 			maskOpLess, maskOpLessEqual,
 			maskOpGreaterEqual, maskOpGreater,
-			maskOpRevisions
+			maskOpRevisions, maskOpGlob
 		} Operator;
 
 		typedef struct {
@@ -76,10 +76,9 @@ class Mask : public BasicVersion {
 	private:
 		Operator m_operator; /**< Operator for mask. */
 		Type m_type;   /**< Mask type for this mask. */
-		bool m_is_wildcard;
 
-		std::string m_category, /**< category */
-			   m_name;     /**< package name */
+		std::string m_category; /**< category */
+		std::string m_name;     /**< package name */
 
 		/** split a "mask string" into its components
 		 * @param str_mask the string to be dissected
@@ -93,25 +92,21 @@ class Mask : public BasicVersion {
 		/** Tests if the mask applies to a Version.
 		 * @param ve test this version
 		 * @return true if applies. */
-		bool test(BasicVersion *bv);
-
-		void expand(Package *pkg);
-
-		const char *getMaskOperator(Operator type);
+		bool test(BasicVersion *bv) const;
 
 	public:
 		/** Parse mask-string. */
 		Mask(const char *str, Type type);
 
-		eix::ptr_list<Version> match(Package &pkg);
+		eix::ptr_list<Version> match(Package &pkg) const;
 
-		const char *getVersion()
+		const char *getVersion() const
 		{ return m_full.c_str(); }
 
-		const char *getName()
+		const char *getName() const
 		{ return m_name.c_str(); }
 
-		const char *getCategory()
+		const char *getCategory() const
 		{ return m_category.c_str(); }
 
 		/** Sets the stability members of all version in package according to the mask.
@@ -119,9 +114,6 @@ class Mask : public BasicVersion {
 		 * @param check_name     true if name should be tested
 		 * @param check_category true if category should be tested */
 		void checkMask(Package& pkg, const bool check_category, const bool check_name);
-
-		/** Print mask. */
-		friend std::ostream& operator<< (std::ostream& os, Mask& m);
 };
 
 class KeywordMask : public Mask {
