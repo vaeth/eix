@@ -42,35 +42,34 @@
 
 using namespace std;
 
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec)
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive)
 {
-	ifstream mask_file(file);
-	if(mask_file.is_open()) {
-		string line;
-		while(getline(mask_file, line)) {
-			trim(&line);
-			if(line.size() == 0 || line[0] == '#')
-				continue;
-			try {
-				Mask *m = new Mask(line.c_str(), type);
-				OOM_ASSERT(m);
-				if(cat_map) {
-					cat_map->add(m);
-				}
-				else {
-					mask_vec->push_back(m);
-				}
+	vector<string> lines;
+	if( ! pushback_lines(file, &lines, true, recursive))
+		return false;
+	for(vector<string>::iterator it=lines.begin(); it<lines.end(); ++it)
+	{
+		string line=*it;
+		try {
+			Mask *m = new Mask(line.c_str(), type);
+			OOM_ASSERT(m);
+			if(cat_map) {
+				cat_map->add(m);
 			}
-			catch(ExBasic e) {
-				cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
-				     << "   " << e.getMessage() << endl;
+			else {
+				mask_vec->push_back(m);
 			}
 		}
-		mask_file.close();
-		return true;
+		catch(ExBasic e) {
+			cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
+			     << "   " << e.getMessage() << endl;
+		}
 	}
-	return false;
+	return true;
 }
+
+
+
 
 /** Key that should accumelate their content rathern then replace. */
 static const char *default_accumulating_keys[] = {

@@ -45,16 +45,16 @@ class Mask;
 class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec);
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive=true);
 
 /** Grab Mask from file and add to category->vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec) {
-	return grab_masks(file, type, NULL , mask_vec);
+inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive=true) {
+	return grab_masks(file, type, NULL , mask_vec, recursive);
 }
 
 /** Grab Mask from file and add to vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map) {
-	return grab_masks(file, type, cat_map, NULL);
+inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive=true) {
+	return grab_masks(file, type, cat_map, NULL, recursive);
 }
 
 class PortageSettings;

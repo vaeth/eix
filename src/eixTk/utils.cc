@@ -43,7 +43,7 @@
 using namespace std;
 
 /** push_back every line of file into v. */
-bool pushback_lines(const char *file, vector<string> *v, bool removed_empty)
+bool pushback_lines_file(const char *file, vector<string> *v, bool removed_empty)
 {
 	string line;
 	ifstream ifstr(file);
@@ -71,14 +71,37 @@ bool pushback_lines(const char *file, vector<string> *v, bool removed_empty)
 	return false;
 }
 
+/** push_back every line of file or dir into v. */
+bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, bool recursive)
+{
+	static const char *files_exclude[] = { "..", "." , NULL };
+	vector<string> files;
+	string dir(file);
+	dir += "/";
+	if(recursive && pushback_files(dir, files, files_exclude, false))
+	{
+		bool rvalue=true;
+		for(vector<string>::iterator it=files.begin();
+			it<files.end(); ++it)
+		{
+			if(! pushback_lines(it->c_str(), v, removed_empty))
+				rvalue=false;
+		}
+		return rvalue;
+	}
+	else
+		return pushback_lines_file(file, v, removed_empty);
+}
+
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if the don't match any
  * char * in given exlude list.
  * @param dir_path Path to directory
  * @param into pointer to vector of strings .. files get append here (with full path)
  * @param exclude list of char * that don't need to be put into vector
+ * @param onlyfiles consider only ordinary files
  * @return false if everything is ok */
-bool pushback_files(string &dir_path, vector<string> &into, const char *exclude[])
+bool pushback_files(string &dir_path, vector<string> &into, const char *exclude[], bool onlyfiles)
 {
 	struct stat static_stat;
 	DIR *dir = opendir(dir_path.c_str());
@@ -91,13 +114,19 @@ bool pushback_files(string &dir_path, vector<string> &into, const char *exclude[
 		if(exclude)
 		{
 			char **_p = (char **)exclude;
-			while(*_p) /* Look if it's in exclude */
-				if(strcmp(*(_p++), dir_entry->d_name) == 0)
-					continue;
+			for(;*_p;_p++) /* Look if it's in exclude */
+				if(strcmp(*_p, dir_entry->d_name) == 0)
+					break;
+			if(*_p)
+				continue;
+
 		}
-		if(stat((dir_path + dir_entry->d_name).c_str(), &static_stat)
-				|| !S_ISREG(static_stat.st_mode))
-			continue;
+		if(onlyfiles)
+		{
+			if(stat((dir_path + dir_entry->d_name).c_str(), &static_stat)
+					|| !S_ISREG(static_stat.st_mode))
+				continue;
+		}
 		into.push_back(dir_path + dir_entry->d_name);
 	}
 	closedir(dir);

@@ -32,8 +32,8 @@
 #include <vector>
 #include <string>
 
-/** push_back every line of file into v. */
-bool pushback_lines(const char *file, std::vector<std::string> *v, bool removed_empty = true);
+/** push_back every line of file or dir into v. */
+bool pushback_lines(const char *file, std::vector<std::string> *v, bool removed_empty = true, bool recursive = true);
 
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if the don't match any
@@ -41,8 +41,9 @@ bool pushback_lines(const char *file, std::vector<std::string> *v, bool removed_
  * @param dir_path Path to directory
  * @param into pointer to vector of strings .. files get append here (with full path)
  * @param exlude list of char * that don't need to be put into vector
+ * @param onlyfiles consider only ordinary files
  * @return false if everything is ok */
-bool pushback_files(std::string &dir_path, std::vector<std::string> &into, const char *exclude[]);
+bool pushback_files(std::string &dir_path, std::vector<std::string> &into, const char *exclude[], bool onlyfiles = true);
 
 
 /** Cycle through map using it, until it is it_end, append all values from it

@@ -2,3 +2,6 @@
   awk '$1~/^\[ebuild$/{print $4}' | sed -e 's/\-[0-9][A-Za-z0-9_.-]*$//' | awk -F/ '{system("eix -C "$1" -e "$2" -c | head -n 1")}'
 
 * Only display overlays that are really needed.
+
+* Sanity check for recursive reading to avoid possibly endless loops
+
