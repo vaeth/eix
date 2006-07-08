@@ -77,7 +77,7 @@ BasicVersion::parseVersion(const char *str, int n)
 	}
 
 	// Let's remove useless 0 at the end
-	for(vector<unsigned short>::reverse_iterator ri = m_primsplit.rbegin();
+	for(vector<unsigned long>::reverse_iterator ri = m_primsplit.rbegin();
 		ri != m_primsplit.rend() && *ri == 0;
 		ri++)
 	{

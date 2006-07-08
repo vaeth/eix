@@ -84,7 +84,7 @@ class BasicVersion
 		std::string             m_full;
 
 		/** Splitted m_primsplit-version. */
-		std::vector<unsigned short> m_primsplit;
+		std::vector<unsigned long> m_primsplit;
 
 		/** Optional one-character suffix of m_primsplit. */
 		unsigned char          m_primarychar;

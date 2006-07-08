@@ -77,7 +77,7 @@ io::read_version(FILE *fp)
 		i > 0;
 		--i)
 	{
-		v->m_primsplit.push_back(io::read<unsigned short>(fp));
+		v->m_primsplit.push_back(io::read<unsigned long>(fp));
 	}
 
 	v->m_primarychar = io::read<unsigned char>(fp);
@@ -104,11 +104,11 @@ io::write_version(FILE *fp, const Version *v)
 	// write m_primsplit
 	io::write<unsigned char>(fp, (unsigned char)v->m_primsplit.size());
 
-	for(vector<unsigned short>::const_iterator it = v->m_primsplit.begin();
+	for(vector<unsigned long>::const_iterator it = v->m_primsplit.begin();
 		it != v->m_primsplit.end();
 		++it)
 	{
-		io::write<unsigned short>(fp, *it);
+		io::write<unsigned long>(fp, *it);
 	}
 
 	io::write<unsigned char>(fp, v->m_primarychar);
