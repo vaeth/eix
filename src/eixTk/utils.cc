@@ -75,6 +75,7 @@ bool pushback_lines_file(const char *file, vector<string> *v, bool removed_empty
 bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, bool recursive)
 {
 	static const char *files_exclude[] = { "..", "." , NULL };
+	static int depth=0;
 	vector<string> files;
 	string dir(file);
 	dir += "/";
@@ -84,8 +85,12 @@ bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, boo
 		for(vector<string>::iterator it=files.begin();
 			it<files.end(); ++it)
 		{
+			++depth;
+			ASSERT(depth < 100,
+				"Nesting level too deep in %s", dir.c_str());
 			if(! pushback_lines(it->c_str(), v, removed_empty))
 				rvalue=false;
+			--depth;
 		}
 		return rvalue;
 	}

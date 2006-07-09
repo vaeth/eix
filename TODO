@@ -3,5 +3,3 @@
 
 * Only display overlays that are really needed.
 
-* Sanity check for recursive reading to avoid possibly endless loops
-
