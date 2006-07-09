@@ -63,7 +63,11 @@ bool VarsReader::isIncremental(const char *key)
 
 /** Assign key=value and reset key- and value-buffer. */
 #define ASSIGN_KEY_VALUE  do { \
-	if( (parse_flags & ONLY_KEYWORDS) ) { \
+	if(sourcecmd) { \
+		sourcecmd=false; \
+		source(value.c_str()); \
+	} \
+	else if( (parse_flags & ONLY_KEYWORDS) ) { \
 		if(strncmp("KEYWORDS=", key_begin, 9) == 0) { \
 			(*vars)[string(key_begin, key_len)] = value; \
 			CHSTATE(STOP); \
@@ -114,14 +118,38 @@ void VarsReader::JUMP_COMMENT()
 
 /** Jump whitespaces and tabs at begining of line.
  * Read while ' ' || '\t'
- * '#' -> [RV] JUMP_COMMENT | [A-Z_] -> (reset key) FIND_ASSIGNMENT | -> JUMP_NOISE
+ * '#' -> [RV] JUMP_COMMENT | [A-Z_] -> (reset key) FIND_ASSIGNMENT |
+ # source or . -> EVAL_VALUE with sourcecmd=true | -> JUMP_NOISE
  * @see isValidKeyCharacter */
 void VarsReader::JUMP_WHITESPACE()
 {
 	while(INPUT == '\t' || INPUT == ' ') NEXT_INPUT;
 	switch(INPUT) {
-		case '#':  NEXT_INPUT; CHSTATE(JUMP_COMMENT);
-		default:   if(isValidKeyCharacter(INPUT)) {
+		case '#':  NEXT_INPUT;
+			   while(INPUT != '\n') NEXT_INPUT;
+			   CHSTATE(JUMP_WHITESPACE);
+			   break;
+		case 's':  {
+				int i=0;
+				const char *begin = x;
+				while(isalpha(INPUT)) { NEXT_INPUT; ++i; }
+				if((i!=6) || strncmp("source", begin, 6) != 0)
+				{
+					CHSTATE(JUMP_NOISE);
+					break;
+				}
+			   }
+			   --x;
+		case '.':  NEXT_INPUT;
+			   if(INPUT == '\t' || INPUT == ' ')
+			   {
+				sourcecmd=true;
+				CHSTATE(EVAL_VALUE);
+			   }
+			   else
+				CHSTATE(JUMP_NOISE);
+			   break;
+		default:   if(isValidKeyCharacterStart(INPUT)) {
 					   key_begin = x;
 					   CHSTATE(FIND_ASSIGNMENT);
 				   }
@@ -133,7 +161,7 @@ void VarsReader::JUMP_WHITESPACE()
  * Keys are marked with a '=' at the end ('=' is not part of the key). This state always gets the
  * first character of the keyword as current INPUT, thus we don't need to check if key_len is >= 1,
  * is always >= 1.
- * Read while not ('=' || '#') and [A-Z_]
+ * Read while not ('=' || '#') and [A-Z_0-9]
  * '=' -> EVAL_VALUE | '#' -> [RV] JUMP_COMMENT | -> JUMP_NOISE */
 void VarsReader::FIND_ASSIGNMENT()
 {
@@ -351,6 +379,7 @@ void VarsReader::runFsm()
 void VarsReader::initFsm()
 {
 	STATE = state_JUMP_WHITESPACE;
+	sourcecmd = false;
 	x = filebuffer;
 	key_len = 0;
 }
@@ -408,3 +437,20 @@ bool VarsReader::read(const char *filename)
 	munmap(filebuffer, st.st_size);
 	return true;
 }
+
+/** Read file using a new instance of VarsReader,
+    but with same settings and adding variables only. */
+bool VarsReader::source(const char *filename)
+{
+	static int depth=0;
+	++depth;
+	ASSERT(depth < 100,
+	  "Nesting level too deep when reading %s", filename);
+	VarsReader includefile(parse_flags);
+	includefile.accumulatingKeys(incremental_keys);
+	includefile.useMap(vars);
+	int rvalue=includefile.read(filename);
+	depth--;
+	return rvalue;
+}
+

@@ -6,6 +6,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=137784
 	- patch from caster@matfyz.cz to treat version numbers as long ints:
 	  http://bugs.gentoo.org/show_bug.cgi?id=133732
+	- Support a "source " (and ". ") command in config-files:
+	  http://bugs.gentoo.org/show_bug.cgi?id=132874
 
 *eix-0.5.5
 	Emil Beinroth <emilbeinroth at gmx.net>:

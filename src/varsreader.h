@@ -152,11 +152,15 @@ class VarsReader {
 		/** Resolve references to a variable in declaration of a variable. */
 		void resolveReference();
 
+		/** Read file using a new instance of VarsReader with the same
+		    settings, adding variables to current instance. */
+		bool source(const char *filename);
 
 		unsigned int key_len; /**< Lenght of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
 
 		char *x;         /**< Pointer to current position in filebuffer. */
+		bool sourcecmd; /* A flag whether we are currently parsing a source command instead of a variable. */
 
 		std::string value;     /**< Buffy for value */
 
@@ -175,10 +179,16 @@ class VarsReader {
 		 * @warning You need to call deinit() if you called this function. */
 		void initFsm();
 
-		/** True if x matches [A-Z_] */
+		/** True if x matches [A-Z_0-9] */
 		virtual bool isValidKeyCharacter(char x) {
 			return ((x >= 'A' && x <= 'Z')
 					|| x == '_' || (x >= '0' && x <= '9'));
+		}
+
+		/** True if x matches [A-Z_] */
+		virtual bool isValidKeyCharacterStart(char x) {
+			return ((x >= 'A' && x <= 'Z')
+					|| x == '_' );
 		}
 
 		const char *file_name; /**< Name of parsed file. */
