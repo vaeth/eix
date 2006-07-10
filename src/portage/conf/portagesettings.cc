@@ -86,12 +86,12 @@ PortageSettings::PortageSettings()
 	profile     = new CascadingProfile(this);
 	user_config = new PortageUserConfig(this);
 
-	VarsReader make_globals(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES);
+	VarsReader make_globals(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
 	make_globals.accumulatingKeys(default_accumulating_keys);
 	make_globals.useMap(this);
 	make_globals.read("/etc/make.globals");
 
-	VarsReader make_conf(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES);
+	VarsReader make_conf(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
 	make_conf.accumulatingKeys(default_accumulating_keys);
 	make_conf.useMap(this);
 	make_conf.read("/etc/make.conf");
@@ -171,7 +171,7 @@ bool PortageUserConfig::readKeywords() {
 	string fscked_arch = join_vector(splitted);
 
 	vector<string> lines;
-	pushback_lines("/etc/portage/package.keywords", &lines, false);
+	pushback_lines("/etc/portage/package.keywords", &lines, false, true);
 
 	for(unsigned int i = 0;
 		i<lines.size();

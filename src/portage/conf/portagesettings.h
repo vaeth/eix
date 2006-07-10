@@ -45,15 +45,15 @@ class Mask;
 class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive=true);
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false);
 
 /** Grab Mask from file and add to category->vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive=true) {
+inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive = false) {
 	return grab_masks(file, type, NULL , mask_vec, recursive);
 }
 
 /** Grab Mask from file and add to vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive=true) {
+inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive = false) {
 	return grab_masks(file, type, cat_map, NULL, recursive);
 }
 
@@ -67,8 +67,8 @@ class PortageUserConfig {
 
 		bool readKeywords();
 		bool readMasks() {
-			bool mask_ok = grab_masks("/etc/portage/package.mask", Mask::maskMask, &m_mask);
-			bool unmask_ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &m_mask);
+			bool mask_ok = grab_masks("/etc/portage/package.mask", Mask::maskMask, &m_mask, true);
+			bool unmask_ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &m_mask, true);
 			return mask_ok && unmask_ok;
 		}
 

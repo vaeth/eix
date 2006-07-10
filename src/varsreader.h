@@ -160,7 +160,7 @@ class VarsReader {
 		char *key_begin;      /**< Pointer to first character of key. */
 
 		char *x;         /**< Pointer to current position in filebuffer. */
-		bool sourcecmd; /* A flag whether we are currently parsing a source command instead of a variable. */
+		bool sourcecmd; /* A flag whether we are currently parsing a source command */
 
 		std::string value;     /**< Buffy for value */
 
@@ -208,7 +208,8 @@ class VarsReader {
 							 of a variable. i.e.  USE="${USE} -kde" */
 			INTO_MAP,      /**< Flag: Init but don't parse .. you must first supply
 							 a pointer to map<string,string> with useMap(...) */
-			APPEND_VALUES; /**< Flag: appended new values rather then replace the old value. */
+			APPEND_VALUES, /**< Flag: appended new values rather then replace the old value. */
+			ALLOW_SOURCE;  /**< Flag: Allow "source"/"." command. */
 
 
 		/** Init and parse the FSM depending on supplied flags. */

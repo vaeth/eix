@@ -86,7 +86,8 @@ VarsReader::NONE          = 0x00, /**< Flag: No flags set; normal behavior. */
 							of a variable. i.e.  USE="${USE} -kde" */
 	VarsReader::INTO_MAP      = 0x04, /**< Flag: Init but don't parse .. you must first supply
 							a pointer to map<string,string> with useMap(...) */
-	VarsReader::APPEND_VALUES = 0x08; /**< Flag: appended new values rather then replace the old value. */
+	VarsReader::APPEND_VALUES = 0x08, /**< Flag: appended new values rather then replace the old value. */
+	VarsReader::ALLOW_SOURCE  = 0x10;  /**< Flag: Allow "source"/"." command. */
 
 /*************************************************************************/
 /********************** FSM states begin here ****************************/
@@ -141,7 +142,8 @@ void VarsReader::JUMP_WHITESPACE()
 			   }
 			   --x;
 		case '.':  NEXT_INPUT;
-			   if(INPUT == '\t' || INPUT == ' ')
+			   if((parse_flags & ALLOW_SOURCE) &&
+			     (INPUT == '\t' || INPUT == ' '))
 			   {
 				sourcecmd=true;
 				CHSTATE(EVAL_VALUE);
