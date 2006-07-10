@@ -304,6 +304,10 @@ Use the same syntax as you would inside ().
 See B<FORMATSTRING>.
 
 .TP
+.BR MARK_INSTALLED "  " (none ", " bold ", " underline ", " blink ", " inverse)
+Mark the installed packages by this attribute when displaying versions.
+
+.TP
 .BR FORCE_USECOLORS "  " (true/false)
 Use colors even when stdout is not a terminal.
 

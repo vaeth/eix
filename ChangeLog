@@ -8,6 +8,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=133732
 	- Support a "source " (and ". ") command in config-files:
 	  http://bugs.gentoo.org/show_bug.cgi?id=132874
+	- Mark installed versions in output list. This experimental feature
+	  can be disabled with MARK_INSTALLED=none in /etc/eixrc
 
 *eix-0.5.5
 	Emil Beinroth <emilbeinroth at gmx.net>:
