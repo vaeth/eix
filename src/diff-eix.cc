@@ -224,21 +224,21 @@ print_changed_package(Package *op, Package *np)
 	op->installed_versions = np->installed_versions
 		= varpkg_db.getInstalledString(*np);
 
-	format_string.print(p, print_diff_package_property, get_diff_package_property, format_changed);
+	format_string.print(p, print_diff_package_property, get_diff_package_property, format_changed, &varpkg_db);
 }
 
 void
 print_found_package(Package *p)
 {
 	p->installed_versions = varpkg_db.getInstalledString(*p);
-	format_string.print(p, format_new);
+	format_string.print(p, format_new, &varpkg_db);
 }
 
 void
 print_lost_package(Package *p)
 {
 	p->installed_versions = varpkg_db.getInstalledString(*p);
-	format_string.print(p, format_delete);
+	format_string.print(p, format_delete, &varpkg_db);
 }
 
 
@@ -307,6 +307,7 @@ run_diff_eix(int argc, char *argv[])
 	format_string.color_unstable   = eixrc["COLOR_UNSTABLE"];
 	format_string.color_stable     = eixrc["COLOR_STABLE"];
 	format_string.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
+	format_string.mark_installed   = eixrc["MARK_INSTALLED"];
 
 	format_string.setupColors();
 

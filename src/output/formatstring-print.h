@@ -34,8 +34,8 @@
 #include <portage/version.h>
 #include <eixTk/exceptions.h>
 
-void print_version(PrintFormat *fmt, Version *version);
-void print_versions(PrintFormat *fmt, Package * p);
+void print_version(PrintFormat *fmt, Version *version, bool isinstalled = false);
+void print_versions(PrintFormat *fmt, Package *p);
 
 void   print_package_property(PrintFormat *fmt, void *entity, std::string &name) throw(ExBasic);
 std::string get_package_property(void *entity, std::string &name) throw(ExBasic);

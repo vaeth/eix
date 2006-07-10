@@ -101,6 +101,11 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "MARK_INSTALLED",
+			"inverse", "How installed packages are marked in version listings.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORCE_USECOLORS",
 			"false", "This turns --force-color on for every query.")
 		);

@@ -27,13 +27,13 @@
 
 
 #include "formatstring-print.h"
-
+#include <portage/vardbpkg.h>
 #include <sstream>
 
 using namespace std;
 
 void
-print_version(PrintFormat *fmt, Version *version)
+print_version(PrintFormat *fmt, Version *version, bool isinstalled)
 {
 	if(fmt->style_version_lines)
 		fputs("\n\t", stdout);
@@ -81,7 +81,11 @@ print_version(PrintFormat *fmt, Version *version)
 	if (fmt->style_version_lines)
 		cout << "\r\t\t";
 
+	if (isinstalled && (!fmt->no_color))
+		cout << fmt->mark_installed;
 	cout << version->getFull();
+	if (isinstalled && (!fmt->no_color))
+		cout << fmt->mark_installed_end;
 }
 
 void
@@ -89,7 +93,10 @@ print_versions(PrintFormat *fmt, Package* p)
 {
 	Package::iterator version_it = p->begin();
 	while(version_it != p->end()) {
-		print_version(fmt, *version_it);
+		if(fmt->vardb)
+			print_version(fmt, *version_it, fmt->vardb->isInstalled(p,*version_it));
+		else
+			print_version(fmt, *version_it);
 
 		if(!p->have_same_overlay_key && version_it->overlay_key) {
 			if( ! fmt->no_color )

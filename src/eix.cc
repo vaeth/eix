@@ -246,6 +246,7 @@ setup_defaults()
 	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
+	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 }
 
@@ -404,7 +405,7 @@ run_eix(int argc, char** argv)
 			need_overlay_table = true;
 		}
 
-		format.print(*it);
+		format.print(*it, &varpkg_db);
 	}
 
 	if(need_overlay_table)

@@ -51,8 +51,9 @@ get_escape(char *p)
 }
 
 void
-PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root)
+PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg)
 {
+	vardb=vardbpkg;
 	for(;
 		root != NULL;
 		root = root->next)
@@ -81,10 +82,10 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
-						recPrint(entity, print_property, get_property, ief->if_true);
+						recPrint(entity, print_property, get_property, ief->if_true, vardbpkg);
 					}
 					else if(!ok && ief->if_false) {
-						recPrint(entity, print_property, get_property, ief->if_false);
+						recPrint(entity, print_property, get_property, ief->if_false, vardbpkg);
 					}
 				}
 				break;

@@ -35,6 +35,8 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/ansicolor.h>
 
+class VarDbPkg;
+
 class Node {
 	public:
 		enum Type { TEXT, VARIABLE, IF } type;
@@ -135,6 +137,7 @@ class FormatParser {
 };
 
 class PrintFormat {
+	friend void print_versions(PrintFormat *fmt, Package *p);
 
 	public:
 		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, std::string &property);
@@ -145,8 +148,9 @@ class PrintFormat {
 		PrintProperty  m_print_property;
 		GetProperty    m_get_property;
 		Node          *m_root;
+		VarDbPkg      *vardb;
 
-		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
+		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg);
 
 	public:
 		bool no_color,            /**< Shall we use colors? */
@@ -156,6 +160,8 @@ class PrintFormat {
 			   color_unstable,   /**< Color for unstable versions */
 			   color_stable,     /**< Color for stable versions */
 			   color_overlaykey; /**< Color for the overlay key */
+		std::string mark_installed,   /**< Marker for installed packages */
+			   mark_installed_end;/**< End-Marker for installed packages */
 
 		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
 			: m_print_property(print_callback), m_get_property(get_callback) { }
@@ -165,20 +171,23 @@ class PrintFormat {
 			color_unstable   = AnsiColor(color_unstable).asString();
 			color_stable     = AnsiColor(color_stable).asString();
 			color_overlaykey = AnsiColor(color_overlaykey).asString();
+			AnsiMarker marker(mark_installed);
+			mark_installed     = marker.asString();
+			mark_installed_end = marker.end();
 		}
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root) {
-			recPrint(entity, print_property, get_property, root);
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL) {
+			recPrint(entity, print_property, get_property, root, vardbpkg);
 			fputc('\n', stdout);
 		}
 
-		void print(void *entity, Node *root) {
-			recPrint(entity, m_print_property, m_get_property, root);
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL) {
+			recPrint(entity, m_print_property, m_get_property, root, vardbpkg);
 			fputc('\n', stdout);
 		}
 
-		void print(void *entity) {
-			recPrint(entity, m_print_property, m_get_property, m_root);
+		void print(void *entity, VarDbPkg *vardbpkg = NULL) {
+			recPrint(entity, m_print_property, m_get_property, m_root, vardbpkg);
 			fputc('\n', stdout);
 		}
 

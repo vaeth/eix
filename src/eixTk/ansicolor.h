@@ -69,6 +69,7 @@ class AnsiColor {
 					snprintf(buf, len, "\x1B[%d;%dm", (int)light, (int)fg);
 				}
 			}
+			else buf[0]='\0';
 			return std::string(buf);
 		}
 
@@ -132,6 +133,73 @@ operator<< (std::ostream& os, AnsiColor ac)
 			os << ";" << (int)ac.fg;
 		os << 'm';
 	}
+	return os;
+}
+
+/** A class for using other ANSI markers
+ * Example:
+ * @code
+ * AnsiMarker m_inverse(AnsiMarker::amInverse);
+ * cout << m_inverse << "inverse text" << m_inverse.end() << "normal text";
+ * @endcode
+ */
+class AnsiMarker {
+
+	public:
+		/** The various colors, acNone is the default color */
+		enum Marker { amNone=0, amBold=1, amUnderlined=4, amBlink=5, amInverse=7 };
+		Marker mk;
+
+		AnsiMarker(const Marker mk = amNone) : mk(mk) { }
+
+		std::string asString()
+		{
+			static const int len = 100;
+			char buf[len];
+			if( mk!=amNone ) {
+				snprintf(buf, len, "\x1B[%dm", (int)mk);
+			}
+			else buf[0]='\0';
+			return std::string(buf);
+		}
+		std::string end()
+		{
+			if(mk!=amNone)
+				return "\x1B[0m";
+			return "";
+		}
+
+		static std::map<std::string,AnsiMarker::Marker>& init_map_once()
+		{
+			static std::map<std::string,AnsiMarker::Marker> marker_map;
+			marker_map["none"]    = AnsiMarker::amNone;
+			marker_map["bold"]    = AnsiMarker::amBold;
+			marker_map["underline"] = AnsiMarker::amUnderlined;
+			marker_map["blink"]   = AnsiMarker::amBlink;
+			marker_map["inverse"] = AnsiMarker::amInverse;
+			return marker_map;
+		}
+
+		static Marker name_to_marker(std::string name)
+		{
+			static std::map<std::string,AnsiMarker::Marker> &marker_map = init_map_once();
+			return marker_map[name];
+		}
+
+		/** Prints the current marker to an ostream */
+		friend std::ostream& operator<< (std::ostream& os, AnsiMarker am);
+
+		AnsiMarker(std::string marker_name) throw (ExBasic)
+		{
+			mk = name_to_marker(marker_name);
+		}
+};
+
+inline std::ostream&
+operator<< (std::ostream& os, AnsiMarker am)
+{
+	if( am.mk != AnsiMarker::amNone )
+		os << "\x1B[" << (int)am.mk << 'm';
 	return os;
 }
 
