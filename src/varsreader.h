@@ -153,7 +153,8 @@ class VarsReader {
 		void resolveReference();
 
 		/** Read file using a new instance of VarsReader with the same
-		    settings, adding variables to current instance. */
+		    settings (except for APPEND_VALUES),
+		    adding variables to current instance. */
 		bool source(const char *filename);
 
 		unsigned int key_len; /**< Lenght of the key. */

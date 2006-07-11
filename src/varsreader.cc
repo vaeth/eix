@@ -448,7 +448,7 @@ bool VarsReader::source(const char *filename)
 	++depth;
 	ASSERT(depth < 100,
 	  "Nesting level too deep when reading %s", filename);
-	VarsReader includefile(parse_flags);
+	VarsReader includefile(parse_flags & (~APPEND_VALUES));
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
 	int rvalue=includefile.read(filename);
