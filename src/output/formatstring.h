@@ -148,7 +148,10 @@ class PrintFormat {
 		PrintProperty  m_print_property;
 		GetProperty    m_get_property;
 		Node          *m_root;
-		VarDbPkg      *vardb;
+		VarDbPkg      *vardb;/**< This is actually hack:
+			vardb is only set temporarily during printing to allow
+			comparison with installed versions - this is only to
+			avoid passing this argument through all subfunctions */
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 

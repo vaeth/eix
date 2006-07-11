@@ -88,13 +88,15 @@ string VarDbPkg::getInstalledString(const Package &p)
 /** Returns true if a Package installed. */
 bool VarDbPkg::isInstalled(Package *p, BasicVersion *v)
 {
-	if(v == NULL)
-		return ( getInstalledVector( p->category, p->name ) );
-
 	vector<BasicVersion> *vec = getInstalledVector( p->category, p->name );
-	for(unsigned int i = 0; i < vec->size(); ++i)
-		if((*vec)[i] == *v)
+	if(vec)
+	{
+		if(v == NULL)
 			return true;
+		for(unsigned int i = 0; i < vec->size(); ++i)
+			if((*vec)[i] == *v)
+				return true;
+	}
 	return false;
 }
 
