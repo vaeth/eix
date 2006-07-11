@@ -159,7 +159,11 @@ BasicVersion::compare(const BasicVersion &basic_version) const
 	if( m_gentoorevision < basic_version.m_gentoorevision ) return -1;
 	if( m_gentoorevision > basic_version.m_gentoorevision ) return  1;
 
-	return 0;
+	// The numbers are equal, but the strings might still be different,
+	// e.g. 1.02 is different from 1.002.
+	// In such a case, we simply compare the strings alphabetically.
+	// This is not always what you want but at least reproducible.
+	return strcmp(getFull(),basic_version.getFull());
 }
 
 const char *

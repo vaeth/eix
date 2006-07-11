@@ -43,7 +43,7 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 	vardbpkg = vdb;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	invert   = installed = false;
+	invert   = installed = dup_versions = false;
 }
 
 void
@@ -73,6 +73,11 @@ PackageTest::calculateNeeds() {
 	if(installed && need < PackageReader::NAME)
 	{
 		need = PackageReader::NAME;
+	}
+
+	if(dup_versions && need < PackageReader::VERSIONS)
+	{
+		need = PackageReader::VERSIONS;
 	}
 }
 
@@ -182,6 +187,10 @@ PackageTest::match(PackageReader *pkg) const
 	/* Honour the C_O_INSTALLED, C_O_DUP_VERSIONS and the C_O_INVERT flags. */
 	if(installed && is_match) {
 		is_match = vardbpkg->isInstalled(pkg->get());
+	}
+
+	if(dup_versions && is_match) {
+		is_match = pkg->get()->have_duplicate_versions;
 	}
 
 	return (invert ? !is_match : is_match);

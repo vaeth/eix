@@ -79,7 +79,7 @@ print_version(PrintFormat *fmt, Version *version, bool isinstalled)
 	}
 
 	if (fmt->style_version_lines)
-		cout << "\r\t\t";
+		fputs("\t\t", stdout);
 
 	if (isinstalled && (!fmt->no_color))
 		cout << fmt->mark_installed;

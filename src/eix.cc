@@ -92,6 +92,7 @@ dump_help(int exit_code)
 			"Local:\n"
 			"  Miscellaneous:\n"
 			"    -I, --installed       Next expression only matches installed packages.\n"
+			"    -D  --dup-versions    Match packages with duplicated versions\n"
 			"    -!, --not             Invert the expression.\n"
 			"\n"
 			"  Search Fields:\n"
@@ -203,6 +204,7 @@ static struct Option long_options[] = {
 
 	// Options for criteria
 	Option("installed",     'I'),
+	Option("dup-versions",  'D'),
 	Option("not",           '!'),
 
 	// Algorithms for a criteria

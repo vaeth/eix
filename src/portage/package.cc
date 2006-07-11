@@ -34,9 +34,30 @@ Package::~Package()
 	delete_and_clear();
 }
 
+
+/** Check if a package has duplicated versions. */
+bool
+Package::checkDuplicates(Version *version) const
+{
+	for(const_iterator i = begin(); i != end(); ++i)
+	{
+		if(dynamic_cast<BasicVersion&>(**i) == dynamic_cast<BasicVersion&>(*version))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 /** Adds a version to "the versions" list. */
 void Package::addVersion(Version *version)
 {
+	/* if the same version is in various places it should be shown.
+	   possible thanks to the new [overlay] marker. */
+	if(!have_duplicate_versions) {
+		have_duplicate_versions = checkDuplicates(version);
+	}
+
 	/* This should remain with two if .. so we can guarante that
 	 * versions.size() == 0 in the else. */
 	if(empty() == false) {

@@ -2,14 +2,15 @@
 
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- If a config file is a directory, read it recursively:
+	- If /etc/portage/package.* is a directory, read it recursively:
 	  http://bugs.gentoo.org/show_bug.cgi?id=137784
 	- patch from caster@matfyz.cz to treat version numbers as long ints:
 	  http://bugs.gentoo.org/show_bug.cgi?id=133732
-	- Support a "source " (and ". ") command in config-files:
+	- Support a "source " (and ". ") command in /etc/make.*:
 	  http://bugs.gentoo.org/show_bug.cgi?id=132874
 	- Mark installed versions in output list. This experimental feature
 	  can be disabled with MARK_INSTALLED=none in /etc/eixrc
+	- Fixing -D again
 
 *eix-0.5.5
 	Emil Beinroth <emilbeinroth at gmx.net>:

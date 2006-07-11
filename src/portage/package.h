@@ -40,6 +40,10 @@ class Package
 	: public eix::ptr_list<Version>
 {
 	public:
+		/** True if duplicated versions are found in for this package.
+		 * That means i.e. the version 0.2 is found in two overlays. */
+		bool have_duplicate_versions;
+
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		unsigned short overlay_key;
 
@@ -70,12 +74,16 @@ class Package
 		Version *best() const;
 
 	protected:
+		/** Check if a package has duplicated versions. */
+		bool checkDuplicates(Version *version) const;
+
 		void sortedPushBack(Version *v);
 
 		void defaults()
 		{
 			is_system_package = false;
 			have_same_overlay_key = true;
+			have_duplicate_versions = false;
 		}
 };
 
