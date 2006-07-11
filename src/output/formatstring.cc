@@ -51,10 +51,8 @@ get_escape(char *p)
 }
 
 void
-PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg)
+PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root)
 {
-	vardb=vardbpkg;
-	vardb=NULL;// temporarily until I have time to fix the segfault
 	for(;
 		root != NULL;
 		root = root->next)
@@ -83,10 +81,10 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
-						recPrint(entity, print_property, get_property, ief->if_true, vardbpkg);
+						recPrint(entity, print_property, get_property, ief->if_true);
 					}
 					else if(!ok && ief->if_false) {
-						recPrint(entity, print_property, get_property, ief->if_false, vardbpkg);
+						recPrint(entity, print_property, get_property, ief->if_false);
 					}
 				}
 				break;

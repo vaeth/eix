@@ -150,7 +150,7 @@ class PrintFormat {
 		Node          *m_root;
 		VarDbPkg      *vardb;
 
-		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg);
+		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
 	public:
 		bool no_color,            /**< Shall we use colors? */
@@ -164,7 +164,9 @@ class PrintFormat {
 			   mark_installed_end;/**< End-Marker for installed packages */
 
 		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
-			: m_print_property(print_callback), m_get_property(get_callback) { }
+			: m_print_property(print_callback), m_get_property(get_callback) {
+			vardb=NULL;
+		}
 
 		void setupColors() {
 			color_masked     = AnsiColor(color_masked).asString();
@@ -177,18 +179,24 @@ class PrintFormat {
 		}
 
 		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL) {
-			recPrint(entity, print_property, get_property, root, vardbpkg);
+			vardb=vardbpkg;
+			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
+			vardb=NULL;
 		}
 
 		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL) {
-			recPrint(entity, m_print_property, m_get_property, root, vardbpkg);
+			vardb=vardbpkg;
+			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
+			vardb=NULL;
 		}
 
 		void print(void *entity, VarDbPkg *vardbpkg = NULL) {
-			recPrint(entity, m_print_property, m_get_property, m_root, vardbpkg);
+			vardb=vardbpkg;
+			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
+			vardb=NULL;
 		}
 
 		void setFormat(const char *fmt) throw(ExBasic) {
