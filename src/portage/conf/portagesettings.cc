@@ -143,7 +143,21 @@ vector<string> *PortageSettings::getCategories()
 		}
 
 		sort(m_categories.begin(), m_categories.end());
-		unique(m_categories.begin(),m_categories.end());
+		// I don't know why this does not work:
+		// unique(m_categories.begin(), m_categories.end());
+		// So we implement it manually:
+		vector<string> copy;
+		const char *previous=NULL;
+		for(vector<string>::iterator i = m_categories.begin();
+			i!=m_categories.end(); ++i)
+		{
+			if(previous)
+				if(strcmp(previous, i->c_str()) == 0)
+					continue;
+			copy.push_back(*i);
+			previous=i->c_str();
+		}
+		m_categories=copy;
 	}
 	return &m_categories;
 }
