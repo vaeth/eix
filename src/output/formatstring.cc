@@ -54,6 +54,7 @@ void
 PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg)
 {
 	vardb=vardbpkg;
+	vardb=NULL;// temporarily until I have time to fix the segfault
 	for(;
 		root != NULL;
 		root = root->next)
