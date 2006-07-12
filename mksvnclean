@@ -1,0 +1,16 @@
+#! /bin/bash
+die() {
+	echo $1
+	exit ${2:-1}
+}
+
+if [[ -e configure ]]; then
+	[[ -e Makefile.in ]] || ./autogen.sh || die "./autogen.sh failed"
+	[[ -e Makefile ]] || ./configure || die "./configure failed"
+fi
+if [[ -e Makefile ]]; then
+	make maintainer-clean || die "make maintainer-clean failed"
+fi
+rm -rf build config
+rm aclocal.m4 configure
+find -name "Makefile.in" -print0 | xargs -0 -r -- rm -v --

@@ -5,6 +5,7 @@ svnroot="http://dev.croup.de/repos/${proj}"
 
 usage() {
 	echo "Usage: mkrelease"
+	echo "Verify in advance to have AC_INIT set correctly in configure.in"
 }
 
 die() {
@@ -20,6 +21,7 @@ echo "Creating release tag... "
 svn copy ${svnroot}/trunk ${svnroot}/tags/release-${ver} \
 	-m "Tagging the ${ver} release of the ${proj} project" &>/dev/null || die "svn copy failed"
 
+exit 0
 
 echo "Running autotools..."
 

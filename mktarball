@@ -1,0 +1,24 @@
+#! /bin/bash
+
+usage() {
+	echo "Usage: mktarball"
+}
+
+die() {
+	echo $1
+	exit ${2:-1}
+}
+
+mkdir build &>/dev/null
+pushd build/ &>/dev/null || die "pushd build failed"
+popd &>/dev/null || die "popd failed"
+
+./mkmake -q dist || die "mkmake dist failed"
+
+for i in *.tar*; do
+	md5sum "$i" >"$i.md5"
+	mv "$i" "$i.md5" build
+done
+
+echo "Tarball ist at build/"
+echo "Note that to tag the release in svn you should run mkrelease"

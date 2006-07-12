@@ -124,6 +124,7 @@ void VarsReader::JUMP_COMMENT()
  * @see isValidKeyCharacter */
 void VarsReader::JUMP_WHITESPACE()
 {
+	sourcecmd=false;
 	while(INPUT == '\t' || INPUT == ' ') NEXT_INPUT;
 	switch(INPUT) {
 		case '#':  NEXT_INPUT;

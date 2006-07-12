@@ -1,0 +1,31 @@
+#! /bin/bash
+
+usage() {
+	echo "Usage: mkmake [-q] args-for-make"
+}
+
+die() {
+	echo $1
+	exit ${2:-1}
+}
+
+QUIET=''
+if [[ "$1" = '-q' ]]; then
+  QUIET='&>/dev/null'
+  shift
+fi
+MAKEEXEC="$(type -P make)" || die "cannot find make"
+if ! [[ -e Makefile ]]; then
+	if ! [[ -e configure && -e Makefile.in ]]; then
+		echo "Running autotools..."
+		eval ./autogen.sh $QUIET || die "autogen failed"
+	fi
+	echo "Running configure..."
+	eval ./configure $QUIET || die "configure failed"
+fi
+echo "Making $@..."
+if [[ "$QUIET" ]]; then
+	exec "$MAKEEXEC" "$@" &>/dev/null
+else
+	exec "$MAKEEXEC" "$@"
+fi
