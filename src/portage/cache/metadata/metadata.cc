@@ -59,6 +59,7 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 	for(int i=0; i<numfiles;)
 	{
 		Version *version;
+		Version *newest = NULL;
 
 		/* Split string into package and version, and catch any errors. */
 		aux = ExplodeAtom::split(dents[i]->d_name);
@@ -80,6 +81,8 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			/* Make version and add it to package. */
 			version = new Version(aux[1]);
 			pkg->addVersion(version);
+			if(*(pkg->latest()) == *version)
+				newest=version;
 
 			/* Read stability from cachefile */
 			version->set(metadata_get_keywords(catpath + "/" + dents[i]->d_name, m_arch));
@@ -106,7 +109,8 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		read_metadata(string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str(), pkg);
+		if(newest) // provided we have read the "last" version
+			read_metadata(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
 	}
 
 	if(numfiles > 0)

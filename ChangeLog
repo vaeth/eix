@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.5.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Read package information for the newest available versions:
+	  http://bugs.gentoo.org/show_bug.cgi?id=138629
+
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- If /etc/portage/package.* is a directory, read it recursively:

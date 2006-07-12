@@ -270,15 +270,19 @@ int CdbCache::readCategory(Category &vec) throw(ExBasic)
 		/* If none was found create one */
 		if(pkg == NULL) {
 			pkg = vec.addPackage(aux[0]);
-			pkg->desc     = mapping["DESCRIPTION"];
-			pkg->homepage = mapping["HOMEPAGE"];
-			pkg->licenses = mapping["LICENSE"];
-			pkg->provide  = mapping["PROVIDE"];
 		}
 
 		/* Make version and add it to package. */
 		Version *version = new Version(aux[1]);
 		pkg->addVersion(version);
+		/* For the latest version read/change corresponding data */
+		if(*(pkg->latest()) == *version)
+		{
+			pkg->desc     = mapping["DESCRIPTION"];
+			pkg->homepage = mapping["HOMEPAGE"];
+			pkg->licenses = mapping["LICENSE"];
+			pkg->provide  = mapping["PROVIDE"];
+		}
 
 		/* Read stability */
 		version->set(m_arch, mapping["KEYWORDS"]);

@@ -58,6 +58,7 @@ int FlatCache::readCategory(Category &vec) throw(ExBasic)
 	for(int i=0; i<numfiles;)
 	{
 		Version *version;
+		Version *newest = NULL;
 
 		/* Split string into package and version, and catch any errors. */
 		aux = ExplodeAtom::split(dents[i]->d_name);
@@ -79,6 +80,8 @@ int FlatCache::readCategory(Category &vec) throw(ExBasic)
 			/* Make version and add it to package. */
 			version = new Version(aux[1]);
 			pkg->addVersion(version);
+			if(*(pkg->latest()) == *version)
+				newest=version;
 
 			/* Read stability from cachefile */
 			version->set( get_keywords(m_arch, catpath + "/" + dents[i]->d_name));
@@ -105,7 +108,8 @@ int FlatCache::readCategory(Category &vec) throw(ExBasic)
 		free(aux[1]);
 
 		/* Read the cache file of the last version completely */
-		read_file(pkg, string(catpath + "/" + pkg->name + "-" + version->getFull()).c_str() );
+		if(newest) // provided we have read the "last" version
+			read_file(pkg, string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str() );
 	}
 
 	if(numfiles > 0)

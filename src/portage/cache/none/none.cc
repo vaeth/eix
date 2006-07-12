@@ -51,12 +51,12 @@ static int ebuild_selector (SCANDIR_ARG3 dent)
 
 void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
 {
-	bool have_onetime_info = false;
+	// Make sure to no allocate for a nonexistent package:
+	if(numfiles<=0)
+		return;
 
 	Package *pkg = vec.findPackage(pkg_name);
-	if( (pkg) )
-		have_onetime_info = true;
-	else
+	if( !pkg )
 		pkg = vec.addPackage(pkg_name);
 
 	for(int i = 0; i<numfiles; ++i)
@@ -66,42 +66,35 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 		if( !(dotptr) || strcmp(dotptr,".ebuild") )
 			continue;
 
-		/* read the ebuild */
-		VarsReader ebuild((have_onetime_info ? VarsReader::ONLY_KEYWORDS : VarsReader::NONE));
-		ebuild.read((*directory_path + "/" + list[i]->d_name).c_str());
-
-
-		/* now we don't need the filename anymore, so we can cut off the .ebuild */
+		/* For splitting the version, we cut off the .ebuild */
 		*dotptr = '\0';
-
 		/* Check if we can split it */
 		char* ver = ExplodeAtom::split_version(list[i]->d_name);
+		/* Restore the old value */
+		*dotptr = '.';
 		if(ver == NULL) {
 			m_error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
 			continue;
 		}
 
-		/* only copy ebuild infos once */
-		if( !(have_onetime_info) )
+		/* Make version and add it to package. */
+		Version *version = new Version(ver);
+		pkg->addVersion(version);
+		/* For the latest version read/change corresponding data */
+		bool read_all = (*(pkg->latest()) == *version);
+		/* read the ebuild */
+		VarsReader ebuild((read_all ? VarsReader::NONE : VarsReader::ONLY_KEYWORDS));
+		ebuild.read((*directory_path + "/" + list[i]->d_name).c_str());
+		version->overlay_key = m_overlay_key;
+		version->set(m_arch, ebuild["KEYWORDS"]);
+		if(read_all)
 		{
 			pkg->homepage = ebuild["HOMEPAGE"];
 			pkg->licenses = ebuild["LICENSE"];
 			pkg->desc     = ebuild["DESCRIPTION"];
 			pkg->provide  = ebuild["PROVIDE"];
-
-			have_onetime_info = true;
 		}
-
-		/* Make version and add it to package. */
-		Version *version = new Version(ver);
-		version->overlay_key = m_overlay_key;
-		version->set(m_arch, ebuild["KEYWORDS"]);
-		pkg->addVersion(version);
 		free(ver);
-	}
-
-	if(!have_onetime_info) {
-		vec.deletePackage(pkg_name);
 	}
 }
 

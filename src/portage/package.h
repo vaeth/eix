@@ -73,6 +73,9 @@ class Package
 
 		Version *best() const;
 
+		Version *latest() const
+		{ return *rbegin(); }
+
 	protected:
 		/** Check if a package has duplicated versions. */
 		bool checkDuplicates(Version *version) const;
