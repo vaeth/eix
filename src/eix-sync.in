@@ -124,7 +124,7 @@ if [ -e "/etc/eix-sync-overlays" ]; then
 fi
 
 # Copy cache, create new cache and diff
-tmpfile=$(mktemp)
+tmpfile=$(mktemp /tmp/eix.XXXXXX)
 cp "/var/cache/eix" ${tmpfile} || die "Failed to create temporary cache file"
 run_command "Running update-eix" "update-eix" || exit 1 
 diff-eix ${tmpfile} || die "Failed to diff against current cache"
