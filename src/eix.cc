@@ -93,6 +93,11 @@ dump_help(int exit_code)
 			"  Miscellaneous:\n"
 			"    -I, --installed       Next expression only matches installed packages.\n"
 			"    -D  --dup-versions    Match packages with duplicated versions\n"
+			"    -t  --test-for-any    Match packages with entries in /etc/portage/*\n"
+			"                          whose removal does not change any mask/keyword\n"
+			"    -T  --test-for-installed Match packages with entries in /etc/portage/*\n"
+			"                          whose removal does not change any mask/keyword\n"
+			"                          of an installed version of a package\n"
 			"    -!, --not             Invert the expression.\n"
 			"\n"
 			"  Search Fields:\n"
@@ -205,6 +210,8 @@ static struct Option long_options[] = {
 	// Options for criteria
 	Option("installed",     'I'),
 	Option("dup-versions",  'D'),
+	Option("test-for-any",  't'),
+	Option("test-for-installed", 'T'),
 	Option("not",           '!'),
 
 	// Algorithms for a criteria
@@ -310,7 +317,8 @@ run_eix(int argc, char** argv)
 		close(1);
 	}
 
-	Matchatom *query = parse_cli(varpkg_db, argreader.begin(), argreader.end());
+	PortageSettings portagesettings;
+	Matchatom *query = parse_cli(varpkg_db, portagesettings, argreader.begin(), argreader.end());
 
 	string varname;
 	try {
@@ -371,8 +379,6 @@ run_eix(int argc, char** argv)
 	if(FuzzyAlgorithm::sort_by_levenshtein()) {
 		matches.sort(FuzzyAlgorithm::compare);
 	}
-
-	PortageSettings portagesettings;
 
 	Keywords accepted_keywords;
 

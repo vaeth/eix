@@ -100,6 +100,16 @@ Only match packages with duplicated versions
 (for example, sys-foo/bar-0.2.1 exists both in the official portage tree and a local
 overlay)
 .TP
+.BR -t ", " --test-for-any
+Only match packages with entries in /etc/portage/package.* whose removal
+would not modify any keywords/mask of any existing version of the package.
+This may help cleaning up the local config-files.
+.TP
+.BR -T ", " --test-for-installed
+Only match packages with entries in /etc/portage/package.* whose removal
+would not modify any keywords/mask of an installed version of the package.
+Note that this includes all packages matching -t
+.TP
 .BR -! ", " --not
 Invert the expression given
 .\" }}}

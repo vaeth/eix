@@ -29,7 +29,7 @@
 #include "cli.h"
 
 Matchatom *
-parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+parse_cli(VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
@@ -75,6 +75,8 @@ parse_cli(VarDbPkg &varpkg_db, ArgumentReader::iterator arg, ArgumentReader::ite
 			// Check local options {{{
 			case 'I': test->Installed();    break;
 			case 'D': test->DuplVersions(); break;
+			case 't': test->ObsoleteCfg(portagesettings,false); break;
+			case 'T': test->ObsoleteCfg(portagesettings,true); break;
 			case '!': test->Invert();       break;
 			// }}}
 

@@ -106,3 +106,15 @@ Package::best() const
 	}
 	return ret;
 }
+
+void Package::deepcopy(const Package &p)
+{
+	*this=p;
+	clear();
+	for(Package::const_iterator it=p.begin(); it != p.end(); it++)
+	{
+		Version *v=new Version;
+		*v=(**it);
+		this->push_back(v);
+	}
+}

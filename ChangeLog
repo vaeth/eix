@@ -2,6 +2,7 @@
 
 *eix-0.5.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Implemented -t and -T to help cleaning up /etc/portage/package.*
 	- Read package information for the newest available versions:
 	  http://bugs.gentoo.org/show_bug.cgi?id=138629
 

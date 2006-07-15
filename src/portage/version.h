@@ -59,6 +59,12 @@ class Version : public BasicVersion, public Keywords {
 
 		bool operator == (const BasicVersion &v) const
 		{ return ((BasicVersion)*this) == v; }
+
+		bool operator != (const Version &v) const
+		{ return !((*this) == v); }
+
+		bool operator != (const BasicVersion &v) const
+		{ return !((*this) == v); }
 };
 
 #endif /* __VERSION_H__ */

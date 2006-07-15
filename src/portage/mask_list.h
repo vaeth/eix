@@ -123,18 +123,21 @@ class MaskList
 			return &(t->second);
 		}
 
-		void applyMasks(Package *p) const
+		bool applyMasks(Package *p) const
 		{
 			const eix::ptr_list<_type> *l = get(p);
 			if(l == NULL)
-				return;
+				return false;
 
+			bool rvalue = false;
 			for(const_mask_iterator m = l->begin();
 				m != l->end();
 				++m)
 			{
 				m->checkMask(*p, false, false);
+				rvalue = true;
 			}
+			return rvalue;
 		}
 };
 

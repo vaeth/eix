@@ -26,6 +26,7 @@
  ***************************************************************************/
 
 #include "packagetest.h"
+#include <portage/version.h>
 
 using namespace std;
 
@@ -44,6 +45,7 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
 	invert   = installed = dup_versions = false;
+	portagesettings = NULL;
 }
 
 void
@@ -76,6 +78,11 @@ PackageTest::calculateNeeds() {
 	}
 
 	if(dup_versions && need < PackageReader::VERSIONS)
+	{
+		need = PackageReader::VERSIONS;
+	}
+
+	if(portagesettings && need < PackageReader::VERSIONS)
 	{
 		need = PackageReader::VERSIONS;
 	}
@@ -173,24 +180,84 @@ PackageTest::stringMatch(Package *pkg) const
 	return false;
 }
 
+/** test whether m1 and m2 have the same masks/keywords for
+    all/installed versions (depending on test_only_installed) */
+bool
+PackageTest::have_same_mask(const Package &m1, const Package &m2) const
+{
+	Package::const_reverse_iterator m1_ri = m1.rbegin();
+	Package::const_reverse_iterator m2_ri = m2.rbegin();
+	BasicVersion *prev_ver = NULL;
+	for(; m1_ri != m1.rend(); prev_ver = *m1_ri, ++m1_ri, ++m2_ri)
+	{
+		// The two lists have different size or are sorted differently
+		// This should not happen, but if it does for some reason,
+		// this is due to m2_config. In such an emergency case,
+		// we even do not test for installed versions
+		if( m2_ri == m2.rend() || (**m1_ri != **m2_ri))
+			return false;
+		// Only test if keywords/masks are not equal anyway:
+		if(m1_ri->get() != m2_ri->get())
+		{
+			if(!test_only_installed)
+				return false;
+			// If the current version was not yet treated
+			if((prev_ver == NULL) ||
+				(**m1_ri != *prev_ver))
+			{
+				// And this version is installed
+				if(vardbpkg->isInstalled(&m1, *m1_ri))
+					return false;
+			}
+		}
+	}
+	// The two lists have different size?
+	if ( m2_ri != m2.rend())
+		return false;
+	return true;
+}
+
 bool
 PackageTest::match(PackageReader *pkg) const
 {
 	bool is_match = true;
+	Package *p = NULL;
 
 	pkg->read(need);
 
 	if(algorithm.get() != NULL) {
-		is_match = stringMatch(pkg->get());
+		p = pkg->get();
+		is_match = stringMatch(p);
 	}
 
-	/* Honour the C_O_INSTALLED, C_O_DUP_VERSIONS and the C_O_INVERT flags. */
+	/* Honour the -I, -D, -t, -T, and -! flags. */
+
 	if(installed && is_match) {
-		is_match = vardbpkg->isInstalled(pkg->get());
+		if(p == NULL)
+			p = pkg->get();
+		is_match = vardbpkg->isInstalled(p);
 	}
 
 	if(dup_versions && is_match) {
-		is_match = pkg->get()->have_duplicate_versions;
+		if(p == NULL)
+			p = pkg->get();
+		is_match = p->have_duplicate_versions;
+	}
+
+	if(portagesettings && is_match) {
+		if(p == NULL)
+			p = pkg->get();
+		Package ori,user;
+		ori.deepcopy(*p);
+		portagesettings->setStability(&ori, accept_keywords);
+		user.deepcopy(ori);
+		is_match = false;
+		if(portagesettings->user_config->setMasks(&user))
+			is_match = true;
+		if(portagesettings->user_config->setStability(&user, accept_keywords))
+			is_match = true;
+		if(is_match)
+			is_match=have_same_mask(ori, user);
 	}
 
 	return (invert ? !is_match : is_match);

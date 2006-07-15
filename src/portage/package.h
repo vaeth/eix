@@ -76,6 +76,8 @@ class Package
 		Version *latest() const
 		{ return *rbegin(); }
 
+		void deepcopy(const Package &p);
+
 	protected:
 		/** Check if a package has duplicated versions. */
 		bool checkDuplicates(Version *version) const;

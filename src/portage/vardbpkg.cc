@@ -86,7 +86,7 @@ string VarDbPkg::getInstalledString(const Package &p)
 }
 
 /** Returns true if a Package installed. */
-bool VarDbPkg::isInstalled(Package *p, BasicVersion *v)
+bool VarDbPkg::isInstalled(const Package *p, const BasicVersion *v)
 {
 	vector<BasicVersion> *vec = getInstalledVector( p->category, p->name );
 	if(vec)
