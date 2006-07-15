@@ -144,11 +144,14 @@ class DiffTrees
 		found_func found_package;
 		changed_func changed_package;
 
-		/// Constructor
-		DiffTrees(const PortageSettings &psettings)
+		DiffTrees(const PortageSettings &psettings, bool local_portage_config)
 		{
 			portagesettings = &psettings;
-			accepted_keywords = psettings.getAcceptKeywords();
+			ignore_etc_portage = !local_portage_config;
+			if(local_portage_config)
+				accepted_keywords = psettings.getAcceptKeywords();
+			else
+				accepted_keywords = Keywords::KEY_STABLE;
 		}
 
 		/// Diff the trees and run callbacks
@@ -174,7 +177,7 @@ class DiffTrees
 	private:
 		Keywords accepted_keywords;
 		const PortageSettings *portagesettings;
-
+		bool ignore_etc_portage;
 
 		/// Diff two categories and run callbacks.
 		// Remove already diffed packages.
@@ -210,11 +213,19 @@ class DiffTrees
 		/// Return true if the best versions of both packages differ.
 		bool best_differs(Package &p1, Package &p2)
 		{
-			portagesettings->user_config->setMasks(&p1);
-			portagesettings->user_config->setStability(&p1, accepted_keywords);
+			if(!ignore_etc_portage)
+			{
+				portagesettings->user_config->setMasks(&p1);
+				portagesettings->user_config->setStability(&p1, accepted_keywords);
+				portagesettings->user_config->setMasks(&p2);
+				portagesettings->user_config->setStability(&p2, accepted_keywords);
+			}
+			else
+			{
+				portagesettings->setStability(&p1, accepted_keywords);
+				portagesettings->setStability(&p2, accepted_keywords);
+			}
 			Version *old_best = p1.best();
-			portagesettings->user_config->setMasks(&p2);
-			portagesettings->user_config->setStability(&p2, accepted_keywords);
 			Version *new_best = p2.best();
 
 			return (old_best == NULL && new_best != NULL)
@@ -335,7 +346,7 @@ run_diff_eix(int argc, char *argv[])
 
 	INFO("Diffing databases (%i - %i packages)\n", old_tree.countPackages(), new_tree.countPackages());
 
-	DiffTrees differ(portagesettings);
+	DiffTrees differ(portagesettings, eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG"));
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;
 	differ.changed_package = print_changed_package;

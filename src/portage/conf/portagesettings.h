@@ -80,8 +80,8 @@ class PortageUserConfig {
 		}
 
 		// return true if something from /etc/portage/package.* applied
-		bool setMasks(Package *p);
-		bool setStability(Package *p, Keywords kw);
+		bool setMasks(Package *p) const;
+		bool setStability(Package *p, Keywords kw) const;
 };
 
 class PortageUserConfig;
@@ -126,7 +126,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		 * Reads categories on first call. */
 		std::vector<std::string> *getCategories();
 
-		void setStability(Package *pkg, const Keywords &kw);
+		void setStability(Package *pkg, const Keywords &kw) const;
 };
 
 #endif

@@ -367,6 +367,10 @@ Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
 environment.
 .TP
+.BR DIFF_LOCAL_PORTAGE_CONFIG " " (true/false)
+If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
+or the environment.
+.TP
 .\" {{{ Default Matchfields for different strings.
 .BR MATCH_NAME_IF " " (string)
 Use NAME as default matchfield if the string match the given regex.

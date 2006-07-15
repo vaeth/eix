@@ -142,6 +142,11 @@ eixrc.addDefault(
 			"true","If false, eix won't read /etc/portage and ACCEPT_KEYWORDS.")
 		);
 
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_LOCAL_PORTAGE_CONFIG",
+			"true","If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS.")
+		);
+
 /* fancy new feature: change default matchfield depending on the searchstring. */
 #define MATCH_IF(field, value)                                                                       \
 	eixrc.addDefault(                                                                               \

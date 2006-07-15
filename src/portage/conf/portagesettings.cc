@@ -216,7 +216,7 @@ bool PortageUserConfig::readKeywords() {
 	return true;
 }
 
-bool PortageUserConfig::setMasks(Package *p) {
+bool PortageUserConfig::setMasks(Package *p) const {
 	/* Set hardmasks */
 	return m_mask.applyMasks(p);
 }
@@ -232,7 +232,7 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 }
 
 bool
-PortageUserConfig::setStability(Package *p, Keywords kw)
+PortageUserConfig::setStability(Package *p, Keywords kw) const
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
 	map<Version*,string> sorted_by_versions;
@@ -295,7 +295,7 @@ PortageUserConfig::setStability(Package *p, Keywords kw)
 }
 
 void
-PortageSettings::setStability(Package *pkg, const Keywords &kw)
+PortageSettings::setStability(Package *pkg, const Keywords &kw) const
 {
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {
