@@ -144,11 +144,16 @@ class DiffTrees
 		found_func found_package;
 		changed_func changed_package;
 
-		/// Diff the trees and run callbacks
-		void diff(PackageTree &old_tree, PackageTree &new_tree, PortageSettings &psettings)
+		/// Constructor
+		DiffTrees(const PortageSettings &psettings)
 		{
-			Keywords accepted_keywords = psettings.getAcceptKeywords();
+			portagesettings = &psettings;
+			accepted_keywords = psettings.getAcceptKeywords();
+		}
 
+		/// Diff the trees and run callbacks
+		void diff(PackageTree &old_tree, PackageTree &new_tree)
+		{
 			// Diff every category from the old tree with the category from the new tree
 			for(PackageTree::iterator old_cat = old_tree.begin();
 				old_cat != old_tree.end();
@@ -166,6 +171,10 @@ class DiffTrees
 				for_each(new_cat->begin(), new_cat->end(), found_package);
 			}
 		}
+	private:
+		Keywords accepted_keywords;
+		const PortageSettings *portagesettings;
+
 
 		/// Diff two categories and run callbacks.
 		// Remove already diffed packages.
@@ -199,14 +208,18 @@ class DiffTrees
 		}
 
 		/// Return true if the best versions of both packages differ.
-		bool best_differs(const Package &p1, const Package &p2)
+		bool best_differs(Package &p1, Package &p2)
 		{
-				Version *old_best = p1.best();
-				Version *new_best = p2.best();
+			portagesettings->user_config->setMasks(&p1);
+			portagesettings->user_config->setStability(&p1, accepted_keywords);
+			Version *old_best = p1.best();
+			portagesettings->user_config->setMasks(&p2);
+			portagesettings->user_config->setStability(&p2, accepted_keywords);
+			Version *new_best = p2.best();
 
-				return (old_best == NULL && new_best != NULL)
-				    || (old_best != NULL && new_best == NULL)
-				    || (old_best != NULL && new_best != NULL && *old_best != *new_best);
+			return (old_best == NULL && new_best != NULL)
+			    || (old_best != NULL && new_best == NULL)
+			    || (old_best != NULL && new_best != NULL && *old_best != *new_best);
 		}
 };
 
@@ -322,12 +335,12 @@ run_diff_eix(int argc, char *argv[])
 
 	INFO("Diffing databases (%i - %i packages)\n", old_tree.countPackages(), new_tree.countPackages());
 
-	DiffTrees differ;
+	DiffTrees differ(portagesettings);
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;
 	differ.changed_package = print_changed_package;
 
-	differ.diff(old_tree, new_tree, portagesettings);
+	differ.diff(old_tree, new_tree);
 
 	return 0;
 }

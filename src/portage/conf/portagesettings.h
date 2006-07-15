@@ -115,7 +115,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 			return m_accepted_keyword;
 		}
 
-		Keywords getAcceptKeywords() {
+		Keywords getAcceptKeywords() const {
 			return m_accepted_keywords;
 		}
 
