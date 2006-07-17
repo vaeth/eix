@@ -95,7 +95,11 @@ print_help(void)
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
-			"     --exclude-overlay   exclude a overlay from the update-process.\n"
+			"     --exclude-overlay   exclude an overlay from the update-process.\n"
+			"                         Note that you can also exclude PORTDIR\n"
+			"                         using this option.\n"
+			"\n"
+			"     --add-overlay       add an overlay to the update-process.\n"
 			"\n"
 #if 0
 			"     --print-masks       print masks (if you are no developer, you probably won't need this)\n"
@@ -114,6 +118,7 @@ print_help(void)
 enum cli_options {
 	O_DUMP = 260,
 	O_EXCLUDE,
+	O_ADD,
 	ONLY_NEEDED,
 	O_PRINT_MASKS
 };
@@ -132,6 +137,7 @@ static struct Option long_options[] = {
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 
 	 Option("exclude-overlay", O_EXCLUDE), /* exclude a overlay from the update-process. */
+	 Option("add-overlay",     O_ADD),     /* add  an   overlay to   the update-process. */
 	 Option(0 ,                0)
 };
 
@@ -142,6 +148,7 @@ run_update_eix(int argc, char *argv[])
 	EixRc &eixrc = get_eixrc();
 
 	vector<string>excluded_overlays = split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r");
+	vector<string>add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -161,6 +168,16 @@ run_update_eix(int argc, char *argv[])
 					exit(1);
 				}
 				excluded_overlays.push_back(current_param->m_argument);
+				break;
+			case O_ADD:
+				++current_param;
+				if(! (current_param != argreader.end()
+					  && current_param->type == Parameter::ARGUMENT)) {
+					fprintf(stderr, "Arg %i: --add-overlay is missing an argument.\n",
+							distance(argreader.begin(), current_param));
+					exit(1);
+				}
+				add_overlays.push_back(current_param->m_argument);
 				break;
 		}
 		++current_param;
@@ -197,6 +214,10 @@ run_update_eix(int argc, char *argv[])
 		table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str());
 	else
 		INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
+
+	for(vector<string>::iterator it = add_overlays.begin();
+		it != add_overlays.end(); ++it)
+		portage_settings.overlays.push_back(*it);
 
 	for(unsigned int i = 0; i<portage_settings.overlays.size(); ++i)
 	{

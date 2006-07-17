@@ -334,6 +334,10 @@ Set default levenshtein-distance.
 Set a list of overlays that are excluded from the index (separators are [\\n\\r\\t ]).
 
 .TP
+.BR ADD_OVERLAY "  " (String)
+Set a list of overlays that are added to the index (separators are [\\n\\r\\t ]).
+
+.TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (Strings)
 Set the type of the cache used by portage. If you don't know what this is, just leave it
 alone.

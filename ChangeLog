@@ -7,6 +7,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=138629
 	- Let diff-eix respect local setting (DIFF_LOCAL_PORTAGE_CONFIG):
 	  http://bugs.gentoo.org/show_bug.cgi?id=140555
+	- Document that it is possible to exclude the PORTDIR "overlay"
+	- Add --add-overlay (ADD_OVERLAY variable) to update-eix
 
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

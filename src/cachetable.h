@@ -42,6 +42,9 @@ class CacheTable
 
 		void addCache(std::string directory, std::string cache_name)
 		{
+			for(CacheTable::iterator it=begin(); it != end(); ++it)
+				if(directory == it->getPath())
+					return;
 			BasicCache *cache = get_cache(cache_name);
 			if(cache == NULL)
 			{

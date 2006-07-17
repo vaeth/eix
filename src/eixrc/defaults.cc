@@ -138,6 +138,11 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "ADD_OVERLAY",
+			"","List of overlays that should be added to the index.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "LOCAL_PORTAGE_CONFIG",
 			"true","If false, eix won't read /etc/portage and ACCEPT_KEYWORDS.")
 		);
