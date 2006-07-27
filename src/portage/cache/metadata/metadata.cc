@@ -85,7 +85,7 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 				newest=version;
 
 			/* Read stability from cachefile */
-			version->set(metadata_get_keywords(catpath + "/" + dents[i]->d_name, m_arch));
+			version->set(m_arch, metadata_get_keywords(catpath + "/" + dents[i]->d_name));
 			version->overlay_key = m_overlay_key;
 
 			/* Free old split */

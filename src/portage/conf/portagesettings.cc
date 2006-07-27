@@ -286,6 +286,36 @@ PortageUserConfig::setStability(Package *p, Keywords kw) const
 				else if(*kvi == "-*") {
 					lkw |= Keywords::KEY_MINUSASTERISK;
 				}
+				else { // match non-arch keywords:
+					vector<string> arr_keywords = split_string((*i)->get_full_keywords());
+					for(vector<string>::iterator it = arr_keywords.begin();
+						it != arr_keywords.end(); ++it)
+						if(*it == *kvi)
+						{
+							switch((*it)[0]) {
+								case '-':
+									if((*it)[1] == '~')
+									{
+										lkw |= Keywords::KEY_UNSTABLE;
+										**i |= Keywords::KEY_UNSTABLE;
+									}
+									else
+									{
+										lkw |= Keywords::KEY_UNSTABLE;
+										**i |= Keywords::KEY_UNSTABLE;
+									}
+								case '~':
+									lkw |= Keywords::KEY_UNSTABLE;
+									**i |= Keywords::KEY_UNSTABLE;
+									break;
+								default:
+									lkw |= Keywords::KEY_STABLE;
+									**i |= Keywords::KEY_STABLE;
+									break;
+							}
+							break;
+						}
+				}
 			}
 
 		}

@@ -34,7 +34,7 @@
 
 #include <fstream>
 
-Keywords::Type get_keywords(std::string arch, std::string filename) throw (ExBasic);
+std::string get_keywords(std::string filename) throw (ExBasic);
 
 /** Read a metadata cache file. */
 void read_file(Package *pkg, const char *filename) throw (ExBasic);

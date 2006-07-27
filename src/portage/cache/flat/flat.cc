@@ -84,7 +84,7 @@ int FlatCache::readCategory(Category &vec) throw(ExBasic)
 				newest=version;
 
 			/* Read stability from cachefile */
-			version->set( get_keywords(m_arch, catpath + "/" + dents[i]->d_name));
+			version->set(m_arch, get_keywords(catpath + "/" + dents[i]->d_name));
 			version->overlay_key = m_overlay_key;
 
 			/* Free old split */

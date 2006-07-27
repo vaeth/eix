@@ -34,7 +34,7 @@
 using namespace std;
 
 /** Read the stability on 'arch' from a metadata cache file. */
-Keywords::Type get_keywords(string arch, string filename) throw (ExBasic)
+string get_keywords(string filename) throw (ExBasic)
 {
 	// NOTE: Switched from std::istream::getline to std::getline
 	string linebuf;
@@ -54,7 +54,7 @@ Keywords::Type get_keywords(string arch, string filename) throw (ExBasic)
 	getline(is, linebuf);
 	is.close();
 
-	return Keywords::get_type(arch, linebuf);
+	return linebuf;
 }
 
 /** Read a metadata cache file. */

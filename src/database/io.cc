@@ -71,6 +71,7 @@ io::read_version(FILE *fp)
 
 	// read stability & masking
 	v->m_mask = io::read<Keywords::Type>(fp);
+	v->full_keywords = io::read_string(fp);
 
 	// read primary version part
 	for(unsigned char i = io::read<unsigned char>(fp);
@@ -100,6 +101,9 @@ io::write_version(FILE *fp, const Version *v)
 
 	// write stability & masking
 	io::write<Keywords::Type>(fp, v->m_mask);
+
+	// write full keywords if available
+	io::write_string(fp, v->full_keywords);
 
 	// write m_primsplit
 	io::write<unsigned char>(fp, (unsigned char)v->m_primsplit.size());

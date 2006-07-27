@@ -47,10 +47,11 @@ class Keywords {
 
 	protected:
 		Type m_mask;
+		std::string full_keywords;
 
 	public:
 		Keywords(Type t = KEY_MINUSKEYWORD)
-		{ m_mask = t; }
+		{ m_mask = t; full_keywords = ""; }
 
 		static Type get_type(std::string arch, std::string keywords)
 		{
@@ -82,13 +83,16 @@ class Keywords {
 		}
 
 		void set(std::string arch, std::string keywords)
-		{ set(get_type(arch, keywords)); }
+		{ full_keywords = keywords; set(get_type(arch, keywords)); }
 
 		void set(Type t)
 		{ m_mask = t; }
 
 		Type get() const
 		{ return m_mask; }
+
+		std::string get_full_keywords() const
+		{ return full_keywords; }
 
 		/** Return true if version is marked stable. */
 		bool isStable() const

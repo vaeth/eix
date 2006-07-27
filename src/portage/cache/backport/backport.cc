@@ -63,9 +63,9 @@ get_map_from_cache(const char *file, map<string,string> &x)
 	return x.size();
 }
 
-/** Read the stability on 'arch' from a metadata cache file. */
-static Keywords::Type
-get_keywords(const string &filename, const string &arch) throw (ExBasic)
+/** Read the stability from a metadata cache file. */
+static string
+get_keywords(const string &filename) throw (ExBasic)
 {
 	map<string,string> cf;
 
@@ -76,7 +76,7 @@ get_keywords(const string &filename, const string &arch) throw (ExBasic)
 				strerror(errno));
 	}
 
-	return Keywords::get_type(arch, cf["KEYWORDS"]);
+	return cf["KEYWORDS"];
 }
 
 /** Read a metadata cache file. */
@@ -140,7 +140,7 @@ int BackportCache::readCategory(Category &vec) throw(ExBasic)
 				newest=version;
 
 			/* Read stability from cachefile */
-			version->set(get_keywords(catpath + "/" + dents[i]->d_name, m_arch));
+			version->set(m_arch, get_keywords(catpath + "/" + dents[i]->d_name));
 			version->overlay_key = m_overlay_key;
 
 			/* Free old split */

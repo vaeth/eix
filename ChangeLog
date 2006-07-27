@@ -2,13 +2,15 @@
 
 *eix-0.5.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Implemented -t and -T to help cleaning up /etc/portage/package.*
+	- Implemented -t and -T to help cleaning up /etc/portage/package.*.
 	- Read package information for the newest available versions:
 	  http://bugs.gentoo.org/show_bug.cgi?id=138629
 	- Let diff-eix respect local setting (DIFF_LOCAL_PORTAGE_CONFIG):
 	  http://bugs.gentoo.org/show_bug.cgi?id=140555
-	- Document that it is possible to exclude the PORTDIR "overlay"
-	- Add --add-overlay (ADD_OVERLAY variable) to update-eix
+	- Document that it is possible to exclude the PORTDIR "overlay".
+	- Add --add-overlay (ADD_OVERLAY variable) to update-eix.
+	- Treat also non-arch Keywords, e.g. x86 on an amd64 architecture.
+	  Unfortunately, this increases database size by factor ~1.5.
 
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -20,7 +22,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=132874
 	- Mark installed versions in output list. This experimental feature
 	  can be disabled with MARK_INSTALLED=none in /etc/eixrc
-	- Fixing -D again
+	- Fixing -D again.
 
 *eix-0.5.5
 	Emil Beinroth <emilbeinroth at gmx.net>:
