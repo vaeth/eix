@@ -54,7 +54,7 @@ using namespace std;
 
 char *program_name = NULL;
 void sig_handler(int sig);
-void update(CacheTable &cache_table, PortageSettings &portage_settings);
+void update(CacheTable &cache_table, PortageSettings &portage_settings, bool small);
 
 static void
 check_db_permissions()
@@ -232,7 +232,8 @@ run_update_eix(int argc, char *argv[])
 
 	/* Update the database from scratch */
 	try {
-		update(table, portage_settings);
+		update(table, portage_settings,
+			eixrc.getBool("SMALL_EIX_DATABASE"));
 	} catch(ExBasic &e)
 	{
 		cerr << e << endl;
@@ -254,7 +255,7 @@ error_callback(const char *fmt, ...)
 }
 
 void
-update(CacheTable &cache_table, PortageSettings &portage_settings)
+update(CacheTable &cache_table, PortageSettings &portage_settings, bool small)
 {
 	DBHeader dbheader;
 	vector<string> *categories = portage_settings.getCategories();
@@ -310,7 +311,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings)
 	dbheader.size = package_tree.countCategories();
 
 	io::write_header(database_stream, dbheader);
-	io::write_packagetree(database_stream, package_tree);
+	io::write_packagetree(database_stream, package_tree, small);
 
 	fclose(database_stream);
 

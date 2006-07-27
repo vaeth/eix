@@ -38,7 +38,7 @@
 class Version : public BasicVersion, public Keywords {
 
 	public:
-		friend void     io::write_version(FILE *fp, const Version *v);
+		friend void     io::write_version(FILE *fp, const Version *v, bool small);
 		friend Version *io::read_version(FILE *fp);
 
 		/** Key for Portagedb.overlays/overlaylist from header. */

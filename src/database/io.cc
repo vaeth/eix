@@ -94,7 +94,7 @@ io::read_version(FILE *fp)
 }
 
 void
-io::write_version(FILE *fp, const Version *v)
+io::write_version(FILE *fp, const Version *v, bool small)
 {
 	// write m_full string
 	io::write_string(fp, v->m_full);
@@ -102,8 +102,11 @@ io::write_version(FILE *fp, const Version *v)
 	// write stability & masking
 	io::write<Keywords::Type>(fp, v->m_mask);
 
-	// write full keywords if available
-	io::write_string(fp, v->full_keywords);
+	// write full keywords unless small database is required
+	if(small)
+		io::write_string(fp, "");
+	else
+		io::write_string(fp, v->full_keywords);
 
 	// write m_primsplit
 	io::write<unsigned char>(fp, (unsigned char)v->m_primsplit.size());
@@ -141,7 +144,7 @@ io::write_category_header(FILE *fp, const std::string &name, unsigned int size)
 
 
 void
-io::write_package(FILE *fp, const Package &pkg)
+io::write_package(FILE *fp, const Package &pkg, bool small)
 {
 	off_t offset_position = ftello(fp);
 	fseek(fp, sizeof(PackageReader::offset_type), SEEK_CUR);
@@ -159,7 +162,7 @@ io::write_package(FILE *fp, const Package &pkg)
 		i != pkg.end();
 		++i)
 	{
-		io::write_version(fp, *i);
+		io::write_version(fp, *i, small);
 	}
 
 	off_t pkg_end = ftello(fp);
@@ -193,7 +196,7 @@ io::read_header(FILE *fp, DBHeader &hdr)
 }
 
 void
-io::write_packagetree(FILE *fp, const PackageTree &tree)
+io::write_packagetree(FILE *fp, const PackageTree &tree, bool small)
 {
 	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
 	{
@@ -205,7 +208,7 @@ io::write_packagetree(FILE *fp, const PackageTree &tree)
 			++p)
 		{
 			// write package to fp
-			io::write_package(fp, **p);
+			io::write_package(fp, **p, small);
 		}
 	}
 }

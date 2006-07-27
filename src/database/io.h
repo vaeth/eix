@@ -66,7 +66,7 @@ namespace io {
 	Version *read_version(FILE *fp);
 
 	// Write a version to fp
-	void write_version(FILE *fp, const Version *v);
+	void write_version(FILE *fp, const Version *v, bool small);
 
 
 	// Read a category-header from fp
@@ -77,13 +77,13 @@ namespace io {
 
 
 	// Write package to stream
-	void write_package(FILE *fp, const Package &pkg);
+	void write_package(FILE *fp, const Package &pkg, bool small);
 
 
 	void write_header(FILE *fp, const DBHeader &hdr);
 	void read_header(FILE *fp, DBHeader &hdr);
 
-	void write_packagetree(FILE *fp, const PackageTree &pkg);
+	void write_packagetree(FILE *fp, const PackageTree &pkg, bool small);
 	void read_packagetree(FILE *fp, unsigned int size, PackageTree &tree);
 }
 

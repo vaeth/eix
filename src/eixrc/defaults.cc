@@ -116,6 +116,11 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "SMALL_EIX_DATABASE",
+			"false", "Keep database small at the cost of never honoring keywords of other ARCH")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::INTEGER, "LEVENSHTEIN_DISTANCE",
 			LEVENSHTEIN_DISTANCE_STR,
 			"Defines the default maximal levensthein for which a string is considered a match.")

@@ -12,7 +12,8 @@
 	- Fixed passing of recursive flag for /etc/portage/package.*
 	  This should fix http://bugs.gentoo.org/show_bug.cgi?id=141818
 	- Treat also non-arch Keywords, e.g. x86 on an amd64 architecture.
-	  Unfortunately, this increases database size by factor ~1.5.
+	  To avoid increasing database size by factor ~1.5 for this feature,
+	  you can use the new SMALL_EIX_DATABASE variable.
 
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

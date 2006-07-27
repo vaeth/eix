@@ -326,6 +326,11 @@ Use colors even when stdout is not a terminal.
 Turns --versionlines on.
 
 .TP
+.BR SMALL_EIX_DATABASE "  " (true/false)
+Keep database small at the cost of never honoring keywords of other ARCH.
+Only set this to true if you really must save disk space.
+
+.TP
 .BR LEVENSHTEIN_DISTANCE "  " (Integer)
 Set default levenshtein-distance.
 
