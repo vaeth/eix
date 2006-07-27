@@ -88,7 +88,7 @@ bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, boo
 			++depth;
 			ASSERT(depth < 100,
 				"Nesting level too deep in %s", dir.c_str());
-			if(! pushback_lines(it->c_str(), v, removed_empty))
+			if(! pushback_lines(it->c_str(), v, removed_empty, true))
 				rvalue=false;
 			--depth;
 		}
