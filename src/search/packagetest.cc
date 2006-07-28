@@ -180,8 +180,9 @@ PackageTest::stringMatch(Package *pkg) const
 	return false;
 }
 
-/** test whether m1 and m2 have the same masks/keywords for
-    all/installed versions (depending on test_only_installed) */
+/** test whether m1 and m2 have the same masks/keywords or
+    whether m2 has redundant flag set for all/installed
+    versions (depending on test_only_installed) */
 bool
 PackageTest::have_same_mask(const Package &m1, const Package &m2) const
 {
@@ -197,7 +198,8 @@ PackageTest::have_same_mask(const Package &m1, const Package &m2) const
 		if( m2_ri == m2.rend() || (**m1_ri != **m2_ri))
 			return false;
 		// Only test if keywords/masks are not equal anyway:
-		if(m1_ri->get() != m2_ri->get())
+		if((m1_ri->get() != m2_ri->get()) &&
+			(!m2_ri->get_redundant()))
 		{
 			if(!test_only_installed)
 				return false;

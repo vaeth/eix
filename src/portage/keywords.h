@@ -48,6 +48,7 @@ class Keywords {
 	protected:
 		Type m_mask;
 		std::string full_keywords;
+		bool redundant ; /* local config sets redundant entries */
 
 	public:
 		Keywords(Type t = KEY_MINUSKEYWORD)
@@ -93,6 +94,12 @@ class Keywords {
 
 		std::string get_full_keywords() const
 		{ return full_keywords; }
+
+		void set_redundant(bool red)
+		{ redundant = red; }
+
+		bool get_redundant () const
+		{ return redundant; }
 
 		/** Return true if version is marked stable. */
 		bool isStable() const

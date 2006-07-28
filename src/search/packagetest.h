@@ -117,8 +117,9 @@ class PackageTest {
 		/** Get the Fetched-value that is required to determin */
 		void calculateNeeds();
 
-		/** test whether m1 and m2 have the same masks/keywords for
-		    all/installed versions (depending on test_only_installed) */
+		/** test whether m1 and m2 have the same masks/keywords or
+		    whether m2 has redundant flag set for all/installed
+		    versions (depending on test_only_installed) */
 		bool have_same_mask(const Package &m1, const Package &m2) const;
 };
 

@@ -101,13 +101,16 @@ Only match packages with duplicated versions
 overlay)
 .TP
 .BR -t ", " --test-for-any
-Only match packages with entries in /etc/portage/package.* whose removal
-would not modify any keywords/mask of any existing version of the package.
-This may help cleaning up the local config-files.
+Only match packages with entries in /etc/portage/package.* whose removal or
+modification would not modify any keywords/mask of any existing version
+of the package. This may help cleaning up the local config-files.
+By modification, we mean here that e.g. -*, ~NONARCH, or NONARCH may be
+replaced by ~ARCH, or that ~NONARCH may be replaced by NONARCH.
 .TP
 .BR -T ", " --test-for-installed
-Only match packages with entries in /etc/portage/package.* whose removal
-would not modify any keywords/mask of an installed version of the package.
+Only match packages with entries in /etc/portage/package.* whose removal or
+modification would not modify any keywords/mask of an installed version
+of the package.
 Note that this includes all packages matching -t
 .TP
 .BR -! ", " --not

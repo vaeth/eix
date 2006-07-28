@@ -231,6 +231,15 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 	}
 }
 
+inline bool isinvector(vector<string> &vec, const char *s)
+{
+	for(vector<string>::iterator it = vec.begin();
+		it !=vec.end(); ++it)
+		if(strcmp(it->c_str(),s) == 0)
+			return true;
+	return false;
+}
+
 bool
 PortageUserConfig::setStability(Package *p, Keywords kw) const
 {
@@ -262,6 +271,17 @@ PortageUserConfig::setStability(Package *p, Keywords kw) const
 		i != p->end();
 		++i)
 	{
+		bool unneeded = false;
+		char arch_needed;
+		char arch_used = 0;
+		Keywords::Type oritype = (*i)->get();
+		if(oritype & Keywords::KEY_STABLE)
+			arch_needed = 0;
+		else if(oritype & Keywords::KEY_UNSTABLE)
+			arch_needed = 1;
+		else
+			arch_needed = 3;
+
 		Keywords lkw(kw.get());
 
 		string skw = sorted_by_versions[*i];
@@ -278,47 +298,61 @@ PortageUserConfig::setStability(Package *p, Keywords kw) const
 					lkw &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
 				}
 				else if(*kvi == "~" + arch) {
+					if(arch_used < 1)
+						arch_used = 1;
+					if(arch_needed > 1)
+						unneeded = true;
 					lkw |= Keywords::KEY_UNSTABLE;
 				}
 				else if(*kvi == "-~" + arch) {
 					lkw &= (~Keywords::KEY_UNSTABLE | ~Keywords::KEY_ALL);
 				}
 				else if(*kvi == "-*") {
+					if(arch_used < 3)
+						arch_used = 3;
 					lkw |= Keywords::KEY_MINUSASTERISK;
 				}
 				else { // match non-arch keywords:
-					vector<string> arr_keywords = split_string((*i)->get_full_keywords());
-					for(vector<string>::iterator it = arr_keywords.begin();
-						it != arr_keywords.end(); ++it)
-						if(*it == *kvi)
+					const char *s = kvi->c_str();
+					if(s[0] == '-')
+						unneeded = true;
+					else
+					{
+						vector<string> arr_keywords = split_string((*i)->get_full_keywords());
+						if(isinvector(arr_keywords, s))
 						{
-							switch((*it)[0]) {
-								case '-':
-									if((*it)[1] == '~')
-									{
-										lkw |= Keywords::KEY_UNSTABLE;
-										**i |= Keywords::KEY_UNSTABLE;
-									}
-									else
-									{
-										lkw |= Keywords::KEY_UNSTABLE;
-										**i |= Keywords::KEY_UNSTABLE;
-									}
-								case '~':
-									lkw |= Keywords::KEY_UNSTABLE;
-									**i |= Keywords::KEY_UNSTABLE;
-									break;
-								default:
-									lkw |= Keywords::KEY_STABLE;
-									**i |= Keywords::KEY_STABLE;
-									break;
+							if(arch_used < 2)
+								arch_used = 2;
+							if(arch_needed < 2)
+								unneeded = true;
+							else
+								arch_needed = 2;
+							lkw |= Keywords::KEY_UNSTABLE;
+							**i |= Keywords::KEY_UNSTABLE;
+							if((!unneeded) && (s[0] == '~'))
+							{
+								if(isinvector(arr_keywords, s+1))
+									unneeded = true;
 							}
-							break;
 						}
+						else
+							unneeded = true;
+					}
 				}
 			}
 
 		}
+		if(arch_used == 3)
+		{
+			if(arch_needed < 2)
+				unneeded = true;
+		}
+		else
+		{
+			if(arch_used > arch_needed)
+				unneeded = true;
+		}
+		(*i)->set_redundant(unneeded);
 		apply_keywords(**i, lkw.get());
 	}
 	return rvalue;
