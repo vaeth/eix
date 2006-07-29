@@ -109,6 +109,7 @@ class EixRc : public std::map<std::string,std::string> {
 			Keywords::Redundant type,
 			Keywords::Redundant &red,
 			Keywords::Redundant &all,
+			Keywords::Redundant &spc,
 			Keywords::Redundant &ins)
 		{
 			const char *a=(*this)[key].c_str();
@@ -121,25 +122,41 @@ class EixRc : public std::map<std::string,std::string> {
 			{
 				red |= type;
 				all &= ~type;
-				ins &= ~type;
+				spc &= ~type;
 			}
 			else if(strcasecmp(a, "some-installed") == 0)
 			{
 				red |= type;
 				all &= ~type;
+				spc |= type;
 				ins |= type;
+			}
+			else if(strcasecmp(a, "some-uninstalled") == 0)
+			{
+				red |= type;
+				all &= ~type;
+				spc |= type;
+				ins &= ~type;
 			}
 			else if(strcasecmp(a, "all") == 0)
 			{
 				red |= type;
 				all |= type;
-				ins &= ~type;
+				spc &= ~type;
 			}
 			else if(strcasecmp(a, "all-installed") == 0)
 			{
 				red |= type;
 				all |= type;
+				spc |= type;
 				ins |= type;
+			}
+			else if(strcasecmp(a, "all-uninstalled") == 0)
+			{
+				red |= type;
+				all |= type;
+				spc |= type;
+				ins &= ~type;
 			}
 			else
 			{
@@ -147,7 +164,8 @@ class EixRc : public std::map<std::string,std::string> {
 					"Assuming value all-installed",	key, a);
 				red |= type;
 				all |= type;
-				ins |= type;
+				spc |= type;
+				ins |= ~type;
 			}
 		}
 

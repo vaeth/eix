@@ -186,17 +186,22 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	r &= redundant_flags;
 	if(r == Keywords::RED_NOTHING)
 		return false;
-	bool test_not_only_installed = !(r & installed_flags);
-	if(r & all_flags)// test all or all-installed
+	bool test_unrestricted = !(r & special_only_flags);
+	bool test_uninstalled = !(r & installed_flags);
+	if(r & all_flags)// test all, all-installed or all-uninstalled
 	{
+		bool rvalue = false;
 		BasicVersion *prev_ver = NULL;
 		for(Package::const_reverse_iterator pi = p.rbegin();
 			pi != p.rend();
 			prev_ver = *pi, ++pi)
 		{
-			if(! ((pi->get_redundant()) & r))
+			// "all" should also mean at least once:
+			if((pi->get_redundant()) & r)
+				rvalue = true;
+			else// and no failure:
 			{
-				if(test_not_only_installed)
+				if(test_unrestricted)
 					return false;
 				// If the current version was not yet treated (i.e.
 				// we consider at most the last overlay as installed)
@@ -205,11 +210,19 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 				{
 					// And this version is installed
 					if(vardbpkg->isInstalled(&p, *pi))
+					{
+						if(test_uninstalled)
+							continue;
+						return false;
+					}
+					else if(test_uninstalled)
 						return false;
 				}
+				else if(test_uninstalled)
+					return false;
 			}
 		}
-		return true;
+		return rvalue;
 	}
 	else// test some or some-installed
 	{
@@ -218,9 +231,17 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 		{
 			if((pi->get_redundant()) & r)
 			{
-				if(test_not_only_installed)
+				if(test_unrestricted)
 					return true;
+				// in contrast to the above loop, we do not
+				// distinguish overlays here.
 				if(vardbpkg->isInstalled(&p, *pi))
+				{
+					if(test_uninstalled)
+						continue;
+					return true;
+				}
+				else if(test_uninstalled)
 					return true;
 			}
 		}
@@ -271,7 +292,7 @@ PackageTest::match(PackageReader *pkg) const
 			{
 				is_match = have_redundant(user, Keywords::RED_DOUBLE_MASK);
 				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_DOUBLE_MASK);
+					is_match = have_redundant(user, Keywords::RED_DOUBLE_UNMASK);
 				if(!is_match)
 					is_match = have_redundant(user, Keywords::RED_MASK);
 				if(!is_match)

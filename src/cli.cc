@@ -70,41 +70,41 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 		}
 		// }}}
 
-		Keywords::Redundant red, all, inst;
+		Keywords::Redundant red, all, spc, ins;
 		switch(**arg)
 		{
 			// Check local options {{{
 			case 'I': test->Installed();    break;
 			case 'D': test->DuplVersions(); break;
-			case 'T': red = all = inst = Keywords::RED_NOTHING;
+			case 'T': red = all = spc = ins = Keywords::RED_NOTHING;
 				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
 					Keywords::RED_DOUBLE,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
 					Keywords::RED_MIXED,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",
 					Keywords::RED_WEAKER,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_STRANGE",
 					Keywords::RED_STRANGE,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
 					Keywords::RED_NO_CHANGE,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
 					Keywords::RED_MASK,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
 					Keywords::RED_UNMASK,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
 					Keywords::RED_DOUBLE_MASK,
-					red, all, inst);
+					red, all, spc, ins);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
 					Keywords::RED_DOUBLE_UNMASK,
-					red, all, inst);
-				  test->ObsoleteCfg(portagesettings, red, all, inst);
+					red, all, spc, ins);
+				  test->ObsoleteCfg(portagesettings, red, all, spc, ins);
 				  break;
 			case '!': test->Invert();       break;
 			// }}}

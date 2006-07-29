@@ -77,13 +77,14 @@ class PackageTest {
 		void DuplVersions()
 		{ dup_versions = !dup_versions; }
 
-		void ObsoleteCfg(PortageSettings &p, Keywords::Redundant red, Keywords::Redundant all, Keywords::Redundant ins)
+		void ObsoleteCfg(PortageSettings &p, Keywords::Redundant red, Keywords::Redundant all, Keywords::Redundant spc, Keywords::Redundant ins)
 		{
-			redundant_flags = red;
-			all_flags       = all;
-			installed_flags = ins;
-			portagesettings = &p;
-			accept_keywords = p.getAcceptKeywords();
+			redundant_flags    = red;
+			all_flags          = all;
+			special_only_flags = spc;
+			installed_flags    = ins;
+			portagesettings    = &p;
+			accept_keywords    = p.getAcceptKeywords();
 		}
 
 		void Invert()
@@ -99,8 +100,10 @@ class PackageTest {
 		MatchField field;
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
-		/* Test for this redundany. */
-		Keywords::Redundant redundant_flags, all_flags, installed_flags;
+		/* Test for this redundancy: */
+		Keywords::Redundant
+			redundant_flags, all_flags,
+			special_only_flags, installed_flags;
 
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;

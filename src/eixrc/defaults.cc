@@ -213,7 +213,7 @@ eixrc.addDefault(
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MASK_NO_CHANGE",
-			"all-installed",
+			"all-uninstalled",
 			"Applies if /etc/portage/package.mask contains entries\n"
 			"# which do not change the mask status for the versions in question.")
 		);
