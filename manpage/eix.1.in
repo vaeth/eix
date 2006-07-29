@@ -57,10 +57,10 @@ Disables the use of ANSI color codes. This is useful for terminals that do not s
 .BR -F ", " --force-color
 The opposite of --nocolor.
 .TP
-.BR -t ", " test-non-matching
-Before other output, print entries in of /etc/portage/package.* which do not
-match any existing version in the package database. You might want to combine
-this option with -T to cleanup /etc/portage/package.*.
+.BR -t ", " --test-non-matching
+Before other output, print entries of /etc/portage/package.* which do not
+match any existing version in the package database. This option is best
+combined with -T to clean up /etc/portage/package.*.
 .\" }}}
 
 .\" {{{ -------- Output options
