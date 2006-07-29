@@ -2,7 +2,7 @@
 
 *eix-0.5.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Implemented -t and -T to help cleaning up /etc/portage/package.*.
+	- Implemented -T to help cleaning up /etc/portage/package.*.
 	- Read package information for the newest available versions:
 	  http://bugs.gentoo.org/show_bug.cgi?id=138629
 	- Let diff-eix respect local setting (DIFF_LOCAL_PORTAGE_CONFIG):
@@ -14,6 +14,7 @@
 	- Treat also non-arch Keywords, e.g. x86 on an amd64 architecture.
 	  To avoid increasing database size by factor ~1.5 for this feature,
 	  you can use the new SMALL_EIX_DATABASE variable.
+	- Introduced REDUNDANT_* to allow high customization for -T
 
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

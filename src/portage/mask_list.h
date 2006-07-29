@@ -33,6 +33,7 @@
 
 #include <eixTk/ptr_list.h>
 #include <portage/package.h>
+#include <portage/version.h>
 
 template<typename _type>
 class MaskList
@@ -123,19 +124,52 @@ class MaskList
 			return &(t->second);
 		}
 
-		bool applyMasks(Package *p) const
+		// return true if some masks applied
+		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const
 		{
 			const eix::ptr_list<_type> *l = get(p);
 			if(l == NULL)
 				return false;
 
 			bool rvalue = false;
+			bool had_mask = false;
+			bool had_unmask = false;
 			for(const_mask_iterator m = l->begin();
 				m != l->end();
 				++m)
 			{
-				m->checkMask(*p, false, false);
-				rvalue = true;
+				rvalue = 1;
+				m->checkMask(*p, false, false, check);
+				switch(m->get_type())
+				{
+					case Mask::maskMask:
+						had_mask=true;
+						break;
+					case Mask::maskUnmask:
+						had_unmask=true;
+						break;
+				}
+			}
+			if(!(check & Keywords::RED_MASK))
+				had_mask = false;
+			if(!(check & Keywords::RED_UNMASK))
+				had_unmask = false;
+			if(had_mask || had_unmask)
+			{
+				for(Package::iterator i = p->begin();
+					i != p->end(); ++i)
+				{
+					if(had_mask)
+					{
+						if(!i->was_masked())
+							i->set_redundant(Keywords::RED_MASK);
+					}
+					if(had_unmask)
+					{
+						if(!i->was_unmasked())
+							i->set_redundant(Keywords::RED_UNMASK);
+					}
+				}
 			}
 			return rvalue;
 		}

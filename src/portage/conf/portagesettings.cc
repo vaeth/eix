@@ -216,9 +216,10 @@ bool PortageUserConfig::readKeywords() {
 	return true;
 }
 
-bool PortageUserConfig::setMasks(Package *p) const {
+// return true if something from /etc/portage/package.* applied
+bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const {
 	/* Set hardmasks */
-	return m_mask.applyMasks(p);
+	return m_mask.applyMasks(p, check);
 }
 
 inline void apply_keywords(Version &v, Keywords::Type t)
@@ -231,17 +232,18 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 	}
 }
 
-inline bool isinvector(vector<string> &vec, const char *s)
-{
-	for(vector<string>::iterator it = vec.begin();
-		it !=vec.end(); ++it)
-		if(strcmp(it->c_str(),s) == 0)
-			return true;
-	return false;
-}
+#define set_arch_used(value) { \
+	if(arch_used < value) { \
+		if(arch_used != 0) \
+			redundant |= (check & Keywords::RED_MIXED); \
+		arch_used = value; \
+	} else if(arch_used > value) \
+		redundant |= (check & Keywords::RED_MIXED); }
 
+
+// return true if something from /etc/portage/package.* applied
 bool
-PortageUserConfig::setStability(Package *p, Keywords kw) const
+PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redundant check) const
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
 	map<Version*,string> sorted_by_versions;
@@ -271,16 +273,16 @@ PortageUserConfig::setStability(Package *p, Keywords kw) const
 		i != p->end();
 		++i)
 	{
-		bool unneeded = false;
+		Keywords::Redundant redundant = i->get_redundant();
 		char arch_needed;
 		char arch_used = 0;
-		Keywords::Type oritype = (*i)->get();
+		Keywords::Type oritype = i->get();
 		if(oritype & Keywords::KEY_STABLE)
 			arch_needed = 0;
 		else if(oritype & Keywords::KEY_UNSTABLE)
 			arch_needed = 1;
 		else
-			arch_needed = 3;
+			arch_needed = 4;
 
 		Keywords lkw(kw.get());
 
@@ -288,72 +290,109 @@ PortageUserConfig::setStability(Package *p, Keywords kw) const
 		if(skw.empty() == false)
 		{
 			vector<string> kv = split_string(skw);
-			kv.erase(unique(kv.begin(), kv.end()), kv.end());
+			vector<string>::iterator new_end = unique(kv.begin(), kv.end());
+			if(new_end != kv.end())
+			{
+				kv.erase(new_end, kv.end());
+				redundant |= (check & Keywords::RED_DOUBLE);
+			}
 
+			vector<string> *arr = NULL;
 			for(vector<string>::iterator kvi = kv.begin();
 				kvi != kv.end();
 				++kvi)
 			{
-				if(*kvi == "-" + arch) {
+				if(*kvi == arch) {
+					redundant |= (check & Keywords::RED_DOUBLE);
+				}
+				else if(*kvi == "-" + arch) {
 					lkw &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
 				}
 				else if(*kvi == "~" + arch) {
-					if(arch_used < 1)
-						arch_used = 1;
-					if(arch_needed > 1)
-						unneeded = true;
+					set_arch_used(1);
 					lkw |= Keywords::KEY_UNSTABLE;
 				}
 				else if(*kvi == "-~" + arch) {
 					lkw &= (~Keywords::KEY_UNSTABLE | ~Keywords::KEY_ALL);
 				}
 				else if(*kvi == "-*") {
-					if(arch_used < 3)
-						arch_used = 3;
+					set_arch_used(4);
 					lkw |= Keywords::KEY_MINUSASTERISK;
 				}
 				else { // match non-arch keywords:
 					const char *s = kvi->c_str();
 					if(s[0] == '-')
-						unneeded = true;
+					{
+						redundant |= (check & Keywords::RED_STRANGE);
+					}
 					else
 					{
-						vector<string> arr_keywords = split_string((*i)->get_full_keywords());
-						if(isinvector(arr_keywords, s))
+						if(!arr)
 						{
-							if(arch_used < 2)
-								arch_used = 2;
-							if(arch_needed < 2)
-								unneeded = true;
-							else
-								arch_needed = 2;
-							lkw |= Keywords::KEY_UNSTABLE;
-							**i |= Keywords::KEY_UNSTABLE;
-							if((!unneeded) && (s[0] == '~'))
+							arr = new vector<string>;
+							*arr = split_string((*i)->get_full_keywords());
+						}
+						if(find(arr->begin(), arr->end(), s) != arr->end())
+						{
+							lkw |= Keywords::KEY_STABLE;
+							**i |= Keywords::KEY_STABLE;
+							if(s[0] != '~')// OTHERARCH stable found
 							{
-								if(isinvector(arr_keywords, s+1))
-									unneeded = true;
+								set_arch_used(2);
+								if(arch_needed > 2)
+									arch_needed = 2;
+							}
+							else// ~OTHERARCH found
+							{
+								set_arch_used(3);
+								if(arch_needed > 3)
+									arch_needed = 3;
+								if((arch_needed == 3) &&
+									(check & (~redundant) & Keywords::RED_WEAKER))
+								{
+									if(find(arr->begin(), arr->end(), s+1) != arr->end())
+										arch_needed = 2;
+								}
 							}
 						}
-						else
-							unneeded = true;
+						else if(check & (Keywords::RED_STRANGE | Keywords::RED_MIXED))
+						{
+							// an unknown OTHERARCH keyword need not necessarily be "strange":
+							// it could also simply be too weak because ~OTHERARCH exists
+							if(s[0] != '~')
+							{
+								string testing="~" + *kvi;
+								// Do not set arch_needed = 3, even if ~OTHERARCH is found here:
+								// etc/portage/package.keywords might contain ~ANOTHERARCH
+								if(find(arr->begin(), arr->end(), testing) != arr->end()) {
+									set_arch_used(2);
+								}
+								else
+									redundant |= (check & Keywords::RED_STRANGE);
+							}
+							else
+								redundant |= (check & Keywords::RED_STRANGE);
+						}
 					}
 				}
 			}
-
-		}
-		if(arch_used == 3)
-		{
-			if(arch_needed < 2)
-				unneeded = true;
-		}
-		else
-		{
 			if(arch_used > arch_needed)
-				unneeded = true;
+				redundant |= (check & Keywords::RED_WEAKER);
+			if(check & Keywords::RED_DOUBLE)
+			{
+				sort(kv.begin(), kv.end());
+				if(unique(kv.begin(), kv.end()) != kv.end())
+					redundant |= Keywords::RED_DOUBLE;
+			}
 		}
-		(*i)->set_redundant(unneeded);
 		apply_keywords(**i, lkw.get());
+		if(rvalue && (check & Keywords::RED_NO_CHANGE))
+		{
+			if((i->get() & Keywords::KEY_ALL) == (oritype & Keywords::KEY_ALL))
+				redundant |= Keywords::RED_NO_CHANGE;
+		}
+		if(redundant)
+			i->set_redundant(redundant);
 	}
 	return rvalue;
 }

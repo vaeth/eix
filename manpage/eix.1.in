@@ -1,11 +1,11 @@
-.TH "eix" "1" "April 6th, 2005" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "July 29th, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
 - a set of utilities for searching, diffing and updating a binary cache of your local portage-trees
 .\" }}}
 
-.\" {{{ SYNOPSIS 
+.\" {{{ SYNOPSIS
 .SH "SYNOPSIS"
 .BR eix
 [I<common options>] [I<OPTIONS>] I<EXPRESSION...>
@@ -100,18 +100,9 @@ Only match packages with duplicated versions
 (for example, sys-foo/bar-0.2.1 exists both in the official portage tree and a local
 overlay)
 .TP
-.BR -t ", " --test-for-any
-Only match packages with entries in /etc/portage/package.* whose removal or
-modification would not modify any keywords/mask of any existing version
-of the package. This may help cleaning up the local config-files.
-By modification, we mean here that e.g. -*, ~NONARCH, or NONARCH may be
-replaced by ~ARCH, or that ~NONARCH may be replaced by NONARCH.
-.TP
-.BR -T ", " --test-for-installed
-Only match packages with entries in /etc/portage/package.* whose removal or
-modification would not modify any keywords/mask of an installed version
-of the package.
-Note that this includes all packages matching -t
+.BR -T ", " --test-redundancy
+Only match packages with redundant entries in /etc/portage/package.*
+What is considered as redundant is defined by the REDUNDANT_*-variables below.
 .TP
 .BR -! ", " --not
 Invert the expression given
@@ -202,7 +193,7 @@ The version would be "masked by ~keyword".
 Finally, this would be a stable version.
 .\" }}}
 
-.\" {{{ FORMATSTRING 
+.\" {{{ FORMATSTRING
 .SH FORMATSTRING
 .LP
 A formatstring can contain conditional blocks, package properties, colors and
@@ -252,7 +243,7 @@ could be easily replaced by using "B<Conditional blocks>".
 if all versions are in the same overlay this expands to "[overlaykey]"
 .TP
 .BR best
-the highest stable version 
+the highest stable version
 .TP
 .BR system
 expands to "system" if this package is in the system-profile
@@ -261,7 +252,7 @@ expands to "system" if this package is in the system-profile
 the packages PROVIDE-string
 .\" }}}
 
-.\" {{{ -------- Colors 
+.\" {{{ -------- Colors
 .SS Colors
 .TP
 (I<NAME>,I<BRIGHTNESS>)
@@ -271,7 +262,7 @@ Available colors are:
 I<default black red green yellow blue purple cyan gray>
 .\" }}}
 
-.\" {{{ -------- Example 
+.\" {{{ -------- Example
 .SS Example:
 .TP
 {installedversions}(yellow,1){else}(yellow,0){}<name>()
@@ -280,7 +271,7 @@ yellow.
 .\" }}}
 .\" }}}
 
-.\" {{{ FILES 
+.\" {{{ FILES
 .SH "FILES"
 .LP
 .\" {{{ -------- /etc/eix-sync-overlays
@@ -290,13 +281,13 @@ B<app-portage/gentoolkit-dev>. A line that only contains an asterisk causes eix-
 all overlays, using gensync -a.
 .\" }}}
 
-.\" {{{ -------- /etc/eixrc 
-.SS /etc/eixrc 
+.\" {{{ -------- /etc/eixrc
+.SS /etc/eixrc
 Global configuration file. ~/.eixrc overrides this file.
 .\" }}}
 
-.\" {{{ -------- ~/.eixrc 
-.SS ~/.eixrc 
+.\" {{{ -------- ~/.eixrc
+.SS ~/.eixrc
 Per-user configuration file.
 .TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (Strings)
@@ -364,7 +355,7 @@ cache-backend for portage (cdb with cpickle'd dictionaries as values).
 You are using the default cache-backend (plain text files).
 .TP
 .SS
-.BR backport 
+.BR backport
 If you are using that backport-stuff (from portage-3 to portage-2) you should use this one.
 .TP
 .SS
@@ -384,34 +375,75 @@ If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
 or the environment.
 .TP
 .\" {{{ Default Matchfields for different strings.
-.BR MATCH_NAME_IF " " (string)
+.BR MATCH_NAME_IF " " (String)
 Use NAME as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_DESCRIPTION_IF " " (string)
+.BR MATCH_DESCRIPTION_IF " " (String)
 Use DESCRIPTION as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_LICENSE_IF " " (string)
+.BR MATCH_LICENSE_IF " " (String)
 Use LICENSE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_CATEGORY_IF " " (string)
+.BR MATCH_CATEGORY_IF " " (String)
 Use CATEGORY as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_CATEGORY_NAME_IF " " (string)
+.BR MATCH_CATEGORY_NAME_IF " " (String)
 Use CATEGORY_NAME as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_HOMEPAGE_IF " " (string)
+.BR MATCH_HOMEPAGE_IF " " (String)
 Use HOMEPAGE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_PROVIDE_IF " " (string)
+.BR MATCH_PROVIDE_IF " " (String)
 Use PROVIDE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_ORDER " " (string)
+.BR MATCH_ORDER " " (String)
 Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
+.TP
+.\" }}}
+.\" {{{ Definition of Redundancy
+.BR REDUNDANT_IF_DOUBLE " " (some / all / some-installed / all-installed / some-uninstalled / all-uninstalled / no " or " false)
+Applies if /etc/portage/package.keywords lists the same keyword twice
+for some/all (un-/installed) versions.
+.TP
+.BR REDUNDANT_IF_MIXED "  " (String ", see above")
+Applies if /etc/portage/package.keywords lists two different keywords,
+e.g. ~ARCH and -*, for the versions in question.
+.TP
+.BR REDUNDANT_IF_WEAKER "  " (String ", see above")
+Applies if /etc/portage/package.keywords lists a keywords which can
+be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH
+in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,
+for the versions in question.
+.TP
+.BR REDUNDANT_IF_STRANGE "  " (String ", see above")
+Applies if /etc/portage/package.keywords lists a strange keyword,
+e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,
+for the versions in question.
+.TP
+.BR REDUNDANT_IF_NO_CHANGE "  " (String ", see above")
+Applies if /etc/portage/package.keywords provides keywords which do not
+change the availability keywords status for the versions in question.
+.TP
+.BR REDUNDANT_IF_MASK_NO_CHANGE "  " (String ", see above")
+Applies if /etc/portage/package.mask contains entries
+which do not change the mask status for the versions in question.
+.TP
+.BR REDUNDANT_IF_UNMASK_NO_CHANGE "  " (String ", see above")
+Applies if /etc/portage/package.unmask contains entries
+which do not change the mask status for the versions in question.
+.TP
+.BR REDUNDANT_IF_DOUBLE_MASKED "  " (String ", see above")
+Applies if /etc/portage/package.mask matches twice
+for the versions in question.
+.TP
+.BR REDUNDANT_IF_DOUBLE_UNMASKED "  " (String ", see above")
+Applies if /etc/portage/package.unmask matches twice
+for the versions in question.
 .TP
 .\" }}}
 .\" }}}
 
-.\" {{{ -------- @EIX_CACHEFILE@ 
+.\" {{{ -------- @EIX_CACHEFILE@
 .SS @EIX_CACHEFILE@
 This is the binary database for eix.
 .\" }}}
@@ -423,7 +455,7 @@ This is the binary database for eix.
 There are no bugs, just random features.
 .\" }}}
 
-.\" {{{ HISTORY 
+.\" {{{ HISTORY
 .SH "HISTORY"
 .LP
 B<eix> was formerly known as B<portagedb>. The name was changed because a part of
@@ -438,17 +470,19 @@ always find packages that are not in portage anymore. To circumvent this, eix-sy
 deletes the old cache (rm -fr /var/cache/edb/dep/*).
 .\" }}}
 
-.\" {{{ AUTHORS 
+.\" {{{ AUTHORS
 .SH "AUTHORS"
 .LP
-Emil Beinroth <emilbeinroth at gmx.net> (developer, current maintainer)
+Martin Väth <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+
+Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 
 Wolfgang Frisch <xororand at users.sourceforge.net> (developer, initial author)
 
 Roland Wittmann <linuxcommando at users.sourceforge.net> (developer)
 .\" }}}
 
-.\" {{{ SEE ALSO 
+.\" {{{ SEE ALSO
 .SH "SEE ALSO"
 .BR portage (5),
 .\" Match-algorithms

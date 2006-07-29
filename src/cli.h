@@ -31,6 +31,6 @@
 #include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>
 
-Matchatom *parse_cli(VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end);
+Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end);
 
 #endif /* __CLI_H__ */

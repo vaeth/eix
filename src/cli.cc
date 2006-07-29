@@ -29,7 +29,7 @@
 #include "cli.h"
 
 Matchatom *
-parse_cli(VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
@@ -70,13 +70,42 @@ parse_cli(VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader:
 		}
 		// }}}
 
+		Keywords::Redundant red, all, inst;
 		switch(**arg)
 		{
 			// Check local options {{{
 			case 'I': test->Installed();    break;
 			case 'D': test->DuplVersions(); break;
-			case 't': test->ObsoleteCfg(portagesettings,false); break;
-			case 'T': test->ObsoleteCfg(portagesettings,true); break;
+			case 'T': red = all = inst = Keywords::RED_NOTHING;
+				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
+					Keywords::RED_DOUBLE,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
+					Keywords::RED_MIXED,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",
+					Keywords::RED_WEAKER,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_STRANGE",
+					Keywords::RED_STRANGE,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
+					Keywords::RED_NO_CHANGE,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
+					Keywords::RED_MASK,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
+					Keywords::RED_UNMASK,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
+					Keywords::RED_DOUBLE_MASK,
+					red, all, inst);
+				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
+					Keywords::RED_DOUBLE_UNMASK,
+					red, all, inst);
+				  test->ObsoleteCfg(portagesettings, red, all, inst);
+				  break;
 			case '!': test->Invert();       break;
 			// }}}
 

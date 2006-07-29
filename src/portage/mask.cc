@@ -211,61 +211,82 @@ Mask::match(Package &pkg) const
 	return ret;
 }
 
-/** Sets the stability members of all version in package according to the mask. */
+/** Sets the stability members of all version in package according to the mask.
+ * @param pkg            package you want tested
+ * @param check_name     true if name should be tested */
 void
-Mask::checkMask(Package& pkg, const bool check_category, const bool check_name)
+Mask::checkMask(Package& pkg, const bool check_category, const bool check_name, Keywords::Redundant check)
 {
 	if((check_name && pkg.name.c_str() != m_name)
 		|| (check_category && pkg.category.c_str() != m_category))
 		return;
 
+	bool rvalue = false;
 	for(Package::iterator i = pkg.begin();
 		i != pkg.end();
 		++i)
 	{
-		apply(*i);
+		apply(*i, check);
 	}
+	return;
 }
 
-/** Sets the stability & masked members of ve according to the mask.
- * @param ve Version instance to be set
- * @param name name of package (NULL if shall not be tested) */
-void Mask::apply(Version *ve)
+/** Sets the stability & masked members of ve according to the mask
+ * @param ve Version instance to be set */
+void Mask::apply(Version *ve, Keywords::Redundant check)
 {
-	/* Don't do sensless checking. */
-	if(        (m_type == maskUnmask
-				&& !ve->isPackageMask())     /* Unmask but is not masked */
-			|| (m_type == maskMask
-				&& ve->isPackageMask())      /* Mask but is already masked */
-			|| (m_type == maskAllowedByProfile
-				&& ve->isProfileMask())      /* Won't change anything cause already masked by profile */
-			|| (m_type == maskInSystem
-				&& ve->isSystem()
-				&& ve->isProfileMask())
-			|| (m_type == maskTypeNone)      /* We have nothing to masked. */
-			)
+	if(	(m_type == maskAllowedByProfile
+			&& ve->isProfileMask())      /* Won't change anything cause already masked by profile */
+		|| (m_type == maskInSystem
+			&& ve->isSystem()
+			&& ve->isProfileMask()))
 		return;
 
 	switch(m_type) {
 		case maskUnmask:
-			if(test(ve))
+			if(!test(ve))
+				break;
+			if(check & Keywords::RED_DOUBLE_UNMASK)
+			{
+				if(ve->wanted_unmasked())
+					ve->set_redundant(Keywords::RED_DOUBLE_UNMASK);
+				ve->set_wanted_unmasked();
+			}
+			if(ve->isPackageMask())
+			{
 				*ve &= ~Keywords::PACKAGE_MASK;
-			return;
+				if(check & Keywords::RED_UNMASK)
+					ve->set_was_unmasked();
+			}
+			break;
 		case maskMask:
-			if(test(ve))
+			if(!test(ve))
+				break;
+			if(check & Keywords::RED_DOUBLE_MASK)
+			{
+				if(ve->wanted_masked())
+					ve->set_redundant(Keywords::RED_DOUBLE_MASK);
+				ve->set_wanted_masked();
+			}
+			if(!ve->isPackageMask())
+			{
 				*ve |= Keywords::PACKAGE_MASK;
-			return;
+				if(check & Keywords::RED_MASK)
+					ve->set_was_masked();
+			}
+			break;
 		case maskInSystem:
 			if( test(ve) )
 				*ve |= Keywords::SYSTEM_PACKAGE;
 			else
 				*ve |= Keywords::PROFILE_MASK;
-			return;
+			break;
 		case maskAllowedByProfile:
 			if(!test(ve))
 				*ve |= Keywords::PROFILE_MASK;
-			return;
+			break;
 		case maskTypeNone:
-			return;
+			break;
 	}
+	return;
 }

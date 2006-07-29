@@ -180,43 +180,52 @@ PackageTest::stringMatch(Package *pkg) const
 	return false;
 }
 
-/** test whether m1 and m2 have the same masks/keywords or
-    whether m2 has redundant flag set for all/installed
-    versions (depending on test_only_installed) */
 bool
-PackageTest::have_same_mask(const Package &m1, const Package &m2) const
+PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 {
-	Package::const_reverse_iterator m1_ri = m1.rbegin();
-	Package::const_reverse_iterator m2_ri = m2.rbegin();
-	BasicVersion *prev_ver = NULL;
-	for(; m1_ri != m1.rend(); prev_ver = *m1_ri, ++m1_ri, ++m2_ri)
+	r &= redundant_flags;
+	if(r == Keywords::RED_NOTHING)
+		return false;
+	bool test_not_only_installed = !(r & installed_flags);
+	if(r & all_flags)// test all or all-installed
 	{
-		// The two lists have different size or are sorted differently
-		// This should not happen, but if it does for some reason,
-		// this is due to m2_config. In such an emergency case,
-		// we even do not test for installed versions
-		if( m2_ri == m2.rend() || (**m1_ri != **m2_ri))
-			return false;
-		// Only test if keywords/masks are not equal anyway:
-		if((m1_ri->get() != m2_ri->get()) &&
-			(!m2_ri->get_redundant()))
+		BasicVersion *prev_ver = NULL;
+		for(Package::const_reverse_iterator pi = p.rbegin();
+			pi != p.rend();
+			prev_ver = *pi, ++pi)
 		{
-			if(!test_only_installed)
-				return false;
-			// If the current version was not yet treated
-			if((prev_ver == NULL) ||
-				(**m1_ri != *prev_ver))
+			if(! ((pi->get_redundant()) & r))
 			{
-				// And this version is installed
-				if(vardbpkg->isInstalled(&m1, *m1_ri))
+				if(test_not_only_installed)
 					return false;
+				// If the current version was not yet treated (i.e.
+				// we consider at most the last overlay as installed)
+				if((prev_ver == NULL) ||
+					(**pi != *prev_ver))
+				{
+					// And this version is installed
+					if(vardbpkg->isInstalled(&p, *pi))
+						return false;
+				}
 			}
 		}
+		return true;
 	}
-	// The two lists have different size?
-	if ( m2_ri != m2.rend())
+	else// test some or some-installed
+	{
+		for(Package::const_iterator pi = p.begin();
+			pi != p.end(); ++pi)
+		{
+			if((pi->get_redundant()) & r)
+			{
+				if(test_not_only_installed)
+					return true;
+				if(vardbpkg->isInstalled(&p, *pi))
+					return true;
+			}
+		}
 		return false;
-	return true;
+	}
 }
 
 bool
@@ -232,7 +241,7 @@ PackageTest::match(PackageReader *pkg) const
 		is_match = stringMatch(p);
 	}
 
-	/* Honour the -I, -D, -t, -T, and -! flags. */
+	/* Honour the -I, -D, -T, and -! flags. */
 
 	if(installed && is_match) {
 		if(p == NULL)
@@ -249,17 +258,42 @@ PackageTest::match(PackageReader *pkg) const
 	if(portagesettings && is_match) {
 		if(p == NULL)
 			p = pkg->get();
-		Package ori,user;
-		ori.deepcopy(*p);
-		portagesettings->setStability(&ori, accept_keywords);
-		user.deepcopy(ori);
+		Package user;
+		if(redundant_flags != Keywords::RED_NOTHING)
+		{
+			user.deepcopy(*p);
+			portagesettings->setStability(&user, accept_keywords);
+		}
 		is_match = false;
-		if(portagesettings->user_config->setMasks(&user))
-			is_match = true;
-		if(portagesettings->user_config->setStability(&user, accept_keywords))
-			is_match = true;
-		if(is_match)
-			is_match=have_same_mask(ori, user);
+		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
+		{
+			if(portagesettings->user_config->setMasks(&user, redundant_flags))
+			{
+				is_match = have_redundant(user, Keywords::RED_DOUBLE_MASK);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_DOUBLE_MASK);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_MASK);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_UNMASK);
+			}
+		}
+		if((!is_match) &&
+			(redundant_flags & Keywords::RED_ALL_KEYWORDS))
+		{
+			if(portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags))
+			{
+				is_match = have_redundant(user, Keywords::RED_DOUBLE);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_MIXED);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_WEAKER);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_STRANGE);
+				if(!is_match)
+					is_match = have_redundant(user, Keywords::RED_NO_CHANGE);
+			}
+		}
 	}
 
 	return (invert ? !is_match : is_match);

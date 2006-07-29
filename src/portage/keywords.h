@@ -44,15 +44,37 @@ class Keywords {
 			PACKAGE_MASK      ,
 			PROFILE_MASK      ,
 			SYSTEM_PACKAGE    ;
+		typedef unsigned short Redundant;
+		static const Redundant
+			RED_NOTHING,       /* None of the following           */
+			RED_DOUBLE ,       /* Same keyword twice              */
+			RED_MIXED,         /* Weaker and stronger keyword     */
+			RED_WEAKER,        /* Unnecessarily strong keyword    */
+			RED_STRANGE,       /* Unrecognized OTHERARCH or -OTHERARCH */
+			RED_NO_CHANGE,     /* No change in keyword status     */
+			RED_MASK,          /* No change in mask status        */
+			RED_UNMASK,        /* No change in unmask status      */
+			RED_DOUBLE_MASK,   /* Double mask entry               */
+			RED_DOUBLE_UNMASK, /* Double unmask entry             */
+			RED_ALL_KEYWORDS,
+			RED_ALL_MASK,
+			RED_ALL_UNMASK,
+			RED_ALL_MASKSTUFF;
 
 	protected:
 		Type m_mask;
 		std::string full_keywords;
-		bool redundant ; /* local config sets redundant entries */
+		Redundant redundant;
+		char red_mask; // temporary redundant-related stuff during mask testing
 
 	public:
 		Keywords(Type t = KEY_MINUSKEYWORD)
-		{ m_mask = t; full_keywords = ""; }
+		{
+			m_mask = t;
+			full_keywords = "";
+			redundant = RED_NOTHING;
+			red_mask = 0;
+		}
 
 		static Type get_type(std::string arch, std::string keywords)
 		{
@@ -95,11 +117,35 @@ class Keywords {
 		std::string get_full_keywords() const
 		{ return full_keywords; }
 
-		void set_redundant(bool red)
-		{ redundant = red; }
+		void set_redundant(Redundant or_redundant = true)
+		{ redundant |= or_redundant; }
 
-		bool get_redundant () const
+		Redundant get_redundant () const
 		{ return redundant; }
+
+		void set_was_masked(bool was_masked = true)
+		{ if(was_masked) red_mask |= 0x01; else red_mask &= ~0x01; }
+
+		bool was_masked () const
+		{ return (red_mask & 0x01); }
+
+		void set_was_unmasked(bool was_unmasked = true)
+		{ if(was_unmasked) red_mask |= 0x02; else red_mask &= ~0x02; }
+
+		bool was_unmasked () const
+		{ return (red_mask & 0x02); }
+
+		void set_wanted_masked(bool wanted_masked = true)
+		{ if(wanted_masked) red_mask |= 0x04; else red_mask &= ~0x04; }
+
+		bool wanted_masked () const
+		{ return (red_mask & 0x04); }
+
+		void set_wanted_unmasked(bool wanted_unmasked = true)
+		{ if(wanted_unmasked) red_mask |= 0x08; else red_mask &= ~0x08; }
+
+		bool wanted_unmasked () const
+		{ return (red_mask & 0x08); }
 
 		/** Return true if version is marked stable. */
 		bool isStable() const

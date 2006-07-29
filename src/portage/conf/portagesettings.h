@@ -80,8 +80,8 @@ class PortageUserConfig {
 		}
 
 		// return true if something from /etc/portage/package.* applied
-		bool setMasks(Package *p) const;
-		bool setStability(Package *p, Keywords kw) const;
+		bool setMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		bool setStability(Package *p, const Keywords &kw, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 };
 
 class PortageUserConfig;

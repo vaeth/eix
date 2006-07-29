@@ -37,3 +37,20 @@ const Keywords::Type
 	Keywords::PACKAGE_MASK       = 0x10,
 	Keywords::PROFILE_MASK       = 0x20,
 	Keywords::SYSTEM_PACKAGE     = 0x40;
+
+const Keywords::Redundant
+	Keywords::RED_NOTHING      = 0x000,
+	Keywords::RED_DOUBLE       = 0x001,
+	Keywords::RED_MIXED        = 0x002,
+	Keywords::RED_WEAKER       = 0x004,
+	Keywords::RED_STRANGE      = 0x008,
+	Keywords::RED_NO_CHANGE    = 0x010,
+	Keywords::RED_ALL_KEYWORDS = RED_DOUBLE|RED_MIXED|RED_WEAKER|RED_STRANGE|RED_NO_CHANGE,
+	Keywords::RED_MASK         = 0x020,
+	Keywords::RED_UNMASK       = 0x040,
+	Keywords::RED_DOUBLE_MASK  = 0x080,
+	Keywords::RED_DOUBLE_UNMASK= 0x100,
+	Keywords::RED_ALL_MASK     = RED_MASK|RED_DOUBLE_MASK,
+	Keywords::RED_ALL_UNMASK   = RED_UNMASK|RED_DOUBLE_UNMASK,
+	Keywords::RED_ALL_MASKSTUFF= RED_ALL_MASK|RED_ALL_UNMASK;
+

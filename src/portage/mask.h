@@ -31,6 +31,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
 #include <portage/basicversion.h>
+#include <portage/keywords.h>
 
 #include <map>
 #include <string>
@@ -87,7 +88,7 @@ class Mask : public BasicVersion {
 
 		/** Sets the stability & masked members of ve according to the mask
 		 * @param ve Version instance to be set */
-		void apply(Version *ve);
+		void apply(Version *ve, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		/** Tests if the mask applies to a Version.
 		 * @param ve test this version
@@ -109,11 +110,14 @@ class Mask : public BasicVersion {
 		const char *getCategory() const
 		{ return m_category.c_str(); }
 
+		Type get_type () const
+		{ return m_type; }
+
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
 		 * @param check_name     true if name should be tested
 		 * @param check_category true if category should be tested */
-		void checkMask(Package& pkg, const bool check_category, const bool check_name);
+		void checkMask(Package& pkg, const bool check_category, const bool check_name, Keywords::Redundant check = Keywords::RED_NOTHING);
 };
 
 class KeywordMask : public Mask {

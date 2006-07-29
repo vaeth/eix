@@ -33,6 +33,7 @@
 
 #include <vector>
 #include <string>
+#include <portage/keywords.h>
 
 #define EIX_USERRC   "/.eixrc"
 
@@ -102,6 +103,52 @@ class EixRc : public std::map<std::string,std::string> {
 
 		bool getBool(const char *key) {
 			return ! strcasecmp((*this)[key].c_str(),"true");
+		}
+
+		void getRedundantFlags(const char *key,
+			Keywords::Redundant type,
+			Keywords::Redundant &red,
+			Keywords::Redundant &all,
+			Keywords::Redundant &ins)
+		{
+			const char *a=(*this)[key].c_str();
+			if((strcasecmp(a, "no") == 0) ||
+			   (strcasecmp(a, "false") == 0))
+			{
+				red &= ~type;
+			}
+			else if(strcasecmp(a, "some") == 0)
+			{
+				red |= type;
+				all &= ~type;
+				ins &= ~type;
+			}
+			else if(strcasecmp(a, "some-installed") == 0)
+			{
+				red |= type;
+				all &= ~type;
+				ins |= type;
+			}
+			else if(strcasecmp(a, "all") == 0)
+			{
+				red |= type;
+				all |= type;
+				ins &= ~type;
+			}
+			else if(strcasecmp(a, "all-installed") == 0)
+			{
+				red |= type;
+				all |= type;
+				ins |= type;
+			}
+			else
+			{
+				WARNING("Variable %s has unknown value %s.\n"
+					"Assuming value all-installed",	key, a);
+				red |= type;
+				all |= type;
+				ins |= type;
+			}
 		}
 
 		int getInteger(const char *key) {

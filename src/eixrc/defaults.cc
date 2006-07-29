@@ -161,7 +161,7 @@ eixrc.addDefault(
 #define MATCH_IF(field, value)                                                                       \
 	eixrc.addDefault(                                                                               \
 			EixRcOption(EixRcOption::STRING, "MATCH_" #field "_IF",                                  \
-				value, "Use " #field "as default matchfield if the search string match the given extended regex.") \
+				value, "Use " #field " as default matchfield if the search string match the given extended regex.") \
 			)
 
 MATCH_IF(NAME,          ".*");
@@ -175,4 +175,63 @@ MATCH_IF(PROVIDE,       "^virtual/");
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MATCH_ORDER",
 			"PROVIDE CATEGORY_NAME NAME","Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",
+			"some",
+			"Applies if /etc/portage/package.keywords lists the same keyword twice\n"
+			"# for some/all (un-/installed) versions.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MIXED",
+			"some",
+			"Applies if /etc/portage/package.keywords lists two different keywords,\n"
+			"# e.g. ~ARCH and -*, for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_WEAKER",
+			"all-installed",
+			"Applies if /etc/portage/package.keywords lists a keywords which can\n"
+			"# be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
+			"# in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,\n"
+			"# for the versions in question.")
+
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_STRANGE",
+			"some",
+			"Applies if /etc/portage/package.keywords lists a strange keyword\n"
+			"# e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,\n"
+			"# for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_NO_CHANGE",
+			"all-installed",
+			"Applies if /etc/portage/package.keywords provides keywords which do not\n"
+			"# change the availability keywords status for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MASK_NO_CHANGE",
+			"all-installed",
+			"Applies if /etc/portage/package.mask contains entries\n"
+			"# which do not change the mask status for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_UNMASK_NO_CHANGE",
+			"all-installed",
+			"Applies if /etc/portage/package.unmask contains entries\n"
+			"# which do not change the mask status for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_MASKED",
+			"some",
+			"Applies if /etc/portage/package.mask matches twice\n"
+			"# for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_UNMASKED",
+			"some",
+			"Applies if /etc/portage/package.unmask matches twice\n"
+			"# for the versions in question.")
 		);

@@ -77,11 +77,13 @@ class PackageTest {
 		void DuplVersions()
 		{ dup_versions = !dup_versions; }
 
-		void ObsoleteCfg(PortageSettings &p, bool only_installed)
+		void ObsoleteCfg(PortageSettings &p, Keywords::Redundant red, Keywords::Redundant all, Keywords::Redundant ins)
 		{
+			redundant_flags = red;
+			all_flags       = all;
+			installed_flags = ins;
 			portagesettings = &p;
-			accept_keywords=p.getAcceptKeywords();
-			test_only_installed=only_installed;
+			accept_keywords = p.getAcceptKeywords();
 		}
 
 		void Invert()
@@ -97,6 +99,8 @@ class PackageTest {
 		MatchField field;
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
+		/* Test for this redundany. */
+		Keywords::Redundant redundant_flags, all_flags, installed_flags;
 
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;
@@ -107,7 +111,6 @@ class PackageTest {
 		/** Lookup stuff about obsolete user flags here (if non-null) */
 		PortageSettings *portagesettings;
 		Keywords accept_keywords;
-		bool test_only_installed;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
@@ -117,10 +120,7 @@ class PackageTest {
 		/** Get the Fetched-value that is required to determin */
 		void calculateNeeds();
 
-		/** test whether m1 and m2 have the same masks/keywords or
-		    whether m2 has redundant flag set for all/installed
-		    versions (depending on test_only_installed) */
-		bool have_same_mask(const Package &m1, const Package &m2) const;
+		bool have_redundant(const Package &p, Keywords::Redundant r) const;
 };
 
 #endif /* __PACKAGETEST_H__ */
