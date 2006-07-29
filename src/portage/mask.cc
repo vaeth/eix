@@ -231,6 +231,23 @@ Mask::checkMask(Package& pkg, const bool check_category, const bool check_name, 
 	return;
 }
 
+bool
+Mask::ismatch(Package& pkg)
+{
+	if(strcmp(pkg.name.c_str(), m_name.c_str()) != 0)
+		return false;
+	if(strcmp(pkg.category.c_str(), m_category.c_str()) != 0)
+		return false;
+	for(Package::iterator i = pkg.begin();
+		i != pkg.end();
+		++i)
+	{
+		if(test(*i))
+			return true;
+	}
+	return false;
+}
+
 /** Sets the stability & masked members of ve according to the mask
  * @param ve Version instance to be set */
 void Mask::apply(Version *ve, Keywords::Redundant check)

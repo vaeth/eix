@@ -57,6 +57,7 @@ using namespace std;
 const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -78,6 +79,11 @@ dump_help(int exit_code)
 			"     -V, --version         show version and exit\n"
 			"     --dump                dump variables to stdout\n"
 			"\n"
+			"   Special:\n"
+			"     -t  --test-non-matching Before other output, print non-matching entries\n"
+			"                           of /etc/portage/package.*; this option is usually\n"
+			"                           combined with -T to cleanup /etc/portage/package.*\n"
+			"\n"
 			"   Output:\n"
 			"     -q, --quiet           no output of any kind\n"
 			"     -n, --nocolor         do not use ANSI color codes\n"
@@ -93,7 +99,9 @@ dump_help(int exit_code)
 			"  Miscellaneous:\n"
 			"    -I, --installed       Next expression only matches installed packages.\n"
 			"    -D  --dup-versions    Match packages with duplicated versions\n"
-			"    -T  --test-redundancy Match packages with redundancy in /etc/portage/*.\n"
+			"    -T  --test-redundancy Match packages with redundancy in\n"
+			"                          /etc/portage/package.* according to the\n"
+			"                          REDUNDANY* variables\n"
 			"    -!, --not             Invert the expression.\n"
 			"\n"
 			"  Search Fields:\n"
@@ -174,6 +182,7 @@ static struct LocalOptions {
 		 show_help,
 		 show_version,
 		 dump_eixrc,
+		 test_unused,
 		 do_debug,
 		 ignore_etc_portage,
 		 is_current;
@@ -193,6 +202,7 @@ static struct Option long_options[] = {
 	Option("help",         'h',     Option::BOOLEAN_T,     &rc_options.show_help),
 	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
 	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
+	Option("test-non-matching",'t', Option::BOOLEAN_T,     &rc_options.test_unused),
 	Option("debug",        'd',     Option::BOOLEAN_T,     &rc_options.do_debug),
 
 	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
@@ -339,6 +349,8 @@ run_eix(int argc, char** argv)
 	format.setupColors();
 
 	eix::ptr_list<Package> matches;
+	eix::ptr_list<Package> all_packages;
+
 
 	/* Open database file */
 	FILE *fp = fopen(EIX_CACHEFILE, "rb");
@@ -362,12 +374,25 @@ run_eix(int argc, char** argv)
 	{
 		if(query->match(&reader))
 		{
-			matches.push_back(reader.release());
+			Package *release=reader.release();
+			matches.push_back(release);
+			if(rc_options.test_unused)
+				all_packages.push_back(release);
 		}
 		else
 		{
-			reader.skip();
+			if(rc_options.test_unused)
+				all_packages.push_back(reader.release());
+			else
+				reader.skip();
 		}
+	}
+	if(rc_options.test_unused)
+	{
+		print_unused("/etc/portage/package.keywords", all_packages);
+		print_unused("/etc/portage/package.mask",     all_packages);
+		print_unused("/etc/portage/package.unmask",   all_packages);
+		print_unused("/etc/portage/package.use",      all_packages);
 	}
 
 	/* Sort the found matches by rating */
@@ -441,6 +466,55 @@ int is_current_dbversion(const char *filename) {
 	fclose(fp);
 
 	return header.isCurrent() ? 0 : 1;
+}
+
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist)
+{
+	vector<string> unused;
+	vector<string> lines;
+	pushback_lines(filename, &lines, false, true);
+	for(unsigned int i = 0;
+		i<lines.size();
+		i++)
+	{
+		if(lines[i].size() == 0)
+		{
+			continue;
+		}
+		KeywordMask *m = NULL;
+
+		try {
+			string::size_type n = lines[i].find_first_of("\t ");
+			if(n == string::npos) {
+				m = new KeywordMask(lines[i].c_str());
+			}
+			else {
+				m = new KeywordMask(lines[i].substr(0, n).c_str());
+			}
+		}
+		catch(ExBasic e) {
+			portage_parse_error(filename, i, lines[i], e);
+		}
+		if(!m)
+			continue;
+
+		eix::ptr_list<Package>::const_iterator pi;
+		for(pi = packagelist.begin(); pi != packagelist.end(); ++pi)
+		{
+			if(m->ismatch(**pi))
+				break;
+		}
+		if(pi == packagelist.end())
+		{
+			unused.push_back(lines[i]);
+		}
+		delete m;
+	}
+	cout << "Entries in " << filename << " matching no existing version:\n\n";
+	for(vector<string>::iterator it=unused.begin();
+		it != unused.end(); it++)
+		cout << *it << endl;
+	cout << "--\n\n";
 }
 
 int main(int argc, char** argv)

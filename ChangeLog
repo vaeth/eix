@@ -1,6 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.5.7
+*eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Implemented -T to help cleaning up /etc/portage/package.*.
 	- Read package information for the newest available versions:
@@ -15,6 +15,7 @@
 	  To avoid increasing database size by factor ~1.5 for this feature,
 	  you can use the new SMALL_EIX_DATABASE variable.
 	- Introduced REDUNDANT_* to allow high customization for -T
+	- Implemented -t to help further in cleaning up /etc/portage/package.*
 
 *eix-0.5.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

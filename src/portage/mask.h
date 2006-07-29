@@ -118,6 +118,8 @@ class Mask : public BasicVersion {
 		 * @param check_name     true if name should be tested
 		 * @param check_category true if category should be tested */
 		void checkMask(Package& pkg, const bool check_category, const bool check_name, Keywords::Redundant check = Keywords::RED_NOTHING);
+
+		bool ismatch(Package& pkg);
 };
 
 class KeywordMask : public Mask {

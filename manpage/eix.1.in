@@ -1,4 +1,4 @@
-.TH "eix" "1" "July 29th, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "July 30th, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -56,6 +56,11 @@ Disables the use of ANSI color codes. This is useful for terminals that do not s
 .TP
 .BR -F ", " --force-color
 The opposite of --nocolor.
+.TP
+.BR -t ", " test-non-matching
+Before other output, print entries in of /etc/portage/package.* which do not
+match any existing version in the package database. You might want to combine
+this option with -T to cleanup /etc/portage/package.*.
 .\" }}}
 
 .\" {{{ -------- Output options
