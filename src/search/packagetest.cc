@@ -181,14 +181,14 @@ PackageTest::stringMatch(Package *pkg) const
 }
 
 bool
-PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
+PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const
 {
-	r &= redundant_flags;
+	r &= t.red;
 	if(r == Keywords::RED_NOTHING)
 		return false;
-	bool test_unrestricted = !(r & special_only_flags);
-	bool test_uninstalled = !(r & installed_flags);
-	if(r & all_flags)// test all, all-installed or all-uninstalled
+	bool test_unrestricted = !(r & t.spc);
+	bool test_uninstalled = !(r & t.ins);
+	if(r & t.all)// test all, all-installed or all-uninstalled
 	{
 		bool rvalue = false;
 		BasicVersion *prev_ver = NULL;
@@ -247,6 +247,19 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 		}
 		return false;
 	}
+}
+
+bool
+PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
+{
+	r &= redundant_flags;
+	if(r == Keywords::RED_NOTHING)
+		return false;
+	if(have_redundant(p, r, first_test))
+		return true;
+	if(have_redundant(p, r, second_test))
+		return true;
+	return false;
 }
 
 bool

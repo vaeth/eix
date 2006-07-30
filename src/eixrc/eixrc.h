@@ -34,6 +34,7 @@
 #include <vector>
 #include <string>
 #include <portage/keywords.h>
+#include <search/redundancy.h>
 
 #define EIX_USERRC   "/.eixrc"
 
@@ -61,7 +62,64 @@ class EixRc : public std::map<std::string,std::string> {
 	private:
 		std::vector<EixRcOption> defaults;
 
+		bool getRedundantFlagAtom(const char *s,
+			Keywords::Redundant type, RedAtom &r)
+		{
+			if((s == NULL) ||
+			   (strcasecmp(s, "no") == 0) ||
+			   (strcasecmp(s, "false") == 0))
+			{
+				r.red &= ~type;
+			}
+			else if(strcasecmp(s, "some") == 0)
+			{
+				r.red |= type;
+				r.all &= ~type;
+				r.spc &= ~type;
+			}
+			else if(strcasecmp(s, "some-installed") == 0)
+			{
+				r.red |= type;
+				r.all &= ~type;
+				r.spc |= type;
+				r.ins |= type;
+			}
+			else if(strcasecmp(s, "some-uninstalled") == 0)
+			{
+				r.red |= type;
+				r.all &= ~type;
+				r.spc |= type;
+				r.ins &= ~type;
+			}
+			else if(strcasecmp(s, "all") == 0)
+			{
+				r.red |= type;
+				r.all |= type;
+				r.spc &= ~type;
+			}
+			else if(strcasecmp(s, "all-installed") == 0)
+			{
+				r.red |= type;
+				r.all |= type;
+				r.spc |= type;
+				r.ins |= type;
+			}
+			else if(strcasecmp(s, "all-uninstalled") == 0)
+			{
+				r.red |= type;
+				r.all |= type;
+				r.spc |= type;
+				r.ins &= ~type;
+			}
+			else
+				return false;
+			return true;
+		}
+
+
 	public:
+		typedef struct { RedAtom first, second; } RedPair;
+
 		void read(void) {
 			char *home = getenv("HOME");
 			if(!(home))
@@ -107,66 +165,47 @@ class EixRc : public std::map<std::string,std::string> {
 
 		void getRedundantFlags(const char *key,
 			Keywords::Redundant type,
-			Keywords::Redundant &red,
-			Keywords::Redundant &all,
-			Keywords::Redundant &spc,
-			Keywords::Redundant &ins)
+			RedPair &p)
 		{
-			const char *a=(*this)[key].c_str();
-			if((strcasecmp(a, "no") == 0) ||
-			   (strcasecmp(a, "false") == 0))
+			std::string value=(*this)[key].c_str();
+			std::vector<std::string> a=split_string(value);
+			bool fail = false;
+
+			for(;;)// a dummy loop for break on errors
 			{
-				red &= ~type;
+				std::vector<std::string>::iterator it = a.begin();
+				if(it == a.end())
+					break;
+				if(!getRedundantFlagAtom(it->c_str(), type, p.first))
+					break;
+				++it;
+				if(it == a.end())
+				{
+					getRedundantFlagAtom(NULL, type, p.second);
+					return;
+				}
+				const char *s = it->c_str();
+				if((strcasecmp(s, "or") == 0) ||
+					(strcasecmp(s, "||") == 0) ||
+					(strcasecmp(s, "|") == 0))
+				{
+					++it;
+					if(it == a.end())
+						break;
+					s = it->c_str();
+				}
+				if(!getRedundantFlagAtom(s, type, p.first))
+					break;
+				++it;
+				if(it == a.end())
+					return;
+				break;
 			}
-			else if(strcasecmp(a, "some") == 0)
-			{
-				red |= type;
-				all &= ~type;
-				spc &= ~type;
-			}
-			else if(strcasecmp(a, "some-installed") == 0)
-			{
-				red |= type;
-				all &= ~type;
-				spc |= type;
-				ins |= type;
-			}
-			else if(strcasecmp(a, "some-uninstalled") == 0)
-			{
-				red |= type;
-				all &= ~type;
-				spc |= type;
-				ins &= ~type;
-			}
-			else if(strcasecmp(a, "all") == 0)
-			{
-				red |= type;
-				all |= type;
-				spc &= ~type;
-			}
-			else if(strcasecmp(a, "all-installed") == 0)
-			{
-				red |= type;
-				all |= type;
-				spc |= type;
-				ins |= type;
-			}
-			else if(strcasecmp(a, "all-uninstalled") == 0)
-			{
-				red |= type;
-				all |= type;
-				spc |= type;
-				ins &= ~type;
-			}
-			else
-			{
-				WARNING("Variable %s has unknown value %s.\n"
-					"Assuming value all-installed",	key, a);
-				red |= type;
-				all |= type;
-				spc |= type;
-				ins |= ~type;
-			}
+			WARNING("%s has unknown value \"%s\";\n"
+				"\tassuming value \"all-installed\" instead.",
+				key, value.c_str());
+			getRedundantFlagAtom("all-installed", type, p.first);
+			getRedundantFlagAtom(NULL, type, p.second);
 		}
 
 		int getInteger(const char *key) {

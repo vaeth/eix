@@ -406,9 +406,50 @@ Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy
-.BR REDUNDANT_IF_DOUBLE " " (some / all / some-installed / all-installed / some-uninstalled / all-uninstalled / no " or " false)
+.BR REDUNDANT_IF_DOUBLE " " (String)
 Applies if /etc/portage/package.keywords lists the same keyword twice
 for some/all (un-/installed) versions.
+
+B<String> describes which versions should be tested.
+It can have the following values:
+
+.TP
+.SS
+.BR no " or " false
+Do not test for this type of redundancy.
+.TP
+.SS
+.BR some
+It suffices that the redundancy occurs for some version in the database.
+.TP
+.SS
+.BR all
+The redundancy must occur for all versions in the database.
+.TP
+.SS
+.BR some-installed
+It suffices that the redundancy occurs for some installed version.
+Uninstalled versions are ignored for this test.
+.TP
+.SS
+.BR all-installed
+The redundancy must occurs at least for all installed versions of the package.
+If no package is installed, it must occur at least once.
+.TP
+.SS
+.BR some-uninstalled
+It suffices that the redundancy occurs for some uninstalled version.
+Installed versions are ignored for this test.
+.TP
+.SS
+.BR all-uninstalled
+The redundancy must occurs at least for all uninstalled versions.
+If all versions in the database are installed, it must occur at least once.
+.TP
+.SS
+.BR "" "some of the above  " or "  some of the above"
+The result is positive if at least one of the two tests is positive.
+Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
 .TP
 .BR REDUNDANT_IF_MIXED "  " (String ", see above")
 Applies if /etc/portage/package.keywords lists two different keywords,
@@ -444,7 +485,6 @@ for the versions in question.
 .BR REDUNDANT_IF_DOUBLE_UNMASKED "  " (String ", see above")
 Applies if /etc/portage/package.unmask matches twice
 for the versions in question.
-.TP
 .\" }}}
 .\" }}}
 

@@ -42,6 +42,8 @@
 #include <eixTk/exceptions.h>
 
 #include <search/algorithms.h>
+#include <search/redundancy.h>
+
 
 /** Test a package if it matches some criteria. */
 class PackageTest {
@@ -77,12 +79,11 @@ class PackageTest {
 		void DuplVersions()
 		{ dup_versions = !dup_versions; }
 
-		void ObsoleteCfg(PortageSettings &p, Keywords::Redundant red, Keywords::Redundant all, Keywords::Redundant spc, Keywords::Redundant ins)
+		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second)
 		{
-			redundant_flags    = red;
-			all_flags          = all;
-			special_only_flags = spc;
-			installed_flags    = ins;
+			redundant_flags    = first.red|second.red;
+			first_test         = first;
+			second_test        = second;
 			portagesettings    = &p;
 			accept_keywords    = p.getAcceptKeywords();
 		}
@@ -101,9 +102,8 @@ class PackageTest {
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
 		/* Test for this redundancy: */
-		Keywords::Redundant
-			redundant_flags, all_flags,
-			special_only_flags, installed_flags;
+		Keywords::Redundant redundant_flags;
+		RedAtom first_test, second_test;
 
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;
@@ -123,6 +123,7 @@ class PackageTest {
 		/** Get the Fetched-value that is required to determin */
 		void calculateNeeds();
 
+		bool have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const;
 		bool have_redundant(const Package &p, Keywords::Redundant r) const;
 };
 
