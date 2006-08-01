@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.6.0
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Reflect portage's change of ignoring hidden files/dir
+	  for recursive reading, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=137607
+	- Reflect portage's behaviour of reading files/dirs sorted for
+	  recursive reading.
+
 *eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Implemented -T to help cleaning up /etc/portage/package.*.

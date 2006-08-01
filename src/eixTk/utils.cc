@@ -98,44 +98,71 @@ bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, boo
 		return pushback_lines_file(file, v, removed_empty);
 }
 
+/** These variables and function are only supposed to be used from
+ *  pushback_files. We cannot use a class here, because scandir wants a
+ *  "blank" selector-function */
+static const char **pushback_files_exclude;
+static string *pushback_files_dir_path;
+static bool pushback_files_no_hidden;
+int pushback_files_selector(const struct dirent *dir_entry)
+{
+	if(pushback_files_no_hidden)
+	{
+		if((dir_entry->d_name)[0] == '.')
+			return 0;
+	}
+	if(pushback_files_exclude)
+	{
+		const char **_p = pushback_files_exclude;
+		for( ; *_p ; ++_p) /* Look if it's in exclude */
+			if(strcmp(*_p, dir_entry->d_name) == 0)
+				return 0;
+	}
+	if(pushback_files_dir_path)
+	{
+		struct stat static_stat;
+		if(stat(((*pushback_files_dir_path) + dir_entry->d_name).c_str(), &static_stat))
+			return 0;
+		if(!S_ISREG(static_stat.st_mode))
+			return 0;
+	}
+	return 1;
+}
+
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if the don't match any
  * char * in given exlude list.
  * @param dir_path Path to directory
  * @param into pointer to vector of strings .. files get append here (with full path)
  * @param exclude list of char * that don't need to be put into vector
- * @param onlyfiles consider only ordinary files
- * @return false if everything is ok */
-bool pushback_files(string &dir_path, vector<string> &into, const char *exclude[], bool onlyfiles)
+ * @param only_files consider only ordinary files
+ * @param no_hidden ignore hidden files
+ * @return true if everything is ok */
+bool pushback_files(string &dir_path, vector<string> &into, const char *exclude[], bool only_files, bool no_hidden)
 {
-	struct stat static_stat;
-	DIR *dir = opendir(dir_path.c_str());
-	if( !(dir) ) return false;
-	/* one for \0 and on for /, to be on the save side */
-
-	struct dirent *dir_entry;
-	while((dir_entry = readdir(dir)))
+	pushback_files_exclude = exclude;
+	pushback_files_no_hidden = no_hidden;
+	if(only_files)
+		pushback_files_dir_path = &dir_path;
+	else
+		pushback_files_dir_path = NULL;
+	struct dirent **namelist = NULL;
+	int num = scandir(dir_path.c_str(), &namelist,
+		pushback_files_selector, alphasort);
+	bool ok;
+	if(num < 0)
+		ok = false;
+	else
 	{
-		if(exclude)
+		ok = true;
+		for(int i = 0; i < num; ++i)
 		{
-			char **_p = (char **)exclude;
-			for(;*_p;_p++) /* Look if it's in exclude */
-				if(strcmp(*_p, dir_entry->d_name) == 0)
-					break;
-			if(*_p)
-				continue;
-
+			into.push_back(dir_path + (namelist[i]->d_name));
 		}
-		if(onlyfiles)
-		{
-			if(stat((dir_path + dir_entry->d_name).c_str(), &static_stat)
-					|| !S_ISREG(static_stat.st_mode))
-				continue;
-		}
-		into.push_back(dir_path + dir_entry->d_name);
 	}
-	closedir(dir);
-	return true;
+	if(namelist)
+		free(namelist);
+	return ok;
 }
 
 /** Cycle through map using it, until it is it_end, append all values from it

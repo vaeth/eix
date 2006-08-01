@@ -16,6 +16,18 @@ die() {
 ver=$(grep AC_INIT configure.in | awk '{ print $2 }')
 ver=${ver/,}
 
+ans=''
+while [[ -z "${ans}" ]]; do
+	read -p "Are you sure you want to release ${proj}-${ver}? (y/n) " ans
+	case "${ans}" in
+		n) echo "Not releasing anything"; exit 1;;
+		y) ;;
+		*) if [[ "${ans}" ]]; then
+			echo "Unknown answer: ${ans}"
+			exit 2
+		fi;;
+	esac
+done
 echo "Creating release tag... "
 
 svn copy ${svnroot}/trunk ${svnroot}/tags/release-${ver} \
