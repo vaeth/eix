@@ -148,10 +148,11 @@ class PrintFormat {
 		PrintProperty  m_print_property;
 		GetProperty    m_get_property;
 		Node          *m_root;
-		VarDbPkg      *vardb;/**< This is actually hack:
-			vardb is only set temporarily during printing to allow
-			comparison with installed versions - this is only to
-			avoid passing this argument through all subfunctions */
+		/* The following two are actually a hack:
+		   They are only set temporarily during printing to avoid
+		   passing this argument through all sub-functions */
+		VarDbPkg      *vardb;
+		std::vector<int> *overlay_translations;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
@@ -167,9 +168,9 @@ class PrintFormat {
 			   mark_installed_end;/**< End-Marker for installed packages */
 
 		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
-			: m_print_property(print_callback), m_get_property(get_callback) {
-			vardb=NULL;
-		}
+			: m_print_property(print_callback), m_get_property(get_callback),
+			  vardb(NULL), overlay_translations(NULL)
+			{}
 
 		void setupColors() {
 			color_masked     = AnsiColor(color_masked).asString();
@@ -181,25 +182,31 @@ class PrintFormat {
 			mark_installed_end = marker.end();
 		}
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL) {
-			vardb=vardbpkg;
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<int> *overlaymap = NULL) {
+			vardb = vardbpkg;
+			overlay_translations = overlaymap;
 			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
-			vardb=NULL;
+			vardb = NULL;
+			overlay_translations = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL) {
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<int> *overlaymap = NULL) {
 			vardb=vardbpkg;
+			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
 			vardb=NULL;
+			overlay_translations = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg = NULL) {
+		void print(void *entity, VarDbPkg *vardbpkg = NULL, std::vector<int> *overlaymap = NULL) {
 			vardb=vardbpkg;
+			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
 			vardb=NULL;
+			overlay_translations = NULL;
 		}
 
 		void setFormat(const char *fmt) throw(ExBasic) {

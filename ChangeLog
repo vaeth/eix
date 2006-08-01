@@ -7,6 +7,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=137607
 	- Reflect portage's behaviour of reading files/dirs sorted for
 	  recursive reading.
+	- Introduce OVERLAYS_LIST to display only overlays that are
+	  really needed.
 
 *eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

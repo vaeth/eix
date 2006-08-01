@@ -41,7 +41,7 @@ class Package
 {
 	public:
 		/** True if duplicated versions are found in for this package.
-		 * That means i.e. the version 0.2 is found in two overlays. */
+		 * That means e.g. that version 0.2 is found in two overlays. */
 		bool have_duplicate_versions;
 
 		/** Key for Portagedb.overlays/overlaylist from header. */

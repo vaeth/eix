@@ -101,7 +101,7 @@ dump_help(int exit_code)
 			"    -D  --dup-versions    Match packages with duplicated versions\n"
 			"    -T  --test-redundancy Match packages with redundancy in\n"
 			"                          /etc/portage/package.* according to the\n"
-			"                          REDUNDANT* variables (see eix --dump or man eix).\n"
+			"                          REDUNDANT* variables (see man eix).\n"
 			"                          Use -t to find redundancy for non-existing packages.\n"
 			"    -!, --not             Invert the expression.\n"
 			"\n"
@@ -172,6 +172,7 @@ enum cli_options {
 };
 
 char *format_normal, *format_verbose, *format_compact;
+char overlay_mode;
 
 PrintFormat format(get_package_property, print_package_property);
 
@@ -263,20 +264,39 @@ setup_defaults()
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
+
+	string overlay = rc["OVERLAYS_LIST"];
+	if(overlay.find("if") != string::npos)
+		overlay_mode = 2;
+	else if(overlay.find("number") != string::npos)
+		overlay_mode = 0;
+	else if(overlay.find("used") != string::npos)
+		overlay_mode = 1;
+	else if((overlay.find("no") != string::npos) ||
+		(overlay.find("false") != string::npos))
+		overlay_mode = 4;
+	else
+		overlay_mode = 3;
 }
 
 void
-print_overlay_table(DBHeader &header)
+print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<int> *overlay_num)
 {
 	for(int i = 1;
 		i < header.countOverlays();
 		i++)
 	{
+		if(overlay_used)
+			if(!((*overlay_used)[i-1]))
+				continue;
+		int ov_num = i;
+		if(overlay_num)
+			ov_num = (*overlay_num)[i-1];
 		if( !format.no_color )
 		{
 			cout << format.color_overlaykey;
 		}
-		printf("[%i] ", i);
+		printf("[%i] ", ov_num);
 		if( !format.no_color )
 		{
 			cout << AnsiColor(AnsiColor::acDefault, 0);
@@ -412,6 +432,9 @@ run_eix(int argc, char** argv)
 	}
 
 	bool need_overlay_table = false;
+	vector<bool> overlay_used(header.countOverlays(), false);
+	if(overlay_mode == 3)
+		need_overlay_table = true;
 	for(eix::ptr_list<Package>::iterator it = matches.begin();
 		it != matches.end();
 		++it)
@@ -432,14 +455,41 @@ run_eix(int argc, char** argv)
 				|| it->overlay_key != 0) )
 		{
 			need_overlay_table = true;
+			if(overlay_mode <= 1)
+			{
+				for(Package::iterator ver = it->begin();
+					ver != it->end(); ++ver)
+				{
+					int key = ver->overlay_key;
+					if(key>0)
+						overlay_used[key - 1] = true;
+				}
+			}
 		}
-
-		format.print(*it, &varpkg_db);
+		if(overlay_mode != 0)
+			format.print(*it, &varpkg_db);
 	}
-
+	if(overlay_mode == 4)
+		need_overlay_table = false;
+	vector<int> overlay_num(header.countOverlays());
+	if(overlay_mode == 0)
+	{
+		short i = 1;
+		vector<bool>::iterator  uit = overlay_used.begin();
+		vector<int>::iterator nit = overlay_num.begin();
+		for(; uit != overlay_used.end(); ++uit, ++nit)
+			if(*uit == true)
+				*nit = i++;
+		for(eix::ptr_list<Package>::iterator it = matches.begin();
+			it != matches.end();
+			++it)
+			format.print(*it, &varpkg_db, &overlay_num);
+	}
 	if(need_overlay_table)
 	{
-		print_overlay_table(header);
+		print_overlay_table(header,
+			(overlay_mode <= 1)? &overlay_used : NULL,
+			(overlay_mode == 0)? &overlay_num : NULL);
 	}
 
 	fputs("\n", stdout);

@@ -104,7 +104,10 @@ print_versions(PrintFormat *fmt, Package* p)
 			if( ! fmt->no_color )
 				cout << fmt->color_overlaykey;
 
-			cout << "[" << version_it->overlay_key << "] ";
+			short ov_key = version_it->overlay_key;
+			if(fmt->overlay_translations)
+				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
+			cout << "[" << ov_key << "] ";
 		}
 
 		if(++version_it != p->end() && !fmt->style_version_lines)

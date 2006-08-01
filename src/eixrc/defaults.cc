@@ -121,6 +121,11 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "OVERLAYS_LIST",
+			"all-used-renumbered", "Which overlays to list (all/all-if-used/all-used/all-used-renumbered/no)")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::INTEGER, "LEVENSHTEIN_DISTANCE",
 			LEVENSHTEIN_DISTANCE_STR,
 			"Defines the default maximal levensthein for which a string is considered a match.")
@@ -181,7 +186,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",
 			"some",
 			"Applies if /etc/portage/package.keywords lists the same keyword twice\n"
-			"# for some/all (un-/installed) versions.")
+			"# for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MIXED",

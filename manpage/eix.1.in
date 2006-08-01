@@ -330,6 +330,10 @@ Keep database small at the cost of never honoring keywords of other ARCH.
 Only set this to true if you really must save disk space.
 
 .TP
+.BR OVERLAYS_LIST "  " (all / all-if-used / all-used / all-used-renumbered / no)
+Defines which overlays to list.
+
+.TP
 .BR LEVENSHTEIN_DISTANCE "  " (Integer)
 Set default levenshtein-distance.
 
