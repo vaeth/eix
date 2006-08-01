@@ -94,6 +94,9 @@ class PackageTest {
 		MatchField operator |= (const MatchField m)
 		{ return field |= m; }
 
+		MatchField operator = (const MatchField m)
+		{ return field = m; }
+
 	protected:
 
 	private:

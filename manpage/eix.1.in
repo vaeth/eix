@@ -111,6 +111,9 @@ What is considered as redundant is defined by the REDUNDANT_*-variables below.
 .TP
 .BR -! ", " --not
 Invert the expression given
+.TP
+.BR -| ", " --pipe
+Use input from pipe of an emerge -pv (similar to genlop -p)
 .\" }}}
 
 .\" {{{ -------- Operation selection

@@ -28,6 +28,8 @@
 #include "../config.h"
 #include "cli.h"
 
+using namespace std;
+
 Matchatom *
 parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
@@ -71,6 +73,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 		// }}}
 
 		EixRc::RedPair red;
+		bool firsttime;
 		switch(**arg)
 		{
 			// Check local options {{{
@@ -130,6 +133,47 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 			case 'p': test->setAlgorithm(new WildcardAlgorithm());
 					  break;
 			// }}}
+
+			case '|':
+				test->setAlgorithm(new ESMAlgorithm());
+				*test = PackageTest::CATEGORY_NAME;
+				firsttime = true;
+				while(!cin.eof())
+				{
+					string line;
+					getline(cin, line);
+					trim(&line);
+					vector<string> wordlist = split_string(line.c_str());
+					vector<string>::iterator word = wordlist.begin();
+					string::size_type i;
+					for(; word != wordlist.end(); ++word)
+					{
+						i = word->find("/");
+						if(i == string::npos)
+							continue;
+						if(word->find("/", i + 1) == string::npos)
+							break;
+					}
+					if(word == wordlist.end())
+						continue;
+					if(! firsttime)
+					{
+						Matchatom *next = current->OR();
+						current->setTest(test);
+						current->finalize();
+						current = next;
+						test = new PackageTest(&varpkg_db);
+						test->setAlgorithm(new ESMAlgorithm());
+						*test = PackageTest::CATEGORY_NAME;
+					}
+					firsttime = false;
+					const char *name = ExplodeAtom::split_name(word->c_str());
+					if(!name)
+						name = strdup(word->c_str());
+					test->setPattern(name);
+				}
+				need_logical_operator = true;
+				break;
 
 			// String arguments .. finally! {{{
 			case -1:  test->setPattern(arg->m_argument);

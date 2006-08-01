@@ -9,6 +9,7 @@
 	  recursive reading.
 	- Introduce OVERLAYS_LIST to display only overlays that are
 	  really needed.
+	- Option --pipe to parse output from emerge -pv (similar to genlop -p)
 
 *eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
