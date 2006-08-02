@@ -32,6 +32,8 @@
 #include <vector>
 #include <string>
 
+#include <portage/version.h>
+
 /** Representation of a database-header.
  * Contains your arch, the version of the db, the number of packages/categories
  * and a table of key->directory mappings. */
@@ -49,13 +51,13 @@ class DBHeader {
 		unsigned int size; /**< Number of categories. */
 
 		/** Get string for key from directory-table. */
-		std::string getOverlay(short key) const;
+		std::string getOverlay(Version::Overlay key) const;
 
 		/** Add overlay to directory-table and return key. */
-		short addOverlay(std::string overlay);
+		Version::Overlay addOverlay(std::string overlay);
 
-		short countOverlays() const
-		{ return overlays.size(); }
+		Version::Overlay countOverlays() const
+		{ return (Version::Overlay)(overlays.size()); }
 
 		bool isCurrent()
 		{ return version == DBHeader::current; }

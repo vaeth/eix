@@ -139,6 +139,7 @@ class FormatParser {
 
 class PrintFormat {
 	friend void print_versions(PrintFormat *fmt, Package *p);
+	friend void print_package_property(PrintFormat *fmt, void *void_entity, std::string &name) throw(ExBasic);
 
 	public:
 		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, std::string &property);
@@ -153,7 +154,7 @@ class PrintFormat {
 		   They are only set temporarily during printing to avoid
 		   passing this argument through all sub-functions */
 		VarDbPkg      *vardb;
-		std::vector<int> *overlay_translations;
+		std::vector<Version::Overlay> *overlay_translations;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
@@ -183,7 +184,7 @@ class PrintFormat {
 			mark_installed_end = marker.end();
 		}
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<int> *overlaymap = NULL) {
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb = vardbpkg;
 			overlay_translations = overlaymap;
 			recPrint(entity, print_property, get_property, root);
@@ -192,7 +193,7 @@ class PrintFormat {
 			overlay_translations = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<int> *overlaymap = NULL) {
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb=vardbpkg;
 			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, root);
@@ -201,7 +202,7 @@ class PrintFormat {
 			overlay_translations = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg = NULL, std::vector<int> *overlaymap = NULL) {
+		void print(void *entity, VarDbPkg *vardbpkg = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb=vardbpkg;
 			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, m_root);

@@ -33,7 +33,7 @@
 
 #include <string>
 
-class Version;
+#include <portage/version.h>
 
 /** A class to represent a package in portage It contains various information
  * about a package, including a list of versions. */
@@ -46,7 +46,7 @@ class Package
 		bool have_duplicate_versions;
 
 		/** Key for Portagedb.overlays/overlaylist from header. */
-		unsigned short overlay_key;
+		Version::Overlay overlay_key;
 
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key;

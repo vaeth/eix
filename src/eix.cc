@@ -283,23 +283,23 @@ setup_defaults()
 }
 
 void
-print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<int> *overlay_num)
+print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<Version::Overlay> *overlay_num)
 {
-	for(int i = 1;
+	for(Version::Overlay i = 1;
 		i < header.countOverlays();
-		i++)
+		++i)
 	{
 		if(overlay_used)
 			if(!((*overlay_used)[i-1]))
 				continue;
-		int ov_num = i;
+		Version::Overlay ov_num = i;
 		if(overlay_num)
 			ov_num = (*overlay_num)[i-1];
 		if( !format.no_color )
 		{
 			cout << format.color_overlaykey;
 		}
-		printf("[%i] ", ov_num);
+		cout << "[" << ov_num << "] ";
 		if( !format.no_color )
 		{
 			cout << AnsiColor(AnsiColor::acDefault, 0);
@@ -463,7 +463,7 @@ run_eix(int argc, char** argv)
 				for(Package::iterator ver = it->begin();
 					ver != it->end(); ++ver)
 				{
-					int key = ver->overlay_key;
+					Version::Overlay key = ver->overlay_key;
 					if(key>0)
 						overlay_used[key - 1] = true;
 				}
@@ -474,12 +474,12 @@ run_eix(int argc, char** argv)
 	}
 	if(overlay_mode == 4)
 		need_overlay_table = false;
-	vector<int> overlay_num(header.countOverlays());
+	vector<Version::Overlay> overlay_num(header.countOverlays());
 	if(overlay_mode == 0)
 	{
 		short i = 1;
 		vector<bool>::iterator  uit = overlay_used.begin();
-		vector<int>::iterator nit = overlay_num.begin();
+		vector<Version::Overlay>::iterator nit = overlay_num.begin();
 		for(; uit != overlay_used.end(); ++uit, ++nit)
 			if(*uit == true)
 				*nit = i++;

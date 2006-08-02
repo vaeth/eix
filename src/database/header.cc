@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -36,17 +37,17 @@ using namespace std;
 
 /** Get string for key from directory-table. */
 string
-DBHeader::getOverlay(short key) const
+DBHeader::getOverlay(Version::Overlay key) const
 {
-	if(key > (short) overlays.size())
+	if(key > countOverlays())
 		return string("");
 	return overlays[key];
 }
 
 /** Add overlay to directory-table and return key. */
-short
+Version::Overlay
 DBHeader::addOverlay(string overlay)
 {
 	overlays.push_back(overlay);
-	return (short) overlays.size() - 1;
+	return countOverlays() - 1;
 }
