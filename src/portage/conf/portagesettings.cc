@@ -155,8 +155,14 @@ vector<string> *PortageSettings::getCategories()
 MaskList<Mask> *PortageSettings::getMasks()
 {
 	if(m_masks.empty()) {
-		if(!grab_masks(string((*this)["PORTDIR"]+"profiles/package.mask").c_str(), Mask::maskMask, &m_masks) )
+		if(!grab_masks(string((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
 			WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
+		for(vector<string>::iterator i = overlays.begin();
+			i != overlays.end();
+			++i)
+		{
+			grab_masks(string(*i + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
+		}
 	}
 	return &(m_masks);
 }

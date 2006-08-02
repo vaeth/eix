@@ -41,6 +41,7 @@
 /* Files for categories the user defined and categories from the official tree */
 #define USER_CATEGORIES_FILE    "/etc/portage/categories"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
+#define PORTDIR_MASK_FILE       "profiles/package.mask"
 
 class Mask;
 class Package;
