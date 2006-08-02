@@ -1,4 +1,4 @@
-.TH "eix" "1" "July 30th, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "August 2, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -292,11 +292,15 @@ all overlays, using gensync -a.
 .\" {{{ -------- /etc/eixrc
 .SS /etc/eixrc
 Global configuration file. ~/.eixrc overrides this file.
+.TP
+The variables can also be overridden by the environment.
 .\" }}}
 
 .\" {{{ -------- ~/.eixrc
 .SS ~/.eixrc
 Per-user configuration file.
+.TP
+The variables in this file can be overridden by the environment.
 .TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (Strings)
 Define the normal, compact and verbose layout for results printed by B<eix> (See
@@ -333,8 +337,41 @@ Keep database small at the cost of never honoring keywords of other ARCH.
 Only set this to true if you really must save disk space.
 
 .TP
+.BR DEFAULT_IS_OR "  " (true/false)
+If several arguments are given without a logical concatenation (-a or -o),
+eix assumes an implicit concatenation. If this variable is true, it assumes
+the concatenation -o (or), otherwise -a (and).
+
+.TP
 .BR OVERLAYS_LIST "  " (all / all-if-used / all-used / all-used-renumbered / no)
-Defines which overlays to list.
+People with many different overlays do not want to see all overlays listed at
+the end but only those which are really used. Here, you can customize the
+behaviour. The value is interpreted as follows:
+.TP
+.SS
+.BR all-if-used / if-used / if
+Display all overlays, if at least one is used. This was the default behaviour
+before eix-0.6.0.
+.TP
+.SS
+.BR used-renumbered / renumber / renumbered / number
+Display only the overlays actually used, numbering them "correctly"
+(i.e. if only two overlays are needed, number them [1] and [2]).
+The disadvantage is that overlays get different numbers for different queries.
+However, the order of the numbering is consistent.
+.TP
+.SS
+.BR all-used / only-used / used
+Display only the overlays actually used, keeping the numbering consistent
+over all queries (on the same database).
+.TP
+.SS
+.BR no / false
+Never display a list of overlays.
+.TP
+.SS
+.BR "" "anything else"
+List all overlays for every query (even if not even one is needed).
 
 .TP
 .BR LEVENSHTEIN_DISTANCE "  " (Integer)
@@ -419,7 +456,6 @@ for some/all (un-/installed) versions.
 
 B<String> describes which versions should be tested.
 It can have the following values:
-
 .TP
 .SS
 .BR no " or " false
@@ -525,7 +561,8 @@ deletes the old cache (rm -fr /var/cache/edb/dep/*).
 .\" {{{ AUTHORS
 .SH "AUTHORS"
 .LP
-Martin Väth <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+
+Martin V\[:a]th  <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 

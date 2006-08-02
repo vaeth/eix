@@ -1,6 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.6.0
+*eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Reflect portage's change of ignoring hidden files/dir
 	  for recursive reading, see
@@ -10,6 +10,9 @@
 	- Introduce OVERLAYS_LIST to display only overlays that are
 	  really needed.
 	- Option --pipe to parse output from emerge -pv (similar to genlop -p)
+	- Introduce DEFAULT_IS_OR and let it default to "true".
+	  This changes the default behaviour when several arguments are given.
+	- Document that variables may be overridden by environment
 
 *eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

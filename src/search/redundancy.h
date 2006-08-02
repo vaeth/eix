@@ -6,9 +6,9 @@
  *   https://sourceforge.net/projects/eix                                  *
  *                                                                         *
  *   Copyright (c)                                                         *
- *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *

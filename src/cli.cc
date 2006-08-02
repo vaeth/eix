@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,6 +31,16 @@
 
 using namespace std;
 
+#define FINISH_CURRENT { \
+	current->setTest(test); \
+	current->finalize(); }
+
+#define USE_NEXT { \
+	FINISH_CURRENT; \
+	current = next; \
+	test = new PackageTest(&varpkg_db); }
+
+
 Matchatom *
 parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
@@ -39,6 +50,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 	PackageTest *test    = new PackageTest(&varpkg_db);
 
 	bool need_logical_operator = false;
+	bool have_default_operator = false;
+	bool default_operator;
 	while(arg != end)
 	{
 		// Check for logical operator {{{
@@ -57,16 +70,21 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 			}
 			else if(need_logical_operator)
 			{
-				next = current->AND();
+				if(!have_default_operator)
+				{
+					have_default_operator = true;
+					default_operator = eixrc.getBool("DEFAULT_IS_OR");
+				}
+				if(default_operator)
+					next = current->OR();
+				else
+					next = current->AND();
 			}
 
 			if(next != NULL)
 			{
-				current->setTest(test);
-				current->finalize();
+				USE_NEXT;
 				need_logical_operator = false;
-				current = next;
-				test = new PackageTest(&varpkg_db);
 				continue;
 			}
 		}
@@ -134,6 +152,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 					  break;
 			// }}}
 
+			// Read from pipe {{{
 			case '|':
 				test->setAlgorithm(new ESMAlgorithm());
 				*test = PackageTest::CATEGORY_NAME;
@@ -159,10 +178,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 					if(! firsttime)
 					{
 						Matchatom *next = current->OR();
-						current->setTest(test);
-						current->finalize();
-						current = next;
-						test = new PackageTest(&varpkg_db);
+						USE_NEXT;
 						test->setAlgorithm(new ESMAlgorithm());
 						*test = PackageTest::CATEGORY_NAME;
 					}
@@ -174,6 +190,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 				}
 				need_logical_operator = true;
 				break;
+			// }}}
 
 			// String arguments .. finally! {{{
 			case -1:  test->setPattern(arg->m_argument);
@@ -184,8 +201,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 
 		++arg;
 	}
-	current->setTest(test);
-	current->finalize();
+	FINISH_CURRENT;
 	return root;
 }
 
