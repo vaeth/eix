@@ -45,11 +45,11 @@ class Package
 		 * That means e.g. that version 0.2 is found in two overlays. */
 		bool have_duplicate_versions;
 
-		/** Key for Portagedb.overlays/overlaylist from header. */
-		Version::Overlay overlay_key;
-
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key;
+
+		/** The smallest overlay from which one of the version comes. */
+		Version::Overlay smallest_overlay;
 
 		/** True if every version is in the system-profile. */
 		bool is_system_package;

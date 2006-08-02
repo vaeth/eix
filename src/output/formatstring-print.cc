@@ -129,9 +129,9 @@ print_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(
 	}
 	else if(name == "overlaykey") {
 		if(entity->have_same_overlay_key
-				&& entity->overlay_key)
+				&& entity->smallest_overlay)
 		{
-			int ov_key = entity->overlay_key;
+			int ov_key = entity->smallest_overlay;
 			if(fmt->overlay_translations)
 				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
 			cout << "[" << ov_key << "] ";
@@ -144,12 +144,12 @@ print_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(
 		}
 	}
 	else
-		cout << get_package_property(void_entity, name);
+		cout << get_package_property(fmt, void_entity, name);
 
 }
 
 string
-get_package_property(void *void_entity, string &name) throw(ExBasic)
+get_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(ExBasic)
 {
 	Package *entity = (Package*)void_entity;
 
@@ -178,8 +178,11 @@ get_package_property(void *void_entity, string &name) throw(ExBasic)
 		stringstream ss;
 		string ret;
 		if(entity->have_same_overlay_key
-				&& entity->overlay_key) {
-			ss << (int)entity->overlay_key;
+				&& entity->smallest_overlay) {
+			int ov_key = entity->smallest_overlay;
+			if(fmt->overlay_translations)
+				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
+			ss << ov_key;
 			ss >> ret;
 		}
 		return ret;
@@ -202,7 +205,7 @@ get_package_property(void *void_entity, string &name) throw(ExBasic)
 }
 
 string
-get_diff_package_property(void *void_entity, string &name) throw(ExBasic)
+get_diff_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(ExBasic)
 {
 	Package *newer = ((Package**)void_entity)[1];
 	Package *older = ((Package**)void_entity)[0];
@@ -220,7 +223,7 @@ get_diff_package_property(void *void_entity, string &name) throw(ExBasic)
 		}
 		return "";
 	}
-	return get_package_property((void*)newer, name);
+	return get_package_property(fmt, (void*)newer, name);
 }
 
 void

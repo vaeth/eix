@@ -74,7 +74,7 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					ConditionBlock *ief = (ConditionBlock*)root;
 					bool ok = false;
 					try {
-						ok = get_property(entity, ief->variable.name) == ief->text.text;
+						ok = get_property(this, entity, ief->variable.name) == ief->text.text;
 					}
 					catch(ExBasic e) {
 						cerr << e << endl;

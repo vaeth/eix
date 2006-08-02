@@ -455,7 +455,7 @@ run_eix(int argc, char** argv)
 
 		if( !need_overlay_table
 			&& (!it->have_same_overlay_key
-				|| it->overlay_key != 0) )
+				|| it->smallest_overlay) )
 		{
 			need_overlay_table = true;
 			if(overlay_mode <= 1)

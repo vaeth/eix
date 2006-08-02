@@ -140,10 +140,11 @@ class FormatParser {
 class PrintFormat {
 	friend void print_versions(PrintFormat *fmt, Package *p);
 	friend void print_package_property(PrintFormat *fmt, void *void_entity, std::string &name) throw(ExBasic);
+	friend std::string get_package_property(PrintFormat *fmt, void *entity, std::string &name) throw(ExBasic);
 
 	public:
 		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, std::string &property);
-		typedef std::string (*GetProperty)  (void *entity, std::string &property);
+		typedef std::string (*GetProperty)(PrintFormat *formatstring, void *entity, std::string &property);
 
 	protected:
 		FormatParser   m_parser;

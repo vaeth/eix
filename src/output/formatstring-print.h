@@ -39,10 +39,10 @@ void print_version(PrintFormat *fmt, Version *version, bool isinstalled = false)
 void print_versions(PrintFormat *fmt, Package *p);
 
 void   print_package_property(PrintFormat *fmt, void *entity, std::string &name) throw(ExBasic);
-std::string get_package_property(void *entity, std::string &name) throw(ExBasic);
+std::string get_package_property(PrintFormat *fmt, void *entity, std::string &name) throw(ExBasic);
 
 
 void print_diff_package_property(PrintFormat *fmt, void *void_entity, std::string &name) throw(ExBasic);
-std::string get_diff_package_property(void *void_entity, std::string &name) throw(ExBasic);
+std::string get_diff_package_property(PrintFormat *fmt, void *void_entity, std::string &name) throw(ExBasic);
 
 #endif /* __FORMATSTRING-PRINT_H__ */

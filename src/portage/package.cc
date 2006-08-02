@@ -59,18 +59,23 @@ void Package::addVersion(Version *version)
 		have_duplicate_versions = checkDuplicates(version);
 	}
 
+	Version::Overlay key = version->overlay_key;
+
 	/* This should remain with two if .. so we can guarante that
 	 * versions.size() == 0 in the else. */
 	if(empty() == false) {
-		if(overlay_key != version->overlay_key)
+		if(smallest_overlay != key)
+		{
 			have_same_overlay_key = false;
-
+			if(smallest_overlay > key)
+				smallest_overlay = key;
+		}
 		if(is_system_package) {
 			is_system_package = version->isSystem();
 		}
 	}
 	else {
-		overlay_key       = version->overlay_key;
+		smallest_overlay  = key;
 		is_system_package = version->isSystem();
 	}
 
