@@ -123,7 +123,17 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DEFAULT_IS_OR",
-			"true", "Whether default concatenation of queries is -o (or) or -a (and)")
+			"true", "Whether default concatenation of string queries is -o (or) or -a (and)")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DUP_PACKAGES_ONLY_OVERLAYS",
+			"false", "Whether checks for duplicate packages occur only among overlays")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DUP_VERSIONS_ONLY_OVERLAYS",
+			"false", "Whether checks for duplicate versions occur only among overlays")
 		);
 
 eixrc.addDefault(

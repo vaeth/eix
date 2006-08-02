@@ -43,13 +43,22 @@ class Package
 	public:
 		/** True if duplicated versions are found in for this package.
 		 * That means e.g. that version 0.2 is found in two overlays. */
-		bool have_duplicate_versions;
+		typedef char Duplicates;
+		static const Duplicates
+			DUP_NONE,
+			DUP_SOME,    /* Duplicate versions are somewhere */
+			DUP_OVERLAYS;/* Duplicate versions are both in overlays */
+
+		Duplicates have_duplicate_versions;
 
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key;
 
-		/** The smallest overlay from which one of the version comes. */
-		Version::Overlay smallest_overlay;
+		/** True if all versions come from at most one overlay. */
+		bool at_least_two_overlays;
+
+		/** The largest overlay from which one of the version comes. */
+		Version::Overlay largest_overlay;
 
 		/** True if every version is in the system-profile. */
 		bool is_system_package;
@@ -81,7 +90,7 @@ class Package
 
 	protected:
 		/** Check if a package has duplicated versions. */
-		bool checkDuplicates(Version *version) const;
+		void checkDuplicates(Version *version);
 
 		void sortedPushBack(Version *v);
 
@@ -89,7 +98,8 @@ class Package
 		{
 			is_system_package = false;
 			have_same_overlay_key = true;
-			have_duplicate_versions = false;
+			at_least_two_overlays = false;
+			have_duplicate_versions = DUP_NONE;
 		}
 };
 

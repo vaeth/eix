@@ -13,6 +13,8 @@
 	- Introduce DEFAULT_IS_OR and let it default to "true".
 	  This changes the default behaviour when several arguments are given.
 	- Document that variables may be overridden by environment
+	- Introduce -d and DUP_*_ONLY_OVERLAYS, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=142469
 
 *eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -99,7 +99,8 @@ dump_help(int exit_code)
 			"Local:\n"
 			"  Miscellaneous:\n"
 			"    -I, --installed       Next expression only matches installed packages.\n"
-			"    -D, --dup-versions    Match packages with duplicated versions\n"
+			"    -d, --dup-packages    Match duplicated packages.\n"
+			"    -D, --dup-versions    Match packages with duplicated versions.\n"
 			"    -T, --test-redundancy Match packages with redundancy in\n"
 			"                          /etc/portage/package.* according to the\n"
 			"                          REDUNDANT* variables (see man eix).\n"
@@ -164,13 +165,10 @@ enum cli_options {
 	O_FMT = 256,
 	O_FMT_VERBOSE,
 	O_FMT_COMPACT,
-	O_EXC_OVERLAY,
 	O_DUMP,
-	O_COLOR,
 	O_IGNORE_ETC_PORTAGE,
-	O_USE,
 	O_CURRENT,
-	O_NORC
+	O_DEBUG
 };
 
 char *format_normal, *format_verbose, *format_compact;
@@ -207,7 +205,7 @@ static struct Option long_options[] = {
 	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
 	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
 	Option("test-non-matching",'t', Option::BOOLEAN_T,     &rc_options.test_unused),
-	Option("debug",        'd',     Option::BOOLEAN_T,     &rc_options.do_debug),
+	Option("debug",        O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
 
 	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
 
@@ -219,6 +217,7 @@ static struct Option long_options[] = {
 
 	// Options for criteria
 	Option("installed",     'I'),
+	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-redundancy",'T'),
 	Option("not",           '!'),
@@ -436,8 +435,6 @@ run_eix(int argc, char** argv)
 
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);
-	if(overlay_mode == 3)
-		need_overlay_table = true;
 	for(eix::ptr_list<Package>::iterator it = matches.begin();
 		it != matches.end();
 		++it)
@@ -453,9 +450,7 @@ run_eix(int argc, char** argv)
 
 		it->installed_versions = varpkg_db.getInstalledString(**it);
 
-		if( !need_overlay_table
-			&& (!it->have_same_overlay_key
-				|| it->smallest_overlay) )
+		if(it->largest_overlay)
 		{
 			need_overlay_table = true;
 			if(overlay_mode <= 1)
@@ -472,8 +467,11 @@ run_eix(int argc, char** argv)
 		if(overlay_mode != 0)
 			format.print(*it, &varpkg_db);
 	}
-	if(overlay_mode == 4)
-		need_overlay_table = false;
+	switch(overlay_mode)
+	{
+		case 3: need_overlay_table = true;  break;
+		case 4: need_overlay_table = false; break;
+	}
 	vector<Version::Overlay> overlay_num(header.countOverlays());
 	if(overlay_mode == 0)
 	{

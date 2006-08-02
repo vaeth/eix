@@ -105,7 +105,7 @@ print_versions(PrintFormat *fmt, Package* p)
 			if( ! fmt->no_color )
 				cout << fmt->color_overlaykey;
 
-			int ov_key = version_it->overlay_key;
+			Version::Overlay ov_key = version_it->overlay_key;
 			if(fmt->overlay_translations)
 				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
 			cout << "[" << ov_key << "] ";
@@ -128,10 +128,9 @@ print_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(
 		print_versions(fmt, entity);
 	}
 	else if(name == "overlaykey") {
-		if(entity->have_same_overlay_key
-				&& entity->smallest_overlay)
+		Version::Overlay ov_key = entity->largest_overlay;
+		if(ov_key && entity->have_same_overlay_key)
 		{
-			int ov_key = entity->smallest_overlay;
 			if(fmt->overlay_translations)
 				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
 			cout << "[" << ov_key << "] ";
@@ -177,9 +176,8 @@ get_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(Ex
 	else if(name == "overlaykey") {
 		stringstream ss;
 		string ret;
-		if(entity->have_same_overlay_key
-				&& entity->smallest_overlay) {
-			int ov_key = entity->smallest_overlay;
+		Version::Overlay ov_key = entity->largest_overlay;
+		if(ov_key && entity->have_same_overlay_key) {
 			if(fmt->overlay_translations)
 				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
 			ss << ov_key;

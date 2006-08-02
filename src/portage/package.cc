@@ -35,19 +35,37 @@ Package::~Package()
 	delete_and_clear();
 }
 
+const Package::Duplicates
+	Package::DUP_NONE     = 0x00,
+	Package::DUP_SOME     = 0x01,
+	Package::DUP_OVERLAYS = 0x03;
 
 /** Check if a package has duplicated versions. */
-bool
-Package::checkDuplicates(Version *version) const
+void Package::checkDuplicates(Version *version)
 {
-	for(const_iterator i = begin(); i != end(); ++i)
+	if(have_duplicate_versions == DUP_OVERLAYS)
+		return;
+	bool no_overlay = !(version->overlay_key);
+	if(no_overlay && (have_duplicate_versions == DUP_SOME))
+		return;
+	for(iterator i = begin(); i != end(); ++i)
 	{
 		if(dynamic_cast<BasicVersion&>(**i) == dynamic_cast<BasicVersion&>(*version))
 		{
-			return true;
+			if(no_overlay)
+			{
+				have_duplicate_versions = DUP_SOME;
+				return;
+			}
+			if(i->overlay_key)
+			{
+				have_duplicate_versions = DUP_OVERLAYS;
+				return;
+			}
+			have_duplicate_versions = DUP_SOME;
 		}
 	}
-	return false;
+	return;
 }
 
 /** Adds a version to "the versions" list. */
@@ -55,27 +73,27 @@ void Package::addVersion(Version *version)
 {
 	/* if the same version is in various places it should be shown.
 	   possible thanks to the new [overlay] marker. */
-	if(!have_duplicate_versions) {
-		have_duplicate_versions = checkDuplicates(version);
-	}
+	checkDuplicates(version);
 
 	Version::Overlay key = version->overlay_key;
 
 	/* This should remain with two if .. so we can guarante that
 	 * versions.size() == 0 in the else. */
 	if(empty() == false) {
-		if(smallest_overlay != key)
+		if(largest_overlay != key)
 		{
 			have_same_overlay_key = false;
-			if(smallest_overlay > key)
-				smallest_overlay = key;
+			if(largest_overlay && key)
+				at_least_two_overlays = true;
+			if(largest_overlay < key)
+				largest_overlay = key;
 		}
 		if(is_system_package) {
 			is_system_package = version->isSystem();
 		}
 	}
 	else {
-		smallest_overlay  = key;
+		largest_overlay   = key;
 		is_system_package = version->isSystem();
 	}
 

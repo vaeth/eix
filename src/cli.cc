@@ -95,8 +95,12 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 		switch(**arg)
 		{
 			// Check local options {{{
-			case 'I': test->Installed();    break;
-			case 'D': test->DuplVersions(); break;
+			case 'I': test->Installed();
+				  break;
+			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
+				  break;
+			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
+				  break;
 			case 'T': eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
 					Keywords::RED_DOUBLE, red);
 				  eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
@@ -117,7 +121,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 					Keywords::RED_DOUBLE_UNMASK, red);
 				  test->ObsoleteCfg(portagesettings, red.first, red.second);
 				  break;
-			case '!': test->Invert();       break;
+			case '!': test->Invert();
+				  break;
 			// }}}
 
 			// Check for field-designators {{{
@@ -131,25 +136,24 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 			// }}}
 
 			// Check for algorithms {{{
-			case 'f':
-					  if(++arg != end
-						 && arg->type == Parameter::ARGUMENT
-						 && is_numeric(arg->m_argument))
-					  {
-						  test->setAlgorithm(new FuzzyAlgorithm(atoi(arg->m_argument)));
-					  }
-					  else
-					  {
-						  test->setAlgorithm(new FuzzyAlgorithm(LEVENSHTEIN_DISTANCE));
-						  arg--;
-					  }
-					  break;
+			case 'f': if(++arg != end
+					 && arg->type == Parameter::ARGUMENT
+					 && is_numeric(arg->m_argument))
+				  {
+					  test->setAlgorithm(new FuzzyAlgorithm(atoi(arg->m_argument)));
+				  }
+				  else
+				  {
+					  test->setAlgorithm(new FuzzyAlgorithm(LEVENSHTEIN_DISTANCE));
+					  arg--;
+				  }
+				  break;
 			case 'r': test->setAlgorithm(new RegexAlgorithm());
-					  break;
+				  break;
 			case 'e': test->setAlgorithm(new ESMAlgorithm());
-					  break;
+				  break;
 			case 'p': test->setAlgorithm(new WildcardAlgorithm());
-					  break;
+				  break;
 			// }}}
 
 			// Read from pipe {{{
@@ -194,8 +198,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 
 			// String arguments .. finally! {{{
 			case -1:  test->setPattern(arg->m_argument);
-					  need_logical_operator = true;
-					  break;
+				  need_logical_operator = true;
+				  break;
 			// }}}
 		}
 

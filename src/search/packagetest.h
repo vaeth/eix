@@ -77,8 +77,17 @@ class PackageTest {
 		void Installed()
 		{ installed = !installed; }
 
-		void DuplVersions()
-		{ dup_versions = !dup_versions; }
+		void DuplVersions(bool only_overlay)
+		{
+			dup_versions_overlay = only_overlay;
+			dup_versions = !dup_versions;
+		}
+
+		void DuplPackages(bool only_overlay)
+		{
+			dup_packages_overlay = only_overlay;
+			dup_packages = !dup_packages;
+		}
 
 		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second)
 		{
@@ -113,7 +122,9 @@ class PackageTest {
 		PackageReader::Attributes need;
 		/** Our string matching algorithm. */
 		std::auto_ptr<BaseAlgorithm> algorithm;
-		bool installed, dup_versions, invert;
+		bool installed, invert;
+		bool dup_versions, dup_versions_overlay;
+		bool dup_packages, dup_packages_overlay;
 
 		/** Lookup stuff about obsolete user flags here (if non-null) */
 		PortageSettings *portagesettings;
@@ -123,6 +134,7 @@ class PackageTest {
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
 
 		bool stringMatch(Package *pkg) const;
+		bool match_internal(PackageReader *pkg) const;
 
 		/** Get the Fetched-value that is required to determin */
 		void calculateNeeds();

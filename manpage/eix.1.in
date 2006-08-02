@@ -100,10 +100,15 @@ Only match installed packages. Please don't use this as a replacement for qlist 
 equery, it's not the same. This only show packages that could be installed and that are
 installed. Packages that are installed, but no longer in portage are not listed here.
 .TP
+.BR -d ", " --dup-packages
+Only match duplicated packages with duplicated packages,
+for example, if sys-foo/bar exists both in the official portage tree and a local overlay.
+If B<DUP_PACKAGES_ONLY_OVERLAYS> is set (see below), the instances must be in two different local overlays.
+.TP
 .BR -D ", " --dup-versions
-Only match packages with duplicated versions
-(for example, sys-foo/bar-0.2.1 exists both in the official portage tree and a local
-overlay)
+Only match packages with duplicated versions,
+for example, if sys-foo/bar-0.2.1 exists both in the official portage tree and a local overlay.
+If B<DUP_VERSIONS_ONLY_OVERLAYS> is set (see below), both instances must be in overlays.
 .TP
 .BR -T ", " --test-redundancy
 Only match packages with redundant entries in /etc/portage/package.*
@@ -324,23 +329,35 @@ See B<FORMATSTRING>.
 Mark the installed packages by this attribute when displaying versions.
 
 .TP
-.BR FORCE_USECOLORS "  " (true/false)
+.BR FORCE_USECOLORS "  " (true / false)
 Use colors even when stdout is not a terminal.
 
 .TP
-.BR STYLE_VERSION_LINES "  " (true/false)
+.BR STYLE_VERSION_LINES "  " (true / false)
 Turns --versionlines on.
 
 .TP
-.BR SMALL_EIX_DATABASE "  " (true/false)
+.BR SMALL_EIX_DATABASE "  " (true / false)
 Keep database small at the cost of never honoring keywords of other ARCH.
 Only set this to true if you really must save disk space.
 
 .TP
-.BR DEFAULT_IS_OR "  " (true/false)
-If several arguments are given without a logical concatenation (-a or -o),
+.BR DUP_PACKAGES_ONLY_OVERLAYS "  " (true / false)
+Defines whether duplicate package checks occur only among overlays, i.e. a
+package is only considered as duplicate if it occurs in at least two
+different overlays.
+
+.TP
+.BR DUP_VERSIONS_ONLY_OVERLAYS "  " (true / false)
+Defines whether duplicate version checks occur only among overlays, i.e. a
+version is only considered as duplicate if it occurs at least twice in
+overlays.
+
+.TP
+.BR DEFAULT_IS_OR "  " (true / false)
+If several pattern arguments occur without logical concatenation (-a or -o),
 eix assumes an implicit concatenation. If this variable is true, it assumes
-the concatenation -o (or), otherwise -a (and).
+that this concatenation is -o (or), otherwise -a (and).
 
 .TP
 .BR OVERLAYS_LIST "  " (all / all-if-used / all-used / all-used-renumbered / no)
@@ -415,11 +432,11 @@ No cache-backend. Get the information from the ebuilds.
 .BR metadata
 Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
 .TP
-.BR LOCAL_PORTAGE_CONFIG " " (true/false)
+.BR LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
 environment.
 .TP
-.BR DIFF_LOCAL_PORTAGE_CONFIG " " (true/false)
+.BR DIFF_LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
 or the environment.
 .TP

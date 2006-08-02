@@ -45,7 +45,7 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 	vardbpkg = vdb;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	invert   = installed = dup_versions = false;
+	invert   = installed = dup_versions = dup_packages = false;
 	portagesettings = NULL;
 }
 
@@ -73,17 +73,14 @@ PackageTest::calculateNeeds() {
 		}
 	}
 
-	if(installed && need < PackageReader::NAME)
+	if((need < PackageReader::NAME) &&
+		installed )
 	{
 		need = PackageReader::NAME;
 	}
 
-	if(dup_versions && need < PackageReader::VERSIONS)
-	{
-		need = PackageReader::VERSIONS;
-	}
-
-	if(portagesettings && need < PackageReader::VERSIONS)
+	if((need < PackageReader::VERSIONS) &&
+		(dup_packages || dup_versions || portagesettings))
 	{
 		need = PackageReader::VERSIONS;
 	}
@@ -263,73 +260,97 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	return false;
 }
 
-bool
-PackageTest::match(PackageReader *pkg) const
+inline bool
+PackageTest::match_internal(PackageReader *pkg) const
 {
-	bool is_match = true;
 	Package *p = NULL;
 
 	pkg->read(need);
 
 	if(algorithm.get() != NULL) {
 		p = pkg->get();
-		is_match = stringMatch(p);
+		if(!stringMatch(p))
+			return false;
 	}
 
-	/* Honour the -I, -D, -T, and -! flags. */
+	/* Honour the -I, -d, -D, -T, and -! flags. */
 
-	if(installed && is_match) {
+	if(installed) {
 		if(p == NULL)
 			p = pkg->get();
-		is_match = vardbpkg->isInstalled(p);
+		if(!(vardbpkg->isInstalled(p)))
+			return false;
 	}
 
-	if(dup_versions && is_match) {
+	if(dup_packages) {
 		if(p == NULL)
 			p = pkg->get();
-		is_match = p->have_duplicate_versions;
+		if(dup_packages_overlay)
+		{
+			if(!(p->at_least_two_overlays))
+				return false;
+		}
+		else if(p->have_same_overlay_key)
+			return false;
 	}
 
-	if(portagesettings && is_match) {
+	if(dup_versions) {
 		if(p == NULL)
 			p = pkg->get();
-		Package user;
-		if(redundant_flags != Keywords::RED_NOTHING)
-		{
-			user.deepcopy(*p);
-			portagesettings->setStability(&user, accept_keywords);
-		}
-		is_match = false;
-		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
-		{
-			if(portagesettings->user_config->setMasks(&user, redundant_flags))
-			{
-				is_match = have_redundant(user, Keywords::RED_DOUBLE_MASK);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_DOUBLE_UNMASK);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_MASK);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_UNMASK);
-			}
-		}
-		if((!is_match) &&
-			(redundant_flags & Keywords::RED_ALL_KEYWORDS))
-		{
-			if(portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags))
-			{
-				is_match = have_redundant(user, Keywords::RED_DOUBLE);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_MIXED);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_WEAKER);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_STRANGE);
-				if(!is_match)
-					is_match = have_redundant(user, Keywords::RED_NO_CHANGE);
-			}
-		}
+		Package::Duplicates testfor= ((dup_versions_overlay) ?
+				Package::DUP_OVERLAYS : Package::DUP_SOME);
+		if(((p->have_duplicate_versions) & testfor) != testfor)
+			return false;
 	}
 
+	if(!portagesettings)
+		return true;
+
+	if(p == NULL)
+		p = pkg->get();
+	Package user;
+	if(redundant_flags != Keywords::RED_NOTHING)
+	{
+		user.deepcopy(*p);
+		portagesettings->setStability(&user, accept_keywords);
+	}
+	if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
+	{
+		if(portagesettings->user_config->setMasks(&user, redundant_flags))
+		{
+			if(have_redundant(user, Keywords::RED_DOUBLE_MASK))
+				return true;
+			if(have_redundant(user, Keywords::RED_DOUBLE_UNMASK))
+				return true;
+			if(have_redundant(user, Keywords::RED_MASK))
+				return true;
+			if(have_redundant(user, Keywords::RED_UNMASK))
+				return true;
+		}
+	}
+	if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
+	{
+		if(portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags))
+		{
+			if(have_redundant(user, Keywords::RED_DOUBLE))
+				return true;
+			if(have_redundant(user, Keywords::RED_MIXED))
+				return true;
+			if(have_redundant(user, Keywords::RED_WEAKER))
+				return true;
+			if(have_redundant(user, Keywords::RED_STRANGE))
+				return true;
+			if(have_redundant(user, Keywords::RED_NO_CHANGE))
+				return true;
+		}
+	}
+	return false;
+}
+
+bool
+PackageTest::match(PackageReader *pkg) const
+{
+	bool is_match = match_internal(pkg);
 	return (invert ? !is_match : is_match);
 }
+
