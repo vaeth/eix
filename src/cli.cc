@@ -42,7 +42,7 @@ using namespace std;
 
 
 Matchatom *
-parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, SpecialList **special_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
@@ -187,10 +187,16 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, A
 						*test = PackageTest::CATEGORY_NAME;
 					}
 					firsttime = false;
-					const char *name = ExplodeAtom::split_name(word->c_str());
-					if(!name)
-						name = strdup(word->c_str());
-					test->setPattern(name);
+					char **name_ver = ExplodeAtom::split(word->c_str());
+					if(!name_ver[0])// No proper version string?
+					{
+						name_ver[0] = strdup(word->c_str());
+						name_ver[1] = NULL;
+					}
+					if(!(*special_list))
+						*special_list = new SpecialList();
+					(*special_list)->add(name_ver[0], name_ver[1]);
+					test->setPattern(name_ver[0]);
 				}
 				need_logical_operator = true;
 				break;

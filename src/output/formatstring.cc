@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -48,6 +49,39 @@ get_escape(char *p)
 		case 'a':  return string("\a");
 	}
 	return string(p, 1);
+}
+
+void SpecialList::add(const char *pkg, const char *ver)
+{
+	pair<string, BasicVersion*> p;
+	p.first = string(pkg);
+	if(ver)
+		p.second = new BasicVersion(ver);
+	else
+		p.second = NULL;
+	insert(p);
+}
+
+/** Return true if pkg is special. If ver is non-NULL also *ver must match */
+bool SpecialList::is_special(const Package &pkg, const BasicVersion *ver) const
+{
+	typedef multimap <string, BasicVersion*>::const_iterator CIT; 
+	typedef pair<CIT, CIT> Range;
+	Range pair=equal_range(pkg.category + "/" + pkg.name);
+	if(pair.first == pair.second)// no match
+		return false;
+	if(!ver)	// do not care about versions
+		return true;
+	for(CIT it = pair.first ; it != pair.second; ++it )
+	{
+		BasicVersion *p = it->second;
+		if(p)
+		{
+			if(*p == *ver)
+				return true;
+		}
+	}
+	return false;
 }
 
 void

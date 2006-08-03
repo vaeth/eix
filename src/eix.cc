@@ -265,6 +265,7 @@ setup_defaults()
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.mark_installed      = rc["MARK_INSTALLED"];
+	format.mark_version        = rc["MARK_VERSIONS"];
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 
 	string overlay = rc["OVERLAYS_LIST"];
@@ -346,7 +347,8 @@ run_eix(int argc, char** argv)
 	}
 
 	PortageSettings portagesettings;
-	Matchatom *query = parse_cli(eixrc, varpkg_db, portagesettings, argreader.begin(), argreader.end());
+	SpecialList *special_list = NULL;
+	Matchatom *query = parse_cli(eixrc, varpkg_db, portagesettings, &special_list, argreader.begin(), argreader.end());
 
 	string varname;
 	try {
@@ -465,7 +467,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != 0)
-			format.print(*it, &varpkg_db);
+			format.print(*it, &varpkg_db, special_list);
 	}
 	switch(overlay_mode)
 	{
@@ -484,7 +486,7 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
 			++it)
-			format.print(*it, &varpkg_db, &overlay_num);
+			format.print(*it, &varpkg_db, special_list, &overlay_num);
 	}
 	if(need_overlay_table)
 	{

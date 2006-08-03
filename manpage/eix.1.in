@@ -45,7 +45,7 @@ Produce no output on stderr and stdout (fatal errors which occur at the
 beginning of execution are printed to stderr, regardless of this option).
 .TP
 .BR --dump
-Show defaults for eixrc-variables.
+Show the current eixrc-variables and their defaults.
 .TP
 .BR -V ", " --version
 Print version and exit.
@@ -112,20 +112,23 @@ If B<DUP_VERSIONS_ONLY_OVERLAYS> is set (see below), both instances must be in o
 .TP
 .BR -T ", " --test-redundancy
 Only match packages with redundant entries in /etc/portage/package.*
-What is considered as redundant is defined by the REDUNDANT_*-variables below.
+What is considered as redundant is defined by the B<REDUNDANT_>*-variables below.
 .TP
 .BR -! ", " --not
 Invert the expression given
 .TP
 .BR -| ", " --pipe
 Use input from pipe of an emerge -pv (similar to genlop -p).
-Actually, any input lines are honored which contain words in the format
+Actually, any input lines are honored which contains a word in the format
 
-I<category>B</>I<package>B<->I<version> (the B<->I<version> part is ignored) or
+I<category>B</>I<package>B<->I<version> or
 
 I<category>B</>I<package>
 
 More precisely, in each line the first word in this format is chosen.
+The packages/versions passed this way will in the output be marked.
+For details, see the B<marked> formatstring and the B<MARK_VERSIONS>
+variable below.
 .\" }}}
 
 .\" {{{ -------- Operation selection
@@ -270,24 +273,34 @@ expands to "system" if this package is in the system-profile
 .TP
 .BR provide
 the packages PROVIDE-string
+.TP
+.BR marked
+expands to "1" if the package was passed with the B<--pipe> option.
+This is mainly only useful in tests.
 .\" }}}
 
 .\" {{{ -------- Colors
 .SS Colors
 .TP
-(I<NAME>,I<BRIGHTNESS>)
+(I<NAME>,I<BRIGHTNESS>;I<MARKER>)
+Both, the ",I<BRIGHTNESS>" and ";I<MARKERS>" part may be omitted.
+
 If I<BRIGHTNESS> is 1, eix prints the corresponding 'light' (bold) color for
 I<NAME>, or normal color if I<BRIGHTNESS> is 0.
+
 Available colors are:
 I<default black red green yellow blue purple cyan gray>
+
+Available markers are:
+I<none bold underline blink inverse>
 .\" }}}
 
 .\" {{{ -------- Example
 .SS Example:
 .TP
-{installedversions}(yellow,1){else}(yellow,0){}<name>()
-If the package is installed, print the name in bright yellow, else in normal
-yellow.
+{installedversions}(yellow,1;underline){else}(yellow,0){}<name>()
+If the package is installed, print the name underlined in bright yellow,
+else in normal yellow.
 .\" }}}
 .\" }}}
 
@@ -334,6 +347,10 @@ See B<FORMATSTRING>.
 .TP
 .BR MARK_INSTALLED "  " (none ", " bold ", " underline ", " blink ", " inverse)
 Mark the installed packages by this attribute when displaying versions.
+
+.TP
+.BR MARK_VERSIONS "  " (none ", " bold ", " underline ", " blink ", " inverse)
+Mark the package versions passed with B<--pipe> by this attribute.
 
 .TP
 .BR FORCE_USECOLORS "  " (true / false)

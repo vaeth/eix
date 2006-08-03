@@ -227,15 +227,25 @@ class EixRc : public std::map<std::string,std::string> {
 					case EixRcOption::INTEGER: typestring = "INTEGER";
 								  break;
 				}
-
+				const char *key   = defaults[i].key.c_str();
+				const char *deflt = defaults[i].value.c_str();
+				const char *value = (*this)[defaults[i].key].c_str();
 				fprintf(s,
 						"# %s\n"
 						"# %s\n"
-						"%s='%s'\n\n",
+						"%s='%s'\n",
 						typestring,
 						defaults[i].description.c_str(),
-						defaults[i].key.c_str(),
-						defaults[i].value.c_str());
+						key,
+						value);
+				if(strcmp(deflt,value) == 0)
+					fprintf(s, "\n");
+				else
+					fprintf(s,
+						"# changed locally, default was:\n"
+						"# %s='%s'\n\n",
+						key,
+						deflt);
 			}
 		}
 };

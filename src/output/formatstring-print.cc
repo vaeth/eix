@@ -34,8 +34,18 @@
 using namespace std;
 
 void
-print_version(PrintFormat *fmt, Version *version, bool isinstalled)
+print_version(const PrintFormat *fmt, const Version *version, const Package *package)
 {
+	bool is_installed = false;
+	bool is_special = false;
+	if(!fmt->no_color)
+	{
+		if(fmt->vardb)
+			is_installed = fmt->vardb->isInstalled(package, version);
+		if(fmt->special_list)
+			is_special = fmt->special_list->is_special(*package, version);
+	}
+
 	if(fmt->style_version_lines)
 		fputs("\n\t", stdout);
 
@@ -82,24 +92,30 @@ print_version(PrintFormat *fmt, Version *version, bool isinstalled)
 	if (fmt->style_version_lines)
 		fputs("\t\t", stdout);
 
-	if (isinstalled && (!fmt->no_color))
+	if (is_installed)
 		cout << fmt->mark_installed;
+	if (is_special)
+		cout << fmt->mark_version;
 	cout << version->getFull();
-	if (isinstalled && (!fmt->no_color))
+	if (is_special)
+	{
+		cout << fmt->mark_version_end;
+		if(is_installed &&
+			(fmt->mark_version_end != fmt->mark_installed_end))
+		{
+			cout << fmt->mark_installed_end;
+		}
+	}
+	else if (is_installed)
 		cout << fmt->mark_installed_end;
 }
 
 void
-print_versions(PrintFormat *fmt, Package* p)
+print_versions(const PrintFormat *fmt, const Package* p)
 {
-	Package::iterator version_it = p->begin();
+	Package::const_iterator version_it = p->begin();
 	while(version_it != p->end()) {
-		if(fmt->vardb)
-		{
-			print_version(fmt, *version_it, fmt->vardb->isInstalled(p, *version_it));
-		}
-		else
-			print_version(fmt, *version_it);
+		print_version(fmt, *version_it, p);
 
 		if(!p->have_same_overlay_key && version_it->overlay_key) {
 			if( ! fmt->no_color )
@@ -120,7 +136,7 @@ print_versions(PrintFormat *fmt, Package* p)
 
 
 void
-print_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(ExBasic)
+print_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
 {
 	Package *entity = (Package*)void_entity;
 
@@ -139,7 +155,7 @@ print_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(
 	else if(name == "best") {
 		Version *best = entity->best();
 		if(best != NULL) {
-			print_version(fmt, best);
+			print_version(fmt, best, entity);
 		}
 	}
 	else
@@ -148,7 +164,7 @@ print_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(
 }
 
 string
-get_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(ExBasic)
+get_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
 {
 	Package *entity = (Package*)void_entity;
 
@@ -198,12 +214,20 @@ get_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(Ex
 		}
 		return best->getFull();
 	}
-
+	else if(name == "marked")
+	{
+		if(fmt->special_list)
+		{
+			if(fmt->special_list->is_special(*entity))
+				return "1";
+		}
+		return "";
+	}
 	throw(ExBasic("Unknown property '%s'.", name.c_str()));
 }
 
 string
-get_diff_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(ExBasic)
+get_diff_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
 {
 	Package *newer = ((Package**)void_entity)[1];
 	Package *older = ((Package**)void_entity)[0];
@@ -225,7 +249,7 @@ get_diff_package_property(PrintFormat *fmt, void *void_entity, string &name) thr
 }
 
 void
-print_diff_package_property(PrintFormat *fmt, void *void_entity, string &name) throw(ExBasic)
+print_diff_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
 {
 	print_package_property(fmt, ((Package**)void_entity)[1], name);
 }

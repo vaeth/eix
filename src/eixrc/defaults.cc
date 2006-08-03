@@ -32,7 +32,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
 			"[{installedversions}(yellow,1)U{else}(green,1)N{}()]"
 			" (green,1)>>() "
-			"{system}(yellow){else}(){}<category>()/(default,1)<name>() "
+			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({best}<best>{else}none{}()){overlaykey} (cyan,1)<overlaykey>(){}: <description>",
 			"Define the format used for new packages.")
 		);
@@ -40,7 +40,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
 			"    (red,1)\\<\\<() "
-			"{system}(yellow){else}(){}<category>()/(default,1)<name>() "
+			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({best}<best>{else}none{}()){overlaykey} (cyan,1)<overlaykey>(){}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
@@ -49,7 +49,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
 			"[{installedversions}{upgrade}(yellow,1)U{else}(red,1)D{}{else}(green,1)N{}()]"
 			" (yellow,0)==() "
-			"{system}(yellow){else}(){}<category>()/(default,1)<name>() "
+			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({best}<best>{else}none{}()){overlaykey} (cyan,1)<overlaykey>(){}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
@@ -57,7 +57,7 @@ eixrc.addDefault(
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
-			"(green)* {system}(yellow){else}(){}<category>()/(default,1)<name> (cyan,1)<overlaykey>()\n"
+			"(green)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() (cyan,1)<overlaykey>()\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
 			"     (green)Homepage:()            <homepage>\n"
@@ -66,13 +66,13 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversions}(yellow,1)I{else}(green,1)N{}()] {system}(yellow){else}(){}<category>()/(default,1)<name>() \\((green)<installedversions>()\\): <description>",
+			"[{installedversions}(yellow,1)I{else}(green,1)N{}()] {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\((green)<installedversions>()\\): <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_VERBOSE",
-			"(green,0)* {system}(yellow){else}(){}<category>()/(default,1)<name> (cyan,1)<overlaykey>()\n"
+			"(green,0)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() (cyan,1)<overlaykey>()\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
 			"     (green)Homepage:()            <homepage>\n"
@@ -104,6 +104,11 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MARK_INSTALLED",
 			"inverse", "How installed packages are marked in version listings.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "MARK_VERSIONS",
+			"underline", "How the package versions passed with --pipe are marked in version listings.")
 		);
 
 eixrc.addDefault(

@@ -137,24 +137,35 @@ class FormatParser {
 		}
 };
 
+class SpecialList : std::multimap<std::string, BasicVersion*>
+{
+	public:
+		SpecialList() {}
+		void add(const char *pkg, const char *ver);
+		/** Return true if pkg is special. If ver is non-NULL also *ver must match */
+		bool is_special(const Package &pkg, const BasicVersion *ver = NULL) const;
+};
+
 class PrintFormat {
-	friend void print_versions(PrintFormat *fmt, Package *p);
-	friend void print_package_property(PrintFormat *fmt, void *void_entity, std::string &name) throw(ExBasic);
-	friend std::string get_package_property(PrintFormat *fmt, void *entity, std::string &name) throw(ExBasic);
+	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p);
+	friend void print_versions(const PrintFormat *fmt, const Package *p);
+	friend void print_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name) throw(ExBasic);
+	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name) throw(ExBasic);
 
 	public:
-		typedef void   (*PrintProperty)(PrintFormat *formatstring, void *entity, std::string &property);
-		typedef std::string (*GetProperty)(PrintFormat *formatstring, void *entity, std::string &property);
+		typedef void   (*PrintProperty)(const PrintFormat *formatstring, void *entity, const std::string &property);
+		typedef std::string (*GetProperty)(const PrintFormat *formatstring, void *entity, const std::string &property);
 
 	protected:
 		FormatParser   m_parser;
 		PrintProperty  m_print_property;
 		GetProperty    m_get_property;
 		Node          *m_root;
-		/* The following two are actually a hack:
+		/* The following three are actually a hack:
 		   They are only set temporarily during printing to avoid
 		   passing this argument through all sub-functions */
 		VarDbPkg      *vardb;
+		SpecialList   *special_list;
 		std::vector<Version::Overlay> *overlay_translations;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
@@ -168,11 +179,13 @@ class PrintFormat {
 			   color_stable,     /**< Color for stable versions */
 			   color_overlaykey; /**< Color for the overlay key */
 		std::string mark_installed,   /**< Marker for installed packages */
-			   mark_installed_end;/**< End-Marker for installed packages */
+			   mark_installed_end,/**< End-Marker for installed packages */
+			   mark_version,      /**< Marker for special versions */
+			   mark_version_end;  /**< End-Marker for special versions */
 
 		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
 			: m_print_property(print_callback), m_get_property(get_callback),
-			  vardb(NULL), overlay_translations(NULL)
+			  vardb(NULL), overlay_translations(NULL), special_list(NULL)
 			{}
 
 		void setupColors() {
@@ -180,35 +193,44 @@ class PrintFormat {
 			color_unstable   = AnsiColor(color_unstable).asString();
 			color_stable     = AnsiColor(color_stable).asString();
 			color_overlaykey = AnsiColor(color_overlaykey).asString();
-			AnsiMarker marker(mark_installed);
-			mark_installed     = marker.asString();
-			mark_installed_end = marker.end();
+			AnsiMarker ins_marker(mark_installed);
+			mark_installed     = ins_marker.asString();
+			mark_installed_end = ins_marker.end();
+			AnsiMarker ver_marker(mark_version);
+			mark_version       = ver_marker.asString();
+			mark_version_end   = ver_marker.end();
 		}
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, SpecialList *spc = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb = vardbpkg;
+			special_list = spc;
 			overlay_translations = overlaymap;
 			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
 			vardb = NULL;
+			special_list = NULL;
 			overlay_translations = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, SpecialList *spc = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb=vardbpkg;
+			special_list = spc;
 			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
 			vardb=NULL;
+			special_list = NULL;
 			overlay_translations = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, VarDbPkg *vardbpkg = NULL, SpecialList *spc = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb=vardbpkg;
+			special_list = spc;
 			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
 			vardb=NULL;
+			special_list = NULL;
 			overlay_translations = NULL;
 		}
 
