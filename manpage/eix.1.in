@@ -59,8 +59,8 @@ The opposite of --nocolor.
 .TP
 .BR -t ", " --test-non-matching
 Before other output, print entries of /etc/portage/package.* which do not
-match any existing version in the package database. This option is best
-combined with -T to clean up /etc/portage/package.*.
+match any existing version in the package database.
+This option is best combined with -T to clean up /etc/portage/package.*.
 .\" }}}
 
 .\" {{{ -------- Output options
@@ -112,7 +112,10 @@ If B<DUP_VERSIONS_ONLY_OVERLAYS> is set (see below), both instances must be in o
 .TP
 .BR -T ", " --test-redundancy
 Only match packages with redundant entries in /etc/portage/package.*
-What is considered as redundant is defined by the B<REDUNDANT_>*-variables below.
+
+What is considered as redundant is defined by the B<REDUNDANT_IF>-variables below.
+
+This option is best combined with -t to find other types of redundancy.
 .TP
 .BR -! ", " --not
 Invert the expression given
@@ -127,8 +130,8 @@ I<category>B</>I<package>
 
 More precisely, in each line the first word in this format is chosen.
 The packages/versions passed this way will in the output be marked.
-For details, see the B<marked> formatstring and the B<MARK_VERSIONS>
-variable below.
+For details, see the B<marked> and B<markedversions> formatstring and the
+B<MARK_VERSIONS> variable below.
 .\" }}}
 
 .\" {{{ -------- Operation selection
@@ -251,11 +254,15 @@ printed. If used to print a property, the name B<must be enclosed in square brac
 The name, category, homepage and licenses for the current package.
 .TP
 .BR availableversions
-All versions that could be installed for this package, separated by spaces. The
-versions are printed in the according colors.
+All versions that could be installed for this package
+(-l changes output accordingly).
+The versions are printed in the according colors.
 .TP
 .BR installedversions
-All installed versions (-l changes output accordingly).
+All installed versions, separated by spaces.
+.TP
+.BR markedversions
+All marked (with the B<--pipe> option) versions, separated by spaces.
 .TP
 .BR compactflags
 If the package is installed a "I", else "N".
@@ -283,7 +290,7 @@ This is mainly only useful in tests.
 .SS Colors
 .TP
 (I<NAME>,I<BRIGHTNESS>;I<MARKER>)
-Both, the ",I<BRIGHTNESS>" and ";I<MARKERS>" part may be omitted.
+Each of the ",I<BRIGHTNESS>" and ";I<MARKERS>" parts may be omitted.
 
 If I<BRIGHTNESS> is 1, eix prints the corresponding 'light' (bold) color for
 I<NAME>, or normal color if I<BRIGHTNESS> is 0.

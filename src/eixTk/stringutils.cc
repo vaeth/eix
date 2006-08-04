@@ -112,11 +112,10 @@ ExplodeAtom::split(const char* str)
 	static char* out[2] = { NULL, NULL };
 	const char *x = get_start_of_version(str);
 
-	if(x)
-	{
-		out[0] = strndup(str, ((x - 1) - str));
-		out[1] = strdup(x);
-	}
+	if(!x)
+		return NULL;
+	out[0] = strndup(str, ((x - 1) - str));
+	out[1] = strdup(x);
 	return out;
 }
 

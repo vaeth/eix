@@ -15,7 +15,7 @@
 	- Document that variables may be overridden by environment
 	- Introduce -d and DUP_*_ONLY_OVERLAYS, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=142469
-	- Read portage/package.mask of overlays, see
+	- Read profile/package.mask of overlays, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=142503
 	- Mark packages and versions passed with --pipe, see the discussion in
 	  http://bugs.gentoo.org/show_bug.cgi?id=142469
@@ -23,6 +23,7 @@
 	  marking of packages and versions passed with --pipe.
 	- Change color format to allow also marker commands in the formats.
 	- Change --dump to display current variables (but still defaults).
+	- Introduce "markedversions" format.
 
 *eix-0.6.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

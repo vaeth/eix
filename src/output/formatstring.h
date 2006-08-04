@@ -137,13 +137,32 @@ class FormatParser {
 		}
 };
 
-class SpecialList : std::multimap<std::string, BasicVersion*>
+class MarkedList : std::multimap<std::string, BasicVersion*>
 {
 	public:
-		SpecialList() {}
+		MarkedList() {}
+		~MarkedList()
+		{
+			for(const_iterator it = begin(); it != end(); ++it)
+			{
+				if(it->second)
+					delete it->second;
+			}
+		}
+
 		void add(const char *pkg, const char *ver);
-		/** Return true if pkg is special. If ver is non-NULL also *ver must match */
-		bool is_special(const Package &pkg, const BasicVersion *ver = NULL) const;
+		/** Return pointer to (newly allocated) sorted vector of marked versions,
+		    or NULL. With nonversion argument, its content will decide whether
+		    the package was marked with a non-version argument */
+		std::vector<BasicVersion> *get_marked_vector(const Package &pkg, bool *nonversion = NULL) const;
+		/** Return true if pkg is marked. If ver is non-NULL also *ver must match */
+		bool is_marked(const Package &pkg, const BasicVersion *ver = NULL) const;
+		/** Return String of marked versions (sorted) */
+		std::string getMarkedString(const Package &pkg) const;
+	private:
+		typedef const_iterator CI;
+		typedef std::pair<CI, CI> CIPair;
+		CIPair equal_range_pkg(const Package &pkg) const;
 };
 
 class PrintFormat {
@@ -165,7 +184,7 @@ class PrintFormat {
 		   They are only set temporarily during printing to avoid
 		   passing this argument through all sub-functions */
 		VarDbPkg      *vardb;
-		SpecialList   *special_list;
+		MarkedList   *marked_list;
 		std::vector<Version::Overlay> *overlay_translations;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
@@ -180,12 +199,12 @@ class PrintFormat {
 			   color_overlaykey; /**< Color for the overlay key */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
-			   mark_version,      /**< Marker for special versions */
-			   mark_version_end;  /**< End-Marker for special versions */
+			   mark_version,      /**< Marker for marked versions */
+			   mark_version_end;  /**< End-Marker for marked versions */
 
 		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
 			: m_print_property(print_callback), m_get_property(get_callback),
-			  vardb(NULL), overlay_translations(NULL), special_list(NULL)
+			  vardb(NULL), overlay_translations(NULL), marked_list(NULL)
 			{}
 
 		void setupColors() {
@@ -201,36 +220,36 @@ class PrintFormat {
 			mark_version_end   = ver_marker.end();
 		}
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, SpecialList *spc = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, MarkedList *mkd = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb = vardbpkg;
-			special_list = spc;
+			marked_list = mkd;
 			overlay_translations = overlaymap;
 			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
 			vardb = NULL;
-			special_list = NULL;
+			marked_list = NULL;
 			overlay_translations = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, SpecialList *spc = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, MarkedList *mkd = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb=vardbpkg;
-			special_list = spc;
+			marked_list = mkd;
 			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
 			vardb=NULL;
-			special_list = NULL;
+			marked_list = NULL;
 			overlay_translations = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg = NULL, SpecialList *spc = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, VarDbPkg *vardbpkg = NULL, MarkedList *mkd = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
 			vardb=vardbpkg;
-			special_list = spc;
+			marked_list = mkd;
 			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
 			vardb=NULL;
-			special_list = NULL;
+			marked_list = NULL;
 			overlay_translations = NULL;
 		}
 

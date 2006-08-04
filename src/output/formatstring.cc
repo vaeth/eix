@@ -51,7 +51,7 @@ get_escape(char *p)
 	return string(p, 1);
 }
 
-void SpecialList::add(const char *pkg, const char *ver)
+void MarkedList::add(const char *pkg, const char *ver)
 {
 	pair<string, BasicVersion*> p;
 	p.first = string(pkg);
@@ -62,17 +62,53 @@ void SpecialList::add(const char *pkg, const char *ver)
 	insert(p);
 }
 
-/** Return true if pkg is special. If ver is non-NULL also *ver must match */
-bool SpecialList::is_special(const Package &pkg, const BasicVersion *ver) const
+inline
+MarkedList::CIPair MarkedList::equal_range_pkg(const Package &pkg) const
 {
-	typedef multimap <string, BasicVersion*>::const_iterator CIT; 
-	typedef pair<CIT, CIT> Range;
-	Range pair=equal_range(pkg.category + "/" + pkg.name);
-	if(pair.first == pair.second)// no match
+	return equal_range(pkg.category + "/" + pkg.name);
+}
+
+/** Return pointer to (newly allocated) sorted vector of marked versions,
+    or NULL. With nonversion argument, its content will decide whether
+    the package was marked with a non-version argument */
+vector<BasicVersion> *MarkedList::get_marked_vector(const Package &pkg, bool *nonversion) const
+{
+	CIPair beg_end = equal_range_pkg(pkg);
+	if(nonversion)
+		*nonversion = false;
+	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
+		return NULL;
+	vector<BasicVersion> *ret = NULL;
+	for(const_iterator it = beg_end.first ; it != beg_end.second; ++it)
+	{
+		BasicVersion *p = it->second;
+		if(!p)
+		{
+			if(nonversion)
+				*nonversion = true;
+			continue;
+		}
+		if(ret)
+			ret->push_back(*p);
+		else
+			ret = new vector<BasicVersion>(1,*p);
+	}
+	if(!ret)// No version was explicitly marked
+		return NULL;
+	sort(ret->begin(),ret->end());
+	ret->erase(unique(ret->begin(), ret->end()), ret->end());
+	return ret;
+}
+
+/** Return true if pkg is marked. If ver is non-NULL also *ver must match */
+bool MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
+{
+	CIPair beg_end = equal_range_pkg(pkg);
+	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
 		return false;
 	if(!ver)	// do not care about versions
 		return true;
-	for(CIT it = pair.first ; it != pair.second; ++it )
+	for(const_iterator it = beg_end.first ; it != beg_end.second; ++it )
 	{
 		BasicVersion *p = it->second;
 		if(p)
@@ -82,6 +118,27 @@ bool SpecialList::is_special(const Package &pkg, const BasicVersion *ver) const
 		}
 	}
 	return false;
+}
+
+/** Return String of marked versions (sorted) */
+string MarkedList::getMarkedString(const Package &pkg) const
+{
+	bool nonversion;
+	vector<BasicVersion> *marked = get_marked_vector(pkg, &nonversion);
+	if(!marked)
+		return nonversion ? "*" : "";
+	string ret;
+	if(nonversion)
+		ret = "*";
+	for(vector<BasicVersion>::const_iterator it = marked->begin();
+		it != marked->end(); ++it )
+	{
+		if(!ret.empty())
+			ret.append(" ");
+		ret.append(it->getFull());
+	}
+	delete marked;
+	return ret;
 }
 
 void

@@ -60,13 +60,14 @@ eixrc.addDefault(
 			"(green)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() (cyan,1)<overlaykey>()\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
+			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"     (green)Homepage:()            <homepage>\n"
 			"     (green)Description:()         <description>\n", "Define the format for the normal output of searches.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversions}(yellow,1)I{else}(green,1)N{}()] {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\((green)<installedversions>()\\): <description>",
+			"[{installedversions}(yellow,1)I{else}(green,1)N{}()] {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversions}(), {}{}(green)<installedversions>()\\): <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
@@ -75,6 +76,7 @@ eixrc.addDefault(
 			"(green,0)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() (cyan,1)<overlaykey>()\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
+			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"     (green)Homepage:()            <homepage>\n"
 			"     (green)Description:()         <description>\n"
 			"     (green)Provides:()            {provide}<provide>{else}none{}\n"

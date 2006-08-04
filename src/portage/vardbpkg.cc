@@ -61,9 +61,9 @@ vector<BasicVersion> *VarDbPkg::getInstalledVector(string category, string name)
 	return &(cat_it->second);
 }
 
-/** Return a pointer to internal string representing all installed versions.
- * @param p Get installed versions of this package.
- * @return all installed versions concatenated to a emptry string. */
+/** Find installed versions of packet "name" in category "category".
+ * @param p the Package you would like the info for
+ * @return string with installed versions */
 string VarDbPkg::getInstalledString(const Package &p)
 {
 	vector<BasicVersion> *vec = getInstalledVector(p.category, p.name);

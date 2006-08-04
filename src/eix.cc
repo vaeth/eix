@@ -347,8 +347,8 @@ run_eix(int argc, char** argv)
 	}
 
 	PortageSettings portagesettings;
-	SpecialList *special_list = NULL;
-	Matchatom *query = parse_cli(eixrc, varpkg_db, portagesettings, &special_list, argreader.begin(), argreader.end());
+	MarkedList *marked_list = NULL;
+	Matchatom *query = parse_cli(eixrc, varpkg_db, portagesettings, &marked_list, argreader.begin(), argreader.end());
 
 	string varname;
 	try {
@@ -467,7 +467,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != 0)
-			format.print(*it, &varpkg_db, special_list);
+			format.print(*it, &varpkg_db, marked_list);
 	}
 	switch(overlay_mode)
 	{
@@ -486,7 +486,7 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
 			++it)
-			format.print(*it, &varpkg_db, special_list, &overlay_num);
+			format.print(*it, &varpkg_db, marked_list, &overlay_num);
 	}
 	if(need_overlay_table)
 	{

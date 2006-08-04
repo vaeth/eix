@@ -37,13 +37,13 @@ void
 print_version(const PrintFormat *fmt, const Version *version, const Package *package)
 {
 	bool is_installed = false;
-	bool is_special = false;
+	bool is_marked = false;
 	if(!fmt->no_color)
 	{
 		if(fmt->vardb)
 			is_installed = fmt->vardb->isInstalled(package, version);
-		if(fmt->special_list)
-			is_special = fmt->special_list->is_special(*package, version);
+		if(fmt->marked_list)
+			is_marked = fmt->marked_list->is_marked(*package, version);
 	}
 
 	if(fmt->style_version_lines)
@@ -94,10 +94,10 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 
 	if (is_installed)
 		cout << fmt->mark_installed;
-	if (is_special)
+	if (is_marked)
 		cout << fmt->mark_version;
 	cout << version->getFull();
-	if (is_special)
+	if (is_marked)
 	{
 		cout << fmt->mark_version_end;
 		if(is_installed &&
@@ -216,11 +216,17 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 	}
 	else if(name == "marked")
 	{
-		if(fmt->special_list)
+		if(fmt->marked_list)
 		{
-			if(fmt->special_list->is_special(*entity))
+			if(fmt->marked_list->is_marked(*entity))
 				return "1";
 		}
+		return "";
+	}
+	else if(name == "markedversions")
+	{
+		if(fmt->marked_list)
+			return fmt->marked_list->getMarkedString(*entity);
 		return "";
 	}
 	throw(ExBasic("Unknown property '%s'.", name.c_str()));
