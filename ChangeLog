@@ -2,11 +2,11 @@
 
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Reflect portage's change of ignoring hidden files/dir
+	- Reflect portage's change of ignoring hidden files/dirs
 	  for recursive reading, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=137607
-	- Reflect portage's behaviour of reading files/dirs sorted for
-	  recursive reading.
+	- Reflect portage's behaviour of reading files/dirs in sorted order
+	  for recursive reading.
 	- Introduce OVERLAYS_LIST to display only overlays that are
 	  really needed.
 	- Option --pipe to parse output from emerge -pv (similar to genlop -p)
@@ -21,7 +21,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=142469
 	- Introduce "marked" format and "MARK_VERSIONS" to customize the
 	  marking of packages and versions passed with --pipe.
-	- Change color format to allow also marker commands in the formats.
+	- Change color format to allow also e.g. "underline" in the formats.
 	- Change --dump to display current variables (but still defaults).
 	- Introduce "markedversions" format.
 
