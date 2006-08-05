@@ -525,7 +525,7 @@ Uninstalled versions are ignored for this test.
 .SS
 .BR all-installed
 The redundancy must occurs at least for all installed versions of the package.
-If no package is installed, it must occur at least once.
+If no version is installed, it must occur at least once.
 .TP
 .SS
 .BR some-uninstalled
