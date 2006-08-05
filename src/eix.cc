@@ -58,7 +58,7 @@ using namespace std;
 const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist);
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -414,10 +414,11 @@ run_eix(int argc, char** argv)
 	}
 	if(rc_options.test_unused)
 	{
-		print_unused("/etc/portage/package.keywords", all_packages);
+		bool empty = eixrc.getBool("EMPTY_IS_BAD");
+		print_unused("/etc/portage/package.keywords", all_packages, empty);
 		print_unused("/etc/portage/package.mask",     all_packages);
 		print_unused("/etc/portage/package.unmask",   all_packages);
-		print_unused("/etc/portage/package.use",      all_packages);
+		print_unused("/etc/portage/package.use",      all_packages, empty);
 	}
 
 	/* Sort the found matches by rating */
@@ -522,7 +523,7 @@ int is_current_dbversion(const char *filename) {
 	return header.isCurrent() ? 0 : 1;
 }
 
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist)
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
@@ -540,6 +541,11 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 		try {
 			string::size_type n = lines[i].find_first_of("\t ");
 			if(n == string::npos) {
+				if(test_empty)
+				{
+					unused.push_back(lines[i]);
+					continue;
+				}
 				m = new KeywordMask(lines[i].c_str());
 			}
 			else {
@@ -564,7 +570,10 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 		}
 		delete m;
 	}
-	cout << "Entries in " << filename << " matching no existing version:\n\n";
+	cout << "Non-matching ";
+	if(test_empty)
+		cout << "or empty ";
+	cout << "entries in " << filename << ":\n\n";
 	for(vector<string>::iterator it=unused.begin();
 		it != unused.end(); it++)
 		cout << *it << endl;

@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.6.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Correct scandir handling according to ./configure in pushback_files
+	- Introduce EMPTY_IS_BAD and corresponding test in -t
+
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Reflect portage's change of ignoring hidden files/dirs

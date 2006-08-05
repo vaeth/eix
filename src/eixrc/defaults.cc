@@ -206,6 +206,10 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "EMPTY_IS_BAD",
+			"true","Defines whether empty entries in /etc/portage/package.* are shown with -t.")
+		);
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",
 			"some",
 			"Applies if /etc/portage/package.keywords lists the same keyword twice\n"

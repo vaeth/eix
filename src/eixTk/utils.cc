@@ -58,6 +58,7 @@ bool pushback_lines_file(const char *file, vector<string> *v, bool removed_empty
 			if(x != string::npos)
 			{
 				line.erase(x);
+				trim(&line);
 			}
 
 			if(line.size() == 0 && removed_empty)
@@ -105,7 +106,7 @@ bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, boo
 static const char **pushback_files_exclude;
 static string *pushback_files_dir_path;
 static bool pushback_files_no_hidden;
-int pushback_files_selector(const struct dirent *dir_entry)
+int pushback_files_selector(SCANDIR_ARG3 dir_entry)
 {
 	if(pushback_files_no_hidden)
 	{
