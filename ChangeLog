@@ -6,6 +6,8 @@
 	- Introduce TEST_FOR_EMPTY and corresponding test in -t.
 	- Do no install test-programs.
 	- Introduce PRINT_COUNT_ALWAYS.
+	- Introduce TEST_FOR_NONEXISTENT, NONEXISTENT_IF_MASKED.
+	- Introduce TEST_FOR_REDUNDANCY.
 
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

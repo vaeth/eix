@@ -101,10 +101,9 @@ dump_help(int exit_code)
 			"    -I, --installed       Next expression only matches installed packages.\n"
 			"    -d, --dup-packages    Match duplicated packages.\n"
 			"    -D, --dup-versions    Match packages with duplicated versions.\n"
-			"    -T, --test-redundancy Match packages with redundancy in\n"
-			"                          /etc/portage/package.* according to the\n"
-			"                          REDUNDANT* variables (see man eix).\n"
-			"                          Use -t to find redundancy for non-existing packages.\n"
+			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
+			"                          /etc/portage/package.* (see man eix).\n"
+			"                          Use -t to check non-existing packages.\n"
 			"    -!, --not             Invert the expression.\n"
 			"    -|, --pipe            Use input from pipe of emerge -pv\n"
 			"\n"
@@ -219,7 +218,7 @@ static struct Option long_options[] = {
 	Option("installed",     'I'),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
-	Option("test-redundancy",'T'),
+	Option("test-obsolete", 'T'),
 	Option("not",           '!'),
 	Option("pipe",          '|'),
 

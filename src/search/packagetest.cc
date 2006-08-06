@@ -31,14 +31,20 @@
 
 using namespace std;
 
-const PackageTest::MatchField PackageTest::NONE          = 0x00, /* Search in name */
-	  PackageTest::NAME          = 0x01, /* Search in name */
-	  PackageTest::DESCRIPTION   = 0x02, /* Search in description */
-	  PackageTest::PROVIDE       = 0x04, /* Search in provides */
-	  PackageTest::LICENSE       = 0x08, /* Search in license */
-	  PackageTest::CATEGORY      = 0x10, /* Search in category */
-	  PackageTest::CATEGORY_NAME = 0x20, /* Search in category/name */
-	  PackageTest::HOMEPAGE      = 0x40; /* Search in homepage */
+const PackageTest::MatchField
+		PackageTest::NONE          = 0x00, /* Search in name */
+		PackageTest::NAME          = 0x01, /* Search in name */
+		PackageTest::DESCRIPTION   = 0x02, /* Search in description */
+		PackageTest::PROVIDE       = 0x04, /* Search in provides */
+		PackageTest::LICENSE       = 0x08, /* Search in license */
+		PackageTest::CATEGORY      = 0x10, /* Search in category */
+		PackageTest::CATEGORY_NAME = 0x20, /* Search in category/name */
+		PackageTest::HOMEPAGE      = 0x40; /* Search in homepage */
+
+const PackageTest::TestInstalled
+		PackageTest::INS_NONE        = 0x00,
+		PackageTest::INS_NONEXISTENT = 0x01,
+		PackageTest::INS_MASKED      = 0x02;
 
 PackageTest::PackageTest(VarDbPkg *vdb)
 {
@@ -46,6 +52,7 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
 	invert   = installed = dup_versions = dup_packages = false;
+	test_installed = INS_NONE;
 	portagesettings = NULL;
 }
 
@@ -207,7 +214,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 					(**pi != *prev_ver))
 				{
 					// And this version is installed
-					if(vardbpkg->isInstalled(&p, *pi))
+					if(vardbpkg->isInstalled(p, *pi))
 					{
 						if(test_uninstalled)
 							continue;
@@ -233,7 +240,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 					return true;
 				// in contrast to the above loop, we do not
 				// distinguish overlays here.
-				if(vardbpkg->isInstalled(&p, *pi))
+				if(vardbpkg->isInstalled(p, *pi))
 				{
 					if(test_uninstalled)
 						continue;
@@ -278,7 +285,7 @@ PackageTest::match_internal(PackageReader *pkg) const
 	if(installed) {
 		if(p == NULL)
 			p = pkg->get();
-		if(!(vardbpkg->isInstalled(p)))
+		if(!(vardbpkg->isInstalled(*p)))
 			return false;
 	}
 
@@ -303,17 +310,20 @@ PackageTest::match_internal(PackageReader *pkg) const
 			return false;
 	}
 
-	if(!portagesettings)
+	if(!portagesettings)// -T?
 		return true;
+	// Can some test succeed at all?
+	if((test_installed == INS_NONE) &&
+		(redundant_flags == Keywords::RED_NOTHING))
+		return false;
 
 	if(p == NULL)
 		p = pkg->get();
 	Package user;
-	if(redundant_flags != Keywords::RED_NOTHING)
-	{
-		user.deepcopy(*p);
-		portagesettings->setStability(&user, accept_keywords);
-	}
+	user.deepcopy(*p);
+	portagesettings->setStability(&user, accept_keywords);
+
+	bool mask_was_set = false;
 	if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 	{
 		if(portagesettings->user_config->setMasks(&user, redundant_flags))
@@ -327,7 +337,9 @@ PackageTest::match_internal(PackageReader *pkg) const
 			if(have_redundant(user, Keywords::RED_UNMASK))
 				return true;
 		}
+		mask_was_set = true;
 	}
+	bool keywords_was_set = false;
 	if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
 	{
 		if(portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags))
@@ -343,6 +355,42 @@ PackageTest::match_internal(PackageReader *pkg) const
 			if(have_redundant(user, Keywords::RED_NO_CHANGE))
 				return true;
 		}
+		keywords_was_set = true;
+	}
+	if(test_installed == INS_NONE)
+		return false;
+	vector<BasicVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+	if(!installed_versions)
+		return false;
+	if(test_installed & INS_MASKED)
+	{
+		if(!mask_was_set)
+			portagesettings->user_config->setMasks(&user, redundant_flags);
+		if(!keywords_was_set)
+			portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags);
+	}
+	for(vector<BasicVersion>::iterator current = installed_versions->begin();
+		current != installed_versions->end(); ++current)
+	{
+		TestInstalled found = INS_NONE;
+		bool not_all_found = true;
+		for(Package::iterator version_it = user.begin();
+			version_it != user.end(); ++version_it)
+		{
+			Version *version = *version_it;
+			if(*version != *current)
+				continue;
+			found |= INS_NONEXISTENT;
+			if(version->isStable())
+				found |= INS_MASKED;
+			if((found & test_installed) == test_installed)
+			{
+				not_all_found = false;
+				break;
+			}
+		}
+		if(not_all_found)
+			return true;
 	}
 	return false;
 }

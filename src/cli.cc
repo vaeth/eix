@@ -91,6 +91,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 		// }}}
 
 		EixRc::RedPair red;
+		PackageTest::TestInstalled test_installed;
 		bool firsttime;
 		switch(**arg)
 		{
@@ -101,25 +102,36 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 				  break;
 			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
 				  break;
-			case 'T': eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
-					Keywords::RED_DOUBLE, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
-					Keywords::RED_MIXED, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",
-					Keywords::RED_WEAKER, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_STRANGE",
-					Keywords::RED_STRANGE, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
-					Keywords::RED_NO_CHANGE, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
-					Keywords::RED_MASK, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
-					Keywords::RED_UNMASK, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
-					Keywords::RED_DOUBLE_MASK, red);
-				  eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
-					Keywords::RED_DOUBLE_UNMASK, red);
-				  test->ObsoleteCfg(portagesettings, red.first, red.second);
+			case 'T': red.first = red.second = RedAtom();
+				  if(eixrc.getBool("TEST_FOR_REDUNDANCY"))
+				  {
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
+						Keywords::RED_DOUBLE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
+						Keywords::RED_MIXED, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",
+						Keywords::RED_WEAKER, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_STRANGE",
+						Keywords::RED_STRANGE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
+						Keywords::RED_NO_CHANGE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
+						Keywords::RED_MASK, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
+						Keywords::RED_UNMASK, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
+						Keywords::RED_DOUBLE_MASK, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
+						Keywords::RED_DOUBLE_UNMASK, red);
+				  }
+				  test_installed = PackageTest::INS_NONE;
+				  if(eixrc.getBool("TEST_FOR_NONEXISTENT"))
+				  {
+					test_installed |= PackageTest::INS_NONEXISTENT;
+					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
+						test_installed |= PackageTest::INS_MASKED;
+				  }
+				  test->ObsoleteCfg(portagesettings, red.first, red.second, test_installed);
 				  break;
 			case '!': test->Invert();
 				  break;

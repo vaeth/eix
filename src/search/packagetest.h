@@ -60,6 +60,12 @@ class PackageTest {
 		                        CATEGORY_NAME , /* Search in category/name */
 		                        HOMEPAGE      ; /* Search in homepage */
 
+		typedef char TestInstalled;
+		static const TestInstalled
+					INS_NONE,
+					INS_NONEXISTENT, /* Test for nonexistent installed packages */
+					INS_MASKED;      /* Test for masked installed packages */
+
 		/** Set default values. */
 		PackageTest(VarDbPkg *vdb = NULL);
 
@@ -89,13 +95,20 @@ class PackageTest {
 			dup_packages = !dup_packages;
 		}
 
-		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second)
+		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
 		{
+			// portagesettings is our flag
+			if(portagesettings)// Only toggling?
+			{
+				portagesettings = NULL;
+				return;
+			}
+			portagesettings    = &p;
 			redundant_flags    = first.red|second.red;
 			first_test         = first;
 			second_test        = second;
-			portagesettings    = &p;
 			accept_keywords    = p.getAcceptKeywords();
+			test_installed     = test_ins;
 		}
 
 		void Invert()
@@ -114,9 +127,6 @@ class PackageTest {
 		MatchField field;
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
-		/* Test for this redundancy: */
-		Keywords::Redundant redundant_flags;
-		RedAtom first_test, second_test;
 
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;
@@ -126,8 +136,15 @@ class PackageTest {
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 
-		/** Lookup stuff about obsolete user flags here (if non-null) */
+		/** Lookup stuff about obsolete user flags here.
+		    If this is null, then no redundancy type tests are made. */
 		PortageSettings *portagesettings;
+		/* Test for this redundancy: */
+		Keywords::Redundant redundant_flags;
+		RedAtom first_test, second_test;
+		TestInstalled test_installed;
+
+
 		Keywords accept_keywords;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
@@ -136,7 +153,7 @@ class PackageTest {
 		bool stringMatch(Package *pkg) const;
 		bool match_internal(PackageReader *pkg) const;
 
-		/** Get the Fetched-value that is required to determin */
+		/** Get the Fetched-value that is required to determine the match */
 		void calculateNeeds();
 
 		bool have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const;

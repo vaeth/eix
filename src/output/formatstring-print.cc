@@ -41,7 +41,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	if(!fmt->no_color)
 	{
 		if(fmt->vardb)
-			is_installed = fmt->vardb->isInstalled(package, version);
+			is_installed = fmt->vardb->isInstalled(*package, version);
 		if(fmt->marked_list)
 			is_marked = fmt->marked_list->is_marked(*package, version);
 	}

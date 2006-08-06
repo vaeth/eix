@@ -119,7 +119,7 @@ class EixRc : public std::map<std::string,std::string> {
 
 
 	public:
-		typedef struct { RedAtom first, second; } RedPair;
+		typedef std::pair<RedAtom, RedAtom> RedPair;
 
 		void read(void) {
 			char *home = getenv("HOME");

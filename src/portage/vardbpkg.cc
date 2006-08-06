@@ -40,21 +40,21 @@ inline static void sort_installed(map<string,vector<BasicVersion> > *maping);
 
 /** Find installed versions of packet "name" in category "category".
  * @return NULL if not found .. else pointer to vector of versions. */
-vector<BasicVersion> *VarDbPkg::getInstalledVector(string category, string name)
+vector<BasicVersion> *VarDbPkg::getInstalledVector(const string &category, const string &name)
 {
 	map<string, map<string, vector<BasicVersion> >* >::iterator map_it = installed.find(category);
 	/* Not yet read */
 	if(map_it == installed.end()) {
-		readCategory(category);
+		readCategory(category.c_str());
 		return getInstalledVector(category, name);
 	}
 
+	map<string, vector<BasicVersion> >* installed_cat = map_it->second;
 	/* No such category in db-directory. */
-	if((*map_it).second == NULL)
+	if(!installed_cat)
 		return NULL;
 
-	map<string, vector<BasicVersion> >* installed_cat = (*map_it).second;
-	/* Find paket */
+	/* Find packet */
 	map<string, vector<BasicVersion> >::iterator cat_it = installed_cat->find(name);
 	if(cat_it == installed_cat->end())
 		return NULL; /* Not installed */
@@ -66,9 +66,9 @@ vector<BasicVersion> *VarDbPkg::getInstalledVector(string category, string name)
  * @return string with installed versions */
 string VarDbPkg::getInstalledString(const Package &p)
 {
-	vector<BasicVersion> *vec = getInstalledVector(p.category, p.name);
-	if(vec == 0) {
-		return (string(""));
+	vector<BasicVersion> *vec = getInstalledVector(p);
+	if(!vec) {
+		return "";
 	}
 
 	string ret;
@@ -87,12 +87,12 @@ string VarDbPkg::getInstalledString(const Package &p)
 }
 
 /** Returns true if a Package installed. */
-bool VarDbPkg::isInstalled(const Package *p, const BasicVersion *v)
+bool VarDbPkg::isInstalled(const Package &p, const BasicVersion *v)
 {
-	vector<BasicVersion> *vec = getInstalledVector( p->category, p->name );
+	vector<BasicVersion> *vec = getInstalledVector(p);
 	if(vec)
 	{
-		if(v == NULL)
+		if(!v)
 			return true;
 		for(unsigned int i = 0; i < vec->size(); ++i)
 			if((*vec)[i] == *v)
@@ -102,7 +102,7 @@ bool VarDbPkg::isInstalled(const Package *p, const BasicVersion *v)
 }
 
 /** Read category from db-directory. */
-void VarDbPkg::readCategory(string category)
+void VarDbPkg::readCategory(const char *category)
 {
 	/* Pointers to db and category DIRectory */
 	DIR *dir_category;

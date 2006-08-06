@@ -215,6 +215,18 @@ eixrc.addDefault(
 			"true","Defines whether empty entries in /etc/portage/package.* are shown with -t.")
 		);
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_NONEXISTENT",
+			"true","Defines whether non-existing installed versions are positive for -T.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "NONEXISTENT_IF_MASKED",
+			"true","Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_REDUNDANCY",
+			"true","Defines whether redundant entries are positive for -T.")
+		);
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",
 			"some",
 			"Applies if /etc/portage/package.keywords lists the same keyword twice\n"

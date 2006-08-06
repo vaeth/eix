@@ -33,9 +33,7 @@
 #include <map>
 
 #include <eixTk/exceptions.h>
-#include <portage/basicversion.h>
-
-class Package;
+#include <portage/package.h>
 
 /** Holds every installed version of a package. */
 class VarDbPkg {
@@ -46,11 +44,11 @@ class VarDbPkg {
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULL if not found .. else pointer to vector of versions. */
-		std::vector<BasicVersion> *getInstalledVector(std::string category, std::string name);
+		std::vector<BasicVersion> *getInstalledVector(const std::string &category, const std::string &name);
 
 		/** Read category from db-directory.
 		 * @param category read this category. */
-		void readCategory(std::string category);
+		void readCategory(const char *category);
 
 	public:
 		/** Default constructor. */
@@ -70,10 +68,16 @@ class VarDbPkg {
 		 * @return string with installed versions */
 		std::string getInstalledString(const Package &p);
 
+		/** Find installed versions
+		 * @return NULL if not found .. else pointer to vector of versions. */
+		std::vector<BasicVersion> *getInstalledVector(const Package &p) {
+			return getInstalledVector(p.category, p.name);
+		}
+
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
 		 * @param v If not NULL, check for this BasicVersion. */
-		bool isInstalled(const Package *p, const BasicVersion *v = NULL);
+		bool isInstalled(const Package &p, const BasicVersion *v = NULL);
 };
 
 #endif /* __PORTAGECONF_H__ */
