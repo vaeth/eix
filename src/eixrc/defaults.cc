@@ -206,7 +206,7 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "EMPTY_IS_BAD",
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_EMPTY",
 			"true","Defines whether empty entries in /etc/portage/package.* are shown with -t.")
 		);
 eixrc.addDefault(

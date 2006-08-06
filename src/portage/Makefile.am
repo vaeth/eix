@@ -17,7 +17,7 @@ libportage_a_SOURCES = basicversion.cc basicversion.h \
 
 TESTS = basicversion-test keywords-test
 
-bin_PROGRAMS = basicversion-test keywords-test
+noinst_PROGRAMS = basicversion-test keywords-test
 
 basicversion_test_SOURCES = basicversion_test.cc basicversion.cc
 

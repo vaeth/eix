@@ -414,7 +414,7 @@ run_eix(int argc, char** argv)
 	}
 	if(rc_options.test_unused)
 	{
-		bool empty = eixrc.getBool("EMPTY_IS_BAD");
+		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		print_unused("/etc/portage/package.keywords", all_packages, empty);
 		print_unused("/etc/portage/package.mask",     all_packages);
 		print_unused("/etc/portage/package.unmask",   all_packages);

@@ -60,7 +60,7 @@ The opposite of --nocolor.
 .BR -t ", " --test-non-matching
 Before other output, print entries of /etc/portage/package.* which do not
 match any existing version in the package database or which apparently have
-no meaning because they are empty (see B<EMPTY_IS_BAD>).
+no meaning because they are empty (see B<TEST_FOR_EMPTY>).
 
 This option is best combined with -T to clean up /etc/portage/package.*.
 .\" }}}
@@ -500,7 +500,7 @@ Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy
-.BR EMPTY_IS_BAD "  " (true / false)
+.BR TEST_FOR_EMPTY "  " (true / false)
 Defines whether empty entries in /etc/portage/package.* are shown with -t.
 .TP
 .BR REDUNDANT_IF_DOUBLE " " (String)

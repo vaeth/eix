@@ -2,8 +2,9 @@
 
 *eix-0.6.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Correct scandir handling according to ./configure in pushback_files
-	- Introduce EMPTY_IS_BAD and corresponding test in -t
+	- Correct scandir handling according to ./configure in pushback_files.
+	- Introduce TEST_FOR_EMPTY and corresponding test in -t.
+	- Do no install test-programs.
 
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
