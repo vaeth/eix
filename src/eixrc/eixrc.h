@@ -161,7 +161,18 @@ class EixRc : public std::map<std::string,std::string> {
 		}
 
 		bool getBool(const char *key) {
-			return ! strcasecmp((*this)[key].c_str(),"true");
+			const char *s = (*this)[key].c_str();
+			if(strcasecmp(s, "true") == 0)
+				return true;
+			if(strcasecmp(s, "1") == 0)
+				return true;
+			if(strcasecmp(s, "yes") == 0)
+				return true;
+			if(strcasecmp(s, "y") == 0)
+				return true;
+			if(strcasecmp(s, "on") == 0)
+				return true;
+			return false;
 		}
 
 		void getRedundantFlags(const char *key,

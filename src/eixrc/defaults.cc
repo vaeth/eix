@@ -185,6 +185,11 @@ eixrc.addDefault(
 			"true","If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS.")
 		);
 
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
+			"false","If true, always print the number of matches in the last line.")
+		);
+
 /* fancy new feature: change default matchfield depending on the searchstring. */
 #define MATCH_IF(field, value)                                                                       \
 	eixrc.addDefault(                                                                               \

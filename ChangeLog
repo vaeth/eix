@@ -5,6 +5,7 @@
 	- Correct scandir handling according to ./configure in pushback_files.
 	- Introduce TEST_FOR_EMPTY and corresponding test in -t.
 	- Do no install test-programs.
+	- Introduce PRINT_COUNT_ALWAYS.
 
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

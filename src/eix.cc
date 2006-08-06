@@ -58,7 +58,7 @@ using namespace std;
 const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false, bool linefeed = false);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -282,9 +282,10 @@ setup_defaults()
 		overlay_mode = 3;
 }
 
-void
+bool
 print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<Version::Overlay> *overlay_num)
 {
+	bool printed_overlay = false;
 	for(Version::Overlay i = 1;
 		i < header.countOverlays();
 		++i)
@@ -305,7 +306,9 @@ print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<Version
 			cout << AnsiColor(AnsiColor::acDefault, 0);
 		}
 		cout << header.getOverlay(i) << endl;
+		printed_overlay = true;
 	}
+	return printed_overlay;
 }
 
 int
@@ -415,10 +418,11 @@ run_eix(int argc, char** argv)
 	if(rc_options.test_unused)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
+		cout << "\n";
 		print_unused("/etc/portage/package.keywords", all_packages, empty);
 		print_unused("/etc/portage/package.mask",     all_packages);
 		print_unused("/etc/portage/package.unmask",   all_packages);
-		print_unused("/etc/portage/package.use",      all_packages, empty);
+		print_unused("/etc/portage/package.use",      all_packages, empty, true);
 	}
 
 	/* Sort the found matches by rating */
@@ -489,15 +493,33 @@ run_eix(int argc, char** argv)
 			++it)
 			format.print(*it, &varpkg_db, marked_list, &overlay_num);
 	}
+	bool printed_overlay = false;
 	if(need_overlay_table)
 	{
-		print_overlay_table(header,
+		printed_overlay = print_overlay_table(header,
 			(overlay_mode <= 1)? &overlay_used : NULL,
 			(overlay_mode == 0)? &overlay_num : NULL);
 	}
 
-	fputs("\n", stdout);
-	printf("Found %i matches\n", matches.size());
+	if(!matches.size()) {
+		if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
+			cout << "Found 0 matches.\n";
+		else
+			cout << "No matches found.\n";
+	}
+	else if(matches.size() == 1) {
+		if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
+		{
+			if(printed_overlay)
+				cout << "\n";
+			cout << "Found 1 match.\n";
+		}
+	}
+	else {
+		if(printed_overlay)
+			cout << "\n";
+		cout << "Found " << matches.size() << " matches.\n";
+	}
 
 	// Delete old query
 	delete query;
@@ -523,7 +545,7 @@ int is_current_dbversion(const char *filename) {
 	return header.isCurrent() ? 0 : 1;
 }
 
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty, bool linefeed)
 {
 	vector<string> unused;
 	vector<string> lines;
@@ -570,10 +592,21 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 		}
 		delete m;
 	}
-	cout << "Non-matching ";
+	if(unused.empty())
+		cout << "No non-matching";
+	else
+		cout << "Non-matching";
 	if(test_empty)
-		cout << "or empty ";
-	cout << "entries in " << filename << ":\n\n";
+		cout << " or empty";
+	cout << " entries in " << filename;
+	if(unused.empty())
+	{
+		cout << ".\n";
+		if(linefeed)
+			cout << "\n";
+		return;
+	}
+	cout << ":\n\n";
 	for(vector<string>::iterator it=unused.begin();
 		it != unused.end(); it++)
 		cout << *it << endl;

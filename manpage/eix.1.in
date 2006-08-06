@@ -473,6 +473,12 @@ environment.
 If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
 or the environment.
 .TP
+.BR PRINT_COUNT_ALWAYS " " (true / false)
+If true, always print the number of matches in the last line, even if this
+number is 0 or 1.
+This is normally not useful but might simplify writing certain scripts
+parsing the output of eix.
+.TP
 .\" {{{ Default Matchfields for different strings.
 .BR MATCH_NAME_IF " " (String)
 Use NAME as default matchfield if the string match the given regex.
