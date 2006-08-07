@@ -1,13 +1,19 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.6.2
+*eix-0.6.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Correct scandir handling according to ./configure in pushback_files.
-	- Introduce TEST_FOR_EMPTY and corresponding test in -t.
+	- Rename EMPTY_IS_BAD -> TEST_FOR_EMPTY.
+	  Sorry for that: eix-0.6.2 was not yet intended to be released.
+	  (The release happened only by a misunderstanding).
 	- Do no install test-programs.
 	- Introduce PRINT_COUNT_ALWAYS.
 	- Introduce TEST_FOR_NONEXISTENT, NONEXISTENT_IF_MASKED.
 	- Introduce TEST_FOR_REDUNDANCY.
+
+*eix-0.6.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Correct scandir handling according to ./configure in pushback_files.
+	- Introduce EMPTY_IS_BAD and corresponding test in -t
 
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
