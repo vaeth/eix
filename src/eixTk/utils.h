@@ -42,10 +42,11 @@ bool pushback_lines(const char *file, std::vector<std::string> *v, bool removed_
  * @param dir_path Path to directory
  * @param into pointer to vector of strings .. files get append here (with full path)
  * @param exlude list of char * that don't need to be put into vector
- * @param only_files consider only ordinary files
+ * @param only_type: if 1: consider only ordinary files, if 2: consider only dirs, if 3: consider only files or dirs
  * @param no_hidden ignore hidden files
+ * @param full_path return full pathnames
  * @return true if everything is ok */
-bool pushback_files(std::string &dir_path, std::vector<std::string> &into, const char *exclude[], bool only_files = true, bool no_hidden = true);
+bool pushback_files(const std::string &dir_path, std::vector<std::string> &into, const char *exclude[] = NULL, short only_files = 1, bool no_hidden = true, bool full_path = true);
 
 
 /** Cycle through map using it, until it is it_end, append all values from it

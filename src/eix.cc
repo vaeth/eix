@@ -29,6 +29,7 @@
 #include "../config.h"
 
 #include <global.h>
+#include <set>
 
 #include <output/formatstring.h>
 #include <output/formatstring-print.h>
@@ -58,7 +59,9 @@ using namespace std;
 const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false, bool linefeed = false);
+void print_vector(const vector<string> &vec);
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+void print_removed(const string &dirname, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -82,7 +85,8 @@ dump_help(int exit_code)
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
-			"                           of /etc/portage/package.*; this option is best\n"
+			"                           of /etc/portage/package.* and non-matching names\n"
+			"                           of installed packages; this option is best\n"
 			"                           combined with -T to clean up /etc/portage/package.*\n"
 			"\n"
 			"   Output:\n"
@@ -322,7 +326,9 @@ print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<Version
 int
 run_eix(int argc, char** argv)
 {
-	VarDbPkg varpkg_db("/var/db/pkg/");
+	const string var_db_pkg = "/var/db/pkg/";
+
+	VarDbPkg varpkg_db(var_db_pkg.c_str());
 	EixRc &eixrc = get_eixrc();
 
 	// Setup defaults for all global variables like rc_options
@@ -430,7 +436,8 @@ run_eix(int argc, char** argv)
 		print_unused("/etc/portage/package.keywords", all_packages, empty);
 		print_unused("/etc/portage/package.mask",     all_packages);
 		print_unused("/etc/portage/package.unmask",   all_packages);
-		print_unused("/etc/portage/package.use",      all_packages, empty, true);
+		print_unused("/etc/portage/package.use",      all_packages, empty);
+		print_removed(var_db_pkg, all_packages);
 	}
 
 	/* Sort the found matches by rating */
@@ -553,7 +560,15 @@ int is_current_dbversion(const char *filename) {
 	return header.isCurrent() ? 0 : 1;
 }
 
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty, bool linefeed)
+void print_vector(const vector<string> &vec)
+{
+	cout << ":\n\n";
+	for(vector<string>::const_iterator it=vec.begin(); it != vec.end(); it++)
+		cout << *it << endl;
+	cout << "--\n\n";
+}
+
+void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
@@ -610,15 +625,55 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 	if(unused.empty())
 	{
 		cout << ".\n";
-		if(linefeed)
-			cout << "\n";
 		return;
 	}
-	cout << ":\n\n";
-	for(vector<string>::iterator it=unused.begin();
-		it != unused.end(); it++)
-		cout << *it << endl;
-	cout << "--\n\n";
+	print_vector(unused);
+	return;
+}
+
+void print_removed(const string &dirname, const eix::ptr_list<Package> &packagelist)
+{
+	/* For faster testing, we build a category->name set */
+	map< string, set<string> > cat_name;
+	for(eix::ptr_list<Package>::const_iterator pit = packagelist.begin();
+		pit != packagelist.end(); ++pit )
+		cat_name[pit->category].insert(pit->name);
+
+	/* This will contain categories/packages to be printed */
+	vector<string> failure;
+
+	/* Read all installed packages (not versions!) and fill failures */
+	vector<string> categories;
+	pushback_files(dirname, categories, NULL, 2, true, false);
+	for(vector<string>::const_iterator cit = categories.begin();
+		cit != categories.end(); ++cit )
+	{
+		vector<string> names;
+		string cat_slash = *cit + "/";
+		pushback_files(dirname + cat_slash, names, NULL, 2, true, false);
+		map< string, set<string> >::const_iterator cat = cat_name.find(*cit);
+		const set<string> *ns = ( (cat == cat_name.end()) ? NULL : &(cat->second) );
+		for(vector<string>::const_iterator nit = names.begin();
+			nit != names.end(); ++nit )
+		{
+			const char *name;
+			try { name = ExplodeAtom::split_name(nit->c_str()); }
+			catch(ExBasic &e) { name = new char[1]; }
+			if(ns)
+				if(ns->find(name) != ns->end())
+					continue;
+			failure.push_back(cat_slash + name);
+			delete name;
+		}
+	}
+	if(failure.empty())
+	{
+		cout << "The names of all installed packages are in the database.\n\n";
+		return;
+	}
+	cout << "The following installed packages are not in the database";
+	print_vector(failure);
+	return;
 }
 
 int main(int argc, char** argv)

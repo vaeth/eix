@@ -62,7 +62,14 @@ Before other output, print entries of /etc/portage/package.* which do not
 match any existing version in the package database or which apparently have
 no meaning because they are empty (see B<TEST_FOR_EMPTY>).
 
-This option is best combined with -T to clean up /etc/portage/package.*.
+This option also lists all installed packages whose name is not in the database.
+
+Note that this is essentially different from B<-T> (see below).
+The latter only tests for packages B<in the database> whether redundant
+entries in /etc/portage/package.* exist or whether the installed versions
+are available, respectively.
+
+This option is best combined with -T to clean up /etc/portage/package.*
 .\" }}}
 
 .\" {{{ -------- Output options
@@ -136,7 +143,11 @@ Packages are obsolete if they have redundant entries in /etc/portage/package.*
 What is considered as redundant is defined by the B<REDUNDANT_IF>-variables below,
 and what is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables.
 
-This option is best combined with -t to find other types of obsolete entries.
+Note that this options only tests packages in the database - in particular, you
+will not find entries for e.g. renamed or removed (from the portage tree) packages with this option.
+Use B<-t> to find the latter.
+
+Therefore, this option is best combined with -t to find also other types of obsolete entries.
 .TP
 .BR -! ", " --not
 Invert the expression given

@@ -8,6 +8,7 @@
 	  (required splitting of addVersion into two functions)
 	- Introduce PRINT_SLOTS and DIFF_PRINT_SLOTS
 	- Introduce options -i, -1, -2, -O
+	- Output nonexistent installed package names with -t
 
 *eix-0.6.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
