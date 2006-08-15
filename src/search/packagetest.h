@@ -81,34 +81,23 @@ class PackageTest {
 		{ calculateNeeds(); }
 
 		void Installed(bool multi = false)
-		{ installed = !installed; multi_installed = multi; }
+		{ installed = true; multi_installed = multi; }
 
 		void Slotted(bool multi = false)
-		{ slotted = !slotted; multi_slot = multi; }
+		{ slotted = true; multi_slot = multi; }
 
 		void Overlay()
-		{ overlay = !overlay; }
+		{ overlay = true; }
 
 		void DuplVersions(bool only_overlay)
-		{
-			dup_versions_overlay = only_overlay;
-			dup_versions = !dup_versions;
-		}
+		{ dup_versions = true ; dup_versions_overlay = only_overlay; }
 
 		void DuplPackages(bool only_overlay)
-		{
-			dup_packages_overlay = only_overlay;
-			dup_packages = !dup_packages;
-		}
+		{ dup_packages = true; dup_packages_overlay = only_overlay; }
 
 		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
 		{
 			// portagesettings is our flag
-			if(portagesettings)// Only toggling?
-			{
-				portagesettings = NULL;
-				return;
-			}
 			portagesettings    = &p;
 			redundant_flags    = first.red|second.red;
 			first_test         = first;
@@ -145,7 +134,7 @@ class PackageTest {
 		bool dup_packages, dup_packages_overlay;
 
 		/** Lookup stuff about obsolete user flags here.
-		    If this is null, then no redundancy type tests are made. */
+		    If this is NULL, then no redundancy type tests are made. */
 		PortageSettings *portagesettings;
 		/* Test for this redundancy: */
 		Keywords::Redundant redundant_flags;

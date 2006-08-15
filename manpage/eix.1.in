@@ -57,19 +57,6 @@ Disables the use of ANSI color codes. This is useful for terminals that do not s
 .BR -F ", " --force-color
 The opposite of --nocolor.
 .TP
-.BR -t ", " --test-non-matching
-Before other output, print entries of /etc/portage/package.* which do not
-match any existing version in the package database or which apparently have
-no meaning because they are empty (see B<TEST_FOR_EMPTY>).
-
-This option also lists all installed packages whose name is not in the database.
-
-Note that this is essentially different from B<-T> (see below).
-The latter only tests for packages B<in the database> whether redundant
-entries in /etc/portage/package.* exist or whether the installed versions
-are available, respectively.
-
-This option is best combined with -T to clean up /etc/portage/package.*
 .\" }}}
 
 .\" {{{ -------- Output options
@@ -100,6 +87,21 @@ Define the compact layout for results as I<FORMAT>
 .BR --format-verbose " " I<FORMAT>
 Define the verbose layout for results as I<FORMAT>
 .\" }}}
+.SS Special options for B<eix>
+.TP
+.BR -t ", " --test-non-matching
+Before other output, print entries of /etc/portage/package.* which do not
+match any existing version in the package database or which apparently have
+no meaning because they are empty (see B<TEST_FOR_EMPTY>).
+
+This option also lists all installed packages whose name is not in the database.
+
+Note that this is essentially different from B<-T> (see below).
+The latter only tests for packages B<in the database> whether redundant
+entries in /etc/portage/package.* exist or whether the installed versions
+are available, respectively.
+
+This option is best combined with -T to clean up /etc/portage/package.*
 
 .\" {{{ -------- Options for expressions
 .SS Options for expressions
@@ -124,17 +126,17 @@ for example, if sys-foo/bar-0.2.1 exists both in the official portage tree and a
 If B<DUP_VERSIONS_ONLY_OVERLAYS> is set (see below), both instances must be in overlays.
 .TP
 .BR -1 ", " --slotted
-Match packages with a nontrivial slot, i.e. where SLOT is nonempty and different from "0".
+Only match packages with a nontrivial slot, i.e. where SLOT is nonempty and different from "0".
 .TP
 .BR -2 ", " --slots
-Match packages with at least two different slots.
+Only match packages with at least two different slots.
 In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
 .TP
 .BR -O ", " --overlay
-Match packages with at least one version in an overlay.
+Only match packages with at least one version in an overlay.
 .TP
 .BR -T ", " --test-obsolete
-Only match obsolete packages
+Only match obsolete packages.
 
 Packages are obsolete if they have redundant entries in /etc/portage/package.*
 (if B<TEST_FOR_REDUNDANCY> is true) or if not all installed versions exist
@@ -149,10 +151,9 @@ Use B<-t> to find the latter.
 
 Therefore, this option is best combined with -t to find also other types of obsolete entries.
 .TP
-.BR -! ", " --not
-Invert the expression given
-.TP
 .BR -| ", " --pipe
+(Recall that a shell will not pass an unquoted B<|> sign, so quote properly).
+
 Use input from pipe of an emerge -pv (similar to genlop -p).
 Actually, any input lines are honored which contains a word in the format
 
@@ -164,6 +165,14 @@ More precisely, in each line the first word in this format is chosen.
 The packages/versions passed this way will in the output be marked.
 For details, see the B<marked> and B<markedversions> formatstring and the
 B<MARK_VERSIONS> variable below.
+
+This local option is treated as if a sequence of corresponding matching
+expressions, concatenated with B<-o>, were given.
+.TP
+.BR -! ", " --not
+(Recall that an interactive shell will not pass an unquoted B<!> sign, so quote properly).
+
+Invert the expression given.
 .\" }}}
 
 .\" {{{ -------- Operation selection
@@ -222,9 +231,29 @@ Again, be sure to use single quotes around patterns. (Default)
 
 .\" {{{ OUTPUT
 .SH OUTPUT
+.SS Slots
+In contrast to usual output of versions in emerge, B<eix> and B<diff-eix>
+can also print slot names if they are nonempty and different from "0".
+Whether this happens is determined by the B<PRINT_SLOTS> and
+B<DIFF_PRINT_SLOTS> variables, respectively, and by the content of the
+B<FORMATSTRING>.
+
+If slots are printed, the slot name is separated from the version number with a colon.
+Some Examples:
+.TP
+.BR 4.1.1:4.1
+This is version 4.1.1 which will be installed into the slot "4.1".
+.TP
+.BR 3.14p:GNAT-3.14p
+This is version 3.14p which will be installed into the slot "GNAT-3.14p".
+.TP
+.BR 2.0.0_rc1-r6
+This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
+
+.SS Masking
 If you used gentoo for more than a week you're probably going to immediately
-recognize the format of the versions-strings. Nevertheless, we are going to
-explain them here.
+recognize the format of the masking in the versions-strings.
+Nevertheless, we are going to explain it here by some examples.
 .TP
 .BR [P]2.95.3-r8
 If a mask for the package was found in the packages-files from your profile, but this

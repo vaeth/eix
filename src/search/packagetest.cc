@@ -290,9 +290,9 @@ PackageTest::match_internal(PackageReader *pkg) const
 		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
 		if(!s)
 			return false;
-		if(s != 1)
-			return true;
-		return !multi_installed;
+		if(s == 1)
+			if(multi_installed)
+				return false;
 	}
 
 	if(slotted) { // -1 or -2
