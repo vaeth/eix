@@ -78,6 +78,10 @@ class VarDbPkg {
 		 * @param p Check for this Package.
 		 * @param v If not NULL, check for this BasicVersion. */
 		bool isInstalled(const Package &p, const BasicVersion *v = NULL);
+
+		/** Returns number of installed versions of this package
+		 * @param p Check for this Package. */
+		std::vector<BasicVersion>::size_type numInstalled(const Package &p);
 };
 
 #endif /* __PORTAGECONF_H__ */

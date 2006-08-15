@@ -40,6 +40,11 @@ const Package::Duplicates
 	Package::DUP_SOME     = 0x01,
 	Package::DUP_OVERLAYS = 0x03;
 
+const Package::Slots
+	Package::SLOTS_NONE   = 0x00,
+	Package::SLOTS_EXIST  = 0x01,
+	Package::SLOTS_MANY   = 0x03;
+
 /** Check if a package has duplicated versions. */
 void Package::checkDuplicates(Version *version)
 {
@@ -65,21 +70,19 @@ void Package::checkDuplicates(Version *version)
 			have_duplicate_versions = DUP_SOME;
 		}
 	}
-	return;
 }
 
-/** Adds a version to "the versions" list. */
-void Package::addVersion(Version *version)
+/** Finishes addVersionStart() after the remaining data
+    have been filled */
+void Package::addVersionFinalize(Version *version)
 {
-	/* if the same version is in various places it should be shown.
-	   possible thanks to the new [overlay] marker. */
-	checkDuplicates(version);
-
 	Version::Overlay key = version->overlay_key;
 
-	/* This should remain with two if .. so we can guarante that
-	 * versions.size() == 0 in the else. */
-	if(empty() == false) {
+	if(version->slot == "0")
+		version->slot = "";
+
+	/* This guarantees that we pushed our first version */
+	if(size() != 1) {
 		if(largest_overlay != key)
 		{
 			have_same_overlay_key = false;
@@ -88,16 +91,24 @@ void Package::addVersion(Version *version)
 			if(largest_overlay < key)
 				largest_overlay = key;
 		}
+		if((have_slots & SLOTS_MANY) != SLOTS_MANY)
+		{
+			if(common_slot != version->slot)
+				have_slots |= SLOTS_MANY;
+		}
 		if(is_system_package) {
 			is_system_package = version->isSystem();
 		}
 	}
 	else {
 		largest_overlay   = key;
+		if( (version->slot).length() )
+		{
+			have_slots  = SLOTS_EXIST;
+			common_slot = version->slot;
+		}
 		is_system_package = version->isSystem();
 	}
-
-	sortedPushBack(version);
 }
 
 void

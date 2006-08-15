@@ -34,50 +34,45 @@
 
 using namespace std;
 
-/** Read the stability on 'arch' from a metadata cache file. */
-string get_keywords(string filename) throw (ExBasic)
+inline
+void skip_lines(const int nr, ifstream &is, const string &filename) throw (ExBasic)
 {
-	// NOTE: Switched from std::istream::getline to std::getline
-	string linebuf;
-	int linenr;
-	ifstream is(filename.c_str());
-
-	if(!is.is_open())
-		throw ExBasic("Can't open %s: %s", filename.c_str(), strerror(errno));
-
-	// Skip the first 8 lines
-	for( linenr=0;linenr<8; linenr++ )
+	for(int i=nr; i>0; --i)
 	{
 		is.ignore(numeric_limits<int>::max(), '\n');
-		if( is.fail() ) throw ExBasic("Can't read cache file %s: %s", filename.c_str(), strerror(errno));
+		if(is.fail())
+			throw ExBasic("Can't read cache file %s: %s",
+			              filename.c_str(), strerror(errno));
 	}
-	// Read the keywords line
-	getline(is, linebuf);
-	is.close();
+}
 
-	return linebuf;
+#define open_skipping(nr, is, filename) \
+	ifstream is(filename); \
+	if(!is.is_open()) \
+		throw ExBasic("Can't open %s: %s", (filename), strerror(errno)); \
+	skip_lines(nr, is, (filename));
+
+
+/** Read the stability on 'arch' from a metadata cache file. */
+void flat_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
+{
+	open_skipping(2, is, filename.c_str());
+	getline(is, slot);
+	skip_lines(5, is, filename);
+	getline(is, keywords);
+	is.close();
 }
 
 /** Read a metadata cache file. */
-void read_file(Package *pkg, const char *filename) throw (ExBasic)
+void
+flat_read_file(const char *filename, Package *pkg) throw (ExBasic)
 {
+	open_skipping(5, is, filename);
 	string linebuf;
-	int linenr;
-	ifstream is(filename);
-
-	if(!is.is_open()) throw ExBasic("Can't open %s: %s", filename, strerror(errno));
-
-	// Skip the first 5 lines
-	for( linenr=0;linenr<5; linenr++ )
-	{
-		is.ignore(numeric_limits<int>::max(), '\n');
-		if( is.fail() ) throw ExBasic("Can't read metadata cache file: %s", filename);
-	}
-
 	// Read the rest
-	for(; getline(is, linebuf); linenr++)
+	for(int linenr = 5; getline(is, linebuf); ++linenr)
 	{
-		switch( linenr )
+		switch(linenr)
 		{
 			case 5:  pkg->homepage = linebuf; break;
 			case 6:  pkg->licenses = linebuf; break;
@@ -88,4 +83,3 @@ void read_file(Package *pkg, const char *filename) throw (ExBasic)
 	}
 	is.close();
 }
-

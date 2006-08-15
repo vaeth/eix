@@ -1,4 +1,4 @@
-.TH "eix" "1" "August 2, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "August 15, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -102,6 +102,10 @@ Only match installed packages. Please don't use this as a replacement for qlist 
 equery, it's not the same. This only show packages that could be installed and that are
 installed. Packages that are installed, but no longer in portage are not listed here.
 .TP
+.BR -i ", " --multi-installed
+Only match packages which are installed in at least two different versions.
+Usually, this means that these versions are slotted (at installation time).
+.TP
 .BR -d ", " --dup-packages
 Only match duplicated packages,
 for example, if sys-foo/bar exists both in the official portage tree and a local overlay.
@@ -111,6 +115,16 @@ If B<DUP_PACKAGES_ONLY_OVERLAYS> is set (see below), the instances must be in tw
 Only match packages with duplicated versions,
 for example, if sys-foo/bar-0.2.1 exists both in the official portage tree and a local overlay.
 If B<DUP_VERSIONS_ONLY_OVERLAYS> is set (see below), both instances must be in overlays.
+.TP
+.BR -1 ", " --slotted
+Match packages with a nontrivial slot, i.e. where SLOT is nonempty and different from "0".
+.TP
+.BR -2 ", " --slots
+Match packages with at least two different slots.
+In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
+.TP
+.BR -O ", " --overlay
+Match packages with at least one version in an overlay.
 .TP
 .BR -T ", " --test-obsolete
 Only match obsolete packages
@@ -260,10 +274,13 @@ printed. If used to print a property, the name B<must be enclosed in square brac
 .BR name ", " category ", " homepage ", " licenses
 The name, category, homepage and licenses for the current package.
 .TP
-.BR availableversions
-All versions that could be installed for this package
+.BR availableversions "  or  " availableversionslong
+All versions including slots that could be installed for this package
 (-l changes output accordingly).
 The versions are printed in the according colors.
+.TP
+.BR availableversionsshort
+As B<availableversions>, but do not print any slots
 .TP
 .BR installedversions
 All installed versions, separated by spaces.
@@ -279,8 +296,11 @@ could be easily replaced by using "B<Conditional blocks>".
 .BR overlaykey
 if all versions are in the same overlay this expands to "[overlaykey]"
 .TP
-.BR best
+.BR best "  or   " bestshort
 the highest stable version
+.TP
+.BR bestlong
+the highest stable version, including slot information
 .TP
 .BR system
 expands to "system" if this package is in the system-profile
@@ -478,6 +498,12 @@ environment.
 If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
 or the environment.
 .TP
+.BR PRINT_SLOTS " " (true / false)
+If false, eix never prints any slot information.
+.TP
+.BR DIFF_PRINT_SLOTS " " (true / false)
+If false, diff-eix never prints any slot information.
+.TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this
 number is 0 or 1.
@@ -523,7 +549,7 @@ Defines whether redundant entries in /etc/portage/package.* are positive for -T.
 What is considered as redundant is defined by the B<REDUNDANT_IF>-variables.
 .TP
 .BR NONEXISTENT_IF_MASKED "  " (true / false)
-Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT
+Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 .TP
 .BR REDUNDANT_IF_DOUBLE " " (String)
 Applies if /etc/portage/package.keywords lists the same keyword twice

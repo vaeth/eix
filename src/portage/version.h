@@ -35,7 +35,7 @@
 
 #include <iostream>
 
-/** Version expands the BasicVersion class by portagedb stability keys */
+/** Version expands the BasicVersion class by overlay-keys and slots */
 class Version : public BasicVersion, public Keywords {
 
 	public:
@@ -46,18 +46,22 @@ class Version : public BasicVersion, public Keywords {
 
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
+		/** The slot, the version represents.
+		    For saving space, the default "0" is always stored as "" */
+		std::string slot;
 
 		Version() : overlay_key(0)
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : BasicVersion(str), overlay_key(0)
+		Version(const char* str) : BasicVersion(str), overlay_key(0), slot("")
 		{ }
 
+		/** The equality operator does *not* test the slots */
 		bool operator == (const Version &v) const
 		{
-			return (((BasicVersion)*this) == ((BasicVersion)v)
-			        && overlay_key == v.overlay_key);
+			return ((((BasicVersion)*this) == ((BasicVersion)v))
+			        && (overlay_key == v.overlay_key));
 		}
 
 		bool operator == (const BasicVersion &v) const
@@ -68,6 +72,13 @@ class Version : public BasicVersion, public Keywords {
 
 		bool operator != (const BasicVersion &v) const
 		{ return !((*this) == v); }
+
+		std::string getFullSlotted () const
+		{
+			if(slot.length())
+				return std::string(getFull()) + ":" + slot;
+			return getFull();
+		}
 };
 
 #endif /* __VERSION_H__ */

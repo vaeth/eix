@@ -80,8 +80,14 @@ class PackageTest {
 		void finalize()
 		{ calculateNeeds(); }
 
-		void Installed()
-		{ installed = !installed; }
+		void Installed(bool multi = false)
+		{ installed = !installed; multi_installed = multi; }
+
+		void Slotted(bool multi = false)
+		{ slotted = !slotted; multi_slot = multi; }
+
+		void Overlay()
+		{ overlay = !overlay; }
 
 		void DuplVersions(bool only_overlay)
 		{
@@ -132,7 +138,9 @@ class PackageTest {
 		PackageReader::Attributes need;
 		/** Our string matching algorithm. */
 		std::auto_ptr<BaseAlgorithm> algorithm;
-		bool installed, invert;
+		bool installed, multi_installed, invert;
+		bool slotted, multi_slot;
+		bool overlay;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 

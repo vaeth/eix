@@ -99,8 +99,12 @@ dump_help(int exit_code)
 			"Local:\n"
 			"  Miscellaneous:\n"
 			"    -I, --installed       Next expression only matches installed packages.\n"
+			"    -i, --multi-installed Match packages installed in several versions.\n"
 			"    -d, --dup-packages    Match duplicated packages.\n"
 			"    -D, --dup-versions    Match packages with duplicated versions.\n"
+			"    -1, --slotted         Match packages with a nontrivial slot.\n"
+			"    -2, --slots           Match packages with two different slots.\n"
+			"    -O, --overlay         Match packages from overlays.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -216,6 +220,10 @@ static struct Option long_options[] = {
 
 	// Options for criteria
 	Option("installed",     'I'),
+	Option("multi-installed",'i'),
+	Option("slotted",       '1'),
+	Option("slots",         '2'),
+	Option("overlay",       'O'),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
@@ -265,6 +273,7 @@ setup_defaults()
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.mark_version        = rc["MARK_VERSIONS"];
+	format.show_slots          = rc.getBool("PRINT_SLOTS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 
 	string overlay = rc["OVERLAYS_LIST"];

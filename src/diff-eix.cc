@@ -272,9 +272,7 @@ run_diff_eix(int argc, char *argv[])
 {
 	string old_file, new_file;
 
-	if(isatty(1) != 1) {
-		format_string.no_color = true;
-	}
+	format_string.no_color   = (isatty(1) != 1);
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -333,8 +331,10 @@ run_diff_eix(int argc, char *argv[])
 	format_string.color_stable     = eixrc["COLOR_STABLE"];
 	format_string.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
 	format_string.mark_installed   = eixrc["MARK_INSTALLED"];
+	format_string.show_slots       = eixrc.getBool("DIFF_PRINT_SLOTS");
 
 	format_string.setupColors();
+
 
 	DBHeader old_header;
 	PackageTree old_tree;

@@ -98,6 +98,14 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 			// Check local options {{{
 			case 'I': test->Installed();
 				  break;
+			case 'i': test->Installed(true);
+				  break;
+			case '1': test->Slotted();
+				  break;
+			case '2': test->Slotted(true);
+				  break;
+			case 'O': test->Overlay();
+				  break;
 			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
 				  break;
 			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));

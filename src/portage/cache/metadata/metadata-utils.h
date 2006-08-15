@@ -36,8 +36,7 @@
 
 class Package;
 
-std::string metadata_get_keywords(const std::string &filename) throw (ExBasic);
-
+void metadata_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot) throw (ExBasic);
 void read_metadata(const char *filename, Package *pkg) throw (ExBasic);
 
 #endif /* __METADATAUTILS_H__ */

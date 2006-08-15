@@ -42,6 +42,55 @@
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
 class VarsReader {
+	public:
+		typedef char Flags;
+		static const Flags
+			NONE,          /**< Flag: No flags set; normal behavior. */
+			ONLY_KEYWORDS_SLOT, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
+			KEYWORDS_READ, /**< Flag: Have already read "KEYWORDS" once. */
+			SLOT_READ,     /**< Flag: Have already read "SLOT" once. */
+			SUBST_VARS,    /**< Flag: Allow references to variable in declarations
+							 of a variable. i.e.  USE="${USE} -kde" */
+			INTO_MAP,      /**< Flag: Init but don't parse .. you must first supply
+							 a pointer to map<string,string> with useMap(...) */
+			APPEND_VALUES, /**< Flag: appended new values rather then replace the old value. */
+			ALLOW_SOURCE,  /**< Flag: Allow "source"/"." command. */
+			HAVE_READ,     /**< Combination of previous "*_READ" */
+			ONLY_HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
+
+
+		/** Init and parse the FSM depending on supplied flags. */
+		VarsReader(Flags flags) {
+			parse_flags = flags;
+			if( ! (parse_flags & INTO_MAP) ) {
+				vars = new std::map<std::string,std::string>;
+			}
+		}
+
+		/** Free memory. */
+		virtual ~VarsReader() {
+			if( !(parse_flags & INTO_MAP) )
+				delete  vars;
+		}
+
+		/** Read file.
+		 * @return true if the file was successfully read. */
+		bool read(const char *filename);
+
+		/** Use a supplied map for variables. */
+		void useMap(std::map<std::string,std::string> *vars_map) {
+			vars = vars_map;
+		}
+
+		/** Set array of keys which values should be prepended to the new value. */
+		void accumulatingKeys(const char **keys) {
+			incremental_keys = keys;
+		}
+
+		/** Operator that helps us to be used like a map. */
+		std::string& operator[] (std::string key) {
+			return (*vars)[key];
+		}
 
 	private:
 		/** Kepper of the holy state. */
@@ -150,12 +199,16 @@ class VarsReader {
 		 * [RV] -> NOISE_DOUBLE_QUOTE */
 		void NOISE_DOUBLE_QUOTE_ESCAPE();
 
+		/** Assign key=value or source file.
+		    Return true if a stop is required due to ONLY_KEYWORDS_SLOT */
+		bool assign_key_value();
+
 		/** Resolve references to a variable in declaration of a variable. */
 		void resolveReference();
 
 		/** Read file using a new instance of VarsReader with the same
 		    settings (except for APPEND_VALUES),
-		    adding variables to current instance. */
+		    adding variables and changed HAVE_READ to current instance. */
 		bool source(const char *filename);
 
 		unsigned int key_len; /**< Lenght of the key. */
@@ -166,7 +219,7 @@ class VarsReader {
 
 		std::string value;     /**< Buffy for value */
 
-		short parse_flags; /**< Flags for configuration of parser. */
+		Flags parse_flags; /**< Flags for configuration of parser. */
 
 	protected:
 		char *filebuffer, /**< The filebuffer everyone is taking about. */
@@ -202,50 +255,6 @@ class VarsReader {
 
 		bool isIncremental(const char *key);
 
-	public:
-		static const short
-			NONE,          /**< Flag: No flags set; normal behavior. */
-			ONLY_KEYWORDS, /**< Flag: Only read "KEYWORDS" once, than exit the parser. */
-			SUBST_VARS,    /**< Flag: Allow references to variable in declarations
-							 of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP,      /**< Flag: Init but don't parse .. you must first supply
-							 a pointer to map<string,string> with useMap(...) */
-			APPEND_VALUES, /**< Flag: appended new values rather then replace the old value. */
-			ALLOW_SOURCE;  /**< Flag: Allow "source"/"." command. */
-
-
-		/** Init and parse the FSM depending on supplied flags. */
-		VarsReader(short flags) {
-			parse_flags = flags;
-			if( ! (parse_flags & INTO_MAP) ) {
-				vars = new std::map<std::string,std::string>;
-			}
-		}
-
-		/** Free memory. */
-		virtual ~VarsReader() {
-			if( !(parse_flags & INTO_MAP) )
-				delete  vars;
-		}
-
-		/** Read file.
-		 * @return true if the file was successfully read. */
-		bool read(const char *filename);
-
-		/** Use a supplied map for variables. */
-		void useMap(std::map<std::string,std::string> *vars_map) {
-			vars = vars_map;
-		}
-
-		/** Set array of keys which values should be prepended to the new value. */
-		void accumulatingKeys(const char **keys) {
-			incremental_keys = keys;
-		}
-
-		/** Operator that helps us to be used like a map. */
-		std::string& operator[] (std::string key) {
-			return (*vars)[key];
-		}
 };
 
 #endif /* __VARSREADER_H__ */

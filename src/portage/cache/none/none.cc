@@ -80,17 +80,19 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 
 		/* Make version and add it to package. */
 		Version *version = new Version(ver);
-		pkg->addVersion(version);
+		pkg->addVersionStart(version);
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;
 		if( have_onetime_info )
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
 		/* read the ebuild */
-		VarsReader ebuild((read_onetime_info ? VarsReader::NONE : VarsReader::ONLY_KEYWORDS));
+		VarsReader ebuild((read_onetime_info ? VarsReader::NONE : VarsReader::ONLY_KEYWORDS_SLOT));
 		ebuild.read((*directory_path + "/" + list[i]->d_name).c_str());
 		version->overlay_key = m_overlay_key;
 		version->set(m_arch, ebuild["KEYWORDS"]);
+		version->slot = ebuild["SLOT"];
+		pkg->addVersionFinalize(version);
 		if(read_onetime_info)
 		{
 			pkg->homepage = ebuild["HOMEPAGE"];

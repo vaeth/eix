@@ -51,7 +51,8 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 	vardbpkg = vdb;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	invert   = installed = dup_versions = dup_packages = false;
+	overlay  = slotted  = installed = invert =
+			dup_versions = dup_packages = false;
 	test_installed = INS_NONE;
 	portagesettings = NULL;
 }
@@ -87,7 +88,8 @@ PackageTest::calculateNeeds() {
 	}
 
 	if((need < PackageReader::VERSIONS) &&
-		(dup_packages || dup_versions || portagesettings))
+		(dup_packages || dup_versions || slotted ||
+			overlay|| portagesettings))
 	{
 		need = PackageReader::VERSIONS;
 	}
@@ -280,16 +282,36 @@ PackageTest::match_internal(PackageReader *pkg) const
 			return false;
 	}
 
-	/* Honour the -I, -d, -D, -T, and -! flags. */
+	/* Honour the -I, -i, -1, -2, -O, -d, -D, and -T flags. */
 
-	if(installed) {
+	if(installed) { // -i or -I
 		if(p == NULL)
 			p = pkg->get();
-		if(!(vardbpkg->isInstalled(*p)))
+		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
+		if(!s)
+			return false;
+		if(s != 1)
+			return true;
+		return !multi_installed;
+	}
+
+	if(slotted) { // -1 or -2
+		if(p == NULL)
+			p = pkg->get();
+		Package::Slots testfor = ((multi_slot) ?
+				Package::SLOTS_MANY : Package::SLOTS_EXIST);
+		if(((p->have_slots) & testfor) != testfor)
 			return false;
 	}
 
-	if(dup_packages) {
+	if(overlay) { // -O
+		if(p == NULL)
+			p = pkg->get();
+		if(!(p->largest_overlay))
+			return false;
+	}
+
+	if(dup_packages) { // -d
 		if(p == NULL)
 			p = pkg->get();
 		if(dup_packages_overlay)
@@ -301,16 +323,16 @@ PackageTest::match_internal(PackageReader *pkg) const
 			return false;
 	}
 
-	if(dup_versions) {
+	if(dup_versions) { // -D
 		if(p == NULL)
 			p = pkg->get();
-		Package::Duplicates testfor= ((dup_versions_overlay) ?
+		Package::Duplicates testfor = ((dup_versions_overlay) ?
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
 		if(((p->have_duplicate_versions) & testfor) != testfor)
 			return false;
 	}
 
-	if(!portagesettings)// -T?
+	if(!portagesettings)// -T
 		return true;
 	// Can some test succeed at all?
 	if((test_installed == INS_NONE) &&
@@ -399,6 +421,7 @@ bool
 PackageTest::match(PackageReader *pkg) const
 {
 	bool is_match = match_internal(pkg);
+	/* Honour the -! flag. */
 	return (invert ? !is_match : is_match);
 }
 

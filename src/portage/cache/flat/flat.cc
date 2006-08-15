@@ -80,13 +80,16 @@ int FlatCache::readCategory(Category &vec) throw(ExBasic)
 		do {
 			/* Make version and add it to package. */
 			version = new Version(aux[1]);
+
+			/* Read stability from cachefile */
+			string keywords;
+			flat_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
+			version->set(m_arch, keywords);
+			version->overlay_key = m_overlay_key;
+
 			pkg->addVersion(version);
 			if(*(pkg->latest()) == *version)
 				newest=version;
-
-			/* Read stability from cachefile */
-			version->set(m_arch, get_keywords(catpath + "/" + dents[i]->d_name));
-			version->overlay_key = m_overlay_key;
 
 			/* Free old split */
 			free(aux[0]);
@@ -110,7 +113,7 @@ int FlatCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			read_file(pkg, string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str() );
+			flat_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
 	}
 
 	if(numfiles > 0)

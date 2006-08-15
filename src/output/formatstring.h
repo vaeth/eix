@@ -166,8 +166,8 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 };
 
 class PrintFormat {
-	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p);
-	friend void print_versions(const PrintFormat *fmt, const Package *p);
+	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot);
+	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name) throw(ExBasic);
 	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name) throw(ExBasic);
 
@@ -184,14 +184,15 @@ class PrintFormat {
 		   They are only set temporarily during printing to avoid
 		   passing this argument through all sub-functions */
 		VarDbPkg      *vardb;
-		MarkedList   *marked_list;
+		MarkedList    *marked_list;
 		std::vector<Version::Overlay> *overlay_translations;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
 	public:
 		bool no_color,            /**< Shall we use colors? */
-			 style_version_lines; /**< Shall we show versions linewise? */
+		     style_version_lines, /**< Shall we show versions linewise? */
+		     show_slots;          /**< Shall we show slots at all? */
 
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,   /**< Color for unstable versions */

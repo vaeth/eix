@@ -48,8 +48,15 @@ class Package
 			DUP_NONE,
 			DUP_SOME,    /* Duplicate versions are somewhere */
 			DUP_OVERLAYS;/* Duplicate versions are both in overlays */
+		typedef char Slots;
+		static const Slots
+			SLOTS_NONE,
+			SLOTS_EXIST, /* Slots different from "0" exist */
+			SLOTS_MANY;  /* Different slots do exist */
 
 		Duplicates have_duplicate_versions;
+		Slots have_slots;
+		std::string common_slot;
 
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key;
@@ -78,8 +85,20 @@ class Package
 		/** De-constructor, delete content of Version-list. */
 		~Package();
 
-		/** Adds a version to "the versions" list, */
-		void addVersion(Version *vex);
+		/** Adds a version to "the versions" list.
+		    Only BasicVersion needs to be filled here.
+		    You must call addVersionFinalize() after filling
+		    the remaining data */
+		void addVersionStart(Version *version)
+		{ checkDuplicates(version); sortedPushBack(version); }
+
+		/** Finishes addVersion() after the remaining data
+		    have been filled */
+		void addVersionFinalize(Version *version);
+
+		/** Adds a version to "the versions" list. */
+		void addVersion(Version *version)
+		{ addVersionStart(version); addVersionFinalize(version); }
 
 		Version *best() const;
 
@@ -89,10 +108,10 @@ class Package
 		void deepcopy(const Package &p);
 
 	protected:
-		/** Check if a package has duplicated versions. */
+		/** Check if a package has duplicated vsions. */
 		void checkDuplicates(Version *version);
 
-		void sortedPushBack(Version *v);
+		void sortedPushBack(Version *version);
 
 		void defaults()
 		{
@@ -100,6 +119,8 @@ class Package
 			have_same_overlay_key = true;
 			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
+			have_slots = SLOTS_NONE;
+			common_slot = "";
 		}
 };
 

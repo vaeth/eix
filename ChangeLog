@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.6.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce slot support
+	- Fix memory leak for source command in varsreader
+	- Fix setting of package flags in all cache methods
+	  (required splitting of addVersion into two functions)
+	- Introduce PRINT_SLOTS and DIFF_PRINT_SLOTS
+	- Introduce options -i, -1, -2, -O
+
 *eix-0.6.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Rename EMPTY_IS_BAD -> TEST_FOR_EMPTY.

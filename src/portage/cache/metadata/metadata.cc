@@ -81,13 +81,16 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		do {
 			/* Make version and add it to package. */
 			version = new Version(aux[1]);
-			pkg->addVersion(version);
-			if(*(pkg->latest()) == *version)
-				newest=version;
 
 			/* Read stability from cachefile */
-			version->set(m_arch, metadata_get_keywords(catpath + "/" + dents[i]->d_name));
+			string keywords;
+			metadata_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
+			version->set(m_arch, keywords);
 			version->overlay_key = m_overlay_key;
+
+			pkg->addVersion(version);
+			if(*(pkg->latest()) == *version)
+				newest = version;
 
 			/* Free old split */
 			free(aux[0]);

@@ -186,6 +186,16 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "PRINT_SLOTS",
+			"true","If false, eix never prints any slot information.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_PRINT_SLOTS",
+			"false","If false, diff-eix never prints any slot information.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
 			"false","If true, always print the number of matches in the last line.")
 		);
@@ -245,7 +255,6 @@ eixrc.addDefault(
 			"# be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
 			"# in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,\n"
 			"# for the versions in question.")
-
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_STRANGE",

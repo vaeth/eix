@@ -36,54 +36,43 @@
 
 using namespace std;
 
-/** Read the stability on 'arch' from a metadata cache file. */
-string
-metadata_get_keywords(const string &filename) throw (ExBasic)
+inline
+void skip_lines(const int nr, ifstream &is, const string &filename) throw (ExBasic)
 {
-	// NOTE: Switched from std::istream::getline to std::getline
-	ifstream is(filename.c_str());
-
-	if(!is.is_open())
-		throw ExBasic("Can't open %s: %s", filename.c_str(), strerror(errno));
-
-	int linenr;
-	// Skip the first 8 lines
-	for( linenr=0;linenr<8; linenr++ )
+	for(int i=nr; i>0; --i)
 	{
-		// 10000 is an arbitrary value, assuming that no line is longer
 		is.ignore(numeric_limits<int>::max(), '\n');
 		if(is.fail())
 			throw ExBasic("Can't read cache file %s: %s",
 			              filename.c_str(), strerror(errno));
 	}
+}
 
-	// Read the keywords line
-	string linebuf;
-	getline(is, linebuf);
+#define open_skipping(nr, is, filename) \
+	ifstream is(filename); \
+	if(!is.is_open()) \
+		throw ExBasic("Can't open %s: %s", (filename), strerror(errno)); \
+	skip_lines(nr, is, (filename));
+
+/** Read the slot and keywords from a metadata cache file. */
+void
+metadata_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
+{
+	open_skipping(2, is, filename.c_str());
+	getline(is, slot);
+	skip_lines(5, is, filename);
+	getline(is, keywords);
 	is.close();
-
-	return linebuf;
 }
 
 /** Read a metadata cache file. */
 void
 read_metadata(const char *filename, Package *pkg) throw (ExBasic)
 {
-	ifstream is(filename);
-	if(!is.is_open())
-		throw ExBasic("Can't open %s: %s", filename, strerror(errno));
-
-	int linenr;
-	// Skip the first 5 lines
-	for(linenr = 0; linenr < 5; ++linenr)
-	{
-		is.ignore(numeric_limits<int>::max(), '\n');
-		if( is.fail() ) throw ExBasic("Can't read metadata cache file: %s", filename);
-	}
-
+	open_skipping(5, is, filename);
 	string linebuf;
 	// Read the rest
-	for(; getline(is, linebuf); ++linenr)
+	for(int linenr = 5; getline(is, linebuf); ++linenr)
 	{
 		switch(linenr)
 		{

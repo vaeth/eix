@@ -101,6 +101,16 @@ bool VarDbPkg::isInstalled(const Package &p, const BasicVersion *v)
 	return false;
 }
 
+/** Returns number of installed versions of this package
+ * @param p Check for this Package. */
+vector<BasicVersion>::size_type VarDbPkg::numInstalled(const Package &p)
+{
+	vector<BasicVersion> *vec = getInstalledVector(p);
+	if(!vec)
+		return 0;
+	return vec->size();
+}
+
 /** Read category from db-directory. */
 void VarDbPkg::readCategory(const char *category)
 {

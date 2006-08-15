@@ -65,8 +65,8 @@ get_map_from_cache(const char *file, map<string,string> &x)
 }
 
 /** Read the stability from a metadata cache file. */
-static string
-get_keywords(const string &filename) throw (ExBasic)
+void
+backport_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
 {
 	map<string,string> cf;
 
@@ -76,13 +76,13 @@ get_keywords(const string &filename) throw (ExBasic)
 				filename.c_str(),
 				strerror(errno));
 	}
-
-	return cf["KEYWORDS"];
+	keywords = cf["KEYWORDS"];
+	slot     = cf["SLOT"];
 }
 
 /** Read a metadata cache file. */
 static void
-read_file(const char *filename, Package *pkg) throw (ExBasic)
+backport_read_file(const char *filename, Package *pkg) throw (ExBasic)
 {
 	map<string,string> cf;
 
@@ -136,13 +136,16 @@ int BackportCache::readCategory(Category &vec) throw(ExBasic)
 		do {
 			/* Make version and add it to package. */
 			version = new Version(aux[1]);
+
+			/* Read stability from cachefile */
+			string keywords;
+			backport_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
+			version->set(m_arch, keywords);
+			version->overlay_key = m_overlay_key;
+
 			pkg->addVersion(version);
 			if(*(pkg->latest()) == *version)
 				newest=version;
-
-			/* Read stability from cachefile */
-			version->set(m_arch, get_keywords(catpath + "/" + dents[i]->d_name));
-			version->overlay_key = m_overlay_key;
 
 			/* Free old split */
 			free(aux[0]);
@@ -166,7 +169,7 @@ int BackportCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
+			backport_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
 	}
 
 	if(numfiles > 0)

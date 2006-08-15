@@ -51,6 +51,21 @@
 
 using namespace std;
 
+const VarsReader::Flags
+	VarsReader::NONE          = 0x00, /**< Flag: No flags set; normal behavior. */
+	VarsReader::ONLY_KEYWORDS_SLOT = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
+	VarsReader::KEYWORDS_READ = 0x02, /**< Flag: Have already read "KEYWORDS" once. */
+	VarsReader::SLOT_READ     = 0x04, /**< Flag: Have already read "SLOT" once. */
+	VarsReader::SUBST_VARS    = 0x08, /**< Flag: Allow references to variable in declarations
+							of a variable. i.e.  USE="${USE} -kde" */
+	VarsReader::INTO_MAP      = 0x10, /**< Flag: Init but don't parse .. you must first supply
+							a pointer to map<string,string> with useMap(...) */
+	VarsReader::APPEND_VALUES = 0x20, /**< Flag: appended new values rather then replace the old value. */
+	VarsReader::ALLOW_SOURCE  = 0x40,  /**< Flag: Allow "source"/"." command. */
+	VarsReader::HAVE_READ     = KEYWORDS_READ | SLOT_READ,   /**< Combination of previous "*_READ" */
+	VarsReader::ONLY_HAVE_READ= ONLY_KEYWORDS_SLOT | HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
+
+
 bool VarsReader::isIncremental(const char *key)
 {
 	if(incremental_keys == NULL)
@@ -62,33 +77,41 @@ bool VarsReader::isIncremental(const char *key)
 	return false;
 }
 
-/** Assign key=value and reset key- and value-buffer. */
+/** Assign key=value or source file.
+    Return true if a stop is required due to ONLY_KEYWORDS_SLOT */
+bool VarsReader::assign_key_value()
+{
+	if(sourcecmd)
+	{
+		sourcecmd=false;
+		source(value.c_str());
+		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);
+	}
+	if( (parse_flags & ONLY_KEYWORDS_SLOT) )
+	{
+		if(strncmp("KEYWORDS=", key_begin, 9) == 0)
+		{
+			(*vars)[string(key_begin, key_len)] = value;
+			parse_flags |= KEYWORDS_READ;
+			return (parse_flags & SLOT_READ);
+		}
+		else if(strncmp("SLOT=", key_begin, 5) == 0)
+		{
+			(*vars)[string(key_begin, key_len)] = value;
+			parse_flags |= SLOT_READ;
+			return (parse_flags & KEYWORDS_READ);
+		}
+		return false;
+	}
+	(*vars)[string(key_begin, key_len)] = value;
+	return false;
+}
+
 #define ASSIGN_KEY_VALUE  do { \
-	if(sourcecmd) { \
-		sourcecmd=false; \
-		source(value.c_str()); \
-	} \
-	else if( (parse_flags & ONLY_KEYWORDS) ) { \
-		if(strncmp("KEYWORDS=", key_begin, 9) == 0) { \
-			(*vars)[string(key_begin, key_len)] = value; \
-			CHSTATE(STOP); \
-		} \
-		break; \
-	} \
-	else { \
-		(*vars)[string(key_begin, key_len)] = value; \
+	if (assign_key_value()) { \
+		CHSTATE(STOP); \
 	} \
 } while(0)
-
-const short
-VarsReader::NONE          = 0x00, /**< Flag: No flags set; normal behavior. */
-	VarsReader::ONLY_KEYWORDS = 0x01, /**< Flag: Only read "KEYWORDS" once, than exit the parser. */
-	VarsReader::SUBST_VARS    = 0x02, /**< Flag: Allow references to variable in declarations
-							of a variable. i.e.  USE="${USE} -kde" */
-	VarsReader::INTO_MAP      = 0x04, /**< Flag: Init but don't parse .. you must first supply
-							a pointer to map<string,string> with useMap(...) */
-	VarsReader::APPEND_VALUES = 0x08, /**< Flag: appended new values rather then replace the old value. */
-	VarsReader::ALLOW_SOURCE  = 0x10;  /**< Flag: Allow "source"/"." command. */
 
 /*************************************************************************/
 /********************** FSM states begin here ****************************/
@@ -442,18 +465,20 @@ bool VarsReader::read(const char *filename)
 	return true;
 }
 
-/** Read file using a new instance of VarsReader,
-    but with same settings and adding variables only. */
+/** Read file using a new instance of VarsReader with the same
+    settings (except for APPEND_VALUES),
+    adding variables and changed HAVE_READ to current instance. */
 bool VarsReader::source(const char *filename)
 {
 	static int depth=0;
 	++depth;
 	ASSERT(depth < 100,
 	  "Nesting level too deep when reading %s", filename);
-	VarsReader includefile(parse_flags & (~APPEND_VALUES));
+	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
 	int rvalue=includefile.read(filename);
+	parse_flags |= (includefile.parse_flags & HAVE_READ);
 	depth--;
 	return rvalue;
 }

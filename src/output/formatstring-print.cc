@@ -34,7 +34,7 @@
 using namespace std;
 
 void
-print_version(const PrintFormat *fmt, const Version *version, const Package *package)
+print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots)
 {
 	bool is_installed = false;
 	bool is_marked = false;
@@ -96,7 +96,10 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		cout << fmt->mark_installed;
 	if (is_marked)
 		cout << fmt->mark_version;
-	cout << version->getFull();
+	if (with_slots && fmt->show_slots)
+		cout << version->getFullSlotted();
+	else
+		cout << version->getFull();
 	if (is_marked)
 	{
 		cout << fmt->mark_version_end;
@@ -111,11 +114,11 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 }
 
 void
-print_versions(const PrintFormat *fmt, const Package* p)
+print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
 {
 	Package::const_iterator version_it = p->begin();
 	while(version_it != p->end()) {
-		print_version(fmt, *version_it, p);
+		print_version(fmt, *version_it, p, with_slots);
 
 		if(!p->have_same_overlay_key && version_it->overlay_key) {
 			if( ! fmt->no_color )
@@ -140,8 +143,12 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 {
 	Package *entity = (Package*)void_entity;
 
-	if(name == "availableversions") {
-		print_versions(fmt, entity);
+	if((name == "availableversions") ||
+		(name == "availableversionslong")) {
+		print_versions(fmt, entity, true);
+	}
+	else if(name == "availableversionsshort") {
+		print_versions(fmt, entity, false);
 	}
 	else if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
@@ -152,10 +159,17 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 			cout << "[" << ov_key << "] ";
 		}
 	}
-	else if(name == "best") {
+	else if((name == "best") ||
+		(name == "bestlong")) {
 		Version *best = entity->best();
 		if(best != NULL) {
-			print_version(fmt, best, entity);
+			print_version(fmt, best, entity, true);
+		}
+	}
+	else if(name == "bestshort") {
+		Version *best = entity->best();
+		if(best != NULL) {
+			print_version(fmt, best, entity, false);
 		}
 	}
 	else
@@ -207,11 +221,21 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 		}
 		return "";
 	}
-	else if(name == "best") {
+	else if((name == "best") ||
+		(name == "bestshort")) {
 		Version *best = entity->best();
 		if(best == NULL) {
 			return "";
 		}
+		return best->getFull();
+	}
+	else if(name == "bestlong") {
+		Version *best = entity->best();
+		if(best == NULL) {
+			return "";
+		}
+		if(fmt->show_slots)
+			return best->getFullSlotted();
 		return best->getFull();
 	}
 	else if(name == "marked")

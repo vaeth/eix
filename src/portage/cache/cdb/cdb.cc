@@ -275,7 +275,7 @@ int CdbCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Make version and add it to package. */
 		Version *version = new Version(aux[1]);
-		pkg->addVersion(version);
+		pkg->addVersionStart(version);
 		/* For the latest version read/change corresponding data */
 		if(*(pkg->latest()) == *version)
 		{
@@ -287,7 +287,9 @@ int CdbCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Read stability */
 		version->set(m_arch, mapping["KEYWORDS"]);
+		version->slot = mapping["SLOT"];
 		version->overlay_key = m_overlay_key;
+		pkg->addVersionFinalize(version);
 
 		/* Free split */
 		free(aux[0]);

@@ -35,9 +35,7 @@
 
 #include <fstream>
 
-std::string get_keywords(std::string filename) throw (ExBasic);
-
-/** Read a metadata cache file. */
-void read_file(Package *pkg, const char *filename) throw (ExBasic);
+void flat_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot) throw (ExBasic);
+void flat_read_file(const char *filename, Package *pkg) throw (ExBasic);
 
 #endif /* __FLATCACHEUTILS_H__ */

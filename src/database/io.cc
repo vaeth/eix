@@ -89,6 +89,7 @@ io::read_version(FILE *fp)
 	v->m_suffixnum     = io::read<unsigned int>(fp);
 	v->m_gentoorevision = io::read<unsigned char>(fp);
 
+	v->slot = io::read_string(fp);
 	v->overlay_key = io::read<short>(fp);
 
 	return v;
@@ -126,6 +127,7 @@ io::write_version(FILE *fp, const Version *v, bool small)
 	io::write<unsigned int>(fp, v->m_suffixnum);
 	io::write<unsigned char>(fp, v->m_gentoorevision);
 
+	io::write_string(fp, v->slot);
 	io::write<short>(fp, v->overlay_key);
 }
 
