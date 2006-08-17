@@ -2,13 +2,14 @@
 
 *eix-0.6.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Introduce slot support
-	- Fix memory leak for source command in varsreader
+	- Introduce slot support.
+	- Fix memory leak for source command in varsreader.
 	- Fix setting of package flags in all cache methods
-	  (required splitting of addVersion into two functions)
-	- Introduce PRINT_SLOTS and DIFF_PRINT_SLOTS
-	- Introduce options -i, -1, -2, -O
-	- Output nonexistent installed package names with -t
+	  (required splitting of addVersion into two functions).
+	- Introduce PRINT_SLOTS and DIFF_PRINT_SLOTS.
+	- Introduce options -i, -1, -2, -O.
+	- Output nonexistent installed package names with -t.
+	- DEFAULT_IS_OR defaults to "false" again.
 
 *eix-0.6.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -23,7 +24,7 @@
 *eix-0.6.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Correct scandir handling according to ./configure in pushback_files.
-	- Introduce EMPTY_IS_BAD and corresponding test in -t
+	- Introduce EMPTY_IS_BAD and corresponding test in -t.
 
 *eix-0.6.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

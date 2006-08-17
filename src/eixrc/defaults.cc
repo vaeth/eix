@@ -130,7 +130,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DEFAULT_IS_OR",
-			"true", "Whether default concatenation of string queries is -o (or) or -a (and)")
+			"false", "Whether default concatenation of queries is -o (or) or -a (and)")
 		);
 
 eixrc.addDefault(
