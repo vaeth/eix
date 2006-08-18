@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.6.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix manpage bug: best=bestlong
+
 *eix-0.6.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce slot support.

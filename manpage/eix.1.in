@@ -336,11 +336,11 @@ could be easily replaced by using "B<Conditional blocks>".
 .BR overlaykey
 if all versions are in the same overlay this expands to "[overlaykey]"
 .TP
-.BR best "  or   " bestshort
-the highest stable version
-.TP
-.BR bestlong
+.BR best "  or   " bestlong
 the highest stable version, including slot information
+.TP
+.BR bestshort
+the highest stable version without slot information
 .TP
 .BR system
 expands to "system" if this package is in the system-profile
