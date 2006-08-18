@@ -2,6 +2,13 @@
 
 *eix-0.6.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add OVERRIDE_CACHE_METHOD, ADD_LOCAL_CACHE_METHOD, ADD_CACHE_METHOD
+	  to allow e.g. cache method metadata for a specific overlay.
+	  See the discussion in
+	  http://bugs.gentoo.org/show_bug.cgi?id=144200
+	- Add cache method eix to e.g. fetch "precompiled" data for a
+	  specific overlay. See the discussion in
+	  http://bugs.gentoo.org/show_bug.cgi?id=144200
 	- Fix manpage bug: best=bestlong
 
 *eix-0.6.4

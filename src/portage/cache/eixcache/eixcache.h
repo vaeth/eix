@@ -6,8 +6,6 @@
  *   https://sourceforge.net/projects/eix                                  *
  *                                                                         *
  *   Copyright (c)                                                         *
- *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
- *     Emil Beinroth <emilbeinroth@gmx.net>                                *
  *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -26,42 +24,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __CACHETABLE_H__
-#define __CACHETABLE_H__
+#ifndef __EIXCACHE_H__
+#define __EIXCACHE_H__
 
-#include <portage/cache/cache-map.h>
-#include <eixTk/ptr_list.h>
+#include <portage/cache/base.h>
 
-#include <string>
-#include <map>
+class EixCache : public BasicCache {
+	private:
+		std::string m_file;
+		bool m_only_overlay;
+		short m_get_overlay;
 
-class CacheTable
-	: public eix::ptr_list<BasicCache>
-{
 	public:
-		~CacheTable()
-		{ delete_and_clear(); }
+		EixCache(std::string file = "", bool only_overlay = false, short get_overlay = 0) : m_file(file), m_only_overlay(only_overlay), m_get_overlay(get_overlay)
+		{ }
 
-		void addCache(std::string directory, std::string cache_name, const std::map<std::string, std::string> *override)
-		{
-			for(CacheTable::iterator it=begin(); it != end(); ++it)
-				if(directory == it->getPath())
-					return;
-			if(override)
-			{
-				std::map<std::string, std::string>::const_iterator found = override->find(directory);
-				if(found != override->end())
-					cache_name = found->second;
-			}
-			BasicCache *cache = get_cache(cache_name);
-			if(cache == NULL)
-			{
-				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory.c_str()));
-			}
+		int readCategory(Category &vec) throw(ExBasic);
 
-			cache->setScheme(directory);
-			push_back(cache);
-		}
+		const char *getType() const;
 };
 
-#endif /* __CACHETABLE_H__ */
+#endif /* __EIXCACHE_H__ */

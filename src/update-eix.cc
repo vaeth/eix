@@ -142,12 +142,35 @@ static struct Option long_options[] = {
 	 Option(0 ,                0)
 };
 
+inline
+void add_override(map<string, string> *&override, EixRc &eixrc, const char *s)
+{
+	vector<string> v = split_string(eixrc[s]," \t\n\r");
+	if(v.size() & 1)
+	{
+		fprintf(stderr, "%s must be a list of the form DIRECTORY METHOD\n", s);
+		exit(1);
+	}
+	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it)
+	{
+		if(!override)
+			override = new map<string, string>;
+		const char *path = it->c_str();
+		++it;
+		(*override)[path] = *it;
+	}
+}
+
 int
 run_update_eix(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc = get_eixrc();
+	map<string, string> *override = NULL;
 
+	add_override(override, eixrc, "OVERRIDE_CACHE_METHOD");
+	add_override(override, eixrc, "ADD_LOCAL_CACHE_METHOD");
+	add_override(override, eixrc, "ADD_CACHE_METHOD");
 	vector<string>excluded_overlays = split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r");
 	vector<string>add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
 
@@ -212,7 +235,7 @@ run_update_eix(int argc, char *argv[])
 	CacheTable table;
 	if( find(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"]) == excluded_overlays.end())
-		table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str());
+		table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str(), override);
 	else
 		INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
 
@@ -224,7 +247,7 @@ run_update_eix(int argc, char *argv[])
 	{
 		if( find(excluded_overlays.begin(), excluded_overlays.end(),
 					portage_settings.overlays[i]) == excluded_overlays.end())
-			table.addCache(portage_settings.overlays[i], eixrc["OVERLAY_CACHE_METHOD"].c_str());
+			table.addCache(portage_settings.overlays[i], eixrc["OVERLAY_CACHE_METHOD"].c_str(), override);
 		else
 			INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
 	}

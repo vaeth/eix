@@ -157,12 +157,30 @@ eixrc.addDefault(
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTDIR_CACHE_METHOD",
-			PORTDIR_CACHE_METHOD ,"Portage cache-backend that should be used for PORTDIR (flat/cdb/none/backport).")
+			PORTDIR_CACHE_METHOD ,"Portage cache-backend that should be used for PORTDIR (metadata/flat/cdb/none/backport/eix[:file[:nr]]")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERLAY_CACHE_METHOD",
-			"none","Portage cache-backend that should be used for the overlays (flat/cdb/none/backport).")
+			"none","Portage cache-backend that should be used for the overlays (metadata/flat/cdb/none/backport/eix[:file[:nr]]).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "OVERRIDE_CACHE_METHOD",
+			"","Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
+			"# This is a list of pairs DIRECTORY METHOD. Later entries take precedence.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "ADD_LOCAL_CACHE_METHOD",
+			"","This variable is added to OVERRIDE_CACHE_METHOD.\n"
+			"# This variable is meant to be set only locally.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "ADD_CACHE_METHOD",
+			"","This variable is added to OVERRIDE_CACHE_METHOD.\n"
+			"# This variable is meant to be set only temporarily in the environment.")
 		);
 
 eixrc.addDefault(

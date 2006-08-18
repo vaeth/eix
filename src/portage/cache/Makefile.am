@@ -10,6 +10,7 @@ libcache_a_SOURCES = base.h base.cc \
 					 flat/flat.cc flat/flat.h \
 					 flat/flat-utils.cc flat/flat-utils.h \
 					 none/none.cc none/none.h \
+					 eixcache/eixcache.cc eixcache/eixcache.h \
 					 cdb/cdb.h cdb/cdb.cc \
 					 backport/backport.cc backport/backport.h \
 					 metadata/metadata-utils.cc metadata/metadata-utils.h \
