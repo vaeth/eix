@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,6 +32,7 @@
 #include <database/header.h>
 #include <database/package_reader.h>
 #include <database/io.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -85,12 +87,9 @@ Category::find(const std::string &name)
 Package *
 PackageTree::findPackage(const string &category, const string &name) const
 {
-	for(const_iterator i = begin(); i != end(); ++i)
-	{
-		if(i->name() == category)
-			return i->findPackage(name);
-	}
-
+	Category *f = find(category);
+	if(f)
+		return f->findPackage(name);
 	return NULL;
 }
 
@@ -128,18 +127,89 @@ PackageTree::countPackages() const
 	return ret;
 }
 
-Category &
-PackageTree::operator [] (const string name)
+Category *PackageTree::find(const string name) const
 {
-	for(iterator i = begin();
+	if(fast_access)
+	{
+		map<string,Category*>::const_iterator f = fast_access->find(name);
+		if(f == fast_access->end())
+			return NULL;
+		return f->second;
+	}
+	for(const_iterator i = begin();
 		i != end();
 		++i)
 	{
 		if(i->name() == name)
-			return **i;
+			return *i;
 	}
+	return NULL;
+}
 
+Category &PackageTree::insert(const string name)
+{
 	Category *p = new Category(name);
-	push_back(p);
+	bool inserted = false;
+	for(iterator i = begin(); i != end(); ++i)
+	{
+		if(name <= i->name())
+		{
+			if(name == i->name()) { // We already had this category
+				delete p;
+				return **i;
+			}
+			((eix::ptr_list<Category> *)this)->insert(i,p);
+			inserted = true;
+			break;
+		}
+	}
+	if(!inserted)
+		((eix::ptr_list<Category> *)this)->push_back(p);
+	if(fast_access)
+		(*fast_access)[name] = p;
 	return *p;
 }
+
+void PackageTree::add_missing_categories(vector<string> &categories) const
+{
+	for(const_iterator i = begin();
+		i != end();
+		++i)
+	{
+		categories.push_back(i->name());
+	}
+	std::sort(categories.begin(), categories.end());
+	categories.erase(std::unique(categories.begin(), categories.end()),
+			categories.end());
+}
+
+void PackageTree::need_fast_access(const vector<string> *add_cat)
+{
+	if(fast_access)
+		return;
+	fast_access = new std::map<std::string, Category*>;
+	for(iterator i = begin(); i != end(); ++i)
+		(*fast_access)[i->name()] = *i;
+	for(vector<string>::const_iterator it = add_cat->begin();
+		it != add_cat->end(); ++it)
+		(*this)[*it];
+}
+
+void PackageTree::finish_fast_access()
+{
+	if(!fast_access)
+		return;
+	delete fast_access;
+	fast_access = NULL;
+	iterator i = begin();
+	while(i != end())
+	{
+		if(i->empty()) {
+			erase(i);
+			i=begin(); // We must restart after an erase
+		}
+		else
+			++i;
+	}
+}
+

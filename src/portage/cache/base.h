@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -33,6 +34,7 @@
 
 class Category;
 class Package;
+class PackageTree;
 
 #if 0
 // Add package to vector
@@ -76,8 +78,19 @@ class BasicCache {
 		// Return name of Cache.*/
 		virtual const char *getType() const = 0;
 
-		// Read Cache for a category with a little from portageif. */
-		virtual int readCategory(Category &vec) throw(ExBasic) = 0;
+		// Maybe we can even read multiple Categories at once (eixcache)
+		virtual bool can_read_multiple_categories() const
+		{ return false; }
+
+		// If available, the function to read multiple Categories.
+		// If categories is not NULL, then categories might be added (to categories)
+		// If category is not NULL, then the other arguments are ignored, and the function is equivalent to readCategory
+		virtual int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic)
+		{ return 1; }
+
+		// Read Cache for a category
+		virtual int readCategory(Category &vec) throw(ExBasic)
+		{ return readCategories(NULL, NULL, &vec); }
 
 	protected:
 		std::string m_scheme;

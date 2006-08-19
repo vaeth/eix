@@ -34,15 +34,11 @@ END
 done
 
 cat<<END
-	vector<string> splitted = split_string(name, ":", false);
-	if (splitted[0] == "eix")
 	{
-		switch(splitted.size())
-		{
-			case 1: return new EixCache();
-			case 2: return new EixCache(splitted[1]);
-			case 3: return new EixCache(splitted[1], 1, atoi(splitted[2].c_str()));
-		}
+		EixCache *e=new EixCache;
+		if(e->initialize(name))
+			return e;
+		delete e;
 	}
 	return NULL;
 }

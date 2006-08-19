@@ -41,27 +41,64 @@
 
 using namespace std;
 
-const char *EixCache::getType() const
+bool EixCache::initialize(string &name)
 {
-	string ret="eix";
-//cout << "FILENAME <" << m_file << "> overlay: " << m_get_overlay << "\n";
-	if(m_file.length())
+	vector<string> args = split_string(name, ":", false);
+	if(strcasecmp(args[0].c_str(), "eix") == 0)
 	{
-		ret = ret + ": " + m_file;
+		m_name = "eix";
+		never_add_categories = true;
 	}
-	if(m_only_overlay)
+	else if((strcasecmp(args[0].c_str(), "eix*") == 0) ||
+		(strcasecmp(args[0].c_str(), "*eix") == 0))
 	{
-		stringstream ss;
-		ss << m_get_overlay;
-		string num;
-		ss >> num;
-		ret = ret + " [" + num + "]";
+		m_name = "eix*";
+		never_add_categories = false;
 	}
-	return ret.c_str();
+	else
+		return false;
+
+	m_file = "";
+	if(args.size() >= 2) {
+		if(args[1].length()) {
+			m_name += " ";
+			m_name += args[1];
+			m_file = args[1];
+		}
+	}
+
+	m_only_overlay = true;
+	m_get_overlay = 0;
+	if(args.size() >= 3) {
+		if(args[2].length()) {
+			m_name += " [";
+			m_name += args[2];
+			m_name += "]";
+			if(args[2] != "*")
+			{
+				m_only_overlay = true;
+				try {
+					m_get_overlay = atoi(args[2].c_str());
+				}
+				catch(ExBasic e) {
+					return false;
+				}
+			}
+		}
+	}
+	return (args.size() <= 3);
 }
 
-int EixCache::readCategory(Category &vec) throw(ExBasic)
+int EixCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
 {
+	if(category) {
+		packagetree = NULL;
+		categories = NULL;
+	}
+	bool add_categories = (categories != NULL);
+	if(never_add_categories)
+		add_categories = false;
+
 	const char *file = EIX_CACHEFILE;
 	if(m_file.length())
 		file = m_file.c_str();
@@ -80,18 +117,36 @@ int EixCache::readCategory(Category &vec) throw(ExBasic)
 	              file, header.version, DBHeader::current);
 	}
 
+	if(packagetree)
+		packagetree->need_fast_access(categories);
+
 	for(PackageReader reader(fp, header.size); reader.next(); reader.skip())
 	{
 		reader.read(PackageReader::NAME);
 		Package *p = reader.get();
-		if (p->category != vec.name()) // wrong category
-			continue;
+		Category *dest_cat;
+		if(add_categories) {
+			dest_cat = &((*packagetree)[p->category]);
+		}
+		else if(category)
+		{
+			if(category->name() != p->category)
+				continue;
+			dest_cat = category;
+		}
+		else
+		{
+			dest_cat = packagetree->find(p->category);
+			if(!dest_cat)
+				continue;
+		}
+
 		reader.read(PackageReader::VERSIONS);
 		p = reader.get();
 		bool have_onetime_info = false;
-		Package *pkg = vec.findPackage(p->name);
+		Package *pkg = dest_cat->findPackage(p->name);
 		if(pkg == NULL)
-			pkg = vec.addPackage(p->name);
+			pkg = dest_cat->addPackage(p->name);
 		else
 			have_onetime_info = true;
 		for(Package::iterator it = p->begin();
@@ -117,8 +172,12 @@ int EixCache::readCategory(Category &vec) throw(ExBasic)
 			}
 		}
 		if(!have_onetime_info)
-			vec.deletePackage(p->name);
+			dest_cat->deletePackage(p->name);
 	}
 	fclose(fp);
-	return 0;
+	if(packagetree)
+		packagetree->finish_fast_access();
+	if(add_categories)
+		packagetree->add_missing_categories(*categories);
+	return 1;
 }

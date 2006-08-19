@@ -31,17 +31,22 @@
 
 class EixCache : public BasicCache {
 	private:
-		std::string m_file;
+		std::string m_file, m_name;
 		bool m_only_overlay;
 		short m_get_overlay;
+		bool never_add_categories;
 
 	public:
-		EixCache(std::string file = "", bool only_overlay = false, short get_overlay = 0) : m_file(file), m_only_overlay(only_overlay), m_get_overlay(get_overlay)
-		{ }
+		// return true if successfull
+		bool initialize(std::string &name);
 
-		int readCategory(Category &vec) throw(ExBasic);
+		bool can_read_multiple_categories() const
+		{ return true; }
 
-		const char *getType() const;
+		int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
+
+		const char *getType() const
+		{ return m_name.c_str(); }
 };
 
 #endif /* __EIXCACHE_H__ */

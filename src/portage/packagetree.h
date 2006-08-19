@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,6 +32,7 @@
 #include <map>
 #include <string>
 #include <list>
+#include <vector>
 
 #include <eixTk/ptr_list.h>
 
@@ -62,17 +64,35 @@ class Category : public eix::ptr_list<Package> {
 class PackageTree : public eix::ptr_list<Category> {
 
 	public:
+		PackageTree() : fast_access(NULL)
+		{ }
+
 		~PackageTree()
 		{ delete_and_clear(); }
 
 		Package *findPackage(const std::string &category, const std::string &name) const;
 		bool deletePackage(const std::string &category, const std::string &name);
 
-		Category &operator [] (const std::string name);
+		Category *find(const std::string name) const;
+		Category &insert(const std::string name);
+
+		Category &operator [] (const std::string name)
+		{
+			Category *p=find(name);
+			if(p)
+				return *p;
+			return insert(name);
+		}
+		void need_fast_access(const std::vector<std::string> *add_cat);
+		void finish_fast_access();
+
+		void add_missing_categories(std::vector<std::string> &categories) const;
 
 		unsigned int countPackages() const;
 		unsigned int countCategories() const
 		{ return size(); }
+	protected:
+		std::map<std::string, Category*> *fast_access;
 };
 
 #endif /* __PACKAGETREE_H__ */

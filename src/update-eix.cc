@@ -298,17 +298,25 @@ update(CacheTable &cache_table, PortageSettings &portage_settings, bool small)
 
 		INFO("[%i] %s (cache: %s)\n", key, cache->getPath().c_str(), cache->getType());
 		INFO("     Reading ");
-
-		PercentStatus percent_status;
-		percent_status.start(categories->size());
-
-		/* iterator through categories */
-		for(vector<string>::iterator ci = categories->begin();
-			ci != categories->end();
-			++ci)
+		if(cache->can_read_multiple_categories())
 		{
-			++percent_status;
-			cache->readCategory(package_tree[*ci]);
+			cache->readCategories(&package_tree, categories);
+			INFO("100%\n");
+		}
+		else
+		{
+
+			PercentStatus percent_status;
+			percent_status.start(categories->size());
+
+			/* iterator through categories */
+			for(vector<string>::iterator ci = categories->begin();
+				ci != categories->end();
+				++ci)
+			{
+				++percent_status;
+				cache->readCategory(package_tree[*ci]);
+			}
 		}
 	}
 
