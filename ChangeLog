@@ -2,17 +2,15 @@
 
 *eix-0.6.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Most of the changes in this release are motivated by the request
+	  http://bugs.gentoo.org/show_bug.cgi?id=144200
 	- Add OVERRIDE_CACHE_METHOD, ADD_LOCAL_CACHE_METHOD, ADD_CACHE_METHOD
 	  to allow e.g. cache method metadata for a specific overlay.
-	  See the discussion in
-	  http://bugs.gentoo.org/show_bug.cgi?id=144200
-	- Add cache method eix to e.g. fetch "precompiled" data for a
-	  specific overlay. See the discussion in
-	  http://bugs.gentoo.org/show_bug.cgi?id=144200
-	- Speed up cache-method eix by reading all categories at once.
-	  Moreover, category names are temporarily hashed during reading.
-	- Introduce cache method eix* in view of
-	  http://bugs.gentoo.org/show_bug.cgi?id=144200
+	- Add cache method eix to use "pre-indexed" data for a
+	  specific overlay.
+	- Add cache method eix* to use "pre-indexed" data even with possibly
+	  new categories.
+	- Make eix database format architecture-independent.
 	- Fix manpage bug: best=bestlong
 
 *eix-0.6.4

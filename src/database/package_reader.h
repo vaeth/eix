@@ -50,7 +50,10 @@ class PackageReader {
 		};
 
 		typedef unsigned short size_type;
+		static const unsigned short sizesize = io::shortsize;
+
 		typedef off_t          offset_type;
+		static const unsigned short offsetsize = io::longsize;
 
 		/// Initialize with file-stream and number of packages.
 		PackageReader(FILE *fp, unsigned int size) 

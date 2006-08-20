@@ -32,13 +32,13 @@
 
 #include <database/io.h>
 
-void 
+void
 PackageReader::read(Attributes need)
 {
 	if(m_have >= need) // Already got this one.
 		return;
 
-	switch(m_have) 
+	switch(m_have)
 	{
 		case NONE:
 			m_pkg->name = io::read_string(m_fp);
@@ -62,7 +62,7 @@ PackageReader::read(Attributes need)
 				break;
 		case LICENSE:
 			size_type n;
-			n = io::read<size_type>(m_fp);
+			n = io::read<PackageReader::size_type>(PackageReader::sizesize, m_fp);
 			for(size_type i = 0; i<n; i++ ) {
 				m_pkg->addVersion(io::read_version(m_fp));
 			}
@@ -84,7 +84,7 @@ PackageReader::next()
 {
 	if(m_cat_size-- == 0)
 	{
-		if(m_frames-- == 0) 
+		if(m_frames-- == 0)
 		{
 			return false;
 		}
@@ -92,7 +92,7 @@ PackageReader::next()
 		return next();
 	}
 
-	m_next =  ftello(m_fp) + io::read<offset_type>(m_fp);
+	m_next =  ftello(m_fp) + io::read<PackageReader::offset_type>(PackageReader::offsetsize, m_fp);
 	m_have = NONE;
 	m_pkg.reset(new Package());
 	m_pkg->category = m_cat_name;

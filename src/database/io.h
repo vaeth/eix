@@ -37,21 +37,35 @@ class PackageTree;
 class DBHeader;
 
 namespace io {
+	const unsigned short charsize    = sizeof(char);
+	const unsigned short shortsize   = 2;
+	const unsigned short intsize     = 4;
+	const unsigned short longsize    = 4;
 
 	/// Read any POD.
 	template<typename _Tp> _Tp
-	read(FILE *fp)
+	read(const unsigned short size, FILE *fp)
 	{
-		_Tp ret;
-		fread((void*)&(ret), sizeof(_Tp), 1, fp);
+		_Tp ret = fgetc(fp);
+		for(unsigned short i = 1, shift = 8; i<size; i++, shift += 8)
+		{
+			ret |= (_Tp)(fgetc(fp) & 0xFF) << shift;
+		}
 		return ret;
 	}
 
 	/// Write any POD.
 	template<typename _Tp> void
-	write(FILE *fp, const _Tp t)
+	write(const unsigned short size, FILE *fp, _Tp t)
 	{
-		fwrite((const void*)&(t), sizeof(_Tp), 1, fp);
+		for(unsigned short i = 1; ; i++)
+		{
+			fputc(t & 0xFF, fp);
+			if(i < size)
+				t >>= 8;
+			else
+				return;
+		}
 	}
 
 	/// Read a string of the format { unsigned short len; char[] string;

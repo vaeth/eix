@@ -45,7 +45,7 @@ class DBHeader {
 
 	public:
 		/** Current version of database-format. */
-		static const int current = 16;
+		static const int current = 17;
 
 		int version; /**< Version of the db. */
 		unsigned int size; /**< Number of categories. */

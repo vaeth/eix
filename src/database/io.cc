@@ -45,7 +45,7 @@ using namespace std;
 std::string
 io::read_string(FILE *fp)
 {
-	unsigned short len = read<short>(fp);
+	unsigned short len = io::read<unsigned short>(io::shortsize, fp);
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
 	fread((void*)(buf.get()), sizeof(char), len, (fp));
@@ -58,7 +58,7 @@ void
 io::write_string(FILE *fp, const std::string &str)
 {
 	unsigned short len = str.size();
-	write<short>(fp, len);
+	io::write<unsigned short>(io::shortsize, fp, len);
 	fwrite((const void*)(str.c_str()), sizeof(char), len, (fp));
 }
 
@@ -71,26 +71,26 @@ io::read_version(FILE *fp)
 	v->m_full = io::read_string(fp);
 
 	// read stability & masking
-	v->m_mask = io::read<Keywords::Type>(fp);
+	v->m_mask = io::read<Keywords::Type>(Keywords::Typesize, fp);
 	v->full_keywords = io::read_string(fp);
 
 	// read primary version part
-	for(unsigned char i = io::read<unsigned char>(fp);
+	for(unsigned char i = io::read<unsigned char>(io::charsize, fp);
 		i > 0;
 		--i)
 	{
-		v->m_primsplit.push_back(io::read<unsigned long>(fp));
+		v->m_primsplit.push_back(io::read<unsigned long>(io::longsize, fp));
 	}
 
-	v->m_primarychar = io::read<unsigned char>(fp);
+	v->m_primarychar = io::read<unsigned char>(io::charsize, fp);
 
 	// read m_suffixlevel,m_suffixnum,m_gentoorevision
-	v->m_suffixlevel   = io::read<unsigned char>(fp);
-	v->m_suffixnum     = io::read<unsigned int>(fp);
-	v->m_gentoorevision = io::read<unsigned char>(fp);
+	v->m_suffixlevel   = io::read<unsigned char>(io::charsize, fp);
+	v->m_suffixnum     = io::read<unsigned int>(io::intsize, fp);
+	v->m_gentoorevision= io::read<unsigned char>(io::charsize, fp);
 
 	v->slot = io::read_string(fp);
-	v->overlay_key = io::read<short>(fp);
+	v->overlay_key = io::read<unsigned short>(io::shortsize, fp);
 
 	return v;
 }
@@ -102,7 +102,7 @@ io::write_version(FILE *fp, const Version *v, bool small)
 	io::write_string(fp, v->m_full);
 
 	// write stability & masking
-	io::write<Keywords::Type>(fp, v->m_mask);
+	io::write<Keywords::Type>(Keywords::Typesize, fp, v->m_mask);
 
 	// write full keywords unless small database is required
 	if(small)
@@ -111,38 +111,38 @@ io::write_version(FILE *fp, const Version *v, bool small)
 		io::write_string(fp, v->full_keywords);
 
 	// write m_primsplit
-	io::write<unsigned char>(fp, (unsigned char)v->m_primsplit.size());
+	io::write<unsigned char>(io::charsize, fp, (unsigned char)v->m_primsplit.size());
 
 	for(vector<unsigned long>::const_iterator it = v->m_primsplit.begin();
 		it != v->m_primsplit.end();
 		++it)
 	{
-		io::write<unsigned long>(fp, *it);
+		io::write<unsigned long>(io::longsize, fp, *it);
 	}
 
-	io::write<unsigned char>(fp, v->m_primarychar);
+	io::write<unsigned char>(io::charsize, fp, v->m_primarychar);
 
 	// write m_suffixlevel,m_suffixnum,m_gentoorevision
-	io::write<unsigned char>(fp, v->m_suffixlevel);
-	io::write<unsigned int>(fp, v->m_suffixnum);
-	io::write<unsigned char>(fp, v->m_gentoorevision);
+	io::write<unsigned char>(io::charsize, fp, v->m_suffixlevel);
+	io::write<unsigned int> (io::intsize,  fp, v->m_suffixnum);
+	io::write<unsigned char>(io::charsize, fp, v->m_gentoorevision);
 
 	io::write_string(fp, v->slot);
-	io::write<short>(fp, v->overlay_key);
+	io::write<unsigned short>(io::shortsize, fp, v->overlay_key);
 }
 
 unsigned int
 io::read_category_header(FILE *fp, std::string &name)
 {
 	name = io::read_string(fp);
-	return io::read<unsigned int>(fp);
+	return io::read<unsigned int>(io::intsize, fp);
 }
 
 void
 io::write_category_header(FILE *fp, const std::string &name, unsigned int size)
 {
-	io::write_string(fp,  name);
-	io::write<unsigned int>(fp, size);
+	io::write_string(fp, name);
+	io::write<unsigned int>(io::intsize, fp, size);
 }
 
 
@@ -150,7 +150,7 @@ void
 io::write_package(FILE *fp, const Package &pkg, bool small)
 {
 	off_t offset_position = ftello(fp);
-	fseek(fp, sizeof(PackageReader::offset_type), SEEK_CUR);
+	fseek(fp, PackageReader::offsetsize, SEEK_CUR);
 
 	io::write_string(fp, pkg.name);
 	io::write_string(fp, pkg.desc);
@@ -159,7 +159,7 @@ io::write_package(FILE *fp, const Package &pkg, bool small)
 	io::write_string(fp, pkg.licenses);
 
 	// write all version entries
-	io::write<PackageReader::size_type>(fp, pkg.size());
+	io::write<PackageReader::size_type>(PackageReader::sizesize, fp, pkg.size());
 
 	for(Package::const_iterator i = pkg.begin();
 		i != pkg.end();
@@ -171,7 +171,7 @@ io::write_package(FILE *fp, const Package &pkg, bool small)
 	off_t pkg_end = ftello(fp);
 	fseek(fp, offset_position, SEEK_SET);
 	off_t v = (pkg_end - offset_position);
-	io::write<PackageReader::offset_type>(fp, v);
+	io::write<PackageReader::offset_type>(PackageReader::offsetsize, fp, v);
 	fseek(fp, pkg_end, SEEK_SET);
 }
 
@@ -179,10 +179,10 @@ io::write_package(FILE *fp, const Package &pkg, bool small)
 void
 io::write_header(FILE *fp, const DBHeader &hdr)
 {
-	io::write(fp, DBHeader::current);
-	io::write<int>(fp, hdr.size);
+	io::write<unsigned int>(io::intsize, fp, DBHeader::current);
+	io::write<unsigned int>(io::intsize, fp, hdr.size);
 
-	io::write<short>(fp, hdr.countOverlays());
+	io::write<unsigned short>(io::shortsize, fp, hdr.countOverlays());
 	for(int i = 0; i<hdr.countOverlays(); i++)
 		io::write_string(fp, hdr.getOverlay(i));
 }
@@ -190,12 +190,13 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 void
 io::read_header(FILE *fp, DBHeader &hdr)
 {
-	hdr.version = io::read<int>(fp);
-	hdr.size = io::read<int>(fp);
+	hdr.version = io::read<unsigned int>(io::intsize, fp);
+	hdr.size = io::read<unsigned int>(io::intsize, fp);
 
-	unsigned short overlay_sz = io::read<short>(fp);
-	while(overlay_sz--)
+	unsigned short overlay_sz = io::read<unsigned short>(io::shortsize, fp);
+	while(overlay_sz--) {
 		hdr.addOverlay(io::read_string(fp));
+	}
 }
 
 void

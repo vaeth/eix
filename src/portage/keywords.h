@@ -30,11 +30,13 @@
 #define __STABILITY_H__
 
 #include <eixTk/stringutils.h>
+#include <database/io.h>
 #include <vector>
 
 class Keywords {
 	public:
 		typedef char Type;
+		static const unsigned short Typesize = io::charsize;
 		static const Type
 			KEY_MISSINGKEYWORD,
 			KEY_STABLE        , /*  ARCH */
@@ -45,6 +47,7 @@ class Keywords {
 			PACKAGE_MASK      ,
 			PROFILE_MASK      ,
 			SYSTEM_PACKAGE    ;
+
 		typedef unsigned short Redundant;
 		static const Redundant
 			RED_NOTHING,       /* None of the following           */
