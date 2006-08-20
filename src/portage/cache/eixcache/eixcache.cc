@@ -74,9 +74,11 @@ bool EixCache::initialize(string &name)
 			m_name += " [";
 			m_name += args[2];
 			m_name += "]";
-			if(args[2] != "*")
+			if(args[2] == "*") {
+				m_only_overlay = false;
+			}
+			else
 			{
-				m_only_overlay = true;
 				try {
 					m_get_overlay = atoi(args[2].c_str());
 				}
