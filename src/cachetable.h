@@ -50,7 +50,13 @@ class CacheTable
 					return;
 			if(override)
 			{
-				std::map<std::string, std::string>::const_iterator found = override->find(directory);
+				// If we would look for identical names, we could use the much faster
+				// std::map<std::string, std::string>::const_iterator found = override->find(directory);
+				std::map<std::string, std::string>::const_iterator found;
+				for(found = override->begin();
+					found != override->end(); ++found)
+					if(same_filenames(directory, found->first))
+						break;
 				if(found != override->end())
 					cache_name = found->second;
 			}

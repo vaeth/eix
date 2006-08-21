@@ -105,7 +105,7 @@ class FormatParser {
 		const char   *band;
 		char         *band_position;
 		bool          enable_colors;
-		std::string        last_error;
+		std::string   last_error;
 
 		/* Decide what state should be used to parse the current type of token. */
 		ParserState state_START();
@@ -180,12 +180,13 @@ class PrintFormat {
 		PrintProperty  m_print_property;
 		GetProperty    m_get_property;
 		Node          *m_root;
-		/* The following three are actually a hack:
-		   They are only set temporarily during printing to avoid
+		std::vector<bool> *virtuals;
+		std::vector<Version::Overlay> *overlay_translations;
+		MarkedList    *marked_list;
+		/* The following is actually a hack:
+		   This is only set temporarily during printing to avoid
 		   passing this argument through all sub-functions */
 		VarDbPkg      *vardb;
-		MarkedList    *marked_list;
-		std::vector<Version::Overlay> *overlay_translations;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
@@ -197,22 +198,24 @@ class PrintFormat {
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,   /**< Color for unstable versions */
 			   color_stable,     /**< Color for stable versions */
-			   color_overlaykey; /**< Color for the overlay key */
+			   color_overlaykey, /**< Color for the overlay key */
+			   color_virtualkey; /**< Color for the virtual key */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
 			   mark_version_end;  /**< End-Marker for marked versions */
 
-		PrintFormat(GetProperty get_callback, PrintProperty print_callback)
+		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),
-			  vardb(NULL), overlay_translations(NULL), marked_list(NULL)
-			{}
+			  vardb(NULL), overlay_translations(NULL), marked_list(NULL), virtuals(NULL)
+			{ }
 
 		void setupColors() {
 			color_masked     = AnsiColor(color_masked).asString();
 			color_unstable   = AnsiColor(color_unstable).asString();
 			color_stable     = AnsiColor(color_stable).asString();
 			color_overlaykey = AnsiColor(color_overlaykey).asString();
+			color_virtualkey = AnsiColor(color_virtualkey).asString();
 			AnsiMarker ins_marker(mark_installed);
 			mark_installed     = ins_marker.asString();
 			mark_installed_end = ins_marker.end();
@@ -221,37 +224,38 @@ class PrintFormat {
 			mark_version_end   = ver_marker.end();
 		}
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL, MarkedList *mkd = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void clear_virtual(Version::Overlay count)
+		{ virtuals = new std::vector<bool>(count, false); }
+
+		void determine_virtual(const Version::Overlay overlay, const std::string &name);
+
+		void set_overlay_translations(std::vector<Version::Overlay> *translations)
+		{ overlay_translations = translations; }
+
+		void set_marked_list(MarkedList *m_list)
+		{ marked_list = m_list; }
+
+		std::string overlay_keytext(Version::Overlay overlay, bool never_color = false) const;
+
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL) {
 			vardb = vardbpkg;
-			marked_list = mkd;
-			overlay_translations = overlaymap;
 			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
 			vardb = NULL;
-			marked_list = NULL;
-			overlay_translations = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL, MarkedList *mkd = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL) {
 			vardb=vardbpkg;
-			marked_list = mkd;
-			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
 			vardb=NULL;
-			marked_list = NULL;
-			overlay_translations = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg = NULL, MarkedList *mkd = NULL, std::vector<Version::Overlay> *overlaymap = NULL) {
+		void print(void *entity, VarDbPkg *vardbpkg = NULL) {
 			vardb=vardbpkg;
-			marked_list = mkd;
-			overlay_translations = overlaymap;
 			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
 			vardb=NULL;
-			marked_list = NULL;
-			overlay_translations = NULL;
 		}
 
 		void setFormat(const char *fmt) throw(ExBasic) {

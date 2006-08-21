@@ -62,7 +62,8 @@ using namespace std;
 void   signal_handler(int sig);
 
 PortageSettings portagesettings;
-PrintFormat     format_string(get_package_property, print_package_property);
+PrintFormat     format_for_new(get_package_property, print_package_property);
+PrintFormat     format_for_old;
 VarDbPkg        varpkg_db("/var/db/pkg/");
 Node           *format_new, *format_delete, *format_changed;
 
@@ -108,8 +109,8 @@ static struct Option long_options[] = {
 	Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help), /* show a short help screen */
 	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
-	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_string.no_color)),
-	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_string.no_color)),
+	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
+	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
 
 	Option(0, 0)
 };
@@ -132,6 +133,17 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 
 	io::read_packagetree(fp, header->size, *body);
 	fclose(fp);
+}
+
+void
+set_virtual(PrintFormat *fmt, const DBHeader &header)
+{
+	fmt->clear_virtual(header.countOverlays());
+	if(header.countOverlays())
+	{
+		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
+			fmt->determine_virtual(i, header.getOverlay(i));
+	}
 }
 
 class DiffTrees
@@ -249,21 +261,21 @@ print_changed_package(Package *op, Package *np)
 	op->installed_versions = np->installed_versions
 		= varpkg_db.getInstalledString(*np);
 
-	format_string.print(p, print_diff_package_property, get_diff_package_property, format_changed, &varpkg_db);
+	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &varpkg_db);
 }
 
 void
 print_found_package(Package *p)
 {
 	p->installed_versions = varpkg_db.getInstalledString(*p);
-	format_string.print(p, format_new, &varpkg_db);
+	format_for_new.print(p, format_new, &varpkg_db);
 }
 
 void
 print_lost_package(Package *p)
 {
 	p->installed_versions = varpkg_db.getInstalledString(*p);
-	format_string.print(p, format_delete, &varpkg_db);
+	format_for_old.print(p, format_delete, &varpkg_db);
 }
 
 
@@ -272,7 +284,7 @@ run_diff_eix(int argc, char *argv[])
 {
 	string old_file, new_file;
 
-	format_string.no_color   = (isatty(1) != 1);
+	format_for_new.no_color   = (isatty(1) != 1);
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -292,7 +304,7 @@ run_diff_eix(int argc, char *argv[])
 	}
 
 	if(eixrc.getBool("FORCE_USECOLORS")) {
-		format_string.no_color = false;
+		format_for_new.no_color = false;
 	}
 
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
@@ -312,13 +324,13 @@ run_diff_eix(int argc, char *argv[])
 	string varname;
 	try {
 		varname = "DIFF_FORMAT_NEW";
-		format_new = format_string.parseFormat(eixrc["DIFF_FORMAT_NEW"].c_str());
+		format_new = format_for_new.parseFormat(eixrc["DIFF_FORMAT_NEW"].c_str());
 
 		varname = "DIFF_FORMAT_DELETE";
-		format_delete = format_string.parseFormat(eixrc["DIFF_FORMAT_DELETE"].c_str());
+		format_delete = format_for_new.parseFormat(eixrc["DIFF_FORMAT_DELETE"].c_str());
 
 		varname = "DIFF_FORMAT_CHANGED";
-		format_changed = format_string.parseFormat(eixrc["DIFF_FORMAT_CHANGED"].c_str());
+		format_changed = format_for_new.parseFormat(eixrc["DIFF_FORMAT_CHANGED"].c_str());
 	}
 	catch(ExBasic e) {
 		cout << "Problems while parsing " << varname << "." << endl
@@ -326,15 +338,15 @@ run_diff_eix(int argc, char *argv[])
 		exit(1);
 	}
 
-	format_string.color_masked     = eixrc["COLOR_MASKED"];
-	format_string.color_unstable   = eixrc["COLOR_UNSTABLE"];
-	format_string.color_stable     = eixrc["COLOR_STABLE"];
-	format_string.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
-	format_string.mark_installed   = eixrc["MARK_INSTALLED"];
-	format_string.show_slots       = eixrc.getBool("DIFF_PRINT_SLOTS");
+	format_for_new.color_masked     = eixrc["COLOR_MASKED"];
+	format_for_new.color_unstable   = eixrc["COLOR_UNSTABLE"];
+	format_for_new.color_stable     = eixrc["COLOR_STABLE"];
+	format_for_new.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
+	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
+	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
+	format_for_new.show_slots       = eixrc.getBool("DIFF_PRINT_SLOTS");
 
-	format_string.setupColors();
-
+	format_for_new.setupColors();
 
 	DBHeader old_header;
 	PackageTree old_tree;
@@ -344,6 +356,10 @@ run_diff_eix(int argc, char *argv[])
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree);
 
+	format_for_new.set_overlay_translations(NULL);
+	format_for_old = format_for_new;
+	set_virtual(&format_for_old, old_header);
+	set_virtual(&format_for_new, new_header);
 
 	INFO("Diffing databases (%i - %i packages)\n", old_tree.countPackages(), new_tree.countPackages());
 

@@ -29,7 +29,6 @@
 
 #include "formatstring-print.h"
 #include <portage/vardbpkg.h>
-#include <sstream>
 
 using namespace std;
 
@@ -121,13 +120,7 @@ print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
 		print_version(fmt, *version_it, p, with_slots);
 
 		if(!p->have_same_overlay_key && version_it->overlay_key) {
-			if( ! fmt->no_color )
-				cout << fmt->color_overlaykey;
-
-			Version::Overlay ov_key = version_it->overlay_key;
-			if(fmt->overlay_translations)
-				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
-			cout << "[" << ov_key << "] ";
+			cout << fmt->overlay_keytext(version_it->overlay_key);
 		}
 
 		if(++version_it != p->end() && !fmt->style_version_lines)
@@ -152,11 +145,8 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 	}
 	else if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
-		if(ov_key && entity->have_same_overlay_key)
-		{
-			if(fmt->overlay_translations)
-				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
-			cout << "[" << ov_key << "] ";
+		if(ov_key && entity->have_same_overlay_key) {
+			cout << fmt->overlay_keytext(ov_key);
 		}
 	}
 	else if((name == "best") ||
@@ -204,16 +194,11 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 		return entity->provide;
 	}
 	else if(name == "overlaykey") {
-		stringstream ss;
-		string ret;
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key) {
-			if(fmt->overlay_translations)
-				ov_key = (*(fmt->overlay_translations))[ov_key - 1];
-			ss << ov_key;
-			ss >> ret;
+			return fmt->overlay_keytext(ov_key, false);
 		}
-		return ret;
+		return "";
 	}
 	else if(name == "system") {
 		if(entity->is_system_package) {

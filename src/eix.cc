@@ -273,6 +273,7 @@ setup_defaults()
 	format.color_unstable      = rc["COLOR_UNSTABLE"];
 	format.color_stable        = rc["COLOR_STABLE"];
 	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
+	format.color_virtualkey    = rc["COLOR_VIRTUALKEY"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.mark_installed      = rc["MARK_INSTALLED"];
@@ -295,28 +296,18 @@ setup_defaults()
 }
 
 bool
-print_overlay_table(DBHeader &header, vector<bool> *overlay_used, vector<Version::Overlay> *overlay_num)
+print_overlay_table(PrintFormat &format, DBHeader &header, vector<bool> *overlay_used)
 {
 	bool printed_overlay = false;
 	for(Version::Overlay i = 1;
-		i < header.countOverlays();
+		i != header.countOverlays();
 		++i)
 	{
 		if(overlay_used)
 			if(!((*overlay_used)[i-1]))
 				continue;
 		Version::Overlay ov_num = i;
-		if(overlay_num)
-			ov_num = (*overlay_num)[i-1];
-		if( !format.no_color )
-		{
-			cout << format.color_overlaykey;
-		}
-		cout << "[" << ov_num << "] ";
-		if( !format.no_color )
-		{
-			cout << AnsiColor(AnsiColor::acDefault, 0);
-		}
+		cout << format.overlay_keytext(i) << " ";
 		cout << header.getOverlay(i) << endl;
 		printed_overlay = true;
 	}
@@ -455,6 +446,15 @@ run_eix(int argc, char** argv)
 		accepted_keywords = portagesettings.getAcceptKeywords();
 	}
 
+	format.set_marked_list(marked_list);
+	if(overlay_mode != 0)
+		format.set_overlay_translations(NULL);
+	format.clear_virtual(header.countOverlays());
+	if(header.countOverlays())
+	{
+		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
+			format.determine_virtual(i, header.getOverlay(i));
+	}
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);
 	for(eix::ptr_list<Package>::iterator it = matches.begin();
@@ -487,7 +487,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != 0)
-			format.print(*it, &varpkg_db, marked_list);
+			format.print(*it, &varpkg_db);
 	}
 	switch(overlay_mode)
 	{
@@ -503,17 +503,17 @@ run_eix(int argc, char** argv)
 		for(; uit != overlay_used.end(); ++uit, ++nit)
 			if(*uit == true)
 				*nit = i++;
+		format.set_overlay_translations(&overlay_num);
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
 			++it)
-			format.print(*it, &varpkg_db, marked_list, &overlay_num);
+			format.print(*it, &varpkg_db);
 	}
 	bool printed_overlay = false;
 	if(need_overlay_table)
 	{
-		printed_overlay = print_overlay_table(header,
-			(overlay_mode <= 1)? &overlay_used : NULL,
-			(overlay_mode == 0)? &overlay_num : NULL);
+		printed_overlay = print_overlay_table(format, header,
+			(overlay_mode <= 1)? &overlay_used : NULL);
 	}
 
 	if(!matches.size()) {

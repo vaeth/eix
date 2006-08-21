@@ -12,6 +12,9 @@
 	  new categories.
 	- Make eix database format architecture-independent.
 	- Detect overlays with equivalent paths as identical.
+	- Introduce COLOR_VIRTUALKEY
+	- Add update-eix-remote
+	- Distinguish old/new overlays in diff-eix
 	- Fix manpage bug: best=bestlong
 
 *eix-0.6.4

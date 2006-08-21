@@ -334,7 +334,8 @@ This property is kept only because of backward compatibility reasons. It
 could be easily replaced by using "B<Conditional blocks>".
 .TP
 .BR overlaykey
-if all versions are in the same overlay this expands to "[overlaykey]"
+if all versions are in the same overlay this expands to "overlaykey".
+When printed, "[overlaykey]" is printed with corresponding colors.
 .TP
 .BR best "  or   " bestlong
 the highest stable version, including slot information
@@ -412,9 +413,9 @@ stable versions has changed. This is only used by B<diff-eix> (See
 B<FORMATSTRING>)
 
 .TP
-.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_OVERLAYKEY "  " (Strings)
-Define the color for masked versions, stable versions, unstable versions and the
-overlay-key.
+.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
+Define the color for masked versions, stable versions, unstable versions,
+the overlay-key and the overlay-key for "virtual" overlays (which are not absolute pathnames).
 Use the same syntax as you would inside ().
 See B<FORMATSTRING>.
 

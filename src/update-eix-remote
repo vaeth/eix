@@ -1,0 +1,242 @@
+#!/bin/bash
+###########################################################################
+#   eix is a small utility for searching ebuilds in the                   #
+#   Gentoo Linux portage system. It uses indexing to allow quick searches #
+#   in package descriptions with regular expressions.                     #
+#                                                                         #
+#   https://sourceforge.net/projects/eix                                  #
+#                                                                         #
+#   Copyright (c)                                                         #
+#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
+#                                                                         #
+#   This program is free software; you can redistribute it and/or modify  #
+#   it under the terms of the GNU General Public License as published by  #
+#   the Free Software Foundation; either version 2 of the License, or     #
+#   (at your option) any later version.                                   #
+#                                                                         #
+#   This program is distributed in the hope that it will be useful,       #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with this program; if not, write to the                         #
+#   Free Software Foundation, Inc.,                                       #
+#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
+###########################################################################
+
+source /sbin/functions.sh
+die () { eerror "$@"; exit 2; }
+type portageq &>/dev/null || die 'portageq is required for this script'
+
+[[ "${OVERLAYPARENT}" ]] || OVERLAYPARENT="/usr/portage/local"
+[[ "${EIXCACHESPATH}" ]] || EIXCACHESPATH="/var/cache"
+EIXCACHESNAME="eix-caches.tbz2"
+
+Sanitize () {
+	[[ "${OVERLAYPARENT}" != "${OVERLAYPARENT#/}" ]] || \
+		die '$OVERLAYPARENT must start with /'
+	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT#/}" ]]; do
+		OVERLAYPARENT="${OVERLAYPARENT#/}"
+	done
+	OVERLAYPARENT="/${OVERLAYPARENT}"
+	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
+		OVERLAYPARENT="${OVERLAYPARENT%/}"
+	done
+	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
+		OVERLAYPARENT="${OVERLAYPARENT%/}"
+	done
+	[[ "${EIXCACHESPATH}" != "${EIXCACHESPATH#/}" ]] || \
+		die '$EIXCACHESPATH must start with /'
+	while [[ "${EIXCACHESPATH}" != "${EIXCACHESPATH%/}" ]]; do
+		EIXCACHESPATH="${EIXCACHESPATH%/}"
+	done
+	[[ "${EIXCACHESPATH}" ]] || EIXCACHESPATH='/'
+	EIXCACHESFULL="${EIXCACHESPATH}/${EIXCACHESNAME}"
+}
+Sanitize
+
+Usage () {
+	echo "Usage: ${0##*/} [options] command
+The following commands are provided:
+
+update:	Fetch the eix-caches of some layman overlays into the file
+	${EIXCACHESFULL}
+	and add them to the eix database.
+fetch:	Only fetch the overlays.
+add:	Only add the overlays to the eix database.
+remove:	Remove the additional overlays from the eix database;
+	this is similar to update-eix but faster (without actual updating).
+	This command does *not* remove the file
+	${EIXCACHESFULL}
+
+All corresponding local overlay paths are excluded from the current database.
+The local paths are determined by prefixing the path
+	${OVERLAYPARENT}
+You can modify this value by setting the environment variable \$OVERLAYPATH
+
+The (compressed) data ${EIXCACHESNAME} is stored in the path
+	${EIXCACHESPATH}
+You can modify this value by setting the environment variable \$EIXCACHESPATH
+
+Options:
+	-e PATH	Use PATH as \$EIXCACHESPATH
+	-o PATH	Use PATH as \$OVERLAYPATH
+	-v	Verbose (default)
+	-q	Quiet"
+	exit $1
+}
+
+VERBOSE=1
+while getopts 'vqe:o:?hH' OPTION; do
+case "${OPTION}" in
+  v) VERBOSE=1;;
+  q) VERBOSE='';;
+  e) EIXCACHESPATH="${OPTARG}"; Sanitize;;
+  o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
+  *) Usage 0;;
+esac
+done
+shift $((OPTIND-1))
+[[ $# -eq 1 ]] || Usage 1
+
+RunCommand() {
+	local RET
+	if [[ "${VERBOSE}" ]]; then
+		einfo "${1}"
+		"${@}"
+		return "${?}"
+	fi
+	ebegin "${1}"
+	"${@}" &>/dev/null
+	RET=${?}
+	eend ${ret} "Problems running ${@}"
+	return "${ret}"
+}
+
+Fetch () {
+	cd "${EIXCACHESPATH}" >/dev/null || die "cannot cd to ${EIXCACHESPATH}"
+	if [[ -e "${EIXCACHESFULL}" ]]; then
+		rm "${EIXCACHESFULL}" && [[ ! -e "${EIXCACHESFULL}" ]] \
+			|| die "cannot remove ${EIXCACHESFULL}"
+	fi
+	RunCommand \
+	wget "http://dev.gentooexperimental.org/eix_cache/${EIXCACHESNAME}" \
+		|| die "could not fetch ${EIXCACHESFULL}"
+}
+
+TMPDIR=''
+Cleanup () {
+	local RET="$?"
+	cd / >/dev/null;
+	if [[ "${TMPDIR}" ]]; then
+		[[ -d "${TMPDIR}" ]] && rm -rf "${TMPDIR}"
+	fi
+	TMPDIR=''
+	trap '' 0 1 2 15
+	exit "${RET}"
+}
+CdTemp () {
+	if type mktemp &>/dev/null; then
+		TMPDIR="$(mktemp -d /tmp/eix.XXXXXX)"
+	else
+		TMPDIR="/tmp/eix.$$"
+		[[ -e "${TMPDIR}" ]] && \
+			die "temporary name ${TMPDIR} already exists"
+		mkdir "${TMPDIR}" || die "cannot create "${TMPDIR}
+	fi
+	cd "${TMPDIR}" >/dev/null || die "cannot cd to ${TMPDIR}"
+	trap "Cleanup" 0 1 2 15
+}
+
+export ADD_CACHE_METHOD
+declare -a ARR_METHOD UPDATE_EIX_ARGS
+
+AddMethod () {
+	local J
+	for J; do
+		ARR_METHOD[${#ARR_METHOD[@]}]="${J}"
+	done
+}
+
+AddUpdateArgs () {
+	local K
+	for K; do
+		UPDATE_EIX_ARGS[${#UPDATE_EIX_ARGS[@]}]="${K}"
+	done
+}
+
+AddOverlay () {
+	local J
+	for J; do
+		AddUpdateArgs '--add-overlay' "${J}"
+	done
+}
+
+AddExclude () {
+	local J
+	for J; do
+		AddUpdateArgs '--exclude-overlay' "${J}"
+	done
+}
+
+ClearData () {
+	ARR_METHOD=()
+	UPDATE_EIX_ARGS=()
+}
+
+CallUpdateEix () {
+	ADD_CACHE_METHOD="${ARR_METHOD[*]}"
+	RunCommand update-eix "${UPDATE_EIX_ARGS[@]}" || \
+		die "update-eix failed"
+}
+
+AddLocalMethods () {
+	local I
+	AddMethod "$(portageq portdir)" "eix"
+	for I in $(portageq portdir_overlay) $ADD_OVERLAY
+	do
+		AddMethod "${I}" "eix::${I}"
+	done
+}
+
+Add () {
+	local I NAME VIRTUAL
+	[[ -r "${EIXCACHESFULL}" ]] || die "cannot read ${EIXCACHESFULL}"
+	CdTemp
+	RunCommand tar xjf "${EIXCACHESFULL}" || \
+		die "cannot unpack ${EIXCACHESFULL}"
+	ClearData
+	AddLocalMethods
+	for I in *
+	do
+		NAME="${I%.eix}"
+		NAME="${NAME#_usr_portage_local_}"
+		NAME="${NAME//_//}"
+		VIRTUAL="(${NAME})"
+		AddMethod "${VIRTUAL}" "eix*:${TMPDIR}/${I}"
+		AddOverlay "${VIRTUAL}"
+		AddExclude "${OVERLAYPARENT}/${NAME}"
+	done
+	CallUpdateEix
+}
+
+Remove () {
+	ClearData
+	AddLocalMethods
+	CallUpdateEix
+}
+
+Update () {
+	Fetch
+	Add
+}
+
+case "${1}" in
+	update|both)     Update;;
+	fetch*|get|wget) Fetch;;
+	add)             Add;;
+	remove|del*)     Remove;;
+	*) Usage 1;;
+esac
+

@@ -34,6 +34,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <map>
+#include <sstream>
 
 using namespace std;
 
@@ -139,6 +140,42 @@ string MarkedList::getMarkedString(const Package &pkg) const
 	}
 	delete marked;
 	return ret;
+}
+
+void
+PrintFormat::determine_virtual(const Version::Overlay overlay, const std::string &name)
+{
+	(*virtuals)[overlay] = (name[0] != '/');
+}
+
+string
+PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
+{
+	string text;
+	string start = "[";
+	string end = "]";
+	bool color = !no_color;
+	if( never_color )
+		color = false;
+	if( color )
+	{
+		bool is_virtual = false;
+		if(virtuals) {
+			if(overlay < virtuals->size())
+				is_virtual = (*virtuals)[overlay];
+		}
+		if(is_virtual)
+			start = color_virtualkey + start;
+		else
+			start = color_overlaykey + start;
+		end += AnsiColor(AnsiColor::acDefault).asString();
+	}
+	if(overlay_translations)
+		overlay = (*overlay_translations)[ overlay - 1 ];
+	stringstream ss;
+	ss << overlay;
+	ss >> text;
+	return start + text + end;
 }
 
 void
