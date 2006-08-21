@@ -24,29 +24,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __EIXCACHE_H__
-#define __EIXCACHE_H__
+#include <eixTk/filenames.h>
 
-#include <portage/cache/base.h>
-
-class EixCache : public BasicCache {
-	private:
-		std::string m_name, m_file, m_overlay;
-		bool m_only_overlay;
-		short m_get_overlay;
-		bool never_add_categories;
-
-	public:
-		// return true if successfull
-		bool initialize(std::string &name);
-
-		bool can_read_multiple_categories() const
-		{ return true; }
-
-		int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
-
-		const char *getType() const
-		{ return m_name.c_str(); }
-};
-
-#endif /* __EIXCACHE_H__ */
+/** Compare whether two filenames are identical */
+bool same_filenames(const std::string &a, const std::string &b)
+{
+	const char *s = a.c_str();
+	const char *t = b.c_str();
+	bool first = true;
+	while(1)
+	{
+		const char c = *(s++);
+		if(c == '/')
+		{
+			while(*s == '/')
+				s++;
+		}
+		const char d = *(t++);
+		if(d == '/')
+		{
+			while(*t == '/')
+				t++;
+		}
+		if( c != d )
+		{
+			if(first)
+				return false;
+			if(( c == '\0' ) && (d == '/') && (*t == '\0'))
+				return true;
+			if(( d == '\0' ) && (c == '/') && (*s == '\0'))
+				return true;
+			return false;
+		}
+		first = false;
+		if( c == '\0' )
+			return true;
+	}
+}

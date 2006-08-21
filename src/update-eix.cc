@@ -34,6 +34,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/utils.h>
+#include <eixTk/filenames.h>
 
 #include <database/header.h>
 #include <database/io.h>
@@ -233,7 +234,7 @@ run_update_eix(int argc, char *argv[])
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
-	if( find(excluded_overlays.begin(), excluded_overlays.end(),
+	if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"]) == excluded_overlays.end())
 		table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str(), override);
 	else
@@ -241,11 +242,20 @@ run_update_eix(int argc, char *argv[])
 
 	for(vector<string>::iterator it = add_overlays.begin();
 		it != add_overlays.end(); ++it)
+	{
+		// Don't add double overlays
+		if(find_filenames(portage_settings.overlays.begin(), portage_settings.overlays.end(),
+				*it) != portage_settings.overlays.end())
+			continue;
+		// Don't add PORTDIR
+		if(same_filenames(portage_settings["PORTDIR"], *it))
+			continue;
 		portage_settings.overlays.push_back(*it);
+	}
 
 	for(unsigned int i = 0; i<portage_settings.overlays.size(); ++i)
 	{
-		if( find(excluded_overlays.begin(), excluded_overlays.end(),
+		if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 					portage_settings.overlays[i]) == excluded_overlays.end())
 			table.addCache(portage_settings.overlays[i], eixrc["OVERLAY_CACHE_METHOD"].c_str(), override);
 		else

@@ -11,6 +11,7 @@
 	- Add cache method eix* to use "pre-indexed" data even with possibly
 	  new categories.
 	- Make eix database format architecture-independent.
+	- Detect overlays with equivalent paths as identical.
 	- Fix manpage bug: best=bestlong
 
 *eix-0.6.4

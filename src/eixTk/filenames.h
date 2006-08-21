@@ -24,29 +24,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __EIXCACHE_H__
-#define __EIXCACHE_H__
+#ifndef __FILENAMES_H__
+#define __FILENAMES_H__
 
-#include <portage/cache/base.h>
+#include "../../config.h"
 
-class EixCache : public BasicCache {
-	private:
-		std::string m_name, m_file, m_overlay;
-		bool m_only_overlay;
-		short m_get_overlay;
-		bool never_add_categories;
+#include <string>
+#include <vector>
 
-	public:
-		// return true if successfull
-		bool initialize(std::string &name);
+/** Compare whether two filenames are identical */
+bool same_filenames(const std::string &a, const std::string &b);
 
-		bool can_read_multiple_categories() const
-		{ return true; }
+inline
+std::vector<std::string>::const_iterator find_filenames(const std::vector<std::string>::const_iterator start,
+		const std::vector<std::string>::const_iterator end, const std::string &search)
+{
+	for(std::vector<std::string>::const_iterator i = start; i != end; ++i)
+		if(same_filenames(*i, search))
+			return i;
+	return end;
+}
 
-		int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
-
-		const char *getType() const
-		{ return m_name.c_str(); }
-};
-
-#endif /* __EIXCACHE_H__ */
+#endif /* __FILENAMES_H__ */

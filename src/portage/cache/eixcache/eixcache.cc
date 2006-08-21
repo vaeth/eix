@@ -1,5 +1,3 @@
-
-
 /***************************************************************************
  *   eix is a small utility for searching ebuilds in the                   *
  *   Gentoo Linux portage system. It uses indexing to allow quick searches *
@@ -33,13 +31,14 @@
 #include <database/package_reader.h>
 #include <database/header.h>
 #include <portage/packagetree.h>
+#include <eixTk/filenames.h>
 
 #include <config.h>
-
 #include <string>
-#include <sstream>
 
 using namespace std;
+
+
 
 bool EixCache::initialize(string &name)
 {
@@ -68,6 +67,7 @@ bool EixCache::initialize(string &name)
 	}
 
 	m_only_overlay = true;
+	m_overlay = "";
 	m_get_overlay = 0;
 	if(args.size() >= 3) {
 		if(args[2].length()) {
@@ -78,14 +78,7 @@ bool EixCache::initialize(string &name)
 				m_only_overlay = false;
 			}
 			else
-			{
-				try {
-					m_get_overlay = atoi(args[2].c_str());
-				}
-				catch(ExBasic e) {
-					return false;
-				}
-			}
+				m_overlay = args[2];
 		}
 	}
 	return (args.size() <= 3);
@@ -115,8 +108,57 @@ int EixCache::readCategories(PackageTree *packagetree, vector<string> *categorie
 	io::read_header(fp, header);
 	if(!header.isCurrent()) {
 		fclose(fp);
-		throw ExBasic("Cache file %s uses an obsoleteformat (%i current is %i)",
+		throw ExBasic("Cache file %s uses an obsolete format (%i current is %i)",
 	              file, header.version, DBHeader::current);
+	}
+	if(m_only_overlay)
+	{
+		if(m_overlay.length())
+		{
+			for(Version::Overlay i = 0; i != header.countOverlays(); i++)
+			{
+				if(same_filenames(header.getOverlay(i), m_overlay))
+				{
+					m_get_overlay = i;
+					m_overlay = "";
+					break;
+				}
+			}
+			if(m_overlay.length())// Overlay not found
+			{
+				// Is m_overlay a number?
+				bool is_number = true;
+				const char *s = m_overlay.c_str();
+				for(int i = 0; i < m_overlay.length(); i++)
+				{
+					char c = *(s++);
+					if((c < '0') || (c > '9'))
+					{
+						is_number = false;
+						break;
+					}
+				}
+				if(is_number)
+				{
+					try {
+						m_get_overlay = atoi(m_overlay.c_str());
+					}
+					catch(ExBasic e) {
+						is_number = false;
+					}
+				}
+				if(is_number)
+					if(m_get_overlay >= header.countOverlays())
+						is_number = false;
+				if(!is_number)
+				{
+					fclose(fp);
+					throw ExBasic("Cache file %s does not contain overlay %s",
+						file, m_overlay.c_str());
+				}
+				m_overlay = "";
+			}
+		}
 	}
 
 	if(packagetree)

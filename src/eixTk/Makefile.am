@@ -11,6 +11,7 @@ INCLUDES = -I$(top_srcdir)/src
 libeixTk_a_SOURCES = ansicolor.h \
 					 argsreader.cc argsreader.h \
 					 exceptions.h \
+					 filenames.cc filenames.h \
 					 regexp.h regexp.cc \
 					 stringutils.cc stringutils.h \
 					 sysutils.cc sysutils.h \
