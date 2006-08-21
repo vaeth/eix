@@ -31,6 +31,7 @@
 
 #include <portage/cache/cache-map.h>
 #include <eixTk/ptr_list.h>
+#include <eixTk/filenames.h>
 
 #include <string>
 #include <map>
@@ -45,7 +46,7 @@ class CacheTable
 		void addCache(std::string directory, std::string cache_name, const std::map<std::string, std::string> *override)
 		{
 			for(CacheTable::iterator it=begin(); it != end(); ++it)
-				if(directory == it->getPath())
+				if(same_filenames(directory, it->getPath()))
 					return;
 			if(override)
 			{
