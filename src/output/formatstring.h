@@ -166,7 +166,9 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 };
 
 class PrintFormat {
-	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot);
+	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot, bool exclude_overlay);
+	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
+	friend void print_versions_slots(const PrintFormat *fmt, const Package *p);
 	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name) throw(ExBasic);
 	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name) throw(ExBasic);
@@ -193,13 +195,17 @@ class PrintFormat {
 	public:
 		bool no_color,            /**< Shall we use colors? */
 		     style_version_lines, /**< Shall we show versions linewise? */
-		     show_slots;          /**< Shall we show slots at all? */
+		     show_slots,          /**< Shall we show slots at all? */
+		     slot_sorted,         /**< Print sorted by slots */
+		     colon_slots,         /**< Print slots separated with colons */
+		     colored_slots;       /**< Print slots in separate color */
 
 		std::string color_masked,     /**< Color for masked versions */
-			   color_unstable,   /**< Color for unstable versions */
-			   color_stable,     /**< Color for stable versions */
-			   color_overlaykey, /**< Color for the overlay key */
-			   color_virtualkey; /**< Color for the virtual key */
+			   color_unstable,    /**< Color for unstable versions */
+			   color_stable,      /**< Color for stable versions */
+			   color_overlaykey,  /**< Color for the overlay key */
+			   color_virtualkey,  /**< Color for the virtual key */
+			   color_slots;       /**< Color for slots */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
@@ -216,6 +222,7 @@ class PrintFormat {
 			color_stable     = AnsiColor(color_stable).asString();
 			color_overlaykey = AnsiColor(color_overlaykey).asString();
 			color_virtualkey = AnsiColor(color_virtualkey).asString();
+			color_slots      = AnsiColor(color_slots).asString();
 			AnsiMarker ins_marker(mark_installed);
 			mark_installed     = ins_marker.asString();
 			mark_installed_end = ins_marker.end();

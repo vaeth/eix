@@ -87,26 +87,23 @@ BasicVersion::parseVersion(const char *str, int n)
 }
 
 /** Compares the split m_primsplit numbers of another BasicVersion instances to itself. */
-int BasicVersion::comparePrimary(const BasicVersion& basic_version) const
+int BasicVersion::comparePrimary(const BasicVersion& b) const
 {
-	int splits = min(m_primsplit.size(), basic_version.m_primsplit.size());
-
-	/* Compare the splitted m_primsplit version numbers from left to basic_version. */
-	for(int i = 0; i<splits; i++) {
-		if(m_primsplit[i] < basic_version.m_primsplit[i])
+	vector<unsigned long>::const_iterator ait = m_primsplit.begin();
+	vector<unsigned long>::const_iterator bit = b.m_primsplit.begin();
+	for( ; (ait != m_primsplit.end()) && (bit != b.m_primsplit.end());
+		++ait, ++bit)
+	{
+		if(*ait < *bit)
 			return -1;
-		else if(m_primsplit[i] > basic_version.m_primsplit[i])
+		if(*ait > *bit)
 			return 1;
 	}
 	/* The one with the bigger amount of versionsplits is our winner */
-	int x = (- basic_version.m_primsplit.size() + m_primsplit.size());
-
-	if(x > 0)
+	if(ait != m_primsplit.end())
 		return 1;
-
-	if(x < 0)
+	if(bit != b.m_primsplit.end())
 		return -1;
-
 	return 0;
 }
 

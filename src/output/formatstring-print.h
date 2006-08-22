@@ -35,7 +35,9 @@
 #include <portage/version.h>
 #include <eixTk/exceptions.h>
 
-void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slot);
+void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slot, bool exclude_overlay);
+void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
+void print_versions_slots(const PrintFormat *fmt, const Package *p);
 void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 
 void print_package_property(const PrintFormat *fmt, void *entity, const std::string &name) throw(ExBasic);

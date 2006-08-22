@@ -33,7 +33,7 @@
 using namespace std;
 
 void
-print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots)
+print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay)
 {
 	bool is_installed = false;
 	bool is_marked = false;
@@ -46,7 +46,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 
 	if(fmt->style_version_lines)
-		fputs("\n\t", stdout);
+		fputs("\n\t\t", stdout);
 
 	if(version->isProfileMask()) {
 		if( !fmt->no_color )
@@ -89,14 +89,14 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 
 	if (fmt->style_version_lines)
-		fputs("\t\t", stdout);
+		fputs("\t", stdout);
 
 	if (is_installed)
 		cout << fmt->mark_installed;
 	if (is_marked)
 		cout << fmt->mark_version;
-	if (with_slots && fmt->show_slots)
-		cout << version->getFullSlotted();
+	if (with_slots && fmt->show_slots && (!fmt->colored_slots))
+		cout << version->getFullSlotted(fmt->colon_slots);
 	else
 		cout << version->getFull();
 	if (is_marked)
@@ -110,26 +110,83 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 	else if (is_installed)
 		cout << fmt->mark_installed_end;
+	if (with_slots && fmt->show_slots && fmt->colored_slots)
+	{
+		string slot = version->getSlotAppendix(fmt->colon_slots);
+		if(slot.size())
+		{
+			if(! fmt->no_color)
+				cout << fmt->color_slots;
+			cout << slot;
+		}
+	}
+	if(!exclude_overlay)
+	{
+		if(!package->have_same_overlay_key && version->overlay_key)
+			cout << fmt->overlay_keytext(version->overlay_key);
+	}
 }
 
 void
-print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
+print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
 {
-	Package::const_iterator version_it = p->begin();
-	while(version_it != p->end()) {
-		print_version(fmt, *version_it, p, with_slots);
-
-		if(!p->have_same_overlay_key && version_it->overlay_key) {
-			cout << fmt->overlay_keytext(version_it->overlay_key);
-		}
-
-		if(++version_it != p->end() && !fmt->style_version_lines)
-			cout<<" ";
+	Package::const_iterator vit = p->begin();
+	while(vit != p->end()) {
+		print_version(fmt, *vit, p, with_slots, false);
+		if(++vit != p->end() && !fmt->style_version_lines)
+			cout << " ";
 	}
 	if( !fmt->no_color )
 		cout << AnsiColor(AnsiColor::acDefault, 0);
 }
 
+void
+print_versions_slots(const PrintFormat *fmt, const Package* p)
+{
+	if(!p->have_nontrivial_slots)
+	{
+		print_versions_versions(fmt, p, false);
+		return;
+	}
+	const SlotList *sl = &(p->slotlist);
+	bool only_one = (sl->size() == 1);
+	for(SlotList::const_iterator it = sl->begin();
+		it != sl->end(); ++it)
+	{
+		const char *s = it->slot();
+		if((!only_one) || fmt->style_version_lines)
+			fputs("\n\t", stdout);
+		if( !fmt->no_color)
+			cout << fmt->color_slots;
+		if(s[0])
+			cout << "(" << s << ")";
+		else
+			cout << "(0)";
+		if( !fmt->no_color)
+			cout << AnsiColor(AnsiColor::acDefault, 0);
+		if( !fmt->style_version_lines)
+			cout << (only_one ? "  " : "\t");
+		const VersionList *vl = &(it->const_version_list());
+		VersionList::const_iterator vit = vl->begin();
+		while(vit != vl->end())
+		{
+			print_version(fmt, *vit, p, false, false);
+			if(++vit != vl->end() && !fmt->style_version_lines)
+				cout << " ";
+		}
+		if( !fmt->no_color )
+			cout << AnsiColor(AnsiColor::acDefault, 0);
+	}
+}
+
+void
+print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
+{
+	if(fmt->slot_sorted)
+		print_versions_slots(fmt, p);
+	else
+		print_versions_versions(fmt, p, with_slots);
+}
 
 void
 print_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
@@ -137,11 +194,9 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 	Package *entity = (Package*)void_entity;
 
 	if((name == "availableversions") ||
-		(name == "availableversionslong")) {
-		print_versions(fmt, entity, true);
-	}
-	else if(name == "availableversionsshort") {
-		print_versions(fmt, entity, false);
+		(name == "availableversionslong") ||
+		(name == "availablevresionsshort")) {
+		print_versions(fmt, entity, (name != "availableversionsshort"));
 	}
 	else if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
@@ -150,16 +205,24 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 		}
 	}
 	else if((name == "best") ||
-		(name == "bestlong")) {
+		(name == "bestlong") ||
+		(name == "bestshort")) {
 		Version *best = entity->best();
 		if(best != NULL) {
-			print_version(fmt, best, entity, true);
+			print_version(fmt, best, entity, (name != "bestshort"), false);
 		}
 	}
-	else if(name == "bestshort") {
-		Version *best = entity->best();
-		if(best != NULL) {
-			print_version(fmt, best, entity, false);
+	else if((name == "bestslots") ||
+		(name == "bestslotslong") ||
+		(name == "bestslotsshort")) {
+		vector<Version*> versions;
+		entity->best_slots(versions);
+		for(vector<Version*>::const_iterator it = versions.begin();
+			it != versions.end(); ++it)
+		{
+			if(it != versions.begin())
+				cout << " ";
+			print_version(fmt, *it, entity, (name != "bestslotshort"), false);
 		}
 	}
 	else
@@ -207,21 +270,34 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 		return "";
 	}
 	else if((name == "best") ||
+		(name == "bestlong") ||
 		(name == "bestshort")) {
 		Version *best = entity->best();
 		if(best == NULL) {
 			return "";
 		}
+		if(fmt->show_slots && (name != "bestshort"))
+			return best->getFullSlotted(fmt->colon_slots);
 		return best->getFull();
 	}
-	else if(name == "bestlong") {
-		Version *best = entity->best();
-		if(best == NULL) {
-			return "";
+	else if((name == "bestslots") ||
+		(name == "bestslotslong") ||
+		(name == "bestslotsshort")) {
+		bool with_slots = (name != "bestslotshort");
+		vector<Version*> versions;
+		entity->best_slots(versions);
+		string ret;
+		for(vector<Version*>::const_iterator it = versions.begin();
+			it != versions.end(); ++it)
+		{
+			if(ret.length())
+				ret += " ";
+			if(with_slots)
+				ret += (*it)->getFullSlotted(fmt->colon_slots);
+			else
+				ret += (*it)->getFull();
 		}
-		if(fmt->show_slots)
-			return best->getFullSlotted();
-		return best->getFull();
+		return ret;
 	}
 	else if(name == "marked")
 	{

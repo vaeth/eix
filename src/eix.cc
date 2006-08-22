@@ -96,6 +96,7 @@ dump_help(int exit_code)
 			"     -c, --compact         compact search results\n"
 			"     -v, --verbose         verbose search results\n"
 			"     -l, --versionlines    print available versions line-by-line\n"
+			"     -x, --slotsorted      sort output by slots, not by versions\n"
 			"         --format          format string for normal output\n"
 			"         --format-compact  format string for compact output\n"
 			"         --format-verbose  format string for verbose output\n"
@@ -108,6 +109,7 @@ dump_help(int exit_code)
 			"    -D, --dup-versions    Match packages with duplicated versions.\n"
 			"    -1, --slotted         Match packages with a nontrivial slot.\n"
 			"    -2, --slots           Match packages with two different slots.\n"
+			"    -u, --update          Match packages without best slotted version.\n"
 			"    -O, --overlay         Match packages from overlays.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
@@ -205,6 +207,7 @@ static struct Option long_options[] = {
 	Option("nocolor",      'n',     Option::BOOLEAN_T,     &format.no_color),
 	Option("force-color",  'F',     Option::BOOLEAN_F,     &format.no_color),
 	Option("versionlines", 'l',     Option::BOOLEAN_T,     &format.style_version_lines),
+	Option("slotsorted",   'x',     Option::BOOLEAN_T,     &format.slot_sorted),
 
 	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
 	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
@@ -227,6 +230,7 @@ static struct Option long_options[] = {
 	Option("multi-installed",'i'),
 	Option("slotted",       '1'),
 	Option("slots",         '2'),
+	Option("update",        'u'),
 	Option("overlay",       'O'),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
@@ -274,12 +278,16 @@ setup_defaults()
 	format.color_stable        = rc["COLOR_STABLE"];
 	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
 	format.color_virtualkey    = rc["COLOR_VIRTUALKEY"];
+	format.color_slots         = rc["COLOR_SLOTS"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.mark_version        = rc["MARK_VERSIONS"];
 	format.show_slots          = rc.getBool("PRINT_SLOTS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
+	format.slot_sorted         = rc.getBool("STYLE_SLOT_SORTED");
+	format.colon_slots         = rc.getBool("COLON_SLOTS");
+	format.colored_slots       = rc.getBool("COLORED_SLOTS");
 
 	string overlay = rc["OVERLAYS_LIST"];
 	if(overlay.find("if") != string::npos)

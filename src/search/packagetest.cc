@@ -51,10 +51,9 @@ PackageTest::PackageTest(VarDbPkg *vdb)
 	vardbpkg = vdb;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	overlay  = slotted  = installed = invert =
+	overlay  = slotted  = installed = invert = update = test_obsolete =
 			dup_versions = dup_packages = false;
 	test_installed = INS_NONE;
-	portagesettings = NULL;
 }
 
 void
@@ -89,7 +88,7 @@ PackageTest::calculateNeeds() {
 
 	if((need < PackageReader::VERSIONS) &&
 		(dup_packages || dup_versions || slotted ||
-			overlay|| portagesettings))
+			update || overlay|| test_obsolete))
 	{
 		need = PackageReader::VERSIONS;
 	}
@@ -282,7 +281,7 @@ PackageTest::match_internal(PackageReader *pkg) const
 			return false;
 	}
 
-	/* Honour the -I, -i, -1, -2, -O, -d, -D, and -T flags. */
+	/* Honour the special flags. */
 
 	if(installed) { // -i or -I
 		if(p == NULL)
@@ -295,13 +294,54 @@ PackageTest::match_internal(PackageReader *pkg) const
 				return false;
 	}
 
+	if(update) { // -u
+		if(p == NULL)
+			p = pkg->get();
+		vector<BasicVersion> *ins = vardbpkg->getInstalledVector(*p);
+		if(!ins)
+			return false;
+		bool all_are_best = true;
+		Package user;
+		user.deepcopy(*p);
+		portagesettings->user_config->setMasks(&user);
+		portagesettings->user_config->setStability(&user, accept_keywords);
+		user.calculate_slotlist();// should be redundant, but who knows...
+		for(vector<BasicVersion>::const_iterator it = ins->begin();
+			it != ins->end(); ++it)
+		{
+			const char *name = user.slotname(*it);
+			if(!name)
+			{
+				all_are_best = false;
+				break;
+			}
+			Version *best_slot = user.best_slot(name);
+			if(best_slot)
+			{
+				if(*best_slot != *it)
+				{
+					all_are_best = false;
+					break;
+				}
+			}
+			else
+			{
+				all_are_best = false;
+				break;
+			}
+		}
+		if(all_are_best)
+			return false;
+	}
+
 	if(slotted) { // -1 or -2
 		if(p == NULL)
 			p = pkg->get();
-		Package::Slots testfor = ((multi_slot) ?
-				Package::SLOTS_MANY : Package::SLOTS_EXIST);
-		if(((p->have_slots) & testfor) != testfor)
+		if(! (p->have_nontrivial_slots))
 			return false;
+		if(multi_slot)
+			if( (p->slotlist).size() <= 1 )
+				return false;
 	}
 
 	if(overlay) { // -O
@@ -332,7 +372,7 @@ PackageTest::match_internal(PackageReader *pkg) const
 			return false;
 	}
 
-	if(!portagesettings)// -T
+	if(!test_obsolete)// -T
 		return true;
 	// Can some test succeed at all?
 	if((test_installed == INS_NONE) &&

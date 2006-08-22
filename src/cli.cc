@@ -104,6 +104,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 				  break;
 			case '2': test->Slotted(true);
 				  break;
+			case 'u': test->Update(portagesettings);
+				  break;
 			case 'O': test->Overlay();
 				  break;
 			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));

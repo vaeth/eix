@@ -1,4 +1,4 @@
-.TH "eix" "1" "August 15, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "August 23, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -64,6 +64,9 @@ The opposite of --nocolor.
 .TP
 .BR -l ", " --versionlines
 Prints available versions in a (vertical) list.
+.TP
+.BR -x ", " --slotsorted
+Prints available versions sorted by slots, not by versions.
 .TP
 .BR -c ", " --compact
 Causes eix to use a compact layout for search results. Useful for obtaining a better
@@ -131,6 +134,11 @@ Only match packages with a nontrivial slot, i.e. where SLOT is nonempty and diff
 .BR -2 ", " --slots
 Only match packages with at least two different slots.
 In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
+.TP
+.BR -u ", " --update
+Only match packages which have at least one slotted version installed which
+is not the best version within that slot.
+This means that you should either upgrade or downgrade that package.
 .TP
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
@@ -238,13 +246,16 @@ Whether this happens is determined by the B<PRINT_SLOTS> and
 B<DIFF_PRINT_SLOTS> variables, respectively, and by the content of the
 B<FORMATSTRING>.
 
-If slots are printed, the slot name is separated from the version number with a colon.
+If slots are printed, the slot name is separated from the version number
+either with a colon, or the slot names are written in braces.
+You can choose the preferred modes for eix and diff-eix with the
+B<COLON_SLOTS> or B<DIFF_COLON_SLOTS> variables, respectively.
 Some Examples:
 .TP
-.BR 4.1.1:4.1
+.BR 4.1.1:4.1 "    or    " 4.1.1(4.1)
 This is version 4.1.1 which will be installed into the slot "4.1".
 .TP
-.BR 3.14p:GNAT-3.14p
+.BR 3.14p:GNAT-3.14p "    or    " 3.14p(GNAT-3.14p)
 This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .TP
 .BR 2.0.0_rc1-r6
@@ -337,11 +348,19 @@ could be easily replaced by using "B<Conditional blocks>".
 if all versions are in the same overlay this expands to "overlaykey".
 When printed, "[overlaykey]" is printed with corresponding colors.
 .TP
-.BR best "  or   " bestlong
+.BR best "  or  " bestlong
 the highest stable version, including slot information
 .TP
 .BR bestshort
 the highest stable version without slot information
+.TP
+.BR bestslots "  or  " bestslotslong
+for each slot the highest stable version (including slot information),
+separated by spaces.
+.TP
+.BR bestslotsshort
+for each slot the highest stable version (without slot information),
+separated by spaces.
 .TP
 .BR system
 expands to "system" if this package is in the system-profile
@@ -413,9 +432,9 @@ stable versions has changed. This is only used by B<diff-eix> (See
 B<FORMATSTRING>)
 
 .TP
-.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
-Define the color for masked versions, stable versions, unstable versions,
-the overlay-key and the overlay-key for "virtual" overlays (which are not absolute pathnames).
+.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
+Define the color for masked versions, stable versions, unstable versions, slots,
+the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).
 Use the same syntax as you would inside ().
 See B<FORMATSTRING>.
 
@@ -434,6 +453,28 @@ Use colors even when stdout is not a terminal.
 .TP
 .BR STYLE_VERSION_LINES "  " (true / false)
 Turns --versionlines on.
+
+.TP
+.BR STYLE_SLOT_SORTED "  " (true / false)
+Turns --slotsorted on.
+
+.TP
+.BR COLORED_SLOTS "  " (true / false)
+If false, eix will not color slots appended to versions.
+
+.TP
+.BR DIFF_COLORED_SLOTS "  " (true / false)
+If false, diff-eix will not color slots appended to versions.
+
+.TP
+.BR COLON_SLOTS "  " (true / false)
+If true, eix will separate slots with a colon.
+This has the advantage that it takes one character less than braces and
+thus makes listings of many versions shorter.
+
+.TP
+.BR DIFF_COLON_SLOTS "  " (true / false)
+If true, diff-eix will separate slots with a colon.
 
 .TP
 .BR SMALL_EIX_DATABASE "  " (true / false)

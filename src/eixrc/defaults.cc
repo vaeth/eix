@@ -33,7 +33,7 @@ eixrc.addDefault(
 			"[{installedversions}(yellow,1)U{else}(green,1)N{}()]"
 			" (green,1)>>() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({best}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({bestshort}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for new packages.")
 		);
 
@@ -41,7 +41,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
 			"    (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({best}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({bestshort}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
@@ -50,7 +50,7 @@ eixrc.addDefault(
 			"[{installedversions}{upgrade}(yellow,1)U{else}(red,1)D{}{else}(green,1)N{}()]"
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({best}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({bestshort}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
@@ -76,6 +76,7 @@ eixrc.addDefault(
 			"(green,0)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
+			"     (green)Best versions/slot:()  {bestslotsshort}<bestslotslong>{else}none{}\n"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"     (green)Homepage:()            <homepage>\n"
 			"     (green)Description:()         <description>\n"
@@ -109,6 +110,11 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_SLOTS",
+			"red,1", "Color for slots.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MARK_INSTALLED",
 			"inverse", "How installed packages are marked in version listings.")
 		);
@@ -125,7 +131,32 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "STYLE_VERSION_LINES",
-			"false", "Allways show version as lines (--version-lines).")
+			"false", "Defines whether --versionlines is on by default.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "STYLE_SLOT_SORTED",
+			"false", "Defines whether --slotsorted is on by default.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "COLORED_SLOTS",
+			"true", "If false, eix will not color slots appended to versions.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_COLORED_SLOTS",
+			"true", "If false, diff-eix will not color slots appended to versions.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "COLON_SLOTS",
+			"false", "If true, eix will separate slots with a colon.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_COLON_SLOTS",
+			"false", "If true, diff-eix will separate slots with a colon.")
 		);
 
 eixrc.addDefault(

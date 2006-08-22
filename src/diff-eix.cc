@@ -207,7 +207,7 @@ class DiffTrees
 					lost_package(*old_pkg);
 
 				// Best version differs
-				else if(best_differs(**old_pkg, **new_pkg))
+				else if(best_differs(**old_pkg, **new_pkg, true))
 					changed_package(*old_pkg, *new_pkg);
 
 				// Remove the new package
@@ -223,8 +223,8 @@ class DiffTrees
 			}
 		}
 
-		/// Return true if the best versions of both packages differ.
-		bool best_differs(Package &p1, Package &p2)
+		/// Return true if the best versions/slot of both packages differ.
+		bool best_differs(Package &p1, Package &p2, bool test_all_slots = true)
 		{
 			if(!ignore_etc_portage)
 			{
@@ -238,12 +238,29 @@ class DiffTrees
 				portagesettings->setStability(&p1, accepted_keywords);
 				portagesettings->setStability(&p2, accepted_keywords);
 			}
-			Version *old_best = p1.best();
-			Version *new_best = p2.best();
 
-			return (old_best == NULL && new_best != NULL)
-			    || (old_best != NULL && new_best == NULL)
-			    || (old_best != NULL && new_best != NULL && *old_best != *new_best);
+			if(!test_all_slots)
+			{
+				Version *old_best = p1.best();
+				Version *new_best = p2.best();
+				if(old_best && new_best)
+					return (*old_best != *new_best);
+				return (old_best != new_best);
+			}
+			vector<Version*> old_best;
+			vector<Version*> new_best;
+			p1.best_slots(old_best);
+			p2.best_slots(new_best);
+			if(old_best.size() != new_best.size())
+				return true;
+			vector<Version*>::const_iterator old_it = old_best.begin();
+			vector<Version*>::const_iterator new_it = new_best.begin();
+			for(; old_it != old_best.end(); ++old_it, ++new_it)
+			{
+				if(**old_it != **new_it)
+					return true;
+			}
+			return false;
 		}
 };
 
@@ -343,8 +360,11 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_stable     = eixrc["COLOR_STABLE"];
 	format_for_new.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
 	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
+	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
 	format_for_new.show_slots       = eixrc.getBool("DIFF_PRINT_SLOTS");
+	format_for_new.colon_slots      = eixrc.getBool("DIFF_COLON_SLOTS");
+	format_for_new.colored_slots    = eixrc.getBool("DIFF_COLORED_SLOTS");
 
 	format_for_new.setupColors();
 

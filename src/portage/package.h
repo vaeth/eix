@@ -31,12 +31,53 @@
 
 #include <eixTk/ptr_list.h>
 
+#include <list>
 #include <string>
 
 #include <portage/version.h>
 
+/** A sorted list of pointer to Versions */
+
+class VersionList : public std::list<Version*>
+{
+	public:
+		VersionList(Version *v) : std::list<Version*>(1, v)
+		{ }
+
+		Version* best() const;
+};
+
+class SlotVersions
+{
+	private:
+		const char  *m_slot;
+		VersionList  m_version_list;
+
+	public:
+		const char *slot() const
+		{ return m_slot; }
+
+		const VersionList &const_version_list() const
+		{ return m_version_list; }
+
+		VersionList &version_list()
+		{ return m_version_list; }
+
+		SlotVersions(const char *s, Version *v) :
+			m_slot(s), m_version_list(v)
+		{ }
+};
+
+/** This list is always sorted with respect to the first version for each slot */
+class SlotList : public std::list<SlotVersions>
+{
+	public:
+		void push_back_largest(Version *version);
+		const VersionList *operator [] (const char *s) const;
+};
+
 /** A class to represent a package in portage It contains various information
- * about a package, including a list of versions. */
+ * about a package, including a sorted(!) list of versions. */
 class Package
 	: public eix::ptr_list<Version>
 {
@@ -48,15 +89,17 @@ class Package
 			DUP_NONE,
 			DUP_SOME,    /* Duplicate versions are somewhere */
 			DUP_OVERLAYS;/* Duplicate versions are both in overlays */
-		typedef char Slots;
-		static const Slots
-			SLOTS_NONE,
-			SLOTS_EXIST, /* Slots different from "0" exist */
-			SLOTS_MANY;  /* Different slots do exist */
 
 		Duplicates have_duplicate_versions;
-		Slots have_slots;
-		std::string common_slot;
+
+		/** The following list is always sorted with respect to the
+		    first version. Moreover, this list is complete, i.e. it
+		    contains also the trivial slot (-> each version is
+		    contained exactly in one slot) */
+		SlotList slotlist;
+
+		/* True if at least one slot is nonempty (different from "0") */
+		bool have_nontrivial_slots;
 
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key;
@@ -100,7 +143,15 @@ class Package
 		void addVersion(Version *version)
 		{ addVersionStart(version); addVersionFinalize(version); }
 
+		void calculate_slotlist();
+
 		Version *best() const;
+
+		Version *best_slot(const char *slot_name) const;
+
+		void best_slots(std::vector<Version*> &l) const;
+
+		const char *slotname(const BasicVersion &v) const;
 
 		Version *latest() const
 		{ return *rbegin(); }
@@ -119,8 +170,7 @@ class Package
 			have_same_overlay_key = true;
 			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
-			have_slots = SLOTS_NONE;
-			common_slot = "";
+			have_nontrivial_slots = false;
 		}
 };
 

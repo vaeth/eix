@@ -86,6 +86,13 @@ class PackageTest {
 		void Slotted(bool multi = false)
 		{ slotted = true; multi_slot = multi; }
 
+		void Update(PortageSettings &p)
+		{
+			update = true;
+			portagesettings = &p;
+			accept_keywords = p.getAcceptKeywords();
+		}
+
 		void Overlay()
 		{ overlay = true; }
 
@@ -97,7 +104,7 @@ class PackageTest {
 
 		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
 		{
-			// portagesettings is our flag
+			test_obsolete      = true;
 			portagesettings    = &p;
 			redundant_flags    = first.red|second.red;
 			first_test         = first;
@@ -129,12 +136,11 @@ class PackageTest {
 		std::auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
-		bool overlay;
+		bool overlay, update, test_obsolete;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 
-		/** Lookup stuff about obsolete user flags here.
-		    If this is NULL, then no redundancy type tests are made. */
+		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;
 		/* Test for this redundancy: */
 		Keywords::Redundant redundant_flags;

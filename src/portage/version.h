@@ -35,7 +35,7 @@
 
 #include <iostream>
 
-/** Version expands the BasicVersion class by overlay-keys and slots */
+/** Version expands the BasicVersion class by Keywords, overlay-keys, slots */
 class Version : public BasicVersion, public Keywords {
 
 	public:
@@ -73,12 +73,19 @@ class Version : public BasicVersion, public Keywords {
 		bool operator != (const BasicVersion &v) const
 		{ return !((*this) == v); }
 
-		std::string getFullSlotted () const
+		std::string getSlotAppendix (bool colon) const
 		{
 			if(slot.length())
-				return std::string(getFull()) + ":" + slot;
-			return getFull();
+			{
+				if(colon)
+					return std::string(":") + slot;
+				return std::string("(") + slot + ")";
+			}
+			return "";
 		}
+
+		std::string getFullSlotted (bool colon) const
+		{ return std::string(getFull()) + getSlotAppendix(colon); }
 };
 
 #endif /* __VERSION_H__ */

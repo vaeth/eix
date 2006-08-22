@@ -30,6 +30,8 @@
 
 #include <portage/version.h>
 
+using namespace std;
+
 Package::~Package()
 {
 	delete_and_clear();
@@ -40,10 +42,44 @@ const Package::Duplicates
 	Package::DUP_SOME     = 0x01,
 	Package::DUP_OVERLAYS = 0x03;
 
-const Package::Slots
-	Package::SLOTS_NONE   = 0x00,
-	Package::SLOTS_EXIST  = 0x01,
-	Package::SLOTS_MANY   = 0x03;
+Version *
+VersionList::best() const
+{
+	for(const_reverse_iterator ri = rbegin();
+		ri != rend(); ++ri)
+	{
+		if((*ri)->isStable() && (!(*ri)->isHardMasked()))
+			return *ri;
+	}
+	return NULL;
+}
+
+void
+SlotList::push_back_largest(Version *version)
+{
+	const char *name = (version->slot).c_str();
+	for(iterator it = begin(); it != end(); ++it)
+	{
+		if(strcmp(name, it->slot()) == 0)
+		{
+			(it->version_list()).push_back(version);
+			return;
+		}
+	}
+	push_back(SlotVersions(name, version));
+}
+
+const VersionList *
+SlotList::operator [] (const char *s) const
+{
+	for(const_iterator it = begin(); it != end(); ++it)
+	{
+		if(strcmp(s, it->slot()) == 0)
+			return &(it->const_version_list());
+	}
+	return NULL;
+}
+
 
 /** Check if a package has duplicated versions. */
 void Package::checkDuplicates(Version *version)
@@ -72,6 +108,20 @@ void Package::checkDuplicates(Version *version)
 	}
 }
 
+void
+Package::sortedPushBack(Version *v)
+{
+	for(iterator i = begin(); i != end(); ++i)
+	{
+		if(*v < **i)
+		{
+			insert(i, v);
+			return;
+		}
+	}
+	push_back(v);
+}
+
 /** Finishes addVersionStart() after the remaining data
     have been filled */
 void Package::addVersionFinalize(Version *version)
@@ -91,38 +141,21 @@ void Package::addVersionFinalize(Version *version)
 			if(largest_overlay < key)
 				largest_overlay = key;
 		}
-		if((have_slots & SLOTS_MANY) != SLOTS_MANY)
-		{
-			if(common_slot != version->slot)
-				have_slots |= SLOTS_MANY;
-		}
 		if(is_system_package) {
 			is_system_package = version->isSystem();
 		}
 	}
 	else {
-		largest_overlay   = key;
-		if( (version->slot).length() )
-		{
-			have_slots  = SLOTS_EXIST;
-			common_slot = version->slot;
-		}
-		is_system_package = version->isSystem();
+		largest_overlay       = key;
+		have_nontrivial_slots = false;
+		is_system_package     = version->isSystem();
 	}
-}
-
-void
-Package::sortedPushBack(Version *v)
-{
-	for(iterator i = begin(); i != end(); ++i)
-	{
-		if(*v < **i)
-		{
-			insert(i, v);
-			return;
-		}
-	}
-	push_back(v);
+	if((version->slot).length())
+		have_nontrivial_slots = true;
+	// We must recalculate the complete slotlist after each modification.
+	// The reason is that the pointers might go into nirvana, because
+	// a push_back might move the whole list.
+	calculate_slotlist();
 }
 
 Version *
@@ -142,14 +175,57 @@ Package::best() const
 	return ret;
 }
 
+void
+Package::calculate_slotlist()
+{
+	slotlist.clear();
+	for(iterator it = begin(); it != end(); ++it)
+		slotlist.push_back_largest(*it);
+}
+
+
+Version *
+Package::best_slot(const char *slot_name) const
+{
+	const VersionList *vl = slotlist[slot_name];
+	if(!vl)
+		return NULL;
+	return vl->best();
+}
+
+void
+Package::best_slots(vector<Version*> &l) const
+{
+	l.clear();
+	for(SlotList::const_iterator sit = slotlist.begin();
+		sit != slotlist.end(); ++sit)
+	{
+		Version *p = (sit->const_version_list()).best();
+		if(p)
+			l.push_back(p);
+	}
+}
+
+const char *
+Package::slotname(const BasicVersion &v) const
+{
+	for(const_iterator i = begin(); i != end(); i++)
+	{
+		if(**i == v)
+			return (i->slot).c_str();
+	}
+	return NULL;
+}
+
 void Package::deepcopy(const Package &p)
 {
 	*this=p;
-	clear();
-	for(Package::const_iterator it=p.begin(); it != p.end(); it++)
+	for(Package::iterator it=begin(); it != end(); ++it)
 	{
 		Version *v=new Version;
 		*v=(**it);
-		this->push_back(v);
+		*it = v;
 	}
+	// The pointers in slotlist should point to the clone.
+	calculate_slotlist();
 }

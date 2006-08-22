@@ -4,6 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Most of the changes in this release are motivated by the request
 	  http://bugs.gentoo.org/show_bug.cgi?id=144200
+	  Also more support for slots was added. In detail:
 	- Add OVERRIDE_CACHE_METHOD, ADD_LOCAL_CACHE_METHOD, ADD_CACHE_METHOD
 	  to allow e.g. cache method metadata for a specific overlay.
 	- Add cache method eix to use "pre-indexed" data for a
@@ -16,6 +17,11 @@
 	- Add update-eix-remote
 	- Distinguish old/new overlays in diff-eix
 	- Fix manpage bug: best=bestlong
+	- Introduce COLOR_SLOT, *COLORED_SLOT, *COLON_SLOT
+	- Introduce --slot-sorted, STYLE_SLOT_SORTED
+	- Introduce bestversions* format
+	- diff-eix outputs package also if best versions change in some slot.
+	- Implement -u option.
 
 *eix-0.6.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
