@@ -46,12 +46,13 @@ const PackageTest::TestInstalled
 		PackageTest::INS_NONEXISTENT = 0x01,
 		PackageTest::INS_MASKED      = 0x02;
 
-PackageTest::PackageTest(VarDbPkg *vdb)
+PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p)
 {
-	vardbpkg = vdb;
+	vardbpkg =  &vdb;
+	portagesettings = &p;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	overlay  = slotted  = installed = invert = update = test_obsolete =
+	obsolete = overlay = installed = invert = update = slotted =
 			dup_versions = dup_packages = false;
 	test_installed = INS_NONE;
 }
@@ -88,7 +89,7 @@ PackageTest::calculateNeeds() {
 
 	if((need < PackageReader::VERSIONS) &&
 		(dup_packages || dup_versions || slotted ||
-			update || overlay|| test_obsolete))
+			update || overlay|| obsolete))
 	{
 		need = PackageReader::VERSIONS;
 	}
@@ -268,200 +269,210 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	return false;
 }
 
-inline bool
-PackageTest::match_internal(PackageReader *pkg) const
+#define get_p() do { \
+	if(!p) \
+		p = pkg->get(); \
+} while(0)
+
+#define get_user_accept() do { \
+	if(!user) { \
+		accept_keywords = portagesettings->getAcceptKeywords(); \
+		user = new Package; \
+		user->deepcopy(*p); \
+	} \
+} while(0)
+
+#define set_user_flags() do { \
+	if(!mask_was_set) { \
+		mask_was_set = true; \
+		portagesettings->user_config->setMasks(user); \
+	} \
+	if(!keywords_was_set) { \
+		keywords_was_set = true; \
+		portagesettings->user_config->setStability(user, accept_keywords); \
+	} \
+} while(0)
+
+bool
+PackageTest::match(PackageReader *pkg) const
 {
 	Package *p = NULL;
 
 	pkg->read(need);
 
-	if(algorithm.get() != NULL) {
-		p = pkg->get();
-		if(!stringMatch(p))
-			return false;
-	}
+	/*
+	   Test the local options.
+	   Each test must start with "get_p()" to get "p"; remember to modify
+	   "need" in CalculateNeeds() to ensure that you will have all
+	   required data in the (possibly only partly filled) package "p".
+	   If a test fails, "return invert";
+	   if a test succeeds, pass to the next test,
+	   i.e. within the same Matchatom, we always have "-a" concatenation
+	   and honor the "invert" flag.
+	   (The latter might have to be modified if someday somebody wants
+	   to introduce "tree-type" expressions for queries, i.e. with braces:
+	   Then "abstract" subexpressions might have to be negated, too,
+	   because you do not want to have "-! -( ... -)" behave like
+	   "-! -a -( ... -)" or "-! -o -( ... -)").
 
-	/* Honour the special flags. */
+	   If a test needs local settings of the keywords/mask, do not rely
+	   that they are set in p, because the user might not want to see
+	   the local settings. Instead, do three things.
+	   1. Call
+	      get_user_accept() (to make sure a copy of p is in "user" and
+	                         "accept_keywords" is properly defined)
+	      set_user_flags() (to make sure the local settings have applied)
+	      Then use "user" instead of "p".
+	      Note that both commands are time-consuming,
+	      so do other tests first, if possible.
+	   2. Make sure to place your test after the "obsolete" tests:
+	      The "obsolete" tests need a special treatment, since they *must*
+	      use non-user settings before (to observe the changes when
+	      user-settings are applied).
+	   3. Once more: remember to modify "need" in CalculateNeeds() to
+	      ensure the versions really have been read for the package.
+	*/
+
+	if(algorithm.get() != NULL) {
+		get_p();
+		if(!stringMatch(p))
+			return invert;
+	}
 
 	if(installed) { // -i or -I
-		if(p == NULL)
-			p = pkg->get();
+		get_p();
 		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
 		if(!s)
-			return false;
+			return invert;
 		if(s == 1)
 			if(multi_installed)
-				return false;
-	}
-
-	if(update) { // -u
-		if(p == NULL)
-			p = pkg->get();
-		vector<BasicVersion> *ins = vardbpkg->getInstalledVector(*p);
-		if(!ins)
-			return false;
-		bool all_are_best = true;
-		Package user;
-		user.deepcopy(*p);
-		portagesettings->user_config->setMasks(&user);
-		portagesettings->user_config->setStability(&user, accept_keywords);
-		user.calculate_slotlist();// should be redundant, but who knows...
-		for(vector<BasicVersion>::const_iterator it = ins->begin();
-			it != ins->end(); ++it)
-		{
-			const char *name = user.slotname(*it);
-			if(!name)
-			{
-				all_are_best = false;
-				break;
-			}
-			Version *best_slot = user.best_slot(name);
-			if(best_slot)
-			{
-				if(*best_slot != *it)
-				{
-					all_are_best = false;
-					break;
-				}
-			}
-			else
-			{
-				all_are_best = false;
-				break;
-			}
-		}
-		if(all_are_best)
-			return false;
+				return invert;
 	}
 
 	if(slotted) { // -1 or -2
-		if(p == NULL)
-			p = pkg->get();
+		get_p();
 		if(! (p->have_nontrivial_slots))
-			return false;
+			return invert;
 		if(multi_slot)
 			if( (p->slotlist).size() <= 1 )
-				return false;
+				return invert;
 	}
 
 	if(overlay) { // -O
-		if(p == NULL)
-			p = pkg->get();
+		get_p();
 		if(!(p->largest_overlay))
-			return false;
+			return invert;
 	}
 
 	if(dup_packages) { // -d
-		if(p == NULL)
-			p = pkg->get();
+		get_p();
 		if(dup_packages_overlay)
 		{
 			if(!(p->at_least_two_overlays))
-				return false;
+				return invert;
 		}
 		else if(p->have_same_overlay_key)
-			return false;
+			return invert;
 	}
 
 	if(dup_versions) { // -D
-		if(p == NULL)
-			p = pkg->get();
+		get_p();
 		Package::Duplicates testfor = ((dup_versions_overlay) ?
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
 		if(((p->have_duplicate_versions) & testfor) != testfor)
-			return false;
+			return invert;
 	}
 
-	if(!test_obsolete)// -T
-		return true;
-	// Can some test succeed at all?
-	if((test_installed == INS_NONE) &&
-		(redundant_flags == Keywords::RED_NOTHING))
-		return false;
-
-	if(p == NULL)
-		p = pkg->get();
-	Package user;
-	user.deepcopy(*p);
-	portagesettings->setStability(&user, accept_keywords);
-
+	Package *user = NULL;
 	bool mask_was_set = false;
-	if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
-	{
-		if(portagesettings->user_config->setMasks(&user, redundant_flags))
-		{
-			if(have_redundant(user, Keywords::RED_DOUBLE_MASK))
-				return true;
-			if(have_redundant(user, Keywords::RED_DOUBLE_UNMASK))
-				return true;
-			if(have_redundant(user, Keywords::RED_MASK))
-				return true;
-			if(have_redundant(user, Keywords::RED_UNMASK))
-				return true;
-		}
-		mask_was_set = true;
-	}
 	bool keywords_was_set = false;
-	if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
-	{
-		if(portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags))
+	Keywords accept_keywords;
+	while(obsolete) {  // -T; loop, because we break in case of success
+		// Can some test succeed at all?
+		if((test_installed == INS_NONE) &&
+			(redundant_flags == Keywords::RED_NOTHING))
+			return invert;
+
+		get_p();
+		get_user_accept();
+		portagesettings->setStability(user, accept_keywords);
+
+		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 		{
-			if(have_redundant(user, Keywords::RED_DOUBLE))
-				return true;
-			if(have_redundant(user, Keywords::RED_MIXED))
-				return true;
-			if(have_redundant(user, Keywords::RED_WEAKER))
-				return true;
-			if(have_redundant(user, Keywords::RED_STRANGE))
-				return true;
-			if(have_redundant(user, Keywords::RED_NO_CHANGE))
-				return true;
-		}
-		keywords_was_set = true;
-	}
-	if(test_installed == INS_NONE)
-		return false;
-	vector<BasicVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
-	if(!installed_versions)
-		return false;
-	if(test_installed & INS_MASKED)
-	{
-		if(!mask_was_set)
-			portagesettings->user_config->setMasks(&user, redundant_flags);
-		if(!keywords_was_set)
-			portagesettings->user_config->setStability(&user, accept_keywords, redundant_flags);
-	}
-	for(vector<BasicVersion>::iterator current = installed_versions->begin();
-		current != installed_versions->end(); ++current)
-	{
-		TestInstalled found = INS_NONE;
-		bool not_all_found = true;
-		for(Package::iterator version_it = user.begin();
-			version_it != user.end(); ++version_it)
-		{
-			Version *version = *version_it;
-			if(*version != *current)
-				continue;
-			found |= INS_NONEXISTENT;
-			if(version->isStable())
-				found |= INS_MASKED;
-			if((found & test_installed) == test_installed)
+			mask_was_set = true;
+			if(portagesettings->user_config->setMasks(user, redundant_flags))
 			{
-				not_all_found = false;
-				break;
+				if(have_redundant(*user, Keywords::RED_DOUBLE_MASK))
+					break;
+				if(have_redundant(*user, Keywords::RED_DOUBLE_UNMASK))
+					break;
+				if(have_redundant(*user, Keywords::RED_MASK))
+					break;
+				if(have_redundant(*user, Keywords::RED_UNMASK))
+					break;
 			}
 		}
-		if(not_all_found)
-			return true;
+		if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
+		{
+			keywords_was_set = true;
+			if(portagesettings->user_config->setStability(user, accept_keywords, redundant_flags))
+			{
+				if(have_redundant(*user, Keywords::RED_DOUBLE))
+					break;
+				if(have_redundant(*user, Keywords::RED_MIXED))
+					break;
+				if(have_redundant(*user, Keywords::RED_WEAKER))
+					break;
+				if(have_redundant(*user, Keywords::RED_STRANGE))
+					break;
+				if(have_redundant(*user, Keywords::RED_NO_CHANGE))
+					break;
+			}
+		}
+		if(test_installed == INS_NONE)
+			return invert;
+		vector<BasicVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+		if(!installed_versions)
+			return invert;
+		if(test_installed & INS_MASKED) {
+			set_user_flags();
+		}
+		vector<BasicVersion>::iterator current = installed_versions->begin();
+		for( ; current != installed_versions->end(); ++current)
+		{
+			TestInstalled found = INS_NONE;
+			bool not_all_found = true;
+			for(Package::iterator version_it = user->begin();
+				version_it != user->end(); ++version_it)
+			{
+				Version *version = *version_it;
+				if(*version != *current)
+					continue;
+				found |= INS_NONEXISTENT;
+				if(version->isStable())
+					found |= INS_MASKED;
+				if((found & test_installed) == test_installed)
+				{
+					not_all_found = false;
+					break;
+				}
+			}
+			if(not_all_found)
+				break;
+		}
+		if(current != installed_versions->end())
+			break;
+		return invert;
 	}
-	return false;
-}
 
-bool
-PackageTest::match(PackageReader *pkg) const
-{
-	bool is_match = match_internal(pkg);
-	/* Honour the -! flag. */
-	return (invert ? !is_match : is_match);
-}
+	if(update) { // -u
+		get_p();
+		get_user_accept();
+		set_user_flags();
+		if(! user->compare_slots(vardbpkg, true))
+			return invert;
+	}
 
+	// all tests succeeded:
+	return (!invert);
+}

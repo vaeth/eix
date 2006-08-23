@@ -197,22 +197,25 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 		(name == "availableversionslong") ||
 		(name == "availablevresionsshort")) {
 		print_versions(fmt, entity, (name != "availableversionsshort"));
+		return;
 	}
-	else if(name == "overlaykey") {
+	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key) {
 			cout << fmt->overlay_keytext(ov_key);
 		}
+		return;
 	}
-	else if((name == "best") ||
+	if((name == "best") ||
 		(name == "bestlong") ||
 		(name == "bestshort")) {
 		Version *best = entity->best();
 		if(best != NULL) {
 			print_version(fmt, best, entity, (name != "bestshort"), false);
 		}
+		return;
 	}
-	else if((name == "bestslots") ||
+	if((name == "bestslots") ||
 		(name == "bestslotslong") ||
 		(name == "bestslotsshort")) {
 		vector<Version*> versions;
@@ -224,10 +227,9 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 				cout << " ";
 			print_version(fmt, *it, entity, (name != "bestslotshort"), false);
 		}
+		return;
 	}
-	else
-		cout << get_package_property(fmt, void_entity, name);
-
+	cout << get_package_property(fmt, void_entity, name);
 }
 
 string
@@ -238,38 +240,38 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 	if(name == "category") {
 		return entity->category;
 	}
-	else if(name == "name") {
+	if(name == "name") {
 		return entity->name;
 	}
-	else if(name == "description") {
+	if(name == "description") {
 		return entity->desc;
 	}
-	else if(name == "homepage") {
+	if(name == "homepage") {
 		return entity->homepage;
 	}
-	else if(name == "licenses") {
+	if(name == "licenses") {
 		return entity->licenses;
 	}
-	else if(name == "installedversions") {
+	if(name == "installedversions") {
 		return entity->installed_versions;
 	}
-	else if(name == "provide") {
+	if(name == "provide") {
 		return entity->provide;
 	}
-	else if(name == "overlaykey") {
+	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key) {
 			return fmt->overlay_keytext(ov_key, false);
 		}
 		return "";
 	}
-	else if(name == "system") {
+	if(name == "system") {
 		if(entity->is_system_package) {
 			return "system";
 		}
 		return "";
 	}
-	else if((name == "best") ||
+	if((name == "best") ||
 		(name == "bestlong") ||
 		(name == "bestshort")) {
 		Version *best = entity->best();
@@ -280,7 +282,7 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 			return best->getFullSlotted(fmt->colon_slots);
 		return best->getFull();
 	}
-	else if((name == "bestslots") ||
+	if((name == "bestslots") ||
 		(name == "bestslotslong") ||
 		(name == "bestslotsshort")) {
 		bool with_slots = (name != "bestslotshort");
@@ -299,7 +301,7 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 		}
 		return ret;
 	}
-	else if(name == "marked")
+	if(name == "marked")
 	{
 		if(fmt->marked_list)
 		{
@@ -308,39 +310,126 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 		}
 		return "";
 	}
-	else if(name == "markedversions")
+	if(name == "markedversions")
 	{
 		if(fmt->marked_list)
 			return fmt->marked_list->getMarkedString(*entity);
 		return "";
 	}
+	if((name == "upgradeinstalled") ||
+		(name == "slotupgradeinstalled")) {
+		if(entity->compare(fmt->vardb, true) > 0)
+			return "1";
+		if(name == "upgradeinstalled")
+			return "";
+		if(entity->compare_slots(fmt->vardb, true) > 0)
+			return "1";
+		return "";
+	}
+	if((name == "downgradeinstalled") ||
+		(name == "slotdowngradeinstalled")) {
+		int c = entity->compare(fmt->vardb, true, (name != "downgradeinstalled"));
+		if((c < 0) || (c == 2))
+			return "1";
+		return "";
+	}
+	if((name == "differinstalled") ||
+		(name == "slotdifferinstalled")) {
+		if(entity->compare(fmt->vardb, true))
+			return "1";
+		if(name == "differinstalled")
+			return "";
+		if(entity->compare_slots(fmt->vardb, true))
+			return "1";
+		return "";
+	}
+	if((name == "upgradepotentially") ||
+		(name == "slotupgradepotentially")) {
+		if(entity->compare(fmt->vardb, false) > 0)
+			return "1";
+		if(name == "upgradepotentially")
+			return "";
+		if(entity->compare_slots(fmt->vardb, false) > 0)
+			return "1";
+		return "";
+	}
+	if((name == "downgradepotentially") ||
+		(name == "slotdowngradepotentially")) {
+		int c = entity->compare(fmt->vardb, true, (name != "downgradepotentially"));
+		if((c < 0) || (c == 2))
+			return "1";
+		return "";
+	}
+	if((name == "differpotentially") ||
+		(name == "slotdifferpotentially")) {
+		int c = entity->compare(fmt->vardb, false);
+		if(c == -2)
+			c = 0;
+		if(c)
+			return "1";
+		if(name == "differpotentially")
+			return "";
+		c = entity->compare(fmt->vardb, false, (name != "differpotentially"));
+		if(c == -2)
+			c = 0;
+		if(c)
+			return "1";
+		return "";
+	}
 	throw(ExBasic("Unknown property '%s'.", name.c_str()));
+}
+
+void *old_or_new(string *new_name, Package *older, Package *newer, const string &name)
+{
+	const char *s = name.c_str();
+	if(strncmp(s, "old", 3) == 0)
+	{
+		*new_name = s + 3;
+		return (void *)older;
+	}
+	if(strncmp(s, "new", 3) == 0)
+	{
+		*new_name = s + 3;
+		return (void *)newer;
+	}
+	*new_name = name;
+	return (void *)newer;
 }
 
 string
 get_diff_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
 {
-	Package *newer = ((Package**)void_entity)[1];
 	Package *older = ((Package**)void_entity)[0];
-	if(name == "upgrade")  {
-		Version *new_best = newer->best(),
-				*old_best = older->best();
-
-		if(new_best == NULL && old_best != NULL) {
-			return "";
-		}
-
-		if((new_best != NULL && old_best == NULL)
-				|| *new_best > *old_best) {
-			return "yes";
-		}
+	Package *newer = ((Package**)void_entity)[1];
+	if((name == "upgrade") ||
+		(name == "slotupgrade")) {
+		if(older->compare(*newer, (name != "upgrade")) < 0)
+			return "1";
 		return "";
 	}
-	return get_package_property(fmt, (void*)newer, name);
+	if((name == "downgrade") ||
+		(name == "slotdowngrade")) {
+		if(newer->compare(*older, (name != "downgrade")) < 0)
+			return "1";
+		return "";
+	}
+	if((name == "differ") ||
+		(name == "slotdiffer")) {
+		if(newer->compare(*older, (name != "differ")) != 0)
+			return "1";
+		return "";
+	}
+	string new_name;
+	void *entity = old_or_new(&new_name, older, newer, name);
+	return get_package_property(fmt, entity, new_name);
 }
 
 void
 print_diff_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
 {
-	print_package_property(fmt, ((Package**)void_entity)[1], name);
+	Package *older = ((Package**)void_entity)[0];
+	Package *newer = ((Package**)void_entity)[1];
+	string new_name;
+	void *entity = old_or_new(&new_name, older, newer, name);
+	print_package_property(fmt, entity, new_name);
 }

@@ -33,8 +33,11 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
 #include <portage/version.h>
+
+class VarDbPkg;
 
 /** A sorted list of pointer to Versions */
 
@@ -69,7 +72,7 @@ class SlotVersions
 };
 
 /** This list is always sorted with respect to the first version for each slot */
-class SlotList : public std::list<SlotVersions>
+class SlotList : public std::vector<SlotVersions>
 {
 	public:
 		void push_back_largest(Version *version);
@@ -150,6 +153,74 @@ class Package
 		Version *best_slot(const char *slot_name) const;
 
 		void best_slots(std::vector<Version*> &l) const;
+
+		/** Compare best_slots() versions with that of p.
+		    return value:
+			 0: Everything matches
+			 1: p has a smaller value and no larger
+			-1: p has a larger  value and no smaller
+			 2: p has a smaller and a larger value
+			-2: Everything matches, but overlays are different */
+		int compare_slots(const Package &p) const;
+
+		/** Compare best_slots() versions with that installed in v.
+		    if v is NULL, it is assumed that none is installed.
+		    return value:
+			 0: All installed versions are best and
+			    (unless only_installed) one is installed
+			 1: upgrade   necessary but no downgrade
+			-1: downgrade necessary but no upgrade
+			 2: upgrade and downgrade necessary
+			-2: (if only_installed) nothing is installed,
+			    and nothing can be installed
+			 3: (if only_installed) nothing is installed,
+			    but one can be installed */
+		int compare_slots(VarDbPkg *v, bool only_installed) const;
+
+		/** Compare best() version with that of p.
+		    return value:
+			 0: same
+			 1: p is smaller
+			-1: p is larger
+			-2: same, but overlays are different */
+		int compare(const Package &p) const;
+
+		/** Compare best() version with that installed in v.
+		    if v is NULL, it is assumed that none is installed.
+		    return value:
+			 0: All installed versions are best and
+			    (unless only_installed) one is installed
+			 1: upgrade necessary
+			-1: downgrade necessary
+			-2: (if only_installed) nothing is installed,
+			    and nothing can be installed
+			 3: (if only_installed) nothing is installed,
+			    but one can be installed */
+		int compare(VarDbPkg *v, bool only_installed) const;
+
+		int compare(const Package &p, bool with_slots) const
+		{
+			if(with_slots)
+				return compare_slots(p);
+			return compare(p);
+		}
+
+		int compare(VarDbPkg *v, bool only_installed, bool with_slots) const
+		{
+			if(with_slots)
+				return compare_slots(v, only_installed);
+			return compare(v, only_installed);
+		}
+
+		int compare(const Package &p, VarDbPkg *v, bool only_installed, bool installed, bool with_slots = false) const
+		{
+			if(installed)
+				return compare(v, only_installed, with_slots);
+			return compare(p, with_slots);
+		}
+
+		int compare_slots(const Package &p, VarDbPkg *v, bool only_installed, bool installed) const
+		{ return compare(p, v, only_installed, installed, true); }
 
 		const char *slotname(const BasicVersion &v) const;
 

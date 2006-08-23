@@ -67,7 +67,7 @@ class PackageTest {
 					INS_MASKED;      /* Test for masked installed packages */
 
 		/** Set default values. */
-		PackageTest(VarDbPkg *vdb = NULL);
+		PackageTest(VarDbPkg &vdb, PortageSettings &p);
 
 		void setAlgorithm(BaseAlgorithm *p)
 		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
@@ -87,11 +87,7 @@ class PackageTest {
 		{ slotted = true; multi_slot = multi; }
 
 		void Update(PortageSettings &p)
-		{
-			update = true;
-			portagesettings = &p;
-			accept_keywords = p.getAcceptKeywords();
-		}
+		{  update = true; }
 
 		void Overlay()
 		{ overlay = true; }
@@ -104,12 +100,10 @@ class PackageTest {
 
 		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
 		{
-			test_obsolete      = true;
-			portagesettings    = &p;
+			obsolete           = true;
 			redundant_flags    = first.red|second.red;
 			first_test         = first;
 			second_test        = second;
-			accept_keywords    = p.getAcceptKeywords();
 			test_installed     = test_ins;
 		}
 
@@ -136,7 +130,7 @@ class PackageTest {
 		std::auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
-		bool overlay, update, test_obsolete;
+		bool overlay, update, obsolete;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 
@@ -147,14 +141,10 @@ class PackageTest {
 		RedAtom first_test, second_test;
 		TestInstalled test_installed;
 
-
-		Keywords accept_keywords;
-
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
 
 		bool stringMatch(Package *pkg) const;
-		bool match_internal(PackageReader *pkg) const;
 
 		/** Get the Fetched-value that is required to determine the match */
 		void calculateNeeds();

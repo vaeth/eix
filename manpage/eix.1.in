@@ -339,11 +339,6 @@ All installed versions, separated by spaces.
 .BR markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.
 .TP
-.BR compactflags
-If the package is installed a "I", else "N".
-This property is kept only because of backward compatibility reasons. It
-could be easily replaced by using "B<Conditional blocks>".
-.TP
 .BR overlaykey
 if all versions are in the same overlay this expands to "overlaykey".
 When printed, "[overlaykey]" is printed with corresponding colors.
@@ -371,6 +366,43 @@ the packages PROVIDE-string
 .BR marked
 expands to "1" if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
+.TP
+.BR upgradeinstalled ", " downgradeinstalled ", " differinstalled
+expands to "1" if the package is installed and can be upgraded,
+should be downgraded, resp. one of both.
+The test takes only the best stable version into account.
+Usually, you will instead want to consider slots which is done by the following:
+.TP
+.BR slotupgradeinstalled
+expands to "1" if the package is installed, and if at least one slot
+can be upgraded or if a newer slot exists.
+.TP
+.BR slotdowngradeinstalled
+expands to "1" if at least one installed slot should be downgraded.
+.TP
+.BR slotdifferinstalled
+expands to "1" if one of the two above expand to "1".
+.TP
+.BR upgradepotential ", " downgradepotential ", " differpotential ", " slotupgradepotential ", " slotdowngradepotential ", " slotdifferpotential
+this is analogous to the corresponding B<*installed> version with the difference
+that uninstalled packages for which a stable version exists are considered as "upgradable".
+.TP
+.BR upgrade ", " downgrade ", " differ ", " slotupgrade ", " slotdowngrade ", " slotdiffer
+These variables can only be used in conditionals in B<DIFF_FORMAT_CHANGED>.
+B<upgrade> expands to "1" if the new package has a
+larger best version than the old slot or comes from a different overlay.
+The corresponding B<slotupgrade> variable takes all slots into account
+(which is usually what you want).
+The meaning of the other variables should be obvious.
+.TP
+.BR old* ", " new*
+These variables can only be used in B<DIFF_FORMAT_CHANGED>.
+They expand to the corresponding variable, taking the old resp. new data
+into account.
+If neither B<old> nor B<new> is specified, the new version is assumed.
+For example, B<oldbestslots> expands to the best slots of the previous version,
+while B<newbestslots> and B<bestslots> both expand to the best slots of the
+current (i.e. new) version.
 .\" }}}
 
 .\" {{{ -------- Colors
@@ -420,6 +452,14 @@ The variables can also be overridden by the environment.
 Per-user configuration file.
 .TP
 The variables in this file can be overridden by the environment.
+.TP
+.BR DIFF_NO_SLOTS "  " (true / false)
+If true, diff-eix will not consider slots for version changes.
+
+.TP
+.BR DIFF_ONLY_INSTALLED "  " (true / false)
+If true, diff-eix will only consider version changes for installed packages.
+
 .TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (Strings)
 Define the normal, compact and verbose layout for results printed by B<eix> (See

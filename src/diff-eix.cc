@@ -135,6 +135,51 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 	fclose(fp);
 }
 
+class SetStability {
+	private:
+		const PortageSettings *portagesettings;
+		Keywords accepted_keywords;
+		bool ignore_etc_portage;
+
+	public:
+		SetStability(const PortageSettings &psettings, bool local_portage_config)
+		{
+			portagesettings = &psettings;
+			ignore_etc_portage = !local_portage_config;
+			if(local_portage_config)
+				accepted_keywords = psettings.getAcceptKeywords();
+			else
+				accepted_keywords = Keywords::KEY_STABLE;
+		}
+
+		void set_stability(Package &package) const
+		{
+			if(!ignore_etc_portage)
+			{
+				portagesettings->user_config->setMasks(&package);
+				portagesettings->user_config->setStability(&package, accepted_keywords);
+			}
+			else
+			{
+				portagesettings->setStability(&package, accepted_keywords);
+			}
+		}
+
+		void set_stability(Category &category) const
+		{
+			for(Category::iterator it = category.begin();
+				it != category.end(); ++it)
+				set_stability(**it);
+		}
+
+		void set_stability(PackageTree &tree) const
+		{
+			for(PackageTree::iterator it = tree.begin();
+				it != tree.end(); ++it)
+				set_stability(**it);
+		}
+};
+
 void
 set_virtual(PrintFormat *fmt, const DBHeader &header)
 {
@@ -157,15 +202,9 @@ class DiffTrees
 		found_func found_package;
 		changed_func changed_package;
 
-		DiffTrees(const PortageSettings &psettings, bool local_portage_config)
-		{
-			portagesettings = &psettings;
-			ignore_etc_portage = !local_portage_config;
-			if(local_portage_config)
-				accepted_keywords = psettings.getAcceptKeywords();
-			else
-				accepted_keywords = Keywords::KEY_STABLE;
-		}
+		DiffTrees(VarDbPkg *vardbpkg, bool only_installed, bool compare_slots) :
+			m_vardbpkg(vardbpkg), m_only_installed(only_installed), m_slots(compare_slots)
+		{ }
 
 		/// Diff the trees and run callbacks
 		void diff(PackageTree &old_tree, PackageTree &new_tree)
@@ -188,9 +227,19 @@ class DiffTrees
 			}
 		}
 	private:
-		Keywords accepted_keywords;
-		const PortageSettings *portagesettings;
-		bool ignore_etc_portage;
+		VarDbPkg *m_vardbpkg;
+		bool m_only_installed, m_slots;
+
+		bool best_differs(const Package *new_pkg, const Package *old_pkg)
+		{
+			if(new_pkg->compare(*old_pkg, m_vardbpkg, true, m_only_installed))
+				return true;
+			if(!m_slots)
+				return false;
+			if(new_pkg->compare_slots(*old_pkg, m_vardbpkg, true, m_only_installed))
+				return true;
+			return false;
+		}
 
 		/// Diff two categories and run callbacks.
 		// Remove already diffed packages.
@@ -207,7 +256,7 @@ class DiffTrees
 					lost_package(*old_pkg);
 
 				// Best version differs
-				else if(best_differs(**old_pkg, **new_pkg, true))
+				else if(best_differs(*new_pkg, *old_pkg))
 					changed_package(*old_pkg, *new_pkg);
 
 				// Remove the new package
@@ -221,46 +270,6 @@ class DiffTrees
 				delete *old_pkg;
 				old_pkg = old_cat.erase(old_pkg);
 			}
-		}
-
-		/// Return true if the best versions/slot of both packages differ.
-		bool best_differs(Package &p1, Package &p2, bool test_all_slots = true)
-		{
-			if(!ignore_etc_portage)
-			{
-				portagesettings->user_config->setMasks(&p1);
-				portagesettings->user_config->setStability(&p1, accepted_keywords);
-				portagesettings->user_config->setMasks(&p2);
-				portagesettings->user_config->setStability(&p2, accepted_keywords);
-			}
-			else
-			{
-				portagesettings->setStability(&p1, accepted_keywords);
-				portagesettings->setStability(&p2, accepted_keywords);
-			}
-
-			if(!test_all_slots)
-			{
-				Version *old_best = p1.best();
-				Version *new_best = p2.best();
-				if(old_best && new_best)
-					return (*old_best != *new_best);
-				return (old_best != new_best);
-			}
-			vector<Version*> old_best;
-			vector<Version*> new_best;
-			p1.best_slots(old_best);
-			p2.best_slots(new_best);
-			if(old_best.size() != new_best.size())
-				return true;
-			vector<Version*>::const_iterator old_it = old_best.begin();
-			vector<Version*>::const_iterator new_it = new_best.begin();
-			for(; old_it != old_best.end(); ++old_it, ++new_it)
-			{
-				if(**old_it != **new_it)
-					return true;
-			}
-			return false;
 		}
 };
 
@@ -338,16 +347,16 @@ run_diff_eix(int argc, char *argv[])
 		new_file = current_param->m_argument;
 	}
 
-	string varname;
+	const char *varname;
 	try {
 		varname = "DIFF_FORMAT_NEW";
-		format_new = format_for_new.parseFormat(eixrc["DIFF_FORMAT_NEW"].c_str());
+		format_new = format_for_new.parseFormat(eixrc[varname].c_str());
 
 		varname = "DIFF_FORMAT_DELETE";
-		format_delete = format_for_new.parseFormat(eixrc["DIFF_FORMAT_DELETE"].c_str());
+		format_delete = format_for_new.parseFormat(eixrc[varname].c_str());
 
 		varname = "DIFF_FORMAT_CHANGED";
-		format_changed = format_for_new.parseFormat(eixrc["DIFF_FORMAT_CHANGED"].c_str());
+		format_changed = format_for_new.parseFormat(eixrc[varname].c_str());
 	}
 	catch(ExBasic e) {
 		cout << "Problems while parsing " << varname << "." << endl
@@ -368,22 +377,28 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.setupColors();
 
+	SetStability set_stability(portagesettings, eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG"));
+
 	DBHeader old_header;
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);
+	set_stability.set_stability(old_tree);
 
 	DBHeader new_header;
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree);
+	set_stability.set_stability(new_tree);
 
 	format_for_new.set_overlay_translations(NULL);
 	format_for_old = format_for_new;
 	set_virtual(&format_for_old, old_header);
 	set_virtual(&format_for_new, new_header);
 
+	DiffTrees differ(&varpkg_db,
+		eixrc.getBool("DIFF_ONLY_INSTALLED"),
+		!eixrc.getBool("DIFF_NO_SLOTS"));
 	INFO("Diffing databases (%i - %i packages)\n", old_tree.countPackages(), new_tree.countPackages());
 
-	DiffTrees differ(portagesettings, eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG"));
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;
 	differ.changed_package = print_changed_package;

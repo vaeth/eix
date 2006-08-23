@@ -17,11 +17,17 @@
 	- Add update-eix-remote
 	- Distinguish old/new overlays in diff-eix
 	- Fix manpage bug: best=bestlong
-	- Introduce COLOR_SLOT, *COLORED_SLOT, *COLON_SLOT
+	- Introduce COLOR_SLOTS, *COLORED_SLOTS, *COLON_SLOTS
 	- Introduce --slot-sorted, STYLE_SLOT_SORTED
 	- Introduce bestversions* format
 	- diff-eix outputs package also if best versions change in some slot.
 	- Implement -u option.
+	- Introduce DIFF_ONLY_INSTALLED, DIFF_NO_SLOTS
+	- Introduce formats old* and new* for DIFF_FORMAT_CHANGED.
+	- Introduce formats {slot,}{upgrade,downgrade,differ}
+	  for DIFF_FORMAT_CHANGED.
+	- Introduce formats *installed and *potential to visualize upgrades.
+	- Change default formatstrings to use new features.
 
 *eix-0.6.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

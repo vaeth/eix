@@ -29,45 +29,58 @@
 #include "../config.h"
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_NO_SLOTS",
+			"false", "If true, diff-eix will not consider slots for version changes.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_ONLY_INSTALLED",
+			"false", "If true, diff-eix will only consider version changes for installed packages.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
-			"[{installedversions}(yellow,1)U{else}(green,1)N{}()]"
+			"[{installedversions}{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{else}(green,1)N{}()]"
 			" (green,1)>>() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({bestshort}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for new packages.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
-			"    (red,1)\\<\\<() "
+			"{installedversions}[(purple,1)D()]{else}   {}"
+			" (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({bestshort}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({installedversions}<installedversions>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
-			"[{installedversions}{upgrade}(yellow,1)U{else}(red,1)D{}{else}(green,1)N{}()]"
+			"[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{slotupgrade}(yellow,1)>{}{slotdowngrade}(red,1)\\<{}()]"
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({bestshort}<best>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({oldbestshort}<oldbestslots>() -> {}{bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
-			"(green)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
+			"{slotdifferinstalled}[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}()]{else}(green)*{}"
+			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
-			"     (green)Homepage:()            <homepage>\n"
-			"     (green)Description:()         <description>\n", "Define the format for the normal output of searches.")
+			"{homepage}     (green)Homepage:()            <homepage>\n{}"
+			"{description}     (green)Description:()         <description>\n{}",
+			"Define the format for the normal output of searches.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversions}(yellow,1)I{else}(green,1)N{}()] {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversions}(), {}{}(green)<installedversions>()\\): <description>",
+			"[{installedversions}{slotdifferinstalled}{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{else}(cyan,1)I{}{else}(green,1)N{}()]"
+			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversions}(), {}{}(green)<installedversions>()\\): <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
@@ -75,13 +88,15 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_VERBOSE",
 			"(green,0)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"     (green)Installed:()           {installedversions}<installedversions>{else}none{}\n"
-			"     (green)Best versions/slot:()  {bestslotsshort}<bestslotslong>{else}none{}\n"
+			"{installedversions}     (green)Installed:()           <installedversions>\n{}"
+			"{bestshort}     (green)Best versions/slot:()  <bestslots>\n{}"
+			"{slotdifferinstalled}     (green)Recommendation:()      {slotupgradeinstalled}(cyan,1)Upgrade{slotdowngradeinstalled} and {}{}{slotdowngradeinstalled}(purple,1)Downgrade{}\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
-			"     (green)Homepage:()            <homepage>\n"
-			"     (green)Description:()         <description>\n"
-			"     (green)Provides:()            {provide}<provide>{else}none{}\n"
-			"     (green)License:()             <licenses>\n", "Defines the verbose output for eix (-v).")
+			"{homepage}     (green)Homepage:()            <homepage>\n{}"
+			"{description}     (green)Description:()         <description>\n{}"
+			"{provide}     (green)Provides:()            <provide>\n{}"
+			"{licenses}     (green)License:()             <licenses>\n{}",
+			"Defines the verbose output for eix (-v).")
 		);
 
 eixrc.addDefault(
@@ -193,65 +208,65 @@ eixrc.addDefault(
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTDIR_CACHE_METHOD",
-			PORTDIR_CACHE_METHOD ,"Portage cache-backend that should be used for PORTDIR (metadata/flat/cdb/none/backport/eix[:file[:nr]]")
+			PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR (metadata/flat/cdb/none/backport/eix[:file[:nr]]")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERLAY_CACHE_METHOD",
-			"none","Portage cache-backend that should be used for the overlays (metadata/flat/cdb/none/backport/eix[:file[:nr]]).")
+			"none", "Portage cache-backend that should be used for the overlays (metadata/flat/cdb/none/backport/eix[:file[:nr]]).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERRIDE_CACHE_METHOD",
-			"","Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
+			"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
 			"# This is a list of pairs DIRECTORY METHOD. Later entries take precedence.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_LOCAL_CACHE_METHOD",
-			"","This variable is added to OVERRIDE_CACHE_METHOD.\n"
+			"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
 			"# This variable is meant to be set only locally.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_CACHE_METHOD",
-			"","This variable is added to OVERRIDE_CACHE_METHOD.\n"
+			"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
 			"# This variable is meant to be set only temporarily in the environment.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EXCLUDE_OVERLAY",
-			"","List of overlays that should be excluded from the index.")
+			"", "List of overlays that should be excluded from the index.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_OVERLAY",
-			"","List of overlays that should be added to the index.")
+			"", "List of overlays that should be added to the index.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "LOCAL_PORTAGE_CONFIG",
-			"true","If false, eix won't read /etc/portage and ACCEPT_KEYWORDS.")
+			"true", "If false, eix won't read /etc/portage and ACCEPT_KEYWORDS.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_LOCAL_PORTAGE_CONFIG",
-			"true","If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS.")
+			"true", "If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_SLOTS",
-			"true","If false, eix never prints any slot information.")
+			"true", "If false, eix never prints any slot information.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_PRINT_SLOTS",
-			"false","If false, diff-eix never prints any slot information.")
+			"false", "If false, diff-eix never prints any slot information.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
-			"false","If true, always print the number of matches in the last line.")
+			"false", "If true, always print the number of matches in the last line.")
 		);
 
 /* fancy new feature: change default matchfield depending on the searchstring. */
@@ -271,24 +286,24 @@ MATCH_IF(PROVIDE,       "^virtual/");
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MATCH_ORDER",
-			"PROVIDE CATEGORY_NAME NAME","Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.")
+			"PROVIDE CATEGORY_NAME NAME", "Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_EMPTY",
-			"true","Defines whether empty entries in /etc/portage/package.* are shown with -t.")
+			"true", "Defines whether empty entries in /etc/portage/package.* are shown with -t.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_NONEXISTENT",
-			"true","Defines whether non-existing installed versions are positive for -T.")
+			"true", "Defines whether non-existing installed versions are positive for -T.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "NONEXISTENT_IF_MASKED",
-			"true","Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.")
+			"true", "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_REDUNDANCY",
-			"true","Defines whether redundant entries are positive for -T.")
+			"true", "Defines whether redundant entries are positive for -T.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",

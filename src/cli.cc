@@ -38,7 +38,7 @@ using namespace std;
 #define USE_NEXT { \
 	FINISH_CURRENT; \
 	current = next; \
-	test = new PackageTest(&varpkg_db); }
+	test = new PackageTest(varpkg_db, portagesettings); }
 
 
 Matchatom *
@@ -47,7 +47,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
 	Matchatom   *current = root;
-	PackageTest *test    = new PackageTest(&varpkg_db);
+	PackageTest *test    = new PackageTest(varpkg_db, portagesettings);
 
 	bool need_logical_operator = false;
 	bool have_default_operator = false;
