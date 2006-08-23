@@ -35,12 +35,15 @@
 #include <eixTk/exceptions.h>
 #include <portage/package.h>
 
+class PrintFormat;
+
 /** Holds every installed version of a package. */
 class VarDbPkg {
 	private:
 		/** Mapping of [category][package] to list versions. */
 		std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* > installed;
 		std::string _directory; /**< This is the db-directory. */
+		bool _have_slots;
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULL if not found .. else pointer to vector of versions. */
@@ -52,9 +55,9 @@ class VarDbPkg {
 
 	public:
 		/** Default constructor. */
-		VarDbPkg(std::string directory) {
-			_directory = directory;
-		}
+		VarDbPkg(std::string directory, bool read_slots) :
+			_directory(directory), _have_slots(read_slots)
+		{ }
 
 		~VarDbPkg() {
 			std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* >::iterator it = installed.begin();
@@ -63,10 +66,8 @@ class VarDbPkg {
 			}
 		}
 
-		/** Find installed versions of packet "name" in category "category".
-		 * @param p the Package you would like the info for
-		 * @return string with installed versions */
-		std::string getInstalledString(const Package &p);
+		bool have_slots() const
+		{ return _have_slots; }
 
 		/** Find installed versions
 		 * @return NULL if not found .. else pointer to vector of versions. */

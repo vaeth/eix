@@ -36,6 +36,10 @@
 class BasicVersion
 {
 	public:
+		/** The slot, the version represents.
+		    For saving space, the default "0" is always stored as "" */
+		std::string slot;
+
 		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
 		static const char *suffixlevels[];
 		/** Index in suffixlevels where versions without a index are located. */
@@ -80,6 +84,19 @@ class BasicVersion
 		const char   *getFull() const
 		{ return m_full.c_str(); }
 
+		std::string getSlotAppendix (bool colon) const
+		{
+			if(slot.length())
+			{
+				if(colon)
+					return std::string(":") + slot;
+				return std::string("(") + slot + ")";
+			}
+			return "";
+		}
+
+		std::string getFullSlotted (bool colon) const
+		{ return std::string(getFull()) + getSlotAppendix(colon); }
 	protected:
 		/** The m_full version-string. */
 		std::string             m_full;

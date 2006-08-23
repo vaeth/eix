@@ -32,6 +32,43 @@
 
 using namespace std;
 
+string
+get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text)
+{
+	if((!fmt->show_slots))
+		return version->getFull();
+	if(pure_text || fmt->no_color || (!fmt->colored_slots))
+		return version->getFullSlotted(fmt->colon_slots);
+	string slot = version->getSlotAppendix(fmt->colon_slots);
+	if(!slot.size())
+		return version->getFull();
+	return version->getFull() + fmt->color_slots + slot +
+		AnsiColor(AnsiColor::acDefault, 0).asString();
+}
+
+string
+getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
+{
+	if(!fmt.vardb)
+		return "";
+	vector<BasicVersion> *vec = fmt.vardb->getInstalledVector(p);
+	if(!vec) {
+		return "";
+	}
+
+	vector<BasicVersion>::iterator it = vec->begin();
+	if(it == vec->end())
+		return "";
+	string ret;
+	for(;;) {
+		ret.append(get_basic_version(&fmt, &(*it), pure_text));
+		if(++it == vec->end())
+			return ret;
+		ret.append(" ");
+	}
+}
+
+
 void
 print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay)
 {
@@ -199,6 +236,12 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 		print_versions(fmt, entity, (name != "availableversionsshort"));
 		return;
 	}
+	if(name == "installedversions") {
+		if(!fmt->vardb)
+			return;
+		cout << getInstalledString(*entity, *fmt, false);
+		return;
+	}
 	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key) {
@@ -253,7 +296,9 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 		return entity->licenses;
 	}
 	if(name == "installedversions") {
-		return entity->installed_versions;
+		if(!fmt->vardb)
+			return "";
+		return getInstalledString(*entity, *fmt, true);
 	}
 	if(name == "provide") {
 		return entity->provide;

@@ -84,6 +84,7 @@ dump_help(int exit_code)
 			"     --dump                dump variables to stdout\n"
 			"\n"
 			"   Special:\n"
+			"     -Q, --quick           don't read slots of installed packages\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
 			"                           of /etc/portage/package.* and non-matching names\n"
 			"                           of installed packages; this option is best\n"
@@ -188,6 +189,7 @@ PrintFormat format(get_package_property, print_package_property);
 /** Local options for argument reading. */
 static struct LocalOptions {
 	bool be_quiet,
+		 quick,
 		 verbose_output,
 		 compact_output,
 		 show_help,
@@ -203,6 +205,7 @@ static struct LocalOptions {
 static struct Option long_options[] = {
 	// Global options
 	Option("quiet",        'q',     Option::BOOLEAN,       &rc_options.be_quiet),
+	Option("quick",        'Q',     Option::BOOLEAN,       &rc_options.quick),
 
 	Option("nocolor",      'n',     Option::BOOLEAN_T,     &format.no_color),
 	Option("force-color",  'F',     Option::BOOLEAN_F,     &format.no_color),
@@ -269,6 +272,8 @@ setup_defaults()
 	// Setup defaults
 	(void) memset(&rc_options, 0, sizeof(rc_options));
 
+	rc_options.quick           = rc.getBool("QUICKREADING");
+
 	format_verbose             = (char*) rc["FORMAT_VERBOSE"].c_str();
 	format_compact             = (char*) rc["FORMAT_COMPACT"].c_str();
 	format_normal              = (char*) rc["FORMAT"].c_str();
@@ -327,7 +332,6 @@ run_eix(int argc, char** argv)
 {
 	const string var_db_pkg = "/var/db/pkg/";
 
-	VarDbPkg varpkg_db(var_db_pkg.c_str());
 	EixRc &eixrc = get_eixrc();
 
 	// Setup defaults for all global variables like rc_options
@@ -361,6 +365,8 @@ run_eix(int argc, char** argv)
 	if(rc_options.be_quiet) {
 		close(1);
 	}
+
+	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick);
 
 	PortageSettings portagesettings;
 	MarkedList *marked_list = NULL;
@@ -477,8 +483,6 @@ run_eix(int argc, char** argv)
 		else {
 			portagesettings.setStability(*it, accepted_keywords);
 		}
-
-		it->installed_versions = varpkg_db.getInstalledString(**it);
 
 		if(it->largest_overlay)
 		{

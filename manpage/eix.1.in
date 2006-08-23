@@ -40,6 +40,12 @@ from B<emerge> and B<update-eix> to I</var/log/eix-sync.log> for cleanliness.
 .SS Common options
 These options are common to all programs in the eix-suite.
 .TP
+.BR -Q ", " --quick
+Do not read the slots of installed versions.
+This will speed up the startup enormously.
+The disadvantage is that the slots of installed version will not be printed.
+Moreover, eix or diff-eix might report false positives about downgrades.
+.TP
 .BR -q ", " --quiet
 Produce no output on stderr and stdout (fatal errors which occur at the
 beginning of execution are printed to stderr, regardless of this option).
@@ -453,6 +459,14 @@ Per-user configuration file.
 .TP
 The variables in this file can be overridden by the environment.
 .TP
+.BR QUICKREADING "  " (true / false)
+If true, eix will use B<--quick> by default.
+
+.TP
+.BR QUICKREADING "  " (true / false)
+If true, diff-eix will use B<--quick> by default.
+
+.TP
 .BR DIFF_NO_SLOTS "  " (true / false)
 If true, diff-eix will not consider slots for version changes.
 
@@ -492,11 +506,11 @@ Use colors even when stdout is not a terminal.
 
 .TP
 .BR STYLE_VERSION_LINES "  " (true / false)
-Turns --versionlines on.
+Turns B<--versionlines> on.
 
 .TP
 .BR STYLE_SLOT_SORTED "  " (true / false)
-Turns --slotsorted on.
+Turns B<--slotsorted> on.
 
 .TP
 .BR COLORED_SLOTS "  " (true / false)

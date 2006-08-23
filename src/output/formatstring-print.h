@@ -35,6 +35,8 @@
 #include <portage/version.h>
 #include <eixTk/exceptions.h>
 
+std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text);
+std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text);
 void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slot, bool exclude_overlay);
 void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 void print_versions_slots(const PrintFormat *fmt, const Package *p);

@@ -117,7 +117,7 @@ class Package
 		bool is_system_package;
 
 		/** Package properties (stored in db) */
-		std::string category, name, desc, homepage, licenses, installed_versions, provide;
+		std::string category, name, desc, homepage, licenses, provide;
 
 		/// Preset with defaults
 		Package()

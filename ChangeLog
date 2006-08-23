@@ -28,6 +28,8 @@
 	  for DIFF_FORMAT_CHANGED.
 	- Introduce formats *installed and *potential to visualize upgrades.
 	- Change default formatstrings to use new features.
+	- Read slots of installed versions.
+	- Introduce -Q option.
 
 *eix-0.6.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

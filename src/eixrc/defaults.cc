@@ -29,9 +29,15 @@
 #include "../config.h"
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "DIFF_NO_SLOTS",
-			"false", "If true, diff-eix will not consider slots for version changes.")
+		EixRcOption(EixRcOption::BOOLEAN, "QUICKREADING",
+			"false", "whether --quick is on for eix by default.")
 		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_QUICKREADING",
+			"false", "whether --quick is on for diff-eix by default.")
+		);
+
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_ONLY_INSTALLED",
@@ -58,7 +64,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
-			"[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{slotupgrade}(yellow,1)>{}{slotdowngrade}(red,1)\\<{}()]"
+			"[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{!slotupgradeinstalled}{slotupgrade}(yellow,1)>{}{}{!slotdowngradeinstalled}{slotdowngrade}(red,1)\\<{}{}()]"
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({oldbestshort}<oldbestslots>() -> {}{bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
@@ -71,6 +77,7 @@ eixrc.addDefault(
 			"{slotdifferinstalled}[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
+			"{installedversions}     (green)Installed:()           <installedversions>\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"{homepage}     (green)Homepage:()            <homepage>\n{}"
 			"{description}     (green)Description:()         <description>\n{}",

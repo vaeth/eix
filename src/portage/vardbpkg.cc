@@ -29,8 +29,11 @@
 #include "vardbpkg.h"
 
 #include <eixTk/stringutils.h>
+#include <eixTk/utils.h>
 #include <portage/basicversion.h>
 #include <portage/package.h>
+#include <output/formatstring.h>
+#include <output/formatstring-print.h>
 
 #include <dirent.h>
 
@@ -59,31 +62,6 @@ vector<BasicVersion> *VarDbPkg::getInstalledVector(const string &category, const
 	if(cat_it == installed_cat->end())
 		return NULL; /* Not installed */
 	return &(cat_it->second);
-}
-
-/** Find installed versions of packet "name" in category "category".
- * @param p the Package you would like the info for
- * @return string with installed versions */
-string VarDbPkg::getInstalledString(const Package &p)
-{
-	vector<BasicVersion> *vec = getInstalledVector(p);
-	if(!vec) {
-		return "";
-	}
-
-	string ret;
-	vector<BasicVersion>::iterator it = vec->begin();
-	if(it == vec->end()) {
-		return "";
-	}
-	for(;;) {
-		ret.append(it->getFull());
-		if(++it == vec->end()) {
-			break;
-		}
-		ret.append(" ");
-	}
-	return ret;
 }
 
 /** Returns true if a Package installed. */
@@ -119,7 +97,8 @@ void VarDbPkg::readCategory(const char *category)
 	struct dirent* package_entry;  /* current package dirent */
 
 	/* Open category-directory */
-	if( (dir_category = opendir((_directory + category).c_str())) == NULL) {
+	string dirname = _directory + category;
+	if( (dir_category = opendir(dirname.c_str())) == NULL) {
 		installed[category] = NULL;
 		return;
 	}
@@ -127,16 +106,36 @@ void VarDbPkg::readCategory(const char *category)
 	installed[category] = category_installed = new map<string,vector<BasicVersion> >;
 	OOM_ASSERT(category_installed);
 
+	dirname.append("/");
+
 	/* Cycle through this category */
 	while( (package_entry = readdir(dir_category)) != NULL )
 	{
+
 		if(package_entry->d_name[0] == '.')
 			continue; /* Don't want dot-stuff */
 		char **aux = ExplodeAtom::split( package_entry->d_name);
 		if(aux == NULL)
 			continue;
 		try {
-			(*category_installed)[aux[0]].push_back(BasicVersion(aux[1]));
+			BasicVersion version(aux[1]);
+			if(_have_slots)
+			{
+				vector<string> lines;
+				if(pushback_lines(
+					(dirname + package_entry->d_name + "/SLOT").c_str(),
+					&lines, true, false))
+				{
+					if(lines.size())
+					{
+						if(lines[0] != "0")
+							version.slot = lines[0];
+					}
+					(*category_installed)[aux[0]].push_back(version);
+				}
+			}
+			else
+				(*category_installed)[aux[0]].push_back(version);
 		}
 		catch(ExBasic e) {
 			cerr << e << endl;

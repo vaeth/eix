@@ -305,11 +305,17 @@ Package::compare_slots(VarDbPkg *v, bool only_installed) const
 	for(vector<BasicVersion>::const_iterator it = ins->begin();
 		it != ins->end() ; ++it)
 	{
-		const char *name = slotname(*it);
-		if(!name)
+		const char *name;
+		if(v->have_slots())
+			name = (it->slot).c_str();
+		else
 		{
-			downgrade = true;
-			continue;
+			name = slotname(*it);
+			if(!name)
+			{
+				downgrade = true;
+				continue;
+			}
 		}
 		Version *t_best_slot = best_slot(name);
 		if(!t_best_slot)

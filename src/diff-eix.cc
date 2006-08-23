@@ -64,7 +64,7 @@ void   signal_handler(int sig);
 PortageSettings portagesettings;
 PrintFormat     format_for_new(get_package_property, print_package_property);
 PrintFormat     format_for_old;
-VarDbPkg        varpkg_db("/var/db/pkg/");
+VarDbPkg       *varpkg_db;
 Node           *format_new, *format_delete, *format_changed;
 
 static void
@@ -73,6 +73,7 @@ print_help(int ret)
 	printf(
 		"diff-eix [options] old-cache [new-cache]\n"
 		"\n"
+		" -Q, --quick             don't read slots of installed packages\n"
 		" -n, --nocolor           don't use colors in output\n"
 		" -F, --force-color       force colors on things that are not a terminal\n"
 		"     --dump              dump variables to stdout\n"
@@ -96,7 +97,8 @@ print_help(int ret)
 
 bool cli_show_help    = false,
 	 cli_show_version = false,
-	 cli_dump_eixrc   = false;
+	 cli_dump_eixrc   = false,
+	 cli_quick;
 
 enum cli_options {
 	O_DUMP = 300,
@@ -111,6 +113,7 @@ static struct Option long_options[] = {
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
 	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
 	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
+	Option("quick",        'Q',    Option::BOOLEAN_T, &cli_quick),
 
 	Option(0, 0)
 };
@@ -284,24 +287,19 @@ print_changed_package(Package *op, Package *np)
 	Package *p[2];
 	p[0] = op;
 	p[1] = np;
-	op->installed_versions = np->installed_versions
-		= varpkg_db.getInstalledString(*np);
-
-	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &varpkg_db);
+	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, varpkg_db);
 }
 
 void
 print_found_package(Package *p)
 {
-	p->installed_versions = varpkg_db.getInstalledString(*p);
-	format_for_new.print(p, format_new, &varpkg_db);
+	format_for_new.print(p, format_new, varpkg_db);
 }
 
 void
 print_lost_package(Package *p)
 {
-	p->installed_versions = varpkg_db.getInstalledString(*p);
-	format_for_old.print(p, format_delete, &varpkg_db);
+	format_for_old.print(p, format_delete, varpkg_db);
 }
 
 
@@ -312,6 +310,10 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.no_color   = (isatty(1) != 1);
 
+	EixRc &eixrc = get_eixrc();
+
+	cli_quick = eixrc.getBool("DIFF_QUICKREADING");
+
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
 	ArgumentReader::iterator current_param = argreader.begin();
@@ -321,8 +323,6 @@ run_diff_eix(int argc, char *argv[])
 
 	if(cli_show_version)
 		dump_version(0);
-
-	EixRc &eixrc = get_eixrc();
 
 	if(cli_dump_eixrc) {
 		eixrc.dumpDefaults(stdout);
@@ -377,6 +377,8 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.setupColors();
 
+	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick);
+
 	SetStability set_stability(portagesettings, eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG"));
 
 	DBHeader old_header;
@@ -394,7 +396,7 @@ run_diff_eix(int argc, char *argv[])
 	set_virtual(&format_for_old, old_header);
 	set_virtual(&format_for_new, new_header);
 
-	DiffTrees differ(&varpkg_db,
+	DiffTrees differ(varpkg_db,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),
 		!eixrc.getBool("DIFF_NO_SLOTS"));
 	INFO("Diffing databases (%i - %i packages)\n", old_tree.countPackages(), new_tree.countPackages());
@@ -405,6 +407,7 @@ run_diff_eix(int argc, char *argv[])
 
 	differ.diff(old_tree, new_tree);
 
+	delete varpkg_db;
 	return 0;
 }
 
