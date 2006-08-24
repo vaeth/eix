@@ -31,6 +31,8 @@
 #include <eixTk/ansicolor.h>
 #include <eixTk/stringutils.h>
 
+#include <portage/conf/portagesettings.h>
+
 #include <iostream>
 #include <cstdlib>
 #include <map>
@@ -140,6 +142,24 @@ string MarkedList::getMarkedString(const Package &pkg) const
 	}
 	delete marked;
 	return ret;
+}
+
+LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg)
+{
+	if(fmt->recommend_local)
+	{
+		is_a_copy = true;
+		package = new Package;
+		package->deepcopy(*pkg);
+		fmt->portagesettings->user_config->setMasks(package);
+		fmt->portagesettings->user_config->setStability(package,
+			fmt->portagesettings->getAcceptKeywords());
+	}
+	else
+	{
+		is_a_copy = false;
+		package = pkg;
+	}
 }
 
 void

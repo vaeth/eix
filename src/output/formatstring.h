@@ -37,6 +37,7 @@
 #include <eixTk/ansicolor.h>
 
 class VarDbPkg;
+class PortageSettings;
 
 class Node {
 	public:
@@ -174,6 +175,7 @@ class PrintFormat {
 	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name) throw(ExBasic);
 	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name) throw(ExBasic);
+	friend class LocalCopy;
 
 	public:
 		typedef void   (*PrintProperty)(const PrintFormat *formatstring, void *entity, const std::string &property);
@@ -187,10 +189,14 @@ class PrintFormat {
 		std::vector<bool> *virtuals;
 		std::vector<Version::Overlay> *overlay_translations;
 		MarkedList    *marked_list;
-		/* The following is actually a hack:
+		/* The following two ares actually a hack:
 		   This is only set temporarily during printing to avoid
-		   passing this argument through all sub-functions */
+		   passing this argument through all sub-functions.
+		   We do it that way since we do not want to set it "globally":
+		   The pointers might possibly have changed until we use them */
 		VarDbPkg      *vardb;
+		PortageSettings *portagesettings;
+
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
@@ -200,7 +206,8 @@ class PrintFormat {
 		     show_slots,          /**< Shall we show slots at all? */
 		     slot_sorted,         /**< Print sorted by slots */
 		     colon_slots,         /**< Print slots separated with colons */
-		     colored_slots;       /**< Print slots in separate color */
+		     colored_slots,       /**< Print slots in separate color */
+		     recommend_local;     /**< Recommendation tests based on local settings? */
 
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,    /**< Color for unstable versions */
@@ -215,7 +222,8 @@ class PrintFormat {
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),
-			  vardb(NULL), overlay_translations(NULL), marked_list(NULL), virtuals(NULL)
+			  vardb(NULL), portagesettings(NULL),
+			  overlay_translations(NULL), marked_list(NULL), virtuals(NULL)
 			{ }
 
 		void setupColors() {
@@ -246,25 +254,25 @@ class PrintFormat {
 
 		std::string overlay_keytext(Version::Overlay overlay, bool never_color = false) const;
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg = NULL) {
-			vardb = vardbpkg;
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg, PortageSettings *ps) {
+			vardb = vardbpkg; portagesettings = ps;
 			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
-			vardb = NULL;
+			vardb=NULL; portagesettings = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg = NULL) {
-			vardb=vardbpkg;
+		void print(void *entity, Node *root, VarDbPkg *vardbpkg, PortageSettings *ps) {
+			vardb = vardbpkg; portagesettings = ps;
 			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
-			vardb=NULL;
+			vardb=NULL; portagesettings = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg = NULL) {
-			vardb=vardbpkg;
+		void print(void *entity, VarDbPkg *vardbpkg, PortageSettings *ps) {
+			vardb = vardbpkg; portagesettings = ps;
 			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
-			vardb=NULL;
+			vardb=NULL; portagesettings = NULL;
 		}
 
 		void setFormat(const char *fmt) throw(ExBasic) {
@@ -277,5 +285,19 @@ class PrintFormat {
 
 	private:
 };
+
+class LocalCopy {
+	private:
+		bool is_a_copy;
+	public:
+		Package *package;
+
+		LocalCopy(const PrintFormat *fmt, Package *pkg);
+
+		~LocalCopy()
+		{ if(is_a_copy) delete package; }
+};
+
+
 
 #endif /* __FORMATSTRING_H__ */

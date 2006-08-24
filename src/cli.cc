@@ -104,7 +104,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 				  break;
 			case '2': test->Slotted(true);
 				  break;
-			case 'u': test->Update(portagesettings);
+			case 'u': test->Update(eixrc.getBool("UPGRADE_ALWAYS_LOCAL"));
 				  break;
 			case 'O': test->Overlay();
 				  break;
@@ -141,7 +141,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
 						test_installed |= PackageTest::INS_MASKED;
 				  }
-				  test->ObsoleteCfg(portagesettings, red.first, red.second, test_installed);
+				  test->ObsoleteCfg(red.first, red.second, test_installed);
 				  break;
 			case '!': test->Invert();
 				  break;

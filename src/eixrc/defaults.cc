@@ -46,7 +46,8 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
-			"[{installedversions}{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{else}(green,1)N{}()]"
+			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1)N{}()]"
+			"{!recommend} {else}{!upgrade} {else} {!downgrade} {}{}{}"
 			" (green,1)>>() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
@@ -55,7 +56,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
-			"{installedversions}[(purple,1)D()]{else}   {}"
+			"{installedversions}[(purple,1)D()]{else}   {} "
 			" (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({installedversions}<installedversions>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
@@ -64,7 +65,8 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
-			"[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{!slotupgradeinstalled}{slotupgrade}(yellow,1)>{}{}{!slotdowngradeinstalled}{slotdowngrade}(red,1)\\<{}{}()]"
+			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!upgrade}{better}(yellow,1)>{}{}{!downgrade}{worse}(red,1)\\<{}{}()]"
+			"{!upgrade}{!better} {}{}{!downgrade}{!worse} {}{}"
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({oldbestshort}<oldbestslots>() -> {}{bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
@@ -74,7 +76,7 @@ eixrc.addDefault(
 /* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
-			"{slotdifferinstalled}[{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}()]{else}(green)*{}"
+			"{installedversions}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(default,1)I{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"{installedversions}     (green)Installed:()           <installedversions>\n{}"
@@ -86,7 +88,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversions}{slotdifferinstalled}{slotupgradeinstalled}(cyan,1)U{}{slotdowngradeinstalled}(purple,1)D{}{else}(cyan,1)I{}{else}(green,1)N{}()]"
+			"[{installedversions}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(default,1)I{}{else}(green,1)N{}()]"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversions}(), {}{}(green)<installedversions>()\\): <description>",
 			"Define the compact output shown when -c is used.")
 		);
@@ -97,7 +99,7 @@ eixrc.addDefault(
 			"     (green)Available versions:()  <availableversions>\n"
 			"{installedversions}     (green)Installed:()           <installedversions>\n{}"
 			"{bestshort}     (green)Best versions/slot:()  <bestslots>\n{}"
-			"{slotdifferinstalled}     (green)Recommendation:()      {slotupgradeinstalled}(cyan,1)Upgrade{slotdowngradeinstalled} and {}{}{slotdowngradeinstalled}(purple,1)Downgrade{}\n{}"
+			"{recommend}     (green)Recommendation:()      {upgrade}(cyan,1)Upgrade{downgrade} and {}{}{downgrade}(purple,1)Downgrade{}\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"{homepage}     (green)Homepage:()            <homepage>\n{}"
 			"{description}     (green)Description:()         <description>\n{}"
@@ -262,13 +264,28 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "UPGRADE_ALWAYS_LOCAL",
+			"true", "if true, eix -u will match according to local settings")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "RECOMMEND_ALWAYS_LOCAL",
+			"true", "if true, up-/downgrade recommendations accord always to local settings")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
+			"true", "If true, upgrade tests succeed for installed packages with new higher slots")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_SLOTS",
 			"true", "If false, eix never prints any slot information.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_PRINT_SLOTS",
-			"false", "If false, diff-eix never prints any slot information.")
+			"true", "If false, diff-eix never prints any slot information.")
 		);
 
 eixrc.addDefault(

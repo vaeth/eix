@@ -42,9 +42,14 @@ These options are common to all programs in the eix-suite.
 .TP
 .BR -Q ", " --quick
 Do not read the slots of installed versions.
-This will speed up the startup enormously.
-The disadvantage is that the slots of installed version will not be printed.
-Moreover, eix or diff-eix might report false positives about downgrades.
+This will speed up the (first) startup enormously
+(later startups go faster anyway, since the data will be in the disk cache).
+
+One disadvantage of this option is of course that the slots of
+installed version will not be printed. However, another disadvantage is that
+eix and diff-eix might report false positives for up-/downgrade recommendations
+of packages with at least two slots and an installed version not in the
+database anymore.
 .TP
 .BR -q ", " --quiet
 Produce no output on stderr and stdout (fatal errors which occur at the
@@ -141,7 +146,7 @@ Only match packages with a nontrivial slot, i.e. where SLOT is nonempty and diff
 Only match packages with at least two different slots.
 In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
 .TP
-.BR -u ", " --update
+.BR -u ", " --upgrade
 Only match packages which have at least one slotted version installed which
 is not the best version within that slot.
 This means that you should either upgrade or downgrade that package.
@@ -373,42 +378,42 @@ the packages PROVIDE-string
 expands to "1" if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
 .TP
-.BR upgradeinstalled ", " downgradeinstalled ", " differinstalled
-expands to "1" if the package is installed and can be upgraded,
-should be downgraded, resp. one of both.
-The test takes only the best stable version into account.
-Usually, you will instead want to consider slots which is done by the following:
+.BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
+B<upgrade> expands to "1" if the package is installed and at least one slot can be upgraded
+(or the best stable version is a new slot and B<UPDATE_TO_HIGHEST_SLOT> is true).
+The other variables test similarly whether the package can be upgraded or newly installed,
+should be downgraded, can/should be upgraded/downgraded,
+or can/should be upgraded/downgraded/installed, respectively.
+The variable B<RECOMMEND_ALWAYS_LOCAL> determines whether these tests always
+accord to the setting of /etc/portage and ACCEPT_KEYWORDS.
 .TP
-.BR slotupgradeinstalled
-expands to "1" if the package is installed, and if at least one slot
-can be upgraded or if a newer slot exists.
+.BR bestupgrade ", " bestupgradeorinstall ", " bestdowngrade ", " bestrecommend ", " bestrecommendorinstall
+as above with the difference that only the best stable version of the package
+is taken into account (and not all slots).
 .TP
-.BR slotdowngradeinstalled
-expands to "1" if at least one installed slot should be downgraded.
-.TP
-.BR slotdifferinstalled
-expands to "1" if one of the two above expand to "1".
-.TP
-.BR upgradepotential ", " downgradepotential ", " differpotential ", " slotupgradepotential ", " slotdowngradepotential ", " slotdifferpotential
-this is analogous to the corresponding B<*installed> version with the difference
-that uninstalled packages for which a stable version exists are considered as "upgradable".
-.TP
-.BR upgrade ", " downgrade ", " differ ", " slotupgrade ", " slotdowngrade ", " slotdiffer
-These variables can only be used in conditionals in B<DIFF_FORMAT_CHANGED>.
-B<upgrade> expands to "1" if the new package has a
-larger best version than the old slot or comes from a different overlay.
-The corresponding B<slotupgrade> variable takes all slots into account
-(which is usually what you want).
-The meaning of the other variables should be obvious.
+.BR better ", " worse ", " differ ", " bestbetter ", " bestworse ", " bestdiffer
+this can only be used in conditionals in B<DIFF_FORMAT_CHANGED>.
+B<better> expands to "1" if the new package has a new slot or a better stable
+version (or the same best stable version but from a different overlay number)
+for some slot than the old package.
+B<worse> means analogously that the old package had at least one better slot
+or a slot which is not available in the new package.
+B<differ> means that not all best stable slots of the old and new package
+coincide.
+The corresponding B<best*> versions have an analogous meaning with the
+difference that only the best stable version is taken into account
+(and not all slots).
+The variable B<RECOMMEND_ALWAYS_LOCAL> determines whether these tests are always
+according to the setting of /etc/portage and ACCEPT_KEYWORDS.
 .TP
 .BR old* ", " new*
-These variables can only be used in B<DIFF_FORMAT_CHANGED>.
-They expand to the corresponding variable, taking the old resp. new data
-into account.
+this can only be used in B<DIFF_FORMAT_CHANGED>.
+You can prefix any variable name to B<old> and B<new>, and the value
+corresponds to that variable, taking the old resp. new data into account.
 If neither B<old> nor B<new> is specified, the new version is assumed.
-For example, B<oldbestslots> expands to the best slots of the previous version,
+For example, B<oldbestslots> expands to the best slots of the old package,
 while B<newbestslots> and B<bestslots> both expand to the best slots of the
-current (i.e. new) version.
+current (i.e. new) package.
 .\" }}}
 
 .\" {{{ -------- Colors
@@ -683,6 +688,24 @@ environment.
 .BR DIFF_LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
 or the environment.
+.TP
+.BR UPGRADE_ALWAYS_LOCAL " " (true / false)
+If true, the B<--upgrade> option of eix will always match according to the
+local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
+independent of other options or variables.
+Note that this refers only to the match, not to the way the package is printed.
+.TP
+.BR RECOMMEND_ALWAYS_LOCAL " " (true / false)
+If true, the upgrade/downgrade recommendations as well as in diff-eix the
+tests for version changes will always accord to the
+local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
+independent of other options or variables.
+Note that this refers only to the way the test variables in the format strings
+are interpreted.
+.TP
+.BR UPGRADE_TO_HIGHEST_SLOT " " (true / false)
+If true, all upgrade tests will give a positive result for an installed
+package for which not the slot with the best stable version is installed.
 .TP
 .BR PRINT_SLOTS " " (true / false)
 If false, eix never prints any slot information.

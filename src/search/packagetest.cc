@@ -467,9 +467,14 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(update) { // -u
 		get_p();
-		get_user_accept();
-		set_user_flags();
-		if(! user->compare_slots(vardbpkg, true))
+		if(update_matches_local)
+		{
+			get_user_accept();
+			set_user_flags();
+			if(! user->recommend(vardbpkg, true, true))
+				return invert;
+		}
+		else if(! p->recommend(vardbpkg, true, true))
 			return invert;
 	}
 

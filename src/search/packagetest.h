@@ -86,8 +86,8 @@ class PackageTest {
 		void Slotted(bool multi = false)
 		{ slotted = true; multi_slot = multi; }
 
-		void Update(PortageSettings &p)
-		{  update = true; }
+		void Update(bool local_config)
+		{  update = true; update_matches_local = local_config; }
 
 		void Overlay()
 		{ overlay = true; }
@@ -98,7 +98,7 @@ class PackageTest {
 		void DuplPackages(bool only_overlay)
 		{ dup_packages = true; dup_packages_overlay = only_overlay; }
 
-		void ObsoleteCfg(PortageSettings &p, const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
+		void ObsoleteCfg(const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
 		{
 			obsolete           = true;
 			redundant_flags    = first.red|second.red;
@@ -130,7 +130,8 @@ class PackageTest {
 		std::auto_ptr<BaseAlgorithm> algorithm;
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
-		bool overlay, update, obsolete;
+		bool overlay, obsolete;
+		bool update, update_matches_local;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 

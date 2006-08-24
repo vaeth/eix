@@ -29,6 +29,7 @@
 
 #include "formatstring-print.h"
 #include <portage/vardbpkg.h>
+#include <portage/conf/portagesettings.h>
 
 using namespace std;
 
@@ -67,7 +68,6 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
 		ret.append(" ");
 	}
 }
-
 
 void
 print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay)
@@ -361,63 +361,63 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 			return fmt->marked_list->getMarkedString(*entity);
 		return "";
 	}
-	if((name == "upgradeinstalled") ||
-		(name == "slotupgradeinstalled")) {
-		if(entity->compare(fmt->vardb, true) > 0)
-			return "1";
-		if(name == "upgradeinstalled")
-			return "";
-		if(entity->compare_slots(fmt->vardb, true) > 0)
+	if(name == "upgrade")
+	{
+		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, true, true))
 			return "1";
 		return "";
 	}
-	if((name == "downgradeinstalled") ||
-		(name == "slotdowngradeinstalled")) {
-		int c = entity->compare(fmt->vardb, true, (name != "downgradeinstalled"));
-		if((c < 0) || (c == 2))
+	if(name == "upgradeorinstall")
+	{
+		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, false, true))
 			return "1";
 		return "";
 	}
-	if((name == "differinstalled") ||
-		(name == "slotdifferinstalled")) {
-		if(entity->compare(fmt->vardb, true))
-			return "1";
-		if(name == "differinstalled")
-			return "";
-		if(entity->compare_slots(fmt->vardb, true))
+	if(name == "downgrade")
+	{
+		if(LocalCopy(fmt, entity).package->must_downgrade(fmt->vardb, true))
 			return "1";
 		return "";
 	}
-	if((name == "upgradepotentially") ||
-		(name == "slotupgradepotentially")) {
-		if(entity->compare(fmt->vardb, false) > 0)
-			return "1";
-		if(name == "upgradepotentially")
-			return "";
-		if(entity->compare_slots(fmt->vardb, false) > 0)
+	if(name == "recommend")
+	{
+		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, true, true))
 			return "1";
 		return "";
 	}
-	if((name == "downgradepotentially") ||
-		(name == "slotdowngradepotentially")) {
-		int c = entity->compare(fmt->vardb, true, (name != "downgradepotentially"));
-		if((c < 0) || (c == 2))
+	if(name == "recommendorinstall")
+	{
+		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, false, true))
 			return "1";
 		return "";
 	}
-	if((name == "differpotentially") ||
-		(name == "slotdifferpotentially")) {
-		int c = entity->compare(fmt->vardb, false);
-		if(c == -2)
-			c = 0;
-		if(c)
+	if(name == "bestupgrade")
+	{
+		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, true, false))
 			return "1";
-		if(name == "differpotentially")
-			return "";
-		c = entity->compare(fmt->vardb, false, (name != "differpotentially"));
-		if(c == -2)
-			c = 0;
-		if(c)
+		return "";
+	}
+	if(name == "bestupgradeorinstall")
+	{
+		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, false, false))
+			return "1";
+		return "";
+	}
+	if(name == "bestdowngrade")
+	{
+		if(LocalCopy(fmt, entity).package->must_downgrade(fmt->vardb, false))
+			return "1";
+		return "";
+	}
+	if(name == "bestrecommend")
+	{
+		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, true, false))
+			return "1";
+		return "";
+	}
+	if(name == "bestrecommendorinstall")
+	{
+		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, false, false))
 			return "1";
 		return "";
 	}
@@ -446,21 +446,39 @@ get_diff_package_property(const PrintFormat *fmt, void *void_entity, const strin
 {
 	Package *older = ((Package**)void_entity)[0];
 	Package *newer = ((Package**)void_entity)[1];
-	if((name == "upgrade") ||
-		(name == "slotupgrade")) {
-		if(older->compare(*newer, (name != "upgrade")) < 0)
+	if(name == "better")
+	{
+		if(LocalCopy(fmt, newer).package->have_worse(*(LocalCopy(fmt, older).package), true))
 			return "1";
 		return "";
 	}
-	if((name == "downgrade") ||
-		(name == "slotdowngrade")) {
-		if(newer->compare(*older, (name != "downgrade")) < 0)
+	if(name == "bestbetter")
+	{
+		if(LocalCopy(fmt, newer).package->have_worse(*(LocalCopy(fmt, older).package), false))
 			return "1";
 		return "";
 	}
-	if((name == "differ") ||
-		(name == "slotdiffer")) {
-		if(newer->compare(*older, (name != "differ")) != 0)
+	if(name == "worse")
+	{
+		if(LocalCopy(fmt, older).package->have_worse(*(LocalCopy(fmt, newer).package), true))
+			return "1";
+		return "";
+	}
+	if(name == "bestworse")
+	{
+		if(LocalCopy(fmt, older).package->have_worse(*(LocalCopy(fmt, newer).package), false))
+			return "1";
+		return "";
+	}
+	if(name == "differ")
+	{
+		if(LocalCopy(fmt, newer).package->differ(*(LocalCopy(fmt, older).package), true))
+			return "1";
+		return "";
+	}
+	if(name == "bestdiffer")
+	{
+		if(LocalCopy(fmt, newer).package->differ(*(LocalCopy(fmt, older).package), false))
 			return "1";
 		return "";
 	}

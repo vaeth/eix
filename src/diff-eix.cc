@@ -234,15 +234,7 @@ class DiffTrees
 		bool m_only_installed, m_slots;
 
 		bool best_differs(const Package *new_pkg, const Package *old_pkg)
-		{
-			if(new_pkg->compare(*old_pkg, m_vardbpkg, true, m_only_installed))
-				return true;
-			if(!m_slots)
-				return false;
-			if(new_pkg->compare_slots(*old_pkg, m_vardbpkg, true, m_only_installed))
-				return true;
-			return false;
-		}
+		{ return new_pkg->differ(*old_pkg, m_vardbpkg, true, m_only_installed, m_slots); }
 
 		/// Diff two categories and run callbacks.
 		// Remove already diffed packages.
@@ -287,19 +279,19 @@ print_changed_package(Package *op, Package *np)
 	Package *p[2];
 	p[0] = op;
 	p[1] = np;
-	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, varpkg_db);
+	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, varpkg_db, &portagesettings);
 }
 
 void
 print_found_package(Package *p)
 {
-	format_for_new.print(p, format_new, varpkg_db);
+	format_for_new.print(p, format_new, varpkg_db, &portagesettings);
 }
 
 void
 print_lost_package(Package *p)
 {
-	format_for_old.print(p, format_delete, varpkg_db);
+	format_for_old.print(p, format_delete, varpkg_db, &portagesettings);
 }
 
 
@@ -313,6 +305,7 @@ run_diff_eix(int argc, char *argv[])
 	EixRc &eixrc = get_eixrc();
 
 	cli_quick = eixrc.getBool("DIFF_QUICKREADING");
+	Package::upgrade_to_best = eixrc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -379,7 +372,12 @@ run_diff_eix(int argc, char *argv[])
 
 	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick);
 
-	SetStability set_stability(portagesettings, eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG"));
+	bool local_settings = eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG");
+	SetStability set_stability(portagesettings, local_settings);
+	if(local_settings)
+		format_for_new.recommend_local = false;
+	else
+		format_for_new.recommend_local  = eixrc.getBool("RECOMMEND_ALWAYS_LOCAL");
 
 	DBHeader old_header;
 	PackageTree old_tree;

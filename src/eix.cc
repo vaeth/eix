@@ -293,6 +293,9 @@ setup_defaults()
 	format.slot_sorted         = rc.getBool("STYLE_SLOT_SORTED");
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
 	format.colored_slots       = rc.getBool("COLORED_SLOTS");
+	format.recommend_local     = rc.getBool("RECOMMEND_ALWAYS_LOCAL");
+
+	Package::upgrade_to_best   = rc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 
 	string overlay = rc["OVERLAYS_LIST"];
 	if(overlay.find("if") != string::npos)
@@ -499,7 +502,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != 0)
-			format.print(*it, &varpkg_db);
+			format.print(*it, &varpkg_db, &portagesettings);
 	}
 	switch(overlay_mode)
 	{
@@ -519,7 +522,7 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
 			++it)
-			format.print(*it, &varpkg_db);
+			format.print(*it, &varpkg_db, &portagesettings);
 	}
 	bool printed_overlay = false;
 	if(need_overlay_table)
