@@ -1,21 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.6.5
+*eix-0.7.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- IMPORTANT!!
-	  eix starts much SLOWER now (SLOTS of installed packages are read;
-	  later startups go faster, since the data will be in the disk cache).
-	  If you do not want this, use the -Q option or set the variables
-	       QUICKREADING=true      (for eix)
-	       DIFF_QUICKREADING=true (for diff-eix)
-	  in /etc/eixrc (or ~/.eixrc or the environment).
-	  The disadvantage of this is (besides seeing no slots of installed
-	  packages) that you might get false positives for up-/downgrade
-	  recommendations of packages with at least two slots and an installed
-	  version not in the database anymore.
-	- Most of the changes in this release are motivated by the request
+	- Major changes: remote support and full support for slots.
+	  For the former, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=144200
-	  Also more support for slots was added. In detail:
+	  the idea for the latter is due to a discussion with caster@matfyz.cz
+	  All changes in detail:
 	- Add OVERRIDE_CACHE_METHOD, ADD_LOCAL_CACHE_METHOD, ADD_CACHE_METHOD
 	  to allow e.g. cache method metadata for a specific overlay.
 	- Add cache method eix to use "pre-indexed" data for a
@@ -25,24 +16,28 @@
 	- Make eix database format architecture-independent.
 	- Detect overlays with equivalent paths as identical.
 	- Introduce COLOR_VIRTUALKEY
-	- Add update-eix-remote
-	- Distinguish old/new overlays in diff-eix
-	- Fix manpage bug: best=bestlong
+	- Add update-eix-remote.
+	- Distinguish old/new overlays in diff-eix.
+	- Fix manpage bug: best=bestlong.
 	- Introduce COLOR_SLOTS, *COLORED_SLOTS, *COLON_SLOTS
-	- Introduce --slot-sorted, STYLE_SLOT_SORTED
-	- Introduce bestversions* format
+	- Introduce --versionsorted, STYLE_VERSION_SORTED.
+	  Let the defaults be false -> different default output.
+	- Introduce bestversions* format.
 	- diff-eix outputs package also if best versions change in some slot.
-	- Implement -u option. Introduce EIX_U_ALWAYS_LOCAL
-	- Introduce DIFF_ONLY_INSTALLED, DIFF_NO_SLOTS
+	- Implement -u option.
+	- Introduce UPGRADE_ALWAYS_LOCAL.
+	- Introduce DIFF_ONLY_INSTALLED, DIFF_NO_SLOTS.
 	- Introduce formats old* and new* for DIFF_FORMAT_CHANGED.
-	- Introduce formats better, worse, differ
-	  and the corresponding best*-version for DIFF_FORMAT_CHANGED.
-	- Introduce formats upgrade, upgradeorinstall, downgrade, recommend,
-	  recommendorinstall and the corresponding best*-version
-	  to visualize upgrades.
+	- Introduce formats *better, *worse, *differ for DIFF_FORMAT_CHANGED.
+	- Introduce formats *upgrade, *upgradeorinstall, *downgrade,
+	  *recommend, *recommendorinstall to visualize upgrade recommendations.
 	- Change default formatstrings to use new features.
-	- Introduce UPGRADE_ALWAYS_LOCAL, RECOMMEND_ALWAYS_LOCAL
-	- Introduce UPGRADE_TO_HIGHEST_SLOT
+	- Introduce UPGRADE_ALWAYS_LOCAL, RECOMMEND_ALWAYS_LOCAL.
+	- Introduce UPGRADE_TO_HIGHEST_SLOT.
+	- Introduce DEFAULT_FORMAT.
+	- Implement just-in-time reading of slots of installed versions.
+	- Implement --quick, --care. Introduce *QUICKMODE, *CAREMODE
+	- Implement --quiet for diff-eix. Introduce *QUIETMODE.
 
 *eix-0.6.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

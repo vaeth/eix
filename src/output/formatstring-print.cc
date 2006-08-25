@@ -62,6 +62,8 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
 		return "";
 	string ret;
 	for(;;) {
+		if(!p.guess_slotname(*it, fmt.vardb))
+			it->slot = "?";
 		ret.append(get_basic_version(&fmt, &(*it), pure_text));
 		if(++it == vec->end())
 			return ret;

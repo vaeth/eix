@@ -38,7 +38,7 @@ const int   BasicVersion::suffix_level_count = sizeof(suffixlevels)/sizeof(char*
 
 BasicVersion::BasicVersion(const char *str)
 {
-	slot = "";
+	slot = ""; know_slot = read_failed = false;
 	if(str)
 	{
 		parseVersion(str);

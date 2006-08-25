@@ -89,6 +89,39 @@ vector<BasicVersion>::size_type VarDbPkg::numInstalled(const Package &p)
 	return vec->size();
 }
 
+bool VarDbPkg::readSlot(const Package &p, BasicVersion &v) const
+{
+	if(v.know_slot)
+		return true;
+	if(!get_slots)
+		return false;
+	if(v.read_failed)
+		return false;
+	try {
+		vector<string> lines;
+		if(!pushback_lines(
+			(_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
+			&lines, true, false))
+		{
+			v.read_failed = true;
+			return false;
+		}
+		if(!lines.size())
+			v.slot = "";
+		else if(lines[0] == "0")
+			v.slot = "";
+		else
+			v.slot = lines[0];
+		v.know_slot = true;
+		return true;
+	}
+	catch(ExBasic e) {
+		cerr << e << endl;
+		v.read_failed = true;
+		return false;
+	}
+}
+
 /** Read category from db-directory. */
 void VarDbPkg::readCategory(const char *category)
 {
@@ -97,16 +130,13 @@ void VarDbPkg::readCategory(const char *category)
 	struct dirent* package_entry;  /* current package dirent */
 
 	/* Open category-directory */
-	string dirname = _directory + category;
-	if( (dir_category = opendir(dirname.c_str())) == NULL) {
+	if( (dir_category = opendir((_directory + category).c_str())) == NULL) {
 		installed[category] = NULL;
 		return;
 	}
 	map<string, vector<BasicVersion> >* category_installed;
 	installed[category] = category_installed = new map<string,vector<BasicVersion> >;
 	OOM_ASSERT(category_installed);
-
-	dirname.append("/");
 
 	/* Cycle through this category */
 	while( (package_entry = readdir(dir_category)) != NULL )
@@ -118,24 +148,7 @@ void VarDbPkg::readCategory(const char *category)
 		if(aux == NULL)
 			continue;
 		try {
-			BasicVersion version(aux[1]);
-			if(_have_slots)
-			{
-				vector<string> lines;
-				if(pushback_lines(
-					(dirname + package_entry->d_name + "/SLOT").c_str(),
-					&lines, true, false))
-				{
-					if(lines.size())
-					{
-						if(lines[0] != "0")
-							version.slot = lines[0];
-					}
-					(*category_installed)[aux[0]].push_back(version);
-				}
-			}
-			else
-				(*category_installed)[aux[0]].push_back(version);
+			(*category_installed)[aux[0]].push_back(BasicVersion(aux[1]));
 		}
 		catch(ExBasic e) {
 			cerr << e << endl;

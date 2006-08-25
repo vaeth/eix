@@ -43,7 +43,7 @@ class VarDbPkg {
 		/** Mapping of [category][package] to list versions. */
 		std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* > installed;
 		std::string _directory; /**< This is the db-directory. */
-		bool _have_slots;
+		bool get_slots, take_care;
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULL if not found .. else pointer to vector of versions. */
@@ -55,8 +55,9 @@ class VarDbPkg {
 
 	public:
 		/** Default constructor. */
-		VarDbPkg(std::string directory, bool read_slots) :
-			_directory(directory), _have_slots(read_slots)
+		VarDbPkg(std::string directory, bool read_slots, bool care_slots) :
+			_directory(directory), get_slots(read_slots || care_slots),
+			take_care(care_slots)
 		{ }
 
 		~VarDbPkg() {
@@ -66,14 +67,16 @@ class VarDbPkg {
 			}
 		}
 
-		bool have_slots() const
-		{ return _have_slots; }
+		bool care_slots() const
+		{ return take_care; }
+
+		bool readSlot(const Package &p, BasicVersion &v) const;
 
 		/** Find installed versions
 		 * @return NULL if not found .. else pointer to vector of versions. */
 		std::vector<BasicVersion> *getInstalledVector(const Package &p) {
 			return getInstalledVector(p.category, p.name);
-		}
+		};
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.

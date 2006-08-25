@@ -273,7 +273,15 @@ class Package
 			return differ(p, test_slots);
 		}
 
+		/** Get the name of a slot of a version.
+		    returns NULL if not found. */
 		const char *slotname(const BasicVersion &v) const;
+
+		/** Get the name of a slot of an installed version,
+		    possibly reading it from disk.
+		    Returns true if a reasonable choice seems to be found
+		    (v.know_slot determines whether we had full success). */
+		bool guess_slotname(BasicVersion &v, const VarDbPkg *vardbpkg) const;
 
 		Version *latest() const
 		{ return *rbegin(); }

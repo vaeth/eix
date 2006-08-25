@@ -133,6 +133,7 @@ void Package::addVersionFinalize(Version *version)
 
 	if(version->slot == "0")
 		version->slot = "";
+	version->know_slot = true;
 
 	/* This guarantees that we pushed our first version */
 	if(size() != 1) {
@@ -218,6 +219,31 @@ Package::slotname(const BasicVersion &v) const
 			return (i->slot).c_str();
 	}
 	return NULL;
+}
+bool Package::guess_slotname(BasicVersion &v, const VarDbPkg *vardbpkg) const
+{
+	if(vardbpkg->care_slots())
+		return vardbpkg->readSlot(*this, v);
+	if(v.know_slot)
+		return true;
+	const char *s = slotname(v);
+	if(s)
+	{
+		v.slot = s;
+		v.know_slot = true;
+	}
+	if(vardbpkg->readSlot(*this, v))
+		return true;
+	if(slotlist.size() == 1)
+	{
+		// There is only one slot, so the choice seems clear.
+		// However, perhaps our package is from an old database
+		// (e.g. in diff-eix) and so there might be new slots elsewhere
+		// Therefore we better don't modify v.know_slot.
+		v.slot = slotlist.begin()->slot();
+		return true;
+	}
+	return false;
 }
 
 /** Test whether p has a worse best_slot()
@@ -336,37 +362,22 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	}
 	bool downgrade = false;
 	bool upgrade = false;
-	for(vector<BasicVersion>::const_iterator it = ins->begin();
+	for(vector<BasicVersion>::iterator it = ins->begin();
 		it != ins->end() ; ++it)
 	{
-		const char *name;
-		if(v->have_slots())
-			name = (it->slot).c_str();
-		else
+		if(!guess_slotname(*it, v))
 		{
-			// We must do an empirical guess about the slot
-			// of the installed version.
-			name = slotname(*it);
-			if(!name)
+			// Perhaps the slot was removed:
+			downgrade = true;
+			Version *t_best = best();
+			if(t_best)
 			{
-				// We cannot find the version in the database.
-				if(slotlist.size() == 1)
-				{
-					// There is only one slot, so the choice is clear:
-					name = slotlist.begin()->slot();
-				}
-				else
-				{
-					// Perhaps the slot was removed:
-					downgrade = true;
-					// perhaps an upgrade is possible:
-					if(*(best()) > *it)
-						upgrade = true;
-					continue;
-				}
+				if(*t_best > *it)
+					upgrade = true;
 			}
+			continue;
 		}
-		Version *t_best_slot = best_slot(name);
+		Version *t_best_slot = best_slot((it->slot).c_str());
 		if(!t_best_slot)
 		{
 			downgrade = true;
@@ -419,22 +430,22 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 	{
 		if(!t_best)
 			return -1;
-		bool only_slot = false;
-		for(vector<BasicVersion>::const_iterator it = ins->begin();
+		for(vector<BasicVersion>::iterator it = ins->begin();
 			it != ins->end(); ++it)
 		{
 			if(*t_best > *it)
 				continue;
 			if(*t_best < *it)
 				return -1;
-			if((!test_slot) || (!v->have_slots()))
+			if(!test_slot)
 				return 0;
-			if(t_best->slot == it->slot)
-				return 0;
-			only_slot = true;
-		}
-		if(only_slot)
+			if(guess_slotname(*it, v))
+			{
+				if(t_best->slot == it->slot)
+					return 0;
+			}
 			return 3;
+		}
 		return 1;
 	}
 	if((!only_installed) && t_best)

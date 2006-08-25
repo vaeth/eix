@@ -73,7 +73,9 @@ print_help(int ret)
 	printf(
 		"diff-eix [options] old-cache [new-cache]\n"
 		"\n"
-		" -Q, --quick             don't read slots of installed packages\n"
+		" -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
+		"     --care              always read slots of installed packages\n"
+		" -q, --quiet (toggle)    (no) output\n"
 		" -n, --nocolor           don't use colors in output\n"
 		" -F, --force-color       force colors on things that are not a terminal\n"
 		"     --dump              dump variables to stdout\n"
@@ -98,10 +100,13 @@ print_help(int ret)
 bool cli_show_help    = false,
 	 cli_show_version = false,
 	 cli_dump_eixrc   = false,
-	 cli_quick;
+	 cli_quick,
+	 cli_care,
+	 cli_quiet;
 
 enum cli_options {
 	O_DUMP = 300,
+	O_CARE,
 	O_FORCE_COLOR
 };
 
@@ -113,7 +118,9 @@ static struct Option long_options[] = {
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
 	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
 	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
-	Option("quick",        'Q',    Option::BOOLEAN_T, &cli_quick),
+	Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick),
+	Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care),
+	Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet),
 
 	Option(0, 0)
 };
@@ -304,7 +311,9 @@ run_diff_eix(int argc, char *argv[])
 
 	EixRc &eixrc = get_eixrc();
 
-	cli_quick = eixrc.getBool("DIFF_QUICKREADING");
+	cli_quick = eixrc.getBool("DIFF_QUICKMODE");
+	cli_care  = eixrc.getBool("DIFF_CAREMODE");
+	cli_quiet = eixrc.getBool("DIFF_QUIETMODE");
 	Package::upgrade_to_best = eixrc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 
 	/* Setup ArgumentReader. */
@@ -321,6 +330,9 @@ run_diff_eix(int argc, char *argv[])
 		eixrc.dumpDefaults(stdout);
 		exit(0);
 	}
+
+	if(cli_quiet)
+		close(1);
 
 	if(eixrc.getBool("FORCE_USECOLORS")) {
 		format_for_new.no_color = false;
@@ -370,7 +382,7 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.setupColors();
 
-	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick);
+	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick, cli_care);
 
 	bool local_settings = eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, local_settings);

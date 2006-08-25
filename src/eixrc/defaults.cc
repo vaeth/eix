@@ -29,13 +29,33 @@
 #include "../config.h"
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "QUICKREADING",
+		EixRcOption(EixRcOption::BOOLEAN, "QUICKMODE",
 			"false", "whether --quick is on for eix by default.")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "DIFF_QUICKREADING",
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_QUICKMODE",
 			"false", "whether --quick is on for diff-eix by default.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "CAREMODE",
+			"false", "whether --care is on for eix.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_CAREMODE",
+			"false", "whether --care is on for diff-eix.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "QUIETMODE",
+			"false", "whether --quiet is on for eix by default.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_QUIETMODE",
+			"false", "whether --quiet is on for diff-eix by default.")
 		);
 
 
@@ -45,35 +65,10 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
-			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1)N{}()]"
-			"{!recommend} {else}{!upgrade} {else} {!downgrade} {}{}{}"
-			" (green,1)>>() "
-			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
-			"Define the format used for new packages.")
+		EixRcOption(EixRcOption::STRING, "DEFAULT_FORMAT",
+			"normal", "Defines whether --compact or --verbose is on by default.")
 		);
 
-eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
-			"{installedversions}[(purple,1)D()]{else}   {} "
-			" (red,1)\\<\\<() "
-			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({installedversions}<installedversions>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
-			"Define the format used for packages that were deleted.")
-		);
-
-eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
-			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!upgrade}{better}(yellow,1)>{}{}{!downgrade}{worse}(red,1)\\<{}{}()]"
-			"{!upgrade}{!better} {}{}{!downgrade}{!worse} {}{}"
-			" (yellow,0)==() "
-			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({oldbestshort}<oldbestslots>() -> {}{bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
-			"Define the format used for packages that were deleted.")
-		);
-
-/* Setting default values for eixrc */
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
 			"{installedversions}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(default,1)I{}()]{else}(green)*{}"
@@ -106,6 +101,35 @@ eixrc.addDefault(
 			"{provide}     (green)Provides:()            <provide>\n{}"
 			"{licenses}     (green)License:()             <licenses>\n{}",
 			"Defines the verbose output for eix (-v).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
+			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1)N{}()]"
+			"{!recommend} {else}{!upgrade} {else} {!downgrade} {}{}{}"
+			" (green,1)>>() "
+			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
+			"\\({bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"Define the format used for new packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
+			"{installedversions}[(purple,1)D()]{else}   {} "
+			" (red,1)\\<\\<() "
+			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
+			"\\({installedversions}<installedversions>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"Define the format used for packages that were deleted.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
+			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!upgrade}{better}(yellow,1)>{}{}{!downgrade}{worse}(red,1)\\<{}{}()]"
+			"{!upgrade}{!better} {}{}{!downgrade}{!worse} {}{}"
+			" (yellow,0)==() "
+			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
+			"\\({oldbestshort}<oldbestslots>() -> {}{bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"Define the format used for packages that were deleted.")
 		);
 
 eixrc.addDefault(
@@ -154,13 +178,13 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "STYLE_VERSION_LINES",
-			"false", "Defines whether --versionlines is on by default.")
+		EixRcOption(EixRcOption::BOOLEAN, "STYLE_VERSION_SORTED",
+			"false", "Defines whether --versionsorted is on by default.")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "STYLE_SLOT_SORTED",
-			"false", "Defines whether --slotsorted is on by default.")
+		EixRcOption(EixRcOption::BOOLEAN, "STYLE_VERSION_LINES",
+			"false", "Defines whether --versionlines is on by default.")
 		);
 
 eixrc.addDefault(

@@ -1,4 +1,4 @@
-.TH "eix" "1" "August 23, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "August 25, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -40,18 +40,23 @@ from B<emerge> and B<update-eix> to I</var/log/eix-sync.log> for cleanliness.
 .SS Common options
 These options are common to all programs in the eix-suite.
 .TP
-.BR -Q ", " --quick
-Do not read the slots of installed versions.
-This will speed up the (first) startup enormously
-(later startups go faster anyway, since the data will be in the disk cache).
-
-One disadvantage of this option is of course that the slots of
-installed version will not be printed. However, another disadvantage is that
-eix and diff-eix might report false positives for up-/downgrade recommendations
-of packages with at least two slots and an installed version not in the
-database anymore.
+.BR -Q ", " --quick "   (toggle)"
+Do (not) read the slots of installed versions which cannot be guessed
+(i.e. installed versions of packages with at least two different slots
+for which the installed version is not in the database anymore).
+Note that with this option, eix and diff-eix might report false positives
+for up-/downgrade recommendations for these packages.
 .TP
-.BR -q ", " --quiet
+.BR --care
+This deactivates --quick, and moreover, slots of installed version are
+always read instead of relying on the guess of the slot.
+This will in particular make sure that you get an up-/downgrade
+recommendation if a slot name of an installed version changes.
+Note that this will dramatically decrease the speed at the first call.
+(If your filesystem has a reasonable cache, later calls are almost not
+slower than without this option).
+.TP
+.BR -q ", " --quiet "   (toggle)"
 Produce no output on stderr and stdout (fatal errors which occur at the
 beginning of execution are printed to stderr, regardless of this option).
 .TP
@@ -73,18 +78,19 @@ The opposite of --nocolor.
 .\" {{{ -------- Output options
 .SS Output options
 .TP
-.BR -l ", " --versionlines
+.BR -x ", " --versionsort "    (toggle)"
+Prints available versions sorted by slots/versions.
+If sorted by slots, each new slot starts in a new line.
+.TP
+.BR -l ", " --versionlines "   (toggle)"
 Prints available versions in a (vertical) list.
 .TP
-.BR -x ", " --slotsorted
-Prints available versions sorted by slots, not by versions.
-.TP
-.BR -c ", " --compact
+.BR -c ", " --compact "   (toggle)"
 Causes eix to use a compact layout for search results. Useful for obtaining a better
 overview in the case of a long list of results, and also to help speed up searching over
 slow connections such as a serial console.
 .TP
-.BR -v ", " --verbose
+.BR -v ", " --verbose "   (toggle)"
 Use a verbose layout with additional information about search results such as the license
 of a package.
 .\" }}}
@@ -464,12 +470,30 @@ Per-user configuration file.
 .TP
 The variables in this file can be overridden by the environment.
 .TP
-.BR QUICKREADING "  " (true / false)
+.BR QUICKMODE "  " (true / false)
 If true, eix will use B<--quick> by default.
 
 .TP
-.BR QUICKREADING "  " (true / false)
+.BR DIFF_QUICKMODE "  " (true / false)
 If true, diff-eix will use B<--quick> by default.
+
+.BR CAREMODE "  " (true / false)
+If true, eix will use B<--care>.
+
+.TP
+.BR DIFF_CAREMODE "  " (true / false)
+If true, diff-eix will use B<--care>.
+
+.BR QUIETMODE "  " (true / false)
+If true, eix will use B<--quiet> by default.
+
+.TP
+.BR DIFF_QUIETMODE "  " (true / false)
+If true, diff-eix will use B<--quiet> by default.
+
+.TP
+.BR DEFAULT_FORMAT "  " (normal / compact / verbose)
+Defines whether B<--compact> or B<--verbose> is on by default.
 
 .TP
 .BR DIFF_NO_SLOTS "  " (true / false)
@@ -510,12 +534,12 @@ Mark the package versions passed with B<--pipe> by this attribute.
 Use colors even when stdout is not a terminal.
 
 .TP
-.BR STYLE_VERSION_LINES "  " (true / false)
-Turns B<--versionlines> on.
+.BR STYLE_VERSION_SORTED "  " (true / false)
+Defines whether B<--verionsorted> is on by default.
 
 .TP
-.BR STYLE_SLOT_SORTED "  " (true / false)
-Turns B<--slotsorted> on.
+.BR STYLE_VERSION_LINES "  " (true / false)
+Defines whether B<--versionlines> is on by default.
 
 .TP
 .BR COLORED_SLOTS "  " (true / false)

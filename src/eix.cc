@@ -84,23 +84,24 @@ dump_help(int exit_code)
 			"     --dump                dump variables to stdout\n"
 			"\n"
 			"   Special:\n"
-			"     -Q, --quick           don't read slots of installed packages\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
 			"                           of /etc/portage/package.* and non-matching names\n"
 			"                           of installed packages; this option is best\n"
 			"                           combined with -T to clean up /etc/portage/package.*\n"
+			"     -Q, --quick (toggle)  don't read unguessable slots of installed packages\n"
+			"         --care            always read slots of installed packages\n"
 			"\n"
 			"   Output:\n"
-			"     -q, --quiet           no output of any kind\n"
-			"     -n, --nocolor         do not use ANSI color codes\n"
-			"     -F, --force-color     force colorful output\n"
-			"     -c, --compact         compact search results\n"
-			"     -v, --verbose         verbose search results\n"
-			"     -l, --versionlines    print available versions line-by-line\n"
-			"     -x, --slotsorted      sort output by slots, not by versions\n"
-			"         --format          format string for normal output\n"
-			"         --format-compact  format string for compact output\n"
-			"         --format-verbose  format string for verbose output\n"
+			"     -q, --quiet (toggle)   (no) output\n"
+			"     -n, --nocolor          do not use ANSI color codes\n"
+			"     -F, --force-color      force colorful output\n"
+			"     -c, --compact (toggle) compact search results\n"
+			"     -v, --verbose (toggle) verbose search results\n"
+			"     -x, --versionsort  (toggle) sort output by slots/versions\n"
+			"     -l, --versionlines (toggle) print available versions line-by-line\n"
+			"         --format           format string for normal output\n"
+			"         --format-compact   format string for compact output\n"
+			"         --format-verbose   format string for verbose output\n"
 			"\n"
 			"Local:\n"
 			"  Miscellaneous:\n"
@@ -115,7 +116,7 @@ dump_help(int exit_code)
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
-			"    -!, --not             Invert the expression.\n"
+			"    -!, --not (toggle)    Invert the expression.\n"
 			"    -|, --pipe            Use input from pipe of emerge -pv\n"
 			"\n"
 			"  Search Fields:\n"
@@ -176,6 +177,7 @@ enum cli_options {
 	O_FMT_VERBOSE,
 	O_FMT_COMPACT,
 	O_DUMP,
+	O_CARE,
 	O_IGNORE_ETC_PORTAGE,
 	O_CURRENT,
 	O_DEBUG
@@ -190,6 +192,7 @@ PrintFormat format(get_package_property, print_package_property);
 static struct LocalOptions {
 	bool be_quiet,
 		 quick,
+		 care,
 		 verbose_output,
 		 compact_output,
 		 show_help,
@@ -206,11 +209,12 @@ static struct Option long_options[] = {
 	// Global options
 	Option("quiet",        'q',     Option::BOOLEAN,       &rc_options.be_quiet),
 	Option("quick",        'Q',     Option::BOOLEAN,       &rc_options.quick),
+	Option("care",         O_CARE,  Option::BOOLEAN_T,     &rc_options.care),
 
 	Option("nocolor",      'n',     Option::BOOLEAN_T,     &format.no_color),
 	Option("force-color",  'F',     Option::BOOLEAN_F,     &format.no_color),
-	Option("versionlines", 'l',     Option::BOOLEAN_T,     &format.style_version_lines),
-	Option("slotsorted",   'x',     Option::BOOLEAN_T,     &format.slot_sorted),
+	Option("versionlines", 'l',     Option::BOOLEAN,       &format.style_version_lines),
+	Option("versionsort",  'x',     Option::BOOLEAN,       &format.slot_sorted),
 
 	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
 	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
@@ -272,11 +276,22 @@ setup_defaults()
 	// Setup defaults
 	(void) memset(&rc_options, 0, sizeof(rc_options));
 
-	rc_options.quick           = rc.getBool("QUICKREADING");
+	rc_options.quick           = rc.getBool("QUICKMODE");
+	rc_options.be_quiet        = rc.getBool("QUIETMODE");
+	rc_options.care            = rc.getBool("CAREMODE");
 
 	format_verbose             = (char*) rc["FORMAT_VERBOSE"].c_str();
 	format_compact             = (char*) rc["FORMAT_COMPACT"].c_str();
 	format_normal              = (char*) rc["FORMAT"].c_str();
+	string s                   = rc["DEFAULT_FORMAT"];
+	if((strcasecmp(s.c_str(), "FORMAT_VERBOSE") == 0) ||
+	   (strcasecmp(s.c_str(), "verbose") == 0)) {
+		rc_options.verbose_output = true;
+	}
+	else if((strcasecmp(s.c_str(), "FORMAT_COMPACT") == 0) ||
+	   (strcasecmp(s.c_str(), "compact") == 0)) {
+		rc_options.compact_output = true;
+	}
 
 	format.color_masked        = rc["COLOR_MASKED"];
 	format.color_unstable      = rc["COLOR_UNSTABLE"];
@@ -290,7 +305,7 @@ setup_defaults()
 	format.mark_version        = rc["MARK_VERSIONS"];
 	format.show_slots          = rc.getBool("PRINT_SLOTS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
-	format.slot_sorted         = rc.getBool("STYLE_SLOT_SORTED");
+	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
 	format.colored_slots       = rc.getBool("COLORED_SLOTS");
 	format.recommend_local     = rc.getBool("RECOMMEND_ALWAYS_LOCAL");
@@ -369,7 +384,7 @@ run_eix(int argc, char** argv)
 		close(1);
 	}
 
-	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick);
+	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick, rc_options.care);
 
 	PortageSettings portagesettings;
 	MarkedList *marked_list = NULL;
@@ -454,12 +469,18 @@ run_eix(int argc, char** argv)
 	}
 
 	Keywords accepted_keywords;
+	bool local_is_default;
 
 	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG")) {
 		rc_options.ignore_etc_portage = true;
 		accepted_keywords = Keywords::KEY_STABLE;
 	}
 	else {
+		if(!rc_options.ignore_etc_portage) {
+			// No need to apply local settings for each test.
+			// This saves a lot of time.
+			format.recommend_local = false;
+		}
 		accepted_keywords = portagesettings.getAcceptKeywords();
 	}
 
