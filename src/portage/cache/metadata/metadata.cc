@@ -27,7 +27,7 @@
  ***************************************************************************/
 
 #include "metadata.h"
-#include "metadata-utils.h"
+#include <portage/cache/cache-utils.h>
 
 #include <eixTk/stringutils.h>
 #include <portage/package.h>
@@ -84,7 +84,7 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords;
-			metadata_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
+			flat_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
 			version->set(m_arch, keywords);
 			version->overlay_key = m_overlay_key;
 
@@ -92,16 +92,15 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			if(*(pkg->latest()) == *version)
 				newest = version;
 
-			/* Free old split */
-			free(aux[0]);
-			free(aux[1]);
-			memset(aux, '\0', sizeof(char*) * 2);
-
 			/* If this is the last file we break so we can get the full
 			 * information after this while-loop. If we still have more files
 			 * ahead we can just read the next file. */
 			if(++i == numfiles)
 				break;
+
+			/* Free old split */
+			free(aux[0]);
+			free(aux[1]);
 
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(dents[i]->d_name);
@@ -114,7 +113,7 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			read_metadata(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
+			flat_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
 	}
 
 	if(numfiles > 0)

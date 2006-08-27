@@ -26,16 +26,22 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __FLATCACHEUTILS_H__
-#define __FLATCACHEUTILS_H__
+#ifndef __CACHEUTILS_H__
+#define __CACHEUTILS_H__
 
 #include <eixTk/exceptions.h>
 #include <portage/keywords.h>
-#include <portage/package.h>
+#include <dirent.h>
+#include <map>
+#include <string>
 
-#include <fstream>
+class Package;
+class Version;
 
+int package_selector (SCANDIR_ARG3 dent);
+int ebuild_selector (SCANDIR_ARG3 dent);
 void flat_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot) throw (ExBasic);
 void flat_read_file(const char *filename, Package *pkg) throw (ExBasic);
+void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version);
 
-#endif /* __FLATCACHEUTILS_H__ */
+#endif /* __CACHEUTILS_H__ */

@@ -26,60 +26,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "flat-utils.h"
-#include <eixTk/stringutils.h>
+#ifndef __EBUILD_H__
+#define __EBUILD_H__
 
-#include <fstream>
-#include <limits>
+#include <portage/cache/base.h>
+#include <string>
 
-using namespace std;
+class Package;
+class Version;
 
-inline
-void skip_lines(const int nr, ifstream &is, const string &filename) throw (ExBasic)
-{
-	for(int i=nr; i>0; --i)
-	{
-		is.ignore(numeric_limits<int>::max(), '\n');
-		if(is.fail())
-			throw ExBasic("Can't read cache file %s: %s",
-			              filename.c_str(), strerror(errno));
-	}
-}
+class EbuildCache : public BasicCache {
+		friend void ebuild_sig_handler(int sig);
+	private:
+		static EbuildCache *handler_arg;
+		bool have_set_signals;
+		std::string *cachefile;
+		typedef void signal_handler(int sig);
+		signal_handler *handleTERM, *handleINT, *handleHUP;
+		bool use_ebuild_sh;
 
-#define open_skipping(nr, is, filename) \
-	ifstream is(filename); \
-	if(!is.is_open()) \
-		throw ExBasic("Can't open %s: %s", (filename), strerror(errno)); \
-	skip_lines(nr, is, (filename));
+		void add_handler();
+		void remove_handler();
+		bool make_tempfile();
+		bool make_cachefile(const char *name, const Package &package, const Version &version);
+		void delete_cachefile();
+	public:
+		EbuildCache(bool use_sh = false) : BasicCache(), cachefile(NULL), have_set_signals(false), use_ebuild_sh(use_sh)
+		{ }
 
+		~EbuildCache()
+		{ delete_cachefile(); }
 
-/** Read the stability on 'arch' from a metadata cache file. */
-void flat_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
-{
-	open_skipping(2, is, filename.c_str());
-	getline(is, slot);
-	skip_lines(5, is, filename);
-	getline(is, keywords);
-	is.close();
-}
+		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles);
+		int readCategory(Category &vec) throw(ExBasic);
 
-/** Read a metadata cache file. */
-void
-flat_read_file(const char *filename, Package *pkg) throw (ExBasic)
-{
-	open_skipping(5, is, filename);
-	string linebuf;
-	// Read the rest
-	for(int linenr = 5; getline(is, linebuf); ++linenr)
-	{
-		switch(linenr)
+		const char *getType() const
 		{
-			case 5:  pkg->homepage = linebuf; break;
-			case 6:  pkg->licenses = linebuf; break;
-			case 7:  pkg->desc     = linebuf; break;
-			case 13: pkg->provide  = linebuf; is.close();
-					 return;
+			if(use_ebuild_sh)
+				return "ebuild*";
+			return "ebuild";
 		}
-	}
-	is.close();
-}
+};
+
+#endif /* __EBUILD_H__ */

@@ -666,7 +666,40 @@ If you are using that backport-stuff (from portage-3 to portage-2) you should us
 .TP
 .SS
 .BR none
-No cache-backend. Get the information from the ebuilds.
+No cache-backend.
+Get the information from the ebuilds.
+The ebuild is not executed but only parsed, using some heuristics.
+Hence, this method has some problems.
+For example, if variables are only set in eclasses, this method will not
+see them.
+Examples of problems with this method is missing SLOT information for
+typical ebuilds from kde-base.
+.TP
+.SS
+.BR ebuild
+For overlays, this is the most compatible but also the slowest method.
+The information is obtained via "/usr/bin/ebuild ... depend" from the ebuild.
+Since all ebuilds will get executed by bash, this may be a security risk
+if you do not trust all ".ebuild" scripts or your environment variables.
+Intentionally, the environment is not cleared before the actual execution
+so that you can pass further variables to the ebuild.
+However, this can also lead to unexpected behaviour;
+use B<env -i update-eix> when this causes problems.
+.TP
+.SS
+.BR ebuild*
+This is something in between B<none> and B<ebuild>:
+The information is obtained via the undocumented "/usr/lib/portage/ebuild.sh".
+Thus, instead of executing a python program for each ".ebuild" as for
+cache-method B<ebuild>, "only" a lengthy shell-script and the ebuild itself
+is executed (hence, also this method is unsafe if you do not trust all
+".ebuild" scripts).
+All environment variables are cleared, and only some .ebuild variables
+like $P are set when the ebuild is executed.
+This method is not quite as compatible as the method B<ebuild>, and its
+success may depend more on the portage version.
+However, this method is considerably faster than B<ebuild> and stable
+enough to treat e.g. typical ebuilds from kde-base.
 .TP
 .SS
 .BR metadata

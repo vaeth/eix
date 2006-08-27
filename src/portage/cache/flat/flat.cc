@@ -27,7 +27,7 @@
  ***************************************************************************/
 
 #include "flat.h"
-#include "flat-utils.h"
+#include <portage/cache/cache-utils.h>
 
 #include <portage/packagetree.h>
 #include <portage/package.h>

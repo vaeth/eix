@@ -167,6 +167,7 @@ bool pushback_files(const string &dir_path, vector<string> &into, const char *ex
 				into.push_back(dir_path + (namelist[i]->d_name));
 			else
 				into.push_back(namelist[i]->d_name);
+			free(namelist[i]);
 		}
 	}
 	if(namelist)

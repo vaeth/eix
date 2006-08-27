@@ -26,13 +26,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "metadata-utils.h"
-
+#include "cache-utils.h"
 #include <eixTk/stringutils.h>
 #include <portage/package.h>
 
 #include <fstream>
 #include <limits>
+
+int package_selector (SCANDIR_ARG3 dent)
+{
+	return (dent->d_name[0] != '.'
+			&& strcmp(dent->d_name, "CVS") != 0);
+}
+
+int ebuild_selector (SCANDIR_ARG3 dent)
+{
+	return package_selector(dent);
+}
+
 
 using namespace std;
 
@@ -54,9 +65,9 @@ void skip_lines(const int nr, ifstream &is, const string &filename) throw (ExBas
 		throw ExBasic("Can't open %s: %s", (filename), strerror(errno)); \
 	skip_lines(nr, is, (filename));
 
-/** Read the slot and keywords from a metadata cache file. */
-void
-metadata_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
+
+/** Read the keywords and slot from a flat cache file. */
+void flat_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
 {
 	open_skipping(2, is, filename.c_str());
 	getline(is, slot);
@@ -65,9 +76,9 @@ metadata_get_keywords_slot(const string &filename, string &keywords, string &slo
 	is.close();
 }
 
-/** Read a metadata cache file. */
+/** Read a flat cache file. */
 void
-read_metadata(const char *filename, Package *pkg) throw (ExBasic)
+flat_read_file(const char *filename, Package *pkg) throw (ExBasic)
 {
 	open_skipping(5, is, filename);
 	string linebuf;
@@ -84,4 +95,43 @@ read_metadata(const char *filename, Package *pkg) throw (ExBasic)
 		}
 	}
 	is.close();
+}
+
+inline
+string::size_type revision_index(const string &ver)
+{
+	string::size_type i = ver.rfind("-r");
+	if(i == string::npos)
+		return string::npos;
+	bool somenum = false;
+	for(const char *s = ver.c_str() + i + 2; *s; ++s)
+	{
+		if((*s < '0') || (*s >'9'))
+			return string::npos;
+		somenum = true;
+	}
+	if(somenum)
+		return i;
+	return string::npos;
+}
+
+void env_add_package(map<string,string> &env, const Package &package, const Version &version)
+{
+	string full = version.getFull();
+	env["CATEGORY"] = package.category;
+	env["PN"]       = package.name;
+	env["PVR"]      = full;
+        env["PF"]       = package.name + "-" + full;
+	string mainversion;
+	string::size_type ind = revision_index(full);
+	if(ind == string::npos) {
+		env["PR"]   = "r0";
+		mainversion = full;
+	}
+	else {
+		env["PR"]   = full.substr(ind + 1);
+		mainversion = full.substr(0, ind);
+	}
+	env["PV"]       = mainversion;
+	env["P"]        = package.name + "-" + mainversion;
 }

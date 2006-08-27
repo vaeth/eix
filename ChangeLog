@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add cache methods ebuild and ebuild*
+	- Avoid memory leak in pushback_files().
+
 *eix-0.7.0_beta
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Major changes: remote support and full support for slots.

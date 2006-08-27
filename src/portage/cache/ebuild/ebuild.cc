@@ -26,21 +26,150 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "none.h"
-
+#include "ebuild.h"
 #include <portage/cache/cache-utils.h>
-#include <varsreader.h>
+
+#include <eixTk/stringutils.h>
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
+#include <map>
+
 #include <dirent.h>
+#include <unistd.h>
 
 #include <config.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 using namespace std;
 
-void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
+const char *EBUILD_SH_EXEC     = "/usr/lib/portage/bin/ebuild.sh";
+const char *EBUILD_EXEC        = "/usr/bin/ebuild";
+const char *EBUILD_DEPEND_TEMP = "/var/cache/edb/dep/aux_db_key_temp";
+
+EbuildCache *EbuildCache::handler_arg;
+void
+ebuild_sig_handler(int sig)
+{
+	EbuildCache::handler_arg->delete_cachefile();
+}
+
+// Take care:
+// Since handler_arg is static, add_handler will not be reentrant,
+// even for different instances of EbuildCache.
+// However, as long as add_handler() and remove_handler() are
+// only called internally within the same public function
+// of EbuildCache (and EbuildCache does not call other instances),
+// this is not a problem from "outside" this class.
+
+void EbuildCache::add_handler()
+{
+	handler_arg = this;
+	// Set the signals "empty" to avoid a race condition:
+	// On a signal, we should cleanup only the signals actually set.
+	handleHUP  = handleINT = handleTERM = ebuild_sig_handler;
+	have_set_signals = true;
+	handleHUP  = signal(SIGHUP, ebuild_sig_handler);
+	if(handleHUP == SIG_IGN)
+		signal(SIGHUP, SIG_IGN);
+	handleINT  = signal(SIGINT, ebuild_sig_handler);
+	if(handleINT == SIG_IGN)
+		signal(SIGINT, SIG_IGN);
+	handleTERM = signal(SIGTERM, ebuild_sig_handler);
+	if(handleTERM == SIG_IGN)
+		signal(SIGTERM, SIG_IGN);
+}
+
+void EbuildCache::remove_handler()
+{
+	if(!have_set_signals)
+		return;
+	signal(SIGHUP,  handleHUP);
+	signal(SIGINT,  handleINT);
+	signal(SIGTERM, handleTERM);
+	have_set_signals = false;
+}
+
+// You should have called add_handler() in advance
+bool EbuildCache::make_tempfile()
+{
+	char *temp = (char *)malloc(50 * sizeof(char));
+	if(!temp)
+		return false;
+	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");
+	int fd = mkstemp(temp);
+	if(fd == -1)
+		return false;
+	cachefile = new string(temp);
+	free(temp);
+	close(fd);
+	return true;
+}
+
+void EbuildCache::delete_cachefile()
+{
+	if(!cachefile)
+		return;
+	if(unlink(cachefile->c_str())<0)
+		throw ExBasic("Can't unlink %s", cachefile->c_str());
+	cachefile = NULL;
+	remove_handler();
+}
+
+bool EbuildCache::make_cachefile(const char *name, const Package &package, const Version &version)
+{
+	map<string, string> env;
+	add_handler();
+	if(use_ebuild_sh)
+	{
+		if(!make_tempfile())
+		{
+			remove_handler();
+			return false;
+		}
+		env_add_package(env, package, version);
+		env["dbkey"]        = *cachefile;
+		env["EBUILD"]       = name;
+		env["ECLASSDIR"]    = "/usr/portage/eclass";
+		env["EBUILD_PHASE"] = "depend";
+	}
+	else
+		cachefile = new string(EBUILD_DEPEND_TEMP);
+	pid_t child = vfork();
+	if(child == -1) {
+		throw ExBasic("Forking failed");
+	}
+	if(child == 0)
+	{
+		if(!use_ebuild_sh)
+		{
+			execl(EBUILD_EXEC, EBUILD_EXEC, name, "depend", NULL);
+			exit(2);
+		}
+		const char **myenv = (const char **)malloc((env.size() + 1) * sizeof(const char *));
+		const char **ptr = myenv;
+		for(map<string, string>::const_iterator it = env.begin();
+			it != env.end(); ++it, ++ptr) {
+			string *s = new string((it->first) + '=' + (it->second));
+			*ptr = s->c_str();
+		}
+		*ptr = NULL;
+		execle(EBUILD_SH_EXEC, EBUILD_SH_EXEC, "depend", NULL, myenv);
+		exit(2);
+	}
+	int exec_status;
+	while( waitpid( child, &exec_status, 0) != child );
+	if(exec_status)
+	{
+		delete_cachefile();
+		return false;
+	}
+	return true;
+}
+
+void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
 {
 	bool have_onetime_info = false;
 
@@ -71,38 +200,29 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 		/* Make version and add it to package. */
 		Version *version = new Version(ver);
 		pkg->addVersionStart(version);
+
+		/* Exectue the external program to generate cachefile */
+		if(!make_cachefile((*directory_path + "/" + list[i]->d_name).c_str(), *pkg, *version))
+			continue;
+
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;
 		if( have_onetime_info )
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
-		/* read the ebuild */
-		VarsReader::Flags flags = VarsReader::NONE;
-		if(!read_onetime_info)
-			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
-#ifdef SUBST_IN_EBUILDS
-		VarsReader ebuild(flags | VarsReader::INTO_MAP | VarsReader::SUBST_VARS);
-		map<string, string> env;
-		env_add_package(env, *pkg, *version);
-		ebuild.useMap(&env);
-#else
-		VarsReader ebuild(flags);
-#endif
-		ebuild.read((*directory_path + "/" + list[i]->d_name).c_str());
+		string keywords, slot;
+		flat_get_keywords_slot(cachefile->c_str(), keywords, slot);
 		version->overlay_key = m_overlay_key;
-		version->set(m_arch, ebuild["KEYWORDS"]);
-		version->slot = ebuild["SLOT"];
+		version->set(m_arch, keywords);
+		version->slot = slot;
 		pkg->addVersionFinalize(version);
 		if(read_onetime_info)
 		{
-			pkg->homepage = ebuild["HOMEPAGE"];
-			pkg->licenses = ebuild["LICENSE"];
-			pkg->desc     = ebuild["DESCRIPTION"];
-			pkg->provide  = ebuild["PROVIDE"];
-
+			flat_read_file(cachefile->c_str(), pkg);
 			have_onetime_info = true;
 		}
 		free(ver);
+		delete_cachefile();
 	}
 
 	if(!have_onetime_info) {
@@ -110,7 +230,7 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 	}
 }
 
-int NoneCache::readCategory(Category &vec) throw(ExBasic)
+int EbuildCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
@@ -141,3 +261,4 @@ int NoneCache::readCategory(Category &vec) throw(ExBasic)
 
 	return 1;
 }
+
