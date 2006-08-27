@@ -2,7 +2,12 @@
 
 *eix-0.7.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Add cache methods ebuild and ebuild*
+	- Let cache method "none" substitute variables;
+	  fix segfault in substitutions for cases like A=${X-$ARCH}
+	- Previous cache method "none" is now called "none*".
+	- Define standard ebuild standard variables like $P or $PN;
+	- Add cache methods "ebuild" and "ebuild*" to scan properly e.g.
+	  SLOTS of typical kde-base packages.
 	- Avoid memory leak in pushback_files().
 
 *eix-0.7.0_beta

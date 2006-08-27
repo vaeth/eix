@@ -358,10 +358,14 @@ void VarsReader::resolveReference()
 	}
 
 	if(*begin == '{') {
-		ASSERT(INPUT == '}', "%s: Ran into '%c' while looking for '}' after '%.*s'.",
+		if(INPUT == '}') {
+			value.append((*vars)[string(begin + sizeof(char), ref_key_lenght)]);
+		}
+		/** For some reseon, this fprintf crashes:
+		else
+			fprintf(stderr, "%s: Ran into '%c' while looking for '}' after '%.*s'.",
 				file_name, INPUT, ref_key_lenght, begin);
-
-		value.append((*vars)[string(begin + sizeof(char), ref_key_lenght)]);
+		*/
 		NEXT_INPUT;
 	}
 	else {

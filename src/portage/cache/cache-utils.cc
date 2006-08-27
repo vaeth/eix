@@ -115,13 +115,16 @@ string::size_type revision_index(const string &ver)
 	return string::npos;
 }
 
-void env_add_package(map<string,string> &env, const Package &package, const Version &version)
+void env_add_package(map<string,string> &env, const Package &package, const Version &version, const char *ebuild_name)
 {
 	string full = version.getFull();
-	env["CATEGORY"] = package.category;
-	env["PN"]       = package.name;
-	env["PVR"]      = full;
-        env["PF"]       = package.name + "-" + full;
+	env["EBUILD"]       = ebuild_name;
+	env["ECLASSDIR"]    = "/usr/portage/eclass";
+	env["EBUILD_PHASE"] = "depend";
+	env["CATEGORY"]     = package.category;
+	env["PN"]           = package.name;
+	env["PVR"]          = full;
+	env["PF"]           = package.name + "-" + full;
 	string mainversion;
 	string::size_type ind = revision_index(full);
 	if(ind == string::npos) {
@@ -132,6 +135,6 @@ void env_add_package(map<string,string> &env, const Package &package, const Vers
 		env["PR"]   = full.substr(ind + 1);
 		mainversion = full.substr(0, ind);
 	}
-	env["PV"]       = mainversion;
-	env["P"]        = package.name + "-" + mainversion;
+	env["PV"]           = mainversion;
+	env["P"]            = package.name + "-" + mainversion;
 }

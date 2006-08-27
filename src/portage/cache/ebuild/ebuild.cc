@@ -129,11 +129,8 @@ bool EbuildCache::make_cachefile(const char *name, const Package &package, const
 			remove_handler();
 			return false;
 		}
-		env_add_package(env, package, version);
-		env["dbkey"]        = *cachefile;
-		env["EBUILD"]       = name;
-		env["ECLASSDIR"]    = "/usr/portage/eclass";
-		env["EBUILD_PHASE"] = "depend";
+		env_add_package(env, package, version, name);
+		env["dbkey"] = *cachefile;
 	}
 	else
 		cachefile = new string(EBUILD_DEPEND_TEMP);

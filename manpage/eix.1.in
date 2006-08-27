@@ -1,4 +1,4 @@
-.TH "eix" "1" "August 25, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "August 27, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -670,10 +670,15 @@ No cache-backend.
 Get the information from the ebuilds.
 The ebuild is not executed but only parsed, using some heuristics.
 Hence, this method has some problems.
-For example, if variables are only set in eclasses, this method will not
-see them.
+For example, if variables are only set in eclasses, this method will not see them.
 Examples of problems with this method is missing SLOT information for
 typical ebuilds from kde-base.
+.TP
+.SS
+.BR none*
+This is essentially the same as cache method B<none> with the difference
+that variables are not expanded in variable definitions.
+This is the cache-method B<none> from older eix versions (before 0.7.1).
 .TP
 .SS
 .BR ebuild

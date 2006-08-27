@@ -67,6 +67,7 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 			m_error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
 			continue;
 		}
+		string ebuild_name = (*directory_path) + "/" + list[i]->d_name;
 
 		/* Make version and add it to package. */
 		Version *version = new Version(ver);
@@ -80,15 +81,16 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 		VarsReader::Flags flags = VarsReader::NONE;
 		if(!read_onetime_info)
 			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
-#ifdef SUBST_IN_EBUILDS
-		VarsReader ebuild(flags | VarsReader::INTO_MAP | VarsReader::SUBST_VARS);
 		map<string, string> env;
-		env_add_package(env, *pkg, *version);
-		ebuild.useMap(&env);
-#else
+		if(!nosubst)
+		{
+			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
+			env_add_package(env, *pkg, *version, ebuild_name.c_str());
+		}
 		VarsReader ebuild(flags);
-#endif
-		ebuild.read((*directory_path + "/" + list[i]->d_name).c_str());
+		if(flags & VarsReader::INTO_MAP)
+			ebuild.useMap(&env);
+		ebuild.read(ebuild_name.c_str());
 		version->overlay_key = m_overlay_key;
 		version->set(m_arch, ebuild["KEYWORDS"]);
 		version->slot = ebuild["SLOT"];
