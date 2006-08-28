@@ -118,7 +118,7 @@ void EbuildCache::delete_cachefile()
 	remove_handler();
 }
 
-bool EbuildCache::make_cachefile(const char *name, const Package &package, const Version &version)
+bool EbuildCache::make_cachefile(const char *name, const string &dir, const Package &package, const Version &version)
 {
 	map<string, string> env;
 	add_handler();
@@ -129,7 +129,7 @@ bool EbuildCache::make_cachefile(const char *name, const Package &package, const
 			remove_handler();
 			return false;
 		}
-		env_add_package(env, package, version, name);
+		env_add_package(env, package, version, dir, name);
 		env["dbkey"] = *cachefile;
 	}
 	else
@@ -166,7 +166,7 @@ bool EbuildCache::make_cachefile(const char *name, const Package &package, const
 	return true;
 }
 
-void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
+void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -199,25 +199,37 @@ void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_p
 		pkg->addVersionStart(version);
 
 		/* Exectue the external program to generate cachefile */
-		if(!make_cachefile((*directory_path + "/" + list[i]->d_name).c_str(), *pkg, *version))
+		string full_path = *directory_path + '/' + list[i]->d_name;
+		if(!make_cachefile(full_path.c_str(), *directory_path, *pkg, *version))
+		{
+			cerr << "Could not properly execute " << full_path << endl;
 			continue;
+		}
 
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;
 		if( have_onetime_info )
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
-		string keywords, slot;
-		flat_get_keywords_slot(cachefile->c_str(), keywords, slot);
 		version->overlay_key = m_overlay_key;
-		version->set(m_arch, keywords);
-		version->slot = slot;
-		pkg->addVersionFinalize(version);
-		if(read_onetime_info)
-		{
-			flat_read_file(cachefile->c_str(), pkg);
+		string keywords, slot;
+		try {
+			flat_get_keywords_slot(cachefile->c_str(), keywords, slot);
+			version->set(m_arch, keywords);
+			version->slot = slot;
+			if(read_onetime_info)
+			{
+				flat_read_file(cachefile->c_str(), pkg);
+				have_onetime_info = true;
+			}
+		}
+		catch(ExBasic e) {
+			cerr << "Executing " << full_path <<
+				" did not produce all data.";
+			// We keep the version anyway, even with wrong keywords/slots/infos:
 			have_onetime_info = true;
 		}
+		pkg->addVersionFinalize(version);
 		free(ver);
 		delete_cachefile();
 	}
@@ -231,20 +243,25 @@ int EbuildCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
-	string catpath = m_scheme + "/" + vec.name();
+	string catpath = m_scheme + '/' + vec.name();
 	int numpackages = scandir(catpath.c_str(),
 			&packages, package_selector, alphasort);
 
 	for(int i = 0; i<numpackages; ++i)
 	{
 		struct dirent **files = NULL;
-		string pkg_path = catpath + "/" + packages[i]->d_name;
+		string pkg_path = catpath + '/' + packages[i]->d_name;
 
 		int numfiles = scandir(pkg_path.c_str(),
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			try {
+				readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			}
+			catch(ExBasic e) {
+				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
+			}
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);

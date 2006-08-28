@@ -256,15 +256,9 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "ADD_LOCAL_CACHE_METHOD",
-			"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
-			"# This variable is meant to be set only locally.")
-		);
-
-eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_CACHE_METHOD",
 			"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
-			"# This variable is meant to be set only temporarily in the environment.")
+			"# This variable is meant to be set only locally.")
 		);
 
 eixrc.addDefault(

@@ -31,10 +31,13 @@
 
 #include <eixTk/exceptions.h>
 #include <string>
+#include <map>
 
 class Category;
 class Package;
+class Version;
 class PackageTree;
+class PortageSettings;
 
 #if 0
 // Add package to vector
@@ -51,6 +54,9 @@ bool deletePackage(Category &v, const std::string &pkg);
 class BasicCache {
 
 	public:
+		BasicCache()
+		{ portagesettings = NULL; }
+
 		// Virtual deconstructor. */
 		virtual ~BasicCache()
 		{ }
@@ -97,8 +103,10 @@ class BasicCache {
 		short  m_overlay_key;
 		std::string m_arch;
 		void (*m_error_callback)(const char *fmt, ...);
+		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
 
 	public:
+		PortageSettings *portagesettings;
 };
 
 #endif /* __BASICCACHE_H__ */

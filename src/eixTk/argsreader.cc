@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -68,14 +69,14 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 							continue;
 						default:
 							/* some longopt */
-							push_back(Parameter(lookup_longopt(ptr, opt_table)));
+							push_back(Parameter(argv[i], lookup_longopt(ptr, opt_table)));
 							continue;
 					}
 				default:
 					/* some shortopts */
 					int c = 0;
 					while(ptr[c] != '\0')
-						push_back(Parameter(lookup_shortopt(ptr[c++], opt_table)));
+						push_back(Parameter(argv[i], lookup_shortopt(ptr[c++], opt_table)));
 					continue;
 			}
 		push_back(Parameter(ptr));
@@ -141,19 +142,18 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 		}
 
 		Option *c = lookup_option(it->m_option, opt_table);
-		if(c == NULL || c->type == Option::NONE)
+		if(c == NULL)
 		{
 			++it;
 			continue;
 		}
 
+		const char *remember;
 		switch(c->type)
 		{
 			case Option::BOOLEAN_F:
 			case Option::BOOLEAN_T:
 			case Option::BOOLEAN:
-				if(c->boolean != NULL)
-				{
 					if(c->type == Option::BOOLEAN_T)
 						*c->boolean = true;
 					else if(c->type == Option::BOOLEAN_F)
@@ -161,29 +161,43 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 					else
 						*c->boolean = ! *c->boolean;
 					it = erase(it);
-				}
-				continue;
+					break;
 			case Option::INTEGER:
-				if(c->integer != NULL)
-				{
 					++*c->integer;
 					it = erase(it);
-				}
-				continue;
+					break;
 			case Option::STRING:
-				if(c->str != NULL)
-				{
+			case Option::PAIR:
+			case Option::STRINGLIST:
+			case Option::PAIRLIST:
 					it = erase(it);
 					__ASSERT(it != end(), "Missing parameter to --%s\n", c->longopt);
-					__ASSERT(it->type == Parameter::ARGUMENT, "Missing parameter to --%s\n", c->longopt);
-					*c->str = it->m_argument;
+					remember = it->m_argument;
 					it = erase(it);
-				}
-				continue;
-			case Option::NONE:
+					if(c->type == Option::STRINGLIST)
+					{
+						c->strlist->push_back(remember);
+						break;
+					}
+					if(c->type == Option::STRING)
+					{
+						*(c->str) = remember;
+						break;
+					}
+					__ASSERT(it != end(), "Missing second parameter to --%s\n", c->longopt);
+					if(c->type == Option::PAIR)
+					{
+						*((c->pr).first)  = remember;
+						*((c->pr).second) = it->m_argument;
+					}
+					else
+					{
+						c->prlist->push_back(ArgPair(remember, it->m_argument));
+					}
+					it = erase(it);
+					break;
 			default:
-				++it;
-				continue;
+					++it;
 		}
 	}
 }

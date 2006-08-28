@@ -48,7 +48,7 @@ class EbuildCache : public BasicCache {
 		void add_handler();
 		void remove_handler();
 		bool make_tempfile();
-		bool make_cachefile(const char *name, const Package &package, const Version &version);
+		bool make_cachefile(const char *name, const std::string &dir, const Package &package, const Version &version);
 		void delete_cachefile();
 	public:
 		EbuildCache(bool use_sh = false) : BasicCache(), cachefile(NULL), have_set_signals(false), use_ebuild_sh(use_sh)
@@ -57,7 +57,7 @@ class EbuildCache : public BasicCache {
 		~EbuildCache()
 		{ delete_cachefile(); }
 
-		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles);
+		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles) throw(ExBasic);
 		int readCategory(Category &vec) throw(ExBasic);
 
 		const char *getType() const

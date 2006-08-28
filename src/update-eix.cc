@@ -56,38 +56,105 @@ using namespace std;
 
 char *program_name = NULL;
 void sig_handler(int sig);
-void update(CacheTable &cache_table, PortageSettings &portage_settings, bool small);
+void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small);
+
+class Permissions {
+	private:
+		string cachefile;
+		bool modify;
+		bool testing;
+		static bool know_root, am_root;
+	public:
+		Permissions(const char *other_cachefile)
+		{
+			if(other_cachefile)
+			{
+				testing = false;
+				cachefile = other_cachefile;
+			}
+			else
+			{
+				testing = true;
+				cachefile = EIX_CACHEFILE;
+			}
+			know_root = false;
+		}
+
+		bool am_i_root()
+		{
+			if(know_root)
+				return am_root;
+			know_root = true;
+			am_root = (getuid() == 0);
+			return am_root;
+		}
+
+		bool test_writable()
+		{
+			if(am_i_root())
+				return true;
+			else
+				return is_writable(cachefile.c_str());
+		}
+
+		void check_db()
+		{
+			bool must_modify;
+			if(get_mtime(cachefile.c_str()) == 0)
+			{
+				modify = true;
+				must_modify = testing;
+			}
+			else
+			{
+				modify = testing;
+				must_modify = false;
+				if(testing)
+				{
+					if(!test_writable())
+					{
+						cerr << cachefile << " must be writable by group portage.\n";
+						exit(1);
+					}
+					if(!am_i_root())
+					{
+						if(!user_in_group("portage")) {
+							cerr << "You must be in the portage-group to update the database.\n";
+							exit(1);
+						}
+					}
+				}
+			}
+			if(modify)
+			{
+				if(!am_i_root())
+				{
+					if(must_modify) {
+						cerr << "User 'root' is needed to initially generate the database.\n";
+						exit(1);
+					}
+					modify = false;
+				}
+				return;
+			}
+		}
+
+		void set_db()
+		{
+			if(!modify)
+				return;
+			gid_t g;
+			uid_t u;
+			if(get_gid_of("portage", &g) && get_uid_of("portage", &u)) {
+				chown(cachefile.c_str(), u, g);
+				chmod(cachefile.c_str(), 00664);
+			}
+		}
+};
+bool Permissions::know_root, Permissions::am_root;
 
 static void
-check_db_permissions()
-{
-	/* Check if the permissions are correct and we are in the right group */
-	if(getuid() != 0) {
-		if(get_mtime(EIX_CACHEFILE) == 0) {
-			fprintf(stderr, "User 'root' is needed to initially generate the database.\n");
-			exit(1);
-		}
-		if(!user_in_group("portage")) {
-			fprintf(stderr, "You must be in the portage-group to update the database.\n");
-			exit(1);
-		}
-		if(!is_writable(EIX_CACHEFILE)) {
-			fprintf(stderr, EIX_CACHEFILE" must be writable by group portage.\n");
-			exit(1);
-		}
-	}
-
-	gid_t g;
-	uid_t u;
-
-	if(get_gid_of("portage", &g) && get_uid_of("portage", &u)) {
-		chown(EIX_CACHEFILE, u, g);
-		chmod(EIX_CACHEFILE, 00664);
-	}
-}
-
-static void
-print_help(void)
+print_help(int ret)
 {
 	printf( "%s [options]\n"
 			"\n"
@@ -97,16 +164,16 @@ print_help(void)
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
-			"     --exclude-overlay   exclude an overlay from the update-process.\n"
+			" -o  --output            output to another file than"EIX_CACHEFILE"\n"
+			"                         In addition, all permission checks are omitted.\n"
+			" -x  --exclude-overlay   exclude an overlay from the update-process.\n"
 			"                         Note that you can also exclude PORTDIR\n"
 			"                         using this option.\n"
 			"\n"
-			"     --add-overlay       add an overlay to the update-process.\n"
+			" -a  --add-overlay       add an overlay to the update-process.\n"
 			"\n"
-#if 0
-			"     --print-masks       print masks (if you are no developer, you probably won't need this)\n"
+			" -m  --override-method   override cache method for a specified overlay.\n"
 			"\n"
-#endif
 			"You can contact the developers in #eix on irc.freenode.net or on\n"
 			"the sourceforge-page "PACKAGE_BUGREPORT".\n"
 			"There is also a wiki at "EIX_WIKI".\n"
@@ -114,15 +181,11 @@ print_help(void)
 			"further information.\n",
 		program_name);
 
-	exit(0);
+	exit(ret);
 }
 
 enum cli_options {
-	O_DUMP = 260,
-	O_EXCLUDE,
-	O_ADD,
-	ONLY_NEEDED,
-	O_PRINT_MASKS
+	O_DUMP = 260
 };
 
 bool quiet = false,
@@ -130,16 +193,23 @@ bool quiet = false,
 	 show_version = false,
 	 dump_eixrc = false;
 
+list<const char *> exclude_args, add_args;
+list<ArgPair> method_args;
+const char *outputname;
+
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
 
-	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet), /* produce no output */
+	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet),
 	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
-	 Option("help",           'h',     Option::BOOLEAN_T, &show_help), /* show a short help screen */
+	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 
-	 Option("exclude-overlay", O_EXCLUDE), /* exclude a overlay from the update-process. */
-	 Option("add-overlay",     O_ADD),     /* add  an   overlay to   the update-process. */
+	 Option("exclude-overlay",'x',     Option::STRINGLIST,&exclude_args),
+	 Option("add-overlay",    'a',     Option::STRINGLIST,&add_args),
+	 Option("method",         'm',     Option::PAIRLIST,  &method_args),
+	 Option("output",         'o',     Option::STRING,    &outputname),
+
 	 Option(0 ,                0)
 };
 
@@ -168,51 +238,47 @@ run_update_eix(int argc, char *argv[])
 	/* Setup eixrc. */
 	EixRc &eixrc = get_eixrc();
 	map<string, string> *override = NULL;
+	bool have_output;
+	string outputfile;
 
 	add_override(override, eixrc, "OVERRIDE_CACHE_METHOD");
-	add_override(override, eixrc, "ADD_LOCAL_CACHE_METHOD");
 	add_override(override, eixrc, "ADD_CACHE_METHOD");
 	vector<string>excluded_overlays = split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r");
 	vector<string>add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
+	outputname = NULL;
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
-	ArgumentReader::iterator current_param = argreader.begin();
 
-	/* Read options. */
-	while(current_param != argreader.end())
+	/* We do not want any arguments except options */
+	if(argreader.begin() != argreader.end())
+		print_help(1);
+
+	/* Interpret the string arguments (do not trust that content of const char * remains) */
+	if(outputname)
 	{
-		switch(**current_param)
-		{
-			case O_EXCLUDE:
-				++current_param;
-				if(! (current_param != argreader.end()
-					  && current_param->type == Parameter::ARGUMENT)) {
-					fprintf(stderr, "Arg %i: --exclude-overlay is missing an argument.\n",
-							distance(argreader.begin(), current_param));
-					exit(1);
-				}
-				excluded_overlays.push_back(current_param->m_argument);
-				break;
-			case O_ADD:
-				++current_param;
-				if(! (current_param != argreader.end()
-					  && current_param->type == Parameter::ARGUMENT)) {
-					fprintf(stderr, "Arg %i: --add-overlay is missing an argument.\n",
-							distance(argreader.begin(), current_param));
-					exit(1);
-				}
-				add_overlays.push_back(current_param->m_argument);
-				break;
-		}
-		++current_param;
+		have_output = true;
+		outputfile = outputname;
 	}
+	else
+	{
+		have_output = false;
+		outputfile = EIX_CACHEFILE;
+	}
+	for(list<const char*>::iterator it = exclude_args.begin();
+		it != exclude_args.end(); ++it)
+		excluded_overlays.push_back(*it);
+	for(list<const char*>::iterator it = add_args.begin();
+		it != add_args.end(); ++it)
+		add_overlays.push_back(*it);
+	for(list<ArgPair>::iterator it = method_args.begin();
+		it != method_args.end(); ++it)
+		(*override)[it->first] = it->second;
 
-	/* Check for correct permissions. */
-	check_db_permissions();
+	Permissions permissions(have_output ? outputfile.c_str() : NULL);
 
 	if(show_help)
-		print_help();
+		print_help(0);
 
 	if(show_version) {
 		dump_version(0);
@@ -228,6 +294,9 @@ run_update_eix(int argc, char *argv[])
 		eixrc.dumpDefaults(stdout);
 		exit(0);
 	}
+
+	/* Check for correct permissions. */
+	permissions.check_db();
 
 	INFO("Reading Portage settings ..\n");
 	PortageSettings portage_settings;
@@ -262,18 +331,20 @@ run_update_eix(int argc, char *argv[])
 			INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
 	}
 
-	INFO("Building database (%s) from scratch ..\n", EIX_CACHEFILE);
+	INFO("Building database (%s) from scratch ..\n", outputfile.c_str());
 
 	/* Update the database from scratch */
+	int ret = 0;
 	try {
-		update(table, portage_settings,
+		update(outputfile.c_str(), table, portage_settings,
 			eixrc.getBool("SMALL_EIX_DATABASE"));
 	} catch(ExBasic &e)
 	{
 		cerr << e << endl;
-		return 1;
+		ret = 2;
 	}
-	return 0;
+	permissions.set_db();
+	return ret;
 }
 
 void
@@ -289,7 +360,7 @@ error_callback(const char *fmt, ...)
 }
 
 void
-update(CacheTable &cache_table, PortageSettings &portage_settings, bool small)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small)
 {
 	DBHeader dbheader;
 	vector<string> *categories = portage_settings.getCategories();
@@ -300,6 +371,8 @@ update(CacheTable &cache_table, PortageSettings &portage_settings, bool small)
 		++it)
 	{
 		BasicCache *cache = *it;
+		cache->portagesettings = &portage_settings;
+
 		/* Build database from scratch. */
 		short key = dbheader.addOverlay(cache->getPath());
 		cache->setKey(key);
@@ -347,7 +420,7 @@ update(CacheTable &cache_table, PortageSettings &portage_settings, bool small)
 	}
 
 	/* And write database back to disk .. */
-	FILE *database_stream = fopen(EIX_CACHEFILE, "wb");
+	FILE *database_stream = fopen(outputfile, "wb");
 	ASSERT(database_stream, "Can't open the database file %s for writing (mode = 'wb')", EIX_CACHEFILE);
 
 	dbheader.size = package_tree.countCategories();

@@ -183,7 +183,7 @@ enum cli_options {
 	O_DEBUG
 };
 
-char *format_normal, *format_verbose, *format_compact;
+const char *format_normal, *format_verbose, *format_compact;
 char overlay_mode;
 
 PrintFormat format(get_package_property, print_package_property);

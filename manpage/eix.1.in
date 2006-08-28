@@ -1,4 +1,4 @@
-.TH "eix" "1" "August 27, 2006" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "August 28, 2006" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -15,7 +15,7 @@ A I<EXPRESSION> can be:
     [I<local options>] I<PATTERN>
 
 .BR update-eix
-[I<common options>] [B<--exclude-overlay> I<DIR>]
+[I<common options>] [I<update-eix options>]
 
 .BR diff-eix
 [I<common options>] I<OLD-CACHE> [I<NEW-CACHE>]
@@ -40,14 +40,17 @@ from B<emerge> and B<update-eix> to I</var/log/eix-sync.log> for cleanliness.
 .SS Common options
 These options are common to all programs in the eix-suite.
 .TP
-.BR -Q ", " --quick "   (toggle)"
+.BR -h ", " --help
+Print a help screen and exit.
+.TP
+.BR -Q ", " --quick "   (toggle)    (not for B<update-eix>)"
 Do (not) read the slots of installed versions which cannot be guessed
 (i.e. installed versions of packages with at least two different slots
 for which the installed version is not in the database anymore).
 Note that with this option, eix and diff-eix might report false positives
 for up-/downgrade recommendations for these packages.
 .TP
-.BR --care
+.BR --care "    (not for B<update-eix>)"
 This deactivates --quick, and moreover, slots of installed version are
 always read instead of relying on the guess of the slot.
 This will in particular make sure that you get an up-/downgrade
@@ -95,18 +98,7 @@ Use a verbose layout with additional information about search results such as th
 of a package.
 .\" }}}
 
-.\" {{{ -------- Defining layouts
-.SS Defining layouts \fP(see B<FORMATSTRING> below)
-.TP
-.BR --format " " I<FORMAT>
-Define the normal layout for results as I<FORMAT>
-.TP
-.BR --format-compact " " I<FORMAT>
-Define the compact layout for results as I<FORMAT>
-.TP
-.BR --format-verbose " " I<FORMAT>
-Define the verbose layout for results as I<FORMAT>
-.\" }}}
+.\" {{{ -------- Options for eix
 .SS Special options for B<eix>
 .TP
 .BR -t ", " --test-non-matching
@@ -252,6 +244,60 @@ information, please read
 .BR regex (7).
 Again, be sure to use single quotes around patterns. (Default)
 .\" }}}
+.\" {{{ -------- Defining layouts
+.SS Defining layouts \fP(see B<FORMATSTRING> below)
+.TP
+.BR --format " " I<FORMAT>
+Define the normal layout for results as I<FORMAT>
+.TP
+.BR --format-compact " " I<FORMAT>
+Define the compact layout for results as I<FORMAT>
+.TP
+.BR --format-verbose " " I<FORMAT>
+Define the verbose layout for results as I<FORMAT>
+.\" }}}
+.\" }}}
+.\" {{{ -------- Options for update-eix
+.SS Special options for B<update-eix>
+.TP
+.BR  -o " " I<outputfile> ", " --output " " I<outputfile>
+Use this option if you are running B<update-eix> with reduced permissions
+or if you want to generate an eix-database for distribution
+(e.g. to avoid security problems of cache methods B<ebuild> and B<ebuild*>
+and to keep your original database).
+With this option, B<update-eix> will not test about permissions and will
+write its output to I<outputfile> instead of B<@EIX_CACHEFILE@>.
+
+.TP
+.BR  -a " " I<overlay> ", " --add-overlay " " I<overlay>
+This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/make.conf
+or to B<ADD_OVERLAY> but has the advantage that you need not modify some of those,
+and you can also use spaces in I<overlay>.
+If I<overlay> is already contained in the list of overlays, this option has no effect.
+It is explicitly admissible to use this option repeatedly to add several overlays.
+
+.TP
+.BR -x " " I<overlay> ", " --exclude-overlay " " I<overlay>
+This is similar to adding I<overlay> to B<EXCLUDE_OVERLAY>
+but has the advantage that you need not modify the latter,
+and you can also use spaces in I<overlay>.
+Always exclude I<overlay> (even for later B<--add-overlay> options),
+no matter whether I<overlay> is in the list of overlays.
+The B<PORTDIR> directory is considered as any other overlay which can be excluded
+(in this case, the first I<overlay> in the list will be stored as B<PORTDIR>).
+It is explicitly admissible to use this option repeatedly to exclude several overlays.
+.TP
+.BR -m " " I<overlay> " " I<method> ", " --override-method " " I<overlay> " " I<method>
+Change the cache method of I<overlay>
+(the B<PORTDIR> directory is an allowed I<overlay>)
+to I<method>.
+If I<overlay> is not in the list of overlays, this option has no effect.
+This option is similar to adding I<overlay> I<method> to B<ADD_CACHE_METHOD>
+(i.e. to B<OVERRIDE_CACHE_METHOD>) but has the advantage that you need not
+modify the latter and you can also use spaces in I<overlay> or I<method>.
+It is explicitly admissible to use this option repeatedly to
+override cache methods for several overlays.
+The last override has precedence.
 .\" }}}
 
 .\" {{{ OUTPUT
@@ -620,10 +666,12 @@ Set default levenshtein-distance.
 .TP
 .BR EXCLUDE_OVERLAY "  " (String)
 Set a list of overlays that are excluded from the index (separators are [\\n\\r\\t ]).
+See the B<update-eix> option B<--exclude-overlay>.
 
 .TP
 .BR ADD_OVERLAY "  " (String)
 Set a list of overlays that are added to the index (separators are [\\n\\r\\t ]).
+See the B<update-eix> option B<--add-overlay>.
 
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (Strings)
@@ -636,17 +684,14 @@ You might want to specify a different cache method only for some overlays
 This can be done with the following variables:
 
 .TP
-.BR OVERRIDE_CACHE_METHOD ", " ADD_LOCAL_CACHE_METHOD ", " ADD_CACHE_METHOD "  " (Strings)
-These variables are lists of the form B<DIRECTORY> B<CACHE-METHOD>.
-For each overlay (or main tree) B<DIRECTORY>, the default cache method
-(determined by B<PORTDIR_CACHE_METHOD> and B<OVERLAY_CACHE_METHOD>)
-is overridden with the value B<CACHE-METHOD>.
-Later entries in this list take precedence.
-These variables are evaluated in the order given above.
-The intention is that you use B<OVERRIDE_CACHE_METHOD> in your global
-configuration, add B<ADD_LOCAL_CACHE_METHOD> in your local configuration,
-and use B<ADD_CACHE_METHOD> only as a temporary environment variable,
-always being able to modify earlier changes.
+.BR OVERRIDE_CACHE_METHOD ", " ADD_CACHE_METHOD
+These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
+The cache method of I<overlay> is set to I<method>, overriding the
+settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
+if I<overlay> is the B<PORTDIR> directory).
+Later entries override earlier ones.
+The settings in B<ADD_CACHE_METHODS> override the settings of
+B<OVERRIDE_CACHE_METHOD> and are meant to be used only locally.
 
 The following cache methods are available:
 .TP
@@ -669,7 +714,7 @@ If you are using that backport-stuff (from portage-3 to portage-2) you should us
 No cache-backend.
 Get the information from the ebuilds.
 The ebuild is not executed but only parsed, using some heuristics.
-Hence, this method has some problems.
+Hence, this method has no security risk but possibly some other problems.
 For example, if variables are only set in eclasses, this method will not see them.
 Examples of problems with this method is missing SLOT information for
 typical ebuilds from kde-base.
@@ -688,8 +733,11 @@ Since all ebuilds will get executed by bash, this may be a security risk
 if you do not trust all ".ebuild" scripts or your environment variables.
 Intentionally, the environment is not cleared before the actual execution
 so that you can pass further variables to the ebuild.
-However, this can also lead to unexpected behaviour;
+However, this can also lead to unexpected behaviour or even a security risk
+since many bash scripts may be tricked with strange environments.
 use B<env -i update-eix> when this causes problems.
+
+B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
 .TP
 .SS
 .BR ebuild*
@@ -705,6 +753,8 @@ This method is not quite as compatible as the method B<ebuild>, and its
 success may depend more on the portage version.
 However, this method is considerably faster than B<ebuild> and stable
 enough to treat e.g. typical ebuilds from kde-base.
+
+B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
 .TP
 .SS
 .BR metadata

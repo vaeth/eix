@@ -40,7 +40,7 @@
 
 using namespace std;
 
-void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles)
+void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -67,7 +67,7 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 			m_error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
 			continue;
 		}
-		string ebuild_name = (*directory_path) + "/" + list[i]->d_name;
+		string ebuild_name = (*directory_path) + '/' + list[i]->d_name;
 
 		/* Make version and add it to package. */
 		Version *version = new Version(ver);
@@ -85,13 +85,20 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 		if(!nosubst)
 		{
 			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
-			env_add_package(env, *pkg, *version, ebuild_name.c_str());
+			env_add_package(env, *pkg, *version, *directory_path, ebuild_name.c_str());
 		}
 		VarsReader ebuild(flags);
 		if(flags & VarsReader::INTO_MAP)
 			ebuild.useMap(&env);
-		ebuild.read(ebuild_name.c_str());
 		version->overlay_key = m_overlay_key;
+		try {
+			ebuild.read(ebuild_name.c_str());
+		}
+		catch(ExBasic e) {
+			cerr << "Problems with reading " << ebuild_name <<
+				":\n" << e << endl;
+		}
+
 		version->set(m_arch, ebuild["KEYWORDS"]);
 		version->slot = ebuild["SLOT"];
 		pkg->addVersionFinalize(version);
@@ -123,13 +130,18 @@ int NoneCache::readCategory(Category &vec) throw(ExBasic)
 	for(int i = 0; i<numpackages; ++i)
 	{
 		struct dirent **files = NULL;
-		string pkg_path = catpath + "/" + packages[i]->d_name;
+		string pkg_path = catpath + '/' + packages[i]->d_name;
 
 		int numfiles = scandir(pkg_path.c_str(),
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			try {
+				readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+			}
+			catch(ExBasic e) {
+				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
+			}
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);

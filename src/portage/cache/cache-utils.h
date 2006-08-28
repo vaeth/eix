@@ -32,16 +32,13 @@
 #include <eixTk/exceptions.h>
 #include <portage/keywords.h>
 #include <dirent.h>
-#include <map>
 #include <string>
 
 class Package;
-class Version;
 
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);
 void flat_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot) throw (ExBasic);
 void flat_read_file(const char *filename, Package *pkg) throw (ExBasic);
-void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const char *ebuild_name);
 
 #endif /* __CACHEUTILS_H__ */

@@ -149,15 +149,7 @@ CdTemp () {
 	trap "Cleanup" 0 1 2 15
 }
 
-export ADD_CACHE_METHOD
-declare -a ARR_METHOD UPDATE_EIX_ARGS
-
-AddMethod () {
-	local J
-	for J; do
-		ARR_METHOD[${#ARR_METHOD[@]}]="${J}"
-	done
-}
+declare -a UPDATE_EIX_ARGS
 
 AddUpdateArgs () {
 	local K
@@ -166,27 +158,29 @@ AddUpdateArgs () {
 	done
 }
 
-AddOverlay () {
+AddMethod () {
+	AddUpdateArgs '-m' "$1" "$2"
+}
+
+AddOverlays () {
 	local J
 	for J; do
-		AddUpdateArgs '--add-overlay' "${J}"
+		AddUpdateArgs '-a' "${J}"
 	done
 }
 
-AddExclude () {
+AddExcludes () {
 	local J
 	for J; do
-		AddUpdateArgs '--exclude-overlay' "${J}"
+		AddUpdateArgs '-x' "${J}"
 	done
 }
 
 ClearData () {
-	ARR_METHOD=()
 	UPDATE_EIX_ARGS=()
 }
 
 CallUpdateEix () {
-	ADD_CACHE_METHOD="${ARR_METHOD[*]}"
 	RunCommand update-eix "${UPDATE_EIX_ARGS[@]}" || \
 		die "update-eix failed"
 }
@@ -215,8 +209,8 @@ Add () {
 		NAME="${NAME//_//}"
 		VIRTUAL="(${NAME})"
 		AddMethod "${VIRTUAL}" "eix*:${TMPDIR}/${I}"
-		AddOverlay "${VIRTUAL}"
-		AddExclude "${OVERLAYPARENT}/${NAME}"
+		AddOverlays "${VIRTUAL}"
+		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done
 	CallUpdateEix
 }

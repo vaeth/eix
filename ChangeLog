@@ -8,6 +8,12 @@
 	- Define standard ebuild standard variables like $P or $PN;
 	- Add cache methods "ebuild" and "ebuild*" to scan properly e.g.
 	  SLOTS of typical kde-base packages.
+	- Better treatment of overlay eclass (in particular for ebuild*).
+	- Let none, none*, ebuild, ebuild* continue after errors.
+	- Add option --output to updatedb - can now run with minor permissions.
+	- Improved handling of database file permissions.
+	- Improved option parsing.
+	- Added --override_method option; eliminated ADD_LOCAL_CACHE_METHOD.
 	- Avoid memory leak in pushback_files().
 
 *eix-0.7.0_beta

@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -30,16 +31,21 @@
 
 #include <list>
 
+typedef std::pair<const char *,const char *> ArgPair;
+
 /// Maps longopt->shortopt.
 typedef struct Option
 {
 	enum Type {
-		NONE = 0,      ///< No type set (will not be removed on fold)
-		BOOLEAN_T = 1, ///< Boolean. Will be set to true if found.
-		BOOLEAN_F = 2, ///< Boolean. Will be set to false if found.
-		BOOLEAN = 3,   ///< Boolean. Will be flipped if found.
-		INTEGER = 4,   ///< Int. Increase value if found.
-		STRING = 5     ///< String. Set if found (warn if already set)
+		NONE,          ///< No type set (will not be removed on fold)
+		BOOLEAN_T,     ///< Boolean. Will be set to true if found.
+		BOOLEAN_F,     ///< Boolean. Will be set to false if found.
+		BOOLEAN,       ///< Boolean. Will be flipped if found.
+		INTEGER,       ///< Int. Increase value if found.
+		STRING,        ///< String. Set if found.
+		PAIR,          ///< Pair of strings.
+		STRINGLIST,    ///< Accumulative strings.
+		PAIRLIST       ///< Accumulative pairs of strings.
 	} type;
 
 	Option(const char *l, int s, enum Type t, int *i)
@@ -50,8 +56,20 @@ typedef struct Option
 		: type(t), longopt(l), shortopt(s), boolean(b)
 	{ }
 
-	Option(const char *l, int s, enum Type t, char **c)
+	Option(const char *l, int s, enum Type t, const char **c)
 		: type(t), longopt(l), shortopt(s), str(c)
+	{ }
+
+	Option(const char *l, int s, enum Type t, const char **c1, const char **c2)
+		: type(t), longopt(l), shortopt(s)
+	{ pr.first = c1; pr.second = c2; }
+
+	Option(const char *l, int s, enum Type t, std::list<const char*> *c)
+		: type(t), longopt(l), shortopt(s), strlist(c)
+	{ }
+
+	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c)
+		: type(t), longopt(l), shortopt(s), prlist(c)
 	{ }
 
 	Option(const char *l, int s)
@@ -64,7 +82,10 @@ typedef struct Option
 	const union { ///< Pointer to variable of argument.
 		int   *integer;
 		bool  *boolean;
-		char **str;
+		const char **str;
+		struct { const char **first; const char **second; } pr;
+		std::list<const char *> *strlist;
+		std::list<ArgPair> *prlist;
 	};
 };
 
@@ -72,21 +93,20 @@ typedef struct Option
 class Parameter
 {
 	public:
-		/// Type of arguemnt. ARGUMENT or OPTION.
+		/// Type of argument. ARGUMENT, OPTION, or PAIR.
 		const enum Type {
 			ARGUMENT = 1,
-			OPTION = 2
+			OPTION = 2,
+			PAIR = 3,
 		} type;
 
-		const union {
-			/// If type is ARGUMENT this is the string we got.
-			char *m_argument;
-			/// If type is OPTION this holds the option-key.
-			int m_option;
-		};
+		/// This is the string we got.
+		const char *m_argument;
+		/// If type is OPTION this holds the option-key.
+		int m_option;
 
-		Parameter(int option)
-			: type(Parameter::OPTION), m_option(option)
+		Parameter(char *argument, int option)
+			: type(Parameter::OPTION), m_argument(argument), m_option(option)
 		{ }
 
 		Parameter(char *argument)
@@ -95,7 +115,6 @@ class Parameter
 
 		int operator * ()
 		{ return type == OPTION ? m_option : -1; }
-
 };
 
 /// Main class for argument parsing.
