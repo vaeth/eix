@@ -195,7 +195,7 @@ bool quiet = false,
 
 list<const char *> exclude_args, add_args;
 list<ArgPair> method_args;
-const char *outputname;
+const char *outputname = NULL;
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
@@ -230,6 +230,28 @@ void add_override(map<string, string> &override, EixRc &eixrc, const char *s)
 	}
 }
 
+void add_virtuals(map<string, string> &override, vector<string> &add)
+{
+	static const string a = "eix*::";
+	FILE *fp = fopen(EIX_CACHEFILE, "rb");
+	if(!fp)
+		return;
+
+	DBHeader header;
+	io::read_header(fp, header);
+	fclose(fp);
+	if(!header.isCurrent())
+		return;
+	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
+	{
+		const char *overlay = (header.getOverlay(i)).c_str();
+		if(!is_virtual(overlay))
+			continue;
+		add.push_back(overlay);
+		override[overlay] = a + overlay;
+	}
+}
+
 int
 run_update_eix(int argc, char *argv[])
 {
@@ -239,11 +261,16 @@ run_update_eix(int argc, char *argv[])
 	bool have_output;
 	string outputfile;
 
-	add_override(override, eixrc, "OVERRIDE_CACHE_METHOD");
+	add_override(override, eixrc, "CACHE_METHOD");
 	add_override(override, eixrc, "ADD_CACHE_METHOD");
-	vector<string>excluded_overlays = split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r");
-	vector<string>add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
-	outputname = NULL;
+	vector<string> excluded_overlays = split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r");
+	vector<string> add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
+
+	if(eixrc.getBool("KEEP_VIRTUALS"))
+		add_virtuals(override, add_overlays);
+
+	add_override(override, eixrc, "OVERRIDE_CACHE_METHOD");
+	add_override(override, eixrc, "ADD_OVERRIDE_CACHE_METHOD");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -332,7 +359,7 @@ run_update_eix(int argc, char *argv[])
 		}
 	}
 
-	INFO("Building database (%s) from scratch ..\n", outputfile.c_str());
+	INFO("Building database (%s) ..\n", outputfile.c_str());
 
 	/* Update the database from scratch */
 	int ret = 0;

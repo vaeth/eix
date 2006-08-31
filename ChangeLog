@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Improved determination of "virtual" overlays.
+	- Introduce KEEP_VIRTUAL and let it default to true.
+	- Introduce CACHE_METHOD and ADD_OVERRIDE_CACHE_METHOD
+	  and change hierarchy:
+	  CACHE_METHOD < ADD_CACHE_METHOD < KEEP_VIRTUAL <
+	  OVERRIDE_CACHE_METHOD < ADD_OVERRIDE_CACHE_METHOD
+
 *eix-0.7.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- urgent version bump to fix a segfault of update-eix -m

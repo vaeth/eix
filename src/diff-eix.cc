@@ -37,6 +37,7 @@
 #include <eixTk/stringutils.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
+#include <eixTk/filenames.h>
 #include <eixTk/utils.h>
 
 #include <database/header.h>
@@ -193,12 +194,11 @@ class SetStability {
 void
 set_virtual(PrintFormat *fmt, const DBHeader &header)
 {
+	if(!header.countOverlays())
+		return;
 	fmt->clear_virtual(header.countOverlays());
-	if(header.countOverlays())
-	{
-		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-			fmt->determine_virtual(i, header.getOverlay(i));
-	}
+	for(Version::Overlay i = 1; i != header.countOverlays(); i++)
+		fmt->set_as_virtual(i, is_virtual(header.getOverlay(i).c_str()));
 }
 
 class DiffTrees

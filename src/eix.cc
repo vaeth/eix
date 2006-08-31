@@ -40,6 +40,7 @@
 #include <eixTk/stringutils.h>
 #include <eixTk/ansicolor.h>
 #include <eixTk/utils.h>
+#include <eixTk/filenames.h>
 
 #include <cli.h>
 
@@ -487,11 +488,11 @@ run_eix(int argc, char** argv)
 	format.set_marked_list(marked_list);
 	if(overlay_mode != 0)
 		format.set_overlay_translations(NULL);
-	format.clear_virtual(header.countOverlays());
 	if(header.countOverlays())
 	{
+		format.clear_virtual(header.countOverlays());
 		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-			format.determine_virtual(i, header.getOverlay(i));
+			format.set_as_virtual(i, is_virtual(header.getOverlay(i).c_str()));
 	}
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);

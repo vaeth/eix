@@ -250,13 +250,25 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "OVERRIDE_CACHE_METHOD",
+		EixRcOption(EixRcOption::STRING, "CACHE_METHOD",
 			"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
 			"# This is a list of pairs DIRECTORY METHOD. Later entries take precedence.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_CACHE_METHOD",
+			"", "This variable is added to CACHE_METHOD.\n"
+			"# This variable is meant to be set only locally.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "OVERRIDE_CACHE_METHOD",
+			"", "This variable can override the choices of CACHE_METHOD/ADD_CACHE_METHOD\n"
+			"# and in addition it can override the choices made by KEEP_VIRTUALS.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "ADD_OVERRIDE_CACHE_METHOD",
 			"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
 			"# This variable is meant to be set only locally.")
 		);
@@ -269,6 +281,12 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_OVERLAY",
 			"", "List of overlays that should be added to the index.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "KEEP_VIRTUALS",
+			"true", "Keep virtuals of the old cache file by adding corresponding entries"
+			"# implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD")
 		);
 
 eixrc.addDefault(

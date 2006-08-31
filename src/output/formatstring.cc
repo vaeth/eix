@@ -162,12 +162,6 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg)
 	}
 }
 
-void
-PrintFormat::determine_virtual(const Version::Overlay overlay, const std::string &name)
-{
-	(*virtuals)[overlay] = (name[0] != '/');
-}
-
 string
 PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 {
@@ -179,12 +173,7 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 		color = false;
 	if( color )
 	{
-		bool is_virtual = false;
-		if(virtuals) {
-			if(overlay < virtuals->size())
-				is_virtual = (*virtuals)[overlay];
-		}
-		if(is_virtual)
+		if(is_virtual(overlay))
 			start = color_virtualkey + start;
 		else
 			start = color_overlaykey + start;

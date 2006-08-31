@@ -242,9 +242,27 @@ class PrintFormat {
 		}
 
 		void clear_virtual(Version::Overlay count)
-		{ virtuals = new std::vector<bool>(count, false); }
+		{
+			if(virtuals)
+				delete virtuals;
+			virtuals = new std::vector<bool>(count, false);
+		}
 
-		void determine_virtual(const Version::Overlay overlay, const std::string &name);
+		void set_as_virtual(const Version::Overlay overlay, bool on = true)
+		{
+			if(!overlay)
+				return;
+			(*virtuals)[overlay-1] = on;
+		}
+
+		bool is_virtual(const Version::Overlay overlay) const
+		{
+			if(!virtuals)
+				return false;
+			if((!overlay) || (overlay >= virtuals->size()))
+				return false;
+			return (*virtuals)[overlay - 1];
+		}
 
 		void set_overlay_translations(std::vector<Version::Overlay> *translations)
 		{ overlay_translations = translations; }

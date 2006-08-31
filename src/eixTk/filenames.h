@@ -28,6 +28,7 @@
 #define __FILENAMES_H__
 
 #include "../../config.h"
+#include <eixTk/sysutils.h>
 
 #include <string>
 #include <vector>
@@ -43,6 +44,15 @@ std::vector<std::string>::const_iterator find_filenames(const std::vector<std::s
 		if(same_filenames(*i, search))
 			return i;
 	return end;
+}
+
+/** Test whether filename appears to be a "virtual" overlay */
+inline
+bool is_virtual(const char *name)
+{
+	if(*name != '/')
+		return true;
+	return !is_dir(name);
 }
 
 #endif /* __FILENAMES_H__ */

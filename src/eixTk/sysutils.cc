@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -81,16 +82,25 @@ bool get_gid_of(const char *name, gid_t *g)
 }
 
 
-bool is_writable(const char *file) throw(ExBasic)
+bool is_writable(const char *file) //throw(ExBasic)
 {
 	struct stat stat_buf;
 	if(stat(file, &stat_buf) != 0) {
-		throw(ExBasic("file %s not found. ", file));
+		//throw(ExBasic("file %s not found. ", file));
+		return false;
 	}
 	gid_t g;
 	return (get_gid_of("portage", &g)
 			&& (stat_buf.st_mode & (S_IWGRP|S_IRGRP)) == (S_IWGRP|S_IRGRP)
 			&& stat_buf.st_gid == g );
+}
+
+bool is_dir(const char *file)
+{
+	struct stat stat_buf;
+	if(stat(file, &stat_buf) != 0)
+		return false;
+	return S_ISDIR(stat_buf.st_mode);
 }
 
 /** Return mtime of file. */

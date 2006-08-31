@@ -65,8 +65,10 @@ update:	Fetch the eix-caches of some layman overlays into the file
 	and add them to the eix database.
 fetch:	Only fetch the overlays.
 add:	Only add the overlays to the eix database.
-remove:	Remove the additional overlays from the eix database;
-	this is similar to update-eix but faster (without actual updating).
+remove:	Remove all temporarily added virtual overlays from the eix database;
+	this is similar to
+		KEEP_VIRTUALS=false update-eix
+	but faster (without actual updating where possible).
 	This command does *not* remove the file
 	${EIXCACHESFULL}
 
@@ -123,6 +125,8 @@ Fetch () {
 	RunCommand \
 	wget "http://dev.gentooexperimental.org/eix_cache/${EIXCACHESNAME}" \
 		|| die "could not fetch ${EIXCACHESFULL}"
+	chmod 664 "${EIXCACHESFULL}"
+	[[ "${UID}" -eq 0 ]] && chown portage:portage "${EIXCACHESFULL}"
 }
 
 TMPDIR=''
@@ -150,6 +154,7 @@ CdTemp () {
 }
 
 declare -a UPDATE_EIX_ARGS
+export KEEP_VIRTUALS
 
 AddUpdateArgs () {
 	local K
@@ -212,12 +217,14 @@ Add () {
 		AddOverlays "${VIRTUAL}"
 		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done
+	KEEP_VIRTUALS=true
 	CallUpdateEix
 }
 
 Remove () {
 	ClearData
 	AddLocalMethods
+	KEEP_VIRTUALS=false
 	CallUpdateEix
 }
 

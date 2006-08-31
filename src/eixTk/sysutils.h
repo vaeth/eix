@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,9 +32,12 @@
 class ExBasic;
 
 #include <unistd.h>
+#include <time.h>
 
 /** Return false if the file is not writable/readable by users in the group portage. */
-bool is_writable(const char *file) throw(ExBasic);
+bool is_writable(const char *file);
+
+bool is_dir(const char *file);
 
 /** Return true if the current user is in the group_name. */
 bool user_in_group(const char *group_name);

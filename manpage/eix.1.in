@@ -273,6 +273,7 @@ write its output to I<outputfile> instead of B<@EIX_CACHEFILE@>.
 This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/make.conf
 or to B<ADD_OVERLAY> but has the advantage that you need not modify some of those,
 and you can also use spaces in I<overlay>.
+Overlays added by this option come after overlays added by B<KEEP_VIRTUALS>.
 If I<overlay> is already contained in the list of overlays, this option has no effect.
 It is explicitly admissible to use this option repeatedly to add several overlays.
 
@@ -292,8 +293,8 @@ Change the cache method of I<overlay>
 (the B<PORTDIR> directory is an allowed I<overlay>)
 to I<method>.
 If I<overlay> is not in the list of overlays, this option has no effect.
-This option is similar to adding I<overlay> I<method> to B<ADD_CACHE_METHOD>
-(i.e. to B<OVERRIDE_CACHE_METHOD>) but has the advantage that you need not
+This option is similar to adding I<overlay> I<method> to
+B<ADD_OVERRIDE_CACHE_METHOD> but has the advantage that you need not
 modify the latter and you can also use spaces in I<overlay> or I<method>.
 It is explicitly admissible to use this option repeatedly to
 override cache methods for several overlays.
@@ -684,14 +685,21 @@ You might want to specify a different cache method only for some overlays
 This can be done with the following variables:
 
 .TP
-.BR OVERRIDE_CACHE_METHOD ", " ADD_CACHE_METHOD
+.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD
 These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
 The cache method of I<overlay> is set to I<method>, overriding the
 settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
 if I<overlay> is the B<PORTDIR> directory).
 Later entries override earlier ones.
-The settings in B<ADD_CACHE_METHODS> override the settings of
-B<OVERRIDE_CACHE_METHOD> and are meant to be used only locally.
+
+The reason for several variables is that additions/changes are possible
+without touching the other variables:
+The settings of B<OVERRIDE_CACHE_METHOD> extend/override the settings of
+B<CACHE_METHOD> and, in addition, they extend/override the settings made
+by B<KEEP_VIRTUALS> (see below).
+The settings in B<ADD_CACHE_METHOD>/B<ADD_OVERRIDE_CACHE_METHOD>
+extend/override the settings of B<CACHE_METHOD>/B<OVERRIDE_CACHE_METHOD>
+and are meant to be used only locally.
 
 The following cache methods are available:
 .TP
@@ -792,6 +800,16 @@ were not enabled by some profile/categories file.
 This cache method is useful if I<FILE> contains information for some
 overlay directory for which the corresponding profile/categories on
 the local machine is unknown or not necessarily up-to-date.
+.TP
+.BR KEEP_VIRTUALS " " (true / false)
+If true, update-eix will keep all virtual overlays from the previous database
+if that existed.
+This has the same effect as appending for each virtual overlay of the previous
+database the entry "I<overlay-name>" to B<ADD_OVERLAY> and appending a
+corresponding entry "I<overlay> eix*::I<overlay>" to B<ADD_CACHE_METHOD>.
+Note that this means that this option might override settings made in
+B<CACHE_METHOD> and B<ADD_CACHE_METHOD>, but it might be overridden by
+settings from B<OVERRIDE_CACHE_METHOD> and B<ADD_OVERRIDE_CACHE_METHOD>.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
