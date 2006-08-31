@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- urgent version bump to fix a segfault of update-eix -m
+	  when ADD_CACHE_METHOD and OVERRIDE_CACHE_METHOD are both empty
+	  (this happened for update-eix-remote if no configuration was used).
+
 *eix-0.7.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let cache method "none" substitute variables;

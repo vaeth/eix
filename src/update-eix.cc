@@ -214,7 +214,7 @@ static struct Option long_options[] = {
 };
 
 inline
-void add_override(map<string, string> *&override, EixRc &eixrc, const char *s)
+void add_override(map<string, string> &override, EixRc &eixrc, const char *s)
 {
 	vector<string> v = split_string(eixrc[s]," \t\n\r");
 	if(v.size() & 1)
@@ -224,11 +224,9 @@ void add_override(map<string, string> *&override, EixRc &eixrc, const char *s)
 	}
 	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it)
 	{
-		if(!override)
-			override = new map<string, string>;
 		const char *path = it->c_str();
 		++it;
-		(*override)[path] = *it;
+		override[path] = *it;
 	}
 }
 
@@ -237,7 +235,7 @@ run_update_eix(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc = get_eixrc();
-	map<string, string> *override = NULL;
+	map<string, string> override;
 	bool have_output;
 	string outputfile;
 
@@ -273,7 +271,7 @@ run_update_eix(int argc, char *argv[])
 		add_overlays.push_back(*it);
 	for(list<ArgPair>::iterator it = method_args.begin();
 		it != method_args.end(); ++it)
-		(*override)[it->first] = it->second;
+		override[it->first] = it->second;
 
 	Permissions permissions(have_output ? outputfile.c_str() : NULL);
 
@@ -303,32 +301,35 @@ run_update_eix(int argc, char *argv[])
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
-	if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-				portage_settings["PORTDIR"]) == excluded_overlays.end())
-		table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str(), override);
-	else
-		INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
-
-	for(vector<string>::iterator it = add_overlays.begin();
-		it != add_overlays.end(); ++it)
 	{
-		// Don't add double overlays
-		if(find_filenames(portage_settings.overlays.begin(), portage_settings.overlays.end(),
-				*it) != portage_settings.overlays.end())
-			continue;
-		// Don't add PORTDIR
-		if(same_filenames(portage_settings["PORTDIR"], *it))
-			continue;
-		portage_settings.overlays.push_back(*it);
-	}
-
-	for(unsigned int i = 0; i<portage_settings.overlays.size(); ++i)
-	{
+		map<string, string> *override_ptr = (override.size() ? &override : NULL);
 		if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-					portage_settings.overlays[i]) == excluded_overlays.end())
-			table.addCache(portage_settings.overlays[i], eixrc["OVERLAY_CACHE_METHOD"].c_str(), override);
+				portage_settings["PORTDIR"]) == excluded_overlays.end())
+			table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str(), override_ptr);
 		else
-			INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
+			INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
+
+		for(vector<string>::iterator it = add_overlays.begin();
+			it != add_overlays.end(); ++it)
+		{
+			// Don't add double overlays
+			if(find_filenames(portage_settings.overlays.begin(), portage_settings.overlays.end(),
+					*it) != portage_settings.overlays.end())
+				continue;
+			// Don't add PORTDIR
+			if(same_filenames(portage_settings["PORTDIR"], *it))
+				continue;
+			portage_settings.overlays.push_back(*it);
+		}
+
+		for(unsigned int i = 0; i<portage_settings.overlays.size(); ++i)
+		{
+			if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
+					portage_settings.overlays[i]) == excluded_overlays.end())
+				table.addCache(portage_settings.overlays[i], eixrc["OVERLAY_CACHE_METHOD"].c_str(), override_ptr);
+			else
+				INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
+		}
 	}
 
 	INFO("Building database (%s) from scratch ..\n", outputfile.c_str());
