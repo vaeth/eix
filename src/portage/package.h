@@ -95,13 +95,13 @@ class Package
 
 		Duplicates have_duplicate_versions;
 
-		/** The following list is always sorted with respect to the
+		/** \c slotlist is always sorted with respect to the
 		    first version. Moreover, this list is complete, i.e. it
 		    contains also the trivial slot (-> each version is
 		    contained exactly in one slot) */
 		SlotList slotlist;
 
-		/* True if at least one slot is nonempty (different from "0") */
+		/** True if at least one slot is nonempty (different from "0") */
 		bool have_nontrivial_slots;
 
 		/** True if all versions come from one overlay. */
@@ -157,30 +157,30 @@ class Package
 
 		void best_slots(std::vector<Version*> &l) const;
 
-		/** Test whether p has a worse best_slot()
-		    return value:
-			 1: p has  a worse/missing best_slot
-			 3: p has no worse/missing best_slot, but an identical
-			    from a different overlay
-			 0: else */
+		/** Test whether p has a worse best_slot().
+		    @return
+			-  1: p has  a worse/missing best_slot
+			-  3: p has no worse/missing best_slot, but an
+			      identical from a different overlay
+			-  0: else */
 		int worse_best_slots(const Package &p) const;
 
 		/** Compare best_slots() versions with that of p.
-		    return value:
-			 0: Everything matches
-			 1: p has a worse/missing best_slot, and *this has not
-			-1: *this has a worse/missing best_slot, and p has not
-			 2: p and *this both have a worse/missing best_slot
-			 3: all matches, but at least one overlay differs */
+		    @return
+			-  0: Everything matches
+			-  1: p has a worse/missing best_slot, and *this has not
+			- -1: *this has a worse/missing best_slot, and p has not
+			-  2: p and *this both have a worse/missing best_slot
+			-  3: all matches, but at least one overlay differs */
 		int compare_best_slots(const Package &p) const;
 
 		/** Compare best() version with that of p.
-		    return value:
-			 0: same
-			 1: p is smaller
-			-1: p is larger
-			 3: same, but overlays (or slots if test_slot)
-			    are different */
+		    @return
+			-  0: same
+			-  1: p is smaller
+			- -1: p is larger
+			-  3: same, but overlays (or slots if test_slot)
+			      are different */
 		int compare_best(const Package &p, bool test_slot) const;
 
 		/** has p a worse/missing best/best_slot/different overlay? */
@@ -201,31 +201,31 @@ class Package
 
 		/** Compare best_slots() versions with that installed in v.
 		    if v is NULL, it is assumed that none is installed.
-		    return value:
-			 0: All installed versions are best and
-			    (unless only_installed) one is installed
-			    or nothing is installed and nothing can be
-			    installed
-			 1: upgrade   necessary but no downgrade
-			-1: downgrade necessary but no upgrade
-			 2: upgrade and downgrade necessary
-			 4: (if only_installed) nothing is installed,
-			    but one can be installed */
+		    @return
+			-  0: All installed versions are best and
+			      (unless only_installed) one is installed
+			      or nothing is installed and nothing can be
+			      installed
+			-  1: upgrade   necessary but no downgrade
+			- -1: downgrade necessary but no upgrade
+			-  2: upgrade and downgrade necessary
+			-  4: (if only_installed) nothing is installed,
+			      but one can be installed */
 		int check_best_slots(VarDbPkg *v, bool only_installed) const;
 
 		/** Compare best() version with that installed in v.
 		    if v is NULL, it is assumed that none is installed.
-		    return value:
-			 0: All installed versions are best and
-			    (unless only_installed) one is installed
-			    or nothing is installed and nothing can be
-			    installed
-			 1: upgrade necessary
-			-1: downgrade necessary
-			 3: (if test_slot) everything matches,
-			    but slots are different.
-			 4: (if only_installed) nothing is installed,
-			    but one can be installed */
+		    @return
+			-  0: All installed versions are best and
+			      (unless only_installed) one is installed
+			      or nothing is installed and nothing can be
+			      installed
+			-  1: upgrade necessary
+			- -1: downgrade necessary
+			-  3: (if test_slot) everything matches,
+			      but slots are different.
+			-  4: (if only_installed) nothing is installed,
+			      but one can be installed */
 		int check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */

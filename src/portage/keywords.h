@@ -69,7 +69,7 @@ class Keywords {
 		Type m_mask;
 		std::string full_keywords;
 		Redundant redundant;
-		char red_mask; // temporary redundant-related stuff during mask testing
+		char red_mask; ///< temporary redundant-related stuff during mask testing
 
 	public:
 		Keywords(Type t = KEY_MINUSKEYWORD)
@@ -151,31 +151,31 @@ class Keywords {
 		bool wanted_unmasked () const
 		{ return (red_mask & 0x08); }
 
-		/** Return true if version is marked stable. */
+		/** @return true if version is marked stable. */
 		bool isStable() const
 		{ return m_mask & KEY_STABLE; }
-		/** Return true if version is unstable. */
+		/** @return true if version is unstable. */
 		bool isUnstable() const
 		{ return m_mask & KEY_UNSTABLE; }
-		/** Return true if version is masked by -* keyword. */
+		/** @return true if version is masked by -* keyword. */
 		bool isMinusAsterisk() const
 		{ return m_mask & KEY_MINUSASTERISK; }
-		/** Return true if version is masked by -keyword. */
+		/** @return true if version is masked by -keyword. */
 		bool isMinusKeyword() const
 		{ return m_mask & KEY_MINUSKEYWORD; }
-		/** Return true if version is masked by missing keyword. */
+		/** @return true if version is masked by missing keyword. */
 		bool isMissingKeyword() const
 		{ return m_mask == KEY_MISSINGKEYWORD; }
 
 		bool isHardMasked() const
 		{ return isPackageMask() || isProfileMask(); }
-		/** Return true if version is masked by profile. */
+		/** @return true if version is masked by profile. */
 		bool isProfileMask() const
 		{ return m_mask & PROFILE_MASK; }
-		/** Return true if version is masked by a package.mask. */
+		/** @return true if version is masked by a package.mask. */
 		bool isPackageMask() const
 		{ return m_mask & PACKAGE_MASK; }
-		/** Return true if version is part of a package that is a system-package. */
+		/** @return true if version is part of a package that is a system-package. */
 		bool isSystem() const
 		{ return m_mask & SYSTEM_PACKAGE; }
 

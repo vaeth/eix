@@ -26,11 +26,10 @@
 ###########################################################################
 
 source /sbin/functions.sh
-die () { eerror "$@"; exit 2; }
+die () { eerror "${*}"; exit 2; }
 type portageq &>/dev/null || die 'portageq is required for this script'
 
 [[ "${OVERLAYPARENT}" ]] || OVERLAYPARENT="/usr/portage/local"
-[[ "${EIXCACHESPATH}" ]] || EIXCACHESPATH="/var/cache"
 EIXCACHESNAME="eix-caches.tbz2"
 
 Sanitize () {
@@ -39,99 +38,106 @@ Sanitize () {
 	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT#/}" ]]; do
 		OVERLAYPARENT="${OVERLAYPARENT#/}"
 	done
+	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
+		OVERLAYPARENT="${OVERLAYPARENT%/}"
+	done
 	OVERLAYPARENT="/${OVERLAYPARENT}"
-	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
-		OVERLAYPARENT="${OVERLAYPARENT%/}"
-	done
-	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
-		OVERLAYPARENT="${OVERLAYPARENT%/}"
-	done
-	[[ "${EIXCACHESPATH}" != "${EIXCACHESPATH#/}" ]] || \
-		die '$EIXCACHESPATH must start with /'
-	while [[ "${EIXCACHESPATH}" != "${EIXCACHESPATH%/}" ]]; do
-		EIXCACHESPATH="${EIXCACHESPATH%/}"
-	done
-	[[ "${EIXCACHESPATH}" ]] || EIXCACHESPATH='/'
-	EIXCACHESFULL="${EIXCACHESPATH}/${EIXCACHESNAME}"
 }
 Sanitize
 
 Usage () {
-	echo "Usage: ${0##*/} [options] command
+	echo "Usage: ${0##*/} [options] command [FILE]
+Handle some remote updates for @PACKAGE_STRING@
 The following commands are provided:
 
-update:	Fetch the eix-caches of some layman overlays into the file
-	${EIXCACHESFULL}
-	and add them to the eix database.
-fetch:	Only fetch the overlays.
-add:	Only add the overlays to the eix database.
+update:	Fetch the eix-caches of some layman overlays into a temporary file
+	resp. into FILE and add them to the eix database.
+fetch:	Only fetch the overlays into FILE
+add:	Only add the overlays from FILE to the eix database.
 remove:	Remove all temporarily added virtual overlays from the eix database;
 	this is similar to
 		KEEP_VIRTUALS=false update-eix
 	but faster (without actual updating where possible).
-	This command does *not* remove the file
-	${EIXCACHESFULL}
 
-All corresponding local overlay paths are excluded from the current database.
-The local paths are determined by prefixing the path
+It is strongly recommended to use the update/fetch commands only as root
+or with the -u \"nobody\" option or with very limited permissions.
+
+For update and add all corresponding local overlay paths are excluded
+from the current database to avoid confusion. The local paths are determined
+by prefixing the path
 	${OVERLAYPARENT}
-You can modify this value by setting the environment variable \$OVERLAYPATH
-
-The (compressed) data ${EIXCACHESNAME} is stored in the path
-	${EIXCACHESPATH}
-You can modify this value by setting the environment variable \$EIXCACHESPATH
+You can modify this value by setting the environment variable \$OVERLAYPARENT
+or with the -o option. If you do not want this feature, set \$OVERLAYPARENT
+to some path not containing any overlays.
 
 Options:
-	-e PATH	Use PATH as \$EIXCACHESPATH
-	-o PATH	Use PATH as \$OVERLAYPATH
+	-u USER	Call wget as USER. Defaults to \"nobody\" if called as root.
+	-o PATH	Use PATH as \$OVERLAYPARENT
 	-v	Verbose (default)
 	-q	Quiet"
-	exit $1
+	exit ${1}
 }
 
 VERBOSE=1
-while getopts 'vqe:o:?hH' OPTION; do
+FETCHUSER=''
+while getopts 'vqu:o:?hH' OPTION; do
 case "${OPTION}" in
   v) VERBOSE=1;;
   q) VERBOSE='';;
-  e) EIXCACHESPATH="${OPTARG}"; Sanitize;;
+  u) FETCHUSER="${OPTARG}";;
   o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
   *) Usage 0;;
 esac
 done
 shift $((OPTIND-1))
-[[ $# -eq 1 ]] || Usage 1
+
+declare -a SUCMD
+
+NEED_ARG=''
+FILENAME=''
+GetFilename () {
+	[[ ${#} -gt 1 ]] && Usage 1
+	if [[ ${#} -lt 1 ]]; then
+		[[ "${NEED_ARG}" ]] && die "Filename argument is mandatory"
+		return
+	fi
+	FILENAME="${1}"
+	[[ "${FILENAME}" ]] || die "Filename argument must be nonempty"
+	[[ "${FILENAME:0:1}" != '/' && "${FILENAME:0:1}" != '~' ]] && \
+		FILENAME="$(pwd)/${FILENAME}"
+}
+
+CalcSuCmd () {
+	local MY_CMD
+	MY_CMD="$(type -P "${1}")" || die "${1} cannot be found in $PATH"
+	SUCMD=("${MY_CMD}")
+	[[ "${FETCHUSER}" || "${UID}" -ne 0 ]] || FETCHUSER="nobody"
+	[[ "${FETCHUSER}" ]] &&	SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
+}
 
 RunCommand() {
 	local RET
 	if [[ "${VERBOSE}" ]]; then
 		einfo "${1}"
+		shift
 		"${@}"
 		return "${?}"
 	fi
 	ebegin "${1}"
+	shift
 	"${@}" &>/dev/null
 	RET=${?}
 	eend ${ret} "Problems running ${@}"
 	return "${ret}"
 }
 
-Fetch () {
-	cd "${EIXCACHESPATH}" >/dev/null || die "cannot cd to ${EIXCACHESPATH}"
-	if [[ -e "${EIXCACHESFULL}" ]]; then
-		rm "${EIXCACHESFULL}" && [[ ! -e "${EIXCACHESFULL}" ]] \
-			|| die "cannot remove ${EIXCACHESFULL}"
-	fi
-	RunCommand \
-	wget "http://dev.gentooexperimental.org/eix_cache/${EIXCACHESNAME}" \
-		|| die "could not fetch ${EIXCACHESFULL}"
-	chmod 664 "${EIXCACHESFULL}"
-	[[ "${UID}" -eq 0 ]] && chown portage:portage "${EIXCACHESFULL}"
+CdDir () {
+	cd "${1}" >/dev/null || die "cannot cd to ${TMPDIR}"
 }
 
 TMPDIR=''
 Cleanup () {
-	local RET="$?"
+	local RET="${?}"
 	cd / >/dev/null;
 	if [[ "${TMPDIR}" ]]; then
 		[[ -d "${TMPDIR}" ]] && rm -rf "${TMPDIR}"
@@ -140,7 +146,8 @@ Cleanup () {
 	trap '' 0 1 2 15
 	exit "${RET}"
 }
-CdTemp () {
+MakeTempDir () {
+	[[ "${TMPDIR}" ]] && return
 	if type mktemp &>/dev/null; then
 		TMPDIR="$(mktemp -d /tmp/eix.XXXXXX)"
 	else
@@ -149,8 +156,31 @@ CdTemp () {
 			die "temporary name ${TMPDIR} already exists"
 		mkdir "${TMPDIR}" || die "cannot create "${TMPDIR}
 	fi
-	cd "${TMPDIR}" >/dev/null || die "cannot cd to ${TMPDIR}"
-	trap "Cleanup" 0 1 2 15
+	trap Cleanup 0 1 2 15
+	chmod 755 "${TMPDIR}"
+	[[ "${1}" ]] && CdDir "${TMPDIR}"
+}
+
+TMPSUB=''
+MakeTempSub () {
+	if [[ -z "${TMPSUB}" ]]; then
+		MakeTempDir
+		TMPSUB="${TMPDIR}/1"
+		( umask 000; mkdir "${TMPSUB}" )
+	fi
+	[[ "${1}" ]] && CdDir "${TMPSUB}"
+}
+
+TMPFILE=''
+FetchTemp () {
+	local SOURCE="http://dev.gentooexperimental.org/eix_cache"
+	SOURCE="${SOURCE}/${EIXCACHESNAME}"
+	MakeTempDir cd
+	TMPFILE="${TMPDIR}/${EIXCACHESNAME}"
+	( umask 000; >"${TMPFILE}" )
+	CalcSuCmd wget
+	RunCommand "Fetching ${EIXCACHESNAME}" \
+		"${SUCMD[@]}" -c "${SOURCE}" || die "could not fetch ${SOURCE}"
 }
 
 declare -a UPDATE_EIX_ARGS
@@ -186,8 +216,8 @@ ClearData () {
 }
 
 CallUpdateEix () {
-	RunCommand update-eix "${UPDATE_EIX_ARGS[@]}" || \
-		die "update-eix failed"
+	RunCommand "Calling update-eix" \
+		update-eix "${UPDATE_EIX_ARGS[@]}" || die "update-eix failed"
 }
 
 AddLocalMethods () {
@@ -199,12 +229,9 @@ AddLocalMethods () {
 	done
 }
 
-Add () {
+AddArchive () {
 	local I NAME VIRTUAL
-	[[ -r "${EIXCACHESFULL}" ]] || die "cannot read ${EIXCACHESFULL}"
-	CdTemp
-	RunCommand tar xjf "${EIXCACHESFULL}" || \
-		die "cannot unpack ${EIXCACHESFULL}"
+	RunCommand "Unpacking data" tar xjf "${1}" || die "cannot unpack ${1}"
 	ClearData
 	AddLocalMethods
 	for I in *
@@ -213,12 +240,36 @@ Add () {
 		NAME="${NAME#_usr_portage_local_}"
 		NAME="${NAME//_//}"
 		VIRTUAL="(${NAME})"
-		AddMethod "${VIRTUAL}" "eix*:${TMPDIR}/${I}"
+		AddMethod "${VIRTUAL}" "eix*:${2}/${I}"
 		AddOverlays "${VIRTUAL}"
 		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done
 	KEEP_VIRTUALS=true
 	CallUpdateEix
+}
+
+FetchCopy () {
+	GetFilename "${@}"
+	FetchTemp
+	[[ "${FILENAME}" ]] || return
+	(
+		[[ "${UID}" -eq 0 ]] && umask 002
+		cp --preserve=timestamps "${TMPFILE}" "${FILENAME}"
+	)
+	[[ "${UID}" -eq 0 ]] && chown portage:portage "${FILENAME}"
+}
+
+Fetch () {
+	NEED_ARG=1
+	FetchCopy "${@}"
+}
+
+Add () {
+	NEED_ARG=1
+	GetFilename "${@}"
+	[[ -r "${FILENAME}" ]] || die "cannot read ${FILENAME}"
+	MakeTempDir cd
+	AddArchive "${FILENAME}" "${TMPDIR}"
 }
 
 Remove () {
@@ -229,15 +280,19 @@ Remove () {
 }
 
 Update () {
-	Fetch
-	Add
+	FetchCopy "${@}"
+	MakeTempSub cd
+	AddArchive "${TMPFILE}" "${TMPSUB}"
 }
 
-case "${1}" in
-	update|both)     Update;;
-	fetch*|get|wget) Fetch;;
-	add)             Add;;
-	remove|del*)     Remove;;
-	*) Usage 1;;
+MAIN_COMMAND="${1}"
+shift
+
+case "${MAIN_COMMAND}" in
+	update|both)     Update "${@}";;
+	fetch*|get|wget) Fetch "${@}";;
+	add)             Add "${@}";;
+	remove|del*)     Remove "${@}";;
+	*)               Usage 1;;
 esac
 

@@ -5,9 +5,13 @@
 	- Improved determination of "virtual" overlays.
 	- Introduce KEEP_VIRTUAL and let it default to true.
 	- Introduce CACHE_METHOD and ADD_OVERRIDE_CACHE_METHOD
-	  and change hierarchy:
+	  and change override-order:
 	  CACHE_METHOD < ADD_CACHE_METHOD < KEEP_VIRTUAL <
 	  OVERRIDE_CACHE_METHOD < ADD_OVERRIDE_CACHE_METHOD
+	- Let update-eix-remote default to temporary files:
+	  With KEEP_VIRTUAL, a "permanent" remote cache is not really needed.
+	- Drop permissions for update-eix-remote when fetching.
+	- Better doxygen sourcecode documentation.
 
 *eix-0.7.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

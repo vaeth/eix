@@ -300,7 +300,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	pkg->read(need);
 
-	/*
+	/**
 	   Test the local options.
 	   Each test must start with "get_p()" to get "p"; remember to modify
 	   "need" in CalculateNeeds() to ensure that you will have all

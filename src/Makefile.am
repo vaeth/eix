@@ -8,6 +8,7 @@
 #   Copyright (c)                                                         #
 #     Wolfgang Frisch <xororand@users.sourceforge.net>                    #
 #     Emil Beinroth <emilbeinroth@gmx.net>                                #
+#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
 #                                                                         #
 #   This program is free software; you can redistribute it and/or modify  #
 #   it under the terms of the GNU General Public License as published by  #
@@ -29,13 +30,14 @@
 SUBDIRS = eixTk database portage output search
 
 # Remove files we don't want ..
-CLEANFILES = cppcomplete.tags tags eix-sync
+CLEANFILES = cppcomplete.tags tags eix-sync update-eix-remote
 
-EXTRA_DIST = eix-sync.in update-eix-remote eixrc/defaults.cc eixrc/eixrc.h
+EXTRA_DIST = eix-sync.in update-eix-remote.in eixrc/defaults.cc eixrc/eixrc.h
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
-sbin_SCRIPTS = eix-sync update-eix-remote
+bin_SCRIPTS  = update-eix-remote
+sbin_SCRIPTS = eix-sync
 
 # The search-tool for our database
 eix_SOURCES = eix.cc \
@@ -56,7 +58,6 @@ update_eix_SOURCES = update-eix.cc \
 				     varsreader.cc varsreader.h \
 					 global.cc
 
-	
 update_eix_LDADD = database/libdatabase.a \
 				   portage/libportage.a \
 				   portage/conf/libportageconf.a \
@@ -75,6 +76,8 @@ diff_eix_LDADD = database/libdatabase.a \
 				 output/liboutput.a \
 				 eixTk/libeixTk.a
 
-
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," $(srcdir)/eix-sync.in > eix-sync
+
+update-eix-remote: update-eix-remote.in
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," $(srcdir)/update-eix-remote.in > update-eix-remote
