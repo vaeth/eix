@@ -26,20 +26,26 @@
 ###########################################################################
 
 source /sbin/functions.sh
-die () { eerror "${*}"; exit 2; }
+
+die () {
+	eerror "${*}"
+	EXITCODE=2
+	exit "${EXITCODE}"
+}
+
 type portageq &>/dev/null || die 'portageq is required for this script'
 
 [[ "${OVERLAYPARENT}" ]] || OVERLAYPARENT="/usr/portage/local"
 EIXCACHESNAME="eix-caches.tbz2"
 
 Sanitize () {
-	[[ "${OVERLAYPARENT}" != "${OVERLAYPARENT#/}" ]] || \
+	[[ "${OVERLAYPARENT:0:1}" = '/' ]] || \
 		die '$OVERLAYPARENT must start with /'
+	while [[ "${OVERLAYPARENT:0:1}" = '/' ]]; do
+		OVERLAYPARENT="${OVERLAYPARENT%/}"
+	done
 	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT#/}" ]]; do
 		OVERLAYPARENT="${OVERLAYPARENT#/}"
-	done
-	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
-		OVERLAYPARENT="${OVERLAYPARENT%/}"
 	done
 	OVERLAYPARENT="/${OVERLAYPARENT}"
 }
@@ -75,7 +81,8 @@ Options:
 	-o PATH	Use PATH as \$OVERLAYPARENT
 	-v	Verbose (default)
 	-q	Quiet"
-	exit ${1}
+	EXITCODE="${1}"
+	exit "${EXITCODE}"
 }
 
 VERBOSE=1
@@ -127,8 +134,8 @@ RunCommand() {
 	shift
 	"${@}" &>/dev/null
 	RET=${?}
-	eend ${ret} "Problems running ${@}"
-	return "${ret}"
+	eend ${RET} "Problems running ${@}"
+	return "${RET}"
 }
 
 CdDir () {
@@ -136,22 +143,23 @@ CdDir () {
 }
 
 TMPDIR=''
+EXITCODE=0
 Cleanup () {
-	local RET="${?}"
 	cd / >/dev/null;
 	if [[ "${TMPDIR}" ]]; then
 		[[ -d "${TMPDIR}" ]] && rm -rf "${TMPDIR}"
 	fi
 	TMPDIR=''
 	trap '' 0 1 2 15
-	exit "${RET}"
+	exit "${EXITCODE}"
 }
 MakeTempDir () {
 	[[ "${TMPDIR}" ]] && return
 	if type mktemp &>/dev/null; then
-		TMPDIR="$(mktemp -d /tmp/eix.XXXXXX)"
+		TMPDIR="$(mktemp -d /tmp/${0##*/}.XXXXXX)" || \
+			die "cannot create temporary directory"
 	else
-		TMPDIR="/tmp/eix.$$"
+		TMPDIR="/tmp/${0##*/}.$$"
 		[[ -e "${TMPDIR}" ]] && \
 			die "temporary name ${TMPDIR} already exists"
 		mkdir "${TMPDIR}" || die "cannot create "${TMPDIR}
@@ -296,3 +304,4 @@ case "${MAIN_COMMAND}" in
 	*)               Usage 1;;
 esac
 
+exit 0

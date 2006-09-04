@@ -11,6 +11,15 @@
 	- Let update-eix-remote default to temporary files:
 	  With KEEP_VIRTUAL, a "permanent" remote cache is not really needed.
 	- Drop permissions for update-eix-remote when fetching.
+	- Enable much more customization for eix-sync:
+	  rsync from/to other hosts, various hooks, keep old database.
+	  Allow almost each step (gensync/emerge --sync/update-eix/...)
+	  switched on/off by options.
+	- Rename /etc/eix-sync-overlays to /etc/eix-sync.conf,
+	  since now hooks etc. are possible in this file.
+	- Document update-eix-remote and new details of eix-sync in manpage.
+	- It makes now also sense to start eix-sync as a normal user (e.g.
+	  for -d or certain other tasks) -> change to normal bin-directory.
 	- Better doxygen sourcecode documentation.
 
 *eix-0.7.2

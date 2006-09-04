@@ -5,7 +5,8 @@ man_MANS = eix.1
 EXTRA_DIST = eix.1.in
 
 eix.1: eix.1.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	@regex_cmd@ -e 's/$$Date:[^,]*, *\([^)]*\)[^\$$]*\$$/\1/' \
+	    -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE)," \
 	    -e "s,\@EIX_WIKI\@,$(EIX_WIKI)," \
 	    -e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE)," \

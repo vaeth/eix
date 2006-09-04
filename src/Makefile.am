@@ -36,8 +36,7 @@ EXTRA_DIST = eix-sync.in update-eix-remote.in eixrc/defaults.cc eixrc/eixrc.h
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
-bin_SCRIPTS  = update-eix-remote
-sbin_SCRIPTS = eix-sync
+bin_SCRIPTS  = update-eix-remote eix-sync
 
 # The search-tool for our database
 eix_SOURCES = eix.cc \
@@ -77,7 +76,10 @@ diff_eix_LDADD = database/libdatabase.a \
 				 eixTk/libeixTk.a
 
 eix-sync: eix-sync.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," $(srcdir)/eix-sync.in > eix-sync
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE)," \
+	$(srcdir)/eix-sync.in > eix-sync
 
 update-eix-remote: update-eix-remote.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," $(srcdir)/update-eix-remote.in > update-eix-remote
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	$(srcdir)/update-eix-remote.in > update-eix-remote
