@@ -369,10 +369,10 @@ if (
      umask 002
      if [[ "${QUIET}" || -z "${VERBOSE}" ]]; then
        >"${LOGFILE}"
+       [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}"
      fi
    ) &>/dev/null
 then
-  [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}"
   REDIRECT="${LOGFILE}"
 else
   REDIRECT=/dev/null
