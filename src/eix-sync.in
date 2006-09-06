@@ -124,7 +124,7 @@ while getopts "ds:2:Uug@SmtvqwrR?hH" OPTION; do
     *) Usage 1;;
   esac
 done
-[[ "${DOUPDATE}" ]] && CLEARCACHE=''
+[[ "${DOUPDATE}" ]] || CLEARCACHE=''
 [[ "${SERVER}" ]] && METADATA=1
 
 # Run command
