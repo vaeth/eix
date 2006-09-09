@@ -60,8 +60,9 @@ The following options are available:
 
 -d   Only show differences to the previously saved database and exit.
      This is equivalent to diff-eix ${EIXPREVIOUS}.
--s [user@]SERVER Sync via rsync from SERVER. This option implies -m.
--2 [user@]CLIENT Sync via rsync *to* CLIENT after successfull syncing;
+-s [USER@]SERVER[:DIR] Sync via rsync from SERVER. This option implies -m.
+     USER defaults to current user and DIR defaults to \$PORTDIR
+-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after update-eix (@ entries)
@@ -250,10 +251,17 @@ CallGensync () {
 PREPRSYNC=''
 PrepRsync () {
   local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS
+  if [[ -z "${PORTDIR}" ]]; then
+    PORTDIR="$(portageq portdir)" || PORTDIR="/usr/portage"
+  fi
+  HOSTDIR="${1#*:}"
+  if [[ "${HOSTDIR}" && "${HOSTDIR}" != "${1}" ]]; then
+    HOSTDIR="${1}"
+  else
+    HOSTDIR="${1%%:*}:${PORTDIR}"
+  fi
+  HOSTDIR="${HOSTDIR%/}/"
   [[ "${PREPRSYNC}" ]] && return
-  PORTDIR="$(portageq portdir)" || PORTDIR="/usr/portage"
-  PORTDIR_CLIENT="${PORTDIR}"
-  PORTDIR_SERVER="${PORTDIR}"
   PORTAGE_RSYNC_OPTS="$(portageq envvar PORTAGE_RSYNC_OPTS)"
   PORTAGE_RSYNC_EXTRA_OPTS="$(portageq envvar PORTAGE_RSYNC_EXTRA_OPTS)"
   for CURRENT_COMMAND in "${BEFORE_RSYNC[@]}"; do
@@ -275,9 +283,9 @@ CallEmergeSync () {
   [[ "${EMULATEMODE}" ]] && return
   if [[ "${SERVER}" ]]; then
     PrepRsync
-    RunCommand "rsyncing from ${SERVER}" \
-      rsync $RSYNC_OPTS "${SERVER}:${PORTDIR_SERVER}/" "${PORTDIR}" || \
-        die "Could not rsync from ${SERVER}:${PORTDIR_SERVER}"
+    RunCommand "rsyncing from ${HOSTDIR}" \
+      rsync $RSYNC_OPTS "${HOSTDIR}" "${PORTDIR}" || \
+        die "Could not rsync from ${HOSTDIR}"
   fi
   [[ "${METADATA}" ]] && return
   RootCommand "Running ${EMERGECMD[*]}" \
@@ -287,10 +295,10 @@ CallEmergeSync () {
 CallSyncClient () {
   [[ "${EMULATEMODE}" ]] && return
   [[ "${CLIENT}" ]] || return
-  PrepRsync
-  RunCommand "rsyncing to ${CLIENT}" \
-    rsync $RSYNC_OPTS "${PORTDIR}" "${CLIENT}:${PORTDIR_CLIENT}/" || \
-      die "Could not rsync to ${CLIENT}:${PORTDIR_CLIENT}"
+  PrepRsync "${CLIENT}"
+  RunCommand "rsyncing to ${HOSTDIR}" \
+    rsync $RSYNC_OPTS "${PORTDIR}" "${HOSTDIR}" || \
+      die "Could not rsync to ${HOSTDIR}"
 }
 
 TESTRESULT=''

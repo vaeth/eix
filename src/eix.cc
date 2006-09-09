@@ -83,6 +83,7 @@ dump_help(int exit_code)
 			"     -h, --help            show this screen and exit\n"
 			"     -V, --version         show version and exit\n"
 			"     --dump                dump variables to stdout\n"
+			"     --dump-defaults       dump default values of variables\n"
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -178,6 +179,7 @@ enum cli_options {
 	O_FMT_VERBOSE,
 	O_FMT_COMPACT,
 	O_DUMP,
+	O_DUMP_DEFAULTS,
 	O_CARE,
 	O_IGNORE_ETC_PORTAGE,
 	O_CURRENT,
@@ -199,6 +201,7 @@ static struct LocalOptions {
 		 show_help,
 		 show_version,
 		 dump_eixrc,
+		 dump_defaults,
 		 test_unused,
 		 do_debug,
 		 ignore_etc_portage,
@@ -222,6 +225,7 @@ static struct Option long_options[] = {
 	Option("help",         'h',     Option::BOOLEAN_T,     &rc_options.show_help),
 	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
 	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
+	Option("dump-defaults",O_DUMP_DEFAULTS,Option::BOOLEAN_T,&rc_options.dump_defaults),
 	Option("test-non-matching",'t', Option::BOOLEAN_T,     &rc_options.test_unused),
 	Option("debug",        O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
 
@@ -365,8 +369,8 @@ run_eix(int argc, char** argv)
 	}
 
 	// Dump eixrc-stuff
-	if(rc_options.dump_eixrc) {
-		eixrc.dumpDefaults(stdout);
+	if(rc_options.dump_eixrc || rc_options.dump_defaults) {
+		eixrc.dumpDefaults(stdout, rc_options.dump_defaults);
 		exit(0);
 	}
 

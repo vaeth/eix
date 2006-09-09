@@ -58,6 +58,16 @@ class EixRcOption {
 		}
 };
 
+inline std::string as_comment(const char *s) {
+	std::string ret = s;
+	std::string::size_type pos = 0;
+	while(pos = ret.find("\n", pos), pos != std::string::npos) {
+		ret.insert(pos + 1, "# ");
+		pos += 2;
+	}
+	return ret;
+}
+
 class EixRc : public std::map<std::string,std::string> {
 
 	private:
@@ -224,7 +234,10 @@ class EixRc : public std::map<std::string,std::string> {
 			return atoi((*this)[key].c_str());
 		}
 
-		void dumpDefaults(FILE *s) {
+		void dumpDefaults(FILE *s, bool use_defaults) {
+			const char *message = use_defaults ?
+				"was locally changed to:" :
+				"changed locally, default was:";
 			for(unsigned int i = 0;
 				i<defaults.size();
 				++i)
@@ -241,22 +254,26 @@ class EixRc : public std::map<std::string,std::string> {
 				const char *key   = defaults[i].key.c_str();
 				const char *deflt = defaults[i].value.c_str();
 				const char *value = (*this)[defaults[i].key].c_str();
+				const char *output = (use_defaults ? deflt : value);
+				const char *comment = (use_defaults ? value : deflt);
 				fprintf(s,
 						"# %s\n"
 						"# %s\n"
 						"%s='%s'\n",
-						typestring,
-						defaults[i].description.c_str(),
+						as_comment(typestring).c_str(),
+						as_comment(defaults[i].description.c_str()).c_str(),
 						key,
-						value);
+						output);
 				if(strcmp(deflt,value) == 0)
 					fprintf(s, "\n");
-				else
+				else {
 					fprintf(s,
-						"# changed locally, default was:\n"
+						"# %s\n"
 						"# %s='%s'\n\n",
+						message,
 						key,
-						deflt);
+						as_comment(comment).c_str());
+				}
 			}
 		}
 };

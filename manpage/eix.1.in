@@ -72,7 +72,10 @@ Produce no output on stderr and stdout (fatal errors which occur at the
 beginning of execution are printed to stderr, regardless of this option).
 .TP
 .BR --dump
-Show the current eixrc-variables and their defaults.
+Show the current eixrc-variables, and their defaults as comments.
+.TP
+.BR --dump-defaults
+Show the defaults of the eixrc-variables, and their current values as comments.
 .TP
 .BR -V ", " --version
 Print version and exit.

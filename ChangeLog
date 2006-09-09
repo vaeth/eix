@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Allow different server/client PORTDIR directory for eix-sync.
+	- Introduce --dump-defaults and fix output of --dump so that
+	  commented variables containing newlines are commented in each line.
+
 *eix-0.7.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Improved determination of "virtual" overlays.

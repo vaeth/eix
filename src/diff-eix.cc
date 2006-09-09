@@ -80,6 +80,7 @@ print_help(int ret)
 		" -n, --nocolor           don't use colors in output\n"
 		" -F, --force-color       force colors on things that are not a terminal\n"
 		"     --dump              dump variables to stdout\n"
+		"     --dump-defaults     dump default values of variables\n"
 		"\n"
 		" -h, --help              show a short help screen\n"
 		" -V, --version           show version-string\n"
@@ -101,12 +102,14 @@ print_help(int ret)
 bool cli_show_help    = false,
 	 cli_show_version = false,
 	 cli_dump_eixrc   = false,
+	 cli_dump_defaults = false,
 	 cli_quick,
 	 cli_care,
 	 cli_quiet;
 
 enum cli_options {
 	O_DUMP = 300,
+	O_DUMP_DEFAULTS,
 	O_CARE,
 	O_FORCE_COLOR
 };
@@ -117,6 +120,7 @@ static struct Option long_options[] = {
 	Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help), /* show a short help screen */
 	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
+	Option("dump-deafults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults),
 	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
 	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
 	Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick),
@@ -326,8 +330,8 @@ run_diff_eix(int argc, char *argv[])
 	if(cli_show_version)
 		dump_version(0);
 
-	if(cli_dump_eixrc) {
-		eixrc.dumpDefaults(stdout);
+	if(cli_dump_eixrc || cli_dump_defaults) {
+		eixrc.dumpDefaults(stdout, cli_dump_defaults);
 		exit(0);
 	}
 

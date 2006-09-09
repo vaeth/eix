@@ -30,32 +30,32 @@
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "QUICKMODE",
-			"false", "whether --quick is on for eix by default.")
+			"false", "Whether --quick is on for eix by default.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_QUICKMODE",
-			"false", "whether --quick is on for diff-eix by default.")
+			"false", "Whether --quick is on for diff-eix by default.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "CAREMODE",
-			"false", "whether --care is on for eix.")
+			"false", "Whether --care is on for eix.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_CAREMODE",
-			"false", "whether --care is on for diff-eix.")
+			"false", "Whether --care is on for diff-eix.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "QUIETMODE",
-			"false", "whether --quiet is on for eix by default.")
+			"false", "Whether --quiet is on for eix by default.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_QUIETMODE",
-			"false", "whether --quiet is on for diff-eix by default.")
+			"false", "Whether --quiet is on for diff-eix by default.")
 		);
 
 
@@ -252,25 +252,25 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CACHE_METHOD",
 			"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
-			"# This is a list of pairs DIRECTORY METHOD. Later entries take precedence.")
+			"This is a list of pairs DIRECTORY METHOD. Later entries take precedence.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_CACHE_METHOD",
 			"", "This variable is added to CACHE_METHOD.\n"
-			"# This variable is meant to be set only locally.")
+			"This variable is meant to be set only locally.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERRIDE_CACHE_METHOD",
 			"", "This variable can override the choices of CACHE_METHOD/ADD_CACHE_METHOD\n"
-			"# and in addition it can override the choices made by KEEP_VIRTUALS.")
+			"and in addition it can override the choices made by KEEP_VIRTUALS.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ADD_OVERRIDE_CACHE_METHOD",
 			"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
-			"# This variable is meant to be set only locally.")
+			"This variable is meant to be set only locally.")
 		);
 
 eixrc.addDefault(
@@ -286,7 +286,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "KEEP_VIRTUALS",
 			"true", "Keep virtuals of the old cache file by adding corresponding entries"
-			"# implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD")
+			"implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD")
 		);
 
 eixrc.addDefault(
@@ -369,56 +369,56 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",
 			"some",
 			"Applies if /etc/portage/package.keywords lists the same keyword twice\n"
-			"# for the versions in question.")
+			"for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MIXED",
 			"some",
 			"Applies if /etc/portage/package.keywords lists two different keywords,\n"
-			"# e.g. ~ARCH and -*, for the versions in question.")
+			"e.g. ~ARCH and -*, for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_WEAKER",
 			"all-installed",
 			"Applies if /etc/portage/package.keywords lists a keywords which can\n"
-			"# be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
-			"# in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,\n"
-			"# for the versions in question.")
+			"be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
+			"in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,\n"
+			"for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_STRANGE",
 			"some",
 			"Applies if /etc/portage/package.keywords lists a strange keyword\n"
-			"# e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,\n"
-			"# for the versions in question.")
+			"e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,\n"
+			"for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_NO_CHANGE",
 			"all-installed",
 			"Applies if /etc/portage/package.keywords provides keywords which do not\n"
-			"# change the availability keywords status for the versions in question.")
+			"change the availability keywords status for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MASK_NO_CHANGE",
 			"all-uninstalled",
 			"Applies if /etc/portage/package.mask contains entries\n"
-			"# which do not change the mask status for the versions in question.")
+			"which do not change the mask status for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_UNMASK_NO_CHANGE",
 			"all-installed",
 			"Applies if /etc/portage/package.unmask contains entries\n"
-			"# which do not change the mask status for the versions in question.")
+			"which do not change the mask status for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_MASKED",
 			"some",
 			"Applies if /etc/portage/package.mask matches twice\n"
-			"# for the versions in question.")
+			"for the versions in question.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_UNMASKED",
 			"some",
 			"Applies if /etc/portage/package.unmask matches twice\n"
-			"# for the versions in question.")
+			"for the versions in question.")
 		);

@@ -161,6 +161,7 @@ print_help(int ret)
 			" -h, --help              show a short help screen\n"
 			" -V, --version           show version-string\n"
 			"     --dump              show eixrc-variables\n"
+			"     --dump-defaults     show default eixrc-variables\n"
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
@@ -185,13 +186,15 @@ print_help(int ret)
 }
 
 enum cli_options {
-	O_DUMP = 260
+	O_DUMP = 260,
+	O_DUMP_DEFAULTS
 };
 
 bool quiet = false,
 	 show_help = false,
 	 show_version = false,
-	 dump_eixrc = false;
+	 dump_eixrc   = false,
+	 dump_defaults = false;
 
 list<const char *> exclude_args, add_args;
 list<ArgPair> method_args;
@@ -202,6 +205,7 @@ static struct Option long_options[] = {
 
 	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet),
 	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
+	 Option("dump-defaults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
 	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 
@@ -315,8 +319,8 @@ run_update_eix(int argc, char *argv[])
 		close(2);
 	}
 
-	if(dump_eixrc) {
-		eixrc.dumpDefaults(stdout);
+	if(dump_eixrc || dump_defaults) {
+		eixrc.dumpDefaults(stdout, dump_defaults);
 		exit(0);
 	}
 
