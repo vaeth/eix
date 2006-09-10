@@ -385,9 +385,9 @@ error_callback(const char *fmt, ...)
 	fputs("\n", stdout);
 	va_list ap;
 	va_start(ap, fmt);
-	vfprintf(stdout, fmt, ap);
+	vfprintf(stderr, fmt, ap);
 	va_end(ap);
-	fputs("\n", stdout);
+	fputs("\n", stderr);
 	INFO("     Reading    %%");
 }
 
@@ -415,28 +415,29 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
+			PercentStatus percent_status(1);
 			cache->setErrorCallback(error_callback);
 			if(cache->readCategories(&package_tree, categories)) {
-				INFO("100%\n");
+				++percent_status;
 			}
 			else {
-				INFO("aborted\n");
+				INFO("\b\b\b\baborted\n");
 			}
 		}
 		else
 		{
-			PercentStatus percent_status;
-			percent_status.start(categories->size());
+			PercentStatus percent_status(categories->size());
 
 			/* iterator through categories */
 			for(vector<string>::iterator ci = categories->begin();
 				ci != categories->end();
 				++ci)
 			{
-				++percent_status;
-				if(!cache->readCategory(package_tree[*ci]))
-				{
-					INFO("aborted\n");
+				if(cache->readCategory(package_tree[*ci])) {
+					++percent_status;
+				}
+				else {
+					INFO("\b\b\b\baborted\n");
 					break;
 				}
 			}
