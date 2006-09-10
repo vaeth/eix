@@ -66,30 +66,32 @@ get_map_from_cache(const char *file, map<string,string> &x)
 
 /** Read the stability from a metadata cache file. */
 void
-backport_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
+backport_get_keywords_slot(const string &filename, string &keywords, string &slot, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> cf;
 
 	if( get_map_from_cache(filename.c_str(), cf) < 0 )
 	{
-		throw ExBasic("Can't read cache file %s: %s",
+		error_callback("Can't read cache file %s: %s",
 				filename.c_str(),
 				strerror(errno));
+		return;
 	}
 	keywords = cf["KEYWORDS"];
 	slot     = cf["SLOT"];
 }
 
 /** Read a metadata cache file. */
-static void
-backport_read_file(const char *filename, Package *pkg) throw (ExBasic)
+void
+backport_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> cf;
 
 	if( get_map_from_cache(filename, cf) < 0 )
 	{
-		throw ExBasic("Can't read cache file %s: %s",
-		              filename, strerror(errno));
+		error_callback("Can't read cache file %s: %s",
+				filename, strerror(errno));
+		return;
 	}
 
 	pkg->homepage = cf["HOMEPAGE"];
@@ -105,7 +107,7 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int BackportCache::readCategory(Category &vec) throw(ExBasic)
+bool BackportCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;
@@ -139,7 +141,7 @@ int BackportCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords;
-			backport_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
+			backport_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot, m_error_callback);
 			version->set(m_arch, keywords);
 			version->overlay_key = m_overlay_key;
 
@@ -160,16 +162,20 @@ int BackportCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(dents[i]->d_name);
-			if(aux == NULL) {
-				throw(ExBasic("Can't split %s into package and version.", dents[i]->d_name));
+			if(!aux) {
+				m_error_callback("Can't split %s into package and version.", dents[i]->d_name);
+				break;
 			}
 		} while(strcmp(aux[0], pkg->name.c_str()) == 0);
-		free(aux[0]);
-		free(aux[1]);
+		if(aux)
+		{
+			free(aux[0]);
+			free(aux[1]);
+		}
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			backport_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
+			backport_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
 	}
 
 	if(numfiles > 0)
@@ -178,5 +184,5 @@ int BackportCache::readCategory(Category &vec) throw(ExBasic)
 			free(dents[i]);
 		free(dents);
 	}
-	return 0;
+	return true;
 }

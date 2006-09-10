@@ -58,7 +58,7 @@ class EbuildCache : public BasicCache {
 		{ delete_cachefile(); }
 
 		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles) throw(ExBasic);
-		int readCategory(Category &vec) throw(ExBasic);
+		bool readCategory(Category &vec) throw(ExBasic);
 
 		const char *getType() const
 		{

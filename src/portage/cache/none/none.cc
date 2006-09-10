@@ -119,7 +119,7 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 	}
 }
 
-int NoneCache::readCategory(Category &vec) throw(ExBasic)
+bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
@@ -153,5 +153,5 @@ int NoneCache::readCategory(Category &vec) throw(ExBasic)
 	if(numpackages > 0)
 		free(packages);
 
-	return 1;
+	return true;
 }

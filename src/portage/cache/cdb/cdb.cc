@@ -242,7 +242,7 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 	return true;
 }
 
-int CdbCache::readCategory(Category &vec) throw(ExBasic)
+bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + vec.name() + ".cdb";
 	uint32_t dlen;
@@ -251,7 +251,11 @@ int CdbCache::readCategory(Category &vec) throw(ExBasic)
 
 	Cdb cdb(cdbfile.c_str());
 	if( ! cdb.isReady() )
-		return -1;
+	{
+		m_error_callback("Can't read cache file %s",
+				cdbfile.c_str());
+		return true;
+	}
 	while( ! cdb.end() ) {
 		key = cdb.get(&dlen, (void **)&data);
 		map<string,string> mapping;
@@ -296,5 +300,5 @@ int CdbCache::readCategory(Category &vec) throw(ExBasic)
 		free(aux[1]);
 	}
 
-	return 0;
+	return true;
 }

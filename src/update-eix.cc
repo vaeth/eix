@@ -415,12 +415,16 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
-			cache->readCategories(&package_tree, categories);
-			INFO("100%\n");
+			cache->setErrorCallback(error_callback);
+			if(cache->readCategories(&package_tree, categories)) {
+				INFO("100%\n");
+			}
+			else {
+				INFO("aborted\n");
+			}
 		}
 		else
 		{
-
 			PercentStatus percent_status;
 			percent_status.start(categories->size());
 
@@ -430,7 +434,11 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 				++ci)
 			{
 				++percent_status;
-				cache->readCategory(package_tree[*ci]);
+				if(!cache->readCategory(package_tree[*ci]))
+				{
+					INFO("aborted\n");
+					break;
+				}
 			}
 		}
 	}

@@ -48,39 +48,42 @@ int ebuild_selector (SCANDIR_ARG3 dent)
 using namespace std;
 
 inline
-void skip_lines(const int nr, ifstream &is, const string &filename) throw (ExBasic)
+bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
 {
 	for(int i=nr; i>0; --i)
 	{
 		is.ignore(numeric_limits<int>::max(), '\n');
 		if(is.fail())
-			throw ExBasic("Can't read cache file %s: %s",
-			              filename.c_str(), strerror(errno));
+		{
+			error_callback("Can't read cache file %s: %s",
+					filename.c_str(), strerror(errno));
+			return false;
+		}
 	}
 }
 
-#define open_skipping(nr, is, filename) \
+#define open_skipping(nr, is, filename, error_callback) \
 	ifstream is(filename); \
 	if(!is.is_open()) \
-		throw ExBasic("Can't open %s: %s", (filename), strerror(errno)); \
-	skip_lines(nr, is, (filename));
+		error_callback("Can't open %s: %s", (filename), strerror(errno)); \
+	skip_lines(nr, is, (filename), error_callback);
 
 
 /** Read the keywords and slot from a flat cache file. */
-void flat_get_keywords_slot(const string &filename, string &keywords, string &slot) throw (ExBasic)
+void flat_get_keywords_slot(const string &filename, string &keywords, string &slot, BasicCache::ErrorCallback error_callback)
 {
-	open_skipping(2, is, filename.c_str());
+	open_skipping(2, is, filename.c_str(), error_callback);
 	getline(is, slot);
-	skip_lines(5, is, filename);
+	skip_lines(5, is, filename, error_callback);
 	getline(is, keywords);
 	is.close();
 }
 
 /** Read a flat cache file. */
 void
-flat_read_file(const char *filename, Package *pkg) throw (ExBasic)
+flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
 {
-	open_skipping(5, is, filename);
+	open_skipping(5, is, filename, error_callback);
 	string linebuf;
 	// Read the rest
 	for(int linenr = 5; getline(is, linebuf); ++linenr)

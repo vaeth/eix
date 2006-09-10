@@ -35,8 +35,12 @@ class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 
 	private:
-		/** This variable is actually the parameter for the sqlite3-callback function */
+		/** This variable is actually the this-parameter for our sqlite_callback function.
+		    Note that this makes readCategories non-reentrant. */
 		static SqliteCache *callback_arg;
+		/** Our sqlite_callback() will set this to true in case of an error. */
+		bool sqlite_callback_error;
+		/** Parameter passing to sqlite_callback() */
 		PackageTree *packagetree;
 		Category *category;
 
@@ -44,7 +48,7 @@ class SqliteCache : public BasicCache {
 		bool can_read_multiple_categories() const
 		{ return true; }
 
-		int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
 
 		const char *getType() const
 		{ return "sqlite"; }

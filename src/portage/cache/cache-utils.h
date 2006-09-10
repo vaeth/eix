@@ -31,6 +31,7 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/keywords.h>
+#include <portage/cache/base.h>
 #include <dirent.h>
 #include <string>
 
@@ -38,7 +39,7 @@ class Package;
 
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);
-void flat_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot) throw (ExBasic);
-void flat_read_file(const char *filename, Package *pkg) throw (ExBasic);
+void flat_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot, BasicCache::ErrorCallback error_callback);
+void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
 #endif /* __CACHEUTILS_H__ */

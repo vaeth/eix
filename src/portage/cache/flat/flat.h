@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -33,7 +34,7 @@
 class FlatCache : public BasicCache {
 
 	public:
-		int readCategory(Category &vec) throw(ExBasic);
+		bool readCategory(Category &vec) throw(ExBasic);
 
 		const char *getType() const
 		{ return "flat"; }

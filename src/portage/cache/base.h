@@ -54,57 +54,63 @@ bool deletePackage(Category &v, const std::string &pkg);
 class BasicCache {
 
 	public:
+		typedef void (*ErrorCallback)(const char *fmt, ...);
+
 		BasicCache()
 		{ portagesettings = NULL; }
 
-		// Virtual deconstructor. */
+		/// Virtual deconstructor
 		virtual ~BasicCache()
 		{ }
 
-		// Set scheme for this cache. */
+		/// Set scheme for this cache
 		void setScheme(std::string scheme)
 		{ m_scheme = scheme; }
 
-		// Set overlay-key. */
+		/// Set overlay-key
 		void setKey(short key)
 		{ m_overlay_key = key; }
 
-		// Set arch for system. */
+		/// Set arch for system
 		void setArch(const std::string &arch)
 		{ m_arch = arch; }
 
-		// Set arch for system. */
-		void setErrorCallback(void (*error_callback)(const char *fmt, ...))
-		{ m_error_callback = error_callback; }
-
-		// Get scheme for this cache. */
+		// Get scheme for this cache
 		std::string getPath() const
 		{ return m_scheme; }
 
-		// Return name of Cache.*/
+		/// Set callback function to be used in case of errors
+		void setErrorCallback(ErrorCallback error_callback)
+		{ m_error_callback = error_callback; }
+
+		// @return name of Cache (formatted for good printing)
 		virtual const char *getType() const = 0;
 
-		// Maybe we can even read multiple Categories at once (eixcache)
+		/// Can the method even read multiple categories at once?
 		virtual bool can_read_multiple_categories() const
 		{ return false; }
 
-		/** If available, the function to read multiple Categories.
-		    Note that categories might possibly grow if categories should be added.
+		/// If available, the function to read multiple categories.
+		/** Note that "categories" might possibly grow if categories should be added.
 		    @param packagetree must point to packagetree (if category is not null)
 		    @param categories must point to list of categories (if category is not null)
-		    @param category if non-null, the function is identical to readCategory */
-		virtual int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic)
+		    @param category if non-null, the function is identical to readCategory
+		    @return false if an error occurred so fatal that further calls
+		    with this scheme (even with other categories) are useless. */
+		virtual bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic)
 		{ return 1; }
 
-		// Read Cache for a category
-		virtual int readCategory(Category &vec) throw(ExBasic)
+		/// Read Cache for a category
+		/** @return false if an error occurred so fatal that further calls
+		    with this scheme (even with other categories) are useless. */
+		virtual bool readCategory(Category &vec) throw(ExBasic)
 		{ return readCategories(NULL, NULL, &vec); }
 
 	protected:
 		std::string m_scheme;
 		short  m_overlay_key;
 		std::string m_arch;
-		void (*m_error_callback)(const char *fmt, ...);
+		ErrorCallback m_error_callback;
 		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
 
 	public:

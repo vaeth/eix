@@ -44,54 +44,62 @@ using namespace std;
 /* Path to portage cache */
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
 
-/** This variable is actually the parameter for the sqlite3-callback function */
+
+/** All stuff related to our  sqlite_callback() */
 
 SqliteCache *SqliteCache::callback_arg;
+#define THIS SqliteCache::callback_arg
 
-inline const char *has_category(const string &category, const char *cat_name)
-{
-	for(const char *s = category.c_str(); *s; ++s, ++cat_name) {
-		if(*s != *cat_name)
-			return NULL;
-	}
-	if(*cat_name == '/')
-		return ++cat_name;
-	return NULL;
-}
+#define ARGV(i) (argv[i] ? argv[i] : "")
 
 int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
 #if 0
 	for(int i = 0; i<argc; i++) {
-		cout << i << ": " << azColName[i] << " = " <<  ( argv[i] ? argv[i] : "NULL" ) << "\n";
+		cout << i << ": " << azColName[i] << " = " <<  ARGV(i) << "\n";
 	}
 	return 0;
 #endif
-	if(!argv[1])
+	// If an earlier error occurred, we ignore later calls:
+	if(THIS->sqlite_callback_error)
 		return 0;
-	string category = argv[1];
+
+	if(argc <= 1) {
+		THIS->sqlite_callback_error = true;
+		THIS->m_error_callback("Dataset does not contain a package name");
+		return 0;
+	}
+	string category = ARGV(1);
+	if(argc <= 17) {
+		THIS->sqlite_callback_error = true;
+		THIS->m_error_callback("Dataset for %s is too small", category.c_str());
+		return 0;
+	}
 	string::size_type pos = category.find_first_of('/');
-	if(pos == string::npos)
+	if(pos == string::npos) {
+		THIS->sqlite_callback_error = true;
+		THIS->m_error_callback("'%s' not of the form package/category-version", category.c_str());
 		return 0;
+	}
 	string name_ver = category.substr(pos + 1);
 	category.resize(pos);
 	// Does the category match?
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
-	if(SqliteCache::callback_arg->category) {
-		dest_cat = SqliteCache::callback_arg->category;
+	if(THIS->category) {
+		dest_cat = THIS->category;
 		if(dest_cat->name() != category)
 			return 0;
 	}
 	else {
-		dest_cat = SqliteCache::callback_arg->packagetree->find(category);
+		dest_cat = THIS->packagetree->find(category);
 		if(!dest_cat)
 			return 0;
 	}
 	char **aux = ExplodeAtom::split(name_ver.c_str());
 	if(aux == NULL)
 	{
-		SqliteCache::callback_arg->m_error_callback("Can't split '%s' into package and version.", name_ver.c_str());
+		THIS->m_error_callback("Can't split '%s' into package and version.", name_ver.c_str());
 		return 0;
 	}
 	/* Search for existing package */
@@ -104,18 +112,18 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	/* Create a new version and add it to package */
 	Version *version = new Version(aux[1]);
 	// reading slots and stability
-	version->slot = argv[6];
-	string keywords = argv[12];
-	version->set(SqliteCache::callback_arg->m_arch, keywords);
+	version->slot = ARGV(6);
+	string keywords = ARGV(12);
+	version->set(THIS->m_arch, keywords);
 	pkg->addVersion(version);
 
 	/* For the newest version, add all remaining data */
 	if(*(pkg->latest()) == *version)
 	{
-		pkg->homepage = argv[9];
-		pkg->licenses = argv[10];
-		pkg->desc     = argv[11];
-		pkg->provide  = argv[17];
+		pkg->homepage = ARGV(9);
+		pkg->licenses = ARGV(10);
+		pkg->desc     = ARGV(11);
+		pkg->provide  = ARGV(17);
 	}
 	/* Free old split */
 	free(aux[0]);
@@ -123,7 +131,7 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	return 0;
 }
 
-int SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories, Category *cat) throw(ExBasic)
+bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories, Category *cat) throw(ExBasic)
 {
 	if(cat)
 	{
@@ -135,7 +143,10 @@ int SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories
 	// Cut all trailing '/' and append ".sqlite" to the name
 	string::size_type pos = sqlitefile.find_last_not_of('/');
 	if(pos == string::npos)
-		return -1;
+	{
+		m_error_callback("Database path incorrect");
+		return false;
+	}
 	sqlitefile.resize(pos + 1);
 	sqlitefile.append(".sqlite");
 
@@ -144,11 +155,14 @@ int SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories
 	if(rc)
 	{
 		sqlite3_close(db);
-		return -1;
+		m_error_callback("Can't open cache file %s",
+			sqlitefile.c_str());
+		return false;
 	}
 	if(pkgtree)
 		pkgtree->need_fast_access(categories);
 	callback_arg = this;
+	sqlite_callback_error = false;
 	packagetree = pkgtree;
 	category = cat;
 	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, 0, &errormessage);
@@ -156,19 +170,19 @@ int SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories
 	if(pkgtree)
 		pkgtree->finish_fast_access();
 	if(rc != SQLITE_OK)
-		throw(ExBasic("sqlite error: %s", errormessage));
-	return 1;
+		m_error_callback("sqlite error: %s", errormessage);
+	return !sqlite_callback_error;
 }
 
 #else /* Not WITH_SQLITE */
 
 using namespace std;
 
-int SqliteCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
+bool SqliteCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
 {
-	throw(ExBasic("Cache method sqlite is not compiled in.\n"
-	"Recompile eix, using configure option --with-sqlite to add sqlite support."));
-	return -1;
+	m_error_callback("Cache method sqlite is not compiled in.\n"
+	"Recompile eix, using configure option --with-sqlite to add sqlite support.");
+	return false;
 }
 
 #endif

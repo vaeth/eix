@@ -37,13 +37,13 @@ class EixCache : public BasicCache {
 		bool never_add_categories;
 
 	public:
-		// return true if successfull
+		// @return true if successful
 		bool initialize(std::string &name);
 
 		bool can_read_multiple_categories() const
 		{ return true; }
 
-		int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
 
 		const char *getType() const
 		{ return m_name.c_str(); }

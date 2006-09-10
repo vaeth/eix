@@ -113,7 +113,7 @@ void EbuildCache::delete_cachefile()
 	if(!cachefile)
 		return;
 	if(unlink(cachefile->c_str())<0)
-		throw ExBasic("Can't unlink %s", cachefile->c_str());
+		m_error_callback("Can't unlink %s", cachefile->c_str());
 	cachefile = NULL;
 	remove_handler();
 }
@@ -136,7 +136,8 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 		cachefile = new string(EBUILD_DEPEND_TEMP);
 	pid_t child = vfork();
 	if(child == -1) {
-		throw ExBasic("Forking failed");
+		m_error_callback("Forking failed");
+		return false;
 	}
 	if(child == 0)
 	{
@@ -202,7 +203,7 @@ void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_p
 		string full_path = *directory_path + '/' + list[i]->d_name;
 		if(!make_cachefile(full_path.c_str(), *directory_path, *pkg, *version))
 		{
-			cerr << "Could not properly execute " << full_path << endl;
+			m_error_callback("Could not properly execute %s", full_path.c_str());
 			continue;
 		}
 
@@ -214,12 +215,12 @@ void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_p
 		version->overlay_key = m_overlay_key;
 		string keywords, slot;
 		try {
-			flat_get_keywords_slot(cachefile->c_str(), keywords, slot);
+			flat_get_keywords_slot(cachefile->c_str(), keywords, slot, m_error_callback);
 			version->set(m_arch, keywords);
 			version->slot = slot;
 			if(read_onetime_info)
 			{
-				flat_read_file(cachefile->c_str(), pkg);
+				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 				have_onetime_info = true;
 			}
 		}
@@ -239,7 +240,7 @@ void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_p
 	}
 }
 
-int EbuildCache::readCategory(Category &vec) throw(ExBasic)
+bool EbuildCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
@@ -256,12 +257,7 @@ int EbuildCache::readCategory(Category &vec) throw(ExBasic)
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			try {
-				readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
-			}
-			catch(ExBasic e) {
-				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
-			}
+			readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
 			for(int i=0; i<numfiles; i++ )
 				free(files[i]);
 			free(files);
@@ -273,6 +269,6 @@ int EbuildCache::readCategory(Category &vec) throw(ExBasic)
 	if(numpackages > 0)
 		free(packages);
 
-	return 1;
+	return true;
 }
 

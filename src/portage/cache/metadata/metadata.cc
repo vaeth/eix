@@ -50,7 +50,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-int MetadataCache::readCategory(Category &vec) throw(ExBasic)
+bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = m_scheme + METADATA_PATH + vec.name();
 	struct dirent **dents;
@@ -84,7 +84,7 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords;
-			flat_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot);
+			flat_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot, m_error_callback);
 			version->set(m_arch, keywords);
 			version->overlay_key = m_overlay_key;
 
@@ -104,16 +104,20 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(dents[i]->d_name);
-			if(aux == NULL) {
-				throw(ExBasic("Can't split %s into package and version.", dents[i]->d_name));
+			if(!aux) {
+				m_error_callback("Can't split %s into package and version.", dents[i]->d_name);
+				break;
 			}
 		} while(strcmp(aux[0], pkg->name.c_str()) == 0);
-		free(aux[0]);
-		free(aux[1]);
+		if(aux)
+		{
+			free(aux[0]);
+			free(aux[1]);
+		}
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			flat_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg);
+			flat_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
 	}
 
 	if(numfiles > 0)
@@ -122,5 +126,5 @@ int MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			free(dents[i]);
 		free(dents);
 	}
-	return 0;
+	return true;
 }

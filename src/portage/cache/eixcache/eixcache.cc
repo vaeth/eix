@@ -84,7 +84,7 @@ bool EixCache::initialize(string &name)
 	return (args.size() <= 3);
 }
 
-int EixCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
+bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
 {
 	if(category) {
 		packagetree = NULL;
@@ -99,8 +99,9 @@ int EixCache::readCategories(PackageTree *packagetree, vector<string> *categorie
 		file = m_file.c_str();
 	FILE *fp = fopen(file, "rb");
 	if(!fp) {
-		throw ExBasic("Can't read cache file %s: %s",
-	              file, strerror(errno));
+		m_error_callback("Can't read cache file %s: %s",
+			file, strerror(errno));
+		return false;
 	}
 
 	DBHeader header;
@@ -108,8 +109,9 @@ int EixCache::readCategories(PackageTree *packagetree, vector<string> *categorie
 	io::read_header(fp, header);
 	if(!header.isCurrent()) {
 		fclose(fp);
-		throw ExBasic("Cache file %s uses an obsolete format (%i current is %i)",
-	              file, header.version, DBHeader::current);
+		m_error_callback("Cache file %s uses an obsolete format (%i current is %i)",
+			file, header.version, DBHeader::current);
+		return false;
 	}
 	if(m_only_overlay)
 	{
@@ -153,8 +155,9 @@ int EixCache::readCategories(PackageTree *packagetree, vector<string> *categorie
 				if(!is_number)
 				{
 					fclose(fp);
-					throw ExBasic("Cache file %s does not contain overlay %s",
+					m_error_callback("Cache file %s does not contain overlay %s",
 						file, m_overlay.c_str());
+					return false;
 				}
 				m_overlay = "";
 			}
@@ -223,5 +226,5 @@ int EixCache::readCategories(PackageTree *packagetree, vector<string> *categorie
 		packagetree->finish_fast_access();
 	if(add_categories)
 		packagetree->add_missing_categories(*categories);
-	return 1;
+	return true;
 }
