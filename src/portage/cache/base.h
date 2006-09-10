@@ -88,9 +88,11 @@ class BasicCache {
 		virtual bool can_read_multiple_categories() const
 		{ return false; }
 
-		// If available, the function to read multiple Categories.
-		// If categories is not NULL, then categories might be added (to categories)
-		// If category is not NULL, then the other arguments are ignored, and the function is equivalent to readCategory
+		/** If available, the function to read multiple Categories.
+		    Note that categories might possibly grow if categories should be added.
+		    @param packagetree must point to packagetree (if category is not null)
+		    @param categories must point to list of categories (if category is not null)
+		    @param category if non-null, the function is identical to readCategory */
 		virtual int readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic)
 		{ return 1; }
 

@@ -5,7 +5,7 @@ function to_classname () {
 	echo "${1:1}Cache"
 }
 
-cache_names="backport cdb flat none metadata ebuild eixcache"
+cache_names="backport cdb sqlite flat none metadata ebuild eixcache"
 cache_stars="none ebuild"
 
 cat<<END

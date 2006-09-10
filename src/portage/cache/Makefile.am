@@ -13,6 +13,7 @@ libcache_a_SOURCES = base.h base.cc \
 					 ebuild/ebuild.cc ebuild/ebuild.h \
 					 eixcache/eixcache.cc eixcache/eixcache.h \
 					 cdb/cdb.h cdb/cdb.cc \
+					 sqlite/sqlite.h sqlite/sqlite.cc \
 					 backport/backport.cc backport/backport.h \
 					 metadata/metadata.cc metadata/metadata.h \
 					 cache-map.cc cache-map.h

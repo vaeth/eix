@@ -773,18 +773,38 @@ and are meant to be used only locally.
 The following cache methods are available:
 .TP
 .SS
+.BR sqlite
+This is an extremely fast cache method if you are using portage with the
+sqlite backend as described in
+I<http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite>.
+Note that in contrast to the default B<metadata> cache method you must
+use B<emerge --metadata> before you call B<update-eix> with this method.
+
+Since the support of this cache method requires B<sqlite> to be installed,
+this method is not necessarily compiled in.
+You must have emerged B<eix> with the B<sqlite> USE flag
+(or in a manual installation used I<./configure --with-sqlite>
+before compilation) if you want support for this method.
+.TP
+.SS
 .BR cdb
 You are using the cdb-module from
 I<http://forums.gentoo.org/viewtopic-t-261580.html> as
 cache-backend for portage (cdb with cpickle'd dictionaries as values).
+Note that in contrast to the default B<metadata> cache method you must
+use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR flat
 You are using the default cache-backend (plain text files).
+Note that in contrast to the default B<metadata> cache method you must
+use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR backport
 If you are using that backport-stuff (from portage-3 to portage-2) you should use this one.
+Note that in contrast to the default B<metadata> cache method you must
+use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR none

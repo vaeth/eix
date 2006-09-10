@@ -61,7 +61,9 @@ update_eix_LDADD = database/libdatabase.a \
 				   portage/libportage.a \
 				   portage/conf/libportageconf.a \
 				   portage/cache/libcache.a \
-				   eixTk/libeixTk.a
+				   eixTk/libeixTk.a \
+				   @SQLITE_LIBS@
+
 
 # The diff-tool for our database
 diff_eix_SOURCES = diff-eix.cc \

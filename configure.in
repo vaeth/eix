@@ -49,6 +49,17 @@ AC_TRY_COMPILE([ #include <dirent.h>
 
 AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
 
+dnl What about sqlite?
+AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite ],[
+		AC_DEFINE(WITH_SQLITE,1, Define to 1 if cache method sqlite is wanted)
+		SQLITE_LIBS=`pkg-config --libs sqlite3`
+	],
+	[
+		SQLITE_LIBS=""
+	])
+
+AC_SUBST(SQLITE_LIBS)
+
 
 AC_ARG_WITH(portdir-cache-method,[  --with-portdir-cache-method=STR  default PORTDIR_CACHE_METHOD],
 		[PORTDIR_CACHE_METHOD=$withval],
