@@ -42,10 +42,10 @@ Sanitize () {
 	[[ "${OVERLAYPARENT:0:1}" = '/' ]] || \
 		die '$OVERLAYPARENT must start with /'
 	while [[ "${OVERLAYPARENT:0:1}" = '/' ]]; do
-		OVERLAYPARENT="${OVERLAYPARENT%/}"
-	done
-	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT#/}" ]]; do
 		OVERLAYPARENT="${OVERLAYPARENT#/}"
+	done
+	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
+		OVERLAYPARENT="${OVERLAYPARENT%/}"
 	done
 	OVERLAYPARENT="/${OVERLAYPARENT}"
 }

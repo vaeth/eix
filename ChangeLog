@@ -6,10 +6,12 @@
 	    http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite
 	  Introduce very fast cache method "sqlite" which is available if
 	  eix is compiled with ./configure --with-sqlite
+	- Fix endless loop and wrong sanitize in update-eix-remote.
+	  Thanks to Stefan Schweizer <genstef@gentoo.org> for the report.
 	- Allow different server/client PORTDIR directory for eix-sync.
 	- Introduce --dump-defaults and fix output of --dump so that
 	  commented variables containing newlines are commented in each line.
-	- Improve error-handling of update-eix (continue as far as possible)
+	- Improve error-handling of update-eix (continue as far as possible).
 
 *eix-0.7.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

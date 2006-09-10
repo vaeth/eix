@@ -782,7 +782,7 @@ use B<emerge --metadata> before you call B<update-eix> with this method.
 
 Since the support of this cache method requires B<sqlite> to be installed,
 this method is not necessarily compiled in.
-You must have emerged B<eix> with the B<sqlite> USE flag
+You must have emerged B<eix> with the appropriate USE flag
 (or in a manual installation used I<./configure --with-sqlite>
 before compilation) if you want support for this method.
 .TP

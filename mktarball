@@ -24,5 +24,5 @@ for i in *.tar*; do
 	mv "$i" "$i.md5" build
 done
 
-echo "Tarball ist at build/"
+echo "Tarball is at build/"
 echo "Note that to tag the release in svn you should run mkrelease"
