@@ -169,8 +169,10 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 	sqlite3_close(db);
 	if(pkgtree)
 		pkgtree->finish_fast_access();
-	if(rc != SQLITE_OK)
+	if(rc != SQLITE_OK) {
+		sqlite_callback_error = true;
 		m_error_callback("sqlite error: %s", errormessage);
+	}
 	return !sqlite_callback_error;
 }
 
