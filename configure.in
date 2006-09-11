@@ -51,12 +51,23 @@ AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
 
 dnl What about sqlite?
 AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite ],[
-		AC_DEFINE(WITH_SQLITE,1, Define to 1 if cache method sqlite is wanted)
-		SQLITE_LIBS=`pkg-config --libs sqlite3`
+		if test "x${withval}" = "xno"; then
+			SQLITE_LIBS=""
+		else
+			SQLITE_LIBS=`pkg-config --libs sqlite3`
+			# If pkg-config is not available or failed, we use a default
+			if test -z "${SQLITE_LIBS}"; then
+				SQLITE_LIBS=-lsqlite3
+			fi
+		fi
 	],
 	[
 		SQLITE_LIBS=""
 	])
+
+if test -n "${SQLITE_LIBS}"; then
+	AC_DEFINE(WITH_SQLITE,1, Define to 1 if cache method sqlite is wanted)
+fi
 
 AC_SUBST(SQLITE_LIBS)
 
