@@ -56,8 +56,12 @@ Unless the -t option is used, the old database will be saved to
 The file ${GENSYNCCONF} determines for which overlays gensync is called.
 You can also add certain hooks in that file - \"man eix\" for details.
 
+The file ${GENSYNCCONF} and the environment variable EIX_SYNC_OPTS can
+contain default options which are processed before the command line options.
+Note that \"--\" in the default options will forbid command line options.
 The following options are available:
 
+-i   Ignore all previous options (useful to ignore the default options).
 -d   Only show differences to the previously saved database and exit.
      This is equivalent to diff-eix ${EIXPREVIOUS}.
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER. This option implies -m.
@@ -80,7 +84,8 @@ The following options are available:
 -q   Be quiet (close stdout).
 -w   Run emerge-webrsync instead of emerge --sync.
 -r   Really recreate the dep-cache (rm -rf /var/cache/edb/dep/*) (default).
--R   Do not really recreate the dep-cache."
+-R   Do not really recreate the dep-cache.
+-h   Show this text and exit."
   EXITCODE="${1}"
   exit ${1}
 }
@@ -91,22 +96,76 @@ DiffOnly() {
   die "Could not execute diff-eix"
 }
 
+if [[ -r "${GENSYNCCONF}" ]]; then
+  HAVECONF=1
+else
+  HAVECONF=''
+fi
+declare -a AFTER_SYNC AFTER_UPDATE BEFORE_RSYNC
+ExecuteConfig () {
+  local I J MYCMD
+  AFTER_SYNC=()
+  AFTER_UPDATE=()
+  BEFORE_RSYNC=()
+  CONFIG_OPTS=''
+  [[ "${HAVECONF}" ]] || return
+  while read I; do
+    J="${I%%#*}"
+    while [[ "${J% }" != "${J}" ]]; do J="${J%?}"; done
+    while [[ "${J:0:1}" = " " ]]; do J="${J#?}"; done
+    [[ "${J}" ]] || continue
+    case "${J}" in
+      !*)  J="${J#?}"; MYCMD='!';;
+      @@*) J="${J#??}"; MYCMD='@@';;
+      @*)  J="${J#?}"; MYCMD='@';;
+      \~*) J="${J#?}"; MYCMD='~';;
+      -*)  CONFIG_OPTS="${CONFIG_OPTS} ${J}"; continue;;
+      *)   MYCMD="gensync";;
+    esac
+    [[ "${1}" = 'opts' ]] && continue
+    case "${MYCMD}" in
+      @@) AFTER_UPDATE[${#AFTER_UPDATE[@]}]="${J}"; continue;;
+      @)  AFTER_SYNC[${#AFTER_SYNC[@]}]="${J}"; continue;;
+      \~)  BEFORE_RSYNC[${#BEFORE_RSYNC[@]}]="${J}"; continue;;
+      !)  [[ "${NOGENSYNC}" ]] || DoExecute "${J}"; continue;;
+    esac
+    [[ "${NOGENSYNC}" ]] && continue
+    if [[ "${J}" = "*" ]]; then
+      RootCommand "Syncing all portage overlays"
+        "${MYCMD}" -a || die "${MYCMD} -a failed"
+      continue;
+    fi
+    RootCommand "Syncing portage overlay '${J}'"
+      "${MYCMD}" "${J}" || die "${MYCMD} ${J} failed"
+  done <"${GENSYNCCONF}"
+}
+
+
 # Get options from cli
 declare -a EMERGECMD
-EMERGECMD=("emerge" "--sync")
-CLEARCACHE=1
-NOGENSYNC=''
-NOHOOKS=''
-VERBOSE=''
-QUIET=''
-USETEMP=''
-METADATA=''
-SERVER=''
-CLIENT=''
-DOUPDATE='1'
-SYNCHOOKS='1'
-while getopts "ds:2:Uug@SmtvqwrR?hH" OPTION; do
+
+DefaultOpts () {
+  EMERGECMD=("emerge" "--sync")
+  CLEARCACHE=1
+  NOGENSYNC=''
+  NOHOOKS=''
+  VERBOSE=''
+  QUIET=''
+  USETEMP=''
+  METADATA=''
+  SERVER=''
+  CLIENT=''
+  DOUPDATE='1'
+  SYNCHOOKS='1'
+}
+
+DefaultOpts
+ExecuteConfig 'opts'
+
+while getopts "ids:2:Uug@SmtvqwrR?hH" OPTION \
+  ${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
   case "${OPTION}" in
+    i) DefaultOpts;;
     d) DiffOnly;;
     s) SERVER="${OPTARG}";;
     2) CLIENT="${OPTARG}";;
@@ -204,48 +263,6 @@ MakeTempFile () {
     mkdir "${TMPFILE}" || die "cannot create ${TMPFILE}"
   fi
   trap DelTemp 0 1 2 15
-}
-
-declare -a AFTER_SYNC AFTER_UPDATE BEFORE_RSYNC
-AFTER_SYNC=()
-AFTER_UPDATE=()
-BEFORE_RSYNC=()
-if [[ -r "${GENSYNCCONF}" ]]; then
-  HAVECONF=1
-else
-  HAVECONF=''
-fi
-CallGensync () {
-  local I J MYCMD
-  [[ "${HAVECONF}" ]] || return
-  while read I; do
-    J="${I%%#*}"
-    while [[ "${J% }" != "${J}" ]]; do J="${J%?}"; done
-    while [[ "${J:0:1}" = " " ]]; do J="${J#?}"; done
-    [[ "${J}" ]] || continue
-    case "${J}" in
-      !*)  J="${J#?}"; MYCMD='!';;
-      @@*) J="${J#??}"; MYCMD='@@';;
-      @*)  J="${J#?}"; MYCMD='@';;
-      \~*)  J="${J#?}"; MYCMD='~';;
-      *)   MYCMD="gensync";;
-    esac
-    [[ "${EMULATEMODE}" ]] && continue
-    case "${MYCMD}" in
-      @@) AFTER_UPDATE[${#AFTER_UPDATE[@]}]="${J}"; continue;;
-      @)  AFTER_SYNC[${#AFTER_SYNC[@]}]="${J}"; continue;;
-      \~)  BEFORE_RSYNC[${#BEFORE_RSYNC[@]}]="${J}"; continue;;
-      !)  [[ "${NOGENSYNC}" ]] || DoExecute "${J}"; continue;;
-    esac
-    [[ "${NOGENSYNC}" ]] && continue
-    if [[ "${J}" = "*" ]]; then
-      RootCommand "Syncing all portage overlays"
-        "${MYCMD}" -a || die "${MYCMD} -a failed"
-      continue;
-    fi
-    RootCommand "Syncing portage overlay '${J}'"
-      "${MYCMD}" "${J}" || die "${MYCMD} ${J} failed"
-  done <"${GENSYNCCONF}"
 }
 
 PREPRSYNC=''
@@ -357,7 +374,7 @@ CopyDiff () {
 MainSync () {
   CondUpdate
   ClearCache
-  CallGensync
+  ExecuteConfig 'sync'
   CallEmergeSync
   [[ "${SYNCHOOKS}" ]] && DoHook "${AFTER_SYNC[@]}"
   CallSyncClient

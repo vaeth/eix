@@ -515,6 +515,10 @@ Comments start with B<#> (all lines are cut at the first B<#>; it is not
 possible to mask B<#>). Lines can have the following forms and will be
 executed in the given order before B<emerge --sync> is executed.
 .TP
+.BR I<option(s)>
+Use I<option(s)> as default for eix-sync (in front of all other options).
+As usual, I<option(s)> must start with "B<->".
+.TP
 .BR I<Name>
 Call B<gensync> I<Name>.
 Note that B<gensync> is provided by B<app-portage/gentoolkit-dev> to sync
