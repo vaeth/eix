@@ -71,7 +71,7 @@ The following options are available:
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after update-eix (@ entries)
      and do not show differences. This option implies -R
--u   Update database only and show differences. This is equivalent to -g@m.
+-u   Update database only and show differences. This is equivalent to -g@ms ''
 -g   Do not call gensync (and the !commands in ${GENSYNCCONF}).
      However, the postponed hooks (@ and @@ entries) will be executed anyway.
 -@   Do not execute the hooks (@ and @@ entries) of ${GENSYNCCONF}.
@@ -170,7 +170,7 @@ while getopts "ids:2:Uug@SmtvqwrR?hH" OPTION \
     s) SERVER="${OPTARG}";;
     2) CLIENT="${OPTARG}";;
     U) DOUPDATE='';;
-    u) NOGENSYNC=1; NOHOOKS=1; METADATA=1;;
+    u) NOGENSYNC=1; NOHOOKS=1; METADATA=1; SERVER='';;
     g) NOGENSYNC=1;;
     @) NOHOOKS=1;;
     S) SYNCHOOKS='';;
@@ -299,7 +299,7 @@ ClearCache () {
 CallEmergeSync () {
   [[ "${EMULATEMODE}" ]] && return
   if [[ "${SERVER}" ]]; then
-    PrepRsync
+    PrepRsync "${SERVER}"
     RunCommand "rsyncing from ${HOSTDIR}" \
       rsync $RSYNC_OPTS "${HOSTDIR}" "${PORTDIR}" || \
         die "Could not rsync from ${HOSTDIR}"
