@@ -597,6 +597,7 @@ If true, eix will use B<--quick> by default.
 .BR DIFF_QUICKMODE "  " (true / false)
 If true, diff-eix will use B<--quick> by default.
 
+.TP
 .BR CAREMODE "  " (true / false)
 If true, eix will use B<--care>.
 
@@ -604,6 +605,7 @@ If true, eix will use B<--care>.
 .BR DIFF_CAREMODE "  " (true / false)
 If true, diff-eix will use B<--care>.
 
+.TP
 .BR QUIETMODE "  " (true / false)
 If true, eix will use B<--quiet> by default.
 
@@ -915,14 +917,14 @@ or the environment.
 .BR UPGRADE_ALWAYS_LOCAL " " (true / false)
 If true, the B<--upgrade> option of eix will always match according to the
 local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
-independent of other options or variables.
+independently of other options or variables.
 Note that this refers only to the match, not to the way the package is printed.
 .TP
 .BR RECOMMEND_ALWAYS_LOCAL " " (true / false)
 If true, the upgrade/downgrade recommendations as well as in diff-eix the
 tests for version changes will always accord to the
 local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
-independent of other options or variables.
+independently of other options or variables.
 Note that this refers only to the way the test variables in the format strings
 are interpreted.
 .TP
