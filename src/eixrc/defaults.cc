@@ -423,6 +423,16 @@ eixrc.addDefault(
 			"for the versions in question.")
 		);
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_USE",
+			"some",
+			"Applies if /etc/portage/package.use matches twice")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
+			"some",
+			"Applies if /etc/portage/package.cflags matches twice")
+		);
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_IN_KEYWORDS",
 			"-some",
 			"Applies if /etc/portage/package.keywords contains a matching entry")

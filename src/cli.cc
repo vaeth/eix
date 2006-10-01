@@ -133,6 +133,10 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 						Keywords::RED_DOUBLE_MASK, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
 						Keywords::RED_DOUBLE_UNMASK, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_USE",
+						Keywords::RED_DOUBLE_USE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_CFLAGS",
+						Keywords::RED_DOUBLE_CFLAGS, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_KEYWORDS",
 						Keywords::RED_IN_KEYWORDS, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_MASK",

@@ -32,11 +32,12 @@ SUBDIRS = eixTk database portage output search
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags eix-sync update-eix-remote
 
-EXTRA_DIST = eix-sync.in update-eix-remote.in eixrc/defaults.cc eixrc/eixrc.h
+EXTRA_DIST = eix-sync.in update-eix-remote.in eix-test-obsolete.in \
+	eixrc/defaults.cc eixrc/eixrc.h
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
-bin_SCRIPTS  = update-eix-remote eix-sync
+bin_SCRIPTS  = update-eix-remote eix-sync eix-test-obsolete
 
 # The search-tool for our database
 eix_SOURCES = eix.cc \
@@ -81,6 +82,10 @@ eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE)," \
 	$(srcdir)/eix-sync.in > eix-sync
+
+eix-test-obsolete: eix-test-obsolete.in
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	$(srcdir)/eix-test-obsolete.in > eix-test-obsolete
 
 update-eix-remote: update-eix-remote.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \

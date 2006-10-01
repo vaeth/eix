@@ -186,7 +186,7 @@ void PortageUserConfigReadVersionFile (const char *file, MaskList<KeywordMask> *
 			else {
 				m = new KeywordMask(lines[i].substr(0, n).c_str());
 				if(m)
-					m->keywords = lines[i].substr(n + 1);
+					m->keywords = "1"; //lines[i].substr(n + 1);
 			}
 			if(m)
 				list->add(m);
@@ -196,10 +196,10 @@ void PortageUserConfigReadVersionFile (const char *file, MaskList<KeywordMask> *
 }
 
 /// @return true if some mask from list applied
-bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flags)
+bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in)
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = list->get(p);
-	map<Version*,string> sorted_by_versions;
+	map<Version*,char> sorted_by_versions;
 	bool rvalue = false;
 
 	if(!keyword_masks)
@@ -216,13 +216,13 @@ bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, K
 			v != matches.end();
 			++v)
 		{
-			string &s=sorted_by_versions[*v];
-			if(!it->keywords.empty())
-			{
-				if(!s.empty())
-					s.append(" ");
-				s.append(it->keywords);
-			}
+			if(it->keywords.empty())
+				continue;
+			char &s = sorted_by_versions[*v];
+			if(s)
+				s = 2;
+			else
+				s = 1;
 		}
 	}
 
@@ -230,11 +230,27 @@ bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, K
 		i != p->end();
 		++i)
 	{
-		if(!sorted_by_versions[*i].empty())
-			i->set_redundant( (i->get_redundant()) | flags );
+		char s = sorted_by_versions[*i];
+		if(!s)
+			continue;
+		Keywords::Redundant redundant = flag_in | i->get_redundant();
+		if(s == 2)
+			redundant |= flag_double;
+		i->set_redundant(redundant);
 	}
 	return true;
 }
+
+bool PortageUserConfigCheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in)
+{
+	if(!(*readfile))
+	{
+		PortageUserConfigReadVersionFile(file, list);
+		*readfile = true;
+	}
+	return PortageUserConfigCheckList(p, list, flag_double, flag_in);
+}
+
 
 bool PortageUserConfig::readKeywords() {
 	/* Prepend a ~ to every token.

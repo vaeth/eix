@@ -193,10 +193,10 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 	r &= t.red;
 	if(r == Keywords::RED_NOTHING)
 		return false;
-	if(t.only)
+	if(t.only & r)
 	{
 		if( (vardbpkg->numInstalled(p) != 0)
-			!= t.oins)
+			!= (t.oins & r != 0))
 			return false;
 	}
 	bool test_unrestricted = !(r & t.spc);
@@ -441,21 +441,19 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		if(redundant_flags & Keywords::RED_IN_USE)
+		if(portagesettings->user_config->CheckUse(user, redundant_flags))
 		{
-			if(portagesettings->user_config->CheckUse(user))
-			{
-				if(have_redundant(*user, Keywords::RED_IN_USE))
-					break;
-			}
+			if(have_redundant(*user, Keywords::RED_DOUBLE_USE))
+				break;
+			if(have_redundant(*user, Keywords::RED_IN_USE))
+				break;
 		}
-		if(redundant_flags & Keywords::RED_IN_CFLAGS)
+		if(portagesettings->user_config->CheckCflags(user, redundant_flags))
 		{
-			if(portagesettings->user_config->CheckCflags(user))
-			{
-				if(have_redundant(*user, Keywords::RED_IN_CFLAGS))
-					break;
-			}
+			if(have_redundant(*user, Keywords::RED_DOUBLE_CFLAGS))
+				break;
+			if(have_redundant(*user, Keywords::RED_IN_CFLAGS))
+				break;
 		}
 		if(test_installed == INS_NONE)
 			return invert;

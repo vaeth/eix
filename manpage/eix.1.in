@@ -23,6 +23,8 @@ A I<EXPRESSION> can be:
 .BR eix-sync
 
 .BR update-eix-remote
+
+.BR eix-test-obsolete
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -39,7 +41,10 @@ of I</etc/eix-sync.conf>
 
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
-To get more help on B<update-eix-remove> call B<update-eix-remove -h>.
+To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
+
+B<eix-test-obsolete> is a script which calls B<eix> several time to display
+the output of B<eix -tTc> in a more organized manner.
 .\" }}}
 
 .\" {{{ OPTIONS
@@ -1069,7 +1074,23 @@ for the versions in question.
 Applies if /etc/portage/package.unmask matches twice
 for the versions in question.
 .TP
-.BR REDUNDANT_IF_KEYWORDS "  " (String ", see above")
+.BR REDUNDANT_IF_DOUBLE_USE "  " (String ", see above")
+Applies if /etc/portage/package.use matches twice
+for the versions in question.
+.TP
+.BR REDUNDANT_IF_DOUBLE_CFLAGS "  " (String ", see above")
+Applies if /etc/portage/package.cflags matches twice
+for the versions in question.
+Note that this file is not supported by portage, but you might e.g. have built some
+support for it in your personal /etc/portage/bashrc file.
+Of course, this means that also no format for /etc/portage/package.cflags is defined.
+eix assumes that the format is analogous to /etc/portage/package.{keywords,use}
+(i.e. an entry is at most one line, with the matching version(s) at the beginning).
+As the other /etc/portage/package.* files, /etc/portage/package.cflags may also be a directory tree;
+in this case, all non-hidden files/subdirectories in this tree are read recursively,
+resolving all symbolic links.
+.TP
+.BR REDUNDANT_IF_IN_KEYWORDS "  " (String ", see above")
 Applies if /etc/portage/package.keywords contains a nonempty entry matching the versions in question
 (to find empty entries use -t).
 Of course, one will certainly not consider all matches as a redundancy
@@ -1089,14 +1110,7 @@ This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 .TP
 .BR REDUNDANT_IF_IN_CFLAGS "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
-Note that this file is not supported by portage, but you might e.g. have built some
-support for it in your personal /etc/portage/bashrc file.
-Of course, this means that also no format for /etc/portage/package.cflags is defined.
-eix assumes that the format is analogous to /etc/portage/package.{keywords,use}
-(i.e. an entry is at most one line, with the matching version(s) at the beginning).
-As the other /etc/portage/package.* files, /etc/portage/package.cflags may also be a directory tree;
-in this case, all non-hidden files/subdirectories in this tree are read recursively,
-resolving all symbolic links.
+See the above comments about this file.
 .\" }}}
 .\" }}}
 

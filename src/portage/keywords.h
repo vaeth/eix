@@ -65,10 +65,14 @@ class Keywords {
 			RED_IN_UNMASK,     /**< Some entry in package.umask     */
 			RED_IN_USE,        /**< Some entry in package.use       */
 			RED_IN_CFLAGS,     /**< Some entry in package.cflags    */
+			RED_DOUBLE_USE,    /**< Double entry in package.use     */
+			RED_DOUBLE_CFLAGS, /**< Double entry in package.cflags  */
 			RED_ALL_KEYWORDS,
 			RED_ALL_MASK,
 			RED_ALL_UNMASK,
-			RED_ALL_MASKSTUFF;
+			RED_ALL_MASKSTUFF,
+			RED_ALL_USE,
+			RED_ALL_CFLAGS;
 
 	protected:
 		Type m_mask;

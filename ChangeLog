@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Urgent release to fix certain non-matches of -T (the +/- prefix in
+	  REDUNDANT_IF_* had falsely a "global" effect for several tests).
+	- Introduce REDUNDANT_IF_DOUBLE_{USE,CFLAGS}.
+	- Add eix-test-obsolete script to beautify the output of eix -tT.
+	- Fix manpage typo (thanks to Mathieu Bonnet).
+
 *eix-0.7.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- By the new default, now all matches of /etc/portage/package.*
