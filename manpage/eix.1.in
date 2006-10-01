@@ -1071,18 +1071,31 @@ for the versions in question.
 .TP
 .BR REDUNDANT_IF_KEYWORDS "  " (String ", see above")
 Applies if /etc/portage/package.keywords contains an entry matching the versions in question.
+Of course, one will certainly not consider all matches as a redundancy
+(also one might misuse this option to simply list all matches).
+However, one might consider matching but non-installed packages as redundant.
+Hence, typically you might want to set this variable to the value B<-some> or the equivalent value B<-some-uninstalled>
+(or to B<false> if you think that entries for uninstalled packages are "normal").
 .TP
 .BR REDUNDANT_IF_MASK "  " (String ", see above")
-Applies if /etc/portage/package.mask contains an entry matching the versions in question.
+This is analogous to B<REDUNDANT_IF_KEYWORDS> but for /etc/portage/package.mask.
 .TP
 .BR REDUNDANT_IF_DOUBLE_UNMASK "  " (String ", see above")
-Applies if /etc/portage/package.unmask contains an entry matching the versions in question.
+This is analogous to B<REDUNDANT_IF_KEYWORDS> but for /etc/portage/package.unmask.
 .TP
 .BR REDUNDANT_IF_USE "  " (String ", see above")
-Applies if /etc/portage/package.use contains an entry matching the versions in question.
+This is analogous to B<REDUNDANT_IF_KEYWORDS> but for /etc/portage/package.use.
 .TP
 .BR REDUNDANT_IF_CFLAGS "  " (String ", see above")
-Applies if /etc/portage/package.cflags contains an entry matching the versions in question.
+This is analogous to B<REDUNDANT_IF_KEYWORDS> but for /etc/portage/package.cflags.
+Note that this file is not supported by portage, but you might e.g. have built some
+support for it in your personal /etc/portage/bashrc file.
+Of course, this means that also no format for /etc/portage/package.cflags is defined.
+eix assumes that the format is analogous to /etc/portage/package.{keywords,use}
+(i.e.\ an entry is at most one line, with the matching version(s) at the beginning).
+As the other /etc/portage/package.* files, /etc/portage/package.cflags may also be a directory tree;
+in this case, all non-hidden files/subdirectories in this tree are read recursively,
+resolving all symbolic links.
 .\" }}}
 .\" }}}
 

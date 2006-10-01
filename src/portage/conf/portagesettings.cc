@@ -126,7 +126,7 @@ PortageSettings::~PortageSettings()
 	}
 }
 
-/** Return vector of all possible all categories.
+/** Return vector of all possible categories.
  * Reads categories on first call. */
 vector<string> *PortageSettings::getCategories()
 {
@@ -202,20 +202,23 @@ bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, K
 	map<Version*,string> sorted_by_versions;
 	bool rvalue = false;
 
-	if(keyword_masks != NULL && keyword_masks->empty() == false)
+	if(!keyword_masks)
+		return false;
+	if(keyword_masks->empty())
+		return false;
+	for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
+		it != keyword_masks->end();
+		++it)
 	{
-		rvalue = true;
-		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
-			it != keyword_masks->end();
-			++it)
-		{
-			eix::ptr_list<Version> matches = it->match(*p);
+		eix::ptr_list<Version> matches = it->match(*p);
 
-			for(eix::ptr_list<Version>::iterator  v = matches.begin();
-				v != matches.end();
-				++v)
+		for(eix::ptr_list<Version>::iterator  v = matches.begin();
+			v != matches.end();
+			++v)
+		{
+			string &s=sorted_by_versions[*v];
+			if(!it->keywords.empty())
 			{
-				string &s=sorted_by_versions[*v];
 				if(!s.empty())
 					s.append(" ");
 				s.append(it->keywords);
@@ -230,7 +233,7 @@ bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, K
 		if(!sorted_by_versions[*i].empty())
 			i->set_redundant( (i->get_redundant()) | flags );
 	}
-	return rvalue;
+	return true;
 }
 
 bool PortageUserConfig::readKeywords() {
