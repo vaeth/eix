@@ -2,16 +2,22 @@
 
 *eix-0.7.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Enable default options for eix-sync (by config-file and environment)
-	- Fix eix-sync -s.
-	- Let eix-sync -u imply -s "".
+	- By the new default, now all matches of /etc/portage/package.*
+	  to non-installed packages are considered as redundant.
+	  Also /etc/portage/package.cflags is now checked for redundancy
+	  to the same extent as /etc/portage/package.use.
+	  This was possible with the following three additions:
+	- Introduce REDUNDANT_IF_IN_* to match any entry in
+	  /etc/portage/package.*.
 	- Introduce +/- prefix for string in REDUNDANT* to test the redundancy
 	  only for installed/uninstalled packages.
-	- Introduce REDUNDANT_IF_IN* to match any entry in
-	   /etc/portage/package.*
-	  By the new default, this is now used to consider all matches
-	  to non-installed packages as redundant.
 	- Extend -t to contain also /etc/portage/package.cflags.
+	- Let diff-eix by default list all versions if no stable exists.
+	- Enable default options for eix-sync (by config-file and environment).
+	- Fix eix-sync -s.
+	- Let eix-sync -u imply -s "".
+	- Let eix-sync not call update-eix if this was done in an emerge hook.
+	- Fix tempfile handling of eix-sync if mktemp does not exist.
 
 *eix-0.7.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -126,7 +126,7 @@ ExecuteConfig () {
     case "${MYCMD}" in
       @@) AFTER_UPDATE[${#AFTER_UPDATE[@]}]="${J}"; continue;;
       @)  AFTER_SYNC[${#AFTER_SYNC[@]}]="${J}"; continue;;
-      \~)  BEFORE_RSYNC[${#BEFORE_RSYNC[@]}]="${J}"; continue;;
+      \~) BEFORE_RSYNC[${#BEFORE_RSYNC[@]}]="${J}"; continue;;
       !)  [[ "${NOGENSYNC}" ]] || DoExecute "${J}"; continue;;
     esac
     [[ "${NOGENSYNC}" ]] && continue
@@ -260,7 +260,7 @@ MakeTempFile () {
     TMPFILE="/tmp/${0##*/}.$$"
     [[ -e "${TMPFILE}" ]] && \
       die "temporary name ${TMPFILE} already exists"
-    mkdir "${TMPFILE}" || die "cannot create ${TMPFILE}"
+    >"${TMPFILE}" || die "cannot create ${TMPFILE}"
   fi
   trap DelTemp 0 1 2 15
 }
@@ -351,22 +351,43 @@ CondUpdate () {
   fi
 }
 
-CopyDiff () {
+CopyPrevious () {
+  [[ "${DOUPDATE}" ]] || return
+  [[ "${EMULATEMODE}" ]] && return
+  MakeTempFile
+  ( umask 002 ; cp "${EIXCACHE}" "${TMPFILE}" ) ||
+    die "Could not copy database to temporary file ${TMPFILE}"
+}
+
+MovePrevious () {
+  [[ "${USETEMP}" ]] && return
+  ( umask 002
+    RunCommand "Copying old ${EIXCACHE} cache to ${EIXPREVIOUS}" \
+      mv -f "${TMPFILE}" "${EIXPREVIOUS}" ) ||
+      die "Could not move ${TMPFILE} to ${EIXPREVIOUS}"
+  [[ "${UID}" -eq 0 ]] && chown portage:portage "${EIXPREVIOUS}" &>/dev/null
+  chmod 664 "${EIXPREVIOUS}" &>/dev/null
+}
+
+UpdateDiff () {
   local D
   [[ "${DOUPDATE}" ]] || return
   if [[ "${USETEMP}" ]]; then
     [[ "${EMULATEMODE}" ]] && return
-    MakeTempFile
     D="${TMPFILE}"
   else
     D="${EIXPREVIOUS}"
     [[ -e "${D}" ]] || RootTest
     [[ "${EMULATEMODE}" ]] && return
   fi
-  ( umask 002 ; cp "${EIXCACHE}" "${D}" ) ||
-    die "Could not copy database to ${D}"
-  RunCommand "Running update-eix" "update-eix" || \
-    die "Failure while running update-eix"
+  if [[ "${EIXCACHE}" -nt "${TMPFILE}" ]]; then
+    MovePrevious
+    einfo "update-eix was apparently already called in a hook"
+  else
+    MovePrevious
+    RunCommand "Running update-eix" "update-eix" || \
+      die "Failure while running update-eix"
+  fi
   DoHook "${AFTER_UPDATE[@]}"
   diff-eix "${D}" || die "Failed to diff against current cache"
 }
@@ -374,12 +395,13 @@ CopyDiff () {
 MainSync () {
   CondUpdate
   ClearCache
+  CopyPrevious
   ExecuteConfig 'sync'
   CallEmergeSync
   [[ "${SYNCHOOKS}" ]] && DoHook "${AFTER_SYNC[@]}"
   CallSyncClient
   CallEmergeMetadata
-  CopyDiff
+  UpdateDiff
 }
 
 if [[ "${UID}" -ne 0 ]]; then
@@ -394,7 +416,7 @@ if (
      umask 002
      if [[ "${QUIET}" || -z "${VERBOSE}" ]]; then
        >"${LOGFILE}"
-       [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}"
+       [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}" &>/dev/null
      fi
    ) &>/dev/null
 then

@@ -109,7 +109,7 @@ eixrc.addDefault(
 			"{!recommend} {else}{!upgrade} {else} {!downgrade} {}{}{}"
 			" (green,1)>>() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({bestshort}<bestslots>{else}<availableversions>{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for new packages.")
 		);
 
@@ -118,7 +118,7 @@ eixrc.addDefault(
 			"{installedversions}[(purple,1)D()]{else}   {} "
 			" (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({installedversions}<installedversions>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({oldbestshort}<oldbestslots>{else}<oldavailableversions>{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
@@ -128,7 +128,7 @@ eixrc.addDefault(
 			"{!upgrade}{!better} {}{}{!downgrade}{!worse} {}{}"
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({oldbestshort}<oldbestslots>() -> {}{bestshort}<bestslots>{else}none{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({oldbestshort}<oldbestslots>{else}<oldavailableversions>{}() -> {bestshort}<bestslots>{else}<availableversions>{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
