@@ -416,9 +416,9 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 				if(have_redundant(*user, Keywords::RED_UNMASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_SOME_MASK))
+				if(have_redundant(*user, Keywords::RED_IN_MASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_SOME_UNMASK))
+				if(have_redundant(*user, Keywords::RED_IN_UNMASK))
 					break;
 			}
 		}
@@ -437,23 +437,23 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 				if(have_redundant(*user, Keywords::RED_NO_CHANGE))
 					break;
-				if(have_redundant(*user, Keywords::RED_SOME_KEYWORDS))
+				if(have_redundant(*user, Keywords::RED_IN_KEYWORDS))
 					break;
 			}
 		}
-		if(redundant_flags & Keywords::RED_SOME_USE)
+		if(redundant_flags & Keywords::RED_IN_USE)
 		{
 			if(portagesettings->user_config->CheckUse(user))
 			{
-				if(have_redundant(*user, Keywords::RED_SOME_USE))
+				if(have_redundant(*user, Keywords::RED_IN_USE))
 					break;
 			}
 		}
-		if(redundant_flags & Keywords::RED_SOME_CFLAGS)
+		if(redundant_flags & Keywords::RED_IN_CFLAGS)
 		{
 			if(portagesettings->user_config->CheckCflags(user))
 			{
-				if(have_redundant(*user, Keywords::RED_SOME_CFLAGS))
+				if(have_redundant(*user, Keywords::RED_IN_CFLAGS))
 					break;
 			}
 		}

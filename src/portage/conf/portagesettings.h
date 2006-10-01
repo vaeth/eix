@@ -104,10 +104,10 @@ class PortageUserConfig {
 		bool setStability(Package *p, const Keywords &kw, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 		/// @return true if something from /etc/portage/package.* applied
 		bool CheckUse(Package *p)
-		{ return PortageUserConfigCheckFile(p, "/etc/portage/package.use", &m_use, &read_use, Keywords::RED_SOME_USE); }
+		{ return PortageUserConfigCheckFile(p, "/etc/portage/package.use", &m_use, &read_use, Keywords::RED_IN_USE); }
 		/// @return true if something from /etc/portage/package.* applied
 		bool CheckCflags(Package *p)
-		{ return PortageUserConfigCheckFile(p, "/etc/portage/package.cflags", &m_cflags, &read_cflags, Keywords::RED_SOME_CFLAGS); }
+		{ return PortageUserConfigCheckFile(p, "/etc/portage/package.cflags", &m_cflags, &read_cflags, Keywords::RED_IN_CFLAGS); }
 };
 
 class PortageUserConfig;

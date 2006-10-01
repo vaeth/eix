@@ -423,27 +423,27 @@ eixrc.addDefault(
 			"for the versions in question.")
 		);
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_KEYWORDS",
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_IN_KEYWORDS",
 			"-some",
 			"Applies if /etc/portage/package.keywords contains a matching entry")
 		);
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MASK",
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_IN_MASK",
 			"-some",
 			"Applies if /etc/portage/package.mask matches")
 		);
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_UNMASK",
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_IN_UNMASK",
 			"-some",
 			"Applies if /etc/portage/package.mask matches")
 		);
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_USE",
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_IN_USE",
 			"-some",
 			"Applies if /etc/portage/package.use matches")
 		);
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_CFLAGS",
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_IN_CFLAGS",
 			"-some",
 			"Applies if /etc/portage/package.cflags matches")
 		);

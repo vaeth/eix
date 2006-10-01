@@ -60,11 +60,11 @@ class Keywords {
 			RED_UNMASK,        /**< No change in unmask status      */
 			RED_DOUBLE_MASK,   /**< Double mask entry               */
 			RED_DOUBLE_UNMASK, /**< Double unmask entry             */
-			RED_SOME_KEYWORDS, /**< Some entry in package.keywords  */
-			RED_SOME_MASK,     /**< Some entry in package.mask      */
-			RED_SOME_UNMASK,   /**< Some entry in package.umask     */
-			RED_SOME_USE,      /**< Some entry in package.use       */
-			RED_SOME_CFLAGS,   /**< Some entry in package.cflags    */
+			RED_IN_KEYWORDS,   /**< Some entry in package.keywords  */
+			RED_IN_MASK,       /**< Some entry in package.mask      */
+			RED_IN_UNMASK,     /**< Some entry in package.umask     */
+			RED_IN_USE,        /**< Some entry in package.use       */
+			RED_IN_CFLAGS,     /**< Some entry in package.cflags    */
 			RED_ALL_KEYWORDS,
 			RED_ALL_MASK,
 			RED_ALL_UNMASK,

@@ -349,8 +349,8 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 		string skw = sorted_by_versions[*i];
 		if(!skw.empty())
 		{
-			if(check & Keywords::RED_SOME_KEYWORDS)
-				redundant |= Keywords::RED_SOME_KEYWORDS;
+			if(check & Keywords::RED_IN_KEYWORDS)
+				redundant |= Keywords::RED_IN_KEYWORDS;
 			vector<string> kv = split_string(skw);
 			vector<string>::iterator new_end = unique(kv.begin(), kv.end());
 			if(new_end != kv.end())

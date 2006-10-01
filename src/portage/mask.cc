@@ -257,8 +257,8 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 		case maskUnmask:
 			if(!test(ve))
 				break;
-			if(check & Keywords::RED_SOME_UNMASK)
-				ve->set_redundant(Keywords::RED_SOME_UNMASK);
+			if(check & Keywords::RED_IN_UNMASK)
+				ve->set_redundant(Keywords::RED_IN_UNMASK);
 			if(check & Keywords::RED_DOUBLE_UNMASK)
 			{
 				if(ve->wanted_unmasked())
@@ -275,8 +275,8 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 		case maskMask:
 			if(!test(ve))
 				break;
-			if(check & Keywords::RED_SOME_MASK)
-				ve->set_redundant(Keywords::RED_SOME_MASK);
+			if(check & Keywords::RED_IN_MASK)
+				ve->set_redundant(Keywords::RED_IN_MASK);
 			if(check & Keywords::RED_DOUBLE_MASK)
 			{
 				if(ve->wanted_masked())

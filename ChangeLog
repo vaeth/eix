@@ -7,10 +7,10 @@
 	- Let eix-sync -u imply -s "".
 	- Introduce +/- prefix for string in REDUNDANT* to test the redundancy
 	  only for installed/uninstalled packages.
-	- Introduce REDUNDANT_IF_KEYWORDS/MASK/UNMASK/USE/CFLAGS to match any
-	  entry in /etc/portage/package.{keywords,mask,unmask,use,cflags}.
-	  By the new default, this is used now to consider all matches in these
-	  files to non-installed packages as redundant.
+	- Introduce REDUNDANT_IF_IN* to match any entry in
+	   /etc/portage/package.*
+	  By the new default, this is now used to consider all matches
+	  to non-installed packages as redundant.
 	- Extend -t to contain also /etc/portage/package.cflags.
 
 *eix-0.7.4

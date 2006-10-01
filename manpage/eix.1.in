@@ -1078,16 +1078,16 @@ However, one might consider matching but non-installed packages as redundant.
 Hence, typically one might want to set this variable to the value B<-some> or the equivalent value B<-some-uninstalled>
 (or to B<false> if one thinks that entries for uninstalled packages are "normal" and not redundant).
 .TP
-.BR REDUNDANT_IF_MASK "  " (String ", see above")
+.BR REDUNDANT_IF_IN_MASK "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.mask.
 .TP
-.BR REDUNDANT_IF_DOUBLE_UNMASK "  " (String ", see above")
+.BR REDUNDANT_IF_IN_UNMASK "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.unmask.
 .TP
-.BR REDUNDANT_IF_USE "  " (String ", see above")
+.BR REDUNDANT_IF_IN_USE "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 .TP
-.BR REDUNDANT_IF_CFLAGS "  " (String ", see above")
+.BR REDUNDANT_IF_IN_CFLAGS "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
 Note that this file is not supported by portage, but you might e.g. have built some
 support for it in your personal /etc/portage/bashrc file.

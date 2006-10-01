@@ -133,16 +133,16 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 						Keywords::RED_DOUBLE_MASK, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
 						Keywords::RED_DOUBLE_UNMASK, red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_KEYWORDS",
-						Keywords::RED_SOME_KEYWORDS, red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_MASK",
-						Keywords::RED_SOME_MASK, red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK",
-						Keywords::RED_SOME_UNMASK, red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_USE",
-						Keywords::RED_SOME_USE, red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_CFLAGS",
-						Keywords::RED_SOME_CFLAGS, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_IN_KEYWORDS",
+						Keywords::RED_IN_KEYWORDS, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_IN_MASK",
+						Keywords::RED_IN_MASK, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_IN_UNMASK",
+						Keywords::RED_IN_UNMASK, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_IN_USE",
+						Keywords::RED_IN_USE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
+						Keywords::RED_IN_CFLAGS, red);
 				  }
 				  test_installed = PackageTest::INS_NONE;
 				  if(eixrc.getBool("TEST_FOR_NONEXISTENT"))
