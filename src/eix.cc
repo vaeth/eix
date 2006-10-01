@@ -465,6 +465,7 @@ run_eix(int argc, char** argv)
 		print_unused("/etc/portage/package.mask",     all_packages);
 		print_unused("/etc/portage/package.unmask",   all_packages);
 		print_unused("/etc/portage/package.use",      all_packages, empty);
+		print_unused("/etc/portage/package.cflags",   all_packages, empty);
 		print_removed(var_db_pkg, all_packages);
 	}
 

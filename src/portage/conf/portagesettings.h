@@ -61,11 +61,27 @@ inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_ma
 
 class PortageSettings;
 
+void PortageUserConfigReadVersionFile(const char *file, MaskList<KeywordMask> *list);
+/// @return true if some mask from list applied
+bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flags);
+/// @return true if some mask from file applied
+inline bool PortageUserConfigCheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flags)
+{
+	if(!(*readfile))
+	{
+		PortageUserConfigReadVersionFile(file, list);
+		*readfile = true;
+	}
+	return PortageUserConfigCheckList(p, list, flags);
+}
+
 class PortageUserConfig {
 	private:
 		PortageSettings      *m_settings;
 		MaskList<Mask>        m_mask;
 		MaskList<KeywordMask> m_keywords;
+		MaskList<KeywordMask> m_use,m_cflags;
+		bool read_use,read_cflags;
 
 		bool readKeywords();
 		bool readMasks() {
@@ -79,11 +95,19 @@ class PortageUserConfig {
 			m_settings = psettings;
 			readKeywords();
 			readMasks();
+			read_use = read_cflags = false;
 		}
 
-		// return true if something from /etc/portage/package.* applied
+		/// @return true if something from /etc/portage/package.* applied
 		bool setMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		/// @return true if something from /etc/portage/package.* applied
 		bool setStability(Package *p, const Keywords &kw, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		/// @return true if something from /etc/portage/package.* applied
+		bool CheckUse(Package *p)
+		{ return PortageUserConfigCheckFile(p, "/etc/portage/package.use", &m_use, &read_use, Keywords::RED_SOME_USE); }
+		/// @return true if something from /etc/portage/package.* applied
+		bool CheckCflags(Package *p)
+		{ return PortageUserConfigCheckFile(p, "/etc/portage/package.cflags", &m_cflags, &read_cflags, Keywords::RED_SOME_CFLAGS); }
 };
 
 class PortageUserConfig;

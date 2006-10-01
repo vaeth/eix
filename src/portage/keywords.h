@@ -39,10 +39,10 @@ class Keywords {
 		static const unsigned short Typesize = io::charsize;
 		static const Type
 			KEY_MISSINGKEYWORD,
-			KEY_STABLE        , /*  ARCH */
-			KEY_UNSTABLE      , /* ~ARCH */
-			KEY_MINUSASTERISK , /*  -*   */
-			KEY_MINUSKEYWORD  , /* -ARCH */
+			KEY_STABLE        , /**<  ARCH */
+			KEY_UNSTABLE      , /**< ~ARCH */
+			KEY_MINUSASTERISK , /**<  -*   */
+			KEY_MINUSKEYWORD  , /**< -ARCH */
 			KEY_ALL           ,
 			PACKAGE_MASK      ,
 			PROFILE_MASK      ,
@@ -50,16 +50,21 @@ class Keywords {
 
 		typedef unsigned short Redundant;
 		static const Redundant
-			RED_NOTHING,       /* None of the following           */
-			RED_DOUBLE ,       /* Same keyword twice              */
-			RED_MIXED,         /* Weaker and stronger keyword     */
-			RED_WEAKER,        /* Unnecessarily strong keyword    */
-			RED_STRANGE,       /* Unrecognized OTHERARCH or -OTHERARCH */
-			RED_NO_CHANGE,     /* No change in keyword status     */
-			RED_MASK,          /* No change in mask status        */
-			RED_UNMASK,        /* No change in unmask status      */
-			RED_DOUBLE_MASK,   /* Double mask entry               */
-			RED_DOUBLE_UNMASK, /* Double unmask entry             */
+			RED_NOTHING,       /**< None of the following           */
+			RED_DOUBLE ,       /**< Same keyword twice              */
+			RED_MIXED,         /**< Weaker and stronger keyword     */
+			RED_WEAKER,        /**< Unnecessarily strong keyword    */
+			RED_STRANGE,       /**< Unrecognized OTHERARCH or -OTHERARCH */
+			RED_NO_CHANGE,     /**< No change in keyword status     */
+			RED_MASK,          /**< No change in mask status        */
+			RED_UNMASK,        /**< No change in unmask status      */
+			RED_DOUBLE_MASK,   /**< Double mask entry               */
+			RED_DOUBLE_UNMASK, /**< Double unmask entry             */
+			RED_SOME_KEYWORDS, /**< Some entry in package.keywords  */
+			RED_SOME_MASK,     /**< Some entry in package.mask      */
+			RED_SOME_UNMASK,   /**< Some entry in package.umask     */
+			RED_SOME_USE,      /**< Some entry in package.use       */
+			RED_SOME_CFLAGS,   /**< Some entry in package.cflags    */
 			RED_ALL_KEYWORDS,
 			RED_ALL_MASK,
 			RED_ALL_UNMASK,

@@ -422,3 +422,28 @@ eixrc.addDefault(
 			"Applies if /etc/portage/package.unmask matches twice\n"
 			"for the versions in question.")
 		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_KEYWORDS",
+			"-some",
+			"Applies if /etc/portage/package.keywords contains a matching entry")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MASK",
+			"-some",
+			"Applies if /etc/portage/package.mask matches")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_UNMASK",
+			"-some",
+			"Applies if /etc/portage/package.mask matches")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_USE",
+			"-some",
+			"Applies if /etc/portage/package.use matches")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_CFLAGS",
+			"-some",
+			"Applies if /etc/portage/package.cflags matches")
+		);

@@ -76,8 +76,25 @@ class EixRc : public std::map<std::string,std::string> {
 		bool getRedundantFlagAtom(const char *s,
 			Keywords::Redundant type, RedAtom &r)
 		{
-			if((s == NULL) ||
-			   (strcasecmp(s, "no") == 0) ||
+			r.only &= ~type;
+			if(s == NULL)
+			{
+				r.red &= ~type;
+				return true;
+			}
+			if(*s == '+')
+			{
+				s++;
+				r.only |= type;
+				r.oins |= type;
+			}
+			else if(*s == '-')
+			{
+				s++;
+				r.only |= type;
+				r.oins &= ~type;
+			}
+			if((strcasecmp(s, "no") == 0) ||
 			   (strcasecmp(s, "false") == 0))
 			{
 				r.red &= ~type;

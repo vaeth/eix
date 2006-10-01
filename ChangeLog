@@ -4,7 +4,14 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Enable default options for eix-sync (by config-file and environment)
 	- Fix eix-sync -s.
-	- Let eix-sync -u imply -s "" (useful is -s is used in config-file).
+	- Let eix-sync -u imply -s "".
+	- Introduce +/- prefix for string in REDUNDANT* to test the redundancy
+	  only for installed/uninstalled packages.
+	- Introduce REDUNDANT_IF_KEYWORDS/MASK/UNMASK/USE/CFLAGS to match any
+	  entry in /etc/portage/package.{keywords,mask,unmask,use,cflags}.
+	  By the new default, this is used now to consider all matches in these
+	  files to non-installed packages as redundant.
+	- Extend -t to contain also /etc/portage/package.cflags.
 
 *eix-0.7.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -193,6 +193,12 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 	r &= t.red;
 	if(r == Keywords::RED_NOTHING)
 		return false;
+	if(t.only)
+	{
+		if( (vardbpkg->numInstalled(p) != 0)
+			!= t.oins)
+			return false;
+	}
 	bool test_unrestricted = !(r & t.spc);
 	bool test_uninstalled = !(r & t.ins);
 	if(r & t.all)// test all, all-installed or all-uninstalled
@@ -410,6 +416,10 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 				if(have_redundant(*user, Keywords::RED_UNMASK))
 					break;
+				if(have_redundant(*user, Keywords::RED_SOME_MASK))
+					break;
+				if(have_redundant(*user, Keywords::RED_SOME_UNMASK))
+					break;
 			}
 		}
 		if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
@@ -426,6 +436,24 @@ PackageTest::match(PackageReader *pkg) const
 				if(have_redundant(*user, Keywords::RED_STRANGE))
 					break;
 				if(have_redundant(*user, Keywords::RED_NO_CHANGE))
+					break;
+				if(have_redundant(*user, Keywords::RED_SOME_KEYWORDS))
+					break;
+			}
+		}
+		if(redundant_flags & Keywords::RED_SOME_USE)
+		{
+			if(portagesettings->user_config->CheckUse(user))
+			{
+				if(have_redundant(*user, Keywords::RED_SOME_USE))
+					break;
+			}
+		}
+		if(redundant_flags & Keywords::RED_SOME_CFLAGS)
+		{
+			if(portagesettings->user_config->CheckCflags(user))
+			{
+				if(have_redundant(*user, Keywords::RED_SOME_CFLAGS))
 					break;
 			}
 		}

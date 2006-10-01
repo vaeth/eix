@@ -1025,6 +1025,11 @@ The redundancy must occurs at least for all uninstalled versions.
 If all versions in the database are installed, it must occur at least once.
 .TP
 .SS
+.BR -"some of the above  or  " +"some of the above"
+The test only applies if in addition no version (in case B<->)
+resp. at least some version (in case B<+>) of the package is installed.
+.TP
+.SS
 .BR "" "some of the above  " or "  some of the above"
 The result is positive if at least one of the two tests is positive.
 Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
@@ -1063,6 +1068,21 @@ for the versions in question.
 .BR REDUNDANT_IF_DOUBLE_UNMASKED "  " (String ", see above")
 Applies if /etc/portage/package.unmask matches twice
 for the versions in question.
+.TP
+.BR REDUNDANT_IF_KEYWORDS "  " (String ", see above")
+Applies if /etc/portage/package.keywords contains an entry matching the versions in question.
+.TP
+.BR REDUNDANT_IF_MASK "  " (String ", see above")
+Applies if /etc/portage/package.mask contains an entry matching the versions in question.
+.TP
+.BR REDUNDANT_IF_DOUBLE_UNMASK "  " (String ", see above")
+Applies if /etc/portage/package.unmask contains an entry matching the versions in question.
+.TP
+.BR REDUNDANT_IF_USE "  " (String ", see above")
+Applies if /etc/portage/package.use contains an entry matching the versions in question.
+.TP
+.BR REDUNDANT_IF_CFLAGS "  " (String ", see above")
+Applies if /etc/portage/package.cflags contains an entry matching the versions in question.
 .\" }}}
 .\" }}}
 
@@ -1088,7 +1108,7 @@ The functionality of update-eix was once triggered by using the -u switch on
 eix. It was than separated to provide better maintainability. Thus update-eix
 came to life.
 
-The new portage-versions (>=2.1_pre1) doesn't remove the old dep-cache, thus eix would
+The new portage-versions (>=2.1_pre1) don't remove the old dep-cache, thus eix would
 always find packages that are not in portage anymore. To circumvent this, eix-sync
 deletes the old cache (rm -rf /var/cache/edb/dep/*).
 .\" }}}

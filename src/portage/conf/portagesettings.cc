@@ -167,6 +167,71 @@ MaskList<Mask> *PortageSettings::getMasks()
 	return &(m_masks);
 }
 
+void PortageUserConfigReadVersionFile (const char *file, MaskList<KeywordMask> *list)
+{
+	vector<string> lines;
+	pushback_lines(file, &lines, false, true);
+	for(unsigned int i = 0;
+		i<lines.size();
+		i++)
+	{
+		if(lines[i].size() == 0)
+			continue;
+		try {
+			KeywordMask *m = NULL;
+			string::size_type n = lines[i].find_first_of("\t ");
+			if(n == string::npos) {
+				m = new KeywordMask(lines[i].c_str());
+			}
+			else {
+				m = new KeywordMask(lines[i].substr(0, n).c_str());
+				if(m)
+					m->keywords = lines[i].substr(n + 1);
+			}
+			if(m)
+				list->add(m);
+		}
+		catch(ExBasic e) { }
+	}
+}
+
+/// @return true if some mask from list applied
+bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flags)
+{
+	const eix::ptr_list<KeywordMask> *keyword_masks = list->get(p);
+	map<Version*,string> sorted_by_versions;
+	bool rvalue = false;
+
+	if(keyword_masks != NULL && keyword_masks->empty() == false)
+	{
+		rvalue = true;
+		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
+			it != keyword_masks->end();
+			++it)
+		{
+			eix::ptr_list<Version> matches = it->match(*p);
+
+			for(eix::ptr_list<Version>::iterator  v = matches.begin();
+				v != matches.end();
+				++v)
+			{
+				string &s=sorted_by_versions[*v];
+				if(!s.empty())
+					s.append(" ");
+				s.append(it->keywords);
+			}
+		}
+	}
+
+	for(Package::iterator i = p->begin();
+		i != p->end();
+		++i)
+	{
+		if(!sorted_by_versions[*i].empty())
+			i->set_redundant( (i->get_redundant()) | flags );
+	}
+	return rvalue;
+}
 
 bool PortageUserConfig::readKeywords() {
 	/* Prepend a ~ to every token.
@@ -187,9 +252,7 @@ bool PortageUserConfig::readKeywords() {
 		i++)
 	{
 		if(lines[i].size() == 0)
-		{
 			continue;
-		}
 
 		try {
 			string::size_type n = lines[i].find_first_of("\t ");
@@ -211,7 +274,7 @@ bool PortageUserConfig::readKeywords() {
 	return true;
 }
 
-// return true if something from /etc/portage/package.* applied
+/// @return true if something from /etc/portage/package.* applied
 bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const {
 	/* Set hardmasks */
 	return m_mask.applyMasks(p, check);
@@ -235,8 +298,7 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 	} else if(arch_used > value) \
 		redundant |= (check & Keywords::RED_MIXED); }
 
-
-// return true if something from /etc/portage/package.* applied
+/// @return true if something from /etc/portage/package.* applied
 bool
 PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redundant check) const
 {
@@ -282,8 +344,10 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 		Keywords lkw(kw.get());
 
 		string skw = sorted_by_versions[*i];
-		if(skw.empty() == false)
+		if(!skw.empty())
 		{
+			if(check & Keywords::RED_SOME_KEYWORDS)
+				redundant |= Keywords::RED_SOME_KEYWORDS;
 			vector<string> kv = split_string(skw);
 			vector<string>::iterator new_end = unique(kv.begin(), kv.end());
 			if(new_end != kv.end())

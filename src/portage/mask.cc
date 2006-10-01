@@ -253,17 +253,12 @@ Mask::ismatch(Package& pkg)
  * @param ve Version instance to be set */
 void Mask::apply(Version *ve, Keywords::Redundant check)
 {
-	if(	(m_type == maskAllowedByProfile
-			&& ve->isProfileMask())      /* Won't change anything cause already masked by profile */
-		|| (m_type == maskInSystem
-			&& ve->isSystem()
-			&& ve->isProfileMask()))
-		return;
-
 	switch(m_type) {
 		case maskUnmask:
 			if(!test(ve))
 				break;
+			if(check & Keywords::RED_SOME_UNMASK)
+				ve->set_redundant(Keywords::RED_SOME_UNMASK);
 			if(check & Keywords::RED_DOUBLE_UNMASK)
 			{
 				if(ve->wanted_unmasked())
@@ -280,6 +275,8 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 		case maskMask:
 			if(!test(ve))
 				break;
+			if(check & Keywords::RED_SOME_MASK)
+				ve->set_redundant(Keywords::RED_SOME_MASK);
 			if(check & Keywords::RED_DOUBLE_MASK)
 			{
 				if(ve->wanted_masked())
@@ -294,12 +291,16 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 			}
 			break;
 		case maskInSystem:
+			if( ve->isSystem() && ve->isProfileMask())	/* Won't change anything cause already masked by profile */
+				break;
 			if( test(ve) )
 				*ve |= Keywords::SYSTEM_PACKAGE;
 			else
 				*ve |= Keywords::PROFILE_MASK;
 			break;
 		case maskAllowedByProfile:
+			if( ve->isProfileMask())	/* Won't change anything cause already masked by profile */
+				break;
 			if(!test(ve))
 				*ve |= Keywords::PROFILE_MASK;
 			break;
