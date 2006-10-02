@@ -244,11 +244,16 @@ AddArchive () {
 	AddLocalMethods
 	for I in *
 	do
+		NAME="${I//:/_}"
+		[[ "${NAME}" != "${I}" ]] && mv "${I}" "${NAME}"
+	done
+	for I in *
+	do
 		NAME="${I%.eix}"
 		NAME="${NAME#_usr_portage_local_}"
 		NAME="${NAME//_//}"
 		VIRTUAL="(${NAME})"
-		AddMethod "${VIRTUAL}" "eix*:${2}/${I}"
+		AddMethod "${VIRTUAL}" "eix*:${2}/${I}:*"
 		AddOverlays "${VIRTUAL}"
 		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done

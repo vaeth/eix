@@ -1,5 +1,5 @@
 #!/bin/bash
-# This is a front-end for eix -tT (@PACKAGE_STRING@)
+# This script gives a structured output of eix -tTc (@PACKAGE_STRING@)
 # Author: Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 ###########################################################################
@@ -34,7 +34,7 @@ Eix () {
 	if PRINT_COUNT_ALWAYS=false eix -Tc | head -n1 | \
 		grep -q '^No matches found\.'
 	then
-		[[ "${1}" ]] && echo "${1} (or test was skipped)."
+		[[ "${1}" ]] && echo "${1} (or test switched off)."
 		return
 	fi
 	echo
