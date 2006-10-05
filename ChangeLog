@@ -1,8 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix default DIFF_FORMAT_DELETE (fix "unknown property: old*" errors)
+
 *eix-0.7.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Early release to fix two problems.
+	- Early release to fix two problems:
 	- In the default setting -T had false non-matches (the +/- prefix
 	  in REDUNDANT_IF_* had falsely an effect also for some other tests).
 	- The structure in the remote overlays database was changed.

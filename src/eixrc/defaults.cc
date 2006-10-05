@@ -118,7 +118,7 @@ eixrc.addDefault(
 			"{installedversions}[(purple,1)D()]{else}   {} "
 			" (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
-			"\\({oldbestshort}<oldbestslots>{else}<oldavailableversions>{}()){overlaykey} <overlaykey>{}: <description>",
+			"\\({bestshort}<bestslots>{else}<availableversions>{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
