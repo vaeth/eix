@@ -43,7 +43,7 @@ B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
 To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
 
-B<eix-test-obsolete> is a script which calls B<eix> several time to display
+B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
 .\" }}}
 
