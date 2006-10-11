@@ -34,6 +34,7 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/package.h>
+#include <portage/instversion.h>
 
 class PrintFormat;
 
@@ -41,13 +42,13 @@ class PrintFormat;
 class VarDbPkg {
 	private:
 		/** Mapping of [category][package] to list versions. */
-		std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* > installed;
+		std::map<std::string, std::map<std::string, std::vector<InstVersion> >* > installed;
 		std::string _directory; /**< This is the db-directory. */
 		bool get_slots, take_care;
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULL if not found .. else pointer to vector of versions. */
-		std::vector<BasicVersion> *getInstalledVector(const std::string &category, const std::string &name);
+		std::vector<InstVersion> *getInstalledVector(const std::string &category, const std::string &name);
 
 		/** Read category from db-directory.
 		 * @param category read this category. */
@@ -61,7 +62,7 @@ class VarDbPkg {
 		{ }
 
 		~VarDbPkg() {
-			std::map<std::string, std::map<std::string, std::vector<BasicVersion> >* >::iterator it = installed.begin();
+			std::map<std::string, std::map<std::string, std::vector<InstVersion> >* >::iterator it = installed.begin();
 			while(it != installed.end()) {
 				delete it++->second;
 			}
@@ -70,11 +71,12 @@ class VarDbPkg {
 		bool care_slots() const
 		{ return take_care; }
 
-		bool readSlot(const Package &p, BasicVersion &v) const;
+		bool readSlot(const Package &p, InstVersion &v) const;
+		bool readUse(const Package &p, InstVersion &v) const;
 
 		/** Find installed versions
 		 * @return NULL if not found .. else pointer to vector of versions. */
-		std::vector<BasicVersion> *getInstalledVector(const Package &p) {
+		std::vector<InstVersion> *getInstalledVector(const Package &p) {
 			return getInstalledVector(p.category, p.name);
 		};
 
@@ -85,7 +87,7 @@ class VarDbPkg {
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */
-		std::vector<BasicVersion>::size_type numInstalled(const Package &p);
+		std::vector<InstVersion>::size_type numInstalled(const Package &p);
 };
 
 #endif /* __PORTAGECONF_H__ */

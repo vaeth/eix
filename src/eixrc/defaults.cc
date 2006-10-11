@@ -133,6 +133,28 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_INSTALLATION_DATE",
+			"[%X %x]",
+			"strftime() format which eix uses to print the installation date")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_INSTALLATION_DATE",
+			"[%x]",
+			"strftime() format which diff-eix uses to print the installation date")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_INSTALLED_USE",
+			"[%s]", "Printf-like format which eix uses to print useflags for installed packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_FORMAT_INSTALLED_USE",
+			"", "Printf-like format which diff-eix uses to print useflags for installed packages.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "COLOR_MASKED",
 			"red", "Define color for masked versions.")
 		);

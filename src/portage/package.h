@@ -36,6 +36,7 @@
 #include <vector>
 
 #include <portage/version.h>
+#include <portage/instversion.h>
 
 class VarDbPkg;
 
@@ -281,7 +282,7 @@ class Package
 		    possibly reading it from disk.
 		    Returns true if a reasonable choice seems to be found
 		    (v.know_slot determines whether we had full success). */
-		bool guess_slotname(BasicVersion &v, const VarDbPkg *vardbpkg) const;
+		bool guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const;
 
 		Version *latest() const
 		{ return *rbegin(); }

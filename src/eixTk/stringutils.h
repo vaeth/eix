@@ -32,6 +32,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #if !defined HAVE_STRNDUP
 /** strndup in case we don't have one. */
@@ -116,6 +117,9 @@ std::vector<std::string> split_string(const std::string &str, const char *at = "
 /** Join a string-vector.
  * @param glue glue between the elements. */
 std::string join_vector(std::vector<std::string> &vec, std::string glue = " ");
+
+/** Make a set from a string-vector. */
+void make_set(std::set<std::string> *the_set, const std::vector<std::string> &the_list);
 
 /** Resolve a vector of -/+ keywords.
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords

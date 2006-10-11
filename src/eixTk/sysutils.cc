@@ -33,6 +33,9 @@
 #include <grp.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <string>
+
+using namespace std;
 
 static bool is_on_list (char *const *list, const char *member)
 {
@@ -110,4 +113,17 @@ time_t get_mtime(const char *file)
 	if(stat(file, &stat_b))
 		return 0;
 	return stat_b.st_mtime;
+}
+
+/** @return mydate formatted according to locales and dateFormat */
+const char *date_conv(const char *dateFormat, time_t mydate)
+{
+	const int max_datelen=256;
+	static char buffer[max_datelen];
+	string old_lcall = setlocale(LC_ALL, NULL);
+	setlocale(LC_ALL, "");
+	struct tm *loctime = localtime (&mydate);
+	strftime(buffer, max_datelen, dateFormat, loctime);
+	setlocale(LC_ALL, old_lcall.c_str());
+	return buffer;
 }

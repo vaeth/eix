@@ -457,13 +457,13 @@ PackageTest::match(PackageReader *pkg) const
 		}
 		if(test_installed == INS_NONE)
 			return invert;
-		vector<BasicVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
 		if(!installed_versions)
 			return invert;
 		if(test_installed & INS_MASKED) {
 			set_user_flags();
 		}
-		vector<BasicVersion>::iterator current = installed_versions->begin();
+		vector<InstVersion>::iterator current = installed_versions->begin();
 		for( ; current != installed_versions->end(); ++current)
 		{
 			TestInstalled found = INS_NONE;

@@ -297,6 +297,8 @@ setup_defaults()
 	   (strcasecmp(s.c_str(), "compact") == 0)) {
 		rc_options.compact_output = true;
 	}
+	format.dateFormat          = rc["FORMAT_INSTALLATION_DATE"];
+	format.instUseFormat       = rc["FORMAT_INSTALLED_USE"];
 
 	format.color_masked        = rc["COLOR_MASKED"];
 	format.color_unstable      = rc["COLOR_UNSTABLE"];

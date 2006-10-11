@@ -133,7 +133,6 @@ void Package::addVersionFinalize(Version *version)
 
 	if(version->slot == "0")
 		version->slot = "";
-	version->know_slot = true;
 
 	/* This guarantees that we pushed our first version */
 	if(size() != 1) {
@@ -220,7 +219,7 @@ Package::slotname(const BasicVersion &v) const
 	}
 	return NULL;
 }
-bool Package::guess_slotname(BasicVersion &v, const VarDbPkg *vardbpkg) const
+bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 {
 	if(vardbpkg->care_slots())
 		return vardbpkg->readSlot(*this, v);
@@ -345,7 +344,7 @@ Package::compare_best(const Package &p, bool test_slot) const
 int
 Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 {
-	vector<BasicVersion> *ins = NULL;
+	vector<InstVersion> *ins = NULL;
 	if(v)
 		ins = v->getInstalledVector(*this);
 	if(ins)
@@ -362,7 +361,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	}
 	bool downgrade = false;
 	bool upgrade = false;
-	for(vector<BasicVersion>::iterator it = ins->begin();
+	for(vector<InstVersion>::iterator it = ins->begin();
 		it != ins->end() ; ++it)
 	{
 		if(!guess_slotname(*it, v))
@@ -420,7 +419,7 @@ int
 Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 {
 	BasicVersion *t_best = best();
-	vector<BasicVersion> *ins = NULL;
+	vector<InstVersion> *ins = NULL;
 	if(v)
 		ins = v->getInstalledVector(*this);
 	if(ins)
@@ -430,7 +429,7 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 	{
 		if(!t_best)
 			return -1;
-		for(vector<BasicVersion>::iterator it = ins->begin();
+		for(vector<InstVersion>::iterator it = ins->begin();
 			it != ins->end(); ++it)
 		{
 			if(*t_best > *it)

@@ -642,6 +642,15 @@ stable versions has changed. This is only used by B<diff-eix> (See
 B<FORMATSTRING>)
 
 .TP
+.BR FORMAT_INSTALLATION_DATE ", " DIFF_FORMAT_INSTALLATION_DATE
+Define the strftime() format which eix resp. diff-eix uses to print the installation date.
+
+.TP
+.BR FORMAT_INSTALLED_USE ", " DIFF_FORMAT_INSTALLED_USE
+Define the printf-like format which eix resp. diff-eix uses to print useflags of installed packages
+If this string is empty, the processing is slightly faster since then these data are not read.
+
+.TP
 .BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
 Define the color for masked versions, stable versions, unstable versions, slots,
 the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).

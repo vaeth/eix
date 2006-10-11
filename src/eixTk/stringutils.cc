@@ -208,3 +208,14 @@ resolve_plus_minus(vector<string> &v, bool warn_plus, bool order)
 	}
 	return v;
 }
+
+/** Make a set from a string-vector. */
+void make_set(set<string> *the_set, const vector<string> &the_list)
+{
+	the_set->clear();
+	for(vector<string>::const_iterator it = the_list.begin();
+		it != the_list.end(); ++it) {
+		the_set->insert(*it);
+	}
+}
+

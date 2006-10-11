@@ -30,6 +30,7 @@
 
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
+#include <eixTk/sysutils.h>
 #include <portage/basicversion.h>
 #include <portage/package.h>
 #include <output/formatstring.h>
@@ -39,26 +40,26 @@
 
 using namespace std;
 
-inline static void sort_installed(map<string,vector<BasicVersion> > *maping);
+inline static void sort_installed(map<string,vector<InstVersion> > *maping);
 
 /** Find installed versions of packet "name" in category "category".
  * @return NULL if not found .. else pointer to vector of versions. */
-vector<BasicVersion> *VarDbPkg::getInstalledVector(const string &category, const string &name)
+vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const string &name)
 {
-	map<string, map<string, vector<BasicVersion> >* >::iterator map_it = installed.find(category);
+	map<string, map<string, vector<InstVersion> >* >::iterator map_it = installed.find(category);
 	/* Not yet read */
 	if(map_it == installed.end()) {
 		readCategory(category.c_str());
 		return getInstalledVector(category, name);
 	}
 
-	map<string, vector<BasicVersion> >* installed_cat = map_it->second;
+	map<string, vector<InstVersion> >* installed_cat = map_it->second;
 	/* No such category in db-directory. */
 	if(!installed_cat)
 		return NULL;
 
 	/* Find packet */
-	map<string, vector<BasicVersion> >::iterator cat_it = installed_cat->find(name);
+	map<string, vector<InstVersion> >::iterator cat_it = installed_cat->find(name);
 	if(cat_it == installed_cat->end())
 		return NULL; /* Not installed */
 	return &(cat_it->second);
@@ -67,7 +68,7 @@ vector<BasicVersion> *VarDbPkg::getInstalledVector(const string &category, const
 /** Returns true if a Package installed. */
 bool VarDbPkg::isInstalled(const Package &p, const BasicVersion *v)
 {
-	vector<BasicVersion> *vec = getInstalledVector(p);
+	vector<InstVersion> *vec = getInstalledVector(p);
 	if(vec)
 	{
 		if(!v)
@@ -81,15 +82,15 @@ bool VarDbPkg::isInstalled(const Package &p, const BasicVersion *v)
 
 /** Returns number of installed versions of this package
  * @param p Check for this Package. */
-vector<BasicVersion>::size_type VarDbPkg::numInstalled(const Package &p)
+vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p)
 {
-	vector<BasicVersion> *vec = getInstalledVector(p);
+	vector<InstVersion> *vec = getInstalledVector(p);
 	if(!vec)
 		return 0;
 	return vec->size();
 }
 
-bool VarDbPkg::readSlot(const Package &p, BasicVersion &v) const
+bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 {
 	if(v.know_slot)
 		return true;
@@ -122,6 +123,50 @@ bool VarDbPkg::readSlot(const Package &p, BasicVersion &v) const
 	}
 }
 
+bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
+{
+	if(v.know_use)
+		return true;
+	v.know_use=true;
+	v.iuse.clear();
+	v.usedUse.clear();
+	set<string> iuse_set;
+	vector<string> alluse;
+	try {
+		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
+		vector<string> lines;
+		if(!pushback_lines((dirname + "/IUSE").c_str(),
+			&lines, true, false))
+			return false;
+		vector<string> iuse = split_string(join_vector(lines, " "));
+		for(vector<string>::iterator it = iuse.begin();
+			it != iuse.end(); ++it)
+		{
+			if(iuse_set.find(*it) != iuse_set.end())
+				continue;
+			iuse_set.insert(*it);
+			v.iuse.push_back(*it);
+		}
+		lines.clear();
+		if(!pushback_lines((dirname + "/USE").c_str(),
+			&lines, true, false))
+			return false;
+		alluse = split_string(join_vector(lines, " "));
+	}
+	catch(ExBasic e) {
+		cerr << e << endl;
+		return false;
+	}
+	for(vector<string>::iterator it = alluse.begin();
+		it != alluse.end(); ++it)
+	{
+		if(iuse_set.find(*it) != iuse_set.end()) {
+			v.usedUse.insert(*it);
+		}
+	}
+	return true;
+}
+
 /** Read category from db-directory. */
 void VarDbPkg::readCategory(const char *category)
 {
@@ -130,12 +175,14 @@ void VarDbPkg::readCategory(const char *category)
 	struct dirent* package_entry;  /* current package dirent */
 
 	/* Open category-directory */
-	if( (dir_category = opendir((_directory + category).c_str())) == NULL) {
+	string dir_category_name = _directory + category;
+	if( (dir_category = opendir(dir_category_name.c_str())) == NULL) {
 		installed[category] = NULL;
 		return;
 	}
-	map<string, vector<BasicVersion> >* category_installed;
-	installed[category] = category_installed = new map<string,vector<BasicVersion> >;
+	dir_category_name.append("/");
+	map<string, vector<InstVersion> >* category_installed;
+	installed[category] = category_installed = new map<string,vector<InstVersion> >;
 	OOM_ASSERT(category_installed);
 
 	/* Cycle through this category */
@@ -145,13 +192,20 @@ void VarDbPkg::readCategory(const char *category)
 		if(package_entry->d_name[0] == '.')
 			continue; /* Don't want dot-stuff */
 		char **aux = ExplodeAtom::split( package_entry->d_name);
+		InstVersion *instver = NULL;
 		if(aux == NULL)
 			continue;
 		try {
-			(*category_installed)[aux[0]].push_back(BasicVersion(aux[1]));
+			instver = new InstVersion(aux[1]);
 		}
 		catch(ExBasic e) {
 			cerr << e << endl;
+		}
+		if(instver)
+		{
+			instver->instDate = get_mtime((dir_category_name + package_entry->d_name).c_str());
+			(*category_installed)[aux[0]].push_back(*instver);
+			free(instver);
 		}
 
 		free(aux[0]);
@@ -161,9 +215,9 @@ void VarDbPkg::readCategory(const char *category)
 	sort_installed(installed[category]);
 }
 
-inline static void sort_installed(map<string,vector<BasicVersion> > *maping)
+inline static void sort_installed(map<string,vector<InstVersion> > *maping)
 {
-	map<string,vector<BasicVersion> >::iterator it = maping->begin();
+	map<string,vector<InstVersion> >::iterator it = maping->begin();
 	while(it != maping->end())
 	{
 		sort(it->second.begin(), it->second.end());

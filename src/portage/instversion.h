@@ -26,38 +26,45 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __SYSUTILS_H__
-#define __SYSUTILS_H__
+#ifndef __INSTVERSION_H__
+#define __INSTVERSION_H__
 
-class ExBasic;
+#include <portage/basicversion.h>
+#include <set>
 
-#include <unistd.h>
-#include <time.h>
+/** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
+class InstVersion : public BasicVersion, public Keywords {
 
-/** Return false if the file is not writable/readable by users in the group portage. */
-bool is_writable(const char *file);
+	public:
+		/** For versions in vardbpkg we might not yet know the slot.
+		    For caching, we mark this here: */
+		bool know_slot, read_failed;
+		/** Similarly for iuse and usedUse: */
+		bool know_use;
 
-bool is_dir(const char *file);
+		time_t instDate;
+		std::set<std::string> usedUse; /* Those useflags in iuse actually used */
 
-/** Return true if the current user is in the group_name. */
-bool user_in_group(const char *group_name);
+		InstVersion() : instDate(0), know_slot(false), read_failed(false), know_use(false)
+		{ }
 
-/** Get uid of a user.
- * @param u pointer to uid_t .. uid is stored there.
- * @param name name of user
- * @return true if user exists */
-bool get_uid_of(const char *name, uid_t *u);
+		/** Constructor, calls BasicVersion::parseVersion( str ) */
+		InstVersion(const char* str) : BasicVersion(str), instDate(0), know_slot(false), read_failed(false), know_use(false)
+		{ }
 
-/** Get gid of a group.
- * @param g pointer to gid_t .. gid is stored there.
- * @param name name of group
- * @return true if group exists */
-bool get_gid_of(const char *name, gid_t *g);
+		/** The equality operator does not test the additional data */
+		bool operator == (const InstVersion &v) const
+		{ return ((BasicVersion)*this) == ((BasicVersion)v); }
 
-/** Return mtime of file. */
-time_t get_mtime(const char *file);
+		bool operator == (const BasicVersion &v) const
+		{ return ((BasicVersion)*this) == v; }
 
-/** @return mydate formatted according to locales and dateFormat */
-const char *date_conv(const char *dateFormat, time_t mydate);
+		bool operator != (const InstVersion &v) const
+		{ return !((*this) == v); }
 
-#endif /* __SYSUTILS_H__ */
+		bool operator != (const BasicVersion &v) const
+		{ return !((*this) == v); }
+
+};
+
+#endif /* __INSTVERSION_H__ */

@@ -28,6 +28,7 @@
 
 
 #include "formatstring-print.h"
+#include <eixTk/sysutils.h>
 #include <portage/vardbpkg.h>
 #include <portage/conf/portagesettings.h>
 
@@ -48,16 +49,43 @@ get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure
 }
 
 string
+get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt)
+{
+	if(fmt.instUseFormat.empty())
+		return "";
+	if(!fmt.vardb->readUse(p, i))
+		return "";
+	if(i.iuse.empty())
+		return "";
+	string ret = "";
+	for(vector<string>::iterator it = i.iuse.begin();
+		it != i.iuse.end(); ++it)
+	{
+		if(!ret.empty())
+			ret.append(" ");
+		if(i.usedUse.find(*it) == i.usedUse.end())
+			ret.append("-");
+		ret.append(*it);
+	}
+        char *tmp;
+        if( asprintf(&tmp, fmt.instUseFormat.c_str(), ret.c_str()) < 0)
+              return ret;
+	ret = tmp;
+	free(tmp);
+	return ret;
+}
+
+string
 getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
 {
 	if(!fmt.vardb)
 		return "";
-	vector<BasicVersion> *vec = fmt.vardb->getInstalledVector(p);
+	vector<InstVersion> *vec = fmt.vardb->getInstalledVector(p);
 	if(!vec) {
 		return "";
 	}
 
-	vector<BasicVersion>::iterator it = vec->begin();
+	vector<InstVersion>::iterator it = vec->begin();
 	if(it == vec->end())
 		return "";
 	string ret;
@@ -65,9 +93,15 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
 		if(!p.guess_slotname(*it, fmt.vardb))
 			it->slot = "?";
 		ret.append(get_basic_version(&fmt, &(*it), pure_text));
+		ret.append(date_conv(fmt.dateFormat.c_str(), it->instDate));
+		string inst_use = get_inst_use(p, *it, fmt);
+		ret.append(inst_use);
 		if(++it == vec->end())
 			return ret;
-		ret.append(" ");
+		if(inst_use.size() || fmt.style_version_lines)
+			ret.append("\n\t\t\t  ");
+		else
+			ret.append(" ");
 	}
 }
 

@@ -168,6 +168,7 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 
 class PrintFormat {
 	friend std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text);
+        friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt);
 	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text);
 	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot, bool exclude_overlay);
 	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
@@ -189,7 +190,7 @@ class PrintFormat {
 		std::vector<bool> *virtuals;
 		std::vector<Version::Overlay> *overlay_translations;
 		MarkedList    *marked_list;
-		/* The following two ares actually a hack:
+		/* The following two variables are actually a hack:
 		   This is only set temporarily during printing to avoid
 		   passing this argument through all sub-functions.
 		   We do it that way since we do not want to set it "globally":
@@ -219,6 +220,8 @@ class PrintFormat {
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
 			   mark_version_end;  /**< End-Marker for marked versions */
+		std::string dateFormat,       /**< The format of the install-date */
+		            instUseFormat;    /**< The format of the install-USEflags */
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),

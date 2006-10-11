@@ -2,7 +2,9 @@
 
 *eix-0.7.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix default DIFF_FORMAT_DELETE (fix "unknown property: old*" errors)
+	- Fix default DIFF_FORMAT_DELETE (fix "unknown property: old*" errors).
+	- Introduce FORMAT_INSTALLATION_DATE and DIFF_FORMAT_INSTALLATION_DATE.
+	- Introduce FORMAT_INSTALLED_USE and DIFF_FORMAT_INSTALLED_USE.
 
 *eix-0.7.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
