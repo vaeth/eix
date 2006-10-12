@@ -9,7 +9,7 @@ noinst_LIBRARIES = libportage.a
 libportage_a_SOURCES = basicversion.cc basicversion.h \
 					   mask.cc mask.h \
 					   mask_list.h \
-					   version.h \
+					   version.h instversion.h \
 					   package.cc package.h \
 					   keywords.cc keywords.h \
 					   vardbpkg.cc vardbpkg.h \
