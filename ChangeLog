@@ -5,6 +5,9 @@
 	- Fix default DIFF_FORMAT_DELETE (fix "unknown property: old*" errors).
 	- Introduce FORMAT_INSTALLATION_DATE and DIFF_FORMAT_INSTALLATION_DATE.
 	- Introduce FORMAT_INSTALLED_USE and DIFF_FORMAT_INSTALLED_USE.
+	- Reformulate description of cache methods on manpage.
+	- Internal Change: Use InstVersion (inherited from BasicVersion) to
+	  manage installed versions (to store e.g. installation dates).
 
 *eix-0.7.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

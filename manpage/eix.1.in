@@ -770,7 +770,7 @@ alone.
 B<PORTDIR_CACHE_METHOD> defaults to I<@PORTDIR_CACHE_METHOD@>, B<OVERLAY_CACHE_METHOD> to
 I<none>.
 The available values are described below.
-You might want to specify a different cache method only for some overlays
+You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
 
 .TP
@@ -793,6 +793,13 @@ and are meant to be used only locally.
 The following cache methods are available:
 .TP
 .SS
+.BR metadata
+Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
+This is the default method which will always work if the portage tree is readable
+when you run update-eix.
+However, it is not necessarily the fastest method.
+.TP
+.SS
 .BR sqlite
 This is an extremely fast cache method if you are using portage with the
 sqlite backend as described in
@@ -807,8 +814,8 @@ You must have emerged B<eix> with the appropriate USE flag
 before compilation) if you want support for this method.
 .TP
 .SS
-.BR cdb
-You are using the cdb-module from
+.BR " cdb"
+Use this if you are using <portage-2.1 and the cdb-module from
 I<http://forums.gentoo.org/viewtopic-t-261580.html> as
 cache-backend for portage (cdb with cpickle'd dictionaries as values).
 Note that in contrast to the default B<metadata> cache method you must
@@ -816,13 +823,17 @@ use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR flat
-You are using the default cache-backend (plain text files).
+If you are using <portage-2.1 and the default backend, you might want
+to use this one if you do not have access to the portage tree when
+you run update-eix.
 Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR backport
-If you are using that backport-stuff (from portage-3 to portage-2) you should use this one.
+If you are using >=portage-2.1 and the default backend, you might want
+to use this one if you do not have access to the portage tree when
+you run update-eix.
 Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
@@ -872,10 +883,6 @@ However, this method is considerably faster than B<ebuild> and stable
 enough to treat e.g. typical ebuilds from kde-base.
 
 B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
-.TP
-.SS
-.BR metadata
-Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
 .TP
 .SS
 .BR eix "  or   "  eix:I<FILE> "  or  " eix:I<FILE>:I<overlay>
