@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -76,6 +77,10 @@ class RegexAlgorithm : public BaseAlgorithm {
 		Regex re;
 
 	public:
+		RegexAlgorithm() {
+			re.compile("");
+		}
+
 		void setString(std::string s) {
 			search_string = s;
 			re.compile(search_string.c_str());

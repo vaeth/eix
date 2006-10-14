@@ -2,8 +2,8 @@
 
 *eix-0.7.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Bugfix: Initialize empty search string when new algorithm is
-	  selected. This fixes http://bugs.gentoo.org/show_bug.cgi?id=151327
+	- Bugfix: Initialize empty search string in constructor of regex.
+	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=151327
 	- Bugfix: No splitting of short options when they are option
 	  parameters, e.g. in "update-eix -o -oo" the second argument
 	  is not interpreted as two options of type -o.
