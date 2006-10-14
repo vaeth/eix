@@ -70,7 +70,10 @@ class PackageTest {
 		PackageTest(VarDbPkg &vdb, PortageSettings &p);
 
 		void setAlgorithm(BaseAlgorithm *p)
-		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
+		{
+			algorithm = std::auto_ptr<BaseAlgorithm>(p);
+			setPattern("");
+		}
 
 		void setPattern(const char *p);
 

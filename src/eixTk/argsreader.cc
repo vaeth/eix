@@ -45,41 +45,59 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 {
 	bool seen_escape = false;
 	name = argv[0];
+	unsigned int paramarg_remain = 0;
 	for(int i = 1; i<argc ; i++)
 	{
-		if(seen_escape)
+		if(seen_escape || paramarg_remain)
 		{
 			push_back(Parameter(argv[i]));
+			if(paramarg_remain)
+				paramarg_remain--;
 			continue;
 		}
 
 		char *ptr = argv[i];
-		if(*ptr == '-')
-			switch(*++ptr)
-			{
-				case 0:
-					continue;
-				case '-':
-					/* something that begins with -- */
-					switch(*++ptr)
+		if(*ptr != '-')
+		{
+			push_back(Parameter(ptr));
+			continue;
+		}
+		int opt;
+		switch(*++ptr)
+		{
+			case 0:
+				push_back(Parameter("-"));
+				continue;
+			case '-':
+				/* something that begins with -- */
+				switch(*++ptr)
+				{
+					case 0:
+						/* a lonely -- */
+						seen_escape = true;
+						continue;
+					default:
+						/* some longopt */
+						opt = lookup_longopt(ptr, opt_table);
+						push_back(Parameter(opt));
+						paramarg_remain = numargs(opt, opt_table);
+				}
+				break;
+			default:
+				/* some shortopts */
+				for(char c = *ptr; c != '\0' ; c = *++ptr)
+				{
+					if(paramarg_remain)
 					{
-						case 0:
-							/* a lonely -- */
-							seen_escape = true;
-							continue;
-						default:
-							/* some longopt */
-							push_back(Parameter(argv[i], lookup_longopt(ptr, opt_table)));
-							continue;
+						push_back(Parameter(ptr));
+						paramarg_remain--;
+						break;
 					}
-				default:
-					/* some shortopts */
-					int c = 0;
-					while(ptr[c] != '\0')
-						push_back(Parameter(argv[i], lookup_shortopt(ptr[c++], opt_table)));
-					continue;
-			}
-		push_back(Parameter(ptr));
+					opt = lookup_shortopt(c, opt_table);
+					push_back(Parameter(opt));
+					paramarg_remain = numargs(opt, opt_table);
+				}
+		}
 	}
 
 	foldAndRemove(opt_table);
@@ -95,6 +113,25 @@ ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 		++opt_table;
 	}
 	return NULL;
+}
+
+int
+ArgumentReader::numargs(const int opt, struct Option *opt_table)
+{
+	Option *c = lookup_option(opt, opt_table);
+	if(c == NULL)
+		return 0;
+	switch(c->type)
+	{
+		case Option::INTEGER:
+		case Option::STRING:
+		case Option::STRINGLIST:
+			return 1;
+		case Option::PAIR:
+		case Option::PAIRLIST:
+			return 2;
+	}
+	return 0;
 }
 
 /** Return shortopt for longopt stored in opt.

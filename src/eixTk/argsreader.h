@@ -105,8 +105,8 @@ class Parameter
 		/// If type is OPTION this holds the option-key.
 		int m_option;
 
-		Parameter(char *argument, int option)
-			: type(Parameter::OPTION), m_argument(argument), m_option(option)
+		Parameter(int option)
+			: type(Parameter::OPTION), m_option(option)
 		{ }
 
 		Parameter(char *argument)
@@ -138,6 +138,9 @@ class ArgumentReader
 
 		/// Return Option from internal table.
 		static Option *lookup_option(const int opt, struct Option *opt_table);
+
+		/// Return number of args for opt
+		static int numargs(const int opt, struct Option *opt_table);
 
 		/// Fold parameter-list so that a option with an arguments has its argument set
 		// internal rather than lying around after it in the list.
