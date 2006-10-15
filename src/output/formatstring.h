@@ -169,7 +169,7 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 class PrintFormat {
 	friend std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text);
         friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt);
-	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text);
+	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype);
 	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot, bool exclude_overlay);
 	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_versions_slots(const PrintFormat *fmt, const Package *p);

@@ -9,6 +9,7 @@
 	  is not interpreted as two options of type -o.
 	- Option parameters can follow without space. For instance,
 	  instead of "update-eix -o test" you can use "update-eix -otest".
+	- Introduce installedversionsshort and installedversionsdate.
 
 *eix-0.7.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

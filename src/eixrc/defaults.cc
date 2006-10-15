@@ -71,10 +71,10 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
-			"{installedversions}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(default,1)I{}()]{else}(green)*{}"
+			"{installedversionsshort}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(default,1)I{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversions}     (green)Installed:()           <installedversions>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions>\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"{homepage}     (green)Homepage:()            <homepage>\n{}"
 			"{description}     (green)Description:()         <description>\n{}",
@@ -83,8 +83,8 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversions}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(default,1)I{}{else}(green,1)N{}()]"
-			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversions}(), {}{}(green)<installedversions>()\\): <description>",
+			"[{installedversionsshort}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(default,1)I{}{else}(green,1)N{}()]"
+			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversionsshort}(), {}{}(green)<installedversionsdate>()\\): <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
@@ -92,7 +92,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_VERBOSE",
 			"(green,0)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversions}     (green)Installed:()           <installedversions>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions>\n{}"
 			"{bestshort}     (green)Best versions/slot:()  <bestslots>\n{}"
 			"{recommend}     (green)Recommendation:()      {upgrade}(cyan,1)Upgrade{downgrade} and {}{}{downgrade}(purple,1)Downgrade{}\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
@@ -115,7 +115,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
-			"{installedversions}[(purple,1)D()]{else}   {} "
+			"{installedversionsshort}[(purple,1)D()]{else}   {} "
 			" (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() "
 			"\\({bestshort}<bestslots>{else}<availableversions>{}()){overlaykey} <overlaykey>{}: <description>",

@@ -75,8 +75,12 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt)
 	return ret;
 }
 
+const char
+	INST_WITH_DATE=1,      //< Installed string should contain date
+	INST_WITH_USEFLAGS=2,  //< Installed string should contain useflags
+	INST_WITH_NEWLINE=4;   //< Installed string should contain newlines
 string
-getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
+getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype)
 {
 	if(!fmt.vardb)
 		return "";
@@ -89,16 +93,25 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text)
 	if(it == vec->end())
 		return "";
 	string ret;
+	bool useflags;
 	for(;;) {
 		if(!p.guess_slotname(*it, fmt.vardb))
 			it->slot = "?";
 		ret.append(get_basic_version(&fmt, &(*it), pure_text));
-		ret.append(date_conv(fmt.dateFormat.c_str(), it->instDate));
-		string inst_use = get_inst_use(p, *it, fmt);
-		ret.append(inst_use);
+		if(formattype & INST_WITH_DATE)
+			ret.append(date_conv(fmt.dateFormat.c_str(), it->instDate));
+		useflags = false;
+		if(formattype & INST_WITH_USEFLAGS) {
+			string inst_use = get_inst_use(p, *it, fmt);
+			if(inst_use.size()) {
+				ret.append(inst_use);
+				useflags = true;
+			}
+		}
 		if(++it == vec->end())
 			return ret;
-		if(inst_use.size() || fmt.style_version_lines)
+		if((formattype & INST_WITH_NEWLINE) &&
+			(useflags || fmt.style_version_lines))
 			ret.append("\n\t\t\t  ");
 		else
 			ret.append(" ");
@@ -272,10 +285,18 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 		print_versions(fmt, entity, (name != "availableversionsshort"));
 		return;
 	}
-	if(name == "installedversions") {
+	if((name == "installedversions") ||
+		(name == "installedversionsdate") ||
+		(name == "installedversionsshort")) {
 		if(!fmt->vardb)
 			return;
-		cout << getInstalledString(*entity, *fmt, false);
+		char formattype = 0;
+		if(name != "installedversionsshort") {
+			formattype = INST_WITH_DATE;
+			if(name == "installedversions")
+				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
+		}
+		cout << getInstalledString(*entity, *fmt, false, formattype);
 		return;
 	}
 	if(name == "overlaykey") {
@@ -331,10 +352,18 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 	if(name == "licenses") {
 		return entity->licenses;
 	}
-	if(name == "installedversions") {
+	if((name == "installedversions") ||
+		(name == "installedversionsdate") ||
+		(name == "installedversionsshort")) {
 		if(!fmt->vardb)
 			return "";
-		return getInstalledString(*entity, *fmt, true);
+		char formattype = 0;
+		if(name != "installedversionsshort") {
+			formattype = INST_WITH_DATE;
+			if(name == "installedversions")
+				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
+		}
+		return getInstalledString(*entity, *fmt, true, formattype);
 	}
 	if(name == "provide") {
 		return entity->provide;
