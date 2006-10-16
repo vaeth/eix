@@ -230,15 +230,36 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 	return; /* never reached */
 }
 
+string parse_colors(const string &colorstring, bool colors)
+{
+	string ret;
+	FormatParser parser;
+	for(Node *root = parser.start(colorstring.c_str(), colors, true);
+		root != NULL; root = root->next)
+	{
+		if(root->type != Node::TEXT)
+			throw(ExBasic("Internal error: bad node for parse_colors."));
+		ret.append(((Text*)root)->text);
+	}
+	return ret;
+}
 
 FormatParser::ParserState
 FormatParser::state_START()
 {
 	switch(*band_position++) {
-		case '\0': return STOP;
-		case '{':  return IF;
-		case '<':  return PROPERTY;
-		case '(':  return COLOR;
+		case '\0':
+			return STOP;
+		case '{':
+			if(only_colors)
+				break;
+			return IF;
+		case '<':
+			if(only_colors)
+				break;
+			return PROPERTY;
+		case '(':
+			return COLOR;
 	}
 	--band_position;
 	return TEXT;
@@ -290,7 +311,8 @@ FormatParser::state_PROPERTY()
 		last_error = "'<' without closing '>'";
 		return ERROR;
 	}
-	keller.push(new Property(string(band_position, q - band_position)));
+	keller.push(new Property(parse_colors(
+		string(band_position, q - band_position), enable_colors)));
 	band_position = q + 1;
 	return START;
 }
@@ -459,10 +481,11 @@ FormatParser::state_FI()
 }
 
 Node *
-FormatParser::start(const char *fmt, bool colors) throw(ExBasic)
+FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(ExBasic)
 {
 	/* Initialize machine */
 	enable_colors = colors;
+	only_colors = parse_only_colors;
 	last_error.clear();
 	state = START;
 	band = fmt;

@@ -10,7 +10,8 @@
 	- Option parameters can follow without space. For instance,
 	  instead of "update-eix -o test" you can use "update-eix -otest".
 	- Introduce installedversionsshort and installedversionsdate.
-	- Bugfix wrong color output in FORMAT_COMPACT default.
+	- Allow appending stringlist to installedversion* to influence the
+	  color output.
 
 *eix-0.7.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

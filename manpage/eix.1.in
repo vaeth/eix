@@ -413,15 +413,36 @@ The versions are printed in the according colors.
 .BR availableversionsshort
 As B<availableversions>, but do not print any slots
 .TP
-.BR installedversionsshort, installedversionsdate
-All installed versions (without or with installation date, respectively),
-separated by spaces.
-.TP
-.BR installedversions
+.BR installedversions "[" :string  "]["  :string "]" "" ...
 All installed versions, including installation dates and useflags.
 The separator between several versions is a space unless
 useflags is nonempty or --versionlines is active: In these cases,
 the separator contains a newline and several tabs and spaces.
+
+When used to print the installed versions, you can add a colon-separated
+list of strings. These strings will be output on the following places:
+
+.BR "1st string: " "In front of each version"
+
+.BR "2nd string: " "After the version number (including slotname)"
+
+.BR "3rd string: " "At the end of each version (including installation dates and useflags)"
+
+.BR "4th string: " "In front of the installation date (if it is printed)"
+
+.BR "5th string: " "After the installation date (if it is printed)"
+
+.BR "6th string: " "In front of the useflags (if they are printed)"
+
+.BR "7th string: " "After the useflags (if they are printed)"
+
+It is explicitly admissible that the strings contain colors in the format
+described later: this is what you will probably use it for.
+.TP
+.BR installedversionsshort, installedversionsdate
+All installed versions (without or with installation date, respectively),
+separated by spaces. As for B<installedversions> you can also add a list
+of colon-separated strings to influence the printing.
 .TP
 .BR markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.

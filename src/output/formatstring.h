@@ -93,7 +93,10 @@ class ConditionBlock : public Node {
 		}
 };
 
+std::string parse_colors(const std::string &colorstring, bool colors);
+
 class FormatParser {
+		friend std::string parse_colors(const std::string &colorstring, bool colors);
 	private:
 		typedef enum ParserState {
 			ERROR, STOP, START,
@@ -106,6 +109,7 @@ class FormatParser {
 		const char   *band;
 		char         *band_position;
 		bool          enable_colors;
+		bool          only_colors;
 		std::string   last_error;
 
 		/* Decide what state should be used to parse the current type of token. */
@@ -120,7 +124,7 @@ class FormatParser {
 		ParserState state_FI();
 
 	public:
-		Node *start(const char *fmt, bool colors = true) throw(ExBasic);
+		Node *start(const char *fmt, bool colors = true, bool parse_only_colors = false) throw(ExBasic);
 
 		/* Calculate line and column of current position. */
 		int getPosition(int *line, int *column) {
@@ -169,7 +173,7 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 class PrintFormat {
 	friend std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text);
         friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt);
-	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype);
+	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const std::vector<std::string> &prepend);
 	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot, bool exclude_overlay);
 	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_versions_slots(const PrintFormat *fmt, const Package *p);

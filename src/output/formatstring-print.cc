@@ -42,7 +42,7 @@ get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure
 	if(pure_text || fmt->no_color || (!fmt->colored_slots))
 		return version->getFullSlotted(fmt->colon_slots);
 	string slot = version->getSlotAppendix(fmt->colon_slots);
-	if(!slot.size())
+	if(slot.empty())
 		return version->getFull();
 	return version->getFull() + fmt->color_slots + slot +
 		AnsiColor(AnsiColor::acDefault, 0).asString();
@@ -80,7 +80,7 @@ const char
 	INST_WITH_USEFLAGS=2,  //< Installed string should contain useflags
 	INST_WITH_NEWLINE=4;   //< Installed string should contain newlines
 string
-getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype)
+getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const vector<string> &prepend)
 {
 	if(!fmt.vardb)
 		return "";
@@ -97,17 +97,37 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 	for(;;) {
 		if(!p.guess_slotname(*it, fmt.vardb))
 			it->slot = "?";
+		if(prepend.size() > 0)
+			ret.append(prepend[0]);
 		ret.append(get_basic_version(&fmt, &(*it), pure_text));
+		if(prepend.size() > 1)
+			ret.append(prepend[1]);
 		if(formattype & INST_WITH_DATE)
-			ret.append(date_conv(fmt.dateFormat.c_str(), it->instDate));
+		{
+			string date = date_conv(fmt.dateFormat.c_str(), it->instDate);
+			if(!date.empty())
+			{
+				if(prepend.size() > 3)
+					ret.append(prepend[3]);
+				ret.append(date);
+				if(prepend.size() > 4)
+					ret.append(prepend[4]);
+			}
+		}
 		useflags = false;
 		if(formattype & INST_WITH_USEFLAGS) {
 			string inst_use = get_inst_use(p, *it, fmt);
-			if(inst_use.size()) {
+			if(!inst_use.empty()) {
+				if(prepend.size() > 5)
+					ret.append(prepend[5]);
 				ret.append(inst_use);
 				useflags = true;
+				if(prepend.size() > 6)
+					ret.append(prepend[6]);
 			}
 		}
+		if(prepend.size() > 2)
+			ret.append(prepend[2]);
 		if(++it == vec->end())
 			return ret;
 		if((formattype & INST_WITH_NEWLINE) &&
@@ -199,7 +219,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	if (with_slots && fmt->show_slots && fmt->colored_slots)
 	{
 		string slot = version->getSlotAppendix(fmt->colon_slots);
-		if(slot.size())
+		if(!slot.empty())
 		{
 			if(! fmt->no_color)
 				cout << fmt->color_slots;
@@ -279,24 +299,28 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 {
 	Package *entity = (Package*)void_entity;
 
+	vector<string> prepend = split_string(name, ":", false);
+	string plainname = prepend[0];
+	prepend.erase(prepend.begin());
+
 	if((name == "availableversions") ||
 		(name == "availableversionslong") ||
 		(name == "availablevresionsshort")) {
 		print_versions(fmt, entity, (name != "availableversionsshort"));
 		return;
 	}
-	if((name == "installedversions") ||
-		(name == "installedversionsdate") ||
-		(name == "installedversionsshort")) {
+	if((plainname == "installedversions") ||
+		(plainname == "installedversionsdate") ||
+		(plainname == "installedversionsshort")) {
 		if(!fmt->vardb)
 			return;
 		char formattype = 0;
-		if(name != "installedversionsshort") {
+		if(plainname != "installedversionsshort") {
 			formattype = INST_WITH_DATE;
-			if(name == "installedversions")
+			if(plainname == "installedversions")
 				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
 		}
-		cout << getInstalledString(*entity, *fmt, false, formattype);
+		cout << getInstalledString(*entity, *fmt, false, formattype, prepend);
 		return;
 	}
 	if(name == "overlaykey") {
@@ -363,7 +387,8 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 			if(name == "installedversions")
 				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
 		}
-		return getInstalledString(*entity, *fmt, true, formattype);
+		vector<string> prepend;
+		return getInstalledString(*entity, *fmt, true, formattype, prepend);
 	}
 	if(name == "provide") {
 		return entity->provide;
