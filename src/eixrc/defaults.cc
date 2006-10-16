@@ -84,7 +84,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
 			"[{installedversionsshort}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(default,1)I{}{else}(green,1)N{}()]"
-			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversionsshort}(), {}{}(green)<installedversionsdate>()\\): <description>",
+			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>() \\({marked}(red,1)<markedversions>{installedversionsshort}(), {}{}<installedversionsdate*>\\): <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
