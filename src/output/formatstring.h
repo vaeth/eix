@@ -224,7 +224,8 @@ class PrintFormat {
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
 			   mark_version_end;  /**< End-Marker for marked versions */
-		std::string dateFormat,       /**< The format of the install-date */
+		std::string dateFormat,       /**< The format of the long  install-date */
+		            dateFormatShort,  /**< The format of the short install-date */
 		            instUseFormat;    /**< The format of the install-USEflags */
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)

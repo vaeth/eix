@@ -2,6 +2,18 @@
 
 *eix-0.7.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce installedversionsshort, installedversionsdate,
+	  installedversionsshortdate, and FORMAT_SHORT_INSTALLATION_DATE.
+	- Remove DIFF_FORMAT_INSTALL* as this should better be handled in
+	  the FORMAT_* strings (which is now possible also for the date).
+	- Allow appending stringlist to installedversion* to influence the
+	  color output.
+	- Make default colors of [I],* reverse, since the only other
+	  consistent choice would be to use [I] color for installed versions;
+	  this looked bad since bright default was reserved for package names
+	  and all other non-reserved choices remind of the "downgrade" color.
+	  Change [N] color with -c correspondingly to allow better optical
+	  distinction (not in diff-eix: [N] has a different meaning there).
 	- Bugfix: Initialize empty search string in constructor of regex.
 	  This fixes http://bugs.gentoo.org/show_bug.cgi?id=151327
 	- Bugfix: No splitting of short options when they are option
@@ -9,9 +21,6 @@
 	  is not interpreted as two options of type -o.
 	- Option parameters can follow without space. For instance,
 	  instead of "update-eix -o test" you can use "update-eix -otest".
-	- Introduce installedversionsshort and installedversionsdate.
-	- Allow appending stringlist to installedversion* to influence the
-	  color output.
 
 *eix-0.7.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

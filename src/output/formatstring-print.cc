@@ -78,7 +78,8 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt)
 const char
 	INST_WITH_DATE=1,      //< Installed string should contain date
 	INST_WITH_USEFLAGS=2,  //< Installed string should contain useflags
-	INST_WITH_NEWLINE=4;   //< Installed string should contain newlines
+	INST_WITH_NEWLINE=4,   //< Installed string should contain newlines
+	INST_SHORTDATE=8;      //< date should be in short format
 string
 getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const vector<string> &prepend)
 {
@@ -104,7 +105,11 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			ret.append(prepend[1]);
 		if(formattype & INST_WITH_DATE)
 		{
-			string date = date_conv(fmt.dateFormat.c_str(), it->instDate);
+			string date =
+				date_conv(((formattype & INST_SHORTDATE) ?
+					fmt.dateFormatShort.c_str() :
+					fmt.dateFormat.c_str()),
+					it->instDate);
 			if(!date.empty())
 			{
 				if(prepend.size() > 3)
@@ -311,6 +316,7 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 	}
 	if((plainname == "installedversions") ||
 		(plainname == "installedversionsdate") ||
+		(plainname == "installedversionsshortdate") ||
 		(plainname == "installedversionsshort")) {
 		if(!fmt->vardb)
 			return;
@@ -319,6 +325,8 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 			formattype = INST_WITH_DATE;
 			if(plainname == "installedversions")
 				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
+			else if(plainname == "installedversionsshortdate")
+				formattype |= INST_SHORTDATE;
 		}
 		cout << getInstalledString(*entity, *fmt, false, formattype, prepend);
 		return;
@@ -378,6 +386,7 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 	}
 	if((name == "installedversions") ||
 		(name == "installedversionsdate") ||
+		(name == "installedversionsshortdate") ||
 		(name == "installedversionsshort")) {
 		if(!fmt->vardb)
 			return "";
@@ -386,6 +395,8 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 			formattype = INST_WITH_DATE;
 			if(name == "installedversions")
 				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
+			else if(name == "installedversionsshortdate")
+				formattype |= INST_SHORTDATE;
 		}
 		vector<string> prepend;
 		return getInstalledString(*entity, *fmt, true, formattype, prepend);

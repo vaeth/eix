@@ -71,10 +71,10 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
-			"{installedversionsshort}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(default,1)I{}()]{else}(green)*{}"
+			"{installedversionsshort}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1;inverse)I{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversionsshort}     (green)Installed:()           <installedversions:(default,1)::():(purple)::(blue,1)>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1)::():(purple)::(black,1)>\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"{homepage}     (green)Homepage:()            <homepage>\n{}"
 			"{description}     (green)Description:()         <description>\n{}",
@@ -83,16 +83,16 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversionsshort}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(default,1)I{}{else}(green,1)N{}()]"
-			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){marked} \\((red,1)<markedversions>(){installedversionsshort}, {else}\\){}{else}{installedversionsshort} \\({}{}{installedversionsshort}<installedversionsdate:(default,1)::():(purple)::(blue,1)>()\\){}: <description>",
+			"[{installedversionsshort}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(green,1;inverse)I{}{else}(green,0)N{}()]"
+			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){marked} \\((red,1)<markedversions>(){installedversionsshort}, {else}\\){}{else}{installedversionsshort} \\({}{}{installedversionsshort}<installedversionsshortdate:(blue,1):()::@(purple)::(black,1):()>()\\){}: <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_VERBOSE",
-			"(green,0)* {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
+			"{installedversionsshort}(green,1;inverse){else}(green,0){}*() {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversionsshort}     (green)Installed:()           <installedversions:(default,1)::():(purple)::(blue,1)>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1)::():(purple)::(black,1)>\n{}"
 			"{bestshort}     (green)Best versions/slot:()  <bestslots>\n{}"
 			"{recommend}     (green)Recommendation:()      {upgrade}(cyan,1)Upgrade{downgrade} and {}{}{downgrade}(purple,1)Downgrade{}\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
@@ -135,23 +135,18 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_INSTALLATION_DATE",
 			"(%X %x)",
-			"strftime() format which eix uses to print the installation date")
+			"strftime() format for printing the installation date in long form")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_INSTALLATION_DATE",
-			"(%x)",
-			"strftime() format which diff-eix uses to print the installation date")
+		EixRcOption(EixRcOption::STRING, "FORMAT_SHORT_INSTALLATION_DATE",
+			"%x",
+			"strftime() format for printing the installation date in short form")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_INSTALLED_USE",
-			"[%s]", "Printf-like format which eix uses to print useflags for installed packages.")
-		);
-
-eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "DIFF_FORMAT_INSTALLED_USE",
-			"", "Printf-like format which diff-eix uses to print useflags for installed packages.")
+			"(%s)", "Printf-like format for printing useflags for installed packages")
 		);
 
 eixrc.addDefault(

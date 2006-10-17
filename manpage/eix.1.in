@@ -439,8 +439,8 @@ list of strings. These strings will be output on the following places:
 It is explicitly admissible that the strings contain colors in the format
 described later: this is what you will probably use it for.
 .TP
-.BR installedversionsshort, installedversionsdate
-All installed versions (without or with installation date, respectively),
+.BR installedversionsshort, installedversionsdate, installedversionsshortdate
+All installed versions (without or with installation date or with installation date in short form, respectively),
 separated by spaces. As for B<installedversions> you can also add a list
 of colon-separated strings to influence the printing.
 .TP
@@ -670,12 +670,12 @@ stable versions has changed. This is only used by B<diff-eix> (See
 B<FORMATSTRING>)
 
 .TP
-.BR FORMAT_INSTALLATION_DATE ", " DIFF_FORMAT_INSTALLATION_DATE
-Define the strftime() format which eix resp. diff-eix uses to print the installation date.
+.BR FORMAT_INSTALLATION_DATE ", " FORMAT_SHORT_INSTALLATION_DATE
+Define the strftime() format used to print the installation date (in normal resp. short form).
 
 .TP
-.BR FORMAT_INSTALLED_USE ", " DIFF_FORMAT_INSTALLED_USE
-Define the printf-like format which eix resp. diff-eix uses to print useflags of installed packages
+.BR FORMAT_INSTALLED_USE
+Define the printf-like format used to print useflags of installed packages.
 If this string is empty, the processing is slightly faster since then these data are not read.
 
 .TP
