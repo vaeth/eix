@@ -74,7 +74,7 @@ eixrc.addDefault(
 			"{installedversionsshort}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1;inverse)I{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1)::():(purple)::(black,1)>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1;inverse):()::():(purple)::(black,1)>\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"
 			"{homepage}     (green)Homepage:()            <homepage>\n{}"
 			"{description}     (green)Description:()         <description>\n{}",
@@ -84,7 +84,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
 			"[{installedversionsshort}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(green,1;inverse)I{}{else}(green,0)N{}()]"
-			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){marked} \\((red,1)<markedversions>(){installedversionsshort}, {else}\\){}{else}{installedversionsshort} \\({}{}{installedversionsshort}<installedversionsshortdate:(blue,1):()::@(purple)::(black,1):()>()\\){}: <description>",
+			" {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){marked} \\((red,1)<markedversions>(){installedversionsshort}, {else}\\){}{else}{installedversionsshort} \\({}{}{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():():():@(purple)::(black,1)>()\\){}: <description>",
 			"Define the compact output shown when -c is used.")
 		);
 
@@ -92,7 +92,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_VERBOSE",
 			"{installedversionsshort}(green,1;inverse){else}(green,0){}*() {system}(yellow){else}(){}<category>()/{marked}(red,1;inverse){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1)::():(purple)::(black,1)>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1;inverse):()::():(purple)::(black,1)>\n{}"
 			"{bestshort}     (green)Best versions/slot:()  <bestslots>\n{}"
 			"{recommend}     (green)Recommendation:()      {upgrade}(cyan,1)Upgrade{downgrade} and {}{}{downgrade}(purple,1)Downgrade{}\n{}"
 			"{marked}     (green)Marked:()              (red,1)<markedversions>()\n{}"

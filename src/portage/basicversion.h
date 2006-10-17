@@ -98,8 +98,8 @@ class BasicVersion
 			return "";
 		}
 
-		std::string getFullSlotted (bool colon) const
-		{ return std::string(getFull()) + getSlotAppendix(colon); }
+		std::string getFullSlotted (bool colon, const std::string& intermediate = "") const
+		{ return std::string(getFull()) + intermediate + getSlotAppendix(colon); }
 	protected:
 		/** The m_full version-string. */
 		std::string             m_full;

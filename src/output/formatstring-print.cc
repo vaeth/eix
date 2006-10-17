@@ -35,16 +35,16 @@
 using namespace std;
 
 string
-get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text)
+get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text, const string &intermediate)
 {
 	if((!fmt->show_slots))
 		return version->getFull();
 	if(pure_text || fmt->no_color || (!fmt->colored_slots))
-		return version->getFullSlotted(fmt->colon_slots);
+		return version->getFullSlotted(fmt->colon_slots, intermediate);
 	string slot = version->getSlotAppendix(fmt->colon_slots);
 	if(slot.empty())
 		return version->getFull();
-	return version->getFull() + fmt->color_slots + slot +
+	return version->getFull() + intermediate + fmt->color_slots + slot +
 		AnsiColor(AnsiColor::acDefault, 0).asString();
 }
 
@@ -100,9 +100,10 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			it->slot = "?";
 		if(prepend.size() > 0)
 			ret.append(prepend[0]);
-		ret.append(get_basic_version(&fmt, &(*it), pure_text));
-		if(prepend.size() > 1)
-			ret.append(prepend[1]);
+		ret.append(get_basic_version(&fmt, &(*it), pure_text,
+			((prepend.size() > 1) ? prepend[1] : "")));
+		if(prepend.size() > 2)
+			ret.append(prepend[2]);
 		if(formattype & INST_WITH_DATE)
 		{
 			string date =
@@ -112,27 +113,27 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 					it->instDate);
 			if(!date.empty())
 			{
-				if(prepend.size() > 3)
-					ret.append(prepend[3]);
-				ret.append(date);
 				if(prepend.size() > 4)
 					ret.append(prepend[4]);
+				ret.append(date);
+				if(prepend.size() > 5)
+					ret.append(prepend[5]);
 			}
 		}
 		useflags = false;
 		if(formattype & INST_WITH_USEFLAGS) {
 			string inst_use = get_inst_use(p, *it, fmt);
 			if(!inst_use.empty()) {
-				if(prepend.size() > 5)
-					ret.append(prepend[5]);
-				ret.append(inst_use);
-				useflags = true;
 				if(prepend.size() > 6)
 					ret.append(prepend[6]);
+				ret.append(inst_use);
+				useflags = true;
+				if(prepend.size() > 7)
+					ret.append(prepend[7]);
 			}
 		}
-		if(prepend.size() > 2)
-			ret.append(prepend[2]);
+		if(prepend.size() > 3)
+			ret.append(prepend[3]);
 		if(++it == vec->end())
 			return ret;
 		if((formattype & INST_WITH_NEWLINE) &&

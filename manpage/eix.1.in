@@ -422,24 +422,28 @@ the separator contains a newline and several tabs and spaces.
 When used to print the installed versions, you can add a colon-separated
 list of strings. These strings will be output on the following places:
 
-.BR "1st string: " "In front of each version"
+.BR "1st string: " "In front of each entry"
 
-.BR "2nd string: " "After the version number (including slotname)"
+.BR "2nd string: " "Before slotname (if slotname is printed)"
 
-.BR "3rd string: " "At the end of each version (including installation dates and useflags)"
+.BR "3rd string: " "After version number + slotname"
 
-.BR "4th string: " "In front of the installation date (if it is printed)"
+.BR "4th string: " "After each complete entry"
 
-.BR "5th string: " "After the installation date (if it is printed)"
+.BR "5th string: " "In front of the installation date (if it is printed)"
 
-.BR "6th string: " "In front of the useflags (if they are printed)"
+.BR "6th string: " "After the installation date (if it is printed)"
 
-.BR "7th string: " "After the useflags (if they are printed)"
+.BR "7th string: " "In front of the useflags (if they are printed)"
+
+.BR "8th string: " "After the useflags (if they are printed)"
+
+.BR "later strings " "are ignored"
 
 It is explicitly admissible that the strings contain colors in the format
-described later: this is what you will probably use it for.
+described later: this is what you will probably use these strings for.
 .TP
-.BR installedversionsshort, installedversionsdate, installedversionsshortdate
+.BR installedversionsshort ", " installedversionsdate ", " installedversionsshortdate
 All installed versions (without or with installation date or with installation date in short form, respectively),
 separated by spaces. As for B<installedversions> you can also add a list
 of colon-separated strings to influence the printing.
