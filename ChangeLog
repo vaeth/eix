@@ -2,6 +2,11 @@
 
 *eix-0.7.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Main changes are improved possibilities of (colorized!) output of
+	  installed versions and corresponding changes in FORMAT_* defaults.
+	- Show installed versions in FORMAT_COMPACT default.
+	- Change output of marked packages/versions in FORMAT_* defaults
+	  consistently to (red,1;underlined).
 	- Introduce installedversionsshort, installedversionsdate,
 	  installedversionsshortdate, and FORMAT_SHORT_INSTALLATION_DATE.
 	- Remove DIFF_FORMAT_INSTALL* as this should better be handled in
