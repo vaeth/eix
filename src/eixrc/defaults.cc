@@ -71,7 +71,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT",
-			"{installedversionsshort}[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1;inverse)I{}()]{else}(green)*{}"
+			"{installedversionsshort}[{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{!recommend}(green,1;inverse)I{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
 			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1;inverse):()::():(purple)::(black,1)>\n{}"
@@ -83,7 +83,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_COMPACT",
-			"[{installedversionsshort}{recommend}{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{else}(green,1;inverse)I{}{else}(green,0)N{}()]"
+			"[{installedversionsshort}{recommend}{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{else}(green,1;inverse)I{}{else}(green,0)N{}()]"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>()"
 			" \\({marked}(red,1;underline)<markedversions>(); {}"
 			"{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():():():@(purple)::(black,1)>{recommend} -> {bestshort}<bestslots>{else}<availableversions>{}{}"
@@ -108,7 +108,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
-			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!recommend}(green,1)N{}()]"
+			"[{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{!recommend}(green,1)N{}()]"
 			"{!recommend} {else}{!upgrade} {else} {!downgrade} {}{}{}"
 			" (green,1)>>() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>() "
@@ -118,7 +118,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
-			"{installedversionsshort}[(purple,1)D()]{else}   {} "
+			"{installedversionsshort}[(purple,1;inverse)D()]{else}   {} "
 			" (red,1)\\<\\<() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>() "
 			"\\({bestshort}<bestslots>{else}<availableversions>{}()){overlaykey} <overlaykey>{}: <description>",
@@ -127,7 +127,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED",
-			"[{upgrade}(cyan,1)U{}{downgrade}(purple,1)D{}{!upgrade}{better}(yellow,1)>{}{}{!downgrade}{worse}(red,1)\\<{}{}()]"
+			"[{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{recommend}(){}{!upgrade}{better}(yellow,1)>{}{}{!downgrade}{worse}(red,1)\\<{}{}{!recommend}(){}]"
 			"{!upgrade}{!better} {}{}{!downgrade}{!worse} {}{}"
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>() \\("
