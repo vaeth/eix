@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.9
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Four further string arguments for installedversions* to allow
+	  different colouring of set/unset useflags.
+	- Corresponding change in default *FORMAT* strings.
+
 *eix-0.7.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Main changes are improved possibilities of (colorized!) output of

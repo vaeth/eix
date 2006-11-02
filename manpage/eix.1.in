@@ -438,6 +438,14 @@ list of strings. These strings will be output on the following places:
 
 .BR "8th string: " "After the useflags (if they are printed)"
 
+.BR "9th string: " "Before each set useflag"
+
+.BR "10th string: " "After each set useflag"
+
+.BR "11th string: " "Before each unset useflag. This defaults to '-'"
+
+.BR "12th string: " "After each unset useflag."
+
 .BR "later strings " "are ignored"
 
 It is explicitly admissible that the strings contain colors in the format

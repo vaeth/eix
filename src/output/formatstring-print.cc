@@ -49,7 +49,7 @@ get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure
 }
 
 string
-get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt)
+get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a)
 {
 	if(fmt.instUseFormat.empty())
 		return "";
@@ -63,13 +63,20 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt)
 	{
 		if(!ret.empty())
 			ret.append(" ");
+		int addindex = 0;
 		if(i.usedUse.find(*it) == i.usedUse.end())
+			addindex = 2;
+		if(a[addindex])
+			ret.append(a[addindex]);
+		else if(addindex == 2)
 			ret.append("-");
 		ret.append(*it);
+		if(a[addindex+1])
+			ret.append(a[addindex+1]);
 	}
-        char *tmp;
-        if( asprintf(&tmp, fmt.instUseFormat.c_str(), ret.c_str()) < 0)
-              return ret;
+	char *tmp;
+	if( asprintf(&tmp, fmt.instUseFormat.c_str(), ret.c_str()) < 0)
+		return ret;
 	ret = tmp;
 	free(tmp);
 	return ret;
@@ -122,7 +129,14 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		}
 		useflags = false;
 		if(formattype & INST_WITH_USEFLAGS) {
-			string inst_use = get_inst_use(p, *it, fmt);
+			const char *a[4];
+			for(int i=0; i<4; ++i) {
+				a[i] = NULL;
+				if(prepend.size() > 8+i)
+					if((i == 2) || (!prepend[8+i].empty()))
+						a[i] = prepend[8+i].c_str();
+			}
+			string inst_use = get_inst_use(p, *it, fmt, a);
 			if(!inst_use.empty()) {
 				if(prepend.size() > 6)
 					ret.append(prepend[6]);
