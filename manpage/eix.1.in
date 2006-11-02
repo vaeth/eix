@@ -707,7 +707,7 @@ Let eix/diff-eix color versions according to original settings, not according to
 
 .TP
 .BR COLOR_LOCAL_MASK ", " DIFF_COLOR_LOCAL_MASK "  " (true / false)
-Let eix/diff-eix color versions only locally masked (i.e. [m]) always as if it were also originally masked (e.g. [M]).
+Let eix/diff-eix color only locally masked (i.e. [m]) versions always as if they were also originally masked (e.g. [M]).
 
 .TP
 .BR STYLE_VERSION_SORTED "  " (true / false)

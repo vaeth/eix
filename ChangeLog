@@ -6,10 +6,10 @@
 	  can be seen. This is a suggestion of STEDevil, see
 	  http://forums.gentoo.org/viewtopic-t-278819-start-325.html
 	- Show the keyword flag also for masked versions.
-	- Color according to original settings not to local settings.
-	  Make an exception for local masking.
-	- Introduce *COLOR_ORIGINAL and *COLOR_LOCAL_MASK to allow the user
-	  to retain the old coloring behaviour or to omit the mask exception.
+	- Color according to original settings not to local settings;
+	  make a possible exception for local masking (*COLOR_LOCAL_MASK).
+	- Introduce *COLOR_ORIGINAL to allow the user to retain the
+	  old coloring behaviour.
 	- Allow 4 further strings for installedversions* to make it possible
 	  to have different coloring for set/unset useflags.
 	- Corresponding changes in default FORMAT strings.

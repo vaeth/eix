@@ -205,18 +205,18 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "COLOR_LOCAL_MASK",
-			"true", "Let eix color versions only locally masked always as masked.")
-		);
-
-eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_COLOR_ORIGINAL",
 			"true", "Let diff-eix color versions according to original settings, not according to local settings.")
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "COLOR_LOCAL_MASK",
+			"false", "Let eix color only locally masked versions as masked.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_COLOR_LOCAL_MASK",
-			"true", "Let diff-eix color versions only locally masked always as masked.")
+			"false", "Let diff-eix color only locally masked versions as masked.")
 		);
 
 eixrc.addDefault(
