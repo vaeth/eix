@@ -145,4 +145,4 @@ PRINT_COUNT_ALWAYS=false eix "-t!" | grep -v "^No matches found."
 )
 TEST_FOR_REDUNDANCY=false \
 	Eix "All installed versions of packages are in the database" \
-		"Installed packages with a version not in the database"
+	"Installed packages with a version not in the database (or masked)"
