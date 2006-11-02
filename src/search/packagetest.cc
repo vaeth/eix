@@ -402,6 +402,7 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		get_user_accept();
 		portagesettings->setStability(user, accept_keywords);
+		user->save_maskstuff();
 
 		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 		{

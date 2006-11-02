@@ -174,45 +174,108 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	if(fmt->style_version_lines)
 		fputs("\n\t\t", stdout);
 
-	if(version->isProfileMask()) {
-		if( !fmt->no_color )
+	bool need_color = !(fmt->no_color);
+	const char *mask_text = NULL, *keyword_text = NULL;
+
+	if(version->saved_isHardMasked()) {
+		if( need_color && fmt->color_original ) {
+			need_color = false;
 			cout << fmt->color_masked;
-		fputs("[P]", stdout);
+		}
+		if(version->isProfileMask()) {
+			if( need_color ) {
+				need_color = false;
+				cout << fmt->color_masked;
+			}
+			mask_text = "[P]";
+		}
+		else if(version->isPackageMask()) {
+			if( need_color ) {
+				need_color = false;
+				cout << fmt->color_masked;
+			}
+			mask_text = "[M]";
+		}
+		else if(version->saved_isProfileMask()) {
+			mask_text = "{P}";
+		}
+		else {
+			mask_text = "{M}";
+		}
 	}
-	else if(version->isPackageMask()) {
-		if( !fmt->no_color )
+	else if(version->isHardMasked()) {
+		if( need_color && fmt->color_local_mask ) {
+			need_color = false;
 			cout << fmt->color_masked;
-		fputs("[M]", stdout);
+		}
+		mask_text = "[m]";
 	}
-	else if(version->isStable()) {
-		if( !fmt->no_color )
+
+	if(version->isStable()) {
+		if( need_color && !(fmt->color_original) ) {
+			need_color = false;
 			cout << fmt->color_stable;
+		}
+		if (version->saved_isStable()) {
+			if( need_color )
+				cout << fmt->color_stable;
+		}
+		else if (version->saved_isUnstable()) {
+			if( need_color )
+				cout << fmt->color_unstable;
+			keyword_text = "(~)";
+		}
+		else if (version->saved_isMinusAsterisk()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = "(*)";
+		}
+		else if (version->saved_isMinusKeyword()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = "(-)";
+		}
+		else if (version->saved_isMissingKeyword()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = "(!)";
+		}
+		else if (!version->saved_isHardMasked()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = "(?)";
+		}
 	}
 	else if (version->isUnstable()) {
-		if( !fmt->no_color )
+		if( need_color )
 			cout << fmt->color_unstable;
-		fputs("~", stdout);
+		keyword_text = "~";
 	}
 	else if (version->isMinusAsterisk()) {
-		if( !fmt->no_color )
+		if( need_color )
 			cout << fmt->color_masked;
-		fputs("*", stdout);
+		keyword_text = "*";
 	}
 	else if (version->isMinusKeyword()) {
-		if( !fmt->no_color )
+		if( need_color )
 			cout << fmt->color_masked;
-		fputs("-", stdout);
+		keyword_text = "-";
 	}
 	else if (version->isMissingKeyword()) {
-		if( !fmt->no_color )
+		if( need_color )
 			cout << fmt->color_masked;
-		fputs("!", stdout);
+		keyword_text = "!";
 	}
-	else {
-		if( !fmt->no_color )
+	else if (!(version->isHardMasked())) {
+		if( need_color )
 			cout << fmt->color_masked;
-		fputs("?", stdout);
+		keyword_text = "?";
 	}
+
+	if(mask_text)
+		fputs(mask_text, stdout);
+	if(keyword_text)
+		fputs(keyword_text, stdout);
 
 	if (fmt->style_version_lines)
 		fputs("\t", stdout);

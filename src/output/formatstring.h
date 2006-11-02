@@ -207,6 +207,8 @@ class PrintFormat {
 
 	public:
 		bool no_color,            /**< Shall we use colors? */
+		     color_original,      /**< Color according to non-local settings? */
+		     color_local_mask,    /**< Color [m] as masked? */
 		     style_version_lines, /**< Shall we show versions linewise? */
 		     show_slots,          /**< Shall we show slots at all? */
 		     slot_sorted,         /**< Print sorted by slots */

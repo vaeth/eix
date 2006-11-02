@@ -2,9 +2,17 @@
 
 *eix-0.7.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Four further string arguments for installedversions* to allow
-	  different colouring of set/unset useflags.
-	- Corresponding change in default *FORMAT* strings.
+	- Print output such that also the original (non-local) stability
+	  can be seen. This is a suggestion of STEDevil, see
+	  http://forums.gentoo.org/viewtopic-t-278819-start-325.html
+	- Show the keyword flag also for masked versions.
+	- Color according to original settings not to local settings.
+	  Make an exception for local masking.
+	- Introduce *COLOR_ORIGINAL and *COLOR_LOCAL_MASK to allow the user
+	  to retain the old coloring behaviour or to omit the mask exception.
+	- Allow 4 further strings for installedversions* to make it possible
+	  to have different coloring for set/unset useflags.
+	- Corresponding changes in default FORMAT strings.
 
 *eix-0.7.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

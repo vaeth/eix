@@ -635,24 +635,16 @@ can override the variables set in this file. See B<~/.eixrc>.
 Per-user configuration file.
 The variables in this file can be overridden by environment variables.
 .TP
-.BR QUICKMODE "  " (true / false)
-If true, eix will use B<--quick> by default.
+.BR QUICKMODE ", " DIFF_QUICKMODE "  " (true / false)
+If true, eix/diff-eix will use B<--quick> by default.
 
 .TP
-.BR DIFF_QUICKMODE "  " (true / false)
-If true, diff-eix will use B<--quick> by default.
+.BR CAREMODE ", " DIFF_CAREMODE "  " (true / false)
+If true, eix/diff-eix will use B<--care>.
 
 .TP
-.BR CAREMODE "  " (true / false)
-If true, eix will use B<--care>.
-
-.TP
-.BR DIFF_CAREMODE "  " (true / false)
-If true, diff-eix will use B<--care>.
-
-.TP
-.BR QUIETMODE "  " (true / false)
-If true, eix will use B<--quiet> by default.
+.BR QUIETMODE ", " DIFF_QUIETMODE "  " (true / false)
+If true, eix/diff-eix will use B<--quiet> by default.
 
 .TP
 .BR DIFF_QUIETMODE "  " (true / false)
@@ -710,6 +702,14 @@ Mark the package versions passed with B<--pipe> by this attribute.
 Use colors even when stdout is not a terminal.
 
 .TP
+.BR COLOR_ORIGINAL ", " DIFF_COLOR_ORIGINAL  "  " (true / false)
+Let eix/diff-eix color versions according to original settings, not according to local settings.
+
+.TP
+.BR COLOR_LOCAL_MASK ", " DIFF_COLOR_LOCAL_MASK "  " (true / false)
+Let eix/diff-eix color versions only locally masked (i.e. [m]) always as if it were also originally masked (e.g. [M]).
+
+.TP
 .BR STYLE_VERSION_SORTED "  " (true / false)
 Defines whether B<--verionsorted> is on by default.
 
@@ -718,22 +718,14 @@ Defines whether B<--verionsorted> is on by default.
 Defines whether B<--versionlines> is on by default.
 
 .TP
-.BR COLORED_SLOTS "  " (true / false)
-If false, eix will not color slots appended to versions.
+.BR COLORED_SLOTS ", " DIFF_COLORED_SLOTS "  " (true / false)
+If false, eix/diff-eix will not color slots appended to versions.
 
 .TP
-.BR DIFF_COLORED_SLOTS "  " (true / false)
-If false, diff-eix will not color slots appended to versions.
-
-.TP
-.BR COLON_SLOTS "  " (true / false)
-If true, eix will separate slots with a colon.
+.BR COLON_SLOTS ", " DIFF_COLON_SLOTS "  " (true / false)
+If true, eix/diff-eix will separate slots with a colon instead with braces.
 This has the advantage that it takes one character less than braces and
 thus makes listings of many versions shorter.
-
-.TP
-.BR DIFF_COLON_SLOTS "  " (true / false)
-If true, diff-eix will separate slots with a colon.
 
 .TP
 .BR SMALL_EIX_DATABASE "  " (true / false)

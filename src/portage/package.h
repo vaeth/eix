@@ -150,6 +150,9 @@ class Package
 		void addVersion(Version *version)
 		{ addVersionStart(version); addVersionFinalize(version); }
 
+		/** Save maskstuff for each version of the package */
+		void save_maskstuff();
+
 		void calculate_slotlist();
 
 		Version *best() const;

@@ -161,6 +161,12 @@ void Package::addVersionFinalize(Version *version)
 	calculate_slotlist();
 }
 
+void Package::save_maskstuff()
+{
+	for(iterator i = begin(); i != end(); ++i)
+		i->save_maskstuff();
+}
+
 Version *
 Package::best() const
 {

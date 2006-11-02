@@ -75,7 +75,7 @@ class Keywords {
 			RED_ALL_CFLAGS;
 
 	protected:
-		Type m_mask;
+		Type m_mask, saved_m_mask;
 		std::string full_keywords;
 		Redundant redundant;
 		char red_mask; ///< temporary redundant-related stuff during mask testing
@@ -163,30 +163,59 @@ class Keywords {
 		/** @return true if version is marked stable. */
 		bool isStable() const
 		{ return m_mask & KEY_STABLE; }
+		/** @return true if saved version is marked stable. */
+		bool saved_isStable() const
+		{ return saved_m_mask & KEY_STABLE; }
 		/** @return true if version is unstable. */
 		bool isUnstable() const
 		{ return m_mask & KEY_UNSTABLE; }
+		/** @return true if saved version is unstable. */
+		bool saved_isUnstable() const
+		{ return saved_m_mask & KEY_UNSTABLE; }
 		/** @return true if version is masked by -* keyword. */
 		bool isMinusAsterisk() const
 		{ return m_mask & KEY_MINUSASTERISK; }
+		/** @return true if saved version is masked by -* keyword. */
+		bool saved_isMinusAsterisk() const
+		{ return saved_m_mask & KEY_MINUSASTERISK; }
 		/** @return true if version is masked by -keyword. */
 		bool isMinusKeyword() const
 		{ return m_mask & KEY_MINUSKEYWORD; }
+		/** @return true if saved version is masked by -keyword. */
+		bool saved_isMinusKeyword() const
+		{ return saved_m_mask & KEY_MINUSKEYWORD; }
 		/** @return true if version is masked by missing keyword. */
 		bool isMissingKeyword() const
 		{ return m_mask == KEY_MISSINGKEYWORD; }
+		/** @return true if saved version is masked by missing keyword. */
+		bool saved_isMissingKeyword() const
+		{ return saved_m_mask == KEY_MISSINGKEYWORD; }
 
 		bool isHardMasked() const
 		{ return isPackageMask() || isProfileMask(); }
+		bool saved_isHardMasked() const
+		{ return saved_isPackageMask() || saved_isProfileMask(); }
 		/** @return true if version is masked by profile. */
 		bool isProfileMask() const
 		{ return m_mask & PROFILE_MASK; }
+		/** @return true if saved version is masked by profile. */
+		bool saved_isProfileMask() const
+		{ return saved_m_mask & PROFILE_MASK; }
 		/** @return true if version is masked by a package.mask. */
 		bool isPackageMask() const
 		{ return m_mask & PACKAGE_MASK; }
+		/** @return true if saved version is masked by a package.mask. */
+		bool saved_isPackageMask() const
+		{ return saved_m_mask & PACKAGE_MASK; }
 		/** @return true if version is part of a package that is a system-package. */
 		bool isSystem() const
 		{ return m_mask & SYSTEM_PACKAGE; }
+		/** @return true if saved version is part of a package that is a system-package. */
+		bool saved_isSystem() const
+		{ return saved_m_mask & SYSTEM_PACKAGE; }
+
+		void save_maskstuff()
+		{ saved_m_mask = m_mask; }
 
 		void operator |= (const Keywords::Type &t)
 		{ m_mask |= t; }

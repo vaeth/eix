@@ -309,6 +309,8 @@ setup_defaults()
 	format.color_slots         = rc["COLOR_SLOTS"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
+	format.color_original      = rc.getBool("COLOR_ORIGINAL");
+	format.color_local_mask    = rc.getBool("COLOR_LOCAL_MASK");
 	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.mark_version        = rc["MARK_VERSIONS"];
 	format.show_slots          = rc.getBool("PRINT_SLOTS");
@@ -508,13 +510,12 @@ run_eix(int argc, char** argv)
 		it != matches.end();
 		++it)
 	{
+		portagesettings.setStability(*it, accepted_keywords);
+		it->save_maskstuff();
 		/* Add individual maskings from this machines /etc/portage/ */
 		if(!rc_options.ignore_etc_portage) {
 			portagesettings.user_config->setMasks(*it);
 			portagesettings.user_config->setStability(*it, accepted_keywords);
-		}
-		else {
-			portagesettings.setStability(*it, accepted_keywords);
 		}
 
 		if(it->largest_overlay)

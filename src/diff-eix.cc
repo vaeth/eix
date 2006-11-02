@@ -169,14 +169,12 @@ class SetStability {
 
 		void set_stability(Package &package) const
 		{
+			portagesettings->setStability(&package, accepted_keywords);
+			package.save_maskstuff();
 			if(!ignore_etc_portage)
 			{
 				portagesettings->user_config->setMasks(&package);
 				portagesettings->user_config->setStability(&package, accepted_keywords);
-			}
-			else
-			{
-				portagesettings->setStability(&package, accepted_keywords);
 			}
 		}
 
@@ -386,6 +384,8 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.show_slots       = eixrc.getBool("DIFF_PRINT_SLOTS");
 	format_for_new.colon_slots      = eixrc.getBool("DIFF_COLON_SLOTS");
 	format_for_new.colored_slots    = eixrc.getBool("DIFF_COLORED_SLOTS");
+	format_for_new.color_original   = eixrc.getBool("DIFF_COLOR_ORIGINAL");
+	format_for_new.color_local_mask = eixrc.getBool("DIFF_COLOR_LOCAL_MASK");
 
 	format_for_new.setupColors();
 
