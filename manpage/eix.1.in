@@ -355,10 +355,10 @@ The version matches a mask from /etc/portage/package.mask, $PORTDIR/profiles/pac
 or a package.mask from your profile. Portage calls this "masked by package.mask".
 .TP
 .BR [m]4.1.4
-The version matches a local mask (from /etc/portage/package.mask) but no is
+The version matches a local mask (from /etc/portage/package.mask), but it is
 neither "masked by profile" nor masked in $PORTDIR/profiles/package.mask.
 .TP
-.BR {P}4.0.0_alpha20050213
+.BR {P}2.95.3-r8
 The version was originally "masked by profile", but this was locally changed in /etc/portage/package.unmask.
 .TP
 .BR {M}4.0.0_alpha20050213
@@ -382,14 +382,12 @@ The version would be "masked by ~keyword".
 .BR (~)3.3.5.20050130
 The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS in /etc/make.conf).
 .TP
-.BR {M}(~)1.0.9626
-The version was originally both, "masked by package.mask" and "masked by ~keyword", but both was locally changed
-(in /etc/portage/package.unmask and in /etc/portage/package.keywords or by ACCEPT_KEYWORDS in /etc/make.conf),
-turning it into an unmasked stable version.
+.BR [M]~1.0.9626
+The version is both, "masked by package.mask" and "masked by ~keyword".
 .TP
 .BR [m](~)4.1.4-r1
 The version was originally only "masked by ~keyword", but this was locally changed (by /etc/portage/package.keywords or by ACCEPT_KEYWORDS in /etc/make.conf).
-However, the version was locally masked (in /etc/portage/package.mask).
+However, the version is locally masked (in /etc/portage/package.mask).
 .TP
 .BR 3.3.1
 .RS
