@@ -479,12 +479,11 @@ run_eix(int argc, char** argv)
 		matches.sort(FuzzyAlgorithm::compare);
 	}
 
-	Keywords accepted_keywords;
-	bool local_is_default;
+	Keywords default_accepted_keywords = portagesettings.getAcceptKeywordsDefault();
+	Keywords local_accepted_keywords;
 
 	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG")) {
 		rc_options.ignore_etc_portage = true;
-		accepted_keywords = Keywords::KEY_STABLE;
 	}
 	else {
 		if(!rc_options.ignore_etc_portage) {
@@ -492,7 +491,7 @@ run_eix(int argc, char** argv)
 			// This saves a lot of time.
 			format.recommend_local = false;
 		}
-		accepted_keywords = portagesettings.getAcceptKeywords();
+		local_accepted_keywords = portagesettings.getAcceptKeywordsLocal();
 	}
 
 	format.set_marked_list(marked_list);
@@ -510,12 +509,11 @@ run_eix(int argc, char** argv)
 		it != matches.end();
 		++it)
 	{
-		portagesettings.setStability(*it, accepted_keywords);
-		it->save_maskstuff();
+		portagesettings.setStability(*it,  default_accepted_keywords, true);
 		/* Add individual maskings from this machines /etc/portage/ */
 		if(!rc_options.ignore_etc_portage) {
 			portagesettings.user_config->setMasks(*it);
-			portagesettings.user_config->setStability(*it, accepted_keywords);
+			portagesettings.user_config->setStability(*it, local_accepted_keywords);
 		}
 
 		if(it->largest_overlay)

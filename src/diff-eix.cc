@@ -153,7 +153,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 class SetStability {
 	private:
 		const PortageSettings *portagesettings;
-		Keywords accepted_keywords;
+		Keywords default_accepted_keywords, local_accepted_keywords;
 		bool ignore_etc_portage;
 
 	public:
@@ -161,20 +161,18 @@ class SetStability {
 		{
 			portagesettings = &psettings;
 			ignore_etc_portage = !local_portage_config;
+			default_accepted_keywords = psettings.getAcceptKeywordsDefault();
 			if(local_portage_config)
-				accepted_keywords = psettings.getAcceptKeywords();
-			else
-				accepted_keywords = Keywords::KEY_STABLE;
+				local_accepted_keywords = psettings.getAcceptKeywordsLocal();
 		}
 
 		void set_stability(Package &package) const
 		{
-			portagesettings->setStability(&package, accepted_keywords);
-			package.save_maskstuff();
+			portagesettings->setStability(&package, default_accepted_keywords, true);
 			if(!ignore_etc_portage)
 			{
 				portagesettings->user_config->setMasks(&package);
-				portagesettings->user_config->setStability(&package, accepted_keywords);
+				portagesettings->user_config->setStability(&package, local_accepted_keywords);
 			}
 		}
 

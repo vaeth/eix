@@ -282,7 +282,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 
 #define get_user_accept() do { \
 	if(!user) { \
-		accept_keywords = portagesettings->getAcceptKeywords(); \
+		accept_keywords = portagesettings->getAcceptKeywordsLocal(); \
 		user = new Package; \
 		user->deepcopy(*p); \
 	} \
@@ -401,8 +401,10 @@ PackageTest::match(PackageReader *pkg) const
 
 		get_p();
 		get_user_accept();
-		portagesettings->setStability(user, accept_keywords);
-		user->save_maskstuff();
+		/* To test /etc/portage/* redundancy
+		   (not that of ACCEPT_KEYWORDS in /etc/make.conf),
+		   we must use here the *local* accept_keywords. */
+		portagesettings->setStability(user, accept_keywords, true);
 
 		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 		{

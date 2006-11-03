@@ -137,7 +137,11 @@ class PortageSettings : public std::map<std::string,std::string> {
 			return m_accepted_keyword;
 		}
 
-		Keywords getAcceptKeywords() const {
+		static Keywords getAcceptKeywordsDefault() {
+			return Keywords::KEY_STABLE;
+		}
+
+		Keywords getAcceptKeywordsLocal() const {
 			return m_accepted_keywords;
 		}
 
@@ -148,7 +152,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		 * Reads categories on first call. */
 		std::vector<std::string> *getCategories();
 
-		void setStability(Package *pkg, const Keywords &kw) const;
+		void setStability(Package *pkg, const Keywords &kw, bool save_after_setting) const;
 };
 
 #endif

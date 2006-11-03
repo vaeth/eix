@@ -153,7 +153,7 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg)
 		package->deepcopy(*pkg);
 		fmt->portagesettings->user_config->setMasks(package);
 		fmt->portagesettings->user_config->setStability(package,
-			fmt->portagesettings->getAcceptKeywords());
+			fmt->portagesettings->getAcceptKeywordsLocal());
 	}
 	else
 	{

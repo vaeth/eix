@@ -476,7 +476,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 }
 
 void
-PortageSettings::setStability(Package *pkg, const Keywords &kw) const
+PortageSettings::setStability(Package *pkg, const Keywords &kw, bool save_after_setting) const
 {
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {
@@ -487,4 +487,6 @@ PortageSettings::setStability(Package *pkg, const Keywords &kw) const
 			**t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
 		}
 	}
+	if(save_after_setting)
+		pkg->save_maskstuff();
 }
