@@ -368,7 +368,7 @@ The version was originally masked in $PORTDIR/profiles/package.mask, but this wa
 That version is "masked by -* keyword".
 .TP
 .BR (*)3.4.3-r2
-That version was originally "masked by -* keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS in /etc/make.conf).
+That version was originally "masked by -* keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
 .TP
 .BR !3.3.3
 This means the version is "masked by missing keyword".
@@ -380,13 +380,13 @@ Masked by -ARCH.
 The version would be "masked by ~keyword".
 .TP
 .BR (~)3.3.5.20050130
-The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS in /etc/make.conf).
+The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
 .TP
 .BR [M]~1.0.9626
 The version is both, "masked by package.mask" and "masked by ~keyword".
 .TP
 .BR [m](~)4.1.4-r1
-The version was originally only "masked by ~keyword", but this was locally changed (by /etc/portage/package.keywords or by ACCEPT_KEYWORDS in /etc/make.conf).
+The version was originally only "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
 However, the version is locally masked (in /etc/portage/package.mask).
 .TP
 .BR 3.3.1
@@ -1077,7 +1077,7 @@ Do not test for this type of redundancy.
 It suffices that the redundancy occurs for some version in the database.
 .TP
 .SS
-.BR all
+.BR " all"
 The redundancy must occur for all versions in the database.
 .TP
 .SS
@@ -1101,7 +1101,7 @@ The redundancy must occurs at least for all uninstalled versions.
 If all versions in the database are installed, it must occur at least once.
 .TP
 .SS
-.BR -"some of the above  or  " +"some of the above"
+.BR "-" "some of the above  or  " "+" "some of the above"
 The test only applies if in addition no version (in case B<->)
 resp. at least some version (in case B<+>) of the package is installed.
 .TP

@@ -138,6 +138,14 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		if(!pushback_lines((dirname + "/IUSE").c_str(),
 			&lines, true, false))
 			return false;
+		v.iuse = split_string(join_vector(lines, " "));
+		sort(v.iuse.begin(), v.iuse.end());
+		v.iuse.erase(unique(v.iuse.begin(), v.iuse.end()), v.iuse.end());
+		make_set(&iuse_set, v.iuse);
+		/* If you do not want the alphabetical order in v.iuse
+		   but instead the original order in the IUSE file,
+		   use the following code instead of the above 4 lines.
+
 		vector<string> iuse = split_string(join_vector(lines, " "));
 		for(vector<string>::iterator it = iuse.begin();
 			it != iuse.end(); ++it)
@@ -147,6 +155,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 			iuse_set.insert(*it);
 			v.iuse.push_back(*it);
 		}
+		*/
 		lines.clear();
 		if(!pushback_lines((dirname + "/USE").c_str(),
 			&lines, true, false))

@@ -13,7 +13,9 @@
 	- Allow 4 further strings for installedversions* to make it possible
 	  to have different coloring for set/unset useflags.
 	- Corresponding changes in default FORMAT strings.
-	- Fix a misleading text in eix-test-obsolete
+	- Sort useflags alphabetically.
+	- Fix a misleading text in eix-test-obsolete.
+	- Fix manpage typos.
 
 *eix-0.7.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
