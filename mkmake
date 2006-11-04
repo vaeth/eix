@@ -1,20 +1,28 @@
 #! /bin/bash
 
 usage() {
-	echo "Usage: mkmake [-q] args-for-make"
+	echo "Usage: ./${0##*/} [options] args-for-make
+Available options are
+  -q  quiet
+  -n  Stop after ./configure, i.e. do not run make"
 }
 
 die() {
-	echo $1
+	echo "$1"
 	exit ${2:-1}
 }
 
 QUIET=''
-if [[ "$1" = '-q' ]]; then
-  QUIET='&>/dev/null'
-  shift
-fi
-MAKEEXEC="$(type -P make)" || die "cannot find make"
+EARLYSTOP=''
+while getopts 'qn?hH' OPTION; do
+case "$OPTION" in
+  q) QUIET='&>/dev/null';;
+  n) EARLYSTOP=1;;
+  *) Usage;;
+esac
+done
+shift $((OPTIND-1))
+
 if ! [[ -e Makefile ]]; then
 	if ! [[ -e configure && -e Makefile.in ]]; then
 		echo "Running autotools..."
@@ -23,7 +31,9 @@ if ! [[ -e Makefile ]]; then
 	echo "Running configure..."
 	eval ./configure $QUIET || die "configure failed"
 fi
+[[ "$EARLYSTOP" ]] && exit 0
 echo "Making $@..."
+MAKEEXEC="$(type -P make)" || die "cannot find make"
 if [[ "$QUIET" ]]; then
 	exec "$MAKEEXEC" "$@" &>/dev/null
 else

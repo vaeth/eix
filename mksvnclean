@@ -1,6 +1,6 @@
 #! /bin/bash
 die() {
-	echo $1
+	echo "$1"
 	exit ${2:-1}
 }
 
@@ -11,6 +11,7 @@ fi
 if [[ -e Makefile ]]; then
 	make maintainer-clean || die "make maintainer-clean failed"
 fi
-rm -rf build config
-rm aclocal.m4 configure
+rm -vrf build config
+rm -vf aclocal.m4 configure
 find -name "Makefile.in" -print0 | xargs -0 -r -- rm -v --
+rm -vi svn-commit*.tmp

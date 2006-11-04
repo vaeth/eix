@@ -5,7 +5,7 @@ usage() {
 }
 
 die() {
-	echo $1
+	echo "$1"
 	exit ${2:-1}
 }
 
@@ -14,6 +14,7 @@ pushd build/ &>/dev/null || die "pushd build failed"
 popd &>/dev/null || die "popd failed"
 
 if FAKEROOT="$(type -P fakeroot)"; then
+	./mkmake -qn || die "mkmake -qn failed"
 	"$FAKEROOT" ./mkmake -q dist || die "mkmake dist failed"
 else
 	./mkmake -q dist || die "mkmake dist failed"
