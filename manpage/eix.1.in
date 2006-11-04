@@ -984,17 +984,23 @@ settings from B<OVERRIDE_CACHE_METHOD> and B<ADD_OVERRIDE_CACHE_METHOD>.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
-environment.
+environment. Since eix-0.7.9, it is recommended to leave this value "true",
+since setting it to "false" will just hide some informations.
 .TP
 .BR DIFF_LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
-or the environment.
+or the environment. Since eix-0.7.9, it is recommended to leave this value
+"true", since setting it to "false" will just hide some informations.
 .TP
 .BR UPGRADE_ALWAYS_LOCAL " " (true / false)
 If true, the B<--upgrade> option of eix will always match according to the
 local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
 independently of other options or variables.
 Note that this refers only to the match, not to the way the package is printed.
+
+This variable is somewhat obsolete:
+If you followed the above suggestion and left B<*LOCAL_PORTAGE_CONFIG>="I<true>",
+this variable has no effect.
 .TP
 .BR RECOMMEND_ALWAYS_LOCAL " " (true / false)
 If true, the upgrade/downgrade recommendations as well as in diff-eix the
@@ -1003,6 +1009,10 @@ local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
 independently of other options or variables.
 Note that this refers only to the way the test variables in the format strings
 are interpreted.
+
+This variable is somewhat obsolete:
+If you followed the above suggestion and left B<*LOCAL_PORTAGE_CONFIG>="I<true>",
+this variable has no effect.
 .TP
 .BR UPGRADE_TO_HIGHEST_SLOT " " (true / false)
 If true, all upgrade tests will give a positive result for an installed

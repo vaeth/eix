@@ -2,7 +2,12 @@
 
 *eix-0.7.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Print output such that also the original (non-local) stability
+	- Since this version, it is now strongly recommended to leave
+	  *LOCAL_PORTAGE_CONFIG=true, because the "default" stability
+	  can now be seen anyway: The output and default coloring was changed
+	  to reflect the non-local settings (concerning the coloring, this
+	  new feature is optional and can be switched off, see below).
+	- Print output such that also the default (non-local) stability
 	  can be seen. This is a suggestion of STEDevil, see
 	  http://forums.gentoo.org/viewtopic-t-278819-start-325.html
 	- Show the keyword flag also for masked versions.
