@@ -469,6 +469,8 @@ list of strings. These strings will be output on the following places:
 
 .BR "12th string: " "After each unset useflag."
 
+.BR "13th string: " "Between two entries. The default is to vary this string between \" \" and \"\\n\\t\\t\\t  \", depending on whether useflags are printed or --versionlines is in effect"
+
 .BR "later strings " "are ignored"
 
 You can use "\\" to escape a colon or "\\" within these strings
@@ -1033,6 +1035,9 @@ If true, always print the number of matches in the last line, even if this
 number is 0 or 1.
 This is normally not useful but might simplify writing certain scripts
 parsing the output of eix.
+.TP
+.BR TAG_FOR_PROFILE " " TAG_FOR_MASKED " " TAG_FOR_EX_PROFILE " " TAG_FOR_EX_MASKED " " TAG_FOR_LOCALLY_MASKED " " TAG_FOR_STABLE " " TAG_FOR_UNSTABLE " " TAG_FOR_MINUS_ASTERISK " " TAG_FOR_MINUS_KEYWORD " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_OTHER " " TAG_FOR_EX_UNSTABLE " " TAG_FOR_EX_MINUS_ASTERISK " " TAG_FOR_EX_MINUS_KEYWORD " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_EX_OTHER (String)
+The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP
 .\" {{{ Default Matchfields for different strings.
 .BR MATCH_NAME_IF " " (String)

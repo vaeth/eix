@@ -4,7 +4,14 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix installation date in default FORMAT_COMPACT (the separating "@"
 	  was mistakenly removed in the previous release).
-	- Enable escaping of ':' in the installedversion* string arguments.
+	- Enable escaping of ':' in the installedversions* string arguments.
+	- Introduce TAG_FOR_* variables (in particular, it is now possible
+	  to completely revert to the old behaviour by setting the
+	  TAG_FOR_EX_* variables empty and TAG_FOR_LOCALLY_MASKED="[M]").
+	- Do not include braces in default FORMAT_*INSTALL*:
+	  This is better put into the installedversions* string arguments.
+	- Change FORMAT_VERBOSE default to let installedversions* display
+	  everything in a separate line.
 
 *eix-0.7.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

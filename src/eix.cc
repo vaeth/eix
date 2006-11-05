@@ -320,6 +320,23 @@ setup_defaults()
 	format.colored_slots       = rc.getBool("COLORED_SLOTS");
 	format.recommend_local     = rc.getBool("RECOMMEND_ALWAYS_LOCAL");
 
+	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
+	format.tag_for_masked             = rc["TAG_FOR_MASKED"];
+	format.tag_for_ex_profile         = rc["TAG_FOR_EX_PROFILE"];
+	format.tag_for_ex_masked          = rc["TAG_FOR_EX_MASKED"];
+	format.tag_for_locally_masked     = rc["TAG_FOR_LOCALLY_MASKED"];
+	format.tag_for_stable             = rc["TAG_FOR_STABLE"];
+	format.tag_for_unstable           = rc["TAG_FOR_UNSTABLE"];
+	format.tag_for_minus_asterisk     = rc["TAG_FOR_MINUS_ASTERISK"];
+	format.tag_for_minus_keyword      = rc["TAG_FOR_MINUS_KEYWORD"];
+	format.tag_for_missing_keyword    = rc["TAG_FOR_MISSING_KEYWORD"];
+	format.tag_for_other              = rc["TAG_FOR_OTHER"];
+	format.tag_for_ex_unstable        = rc["TAG_FOR_EX_UNSTABLE"];
+	format.tag_for_ex_minus_asterisk  = rc["TAG_FOR_EX_MINUS_ASTERISK"];
+	format.tag_for_ex_minus_keyword   = rc["TAG_FOR_EX_MINUS_KEYWORD"];
+	format.tag_for_ex_missing_keyword = rc["TAG_FOR_EX_MISSING_KEYWORD"];
+	format.tag_for_ex_other           = rc["TAG_FOR_EX_OTHER"];
+
 	Package::upgrade_to_best   = rc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 
 	string overlay = rc["OVERLAYS_LIST"];

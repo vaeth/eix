@@ -229,6 +229,15 @@ class PrintFormat {
 		std::string dateFormat,       /**< The format of the long  install-date */
 		            dateFormatShort,  /**< The format of the short install-date */
 		            instUseFormat;    /**< The format of the install-USEflags */
+		std::string tag_for_profile, tag_for_masked,
+			tag_for_ex_profile, tag_for_ex_masked,
+			tag_for_locally_masked, tag_for_stable,
+			tag_for_unstable,
+			tag_for_minus_asterisk, tag_for_minus_keyword,
+			tag_for_missing_keyword, tag_for_other,
+			tag_for_ex_unstable,
+			tag_for_ex_minus_asterisk, tag_for_ex_minus_keyword,
+			tag_for_ex_missing_keyword, tag_for_ex_other;
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),

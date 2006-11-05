@@ -74,7 +74,7 @@ eixrc.addDefault(
 			"{installedversionsshort}[{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{!recommend}(green,1;inverse)I{}()]{else}(green)*{}"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1;inverse):():::(purple):():::(red,1):():(black,1)-:()>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1;inverse):():::(purple)\\(:\\)():\\(:\\):(red,1):():(black,1)-:()>\n{}"
 			"{marked}     (green)Marked:()              (red,1;underline)<markedversions>()\n{}"
 			"{homepage}     (green)Homepage:()            <homepage>\n{}"
 			"{description}     (green)Description:()         <description>\n{}",
@@ -86,7 +86,7 @@ eixrc.addDefault(
 			"[{installedversionsshort}{recommend}{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{else}(green,1;inverse)I{}{else}(green,0)N{}()]"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>()"
 			" \\({marked}(red,1;underline)<markedversions>(); {}"
-			"{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():()::@(purple):():::(red,1):():(black,1)-:()>"
+			"{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():()::@(purple):():\\(:\\):(red,1):():(black,1)-:()>"
 			"{recommend} -> {bestshort}<bestslots>{else}<availableversions>{}{}"
 			"{else}{bestshort}<bestslots>{else}<availableversions>{}{}()\\): <description>",
 			"Define the compact output shown when -c is used.")
@@ -96,7 +96,9 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_VERBOSE",
 			"{installedversionsshort}(green,1;inverse){else}(green,0){}*() {system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>(){overlaykey} <overlaykey>\n"
 			"     (green)Available versions:()  <availableversions>\n"
-			"{installedversionsshort}     (green)Installed:()           <installedversions:(blue,1;inverse):():::(purple):():::(red,1):():(black,1)-:()>\n{}"
+			"{installedversionsshort}     (green)Installed:()           <installedversions:Version\\\\: (blue,1;inverse):():()::\n"
+			"                          Date\\\\:    (purple):():\n"
+			"                          USE\\\\:     ::(red,1):():(black,1)-:():\n                          >\n{}"
 			"{bestshort}     (green)Best versions/slot:()  <bestslots>\n{}"
 			"{recommend}     (green)Recommendation:()      {upgrade}(cyan,1)Upgrade{downgrade} and {}{}{downgrade}(purple,1)Downgrade{}\n{}"
 			"{marked}     (green)Marked:()              (red,1;underline)<markedversions>()\n{}"
@@ -133,14 +135,14 @@ eixrc.addDefault(
 			" (yellow,0)==() "
 			"{system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>() \\("
 			//Uncomment the following line if you want to see installed versions whenever there are any:
-			//"{installedversionsshort}<installedversionsshortdate::(blue,1;inverse):():::(purple):():::(red,1):():(black,1)-:()>; {}"
+			//"{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():()::@(purple):():\\(:\\):(red,1):():(black,1)-:()>; {}"
 			"{oldbestshort}<oldbestslots>{else}<oldavailableversions>{}() -> {bestshort}<bestslots>{else}<availableversions>{}()){overlaykey} <overlaykey>{}: <description>",
 			"Define the format used for packages that were deleted.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_INSTALLATION_DATE",
-			"(%X %x)",
+			"%X %x",
 			"strftime() format for printing the installation date in long form")
 		);
 
@@ -152,7 +154,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_INSTALLED_USE",
-			"(%s)", "Printf-like format for printing useflags for installed packages")
+			"%s", "Printf-like format for printing useflags for installed packages")
 		);
 
 eixrc.addDefault(
@@ -371,6 +373,28 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
 			"false", "If true, always print the number of matches in the last line.")
 		);
+
+#define TAG_FOR(type, default, comment) \
+	eixrc.addDefault( \
+		EixRcOption(EixRcOption::STRING, "TAG_FOR_" #type, \
+			default, "Tag for " #comment " versions.") \
+		);
+TAG_FOR(PROFILE, "[P]", "profile masked")
+TAG_FOR(MASKED, "[M]", "package.masked")
+TAG_FOR(EX_PROFILE, "{P}", "originally profile masked but unmasked")
+TAG_FOR(EX_MASKED, "{M}", "originally package.masked but unmasked")
+TAG_FOR(LOCALLY_MASKED, "[m]", "only locally masked")
+TAG_FOR(STABLE, "", "stable")
+TAG_FOR(UNSTABLE, "~", "unstable")
+TAG_FOR(MINUS_ASTERISK, "*", "-*")
+TAG_FOR(MINUS_KEYWORD, "-", "-ARCH")
+TAG_FOR(MISSING_KEYWORD, "!", "missing keyword")
+TAG_FOR(OTHER, "?", "strange keyword")
+TAG_FOR(EX_UNSTABLE, "(~)", "originally unstable but now stable")
+TAG_FOR(EX_MINUS_ASTERISK, "(*)", "originally -* but now stable")
+TAG_FOR(EX_MINUS_KEYWORD, "(-)", "originally -ARCH but now stable")
+TAG_FOR(EX_MISSING_KEYWORD, "(!)", "originally missing keyword but now stable")
+TAG_FOR(EX_OTHER, "(?)", "originally strange keyword but now stable")
 
 /* fancy new feature: change default matchfield depending on the searchstring. */
 #define MATCH_IF(field, value)                                                                       \

@@ -387,6 +387,23 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.setupColors();
 
+	format_for_new.tag_for_profile            = eixrc["TAG_FOR_PROFILE"];
+	format_for_new.tag_for_masked             = eixrc["TAG_FOR_MASKED"];
+	format_for_new.tag_for_ex_profile         = eixrc["TAG_FOR_EX_PROFILE"];
+	format_for_new.tag_for_ex_masked          = eixrc["TAG_FOR_EX_MASKED"];
+	format_for_new.tag_for_locally_masked     = eixrc["TAG_FOR_LOCALLY_MASKED"];
+	format_for_new.tag_for_stable             = eixrc["TAG_FOR_STABLE"];
+	format_for_new.tag_for_unstable           = eixrc["TAG_FOR_UNSTABLE"];
+	format_for_new.tag_for_minus_asterisk     = eixrc["TAG_FOR_MINUS_ASTERISK"];
+	format_for_new.tag_for_minus_keyword      = eixrc["TAG_FOR_MINUS_KEYWORD"];
+	format_for_new.tag_for_missing_keyword    = eixrc["TAG_FOR_MISSING_KEYWORD"];
+	format_for_new.tag_for_other              = eixrc["TAG_FOR_OTHER"];
+	format_for_new.tag_for_ex_unstable        = eixrc["TAG_FOR_EX_UNSTABLE"];
+	format_for_new.tag_for_ex_minus_asterisk  = eixrc["TAG_FOR_EX_MINUS_ASTERISK"];
+	format_for_new.tag_for_ex_minus_keyword   = eixrc["TAG_FOR_EX_MINUS_KEYWORD"];
+	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
+	format_for_new.tag_for_ex_other           = eixrc["TAG_FOR_EX_OTHER"];
+
 	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick, cli_care);
 
 	bool local_settings = eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG");
