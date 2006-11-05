@@ -382,7 +382,7 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 {
 	Package *entity = (Package*)void_entity;
 
-	vector<string> prepend = split_string(name, ":", false);
+	vector<string> prepend = split_string(name, ":", false, true, true);
 	string plainname = prepend[0];
 	prepend.erase(prepend.begin());
 

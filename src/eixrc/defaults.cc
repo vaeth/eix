@@ -86,7 +86,7 @@ eixrc.addDefault(
 			"[{installedversionsshort}{recommend}{upgrade}(cyan,1;inverse)U{}{downgrade}(purple,1;inverse)D{}{else}(green,1;inverse)I{}{else}(green,0)N{}()]"
 			" {system}(yellow){else}(){}<category>()/{marked}(red,1;underline){else}(default,1){}<name>()"
 			" \\({marked}(red,1;underline)<markedversions>(); {}"
-			"{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():::(purple):():::(red,1):():(black,1)-:()>"
+			"{installedversionsshort}<installedversionsshortdate:(blue,1;inverse):():()::@(purple):():::(red,1):():(black,1)-:()>"
 			"{recommend} -> {bestshort}<bestslots>{else}<availableversions>{}{}"
 			"{else}{bestshort}<bestslots>{else}<availableversions>{}{}()\\): <description>",
 			"Define the compact output shown when -c is used.")

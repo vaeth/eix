@@ -471,6 +471,7 @@ list of strings. These strings will be output on the following places:
 
 .BR "later strings " "are ignored"
 
+You can use \\ to escape colons or \\ within these strings.
 It is explicitly admissible that the strings contain colors in the format
 described later: this is what you will probably use these strings for.
 .TP

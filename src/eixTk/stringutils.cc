@@ -121,18 +121,38 @@ ExplodeAtom::split(const char* str)
 }
 
 vector<string>
-split_string(const string &str, const char *at, bool ignore_empty)
+split_string(const string &str, const char *at, bool ignore_empty, bool ignore_escaped, bool remove_escape)
 {
 	vector<string> vec;
 	string::size_type last_pos = 0,
 		pos = 0;
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
+		if(ignore_escaped) {
+			bool escaped = false;
+			string::size_type s = pos;
+			while(s > 0)
+			{
+				if(str[--s] == '\\')
+					escaped = !escaped;
+			}
+			if(escaped)
+				continue;
+		}
 		if((pos - last_pos) > 0 || !ignore_empty)
 			vec.push_back(str.substr(last_pos, pos - last_pos));
 		last_pos = ++pos;
 	}
 	if((str.size() - last_pos) > 0 || !ignore_empty)
 		vec.push_back(str.substr(last_pos));
+	if(ignore_escaped && remove_escape)
+	{
+		for(vector<string>::iterator it = vec.begin();
+			it != vec.end(); ++it) {
+			while((pos = it->find_first_of(at, pos)) != string::npos) {
+				it->erase(--pos);
+			}
+		}
+	}
 	return vec;
 }
 

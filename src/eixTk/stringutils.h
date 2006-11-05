@@ -112,7 +112,7 @@ trim(std::string *str, const char *delims = " \t\r\n")
  * @param str Reference to the string that should be splitted.
  * @param at  Split at the occurrence of any these characters.
  * @return    vector of strings. */
-std::vector<std::string> split_string(const std::string &str, const char *at = " \t\r\n", bool ignore_empty = true);
+std::vector<std::string> split_string(const std::string &str, const char *at = " \t\r\n", bool ignore_empty = true, bool ignore_escaped = false, bool remove_escape = false);
 
 /** Join a string-vector.
  * @param glue glue between the elements. */

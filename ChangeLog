@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.7.10
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix installation date in default FORMAT_COMPACT (the separating "@"
+	  was mistakenly removed in the previous release).
+	- Enable escaping of ':' in the installedversion* string arguments.
+
 *eix-0.7.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Since this version, it is now strongly recommended to leave
