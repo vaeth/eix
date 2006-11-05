@@ -132,11 +132,15 @@ split_string(const string &str, const char *at, bool ignore_empty, bool ignore_e
 			string::size_type s = pos;
 			while(s > 0)
 			{
-				if(str[--s] == '\\')
-					escaped = !escaped;
+				if(str[--s] != '\\')
+					break;
+				escaped = !escaped;
 			}
 			if(escaped)
+			{
+				++pos;
 				continue;
+			}
 		}
 		if((pos - last_pos) > 0 || !ignore_empty)
 			vec.push_back(str.substr(last_pos, pos - last_pos));
@@ -144,12 +148,13 @@ split_string(const string &str, const char *at, bool ignore_empty, bool ignore_e
 	}
 	if((str.size() - last_pos) > 0 || !ignore_empty)
 		vec.push_back(str.substr(last_pos));
-	if(ignore_escaped && remove_escape)
+	if(remove_escape)
 	{
 		for(vector<string>::iterator it = vec.begin();
 			it != vec.end(); ++it) {
+			pos = 0;
 			while((pos = it->find_first_of(at, pos)) != string::npos) {
-				it->erase(--pos);
+				it->erase(pos - 1, 1);
 			}
 		}
 	}

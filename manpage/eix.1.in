@@ -471,7 +471,10 @@ list of strings. These strings will be output on the following places:
 
 .BR "later strings " "are ignored"
 
-You can use \\ to escape colons or \\ within these strings.
+You can use "\\" to escape a colon or "\\" within these strings
+(be aware that you have to escape "\\" in FORMAT* anyway, so you will usually
+have to use "\\\\:" if you want to print a colon within such a string).
+
 It is explicitly admissible that the strings contain colors in the format
 described later: this is what you will probably use these strings for.
 .TP
