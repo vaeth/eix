@@ -276,7 +276,7 @@ static struct Option long_options[] = {
 void
 setup_defaults()
 {
-	EixRc &rc = get_eixrc();
+	EixRc &rc = get_eixrc(NULL);
 
 	// Setup defaults
 	(void) memset(&rc_options, 0, sizeof(rc_options));
@@ -377,7 +377,7 @@ run_eix(int argc, char** argv)
 {
 	const string var_db_pkg = "/var/db/pkg/";
 
-	EixRc &eixrc = get_eixrc();
+	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);
 
 	// Setup defaults for all global variables like rc_options
 	setup_defaults();

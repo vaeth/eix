@@ -260,7 +260,7 @@ int
 run_update_eix(int argc, char *argv[])
 {
 	/* Setup eixrc. */
-	EixRc &eixrc = get_eixrc();
+	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);
 	map<string, string> override;
 	bool have_output;
 	string outputfile;

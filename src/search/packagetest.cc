@@ -114,7 +114,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 PackageTest::MatchField
 PackageTest::get_matchfield(const char *p) throw(ExBasic)
 {
-	EixRc &rc = get_eixrc();
+	EixRc &rc = get_eixrc(NULL);
 	vector<string> order = split_string(rc["MATCH_ORDER"].c_str(), " \t\n\r", true);
 	for(vector<string>::iterator it = order.begin();
 		it != order.end();

@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -27,26 +28,33 @@
 
 #include "global.h"
 #include <eixrc/eixrc.h>
+#include <eixTk/exceptions.h>
 
 /** Create a static EixRc and fill with defaults.
  * This should only be called once! */
 static
-EixRc &
-get_eixrc_once()
+EixRc *
+get_eixrc_once(const char *prefix)
 {
 	static EixRc eixrc;
+	eixrc.prefix = std::string(prefix);
 
 #include <eixrc/defaults.cc>
 
 	eixrc.read();
-	return eixrc;
+	return &eixrc;
 }
+
 
 /** Return reference to internal static EixRc.
  * This can be called everywhere! */
 EixRc &
-get_eixrc()
+get_eixrc(const char *prefix)
 {
-	static EixRc &rc = get_eixrc_once();
-	return rc;
+	static EixRc *rc = NULL;
+	if(rc)
+		return *rc;
+	ASSERT(prefix, "internal error: get_eixrc was not initialized with proper argument");
+	rc = get_eixrc_once(prefix);
+	return *rc;
 }

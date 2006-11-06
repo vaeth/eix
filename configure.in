@@ -1,4 +1,4 @@
-AC_INIT(eix, 0.7.10, http://sourceforge.net/projects/eix/)
+AC_INIT(eix, 0.8.0, http://sourceforge.net/projects/eix/)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -117,6 +117,7 @@ dnl Done!
 AC_OUTPUT(Makefile manpage/Makefile
 		  src/Makefile
 		  src/eixTk/Makefile
+		  src/eixrc/Makefile
 
 		  src/database/Makefile
 

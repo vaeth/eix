@@ -1,7 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.7.10
+*eix-0.8.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Major change: delayed reference %{VAR} of config vars possible.
+	  This way, FORMAT_* strings can be input/modified more conveniently.
+	  Moreover, most DIFF_* variables were dropped, since the distinction
+	  whether eix or diff-eix is run can be made with %{*VAR}.
 	- Fix installation date in default FORMAT_COMPACT (the separating "@"
 	  was mistakenly removed in the previous release).
 	- Enable escaping of ':' in the installedversions* string arguments.
@@ -12,6 +16,7 @@
 	  This is better put into the installedversions* string arguments.
 	- Change FORMAT_VERBOSE default to let installedversions* display
 	  everything in a separate line.
+	- Bugfix: Put DIFF_NEW_SLOTS into defaults.cc
 
 *eix-0.7.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

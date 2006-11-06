@@ -320,16 +320,14 @@ The last override has precedence.
 .\" {{{ OUTPUT
 .SH OUTPUT
 .SS Slots
-In contrast to usual output of versions in emerge, B<eix> and B<diff-eix>
+In contrast to usual output of versions in emerge, B<eix>
 can also print slot names if they are nonempty and different from "0".
-Whether this happens is determined by the B<PRINT_SLOTS> and
-B<DIFF_PRINT_SLOTS> variables, respectively, and by the content of the
-B<FORMATSTRING>.
+Whether this happens is determined by the B<PRINT_SLOTS> variable and by
+the content of the B<FORMATSTRING>.
 
 If slots are printed, the slot name is separated from the version number
 either with a colon, or the slot names are written in braces.
-You can choose the preferred modes for eix and diff-eix with the
-B<COLON_SLOTS> or B<DIFF_COLON_SLOTS> variables, respectively.
+You can choose the preferred modes with the B<COLON_SLOTS> variable.
 Some Examples:
 .TP
 .BR 4.1.1:4.1 "    or    " 4.1.1(4.1)
@@ -663,21 +661,45 @@ can override the variables set in this file. See B<~/.eixrc>.
 .SS ~/.eixrc
 Per-user configuration file.
 The variables in this file can be overridden by environment variables.
+You can use a shell-like syntax to set the following variables.
+In particular, you can use auxiliary variables to set these variables.
+
+However, if you use auxiliary variables as usual, you will only see
+the substituted values with --dump or --dump-defaults.
+For this reason, you can refer to variables beside the usual shell-way also in
+the syntax B<%{>I<VARIABLE>B<}> (the braces here are not optional).
+This means that the substitution is delayed until all configuration files
+and environment variables are read, and the substitution will not show up
+with --dump or --dump-defaults.
+
+This delayed substitution also has the special variant B<%{*>I<VARIABLE>B<}>
+which will refer to the value of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>,
+depending on whether it is called from B<eix>/B<update-eix> or
+from B<diff-eix>. This way you can have different defaults for these programs.
+
+If you need %{ in a variable text, you must use %%{ instead.
+
+Note that any variables you add for delayed substitution are only output
+with --dump if they are actually used (i.e. referenced in some of the other variables).
+If you want to output them anyway, e.g. for comments or easier later change,
+you can collect references to them in the B<DUMMY> string.
 .TP
-.BR QUICKMODE ", " DIFF_QUICKMODE "  " (true / false)
-If true, eix/diff-eix will use B<--quick> by default.
+.BR DUMMY "  " (string)
+This variable has no direct influence on the programs, but the content of this
+variable can be used to collect delayed references to (otherwise unused) variables
+so that they are printed with --dump or --dump-defaults.
 
 .TP
-.BR CAREMODE ", " DIFF_CAREMODE "  " (true / false)
-If true, eix/diff-eix will use B<--care>.
+.BR QUICKMODE "  " (true / false)
+If true, eix and diff-eix will use B<--quick> by default.
 
 .TP
-.BR QUIETMODE ", " DIFF_QUIETMODE "  " (true / false)
-If true, eix/diff-eix will use B<--quiet> by default.
+.BR CAREMODE "  " (true / false)
+If true, eix and diff-eix will use B<--care>.
 
 .TP
-.BR DIFF_QUIETMODE "  " (true / false)
-If true, diff-eix will use B<--quiet> by default.
+.BR QUIETMODE "  " (true / false)
+If true, eix and diff-eix will use B<--quiet> by default.
 
 .TP
 .BR DEFAULT_FORMAT "  " (normal / compact / verbose)
@@ -731,12 +753,12 @@ Mark the package versions passed with B<--pipe> by this attribute.
 Use colors even when stdout is not a terminal.
 
 .TP
-.BR COLOR_ORIGINAL ", " DIFF_COLOR_ORIGINAL  "  " (true / false)
-Let eix/diff-eix color versions according to original settings, not according to local settings.
+.BR COLOR_ORIGINAL "  " (true / false)
+If false, versions are only colored according to the local setting.
 
 .TP
-.BR COLOR_LOCAL_MASK ", " DIFF_COLOR_LOCAL_MASK "  " (true / false)
-Let eix/diff-eix color only locally masked (i.e. [m]) versions always as if they were also originally masked (e.g. [M]).
+.BR COLOR_LOCAL_MASK "  " (true / false)
+If false, COLOR_ORIGINAL=false has no effect on versions which are only locally masked (i.e. [m]).
 
 .TP
 .BR STYLE_VERSION_SORTED "  " (true / false)
@@ -747,12 +769,12 @@ Defines whether B<--verionsorted> is on by default.
 Defines whether B<--versionlines> is on by default.
 
 .TP
-.BR COLORED_SLOTS ", " DIFF_COLORED_SLOTS "  " (true / false)
-If false, eix/diff-eix will not color slots appended to versions.
+.BR COLORED_SLOTS "  " (true / false)
+If false, the slotnames appended to versions are not colored.
 
 .TP
-.BR COLON_SLOTS ", " DIFF_COLON_SLOTS "  " (true / false)
-If true, eix/diff-eix will separate slots with a colon instead with braces.
+.BR COLON_SLOTS "  " (true / false)
+If true, slots are separated from the version names with a colon instead of braces.
 This has the advantage that it takes one character less than braces and
 thus makes listings of many versions shorter.
 
@@ -989,14 +1011,9 @@ B<CACHE_METHOD> and B<ADD_CACHE_METHOD>, but it might be overridden by
 settings from B<OVERRIDE_CACHE_METHOD> and B<ADD_OVERRIDE_CACHE_METHOD>.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true / false)
-If false, eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf or the
-environment. Since eix-0.7.9, it is recommended to leave this value "true",
+If false, /etc/portage and ACCEPT_KEYWORDS (from make.conf or the environment) are ignored.
+Since eix-0.7.9, it is recommended to leave this value "true",
 since setting it to "false" will just hide some informations.
-.TP
-.BR DIFF_LOCAL_PORTAGE_CONFIG " " (true / false)
-If false, diff-eix won't read /etc/portage and ACCEPT_KEYWORDS from make.conf
-or the environment. Since eix-0.7.9, it is recommended to leave this value
-"true", since setting it to "false" will just hide some informations.
 .TP
 .BR UPGRADE_ALWAYS_LOCAL " " (true / false)
 If true, the B<--upgrade> option of eix will always match according to the
@@ -1025,10 +1042,7 @@ If true, all upgrade tests will give a positive result for an installed
 package for which not the slot with the best stable version is installed.
 .TP
 .BR PRINT_SLOTS " " (true / false)
-If false, eix never prints any slot information.
-.TP
-.BR DIFF_PRINT_SLOTS " " (true / false)
-If false, diff-eix never prints any slot information.
+If false, no slot information is printed.
 .TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this
@@ -1229,6 +1243,10 @@ came to life.
 The new portage-versions (>=2.1_pre1) don't remove the old dep-cache, thus eix would
 always find packages that are not in portage anymore. To circumvent this, eix-sync
 deletes the old cache (rm -rf /var/cache/edb/dep/*).
+
+Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
+reasonable anymore to use different variable names for eix and diff-eix.
+Hence, all corresponding B<DIFF_*> variables have vanished.
 .\" }}}
 
 .\" {{{ AUTHORS

@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -31,6 +32,6 @@
 #include <eixrc/eixrc.h>
 
 /** Return a static eixrc. */
-EixRc &get_eixrc();
+EixRc &get_eixrc(const char *prefix);
 
 #endif /* __EIXRC-GLOBALS_H__ */

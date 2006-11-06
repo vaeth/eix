@@ -309,11 +309,11 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.no_color   = (isatty(1) != 1);
 
-	EixRc &eixrc = get_eixrc();
+	EixRc &eixrc = get_eixrc(DIFF_EIX_VARS_PREFIX);
 
-	cli_quick = eixrc.getBool("DIFF_QUICKMODE");
-	cli_care  = eixrc.getBool("DIFF_CAREMODE");
-	cli_quiet = eixrc.getBool("DIFF_QUIETMODE");
+	cli_quick = eixrc.getBool("QUICKMODE");
+	cli_care  = eixrc.getBool("CAREMODE");
+	cli_quiet = eixrc.getBool("QUIETMODE");
 	Package::upgrade_to_best = eixrc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 
 	/* Setup ArgumentReader. */
@@ -379,11 +379,11 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
 	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
-	format_for_new.show_slots       = eixrc.getBool("DIFF_PRINT_SLOTS");
-	format_for_new.colon_slots      = eixrc.getBool("DIFF_COLON_SLOTS");
-	format_for_new.colored_slots    = eixrc.getBool("DIFF_COLORED_SLOTS");
-	format_for_new.color_original   = eixrc.getBool("DIFF_COLOR_ORIGINAL");
-	format_for_new.color_local_mask = eixrc.getBool("DIFF_COLOR_LOCAL_MASK");
+	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
+	format_for_new.colon_slots      = eixrc.getBool("COLON_SLOTS");
+	format_for_new.colored_slots    = eixrc.getBool("COLORED_SLOTS");
+	format_for_new.color_original   = eixrc.getBool("COLOR_ORIGINAL");
+	format_for_new.color_local_mask = eixrc.getBool("COLOR_LOCAL_MASK");
 
 	format_for_new.setupColors();
 
@@ -406,7 +406,7 @@ run_diff_eix(int argc, char *argv[])
 
 	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick, cli_care);
 
-	bool local_settings = eixrc.getBool("DIFF_LOCAL_PORTAGE_CONFIG");
+	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, local_settings);
 	if(local_settings)
 		format_for_new.recommend_local = false;

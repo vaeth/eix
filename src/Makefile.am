@@ -27,14 +27,13 @@
 ###########################################################################
 
 # Build our toolkits
-SUBDIRS = eixTk database portage output search
+SUBDIRS = eixTk eixrc database portage output search
 
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags \
 	eix-sync update-eix-remote eix-test-obsolete
 
-EXTRA_DIST = eix-sync.in update-eix-remote.in eix-test-obsolete.in \
-	eixrc/defaults.cc eixrc/eixrc.h
+EXTRA_DIST = eix-sync.in update-eix-remote.in eix-test-obsolete.in
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
@@ -52,6 +51,7 @@ eix_LDADD = database/libdatabase.a \
 			portage/libportage.a \
 			output/liboutput.a \
 			eixTk/libeixTk.a \
+			eixrc/libeixrc.a \
 			search/libsearch.a
 
 # The update-tool for our database
@@ -64,6 +64,7 @@ update_eix_LDADD = database/libdatabase.a \
 				   portage/conf/libportageconf.a \
 				   portage/cache/libcache.a \
 				   eixTk/libeixTk.a \
+				   eixrc/libeixrc.a \
 				   @SQLITE_LIBS@
 
 
@@ -77,7 +78,8 @@ diff_eix_LDADD = database/libdatabase.a \
 				 portage/conf/libportageconf.a \
 				 portage/libportage.a \
 				 output/liboutput.a \
-				 eixTk/libeixTk.a
+				 eixTk/libeixTk.a \
+				 eixrc/libeixrc.a
 
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
