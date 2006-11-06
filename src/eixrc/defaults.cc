@@ -219,7 +219,7 @@ eixrc.addDefault(
 			"{upgrade}"
 				"{!downgrade} {}"
 			"{else}"
-				"{downgrade} {}"
+				" "
 			"{}"
 			" (green,1)>>()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
