@@ -159,7 +159,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
-			"{installedversionsshort}%{FORMAT_INSTALLEDVERSIONS_COMPACT}; {}"
+			//"{installedversionsshort}%{INSTALLEDVERSIONS_COMPACT}; {}"
 			"",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for diff-eix for installed versions.")
