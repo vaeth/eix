@@ -123,27 +123,67 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 	return true;
 }
 
-class EixRcReference {
-	public:
-		bool in_defaults;
-		EixRc::default_index ind;
-
-		EixRcReference()
-		{ in_defaults = false; }
-
-		void set_reference(EixRc::default_index i)
-		{ in_defaults = true; ind = i; }
-};
-
 void EixRc::read()
 {
-	map<string,string> *tempmap = new map<string,string>;
-	map<string,EixRcReference> props;
+	set<string> has_reference;
+
+	// First, we create defaults and the main map with all variables
+	// (including all values required by delayed references).
+	read_undelayed(has_reference);
+
+	// Resolve delayed references recursively.
+	for(default_index i = 0; i < defaults.size(); ++i)
+	{
+		set<string> visited;
+		if(resolve_delayed_recurse(defaults[i].key, visited, has_reference) == NULL)
+		{
+			cerr << "fatal error in config: self-reference in delayed substitution for "
+				<< (defaults[i].key) << "\n";
+			exit(2);
+		}
+	}
+}
+
+string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference)
+{
+	string *value = &((*this)[key]);
+	if(has_reference.find(key) == has_reference.end())
+		return value;
+	string::size_type pos = 0;
+	for(;;)
+	{
+		string::size_type length;
+		pos = find_delayed(*value, pos, &length);
+		if(pos == string::npos) {
+			has_reference.erase(key);
+			return value;
+		}
+		if(visited.find(key) != visited.end())
+			return NULL;
+		visited.insert(key);
+		string *s = resolve_delayed_recurse(
+			( ((*value)[pos + 2] == '*') ?
+			(prefix + value->substr(pos + 3, length - 4)) :
+			value->substr(pos + 2, length - 3)),
+			visited, has_reference);
+		visited.erase(key);
+		if(!s)
+			return NULL;
+		value->replace(pos, length, *s);
+	}
+}
+
+/** Create defaults and the main map with all variables
+   (including all values required by delayed references).
+   @arg has_reference is initialized to corresponding keys */
+void EixRc::read_undelayed(set<string> &has_reference) {
+	map<string,string> tempmap;
+	set<string> default_keys;
 
 	// Initialize with the default variables
 	for(default_index i = 0; i < defaults.size(); ++i) {
-		props[defaults[i].key].set_reference(i);
-		(*tempmap)[defaults[i].key] = defaults[i].value;
+		default_keys.insert(defaults[i].key);
+		tempmap[defaults[i].key] = defaults[i].value;
 	}
 
 	// override with EIX_SYSTEMRC
@@ -151,7 +191,7 @@ void EixRc::read()
 			VarsReader::SUBST_VARS
 			|VarsReader::ALLOW_SOURCE
 			|VarsReader::INTO_MAP);
-	rc.useMap(tempmap);
+	rc.useMap(&tempmap);
 	rc.read(EIX_SYSTEMRC);
 
 	// override with EIX_USERRC
@@ -167,8 +207,8 @@ void EixRc::read()
 
 	// override with ENV
 	bool have_delayed = false;
-	for(map<string,string>::iterator it = tempmap->begin();
-		it != tempmap->end(); ++it)
+	for(map<string,string>::iterator it = tempmap.begin();
+		it != tempmap.end(); ++it)
 	{
 		char *val = getenv((it->first).c_str());
 		if(val)
@@ -178,12 +218,12 @@ void EixRc::read()
 	// Set new values as default and for printing with --dump.
 	for(vector<EixRcOption>::iterator it = defaults.begin();
 		it != defaults.end(); ++it) {
-		it->local_value = (*tempmap)[it->key];
+		it->local_value = tempmap[it->key];
 		(*this)[it->key] = it->local_value;
 	}
 
-	// Recursively join all delayed references to defaults.
-	// Make sure that main map is kept up to date.
+	// Recursively join all delayed references to defaults,
+	// keeping main map up to date. Also initialize has_reference.
 	for(default_index i = 0; i < defaults.size(); ++i)
 	{
 		string &str = defaults[i].local_value;
@@ -194,78 +234,43 @@ void EixRc::read()
 			pos = find_delayed(str, pos, &length);
 			if(pos == string::npos)
 				break;
+			has_reference.insert(defaults[i].key);
 			if(str[pos + 2] == '*') {
 				string s = str.substr(pos + 3, length - 4);
 				join_delayed(string(EIX_VARS_PREFIX) + s,
-					props, tempmap);
+					default_keys, tempmap);
 				join_delayed(string(DIFF_EIX_VARS_PREFIX) + s,
-					props, tempmap);
+					default_keys, tempmap);
 			}
 			else {
 				join_delayed(str.substr(pos + 2, length - 3),
-					props, tempmap);
+					default_keys, tempmap);
 			}
 			pos += length;
 		}
 	}
-
-	// Now we can forget all other variables in the config files.
-	delete tempmap;
-
-	// Resolve delayed references recursively.
-	for(default_index i = 0; i < defaults.size(); ++i)
-	{
-		set<string> visited;
-		if(resolve_delayed(defaults[i].key, visited) == NULL)
-		{
-			cerr << "fatal error in config: self-reference in delayed substitution for "
-				<< (defaults[i].key) << "\n";
-			exit(2);
-		}
-	}
 }
 
-void EixRc::join_delayed(const string &key, map<string,EixRcReference> &props, map<string,string> *tempmap)
+void EixRc::join_delayed(const string &key, set<string> &default_keys, const map<string,string> &tempmap)
 {
-	EixRcReference &ref = props[key];
-	if(ref.in_defaults)
+	if(default_keys.find(key) != default_keys.end())
 		return;
 	string val;
-	map<string,string>::iterator f = tempmap->find(key);
-	if(f != tempmap->end())
+	map<string,string>::const_iterator f = tempmap.find(key);
+	if(f != tempmap.end()) {
+	// Note that if a variable is defined in a file and in ENV,
+	// its value was already overridden from ENV.
 		val = f->second;
+	}
 	else {
+	// If it was not defined in a file, it might be in ENV anyway:
 		char *envval = getenv(key.c_str());
 		if(envval)
 			val = string(envval);
 	}
-	ref.in_defaults = true;
-	ref.ind = defaults.size();
 	defaults.push_back(EixRcOption(EixRcOption::LOCAL, key, val, ""));
+	default_keys.insert(key);
 	(*this)[key] = val;
-}
-
-string *EixRc::resolve_delayed(string key, set<string> &visited)
-{
-	string &value = (*this)[key];
-	string::size_type pos = 0;
-	for(;;)
-	{
-		string::size_type length;
-		pos = find_delayed(value, pos, &length);
-		if(pos == string::npos)
-			return &value;
-		if(visited.find(key) != visited.end())
-			return NULL;
-		visited.insert(key);
-		string *s = resolve_delayed(((value[pos + 2] == '*') ?
-			(prefix + value.substr(pos + 3, length - 4)) :
-			value.substr(pos + 2, length - 3)), visited);
-		visited.erase(key);
-		if(!s)
-			return NULL;
-		value.replace(pos, length, *s);
-	}
 }
 
 string::size_type EixRc::find_delayed(const string &str, string::size_type pos, string::size_type *length)
