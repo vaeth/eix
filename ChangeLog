@@ -17,6 +17,7 @@
 	- Change FORMAT_VERBOSE default to let installedversions* display
 	  everything in a separate line.
 	- Bugfix: Put DIFF_NEW_SLOTS into defaults.cc
+	- Tiny bugfix: "and" for "Upgrade and Downgrade" in default color.
 
 *eix-0.7.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

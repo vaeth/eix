@@ -66,6 +66,104 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_NAME",
+			"default,1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing the name of packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_CATEGORY",
+			"",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing the category of packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_CATEGORY_SYSTEM",
+			"yellow",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing the category of system packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_UPGRADE_TEXT",
+			"cyan,1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing upgrade recommendation texts.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_DOWNGRADE_TEXT",
+			"purple,1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing downgrade recommendation texts.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_UPGRADE",
+			"%{COLOR_UPGRADE_TEXT};inverse",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing upgrade recommendation tags.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_DOWNGRADE",
+			"%{COLOR_DOWNGRADE_TEXT};inverse",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing downgrade recommendation tags.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_BETTER",
+			"yellow,1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for \"better version\" flags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_WORSE",
+			"red,1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for \"worse version\" flags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_NEW",
+			"%{COLOR_TITLE},1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for \"new version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_DELETE",
+			"red,1",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for \"deleted version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_CHANGED",
+			"yellow",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for \"changed version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_INST_TAG",
+			"%{COLOR_TITLE},1;inverse",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for tagging installed packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_UNINST_TAG",
+			"%{COLOR_TITLE}",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for tagging uninstalled packages.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "COLOR_DATE",
 			"purple",
 			"This variable is used for delayed substitution.\n"
@@ -105,6 +203,83 @@ eixrc.addDefault(
 			"blue,1;inverse",
 			"This variable is used for delayed substitution.\n"
 			"It defines the color used for printing the version of installed packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "CHAR_UPGRADE",
+			"U",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character printed for upgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "CHAR_DOWNGRADE",
+			"D",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character printed for downgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "CHAR_INSTALLED",
+			"I",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character printed for installed packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "CHAR_UNINSTALLED",
+			"N",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character printed for uninstalled packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_BETTER",
+			">",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character used for \"better version\" flags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_WORSE",
+			"\\<",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character used for \"worse version\" flags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "STRING_PLAIN_INSTALLED",
+			"%{STRING_PLAIN_UNINSTALLED}",
+			"This variable is used for delayed substitution.\n"
+			"It defines the string used for \"plain\" tagging installed packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "STRING_PLAIN_UNINSTALLED",
+			"*",
+			"This variable is used for delayed substitution.\n"
+			"It defines the string used for \"plain\" tagging unintalled packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_STRING_NEW",
+			">>",
+			"This variable is used for delayed substitution.\n"
+			"It defines the string used for \"new version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_STRING_DELETE",
+			"\\<\\<",
+			"This variable is used for delayed substitution.\n"
+			"It defines the string used for \"deleted version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_STRING_CHANGED",
+			"==",
+			"This variable is used for delayed substitution.\n"
+			"It defines the string used for \"changed version\" tags (diff-eix).")
 		);
 
 eixrc.addDefault(
@@ -159,7 +334,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
-			//"{installedversionsshort}%{INSTALLEDVERSIONS_COMPACT}; {}"
+			"{installedversionsshort}%{INSTALLEDVERSIONS_COMPACT}; {}"
 			"",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for diff-eix for installed versions.")
@@ -168,7 +343,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_NAME",
-			"{system}(yellow){else}(){}<category>()/{marked}(%{COLOR_MARKED_VERSION}){else}(default,1){}<name>()",
+			"{system}(%{COLOR_CATEGORY_SYSTEM}){else}(%{COLOR_CATEGORY}){}<category>()/{marked}(%{COLOR_MARKED_VERSION}){else}(%{COLOR_NAME}){}<name>()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the printing the package name.")
 		);
@@ -176,19 +351,19 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_HEADER",
 			"{installedversionsshort}["
-			"{upgrade}(cyan,1;inverse)U{}"
-			"{downgrade}(purple,1;inverse)D{}"
-			"{!recommend}(green,1;inverse)I{}()"
-			"]{else}(green)*{}",
+			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
+			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
+			"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}{}()"
+			"]{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the normal header symbols.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_HEADER_VERBOSE",
-			"{installedversionsshort}(green,1;inverse)"
-			"{else}(green,0){}"
-			"*()",
+			"{installedversionsshort}(%{COLOR_INST_TAG})%{STRING_PLAIN_INSTALLED}"
+			"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}"
+			"()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the verbose header symbols.")
 		);
@@ -197,13 +372,13 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_HEADER_COMPACT",
 			"[{installedversionsshort}"
 				"{recommend}"
-					"{upgrade}(cyan,1;inverse)U{}"
-					"{downgrade}(purple,1;inverse)D{}"
+					"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
+					"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
 				"{else}"
-					"(green,1;inverse)I"
+					"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}{}()"
 				"{}"
 			"{else}"
-				"(green,0)N"
+				"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}"
 			"{}()]",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the compact header symbols.")
@@ -212,16 +387,16 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_NEW",
 			"["
-			"{upgrade}(cyan,1;inverse)U{}"
-			"{downgrade}(purple,1;inverse)D{}"
-			"{!recommend}(green,1)N{}"
+			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
+			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
+			"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}{}()"
 			"()]"
 			"{upgrade}"
 				"{!downgrade} {}"
 			"{else}"
 				" "
 			"{}"
-			" (green,1)>>()",
+			" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-new header symbols.")
 		);
@@ -229,11 +404,11 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_DELETE",
 			"{installedversionsshort}"
-				"[(purple,1;inverse)D()]"
+				"[(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}]"
 			"{else}"
 				"   "
 			"{}"
-			"  (red,1)\\<\\<()",
+			"  (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-delete header symbols.")
 		);
@@ -241,16 +416,16 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_CHANGED",
 			"["
-			"{upgrade}(cyan,1;inverse)U{}"
-			"{downgrade}(purple,1;inverse)D{}"
+			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
+			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
 			"{recommend}(){}"
-			"{!upgrade}{better}(yellow,1)>{}{}"
-			"{!downgrade}{worse}(red,1)\\<{}{}"
+			"{!upgrade}{better}(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}{}{}"
+			"{!downgrade}{worse}(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}{}{}"
 			"{!recommend}(){}"
 			"]"
 			"{!upgrade}{!better} {}{}"
 			"{!downgrade}{!worse} {}{}"
-			" (yellow,0)==()",
+			" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-changed header symbols.")
 		);
@@ -361,42 +536,54 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_HOMEPAGE",
-			"{homepage}     (%{COLOR_TITLE})Homepage:()            <homepage>\\n{}",
+			"{homepage}     (%{COLOR_TITLE})Homepage:()            "
+			"<homepage>\\n{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package homepage.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_DESCRIPTION",
-			"{description}     (%{COLOR_TITLE})Description:()         <description>\\n{}",
+			"{description}     (%{COLOR_TITLE})Description:()         "
+			"<description>\\n{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package description.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_BESTSLOTS",
-			"{bestshort}     (%{COLOR_TITLE})Best versions/slot:()  <bestslots>\\n{}",
+			"{bestshort}     (%{COLOR_TITLE})Best versions/slot:()  "
+			"<bestslots>\\n{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the best versions/slots.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_RECOMMEND",
-			"{recommend}     (%{COLOR_TITLE})Recommendation:()      {upgrade}(cyan,1)Upgrade{downgrade} and {}{}{downgrade}(purple,1)Downgrade{}\\n{}",
+			"{recommend}     (%{COLOR_TITLE})Recommendation:()      "
+			"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade()"
+				"{downgrade}"
+					" and "
+				"{}"
+			"{}"
+			"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(){}"
+			"\\n{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the up-/downgrade recommendations.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_PROVIDE",
-			"{provide}     (%{COLOR_TITLE})Provides:()            <provide>\\n{}",
+			"{provide}     (%{COLOR_TITLE})Provides:()            "
+			"<provide>\\n{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package provides.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_LICENSES",
-			"{licenses}     (%{COLOR_TITLE})License:()             <licenses>\\n{}",
+			"{licenses}     (%{COLOR_TITLE})License:()             "
+			"<licenses>\\n{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package licenses.")
 		);
