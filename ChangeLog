@@ -3,20 +3,23 @@
 *eix-0.8.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Major change: delayed reference %{VAR} of config vars possible.
-	  This way, FORMAT_* strings can be input/modified more conveniently.
+	  This way, *FORMAT_* strings can be input/modified more conveniently.
 	  Moreover, most DIFF_* variables were dropped, since the distinction
 	  whether eix or diff-eix is run can be made with %{*VAR}.
-	- Fix installation date in default FORMAT_COMPACT (the separating "@"
-	  was mistakenly removed in the previous release).
-	- Enable escaping of ':' in the installedversions* string arguments.
+	  Default *FORMAT* strings make now heavy use of these delayed
+	  references. In particular, all colors/strings/characters/lines are
+	  stored in separate variables and can such be easily customized.
 	- Introduce TAG_FOR_* variables (in particular, it is now possible
 	  to completely revert to the old behaviour by setting the
 	  TAG_FOR_EX_* variables empty and TAG_FOR_LOCALLY_MASKED="[M]").
+	- Enable escaping of ':' in the installedversions* string arguments.
+	- Bugfix: Put DIFF_NEW_SLOTS into defaults.cc
+	- Fix installation date in default FORMAT_COMPACT (the separating "@"
+	  was mistakenly removed in the previous release).
 	- Do not include braces in default FORMAT_*INSTALL*:
 	  This is better put into the installedversions* string arguments.
 	- Change FORMAT_VERBOSE default to let installedversions* display
 	  everything in a separate line.
-	- Bugfix: Put DIFF_NEW_SLOTS into defaults.cc
 	- Tiny bugfix: "and" for "Upgrade and Downgrade" in default color.
 
 *eix-0.7.9

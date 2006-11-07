@@ -118,35 +118,42 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_BETTER",
 			"yellow,1",
 			"This variable is used for delayed substitution.\n"
-			"It defines the color used for \"better version\" flags (diff-eix).")
+			"It defines the color used for \"better version\" tags (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_WORSE",
 			"red,1",
 			"This variable is used for delayed substitution.\n"
-			"It defines the color used for \"worse version\" flags (diff-eix).")
+			"It defines the color used for \"worse version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_NEW_TAG",
+			"%{DIFF_COLOR_NEW}",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for \"new package\" tags (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_NEW",
 			"%{COLOR_TITLE},1",
 			"This variable is used for delayed substitution.\n"
-			"It defines the color used for \"new version\" tags (diff-eix).")
+			"It defines the color used for \"new package\" separators (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_DELETE",
 			"red,1",
 			"This variable is used for delayed substitution.\n"
-			"It defines the color used for \"deleted version\" tags (diff-eix).")
+			"It defines the color used for \"deleted package\" separators (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_CHANGED",
 			"yellow",
 			"This variable is used for delayed substitution.\n"
-			"It defines the color used for \"changed version\" tags (diff-eix).")
+			"It defines the color used for \"changed package\" separators (diff-eix).")
 		);
 
 eixrc.addDefault(
@@ -228,23 +235,30 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CHAR_UNINSTALLED",
-			"N",
+			"%{DIFF_CHAR_NEW}",
 			"This variable is used for delayed substitution.\n"
 			"It defines the character printed for uninstalled packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_NEW",
+			"N",
+			"This variable is used for delayed substitution.\n"
+			"It defines the character printed for new packages (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_BETTER",
 			">",
 			"This variable is used for delayed substitution.\n"
-			"It defines the character used for \"better version\" flags (diff-eix).")
+			"It defines the character used for \"better version\" tags (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_WORSE",
 			"\\<",
 			"This variable is used for delayed substitution.\n"
-			"It defines the character used for \"worse version\" flags (diff-eix).")
+			"It defines the character used for \"worse version\" tags (diff-eix).")
 		);
 
 eixrc.addDefault(
@@ -265,21 +279,21 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_STRING_NEW",
 			">>",
 			"This variable is used for delayed substitution.\n"
-			"It defines the string used for \"new version\" tags (diff-eix).")
+			"It defines the string used for \"new package\" separators (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_STRING_DELETE",
 			"\\<\\<",
 			"This variable is used for delayed substitution.\n"
-			"It defines the string used for \"deleted version\" tags (diff-eix).")
+			"It defines the string used for \"deleted package\" separators (diff-eix).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_STRING_CHANGED",
 			"==",
 			"This variable is used for delayed substitution.\n"
-			"It defines the string used for \"changed version\" tags (diff-eix).")
+			"It defines the string used for \"changed package\" separators (diff-eix).")
 		);
 
 eixrc.addDefault(
@@ -389,7 +403,7 @@ eixrc.addDefault(
 			"["
 			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
 			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
-			"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}{}()"
+			"{!recommend}(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}{}()"
 			"()]"
 			"{upgrade}"
 				"{!downgrade} {}"
