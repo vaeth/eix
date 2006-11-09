@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Bugfix: Let "%%{" work as documented in the treatment of
+	  delayed variables.
+
 *eix-0.8.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Major change: delayed reference %{VAR} of config vars possible.

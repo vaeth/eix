@@ -142,6 +142,20 @@ void EixRc::read()
 			exit(2);
 		}
 	}
+
+	// Let %%{ expand to %{
+	for(map<string,string>::iterator it = begin(); it != end(); ++it)
+	{
+		string &str = it->second;
+		string::size_type pos = 0;
+		for(;; pos += 2)
+		{
+			pos = str.find("%%{", pos);
+			if(pos == string::npos)
+				break;
+			str.erase(pos,1);
+		}
+	}
 }
 
 string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference)
