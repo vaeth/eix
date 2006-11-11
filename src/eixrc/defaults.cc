@@ -446,7 +446,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_BESTSLOTS_COMPACT",
-			"{bestshort}<bestslots>{else}<availableversions>{}()",
+			"{bestshort}<bestslots>{else}<availableversions>{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the compact format for the best versions/slots.")
 		);

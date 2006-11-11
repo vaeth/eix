@@ -45,7 +45,7 @@ get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure
 	if(slot.empty())
 		return version->getFull();
 	return version->getFull() + intermediate + fmt->color_slots + slot +
-		AnsiColor(AnsiColor::acDefault, 0).asString();
+		AnsiColor::reset;
 }
 
 string
@@ -314,6 +314,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		if(!package->have_same_overlay_key && version->overlay_key)
 			cout << fmt->overlay_keytext(version->overlay_key);
 	}
+	cout << AnsiColor::reset;
 }
 
 void
@@ -326,7 +327,7 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 			cout << " ";
 	}
 	if( !fmt->no_color )
-		cout << AnsiColor(AnsiColor::acDefault, 0);
+		cout << AnsiColor::reset;
 }
 
 void
@@ -352,7 +353,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p)
 		else
 			cout << "(0)";
 		if( !fmt->no_color)
-			cout << AnsiColor(AnsiColor::acDefault, 0);
+			cout << AnsiColor::reset;
 		if( !fmt->style_version_lines)
 			cout << (only_one ? "  " : "\t");
 		const VersionList *vl = &(it->const_version_list());
@@ -364,7 +365,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p)
 				cout << " ";
 		}
 		if( !fmt->no_color )
-			cout << AnsiColor(AnsiColor::acDefault, 0);
+			cout << AnsiColor::reset;
 	}
 }
 

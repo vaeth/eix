@@ -4,6 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Bugfix: Let "%%{" work as documented in the treatment of
 	  delayed variables.
+	- Bugfix: Reset colors after each printed version.
 
 *eix-0.8.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
