@@ -48,7 +48,8 @@ class AnsiMarker {
 
 		AnsiMarker(const Marker mk = amNone) : mk(mk) { }
 
-		static const char *reset = "\x1B[0m";
+		static const char *reset()
+		{ return "\x1B[0m"; }
 
 		std::string asString()
 		{
@@ -63,7 +64,7 @@ class AnsiMarker {
 		std::string end()
 		{
 			if(mk!=amNone)
-				return reset;
+				return reset();
 			return "";
 		}
 
@@ -124,7 +125,8 @@ class AnsiColor {
 		bool light;
 
 		/** reset - faster than AnsiColor(AnsiColor::acDefault) */
-		static const char *reset = AnsiMarker::reset;
+		static const char *reset()
+		{ return AnsiMarker::reset(); }
 
 		/** additional marker */
 		AnsiMarker::Marker mk;
