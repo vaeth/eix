@@ -213,32 +213,30 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 			pos += s->length();
 			continue;
 		}
+		string::size_type skippos = pos;
 		bool result = istrue(s->c_str()) ?
 			(type == DelayedIf) : (type == DelayedNotif);
 		string::size_type delpos = string::npos;
 		if(result)
-			value->erase(pos, length);
+			value->erase(skippos, length);
 		else {
-			delpos = pos;
-			pos += length;
+			delpos = skippos;
+			skippos += length;
 		}
 		bool gotelse = false;
 		unsigned int count = 0;
-		for(;; pos += length)
+		for(;; skippos += length)
 		{
-			type = find_next_delayed(*value, &pos, &length);
+			type = find_next_delayed(*value, &skippos, &length);
 
 			if(type == DelayedFi) {
 				if(count --)
 					continue;
-				if(delpos == string::npos) {
-					value->erase(pos, length);
-					length = 0;
-					break;
-				}
-				value->erase(delpos, (pos + length) - delpos);
-				pos = delpos;
-				length = 0;
+				if(delpos == string::npos)
+					value->erase(skippos, length);
+				else
+					value->erase(delpos,
+						(skippos + length) - delpos);
 				break;
 			}
 			if(type == DelayedElse) {
@@ -251,13 +249,14 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 				}
 				gotelse = true;
 				if(result) {
-					value->erase(pos, length);
+					value->erase(skippos, length);
 					length = 0;
-					delpos = pos;
+					delpos = skippos;
 					continue;
 				}
-				value->erase(delpos, (pos + length) - delpos);
-				pos = delpos;
+				value->erase(delpos,
+					(skippos + length) - delpos);
+				skippos = delpos;
 				length = 0;
 				delpos = string::npos;
 				continue;

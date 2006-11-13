@@ -5,6 +5,9 @@
 	- Conditional blocks in delayed references.
 	- Make use of conditionals in defaults:
 	  Introduce delayed PRINT_ALWAYS, DIFF_PRINT_INSTALLED.
+	  In particular, PRINT_ALWAYS finally is a way to have a "short"
+	  configuration for cyberpatrols wish to print lines even if unused:
+	  http://forums.gentoo.org/viewtopic-t-278819-postdays-0-postorder-asc-start-292.html
 	- Bugfix: Let "%%{" work as documented in the treatment of
 	  delayed variables.
 	- Bugfix: Reset colors after each printed version.

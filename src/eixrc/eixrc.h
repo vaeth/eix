@@ -62,7 +62,7 @@ class EixRc : public std::map<std::string,std::string> {
 		void addDefault(EixRcOption option);
 
 		bool getBool(const char *key)
-		{ istrue((*this)[key].c_str()); }
+		{ return istrue((*this)[key].c_str()); }
 
 		void getRedundantFlags(const char *key,
 			Keywords::Redundant type,
