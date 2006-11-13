@@ -306,7 +306,7 @@ CallEmergeSync () {
   fi
   [[ "${METADATA}" ]] && return
   RootCommand "Running ${EMERGECMD[*]}" \
-    "${EMERGECMD[@]}" || die "${EMERGECMD[*]} failed"
+    time "${EMERGECMD[@]}" || die "${EMERGECMD[*]} failed"
 }
 
 CallSyncClient () {

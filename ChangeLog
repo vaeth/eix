@@ -8,12 +8,13 @@
 	  In particular, PRINT_ALWAYS finally is a way to have a "short"
 	  configuration for cyberpatrols wish to print lines even if unused:
 	  http://forums.gentoo.org/viewtopic-t-278819-postdays-0-postorder-asc-start-292.html
+	- Let eix-sync print the time emerge --sync needed.
 	- Bugfix: Let "%%{" work as documented in the treatment of
 	  delayed variables.
 	- Bugfix: Reset colors after each printed version.
 	- Bugfix in defaults: color of marked versions/packages.
 	- Tiny bugfix in defaults: color of ":" after installed version
-	- Fix some comments to variables.
+	- Fix some comments of variables.
 
 *eix-0.8.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
