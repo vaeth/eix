@@ -403,7 +403,7 @@ normal strings.
 Conditions are very simple: A property is expanded and the resulting string is
 tested against another string. If they are the same, the condition is true and
 the block is executed. Conditions can be negated so that the else-part is
-executed if the conditions is true, and the if-part if the condition is false.
+executed if the condition is true, and the if-part if the condition is false.
 The else-part can be also be completely left out.
 .TP
 .BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {}
@@ -665,24 +665,86 @@ You can use a shell-like syntax to set the following variables.
 In particular, you can use auxiliary variables to set these variables.
 
 However, if you use auxiliary variables as usual, you will only see
-the substituted values with --dump or --dump-defaults.
-For this reason, you can refer to variables beside the usual shell-way also in
-the syntax B<%{>I<VARIABLE>B<}> (the braces here are not optional).
+the substituted values with --dump or --dump-defaults and you cannot
+replace the inserted values e.g. by setting them in the environment.
+
+For this reason, you can refer to variables besides the usual shell-way also
+in the syntax B<%{>I<VARIABLE>B<}> (the braces here are not optional).
 This means that the substitution is delayed until all configuration files
 and environment variables are read, and the substitution will not show up
 with --dump or --dump-defaults.
 
-This delayed substitution also has the special variant B<%{*>I<VARIABLE>B<}>
-which will refer to the value of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>,
-depending on whether it is called from B<eix>/B<update-eix> or
-from B<diff-eix>. This way you can have different defaults for these programs.
+This concept is called delayed substitution/reference, and provides also
+some additional features:
 
-If you need %{ in a variable text, you must use %%{ instead.
+.\" {{{ -------- Special symbols
+.TP
+.BR "Special symbols for delayed substitution"
+
+.TP
+.SS
+.BR " %%{"
+This must be used if you need B<%{> in a variable text
+(otherwise delayed substitution would take place).
+
+.TP
+.SS
+.BR "*" I<VARIABLE>
+If a delayed reference uses a variable name starting with B<*>,
+this B<*> is replaced by B<EIX_> or B<DIFF_>, depending on whether
+it is used from B<eix>/B<update-eix> or from B<diff-eix>.
+This way you can have different defaults for these programs.
+
+For example the delayed reference B<%{*>I<VARIABLE>B<}> will insert
+the expansion of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>, respectively.
+.\" }}}
+
+.\" {{{ -------- Conditional blocks as delayed reference
+.TP
+.BR "Conditional blocks in delayed references"
+If you want to substitute several variables completely differently,
+depending on the state of a (Boolean) variable, you can use
+conditional blocks.
+
+This is somewhat analogous to Conditional Blocks in FORMATSTRING:
+If the referenced variable expands finally to the boolean value true
+(B<true>/B<1>/B<yes>/B<y>/B<on>) the result is true
+and the corresponding block of the string is expanded.
+Conditions can be negated so that the else-part is expanded if the
+condition is true, and the if-part if the condition is false.
+The else-part can be also be completely left out.
+The special variable names B<*>I<VARIABLE> can also be used in these
+conditionals.
+.TP
+.SS
+.BR "%{?I<VARIABLE>}" I<TCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to true.
+
+.TP
+.SS
+.BR "%{!I<VARIABLE>}" I<TCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to false.
+
+.TP
+.SS
+.BR "%{?I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to true, otherwise I<FCODE>.
+
+.TP
+.SS
+.BR "%{!I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to false, otherwise I<FCODE>.
+
+A conditional block must occur completely within one variable, i.e.
+it is not possible to e.g. substitute the B<%{}> from another variable
+via delayed reference.
+.SS ""
+.\" }}}
 
 Note that any variables you add for delayed substitution are only output
 with --dump if they are actually used (i.e. referenced in some of the other variables).
 If you want to output them anyway, e.g. for comments or easier later change,
-you can collect references to them in the B<DUMMY> string.
+you can collect references to them in the B<DUMMY> variable.
 .TP
 .BR DUMMY "  " (string)
 This variable has no direct influence on the programs, but the content of this

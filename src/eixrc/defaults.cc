@@ -59,6 +59,20 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "PRINT_ALWAYS",
+			"false",
+			"This variable is used for delayed substitution.\n"
+			"It defines whether all information lines are printed (even if empty).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_PRINT_INSTALLED",
+			"true",
+			"This variable is used for delayed substitution.\n"
+			"It defines whether diff-eix will output installed versions.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "COLOR_TITLE",
 			"green",
 			"This variable is used for delayed substitution.\n"
@@ -193,7 +207,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "COLOR_INST_VERSION",
-			"blue,1;inverse",
+			"blue,1;%{MARK_INSTALLED}",
 			"This variable is used for delayed substitution.\n"
 			"It defines the color used for printing the version of installed packages.")
 		);
@@ -207,9 +221,16 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "COLOR_MARKED_VERSION",
-			"blue,1;inverse",
+			"%{COLOR_MARKED_NAME}",
 			"This variable is used for delayed substitution.\n"
-			"It defines the color used for printing the version of installed packages.")
+			"It defines the color used for printing a marked version of a packages.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_MARKED_NAME",
+			"red,1;%{MARK_VERSIONS}",
+			"This variable is used for delayed substitution.\n"
+			"It defines the color used for printing a marked package name.")
 		);
 
 eixrc.addDefault(
@@ -333,14 +354,32 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_INSTALLEDVERSIONS",
-			"{installedversionsshort}     (%{COLOR_TITLE})Installed versions():  %{INSTALLEDVERSIONS}\\n{}",
+			"%{!PRINT_ALWAYS}{installedversionsshort}%{}"
+			"     (%{COLOR_TITLE})Installed versions:()"
+			"  "
+			"%{?PRINT_ALWAYS}{installedversionsshort}%{}"
+			"%{INSTALLEDVERSIONS}"
+			"%{?PRINT_ALWAYS}"
+				"{else}None{}\\n"
+			"%{else}"
+				"\\n{}"
+			"%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the \"normal\" format for a line with installed versions.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_INSTALLEDVERSIONS_VERBOSE",
-			"{installedversionsshort}     (%{COLOR_TITLE})Installed versions:()  %{INSTALLEDVERSIONS_VERBOSE}\\n{}",
+			"%{!PRINT_ALWAYS}{installedversionsshort}%{}"
+			"     (%{COLOR_TITLE})Installed versions:()"
+			"  "
+			"%{?PRINT_ALWAYS}{installedversionsshort}%{}"
+			"%{INSTALLEDVERSIONS_VERBOSE}"
+			"%{?PRINT_ALWAYS}"
+				"{else}None{}\\n"
+			"%{else}"
+				"\\n{}"
+			"%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the verbose format for a line with installed versions.")
 		);
@@ -357,7 +396,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_NAME",
-			"{system}(%{COLOR_CATEGORY_SYSTEM}){else}(%{COLOR_CATEGORY}){}<category>()/{marked}(%{COLOR_MARKED_VERSION}){else}(%{COLOR_NAME}){}<name>()",
+			"{system}(%{COLOR_CATEGORY_SYSTEM}){else}(%{COLOR_CATEGORY}){}<category>()/{marked}(%{COLOR_MARKED_NAME}){else}(%{COLOR_NAME}){}<name>()",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the printing the package name.")
 		);
@@ -460,7 +499,9 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
-			"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
+			"%{?DIFF_PRINT_INSTALLED}"
+				"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
+			"%{}"
 			"{oldbestshort}"
 				"<oldbestslots>"
 			"{else}"
@@ -543,61 +584,89 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_MARKEDVERSIONS",
-			"{marked}     (%{COLOR_TITLE})Marked:()              (%{COLOR_MARKED_VERSION})<markedversions>()\\n{}",
+			"%{!PRINT_ALWAYS}{marked}%{}"
+			"     (%{COLOR_TITLE})Marked:()"
+			"%{?PRINT_ALWAYS}{marked}%{}"
+			"              "
+			"(%{COLOR_MARKED_VERSION})<markedversions>()"
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with marked versions.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_HOMEPAGE",
-			"{homepage}     (%{COLOR_TITLE})Homepage:()            "
-			"<homepage>\\n{}",
+			"%{!PRINT_ALWAYS}{homepage}%{}"
+			"     (%{COLOR_TITLE})Homepage:()"
+			"%{?PRINT_ALWAYS}{homepage}%{}"
+			"            "
+			"<homepage>"
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package homepage.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_DESCRIPTION",
-			"{description}     (%{COLOR_TITLE})Description:()         "
-			"<description>\\n{}",
+			"%{!PRINT_ALWAYS}{description}%{}"
+			"     (%{COLOR_TITLE})Description:()"
+			"%{?PRINT_ALWAYS}{description}%{}"
+			"         "
+			"<description>"
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package description.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_BESTSLOTS",
-			"{bestshort}     (%{COLOR_TITLE})Best versions/slot:()  "
-			"<bestslots>\\n{}",
+			"%{!PRINT_ALWAYS}{bestshort}%{}"
+			"     (%{COLOR_TITLE})Best versions/slot:()"
+			"%{?PRINT_ALWAYS}{bestshort}%{}"
+			"  "
+			"<bestslots>"
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the best versions/slots.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_RECOMMEND",
-			"{recommend}     (%{COLOR_TITLE})Recommendation:()      "
+			"%{!PRINT_ALWAYS}{recommend}%{}"
+			"     (%{COLOR_TITLE})Recommendation:()"
+			"%{?PRINT_ALWAYS}{recommend}%{}"
+			"      "
 			"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade()"
 				"{downgrade}"
 					" and "
 				"{}"
 			"{}"
 			"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(){}"
-			"\\n{}",
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the up-/downgrade recommendations.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_PROVIDE",
-			"{provide}     (%{COLOR_TITLE})Provides:()            "
-			"<provide>\\n{}",
+			"%{!PRINT_ALWAYS}{provide}%{}"
+			"     (%{COLOR_TITLE})Provides:()"
+			"%{?PRINT_ALWAYS}{provide}%{}"
+			"            "
+			"<provide>"
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package provides.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_LICENSES",
-			"{licenses}     (%{COLOR_TITLE})License:()             "
-			"<licenses>\\n{}",
+			"%{!PRINT_ALWAYS}{licenses}%{}"
+			"     (%{COLOR_TITLE})License:()"
+			"%{?PRINT_ALWAYS}{licenses}%{}"
+			"             "
+			"<licenses>"
+			"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 			"This variable is used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for a line with the package licenses.")
 		);

@@ -2,9 +2,15 @@
 
 *eix-0.8.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Conditional blocks in delayed references.
+	- Make use of conditionals in defaults:
+	  Introduce delayed PRINT_ALWAYS, DIFF_PRINT_INSTALLED.
 	- Bugfix: Let "%%{" work as documented in the treatment of
 	  delayed variables.
 	- Bugfix: Reset colors after each printed version.
+	- Bugfix in defaults: color of marked versions/packages.
+	- Tiny bugfix in defaults: color of ":" after installed version
+	- Fix some comments to variables.
 
 *eix-0.8.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

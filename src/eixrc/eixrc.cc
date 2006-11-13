@@ -135,10 +135,14 @@ void EixRc::read()
 	for(default_index i = 0; i < defaults.size(); ++i)
 	{
 		set<string> visited;
-		if(resolve_delayed_recurse(defaults[i].key, visited, has_reference) == NULL)
+		const char *errtext;
+		string errvar;
+		if(resolve_delayed_recurse(defaults[i].key, visited,
+			has_reference, &errtext, &errvar) == NULL)
 		{
-			cerr << "fatal error in config: self-reference in delayed substitution for "
-				<< (defaults[i].key) << "\n";
+			cerr << "fatal config error: " << errtext
+				<< " in delayed substitution of " << errvar
+				<< "\n";
 			exit(2);
 		}
 	}
@@ -158,7 +162,7 @@ void EixRc::read()
 	}
 }
 
-string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference)
+string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)
 {
 	string *value = &((*this)[key]);
 	if(has_reference.find(key) == has_reference.end())
@@ -167,23 +171,107 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 	for(;;)
 	{
 		string::size_type length;
-		pos = find_delayed(*value, pos, &length);
-		if(pos == string::npos) {
+		DelayedType type = find_next_delayed(*value, &pos, &length);
+		if(type == DelayedNotFound) {
 			has_reference.erase(key);
 			return value;
 		}
-		if(visited.find(key) != visited.end())
+		if(type == DelayedFi) {
+			*errtext = "FI without IF";
+			*errvar = key;
 			return NULL;
+		}
+		if(type == DelayedElse) {
+			*errtext = "ELSE without IF";
+			*errvar = key;
+			return NULL;
+		}
+		bool will_test = false;
+		string::size_type varpos = pos + 2;
+		string::size_type varlength = length - 3;
+		if((type == DelayedIf) || (type == DelayedNotif)) {
+			will_test = true;
+			varpos++;
+			varlength--;
+		}
+		if(visited.find(key) != visited.end()) {
+			*errtext = "self-reference";
+			*errvar = key;
+			return NULL;
+		}
 		visited.insert(key);
 		string *s = resolve_delayed_recurse(
-			( ((*value)[pos + 2] == '*') ?
-			(prefix + value->substr(pos + 3, length - 4)) :
-			value->substr(pos + 2, length - 3)),
-			visited, has_reference);
+			( ((*value)[varpos] == '*') ?
+			(prefix + value->substr(varpos + 1, varlength - 1)) :
+			value->substr(varpos, varlength)),
+			visited, has_reference, errtext, errvar);
 		visited.erase(key);
 		if(!s)
 			return NULL;
-		value->replace(pos, length, *s);
+		if(! will_test) {
+			value->replace(pos, length, *s);
+			pos += s->length();
+			continue;
+		}
+		bool result = istrue(s->c_str()) ?
+			(type == DelayedIf) : (type == DelayedNotif);
+		string::size_type delpos = string::npos;
+		if(result)
+			value->erase(pos, length);
+		else {
+			delpos = pos;
+			pos += length;
+		}
+		bool gotelse = false;
+		unsigned int count = 0;
+		for(;; pos += length)
+		{
+			type = find_next_delayed(*value, &pos, &length);
+
+			if(type == DelayedFi) {
+				if(count --)
+					continue;
+				if(delpos == string::npos) {
+					value->erase(pos, length);
+					length = 0;
+					break;
+				}
+				value->erase(delpos, (pos + length) - delpos);
+				pos = delpos;
+				length = 0;
+				break;
+			}
+			if(type == DelayedElse) {
+				if(count)
+					continue;
+				if(gotelse) {
+					*errtext = "double ELSE";
+					*errvar = key;
+					return NULL;
+				}
+				gotelse = true;
+				if(result) {
+					value->erase(pos, length);
+					length = 0;
+					delpos = pos;
+					continue;
+				}
+				value->erase(delpos, (pos + length) - delpos);
+				pos = delpos;
+				length = 0;
+				delpos = string::npos;
+				continue;
+			}
+			if((type == DelayedIf) || (type == DelayedNotif)) {
+				count ++;
+				continue;
+			}
+			if(type == DelayedNotFound) {
+				*errtext = "IF without FI";
+				*errvar = key;
+				return NULL;
+			}
+		}
 	}
 }
 
@@ -242,25 +330,34 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 	{
 		string &str = defaults[i].local_value;
 		string::size_type pos = 0;
-		for(;;)
+		string::size_type length = 0;
+		for(;; pos += length)
 		{
-			string::size_type length;
-			pos = find_delayed(str, pos, &length);
-			if(pos == string::npos)
+			DelayedType type = find_next_delayed(str, &pos, &length);
+			if (type == DelayedNotFound)
 				break;
+			else if (type == DelayedVariable) {
+				pos += 2;
+				length -= 2;
+			}
+			else if ((type == DelayedIf) || (type == DelayedNotif)) {
+				pos += 3;
+				length -= 3;
+			}
+			else
+				continue;
 			has_reference.insert(defaults[i].key);
-			if(str[pos + 2] == '*') {
-				string s = str.substr(pos + 3, length - 4);
+			if(str[pos] == '*') {
+				string s = str.substr(pos + 1, length - 2);
 				join_delayed(string(EIX_VARS_PREFIX) + s,
 					default_keys, tempmap);
 				join_delayed(string(DIFF_EIX_VARS_PREFIX) + s,
 					default_keys, tempmap);
 			}
 			else {
-				join_delayed(str.substr(pos + 2, length - 3),
+				join_delayed(str.substr(pos, length - 1),
 					default_keys, tempmap);
 			}
-			pos += length;
 		}
 	}
 }
@@ -287,37 +384,62 @@ void EixRc::join_delayed(const string &key, set<string> &default_keys, const map
 	(*this)[key] = val;
 }
 
-string::size_type EixRc::find_delayed(const string &str, string::size_type pos, string::size_type *length)
+EixRc::DelayedType EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length)
 {
+	string::size_type pos = *posref;
 	for(;; pos += 2)
 	{
 		pos = str.find("%{", pos);
 		if(pos == string::npos)
-			return string::npos;
+		{
+			*posref = string::npos;
+			return DelayedNotFound;
+		}
 		if(pos > 0) {
 			if(str[pos - 1] == '%')
 				continue;
 		}
 		string::size_type i = pos + 2;
 		char c = str[i++];
-		if((c != '*') && (c != '_') &&
-			((c < 'A') || (c > 'Z')) &&
-			((c < 'a') || (c > 'z')))
-			continue;
-		for(;;)
+		DelayedType type;
+		if(c == '}')
+			type = DelayedFi;
+		else
 		{
-			c = str[i++];
-			if ((c != '_') &&
-				((c < '0') || (c > '9')) &&
+			if(c == '?') {
+				type = DelayedIf;
+				c = str[i++];
+			}
+			else if(c == '!') {
+				type = DelayedNotif;
+				c = str[i++];
+			}
+			else
+				type = DelayedVariable;
+			if((c != '*') && (c != '_') &&
 				((c < 'A') || (c > 'Z')) &&
 				((c < 'a') || (c > 'z')))
-				break;
+				continue;
+			for(;;)
+			{
+				c = str[i++];
+				if ((c != '_') &&
+					((c < '0') || (c > '9')) &&
+					((c < 'A') || (c > 'Z')) &&
+					((c < 'a') || (c > 'z')))
+					break;
+			}
+			if(c != '}')
+				continue;
+			if(strcasecmp(
+				(str.substr(pos + 2, i - pos - 3)).c_str(),
+				"else") == 0)
+				type = DelayedElse;
 		}
-		if(c != '}')
-			continue;
+		*posref = pos;
 		if(length)
 			*length = i - pos;
-		return pos;
+		return type;
 	}
 }
 
@@ -332,9 +454,8 @@ void EixRc::addDefault(EixRcOption option)
 	defaults.push_back(option);
 }
 
-bool EixRc::getBool(const char *key)
+bool EixRc::istrue(const char *s)
 {
-	const char *s = (*this)[key].c_str();
 	if(strcasecmp(s, "true") == 0)
 		return true;
 	if(strcasecmp(s, "1") == 0)

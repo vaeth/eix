@@ -61,7 +61,8 @@ class EixRc : public std::map<std::string,std::string> {
 
 		void addDefault(EixRcOption option);
 
-		bool getBool(const char *key);
+		bool getBool(const char *key)
+		{ istrue((*this)[key].c_str()); }
 
 		void getRedundantFlags(const char *key,
 			Keywords::Redundant type,
@@ -71,16 +72,18 @@ class EixRc : public std::map<std::string,std::string> {
 
 		void dumpDefaults(FILE *s, bool use_defaults);
 	private:
+		static bool istrue(const char *s);
+		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIf, DelayedNotif, DelayedElse, DelayedFi };
 		std::vector<EixRcOption> defaults;
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r);
-		std::string *resolve_delayed_recurse(std::string key, std::set<std::string> &visited, std::set<std::string> &has_reference);
+		std::string *resolve_delayed_recurse(std::string key, std::set<std::string> &visited, std::set<std::string> &has_reference, const char **errtext, std::string *errvar);
 
 		  /** Create defaults and the main map with all variables
 		     (including all values required by delayed references).
 		   @arg has_reference is initialized to corresponding keys */
 		void read_undelayed(std::set<std::string> &has_reference);
 		void join_delayed(const std::string &val, std::set<std::string> &default_keys, const std::map<std::string,std::string> &tempmap);
-		static std::string::size_type find_delayed(const std::string &str, std::string::size_type pos = 0, std::string::size_type *length = NULL);
+		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length = NULL);
 		static std::string as_comment(const char *s);
 };
 #endif /* __EIXRC_H__ */
