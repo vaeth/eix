@@ -187,6 +187,18 @@ done
 [[ "${DOUPDATE}" ]] || CLEARCACHE=''
 [[ "${SERVER}" ]] && METADATA=1
 
+# We need a special function to treat the reserved word "time" like a command.
+# (Of course "eval" would do a similar thing, but would also apply to args).
+MyRun () {
+  if [[ "${1}" != 'time' ]]; then
+    "${@}"
+    return
+  fi
+  shift
+  time "${@}"
+  return
+}
+
 # Run command
 # if VERBOSE is empty, redirect 1,2 to /dev/null and use ebegin/eend
 # (instead of einfo)
@@ -196,12 +208,12 @@ RunCommand () {
   if [[ "${VERBOSE}" ]]; then
     einfo "${1}"
     shift
-    "${@}"
+    MyRun "${@}"
     return "${?}"
   fi
   ebegin "${1}"
   shift
-  "${@}" &>"${REDIRECT}"
+  MyRun "${@}" &>"${REDIRECT}"
   RET="${?}"
   eend "${RET}" "Problems running ${@}"
   return "${RET}"
