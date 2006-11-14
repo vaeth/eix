@@ -140,7 +140,7 @@ class ArgumentReader
 		static Option *lookup_option(const int opt, struct Option *opt_table);
 
 		/// Return number of args for opt
-		static int numargs(const int opt, struct Option *opt_table);
+		static unsigned int numargs(const int opt, struct Option *opt_table);
 
 		/// Fold parameter-list so that a option with an arguments has its argument set
 		// internal rather than lying around after it in the list.

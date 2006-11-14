@@ -222,7 +222,6 @@ Mask::checkMask(Package& pkg, const bool check_category, const bool check_name, 
 		|| (check_category && pkg.category.c_str() != m_category))
 		return;
 
-	bool rvalue = false;
 	for(Package::iterator i = pkg.begin();
 		i != pkg.end();
 		++i)

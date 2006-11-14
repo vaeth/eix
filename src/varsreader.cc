@@ -350,26 +350,26 @@ void VarsReader::resolveReference()
 	char *begin = x;
 	if(INPUT == '{')
 		NEXT_INPUT;
-	unsigned int ref_key_lenght = 0;
+	unsigned int ref_key_length = 0;
 
 	while(isValidKeyCharacter(INPUT)) {
 		NEXT_INPUT;
-		++ref_key_lenght;
+		++ref_key_length;
 	}
 
 	if(*begin == '{') {
 		if(INPUT == '}') {
-			value.append((*vars)[string(begin + sizeof(char), ref_key_lenght)]);
+			value.append((*vars)[string(begin + sizeof(char), ref_key_length)]);
 		}
 		/** For some reseon, this fprintf crashes:
 		else
 			fprintf(stderr, "%s: Ran into '%c' while looking for '}' after '%.*s'.",
-				file_name, INPUT, ref_key_lenght, begin);
+				file_name, INPUT, ref_key_length, begin);
 		*/
 		NEXT_INPUT;
 	}
 	else {
-		value.append((*vars)[string(begin, ref_key_lenght)]);
+		value.append((*vars)[string(begin, ref_key_length)]);
 	}
 	return;
 }

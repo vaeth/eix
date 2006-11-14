@@ -96,9 +96,9 @@ CascadingProfile::readFiles()
 			vector<string> lines;
 			pushback_lines(file->c_str(), &lines, false);
 
-			for(unsigned int i = 0; i<lines.size(); i++)
+			for(vector<string>::size_type i = 0; i < lines.size(); i++)
 			{
-				if(lines[i].size() == 0)
+				if(lines[i].empty())
 					continue;
 				try {
 					(this->*handler) (lines[i]);
@@ -163,7 +163,7 @@ static const char *default_accumulating_keys[] = {
 /** Read all "make.defaults" files found in profile. */
 void CascadingProfile::readMakeDefaults()
 {
-	for(unsigned int i = 0; i<m_profile_files.size(); i++) {
+	for(vector<string>::size_type i = 0; i < m_profile_files.size(); ++i) {
 		if( strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0) {
 			VarsReader parser(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES);
 			parser.accumulatingKeys(default_accumulating_keys); // use defaults

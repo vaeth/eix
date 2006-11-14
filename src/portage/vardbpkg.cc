@@ -73,7 +73,7 @@ bool VarDbPkg::isInstalled(const Package &p, const BasicVersion *v)
 	{
 		if(!v)
 			return true;
-		for(unsigned int i = 0; i < vec->size(); ++i)
+		for(vector<InstVersion>::size_type i = 0; i < vec->size(); ++i)
 			if((*vec)[i] == *v)
 				return true;
 	}

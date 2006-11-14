@@ -246,7 +246,7 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string cdbfile = PORTAGE_CACHE_PATH + m_scheme + vec.name() + ".cdb";
 	uint32_t dlen;
-	char *data;
+	void *data;
 	string key;
 
 	Cdb cdb(cdbfile.c_str());
@@ -257,9 +257,9 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 		return true;
 	}
 	while( ! cdb.end() ) {
-		key = cdb.get(&dlen, (void **)&data);
+		key = cdb.get(&dlen, &data);
 		map<string,string> mapping;
-		if( ! unpickle_get_mapping(data, dlen, mapping)) {
+		if( ! unpickle_get_mapping((char *)data, dlen, mapping)) {
 			m_error_callback("Problems with %s .. skipping.", key.c_str());
 			continue;
 		}

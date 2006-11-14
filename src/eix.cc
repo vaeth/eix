@@ -364,7 +364,6 @@ print_overlay_table(PrintFormat &format, DBHeader &header, vector<bool> *overlay
 		if(overlay_used)
 			if(!((*overlay_used)[i-1]))
 				continue;
-		Version::Overlay ov_num = i;
 		cout << format.overlay_keytext(i) << " ";
 		cout << header.getOverlay(i) << endl;
 		printed_overlay = true;
@@ -634,7 +633,7 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 	vector<string> unused;
 	vector<string> lines;
 	pushback_lines(filename, &lines, false, true);
-	for(unsigned int i = 0;
+	for(vector<string>::size_type i = 0;
 		i<lines.size();
 		i++)
 	{

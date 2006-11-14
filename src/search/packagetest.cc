@@ -401,7 +401,7 @@ PackageTest::match(PackageReader *pkg) const
 
 		get_p();
 		get_user_accept();
-		/* To test /etc/portage/* redundancy
+		/* To test with /etc/portage redundancy
 		   (not that of ACCEPT_KEYWORDS in /etc/make.conf),
 		   we must use here the *local* accept_keywords. */
 		portagesettings->setStability(user, accept_keywords, true);

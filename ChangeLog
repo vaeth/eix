@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Some code cleanup and fixing of some compiler warnings.
+	  Thanks to KIMURA Masaru / hiyuh <hiyuh.root@gmail.com>
+	  http://bugs.gentoo.org/show_bug.cgi?id=155160
+
 *eix-0.8.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Conditional blocks in delayed references.

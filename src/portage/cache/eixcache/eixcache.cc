@@ -115,7 +115,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	}
 	if(m_only_overlay)
 	{
-		if(m_overlay.length())
+		if(!m_overlay.empty())
 		{
 			for(Version::Overlay i = 0; i != header.countOverlays(); i++)
 			{
@@ -126,12 +126,12 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 					break;
 				}
 			}
-			if(m_overlay.length())// Overlay not found
+			if(!m_overlay.empty())// Overlay not found
 			{
 				// Is m_overlay a number?
 				bool is_number = true;
 				const char *s = m_overlay.c_str();
-				for(int i = 0; i < m_overlay.length(); i++)
+				for(string::size_type i = 0; i < m_overlay.length(); i++)
 				{
 					char c = *(s++);
 					if((c < '0') || (c > '9'))

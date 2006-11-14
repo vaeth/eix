@@ -115,7 +115,7 @@ ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 	return NULL;
 }
 
-int
+unsigned int
 ArgumentReader::numargs(const int opt, struct Option *opt_table)
 {
 	Option *c = lookup_option(opt, opt_table);
@@ -130,6 +130,8 @@ ArgumentReader::numargs(const int opt, struct Option *opt_table)
 		case Option::PAIR:
 		case Option::PAIRLIST:
 			return 2;
+		default:
+			break;
 	}
 	return 0;
 }

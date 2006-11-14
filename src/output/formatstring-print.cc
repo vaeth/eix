@@ -130,11 +130,11 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		useflags = false;
 		if(formattype & INST_WITH_USEFLAGS) {
 			const char *a[4];
-			for(int i=0; i<4; ++i) {
+			for(vector<string>::size_type i=0; i<4; ++i) {
 				a[i] = NULL;
-				if(prepend.size() > 8+i)
-					if((i == 2) || (!prepend[8+i].empty()))
-						a[i] = prepend[8+i].c_str();
+				if(prepend.size() > i + 8)
+					if((i == 2) || (!prepend[i + 8].empty()))
+						a[i] = prepend[i + 8].c_str();
 			}
 			string inst_use = get_inst_use(p, *it, fmt, a);
 			if(!inst_use.empty()) {

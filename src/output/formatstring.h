@@ -241,8 +241,8 @@ class PrintFormat {
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),
-			  vardb(NULL), portagesettings(NULL),
-			  overlay_translations(NULL), marked_list(NULL), virtuals(NULL)
+			  virtuals(NULL), overlay_translations(NULL), marked_list(NULL),
+			  vardb(NULL), portagesettings(NULL)
 			{ }
 
 		void setupColors() {

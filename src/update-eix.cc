@@ -353,7 +353,7 @@ run_update_eix(int argc, char *argv[])
 			portage_settings.overlays.push_back(*it);
 		}
 
-		for(unsigned int i = 0; i<portage_settings.overlays.size(); ++i)
+		for(vector<string>::size_type i = 0; i < portage_settings.overlays.size(); ++i)
 		{
 			if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 					portage_settings.overlays[i]) == excluded_overlays.end())

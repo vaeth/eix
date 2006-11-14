@@ -149,6 +149,8 @@ class MaskList
 					case Mask::maskUnmask:
 						had_unmask=true;
 						break;
+					default:
+						break;
 				}
 			}
 			if(!(check & Keywords::RED_MASK))

@@ -45,11 +45,11 @@ class InstVersion : public BasicVersion, public Keywords {
 		time_t instDate;
 		std::set<std::string> usedUse; /* Those useflags in iuse actually used */
 
-		InstVersion() : instDate(0), know_slot(false), read_failed(false), know_use(false)
+		InstVersion() : know_slot(false), read_failed(false), know_use(false), instDate(0)
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		InstVersion(const char* str) : BasicVersion(str), instDate(0), know_slot(false), read_failed(false), know_use(false)
+		InstVersion(const char* str) : BasicVersion(str), know_slot(false), read_failed(false), know_use(false), instDate(0)
 		{ }
 
 		/** The equality operator does not test the additional data */

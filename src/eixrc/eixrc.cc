@@ -307,7 +307,6 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 	}
 
 	// override with ENV
-	bool have_delayed = false;
 	for(map<string,string>::iterator it = tempmap.begin();
 		it != tempmap.end(); ++it)
 	{
@@ -474,7 +473,6 @@ void EixRc::getRedundantFlags(const char *key,
 {
 	string value=(*this)[key].c_str();
 	vector<string> a=split_string(value);
-	bool fail = false;
 
 	for(;;)// a dummy loop for break on errors
 	{
@@ -535,8 +533,8 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults)
 	const char *message = use_defaults ?
 		"was locally changed to:" :
 		"changed locally, default was:";
-	for(unsigned int i = 0;
-		i<defaults.size();
+	for(vector<EixRcOption>::size_type i = 0;
+		i < defaults.size();
 		++i)
 	{
 		const char *typestring = "UNKNOWN";

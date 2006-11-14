@@ -51,7 +51,7 @@ class EbuildCache : public BasicCache {
 		bool make_cachefile(const char *name, const std::string &dir, const Package &package, const Version &version);
 		void delete_cachefile();
 	public:
-		EbuildCache(bool use_sh = false) : BasicCache(), cachefile(NULL), have_set_signals(false), use_ebuild_sh(use_sh)
+		EbuildCache(bool use_sh = false) : BasicCache(), have_set_signals(false), cachefile(NULL), use_ebuild_sh(use_sh)
 		{ }
 
 		~EbuildCache()

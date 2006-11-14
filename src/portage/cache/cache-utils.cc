@@ -60,6 +60,8 @@ bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::
 			return false;
 		}
 	}
+
+	return true;
 }
 
 #define open_skipping(nr, is, filename, error_callback) \

@@ -171,11 +171,11 @@ void PortageUserConfigReadVersionFile (const char *file, MaskList<KeywordMask> *
 {
 	vector<string> lines;
 	pushback_lines(file, &lines, false, true);
-	for(unsigned int i = 0;
+	for(vector<string>::size_type i = 0;
 		i<lines.size();
 		i++)
 	{
-		if(lines[i].size() == 0)
+		if(lines[i].empty())
 			continue;
 		try {
 			KeywordMask *m = NULL;
@@ -200,7 +200,6 @@ bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, K
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = list->get(p);
 	map<Version*,char> sorted_by_versions;
-	bool rvalue = false;
 
 	if(!keyword_masks)
 		return false;
@@ -266,11 +265,11 @@ bool PortageUserConfig::readKeywords() {
 	vector<string> lines;
 	pushback_lines("/etc/portage/package.keywords", &lines, false, true);
 
-	for(unsigned int i = 0;
+	for(vector<string>::size_type i = 0;
 		i<lines.size();
 		i++)
 	{
-		if(lines[i].size() == 0)
+		if(lines[i].empty())
 			continue;
 
 		try {
