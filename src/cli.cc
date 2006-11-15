@@ -51,7 +51,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 
 	bool need_logical_operator = false;
 	bool have_default_operator = false;
-	bool default_operator;
+	bool default_operator = false;
 	while(arg != end)
 	{
 		// Check for logical operator {{{

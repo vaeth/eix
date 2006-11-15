@@ -61,6 +61,8 @@ class PercentStatus {
 		 * @param max number of steps you want to do. */
 		PercentStatus(unsigned int max = 0)
 		{
+			m_max = m_run = 0;
+			m_step_size = 0;
 			if(max != 0) {
 				start(max);
 			}

@@ -120,6 +120,7 @@ class Cdb {
 	public:
 		Cdb(const char *file) {
 			cdb_data = NULL;
+			cdb_data_size = 0;
 			is_ready = false;
 			int fd = open(file, O_RDONLY);
 			if(fd == -1) {
