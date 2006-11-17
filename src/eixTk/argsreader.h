@@ -37,15 +37,23 @@ typedef std::pair<const char *,const char *> ArgPair;
 typedef struct Option
 {
 	enum Type {
-		NONE,          ///< No type set (will not be removed on fold)
 		BOOLEAN_T,     ///< Boolean. Will be set to true if found.
 		BOOLEAN_F,     ///< Boolean. Will be set to false if found.
 		BOOLEAN,       ///< Boolean. Will be flipped if found.
 		INTEGER,       ///< Int. Increase value if found.
-		STRING,        ///< String. Set if found.
-		PAIR,          ///< Pair of strings.
+		STRING,        ///< String. Barf if not found.
+		STRING_OPTIONAL,///< String. Empty if not found.
+		PAIR,          ///< Pair of strings. Barf if not found.
+		PAIR_OPTIONAL, ///< Pair of strings. Empty if not found.
 		STRINGLIST,    ///< Accumulative strings.
-		PAIRLIST       ///< Accumulative pairs of strings.
+		STRINGLIST_OPTIONAL,///< Accumulative strings. Empty if not found.
+		PAIRLIST,      ///< Accumulative pairs of strings.
+		PAIRLIST_OPTIONAL,///< Accumulative pairs of strings.
+		KEEP,          ///< Do not remove. No arg.
+		KEEP_STRING,   ///< Do not remove. String arg.
+		KEEP_STRING_OPTIONAL,///< Do not remove. String arg.
+		KEEP_PAIR,     ///< Do not remove. Pair of strings arg.
+		KEEP_PAIR_OPTIONAL ///< Do not remove. Pair of strings arg.
 	} type;
 
 	Option(const char *l, int s, enum Type t, int *i)
@@ -72,8 +80,8 @@ typedef struct Option
 		: type(t), longopt(l), shortopt(s), prlist(c)
 	{ }
 
-	Option(const char *l, int s)
-		: type(NONE), longopt(l), shortopt(s)
+	Option(const char *l, int s, enum Type t = KEEP)
+		: type(t), longopt(l), shortopt(s)
 	{ }
 
 	const char *longopt; ///< longopt of this pair.

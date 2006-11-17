@@ -115,6 +115,9 @@ dump_help(int exit_code)
 			"    -2, --slots           Match packages with two different slots.\n"
 			"    -u, --update          Match packages without best slotted version.\n"
 			"    -O, --overlay         Match packages from overlays.\n"
+			"    -J, --installed-overlay Match packages installed from overlays.\n"
+			"    --in-overlay OVERLAY           Match packages from OVERLAY.\n"
+			"    --installed-in-overlay OVERLAY Match packages installed from OVERLAY.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -167,24 +170,6 @@ sig_handler(int sig)
 				"Sorry for the inconvenience and thanks in advance!\n", program_name);
 	exit(1);
 }
-
-/*	If you want to add a new parameter to eix just insert a line into
- *	long_options. If you only want a longopt, add a new define.
- *
- *	-- ebeinroth
- */
-
-enum cli_options {
-	O_FMT = 256,
-	O_FMT_VERBOSE,
-	O_FMT_COMPACT,
-	O_DUMP,
-	O_DUMP_DEFAULTS,
-	O_CARE,
-	O_IGNORE_ETC_PORTAGE,
-	O_CURRENT,
-	O_DEBUG
-};
 
 const char *format_normal, *format_verbose, *format_compact;
 char overlay_mode;
@@ -244,6 +229,9 @@ static struct Option long_options[] = {
 	Option("slots",         '2'),
 	Option("update",        'u'),
 	Option("overlay",       'O'),
+	Option("overlay-installed",'J'),
+	Option("in-overlay",    O_OVERLAY, Option::KEEP_STRING_OPTIONAL),
+	Option("installed-in-overlay",O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
@@ -410,12 +398,6 @@ run_eix(int argc, char** argv)
 		close(1);
 	}
 
-	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick, rc_options.care);
-
-	PortageSettings portagesettings;
-	MarkedList *marked_list = NULL;
-	Matchatom *query = parse_cli(eixrc, varpkg_db, portagesettings, &marked_list, argreader.begin(), argreader.end());
-
 	string varname;
 	try {
 		if(rc_options.verbose_output) {
@@ -439,9 +421,11 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
-	eix::ptr_list<Package> matches;
-	eix::ptr_list<Package> all_packages;
+	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick, rc_options.care);
 
+	PortageSettings portagesettings;
+	MarkedList *marked_list = NULL;
+	Matchatom *query;
 
 	/* Open database file */
 	FILE *fp = fopen(EIX_CACHEFILE, "rb");
@@ -457,8 +441,14 @@ run_eix(int argc, char** argv)
 	if(!header.isCurrent()) {
 		fprintf(stderr, "Your database-file uses an obsolete format (%i, current is %i).\n"
 				"Please run 'update-eix' and try again.\n", header.version, DBHeader::current);
+		fclose(fp);
 		exit(1);
 	}
+
+	query = parse_cli(eixrc, varpkg_db, portagesettings, header, &marked_list, argreader.begin(), argreader.end());
+
+	eix::ptr_list<Package> matches;
+	eix::ptr_list<Package> all_packages;
 
 	PackageReader reader(fp, header.size);
 	while(reader.next())
@@ -478,6 +468,7 @@ run_eix(int argc, char** argv)
 				reader.skip();
 		}
 	}
+	fclose(fp);
 	if(rc_options.test_unused)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");

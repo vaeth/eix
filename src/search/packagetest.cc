@@ -50,6 +50,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p)
 {
 	vardbpkg =  &vdb;
 	portagesettings = &p;
+	overlay_list = overlay_inst_list = NULL;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
 	obsolete = overlay = installed = invert = update = slotted =
@@ -89,7 +90,8 @@ PackageTest::calculateNeeds() {
 
 	if((need < PackageReader::VERSIONS) &&
 		(dup_packages || dup_versions || slotted ||
-			update || overlay|| obsolete))
+			update || overlay|| obsolete ||
+			overlay_list || overlay_inst_list))
 	{
 		need = PackageReader::VERSIONS;
 	}
@@ -364,9 +366,37 @@ PackageTest::match(PackageReader *pkg) const
 				return invert;
 	}
 
-	if(overlay) { // -O
+	if(overlay) { // -O ''
 		get_p();
 		if(!(p->largest_overlay))
+			return invert;
+	}
+
+	if(overlay_list) { // -O 'something'
+		get_p();
+		bool have = false;
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if(overlay_list->find(it->overlay_key) == overlay_list->end())
+				continue;
+			have = true;
+			break;
+		}
+		if(!have)
+			return invert;
+	}
+
+	if(overlay_inst_list) { // -J 'something'
+		get_p();
+		bool have = false;
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if(overlay_inst_list->find(it->overlay_key) == overlay_inst_list->end())
+				continue;
+			if(vardbpkg->isInstalled(*p, *it)) {
+				have = true;
+				break;
+			}
+		}
+		if(!have)
 			return invert;
 	}
 

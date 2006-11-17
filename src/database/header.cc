@@ -32,6 +32,7 @@
 
 #include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
+#include <eixTk/filenames.h>
 
 using namespace std;
 
@@ -50,4 +51,57 @@ DBHeader::addOverlay(string overlay)
 {
 	overlays.push_back(overlay);
 	return countOverlays() - 1;
+}
+
+bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal) const
+{
+	if(minimal > countOverlays())
+		return false;
+	if(*name == '\0') {
+		if(countOverlays() == 1)
+			return false;
+		*num = (minimal != 0) ? minimal : 1;
+		return true;
+	}
+	if(minimal == 0) {
+		if(portdir) {
+			if(same_filenames(portdir, name)) {
+				*num = 0;
+				return true;
+			}
+		}
+	}
+	for(Version::Overlay i = minimal; i != countOverlays(); i++)
+	{
+		if(same_filenames(getOverlay(i), name)) {
+			*num = i;
+			return true;
+		}
+	}
+	// Is name a number?
+	Version::Overlay number;
+	const char *s = name;
+	for( ; ((*s) >= '0') && ((*s) <= '9') ; s++);
+	if(*s)
+		return false;
+	try {
+		number = atoi(name);
+		if(number >= countOverlays())
+			return false;
+		if(number < minimal)
+			return false;
+	}
+	catch(ExBasic e) {
+		return false;
+	}
+	*num = number;
+	return true;
+}
+
+void
+DBHeader::get_overlay_vector(set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal) const
+{
+	Version::Overlay curr;
+	for(curr = minimal; find_overlay(&curr, name, portdir, curr); curr++)
+		overlays->insert(curr);
 }

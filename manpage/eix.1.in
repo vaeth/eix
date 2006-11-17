@@ -168,6 +168,34 @@ This means that you should either upgrade or downgrade that package.
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
 .TP
+.BR --in-overlay " I<overlay>"
+Only match packages with at least one version in overlay I<overlay>.
+If this option is repeated, the additional I<overlay>s are joined
+to the list of admissible overlays.
+
+I<overlay> may be either the name (path) of the overlay or its number.
+Note that if you use the default B<OVERLAYS_LIST=all-used-renumbered>
+you do not see the correct overlay numbers; to get a list of the correct
+overlay numbers you can e.g. call
+
+B<OVERLAYS_LIST=all eix -e ''>
+
+The special values B<0> or B<$PORTDIR> match the "main" tree (which in
+this connection is considered as the 0'th overlay).
+
+If I<overlay> is empty (or omitted if B<--in-overlay> is the last option)
+it matches all overlays except for the "main" tree
+(i.e. B<--in-overlay ''> is the same as B<-O>).
+.TP
+.BR -J ", " --installed-overlay
+Only match packages with at least one installed version in an overlay.
+.TP
+.BR --installed-in-overlay " I<overlay>"
+This is analogous to B<--in-overlay> with the difference that only
+packages are matched which have at least one installed version in I<overlay>.
+For instance, B<--installed-in-overlay 0> will only match those packages
+which have at least one version which is also in the regular portage tree.
+.TP
 .BR -T ", " --test-obsolete
 Only match obsolete packages.
 

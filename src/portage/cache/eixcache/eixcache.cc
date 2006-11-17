@@ -32,6 +32,7 @@
 #include <database/header.h>
 #include <portage/packagetree.h>
 #include <eixTk/filenames.h>
+#include <portage/conf/portagesettings.h>
 
 #include <config.h>
 #include <string>
@@ -117,50 +118,17 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	{
 		if(!m_overlay.empty())
 		{
-			for(Version::Overlay i = 0; i != header.countOverlays(); i++)
+			const char *portdir = NULL;
+			if(portagesettings)
+				portdir = (*portagesettings)["PORTDIR"].c_str();
+			if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir))
 			{
-				if(same_filenames(header.getOverlay(i), m_overlay))
-				{
-					m_get_overlay = i;
-					m_overlay = "";
-					break;
-				}
+				fclose(fp);
+				m_error_callback("Cache file %s does not contain overlay %s",
+					file, m_overlay.c_str());
+				return false;
 			}
-			if(!m_overlay.empty())// Overlay not found
-			{
-				// Is m_overlay a number?
-				bool is_number = true;
-				const char *s = m_overlay.c_str();
-				for(string::size_type i = 0; i < m_overlay.length(); i++)
-				{
-					char c = *(s++);
-					if((c < '0') || (c > '9'))
-					{
-						is_number = false;
-						break;
-					}
-				}
-				if(is_number)
-				{
-					try {
-						m_get_overlay = atoi(m_overlay.c_str());
-					}
-					catch(ExBasic e) {
-						is_number = false;
-					}
-				}
-				if(is_number)
-					if(m_get_overlay >= header.countOverlays())
-						is_number = false;
-				if(!is_number)
-				{
-					fclose(fp);
-					m_error_callback("Cache file %s does not contain overlay %s",
-						file, m_overlay.c_str());
-					return false;
-				}
-				m_overlay = "";
-			}
+			m_overlay = "";
 		}
 	}
 

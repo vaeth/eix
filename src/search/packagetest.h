@@ -29,7 +29,8 @@
 #ifndef __PACKAGETEST_H__
 #define __PACKAGETEST_H__
 
-#include <string.h>
+#include <set>
+#include <string>
 
 #include <regex.h>
 #include <fnmatch.h>
@@ -37,6 +38,7 @@
 #include <global.h>
 
 #include <portage/vardbpkg.h>
+#include <portage/version.h>
 #include <portage/conf/portagesettings.h>
 #include <database/package_reader.h>
 
@@ -69,6 +71,17 @@ class PackageTest {
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p);
 
+		~PackageTest() {
+			if(overlay_list) {
+				delete overlay_list;
+				overlay_list = NULL;
+			}
+			if(overlay_inst_list) {
+				delete overlay_inst_list;
+				overlay_inst_list = NULL;
+			}
+		}
+
 		void setAlgorithm(BaseAlgorithm *p)
 		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
 
@@ -91,6 +104,21 @@ class PackageTest {
 
 		void Overlay()
 		{ overlay = true; }
+
+		std::set<Version::Overlay> *OverlayList()
+		{
+			if(!overlay_list)
+				overlay_list = new std::set<Version::Overlay>;
+			return overlay_list;
+		}
+
+		std::set<Version::Overlay> *OverlayInstList()
+		{
+			installed = true;
+			if(!overlay_inst_list)
+				overlay_inst_list = new std::set<Version::Overlay>;
+			return overlay_inst_list;
+		}
 
 		void DuplVersions(bool only_overlay)
 		{ dup_versions = true ; dup_versions_overlay = only_overlay; }
@@ -128,12 +156,16 @@ class PackageTest {
 		PackageReader::Attributes need;
 		/** Our string matching algorithm. */
 		std::auto_ptr<BaseAlgorithm> algorithm;
+
+		/** Other flags for tests */
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
 		bool overlay, obsolete;
 		bool update, update_matches_local;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
+
+		std::set<Version::Overlay> *overlay_list, *overlay_inst_list;
 
 		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;

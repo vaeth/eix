@@ -29,6 +29,7 @@
 #ifndef __DBHEADER_H__
 #define __DBHEADER_H__
 
+#include <set>
 #include <vector>
 #include <string>
 
@@ -56,10 +57,19 @@ class DBHeader {
 		/** Add overlay to directory-table and return key. */
 		Version::Overlay addOverlay(std::string overlay);
 
+		/** Find first overlay-number >=minimal for name.
+		    Name might be either a filename or a number string.
+		    The special name portdir (if defined) matches 0.
+		    The special name '' matches everything but 0. */
+		bool find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal = 0) const;
+
+		/** Add all overlay-numbers >=minimal for name to vec (name might be a number string). */
+		void get_overlay_vector(std::set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal = 0) const;
+
 		Version::Overlay countOverlays() const
 		{ return (Version::Overlay)(overlays.size()); }
 
-		bool isCurrent()
+		bool isCurrent() const
 		{ return version == DBHeader::current; }
 };
 #endif /* __DBHEADER_H__ */

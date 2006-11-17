@@ -32,7 +32,29 @@
 #include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>
 #include <output/formatstring.h>
+#include <database/header.h>
 
-Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
+Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
+
+/*	If you want to add a new parameter to eix just insert a line into
+ *	long_options. If you only want a longopt, add a new define.
+ *
+ *	-- ebeinroth
+ */
+
+enum cli_options {
+	O_FMT = 256,
+	O_FMT_VERBOSE,
+	O_FMT_COMPACT,
+	O_DUMP,
+	O_DUMP_DEFAULTS,
+	O_CARE,
+	O_IGNORE_ETC_PORTAGE,
+	O_CURRENT,
+	O_OVERLAY,
+	O_INSTALLED_OVERLAY,
+	O_DEBUG
+};
+
 
 #endif /* __CLI_H__ */

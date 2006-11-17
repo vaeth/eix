@@ -123,12 +123,19 @@ ArgumentReader::numargs(const int opt, struct Option *opt_table)
 		return 0;
 	switch(c->type)
 	{
-		case Option::INTEGER:
 		case Option::STRING:
+		case Option::STRING_OPTIONAL:
 		case Option::STRINGLIST:
+		case Option::STRINGLIST_OPTIONAL:
+		case Option::KEEP_STRING:
+		case Option::KEEP_STRING_OPTIONAL:
 			return 1;
 		case Option::PAIR:
+		case Option::PAIR_OPTIONAL:
 		case Option::PAIRLIST:
+		case Option::PAIRLIST_OPTIONAL:
+		case Option::KEEP_PAIR:
+		case Option::KEEP_PAIR_OPTIONAL:
 			return 2;
 		default:
 			break;
@@ -187,7 +194,10 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 			continue;
 		}
 
-		const char *remember;
+		const char *remember = "";
+		const char *second = "";
+		bool keep = false;
+		bool optional = false;
 		switch(c->type)
 		{
 			case Option::BOOLEAN_F:
@@ -205,37 +215,76 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 					++*c->integer;
 					it = erase(it);
 					break;
+			case Option::KEEP_STRING_OPTIONAL:
+			case Option::KEEP_PAIR_OPTIONAL:
+					optional = true;
+			case Option::KEEP_STRING:
+			case Option::KEEP_PAIR:
+					keep = true;
 			case Option::STRING:
 			case Option::PAIR:
 			case Option::STRINGLIST:
 			case Option::PAIRLIST:
-					it = erase(it);
-					__ASSERT(it != end(), "Missing parameter to --%s\n", c->longopt);
-					remember = it->m_argument;
-					it = erase(it);
-					if(c->type == Option::STRINGLIST)
+			case Option::STRING_OPTIONAL:
+			case Option::PAIR_OPTIONAL:
+			case Option::STRINGLIST_OPTIONAL:
+			case Option::PAIRLIST_OPTIONAL:
+					switch(c->type) {
+						case Option::STRING_OPTIONAL:
+						case Option::STRINGLIST_OPTIONAL:
+						case Option::PAIR_OPTIONAL:
+						case Option::PAIRLIST_OPTIONAL:
+							optional = true;
+						default:
+							break;
+					}
+					if(keep)
+						++it;
+					else
+						it = erase(it);
+					if(it == end())
+						__ASSERT(optional, "Missing parameter to --%s\n", c->longopt);
+					else {
+						remember = it->m_argument;
+						if(keep)
+							++it;
+						else
+							it = erase(it);
+					}
+					if((c->type == Option::KEEP_STRING) || (c->type == Option::KEEP_STRING_OPTIONAL))
+						break;
+					if((c->type == Option::STRINGLIST) || (c->type == Option::STRINGLIST_OPTIONAL))
 					{
 						c->strlist->push_back(remember);
 						break;
 					}
-					if(c->type == Option::STRING)
+					if((c->type == Option::STRING) || (c->type == Option::STRING_OPTIONAL))
 					{
 						*(c->str) = remember;
 						break;
 					}
-					__ASSERT(it != end(), "Missing second parameter to --%s\n", c->longopt);
-					if(c->type == Option::PAIR)
+					if(it == end())
+						__ASSERT(optional, "Missing second parameter to --%s\n", c->longopt);
+					else {
+						second = it->m_argument;
+						if(keep)
+							++it;
+						else
+							it = erase(it);
+					}
+					if(keep)
+					//((c->type == Option::KEEP_PAIR) || (c->type == Option::KEEP_PAIR_OPTIONAL))
+						break;
+					if((c->type == Option::PAIR) || (c->type == Option::PAIR_OPTIONAL))
 					{
 						*((c->pr).first)  = remember;
-						*((c->pr).second) = it->m_argument;
+						*((c->pr).second) = second;
+						break;
 					}
-					else
-					{
-						c->prlist->push_back(ArgPair(remember, it->m_argument));
-					}
-					it = erase(it);
+					//if((c->type == Option::PAIRLIST) || (c->type == Option::PAIRLIST_OPTIONAL))
+						c->prlist->push_back(ArgPair(remember, second));
 					break;
-			default:
+			default: // KEEP
 					++it;
 		}
 	}

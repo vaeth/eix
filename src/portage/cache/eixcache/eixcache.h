@@ -28,12 +28,13 @@
 #define __EIXCACHE_H__
 
 #include <portage/cache/base.h>
+#include <portage/version.h>
 
 class EixCache : public BasicCache {
 	private:
 		std::string m_name, m_file, m_overlay;
 		bool m_only_overlay;
-		short m_get_overlay;
+		Version::Overlay m_get_overlay;
 		bool never_add_categories;
 
 	public:

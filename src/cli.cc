@@ -40,9 +40,17 @@ using namespace std;
 	current = next; \
 	test = new PackageTest(varpkg_db, portagesettings); }
 
+inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
+{
+	ArgumentReader::iterator next = arg;
+	if(++next == end)
+		return false;
+	arg = next;
+	return true;
+}
 
 Matchatom *
-parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
@@ -106,7 +114,28 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, M
 				  break;
 			case 'u': test->Update(eixrc.getBool("UPGRADE_ALWAYS_LOCAL"));
 				  break;
+			case O_OVERLAY:
+				  if(optional_increase(arg, end)) {
+					header.get_overlay_vector(
+						test->OverlayList(),
+						arg->m_argument,
+						portagesettings["PORTDIR"].c_str());
+					break;
+				  }
 			case 'O': test->Overlay();
+				  break;
+			case O_INSTALLED_OVERLAY:
+				  if(optional_increase(arg, end)) {
+					header.get_overlay_vector(
+						test->OverlayInstList(),
+						arg->m_argument,
+						portagesettings["PORTDIR"].c_str());
+					break;
+				  }
+			case 'J': header.get_overlay_vector(
+					test->OverlayInstList(),
+					"",
+					portagesettings["PORTDIR"].c_str());
 				  break;
 			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
 				  break;
