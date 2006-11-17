@@ -366,13 +366,13 @@ PackageTest::match(PackageReader *pkg) const
 				return invert;
 	}
 
-	if(overlay) { // -O ''
+	if(overlay) { // -O
 		get_p();
 		if(!(p->largest_overlay))
 			return invert;
 	}
 
-	if(overlay_list) { // -O 'something'
+	if(overlay_list) { // --in-overlay 'something'
 		get_p();
 		bool have = false;
 		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
@@ -385,17 +385,26 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(overlay_inst_list) { // -J 'something'
+	if(overlay_inst_list) { // -J or --installed-in-overlay
 		get_p();
 		bool have = false;
+		bool get_installed = true;
+		vector<InstVersion> *installed_versions = NULL;
 		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
 			if(overlay_inst_list->find(it->overlay_key) == overlay_inst_list->end())
 				continue;
-			if(vardbpkg->isInstalled(*p, *it)) {
+			if(get_installed) {
+				get_installed = false;
+				installed_versions = vardbpkg->getInstalledVector(*p);
+			}
+			if(!installed_versions)
+				continue;
+			if(VarDbPkg::isInVec(installed_versions,*it)) {
 				have = true;
 				break;
 			}
 		}
+		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
 		if(!have)
 			return invert;
 	}

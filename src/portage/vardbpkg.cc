@@ -65,10 +65,9 @@ vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const 
 	return &(cat_it->second);
 }
 
-/** Returns true if a Package installed. */
-bool VarDbPkg::isInstalled(const Package &p, const BasicVersion *v)
+/** Returns true if v is in vec. v=NULL is always in vec */
+bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v)
 {
-	vector<InstVersion> *vec = getInstalledVector(p);
 	if(vec)
 	{
 		if(!v)

@@ -114,7 +114,6 @@ class PackageTest {
 
 		std::set<Version::Overlay> *OverlayInstList()
 		{
-			installed = true;
 			if(!overlay_inst_list)
 				overlay_inst_list = new std::set<Version::Overlay>;
 			return overlay_inst_list;

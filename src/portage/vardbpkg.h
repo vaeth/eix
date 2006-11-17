@@ -80,10 +80,14 @@ class VarDbPkg {
 			return getInstalledVector(p.category, p.name);
 		};
 
+		/** Returns true if v is in vec. v=NULL is always in vec */
+		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULL);
+
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
 		 * @param v If not NULL, check for this BasicVersion. */
-		bool isInstalled(const Package &p, const BasicVersion *v = NULL);
+		bool isInstalled(const Package &p, const BasicVersion *v = NULL)
+		{ return isInVec(getInstalledVector(p), v); }
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */
