@@ -404,7 +404,6 @@ PackageTest::match(PackageReader *pkg) const
 				break;
 			}
 		}
-		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
 		if(!have)
 			return invert;
 	}
