@@ -250,6 +250,10 @@ bool PortageUserConfigCheckFile(Package *p, const char *file, MaskList<KeywordMa
 	return PortageUserConfigCheckList(p, list, flag_double, flag_in);
 }
 
+typedef struct {
+	string keywords;
+	bool locally_double;
+} KeywordsFlag;
 
 bool PortageUserConfig::readKeywords() {
 	/* Prepend a ~ to every token.
@@ -265,23 +269,58 @@ bool PortageUserConfig::readKeywords() {
 	vector<string> lines;
 	pushback_lines("/etc/portage/package.keywords", &lines, false, true);
 
-	for(vector<string>::size_type i = 0;
-		i<lines.size();
-		i++)
+	/* Read only the last line for each "first" entry, e.g. in the example
+		foo/bar 1
+		foo/bar 2
+		=foo/bar-1 3
+		=foo/bar-1 4
+	   the line 1 and 3 are ignored but 2 and 4 are both put to keywords
+	   (even if they should influence each other).
+	   This is strange, but this is the way portage does it.
+
+	   We read in two passes, first creating the actual list in a map
+	   (and remember BTW which were doubled) and then we push the map
+	   in the original order to m_keywords */
+
+	map<string, KeywordsFlag> have;
+	for(vector<string>::size_type i = 0; i < lines.size(); ++i)
 	{
 		if(lines[i].empty())
 			continue;
 
+		string::size_type n = lines[i].find_first_of("\t ");
+		string name, content;
+		if(n == string::npos) {
+			name = lines[i];
+			content = fscked_arch;
+		}
+		else {
+			name = lines[i].substr(0, n);
+			content = lines[i].substr(n + 1);
+		}
+		lines[i] = name;
+		map<string, KeywordsFlag>::iterator old = have.find(name);
+		if(old == have.end()) {
+			KeywordsFlag *f = &(have[name]);
+			f->locally_double = false;
+			f->keywords = content;
+		}
+		else {
+			(old->second).locally_double = true;
+			(old->second).keywords = content;
+		}
+	}
+
+	for(vector<string>::size_type i = 0; i != lines.size(); ++i)
+	{
+		if(lines[i].empty())
+			continue;
 		try {
-			string::size_type n = lines[i].find_first_of("\t ");
-			if(n == string::npos) {
-				KeywordMask *m = new KeywordMask(lines[i].c_str());
-				m->keywords = fscked_arch;
-				m_keywords.add(m);
-			}
-			else {
-				KeywordMask *m = new KeywordMask(lines[i].substr(0, n).c_str());
-				m->keywords = lines[i].substr(n + 1);
+			KeywordMask *m = new KeywordMask(lines[i].c_str());
+			if(m) {
+				KeywordsFlag *f = &(have[lines[i]]);
+				m->keywords       = f->keywords;
+				m->locally_double = f->locally_double;
 				m_keywords.add(m);
 			}
 		}
@@ -324,7 +363,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 	map<Version*,string> sorted_by_versions;
 	bool rvalue = false;
 
-	if(keyword_masks != NULL && keyword_masks->empty() == false)
+	if(keyword_masks && (!keyword_masks->empty()))
 	{
 		rvalue = true;
 		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
@@ -338,6 +377,12 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 				++v)
 			{
 				sorted_by_versions[*v].append(" " + it->keywords);
+				if(!it->locally_double)
+					continue;
+				if(!(check & Keywords::RED_DOUBLE_LINE))
+					continue;
+				v->set_redundant((v->get_redundant()) |
+					Keywords::RED_DOUBLE_LINE);
 			}
 		}
 	}

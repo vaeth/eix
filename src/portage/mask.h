@@ -130,6 +130,7 @@ class KeywordMask : public Mask {
 		{ }
 
 		std::string keywords;
+		bool locally_double;
 };
 
 #endif /* __MASK_H__ */

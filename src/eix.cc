@@ -473,7 +473,7 @@ run_eix(int argc, char** argv)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		cout << "\n";
-		print_unused("/etc/portage/package.keywords", all_packages, empty);
+		print_unused("/etc/portage/package.keywords", all_packages);
 		print_unused("/etc/portage/package.mask",     all_packages);
 		print_unused("/etc/portage/package.unmask",   all_packages);
 		print_unused("/etc/portage/package.use",      all_packages, empty);

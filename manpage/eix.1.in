@@ -1233,6 +1233,15 @@ resp. at least some version (in case B<+>) of the package is installed.
 The result is positive if at least one of the two tests is positive.
 Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
 .TP
+.BR REDUNDANT_IF_DOUBLE_LINE " " (String)
+Applies if /etc/portage/package.keywords has two lines for identical targets,
+i.e. such that portage would drop the first of these lines.
+Note that lines with targets B<foo/bar> and B<=foo/bar-1> are considered as
+different in this context by portage (and thus also by eix)
+even if B<foo/bar> would apply to version B<1>.
+The latter redundancy can be found implicitly with B<REDUNDANT_IF_DOUBLE_LINE>,
+B<REDUNDANT_IF_MIXED>, and B<REDUNDANT_IF_STRANGE>.
+.TP
 .BR REDUNDANT_IF_MIXED "  " (String ", see above")
 Applies if /etc/portage/package.keywords lists two different keywords,
 e.g. ~ARCH and -*, for the versions in question.

@@ -146,6 +146,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  {
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
 						Keywords::RED_DOUBLE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LINE",
+						Keywords::RED_DOUBLE_LINE, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
 						Keywords::RED_MIXED, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",

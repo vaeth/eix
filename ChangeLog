@@ -3,6 +3,10 @@
 *eix-0.8.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add options -J, --in-overlay, --installed-in-overlay
+	- Bugfix: Treat lines with double target in
+	  /etc/portage/package.keywords as portage does
+	  (i.e. ignore earlier lines if target is completely identical).
+	- Introduce REDUNDANT_IF_DOUBLE_LINES.
 	- Some code cleanup and fixing of some compiler warnings.
 	  Thanks to KIMURA Masaru / hiyuh <hiyuh.root@gmail.com>
 	  http://bugs.gentoo.org/show_bug.cgi?id=155160

@@ -1010,6 +1010,11 @@ eixrc.addDefault(
 			"for the versions in question.")
 		);
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE_LINE",
+			"some",
+			"Applies if /etc/portage/package.keywords has two lines for identical target.")
+		);
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MIXED",
 			"some",
 			"Applies if /etc/portage/package.keywords lists two different keywords,\n"

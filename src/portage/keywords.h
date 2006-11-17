@@ -48,10 +48,11 @@ class Keywords {
 			PROFILE_MASK      ,
 			SYSTEM_PACKAGE    ;
 
-		typedef unsigned short Redundant;
+		typedef long Redundant;
 		static const Redundant
 			RED_NOTHING,       /**< None of the following           */
-			RED_DOUBLE ,       /**< Same keyword twice              */
+			RED_DOUBLE,        /**< Same keyword twice              */
+			RED_DOUBLE_LINE,   /**< Same keyword line twice         */
 			RED_MIXED,         /**< Weaker and stronger keyword     */
 			RED_WEAKER,        /**< Unnecessarily strong keyword    */
 			RED_STRANGE,       /**< Unrecognized OTHERARCH or -OTHERARCH */
