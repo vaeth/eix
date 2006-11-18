@@ -76,6 +76,10 @@ class PackageTest {
 				delete overlay_list;
 				overlay_list = NULL;
 			}
+			if(overlay_only_list) {
+				delete overlay_only_list;
+				overlay_only_list = NULL;
+			}
 			if(overlay_inst_list) {
 				delete overlay_inst_list;
 				overlay_inst_list = NULL;
@@ -110,6 +114,13 @@ class PackageTest {
 			if(!overlay_list)
 				overlay_list = new std::set<Version::Overlay>;
 			return overlay_list;
+		}
+
+		std::set<Version::Overlay> *OverlayOnlyList()
+		{
+			if(!overlay_only_list)
+				overlay_only_list = new std::set<Version::Overlay>;
+			return overlay_only_list;
 		}
 
 		std::set<Version::Overlay> *OverlayInstList()
@@ -164,7 +175,8 @@ class PackageTest {
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 
-		std::set<Version::Overlay> *overlay_list, *overlay_inst_list;
+		std::set<Version::Overlay>
+			*overlay_list, *overlay_only_list, *overlay_inst_list;
 
 		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;

@@ -169,11 +169,12 @@ This means that you should either upgrade or downgrade that package.
 Only match packages with at least one version in an overlay.
 .TP
 .BR --in-overlay " I<overlay>"
-Only match packages with at least one version in overlay I<overlay>.
-If this option is repeated, the additional I<overlay>s are joined
+Only match packages with at least one version in an overlay matching I<overlay>.
+
+If this option is repeated, the additional I<overlay> arguments are joined
 to the list of admissible overlays.
 
-I<overlay> may be either the name (path) of the overlay or its number.
+I<overlay> may be either a wildcard pattern or a number.
 Note that if you use the default B<OVERLAYS_LIST=all-used-renumbered>
 you do not see the correct overlay numbers; to get a list of the correct
 overlay numbers you can e.g. call
@@ -186,6 +187,16 @@ this connection is considered as the 0'th overlay).
 If I<overlay> is empty (or omitted if B<--in-overlay> is the last option)
 it matches all overlays except for the "main" tree
 (i.e. B<--in-overlay ''> is the same as B<-O>).
+.TP
+.BR --only-in-overlay " I<overlay>"
+Only match packages which has only versions in an overlay matching I<overlay>.
+
+If this option is repeated, the additional I<overlay> arguments are joined
+to the list of admissible overlays.
+
+I<overlay> may be either a wildcard pattern or a number, as in B<--in-overlay>.
+In particular, B<--in-overlay ''> matches all packages which are not in the
+official portage tree but only in some overlay.
 .TP
 .BR -J ", " --installed-overlay
 Only match packages with at least one installed version in an overlay.
@@ -326,23 +337,25 @@ It is explicitly admissible to use this option repeatedly to add several overlay
 This is similar to adding I<overlay> to B<EXCLUDE_OVERLAY>
 but has the advantage that you need not modify the latter,
 and you can also use spaces in I<overlay>.
-Always exclude I<overlay> (even for later B<--add-overlay> options),
-no matter whether I<overlay> is in the list of overlays.
+I<overlay> is considered as a mask. All matching overlays
+(even those added by later B<--add-overlay> options)
+are excluded from the list of overlays.
 The B<PORTDIR> directory is considered as any other overlay which can be excluded
 (in this case, the first I<overlay> in the list will be stored as B<PORTDIR>).
 It is explicitly admissible to use this option repeatedly to exclude several overlays.
 .TP
 .BR -m " " I<overlay> " " I<method> ", " --override-method " " I<overlay> " " I<method>
 Change the cache method of I<overlay>
-(the B<PORTDIR> directory is an allowed I<overlay>)
-to I<method>.
-If I<overlay> is not in the list of overlays, this option has no effect.
+(the B<PORTDIR> directory is an allowed I<overlay>) to I<method>.
+I<overlay> is considered as a mask, i.e. it may contain wildcards.
+If I<overlay> does not match anything in the list of overlays,
+this option has no effect.
 This option is similar to adding I<overlay> I<method> to
 B<ADD_OVERRIDE_CACHE_METHOD> but has the advantage that you need not
 modify the latter and you can also use spaces in I<overlay> or I<method>.
 It is explicitly admissible to use this option repeatedly to
 override cache methods for several overlays.
-The last override has precedence.
+The last matching override takes precedence.
 .\" }}}
 
 .\" {{{ OUTPUT
@@ -928,7 +941,7 @@ Set default levenshtein-distance.
 
 .TP
 .BR EXCLUDE_OVERLAY "  " (String)
-Set a list of overlays that are excluded from the index (separators are [\\n\\r\\t ]).
+Set a list of wildcard patterns for overlay paths that are excluded from the index (separators are [\\n\\r\\t ]).
 See the B<update-eix> option B<--exclude-overlay>.
 
 .TP
@@ -952,7 +965,8 @@ These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
 The cache method of I<overlay> is set to I<method>, overriding the
 settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
 if I<overlay> is the B<PORTDIR> directory).
-Later entries override earlier ones.
+I<overlay> is interpreted as a wildcard pattern.
+Later entries override earlier ones: The last matching entry takes precedence.
 
 The reason for several variables is that additions/changes are possible
 without touching the other variables:
@@ -1069,7 +1083,9 @@ If you do not want this, use B<eix*> (see below).
 If the I<overlay> is given, then only the entries corresponding
 to that overlay within I<FILE> are read. If I<overlay> is empty or not given,
 this means that the "main" tree in I<FILE> is read.
-I<overlay> is the name of the overlay directory as stored in I<FILE>.
+I<overlay> is first considered as a wildcard pattern;
+only the first overlay name in I<FILE>
+(i.e. with the smallest number) matching I<overlay> is considered.
 If no such name exists and I<overlay> is a number, then this number is
 interpreted as the number of the overlay as stored in I<FILE>.
 Note that I<overlay> has in general no relation with the current overlay

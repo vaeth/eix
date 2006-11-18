@@ -34,14 +34,16 @@
 #include <vector>
 
 /** Compare whether two filenames are identical */
-bool same_filenames(const std::string &a, const std::string &b);
+bool same_filenames(const char *mask, const char *name, bool glob = false);
 
+/** Return first match in a list of filenames/patterns. */
 inline
 std::vector<std::string>::const_iterator find_filenames(const std::vector<std::string>::const_iterator start,
-		const std::vector<std::string>::const_iterator end, const std::string &search)
+		const std::vector<std::string>::const_iterator end, const char *search,
+		bool list_of_patterns = false)
 {
 	for(std::vector<std::string>::const_iterator i = start; i != end; ++i)
-		if(same_filenames(*i, search))
+		if(same_filenames(i->c_str(), search, list_of_patterns))
 			return i;
 	return end;
 }

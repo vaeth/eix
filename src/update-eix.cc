@@ -167,13 +167,13 @@ print_help(int ret)
 			"\n"
 			" -o  --output            output to another file than"EIX_CACHEFILE"\n"
 			"                         In addition, all permission checks are omitted.\n"
-			" -x  --exclude-overlay   exclude an overlay from the update-process.\n"
+			" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
 			"                         Note that you can also exclude PORTDIR\n"
 			"                         using this option.\n"
 			"\n"
 			" -a  --add-overlay       add an overlay to the update-process.\n"
 			"\n"
-			" -m  --override-method   override cache method for a specified overlay.\n"
+			" -m  --override-method   override cache method for matching overlays.\n"
 			"\n"
 			"You can contact the developers in #eix on irc.freenode.net or on\n"
 			"the sourceforge-page "PACKAGE_BUGREPORT".\n"
@@ -334,9 +334,9 @@ run_update_eix(int argc, char *argv[])
 	CacheTable table;
 	{
 		map<string, string> *override_ptr = (override.size() ? &override : NULL);
-		if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-				portage_settings["PORTDIR"]) == excluded_overlays.end())
-			table.addCache(portage_settings["PORTDIR"], eixrc["PORTDIR_CACHE_METHOD"].c_str(), override_ptr);
+		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
+				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())
+			table.addCache(portage_settings["PORTDIR"].c_str(), eixrc["PORTDIR_CACHE_METHOD"].c_str(), override_ptr);
 		else
 			INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
 
@@ -345,19 +345,19 @@ run_update_eix(int argc, char *argv[])
 		{
 			// Don't add double overlays
 			if(find_filenames(portage_settings.overlays.begin(), portage_settings.overlays.end(),
-					*it) != portage_settings.overlays.end())
+					it->c_str()) != portage_settings.overlays.end())
 				continue;
 			// Don't add PORTDIR
-			if(same_filenames(portage_settings["PORTDIR"], *it))
+			if(same_filenames(it->c_str(), portage_settings["PORTDIR"].c_str()))
 				continue;
 			portage_settings.overlays.push_back(*it);
 		}
 
 		for(vector<string>::size_type i = 0; i < portage_settings.overlays.size(); ++i)
 		{
-			if( find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-					portage_settings.overlays[i]) == excluded_overlays.end())
-				table.addCache(portage_settings.overlays[i], eixrc["OVERLAY_CACHE_METHOD"].c_str(), override_ptr);
+			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
+					portage_settings.overlays[i].c_str(), true) == excluded_overlays.end())
+				table.addCache(portage_settings.overlays[i].c_str(), eixrc["OVERLAY_CACHE_METHOD"].c_str(), override_ptr);
 			else
 				INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
 		}

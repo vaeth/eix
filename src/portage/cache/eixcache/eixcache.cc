@@ -121,7 +121,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			const char *portdir = NULL;
 			if(portagesettings)
 				portdir = (*portagesettings)["PORTDIR"].c_str();
-			if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir))
+			if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, true))
 			{
 				fclose(fp);
 				m_error_callback("Cache file %s does not contain overlay %s",

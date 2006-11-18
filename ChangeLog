@@ -2,11 +2,15 @@
 
 *eix-0.8.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Add options -J, --in-overlay, --installed-in-overlay
-	- Bugfix: Treat lines with double target in
-	  /etc/portage/package.keywords as portage does
+	- Add options --in-overlay, --only-in-overlay
+	- Add options -J, --installed-in-overlay
+	- Allow wildcard patterns for overlays in --exclude-overlay and
+	  --override-method (and for the corresponding variables) and
+	  for the overlay references in cache method eix/eix*
+	- Bugfix: Treat lines with identical target in
+	  /etc/portage/package.keywords in the way portage does it
 	  (i.e. ignore earlier lines if target is completely identical).
-	- Introduce REDUNDANT_IF_DOUBLE_LINES.
+	- Introduce REDUNDANT_IF_DOUBLE_LINES (related to previous bugfix).
 	- Some code cleanup and fixing of some compiler warnings.
 	  Thanks to KIMURA Masaru / hiyuh <hiyuh.root@gmail.com>
 	  http://bugs.gentoo.org/show_bug.cgi?id=155160

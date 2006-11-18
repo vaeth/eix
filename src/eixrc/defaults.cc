@@ -878,7 +878,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CACHE_METHOD",
 			"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
-			"This is a list of pairs DIRECTORY METHOD. Later entries take precedence.")
+			"This is a list of pairs DIR-PATTERN METHOD. Later entries take precedence.")
 		);
 
 eixrc.addDefault(

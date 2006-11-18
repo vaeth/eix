@@ -124,6 +124,19 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  }
 			case 'O': test->Overlay();
 				  break;
+			case O_ONLY_OVERLAY:
+				  if(optional_increase(arg, end)) {
+					header.get_overlay_vector(
+						test->OverlayOnlyList(),
+						arg->m_argument,
+						portagesettings["PORTDIR"].c_str());
+					break;
+				  }
+				  header.get_overlay_vector(
+					test->OverlayOnlyList(),
+					"",
+					portagesettings["PORTDIR"].c_str());
+				  break;
 			case O_INSTALLED_OVERLAY:
 				  if(optional_increase(arg, end)) {
 					header.get_overlay_vector(

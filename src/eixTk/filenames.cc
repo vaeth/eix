@@ -25,39 +25,43 @@
  ***************************************************************************/
 
 #include <eixTk/filenames.h>
+#include <fnmatch.h>
+
+using namespace std;
+
+string normalize_path(const char *path)
+{
+	string name(path);
+	for(string::size_type i = 0; i < name.size(); ++i)
+	{
+		// Erase all / following one /
+		if(name[i] == '/') {
+			string::size_type n = 0;
+			for(string::size_type j = i + 1 ;
+				j < name.size(); ++j) {
+				if(name[j] != '/')
+					break;
+				++n;
+			}
+			if(n)
+				name.erase(i + 1, n);
+		}
+	}
+	// Erase trailing / if it is not the first character
+	string::size_type s = name.size();
+	if(s > 1) {
+		if(name[--s] == '/')
+			name.erase(s, 1);
+	}
+	return name;
+}
 
 /** Compare whether two filenames are identical */
-bool same_filenames(const std::string &a, const std::string &b)
+bool same_filenames(const char *mask, const char *name, bool glob)
 {
-	const char *s = a.c_str();
-	const char *t = b.c_str();
-	bool first = true;
-	while(1)
-	{
-		const char c = *(s++);
-		if(c == '/')
-		{
-			while(*s == '/')
-				s++;
-		}
-		const char d = *(t++);
-		if(d == '/')
-		{
-			while(*t == '/')
-				t++;
-		}
-		if( c != d )
-		{
-			if(first)
-				return false;
-			if(( c == '\0' ) && (d == '/') && (*t == '\0'))
-				return true;
-			if(( d == '\0' ) && (c == '/') && (*s == '\0'))
-				return true;
-			return false;
-		}
-		first = false;
-		if( c == '\0' )
-			return true;
-	}
+	string m = normalize_path(mask);
+	string n = normalize_path(name);
+	if(!glob)
+		return (m == n);
+	return (fnmatch(m.c_str(), n.c_str(), 0) == 0);
 }

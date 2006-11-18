@@ -118,6 +118,7 @@ dump_help(int exit_code)
 			"    -J, --installed-overlay Match packages installed from overlays.\n"
 			"    --in-overlay OVERLAY           Match packages from OVERLAY.\n"
 			"    --installed-in-overlay OVERLAY Match packages installed from OVERLAY.\n"
+			"    --only-in-overlay OVERLAY      Match packages only in OVERLAY.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -228,10 +229,11 @@ static struct Option long_options[] = {
 	Option("slotted",       '1'),
 	Option("slots",         '2'),
 	Option("update",        'u'),
-	Option("overlay",       'O'),
-	Option("overlay-installed",'J'),
-	Option("in-overlay",    O_OVERLAY, Option::KEEP_STRING_OPTIONAL),
-	Option("installed-in-overlay",O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
+	Option("overlay",              'O'),
+	Option("installed-overlay",    'J'),
+	Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL),
+	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
+	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),

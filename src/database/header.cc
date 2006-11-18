@@ -53,7 +53,7 @@ DBHeader::addOverlay(string overlay)
 	return countOverlays() - 1;
 }
 
-bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal) const
+bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal, bool test_saved_portdir) const
 {
 	if(minimal > countOverlays())
 		return false;
@@ -65,7 +65,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 	}
 	if(minimal == 0) {
 		if(portdir) {
-			if(same_filenames(portdir, name)) {
+			if(same_filenames(name, portdir, true)) {
 				*num = 0;
 				return true;
 			}
@@ -73,7 +73,9 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 	}
 	for(Version::Overlay i = minimal; i != countOverlays(); i++)
 	{
-		if(same_filenames(getOverlay(i), name)) {
+		if(same_filenames(name, getOverlay(i).c_str(), true)) {
+			if((!test_saved_portdir) && (i == 0))
+				continue;
 			*num = i;
 			return true;
 		}
@@ -99,9 +101,9 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 }
 
 void
-DBHeader::get_overlay_vector(set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal) const
+DBHeader::get_overlay_vector(set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal, bool test_saved_portdir) const
 {
 	Version::Overlay curr;
-	for(curr = minimal; find_overlay(&curr, name, portdir, curr); curr++)
+	for(curr = minimal; find_overlay(&curr, name, portdir, curr, test_saved_portdir); curr++)
 		overlays->insert(curr);
 }

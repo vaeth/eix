@@ -43,27 +43,27 @@ class CacheTable
 		~CacheTable()
 		{ delete_and_clear(); }
 
-		void addCache(std::string directory, std::string cache_name, const std::map<std::string, std::string> *override)
+		void addCache(const char *directory, std::string cache_name, const std::map<std::string, std::string> *override)
 		{
 			for(CacheTable::iterator it=begin(); it != end(); ++it)
-				if(same_filenames(directory, it->getPath()))
+				if(same_filenames(directory, (it->getPath()).c_str()))
 					return;
 			if(override)
 			{
 				// If we would look for identical names, we could use the much faster
 				// std::map<std::string, std::string>::const_iterator found = override->find(directory);
-				std::map<std::string, std::string>::const_iterator found;
-				for(found = override->begin();
-					found != override->end(); ++found)
-					if(same_filenames(directory, found->first))
+				std::map<std::string, std::string>::const_reverse_iterator found;
+				for(found = override->rbegin();
+					found != override->rend(); ++found)
+					if(same_filenames((found->first).c_str(), directory, true))
 						break;
-				if(found != override->end())
+				if(found != override->rend())
 					cache_name = found->second;
 			}
 			BasicCache *cache = get_cache(cache_name);
 			if(cache == NULL)
 			{
-				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory.c_str()));
+				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory));
 			}
 
 			cache->setScheme(directory);

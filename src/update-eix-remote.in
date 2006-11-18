@@ -201,8 +201,18 @@ AddUpdateArgs () {
 	done
 }
 
+AddUpdateQuoting () {
+	local K
+	K="${1//\\/\\\\}"
+	K="${K//\?/\?}"
+	K="${K//\*/\*}"
+	shift
+	AddUpdateArgs "${K}" "${@}"
+}
+
 AddMethod () {
-	AddUpdateArgs '-m' "$1" "$2"
+	AddUpdateArgs '-m'
+	AddUpdateQuoting "${1}" "${2}"
 }
 
 AddOverlays () {
@@ -213,9 +223,10 @@ AddOverlays () {
 }
 
 AddExcludes () {
-	local J
+	local J L
 	for J; do
-		AddUpdateArgs '-x' "${J}"
+		AddUpdateArgs '-x'
+		AddUpdateQuoting "${J}"
 	done
 }
 
