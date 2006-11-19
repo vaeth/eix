@@ -88,13 +88,13 @@ Options:
 VERBOSE=1
 FETCHUSER=''
 while getopts 'vqu:o:?hH' OPTION; do
-case "${OPTION}" in
-  v) VERBOSE=1;;
-  q) VERBOSE='';;
-  u) FETCHUSER="${OPTARG}";;
-  o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
-  *) Usage 0;;
-esac
+	case "${OPTION}" in
+		v) VERBOSE=1;;
+		q) VERBOSE='';;
+		u) FETCHUSER="${OPTARG}";;
+		o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
+		*) Usage 0;;
+	esac
 done
 shift $((OPTIND-1))
 
@@ -206,6 +206,7 @@ AddUpdateQuoting () {
 	K="${1//\\/\\\\}"
 	K="${K//\?/\?}"
 	K="${K//\*/\*}"
+	K="${K//\[/\[}"
 	shift
 	AddUpdateArgs "${K}" "${@}"
 }
@@ -223,7 +224,7 @@ AddOverlays () {
 }
 
 AddExcludes () {
-	local J L
+	local J
 	for J; do
 		AddUpdateArgs '-x'
 		AddUpdateQuoting "${J}"
