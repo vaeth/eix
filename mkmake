@@ -1,12 +1,13 @@
 #! /bin/bash
 
-usage() {
+Usage() {
 	echo "Usage: ./${0##*/} [options] args-for-make
 Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
   -c  Use only debugging-safe CXXFLAGS"
+	exit ${1}
 }
 
 die() {
@@ -18,13 +19,13 @@ QUIET=''
 EARLYSTOP=''
 KEEPENV=''
 SAVEFLAGS=''
-while getopts 'qn?hH' OPTION; do
+while getopts 'qnec?hH' OPTION; do
 case "$OPTION" in
 	q) QUIET='&>/dev/null';;
 	n) EARLYSTOP=1;;
 	e) KEEPENV='';;
 	c) SAFEFLAGS=1;;
-	*) Usage;;
+	*) Usage 1;;
 esac
 done
 shift $((OPTIND-1))

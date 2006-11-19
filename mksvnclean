@@ -14,4 +14,5 @@ fi
 rm -vrf build config
 rm -vf aclocal.m4 configure
 find -name "Makefile.in" -print0 | xargs -0 -r -- rm -v --
-rm -vi svn-commit*.tmp
+rm -i svn-commit*.tmp
+
