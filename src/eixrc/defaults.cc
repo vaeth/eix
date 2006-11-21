@@ -457,7 +457,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_DELETE",
 			"{installedversionsshort}"
-				"[(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}]"
+				"[(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()]"
 			"{else}"
 				"   "
 			"{}"

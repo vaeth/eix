@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix default FORMAT_HEADER_DELETE (reset color in [D]).
+
 *eix-0.8.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add options --in-overlay, --only-in-overlay
