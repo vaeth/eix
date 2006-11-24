@@ -1,0 +1,131 @@
+#!/bin/bash
+###########################################################################
+#   eix is a small utility for searching ebuilds in the                   #
+#   Gentoo Linux portage system. It uses indexing to allow quick searches #
+#   in package descriptions with regular expressions.                     #
+#                                                                         #
+#   https://sourceforge.net/projects/eix                                  #
+#                                                                         #
+#   Copyright (c)                                                         #
+#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
+#                                                                         #
+#   This program is free software; you can redistribute it and/or modify  #
+#   it under the terms of the GNU General Public License as published by  #
+#   the Free Software Foundation; either version 2 of the License, or     #
+#   (at your option) any later version.                                   #
+#                                                                         #
+#   This program is distributed in the hope that it will be useful,       #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with this program; if not, write to the                         #
+#   Free Software Foundation, Inc.,                                       #
+#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
+###########################################################################
+
+source update-eix-functions.sh.in
+
+declare -a LAYMAN_MAKE LAYMAN_OVERLAYS
+
+Usage () {
+	local I
+	echo "Usage: ${0##*/} [options] command
+Add or remove local layman overlays to eix database (@PACKAGE_STRING@)
+The following commands are provided:
+
+add:	Add the local layman overlays to the eix database
+remove:	Remove the local layman overlays from the eix database.
+
+Options:
+	-a OVERLAY  Add overlay to the list of layman overlays.
+	-A PATH     Add PATH to the sourced make.conf's used to determine
+	            the layman overlays. Current value:"
+	for I in "${LAYMAN_MAKE[@]}"
+	do
+		echo \
+"	            	${I}"
+	done
+	echo \
+"	-C          Clear the above list.
+	-v          Verbose (default)
+	-q          Quiet"
+	exit "${1}"
+}
+
+ClearLayman () {
+	LAYMAN_MAKE=()
+}
+
+AddLaymanMake () {
+	local I
+	for I; do
+		LAYMAN_MAKE[${#LAYMAN_MAKE[@]}]="${I}"
+	done
+}
+
+AddLaymanOverlays () {
+	local I
+	for I; do
+		LAYMAN_OVERLAYS[${#LAYMAN_OVERLAYS[@]}]="${I}"
+	done
+}
+
+GetPortdir
+ClearLayman
+AddLaymanMake "${PORTDIR}/local/layman/make.conf"
+LAYMAN_OVERLAYS=()
+
+while getopts 'vqa:A:C?hH' OPTION; do
+	case "${OPTION}" in
+		v) VERBOSE=1;;
+		q) VERBOSE='';;
+		a) AddLaymanOverlays "${OPTARG}";;
+		A) AddLaymanMake "${OPTARG}";;
+		C) ClearLayman;;
+		*) Usage 0;;
+	esac
+done
+shift $((OPTIND-1))
+
+GetOverlays () {
+	local I
+	for I in "${LAYMAN_MAKE[@]}"
+	do
+		[[ "${I}" ]] || continue
+		[[ -r "${I}" ]] || die "cannot read ${I}"
+		AddLaymanOverlays \
+			$(PORTDIR_OVERLAY=''; source "${I}"; \
+				echo "${PORTDIR_OVERLAY}")
+	done
+}
+
+Init () {
+	ClearUpdateEixArgs
+	GetOverlays
+	AddLocalMethods
+}
+
+Add () {
+	Init
+	AddOverlays "${LAYMAN_OVERLAYS[@]}"
+	CallUpdateEix
+}
+
+Remove () {
+	Init
+	AddExcludes "${LAYMAN_OVERLAYS[@]}"
+	CallUpdateEix
+}
+
+MAIN_COMMAND="${1}"
+shift
+
+case "${MAIN_COMMAND}" in
+	add*)               Add "${@}";;
+	rem*|del*|rm*|sub*) Remove "${@}";;
+	*)                  Usage 1;;
+esac
+
+exit 0

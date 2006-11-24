@@ -1,0 +1,121 @@
+#!/bin/bash
+###########################################################################
+#   eix is a small utility for searching ebuilds in the                   #
+#   Gentoo Linux portage system. It uses indexing to allow quick searches #
+#   in package descriptions with regular expressions.                     #
+#                                                                         #
+#   https://sourceforge.net/projects/eix                                  #
+#                                                                         #
+#   Copyright (c)                                                         #
+#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
+#                                                                         #
+#   This program is free software; you can redistribute it and/or modify  #
+#   it under the terms of the GNU General Public License as published by  #
+#   the Free Software Foundation; either version 2 of the License, or     #
+#   (at your option) any later version.                                   #
+#                                                                         #
+#   This program is distributed in the hope that it will be useful,       #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with this program; if not, write to the                         #
+#   Free Software Foundation, Inc.,                                       #
+#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
+###########################################################################
+
+# Helper functions for update-eix-remote, update-eix-layman,
+# and perhaps similar local scripts. (@PACKAGE_STRING@).
+
+source /sbin/functions.sh
+
+die () {
+	eerror "${*}"
+	EXITCODE=2
+	exit "${EXITCODE}"
+}
+
+type portageq &>/dev/null || die "portageq is required for ${0##*/}"
+
+GetPortdir () {
+	[[ "${PORTDIR}" ]] || PORTDIR="$(portageq portdir)"
+	[[ "${PORTDIR}" ]] || PORTDIR='/usr/portage'
+}
+
+VERBOSE=1
+
+RunCommand () {
+	local RET
+	if [[ "${VERBOSE}" ]]; then
+		einfo "${1}"
+		shift
+		"${@}"
+		return "${?}"
+	fi
+	ebegin "${1}"
+	shift
+	"${@}" &>/dev/null
+	RET=${?}
+	eend ${RET} "Problems running ${@}"
+	return "${RET}"
+}
+
+declare -a UPDATE_EIX_ARGS
+
+AddUpdateArgs () {
+	local K
+	for K; do
+		UPDATE_EIX_ARGS[${#UPDATE_EIX_ARGS[@]}]="${K}"
+	done
+}
+
+AddUpdateQuoting () {
+	local K
+	K="${1//\\/\\\\}"
+	K="${K//\?/\?}"
+	K="${K//\*/\*}"
+	K="${K//\[/\[}"
+	shift
+	AddUpdateArgs "${K}" "${@}"
+}
+
+AddMethod () {
+	AddUpdateArgs '-m'
+	AddUpdateQuoting "${1}" "${2}"
+}
+
+AddOverlays () {
+	local J
+	for J; do
+		AddUpdateArgs '-a' "${J}"
+	done
+}
+
+AddExcludes () {
+	local J
+	for J; do
+		AddUpdateArgs '-x'
+		AddUpdateQuoting "${J}"
+	done
+}
+
+ClearUpdateEixArgs () {
+	UPDATE_EIX_ARGS=()
+}
+
+CallUpdateEix () {
+	RunCommand "Calling update-eix" \
+		update-eix "${UPDATE_EIX_ARGS[@]}" || die "update-eix failed"
+}
+
+AddLocalMethods () {
+	local I
+	GetPortdir
+	AddMethod "${PORTDIR}" "eix"
+	for I in $(portageq portdir_overlay) $ADD_OVERLAY
+	do
+		AddMethod "${I}" "eix::${I}"
+	done
+}
+

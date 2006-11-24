@@ -22,9 +22,13 @@ A I<EXPRESSION> can be:
 
 .BR eix-sync
 
+.BR eix-test-obsolete
+
 .BR update-eix-remote
 
-.BR eix-test-obsolete
+.BR update-eix-layman
+
+.BR update-eix-functions.sh
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -39,12 +43,20 @@ using B<diff-eix>.
 To get more help on B<eix-sync> call B<eix-sync -h> and see the documentation
 of I</etc/eix-sync.conf>
 
+B<eix-test-obsolete> is a script which calls B<eix> several times to display
+the output of B<eix -tTc> in a more organized manner.
+
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
 To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
 
-B<eix-test-obsolete> is a script which calls B<eix> several times to display
-the output of B<eix -tTc> in a more organized manner.
+B<update-eix-layman> can add or remove local layman overlays to the
+current database.
+To get more help on B<update-eix-layman> call B<update-eix-layman -h>.
+
+B<update-eix-functions.sh> are helper functions used by B<update-eix-remote>
+and B<update-eix-layman>.
+You might want to use them for your own similar scripts.
 .\" }}}
 
 .\" {{{ OPTIONS

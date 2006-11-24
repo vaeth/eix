@@ -31,13 +31,16 @@ SUBDIRS = eixTk eixrc database portage output search
 
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags \
-	eix-sync update-eix-remote eix-test-obsolete
+	eix-sync eix-test-obsolete \
+	update-eix-remote update-eix-layman update-eix-functions.sh
 
-EXTRA_DIST = eix-sync.in update-eix-remote.in eix-test-obsolete.in
+EXTRA_DIST = eix-sync.in eix-test-obsolete.in \
+	update-eix-remote.in update-eix-layman.in update-eix-functions.sh.in
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
-bin_SCRIPTS  = update-eix-remote eix-sync eix-test-obsolete
+bin_SCRIPTS  = eix-sync eix-test-obsolete \
+	update-eix-remote update-eix-layman update-eix-functions.sh
 
 # The search-tool for our database
 eix_SOURCES = eix.cc \
@@ -90,6 +93,17 @@ eix-test-obsolete: eix-test-obsolete.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
 	$(srcdir)/eix-test-obsolete.in > eix-test-obsolete
 
+update-eix-functions.sh: update-eix-functions.sh.in
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	$(srcdir)/update-eix-functions.sh.in > update-eix-functions.sh
+
 update-eix-remote: update-eix-remote.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	    -e "s,update-eix-functions.sh.in,$(bindir)/update-eix-functions.sh," \
 	$(srcdir)/update-eix-remote.in > update-eix-remote
+
+update-eix-layman: update-eix-layman.in
+	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	    -e "s,update-eix-functions.sh.in,$(bindir)/update-eix-functions.sh," \
+	$(srcdir)/update-eix-layman.in > update-eix-layman
+
