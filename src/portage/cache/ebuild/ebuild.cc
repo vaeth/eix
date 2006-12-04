@@ -213,11 +213,11 @@ void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_p
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
 		version->overlay_key = m_overlay_key;
-		string keywords, slot;
+		string keywords, iuse;
 		try {
-			flat_get_keywords_slot(cachefile->c_str(), keywords, slot, m_error_callback);
+			flat_get_keywords_slot_iuse(cachefile->c_str(), keywords, version->slot, iuse, m_error_callback);
 			version->set(m_arch, keywords);
-			version->slot = slot;
+			version->set_iuse(iuse);
 			if(read_onetime_info)
 			{
 				flat_read_file(cachefile->c_str(), pkg, m_error_callback);

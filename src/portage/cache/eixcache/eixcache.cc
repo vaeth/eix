@@ -186,7 +186,11 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 				have_onetime_info = true;
 			}
 		}
-		if(!have_onetime_info)
+		if(have_onetime_info) { // if the package exists:
+			// add coll_iuse from the saved data
+			pkg->add_coll_iuse(p->coll_iuse);
+		}
+		else
 			dest_cat->deletePackage(p->name);
 	}
 	fclose(fp);

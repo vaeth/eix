@@ -120,6 +120,9 @@ class Package
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
 
+		/** Collected IUSE for all versions of that package */
+		std::string coll_iuse;
+
 		/** How upgrades for new better slots are treated in tests */
 		static bool upgrade_to_best;
 
@@ -145,6 +148,12 @@ class Package
 		/** Finishes addVersion() after the remaining data
 		    have been filled */
 		void addVersionFinalize(Version *version);
+
+		/** This is called by addVersionFinalize() to calculate
+		    coll_iuse and to save memory by freeing original iuse */
+		void collect_iuse();
+
+		void add_coll_iuse(const std::string &s);
 
 		/** Adds a version to "the versions" list. */
 		void addVersion(Version *version)

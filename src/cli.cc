@@ -213,6 +213,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			case 'L': *test |= PackageTest::LICENSE;       break;
 			case 'H': *test |= PackageTest::HOMEPAGE;      break;
 			case 'P': *test |= PackageTest::PROVIDE;       break;
+			case 'U': *test |= PackageTest::IUSE;          break;
 			// }}}
 
 			// Check for algorithms {{{

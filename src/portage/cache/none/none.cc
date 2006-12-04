@@ -101,6 +101,7 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 
 		version->set(m_arch, ebuild["KEYWORDS"]);
 		version->slot = ebuild["SLOT"];
+		version->set_iuse(ebuild["IUSE"]);
 		pkg->addVersionFinalize(version);
 		if(read_onetime_info)
 		{

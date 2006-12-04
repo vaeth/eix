@@ -5,6 +5,8 @@
 	- Fix default FORMAT_HEADER_DELETE (reset color in [D]).
 	- Add update-eix-layman
 	- Add update-eix-functions.sh
+	- Store IUSE in database (currently only for packages).
+	- Add option -U (suggested by stephan.ritscher).
 
 *eix-0.8.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

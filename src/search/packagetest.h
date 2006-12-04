@@ -60,7 +60,8 @@ class PackageTest {
 		                        LICENSE       , /* Search in license */
 		                        CATEGORY      , /* Search in category */
 		                        CATEGORY_NAME , /* Search in category/name */
-		                        HOMEPAGE      ; /* Search in homepage */
+		                        HOMEPAGE      , /* Search in homepage */
+		                        IUSE          ; /* Search in iuse */
 
 		typedef char TestInstalled;
 		static const TestInstalled
@@ -189,6 +190,12 @@ class PackageTest {
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
 
 		bool stringMatch(Package *pkg) const;
+
+		void setNeeds(const PackageReader::Attributes i)
+		{
+			if(need < i)
+				need = i;
+		}
 
 		/** Get the Fetched-value that is required to determine the match */
 		void calculateNeeds();

@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -53,14 +54,18 @@ PackageReader::read(Attributes need)
 			if(need == PROVIDE)
 				break;
 		case PROVIDE:
-			m_pkg->homepage = io::read_string( m_fp);
+			m_pkg->homepage = io::read_string(m_fp);
 			if(need == HOMEPAGE)
 				break;
 		case HOMEPAGE:
-			m_pkg->licenses = io::read_string( m_fp);
+			m_pkg->licenses = io::read_string(m_fp);
 			if(need == LICENSE)
 				break;
 		case LICENSE:
+			m_pkg->coll_iuse = io::read_string(m_fp);
+			if(need == COLL_IUSE)
+				break;
+		case COLL_IUSE:
 			size_type n;
 			n = io::read<PackageReader::size_type>(PackageReader::sizesize, m_fp);
 			for(size_type i = 0; i<n; i++ ) {

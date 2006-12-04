@@ -125,6 +125,27 @@ Package::sortedPushBack(Version *v)
 	push_back(v);
 }
 
+void Package::add_coll_iuse(const string &s)
+{
+	vector<string> iuse = split_string(coll_iuse + " " + s);
+	std::sort(iuse.begin(), iuse.end());
+	iuse.erase(std::unique(iuse.begin(), iuse.end()), iuse.end());
+	coll_iuse = join_vector(iuse);
+}
+
+void Package::collect_iuse()
+{
+	vector<string> iuse = split_string(coll_iuse);
+	for(iterator it = begin(); it != end(); ++it) {
+		iuse.insert(iuse.end(), (it->iuse).begin(), (it->iuse).end());
+		// Clear iuse to save memory:
+		(it->iuse).clear();
+	}
+	std::sort(iuse.begin(), iuse.end());
+	iuse.erase(std::unique(iuse.begin(), iuse.end()), iuse.end());
+	coll_iuse = join_vector(iuse);
+}
+
 /** Finishes addVersionStart() after the remaining data
     have been filled */
 void Package::addVersionFinalize(Version *version)
@@ -155,6 +176,7 @@ void Package::addVersionFinalize(Version *version)
 	}
 	if((version->slot).length())
 		have_nontrivial_slots = true;
+	collect_iuse();
 	// We must recalculate the complete slotlist after each modification.
 	// The reason is that the pointers might go into nirvana, because
 	// a push_back might move the whole list.

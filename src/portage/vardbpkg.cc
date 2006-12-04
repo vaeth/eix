@@ -127,7 +127,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 	if(v.know_use)
 		return true;
 	v.know_use=true;
-	v.iuse.clear();
+	v.inst_iuse.clear();
 	v.usedUse.clear();
 	set<string> iuse_set;
 	vector<string> alluse;
@@ -137,11 +137,11 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		if(!pushback_lines((dirname + "/IUSE").c_str(),
 			&lines, true, false))
 			return false;
-		v.iuse = split_string(join_vector(lines, " "));
-		sort(v.iuse.begin(), v.iuse.end());
-		v.iuse.erase(unique(v.iuse.begin(), v.iuse.end()), v.iuse.end());
-		make_set(&iuse_set, v.iuse);
-		/* If you do not want the alphabetical order in v.iuse
+		v.inst_iuse = split_string(join_vector(lines, " "));
+		sort(v.inst_iuse.begin(), v.inst_iuse.end());
+		v.inst_iuse.erase(unique(v.inst_iuse.begin(), v.inst_iuse.end()), v.inst_iuse.end());
+		make_set(&iuse_set, v.inst_iuse);
+		/* If you do not want the alphabetical order in v.inst_iuse
 		   but instead the original order in the IUSE file,
 		   use the following code instead of the above 4 lines.
 
@@ -152,7 +152,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 			if(iuse_set.find(*it) != iuse_set.end())
 				continue;
 			iuse_set.insert(*it);
-			v.iuse.push_back(*it);
+			v.inst_iuse.push_back(*it);
 		}
 		*/
 		lines.clear();

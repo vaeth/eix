@@ -124,7 +124,8 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 			bool ok = (d <= max_levenshteindistance);
 			if(ok)
 			{
-				levenshtein_map[p->category + "/" + p->name] = d;
+				if(p)
+					levenshtein_map[p->category + "/" + p->name] = d;
 			}
 			return ok;
 		}

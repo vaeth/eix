@@ -82,9 +82,10 @@ bool FlatCache::readCategory(Category &vec) throw(ExBasic)
 			version = new Version(aux[1]);
 
 			/* Read stability from cachefile */
-			string keywords;
-			flat_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot, m_error_callback);
+			string keywords, iuse;
+			flat_get_keywords_slot_iuse(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, m_error_callback);
 			version->set(m_arch, keywords);
+			version->set_iuse(iuse);
 			version->overlay_key = m_overlay_key;
 
 			pkg->addVersion(version);

@@ -32,15 +32,23 @@
 #include <database/io.h>
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
+#include <eixTk/stringutils.h>
 
 #include <iostream>
 
-/** Version expands the BasicVersion class by Keywords and overlay-keys */
+/** Version expands the BasicVersion class by data relevant for versions in tree/overlays */
 class Version : public BasicVersion, public Keywords {
 
 	public:
 		friend void     io::write_version(FILE *fp, const Version *v, bool small);
 		friend Version *io::read_version(FILE *fp);
+
+		/** Currently, this is empty most of the time to save space:
+		    Although initially, the data is read correctly, it is
+		    cleared in Version::addVersionFinalize to get only a
+		    package-wide iuse. Also, only the latter is stored/read
+		    from the eix-internal database. */
+		std::vector<std::string> iuse;
 
 		typedef unsigned short Overlay;
 
@@ -53,6 +61,13 @@ class Version : public BasicVersion, public Keywords {
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
 		Version(const char* str) : BasicVersion(str), overlay_key(0)
 		{ }
+
+		void set_iuse(const std::string &i)
+		{
+			iuse = split_string(i);
+			sort(iuse.begin(), iuse.end());
+			iuse.erase(unique(iuse.begin(), iuse.end()), iuse.end());
+		}
 
 		/** The equality operator does *not* test the slots */
 		bool operator == (const Version &v) const

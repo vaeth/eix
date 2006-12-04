@@ -981,6 +981,7 @@ MATCH_IF(CATEGORY,      ".*");
 MATCH_IF(CATEGORY_NAME, "/");
 MATCH_IF(HOMEPAGE,      ".*");
 MATCH_IF(PROVIDE,       "^virtual/");
+MATCH_IF(IUSE,          ".*");
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MATCH_ORDER",

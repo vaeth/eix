@@ -293,6 +293,7 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 		/* Read stability */
 		version->set(m_arch, mapping["KEYWORDS"]);
 		version->slot = mapping["SLOT"];
+		version->set_iuse(mapping["IUSE"]);
 		version->overlay_key = m_overlay_key;
 		pkg->addVersionFinalize(version);
 

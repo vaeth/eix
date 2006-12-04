@@ -284,6 +284,10 @@ i.e. "GPL-2"
 .TP
 .BR -P ", " --provide
 i.e. "virtual/blackbox"
+.TP
+.BR -U ", " --use
+The useflags defined by IUSE in the ebuild (B<not> that of installed packages).
+You will usually want to combine this option with -e
 .\" }}}
 
 .\" {{{ -------- Match algorithms
@@ -1189,6 +1193,9 @@ Use CATEGORY_NAME as default matchfield if the string match the given regex.
 .TP
 .BR MATCH_HOMEPAGE_IF " " (String)
 Use HOMEPAGE as default matchfield if the string match the given regex.
+.TP
+.BR MATCH_IUSE_IF " " (String)
+Use USE as default matchfield if the string match the given regex.
 .TP
 .BR MATCH_PROVIDE_IF " " (String)
 Use PROVIDE as default matchfield if the string match the given regex.

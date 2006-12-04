@@ -42,8 +42,9 @@ class InstVersion : public BasicVersion, public Keywords {
 		/** Similarly for iuse and usedUse: */
 		bool know_use;
 
-		time_t instDate;
-		std::set<std::string> usedUse; /* Those useflags in iuse actually used */
+		time_t instDate;                   /**< Installation date according to vardbpkg */
+		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
+		std::set<std::string> usedUse;     /**< Those useflags in iuse actually used    */
 
 		InstVersion() : know_slot(false), read_failed(false), know_use(false), instDate(0)
 		{ }

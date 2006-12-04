@@ -66,7 +66,7 @@ get_map_from_cache(const char *file, map<string,string> &x)
 
 /** Read the stability from a metadata cache file. */
 void
-backport_get_keywords_slot(const string &filename, string &keywords, string &slot, BasicCache::ErrorCallback error_callback)
+backport_get_keywords_slot_iuse(const string &filename, string &keywords, string &slot, string &iuse, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> cf;
 
@@ -79,6 +79,7 @@ backport_get_keywords_slot(const string &filename, string &keywords, string &slo
 	}
 	keywords = cf["KEYWORDS"];
 	slot     = cf["SLOT"];
+	iuse     = cf["IUSE"];
 }
 
 /** Read a metadata cache file. */
@@ -140,9 +141,10 @@ bool BackportCache::readCategory(Category &vec) throw(ExBasic)
 			version = new Version(aux[1]);
 
 			/* Read stability from cachefile */
-			string keywords;
-			backport_get_keywords_slot(catpath + "/" + dents[i]->d_name, keywords, version->slot, m_error_callback);
+			string keywords, iuse;
+			backport_get_keywords_slot_iuse(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, m_error_callback);
 			version->set(m_arch, keywords);
+			version->set_iuse(iuse);
 			version->overlay_key = m_overlay_key;
 
 			pkg->addVersion(version);

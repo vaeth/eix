@@ -39,7 +39,8 @@ const PackageTest::MatchField
 		PackageTest::LICENSE       = 0x08, /* Search in license */
 		PackageTest::CATEGORY      = 0x10, /* Search in category */
 		PackageTest::CATEGORY_NAME = 0x20, /* Search in category/name */
-		PackageTest::HOMEPAGE      = 0x40; /* Search in homepage */
+		PackageTest::HOMEPAGE      = 0x40, /* Search in homepage */
+		PackageTest::IUSE          = 0x80; /* Search in iuse */
 
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE        = 0x00,
@@ -60,41 +61,29 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p)
 
 void
 PackageTest::calculateNeeds() {
-	map<MatchField,PackageReader::Attributes> smap;
-	smap[HOMEPAGE]      = PackageReader::VERSIONS;
-	smap[PROVIDE]       = PackageReader::PROVIDE;
-	smap[LICENSE]       = PackageReader::LICENSE;
-	smap[DESCRIPTION]   = PackageReader::DESCRIPTION;
-	smap[CATEGORY]      = PackageReader::NAME;
-	smap[CATEGORY_NAME] = PackageReader::NAME;
-	smap[NAME]          = PackageReader::NAME;
-
 	need = PackageReader::NONE;
-
-	for(MatchField x = HOMEPAGE;
-		x > NONE;
-		x >>= 1)
-	{
-		if (x & field)
-		{
-			need = smap[x];
-			break;
-		}
-	}
-
-	if((need < PackageReader::NAME) &&
-		installed )
-	{
-		need = PackageReader::NAME;
-	}
-
-	if((need < PackageReader::VERSIONS) &&
-		(dup_packages || dup_versions || slotted ||
-			update || overlay|| obsolete ||
-			overlay_list || overlay_only_list || overlay_inst_list))
-	{
-		need = PackageReader::VERSIONS;
-	}
+	if(field & HOMEPAGE)
+		setNeeds(PackageReader::VERSIONS);
+	if(field & PROVIDE)
+		setNeeds(PackageReader::PROVIDE);
+	if(field & LICENSE)
+		setNeeds(PackageReader::LICENSE);
+	if(field & DESCRIPTION)
+		setNeeds(PackageReader::DESCRIPTION);
+	if(field & CATEGORY)
+		setNeeds(PackageReader::NAME);
+	if(field & CATEGORY_NAME)
+		setNeeds(PackageReader::NAME);
+	if(field & NAME)
+		setNeeds(PackageReader::NAME);
+	if(field & IUSE)
+		setNeeds(PackageReader::COLL_IUSE);
+	if(installed)
+		setNeeds(PackageReader::NAME);
+	if(dup_packages || dup_versions || slotted ||
+		update || overlay|| obsolete ||
+		overlay_list || overlay_only_list || overlay_inst_list)
+		setNeeds(PackageReader::VERSIONS);
 }
 
 PackageTest::MatchField
@@ -109,6 +98,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "CATEGORY_NAME") ret = CATEGORY_NAME;
 	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
 	else if(p == "PROVIDE")       ret = PROVIDE;
+	else if(p == "IUSE")          ret = IUSE;
 	else THROW("Can't find MatchField called %s.", p.c_str());
 	return ret;
 }
@@ -184,6 +174,17 @@ PackageTest::stringMatch(Package *pkg) const
 	if(field & PROVIDE && (*algorithm)(pkg->provide.c_str(), pkg))
 	{
 		return true;
+	}
+
+	if(field & IUSE)
+	{
+		vector<string> s=split_string(pkg->coll_iuse);
+		for(vector<string>::const_iterator it = s.begin();
+			it != s.end(); ++it)
+		{
+			if((*algorithm)(it->c_str(), NULL))
+				return true;
+		}
 	}
 
 	return false;

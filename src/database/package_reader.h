@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -45,8 +46,8 @@ class PackageReader {
 	public:
 		enum Attributes {
 			NONE = 0,
-			NAME, DESCRIPTION, PROVIDE, HOMEPAGE, LICENSE, VERSIONS,
-			ALL = 6
+			NAME, DESCRIPTION, PROVIDE, HOMEPAGE, LICENSE, COLL_IUSE, VERSIONS,
+			ALL = 7
 		};
 
 		typedef unsigned short size_type;

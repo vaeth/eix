@@ -157,6 +157,7 @@ io::write_package(FILE *fp, const Package &pkg, bool small)
 	io::write_string(fp, pkg.provide);
 	io::write_string(fp, pkg.homepage);
 	io::write_string(fp, pkg.licenses);
+	io::write_string(fp, pkg.coll_iuse);
 
 	// write all version entries
 	io::write<PackageReader::size_type>(PackageReader::sizesize, fp, pkg.size());

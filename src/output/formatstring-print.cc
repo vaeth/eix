@@ -55,11 +55,11 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 		return "";
 	if(!fmt.vardb->readUse(p, i))
 		return "";
-	if(i.iuse.empty())
+	if(i.inst_iuse.empty())
 		return "";
 	string ret = "";
-	for(vector<string>::iterator it = i.iuse.begin();
-		it != i.iuse.end(); ++it)
+	for(vector<string>::iterator it = i.inst_iuse.begin();
+		it != i.inst_iuse.end(); ++it)
 	{
 		if(!ret.empty())
 			ret.append(" ");

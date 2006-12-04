@@ -115,6 +115,8 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	version->slot = ARGV(6);
 	string keywords = ARGV(12);
 	version->set(THIS->m_arch, keywords);
+	string iuse = ARGV(14);
+	version->set_iuse(iuse);
 	pkg->addVersion(version);
 
 	/* For the newest version, add all remaining data */

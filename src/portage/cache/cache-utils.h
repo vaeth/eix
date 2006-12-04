@@ -39,7 +39,7 @@ class Package;
 
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);
-void flat_get_keywords_slot(const std::string &filename, std::string &keywords, std::string &slot, BasicCache::ErrorCallback error_callback);
+void flat_get_keywords_slot_iuse(const std::string &filename, std::string &keywords, std::string &slot, std::string &iuse, BasicCache::ErrorCallback error_callback);
 void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
 #endif /* __CACHEUTILS_H__ */

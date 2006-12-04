@@ -133,6 +133,7 @@ dump_help(int exit_code)
 			"    -H, --homepage        homepage\n"
 			"    -L, --license         license\n"
 			"    -P, --provide         provides\n"
+			"    -U, --use             useflags\n"
 			"\n"
 			"  Type of Pattern:\n"
 			"    -r, --regex           Pattern is a regexp (default)\n"
@@ -254,6 +255,7 @@ static struct Option long_options[] = {
 	Option("license",       'L'),
 	Option("homepage",      'H'),
 	Option("provide",       'P'),
+	Option("use",           'U'),
 
 	// What to do with the next one
 	Option("or",            'o'),

@@ -40,9 +40,6 @@ class BasicVersion
 		    For saving space, the default "0" is always stored as "" */
 		std::string slot;
 
-		/** Currently only used in connection with vardbpkg */
-		std::vector<std::string> iuse;
-
 		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
 		static const char *suffixlevels[];
 		/** Index in suffixlevels where versions without a index are located. */
