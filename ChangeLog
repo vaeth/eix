@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Treat empty regular expression manually. This fixes
+	  http://bugs.gentoo.org/show_bug.cgi?id=158222
+	- Add option -O to update-eix-remote, see the discussion starting at
+	  http://forums.gentoo.org/viewtopic-t-278819-start-343.html
+
 *eix-0.8.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix default FORMAT_HEADER_DELETE (reset color in [D]).

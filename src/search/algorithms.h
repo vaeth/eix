@@ -77,9 +77,8 @@ class RegexAlgorithm : public BaseAlgorithm {
 		Regex re;
 
 	public:
-		RegexAlgorithm() {
-			re.compile("");
-		}
+		RegexAlgorithm()
+		{ }
 
 		void setString(std::string s) {
 			search_string = s;
@@ -87,8 +86,8 @@ class RegexAlgorithm : public BaseAlgorithm {
 		}
 
 		bool operator () (const char *s, Package *p) {
-			UNUSED(s); UNUSED(p);
-			return !regexec(re.get(), s, 0, NULL, 0);
+			UNUSED(p);
+			return re.match(s);
 		}
 };
 

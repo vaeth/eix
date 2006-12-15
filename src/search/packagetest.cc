@@ -113,7 +113,7 @@ PackageTest::get_matchfield(const char *p) throw(ExBasic)
 		++it)
 	{
 		Regex re(rc["MATCH_" + *it + "_IF"].c_str());
-		if(!regexec(re.get(), p, 0, NULL, 0))
+		if(re.match(p))
 		{
 			return name2field(*it);
 		}

@@ -69,6 +69,10 @@ or with the -o option. If you do not want this feature, set \$OVERLAYPARENT
 to some path not containing any overlays.
 
 Options:
+	-O x    Extract from the cache files within FILE only overlay Nr. x,
+	        i.e. use cache method eix*:...:x for reading these cache files.
+	        Default for x is * (which means all overlays in each files)
+	        See \"man eix\" for details on cache method eix*.
 	-u USER Call wget as USER. Defaults to \"nobody\" if called as root.
 	-o PATH Use PATH as \$OVERLAYPARENT
 	-v      Verbose (default)
@@ -77,10 +81,12 @@ Options:
 	exit "${EXITCODE}"
 }
 
+OVERLAYNR='*'
 VERBOSE=1
 FETCHUSER=''
-while getopts 'vqu:o:?hH' OPTION; do
+while getopts 'O:vqu:o:?hH' OPTION; do
 	case "${OPTION}" in
+		O) OVERLAYNR="${OPTARG}";;
 		v) VERBOSE=1;;
 		q) VERBOSE='';;
 		u) FETCHUSER="${OPTARG}";;
@@ -168,7 +174,7 @@ FetchTemp () {
 }
 
 AddArchive () {
-	local I NAME VIRTUAL
+	local I NAME VIRTUAL OVERLAYARG
 	RunCommand "Unpacking data" tar xjf "${1}" || die "cannot unpack ${1}"
 	ClearUpdateEixArgs
 	AddLocalMethods
@@ -177,13 +183,18 @@ AddArchive () {
 		NAME="${I//:/_}"
 		[[ "${NAME}" != "${I}" ]] && mv "${I}" "${NAME}"
 	done
+	if [[ "${OVERLAYNR}" ]]; then
+		OVERLAYARG=":${OVERLAYNR}"
+	else
+		OVERLAYARG=''
+	fi
 	for I in *
 	do
 		NAME="${I%.eix}"
 		NAME="${NAME#_usr_portage_local_}"
 		NAME="${NAME//_//}"
 		VIRTUAL="(${NAME})"
-		AddMethod "${VIRTUAL}" "eix*:${2}/${I}:*"
+		AddMethod "${VIRTUAL}" "eix*:${2}/${I}${OVERLAYARG}"
 		AddOverlays "${VIRTUAL}"
 		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done
