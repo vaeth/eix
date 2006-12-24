@@ -76,13 +76,18 @@ The following options are available:
      However, the postponed hooks (@ and @@ entries) will be executed anyway.
 -@   Do not execute the hooks (@ and @@ entries) of ${GENSYNCCONF}.
 -S   Do not execute the hooks after emerge --sync (@@ entries).
--m   Run emerge --metadata instead of emerge --sync.
+-m   Run emerge --metadata but not emerge --sync.
      emerge --metadata is skipped if you use portage's metadata overlay module
      or if option -U is used.
+-M   Run emerge --metadata in addition to emerge --sync.
+     This is probably only useful in conjunction with -c.
 -t   Use temporary file to save the current database (-d will not be possible).
 -v   Don't suppress output of update-eix and emerge.
 -q   Be quiet (close stdout).
 -w   Run emerge-webrsync instead of emerge --sync.
+-W   Run emerge-delta-webrsync instead of emerge --sync.
+-c CMD Run CMD instead of emerge --sync.
+-C OPT Add OPT to the emerge --sync command (or whatever is used instead).
 -r   Really recreate the dep-cache (rm -rf /var/cache/edb/dep/*) (default).
 -R   Do not really recreate the dep-cache.
 -h   Show this text and exit."
@@ -146,13 +151,14 @@ declare -a EMERGECMD
 
 DefaultOpts () {
   EMERGECMD=("emerge" "--sync")
-  CLEARCACHE=1
+  CLEARCACHE='1'
   NOGENSYNC=''
   NOHOOKS=''
   VERBOSE=''
   QUIET=''
   USETEMP=''
   METADATA=''
+  SKIP_SYNC=''
   SERVER=''
   CLIENT=''
   DOUPDATE='1'
@@ -162,7 +168,7 @@ DefaultOpts () {
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uug@SmtvqwrR?hH" OPTION \
+while getopts "ids:2:Uug@SmMtvqwWc:C:rR?hH" OPTION \
   ${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
   case "${OPTION}" in
     i) DefaultOpts;;
@@ -170,22 +176,27 @@ while getopts "ids:2:Uug@SmtvqwrR?hH" OPTION \
     s) SERVER="${OPTARG}";;
     2) CLIENT="${OPTARG}";;
     U) DOUPDATE='';;
-    u) NOGENSYNC=1; NOHOOKS=1; METADATA=1; SERVER='';;
+    u) NOGENSYNC=1; NOHOOKS=1; SKIP_SYNC=1; SERVER='';;
     g) NOGENSYNC=1;;
     @) NOHOOKS=1;;
     S) SYNCHOOKS='';;
-    m) METADATA=1;;
+    m) SKIP_SYNC=1;;
+    M) METADATA=1;;
     t) USETEMP=1;;
     v) VERBOSE=1;;
     q) QUIET=1;;
     w) EMERGECMD=("emerge-webrsync");;
+    W) EMERGECMD=("emerge-delta-webrsync");;
+    c) EMERGECMD=(); EMERGECMD[0]="${OPTARG}";;
+    C) EMERGECMD[${#EMERGECMD[@]}]="${OPTARG}";;
     r) CLEARCACHE=1;;
     R) CLEARCACHE='';;
     *) Usage 1;;
   esac
 done
 [[ "${DOUPDATE}" ]] || CLEARCACHE=''
-[[ "${SERVER}" ]] && METADATA=1
+[[ "${SERVER}" ]] && SKIP_SYNC=1
+[[ "${SKIP_SYNC}" ]] && METADATA=1
 
 # We need a special function to treat the reserved word "time" like a command.
 # (Of course "eval" would do a similar thing, but would also apply to args).
@@ -316,7 +327,7 @@ CallEmergeSync () {
       rsync $RSYNC_OPTS "${HOSTDIR}" "${PORTDIR}" || \
         die "Could not rsync from ${HOSTDIR}"
   fi
-  [[ "${METADATA}" ]] && return
+  [[ "${SKIP_SYNC}" ]] && return
   RootCommand "Running ${EMERGECMD[*]}" \
     time "${EMERGECMD[@]}" || die "${EMERGECMD[*]} failed"
 }
