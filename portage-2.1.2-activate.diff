@@ -1,0 +1,42 @@
+--- src/portage/cache/Makefile.am
++++ src/portage/cache/Makefile.am
+@@ -7,9 +7,9 @@
+ noinst_LIBRARIES = libcache.a
+ 
+ 
+-#				 port2_1_2/port2_1_2.cc port2_1_2/port2_1_2.h
+ libcache_a_SOURCES = base.h base.cc \
+ 				 port2_0_0/port2_0_0.cc port2_0_0/port2_0_0.h \
++				 port2_1_2/port2_1_2.cc port2_1_2/port2_1_2.h \
+ 				 port2_1_0/port2_1_0.cc port2_1_0/port2_1_0.h \
+ 				 cache-utils/flat-reader.cc cache-utils/flat-reader.h \
+ 				 cache-utils/selectors.cc cache-utils/selectors.h \
+--- src/portage/cache/cache-utils/unpickle.cc
++++ src/portage/cache/cache-utils/unpickle.cc
+@@ -164,7 +164,6 @@
+ }
+ 
+ /** For portage-2.1.2 cache */
+-/*
+ bool unpickle_get(const char **datas, const char *data_end, std::map<std::string,std::string> &unpickled, bool first)
+ {
+ 	int ret = 1;
+@@ -252,4 +251,3 @@
+ 	*datas = data;
+ 	return true;
+ }
+-*/
+--- src/portage/cache/generate-cachemap.sh
++++ src/portage/cache/generate-cachemap.sh
+@@ -13,9 +13,9 @@
+ 
+ cache_stars="none ebuild"
+ extra_caches="metadata sqlite cdb $cache_stars"
+-#add_includes="port2_1_2"
++add_includes="port2_1_2"
+ cache_includes="$add_includes eixcache $extra_caches port2_1_0 port2_0_0"
+-#add_names="portage-2.1.2"
++add_names="portage-2.1.2"
+ cache_names="$add_names $extra_caches
+ 	portage-2.0 portage-2.0.51 flat
+ 	portage-2.1 portage-2.1.0 backport"

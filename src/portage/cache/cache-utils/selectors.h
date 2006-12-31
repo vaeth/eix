@@ -26,18 +26,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __FLAT_H__
-#define __FLAT_H__
+#ifndef __SELECTORS_H__
+#define __SELECTORS_H__
 
-#include <portage/cache/base.h>
+#include <config.h>
+#include <dirent.h>
 
-class FlatCache : public BasicCache {
+int package_selector (SCANDIR_ARG3 dent);
+int ebuild_selector (SCANDIR_ARG3 dent);
 
-	public:
-		bool readCategory(Category &vec) throw(ExBasic);
-
-		const char *getType() const
-		{ return "flat"; }
-};
-
-#endif /* __FLAT_H__ */
+#endif /* __SELECTORS_H__ */

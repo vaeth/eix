@@ -26,8 +26,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "flat.h"
-#include <portage/cache/cache-utils.h>
+#include "port2_0_0.h"
+#include <cache-utils/flat-reader.h>
 
 #include <portage/packagetree.h>
 #include <portage/package.h>
@@ -49,7 +49,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-bool FlatCache::readCategory(Category &vec) throw(ExBasic)
+bool Port2_0_0_Cache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;

@@ -26,20 +26,68 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __CACHEUTILS_H__
-#define __CACHEUTILS_H__
+#include "flat-reader.h"
+#include <eixTk/stringutils.h>
+#include <portage/package.h>
 
-#include <eixTk/exceptions.h>
-#include <portage/keywords.h>
-#include <portage/cache/base.h>
-#include <dirent.h>
-#include <string>
+#include <fstream>
+#include <limits>
 
-class Package;
+using namespace std;
 
-int package_selector (SCANDIR_ARG3 dent);
-int ebuild_selector (SCANDIR_ARG3 dent);
-void flat_get_keywords_slot_iuse(const std::string &filename, std::string &keywords, std::string &slot, std::string &iuse, BasicCache::ErrorCallback error_callback);
-void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
+inline
+bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
+{
+	for(int i=nr; i>0; --i)
+	{
+		is.ignore(numeric_limits<int>::max(), '\n');
+		if(is.fail())
+		{
+			error_callback("Can't read cache file %s: %s",
+					filename.c_str(), strerror(errno));
+			return false;
+		}
+	}
 
-#endif /* __CACHEUTILS_H__ */
+	return true;
+}
+
+#define open_skipping(nr, is, filename, error_callback) \
+	ifstream is(filename); \
+	if(!is.is_open()) \
+		error_callback("Can't open %s: %s", (filename), strerror(errno)); \
+	skip_lines(nr, is, (filename), error_callback);
+
+
+/** Read the keywords and slot from a flat cache file. */
+void flat_get_keywords_slot_iuse(const string &filename, string &keywords, string &slot, string &iuse, BasicCache::ErrorCallback error_callback)
+{
+	open_skipping(2, is, filename.c_str(), error_callback);
+	getline(is, slot);
+	skip_lines(5, is, filename, error_callback);
+	getline(is, keywords);
+	skip_lines(1, is, filename, error_callback);
+	getline(is, iuse);
+	is.close();
+}
+
+/** Read a flat cache file. */
+void
+flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
+{
+	open_skipping(5, is, filename, error_callback);
+	string linebuf;
+	// Read the rest
+	for(int linenr = 5; getline(is, linebuf); ++linenr)
+	{
+		switch(linenr)
+		{
+			case 5:  pkg->homepage = linebuf; break;
+			case 6:  pkg->licenses = linebuf; break;
+			case 7:  pkg->desc     = linebuf; break;
+			case 13: pkg->provide  = linebuf; is.close();
+					 return;
+		}
+	}
+	is.close();
+}

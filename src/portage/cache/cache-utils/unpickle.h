@@ -26,80 +26,61 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "cache-utils.h"
-#include <eixTk/stringutils.h>
-#include <portage/package.h>
+#ifndef __UNPICKLE_H__
+#define __UNPICKLE_H__
 
-#include <fstream>
-#include <limits>
+#include <map>
+#include <string>
 
-int package_selector (SCANDIR_ARG3 dent)
-{
-	return (dent->d_name[0] != '.'
-			&& strcmp(dent->d_name, "CVS") != 0);
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+
+#if !defined(__OpenBSD__)
+#include <stdint.h>
+#endif
+
+#include <unistd.h>
+
+#include <config.h>
+
+#if defined(WORDS_BIGENDIAN)
+/* For the big-endian machines */
+#define UINT32_PACK(out,in)   uint32_pack(out,in)
+#define UINT32_UNPACK(in,out) uint32_unpack(in,out)
+
+/* Adopted from python-cdb (which adopted it from libowfat :) */
+inline static void uint32_pack(char *out, uint32_t in);
+inline static void uint32_unpack(const char *in, uint32_t *out);
+
+inline static void uint32_pack(char *out, uint32_t in) {
+	*out=in&0xff; in>>=8;
+	*++out=in&0xff; in>>=8;
+	*++out=in&0xff; in>>=8;
+	*++out=in&0xff;
 }
 
-int ebuild_selector (SCANDIR_ARG3 dent)
-{
-	return package_selector(dent);
+inline static void uint32_unpack(const char *in, uint32_t *out) {
+	*out = (((uint32_t)(unsigned char)in[3])<<24) |
+		(((uint32_t)(unsigned char)in[2])<<16) |
+		(((uint32_t)(unsigned char)in[1])<<8) |
+		(uint32_t)(unsigned char)in[0];
 }
 
+#else  /* defined(WORDS_BIGENDIAN) */
+/* This is for the little-endian pppl */
 
-using namespace std;
+/* Adopted from python-cdb (which adopted it from libowfat) */
+#define UINT32_PACK(out,in) (*(uint32_t*)(out)=(*(uint32_t*)&in))
+#define UINT32_UNPACK(in,out) (*((uint32_t*)out)=*(uint32_t*)(in))
 
-inline
-bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
-{
-	for(int i=nr; i>0; --i)
-	{
-		is.ignore(numeric_limits<int>::max(), '\n');
-		if(is.fail())
-		{
-			error_callback("Can't read cache file %s: %s",
-					filename.c_str(), strerror(errno));
-			return false;
-		}
-	}
+#endif /* defined(WORDS_BIGENDIAN) */
 
-	return true;
-}
+/** For cdb cache */
+bool unpickle_get_mapping(char *data, unsigned int data_len, std::map<std::string,std::string> &unpickled);
 
-#define open_skipping(nr, is, filename, error_callback) \
-	ifstream is(filename); \
-	if(!is.is_open()) \
-		error_callback("Can't open %s: %s", (filename), strerror(errno)); \
-	skip_lines(nr, is, (filename), error_callback);
+/** For portage-2.1.2 cache */
+bool unpickle_get(const char **data, const char *data_end, std::map<std::string,std::string> &unpickled, bool first);
 
-
-/** Read the keywords and slot from a flat cache file. */
-void flat_get_keywords_slot_iuse(const string &filename, string &keywords, string &slot, string &iuse, BasicCache::ErrorCallback error_callback)
-{
-	open_skipping(2, is, filename.c_str(), error_callback);
-	getline(is, slot);
-	skip_lines(5, is, filename, error_callback);
-	getline(is, keywords);
-	skip_lines(1, is, filename, error_callback);
-	getline(is, iuse);
-	is.close();
-}
-
-/** Read a flat cache file. */
-void
-flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
-{
-	open_skipping(5, is, filename, error_callback);
-	string linebuf;
-	// Read the rest
-	for(int linenr = 5; getline(is, linebuf); ++linenr)
-	{
-		switch(linenr)
-		{
-			case 5:  pkg->homepage = linebuf; break;
-			case 6:  pkg->licenses = linebuf; break;
-			case 7:  pkg->desc     = linebuf; break;
-			case 13: pkg->provide  = linebuf; is.close();
-					 return;
-		}
-	}
-	is.close();
-}
+#endif /* __UNPICKLE_H__ */

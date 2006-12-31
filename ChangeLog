@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Prepare infrastructure to support portage-2.1.1 cache someday,
+	  although this seems almost impossible. See TODO file.
+
 *eix-0.8.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Treat empty regular expression manually. This fixes

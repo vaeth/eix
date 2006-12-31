@@ -26,7 +26,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "backport.h"
+#include "port2_1_0.h"
 
 #include <portage/package.h>
 #include <portage/version.h>
@@ -108,7 +108,7 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-bool BackportCache::readCategory(Category &vec) throw(ExBasic)
+bool Port2_1_0_Cache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;

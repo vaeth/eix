@@ -27,7 +27,7 @@
  ***************************************************************************/
 
 #include "metadata.h"
-#include <portage/cache/cache-utils.h>
+#include <cache-utils/flat-reader.h>
 
 #include <eixTk/stringutils.h>
 #include <portage/package.h>

@@ -1025,7 +1025,7 @@ Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.BR flat
+.BR portage-2.0
 If you are using <portage-2.1 and the default backend, you might want
 to use this one if you do not have access to the portage tree when
 you run update-eix.
@@ -1033,10 +1033,10 @@ Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.BR backport
-If you are using >=portage-2.1 and the default backend, you might want
-to use this one if you do not have access to the portage tree when
-you run update-eix.
+.BR portage-2.1
+If you are using portage-2.1 or portage-2.1.1 and the default backend,
+you might want to use this one if you do not have access to the portage
+tree when you run update-eix.
 Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
@@ -1374,13 +1374,16 @@ The functionality of update-eix was once triggered by using the -u switch on
 eix. It was than separated to provide better maintainability. Thus update-eix
 came to life.
 
-The new portage-versions (>=2.1_pre1) don't remove the old dep-cache, thus eix would
+portage-2.1 and portage-2.1.1 doesn't remove the old dep-cache, thus eix would
 always find packages that are not in portage anymore. To circumvent this, eix-sync
 deletes the old cache (rm -rf /var/cache/edb/dep/*).
 
 Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
 reasonable anymore to use different variable names for eix and diff-eix.
 Hence, all corresponding B<DIFF_*> variables have vanished.
+
+The cache methods B<flat> and B<backport> are now called B<portage-2.0>
+and B<portage-2.1>, respectively (the obsolete names are still supported).
 .\" }}}
 
 .\" {{{ AUTHORS

@@ -1,1 +1,33 @@
-Full support for USE-Flags
+- Full support for USE-Flags:
+
+  Currently, the USE Flags of all versions of one package are collected
+  in the package class (to save disk and memory space).
+     The versions class already contain corresponding entries (and they are
+  filled by the cache methods), but in the portage/package.cc member functions
+  addVersion()/addVersionFinalize() the function collect_iuse() is called
+  which clears all the entries, collecting them in the corresponding
+  package class.
+     Also the eix database format currently only reads the package useflags
+  and not the version useflags.
+
+- Support of portage-2.1.2 cache method (cpickle):
+
+  This seems to be very hard. The beginning of a cpickle-interpreter is
+  written in portage/cache/cache-utils/unpickle.cc, but currently
+  commented out - currently, I gave up. Maybe it is possible to write
+  some semi-cheating interpreter - any ideas are welcome.
+  Note that the first two functions in the above file are used by cdb.cc,
+  so you must not delete it completely.
+  If you want to run the above function (which currently only prints the
+  cpickle file in a human-readable form until it fails), you have to
+    export PORTDIR_CACHE_METHOD=portage-2.1.2
+  and you have to uncomment not only the above function but also:
+  a) Uncomment the two corresponding add_include/add_name-variables in
+     portage/cache/generate-cachemap.sh
+  b) Add the two filenames
+     port2_1_2/port2_1_2.cc port2_1_2/port2_1_2.h
+     to the libcache_a_SOURCES in portage/cache/Makefile.am
+     (do must add a trailing \ if you move the corresponding
+     comment line in this file!).
+  All three things are done by portage-2.1.2-activate.diff
+  Of course, it is necessary afterwards to rerun automake (./mkmake)
