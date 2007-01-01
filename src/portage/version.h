@@ -36,6 +36,23 @@
 
 #include <iostream>
 
+/* If NOT_FULL_USE is defined, then the iuse data will be handled per package
+   and not per version to save memory and disk space.
+   More precisely, if NOT_FULL_USE is defined then the version::iuse entry
+   will be empty most of the time:
+   The entry is cleared in Package::collect_iuse() which is called by
+   Package::addVersionFinalize() / Package::addVersion()
+   whenever a version is added to the package: Before clearing,
+   collect_iuse() adds the corresponding data to the package-wide data.
+   If on the other hand, NOT_FULL_USE is undefined, collect_iuse() will not
+   delete this data, and the database-output function will write an empty
+   string for the package-wide IUSE data, and the database-reading function
+   will get forced to read all package versions (using Package::addVersion()
+   and thus calculating the package-wide IUSE) before the package-wide
+   IUSE data is assumed to be known. */
+
+#define NOT_FULL_USE
+
 /** Version expands the BasicVersion class by data relevant for versions in tree/overlays */
 class Version : public BasicVersion, public Keywords {
 
@@ -43,11 +60,8 @@ class Version : public BasicVersion, public Keywords {
 		friend void     io::write_version(FILE *fp, const Version *v, bool small);
 		friend Version *io::read_version(FILE *fp);
 
-		/** Currently, this is empty most of the time to save space:
-		    Although initially, the data is read correctly, it is
-		    cleared in Version::addVersionFinalize to get only a
-		    package-wide iuse. Also, only the latter is stored/read
-		    from the eix-internal database. */
+		/** If NOT_FULL_USE is defined, this might "falsely" be empty
+		    to save memory. See the comments above NOT_FULL_USE. */
 		std::vector<std::string> iuse;
 
 		typedef unsigned short Overlay;
@@ -68,6 +82,9 @@ class Version : public BasicVersion, public Keywords {
 			sort(iuse.begin(), iuse.end());
 			iuse.erase(unique(iuse.begin(), iuse.end()), iuse.end());
 		}
+
+		std::string get_iuse() const
+		{ return join_vector(iuse); }
 
 		/** The equality operator does *not* test the slots */
 		bool operator == (const Version &v) const

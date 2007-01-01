@@ -109,7 +109,7 @@ void static unpickle_check_dict(bool &waiting_for_value, map<string,string> &unp
 /** For cdb cache */
 bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> &unpickled)
 {
-	int ret = 1;
+	char ret = 1;
 	char *data_end = data + data_len;
 	bool waiting_for_value = false;
 	string key;
@@ -137,8 +137,7 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 				continue;
 			case SHORT_BINSTRING:
 				{
-					unsigned char len;
-					len = *(data)++;
+					unsigned char len = NEXT;
 					string buf(data, len);
 					MOVE(len);
 					unpickle_check_dict(waiting_for_value, unpickled, buf, key);
@@ -155,101 +154,175 @@ bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> 
 				}
 				continue;
 			case SETITEMS:
-			default:
 				ret = 0;
 				continue;
+			default:
+				break;
 		}
 	}
 	return true;
 }
 
+//#define TEST_UNPICKLE
+
 /** For portage-2.1.2 cache */
-/*
-bool unpickle_get(const char **datas, const char *data_end, std::map<std::string,std::string> &unpickled, bool first)
+void
+Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 {
-	int ret = 1;
-	const char *data = *datas;
-	int i;
+	vector<string>::size_type index;
+	char prev = 0, curr = 1;
 	bool waiting_for_value = false;
-	string key;
+	string buf, key;
 
-	if(NEXT != PROTO)
-		return false;
+	unpickled.clear();
+	if(firsttime) {
+		if( ! is_finished() && (NEXT == PROTO) )
+			if( ! is_finished() && (NEXT == 0x2) )
+				firsttime = false;
+		if(firsttime) {
+			throw ExBasic("wrong cpickle header");
+			finish();
+			return;
+		}
+	}
 
-	if(NEXT != 0x2)
-		return false;
-
-	if(NEXT != EMPTY_DICT)
-		return false;
-
-	while( ! IS_END && (ret = NEXT) ) {
-		switch(ret) {
+	while( ! is_finished() && (curr = NEXT) ) {
+		switch(curr) {
+			case BINGET:
+				index = (unsigned char)NEXT;
+#ifdef TEST_UNPICKLE
+				cout << "BINGET: " << index << "\n";
+#endif
+				if(prev == STRING)
+					buf = wasput.at(index);
+				else
+					prev = BINGET;
+				continue;
+			case LONG_BINGET:
+				{
+					uint32_t arg;
+					UINT32_UNPACK(data, &arg);
+					index = arg;
+					MOVE(4);
+				}
+#ifdef TEST_UNPICKLE
+				cout << "BINGET: " << index << "\n";
+#endif
+				if(prev == STRING)
+					buf = wasput.at(index);
+				else
+					prev = BINGET;
+				continue;
 			case BINPUT:
-				i = NEXT;
-				cout << "BINPUT: " << i << "\n";
+				index = (unsigned char)NEXT;
+#ifdef TEST_UNPICKLE
+				cout << "BINPUT: " << (int)index << "\n";
+#endif
+				if(prev == STRING)
+					insert(index, buf);
+				continue;
+			case LONG_BINPUT:
+				{
+					uint32_t arg;
+					UINT32_UNPACK(data, &arg);
+					index = arg;
+					MOVE(4);
+				}
+#ifdef TEST_UNPICKLE
+				cout << "BINPUT: " << index << "\n";
+#endif
+				if(prev == STRING)
+					insert(index, buf);
 				continue;
 			case BININT:
-				{
-					string buf;
-					MOVE(sizeof(int));
-					unpickle_check_dict(waiting_for_value, unpickled, buf, key);
-				}
+#ifdef TEST_UNPICKLE
+				cout << "BININT\n";
+#endif
+				MOVE(sizeof(int));
+				prev = BININT;
 				continue;
 			case SHORT_BINSTRING:
 				{
-					unsigned char len;
-					len = *(data)++;
-					string buf(data, len);
+					unsigned char len = NEXT;
+					buf = string(data, len);
 					MOVE(len);
+#ifdef TEST_UNPICKLE
 					cout << "STRING: " << buf << "\n";
+#endif
 				}
-				continue;
+				prev = STRING;
+				break;
 			case BINSTRING:
 				{
 					uint32_t len;
 					UINT32_UNPACK(data, &len);
 					MOVE(4);
-					string buf(data, len);
+					buf = string(data, len);
 					MOVE(len);
+#ifdef TEST_UNPICKLE
 					cout << "STRING: " << buf << "\n";
+#endif
 				}
-				continue;
+				prev = STRING;
+				break;
 			case SETITEMS:
-				i = NEXT;
-				cout << "SETITEMS: " << i << "\n";
-				continue;
+#ifdef TEST_UNPICKLE
+				{
+					unsigned char i = *data;
+					cout << "SETITEMS: " << (int)i << "\n";
+				}
+#endif
+				MOVE(1);
+				// prev = SETITEMS;
+				return;
 			case MARK:
+#ifdef TEST_UNPICKLE
 				cout << "MARK\n";
+#endif
+				prev = MARK;
 				continue;
 			case EMPTY_DICT:
+#ifdef TEST_UNPICKLE
 				cout << "EMPTY_DICT\n";
-				continue;
-			case LONG:
-				cout << "LONG\n";
-				MOVE(sizeof(long));
+#endif
+				prev = EMPTY_DICT;
 				continue;
 			case LONG1:
-				i = NEXT;
-				cout << "LONG1: " << i << "\n";
-				continue;
-			case UNICODE:
-				MOVE(4);
-				cout << "UNICODE\n";
-				continue;
-			case BINGET:
-				i = NEXT;
-				cout << "BINGET: " << i << "\n";
-				continue;
+				{
+					unsigned char len = NEXT;
+					MOVE(len);
+				}
+#ifdef TEST_UNPICKLE
+				cout << "LONG1\n";
+#endif
+				prev = LONG;
+				break;
 			case STOP:
-				data = data_end;
+#ifdef TEST_UNPICKLE
+				cout << "STOP\n";
+#endif
+				finish();
+				// prev = STOP;
 				continue;
 			default:
-				cout << "UNKNOWN: " << ret << "\"" << (char)ret << "\"\n";
-				*datas = data_end;
-				return false;
+				finish();
+				throw ExBasic("Unsupported pickle value %x (%c)", (int)(unsigned char)curr, curr);
+				// prev = curr;
+				return;
+		}
+		if(prev == STRING)
+			unpickle_check_dict(waiting_for_value, unpickled, buf, key);
+		// This is a hack: If a long follows, we have the key string:
+		else if(prev == LONG) {
+			unpickled["KEY"] = buf;
+			waiting_for_value = false;
 		}
 	}
-	*datas = data;
-	return true;
 }
-*/
+
+void Unpickler::insert(vector<string>::size_type index, string string)
+{
+	if(index >= wasput.size())
+		wasput.resize(index + 100);
+	wasput[index] = string;
+}

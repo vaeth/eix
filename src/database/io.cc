@@ -92,6 +92,7 @@ io::read_version(FILE *fp)
 	v->slot = io::read_string(fp);
 	v->overlay_key = io::read<unsigned short>(io::shortsize, fp);
 
+	v->set_iuse(io::read_string(fp));
 	return v;
 }
 
@@ -129,6 +130,7 @@ io::write_version(FILE *fp, const Version *v, bool small)
 
 	io::write_string(fp, v->slot);
 	io::write<unsigned short>(io::shortsize, fp, v->overlay_key);
+	io::write_string(fp, v->get_iuse());
 }
 
 unsigned int
@@ -157,7 +159,11 @@ io::write_package(FILE *fp, const Package &pkg, bool small)
 	io::write_string(fp, pkg.provide);
 	io::write_string(fp, pkg.homepage);
 	io::write_string(fp, pkg.licenses);
+#ifdef NOT_FULL_USE
 	io::write_string(fp, pkg.coll_iuse);
+#else
+	io::write_string(fp, "");
+#endif
 
 	// write all version entries
 	io::write<PackageReader::size_type>(PackageReader::sizesize, fp, pkg.size());

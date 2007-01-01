@@ -88,6 +88,68 @@ class MapFile {
 		}
 };
 
+bool
+Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories, Category *category)
+{
+	string catstring = mapper["KEY"];
+	if(catstring.empty())
+		return false;
+	string::size_type pos = catstring.find_first_of('/');
+	if(pos == string::npos) {
+		m_error_callback("'%s' not of the form package/catstring-version", catstring.c_str());
+		return false;
+	}
+	string name_ver = catstring.substr(pos + 1);
+	catstring.resize(pos);
+	// Does the category match?
+	// Currently, we do not add non-matching categories with this method.
+	Category *dest_cat;
+	if(category) {
+		dest_cat = category;
+		if(dest_cat->name() != catstring)
+			return false;
+	}
+	else {
+		dest_cat = packagetree->find(catstring);
+		if(!dest_cat)
+			return false;
+	}
+	char **aux = ExplodeAtom::split(name_ver.c_str());
+	if(aux == NULL)
+	{
+		m_error_callback("Can't split '%s' into package and version.", name_ver.c_str());
+		return false;
+	}
+	/* Search for existing package */
+	Package *pkg = dest_cat->findPackage(aux[0]);
+
+	/* If none was found create one */
+	if(pkg == NULL)
+		pkg = dest_cat->addPackage(aux[0]);
+
+	/* Create a new version and add it to package */
+	Version *version = new Version(aux[1]);
+	// reading slots and stability
+	version->slot = mapper["SLOT"];
+	string keywords = mapper["KEYWORDS"];
+	version->set(m_arch, keywords);
+	string iuse = mapper["IUSE"];
+	version->set_iuse(iuse);
+	pkg->addVersion(version);
+
+	/* For the newest version, add all remaining data */
+	if(*(pkg->latest()) == *version)
+	{
+		pkg->homepage = mapper["HOMEPAGE"];
+		pkg->licenses = mapper["LICENSES"];
+		pkg->desc     = mapper["DESCRIPTION"];
+		pkg->provide  = mapper["PROVIDE"];
+	}
+	/* Free old split */
+	free(aux[0]);
+	free(aux[1]);
+	return true;
+}
 
 bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category) throw(ExBasic)
 {
@@ -102,12 +164,30 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 				filename.c_str());
 		return true;
 	}
-	while( data < end ) {
-		if(!unpickle_get(&data, end, unpickled, false)) {
-			m_error_callback("Unpickle of %s failed",
-				filename.c_str());
-			return false;
+	if(category)
+	{
+		packagetree = NULL;
+		categories = NULL;
+	}
+	if(packagetree)
+		packagetree->need_fast_access(categories);
+	try {
+		Unpickler unpickler(data, end);
+		while(! unpickler.is_finished())
+		{
+			unpickler.get(unpickled);
+			readEntry(unpickled, packagetree, categories, category);
 		}
 	}
+	catch(ExBasic e) {
+		cerr << "Problems with " << filename <<
+			":\n" << e << endl;
+		if(packagetree)
+			packagetree->finish_fast_access();
+		return false;
+	}
+	if(packagetree)
+		packagetree->finish_fast_access();
 	return true;
 }
+

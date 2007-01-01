@@ -1034,11 +1034,21 @@ use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR portage-2.1
-If you are using portage-2.1 or portage-2.1.1 and the default backend,
+If you are using >=portage-2.1 and the default backend,
 you might want to use this one if you do not have access to the portage
 tree when you run update-eix.
 Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
+.TP
+.SS
+.BR portage-2.1*
+B<This is experimental and does not give all data!>
+If you want to use /var/cache/edb/vdb_metadata.pickle of >=portage-2.1.2,
+you can use this method. Note that this data is usually B<incomplete>.
+For instance, you will not get proper keywords, there are no package
+descriptions, and the cache usually only contains the installed packages.
+Moreover, this method depends on particular portage and python behaviour
+and may fail completely.
 .TP
 .SS
 .BR none

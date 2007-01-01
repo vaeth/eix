@@ -63,15 +63,19 @@ PackageReader::read(Attributes need)
 				break;
 		case LICENSE:
 			m_pkg->coll_iuse = io::read_string(m_fp);
+#ifdef NOT_FULL_USE
 			if(need == COLL_IUSE)
 				break;
 		case COLL_IUSE:
+#endif
 			size_type n;
 			n = io::read<PackageReader::size_type>(PackageReader::sizesize, m_fp);
 			for(size_type i = 0; i<n; i++ ) {
 				m_pkg->addVersion(io::read_version(m_fp));
 			}
-		case ALL:
+		//case COLL_IUSE: // If NOT_FULL_USE
+		//case ALL:
+		default:
 			break;
 	}
 	m_have = need;

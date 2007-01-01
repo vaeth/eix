@@ -162,9 +162,9 @@ split_string(const string &str, const char *at, bool ignore_empty, bool ignore_e
 }
 
 string
-join_vector(vector<string> &vec, string glue)
+join_vector(const vector<string> &vec, string glue)
 {
-	vector<string>::iterator it = vec.begin();
+	vector<string>::const_iterator it = vec.begin();
 	if(it == vec.end()) {
 		return "";
 	}

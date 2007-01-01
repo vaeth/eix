@@ -29,8 +29,11 @@
 #ifndef __UNPICKLE_H__
 #define __UNPICKLE_H__
 
+#include <eixTk/exceptions.h>
+
 #include <map>
 #include <string>
+#include <vector>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -81,6 +84,26 @@ inline static void uint32_unpack(const char *in, uint32_t *out) {
 bool unpickle_get_mapping(char *data, unsigned int data_len, std::map<std::string,std::string> &unpickled);
 
 /** For portage-2.1.2 cache */
-bool unpickle_get(const char **data, const char *data_end, std::map<std::string,std::string> &unpickled, bool first);
+class Unpickler {
+	private:
+		bool firsttime;
+		std::vector<std::string> wasput;
+		const char *data, *data_end;
+		void insert(std::vector<std::string>::size_type index, std::string string);
+	public:
+		void clear()
+		{ wasput.clear(); }
+
+		void finish()
+		{ data = data_end; clear(); }
+
+		bool is_finished()
+		{ return (data >= data_end); }
+
+		Unpickler(const char *start, const char *end)
+		{ data = start ; data_end = end; clear(); firsttime = true; }
+
+		void get(std::map<std::string,std::string> &unpickled) throw(ExBasic);
+};
 
 #endif /* __UNPICKLE_H__ */

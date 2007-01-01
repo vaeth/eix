@@ -116,7 +116,7 @@ std::vector<std::string> split_string(const std::string &str, const char *at = "
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
-std::string join_vector(std::vector<std::string> &vec, std::string glue = " ");
+std::string join_vector(const std::vector<std::string> &vec, std::string glue = " ");
 
 /** Make a set from a string-vector. */
 void make_set(std::set<std::string> *the_set, const std::vector<std::string> &the_list);

@@ -138,8 +138,10 @@ void Package::collect_iuse()
 	vector<string> iuse = split_string(coll_iuse);
 	for(iterator it = begin(); it != end(); ++it) {
 		iuse.insert(iuse.end(), (it->iuse).begin(), (it->iuse).end());
+#ifdef NOT_FULL_USE
 		// Clear iuse to save memory:
 		(it->iuse).clear();
+#endif
 	}
 	std::sort(iuse.begin(), iuse.end());
 	iuse.erase(std::unique(iuse.begin(), iuse.end()), iuse.end());

@@ -2,8 +2,9 @@
 
 *eix-0.8.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Prepare infrastructure to support portage-2.1.1 cache someday,
-	  although this seems almost impossible. See TODO file.
+	- Rename cache methods flat/backport to portage-2.0/portage-2.1
+	- Experimental portage-2.1* cache method (not recommended).
+	- Prepare database for per-version IUSE
 
 *eix-0.8.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

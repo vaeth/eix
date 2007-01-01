@@ -30,8 +30,12 @@
 #define __PORT2_1_2_H__
 
 #include <portage/cache/base.h>
+#include <map>
+#include <string>
 
 class Port2_1_2_Cache : public BasicCache {
+	private:
+		bool readEntry(std::map<std::string,std::string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL);
 
 	public:
 		bool can_read_multiple_categories() const
@@ -40,7 +44,7 @@ class Port2_1_2_Cache : public BasicCache {
 		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
 
 		const char *getType() const
-		{ return "portage-2.1.1"; }
+		{ return "portage-2.1*"; }
 };
 
 #endif /* __PORT2_1_2_H__ */
