@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -36,6 +37,8 @@
 #include <string>
 #include <vector>
 
+class PortageSettings;
+
 /** Access to the cascading profile pointed to by /etc/make.profile. */
 class CascadingProfile {
 
@@ -43,7 +46,7 @@ class CascadingProfile {
 
 	protected:
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
-		std::map<std::string,std::string> *m_make_defaults; /**< Map of variables found in make.defaults-files. */
+		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
 		MaskList<Mask> m_system;         /**< Packages in m_system profile. */
 		MaskList<Mask> m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
@@ -73,9 +76,10 @@ class CascadingProfile {
 		 * Use make_defaults as map for parser. */
 		void readMakeDefaults();
 
+		void ReadLink(std::string &path) const;
 	public:
-		CascadingProfile(std::map<std::string,std::string> *mapping) {
-			m_make_defaults = mapping;
+		CascadingProfile(PortageSettings *portagesettings) {
+			m_portagesettings = portagesettings;
 
 			listProfile();
 			readMakeDefaults();

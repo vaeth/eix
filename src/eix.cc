@@ -61,7 +61,7 @@ const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
 void print_vector(const vector<string> &vec);
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+void print_unused(const char *configroot, const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
 void print_removed(const string &dirname, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
@@ -174,6 +174,8 @@ sig_handler(int sig)
 }
 
 const char *format_normal, *format_verbose, *format_compact;
+const char *eix_cachefile = EIX_CACHEFILE;
+
 char overlay_mode;
 
 PrintFormat format(get_package_property, print_package_property);
@@ -223,6 +225,8 @@ static struct Option long_options[] = {
 	Option("format",         O_FMT,         Option::STRING,   &format_normal),
 	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
 	Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact),
+
+	Option("cache-file",     O_EIX_CACHEFILE,Option::STRING,  &eix_cachefile),
 
 	// Options for criteria
 	Option("installed",     'I'),
@@ -378,7 +382,7 @@ run_eix(int argc, char** argv)
 
 	// Only check if the versions uses the current layout
 	if(rc_options.is_current) {
-		return is_current_dbversion(EIX_CACHEFILE);
+		return is_current_dbversion(eix_cachefile);
 	}
 
 	// Dump eixrc-stuff
@@ -432,10 +436,10 @@ run_eix(int argc, char** argv)
 	Matchatom *query;
 
 	/* Open database file */
-	FILE *fp = fopen(EIX_CACHEFILE, "rb");
+	FILE *fp = fopen(eix_cachefile, "rb");
 	if(!fp) {
-		fprintf(stderr, "Can't open the database file "EIX_CACHEFILE" for reading (mode = 'rb')\n"
-				"Did you forget to create it with 'update-eix'?\n");
+		fprintf(stderr, "Can't open the database file %s for reading (mode = 'rb')\n"
+				"Did you forget to create it with 'update-eix'?\n", eix_cachefile);
 		exit(1);
 	}
 
@@ -477,11 +481,11 @@ run_eix(int argc, char** argv)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		cout << "\n";
-		print_unused("/etc/portage/package.keywords", all_packages);
-		print_unused("/etc/portage/package.mask",     all_packages);
-		print_unused("/etc/portage/package.unmask",   all_packages);
-		print_unused("/etc/portage/package.use",      all_packages, empty);
-		print_unused("/etc/portage/package.cflags",   all_packages, empty);
+		print_unused(portagesettings.configroot, USER_KEYWORDS_FILE, all_packages);
+		print_unused(portagesettings.configroot, USER_MASK_FILE,     all_packages);
+		print_unused(portagesettings.configroot, USER_UNMASK_FILE,   all_packages);
+		print_unused(portagesettings.configroot, USER_USE_FILE,      all_packages, empty);
+		print_unused(portagesettings.configroot, USER_CFLAGS_FILE,   all_packages, empty);
 		print_removed(var_db_pkg, all_packages);
 	}
 
@@ -623,11 +627,12 @@ void print_vector(const vector<string> &vec)
 	cout << "--\n\n";
 }
 
-void print_unused(const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
+void print_unused(const char *configroot, const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
-	pushback_lines(filename, &lines, false, true);
+	string name(configroot ? (string(configroot) + filename) : filename);
+	pushback_lines(name.c_str(), &lines, false, true);
 	for(vector<string>::size_type i = 0;
 		i<lines.size();
 		i++)
@@ -653,7 +658,7 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 			}
 		}
 		catch(ExBasic e) {
-			portage_parse_error(filename, i, lines[i], e);
+			portage_parse_error(name.c_str(), i, lines[i], e);
 		}
 		if(!m)
 			continue;
@@ -676,7 +681,7 @@ void print_unused(const char *filename, const eix::ptr_list<Package> &packagelis
 		cout << "Non-matching";
 	if(test_empty)
 		cout << " or empty";
-	cout << " entries in " << filename;
+	cout << " entries in " << name.c_str();
 	if(unused.empty())
 	{
 		cout << ".\n";

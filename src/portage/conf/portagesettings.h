@@ -39,7 +39,14 @@
 #include <vector>
 
 /* Files for categories the user defined and categories from the official tree */
+#define MAKE_GLOBALS_FILE       "/etc/make.globals"
+#define MAKE_CONF_FILE          "/etc/make.conf"
 #define USER_CATEGORIES_FILE    "/etc/portage/categories"
+#define USER_KEYWORDS_FILE      "/etc/portage/package.keywords"
+#define USER_MASK_FILE          "/etc/portage/package.mask"
+#define USER_UNMASK_FILE        "/etc/portage/package.unmask"
+#define USER_USE_FILE           "/etc/portage/package.use"
+#define USER_CFLAGS_FILE        "/etc/portage/package.cflags"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
 #define PORTDIR_MASK_FILE       "profiles/package.mask"
 
@@ -47,36 +54,35 @@ class Mask;
 class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false);
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false, const char *configroot = NULL);
 
 /** Grab Mask from file and add to category->vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive = false) {
-	return grab_masks(file, type, NULL , mask_vec, recursive);
+inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive = false, const char *configroot = NULL) {
+	return grab_masks(file, type, NULL , mask_vec, recursive, configroot);
 }
 
 /** Grab Mask from file and add to vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive = false) {
-	return grab_masks(file, type, cat_map, NULL, recursive);
+inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive = false, const char *configroot = NULL) {
+	return grab_masks(file, type, cat_map, NULL, recursive, configroot);
 }
 
 class PortageSettings;
 
-bool PortageUserConfigCheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in);
 
 class PortageUserConfig {
 	private:
 		PortageSettings      *m_settings;
 		MaskList<Mask>        m_mask;
 		MaskList<KeywordMask> m_keywords;
-		MaskList<KeywordMask> m_use,m_cflags;
-		bool read_use,read_cflags;
+		MaskList<KeywordMask> m_use, m_cflags;
+		bool read_use, read_cflags;
 
 		bool readKeywords();
-		bool readMasks() {
-			bool mask_ok = grab_masks("/etc/portage/package.mask", Mask::maskMask, &m_mask, true);
-			bool unmask_ok = grab_masks("/etc/portage/package.unmask", Mask::maskUnmask, &m_mask, true);
-			return mask_ok && unmask_ok;
-		}
+		bool readMasks();
+
+		static bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in);
+		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
+		static void ReadVersionFile (const char *file, MaskList<KeywordMask> *list);
 
 	public:
 		PortageUserConfig(PortageSettings *psettings) {
@@ -86,22 +92,24 @@ class PortageUserConfig {
 			read_use = read_cflags = false;
 		}
 
+
 		/// @return true if something from /etc/portage/package.* applied
 		bool setMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 		/// @return true if something from /etc/portage/package.* applied
 		bool setStability(Package *p, const Keywords &kw, Keywords::Redundant check = Keywords::RED_NOTHING) const;
-		/// @return true if something from /etc/portage/package.* applied
+
+		/// @return true if something from /etc/portage/package.use applied
 		bool CheckUse(Package *p, Keywords::Redundant check)
 		{
 			if(check & Keywords::RED_ALL_USE)
-				return PortageUserConfigCheckFile(p, "/etc/portage/package.use", &m_use, &read_use, check & Keywords::RED_DOUBLE_USE, check & Keywords::RED_IN_USE);
+				return CheckFile(p, USER_USE_FILE, &m_use, &read_use, check & Keywords::RED_DOUBLE_USE, check & Keywords::RED_IN_USE);
 			return false;
 		}
-		/// @return true if something from /etc/portage/package.* applied
+		/// @return true if something from /etc/portage/package.cflags applied
 		bool CheckCflags(Package *p, Keywords::Redundant check)
 		{
 			if(check & Keywords::RED_ALL_CFLAGS)
-				return PortageUserConfigCheckFile(p, "/etc/portage/package.cflags", &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
+				return CheckFile(p, USER_CFLAGS_FILE, &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
 			return false;
 		}
 };
@@ -113,6 +121,8 @@ class PortageUserConfig;
 class PortageSettings : public std::map<std::string,std::string> {
 
 	private:
+		friend class CascadingProfile;
+
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
 		std::vector<std::string> m_accepted_keyword;
 
@@ -120,7 +130,12 @@ class PortageSettings : public std::map<std::string,std::string> {
 		MaskList<Mask> m_masks;
 		Keywords m_accepted_keywords;
 
+		void override_by_env(const char **vars);
+		void read_config(const char *root, const char *name);
+
 	public:
+		const char *configroot;
+
 		/** Your cascading profile. */
 		CascadingProfile  *profile;
 		PortageUserConfig *user_config;

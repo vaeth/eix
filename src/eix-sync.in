@@ -36,7 +36,7 @@ EIXCACHE="@EIX_CACHEFILE@"
 EIXPREVIOUS="${EIXCACHE%/*}/eix.previous"
 GENSYNCCONF="/etc/eix-sync.conf"
 LOGFILE="/var/log/eix-sync.log"
-PMOD='/etc/portage/modules'
+PMOD="${PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
 # print message and die a horrible death

@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -29,6 +30,7 @@
 
 #include <eixTk/utils.h>
 #include <varsreader.h>
+#include <portage/conf/portagesettings.h>
 
 #include <fstream>
 
@@ -151,24 +153,12 @@ void CascadingProfile::readPackages(const string &line)
 	}
 }
 
-/** Key that should accumelate their content rathern then replace. */
-static const char *default_accumulating_keys[] = {
-	"USE",
-	"CONFIG_*",
-	"FEATURES",
-	"ACCEPT_KEYWORDS",
-	NULL
-};
-
 /** Read all "make.defaults" files found in profile. */
 void CascadingProfile::readMakeDefaults()
 {
 	for(vector<string>::size_type i = 0; i < m_profile_files.size(); ++i) {
 		if( strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0) {
-			VarsReader parser(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES);
-			parser.accumulatingKeys(default_accumulating_keys); // use defaults
-			parser.useMap(m_make_defaults);
-			parser.read(m_profile_files[i].c_str());
+			m_portagesettings->read_config(NULL, m_profile_files[i].c_str());
 		}
 	}
 }
@@ -187,21 +177,39 @@ void CascadingProfile::readPackageMasks(const string &line)
 	}
 }
 
-/** Cycle through profile and put path to files into this->m_profile_files. */
-void CascadingProfile::listProfile(void) throw(ExBasic)
+void CascadingProfile::ReadLink(string &path) const
 {
 	char readlink_buffer[READLINK_BUFFER];
-	int len = readlink(PROFILE_LINK, readlink_buffer, READLINK_BUFFER - 1);
+	string profile_linkname(PROFILE_LINK);
+	if(m_portagesettings->configroot)
+		profile_linkname.insert(0, m_portagesettings->configroot);
+	int len = readlink(profile_linkname.c_str() , readlink_buffer, READLINK_BUFFER - 1);
 	if(len == -1) {
-		throw( ExBasic("readlink("PROFILE_LINK") failed: %s", strerror(errno)) );
+		throw( ExBasic("readlink(%s) failed: %s", profile_linkname.c_str(), strerror(errno)) );
 	}
 	readlink_buffer[len] = '\0';
 
-	string path_buffer(readlink_buffer);
-	/* If it's a relative path prepend the dirname of PROFILE_LINK_DIRECTORY */
-	if( path_buffer[0] != '/' )
-		path_buffer.insert(0, PROFILE_LINK_DIRECTORY);
-	path_buffer.append("/"); /* append "/" */
+	path = readlink_buffer;
+	/* If it's a relative path prepend the dirname of ${PORTAGE_CONFIGROOT}/PROFILE_LINK_DIRECTORY */
+	if( path[0] != '/' ) {
+		path.insert(0, PROFILE_LINK_DIRECTORY);
+		if(m_portagesettings->configroot)
+			path.insert(0, m_portagesettings->configroot);
+	}
+}
+
+/** Cycle through profile and put path to files into this->m_profile_files. */
+void CascadingProfile::listProfile(void) throw(ExBasic)
+{
+	string path_buffer;
+	path_buffer = (*m_portagesettings)["PORTAGE_PROFILE"];
+	if(path_buffer.empty())
+		ReadLink(path_buffer);
+	if(path_buffer.empty())
+		return;
+
+	if(path_buffer[path_buffer.size() - 1] != '/')
+		path_buffer.append("/");
 
 	do {
 		/* Don't care about errors when reading profile. */

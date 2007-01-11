@@ -54,6 +54,7 @@ enum cli_options {
 	O_OVERLAY,
 	O_ONLY_OVERLAY,
 	O_INSTALLED_OVERLAY,
+	O_EIX_CACHEFILE,
 	O_DEBUG
 };
 

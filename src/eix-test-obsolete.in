@@ -78,70 +78,72 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
+COMMON="${PORTAGE_CONFIGROOT}/etc/portage/package."
+
 PRINT_COUNT_ALWAYS=false eix "-t!" | grep -v "^No matches found."
 
 (
 	export TEST_FOR_NONEXISTENT=false
 	(
 		NoMask; NoUnmask; NoUse; NoCflags; NoUninstalled
-		Eix "No redundant entries in /etc/portage/package.keywords" \
-			"Redundant in /etc/portage/package.keywords"
+		Eix "No redundant entries in ${COMMON}keywords" \
+			"Redundant in ${COMMON}keywords"
 	)
 	NoKeywords
 	(
 		NoUnmask; NoUse; NoCflags; NoUninstalled
-		Eix "No redundant entries in /etc/portage/package.mask" \
-			"Redundant in /etc/portage/package.mask"
+		Eix "No redundant entries in ${COMMON}mask" \
+			"Redundant in ${COMMON}mask"
 	)
 	NoMask
 	(
 		NoUse; NoCflags; NoUninstalled
-		Eix "No redundant entries in /etc/portage/package.unmask" \
-			"Redundant in /etc/portage/package.unmask"
+		Eix "No redundant entries in ${COMMON}unmask" \
+			"Redundant in ${COMMON}unmask"
 	)
 	NoUnmask
 	(
 		NoCflags; NoUninstalled
-		Eix "No redundant entries in /etc/portage/package.use" \
-			"Redundant in /etc/portage/package.use"
+		Eix "No redundant entries in ${COMMON}use" \
+			"Redundant in ${COMMON}use"
 	)
 	NoUse
 	(
 		NoUninstalled
-		Eix "No redundant entries in /etc/portage/package.cflags" \
-			"Redundant in /etc/portage/package.cflags"
+		Eix "No redundant entries in ${COMMON}cflags" \
+			"Redundant in ${COMMON}cflags"
 	)
 	NoCflags
 	REDUNDANT_IF_IN_MASK=false \
 	REDUNDANT_IF_IN_UNMASK=false \
 	REDUNDANT_IF_IN_USE=false \
 	REDUNDANT_IF_IN_CFLAGS=false \
-		Eix "No uninstalled entries in /etc/portage/package.keywords" \
-			"Not installed but in /etc/portage/package.keywords"
+		Eix "No uninstalled entries in ${COMMON}keywords" \
+			"Not installed but in ${COMMON}keywords"
 	REDUNDANT_IF_IN_KEYWORDS=false \
 	REDUNDANT_IF_IN_UNMASK=false \
 	REDUNDANT_IF_IN_USE=false \
 	REDUNDANT_IF_IN_CFLAGS=false \
-		Eix "No uninstalled entries in /etc/portage/package.mask" \
-			"Not installed but in /etc/portage/package.mask"
+		Eix "No uninstalled entries in ${COMMON}mask" \
+			"Not installed but in ${COMMON}mask"
 	REDUNDANT_IF_IN_KEYWORDS=false \
 	REDUNDANT_IF_IN_MASK=false \
 	REDUNDANT_IF_IN_USE=false \
 	REDUNDANT_IF_IN_CFLAGS=false \
-		Eix "No uninstalled entries in /etc/portage/package.unmask" \
-			"Not installed but in /etc/portage/package.unmask"
+		Eix "No uninstalled entries in ${COMMON}unmask" \
+			"Not installed but in ${COMMON}unmask"
 	REDUNDANT_IF_IN_KEYWORDS=false \
 	REDUNDANT_IF_IN_MASK=false \
 	REDUNDANT_IF_IN_UNMASK=false \
 	REDUNDANT_IF_IN_CFLAGS=false \
-		Eix "No uninstalled entries in /etc/portage/package.use" \
-			"Not installed but in /etc/portage/package.use"
+		Eix "No uninstalled entries in ${COMMON}use" \
+			"Not installed but in ${COMMON}use"
 	REDUNDANT_IF_IN_KEYWORDS=false \
 	REDUNDANT_IF_IN_MASK=false \
 	REDUNDANT_IF_IN_UNMASK=false \
 	REDUNDANT_IF_IN_USE=false \
-		Eix "No uninstalled entries in /etc/portage/package.cflags" \
-			"Not installed but in /etc/portage/package.cflags"
+		Eix "No uninstalled entries in ${COMMON}cflags" \
+			"Not installed but in ${COMMON}cflags"
 )
 TEST_FOR_REDUNDANCY=false \
 	Eix "All installed versions of packages are in the database" \

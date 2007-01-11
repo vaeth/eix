@@ -40,13 +40,16 @@
 #include <varsreader.h>
 
 #include <fstream>
+#include <fnmatch.h>
+
 
 using namespace std;
 
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive)
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive, const char *configroot)
 {
+	string filename(configroot ? (string(configroot) + file) : file);
 	vector<string> lines;
-	if( ! pushback_lines(file, &lines, true, recursive))
+	if( ! pushback_lines(filename.c_str(), &lines, true, recursive))
 		return false;
 	for(vector<string>::iterator it=lines.begin(); it<lines.end(); ++it)
 	{
@@ -62,7 +65,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 			}
 		}
 		catch(ExBasic e) {
-			cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
+			cerr << "-- Invalid line in " << filename << ": \"" << line << "\"" << endl
 			     << "   " << e.getMessage() << endl;
 		}
 	}
@@ -70,9 +73,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 }
 
 
-
-
-/** Key that should accumelate their content rathern then replace. */
+/** Keys that should accumulate their content rathern then replace. */
 static const char *default_accumulating_keys[] = {
 	"USE",
 	"CONFIG_*",
@@ -81,34 +82,88 @@ static const char *default_accumulating_keys[] = {
 	NULL
 };
 
+/** Environment variables which should take effect before reading profiles. */
+static const char *test_in_env_early[] = {
+	"PORTAGE_PROFILE",
+	NULL
+};
+
+/** Environment variables which should add/override all other settings. */
+static const char *test_in_env_late[] = {
+	"PORTDIR",
+	"PORTDIR_OVERLAY",
+	"USE",
+	"CONFIG_PROTECT",
+	"CONFIG_PROTECT_MASK",
+	"FEATURES",
+	"ACCEPT_KEYWORDS",
+	NULL
+};
+
+inline static bool is_accumulating(const char **accumulating, const char *key)
+{
+	const char *match;
+	while((match = *(accumulating++)) != NULL) {
+		if(fnmatch(match, key, 0) == 0)
+			return true;
+	}
+	return false;
+}
+
+void PortageSettings::override_by_env(const char **vars)
+{
+	const char *var;
+	while((var = *(vars++)) != NULL)
+	{
+		const char *e = getenv(var);
+		if(!e)
+			continue;
+		if(!is_accumulating(default_accumulating_keys, var))
+		{
+			(*this)[var] = e;
+			continue;
+		}
+		string &ref = ((*this)[var]);
+		if(ref.empty())
+			ref = e;
+		else
+			ref.append(string("\n") + e);
+	}
+}
+
+void PortageSettings::read_config(const char *root, const char *name)
+{
+	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
+	configfile.accumulatingKeys(default_accumulating_keys);
+	configfile.useMap(this);
+	if(configroot)
+		configfile.read((string(configroot) + name).c_str());
+	else
+		configfile.read(name);
+}
+
 /** Read make.globals and make.conf. */
 PortageSettings::PortageSettings()
 {
+	configroot = getenv("PORTAGE_CONFIGROOT");
+
+	read_config(configroot, MAKE_GLOBALS_FILE);
+	read_config(configroot, MAKE_CONF_FILE);
+	override_by_env(test_in_env_early);
 	profile     = new CascadingProfile(this);
 	user_config = new PortageUserConfig(this);
+	override_by_env(test_in_env_late);
 
-	VarsReader make_globals(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
-	make_globals.accumulatingKeys(default_accumulating_keys);
-	make_globals.useMap(this);
-	make_globals.read("/etc/make.globals");
-
-	VarsReader make_conf(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
-	make_conf.accumulatingKeys(default_accumulating_keys);
-	make_conf.useMap(this);
-	make_conf.read("/etc/make.conf");
-
-	if((*this)["PORTDIR"].size() == 0 ) {
+	if((*this)["PORTDIR"].empty()) {
 		(*this)["PORTDIR"] = "/usr/portage/";
 	}
 	else {
-		(*this)["PORTDIR"].append("/");
+		string &ref = (*this)["PORTDIR"];
+		if(ref[ref.size() - 1] != '/')
+			ref.append("/");
 	}
 
 	overlays = split_string((*this)["PORTDIR_OVERLAY"]);
-
-	if(getenv("ACCEPT_KEYWORDS")) {
-		(*this)["ACCEPT_KEYWORDS"].append(string(" ") + getenv("ACCEPT_KEYWORDS"));
-	}
 
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
@@ -133,7 +188,11 @@ vector<string> *PortageSettings::getCategories()
 	if(m_categories.empty()) {
 		/* Merge categories from /etc/portage/categories and
 		 * portdir/profile/categories */
-		pushback_lines(USER_CATEGORIES_FILE, &m_categories);
+		string user_cat(USER_CATEGORIES_FILE);
+		if(configroot)
+			user_cat.insert(0, configroot);
+		pushback_lines(user_cat.c_str(), &m_categories);
+
 		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
 		for(vector<string>::iterator i = overlays.begin();
 			i != overlays.end();
@@ -167,7 +226,16 @@ MaskList<Mask> *PortageSettings::getMasks()
 	return &(m_masks);
 }
 
-void PortageUserConfigReadVersionFile (const char *file, MaskList<KeywordMask> *list)
+bool
+PortageUserConfig::readMasks()
+{
+	bool mask_ok = grab_masks(USER_MASK_FILE, Mask::maskMask, &m_mask, true, m_settings->configroot);
+	bool unmask_ok = grab_masks(USER_UNMASK_FILE, Mask::maskUnmask, &m_mask, true, m_settings->configroot);
+	return mask_ok && unmask_ok;
+}
+
+void
+PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *list)
 {
 	vector<string> lines;
 	pushback_lines(file, &lines, false, true);
@@ -196,7 +264,7 @@ void PortageUserConfigReadVersionFile (const char *file, MaskList<KeywordMask> *
 }
 
 /// @return true if some mask from list applied
-bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in)
+bool PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in)
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = list->get(p);
 	map<Version*,char> sorted_by_versions;
@@ -240,14 +308,17 @@ bool PortageUserConfigCheckList(Package *p, const MaskList<KeywordMask> *list, K
 	return true;
 }
 
-bool PortageUserConfigCheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in)
+bool PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const
 {
 	if(!(*readfile))
 	{
-		PortageUserConfigReadVersionFile(file, list);
+		if(m_settings->configroot)
+			ReadVersionFile((string(m_settings->configroot) + file).c_str(), list);
+		else
+			ReadVersionFile(file, list);
 		*readfile = true;
 	}
-	return PortageUserConfigCheckList(p, list, flag_double, flag_in);
+	return CheckList(p, list, flag_double, flag_in);
 }
 
 typedef struct {
@@ -267,7 +338,11 @@ bool PortageUserConfig::readKeywords() {
 	string fscked_arch = join_vector(splitted);
 
 	vector<string> lines;
-	pushback_lines("/etc/portage/package.keywords", &lines, false, true);
+	string filename(USER_KEYWORDS_FILE);
+	if(m_settings->configroot)
+		filename = string(m_settings->configroot) + filename;
+
+	pushback_lines(filename.c_str(), &lines, false, true);
 
 	/* Read only the last line for each "first" entry, e.g. in the example
 		foo/bar 1
@@ -325,7 +400,7 @@ bool PortageUserConfig::readKeywords() {
 			}
 		}
 		catch(ExBasic e) {
-			portage_parse_error("/etc/portage/package.keywords", i, lines[i], e);
+			portage_parse_error(filename.c_str(), i, lines[i], e);
 		}
 	}
 	return true;
@@ -472,7 +547,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 								if((arch_needed == 3) &&
 									(check & (~redundant) & Keywords::RED_WEAKER))
 								{
-									if(find(arr->begin(), arr->end(), s+1) != arr->end())
+									if(find(arr->begin(), arr->end(), s + 1) != arr->end())
 										arch_needed = 2;
 								}
 							}

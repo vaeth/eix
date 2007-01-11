@@ -2,9 +2,14 @@
 
 *eix-0.8.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Honour PORTAGE_CONFIGROOT
+	- Honour PORTAGE_PROFILE
+	- Allow environment to override/add to portage config variables
+	  like PORTDIR, PORTDIR_OVERLAY, ...
+	- Introduce --cache-file
 	- Rename cache methods flat/backport to portage-2.0/portage-2.1
-	- Experimental portage-2.1* cache method (not recommended).
-	- Prepare database for per-version IUSE
+	- Experimental portage-2.1* cache method (don't use it!).
+	- Prepare database format for perhaps future per-version IUSE data.
 
 *eix-0.8.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

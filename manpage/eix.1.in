@@ -143,6 +143,10 @@ are available, respectively.
 
 This option is best combined with -T to clean up /etc/portage/package.*
 
+.TP
+.BR --cache-file " I<FILE>"
+Use I<FILE> instead of B<@EIX_CACHEFILE@>.
+
 .\" {{{ -------- Options for expressions
 .SS Options for expressions
 .TP
@@ -1042,11 +1046,11 @@ use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
 .BR portage-2.1*
-B<This is experimental and does not give all data!>
-If you want to use /var/cache/edb/vdb_metadata.pickle of >=portage-2.1.2,
-you can use this method. Note that this data is usually B<incomplete>.
-For instance, you will not get proper keywords, there are no package
-descriptions, and the cache usually only contains the installed packages.
+B<Don't use this!>
+This is an experimental attempt to use /var/cache/edb/vdb_metadata.pickle
+of >=portage-2.1.2. Currently, that file only contains the installed packages.
+In particular, you will only get installed versions of installed packages,
+wrong keywords, no package description, etc.
 Moreover, this method depends on particular portage and python behaviour
 and may fail completely.
 .TP
