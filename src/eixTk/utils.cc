@@ -109,9 +109,18 @@ static short pushback_files_only_type;
 static const string *pushback_files_dir_path; // defined if pushback_files_only_type is nonzero
 int pushback_files_selector(SCANDIR_ARG3 dir_entry)
 {
+	// Empty names shouldn't occur. Just to be sure, we ignore them:
+	if(!((dir_entry->d_name)[0]))
+		return 0;
+
 	if(pushback_files_no_hidden)
 	{
+		// files starting with '.' are hidden.
 		if((dir_entry->d_name)[0] == '.')
+			return 0;
+		// files ending with '~' are hidden.
+		// (Note that we already excluded the bad case of empty names).
+		if((dir_entry->d_name)[strlen(dir_entry->d_name) - 1] == '~')
 			return 0;
 	}
 	if(pushback_files_exclude)

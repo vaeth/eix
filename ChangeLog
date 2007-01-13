@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Ignore *~ files in /etc/portage/package.*
+	  This reflects the change of portage-2.1.2_rc4-r9 of
+	  http://bugs.gentoo.org/show_bug.cgi?id=144445
+
 *eix-0.8.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Honour PORTAGE_CONFIGROOT
