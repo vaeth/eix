@@ -389,7 +389,7 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 
 	if((name == "availableversions") ||
 		(name == "availableversionslong") ||
-		(name == "availablevresionsshort")) {
+		(name == "availableversionsshort")) {
 		print_versions(fmt, entity, (name != "availableversionsshort"));
 		return;
 	}
