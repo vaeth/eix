@@ -86,6 +86,7 @@ diff_eix_LDADD = database/libdatabase.a \
 
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
+	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh'," \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE)," \
 	$(srcdir)/eix-sync.in > eix-sync
 
@@ -99,11 +100,11 @@ update-eix-functions.sh: update-eix-functions.sh.in
 
 update-eix-remote: update-eix-remote.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
-	    -e "s,update-eix-functions.sh.in,$(bindir)/update-eix-functions.sh," \
+	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh'," \
 	$(srcdir)/update-eix-remote.in > update-eix-remote
 
 update-eix-layman: update-eix-layman.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
-	    -e "s,update-eix-functions.sh.in,$(bindir)/update-eix-functions.sh," \
+	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh'," \
 	$(srcdir)/update-eix-layman.in > update-eix-layman
 

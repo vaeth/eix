@@ -6,6 +6,10 @@
 	  This reflects the change of portage-2.1.2_rc4-r9 of
 	  http://bugs.gentoo.org/show_bug.cgi?id=144445
 	- Fix <availableversionsshort>.
+	- Security improvement: Use random temporary names also on systems
+	  without mktemp (in eix-sync and update-eix-remote).
+	- Add Push and NormalizeNames to update-eix-functions.sh
+	- Code cleanup of scripts, in particular of eix-sync
 
 *eix-0.8.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

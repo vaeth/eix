@@ -1,4 +1,3 @@
-#!/bin/bash
 ###########################################################################
 #   eix is a small utility for searching ebuilds in the                   #
 #   Gentoo Linux portage system. It uses indexing to allow quick searches #
@@ -25,7 +24,9 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ###########################################################################
 
-# Helper functions for update-eix-remote, update-eix-layman,
+# This file must be "source"d by bash scripts.
+#
+# it contains helper functions for update-eix-remote, update-eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 source /sbin/functions.sh
@@ -63,11 +64,17 @@ RunCommand () {
 
 declare -a UPDATE_EIX_ARGS
 
-AddUpdateArgs () {
-	local K
+Push () {
+	local ARR K
+	ARR="${1}"
+	shift
 	for K; do
-		UPDATE_EIX_ARGS[${#UPDATE_EIX_ARGS[@]}]="${K}"
+		eval ${ARR}[\${#${ARR}[@]}]="\${K}"
 	done
+}
+
+AddUpdateArgs () {
+	Push UPDATE_EIX_ARGS "${@}"
 }
 
 AddUpdateQuoting () {
@@ -117,5 +124,40 @@ AddLocalMethods () {
 	do
 		AddMethod "${I}" "eix::${I}"
 	done
+}
+
+# Consider variables (arguments) as paths and normalize them.
+# If READLINK=readlink (default), resolve even to "true" pathnames.
+# Return with 1 if at least one variable is empty.
+# Set RELATIVE to a list of all variables which are relative paths
+# (the first token in RELATIVE will be a space if the list is not empty).
+
+READLINK="$(type -p readlink)" || READLINK=''
+NormalizeNames () {
+	local TRUENAME PREV I RSTAT=0
+	RELATIVE=''
+	for I; do
+		eval TRUENAME="\${${I}}"
+		if [[ -z "${TRUENAME}" ]]; then
+			eval ${I}=''
+			RSTAT=1
+			continue
+		fi
+		[[ "${TRUENAME:0:1}" = '/' ]] || RELATIVE="${RELATIVE} ${I}"
+		if [[ "${READLINK}" ]]; then
+			PREV="${TRUENAME}"
+			TRUENAME="$("${READLINK}" -f -- "${TRUENAME}")" \
+				|| TRUENAME=''
+			[[ "${TRUENAME}" ]] || TRUENAME="${PREV}"
+		fi
+		PREV=''
+		while [[ "${PREV}" != "${TRUENAME}" ]]; do
+			PREV="${TRUENAME}"
+			TRUENAME="${TRUENAME//\/\///}"
+		done
+		[[ "${TRUENAME}" != '/' ]] && TRUENAME="${TRUENAME%/}"
+		eval ${I}="\${TRUENAME}"
+	done
+	return ${RSTAT}
 }
 

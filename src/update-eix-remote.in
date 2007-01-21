@@ -31,15 +31,9 @@ source update-eix-functions.sh.in
 EIXCACHESNAME="eix-caches.tbz2"
 
 Sanitize () {
-	[[ "${OVERLAYPARENT:0:1}" = '/' ]] || \
-		die '$OVERLAYPARENT must start with /'
-	while [[ "${OVERLAYPARENT:0:1}" = '/' ]]; do
-		OVERLAYPARENT="${OVERLAYPARENT#/}"
-	done
-	while [[ "${OVERLAYPARENT}" != "${OVERLAYPARENT%/}" ]]; do
-		OVERLAYPARENT="${OVERLAYPARENT%/}"
-	done
-	OVERLAYPARENT="/${OVERLAYPARENT}"
+	READLINK='' NormalizeNames OVERLAYPARENT \
+		|| die '$OVERLAYPARENT must not be empty'
+	[[ "${RELATIVE}" ]] && die '$OVERLAYPARENT must start with /'
 }
 Sanitize
 
@@ -60,7 +54,7 @@ remove: Remove all temporarily added virtual overlays from the eix database;
 It is strongly recommended to use the update/fetch commands only as root
 or with the -u \"nobody\" option or with very limited permissions.
 
-For update and add all corresponding local overlay paths are excluded
+For \"update\" and \"add\" all corresponding local overlay paths are excluded
 from the current database to avoid confusion. The local paths are determined
 by prefixing the path
 	${OVERLAYPARENT}
@@ -117,7 +111,8 @@ CalcSuCmd () {
 	MY_CMD="$(type -P "${1}")" || die "${1} cannot be found in $PATH"
 	SUCMD=("${MY_CMD}")
 	[[ "${FETCHUSER}" || "${UID}" -ne 0 ]] || FETCHUSER="nobody"
-	[[ "${FETCHUSER}" ]] &&	SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
+	[[ "${FETCHUSER}" ]] \
+		&& SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
 }
 
 CdDir () {
@@ -129,22 +124,28 @@ EXITCODE=0
 Cleanup () {
 	cd / >/dev/null;
 	if [[ "${TMPDIR}" ]]; then
-		[[ -d "${TMPDIR}" ]] && rm -rf "${TMPDIR}"
+		[[ -d "${TMPDIR}" ]] && rm -rf -- "${TMPDIR}"
 	fi
 	TMPDIR=''
 	trap '' 0 1 2 15
 	exit "${EXITCODE}"
 }
 MakeTempDir () {
+	local COUNT
 	[[ "${TMPDIR}" ]] && return
 	if type mktemp &>/dev/null; then
 		TMPDIR="$(mktemp -d /tmp/${0##*/}.XXXXXX)" || \
 			die "cannot create temporary directory"
 	else
-		TMPDIR="/tmp/${0##*/}.$$"
-		[[ -e "${TMPDIR}" ]] && \
-			die "temporary name ${TMPDIR} already exists"
-		mkdir "${TMPDIR}" || die "cannot create "${TMPDIR}
+		COUNT=0
+		while true; do
+			((COUNT++ == 10000)) && \
+				die "found no free temp after 10000 attempts"
+			TMPDIR="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
+			[[ -e "${TMPDIR}" ]] && continue
+			mkdir "${TMPDIR}" || die "cannot create ${TMPDIR}"
+			break
+		done
 	fi
 	trap Cleanup 0 1 2 15
 	chmod 755 "${TMPDIR}"
@@ -181,7 +182,7 @@ AddArchive () {
 	for I in *
 	do
 		NAME="${I//:/_}"
-		[[ "${NAME}" != "${I}" ]] && mv "${I}" "${NAME}"
+		[[ "${NAME}" != "${I}" ]] && mv -- "${I}" "${NAME}"
 	done
 	if [[ "${OVERLAYNR}" ]]; then
 		OVERLAYARG=":${OVERLAYNR}"
@@ -208,9 +209,9 @@ FetchCopy () {
 	[[ "${FILENAME}" ]] || return
 	(
 		[[ "${UID}" -eq 0 ]] && umask 002
-		cp --preserve=timestamps "${TMPFILE}" "${FILENAME}"
+		cp --preserve=timestamps -- "${TMPFILE}" "${FILENAME}"
 	)
-	[[ "${UID}" -eq 0 ]] && chown portage:portage "${FILENAME}"
+	[[ "${UID}" -eq 0 ]] && chown -- portage:portage "${FILENAME}"
 }
 
 Fetch () {

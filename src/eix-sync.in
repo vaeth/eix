@@ -30,19 +30,14 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ###########################################################################
 
-source /sbin/functions.sh
+source update-eix-functions.sh.in
 
-EIXCACHE="@EIX_CACHEFILE@"
+EIXCACHE='@EIX_CACHEFILE@'
 EIXPREVIOUS="${EIXCACHE%/*}/eix.previous"
-GENSYNCCONF="/etc/eix-sync.conf"
-LOGFILE="/var/log/eix-sync.log"
+GENSYNCCONF='/etc/eix-sync.conf'
+LOGFILE='/var/log/eix-sync.log'
 PMOD="${PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
-
-# print message and die a horrible death
-die () {
-  eerror "${*}"; EXITCODE=2; exit "${EXITCODE}"
-}
 
 Usage () {
   echo "${0##*/} [options]
@@ -129,9 +124,9 @@ ExecuteConfig () {
     esac
     [[ "${1}" = 'opts' ]] && continue
     case "${MYCMD}" in
-      @@) AFTER_UPDATE[${#AFTER_UPDATE[@]}]="${J}"; continue;;
-      @)  AFTER_SYNC[${#AFTER_SYNC[@]}]="${J}"; continue;;
-      \~) BEFORE_RSYNC[${#BEFORE_RSYNC[@]}]="${J}"; continue;;
+      @@) Push AFTER_UPDATE "${J}"; continue;;
+      @)  Push AFTER_SYNC "${J}"; continue;;
+      \~) Push BEFORE_RSYNC "${J}"; continue;;
       !)  [[ "${NOGENSYNC}" ]] || DoExecute "${J}"; continue;;
     esac
     [[ "${NOGENSYNC}" ]] && continue
@@ -188,7 +183,7 @@ while getopts "ids:2:Uug@SmMtvqwWc:C:rR?hH" OPTION \
     w) EMERGECMD=("emerge-webrsync");;
     W) EMERGECMD=("emerge-delta-webrsync");;
     c) EMERGECMD=(); EMERGECMD[0]="${OPTARG}";;
-    C) EMERGECMD[${#EMERGECMD[@]}]="${OPTARG}";;
+    C) Push EMERGECMD "${OPTARG}";;
     r) CLEARCACHE=1;;
     R) CLEARCACHE='';;
     *) Usage 1;;
@@ -213,7 +208,7 @@ MyRun () {
 # Run command
 # if VERBOSE is empty, redirect 1,2 to /dev/null and use ebegin/eend
 # (instead of einfo)
-RunCommand () {
+MyRunCommand () {
   local RET
   [[ "${EMULATEMODE}" ]] && return 0
   if [[ "${VERBOSE}" ]]; then
@@ -234,7 +229,7 @@ DoExecute () {
   [[ "${EMULATEMODE}" ]] && return 0
   (
     for CURRENT_COMMAND; do
-      RunCommand "Executing ${CURRENT_COMMAND}" \
+      MyRunCommand "Executing ${CURRENT_COMMAND}" \
         eval "${CURRENT_COMMAND}" ||
           die "Something went wrong with ${CURRENT_COMMAND}"
     done
@@ -252,7 +247,7 @@ RootTest () {
 
 RootCommand () {
   RootTest
-  RunCommand "${@}"
+  MyRunCommand "${@}"
 }
 
 SED1='s!^[[:space:]]*'
@@ -276,14 +271,20 @@ DelTemp () {
   exit ${EXITCODE}
 }
 MakeTempFile () {
+  local COUNT
   if type mktemp &>/dev/null; then
     TMPFILE="$(mktemp /tmp/${0##*/}.XXXXXX)" ||
       die "cannot create temporary file"
   else
-    TMPFILE="/tmp/${0##*/}.$$"
-    [[ -e "${TMPFILE}" ]] && \
-      die "temporary name ${TMPFILE} already exists"
-    >"${TMPFILE}" || die "cannot create ${TMPFILE}"
+    COUNT=0
+    while true; do
+      ((COUNT++ == 10000)) && \
+        die "found no free tempname after 10000 attempts"
+      TMPFILE="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
+      [[ -e "${TMPFILE}" ]] && continue
+      >"${TMPFILE}" || die "cannot create temporary file ${TMPFILE}"
+      break
+    done
   fi
   trap DelTemp 0 1 2 15
 }
@@ -291,9 +292,7 @@ MakeTempFile () {
 PREPRSYNC=''
 PrepRsync () {
   local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS
-  if [[ -z "${PORTDIR}" ]]; then
-    PORTDIR="$(portageq portdir)" || PORTDIR="/usr/portage"
-  fi
+  GetPortdir
   HOSTDIR="${1#*:}"
   if [[ "${HOSTDIR}" && "${HOSTDIR}" != "${1}" ]]; then
     HOSTDIR="${1}"
@@ -323,7 +322,7 @@ CallEmergeSync () {
   [[ "${EMULATEMODE}" ]] && return
   if [[ "${SERVER}" ]]; then
     PrepRsync "${SERVER}"
-    RunCommand "rsyncing from ${HOSTDIR}" \
+    MyRunCommand "rsyncing from ${HOSTDIR}" \
       rsync $RSYNC_OPTS "${HOSTDIR}" "${PORTDIR}" || \
         die "Could not rsync from ${HOSTDIR}"
   fi
@@ -336,7 +335,7 @@ CallSyncClient () {
   [[ "${EMULATEMODE}" ]] && return
   [[ "${CLIENT}" ]] || return
   PrepRsync "${CLIENT}"
-  RunCommand "rsyncing to ${HOSTDIR}" \
+  MyRunCommand "rsyncing to ${HOSTDIR}" \
     rsync $RSYNC_OPTS "${PORTDIR}" "${HOSTDIR}" || \
       die "Could not rsync to ${HOSTDIR}"
 }
@@ -369,7 +368,7 @@ CondUpdate () {
   fi
   [[ "${EMULATEMODE}" ]] && return
   if ! eix --is-current; then
-    RunCommand "eix-cache uses obsolete format. Running update-eix!" \
+    MyRunCommand "eix-cache uses obsolete format. Running update-eix!" \
         update-eix || die "update-eix failed"
   fi
 }
@@ -385,7 +384,7 @@ CopyPrevious () {
 MovePrevious () {
   [[ "${USETEMP}" ]] && return
   ( umask 002
-    RunCommand "Copying old ${EIXCACHE} cache to ${EIXPREVIOUS}" \
+    MyRunCommand "Copying old ${EIXCACHE} cache to ${EIXPREVIOUS}" \
       mv -f "${TMPFILE}" "${EIXPREVIOUS}" ) ||
       die "Could not move ${TMPFILE} to ${EIXPREVIOUS}"
   [[ "${UID}" -eq 0 ]] && chown portage:portage "${EIXPREVIOUS}" &>/dev/null
@@ -408,7 +407,7 @@ UpdateDiff () {
     einfo "update-eix was apparently already called in a hook"
   else
     MovePrevious
-    RunCommand "Running update-eix" "update-eix" || \
+    MyRunCommand "Running update-eix" "update-eix" || \
       die "Failure while running update-eix"
   fi
   DoHook "${AFTER_UPDATE[@]}"
@@ -438,7 +437,7 @@ EMULATEMODE=''
 if (
      umask 002
      if [[ "${QUIET}" || -z "${VERBOSE}" ]]; then
-       >"${LOGFILE}"
+       >"${LOGFILE}" || exit 1
        [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}" &>/dev/null
      fi
    ) &>/dev/null
