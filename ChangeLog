@@ -10,6 +10,7 @@
 	  without mktemp (in eix-sync and update-eix-remote).
 	- Add Push and NormalizeNames to update-eix-functions.sh
 	- Code cleanup of scripts, in particular of eix-sync
+	- Correct EIX_WIKI to http://eix.sourceforget.net
 
 *eix-0.8.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -362,8 +363,9 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix fstream.ignore-stuff in metadata and flat.
 	- Redone a part of argsreader.h Option .. looks *much* cleaner now.
-	- Fixed http://dev.croup.de/proj/eix/ticket/3 - profiles can contain
-	  profiles/categories
+	- Fixed http://gentooexperimental.org/eix/ticket/3
+	  (was previously http://dev.croup.de/proj/eix/ticket/3)
+	  profiles can contain profiles/categories
 	- fuzzy-search is now ignore-case.
 
 *eix-0.5.4
@@ -421,7 +423,8 @@
 	  into the glibc (getpwnam) .. but this is really a leak. See
 	  --run-glibc-freeres in valgrind(1).
 	- Rewrite BasicVersion (much more efficient) and fixes
-	  http://dev.croup.de/proj/eix/ticket/1
+	  http://gentooexperimental.org/eix/ticket/1
+	  (was previously http://dev.croup.de/proj/eix/ticket/1)
 	- Fix http://bugs.gentoo.org/show_bug.cgi?id=113735
 
 *eix-0.5_beta

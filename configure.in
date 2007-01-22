@@ -87,7 +87,9 @@ AM_CXXFLAGS=""
 
 EIX_CACHEFILE="/var/cache/eix"
 LEVENSHTEIN_DISTANCE=2
-EIX_WIKI="http://dev.croup.de/proj/eix"
+#EIX_WIKI="http://dev.croup.de/proj/eix"
+#EIX_WIKI="http://gentooexperimental.org/eix"
+EIX_WIKI="http://eix.sourceforge.net"
 
 AC_DEFINE_UNQUOTED(EIX_CACHEFILE, "$EIX_CACHEFILE", Location of the cachefile)
 
