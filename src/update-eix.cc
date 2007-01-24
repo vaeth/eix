@@ -65,7 +65,7 @@ class Permissions {
 		bool testing;
 		static bool know_root, am_root;
 	public:
-		Permissions(const char *other_cachefile)
+		Permissions(const char *other_cachefile, string eprefix)
 		{
 			if(other_cachefile)
 			{
@@ -74,8 +74,14 @@ class Permissions {
 			}
 			else
 			{
-				testing = true;
-				cachefile = EIX_CACHEFILE;
+				if(eprefix.empty()) {
+					testing = true;
+					cachefile = EIX_CACHEFILE;
+				}
+				else {
+					testing = false;
+					cachefile = eprefix + EIX_CACHEFILE;
+				}
 			}
 			know_root = false;
 		}
@@ -234,10 +240,10 @@ void add_override(map<string, string> &override, EixRc &eixrc, const char *s)
 	}
 }
 
-void add_virtuals(map<string, string> &override, vector<string> &add)
+void add_virtuals(map<string, string> &override, vector<string> &add, string eprefix)
 {
 	static const string a = "eix*::";
-	FILE *fp = fopen(EIX_CACHEFILE, "rb");
+	FILE *fp = fopen((eprefix + EIX_CACHEFILE).c_str(), "rb");
 	if(!fp)
 		return;
 
@@ -249,7 +255,7 @@ void add_virtuals(map<string, string> &override, vector<string> &add)
 	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
 	{
 		const char *overlay = (header.getOverlay(i)).c_str();
-		if(!is_virtual(overlay))
+		if(!is_virtual((eprefix + overlay).c_str()))
 			continue;
 		add.push_back(overlay);
 		override[overlay] = a + overlay;
@@ -271,7 +277,7 @@ run_update_eix(int argc, char *argv[])
 	vector<string> add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
 
 	if(eixrc.getBool("KEEP_VIRTUALS"))
-		add_virtuals(override, add_overlays);
+		add_virtuals(override, add_overlays, eixrc.m_eprefix);
 
 	add_override(override, eixrc, "OVERRIDE_CACHE_METHOD");
 	add_override(override, eixrc, "ADD_OVERRIDE_CACHE_METHOD");
@@ -292,7 +298,7 @@ run_update_eix(int argc, char *argv[])
 	else
 	{
 		have_output = false;
-		outputfile = EIX_CACHEFILE;
+		outputfile = eixrc.m_eprefix + EIX_CACHEFILE;
 	}
 	for(list<const char*>::iterator it = exclude_args.begin();
 		it != exclude_args.end(); ++it)
@@ -304,7 +310,7 @@ run_update_eix(int argc, char *argv[])
 		it != method_args.end(); ++it)
 		override[it->first] = it->second;
 
-	Permissions permissions(have_output ? outputfile.c_str() : NULL);
+	Permissions permissions((have_output ? outputfile.c_str() : NULL), eixrc.m_eprefix);
 
 	if(show_help)
 		print_help(0);
@@ -328,7 +334,7 @@ run_update_eix(int argc, char *argv[])
 	permissions.check_db();
 
 	INFO("Reading Portage settings ..\n");
-	PortageSettings portage_settings;
+	PortageSettings portage_settings(eixrc.m_eprefix, eixrc.m_eprefixconf);
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
@@ -336,7 +342,7 @@ run_update_eix(int argc, char *argv[])
 		map<string, string> *override_ptr = (override.size() ? &override : NULL);
 		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())
-			table.addCache(portage_settings["PORTDIR"].c_str(), eixrc["PORTDIR_CACHE_METHOD"].c_str(), override_ptr);
+			table.addCache(eixrc.eprefix, portage_settings["PORTDIR"].c_str(), eixrc["PORTDIR_CACHE_METHOD"].c_str(), override_ptr);
 		else
 			INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
 
@@ -357,7 +363,7 @@ run_update_eix(int argc, char *argv[])
 		{
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 					portage_settings.overlays[i].c_str(), true) == excluded_overlays.end())
-				table.addCache(portage_settings.overlays[i].c_str(), eixrc["OVERLAY_CACHE_METHOD"].c_str(), override_ptr);
+				table.addCache(eixrc.eprefix, portage_settings.overlays[i].c_str(), eixrc["OVERLAY_CACHE_METHOD"].c_str(), override_ptr);
 			else
 				INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
 		}
@@ -411,7 +417,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%i] %s (cache: %s)\n", key, cache->getPath().c_str(), cache->getType());
+		INFO("[%i] %s (cache: %s)\n", key, cache->getPrefixedPath().c_str(), cache->getType());
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
@@ -462,7 +468,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	/* And write database back to disk .. */
 	FILE *database_stream = fopen(outputfile, "wb");
-	ASSERT(database_stream, "Can't open the database file %s for writing (mode = 'wb')", EIX_CACHEFILE);
+	ASSERT(database_stream, "Can't open the database file %s for writing (mode = 'wb')", outputfile);
 
 	dbheader.size = package_tree.countCategories();
 

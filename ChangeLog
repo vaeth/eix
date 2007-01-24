@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Let PORTAGE_CONFIGROOT modify the path of /etc/eixrc.
+	- Allow PORTAGE_CONFIGROOT also in /etc/eixrc and ~/.eixrc
+	  if not set in the environment.
+	- Introduce EPREFIX analogously to PORTAGE_CONFIGROOT
+	  but for all paths except $HOME/eixrc and the cachefile arguments
+	  on the command line. This allows support for prefix-portage.
+
 *eix-0.8.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Ignore *~ files in /etc/portage/package.*
@@ -10,7 +19,7 @@
 	  without mktemp (in eix-sync and update-eix-remote).
 	- Add Push and NormalizeNames to update-eix-functions.sh
 	- Code cleanup of scripts, in particular of eix-sync
-	- Correct EIX_WIKI to http://eix.sourceforget.net
+	- Correct EIX_WIKI to http://eix.sourceforge.net
 
 *eix-0.8.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

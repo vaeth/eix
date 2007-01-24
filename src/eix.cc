@@ -54,6 +54,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#define VAR_DB_PKG "/var/db/pkg/"
+
+
 using namespace std;
 
 /** The name under which we have been called. */
@@ -61,7 +64,7 @@ const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
 void print_vector(const vector<string> &vec);
-void print_unused(const char *configroot, const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+void print_unused(const string &filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
 void print_removed(const string &dirname, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
@@ -92,6 +95,7 @@ dump_help(int exit_code)
 			"                           combined with -T to clean up /etc/portage/package.*\n"
 			"     -Q, --quick (toggle)  don't read unguessable slots of installed packages\n"
 			"         --care            always read slots of installed packages\n"
+			"         --cache-file      use another cache-file instead of "EIX_CACHEFILE"\n"
 			"\n"
 			"   Output:\n"
 			"     -q, --quiet (toggle)   (no) output\n"
@@ -174,7 +178,7 @@ sig_handler(int sig)
 }
 
 const char *format_normal, *format_verbose, *format_compact;
-const char *eix_cachefile = EIX_CACHEFILE;
+const char *eix_cachefile = NULL;
 
 char overlay_mode;
 
@@ -370,8 +374,6 @@ print_overlay_table(PrintFormat &format, DBHeader &header, vector<bool> *overlay
 int
 run_eix(int argc, char** argv)
 {
-	const string var_db_pkg = "/var/db/pkg/";
-
 	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);
 
 	// Setup defaults for all global variables like rc_options
@@ -380,9 +382,15 @@ run_eix(int argc, char** argv)
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, long_options);
 
+	string cachefile;
+	if(eix_cachefile)
+		cachefile = eix_cachefile;
+	else
+		cachefile = eixrc.m_eprefix + EIX_CACHEFILE;
+
 	// Only check if the versions uses the current layout
 	if(rc_options.is_current) {
-		return is_current_dbversion(eix_cachefile);
+		return is_current_dbversion(cachefile.c_str());
 	}
 
 	// Dump eixrc-stuff
@@ -429,17 +437,19 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
+	PortageSettings portagesettings(eixrc.m_eprefix, eixrc.m_eprefixconf);
+
+	string var_db_pkg = portagesettings.m_eprefixconf + VAR_DB_PKG;
 	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick, rc_options.care);
 
-	PortageSettings portagesettings;
 	MarkedList *marked_list = NULL;
 	Matchatom *query;
 
 	/* Open database file */
-	FILE *fp = fopen(eix_cachefile, "rb");
+	FILE *fp = fopen(cachefile.c_str(), "rb");
 	if(!fp) {
 		fprintf(stderr, "Can't open the database file %s for reading (mode = 'rb')\n"
-				"Did you forget to create it with 'update-eix'?\n", eix_cachefile);
+				"Did you forget to create it with 'update-eix'?\n", cachefile.c_str());
 		exit(1);
 	}
 
@@ -481,11 +491,11 @@ run_eix(int argc, char** argv)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		cout << "\n";
-		print_unused(portagesettings.configroot, USER_KEYWORDS_FILE, all_packages);
-		print_unused(portagesettings.configroot, USER_MASK_FILE,     all_packages);
-		print_unused(portagesettings.configroot, USER_UNMASK_FILE,   all_packages);
-		print_unused(portagesettings.configroot, USER_USE_FILE,      all_packages, empty);
-		print_unused(portagesettings.configroot, USER_CFLAGS_FILE,   all_packages, empty);
+		print_unused(portagesettings.m_eprefixconf + USER_KEYWORDS_FILE, all_packages);
+		print_unused(portagesettings.m_eprefixconf + USER_MASK_FILE,     all_packages);
+		print_unused(portagesettings.m_eprefixconf + USER_UNMASK_FILE,   all_packages);
+		print_unused(portagesettings.m_eprefixconf + USER_USE_FILE,      all_packages, empty);
+		print_unused(portagesettings.m_eprefixconf + USER_CFLAGS_FILE,   all_packages, empty);
 		print_removed(var_db_pkg, all_packages);
 	}
 
@@ -516,7 +526,7 @@ run_eix(int argc, char** argv)
 	{
 		format.clear_virtual(header.countOverlays());
 		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-			format.set_as_virtual(i, is_virtual(header.getOverlay(i).c_str()));
+			format.set_as_virtual(i, is_virtual((portagesettings.m_eprefix + header.getOverlay(i)).c_str()));
 	}
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);
@@ -627,12 +637,11 @@ void print_vector(const vector<string> &vec)
 	cout << "--\n\n";
 }
 
-void print_unused(const char *configroot, const char *filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
+void print_unused(const string &filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
-	string name(configroot ? (string(configroot) + filename) : filename);
-	pushback_lines(name.c_str(), &lines, false, true);
+	pushback_lines(filename.c_str(), &lines, false, true);
 	for(vector<string>::size_type i = 0;
 		i<lines.size();
 		i++)
@@ -658,7 +667,7 @@ void print_unused(const char *configroot, const char *filename, const eix::ptr_l
 			}
 		}
 		catch(ExBasic e) {
-			portage_parse_error(name.c_str(), i, lines[i], e);
+			portage_parse_error(filename.c_str(), i, lines[i], e);
 		}
 		if(!m)
 			continue;
@@ -681,7 +690,7 @@ void print_unused(const char *configroot, const char *filename, const eix::ptr_l
 		cout << "Non-matching";
 	if(test_empty)
 		cout << " or empty";
-	cout << " entries in " << name.c_str();
+	cout << " entries in " << filename;
 	if(unused.empty())
 	{
 		cout << ".\n";

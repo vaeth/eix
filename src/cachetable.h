@@ -43,7 +43,7 @@ class CacheTable
 		~CacheTable()
 		{ delete_and_clear(); }
 
-		void addCache(const char *directory, std::string cache_name, const std::map<std::string, std::string> *override)
+		void addCache(const char *prefix, const char *directory, std::string cache_name, const std::map<std::string, std::string> *override)
 		{
 			for(CacheTable::iterator it=begin(); it != end(); ++it)
 				if(same_filenames(directory, (it->getPath()).c_str()))
@@ -66,7 +66,7 @@ class CacheTable
 				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory));
 			}
 
-			cache->setScheme(directory);
+			cache->setScheme(prefix, directory);
 			push_back(cache);
 		}
 };

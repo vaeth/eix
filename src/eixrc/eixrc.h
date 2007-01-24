@@ -51,7 +51,9 @@ class EixRcOption {
 class EixRcReference;
 class EixRc : public std::map<std::string,std::string> {
 	public:
-		std::string prefix;
+		std::string varprefix;
+		std::string m_eprefix, m_eprefixconf;
+		const char *eprefix;
 		typedef std::vector<EixRcOption>::size_type default_index;
 		typedef std::pair<RedAtom, RedAtom> RedPair;
 

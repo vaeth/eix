@@ -134,7 +134,7 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 		env["dbkey"] = *cachefile;
 	}
 	else
-		cachefile = new string(EBUILD_DEPEND_TEMP);
+		cachefile = new string(m_prefix + EBUILD_DEPEND_TEMP);
 	pid_t child = vfork();
 	if(child == -1) {
 		m_error_callback("Forking failed");
@@ -144,7 +144,8 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 	{
 		if(!use_ebuild_sh)
 		{
-			execl(EBUILD_EXEC, EBUILD_EXEC, name, "depend", NULL);
+			string ebuild = m_prefix + EBUILD_EXEC;
+			execl(ebuild.c_str(), ebuild.c_str(), name, "depend", NULL);
 			exit(2);
 		}
 		const char **myenv = (const char **)malloc((env.size() + 1) * sizeof(const char *));
@@ -155,7 +156,8 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 			*ptr = s->c_str();
 		}
 		*ptr = NULL;
-		execle(EBUILD_SH_EXEC, EBUILD_SH_EXEC, "depend", NULL, myenv);
+		string ebuild_sh = m_prefix + EBUILD_SH_EXEC;
+		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", NULL, myenv);
 		exit(2);
 	}
 	int exec_status;
@@ -245,11 +247,11 @@ bool EbuildCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
-	string catpath = m_scheme + '/' + vec.name();
+	string catpath = m_prefix + m_scheme + '/' + vec.name();
 	int numpackages = scandir(catpath.c_str(),
 			&packages, package_selector, alphasort);
 
-	for(int i = 0; i<numpackages; ++i)
+	for(int i = 0; i < numpackages; ++i)
 	{
 		struct dirent **files = NULL;
 		string pkg_path = catpath + '/' + packages[i]->d_name;
@@ -265,7 +267,7 @@ bool EbuildCache::readCategory(Category &vec) throw(ExBasic)
 		}
 	}
 
-	for(int i=0; i<numpackages; i++ )
+	for(int i = 0; i < numpackages; i++ )
 		free(packages[i]);
 	if(numpackages > 0)
 		free(packages);

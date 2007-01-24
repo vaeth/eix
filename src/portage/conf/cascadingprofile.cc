@@ -158,7 +158,7 @@ void CascadingProfile::readMakeDefaults()
 {
 	for(vector<string>::size_type i = 0; i < m_profile_files.size(); ++i) {
 		if( strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0) {
-			m_portagesettings->read_config(NULL, m_profile_files[i].c_str());
+			m_portagesettings->read_config(m_profile_files[i].c_str());
 		}
 	}
 }
@@ -180,11 +180,9 @@ void CascadingProfile::readPackageMasks(const string &line)
 void CascadingProfile::ReadLink(string &path) const
 {
 	char readlink_buffer[READLINK_BUFFER];
-	string profile_linkname(PROFILE_LINK);
-	if(m_portagesettings->configroot)
-		profile_linkname.insert(0, m_portagesettings->configroot);
+	string profile_linkname = (m_portagesettings->m_eprefixconf) + PROFILE_LINK;
 	int len = readlink(profile_linkname.c_str() , readlink_buffer, READLINK_BUFFER - 1);
-	if(len == -1) {
+	if(len <= 0) {
 		throw( ExBasic("readlink(%s) failed: %s", profile_linkname.c_str(), strerror(errno)) );
 	}
 	readlink_buffer[len] = '\0';
@@ -192,9 +190,7 @@ void CascadingProfile::ReadLink(string &path) const
 	path = readlink_buffer;
 	/* If it's a relative path prepend the dirname of ${PORTAGE_CONFIGROOT}/PROFILE_LINK_DIRECTORY */
 	if( path[0] != '/' ) {
-		path.insert(0, PROFILE_LINK_DIRECTORY);
-		if(m_portagesettings->configroot)
-			path.insert(0, m_portagesettings->configroot);
+		path.insert(0, (m_portagesettings->m_eprefixconf) + PROFILE_LINK_DIRECTORY);
 	}
 }
 
@@ -203,10 +199,14 @@ void CascadingProfile::listProfile(void) throw(ExBasic)
 {
 	string path_buffer;
 	path_buffer = (*m_portagesettings)["PORTAGE_PROFILE"];
-	if(path_buffer.empty())
+	if(path_buffer.empty()) {
 		ReadLink(path_buffer);
-	if(path_buffer.empty())
-		return;
+		if(path_buffer.empty())
+			return;
+	}
+	else {
+		path_buffer.insert(0, m_portagesettings->m_eprefix);
+	}
 
 	if(path_buffer[path_buffer.size() - 1] != '/')
 		path_buffer.append("/");

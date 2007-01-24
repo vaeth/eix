@@ -51,7 +51,7 @@ void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_pat
 	else
 		pkg = vec.addPackage(pkg_name);
 
-	for(int i = 0; i<numfiles; ++i)
+	for(int i = 0; i < numfiles; ++i)
 	{
 		/* Check if this is an ebuild  */
 		char* dotptr = strrchr(list[i]->d_name, '.');
@@ -125,11 +125,11 @@ bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
-	string catpath = m_scheme + "/" + vec.name();
+	string catpath = m_prefix + m_scheme + "/" + vec.name();
 	int numpackages = scandir(catpath.c_str(),
 			&packages, package_selector, alphasort);
 
-	for(int i = 0; i<numpackages; ++i)
+	for(int i = 0; i < numpackages; ++i)
 	{
 		struct dirent **files = NULL;
 		string pkg_path = catpath + '/' + packages[i]->d_name;
@@ -150,7 +150,7 @@ bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 		}
 	}
 
-	for(int i=0; i<numpackages; i++ )
+	for(int i = 0; i < numpackages; i++ )
 		free(packages[i]);
 	if(numpackages > 0)
 		free(packages);

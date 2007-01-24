@@ -34,7 +34,7 @@
 
 using namespace std;
 
-inline
+static inline
 string::size_type revision_index(const string &ver)
 {
 	string::size_type i = ver.rfind("-r");
@@ -52,14 +52,46 @@ string::size_type revision_index(const string &ver)
 	return string::npos;
 }
 
+void BasicCache::setScheme(const char *prefix, std::string scheme)
+{
+	m_scheme = scheme;
+	if(prefix)
+	{
+		have_prefix = true;
+		m_prefix = prefix;
+	}
+	else
+	{
+		have_prefix = false;
+		m_prefix = "";
+	}
+}
+
 void BasicCache::env_add_package(map<string,string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const
 {
 	string full = version.getFull();
+	string eroot;
+	const char *root = getenv("ROOT");
+	if(root) {
+		env["ROOT"] = root;
+		eroot = root + m_prefix;
+	}
+	else {
+		env["ROOT"] = "/";
+		eroot = m_prefix;
+	}
+	if(have_prefix) {
+		env["EPREFIX"] = m_prefix;
+		env["EROOT"]   = eroot;
+	}
+	env["PORTDIR_OVERLAY"] = (*portagesettings)["PORTDIR_OVERLAY"];
+	string portdir         = (*portagesettings)["PORTDIR"];
+	env["PORTDIR"]         = portdir;
+
 	env["EBUILD"]       = ebuild_full;
 	env["O"]            = ebuild_dir;
 	env["FILESDIR"]     = ebuild_dir + "/files";
-	env["ROOT"]         = '/';
-	env["ECLASSDIR"]    = "/usr/portage/eclass";
+	env["ECLASSDIR"]    = eroot + portdir + "/eclass";
 	env["EBUILD_PHASE"] = "depend";
 	env["CATEGORY"]     = package.category;
 	env["PN"]           = package.name;
@@ -77,8 +109,6 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 	}
 	env["PV"]           = mainversion;
 	env["P"]            = package.name + "-" + mainversion;
-	env["PORTDIR"]         = (*portagesettings)["PORTDIR"];
-	env["PORTDIR_OVERLAY"] = (*portagesettings)["PORTDIR_OVERLAY"];
 }
 
 #if 0

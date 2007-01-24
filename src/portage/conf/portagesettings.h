@@ -54,16 +54,16 @@ class Mask;
 class Package;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false, const char *configroot = NULL);
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false);
 
 /** Grab Mask from file and add to category->vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive = false, const char *configroot = NULL) {
-	return grab_masks(file, type, NULL , mask_vec, recursive, configroot);
+inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive = false) {
+	return grab_masks(file, type, NULL , mask_vec, recursive);
 }
 
 /** Grab Mask from file and add to vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive = false, const char *configroot = NULL) {
-	return grab_masks(file, type, cat_map, NULL, recursive, configroot);
+inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive = false) {
+	return grab_masks(file, type, cat_map, NULL, recursive);
 }
 
 class PortageSettings;
@@ -131,10 +131,10 @@ class PortageSettings : public std::map<std::string,std::string> {
 		Keywords m_accepted_keywords;
 
 		void override_by_env(const char **vars);
-		void read_config(const char *root, const char *name);
+		void read_config(const char *name);
 
 	public:
-		const char *configroot;
+		std::string m_eprefix, m_eprefixconf;
 
 		/** Your cascading profile. */
 		CascadingProfile  *profile;
@@ -143,7 +143,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
-		PortageSettings();
+		PortageSettings(const std::string &eprefix, const std::string &eprefixconf);
 
 		/** Free memory. */
 		~PortageSettings();

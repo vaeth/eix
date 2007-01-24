@@ -32,6 +32,6 @@
 #include <eixrc/eixrc.h>
 
 /** Return a static eixrc. */
-EixRc &get_eixrc(const char *prefix);
+EixRc &get_eixrc(const char *varprefix);
 
 #endif /* __EIXRC-GLOBALS_H__ */

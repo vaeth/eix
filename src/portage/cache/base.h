@@ -64,8 +64,7 @@ class BasicCache {
 		{ }
 
 		/// Set scheme for this cache
-		void setScheme(std::string scheme)
-		{ m_scheme = scheme; }
+		void setScheme(const char *prefix, std::string scheme);
 
 		/// Set overlay-key
 		void setKey(short key)
@@ -78,6 +77,14 @@ class BasicCache {
 		// Get scheme for this cache
 		std::string getPath() const
 		{ return m_scheme; }
+
+		std::string getPrefixedPath() const
+		{
+			if(have_prefix)
+				return std::string("[") + m_prefix + "]" + m_scheme;
+			return m_scheme;
+		}
+
 
 		/// Set callback function to be used in case of errors
 		void setErrorCallback(ErrorCallback error_callback)
@@ -107,7 +114,8 @@ class BasicCache {
 		{ return readCategories(NULL, NULL, &vec); }
 
 	protected:
-		std::string m_scheme;
+		std::string m_scheme, m_prefix;
+		bool have_prefix;
 		short  m_overlay_key;
 		std::string m_arch;
 		ErrorCallback m_error_callback;

@@ -813,6 +813,21 @@ variable can be used to collect delayed references to (otherwise unused) variabl
 so that they are printed with --dump or --dump-defaults.
 
 .TP
+.BR PORTAGE_CONFIGROOT "  " (string)
+This path is prepended to the /etc paths.
+The purpose is to respect PORTAGE_CONFIGROOT in the same way portage does.
+If you set this variable in the environment it will also change the path
+where /etc/eixrc is searched.
+
+.TP
+.BR EPREFIX "  " (string)
+This path is prepended to all paths (except for $HOME/.eixrc and
+and except for the cachefile path passed in the commandline).
+The purpose is to allow a quasi-chroot analogously to prefix-portage.
+If you set this variable in the environment it will also change the path
+where /etc/eixrc is searched.
+
+.TP
 .BR QUICKMODE "  " (true / false)
 If true, eix and diff-eix will use B<--quick> by default.
 

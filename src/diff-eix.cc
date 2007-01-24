@@ -56,13 +56,16 @@
 #include <sys/stat.h> /* chmod(..) */
 #include <signal.h>   /* signal handlers */
 
+#define VAR_DB_PKG "/var/db/pkg/"
+
+
 #define INFO(...) fprintf(stderr, __VA_ARGS__)
 
 using namespace std;
 
 void   signal_handler(int sig);
 
-PortageSettings portagesettings;
+PortageSettings *portagesettings;
 PrintFormat     format_for_new(get_package_property, print_package_property);
 PrintFormat     format_for_old;
 VarDbPkg       *varpkg_db;
@@ -157,13 +160,13 @@ class SetStability {
 		bool ignore_etc_portage;
 
 	public:
-		SetStability(const PortageSettings &psettings, bool local_portage_config)
+		SetStability(const PortageSettings *psettings, bool local_portage_config)
 		{
-			portagesettings = &psettings;
+			portagesettings = psettings;
 			ignore_etc_portage = !local_portage_config;
-			default_accepted_keywords = psettings.getAcceptKeywordsDefault();
+			default_accepted_keywords = psettings->getAcceptKeywordsDefault();
 			if(local_portage_config)
-				local_accepted_keywords = psettings.getAcceptKeywordsLocal();
+				local_accepted_keywords = psettings->getAcceptKeywordsLocal();
 		}
 
 		void set_stability(Package &package) const
@@ -192,13 +195,13 @@ class SetStability {
 };
 
 void
-set_virtual(PrintFormat *fmt, const DBHeader &header)
+set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix)
 {
 	if(!header.countOverlays())
 		return;
 	fmt->clear_virtual(header.countOverlays());
 	for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-		fmt->set_as_virtual(i, is_virtual(header.getOverlay(i).c_str()));
+		fmt->set_as_virtual(i, is_virtual((eprefix + header.getOverlay(i)).c_str()));
 }
 
 class DiffTrees
@@ -286,19 +289,19 @@ print_changed_package(Package *op, Package *np)
 	Package *p[2];
 	p[0] = op;
 	p[1] = np;
-	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, varpkg_db, &portagesettings);
+	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, varpkg_db, portagesettings);
 }
 
 void
 print_found_package(Package *p)
 {
-	format_for_new.print(p, format_new, varpkg_db, &portagesettings);
+	format_for_new.print(p, format_new, varpkg_db, portagesettings);
 }
 
 void
 print_lost_package(Package *p)
 {
-	format_for_old.print(p, format_delete, varpkg_db, &portagesettings);
+	format_for_old.print(p, format_delete, varpkg_db, portagesettings);
 }
 
 
@@ -346,7 +349,7 @@ run_diff_eix(int argc, char *argv[])
 	old_file = current_param->m_argument;
 	++current_param;
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
-		new_file = EIX_CACHEFILE;
+		new_file = eixrc.m_eprefix + EIX_CACHEFILE;
 	}
 	else {
 		new_file = current_param->m_argument;
@@ -404,7 +407,9 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
 	format_for_new.tag_for_ex_other           = eixrc["TAG_FOR_EX_OTHER"];
 
-	varpkg_db = new VarDbPkg("/var/db/pkg/", !cli_quick, cli_care);
+	portagesettings = new PortageSettings(eixrc.m_eprefix, eixrc.m_eprefixconf);
+
+	varpkg_db = new VarDbPkg((portagesettings->m_eprefix) + VAR_DB_PKG, !cli_quick, cli_care);
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, local_settings);
@@ -425,8 +430,8 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.set_overlay_translations(NULL);
 	format_for_old = format_for_new;
-	set_virtual(&format_for_old, old_header);
-	set_virtual(&format_for_new, new_header);
+	set_virtual(&format_for_old, old_header, portagesettings->m_eprefix);
+	set_virtual(&format_for_new, new_header, portagesettings->m_eprefix);
 
 	DiffTrees differ(varpkg_db,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),
@@ -440,6 +445,7 @@ run_diff_eix(int argc, char *argv[])
 	differ.diff(old_tree, new_tree);
 
 	delete varpkg_db;
+	delete portagesettings;
 	return 0;
 }
 

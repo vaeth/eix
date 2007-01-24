@@ -34,10 +34,10 @@
  * This should only be called once! */
 static
 EixRc *
-get_eixrc_once(const char *prefix)
+get_eixrc_once(const char *varprefix)
 {
 	static EixRc eixrc;
-	eixrc.prefix = std::string(prefix);
+	eixrc.varprefix = std::string(varprefix);
 
 #include <eixrc/defaults.cc>
 
@@ -49,12 +49,12 @@ get_eixrc_once(const char *prefix)
 /** Return reference to internal static EixRc.
  * This can be called everywhere! */
 EixRc &
-get_eixrc(const char *prefix)
+get_eixrc(const char *varprefix)
 {
 	static EixRc *rc = NULL;
 	if(rc)
 		return *rc;
-	ASSERT(prefix, "internal error: get_eixrc was not initialized with proper argument");
-	rc = get_eixrc_once(prefix);
+	ASSERT(varprefix, "internal error: get_eixrc was not initialized with proper argument");
+	rc = get_eixrc_once(varprefix);
 	return *rc;
 }

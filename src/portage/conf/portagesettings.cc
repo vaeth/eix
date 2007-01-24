@@ -45,11 +45,10 @@
 
 using namespace std;
 
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive, const char *configroot)
+bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive)
 {
-	string filename(configroot ? (string(configroot) + file) : file);
 	vector<string> lines;
-	if( ! pushback_lines(filename.c_str(), &lines, true, recursive))
+	if( ! pushback_lines(file, &lines, true, recursive))
 		return false;
 	for(vector<string>::iterator it=lines.begin(); it<lines.end(); ++it)
 	{
@@ -65,7 +64,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 			}
 		}
 		catch(ExBasic e) {
-			cerr << "-- Invalid line in " << filename << ": \"" << line << "\"" << endl
+			cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
 			     << "   " << e.getMessage() << endl;
 		}
 	}
@@ -131,24 +130,22 @@ void PortageSettings::override_by_env(const char **vars)
 	}
 }
 
-void PortageSettings::read_config(const char *root, const char *name)
+void PortageSettings::read_config(const char *name)
 {
 	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
-	if(configroot)
-		configfile.read((string(configroot) + name).c_str());
-	else
-		configfile.read(name);
+	configfile.read(name);
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings()
+PortageSettings::PortageSettings(const string &eprefix, const string &eprefixconf)
 {
-	configroot = getenv("PORTAGE_CONFIGROOT");
+	m_eprefix = eprefix;
+	m_eprefixconf = eprefixconf;
 
-	read_config(configroot, MAKE_GLOBALS_FILE);
-	read_config(configroot, MAKE_CONF_FILE);
+	read_config((m_eprefixconf + MAKE_GLOBALS_FILE).c_str());
+	read_config((m_eprefixconf + MAKE_CONF_FILE).c_str());
 	override_by_env(test_in_env_early);
 	profile     = new CascadingProfile(this);
 	user_config = new PortageUserConfig(this);
@@ -188,17 +185,14 @@ vector<string> *PortageSettings::getCategories()
 	if(m_categories.empty()) {
 		/* Merge categories from /etc/portage/categories and
 		 * portdir/profile/categories */
-		string user_cat(USER_CATEGORIES_FILE);
-		if(configroot)
-			user_cat.insert(0, configroot);
-		pushback_lines(user_cat.c_str(), &m_categories);
+		pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &m_categories);
 
-		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
+		pushback_lines((m_eprefix + (*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
 		for(vector<string>::iterator i = overlays.begin();
 			i != overlays.end();
 			++i)
 		{
-			pushback_lines((*i + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
+			pushback_lines((m_eprefix + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
 			               &m_categories);
 		}
 
@@ -214,13 +208,13 @@ vector<string> *PortageSettings::getCategories()
 MaskList<Mask> *PortageSettings::getMasks()
 {
 	if(m_masks.empty()) {
-		if(!grab_masks(string((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
+		if(!grab_masks((m_eprefix + (*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
 			WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
 		for(vector<string>::iterator i = overlays.begin();
 			i != overlays.end();
 			++i)
 		{
-			grab_masks(string(*i + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
+			grab_masks((m_eprefix + (*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
 		}
 	}
 	return &(m_masks);
@@ -229,8 +223,8 @@ MaskList<Mask> *PortageSettings::getMasks()
 bool
 PortageUserConfig::readMasks()
 {
-	bool mask_ok = grab_masks(USER_MASK_FILE, Mask::maskMask, &m_mask, true, m_settings->configroot);
-	bool unmask_ok = grab_masks(USER_UNMASK_FILE, Mask::maskUnmask, &m_mask, true, m_settings->configroot);
+	bool mask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, &m_mask, true);
+	bool unmask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, &m_mask, true);
 	return mask_ok && unmask_ok;
 }
 
@@ -312,10 +306,7 @@ bool PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<Keyword
 {
 	if(!(*readfile))
 	{
-		if(m_settings->configroot)
-			ReadVersionFile((string(m_settings->configroot) + file).c_str(), list);
-		else
-			ReadVersionFile(file, list);
+		ReadVersionFile(((m_settings->m_eprefixconf) + file).c_str(), list);
 		*readfile = true;
 	}
 	return CheckList(p, list, flag_double, flag_in);
@@ -338,9 +329,7 @@ bool PortageUserConfig::readKeywords() {
 	string fscked_arch = join_vector(splitted);
 
 	vector<string> lines;
-	string filename(USER_KEYWORDS_FILE);
-	if(m_settings->configroot)
-		filename = string(m_settings->configroot) + filename;
+	string filename((m_settings->m_eprefixconf) + USER_KEYWORDS_FILE);
 
 	pushback_lines(filename.c_str(), &lines, false, true);
 

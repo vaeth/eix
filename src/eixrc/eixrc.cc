@@ -125,6 +125,17 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 
 void EixRc::read()
 {
+	eprefix = getenv("EPREFIX");
+	if(eprefix)
+		m_eprefix = eprefix;
+	else
+		m_eprefix = "";
+	const char *configroot = getenv("PORTAGE_CONFIGROOT");
+	if(configroot)
+		m_eprefixconf = m_eprefix + configroot;
+	else
+		m_eprefixconf = m_eprefix;
+
 	set<string> has_reference;
 
 	// First, we create defaults and the main map with all variables
@@ -160,6 +171,14 @@ void EixRc::read()
 			str.erase(pos,1);
 		}
 	}
+
+	// set m_eprefix/m_eprefixconf/eprefix to possibly new settings:
+	m_eprefix = (*this)["EPREFIX"];
+	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"] + m_eprefix;
+	// Important: eprefix should remain NULL if it is not in environment
+	// and not set different from "" in the eixrc files.
+	if(!m_eprefix.empty())
+		eprefix = m_eprefix.c_str();
 }
 
 string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)
@@ -202,7 +221,7 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 		visited.insert(key);
 		string *s = resolve_delayed_recurse(
 			( ((*value)[varpos] == '*') ?
-			(prefix + value->substr(varpos + 1, varlength - 1)) :
+			(varprefix + value->substr(varpos + 1, varlength - 1)) :
 			value->substr(varpos, varlength)),
 			visited, has_reference, errtext, errvar);
 		visited.erase(key);
@@ -293,7 +312,7 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 			|VarsReader::ALLOW_SOURCE
 			|VarsReader::INTO_MAP);
 	rc.useMap(&tempmap);
-	rc.read(EIX_SYSTEMRC);
+	rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str());
 
 	// override with EIX_USERRC
 	char *home = getenv("HOME");

@@ -95,13 +95,15 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	if(never_add_categories)
 		add_categories = false;
 
-	const char *file = EIX_CACHEFILE;
+	string file;
 	if(m_file.length())
-		file = m_file.c_str();
-	FILE *fp = fopen(file, "rb");
+		file = m_prefix + m_file;
+	else
+		file = m_prefix + EIX_CACHEFILE;
+	FILE *fp = fopen(file.c_str(), "rb");
 	if(!fp) {
 		m_error_callback("Can't read cache file %s: %s",
-			file, strerror(errno));
+			file.c_str(), strerror(errno));
 		return false;
 	}
 
@@ -111,7 +113,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	if(!header.isCurrent()) {
 		fclose(fp);
 		m_error_callback("Cache file %s uses an obsolete format (%i current is %i)",
-			file, header.version, DBHeader::current);
+			file.c_str(), header.version, DBHeader::current);
 		return false;
 	}
 	if(m_only_overlay)
@@ -125,7 +127,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			{
 				fclose(fp);
 				m_error_callback("Cache file %s does not contain overlay %s",
-					file, m_overlay.c_str());
+					file.c_str(), m_overlay.c_str());
 				return false;
 			}
 			m_overlay = "";

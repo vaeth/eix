@@ -153,7 +153,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 
 bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category) throw(ExBasic)
 {
-	string filename = PORTAGE_PICKLE;
+	string filename = m_prefix + PORTAGE_PICKLE;
 	const char *data, *end;
 	map<string,string> unpickled;
 

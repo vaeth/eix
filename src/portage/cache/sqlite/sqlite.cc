@@ -141,7 +141,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 		categories = NULL;
 	}
 	char *errormessage = NULL;
-	string sqlitefile = PORTAGE_CACHE_PATH + m_scheme;
+	string sqlitefile = m_prefix + PORTAGE_CACHE_PATH + m_scheme;
 	// Cut all trailing '/' and append ".sqlite" to the name
 	string::size_type pos = sqlitefile.find_last_not_of('/');
 	if(pos == string::npos)

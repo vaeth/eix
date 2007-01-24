@@ -29,6 +29,17 @@
 #include "../config.h"
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "PORTAGE_CONFIGROOT",
+			"", "This path is prepended to the /etc paths.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EPREFIX",
+			"", "This path is prepended to all paths (except for $HOME/.eixrc\n"
+			"and except for the cachefile path passed in the commandline.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "QUICKMODE",
 			"false", "Whether --quick is on by default.")
 		);

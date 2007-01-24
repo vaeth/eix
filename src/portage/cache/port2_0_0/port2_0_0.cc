@@ -51,7 +51,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 
 bool Port2_0_0_Cache::readCategory(Category &vec) throw(ExBasic)
 {
-	string catpath = PORTAGE_CACHE_PATH + m_scheme + vec.name();
+	string catpath = m_prefix + PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;
 	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;
