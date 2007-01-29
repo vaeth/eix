@@ -29,15 +29,16 @@
 #include "keywords.h"
 
 const Keywords::Type
-	Keywords::KEY_MISSINGKEYWORD = 0x00,
+	Keywords::KEY_EMPTY          = 0x00,
 	Keywords::KEY_STABLE         = 0x01, /**<  ARCH */
 	Keywords::KEY_UNSTABLE       = 0x02, /**< ~ARCH */
 	Keywords::KEY_MINUSASTERISK  = 0x04, /**<  -*   */
 	Keywords::KEY_MINUSKEYWORD   = 0x08, /**< -ARCH */
-	Keywords::KEY_ALL            = KEY_MISSINGKEYWORD|KEY_STABLE|KEY_UNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD,
-	Keywords::PACKAGE_MASK       = 0x10,
-	Keywords::PROFILE_MASK       = 0x20,
-	Keywords::SYSTEM_PACKAGE     = 0x40;
+	Keywords::KEY_MISSINGKEYWORD = 0x10, /**<  **   */
+	Keywords::KEY_ALL            = KEY_STABLE|KEY_UNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD|KEY_MISSINGKEYWORD,
+	Keywords::PACKAGE_MASK       = 0x20,
+	Keywords::PROFILE_MASK       = 0x40,
+	Keywords::SYSTEM_PACKAGE     = 0x80;
 
 const Keywords::Redundant
 	Keywords::RED_NOTHING      = 0x00000,

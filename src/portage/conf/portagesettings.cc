@@ -465,6 +465,8 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 			arch_needed = 0;
 		else if(oritype & Keywords::KEY_UNSTABLE)
 			arch_needed = 1;
+		else if(oritype & Keywords::KEY_MISSINGKEYWORD)
+			arch_needed = 5;
 		else
 			arch_needed = 4;
 
@@ -504,6 +506,10 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 				else if(*kvi == "-*") {
 					set_arch_used(4);
 					lkw |= Keywords::KEY_MINUSASTERISK;
+				}
+				else if(*kvi == "**") {
+					set_arch_used(5);
+					lkw |= Keywords::KEY_MISSINGKEYWORD;
 				}
 				else { // match non-arch keywords:
 					const char *s = kvi->c_str();

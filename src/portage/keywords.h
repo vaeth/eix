@@ -38,11 +38,12 @@ class Keywords {
 		typedef char Type;
 		static const unsigned short Typesize = io::charsize;
 		static const Type
-			KEY_MISSINGKEYWORD,
+			KEY_EMPTY         ,
 			KEY_STABLE        , /**<  ARCH */
 			KEY_UNSTABLE      , /**< ~ARCH */
 			KEY_MINUSASTERISK , /**<  -*   */
 			KEY_MINUSKEYWORD  , /**< -ARCH */
+			KEY_MISSINGKEYWORD, /**<  **   */
 			KEY_ALL           ,
 			PACKAGE_MASK      ,
 			PROFILE_MASK      ,
@@ -92,7 +93,7 @@ class Keywords {
 
 		static Type get_type(std::string arch, std::string keywords)
 		{
-			Type mask = KEY_MISSINGKEYWORD;
+			Type mask = KEY_EMPTY;
 			std::vector<std::string> arr_keywords = split_string(keywords);
 			for(std::vector<std::string>::iterator it = arr_keywords.begin(); it != arr_keywords.end(); ++it) {
 				switch((*it)[0]) {
@@ -116,6 +117,8 @@ class Keywords {
 						break;
 				}
 			}
+			if(mask == KEY_EMPTY)
+				mask = KEY_MISSINGKEYWORD;
 			return mask;
 		}
 
@@ -187,10 +190,10 @@ class Keywords {
 		{ return saved_m_mask & KEY_MINUSKEYWORD; }
 		/** @return true if version is masked by missing keyword. */
 		bool isMissingKeyword() const
-		{ return m_mask == KEY_MISSINGKEYWORD; }
+		{ return m_mask & KEY_MISSINGKEYWORD; }
 		/** @return true if saved version is masked by missing keyword. */
 		bool saved_isMissingKeyword() const
-		{ return saved_m_mask == KEY_MISSINGKEYWORD; }
+		{ return saved_m_mask & KEY_MISSINGKEYWORD; }
 
 		bool isHardMasked() const
 		{ return isPackageMask() || isProfileMask(); }
