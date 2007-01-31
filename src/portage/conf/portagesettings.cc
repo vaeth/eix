@@ -509,7 +509,8 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 				}
 				else if(*kvi == "**") {
 					set_arch_used(5);
-					lkw |= Keywords::KEY_MISSINGKEYWORD;
+					**i |= Keywords::KEY_STABLE;
+					lkw |= Keywords::KEY_MISSINGKEYWORD | Keywords::KEY_STABLE;
 				}
 				else { // match non-arch keywords:
 					const char *s = kvi->c_str();

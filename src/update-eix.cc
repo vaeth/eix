@@ -462,6 +462,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		{
 			portage_settings.profile->getAllowedPackages()->applyMasks(*p);
 			portage_settings.profile->getSystemPackages()->applyMasks(*p);
+			portage_settings.profile->getPackageMasks()->applyMasks(*p);
 			portage_settings.getMasks()->applyMasks(*p);
 		}
 	}

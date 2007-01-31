@@ -3,13 +3,16 @@
 *eix-0.8.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let ** in /etc/portage/package.keywords accept "missing keyword".
-	  This corresponds to the change in portage-2.1.2-r4.
+	  This corresponds to the change in portage-2.1.2-r4, see
+	  comments #20 #24 in http://bugs.gentoo.org/show_bug.cgi?id=160519
 	- Let PORTAGE_CONFIGROOT modify the path of /etc/eixrc.
 	- Allow PORTAGE_CONFIGROOT also in /etc/eixrc and ~/.eixrc
 	  if not set in the environment.
 	- Introduce EPREFIX which is similar to PORTAGE_CONFIGROOT but
 	  applies for all paths except $HOME/eixrc and the cachefile arguments
 	  on the command line. This allows support for prefix-portage.
+	- Bugfix: Apply package.mask of profiles. This fixes
+	  http://bugs.gentoo.org/show_bug.cgi?id=164695
 
 *eix-0.8.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
