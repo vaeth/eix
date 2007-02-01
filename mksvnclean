@@ -12,7 +12,7 @@ if [[ -e Makefile ]]; then
 	make maintainer-clean || die "make maintainer-clean failed"
 fi
 rm -vrf build config
-rm -vf aclocal.m4 configure
+rm -vf aclocal.m4 configure config.h.in~
 find -name "Makefile.in" -print0 | xargs -0 -r -- rm -v --
 rm -i svn-commit*.tmp
 

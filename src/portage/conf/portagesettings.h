@@ -134,7 +134,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void read_config(const char *name);
 
 	public:
-		std::string m_eprefix, m_eprefixconf;
+		std::string m_eprefix, m_eprefixconf, m_eprefixport;
 
 		/** Your cascading profile. */
 		CascadingProfile  *profile;
@@ -143,7 +143,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(const std::string &eprefix, const std::string &eprefixconf);
+		PortageSettings(const std::string &eprefix, const std::string &eprefixconf, const std::string &eprefixconf);
 
 		/** Free memory. */
 		~PortageSettings();
@@ -151,6 +151,10 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> &getAcceptKeyword() {
 			return m_accepted_keyword;
 		}
+
+		std::string resolve_overlay_name(const std::string &path, bool resolve);
+		void add_overlay(const std::string &path, bool resolve);
+		void add_overlay_vector(const std::vector<std::string> &v, bool resolve);
 
 		static Keywords getAcceptKeywordsDefault() {
 			return Keywords::KEY_STABLE;

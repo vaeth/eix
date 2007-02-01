@@ -33,17 +33,20 @@
 #include <string>
 #include <vector>
 
-/** Compare whether two filenames are identical */
-bool same_filenames(const char *mask, const char *name, bool glob = false);
+/** canonicalize_file_name() if possible or some substitute */
+std::string normalize_path(const char *path, bool resolve = true);
+
+/** Compare whether two (normalized) filenames are identical */
+bool same_filenames(const char *mask, const char *name, bool glob = false, bool resolve_mask = true);
 
 /** Return first match in a list of filenames/patterns. */
 inline
 std::vector<std::string>::const_iterator find_filenames(const std::vector<std::string>::const_iterator start,
 		const std::vector<std::string>::const_iterator end, const char *search,
-		bool list_of_patterns = false)
+		bool list_of_patterns = false, bool resolve_list = false)
 {
 	for(std::vector<std::string>::const_iterator i = start; i != end; ++i)
-		if(same_filenames(i->c_str(), search, list_of_patterns))
+		if(same_filenames(i->c_str(), search, list_of_patterns, resolve_list))
 			return i;
 	return end;
 }

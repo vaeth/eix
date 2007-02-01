@@ -174,11 +174,12 @@ void EixRc::read()
 
 	// set m_eprefix/m_eprefixconf/eprefix to possibly new settings:
 	m_eprefix = (*this)["EPREFIX"];
-	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"] + m_eprefix;
 	// Important: eprefix should remain NULL if it is not in environment
 	// and not set different from "" in the eixrc files.
 	if(!m_eprefix.empty())
 		eprefix = m_eprefix.c_str();
+	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"] + m_eprefix;
+	m_eprefixport = (*this)["EPREFIX_PORTAGE"];
 }
 
 string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)

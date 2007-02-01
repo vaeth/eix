@@ -35,8 +35,13 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX",
-			"", "This path is prepended to all paths (except for $HOME/.eixrc\n"
-			"and except for the cachefile path passed in the commandline.")
+			"", "This path is prepended to all paths except for $HOME/.eixrc, the cachefile\n"
+			"passed in the commandline, and PORTAGE_PROFILE, PORTDIR, and overlays\n")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EPREFIX_PORTAGE",
+			"", "This path is prepended to PORTAGE_PROFILE, PORTDIR, and overlays")
 		);
 
 eixrc.addDefault(

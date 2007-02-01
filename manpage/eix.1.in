@@ -821,11 +821,27 @@ where /etc/eixrc is searched.
 
 .TP
 .BR EPREFIX "  " (string)
-This path is prepended to all paths (except for $HOME/.eixrc and
-and except for the cachefile path passed in the commandline).
-The purpose is to allow a quasi-chroot analogously to prefix-portage.
-If you set this variable in the environment it will also change the path
-where /etc/eixrc is searched.
+This path is prepended to all paths with the following exceptions:
+
+.BR "~/.eixrc"
+
+.BR "cachefile path" "(s) passed in the commandline"
+
+.BR PORTAGE_PROFILE " (only the variable, not the link)"
+
+.BR PORTDIR
+
+.BR "Overlay paths"
+
+(A prefix for the last three items can be set with B<EPREFIX_PORTAGE>).
+The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to
+prefix-portage. If you set this variable in the environment it will also
+change the path where /etc/eixrc is searched.
+
+.TP
+.BR EPREFIX_PORTAGE "  " (string)
+This path is prepended to the paths of B<PORTAGE_PROFILE> (only the variable),
+B<PORTDIR> and all overlay paths.
 
 .TP
 .BR QUICKMODE "  " (true / false)

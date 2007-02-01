@@ -407,7 +407,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
 	format_for_new.tag_for_ex_other           = eixrc["TAG_FOR_EX_OTHER"];
 
-	portagesettings = new PortageSettings(eixrc.m_eprefix, eixrc.m_eprefixconf);
+	portagesettings = new PortageSettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport);
 
 	varpkg_db = new VarDbPkg((portagesettings->m_eprefix) + VAR_DB_PKG, !cli_quick, cli_care);
 

@@ -36,6 +36,7 @@
 
 #include <eixTk/utils.h>
 #include <eixTk/stringutils.h>
+#include <eixTk/filenames.h>
 
 #include <varsreader.h>
 
@@ -138,11 +139,38 @@ void PortageSettings::read_config(const char *name)
 	configfile.read(name);
 }
 
+string PortageSettings::resolve_overlay_name(const string &path, bool resolve)
+{
+	if(resolve)
+		return normalize_path((m_eprefixport + path).c_str(), true);
+	return normalize_path(path.c_str(), false);
+}
+
+void PortageSettings::add_overlay(const string &path, bool resolve)
+{
+	string name = resolve_overlay_name(path, resolve);
+	/* If the overlay exists, don't add it */
+	if(find_filenames(overlays.begin(), overlays.end(),
+			name.c_str(), false, false) != overlays.end())
+			return;
+	/* If the overlay is PORTDIR, don't add it */
+	if(same_filenames((*this)["PORTDIR"].c_str(), name.c_str(), false, false))
+		return;
+	overlays.push_back(name);
+}
+
+void PortageSettings::add_overlay_vector(const vector<string> &v, bool resolve)
+{
+	for(vector<string>::const_iterator it = v.begin(); it != v.end(); ++it)
+		add_overlay(*it, resolve);
+}
+
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(const string &eprefix, const string &eprefixconf)
+PortageSettings::PortageSettings(const string &eprefix, const string &eprefixconf, const string &eprefixport)
 {
 	m_eprefix = eprefix;
 	m_eprefixconf = eprefixconf;
+	m_eprefixport = eprefixport;
 
 	read_config((m_eprefixconf + MAKE_GLOBALS_FILE).c_str());
 	read_config((m_eprefixconf + MAKE_CONF_FILE).c_str());
@@ -151,16 +179,21 @@ PortageSettings::PortageSettings(const string &eprefix, const string &eprefixcon
 	user_config = new PortageUserConfig(this);
 	override_by_env(test_in_env_late);
 
-	if((*this)["PORTDIR"].empty()) {
-		(*this)["PORTDIR"] = "/usr/portage/";
-	}
-	else {
+	/* Normalize "PORTDIR": */
+	{
 		string &ref = (*this)["PORTDIR"];
+		string full = m_eprefixport;
+		if(ref.empty())
+			full.append("/usr/portage");
+		else
+			full.append(ref);
+		ref = normalize_path(full.c_str(), true);
 		if(ref[ref.size() - 1] != '/')
 			ref.append("/");
 	}
 
-	overlays = split_string((*this)["PORTDIR_OVERLAY"]);
+	/* Normalize overlays and erase duplicates */
+	add_overlay_vector(split_string((*this)["PORTDIR_OVERLAY"]), true);
 
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
@@ -187,7 +220,7 @@ vector<string> *PortageSettings::getCategories()
 		 * portdir/profile/categories */
 		pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &m_categories);
 
-		pushback_lines((m_eprefix + (*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
+		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
 		for(vector<string>::iterator i = overlays.begin();
 			i != overlays.end();
 			++i)
@@ -208,7 +241,7 @@ vector<string> *PortageSettings::getCategories()
 MaskList<Mask> *PortageSettings::getMasks()
 {
 	if(m_masks.empty()) {
-		if(!grab_masks((m_eprefix + (*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
+		if(!grab_masks(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
 			WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
 		for(vector<string>::iterator i = overlays.begin();
 			i != overlays.end();

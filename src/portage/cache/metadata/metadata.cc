@@ -52,7 +52,7 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 
 bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 {
-	string catpath = m_prefix + m_scheme + METADATA_PATH + vec.name();
+	string catpath = m_scheme + METADATA_PATH + vec.name();
 	struct dirent **dents;
 	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;

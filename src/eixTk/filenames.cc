@@ -29,8 +29,37 @@
 
 using namespace std;
 
-string normalize_path(const char *path)
+string normalize_path(const char *path, bool resolve)
 {
+	if(resolve)
+	{
+		char *normalized = NULL;
+#if HAVE_CANONICALIZE_FILE_NAME
+		normalized = canonicalize_file_name(path);
+		if(normalized) {
+			if((*path) && !(*normalized)) {
+				free(normalized);
+				normalized = NULL;
+			}
+		}
+#endif
+#if HAVE_REALPATH
+		if(!normalized) {
+			normalized = realpath(path, NULL);
+			if(normalized) {
+				if((*path) && !(*normalized)) {
+					free(normalized);
+					normalized = NULL;
+				}
+			}
+		}
+#endif
+		if(normalized) {
+			string name(normalized);
+			free(normalized);
+			return name;
+		}
+	}
 	string name(path);
 	for(string::size_type i = 0; i < name.size(); ++i)
 	{
@@ -56,11 +85,11 @@ string normalize_path(const char *path)
 	return name;
 }
 
-/** Compare whether two filenames are identical */
-bool same_filenames(const char *mask, const char *name, bool glob)
+/** Compare whether two (normalized) filenames are identical */
+bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask)
 {
-	string m = normalize_path(mask);
-	string n = normalize_path(name);
+	string m = normalize_path(mask, resolve_mask);
+	string n = normalize_path(name, false);
 	if(!glob)
 		return (m == n);
 	return (fnmatch(m.c_str(), n.c_str(), 0) == 0);

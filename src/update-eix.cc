@@ -223,8 +223,38 @@ static struct Option long_options[] = {
 	 Option(0 ,                0)
 };
 
-inline
-void add_override(map<string, string> &override, EixRc &eixrc, const char *s)
+class Pathname {
+	private:
+		string name;
+		bool must_resolve;
+	public:
+		string resolve(PortageSettings &portage_settings)
+		{ return portage_settings.resolve_overlay_name(name, must_resolve); }
+
+		Pathname(string n, bool r) : name(n), must_resolve(r)
+		{ }
+};
+
+class Override {
+	public:
+		Pathname name;
+		string method;
+
+		Override(Pathname n) : name(n)
+		{ }
+
+		Override(Pathname n, string m) : name(n), method(m)
+		{ }
+};
+
+void add_pathnames(vector<Pathname> &add_list, const vector<string> to_add, bool must_resolve)
+{
+	for(vector<string>::const_iterator it = to_add.begin();
+		it != to_add.end(); ++it)
+		add_list.push_back(Pathname(*it, must_resolve));
+}
+
+void add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 {
 	vector<string> v = split_string(eixrc[s]," \t\n\r");
 	if(v.size() & 1)
@@ -234,13 +264,13 @@ void add_override(map<string, string> &override, EixRc &eixrc, const char *s)
 	}
 	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it)
 	{
-		const char *path = it->c_str();
-		++it;
-		override[path] = *it;
+		Override o(Pathname(*it, true));
+		o.method = *(++it);
+		override_list.push_back(o);
 	}
 }
 
-void add_virtuals(map<string, string> &override, vector<string> &add, string eprefix)
+void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string eprefix)
 {
 	static const string a = "eix*::";
 	FILE *fp = fopen((eprefix + EIX_CACHEFILE).c_str(), "rb");
@@ -255,10 +285,11 @@ void add_virtuals(map<string, string> &override, vector<string> &add, string epr
 	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
 	{
 		const char *overlay = (header.getOverlay(i)).c_str();
-		if(!is_virtual((eprefix + overlay).c_str()))
+		if(!is_virtual(overlay))
 			continue;
-		add.push_back(overlay);
-		override[overlay] = a + overlay;
+		Pathname name(overlay, false);
+		add.push_back(name);
+		override_list.push_back(Override(name, a + overlay));
 	}
 }
 
@@ -267,20 +298,22 @@ run_update_eix(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);
-	map<string, string> override;
 	bool have_output;
 	string outputfile;
 
-	add_override(override, eixrc, "CACHE_METHOD");
-	add_override(override, eixrc, "ADD_CACHE_METHOD");
-	vector<string> excluded_overlays = split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r");
-	vector<string> add_overlays = split_string(eixrc["ADD_OVERLAY"], " \t\n\r");
+	vector<Override> override_list;
+	add_override(override_list, eixrc, "CACHE_METHOD");
+	add_override(override_list, eixrc, "ADD_CACHE_METHOD");
+	vector<Pathname> excluded_list;
+	add_pathnames(excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], " \t\n\r"), true);
+	vector<Pathname> add_list;
+	add_pathnames(add_list, split_string(eixrc["ADD_OVERLAY"], " \t\n\r"), true);
 
 	if(eixrc.getBool("KEEP_VIRTUALS"))
-		add_virtuals(override, add_overlays, eixrc.m_eprefix);
+		add_virtuals(override_list, add_list, eixrc.m_eprefix);
 
-	add_override(override, eixrc, "OVERRIDE_CACHE_METHOD");
-	add_override(override, eixrc, "ADD_OVERRIDE_CACHE_METHOD");
+	add_override(override_list, eixrc, "OVERRIDE_CACHE_METHOD");
+	add_override(override_list, eixrc, "ADD_OVERRIDE_CACHE_METHOD");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -302,13 +335,13 @@ run_update_eix(int argc, char *argv[])
 	}
 	for(list<const char*>::iterator it = exclude_args.begin();
 		it != exclude_args.end(); ++it)
-		excluded_overlays.push_back(*it);
+		excluded_list.push_back(Pathname(*it, true));
 	for(list<const char*>::iterator it = add_args.begin();
 		it != add_args.end(); ++it)
-		add_overlays.push_back(*it);
+		add_list.push_back(Pathname(*it, true));
 	for(list<ArgPair>::iterator it = method_args.begin();
 		it != method_args.end(); ++it)
-		override[it->first] = it->second;
+		override_list.push_back(Override(Pathname(it->first, true), it->second));
 
 	Permissions permissions((have_output ? outputfile.c_str() : NULL), eixrc.m_eprefix);
 
@@ -334,7 +367,28 @@ run_update_eix(int argc, char *argv[])
 	permissions.check_db();
 
 	INFO("Reading Portage settings ..\n");
-	PortageSettings portage_settings(eixrc.m_eprefix, eixrc.m_eprefixconf);
+	PortageSettings portage_settings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport);
+
+	/* Normalize names: */
+
+	vector<string> add_overlays;
+	for(vector<Pathname>::iterator it = add_list.begin();
+		it != add_list.end(); ++it)
+		add_overlays.push_back(it->resolve(portage_settings));
+	add_list.clear();
+
+	vector<string> excluded_overlays;
+	for(vector<Pathname>::iterator it = excluded_list.begin();
+		it != excluded_list.end(); ++it)
+		excluded_overlays.push_back(it->resolve(portage_settings));
+	excluded_list.clear();
+
+	map<string, string> override;
+	for(vector<Override>::iterator it = override_list.begin();
+		it != override_list.end(); ++it) {
+		override[(it->name).resolve(portage_settings)] = it->method;
+	}
+	override_list.clear();
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;
@@ -346,23 +400,12 @@ run_update_eix(int argc, char *argv[])
 		else
 			INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
 
-		for(vector<string>::iterator it = add_overlays.begin();
-			it != add_overlays.end(); ++it)
-		{
-			// Don't add double overlays
-			if(find_filenames(portage_settings.overlays.begin(), portage_settings.overlays.end(),
-					it->c_str()) != portage_settings.overlays.end())
-				continue;
-			// Don't add PORTDIR
-			if(same_filenames(it->c_str(), portage_settings["PORTDIR"].c_str()))
-				continue;
-			portage_settings.overlays.push_back(*it);
-		}
+		portage_settings.add_overlay_vector(add_overlays, false);
 
 		for(vector<string>::size_type i = 0; i < portage_settings.overlays.size(); ++i)
 		{
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-					portage_settings.overlays[i].c_str(), true) == excluded_overlays.end())
+					portage_settings.overlays[i].c_str(), true, false) == excluded_overlays.end())
 				table.addCache(eixrc.eprefix, portage_settings.overlays[i].c_str(), eixrc["OVERLAY_CACHE_METHOD"].c_str(), override_ptr);
 			else
 				INFO("Not reading %s\n", portage_settings.overlays[i].c_str());

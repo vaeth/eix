@@ -205,7 +205,7 @@ void CascadingProfile::listProfile(void) throw(ExBasic)
 			return;
 	}
 	else {
-		path_buffer.insert(0, m_portagesettings->m_eprefix);
+		path_buffer.insert(0, m_portagesettings->m_eprefixport);
 	}
 
 	if(path_buffer[path_buffer.size() - 1] != '/')

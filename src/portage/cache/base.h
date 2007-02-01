@@ -81,7 +81,7 @@ class BasicCache {
 		std::string getPrefixedPath() const
 		{
 			if(have_prefix)
-				return std::string("[") + m_prefix + "]" + m_scheme;
+				return m_scheme + " in " + m_prefix;
 			return m_scheme;
 		}
 

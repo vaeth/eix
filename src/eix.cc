@@ -437,7 +437,7 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
-	PortageSettings portagesettings(eixrc.m_eprefix, eixrc.m_eprefixconf);
+	PortageSettings portagesettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport);
 
 	string var_db_pkg = portagesettings.m_eprefixconf + VAR_DB_PKG;
 	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick, rc_options.care);
