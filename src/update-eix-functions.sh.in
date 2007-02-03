@@ -41,7 +41,8 @@ type portageq &>/dev/null || die "portageq is required for ${0##*/}"
 
 GetPortdir () {
 	[[ "${PORTDIR}" ]] || PORTDIR="$(portageq portdir)"
-	[[ "${PORTDIR}" ]] || PORTDIR="${EPREFIX}/usr/portage"
+	[[ "${PORTDIR}" ]] || PORTDIR="/usr/portage"
+	PORTDIR="${EPREFIX_PORTDIR}${PORTDIR}"
 }
 
 VERBOSE=1
