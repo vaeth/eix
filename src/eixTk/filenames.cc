@@ -29,25 +29,65 @@
 
 using namespace std;
 
+#if defined(DEBUG_NORMALIZE_PATH)
+#include <iostream>
+string original_normalize_path(const char *path, bool resolve);
 string normalize_path(const char *path, bool resolve)
 {
+	cerr << "Debug: Calling normalize_path(\"" << path << "\", " << resolve << ")...\nDebug: (with";
+#if !defined(HAVE_CANONICALIZE_FILE_NAME)
+	cerr << "out";
+#endif
+	cerr << " canonicalize_filename(), with";
+#if !defined(HAVE_REALPATH)
+	cerr << "out";
+#endif
+	cerr << " realpath(), with";
+#if defined(PATH_MAX)
+	cerr << " PATH_MAX=" << PATH_MAX;
+#else
+	cerr << "out PATH_MAX";
+#endif
+	cerr << ")\n";
+	string s = original_normalize_path(path,resolve);
+	cerr << "Debug: ... returned with: \"" << s << "\"\n";
+	return s;
+}
+#define normalize_path(a,b) original_normalize_path(a,b)
+#endif
+
+string normalize_path(const char *path, bool resolve)
+{
+	if(!*path)
+		return "";
 	if(resolve)
 	{
 		char *normalized = NULL;
-#if HAVE_CANONICALIZE_FILE_NAME
+#if defined(HAVE_CANONICALIZE_FILE_NAME)
 		normalized = canonicalize_file_name(path);
 		if(normalized) {
-			if((*path) && !(*normalized)) {
+			if(!*normalized) {
 				free(normalized);
 				normalized = NULL;
 			}
 		}
 #endif
-#if HAVE_REALPATH
+#if defined(HAVE_REALPATH)
 		if(!normalized) {
-			normalized = realpath(path, NULL);
+#if defined(PATH_MAX)
+			char *normalized = (char *)malloc(PATH_MAX);
 			if(normalized) {
-				if((*path) && !(*normalized)) {
+				if(!realpath(path, normalized))
+				{
+					free(normalized);
+					normalized = NULL;
+				}
+			}
+#else
+			char *normalized = realpath(path, NULL);
+#endif
+			if(normalized) {
+				if(!*normalized) {
 					free(normalized);
 					normalized = NULL;
 				}
