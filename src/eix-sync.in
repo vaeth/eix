@@ -38,6 +38,7 @@ GENSYNCCONF="${EPREFIX}${PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
 LOGFILE="${EPREFIX}/var/log/eix-sync.log"
 PMOD="${EPREFIX}${PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
+PORTAGECACHE="${EPREFIX}/var/cache/edb/dep"
 
 Usage () {
   echo "${0##*/} [options]
@@ -83,7 +84,7 @@ The following options are available:
 -W   Run emerge-delta-webrsync instead of emerge --sync.
 -c CMD Run CMD instead of emerge --sync.
 -C OPT Add OPT to the emerge --sync command (or whatever is used instead).
--r   Really recreate the dep-cache (rm -rf /var/cache/edb/dep/*) (default).
+-r   Really recreate the dep-cache (rm -rf ${PORTAGECACHE}/*) (default).
 -R   Do not really recreate the dep-cache.
 -h   Show this text and exit."
   EXITCODE="${1}"
@@ -242,7 +243,7 @@ DoHook () {
 }
 
 RootTest () {
-  [[ "${UID}" -eq 0 ]] || die "You need to be root."
+  [[ "${UID}" -eq 0 ]] || [[ ! -s "${EPREFIX}" ]] && die "You need to be root."
 }
 
 RootCommand () {
@@ -314,8 +315,8 @@ ClearCache () {
   [[ "${CLEARCACHE}" ]] || return
   # Cleaning old cache
   # portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
-  RootCommand "Removing old portage-cache in /var/cache/edb/dep/*" \
-    rm -rf /var/cache/edb/dep/* || die "rm -rf /var/cache/edb/dep/* failed"
+  RootCommand "Removing old portage-cache in ${PORTAGECACHE}/*" \
+    rm -rf ${PORTAGECACHE}/* || die "rm -rf ${PORTAGECACHE}/* failed"
 }
 
 CallEmergeSync () {
@@ -361,7 +362,7 @@ CallEmergeMetadata () {
 }
 
 CondUpdate () {
-  if [[ ! -f "/var/cache/eix" ]]; then
+  if [[ ! -f "${EIXCACHE}" ]]; then
     RootCommand "eix-cache doesn't exist. Running update-eix!" \
         update-eix || die "update-eix failed"
     return
@@ -440,6 +441,7 @@ if (
        >"${LOGFILE}" || exit 1
        [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}" &>/dev/null
      fi
+     exit 0
    ) &>/dev/null
 then
   REDIRECT="${LOGFILE}"
