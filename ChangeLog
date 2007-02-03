@@ -9,8 +9,9 @@
 	- Allow PORTAGE_CONFIGROOT also in /etc/eixrc and ~/.eixrc
 	  if not set in the environment.
 	- Introduce EPREFIX which is similar to PORTAGE_CONFIGROOT but
-	  applies for all paths except $HOME/eixrc, PORTAGE_PROFILE, PORTDIR,
-	  overlay paths, and the cachefile arguments on the command line.
+	  applies for all paths except /usr/bin/update-eix-function.sh,
+	  $HOME/eixrc, PORTAGE_PROFILE, PORTDIR, overlay paths,
+	  and the cachefile arguments on the command line.
 	  This allows support for prefix-portage.
 	- Introduce EPREFIX_PORTAGE which is used as prefix for
 	  PORTAGE_PROFILE, PORTDIR, and overlay paths.

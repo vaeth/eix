@@ -29,7 +29,7 @@
 # it contains helper functions for update-eix-remote, update-eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
-source ${EPREFIX}/sbin/functions.sh
+source "${EPREFIX}/sbin/functions.sh"
 
 die () {
 	eerror "${*}"

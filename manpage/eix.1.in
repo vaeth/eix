@@ -38,6 +38,11 @@ B<eix> searches this cache for packages that match the criteria you specified.
 B<diff-eix> compares two binary caches and finds packages that were added, removed or for
 which the highest stable versions has changed.
 
+All of the above programs read the configuration files described later.
+The other utilities are scripts making use of the above commands and
+not reading these configuration files (although some of the variables can
+be passed by the environment). eix-sync has a separate configuration file.
+
 B<eix-sync> can sync the portage/overlay trees and compare them with the old cache
 using B<diff-eix>.
 To get more help on B<eix-sync> call B<eix-sync -h> and see the documentation
@@ -819,9 +824,14 @@ The purpose is to respect PORTAGE_CONFIGROOT in the same way portage does.
 If you set this variable in the environment it will also change the path
 where /etc/eixrc is searched.
 
+Recall that the scripts do not explicitly read /etc/eixrc.
+Hence, if this variable should also take effect for the scripts,
+you B<must> set it in the environment.
 .TP
 .BR EPREFIX "  " (string)
 This path is prepended to all paths with the following exceptions:
+
+.BR "@BINDIR@/update-eix-functions.sh"
 
 .BR "~/.eixrc"
 
@@ -838,11 +848,17 @@ The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to
 prefix-portage. If you set this variable in the environment it will also
 change the path where /etc/eixrc is searched.
 
+Recall that the scripts do not explicitly read /etc/eixrc.
+Hence, if this variable should also take effect for the scripts,
+you B<must> set it in the environment.
 .TP
 .BR EPREFIX_PORTAGE "  " (string)
 This path is prepended to the paths of B<PORTAGE_PROFILE> (only the variable),
 B<PORTDIR> and all overlay paths.
 
+Recall that the scripts do not explicitly read /etc/eixrc.
+Hence, if this variable should also take effect for the scripts,
+you B<must> set it in the environment.
 .TP
 .BR QUICKMODE "  " (true / false)
 If true, eix and diff-eix will use B<--quick> by default.

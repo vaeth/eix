@@ -131,12 +131,13 @@ ExecuteConfig () {
       !)  [[ "${NOGENSYNC}" ]] || DoExecute "${J}"; continue;;
     esac
     [[ "${NOGENSYNC}" ]] && continue
+    RootTest
     if [[ "${J}" = "*" ]]; then
-      RootCommand "Syncing all portage overlays"
+      MyRunCommand "Syncing all portage overlays"
         "${MYCMD}" -a || die "${MYCMD} -a failed"
       continue;
     fi
-    RootCommand "Syncing portage overlay '${J}'"
+    MyRunCommand "Syncing portage overlay '${J}'"
       "${MYCMD}" "${J}" || die "${MYCMD} ${J} failed"
   done <"${GENSYNCCONF}"
 }
@@ -243,12 +244,7 @@ DoHook () {
 }
 
 RootTest () {
-  [[ "${UID}" -eq 0 ]] || [[ ! -s "${EPREFIX}" ]] && die "You need to be root."
-}
-
-RootCommand () {
-  RootTest
-  MyRunCommand "${@}"
+  [[ "${EMULATEMODE}" ]] && die "You need to be root."
 }
 
 SED1='s!^[[:space:]]*'
@@ -267,7 +263,7 @@ SedFor () {
 TMPFILE=''
 EXITCODE=0
 DelTemp () {
-  [[ "${TMPFILE}" ]] && rm -f "${TMPFILE}"
+  [[ "${TMPFILE}" ]] && rm -f -- "${TMPFILE}"
   trap '' 0 1 2 15
   exit ${EXITCODE}
 }
@@ -315,20 +311,23 @@ ClearCache () {
   [[ "${CLEARCACHE}" ]] || return
   # Cleaning old cache
   # portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
-  RootCommand "Removing old portage-cache in ${PORTAGECACHE}/*" \
-    rm -rf ${PORTAGECACHE}/* || die "rm -rf ${PORTAGECACHE}/* failed"
+  RootTest
+  MyRunCommand "Removing old portage-cache in ${PORTAGECACHE}/*" \
+    rm -rf -- "${PORTAGECACHE}"/* || die "rm -rf ${PORTAGECACHE}/* failed"
 }
 
 CallEmergeSync () {
-  [[ "${EMULATEMODE}" ]] && return
   if [[ "${SERVER}" ]]; then
+    [[ "${EMULATEMODE}" ]] && return
     PrepRsync "${SERVER}"
     MyRunCommand "rsyncing from ${HOSTDIR}" \
       rsync $RSYNC_OPTS "${HOSTDIR}" "${PORTDIR}" || \
         die "Could not rsync from ${HOSTDIR}"
+    return
   fi
   [[ "${SKIP_SYNC}" ]] && return
-  RootCommand "Running ${EMERGECMD[*]}" \
+  RootTest
+  MyRunCommand "Running ${EMERGECMD[*]}" \
     time "${EMERGECMD[@]}" || die "${EMERGECMD[*]} failed"
 }
 
@@ -357,13 +356,15 @@ CallEmergeMetadata () {
       einfo "emerge --metadata is skipped due to settings in ${PMOD}"
     return
   fi
-  RootCommand "Running emerge --metadata" \
+  RootTest
+  MyRunCommand "Running emerge --metadata" \
     emerge --metadata || die "emerge --metadata failed"
 }
 
 CondUpdate () {
   if [[ ! -f "${EIXCACHE}" ]]; then
-    RootCommand "eix-cache doesn't exist. Running update-eix!" \
+    RootTest
+    MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
         update-eix || die "update-eix failed"
     return
   fi
@@ -388,8 +389,8 @@ MovePrevious () {
     MyRunCommand "Copying old ${EIXCACHE} cache to ${EIXPREVIOUS}" \
       mv -f "${TMPFILE}" "${EIXPREVIOUS}" ) ||
       die "Could not move ${TMPFILE} to ${EIXPREVIOUS}"
-  [[ "${UID}" -eq 0 ]] && chown portage:portage "${EIXPREVIOUS}" &>/dev/null
-  chmod 664 "${EIXPREVIOUS}" &>/dev/null
+  [[ "${UID}" -eq 0 ]] && chown -- "portage:portage" "${EIXPREVIOUS}" &>/dev/null
+  chmod -- 664 "${EIXPREVIOUS}" &>/dev/null
 }
 
 UpdateDiff () {
@@ -427,7 +428,7 @@ MainSync () {
   UpdateDiff
 }
 
-if [[ "${UID}" -ne 0 ]]; then
+if [[ "${UID}" -ne 0 ]] && [[ -z "${EPREFIX}" ]]; then
 # Emulate everything to check whether we have to be root:
   EMULATEMODE=1
   MainSync
@@ -439,7 +440,7 @@ if (
      umask 002
      if [[ "${QUIET}" || -z "${VERBOSE}" ]]; then
        >"${LOGFILE}" || exit 1
-       [[ "${UID}" -eq 0 ]] && chown portage:portage "${LOGFILE}" &>/dev/null
+       [[ "${UID}" -eq 0 ]] && chown -- "portage:portage" "${LOGFILE}" &>/dev/null
      fi
      exit 0
    ) &>/dev/null

@@ -11,6 +11,7 @@ eix.1: eix.1.in
 	    -e "s,\@EIX_WIKI\@,$(EIX_WIKI)," \
 	    -e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE)," \
 	    -e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD)," \
+	    -e "s,\@BINDIR\@,$(bindir)," \
 	    -e 's,\([BI]\)<\([^>]\+\)>,\\f\1\2\\fR,g' $(srcdir)/eix.1.in > eix.1
 # -e 's,\<_\([^[:space:],.;:]\+\)_\>,\\fI\1\\fR,g' \
 # -e 's,\*\([^[:space:],.;:]\+\)\*,\\fB\1\\fR,g' $(srcdir)/eix.1.in > eix.1
