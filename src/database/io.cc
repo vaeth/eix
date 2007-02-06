@@ -89,9 +89,9 @@ io::read_version(FILE *fp)
 		i > 0;
 		--i)
 	{
-		v->m_suffix.push_back(Suffix(
-			io::read<unsigned char>(io::charsize, fp),
-			io::read<unsigned int>(io::intsize, fp)));
+		unsigned char l = io::read<unsigned char>(io::charsize, fp);
+		unsigned char n = io::read<unsigned long>(io::longsize, fp);
+		v->m_suffix.push_back(Suffix(l, n));
 	}
 
 	// read m_gentoorevision

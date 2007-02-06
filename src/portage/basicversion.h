@@ -62,6 +62,12 @@ class Suffix
 		bool parse(const char **str_ref);
 
 		int compare(const Suffix &b) const;
+
+		unsigned char getLevel() const
+		{ return m_suffixlevel; }
+
+		unsigned long getNum() const
+		{ return m_suffixnum; }
 };
 
 /** Parse and represent a portage version-string. */
@@ -111,6 +117,8 @@ class BasicVersion
 		{ return m_gentoorevision; }
 		const char   *getFull() const
 		{ return m_full.c_str(); }
+		const std::vector<Suffix> &getSuffix() const
+		{ return m_suffix; }
 
 		std::string getSlotAppendix (bool colon) const
 		{
@@ -136,7 +144,7 @@ class BasicVersion
 		unsigned char          m_primarychar;
 
 		/** Splitted suffices */
-		std::vector<Suffix> m_suffix;
+		std::vector<Suffix>    m_suffix;
 
 		/** The optional gentoo-revision. */
 		unsigned char          m_gentoorevision;
