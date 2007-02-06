@@ -32,9 +32,56 @@
 
 using namespace std;
 
-const char *BasicVersion::suffixlevels[]     = { "alpha", "beta", "pre", "rc", "", "p" };
-const char  BasicVersion::no_suffixlevel     = 4;
-const int   BasicVersion::suffix_level_count = sizeof(suffixlevels)/sizeof(char*);
+const char *Suffix::suffixlevels[]     = { "alpha", "beta", "pre", "rc", "", "p" };
+const char  Suffix::no_suffixlevel     = 4;
+const int   Suffix::suffix_level_count = sizeof(suffixlevels)/sizeof(char*);
+
+void
+Suffix::defaults()
+{
+	m_suffixlevel = no_suffixlevel;
+	m_suffixnum   = 0;
+}
+
+bool
+Suffix::parse(const char **str_ref)
+{
+	const char *str = *str_ref;
+	if(*str == '_')
+	{
+		++str;
+		for(int i = 0; i < suffix_level_count; ++i)
+		{
+			if(i != no_suffixlevel
+			   && strncmp(suffixlevels[i], str, strlen(suffixlevels[i])) == 0)
+			{
+				m_suffixlevel = i;
+				str += strlen(suffixlevels[i]);
+				// get suffix-level number .. "_pre123"
+				// I don't really understand why this wants a "char **", and
+				// not a "const char **"
+				char *tail;
+				m_suffixnum = strtoul(str, &tail, 10);
+				*str_ref = (const char *)tail;
+				return true;
+			}
+		}
+	}
+	defaults();
+	return false;
+}
+
+int
+Suffix::compare(const Suffix &b) const
+{
+	if( m_suffixlevel < b.m_suffixlevel ) return -1;
+	if( m_suffixlevel > b.m_suffixlevel ) return  1;
+
+	if( m_suffixnum < b.m_suffixnum ) return -1;
+	if( m_suffixnum > b.m_suffixnum ) return  1;
+
+	return 0;
+}
 
 BasicVersion::BasicVersion(const char *str)
 {
@@ -51,8 +98,7 @@ BasicVersion::defaults()
 	m_full.clear();
 	m_primsplit.clear();
 	m_primarychar   = '\0';
-	m_suffixlevel   = no_suffixlevel;
-	m_suffixnum     = 0;
+	m_suffix.clear();
 	m_gentoorevision = 0;
 }
 
@@ -71,7 +117,20 @@ BasicVersion::parseVersion(const char *str, int n)
 	str = parsePrimary(m_full.c_str());
 	if(*str)
 	{
-		str = parseSuffix(str);
+		Suffix curr_suffix;
+		while(curr_suffix.parse(&str))
+			m_suffix.push_back(curr_suffix);
+
+		// get optional gentoo revision
+		if(!strncmp("-r", str, 2))
+		{
+			str += 2;
+			m_gentoorevision = strtoul(str, (char **)&str, 10);
+		}
+		else
+		{
+			m_gentoorevision = 0;
+		}
 		if(*str != '\0')
 		{
 			cerr << "Garbage at end of version string: " << str << endl;
@@ -108,6 +167,24 @@ int BasicVersion::comparePrimary(const BasicVersion& b) const
 	return 0;
 }
 
+/** Compares the split m_suffixes of another BasicVersion instances to itself. */
+int BasicVersion::compareSuffix(const BasicVersion& b) const
+{
+	vector<Suffix>::const_iterator ait = m_suffix.begin();
+	vector<Suffix>::const_iterator bit = b.m_suffix.begin();
+	for( ; (ait != m_suffix.end()) && (bit != b.m_suffix.end());
+		++ait, ++bit)
+	{
+		int ret = ait->compare(*bit);
+		if(ret)
+			return ret;
+	}
+	static const Suffix empty;
+	const Suffix &aref = (ait == m_suffix.end()) ? empty : *ait;
+	const Suffix &bref = (bit == b.m_suffix.end()) ? empty : *bit;
+	return aref.compare(bref);
+}
+
 bool BasicVersion::operator <  (const BasicVersion& right) const
 {
 	return compare(right) == -1;
@@ -141,19 +218,22 @@ bool BasicVersion::operator <= (const BasicVersion& right) const
 }
 
 int
-BasicVersion::compare(const BasicVersion &basic_version) const
+BasicVersion::compare_tilde(const BasicVersion &basic_version) const
 {
 	int ret = comparePrimary(basic_version);
-	if(ret != 0) return ret;
+	if(ret) return ret;
 
 	if( m_primarychar < basic_version.m_primarychar ) return -1;
 	if( m_primarychar > basic_version.m_primarychar ) return  1;
 
-	if( m_suffixlevel < basic_version.m_suffixlevel ) return -1;
-	if( m_suffixlevel > basic_version.m_suffixlevel ) return  1;
+	return compareSuffix(basic_version);
+}
 
-	if( m_suffixnum < basic_version.m_suffixnum ) return -1;
-	if( m_suffixnum > basic_version.m_suffixnum ) return  1;
+int
+BasicVersion::compare(const BasicVersion &basic_version) const
+{
+	int ret = compare_tilde(basic_version);
+	if(ret) return ret;
 
 	if( m_gentoorevision < basic_version.m_gentoorevision ) return -1;
 	if( m_gentoorevision > basic_version.m_gentoorevision ) return  1;
@@ -162,7 +242,7 @@ BasicVersion::compare(const BasicVersion &basic_version) const
 	// e.g. 1.02 is different from 1.002.
 	// In such a case, we simply compare the strings alphabetically.
 	// This is not always what you want but at least reproducible.
-	return strcmp(getFull(),basic_version.getFull());
+	return strcmp(getFull(), basic_version.getFull());
 }
 
 const char *
@@ -173,7 +253,7 @@ BasicVersion::parsePrimary(const char *str)
 	{
 		if(*str == '.')
 		{
-			m_primsplit.push_back(atoi(buf.c_str()));
+			m_primsplit.push_back(atol(buf.c_str()));
 			buf.clear();
 		}
 		else if(isdigit(*str))
@@ -189,7 +269,7 @@ BasicVersion::parsePrimary(const char *str)
 
 	if(buf.size() > 0)
 	{
-		m_primsplit.push_back(atoi(buf.c_str()));
+		m_primsplit.push_back(atol(buf.c_str()));
 	}
 
 	if(isalpha(*str))
@@ -199,41 +279,3 @@ BasicVersion::parsePrimary(const char *str)
 	return str;
 }
 
-const char *
-BasicVersion::parseSuffix(const char *str)
-{
-	if(*str == '_')
-	{
-		++str;
-		for(int i = 0; i < suffix_level_count; ++i)
-		{
-			if(i != no_suffixlevel
-			   && strncmp(suffixlevels[i], str, strlen(suffixlevels[i])) == 0)
-			{
-				m_suffixlevel = i;
-				str += strlen(suffixlevels[i]);
-				// get suffix-level number .. "_pre123"
-				// I don't really understand why this wants a "char **", and
-				// not a "const char **"
-				m_suffixnum = strtol(str, (char **)&str, 10);
-				break;
-			}
-		}
-	}
-	else
-	{
-		m_suffixlevel = no_suffixlevel;
-	}
-
-	// get optional gentoo revision
-	if(!strncmp("-r", str, 2))
-	{
-		str += 2;
-		m_gentoorevision = strtol(str, (char **)&str, 10);
-	}
-	else
-	{
-		m_gentoorevision = 0;
-	}
-	return str;
-}

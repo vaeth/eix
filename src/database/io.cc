@@ -84,9 +84,17 @@ io::read_version(FILE *fp)
 
 	v->m_primarychar = io::read<unsigned char>(io::charsize, fp);
 
-	// read m_suffixlevel,m_suffixnum,m_gentoorevision
-	v->m_suffixlevel   = io::read<unsigned char>(io::charsize, fp);
-	v->m_suffixnum     = io::read<unsigned int>(io::intsize, fp);
+	// read m_suffix
+	for(unsigned char i = io::read<unsigned char>(io::charsize, fp);
+		i > 0;
+		--i)
+	{
+		v->m_suffix.push_back(Suffix(
+			io::read<unsigned char>(io::charsize, fp),
+			io::read<unsigned int>(io::intsize, fp)));
+	}
+
+	// read m_gentoorevision
 	v->m_gentoorevision= io::read<unsigned char>(io::charsize, fp);
 
 	v->slot = io::read_string(fp);
@@ -123,9 +131,17 @@ io::write_version(FILE *fp, const Version *v, bool small)
 
 	io::write<unsigned char>(io::charsize, fp, v->m_primarychar);
 
-	// write m_suffixlevel,m_suffixnum,m_gentoorevision
-	io::write<unsigned char>(io::charsize, fp, v->m_suffixlevel);
-	io::write<unsigned int> (io::intsize,  fp, v->m_suffixnum);
+	// write m_suffix
+	io::write<unsigned char>(io::charsize, fp, (unsigned char)v->m_suffix.size());
+	for(vector<Suffix>::const_iterator it = v->m_suffix.begin();
+		it != v->m_suffix.end();
+		++it)
+	{
+		io::write<unsigned char>(io::charsize, fp, it->m_suffixlevel);
+		io::write<unsigned long>(io::longsize, fp, it->m_suffixnum);
+	}
+
+	// write m_gentoorevision
 	io::write<unsigned char>(io::charsize, fp, v->m_gentoorevision);
 
 	io::write_string(fp, v->slot);

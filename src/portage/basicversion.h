@@ -31,6 +31,38 @@
 
 #include <string>
 #include <vector>
+#include <database/io.h>
+
+class Suffix
+{
+	private:
+		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
+		static const char *suffixlevels[];
+		/** Index in suffixlevels where versions without a index are located. */
+		static const char no_suffixlevel;
+		/** Number of elements in suffixlevels. */
+		static const int  suffix_level_count;
+
+	protected:
+		unsigned char m_suffixlevel;
+		unsigned long m_suffixnum;
+
+		Suffix(unsigned char suffixlevel, unsigned long suffixnum) :
+		m_suffixlevel(suffixlevel), m_suffixnum(suffixnum)
+		{ }
+
+	public:
+		friend void     io::write_version(FILE *fp, const Version *v, bool small);
+		friend Version *io::read_version(FILE *fp);
+
+		Suffix()
+		{ defaults(); }
+
+		void defaults();
+		bool parse(const char **str_ref);
+
+		int compare(const Suffix &b) const;
+};
 
 /** Parse and represent a portage version-string. */
 class BasicVersion
@@ -39,13 +71,6 @@ class BasicVersion
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
 		std::string slot;
-
-		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
-		static const char *suffixlevels[];
-		/** Index in suffixlevels where versions without a index are located. */
-		static const char no_suffixlevel;
-		/** Number of elements in suffixlevels. */
-		static const int  suffix_level_count;
 
 		/** Parse the version-string pointed to by str.
 		 * If str is NULL, no parsing is done. */
@@ -57,9 +82,16 @@ class BasicVersion
 		/** Parse the version-string pointed to by str. */
 		void parseVersion(const char *str, int n = 0);
 
-		/// Compares the split m_primsplit numbers of another BasicVersion
-		// instances to itself.
+		/** Compares the split m_primsplit numbers of another BasicVersion
+		    instances to itself. */
 		int comparePrimary(const BasicVersion& basic_version) const;
+
+		/** Compares the split m_suffixes of another BasicVersion
+		    instances to itself. */
+		int compareSuffix(const BasicVersion& b) const;
+
+		/// Compare all except gentoo revisions
+		int compare_tilde(const BasicVersion &basic_version) const;
 
 		/// Compare the m_full version.
 		int compare(const BasicVersion &basic_version) const;
@@ -75,10 +107,6 @@ class BasicVersion
 		// Getters for protected members
 		unsigned char getPrimarychar() const
 		{ return m_primarychar; }
-		unsigned char getSuffixlevel() const
-		{ return m_suffixlevel; }
-		unsigned int  getSuffixnum() const
-		{ return m_suffixnum; }
 		unsigned char getGentooRevision() const
 		{ return m_gentoorevision; }
 		const char   *getFull() const
@@ -107,11 +135,8 @@ class BasicVersion
 		/** Optional one-character suffix of m_primsplit. */
 		unsigned char          m_primarychar;
 
-		/** Index of optional suffix in suffixlevels. */
-		unsigned char          m_suffixlevel;
-
-		/** BasicVersion of suffix. */
-		unsigned int           m_suffixnum;
+		/** Splitted suffices */
+		std::vector<Suffix> m_suffix;
 
 		/** The optional gentoo-revision. */
 		unsigned char          m_gentoorevision;
@@ -120,11 +145,6 @@ class BasicVersion
 		 * Return pointer to the end of the m_primsplit-version.
 		 * Thus, if this returns a pointer to '\0', there is nothing more to parse. */
 		const char *parsePrimary(const char *str);
-
-		/** Parse everything that is not the m_primsplit-part of a version-string.
-		 * All prefixes and other stuff. */
-		const char *parseSuffix(const char *str);
-
 	private:
 };
 

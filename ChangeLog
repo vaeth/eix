@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.8
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Change to new version number scheme:
+	  http://bugs.gentoo.org/show_bug.cgi?id=165414
+
 *eix-0.8.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let ** in /etc/portage/package.keywords accept "missing keyword".

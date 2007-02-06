@@ -65,10 +65,30 @@ int main()
 	s1.push_back(BasicVersion("4.0.3"));
 	s1.push_back(BasicVersion("4.1.0z"));
 	s1.push_back(BasicVersion("2.95.3-r9"));
+	s1.push_back(BasicVersion("1.0_rc1_rc2"));
+	s1.push_back(BasicVersion("1.0_rc1"));
+	s1.push_back(BasicVersion("1.0_rc1_p1"));
+	s1.push_back(BasicVersion("1.0_rc2_rc2"));
+	s1.push_back(BasicVersion("1.0_rc2"));
+	s1.push_back(BasicVersion("1.0_rc2_p1"));
+	s1.push_back(BasicVersion("1.0"));
+	s1.push_back(BasicVersion("1.0_p1_rc1"));
+	s1.push_back(BasicVersion("1.0_p1"));
+	s1.push_back(BasicVersion("1.0_p1_p1"));
 
 	sort(s1.begin(), s1.end());
 
 	vector<BasicVersion> s2;
+	s2.push_back(BasicVersion("1.0_rc1_rc2"));
+	s2.push_back(BasicVersion("1.0_rc1"));
+	s2.push_back(BasicVersion("1.0_rc1_p1"));
+	s2.push_back(BasicVersion("1.0_rc2_rc2"));
+	s2.push_back(BasicVersion("1.0_rc2"));
+	s2.push_back(BasicVersion("1.0_rc2_p1"));
+	s2.push_back(BasicVersion("1.0"));
+	s2.push_back(BasicVersion("1.0_p1_rc1"));
+	s2.push_back(BasicVersion("1.0_p1"));
+	s2.push_back(BasicVersion("1.0_p1_p1"));
 	s2.push_back(BasicVersion("2.95.3-r9"));
 	s2.push_back(BasicVersion("3.1.1-r2"));
 	s2.push_back(BasicVersion("3.2.2"));
@@ -99,7 +119,14 @@ int main()
 		++i)
 	{
 		if(s1[i] != s2[i])
+		{
+#ifdef DEBUG_BASICVERSION
+			for(vector<BasicVersion>::iterator it = s1.begin();
+				it != s1.end(); ++it)
+				cout << it->getFull() << endl;
+#endif
 			return 1;
+		}
 	}
 	return 0;
 }

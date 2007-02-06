@@ -188,10 +188,7 @@ Mask::test(BasicVersion *bv) const
 			return (*bv > static_cast<BasicVersion>(*this));
 
 		case maskOpRevisions:
-			return (comparePrimary(*bv) == 0
-			        && (getPrimarychar() == bv->getPrimarychar() )
-			        && (getSuffixlevel() == bv->getSuffixlevel() )
-			        && (getSuffixnum() == bv->getSuffixnum() ) );
+			return (compare_tilde(*bv) == 0);
 	}
 	return false; // Never reached
 }
