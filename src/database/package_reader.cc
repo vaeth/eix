@@ -68,10 +68,11 @@ PackageReader::read(Attributes need)
 				break;
 		case COLL_IUSE:
 #endif
-			size_type n;
-			n = io::read<PackageReader::size_type>(PackageReader::sizesize, m_fp);
-			for(size_type i = 0; i<n; i++ ) {
-				m_pkg->addVersion(io::read_version(m_fp));
+			{
+				io::Versize n = io::read<io::Versize>(io::Versizesize, m_fp);
+				for(io::Versize i = 0; i != n; i++ ) {
+					m_pkg->addVersion(io::read_version(m_fp));
+				}
 			}
 		//case COLL_IUSE: // If NOT_FULL_USE
 		//case ALL:
@@ -101,7 +102,7 @@ PackageReader::next()
 		return next();
 	}
 
-	m_next =  ftello(m_fp) + io::read<PackageReader::offset_type>(PackageReader::offsetsize, m_fp);
+	m_next =  ftello(m_fp) + io::read<PackageReader::Offset>(PackageReader::Offsetsize, m_fp);
 	m_have = NONE;
 	m_pkg.reset(new Package());
 	m_pkg->category = m_cat_name;

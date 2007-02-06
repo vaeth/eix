@@ -35,21 +35,26 @@
 
 class Suffix
 {
+	protected:
+		typedef  io::Char Level;
+		static const unsigned short Levelsize = io::Charsize;
+		Level m_suffixlevel;
+
+		typedef  io::Long Num;
+		static const unsigned short Numsize = io::Longsize;
+		Num      m_suffixnum;
+
+		Suffix(Level suffixlevel, Num suffixnum) :
+		m_suffixlevel(suffixlevel), m_suffixnum(suffixnum)
+		{ }
+
 	private:
 		/** Suffixes allowed by portage (_preX, _pX, _alphaX, ..). */
 		static const char *suffixlevels[];
 		/** Index in suffixlevels where versions without a index are located. */
-		static const char no_suffixlevel;
+		static const Level no_suffixlevel;
 		/** Number of elements in suffixlevels. */
-		static const int  suffix_level_count;
-
-	protected:
-		unsigned char m_suffixlevel;
-		unsigned long m_suffixnum;
-
-		Suffix(unsigned char suffixlevel, unsigned long suffixnum) :
-		m_suffixlevel(suffixlevel), m_suffixnum(suffixnum)
-		{ }
+		static const Level suffix_level_count;
 
 	public:
 		friend void     io::write_version(FILE *fp, const Version *v, bool small);
@@ -61,12 +66,12 @@ class Suffix
 		void defaults();
 		bool parse(const char **str_ref);
 
-		int compare(const Suffix &b) const;
+		int  compare(const Suffix &b) const;
 
-		unsigned char getLevel() const
+		Level getLevel() const
 		{ return m_suffixlevel; }
 
-		unsigned long getNum() const
+		Num getNum() const
 		{ return m_suffixnum; }
 };
 
@@ -74,6 +79,15 @@ class Suffix
 class BasicVersion
 {
 	public:
+		typedef io::Char Primchar;
+		static const unsigned short Primcharsize = io::Charsize;
+
+		typedef io::Short Gentoorevision;
+		static const unsigned short Gentoorevisionsize = io::Shortsize;
+
+		typedef io::Long Num;
+		static const unsigned short Numsize = io::Longsize;
+
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
 		std::string slot;
@@ -111,9 +125,9 @@ class BasicVersion
 		bool operator <= (const BasicVersion& right) const;
 
 		// Getters for protected members
-		unsigned char getPrimarychar() const
+		Primchar getPrimarychar() const
 		{ return m_primarychar; }
-		unsigned char getGentooRevision() const
+		Gentoorevision getGentooRevision() const
 		{ return m_gentoorevision; }
 		const char   *getFull() const
 		{ return m_full.c_str(); }
@@ -135,10 +149,10 @@ class BasicVersion
 		{ return std::string(getFull()) + intermediate + getSlotAppendix(colon); }
 	protected:
 		/** The m_full version-string. */
-		std::string             m_full;
+		std::string            m_full;
 
 		/** Splitted m_primsplit-version. */
-		std::vector<unsigned long> m_primsplit;
+		std::vector<Num>       m_primsplit;
 
 		/** Optional one-character suffix of m_primsplit. */
 		unsigned char          m_primarychar;
@@ -147,7 +161,7 @@ class BasicVersion
 		std::vector<Suffix>    m_suffix;
 
 		/** The optional gentoo-revision. */
-		unsigned char          m_gentoorevision;
+		Gentoorevision         m_gentoorevision;
 
 		/** Parse the m_primsplit-part of a version-string.
 		 * Return pointer to the end of the m_primsplit-version.

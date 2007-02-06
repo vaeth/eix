@@ -50,14 +50,15 @@ class PackageReader {
 			ALL = 7
 		};
 
-		typedef unsigned short size_type;
-		static const unsigned short sizesize = io::shortsize;
-
-		typedef off_t          offset_type;
-		static const unsigned short offsetsize = io::longsize;
+		/** In general, Offsetsize will not be sizeof(Offset),
+		    because it should be system independent. It must only be
+		    large enough to store the offsets occurring in the database.
+		*/
+		typedef off_t Offset;
+		static const unsigned short Offsetsize = io::Longsize;
 
 		/// Initialize with file-stream and number of packages.
-		PackageReader(FILE *fp, unsigned int size) 
+		PackageReader(FILE *fp, io::Treesize size)
 			: m_fp(fp), m_frames(size), m_cat_size(0) { }
 
 		/// Read attributes from the database into the current package.
@@ -84,8 +85,8 @@ class PackageReader {
 	protected:
 		FILE             *m_fp;
 
-		unsigned int      m_frames;
-		unsigned int      m_cat_size;
+		io::Treesize      m_frames;
+		io::Treesize      m_cat_size;
 		std::string       m_cat_name;
 
 		off_t             m_next;

@@ -4,7 +4,10 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Change to new version number scheme:
 	  http://bugs.gentoo.org/show_bug.cgi?id=165414
-	- Fix sorting of things like _pre20060716 (use now 4 byte numbers)
+	- Fix sorting of things like _p20060716 (longer numbers)
+	- Increase some quantities to 64bit (e.g. 20071042308
+	  should still be a valid version number), or to  16bit (e.g. -r9999).
+	- Internal cleanup: Proper variable typing.
 
 *eix-0.8.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

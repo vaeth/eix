@@ -45,11 +45,14 @@ class DBHeader {
 		std::vector<std::string> overlays;
 
 	public:
-		/** Current version of database-format. */
-		static const int current = 21;
+		typedef  io::Int DBVersion;
+		static const unsigned short DBVersionsize = io::Intsize;
 
-		int version; /**< Version of the db. */
-		unsigned int size; /**< Number of categories. */
+		/** Current version of database-format. */
+		static const DBVersion current = 21;
+
+		DBVersion version; /**< Version of the db. */
+		io::Catsize  size; /**< Number of categories. */
 
 		/** Get string for key from directory-table. */
 		std::string getOverlay(Version::Overlay key) const;

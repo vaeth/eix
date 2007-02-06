@@ -35,8 +35,8 @@
 
 class Keywords {
 	public:
-		typedef char Type;
-		static const unsigned short Typesize = io::charsize;
+		typedef io::Char Type;
+		static const unsigned short Typesize = io::Charsize;
 		static const Type
 			KEY_EMPTY         ,
 			KEY_STABLE        , /**<  ARCH */
@@ -49,7 +49,7 @@ class Keywords {
 			PROFILE_MASK      ,
 			SYSTEM_PACKAGE    ;
 
-		typedef long Redundant;
+		typedef uint32_t Redundant;
 		static const Redundant
 			RED_NOTHING,       /**< None of the following           */
 			RED_DOUBLE,        /**< Same keyword twice              */

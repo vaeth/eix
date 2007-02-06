@@ -116,10 +116,10 @@ PackageTree::deletePackage(const string &category, const string &name)
 	return ret;
 }
 
-unsigned int
+io::Treesize
 PackageTree::countPackages() const
 {
-	Category::size_type ret = 0;
+	io::Treesize ret = 0;
 	for(const_iterator i = begin(); i != end(); ++i)
 	{
 		ret += i->size();

@@ -35,6 +35,7 @@
 #include <vector>
 
 #include <eixTk/ptr_list.h>
+#include <database/io.h>
 
 class Package;
 class DBHeader;
@@ -88,8 +89,8 @@ class PackageTree : public eix::ptr_list<Category> {
 
 		void add_missing_categories(std::vector<std::string> &categories) const;
 
-		unsigned int countPackages() const;
-		unsigned int countCategories() const
+		io::Treesize countPackages() const;
+		io::Catsize countCategories() const
 		{ return size(); }
 	protected:
 		std::map<std::string, Category*> *fast_access;

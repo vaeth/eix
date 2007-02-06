@@ -32,9 +32,26 @@
 
 using namespace std;
 
-const char *Suffix::suffixlevels[]     = { "alpha", "beta", "pre", "rc", "", "p" };
-const char  Suffix::no_suffixlevel     = 4;
-const int   Suffix::suffix_level_count = sizeof(suffixlevels)/sizeof(char*);
+static inline BasicVersion::Num
+strtoNum(const char *str, char **s, int index)
+{
+#if defined(HAVE_STRTOULL)
+	return (BasicVersion::Num)strtoull(str, s, index);
+#else
+	return (BasicVersion::Num)strtol(str, s, index);
+#endif
+}
+
+static inline BasicVersion::Num
+atoNum(const char *str)
+{
+	char *s;
+	return strtoNum(str, &s, 10);
+}
+
+const char *Suffix::suffixlevels[]             = { "alpha", "beta", "pre", "rc", "", "p" };
+const Suffix::Level Suffix::no_suffixlevel     = 4;
+const Suffix::Level Suffix::suffix_level_count = sizeof(suffixlevels)/sizeof(char*);
 
 void
 Suffix::defaults()
@@ -50,7 +67,7 @@ Suffix::parse(const char **str_ref)
 	if(*str == '_')
 	{
 		++str;
-		for(int i = 0; i < suffix_level_count; ++i)
+		for(Level i = 0; i != suffix_level_count; ++i)
 		{
 			if(i != no_suffixlevel
 			   && strncmp(suffixlevels[i], str, strlen(suffixlevels[i])) == 0)
@@ -61,7 +78,7 @@ Suffix::parse(const char **str_ref)
 				// I don't really understand why this wants a "char **", and
 				// not a "const char **"
 				char *tail;
-				m_suffixnum = strtoul(str, &tail, 10);
+				m_suffixnum = strtoNum(str, &tail, 10);
 				*str_ref = (const char *)tail;
 				return true;
 			}
@@ -125,7 +142,9 @@ BasicVersion::parseVersion(const char *str, int n)
 		if(!strncmp("-r", str, 2))
 		{
 			str += 2;
-			m_gentoorevision = strtoul(str, (char **)&str, 10);
+			char *s;
+			m_gentoorevision = strtol(str, &s, 10);
+			str = s;
 		}
 		else
 		{
@@ -253,7 +272,7 @@ BasicVersion::parsePrimary(const char *str)
 	{
 		if(*str == '.')
 		{
-			m_primsplit.push_back(atol(buf.c_str()));
+			m_primsplit.push_back(atoNum(buf.c_str()));
 			buf.clear();
 		}
 		else if(isdigit(*str))
@@ -269,7 +288,7 @@ BasicVersion::parsePrimary(const char *str)
 
 	if(buf.size() > 0)
 	{
-		m_primsplit.push_back(atol(buf.c_str()));
+		m_primsplit.push_back(atoNum(buf.c_str()));
 	}
 
 	if(isalpha(*str))

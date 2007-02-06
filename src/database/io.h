@@ -37,19 +37,30 @@ class PackageTree;
 class DBHeader;
 
 namespace io {
-	const unsigned short charsize    = sizeof(char);
-	const unsigned short shortsize   = 2;
-	const unsigned short intsize     = 4;
-	const unsigned short longsize    = 4;
+	typedef uint8_t Char;
+	const unsigned short Charsize    = 1;
+	typedef uint16_t Short;
+	const unsigned short Shortsize   = 2;
+	typedef uint32_t Int;
+	const unsigned short Intsize     = 4;
+	typedef uint64_t Long;
+	const unsigned short Longsize    = 8;
+
+	typedef io::Short Catsize;
+	const unsigned short Catsizesize = io::Shortsize;
+	typedef io::Short Versize;
+	const unsigned short Versizesize = io::Shortsize;
+	typedef io::Int Treesize;
+	const unsigned short Treesizesize = io::Intsize;
 
 	/// Read any POD.
 	template<typename _Tp> _Tp
 	read(const unsigned short size, FILE *fp)
 	{
-		_Tp ret = fgetc(fp);
+		_Tp ret = (_Tp)(((unsigned int)fgetc(fp)) & 0xFF);
 		for(unsigned short i = 1, shift = 8; i<size; i++, shift += 8)
 		{
-			ret |= (_Tp)(fgetc(fp) & 0xFF) << shift;
+			ret |= (_Tp)(((unsigned int)fgetc(fp)) & 0xFF) << shift;
 		}
 		return ret;
 	}
@@ -85,10 +96,10 @@ namespace io {
 
 
 	// Read a category-header from fp
-	unsigned int read_category_header(FILE *fp, std::string &name);
+	io::Treesize read_category_header(FILE *fp, std::string &name);
 
 	// Write a category-header to fp
-	void write_category_header(FILE *fp, const std::string &name, unsigned int size);
+	void write_category_header(FILE *fp, const std::string &name, io::Treesize size);
 
 
 	// Write package to stream
@@ -99,7 +110,7 @@ namespace io {
 	void read_header(FILE *fp, DBHeader &hdr);
 
 	void write_packagetree(FILE *fp, const PackageTree &pkg, bool small);
-	void read_packagetree(FILE *fp, unsigned int size, PackageTree &tree);
+	void read_packagetree(FILE *fp, io::Treesize size, PackageTree &tree);
 }
 
 #endif /* EIX__IO_H__ */
