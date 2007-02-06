@@ -122,7 +122,7 @@ io::write_version(FILE *fp, const Version *v, bool small)
 	// write m_primsplit
 	io::write<io::Char>(io::Charsize, fp, (io::Char)v->m_primsplit.size());
 
-	for(vector<unsigned long>::const_iterator it = v->m_primsplit.begin();
+	for(vector<BasicVersion::Num>::const_iterator it = v->m_primsplit.begin();
 		it != v->m_primsplit.end();
 		++it)
 	{
