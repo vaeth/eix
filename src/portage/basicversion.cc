@@ -157,7 +157,7 @@ BasicVersion::parseVersion(const char *str, int n)
 	}
 
 	// Let's remove useless 0 at the end
-	for(vector<unsigned long>::reverse_iterator ri = m_primsplit.rbegin();
+	for(vector<BasicVersion::Num>::reverse_iterator ri = m_primsplit.rbegin();
 		ri != m_primsplit.rend() && *ri == 0;
 		ri++)
 	{
@@ -168,8 +168,8 @@ BasicVersion::parseVersion(const char *str, int n)
 /** Compares the split m_primsplit numbers of another BasicVersion instances to itself. */
 int BasicVersion::comparePrimary(const BasicVersion& b) const
 {
-	vector<unsigned long>::const_iterator ait = m_primsplit.begin();
-	vector<unsigned long>::const_iterator bit = b.m_primsplit.begin();
+	vector<BasicVersion::Num>::const_iterator ait = m_primsplit.begin();
+	vector<BasicVersion::Num>::const_iterator bit = b.m_primsplit.begin();
 	for( ; (ait != m_primsplit.end()) && (bit != b.m_primsplit.end());
 		++ait, ++bit)
 	{
