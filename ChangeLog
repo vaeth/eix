@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.8.9
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Improve documentation for -I
+
 *eix-0.8.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Change to new version number scheme:

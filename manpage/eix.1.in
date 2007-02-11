@@ -46,7 +46,7 @@ be passed by the environment). eix-sync has a separate configuration file.
 B<eix-sync> can sync the portage/overlay trees and compare them with the old cache
 using B<diff-eix>.
 To get more help on B<eix-sync> call B<eix-sync -h> and see the documentation
-of I</etc/eix-sync.conf>
+of I</etc/eix-sync.conf> below.
 
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
@@ -148,6 +148,7 @@ are available, respectively.
 
 This option is best combined with -T to clean up /etc/portage/package.*
 
+Or you can combine it with -e to have no other output.
 .TP
 .BR --cache-file " I<FILE>"
 Use I<FILE> instead of B<@EIX_CACHEFILE@>.
@@ -157,8 +158,12 @@ Use I<FILE> instead of B<@EIX_CACHEFILE@>.
 .TP
 .BR -I ", " --installed
 Only match installed packages. Please don't use this as a replacement for qlist -ICv or
-equery, it's not the same. This only show packages that could be installed and that are
-installed. Packages that are installed, but no longer in portage are not listed here.
+equery, it's not the same: Packages that are installed, but no longer in the portage tree
+(or overlays) are not listed here. However, you should better not have such packages at all
+(better put these packages in overlays in case you need to reinstall them).
+To find the latter packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
+but be aware that eix -t does not obey the usual FORMAT rules for these packages.
+So you better do not use this in scripts unless you know what you are doing.
 .TP
 .BR -i ", " --multi-installed
 Only match packages which are installed in at least two different versions.
