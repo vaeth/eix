@@ -584,10 +584,10 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 					alwaysstable = true;
 					if(s[0] == '-') { // Strange match
 						set_arch_used(ARCH_ALIENUNSTABLE);
+						redundant |= (check & Keywords::RED_STRANGE);
 					}
 					else if(s[0] != '~') { // ALIEN match
 						set_arch_used(ARCH_ALIENSTABLE);
-						redundant |= (check & Keywords::RED_STRANGE);
 					}
 					else { // ~ALIEN match
 						set_arch_used(ARCH_ALIENUNSTABLE);
