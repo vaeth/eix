@@ -433,14 +433,20 @@ The version was originally "masked by profile", but this was locally changed in 
 .BR {M}4.0.0_alpha20050213
 The version was originally masked in $PORTDIR/profiles/package.mask, but this was locally changed in /etc/portage/package.unmask.
 .TP
-.BR *3.4.3-r2
-That version is "masked by -* keyword".
+.BR *3.3.3
+This means the version is "masked by missing keyword" but stable for an alien architecture.
 .TP
-.BR (*)3.4.3-r2
-That version was originally "masked by -* keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
+.BR ~*3.3.3
+This version is "masked by missing keyword", stable on no architecture, but unstable on an alien architecture.
 .TP
-.BR !3.3.3
-This means the version is "masked by missing keyword".
+.BR **3.3.3
+This means the version is "masked by missing keyword" for all architectures.
+.TP
+.BR (**)3.4.3-r2
+That version originally had no keyword, but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
+.TP
+.BR -*3.4.3-r2
+That version is "masked by -* keyword" for all architectures (soon obsolete).
 .TP
 .BR -0.8.14
 Masked by -ARCH.
@@ -1238,7 +1244,7 @@ number is 0 or 1.
 This is normally not useful but might simplify writing certain scripts
 parsing the output of eix.
 .TP
-.BR TAG_FOR_PROFILE " " TAG_FOR_MASKED " " TAG_FOR_EX_PROFILE " " TAG_FOR_EX_MASKED " " TAG_FOR_LOCALLY_MASKED " " TAG_FOR_STABLE " " TAG_FOR_UNSTABLE " " TAG_FOR_MINUS_ASTERISK " " TAG_FOR_MINUS_KEYWORD " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_OTHER " " TAG_FOR_EX_UNSTABLE " " TAG_FOR_EX_MINUS_ASTERISK " " TAG_FOR_EX_MINUS_KEYWORD " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_EX_OTHER (String)
+.BR TAG_FOR_PROFILE " " TAG_FOR_MASKED " " TAG_FOR_EX_PROFILE " " TAG_FOR_EX_MASKED " " TAG_FOR_LOCALLY_MASKED " " TAG_FOR_STABLE " " TAG_FOR_UNSTABLE " " TAG_FOR_MINUS_ASTERISK " " TAG_FOR_MINUS_KEYWORD " " TAG_FOR_ALIEN_STABLE " " TAG_FOR_ALIEN_UNSTABLE " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_EX_UNSTABLE " " TAG_FOR_EX_MINUS_ASTERISK " " TAG_FOR_EX_MINUS_KEYWORD " " TAG_FOR_EX_ALIEN_STABLE " " TAG_FOR_EX_ALIEN_UNSTABLE " " TAG_FOR_EX_MISSING_KEYWORD (String)
 The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP
 .\" {{{ Default Matchfields for different strings.

@@ -434,9 +434,9 @@ bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const {
 	return m_mask.applyMasks(p, check);
 }
 
-inline void apply_keywords(Version &v, Keywords::Type t)
+inline void apply_keywords(Version &v, Keywords::Type t, bool alwaysstable)
 {
-	if(v.get() & t) {
+	if(alwaysstable || (v.get() & t)) {
 		v |= Keywords::KEY_STABLE;
 	}
 	else {
@@ -444,13 +444,14 @@ inline void apply_keywords(Version &v, Keywords::Type t)
 	}
 }
 
-#define set_arch_used(value) { \
+#define set_arch_used(value) do { \
 	if(arch_used < value) { \
-		if(arch_used != 0) \
+		if(arch_used != ARCH_NOTHING) \
 			redundant |= (check & Keywords::RED_MIXED); \
 		arch_used = value; \
-	} else if(arch_used > value) \
-		redundant |= (check & Keywords::RED_MIXED); }
+	} else \
+		redundant |= (check & Keywords::RED_MIXED); \
+	} while(0)
 
 /// @return true if something from /etc/portage/package.* applied
 bool
@@ -490,18 +491,28 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 		i != p->end();
 		++i)
 	{
-		Keywords::Redundant redundant = i->get_redundant();
+		const char ARCH_NOTHING        = 0,
+		           ARCH_TESTING        = 1,
+		           ARCH_ALIENSTABLE    = 2,
+		           ARCH_ALIENUNSTABLE  = 3,
+		           ARCH_MISSINGKEYWORD = 4;
 		char arch_needed;
-		char arch_used = 0;
+		char arch_used = ARCH_NOTHING;
+		Keywords::Redundant redundant = i->get_redundant();
 		Keywords::Type oritype = i->get();
 		if(oritype & Keywords::KEY_STABLE)
-			arch_needed = 0;
+			arch_needed = ARCH_NOTHING;
 		else if(oritype & Keywords::KEY_UNSTABLE)
-			arch_needed = 1;
-		else if(oritype & Keywords::KEY_MISSINGKEYWORD)
-			arch_needed = 5;
+			arch_needed = ARCH_TESTING;
+		else if((oritype & Keywords::KEY_ALIENSTABLE) ||
+			(oritype & Keywords::KEY_MINUSKEYWORD))
+			arch_needed = ARCH_ALIENSTABLE;
+		else if(oritype & Keywords::KEY_ALIENUNSTABLE)
+			arch_needed = ARCH_ALIENUNSTABLE;
 		else
-			arch_needed = 4;
+			arch_needed = ARCH_MISSINGKEYWORD;
+
+		bool alwaysstable = false;
 
 		Keywords lkw(kw.get());
 
@@ -511,109 +522,126 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 			if(check & Keywords::RED_IN_KEYWORDS)
 				redundant |= Keywords::RED_IN_KEYWORDS;
 			vector<string> kv = split_string(skw);
-			vector<string>::iterator new_end = unique(kv.begin(), kv.end());
-			if(new_end != kv.end())
-			{
-				kv.erase(new_end, kv.end());
-				redundant |= (check & Keywords::RED_DOUBLE);
-			}
-
 			vector<string> *arr = NULL;
 			for(vector<string>::iterator kvi = kv.begin();
 				kvi != kv.end();
 				++kvi)
 			{
 				if(*kvi == arch) {
-					redundant |= (check & Keywords::RED_DOUBLE);
+					set_arch_used(ARCH_NOTHING);
+					lkw |= Keywords::KEY_STABLE;
+					continue;
 				}
-				else if(*kvi == "-" + arch) {
-					lkw &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
-				}
-				else if(*kvi == "~" + arch) {
-					set_arch_used(1);
+				if(*kvi == "~" + arch) {
+					set_arch_used(ARCH_TESTING);
 					lkw |= Keywords::KEY_UNSTABLE;
+					continue;
 				}
-				else if(*kvi == "-~" + arch) {
-					lkw &= (~Keywords::KEY_UNSTABLE | ~Keywords::KEY_ALL);
+				if(*kvi == "*") {
+					set_arch_used(ARCH_ALIENSTABLE);
+					lkw |= Keywords::KEY_ALIENSTABLE;
+					continue;
 				}
-				else if(*kvi == "-*") {
-					set_arch_used(4);
+				if(*kvi == "~*") {
+					set_arch_used(ARCH_ALIENUNSTABLE);
+					lkw |= Keywords::KEY_ALIENUNSTABLE;
+					continue;
+				}
+				if(*kvi == "**") {
+					set_arch_used(ARCH_MISSINGKEYWORD);
+					alwaysstable = true;
+					continue;
+				}
+				if(*kvi == "-*") {
+					set_arch_used(ARCH_MISSINGKEYWORD);
 					lkw |= Keywords::KEY_MINUSASTERISK;
+					continue;
 				}
-				else if(*kvi == "**") {
-					set_arch_used(5);
-					**i |= Keywords::KEY_STABLE;
-					lkw |= Keywords::KEY_MISSINGKEYWORD | Keywords::KEY_STABLE;
+				if(*kvi == "-" + arch) {
+					lkw &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+					// The -ARCH is here to *allow* installations:
+					if(oritype & Keywords::KEY_MINUSKEYWORD) {
+						set_arch_used(ARCH_ALIENSTABLE);
+						lkw |= Keywords::KEY_MINUSKEYWORD;
+					}
+					continue;
 				}
-				else { // match non-arch keywords:
-					const char *s = kvi->c_str();
-					if(s[0] == '-')
-					{
+				if(*kvi == "-~" + arch) {
+					lkw &= (~Keywords::KEY_UNSTABLE | ~Keywords::KEY_ALL);
+					// No continue! (might match strange keyword)
+				}
+				// match alien or strange keywords:
+				const char *s = kvi->c_str();
+				if(s[0] == '-')	{
+					redundant |= (check & Keywords::RED_STRANGE);
+				}
+				if(!arr) {
+					arr = new vector<string>;
+					*arr = split_string((*i)->get_full_keywords());
+				}
+				if(find(arr->begin(), arr->end(), s) != arr->end())
+				{
+					alwaysstable = true;
+					if(s[0] == '-') { // Strange match
+						set_arch_used(ARCH_ALIENUNSTABLE);
+					}
+					else if(s[0] != '~') { // ALIEN match
+						set_arch_used(ARCH_ALIENSTABLE);
 						redundant |= (check & Keywords::RED_STRANGE);
 					}
-					else
-					{
-						if(!arr)
+					else { // ~ALIEN match
+						set_arch_used(ARCH_ALIENUNSTABLE);
+						// We do not consider * weaker than ~ALIEN.
+						// Therefore we should set arch_needed = ARCH_ALIENUNSTABLE
+						//    to avoid redundancy tagging.
+						// However, ALIEN is weaker than ~ALIEN, so
+						// we do this only if ALIEN is not stable:
+						if((arch_needed == ARCH_ALIENSTABLE) &&
+							(check & (~redundant) & Keywords::RED_WEAKER))
 						{
-							arr = new vector<string>;
-							*arr = split_string((*i)->get_full_keywords());
+							if(find(arr->begin(), arr->end(), s + 1) == arr->end())
+								arch_needed = ARCH_ALIENUNSTABLE;
 						}
-						if(find(arr->begin(), arr->end(), s) != arr->end())
-						{
-							lkw |= Keywords::KEY_STABLE;
-							**i |= Keywords::KEY_STABLE;
-							if(s[0] != '~')// OTHERARCH stable found
-							{
-								set_arch_used(2);
-								if(arch_needed > 2)
-									arch_needed = 2;
-							}
-							else// ~OTHERARCH found
-							{
-								set_arch_used(3);
-								if(arch_needed > 3)
-									arch_needed = 3;
-								if((arch_needed == 3) &&
-									(check & (~redundant) & Keywords::RED_WEAKER))
-								{
-									if(find(arr->begin(), arr->end(), s + 1) != arr->end())
-										arch_needed = 2;
-								}
-							}
+					}
+				}
+				else if(check & (Keywords::RED_STRANGE | Keywords::RED_MIXED))
+				{
+					if(s[0] == '-')	{
+						redundant |= (check & Keywords::RED_STRANGE);
+					}
+					else if(s[0] != '~') {
+						// an non-matching ALIEN keyword need not necessarily be "strange":
+						// it could also simply be too weak because ~ALIEN exists.
+						string testing = "~" + *kvi;
+						if(find(arr->begin(), arr->end(), testing) != arr->end()) {
+							set_arch_used(ARCH_ALIENSTABLE);
 						}
-						else if(check & (Keywords::RED_STRANGE | Keywords::RED_MIXED))
-						{
-							// an unknown OTHERARCH keyword need not necessarily be "strange":
-							// it could also simply be too weak because ~OTHERARCH exists
-							if(s[0] != '~')
-							{
-								string testing="~" + *kvi;
-								// Do not set arch_needed = 3, even if ~OTHERARCH is found here:
-								// etc/portage/package.keywords might contain ~ANOTHERARCH
-								if(find(arr->begin(), arr->end(), testing) != arr->end()) {
-									set_arch_used(2);
-								}
-								else
-									redundant |= (check & Keywords::RED_STRANGE);
-							}
-							else
-								redundant |= (check & Keywords::RED_STRANGE);
+						else
+							redundant |= (check & Keywords::RED_STRANGE);
+					}
+					else {
+						// an unknown ~ALIEN keyword need not necessarily be "strange":
+						// it could also simply be too strong because ALIEN exists.
+						if(find(arr->begin(), arr->end(), s + 1) != arr->end()) {
+							set_arch_used(ARCH_ALIENUNSTABLE);
 						}
+						else
+							redundant |= (check & Keywords::RED_STRANGE);
 					}
 				}
 			}
+			if(arr)
+				delete arr;
 			if(arch_used > arch_needed)
 				redundant |= (check & Keywords::RED_WEAKER);
-			if(check & Keywords::RED_DOUBLE)
-			{
+			if(check & Keywords::RED_DOUBLE) {
 				sort(kv.begin(), kv.end());
 				if(unique(kv.begin(), kv.end()) != kv.end())
 					redundant |= Keywords::RED_DOUBLE;
 			}
 		}
-		apply_keywords(**i, lkw.get());
-		if(rvalue && (check & Keywords::RED_NO_CHANGE))
-		{
+		apply_keywords(**i, lkw.get(), alwaysstable);
+		if(rvalue && (check & Keywords::RED_NO_CHANGE))	{
 			if((i->get() & Keywords::KEY_ALL) == (oritype & Keywords::KEY_ALL))
 				redundant |= Keywords::RED_NO_CHANGE;
 		}
@@ -628,7 +656,8 @@ PortageSettings::setStability(Package *pkg, const Keywords &kw, bool save_after_
 {
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {
-		if(t->get() & kw.get()) {
+		if(t->get() & kw.get())
+		{
 			**t |= Keywords::KEY_STABLE;
 		}
 		else {

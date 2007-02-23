@@ -221,59 +221,68 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		if (version->saved_isStable()) {
 			if( need_color )
 				cout << fmt->color_stable;
+			keyword_text = fmt->tag_for_stable;
 		}
 		else if (version->saved_isUnstable()) {
 			if( need_color )
 				cout << fmt->color_unstable;
 			keyword_text = fmt->tag_for_ex_unstable;
 		}
-		else if (version->saved_isMinusAsterisk()) {
-			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_minus_asterisk;
-		}
 		else if (version->saved_isMinusKeyword()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_minus_keyword;
 		}
-		else if (version->saved_isMissingKeyword()) {
+		else if (version->saved_isAlienStable()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = fmt->tag_for_ex_alien_stable;
+		}
+		else if (version->saved_isAlienUnstable()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = fmt->tag_for_ex_alien_unstable;
+		}
+		else if (version->saved_isMinusAsterisk()) {
+			if( need_color )
+				cout << fmt->color_masked;
+			keyword_text = fmt->tag_for_ex_minus_asterisk;
+		}
+		else {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_missing_keyword;
 		}
-		else if (!version->saved_isHardMasked()) {
-			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_other;
-		}
-		else
-			keyword_text = fmt->tag_for_stable;
 	}
 	else if (version->isUnstable()) {
 		if( need_color )
 			cout << fmt->color_unstable;
 		keyword_text = fmt->tag_for_unstable;
 	}
-	else if (version->isMinusAsterisk()) {
-		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_minus_asterisk;
-	}
 	else if (version->isMinusKeyword()) {
 		if( need_color )
 			cout << fmt->color_masked;
 		keyword_text = fmt->tag_for_minus_keyword;
 	}
-	else if (version->isMissingKeyword()) {
+	else if (version->isAlienStable()) {
+		if( need_color )
+			cout << fmt->color_masked;
+		keyword_text = fmt->tag_for_alien_stable;
+	}
+	else if (version->isAlienUnstable()) {
+		if( need_color )
+			cout << fmt->color_masked;
+		keyword_text = fmt->tag_for_alien_unstable;
+	}
+	else if (version->isMinusAsterisk()) {
+		if( need_color )
+			cout << fmt->color_masked;
+		keyword_text = fmt->tag_for_minus_asterisk;
+	}
+	else {
 		if( need_color )
 			cout << fmt->color_masked;
 		keyword_text = fmt->tag_for_missing_keyword;
-	}
-	else if (!(version->isHardMasked())) {
-		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_other;
 	}
 	cout << mask_text << keyword_text;
 

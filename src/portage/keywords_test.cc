@@ -78,24 +78,42 @@ int main()
 	TEST_ASSERT(kw.isMinusAsterisk());
 	TEST_ASSERT(!kw.isStable());
 	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(!kw.isMissingKeyword());
+	TEST_ASSERT(!kw.isAlienStable());
+	TEST_ASSERT(!kw.isAlienUnstable());
 
 	kw.set("alpha", "-alpha");
 	TEST_ASSERT(kw.isMinusKeyword());
 	TEST_ASSERT(!kw.isStable());
 	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(!kw.isMissingKeyword());
+	TEST_ASSERT(!kw.isAlienStable());
+	TEST_ASSERT(!kw.isAlienUnstable());
 
 	kw.set("alpha", "~alpha");
 	TEST_ASSERT(kw.isUnstable());
 	TEST_ASSERT(!kw.isStable());
-	TEST_ASSERT(!kw.isMissingKeyword());
+	TEST_ASSERT(kw.isUnstable());
+	TEST_ASSERT(!kw.isAlienStable());
+	TEST_ASSERT(!kw.isAlienUnstable());
 
 	kw.set("alpha", "alpha");
 	TEST_ASSERT(kw.isStable());
 	TEST_ASSERT(!kw.isUnstable());
 	TEST_ASSERT(!kw.isMinusAsterisk());
-	TEST_ASSERT(!kw.isMissingKeyword());
+	TEST_ASSERT(!kw.isAlienStable());
+	TEST_ASSERT(!kw.isAlienUnstable());
+
+	kw.set("alpha", "beta");
+	TEST_ASSERT(!kw.isStable());
+	TEST_ASSERT(!kw.isUnstable());
+	TEST_ASSERT(kw.isAlienStable());
+	TEST_ASSERT(!kw.isAlienUnstable());
+
+
+	kw.set("alpha", "~beta");
+	TEST_ASSERT(!kw.isStable());
+	TEST_ASSERT(!kw.isUnstable());
+	TEST_ASSERT(!kw.isAlienStable());
+	TEST_ASSERT(kw.isAlienUnstable());
 
 	return 0;
 }

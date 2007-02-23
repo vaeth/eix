@@ -49,7 +49,7 @@ class DBHeader {
 		static const unsigned short DBVersionsize = io::Intsize;
 
 		/** Current version of database-format. */
-		static const DBVersion current = 21;
+		static const DBVersion current = 22;
 
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */

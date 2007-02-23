@@ -3,6 +3,17 @@
 *eix-0.8.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Improve documentation for -I
+	- Let * and ~* in /etc/portage/package.keywords accept stable
+	  and testing keyword, respectively, of any architecture.
+	  Moreover, consider this as weaker (preferrable) than ** and
+	  (the soon obsolete) -*.
+	- Introduce corresponding {EX_,}TAG_FOR_ALIEN_{UN,}STABLE.
+	- Let -ARCH in /etc/portage/package.keywords stabilize -ARCH keyword.
+	- Change default for {EX_,}TAG_FOR_MINUS_ASTERISK.
+	- Drop {EX_,}TAG_FOR_STRANGE.
+	- Fix memory leak in PortageUserConfig::setStability().
+	- Fix some exceptional cases in redundancy testing of
+	  /etc/portage/package.keywords.
 
 *eix-0.8.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -35,15 +35,16 @@
 
 class Keywords {
 	public:
-		typedef io::Char Type;
-		static const unsigned short Typesize = io::Charsize;
+		typedef io::Short Type;
+		static const unsigned short Typesize = io::Shortsize;
 		static const Type
 			KEY_EMPTY         ,
-			KEY_STABLE        , /**<  ARCH */
-			KEY_UNSTABLE      , /**< ~ARCH */
-			KEY_MINUSASTERISK , /**<  -*   */
-			KEY_MINUSKEYWORD  , /**< -ARCH */
-			KEY_MISSINGKEYWORD, /**<  **   */
+			KEY_STABLE        , /**<  ARCH  */
+			KEY_UNSTABLE      , /**< ~ARCH  */
+			KEY_ALIENSTABLE   , /**<  ALIEN */
+			KEY_ALIENUNSTABLE , /**< ~ALIEN */
+			KEY_MINUSKEYWORD  , /**< -ARCH  */
+			KEY_MINUSASTERISK , /**<  -*    */
 			KEY_ALL           ,
 			PACKAGE_MASK      ,
 			PROFILE_MASK      ,
@@ -88,7 +89,7 @@ class Keywords {
 			m_mask = t;
 			full_keywords = "";
 			redundant = RED_NOTHING;
-			red_mask = 0;
+			red_mask = KEY_EMPTY;
 		}
 
 		static Type get_type(std::string arch, std::string keywords)
@@ -101,6 +102,9 @@ class Keywords {
 						if(it->substr(1) == arch) {
 							mask |= KEY_UNSTABLE;
 						}
+						else {
+							mask |= KEY_ALIENUNSTABLE;
+						}
 						break;
 					case '-':
 						if(it->substr(1) == "*") {
@@ -111,14 +115,15 @@ class Keywords {
 						}
 						break;
 					default:
-						if(!(mask & KEY_STABLE) && *it == arch) {
+						if(*it == arch) {
 							mask |= KEY_STABLE;
+						}
+						else {
+							mask |= KEY_ALIENSTABLE;
 						}
 						break;
 				}
 			}
-			if(mask == KEY_EMPTY)
-				mask = KEY_MISSINGKEYWORD;
 			return mask;
 		}
 
@@ -188,12 +193,18 @@ class Keywords {
 		/** @return true if saved version is masked by -keyword. */
 		bool saved_isMinusKeyword() const
 		{ return saved_m_mask & KEY_MINUSKEYWORD; }
-		/** @return true if version is masked by missing keyword. */
-		bool isMissingKeyword() const
-		{ return m_mask & KEY_MISSINGKEYWORD; }
-		/** @return true if saved version is masked by missing keyword. */
-		bool saved_isMissingKeyword() const
-		{ return saved_m_mask & KEY_MISSINGKEYWORD; }
+		/** @return true if version is masked by ALIENARCH */
+		bool isAlienStable() const
+		{ return m_mask & KEY_ALIENSTABLE; }
+		/** @return true if version is masked by ALIENARCH */
+		bool saved_isAlienStable() const
+		{ return saved_m_mask & KEY_ALIENSTABLE; }
+		/** @return true if version is masked by ~ALIENARCH */
+		bool isAlienUnstable() const
+		{ return m_mask & KEY_ALIENUNSTABLE; }
+		/** @return true if version is masked by ~ALIENARCH */
+		bool saved_isAlienUnstable() const
+		{ return saved_m_mask & KEY_ALIENUNSTABLE; }
 
 		bool isHardMasked() const
 		{ return isPackageMask() || isProfileMask(); }

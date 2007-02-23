@@ -29,16 +29,17 @@
 #include "keywords.h"
 
 const Keywords::Type
-	Keywords::KEY_EMPTY          = 0x00,
-	Keywords::KEY_STABLE         = 0x01, /**<  ARCH */
-	Keywords::KEY_UNSTABLE       = 0x02, /**< ~ARCH */
-	Keywords::KEY_MINUSASTERISK  = 0x04, /**<  -*   */
-	Keywords::KEY_MINUSKEYWORD   = 0x08, /**< -ARCH */
-	Keywords::KEY_MISSINGKEYWORD = 0x10, /**<  **   */
-	Keywords::KEY_ALL            = KEY_STABLE|KEY_UNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD|KEY_MISSINGKEYWORD,
-	Keywords::PACKAGE_MASK       = 0x20,
-	Keywords::PROFILE_MASK       = 0x40,
-	Keywords::SYSTEM_PACKAGE     = 0x80;
+	Keywords::KEY_EMPTY          = 0x0000,
+	Keywords::KEY_STABLE         = 0x0001, /**<  ARCH  */
+	Keywords::KEY_UNSTABLE       = 0x0002, /**< ~ARCH  */
+	Keywords::KEY_ALIENSTABLE    = 0x0004, /**<  ALIEN */
+	Keywords::KEY_ALIENUNSTABLE  = 0x0008, /**< ~ALIEN */
+	Keywords::KEY_MINUSKEYWORD   = 0x0010, /**< -ARCH  */
+	Keywords::KEY_MINUSASTERISK  = 0x0020, /**<  -*    */
+	Keywords::KEY_ALL            = KEY_STABLE|KEY_UNSTABLE|KEY_ALIENSTABLE|KEY_ALIENUNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD,
+	Keywords::PACKAGE_MASK       = 0x0100,
+	Keywords::PROFILE_MASK       = 0x0200,
+	Keywords::SYSTEM_PACKAGE     = 0x0400;
 
 const Keywords::Redundant
 	Keywords::RED_NOTHING      = 0x00000,

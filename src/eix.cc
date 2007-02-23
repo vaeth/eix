@@ -329,13 +329,15 @@ setup_defaults()
 	format.tag_for_unstable           = rc["TAG_FOR_UNSTABLE"];
 	format.tag_for_minus_asterisk     = rc["TAG_FOR_MINUS_ASTERISK"];
 	format.tag_for_minus_keyword      = rc["TAG_FOR_MINUS_KEYWORD"];
+	format.tag_for_alien_stable       = rc["TAG_FOR_ALIEN_STABLE"];
+	format.tag_for_alien_unstable     = rc["TAG_FOR_ALIEN_UNSTABLE"];
 	format.tag_for_missing_keyword    = rc["TAG_FOR_MISSING_KEYWORD"];
-	format.tag_for_other              = rc["TAG_FOR_OTHER"];
 	format.tag_for_ex_unstable        = rc["TAG_FOR_EX_UNSTABLE"];
 	format.tag_for_ex_minus_asterisk  = rc["TAG_FOR_EX_MINUS_ASTERISK"];
 	format.tag_for_ex_minus_keyword   = rc["TAG_FOR_EX_MINUS_KEYWORD"];
+	format.tag_for_ex_alien_stable    = rc["TAG_FOR_EX_ALIEN_STABLE"];
+	format.tag_for_ex_alien_unstable  = rc["TAG_FOR_EX_ALIEN_UNSTABLE"];
 	format.tag_for_ex_missing_keyword = rc["TAG_FOR_EX_MISSING_KEYWORD"];
-	format.tag_for_ex_other           = rc["TAG_FOR_EX_OTHER"];
 
 	Package::upgrade_to_best   = rc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 

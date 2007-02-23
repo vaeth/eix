@@ -234,10 +234,12 @@ class PrintFormat {
 			tag_for_locally_masked, tag_for_stable,
 			tag_for_unstable,
 			tag_for_minus_asterisk, tag_for_minus_keyword,
-			tag_for_missing_keyword, tag_for_other,
+			tag_for_alien_stable, tag_for_alien_unstable,
+			tag_for_missing_keyword,
 			tag_for_ex_unstable,
 			tag_for_ex_minus_asterisk, tag_for_ex_minus_keyword,
-			tag_for_ex_missing_keyword, tag_for_ex_other;
+			tag_for_ex_alien_stable, tag_for_ex_alien_unstable,
+			tag_for_ex_missing_keyword;
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),

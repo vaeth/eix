@@ -399,13 +399,15 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_for_unstable           = eixrc["TAG_FOR_UNSTABLE"];
 	format_for_new.tag_for_minus_asterisk     = eixrc["TAG_FOR_MINUS_ASTERISK"];
 	format_for_new.tag_for_minus_keyword      = eixrc["TAG_FOR_MINUS_KEYWORD"];
+	format_for_new.tag_for_alien_stable       = eixrc["TAG_FOR_ALIEN_STABLE"];
+	format_for_new.tag_for_alien_unstable     = eixrc["TAG_FOR_ALIEN_UNSTABLE"];
 	format_for_new.tag_for_missing_keyword    = eixrc["TAG_FOR_MISSING_KEYWORD"];
-	format_for_new.tag_for_other              = eixrc["TAG_FOR_OTHER"];
 	format_for_new.tag_for_ex_unstable        = eixrc["TAG_FOR_EX_UNSTABLE"];
 	format_for_new.tag_for_ex_minus_asterisk  = eixrc["TAG_FOR_EX_MINUS_ASTERISK"];
 	format_for_new.tag_for_ex_minus_keyword   = eixrc["TAG_FOR_EX_MINUS_KEYWORD"];
+	format_for_new.tag_for_ex_alien_stable    = eixrc["TAG_FOR_EX_ALIEN_STABLE"];
+	format_for_new.tag_for_ex_alien_unstable  = eixrc["TAG_FOR_EX_ALIEN_UNSTABLE"];
 	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
-	format_for_new.tag_for_ex_other           = eixrc["TAG_FOR_EX_OTHER"];
 
 	portagesettings = new PortageSettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport);
 
