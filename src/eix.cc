@@ -87,6 +87,7 @@ dump_help(int exit_code)
 			"     -V, --version         show version and exit\n"
 			"     --dump                dump variables to stdout\n"
 			"     --dump-defaults       dump default values of variables\n"
+			"     --print               print the expanded value of a variable\n"
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -179,6 +180,7 @@ sig_handler(int sig)
 
 const char *format_normal, *format_verbose, *format_compact;
 const char *eix_cachefile = NULL;
+const char *print_var = NULL;
 
 char overlay_mode;
 
@@ -225,6 +227,8 @@ static struct Option long_options[] = {
 	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
+
+	Option("print",        O_PRINT_VAR,     Option::STRING,   &print_var),
 
 	Option("format",         O_FMT,         Option::STRING,   &format_normal),
 	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
@@ -383,6 +387,11 @@ run_eix(int argc, char** argv)
 
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, long_options);
+
+	if(print_var) {
+		PrintVar(print_var,eixrc);
+		exit(0);
+	}
 
 	string cachefile;
 	if(eix_cachefile)

@@ -132,9 +132,9 @@ void EixRc::read()
 		m_eprefix = "";
 	const char *configroot = getenv("PORTAGE_CONFIGROOT");
 	if(configroot)
-		m_eprefixconf = m_eprefix + configroot;
+		m_eprefixconf = configroot;
 	else
-		m_eprefixconf = m_eprefix;
+		m_eprefixconf = "";
 
 	set<string> has_reference;
 
@@ -178,7 +178,7 @@ void EixRc::read()
 	// and not set different from "" in the eixrc files.
 	if(!m_eprefix.empty())
 		eprefix = m_eprefix.c_str();
-	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"] + m_eprefix;
+	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"];
 	m_eprefixport = (*this)["EPREFIX_PORTAGE"];
 }
 

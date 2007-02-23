@@ -74,7 +74,7 @@ AddLaymanOverlays () {
 
 GetPortdir
 ClearLayman
-AddLaymanMake "${PORTDIR}/local/layman/make.conf"
+AddLaymanMake "${LOCAL_PORTDIR}/local/layman/make.conf"
 LAYMAN_OVERLAYS=()
 
 while getopts 'vqa:A:C?hH' OPTION; do

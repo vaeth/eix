@@ -30,13 +30,20 @@
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTAGE_CONFIGROOT",
-			"", "This path is prepended to the /etc paths.")
+			"%{EPREFIX}", "This path is prepended to the /etc paths.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "ROOT",
+			"", "This variable is used for delayed substitution.\n"
+			"EPREFIX defaults to this value.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX",
-			"", "This path is prepended to all paths except for $HOME/.eixrc, the cachefile\n"
-			"passed in the commandline, and PORTAGE_PROFILE, PORTDIR, and overlays\n")
+			"%{ROOT}", "This path is prepended to all paths except for $HOME/.eixrc, the cachefile\n"
+			"passed in the commandline, PORTAGE_CONFIGROOT, PORTAGE_PROFILE, PORTDIR,\n"
+			"and overlays\n")
 		);
 
 eixrc.addDefault(

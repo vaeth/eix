@@ -32,11 +32,13 @@
 
 source update-eix-functions.sh.in
 
-EIXCACHE="${EPREFIX}@EIX_CACHEFILE@"
+GetPrefixes
+
+EIXCACHE="${LOCAL_EPREFIX}@EIX_CACHEFILE@"
 EIXPREVIOUS="${EIXCACHE%/*}/eix.previous"
-GENSYNCCONF="${EPREFIX}${PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
-LOGFILE="${EPREFIX}/var/log/eix-sync.log"
-PMOD="${EPREFIX}${PORTAGE_CONFIGROOT}/etc/portage/modules"
+GENSYNCCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
+LOGFILE="${LOCAL_EPREFIX}/var/log/eix-sync.log"
+PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
 Usage () {
@@ -86,10 +88,9 @@ The following options are available:
 -r   Really recreate the dep-cache (rm -rf /var/cache/edb/dep/*) (default).
 -R   Do not really recreate the dep-cache.
 -h   Show this text and exit."
-  [[ "${EPREFIX}" ]] && echo "
-Currently EPREFIX=${EPREFIX} is active which means:
-1. ${EPREFIX} is used as a prefix for all paths
-   (except \$PORTDIR for -s and -2)
+  [[ "${LOCAL_EPREFIX}" ]] && echo "
+Currently EPREFIX=${LOCAL_EPREFIX} is active which means:
+1. \$EPREFIX is used as a prefix for all paths (except \$PORTDIR for -s and -2)
 2. It is assumed that you need not be root to execute anything"
   EXITCODE="${1}"
   exit ${1}
@@ -298,7 +299,7 @@ PrepRsync () {
   if [[ "${HOSTDIR}" && "${HOSTDIR}" != "${1}" ]]; then
     HOSTDIR="${1}"
   else
-    HOSTDIR="${1%%:*}:${PORTDIR}"
+    HOSTDIR="${1%%:*}:${LOCAL_PORTDIR}"
   fi
   HOSTDIR="${HOSTDIR%/}/"
   [[ "${PREPRSYNC}" ]] && return
@@ -316,9 +317,9 @@ ClearCache () {
   # Cleaning old cache
   # portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
   RootTest
-  MyRunCommand "Removing old portage-cache in ${EPREFIX}/var/cache/edb/dep" \
-    rm -rf -- "${EPREFIX}"/var/cache/edb/dep/* || \
-      die "rm -rf ${EPREFIX}/var/cache/edb/dep/* failed"
+  MyRunCommand "Removing old portage-cache in ${LOCAL_EPREFIX}/var/cache/edb/dep" \
+    rm -rf -- "${LOCAL_EPREFIX}"/var/cache/edb/dep/* || \
+      die "rm -rf ${LOCAL_EPREFIX}/var/cache/edb/dep/* failed"
 }
 
 CallEmergeSync () {
@@ -326,7 +327,7 @@ CallEmergeSync () {
     [[ "${EMULATEMODE}" ]] && return
     PrepRsync "${SERVER}"
     MyRunCommand "rsyncing from ${HOSTDIR}" \
-      rsync $RSYNC_OPTS "${HOSTDIR}" "${PORTDIR}" || \
+      rsync $RSYNC_OPTS "${HOSTDIR}" "${LOCAL_PORTDIR}" || \
         die "Could not rsync from ${HOSTDIR}"
     return
   fi
@@ -341,7 +342,7 @@ CallSyncClient () {
   [[ "${CLIENT}" ]] || return
   PrepRsync "${CLIENT}"
   MyRunCommand "rsyncing to ${HOSTDIR}" \
-    rsync ${RSYNC_OPTS} "${PORTDIR}" "${HOSTDIR}" || \
+    rsync ${RSYNC_OPTS} "${LOCAL_PORTDIR}" "${HOSTDIR}" || \
       die "Could not rsync to ${HOSTDIR}"
 }
 
@@ -433,7 +434,7 @@ MainSync () {
   UpdateDiff
 }
 
-if [[ "${UID}" -ne 0 ]] && [[ -z "${EPREFIX}" ]]; then
+if [[ "${UID}" -ne 0 ]] && [[ -z "${LOCAL_EPREFIX}" ]]; then
 # Emulate everything to check whether we have to be root:
   EMULATEMODE=1
   MainSync

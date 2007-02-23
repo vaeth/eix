@@ -46,6 +46,7 @@ enum cli_options {
 	O_FMT = 256,
 	O_FMT_VERBOSE,
 	O_FMT_COMPACT,
+	O_PRINT_VAR,
 	O_DUMP,
 	O_DUMP_DEFAULTS,
 	O_CARE,

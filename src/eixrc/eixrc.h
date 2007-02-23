@@ -48,7 +48,6 @@ class EixRcOption {
 		EixRcOption(char t, std::string name, std::string val, std::string desc);
 };
 
-class EixRcReference;
 class EixRc : public std::map<std::string,std::string> {
 	public:
 		std::string varprefix;
@@ -88,4 +87,16 @@ class EixRc : public std::map<std::string,std::string> {
 		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length = NULL);
 		static std::string as_comment(const char *s);
 };
+
+#define PrintVar(print_var,eixrc) do { \
+	EixRc::const_iterator it = eixrc.find(print_var); \
+	if(it != eixrc.end()) { \
+		std::cout << it->second; \
+	} \
+	else { \
+		PortageSettings portagesettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport); \
+		cout << portagesettings[print_var]; \
+	} \
+} while(0)
+
 #endif /* __EIXRC_H__ */

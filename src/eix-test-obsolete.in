@@ -78,7 +78,8 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
-COMMON="${EPREFIX}${PORTAGE_CONFIGROOT}/etc/portage/package."
+COMMON="$(eix --print PORTAGE_CONFIGROOT)"
+COMMON="${COMMON}/etc/portage/package."
 
 PRINT_COUNT_ALWAYS=false eix "-t!" | grep -v "^No matches found."
 

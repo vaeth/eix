@@ -168,6 +168,7 @@ print_help(int ret)
 			" -V, --version           show version-string\n"
 			"     --dump              show eixrc-variables\n"
 			"     --dump-defaults     show default eixrc-variables\n"
+			"     --print             print the expanded value of a variable\n"
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
@@ -193,7 +194,8 @@ print_help(int ret)
 
 enum cli_options {
 	O_DUMP = 260,
-	O_DUMP_DEFAULTS
+	O_DUMP_DEFAULTS,
+	O_PRINT_VAR
 };
 
 bool quiet = false,
@@ -205,6 +207,7 @@ bool quiet = false,
 list<const char *> exclude_args, add_args;
 list<ArgPair> method_args;
 const char *outputname = NULL;
+const char *print_var = NULL;
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
@@ -212,6 +215,7 @@ static struct Option long_options[] = {
 	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet),
 	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
 	 Option("dump-defaults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
+	 Option("print",        O_PRINT_VAR, Option::STRING,  &print_var),
 	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 
@@ -321,6 +325,11 @@ run_update_eix(int argc, char *argv[])
 	/* We do not want any arguments except options */
 	if(argreader.begin() != argreader.end())
 		print_help(1);
+
+	if(print_var) {
+		PrintVar(print_var,eixrc);
+		exit(0);
+	}
 
 	/* Interpret the string arguments (do not trust that content of const char * remains) */
 	if(outputname)
