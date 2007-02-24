@@ -43,7 +43,7 @@
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
 class VarsReader {
 	public:
-		typedef char Flags;
+		typedef uint8_t Flags;
 		static const Flags
 			NONE,          /**< Flag: No flags set; normal behavior. */
 			ONLY_KEYWORDS_SLOT, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
