@@ -73,7 +73,7 @@ class EixRc : public std::map<std::string,std::string> {
 
 		void dumpDefaults(FILE *s, bool use_defaults);
 
-		const char *string_or_null(const char *var) const;
+		const char *cstr(const char *var) const;
 
 		const char *prefix_cstr(const char *var) const;
 	private:
@@ -94,7 +94,7 @@ class EixRc : public std::map<std::string,std::string> {
 
 #define PrintVar(print_var,eixrc) do { \
 	if(strcmp(print_var, "PORTDIR")) { \
-		const char *s = eixrc.string_or_null(print_var); \
+		const char *s = eixrc.cstr(print_var); \
 		if(s) { \
 			std::cout << s; \
 			break; \

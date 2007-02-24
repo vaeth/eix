@@ -899,12 +899,16 @@ This path is prepended to paths occurring as the argument of source commands
 in /etc/make.conf and /etc/make.globals.
 
 .TP
+.BR EPREFIX_INSTALLED "  " (string)
+This is prepended to the path where eix expects information about installed packages.
+
+.TP
 .BR EPREFIX_PORTAGE_CACHE "  " (string)
 This prefix is prepended to the portage cache.
 
 .TP
-.BR EPREFIX_INSTALLED "  " (string)
-This is prepended to the path where eix expects information about installed packages.
+.BR EPREFIX_ACCESS_OVERLAYS "  " (string)
+This prefix is prepended to overlays when their files are accessed.
 
 .TP
 .BR EPREFIX_PORTDIR "  " (string)

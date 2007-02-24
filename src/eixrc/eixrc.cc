@@ -123,7 +123,7 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 	return true;
 }
 
-const char *EixRc::string_or_null(const char *var) const
+const char *EixRc::cstr(const char *var) const
 {
 	map<string,string>::const_iterator s = find(var);
 	if(s == end())
@@ -133,7 +133,7 @@ const char *EixRc::string_or_null(const char *var) const
 
 const char *EixRc::prefix_cstr(const char *var) const
 {
-	const char *s = string_or_null(var);
+	const char *s = cstr(var);
 	if(!s)
 		return NULL;
 	if(s[0])

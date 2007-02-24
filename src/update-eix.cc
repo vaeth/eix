@@ -393,14 +393,14 @@ run_update_eix(int argc, char *argv[])
 		map<string, string> *override_ptr = (override.size() ? &override : NULL);
 		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())
-			table.addCache(eixrc.string_or_null("EPREFIX_PORTAGE_CACHE"),
+			table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 				NULL,
-				eixrc.string_or_null("EPREFIX_PORTAGE_EXEC"),
+				eixrc.prefix_cstr("EPREFIX_PORTAGE_EXEC"),
 				portage_settings["PORTDIR"].c_str(),
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
 		else
-			INFO("Not reading %s\n", portage_settings["PORTDIR"].c_str());
+			INFO("Not reading duplicate %s\n", portage_settings["PORTDIR"].c_str());
 
 		portage_settings.add_overlay_vector(add_overlays, false);
 
@@ -408,13 +408,13 @@ run_update_eix(int argc, char *argv[])
 		{
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 					portage_settings.overlays[i].c_str(), true, false) == excluded_overlays.end())
-				table.addCache(eixrc.string_or_null("EPREFIX_PORTAGE_CACHE"),
-					NULL,
-					eixrc.string_or_null("EPREFIX_PORTAGE_EXEC"),
+				table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
+					eixrc.prefix_cstr("EPREFIX_ACCESS_OVERLAYS"),
+					eixrc.prefix_cstr("EPREFIX_PORTAGE_EXEC"),
 					portage_settings.overlays[i].c_str(),
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr);
 			else
-				INFO("Not reading %s\n", portage_settings.overlays[i].c_str());
+				INFO("Not reading duplicate %s\n", portage_settings.overlays[i].c_str());
 		}
 	}
 

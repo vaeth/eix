@@ -173,12 +173,13 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefixprofile, const string &eprefixportdir, const string &eprefixoverlays, const string &eprefixsource)
+PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefixprofile, const string &eprefixportdir, const string &eprefixoverlays, const string &eprefixaccessoverlays, const string &eprefixsource)
 {
 	m_eprefixconf     = eprefixconf;
 	m_eprefixprofile  = eprefixprofile;
 	m_eprefixportdir  = eprefixportdir;
 	m_eprefixoverlays = eprefixoverlays;
+	m_eprefixaccessoverlays = eprefixaccessoverlays;
 
 	read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
@@ -238,7 +239,7 @@ vector<string> *PortageSettings::getCategories()
 			i != overlays.end();
 			++i)
 		{
-			pushback_lines(((*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
+			pushback_lines((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
 			               &m_categories);
 		}
 
@@ -260,7 +261,7 @@ MaskList<Mask> *PortageSettings::getMasks()
 			i != overlays.end();
 			++i)
 		{
-			grab_masks(((*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
+			grab_masks((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
 		}
 	}
 	return &(m_masks);

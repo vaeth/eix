@@ -76,13 +76,18 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EPREFIX_INSTALLED",
+			"%{EPREFIX}", "Prefix to the path where eix expects information about installed packages.\n")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX_PORTAGE_CACHE",
 			"%{EPREFIX}", "This prefix is prepended to the portage cache.\n")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "EPREFIX_INSTALLED",
-			"%{EPREFIX}", "Prefix to the path where eix expects information about installed packages.\n")
+		EixRcOption(EixRcOption::STRING, "EPREFIX_ACCESS_OVERLAYS",
+			"", "This prefix is prepended to overlays when their files are accessed.")
 		);
 
 eixrc.addDefault(

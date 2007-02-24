@@ -138,6 +138,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::string m_eprefixprofile;
 		std::string m_eprefixportdir;
 		std::string m_eprefixoverlays;
+		std::string m_eprefixaccessoverlays;
 
 		/** Your cascading profile. */
 		CascadingProfile  *profile;
@@ -146,7 +147,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(const std::string &eprefixconf, const std::string &eprefixportprofile, const std::string &eprefixportdir, const std::string &eprefixoverlay, const std::string &eprefixsource);
+		PortageSettings(const std::string &eprefixconf, const std::string &eprefixportprofile, const std::string &eprefixportdir, const std::string &eprefixoverlays, const std::string &eprefixaccessoverlays, const std::string &eprefixsource);
 
 		/** Free memory. */
 		~PortageSettings();
@@ -182,6 +183,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 	eixrc["EPREFIX_PORTAGE_PROFILE"], \
 	eixrc["EPREFIX_PORTDIR"], \
 	eixrc["EPREFIX_OVERLAYS"], \
+	eixrc["EPREFIX_ACCESS_OVERLAYS"], \
 	eixrc["EPREFIX_SOURCE"])
 
 
