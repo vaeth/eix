@@ -55,6 +55,9 @@ class VarsReader {
 							 a pointer to map<string,string> with useMap(...) */
 			APPEND_VALUES, /**< Flag: appended new values rather then replace the old value. */
 			ALLOW_SOURCE,  /**< Flag: Allow "source"/"." command. */
+			ALLOW_SOURCE_VARNAME, /**< Flag: Allow "source"/"." but
+			                    Prefix is only a varname which
+			                    might be modified during sourcing. */
 			HAVE_READ,     /**< Combination of previous "*_READ" */
 			ONLY_HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
@@ -80,6 +83,11 @@ class VarsReader {
 		/** Use a supplied map for variables. */
 		void useMap(std::map<std::string,std::string> *vars_map) {
 			vars = vars_map;
+		}
+
+		/** Prefix (path resp. varname) used for sourcing */
+		void setPrefix(std::string prefix) {
+			source_prefix = prefix;
 		}
 
 		/** Set array of keys which values should be prepended to the new value. */
@@ -209,7 +217,7 @@ class VarsReader {
 		/** Read file using a new instance of VarsReader with the same
 		    settings (except for APPEND_VALUES),
 		    adding variables and changed HAVE_READ to current instance. */
-		bool source(const char *filename);
+		bool source(const std::string &filename);
 
 		unsigned int key_len; /**< Lenght of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
@@ -228,6 +236,9 @@ class VarsReader {
 										 should be prepended to the new value. */
 		/** Mapping of key to value. */
 		std::map<std::string,std::string> *vars;
+
+		/** Prefix resp. varname used for sourcing */
+		std::string source_prefix;
 
 		/** Init the FSM.
 		 * Mallocs buffer for file and reads it into this buffer.

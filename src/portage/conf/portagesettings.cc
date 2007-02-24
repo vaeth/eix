@@ -131,24 +131,31 @@ void PortageSettings::override_by_env(const char **vars)
 	}
 }
 
-void PortageSettings::read_config(const char *name)
+void PortageSettings::read_config(const string &name, const string &prefix)
 {
 	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
-	configfile.read(name);
+	configfile.setPrefix(prefix);
+	configfile.read(name.c_str());
 }
 
 string PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 {
-	if(resolve)
-		return normalize_path((m_eprefixport + path).c_str(), true);
+	if(resolve) {
+		string full = m_eprefixoverlays;
+		full.append(path);
+		return normalize_path(full.c_str(), true);
+	}
 	return normalize_path(path.c_str(), false);
 }
 
-void PortageSettings::add_overlay(const string &path, bool resolve)
+void PortageSettings::add_overlay(string &path, bool resolve, bool modify)
 {
+	
 	string name = resolve_overlay_name(path, resolve);
+	if(modify)
+		path = name;
 	/* If the overlay exists, don't add it */
 	if(find_filenames(overlays.begin(), overlays.end(),
 			name.c_str(), false, false) != overlays.end())
@@ -159,21 +166,22 @@ void PortageSettings::add_overlay(const string &path, bool resolve)
 	overlays.push_back(name);
 }
 
-void PortageSettings::add_overlay_vector(const vector<string> &v, bool resolve)
+void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool modify)
 {
-	for(vector<string>::const_iterator it = v.begin(); it != v.end(); ++it)
-		add_overlay(*it, resolve);
+	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it)
+		add_overlay(*it, resolve, modify);
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(const string &eprefix, const string &eprefixconf, const string &eprefixport)
+PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefixprofile, const string &eprefixportdir, const string &eprefixoverlays, const string &eprefixsource)
 {
-	m_eprefix = eprefix;
-	m_eprefixconf = eprefixconf;
-	m_eprefixport = eprefixport;
+	m_eprefixconf     = eprefixconf;
+	m_eprefixprofile  = eprefixprofile;
+	m_eprefixportdir  = eprefixportdir;
+	m_eprefixoverlays = eprefixoverlays;
 
-	read_config((m_eprefixconf + MAKE_GLOBALS_FILE).c_str());
-	read_config((m_eprefixconf + MAKE_CONF_FILE).c_str());
+	read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
+	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
 	override_by_env(test_in_env_early);
 	profile     = new CascadingProfile(this);
 	user_config = new PortageUserConfig(this);
@@ -182,7 +190,7 @@ PortageSettings::PortageSettings(const string &eprefix, const string &eprefixcon
 	/* Normalize "PORTDIR": */
 	{
 		string &ref = (*this)["PORTDIR"];
-		string full = m_eprefixport;
+		string full = m_eprefixportdir;
 		if(ref.empty())
 			full.append("/usr/portage");
 		else
@@ -193,7 +201,12 @@ PortageSettings::PortageSettings(const string &eprefix, const string &eprefixcon
 	}
 
 	/* Normalize overlays and erase duplicates */
-	add_overlay_vector(split_string((*this)["PORTDIR_OVERLAY"]), true);
+	{
+		string &ref = (*this)["PORTDIR_OVERLAY"];
+		vector<string> overlays = split_string(ref);
+		add_overlay_vector(overlays, true, true);
+		ref = join_vector(overlays);
+	}
 
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
@@ -225,7 +238,7 @@ vector<string> *PortageSettings::getCategories()
 			i != overlays.end();
 			++i)
 		{
-			pushback_lines((m_eprefix + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
+			pushback_lines(((*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
 			               &m_categories);
 		}
 
@@ -247,7 +260,7 @@ MaskList<Mask> *PortageSettings::getMasks()
 			i != overlays.end();
 			++i)
 		{
-			grab_masks((m_eprefix + (*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
+			grab_masks(((*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
 		}
 	}
 	return &(m_masks);

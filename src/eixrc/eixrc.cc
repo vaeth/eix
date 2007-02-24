@@ -123,13 +123,28 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 	return true;
 }
 
+const char *EixRc::string_or_null(const char *var) const
+{
+	map<string,string>::const_iterator s = find(var);
+	if(s == end())
+		return NULL;
+	return (s->second).c_str();
+}
+
+const char *EixRc::prefix_cstr(const char *var) const
+{
+	const char *s = string_or_null(var);
+	if(!s)
+		return NULL;
+	if(s[0])
+		return s;
+	// Maybe later: Test whether some eprefix-variable is set,
+	// and return "" instead of NULL in this case.
+	return NULL;
+}
+
 void EixRc::read()
 {
-	eprefix = getenv("EPREFIX");
-	if(eprefix)
-		m_eprefix = eprefix;
-	else
-		m_eprefix = "";
 	const char *configroot = getenv("PORTAGE_CONFIGROOT");
 	if(configroot)
 		m_eprefixconf = configroot;
@@ -172,14 +187,8 @@ void EixRc::read()
 		}
 	}
 
-	// set m_eprefix/m_eprefixconf/eprefix to possibly new settings:
-	m_eprefix = (*this)["EPREFIX"];
-	// Important: eprefix should remain NULL if it is not in environment
-	// and not set different from "" in the eixrc files.
-	if(!m_eprefix.empty())
-		eprefix = m_eprefix.c_str();
+	// set m_eprefixconf to possibly new settings:
 	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"];
-	m_eprefixport = (*this)["EPREFIX_PORTAGE"];
 }
 
 string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)
@@ -294,6 +303,14 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 	}
 }
 
+inline void override_by_env(map<string,string> &m) {
+	for(map<string,string>::iterator it = m.begin(); it != m.end(); ++it) {
+		char *val = getenv((it->first).c_str());
+		if(val)
+			it->second = string(val);
+	}
+}
+
 /** Create defaults and the main map with all variables
    (including all values required by delayed references).
    @arg has_reference is initialized to corresponding keys */
@@ -307,33 +324,37 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 		tempmap[defaults[i].key] = defaults[i].value;
 	}
 
-	// override with EIX_SYSTEMRC
+	// override with ENV
+	override_by_env(tempmap);
+
 	VarsReader rc(//VarsReader::NONE
 			VarsReader::SUBST_VARS
-			|VarsReader::ALLOW_SOURCE
+			|VarsReader::ALLOW_SOURCE_VARNAME
 			|VarsReader::INTO_MAP);
 	rc.useMap(&tempmap);
-	rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str());
+	rc.setPrefix("EIXRC_SOURCE");
 
-	// override with EIX_USERRC
-	char *home = getenv("HOME");
-	if(!home)
-		WARNING("No $HOME found in environment.");
+	const char *rc_file = getenv("EIXRC");
+	if(rc_file)
+		rc.read(rc_file);
 	else
 	{
-		string eixrc(home);
-		eixrc.append(EIX_USERRC);
-		rc.read(eixrc.c_str());
+		// override with EIX_SYSTEMRC
+		rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str());
+
+		// override with EIX_USERRC
+		char *home = getenv("HOME");
+		if(!home)
+			WARNING("No $HOME found in environment.");
+		else {
+			string eixrc(home);
+			eixrc.append(EIX_USERRC);
+			rc.read(eixrc.c_str());
+		}
 	}
 
 	// override with ENV
-	for(map<string,string>::iterator it = tempmap.begin();
-		it != tempmap.end(); ++it)
-	{
-		char *val = getenv((it->first).c_str());
-		if(val)
-			it->second = string(val);
-	}
+	override_by_env(tempmap);
 
 	// Set new values as default and for printing with --dump.
 	for(vector<EixRcOption>::iterator it = defaults.begin();

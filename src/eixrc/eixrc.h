@@ -51,8 +51,8 @@ class EixRcOption {
 class EixRc : public std::map<std::string,std::string> {
 	public:
 		std::string varprefix;
-		std::string m_eprefix, m_eprefixconf, m_eprefixport;
-		const char *eprefix;
+		std::string m_eprefixconf;
+
 		typedef std::vector<EixRcOption>::size_type default_index;
 		typedef std::pair<RedAtom, RedAtom> RedPair;
 
@@ -72,6 +72,10 @@ class EixRc : public std::map<std::string,std::string> {
 		int getInteger(const char *key);
 
 		void dumpDefaults(FILE *s, bool use_defaults);
+
+		const char *string_or_null(const char *var) const;
+
+		const char *prefix_cstr(const char *var) const;
 	private:
 		static bool istrue(const char *s);
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIf, DelayedNotif, DelayedElse, DelayedFi };
@@ -89,14 +93,15 @@ class EixRc : public std::map<std::string,std::string> {
 };
 
 #define PrintVar(print_var,eixrc) do { \
-	EixRc::const_iterator it = eixrc.find(print_var); \
-	if(it != eixrc.end()) { \
-		std::cout << it->second; \
+	if(strcmp(print_var, "PORTDIR")) { \
+		const char *s = eixrc.string_or_null(print_var); \
+		if(s) { \
+			std::cout << s; \
+			break; \
+		} \
 	} \
-	else { \
-		PortageSettings portagesettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport); \
-		cout << portagesettings[print_var]; \
-	} \
+	PortageSettings PortageSettingsConstructor(portagesettings, eixrc); \
+	cout << portagesettings[print_var]; \
 } while(0)
 
 #endif /* __EIXRC_H__ */

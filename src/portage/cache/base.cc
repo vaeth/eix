@@ -52,19 +52,42 @@ string::size_type revision_index(const string &ver)
 	return string::npos;
 }
 
-void BasicCache::setScheme(const char *prefix, std::string scheme)
+void BasicCache::setScheme(const char *prefix, const char *prefixport, const char *prefixexec, std::string scheme)
 {
 	m_scheme = scheme;
-	if(prefix)
-	{
+	if(use_prefixport())
+		prefix = prefixport;
+	if(prefix) {
 		have_prefix = true;
 		m_prefix = prefix;
 	}
-	else
-	{
+	else {
 		have_prefix = false;
 		m_prefix = "";
 	}
+	if(use_prefixexec() && prefixexec) {
+		have_prefix_exec = true;
+		m_prefix_exec = prefixexec;
+	}
+	else {
+		have_prefix_exec = false;
+		m_prefix_exec = "";
+	}
+}
+
+string BasicCache::getPrefixedPath() const
+{
+	string ret = m_scheme;
+	if(have_prefix) {
+		ret.append(" in ");
+		ret.append(m_prefix);
+	}
+	if(have_prefix_exec) {
+		ret.append(" (exec: ");
+		ret.append(m_prefix_exec);
+		ret.append(")");
+	}
+	return ret;
 }
 
 void BasicCache::env_add_package(map<string,string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const

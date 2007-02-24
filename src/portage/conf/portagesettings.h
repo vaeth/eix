@@ -131,10 +131,13 @@ class PortageSettings : public std::map<std::string,std::string> {
 		Keywords m_accepted_keywords;
 
 		void override_by_env(const char **vars);
-		void read_config(const char *name);
+		void read_config(const std::string &name, const std::string &prefix);
 
 	public:
-		std::string m_eprefix, m_eprefixconf, m_eprefixport;
+		std::string m_eprefixconf;
+		std::string m_eprefixprofile;
+		std::string m_eprefixportdir;
+		std::string m_eprefixoverlays;
 
 		/** Your cascading profile. */
 		CascadingProfile  *profile;
@@ -143,7 +146,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(const std::string &eprefix, const std::string &eprefixconf, const std::string &eprefixconf);
+		PortageSettings(const std::string &eprefixconf, const std::string &eprefixportprofile, const std::string &eprefixportdir, const std::string &eprefixoverlay, const std::string &eprefixsource);
 
 		/** Free memory. */
 		~PortageSettings();
@@ -153,8 +156,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		}
 
 		std::string resolve_overlay_name(const std::string &path, bool resolve);
-		void add_overlay(const std::string &path, bool resolve);
-		void add_overlay_vector(const std::vector<std::string> &v, bool resolve);
+		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
+		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
 
 		static Keywords getAcceptKeywordsDefault() {
 			return Keywords::KEY_STABLE;
@@ -173,5 +176,14 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		void setStability(Package *pkg, const Keywords &kw, bool save_after_setting) const;
 };
+
+#define PortageSettingsConstructor(PortageSettings,eixrc) PortageSettings( \
+	eixrc.m_eprefixconf, \
+	eixrc["EPREFIX_PORTAGE_PROFILE"], \
+	eixrc["EPREFIX_PORTDIR"], \
+	eixrc["EPREFIX_OVERLAYS"], \
+	eixrc["EPREFIX_SOURCE"])
+
+
 
 #endif

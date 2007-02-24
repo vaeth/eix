@@ -32,12 +32,12 @@
 
 source update-eix-functions.sh.in
 
-GetPrefixes
-
-EIXCACHE="${LOCAL_EPREFIX}@EIX_CACHEFILE@"
-EIXPREVIOUS="${EIXCACHE%/*}/eix.previous"
+LOCAL_VARCACHE="$(update-eix --print EPREFIX_PORTAGE_CACHE)"
+EIXCACHE="$(update-eix --print EIX_CACHEFILE)"
+EIXPREVIOUS="${EIXCACHE}.previous"
+LOCAL_PORTAGE_CONFIGROOT="$(update-eix --print PORTAGE_CONFIGROOT)"
 GENSYNCCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
-LOGFILE="${LOCAL_EPREFIX}/var/log/eix-sync.log"
+LOGFILE="${LOCAL_EPREFIX_PORTAGE_EXEC}/var/log/eix-sync.log"
 PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
@@ -85,14 +85,11 @@ The following options are available:
 -W   Run emerge-delta-webrsync instead of emerge --sync.
 -c CMD Run CMD instead of emerge --sync.
 -C OPT Add OPT to the emerge --sync command (or whatever is used instead).
--r   Really recreate the dep-cache (rm -rf /var/cache/edb/dep/*) (default).
+-r   Really recreate the dep-cache (rm -rf ${LOCAL_VARCACHE}/var/cache/edb/dep/*) (default).
 -R   Do not really recreate the dep-cache.
+-e   Skip heuristic tests whether you must be root.
 -h   Show this text and exit."
-  [[ "${LOCAL_EPREFIX}" ]] && echo "
-Currently EPREFIX=${LOCAL_EPREFIX} is active which means:
-1. \$EPREFIX is used as a prefix for all paths (except \$PORTDIR for -s and -2)
-2. It is assumed that you need not be root to execute anything"
-  EXITCODE="${1}"
+  EXITCODE=${1}
   exit ${1}
 }
 
@@ -165,12 +162,13 @@ DefaultOpts () {
   CLIENT=''
   DOUPDATE='1'
   SYNCHOOKS='1'
+  TEST_FOR_ROOT='1'
 }
 
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uug@SmMtvqwWc:C:rR?hH" OPTION \
+while getopts "ids:2:Uug@SmMtvqwWc:C:rRe?hH" OPTION \
   ${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
   case "${OPTION}" in
     i) DefaultOpts;;
@@ -193,6 +191,7 @@ while getopts "ids:2:Uug@SmMtvqwWc:C:rR?hH" OPTION \
     C) Push EMERGECMD "${OPTARG}";;
     r) CLEARCACHE=1;;
     R) CLEARCACHE='';;
+    e) TEST_FOR_ROOT='';;
     *) Usage 1;;
   esac
 done
@@ -317,9 +316,9 @@ ClearCache () {
   # Cleaning old cache
   # portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
   RootTest
-  MyRunCommand "Removing old portage-cache in ${LOCAL_EPREFIX}/var/cache/edb/dep" \
-    rm -rf -- "${LOCAL_EPREFIX}"/var/cache/edb/dep/* || \
-      die "rm -rf ${LOCAL_EPREFIX}/var/cache/edb/dep/* failed"
+  MyRunCommand "Removing old portage-cache in ${LOCAL_VARCACHE}/var/cache/edb/dep" \
+    rm -rf -- "${LOCAL_VARCACHE}"/var/cache/edb/dep/* || \
+      die "rm -rf ${LOCAL_VARCACHE}/var/cache/edb/dep/* failed"
 }
 
 CallEmergeSync () {
@@ -434,7 +433,7 @@ MainSync () {
   UpdateDiff
 }
 
-if [[ "${UID}" -ne 0 ]] && [[ -z "${LOCAL_EPREFIX}" ]]; then
+if [[ "${UID}" -ne 0 ]] && [[ "${TEST_FOR_ROOT}" ]]; then
 # Emulate everything to check whether we have to be root:
   EMULATEMODE=1
   MainSync

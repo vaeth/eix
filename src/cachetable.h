@@ -43,11 +43,12 @@ class CacheTable
 		~CacheTable()
 		{ delete_and_clear(); }
 
-		void addCache(const char *prefix, const char *directory, std::string cache_name, const std::map<std::string, std::string> *override)
+		void addCache(const char *eprefixcache, const char *eprefixport, const char *eprefixexec, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override)
 		{
 			for(CacheTable::iterator it=begin(); it != end(); ++it)
 				if(same_filenames(directory, (it->getPath()).c_str()))
 					return;
+			const char *cache_method = cache_name.c_str();
 			if(override)
 			{
 				// If we would look for identical names, we could use the much faster
@@ -58,15 +59,15 @@ class CacheTable
 					if(same_filenames((found->first).c_str(), directory, true))
 						break;
 				if(found != override->rend())
-					cache_name = found->second;
+					cache_method = (found->second).c_str();
 			}
-			BasicCache *cache = get_cache(cache_name);
+			BasicCache *cache = get_cache(cache_method);
 			if(cache == NULL)
 			{
 				throw(ExBasic("Unknown cache '%s' for directory '%s'!", cache_name.c_str(), directory));
 			}
 
-			cache->setScheme(prefix, directory);
+			cache->setScheme(eprefixcache, eprefixport, eprefixexec, directory);
 			push_back(cache);
 		}
 };

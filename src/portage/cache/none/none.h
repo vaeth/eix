@@ -43,6 +43,9 @@ class NoneCache : public BasicCache {
 
 		bool readCategory(Category &vec) throw(ExBasic);
 
+		bool use_prefixport() const
+		{ return true; }
+
 		const char *getType() const
 		{
 			if(nosubst)

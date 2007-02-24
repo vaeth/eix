@@ -200,13 +200,13 @@ class SetStability {
 };
 
 void
-set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix)
+set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual)
 {
 	if(!header.countOverlays())
 		return;
 	fmt->clear_virtual(header.countOverlays());
 	for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-		fmt->set_as_virtual(i, is_virtual((eprefix + header.getOverlay(i)).c_str()));
+		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i)).c_str()));
 }
 
 class DiffTrees
@@ -360,7 +360,7 @@ run_diff_eix(int argc, char *argv[])
 	old_file = current_param->m_argument;
 	++current_param;
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
-		new_file = eixrc.m_eprefix + EIX_CACHEFILE;
+		new_file = eixrc["EIX_CACHEFILE"];
 	}
 	else {
 		new_file = current_param->m_argument;
@@ -420,9 +420,9 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_for_ex_alien_unstable  = eixrc["TAG_FOR_EX_ALIEN_UNSTABLE"];
 	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
 
-	portagesettings = new PortageSettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport);
+	portagesettings = new PortageSettingsConstructor(PortageSettings,eixrc);
 
-	varpkg_db = new VarDbPkg((portagesettings->m_eprefix) + VAR_DB_PKG, !cli_quick, cli_care);
+	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care);
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, local_settings);
@@ -443,8 +443,9 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.set_overlay_translations(NULL);
 	format_for_old = format_for_new;
-	set_virtual(&format_for_old, old_header, portagesettings->m_eprefix);
-	set_virtual(&format_for_new, new_header, portagesettings->m_eprefix);
+	string eprefix_virtual = eixrc["EPREFIX_VIRTUAL"];;
+	set_virtual(&format_for_old, old_header, eprefix_virtual);
+	set_virtual(&format_for_new, new_header, eprefix_virtual);
 
 	DiffTrees differ(varpkg_db,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),

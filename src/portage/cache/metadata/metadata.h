@@ -36,6 +36,9 @@ class MetadataCache : public BasicCache {
 	public:
 		bool readCategory(Category &vec) throw(ExBasic);
 
+		bool use_prefixport() const
+		{ return true; }
+
 		const char *getType() const
 		{ return "metadata"; }
 };

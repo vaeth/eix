@@ -97,9 +97,9 @@ Show the current eixrc-variables, and their defaults as comments.
 .BR --dump-defaults
 Show the defaults of the eixrc-variables, and their current values as comments.
 .TP
-.BR --print
-Print a specified variable of eixrc or of portage settings as,
-completely expanded as used internally by eix.
+.BR --print " I<VAR>"
+Print the specified variable I<VAR> of eixrc or of portage settings,
+completely expanded as it would be used internally by eix.
 This is mainly used internally for scripts.
 .TP
 .BR -V ", " --version
@@ -737,12 +737,19 @@ Global configuration file. The variables in B<~/.eixrc> or from the environment
 can override the variables set in this file. See B<~/.eixrc>.
 .\" }}}
 
+.\" {{{ -------- EIXRC
+.SS EIXRC
+If this environment variable is set, its value is used instead of the filename
+/etc/eixrc to read the configuration data. In this case, the file
+~/.eixrc is ignored (but you can of course source it if you want it).
+.\" }}}
+
 .\" {{{ -------- ~/.eixrc
 .SS ~/.eixrc
 Per-user configuration file.
 The variables in this file can be overridden by environment variables.
 You can use a shell-like syntax to set the following variables.
-In particular, you can use auxiliary variables to set these variables.
+In particular, you can source other files and you can use auxiliary variables to set other variables.
 
 However, if you use auxiliary variables as usual, you will only see
 the substituted values with --dump or --dump-defaults and you cannot
@@ -825,6 +832,9 @@ Note that any variables you add for delayed substitution are only output
 with --dump if they are actually used (i.e. referenced in some of the other variables).
 If you want to output them anyway, e.g. for comments or easier later change,
 you can collect references to them in the B<DUMMY> variable.
+
+The following variables do not contain those which are used only in delayed references.
+To get a full description of the latter (and of the defaults), please use B<eix --dump>.
 .TP
 .BR DUMMY "  " (string)
 This variable has no direct influence on the programs, but the content of this
@@ -832,18 +842,24 @@ variable can be used to collect delayed references to (otherwise unused) variabl
 so that they are printed with --dump or --dump-defaults.
 
 .TP
-.BR PORTAGE_CONFIGROOT "  " (string)
-This path is prepended to the /etc paths.
-The purpose is to respect PORTAGE_CONFIGROOT in the same way portage does.
-If you set this variable in the environment it will also change the path
-where /etc/eixrc is searched.
+.BR EIXRC_SOURCE "  " (string)
+This path is prepended to source commands in /etc/eixrc.
+It is meant to be set in the environment but can also be set in /etc/eixrc.
+In the latter case, it will override the setting from the environment as soon as it is read until all files are sourced.
+Note that when this variable takes effect, no delayed substitution is performed yet.
 
-Recall that the scripts do not explicitly read /etc/eixrc.
-Hence, if this variable should also take effect for the scripts,
-you B<must> set it in the environment.
+.TP
+.BR ROOT "  " (string)
 .TP
 .BR EPREFIX "  " (string)
-This path is prepended to all paths with the following exceptions:
+.TP
+.BR EPREFIX_TREE "  " (string)
+These are actually not internal variables of eix but they are just used for
+delayed substitution for the following variables (see B<eix --dump> to see
+in detail in which other variables they occur). Nevertheless, in view of
+their importance, they are described here briefly: In the default setting,
+B<ROOT> and B<EPREFIX> are equivalent, and they set new prefixes for all paths
+with the following exceptions:
 
 .BR "@BINDIR@/update-eix-functions.sh"
 
@@ -851,26 +867,61 @@ This path is prepended to all paths with the following exceptions:
 
 .BR "cachefile path" "(s) passed in the commandline"
 
-.BR PORTAGE_CONFIGROOT
-
 .BR PORTAGE_PROFILE " (only the variable, not the link)"
 
 .BR PORTDIR
 
 .BR "Overlay paths"
 
-(A prefix for the last three items can be set with B<EPREFIX_PORTAGE>,
-and B<PORTAGE_CONFIGROOT> defaults to B<%{EPREFIX}>, see delayed subsitution.)
+The last three items are modified by B<EPREFIX_TREE>.
 The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
-If you set this variable in the environment it will also change the path where /etc/eixrc is searched.
-.TP
-.BR EPREFIX_PORTAGE "  " (string)
-This path is prepended to the paths of B<PORTAGE_PROFILE> (only the variable),
-B<PORTDIR> and all overlay paths.
 
-Recall that the scripts do not explicitly read /etc/eixrc.
-Hence, if this variable should also take effect for the scripts,
-you B<must> set it in the environment.
+Note that variables in B</etc/make.conf> do not influence eix configuration variables.
+In particular, a B<ROOT=>I<something> command in /etc/make.conf does not influence eix.
+You must set it instead in the environment or in an eix configuration file.
+.TP
+.BR PORTAGE_CONFIGROOT "  " (string)
+This path is prepended to the /etc paths.
+The purpose is to respect PORTAGE_CONFIGROOT in the same way portage does.
+If you set this variable in the environment it will also change the path
+where /etc/eixrc is searched. (Note that reading /etc/eixrc occurs before
+delayed substitution takes effect.)
+
+.TP
+.BR EPREFIX_PORTAGE_EXEC "  " (string)
+This path is used as a prefix for everything related to external portage tools.
+In particular, for the cache-method eix this determines the path where some private executables
+of portage are expected and where it is expected that these executables store their data.
+
+.TP
+.BR EPREFIX_SOURCE "  " (string)
+This path is prepended to paths occurring as the argument of source commands
+in /etc/make.conf and /etc/make.globals.
+
+.TP
+.BR EPREFIX_PORTAGE_CACHE "  " (string)
+This prefix is prepended to the portage cache.
+
+.TP
+.BR EPREFIX_INSTALLED "  " (string)
+This is prepended to the path where eix expects information about installed packages.
+
+.TP
+.BR EPREFIX_PORTDIR "  " (string)
+This path is prepended to B<PORTDIR>.
+
+.TP
+.BR EPREFIX_OVERLAYS "  " (string)
+This prefix is prepended to all entries of B<PORTAGE_PROFILE>.
+
+.TP
+.BR EPREFIX_VIRTUAL "  " (string)
+This is prepended to overlays in the eix database to test whether they exist.
+
+.TP
+.BR EIX_CACHEFILE "  " (string)
+The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
+
 .TP
 .BR QUICKMODE "  " (true / false)
 If true, eix and diff-eix will use B<--quick> by default.
@@ -1162,7 +1213,7 @@ B<If you are not completely sure about the .ebuilds for which you use this cache
 .TP
 .SS
 .BR eix "  or   "  eix:I<FILE> "  or  " eix:I<FILE>:I<overlay>
-Use the cache file I<FILE> previously generated by B<update-eix>.
+Use the cachefile I<FILE> previously generated by B<update-eix>.
 If omitted or empty, I<FILE> defaults to @EIX_CACHEFILE@.
 
 As for all other cache methods, only those categories enabled by

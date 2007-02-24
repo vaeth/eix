@@ -158,7 +158,7 @@ void CascadingProfile::readMakeDefaults()
 {
 	for(vector<string>::size_type i = 0; i < m_profile_files.size(); ++i) {
 		if( strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0) {
-			m_portagesettings->read_config(m_profile_files[i].c_str());
+			m_portagesettings->read_config(m_profile_files[i], "");
 		}
 	}
 }
@@ -205,7 +205,7 @@ void CascadingProfile::listProfile(void) throw(ExBasic)
 			return;
 	}
 	else {
-		path_buffer.insert(0, m_portagesettings->m_eprefixport);
+		path_buffer.insert(0, m_portagesettings->m_eprefixprofile);
 	}
 
 	if(path_buffer[path_buffer.size() - 1] != '/')

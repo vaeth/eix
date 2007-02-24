@@ -60,6 +60,12 @@ class EbuildCache : public BasicCache {
 		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles) throw(ExBasic);
 		bool readCategory(Category &vec) throw(ExBasic);
 
+		bool use_prefixport() const
+		{ return true; }
+
+		bool use_prefixexec() const
+		{ return true; }
+
 		const char *getType() const
 		{
 			if(use_ebuild_sh)

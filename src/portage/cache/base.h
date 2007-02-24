@@ -63,8 +63,14 @@ class BasicCache {
 		virtual ~BasicCache()
 		{ }
 
+		virtual bool use_prefixport() const
+		{ return false; }
+
+		virtual bool use_prefixexec() const
+		{ return false; }
+
 		/// Set scheme for this cache
-		void setScheme(const char *prefix, std::string scheme);
+		void setScheme(const char *prefix, const char *prefixport, const char *prefixexec, std::string scheme);
 
 		/// Set overlay-key
 		void setKey(short key)
@@ -78,13 +84,8 @@ class BasicCache {
 		std::string getPath() const
 		{ return m_scheme; }
 
-		std::string getPrefixedPath() const
-		{
-			if(have_prefix)
-				return m_scheme + " in " + m_prefix;
-			return m_scheme;
-		}
-
+		// Get scheme with path(s) for this cache
+		std::string getPrefixedPath() const;
 
 		/// Set callback function to be used in case of errors
 		void setErrorCallback(ErrorCallback error_callback)
@@ -114,8 +115,8 @@ class BasicCache {
 		{ return readCategories(NULL, NULL, &vec); }
 
 	protected:
-		std::string m_scheme, m_prefix;
-		bool have_prefix;
+		std::string m_scheme, m_prefix, m_prefix_exec;
+		bool have_prefix, have_prefix_exec;
 		short  m_overlay_key;
 		std::string m_arch;
 		ErrorCallback m_error_callback;

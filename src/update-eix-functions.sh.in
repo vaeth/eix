@@ -29,7 +29,9 @@
 # it contains helper functions for update-eix-remote, update-eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
-source "${EPREFIX}/sbin/functions.sh"
+LOCAL_EPREFIX_PORTAGE_EXEC="$(update-eix --print EPREFIX_PORTAGE_EXEC)"
+
+source "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
 
 die () {
 	eerror "${*}"
@@ -37,12 +39,10 @@ die () {
 	exit "${EXITCODE}"
 }
 
-type portageq &>/dev/null || die "portageq is required for ${0##*/}"
-
+LOCAL_PORTDIR=''
 GetPortdir () {
-	[[ "${PORTDIR}" ]] || PORTDIR="$(portageq portdir)"
-	[[ "${PORTDIR}" ]] || PORTDIR="/usr/portage"
-	PORTDIR="${EPREFIX_PORTDIR}${PORTDIR}"
+	[[ "${LOCAL_PORTDIR}" ]] && return
+	LOCAL_PORTDIR="$(update-eix --print PORTDIR)"
 }
 
 VERBOSE=1

@@ -397,7 +397,7 @@ run_eix(int argc, char** argv)
 	if(eix_cachefile)
 		cachefile = eix_cachefile;
 	else
-		cachefile = eixrc.m_eprefix + EIX_CACHEFILE;
+		cachefile = eixrc["EIX_CACHEFILE"];
 
 	// Only check if the versions uses the current layout
 	if(rc_options.is_current) {
@@ -448,10 +448,10 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
-	PortageSettings portagesettings(eixrc.m_eprefix, eixrc.m_eprefixconf, eixrc.m_eprefixport);
+	PortageSettings PortageSettingsConstructor(portagesettings, eixrc);
 
-	string var_db_pkg = portagesettings.m_eprefixconf + VAR_DB_PKG;
-	VarDbPkg varpkg_db(var_db_pkg.c_str(), !rc_options.quick, rc_options.care);
+	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
+	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care);
 
 	MarkedList *marked_list = NULL;
 	Matchatom *query;
@@ -502,11 +502,11 @@ run_eix(int argc, char** argv)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		cout << "\n";
-		print_unused(portagesettings.m_eprefixconf + USER_KEYWORDS_FILE, all_packages);
-		print_unused(portagesettings.m_eprefixconf + USER_MASK_FILE,     all_packages);
-		print_unused(portagesettings.m_eprefixconf + USER_UNMASK_FILE,   all_packages);
-		print_unused(portagesettings.m_eprefixconf + USER_USE_FILE,      all_packages, empty);
-		print_unused(portagesettings.m_eprefixconf + USER_CFLAGS_FILE,   all_packages, empty);
+		print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE, all_packages);
+		print_unused(eixrc.m_eprefixconf + USER_MASK_FILE,     all_packages);
+		print_unused(eixrc.m_eprefixconf + USER_UNMASK_FILE,   all_packages);
+		print_unused(eixrc.m_eprefixconf + USER_USE_FILE,      all_packages, empty);
+		print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,   all_packages, empty);
 		print_removed(var_db_pkg, all_packages);
 	}
 
@@ -537,7 +537,7 @@ run_eix(int argc, char** argv)
 	{
 		format.clear_virtual(header.countOverlays());
 		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-			format.set_as_virtual(i, is_virtual((portagesettings.m_eprefix + header.getOverlay(i)).c_str()));
+			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i)).c_str()));
 	}
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);

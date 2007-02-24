@@ -1,17 +1,18 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.8.9
+*eix-0.9.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let * and ~* in /etc/portage/package.keywords accept stable
 	  and testing keyword, respectively, of any architecture.
 	  Moreover, consider this as weaker (preferrable) than ** and
 	  (the soon obsolete) -*.
 	- Introduce corresponding TAG_FOR_{EX_,}ALIEN_{UN,}STABLE.
-	- Introduce --print option and make use of it in the scripts.
-	- Do not concatenate PORTAGE_CONFIGROOT and EPREFIX, but
-	  (see http://bugs.gentoo.org/show_bug.cgi?id=167961 ):
-	- Let PORTAGE_CONFIGROOT default to %{EPREFIX}.
-	- Let EPREFIX default to %{ROOT}.
+	- Introduce --print option and use it in the scripts to have
+	  consistent variable treatment throughout.
+	- Introduce ROOT and EPREFIX_* fine granulation, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=167961
+	- Introduce EIXRC and EIXRC_SOURCE
+	- Introduce EIX_CACHEFILE
 	- Let -ARCH in /etc/portage/package.keywords stabilize -ARCH keyword.
 	- Change default for TAG_FOR_{EX_,}{MINUS_ASTERISK,MISSING_KEYWORD}.
 	- Drop {EX_,}TAG_FOR_STRANGE.

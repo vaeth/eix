@@ -61,7 +61,10 @@ const VarsReader::Flags
 	VarsReader::INTO_MAP      = 0x10, /**< Flag: Init but don't parse .. you must first supply
 							a pointer to map<string,string> with useMap(...) */
 	VarsReader::APPEND_VALUES = 0x20, /**< Flag: appended new values rather then replace the old value. */
-	VarsReader::ALLOW_SOURCE  = 0x40,  /**< Flag: Allow "source"/"." command. */
+	VarsReader::ALLOW_SOURCE  = 0x40, /**< Flag: Allow "source"/"." command. */
+	VarsReader::ALLOW_SOURCE_VARNAME = 0xc0, /**< Flag: Allow "source"/"." but
+			                    VarsReader::Prefix is only a varname which
+			                    might be modified during sourcing. */
 	VarsReader::HAVE_READ     = KEYWORDS_READ | SLOT_READ,   /**< Combination of previous "*_READ" */
 	VarsReader::ONLY_HAVE_READ= ONLY_KEYWORDS_SLOT | HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
@@ -84,7 +87,7 @@ bool VarsReader::assign_key_value()
 	if(sourcecmd)
 	{
 		sourcecmd=false;
-		source(value.c_str());
+		source(value);
 		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);
 	}
 	if( (parse_flags & ONLY_KEYWORDS_SLOT) )
@@ -472,16 +475,26 @@ bool VarsReader::read(const char *filename)
 /** Read file using a new instance of VarsReader with the same
     settings (except for APPEND_VALUES),
     adding variables and changed HAVE_READ to current instance. */
-bool VarsReader::source(const char *filename)
+bool VarsReader::source(const string &filename)
 {
 	static int depth=0;
 	++depth;
 	ASSERT(depth < 100,
-	  "Nesting level too deep when reading %s", filename);
+	  "Nesting level too deep when reading %s", filename.c_str());
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
-	int rvalue=includefile.read(filename);
+	includefile.setPrefix(source_prefix);
+	string currprefix;
+	if((parse_flags & ALLOW_SOURCE_VARNAME) == ALLOW_SOURCE_VARNAME) {
+		if(vars) {
+			// Be careful to not declare the variable...
+			map<string,string>::iterator it = vars->find(source_prefix);
+			if(it != vars->end())
+				currprefix = it->second;
+		}
+	}
+	int rvalue=includefile.read((currprefix + filename).c_str());
 	parse_flags |= (includefile.parse_flags & HAVE_READ);
 	depth--;
 	return rvalue;
