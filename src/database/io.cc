@@ -48,7 +48,7 @@ io::read_string(FILE *fp)
 	io::Short len = io::read<io::Short>(io::Shortsize, fp);
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
-	fread((void*)(buf.get()), sizeof(char), len, (fp));
+	fread(static_cast<void *>(buf.get()), sizeof(char), len, (fp));
 	return std::string(buf.get());
 }
 
@@ -59,7 +59,7 @@ io::write_string(FILE *fp, const std::string &str)
 {
 	unsigned short len = str.size();
 	io::write<io::Short>(io::Shortsize, fp, len);
-	fwrite((const void*)(str.c_str()), sizeof(char), len, (fp));
+	fwrite(static_cast<const void *>(str.c_str()), sizeof(char), len, (fp));
 }
 
 Version *
@@ -120,7 +120,7 @@ io::write_version(FILE *fp, const Version *v, bool small)
 		io::write_string(fp, v->full_keywords);
 
 	// write m_primsplit
-	io::write<io::Char>(io::Charsize, fp, (io::Char)v->m_primsplit.size());
+	io::write<io::Char>(io::Charsize, fp, io::Char(v->m_primsplit.size()));
 
 	for(vector<BasicVersion::Num>::const_iterator it = v->m_primsplit.begin();
 		it != v->m_primsplit.end();
@@ -132,7 +132,7 @@ io::write_version(FILE *fp, const Version *v, bool small)
 	io::write<BasicVersion::Primchar>(BasicVersion::Primcharsize, fp, v->m_primarychar);
 
 	// write m_suffix
-	io::write<io::Char>(io::Charsize, fp, (io::Char)v->m_suffix.size());
+	io::write<io::Char>(io::Charsize, fp, io::Char(v->m_suffix.size()));
 	for(vector<Suffix>::const_iterator it = v->m_suffix.begin();
 		it != v->m_suffix.end();
 		++it)
@@ -228,7 +228,7 @@ io::write_packagetree(FILE *fp, const PackageTree &tree, bool small)
 	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
 	{
 		// Write category-header followed by a list of the packages.
-		io::write_category_header(fp, ci->name(), (io::Treesize)ci->size());
+		io::write_category_header(fp, ci->name(), io::Treesize(ci->size()));
 
 		for(Category::iterator p = ci->begin();
 			p != ci->end();

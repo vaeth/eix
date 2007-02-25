@@ -303,7 +303,7 @@ class Package
 
 	protected:
 		/** Check if a package has duplicated vsions. */
-		void checkDuplicates(Version *version);
+		void checkDuplicates(const Version *version);
 
 		void sortedPushBack(Version *version);
 

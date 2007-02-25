@@ -41,7 +41,7 @@
 using namespace std;
 
 string
-get_escape(char *p)
+get_escape(const char *p)
 {
 	switch(*p) {
 		case '\\': return string("\\");
@@ -50,6 +50,8 @@ get_escape(char *p)
 		case 't':  return string("\t");
 		case 'b':  return string("\b");
 		case 'a':  return string("\a");
+		default:
+			break;
 	}
 	return string(p, 1);
 }
@@ -144,16 +146,17 @@ string MarkedList::getMarkedString(const Package &pkg) const
 	return ret;
 }
 
-LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg)
+LocalCopy::LocalCopy(const PrintFormat *fmt, const Package *pkg)
 {
 	if(fmt->recommend_local)
 	{
 		is_a_copy = true;
-		package = new Package;
-		package->deepcopy(*pkg);
-		fmt->portagesettings->user_config->setMasks(package);
-		fmt->portagesettings->user_config->setStability(package,
+		Package *p = new Package;
+		p->deepcopy(*pkg);
+		fmt->portagesettings->user_config->setMasks(p);
+		fmt->portagesettings->user_config->setStability(p,
 			fmt->portagesettings->getAcceptKeywordsLocal());
+		package = p;
 	}
 	else
 	{
@@ -196,11 +199,11 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 	{
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
-				cout << ((Text*)root)->text;
+				cout << (static_cast<Text*>(root))->text;
 				break;
 			case Node::VARIABLE:
 				try {
-					print_property(this, entity, ((Property*)root)->name);
+					print_property(this, entity, (static_cast<Property*>(root))->name);
 				}
 				catch(ExBasic e) {
 					cerr << e << endl;
@@ -208,7 +211,7 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 				break;
 			case Node::IF:
 				{
-					ConditionBlock *ief = (ConditionBlock*)root;
+					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
 					bool ok = false;
 					try {
 						ok = get_property(this, entity, ief->variable.name) == ief->text.text;
@@ -225,6 +228,8 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					}
 				}
 				break;
+			default:
+				break;
 		}
 	}
 	return; /* never reached */
@@ -239,7 +244,7 @@ string parse_colors(const string &colorstring, bool colors)
 	{
 		if(root->type != Node::TEXT)
 			throw(ExBasic("Internal error: bad node for parse_colors."));
-		ret.append(((Text*)root)->text);
+		ret.append((static_cast<Text*>(root))->text);
 	}
 	return ret;
 }
@@ -260,6 +265,8 @@ FormatParser::state_START()
 			return PROPERTY;
 		case '(':
 			return COLOR;
+		default:
+			break;
 	}
 	--band_position;
 	return TEXT;
@@ -317,8 +324,8 @@ FormatParser::state_PROPERTY()
 	return START;
 }
 
-char *
-seek_character(char *fmt)
+const char *
+seek_character(const char *fmt)
 {
 	while(*fmt && isspace(*fmt)) {
 		++fmt;
@@ -432,7 +439,7 @@ FormatParser::state_ELSE()
 	}
 	p = keller.top();
 	keller.pop();
-	while(p->type != Node::IF || ((ConditionBlock*)p)->final == true) {
+	while(p->type != Node::IF || (static_cast<ConditionBlock*>(p))->final == true) {
 		p->next = q;
 		q = p;
 		if(keller.size() == 0) {
@@ -445,7 +452,7 @@ FormatParser::state_ELSE()
 	if(q == NULL) {
 		q = new Text("");
 	}
-	((ConditionBlock*)p)->if_true = q;
+	(static_cast<ConditionBlock*>(p))->if_true = q;
 	keller.push(p);
 	return START;
 }
@@ -459,7 +466,7 @@ FormatParser::state_FI()
 	}
 	p = keller.top();
 	keller.pop();
-	while(p->type != Node::IF || ((ConditionBlock*)p)->final == true) {
+	while(p->type != Node::IF || (static_cast<ConditionBlock*>(p))->final == true) {
 		p->next = q;
 		q = p;
 		if(keller.size() == 0) {
@@ -469,13 +476,13 @@ FormatParser::state_FI()
 		p = keller.top();
 		keller.pop();
 	}
-	if(((ConditionBlock*)p)->if_true == NULL) {
-		((ConditionBlock*)p)->if_true = q;
+	if((static_cast<ConditionBlock*>(p))->if_true == NULL) {
+		(static_cast<ConditionBlock*>(p))->if_true = q;
 	}
 	else {
-		((ConditionBlock*)p)->if_false = q;
+		(static_cast<ConditionBlock*>(p))->if_false = q;
 	}
-	((ConditionBlock*)p)->final = true;
+	(static_cast<ConditionBlock*>(p))->final = true;
 	keller.push(p);
 	return START;
 }
@@ -489,7 +496,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 	last_error.clear();
 	state = START;
 	band = fmt;
-	band_position = (char *) fmt;
+	band_position = fmt;
 	/* Run machine */
 	while(state != STOP && state != ERROR) {
 		switch(state) {

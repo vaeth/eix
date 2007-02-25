@@ -70,7 +70,7 @@ class DBHeader {
 		void get_overlay_vector(std::set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal = 0, bool test_saved_portdir = false) const;
 
 		Version::Overlay countOverlays() const
-		{ return (Version::Overlay)(overlays.size()); }
+		{ return Version::Overlay(overlays.size()); }
 
 		bool isCurrent() const
 		{ return version == DBHeader::current; }

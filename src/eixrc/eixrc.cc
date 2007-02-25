@@ -269,13 +269,13 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 			skippos += length;
 		}
 		bool gotelse = false;
-		unsigned int count = 0;
+		unsigned int curr_count = 0;
 		for(;; skippos += length)
 		{
 			type = find_next_delayed(*value, &skippos, &length);
 
 			if(type == DelayedFi) {
-				if(count --)
+				if(curr_count --)
 					continue;
 				if(delpos == string::npos)
 					value->erase(skippos, length);
@@ -285,7 +285,7 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 				break;
 			}
 			if(type == DelayedElse) {
-				if(count)
+				if(curr_count)
 					continue;
 				if(gotelse) {
 					*errtext = "double ELSE";
@@ -307,7 +307,7 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 				continue;
 			}
 			if((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
-				count ++;
+				curr_count ++;
 				continue;
 			}
 			if(type == DelayedNotFound) {
@@ -512,7 +512,7 @@ EixRc::DelayedType EixRc::find_next_delayed(const string &str, string::size_type
 void EixRc::clear()
 {
 	defaults.clear();
-	((map<string,string>*) this)->clear();
+	(dynamic_cast<map<string,string>*>(this))->clear();
 }
 
 void EixRc::addDefault(EixRcOption option)
@@ -614,6 +614,9 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults)
 			case EixRcOption::INTEGER: typestring = "INTEGER";
 						  break;
 			case EixRcOption::LOCAL: typestring = NULL;
+						  break;
+			default:
+						  break;
 		}
 		const char *key   = defaults[i].key.c_str();
 		const char *value = defaults[i].local_value.c_str();

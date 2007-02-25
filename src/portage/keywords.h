@@ -145,26 +145,26 @@ class Keywords {
 		Redundant get_redundant () const
 		{ return redundant; }
 
-		void set_was_masked(bool was_masked = true)
-		{ if(was_masked) red_mask |= 0x01; else red_mask &= ~0x01; }
+		void set_was_masked(bool value = true)
+		{ if(value) red_mask |= 0x01; else red_mask &= ~0x01; }
 
 		bool was_masked () const
 		{ return (red_mask & 0x01); }
 
-		void set_was_unmasked(bool was_unmasked = true)
-		{ if(was_unmasked) red_mask |= 0x02; else red_mask &= ~0x02; }
+		void set_was_unmasked(bool value = true)
+		{ if(value) red_mask |= 0x02; else red_mask &= ~0x02; }
 
 		bool was_unmasked () const
 		{ return (red_mask & 0x02); }
 
-		void set_wanted_masked(bool wanted_masked = true)
-		{ if(wanted_masked) red_mask |= 0x04; else red_mask &= ~0x04; }
+		void set_wanted_masked(bool value = true)
+		{ if(value) red_mask |= 0x04; else red_mask &= ~0x04; }
 
 		bool wanted_masked () const
 		{ return (red_mask & 0x04); }
 
-		void set_wanted_unmasked(bool wanted_unmasked = true)
-		{ if(wanted_unmasked) red_mask |= 0x08; else red_mask &= ~0x08; }
+		void set_wanted_unmasked(bool value = true)
+		{ if(value) red_mask |= 0x08; else red_mask &= ~0x08; }
 
 		bool wanted_unmasked () const
 		{ return (red_mask & 0x08); }

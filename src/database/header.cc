@@ -101,9 +101,9 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 }
 
 void
-DBHeader::get_overlay_vector(set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal, bool test_saved_portdir) const
+DBHeader::get_overlay_vector(set<Version::Overlay> *overlayset, const char *name, const char *portdir, Version::Overlay minimal, bool test_saved_portdir) const
 {
 	Version::Overlay curr;
 	for(curr = minimal; find_overlay(&curr, name, portdir, curr, test_saved_portdir); curr++)
-		overlays->insert(curr);
+		overlayset->insert(curr);
 }

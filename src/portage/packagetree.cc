@@ -37,22 +37,22 @@
 using namespace std;
 
 Package *
-Category::findPackage(const string &name) const
+Category::findPackage(const string &pkg_name) const
 {
 	for(const_iterator i = begin(); i != end(); ++i)
 	{
-		if(i->name == name)
+		if(i->name == pkg_name)
 			return *i;
 	}
 	return NULL;
 }
 
 bool
-Category::deletePackage(const string &name)
+Category::deletePackage(const string &pkg_name)
 {
 	for(iterator i = begin(); i != end(); ++i)
 	{
-		if(i->name == name)
+		if(i->name == pkg_name)
 		{
 			delete *i;
 			erase(i);
@@ -63,38 +63,38 @@ Category::deletePackage(const string &name)
 }
 
 Package *
-Category::addPackage(string name)
+Category::addPackage(string pkg_name)
 {
-	Package *p = new Package(m_name, name);
+	Package *p = new Package(m_name, pkg_name);
 	push_back(p);
 	return p;
 }
 
 Category::iterator 
-Category::find(const std::string &name)
+Category::find(const std::string &pkg_name)
 {
 	iterator i = begin(); 
 	for(;
 		i != end();
 		++i)
 	{
-		if(i->name == name)
+		if(i->name == pkg_name)
 			return i;
 	}
 	return i;
 }
 
 Package *
-PackageTree::findPackage(const string &category, const string &name) const
+PackageTree::findPackage(const string &category, const string &pkg_name) const
 {
 	Category *f = find(category);
 	if(f)
-		return f->findPackage(name);
+		return f->findPackage(pkg_name);
 	return NULL;
 }
 
 bool
-PackageTree::deletePackage(const string &category, const string &name)
+PackageTree::deletePackage(const string &category, const string &pkg_name)
 {
 	iterator i = begin();
 	for(; i != end(); ++i)
@@ -106,7 +106,7 @@ PackageTree::deletePackage(const string &category, const string &name)
 	if(i == end())
 		return false;
 
-	bool ret = i->deletePackage(name);
+	bool ret = i->deletePackage(pkg_name);
 
 	// Check if the category is empty after deleting the
 	// package.
@@ -127,11 +127,11 @@ PackageTree::countPackages() const
 	return ret;
 }
 
-Category *PackageTree::find(const string name) const
+Category *PackageTree::find(const string pkg_name) const
 {
 	if(fast_access)
 	{
-		map<string,Category*>::const_iterator f = fast_access->find(name);
+		map<string,Category*>::const_iterator f = fast_access->find(pkg_name);
 		if(f == fast_access->end())
 			return NULL;
 		return f->second;
@@ -140,33 +140,33 @@ Category *PackageTree::find(const string name) const
 		i != end();
 		++i)
 	{
-		if(i->name() == name)
+		if(i->name() == pkg_name)
 			return *i;
 	}
 	return NULL;
 }
 
-Category &PackageTree::insert(const string name)
+Category &PackageTree::insert(const string pkg_name)
 {
-	Category *p = new Category(name);
+	Category *p = new Category(pkg_name);
 	bool inserted = false;
 	for(iterator i = begin(); i != end(); ++i)
 	{
-		if(name <= i->name())
+		if(pkg_name <= i->name())
 		{
-			if(name == i->name()) { // We already had this category
+			if(pkg_name == i->name()) { // We already had this category
 				delete p;
 				return **i;
 			}
-			((eix::ptr_list<Category> *)this)->insert(i,p);
+			(dynamic_cast<eix::ptr_list<Category> *>(this))->insert(i,p);
 			inserted = true;
 			break;
 		}
 	}
 	if(!inserted)
-		((eix::ptr_list<Category> *)this)->push_back(p);
+		(dynamic_cast<eix::ptr_list<Category> *>(this))->push_back(p);
 	if(fast_access)
-		(*fast_access)[name] = p;
+		(*fast_access)[pkg_name] = p;
 	return *p;
 }
 

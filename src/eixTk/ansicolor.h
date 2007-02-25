@@ -46,7 +46,7 @@ class AnsiMarker {
 		enum Marker { amNone=0, amBold=1, amUnderlined=4, amBlink=5, amInverse=7 };
 		Marker mk;
 
-		AnsiMarker(const Marker mk = amNone) : mk(mk) { }
+		AnsiMarker(const Marker m = amNone) : mk(m) { }
 
 		static const char *reset()
 		{ return "\x1B[0m"; }
@@ -56,7 +56,7 @@ class AnsiMarker {
 			static const int len = 100;
 			char buf[len];
 			if( mk!=amNone ) {
-				snprintf(buf, len, "\x1B[%dm", (int)mk);
+				snprintf(buf, len, "\x1B[%dm", int(mk));
 			}
 			else buf[0]='\0';
 			return std::string(buf);
@@ -100,7 +100,7 @@ inline std::ostream&
 operator<< (std::ostream& os, AnsiMarker am)
 {
 	if( am.mk != AnsiMarker::amNone )
-		os << "\x1B[" << (int)am.mk << 'm';
+		os << "\x1B[" << int(am.mk) << 'm';
 	return os;
 }
 
@@ -135,7 +135,7 @@ class AnsiColor {
 		 * @param fg foreground color
 		 * @param light brightness (normal, bright)
 		 * defaults to no color output */
-		AnsiColor(const Color fg = acNone, const bool light = false) : fg(fg), light(light), mk(AnsiMarker::amNone) {}
+		AnsiColor(const Color f = acNone, const bool l = false) : fg(f), light(l), mk(AnsiMarker::amNone) {}
 
 		std::string asString()
 		{
@@ -143,10 +143,10 @@ class AnsiColor {
 			char buf[len];
 			if( fg!=acNone ) {
 				if(fg == acDefault) {
-					snprintf(buf, len, "\x1B[0m\x1B[%dm", (int)light);
+					snprintf(buf, len, "\x1B[0m\x1B[%dm", int(light));
 				}
 				else {
-					snprintf(buf, len, "\x1B[%d;%dm", (int)light, (int)fg);
+					snprintf(buf, len, "\x1B[%d;%dm", int(light), int(fg));
 				}
 			}
 			else buf[0]='\0';
@@ -222,9 +222,9 @@ operator<< (std::ostream& os, AnsiColor ac)
 	{
 		if( ac.fg== AnsiColor::acDefault )
 			os << "\x1B[0m";
-		os << "\x1B[" << (int)ac.light;
+		os << "\x1B[" << int(ac.light);
 		if( ac.fg!= AnsiColor::acDefault )
-			os << ";" << (int)ac.fg;
+			os << ";" << int(ac.fg);
 		os << 'm';
 	}
 	os << AnsiMarker(ac.mk);

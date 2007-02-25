@@ -57,10 +57,9 @@ namespace io {
 	template<typename _Tp> _Tp
 	read(const unsigned short size, FILE *fp)
 	{
-		_Tp ret = (_Tp)(((unsigned int)fgetc(fp)) & 0xFF);
-		for(unsigned short i = 1, shift = 8; i<size; i++, shift += 8)
-		{
-			ret |= (_Tp)(((unsigned int)fgetc(fp)) & 0xFF) << shift;
+		_Tp ret = (Long(Char(fgetc(fp)))) & 0xFF;
+		for(unsigned short i = 1, shift = 8; i<size; i++, shift += 8) {
+			ret |= ((Long(Char(fgetc(fp)))) & 0xFF) << shift;
 		}
 		return ret;
 	}

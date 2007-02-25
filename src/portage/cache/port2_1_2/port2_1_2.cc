@@ -49,7 +49,7 @@ class MapFile {
 			struct stat st;
 			if (fstat(fd,&st) == 0) {
 				void *x = mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
-				if (x != (void*)-1) {
+				if (x != MAP_FAILED) {
 					pf_data_size = st.st_size;
 					pf_data = x;
 					return true;
@@ -82,8 +82,8 @@ class MapFile {
 		bool isReady(const char **data, const char **end) {
 			if(!pf_data)
 				return false;
-			*data = (const char *)pf_data;
-			*end = ((const char *)pf_data) + pf_data_size * sizeof(char);
+			*data = static_cast<const char *>(pf_data);
+			*end = (static_cast<const char *>(pf_data)) + pf_data_size;
 			return true;
 		}
 };
@@ -91,6 +91,7 @@ class MapFile {
 bool
 Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories, Category *category)
 {
+	UNUSED(categories);
 	string catstring = mapper["KEY"];
 	if(catstring.empty())
 		return false;

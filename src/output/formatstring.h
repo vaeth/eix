@@ -107,7 +107,7 @@ class FormatParser {
 		std::stack<Node*>  keller;
 		ParserState   state;
 		const char   *band;
-		char         *band_position;
+		const char   *band_position;
 		bool          enable_colors;
 		bool          only_colors;
 		std::string   last_error;
@@ -128,12 +128,12 @@ class FormatParser {
 
 		/* Calculate line and column of current position. */
 		int getPosition(int *line, int *column) {
-			char *x = (char*) band, *y = (char*) band;
+			const char *x = band, *y = band;
 			while(x <= band_position && x) {
 				y = x;
 				x = strchr(x, '\n');
 				if(x) {
-					x += 1;
+					x ++;
 					++*line;
 					*column = band_position - y;
 				}
@@ -178,13 +178,13 @@ class PrintFormat {
 	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_versions_slots(const PrintFormat *fmt, const Package *p);
 	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
-	friend void print_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name) throw(ExBasic);
-	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name) throw(ExBasic);
+	friend void print_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
+	friend std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 	friend class LocalCopy;
 
 	public:
-		typedef void   (*PrintProperty)(const PrintFormat *formatstring, void *entity, const std::string &property);
-		typedef std::string (*GetProperty)(const PrintFormat *formatstring, void *entity, const std::string &property);
+		typedef void   (*PrintProperty)(const PrintFormat *formatstring, const void *entity, const std::string &property);
+		typedef std::string (*GetProperty)(const PrintFormat *formatstring, const void *entity, const std::string &property);
 
 	protected:
 		FormatParser   m_parser;
@@ -329,9 +329,9 @@ class LocalCopy {
 	private:
 		bool is_a_copy;
 	public:
-		Package *package;
+		const Package *package;
 
-		LocalCopy(const PrintFormat *fmt, Package *pkg);
+		LocalCopy(const PrintFormat *fmt, const Package *pkg);
 
 		~LocalCopy()
 		{ if(is_a_copy) delete package; }

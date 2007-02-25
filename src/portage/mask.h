@@ -69,7 +69,7 @@ class Mask : public BasicVersion {
 		} Operator;
 
 		typedef struct {
-			char *str;
+			const char *str;
 			Mask::Operator op;
 		} OperatorTable;
 

@@ -31,6 +31,8 @@
 
 using namespace std;
 
+typedef unsigned char unsigned_char;
+
 /*
  * Pickle opcodes.  These must be kept in synch with pickle.py.  Extensive
  * docs are in pickletools.py.
@@ -189,7 +191,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 	while( ! is_finished() && (curr = NEXT) ) {
 		switch(curr) {
 			case BINGET:
-				index = (unsigned char)NEXT;
+				index = unsigned_char(NEXT);
 #ifdef TEST_UNPICKLE
 				cout << "BINGET: " << index << "\n";
 #endif
@@ -214,7 +216,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 					prev = BINGET;
 				continue;
 			case BINPUT:
-				index = (unsigned char)NEXT;
+				index = unsigned_char(NEXT);
 #ifdef TEST_UNPICKLE
 				cout << "BINPUT: " << (int)index << "\n";
 #endif
@@ -306,7 +308,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 				continue;
 			default:
 				finish();
-				throw ExBasic("Unsupported pickle value %x (%c)", (int)(unsigned char)curr, curr);
+				throw ExBasic("Unsupported pickle value %x (%c)", int(unsigned_char(curr)), curr);
 				// prev = curr;
 				return;
 		}

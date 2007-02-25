@@ -36,9 +36,9 @@ static inline BasicVersion::Num
 strtoNum(const char *str, char **s, int index)
 {
 #if defined(HAVE_STRTOULL)
-	return (BasicVersion::Num)strtoull(str, s, index);
+	return BasicVersion::Num(strtoull(str, s, index));
 #else
-	return (BasicVersion::Num)strtol(str, s, index);
+	return BasicVersion::Num(strtol(str, s, index));
 #endif
 }
 
@@ -79,7 +79,7 @@ Suffix::parse(const char **str_ref)
 				// not a "const char **"
 				char *tail;
 				m_suffixnum = strtoNum(str, &tail, 10);
-				*str_ref = (const char *)tail;
+				*str_ref = const_cast<const char *>(tail);
 				return true;
 			}
 		}

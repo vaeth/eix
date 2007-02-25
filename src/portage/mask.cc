@@ -189,6 +189,9 @@ Mask::test(BasicVersion *bv) const
 
 		case maskOpRevisions:
 			return (compare_tilde(*bv) == 0);
+
+		default:
+			break;
 	}
 	return false; // Never reached
 }
@@ -301,6 +304,8 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 				*ve |= Keywords::PROFILE_MASK;
 			break;
 		case maskTypeNone:
+			break;
+		default:
 			break;
 	}
 	return;

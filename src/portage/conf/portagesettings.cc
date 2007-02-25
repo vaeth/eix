@@ -204,9 +204,9 @@ PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefi
 	/* Normalize overlays and erase duplicates */
 	{
 		string &ref = (*this)["PORTDIR_OVERLAY"];
-		vector<string> overlays = split_string(ref);
-		add_overlay_vector(overlays, true, true);
-		ref = join_vector(overlays);
+		vector<string> overlayvec = split_string(ref);
+		add_overlay_vector(overlayvec, true, true);
+		ref = join_vector(overlayvec);
 	}
 
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);

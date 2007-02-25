@@ -41,7 +41,7 @@
 
 using namespace std;
 
-void NoneCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
+void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -139,13 +139,13 @@ bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 		if(numfiles > 0)
 		{
 			try {
-				readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
+				readPackage(vec, packages[i]->d_name, &pkg_path, files, numfiles);
 			}
 			catch(ExBasic e) {
 				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
 			}
-			for(int i=0; i<numfiles; i++ )
-				free(files[i]);
+			for(int j=0; j<numfiles; j++ )
+				free(files[j]);
 			free(files);
 		}
 	}

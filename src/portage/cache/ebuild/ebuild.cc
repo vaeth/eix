@@ -54,6 +54,7 @@ EbuildCache *EbuildCache::handler_arg;
 void
 ebuild_sig_handler(int sig)
 {
+	UNUSED(sig);
 	EbuildCache::handler_arg->delete_cachefile();
 }
 
@@ -96,7 +97,7 @@ void EbuildCache::remove_handler()
 // You should have called add_handler() in advance
 bool EbuildCache::make_tempfile()
 {
-	char *temp = (char *)malloc(50 * sizeof(char));
+	char *temp = static_cast<char *>(malloc(256 * sizeof(char)));
 	if(!temp)
 		return false;
 	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");
@@ -145,10 +146,10 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 		if(!use_ebuild_sh)
 		{
 			string ebuild = m_prefix_exec + EBUILD_EXEC;
-			execl(ebuild.c_str(), ebuild.c_str(), name, "depend", NULL);
+			execl(ebuild.c_str(), ebuild.c_str(), name, "depend", static_cast<const char *>(NULL));
 			exit(2);
 		}
-		const char **myenv = (const char **)malloc((env.size() + 1) * sizeof(const char *));
+		const char **myenv = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
 		const char **ptr = myenv;
 		for(map<string, string>::const_iterator it = env.begin();
 			it != env.end(); ++it, ++ptr) {
@@ -157,7 +158,7 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 		}
 		*ptr = NULL;
 		string ebuild_sh = m_prefix_exec + EBUILD_SH_EXEC;
-		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", NULL, myenv);
+		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", static_cast<const char *>(NULL), myenv);
 		exit(2);
 	}
 	int exec_status;
@@ -170,7 +171,7 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 	return true;
 }
 
-void EbuildCache::readPackage(Category &vec, char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
+void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -260,9 +261,9 @@ bool EbuildCache::readCategory(Category &vec) throw(ExBasic)
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
-			readPackage(vec, (char *) packages[i]->d_name, &pkg_path, files, numfiles);
-			for(int i=0; i<numfiles; i++ )
-				free(files[i]);
+			readPackage(vec, packages[i]->d_name, &pkg_path, files, numfiles);
+			for(int j=0; j<numfiles; j++ )
+				free(files[j]);
 			free(files);
 		}
 	}

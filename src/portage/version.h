@@ -90,12 +90,12 @@ class Version : public BasicVersion, public Keywords {
 		/** The equality operator does *not* test the slots */
 		bool operator == (const Version &v) const
 		{
-			return ((((BasicVersion)*this) == ((BasicVersion)v))
-			        && (overlay_key == v.overlay_key));
+			return ((*(dynamic_cast<const BasicVersion*>(this)) == dynamic_cast<const BasicVersion&>(v))
+				&& (overlay_key == v.overlay_key));
 		}
 
 		bool operator == (const BasicVersion &v) const
-		{ return ((BasicVersion)*this) == v; }
+		{ return (*(dynamic_cast<const BasicVersion *>(this)) == v); }
 
 		bool operator != (const Version &v) const
 		{ return !((*this) == v); }

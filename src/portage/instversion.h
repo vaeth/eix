@@ -55,10 +55,10 @@ class InstVersion : public BasicVersion, public Keywords {
 
 		/** The equality operator does not test the additional data */
 		bool operator == (const InstVersion &v) const
-		{ return ((BasicVersion)*this) == ((BasicVersion)v); }
+		{ return (*(dynamic_cast<const BasicVersion *>(this)) == dynamic_cast<const BasicVersion&>(v)); }
 
 		bool operator == (const BasicVersion &v) const
-		{ return ((BasicVersion)*this) == v; }
+		{ return (*(dynamic_cast<const BasicVersion *>(this)) == v); }
 
 		bool operator != (const InstVersion &v) const
 		{ return !((*this) == v); }

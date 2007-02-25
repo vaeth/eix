@@ -54,6 +54,7 @@ SqliteCache *SqliteCache::callback_arg;
 
 int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
+	UNUSED(NotUsed); UNUSED(azColName);
 #if 0
 	for(int i = 0; i<argc; i++) {
 		cout << i << ": " << azColName[i] << " = " <<  ARGV(i) << "\n";

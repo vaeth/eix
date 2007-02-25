@@ -131,6 +131,7 @@ void VarsReader::JUMP_NOISE()
 		case '\\':  NEXT_INPUT; CHSTATE(NOISE_ESCAPE);
 		case '"':   NEXT_INPUT; CHSTATE(NOISE_DOUBLE_QUOTE);
 		case '\'':  NEXT_INPUT; CHSTATE(NOISE_SINGLE_QUOTE);
+		default:    break;
 	}
 	NEXT_INPUT;
 	CHSTATE(JUMP_WHITESPACE);
@@ -401,6 +402,7 @@ void VarsReader::runFsm()
 			case state_VALUE_SINGLE_QUOTE: VALUE_SINGLE_QUOTE(); break;
 			case state_DOUBLE_QUOTE_ESCAPE: DOUBLE_QUOTE_ESCAPE(); break;
 			case state_WHITESPACE_ESCAPE: WHITESPACE_ESCAPE(); break;
+			default: break;
 		}
 	}
 	return;
@@ -433,7 +435,7 @@ bool VarsReader::read(const char *filename)
 		close(fd);
 		return true;
 	}
-	filebuffer = (char *) mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	filebuffer = static_cast<char *>(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 	ASSERT(filebuffer != MAP_FAILED,
 			"Can't map file %s.", filename);
 	filebuffer_end = filebuffer + st.st_size;

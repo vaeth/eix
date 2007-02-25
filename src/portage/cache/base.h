@@ -33,6 +33,8 @@
 #include <string>
 #include <map>
 
+#define UNUSED(p) ((void)(p))
+
 class Category;
 class Package;
 class Version;
@@ -106,7 +108,7 @@ class BasicCache {
 		    @return false if an error occurred so fatal that further calls
 		    with this scheme (even with other categories) are useless. */
 		virtual bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic)
-		{ return 1; }
+		{ UNUSED(packagetree); UNUSED(categories); UNUSED(category); return 1; }
 
 		/// Read Cache for a category
 		/** @return false if an error occurred so fatal that further calls

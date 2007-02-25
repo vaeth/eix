@@ -100,8 +100,8 @@ class EixRc : public std::map<std::string,std::string> {
 			break; \
 		} \
 	} \
-	PortageSettings PortageSettingsConstructor(portagesettings, eixrc); \
-	cout << portagesettings[print_var]; \
+	PortageSettings PortageSettingsConstructor(ps, eixrc); \
+	cout << ps[print_var]; \
 } while(0)
 
 #endif /* __EIXRC_H__ */

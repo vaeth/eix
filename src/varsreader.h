@@ -245,16 +245,16 @@ class VarsReader {
 		 * @warning You need to call deinit() if you called this function. */
 		void initFsm();
 
-		/** True if x matches [A-Z_0-9] */
-		virtual bool isValidKeyCharacter(char x) {
-			return ((x >= 'A' && x <= 'Z')
-					|| x == '_' || (x >= '0' && x <= '9'));
+		/** True if c matches [A-Z_0-9] */
+		virtual bool isValidKeyCharacter(char c) {
+			return ((c >= 'A' && c <= 'Z')
+					|| c == '_' || (c >= '0' && c <= '9'));
 		}
 
-		/** True if x matches [A-Z_] */
-		virtual bool isValidKeyCharacterStart(char x) {
-			return ((x >= 'A' && x <= 'Z')
-					|| x == '_' );
+		/** True if c matches [A-Z_] */
+		virtual bool isValidKeyCharacterStart(char c) {
+			return ((c >= 'A' && c <= 'Z')
+					|| c == '_' );
 		}
 
 		const char *file_name; /**< Name of parsed file. */

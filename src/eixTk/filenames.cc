@@ -75,7 +75,7 @@ string normalize_path(const char *path, bool resolve)
 #if defined(HAVE_REALPATH)
 		if(!normalized) {
 #if defined(PATH_MAX)
-			char *normalized = (char *)malloc(PATH_MAX);
+			normalized = static_cast<char *>(malloc(PATH_MAX));
 			if(normalized) {
 				if(!realpath(path, normalized))
 				{
@@ -84,7 +84,7 @@ string normalize_path(const char *path, bool resolve)
 				}
 			}
 #else
-			char *normalized = realpath(path, NULL);
+			normalized = realpath(path, NULL);
 #endif
 			if(normalized) {
 				if(!*normalized) {

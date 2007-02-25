@@ -51,9 +51,9 @@ class Cdb {
 			struct stat st;
 			if (fstat(fd,&st) == 0) {
 				void *x = mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
-				if (x != (void*)-1) {
+				if (x != MAP_FAILED) {
 					cdb_data_size = st.st_size;
-					cdb_data = (uint32_t *)x;
+					cdb_data = static_cast<uint32_t *>(x);
 					return true;
 				}
 			}
@@ -62,8 +62,8 @@ class Cdb {
 
 		void init() {
 			uint32_t record_end_offset;
-			UINT32_UNPACK((char *)cdb_data, &record_end_offset);
-			cdb_records_end = (uint32_t *)((char *)cdb_data + record_end_offset);
+			UINT32_UNPACK(reinterpret_cast<char *>(cdb_data), &record_end_offset);
+			cdb_records_end = reinterpret_cast<uint32_t *>((reinterpret_cast<char *>(cdb_data)) + record_end_offset);
 			current = cdb_data + (2 * 256);
 			is_ready = true;
 		}
@@ -94,14 +94,14 @@ class Cdb {
 
 		string get(uint32_t *dlen, void **data) {
 			uint32_t klen;
-			UINT32_UNPACK((char *)current, &klen);
+			UINT32_UNPACK(reinterpret_cast<char *>(current), &klen);
 			current++;
-			UINT32_UNPACK((char *)current, dlen);
+			UINT32_UNPACK(reinterpret_cast<char *>(current), dlen);
 			current++;
-			string key((char *)current, klen);
-			current = (uint32_t*)(  (char *)current + (klen));
+			string key(reinterpret_cast<char *>(current), klen);
+			current = reinterpret_cast<uint32_t*>((reinterpret_cast<char *>(current)) + (klen));
 			*data = current;
-			current = (uint32_t*)(  (char *)current + (*dlen));
+			current = reinterpret_cast<uint32_t*>((reinterpret_cast<char *>(current)) + (*dlen));
 			return key;
 		}
 
@@ -131,7 +131,7 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 	while( ! cdb.end() ) {
 		key = cdb.get(&dlen, &data);
 		map<string,string> mapping;
-		if( ! unpickle_get_mapping((char *)data, dlen, mapping)) {
+		if( ! unpickle_get_mapping(static_cast<char *>(data), dlen, mapping)) {
 			m_error_callback("Problems with %s .. skipping.", key.c_str());
 			continue;
 		}

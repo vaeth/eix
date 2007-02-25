@@ -43,15 +43,15 @@ class DBHeader;
 class Category : public eix::ptr_list<Package> {
 
 	public:
-		Category(std::string name)
-		{ m_name = name; }
+		Category(std::string pkg_name)
+		{ m_name = pkg_name; }
 
 		~Category()
 		{ delete_and_clear(); }
 
-		Package *findPackage(const std::string &name) const;
-		bool deletePackage(const std::string &name);
-		Package *addPackage(std::string name);
+		Package *findPackage(const std::string &pkg_name) const;
+		bool deletePackage(const std::string &pkg_name);
+		Package *addPackage(std::string pkg_name);
 
 		const std::string &name() const
 		{ return m_name; }

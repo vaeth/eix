@@ -85,7 +85,7 @@ SlotList::operator [] (const char *s) const
 
 
 /** Check if a package has duplicated versions. */
-void Package::checkDuplicates(Version *version)
+void Package::checkDuplicates(const Version *version)
 {
 	if(have_duplicate_versions == DUP_OVERLAYS)
 		return;
@@ -94,7 +94,7 @@ void Package::checkDuplicates(Version *version)
 		return;
 	for(iterator i = begin(); i != end(); ++i)
 	{
-		if(dynamic_cast<BasicVersion&>(**i) == dynamic_cast<BasicVersion&>(*version))
+		if(*(dynamic_cast<BasicVersion *>(*i)) == *(dynamic_cast<const BasicVersion *>(version)))
 		{
 			if(no_overlay)
 			{

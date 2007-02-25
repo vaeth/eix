@@ -57,7 +57,7 @@ class EbuildCache : public BasicCache {
 		~EbuildCache()
 		{ delete_cachefile(); }
 
-		void readPackage(Category &vec, char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles) throw(ExBasic);
+		void readPackage(Category &vec, const char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles) throw(ExBasic);
 		bool readCategory(Category &vec) throw(ExBasic);
 
 		bool use_prefixport() const

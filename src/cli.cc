@@ -299,6 +299,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  need_logical_operator = true;
 				  break;
 			// }}}
+			default:
+				break;
 		}
 
 		++arg;

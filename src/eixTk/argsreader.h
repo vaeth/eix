@@ -118,7 +118,7 @@ class Parameter
 			: type(Parameter::OPTION), m_option(option)
 		{ }
 
-		Parameter(char *argument)
+		Parameter(const char *argument)
 			: type(Parameter::ARGUMENT), m_argument(argument)
 		{ }
 

@@ -56,9 +56,9 @@ class VarDbPkg {
 
 	public:
 		/** Default constructor. */
-		VarDbPkg(std::string directory, bool read_slots, bool care_slots) :
-			_directory(directory), get_slots(read_slots || care_slots),
-			take_care(care_slots)
+		VarDbPkg(std::string directory, bool read_slots, bool care_about_slots) :
+			_directory(directory), get_slots(read_slots || care_about_slots),
+			take_care(care_about_slots)
 		{ }
 
 		~VarDbPkg() {

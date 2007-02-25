@@ -388,9 +388,9 @@ print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
 }
 
 void
-print_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
+print_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
 {
-	Package *entity = (Package*)void_entity;
+	const Package *entity = static_cast<const Package *>(void_entity);
 
 	vector<string> prepend = split_string(name, ":", false, true, true);
 	string plainname = prepend[0];
@@ -453,9 +453,9 @@ print_package_property(const PrintFormat *fmt, void *void_entity, const string &
 }
 
 string
-get_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
+get_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
 {
-	Package *entity = (Package*)void_entity;
+	const Package *entity = static_cast<const Package *>(void_entity);
 
 	if(name == "category") {
 		return entity->category;
@@ -613,28 +613,28 @@ get_package_property(const PrintFormat *fmt, void *void_entity, const string &na
 	throw(ExBasic("Unknown property '%s'.", name.c_str()));
 }
 
-void *old_or_new(string *new_name, Package *older, Package *newer, const string &name)
+const void *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
 {
 	const char *s = name.c_str();
 	if(strncmp(s, "old", 3) == 0)
 	{
 		*new_name = s + 3;
-		return (void *)older;
+		return older;
 	}
 	if(strncmp(s, "new", 3) == 0)
 	{
 		*new_name = s + 3;
-		return (void *)newer;
+		return newer;
 	}
 	*new_name = name;
-	return (void *)newer;
+	return newer;
 }
 
 string
-get_diff_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
+get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
 {
-	Package *older = ((Package**)void_entity)[0];
-	Package *newer = ((Package**)void_entity)[1];
+	const Package *older = (static_cast<const Package* const*>(void_entity))[0];
+	const Package *newer = (static_cast<const Package* const*>(void_entity))[1];
 	if(name == "better")
 	{
 		if(LocalCopy(fmt, newer).package->have_worse(*(LocalCopy(fmt, older).package), true))
@@ -672,16 +672,16 @@ get_diff_package_property(const PrintFormat *fmt, void *void_entity, const strin
 		return "";
 	}
 	string new_name;
-	void *entity = old_or_new(&new_name, older, newer, name);
+	const void *entity = old_or_new(&new_name, older, newer, name);
 	return get_package_property(fmt, entity, new_name);
 }
 
 void
-print_diff_package_property(const PrintFormat *fmt, void *void_entity, const string &name) throw(ExBasic)
+print_diff_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
 {
-	Package *older = ((Package**)void_entity)[0];
-	Package *newer = ((Package**)void_entity)[1];
+	const Package *older = (static_cast<const Package* const*>(void_entity))[0];
+	const Package *newer = (static_cast<const Package* const*>(void_entity))[1];
 	string new_name;
-	void *entity = old_or_new(&new_name, older, newer, name);
+	const void *entity = old_or_new(&new_name, older, newer, name);
 	print_package_property(fmt, entity, new_name);
 }

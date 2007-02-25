@@ -87,6 +87,8 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 			case 7:  pkg->desc     = linebuf; break;
 			case 13: pkg->provide  = linebuf; is.close();
 					 return;
+			default:
+				break;
 		}
 	}
 	is.close();

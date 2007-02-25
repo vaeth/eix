@@ -87,7 +87,7 @@ class PercentStatus {
 				return;
 			}
 
-			printf("\b\b\b\b" "%.3i%%", (int) (m_run * m_step_size));
+			printf("\b\b\b\b" "%.3i%%", int(m_run * m_step_size));
 			fflush(stdout);
 		}
 

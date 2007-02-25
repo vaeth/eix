@@ -289,9 +289,9 @@ setup_defaults()
 	rc_options.be_quiet        = rc.getBool("QUIETMODE");
 	rc_options.care            = rc.getBool("CAREMODE");
 
-	format_verbose             = (char*) rc["FORMAT_VERBOSE"].c_str();
-	format_compact             = (char*) rc["FORMAT_COMPACT"].c_str();
-	format_normal              = (char*) rc["FORMAT"].c_str();
+	format_verbose             = rc["FORMAT_VERBOSE"].c_str();
+	format_compact             = rc["FORMAT_COMPACT"].c_str();
+	format_normal              = rc["FORMAT"].c_str();
 	string s                   = rc["DEFAULT_FORMAT"];
 	if((strcasecmp(s.c_str(), "FORMAT_VERBOSE") == 0) ||
 	   (strcasecmp(s.c_str(), "verbose") == 0)) {
@@ -360,7 +360,7 @@ setup_defaults()
 }
 
 bool
-print_overlay_table(PrintFormat &format, DBHeader &header, vector<bool> *overlay_used)
+print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_used)
 {
 	bool printed_overlay = false;
 	for(Version::Overlay i = 1;
@@ -370,7 +370,7 @@ print_overlay_table(PrintFormat &format, DBHeader &header, vector<bool> *overlay
 		if(overlay_used)
 			if(!((*overlay_used)[i-1]))
 				continue;
-		cout << format.overlay_keytext(i) << " ";
+		cout << fmt.overlay_keytext(i) << " ";
 		cout << header.getOverlay(i) << endl;
 		printed_overlay = true;
 	}
@@ -573,6 +573,7 @@ run_eix(int argc, char** argv)
 	{
 		case 3: need_overlay_table = true;  break;
 		case 4: need_overlay_table = false; break;
+		default: break;
 	}
 	vector<Version::Overlay> overlay_num(header.countOverlays());
 	if(overlay_mode == 0)
