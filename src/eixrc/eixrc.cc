@@ -218,10 +218,15 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 		bool will_test = false;
 		string::size_type varpos = pos + 2;
 		string::size_type varlength = length - 3;
-		if((type == DelayedIf) || (type == DelayedNotif)) {
+		if((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
 			will_test = true;
 			varpos++;
 			varlength--;
+		}
+		else if((type == DelayedIfEmpty) || (type == DelayedIfNonempty)) {
+			will_test = true;
+			varpos+=2;
+			varlength-=2;
 		}
 		if(visited.find(key) != visited.end()) {
 			*errtext = "self-reference";
@@ -242,9 +247,20 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 			pos += s->length();
 			continue;
 		}
+		// will_test: type is necessarily one of
+		// DelayedIfTrue/DelayedIfFalse/DelayedIfNonempty/DelayedIfEmpty
 		string::size_type skippos = pos;
-		bool result = istrue(s->c_str()) ?
-			(type == DelayedIf) : (type == DelayedNotif);
+		bool result;
+		if((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
+			result = istrue(s->c_str());
+			if(type == DelayedIfFalse)
+				result = !result;
+		}
+		else { // ((type == DelayedIfEmpty) || (type == DelayedIfNonempty))
+			result = s->empty();
+			if(type == DelayedIfNonempty)
+				result = !result;
+		}
 		string::size_type delpos = string::npos;
 		if(result)
 			value->erase(skippos, length);
@@ -290,7 +306,7 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 				delpos = string::npos;
 				continue;
 			}
-			if((type == DelayedIf) || (type == DelayedNotif)) {
+			if((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
 				count ++;
 				continue;
 			}
@@ -379,7 +395,7 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 				pos += 2;
 				length -= 2;
 			}
-			else if ((type == DelayedIf) || (type == DelayedNotif)) {
+			else if ((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
 				pos += 3;
 				length -= 3;
 			}
@@ -446,12 +462,23 @@ EixRc::DelayedType EixRc::find_next_delayed(const string &str, string::size_type
 		else
 		{
 			if(c == '?') {
-				type = DelayedIf;
 				c = str[i++];
+				if(c != '?')
+					type = DelayedIfTrue;
+				else {
+					type = DelayedIfNonempty;
+					c = str[i++];
+				}
 			}
 			else if(c == '!') {
-				type = DelayedNotif;
+				type = DelayedIfFalse;
 				c = str[i++];
+				if(c != '?')
+					type = DelayedIfFalse;
+				else {
+					type = DelayedIfEmpty;
+					c = str[i++];
+				}
 			}
 			else
 				type = DelayedVariable;

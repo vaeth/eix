@@ -34,8 +34,9 @@
 typedef std::pair<const char *,const char *> ArgPair;
 
 /// Maps longopt->shortopt.
-typedef struct Option
+class Option
 {
+	public:
 	enum Type {
 		BOOLEAN_T,     ///< Boolean. Will be set to true if found.
 		BOOLEAN_F,     ///< Boolean. Will be set to false if found.
@@ -105,7 +106,7 @@ class Parameter
 		const enum Type {
 			ARGUMENT = 1,
 			OPTION = 2,
-			PAIR = 3,
+			PAIR = 3
 		} type;
 
 		/// This is the string we got.

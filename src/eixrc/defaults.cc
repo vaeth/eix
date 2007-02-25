@@ -66,8 +66,12 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX_ROOT",
-			"%{EPREFIX}%{ROOT}", "This variable is only used for delayed substitution.\n"
-			"It determines what to use if ROOT and EPREFIX should both apply.")
+			"%{??EPREFIX}%{EPREFIX}%{else}%{ROOT}%{}",
+			"This variable is only used for delayed substitution.\n"
+			"It applies for those paths for which EPREFIX and ROOT should both apply.\n"
+			"So you can decide here what to do if both are nonempty. For instance,\n"
+			"the choice %{EPREFIX}%{ROOT} will apply both; the default applies EPREFIX\n"
+			"but not ROOT for these paths in such a case (i.e. if both are nonempty).")
 		);
 
 eixrc.addDefault(

@@ -78,7 +78,7 @@ class EixRc : public std::map<std::string,std::string> {
 		const char *prefix_cstr(const char *var) const;
 	private:
 		static bool istrue(const char *s);
-		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIf, DelayedNotif, DelayedElse, DelayedFi };
+		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi };
 		std::vector<EixRcOption> defaults;
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r);
 		std::string *resolve_delayed_recurse(std::string key, std::set<std::string> &visited, std::set<std::string> &has_reference, const char **errtext, std::string *errvar);

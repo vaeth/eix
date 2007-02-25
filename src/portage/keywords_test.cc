@@ -8,6 +8,7 @@
  *   Copyright (c)                                                         *
  *     Wolfgang Frisch <xororand@users.sourceforge.net>                    *
  *     Emil Beinroth <emilbeinroth@gmx.net>                                *
+ *     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -46,13 +47,13 @@ int main()
 	/// Test Keyword parsing
 
 	test_keywords("x86", "-* ~alpha ~amd64 arm hppa -ia64 m68k sh ~sparc x86",
-			Keywords::KEY_STABLE|Keywords::KEY_MINUSASTERISK);
+			Keywords::KEY_STABLE|Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE|Keywords::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-* ~alpha ~amd64 arm hppa -ia64 m68k sh ~sparc x86",
-			Keywords::KEY_UNSTABLE|Keywords::KEY_MINUSASTERISK);
+			Keywords::KEY_UNSTABLE|Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE|Keywords::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-* ~amd64 arm hppa -ia64 m68k sh ~sparc x86",
-			Keywords::KEY_MINUSASTERISK);
+			Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE|Keywords::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-*",
 			Keywords::KEY_MINUSASTERISK);
@@ -67,7 +68,7 @@ int main()
 			Keywords::KEY_STABLE);
 
 	test_keywords("sh", "~alpha ~amd64 arm hppa -ia64 ~mips s390 sh sparc x86",
-			Keywords::KEY_STABLE);
+			Keywords::KEY_STABLE|Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE);
 
 
 	/// Test keyword-class methods

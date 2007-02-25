@@ -795,17 +795,23 @@ conditional blocks.
 
 This is somewhat analogous to Conditional Blocks in FORMATSTRING:
 If the referenced variable expands finally to the boolean value true
-(B<true>/B<1>/B<yes>/B<y>/B<on>) the result is true
+(B<true>/B<1>/B<yes>/B<y>/B<on>) (resp. to something nonempty if you
+preceed I<VARIABLE> with an additional B<?>) the result is true
 and the corresponding block of the string is expanded.
 Conditions can be negated so that the else-part is expanded if the
 condition is true, and the if-part if the condition is false.
 The else-part can be also be completely left out.
-The special variable names B<*>I<VARIABLE> can also be used in these
-conditionals.
+The special variable names B<*>I<VARIABLE> (instead of I<VARIABLE>)
+can also be used in these conditionals.
 .TP
 .SS
 .BR "%{?I<VARIABLE>}" I<TCODE> "%{}"
 Expand I<TCODE> if I<VARIABLE> expands to true.
+
+.TP
+.SS
+.BR "%{??I<VARIABLE>}" I<TCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to a nonempty string.
 
 .TP
 .SS
@@ -814,17 +820,35 @@ Expand I<TCODE> if I<VARIABLE> expands to false.
 
 .TP
 .SS
+.BR "%{!?I<VARIABLE>}" I<TCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to the empty string.
+
+.TP
+.SS
 .BR "%{?I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
 Expand I<TCODE> if I<VARIABLE> expands to true, otherwise I<FCODE>.
+
+.TP
+.SS
+.BR "%{??I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to a nonempty string,
+otherwise I<FCODE>.
 
 .TP
 .SS
 .BR "%{!I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
 Expand I<TCODE> if I<VARIABLE> expands to false, otherwise I<FCODE>.
 
-A conditional block must occur completely within one variable, i.e.
-it is not possible to e.g. substitute the B<%{}> from another variable
-via delayed reference.
+.TP
+.SS
+.BR "%{!?I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+Expand I<TCODE> if I<VARIABLE> expands to the empty string,
+otherwise I<FCODE>.
+
+A conditional block must occur completely within one variable,
+i.e. it is not possible to e.g. substitute the B<%{}> symbol
+from another variable via delayed reference (but in I<TCODE>/I<FCODE>
+delayed references can be used).
 .SS ""
 .\" }}}
 
@@ -854,6 +878,8 @@ Note that when this variable takes effect, no delayed substitution is performed 
 .BR EPREFIX "  " (string)
 .TP
 .BR EPREFIX_TREE "  " (string)
+.TP
+.BR EPREFIX_ROOT "  " (string)
 These are actually not internal variables of eix but they are just used for
 delayed substitution for the following variables (see B<eix --dump> to see
 in detail in which other variables they occur). Nevertheless, in view of
@@ -896,14 +922,15 @@ You must set it instead in the environment or in an eix configuration file.
 You can easily customize to which paths the B<EPREFIX> or B<ROOT> variables apply:
 Simply use in the appropriate following variables either the delayed references
 B<%{EPREFIX}>, B<%{ROOT}>, nothing, or B<%{EPREFIX_ROOT}> (which in turn is
-defined as a delayed reference so that you can e.g. easily change the order of
-B<%{EPREFIX}> and B<%{ROOT}> or force that only one of them is applied if
-both are set). Alternatively, you can of course also use other variables as
-delayed references, e.g. you might want to set
+defined as a delayed reference so that you can easily change what to do if
+B<EPREFIX> and B<ROOT> are both nonempty: You might e.g. concatenate these
+paths or use only one of them).
+You can of course also use other variables as delayed references,
+e.g. you might want to set
 
-.BR EIX_CACHEFILE="%{PORTAGE_CONFIGROOT}@EIX_CACHEFILE@"
+.BR EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
 
-if you feel that the eix cachefile should depend on your configuration root.
+if you feel that the eix cachefile should depend (only) on the profile root.
 .TP
 .BR PORTAGE_CONFIGROOT "  " (string)
 This path is prepended to the /etc paths.
@@ -941,7 +968,11 @@ This path is prepended to B<PORTDIR>.
 
 .TP
 .BR EPREFIX_OVERLAYS "  " (string)
-This prefix is prepended to all entries of B<PORTAGE_PROFILE>.
+This prefix is prepended to all entries of B<PORTAGE_OVERLAY>.
+
+.TP
+.BR EPREFIX_PROFILE "  " (string)
+This prefix is prepended to B<PORTAGE_PROFILE> (the variable, not the link).
 
 .TP
 .BR EPREFIX_VIRTUAL "  " (string)
@@ -1508,6 +1539,10 @@ See the above comments about this file.
 .\" {{{ -------- @EIX_CACHEFILE@
 .SS @EIX_CACHEFILE@
 This is the binary database for eix.
+The path can be changed with the B<EIX_CACHEFILE> variable
+(which by default honours B<EPREFIX> via delayed reference).
+But only when the unmodified path @EIX_CACHEFILE@ is used, B<update-eix>
+will perform certain permission tests in advance.
 .\" }}}
 .\" }}}
 

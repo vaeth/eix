@@ -52,7 +52,7 @@
 class PackageTest {
 
 	public:
-		typedef char MatchField;
+		typedef uint8_t MatchField;
 		static const MatchField NONE          , /* Search in name */
 		                        NAME          , /* Search in name */
 		                        DESCRIPTION   , /* Search in description */
@@ -63,7 +63,7 @@ class PackageTest {
 		                        HOMEPAGE      , /* Search in homepage */
 		                        IUSE          ; /* Search in iuse */
 
-		typedef char TestInstalled;
+		typedef uint8_t TestInstalled;
 		static const TestInstalled
 					INS_NONE,
 					INS_NONEXISTENT, /* Test for nonexistent installed packages */
