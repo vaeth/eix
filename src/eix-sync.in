@@ -248,7 +248,16 @@ DoHook () {
 }
 
 RootTest () {
-  [[ "${EMULATEMODE}" ]] && die "You need to be root."
+  [[ "${EMULATEMODE}" ]] || return
+  eerror ""
+  eerror "Nothing was executed, because a heuristic shows that"
+  eerror "root permissions are required to execute everything successfully."
+  einfo  ""
+  einfo  "However, the heuristic might be wrong, e.g. if you use EPREFIX."
+  einfo  "If you want to skip this test temporarily, use option -e."
+  einfo  "If you want to skip this test permanently, put option -e"
+  einfo  "into the file ${GENSYNCCONF}."
+  die    ""
 }
 
 SED1='s!^[[:space:]]*'

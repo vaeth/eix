@@ -20,6 +20,9 @@
 	- Fix some rare exceptional cases in redundancy testing of
 	  /etc/portage/package.keywords and in marking of keywords.
 	- Improve documentation for -I.
+	- Let KEEP_VIRTUALS default to false since it confused too many people.
+	  Moreover, it is somewhat dangerous if (falsely) used with
+	  EPREFIX and friends.
 
 *eix-0.8.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

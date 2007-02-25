@@ -37,20 +37,24 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EIXRC_SOURCE",
 			"", "This path is prepended to source commands in /etc/eixrc.\n"
-			"If set in /etc/eixrc it temporarily overrides the environment."
+			"If set in /etc/eixrc it temporarily overrides the environment.\n"
 			"When this variable takes effect no delayed substitution is performed.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "ROOT",
-			"", "This variable is only used for delayed substitution in EPREFIX.\n")
+			"", "This variable is only used for delayed substitution.\n"
+			"It influences most paths except for $HOME/.eixrc, the cache file\n"
+			"passed in the command line, PORTAGE_PROFILE, PORTDIR,\n"
+			"and overlays. In contrast to EPREFIX, further exceptions are:\n"
+			"PORTAGE_CONFIGROOT, portage/scripts-internal stuff and the eix cachefile.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX",
-			"%{ROOT}", "This variable is only used for delayed substitution.\n"
+			"", "This variable is only used for delayed substitution.\n"
 			"It influences most paths except for $HOME/.eixrc, the cache file\n"
-			"passed in the command line, PORTAGE_CONFIGROOT, PORTAGE_PROFILE, PORTDIR,\n"
+			"passed in the command line, PORTAGE_PROFILE, PORTDIR,\n"
 			"and overlays.\n")
 		);
 
@@ -61,23 +65,29 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EPREFIX_ROOT",
+			"%{EPREFIX}%{ROOT}", "This variable is only used for delayed substitution.\n"
+			"It determines what to use if ROOT and EPREFIX should both apply.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTAGE_CONFIGROOT",
 			"%{EPREFIX}", "This path is prepended to the /etc paths.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX_PORTAGE_EXEC",
-			"%{EPREFIX}", "This prefix is used in connection with external portage tools.\n")
+			"%{EPREFIX}", "This prefix is used in connection with external portage tools.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX_SOURCE",
-			"%{EPREFIX_PORTAGE_EXEC}", "This path is prepended to source commands in /etc/make.conf\n")
+			"%{EPREFIX_PORTAGE_EXEC}", "This path is prepended to source commands in /etc/make.{conf,globals}.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EPREFIX_INSTALLED",
-			"%{EPREFIX}", "Prefix to the path where eix expects information about installed packages.\n")
+			"%{EPREFIX_ROOT}", "Prefix to the path where eix expects information about installed packages.\n")
 		);
 
 eixrc.addDefault(
@@ -998,7 +1008,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "KEEP_VIRTUALS",
-			"true", "Keep virtuals of the old cache file by adding corresponding entries"
+			"false", "Keep virtuals of the old cache file by adding corresponding entries"
 			"implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD")
 		);
 

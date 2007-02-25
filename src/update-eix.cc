@@ -263,7 +263,7 @@ void add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 	}
 }
 
-void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cachefile)
+void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cachefile, string eprefix_virtual)
 {
 	static const string a = "eix*::";
 	FILE *fp = fopen(cachefile.c_str(), "rb");
@@ -277,8 +277,8 @@ void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string
 		return;
 	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
 	{
-		const char *overlay = (header.getOverlay(i)).c_str();
-		if(!is_virtual(overlay))
+		string overlay = eprefix_virtual + header.getOverlay(i);
+		if(!is_virtual(overlay.c_str()))
 			continue;
 		Pathname name(overlay, false);
 		add.push_back(name);
@@ -304,7 +304,7 @@ run_update_eix(int argc, char *argv[])
 	add_pathnames(add_list, split_string(eixrc["ADD_OVERLAY"], " \t\n\r"), true);
 
 	if(eixrc.getBool("KEEP_VIRTUALS"))
-		add_virtuals(override_list, add_list, eix_cachefile);
+		add_virtuals(override_list, add_list, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
 
 	add_override(override_list, eixrc, "OVERRIDE_CACHE_METHOD");
 	add_override(override_list, eixrc, "ADD_OVERRIDE_CACHE_METHOD");

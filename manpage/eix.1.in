@@ -858,8 +858,8 @@ These are actually not internal variables of eix but they are just used for
 delayed substitution for the following variables (see B<eix --dump> to see
 in detail in which other variables they occur). Nevertheless, in view of
 their importance, they are described here briefly: In the default setting,
-B<ROOT> and B<EPREFIX> are equivalent, and they set new prefixes for all paths
-with the following exceptions:
+B<ROOT> and B<EPREFIX> are almost equivalent, and they set new prefixes
+for all paths with the following exceptions:
 
 .BR "@BINDIR@/update-eix-functions.sh"
 
@@ -873,16 +873,41 @@ with the following exceptions:
 
 .BR "Overlay paths"
 
-The last three items are modified by B<EPREFIX_TREE>.
-The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
+The last three items can be modified by B<EPREFIX_TREE>. The prefix B<ROOT>,
+in contrast to B<EPREFIX>, is in addition (in the default settings) also
+not used as a prefix for the following paths:
 
-Note that variables in B</etc/make.conf> do not influence eix configuration variables.
+.BR PORTAGE_CONFIGROOT " (i.e. the /etc/* stuff)"
+
+.BR "Portage-internal binaries"
+
+.BR "Source commands in /etc/make.{conf,globals}"
+
+.BR "The eix cachefile @EIX_CACHEFILE@"
+
+The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
+Note that as a prefix-portage user you will want to use option -e in eix-sync.
+
+The purpose of B<ROOT> is to follow roughly portage's usage of this variable.
+Note that variables in /etc/make.conf do not influence eix configuration variables.
 In particular, a B<ROOT=>I<something> command in /etc/make.conf does not influence eix.
 You must set it instead in the environment or in an eix configuration file.
+
+You can easily customize to which paths the B<EPREFIX> or B<ROOT> variables apply:
+Simply use in the appropriate following variables either the delayed references
+B<%{EPREFIX}>, B<%{ROOT}>, nothing, or B<%{EPREFIX_ROOT}> (which in turn is
+defined as a delayed reference so that you can e.g. easily change the order of
+B<%{EPREFIX}> and B<%{ROOT}> or force that only one of them is applied if
+both are set). Alternatively, you can of course also use other variables as
+delayed references, e.g. you might want to set
+
+.BR EIX_CACHEFILE="%{PORTAGE_CONFIGROOT}@EIX_CACHEFILE@"
+
+if you feel that the eix cachefile should depend on your configuration root.
 .TP
 .BR PORTAGE_CONFIGROOT "  " (string)
 This path is prepended to the /etc paths.
-The purpose is to respect PORTAGE_CONFIGROOT in the same way portage does.
+The purpose is to respect PORTAGE_CONFIGROOT in an analogous way portage does.
 If you set this variable in the environment it will also change the path
 where /etc/eixrc is searched. (Note that reading /etc/eixrc occurs before
 delayed substitution takes effect.)
