@@ -10,7 +10,7 @@ run ()
 }
 
 run mkdir -p config 
-run libtoolize --force --copy --automake
+which glibtoolize 2>&1 >/dev/null && run glibtoolize --force --copy --automake || run libtoolize --force --copy --automake
 run aclocal
 run autoheader
 run autoconf
