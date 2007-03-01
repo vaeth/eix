@@ -6,6 +6,9 @@
 /* Location of eix-wiki */
 #undef EIX_WIKI
 
+/* default EPREFIX */
+#undef EPREFIX_DEFAULT
+
 /* Version of gcc */
 #undef GCC_VERSION
 
@@ -110,6 +113,9 @@
 
 /* default PORTDIR_CACHE_METHOD */
 #undef PORTDIR_CACHE_METHOD
+
+/* default ROOT */
+#undef ROOT_DEFAULT
 
 /* "3th argument of scandir" */
 #undef SCANDIR_ARG3

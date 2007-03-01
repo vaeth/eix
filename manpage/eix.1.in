@@ -873,19 +873,16 @@ In the latter case, it will override the setting from the environment as soon as
 Note that when this variable takes effect, no delayed substitution is performed yet.
 
 .TP
-.BR ROOT "  " (string)
-.TP
-.BR EPREFIX "  " (string)
-.TP
-.BR EPREFIX_TREE "  " (string)
-.TP
-.BR EPREFIX_ROOT "  " (string)
-These are actually not internal variables of eix but they are just used for
-delayed substitution for the following variables (see B<eix --dump> to see
-in detail in which other variables they occur). Nevertheless, in view of
-their importance, they are described here briefly: In the default setting,
-B<ROOT> and B<EPREFIX> are almost equivalent, and they set new prefixes
-for all paths with the following exceptions:
+.BR EPREFIX "  " (prefix-string) " (prefix-string means that this is a string, but if it has the value '/' it is changed to '')"
+
+If the environment variable B<PORTAGE_CONFIGROOT> is not set, then this
+variable is prefixed to the path where /etc/eixrc is searched
+(otherwise B<PORTAGE_CONFIGROOT> is prefixed).
+
+Moreover, this variable is used for delayed substitution to determine
+the prefix of a lot of paths in the subsequent variables;
+see B<eix --dump> to see in detail in which other variables it occurs.
+In the current default, it influences all paths with the following exceptions:
 
 .BR "@BINDIR@/update-eix-functions.sh"
 
@@ -899,20 +896,20 @@ for all paths with the following exceptions:
 
 .BR "Overlay paths"
 
-The last three items can be modified by B<EPREFIX_TREE>. The prefix B<ROOT>,
-in contrast to B<EPREFIX>, is in addition (in the default settings) also
-not used as a prefix for the following paths:
-
-.BR PORTAGE_CONFIGROOT " (i.e. the /etc/* stuff)"
-
-.BR "Portage-internal binaries"
-
-.BR "Source commands in /etc/make.{conf,globals}"
-
-.BR "The eix cachefile @EIX_CACHEFILE@"
+The last three items can be modified by B<EPREFIX_TREE>.
 
 The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
 Note that as a prefix-portage user you will want to use option -e in eix-sync.
+.TP
+.BR ROOT "  " (prefix-string)
+.TP
+.BR EPREFIX_TREE "  " (prefix-string)
+.TP
+.BR EPREFIX_ROOT "  " (prefix-string)
+
+These are actually not internal variables of eix but they are just used for
+delayed substitution for the following variables analogously to B<EPREFIX>
+(see above).
 
 The purpose of B<ROOT> is to follow roughly portage's usage of this variable.
 Note that variables in /etc/make.conf do not influence eix configuration variables.
@@ -932,7 +929,7 @@ e.g. you might want to set
 
 if you feel that the eix cachefile should depend (only) on the profile root.
 .TP
-.BR PORTAGE_CONFIGROOT "  " (string)
+.BR PORTAGE_CONFIGROOT "  " (prefix-string)
 This path is prepended to the /etc paths.
 The purpose is to respect PORTAGE_CONFIGROOT in an analogous way portage does.
 If you set this variable in the environment it will also change the path
@@ -940,42 +937,42 @@ where /etc/eixrc is searched. (Note that reading /etc/eixrc occurs before
 delayed substitution takes effect.)
 
 .TP
-.BR EPREFIX_PORTAGE_EXEC "  " (string)
+.BR EPREFIX_PORTAGE_EXEC "  " (prefix-string)
 This path is used as a prefix for everything related to external portage tools.
 In particular, for the cache-method eix this determines the path where some private executables
 of portage are expected and where it is expected that these executables store their data.
 
 .TP
-.BR EPREFIX_SOURCE "  " (string)
+.BR EPREFIX_SOURCE "  " (prefix-string)
 This path is prepended to paths occurring as the argument of source commands
 in /etc/make.conf and /etc/make.globals.
 
 .TP
-.BR EPREFIX_INSTALLED "  " (string)
+.BR EPREFIX_INSTALLED "  " (prefix-string)
 This is prepended to the path where eix expects information about installed packages.
 
 .TP
-.BR EPREFIX_PORTAGE_CACHE "  " (string)
+.BR EPREFIX_PORTAGE_CACHE "  " (prefix-string)
 This prefix is prepended to the portage cache.
 
 .TP
-.BR EPREFIX_ACCESS_OVERLAYS "  " (string)
+.BR EPREFIX_ACCESS_OVERLAYS "  " (prefix-string)
 This prefix is prepended to overlays when their files are accessed.
 
 .TP
-.BR EPREFIX_PORTDIR "  " (string)
+.BR EPREFIX_PORTDIR "  " (prefix-string)
 This path is prepended to B<PORTDIR>.
 
 .TP
-.BR EPREFIX_OVERLAYS "  " (string)
+.BR EPREFIX_OVERLAYS "  " (prefix-string)
 This prefix is prepended to all entries of B<PORTAGE_OVERLAY>.
 
 .TP
-.BR EPREFIX_PROFILE "  " (string)
+.BR EPREFIX_PROFILE "  " (prefix-string)
 This prefix is prepended to B<PORTAGE_PROFILE> (the variable, not the link).
 
 .TP
-.BR EPREFIX_VIRTUAL "  " (string)
+.BR EPREFIX_VIRTUAL "  " (prefix-string)
 This is prepended to overlays in the eix database to test whether they exist.
 
 .TP

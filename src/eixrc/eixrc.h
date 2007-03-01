@@ -41,7 +41,7 @@
 
 class EixRcOption {
 	public:
-		static const char STRING = 0, INTEGER = 1, BOOLEAN = 2, LOCAL = 3;
+		static const char STRING = 0, PREFIXSTRING = 1, INTEGER = 2, BOOLEAN = 3, LOCAL = 4;
 		char type;
 		std::string key, value, local_value, description;
 
@@ -80,7 +80,10 @@ class EixRc : public std::map<std::string,std::string> {
 		static bool istrue(const char *s);
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi };
 		std::vector<EixRcOption> defaults;
+		std::set<std::string> prefix_keys;
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r);
+		void modify_value(std::string &value, const std::string &key);
+
 		std::string *resolve_delayed_recurse(std::string key, std::set<std::string> &visited, std::set<std::string> &has_reference, const char **errtext, std::string *errvar);
 
 		  /** Create defaults and the main map with all variables

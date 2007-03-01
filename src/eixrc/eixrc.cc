@@ -145,11 +145,21 @@ const char *EixRc::prefix_cstr(const char *var) const
 
 void EixRc::read()
 {
-	const char *configroot = getenv("PORTAGE_CONFIGROOT");
-	if(configroot)
+	const char *name = "PORTAGE_CONFIGROOT";
+	const char *configroot = getenv(name);
+	if(configroot) {
 		m_eprefixconf = configroot;
-	else
-		m_eprefixconf = "";
+		modify_value(m_eprefixconf, name);
+	}
+	else {
+		name = "EPREFIX";
+		configroot = getenv(name);
+		if(configroot)
+			m_eprefixconf = configroot;
+		else
+			m_eprefixconf = EPREFIX_DEFAULT;
+		modify_value(m_eprefixconf, name);
+	}
 
 	set<string> has_reference;
 
@@ -194,8 +204,10 @@ void EixRc::read()
 string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)
 {
 	string *value = &((*this)[key]);
-	if(has_reference.find(key) == has_reference.end())
+	if(has_reference.find(key) == has_reference.end()) {
+		modify_value(*value, key);
 		return value;
+	}
 	string::size_type pos = 0;
 	for(;;)
 	{
@@ -203,6 +215,7 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 		DelayedType type = find_next_delayed(*value, &pos, &length);
 		if(type == DelayedNotFound) {
 			has_reference.erase(key);
+			modify_value(*value, key);
 			return value;
 		}
 		if(type == DelayedFi) {
@@ -375,8 +388,10 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 	// Set new values as default and for printing with --dump.
 	for(vector<EixRcOption>::iterator it = defaults.begin();
 		it != defaults.end(); ++it) {
-		it->local_value = tempmap[it->key];
-		(*this)[it->key] = it->local_value;
+		string &value = tempmap[it->key];
+		modify_value(value, it->key);
+		it->local_value = value;
+		(*this)[it->key] = value;
 	}
 
 	// Recursively join all delayed references to defaults,
@@ -434,6 +449,9 @@ void EixRc::join_delayed(const string &key, set<string> &default_keys, const map
 		if(envval)
 			val = string(envval);
 	}
+	// If some day e.g. prefix_keys (variables with PREFIXSTRING)
+	// should possibly also contain local variables, better modify it:
+	modify_value(val, key);
 	defaults.push_back(EixRcOption(EixRcOption::LOCAL, key, val, ""));
 	default_keys.insert(key);
 	(*this)[key] = val;
@@ -509,14 +527,26 @@ EixRc::DelayedType EixRc::find_next_delayed(const string &str, string::size_type
 	}
 }
 
+void EixRc::modify_value(string &value, const string &key)
+{
+	if(value == "/") {
+		if(prefix_keys.find(key) != prefix_keys.end())
+			value.clear();
+	}
+}
+
 void EixRc::clear()
 {
 	defaults.clear();
+	prefix_keys.clear();
 	(dynamic_cast<map<string,string>*>(this))->clear();
 }
 
 void EixRc::addDefault(EixRcOption option)
 {
+	if(option.type == EixRcOption::PREFIXSTRING)
+		prefix_keys.insert(option.key);
+	modify_value(option.value, option.key);
 	defaults.push_back(option);
 }
 
@@ -610,6 +640,8 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults)
 			case EixRcOption::BOOLEAN: typestring = "BOOLEAN";
 						  break;
 			case EixRcOption::STRING: typestring = "STRING";
+						  break;
+			case EixRcOption::PREFIXSTRING: typestring = "PREFIXSTRING";
 						  break;
 			case EixRcOption::INTEGER: typestring = "INTEGER";
 						  break;

@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Use environment's EPREFIX to find /etc/eixrc if
+	  PORTAGE_CONFIGROOT is unset.
+	- New ./configure options allow customization of default values for
+	  EPREFIX and ROOT.
+	- Introduce prefix-string-type for variables to make e.g. ROOT=/
+	  equivalent to ROOT=''.
+
 *eix-0.9.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let * and ~* in /etc/portage/package.keywords accept stable
