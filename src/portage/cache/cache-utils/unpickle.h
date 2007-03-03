@@ -58,7 +58,7 @@ inline static void uint32_unpack(const char *in, uint32_t *out);
 /* For the big-endian machines */
 
 /* Adopted from python-cdb (which adopted it from libowfat :) */
-inline static void uint32_pack(const char *out, uint32_t in) {
+inline static void uint32_pack(char *out, uint32_t in) {
 	*out=in&0xff; in>>=8;
 	*++out=in&0xff; in>>=8;
 	*++out=in&0xff; in>>=8;
@@ -66,10 +66,10 @@ inline static void uint32_pack(const char *out, uint32_t in) {
 }
 
 inline static void uint32_unpack(const char *in, uint32_t *out) {
-	*out = (((uint32_t(unsigned char(in[3])))<<24) |
-		((uint32_t(unsigned char(in[2])))<<16) |
-		((uint32_t(unsigned char(in[1])))<<8) |
-		(uint32_t(unsigned char(in[0]))));
+	*out = (((uint32_t(uint8_t(in[3])))<<24) |
+		((uint32_t(uint8_t(in[2])))<<16) |
+		((uint32_t(uint8_t(in[1])))<<8) |
+		(uint32_t(uint8_t(in[0]))));
 }
 
 #else  /* defined(WORDS_BIGENDIAN) */
