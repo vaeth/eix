@@ -51,8 +51,9 @@ remove: Remove all temporarily added virtual overlays from the eix database;
         	KEEP_VIRTUALS=false update-eix
         but faster (without actual updating where possible).
 
-It is strongly recommended to use the update/fetch commands only as root
-or with the -u \"nobody\" option or with very limited permissions.
+It is strongly recommended to use the update/fetch commands with very limited
+permissions. Permissions are dropped when run as root or with the \"-u nobody\"
+option. Don't use \"-u root\".
 
 For \"update\" and \"add\" all corresponding local overlay paths are excluded
 from the current database to avoid confusion. The local paths are determined
