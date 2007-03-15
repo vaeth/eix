@@ -2,9 +2,12 @@
 
 *eix-0.9.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix http://bugs.gentoo.org/show_bug.cgi?id=169127 (on big-endian).
+	- Fix partly http://bugs.gentoo.org/show_bug.cgi?id=169127
+	  (compilation error on big-endian architectures).
 	- Reformulate security recommendations in update-eix-remote. Thanks to
 	  Marijn Schouten, see http://bugs.gentoo.org/show_bug.cgi?id=169806
+	- Fix nocolor output. Thanks to Rick Morra for reporting
+	  http://bugs.gentoo.org/show_bug.cgi?id=170868
 
 *eix-0.9.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

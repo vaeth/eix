@@ -323,7 +323,8 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		if(!package->have_same_overlay_key && version->overlay_key)
 			cout << fmt->overlay_keytext(version->overlay_key);
 	}
-	cout << AnsiColor::reset();
+	if(!fmt->no_color)
+		cout << AnsiColor::reset();
 }
 
 void
