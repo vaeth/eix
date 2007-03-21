@@ -1014,7 +1014,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "KEEP_VIRTUALS",
-			"false", "Keep virtuals of the old cache file by adding corresponding entries"
+			"false", "Keep virtuals of the old cache file by adding corresponding entries\n"
 			"implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD")
 		);
 
