@@ -30,6 +30,7 @@
 #define EIX__IO_H__
 
 #include <string>
+#include <stdint.h>
 
 class Package;
 class Version;
