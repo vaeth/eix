@@ -185,6 +185,9 @@ using namespace std;
 
 bool SqliteCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
 {
+	UNUSED(packagetree);
+	UNUSED(category);
+	UNUSED(categories);
 	m_error_callback("Cache method sqlite is not compiled in.\n"
 	"Recompile eix, using configure option --with-sqlite to add sqlite support.");
 	return false;

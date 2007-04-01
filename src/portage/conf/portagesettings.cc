@@ -243,10 +243,7 @@ vector<string> *PortageSettings::getCategories()
 			               &m_categories);
 		}
 
-		sort(m_categories.begin(), m_categories.end());
-		m_categories.erase(
-			unique(m_categories.begin(), m_categories.end()),
-			m_categories.end());
+		sort_uniquify(m_categories);
 	}
 	return &m_categories;
 }
@@ -649,8 +646,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 			if(arch_used > arch_needed)
 				redundant |= (check & Keywords::RED_WEAKER);
 			if(check & Keywords::RED_DOUBLE) {
-				sort(kv.begin(), kv.end());
-				if(unique(kv.begin(), kv.end()) != kv.end())
+				if(sort_uniquify(kv, true))
 					redundant |= Keywords::RED_DOUBLE;
 			}
 		}

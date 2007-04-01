@@ -7,7 +7,8 @@ Available options are
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
-  -S  No sqlite
+  -s  With sqlite
+  -S  Without sqlite
   -c  Use only debugging-safe CXXFLAGS"
 	exit ${1}
 }
@@ -21,7 +22,7 @@ QUIET=''
 EARLYSTOP=''
 KEEPENV=''
 SAVEFLAGS=''
-SQLITE='--with-sqlite'
+SQLITE=''
 PEDANTIC=''
 while getopts 'qSnepc?hH' OPTION; do
 case "$OPTION" in
@@ -29,6 +30,7 @@ case "$OPTION" in
 	n) EARLYSTOP=1;;
 	e) KEEPENV='';;
 	p) PEDANTIC=1;;
+	s) SQLITE='--with-sqlite';;
 	S) SQLITE='--without-sqlite';;
 	c) SAFEFLAGS=1;;
 	*) Usage 1;;
@@ -68,7 +70,7 @@ if ! [[ -e Makefile ]]; then
 	echo "Running configure..."
 	eval ./configure $SQLITE $QUIET || die "configure failed"
 fi
-[[ "$EARLYSTOP" ]] && exit 0
+[[ "$EARLYSTOP" ]] && exec make config.h
 echo "Making $@..."
 MAKEEXEC="$(type -P make)" || die "cannot find make"
 if [[ "$QUIET" ]]; then

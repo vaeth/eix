@@ -100,8 +100,7 @@ vector<BasicVersion> *MarkedList::get_marked_vector(const Package &pkg, bool *no
 	}
 	if(!ret)// No version was explicitly marked
 		return NULL;
-	sort(ret->begin(),ret->end());
-	ret->erase(unique(ret->begin(), ret->end()), ret->end());
+	sort_uniquify(*ret);
 	return ret;
 }
 

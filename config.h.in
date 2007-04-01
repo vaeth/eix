@@ -87,6 +87,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the `vfork' function. */
+#undef HAVE_VFORK
+
 /* Maximal levenshtein-distance for matches */
 #undef LEVENSHTEIN_DISTANCE
 
@@ -125,6 +128,9 @@
 
 /* Target system */
 #undef TARGET
+
+/* Define to 1 if std::unique() works reliable */
+#undef UNIQUE_WORKS
 
 /* Version number of package */
 #undef VERSION

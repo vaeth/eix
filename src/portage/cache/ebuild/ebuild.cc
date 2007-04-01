@@ -136,7 +136,11 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 	}
 	else
 		cachefile = new string(m_prefix_exec + EBUILD_DEPEND_TEMP);
+#if HAVE_VFORK
 	pid_t child = vfork();
+#else
+	pid_t child = fork();
+#endif
 	if(child == -1) {
 		m_error_callback("Forking failed");
 		return false;

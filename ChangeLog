@@ -4,12 +4,15 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix partly http://bugs.gentoo.org/show_bug.cgi?id=169127
 	  (compilation error on big-endian architectures).
+	- Fix std::unique which is presumably broken on some systems.
+	  Perhaps this fixes the above issues completely.
 	- Reformulate security recommendations in update-eix-remote. Thanks to
 	  Marijn Schouten, see http://bugs.gentoo.org/show_bug.cgi?id=169806
 	- Fix nocolor output. Thanks to Rick Morra for reporting
 	  http://bugs.gentoo.org/show_bug.cgi?id=170868
 	- Fix compilation issues with gcc-3.3.6.
 	  Thanks to Helmut Auer <helmut@helmutauer.de>
+	- Minor compatibility fixes.
 
 *eix-0.9.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

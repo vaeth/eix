@@ -178,9 +178,7 @@ void PackageTree::add_missing_categories(vector<string> &categories) const
 	{
 		categories.push_back(i->name());
 	}
-	std::sort(categories.begin(), categories.end());
-	categories.erase(std::unique(categories.begin(), categories.end()),
-			categories.end());
+	sort_uniquify(categories);
 }
 
 void PackageTree::need_fast_access(const vector<string> *add_cat)

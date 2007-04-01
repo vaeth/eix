@@ -33,6 +33,7 @@
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
 #include <eixTk/stringutils.h>
+#include <eixTk/utils.h>
 
 #include <iostream>
 
@@ -80,8 +81,7 @@ class Version : public BasicVersion, public Keywords {
 		void set_iuse(const std::string &i)
 		{
 			iuse = split_string(i);
-			sort(iuse.begin(), iuse.end());
-			iuse.erase(unique(iuse.begin(), iuse.end()), iuse.end());
+			sort_uniquify(iuse);
 		}
 
 		std::string get_iuse() const

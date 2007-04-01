@@ -538,8 +538,16 @@ sig_handler(int sig)
 	if(sig == SIGSEGV)
 		fprintf(stderr,
 				"Received SIGSEGV - you probably found a bug in eix.\n"
-				"Please post the output of eix -V along with your bugreport.\n"
-				"Sorry for the inconvenience.\n");
+				"Please proceed with the following few instructions and help us find the bug:\n"
+				" * install gdb (sys-dev/gdb)\n"
+				" * compile eix with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
+				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
+				" * type \"run\" and wait for the segfault to happen\n"
+				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
+				" * post a bugreport and be sure to include the output from gdb ..\n"
+				"\n"
+				"Sorry for the inconvenience and thanks in advance!\n",
+				program_name, program_name);
 	exit(1);
 }
 

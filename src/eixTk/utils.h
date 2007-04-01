@@ -100,4 +100,43 @@ class PercentStatus {
 /* Print version of eix to stdout. */
 void dump_version(int exit_code = -1);
 
+
+/** Sort and unique. Return true if there were double entries */
+#ifdef UNIQUE_WORKS
+template<typename T>
+bool sort_uniquify(T &v, bool vector_is_ignored = false)
+{
+	std::sort(v.begin(), v.end());
+	typename T::iterator i = std::unique(v.begin(), v.end());
+	if(i == v.end())
+		return false;
+	if(vector_is_ignored)
+		return true;
+	v.erase(i, v.end());
+	return true;
+}
+
+#else
+#include <set>
+
+template<typename T>
+bool sort_uniquify(std::vector<T> &v, bool vector_is_ignored = false)
+{
+	std::set<T> s;
+	for(typename std::vector<T>::const_iterator i = v.begin();
+		i != v.end(); ++i)
+		s.insert(*i);
+	bool r = (s.size() != v.size());
+	if(vector_is_ignored)
+		return r;
+	v.clear();
+	for(typename std::set<T>::const_iterator i = s.begin();
+		i != s.end(); ++i)
+		v.push_back(*i);
+	return r;
+}
+
+#endif
+
+
 #endif /* __UTILS_H__ */

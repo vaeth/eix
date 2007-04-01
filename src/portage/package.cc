@@ -128,8 +128,7 @@ Package::sortedPushBack(Version *v)
 void Package::add_coll_iuse(const string &s)
 {
 	vector<string> iuse = split_string(coll_iuse + " " + s);
-	std::sort(iuse.begin(), iuse.end());
-	iuse.erase(std::unique(iuse.begin(), iuse.end()), iuse.end());
+	sort_uniquify(iuse);
 	coll_iuse = join_vector(iuse);
 }
 
@@ -143,8 +142,7 @@ void Package::collect_iuse()
 		(it->iuse).clear();
 #endif
 	}
-	std::sort(iuse.begin(), iuse.end());
-	iuse.erase(std::unique(iuse.begin(), iuse.end()), iuse.end());
+	sort_uniquify(iuse);
 	coll_iuse = join_vector(iuse);
 }
 

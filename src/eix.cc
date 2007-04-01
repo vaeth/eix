@@ -169,12 +169,13 @@ sig_handler(int sig)
 				"Please proceed with the following few instructions and help us find the bug:\n"
 				" * install gdb (sys-dev/gdb)\n"
 				" * compile eix with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
-				" * enter gdb with \"gdb --args %s your_arguments_for_eix\"\n"
+				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
 				" * type \"run\" and wait for the segfault to happen\n"
 				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
 				" * post a bugreport and be sure to include the output from gdb ..\n"
 				"\n"
-				"Sorry for the inconvenience and thanks in advance!\n", program_name);
+				"Sorry for the inconvenience and thanks in advance!\n",
+				program_name, program_name);
 	exit(1);
 }
 
@@ -371,7 +372,7 @@ print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_us
 			if(!((*overlay_used)[i-1]))
 				continue;
 		cout << fmt.overlay_keytext(i) << " ";
-		cout << header.getOverlay(i) << endl;
+		cout << header.getOverlay(i) << "\n";
 		printed_overlay = true;
 	}
 	return printed_overlay;
@@ -645,7 +646,7 @@ void print_vector(const vector<string> &vec)
 {
 	cout << ":\n\n";
 	for(vector<string>::const_iterator it=vec.begin(); it != vec.end(); it++)
-		cout << *it << endl;
+		cout << *it << "\n";
 	cout << "--\n\n";
 }
 

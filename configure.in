@@ -19,7 +19,7 @@ dnl Well define the following if we don't have one:
 AC_CHECK_FUNCS(strndup, , )
 
 dnl We use these optionally:
-AC_CHECK_FUNCS([canonicalize_file_name realpath strtoull], , )
+AC_CHECK_FUNCS([canonicalize_file_name realpath strtoull vfork], , )
 
 AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then
@@ -52,6 +52,62 @@ AC_TRY_COMPILE([ #include <dirent.h>
 
 AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
 
+dnl Check if std::unique works
+AC_MSG_CHECKING(if std::unique seems to work)
+AC_ARG_WITH(unique,[  --with-unique   Assume that unique works ], [
+		if test "x${withval}" = "xno"; then
+			UNIQUE_WORKS=""
+		else
+			UNIQUE_WORKS="1"
+		fi
+	],
+	[
+		UNIQUE_WORKS="unknown"
+	])
+if test "${UNIQUE_WORKS}" = "unknown"; then
+AC_TRY_RUN([
+	  #include <vector>
+	  #include <string>
+	  using namespace std;
+	  #define UNUSED(p) ((void)(p))
+	  int main(int argc, char** argv)
+	  {
+		UNUSED(argc); UNUSED(argv);
+		const char *a[] = {
+				"1", "2", "2", "3", "3", "4", "4", "5", NULL,
+				"1", "1", "2", "3", "4", "5", "5", "5", NULL,
+				"1", "2", "3", "4", "5", NULL,
+				NULL };
+		const char *b[]= {
+				"1", "2", "3", "4", "5", NULL };
+		typedef vector<string>::size_type ind;
+		for(ind i = 0; a[i]; i++) {
+			vector<string> t;
+			while(a[i])
+				t.push_back(a[i++]);
+			t.erase(unique(t.begin(), t.end()), t.end());
+			for(ind j = 0; ; j++) {
+				if(j == t.size()) {
+					if(b[j])
+						return 1;
+					break;
+				}
+				if(!b[j])
+					return 1;
+				if(t[j] != b[j])
+					return 1;
+			}
+		}
+		return 0;
+	  }
+	],
+	[AC_MSG_RESULT(yes); UNIQUE_WORKS=1 ],
+	[AC_MSG_RESULT(no);  UNIQUE_WORKS="" ])
+fi
+if test -n "${UNIQUE_WORKS}"; then
+	AC_DEFINE(UNIQUE_WORKS,1, Define to 1 if std::unique() works reliable)
+fi
+
 dnl What about sqlite?
 AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite ],[
 		if test "x${withval}" = "xno"; then
@@ -65,7 +121,7 @@ AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite
 		fi
 	],
 	[
-		SQLITE_LIBS=`pkg-config --libs sqlite3`
+		SQLITE_LIBS=`pkg-config --libs sqlite3 2>/dev/null`
 	])
 
 if test -n "${SQLITE_LIBS}"; then
