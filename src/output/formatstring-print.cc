@@ -75,7 +75,7 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 			ret.append(a[addindex+1]);
 	}
 	char *tmp;
-	if( asprintf(&tmp, fmt.instUseFormat.c_str(), ret.c_str()) < 0)
+	if(asprintf_stringarg(&tmp, fmt.instUseFormat.c_str(), ret.c_str()) < 0)
 		return ret;
 	ret = tmp;
 	free(tmp);

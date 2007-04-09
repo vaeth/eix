@@ -136,7 +136,7 @@ bool EbuildCache::make_cachefile(const char *name, const string &dir, const Pack
 	}
 	else
 		cachefile = new string(m_prefix_exec + EBUILD_DEPEND_TEMP);
-#if HAVE_VFORK
+#if defined(HAVE_VFORK)
 	pid_t child = vfork();
 #else
 	pid_t child = fork();

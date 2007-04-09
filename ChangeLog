@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix nonexistent asprintf for solaris
+	  http://bugs.gentoo.org/show_bug.cgi?id=173763
+
 *eix-0.9.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix partly http://bugs.gentoo.org/show_bug.cgi?id=169127

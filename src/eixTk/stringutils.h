@@ -129,4 +129,10 @@ void make_set(std::set<std::string> *the_set, const std::vector<std::string> &th
  * @return           Reference to cleaned vector (it anyway the same vector you gave us). */
 std::vector<std::string>& resolve_plus_minus(std::vector<std::string> &v, bool warn_plus = true, bool order = true);
 
+#if defined(HAVE_ASPRINTF)
+#define asprintf_stringarg(tmp, format, arg) asprintf(tmp, format, arg)
+#else
+int asprintf_stringarg(char **tmp, const char *format, const char *arg);
+#endif
+
 #endif /* __STRINGUTILS_H__ */
