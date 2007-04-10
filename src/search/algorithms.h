@@ -47,7 +47,6 @@
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else
 #define FNMATCH_FLAGS 0
-#define FNMATCH_FLAGS FNM_CASEFOLD
 #endif /* defined FNM_CASEFOLD */
 
 #define UNUSED(p) ((void)(p))
@@ -145,7 +144,7 @@ class WildcardAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator () (const char *s, Package *p) {
 			UNUSED(p);
-			return !fnmatch(search_string.c_str(), const_cast<char *>(s), FNM_CASEFOLD);
+			return !fnmatch(search_string.c_str(), const_cast<char *>(s), FNM_FLAGS);
 		}
 };
 
