@@ -189,7 +189,7 @@ Only match packages with a nontrivial slot, i.e. where SLOT is nonempty and diff
 Only match packages with at least two different slots.
 In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
 .TP
-.BR -u ", " --upgrade
+.BR -u ", " --update
 Only match packages which have at least one slotted version installed which
 is not the best version within that slot.
 This means that you should either upgrade or downgrade that package.
