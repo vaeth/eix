@@ -36,6 +36,7 @@
 
 #if !defined HAVE_STRNDUP
 /** strndup in case we don't have one. */
+#include <unistd.h>
 char *strndup(const char *s, size_t n);
 #endif /* !defined HAVE_STRNDUP */
 

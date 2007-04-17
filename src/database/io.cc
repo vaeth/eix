@@ -36,7 +36,6 @@
 #include <eixTk/auto_ptr.h>
 
 #include <dirent.h>
-#include <unistd.h>
 
 using namespace std;
 

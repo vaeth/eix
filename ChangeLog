@@ -6,6 +6,8 @@
 	  for solaris, see http://bugs.gentoo.org/show_bug.cgi?id=173763
 	- Fix manpage typo --update:
 	  http://bugs.gentoo.org/show_bug.cgi?id=174489
+	- Fix some missing include unistd.h (required for linux 2.4), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=174697
 
 *eix-0.9.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

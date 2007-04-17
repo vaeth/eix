@@ -30,7 +30,12 @@
 #define EIX__IO_H__
 
 #include <string>
+
+#if !defined(__OpenBSD__)
 #include <stdint.h>
+#endif
+
+#include <unistd.h>
 
 class Package;
 class Version;
