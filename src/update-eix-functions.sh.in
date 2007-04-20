@@ -31,9 +31,14 @@
 
 LOCAL_EPREFIX_PORTAGE_EXEC="$(update-eix --print EPREFIX_PORTAGE_EXEC)"
 
-shopt -s sourcepath &>/dev/null
-PATH="${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d:${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin:${PATH}" \
-	source functions.sh
+if [[ -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh" ]]; then
+	source "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"
+elif [[ -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh" ]]; then
+	source "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
+else
+	echo "${0##*/}: Cannot read functions.sh" >&2
+	exit 2
+fi
 
 die () {
 	eerror "${*}"

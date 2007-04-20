@@ -161,7 +161,7 @@ print_help(int ret)
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
-			" -o  --output            output to another file than"EIX_CACHEFILE"\n"
+			" -o  --output            output to another file than "EIX_CACHEFILE"\n"
 			"                         In addition, all permission checks are omitted.\n"
 			" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
 			"                         Note that you can also exclude PORTDIR\n"
