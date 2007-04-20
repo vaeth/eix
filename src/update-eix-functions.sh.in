@@ -31,7 +31,9 @@
 
 LOCAL_EPREFIX_PORTAGE_EXEC="$(update-eix --print EPREFIX_PORTAGE_EXEC)"
 
-source "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
+shopt -s sourcepath &>/dev/null
+PATH="${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d:${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin:${PATH}" \
+	source functions.sh
 
 die () {
 	eerror "${*}"
