@@ -135,6 +135,9 @@
 /* Define to 1 if std::unique() works reliable */
 #undef UNIQUE_WORKS
 
+/* Define to 1 if bzlib can be used */
+#undef USE_BZLIB
+
 /* Version number of package */
 #undef VERSION
 

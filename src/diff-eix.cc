@@ -69,6 +69,7 @@ PortageSettings *portagesettings;
 PrintFormat     format_for_new(get_package_property, print_package_property);
 PrintFormat     format_for_old;
 VarDbPkg       *varpkg_db;
+DBHeader        old_header, new_header;
 Node           *format_new, *format_delete, *format_changed;
 
 static void
@@ -294,19 +295,19 @@ print_changed_package(Package *op, Package *np)
 	Package *p[2];
 	p[0] = op;
 	p[1] = np;
-	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, varpkg_db, portagesettings);
+	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings);
 }
 
 void
 print_found_package(Package *p)
 {
-	format_for_new.print(p, format_new, varpkg_db, portagesettings);
+	format_for_new.print(p, format_new, &new_header, varpkg_db, portagesettings);
 }
 
 void
 print_lost_package(Package *p)
 {
-	format_for_old.print(p, format_delete, varpkg_db, portagesettings);
+	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings);
 }
 
 
@@ -394,6 +395,8 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
+	format_for_new.inst_overlay     = eixrc.getBool("CHECK_INSTALLED_OVERLAYS");
+	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
 	format_for_new.colon_slots      = eixrc.getBool("COLON_SLOTS");
 	format_for_new.colored_slots    = eixrc.getBool("COLORED_SLOTS");
 	format_for_new.color_original   = eixrc.getBool("COLOR_ORIGINAL");
@@ -431,12 +434,10 @@ run_diff_eix(int argc, char *argv[])
 	else
 		format_for_new.recommend_local  = eixrc.getBool("RECOMMEND_ALWAYS_LOCAL");
 
-	DBHeader old_header;
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);
 	set_stability.set_stability(old_tree);
 
-	DBHeader new_header;
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree);
 	set_stability.set_stability(new_tree);

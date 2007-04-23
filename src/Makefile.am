@@ -55,7 +55,8 @@ eix_LDADD = database/libdatabase.a \
 			output/liboutput.a \
 			eixTk/libeixTk.a \
 			eixrc/libeixrc.a \
-			search/libsearch.a
+			search/libsearch.a \
+			@BZLIB_LIBS@
 
 # The update-tool for our database
 update_eix_SOURCES = update-eix.cc \
@@ -68,7 +69,8 @@ update_eix_LDADD = database/libdatabase.a \
 				   portage/cache/libcache.a \
 				   eixTk/libeixTk.a \
 				   eixrc/libeixrc.a \
-				   @SQLITE_LIBS@
+				   @SQLITE_LIBS@ \
+				   @BZLIB_LIBS@
 
 
 # The diff-tool for our database
@@ -82,7 +84,8 @@ diff_eix_LDADD = database/libdatabase.a \
 				 portage/libportage.a \
 				 output/liboutput.a \
 				 eixTk/libeixTk.a \
-				 eixrc/libeixrc.a
+				 eixrc/libeixrc.a \
+				 @BZLIB_LIBS@
 
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \

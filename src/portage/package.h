@@ -108,7 +108,7 @@ class Package
 		/** True if all versions come from one overlay. */
 		bool have_same_overlay_key;
 
-		/** True if all versions come from at most one overlay. */
+		/** True if all versions come from at least two overlays. */
 		bool at_least_two_overlays;
 
 		/** The largest overlay from which one of the version comes. */

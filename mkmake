@@ -24,7 +24,7 @@ KEEPENV=''
 SAVEFLAGS=''
 SQLITE=''
 PEDANTIC=''
-while getopts 'qSnepc?hH' OPTION; do
+while getopts 'qsSnepc?hH' OPTION; do
 case "$OPTION" in
 	q) QUIET='&>/dev/null';;
 	n) EARLYSTOP=1;;

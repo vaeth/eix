@@ -319,6 +319,7 @@ setup_defaults()
 	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.mark_version        = rc["MARK_VERSIONS"];
 	format.show_slots          = rc.getBool("PRINT_SLOTS");
+	format.inst_overlay        = rc.getBool("CHECK_INSTALLED_OVERLAYS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
@@ -568,7 +569,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != 0)
-			format.print(*it, &varpkg_db, &portagesettings);
+			format.print(*it, &header, &varpkg_db, &portagesettings);
 	}
 	switch(overlay_mode)
 	{
@@ -589,7 +590,7 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
 			++it)
-			format.print(*it, &varpkg_db, &portagesettings);
+			format.print(*it, &header, &varpkg_db, &portagesettings);
 	}
 	bool printed_overlay = false;
 	if(need_overlay_table)

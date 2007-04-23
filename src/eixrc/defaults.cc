@@ -1044,6 +1044,12 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "CHECK_INSTALLED_OVERLAYS",
+			"true", "If true, always check from which overlay a package was installed.\n"
+			"Otherwise, only packages appearing in different overlays are checked.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
 			"false", "If true, always print the number of matches in the last line.")
 		);

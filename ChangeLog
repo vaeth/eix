@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Print overlay from which a version was installed.
+	- Try to mark versions as "installed" only for appropriate overlay.
+
 *eix-0.9.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix nonexistent asprintf and broken FNM_CASEFOLD handling

@@ -35,8 +35,15 @@
 #include <portage/package.h>
 #include <output/formatstring.h>
 #include <output/formatstring-print.h>
+#include <database/header.h>
 
 #include <dirent.h>
+
+#if defined(USE_BZLIB)
+#include <bzlib.h>
+#else
+#define UNUSED(p) ((void)(p))
+#endif
 
 using namespace std;
 
@@ -65,16 +72,21 @@ vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const 
 	return &(cat_it->second);
 }
 
-/** Returns true if v is in vec. v=NULL is always in vec */
-bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v)
+/** Returns true if v is in vec. v=NULL is always in vec.
+    If a serious result is found and r is nonzero, r points to that result */
+bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r)
 {
 	if(vec)
 	{
 		if(!v)
 			return true;
-		for(vector<InstVersion>::size_type i = 0; i < vec->size(); ++i)
-			if((*vec)[i] == *v)
+		for(vector<InstVersion>::size_type i = 0; i < vec->size(); ++i) {
+			if((*vec)[i] == *v) {
+				if(r)
+					*r = &((*vec)[i]);
 				return true;
+			}
+		}
 	}
 	return false;
 }
@@ -87,6 +99,99 @@ vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p)
 	if(!vec)
 		return 0;
 	return vec->size();
+}
+
+bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
+{
+#if defined(USE_BZLIB)
+	if(v.know_overlay)
+		return !v.overlay_failed;
+	v.know_overlay = v.overlay_failed = true;
+	BZFILE *fh = BZ2_bzopen(
+		(_directory + p.category + "/" + p.name + "-" + v.getFull() + "/environment.bz2").c_str(),
+		"rb");
+	if(!fh)
+		return false;
+	typedef int BufInd;
+	const BufInd bufsize = 256;
+	const BufInd strsize = 7;
+	char buffer[bufsize + 1];
+	BufInd bufend = BZ2_bzread(fh, buffer, bufsize);
+	if(bufend < strsize) {
+		BZ2_bzclose(fh);
+		return false;
+	}
+	// find EBUILD=...
+	BufInd i = 0;
+	bool in_newline = true;
+	for(;;) {
+		if(i+strsize < bufend) {
+			if(in_newline &&
+				(strncmp(buffer + i, "EBUILD=", strsize) == 0))
+				break;
+		}
+		else {
+			BufInd j = bufend - i;
+			if(j)
+				strncpy(buffer, buffer + i, j);
+			bufend = BZ2_bzread(fh, buffer + j, bufsize - j);
+			if(bufend > 0)
+				bufend += j;
+			if(bufend < strsize) {
+				BZ2_bzclose(fh);
+				return false;
+			}
+			i = 0;
+			continue;
+		}
+		in_newline = false;
+		while(i < bufend) {
+			if(buffer[i++] == '\n') {
+				in_newline = true;
+				break;
+			}
+		}
+	}
+	i += strsize;
+	// Store EBUILD=  content in path;
+	string path;
+	bool done = false;
+	for(;;) {
+		char *ptr = buffer + i;
+		for(; i < bufend; i++) {
+			if(buffer[i] == '\n') {
+				done = true;
+				break;
+			}
+		}
+		buffer[i] = '\0';
+		path.append(ptr);
+		if(done)
+			break;
+		i = 0;
+		bufend = BZ2_bzread(fh, buffer, bufsize);
+		if(bufend <=0)
+			break;
+	}
+	BZ2_bzclose(fh);
+	// Chop /*/*/*
+	string::size_type l = path.size() + 1;
+	for(int c = 0; c < 3; c++) {
+		l = path.rfind('/', l - 1);
+		if(l == string::npos)
+			return false;
+	}
+	path.erase(l);
+	if(header.find_overlay(&v.overlay_key, path.c_str(), portdir, false, true)) {
+		v.overlay_failed = false;
+		return true;
+	}
+	v.overlay_keytext = path;
+	return false;
+#else
+	UNUSED(p); UNUSED(v); UNUSED(header);
+	return false;
+#endif
 }
 
 bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const

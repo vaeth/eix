@@ -527,7 +527,7 @@ list of strings. These strings will be output on the following places:
 
 .BR "2nd string: " "Before slotname (if slotname is printed)"
 
-.BR "3rd string: " "After version number + slotname"
+.BR "3rd string: " "After version number + slotname + overly"
 
 .BR "4th string: " "After each complete entry"
 
@@ -1346,6 +1346,10 @@ package for which not the slot with the best stable version is installed.
 .TP
 .BR PRINT_SLOTS " " (true / false)
 If false, no slot information is printed.
+.TP
+.BR CHECK_INSTALLED_OVERLAYS " " (true / false)
+If true, always check from which overlay a package was installed.
+Otherwise, only packages appearing in different overlays are checked.
 .TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this

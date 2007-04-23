@@ -36,6 +36,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/ansicolor.h>
 
+class DBHeader;
 class VarDbPkg;
 class PortageSettings;
 
@@ -199,6 +200,7 @@ class PrintFormat {
 		   passing this argument through all sub-functions.
 		   We do it that way since we do not want to set it "globally":
 		   The pointers might possibly have changed until we use them */
+		DBHeader      *header;
 		VarDbPkg      *vardb;
 		PortageSettings *portagesettings;
 
@@ -214,7 +216,8 @@ class PrintFormat {
 		     slot_sorted,         /**< Print sorted by slots */
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
-		     recommend_local;     /**< Recommendation tests based on local settings? */
+		     recommend_local,     /**< Recommendation tests based on local settings? */
+		     inst_overlay;        /**< Print always overlay for installed versions? */
 
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,    /**< Color for unstable versions */
@@ -293,22 +296,22 @@ class PrintFormat {
 
 		std::string overlay_keytext(Version::Overlay overlay, bool never_color = false) const;
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, VarDbPkg *vardbpkg, PortageSettings *ps) {
-			vardb = vardbpkg; portagesettings = ps;
+		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
+			header = dbheader; vardb = vardbpkg; portagesettings = ps;
 			recPrint(entity, print_property, get_property, root);
 			fputc('\n', stdout);
 			vardb=NULL; portagesettings = NULL;
 		}
 
-		void print(void *entity, Node *root, VarDbPkg *vardbpkg, PortageSettings *ps) {
-			vardb = vardbpkg; portagesettings = ps;
+		void print(void *entity, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
+			header = dbheader; vardb = vardbpkg; portagesettings = ps;
 			recPrint(entity, m_print_property, m_get_property, root);
 			fputc('\n', stdout);
 			vardb=NULL; portagesettings = NULL;
 		}
 
-		void print(void *entity, VarDbPkg *vardbpkg, PortageSettings *ps) {
-			vardb = vardbpkg; portagesettings = ps;
+		void print(void *entity, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
+			header = dbheader; vardb = vardbpkg; portagesettings = ps;
 			recPrint(entity, m_print_property, m_get_property, m_root);
 			fputc('\n', stdout);
 			vardb=NULL; portagesettings = NULL;

@@ -37,6 +37,7 @@
 #include <portage/instversion.h>
 
 class PrintFormat;
+class DBHeader;
 
 /** Holds every installed version of a package. */
 class VarDbPkg {
@@ -73,6 +74,7 @@ class VarDbPkg {
 
 		bool readSlot(const Package &p, InstVersion &v) const;
 		bool readUse(const Package &p, InstVersion &v) const;
+		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header, const char *portdir) const;
 
 		/** Find installed versions
 		 * @return NULL if not found .. else pointer to vector of versions. */
@@ -80,14 +82,16 @@ class VarDbPkg {
 			return getInstalledVector(p.category, p.name);
 		};
 
-		/** Returns true if v is in vec. v=NULL is always in vec */
-		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULL);
+		/** Returns true if v is in vec. v=NULL is always in vec.
+		    If a serious result is found and r is nonzero, r points to that result */
+		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULL, InstVersion **r = NULL);
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
-		 * @param v If not NULL, check for this BasicVersion. */
-		bool isInstalled(const Package &p, const BasicVersion *v = NULL)
-		{ return isInVec(getInstalledVector(p), v); }
+		 * @param v If not NULL, check for this BasicVersion.
+		   If a particular version is foundand r is nonzero, r points to that version */
+		bool isInstalled(const Package &p, const BasicVersion *v = NULL, InstVersion **r = NULL)
+		{ return isInVec(getInstalledVector(p), v, r); }
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */

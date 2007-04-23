@@ -102,6 +102,9 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		return "";
 	string ret;
 	bool useflags;
+	bool color = !fmt.no_color;
+	if(pure_text)
+		color = false;
 	for(;;) {
 		if(!p.guess_slotname(*it, fmt.vardb))
 			it->slot = "?";
@@ -109,6 +112,26 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			ret.append(prepend[0]);
 		ret.append(get_basic_version(&fmt, &(*it), pure_text,
 			((prepend.size() > 1) ? prepend[1] : "")));
+		if(fmt.inst_overlay || !p.have_same_overlay_key) {
+			if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
+				if(it->overlay_key>0) {
+					if(color)
+						ret.append(AnsiColor(AnsiColor::acDefault).asString());
+					ret.append(fmt.overlay_keytext(it->overlay_key, !color));
+				}
+			}
+			else if(!it->overlay_keytext.empty()) {
+				if(color) {
+					ret.append(AnsiColor(AnsiColor::acDefault).asString());
+					ret.append(fmt.color_virtualkey);
+				}
+				ret.append("[");
+				ret.append(it->overlay_keytext);
+				ret.append("]");
+				if(color)
+					ret.append(AnsiColor(AnsiColor::acDefault).asString());
+			}
+		}
 		if(prepend.size() > 2)
 			ret.append(prepend[2]);
 		if(formattype & INST_WITH_DATE)
@@ -165,12 +188,21 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 {
 	bool is_installed = false;
 	bool is_marked = false;
+	InstVersion *inst = NULL;
 	if(!fmt->no_color)
 	{
 		if(fmt->vardb)
-			is_installed = fmt->vardb->isInstalled(*package, version);
+			is_installed = fmt->vardb->isInstalled(*package, version, &inst);
 		if(fmt->marked_list)
 			is_marked = fmt->marked_list->is_marked(*package, version);
+	}
+
+	// do not mark installed version if it is from a different overlay:
+	if(is_installed && inst && (!(package->have_same_overlay_key))) {
+		if(fmt->vardb->readOverlay(*package, *inst, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str())) {
+			if((inst->overlay_key) != (version->overlay_key))
+				is_installed = false;
+		}
 	}
 
 	if(fmt->style_version_lines)

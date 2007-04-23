@@ -30,6 +30,7 @@
 #define __INSTVERSION_H__
 
 #include <portage/basicversion.h>
+#include <portage/version.h>
 #include <set>
 
 /** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
@@ -42,16 +43,30 @@ class InstVersion : public BasicVersion, public Keywords {
 		/** Similarly for iuse and usedUse: */
 		bool know_use;
 
+		/** Similarly for overlay_keys */
+		bool know_overlay, overlay_failed;
+		Version::Overlay overlay_key;
+		std::string overlay_keytext;
+
 		time_t instDate;                   /**< Installation date according to vardbpkg */
 		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
 		std::set<std::string> usedUse;     /**< Those useflags in iuse actually used    */
 
-		InstVersion() : know_slot(false), read_failed(false), know_use(false), instDate(0)
-		{ }
+		void init() {
+			know_slot = false;
+			read_failed = false;
+			know_use = false;
+			know_overlay = false;
+			overlay_failed = true;
+			instDate = 0;
+		}
+
+		InstVersion()
+		{ init(); }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		InstVersion(const char* str) : BasicVersion(str), know_slot(false), read_failed(false), know_use(false), instDate(0)
-		{ }
+		InstVersion(const char* str) : BasicVersion(str)
+		{ init(); }
 
 		/** The equality operator does not test the additional data */
 		bool operator == (const InstVersion &v) const

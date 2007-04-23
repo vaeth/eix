@@ -1,4 +1,4 @@
-AC_INIT(eix, 0.9.3, http://sourceforge.net/projects/eix/)
+AC_INIT(eix, 0.9.4, http://sourceforge.net/projects/eix/)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -52,6 +52,38 @@ AC_TRY_COMPILE([ #include <dirent.h>
 
 AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
 
+dnl Use bzlib?
+AC_ARG_WITH(bzlib,[  --with-bzlib   Use bzlib ], [
+	if test "x${withval}" = "xno"; then
+		USE_BZLIB=""
+	else
+		USE_BZLIB="1"
+	fi
+	],
+	[
+		USE_BZLIB="test"
+	])
+if test -n "${USE_BZLIB}"; then
+	AC_CHECK_HEADER(bzlib.h, [
+		USE_BZLIB="1"
+	],
+	[
+		if test "x${USE_BZLIB}" = "xtest"; then
+			USE_BZLIB=""
+		else
+			AC_MSG_ERROR("You required bzlib but bzlib.h cannot be found")
+		fi
+	])
+fi
+if test -n "${USE_BZLIB}"; then
+	BZLIB_LIBS="-lbz2"
+	AC_DEFINE(USE_BZLIB,1, Define to 1 if bzlib can be used)
+else
+	BZLIB_LIBS=""
+	AC_MSG_WARN("no support for bzlib = no support for installed overlay information")
+fi
+AC_SUBST(BZLIB_LIBS)
+
 dnl Check if std::unique works
 AC_MSG_CHECKING(if std::unique seems to work)
 AC_ARG_WITH(unique,[  --with-unique   Assume that unique works ], [
@@ -64,7 +96,7 @@ AC_ARG_WITH(unique,[  --with-unique   Assume that unique works ], [
 	[
 		UNIQUE_WORKS="unknown"
 	])
-if test "${UNIQUE_WORKS}" = "unknown"; then
+if test "x${UNIQUE_WORKS}" = "xunknown"; then
 AC_TRY_RUN([
 	  #include <vector>
 	  #include <string>
@@ -101,7 +133,7 @@ AC_TRY_RUN([
 		return 0;
 	  }
 	],
-	[AC_MSG_RESULT(yes); UNIQUE_WORKS=1 ],
+	[AC_MSG_RESULT(yes); UNIQUE_WORKS="1" ],
 	[AC_MSG_RESULT(no);  UNIQUE_WORKS="" ])
 fi
 if test -n "${UNIQUE_WORKS}"; then
@@ -113,15 +145,15 @@ AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite
 		if test "x${withval}" = "xno"; then
 			SQLITE_LIBS=""
 		else
-			SQLITE_LIBS=`pkg-config --libs sqlite3`
+			SQLITE_LIBS="`pkg-config --libs sqlite3`"
 			# If pkg-config is not available or failed, we use a default
 			if test -z "${SQLITE_LIBS}"; then
-				SQLITE_LIBS=-lsqlite3
+				SQLITE_LIBS="-lsqlite3"
 			fi
 		fi
 	],
 	[
-		SQLITE_LIBS=`pkg-config --libs sqlite3 2>/dev/null`
+		SQLITE_LIBS="`pkg-config --libs sqlite3 2>/dev/null`"
 	])
 
 if test -n "${SQLITE_LIBS}"; then

@@ -183,9 +183,13 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 	}
 	if(overlay_translations)
 		overlay = (*overlay_translations)[ overlay - 1 ];
-	stringstream ss;
-	ss << overlay;
-	ss >> text;
+	if(overlay) {
+		stringstream ss;
+		ss << overlay;
+		ss >> text;
+	}
+	else
+		text = "?";
 	return start + text + end;
 }
 
