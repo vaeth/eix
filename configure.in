@@ -52,8 +52,8 @@ AC_TRY_COMPILE([ #include <dirent.h>
 
 AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
 
-dnl Use bzlib?
-AC_ARG_WITH(bzlib,[  --with-bzlib   Use bzlib ], [
+dnl Use bzip2?
+AC_ARG_WITH(bzip2,[  --with-bzip2    Use libbz2 (required for detecting installed overlays)], [
 	if test "x${withval}" = "xno"; then
 		USE_BZLIB=""
 	else
@@ -64,28 +64,38 @@ AC_ARG_WITH(bzlib,[  --with-bzlib   Use bzlib ], [
 		USE_BZLIB="test"
 	])
 if test -n "${USE_BZLIB}"; then
-	AC_CHECK_HEADER(bzlib.h, [
+	AC_MSG_CHECKING(whether libbz2 is usable)
+	BZLIB_LIBS="-lbz2"
+	myoLIBS="${LIBS}"
+	LIBS="${LIBS} ${BZLIB_LIBS}"
+	AC_TRY_LINK([ #include <bzlib.h>
+	],
+	[
+	  BZ2_bzopen("dummy","rb");
+	],
+	[
+		AC_MSG_RESULT(yes)
 		USE_BZLIB="1"
 	],
 	[
-		if test "x${USE_BZLIB}" = "xtest"; then
-			USE_BZLIB=""
-		else
-			AC_MSG_ERROR("You required bzlib but bzlib.h cannot be found")
+		AC_MSG_RESULT(no)
+		if test "x${USE_BZLIB}" != "xtest"; then
+			AC_MSG_ERROR("bzip2 required but libbz2 is unusable")
 		fi
+		USE_BZLIB=""
+		BZLIB_LIBS=""
 	])
+	LIBS="${myoLIBS}"
 fi
 if test -n "${USE_BZLIB}"; then
-	BZLIB_LIBS="-lbz2"
 	AC_DEFINE(USE_BZLIB,1, Define to 1 if bzlib can be used)
 else
-	BZLIB_LIBS=""
-	AC_MSG_WARN("no support for bzlib = no support for installed overlay information")
+	AC_MSG_WARN("no libbz2: eix will not detect installed overlays")
 fi
 AC_SUBST(BZLIB_LIBS)
 
 dnl Check if std::unique works
-AC_MSG_CHECKING(if std::unique seems to work)
+AC_MSG_CHECKING(whether std::unique seems to work)
 AC_ARG_WITH(unique,[  --with-unique   Assume that unique works ], [
 		if test "x${withval}" = "xno"; then
 			UNIQUE_WORKS=""
@@ -133,8 +143,14 @@ AC_TRY_RUN([
 		return 0;
 	  }
 	],
-	[AC_MSG_RESULT(yes); UNIQUE_WORKS="1" ],
-	[AC_MSG_RESULT(no);  UNIQUE_WORKS="" ])
+	[
+		AC_MSG_RESULT(yes)
+		UNIQUE_WORKS="1"
+	],
+	[
+		AC_MSG_RESULT(no)
+		UNIQUE_WORKS=""
+	])
 fi
 if test -n "${UNIQUE_WORKS}"; then
 	AC_DEFINE(UNIQUE_WORKS,1, Define to 1 if std::unique() works reliable)

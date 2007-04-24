@@ -527,27 +527,29 @@ list of strings. These strings will be output on the following places:
 
 .BR "2nd string: " "Before slotname (if slotname is printed)"
 
-.BR "3rd string: " "After version number + slotname + overly"
+.BR "3rd string: " "Before overlay (if overlay is printed)"
 
-.BR "4th string: " "After each complete entry"
+.BR "4rd string: " "After version number + slotname + overlay"
 
-.BR "5th string: " "In front of the installation date (if it is printed)"
+.BR "5th string: " "After each complete entry"
 
-.BR "6th string: " "After the installation date (if it is printed)"
+.BR "6th string: " "In front of the installation date (if it is printed)"
 
-.BR "7th string: " "In front of the useflags (if they are printed)"
+.BR "7th string: " "After the installation date (if it is printed)"
 
-.BR "8th string: " "After the useflags (if they are printed)"
+.BR "8th string: " "In front of the useflags (if they are printed)"
 
-.BR "9th string: " "Before each set useflag"
+.BR "9th string: " "After the useflags (if they are printed)"
 
-.BR "10th string: " "After each set useflag"
+.BR "10th string: " "Before each set useflag"
 
-.BR "11th string: " "Before each unset useflag. This defaults to '-'"
+.BR "11th string: " "After each set useflag"
 
-.BR "12th string: " "After each unset useflag."
+.BR "12th string: " "Before each unset useflag. This defaults to '-'"
 
-.BR "13th string: " "Between two entries. The default is to vary this string between \" \" and \"\\n\\t\\t\\t  \", depending on whether useflags are printed or --versionlines is in effect"
+.BR "13th string: " "After each unset useflag."
+
+.BR "14th string: " "Between two entries. The default is to vary this string between \" \" and \"\\n\\t\\t\\t  \", depending on whether useflags are printed or --versionlines is in effect"
 
 .BR "later strings " "are ignored"
 
@@ -1349,7 +1351,10 @@ If false, no slot information is printed.
 .TP
 .BR CHECK_INSTALLED_OVERLAYS " " (true / false)
 If true, always check from which overlay a package was installed.
-Otherwise, only packages appearing in different overlays are checked.
+Otherwise, only installed packages which have versions appearing in different
+overlays are checked.
+The main advantage of setting this to false is a speed increase by avoiding
+a usually redundant disk access.
 .TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this

@@ -41,8 +41,6 @@
 
 #if defined(USE_BZLIB)
 #include <bzlib.h>
-#else
-#define UNUSED(p) ((void)(p))
 #endif
 
 using namespace std;
@@ -101,9 +99,9 @@ vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p)
 	return vec->size();
 }
 
+#if defined(USE_BZLIB)
 bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
 {
-#if defined(USE_BZLIB)
 	if(v.know_overlay)
 		return !v.overlay_failed;
 	v.know_overlay = v.overlay_failed = true;
@@ -188,11 +186,8 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 	}
 	v.overlay_keytext = path;
 	return false;
-#else
-	UNUSED(p); UNUSED(v); UNUSED(header);
-	return false;
-#endif
 }
+#endif
 
 bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 {

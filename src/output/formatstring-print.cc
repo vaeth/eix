@@ -112,28 +112,38 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			ret.append(prepend[0]);
 		ret.append(get_basic_version(&fmt, &(*it), pure_text,
 			((prepend.size() > 1) ? prepend[1] : "")));
+#if defined(USE_BZLIB)
 		if(fmt.inst_overlay || !p.have_same_overlay_key) {
 			if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
 				if(it->overlay_key>0) {
-					if(color)
-						ret.append(AnsiColor(AnsiColor::acDefault).asString());
-					ret.append(fmt.overlay_keytext(it->overlay_key, !color));
+					if((!p.have_same_overlay_key) || (p.largest_overlay != it->overlay_key)) {
+						if(prepend.size() > 2)
+							ret.append(prepend[2]);
+						ret.append(fmt.overlay_keytext(it->overlay_key, !color));
+					}
 				}
 			}
-			else if(!it->overlay_keytext.empty()) {
-				if(color) {
-					ret.append(AnsiColor(AnsiColor::acDefault).asString());
+			else
+			// Uncomment if you do not want to print unreadable overlays as "[unknown]"
+			// if(!it->overlay_keytext.empty())
+			{
+				if(prepend.size() > 2)
+					ret.append(prepend[2]);
+				if(color)
 					ret.append(fmt.color_virtualkey);
-				}
 				ret.append("[");
-				ret.append(it->overlay_keytext);
+				if(it->overlay_keytext.empty())
+					ret.append("unknown");
+				else
+					ret.append(it->overlay_keytext);
 				ret.append("]");
 				if(color)
 					ret.append(AnsiColor(AnsiColor::acDefault).asString());
 			}
 		}
-		if(prepend.size() > 2)
-			ret.append(prepend[2]);
+#endif
+		if(prepend.size() > 3)
+			ret.append(prepend[3]);
 		if(formattype & INST_WITH_DATE)
 		{
 			string date =
@@ -143,11 +153,11 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 					it->instDate);
 			if(!date.empty())
 			{
-				if(prepend.size() > 4)
-					ret.append(prepend[4]);
-				ret.append(date);
 				if(prepend.size() > 5)
 					ret.append(prepend[5]);
+				ret.append(date);
+				if(prepend.size() > 6)
+					ret.append(prepend[6]);
 			}
 		}
 		useflags = false;
@@ -155,26 +165,26 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			const char *a[4];
 			for(vector<string>::size_type i=0; i<4; ++i) {
 				a[i] = NULL;
-				if(prepend.size() > i + 8)
-					if((i == 2) || (!prepend[i + 8].empty()))
-						a[i] = prepend[i + 8].c_str();
+				if(prepend.size() > i + 9)
+					if((i == 2) || (!prepend[i + 9].empty()))
+						a[i] = prepend[i + 9].c_str();
 			}
 			string inst_use = get_inst_use(p, *it, fmt, a);
 			if(!inst_use.empty()) {
-				if(prepend.size() > 6)
-					ret.append(prepend[6]);
-				ret.append(inst_use);
-				useflags = true;
 				if(prepend.size() > 7)
 					ret.append(prepend[7]);
+				ret.append(inst_use);
+				useflags = true;
+				if(prepend.size() > 8)
+					ret.append(prepend[8]);
 			}
 		}
-		if(prepend.size() > 3)
-			ret.append(prepend[3]);
+		if(prepend.size() > 4)
+			ret.append(prepend[4]);
 		if(++it == vec->end())
 			return ret;
-		if(prepend.size() > 12)
-			ret.append(prepend[12]);
+		if(prepend.size() > 13)
+			ret.append(prepend[13]);
 		else if((formattype & INST_WITH_NEWLINE) &&
 				(useflags || fmt.style_version_lines))
 				ret.append("\n\t\t\t  ");
@@ -197,6 +207,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			is_marked = fmt->marked_list->is_marked(*package, version);
 	}
 
+#if defined(USE_BZLIB)
 	// do not mark installed version if it is from a different overlay:
 	if(is_installed && inst && (!(package->have_same_overlay_key))) {
 		if(fmt->vardb->readOverlay(*package, *inst, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str())) {
@@ -204,6 +215,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 				is_installed = false;
 		}
 	}
+#endif
 
 	if(fmt->style_version_lines)
 		fputs("\n\t\t", stdout);

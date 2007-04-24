@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Print overlay from which a version was installed.
 	- Try to mark versions as "installed" only for appropriate overlay.
+	  (If no matching overlay exists, fall back to previous marking.)
+	- Change <installed:...> syntax by adding support for overlay output.
 
 *eix-0.9.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -423,7 +423,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLEDVERSIONS",
 			"<installedversions"
-			":(%{COLOR_INST_VERSION}):()::"
+			":(%{COLOR_INST_VERSION}):():()::"
 			":(%{COLOR_DATE})\\(:\\)()"
 			":\\(:\\)"
 			":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>",
@@ -434,7 +434,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLEDVERSIONS_COMPACT",
 			"<installedversionsshortdate"
-			":(%{COLOR_INST_VERSION}):():():"
+			":(%{COLOR_INST_VERSION}):():():():"
 			":@(%{COLOR_DATE}):()"
 			":\\(:\\)"
 			":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>",
@@ -445,7 +445,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLEDVERSIONS_VERBOSE",
 			"<installedversions"
-			":(%{COLOR_INST_TITLE})Version\\\\:() (%{COLOR_INST_VERSION}):():():"
+			":(%{COLOR_INST_TITLE})Version\\\\:() (%{COLOR_INST_VERSION}):():():():"
 			":\\n                          (%{COLOR_INST_TITLE})Date\\\\:()    "
 			"(%{COLOR_DATE}):()"
 			":\\n                          (%{COLOR_INST_TITLE})USE\\\\:()     "

@@ -74,7 +74,10 @@ class VarDbPkg {
 
 		bool readSlot(const Package &p, InstVersion &v) const;
 		bool readUse(const Package &p, InstVersion &v) const;
+
+#if defined(USE_BZLIB)
 		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header, const char *portdir) const;
+#endif
 
 		/** Find installed versions
 		 * @return NULL if not found .. else pointer to vector of versions. */
