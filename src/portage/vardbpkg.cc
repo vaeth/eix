@@ -104,9 +104,21 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 {
 	if(v.know_overlay)
 		return !v.overlay_failed;
+
+	// Do not really check if the package is only at one overlay.
+	if(!check_installed_overlays) {
+		if(p.have_same_overlay_key) {
+			v.know_overlay = true;
+			v.overlay_failed = false;
+			v.overlay_key = p.largest_overlay;
+			return true;
+		}
+	}
+
 	// Set default in case of error exit:
 	v.know_overlay = v.overlay_failed = true;
 	v.overlay_keytext.clear();
+
 	// Now read the data...
 	BZFILE *fh = BZ2_bzopen(
 		(_directory + p.category + "/" + p.name + "-" + v.getFull() + "/environment.bz2").c_str(),
@@ -122,6 +134,7 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 		BZ2_bzclose(fh);
 		return false;
 	}
+
 	// find EBUILD=... (cycling buffer if necessary)
 	BufInd i = 0;
 	bool in_newline = true;
@@ -154,6 +167,7 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 		}
 	}
 	i += strsize;
+
 	// Store EBUILD=  content in path (cycling buffer if necessary)
 	string path;
 	bool done = false;
@@ -187,7 +201,7 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 	path.erase(l);
 
 	// Fail anyway if the path is not in overlays of database.
-	// However, in this case store path.
+	// However, in this case store path in overlay_keytext.
 	if(header.find_overlay(&v.overlay_key, path.c_str(), portdir, false, true)) {
 		v.overlay_failed = false;
 		return true;

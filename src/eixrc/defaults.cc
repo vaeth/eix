@@ -1046,7 +1046,8 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "CHECK_INSTALLED_OVERLAYS",
 			"true", "If true, always check from which overlay a package was installed.\n"
-			"Otherwise, only packages appearing in different overlays are checked.")
+			"Otherwise, only packages appearing in different overlays are checked.\n"
+			"This is faster but may sometimes give wrong results.")
 		);
 
 eixrc.addDefault(

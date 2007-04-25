@@ -22,7 +22,7 @@ A I<EXPRESSION> can be:
 
 .BR eix-sync
 
-.BR eix-test-obsolete
+.BR eix-test-obsolete [I<toggle_CHECK_INSTALLED_OVERLAYS>]
 
 .BR update-eix-remote
 
@@ -48,6 +48,11 @@ of I</etc/eix-sync.conf> below.
 
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
+If you pass an argument to B<eix-test-obsolete> (no matter which argument)
+the value of the variable B<CHECK_INSTALLED_OVERLAYS> is toggled.
+(This variable is explained later; roughly speaking, setting it to false means
+an enormous speed increase but at the cost that in certain cases
+versions installed from obsolete overlays cannot be recognized as obsolete.)
 
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
@@ -1367,10 +1372,17 @@ If false, no slot information is printed.
 .TP
 .BR CHECK_INSTALLED_OVERLAYS " " (true / false)
 If true, always check from which overlay a package was installed.
-Otherwise, only installed packages which have versions appearing in different
-overlays are checked.
-The main advantage of setting this to false is a speed increase by avoiding
-a usually redundant disk access.
+Otherwise, only installed packages which have versions in at least two
+different places (overlays) are checked (i.e. it is assumed without checking
+that the installed versions were installed from the same tree).
+
+Setting this variable to "false" may increase the speed enormously,
+especially in connection with option -T (if B<NONEXISTENT_IF_OTHER_OVERLAY>
+is true). However, it means of course that the overlay information
+printed/assumed by eix for installed packages with versions in only
+place (overlay) is incorrect. In particular, the option -T will not detect
+if an installed version of such a package actually stems from a redundant
+overlay.
 .TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this

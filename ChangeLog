@@ -2,6 +2,11 @@
 
 *eix-0.9.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- IMPORTANT!
+	  eix-test-obsolete now tests also for versions installed from
+	  obsolete overlays by default. This takes some time.
+	  Pass an argument to eix-test-obsolete to speed up this test
+	  (but make it less reliable). See the manpage for details.
 	- Print overlay from which a version was installed.
 	- Try to mark versions as "installed" only for appropriate overlay.
 	  (If no matching overlay exists, fall back to old marking.)
@@ -10,6 +15,7 @@
 	  The old meaning is available as --installed-in-some-overlay.
 	- Introduce --installed-from-overlay (corresponding to new -J option).
 	- Introduce NONEXISTENT_IF_OTHER_OVERLAY.
+	- Introduce CHECK_INSTALLED_OVERLAYS.
 
 *eix-0.9.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

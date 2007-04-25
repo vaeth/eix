@@ -78,6 +78,12 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
+if [ $# -gt 0 ]; then
+  export CHECK_INSTALLED_OVERLAYS="$(
+    DUMMY='%{?CHECK_INSTALLED_OVERLAYS}false%{else}true%{}' \
+      eix --print 'DUMMY')"
+fi
+
 COMMON="$(eix --print PORTAGE_CONFIGROOT)"
 COMMON="${COMMON}/etc/portage/package."
 

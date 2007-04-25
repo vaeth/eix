@@ -54,9 +54,13 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbhe
 	vardbpkg =  &vdb;
 	portagesettings = &p;
 	header   = &dbheader;
-	overlay_list = overlay_only_list = in_overlay_inst_list =
-		from_overlay_inst_list = NULL;
+	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
+#if defined(USE_BZLIB)
+	from_overlay_inst_list = NULL;
 	from_foreign_overlay_inst_list = NULL;
+	portdir = (*portagesettings)["PORTDIR"].c_str();
+#endif
+
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
 	obsolete = overlay = installed = invert = update = slotted =
@@ -83,8 +87,11 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(field & IUSE)
 		setNeeds(PackageReader::COLL_IUSE);
-	if(installed ||
-		from_overlay_inst_list || from_foreign_overlay_inst_list)
+	if(installed
+#if defined(USE_BZLIB)
+		|| from_overlay_inst_list || from_foreign_overlay_inst_list
+#endif
+		)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
 		update || overlay|| obsolete ||
@@ -433,7 +440,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 		for(vector<InstVersion>::iterator it = installed_versions->begin();
 			it != installed_versions->end(); ++it) {
-			if(vardbpkg->readOverlay(*p, *it, *header, (*portagesettings)["PORTDIR"].c_str())) {
+			if(vardbpkg->readOverlay(*p, *it, *header, portdir)) {
 				if(!from_overlay_inst_list)
 					continue;
 				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end())
@@ -574,7 +581,7 @@ PackageTest::match(PackageReader *pkg) const
 				}
 #if defined(USE_BZLIB)
 				if(test_installed & INS_OVERLAY) {
-					if(!vardbpkg->readOverlay(*p, *current, *header, (*portagesettings)["PORTDIR"].c_str()))
+					if(!vardbpkg->readOverlay(*p, *current, *header, portdir))
 						continue;
 					if(current->overlay_key != version_it->overlay_key)
 						continue;

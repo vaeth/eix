@@ -87,6 +87,7 @@ class PackageTest {
 				delete in_overlay_inst_list;
 				in_overlay_inst_list = NULL;
 			}
+#if defined(USE_BZLIB)
 			if(from_overlay_inst_list) {
 				delete from_overlay_inst_list;
 				from_overlay_inst_list = NULL;
@@ -95,6 +96,7 @@ class PackageTest {
 				delete from_foreign_overlay_inst_list;
 				from_foreign_overlay_inst_list = NULL;
 			}
+#endif
 		}
 
 		void setAlgorithm(BaseAlgorithm *p)
@@ -141,6 +143,7 @@ class PackageTest {
 			return in_overlay_inst_list;
 		}
 
+#if defined(USE_BZLIB)
 		std::set<Version::Overlay> *FromOverlayInstList()
 		{
 			if(!from_overlay_inst_list)
@@ -154,6 +157,7 @@ class PackageTest {
 				from_foreign_overlay_inst_list = new std::vector<std::string>;
 			return from_foreign_overlay_inst_list;
 		}
+#endif
 
 		void DuplVersions(bool only_overlay)
 		{ dup_versions = true ; dup_versions_overlay = only_overlay; }
@@ -204,9 +208,13 @@ class PackageTest {
 
 		std::set<Version::Overlay>
 			*overlay_list, *overlay_only_list,
-			*in_overlay_inst_list,
-			*from_overlay_inst_list;
+			*in_overlay_inst_list;
+
+#if defined(USE_BZLIB)
+		std::set<Version::Overlay> *from_overlay_inst_list;
 		std::vector<std::string> *from_foreign_overlay_inst_list;
+		const char *portdir;
+#endif
 
 		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;

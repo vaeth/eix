@@ -113,33 +113,31 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		ret.append(get_basic_version(&fmt, &(*it), pure_text,
 			((prepend.size() > 1) ? prepend[1] : "")));
 #if defined(USE_BZLIB)
-		if(fmt.inst_overlay || !p.have_same_overlay_key) {
-			if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
-				if(it->overlay_key>0) {
-					if((!p.have_same_overlay_key) || (p.largest_overlay != it->overlay_key)) {
-						if(prepend.size() > 2)
-							ret.append(prepend[2]);
-						ret.append(fmt.overlay_keytext(it->overlay_key, !color));
-					}
+		if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
+			if(it->overlay_key>0) {
+				if((!p.have_same_overlay_key) || (p.largest_overlay != it->overlay_key)) {
+					if(prepend.size() > 2)
+						ret.append(prepend[2]);
+					ret.append(fmt.overlay_keytext(it->overlay_key, !color));
 				}
 			}
+		}
+		else
+		// Uncomment if you do not want to print unreadable overlays as "[?]"
+		// if(!it->overlay_keytext.empty())
+		{
+			if(prepend.size() > 2)
+				ret.append(prepend[2]);
+			if(color)
+				ret.append(fmt.color_virtualkey);
+			ret.append("[");
+			if(it->overlay_keytext.empty())
+				ret.append("?");
 			else
-			// Uncomment if you do not want to print unreadable overlays as "[?]"
-			// if(!it->overlay_keytext.empty())
-			{
-				if(prepend.size() > 2)
-					ret.append(prepend[2]);
-				if(color)
-					ret.append(fmt.color_virtualkey);
-				ret.append("[");
-				if(it->overlay_keytext.empty())
-					ret.append("?");
-				else
-					ret.append(it->overlay_keytext);
-				ret.append("]");
-				if(color)
-					ret.append(AnsiColor(AnsiColor::acDefault).asString());
-			}
+				ret.append(it->overlay_keytext);
+			ret.append("]");
+			if(color)
+				ret.append(AnsiColor(AnsiColor::acDefault).asString());
 		}
 #endif
 		if(prepend.size() > 3)

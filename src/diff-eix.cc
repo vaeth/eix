@@ -395,7 +395,6 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
-	format_for_new.inst_overlay     = eixrc.getBool("CHECK_INSTALLED_OVERLAYS");
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
 	format_for_new.colon_slots      = eixrc.getBool("COLON_SLOTS");
 	format_for_new.colored_slots    = eixrc.getBool("COLORED_SLOTS");
@@ -426,6 +425,9 @@ run_diff_eix(int argc, char *argv[])
 	portagesettings = new PortageSettingsConstructor(PortageSettings,eixrc);
 
 	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care);
+#if defined(USE_BZLIB)
+	varpkg_db->check_installed_overlays = eixrc.getBool("CHECK_INSTALLED_OVERLAYS");
+#endif
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, local_settings);

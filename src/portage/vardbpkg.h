@@ -77,6 +77,7 @@ class VarDbPkg {
 
 #if defined(USE_BZLIB)
 		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header, const char *portdir) const;
+		bool check_installed_overlays;
 #endif
 
 		/** Find installed versions

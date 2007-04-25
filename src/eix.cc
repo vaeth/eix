@@ -325,7 +325,6 @@ setup_defaults()
 	format.mark_installed      = rc["MARK_INSTALLED"];
 	format.mark_version        = rc["MARK_VERSIONS"];
 	format.show_slots          = rc.getBool("PRINT_SLOTS");
-	format.inst_overlay        = rc.getBool("CHECK_INSTALLED_OVERLAYS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
@@ -460,6 +459,9 @@ run_eix(int argc, char** argv)
 
 	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care);
+#if defined(USE_BZLIB)
+	varpkg_db.check_installed_overlays = eixrc.getBool("CHECK_INSTALLED_OVERLAYS");
+#endif
 
 	MarkedList *marked_list = NULL;
 	Matchatom *query;

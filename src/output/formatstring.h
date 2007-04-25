@@ -173,7 +173,7 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 
 class PrintFormat {
 	friend std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text);
-        friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a);
+	friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a);
 	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const std::vector<std::string> &prepend);
 	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *p, bool with_slot, bool exclude_overlay);
 	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
@@ -218,8 +218,7 @@ class PrintFormat {
 		     slot_sorted,         /**< Print sorted by slots */
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
-		     recommend_local,     /**< Recommendation tests based on local settings? */
-		     inst_overlay;        /**< Print always overlay for installed versions? */
+		     recommend_local;     /**< Recommendation tests based on local settings? */
 
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,    /**< Color for unstable versions */
