@@ -22,7 +22,8 @@ A I<EXPRESSION> can be:
 
 .BR eix-sync
 
-.BR eix-test-obsolete [I<toggle_CHECK_INSTALLED_OVERLAYS>]
+.BR eix-test-obsolete
+[I<toggle CHECK_INSTALLED_OVERLAYS>]
 
 .BR update-eix-remote
 
@@ -39,7 +40,7 @@ B<diff-eix> compares two binary caches and finds packages that were added, remov
 which the highest stable versions has changed.
 
 All of these programs and scripts read the configuration files described later.
-eix-sync has an additional separate configuration file.
+B<eix-sync> has an additional separate configuration file.
 
 B<eix-sync> can sync the portage/overlay trees and compare them with the old cache
 using B<diff-eix>.
@@ -116,7 +117,6 @@ Disables the use of ANSI color codes. This is useful for terminals that do not s
 .TP
 .BR -F ", " --force-color
 The opposite of --nocolor.
-.TP
 .\" }}}
 
 .\" {{{ -------- Output options

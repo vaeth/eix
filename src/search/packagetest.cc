@@ -87,15 +87,15 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(field & IUSE)
 		setNeeds(PackageReader::COLL_IUSE);
-	if(installed
+	if(installed)
+		setNeeds(PackageReader::NAME);
+	if(dup_packages || dup_versions || slotted ||
+		update || overlay|| obsolete ||
+		overlay_list || overlay_only_list || in_overlay_inst_list
 #if defined(USE_BZLIB)
 		|| from_overlay_inst_list || from_foreign_overlay_inst_list
 #endif
 		)
-		setNeeds(PackageReader::NAME);
-	if(dup_packages || dup_versions || slotted ||
-		update || overlay|| obsolete ||
-		overlay_list || overlay_only_list || in_overlay_inst_list)
 		setNeeds(PackageReader::VERSIONS);
 }
 
