@@ -28,6 +28,7 @@
 
 #include "packagetest.h"
 #include <portage/version.h>
+#include <eixTk/filenames.h>
 
 using namespace std;
 
@@ -47,11 +48,14 @@ const PackageTest::TestInstalled
 		PackageTest::INS_NONEXISTENT = 0x01,
 		PackageTest::INS_MASKED      = 0x02;
 
-PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p)
+PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader)
 {
 	vardbpkg =  &vdb;
 	portagesettings = &p;
-	overlay_list = overlay_only_list = overlay_inst_list = NULL;
+	header   = &dbheader;
+	overlay_list = overlay_only_list = in_overlay_inst_list =
+		from_overlay_inst_list = NULL;
+	from_foreign_overlay_inst_list = NULL;
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
 	obsolete = overlay = installed = invert = update = slotted =
@@ -78,11 +82,12 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(field & IUSE)
 		setNeeds(PackageReader::COLL_IUSE);
-	if(installed)
+	if(installed ||
+		from_overlay_inst_list || from_foreign_overlay_inst_list)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
 		update || overlay|| obsolete ||
-		overlay_list || overlay_only_list || overlay_inst_list)
+		overlay_list || overlay_only_list || in_overlay_inst_list)
 		setNeeds(PackageReader::VERSIONS);
 }
 
@@ -394,13 +399,13 @@ PackageTest::match(PackageReader *pkg) const
 		}
 	}
 
-	if(overlay_inst_list) { // -J or --installed-in-overlay
+	if(in_overlay_inst_list) { // --installed-in-[some-]overlay
 		get_p();
 		bool have = false;
 		bool get_installed = true;
 		vector<InstVersion> *installed_versions = NULL;
 		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(overlay_inst_list->find(it->overlay_key) == overlay_inst_list->end())
+			if(in_overlay_inst_list->find(it->overlay_key) == in_overlay_inst_list->end())
 				continue;
 			if(get_installed) {
 				get_installed = false;
@@ -416,6 +421,45 @@ PackageTest::match(PackageReader *pkg) const
 		if(!have)
 			return invert;
 	}
+
+#if defined(USE_BZLIB)
+	if(from_overlay_inst_list ||
+	   from_foreign_overlay_inst_list) { // -J or --installed-from-overlay
+		get_p();
+		bool have = false;
+		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+		if(!installed_versions)
+			return invert;
+		for(vector<InstVersion>::iterator it = installed_versions->begin();
+			it != installed_versions->end(); ++it) {
+			if(vardbpkg->readOverlay(*p, *it, *header, (*portagesettings)["PORTDIR"].c_str())) {
+				if(!from_overlay_inst_list)
+					continue;
+				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end())
+					continue;
+				have = true;
+				break;
+			}
+			if((it->overlay_keytext).empty())
+				continue;
+			if(!from_foreign_overlay_inst_list)
+				continue;
+			for(vector<string>::iterator match = from_foreign_overlay_inst_list->begin();
+				match != from_foreign_overlay_inst_list->end(); ++match) {
+				if(match->empty() ||
+					same_filenames(match->c_str(), (it->overlay_keytext).c_str(), true, false) ||
+					same_filenames(match->c_str(), (it->overlay_keytext).c_str(), true, true)) {
+					have = true;
+					break;
+				}
+			}
+			if(have)
+				break;
+		}
+		if(!have)
+			return invert;
+	}
+#endif
 
 	if(dup_packages) { // -d
 		get_p();

@@ -9,12 +9,14 @@ Available options are
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
   -s  With sqlite
   -S  Without sqlite
+  -b  With bzlib
+  -B  Without bzlib
   -c  Use only debugging-safe CXXFLAGS"
 	exit ${1}
 }
 
 die() {
-	echo "$1"
+	echo "${1}"
 	exit ${2:-1}
 }
 
@@ -23,8 +25,9 @@ EARLYSTOP=''
 KEEPENV=''
 SAVEFLAGS=''
 SQLITE=''
+BZLIB=''
 PEDANTIC=''
-while getopts 'qsSnepc?hH' OPTION; do
+while getopts 'qnepsSbBc?hH' OPTION; do
 case "$OPTION" in
 	q) QUIET='&>/dev/null';;
 	n) EARLYSTOP=1;;
@@ -32,6 +35,8 @@ case "$OPTION" in
 	p) PEDANTIC=1;;
 	s) SQLITE='--with-sqlite';;
 	S) SQLITE='--without-sqlite';;
+	b) BZLIB='--with-bzip2';;
+	B) BZLIB='--without-bzip2';;
 	c) SAFEFLAGS=1;;
 	*) Usage 1;;
 esac
@@ -68,7 +73,7 @@ if ! [[ -e Makefile ]]; then
 		eval ./autogen.sh $QUIET || die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure $SQLITE $QUIET || die "configure failed"
+	eval ./configure $SQLITE $BZLIB $QUIET || die "configure failed"
 fi
 [[ "$EARLYSTOP" ]] && exec make config.h
 echo "Making $@..."

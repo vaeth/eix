@@ -119,11 +119,15 @@ dump_help(int exit_code)
 			"    -1, --slotted         Match packages with a nontrivial slot.\n"
 			"    -2, --slots           Match packages with two different slots.\n"
 			"    -u, --update          Match packages without best slotted version.\n"
-			"    -O, --overlay         Match packages from overlays.\n"
+			"    -O, --overlay                        Match packages from overlays.\n"
+			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
+			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
 			"    -J, --installed-overlay Match packages installed from overlays.\n"
-			"    --in-overlay OVERLAY           Match packages from OVERLAY.\n"
-			"    --installed-in-overlay OVERLAY Match packages installed from OVERLAY.\n"
-			"    --only-in-overlay OVERLAY      Match packages only in OVERLAY.\n"
+			"    --installed-from-overlay OVERLAY     Packages installed from OVERLAY.\n"
+			"    --installed-in-some-overlay          Packages with an installed version\n"
+			"                                         provided by some overlay.\n"
+			"    --installed-in-overlay OVERLAY       Packages with an installed version\n"
+			"                                         provided from OVERLAY.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -245,8 +249,10 @@ static struct Option long_options[] = {
 	Option("update",        'u'),
 	Option("overlay",              'O'),
 	Option("installed-overlay",    'J'),
+	Option("installed-from-overlay",O_FROM_OVERLAY,     Option::KEEP_STRING_OPTIONAL),
 	Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL),
 	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
+	Option("installed-in-some-overlay", O_INSTALLED_SOME),
 	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
@@ -543,6 +549,7 @@ run_eix(int argc, char** argv)
 	}
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);
+	format.set_overlay_used(&overlay_used, &need_overlay_table);
 	for(eix::ptr_list<Package>::iterator it = matches.begin();
 		it != matches.end();
 		++it)
@@ -577,7 +584,7 @@ run_eix(int argc, char** argv)
 		case 4: need_overlay_table = false; break;
 		default: break;
 	}
-	vector<Version::Overlay> overlay_num(header.countOverlays());
+	vector<Version::Overlay> overlay_num(header.countOverlays(), 0);
 	if(overlay_mode == 0)
 	{
 		short i = 1;

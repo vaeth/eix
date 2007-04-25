@@ -181,15 +181,27 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 			start = color_overlaykey + start;
 		end += AnsiColor(AnsiColor::acDefault).asString();
 	}
-	if(overlay_translations)
-		overlay = (*overlay_translations)[ overlay - 1 ];
-	if(overlay) {
-		stringstream ss;
-		ss << overlay;
-		ss >> text;
+	vector<Version::Overlay>::size_type index = overlay - 1;
+	if(overlay_used)
+		(*overlay_used)[index] = true;
+	if(some_overlay_used)
+		*some_overlay_used = true;
+	if(overlay_translations) {
+		overlay = (*overlay_translations)[index];
+		if(!overlay) {
+			Version::Overlay number = 0;
+			for(vector<Version::Overlay>::iterator it = overlay_translations->begin();
+				it != overlay_translations->end(); ++it) {
+				if(number < *it)
+					number = *it;
+			}
+			(*overlay_translations)[index] = ++number;
+			overlay = number;
+		}
 	}
-	else
-		text = "?";
+	stringstream ss;
+	ss << overlay;
+	ss >> text;
 	return start + text + end;
 }
 

@@ -47,6 +47,7 @@
 #include <search/algorithms.h>
 #include <search/redundancy.h>
 
+class DBHeader;
 
 /** Test a package if it matches some criteria. */
 class PackageTest {
@@ -70,7 +71,7 @@ class PackageTest {
 					INS_MASKED;      /* Test for masked installed packages */
 
 		/** Set default values. */
-		PackageTest(VarDbPkg &vdb, PortageSettings &p);
+		PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader);
 
 		~PackageTest() {
 			if(overlay_list) {
@@ -81,9 +82,17 @@ class PackageTest {
 				delete overlay_only_list;
 				overlay_only_list = NULL;
 			}
-			if(overlay_inst_list) {
-				delete overlay_inst_list;
-				overlay_inst_list = NULL;
+			if(in_overlay_inst_list) {
+				delete in_overlay_inst_list;
+				in_overlay_inst_list = NULL;
+			}
+			if(from_overlay_inst_list) {
+				delete from_overlay_inst_list;
+				from_overlay_inst_list = NULL;
+			}
+			if(from_foreign_overlay_inst_list) {
+				delete from_foreign_overlay_inst_list;
+				from_foreign_overlay_inst_list = NULL;
 			}
 		}
 
@@ -124,11 +133,25 @@ class PackageTest {
 			return overlay_only_list;
 		}
 
-		std::set<Version::Overlay> *OverlayInstList()
+		std::set<Version::Overlay> *InOverlayInstList()
 		{
-			if(!overlay_inst_list)
-				overlay_inst_list = new std::set<Version::Overlay>;
-			return overlay_inst_list;
+			if(!in_overlay_inst_list)
+				in_overlay_inst_list = new std::set<Version::Overlay>;
+			return in_overlay_inst_list;
+		}
+
+		std::set<Version::Overlay> *FromOverlayInstList()
+		{
+			if(!from_overlay_inst_list)
+				from_overlay_inst_list = new std::set<Version::Overlay>;
+			return from_overlay_inst_list;
+		}
+
+		std::vector<std::string> *FromForeignOverlayInstList()
+		{
+			if(!from_foreign_overlay_inst_list)
+				from_foreign_overlay_inst_list = new std::vector<std::string>;
+			return from_foreign_overlay_inst_list;
 		}
 
 		void DuplVersions(bool only_overlay)
@@ -162,6 +185,8 @@ class PackageTest {
 		MatchField field;
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
+		/** When reading overlay information use this: */
+		const DBHeader *header;
 
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;
@@ -177,7 +202,10 @@ class PackageTest {
 		bool dup_packages, dup_packages_overlay;
 
 		std::set<Version::Overlay>
-			*overlay_list, *overlay_only_list, *overlay_inst_list;
+			*overlay_list, *overlay_only_list,
+			*in_overlay_inst_list,
+			*from_overlay_inst_list;
+		std::vector<std::string> *from_foreign_overlay_inst_list;
 
 		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;

@@ -31,14 +31,27 @@
 
 using namespace std;
 
-#define FINISH_CURRENT { \
+#define FINISH_CURRENT do { \
 	current->setTest(test); \
-	current->finalize(); }
+	current->finalize(); \
+} while(0)
 
-#define USE_NEXT { \
+#define USE_NEXT do { \
 	FINISH_CURRENT; \
 	current = next; \
-	test = new PackageTest(varpkg_db, portagesettings); }
+	test = new PackageTest(varpkg_db, portagesettings, header); \
+} while(0)
+
+#if !defined(USE_BZLIB)
+static void
+erropt(const char *opt)
+{
+	fprintf(stderr, "eix option %s needs the bz2 library.\n"
+		"Recompile eix with ./configure option --with-bzip2 to use this library.\n",
+		opt);
+	exit(1);
+}
+#endif
 
 inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
 {
@@ -55,7 +68,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
 	Matchatom   *current = root;
-	PackageTest *test    = new PackageTest(varpkg_db, portagesettings);
+	PackageTest *test    = new PackageTest(varpkg_db, portagesettings, header);
 
 	bool need_logical_operator = false;
 	bool have_default_operator = false;
@@ -140,16 +153,42 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			case O_INSTALLED_OVERLAY:
 				  if(optional_increase(arg, end)) {
 					header.get_overlay_vector(
-						test->OverlayInstList(),
+						test->InOverlayInstList(),
 						arg->m_argument,
 						portagesettings["PORTDIR"].c_str());
 					break;
 				  }
-			case 'J': header.get_overlay_vector(
-					test->OverlayInstList(),
+				  // No break here...
+			case O_INSTALLED_SOME: header.get_overlay_vector(
+					test->InOverlayInstList(),
 					"",
 					portagesettings["PORTDIR"].c_str());
 				  break;
+			case O_FROM_OVERLAY:
+#if defined(USE_BZLIB)
+				  if(optional_increase(arg, end)) {
+					header.get_overlay_vector(
+						test->FromOverlayInstList(),
+						arg->m_argument,
+						portagesettings["PORTDIR"].c_str());
+					test->FromForeignOverlayInstList()->push_back(arg->m_argument);
+					break;
+				  }
+				  // No break here...
+#else
+				  erropt("--installed-from-overlay");
+#endif
+			case 'J':
+#if defined(USE_BZLIB)
+				  header.get_overlay_vector(
+					test->FromOverlayInstList(),
+					"",
+					portagesettings["PORTDIR"].c_str());
+				  test->FromForeignOverlayInstList()->push_back("");
+				  break;
+#else
+				  erropt("-J");
+#endif
 			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
 				  break;
 			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));

@@ -194,6 +194,8 @@ class PrintFormat {
 		Node          *m_root;
 		std::vector<bool> *virtuals;
 		std::vector<Version::Overlay> *overlay_translations;
+		std::vector<bool> *overlay_used;
+		bool          *some_overlay_used;
 		MarkedList    *marked_list;
 		/* The following two variables are actually a hack:
 		   This is only set temporarily during printing to avoid
@@ -246,7 +248,9 @@ class PrintFormat {
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 			: m_print_property(print_callback), m_get_property(get_callback),
-			  virtuals(NULL), overlay_translations(NULL), marked_list(NULL),
+			  virtuals(NULL), overlay_translations(NULL),
+			  overlay_used(NULL), some_overlay_used(NULL),
+			  marked_list(NULL),
 			  vardb(NULL), portagesettings(NULL)
 			{ }
 
@@ -290,6 +294,9 @@ class PrintFormat {
 
 		void set_overlay_translations(std::vector<Version::Overlay> *translations)
 		{ overlay_translations = translations; }
+
+		void set_overlay_used(std::vector<bool> *used, bool *some)
+		{ overlay_used = used; some_overlay_used = some; }
 
 		void set_marked_list(MarkedList *m_list)
 		{ marked_list = m_list; }

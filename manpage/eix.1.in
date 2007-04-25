@@ -218,17 +218,33 @@ it matches all overlays except for the "main" tree
 (i.e. B<--in-overlay ''> is the same as B<-O>).
 .TP
 .BR --only-in-overlay " I<overlay>"
-Only match packages which has only versions in an overlay matching I<overlay>.
+Only match packages which have only versions in an overlay matching I<overlay>.
 
 If this option is repeated, the additional I<overlay> arguments are joined
 to the list of admissible overlays.
 
 I<overlay> may be either a wildcard pattern or a number, as in B<--in-overlay>.
-In particular, B<--in-overlay ''> matches all packages which are not in the
-official portage tree but only in some overlay.
+As particular, B<--only-in-overlay ''> matches all packages which are not in
+the official portage tree but only in some overlay.
 .TP
 .BR -J ", " --installed-overlay
-Only match packages with at least one installed version in an overlay.
+Only match packages which have been installed from some overlay.
+To speed up searching you might want to combine this with option
+B<--installed-in-some-overlay> described below.
+.TP
+.BR --installed-from-overlay " I<overlay>"
+This is analogous to B<--in-overlay> with the difference that only
+packages are matched which have at least one version installed
+from I<overlay>.
+For instance, B<--installed-from-overlay 0> will only match those packages
+which have at least one version which was installed from the regular
+portage tree.
+To speed up searching you might want to combine this with option
+B<--installed-in-overlay> described below.
+.TP
+.BR --installed-in-some-overlay
+Only match packages with at least one installed version number which is
+also in some overlay.
 .TP
 .BR --installed-in-overlay " I<overlay>"
 This is analogous to B<--in-overlay> with the difference that only
