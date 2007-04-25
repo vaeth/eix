@@ -1422,6 +1422,10 @@ What is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables
 Defines whether redundant entries in /etc/portage/package.* are positive for -T.
 What is considered as redundant is defined by the B<REDUNDANT_IF>-variables.
 .TP
+.BR NONEXISTENT_IF_OTHER_OVERLAY "  " (true / false)
+Defines whether versions are non-existent for TEST_FOR_NONEXISTENT
+if they come from a different overlay than the installed version.
+.TP
 .BR NONEXISTENT_IF_MASKED "  " (true / false)
 Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 .TP

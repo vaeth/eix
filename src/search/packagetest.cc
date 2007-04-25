@@ -46,7 +46,8 @@ const PackageTest::MatchField
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE        = 0x00,
 		PackageTest::INS_NONEXISTENT = 0x01,
-		PackageTest::INS_MASKED      = 0x02;
+		PackageTest::INS_OVERLAY     = 0x02,
+		PackageTest::INS_MASKED      = 0x04;
 
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader)
 {
@@ -560,7 +561,6 @@ PackageTest::match(PackageReader *pkg) const
 		vector<InstVersion>::iterator current = installed_versions->begin();
 		for( ; current != installed_versions->end(); ++current)
 		{
-			TestInstalled found = INS_NONE;
 			bool not_all_found = true;
 			for(Package::iterator version_it = user->begin();
 				version_it != user->end(); ++version_it)
@@ -568,14 +568,19 @@ PackageTest::match(PackageReader *pkg) const
 				Version *version = *version_it;
 				if(*version != *current)
 					continue;
-				found |= INS_NONEXISTENT;
-				if(version->isStable())
-					found |= INS_MASKED;
-				if((found & test_installed) == test_installed)
-				{
-					not_all_found = false;
-					break;
+				if(test_installed && INS_MASKED) {
+					if(!version->isStable())
+						continue;
 				}
+#if defined(USE_BZLIB)
+				if(test_installed & INS_OVERLAY) {
+					if(!vardbpkg->readOverlay(*p, *current, *header, (*portagesettings)["PORTDIR"].c_str()))
+						continue;
+					if(current->overlay_key != version_it->overlay_key)
+						continue;
+				}
+#endif
+				not_all_found = false;
 			}
 			if(not_all_found)
 				break;

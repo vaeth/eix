@@ -124,7 +124,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 				}
 			}
 			else
-			// Uncomment if you do not want to print unreadable overlays as "[unknown]"
+			// Uncomment if you do not want to print unreadable overlays as "[?]"
 			// if(!it->overlay_keytext.empty())
 			{
 				if(prepend.size() > 2)
@@ -133,7 +133,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 					ret.append(fmt.color_virtualkey);
 				ret.append("[");
 				if(it->overlay_keytext.empty())
-					ret.append("unknown");
+					ret.append("?");
 				else
 					ret.append(it->overlay_keytext);
 				ret.append("]");

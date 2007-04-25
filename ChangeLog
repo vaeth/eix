@@ -9,6 +9,7 @@
 	- Change -J to mean really installed *from* some overlay.
 	  The old meaning is available as --installed-in-some-overlay.
 	- Introduce --installed-from-overlay (corresponding to new -J option).
+	- Introduce NONEXISTENT_IF_OTHER_OVERLAY.
 
 *eix-0.9.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

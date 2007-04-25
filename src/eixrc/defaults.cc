@@ -1108,6 +1108,11 @@ eixrc.addDefault(
 			"true", "Defines whether non-existing installed versions are positive for -T.")
 		);
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "NONEXISTENT_IF_OTHER_OVERLAY",
+			"true", "Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
+			"if they come from a different overlay than the installed version.")
+		);
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "NONEXISTENT_IF_MASKED",
 			"true", "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.")
 		);

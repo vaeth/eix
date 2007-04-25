@@ -43,22 +43,25 @@ class InstVersion : public BasicVersion, public Keywords {
 		/** Similarly for iuse and usedUse: */
 		bool know_use;
 
+		time_t instDate;                   /**< Installation date according to vardbpkg */
+		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
+		std::set<std::string> usedUse;     /**< Those useflags in iuse actually used    */
+
+#if defined(USE_BZLIB)
 		/** Similarly for overlay_keys */
 		bool know_overlay, overlay_failed;
 		Version::Overlay overlay_key;
 		std::string overlay_keytext;
-
-		time_t instDate;                   /**< Installation date according to vardbpkg */
-		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
-		std::set<std::string> usedUse;     /**< Those useflags in iuse actually used    */
+#endif
 
 		void init() {
 			know_slot = false;
 			read_failed = false;
 			know_use = false;
-			know_overlay = false;
-			overlay_failed = true;
 			instDate = 0;
+#if defined(USE_BZLIB)
+			know_overlay = false;
+#endif
 		}
 
 		InstVersion()

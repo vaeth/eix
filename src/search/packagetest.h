@@ -54,21 +54,22 @@ class PackageTest {
 
 	public:
 		typedef uint8_t MatchField;
-		static const MatchField NONE          , /* Search in name */
-		                        NAME          , /* Search in name */
-		                        DESCRIPTION   , /* Search in description */
-		                        PROVIDE       , /* Search in provides */
-		                        LICENSE       , /* Search in license */
-		                        CATEGORY      , /* Search in category */
-		                        CATEGORY_NAME , /* Search in category/name */
-		                        HOMEPAGE      , /* Search in homepage */
-		                        IUSE          ; /* Search in iuse */
+		static const MatchField NONE          , /**< Search in name */
+		                        NAME          , /**< Search in name */
+		                        DESCRIPTION   , /**< Search in description */
+		                        PROVIDE       , /**< Search in provides */
+		                        LICENSE       , /**< Search in license */
+		                        CATEGORY      , /**< Search in category */
+		                        CATEGORY_NAME , /**< Search in category/name */
+		                        HOMEPAGE      , /**< Search in homepage */
+		                        IUSE          ; /**< Search in iuse */
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled
 					INS_NONE,
-					INS_NONEXISTENT, /* Test for nonexistent installed packages */
-					INS_MASKED;      /* Test for masked installed packages */
+					INS_NONEXISTENT, /**< Test for nonexistent installed packages */
+					INS_OVERLAY,     /**< Test for nonexistent overlays of installed packages */
+					INS_MASKED;      /**< Test for masked installed packages */
 
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader);
