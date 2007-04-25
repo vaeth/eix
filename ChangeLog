@@ -7,6 +7,7 @@
 	  obsolete overlays by default. This takes some time.
 	  Pass an argument to eix-test-obsolete to speed up this test
 	  (but make it less reliable). See the manpage for details.
+	- Introduce PRINT_IUSE, FORMAT_{BEFORE,AFTER}_{,COLL_}IUSE
 	- Print overlay from which a version was installed.
 	- Try to mark versions as "installed" only for appropriate overlay.
 	  (If no matching overlay exists, fall back to old marking.)

@@ -401,6 +401,12 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_original   = eixrc.getBool("COLOR_ORIGINAL");
 	format_for_new.color_local_mask = eixrc.getBool("COLOR_LOCAL_MASK");
 
+	format_for_new.print_iuse       = eixrc.getBool("PRINT_IUSE");
+	format_for_new.before_iuse      = eixrc["FORMAT_BEFORE_IUSE"];
+	format_for_new.after_iuse       = eixrc["FORMAT_AFTER_IUSE"];
+	format_for_new.before_coll_iuse = eixrc["FORMAT_BEFORE_COLL_IUSE"];
+	format_for_new.after_coll_iuse  = eixrc["FORMAT_AFTER_COLL_IUSE"];
+
 	format_for_new.setupColors();
 
 	format_for_new.tag_for_profile            = eixrc["TAG_FOR_PROFILE"];

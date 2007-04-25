@@ -52,7 +52,7 @@
    and thus calculating the package-wide IUSE) before the package-wide
    IUSE data is assumed to be known. */
 
-#define NOT_FULL_USE
+/*#define NOT_FULL_USE*/
 
 /** Version expands the BasicVersion class by data relevant for versions in tree/overlays */
 class Version : public BasicVersion, public Keywords {

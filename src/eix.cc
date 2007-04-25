@@ -106,6 +106,7 @@ dump_help(int exit_code)
 			"     -v, --verbose (toggle) verbose search results\n"
 			"     -x, --versionsort  (toggle) sort output by slots/versions\n"
 			"     -l, --versionlines (toggle) print available versions line-by-line\n"
+			"                            and print IUSE on a per-version base.\n"
 			"         --format           format string for normal output\n"
 			"         --format-compact   format string for compact output\n"
 			"         --format-verbose   format string for verbose output\n"
@@ -330,6 +331,12 @@ setup_defaults()
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
 	format.colored_slots       = rc.getBool("COLORED_SLOTS");
 	format.recommend_local     = rc.getBool("RECOMMEND_ALWAYS_LOCAL");
+
+	format.print_iuse          = rc.getBool("PRINT_IUSE");
+	format.before_iuse         = rc["FORMAT_BEFORE_IUSE"];
+	format.after_iuse          = rc["FORMAT_AFTER_IUSE"];
+	format.before_coll_iuse    = rc["FORMAT_BEFORE_COLL_IUSE"];
+	format.after_coll_iuse     = rc["FORMAT_AFTER_COLL_IUSE"];
 
 	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
 	format.tag_for_masked             = rc["TAG_FOR_MASKED"];

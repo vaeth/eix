@@ -863,6 +863,30 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_IUSE",
+			" [(blue)", "This string is printed before IUSE data for a version is output.\n"
+			"(this is only used when --versionlines is active)")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_IUSE",
+			"()]", "This string is printed after IUSE data for a version is output.\n"
+			"(this is only used when --versionlines is active)")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_COLL_IUSE",
+			" \\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
+			"(this is only used when --versionlines is inactive)")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_COLL_IUSE",
+			"()\\}", "This string is printed before IUSE data for all versions is output.\n"
+			"(this is only used when --versionlines is inactive)")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "COLOR_MASKED",
 			"red", "Define color for masked versions.")
 		);
@@ -1041,6 +1065,23 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_SLOTS",
 			"true", "If false, no slot information is printed.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "EIX_PRINT_IUSE",
+			"true", "This variable is only used for delayed substitution.\n"
+			"If false, no IUSE data is printed for eix")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_PRINT_IUSE",
+			"false", "This variable is only used for delayed substitution.\n"
+			"If false, no IUSE data is printed for diff-eix")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "PRINT_IUSE",
+			"%{*PRINT_IUSE}", "If false, no IUSE data is printed.")
 		);
 
 eixrc.addDefault(

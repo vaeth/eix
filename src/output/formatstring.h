@@ -218,7 +218,8 @@ class PrintFormat {
 		     slot_sorted,         /**< Print sorted by slots */
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
-		     recommend_local;     /**< Recommendation tests based on local settings? */
+		     recommend_local,     /**< Recommendation tests based on local settings? */
+		     print_iuse;          /**< Print iuse data */
 
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,    /**< Color for unstable versions */
@@ -233,6 +234,8 @@ class PrintFormat {
 		std::string dateFormat,       /**< The format of the long  install-date */
 		            dateFormatShort,  /**< The format of the short install-date */
 		            instUseFormat;    /**< The format of the install-USEflags */
+		std::string before_iuse, after_iuse,
+		            before_coll_iuse, after_coll_iuse;
 		std::string tag_for_profile, tag_for_masked,
 			tag_for_ex_profile, tag_for_ex_masked,
 			tag_for_locally_masked, tag_for_stable,
@@ -266,6 +269,10 @@ class PrintFormat {
 			AnsiMarker ver_marker(mark_version);
 			mark_version       = ver_marker.asString();
 			mark_version_end   = ver_marker.end();
+			before_iuse        = parse_colors(before_iuse, true);
+			after_iuse         = parse_colors(after_iuse, true);
+			before_coll_iuse   = parse_colors(before_coll_iuse, true);
+			after_coll_iuse    = parse_colors(after_coll_iuse, true);
 		}
 
 		void clear_virtual(Version::Overlay count)

@@ -128,6 +128,8 @@ If sorted by slots, each new slot starts in a new line.
 .TP
 .BR -l ", " --versionlines "   (toggle)"
 Prints available versions in a (vertical) list.
+Moreover, the IUSE data is printed for each version
+(and not collected for the whole package).
 .TP
 .BR -c ", " --compact "   (toggle)"
 Causes eix to use a compact layout for search results. Useful for obtaining a better
@@ -1047,6 +1049,11 @@ Define the printf-like format used to print useflags of installed packages.
 If this string is empty, the processing is slightly faster since then these data are not read.
 
 .TP
+.BR FORMAT_BEFORE_IUSE ", " FORMAT_AFTER_IUSE ", " FORMAT_BEFORE_COLL_IUSE ", " FORMAT_AFTER_COLL_IUSE
+These strings are printed before/after the IUSE data for a version
+(resp. the collected IUSE for all versions of the package) is printed.
+
+.TP
 .BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
 Define the color for masked versions, stable versions, unstable versions, slots,
 the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).
@@ -1369,6 +1376,12 @@ package for which not the slot with the best stable version is installed.
 .TP
 .BR PRINT_SLOTS " " (true / false)
 If false, no slot information is printed.
+.TP
+.BR PRINT_IUSE " " (true / false)
+If true, print IUSE data.
+If --versionlines is active, the data is printed on a per-version base.
+Otherwise all IUSE data corresponding to some version of the package is
+printed collected.
 .TP
 .BR CHECK_INSTALLED_OVERLAYS " " (true / false)
 If true, always check from which overlay a package was installed.

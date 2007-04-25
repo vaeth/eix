@@ -1,5 +1,8 @@
 - Full support for USE-Flags. If you plan to add this support, note that
   eix already reads the IUSE data for each version if you undefine
-  NOT_FULL_USE in package/version.h (see the comments there!).
+  NOT_FULL_USE in portage/version.h (see the comments there!).
 
-- Talk with portage people to support portage-2.1* cache method fully.
+- Talk with portage people to support portage-2.1* cache method fully
+  (however, I guess currently there are no plans to support any cache
+  except sqlite).
+
