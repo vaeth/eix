@@ -237,8 +237,13 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					test_installed |= PackageTest::INS_NONEXISTENT;
 					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
 						test_installed |= PackageTest::INS_MASKED;
-					if(eixrc.getBool("NONEXISTENT_IF_OTHER_OVERLAY"))
+					if(eixrc.getBool("NONEXISTENT_IF_OTHER_OVERLAY")) {
+#if defined(USE_BZLIB)
 						test_installed |= PackageTest::INS_OVERLAY;
+#else
+						erropt("-T with NONEXISTENT_IF_OTHER_OVERLAY=true");
+#endif
+					}
 				  }
 				  test->ObsoleteCfg(red.first, red.second, test_installed);
 				  break;

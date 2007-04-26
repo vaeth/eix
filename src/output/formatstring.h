@@ -235,7 +235,8 @@ class PrintFormat {
 		            dateFormatShort,  /**< The format of the short install-date */
 		            instUseFormat;    /**< The format of the install-USEflags */
 		std::string before_iuse, after_iuse,
-		            before_coll_iuse, after_coll_iuse;
+		            before_coll_iuse, after_coll_iuse,
+		            before_slot_iuse, after_slot_iuse;
 		std::string tag_for_profile, tag_for_masked,
 			tag_for_ex_profile, tag_for_ex_masked,
 			tag_for_locally_masked, tag_for_stable,
@@ -273,6 +274,8 @@ class PrintFormat {
 			after_iuse         = parse_colors(after_iuse, true);
 			before_coll_iuse   = parse_colors(before_coll_iuse, true);
 			after_coll_iuse    = parse_colors(after_coll_iuse, true);
+			before_slot_iuse   = parse_colors(before_slot_iuse, true);
+			after_slot_iuse    = parse_colors(after_slot_iuse, true);
 		}
 
 		void clear_virtual(Version::Overlay count)

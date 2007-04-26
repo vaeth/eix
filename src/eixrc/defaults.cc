@@ -877,13 +877,25 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_COLL_IUSE",
 			" \\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
-			"(this is only used when --versionlines is inactive)")
+			"(this is only used when --versionlines is inactive and there are no slots).")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_COLL_IUSE",
 			"()\\}", "This string is printed before IUSE data for all versions is output.\n"
-			"(this is only used when --versionlines is inactive)")
+			"(this is only used when --versionlines is inactive and there are no slots).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_SLOT_IUSE",
+			"\n\t\\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
+			"(this is only used when --versionlines is inactive and sorting is by slots).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_SLOT_IUSE",
+			"()\\}", "This string is printed before IUSE data for all versions is output.\n"
+			"(this is only used when --versionlines is inactive and sorting is by slots).")
 		);
 
 eixrc.addDefault(
@@ -1086,9 +1098,10 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "CHECK_INSTALLED_OVERLAYS",
-			"true", "If true, always check from which overlay a package was installed.\n"
-			"Otherwise, only packages appearing in different overlays are checked.\n"
-			"This is faster but may sometimes give wrong results.")
+			"false", "If true, always check from which overlay a package was installed.\n"
+			"If false, only packages are checked which occur not only in one tree,\n"
+			"i.e. in at least one overlay. This is faster, but may give a false result\n"
+			"if such a package was actually installed from a meanwhile deleted overlay.\n")
 		);
 
 eixrc.addDefault(
@@ -1151,7 +1164,12 @@ eixrc.addDefault(
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "NONEXISTENT_IF_OTHER_OVERLAY",
-			"true", "Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
+#if defined(USE_BZLIB)
+			"true",
+#else
+			"false",
+#endif
+			"Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
 			"if they come from a different overlay than the installed version.")
 		);
 eixrc.addDefault(

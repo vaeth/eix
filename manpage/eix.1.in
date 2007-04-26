@@ -51,9 +51,9 @@ B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
 If you pass an argument to B<eix-test-obsolete> (no matter which argument)
 the value of the variable B<CHECK_INSTALLED_OVERLAYS> is toggled.
-(This variable is explained later; roughly speaking, setting it to false means
-an enormous speed increase but at the cost that in certain cases
-versions installed from obsolete overlays cannot be recognized as obsolete.)
+(This variable is explained later; roughly speaking, setting it to true
+means that the check about versions installed from obsolete overlays works
+reliable but is much slower).
 
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
@@ -236,8 +236,10 @@ the official portage tree but only in some overlay.
 .TP
 .BR -J ", " --installed-overlay
 Only match packages which have been installed from some overlay.
-To speed up searching you might want to combine this with option
-B<--installed-in-some-overlay> described below.
+To get a completely reliable result you should set
+B<CHECK_INSTALLED_OVERLAYS> to true (which is not the default because
+it dramatically slows down the test).
+See B<CHECK_INSTALLED_OVERLAYS> for details.
 .TP
 .BR --installed-from-overlay " I<overlay>"
 This is analogous to B<--in-overlay> with the difference that only
@@ -246,8 +248,8 @@ from I<overlay>.
 For instance, B<--installed-from-overlay 0> will only match those packages
 which have at least one version which was installed from the regular
 portage tree.
-To speed up searching you might want to combine this with option
-B<--installed-in-overlay> described below.
+As for -J, you should set B<CHECK_INSTALLED_OVERLAYS> to true to get a
+completely reliable result.
 .TP
 .BR --installed-in-some-overlay
 Only match packages with at least one installed version number which is
@@ -268,6 +270,10 @@ Packages are obsolete if they have redundant entries in /etc/portage/package.*
 
 What is considered as redundant is defined by the B<REDUNDANT_IF>-variables below,
 and what is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables.
+Note that the test for versions from obsolete overlays works only reliable if
+you set B<CHECK_INSTALLED_OVERLAYS> to true (which is not the default because
+it dramatically slows down the test).
+See B<CHECK_INSTALLED_OVERLAYS> for details.
 
 Note that this options only tests packages in the database - in particular, you
 will not find entries for e.g. renamed or removed (from the portage tree) packages with this option.
@@ -1049,9 +1055,9 @@ Define the printf-like format used to print useflags of installed packages.
 If this string is empty, the processing is slightly faster since then these data are not read.
 
 .TP
-.BR FORMAT_BEFORE_IUSE ", " FORMAT_AFTER_IUSE ", " FORMAT_BEFORE_COLL_IUSE ", " FORMAT_AFTER_COLL_IUSE
+.BR FORMAT_BEFORE_IUSE ", " FORMAT_AFTER_IUSE ", " FORMAT_BEFORE_COLL_IUSE ", " FORMAT_AFTER_COLL_IUSE ", " FORMAT_BEFORE_SLOT_IUSE ", " FORMAT_AFTER_SLOT_IUSE
 These strings are printed before/after the IUSE data for a version
-(resp. the collected IUSE for all versions of the package) is printed.
+(resp. the collected IUSE for all versions of the package [in one-slotted resp. in slot-sorted displaymode]) is printed.
 
 .TP
 .BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
@@ -1385,17 +1391,17 @@ printed collected.
 .TP
 .BR CHECK_INSTALLED_OVERLAYS " " (true / false)
 If true, always check from which overlay a package was installed.
-Otherwise, only installed packages which have versions in at least two
-different places (overlays) are checked (i.e. it is assumed without checking
-that the installed versions were installed from the same tree).
+If false, only packages are checked which occur not only in one tree, i.e. in at least one overlay.
+This is faster, but may give a false result if such a package was actually
+installed from a meanwhile deleted overlay.
 
-Setting this variable to "false" may increase the speed enormously,
-especially in connection with option -T (if B<NONEXISTENT_IF_OTHER_OVERLAY>
-is true). However, it means of course that the overlay information
-printed/assumed by eix for installed packages with versions in only
-place (overlay) is incorrect. In particular, the option -T will not detect
-if an installed version of such a package actually stems from a redundant
-overlay.
+Especially in connection with option -T (if B<NONEXISTENT_IF_OTHER_OVERLAY>
+is true) and with option -J the speed increase is enormously if you set this
+variable to false (which is the default), but you should be aware that the
+information used about the installed overlay is not completely reliable then.
+In particular, the option -T will not detect if an installed version of
+a package actually stems from a redundant overlay if in the current database
+all versions of this package stem from one (other) location.
 .TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this

@@ -406,6 +406,8 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.after_iuse       = eixrc["FORMAT_AFTER_IUSE"];
 	format_for_new.before_coll_iuse = eixrc["FORMAT_BEFORE_COLL_IUSE"];
 	format_for_new.after_coll_iuse  = eixrc["FORMAT_AFTER_COLL_IUSE"];
+	format_for_new.before_slot_iuse = eixrc["FORMAT_BEFORE_SLOT_IUSE"];
+	format_for_new.after_slot_iuse  = eixrc["FORMAT_AFTER_SLOT_IUSE"];
 
 	format_for_new.setupColors();
 

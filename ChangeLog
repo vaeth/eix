@@ -2,13 +2,14 @@
 
 *eix-0.9.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- IMPORTANT!
-	  eix-test-obsolete now tests also for versions installed from
-	  obsolete overlays by default. This takes some time.
-	  Pass an argument to eix-test-obsolete to speed up this test
-	  (but make it less reliable). See the manpage for details.
-	- Introduce PRINT_IUSE, FORMAT_{BEFORE,AFTER}_{,COLL_}IUSE
+	- Introduce PRINT_IUSE, FORMAT_{BEFORE,AFTER}_{,COLL_,SLOT_}IUSE
+	- Introduce ./configure option --use-bzip2 to enable the following:
 	- Print overlay from which a version was installed.
+	- eix-test-obsolete now tests also for versions installed from
+	  obsolete overlays by default. To make this test reliable you have
+	  to pass an argument to eix-test-obsolete (or you have to set
+	  CHECK_INSTALLED_OVERLAYS). However, then the test takes much longer.
+	  See the manpage for details.
 	- Try to mark versions as "installed" only for appropriate overlay.
 	  (If no matching overlay exists, fall back to old marking.)
 	- Change <installed:...> syntax by adding support for overlay output.

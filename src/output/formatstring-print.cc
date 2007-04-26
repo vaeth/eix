@@ -432,8 +432,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p)
 	}
 	if(fmt->print_iuse && !fmt->style_version_lines) {
 		if(!(p->coll_iuse.empty())) {
-			fputs("\n\t", stdout);
-			cout << fmt->before_coll_iuse << p->coll_iuse << fmt->after_coll_iuse;
+			cout << fmt->before_slot_iuse << p->coll_iuse << fmt->after_slot_iuse;
 		}
 	}
 }

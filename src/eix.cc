@@ -337,6 +337,8 @@ setup_defaults()
 	format.after_iuse          = rc["FORMAT_AFTER_IUSE"];
 	format.before_coll_iuse    = rc["FORMAT_BEFORE_COLL_IUSE"];
 	format.after_coll_iuse     = rc["FORMAT_AFTER_COLL_IUSE"];
+	format.before_slot_iuse    = rc["FORMAT_BEFORE_SLOT_IUSE"];
+	format.after_slot_iuse     = rc["FORMAT_AFTER_SLOT_IUSE"];
 
 	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
 	format.tag_for_masked             = rc["TAG_FOR_MASKED"];
