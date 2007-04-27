@@ -136,14 +136,16 @@ dump_help(int exit_code)
 			"    -|, --pipe            Use input from pipe of emerge -pv\n"
 			"\n"
 			"  Search Fields:\n"
-			"    -S, --description     description\n"
-			"    -A, --category-name   \"category/name\"\n"
-			"    -C, --category        category\n"
-			"    -s, --name            name (default)\n"
-			"    -H, --homepage        homepage\n"
-			"    -L, --license         license\n"
-			"    -P, --provide         provides\n"
-			"    -U, --use             useflags\n"
+			"    -S, --description       description\n"
+			"    -A, --category-name     \"category/name\"\n"
+			"    -C, --category          category\n"
+			"    -s, --name              name (default)\n"
+			"    -H, --homepage          homepage\n"
+			"    -L, --license           license\n"
+			"    -P, --provide           provides\n"
+			"    -U, --use               useflag (of the ebuild)\n"
+			"    --installed-with-use    enabled useflag (of installed package)\n"
+			"    --installed-without-use disabled useflag (of installed package)\n"
 			"\n"
 			"  Type of Pattern:\n"
 			"    -r, --regex           Pattern is a regexp (default)\n"
@@ -276,6 +278,8 @@ static struct Option long_options[] = {
 	Option("homepage",      'H'),
 	Option("provide",       'P'),
 	Option("use",           'U'),
+	Option("installed-with-use",    O_INSTALLED_WITH_USE),
+	Option("installed-without-use", O_INSTALLED_WITHOUT_USE),
 
 	// What to do with the next one
 	Option("or",            'o'),

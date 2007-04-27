@@ -332,8 +332,20 @@ i.e. "GPL-2"
 i.e. "virtual/blackbox"
 .TP
 .BR -U ", " --use
-The useflags defined by IUSE in the ebuild (B<not> that of installed packages).
+A useflag defined by IUSE in the ebuild (B<not> that of installed packages).
 You will usually want to combine this option with -e
+.TP
+.BR --installed-with-use
+A useflag enabled during installation of the package.
+Of course, this flag can only match if the package is installed.
+Note that the same restrictions hold as for -I, i.e. only packages will be matched
+which are still in the database.
+.TP
+.BR --installed-without-use
+A useflag disabled during installation of the package.
+Of course, this flag can only match if the package is installed.
+Note that the same restrictions hold as for -I, i.e. only packages will be matched
+which are still in the database.
 .\" }}}
 
 .\" {{{ -------- Match algorithms

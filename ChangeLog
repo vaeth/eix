@@ -3,6 +3,7 @@
 *eix-0.9.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce PRINT_IUSE, FORMAT_{BEFORE,AFTER}_{,COLL_,SLOT_}IUSE
+	- Introduce --installed-with-use, --installed-without-use
 	- Introduce ./configure option --use-bzip2 to enable the following:
 	- Print overlay from which a version was installed.
 	- eix-test-obsolete now tests also for versions installed from

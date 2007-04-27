@@ -53,7 +53,7 @@ class DBHeader;
 class PackageTest {
 
 	public:
-		typedef uint8_t MatchField;
+		typedef uint16_t MatchField;
 		static const MatchField NONE          , /**< Search in name */
 		                        NAME          , /**< Search in name */
 		                        DESCRIPTION   , /**< Search in description */
@@ -62,7 +62,9 @@ class PackageTest {
 		                        CATEGORY      , /**< Search in category */
 		                        CATEGORY_NAME , /**< Search in category/name */
 		                        HOMEPAGE      , /**< Search in homepage */
-		                        IUSE          ; /**< Search in iuse */
+		                        IUSE          , /**< Search in iuse */
+		                        USE_ENABLED   , /**< Search in enabled  useflags of installed packages */
+		                        USE_DISABLED  ; /**< Search in disabled useflags of installed packages */
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled

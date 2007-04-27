@@ -33,15 +33,17 @@
 using namespace std;
 
 const PackageTest::MatchField
-		PackageTest::NONE          = 0x00, /* Search in name */
-		PackageTest::NAME          = 0x01, /* Search in name */
-		PackageTest::DESCRIPTION   = 0x02, /* Search in description */
-		PackageTest::PROVIDE       = 0x04, /* Search in provides */
-		PackageTest::LICENSE       = 0x08, /* Search in license */
-		PackageTest::CATEGORY      = 0x10, /* Search in category */
-		PackageTest::CATEGORY_NAME = 0x20, /* Search in category/name */
-		PackageTest::HOMEPAGE      = 0x40, /* Search in homepage */
-		PackageTest::IUSE          = 0x80; /* Search in iuse */
+		PackageTest::NONE          = 0x000, /**< Search in name */
+		PackageTest::NAME          = 0x001, /**< Search in name */
+		PackageTest::DESCRIPTION   = 0x002, /**< Search in description */
+		PackageTest::PROVIDE       = 0x004, /**< Search in provides */
+		PackageTest::LICENSE       = 0x008, /**< Search in license */
+		PackageTest::CATEGORY      = 0x010, /**< Search in category */
+		PackageTest::CATEGORY_NAME = 0x020, /**< Search in category/name */
+		PackageTest::HOMEPAGE      = 0x040, /**< Search in homepage */
+		PackageTest::IUSE          = 0x080, /**< Search in iuse */
+		PackageTest::USE_ENABLED   = 0x100, /**< Search in enabled  useflags of installed packages */
+		PackageTest::USE_DISABLED  = 0x200; /**< Search in disabled useflags of installed packages */
 
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE        = 0x00,
@@ -87,6 +89,8 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(field & IUSE)
 		setNeeds(PackageReader::COLL_IUSE);
+	if(field & (USE_ENABLED | USE_DISABLED))
+		setNeeds(PackageReader::NAME);
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
@@ -197,6 +201,34 @@ PackageTest::stringMatch(Package *pkg) const
 		{
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
+		}
+	}
+
+	if(field & (USE_ENABLED | USE_DISABLED))
+	{
+		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*pkg);
+		if(!installed_versions)
+			return false;
+		for(vector<InstVersion>::iterator it = installed_versions->begin();
+			it != installed_versions->end(); ++it) {
+			if(!vardbpkg->readUse(*pkg, *it))
+				continue;
+			if(field & USE_ENABLED) {
+				for(set<string>::iterator uit = (it->usedUse).begin();
+					uit != (it->usedUse).end(); ++uit) {
+					if((*algorithm)(uit->c_str(), NULL))
+						return true;
+				}
+			}
+			if(field & USE_DISABLED) {
+				for(vector<string>::iterator uit = (it->inst_iuse).begin();
+					uit != (it->inst_iuse).end(); ++uit) {
+					if(!(*algorithm)(uit->c_str(), NULL))
+						continue;
+					if((it->usedUse).find(*uit) == (it->usedUse).end())
+						return true;
+				}
+			}
 		}
 	}
 
