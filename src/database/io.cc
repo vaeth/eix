@@ -174,7 +174,7 @@ io::write_package(FILE *fp, const Package &pkg, bool small)
 	io::write_string(fp, pkg.provide);
 	io::write_string(fp, pkg.homepage);
 	io::write_string(fp, pkg.licenses);
-#ifdef NOT_FULL_USE
+#if defined(NOT_FULL_USE)
 	io::write_string(fp, pkg.coll_iuse);
 #else
 	io::write_string(fp, "");

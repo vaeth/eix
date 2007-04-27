@@ -63,7 +63,7 @@ PackageReader::read(Attributes need)
 				break;
 		case LICENSE:
 			m_pkg->coll_iuse = io::read_string(m_fp);
-#ifdef NOT_FULL_USE
+#if defined(NOT_FULL_USE)
 			if(need == COLL_IUSE)
 				break;
 		case COLL_IUSE:

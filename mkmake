@@ -7,6 +7,7 @@ Available options are
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
+  -u  Define NOT_FULL_USE
   -s  With sqlite
   -S  Without sqlite
   -b  With bzlib
@@ -24,15 +25,17 @@ QUIET=''
 EARLYSTOP=''
 KEEPENV=''
 SAVEFLAGS=''
+NOT_FULL_USE=''
 SQLITE=''
 BZLIB=''
 PEDANTIC=''
-while getopts 'qnepsSbBc?hH' OPTION; do
+while getopts 'qnepusSbBc?hH' OPTION; do
 case "$OPTION" in
 	q) QUIET='&>/dev/null';;
 	n) EARLYSTOP=1;;
 	e) KEEPENV='';;
 	p) PEDANTIC=1;;
+	u) NOT_FULL_USE=1;;
 	s) SQLITE='--with-sqlite';;
 	S) SQLITE='--without-sqlite';;
 	b) BZLIB='--with-bzip2';;
@@ -50,6 +53,7 @@ if [[ -z "${KEEPENV}" ]]; then
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
 	CFLAGS="-march=${MARCH} -O2 -pipe"
 	[[ "${SAFEFLAGS}" ]] || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
+	[[ "${NOT_FULL_USE}" ]] && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
 	CFLAGS="${CFLAGS} -g -ggdb3 -Wall -Wextra"
 	CFLAGS="${CFLAGS} -pedantic -Wno-variadic-macros"
 	if [[ "${PEDANTIC}" ]]; then

@@ -122,6 +122,10 @@ class Package
 
 		/** Collected IUSE for all versions of that package */
 		std::string coll_iuse;
+#if !defined(NOT_FULL_USE)
+		/** Does at least one version have individual iuse data? */
+		bool versions_have_full_use;
+#endif
 
 		/** How upgrades for new better slots are treated in tests */
 		static bool upgrade_to_best;
@@ -314,6 +318,9 @@ class Package
 			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
 			have_nontrivial_slots = false;
+#if !defined(NOT_FULL_USE)
+			versions_have_full_use = false;
+#endif
 		}
 };
 

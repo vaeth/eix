@@ -386,7 +386,12 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 	}
 	if( !fmt->no_color )
 		cout << AnsiColor::reset();
-	if(fmt->print_iuse && !fmt->style_version_lines) {
+	bool print_coll_iuse = fmt->print_iuse;
+#if !defined(NOT_FULL_USE)
+	if((fmt->style_version_lines) && (p->versions_have_full_use))
+		print_coll_iuse = false;
+#endif
+	if(print_coll_iuse) {
 		if(!(p->coll_iuse.empty())) {
 			cout << fmt->before_coll_iuse << p->coll_iuse << fmt->after_coll_iuse;
 		}
@@ -430,7 +435,12 @@ print_versions_slots(const PrintFormat *fmt, const Package* p)
 		if( !fmt->no_color )
 			cout << AnsiColor::reset();
 	}
-	if(fmt->print_iuse && !fmt->style_version_lines) {
+	bool print_coll_iuse = fmt->print_iuse;
+#if !defined(NOT_FULL_USE)
+	if((fmt->style_version_lines) && (p->versions_have_full_use))
+		print_coll_iuse = false;
+#endif
+	if(print_coll_iuse) {
 		if(!(p->coll_iuse.empty())) {
 			cout << fmt->before_slot_iuse << p->coll_iuse << fmt->after_slot_iuse;
 		}

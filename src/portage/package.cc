@@ -136,10 +136,14 @@ void Package::collect_iuse()
 {
 	vector<string> iuse = split_string(coll_iuse);
 	for(iterator it = begin(); it != end(); ++it) {
+		if((it->iuse).empty())
+			continue;
 		iuse.insert(iuse.end(), (it->iuse).begin(), (it->iuse).end());
-#ifdef NOT_FULL_USE
+#if defined(NOT_FULL_USE)
 		// Clear iuse to save memory:
 		(it->iuse).clear();
+#else
+		versions_have_full_use = true;
 #endif
 	}
 	sort_uniquify(iuse);
