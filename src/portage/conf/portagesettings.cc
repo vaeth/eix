@@ -173,8 +173,9 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefixprofile, const string &eprefixportdir, const string &eprefixoverlays, const string &eprefixaccessoverlays, const string &eprefixsource)
+PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefixprofile, const string &eprefixportdir, const string &eprefixoverlays, const string &eprefixaccessoverlays, const string &eprefixsource, bool obsolete_minusasterisk)
 {
+	m_obsolete_minusasterisk = obsolete_minusasterisk;
 	m_eprefixconf     = eprefixconf;
 	m_eprefixprofile  = eprefixprofile;
 	m_eprefixportdir  = eprefixportdir;
@@ -464,14 +465,36 @@ inline void apply_keywords(Version &v, Keywords::Type t, bool alwaysstable)
 		redundant |= (check & Keywords::RED_MIXED); \
 	} while(0)
 
+// Return value is true if -* occurs in keywords (and new_minusasterisk is true)
+inline bool add_local_keywords(vector<string> &collect, const string &keywords, bool new_minusasterisk)
+{
+	bool had_minus = false;
+	const vector<string> kv = split_string(keywords);
+	for(vector<string>::const_iterator it = kv.begin();
+		it != kv.end(); ++it)
+	{
+		// "-*" possibly deletes all previous keywords set by user.
+		if(new_minusasterisk) {
+			if(*it == "-*") {
+				had_minus = true;
+				collect.clear();
+				continue;
+			}
+		}
+		collect.push_back(*it);
+	}
+	return had_minus;
+}
+
 /// @return true if something from /etc/portage/package.* applied
 bool
 PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redundant check) const
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
-	map<Version*,string> sorted_by_versions;
+	map<Version*,vector<string> > sorted_by_versions;
 	bool rvalue = false;
 
+	bool new_minusasterisk = !(m_settings->m_obsolete_minusasterisk);
 	if(keyword_masks && (!keyword_masks->empty()))
 	{
 		rvalue = true;
@@ -485,13 +508,17 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 				v != matches.end();
 				++v)
 			{
-				sorted_by_versions[*v].append(" " + it->keywords);
-				if(!it->locally_double)
-					continue;
-				if(!(check & Keywords::RED_DOUBLE_LINE))
-					continue;
-				v->set_redundant((v->get_redundant()) |
-					Keywords::RED_DOUBLE_LINE);
+				if(add_local_keywords(sorted_by_versions[*v], it->keywords, new_minusasterisk)) {
+					if(check & Keywords::RED_MINUSASTERISK)
+						v->set_redundant((v->get_redundant()) |
+							Keywords::RED_MINUSASTERISK);
+				}
+				// Set RED_DOUBLE_LINE depending on locally_double
+				if(it->locally_double) {
+					if(check & Keywords::RED_DOUBLE_LINE)
+						v->set_redundant((v->get_redundant()) |
+							Keywords::RED_DOUBLE_LINE);
+				}
 			}
 		}
 	}
@@ -527,12 +554,11 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 
 		Keywords lkw(kw.get());
 
-		string skw = sorted_by_versions[*i];
-		if(!skw.empty())
+		vector<string> &kv = sorted_by_versions[*i];
+		if(!kv.empty())
 		{
 			if(check & Keywords::RED_IN_KEYWORDS)
 				redundant |= Keywords::RED_IN_KEYWORDS;
-			vector<string> kv = split_string(skw);
 			vector<string> *arr = NULL;
 			for(vector<string>::iterator kvi = kv.begin();
 				kvi != kv.end();
@@ -617,7 +643,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 				}
 				else if(check & (Keywords::RED_STRANGE | Keywords::RED_MIXED))
 				{
-					if(s[0] == '-')	{
+					if(s[0] == '-') {
 						redundant |= (check & Keywords::RED_STRANGE);
 					}
 					else if(s[0] != '~') {
@@ -651,7 +677,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 			}
 		}
 		apply_keywords(**i, lkw.get(), alwaysstable);
-		if(rvalue && (check & Keywords::RED_NO_CHANGE))	{
+		if(rvalue && (check & Keywords::RED_NO_CHANGE)) {
 			if((i->get() & Keywords::KEY_ALL) == (oritype & Keywords::KEY_ALL))
 				redundant |= Keywords::RED_NO_CHANGE;
 		}

@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce OBSOLETE_MINUSASTERISK and set it to false,
+	  to deal with the soon coming portage-2.1.3.
+	- Introduce corresponding REDUNDANT_IF_MINUSASTERISK.
+
 *eix-0.9.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce PRINT_IUSE, FORMAT_{BEFORE,AFTER}_{,COLL_,SLOT_}IUSE

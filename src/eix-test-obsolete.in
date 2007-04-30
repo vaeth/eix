@@ -50,6 +50,7 @@ NoKeywords () { export \
 	REDUNDANT_IF_WEAKER=false \
 	REDUNDANT_IF_STRANGE=false \
 	REDUNDANT_IF_NO_CHANGE=false
+	REDUNDANT_IF_MINUSASTERISK=false
 }
 
 NoMask () { export \

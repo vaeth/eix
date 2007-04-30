@@ -1105,6 +1105,13 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "OBSOLETE_MINUSASTERISK",
+			"false", "If true, treat -* in /etc/portage/package.keywords as <=portage-2.1.2\n"
+			"Since >=portage-2.1.2-r4, -* is practically obsolete and replaced\n"
+			"by ** which accepts anything (note that there are also * and ~*).")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
 			"false", "If true, always print the number of matches in the last line.")
 		);
@@ -1211,6 +1218,12 @@ eixrc.addDefault(
 			"Applies if /etc/portage/package.keywords lists a strange keyword\n"
 			"e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,\n"
 			"for the versions in question.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MINUSASTERISK",
+			"some",
+			"Applies if /etc/portage/package.keywords contains some -* entry.\n"
+			"This test only applies if OBSOLETE_MINUSASTERISK is false.")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_NO_CHANGE",

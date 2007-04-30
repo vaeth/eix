@@ -134,6 +134,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void read_config(const std::string &name, const std::string &prefix);
 
 	public:
+		bool m_obsolete_minusasterisk;
 		std::string m_eprefixconf;
 		std::string m_eprefixprofile;
 		std::string m_eprefixportdir;
@@ -147,7 +148,13 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(const std::string &eprefixconf, const std::string &eprefixportprofile, const std::string &eprefixportdir, const std::string &eprefixoverlays, const std::string &eprefixaccessoverlays, const std::string &eprefixsource);
+		PortageSettings(const std::string &eprefixconf,
+			const std::string &eprefixportprofile,
+			const std::string &eprefixportdir,
+			const std::string &eprefixoverlays,
+			const std::string &eprefixaccessoverlays,
+			const std::string &eprefixsource,
+			bool obsolete_minusasterisk);
 
 		/** Free memory. */
 		~PortageSettings();
@@ -184,7 +191,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 	eixrc["EPREFIX_PORTDIR"], \
 	eixrc["EPREFIX_OVERLAYS"], \
 	eixrc["EPREFIX_ACCESS_OVERLAYS"], \
-	eixrc["EPREFIX_SOURCE"])
+	eixrc["EPREFIX_SOURCE"], \
+	eixrc.getBool("OBSOLETE_MINUSASTERISK"))
 
 
 

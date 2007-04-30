@@ -1415,6 +1415,11 @@ In particular, the option -T will not detect if an installed version of
 a package actually stems from a redundant overlay if in the current database
 all versions of this package stem from one (other) location.
 .TP
+.BR OBSOLETE_MINUSASTERISK " " (true / false)
+If true, treat B<-*> in /etc/portage/package.keywords as portage-2.1.2 and earlier versions do.
+Since portage-2.1.2, the B<-*> keyword is practically obsolete and was replaced by B<**> which accepts anything (even an ebuild with empty B<KEYWORDS>).
+Note that there are also the related keywords B<*> and B<~*> which accept stable or unstable versions of any arch listed in B<KEYWORDS>.
+.TP
 .BR PRINT_COUNT_ALWAYS " " (true / false)
 If true, always print the number of matches in the last line, even if this
 number is 0 or 1.
@@ -1544,6 +1549,10 @@ for the versions in question.
 Applies if /etc/portage/package.keywords lists a strange keyword,
 e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,
 for the versions in question.
+.TP
+.BR REDUNDANT_IF_MINUSASTERISK "  " (String ", see above")
+Applies if /etc/portage/package.keywords contains some -* entry.
+This test only applies if B<OBSOLETE_MINUSASTERISK> is false.
 .TP
 .BR REDUNDANT_IF_NO_CHANGE "  " (String ", see above")
 Applies if /etc/portage/package.keywords provides keywords which do not
