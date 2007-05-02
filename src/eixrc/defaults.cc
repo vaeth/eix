@@ -858,11 +858,6 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_INSTALLED_USE",
-			"%s", "Printf-like format for printing useflags for installed packages")
-		);
-
-eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_IUSE",
 			" [(blue)", "This string is printed before IUSE data for a version is output.\n"
 			"(this is only used when --versionlines is active)")

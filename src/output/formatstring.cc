@@ -291,7 +291,10 @@ FormatParser::ParserState
 FormatParser::state_TEXT()
 {
 	string textbuffer;
-	while(*band_position && (strchr("<{(", *band_position ) == NULL)) {
+	const char *end_of_text = "<{(";
+	if(only_colors)
+		end_of_text = "(";
+	while(*band_position && (strchr(end_of_text, *band_position ) == NULL)) {
 		if(*band_position == '\\') {
 			textbuffer.append(get_escape(++band_position));
 		}

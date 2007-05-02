@@ -244,33 +244,3 @@ void make_set(set<string> *the_set, const vector<string> &the_list)
 	}
 }
 
-#if !defined(HAVE_ASPRINTF)
-int asprintf_stringarg(char **tmp, const char *format, const char *arg)
-{
-	static const int size = 200;
-	*tmp = static_cast<char *>(malloc(size));
-	if (*tmp == NULL)
-		return -1;
-
-	int nchars = snprintf(*tmp, size, format, arg);
-	if(nchars < 0) {
-		free(*tmp);
-		*tmp = NULL;
-		return nchars;
-	}
-	if(nchars < size)
-		return nchars;
-	free(*tmp);
-	nchars++;
-	*tmp = static_cast<char *>(malloc(nchars));
-	if(*tmp == NULL)
-		return -1;
-	nchars = snprintf(*tmp, nchars, format, arg);
-	if(nchars < 0) {
-		free(*tmp);
-		*tmp = NULL;
-	}
-	return nchars;
-}
-#endif
-

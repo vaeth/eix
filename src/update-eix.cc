@@ -56,7 +56,7 @@ using namespace std;
 
 char *program_name = NULL;
 void sig_handler(int sig);
-void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small);
+void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify);
 
 class Permissions {
 	private:
@@ -134,15 +134,16 @@ class Permissions {
 			}
 		}
 
-		void set_db()
+		bool will_modify()
+		{ return modify; }
+
+		static void set_db(FILE *database)
 		{
-			if(!modify)
-				return;
 			gid_t g;
 			uid_t u;
 			if(get_gid_of("portage", &g) && get_uid_of("portage", &u)) {
-				chown(cachefile.c_str(), u, g);
-				chmod(cachefile.c_str(), 00664);
+				fchown(fileno(database), u, g);
+				fchmod(fileno(database), 00664);
 			}
 		}
 };
@@ -424,13 +425,13 @@ run_update_eix(int argc, char *argv[])
 	int ret = 0;
 	try {
 		update(outputfile.c_str(), table, portage_settings,
-			eixrc.getBool("SMALL_EIX_DATABASE"));
+			eixrc.getBool("SMALL_EIX_DATABASE"),
+			permissions.will_modify());
 	} catch(ExBasic &e)
 	{
 		cerr << e << endl;
 		ret = 2;
 	}
-	permissions.set_db();
 	return ret;
 }
 
@@ -447,7 +448,7 @@ error_callback(const char *fmt, ...)
 }
 
 void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify)
 {
 	DBHeader dbheader;
 	vector<string> *categories = portage_settings.getCategories();
@@ -519,6 +520,8 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	/* And write database back to disk .. */
 	FILE *database_stream = fopen(outputfile, "wb");
 	ASSERT(database_stream, "Can't open the database file %s for writing (mode = 'wb')", outputfile);
+	if(will_modify)
+		Permissions::set_db(database_stream);
 
 	dbheader.size = package_tree.countCategories();
 

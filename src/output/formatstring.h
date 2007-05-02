@@ -232,8 +232,7 @@ class PrintFormat {
 			   mark_version,      /**< Marker for marked versions */
 			   mark_version_end;  /**< End-Marker for marked versions */
 		std::string dateFormat,       /**< The format of the long  install-date */
-		            dateFormatShort,  /**< The format of the short install-date */
-		            instUseFormat;    /**< The format of the install-USEflags */
+		            dateFormatShort;  /**< The format of the short install-date */
 		std::string before_iuse, after_iuse,
 		            before_coll_iuse, after_coll_iuse,
 		            before_slot_iuse, after_slot_iuse;

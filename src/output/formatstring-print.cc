@@ -51,13 +51,11 @@ get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure
 string
 get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a)
 {
-	if(fmt.instUseFormat.empty())
-		return "";
 	if(!fmt.vardb->readUse(p, i))
 		return "";
 	if(i.inst_iuse.empty())
 		return "";
-	string ret = "";
+	string ret;
 	for(vector<string>::iterator it = i.inst_iuse.begin();
 		it != i.inst_iuse.end(); ++it)
 	{
@@ -74,11 +72,6 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 		if(a[addindex+1])
 			ret.append(a[addindex+1]);
 	}
-	char *tmp;
-	if(asprintf_stringarg(&tmp, fmt.instUseFormat.c_str(), ret.c_str()) < 0)
-		return ret;
-	ret = tmp;
-	free(tmp);
 	return ret;
 }
 

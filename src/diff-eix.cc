@@ -386,7 +386,6 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.dateFormat       = eixrc["FORMAT_INSTALLATION_DATE"];
 	format_for_new.dateFormatShort  = eixrc["FORMAT_SHORT_INSTALLATION_DATE"];
-	format_for_new.instUseFormat    = eixrc["FORMAT_INSTALLED_USE"];
 	format_for_new.color_masked     = eixrc["COLOR_MASKED"];
 	format_for_new.color_unstable   = eixrc["COLOR_UNSTABLE"];
 	format_for_new.color_stable     = eixrc["COLOR_STABLE"];

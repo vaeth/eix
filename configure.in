@@ -19,7 +19,7 @@ dnl Well define the following if we don't have one:
 AC_CHECK_FUNCS(strndup, , )
 
 dnl We use these optionally:
-AC_CHECK_FUNCS([canonicalize_file_name realpath strtoull vfork asprintf], , )
+AC_CHECK_FUNCS([canonicalize_file_name realpath strtoull vfork], , )
 
 AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then

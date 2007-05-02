@@ -27,6 +27,12 @@
 #include <eixTk/filenames.h>
 #include <fnmatch.h>
 
+#if !defined(PATH_MAX)
+#if defined(MAXPATHLEN)
+#define PATH_MAX MAXPATHLEN
+#endif
+#endif
+
 using namespace std;
 
 #if defined(DEBUG_NORMALIZE_PATH)
@@ -75,17 +81,23 @@ string normalize_path(const char *path, bool resolve)
 #if defined(HAVE_REALPATH)
 		if(!normalized) {
 #if defined(PATH_MAX)
-			normalized = static_cast<char *>(malloc(PATH_MAX));
-			if(normalized) {
-				if(!realpath(path, normalized))
-				{
-					free(normalized);
-					normalized = NULL;
+			// Some implementations of realpath are vulnerable
+			// against internal buffer overflow, so better test:
+			if(strlen(path) < PATH_MAX) {
+				normalized = static_cast<char *>(malloc(PATH_MAX + 1));
+				if(normalized) {
+					if(!realpath(path, normalized))
+					{
+						free(normalized);
+						normalized = NULL;
+					}
 				}
 			}
 #else
+			// We have no idea about the maximal pathlen
 			normalized = realpath(path, NULL);
 #endif
+			// Let normalized="" act as normalized=NULL:
 			if(normalized) {
 				if(!*normalized) {
 					free(normalized);
