@@ -73,6 +73,13 @@ class PackageTest {
 					INS_OVERLAY,     /**< Test for nonexistent overlays of installed packages */
 					INS_MASKED;      /**< Test for masked installed packages */
 
+		typedef uint8_t TestStability;
+		static const TestStability
+					STABLE_NONE,
+					STABLE_FULL,     /**< Test for full stability */
+					STABLE_NONMASKED,/**< Test for non-masked packages */
+					STABLE_SYSTEM;   /**< Test for system packages */
+
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader);
 
@@ -120,6 +127,9 @@ class PackageTest {
 
 		void Update(bool local_config)
 		{  update = true; update_matches_local = local_config; }
+
+		void Stability(TestStability require)
+		{  stability |= require; }
 
 		void Overlay()
 		{ overlay = true; }
@@ -224,6 +234,7 @@ class PackageTest {
 		Keywords::Redundant redundant_flags;
 		RedAtom first_test, second_test;
 		TestInstalled test_installed;
+		TestStability stability;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);

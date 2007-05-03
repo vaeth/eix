@@ -121,6 +121,8 @@ dump_help(int exit_code)
 			"    -1, --slotted         Match packages with a nontrivial slot.\n"
 			"    -2, --slots           Match packages with two different slots.\n"
 			"    -u, --update          Match packages without best slotted version.\n"
+			"    --stable              Match packages with a stable version.\n"
+			"    --non-masked          Match packages with a non-masked version.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
 			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
@@ -251,6 +253,9 @@ static struct Option long_options[] = {
 	Option("slotted",       '1'),
 	Option("slots",         '2'),
 	Option("update",        'u'),
+	Option("stable",        O_STABLE),
+	Option("non-masked",    O_NONMASKED),
+	Option("system",        O_SYSTEM),
 	Option("overlay",              'O'),
 	Option("installed-overlay",    'J'),
 	Option("installed-from-overlay",O_FROM_OVERLAY,     Option::KEEP_STRING_OPTIONAL),

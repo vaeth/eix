@@ -201,6 +201,15 @@ Only match packages which have at least one slotted version installed which
 is not the best version within that slot.
 This means that you should either upgrade or downgrade that package.
 .TP
+.BR --stable
+Only match packages which have at least one stable version.
+.TP
+.BR --non-masked
+Only match packages which have at least one non-masked version.
+.TP
+.BR --system
+Only match system packages.
+.TP
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
 .TP

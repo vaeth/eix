@@ -6,6 +6,8 @@
 	- Introduce OBSOLETE_MINUSASTERISK and set it to false,
 	  to deal with the soon coming portage-2.1.3.
 	- Introduce corresponding REDUNDANT_IF_MINUSASTERISK.
+	- Introduce --stable, --non-masked, --system, see
+	  http://forums.gentoo.org/viewtopic-t-556942.html
 	- Honour /etc/portage/profile. This fixes
 	  http://bugs.gentoo.org/show_bug.cgi?id=176840
 	- Remove FORMAT_INSTALLED_USE for security reasons.

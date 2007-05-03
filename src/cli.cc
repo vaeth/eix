@@ -127,6 +127,12 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  break;
 			case 'u': test->Update(eixrc.getBool("UPGRADE_ALWAYS_LOCAL"));
 				  break;
+			case O_STABLE: test->Stability(PackageTest::STABLE_FULL);
+				  break;
+			case O_NONMASKED: test->Stability(PackageTest::STABLE_NONMASKED);
+				  break;
+			case O_SYSTEM: test->Stability(PackageTest::STABLE_SYSTEM);
+				  break;
 			case O_OVERLAY:
 				  if(optional_increase(arg, end)) {
 					header.get_overlay_vector(

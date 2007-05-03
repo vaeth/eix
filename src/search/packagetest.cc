@@ -51,6 +51,12 @@ const PackageTest::TestInstalled
 		PackageTest::INS_OVERLAY     = 0x02,
 		PackageTest::INS_MASKED      = 0x04;
 
+const PackageTest::TestStability
+		PackageTest::STABLE_NONE      =0x00,
+		PackageTest::STABLE_FULL      =0x01,
+		PackageTest::STABLE_NONMASKED =0x02,
+		PackageTest::STABLE_SYSTEM    =0x04;
+
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader)
 {
 	vardbpkg =  &vdb;
@@ -68,6 +74,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbhe
 	obsolete = overlay = installed = invert = update = slotted =
 			dup_versions = dup_packages = false;
 	test_installed = INS_NONE;
+	stability = STABLE_NONE;
 }
 
 void
@@ -94,12 +101,11 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		update || overlay|| obsolete ||
-		overlay_list || overlay_only_list || in_overlay_inst_list
+		update || overlay|| obsolete || stability ||
 #if defined(USE_BZLIB)
-		|| from_overlay_inst_list || from_foreign_overlay_inst_list
+		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 #endif
-		)
+		overlay_list || overlay_only_list || in_overlay_inst_list)
 		setNeeds(PackageReader::VERSIONS);
 }
 
@@ -393,16 +399,6 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(installed) { // -i or -I
-		get_p();
-		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
-		if(!s)
-			return invert;
-		if(s == 1)
-			if(multi_installed)
-				return invert;
-	}
-
 	if(slotted) { // -1 or -2
 		get_p();
 		if(! (p->have_nontrivial_slots))
@@ -437,6 +433,39 @@ PackageTest::match(PackageReader *pkg) const
 			if(overlay_only_list->find(it->overlay_key) == overlay_only_list->end())
 				return invert;
 		}
+	}
+
+	if(stability) { // --stable, --non-masked, --system
+		get_p();
+		bool have = false;
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if(stability & STABLE_SYSTEM) {
+				if(!it->isSystem())
+					continue;
+				if(stability == STABLE_SYSTEM) {
+					have = true;
+					break;
+				}
+			}
+			if(it->isHardMasked())
+				continue;
+			if((!(stability & STABLE_FULL)) || it->isStable()) {
+				have = true;
+				break;
+			}
+		}
+		if(!have)
+			return invert;
+	}
+
+	if(installed) { // -i or -I
+		get_p();
+		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
+		if(!s)
+			return invert;
+		if(s == 1)
+			if(multi_installed)
+				return invert;
 	}
 
 	if(in_overlay_inst_list) { // --installed-in-[some-]overlay
