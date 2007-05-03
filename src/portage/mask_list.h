@@ -35,31 +35,38 @@
 #include <eixTk/ptr_list.h>
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/mask.h>
 
 template<typename _type>
 class MaskList
 	: public std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >
 {
 	public:
-		typedef typename std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >
+		typedef typename eix::ptr_list<_type>
+			MskList;
+
+		typedef typename std::map<std::string, MskList>
+			CatList;
+
+		typedef typename std::map<std::string, CatList>
 			super;
 
-		typedef typename std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >::iterator
+		typedef typename super::iterator
 			iterator;
 
-		typedef typename std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >::const_iterator
+		typedef typename super::const_iterator
 			const_iterator;
 
-		typedef typename std::map<std::string,eix::ptr_list<_type> >::iterator
+		typedef typename CatList::iterator
 			cat_iterator;
 
-		typedef typename std::map<std::string,eix::ptr_list<_type> >::const_iterator
+		typedef typename CatList::const_iterator
 			const_cat_iterator;
 
-		typedef typename eix::ptr_list<_type>::iterator
+		typedef typename MskList::iterator
 			mask_iterator;
 
-		typedef typename eix::ptr_list<_type>::const_iterator
+		typedef typename MskList::const_iterator
 			const_mask_iterator;
 
 		~MaskList()
@@ -75,6 +82,26 @@ class MaskList
 			}
 		}
 
+		MaskList()
+		{ }
+
+		MaskList(const MaskList<_type> &ori) : super()
+		{
+			for(const_iterator it = ori.begin(); it != ori.end(); ++it)
+			{
+				CatList &cl = (*this)[it->first];
+				for(const_cat_iterator t = it->second.begin();
+					t != it->second.end();
+					++t)
+				{
+					MskList &msk = cl[t->first];
+					for(const_mask_iterator m = t->second.begin();
+						m != t->second.end(); ++m) {
+						msk.push_back(new _type(**m));
+					}
+				}
+			}
+		}
 
 		void add(_type *m)
 		{ (*this)[m->getCategory()][m->getName()].push_back(m); }

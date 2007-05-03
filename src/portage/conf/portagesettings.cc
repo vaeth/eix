@@ -30,6 +30,8 @@
 
 #include "portagesettings.h"
 
+#include <portage/conf/cascadingprofile.h>
+
 #include <portage/mask.h>
 #include <portage/package.h>
 #include <portage/version.h>
@@ -37,6 +39,8 @@
 #include <eixTk/utils.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/filenames.h>
+
+#include <eixrc/eixrc.h>
 
 #include <varsreader.h>
 
@@ -173,20 +177,24 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(const string &eprefixconf, const string &eprefixprofile, const string &eprefixportdir, const string &eprefixoverlays, const string &eprefixaccessoverlays, const string &eprefixsource, bool obsolete_minusasterisk)
+PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 {
-	m_obsolete_minusasterisk = obsolete_minusasterisk;
-	m_eprefixconf     = eprefixconf;
-	m_eprefixprofile  = eprefixprofile;
-	m_eprefixportdir  = eprefixportdir;
-	m_eprefixoverlays = eprefixoverlays;
-	m_eprefixaccessoverlays = eprefixaccessoverlays;
+	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");
+	m_eprefixconf     = eixrc.m_eprefixconf;
+	m_eprefixprofile  = eixrc["EPREFIX_PORTAGE_PROFILE"];
+	m_eprefixportdir  = eixrc["EPREFIX_PORTDIR"];
+	m_eprefixoverlays = eixrc["EPREFIX_OVERLAYS"];
+	m_eprefixaccessoverlays = eixrc["EPREFIX_ACCESS_OVERLAYS"];
 
+	const string &eprefixsource = eixrc["EPREFIX_SOURCE"];
 	read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
 	override_by_env(test_in_env_early);
 	profile     = new CascadingProfile(this);
-	user_config = new PortageUserConfig(this);
+	if(getlocal)
+		user_config = new PortageUserConfig(this);
+	else
+		user_config = NULL;
 	override_by_env(test_in_env_late);
 
 	/* Normalize "PORTDIR": */
@@ -263,6 +271,23 @@ MaskList<Mask> *PortageSettings::getMasks()
 		}
 	}
 	return &(m_masks);
+}
+
+PortageUserConfig::PortageUserConfig(PortageSettings *psettings)
+{
+	m_settings = psettings;
+	profile = new CascadingProfile(*(psettings->profile),
+		((m_settings->m_eprefixconf) + USER_PROFILE_DIR).c_str());
+	readKeywords();
+	readMasks();
+	read_use = read_cflags = false;
+}
+
+PortageUserConfig::~PortageUserConfig()
+{
+	if(profile) {
+		delete profile;
+	}
 }
 
 bool
@@ -441,7 +466,8 @@ bool PortageUserConfig::readKeywords() {
 }
 
 /// @return true if something from /etc/portage/package.* applied
-bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const {
+bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const
+{
 	/* Set hardmasks */
 	return m_mask.applyMasks(p, check);
 }

@@ -42,6 +42,7 @@
 
 #include <cachetable.h>
 
+#include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
 
 #include <string>
@@ -365,7 +366,7 @@ run_update_eix(int argc, char *argv[])
 	permissions.check_db();
 
 	INFO("Reading Portage settings ..\n");
-	PortageSettings PortageSettingsConstructor(portage_settings, eixrc);
+	PortageSettings portage_settings(eixrc, false);
 
 	/* Normalize names: */
 
@@ -510,10 +511,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			p != c->end();
 			++p)
 		{
-			portage_settings.profile->getAllowedPackages()->applyMasks(*p);
-			portage_settings.profile->getSystemPackages()->applyMasks(*p);
-			portage_settings.profile->getPackageMasks()->applyMasks(*p);
-			portage_settings.getMasks()->applyMasks(*p);
+			portage_settings.setMasks(*p);
 		}
 	}
 

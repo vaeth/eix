@@ -2,9 +2,12 @@
 
 *eix-0.9.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add Bugs/FAQ section in manpage.
 	- Introduce OBSOLETE_MINUSASTERISK and set it to false,
 	  to deal with the soon coming portage-2.1.3.
 	- Introduce corresponding REDUNDANT_IF_MINUSASTERISK.
+	- Honour /etc/portage/profile. This fixes
+	  http://bugs.gentoo.org/show_bug.cgi?id=176840
 	- Remove FORMAT_INSTALLED_USE for security reasons.
 	- Some further security fixes.
 	- Internal change: Remove asprintf.

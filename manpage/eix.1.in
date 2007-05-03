@@ -472,7 +472,7 @@ The version matches a local mask (from /etc/portage/package.mask), but it is
 neither "masked by profile" nor masked in $PORTDIR/profiles/package.mask.
 .TP
 .BR {P}2.95.3-r8
-The version was originally "masked by profile", but this was locally changed in /etc/portage/package.unmask.
+The version was originally "masked by profile", but this was locally changed in /etc/portage/profile/packages.
 .TP
 .BR {M}4.0.0_alpha20050213
 The version was originally masked in $PORTDIR/profiles/package.mask, but this was locally changed in /etc/portage/package.unmask.
@@ -1625,9 +1625,34 @@ will perform certain permission tests in advance.
 .\" }}}
 
 .\" {{{ BUGS
-.SH "BUGS"
+.SH "BUGS (and sort of FAQ)"
 .LP
-There are no bugs, just random features.
+diff-eix does never consider /etc/portage/profile. (Reason: The saved database
+contains only the masking state according to the original profile, but not the
+profile itself.
+On the other hand, /etc/portage/profile can only be interpreted when the
+profile is known.)
+
+The output with the default B<OVERLAYS_LIST=all-used-renumbered> is confusing when one wants
+to use the overlay number in some eix variable/command-argument.
+
+There is no cache method setting which gets information from overlays fast and reliable -
+you must always choose between one of these two extremes.
+The default is the fast one, but it shows often false slots and has other problems.
+
+All the B<EPREFIX>/B<ROOT> stuff is confusing.
+In particular, by the mere fact of allowing much of these variables,
+eix will always be vulnerable to local attacks if it is called with a possibly unsafe environment.
+
+The previous default B<KEEP_VIRTUALS=true> used to confuse people.
+However, with the new default, nobody will find out that this feature exists.
+:(
+
+There is no default setting of B<OBSOLETE_MINUSASTERISK> which satisfies both,
+people using old portage and people using new portage.
+
+There are too many features: The documentation and configuration has become too complicated.
+On the other hand, there are still many things which cannot be configured...
 .\" }}}
 
 .\" {{{ HISTORY

@@ -34,6 +34,7 @@
 #include <output/formatstring.h>
 #include <output/formatstring-print.h>
 
+#include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
 
 #include <eixTk/argsreader.h>
@@ -467,7 +468,7 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
-	PortageSettings PortageSettingsConstructor(portagesettings, eixrc);
+	PortageSettings portagesettings(eixrc, true);
 
 	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care);
@@ -571,6 +572,7 @@ run_eix(int argc, char** argv)
 		portagesettings.setStability(*it,  default_accepted_keywords, true);
 		/* Add individual maskings from this machines /etc/portage/ */
 		if(!rc_options.ignore_etc_portage) {
+			portagesettings.user_config->setProfileMasks(*it);
 			portagesettings.user_config->setMasks(*it);
 			portagesettings.user_config->setStability(*it, local_accepted_keywords);
 		}

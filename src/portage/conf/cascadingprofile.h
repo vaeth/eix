@@ -30,14 +30,15 @@
 #define __CASCADINGPROFILE_H__
 
 #include <eixTk/exceptions.h>
-#include <portage/mask.h>
 #include <portage/mask_list.h>
+#include <portage/package.h>
 
 #include <map>
 #include <string>
 #include <vector>
 
 class PortageSettings;
+class Package;
 
 /** Access to the cascading profile pointed to by /etc/make.profile. */
 class CascadingProfile {
@@ -63,7 +64,7 @@ class CascadingProfile {
 
 		/** Cycle through profile and put path to files into
 		 * profile_files. */
-		void listProfile(void) throw(ExBasic);
+		void listProfile(const char *profile_dir = NULL) throw(ExBasic);
 
 		void readFiles();
 
@@ -86,17 +87,30 @@ class CascadingProfile {
 			readFiles();
 		}
 
+		/** Copy CascadingProfile (deep) and append content of profiledir */
+		CascadingProfile(const CascadingProfile &ori, const char *profile_dir) :
+		m_portagesettings(ori.m_portagesettings),
+		m_system(ori.m_system), m_system_allowed(ori.m_system_allowed),
+		m_package_masks(ori.m_package_masks)
+		{
+			listProfile(profile_dir);
+			readMakeDefaults();
+			readFiles();
+		}
+
+		void applyMasks(Package *p) const;
+
 		/** Get all m_system packages. */
-		MaskList<Mask> *getSystemPackages() {
+		const MaskList<Mask> *getSystemPackages() const {
 			return &m_system;
 		}
 
 		/** Get packages that are not in m_system profile but only allowed to have specific versions .*/
-		MaskList<Mask> *getAllowedPackages() {
+		const MaskList<Mask> *getAllowedPackages() const {
 			return &m_system_allowed;
 		}
 
-		MaskList<Mask> *getPackageMasks() {
+		const MaskList<Mask> *getPackageMasks() const {
 			return &(m_package_masks);
 		}
 };

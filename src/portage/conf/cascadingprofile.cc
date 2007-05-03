@@ -30,6 +30,7 @@
 
 #include <eixTk/utils.h>
 #include <varsreader.h>
+#include <portage/package.h>
 #include <portage/conf/portagesettings.h>
 
 #include <fstream>
@@ -195,17 +196,22 @@ void CascadingProfile::ReadLink(string &path) const
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
-void CascadingProfile::listProfile(void) throw(ExBasic)
+void CascadingProfile::listProfile(const char *profile_dir) throw(ExBasic)
 {
 	string path_buffer;
-	path_buffer = (*m_portagesettings)["PORTAGE_PROFILE"];
-	if(path_buffer.empty()) {
-		ReadLink(path_buffer);
-		if(path_buffer.empty())
-			return;
-	}
-	else {
-		path_buffer.insert(0, m_portagesettings->m_eprefixprofile);
+	if(profile_dir)
+		path_buffer = profile_dir;
+	else
+	{
+		path_buffer = (*m_portagesettings)["PORTAGE_PROFILE"];
+		if(path_buffer.empty()) {
+			ReadLink(path_buffer);
+			if(path_buffer.empty())
+				return;
+		}
+		else {
+			path_buffer.insert(0, m_portagesettings->m_eprefixprofile);
+		}
 	}
 
 	if(path_buffer[path_buffer.size() - 1] != '/')

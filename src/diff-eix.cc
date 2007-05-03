@@ -44,6 +44,7 @@
 #include <portage/packagetree.h>
 
 #include <portage/vardbpkg.h>
+#include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
 
 #include <output/formatstring.h>
@@ -429,7 +430,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_for_ex_alien_unstable  = eixrc["TAG_FOR_EX_ALIEN_UNSTABLE"];
 	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
 
-	portagesettings = new PortageSettingsConstructor(PortageSettings,eixrc);
+	portagesettings = new PortageSettings(eixrc, true);
 
 	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care);
 #if defined(USE_BZLIB)
