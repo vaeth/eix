@@ -486,11 +486,11 @@ PackageTest::match(PackageReader *pkg) const
 				continue;
 			if(!from_foreign_overlay_inst_list)
 				continue;
-			for(vector<string>::iterator match = from_foreign_overlay_inst_list->begin();
-				match != from_foreign_overlay_inst_list->end(); ++match) {
-				if(match->empty() ||
-					same_filenames(match->c_str(), (it->overlay_keytext).c_str(), true, false) ||
-					same_filenames(match->c_str(), (it->overlay_keytext).c_str(), true, true)) {
+			for(vector<string>::iterator foreign = from_foreign_overlay_inst_list->begin();
+				foreign != from_foreign_overlay_inst_list->end(); ++foreign) {
+				if(foreign->empty() ||
+					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, false) ||
+					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, true)) {
 					have = true;
 					break;
 				}
