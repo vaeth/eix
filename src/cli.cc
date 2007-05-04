@@ -39,7 +39,7 @@ using namespace std;
 #define USE_NEXT do { \
 	FINISH_CURRENT; \
 	current = next; \
-	test = new PackageTest(varpkg_db, portagesettings, header); \
+	test = new PackageTest(varpkg_db, portagesettings, stability, header); \
 } while(0)
 
 #if !defined(USE_BZLIB)
@@ -63,12 +63,12 @@ inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::ite
 }
 
 Matchatom *
-parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
 	Matchatom   *root    = new Matchatom();
 	Matchatom   *current = root;
-	PackageTest *test    = new PackageTest(varpkg_db, portagesettings, header);
+	PackageTest *test    = new PackageTest(varpkg_db, portagesettings, stability, header);
 
 	bool need_logical_operator = false;
 	bool have_default_operator = false;
@@ -128,6 +128,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			case 'u': test->Update(eixrc.getBool("UPGRADE_ALWAYS_LOCAL"));
 				  break;
 			case O_STABLE: test->Stability(PackageTest::STABLE_FULL);
+				  break;
+			case O_TESTING: test->Stability(PackageTest::STABLE_TESTING);
 				  break;
 			case O_NONMASKED: test->Stability(PackageTest::STABLE_NONMASKED);
 				  break;

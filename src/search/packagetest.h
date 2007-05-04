@@ -48,6 +48,7 @@
 #include <search/redundancy.h>
 
 class DBHeader;
+class SetStability;
 
 /** Test a package if it matches some criteria. */
 class PackageTest {
@@ -76,12 +77,13 @@ class PackageTest {
 		typedef uint8_t TestStability;
 		static const TestStability
 					STABLE_NONE,
-					STABLE_FULL,     /**< Test for full stability */
+					STABLE_FULL,     /**< Test for stable keyword */
+					STABLE_TESTING,  /**< Test for testing keyword */
 					STABLE_NONMASKED,/**< Test for non-masked packages */
 					STABLE_SYSTEM;   /**< Test for system packages */
 
 		/** Set default values. */
-		PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader);
+		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);
 
 		~PackageTest() {
 			if(overlay_list) {
@@ -129,7 +131,7 @@ class PackageTest {
 		{  update = true; update_matches_local = local_config; }
 
 		void Stability(TestStability require)
-		{  stability |= require; }
+		{  test_stability |= require; }
 
 		void Overlay()
 		{ overlay = true; }
@@ -230,11 +232,13 @@ class PackageTest {
 
 		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;
+		/** Lookup stuff about user flags here. */
+		const SetStability *stability;
 		/* Test for this redundancy: */
 		Keywords::Redundant redundant_flags;
 		RedAtom first_test, second_test;
 		TestInstalled test_installed;
-		TestStability stability;
+		TestStability test_stability;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);

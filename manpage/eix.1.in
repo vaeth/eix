@@ -202,7 +202,10 @@ is not the best version within that slot.
 This means that you should either upgrade or downgrade that package.
 .TP
 .BR --stable
-Only match packages which have at least one stable version.
+Only match packages which have at least one stable (non-masked) version.
+.TP
+.BR --testing
+Only match packages which have at least one testing or stable (non-masked) version.
 .TP
 .BR --non-masked
 Only match packages which have at least one non-masked version.

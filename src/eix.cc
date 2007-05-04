@@ -36,6 +36,7 @@
 
 #include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/set_stability.h>
 
 #include <eixTk/argsreader.h>
 #include <eixTk/stringutils.h>
@@ -122,6 +123,7 @@ dump_help(int exit_code)
 			"    -2, --slots           Match packages with two different slots.\n"
 			"    -u, --update          Match packages without best slotted version.\n"
 			"    --stable              Match packages with a stable version.\n"
+			"    --testing             Match packages with a testing or stable version.\n"
 			"    --non-masked          Match packages with a non-masked version.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
@@ -254,6 +256,7 @@ static struct Option long_options[] = {
 	Option("slots",         '2'),
 	Option("update",        'u'),
 	Option("stable",        O_STABLE),
+	Option("testing",       O_TESTING),
 	Option("non-masked",    O_NONMASKED),
 	Option("system",        O_SYSTEM),
 	Option("overlay",              'O'),
@@ -502,7 +505,17 @@ run_eix(int argc, char** argv)
 		exit(1);
 	}
 
-	query = parse_cli(eixrc, varpkg_db, portagesettings, header, &marked_list, argreader.begin(), argreader.end());
+	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG"))
+		rc_options.ignore_etc_portage = true;
+	if(!rc_options.ignore_etc_portage) {
+		// No need to apply local settings for each test.
+		// This saves a lot of time.
+		format.recommend_local = false;
+	}
+
+	SetStability stability(&portagesettings, rc_options.ignore_etc_portage, true);
+
+	query = parse_cli(eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader.begin(), argreader.end());
 
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages;
@@ -543,21 +556,6 @@ run_eix(int argc, char** argv)
 		matches.sort(FuzzyAlgorithm::compare);
 	}
 
-	Keywords default_accepted_keywords = portagesettings.getAcceptKeywordsDefault();
-	Keywords local_accepted_keywords;
-
-	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG")) {
-		rc_options.ignore_etc_portage = true;
-	}
-	else {
-		if(!rc_options.ignore_etc_portage) {
-			// No need to apply local settings for each test.
-			// This saves a lot of time.
-			format.recommend_local = false;
-		}
-		local_accepted_keywords = portagesettings.getAcceptKeywordsLocal();
-	}
-
 	format.set_marked_list(marked_list);
 	if(overlay_mode != 0)
 		format.set_overlay_translations(NULL);
@@ -574,13 +572,7 @@ run_eix(int argc, char** argv)
 		it != matches.end();
 		++it)
 	{
-		portagesettings.setStability(*it,  default_accepted_keywords, true);
-		/* Add individual maskings from this machines /etc/portage/ */
-		if(!rc_options.ignore_etc_portage) {
-			portagesettings.user_config->setProfileMasks(*it);
-			portagesettings.user_config->setMasks(*it);
-			portagesettings.user_config->setStability(*it, local_accepted_keywords);
-		}
+		stability.set_stability(**it);
 
 		if(it->largest_overlay)
 		{

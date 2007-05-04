@@ -26,47 +26,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __CLI_H__
-#define __CLI_H__
+#include <portage/conf/cascadingprofile.h>
+#include <portage/conf/portagesettings.h>
 
-#include <search/dbmatchcriteria.h>
-#include <eixTk/argsreader.h>
-#include <output/formatstring.h>
-#include <database/header.h>
+using namespace std;
 
-class SetStability;
-Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
+void
+CascadingProfile::applyMasks(Package *p) const
+{
+	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+		**it &= Keywords::KEY_ALL;
+	}
+	getAllowedPackages()->applyMasks(p);
+	getSystemPackages()->applyMasks(p);
+	getPackageMasks()->applyMasks(p);
+}
 
-/*	If you want to add a new parameter to eix just insert a line into
- *	long_options. If you only want a longopt, add a new define.
- *
- *	-- ebeinroth
- */
+void PortageUserConfig::setProfileMasks(Package *p) const
+{
+	profile->applyMasks(p);
+	m_settings->getMasks()->applyMasks(p);
+}
 
-enum cli_options {
-	O_FMT = 256,
-	O_FMT_VERBOSE,
-	O_FMT_COMPACT,
-	O_PRINT_VAR,
-	O_DUMP,
-	O_DUMP_DEFAULTS,
-	O_CARE,
-	O_IGNORE_ETC_PORTAGE,
-	O_CURRENT,
-	O_STABLE,
-	O_TESTING,
-	O_NONMASKED,
-	O_SYSTEM,
-	O_OVERLAY,
-	O_ONLY_OVERLAY,
-	O_INSTALLED_OVERLAY,
-	O_INSTALLED_SOME,
-	O_INSTALLED_WITH_USE,
-	O_INSTALLED_WITHOUT_USE,
-	O_FROM_OVERLAY,
-	O_EIX_CACHEFILE,
-	O_DEBUG
-};
+void PortageSettings::setMasks(Package *p)
+{
+	profile->applyMasks(p);
+	getMasks()->applyMasks(p);
+}
 
-
-#endif /* __CLI_H__ */

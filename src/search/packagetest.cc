@@ -28,6 +28,7 @@
 
 #include "packagetest.h"
 #include <portage/version.h>
+#include <portage/set_stability.h>
 #include <eixTk/filenames.h>
 
 using namespace std;
@@ -54,13 +55,15 @@ const PackageTest::TestInstalled
 const PackageTest::TestStability
 		PackageTest::STABLE_NONE      =0x00,
 		PackageTest::STABLE_FULL      =0x01,
-		PackageTest::STABLE_NONMASKED =0x02,
-		PackageTest::STABLE_SYSTEM    =0x04;
+		PackageTest::STABLE_TESTING   =0x02,
+		PackageTest::STABLE_NONMASKED =0x04,
+		PackageTest::STABLE_SYSTEM    =0x08;
 
-PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbheader)
+PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
 {
 	vardbpkg =  &vdb;
 	portagesettings = &p;
+	stability= &set_stability;
 	header   = &dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
 #if defined(USE_BZLIB)
@@ -74,7 +77,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const DBHeader &dbhe
 	obsolete = overlay = installed = invert = update = slotted =
 			dup_versions = dup_packages = false;
 	test_installed = INS_NONE;
-	stability = STABLE_NONE;
+	test_stability = STABLE_NONE;
 }
 
 void
@@ -334,22 +337,18 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 		p = pkg->get(); \
 } while(0)
 
-#define get_user_accept() do { \
+#define get_user() do { \
 	if(!user) { \
-		accept_keywords = portagesettings->getAcceptKeywordsLocal(); \
 		user = new Package; \
 		user->deepcopy(*p); \
 	} \
 } while(0)
 
-#define set_user_flags() do { \
-	if(!mask_was_set) { \
-		mask_was_set = true; \
-		portagesettings->user_config->setMasks(user); \
-	} \
-	if(!keywords_was_set) { \
-		keywords_was_set = true; \
-		portagesettings->user_config->setStability(user, accept_keywords); \
+#define set_user() do { \
+	get_user(); \
+	if(!have_set_stability) { \
+		stability->set_stability(*user); \
+		have_set_stability = true; \
 	} \
 } while(0)
 
@@ -376,14 +375,11 @@ PackageTest::match(PackageReader *pkg) const
 	   "-! -a -( ... -)" or "-! -o -( ... -)").
 
 	   If a test needs local settings of the keywords/mask, do not rely
-	   that they are set in p, because the user might not want to see
-	   the local settings. Instead, do three things.
-	   1. Call
-	      get_user_accept() (to make sure a copy of p is in "user" and
-	                         "accept_keywords" is properly defined)
-	      set_user_flags() (to make sure the local settings have applied)
+	   that they are set in p. Instead, do three things.
+	   1. Call set_user().
+	      This makes a copy of "p" into "user" with local settings.
 	      Then use "user" instead of "p".
-	      Note that both commands are time-consuming,
+	      Note that this is time-consuming,
 	      so do other tests first, if possible.
 	   2. Make sure to place your test after the "obsolete" tests:
 	      The "obsolete" tests need a special treatment, since they *must*
@@ -433,29 +429,6 @@ PackageTest::match(PackageReader *pkg) const
 			if(overlay_only_list->find(it->overlay_key) == overlay_only_list->end())
 				return invert;
 		}
-	}
-
-	if(stability) { // --stable, --non-masked, --system
-		get_p();
-		bool have = false;
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(stability & STABLE_SYSTEM) {
-				if(!it->isSystem())
-					continue;
-				if(stability == STABLE_SYSTEM) {
-					have = true;
-					break;
-				}
-			}
-			if(it->isHardMasked())
-				continue;
-			if((!(stability & STABLE_FULL)) || it->isStable()) {
-				have = true;
-				break;
-			}
-		}
-		if(!have)
-			return invert;
 	}
 
 	if(installed) { // -i or -I
@@ -549,10 +522,10 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
+
 	Package *user = NULL;
 	bool mask_was_set = false;
 	bool keywords_was_set = false;
-	Keywords accept_keywords;
 	while(obsolete) {  // -T; loop, because we break in case of success
 		// Can some test succeed at all?
 		if((test_installed == INS_NONE) &&
@@ -560,10 +533,11 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 
 		get_p();
-		get_user_accept();
+		get_user();
 		/* To test with /etc/portage redundancy
 		   (not that of ACCEPT_KEYWORDS in /etc/make.conf),
 		   we must use here the *local* accept_keywords. */
+		Keywords accept_keywords = portagesettings->getAcceptKeywordsLocal();
 		portagesettings->setStability(user, accept_keywords, true);
 
 		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
@@ -624,7 +598,14 @@ PackageTest::match(PackageReader *pkg) const
 		if(!installed_versions)
 			return invert;
 		if(test_installed & INS_MASKED) {
-			set_user_flags();
+			if(!mask_was_set) {
+				mask_was_set = true;
+				portagesettings->user_config->setMasks(user);
+			}
+			if(!keywords_was_set) {
+				keywords_was_set = true;
+				portagesettings->user_config->setStability(user, accept_keywords);
+			}
 		}
 		vector<InstVersion>::iterator current = installed_versions->begin();
 		for( ; current != installed_versions->end(); ++current)
@@ -658,16 +639,51 @@ PackageTest::match(PackageReader *pkg) const
 		return invert;
 	}
 
+	bool have_set_stability = false;
 	if(update) { // -u
 		get_p();
 		if(update_matches_local)
 		{
-			get_user_accept();
-			set_user_flags();
+			set_user();
 			if(! user->recommend(vardbpkg, true, true))
 				return invert;
 		}
 		else if(! p->recommend(vardbpkg, true, true))
+			return invert;
+	}
+
+	if(test_stability) { // --stable, --non-masked, --system
+		get_p();
+		set_user();
+		bool have = false;
+		for(Package::iterator it = user->begin(); it != user->end(); ++it) {
+			if(test_stability & STABLE_SYSTEM) {
+				if(!it->isSystem())
+					continue;
+				if(test_stability == STABLE_SYSTEM) {
+					have = true;
+					break;
+				}
+			}
+			if(it->isHardMasked())
+				continue;
+			if(it->isStable()) {
+				have = true;
+				break;
+			}
+			if(test_stability & STABLE_FULL)
+				continue;
+			if(it->isUnstable()) {
+				have = true;
+				break;
+			}
+			if(test_stability & STABLE_TESTING)
+				continue;
+			// test_stability & STABLE_NONMASKED
+			have = true;
+			break;
+		}
+		if(!have)
 			return invert;
 	}
 
