@@ -125,6 +125,7 @@ dump_help(int exit_code)
 			"    --stable              Match packages with a stable version.\n"
 			"    --testing             Match packages with a testing or stable version.\n"
 			"    --non-masked          Match packages with a non-masked version.\n"
+			"    --system              Match system packages.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
 			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
