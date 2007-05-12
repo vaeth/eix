@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix diff-eix: Flag whether local settings should be
+	  obeyed was inverted by mistake in 0.9.5.
+	- Fix logic error in {recommend} when new slot vanishes.
+	- Minor fixes and simplifications in default formats.
+
 *eix-0.9.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add Bugs/FAQ section in manpage.

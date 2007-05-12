@@ -273,14 +273,8 @@ class Package
 		/** do we have an upgrade/downgrade recommendation? */
 		bool recommend(VarDbPkg *v, bool only_installed, bool test_slots) const
 		{
-			if(!test_slots)
-				return check_best(v, only_installed, false);
-			if(upgrade_to_best)
-			{
-				if(check_best(v, only_installed, true))
-					return true;
-			}
-			return check_best_slots(v, only_installed);
+			return can_upgrade(v, only_installed, test_slots) ||
+				must_downgrade(v, test_slots);
 		}
 
 		bool differ(const Package &p, VarDbPkg *v, bool only_installed, bool testvardb, bool test_slots) const

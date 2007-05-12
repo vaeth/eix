@@ -527,15 +527,12 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_HEADER_COMPACT",
 			"[{installedversionsshort}"
-				"{recommend}"
-					"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
-					"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
-				"{else}"
-					"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}{}()"
-				"{}"
+				"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(){}"
+				"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(){}"
+				"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}(){}"
 			"{else}"
-				"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}"
-			"{}()]",
+				"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()"
+			"{}]",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the compact header symbols.")
 		);
@@ -543,10 +540,10 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_NEW",
 			"["
-			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
-			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
-			"{!recommend}(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}{}()"
-			"()]"
+			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(){}"
+			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(){}"
+			"{!recommend}(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}(){}"
+			"]"
 			"{upgrade}"
 				"{!downgrade} {}"
 			"{else}"
@@ -572,12 +569,10 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_CHANGED",
 			"["
-			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
-			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
-			"{recommend}(){}"
-			"{!upgrade}{better}(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}{}{}"
-			"{!downgrade}{worse}(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}{}{}"
-			"{!recommend}(){}"
+			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(){}"
+			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(){}"
+			"{!upgrade}{better}(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}(){}{}"
+			"{!downgrade}{worse}(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}(){}{}"
 			"]"
 			"{!upgrade}{!better} {}{}"
 			"{!downgrade}{!worse} {}{}"

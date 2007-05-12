@@ -398,11 +398,11 @@ run_diff_eix(int argc, char *argv[])
 #endif
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
-	SetStability set_stability(portagesettings, local_settings, false);
+	SetStability set_stability(portagesettings, !local_settings, false);
 	if(local_settings)
 		format_for_new.recommend_local = false;
 	else
-		format_for_new.recommend_local  = eixrc.getBool("RECOMMEND_ALWAYS_LOCAL");
+		format_for_new.recommend_local = eixrc.getBool("RECOMMEND_ALWAYS_LOCAL");
 
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);
