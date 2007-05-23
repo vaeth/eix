@@ -139,6 +139,14 @@ slow connections such as a serial console.
 .BR -v ", " --verbose "   (toggle)"
 Use a verbose layout with additional information about search results such as the license
 of a package.
+.TP
+.BR -* ", " --pure-packages "   (toggle)"
+(do not forget quoting if you use the short form from within a shell.)
+Omit printing of additional information (overlay names, number of found packages) after the packages.
+This might be useful for some shell scripts parsing the output
+.TP
+.BR --only-names "   (toggle)"
+As "-*", but additionally print only the category and name of the packages found.
 .\" }}}
 
 .\" {{{ -------- Options for eix
@@ -727,22 +735,20 @@ Use I<option(s)> as default for eix-sync (in front of all other options).
 As usual, I<option(s)> must start with "B<->".
 .TP
 .BR I<Name>
-Call B<gensync> I<Name>.
-Note that B<gensync> is provided by B<app-portage/gentoolkit-dev> to sync
-overlays.
+Call B<layman> -s I<Name>.
+Note that B<layman> is provided by B<app-portage/layman> to sync overlays.
 .TP
 .BR *
-Call B<gensync -a> (i.e. overlays are synced with gensync).
+Call B<layman -S> (i.e. overlays are synced with layman).
 .TP
 .BR ! I<command>
 Execute I<command>. I<command> must exit successfully or B<eix-sync> will
 stop with an error.
-(Thus, B<!gensync> I<Name> is more or less equivalent to
+(Thus, B<!layman> I<Name> is more or less equivalent to
 I<Name>; only different messages will be given during B<eix-sync>.)
 
-You can use this feature to call e.g. B<layman> instead of B<gensync>
-or to unpack an overlay before calling B<gensync> or to apply local fixes
-after B<gensync> was called.
+You can use this feature to unpack e.g. an overlay before calling B<layman>
+or to apply local fixes after B<layman> was called.
 .TP
 .BR ~ I<command>
 This is only important if eix-sync options B<-s> or B<-2> are used.
@@ -1432,10 +1438,11 @@ If true, treat B<-*> in /etc/portage/package.keywords as portage-2.1.2 and earli
 Since portage-2.1.2, the B<-*> keyword is practically obsolete and was replaced by B<**> which accepts anything (even an ebuild with empty B<KEYWORDS>).
 Note that there are also the related keywords B<*> and B<~*> which accept stable or unstable versions of any arch listed in B<KEYWORDS>.
 .TP
-.BR PRINT_COUNT_ALWAYS " " (true / false)
+.BR PRINT_COUNT_ALWAYS " " (true / false / never)
 If true, always print the number of matches in the last line, even if this
 number is 0 or 1.
-This is normally not useful but might simplify writing certain scripts
+If B<PRINT_COUNT_ALWAYS=never>, then this last line is omitted completely.
+Both is normally not useful but might simplify writing certain scripts
 parsing the output of eix.
 .TP
 .BR TAG_FOR_PROFILE " " TAG_FOR_MASKED " " TAG_FOR_EX_PROFILE " " TAG_FOR_EX_MASKED " " TAG_FOR_LOCALLY_MASKED " " TAG_FOR_STABLE " " TAG_FOR_UNSTABLE " " TAG_FOR_MINUS_ASTERISK " " TAG_FOR_MINUS_KEYWORD " " TAG_FOR_ALIEN_STABLE " " TAG_FOR_ALIEN_UNSTABLE " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_EX_UNSTABLE " " TAG_FOR_EX_MINUS_ASTERISK " " TAG_FOR_EX_MINUS_KEYWORD " " TAG_FOR_EX_ALIEN_STABLE " " TAG_FOR_EX_ALIEN_UNSTABLE " " TAG_FOR_EX_MISSING_KEYWORD (String)
@@ -1673,8 +1680,8 @@ On the other hand, there are still many things which cannot be configured...
 B<eix> was formerly known as B<portagedb>. The name was changed because a part of
 portage is also called portagedb, which was a bit confusing for everyone.
 
-The functionality of update-eix was once triggered by using the -u switch on
-eix. It was than separated to provide better maintainability. Thus update-eix
+The functionality of update-eix was once triggered by using the -u switch on eix.
+It was than separated to provide better maintainability. Thus update-eix
 came to life.
 
 portage-2.1 and portage-2.1.1 doesn't remove the old dep-cache, thus eix would
@@ -1687,6 +1694,10 @@ Hence, all corresponding B<DIFF_*> variables have vanished.
 
 The cache methods B<flat> and B<backport> are now called B<portage-2.0>
 and B<portage-2.1>, respectively (the obsolete names are still supported).
+
+eix-sync used to default to gensync instead of layman.
+See the description of /etc/eix-sync.conf how you can still use the
+deprecated gensync if you want to.
 .\" }}}
 
 .\" {{{ AUTHORS
@@ -1713,7 +1724,7 @@ Roland Wittmann <linuxcommando at users.sourceforge.net> (developer)
 .BR esearch (1),
 .BR qsearch (1),
 .\" Related software .. e.g. stuff we use
-.BR gensync (1)
+.BR layman (8)
 .LP
 Further information can be found in our WiKi at \fI@EIX_WIKI@\fR.
 .\" }}}

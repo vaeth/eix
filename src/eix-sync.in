@@ -36,24 +36,24 @@ LOCAL_VARCACHE="$(update-eix --print EPREFIX_PORTAGE_CACHE)"
 EIXCACHE="$(update-eix --print EIX_CACHEFILE)"
 EIXPREVIOUS="${EIXCACHE}.previous"
 LOCAL_PORTAGE_CONFIGROOT="$(update-eix --print PORTAGE_CONFIGROOT)"
-GENSYNCCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
+LAYMANCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
 LOGFILE="${LOCAL_EPREFIX_PORTAGE_EXEC}/var/log/eix-sync.log"
 PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
 Usage () {
   echo "${0##*/} [options]
-Call gensync/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
+Call layman/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
 
 Unless the -v option is used, the output of most commands is redirected to
     ${LOGFILE}.
 Unless the -t option is used, the old database will be saved to
     ${EIXPREVIOUS}.
 
-The file ${GENSYNCCONF} determines for which overlays gensync is called.
+The file ${LAYMANCONF} determines for which overlays layman is called.
 You can also add certain hooks in that file - \"man eix\" for details.
 
-The file ${GENSYNCCONF} and the environment variable EIX_SYNC_OPTS can
+The file ${LAYMANCONF} and the environment variable EIX_SYNC_OPTS can
 contain default options which are processed before the command line options.
 Note that \"--\" in the default options will forbid command line options.
 The following options are available:
@@ -68,10 +68,10 @@ The following options are available:
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after update-eix (@ entries)
      and do not show differences. This option implies -R
--u   Update database only and show differences. This is equivalent to -g@ms ''
--g   Do not call gensync (and the !commands in ${GENSYNCCONF}).
+-u   Update database only and show differences. This is equivalent to -l@ms ''
+-l   Do not call layman (and the !commands in ${LAYMANCONF}).
      However, the postponed hooks (@ and @@ entries) will be executed anyway.
--@   Do not execute the hooks (@ and @@ entries) of ${GENSYNCCONF}.
+-@   Do not execute the hooks (@ and @@ entries) of ${LAYMANCONF}.
 -S   Do not execute the hooks after emerge --sync (@@ entries).
 -m   Run emerge --metadata but not emerge --sync.
      emerge --metadata is skipped if you use portage's metadata overlay module
@@ -99,7 +99,7 @@ DiffOnly() {
   die "Could not execute diff-eix"
 }
 
-if [[ -r "${GENSYNCCONF}" ]]; then
+if [[ -r "${LAYMANCONF}" ]]; then
   HAVECONF=1
 else
   HAVECONF=''
@@ -123,25 +123,25 @@ ExecuteConfig () {
       @*)  J="${J#?}"; MYCMD='@';;
       \~*) J="${J#?}"; MYCMD='~';;
       -*)  CONFIG_OPTS="${CONFIG_OPTS} ${J}"; continue;;
-      *)   MYCMD="gensync";;
+      *)   MYCMD="layman";;
     esac
     [[ "${1}" = 'opts' ]] && continue
     case "${MYCMD}" in
       @@) Push AFTER_UPDATE "${J}"; continue;;
       @)  Push AFTER_SYNC "${J}"; continue;;
       \~) Push BEFORE_RSYNC "${J}"; continue;;
-      !)  [[ "${NOGENSYNC}" ]] || DoExecute "${J}"; continue;;
+      !)  [[ "${NOLAYMAN}" ]] || DoExecute "${J}"; continue;;
     esac
-    [[ "${NOGENSYNC}" ]] && continue
+    [[ "${NOLAYMAN}" ]] && continue
     RootTest
     if [[ "${J}" = "*" ]]; then
       MyRunCommand "Syncing all portage overlays"
-        "${MYCMD}" -a || die "${MYCMD} -a failed"
+        "${MYCMD}" -S || die "${MYCMD} -S failed"
       continue;
     fi
     MyRunCommand "Syncing portage overlay '${J}'"
-      "${MYCMD}" "${J}" || die "${MYCMD} ${J} failed"
-  done <"${GENSYNCCONF}"
+      "${MYCMD}" -s "${J}" || die "${MYCMD} -s ${J} failed"
+  done <"${LAYMANCONF}"
 }
 
 
@@ -151,7 +151,7 @@ declare -a EMERGECMD
 DefaultOpts () {
   EMERGECMD=("emerge" "--sync")
   CLEARCACHE='1'
-  NOGENSYNC=''
+  NOLAYMAN=''
   NOHOOKS=''
   VERBOSE=''
   QUIET=''
@@ -168,7 +168,7 @@ DefaultOpts () {
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uug@SmMtvqwWc:C:rRe?hH" OPTION \
+while getopts "ids:2:Uul@SmMtvqwWc:C:rRe?hH" OPTION \
   ${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
   case "${OPTION}" in
     i) DefaultOpts;;
@@ -176,8 +176,8 @@ while getopts "ids:2:Uug@SmMtvqwWc:C:rRe?hH" OPTION \
     s) SERVER="${OPTARG}";;
     2) CLIENT="${OPTARG}";;
     U) DOUPDATE='';;
-    u) NOGENSYNC=1; NOHOOKS=1; SKIP_SYNC=1; SERVER='';;
-    g) NOGENSYNC=1;;
+    u) NOLAYMAN=1; NOHOOKS=1; SKIP_SYNC=1; SERVER='';;
+    l) NOLAYMAN=1;;
     @) NOHOOKS=1;;
     S) SYNCHOOKS='';;
     m) SKIP_SYNC=1;;
@@ -256,7 +256,7 @@ RootTest () {
   einfo  "However, the heuristic might be wrong, e.g. if you use EPREFIX."
   einfo  "If you want to skip this test temporarily, use option -e."
   einfo  "If you want to skip this test permanently, put option -e"
-  einfo  "into the file ${GENSYNCCONF}."
+  einfo  "into the file ${LAYMANCONF}."
   die    ""
 }
 

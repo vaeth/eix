@@ -104,6 +104,8 @@ dump_help(int exit_code)
 			"     -q, --quiet (toggle)   (no) output\n"
 			"     -n, --nocolor          do not use ANSI color codes\n"
 			"     -F, --force-color      force colorful output\n"
+			"     -*, --pure-packages    Omit printing of overlay names and package number\n"
+			"     --only-names           -* with format <category>/<name>\n"
 			"     -c, --compact (toggle) compact search results\n"
 			"     -v, --verbose (toggle) verbose search results\n"
 			"     -x, --versionsort  (toggle) sort output by slots/versions\n"
@@ -196,7 +198,7 @@ const char *format_normal, *format_verbose, *format_compact;
 const char *eix_cachefile = NULL;
 const char *print_var = NULL;
 
-char overlay_mode;
+uint8_t overlay_mode;
 
 PrintFormat format(get_package_property, print_package_property);
 
@@ -209,6 +211,8 @@ static struct LocalOptions {
 		 compact_output,
 		 show_help,
 		 show_version,
+		 pure_packages,
+		 only_names,
 		 dump_eixrc,
 		 dump_defaults,
 		 test_unused,
@@ -228,6 +232,8 @@ static struct Option long_options[] = {
 	Option("force-color",  'F',     Option::BOOLEAN_F,     &format.no_color),
 	Option("versionlines", 'l',     Option::BOOLEAN,       &format.style_version_lines),
 	Option("versionsort",  'x',     Option::BOOLEAN,       &format.slot_sorted),
+	Option("pure-packages",'*',     Option::BOOLEAN,       &rc_options.pure_packages),
+	Option("only-names",O_ONLY_NAMES,Option::BOOLEAN,      &rc_options.only_names),
 
 	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
 	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
@@ -406,6 +412,31 @@ print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_us
 	return printed_overlay;
 }
 
+void
+set_format()
+{
+	string varname;
+	try {
+		if(rc_options.verbose_output) {
+			varname = "FORMAT_VERBOSE";
+			format.setFormat(format_verbose);
+		}
+		else if(rc_options.compact_output) {
+			varname = "FORMAT_COMPACT";
+			format.setFormat(format_compact);
+		}
+		else {
+			varname = "FORMAT";
+			format.setFormat(format_normal);
+		}
+	}
+	catch(ExBasic &e) {
+		cout << "Problems while parsing " << varname << ".\n"
+			<< e << endl;
+		exit(1);
+	}
+}
+
 int
 run_eix(int argc, char** argv)
 {
@@ -454,28 +485,18 @@ run_eix(int argc, char** argv)
 		close(1);
 	}
 
-	string varname;
-	try {
-		if(rc_options.verbose_output) {
-			varname = "FORMAT_VERBOSE";
-			format.setFormat(format_verbose);
-		}
-		else if(rc_options.compact_output) {
-			varname = "FORMAT_COMPACT";
-			format.setFormat(format_compact);
-		}
-		else {
-			varname = "FORMAT";
-			format.setFormat(format_normal);
-		}
+	if(rc_options.only_names) {
+		rc_options.pure_packages = true;
+		format.setFormat("<category>/<name>");
 	}
-	catch(ExBasic &e) {
-		cout << "Problems while parsing " << varname << "." << endl
-			<< e << endl;
-		exit(1);
-	}
+	else
+		set_format();
 
 	format.setupColors();
+
+	if(rc_options.pure_packages) {
+		overlay_mode = 4;
+	}
 
 	PortageSettings portagesettings(eixrc, true);
 
@@ -620,24 +641,28 @@ run_eix(int argc, char** argv)
 			(overlay_mode <= 1)? &overlay_used : NULL);
 	}
 
-	if(!matches.size()) {
-		if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
-			cout << "Found 0 matches.\n";
-		else
-			cout << "No matches found.\n";
-	}
-	else if(matches.size() == 1) {
-		if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
-		{
+	if((!rc_options.pure_packages) &&
+		(strcasecmp(eixrc["PRINT_COUNT_ALWAYS"].c_str(), "never")))
+	{
+		if(!matches.size()) {
+			if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
+				cout << "Found 0 matches.\n";
+			else
+				cout << "No matches found.\n";
+		}
+		else if(matches.size() == 1) {
+			if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
+			{
+				if(printed_overlay)
+					cout << "\n";
+				cout << "Found 1 match.\n";
+			}
+		}
+		else {
 			if(printed_overlay)
 				cout << "\n";
-			cout << "Found 1 match.\n";
+			cout << "Found " << matches.size() << " matches.\n";
 		}
-	}
-	else {
-		if(printed_overlay)
-			cout << "\n";
-		cout << "Found " << matches.size() << " matches.\n";
 	}
 
 	// Delete old query

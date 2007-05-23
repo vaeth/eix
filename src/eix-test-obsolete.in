@@ -88,7 +88,7 @@ fi
 COMMON="$(eix --print PORTAGE_CONFIGROOT)"
 COMMON="${COMMON}/etc/portage/package."
 
-PRINT_COUNT_ALWAYS=false eix "-t!" | grep -v "^No matches found."
+eix '-t!*'
 
 (
 	export TEST_FOR_NONEXISTENT=false

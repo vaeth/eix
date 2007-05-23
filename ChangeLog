@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- eix-sync now defaults to layman instead of deprecated gensync. Thanks
+	  for the patch to Roberto Castagnola <roberto.castagnola@gmail.com>,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=179482
+	- Introduce PRINT_COUNT_ALWAYS=never
+	- Introduce --pure-packages and --only-names
+
 *eix-0.9.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix diff-eix: Flag whether local settings should be

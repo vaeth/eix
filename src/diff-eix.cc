@@ -340,7 +340,7 @@ run_diff_eix(int argc, char *argv[])
 		format_changed = format_for_new.parseFormat(eixrc[varname].c_str());
 	}
 	catch(ExBasic e) {
-		cout << "Problems while parsing " << varname << "." << endl
+		cout << "Problems while parsing " << varname << ".\n"
 			<< e.getMessage() << endl;
 		exit(1);
 	}
