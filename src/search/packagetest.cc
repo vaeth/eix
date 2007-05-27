@@ -64,6 +64,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	vardbpkg =  &vdb;
 	portagesettings = &p;
 	stability= &set_stability;
+        stability_local = stability_nonlocal = NULL;
 	header   = &dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
 #if defined(USE_BZLIB)
@@ -74,10 +75,10 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	obsolete = overlay = installed = invert = update = slotted =
+	obsolete = overlay = installed = invert = upgrade = slotted =
 			dup_versions = dup_packages = false;
 	test_installed = INS_NONE;
-	test_stability = STABLE_NONE;
+	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
 }
 
 void
@@ -104,7 +105,7 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		update || overlay|| obsolete || stability ||
+		upgrade || overlay|| obsolete || stability ||
 #if defined(USE_BZLIB)
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 #endif
@@ -332,25 +333,40 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	return false;
 }
 
+inline bool
+stabilitytest(const Package &p, PackageTest::TestStability what)
+{
+	if(what == PackageTest::STABLE_NONE)
+		return true;
+	for(Package::const_iterator it = p.begin(); it != p.end(); ++it) {
+		if(what & PackageTest::STABLE_SYSTEM) {
+			if(!it->isSystem())
+				continue;
+			if(what == PackageTest::STABLE_SYSTEM)
+				return true;
+		}
+		if(it->isHardMasked())
+			continue;
+		if(it->isStable()) {
+			return true;
+		}
+		if(what & PackageTest::STABLE_FULL)
+			continue;
+		if(it->isUnstable())
+			return true;
+		if(what & PackageTest::STABLE_TESTING)
+			continue;
+		// what & PackageTest::STABLE_NONMASKED
+			return true;
+	}
+	return false;
+}
+
 #define get_p() do { \
 	if(!p) \
 		p = pkg->get(); \
 } while(0)
 
-#define get_user() do { \
-	if(!user) { \
-		user = new Package; \
-		user->deepcopy(*p); \
-	} \
-} while(0)
-
-#define set_user() do { \
-	get_user(); \
-	if(!have_set_stability) { \
-		stability->set_stability(*user); \
-		have_set_stability = true; \
-	} \
-} while(0)
 
 bool
 PackageTest::match(PackageReader *pkg) const
@@ -374,17 +390,20 @@ PackageTest::match(PackageReader *pkg) const
 	   because you do not want to have "-! -( ... -)" behave like
 	   "-! -a -( ... -)" or "-! -o -( ... -)").
 
-	   If a test needs local settings of the keywords/mask, do not rely
-	   that they are set in p. Instead, do three things.
-	   1. Call set_user().
-	      This makes a copy of "p" into "user" with local settings.
-	      Then use "user" instead of "p".
-	      Note that this is time-consuming,
-	      so do other tests first, if possible.
-	   2. Make sure to place your test after the "obsolete" tests:
-	      The "obsolete" tests need a special treatment, since they *must*
-	      use non-user settings before (to observe the changes when
-	      user-settings are applied).
+	   If a test needs that keywords/mask are set correctly,
+	   do not rely that they are set in p. Instead, do three things.
+	   Note that these are time consuming, so do other tests first,
+	   if possible.
+	   1. Create a local copy of p, using the package copy constructor
+	      (this is important: You need a deep copy).
+	      Say the copy is called "pcopy".
+	   2. Call one of
+		StabilityDefault(pcopy)
+		StabilityLocal(pcopy)
+		StabilityNonlocal(pcopy)
+	      depending on which type of stability you want.
+	      (Default means according to LOCAL_PORTAGE_CONFIG,
+	      Nonlocal means as with LOCAL_PORTAGE_CONFIG=false)
 	   3. Once more: remember to modify "need" in CalculateNeeds() to
 	      ensure the versions really have been read for the package.
 	*/
@@ -522,8 +541,6 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-
-	Package *user = NULL;
 	bool mask_was_set = false;
 	bool keywords_was_set = false;
 	while(obsolete) {  // -T; loop, because we break in case of success
@@ -533,63 +550,63 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 
 		get_p();
-		get_user();
+		Package pdefault(*p);
 		/* To test with /etc/portage redundancy
 		   (not that of ACCEPT_KEYWORDS in /etc/make.conf),
 		   we must use here the *local* accept_keywords. */
 		Keywords accept_keywords = portagesettings->getAcceptKeywordsLocal();
-		portagesettings->setStability(user, accept_keywords, true);
+		portagesettings->setStability(&pdefault, accept_keywords, true);
 
 		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 		{
 			mask_was_set = true;
-			if(portagesettings->user_config->setMasks(user, redundant_flags))
+			if(portagesettings->user_config->setMasks(&pdefault, redundant_flags))
 			{
-				if(have_redundant(*user, Keywords::RED_DOUBLE_MASK))
+				if(have_redundant(pdefault, Keywords::RED_DOUBLE_MASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_DOUBLE_UNMASK))
+				if(have_redundant(pdefault, Keywords::RED_DOUBLE_UNMASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_MASK))
+				if(have_redundant(pdefault, Keywords::RED_MASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_UNMASK))
+				if(have_redundant(pdefault, Keywords::RED_UNMASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_IN_MASK))
+				if(have_redundant(pdefault, Keywords::RED_IN_MASK))
 					break;
-				if(have_redundant(*user, Keywords::RED_IN_UNMASK))
+				if(have_redundant(pdefault, Keywords::RED_IN_UNMASK))
 					break;
 			}
 		}
 		if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
 		{
 			keywords_was_set = true;
-			if(portagesettings->user_config->setStability(user, accept_keywords, redundant_flags))
+			if(portagesettings->user_config->setStability(&pdefault, accept_keywords, redundant_flags))
 			{
-				if(have_redundant(*user, Keywords::RED_DOUBLE))
+				if(have_redundant(pdefault, Keywords::RED_DOUBLE))
 					break;
-				if(have_redundant(*user, Keywords::RED_MIXED))
+				if(have_redundant(pdefault, Keywords::RED_MIXED))
 					break;
-				if(have_redundant(*user, Keywords::RED_WEAKER))
+				if(have_redundant(pdefault, Keywords::RED_WEAKER))
 					break;
-				if(have_redundant(*user, Keywords::RED_STRANGE))
+				if(have_redundant(pdefault, Keywords::RED_STRANGE))
 					break;
-				if(have_redundant(*user, Keywords::RED_NO_CHANGE))
+				if(have_redundant(pdefault, Keywords::RED_NO_CHANGE))
 					break;
-				if(have_redundant(*user, Keywords::RED_IN_KEYWORDS))
+				if(have_redundant(pdefault, Keywords::RED_IN_KEYWORDS))
 					break;
 			}
 		}
-		if(portagesettings->user_config->CheckUse(user, redundant_flags))
+		if(portagesettings->user_config->CheckUse(&pdefault, redundant_flags))
 		{
-			if(have_redundant(*user, Keywords::RED_DOUBLE_USE))
+			if(have_redundant(pdefault, Keywords::RED_DOUBLE_USE))
 				break;
-			if(have_redundant(*user, Keywords::RED_IN_USE))
+			if(have_redundant(pdefault, Keywords::RED_IN_USE))
 				break;
 		}
-		if(portagesettings->user_config->CheckCflags(user, redundant_flags))
+		if(portagesettings->user_config->CheckCflags(&pdefault, redundant_flags))
 		{
-			if(have_redundant(*user, Keywords::RED_DOUBLE_CFLAGS))
+			if(have_redundant(pdefault, Keywords::RED_DOUBLE_CFLAGS))
 				break;
-			if(have_redundant(*user, Keywords::RED_IN_CFLAGS))
+			if(have_redundant(pdefault, Keywords::RED_IN_CFLAGS))
 				break;
 		}
 		if(test_installed == INS_NONE)
@@ -600,19 +617,19 @@ PackageTest::match(PackageReader *pkg) const
 		if(test_installed & INS_MASKED) {
 			if(!mask_was_set) {
 				mask_was_set = true;
-				portagesettings->user_config->setMasks(user);
+				portagesettings->user_config->setMasks(&pdefault);
 			}
 			if(!keywords_was_set) {
 				keywords_was_set = true;
-				portagesettings->user_config->setStability(user, accept_keywords);
+				portagesettings->user_config->setStability(&pdefault, accept_keywords);
 			}
 		}
 		vector<InstVersion>::iterator current = installed_versions->begin();
 		for( ; current != installed_versions->end(); ++current)
 		{
 			bool not_all_found = true;
-			for(Package::iterator version_it = user->begin();
-				version_it != user->end(); ++version_it)
+			for(Package::iterator version_it = pdefault.begin();
+				version_it != pdefault.end(); ++version_it)
 			{
 				Version *version = *version_it;
 				if(*version != *current)
@@ -639,54 +656,47 @@ PackageTest::match(PackageReader *pkg) const
 		return invert;
 	}
 
-	bool have_set_stability = false;
-	if(update) { // -u
+	if(upgrade) { // -u
 		get_p();
-		if(update_matches_local)
-		{
-			set_user();
-			if(! user->recommend(vardbpkg, true, true))
+		Package plocal(*p);
+		if(upgrade_local_mode == LOCALMODE_DEFAULT)
+			StabilityDefault(plocal);
+		else if(upgrade_local_mode == LOCALMODE_LOCAL)
+			StabilityLocal(plocal);
+		else if(upgrade_local_mode == LOCALMODE_NONLOCAL)
+			StabilityNonlocal(plocal);
+		if(! plocal.recommend(vardbpkg, true, true))
 				return invert;
-		}
-		else if(! p->recommend(vardbpkg, true, true))
+	}
+
+	if(test_stability_default != STABLE_NONE)
+	{ // --stable, --testing, --non-masked, --system
+		get_p();
+		Package pdefault(*p);
+		StabilityDefault(pdefault);
+		if(!stabilitytest(pdefault, test_stability_default))
 			return invert;
 	}
 
-	if(test_stability) { // --stable, --non-masked, --system
+	if(test_stability_local != STABLE_NONE)
+	{ // --stable+, --testing+, --non-masked+, --system+
 		get_p();
-		set_user();
-		bool have = false;
-		for(Package::iterator it = user->begin(); it != user->end(); ++it) {
-			if(test_stability & STABLE_SYSTEM) {
-				if(!it->isSystem())
-					continue;
-				if(test_stability == STABLE_SYSTEM) {
-					have = true;
-					break;
-				}
-			}
-			if(it->isHardMasked())
-				continue;
-			if(it->isStable()) {
-				have = true;
-				break;
-			}
-			if(test_stability & STABLE_FULL)
-				continue;
-			if(it->isUnstable()) {
-				have = true;
-				break;
-			}
-			if(test_stability & STABLE_TESTING)
-				continue;
-			// test_stability & STABLE_NONMASKED
-			have = true;
-			break;
-		}
-		if(!have)
+		Package plocal(*p);
+		StabilityLocal(plocal);
+		if(!stabilitytest(plocal, test_stability_local))
+			return invert;
+	}
+
+	if(test_stability_nonlocal != STABLE_NONE)
+	{ // --stable-, --testing-, --non-masked-, --system-
+		get_p();
+		Package pnonlocal(*p);
+		StabilityNonlocal(pnonlocal);
+		if(!stabilitytest(pnonlocal, test_stability_nonlocal))
 			return invert;
 	}
 
 	// all tests succeeded:
 	return (!invert);
 }
+

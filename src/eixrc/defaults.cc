@@ -1050,13 +1050,14 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "UPGRADE_ALWAYS_LOCAL",
-			"true", "if true, eix -u will match according to local settings")
+		EixRcOption(EixRcOption::BOOLEAN, "UPGRADE_LOCAL_MODE",
+			"", "if +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false\n")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "RECOMMEND_ALWAYS_LOCAL",
-			"true", "if true, up-/downgrade recommendations accord always to local settings")
+		EixRcOption(EixRcOption::BOOLEAN, "RECOMMEND_LOCAL_MODE",
+			"", "if +/-, recommendations for up- or downgrade will act as if\n"
+			"LOCAL_PORTAGE_CONFIG=true/false")
 		);
 
 eixrc.addDefault(

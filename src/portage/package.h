@@ -85,6 +85,9 @@ class SlotList : public std::vector<SlotVersions>
 class Package
 	: public eix::ptr_list<Version>
 {
+	private:
+		bool saved_maskstuff;
+
 	public:
 		/** True if duplicated versions are found in for this package.
 		 * That means e.g. that version 0.2 is found in two overlays. */
@@ -139,6 +142,10 @@ class Package
 			: category(c), name(n)
 		{ defaults(); }
 
+		/// For the copy constructor, we make a deep copy
+		Package(const Package &p) : std::list<Version*>(), eix::ptr_list<Version>()
+		{ deepcopy(p); }
+
 		/** De-constructor, delete content of Version-list. */
 		~Package();
 
@@ -165,6 +172,9 @@ class Package
 
 		/** Save maskstuff for each version of the package */
 		void save_maskstuff();
+
+		/** Restore maskstuff for each version of the package */
+		void restore_maskstuff();
 
 		void calculate_slotlist();
 
@@ -312,6 +322,7 @@ class Package
 			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
 			have_nontrivial_slots = false;
+			saved_maskstuff = false;
 #if !defined(NOT_FULL_USE)
 			versions_have_full_use = false;
 #endif

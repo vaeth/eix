@@ -399,10 +399,16 @@ run_diff_eix(int argc, char *argv[])
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, !local_settings, false);
-	if(local_settings)
-		format_for_new.recommend_local = false;
-	else
-		format_for_new.recommend_local = eixrc.getBool("RECOMMEND_ALWAYS_LOCAL");
+	format_for_new.recommend_mode = eixrc.getLocalMode("RECOMMEND_LOCAL_MODE");
+	// Save lot of time: avoid redundant remasking
+	// if(local_settings) {
+	//	if(format_for_new.recommend_mode == LOCALMODE_LOCAL)
+	//		format_for_new.recommend_mode == LOCALMODE_DEFAULT;
+	//}
+	//else {
+	//	if(format_for_new.recommend_mode == LOCALMODE_NONLOCAL)
+	//		format_for_new.recommend_mode == LOCALMODE_DEFAULT;
+	//}
 
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);

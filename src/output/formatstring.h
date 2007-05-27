@@ -33,6 +33,7 @@
 #include <iostream>
 
 #include <portage/package.h>
+#include <portage/set_stability.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/ansicolor.h>
 
@@ -205,7 +206,7 @@ class PrintFormat {
 		DBHeader      *header;
 		VarDbPkg      *vardb;
 		PortageSettings *portagesettings;
-
+		const SetStability *stability_local, *stability_nonlocal;
 
 		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
@@ -218,8 +219,9 @@ class PrintFormat {
 		     slot_sorted,         /**< Print sorted by slots */
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
-		     recommend_local,     /**< Recommendation tests based on local settings? */
 		     print_iuse;          /**< Print iuse data */
+
+		LocalMode recommend_mode;
 
 		std::string color_masked,     /**< Color for masked versions */
 			   color_unstable,    /**< Color for unstable versions */
@@ -249,12 +251,31 @@ class PrintFormat {
 			tag_for_ex_missing_keyword;
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
-			: m_print_property(print_callback), m_get_property(get_callback),
-			  virtuals(NULL), overlay_translations(NULL),
-			  overlay_used(NULL), some_overlay_used(NULL),
-			  marked_list(NULL),
-			  vardb(NULL), portagesettings(NULL)
-			{ }
+		{
+			m_print_property = print_callback;
+			m_get_property = get_callback;
+			virtuals = NULL;
+			overlay_translations = NULL;
+			overlay_used = NULL;
+			some_overlay_used = NULL;
+			marked_list = NULL;
+			vardb = NULL;
+			portagesettings = NULL;
+			stability_local = NULL;
+			stability_nonlocal = NULL;
+		}
+
+		~PrintFormat()
+		{
+			if(stability_local) {
+				delete stability_local;
+				stability_local = NULL;
+			}
+			if(stability_nonlocal) {
+				delete stability_nonlocal;
+				stability_nonlocal = NULL;
+			}
+		}
 
 		void setupColors() {
 			color_masked     = AnsiColor(color_masked).asString();
@@ -338,6 +359,24 @@ class PrintFormat {
 
 		Node *parseFormat(const char *fmt) throw(ExBasic) {
 			return m_parser.start(fmt, !no_color);
+		}
+
+		void StabilityLocal(Package &p) const
+		{
+			if(!stability_local) {
+				(const_cast<PrintFormat*>(this))->stability_local =
+					new SetStability(portagesettings, false, true);
+			}
+			stability_local->set_stability(p);
+		}
+
+		void StabilityNonlocal(Package &p) const
+		{
+			if(!stability_nonlocal) {
+				(const_cast<PrintFormat*>(this))->stability_nonlocal =
+					new SetStability(portagesettings, true, false);
+			}
+			stability_nonlocal->set_stability(p);
 		}
 
 	private:

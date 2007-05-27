@@ -204,21 +204,24 @@ Only match packages with a nontrivial slot, i.e. where SLOT is nonempty and diff
 Only match packages with at least two different slots.
 In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
 .TP
-.BR -u ", " --update
+.BR -u ", " --upgrade ", " --upgrade+ ",  " --upgrgrade-
 Only match packages which have at least one slotted version installed which
 is not the best version within that slot.
 This means that you should either upgrade or downgrade that package.
+
+If you use B<--upgrade+> or B<--upgrade->, then the test acts as if B<LOCAL_PORTAGE_CONFIG> is B<true> or B<false>.
+Otherwise, this decision is based upon B<UPGRADE_LOCAL_MODE>.
 .TP
-.BR --stable
+.BR --stable ", " --stable+ ", " --stable-
 Only match packages which have at least one stable (non-masked) version.
 .TP
-.BR --testing
+.BR --testing ", " --testing+ ", " --testing-
 Only match packages which have at least one testing or stable (non-masked) version.
 .TP
-.BR --non-masked
+.BR --non-masked ", " --non-masked+ ", " --non-masked-
 Only match packages which have at least one non-masked version.
 .TP
-.BR --system
+.BR --system ", " --system+ ", " --system-
 Only match system packages.
 .TP
 .BR -O ", " --overlay
@@ -663,8 +666,7 @@ B<upgrade> expands to "1" if the package is installed and at least one slot can 
 The other variables test similarly whether the package can be upgraded or newly installed,
 should be downgraded, can/should be upgraded/downgraded,
 or can/should be upgraded/downgraded/installed, respectively.
-The variable B<RECOMMEND_ALWAYS_LOCAL> determines whether these tests always
-accord to the setting of /etc/portage and ACCEPT_KEYWORDS.
+The variable B<RECOMMEND_LOCAL_MODE> determines whether these tests obey B<LOCAL_PORTAGE_CONFIG>.
 .TP
 .BR bestupgrade ", " bestupgradeorinstall ", " bestdowngrade ", " bestrecommend ", " bestrecommendorinstall
 as above with the difference that only the best stable version of the package
@@ -682,8 +684,7 @@ coincide.
 The corresponding B<best*> versions have an analogous meaning with the
 difference that only the best stable version is taken into account
 (and not all slots).
-The variable B<RECOMMEND_ALWAYS_LOCAL> determines whether these tests are always
-according to the setting of /etc/portage and ACCEPT_KEYWORDS.
+The variable B<RECOMMEND_LOCAL_MODE> determines whether these tests obey B<LOCAL_PORTAGE_CONFIG>.
 .TP
 .BR old* ", " new*
 this can only be used in B<DIFF_FORMAT_CHANGED>.
@@ -1384,27 +1385,14 @@ If false, /etc/portage and ACCEPT_KEYWORDS (from make.conf or the environment) a
 Since eix-0.7.9, it is recommended to leave this value "true",
 since setting it to "false" will just hide some informations.
 .TP
-.BR UPGRADE_ALWAYS_LOCAL " " (true / false)
-If true, the B<--upgrade> option of eix will always match according to the
-local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
-independently of other options or variables.
-Note that this refers only to the match, not to the way the package is printed.
-
-This variable is somewhat obsolete:
-If you followed the above suggestion and left B<*LOCAL_PORTAGE_CONFIG>="I<true>",
-this variable has no effect.
+.BR UPGRADE_LOCAL_MODE " " (+ " or " local / - " or " non-local "/anything else" )
+If this variable is B<+> / B<->, the B<--upgrade> option of eix will always
+match as if B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.
 .TP
-.BR RECOMMEND_ALWAYS_LOCAL " " (true / false)
-If true, the upgrade/downgrade recommendations as well as in diff-eix the
-tests for version changes will always accord to the
-local setting in /etc/portage and ACCEPT_KEYWORDS from make.conf,
-independently of other options or variables.
-Note that this refers only to the way the test variables in the format strings
-are interpreted.
-
-This variable is somewhat obsolete:
-If you followed the above suggestion and left B<*LOCAL_PORTAGE_CONFIG>="I<true>",
-this variable has no effect.
+.BR RECOMMEND_LOCAL_MODE " " (+ "  or " local / - " or " non-local "/anything else" )
+If this variable is B<+> / B<-> the upgrade/downgrade recommendations
+as well as in diff-eix the tests for version changes will act as is
+B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.
 .TP
 .BR UPGRADE_TO_HIGHEST_SLOT " " (true / false)
 If true, all upgrade tests will give a positive result for an installed

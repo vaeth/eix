@@ -53,6 +53,7 @@ class SetStability {
 
 		void set_stability(Package &package) const
 		{
+			package.restore_maskstuff();
 			portagesettings->setStability(&package, default_accepted_keywords, true);
 			if(ignore_etc_portage)
 				return;

@@ -47,8 +47,9 @@
 #include <search/algorithms.h>
 #include <search/redundancy.h>
 
+#include <portage/set_stability.h>
+
 class DBHeader;
-class SetStability;
 
 /** Test a package if it matches some criteria. */
 class PackageTest {
@@ -98,6 +99,14 @@ class PackageTest {
 				delete in_overlay_inst_list;
 				in_overlay_inst_list = NULL;
 			}
+			if(stability_local) {
+				delete stability_local;
+				stability_local = NULL;
+			}
+			if(stability_nonlocal) {
+				delete stability_nonlocal;
+				stability_nonlocal = NULL;
+			}
 #if defined(USE_BZLIB)
 			if(from_overlay_inst_list) {
 				delete from_overlay_inst_list;
@@ -127,14 +136,41 @@ class PackageTest {
 		void Slotted(bool multi = false)
 		{ slotted = true; multi_slot = multi; }
 
-		void Update(bool local_config)
-		{  update = true; update_matches_local = local_config; }
+		void Upgrade(LocalMode local_mode)
+		{  upgrade = true; upgrade_local_mode = local_mode; }
 
-		void Stability(TestStability require)
-		{  test_stability |= require; }
+		void StabilityDefault(TestStability require)
+		{  test_stability_default |= require; }
+
+		void StabilityLocal(TestStability require)
+		{  test_stability_local |= require; }
+
+		void StabilityNonlocal(TestStability require)
+		{  test_stability_nonlocal |= require; }
 
 		void Overlay()
 		{ overlay = true; }
+
+		void StabilityDefault(Package &p) const
+		{ stability->set_stability(p); }
+
+		void StabilityLocal(Package &p) const
+		{
+			if(!stability_local) {
+				(const_cast<PackageTest*>(this))->stability_local =
+					new SetStability(portagesettings, false, true);
+			}
+			stability_local->set_stability(p);
+		}
+
+		void StabilityNonlocal(Package &p) const
+		{
+			if(!stability_nonlocal) {
+				(const_cast<PackageTest*>(this))->stability_nonlocal =
+					new SetStability(portagesettings, true, false);
+			}
+			stability_nonlocal->set_stability(p);
+		}
 
 		std::set<Version::Overlay> *OverlayList()
 		{
@@ -216,7 +252,8 @@ class PackageTest {
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
 		bool overlay, obsolete;
-		bool update, update_matches_local;
+		bool upgrade;
+		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 
@@ -233,12 +270,14 @@ class PackageTest {
 		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;
 		/** Lookup stuff about user flags here. */
-		const SetStability *stability;
+		const SetStability *stability,
+			*stability_local, *stability_nonlocal;
 		/* Test for this redundancy: */
 		Keywords::Redundant redundant_flags;
 		RedAtom first_test, second_test;
 		TestInstalled test_installed;
-		TestStability test_stability;
+		TestStability test_stability_default,
+			test_stability_local, test_stability_nonlocal;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);

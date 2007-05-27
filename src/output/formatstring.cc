@@ -147,14 +147,14 @@ string MarkedList::getMarkedString(const Package &pkg) const
 
 LocalCopy::LocalCopy(const PrintFormat *fmt, const Package *pkg)
 {
-	if(fmt->recommend_local)
+	if((fmt->recommend_mode) != LOCALMODE_DEFAULT)
 	{
 		is_a_copy = true;
-		Package *p = new Package;
-		p->deepcopy(*pkg);
-		fmt->portagesettings->user_config->setMasks(p);
-		fmt->portagesettings->user_config->setStability(p,
-			fmt->portagesettings->getAcceptKeywordsLocal());
+		Package *p = new Package(*pkg);
+		if(fmt->recommend_mode == LOCALMODE_LOCAL)
+			fmt->StabilityLocal(*p);
+		else // if (fmt->recommend_mode == LOCALMODE_NONLOCAL)
+			fmt->StabilityNonlocal(*p);
 		package = p;
 	}
 	else

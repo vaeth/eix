@@ -65,6 +65,8 @@ class EixRc : public std::map<std::string,std::string> {
 		bool getBool(const char *key)
 		{ return istrue((*this)[key].c_str()); }
 
+		LocalMode getLocalMode(const char *key);
+
 		void getRedundantFlags(const char *key,
 			Keywords::Redundant type,
 			RedPair &p);

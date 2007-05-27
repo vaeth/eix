@@ -123,11 +123,13 @@ dump_help(int exit_code)
 			"    -D, --dup-versions    Match packages with duplicated versions.\n"
 			"    -1, --slotted         Match packages with a nontrivial slot.\n"
 			"    -2, --slots           Match packages with two different slots.\n"
-			"    -u, --update          Match packages without best slotted version.\n"
-			"    --stable              Match packages with a stable version.\n"
-			"    --testing             Match packages with a testing or stable version.\n"
-			"    --non-masked          Match packages with a non-masked version.\n"
-			"    --system              Match system packages.\n"
+			"    -u, --upgrade[+-]     Match packages without best slotted version.\n"
+			"                          +: settings from LOCAL_PORTAGE_CONFIG=true\n"
+			"                          -: settings from LOCAL_PORTAGE_CONFIG=false\n"
+			"    --stable[+-]          Match packages with a stable version\n"
+			"    --testing[+-]         Match packages with a testing or stable version.\n"
+			"    --non-masked[+-]      Match packages with a non-masked version.\n"
+			"    --system[+-]          Match system packages.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
 			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
@@ -261,11 +263,21 @@ static struct Option long_options[] = {
 	Option("multi-installed",'i'),
 	Option("slotted",       '1'),
 	Option("slots",         '2'),
-	Option("update",        'u'),
-	Option("stable",        O_STABLE),
-	Option("testing",       O_TESTING),
-	Option("non-masked",    O_NONMASKED),
-	Option("system",        O_SYSTEM),
+	Option("upgrade",       'u'),
+	Option("upgrade+",      O_UPGRADE_LOCAL),
+	Option("upgrade-",      O_UPGRADE_NONLOCAL),
+	Option("stable",        O_STABLE_DEFAULT),
+	Option("testing",       O_TESTING_DEFAULT),
+	Option("non-masked",    O_NONMASKED_DEFAULT),
+	Option("system",        O_SYSTEM_DEFAULT),
+	Option("stable+",       O_STABLE_LOCAL),
+	Option("testing+",      O_TESTING_LOCAL),
+	Option("non-masked+",   O_NONMASKED_LOCAL),
+	Option("system+",       O_SYSTEM_LOCAL),
+	Option("stable-",       O_STABLE_NONLOCAL),
+	Option("testing-",      O_TESTING_NONLOCAL),
+	Option("non-masked-",   O_NONMASKED_NONLOCAL),
+	Option("system-",       O_SYSTEM_NONLOCAL),
 	Option("overlay",              'O'),
 	Option("installed-overlay",    'J'),
 	Option("installed-from-overlay",O_FROM_OVERLAY,     Option::KEEP_STRING_OPTIONAL),
@@ -349,7 +361,7 @@ setup_defaults()
 	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
 	format.colored_slots       = rc.getBool("COLORED_SLOTS");
-	format.recommend_local     = rc.getBool("RECOMMEND_ALWAYS_LOCAL");
+	format.recommend_mode      = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
 	format.print_iuse          = rc.getBool("PRINT_IUSE");
 	format.before_iuse         = rc["FORMAT_BEFORE_IUSE"];
@@ -527,13 +539,17 @@ run_eix(int argc, char** argv)
 		exit(1);
 	}
 
-	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG"))
+	LocalMode local_mode = LOCALMODE_DEFAULT;
+	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG")) {
 		rc_options.ignore_etc_portage = true;
-	if(!rc_options.ignore_etc_portage) {
-		// No need to apply local settings for each test.
-		// This saves a lot of time.
-		format.recommend_local = false;
+		local_mode = LOCALMODE_NONLOCAL;
 	}
+	else if(!rc_options.ignore_etc_portage) {
+		local_mode = LOCALMODE_LOCAL;
+	}
+	// Save lot of time: avoid redundant remasking
+	if(format.recommend_mode == local_mode)
+		format.recommend_mode = LOCALMODE_DEFAULT;
 
 	SetStability stability(&portagesettings, rc_options.ignore_etc_portage, true);
 

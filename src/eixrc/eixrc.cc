@@ -123,6 +123,19 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 	return true;
 }
 
+LocalMode EixRc::getLocalMode(const char *key)
+{
+	const char *s = (*this)[key].c_str();
+	if((*s == '+') || (strcasecmp(s, "local") == 0))
+		return LOCALMODE_LOCAL;
+	if((*s == '-') || (strcasecmp(s, "non-local") == 0) ||
+		(strcasecmp(s, "nonlocal") == 0) ||
+		(strcasecmp(s, "global") == 0) ||
+		(strcasecmp(s, "original") == 0))
+		return LOCALMODE_NONLOCAL;
+	return LOCALMODE_DEFAULT;
+}
+
 const char *EixRc::cstr(const char *var) const
 {
 	map<string,string>::const_iterator s = find(var);

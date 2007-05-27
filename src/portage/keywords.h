@@ -233,10 +233,15 @@ class Keywords {
 		void save_maskstuff()
 		{ saved_m_mask = m_mask; }
 
+		void restore_maskstuff()
+		{ m_mask = saved_m_mask; }
+
 		void operator |= (const Keywords::Type &t)
 		{ m_mask |= t; }
 		void operator &= (const Keywords::Type &t)
 		{ m_mask &= t; }
 };
+
+enum LocalMode { LOCALMODE_DEFAULT=0, LOCALMODE_LOCAL, LOCALMODE_NONLOCAL };
 
 #endif /* __STABILITY_H__ */

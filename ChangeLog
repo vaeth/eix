@@ -7,6 +7,14 @@
 	  see http://bugs.gentoo.org/show_bug.cgi?id=179482
 	- Introduce PRINT_COUNT_ALWAYS=never
 	- Introduce --pure-packages and --only-names
+	- Introduce +- variants of --stable, --testing, --non-masked, --system.
+	- Rename --update into --upgrade
+	- Introduce --upgrade+ --upgrade-
+	- Replace UPGRADE_ALWAYS_LOCAL and RECOMMEND_ALWAYS_LOCAL by the
+	  more powerful UPGRADE_LOCAL_MODE and RECOMMEND_LOCAL_MODE
+	- UPGRADE_ALWAYS_LOCAL=true was not working correctly in the previous
+	  versions. The new UPGRADE_LOCAL_MODE=+ should fix this
+	- Fix a serious memory leak in PackageTest::match()
 
 *eix-0.9.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
