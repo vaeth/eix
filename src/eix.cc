@@ -606,6 +606,12 @@ run_eix(int argc, char** argv)
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);
 	format.set_overlay_used(&overlay_used, &need_overlay_table);
+	eix::ptr_list<Package>::size_type count;
+	bool only_printed = eixrc.getBool("COUNT_ONLY_PRINTED");
+	if(only_printed)
+		count = 0;
+	else
+		count = matches.size();
 	for(eix::ptr_list<Package>::iterator it = matches.begin();
 		it != matches.end();
 		++it)
@@ -626,8 +632,12 @@ run_eix(int argc, char** argv)
 				}
 			}
 		}
-		if(overlay_mode != 0)
-			format.print(*it, &header, &varpkg_db, &portagesettings);
+		if(overlay_mode != 0) {
+			if(format.print(*it, &header, &varpkg_db, &portagesettings)) {
+				if(only_printed)
+					count++;
+			}
+		}
 	}
 	switch(overlay_mode)
 	{
@@ -647,8 +657,12 @@ run_eix(int argc, char** argv)
 		format.set_overlay_translations(&overlay_num);
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
-			++it)
-			format.print(*it, &header, &varpkg_db, &portagesettings);
+			++it) {
+			if(format.print(*it, &header, &varpkg_db, &portagesettings)) {
+				if(only_printed)
+					count++;
+			}
+		}
 	}
 	bool printed_overlay = false;
 	if(need_overlay_table)
@@ -660,13 +674,13 @@ run_eix(int argc, char** argv)
 	if((!rc_options.pure_packages) &&
 		(strcasecmp(eixrc["PRINT_COUNT_ALWAYS"].c_str(), "never")))
 	{
-		if(!matches.size()) {
+		if(!count) {
 			if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
 				cout << "Found 0 matches.\n";
 			else
 				cout << "No matches found.\n";
 		}
-		else if(matches.size() == 1) {
+		else if(count == 1) {
 			if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
 			{
 				if(printed_overlay)
@@ -677,7 +691,7 @@ run_eix(int argc, char** argv)
 		else {
 			if(printed_overlay)
 				cout << "\n";
-			cout << "Found " << matches.size() << " matches.\n";
+			cout << "Found " << count << " matches.\n";
 		}
 	}
 

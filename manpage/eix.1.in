@@ -1433,6 +1433,12 @@ If B<PRINT_COUNT_ALWAYS=never>, then this last line is omitted completely.
 Both is normally not useful but might simplify writing certain scripts
 parsing the output of eix.
 .TP
+.BR COUNT_ONLY_PRINTED " " (true / false)
+If false, print only the number of matches, independently of whether the
+matches actually lead to some output.
+This might be useful for certain scripts if you are only interested in the
+number of matches and use e.g. B<FORMAT=''> to speed things up.
+.TP
 .BR TAG_FOR_PROFILE " " TAG_FOR_MASKED " " TAG_FOR_EX_PROFILE " " TAG_FOR_EX_MASKED " " TAG_FOR_LOCALLY_MASKED " " TAG_FOR_STABLE " " TAG_FOR_UNSTABLE " " TAG_FOR_MINUS_ASTERISK " " TAG_FOR_MINUS_KEYWORD " " TAG_FOR_ALIEN_STABLE " " TAG_FOR_ALIEN_UNSTABLE " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_EX_UNSTABLE " " TAG_FOR_EX_MINUS_ASTERISK " " TAG_FOR_EX_MINUS_KEYWORD " " TAG_FOR_EX_ALIEN_STABLE " " TAG_FOR_EX_ALIEN_UNSTABLE " " TAG_FOR_EX_MISSING_KEYWORD (String)
 The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP

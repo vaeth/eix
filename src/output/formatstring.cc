@@ -205,15 +205,17 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 	return start + text + end;
 }
 
-void
+bool
 PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root)
 {
+	bool printed = false;
 	for(;
 		root != NULL;
 		root = root->next)
 	{
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
+				printed = true;
 				cout << (static_cast<Text*>(root))->text;
 				break;
 			case Node::VARIABLE:
@@ -236,10 +238,12 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
-						recPrint(entity, print_property, get_property, ief->if_true);
+						if(recPrint(entity, print_property, get_property, ief->if_true))
+							printed = true;
 					}
 					else if(!ok && ief->if_false) {
-						recPrint(entity, print_property, get_property, ief->if_false);
+						if(recPrint(entity, print_property, get_property, ief->if_false))
+							printed = true;
 					}
 				}
 				break;
@@ -247,7 +251,7 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 				break;
 		}
 	}
-	return; /* never reached */
+	return printed;
 }
 
 string parse_colors(const string &colorstring, bool colors)

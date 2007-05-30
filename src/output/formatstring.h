@@ -208,7 +208,8 @@ class PrintFormat {
 		PortageSettings *portagesettings;
 		const SetStability *stability_local, *stability_nonlocal;
 
-		void recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
+		/* return true if something was actually printed */
+		bool recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
 
 	public:
 		bool no_color,            /**< Shall we use colors? */
@@ -332,26 +333,23 @@ class PrintFormat {
 
 		std::string overlay_keytext(Version::Overlay overlay, bool never_color = false) const;
 
-		void print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
+		/* return true if something was actually printed */
+		bool print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
 			header = dbheader; vardb = vardbpkg; portagesettings = ps;
-			recPrint(entity, print_property, get_property, root);
-			fputc('\n', stdout);
+			bool r = recPrint(entity, print_property, get_property, root);
 			vardb=NULL; portagesettings = NULL;
+			if(r)
+				fputc('\n', stdout);
+			return r;
 		}
 
-		void print(void *entity, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
-			header = dbheader; vardb = vardbpkg; portagesettings = ps;
-			recPrint(entity, m_print_property, m_get_property, root);
-			fputc('\n', stdout);
-			vardb=NULL; portagesettings = NULL;
-		}
+		/* return true if something was actually printed */
+		bool print(void *entity, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps)
+		{ return print(entity, m_print_property, m_get_property, root, dbheader, vardbpkg, ps); }
 
-		void print(void *entity, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
-			header = dbheader; vardb = vardbpkg; portagesettings = ps;
-			recPrint(entity, m_print_property, m_get_property, m_root);
-			fputc('\n', stdout);
-			vardb=NULL; portagesettings = NULL;
-		}
+		/* return true if something was actually printed */
+		bool print(void *entity, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps)
+		{ return print(entity, m_root, dbheader, vardbpkg, ps); }
 
 		void setFormat(const char *fmt) throw(ExBasic) {
 			m_root = parseFormat(fmt);

@@ -232,6 +232,22 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_UNINST_STABILIZE",
+			"%{COLOR_STABLE},1",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the color used for printing tags for uninstalled packages\n"
+			"which have gained a stable version.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_INST_STABILIZE",
+			"%{DIFF_COLOR_UNINST_STABILIZE},1;inverse",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the color used for printing tags for installed packages\n"
+			"which have gained a stable version.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_COLOR_BETTER",
 			"yellow,1",
 			"This variable is only used for delayed substitution.\n"
@@ -365,6 +381,22 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_UNINST_STABILIZE",
+			"%{DIFF_CHAR_INST_STABILIZE}",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the character printed for uninstalled packages which have gained\n"
+			"a stable version.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_INST_STABILIZE",
+			"*",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the character printed for installed packages which have gained\n"
+			"a stable version.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_CHAR_NEW",
 			"N",
 			"This variable is only used for delayed substitution.\n"
@@ -383,6 +415,70 @@ eixrc.addDefault(
 			"\\<",
 			"This variable is only used for delayed substitution.\n"
 			"It defines the character used for \"worse version\" tags (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_UPGRADE",
+			"(%{COLOR_UPGRADE})%{CHAR_UPGRADE}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag printed for upgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_DOWNGRADE",
+			"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag printed for downgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_DOWNGRADE",
+			"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag printed for downgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_INSTALLED",
+			"(%{COLOR_INST_TAG})%{CHAR_INSTALLED}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag printed for downgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_UNINSTALLED",
+			"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag printed for downgrade recommendations.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_STABILIZE",
+			"{installedversionsshort}(%{DIFF_COLOR_INST_STABILIZE})%{DIFF_CHAR_INST_STABILIZE}{else}(%{DIFF_COLOR_UNINST_STABILIZE})%{DIFF_CHAR_UNINST_STABILIZE}{}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag for packages which have gained a stable version.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_NEW",
+			"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag printed for new packages (diff-eix).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_BETTER",
+			"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag used for \"better version\" (diff-eix).")
+
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_WORSE",
+			"(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}()",
+			"This variable is only used for delayed substitution.\n"
+			"It defines the tag used for \"worse version\" (diff-eix).")
 		);
 
 eixrc.addDefault(
@@ -507,9 +603,9 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_HEADER",
 			"{installedversionsshort}["
-			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}{}"
-			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}{}"
-			"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}{}()"
+			"{upgrade}%{TAG_UPGRADE}{}"
+			"{downgrade}%{TAG_DOWNGRADE}{}"
+			"{!recommend}%{TAG_INSTALLED}{}"
 			"]{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the normal header symbols.")
@@ -527,11 +623,11 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_HEADER_COMPACT",
 			"[{installedversionsshort}"
-				"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(){}"
-				"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(){}"
-				"{!recommend}(%{COLOR_INST_TAG})%{CHAR_INSTALLED}(){}"
+				"{upgrade}%{TAG_UPGRADE}{}"
+				"{downgrade}%{TAG_DOWNGRADE}{}"
+				"{!recommend}%{TAG_INSTALLED}{}"
 			"{else}"
-				"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()"
+				"%{TAG_UNINSTALLED}"
 			"{}]",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the compact header symbols.")
@@ -540,15 +636,17 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_NEW",
 			"["
-			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(){}"
-			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(){}"
-			"{!recommend}(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}(){}"
+			"{bestshort}{!oldbestshort}%{TAG_STABILIZE}{}{}"
+			"{upgrade}%{TAG_UPGRADE}{}"
+			"{downgrade}%{TAG_DOWNGRADE}{}"
+			"{!recommend}%{TAG_NEW}{}"
 			"]"
 			"{upgrade}"
 				"{!downgrade} {}"
 			"{else}"
 				" "
 			"{}"
+			"{bestshort}{oldbestshort} {else}{}{else} {}"
 			" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-new header symbols.")
@@ -561,7 +659,7 @@ eixrc.addDefault(
 			"{else}"
 				"   "
 			"{}"
-			"  (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()",
+			"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-delete header symbols.")
 		);
@@ -569,11 +667,13 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_CHANGED",
 			"["
-			"{upgrade}(%{COLOR_UPGRADE})%{CHAR_UPGRADE}(){}"
-			"{downgrade}(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}(){}"
-			"{!upgrade}{better}(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}(){}{}"
-			"{!downgrade}{worse}(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}(){}{}"
+			"{bestshort}{!oldbestshort}%{TAG_STABILIZE}{}{}"
+			"{upgrade}%{TAG_UPGRADE}{}"
+			"{downgrade}%{TAG_DOWNGRADE}{}"
+			"{!upgrade}{better}%{TAG_BETTER}{}{}"
+			"{!downgrade}{worse}%{TAG_WORSE}{}{}"
 			"]"
+			"{bestshort}{oldbestshort} {else}{}{else} {}"
 			"{!upgrade}{!better} {}{}"
 			"{!downgrade}{!worse} {}{}"
 			" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()",
@@ -1105,6 +1205,11 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
 			"false", "If true, always print the number of matches in the last line.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "COUNT_ONLY_PRINTED",
+			"true", "If false, count independently of whether the matches are printed.\n")
 		);
 
 #define TAG_FOR(type, default, comment) \

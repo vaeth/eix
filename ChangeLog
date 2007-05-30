@@ -1,5 +1,16 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.8
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Defaults for diff-eix changed to print information about stabilized
+	  versions, see http://forums.gentoo.org/viewtopic-p-4078742.html
+	- Introduced delayed TAG_* variables in defaults.
+	- Suppress newline when the {,DIFF_}FORMAT* string outputs nothing.
+	  This allows to wrap "tests" around the formatstring. For instance,
+	      FORMAT_COMPACT='{downgrade}%{FORMAT}{}' eix -cI
+	  will output only those package which should be downgraded.
+	- Introduce corresponding COUNT_ONLY_PRINTED
+
 *eix-0.9.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-sync now defaults to layman instead of deprecated gensync. Thanks
