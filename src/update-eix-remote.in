@@ -44,6 +44,8 @@ The following commands are provided:
 
 update: Fetch the eix-caches of some layman overlays into a temporary file
         resp. into FILE and add them to the eix database.
+        To keep this data across update-eix calls, you might want to set
+        KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)
 fetch:  Only fetch the overlays into FILE
 add:    Only add the overlays from FILE to the eix database.
 remove: Remove all temporarily added virtual overlays from the eix database;
@@ -103,7 +105,7 @@ GetFilename () {
 	fi
 	FILENAME="${1}"
 	[[ "${FILENAME}" ]] || die "Filename argument must be nonempty"
-	[[ "${FILENAME:0:1}" != '/' && "${FILENAME:0:1}" != '~' ]] && \
+	[[ "${FILENAME:0:1}" != '/' ]] && [[ "${FILENAME:0:1}" != '~' ]] && \
 		FILENAME="$(pwd)/${FILENAME}"
 }
 
@@ -111,9 +113,9 @@ CalcSuCmd () {
 	local MY_CMD
 	MY_CMD="$(type -P "${1}")" || die "${1} cannot be found in $PATH"
 	SUCMD=("${MY_CMD}")
-	[[ "${FETCHUSER}" || "${UID}" -ne 0 ]] || FETCHUSER="nobody"
-	[[ "${FETCHUSER}" ]] \
-		&& SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
+	[[ "${FETCHUSER}" ]] || [[ "${UID}" -ne 0 ]] || FETCHUSER="nobody"
+	[[ "${FETCHUSER}" ]] && \
+		SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
 }
 
 CdDir () {
