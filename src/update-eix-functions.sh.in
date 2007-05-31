@@ -127,7 +127,7 @@ CallUpdateEix () {
 AddLocalMethods () {
 	local I
 	GetPortdir
-	AddMethod "${PORTDIR}" "eix"
+	AddMethod "${LOCAL_PORTDIR}" "eix"
 	for I in $(portageq portdir_overlay) $ADD_OVERLAY
 	do
 		AddMethod "${I}" "eix::${I}"

@@ -2,6 +2,7 @@
 
 *eix-0.9.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fixed update-eix-remote remove
 	- Defaults for diff-eix changed to print information about stabilized
 	  versions, see http://forums.gentoo.org/viewtopic-p-4078742.html
 	- Introduced delayed TAG_* variables in defaults.
