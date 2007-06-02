@@ -34,8 +34,6 @@ using namespace std;
 void
 CascadingProfile::applyMasks(Package *p) const
 {
-	if(trivial_profile)
-		return;
 	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
 		**it &= Keywords::KEY_ALL;
 	}
@@ -46,7 +44,10 @@ CascadingProfile::applyMasks(Package *p) const
 
 void PortageUserConfig::setProfileMasks(Package *p) const
 {
+	if(profile->trivial_profile)
+		return;
 	profile->applyMasks(p);
+	m_settings->getMasks()->applyMasks(p);
 }
 
 void PortageSettings::setMasks(Package *p)

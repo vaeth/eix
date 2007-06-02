@@ -44,9 +44,9 @@ class Package;
 class CascadingProfile {
 
 	public:
+		bool trivial_profile;
 
 	protected:
-		bool trivial_profile;
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
@@ -90,7 +90,7 @@ class CascadingProfile {
 		}
 
 		/** Copy CascadingProfile (deep) and append content of profiledir.
-		    If nothing was really appended, applyMasks() will have no effect all */
+		    If nothing was really appended, set trivial_profile */
 		CascadingProfile(const CascadingProfile &ori, const char *profile_dir) :
 		m_portagesettings(ori.m_portagesettings),
 		m_system(ori.m_system), m_system_allowed(ori.m_system_allowed),
