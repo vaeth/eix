@@ -477,16 +477,3 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 		return 4;
 	return 0;
 }
-
-void Package::deepcopy(const Package &p)
-{
-	*this=p;
-	for(Package::iterator it=begin(); it != end(); ++it)
-	{
-		Version *v=new Version;
-		*v=(**it);
-		*it = v;
-	}
-	// The pointers in slotlist should point to the clone.
-	calculate_slotlist();
-}

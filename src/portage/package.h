@@ -142,10 +142,6 @@ class Package
 			: category(c), name(n)
 		{ defaults(); }
 
-		/// For the copy constructor, we make a deep copy
-		Package(const Package &p) : std::list<Version*>(), eix::ptr_list<Version>()
-		{ deepcopy(p); }
-
 		/** De-constructor, delete content of Version-list. */
 		~Package();
 
@@ -330,8 +326,6 @@ class Package
 
 		Version *latest() const
 		{ return *rbegin(); }
-
-		void deepcopy(const Package &p);
 
 	protected:
 		/** Check if a package has duplicated vsions. */
