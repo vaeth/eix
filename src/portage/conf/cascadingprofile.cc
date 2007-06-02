@@ -83,7 +83,7 @@ CascadingProfile::readFiles()
 		file != m_profile_files.end();
 		++file)
 	{
-		void (CascadingProfile::*handler)(const string &line) = NULL;
+		void (CascadingProfile::*handler)(const string &line);
 
 		if(strcmp(strrchr(file->c_str(), '/'), "/packages") == 0)
 		{
@@ -93,23 +93,23 @@ CascadingProfile::readFiles()
 		{
 			handler = &CascadingProfile::readPackageMasks;
 		}
+		else
+			continue;
 
-		if(handler != NULL)
+		vector<string> lines;
+		pushback_lines(file->c_str(), &lines, false);
+
+		for(vector<string>::size_type i = 0; i < lines.size(); i++)
 		{
-			vector<string> lines;
-			pushback_lines(file->c_str(), &lines, false);
-
-			for(vector<string>::size_type i = 0; i < lines.size(); i++)
+			if(lines[i].empty())
+				continue;
+			try {
+				trivial_profile = false;
+				(this->*handler) (lines[i]);
+			}
+			catch(ExBasic e)
 			{
-				if(lines[i].empty())
-					continue;
-				try {
-					(this->*handler) (lines[i]);
-				}
-				catch(ExBasic e)
-				{
-					portage_parse_error(*file, i + 1, lines[i], e);
-				}
+				portage_parse_error(*file, i + 1, lines[i], e);
 			}
 		}
 	}

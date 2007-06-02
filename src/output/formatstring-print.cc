@@ -214,7 +214,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	bool need_color = !(fmt->no_color);
 	string mask_text, keyword_text;
 
-	if(version->saved_isHardMasked()) {
+	if(version->keys_nonlocal.isHardMasked()) {
 		if( need_color && fmt->color_original ) {
 			need_color = false;
 			cout << fmt->color_masked;
@@ -233,7 +233,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			}
 			mask_text = fmt->tag_for_masked;
 		}
-		else if(version->saved_isProfileMask()) {
+		else if(version->keys_nonlocal.isProfileMask()) {
 			mask_text = fmt->tag_for_ex_profile;
 		}
 		else {
@@ -253,32 +253,32 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			need_color = false;
 			cout << fmt->color_stable;
 		}
-		if (version->saved_isStable()) {
+		if (version->keys_nonlocal.isStable()) {
 			if( need_color )
 				cout << fmt->color_stable;
 			keyword_text = fmt->tag_for_stable;
 		}
-		else if (version->saved_isUnstable()) {
+		else if (version->keys_nonlocal.isUnstable()) {
 			if( need_color )
 				cout << fmt->color_unstable;
 			keyword_text = fmt->tag_for_ex_unstable;
 		}
-		else if (version->saved_isMinusKeyword()) {
+		else if (version->keys_nonlocal.isMinusKeyword()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_minus_keyword;
 		}
-		else if (version->saved_isAlienStable()) {
+		else if (version->keys_nonlocal.isAlienStable()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_alien_stable;
 		}
-		else if (version->saved_isAlienUnstable()) {
+		else if (version->keys_nonlocal.isAlienUnstable()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_alien_unstable;
 		}
-		else if (version->saved_isMinusAsterisk()) {
+		else if (version->keys_nonlocal.isMinusAsterisk()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_minus_asterisk;

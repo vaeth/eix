@@ -512,6 +512,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			++p)
 		{
 			portage_settings.setMasks(*p);
+			p->save_nonlocal();
 		}
 	}
 

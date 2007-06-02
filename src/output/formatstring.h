@@ -279,24 +279,27 @@ class PrintFormat {
 		}
 
 		void setupColors() {
-			color_masked     = AnsiColor(color_masked).asString();
-			color_unstable   = AnsiColor(color_unstable).asString();
-			color_stable     = AnsiColor(color_stable).asString();
-			color_overlaykey = AnsiColor(color_overlaykey).asString();
-			color_virtualkey = AnsiColor(color_virtualkey).asString();
-			color_slots      = AnsiColor(color_slots).asString();
-			AnsiMarker ins_marker(mark_installed);
-			mark_installed     = ins_marker.asString();
-			mark_installed_end = ins_marker.end();
-			AnsiMarker ver_marker(mark_version);
-			mark_version       = ver_marker.asString();
-			mark_version_end   = ver_marker.end();
-			before_iuse        = parse_colors(before_iuse, true);
-			after_iuse         = parse_colors(after_iuse, true);
-			before_coll_iuse   = parse_colors(before_coll_iuse, true);
-			after_coll_iuse    = parse_colors(after_coll_iuse, true);
-			before_slot_iuse   = parse_colors(before_slot_iuse, true);
-			after_slot_iuse    = parse_colors(after_slot_iuse, true);
+			bool use_color = !no_color;
+			if(use_color) {
+				color_masked     = AnsiColor(color_masked).asString();
+				color_unstable   = AnsiColor(color_unstable).asString();
+				color_stable     = AnsiColor(color_stable).asString();
+				color_overlaykey = AnsiColor(color_overlaykey).asString();
+				color_virtualkey = AnsiColor(color_virtualkey).asString();
+				color_slots      = AnsiColor(color_slots).asString();
+				AnsiMarker ins_marker(mark_installed);
+				mark_installed     = ins_marker.asString();
+				mark_installed_end = ins_marker.end();
+				AnsiMarker ver_marker(mark_version);
+				mark_version       = ver_marker.asString();
+				mark_version_end   = ver_marker.end();
+			}
+			before_iuse        = parse_colors(before_iuse, use_color);
+			after_iuse         = parse_colors(after_iuse, use_color);
+			before_coll_iuse   = parse_colors(before_coll_iuse, use_color);
+			after_coll_iuse    = parse_colors(after_coll_iuse, use_color);
+			before_slot_iuse   = parse_colors(before_slot_iuse, use_color);
+			after_slot_iuse    = parse_colors(after_slot_iuse, use_color);
 		}
 
 		void clear_virtual(Version::Overlay count)

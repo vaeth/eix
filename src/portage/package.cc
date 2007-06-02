@@ -187,21 +187,6 @@ void Package::addVersionFinalize(Version *version)
 	calculate_slotlist();
 }
 
-void Package::save_maskstuff()
-{
-	for(iterator i = begin(); i != end(); ++i)
-		i->save_maskstuff();
-	saved_maskstuff = true;
-}
-
-void Package::restore_maskstuff()
-{
-	if(!saved_maskstuff)
-		return;
-	for(iterator i = begin(); i != end(); ++i)
-		i->restore_maskstuff();
-}
-
 Version *
 Package::best() const
 {

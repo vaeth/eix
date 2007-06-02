@@ -28,19 +28,6 @@
 
 #include "keywords.h"
 
-const Keywords::Type
-	Keywords::KEY_EMPTY          = 0x0000,
-	Keywords::KEY_STABLE         = 0x0001, /**<  ARCH  */
-	Keywords::KEY_UNSTABLE       = 0x0002, /**< ~ARCH  */
-	Keywords::KEY_ALIENSTABLE    = 0x0004, /**<  ALIEN */
-	Keywords::KEY_ALIENUNSTABLE  = 0x0008, /**< ~ALIEN */
-	Keywords::KEY_MINUSKEYWORD   = 0x0010, /**< -ARCH  */
-	Keywords::KEY_MINUSASTERISK  = 0x0020, /**<  -*    */
-	Keywords::KEY_ALL            = KEY_STABLE|KEY_UNSTABLE|KEY_ALIENSTABLE|KEY_ALIENUNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD,
-	Keywords::PACKAGE_MASK       = 0x0100,
-	Keywords::PROFILE_MASK       = 0x0200,
-	Keywords::SYSTEM_PACKAGE     = 0x0400;
-
 const Keywords::Redundant
 	Keywords::RED_NOTHING       = 0x00000,
 	Keywords::RED_DOUBLE        = 0x00001,
@@ -67,4 +54,40 @@ const Keywords::Redundant
 	Keywords::RED_DOUBLE_CFLAGS = 0x10000,
 	Keywords::RED_IN_CFLAGS     = 0x20000,
 	Keywords::RED_ALL_CFLAGS    = RED_DOUBLE_CFLAGS|RED_IN_CFLAGS;
+
+KeywordsFlags::Type
+KeywordsFlags::get_type(std::string arch, std::string keywords)
+{
+	Type mask = KEY_EMPTY;
+	std::vector<std::string> arr_keywords = split_string(keywords);
+	for(std::vector<std::string>::iterator it = arr_keywords.begin(); it != arr_keywords.end(); ++it) {
+		switch((*it)[0]) {
+			case '~':
+				if(it->substr(1) == arch) {
+					mask |= KEY_UNSTABLE;
+				}
+				else {
+					mask |= KEY_ALIENUNSTABLE;
+				}
+				break;
+			case '-':
+				if(it->substr(1) == "*") {
+					mask |= KEY_MINUSASTERISK;
+				}
+				else if(it->substr(1) == arch) {
+					mask |= KEY_MINUSKEYWORD;
+				}
+				break;
+			default:
+				if(*it == arch) {
+					mask |= KEY_STABLE;
+				}
+				else {
+					mask |= KEY_ALIENSTABLE;
+				}
+				break;
+		}
+	}
+	return mask;
+}
 

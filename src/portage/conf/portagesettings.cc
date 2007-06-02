@@ -221,7 +221,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
 	(*this)["ACCEPT_KEYWORDS"] = join_vector(m_accepted_keyword);
-	m_accepted_keywords.set((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
+	m_accepted_keywords = KeywordsFlags::get_type((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
 }
 
 PortageSettings::~PortageSettings()
@@ -385,7 +385,7 @@ bool PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<Keyword
 typedef struct {
 	string keywords;
 	bool locally_double;
-} KeywordsFlag;
+} KeywordsData;
 
 bool PortageUserConfig::readKeywords() {
 	/* Prepend a ~ to every token.
@@ -416,7 +416,7 @@ bool PortageUserConfig::readKeywords() {
 	   (and remember BTW which were doubled) and then we push the map
 	   in the original order to m_keywords */
 
-	map<string, KeywordsFlag> have;
+	map<string, KeywordsData> have;
 	for(vector<string>::size_type i = 0; i < lines.size(); ++i)
 	{
 		if(lines[i].empty())
@@ -433,9 +433,9 @@ bool PortageUserConfig::readKeywords() {
 			content = lines[i].substr(n + 1);
 		}
 		lines[i] = name;
-		map<string, KeywordsFlag>::iterator old = have.find(name);
+		map<string, KeywordsData>::iterator old = have.find(name);
 		if(old == have.end()) {
-			KeywordsFlag *f = &(have[name]);
+			KeywordsData *f = &(have[name]);
 			f->locally_double = false;
 			f->keywords = content;
 		}
@@ -452,7 +452,7 @@ bool PortageUserConfig::readKeywords() {
 		try {
 			KeywordMask *m = new KeywordMask(lines[i].c_str());
 			if(m) {
-				KeywordsFlag *f = &(have[lines[i]]);
+				KeywordsData *f = &(have[lines[i]]);
 				m->keywords       = f->keywords;
 				m->locally_double = f->locally_double;
 				m_keywords.add(m);
@@ -472,13 +472,13 @@ bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const
 	return m_mask.applyMasks(p, check);
 }
 
-inline void apply_keywords(Version &v, Keywords::Type t, bool alwaysstable)
+inline void apply_keywords(Version &v, KeywordsFlags::Type t, bool alwaysstable)
 {
 	if(alwaysstable || (v.get() & t)) {
-		v |= Keywords::KEY_STABLE;
+		v |= KeywordsFlags::KEY_STABLE;
 	}
 	else {
-		v &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+		v &= (~KeywordsFlags::KEY_STABLE | ~KeywordsFlags::KEY_ALL);
 	}
 }
 
@@ -514,7 +514,7 @@ inline bool add_local_keywords(vector<string> &collect, const string &keywords, 
 
 /// @return true if something from /etc/portage/package.* applied
 bool
-PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redundant check) const
+PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
 {
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
 	map<Version*,vector<string> > sorted_by_versions;
@@ -563,22 +563,22 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 		char arch_needed;
 		char arch_used = ARCH_NOTHING;
 		Keywords::Redundant redundant = i->get_redundant();
-		Keywords::Type oritype = i->get();
-		if(oritype & Keywords::KEY_STABLE)
+		KeywordsFlags::Type oritype = i->get();
+		if(oritype & KeywordsFlags::KEY_STABLE)
 			arch_needed = ARCH_NOTHING;
-		else if(oritype & Keywords::KEY_UNSTABLE)
+		else if(oritype & KeywordsFlags::KEY_UNSTABLE)
 			arch_needed = ARCH_TESTING;
-		else if((oritype & Keywords::KEY_ALIENSTABLE) ||
-			(oritype & Keywords::KEY_MINUSKEYWORD))
+		else if((oritype & KeywordsFlags::KEY_ALIENSTABLE) ||
+			(oritype & KeywordsFlags::KEY_MINUSKEYWORD))
 			arch_needed = ARCH_ALIENSTABLE;
-		else if(oritype & Keywords::KEY_ALIENUNSTABLE)
+		else if(oritype & KeywordsFlags::KEY_ALIENUNSTABLE)
 			arch_needed = ARCH_ALIENUNSTABLE;
 		else
 			arch_needed = ARCH_MISSINGKEYWORD;
 
 		bool alwaysstable = false;
 
-		Keywords lkw(kw.get());
+		KeywordsFlags lkw(m_settings->m_accepted_keywords);
 
 		vector<string> &kv = sorted_by_versions[*i];
 		if(!kv.empty())
@@ -592,22 +592,22 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 			{
 				if(*kvi == arch) {
 					set_arch_used(ARCH_NOTHING);
-					lkw |= Keywords::KEY_STABLE;
+					lkw |= KeywordsFlags::KEY_STABLE;
 					continue;
 				}
 				if(*kvi == "~" + arch) {
 					set_arch_used(ARCH_TESTING);
-					lkw |= Keywords::KEY_UNSTABLE;
+					lkw |= KeywordsFlags::KEY_UNSTABLE;
 					continue;
 				}
 				if(*kvi == "*") {
 					set_arch_used(ARCH_ALIENSTABLE);
-					lkw |= Keywords::KEY_ALIENSTABLE;
+					lkw |= KeywordsFlags::KEY_ALIENSTABLE;
 					continue;
 				}
 				if(*kvi == "~*") {
 					set_arch_used(ARCH_ALIENUNSTABLE);
-					lkw |= Keywords::KEY_ALIENUNSTABLE;
+					lkw |= KeywordsFlags::KEY_ALIENUNSTABLE;
 					continue;
 				}
 				if(*kvi == "**") {
@@ -617,20 +617,20 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 				}
 				if(*kvi == "-*") {
 					set_arch_used(ARCH_MISSINGKEYWORD);
-					lkw |= Keywords::KEY_MINUSASTERISK;
+					lkw |= KeywordsFlags::KEY_MINUSASTERISK;
 					continue;
 				}
 				if(*kvi == "-" + arch) {
-					lkw &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+					lkw &= (~KeywordsFlags::KEY_STABLE | ~KeywordsFlags::KEY_ALL);
 					// The -ARCH is here to *allow* installations:
-					if(oritype & Keywords::KEY_MINUSKEYWORD) {
+					if(oritype & KeywordsFlags::KEY_MINUSKEYWORD) {
 						set_arch_used(ARCH_ALIENSTABLE);
-						lkw |= Keywords::KEY_MINUSKEYWORD;
+						lkw |= KeywordsFlags::KEY_MINUSKEYWORD;
 					}
 					continue;
 				}
 				if(*kvi == "-~" + arch) {
-					lkw &= (~Keywords::KEY_UNSTABLE | ~Keywords::KEY_ALL);
+					lkw &= (~KeywordsFlags::KEY_UNSTABLE | ~KeywordsFlags::KEY_ALL);
 					// No continue! (might match strange keyword)
 				}
 				// match alien or strange keywords:
@@ -704,7 +704,7 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 		}
 		apply_keywords(**i, lkw.get(), alwaysstable);
 		if(rvalue && (check & Keywords::RED_NO_CHANGE)) {
-			if((i->get() & Keywords::KEY_ALL) == (oritype & Keywords::KEY_ALL))
+			if((i->get() & KeywordsFlags::KEY_ALL) == (oritype & KeywordsFlags::KEY_ALL))
 				redundant |= Keywords::RED_NO_CHANGE;
 		}
 		if(redundant)
@@ -713,19 +713,18 @@ PortageUserConfig::setStability(Package *p, const Keywords &kw, Keywords::Redund
 	return rvalue;
 }
 
+/// Set stability according to local m_accepted_keywords
 void
-PortageSettings::setStability(Package *pkg, const Keywords &kw, bool save_after_setting) const
+PortageSettings::setStability(Package *pkg) const
 {
 	Package::iterator t = pkg->begin();
 	for(; t != pkg->end(); ++t) {
-		if(t->get() & kw.get())
+		if(t->get() & m_accepted_keywords)
 		{
-			**t |= Keywords::KEY_STABLE;
+			**t |= KeywordsFlags::KEY_STABLE;
 		}
 		else {
-			**t &= (~Keywords::KEY_STABLE | ~Keywords::KEY_ALL);
+			**t &= (~KeywordsFlags::KEY_STABLE | ~KeywordsFlags::KEY_ALL);
 		}
 	}
-	if(save_after_setting)
-		pkg->save_maskstuff();
 }

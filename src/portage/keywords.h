@@ -33,23 +33,78 @@
 #include <database/io.h>
 #include <vector>
 
-class Keywords {
+class KeywordsFlags {
 	public:
 		typedef io::Short Type;
 		static const unsigned short Typesize = io::Shortsize;
 		static const Type
-			KEY_EMPTY         ,
-			KEY_STABLE        , /**<  ARCH  */
-			KEY_UNSTABLE      , /**< ~ARCH  */
-			KEY_ALIENSTABLE   , /**<  ALIEN */
-			KEY_ALIENUNSTABLE , /**< ~ALIEN */
-			KEY_MINUSKEYWORD  , /**< -ARCH  */
-			KEY_MINUSASTERISK , /**<  -*    */
-			KEY_ALL           ,
-			PACKAGE_MASK      ,
-			PROFILE_MASK      ,
-			SYSTEM_PACKAGE    ;
+			KEY_EMPTY          = 0x0000,
+			KEY_STABLE         = 0x0001, /**<  ARCH  */
+			KEY_UNSTABLE       = 0x0002, /**< ~ARCH  */
+			KEY_ALIENSTABLE    = 0x0004, /**<  ALIEN */
+			KEY_ALIENUNSTABLE  = 0x0008, /**< ~ALIEN */
+			KEY_MINUSKEYWORD   = 0x0010, /**< -ARCH  */
+			KEY_MINUSASTERISK  = 0x0020, /**<  -*    */
+			KEY_ALL            = KEY_STABLE|KEY_UNSTABLE|KEY_ALIENSTABLE|KEY_ALIENUNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD,
+			PACKAGE_MASK       = 0x0100,
+			PROFILE_MASK       = 0x0200,
+			SYSTEM_PACKAGE     = 0x0400;
 
+	protected:
+		Type m_mask;
+
+	public:
+		static Type get_type(std::string arch, std::string keywords);
+
+		KeywordsFlags(Type t = KEY_MINUSKEYWORD)
+		{ m_mask = t; }
+
+		void set(Type t)
+		{ m_mask = t; }
+
+		Type get() const
+		{ return m_mask; }
+
+		/** @return true if version is marked stable. */
+		bool isStable() const
+		{ return m_mask & KEY_STABLE; }
+		/** @return true if version is unstable. */
+		bool isUnstable() const
+		{ return m_mask & KEY_UNSTABLE; }
+		/** @return true if version is masked by -* keyword. */
+		bool isMinusAsterisk() const
+		{ return m_mask & KEY_MINUSASTERISK; }
+		/** @return true if version is masked by -keyword. */
+		bool isMinusKeyword() const
+		{ return m_mask & KEY_MINUSKEYWORD; }
+		/** @return true if version is masked by ALIENARCH */
+		bool isAlienStable() const
+		{ return m_mask & KEY_ALIENSTABLE; }
+		/** @return true if version is masked by ~ALIENARCH */
+		bool isAlienUnstable() const
+		{ return m_mask & KEY_ALIENUNSTABLE; }
+
+		bool isHardMasked() const
+		{ return isPackageMask() || isProfileMask(); }
+		/** @return true if version is masked by profile. */
+		bool isProfileMask() const
+		{ return m_mask & PROFILE_MASK; }
+		/** @return true if version is masked by a package.mask. */
+		bool isPackageMask() const
+		{ return m_mask & PACKAGE_MASK; }
+		/** @return true if version is part of a package that is a system-package. */
+		bool isSystem() const
+		{ return m_mask & SYSTEM_PACKAGE; }
+
+		void operator |= (const KeywordsFlags::Type &t)
+		{ m_mask |= t; }
+		void operator &= (const KeywordsFlags::Type &t)
+		{ m_mask &= t; }
+};
+
+class Keywords : public KeywordsFlags
+{
+	public:
 		typedef uint32_t Redundant;
 		static const Redundant
 			RED_NOTHING,       /**< None of the following           */
@@ -79,63 +134,23 @@ class Keywords {
 			RED_ALL_CFLAGS;
 
 	protected:
-		Type m_mask, saved_m_mask;
 		std::string full_keywords;
 		Redundant redundant;
 		char red_mask; ///< temporary redundant-related stuff during mask testing
 
 	public:
-		Keywords(Type t = KEY_MINUSKEYWORD)
+		Keywords(Type t = KEY_MINUSKEYWORD) : KeywordsFlags(t)
 		{
-			m_mask = t;
 			full_keywords = "";
 			redundant = RED_NOTHING;
-			red_mask = KEY_EMPTY;
+			red_mask = 0x00;
 		}
 
-		static Type get_type(std::string arch, std::string keywords)
-		{
-			Type mask = KEY_EMPTY;
-			std::vector<std::string> arr_keywords = split_string(keywords);
-			for(std::vector<std::string>::iterator it = arr_keywords.begin(); it != arr_keywords.end(); ++it) {
-				switch((*it)[0]) {
-					case '~':
-						if(it->substr(1) == arch) {
-							mask |= KEY_UNSTABLE;
-						}
-						else {
-							mask |= KEY_ALIENUNSTABLE;
-						}
-						break;
-					case '-':
-						if(it->substr(1) == "*") {
-							mask |= KEY_MINUSASTERISK;
-						}
-						else if(it->substr(1) == arch) {
-							mask |= KEY_MINUSKEYWORD;
-						}
-						break;
-					default:
-						if(*it == arch) {
-							mask |= KEY_STABLE;
-						}
-						else {
-							mask |= KEY_ALIENSTABLE;
-						}
-						break;
-				}
-			}
-			return mask;
-		}
+		void set(Type t)
+		{ KeywordsFlags::set(t); }
 
 		void set(std::string arch, std::string keywords)
 		{ full_keywords = keywords; set(get_type(arch, keywords)); }
-
-		void set(Type t)
-		{ m_mask = t; }
-
-		Type get() const
-		{ return m_mask; }
 
 		std::string get_full_keywords() const
 		{ return full_keywords; }
@@ -169,77 +184,6 @@ class Keywords {
 
 		bool wanted_unmasked () const
 		{ return (red_mask & 0x08); }
-
-		/** @return true if version is marked stable. */
-		bool isStable() const
-		{ return m_mask & KEY_STABLE; }
-		/** @return true if saved version is marked stable. */
-		bool saved_isStable() const
-		{ return saved_m_mask & KEY_STABLE; }
-		/** @return true if version is unstable. */
-		bool isUnstable() const
-		{ return m_mask & KEY_UNSTABLE; }
-		/** @return true if saved version is unstable. */
-		bool saved_isUnstable() const
-		{ return saved_m_mask & KEY_UNSTABLE; }
-		/** @return true if version is masked by -* keyword. */
-		bool isMinusAsterisk() const
-		{ return m_mask & KEY_MINUSASTERISK; }
-		/** @return true if saved version is masked by -* keyword. */
-		bool saved_isMinusAsterisk() const
-		{ return saved_m_mask & KEY_MINUSASTERISK; }
-		/** @return true if version is masked by -keyword. */
-		bool isMinusKeyword() const
-		{ return m_mask & KEY_MINUSKEYWORD; }
-		/** @return true if saved version is masked by -keyword. */
-		bool saved_isMinusKeyword() const
-		{ return saved_m_mask & KEY_MINUSKEYWORD; }
-		/** @return true if version is masked by ALIENARCH */
-		bool isAlienStable() const
-		{ return m_mask & KEY_ALIENSTABLE; }
-		/** @return true if version is masked by ALIENARCH */
-		bool saved_isAlienStable() const
-		{ return saved_m_mask & KEY_ALIENSTABLE; }
-		/** @return true if version is masked by ~ALIENARCH */
-		bool isAlienUnstable() const
-		{ return m_mask & KEY_ALIENUNSTABLE; }
-		/** @return true if version is masked by ~ALIENARCH */
-		bool saved_isAlienUnstable() const
-		{ return saved_m_mask & KEY_ALIENUNSTABLE; }
-
-		bool isHardMasked() const
-		{ return isPackageMask() || isProfileMask(); }
-		bool saved_isHardMasked() const
-		{ return saved_isPackageMask() || saved_isProfileMask(); }
-		/** @return true if version is masked by profile. */
-		bool isProfileMask() const
-		{ return m_mask & PROFILE_MASK; }
-		/** @return true if saved version is masked by profile. */
-		bool saved_isProfileMask() const
-		{ return saved_m_mask & PROFILE_MASK; }
-		/** @return true if version is masked by a package.mask. */
-		bool isPackageMask() const
-		{ return m_mask & PACKAGE_MASK; }
-		/** @return true if saved version is masked by a package.mask. */
-		bool saved_isPackageMask() const
-		{ return saved_m_mask & PACKAGE_MASK; }
-		/** @return true if version is part of a package that is a system-package. */
-		bool isSystem() const
-		{ return m_mask & SYSTEM_PACKAGE; }
-		/** @return true if saved version is part of a package that is a system-package. */
-		bool saved_isSystem() const
-		{ return saved_m_mask & SYSTEM_PACKAGE; }
-
-		void save_maskstuff()
-		{ saved_m_mask = m_mask; }
-
-		void restore_maskstuff()
-		{ m_mask = saved_m_mask; }
-
-		void operator |= (const Keywords::Type &t)
-		{ m_mask |= t; }
-		void operator &= (const Keywords::Type &t)
-		{ m_mask &= t; }
 };
 
 enum LocalMode { LOCALMODE_DEFAULT=0, LOCALMODE_LOCAL, LOCALMODE_NONLOCAL };

@@ -11,6 +11,10 @@
 	- Introduce corresponding COUNT_ONLY_PRINTED
 	- Fixed update-eix-remote remove
 	- manpage recommends to set KEEP_VIRTUALS=true for update-eix-remote
+	- Fix (once more) color output
+	- Major internal cleanup of masking functions, in particular:
+	- Avoid local profile masking if /etc/portage/profile does not
+	  contain any relevant data.
 
 *eix-0.9.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

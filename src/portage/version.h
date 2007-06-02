@@ -61,6 +61,8 @@ class Version : public BasicVersion, public Keywords {
 		friend void     io::write_version(FILE *fp, const Version *v, bool small);
 		friend Version *io::read_version(FILE *fp);
 
+		KeywordsFlags keys_local, keys_nonlocal;
+
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty
 		    to save memory. See the comments above NOT_FULL_USE. */
 		std::vector<std::string> iuse;

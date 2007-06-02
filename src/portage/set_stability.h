@@ -36,32 +36,34 @@
 class SetStability {
 	private:
 		const PortageSettings *portagesettings;
-		Keywords default_accepted_keywords, local_accepted_keywords;
-		bool ignore_etc_portage, etc_profile;
+		bool m_nonlocal, etc_profile;
 
 	public:
-		SetStability(const PortageSettings *psettings, bool no_etc_portage, bool use_etc_profile = true)
+		bool use_etc_profile() const
+		{ return etc_profile; }
+
+		SetStability(const PortageSettings *psettings, bool nonlocal, bool etc_profile_usage = true)
 		{
 			portagesettings = psettings;
-			default_accepted_keywords = psettings->getAcceptKeywordsDefault();
-			ignore_etc_portage = no_etc_portage;
-			etc_profile = use_etc_profile;
-			if(no_etc_portage)
-				return;
-			local_accepted_keywords = psettings->getAcceptKeywordsLocal();
+			m_nonlocal = nonlocal;
+			etc_profile = etc_profile_usage;
 		}
 
 		void set_stability(Package &package) const
 		{
-			package.restore_maskstuff();
-			portagesettings->setStability(&package, default_accepted_keywords, true);
-			if(ignore_etc_portage)
+			if(m_nonlocal) {
+				package.restore_nonlocal();
 				return;
-			/* Add individual maskings from this machines /etc/portage/ */
+			}
+			if(package.restore_local())
+				return;
+			/* Add local keywords */
+			portagesettings->setStability(&package);
 			if(etc_profile)
 				portagesettings->user_config->setProfileMasks(&package);
 			portagesettings->user_config->setMasks(&package);
-			portagesettings->user_config->setStability(&package, local_accepted_keywords);
+			portagesettings->user_config->setStability(&package);
+			package.save_local();
 		}
 
 		void set_stability(Category &category) const

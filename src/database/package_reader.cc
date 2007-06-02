@@ -74,6 +74,7 @@ PackageReader::read(Attributes need)
 					m_pkg->addVersion(io::read_version(m_fp));
 				}
 			}
+			m_pkg->save_nonlocal();
 		//case COLL_IUSE: // If NOT_FULL_USE
 		//case ALL:
 		default:

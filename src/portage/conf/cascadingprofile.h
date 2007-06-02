@@ -46,6 +46,7 @@ class CascadingProfile {
 	public:
 
 	protected:
+		bool trivial_profile;
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
@@ -79,20 +80,23 @@ class CascadingProfile {
 
 		void ReadLink(std::string &path) const;
 	public:
-		CascadingProfile(PortageSettings *portagesettings) {
+		CascadingProfile(PortageSettings *portagesettings)
+		{
+			trivial_profile = true;
 			m_portagesettings = portagesettings;
-
 			listProfile();
 			readMakeDefaults();
 			readFiles();
 		}
 
-		/** Copy CascadingProfile (deep) and append content of profiledir */
+		/** Copy CascadingProfile (deep) and append content of profiledir.
+		    If nothing was really appended, applyMasks() will have no effect all */
 		CascadingProfile(const CascadingProfile &ori, const char *profile_dir) :
 		m_portagesettings(ori.m_portagesettings),
 		m_system(ori.m_system), m_system_allowed(ori.m_system_allowed),
 		m_package_masks(ori.m_package_masks)
 		{
+			trivial_profile = true;
 			listProfile(profile_dir);
 			readMakeDefaults();
 			readFiles();

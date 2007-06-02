@@ -100,7 +100,7 @@ class PortageUserConfig {
 		/// @return true if something from /etc/portage/package.* applied
 		bool setMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 		/// @return true if something from /etc/portage/package.* applied
-		bool setStability(Package *p, const Keywords &kw, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		bool setStability(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 
 		/// @return true if something from /etc/portage/package.use applied
 		bool CheckUse(Package *p, Keywords::Redundant check)
@@ -131,7 +131,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		/** Mapping of category->masks (first all masks, then all unmasks) */
 		MaskList<Mask> m_masks;
-		Keywords m_accepted_keywords;
+		KeywordsFlags::Type m_accepted_keywords;
+		static const KeywordsFlags::Type m_accepted_keywords_nonlocal = KeywordsFlags::KEY_STABLE;
 
 		/** Your cascading profile, excluding local settings */
 		CascadingProfile  *profile;
@@ -157,21 +158,9 @@ class PortageSettings : public std::map<std::string,std::string> {
 		/** Free memory. */
 		~PortageSettings();
 
-		std::vector<std::string> &getAcceptKeyword() {
-			return m_accepted_keyword;
-		}
-
 		std::string resolve_overlay_name(const std::string &path, bool resolve);
 		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
 		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
-
-		static Keywords getAcceptKeywordsDefault() {
-			return Keywords::KEY_STABLE;
-		}
-
-		Keywords getAcceptKeywordsLocal() const {
-			return m_accepted_keywords;
-		}
 
 		/** Read maskings & unmaskings from the profile as well as user-defined ones */
 		MaskList<Mask> *getMasks();
@@ -182,7 +171,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		void setMasks(Package *p);
 
-		void setStability(Package *pkg, const Keywords &kw, bool save_after_setting) const;
+		/// Set stability according to local m_accepted_keywords
+		void setStability(Package *pkg) const;
 };
 
 #endif

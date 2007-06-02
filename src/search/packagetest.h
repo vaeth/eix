@@ -151,25 +151,26 @@ class PackageTest {
 		void Overlay()
 		{ overlay = true; }
 
-		void StabilityDefault(Package &p) const
-		{ stability->set_stability(p); }
+		void StabilityDefault(Package *p) const
+		{ stability->set_stability(*p); }
 
-		void StabilityLocal(Package &p) const
+		void StabilityLocal(Package *p) const
 		{
 			if(!stability_local) {
 				(const_cast<PackageTest*>(this))->stability_local =
-					new SetStability(portagesettings, false, true);
+					new SetStability(portagesettings, false,
+						stability->use_etc_profile());
 			}
-			stability_local->set_stability(p);
+			stability_local->set_stability(*p);
 		}
 
-		void StabilityNonlocal(Package &p) const
+		void StabilityNonlocal(Package *p) const
 		{
 			if(!stability_nonlocal) {
 				(const_cast<PackageTest*>(this))->stability_nonlocal =
 					new SetStability(portagesettings, true, false);
 			}
-			stability_nonlocal->set_stability(p);
+			stability_nonlocal->set_stability(*p);
 		}
 
 		std::set<Version::Overlay> *OverlayList()

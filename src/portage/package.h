@@ -85,8 +85,8 @@ class SlotList : public std::vector<SlotVersions>
 class Package
 	: public eix::ptr_list<Version>
 {
-	private:
-		bool saved_maskstuff;
+		/** Which keywords data was saved already? */
+		bool saved_local;
 
 	public:
 		/** True if duplicated versions are found in for this package.
@@ -170,11 +170,35 @@ class Package
 		void addVersion(Version *version)
 		{ addVersionStart(version); addVersionFinalize(version); }
 
-		/** Save maskstuff for each version of the package */
-		void save_maskstuff();
+		void save_local()
+		{
+			if(saved_local)
+				return;
+			for(iterator i = begin(); i != end(); ++i)
+				i->keys_local = i->get();
+			saved_local = true;
+		}
 
-		/** Restore maskstuff for each version of the package */
-		void restore_maskstuff();
+		bool restore_local()
+		{
+			if(!saved_local)
+				return false;
+			for(iterator i = begin(); i != end(); ++i)
+				i->set(i->keys_local.get());
+			return true;
+		}
+
+		void save_nonlocal()
+		{
+			for(iterator i = begin(); i != end(); ++i)
+				i->keys_nonlocal = i->get();
+		}
+
+		void restore_nonlocal()
+		{
+			for(iterator i = begin(); i != end(); ++i)
+				i->set(i->keys_nonlocal.get());
+		}
 
 		void calculate_slotlist();
 
@@ -322,7 +346,7 @@ class Package
 			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
 			have_nontrivial_slots = false;
-			saved_maskstuff = false;
+			saved_local = false;
 #if !defined(NOT_FULL_USE)
 			versions_have_full_use = false;
 #endif
