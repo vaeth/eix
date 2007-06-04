@@ -105,11 +105,14 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		upgrade || overlay|| obsolete || stability ||
+		upgrade || overlay|| obsolete ||
 #if defined(USE_BZLIB)
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 #endif
-		overlay_list || overlay_only_list || in_overlay_inst_list)
+		overlay_list || overlay_only_list || in_overlay_inst_list ||
+		(test_stability_default != STABLE_NONE) ||
+		(test_stability_local != STABLE_NONE) ||
+		(test_stability_nonlocal != STABLE_NONE))
 		setNeeds(PackageReader::VERSIONS);
 }
 

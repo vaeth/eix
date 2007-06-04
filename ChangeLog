@@ -2,6 +2,10 @@
 
 *eix-0.9.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix calculation of needed data which was broken since eix-0.9.5.
+	  This brings "cheap" searches (for names etc) back to the speed of
+	  eix-0.9.4. See http://sourceforge.net/tracker/index.php?
+	  func=detail&aid=1728310&group_id=128101&atid=710608
 	- New default format for diff-eix: Print * tag for stabilized packages,
 	  see http://forums.gentoo.org/viewtopic-p-4078742.html
 	- Introduced delayed TAG_* variables in default formats.
