@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.9
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix compilation issues with some C compilers, see
+	  http://sourceforge.net/tracker/index.php?
+	  func=detail&aid=1731374&group_id=128101&atid=710608
+
 *eix-0.9.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix calculation of needed data which was broken since eix-0.9.5.

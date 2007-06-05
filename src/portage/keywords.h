@@ -96,9 +96,9 @@ class KeywordsFlags {
 		bool isSystem() const
 		{ return m_mask & SYSTEM_PACKAGE; }
 
-		void operator |= (const KeywordsFlags::Type &t)
+		void operator |= (const KeywordsFlags::Type t)
 		{ m_mask |= t; }
-		void operator &= (const KeywordsFlags::Type &t)
+		void operator &= (const KeywordsFlags::Type t)
 		{ m_mask &= t; }
 };
 
