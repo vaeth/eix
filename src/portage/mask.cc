@@ -98,13 +98,23 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	// Skip category-part
 	str = p + 1;
 
+	// If :... is appended, mark the slot part;
+	const char *end = strrchr(str, ':');
+	m_test_slot = bool(end);
+	if(m_test_slot) {
+		slot = (end + 1);
+		// Interpret Slot "0" as empty slot (as internally always)
+		if(slot == "0")
+			slot.clear();
+	}
+
 	// Get the rest (name-version|name)
 	if(m_operator != maskOpAll)
 	{
 		// There must be a version somewhere
 		p = ExplodeAtom::get_start_of_version(str);
 
-		if(p == NULL)
+		if((!p) || (end && (p >= end)))
 		{
 			throw ExBasic("You have a operator "
 			              "but we can't find a version-part.");
@@ -115,10 +125,13 @@ Mask::parseMask(const char *str) throw(ExBasic)
 
 		// Check for wildcard-version
 		const char *wildcard = strchr(str, '*');
+		if(wildcard && end && (wildcard >= end))
+			wildcard = NULL;
 
 		if(wildcard && wildcard[1] != '\0')
 		{
-			throw ExBasic("A '*' is only valid at the end of a version-string.");
+			if(!(end && ((wildcard + 1) == end)))
+				throw ExBasic("A '*' is only valid at the end of a version-string.");
 		}
 
 		// Only the = operator can have a wildcard-version
@@ -142,17 +155,23 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		if(wildcard)
 		{
 			m_operator = maskOpGlob;
-			m_full = string(str, strlen(str) - 1);
+			m_full = string(str, wildcard);
 		}
 		else
 		{
-			parseVersion(str);
+			if(end)
+				parseVersion(str, end - str);
+			else
+				parseVersion(str);
 		}
 	}
 	else
 	{
 		// Everything else is the package-name
-		m_name = string(str);
+		if(end)
+			m_name = string(str, end - str);
+		else
+			m_name = string(str);
 	}
 }
 
@@ -161,8 +180,12 @@ Mask::parseMask(const char *str) throw(ExBasic)
  * @param category category of package (NULL if shall not be tested)
  * @return true if applies. */
 bool
-Mask::test(BasicVersion *bv) const
+Mask::test(const BasicVersion *bv) const
 {
+	if(m_test_slot) {
+		if(slot != bv->slot)
+			return false;
+	}
 	switch(m_operator)
 	{
 		case maskOpAll:
@@ -173,19 +196,19 @@ Mask::test(BasicVersion *bv) const
 					m_full.size()) == 0;
 
 		case maskOpLess:
-			return (*bv < static_cast<BasicVersion>(*this));
+			return ((*bv) < *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpLessEqual:
-			return (*bv <= static_cast<BasicVersion>(*this));
+			return ((*bv) <= *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpEqual:
-			return (*bv == static_cast<BasicVersion>(*this));
+			return ((*bv) == *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpGreaterEqual:
-			return (*bv >= static_cast<BasicVersion>(*this));
+			return ((*bv) >= *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpGreater:
-			return (*bv > static_cast<BasicVersion>(*this));
+			return ((*bv) > *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpRevisions:
 			return (compare_tilde(*bv) == 0);

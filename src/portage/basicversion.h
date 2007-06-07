@@ -100,7 +100,7 @@ class BasicVersion
 		void defaults();
 
 		/** Parse the version-string pointed to by str. */
-		void parseVersion(const char *str, int n = 0);
+		void parseVersion(const char *str, size_t n = 0);
 
 		/** Compares the split m_primsplit numbers of another BasicVersion
 		    instances to itself. */

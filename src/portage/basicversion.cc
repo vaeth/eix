@@ -120,7 +120,7 @@ BasicVersion::defaults()
 }
 
 void
-BasicVersion::parseVersion(const char *str, int n)
+BasicVersion::parseVersion(const char *str, size_t n)
 {
 	defaults();
 	if(n > 0)
