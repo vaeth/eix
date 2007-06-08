@@ -636,17 +636,17 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_HEADER_NEW",
 			"["
-			"{bestshort}{!oldbestshort}%{TAG_STABILIZE}{}{}"
+			"{bestshort}%{TAG_STABILIZE}{}"
 			"{upgrade}%{TAG_UPGRADE}{}"
 			"{downgrade}%{TAG_DOWNGRADE}{}"
 			"{!recommend}%{TAG_NEW}{}"
 			"]"
+			"{!bestshort} {}"
 			"{upgrade}"
 				"{!downgrade} {}"
 			"{else}"
 				" "
 			"{}"
-			"{bestshort}{oldbestshort} {else}{}{else} {}"
 			" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-new header symbols.")

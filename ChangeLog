@@ -7,6 +7,8 @@
 	- Fix compilation issues with some C compilers, see
 	  http://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1731374&group_id=128101&atid=710608
+	- Fix DIFF_FORMAT_HEADER_NEW default (was broken in eix-0.9.8;
+	  thanks to Seemant Kulleen <seemant@gentoo.org> for reporting.)
 
 *eix-0.9.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
