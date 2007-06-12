@@ -128,7 +128,13 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EIX_CACHEFILE",
-			"%{EPREFIX}" EIX_CACHEFILE, "This file is the default eix cache.\n")
+			"%{EPREFIX}" EIX_CACHEFILE, "This file is the default eix cache.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "SKIP_PERMISSION_TESTS",
+			"false", "Whether to test for group and permissions.  You must set this to true\n"
+			"if you use more sophisticated permission setups (e.g. NSS/LDAP).")
 		);
 
 eixrc.addDefault(

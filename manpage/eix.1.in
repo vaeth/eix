@@ -1068,6 +1068,16 @@ This is prepended to overlays in the eix database to test whether they exist.
 The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
 
 .TP
+.BR SKIP_PERMISSION_TESTS "  " (true / false)
+If true, update-eix will not check for groups and permissions.
+You will probably want to set this to B<true> if you have a more sophisticated
+permission setup on your system (NSS/LDAP, acl, pam-related stuff, ...)
+in which case portage might guess wrong permissions.
+The only negative side effect is that update-eix does not break with an error
+at the beginning but will stop with a (perhaps misleading) error message when
+trying to access the cache file without proper permissions.
+
+.TP
 .BR QUICKMODE "  " (true / false)
 If true, eix and diff-eix will use B<--quick> by default.
 

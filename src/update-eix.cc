@@ -115,7 +115,8 @@ class Permissions {
 					if(!am_i_root())
 					{
 						if(!user_in_group("portage")) {
-							cerr << "You must be in the portage-group to update the database.\n";
+							cerr << "You must be in the portage group to update the database.\n" <<
+								"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test.\n";
 							exit(1);
 						}
 					}
@@ -293,7 +294,7 @@ run_update_eix(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);
-	bool have_output;
+	bool skip_permission_tests;
 	string eix_cachefile = eixrc["EIX_CACHEFILE"];
 	string outputfile;
 
@@ -325,11 +326,11 @@ run_update_eix(int argc, char *argv[])
 
 	/* set the outputfile */
 	if(outputname) {
-		have_output = true;
+		skip_permission_tests = true;
 		outputfile = outputname;
 	}
 	else {
-		have_output = false;
+		skip_permission_tests = eixrc.getBool("SKIP_PERMISSION_TESTS");
 		outputfile = eix_cachefile;
 	}
 	for(list<const char*>::iterator it = exclude_args.begin();
@@ -342,7 +343,7 @@ run_update_eix(int argc, char *argv[])
 		it != method_args.end(); ++it)
 		override_list.push_back(Override(Pathname(it->first, true), it->second));
 
-	Permissions permissions(outputfile, have_output);
+	Permissions permissions(outputfile, skip_permission_tests);
 
 	if(show_help)
 		print_help(0);
