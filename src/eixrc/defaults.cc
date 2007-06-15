@@ -38,17 +38,16 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::PREFIXSTRING, "EIXRC_SOURCE",
 			"", "This path is prepended to source commands in /etc/eixrc.\n"
 			"If set in /etc/eixrc it temporarily overrides the environment.\n"
-			"When this variable takes effect no delayed substitution is performed.")
+			"You must not use delayed substitution in this variable.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::PREFIXSTRING, "EPREFIX",
 			EPREFIX_DEFAULT, "If this variable is set in the environment and PORTAGE_CONFIGROOT is unset,\n"
-			"then this variable is prefixed to the path where /etc/eixrc is searched."
+			"then this variable is prefixed to the path where /etc/eixrc is searched.\n"
 			"Moreover, this variable is used for delayed substitution for path prefixes.\n"
 			"It influences most paths except for $HOME/.eixrc, the cache file\n"
-			"passed in the command line, PORTAGE_PROFILE, PORTDIR,\n"
-			"and overlays.")
+			"passed in the command line, PORTAGE_PROFILE, PORTDIR, and overlays.")
 		);
 
 eixrc.addDefault(
@@ -93,12 +92,12 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::PREFIXSTRING, "EPREFIX_INSTALLED",
-			"%{EPREFIX_ROOT}", "Prefix to the path where eix expects information about installed packages.\n")
+			"%{EPREFIX_ROOT}", "Prefix to the path where eix expects information about installed packages.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::PREFIXSTRING, "EPREFIX_PORTAGE_CACHE",
-			"%{EPREFIX}", "This prefix is prepended to the portage cache.\n")
+			"%{EPREFIX}", "This prefix is prepended to the portage cache.")
 		);
 
 eixrc.addDefault(
@@ -984,7 +983,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_SLOT_IUSE",
-			"\n\t\\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
+			"\\n\\t\\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
 			"(this is only used when --versionlines is inactive and sorting is by slots).")
 		);
 
@@ -1046,7 +1045,8 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "COLOR_LOCAL_MASK",
-			"false", "If false, COLOR_ORIGINAL=false has no effect on versions which are only locally masked (i.e. [m]).")
+			"false", "If false, COLOR_ORIGINAL=false has no effect on versions which are\n"
+			"only locally masked (i.e. [m]).")
 		);
 
 eixrc.addDefault(
@@ -1066,7 +1066,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "COLON_SLOTS",
-			"false", "If true, slots are separated from the version names with a colon instead of braces.")
+			"false", "If true, separated slots from versions with a colon instead of braces.")
 		);
 
 eixrc.addDefault(
@@ -1097,22 +1097,24 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::INTEGER, "LEVENSHTEIN_DISTANCE",
 			LEVENSHTEIN_DISTANCE_STR,
-			"Defines the default maximal levensthein for which a string is considered a match.")
+			"The default maximal levensthein for which a string is considered a match.")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTDIR_CACHE_METHOD",
-			PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR (metadata/flat/cdb/none/backport/eix[:file[:nr]]")
+			PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR\n"
+			"(metadata/sqlite/cdb/portage-2.0/portage-2.1/none[*]/ebuild[*]/eix[*][:*])")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERLAY_CACHE_METHOD",
-			"none", "Portage cache-backend that should be used for the overlays (metadata/flat/cdb/none/backport/eix[:file[:nr]]).")
+			"none", "Portage cache-backend that should be used for the overlays.\n"
+			"(metadata/sqlite/cdb/portage-2.0/portage-2.1/none[*]/ebuild[*]/eix[*][:*])")
 		);
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CACHE_METHOD",
-			"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain directories.\n"
+			"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain paths.\n"
 			"This is a list of pairs DIR-PATTERN METHOD. Later entries take precedence.")
 		);
 
@@ -1157,7 +1159,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "UPGRADE_LOCAL_MODE",
-			"", "if +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false\n")
+			"", "if +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false.")
 		);
 
 eixrc.addDefault(
@@ -1198,7 +1200,7 @@ eixrc.addDefault(
 			"false", "If true, always check from which overlay a package was installed.\n"
 			"If false, only packages are checked which occur not only in one tree,\n"
 			"i.e. in at least one overlay. This is faster, but may give a false result\n"
-			"if such a package was actually installed from a meanwhile deleted overlay.\n")
+			"if such a package was actually installed from a meanwhile deleted overlay.")
 		);
 
 eixrc.addDefault(
@@ -1215,7 +1217,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "COUNT_ONLY_PRINTED",
-			"true", "If false, count independently of whether the matches are printed.\n")
+			"true", "If false, count independently of whether the matches are printed.")
 		);
 
 #define TAG_FOR(type, default, comment) \
@@ -1246,7 +1248,7 @@ TAG_FOR(EX_MISSING_KEYWORD, "(**)", "originally no keyword but now stable")
 #define MATCH_IF(field, value) \
 	eixrc.addDefault( \
 			EixRcOption(EixRcOption::STRING, "MATCH_" #field "_IF", \
-				value, "Use " #field " as default matchfield if the search string match the given extended regex.") \
+				value, "Use " #field " as default matchfield if the search string matches\nthe given extended regular expression.") \
 			)
 
 MATCH_IF(NAME,          ".*");
