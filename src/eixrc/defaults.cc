@@ -31,7 +31,7 @@
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EIXRC",
 			"", "The file which is used instead of /etc/eixrc and ~/.eixrc.\n"
-			"This variable can of course only be set in the environment.\n")
+			"This variable can of course only be set in the environment.")
 		);
 
 eixrc.addDefault(
