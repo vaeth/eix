@@ -29,6 +29,10 @@
 #ifndef __VARSREADER_H__
 #define __VARSREADER_H__
 
+#if !defined(__OpenBSD__)
+#include <stdint.h>
+#endif
+
 // mmap and stat stuff
 #include <sys/types.h>
 #include <sys/stat.h>

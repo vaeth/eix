@@ -223,7 +223,7 @@ bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 		vector<string> lines;
 		if(!pushback_lines(
 			(_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
-			&lines, true, false))
+			&lines, true, false, false))
 		{
 			v.read_failed = true;
 			return false;
@@ -257,7 +257,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
 		vector<string> lines;
 		if(!pushback_lines((dirname + "/IUSE").c_str(),
-			&lines, true, false))
+			&lines, true, false, false))
 			return false;
 		v.inst_iuse = split_string(join_vector(lines, " "));
 		sort_uniquify(v.inst_iuse);
@@ -278,7 +278,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		*/
 		lines.clear();
 		if(!pushback_lines((dirname + "/USE").c_str(),
-			&lines, true, false))
+			&lines, true, false, false))
 			return false;
 		alluse = split_string(join_vector(lines, " "));
 	}

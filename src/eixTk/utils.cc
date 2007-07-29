@@ -44,7 +44,7 @@
 using namespace std;
 
 /** push_back every line of file into v. */
-bool pushback_lines_file(const char *file, vector<string> *v, bool removed_empty)
+bool pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments)
 {
 	string line;
 	ifstream ifstr(file);
@@ -53,15 +53,16 @@ bool pushback_lines_file(const char *file, vector<string> *v, bool removed_empty
 			getline(ifstr, line);
 			trim(&line);
 
-			// strip #blaaa
-			string::size_type x = line.find_first_of("#");
-			if(x != string::npos)
-			{
-				line.erase(x);
-				trim(&line);
+			if(remove_comments) {
+				string::size_type x = line.find_first_of("#");
+				if(x != string::npos)
+				{
+					line.erase(x);
+					trim(&line);
+				}
 			}
 
-			if(line.size() == 0 && removed_empty)
+			if(remove_empty && line.empty())
 				continue;
 			v->push_back(line);
 			if( ifstr.bad() )
@@ -74,7 +75,7 @@ bool pushback_lines_file(const char *file, vector<string> *v, bool removed_empty
 }
 
 /** push_back every line of file or dir into v. */
-bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, bool recursive)
+bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, bool remove_comments)
 {
 	static const char *files_exclude[] = { "..", "." , NULL };
 	static int depth=0;
@@ -90,14 +91,14 @@ bool pushback_lines(const char *file, vector<string> *v, bool removed_empty, boo
 			++depth;
 			ASSERT(depth < 100,
 				"Nesting level too deep in %s", dir.c_str());
-			if(! pushback_lines(it->c_str(), v, removed_empty, true))
+			if(! pushback_lines(it->c_str(), v, remove_empty, true, remove_comments))
 				rvalue=false;
 			--depth;
 		}
 		return rvalue;
 	}
 	else
-		return pushback_lines_file(file, v, removed_empty);
+		return pushback_lines_file(file, v, remove_empty, remove_comments);
 }
 
 /** These variables and function are only supposed to be used from

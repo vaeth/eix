@@ -34,7 +34,7 @@
 #include <string>
 
 /** push_back every line of file or dir into v. */
-bool pushback_lines(const char *file, std::vector<std::string> *v, bool removed_empty = true, bool recursive = false);
+bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_empty = true, bool recursive = false, bool remove_comments = true);
 
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if the don't match any

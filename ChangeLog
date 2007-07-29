@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.10
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix compilation issues with gcc-3.3.6
+	- Do not treat # as comment symbol in /var/db/pkg/*/*/{USE,IUSE,SLOT}.
+	  This fixes http://sourceforge.net/tracker/index.php?
+	  func=detail&aid=1756510&group_id=128101&atid=710608
+
 *eix-0.9.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow slot names for masks, see
