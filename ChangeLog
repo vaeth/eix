@@ -6,6 +6,8 @@
 	- Do not treat # as comment symbol in /var/db/pkg/*/*/{USE,IUSE,SLOT}.
 	  This fixes http://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1756510&group_id=128101&atid=710608
+	- Fix some crashes if there is bad data in /var/db/pkg
+	- Fix some memory allocations
 
 *eix-0.9.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

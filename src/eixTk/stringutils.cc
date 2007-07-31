@@ -68,6 +68,9 @@ const char *
 ExplodeAtom::get_start_of_version(const char* str)
 {
 	const char *x = NULL;
+	// There must be at least one symbol before the version:
+	if(!*(str++))
+		return NULL;
 	while(*str)
 	{
 		if(*str++ == '-'
