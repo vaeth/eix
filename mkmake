@@ -46,17 +46,17 @@ esac
 done
 shift $((OPTIND-1))
 
-if [[ -z "${KEEPENV}" ]]; then
+if [ -z "${KEEPENV}" ]; then
 	MARCH=$(sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 		/etc/make.conf)
 	export CXXFLAGS CFLAGS LDFLAGS
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
 	CFLAGS="-march=${MARCH} -O2 -pipe"
-	[[ "${SAFEFLAGS}" ]] || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
-	[[ "${NOT_FULL_USE}" ]] && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
+	[ -n "${SAFEFLAGS}" ] || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
+	[ -n "${NOT_FULL_USE}" ] && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
 	CFLAGS="${CFLAGS} -g -ggdb3 -Wall -Wextra"
-	CFLAGS="${CFLAGS} -pedantic -Wno-variadic-macros"
-	if [[ "${PEDANTIC}" ]]; then
+	[ -n "${SAFEFLAGS}" ] || CFLAGS="${CFLAGS} -pedantic -Wno-variadic-macros"
+	if [ -n "${PEDANTIC}" ]; then
 		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
 		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=2"
 		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization -Wstack-protector"
@@ -69,20 +69,23 @@ if [[ -z "${KEEPENV}" ]]; then
 	else
 		CXXFLAGS="${CFLAGS} -Werror"
 	fi
-	[[ "${SAFEFLAGS}" ]] || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
+	[ -n "${SAFEFLAGS}" ] || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
 fi
-if ! [[ -e Makefile ]]; then
-	if ! [[ -e configure && -e Makefile.in ]]; then
+[ -n "$QUIET" ] || echo "CFLAGS=$CFLAGS
+CXXFLAGS=$CXXFLAGS
+LDFLAGS=$LDFLAGS"
+if ! [ -e Makefile ]; then
+	if ! [ -e configure -a -e Makefile.in ]; then
 		echo "Running autotools..."
 		eval ./autogen.sh $QUIET || die "autogen failed"
 	fi
 	echo "Running configure..."
 	eval ./configure $SQLITE $BZLIB $QUIET || die "configure failed"
 fi
-[[ "$EARLYSTOP" ]] && exec make config.h
+[ -n "$EARLYSTOP" ] && exec make config.h
 echo "Making $@..."
 MAKEEXEC="$(type -P make)" || die "cannot find make"
-if [[ "$QUIET" ]]; then
+if [ -n "$QUIET" ]; then
 	exec "$MAKEEXEC" "$@" &>/dev/null
 else
 	exec "$MAKEEXEC" "$@"
