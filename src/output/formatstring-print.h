@@ -43,11 +43,10 @@ void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with
 void print_versions_slots(const PrintFormat *fmt, const Package *p);
 void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 
-void print_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
+bool print_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 
-
-void print_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
+bool print_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
 std::string get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
 
 #endif /* __FORMATSTRING-PRINT_H__ */

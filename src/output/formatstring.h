@@ -180,12 +180,12 @@ class PrintFormat {
 	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
 	friend void print_versions_slots(const PrintFormat *fmt, const Package *p);
 	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
-	friend void print_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
+	friend bool print_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
 	friend std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 	friend class LocalCopy;
 
 	public:
-		typedef void   (*PrintProperty)(const PrintFormat *formatstring, const void *entity, const std::string &property);
+		typedef bool      (*PrintProperty)(const PrintFormat *formatstring, const void *entity, const std::string &property);
 		typedef std::string (*GetProperty)(const PrintFormat *formatstring, const void *entity, const std::string &property);
 
 	protected:

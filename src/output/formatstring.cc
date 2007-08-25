@@ -220,7 +220,8 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 				break;
 			case Node::VARIABLE:
 				try {
-					print_property(this, entity, (static_cast<Property*>(root))->name);
+					if(print_property(this, entity, (static_cast<Property*>(root))->name))
+						printed = true;
 				}
 				catch(ExBasic e) {
 					cerr << e << endl;

@@ -449,7 +449,7 @@ print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
 		print_versions_versions(fmt, p, with_slots);
 }
 
-void
+bool
 print_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
 {
 	const Package *entity = static_cast<const Package *>(void_entity);
@@ -462,14 +462,14 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		(name == "availableversionslong") ||
 		(name == "availableversionsshort")) {
 		print_versions(fmt, entity, (name != "availableversionsshort"));
-		return;
+		return true;
 	}
 	if((plainname == "installedversions") ||
 		(plainname == "installedversionsdate") ||
 		(plainname == "installedversionsshortdate") ||
 		(plainname == "installedversionsshort")) {
 		if(!fmt->vardb)
-			return;
+			return false;
 		char formattype = 0;
 		if(plainname != "installedversionsshort") {
 			formattype = INST_WITH_DATE;
@@ -478,24 +478,28 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 			else if(plainname == "installedversionsshortdate")
 				formattype |= INST_SHORTDATE;
 		}
-		cout << getInstalledString(*entity, *fmt, false, formattype, prepend);
-		return;
+		string s = getInstalledString(*entity, *fmt, false, formattype, prepend);
+		if(s.empty())
+			return false;
+		cout << s;
+		return true;
 	}
 	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key) {
 			cout << fmt->overlay_keytext(ov_key);
+			return true;
 		}
-		return;
+		return false;
 	}
 	if((name == "best") ||
 		(name == "bestlong") ||
 		(name == "bestshort")) {
 		Version *best = entity->best();
-		if(best != NULL) {
-			print_version(fmt, best, entity, (name != "bestshort"), false);
-		}
-		return;
+		if(best == NULL)
+			return false;
+		print_version(fmt, best, entity, (name != "bestshort"), false);
+		return true;
 	}
 	if((name == "bestslots") ||
 		(name == "bestslotslong") ||
@@ -509,9 +513,13 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 				cout << " ";
 			print_version(fmt, *it, entity, (name != "bestslotshort"), false);
 		}
-		return;
+		return (versions.begin() != versions.end());
 	}
-	cout << get_package_property(fmt, void_entity, name);
+	string s = get_package_property(fmt, void_entity, name);
+	if(s.empty())
+		return false;
+	cout << s;
+	return true;
 }
 
 string
@@ -738,12 +746,12 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 	return get_package_property(fmt, entity, new_name);
 }
 
-void
+bool
 print_diff_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
 {
 	const Package *older = (static_cast<const Package* const*>(void_entity))[0];
 	const Package *newer = (static_cast<const Package* const*>(void_entity))[1];
 	string new_name;
 	const void *entity = old_or_new(&new_name, older, newer, name);
-	print_package_property(fmt, entity, new_name);
+	return print_package_property(fmt, entity, new_name);
 }

@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.11
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- eix no longer considers output from <...> as "no output"
+	  (for COUNT_ONLY_PRINTED or trailing newline). This fixes
+	  https://sourceforge.net/tracker/index.php?
+	  func=detail&aid=1780283&group_id=128101&atid=710608
+
 *eix-0.9.10
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix compilation issues with gcc-3.3.6
