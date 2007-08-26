@@ -205,7 +205,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 }
 
 void
-print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay)
+print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay, bool full)
 {
 	bool is_installed = false;
 	bool is_marked = false;
@@ -228,7 +228,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 #endif
 
-	if(fmt->style_version_lines)
+	if((!full) && fmt->style_version_lines)
 		fputs("\n\t\t", stdout);
 
 	bool need_color = !(fmt->no_color);
@@ -341,13 +341,15 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 	cout << mask_text << keyword_text;
 
-	if (fmt->style_version_lines)
+	if((!full) && fmt->style_version_lines)
 		fputs("\t", stdout);
 
 	if (is_installed)
 		cout << fmt->mark_installed;
 	if (is_marked)
 		cout << fmt->mark_version;
+	if (full)
+		cout << package->category << "/" << package->name << "-";
 	if (with_slots && fmt->show_slots && (!fmt->colored_slots))
 		cout << version->getFullSlotted(fmt->colon_slots);
 	else
@@ -389,13 +391,16 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 }
 
 void
-print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
+print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots, bool full)
 {
-	Package::const_iterator vit = p->begin();
-	while(vit != p->end()) {
-		print_version(fmt, *vit, p, with_slots, false);
-		if(++vit != p->end() && !fmt->style_version_lines)
+	for(Package::const_iterator vit = p->begin(); vit != p->end(); ++vit) {
+		if(vit != p->begin()) {
+			if(full)
+				cout << "\n";
+			else if(!fmt->style_version_lines)
 			cout << " ";
+		}
+		print_version(fmt, *vit, p, with_slots, false, full);
 	}
 	if( !fmt->no_color )
 		cout << AnsiColor::reset();
@@ -412,11 +417,11 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 }
 
 void
-print_versions_slots(const PrintFormat *fmt, const Package* p)
+print_versions_slots(const PrintFormat *fmt, const Package* p, bool full)
 {
 	if(!p->have_nontrivial_slots)
 	{
-		print_versions_versions(fmt, p, false);
+		print_versions_versions(fmt, p, false, full);
 		return;
 	}
 	const SlotList *sl = &(p->slotlist);
@@ -424,26 +429,31 @@ print_versions_slots(const PrintFormat *fmt, const Package* p)
 	for(SlotList::const_iterator it = sl->begin();
 		it != sl->end(); ++it)
 	{
-		const char *s = it->slot();
-		if((!only_one) || fmt->style_version_lines)
-			fputs("\n\t", stdout);
-		if( !fmt->no_color)
-			cout << fmt->color_slots;
-		if(s[0])
-			cout << "(" << s << ")";
-		else
-			cout << "(0)";
-		if( !fmt->no_color)
-			cout << AnsiColor::reset();
-		if( !fmt->style_version_lines)
-			cout << (only_one ? "  " : "\t");
+		if(!full) {
+			const char *s = it->slot();
+			if((!only_one) || fmt->style_version_lines)
+				fputs("\n\t", stdout);
+			if( !fmt->no_color)
+				cout << fmt->color_slots;
+			if(s[0])
+				cout << "(" << s << ")";
+			else
+				cout << "(0)";
+			if( !fmt->no_color)
+				cout << AnsiColor::reset();
+			if( !fmt->style_version_lines)
+				cout << (only_one ? "  " : "\t");
+		}
 		const VersionList *vl = &(it->const_version_list());
-		VersionList::const_iterator vit = vl->begin();
-		while(vit != vl->end())
-		{
-			print_version(fmt, *vit, p, false, false);
-			if(++vit != vl->end() && !fmt->style_version_lines)
+		for(VersionList::const_iterator vit = vl->begin();
+			vit != vl->end(); ++vit) {
+			if(full) {
+				if((vit != vl->begin()) || (it != sl->begin()))
+					cout << "\n";
+			}
+			else if((vit != vl->begin()) && !fmt->style_version_lines)
 				cout << " ";
+			print_version(fmt, *vit, p, full, false, full);
 		}
 		if( !fmt->no_color )
 			cout << AnsiColor::reset();
@@ -461,12 +471,12 @@ print_versions_slots(const PrintFormat *fmt, const Package* p)
 }
 
 void
-print_versions(const PrintFormat *fmt, const Package* p, bool with_slots)
+print_versions(const PrintFormat *fmt, const Package* p, bool with_slots, bool full)
 {
 	if(fmt->slot_sorted)
-		print_versions_slots(fmt, p);
+		print_versions_slots(fmt, p, full);
 	else
-		print_versions_versions(fmt, p, with_slots);
+		print_versions_versions(fmt, p, with_slots, full);
 }
 
 bool
@@ -481,7 +491,13 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 	if((name == "availableversions") ||
 		(name == "availableversionslong") ||
 		(name == "availableversionsshort")) {
-		print_versions(fmt, entity, (name != "availableversionsshort"));
+		print_versions(fmt, entity, (name != "availableversionsshort"), false);
+		return true;
+	}
+	if((name == "fullavailable") ||
+		(name == "fullavailablelong") ||
+		(name == "fullavailableshort")) {
+		print_versions(fmt, entity, (name != "fullavailableshort"), true);
 		return true;
 	}
 	if((plainname == "installedversions") ||
@@ -525,7 +541,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		Version *best = entity->best();
 		if(best == NULL)
 			return false;
-		print_version(fmt, best, entity, (name != "bestshort"), false);
+		print_version(fmt, best, entity, (name != "bestshort"), false, false);
 		return true;
 	}
 	if((name == "bestslots") ||
@@ -538,7 +554,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		{
 			if(it != versions.begin())
 				cout << " ";
-			print_version(fmt, *it, entity, (name != "bestslotshort"), false);
+			print_version(fmt, *it, entity, (name != "bestslotshort"), false, false);
 		}
 		return (versions.begin() != versions.end());
 	}

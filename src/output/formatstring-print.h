@@ -39,10 +39,10 @@ std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *versio
 std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a);
 std::string getFullInstalled(const Package &p, const PrintFormat &fmt);
 std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const std::vector<std::string> &prepend);
-void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slot, bool exclude_overlay);
-void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
-void print_versions_slots(const PrintFormat *fmt, const Package *p);
-void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot);
+void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slot, bool exclude_overlay, bool full);
+void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slot, bool full);
+void print_versions_slots(const PrintFormat *fmt, const Package *p, bool full);
+void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot, bool full);
 
 bool print_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);

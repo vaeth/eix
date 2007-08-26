@@ -3,6 +3,7 @@
 *eix-0.9.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce <fullinstalled>.
+	- Introduce <fullavailable>, <fullavailableshort>, <fullavailablelong>.
 	- eix no longer considers output from <...> as "no output"
 	  (for COUNT_ONLY_PRINTED or trailing newline). This fixes
 	  http://sourceforge.net/tracker/index.php?
