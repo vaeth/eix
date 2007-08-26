@@ -75,6 +75,26 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 	return ret;
 }
 
+string
+getFullInstalled(const Package &p, const PrintFormat &fmt)
+{
+	if(!fmt.vardb)
+		return "";
+	vector<InstVersion> *vec = fmt.vardb->getInstalledVector(p);
+	if(!vec) {
+		return "";
+	}
+
+	string ret;
+	for(vector<InstVersion>::iterator it = vec->begin();
+		it != vec->end(); ++it) {
+		if(!ret.empty())
+			ret.append("\n");
+		ret.append(p.category + "/" + p.name + "-" + it->getFull());
+	}
+	return ret;
+}
+
 const char
 	INST_WITH_DATE=1,      //< Installed string should contain date
 	INST_WITH_USEFLAGS=2,  //< Installed string should contain useflags
@@ -479,6 +499,13 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 				formattype |= INST_SHORTDATE;
 		}
 		string s = getInstalledString(*entity, *fmt, false, formattype, prepend);
+		if(s.empty())
+			return false;
+		cout << s;
+		return true;
+	}
+	if(plainname == "fullinstalled") {
+		string s = getFullInstalled(*entity, *fmt);
 		if(s.empty())
 			return false;
 		cout << s;

@@ -188,6 +188,11 @@ However, you should better not have such packages at all
 To find such packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
 but be aware that eix -t does not obey the usual B<FORMAT> rules for these packages.
 So you better do not use this in scripts unless you know what you are doing.
+
+If you really want to use this option as a substitute for equery in scripts,
+you might want to combine it with
+B<--format >"<B<fullinstalled>>", B<OVERLAY_LIST=no>, and
+B<PRINT_COUNT_ALWAYS=never>.
 .TP
 .BR -i ", " --multi-installed
 Only match packages which are installed in at least two different versions.
@@ -590,6 +595,16 @@ The versions are printed in the according colors.
 .TP
 .BR availableversionsshort
 As B<availableversions>, but do not print any slots
+.TP
+.BR fullinstalled
+For each installed version, this produces a line of the form
+"B<category/name-version>". Note that overlay information is not printed.
+This is mainly a hack for scripts if you want to interpret the output
+automatically. To speed up things you should use option B<-i> in addition
+if you only want to see this output.
+(You will probably also want to set B<OVERLAY_LIST=no> and
+B<PRINT_COUNT_ALWAYS=never>).
+However, see the warning in B<--installed>.
 .TP
 .BR installedversions "[" :string  "]["  :string "]" "" ...
 All installed versions, including installation dates and useflags.
