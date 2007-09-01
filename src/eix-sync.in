@@ -212,7 +212,7 @@ MyRun () {
 }
 
 # Run command
-# if VERBOSE is empty, redirect 1,2 to /dev/null and use ebegin/eend
+# if VERBOSE is empty, redirect 1,2 to logfile|/dev/null and use ebegin/eend
 # (instead of einfo)
 MyRunCommand () {
   local RET
@@ -225,7 +225,7 @@ MyRunCommand () {
   fi
   ebegin "${1}"
   shift
-  MyRun "${@}" &>"${REDIRECT}"
+  MyRun "${@}" &>>"${REDIRECT}"
   RET="${?}"
   eend "${RET}" "Problems running ${@}"
   return "${RET}"

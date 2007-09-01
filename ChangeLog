@@ -4,7 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce <fullinstalled>.
 	- Introduce <fullavailable>, <fullavailableshort>, <fullavailablelong>.
-	- eix no longer considers output from <...> as "no output"
+	- Bugfix: Do not shorten /var/log/eix-sync.log near end of eix-sync.
+	- Bugfix: eix no longer considers output from <...> as "no output"
 	  (for COUNT_ONLY_PRINTED or trailing newline). This fixes
 	  http://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1780283&group_id=128101&atid=710608
