@@ -25,7 +25,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ###########################################################################
 
-source update-eix-functions.sh.in
+. update-eix-functions.sh.in
 
 declare -a LAYMAN_MAKE LAYMAN_OVERLAYS
 
@@ -51,52 +51,38 @@ Options:
 "	-C          Clear the above list.
 	-v          Verbose (default)
 	-q          Quiet"
-	exit "${1}"
+	exit ${1}
 }
 
 ClearLayman () {
 	LAYMAN_MAKE=()
 }
 
-AddLaymanMake () {
-	local I
-	for I; do
-		LAYMAN_MAKE[${#LAYMAN_MAKE[@]}]="${I}"
-	done
-}
-
-AddLaymanOverlays () {
-	local I
-	for I; do
-		LAYMAN_OVERLAYS[${#LAYMAN_OVERLAYS[@]}]="${I}"
-	done
-}
-
 GetPortdir
 ClearLayman
-AddLaymanMake "${LOCAL_PORTDIR}/local/layman/make.conf"
+Push LAYMAN_MAKE "${LOCAL_PORTDIR}/local/layman/make.conf"
 LAYMAN_OVERLAYS=()
 
 while getopts 'vqa:A:C?hH' OPTION; do
 	case "${OPTION}" in
-		v) VERBOSE=1;;
-		q) VERBOSE='';;
-		a) AddLaymanOverlays "${OPTARG}";;
-		A) AddLaymanMake "${OPTARG}";;
+		v) VERBOSE=true;;
+		q) VERBOSE=false;;
+		a) Push LAYMAN_OVERLAYS "${OPTARG}";;
+		A) Push LAYMAN_MAKE "${OPTARG}";;
 		C) ClearLayman;;
 		*) Usage 0;;
 	esac
 done
-shift $((OPTIND-1))
+shift $(( ${OPTIND} - 1 ))
 
 GetOverlays () {
 	local I
 	for I in "${LAYMAN_MAKE[@]}"
 	do
-		[[ "${I}" ]] || continue
-		[[ -r "${I}" ]] || die "cannot read ${I}"
-		AddLaymanOverlays \
-			$(PORTDIR_OVERLAY=''; source "${I}"; \
+		test -n "${I}" || continue
+		test -r "${I}" || die "cannot read ${I}"
+		Push LAYMAN_OVERLAYS \
+			$(PORTDIR_OVERLAY=''; . "${I}"; \
 				echo "${PORTDIR_OVERLAY}")
 	done
 }

@@ -9,6 +9,8 @@
 	  (for COUNT_ONLY_PRINTED or trailing newline). This fixes
 	  http://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1780283&group_id=128101&atid=710608
+	- eix-sync: introduce -V to make -v in /etc/eix-sync.conf convenient.
+	- Avoid "bashisms" in scripts except for arrays (which are necessary).
 
 *eix-0.9.10
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

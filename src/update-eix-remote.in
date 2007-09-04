@@ -25,15 +25,15 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ###########################################################################
 
-source update-eix-functions.sh.in
+. update-eix-functions.sh.in
 
-[[ "${OVERLAYPARENT}" ]] || OVERLAYPARENT="/usr/portage/local"
+test -z "${OVERLAYPARENT}" && OVERLAYPARENT="/usr/portage/local"
 EIXCACHESNAME="eix-caches.tbz2"
 
 Sanitize () {
 	READLINK='' NormalizeNames OVERLAYPARENT \
 		|| die '$OVERLAYPARENT must not be empty'
-	[[ "${RELATIVE}" ]] && die '$OVERLAYPARENT must start with /'
+	test -n "${RELATIVE}" && die '$OVERLAYPARENT must start with /'
 }
 Sanitize
 
@@ -74,38 +74,38 @@ Options:
 	-o PATH Use PATH as \$OVERLAYPARENT
 	-v      Verbose (default)
 	-q      Quiet"
-	EXITCODE="${1}"
+	EXITCODE=${1}
 	exit "${EXITCODE}"
 }
 
 OVERLAYNR='*'
-VERBOSE=1
+VERBOSE=true
 FETCHUSER=''
 while getopts 'O:vqu:o:?hH' OPTION; do
 	case "${OPTION}" in
 		O) OVERLAYNR="${OPTARG}";;
-		v) VERBOSE=1;;
-		q) VERBOSE='';;
+		v) VERBOSE=true;;
+		q) VERBOSE=false;;
 		u) FETCHUSER="${OPTARG}";;
 		o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
 		*) Usage 0;;
 	esac
 done
-shift $((OPTIND-1))
+shift $(( ${OPTIND} - 1 ))
 
 declare -a SUCMD
 
-NEED_ARG=''
+NEED_ARG=false
 FILENAME=''
 GetFilename () {
-	[[ ${#} -gt 1 ]] && Usage 1
-	if [[ ${#} -lt 1 ]]; then
-		[[ "${NEED_ARG}" ]] && die "Filename argument is mandatory"
+	test ${#} -gt 1 && Usage 1
+	if test ${#} -lt 1; then
+		${NEED_ARG} && die "Filename argument is mandatory"
 		return
 	fi
 	FILENAME="${1}"
-	[[ "${FILENAME}" ]] || die "Filename argument must be nonempty"
-	[[ "${FILENAME:0:1}" != '/' ]] && [[ "${FILENAME:0:1}" != '~' ]] && \
+	test -n "${FILENAME}" || die "Filename argument must be nonempty"
+	test "${FILENAME:0:1}" = '/' || test "${FILENAME:0:1}" = '~' || \
 		FILENAME="$(pwd)/${FILENAME}"
 }
 
@@ -113,8 +113,8 @@ CalcSuCmd () {
 	local MY_CMD
 	MY_CMD="$(type -P "${1}")" || die "${1} cannot be found in $PATH"
 	SUCMD=("${MY_CMD}")
-	[[ "${FETCHUSER}" ]] || [[ "${UID}" -ne 0 ]] || FETCHUSER="nobody"
-	[[ "${FETCHUSER}" ]] && \
+	test -n "${FETCHUSER}" || test "${UID}" -ne 0 || FETCHUSER="nobody"
+	test -n "${FETCHUSER}" && \
 		SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
 }
 
@@ -126,8 +126,8 @@ TMPDIR=''
 EXITCODE=0
 Cleanup () {
 	cd / >/dev/null;
-	if [[ "${TMPDIR}" ]]; then
-		[[ -d "${TMPDIR}" ]] && rm -rf -- "${TMPDIR}"
+	if test -n "${TMPDIR}"; then
+		test -d "${TMPDIR}" && rm -rf -- "${TMPDIR}"
 	fi
 	TMPDIR=''
 	trap '' 0 1 2 15
@@ -135,34 +135,35 @@ Cleanup () {
 }
 MakeTempDir () {
 	local COUNT
-	[[ "${TMPDIR}" ]] && return
-	if type mktemp &>/dev/null; then
+	test -n "${TMPDIR}" && return
+	if type mktemp >/dev/null 2>&1; then
 		TMPDIR="$(mktemp -d /tmp/${0##*/}.XXXXXX)" || \
 			die "cannot create temporary directory"
 	else
 		COUNT=0
 		while true; do
-			((COUNT++ == 10000)) && \
+			test ${COUNT} -eq 9999 && \
 				die "found no free temp after 10000 attempts"
+			COUNT=$(( ${COUNT} + 1 ))
 			TMPDIR="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
-			[[ -e "${TMPDIR}" ]] && continue
+			test -e "${TMPDIR}" && continue
 			mkdir "${TMPDIR}" || die "cannot create ${TMPDIR}"
 			break
 		done
 	fi
 	trap Cleanup 0 1 2 15
 	chmod 755 "${TMPDIR}"
-	[[ "${1}" ]] && CdDir "${TMPDIR}"
+	test -n "${1}" && CdDir "${TMPDIR}"
 }
 
 TMPSUB=''
 MakeTempSub () {
-	if [[ -z "${TMPSUB}" ]]; then
+	if test -z "${TMPSUB}"; then
 		MakeTempDir
 		TMPSUB="${TMPDIR}/1"
 		( umask 000; mkdir "${TMPSUB}" )
 	fi
-	[[ "${1}" ]] && CdDir "${TMPSUB}"
+	test -n "${1}" && CdDir "${TMPSUB}"
 }
 
 TMPFILE=''
@@ -185,9 +186,9 @@ AddArchive () {
 	for I in *
 	do
 		NAME="${I//:/_}"
-		[[ "${NAME}" != "${I}" ]] && mv -- "${I}" "${NAME}"
+		test "${NAME}" = "${I}" || mv -- "${I}" "${NAME}"
 	done
-	if [[ "${OVERLAYNR}" ]]; then
+	if test -n "${OVERLAYNR}"; then
 		OVERLAYARG=":${OVERLAYNR}"
 	else
 		OVERLAYARG=''
@@ -209,23 +210,23 @@ AddArchive () {
 FetchCopy () {
 	GetFilename "${@}"
 	FetchTemp
-	[[ "${FILENAME}" ]] || return
+	test -z "${FILENAME}" && return
 	(
-		[[ "${UID}" -eq 0 ]] && umask 002
+		test "${UID}" -eq 0 && umask 002
 		cp --preserve=timestamps -- "${TMPFILE}" "${FILENAME}"
 	)
-	[[ "${UID}" -eq 0 ]] && chown -- portage:portage "${FILENAME}"
+	test "${UID}" -eq 0 && chown -- portage:portage "${FILENAME}"
 }
 
 Fetch () {
-	NEED_ARG=1
+	NEED_ARG=true
 	FetchCopy "${@}"
 }
 
 Add () {
-	NEED_ARG=1
+	NEED_ARG=true
 	GetFilename "${@}"
-	[[ -r "${FILENAME}" ]] || die "cannot read ${FILENAME}"
+	test -r "${FILENAME}" || die "cannot read ${FILENAME}"
 	MakeTempDir cd
 	AddArchive "${FILENAME}" "${TMPDIR}"
 }

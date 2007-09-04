@@ -31,10 +31,10 @@
 
 LOCAL_EPREFIX_PORTAGE_EXEC="$(update-eix --print EPREFIX_PORTAGE_EXEC)"
 
-if [[ -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh" ]]; then
-	source "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"
-elif [[ -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh" ]]; then
-	source "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
+if test -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"; then
+	. "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"
+elif test -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"; then
+	. "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
 else
 	echo "${0##*/}: Cannot read functions.sh" >&2
 	exit 2
@@ -48,33 +48,33 @@ die () {
 
 LOCAL_PORTDIR=''
 GetPortdir () {
-	[[ "${LOCAL_PORTDIR}" ]] && return
+	test -n "${LOCAL_PORTDIR}" && return
 	LOCAL_PORTDIR="$(update-eix --print PORTDIR)"
 }
 
-VERBOSE=1
+VERBOSE=true
 
 RunCommand () {
 	local RET
-	if [[ "${VERBOSE}" ]]; then
+	if ${VERBOSE}; then
 		einfo "${1}"
 		shift
 		"${@}"
-		return "${?}"
+		return ${?}
 	fi
 	ebegin "${1}"
 	shift
-	"${@}" &>/dev/null
+	"${@}" >/dev/null 2>&1
 	RET=${?}
 	eend ${RET} "Problems running ${@}"
-	return "${RET}"
+	return ${RET}
 }
 
 declare -a UPDATE_EIX_ARGS
 
 Push () {
 	local ARR K
-	ARR="${1}"
+	ARR=${1}
 	shift
 	for K; do
 		eval ${ARR}[\${#${ARR}[@]}]="\${K}"
@@ -146,24 +146,24 @@ NormalizeNames () {
 	RELATIVE=''
 	for I; do
 		eval TRUENAME="\${${I}}"
-		if [[ -z "${TRUENAME}" ]]; then
+		if test -z "${TRUENAME}"; then
 			eval ${I}=''
 			RSTAT=1
 			continue
 		fi
-		[[ "${TRUENAME:0:1}" = '/' ]] || RELATIVE="${RELATIVE} ${I}"
-		if [[ "${READLINK}" ]]; then
+		test "${TRUENAME:0:1}" = '/' || RELATIVE="${RELATIVE} ${I}"
+		if test -n "${READLINK}"; then
 			PREV="${TRUENAME}"
 			TRUENAME="$("${READLINK}" -f -- "${TRUENAME}")" \
 				|| TRUENAME=''
-			[[ "${TRUENAME}" ]] || TRUENAME="${PREV}"
+			test -n "${TRUENAME}" || TRUENAME="${PREV}"
 		fi
 		PREV=''
-		while [[ "${PREV}" != "${TRUENAME}" ]]; do
+		while test "${PREV}" != "${TRUENAME}"; do
 			PREV="${TRUENAME}"
 			TRUENAME="${TRUENAME//\/\///}"
 		done
-		[[ "${TRUENAME}" != '/' ]] && TRUENAME="${TRUENAME%/}"
+		test "${TRUENAME}" = '/' || TRUENAME="${TRUENAME%/}"
 		eval ${I}="\${TRUENAME}"
 	done
 	return ${RSTAT}

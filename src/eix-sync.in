@@ -30,7 +30,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 ###########################################################################
 
-source update-eix-functions.sh.in
+. update-eix-functions.sh.in
 
 LOCAL_VARCACHE="$(update-eix --print EPREFIX_PORTAGE_CACHE)"
 EIXCACHE="$(update-eix --print EIX_CACHEFILE)"
@@ -79,8 +79,9 @@ The following options are available:
 -M   Run emerge --metadata in addition to emerge --sync.
      This is probably only useful in conjunction with -c.
 -t   Use temporary file to save the current database (-d will not be possible).
--v   Don't suppress output of update-eix and emerge.
--q   Be quiet (close stdout).
+-v   Do not redirect output of update-eix and emerge into logfile.
+-V   Cancel previous -v (useful if you used -v in /etc/eix-sync.conf)
+-q   Be quiet (close stdout, redirecting into logfile)
 -w   Run emerge-webrsync instead of emerge --sync.
 -W   Run emerge-delta-webrsync instead of emerge --sync.
 -c CMD Run CMD instead of emerge --sync.
@@ -94,15 +95,15 @@ The following options are available:
 }
 
 DiffOnly() {
-  [[ -e "${EIXPREVIOUS}" ]] || die "No previous database ${EIXPREVIOUS} exists"
+  test -e "${EIXPREVIOUS}" || die "No previous database ${EIXPREVIOUS} exists"
   exec diff-eix -- "${EIXPREVIOUS}"
   die "Could not execute diff-eix"
 }
 
-if [[ -r "${LAYMANCONF}" ]]; then
-  HAVECONF=1
+if test -r "${LAYMANCONF}"; then
+  HAVECONF=true
 else
-  HAVECONF=''
+  HAVECONF=false
 fi
 declare -a AFTER_SYNC AFTER_UPDATE BEFORE_RSYNC
 ExecuteConfig () {
@@ -111,12 +112,12 @@ ExecuteConfig () {
   AFTER_UPDATE=()
   BEFORE_RSYNC=()
   CONFIG_OPTS=''
-  [[ "${HAVECONF}" ]] || return
+  ${HAVECONF} || return 0
   while read I; do
     J="${I%%#*}"
-    while [[ "${J% }" != "${J}" ]]; do J="${J%?}"; done
-    while [[ "${J:0:1}" = " " ]]; do J="${J#?}"; done
-    [[ "${J}" ]] || continue
+    while test "${J% }" != "${J}"; do J="${J%?}"; done
+    while test "${J:0:1}" = " "; do J="${J#?}"; done
+    test -n "${J}" || continue
     case "${J}" in
       !*)  J="${J#?}"; MYCMD='!';;
       @@*) J="${J#??}"; MYCMD='@@';;
@@ -125,16 +126,16 @@ ExecuteConfig () {
       -*)  CONFIG_OPTS="${CONFIG_OPTS} ${J}"; continue;;
       *)   MYCMD="layman";;
     esac
-    [[ "${1}" = 'opts' ]] && continue
+    test "${1}" = 'opts' && continue
     case "${MYCMD}" in
       @@) Push AFTER_UPDATE "${J}"; continue;;
       @)  Push AFTER_SYNC "${J}"; continue;;
       \~) Push BEFORE_RSYNC "${J}"; continue;;
-      !)  [[ "${NOLAYMAN}" ]] || DoExecute "${J}"; continue;;
+      !)  ${NOLAYMAN} || DoExecute "${J}"; continue;;
     esac
-    [[ "${NOLAYMAN}" ]] && continue
+    ${NOLAYMAN} && continue
     RootTest
-    if [[ "${J}" = "*" ]]; then
+    if test "${J}" = '*'; then
       MyRunCommand "Syncing all portage overlays"
         "${MYCMD}" -S || die "${MYCMD} -S failed"
       continue;
@@ -149,60 +150,61 @@ ExecuteConfig () {
 declare -a EMERGECMD
 
 DefaultOpts () {
-  EMERGECMD=("emerge" "--sync")
-  CLEARCACHE='1'
-  NOLAYMAN=''
-  NOHOOKS=''
-  VERBOSE=''
-  QUIET=''
-  USETEMP=''
-  METADATA=''
-  SKIP_SYNC=''
+  EMERGECMD=('emerge' '--sync')
+  CLEARCACHE=true
+  NOLAYMAN=false
+  NOHOOKS=false
+  VERBOSE=false
+  QUIET=false
+  USETEMP=false
+  METADATA=false
+  SKIP_SYNC=false
   SERVER=''
   CLIENT=''
-  DOUPDATE='1'
-  SYNCHOOKS='1'
-  TEST_FOR_ROOT='1'
+  DOUPDATE=true
+  SYNCHOOKS=true
+  TEST_FOR_ROOT=true
 }
 
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uul@SmMtvqwWc:C:rRe?hH" OPTION \
+while getopts "ids:2:Uul@SmMtvVqwWc:C:rRe?hH" OPTION \
   ${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
   case "${OPTION}" in
     i) DefaultOpts;;
     d) DiffOnly;;
     s) SERVER="${OPTARG}";;
     2) CLIENT="${OPTARG}";;
-    U) DOUPDATE='';;
-    u) NOLAYMAN=1; NOHOOKS=1; SKIP_SYNC=1; SERVER='';;
-    l) NOLAYMAN=1;;
-    @) NOHOOKS=1;;
-    S) SYNCHOOKS='';;
-    m) SKIP_SYNC=1;;
-    M) METADATA=1;;
-    t) USETEMP=1;;
-    v) VERBOSE=1;;
-    q) QUIET=1;;
+    U) DOUPDATE=false;;
+    u) NOLAYMAN=true; NOHOOKS=true; SKIP_SYNC=true; SERVER='';;
+    l) NOLAYMAN=true;;
+    @) NOHOOKS=true;;
+    S) SYNCHOOKS=false;;
+    m) SKIP_SYNC=true;;
+    M) METADATA=true;;
+    t) USETEMP=true;;
+    v) VERBOSE=true;;
+    V) VERBOSE=false;;
+    q) QUIET=true;;
     w) EMERGECMD=("emerge-webrsync");;
     W) EMERGECMD=("emerge-delta-webrsync");;
     c) EMERGECMD=(); EMERGECMD[0]="${OPTARG}";;
     C) Push EMERGECMD "${OPTARG}";;
-    r) CLEARCACHE=1;;
-    R) CLEARCACHE='';;
-    e) TEST_FOR_ROOT='';;
+    r) CLEARCACHE=true;;
+    R) CLEARCACHE=false;;
+    e) TEST_FOR_ROOT=false;;
     *) Usage 1;;
   esac
 done
-[[ "${DOUPDATE}" ]] || CLEARCACHE=''
-[[ "${SERVER}" ]] && SKIP_SYNC=1
-[[ "${SKIP_SYNC}" ]] && METADATA=1
+${DOUPDATE} || CLEARCACHE=false
+test -n "${SERVER}" && SKIP_SYNC=true
+${SKIP_SYNC} && METADATA=true
 
 # We need a special function to treat the reserved word "time" like a command.
 # (Of course "eval" would do a similar thing, but would also apply to args).
 MyRun () {
-  if [[ "${1}" != 'time' ]]; then
+  if test "${1}" != 'time'; then
     "${@}"
     return
   fi
@@ -212,12 +214,12 @@ MyRun () {
 }
 
 # Run command
-# if VERBOSE is empty, redirect 1,2 to logfile|/dev/null and use ebegin/eend
+# if VERBOSE is true, redirect 1,2 to logfile|/dev/null and use ebegin/eend
 # (instead of einfo)
 MyRunCommand () {
   local RET
-  [[ "${EMULATEMODE}" ]] && return 0
-  if [[ "${VERBOSE}" ]]; then
+  ${EMULATEMODE} && return 0
+  if ${VERBOSE}; then
     einfo "${1}"
     shift
     MyRun "${@}"
@@ -225,14 +227,14 @@ MyRunCommand () {
   fi
   ebegin "${1}"
   shift
-  MyRun "${@}" &>>"${REDIRECT}"
-  RET="${?}"
+  MyRun "${@}" >>"${REDIRECT}" 2>&1
+  RET=${?}
   eend "${RET}" "Problems running ${@}"
-  return "${RET}"
+  return ${RET}
 }
 
 DoExecute () {
-  [[ "${EMULATEMODE}" ]] && return 0
+  ${EMULATEMODE} && return 0
   (
     for CURRENT_COMMAND; do
       MyRunCommand "Executing ${CURRENT_COMMAND}" \
@@ -243,12 +245,12 @@ DoExecute () {
 }
 
 DoHook () {
-  [[ "${NOHOOKS}" ]] && return 0
+  ${NOHOOKS} && return 0
   DoExecute "${@}"
 }
 
 RootTest () {
-  [[ "${EMULATEMODE}" ]] || return
+  ${EMULATEMODE} || return 0
   eerror ""
   eerror "Nothing was executed, because a heuristic shows that"
   eerror "root permissions are required to execute everything successfully."
@@ -264,7 +266,7 @@ SED1='s!^[[:space:]]*'
 SED2="[[:space:]]*=[[:space:]]*\([^[:space:]]*\)[[:space:]]*\$!\1!p"
 SedFor () {
   local A=''
-  [[ -e "${2}" ]] && \
+  test -e "${2}" && \
     A="$(sed -n -e "${SED1}${1}${SED2}" -- "${2}" | tail -n 1)"
   A="${A%\"}"
   A="${A#\"}"
@@ -276,22 +278,23 @@ SedFor () {
 TMPFILE=''
 EXITCODE=0
 DelTemp () {
-  [[ "${TMPFILE}" ]] && rm -f -- "${TMPFILE}"
+  test -z "${TMPFILE}" || rm -f -- "${TMPFILE}"
   trap '' 0 1 2 15
   exit ${EXITCODE}
 }
 MakeTempFile () {
   local COUNT
-  if type mktemp &>/dev/null; then
-    TMPFILE="$(mktemp /tmp/${0##*/}.XXXXXX)" ||
+  if type mktemp >/dev/null 2>&1; then
+    TMPFILE="$(mktemp /tmp/${0##*/}.XXXXXX)" || \
       die "cannot create temporary file"
   else
     COUNT=0
     while true; do
-      ((COUNT++ == 10000)) && \
-        die "found no free tempname after 10000 attempts"
+       test ${COUNT} -eq 9999 && \
+         die "found no free tempname after 10000 attempts"
+       COUNT=$(( ${COUNT} + 1 ))
       TMPFILE="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
-      [[ -e "${TMPFILE}" ]] && continue
+      test -e "${TMPFILE}" && continue
       >"${TMPFILE}" || die "cannot create temporary file ${TMPFILE}"
       break
     done
@@ -299,29 +302,29 @@ MakeTempFile () {
   trap DelTemp 0 1 2 15
 }
 
-PREPRSYNC=''
+PREPRSYNC=false
 PrepRsync () {
   local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS
   GetPortdir
   HOSTDIR="${1#*:}"
-  if [[ "${HOSTDIR}" && "${HOSTDIR}" != "${1}" ]]; then
+  if test -n "${HOSTDIR}" && test "${HOSTDIR}" != "${1}"; then
     HOSTDIR="${1}"
   else
     HOSTDIR="${1%%:*}:${LOCAL_PORTDIR}"
   fi
   HOSTDIR="${HOSTDIR%/}/"
-  [[ "${PREPRSYNC}" ]] && return
+  ${PREPRSYNC} && return
   PORTAGE_RSYNC_OPTS="$(portageq envvar PORTAGE_RSYNC_OPTS)"
   PORTAGE_RSYNC_EXTRA_OPTS="$(portageq envvar PORTAGE_RSYNC_EXTRA_OPTS)"
   for CURRENT_COMMAND in "${BEFORE_RSYNC[@]}"; do
     eval "$(eval "${CURRENT_COMMAND}")" || die "${CURRENT_COMMAND} failed"
   done
   RSYNC_OPTS="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
-  PREPRSYNC=1
+  PREPRSYNC=true
 }
 
 ClearCache () {
-  [[ "${CLEARCACHE}" ]] || return
+  ${CLEARCACHE} || return 0
   # Cleaning old cache
   # portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
   RootTest
@@ -331,23 +334,23 @@ ClearCache () {
 }
 
 CallEmergeSync () {
-  if [[ "${SERVER}" ]]; then
-    [[ "${EMULATEMODE}" ]] && return
+  if test -n "${SERVER}"; then
+    ${EMULATEMODE} && return
     PrepRsync "${SERVER}"
     MyRunCommand "rsyncing from ${HOSTDIR}" \
       rsync $RSYNC_OPTS "${HOSTDIR}" "${LOCAL_PORTDIR}" || \
         die "Could not rsync from ${HOSTDIR}"
     return
   fi
-  [[ "${SKIP_SYNC}" ]] && return
+  ${SKIP_SYNC} && return
   RootTest
   MyRunCommand "Running ${EMERGECMD[*]}" \
     time "${EMERGECMD[@]}" || die "${EMERGECMD[*]} failed"
 }
 
 CallSyncClient () {
-  [[ "${EMULATEMODE}" ]] && return
-  [[ "${CLIENT}" ]] || return
+  ${EMULATEMODE} && return
+  test -z "${CLIENT}" && return
   PrepRsync "${CLIENT}"
   MyRunCommand "rsyncing to ${HOSTDIR}" \
     rsync ${RSYNC_OPTS} "${LOCAL_PORTDIR}" "${HOSTDIR}" || \
@@ -356,17 +359,17 @@ CallSyncClient () {
 
 TESTRESULT=''
 CallEmergeMetadata () {
-  [[ "${DOUPDATE}" && "${METADATA}" ]] || return
-  if [[ -z "${TESTRESULT}" ]]; then
-    if [[ "$(SedFor 'portdbapi.auxdbmodule' "${PMOD}")" = "${MODULENAME}" ]]
+  ${DOUPDATE} && ${METADATA} || return 0
+  if test -z "${TESTRESULT}"; then
+    if test "$(SedFor 'portdbapi.auxdbmodule' "${PMOD}")" = "${MODULENAME}"
     then
-      TESTRESULT=0
+      TESTRESULT='false'
     else
-      TESTRESULT=1
+      TESTRESULT='true'
     fi
   fi
-  if [[ "${TESTRESULT}" -eq 0 ]]; then
-    [[ "${EMULATEMODE}" ]] || \
+  if test "${TESTRESULT}" = 'false'; then
+    ${EMULATEMODE} || \
       einfo "emerge --metadata is skipped due to settings in ${PMOD}"
     return
   fi
@@ -376,13 +379,13 @@ CallEmergeMetadata () {
 }
 
 CondUpdate () {
-  if [[ ! -f "${EIXCACHE}" ]]; then
+  if ! test -f "${EIXCACHE}"; then
     RootTest
     MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
         update-eix || die "update-eix failed"
     return
   fi
-  [[ "${EMULATEMODE}" ]] && return
+  ${EMULATEMODE} && return
   if ! eix --is-current; then
     MyRunCommand "eix-cache uses obsolete format. Running update-eix!" \
         update-eix || die "update-eix failed"
@@ -390,35 +393,35 @@ CondUpdate () {
 }
 
 CopyPrevious () {
-  [[ "${DOUPDATE}" ]] || return
-  [[ "${EMULATEMODE}" ]] && return
+  ${DOUPDATE} || return 0
+  ${EMULATEMODE} && return
   MakeTempFile
   ( umask 002 ; cp -- "${EIXCACHE}" "${TMPFILE}" ) ||
     die "Could not copy database to temporary file ${TMPFILE}"
 }
 
 MovePrevious () {
-  [[ "${USETEMP}" ]] && return
+  ${USETEMP} && return
   ( umask 002
     MyRunCommand "Copying old ${EIXCACHE} cache to ${EIXPREVIOUS}" \
       mv -f -- "${TMPFILE}" "${EIXPREVIOUS}" ) ||
       die "Could not move ${TMPFILE} to ${EIXPREVIOUS}"
-  [[ "${UID}" -eq 0 ]] && chown -- "portage:portage" "${EIXPREVIOUS}" &>/dev/null
-  chmod -- 664 "${EIXPREVIOUS}" &>/dev/null
+  test "${UID}" -eq 0 && chown -- portage:portage "${EIXPREVIOUS}" >/dev/null 2>&1
+  chmod -- 664 "${EIXPREVIOUS}" >/dev/null 2>&1
 }
 
 UpdateDiff () {
   local D
-  [[ "${DOUPDATE}" ]] || return
-  if [[ "${USETEMP}" ]]; then
-    [[ "${EMULATEMODE}" ]] && return
+  ${DOUPDATE} || return 0
+  if ${USETEMP}; then
+    ${EMULATEMODE} && return
     D="${TMPFILE}"
   else
     D="${EIXPREVIOUS}"
-    [[ -e "${D}" ]] || RootTest
-    [[ "${EMULATEMODE}" ]] && return
+    test -e "${D}" || RootTest
+    ${EMULATEMODE} && return
   fi
-  if [[ "${EIXCACHE}" -nt "${TMPFILE}" ]]; then
+  if test "${EIXCACHE}" -nt "${TMPFILE}"; then
     MovePrevious
     einfo "update-eix was apparently already called in a hook"
   else
@@ -436,36 +439,36 @@ MainSync () {
   CopyPrevious
   ExecuteConfig 'sync'
   CallEmergeSync
-  [[ "${SYNCHOOKS}" ]] && DoHook "${AFTER_SYNC[@]}"
+  ${SYNCHOOKS} && DoHook "${AFTER_SYNC[@]}"
   CallSyncClient
   CallEmergeMetadata
   UpdateDiff
 }
 
-if [[ "${UID}" -ne 0 ]] && [[ "${TEST_FOR_ROOT}" ]]; then
+if ${TEST_FOR_ROOT} && test "${UID}" -ne 0; then
 # Emulate everything to check whether we have to be root:
-  EMULATEMODE=1
+  EMULATEMODE=true
   MainSync
 fi
-EMULATEMODE=''
+EMULATEMODE=false
 
 # Clean out logfile and redirect
 if (
      umask 002
-     if [[ "${QUIET}" || -z "${VERBOSE}" ]]; then
+     if ${QUIET} || ! ${VERBOSE}; then
        >"${LOGFILE}" || exit 1
-       [[ "${UID}" -eq 0 ]] && \
-         chown -- "portage:portage" "${LOGFILE}" &>/dev/null
+       test "${UID}" -eq 0 && \
+         chown -- portage:portage "${LOGFILE}" >/dev/null 2>&1
      fi
      exit 0
-   ) &>/dev/null
+   ) >/dev/null 2>&1
 then
   REDIRECT="${LOGFILE}"
 else
   REDIRECT=/dev/null
   eerror "Redirection to ${LOGFILE} failed. Using ${REDIRECT} instead"
 fi
-[[ "${QUIET}" ]] && exec >>"${REDIRECT}"
+${QUIET} && exec >>"${REDIRECT}"
 
 MainSync
 
