@@ -67,11 +67,9 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
         stability_local = stability_nonlocal = NULL;
 	header   = &dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
-#if defined(USE_BZLIB)
 	from_overlay_inst_list = NULL;
 	from_foreign_overlay_inst_list = NULL;
 	portdir = (*portagesettings)["PORTDIR"].c_str();
-#endif
 
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
@@ -106,9 +104,7 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
 		upgrade || overlay|| obsolete ||
-#if defined(USE_BZLIB)
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
-#endif
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
 		(test_stability_default != STABLE_NONE) ||
 		(test_stability_local != STABLE_NONE) ||
@@ -488,7 +484,6 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-#if defined(USE_BZLIB)
 	if(from_overlay_inst_list ||
 	   from_foreign_overlay_inst_list) { // -J or --installed-from-overlay
 		get_p();
@@ -525,7 +520,6 @@ PackageTest::match(PackageReader *pkg) const
 		if(!have)
 			return invert;
 	}
-#endif
 
 	if(dup_packages) { // -d
 		get_p();
@@ -644,14 +638,12 @@ PackageTest::match(PackageReader *pkg) const
 					if(!version->isStable())
 						continue;
 				}
-#if defined(USE_BZLIB)
 				if(test_installed & INS_OVERLAY) {
 					if(!vardbpkg->readOverlay(*p, *current, *header, portdir))
 						continue;
 					if(current->overlay_key != version_it->overlay_key)
 						continue;
 				}
-#endif
 				not_all_found = false;
 			}
 			if(not_all_found)

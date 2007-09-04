@@ -75,10 +75,10 @@ class VarDbPkg {
 		bool readSlot(const Package &p, InstVersion &v) const;
 		bool readUse(const Package &p, InstVersion &v) const;
 
-#if defined(USE_BZLIB)
 		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header, const char *portdir) const;
-		bool check_installed_overlays;
-#endif
+		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;
+		std::string readOverlayPath(const Package *p, const BasicVersion *v) const;
+		short check_installed_overlays;
 
 		/** Find installed versions
 		 * @return NULL if not found .. else pointer to vector of versions. */

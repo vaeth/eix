@@ -169,7 +169,7 @@ set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virt
 		return;
 	fmt->clear_virtual(header.countOverlays());
 	for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i)).c_str()));
+		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 
 class DiffTrees
@@ -394,9 +394,7 @@ run_diff_eix(int argc, char *argv[])
 	portagesettings = new PortageSettings(eixrc, true);
 
 	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care);
-#if defined(USE_BZLIB)
-	varpkg_db->check_installed_overlays = eixrc.getBool("CHECK_INSTALLED_OVERLAYS");
-#endif
+	varpkg_db->check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
 	SetStability set_stability(portagesettings, !local_settings, false);

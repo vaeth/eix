@@ -86,8 +86,11 @@ class BasicCache {
 		std::string getPath() const
 		{ return m_scheme; }
 
-		// Get scheme with path(s) for this cache
+		// Get scheme with path for this cache
 		std::string getPrefixedPath() const;
+
+		// Get scheme with path(s) for this cache
+		std::string getPathHumanReadable() const;
 
 		/// Set callback function to be used in case of errors
 		void setErrorCallback(ErrorCallback error_callback)

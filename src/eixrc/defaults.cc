@@ -958,37 +958,37 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_IUSE",
+		EixRcOption(EixRcOption::STRING, "FORMAT_BEFORE_IUSE",
 			" [(blue)", "This string is printed before IUSE data for a version is output.\n"
 			"(this is only used when --versionlines is active)")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_IUSE",
+		EixRcOption(EixRcOption::STRING, "FORMAT_AFTER_IUSE",
 			"()]", "This string is printed after IUSE data for a version is output.\n"
 			"(this is only used when --versionlines is active)")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_COLL_IUSE",
+		EixRcOption(EixRcOption::STRING, "FORMAT_BEFORE_COLL_IUSE",
 			" \\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
 			"(this is only used when --versionlines is inactive and there are no slots).")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_COLL_IUSE",
+		EixRcOption(EixRcOption::STRING, "FORMAT_AFTER_COLL_IUSE",
 			"()\\}", "This string is printed before IUSE data for all versions is output.\n"
 			"(this is only used when --versionlines is inactive and there are no slots).")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_BEFORE_SLOT_IUSE",
+		EixRcOption(EixRcOption::STRING, "FORMAT_BEFORE_SLOT_IUSE",
 			"\\n\\t\\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
 			"(this is only used when --versionlines is inactive and sorting is by slots).")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "FORMAT_AFTER_SLOT_IUSE",
+		EixRcOption(EixRcOption::STRING, "FORMAT_AFTER_SLOT_IUSE",
 			"()\\}", "This string is printed before IUSE data for all versions is output.\n"
 			"(this is only used when --versionlines is inactive and sorting is by slots).")
 		);
@@ -1196,11 +1196,13 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "CHECK_INSTALLED_OVERLAYS",
-			"false", "If true, always check from which overlay a package was installed.\n"
-			"If false, only packages are checked which occur not only in one tree,\n"
-			"i.e. in at least one overlay. This is faster, but may give a false result\n"
-			"if such a package was actually installed from a meanwhile deleted overlay.")
+		EixRcOption(EixRcOption::STRING, "CHECK_INSTALLED_OVERLAYS",
+			"repository", "Allowed values are true/false/repository.\n"
+			"If true, always check from which overlay a package version was installed.\n"
+			"If false, only packages with versions in at least two trees are checked.\n"
+			"The compromise - repository - checks at least always the repository files.\n"
+			"Without a check, the assumed overlay may be wrong if the version was\n"
+			"actually installed from a place not in the database anymore.")
 		);
 
 eixrc.addDefault(
@@ -1211,8 +1213,9 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "PRINT_COUNT_ALWAYS",
-			"false", "If true, always print the number of matches in the last line.")
+		EixRcOption(EixRcOption::STRING, "PRINT_COUNT_ALWAYS",
+			"false", "Allowed values are true/false/never.\n"
+			"If true, always print the number of matches (even 0 or 1) in the last line.")
 		);
 
 eixrc.addDefault(

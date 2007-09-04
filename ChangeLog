@@ -2,6 +2,7 @@
 
 *eix-0.9.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support for repository names.
 	- Introduce <fullinstalled>.
 	- Introduce <fullavailable>, <fullavailableshort>, <fullavailablelong>.
 	- Bugfix: Do not shorten /var/log/eix-sync.log near end of eix-sync.

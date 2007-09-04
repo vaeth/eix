@@ -77,6 +77,14 @@ void BasicCache::setScheme(const char *prefix, const char *prefixport, const cha
 
 string BasicCache::getPrefixedPath() const
 {
+	if(have_prefix) {
+		return m_prefix + m_scheme;
+	}
+	return m_scheme;
+}
+
+string BasicCache::getPathHumanReadable() const
+{
 	string ret = m_scheme;
 	if(have_prefix) {
 		ret.append(" in ");

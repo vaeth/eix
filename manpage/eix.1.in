@@ -23,7 +23,6 @@ A I<EXPRESSION> can be:
 .BR eix-sync
 
 .BR eix-test-obsolete
-[I<toggle CHECK_INSTALLED_OVERLAYS>]
 
 .BR update-eix-remote
 
@@ -49,11 +48,6 @@ of I</etc/eix-sync.conf> below.
 
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
-If you pass an argument to B<eix-test-obsolete> (no matter which argument)
-the value of the variable B<CHECK_INSTALLED_OVERLAYS> is toggled.
-(This variable is explained later; roughly speaking, setting it to true
-means that the check about versions installed from obsolete overlays works
-reliable but is much slower).
 
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
@@ -191,8 +185,7 @@ So you better do not use this in scripts unless you know what you are doing.
 
 If you really want to use this option as a substitute for equery in scripts,
 you might want to combine it with
-B<--format >"<B<fullinstalled>>", B<OVERLAY_LIST=no>, and
-B<PRINT_COUNT_ALWAYS=never>.
+B<--format >"<B<fullinstalled>>" B<--pure-packages>.
 .TP
 .BR -i ", " --multi-installed
 Only match packages which are installed in at least two different versions.
@@ -606,8 +599,8 @@ Overlays and useflags (the format depending on whether B<-l> is in effect)
 are also printed after the version.
 
 If you use this, it is likely that you also want to use B<-x> (otherwise,
-you might wonder about the sorting) and probably also B<EIX_PRINT_IUSE=false>,
-B<OVERLAY_LIST=no>, and B<PRINT_COUNT_ALWAYS=never>.
+you might wonder about the sorting) and probably also B<EIX_PRINT_IUSE=false>
+and B<--pure-packages>.
 If you postprocess the output, do not forget that overlay data might be
 included in the output and that the same version might occur in different overlays.
 .TP
@@ -617,8 +610,7 @@ For each installed version, this produces a line of the form
 "B<category/name-version>". Note that overlay information is not printed.
 To speed up things you should use option B<-i> in addition
 if you only want to see this output.
-(You will probably also want to set B<OVERLAY_LIST=no> and
-B<PRINT_COUNT_ALWAYS=never>).
+(You will probably also want to use B<--pure-packages>).
 However, see the warning in B<--installed>.
 .TP
 .BR installedversions "[" :string  "]["  :string "]" "" ...
@@ -1099,10 +1091,10 @@ The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
 
 .TP
 .BR SKIP_PERMISSION_TESTS "  " (true / false)
-If true, update-eix will not check for groups and permissions.
+If B<true>, update-eix will not check for groups and permissions.
 You will probably want to set this to B<true> if you have a more sophisticated
 permission setup on your system (NSS/LDAP, acl, pam-related stuff, ...)
-in which case portage might guess wrong permissions.
+in which case eix might guess wrong permissions.
 The only negative side effect is that update-eix does not break with an error
 at the beginning but will stop with a (perhaps misleading) error message when
 trying to access the cache file without proper permissions.
@@ -1465,24 +1457,32 @@ If true, all upgrade tests will give a positive result for an installed
 package for which not the slot with the best stable version is installed.
 .TP
 .BR PRINT_SLOTS " " (true / false)
-If false, no slot information is printed.
+If B<false>, no slot information is printed.
 .TP
 .BR PRINT_IUSE " " (true / false)
-If true, print IUSE data.
+If B<true>, print IUSE data.
 If --versionlines is active, the data is printed on a per-version base.
 Otherwise all IUSE data corresponding to some version of the package is
 printed collected.
 .TP
-.BR CHECK_INSTALLED_OVERLAYS " " (true / false)
-If true, always check from which overlay a package was installed.
-If false, only packages are checked which occur not only in one tree, i.e. in at least one overlay.
-This is faster, but may give a false result if such a package was actually
-installed from a meanwhile deleted overlay.
+.BR CHECK_INSTALLED_OVERLAYS " " (true / false / repository)
+If B<true>, always check from which overlay a package was installed.
+If B<false>, only packages with versions in at least two trees are checked,
+i.e. only packages for which it appears reasonable from the database that
+it might have been installed from a different overlay.
+However, this information might be false if such a package was removed
+from an overlay or if a whole overlay is not in the database anymore.
+
+The special value B<repository> is a reasonable compromise.
+If the version has a repository file describing the overlay name
+(this is the case if it was installed with >=portage-2.1.3)
+then this repository file is always checked.
 
 Especially in connection with option -T (if B<NONEXISTENT_IF_OTHER_OVERLAY>
 is true) and with option -J the speed increase is enormously if you set this
-variable to false (which is the default), but you should be aware that the
-information used about the installed overlay is not completely reliable then.
+variable to B<false> or B<repository>, but you should be aware that the
+information used about the installed overlay is not completely reliable
+(for versions installed with old portage versions).
 In particular, the option -T will not detect if an installed version of
 a package actually stems from a redundant overlay if in the current database
 all versions of this package stem from one (other) location.

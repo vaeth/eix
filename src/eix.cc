@@ -418,7 +418,7 @@ print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_us
 			if(!((*overlay_used)[i-1]))
 				continue;
 		cout << fmt.overlay_keytext(i) << " ";
-		cout << header.getOverlay(i) << "\n";
+		cout << header.getOverlay(i).human_readable() << "\n";
 		printed_overlay = true;
 	}
 	return printed_overlay;
@@ -514,9 +514,7 @@ run_eix(int argc, char** argv)
 
 	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care);
-#if defined(USE_BZLIB)
-	varpkg_db.check_installed_overlays = eixrc.getBool("CHECK_INSTALLED_OVERLAYS");
-#endif
+	varpkg_db.check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	MarkedList *marked_list = NULL;
 	Matchatom *query;
@@ -601,7 +599,7 @@ run_eix(int argc, char** argv)
 	{
 		format.clear_virtual(header.countOverlays());
 		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
-			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i)).c_str()));
+			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
 	}
 	bool need_overlay_table = false;
 	vector<bool> overlay_used(header.countOverlays(), false);
@@ -671,18 +669,17 @@ run_eix(int argc, char** argv)
 			(overlay_mode <= 1)? &overlay_used : NULL);
 	}
 
-	if((!rc_options.pure_packages) &&
-		(strcasecmp(eixrc["PRINT_COUNT_ALWAYS"].c_str(), "never")))
+	short print_count_always = eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never");
+	if((print_count_always >= 0) && !rc_options.pure_packages)
 	{
 		if(!count) {
-			if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
+			if(print_count_always)
 				cout << "Found 0 matches.\n";
 			else
 				cout << "No matches found.\n";
 		}
 		else if(count == 1) {
-			if(eixrc.getBool("PRINT_COUNT_ALWAYS"))
-			{
+			if(print_count_always) {
 				if(printed_overlay)
 					cout << "\n";
 				cout << "Found 1 match.\n";

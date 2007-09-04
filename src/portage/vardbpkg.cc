@@ -43,6 +43,8 @@
 #include <bzlib.h>
 #endif
 
+#define UNUSED(p) ((void)(p)
+
 using namespace std;
 
 inline static void sort_installed(map<string,vector<InstVersion> > *maping);
@@ -99,29 +101,71 @@ vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p)
 	return vec->size();
 }
 
-#if defined(USE_BZLIB)
 bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
 {
 	if(v.know_overlay)
 		return !v.overlay_failed;
 
+	v.know_overlay = true;
+	v.overlay_failed = false;
+	v.overlay_keytext.clear();
+
 	// Do not really check if the package is only at one overlay.
-	if(!check_installed_overlays) {
+	if(check_installed_overlays == 0) {
 		if(p.have_same_overlay_key) {
-			v.know_overlay = true;
-			v.overlay_failed = false;
 			v.overlay_key = p.largest_overlay;
 			return true;
 		}
 	}
 
-	// Set default in case of error exit:
-	v.know_overlay = v.overlay_failed = true;
-	v.overlay_keytext.clear();
+	string label = readOverlayLabel(&p, dynamic_cast<BasicVersion *>(&v));
+	if(label.empty()) {
+		if(check_installed_overlays < 0) {
+			if(p.have_same_overlay_key) {
+				v.overlay_key = p.largest_overlay;
+				return true;
+			}
+		}
+	}
+	else if(header.find_overlay(&v.overlay_key, label.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
+		return true;
 
-	// Now read the data...
+	string opath = readOverlayPath(&p, dynamic_cast<BasicVersion *>(&v));
+	if(opath.empty()) {
+		v.overlay_keytext = label;
+		v.overlay_failed = true;
+		return false;
+	}
+	else if(header.find_overlay(&v.overlay_key, opath.c_str(), portdir, 0, DBHeader::OVTEST_ALLPATH))
+		return true;
+	v.overlay_failed = true;
+	if(label.empty())
+		v.overlay_keytext = opath;
+	else
+		v.overlay_keytext = string("\"") + label + "\" "+ opath;
+	return false;
+}
+
+string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
+{
+	std::vector<std::string> lines;
+	pushback_lines(
+		(_directory + p->category + "/" + p->name + "-" + v->getFull() + "/repository").c_str(),
+		&lines, true, false, false);
+	for(std::vector<std::string>::const_iterator i = lines.begin();
+		i != lines.end(); ++i) {
+		if(i->empty())
+			continue;
+		return *i;
+	}
+	return "";
+}
+
+string VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
+{
+#if defined(USE_BZLIB)
 	BZFILE *fh = BZ2_bzopen(
-		(_directory + p.category + "/" + p.name + "-" + v.getFull() + "/environment.bz2").c_str(),
+		(_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
 		"rb");
 	if(!fh)
 		return false;
@@ -139,7 +183,7 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 	BufInd i = 0;
 	bool in_newline = true;
 	for(;;) {
-		if(i+strsize < bufend) {
+		if(i + strsize < bufend) {
 			if(in_newline &&
 				(strncmp(buffer + i, "EBUILD=", strsize) == 0))
 				break;
@@ -153,7 +197,7 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 				bufend += j;
 			if(bufend < strsize) {
 				BZ2_bzclose(fh);
-				return false;
+				return "";
 			}
 			i = 0;
 			continue;
@@ -196,20 +240,15 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 	for(int c = 0; c < 3; c++) {
 		l = path.rfind('/', l - 1);
 		if(l == string::npos)
-			return false;
+			return "";
 	}
 	path.erase(l);
-
-	// Fail anyway if the path is not in overlays of database.
-	// However, in this case store path in overlay_keytext.
-	if(header.find_overlay(&v.overlay_key, path.c_str(), portdir, false, true)) {
-		v.overlay_failed = false;
-		return true;
-	}
-	v.overlay_keytext = path;
-	return false;
-}
+	return path;
+#else
+	UNUSED(p); UNUSED(v);
+	return ""
 #endif
+}
 
 bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 {

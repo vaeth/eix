@@ -29,6 +29,7 @@
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
+#include <portage/overlay.h>
 
 #include <database/header.h>
 #include <database/package_reader.h>
@@ -205,8 +206,11 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write<io::Catsize>(io::Catsizesize, fp, hdr.size);
 
 	io::write<Version::Overlay>(Version::Overlaysize, fp, hdr.countOverlays());
-	for(Version::Overlay i = 0; i != hdr.countOverlays(); i++)
-		io::write_string(fp, hdr.getOverlay(i));
+	for(Version::Overlay i = 0; i != hdr.countOverlays(); i++) {
+		const OverlayIdent& overlay = hdr.getOverlay(i);
+		io::write_string(fp, overlay.path);
+		io::write_string(fp, overlay.label);
+	}
 }
 
 void
@@ -217,7 +221,8 @@ io::read_header(FILE *fp, DBHeader &hdr)
 
 	Version::Overlay overlay_sz = io::read<Version::Overlay>(Version::Overlaysize, fp);
 	while(overlay_sz--) {
-		hdr.addOverlay(io::read_string(fp));
+		string path = io::read_string(fp);
+		hdr.addOverlay(OverlayIdent(path.c_str(), io::read_string(fp).c_str()));
 	}
 }
 

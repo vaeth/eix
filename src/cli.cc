@@ -42,17 +42,6 @@ using namespace std;
 	test = new PackageTest(varpkg_db, portagesettings, stability, header); \
 } while(0)
 
-#if !defined(USE_BZLIB)
-static void
-erropt(const char *opt)
-{
-	fprintf(stderr, "eix option %s needs the bz2 library.\n"
-		"Recompile eix with ./configure option --with-bzip2 to use this library.\n",
-		opt);
-	exit(1);
-}
-#endif
-
 inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
 {
 	ArgumentReader::iterator next = arg;
@@ -195,7 +184,6 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					portagesettings["PORTDIR"].c_str());
 				  break;
 			case O_FROM_OVERLAY:
-#if defined(USE_BZLIB)
 				  if(optional_increase(arg, end)) {
 					header.get_overlay_vector(
 						test->FromOverlayInstList(),
@@ -205,20 +193,13 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					break;
 				  }
 				  // No break here...
-#else
-				  erropt("--installed-from-overlay");
-#endif
 			case 'J':
-#if defined(USE_BZLIB)
 				  header.get_overlay_vector(
 					test->FromOverlayInstList(),
 					"",
 					portagesettings["PORTDIR"].c_str());
 				  test->FromForeignOverlayInstList()->push_back("");
 				  break;
-#else
-				  erropt("-J");
-#endif
 			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
 				  break;
 			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
@@ -270,11 +251,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
 						test_installed |= PackageTest::INS_MASKED;
 					if(eixrc.getBool("NONEXISTENT_IF_OTHER_OVERLAY")) {
-#if defined(USE_BZLIB)
 						test_installed |= PackageTest::INS_OVERLAY;
-#else
-						erropt("-T with NONEXISTENT_IF_OTHER_OVERLAY=true");
-#endif
 					}
 				  }
 				  test->ObsoleteCfg(red.first, red.second, test_installed);

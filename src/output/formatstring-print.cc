@@ -125,7 +125,6 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			ret.append(prepend[0]);
 		ret.append(get_basic_version(&fmt, &(*it), pure_text,
 			((prepend.size() > 1) ? prepend[1] : "")));
-#if defined(USE_BZLIB)
 		if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
 			if(it->overlay_key>0) {
 				if((!p.have_same_overlay_key) || (p.largest_overlay != it->overlay_key)) {
@@ -152,7 +151,6 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			if(color)
 				ret.append(AnsiColor(AnsiColor::acDefault).asString());
 		}
-#endif
 		if(prepend.size() > 3)
 			ret.append(prepend[3]);
 		if(formattype & INST_WITH_DATE)
@@ -218,7 +216,6 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			is_marked = fmt->marked_list->is_marked(*package, version);
 	}
 
-#if defined(USE_BZLIB)
 	// do not mark installed version if it is from a different overlay:
 	if(is_installed && inst && (!(package->have_same_overlay_key))) {
 		if(fmt->vardb->readOverlay(*package, *inst, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str())) {
@@ -226,7 +223,6 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 				is_installed = false;
 		}
 	}
-#endif
 
 	if((!full) && fmt->style_version_lines)
 		fputs("\n\t\t", stdout);

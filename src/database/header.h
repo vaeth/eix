@@ -34,6 +34,7 @@
 #include <string>
 
 #include <portage/version.h>
+#include <portage/overlay.h>
 
 /** Representation of a database-header.
  * Contains your arch, the version of the db, the number of packages/categories
@@ -42,32 +43,43 @@ class DBHeader {
 
 	private:
 		/** The mapping from key->directory. */
-		std::vector<std::string> overlays;
+		std::vector<OverlayIdent> overlays;
 
 	public:
 		typedef  io::Int DBVersion;
 		static const unsigned short DBVersionsize = io::Intsize;
 
+		typedef  io::Char OverlayTest;
+		static const OverlayTest
+			OVTEST_NONE              = 0x00,
+			OVTEST_SAVED_PORTDIR     = 0x01,
+			OVTEST_PATH              = 0x02,
+			OVTEST_ALLPATH           = OVTEST_SAVED_PORTDIR|OVTEST_PATH,
+			OVTEST_LABEL             = 0x04,
+			OVTEST_NUMBER            = 0x08,
+			OVTEST_NOT_SAVED_PORTDIR = OVTEST_PATH|OVTEST_LABEL|OVTEST_NUMBER,
+			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
+
 		/** Current version of database-format. */
-		static const DBVersion current = 22;
+		static const DBVersion current = 23;
 
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */
 
-		/** Get string for key from directory-table. */
-		std::string getOverlay(Version::Overlay key) const;
+		/** Get overlay for key from directory-table. */
+		const OverlayIdent& getOverlay(Version::Overlay key) const;
 
 		/** Add overlay to directory-table and return key. */
-		Version::Overlay addOverlay(std::string overlay);
+		Version::Overlay addOverlay(const OverlayIdent& overlay);
 
 		/** Find first overlay-number >=minimal for name.
-		    Name might be either a filename or a number string.
-		    The special name portdir (if defined) matches 0.
+		    Name might be either a label, a filename, or a number string.
+		    The special name portdir (if defined) matches 0 (if OVTEST_PATH)
 		    The special name '' matches everything but 0. */
-		bool find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal = 0, bool test_saved_portdir = false) const;
+		bool find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
 
 		/** Add all overlay-numbers >=minimal for name to vec (name might be a number string). */
-		void get_overlay_vector(std::set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal = 0, bool test_saved_portdir = false) const;
+		void get_overlay_vector(std::set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
 
 		Version::Overlay countOverlays() const
 		{ return Version::Overlay(overlays.size()); }

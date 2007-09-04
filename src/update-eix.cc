@@ -57,7 +57,7 @@ using namespace std;
 
 char *program_name = NULL;
 void sig_handler(int sig);
-void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify);
+void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify, const vector<string> &exclude_labels);
 
 class Permissions {
 	private:
@@ -280,7 +280,7 @@ void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string
 		return;
 	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
 	{
-		string overlay = eprefix_virtual + header.getOverlay(i);
+		string overlay = eprefix_virtual + header.getOverlay(i).path;
 		if(!is_virtual(overlay.c_str()))
 			continue;
 		Pathname name(overlay, false);
@@ -403,7 +403,7 @@ run_update_eix(int argc, char *argv[])
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
 		else
-			INFO("Not reading duplicate %s\n", portage_settings["PORTDIR"].c_str());
+			INFO("Excluded %s\n", portage_settings["PORTDIR"].c_str());
 
 		portage_settings.add_overlay_vector(add_overlays, false);
 
@@ -417,7 +417,7 @@ run_update_eix(int argc, char *argv[])
 					portage_settings.overlays[i].c_str(),
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr);
 			else
-				INFO("Not reading duplicate %s\n", portage_settings.overlays[i].c_str());
+				INFO("Excluded %s\n", portage_settings.overlays[i].c_str());
 		}
 	}
 
@@ -428,7 +428,7 @@ run_update_eix(int argc, char *argv[])
 	try {
 		update(outputfile.c_str(), table, portage_settings,
 			eixrc.getBool("SMALL_EIX_DATABASE"),
-			permissions.will_modify());
+			permissions.will_modify(), excluded_overlays);
 	} catch(ExBasic &e)
 	{
 		cerr << e << endl;
@@ -450,7 +450,7 @@ error_callback(const char *fmt, ...)
 }
 
 void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify, const vector<string> &exclude_labels)
 {
 	DBHeader dbheader;
 	vector<string> *categories = portage_settings.getCategories();
@@ -464,12 +464,18 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->portagesettings = &portage_settings;
 
 		/* Build database from scratch. */
-		short key = dbheader.addOverlay(cache->getPath());
+		OverlayIdent overlay(cache->getPath().c_str(), "");
+		overlay.readLabel(cache->getPrefixedPath().c_str());
+		if(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end()) {
+			INFO("Excluding \"%s\" %s (cache: %s)\n", overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+			continue;
+		}
+		short key = dbheader.addOverlay(overlay);
 		cache->setKey(key);
 		cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%i] %s (cache: %s)\n", key, cache->getPrefixedPath().c_str(), cache->getType());
+		INFO("[%i] \"%s\" %s (cache: %s)\n", key, overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{

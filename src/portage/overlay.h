@@ -26,61 +26,43 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef __INSTVERSION_H__
-#define __INSTVERSION_H__
+#ifndef __OVERLAY_H__
+#define __OVERLAY_H__
 
-#include <portage/basicversion.h>
-#include <portage/version.h>
-#include <set>
+#include <string>
+#include <vector>
+#include <eixTk/utils.h>
 
-/** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
-class InstVersion : public BasicVersion, public Keywords {
-
+class OverlayIdent {
 	public:
-		/** For versions in vardbpkg we might not yet know the slot.
-		    For caching, we mark this here: */
-		bool know_slot, read_failed;
-		/** Similarly for iuse and usedUse: */
-		bool know_use;
+		std::string path, label;
 
-		time_t instDate;                   /**< Installation date according to vardbpkg */
-		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
-		std::set<std::string> usedUse;     /**< Those useflags in iuse actually used    */
+		OverlayIdent(const char *Path, const char *Label)
+		{ path = Path; label = Label; }
 
-		/** Similarly for overlay_keys */
-		bool know_overlay, overlay_failed;
-		Version::Overlay overlay_key;
-		/** overlay_keytext is at most set if overlay_failed */
-		std::string overlay_keytext;
-
-		void init() {
-			know_slot = false;
-			read_failed = false;
-			know_use = false;
-			instDate = 0;
-			know_overlay = false;
+		void
+		readLabel(const char *Path)
+		{
+			std::vector<std::string> lines;
+			pushback_lines((std::string(Path) + "/profiles/repo_name").c_str(), &lines, true, false, false);
+			for(std::vector<std::string>::const_iterator i = lines.begin();
+				i != lines.end(); ++i) {
+				if(i->empty())
+					continue;
+				label = *i;
+				return;
+			}
+			label = "";
 		}
 
-		InstVersion()
-		{ init(); }
-
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		InstVersion(const char* str) : BasicVersion(str)
-		{ init(); }
-
-		/** The equality operator does not test the additional data */
-		bool operator == (const InstVersion &v) const
-		{ return (*(dynamic_cast<const BasicVersion *>(this)) == dynamic_cast<const BasicVersion&>(v)); }
-
-		bool operator == (const BasicVersion &v) const
-		{ return (*(dynamic_cast<const BasicVersion *>(this)) == v); }
-
-		bool operator != (const InstVersion &v) const
-		{ return !((*this) == v); }
-
-		bool operator != (const BasicVersion &v) const
-		{ return !((*this) == v); }
-
+		std::string
+		human_readable() const
+		{
+			if(label.empty())
+				return path;
+			return std::string("\"") + label + "\" " + path;
+		}
 };
 
-#endif /* __INSTVERSION_H__ */
+
+#endif /* __OVERLAY_H__ */

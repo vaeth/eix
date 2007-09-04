@@ -37,23 +37,25 @@
 using namespace std;
 
 /** Get string for key from directory-table. */
-string
+const OverlayIdent &
 DBHeader::getOverlay(Version::Overlay key) const
 {
-	if(key > countOverlays())
-		return string("");
+	if(key > countOverlays()) {
+		static const OverlayIdent not_found("", "");
+		return not_found;
+	}
 	return overlays[key];
 }
 
 /** Add overlay to directory-table and return key. */
 Version::Overlay
-DBHeader::addOverlay(string overlay)
+DBHeader::addOverlay(const OverlayIdent& overlay)
 {
 	overlays.push_back(overlay);
 	return countOverlays() - 1;
 }
 
-bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal, bool test_saved_portdir) const
+bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
 {
 	if(minimal > countOverlays())
 		return false;
@@ -63,23 +65,34 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 		*num = (minimal != 0) ? minimal : 1;
 		return true;
 	}
-	if(minimal == 0) {
-		if(portdir) {
-			if(same_filenames(name, portdir, true)) {
-				*num = 0;
+	if(testmode & OVTEST_LABEL) {
+		for(Version::Overlay i = minimal; i != countOverlays(); i++) {
+			if(getOverlay(i).label == name) {
+				*num = i;
 				return true;
 			}
 		}
 	}
-	for(Version::Overlay i = minimal; i != countOverlays(); i++)
-	{
-		if(same_filenames(name, getOverlay(i).c_str(), true)) {
-			if((!test_saved_portdir) && (i == 0))
-				continue;
-			*num = i;
-			return true;
+	if(testmode & OVTEST_PATH) {
+		if(minimal == 0) {
+			if(portdir) {
+				if(same_filenames(name, portdir, true)) {
+					*num = 0;
+					return true;
+				}
+			}
+		}
+		for(Version::Overlay i = minimal; i != countOverlays(); i++) {
+			if(same_filenames(name, getOverlay(i).path.c_str(), true)) {
+				if((i == 0) && ! (testmode & OVTEST_SAVED_PORTDIR))
+					continue;
+				*num = i;
+				return true;
+			}
 		}
 	}
+	if( ! (testmode & OVTEST_NUMBER))
+		return false;
 	// Is name a number?
 	Version::Overlay number;
 	const char *s = name;
@@ -101,9 +114,9 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 }
 
 void
-DBHeader::get_overlay_vector(set<Version::Overlay> *overlayset, const char *name, const char *portdir, Version::Overlay minimal, bool test_saved_portdir) const
+DBHeader::get_overlay_vector(set<Version::Overlay> *overlayset, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
 {
 	Version::Overlay curr;
-	for(curr = minimal; find_overlay(&curr, name, portdir, curr, test_saved_portdir); curr++)
+	for(curr = minimal; find_overlay(&curr, name, portdir, curr, testmode); curr++)
 		overlayset->insert(curr);
 }

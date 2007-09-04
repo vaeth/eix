@@ -31,10 +31,8 @@
 ###########################################################################
 
 Eix () {
-	if PRINT_COUNT_ALWAYS=false eix -Tc | head -n1 | \
-		grep -q '^No matches found\.'
-	then
-		[[ "${1}" ]] && echo "${1} (or test switched off)."
+	if test -z "$(eix '-*Tc' | head -n1)"; then
+		test -z "${1}" || echo "${1} (or test switched off)."
 		return
 	fi
 	echo
@@ -78,12 +76,6 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_USE=false \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
-
-if [ $# -gt 0 ]; then
-  export CHECK_INSTALLED_OVERLAYS="$(
-    DUMMY='%{?CHECK_INSTALLED_OVERLAYS}false%{else}true%{}' \
-      eix --print 'DUMMY')"
-fi
 
 COMMON="$(eix --print PORTAGE_CONFIGROOT)"
 COMMON="${COMMON}/etc/portage/package."
