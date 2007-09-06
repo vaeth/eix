@@ -1273,6 +1273,30 @@ eixrc.addDefault(
 			"true", "Defines whether empty entries in /etc/portage/package.* are shown with -t.")
 		);
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_KEYWORDS",
+			"true", "Defines whether /etc/portage/package.keywords is tested with -t.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_MASK",
+			"true", "Defines whether /etc/portage/package.mask is tested with -t.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_UNMASK",
+			"true", "Defines whether /etc/portage/package.unmask is tested with -t.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_USE",
+			"true", "Defines whether /etc/portage/package.use is tested with -t.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_CFLAGS",
+			"true", "Defines whether /etc/portage/package.cflags is tested with -t.")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "TEST_REMOVED",
+			"true", "Defines whether removed packages are tested with -t.")
+		);
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_NONEXISTENT",
 			"true", "Defines whether non-existing installed versions are positive for -T.")
 		);

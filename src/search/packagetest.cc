@@ -595,19 +595,22 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		if(portagesettings->user_config->CheckUse(p, redundant_flags))
-		{
-			if(have_redundant(*p, Keywords::RED_DOUBLE_USE))
-				break;
-			if(have_redundant(*p, Keywords::RED_IN_USE))
-				break;
+		if(redundant_flags & (Keywords::RED_DOUBLE_USE|Keywords::RED_IN_USE)) {
+			if(portagesettings->user_config->CheckUse(p, redundant_flags))
+			{
+				if(have_redundant(*p, Keywords::RED_DOUBLE_USE))
+					break;
+				if(have_redundant(*p, Keywords::RED_IN_USE))
+					break;
+			}
 		}
-		if(portagesettings->user_config->CheckCflags(p, redundant_flags))
-		{
-			if(have_redundant(*p, Keywords::RED_DOUBLE_CFLAGS))
-				break;
-			if(have_redundant(*p, Keywords::RED_IN_CFLAGS))
-				break;
+		if(redundant_flags & (Keywords::RED_DOUBLE_CFLAGS|Keywords::RED_IN_CFLAGS)) {
+			if(portagesettings->user_config->CheckCflags(p, redundant_flags)) {
+				if(have_redundant(*p, Keywords::RED_DOUBLE_CFLAGS))
+					break;
+				if(have_redundant(*p, Keywords::RED_IN_CFLAGS))
+					break;
+			}
 		}
 		if(test_installed == INS_NONE)
 			return invert;

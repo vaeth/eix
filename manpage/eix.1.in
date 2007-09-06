@@ -1541,6 +1541,24 @@ Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
 .BR TEST_FOR_EMPTY "  " (true / false)
 Defines whether empty entries in /etc/portage/package.* are shown with -t.
 .TP
+.BR TEST_KEYWORDS "  " (true / false)
+Defines whether /etc/portage/package.keywords is tested with -t.
+.TP
+.BR TEST_MASK "  " (true / false)
+Defines whether /etc/portage/package.mask is tested with -t.
+.TP
+.BR TEST_UNMASK "  " (true / false)
+Defines whether /etc/portage/package.unmask is tested with -t.
+.TP
+.BR TEST_USE "  " (true / false)
+Defines whether /etc/portage/package.use is tested with -t.
+.TP
+.BR TEST_CFLAGS "  " (true / false)
+Defines whether /etc/portage/package.cflags is tested with -t.
+.TP
+.BR TEST_REMOVED "  " (true / false)
+Defines whether removed packages are tested with -t.
+.TP
 .BR TEST_FOR_NONEXISTENT "  " (true / false)
 Defines whether non-existing installed versions are positive for -T.
 What is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables.

@@ -1,5 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.9.12
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce TEST_{KEYWORDS,MASK,UNMASK,USE,CFLAGS,REMOVED}.
+	  In particular, users might want to switch off the package.cflags
+	  tests if they use "personal" /etc/portage/bashrc.
+	- Only scan /etc/portage/package.{cflags,use} if -T really has to:
+	  Faster and avoids possible undesired error messages.
+
 *eix-0.9.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support for repository names.

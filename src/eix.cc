@@ -579,12 +579,18 @@ run_eix(int argc, char** argv)
 	{
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		cout << "\n";
-		print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE, all_packages);
-		print_unused(eixrc.m_eprefixconf + USER_MASK_FILE,     all_packages);
-		print_unused(eixrc.m_eprefixconf + USER_UNMASK_FILE,   all_packages);
-		print_unused(eixrc.m_eprefixconf + USER_USE_FILE,      all_packages, empty);
-		print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,   all_packages, empty);
-		print_removed(var_db_pkg, all_packages);
+		if(eixrc.getBool("TEST_KEYWORDS"))
+			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE, all_packages);
+		if(eixrc.getBool("TEST_MASK"))
+			print_unused(eixrc.m_eprefixconf + USER_MASK_FILE,     all_packages);
+		if(eixrc.getBool("TEST_UNMASK"))
+			print_unused(eixrc.m_eprefixconf + USER_UNMASK_FILE,   all_packages);
+		if(eixrc.getBool("TEST_USE"))
+			print_unused(eixrc.m_eprefixconf + USER_USE_FILE,      all_packages, empty);
+		if(eixrc.getBool("TEST_CFLAGS"))
+			print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,   all_packages, empty);
+		if(eixrc.getBool("TEST_REMOVED"))
+			print_removed(var_db_pkg, all_packages);
 	}
 
 	/* Sort the found matches by rating */
