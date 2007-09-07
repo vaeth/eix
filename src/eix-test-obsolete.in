@@ -77,10 +77,49 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
+Repository () {
+	local I J C
+	if ${1}; then
+		I='with'
+	else
+		I='without'
+	fi
+	echo "The following package versions are installed $I repository information:"
+	if ! cd "$(eix --print EPREFIX_INSTALLED)"/var/db/pkg >/dev/null 2>&1; then
+		echo "${0##*/}: cannot locate your database of installed packages" >&2
+		exit 1
+	fi
+	echo
+	C=0
+	for I in *; do
+		for J in "${I}"/*; do
+			if [ -e "${J}/repository" ]; then
+				${1} || continue
+			else
+				${1} && continue
+			fi
+			echo "${J}"
+			C=$(( $C + 1 ))
+		done
+	done
+	if test $C -eq 0; then
+		echo "none"
+	elif test $C -ne 1; then
+		echo
+		echo "(total number of versions listed above: $C)"
+	fi
+	exit 0
+}
+
 COMMON="$(eix --print PORTAGE_CONFIGROOT)"
 COMMON="${COMMON}/etc/portage/package."
 
-eix '-t!*'
+if test $# -gt 0; then
+	test "$1" = 'no-repository' && Repository false
+	test "$1" = 'repository' && Repository true
+	export CHECK_INSTALLED_OVERLAYS=true
+fi
+eix '-t*!'
 
 (
 	export TEST_FOR_NONEXISTENT=false

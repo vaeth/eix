@@ -22,7 +22,7 @@ A I<EXPRESSION> can be:
 
 .BR eix-sync
 
-.BR eix-test-obsolete
+.BR "eix-test-obsolete " [ repository | no-repository | I<check_always_overlays> ]
 
 .BR update-eix-remote
 
@@ -48,6 +48,15 @@ of I</etc/eix-sync.conf> below.
 
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
+If you pass B<eix-test-obsolete> the particular argument B<repository> or
+B<no-repository>, it will display all package versions which have been
+installed with/without repository data (which is only created by >=portage-2.1.3).
+To avoid false heuristic assumptions about the overlays used for versions without repository files,
+you might want to set B<CHECK_INSTALLED_OVERLAYS=true> (see below) which
+unfortunately slows things down dramatically.
+If B<eix-test-obsolete> is called with any other argument, it will use
+this setting for all its tests; if called without arguments,
+B<eix-test-obsolete> will not modify B<CHECK_INSTALLED_OVERLAYS>.
 
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
@@ -55,8 +64,7 @@ Note that to keep such remote data across update-eix calls
 you might want to set B<KEEP_VIRTUALS=true> in /etc/eixrc.
 To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
 
-B<update-eix-layman> can add or remove local layman overlays to the
-current database.
+B<update-eix-layman> can add or remove local layman overlays to the current database.
 To get more help on B<update-eix-layman> call B<update-eix-layman -h>.
 
 B<update-eix-functions.sh> are helper functions used by B<update-eix-remote>
@@ -564,7 +572,7 @@ The else-part can be also be completely left out.
 .BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {}
 Execute I<TCODE> if the string resulting from expanding I<VARIABLE> is equal to
 I<STRING>.
-The B<!> would negate the behavior.
+The B<!> would negate the behaviour.
 
 .TP
 .BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {else} I<FCODE> {}
@@ -1473,10 +1481,12 @@ it might have been installed from a different overlay.
 However, this information might be false if such a package was removed
 from an overlay or if a whole overlay is not in the database anymore.
 
-The special value B<repository> is a reasonable compromise.
-If the version has a repository file describing the overlay name
-(this is the case if it was installed with >=portage-2.1.3)
-then this repository file is always checked.
+The special value B<repository> is a reasonable compromise:
+If repository data was stored during emerge (this is the case only with current
+portage versions; you can use B<eix-test-obsolete [no-]repository> to check
+for which versions this is (not) the case) then this repository data is always used.
+Only if it is unreadable or does not match, the behaviour for that version
+is the same as in case B<CHECK_INSTALLED_OVERLAYS=false>.
 
 Especially in connection with option -T (if B<NONEXISTENT_IF_OTHER_OVERLAY>
 is true) and with option -J the speed increase is enormously if you set this

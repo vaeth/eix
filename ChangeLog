@@ -2,11 +2,17 @@
 
 *eix-0.9.12
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce eix-test-obsolete [no-]repository
+	- Re-introduce optional parameter for eix-test-obsolete to set
+	  (but not toggle!) CHECK_INSTALLED_OVERLAYS: Users of older portage
+	  versions might find it convenient.
+	- Better document repository behaviour.
 	- Introduce TEST_{KEYWORDS,MASK,UNMASK,USE,CFLAGS,REMOVED}.
 	  In particular, users might want to switch off the package.cflags
-	  tests if they use "personal" /etc/portage/bashrc.
+	  tests if they use a more sophisticated format for it in
+	  /etc/portage/bashrc
 	- Only scan /etc/portage/package.{cflags,use} if -T really has to:
-	  Faster and avoids possible undesired error messages.
+	  This is faster and avoids possible undesired error messages.
 
 *eix-0.9.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
