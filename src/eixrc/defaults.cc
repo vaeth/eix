@@ -1196,6 +1196,11 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "SORT_INST_USE_ALPHA",
+			"false", "If false, sort installed useflags by whether they are set.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CHECK_INSTALLED_OVERLAYS",
 			"repository", "Allowed values are true/false/repository.\n"
 			"If true, always check from which overlay a package version was installed.\n"

@@ -7,6 +7,7 @@
 	  (but not toggle!) CHECK_INSTALLED_OVERLAYS: Users of older portage
 	  versions might find it convenient.
 	- Better document repository behaviour.
+	- Introduce SORT_INST_USE_ALPHA
 	- Introduce TEST_{KEYWORDS,MASK,UNMASK,USE,CFLAGS,REMOVED}.
 	  In particular, users might want to switch off the package.cflags
 	  tests if they use a more sophisticated format for it in

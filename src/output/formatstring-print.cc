@@ -55,22 +55,31 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 		return "";
 	if(i.inst_iuse.empty())
 		return "";
-	string ret;
+	string ret, add;
 	for(vector<string>::iterator it = i.inst_iuse.begin();
 		it != i.inst_iuse.end(); ++it)
 	{
+		int addindex = 0;
+		string *curr = &ret;
+		if(i.usedUse.find(*it) == i.usedUse.end()) {
+			addindex = 2;
+			if(!fmt.alpha_use)
+				curr = &add;
+		}
+		if(!curr->empty())
+			curr->append(" ");
+		if(a[addindex])
+			curr->append(a[addindex]);
+		else if(addindex == 2)
+			curr->append("-");
+		curr->append(*it);
+		if(a[addindex+1])
+			curr->append(a[addindex+1]);
+	}
+	if(!add.empty()) {
 		if(!ret.empty())
 			ret.append(" ");
-		int addindex = 0;
-		if(i.usedUse.find(*it) == i.usedUse.end())
-			addindex = 2;
-		if(a[addindex])
-			ret.append(a[addindex]);
-		else if(addindex == 2)
-			ret.append("-");
-		ret.append(*it);
-		if(a[addindex+1])
-			ret.append(a[addindex+1]);
+		ret.append(add);
 	}
 	return ret;
 }

@@ -1473,6 +1473,12 @@ If --versionlines is active, the data is printed on a per-version base.
 Otherwise all IUSE data corresponding to some version of the package is
 printed collected.
 .TP
+.BR SORT_INST_USE_ALPHA " " (true / false)
+If B<true>, print the useflags of installed packages in alphabetical order.
+Otherwise, first those useflags are printed (in alphabetical order) which
+were set when the package was emerged, then the others are printed
+(in alphabetical order).
+.TP
 .BR CHECK_INSTALLED_OVERLAYS " " (true / false / repository)
 If B<true>, always check from which overlay a package was installed.
 If B<false>, only packages with versions in at least two trees are checked,

@@ -221,6 +221,7 @@ class PrintFormat {
 		     slot_sorted,         /**< Print sorted by slots */
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
+		     alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
 		     print_iuse;          /**< Print iuse data */
 
 		LocalMode recommend_mode;
