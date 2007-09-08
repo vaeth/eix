@@ -47,7 +47,7 @@ void PortageUserConfig::setProfileMasks(Package *p) const
 	if(profile->trivial_profile)
 		return;
 	profile->applyMasks(p);
-	m_settings->getMasks()->applyMasks(p);
+	getMasks()->applyMasks(p);
 }
 
 void PortageSettings::setMasks(Package *p)

@@ -86,6 +86,9 @@ class MaskList
 		{ }
 
 		MaskList(const MaskList<_type> &ori) : super()
+		{ add(ori); }
+
+		void add(const MaskList<_type> &ori)
 		{
 			for(const_iterator it = ori.begin(); it != ori.end(); ++it)
 			{
@@ -138,6 +141,40 @@ class MaskList
 				this->erase(it);
 			}
 		}
+
+		void remove(const MaskList<_type> &l)
+		{
+			for(const_iterator it = l.begin(); it != l.end(); ++it)
+			{
+				for(const_cat_iterator t = it->second.begin();
+					t != it->second.end();
+					++t)
+				{
+					for(const_mask_iterator m = t->second.begin();
+						m != t->second.end(); ++m) {
+							remove(*m);
+					}
+				}
+			}
+		}
+
+#if 0
+		void print() const
+		{
+			for(const_iterator it = super::begin(); it != super::end(); ++it)
+			{
+				for(const_cat_iterator t = it->second.begin();
+					t != it->second.end();
+					++t)
+				{
+					for(const_mask_iterator m = t->second.begin();
+						m != t->second.end(); ++m) {
+							m->print();
+					}
+				}
+			}
+		}
+#endif
 
 		const eix::ptr_list<_type> *get(const Package *p) const
 		{

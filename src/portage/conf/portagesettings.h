@@ -73,9 +73,11 @@ class PortageSettings;
 
 
 class PortageUserConfig {
+		friend class PortageSettings;
 	private:
 		PortageSettings      *m_settings;
-		MaskList<Mask>        m_mask;
+		MaskList<Mask>        m_masks;
+		MaskList<Mask>        m_localmasks;
 		MaskList<KeywordMask> m_keywords;
 		MaskList<KeywordMask> m_use, m_cflags;
 		bool read_use, read_cflags;
@@ -116,6 +118,9 @@ class PortageUserConfig {
 				return CheckFile(p, USER_CFLAGS_FILE, &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
 			return false;
 		}
+
+		const MaskList<Mask> *getMasks() const
+		{ return &m_masks; }
 };
 
 /** Holds Portage's settings, e.g. masks, categories, overlay paths.
@@ -140,6 +145,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void override_by_env(const char **vars);
 		void read_config(const std::string &name, const std::string &prefix);
 
+		/** Read maskings & unmaskings */
+		void ReadPortageMasks();
 	public:
 		bool m_obsolete_minusasterisk;
 		std::string m_eprefixconf;
@@ -162,8 +169,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
 		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
 
-		/** Read maskings & unmaskings from the profile as well as user-defined ones */
-		MaskList<Mask> *getMasks();
+		const MaskList<Mask> *getMasks() const
+		{ return &m_masks; }
 
 		/** Return vector of all possible all categories.
 		 * Reads categories on first call. */

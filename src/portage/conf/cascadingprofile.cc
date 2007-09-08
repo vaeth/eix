@@ -77,6 +77,20 @@ bool CascadingProfile::getParentProfile(string &path_buffer)
 }
 
 void
+CascadingProfile::removeRemove()
+{
+	m_system.remove(m_system_remove);
+	m_system_allowed.remove(m_system_allowed_remove);
+	m_package_masks.remove(m_package_masks_remove);
+}
+
+void
+CascadingProfile::modifyMasks(MaskList<Mask> &masks) const
+{
+	masks.remove(m_package_masks_remove);
+}
+
+void
 CascadingProfile::readFiles()
 {
 	for(vector<string>::iterator file = m_profile_files.begin();
@@ -124,33 +138,26 @@ void CascadingProfile::readPackages(const string &line)
 	bool remove = (*p == '-');
 
 	if (remove)
-	{
 		++p;
-	}
 
 	Mask *m = NULL;
-	MaskList<Mask> *ml = NULL;
 	switch(*p)
 	{
 		case '*':
 			++p;
-			m = new Mask(p, Mask::maskInSystem) ;
-			ml = &m_system;
+			m = new Mask(p, Mask::maskInSystem);
+			if(remove)
+				m_system_remove.add(m);
+			else
+				m_system.add(m);
 			break;
 		default:
 			m = new Mask(p, Mask::maskAllowedByProfile);
-			ml = &m_system_allowed;
+			if(remove)
+				m_system_allowed_remove.add(m);
+			else
+				m_system_allowed.add(m);
 			break;
-	}
-
-	if (remove)
-	{
-		ml->remove(m);
-		delete m;
-	}
-	else
-	{
-		ml->add(m);
 	}
 }
 
@@ -167,15 +174,9 @@ void CascadingProfile::readMakeDefaults()
 void CascadingProfile::readPackageMasks(const string &line)
 {
 	if(line[0] == '-')
-	{
-		Mask *m = new Mask(line.substr(1).c_str(), Mask::maskMask);
-		m_package_masks.remove(m);
-		delete m;
-	}
+		m_package_masks_remove.add(new Mask(line.substr(1).c_str(), Mask::maskMask));
 	else
-	{
 		m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
-	}
 }
 
 void CascadingProfile::ReadLink(string &path) const

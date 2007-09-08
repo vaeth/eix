@@ -50,9 +50,12 @@ class CascadingProfile {
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
-		MaskList<Mask> m_system;         /**< Packages in m_system profile. */
-		MaskList<Mask> m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
+		MaskList<Mask> m_system;         /**< Packages in system profile. */
+		MaskList<Mask> m_system_allowed; /**< Packages that are not in system profile but only allowed to have specific versions.*/
 		MaskList<Mask> m_package_masks;  /**< Masks from package.masks */
+		MaskList<Mask> m_system_remove;         /**< "-" Packages in system profile. */
+		MaskList<Mask> m_system_allowed_remove; /**< "-" Packages that are not in system profile but only allowed to have specific versions.*/
+		MaskList<Mask> m_package_masks_remove;  /**< "-" Masks from package.masks */
 
 	private:
 
@@ -68,6 +71,8 @@ class CascadingProfile {
 		void listProfile(const char *profile_dir = NULL) throw(ExBasic);
 
 		void readFiles();
+
+		void removeRemove();
 
 		/** Read all "packages" files found in profile.
 		 * Populate m_system and m_system_allowed. */
@@ -87,22 +92,30 @@ class CascadingProfile {
 			listProfile();
 			readMakeDefaults();
 			readFiles();
+			removeRemove();
 		}
 
 		/** Copy CascadingProfile (deep) and append content of profiledir.
 		    If nothing was really appended, set trivial_profile */
 		CascadingProfile(const CascadingProfile &ori, const char *profile_dir) :
 		m_portagesettings(ori.m_portagesettings),
-		m_system(ori.m_system), m_system_allowed(ori.m_system_allowed),
-		m_package_masks(ori.m_package_masks)
+		m_system(ori.m_system),
+		m_system_allowed(ori.m_system_allowed),
+		m_package_masks(ori.m_package_masks),
+		m_system_remove(ori.m_system_remove),
+		m_system_allowed_remove(ori.m_system_allowed_remove),
+		m_package_masks_remove(ori.m_package_masks_remove)
 		{
 			trivial_profile = true;
 			listProfile(profile_dir);
 			readMakeDefaults();
 			readFiles();
+			removeRemove();
 		}
 
 		void applyMasks(Package *p) const;
+
+		void modifyMasks(MaskList<Mask> &masks) const;
 
 		/** Get all m_system packages. */
 		const MaskList<Mask> *getSystemPackages() const {

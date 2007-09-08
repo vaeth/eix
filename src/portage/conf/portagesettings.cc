@@ -195,6 +195,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 		user_config = new PortageUserConfig(this);
 	else
 		user_config = NULL;
+	profile->modifyMasks(m_masks);
 	override_by_env(test_in_env_late);
 
 	/* Normalize "PORTDIR": */
@@ -222,6 +223,13 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
 	(*this)["ACCEPT_KEYWORDS"] = join_vector(m_accepted_keyword);
 	m_accepted_keywords = KeywordsFlags::get_type((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
+
+	ReadPortageMasks();
+	if(getlocal) {
+		user_config->m_masks.add(m_masks);
+		user_config->profile->modifyMasks(user_config->m_masks);
+	}
+	profile->modifyMasks(m_masks);
 }
 
 PortageSettings::~PortageSettings()
@@ -257,20 +265,15 @@ vector<string> *PortageSettings::getCategories()
 	return &m_categories;
 }
 
-/** Read maskings & unmaskings as well as user-defined ones */
-MaskList<Mask> *PortageSettings::getMasks()
+/** Read maskings & unmaskings */
+void
+PortageSettings::ReadPortageMasks()
 {
-	if(m_masks.empty()) {
-		if(!grab_masks(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
-			WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
-		for(vector<string>::iterator i = overlays.begin();
-			i != overlays.end();
-			++i)
-		{
-			grab_masks((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
-		}
-	}
-	return &(m_masks);
+	if(!grab_masks(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
+		WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
+	for(vector<string>::iterator i = overlays.begin();
+		i != overlays.end(); ++i)
+		grab_masks((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
 }
 
 PortageUserConfig::PortageUserConfig(PortageSettings *psettings)
@@ -278,6 +281,8 @@ PortageUserConfig::PortageUserConfig(PortageSettings *psettings)
 	m_settings = psettings;
 	profile = new CascadingProfile(*(psettings->profile),
 		((m_settings->m_eprefixconf) + USER_PROFILE_DIR).c_str());
+	m_masks.add( psettings->m_masks );
+	profile->modifyMasks(m_masks);
 	readKeywords();
 	readMasks();
 	read_use = read_cflags = false;
@@ -293,8 +298,8 @@ PortageUserConfig::~PortageUserConfig()
 bool
 PortageUserConfig::readMasks()
 {
-	bool mask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, &m_mask, true);
-	bool unmask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, &m_mask, true);
+	bool mask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, &m_localmasks, true);
+	bool unmask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, &m_localmasks, true);
 	return mask_ok && unmask_ok;
 }
 
@@ -469,7 +474,7 @@ bool PortageUserConfig::readKeywords() {
 bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const
 {
 	/* Set hardmasks */
-	return m_mask.applyMasks(p, check);
+	return m_localmasks.applyMasks(p, check);
 }
 
 inline void apply_keywords(Version &v, KeywordsFlags::Type t, bool alwaysstable)
