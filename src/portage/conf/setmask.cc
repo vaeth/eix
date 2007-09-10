@@ -45,9 +45,13 @@ CascadingProfile::applyMasks(Package *p) const
 void
 PortageUserConfig::setProfileMasks(Package *p) const
 {
-	if(profile->trivial_profile)
-		return;
-	profile->applyMasks(p);
+	if(profile)
+		profile->applyMasks(p);
+#if 0
+	else
+		// We do not assume tacitly that profile did not change:
+		m_settings->profile->applyMasks(p);
+#endif
 }
 
 void

@@ -44,7 +44,6 @@ class Package;
 class CascadingProfile {
 
 	public:
-		bool trivial_profile;
 
 	protected:
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
@@ -64,25 +63,23 @@ class CascadingProfile {
 		bool getParentProfile(std::string &path_buffer);
 
 		/** Read all "packages" files found in profile.
-		 * Populate m_system and m_system_allowed. */
-		void readPackages(const std::string &line);
-		void readPackageMasks(const std::string &line);
+		 * Populate m_system and m_system_allowed.
+		 * @return true if data was changed */
+		bool readPackages(const std::string &line);
+		bool readPackageMasks(const std::string &line);
 
 		void ReadLink(std::string &path) const;
 	public:
 		CascadingProfile(PortageSettings *portagesettings)
-		{
-			trivial_profile = true;
-			m_portagesettings = portagesettings;
-		}
+		{ m_portagesettings = portagesettings; }
 
 		/** Read all "make.defaults" files previously added by listadd... */
 		void readMakeDefaults();
 
 		/** Read all mask/system files previously added by listadd...
-		 * and clear this list of files afterwards. If some file has
-		 * data, set trivial_profile = false (if set_nontrivial). */
-		void readremoveFiles(bool set_nontrivial = true);
+		 * and clear this list of files afterwards.
+		 * @return true if at least one file changed data. */
+		bool readremoveFiles();
 
 		/** Cycle through profile and put path to files into
 		 * m_profile_files. */

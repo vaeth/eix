@@ -106,40 +106,54 @@ class MaskList
 			}
 		}
 
-		void add(_type *m)
-		{ (*this)[m->getCategory()][m->getName()].push_back(m); }
+		/** @return true if actually something was added.
+		    For speed reasons, we currently return always true
+		    and add even unnecessarily. Note that this means that
+		    we must remove more carefully. */
 
-		void remove(_type *m)
+		bool add(_type *m)
+		{
+			(*this)[m->getCategory()][m->getName()].push_back(m);
+			return true;
+		}
+
+		/** @return true if actually something was removed */
+		bool remove(_type *m)
 		{
 			iterator it = super::find(m->getCategory());
 			if(it == super::end())
-				return;
+				return false;
 
 			cat_iterator t = it->second.find(m->getName());
 			if(t == it->second.end())
-				return;
+				return false;
 
-			for(mask_iterator mi = t->second.begin();
-				mi != t->second.end();
-				++mi)
+			bool deleted = false;
+			mask_iterator mi = t->second.begin();
+			while(mi != t->second.end())
 			{
 				if(**mi == *m)
 				{
+					deleted = true;
 					delete *mi;
 					t->second.erase(mi);
-					break;
+					// mi is invalidated
+					mi = t->second.begin();
 				}
+				else
+					++mi;
 			}
-			if(t->second.size() == 0)
+			if(t->second.empty())
 			{
 				// Now empty
 				it->second.erase(t);
 			}
-			if(it->second.size() == 0)
+			if(it->second.empty())
 			{
 				// Now empty
 				this->erase(it);
 			}
+			return deleted;
 		}
 
 		void remove(const MaskList<_type> &l)

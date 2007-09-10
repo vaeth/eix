@@ -215,24 +215,28 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
 	profile->listaddProfile();
 	profile->readMakeDefaults();
-	profile->readremoveFiles(true);
+	profile->readremoveFiles();
 	CascadingProfile *local_profile = NULL;
 	if(getlocal)
 		local_profile = new CascadingProfile(*profile);
 	addOverlayProfiles(profile);
 	if(getlocal) {
-		profile->readremoveFiles(true);
 		local_profile->listaddProfile((m_eprefixconf + USER_PROFILE_DIR).c_str());
 		local_profile->readMakeDefaults();
-		local_profile->trivial_profile = true;
-		local_profile->readremoveFiles(true);
-		addOverlayProfiles(local_profile);
-		local_profile->readMakeDefaults();
-		local_profile->readremoveFiles(false);
+		if(local_profile->readremoveFiles()) {
+			addOverlayProfiles(local_profile);
+			local_profile->readMakeDefaults();
+			local_profile->readremoveFiles();
+		}
+		else {
+			delete local_profile;
+			local_profile = NULL;
+		}
+		profile->readremoveFiles();
 		user_config = new PortageUserConfig(this, local_profile);
 	}
 	else {
-		profile->readremoveFiles(true);
+		profile->readMakeDefaults();
 		profile->readremoveFiles();
 		user_config = NULL;
 	}

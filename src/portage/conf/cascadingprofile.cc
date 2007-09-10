@@ -76,14 +76,15 @@ bool CascadingProfile::getParentProfile(string &path_buffer)
 	return false;
 }
 
-void
-CascadingProfile::readremoveFiles(bool set_nontrivial)
+bool
+CascadingProfile::readremoveFiles()
 {
+	bool ret = false;
 	for(vector<string>::iterator file = m_profile_files.begin();
 		file != m_profile_files.end();
 		++file)
 	{
-		void (CascadingProfile::*handler)(const string &line);
+		bool (CascadingProfile::*handler)(const string &line);
 
 		if(strcmp(strrchr(file->c_str(), '/'), "/packages") == 0)
 		{
@@ -102,9 +103,8 @@ CascadingProfile::readremoveFiles(bool set_nontrivial)
 		for(vector<string>::size_type i = 0; i < lines.size(); i++)
 		{
 			try {
-				if(set_nontrivial)
-					trivial_profile = false;
-				(this->*handler) (lines[i]);
+				if((this->*handler) (lines[i]))
+					ret = true;
 			}
 			catch(ExBasic e)
 			{
@@ -113,9 +113,11 @@ CascadingProfile::readremoveFiles(bool set_nontrivial)
 		}
 	}
 	m_profile_files.clear();
+	return ret;
 }
 
-void CascadingProfile::readPackages(const string &line)
+bool
+CascadingProfile::readPackages(const string &line)
 {
 	/* Cycle through and get rid of comments ..
 	 * lines beginning with '*' are m_system-packages
@@ -123,7 +125,7 @@ void CascadingProfile::readPackages(const string &line)
 	const char *p = line.c_str();
 	bool remove = (*p == '-');
 
-	if (remove)
+	if(remove)
 	{
 		++p;
 	}
@@ -143,19 +145,21 @@ void CascadingProfile::readPackages(const string &line)
 			break;
 	}
 
-	if (remove)
+	if(remove)
 	{
-		ml->remove(m);
+		bool ret = (ml->remove(m));
 		delete m;
+		return ret;
 	}
 	else
 	{
-		ml->add(m);
+		return (ml->add(m));
 	}
 }
 
 /** Read all "make.defaults" files found in profile. */
-void CascadingProfile::readMakeDefaults()
+void
+CascadingProfile::readMakeDefaults()
 {
 	for(vector<string>::size_type i = 0; i < m_profile_files.size(); ++i) {
 		if( strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0) {
@@ -164,17 +168,19 @@ void CascadingProfile::readMakeDefaults()
 	}
 }
 
-void CascadingProfile::readPackageMasks(const string &line)
+bool
+CascadingProfile::readPackageMasks(const string &line)
 {
 	if(line[0] == '-')
 	{
 		Mask *m = new Mask(line.substr(1).c_str(), Mask::maskMask);
-		m_package_masks.remove(m);
+		bool ret = m_package_masks.remove(m);
 		delete m;
+		return ret;
 	}
 	else
 	{
-		m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
+		return m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
 	}
 }
 
