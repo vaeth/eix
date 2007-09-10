@@ -42,17 +42,17 @@ CascadingProfile::applyMasks(Package *p) const
 	getPackageMasks()->applyMasks(p);
 }
 
-void PortageUserConfig::setProfileMasks(Package *p) const
+void
+PortageUserConfig::setProfileMasks(Package *p) const
 {
 	if(profile->trivial_profile)
 		return;
 	profile->applyMasks(p);
-	getMasks()->applyMasks(p);
 }
 
-void PortageSettings::setMasks(Package *p)
+void
+PortageSettings::setMasks(Package *p)
 {
 	profile->applyMasks(p);
-	getMasks()->applyMasks(p);
 }
 

@@ -14,8 +14,8 @@
 	  /etc/portage/bashrc
 	- Only scan /etc/portage/package.{cflags,use} if -T really has to:
 	  This is faster and avoids possible undesired error messages.
-	- Apply '-' in cascading profiles even if the corresponding positive
-	  entry follows later on, and apply these also to package.mask:
+	- Consider profile/package.mask and overlay/profile/package.mask as
+	  (first or last) part of profile w.r.t. '-' entries. This fixes
 	  http://bugs.gentoo.org/show_bug.cgi?id=191716
 
 *eix-0.9.11

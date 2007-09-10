@@ -76,7 +76,6 @@ class PortageUserConfig {
 		friend class PortageSettings;
 	private:
 		PortageSettings      *m_settings;
-		MaskList<Mask>        m_masks;
 		MaskList<Mask>        m_localmasks;
 		MaskList<KeywordMask> m_keywords;
 		MaskList<KeywordMask> m_use, m_cflags;
@@ -93,7 +92,7 @@ class PortageUserConfig {
 		static void ReadVersionFile (const char *file, MaskList<KeywordMask> *list);
 
 	public:
-		PortageUserConfig(PortageSettings *psettings);
+		PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile);
 
 		~PortageUserConfig();
 
@@ -118,9 +117,6 @@ class PortageUserConfig {
 				return CheckFile(p, USER_CFLAGS_FILE, &m_cflags, &read_cflags, check & Keywords::RED_DOUBLE_CFLAGS, check & Keywords::RED_IN_CFLAGS);
 			return false;
 		}
-
-		const MaskList<Mask> *getMasks() const
-		{ return &m_masks; }
 };
 
 /** Holds Portage's settings, e.g. masks, categories, overlay paths.
@@ -134,8 +130,6 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
 		std::vector<std::string> m_accepted_keyword;
 
-		/** Mapping of category->masks (first all masks, then all unmasks) */
-		MaskList<Mask> m_masks;
 		KeywordsFlags::Type m_accepted_keywords;
 		static const KeywordsFlags::Type m_accepted_keywords_nonlocal = KeywordsFlags::KEY_STABLE;
 
@@ -145,8 +139,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void override_by_env(const char **vars);
 		void read_config(const std::string &name, const std::string &prefix);
 
-		/** Read maskings & unmaskings */
-		void ReadPortageMasks();
+		void addOverlayProfiles(CascadingProfile *p) const;
 	public:
 		bool m_obsolete_minusasterisk;
 		std::string m_eprefixconf;
@@ -168,9 +161,6 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::string resolve_overlay_name(const std::string &path, bool resolve);
 		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
 		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
-
-		const MaskList<Mask> *getMasks() const
-		{ return &m_masks; }
 
 		/** Return vector of all possible all categories.
 		 * Reads categories on first call. */

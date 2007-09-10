@@ -77,21 +77,7 @@ bool CascadingProfile::getParentProfile(string &path_buffer)
 }
 
 void
-CascadingProfile::removeRemove()
-{
-	m_system.remove(m_system_remove);
-	m_system_allowed.remove(m_system_allowed_remove);
-	m_package_masks.remove(m_package_masks_remove);
-}
-
-void
-CascadingProfile::modifyMasks(MaskList<Mask> &masks) const
-{
-	masks.remove(m_package_masks_remove);
-}
-
-void
-CascadingProfile::readFiles()
+CascadingProfile::readremoveFiles(bool set_nontrivial)
 {
 	for(vector<string>::iterator file = m_profile_files.begin();
 		file != m_profile_files.end();
@@ -111,14 +97,13 @@ CascadingProfile::readFiles()
 			continue;
 
 		vector<string> lines;
-		pushback_lines(file->c_str(), &lines, false);
+		pushback_lines(file->c_str(), &lines, true, true, true);
 
 		for(vector<string>::size_type i = 0; i < lines.size(); i++)
 		{
-			if(lines[i].empty())
-				continue;
 			try {
-				trivial_profile = false;
+				if(set_nontrivial)
+					trivial_profile = false;
 				(this->*handler) (lines[i]);
 			}
 			catch(ExBasic e)
@@ -127,6 +112,7 @@ CascadingProfile::readFiles()
 			}
 		}
 	}
+	m_profile_files.clear();
 }
 
 void CascadingProfile::readPackages(const string &line)
@@ -138,26 +124,33 @@ void CascadingProfile::readPackages(const string &line)
 	bool remove = (*p == '-');
 
 	if (remove)
+	{
 		++p;
+	}
 
 	Mask *m = NULL;
+	MaskList<Mask> *ml = NULL;
 	switch(*p)
 	{
 		case '*':
 			++p;
-			m = new Mask(p, Mask::maskInSystem);
-			if(remove)
-				m_system_remove.add(m);
-			else
-				m_system.add(m);
+			m = new Mask(p, Mask::maskInSystem) ;
+			ml = &m_system;
 			break;
 		default:
 			m = new Mask(p, Mask::maskAllowedByProfile);
-			if(remove)
-				m_system_allowed_remove.add(m);
-			else
-				m_system_allowed.add(m);
+			ml = &m_system_allowed;
 			break;
+	}
+
+	if (remove)
+	{
+		ml->remove(m);
+		delete m;
+	}
+	else
+	{
+		ml->add(m);
 	}
 }
 
@@ -174,9 +167,15 @@ void CascadingProfile::readMakeDefaults()
 void CascadingProfile::readPackageMasks(const string &line)
 {
 	if(line[0] == '-')
-		m_package_masks_remove.add(new Mask(line.substr(1).c_str(), Mask::maskMask));
+	{
+		Mask *m = new Mask(line.substr(1).c_str(), Mask::maskMask);
+		m_package_masks.remove(m);
+		delete m;
+	}
 	else
+	{
 		m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
+	}
 }
 
 void CascadingProfile::ReadLink(string &path) const
@@ -197,7 +196,7 @@ void CascadingProfile::ReadLink(string &path) const
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
-void CascadingProfile::listProfile(const char *profile_dir) throw(ExBasic)
+void CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 {
 	string path_buffer;
 	if(profile_dir)
@@ -220,7 +219,7 @@ void CascadingProfile::listProfile(const char *profile_dir) throw(ExBasic)
 
 	do {
 		/* Don't care about errors when reading profile. */
-		(void) pushback_files(path_buffer, m_profile_files, profile_exclude);
+		(void) pushback_files(path_buffer, m_profile_files, profile_exclude, 3);
 	} while( getParentProfile(path_buffer) );
 
 }

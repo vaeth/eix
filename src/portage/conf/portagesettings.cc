@@ -89,13 +89,13 @@ static const char *default_accumulating_keys[] = {
 /** Environment variables which should take effect before reading profiles. */
 static const char *test_in_env_early[] = {
 	"PORTAGE_PROFILE",
+	"PORTDIR",
+	"PORTDIR_OVERLAY",
 	NULL
 };
 
 /** Environment variables which should add/override all other settings. */
 static const char *test_in_env_late[] = {
-	"PORTDIR",
-	"PORTDIR_OVERLAY",
 	"USE",
 	"CONFIG_PROTECT",
 	"CONFIG_PROTECT_MASK",
@@ -189,15 +189,8 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	const string &eprefixsource = eixrc["EPREFIX_SOURCE"];
 	read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
-	override_by_env(test_in_env_early);
-	profile     = new CascadingProfile(this);
-	if(getlocal)
-		user_config = new PortageUserConfig(this);
-	else
-		user_config = NULL;
-	profile->modifyMasks(m_masks);
-	override_by_env(test_in_env_late);
 
+	override_by_env(test_in_env_early);
 	/* Normalize "PORTDIR": */
 	{
 		string &ref = (*this)["PORTDIR"];
@@ -210,7 +203,6 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 		if(ref[ref.size() - 1] != '/')
 			ref.append("/");
 	}
-
 	/* Normalize overlays and erase duplicates */
 	{
 		string &ref = (*this)["PORTDIR_OVERLAY"];
@@ -219,17 +211,37 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 		ref = join_vector(overlayvec);
 	}
 
+	profile     = new CascadingProfile(this);
+	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
+	profile->listaddProfile();
+	profile->readMakeDefaults();
+	profile->readremoveFiles(true);
+	CascadingProfile *local_profile = NULL;
+	if(getlocal)
+		local_profile = new CascadingProfile(*profile);
+	addOverlayProfiles(profile);
+	if(getlocal) {
+		profile->readremoveFiles(true);
+		local_profile->listaddProfile((m_eprefixconf + USER_PROFILE_DIR).c_str());
+		local_profile->readMakeDefaults();
+		local_profile->trivial_profile = true;
+		local_profile->readremoveFiles(true);
+		addOverlayProfiles(local_profile);
+		local_profile->readMakeDefaults();
+		local_profile->readremoveFiles(false);
+		user_config = new PortageUserConfig(this, local_profile);
+	}
+	else {
+		profile->readremoveFiles(true);
+		profile->readremoveFiles();
+		user_config = NULL;
+	}
+	override_by_env(test_in_env_late);
+
 	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
 	(*this)["ACCEPT_KEYWORDS"] = join_vector(m_accepted_keyword);
 	m_accepted_keywords = KeywordsFlags::get_type((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
-
-	ReadPortageMasks();
-	if(getlocal) {
-		user_config->m_masks.add(m_masks);
-		user_config->profile->modifyMasks(user_config->m_masks);
-	}
-	profile->modifyMasks(m_masks);
 }
 
 PortageSettings::~PortageSettings()
@@ -265,24 +277,18 @@ vector<string> *PortageSettings::getCategories()
 	return &m_categories;
 }
 
-/** Read maskings & unmaskings */
 void
-PortageSettings::ReadPortageMasks()
+PortageSettings::addOverlayProfiles(CascadingProfile *p) const
 {
-	if(!grab_masks(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks) )
-		WARNING("Can't read %sprofiles/package.mask\n", (*this)["PORTDIR"].c_str());
-	for(vector<string>::iterator i = overlays.begin();
+	for(vector<string>::const_iterator i = overlays.begin();
 		i != overlays.end(); ++i)
-		grab_masks((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str(), Mask::maskMask, &m_masks);
+		p->listaddFile((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str());
 }
 
-PortageUserConfig::PortageUserConfig(PortageSettings *psettings)
+PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile)
 {
 	m_settings = psettings;
-	profile = new CascadingProfile(*(psettings->profile),
-		((m_settings->m_eprefixconf) + USER_PROFILE_DIR).c_str());
-	m_masks.add( psettings->m_masks );
-	profile->modifyMasks(m_masks);
+	profile    = local_profile;
 	readKeywords();
 	readMasks();
 	read_use = read_cflags = false;
