@@ -552,7 +552,7 @@ PackageTest::match(PackageReader *pkg) const
 
 		/* To test only for /etc/portage redundancy
 		   we use her the *local* accept_keywords. */
-		portagesettings->setStability(&(*p));
+		//portagesettings->setStability(&(*p));
 
 		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 		{
@@ -577,8 +577,10 @@ PackageTest::match(PackageReader *pkg) const
 		{
 			keywords_was_set = true;
 			bool applied = portagesettings->user_config->setStability(p, redundant_flags);
-			if(mask_was_set)
+			if(mask_was_set) { // We have set all local masks:
+				// Storing them will save time for output.
 				p->save_local();
+			}
 			if(applied)
 			{
 				if(have_redundant(*p, Keywords::RED_DOUBLE))

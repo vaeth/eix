@@ -62,7 +62,6 @@ class PercentStatus {
 		PercentStatus(unsigned int max = 0)
 		{
 			m_max = m_run = 0;
-			m_step_size = 0;
 			if(max != 0) {
 				start(max);
 			}
@@ -73,7 +72,6 @@ class PercentStatus {
 		{
 			m_max = max;
 			m_run = 0;
-			m_step_size = 100.0/max;
 			printf("  0%%");
 		}
 
@@ -87,14 +85,14 @@ class PercentStatus {
 				return;
 			}
 
-			printf("\b\b\b\b" "%.3i%%", int(m_run * m_step_size));
+			printf("\b\b\b\b" "%3u%%", (hundred * m_run) / m_max );
 			fflush(stdout);
 		}
 
 	protected:
+		static const unsigned int hundred = 100;
 		unsigned int m_max, /**<Number of steps. */
 					 m_run;
-		float m_step_size;  /**< Step-size. */
 };
 
 /* Print version of eix to stdout. */

@@ -58,7 +58,7 @@ class SetStability {
 			if(package.restore_local())
 				return;
 			/* Add local keywords */
-			portagesettings->setStability(&package);
+			//portagesettings->setStability(&package);
 			if(etc_profile)
 				portagesettings->user_config->setProfileMasks(&package);
 			portagesettings->user_config->setMasks(&package);

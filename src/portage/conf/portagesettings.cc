@@ -493,7 +493,7 @@ inline void apply_keywords(Version &v, KeywordsFlags::Type t, bool alwaysstable)
 		v |= KeywordsFlags::KEY_STABLE;
 	}
 	else {
-		v &= (~KeywordsFlags::KEY_STABLE | ~KeywordsFlags::KEY_ALL);
+		v &= ~KeywordsFlags::KEY_STABLE;
 	}
 }
 
@@ -607,26 +607,46 @@ PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
 			{
 				if(*kvi == arch) {
 					set_arch_used(ARCH_NOTHING);
+					if(check & Keywords::RED_DOUBLE) {
+						if(lkw.get() & KeywordsFlags::KEY_STABLE)
+							redundant |= Keywords::RED_DOUBLE;
+					}
 					lkw |= KeywordsFlags::KEY_STABLE;
 					continue;
 				}
 				if(*kvi == "~" + arch) {
 					set_arch_used(ARCH_TESTING);
+					if(check & Keywords::RED_DOUBLE) {
+						if(lkw.get() & KeywordsFlags::KEY_UNSTABLE)
+							redundant |= Keywords::RED_DOUBLE;
+					}
 					lkw |= KeywordsFlags::KEY_UNSTABLE;
 					continue;
 				}
 				if(*kvi == "*") {
 					set_arch_used(ARCH_ALIENSTABLE);
+					if(check & Keywords::RED_DOUBLE) {
+						if(lkw.get() & KeywordsFlags::KEY_ALIENSTABLE)
+							redundant |= Keywords::RED_DOUBLE;
+					}
 					lkw |= KeywordsFlags::KEY_ALIENSTABLE;
 					continue;
 				}
 				if(*kvi == "~*") {
 					set_arch_used(ARCH_ALIENUNSTABLE);
+					if(check & Keywords::RED_DOUBLE) {
+						if(lkw.get() & KeywordsFlags::KEY_ALIENUNSTABLE)
+							redundant |= Keywords::RED_DOUBLE;
+					}
 					lkw |= KeywordsFlags::KEY_ALIENUNSTABLE;
 					continue;
 				}
 				if(*kvi == "**") {
 					set_arch_used(ARCH_MISSINGKEYWORD);
+					if(check & Keywords::RED_DOUBLE) {
+						if(lkw.get() & KeywordsFlags::KEY_ALIENUNSTABLE)
+							redundant |= Keywords::RED_DOUBLE;
+					}
 					alwaysstable = true;
 					continue;
 				}
@@ -636,21 +656,33 @@ PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
 					continue;
 				}
 				if(*kvi == "-" + arch) {
-					lkw &= (~KeywordsFlags::KEY_STABLE | ~KeywordsFlags::KEY_ALL);
+					if(check & Keywords::RED_DOUBLE) {
+						if(!( lkw.get() & KeywordsFlags::KEY_STABLE))
+							redundant |= Keywords::RED_DOUBLE;
+					}
+					lkw &= ~KeywordsFlags::KEY_STABLE;
+					/* This is no longer supported by portage
 					// The -ARCH is here to *allow* installations:
 					if(oritype & KeywordsFlags::KEY_MINUSKEYWORD) {
 						set_arch_used(ARCH_ALIENSTABLE);
 						lkw |= KeywordsFlags::KEY_MINUSKEYWORD;
 					}
+					*/
 					continue;
 				}
 				if(*kvi == "-~" + arch) {
-					lkw &= (~KeywordsFlags::KEY_UNSTABLE | ~KeywordsFlags::KEY_ALL);
-					// No continue! (might match strange keyword)
+					if(check & Keywords::RED_DOUBLE) {
+						if(!( lkw.get() & KeywordsFlags::KEY_UNSTABLE))
+							redundant |= Keywords::RED_DOUBLE;
+					}
+					lkw &= ~KeywordsFlags::KEY_UNSTABLE;
+					continue;
 				}
 				// match alien or strange keywords:
+				// TODO: The '-' is treated here as in old portage, i.e. it does not
+				//       delete a previous entry but might form a "strange match".
 				const char *s = kvi->c_str();
-				if(s[0] == '-')	{
+				if(s[0] == '-') {
 					redundant |= (check & Keywords::RED_STRANGE);
 				}
 				if(!arr) {
@@ -739,7 +771,7 @@ PortageSettings::setStability(Package *pkg) const
 			**t |= KeywordsFlags::KEY_STABLE;
 		}
 		else {
-			**t &= (~KeywordsFlags::KEY_STABLE | ~KeywordsFlags::KEY_ALL);
+			**t &= ~KeywordsFlags::KEY_STABLE;
 		}
 	}
 }
