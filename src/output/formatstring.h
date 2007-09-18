@@ -207,7 +207,9 @@ class PrintFormat {
 		DBHeader      *header;
 		VarDbPkg      *vardb;
 		PortageSettings *portagesettings;
-		const SetStability *stability_local, *stability_nonlocal;
+		const SetStability *stability, *stability_local, *stability_nonlocal;
+		Version::SavedKeyIndex orikey_index;
+		Version::SavedMaskIndex orimask_index;
 
 		/* return true if something was actually printed */
 		bool recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
@@ -264,11 +266,15 @@ class PrintFormat {
 			marked_list = NULL;
 			vardb = NULL;
 			portagesettings = NULL;
+			stability = NULL;
 			stability_local = NULL;
 			stability_nonlocal = NULL;
 		}
 
 		~PrintFormat()
+		{ remove_stability(); }
+
+		void remove_stability()
 		{
 			if(stability_local) {
 				delete stability_local;
@@ -278,6 +284,7 @@ class PrintFormat {
 				delete stability_nonlocal;
 				stability_nonlocal = NULL;
 			}
+			stability = NULL;
 		}
 
 		void setupColors() {
@@ -364,11 +371,18 @@ class PrintFormat {
 			return m_parser.start(fmt, !no_color);
 		}
 
+		void setStabilityDefiner(const SetStability *set_stability) {
+			remove_stability();
+			stability = set_stability;
+			orimask_index = stability->orimask_index();
+			orikey_index = stability->orikey_index();
+		}
+
 		void StabilityLocal(Package &p) const
 		{
 			if(!stability_local) {
 				(const_cast<PrintFormat*>(this))->stability_local =
-					new SetStability(portagesettings, false, true);
+					new SetStability(*stability, true);
 			}
 			stability_local->set_stability(p);
 		}
@@ -377,7 +391,7 @@ class PrintFormat {
 		{
 			if(!stability_nonlocal) {
 				(const_cast<PrintFormat*>(this))->stability_nonlocal =
-					new SetStability(portagesettings, true, false);
+					new SetStability(*stability, false);
 			}
 			stability_nonlocal->set_stability(p);
 		}

@@ -176,7 +176,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			}
 			Version *version = new Version(it->getFull());
 			version->overlay_key = m_overlay_key;
-			version->set(m_arch, it->get_full_keywords());
+			version->set_full_keywords(it->get_full_keywords());
 			version->slot = it->slot;
 			pkg->addVersion(version);
 			if(*(pkg->latest()) == *version)

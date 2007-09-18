@@ -300,7 +300,7 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 			return false;
 		v.inst_iuse = split_string(join_vector(lines, " "));
 		sort_uniquify(v.inst_iuse);
-		make_set(&iuse_set, v.inst_iuse);
+		make_set<string>(iuse_set, v.inst_iuse);
 		/* If you do not want the alphabetical order in v.inst_iuse
 		   but instead the original order in the IUSE file,
 		   use the following code instead of the above 4 lines.

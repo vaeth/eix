@@ -78,10 +78,6 @@ class BasicCache {
 		void setKey(short key)
 		{ m_overlay_key = key; }
 
-		/// Set arch for system
-		void setArch(const std::string &arch)
-		{ m_arch = arch; }
-
 		// Get scheme for this cache
 		std::string getPath() const
 		{ return m_scheme; }
@@ -123,7 +119,6 @@ class BasicCache {
 		std::string m_scheme, m_prefix, m_prefix_exec;
 		bool have_prefix, have_prefix_exec;
 		short  m_overlay_key;
-		std::string m_arch;
 		ErrorCallback m_error_callback;
 		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
 

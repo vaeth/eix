@@ -156,8 +156,7 @@ class PackageTest {
 		{
 			if(!stability_local) {
 				(const_cast<PackageTest*>(this))->stability_local =
-					new SetStability(portagesettings, false,
-						stability->use_etc_profile());
+					new SetStability(*stability, true);
 			}
 			stability_local->set_stability(*p);
 		}
@@ -166,7 +165,7 @@ class PackageTest {
 		{
 			if(!stability_nonlocal) {
 				(const_cast<PackageTest*>(this))->stability_nonlocal =
-					new SetStability(portagesettings, true, false);
+					new SetStability(*stability, false);
 			}
 			stability_nonlocal->set_stability(*p);
 		}

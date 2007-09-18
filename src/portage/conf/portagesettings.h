@@ -98,10 +98,10 @@ class PortageUserConfig {
 
 		void setProfileMasks(Package *p) const;
 
-		/// @return true if something from /etc/portage/package.* applied
-		bool setMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
-		/// @return true if something from /etc/portage/package.* applied
-		bool setStability(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		/// @return true if something from /etc/portage/package.* applied and check involves masks
+		bool setMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING, bool file_mask_is_profile = false) const;
+		/// @return true if something from /etc/portage/package.* applied and check involves keywords
+		bool setKeyflags(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 
 		/// @return true if something from /etc/portage/package.use applied
 		bool CheckUse(Package *p, Keywords::Redundant check)
@@ -128,10 +128,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		friend class PortageUserConfig;
 
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
-		std::vector<std::string> m_accepted_keyword;
-
-		KeywordsFlags::Type m_accepted_keywords;
-		static const KeywordsFlags::Type m_accepted_keywords_nonlocal = KeywordsFlags::KEY_STABLE;
+		std::vector<std::string> m_accepted_keywords;
+		std::set<std::string>    m_accepted_keywords_set, m_arch_set;
 
 		/** Your cascading profile, excluding local settings */
 		CascadingProfile  *profile;
@@ -166,10 +164,10 @@ class PortageSettings : public std::map<std::string,std::string> {
 		 * Reads categories on first call. */
 		std::vector<std::string> *getCategories();
 
-		void setMasks(Package *p);
+		void setMasks(Package *p, bool filemask_is_profile = false) const;
 
-		/// Set stability according to local m_accepted_keywords
-		void setStability(Package *pkg) const;
+		/// Set stability according to arch or local ACCEPTED_KEYWORDS
+		void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
 };
 
 #endif

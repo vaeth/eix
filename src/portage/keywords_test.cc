@@ -28,16 +28,21 @@
 
 #include "keywords.h"
 #include <eixTk/test.h>
+#include <set>
+#include <vector>
 
 using namespace std;
 
 void
-test_keywords(string arch, string kw, Keywords::Type result)
+test_keywords(string arch, string kw, KeywordsFlags::KeyType result)
 {
-	if(Keywords::get_type(arch, kw) != result)
+	set<string> a;
+	resolve_plus_minus(a, split_string(arch), true);
+	if(KeywordsFlags::get_keyflags(a, kw, false) != result)
 	{
 		cout << "arch: " << arch << endl;
 		cout << "keywords: " << kw << endl;
+		cout << int(KeywordsFlags::get_keyflags(a, kw, false)) << " " << int(result) << endl;
 		exit(1);
 	}
 }
@@ -47,74 +52,82 @@ int main()
 	/// Test Keyword parsing
 
 	test_keywords("x86", "-* ~alpha ~amd64 arm hppa -ia64 m68k sh ~sparc x86",
-			Keywords::KEY_STABLE|Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE|Keywords::KEY_MINUSASTERISK);
+			KeywordsFlags::KEY_STABLE|KeywordsFlags::KEY_ARCHSTABLE|KeywordsFlags::KEY_ALIENSTABLE|KeywordsFlags::KEY_ALIENUNSTABLE|KeywordsFlags::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-* ~alpha ~amd64 arm hppa -ia64 m68k sh ~sparc x86",
-			Keywords::KEY_UNSTABLE|Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE|Keywords::KEY_MINUSASTERISK);
+			KeywordsFlags::KEY_ARCHUNSTABLE|KeywordsFlags::KEY_ALIENSTABLE|KeywordsFlags::KEY_ALIENUNSTABLE|KeywordsFlags::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-* ~amd64 arm hppa -ia64 m68k sh ~sparc x86",
-			Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE|Keywords::KEY_MINUSASTERISK);
+			KeywordsFlags::KEY_ALIENSTABLE|KeywordsFlags::KEY_ALIENUNSTABLE|KeywordsFlags::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-*",
-			Keywords::KEY_MINUSASTERISK);
+			KeywordsFlags::KEY_MINUSASTERISK);
 
 	test_keywords("alpha", "-alpha",
-			Keywords::KEY_MINUSKEYWORD);
+			KeywordsFlags::KEY_MINUSKEYWORD);
 
 	test_keywords("alpha", "~alpha",
-			Keywords::KEY_UNSTABLE);
+			KeywordsFlags::KEY_ARCHUNSTABLE);
 
 	test_keywords("alpha", "alpha",
-			Keywords::KEY_STABLE);
+			KeywordsFlags::KEY_STABLE);
 
 	test_keywords("sh", "~alpha ~amd64 arm hppa -ia64 ~mips s390 sh sparc x86",
-			Keywords::KEY_STABLE|Keywords::KEY_ALIENSTABLE|Keywords::KEY_ALIENUNSTABLE);
+			KeywordsFlags::KEY_STABLE|KeywordsFlags::KEY_ALIENSTABLE|KeywordsFlags::KEY_ALIENUNSTABLE);
 
 
 	/// Test keyword-class methods
 
 	Keywords kw;
 
-	kw.set("alpha", "-*");
-	TEST_ASSERT(kw.isMinusAsterisk());
-	TEST_ASSERT(!kw.isStable());
-	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(!kw.isAlienStable());
-	TEST_ASSERT(!kw.isAlienUnstable());
+	set<string> a;
+	resolve_plus_minus(a, split_string("alpha"), false);
 
-	kw.set("alpha", "-alpha");
-	TEST_ASSERT(kw.isMinusKeyword());
-	TEST_ASSERT(!kw.isStable());
-	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(!kw.isAlienStable());
-	TEST_ASSERT(!kw.isAlienUnstable());
+	kw.set_full_keywords("-*");
+	kw.set_keyflags(a, true);
+	TEST_ASSERT(kw.keyflags.isMinusAsterisk());
+	TEST_ASSERT(!kw.keyflags.isStable());
+	TEST_ASSERT(!kw.keyflags.isUnstable());
+	TEST_ASSERT(!kw.keyflags.isAlienStable());
+	TEST_ASSERT(!kw.keyflags.isAlienUnstable());
 
-	kw.set("alpha", "~alpha");
-	TEST_ASSERT(kw.isUnstable());
-	TEST_ASSERT(!kw.isStable());
-	TEST_ASSERT(kw.isUnstable());
-	TEST_ASSERT(!kw.isAlienStable());
-	TEST_ASSERT(!kw.isAlienUnstable());
+	kw.set_full_keywords("-alpha");
+	kw.set_keyflags(a, true);
+	TEST_ASSERT(kw.keyflags.isMinusKeyword());
+	TEST_ASSERT(!kw.keyflags.isStable());
+	TEST_ASSERT(!kw.keyflags.isUnstable());
+	TEST_ASSERT(!kw.keyflags.isAlienStable());
+	TEST_ASSERT(!kw.keyflags.isAlienUnstable());
 
-	kw.set("alpha", "alpha");
-	TEST_ASSERT(kw.isStable());
-	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(!kw.isMinusAsterisk());
-	TEST_ASSERT(!kw.isAlienStable());
-	TEST_ASSERT(!kw.isAlienUnstable());
+	kw.set_full_keywords("~alpha");
+	kw.set_keyflags(a, true);
+	TEST_ASSERT(kw.keyflags.isUnstable());
+	TEST_ASSERT(!kw.keyflags.isStable());
+	TEST_ASSERT(kw.keyflags.isUnstable());
+	TEST_ASSERT(!kw.keyflags.isAlienStable());
+	TEST_ASSERT(!kw.keyflags.isAlienUnstable());
 
-	kw.set("alpha", "beta");
-	TEST_ASSERT(!kw.isStable());
-	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(kw.isAlienStable());
-	TEST_ASSERT(!kw.isAlienUnstable());
+	kw.set_full_keywords("alpha");
+	kw.set_keyflags(a, true);
+	TEST_ASSERT(kw.keyflags.isStable());
+	TEST_ASSERT(!kw.keyflags.isUnstable());
+	TEST_ASSERT(!kw.keyflags.isMinusAsterisk());
+	TEST_ASSERT(!kw.keyflags.isAlienStable());
+	TEST_ASSERT(!kw.keyflags.isAlienUnstable());
 
+	kw.set_full_keywords("beta");
+	kw.set_keyflags(a, true);
+	TEST_ASSERT(!kw.keyflags.isStable());
+	TEST_ASSERT(!kw.keyflags.isUnstable());
+	TEST_ASSERT(kw.keyflags.isAlienStable());
+	TEST_ASSERT(!kw.keyflags.isAlienUnstable());
 
-	kw.set("alpha", "~beta");
-	TEST_ASSERT(!kw.isStable());
-	TEST_ASSERT(!kw.isUnstable());
-	TEST_ASSERT(!kw.isAlienStable());
-	TEST_ASSERT(kw.isAlienUnstable());
+	kw.set_full_keywords("~beta");
+	kw.set_keyflags(a, true);
+	TEST_ASSERT(!kw.keyflags.isStable());
+	TEST_ASSERT(!kw.keyflags.isUnstable());
+	TEST_ASSERT(!kw.keyflags.isAlienStable());
+	TEST_ASSERT(kw.keyflags.isAlienUnstable());
 
 	return 0;
 }

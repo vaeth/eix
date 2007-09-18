@@ -61,7 +61,24 @@ class Version : public BasicVersion, public Keywords {
 		friend void     io::write_version(FILE *fp, const Version *v, bool small);
 		friend Version *io::read_version(FILE *fp);
 
-		KeywordsFlags keys_local, keys_nonlocal;
+		typedef std::vector<KeywordsFlags>::size_type SavedKeyIndex;
+		typedef std::vector<MaskFlags>::size_type SavedMaskIndex;
+		static const SavedKeyIndex
+			SAVEKEY_USER   = 0,
+			SAVEKEY_ACCEPT = 1,
+			SAVEKEY_ARCH   = 2,
+			SAVEKEY_SIZE   = 3;
+		static const SavedMaskIndex
+			SAVEMASK_USER        = 0,
+			SAVEMASK_USERFILE    = 1,
+			SAVEMASK_USERPROFILE = 2,
+			SAVEMASK_PROFILE     = 3,
+			SAVEMASK_FILE        = 4,
+			SAVEMASK_SIZE        = 5;
+		std::vector<KeywordsFlags> saved_keywords;
+		std::vector<bool>          have_saved_keywords;
+		std::vector<MaskFlags>     saved_masks;
+		std::vector<bool>          have_saved_masks;
 
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty
 		    to save memory. See the comments above NOT_FULL_USE. */
@@ -73,12 +90,44 @@ class Version : public BasicVersion, public Keywords {
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
 
-		Version() : overlay_key(0)
+		Version() : overlay_key(0),
+			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
+			have_saved_keywords(SAVEKEY_SIZE, false),
+			saved_masks(SAVEMASK_SIZE, MaskFlags()),
+			have_saved_masks(SAVEMASK_SIZE, false)
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : BasicVersion(str), overlay_key(0)
+		Version(const char* str) : BasicVersion(str), overlay_key(0),
+			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
+			have_saved_keywords(SAVEKEY_SIZE, false),
+			saved_masks(SAVEMASK_SIZE, MaskFlags()),
+			have_saved_masks(SAVEMASK_SIZE, false)
 		{ }
+
+		void save_keyflags(SavedKeyIndex i)
+		{ have_saved_keywords[i] = true; saved_keywords[i] = keyflags; }
+
+		void save_maskflags(SavedMaskIndex i)
+		{ have_saved_masks[i] = true; saved_masks[i] = maskflags; }
+
+		bool restore_keyflags(SavedKeyIndex i)
+		{
+			if(have_saved_keywords[i]) {
+				keyflags = saved_keywords[i];
+				return true;
+			}
+			return false;
+		}
+
+		bool restore_maskflags(SavedMaskIndex i)
+		{
+			if(have_saved_masks[i]) {
+				maskflags = saved_masks[i];
+				return true;
+			}
+			return false;
+		}
 
 		void set_iuse(const std::string &i)
 		{

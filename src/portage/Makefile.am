@@ -11,10 +11,10 @@ libportage_a_SOURCES = basicversion.cc basicversion.h \
 					   mask_list.h \
 					   version.h instversion.h \
 					   package.cc package.h \
-					   keywords.cc keywords.h \
 					   overlay.h \
 					   vardbpkg.cc vardbpkg.h \
-					   packagetree.cc packagetree.h
+					   packagetree.cc packagetree.h \
+					   keywords.cc keywords.h
 
 TESTS = basicversion-test keywords-test
 

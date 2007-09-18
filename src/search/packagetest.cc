@@ -339,19 +339,19 @@ stabilitytest(const Package *p, PackageTest::TestStability what)
 		return true;
 	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
 		if(what & PackageTest::STABLE_SYSTEM) {
-			if(!it->isSystem())
+			if(!it->maskflags.isSystem())
 				continue;
 			if(what == PackageTest::STABLE_SYSTEM)
 				return true;
 		}
-		if(it->isHardMasked())
+		if(it->maskflags.isHardMasked())
 			continue;
-		if(it->isStable()) {
+		if(it->keyflags.isStable()) {
 			return true;
 		}
 		if(what & PackageTest::STABLE_FULL)
 			continue;
-		if(it->isUnstable())
+		if(it->keyflags.isUnstable())
 			return true;
 		if(what & PackageTest::STABLE_TESTING)
 			continue;
@@ -540,8 +540,6 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	bool mask_was_set = false;
-	bool keywords_was_set = false;
 	while(obsolete) {  // -T; loop, because we break in case of success
 		// Can some test succeed at all?
 		if((test_installed == INS_NONE) &&
@@ -550,13 +548,8 @@ PackageTest::match(PackageReader *pkg) const
 
 		get_p();
 
-		/* To test only for /etc/portage redundancy
-		   we use her the *local* accept_keywords. */
-		//portagesettings->setStability(&(*p));
-
 		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
 		{
-			mask_was_set = true;
 			if(portagesettings->user_config->setMasks(p, redundant_flags))
 			{
 				if(have_redundant(*p, Keywords::RED_DOUBLE_MASK))
@@ -575,12 +568,7 @@ PackageTest::match(PackageReader *pkg) const
 		}
 		if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
 		{
-			keywords_was_set = true;
-			bool applied = portagesettings->user_config->setStability(p, redundant_flags);
-			if(mask_was_set) { // We have set all local masks:
-				// Storing them will save time for output.
-				p->save_local();
-			}
+			bool applied = portagesettings->user_config->setKeyflags(p, redundant_flags);
 			if(applied)
 			{
 				if(have_redundant(*p, Keywords::RED_DOUBLE))
@@ -620,14 +608,8 @@ PackageTest::match(PackageReader *pkg) const
 		if(!installed_versions)
 			return invert;
 		if(test_installed & INS_MASKED) {
-			if(!mask_was_set) {
-				mask_was_set = true;
-				portagesettings->user_config->setMasks(p);
-			}
-			if(!keywords_was_set) {
-				keywords_was_set = true;
-				portagesettings->user_config->setStability(p);
-			}
+			portagesettings->user_config->setMasks(p);
+			portagesettings->user_config->setKeyflags(p);
 		}
 		vector<InstVersion>::iterator current = installed_versions->begin();
 		for( ; current != installed_versions->end(); ++current)
@@ -640,7 +622,7 @@ PackageTest::match(PackageReader *pkg) const
 				if(*version != *current)
 					continue;
 				if(test_installed && INS_MASKED) {
-					if(!version->isStable())
+					if(!version->keyflags.isStable())
 						continue;
 				}
 				if(test_installed & INS_OVERLAY) {

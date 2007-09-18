@@ -85,7 +85,7 @@ bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			/* Read stability from cachefile */
 			string keywords, iuse;
 			flat_get_keywords_slot_iuse(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, m_error_callback);
-			version->set(m_arch, keywords);
+			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->overlay_key = m_overlay_key;
 

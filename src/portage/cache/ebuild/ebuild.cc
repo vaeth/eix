@@ -224,7 +224,7 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 		string keywords, iuse;
 		try {
 			flat_get_keywords_slot_iuse(cachefile->c_str(), keywords, version->slot, iuse, m_error_callback);
-			version->set(m_arch, keywords);
+			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			if(read_onetime_info)
 			{

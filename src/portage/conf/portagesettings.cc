@@ -100,6 +100,7 @@ static const char *test_in_env_late[] = {
 	"CONFIG_PROTECT",
 	"CONFIG_PROTECT_MASK",
 	"FEATURES",
+	"ARCH",
 	"ACCEPT_KEYWORDS",
 	NULL
 };
@@ -233,7 +234,6 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 			local_profile = NULL;
 		}
 		profile->readremoveFiles();
-		user_config = new PortageUserConfig(this, local_profile);
 	}
 	else {
 		profile->readMakeDefaults();
@@ -242,10 +242,14 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	}
 	override_by_env(test_in_env_late);
 
-	m_accepted_keyword = split_string((*this)["ACCEPT_KEYWORDS"]);
-	m_accepted_keyword = resolve_plus_minus(m_accepted_keyword);
-	(*this)["ACCEPT_KEYWORDS"] = join_vector(m_accepted_keyword);
-	m_accepted_keywords = KeywordsFlags::get_type((*this)["ARCH"], (*this)["ACCEPT_KEYWORDS"]);
+	m_accepted_keywords = split_string((*this)["ARCH"]);
+	resolve_plus_minus(m_arch_set, m_accepted_keywords, m_obsolete_minusasterisk);
+	push_backs<string>(m_accepted_keywords, split_string((*this)["ACCEPT_KEYWORDS"]));
+	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords, m_obsolete_minusasterisk);
+	make_vector<string>(m_accepted_keywords, m_accepted_keywords_set);
+
+	if(getlocal)
+		user_config = new PortageUserConfig(this, local_profile);
 }
 
 PortageSettings::~PortageSettings()
@@ -404,14 +408,18 @@ typedef struct {
 
 bool PortageUserConfig::readKeywords() {
 	/* Prepend a ~ to every token.
-	 * FIXME: So do we only care for ARCH or do we also care for ACCEPT_KEYWORDS? */
-	vector<string> splitted = split_string((*m_settings)["ARCH"], "\t \n\r");
-	for(vector<string>::iterator it = splitted.begin(); it != splitted.end(); ++it) {
-		if(strchr("-~", (*it)[0]) == NULL) {
-			*it = "~" + *it;
+	 * FIXME: Do we need m_arch_set here or m_accept_keywords_set? */
+	string fscked_arch;
+	{
+		vector<string> archvec;
+		for(set<string>::const_iterator it = m_settings->m_arch_set.begin(); it != m_settings->m_arch_set.end(); ++it) {
+			if(strchr("-~", (*it)[0]) == NULL) {
+				archvec.push_back(string("~") + *it);
+			}
 		}
+		sort_uniquify(archvec);
+		fscked_arch = join_vector(archvec);
 	}
-	string fscked_arch = join_vector(splitted);
 
 	vector<string> lines;
 	string filename((m_settings->m_eprefixconf) + USER_KEYWORDS_FILE);
@@ -480,22 +488,9 @@ bool PortageUserConfig::readKeywords() {
 	return true;
 }
 
-/// @return true if something from /etc/portage/package.* applied
-bool PortageUserConfig::setMasks(Package *p, Keywords::Redundant check) const
-{
-	/* Set hardmasks */
-	return m_localmasks.applyMasks(p, check);
-}
-
-inline void apply_keywords(Version &v, KeywordsFlags::Type t, bool alwaysstable)
-{
-	if(alwaysstable || (v.get() & t)) {
-		v |= KeywordsFlags::KEY_STABLE;
-	}
-	else {
-		v &= ~KeywordsFlags::KEY_STABLE;
-	}
-}
+#define CARE_USED \
+	((check & Keywords::RED_KEYWORD_CARESET) && \
+	(m_settings->m_accepted_keywords_set.find(*kvi) == m_settings->m_accepted_keywords_set.end()))
 
 #define set_arch_used(value) do { \
 	if(arch_used < value) { \
@@ -506,39 +501,26 @@ inline void apply_keywords(Version &v, KeywordsFlags::Type t, bool alwaysstable)
 		redundant |= (check & Keywords::RED_MIXED); \
 	} while(0)
 
-// Return value is true if -* occurs in keywords (and new_minusasterisk is true)
-inline bool add_local_keywords(vector<string> &collect, const string &keywords, bool new_minusasterisk)
-{
-	bool had_minus = false;
-	const vector<string> kv = split_string(keywords);
-	for(vector<string>::const_iterator it = kv.begin();
-		it != kv.end(); ++it)
-	{
-		// "-*" possibly deletes all previous keywords set by user.
-		if(new_minusasterisk) {
-			if(*it == "-*") {
-				had_minus = true;
-				collect.clear();
-				continue;
-			}
-		}
-		collect.push_back(*it);
-	}
-	return had_minus;
-}
-
-/// @return true if something from /etc/portage/package.* applied
+/// @return true if something from /etc/portage/package.* applied and check involves keywords
 bool
-PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
+PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 {
+	if((check & Keywords::RED_ALL_KEYWORDS) == Keywords::RED_NOTHING)
+	{
+		if(p->restore_keyflags(Version::SAVEKEY_USER))
+			return false;
+	}
+
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
 	map<Version*,vector<string> > sorted_by_versions;
 	bool rvalue = false;
 
-	bool new_minusasterisk = !(m_settings->m_obsolete_minusasterisk);
+	bool obsolete_minusasterisk = m_settings->m_obsolete_minusasterisk;
 	if(keyword_masks && (!keyword_masks->empty()))
 	{
 		rvalue = true;
+		for(Package::iterator i = p->begin(); i != p->end(); ++i)
+			push_backs<string>(sorted_by_versions[*i], m_settings->m_accepted_keywords);
 		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
 			it != keyword_masks->end();
 			++it)
@@ -549,11 +531,7 @@ PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
 				v != matches.end();
 				++v)
 			{
-				if(add_local_keywords(sorted_by_versions[*v], it->keywords, new_minusasterisk)) {
-					if(check & Keywords::RED_MINUSASTERISK)
-						v->set_redundant((v->get_redundant()) |
-							Keywords::RED_MINUSASTERISK);
-				}
+				push_backs<string>(sorted_by_versions[*v], split_string(it->keywords));
 				// Set RED_DOUBLE_LINE depending on locally_double
 				if(it->locally_double) {
 					if(check & Keywords::RED_DOUBLE_LINE)
@@ -564,196 +542,149 @@ PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
 		}
 	}
 
-	string arch = (*m_settings)["ARCH"];
-
 	for(Package::iterator i = p->begin();
 		i != p->end();
 		++i)
 	{
-		const char ARCH_NOTHING        = 0,
-		           ARCH_TESTING        = 1,
-		           ARCH_ALIENSTABLE    = 2,
-		           ARCH_ALIENUNSTABLE  = 3,
-		           ARCH_MISSINGKEYWORD = 4;
-		char arch_needed;
-		char arch_used = ARCH_NOTHING;
+		const char
+			ARCH_NOTHING        = 0,
+			ARCH_UNSTABLE       = 1,
+			ARCH_ALIENSTABLE    = 2,
+			ARCH_ALIENUNSTABLE  = 3,
+			ARCH_EVERYTHING     = 4,
+			ARCH_MINUSASTERISK  = 5; // -* always matches -T WEAKER becuse it is higher than arch_needed default
+		char	arch_needed         = ARCH_EVERYTHING,
+			arch_used           = ARCH_NOTHING;
 		Keywords::Redundant redundant = i->get_redundant();
-		KeywordsFlags::Type oritype = i->get();
-		if(oritype & KeywordsFlags::KEY_STABLE)
-			arch_needed = ARCH_NOTHING;
-		else if(oritype & KeywordsFlags::KEY_UNSTABLE)
-			arch_needed = ARCH_TESTING;
-		else if((oritype & KeywordsFlags::KEY_ALIENSTABLE) ||
-			(oritype & KeywordsFlags::KEY_MINUSKEYWORD))
-			arch_needed = ARCH_ALIENSTABLE;
-		else if(oritype & KeywordsFlags::KEY_ALIENUNSTABLE)
-			arch_needed = ARCH_ALIENUNSTABLE;
-		else
-			arch_needed = ARCH_MISSINGKEYWORD;
-
-		bool alwaysstable = false;
-
-		KeywordsFlags lkw(m_settings->m_accepted_keywords);
-
-		vector<string> &kv = sorted_by_versions[*i];
-		if(!kv.empty())
+		KeywordsFlags kf(i->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
+		(*i)->keyflags=kf;
+		i->save_keyflags(Version::SAVEKEY_ACCEPT);
+		if(check & Keywords::RED_KEYWORD_CARESET)
 		{
-			if(check & Keywords::RED_IN_KEYWORDS)
-				redundant |= Keywords::RED_IN_KEYWORDS;
-			vector<string> *arr = NULL;
-			for(vector<string>::iterator kvi = kv.begin();
-				kvi != kv.end();
-				++kvi)
+			if(kf.havesome(KeywordsFlags::KEY_STABLE))
+				arch_needed = ARCH_NOTHING;
+			else if(kf.havesome(KeywordsFlags::KEY_ARCHUNSTABLE))
+				arch_needed = ARCH_UNSTABLE;
+			else if(kf.havesome(KeywordsFlags::KEY_ALIENSTABLE))
+				arch_needed = ARCH_ALIENSTABLE;
+			else if(kf.havesome(KeywordsFlags::KEY_ALIENUNSTABLE))
+				arch_needed = ARCH_ALIENUNSTABLE;
+		}
+		vector<string> &kv = sorted_by_versions[*i];
+		bool calc_lkw = !kv.empty();
+		if(calc_lkw) {
+			if((check & (Keywords::RED_ALL_KEYWORDS &
+				~(Keywords::RED_DOUBLE_LINE | Keywords::RED_IN_KEYWORDS)))
+				== Keywords::RED_NOTHING) {
+				if(kv.size() == m_settings->m_accepted_keywords.size()) {
+					calc_lkw = false;
+				}
+				else
+					redundant |= (check & Keywords::RED_IN_KEYWORDS);
+			}
+			else if(check & Keywords::RED_IN_KEYWORDS) {
+				if(kv.size() != m_settings->m_accepted_keywords.size())
+					redundant |= Keywords::RED_IN_KEYWORDS;
+			}
+		}
+		if(calc_lkw)
+		{
+			bool stable = false;
+			set<string> kv_set;
+			bool minusasterisk;
+			if(check & Keywords::RED_DOUBLE) {
+				vector<string> sorted = kv;
+				if(sort_uniquify(sorted, true))
+					redundant |= Keywords::RED_DOUBLE;
+				bool minuskeyword = false;
+				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk, &minuskeyword, &(m_settings->m_accepted_keywords_set));
+				if(minuskeyword)
+					redundant |= Keywords::RED_DOUBLE;
+			}
+			else
+				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk);
+			if(minusasterisk && !obsolete_minusasterisk)
+					redundant |= (check & Keywords::RED_MINUSASTERISK);
+			set<string> keywords_set;
+			make_set<string>(keywords_set, split_string((*i)->get_full_keywords()));
+			for(vector<string>::iterator kvi = kv.begin(); kvi != kv.end(); ++kvi)
 			{
-				if(*kvi == arch) {
-					set_arch_used(ARCH_NOTHING);
-					if(check & Keywords::RED_DOUBLE) {
-						if(lkw.get() & KeywordsFlags::KEY_STABLE)
-							redundant |= Keywords::RED_DOUBLE;
+				if(!obsolete_minusasterisk) {
+					if((*kvi)[0] == '-') {
+						redundant |= (check & Keywords::RED_STRANGE);
+						continue;
 					}
-					lkw |= KeywordsFlags::KEY_STABLE;
+				}
+				if(keywords_set.find(*kvi) == keywords_set.end()) {
+					// Not found:
+					if(*kvi == "**") {
+						stable = true;
+						if(CARE_USED) {
+							set_arch_used(ARCH_EVERYTHING);
+						}
+						continue;
+					}
+					if(*kvi == "*") {
+						if(kf.havesome(KeywordsFlags::KEY_SOMESTABLE)) {
+							stable = true;
+							if(CARE_USED) {
+								set_arch_used(ARCH_ALIENSTABLE);
+							}
+							continue;
+						}
+					}
+					if(*kvi == "~*") {
+						if(kf.havesome(KeywordsFlags::KEY_TILDESTARMATCH)) {
+							stable = true;
+							if(CARE_USED) {
+								set_arch_used(ARCH_ALIENUNSTABLE);
+							}
+							continue;
+						}
+						redundant |= (check & Keywords::RED_STRANGE);
+						continue;
+					}
 					continue;
 				}
-				if(*kvi == "~" + arch) {
-					set_arch_used(ARCH_TESTING);
-					if(check & Keywords::RED_DOUBLE) {
-						if(lkw.get() & KeywordsFlags::KEY_UNSTABLE)
-							redundant |= Keywords::RED_DOUBLE;
+				// Found:
+				stable = true;
+				if(!(CARE_USED))
+					continue;
+				if((*kvi)[0] == '-') {
+					set_arch_used(ARCH_MINUSASTERISK);
+					continue;
+				}
+				if((*kvi)[0] == '~') {
+					if(*kvi == "~*") {
+						set_arch_used(ARCH_ALIENUNSTABLE);
+						continue;
 					}
-					lkw |= KeywordsFlags::KEY_UNSTABLE;
+					set_arch_used(ARCH_UNSTABLE);
 					continue;
 				}
 				if(*kvi == "*") {
 					set_arch_used(ARCH_ALIENSTABLE);
-					if(check & Keywords::RED_DOUBLE) {
-						if(lkw.get() & KeywordsFlags::KEY_ALIENSTABLE)
-							redundant |= Keywords::RED_DOUBLE;
-					}
-					lkw |= KeywordsFlags::KEY_ALIENSTABLE;
-					continue;
-				}
-				if(*kvi == "~*") {
-					set_arch_used(ARCH_ALIENUNSTABLE);
-					if(check & Keywords::RED_DOUBLE) {
-						if(lkw.get() & KeywordsFlags::KEY_ALIENUNSTABLE)
-							redundant |= Keywords::RED_DOUBLE;
-					}
-					lkw |= KeywordsFlags::KEY_ALIENUNSTABLE;
 					continue;
 				}
 				if(*kvi == "**") {
-					set_arch_used(ARCH_MISSINGKEYWORD);
-					if(check & Keywords::RED_DOUBLE) {
-						if(lkw.get() & KeywordsFlags::KEY_ALIENUNSTABLE)
-							redundant |= Keywords::RED_DOUBLE;
-					}
-					alwaysstable = true;
+					set_arch_used(ARCH_EVERYTHING);
 					continue;
 				}
-				if(*kvi == "-*") {
-					set_arch_used(ARCH_MISSINGKEYWORD);
-					lkw |= KeywordsFlags::KEY_MINUSASTERISK;
-					continue;
-				}
-				if(*kvi == "-" + arch) {
-					if(check & Keywords::RED_DOUBLE) {
-						if(!( lkw.get() & KeywordsFlags::KEY_STABLE))
-							redundant |= Keywords::RED_DOUBLE;
-					}
-					lkw &= ~KeywordsFlags::KEY_STABLE;
-					/* This is no longer supported by portage
-					// The -ARCH is here to *allow* installations:
-					if(oritype & KeywordsFlags::KEY_MINUSKEYWORD) {
-						set_arch_used(ARCH_ALIENSTABLE);
-						lkw |= KeywordsFlags::KEY_MINUSKEYWORD;
-					}
-					*/
-					continue;
-				}
-				if(*kvi == "-~" + arch) {
-					if(check & Keywords::RED_DOUBLE) {
-						if(!( lkw.get() & KeywordsFlags::KEY_UNSTABLE))
-							redundant |= Keywords::RED_DOUBLE;
-					}
-					lkw &= ~KeywordsFlags::KEY_UNSTABLE;
-					continue;
-				}
-				// match alien or strange keywords:
-				// TODO: The '-' is treated here as in old portage, i.e. it does not
-				//       delete a previous entry but might form a "strange match".
-				const char *s = kvi->c_str();
-				if(s[0] == '-') {
-					redundant |= (check & Keywords::RED_STRANGE);
-				}
-				if(!arr) {
-					arr = new vector<string>;
-					*arr = split_string((*i)->get_full_keywords());
-				}
-				if(find(arr->begin(), arr->end(), s) != arr->end())
-				{
-					alwaysstable = true;
-					if(s[0] == '-') { // Strange match
-						set_arch_used(ARCH_ALIENUNSTABLE);
-						redundant |= (check & Keywords::RED_STRANGE);
-					}
-					else if(s[0] != '~') { // ALIEN match
-						set_arch_used(ARCH_ALIENSTABLE);
-					}
-					else { // ~ALIEN match
-						set_arch_used(ARCH_ALIENUNSTABLE);
-						// We do not consider * weaker than ~ALIEN.
-						// Therefore we should set arch_needed = ARCH_ALIENUNSTABLE
-						//    to avoid redundancy tagging.
-						// However, ALIEN is weaker than ~ALIEN, so
-						// we do this only if ALIEN is not stable:
-						if((arch_needed == ARCH_ALIENSTABLE) &&
-							(check & (~redundant) & Keywords::RED_WEAKER))
-						{
-							if(find(arr->begin(), arr->end(), s + 1) == arr->end())
-								arch_needed = ARCH_ALIENUNSTABLE;
-						}
-					}
-				}
-				else if(check & (Keywords::RED_STRANGE | Keywords::RED_MIXED))
-				{
-					if(s[0] == '-') {
-						redundant |= (check & Keywords::RED_STRANGE);
-					}
-					else if(s[0] != '~') {
-						// an non-matching ALIEN keyword need not necessarily be "strange":
-						// it could also simply be too weak because ~ALIEN exists.
-						string testing = "~" + *kvi;
-						if(find(arr->begin(), arr->end(), testing) != arr->end()) {
-							set_arch_used(ARCH_ALIENSTABLE);
-						}
-						else
-							redundant |= (check & Keywords::RED_STRANGE);
-					}
-					else {
-						// an unknown ~ALIEN keyword need not necessarily be "strange":
-						// it could also simply be too strong because ALIEN exists.
-						if(find(arr->begin(), arr->end(), s + 1) != arr->end()) {
-							set_arch_used(ARCH_ALIENUNSTABLE);
-						}
-						else
-							redundant |= (check & Keywords::RED_STRANGE);
-					}
-				}
+				set_arch_used(ARCH_NOTHING);
 			}
-			if(arr)
-				delete arr;
 			if(arch_used > arch_needed)
 				redundant |= (check & Keywords::RED_WEAKER);
-			if(check & Keywords::RED_DOUBLE) {
-				if(sort_uniquify(kv, true))
-					redundant |= Keywords::RED_DOUBLE;
+			if(stable == kf.havesome(KeywordsFlags::KEY_STABLE))
+				redundant |= Keywords::RED_NO_CHANGE;
+			else {
+				if(stable)
+					kf.setbits(KeywordsFlags::KEY_STABLE);
+				else
+					kf.clearbits(KeywordsFlags::KEY_STABLE);
 			}
 		}
-		apply_keywords(**i, lkw.get(), alwaysstable);
-		if(rvalue && (check & Keywords::RED_NO_CHANGE)) {
-			if((i->get() & KeywordsFlags::KEY_ALL) == (oritype & KeywordsFlags::KEY_ALL))
-				redundant |= Keywords::RED_NO_CHANGE;
-		}
+		(*i)->keyflags=kf;
+		i->save_keyflags(Version::SAVEKEY_USER);
 		if(redundant)
 			i->set_redundant(redundant);
 	}
@@ -762,16 +693,22 @@ PortageUserConfig::setStability(Package *p, Keywords::Redundant check) const
 
 /// Set stability according to local m_accepted_keywords
 void
-PortageSettings::setStability(Package *pkg) const
+PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 {
-	Package::iterator t = pkg->begin();
-	for(; t != pkg->end(); ++t) {
-		if(t->get() & m_accepted_keywords)
-		{
-			**t |= KeywordsFlags::KEY_STABLE;
-		}
-		else {
-			**t &= ~KeywordsFlags::KEY_STABLE;
-		}
+	const set<string> *accept_set;
+	Version::SavedKeyIndex ind;
+	if(use_accepted_keywords) {
+		ind = Version::SAVEKEY_ACCEPT;
+		accept_set = &m_accepted_keywords_set;
+	}
+	else {
+		ind = Version::SAVEKEY_ARCH;
+		accept_set = &m_arch_set;
+	}
+	if(pkg->restore_keyflags(ind))
+		return;
+	for(Package::iterator t = pkg->begin(); t != pkg->end(); ++t) {
+		(*t)->set_keyflags(*accept_set, m_obsolete_minusasterisk);
+		(*t)->save_keyflags(ind);
 	}
 }

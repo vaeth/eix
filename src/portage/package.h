@@ -85,9 +85,6 @@ class SlotList : public std::vector<SlotVersions>
 class Package
 	: public eix::ptr_list<Version>
 {
-		/** Which keywords data was saved already? */
-		bool saved_local;
-
 	public:
 		/** True if duplicated versions are found in for this package.
 		 * That means e.g. that version 0.2 is found in two overlays. */
@@ -166,34 +163,34 @@ class Package
 		void addVersion(Version *version)
 		{ addVersionStart(version); addVersionFinalize(version); }
 
-		void save_local()
+		void save_keyflags(Version::SavedKeyIndex i)
 		{
-			if(saved_local)
-				return;
-			for(iterator i = begin(); i != end(); ++i)
-				i->keys_local = i->get();
-			saved_local = true;
+			for(iterator it = begin(); it != end(); ++it)
+				it->save_keyflags(i);
 		}
 
-		bool restore_local()
+		void save_maskflags(Version::SavedMaskIndex i)
 		{
-			if(!saved_local)
-				return false;
-			for(iterator i = begin(); i != end(); ++i)
-				i->set(i->keys_local.get());
+			for(iterator it = begin(); it != end(); ++it)
+				it->save_maskflags(i);
+		}
+
+		bool restore_keyflags(Version::SavedKeyIndex i)
+		{
+			for(iterator it = begin(); it != end(); ++it) {
+				if(!(it->restore_keyflags(i)))
+					return false;
+			}
 			return true;
 		}
 
-		void save_nonlocal()
+		bool restore_maskflags(Version::SavedMaskIndex i)
 		{
-			for(iterator i = begin(); i != end(); ++i)
-				i->keys_nonlocal = i->get();
-		}
-
-		void restore_nonlocal()
-		{
-			for(iterator i = begin(); i != end(); ++i)
-				i->set(i->keys_nonlocal.get());
+			for(iterator it = begin(); it != end(); ++it) {
+				if(!(it->restore_maskflags(i)))
+					return false;
+			}
+			return true;
 		}
 
 		void calculate_slotlist();
@@ -340,7 +337,6 @@ class Package
 			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
 			have_nontrivial_slots = false;
-			saved_local = false;
 #if !defined(NOT_FULL_USE)
 			versions_have_full_use = false;
 #endif

@@ -66,8 +66,8 @@ update_eix_SOURCES = update-eix.cc \
 					 portage/set_stability.h portage/conf/setmask.cc
 
 update_eix_LDADD = database/libdatabase.a \
-				   portage/libportage.a \
 				   portage/conf/libportageconf.a \
+				   portage/libportage.a \
 				   portage/cache/libcache.a \
 				   eixTk/libeixTk.a \
 				   eixrc/libeixrc.a \

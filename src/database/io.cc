@@ -70,8 +70,8 @@ io::read_version(FILE *fp)
 	// read full version string
 	v->m_full = io::read_string(fp);
 
-	// read stability & masking
-	v->m_mask = io::read<Keywords::Type>(Keywords::Typesize, fp);
+	// read masking
+	v->maskflags.set(io::read<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp));
 	v->full_keywords = io::read_string(fp);
 
 	// read primary version part
@@ -101,6 +101,7 @@ io::read_version(FILE *fp)
 	v->overlay_key = io::read<Version::Overlay>(Version::Overlaysize, fp);
 
 	v->set_iuse(io::read_string(fp));
+	//v->save_maskflags(Version::SAVEMASK_FILE);// This is done in package_reader
 	return v;
 }
 
@@ -110,8 +111,8 @@ io::write_version(FILE *fp, const Version *v, bool small)
 	// write m_full string
 	io::write_string(fp, v->m_full);
 
-	// write stability & masking
-	io::write<Keywords::Type>(Keywords::Typesize, fp, v->m_mask);
+	// write masking
+	io::write<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp, v->maskflags.get());
 
 	// write full keywords unless small database is required
 	if(small)

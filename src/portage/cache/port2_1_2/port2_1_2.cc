@@ -133,7 +133,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	// reading slots and stability
 	version->slot = mapper["SLOT"];
 	string keywords = mapper["KEYWORDS"];
-	version->set(m_arch, keywords);
+	version->set_full_keywords(keywords);
 	string iuse = mapper["IUSE"];
 	version->set_iuse(iuse);
 	pkg->addVersion(version);

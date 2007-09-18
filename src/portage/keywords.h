@@ -29,131 +29,183 @@
 #ifndef __STABILITY_H__
 #define __STABILITY_H__
 
+#include <set>
+#include <vector>
+
 #include <eixTk/stringutils.h>
 #include <database/io.h>
-#include <vector>
+
+class MaskFlags {
+	public:
+		typedef io::Char MaskType;
+		static const unsigned short MaskTypesize = io::Charsize;
+		static const MaskType
+			MASK_NONE    = 0x00,
+			MASK_PACKAGE = 0x01,
+			MASK_PROFILE = 0x02,
+			MASK_HARD    = MASK_PACKAGE|MASK_PROFILE,
+			MASK_SYSTEM  = 0x04;
+
+		MaskFlags(MaskType t = MASK_NONE)
+		{ m_mask = t; }
+
+		void set(MaskType t)
+		{ m_mask = t; }
+
+		MaskType get() const
+		{ return m_mask; }
+
+		MaskType getall(MaskType t) const
+		{ return (m_mask & t); }
+
+		bool havesome(MaskType t) const
+		{ return (m_mask & t); }
+
+		bool haveall(MaskType t) const
+		{ return ((m_mask & t) == t); }
+
+		void setbits(MaskType t)
+		{ m_mask |= t; }
+
+		void clearbits(MaskType t)
+		{ m_mask &= ~t; }
+
+		bool isHardMasked() const
+		{ return havesome(MaskFlags::MASK_HARD); }
+		/** @return true if version is masked by profile. */
+		bool isProfileMask() const
+		{ return havesome(MaskFlags::MASK_PROFILE); }
+		/** @return true if version is masked by a package.mask. */
+		bool isPackageMask() const
+		{ return havesome(MaskFlags::MASK_PACKAGE); }
+		/** @return true if version is part of a package that is a system-package. */
+		bool isSystem() const
+		{ return havesome(MaskFlags::MASK_SYSTEM); }
+
+	protected:
+		MaskType m_mask;
+};
 
 class KeywordsFlags {
 	public:
-		typedef io::Short Type;
-		static const unsigned short Typesize = io::Shortsize;
-		static const Type
-			KEY_EMPTY          = 0x0000,
-			KEY_STABLE         = 0x0001, /**<  ARCH  */
-			KEY_UNSTABLE       = 0x0002, /**< ~ARCH  */
-			KEY_ALIENSTABLE    = 0x0004, /**<  ALIEN */
-			KEY_ALIENUNSTABLE  = 0x0008, /**< ~ALIEN */
-			KEY_MINUSKEYWORD   = 0x0010, /**< -ARCH  */
-			KEY_MINUSASTERISK  = 0x0020, /**<  -*    */
-			KEY_ALL            = KEY_STABLE|KEY_UNSTABLE|KEY_ALIENSTABLE|KEY_ALIENUNSTABLE|KEY_MINUSASTERISK|KEY_MINUSKEYWORD,
-			PACKAGE_MASK       = 0x0100,
-			PROFILE_MASK       = 0x0200,
-			SYSTEM_PACKAGE     = 0x0400;
+		typedef io::Char KeyType;
+		static const unsigned short KeyTypesize = io::Charsize;
+		static const KeyType
+			KEY_EMPTY          = 0x00,
+			KEY_STABLE         = 0x01, /**< stabilized */
+			KEY_ARCHSTABLE     = 0x02, /**<  ARCH  */
+			KEY_ARCHUNSTABLE   = 0x04, /**< ~ARCH  */
+			KEY_ALIENSTABLE    = 0x08, /**<  ALIEN */
+			KEY_ALIENUNSTABLE  = 0x10, /**< ~ALIEN */
+			KEY_MINUSKEYWORD   = 0x20, /**< -ARCH  */
+			KEY_MINUSASTERISK  = 0x40, /**<  -*    */
+			KEY_SOMESTABLE     = KEY_ARCHSTABLE|KEY_ALIENSTABLE,
+			KEY_SOMEUNSTABLE   = KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE,
+			KEY_TILDESTARMATCH = KEY_SOMESTABLE|KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE;
 
-	protected:
-		Type m_mask;
+		static KeyType get_keyflags(const std::set<std::string> &accepted_keywords, const std::string &keywords, bool obsolete_minus);
 
-	public:
-		static Type get_type(std::string arch, std::string keywords);
+		KeywordsFlags(KeyType t = KEY_EMPTY)
+		{ m_keyword = t; }
 
-		KeywordsFlags(Type t = KEY_MINUSKEYWORD)
-		{ m_mask = t; }
+		void set(KeyType t)
+		{ m_keyword = t; }
 
-		void set(Type t)
-		{ m_mask = t; }
+		KeyType get() const
+		{ return m_keyword; }
 
-		Type get() const
-		{ return m_mask; }
+		KeyType getall(KeyType t) const
+		{ return (m_keyword & t); }
+
+		bool havesome(KeyType t) const
+		{ return (m_keyword & t); }
+
+		bool haveall(KeyType t) const
+		{ return ((m_keyword & t) == t); }
+
+		void setbits(KeyType t)
+		{ m_keyword |= t; }
+
+		void clearbits(KeyType t)
+		{ m_keyword &= ~t; }
 
 		/** @return true if version is marked stable. */
 		bool isStable() const
-		{ return m_mask & KEY_STABLE; }
+		{ return havesome(KeywordsFlags::KEY_STABLE); }
 		/** @return true if version is unstable. */
 		bool isUnstable() const
-		{ return m_mask & KEY_UNSTABLE; }
+		{ return havesome(KeywordsFlags::KEY_ARCHUNSTABLE); }
 		/** @return true if version is masked by -* keyword. */
 		bool isMinusAsterisk() const
-		{ return m_mask & KEY_MINUSASTERISK; }
+		{ return havesome(KeywordsFlags::KEY_MINUSASTERISK); }
 		/** @return true if version is masked by -keyword. */
 		bool isMinusKeyword() const
-		{ return m_mask & KEY_MINUSKEYWORD; }
+		{ return havesome(KeywordsFlags::KEY_MINUSKEYWORD); }
 		/** @return true if version is masked by ALIENARCH */
 		bool isAlienStable() const
-		{ return m_mask & KEY_ALIENSTABLE; }
+		{ return havesome(KeywordsFlags::KEY_ALIENSTABLE); }
 		/** @return true if version is masked by ~ALIENARCH */
 		bool isAlienUnstable() const
-		{ return m_mask & KEY_ALIENUNSTABLE; }
+		{ return havesome(KeywordsFlags::KEY_ALIENUNSTABLE); }
 
-		bool isHardMasked() const
-		{ return isPackageMask() || isProfileMask(); }
-		/** @return true if version is masked by profile. */
-		bool isProfileMask() const
-		{ return m_mask & PROFILE_MASK; }
-		/** @return true if version is masked by a package.mask. */
-		bool isPackageMask() const
-		{ return m_mask & PACKAGE_MASK; }
-		/** @return true if version is part of a package that is a system-package. */
-		bool isSystem() const
-		{ return m_mask & SYSTEM_PACKAGE; }
-
-		void operator |= (const KeywordsFlags::Type t)
-		{ m_mask |= t; }
-		void operator &= (const KeywordsFlags::Type t)
-		{ m_mask &= t; }
+	protected:
+		KeyType m_keyword;
 };
 
-class Keywords : public KeywordsFlags
+class Keywords
 {
 	public:
 		typedef uint32_t Redundant;
 		static const Redundant
-			RED_NOTHING,       /**< None of the following           */
-			RED_DOUBLE,        /**< Same keyword twice              */
-			RED_DOUBLE_LINE,   /**< Same keyword line twice         */
-			RED_MIXED,         /**< Weaker and stronger keyword     */
-			RED_WEAKER,        /**< Unnecessarily strong keyword    */
-			RED_STRANGE,       /**< Unrecognized OTHERARCH or -OTHERARCH */
-			RED_NO_CHANGE,     /**< No change in keyword status     */
-			RED_MASK,          /**< No change in mask status        */
-			RED_UNMASK,        /**< No change in unmask status      */
-			RED_DOUBLE_MASK,   /**< Double mask entry               */
-			RED_DOUBLE_UNMASK, /**< Double unmask entry             */
-			RED_MINUSASTERISK, /**< Usage of -* in package.keywords */
-			RED_IN_KEYWORDS,   /**< Some entry in package.keywords  */
-			RED_IN_MASK,       /**< Some entry in package.mask      */
-			RED_IN_UNMASK,     /**< Some entry in package.umask     */
-			RED_IN_USE,        /**< Some entry in package.use       */
-			RED_IN_CFLAGS,     /**< Some entry in package.cflags    */
-			RED_DOUBLE_USE,    /**< Double entry in package.use     */
-			RED_DOUBLE_CFLAGS, /**< Double entry in package.cflags  */
-			RED_ALL_KEYWORDS,
-			RED_ALL_MASK,
-			RED_ALL_UNMASK,
-			RED_ALL_MASKSTUFF,
-			RED_ALL_USE,
-			RED_ALL_CFLAGS;
+			RED_NOTHING       = 0x00000, /**< None of the following           */
+			RED_DOUBLE        = 0x00001, /**< Same keyword twice              */
+			RED_DOUBLE_LINE   = 0x00002, /**< Same keyword line twice         */
+			RED_MIXED         = 0x00004, /**< Weaker and stronger keyword     */
+			RED_WEAKER        = 0x00008, /**< Unnecessarily strong keyword    */
+			RED_STRANGE       = 0x00010, /**< Unrecognized OTHERARCH or -OTHERARCH */
+			RED_NO_CHANGE     = 0x00020, /**< No change in keyword status     */
+			RED_MINUSASTERISK = 0x00040, /**< Usage of -* in package.keywords */
+			RED_IN_KEYWORDS   = 0x00080, /**< Some entry in package.keywords  */
+			RED_KEYWORD_CARESET = RED_MIXED|RED_WEAKER,
+			RED_ALL_KEYWORDS  = RED_DOUBLE|RED_DOUBLE_LINE|RED_MIXED|RED_WEAKER|RED_STRANGE|RED_NO_CHANGE|RED_MINUSASTERISK|RED_IN_KEYWORDS,
+			RED_MASK          = 0x00100, /**< No change in mask status        */
+			RED_DOUBLE_MASK   = 0x00200, /**< Double mask entry               */
+			RED_IN_MASK       = 0x00400, /**< Some entry in package.mask      */
+			RED_UNMASK        = 0x00800, /**< No change in unmask status      */
+			RED_DOUBLE_UNMASK = 0x01000, /**< Double unmask entry             */
+			RED_IN_UNMASK     = 0x02000, /**< Some entry in package.umask     */
+			RED_ALL_MASK      = RED_MASK|RED_DOUBLE_MASK|RED_IN_MASK,
+			RED_ALL_UNMASK    = RED_UNMASK|RED_DOUBLE_UNMASK|RED_IN_UNMASK,
+			RED_ALL_MASKSTUFF = RED_ALL_MASK|RED_ALL_UNMASK,
+			RED_DOUBLE_USE    = 0x04000, /**< Double entry in package.use     */
+			RED_IN_USE        = 0x08000, /**< Some entry in package.use       */
+			RED_ALL_USE       = RED_DOUBLE_USE|RED_IN_USE,
+			RED_DOUBLE_CFLAGS = 0x10000, /**< Some entry in package.cflags    */
+			RED_IN_CFLAGS     = 0x20000, /**< Double entry in package.cflags  */
+			RED_ALL_CFLAGS    = RED_DOUBLE_CFLAGS|RED_IN_CFLAGS;
 
-	protected:
-		std::string full_keywords;
-		Redundant redundant;
-		char red_mask; ///< temporary redundant-related stuff during mask testing
-
+		KeywordsFlags keyflags;
+		MaskFlags maskflags;
 	public:
-		Keywords(Type t = KEY_MINUSKEYWORD) : KeywordsFlags(t)
+		Keywords(KeywordsFlags::KeyType k = KeywordsFlags::KEY_EMPTY, MaskFlags::MaskType m = MaskFlags::MASK_NONE) :
+			keyflags(k), maskflags(m)
 		{
 			full_keywords = "";
 			redundant = RED_NOTHING;
 			red_mask = 0x00;
 		}
 
-		void set(Type t)
-		{ KeywordsFlags::set(t); }
-
-		void set(std::string arch, std::string keywords)
-		{ full_keywords = keywords; set(get_type(arch, keywords)); }
+		void set_full_keywords(const std::string &keywords)
+		{ full_keywords = keywords; }
 
 		std::string get_full_keywords() const
 		{ return full_keywords; }
+
+		void set_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
+		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
+
+		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
+		{ return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords, obsolete_minus); }
 
 		void set_redundant(Redundant or_redundant = true)
 		{ redundant |= or_redundant; }
@@ -184,6 +236,12 @@ class Keywords : public KeywordsFlags
 
 		bool wanted_unmasked () const
 		{ return (red_mask & 0x08); }
+
+	protected:
+		std::string full_keywords;
+		Redundant redundant;
+		char red_mask; ///< temporary redundant-related stuff during mask testing
+
 };
 
 enum LocalMode { LOCALMODE_DEFAULT=0, LOCALMODE_LOCAL, LOCALMODE_NONLOCAL };

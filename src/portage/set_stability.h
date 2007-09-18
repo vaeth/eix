@@ -36,34 +36,51 @@
 class SetStability {
 	private:
 		const PortageSettings *portagesettings;
-		bool m_nonlocal, etc_profile;
+		bool m_local, m_filemask_is_profile;
 
 	public:
-		bool use_etc_profile() const
-		{ return etc_profile; }
 
-		SetStability(const PortageSettings *psettings, bool nonlocal, bool etc_profile_usage = true)
+		SetStability(const PortageSettings *psettings, bool localsettings, bool filemask_is_profile = false)
 		{
 			portagesettings = psettings;
-			m_nonlocal = nonlocal;
-			etc_profile = etc_profile_usage;
+			m_local = localsettings;
+			m_filemask_is_profile = filemask_is_profile;
+		}
+
+		SetStability(const SetStability &ori, bool localsettings)
+		{
+			portagesettings = ori.portagesettings;
+			m_local = localsettings;
+			m_filemask_is_profile = ori.m_filemask_is_profile;
+		}
+
+		Version::SavedKeyIndex orikey_index() const
+		{
+			if(m_local)
+				return Version::SAVEKEY_ACCEPT;
+			// This is currently the same, because always use_accapted_keywords in this class
+			return Version::SAVEKEY_ACCEPT;
+		}
+
+		Version::SavedMaskIndex orimask_index() const
+		{
+			if(m_filemask_is_profile)
+				return Version::SAVEMASK_FILE;
+			if(m_local)
+				return Version::SAVEMASK_USERPROFILE;
+			return Version::SAVEMASK_PROFILE;
 		}
 
 		void set_stability(Package &package) const
 		{
-			if(m_nonlocal) {
-				package.restore_nonlocal();
-				return;
+			if(m_local) {
+				portagesettings->user_config->setMasks(&package, m_filemask_is_profile);
+				portagesettings->user_config->setKeyflags(&package);
 			}
-			if(package.restore_local())
-				return;
-			/* Add local keywords */
-			//portagesettings->setStability(&package);
-			if(etc_profile)
-				portagesettings->user_config->setProfileMasks(&package);
-			portagesettings->user_config->setMasks(&package);
-			portagesettings->user_config->setStability(&package);
-			package.save_local();
+			else {
+				portagesettings->setMasks(&package, m_filemask_is_profile);
+				portagesettings->setKeyflags(&package, true);
+			}
 		}
 
 		void set_stability(Category &category) const

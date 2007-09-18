@@ -399,29 +399,25 @@ run_diff_eix(int argc, char *argv[])
 	varpkg_db->check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
-	SetStability set_stability(portagesettings, !local_settings, false);
+	SetStability set_stability_old(portagesettings, local_settings, true);
+	SetStability set_stability_new(portagesettings, local_settings, false);
 	format_for_new.recommend_mode = eixrc.getLocalMode("RECOMMEND_LOCAL_MODE");
-	// Save lot of time: avoid redundant remasking
-	// if(local_settings) {
-	//	if(format_for_new.recommend_mode == LOCALMODE_LOCAL)
-	//		format_for_new.recommend_mode == LOCALMODE_DEFAULT;
-	//}
-	//else {
-	//	if(format_for_new.recommend_mode == LOCALMODE_NONLOCAL)
-	//		format_for_new.recommend_mode == LOCALMODE_DEFAULT;
-	//}
 
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);
-	set_stability.set_stability(old_tree);
+	set_stability_old.set_stability(old_tree);
 
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree);
-	set_stability.set_stability(new_tree);
+	set_stability_new.set_stability(new_tree);
 
 	format_for_new.set_overlay_translations(NULL);
+
 	format_for_old = format_for_new;
-	string eprefix_virtual = eixrc["EPREFIX_VIRTUAL"];;
+	format_for_old.setStabilityDefiner(&set_stability_old);
+	format_for_new.setStabilityDefiner(&set_stability_new);
+
+	string eprefix_virtual = eixrc["EPREFIX_VIRTUAL"];
 	set_virtual(&format_for_old, old_header, eprefix_virtual);
 	set_virtual(&format_for_new, new_header, eprefix_virtual);
 

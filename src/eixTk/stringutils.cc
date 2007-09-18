@@ -182,68 +182,41 @@ join_vector(const vector<string> &vec, string glue)
 	return ret;
 }
 
-inline
 bool
-vec_clean(vector<string>::iterator begin, vector<string>::iterator end, string s)
+resolve_plus_minus(set<string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore, bool warn_plus)
 {
-	bool found = false;
-	vector<string>::iterator it = find(begin, end, s);
-	while(it != end) {
-		*it = "";
-		it = find(begin, end, s);
-		found = true;
-	}
-	return found;
-}
-
-
-string
-resolve_plus_minus(string &v, bool warn_plus, bool order)
-{
-	vector<string> splitted = split_string(v);
-	return join_vector(resolve_plus_minus(splitted, warn_plus, order));
-}
-
-vector<string>&
-resolve_plus_minus(vector<string> &v, bool warn_plus, bool order)
-{
-	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it) {
-		if(it->size() == 0) {
+	bool minusasterisk = false;
+	bool minuskeyword  = false;
+	s.clear();
+	for(vector<string>::const_iterator it = l.begin(); it != l.end(); ++it) {
+		if(it->empty())
 			continue;
-		}
 		if((*it)[0] == '+') {
-			warn_plus && cerr << "keyword begins with '+': " << *it << endl;
-			it->erase(0, 1);
+			warn_plus && cerr << "keyword begins with '+': " << warn_plus << *it << endl;
+			s.insert(it->substr(1));
+			continue;
 		}
 		if((*it)[0] == '-') {
 			if(*it == "-*") {
-				v.erase(v.begin(), ++it);
-				return resolve_plus_minus(v, warn_plus, order);
+				minusasterisk = true;
+				if(!obsolete_minus) {
+					s.clear();
+					continue;
+				}
 			}
-			else if(vec_clean(v.begin(), order ? it : v.end(), it->substr(1))) {
-				*it = "";
+			string key = it->substr(1);
+			if(s.erase(key))
+				continue;
+			if(warnignore) {
+				if(warnignore->find(key) == warnignore->end())
+					minuskeyword = true;
 			}
+			else
+				minuskeyword = true;
 		}
+		s.insert(*it);
 	}
-	vector<string>::iterator it = v.begin();
-	while(it != v.end()) {
-		if(it->size() == 0) {
-			v.erase(it);
-		}
-		else {
-			++it;
-		}
-	}
-	return v;
+	if(warnminus)
+		*warnminus = minuskeyword;
+	return minusasterisk;
 }
-
-/** Make a set from a string-vector. */
-void make_set(set<string> *the_set, const vector<string> &the_list)
-{
-	the_set->clear();
-	for(vector<string>::const_iterator it = the_list.begin();
-		it != the_list.end(); ++it) {
-		the_set->insert(*it);
-	}
-}
-

@@ -1,9 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.9.13
+*eix-0.10.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix stability marking with ~ARCH in ACCEPT_KEYWORDS. Thanks to
-	  Emil Beinroth <emilbeinroth at gmx.net> for reporting.
+	- Rewrite stability setting, fixing thereby a lots of bugs and
+	  inconsistencies. In particular, this fixes ACCEPT_KEYWORDS=~ARCH
+	  and -~ARCH in /etc/portage/package.keywords.
+	  Thanks to Emil Beinroth <emilbeinroth at gmx.net> for reporting.
 	- Fix progress output? Thanks to Mark J. Olah <mjo@cs.unm.edu> for
 	  reporting. See http://bugs.gentoo.org/show_bug.cgi?id=192458
 

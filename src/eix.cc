@@ -551,7 +551,8 @@ run_eix(int argc, char** argv)
 	if(format.recommend_mode == local_mode)
 		format.recommend_mode = LOCALMODE_DEFAULT;
 
-	SetStability stability(&portagesettings, rc_options.ignore_etc_portage, true);
+	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage);
+	format.setStabilityDefiner(&stability);
 
 	query = parse_cli(eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader.begin(), argreader.end());
 

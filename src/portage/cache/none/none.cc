@@ -100,7 +100,7 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 				":\n" << e << endl;
 		}
 
-		version->set(m_arch, ebuild["KEYWORDS"]);
+		version->set_full_keywords(ebuild["KEYWORDS"]);
 		version->slot = ebuild["SLOT"];
 		version->set_iuse(ebuild["IUSE"]);
 		pkg->addVersionFinalize(version);

@@ -119,15 +119,82 @@ std::vector<std::string> split_string(const std::string &str, const char *at = "
  * @param glue glue between the elements. */
 std::string join_vector(const std::vector<std::string> &vec, std::string glue = " ");
 
-/** Make a set from a string-vector. */
-void make_set(std::set<std::string> *the_set, const std::vector<std::string> &the_list);
-
-/** Resolve a vector of -/+ keywords.
+/** Resolve a vector of -/+ keywords and store the result as a set.
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
  * are found, they (and the -keyword) are removed.
- * @param warn_plus  If true, warn if keywords begin with a '+'.
- * @param order      If true, only remove keywords that come before the according -keyword.
- * @return           Reference to cleaned vector (it anyway the same vector you gave us). */
-std::vector<std::string>& resolve_plus_minus(std::vector<std::string> &v, bool warn_plus = true, bool order = true);
+ * @param obsolete_minus   If true do not treat -* special and keep -keyword.
+ * @param warnminus        Set if there was -keyword which did not apply for
+ * @param warnignore
+ * @param warn_plus        Warn if keywords begin with a '+'.
+ * @return true            if -* is contained */
+bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL, bool warn_plus = true);
+
+/** Sort and unique. Return true if there were double entries */
+#ifdef UNIQUE_WORKS
+template<typename T>
+bool sort_uniquify(T &v, bool vector_is_ignored = false)
+{
+	std::sort(v.begin(), v.end());
+	typename T::iterator i = std::unique(v.begin(), v.end());
+	if(i == v.end())
+		return false;
+	if(vector_is_ignored)
+		return true;
+	v.erase(i, v.end());
+	return true;
+}
+
+#else
+
+template<typename T>
+bool sort_uniquify(std::vector<T> &v, bool vector_is_ignored = false)
+{
+	std::set<T> s;
+	for(typename std::vector<T>::const_iterator i = v.begin();
+		i != v.end(); ++i)
+		s.insert(*i);
+	bool r = (s.size() != v.size());
+	if(vector_is_ignored)
+		return r;
+	v.clear();
+	for(typename std::set<T>::const_iterator i = s.begin();
+		i != s.end(); ++i)
+		v.push_back(*i);
+	return r;
+}
+
+#endif
+
+template<typename T>
+void push_backs(std::vector<T> &d, const std::vector<T> &s)
+{
+	for(typename std::vector<T>::const_iterator i = s.begin();
+		i != s.end(); ++i)
+		d.push_back(*i);
+}
+
+/** Make a set from a vector. */
+template<typename T>
+void make_set(std::set<T> &the_set, const std::vector<T> &the_list)
+{
+	the_set.clear();
+	for(typename std::vector<std::string>::const_iterator it = the_list.begin();
+		it != the_list.end(); ++it) {
+		the_set.insert(*it);
+	}
+}
+
+
+/** Make a vector from a set. */
+template<typename T>
+void make_vector(std::vector<T> &the_list, const std::set<T> &the_set)
+{
+	the_list.clear();
+	for(typename std::set<std::string>::const_iterator it = the_set.begin();
+		it != the_set.end(); ++it) {
+		the_list.push_back(*it);
+	}
+}
+
 
 #endif /* __STRINGUTILS_H__ */

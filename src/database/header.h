@@ -61,7 +61,7 @@ class DBHeader {
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 
 		/** Current version of database-format. */
-		static const DBVersion current = 23;
+		static const DBVersion current = 24;
 
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */

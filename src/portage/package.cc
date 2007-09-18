@@ -51,7 +51,7 @@ VersionList::best() const
 	for(const_reverse_iterator ri = rbegin();
 		ri != rend(); ++ri)
 	{
-		if((*ri)->isStable() && (!(*ri)->isHardMasked()))
+		if((*ri)->keyflags.isStable() && (!(*ri)->maskflags.isHardMasked()))
 			return *ri;
 	}
 	return NULL;
@@ -170,13 +170,13 @@ void Package::addVersionFinalize(Version *version)
 				largest_overlay = key;
 		}
 		if(is_system_package) {
-			is_system_package = version->isSystem();
+			is_system_package = version->maskflags.isSystem();
 		}
 	}
 	else {
 		largest_overlay       = key;
 		have_nontrivial_slots = false;
-		is_system_package     = version->isSystem();
+		is_system_package     = version->maskflags.isSystem();
 	}
 	if((version->slot).length())
 		have_nontrivial_slots = true;
@@ -195,7 +195,7 @@ Package::best() const
 		ri != rend();
 		++ri)
 	{
-		if(ri->isStable() && !ri->isHardMasked())
+		if(ri->keyflags.isStable() && !ri->maskflags.isHardMasked())
 		{
 			ret = *ri;
 			break;

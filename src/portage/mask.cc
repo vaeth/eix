@@ -287,9 +287,9 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 					ve->set_redundant(Keywords::RED_DOUBLE_UNMASK);
 				ve->set_wanted_unmasked();
 			}
-			if(ve->isPackageMask())
+			if(ve->maskflags.isPackageMask())
 			{
-				*ve &= ~Keywords::PACKAGE_MASK;
+				ve->maskflags.clearbits(MaskFlags::MASK_PACKAGE);
 				if(check & Keywords::RED_UNMASK)
 					ve->set_was_unmasked();
 			}
@@ -305,26 +305,26 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 					ve->set_redundant(Keywords::RED_DOUBLE_MASK);
 				ve->set_wanted_masked();
 			}
-			if(!ve->isPackageMask())
+			if(!ve->maskflags.isPackageMask())
 			{
-				*ve |= Keywords::PACKAGE_MASK;
+				ve->maskflags.setbits(MaskFlags::MASK_PACKAGE);
 				if(check & Keywords::RED_MASK)
 					ve->set_was_masked();
 			}
 			break;
 		case maskInSystem:
-			if( ve->isSystem() && ve->isProfileMask())	/* Won't change anything cause already masked by profile */
+			if( ve->maskflags.isSystem() && ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
 				break;
 			if( test(ve) )
-				*ve |= Keywords::SYSTEM_PACKAGE;
+				ve->maskflags.setbits(MaskFlags::MASK_SYSTEM);
 			else
-				*ve |= Keywords::PROFILE_MASK;
+				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
 			break;
 		case maskAllowedByProfile:
-			if( ve->isProfileMask())	/* Won't change anything cause already masked by profile */
+			if( ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
 				break;
 			if(!test(ve))
-				*ve |= Keywords::PROFILE_MASK;
+				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
 			break;
 		case maskTypeNone:
 			break;

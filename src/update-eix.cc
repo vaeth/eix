@@ -472,7 +472,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		}
 		short key = dbheader.addOverlay(overlay);
 		cache->setKey(key);
-		cache->setArch(portage_settings["ARCH"]);
+		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
 		INFO("[%i] \"%s\" %s (cache: %s)\n", key, overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
@@ -519,7 +519,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			++p)
 		{
 			portage_settings.setMasks(*p);
-			p->save_nonlocal();
+			p->save_maskflags(Version::SAVEMASK_FILE);
 		}
 	}
 
