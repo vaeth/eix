@@ -6,7 +6,6 @@
 	  inconsistencies. In particular, this fixes ACCEPT_KEYWORDS=~ARCH
 	  and -~ARCH in /etc/portage/package.keywords.
 	  Thanks to Emil Beinroth <emilbeinroth at gmx.net> for reporting.
-	  The influence to option -T is not well tested yet.
 	- Treat leading zeroes of numbers in the portage way, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=192807
 	- Store all version-related numbers as strings. This avoids overflows

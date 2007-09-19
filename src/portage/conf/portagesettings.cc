@@ -488,18 +488,71 @@ bool PortageUserConfig::readKeywords() {
 	return true;
 }
 
-#define CARE_USED \
-	((check & Keywords::RED_KEYWORD_CARESET) && \
-	(m_settings->m_accepted_keywords_set.find(*kvi) == m_settings->m_accepted_keywords_set.end()))
+typedef char ArchUsed;
+static const ArchUsed
+	ARCH_NOTHING        = 0,
+	ARCH_STABLE         = 1,
+	ARCH_UNSTABLE       = 2,
+	ARCH_ALIENSTABLE    = 3,
+	ARCH_ALIENUNSTABLE  = 4,
+	ARCH_EVERYTHING     = 5,
+	ARCH_MINUSASTERISK  = 6; // -* always matches -T WEAKER becuse it is higher than arch_needed default
 
-#define set_arch_used(value) do { \
-	if(arch_used < value) { \
-		if(arch_used != ARCH_NOTHING) \
-			redundant |= (check & Keywords::RED_MIXED); \
-		arch_used = value; \
-	} else \
-		redundant |= (check & Keywords::RED_MIXED); \
-	} while(0)
+static inline ArchUsed
+apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
+	const set<string> &arch_keywords_set, bool obsolete_minus,
+	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut)
+{
+	if(!obsolete_minus) {
+		if(key[0] == '-') {
+			redundant |= (check & Keywords::RED_STRANGE);
+			return ARCH_NOTHING;
+		}
+	}
+	if(keywords_set.find(key) == keywords_set.end()) {
+		// Not found:
+		if(key == "**")
+			return ARCH_EVERYTHING;
+		if(key == "*") {
+			if(kf.havesome(KeywordsFlags::KEY_SOMESTABLE))
+				return ARCH_ALIENSTABLE;
+		}
+		if(key == "~*") {
+			if(kf.havesome(KeywordsFlags::KEY_TILDESTARMATCH))
+				return ARCH_ALIENUNSTABLE;
+			redundant |= (check & Keywords::RED_STRANGE);
+			return ARCH_NOTHING;
+		}
+		// FIXME: We should check here also whether RED_STRANGE is triggered.
+		// However, should e.g. ~amd64 with ARCH=x86 and KEYWORDS="x86" really be strange?
+		return ARCH_NOTHING;
+	}
+	// Found:
+	if(shortcut) {
+		// We do not care what stabilized it, so we speed things up:
+		return ARCH_STABLE;
+	}
+	if(key[0] == '-')
+		return ARCH_MINUSASTERISK;
+	if(key == "*")
+		return ARCH_ALIENSTABLE;
+	if(key == "**")
+		return ARCH_EVERYTHING;
+	if(key[0] == '~') {
+		if(key == "~*")
+			return ARCH_ALIENUNSTABLE;
+		if(arch_keywords_set.find(key) != arch_keywords_set.end())
+			return ARCH_UNSTABLE;
+		if(arch_keywords_set.find(key.substr(1)) != arch_keywords_set.end())
+			return ARCH_UNSTABLE;
+		return ARCH_ALIENUNSTABLE;
+	}
+	if(arch_keywords_set.find(key) != arch_keywords_set.end())
+		return ARCH_STABLE;
+	if(arch_keywords_set.find(string("~") + key) != arch_keywords_set.end())
+		return ARCH_STABLE;
+	return ARCH_ALIENSTABLE;
+}
 
 /// @return true if something from /etc/portage/package.* applied and check involves keywords
 bool
@@ -542,54 +595,38 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 	}
 
+	bool shortcut = !(check & (Keywords::RED_MIXED & Keywords::RED_WEAKER));
 	for(Package::iterator i = p->begin();
-		i != p->end();
-		++i)
+		i != p->end(); ++i)
 	{
-		const char
-			ARCH_NOTHING        = 0,
-			ARCH_UNSTABLE       = 1,
-			ARCH_ALIENSTABLE    = 2,
-			ARCH_ALIENUNSTABLE  = 3,
-			ARCH_EVERYTHING     = 4,
-			ARCH_MINUSASTERISK  = 5; // -* always matches -T WEAKER becuse it is higher than arch_needed default
-		char	arch_needed         = ARCH_EVERYTHING,
-			arch_used           = ARCH_NOTHING;
+		// Calculate ACCEPTED_KEYWORDS state:
+
 		Keywords::Redundant redundant = i->get_redundant();
 		KeywordsFlags kf(i->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
 		(*i)->keyflags=kf;
 		i->save_keyflags(Version::SAVEKEY_ACCEPT);
-		if(check & Keywords::RED_KEYWORD_CARESET)
-		{
-			if(kf.havesome(KeywordsFlags::KEY_STABLE))
-				arch_needed = ARCH_NOTHING;
-			else if(kf.havesome(KeywordsFlags::KEY_ARCHUNSTABLE))
-				arch_needed = ARCH_UNSTABLE;
-			else if(kf.havesome(KeywordsFlags::KEY_ALIENSTABLE))
-				arch_needed = ARCH_ALIENSTABLE;
-			else if(kf.havesome(KeywordsFlags::KEY_ALIENUNSTABLE))
-				arch_needed = ARCH_ALIENUNSTABLE;
-		}
+		bool ori_is_stable = kf.havesome(KeywordsFlags::KEY_STABLE);
+
+		// Were keywords added from /etc/portage/package.keywords?
 		vector<string> &kv = sorted_by_versions[*i];
 		bool calc_lkw = !kv.empty();
 		if(calc_lkw) {
-			if((check & (Keywords::RED_ALL_KEYWORDS &
+			if(kv.size() != m_settings->m_accepted_keywords.size())
+				redundant |= Keywords::RED_IN_KEYWORDS;
+			else if((check & (Keywords::RED_ALL_KEYWORDS &
 				~(Keywords::RED_DOUBLE_LINE | Keywords::RED_IN_KEYWORDS)))
-				== Keywords::RED_NOTHING) {
-				if(kv.size() == m_settings->m_accepted_keywords.size()) {
-					calc_lkw = false;
-				}
-				else
-					redundant |= (check & Keywords::RED_IN_KEYWORDS);
-			}
-			else if(check & Keywords::RED_IN_KEYWORDS) {
-				if(kv.size() != m_settings->m_accepted_keywords.size())
-					redundant |= Keywords::RED_IN_KEYWORDS;
-			}
+				== Keywords::RED_NOTHING)
+				calc_lkw = false;
 		}
+
+		// Keywords were added or we must check for redundancy?
 		if(calc_lkw)
 		{
-			bool stable = false;
+			// Create keywords_set of KEYWORDS from the ebuild
+			set<string> keywords_set;
+			make_set<string>(keywords_set, split_string((*i)->get_full_keywords()));
+
+			// Create kv_set (of now active keywords), possibly testing for double keywords and -*
 			set<string> kv_set;
 			bool minusasterisk;
 			if(check & Keywords::RED_DOUBLE) {
@@ -605,75 +642,67 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk);
 			if(minusasterisk && !obsolete_minusasterisk)
 					redundant |= (check & Keywords::RED_MINUSASTERISK);
-			set<string> keywords_set;
-			make_set<string>(keywords_set, split_string((*i)->get_full_keywords()));
-			for(vector<string>::iterator kvi = kv.begin(); kvi != kv.end(); ++kvi)
+
+			// First apply the original ACCEPTED_KEYWORDS,
+			// removing them from kv_set meanwhile.
+			// The point is that we temporarily disable "check" so that
+			// ACCEPTED_KEYWORDS does not trigger any -T alarm.
+			bool stable = false;
+			for(vector<string>::iterator orikv = m_settings->m_accepted_keywords.begin();
+				orikv != m_settings->m_accepted_keywords.end(); ++orikv)
 			{
-				if(!obsolete_minusasterisk) {
-					if((*kvi)[0] == '-') {
-						redundant |= (check & Keywords::RED_STRANGE);
+				{	// Tests whether keyword is admissible and remove it:
+					set<string>::iterator where = kv_set.find(*orikv);
+					if(where == kv_set.end()) {
+						// The original keyword was removed by -...
 						continue;
 					}
+					kv_set.erase(where);
 				}
-				if(keywords_set.find(*kvi) == keywords_set.end()) {
-					// Not found:
-					if(*kvi == "**") {
-						stable = true;
-						if(CARE_USED) {
-							set_arch_used(ARCH_EVERYTHING);
-						}
-						continue;
-					}
-					if(*kvi == "*") {
-						if(kf.havesome(KeywordsFlags::KEY_SOMESTABLE)) {
-							stable = true;
-							if(CARE_USED) {
-								set_arch_used(ARCH_ALIENSTABLE);
-							}
-							continue;
-						}
-					}
-					if(*kvi == "~*") {
-						if(kf.havesome(KeywordsFlags::KEY_TILDESTARMATCH)) {
-							stable = true;
-							if(CARE_USED) {
-								set_arch_used(ARCH_ALIENUNSTABLE);
-							}
-							continue;
-						}
-						redundant |= (check & Keywords::RED_STRANGE);
-						continue;
-					}
-					continue;
-				}
-				// Found:
-				stable = true;
-				if(!(CARE_USED))
-					continue;
-				if((*kvi)[0] == '-') {
-					set_arch_used(ARCH_MINUSASTERISK);
-					continue;
-				}
-				if((*kvi)[0] == '~') {
-					if(*kvi == "~*") {
-						set_arch_used(ARCH_ALIENUNSTABLE);
-						continue;
-					}
-					set_arch_used(ARCH_UNSTABLE);
-					continue;
-				}
-				if(*kvi == "*") {
-					set_arch_used(ARCH_ALIENSTABLE);
-					continue;
-				}
-				if(*kvi == "**") {
-					set_arch_used(ARCH_EVERYTHING);
-					continue;
-				}
-				set_arch_used(ARCH_NOTHING);
+				if(apply_keyword(*orikv, keywords_set, kf,
+					m_settings->m_accepted_keywords_set,
+					obsolete_minusasterisk,
+					redundant, Keywords::RED_NOTHING, true)
+					!= ARCH_NOTHING)
+					stable = true;
 			}
-			if(arch_used > arch_needed)
-				redundant |= (check & Keywords::RED_WEAKER);
+
+			// Now apply the remaining keywords (i.e. from /etc/portage/package.keywords)
+			ArchUsed arch_used = ARCH_NOTHING;
+			for(set<string>::iterator kvi = kv_set.begin();
+				kvi != kv_set.end(); ++kvi) {
+				ArchUsed arch_curr = apply_keyword(*kvi, keywords_set, kf,
+					m_settings->m_accepted_keywords_set,
+					obsolete_minusasterisk,
+					redundant, check, shortcut);
+				if(arch_curr == ARCH_NOTHING)
+					continue;
+				if(arch_used < arch_curr)
+					arch_used = arch_curr;
+				if(stable || ori_is_stable)
+					redundant |= (check & Keywords::RED_MIXED);
+				stable = true;
+			}
+
+			// Was there a reason to trigger a WEAKER alarm?
+			if(check & Keywords::RED_WEAKER)
+			{
+				ArchUsed arch_needed;
+				if(ori_is_stable)
+					arch_needed = ARCH_NOTHING;
+				else if(kf.havesome(KeywordsFlags::KEY_ARCHUNSTABLE))
+					arch_needed = ARCH_UNSTABLE;
+				else if(kf.havesome(KeywordsFlags::KEY_ALIENSTABLE))
+					arch_needed = ARCH_ALIENSTABLE;
+				else if(kf.havesome(KeywordsFlags::KEY_ALIENUNSTABLE))
+					arch_needed = ARCH_ALIENUNSTABLE;
+				else
+					arch_needed = ARCH_EVERYTHING;
+				if(arch_used > arch_needed)
+					redundant |= Keywords::RED_WEAKER;
+			}
+
+			// If stability was changed, note it and write it back.
 			if(stable == kf.havesome(KeywordsFlags::KEY_STABLE))
 				redundant |= Keywords::RED_NO_CHANGE;
 			else {
@@ -683,6 +712,9 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					kf.clearbits(KeywordsFlags::KEY_STABLE);
 			}
 		}
+
+		// Store the result:
+
 		(*i)->keyflags=kf;
 		i->save_keyflags(Version::SAVEKEY_USER);
 		if(redundant)

@@ -166,7 +166,6 @@ class Keywords
 			RED_NO_CHANGE     = 0x00020, /**< No change in keyword status     */
 			RED_MINUSASTERISK = 0x00040, /**< Usage of -* in package.keywords */
 			RED_IN_KEYWORDS   = 0x00080, /**< Some entry in package.keywords  */
-			RED_KEYWORD_CARESET = RED_MIXED|RED_WEAKER,
 			RED_ALL_KEYWORDS  = RED_DOUBLE|RED_DOUBLE_LINE|RED_MIXED|RED_WEAKER|RED_STRANGE|RED_NO_CHANGE|RED_MINUSASTERISK|RED_IN_KEYWORDS,
 			RED_MASK          = 0x00100, /**< No change in mask status        */
 			RED_DOUBLE_MASK   = 0x00200, /**< Double mask entry               */
