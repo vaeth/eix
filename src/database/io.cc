@@ -64,10 +64,7 @@ io::write_string(FILE *fp, const std::string &str)
 
 LeadNum io::read_LeadNum(FILE *fp)
 {
-	LeadNum n;
-	n.m_lead = io::read<LeadNum::Lead>(LeadNum::Leadsize, fp);
-	n.m_num = io::read<LeadNum::Num>(LeadNum::Numsize, fp);
-	return n;
+	return LeadNum(io::read_string(fp).c_str());
 }
 
 Version *
@@ -120,8 +117,7 @@ io::read_version(FILE *fp)
 void
 io::write_LeadNum(FILE *fp, const LeadNum &n)
 {
-	io::write<LeadNum::Lead>(LeadNum::Leadsize, fp, n.m_lead);
-	io::write<LeadNum::Num>(LeadNum::Numsize, fp, n.m_num);
+	io::write_string(fp, n.represent());
 }
 
 void

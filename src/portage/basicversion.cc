@@ -33,73 +33,84 @@
 
 using namespace std;
 
-inline LeadNum::Num
-LeadNum::strtoNum(const char *str, char **s, int index)
+void
+LeadNum::set_flags()
 {
-#if defined(HAVE_STRTOULL)
-	return LeadNum::Num(strtoull(str, s, index));
-#else
-	return LeadNum::Num(strtol(str, s, index));
-#endif
+	m_is_magic = false;
+	for(std::string::const_iterator it = m_text.begin();
+		it != m_text.end(); ++it) {
+		if(*it != '0') {
+			m_is_zero = false;
+			return;
+		}
+	}
+	m_is_zero = true;
 }
 
 const char *
 LeadNum::parse(const char *str)
 {
-	// count leading zero's
-	Lead i = 0;
-	while(*str == '0') {
-		i++;// Increase before isdigit test, i.e. "0" has 1 leading zero.
-		str++;
+	m_is_magic = false;
+	const char *s = str;
+	bool is_zero = true;
+	char c = *s;
+	while(isdigit(c)) {
+		if(c != '0')
+			is_zero = false;
+		c = *(++s);
 	}
-	m_lead = i;
-	if(!isdigit(*str)) {
-		m_num = 0;
-		return str;
-	}
-
-	// I don't really understand why this wants a "char **", and
-	// not a "const char **"
-	char *tail;
-	m_num = LeadNum::strtoNum(str, &tail, 10);
-	return const_cast<const char *>(tail);
+	m_is_zero = is_zero;
+	m_text = string(str, s);
+	return s;
 }
-
-#if !defined(SAVE_VERSIONTEXT)
-string
-LeadNum::toString() const
-{
-	string ret(m_lead, '0');
-	if(m_num == 0)
-		return ret;
-	stringstream ss;
-	string app;
-	ss << m_num;
-	ss >> app;
-	ret.append(app);
-	return ret;
-}
-#endif
 
 int
 LeadNum::compare(const LeadNum &right) const
 {
 	/* If you modify this, do not forget that the magic value must be
-	*  the smallest one (if necessary you have to test with is_magic()).
-	*  Fortunately, this is automatically the case in the moment without
-	*  any time-consuming case distinctions. */
+	*  the smallest one. */
 
-	// We change the order for speed: usually the leading zeros are equal.
-	if(m_lead == right.m_lead) {
-		if(m_num == right.m_num)
-			return 0;
-		if(m_num > right.m_num)
+	// We change the order for speed: Common cases first, if possible.
+	if(m_is_zero) {
+		if(!right.m_is_zero)
+			return -1;
+		// both values are 0:
+		if(m_is_magic) {
+			if(right.m_is_magic)
+				return 0;
+			return -1;
+		}
+		if(right.m_is_magic)
 			return 1;
+		string::size_type l = size();
+		string::size_type r = right.size();
+		if(l == r)
+			return 0;
+		// "" < "0" < "00" < "000" < ...
+		if(l < r)
+			return -1;
+		return 1;
+	}
+	if(right.m_is_zero)
+		return 1;
+
+	// both values are nonzero:
+	if(leadzero()) {
+		if(right.leadzero())
+			return strcmp(c_str(), right.c_str());
 		return -1;
 	}
-	if(m_lead < right.m_lead)
+	if(right.leadzero())
 		return 1;
-	return -1;
+
+	// both values are without leading zero:
+	string::size_type l = size();
+	string::size_type r = right.size();
+	if(l == r)
+		return strcmp(c_str(), right.c_str());
+	if(l < r)
+		return -1;
+	return 1;
 }
 
 const char *Suffix::suffixlevels[]             = { "alpha", "beta", "pre", "rc", "", "p" };
@@ -119,7 +130,7 @@ Suffix::toString() const
 {
 	string ret = "_";
 	ret.append(suffixlevels[m_suffixlevel]);
-	ret.append(m_suffixnum.toString());
+	ret.append(m_suffixnum.c_str());
 	return ret;
 }
 #endif
@@ -194,7 +205,7 @@ BasicVersion::calc_full()
 			m_full.append(".");
 		}
 		first = false;
-		m_full.append(it->toString());
+		m_full.append(it->c_str());
 	}
 	if(m_primarychar)
 		m_full.append(string(1,m_primarychar));
@@ -204,7 +215,7 @@ BasicVersion::calc_full()
 	}
 	if(!m_gentoorevision.is_magic()) {
 		m_full.append("-r");
-		m_full.append(m_gentoorevision.toString());
+		m_full.append(m_gentoorevision.c_str());
 	}
 	m_full.append(m_garbage);
 }
@@ -341,7 +352,7 @@ BasicVersion::parsePrimary(const char *str)
 	while(*str)
 	{
 		if(*str == '.') {
-			m_primsplit.push_back(LeadNum(buf.c_str()));
+			m_primsplit.push_back(LeadNum(buf));
 			buf.clear();
 		}
 		else if(isdigit(*str))
@@ -352,7 +363,7 @@ BasicVersion::parsePrimary(const char *str)
 	}
 
 	if(!buf.empty())
-		m_primsplit.push_back(LeadNum(buf.c_str()));
+		m_primsplit.push_back(LeadNum(buf));
 
 	if(isalpha(*str))
 		m_primarychar = *str++;

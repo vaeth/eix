@@ -40,18 +40,33 @@
 #include <vector>
 #include <database/io.h>
 
+#include <iostream>
 class LeadNum
 {
 	protected:
-		typedef  io::Long Num;
-		static const unsigned short Numsize = io::Longsize;
-		Num      m_num;
+		std::string m_text;
 
-		typedef  io::Char Lead;
-		static const unsigned short Leadsize = io::Charsize;
-		Lead     m_lead;
+		bool m_is_zero, m_is_magic;
 
-		static Num strtoNum(const char *str, char **s, int index);
+		void set_flags();
+
+		// The following two methods are exclusively meant for io:
+		const char *represent() const
+		{
+			const char *m_magic = "-";
+			if(m_is_magic)
+				return m_magic;
+			return m_text.c_str();
+		}
+		LeadNum(const char *str) : m_text(str)
+		{
+			if(m_text == "-") {
+				set_magic();
+				return;
+			}
+			set_flags();
+		}
+
 	public:
 		friend void    io::write_LeadNum(FILE *fp, const LeadNum &n);
 		friend LeadNum io::read_LeadNum(FILE *fp);
@@ -59,29 +74,37 @@ class LeadNum
 		LeadNum()
 		{ }
 
-		LeadNum(const char *str)
-		{ parse(str); }
+		LeadNum(bool is_magic) : m_is_magic(is_magic)
+		{ m_is_zero = true; m_text.clear(); }
+
+		LeadNum(const std::string &str) : m_text(str)
+		{ set_flags(); }
 
 		const char *parse(const char *str);
 
-		void  clear()
-		{ m_num = 0; m_lead = 0; }
+		void clear()
+		{ m_text.clear(); m_is_zero = true; m_is_magic = false; }
 
 		/// Note that also magic should be zero..
-		bool iszero()
-		{ return (m_num == 0); }
+		bool is_zero() const
+		{ return m_is_zero; }
 
-#if !defined(SAVE_VERSIONTEXT)
-		std::string toString() const;
-#endif
+		bool leadzero() const
+		{ return (*(m_text.c_str()) == '0'); }
 
-		/// set a magic value which is smaller than any allowed value.
+		const char *c_str() const
+		{ return m_text.c_str(); }
+
+		std::string::size_type size() const
+		{ return m_text.size(); }
+
+		/// Set a magic 0 value which is smaller than any allowed value.
 		/// Observe that compare and iszero must be treated correspondingly.
 		void set_magic()
-		{ m_lead = 0xff; m_num = 0; }
+		{ m_is_zero = m_is_magic = true; m_text.clear(); }
 
-		bool is_magic()
-		{ return ((m_lead == 0xff) && (m_num == 0)); }
+		bool is_magic() const
+		{ return m_is_magic; }
 
 		/// Compare two LeadNums.
 		int compare(const LeadNum &right) const;
