@@ -45,7 +45,9 @@ using namespace std;
 std::string
 io::read_string(FILE *fp)
 {
-	io::Short len = io::read<io::Short>(io::Shortsize, fp);
+	io::Short len = io::Short(io::read<io::Char>(io::Charsize, fp));
+	if(len == 0xFF)
+		len = io::Short(io::read<io::Short>(io::Shortsize, fp));
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
 	fread(static_cast<void *>(buf.get()), sizeof(char), len, (fp));
@@ -57,8 +59,13 @@ io::read_string(FILE *fp)
 void
 io::write_string(FILE *fp, const std::string &str)
 {
-	unsigned short len = str.size();
-	io::write<io::Short>(io::Shortsize, fp, len);
+	io::Short len = io::Short(str.size());
+	if(len < 0xFF)
+		io::write<io::Char>(io::Charsize, fp, io::Char(len));
+	else {
+		io::write<io::Char>(io::Charsize, fp, io::Char(0xFF));
+		io::write<io::Short>(io::Shortsize, fp, len);
+	}
 	fwrite(static_cast<const void *>(str.c_str()), sizeof(char), len, (fp));
 }
 

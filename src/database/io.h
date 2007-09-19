@@ -50,7 +50,8 @@ namespace io {
 	const unsigned short Shortsize   = 2;
 	typedef uint32_t Int;
 	const unsigned short Intsize     = 4;
-	typedef uint64_t Long;
+//	Better do not use this (might not work on e.g. 16 bit archs):
+//	typedef uint64_t Long;
 	const unsigned short Longsize    = 8;
 
 	typedef io::Short Catsize;
