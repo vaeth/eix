@@ -62,13 +62,25 @@ io::write_string(FILE *fp, const std::string &str)
 	fwrite(static_cast<const void *>(str.c_str()), sizeof(char), len, (fp));
 }
 
+LeadNum io::read_LeadNum(FILE *fp)
+{
+	LeadNum n;
+	n.m_lead = io::read<LeadNum::Lead>(LeadNum::Leadsize, fp);
+	n.m_num = io::read<LeadNum::Num>(LeadNum::Numsize, fp);
+	return n;
+}
+
 Version *
 io::read_version(FILE *fp)
 {
 	Version *v = new Version();
 
+#if defined(SAVE_VERSIONTEXT)
 	// read full version string
 	v->m_full = io::read_string(fp);
+#else
+	v->m_garbage = io::read_string(fp);
+#endif
 
 	// read masking
 	v->maskflags.set(io::read<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp));
@@ -79,7 +91,7 @@ io::read_version(FILE *fp)
 		i;
 		--i)
 	{
-		v->m_primsplit.push_back(io::read<BasicVersion::Num>(BasicVersion::Numsize, fp));
+		v->m_primsplit.push_back(io::read_LeadNum(fp));
 	}
 
 	v->m_primarychar = io::read<BasicVersion::Primchar>(BasicVersion::Primcharsize, fp);
@@ -90,12 +102,12 @@ io::read_version(FILE *fp)
 		--i)
 	{
 		Suffix::Level l = io::read<Suffix::Level>(Suffix::Levelsize, fp);
-		Suffix::Num   n = io::read<Suffix::Num>  (Suffix::Numsize,  fp);
+		LeadNum       n = io::read_LeadNum(fp);
 		v->m_suffix.push_back(Suffix(l, n));
 	}
 
 	// read m_gentoorevision
-	v->m_gentoorevision= io::read<BasicVersion::Gentoorevision>(BasicVersion::Gentoorevisionsize, fp);
+	v->m_gentoorevision= io::read_LeadNum(fp);
 
 	v->slot = io::read_string(fp);
 	v->overlay_key = io::read<Version::Overlay>(Version::Overlaysize, fp);
@@ -106,10 +118,21 @@ io::read_version(FILE *fp)
 }
 
 void
+io::write_LeadNum(FILE *fp, const LeadNum &n)
+{
+	io::write<LeadNum::Lead>(LeadNum::Leadsize, fp, n.m_lead);
+	io::write<LeadNum::Num>(LeadNum::Numsize, fp, n.m_num);
+}
+
+void
 io::write_version(FILE *fp, const Version *v, bool small)
 {
+#if defined(SAVE_VERSIONTEXT)
 	// write m_full string
 	io::write_string(fp, v->m_full);
+#else
+	io::write_string(fp, v->m_garbage);
+#endif
 
 	// write masking
 	io::write<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp, v->maskflags.get());
@@ -123,11 +146,11 @@ io::write_version(FILE *fp, const Version *v, bool small)
 	// write m_primsplit
 	io::write<io::Char>(io::Charsize, fp, io::Char(v->m_primsplit.size()));
 
-	for(vector<BasicVersion::Num>::const_iterator it = v->m_primsplit.begin();
+	for(vector<LeadNum>::const_iterator it = v->m_primsplit.begin();
 		it != v->m_primsplit.end();
 		++it)
 	{
-		io::write<BasicVersion::Num>(BasicVersion::Numsize, fp, *it);
+		io::write_LeadNum(fp, *it);
 	}
 
 	io::write<BasicVersion::Primchar>(BasicVersion::Primcharsize, fp, v->m_primarychar);
@@ -139,11 +162,11 @@ io::write_version(FILE *fp, const Version *v, bool small)
 		++it)
 	{
 		io::write<Suffix::Level>(Suffix::Levelsize, fp, it->m_suffixlevel);
-		io::write<Suffix::Num>  (Suffix::Numsize,   fp, it->m_suffixnum);
+		io::write_LeadNum(fp, it->m_suffixnum);
 	}
 
 	// write m_gentoorevision
-	io::write<BasicVersion::Gentoorevision>(BasicVersion::Gentoorevisionsize, fp, v->m_gentoorevision);
+	io::write_LeadNum(fp, v->m_gentoorevision);
 
 	io::write_string(fp, v->slot);
 	io::write<Version::Overlay>(Version::Overlaysize, fp, v->overlay_key);

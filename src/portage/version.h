@@ -61,6 +61,16 @@ class Version : public BasicVersion, public Keywords {
 		friend void     io::write_version(FILE *fp, const Version *v, bool small);
 		friend Version *io::read_version(FILE *fp);
 
+		/** If NOT_FULL_USE is defined, this might "falsely" be empty
+		    to save memory. See the comments above NOT_FULL_USE. */
+		std::vector<std::string> iuse;
+
+		typedef io::Short Overlay;
+		static const unsigned short Overlaysize = io::Shortsize;
+
+		/** Key for Portagedb.overlays/overlaylist from header. */
+		Overlay overlay_key;
+
 		typedef std::vector<KeywordsFlags>::size_type SavedKeyIndex;
 		typedef std::vector<MaskFlags>::size_type SavedMaskIndex;
 		static const SavedKeyIndex
@@ -79,16 +89,6 @@ class Version : public BasicVersion, public Keywords {
 		std::vector<bool>          have_saved_keywords;
 		std::vector<MaskFlags>     saved_masks;
 		std::vector<bool>          have_saved_masks;
-
-		/** If NOT_FULL_USE is defined, this might "falsely" be empty
-		    to save memory. See the comments above NOT_FULL_USE. */
-		std::vector<std::string> iuse;
-
-		typedef io::Short Overlay;
-		static const unsigned short Overlaysize = io::Shortsize;
-
-		/** Key for Portagedb.overlays/overlaylist from header. */
-		Overlay overlay_key;
 
 		Version() : overlay_key(0),
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),

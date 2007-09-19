@@ -29,9 +29,77 @@
 #ifndef __BASICVERSION_H__
 #define __BASICVERSION_H__
 
+/* When this is defined, we store additionally the full versiontext
+   in the database.
+   This takes more space, but is faster, of course, and we need not take care
+   to save data in such a way that the versiontext can be constructed
+   (e.g. omitted -r, trailing .0's, trailing garbage). */
+/*#define SAVE_VERSIONTEXT 1*/
+
 #include <string>
 #include <vector>
 #include <database/io.h>
+
+class LeadNum
+{
+	protected:
+		typedef  io::Long Num;
+		static const unsigned short Numsize = io::Longsize;
+		Num      m_num;
+
+		typedef  io::Char Lead;
+		static const unsigned short Leadsize = io::Charsize;
+		Lead     m_lead;
+
+		static Num strtoNum(const char *str, char **s, int index);
+	public:
+		friend void    io::write_LeadNum(FILE *fp, const LeadNum &n);
+		friend LeadNum io::read_LeadNum(FILE *fp);
+
+		LeadNum()
+		{ }
+
+		LeadNum(const char *str)
+		{ parse(str); }
+
+		const char *parse(const char *str);
+
+		void  clear()
+		{ m_num = 0; m_lead = 0; }
+
+		/// Note that also magic should be zero..
+		bool iszero()
+		{ return (m_num == 0); }
+
+#if !defined(SAVE_VERSIONTEXT)
+		std::string toString() const;
+#endif
+
+		/// set a magic value which is smaller than any allowed value.
+		/// Observe that compare and iszero must be treated correspondingly.
+		void set_magic()
+		{ m_lead = 0xff; m_num = 0; }
+
+		bool is_magic()
+		{ return ((m_lead == 0xff) && (m_num == 0)); }
+
+		/// Compare two LeadNums.
+		int compare(const LeadNum &right) const;
+
+		// Short compare-stuff
+		bool operator <  (const LeadNum& right) const
+		{ return (compare(right) < 0); }
+		bool operator >  (const LeadNum& right) const
+		{ return (compare(right) > 0); }
+		bool operator == (const LeadNum& right) const
+		{ return (compare(right) == 0); }
+		bool operator != (const LeadNum& right) const
+		{ return (compare(right) != 0); }
+		bool operator >= (const LeadNum& right) const
+		{ return (compare(right) >= 0); }
+		bool operator <= (const LeadNum& right) const
+		{ return (compare(right) <= 0); }
+};
 
 class Suffix
 {
@@ -40,11 +108,9 @@ class Suffix
 		static const unsigned short Levelsize = io::Charsize;
 		Level m_suffixlevel;
 
-		typedef  io::Long Num;
-		static const unsigned short Numsize = io::Longsize;
-		Num      m_suffixnum;
+		LeadNum m_suffixnum;
 
-		Suffix(Level suffixlevel, Num suffixnum) :
+		Suffix(Level suffixlevel, LeadNum suffixnum) :
 		m_suffixlevel(suffixlevel), m_suffixnum(suffixnum)
 		{ }
 
@@ -71,8 +137,12 @@ class Suffix
 		Level getLevel() const
 		{ return m_suffixlevel; }
 
-		Num getNum() const
+		LeadNum getNum() const
 		{ return m_suffixnum; }
+
+#if !defined(SAVE_VERSIONTEXT)
+		std::string toString() const;
+#endif
 };
 
 /** Parse and represent a portage version-string. */
@@ -81,12 +151,6 @@ class BasicVersion
 	public:
 		typedef io::Char Primchar;
 		static const unsigned short Primcharsize = io::Charsize;
-
-		typedef io::Short Gentoorevision;
-		static const unsigned short Gentoorevisionsize = io::Shortsize;
-
-		typedef io::Long Num;
-		static const unsigned short Numsize = io::Longsize;
 
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
@@ -117,20 +181,38 @@ class BasicVersion
 		int compare(const BasicVersion &basic_version) const;
 
 		// Short compare-stuff
-		bool operator <  (const BasicVersion& right) const;
-		bool operator >  (const BasicVersion& right) const;
-		bool operator == (const BasicVersion& right) const;
-		bool operator != (const BasicVersion& right) const;
-		bool operator >= (const BasicVersion& right) const;
-		bool operator <= (const BasicVersion& right) const;
+		bool operator <  (const BasicVersion& right) const
+		{ return (compare(right) < 0); }
+		bool operator >  (const BasicVersion& right) const
+		{ return (compare(right) > 0); }
+		bool operator == (const BasicVersion& right) const
+		{ return (compare(right) == 0); }
+		bool operator != (const BasicVersion& right) const
+		{ return (compare(right) != 0); }
+		bool operator >= (const BasicVersion& right) const
+		{ return (compare(right) >= 0); }
+		bool operator <= (const BasicVersion& right) const
+		{ return (compare(right) <= 0); }
 
 		// Getters for protected members
 		Primchar getPrimarychar() const
 		{ return m_primarychar; }
-		Gentoorevision getGentooRevision() const
+		LeadNum getGentooRevision() const
 		{ return m_gentoorevision; }
-		const char   *getFull() const
-		{ return m_full.c_str(); }
+
+		const char *getFull() const
+		{
+#if !defined(SAVE_VERSIONTEXT)
+			if(m_full.empty())
+				(const_cast<BasicVersion*>(this))->calc_full();
+#endif
+			return m_full.c_str();
+		}
+
+#if !defined(SAVE_VERSIONTEXT)
+		void calc_full();
+#endif
+
 		const std::vector<Suffix> &getSuffix() const
 		{ return m_suffix; }
 
@@ -151,17 +233,21 @@ class BasicVersion
 		/** The m_full version-string. */
 		std::string            m_full;
 
+#if !defined(SAVE_VERSIONTEXT)
+		/** Garbage at end of version-string */
+		std::string            m_garbage;
+#endif
 		/** Splitted m_primsplit-version. */
-		std::vector<Num>       m_primsplit;
+		std::vector<LeadNum>   m_primsplit;
 
 		/** Optional one-character suffix of m_primsplit. */
-		unsigned char          m_primarychar;
+		Primchar               m_primarychar;
 
 		/** Splitted suffices */
 		std::vector<Suffix>    m_suffix;
 
 		/** The optional gentoo-revision. */
-		Gentoorevision         m_gentoorevision;
+		LeadNum                m_gentoorevision;
 
 		/** Parse the m_primsplit-part of a version-string.
 		 * Return pointer to the end of the m_primsplit-version.

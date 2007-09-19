@@ -39,6 +39,7 @@
 
 class Package;
 class Version;
+class LeadNum;
 class PackageTree;
 class DBHeader;
 
@@ -92,9 +93,14 @@ namespace io {
 	// (without the 0) }
 	void write_string(FILE *fp, const std::string &str);
 
+	/// Read a number with leading zero's
+	LeadNum read_LeadNum(FILE *fp);
 
 	/// Read a version from fp
 	Version *read_version(FILE *fp);
+
+	/// Write a number with leading zero's
+	void write_LeadNum(FILE *fp, const LeadNum &n);
 
 	// Write a version to fp
 	void write_version(FILE *fp, const Version *v, bool small);
