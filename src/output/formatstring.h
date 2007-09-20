@@ -399,16 +399,10 @@ class PrintFormat {
 	private:
 };
 
-class LocalCopy {
-	private:
-		bool is_a_copy;
+class LocalCopy : public PackageSave
+{
 	public:
-		const Package *package;
-
-		LocalCopy(const PrintFormat *fmt, const Package *pkg);
-
-		~LocalCopy()
-		{ if(is_a_copy) delete package; }
+		LocalCopy(const PrintFormat *fmt, Package *pkg);
 };
 
 

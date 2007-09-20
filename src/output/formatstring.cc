@@ -145,23 +145,17 @@ string MarkedList::getMarkedString(const Package &pkg) const
 	return ret;
 }
 
-LocalCopy::LocalCopy(const PrintFormat *fmt, const Package *pkg)
+LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
+	PackageSave((fmt->recommend_mode) == LOCALMODE_DEFAULT ? NULL : pkg)
 {
-	if((fmt->recommend_mode) != LOCALMODE_DEFAULT)
-	{
-		is_a_copy = true;
-		Package *p = new Package(*pkg);
-		if(fmt->recommend_mode == LOCALMODE_LOCAL)
-			fmt->StabilityLocal(*p);
-		else // if (fmt->recommend_mode == LOCALMODE_NONLOCAL)
-			fmt->StabilityNonlocal(*p);
-		package = p;
+	if((fmt->recommend_mode) == LOCALMODE_DEFAULT)
+		return;
+	if(fmt->recommend_mode == LOCALMODE_LOCAL) {
+		fmt->StabilityLocal(*pkg);
+		return;
 	}
-	else
-	{
-		is_a_copy = false;
-		package = pkg;
-	}
+	//(fmt->recommend_mode == LOCALMODE_NONLOCAL)
+	fmt->StabilityNonlocal(*pkg);
 }
 
 string

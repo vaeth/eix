@@ -477,3 +477,28 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 		return 4;
 	return 0;
 }
+
+void
+PackageSave::store(const Package *p)
+{
+	data.clear();
+	if(!p)
+		return;
+	for(Package::const_iterator it = p->begin();
+		it != p->end(); ++it)
+		data[*it] = KeywordSave(*it);
+}
+
+void
+PackageSave::restore(Package *p) const
+{
+	if(data.empty())
+		return;
+	for(Package::iterator it = p->begin();
+		it != p->end(); ++it) {
+		DataType::const_iterator d = data.find(*it);
+		if(d == data.end())
+			continue;
+		d->second.restore(*it);
+	}
+}

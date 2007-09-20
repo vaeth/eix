@@ -34,6 +34,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <portage/version.h>
 #include <portage/instversion.h>
@@ -342,5 +343,18 @@ class Package
 #endif
 		}
 };
+
+class PackageSave {
+		typedef std::map<const Version*, KeywordSave> DataType;
+		DataType data;
+	public:
+		PackageSave(const Package *p = NULL)
+		{ store(p); }
+
+		void store(const Package *p = NULL);
+
+		void restore(Package *p) const;
+};
+
 
 #endif /* __PACKAGE_H__ */

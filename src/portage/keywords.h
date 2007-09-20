@@ -185,7 +185,7 @@ class Keywords
 
 		KeywordsFlags keyflags;
 		MaskFlags maskflags;
-	public:
+
 		Keywords(KeywordsFlags::KeyType k = KeywordsFlags::KEY_EMPTY, MaskFlags::MaskType m = MaskFlags::MASK_NONE) :
 			keyflags(k), maskflags(m)
 		{
@@ -242,6 +242,35 @@ class Keywords
 		char red_mask; ///< temporary redundant-related stuff during mask testing
 
 };
+
+class KeywordSave {
+		KeywordsFlags saved_keyflags;
+		MaskFlags     saved_maskflags;
+		bool have_data;
+	public:
+		KeywordSave(const Keywords *k = NULL)
+		{ store(k); }
+
+		void store(const Keywords *k = NULL)
+		{
+			if(!k) {
+				have_data = false;
+				return;
+			}
+			have_data = true;
+			saved_keyflags  = k->keyflags;
+			saved_maskflags = k->maskflags;
+		}
+
+		void restore(Keywords *k) const
+		{
+			if(!have_data)
+				return;
+			k->keyflags  = saved_keyflags;
+			k->maskflags = saved_maskflags;
+		}
+};
+
 
 enum LocalMode { LOCALMODE_DEFAULT=0, LOCALMODE_LOCAL, LOCALMODE_NONLOCAL };
 

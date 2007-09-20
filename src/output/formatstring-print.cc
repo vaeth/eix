@@ -684,61 +684,91 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "upgrade")
 	{
-		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, true, true))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, true, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "upgradeorinstall")
 	{
-		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, false, true))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, false, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "downgrade")
 	{
-		if(LocalCopy(fmt, entity).package->must_downgrade(fmt->vardb, true))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->must_downgrade(fmt->vardb, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "recommend")
 	{
-		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, true, true))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, true, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "recommendorinstall")
 	{
-		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, false, true))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, false, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestupgrade")
 	{
-		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, true, false))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, true, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestupgradeorinstall")
 	{
-		if(LocalCopy(fmt, entity).package->can_upgrade(fmt->vardb, false, false))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, false, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestdowngrade")
 	{
-		if(LocalCopy(fmt, entity).package->must_downgrade(fmt->vardb, false))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->must_downgrade(fmt->vardb, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestrecommend")
 	{
-		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, true, false))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, true, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestrecommendorinstall")
 	{
-		if(LocalCopy(fmt, entity).package->recommend(fmt->vardb, false, false))
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, false, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
 			return "1";
 		return "";
 	}
@@ -769,37 +799,67 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 	const Package *newer = (static_cast<const Package* const*>(void_entity))[1];
 	if(name == "better")
 	{
-		if(LocalCopy(fmt, newer).package->have_worse(*(LocalCopy(fmt, older).package), true))
+		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
+		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		bool result = newer->have_worse(*older, true);
+		copyolder.restore(const_cast<Package*>(older));
+		copynewer.restore(const_cast<Package*>(newer));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestbetter")
 	{
-		if(LocalCopy(fmt, newer).package->have_worse(*(LocalCopy(fmt, older).package), false))
+		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
+		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		bool result = newer->have_worse(*older, false);
+		copyolder.restore(const_cast<Package*>(older));
+		copynewer.restore(const_cast<Package*>(newer));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "worse")
 	{
-		if(LocalCopy(fmt, older).package->have_worse(*(LocalCopy(fmt, newer).package), true))
+		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
+		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		bool result = older->have_worse(*newer, true);
+		copyolder.restore(const_cast<Package*>(older));
+		copynewer.restore(const_cast<Package*>(newer));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestworse")
 	{
-		if(LocalCopy(fmt, older).package->have_worse(*(LocalCopy(fmt, newer).package), false))
+		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
+		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		bool result = older->have_worse(*newer, false);
+		copyolder.restore(const_cast<Package*>(older));
+		copynewer.restore(const_cast<Package*>(newer));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "differ")
 	{
-		if(LocalCopy(fmt, newer).package->differ(*(LocalCopy(fmt, older).package), true))
+		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
+		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		bool result = newer->differ(*older, true);
+		copyolder.restore(const_cast<Package*>(older));
+		copynewer.restore(const_cast<Package*>(newer));
+		if(result)
 			return "1";
 		return "";
 	}
 	if(name == "bestdiffer")
 	{
-		if(LocalCopy(fmt, newer).package->differ(*(LocalCopy(fmt, older).package), false))
+		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
+		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		bool result = newer->differ(*older, false);
+		copyolder.restore(const_cast<Package*>(older));
+		copynewer.restore(const_cast<Package*>(newer));
+		if(result)
 			return "1";
 		return "";
 	}
