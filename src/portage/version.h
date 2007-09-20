@@ -58,7 +58,7 @@
 class Version : public BasicVersion, public Keywords {
 
 	public:
-		friend void     io::write_version(FILE *fp, const Version *v, bool small);
+		friend void     io::write_version(FILE *fp, const Version *v);
 		friend Version *io::read_version(FILE *fp);
 
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty

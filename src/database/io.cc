@@ -141,10 +141,7 @@ io::write_version(FILE *fp, const Version *v)
 	io::write<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp, v->maskflags.get());
 
 	// write full keywords unless small database is required
-	if(small)
-		io::write_string(fp, "");
-	else
-		io::write_string(fp, v->full_keywords);
+	io::write_string(fp, v->full_keywords);
 
 	// write m_primsplit
 	io::write<io::Char>(io::Charsize, fp, io::Char(v->m_primsplit.size()));
@@ -215,7 +212,7 @@ io::write_package(FILE *fp, const Package &pkg)
 		i != pkg.end();
 		++i)
 	{
-		io::write_version(fp, *i, small);
+		io::write_version(fp, *i);
 	}
 
 	off_t pkg_end = ftello(fp);

@@ -52,14 +52,14 @@ LeadNum::parse(const char *str)
 {
 	m_is_magic = false;
 	const char *s = str;
-	bool is_zero = true;
+	bool iszero = true;
 	char c = *s;
 	while(isdigit(c)) {
 		if(c != '0')
-			is_zero = false;
+			iszero = false;
 		c = *(++s);
 	}
-	m_is_zero = is_zero;
+	m_is_zero = iszero;
 	m_text = string(str, s);
 	return s;
 }

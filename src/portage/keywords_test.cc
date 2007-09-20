@@ -70,10 +70,10 @@ int main()
 			KeywordsFlags::KEY_ARCHUNSTABLE);
 
 	test_keywords("alpha", "alpha",
-			KeywordsFlags::KEY_STABLE);
+			KeywordsFlags::KEY_STABLE|KeywordsFlags::KEY_ARCHSTABLE);
 
 	test_keywords("sh", "~alpha ~amd64 arm hppa -ia64 ~mips s390 sh sparc x86",
-			KeywordsFlags::KEY_STABLE|KeywordsFlags::KEY_ALIENSTABLE|KeywordsFlags::KEY_ALIENUNSTABLE);
+			KeywordsFlags::KEY_STABLE|KeywordsFlags::KEY_ARCHSTABLE|KeywordsFlags::KEY_ALIENSTABLE|KeywordsFlags::KEY_ALIENUNSTABLE);
 
 
 	/// Test keyword-class methods

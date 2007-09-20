@@ -74,7 +74,7 @@ class LeadNum
 		LeadNum()
 		{ }
 
-		LeadNum(bool is_magic) : m_is_magic(is_magic)
+		LeadNum(bool ismagic) : m_is_magic(ismagic)
 		{ m_is_zero = true; m_text.clear(); }
 
 		LeadNum(const std::string &str) : m_text(str)
@@ -146,7 +146,7 @@ class Suffix
 		static const Level suffix_level_count;
 
 	public:
-		friend void     io::write_version(FILE *fp, const Version *v, bool small);
+		friend void     io::write_version(FILE *fp, const Version *v);
 		friend Version *io::read_version(FILE *fp);
 
 		Suffix()

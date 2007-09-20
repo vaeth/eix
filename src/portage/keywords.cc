@@ -61,10 +61,8 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 			}
 		}
 		else {
-			if(!found)
-				m |= KEY_ALIENSTABLE;
-			else if((*it)[0] != '-')
-				m |= KEY_ARCHSTABLE;
+			if((*it)[0] != '-')
+				m |= found ? KEY_ARCHSTABLE : KEY_ALIENSTABLE;
 		}
 	}
 	if(m & KEY_STABLE)
