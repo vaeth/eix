@@ -1318,6 +1318,13 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "TEST_FOR_REDUNDANCY",
 			"true", "Defines whether redundant entries are positive for -T.")
 		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "ACCEPT_KEYWORDS_AS_ARCH",
+			"true", "If true modify ARCH by ACCEPT_KEYWORDS.\n"
+			"This determines which keywords are considered as ARCH or OTHERARCH.")
+		);
+
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_DOUBLE",
 			"some",
@@ -1347,7 +1354,7 @@ eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_STRANGE",
 			"some",
 			"Applies if /etc/portage/package.keywords lists a strange keyword\n"
-			"e.g. UNKNOWNARCH (unknown to the .ebuild) or -OTHERARCH,\n"
+			"e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
 			"for the versions in question.")
 		);
 eixrc.addDefault(

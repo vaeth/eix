@@ -247,6 +247,10 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	push_backs<string>(m_accepted_keywords, split_string((*this)["ACCEPT_KEYWORDS"]));
 	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords, m_obsolete_minusasterisk);
 	make_vector<string>(m_accepted_keywords, m_accepted_keywords_set);
+	if(eixrc.getBool("ACCEPT_KEYWORDS_AS_ARCH"))
+		m_local_arch_set = &m_accepted_keywords_set;
+	else
+		m_local_arch_set = &m_arch_set;
 
 	if(getlocal)
 		user_config = new PortageUserConfig(this, local_profile);
@@ -407,8 +411,7 @@ typedef struct {
 } KeywordsData;
 
 bool PortageUserConfig::readKeywords() {
-	/* Prepend a ~ to every token.
-	 * FIXME: Do we need m_arch_set here or m_accept_keywords_set? */
+	// Prepend a ~ to every token.
 	string fscked_arch;
 	{
 		vector<string> archvec;
@@ -500,9 +503,10 @@ static const ArchUsed
 
 static inline ArchUsed
 apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
-	const set<string> &arch_keywords_set, bool obsolete_minus,
+	const set<string> *arch_set, bool obsolete_minus,
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut)
 {
+	static string tilde("~"), minus("-");
 	if(!obsolete_minus) {
 		if(key[0] == '-') {
 			redundant |= (check & Keywords::RED_STRANGE);
@@ -523,8 +527,36 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 			redundant |= (check & Keywords::RED_STRANGE);
 			return ARCH_NOTHING;
 		}
-		// FIXME: We should check here also whether RED_STRANGE is triggered.
-		// However, should e.g. ~amd64 with ARCH=x86 and KEYWORDS="x86" really be strange?
+		if(!(check & Keywords::RED_STRANGE))
+			return ARCH_NOTHING;
+		const string *s;
+		string r;
+		char have_searched = key[0];
+		if((have_searched == '-') || (have_searched == '~')) {
+			r = key.substr(1); s = &r;
+		}
+		else {
+			s = &key; have_searched = '\0';
+		}
+		if(arch_set->find(key) != arch_set->end())
+			return ARCH_NOTHING;
+		if(arch_set->find(tilde + key) != arch_set->end())
+			return ARCH_NOTHING;
+		if(arch_set->find(minus + key) != arch_set->end())
+			return ARCH_NOTHING;
+		if(have_searched != '\0') {
+			if(keywords_set.find(*s) != keywords_set.end())
+				return ARCH_NOTHING;
+		}
+		if(have_searched != '~') {
+			if(keywords_set.find(tilde + *s) != keywords_set.end())
+				return ARCH_NOTHING;
+		}
+		if(have_searched != '-') {
+			if(keywords_set.find(minus + *s) != keywords_set.end())
+				return ARCH_NOTHING;
+		}
+		redundant |= Keywords::RED_STRANGE;
 		return ARCH_NOTHING;
 	}
 	// Found:
@@ -541,15 +573,15 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 	if(key[0] == '~') {
 		if(key == "~*")
 			return ARCH_ALIENUNSTABLE;
-		if(arch_keywords_set.find(key) != arch_keywords_set.end())
+		if(arch_set->find(key) != arch_set->end())
 			return ARCH_UNSTABLE;
-		if(arch_keywords_set.find(key.substr(1)) != arch_keywords_set.end())
+		if(arch_set->find(key.substr(1)) != arch_set->end())
 			return ARCH_UNSTABLE;
 		return ARCH_ALIENUNSTABLE;
 	}
-	if(arch_keywords_set.find(key) != arch_keywords_set.end())
+	if(arch_set->find(key) != arch_set->end())
 		return ARCH_STABLE;
-	if(arch_keywords_set.find(string("~") + key) != arch_keywords_set.end())
+	if(arch_set->find(tilde + key) != arch_set->end())
 		return ARCH_STABLE;
 	return ARCH_ALIENSTABLE;
 }
@@ -599,7 +631,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	for(Package::iterator i = p->begin();
 		i != p->end(); ++i)
 	{
-		// Calculate ACCEPTED_KEYWORDS state:
+		// Calculate ACCEPT_KEYWORDS state:
 
 		Keywords::Redundant redundant = i->get_redundant();
 		KeywordsFlags kf(i->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
@@ -643,10 +675,10 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			if(minusasterisk && !obsolete_minusasterisk)
 					redundant |= (check & Keywords::RED_MINUSASTERISK);
 
-			// First apply the original ACCEPTED_KEYWORDS,
+			// First apply the original ACCEPT_KEYWORDS,
 			// removing them from kv_set meanwhile.
 			// The point is that we temporarily disable "check" so that
-			// ACCEPTED_KEYWORDS does not trigger any -T alarm.
+			// ACCEPT_KEYWORDS does not trigger any -T alarm.
 			bool stable = false;
 			for(vector<string>::iterator orikv = m_settings->m_accepted_keywords.begin();
 				orikv != m_settings->m_accepted_keywords.end(); ++orikv)
@@ -660,7 +692,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					kv_set.erase(where);
 				}
 				if(apply_keyword(*orikv, keywords_set, kf,
-					m_settings->m_accepted_keywords_set,
+					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
 					redundant, Keywords::RED_NOTHING, true)
 					!= ARCH_NOTHING)
@@ -672,7 +704,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			for(set<string>::iterator kvi = kv_set.begin();
 				kvi != kv_set.end(); ++kvi) {
 				ArchUsed arch_curr = apply_keyword(*kvi, keywords_set, kf,
-					m_settings->m_accepted_keywords_set,
+					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
 					redundant, check, shortcut);
 				if(arch_curr == ARCH_NOTHING)
@@ -723,7 +755,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	return rvalue;
 }
 
-/// Set stability according to local m_accepted_keywords
+/// Set stability according to arch or local ACCEPT_KEYWORDS
 void
 PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 {
@@ -735,7 +767,7 @@ PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 	}
 	else {
 		ind = Version::SAVEKEY_ARCH;
-		accept_set = &m_arch_set;
+		accept_set = m_local_arch_set;
 	}
 	if(pkg->restore_keyflags(ind))
 		return;

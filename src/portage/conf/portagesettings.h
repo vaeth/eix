@@ -129,7 +129,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
 		std::vector<std::string> m_accepted_keywords;
-		std::set<std::string>    m_accepted_keywords_set, m_arch_set;
+		std::set<std::string>    m_accepted_keywords_set, m_arch_set,
+		                        *m_local_arch_set;
 
 		/** Your cascading profile, excluding local settings */
 		CascadingProfile  *profile;
