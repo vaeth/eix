@@ -527,8 +527,15 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 			redundant |= (check & Keywords::RED_STRANGE);
 			return ARCH_NOTHING;
 		}
+
+		// Let us now check whether we trigger RED_STRANGE.
+		// Since this test takes time, we check first whether the
+		// result is required at all. Otherwise, we are done already:
 		if(!(check & Keywords::RED_STRANGE))
 			return ARCH_NOTHING;
+
+		// Let s point to the "blank" keyword (without -/~)
+		// have_searched is the "flag" which we have already tested.
 		const string *s;
 		string r;
 		char have_searched = key[0];
@@ -538,12 +545,17 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 		else {
 			s = &key; have_searched = '\0';
 		}
-		if(arch_set->find(key) != arch_set->end())
+
+		// Is the "blank" keyword in arch_set (possibly with -/~)?
+		if(arch_set->find(*s) != arch_set->end())
 			return ARCH_NOTHING;
-		if(arch_set->find(tilde + key) != arch_set->end())
+		if(arch_set->find(tilde + *s) != arch_set->end())
 			return ARCH_NOTHING;
-		if(arch_set->find(minus + key) != arch_set->end())
+		if(arch_set->find(minus + *s) != arch_set->end())
 			return ARCH_NOTHING;
+
+		// Is the "blank" keyword in KEYWORDS (possibly with -/~)?
+		// (We can avoid the test which already has failed...)
 		if(have_searched != '\0') {
 			if(keywords_set.find(*s) != keywords_set.end())
 				return ARCH_NOTHING;
@@ -556,6 +568,8 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 			if(keywords_set.find(minus + *s) != keywords_set.end())
 				return ARCH_NOTHING;
 		}
+
+		// None of the above tests succeeded, so have a strange key:
 		redundant |= Keywords::RED_STRANGE;
 		return ARCH_NOTHING;
 	}
@@ -564,21 +578,27 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 		// We do not care what stabilized it, so we speed things up:
 		return ARCH_STABLE;
 	}
-	if(key[0] == '-')
-		return ARCH_MINUSASTERISK;
-	if(key == "*")
-		return ARCH_ALIENSTABLE;
-	if(key == "**")
-		return ARCH_EVERYTHING;
 	if(key[0] == '~') {
+		// Usually, we have ARCH_UNSTABLE, but there are exceptions.
+		// First, test special case:
 		if(key == "~*")
 			return ARCH_ALIENUNSTABLE;
+		// We have an ARCH_UNSTABLE if key is in arch (with or without ~)
 		if(arch_set->find(key) != arch_set->end())
 			return ARCH_UNSTABLE;
 		if(arch_set->find(key.substr(1)) != arch_set->end())
 			return ARCH_UNSTABLE;
 		return ARCH_ALIENUNSTABLE;
 	}
+	// Usually, we have ARCH_STABLE, but there are exceptions.
+	// First, test special cases:
+	if(key[0] == '-')
+		return ARCH_MINUSASTERISK;
+	if(key == "*")
+		return ARCH_ALIENSTABLE;
+	if(key == "**")
+		return ARCH_EVERYTHING;
+	// We have an ARCH_STABLE if key is in arch (with or without ~)
 	if(arch_set->find(key) != arch_set->end())
 		return ARCH_STABLE;
 	if(arch_set->find(tilde + key) != arch_set->end())
