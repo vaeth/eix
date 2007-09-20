@@ -57,7 +57,7 @@ using namespace std;
 
 char *program_name = NULL;
 void sig_handler(int sig);
-void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify, const vector<string> &exclude_labels);
+void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels);
 
 class Permissions {
 	private:
@@ -427,7 +427,6 @@ run_update_eix(int argc, char *argv[])
 	int ret = 0;
 	try {
 		update(outputfile.c_str(), table, portage_settings,
-			eixrc.getBool("SMALL_EIX_DATABASE"),
 			permissions.will_modify(), excluded_overlays);
 	} catch(ExBasic &e)
 	{
@@ -450,7 +449,7 @@ error_callback(const char *fmt, ...)
 }
 
 void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool small, bool will_modify, const vector<string> &exclude_labels)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels)
 {
 	DBHeader dbheader;
 	vector<string> *categories = portage_settings.getCategories();
@@ -532,7 +531,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	dbheader.size = package_tree.countCategories();
 
 	io::write_header(database_stream, dbheader);
-	io::write_packagetree(database_stream, package_tree, small);
+	io::write_packagetree(database_stream, package_tree);
 
 	fclose(database_stream);
 

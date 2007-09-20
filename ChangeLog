@@ -2,12 +2,13 @@
 
 *eix-0.10.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Rewrite stability setting, fixing thereby a lots of bugs and
+	- Rewrite stability setting, fixing thereby a lot of bugs and
 	  inconsistencies. In particular, this fixes ACCEPT_KEYWORDS=~ARCH
-	  and -~ARCH in /etc/portage/package.keywords.
-	  Thanks to Emil Beinroth <emilbeinroth at gmx.net> for reporting.
-	- Treat leading zeroes of numbers in the portage way, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=192807
+	  and -~ARCH in /etc/portage/package.keywords (thanks to
+	  Emil Beinroth <emilbeinroth at gmx.net> for reporting).
+	  This also fixes problems with several ARCHes in ACCEPT_KEYWORDS.
+	- Treat leading zeroes of version-related numbers in the portage way,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=192807
 	- Store all version-related numbers as strings. This avoids overflows
 	  and actually saves space and (for the new comparison) even time.
 	- Store string-length more efficiently.
@@ -17,7 +18,8 @@
 	      They have to be recalculated at run-time anyway.
 	  However, the profile-mask/system-packages flags are still saved for
 	  treatment with diff-eix.
-	- Fix progress output? Thanks to Mark J. Olah <mjo@cs.unm.edu> for
+	- Due to (b) above, the SMALL_EIX_DATABASE variable was canceled.
+	- Fix progress output. Thanks to Mark J. Olah <mjo@cs.unm.edu> for
 	  reporting. See http://bugs.gentoo.org/show_bug.cgi?id=192458
 
 *eix-0.9.12

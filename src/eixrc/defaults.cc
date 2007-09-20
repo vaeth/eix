@@ -1070,11 +1070,6 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::BOOLEAN, "SMALL_EIX_DATABASE",
-			"false", "Keep database small at the cost of never honoring keywords of other ARCH")
-		);
-
-eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DEFAULT_IS_OR",
 			"false", "Whether default concatenation of queries is -o (or) or -a (and)")
 		);

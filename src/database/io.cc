@@ -128,7 +128,7 @@ io::write_LeadNum(FILE *fp, const LeadNum &n)
 }
 
 void
-io::write_version(FILE *fp, const Version *v, bool small)
+io::write_version(FILE *fp, const Version *v)
 {
 #if defined(SAVE_VERSIONTEXT)
 	// write m_full string
@@ -192,7 +192,7 @@ io::write_category_header(FILE *fp, const std::string &name, io::Treesize size)
 
 
 void
-io::write_package(FILE *fp, const Package &pkg, bool small)
+io::write_package(FILE *fp, const Package &pkg)
 {
 	off_t offset_position = ftello(fp);
 	fseek(fp, PackageReader::Offsetsize, SEEK_CUR);
@@ -254,7 +254,7 @@ io::read_header(FILE *fp, DBHeader &hdr)
 }
 
 void
-io::write_packagetree(FILE *fp, const PackageTree &tree, bool small)
+io::write_packagetree(FILE *fp, const PackageTree &tree)
 {
 	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
 	{
@@ -266,7 +266,7 @@ io::write_packagetree(FILE *fp, const PackageTree &tree, bool small)
 			++p)
 		{
 			// write package to fp
-			io::write_package(fp, **p, small);
+			io::write_package(fp, **p);
 		}
 	}
 }

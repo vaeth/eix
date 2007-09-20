@@ -1202,11 +1202,6 @@ This has the advantage that it takes one character less than braces and
 thus makes listings of many versions shorter.
 
 .TP
-.BR SMALL_EIX_DATABASE "  " (true / false)
-Keep database small at the cost of never honoring keywords of other ARCH.
-Only set this to true if you really must save disk space.
-
-.TP
 .BR DUP_PACKAGES_ONLY_OVERLAYS "  " (true / false)
 Defines whether duplicate package checks occur only among overlays, i.e. a
 package is only considered as duplicate if it occurs in at least two

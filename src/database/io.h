@@ -104,7 +104,7 @@ namespace io {
 	void write_LeadNum(FILE *fp, const LeadNum &n);
 
 	// Write a version to fp
-	void write_version(FILE *fp, const Version *v, bool small);
+	void write_version(FILE *fp, const Version *v);
 
 
 	// Read a category-header from fp
@@ -115,13 +115,12 @@ namespace io {
 
 
 	// Write package to stream
-	void write_package(FILE *fp, const Package &pkg, bool small);
-
+	void write_package(FILE *fp, const Package &pkg);
 
 	void write_header(FILE *fp, const DBHeader &hdr);
 	void read_header(FILE *fp, DBHeader &hdr);
 
-	void write_packagetree(FILE *fp, const PackageTree &pkg, bool small);
+	void write_packagetree(FILE *fp, const PackageTree &pkg);
 	void read_packagetree(FILE *fp, io::Treesize size, PackageTree &tree);
 }
 
