@@ -21,6 +21,7 @@
 	- Due to (b) above, the SMALL_EIX_DATABASE variable was canceled.
 	- Fix progress output. Thanks to Mark J. Olah <mjo@cs.unm.edu> for
 	  reporting. See http://bugs.gentoo.org/show_bug.cgi?id=192458
+	- Fix http://bugs.gentoo.org/show_bug.cgi?id=192707
 
 *eix-0.9.12
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

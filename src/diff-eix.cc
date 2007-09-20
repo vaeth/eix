@@ -61,7 +61,7 @@
 #define VAR_DB_PKG "/var/db/pkg/"
 
 
-#define INFO(...) fprintf(stderr, __VA_ARGS__)
+#define INFO(...) printf(__VA_ARGS__)
 
 using namespace std;
 
