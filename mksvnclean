@@ -14,6 +14,5 @@ if [ -e Makefile ]; then
 fi
 rm -vrf build config
 rm -vf aclocal.m4 configure config.h.in~
-find -name "Makefile.in" -print0 | xargs -0 -r -- rm -v --
-rm -i svn-commit*.tmp
+find . '(' -name 'Makefile.in' -o -name 'svn-commit*.tmp' -o -name '*.rpo' ')' -delete
 

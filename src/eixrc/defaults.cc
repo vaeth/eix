@@ -1153,6 +1153,12 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "ALWAYS_ACCEPT_KEYWORDS",
+			"false", "If true, ACCEPT_KEYWORDS is used even without LOCAL_PORTAGE_CONFIG,\n"
+			"e.g. to determine the \"default\" stability.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "UPGRADE_LOCAL_MODE",
 			"", "if +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false.")
 		);

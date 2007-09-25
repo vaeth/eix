@@ -33,8 +33,6 @@
 #include <eixTk/sysutils.h>
 #include <portage/basicversion.h>
 #include <portage/package.h>
-#include <output/formatstring.h>
-#include <output/formatstring-print.h>
 #include <database/header.h>
 
 #include <dirent.h>

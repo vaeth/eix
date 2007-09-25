@@ -130,3 +130,7 @@ int main()
 	}
 	return 0;
 }
+
+#if defined(INSTANTIATE_TEMPLATES)
+template class vector<BasicVersion>;
+#endif

@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.10.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce ALWAYS_ACCEPT_KEYWORDS and let it default to "false" to
+	  imitate the behavior of <eix-0.10.0 for ~ARCH in ACCEPT_KEYWORDS,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=193719
+	- Improve internal treatment of SetStability.
+
 *eix-0.10.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Rewrite stability setting, fixing thereby a lot of bugs and

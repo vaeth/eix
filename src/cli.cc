@@ -122,29 +122,29 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			case O_UPGRADE_NONLOCAL:
 				  test->Upgrade(LOCALMODE_NONLOCAL);
 				  break;
-			case O_STABLE_DEFAULT: test->StabilityDefault(PackageTest::STABLE_FULL);
+			case O_STABLE_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_FULL);
 				  break;
-			case O_TESTING_DEFAULT: test->StabilityDefault(PackageTest::STABLE_TESTING);
+			case O_TESTING_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_TESTING);
 				  break;
-			case O_NONMASKED_DEFAULT: test->StabilityDefault(PackageTest::STABLE_NONMASKED);
+			case O_NONMASKED_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_NONMASKED);
 				  break;
-			case O_SYSTEM_DEFAULT: test->StabilityDefault(PackageTest::STABLE_SYSTEM);
+			case O_SYSTEM_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_SYSTEM);
 				  break;
-			case O_STABLE_LOCAL: test->StabilityLocal(PackageTest::STABLE_FULL);
+			case O_STABLE_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_FULL);
 				  break;
-			case O_TESTING_LOCAL: test->StabilityLocal(PackageTest::STABLE_TESTING);
+			case O_TESTING_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_TESTING);
 				  break;
-			case O_NONMASKED_LOCAL: test->StabilityLocal(PackageTest::STABLE_NONMASKED);
+			case O_NONMASKED_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_NONMASKED);
 				  break;
-			case O_SYSTEM_LOCAL: test->StabilityLocal(PackageTest::STABLE_SYSTEM);
+			case O_SYSTEM_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_SYSTEM);
 				  break;
-			case O_STABLE_NONLOCAL: test->StabilityNonlocal(PackageTest::STABLE_FULL);
+			case O_STABLE_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_FULL);
 				  break;
-			case O_TESTING_NONLOCAL: test->StabilityNonlocal(PackageTest::STABLE_TESTING);
+			case O_TESTING_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_TESTING);
 				  break;
-			case O_NONMASKED_NONLOCAL: test->StabilityNonlocal(PackageTest::STABLE_NONMASKED);
+			case O_NONMASKED_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_NONMASKED);
 				  break;
-			case O_SYSTEM_NONLOCAL: test->StabilityNonlocal(PackageTest::STABLE_SYSTEM);
+			case O_SYSTEM_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_SYSTEM);
 				  break;
 			case O_OVERLAY:
 				  if(optional_increase(arg, end)) {

@@ -239,42 +239,38 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	bool need_color = !(fmt->no_color);
 	string mask_text, keyword_text;
 
-	Version::SavedMaskIndex orimask_i = fmt->orimask_index;
-	if(!version->have_saved_masks[orimask_i]) {
-		orimask_i = Version::SAVEMASK_FILE;
-		if(!version->have_saved_masks[orimask_i]) {
-			throw ExBasic("internal error: nonlocal mask %d/%d is read without being stored", int(fmt->orimask_index), int(orimask_i));
-		}
-	}
-	MaskFlags orimask(version->saved_masks[orimask_i]),
-		newmask(version->maskflags);
-	if(orimask.isHardMasked()) {
+	MaskFlags currmask(version->maskflags);
+	KeywordsFlags currkey(version->keyflags);
+	MaskFlags wasmask;
+	KeywordsFlags waskey;
+	fmt->stability->calc_version_flags(false, wasmask, waskey, version, package);
+	if(wasmask.isHardMasked()) {
 		if( need_color && fmt->color_original ) {
 			need_color = false;
 			cout << fmt->color_masked;
 		}
-		if(newmask.isProfileMask()) {
+		if(currmask.isProfileMask()) {
 			if( need_color ) {
 				need_color = false;
 				cout << fmt->color_masked;
 			}
 			mask_text = fmt->tag_for_profile;
 		}
-		else if(newmask.isPackageMask()) {
+		else if(currmask.isPackageMask()) {
 			if( need_color ) {
 				need_color = false;
 				cout << fmt->color_masked;
 			}
 			mask_text = fmt->tag_for_masked;
 		}
-		else if(orimask.isProfileMask()) {
+		else if(wasmask.isProfileMask()) {
 			mask_text = fmt->tag_for_ex_profile;
 		}
 		else {
 			mask_text = fmt->tag_for_ex_masked;
 		}
 	}
-	else if(newmask.isHardMasked()) {
+	else if(currmask.isHardMasked()) {
 		if( need_color && fmt->color_local_mask ) {
 			need_color = false;
 			cout << fmt->color_masked;
@@ -282,42 +278,37 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		mask_text = fmt->tag_for_locally_masked;
 	}
 
-	if(!version->have_saved_keywords[fmt->orikey_index]) {
-		throw ExBasic("internal error: nonlocal key is read without being stored");
-	}
-	KeywordsFlags orikey(version->saved_keywords[fmt->orikey_index]),
-		newkey(version->keyflags);
-	if(newkey.isStable()) {
+	if(currkey.isStable()) {
 		if( need_color && !(fmt->color_original) ) {
 			need_color = false;
 			cout << fmt->color_stable;
 		}
-		if (orikey.isStable()) {
+		if (waskey.isStable()) {
 			if( need_color )
 				cout << fmt->color_stable;
 			keyword_text = fmt->tag_for_stable;
 		}
-		else if (orikey.isUnstable()) {
+		else if (waskey.isUnstable()) {
 			if( need_color )
 				cout << fmt->color_unstable;
 			keyword_text = fmt->tag_for_ex_unstable;
 		}
-		else if (orikey.isMinusKeyword()) {
+		else if (waskey.isMinusKeyword()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_minus_keyword;
 		}
-		else if (orikey.isAlienStable()) {
+		else if (waskey.isAlienStable()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_alien_stable;
 		}
-		else if (orikey.isAlienUnstable()) {
+		else if (waskey.isAlienUnstable()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_alien_unstable;
 		}
-		else if (orikey.isMinusAsterisk()) {
+		else if (waskey.isMinusAsterisk()) {
 			if( need_color )
 				cout << fmt->color_masked;
 			keyword_text = fmt->tag_for_ex_minus_asterisk;
@@ -328,27 +319,27 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			keyword_text = fmt->tag_for_ex_missing_keyword;
 		}
 	}
-	else if (newkey.isUnstable()) {
+	else if (currkey.isUnstable()) {
 		if( need_color )
 			cout << fmt->color_unstable;
 		keyword_text = fmt->tag_for_unstable;
 	}
-	else if (newkey.isMinusKeyword()) {
+	else if (currkey.isMinusKeyword()) {
 		if( need_color )
 			cout << fmt->color_masked;
 		keyword_text = fmt->tag_for_minus_keyword;
 	}
-	else if (newkey.isAlienStable()) {
+	else if (currkey.isAlienStable()) {
 		if( need_color )
 			cout << fmt->color_masked;
 		keyword_text = fmt->tag_for_alien_stable;
 	}
-	else if (newkey.isAlienUnstable()) {
+	else if (currkey.isAlienUnstable()) {
 		if( need_color )
 			cout << fmt->color_masked;
 		keyword_text = fmt->tag_for_alien_unstable;
 	}
-	else if (newkey.isMinusAsterisk()) {
+	else if (currkey.isMinusAsterisk()) {
 		if( need_color )
 			cout << fmt->color_masked;
 		keyword_text = fmt->tag_for_minus_asterisk;

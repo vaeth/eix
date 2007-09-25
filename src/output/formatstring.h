@@ -199,7 +199,7 @@ class PrintFormat {
 		std::vector<bool> *overlay_used;
 		bool          *some_overlay_used;
 		MarkedList    *marked_list;
-		/* The following two variables are actually a hack:
+		/* The following four variables are actually a hack:
 		   This is only set temporarily during printing to avoid
 		   passing this argument through all sub-functions.
 		   We do it that way since we do not want to set it "globally":
@@ -207,9 +207,7 @@ class PrintFormat {
 		DBHeader      *header;
 		VarDbPkg      *vardb;
 		PortageSettings *portagesettings;
-		const SetStability *stability, *stability_local, *stability_nonlocal;
-		Version::SavedKeyIndex orikey_index;
-		Version::SavedMaskIndex orimask_index;
+		const SetStability  *stability;
 
 		/* return true if something was actually printed */
 		bool recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root);
@@ -266,24 +264,6 @@ class PrintFormat {
 			marked_list = NULL;
 			vardb = NULL;
 			portagesettings = NULL;
-			stability = NULL;
-			stability_local = NULL;
-			stability_nonlocal = NULL;
-		}
-
-		~PrintFormat()
-		{ remove_stability(); }
-
-		void remove_stability()
-		{
-			if(stability_local) {
-				delete stability_local;
-				stability_local = NULL;
-			}
-			if(stability_nonlocal) {
-				delete stability_nonlocal;
-				stability_nonlocal = NULL;
-			}
 			stability = NULL;
 		}
 
@@ -346,22 +326,22 @@ class PrintFormat {
 		std::string overlay_keytext(Version::Overlay overlay, bool never_color = false) const;
 
 		/* return true if something was actually printed */
-		bool print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps) {
-			header = dbheader; vardb = vardbpkg; portagesettings = ps;
+		bool print(void *entity, PrintProperty print_property, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s) {
+			header = dbheader; vardb = vardbpkg; portagesettings = ps; stability = s;
 			bool r = recPrint(entity, print_property, get_property, root);
-			vardb=NULL; portagesettings = NULL;
+			vardb=NULL; portagesettings = NULL; s = NULL;
 			if(r)
 				fputc('\n', stdout);
 			return r;
 		}
 
 		/* return true if something was actually printed */
-		bool print(void *entity, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps)
-		{ return print(entity, m_print_property, m_get_property, root, dbheader, vardbpkg, ps); }
+		bool print(void *entity, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s)
+		{ return print(entity, m_print_property, m_get_property, root, dbheader, vardbpkg, ps, s); }
 
 		/* return true if something was actually printed */
-		bool print(void *entity, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps)
-		{ return print(entity, m_root, dbheader, vardbpkg, ps); }
+		bool print(void *entity, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s)
+		{ return print(entity, m_root, dbheader, vardbpkg, ps, s); }
 
 		void setFormat(const char *fmt) throw(ExBasic) {
 			m_root = parseFormat(fmt);
@@ -371,30 +351,11 @@ class PrintFormat {
 			return m_parser.start(fmt, !no_color);
 		}
 
-		void setStabilityDefiner(const SetStability *set_stability) {
-			remove_stability();
-			stability = set_stability;
-			orimask_index = stability->orimask_index();
-			orikey_index = stability->orikey_index();
-		}
-
 		void StabilityLocal(Package &p) const
-		{
-			if(!stability_local) {
-				(const_cast<PrintFormat*>(this))->stability_local =
-					new SetStability(*stability, true);
-			}
-			stability_local->set_stability(p);
-		}
+		{ stability->set_stability(true, p); }
 
 		void StabilityNonlocal(Package &p) const
-		{
-			if(!stability_nonlocal) {
-				(const_cast<PrintFormat*>(this))->stability_nonlocal =
-					new SetStability(*stability, false);
-			}
-			stability_nonlocal->set_stability(p);
-		}
+		{ stability->set_stability(false, p); }
 
 	private:
 };

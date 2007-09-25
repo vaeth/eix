@@ -183,7 +183,7 @@ join_vector(const vector<string> &vec, string glue)
 }
 
 bool
-resolve_plus_minus(set<string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore, bool warn_plus)
+resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore, bool warn_plus)
 {
 	bool minusasterisk = false;
 	bool minuskeyword  = false;
@@ -220,3 +220,13 @@ resolve_plus_minus(set<string> &s, const std::vector<std::string> &l, bool obsol
 		*warnminus = minuskeyword;
 	return minusasterisk;
 }
+
+#if defined(INSTANTIATE_TEMPLATES)
+template class vector<string>;
+template class set<string>;
+template void make_set(set<string> &the_set, const vector<string> &the_list);
+template void make_vector(vector<string> &the_list, const set<string> &the_set);
+template void push_backs(vector<string> &d, const vector<string> &s);
+template bool sort_uniquify(vector<string> &v, bool vector_is_ignored);
+#endif
+

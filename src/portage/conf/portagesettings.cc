@@ -787,7 +787,7 @@ PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 	}
 	else {
 		ind = Version::SAVEKEY_ARCH;
-		accept_set = m_local_arch_set;
+		accept_set = &m_arch_set;
 	}
 	if(pkg->restore_keyflags(ind))
 		return;
@@ -796,3 +796,8 @@ PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 		(*t)->save_keyflags(ind);
 	}
 }
+
+#if defined(INSTANTIATE_TEMPLATES)
+template class MaskList<Mask>;
+template class MaskList<KeywordMask>;
+#endif

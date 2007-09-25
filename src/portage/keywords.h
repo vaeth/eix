@@ -82,6 +82,12 @@ class MaskFlags {
 		bool isSystem() const
 		{ return havesome(MaskFlags::MASK_SYSTEM); }
 
+		bool operator == (const MaskFlags& right) const
+		{ return (m_mask == right.m_mask); }
+
+		bool operator != (const MaskFlags& right) const
+		{ return (m_mask != right.m_mask); }
+
 	protected:
 		MaskType m_mask;
 };
@@ -128,6 +134,12 @@ class KeywordsFlags {
 
 		void clearbits(KeyType t)
 		{ m_keyword &= ~t; }
+
+		bool operator == (const KeywordsFlags& right) const
+		{ return (m_keyword == right.m_keyword); }
+
+		bool operator != (const KeywordsFlags& right) const
+		{ return (m_keyword != right.m_keyword); }
 
 		/** @return true if version is marked stable. */
 		bool isStable() const

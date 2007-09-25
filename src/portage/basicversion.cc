@@ -370,3 +370,7 @@ BasicVersion::parsePrimary(const char *str)
 	return str;
 }
 
+#if defined(INSTANTIATE_TEMPLATES)
+template class vector<LeadNum>;
+template class vector<Suffix>;
+#endif

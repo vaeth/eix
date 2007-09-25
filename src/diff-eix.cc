@@ -68,6 +68,7 @@ using namespace std;
 void   signal_handler(int sig);
 
 PortageSettings *portagesettings;
+SetStability   *set_stability_old, *set_stability_new;
 PrintFormat     format_for_new(get_package_property, print_package_property);
 PrintFormat     format_for_old;
 VarDbPkg       *varpkg_db;
@@ -257,19 +258,19 @@ print_changed_package(Package *op, Package *np)
 	Package *p[2];
 	p[0] = op;
 	p[1] = np;
-	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings);
+	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
 void
 print_found_package(Package *p)
 {
-	format_for_new.print(p, format_new, &new_header, varpkg_db, portagesettings);
+	format_for_new.print(p, format_new, &new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
 void
 print_lost_package(Package *p)
 {
-	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings);
+	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings, set_stability_old);
 }
 
 
@@ -399,23 +400,22 @@ run_diff_eix(int argc, char *argv[])
 	varpkg_db->check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
-	SetStability set_stability_old(portagesettings, local_settings, true);
-	SetStability set_stability_new(portagesettings, local_settings, false);
+	bool always_accept_keywords = eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS");
+	set_stability_old = new SetStability(portagesettings, local_settings, true, always_accept_keywords);
+	set_stability_new = new SetStability(portagesettings, local_settings, false, always_accept_keywords);
 	format_for_new.recommend_mode = eixrc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree);
-	set_stability_old.set_stability(old_tree);
+	set_stability_old->set_stability(old_tree);
 
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree);
-	set_stability_new.set_stability(new_tree);
+	set_stability_new->set_stability(new_tree);
 
 	format_for_new.set_overlay_translations(NULL);
 
 	format_for_old = format_for_new;
-	format_for_old.setStabilityDefiner(&set_stability_old);
-	format_for_new.setStabilityDefiner(&set_stability_new);
 
 	string eprefix_virtual = eixrc["EPREFIX_VIRTUAL"];
 	set_virtual(&format_for_old, old_header, eprefix_virtual);

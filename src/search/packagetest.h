@@ -99,14 +99,6 @@ class PackageTest {
 				delete in_overlay_inst_list;
 				in_overlay_inst_list = NULL;
 			}
-			if(stability_local) {
-				delete stability_local;
-				stability_local = NULL;
-			}
-			if(stability_nonlocal) {
-				delete stability_nonlocal;
-				stability_nonlocal = NULL;
-			}
 			if(from_overlay_inst_list) {
 				delete from_overlay_inst_list;
 				from_overlay_inst_list = NULL;
@@ -137,13 +129,13 @@ class PackageTest {
 		void Upgrade(LocalMode local_mode)
 		{  upgrade = true; upgrade_local_mode = local_mode; }
 
-		void StabilityDefault(TestStability require)
+		void SetStabilityDefault(TestStability require)
 		{  test_stability_default |= require; }
 
-		void StabilityLocal(TestStability require)
+		void SetStabilityLocal(TestStability require)
 		{  test_stability_local |= require; }
 
-		void StabilityNonlocal(TestStability require)
+		void SetStabilityNonlocal(TestStability require)
 		{  test_stability_nonlocal |= require; }
 
 		void Overlay()
@@ -153,22 +145,10 @@ class PackageTest {
 		{ stability->set_stability(*p); }
 
 		void StabilityLocal(Package *p) const
-		{
-			if(!stability_local) {
-				(const_cast<PackageTest*>(this))->stability_local =
-					new SetStability(*stability, true);
-			}
-			stability_local->set_stability(*p);
-		}
+		{ stability->set_stability(true, *p); }
 
 		void StabilityNonlocal(Package *p) const
-		{
-			if(!stability_nonlocal) {
-				(const_cast<PackageTest*>(this))->stability_nonlocal =
-					new SetStability(*stability, false);
-			}
-			stability_nonlocal->set_stability(*p);
-		}
+		{ stability->set_stability(false, *p); }
 
 		std::set<Version::Overlay> *OverlayList()
 		{

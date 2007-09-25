@@ -1446,6 +1446,10 @@ If false, /etc/portage and B<ACCEPT_KEYWORDS> (from make.conf or the environment
 Since eix-0.7.9, it is recommended to leave this value "true",
 because setting it to "false" will just hide some informations.
 .TP
+.BR ALWAYS_ACCEPT_KEYWORDS " " (true / false)
+If true, B<ACCEPT_KEYWORDS> is used even without B<LOCAL_PORTAGE_CONFIG>,
+e.g. to determine the `default' stability.
+.TP
 .BR UPGRADE_LOCAL_MODE " " (+ " or " local / - " or " non-local "/anything else" )
 If this variable is B<+> / B<->, the B<--upgrade> option of eix will always
 match as if B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.

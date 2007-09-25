@@ -551,8 +551,7 @@ run_eix(int argc, char** argv)
 	if(format.recommend_mode == local_mode)
 		format.recommend_mode = LOCALMODE_DEFAULT;
 
-	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage);
-	format.setStabilityDefiner(&stability);
+	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
 	query = parse_cli(eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader.begin(), argreader.end());
 
@@ -640,7 +639,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != 0) {
-			if(format.print(*it, &header, &varpkg_db, &portagesettings)) {
+			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				if(only_printed)
 					count++;
 			}
@@ -665,7 +664,7 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it = matches.begin();
 			it != matches.end();
 			++it) {
-			if(format.print(*it, &header, &varpkg_db, &portagesettings)) {
+			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				if(only_printed)
 					count++;
 			}

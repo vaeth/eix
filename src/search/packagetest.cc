@@ -64,7 +64,6 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	vardbpkg =  &vdb;
 	portagesettings = &p;
 	stability= &set_stability;
-        stability_local = stability_nonlocal = NULL;
 	header   = &dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
 	from_overlay_inst_list = NULL;
