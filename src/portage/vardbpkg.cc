@@ -371,7 +371,7 @@ void VarDbPkg::readCategory(const char *category)
 		{
 			instver->instDate = get_mtime((dir_category_name + package_entry->d_name).c_str());
 			(*category_installed)[aux[0]].push_back(*instver);
-			free(instver);
+			delete instver;
 		}
 
 		free(aux[0]);

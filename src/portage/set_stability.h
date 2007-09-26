@@ -125,7 +125,6 @@ class SetStability {
 			set_stability(get_local, *(const_cast<Package *>(p)));
 			maskflags = v->maskflags;
 			keyflags  = v->keyflags;
-std::cout << m_always_accept_keywords << "\n";
 			saved.restore(const_cast<Package *>(p));
 #if !defined(ALWAYS_RECALCULATE_STABILITY)
 			/* The next test should actually be unnecessary.

@@ -820,20 +820,9 @@ void print_removed(const string &dirname, const eix::ptr_list<Package> &packagel
 		for(vector<string>::const_iterator nit = names.begin();
 			nit != names.end(); ++nit )
 		{
-			const char *name = NULL;
-			try { name = ExplodeAtom::split_name(nit->c_str()); }
-			catch(ExBasic &e) {
-				if(name) {
-					free(const_cast<char *>(name));
-					name = NULL;
-				}
-			}
-			if(!name)
-				continue;
-			if(ns)
-				if(ns->find(name) != ns->end())
-					continue;
-			failure.push_back(cat_slash + name);
+			char *name = ExplodeAtom::split_name(nit->c_str());
+			if(name && (!ns || ns->find(name) == ns->end()))
+				failure.push_back(cat_slash + name);
 			free(const_cast<char *>(name));
 		}
 	}

@@ -6,6 +6,7 @@
 	  imitate the behavior of <eix-0.10.0 for ~ARCH in ACCEPT_KEYWORDS,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=193719
 	- Improve internal treatment of SetStability.
+	- Many fixes due to Emil Beinroth <emilbeinroth at gmx.net>.
 
 *eix-0.10.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

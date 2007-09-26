@@ -71,20 +71,15 @@ class Version : public BasicVersion, public Keywords {
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
 
-		typedef std::vector<KeywordsFlags>::size_type SavedKeyIndex;
-		typedef std::vector<MaskFlags>::size_type SavedMaskIndex;
-		static const SavedKeyIndex
-			SAVEKEY_USER   = 0,
-			SAVEKEY_ACCEPT = 1,
-			SAVEKEY_ARCH   = 2,
-			SAVEKEY_SIZE   = 3;
-		static const SavedMaskIndex
-			SAVEMASK_USER        = 0,
-			SAVEMASK_USERFILE    = 1,
-			SAVEMASK_USERPROFILE = 2,
-			SAVEMASK_PROFILE     = 3,
-			SAVEMASK_FILE        = 4,
-			SAVEMASK_SIZE        = 5;
+		typedef enum {
+			SAVEKEY_USER, SAVEKEY_ACCEPT, SAVEKEY_ARCH, SAVEKEY_SIZE
+		} SavedKeyIndex;
+
+		typedef enum {
+			SAVEMASK_USER, SAVEMASK_USERFILE, SAVEMASK_USERPROFILE,
+			SAVEMASK_PROFILE, SAVEMASK_FILE, SAVEMASK_SIZE
+		} SavedMaskIndex;
+
 		std::vector<KeywordsFlags> saved_keywords;
 		std::vector<bool>          have_saved_keywords;
 		std::vector<MaskFlags>     saved_masks;

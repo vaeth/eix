@@ -58,7 +58,7 @@ PortageUserConfig::setProfileMasks(Package *p) const
 bool
 PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mask_is_profile) const
 {
-	Version::SavedKeyIndex ind = file_mask_is_profile ?
+	Version::SavedMaskIndex ind = file_mask_is_profile ?
 		Version::SAVEMASK_USERFILE : Version::SAVEMASK_USER;
 	if((check & Keywords::RED_ALL_KEYWORDS) == Keywords::RED_NOTHING)
 	{
