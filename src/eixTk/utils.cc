@@ -43,6 +43,8 @@
 
 using namespace std;
 
+const unsigned int PercentStatus::hundred;
+
 /** push_back every line of file into v. */
 bool pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments)
 {

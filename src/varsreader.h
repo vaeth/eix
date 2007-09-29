@@ -49,21 +49,21 @@ class VarsReader {
 	public:
 		typedef uint8_t Flags;
 		static const Flags
-			NONE,          /**< Flag: No flags set; normal behavior. */
-			ONLY_KEYWORDS_SLOT, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
-			KEYWORDS_READ, /**< Flag: Have already read "KEYWORDS" once. */
-			SLOT_READ,     /**< Flag: Have already read "SLOT" once. */
-			SUBST_VARS,    /**< Flag: Allow references to variable in declarations
-							 of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP,      /**< Flag: Init but don't parse .. you must first supply
-							 a pointer to map<string,string> with useMap(...) */
-			APPEND_VALUES, /**< Flag: appended new values rather then replace the old value. */
-			ALLOW_SOURCE,  /**< Flag: Allow "source"/"." command. */
-			ALLOW_SOURCE_VARNAME, /**< Flag: Allow "source"/"." but
-			                    Prefix is only a varname which
-			                    might be modified during sourcing. */
-			HAVE_READ,     /**< Combination of previous "*_READ" */
-			ONLY_HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
+			NONE                 = 0x00, /**< Flag: No flags set; normal behavior. */
+			ONLY_KEYWORDS_SLOT   = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
+			KEYWORDS_READ        = 0x02, /**< Flag: Have already read "KEYWORDS" once. */
+			SLOT_READ            = 0x04, /**< Flag: Have already read "SLOT" once. */
+			SUBST_VARS           = 0x08, /**< Flag: Allow references to variable in declarations
+			                                  of a variable. i.e.  USE="${USE} -kde" */
+			INTO_MAP             = 0x10, /**< Flag: Init but don't parse .. you must first supply
+			                                  a pointer to map<string,string> with useMap(...) */
+			APPEND_VALUES        = 0x20, /**< Flag: appended new values rather then replace the old value. */
+			ALLOW_SOURCE         = 0x40, /**< Flag: Allow "source"/"." command. */
+			ALLOW_SOURCE_VARNAME = 0xc0, /**< Flag: Allow "source"/"." but
+			                                  Prefix is only a varname which
+			                                  might be modified during sourcing. */
+			HAVE_READ            = KEYWORDS_READ|SLOT_READ,     /**< Combination of previous "*_READ" */
+			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
 
 		/** Init and parse the FSM depending on supplied flags. */

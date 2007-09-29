@@ -36,6 +36,17 @@
 
 using namespace std;
 
+const DBHeader::OverlayTest
+	DBHeader::OVTEST_NONE,
+	DBHeader::OVTEST_SAVED_PORTDIR,
+	DBHeader::OVTEST_PATH,
+	DBHeader::OVTEST_ALLPATH,
+	DBHeader::OVTEST_LABEL,
+	DBHeader::OVTEST_NUMBER,
+	DBHeader::OVTEST_NOT_SAVED_PORTDIR,
+	DBHeader::OVTEST_ALL;
+const DBHeader::DBVersion DBHeader::current;
+
 /** Get string for key from directory-table. */
 const OverlayIdent &
 DBHeader::getOverlay(Version::Overlay key) const

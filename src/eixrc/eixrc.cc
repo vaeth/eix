@@ -40,7 +40,7 @@
 
 using namespace std;
 
-EixRcOption::EixRcOption(char t, std::string name, std::string val, std::string desc) {
+EixRcOption::EixRcOption(OptionType t, std::string name, std::string val, std::string desc) {
 	type = t;
 	key = name;
 	if(type == LOCAL) {

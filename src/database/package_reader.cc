@@ -33,6 +33,8 @@
 
 #include <database/io.h>
 
+const unsigned short PackageReader::Offsetsize;
+
 void
 PackageReader::read(Attributes need)
 {

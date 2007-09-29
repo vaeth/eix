@@ -52,21 +52,17 @@
 using namespace std;
 
 const VarsReader::Flags
-	VarsReader::NONE          = 0x00, /**< Flag: No flags set; normal behavior. */
-	VarsReader::ONLY_KEYWORDS_SLOT = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
-	VarsReader::KEYWORDS_READ = 0x02, /**< Flag: Have already read "KEYWORDS" once. */
-	VarsReader::SLOT_READ     = 0x04, /**< Flag: Have already read "SLOT" once. */
-	VarsReader::SUBST_VARS    = 0x08, /**< Flag: Allow references to variable in declarations
-							of a variable. i.e.  USE="${USE} -kde" */
-	VarsReader::INTO_MAP      = 0x10, /**< Flag: Init but don't parse .. you must first supply
-							a pointer to map<string,string> with useMap(...) */
-	VarsReader::APPEND_VALUES = 0x20, /**< Flag: appended new values rather then replace the old value. */
-	VarsReader::ALLOW_SOURCE  = 0x40, /**< Flag: Allow "source"/"." command. */
-	VarsReader::ALLOW_SOURCE_VARNAME = 0xc0, /**< Flag: Allow "source"/"." but
-			                    VarsReader::Prefix is only a varname which
-			                    might be modified during sourcing. */
-	VarsReader::HAVE_READ     = KEYWORDS_READ | SLOT_READ,   /**< Combination of previous "*_READ" */
-	VarsReader::ONLY_HAVE_READ= ONLY_KEYWORDS_SLOT | HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
+	VarsReader::NONE,
+	VarsReader::ONLY_KEYWORDS_SLOT,
+	VarsReader::KEYWORDS_READ,
+	VarsReader::SLOT_READ,
+	VarsReader::SUBST_VARS,
+	VarsReader::INTO_MAP,
+	VarsReader::APPEND_VALUES,
+	VarsReader::ALLOW_SOURCE,
+	VarsReader::ALLOW_SOURCE_VARNAME,
+	VarsReader::HAVE_READ,
+	VarsReader::ONLY_HAVE_READ;
 
 
 bool VarsReader::isIncremental(const char *key)

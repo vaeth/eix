@@ -30,6 +30,26 @@
 
 using namespace std;
 
+const MaskFlags::MaskType
+	MaskFlags::MASK_NONE,
+	MaskFlags::MASK_PACKAGE,
+	MaskFlags::MASK_PROFILE,
+	MaskFlags::MASK_HARD,
+	MaskFlags::MASK_SYSTEM;
+
+const KeywordsFlags::KeyType
+	KeywordsFlags::KEY_EMPTY,
+	KeywordsFlags::KEY_STABLE,
+	KeywordsFlags::KEY_ARCHSTABLE,
+	KeywordsFlags::KEY_ARCHUNSTABLE,
+	KeywordsFlags::KEY_ALIENSTABLE,
+	KeywordsFlags::KEY_ALIENUNSTABLE,
+	KeywordsFlags::KEY_MINUSKEYWORD,
+	KeywordsFlags::KEY_MINUSASTERISK,
+	KeywordsFlags::KEY_SOMESTABLE,
+	KeywordsFlags::KEY_SOMEUNSTABLE,
+	KeywordsFlags::KEY_TILDESTARMATCH;
+
 KeywordsFlags::KeyType
 KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const string &keywords, bool obsolete_minus)
 {
@@ -80,3 +100,29 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 	return m;
 }
 
+const Keywords::Redundant
+	Keywords::RED_NOTHING,
+	Keywords::RED_DOUBLE,
+	Keywords::RED_DOUBLE_LINE,
+	Keywords::RED_MIXED,
+	Keywords::RED_WEAKER,
+	Keywords::RED_STRANGE,
+	Keywords::RED_NO_CHANGE,
+	Keywords::RED_MINUSASTERISK,
+	Keywords::RED_IN_KEYWORDS,
+	Keywords::RED_ALL_KEYWORDS,
+	Keywords::RED_MASK,
+	Keywords::RED_DOUBLE_MASK,
+	Keywords::RED_IN_MASK,
+	Keywords::RED_UNMASK,
+	Keywords::RED_DOUBLE_UNMASK,
+	Keywords::RED_IN_UNMASK,
+	Keywords::RED_ALL_MASK,
+	Keywords::RED_ALL_UNMASK,
+	Keywords::RED_ALL_MASKSTUFF,
+	Keywords::RED_DOUBLE_USE,
+	Keywords::RED_IN_USE,
+	Keywords::RED_ALL_USE,
+	Keywords::RED_DOUBLE_CFLAGS,
+	Keywords::RED_IN_CFLAGS,
+	Keywords::RED_ALL_CFLAGS;

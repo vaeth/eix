@@ -48,7 +48,7 @@ esac
 done
 shift $(( $OPTIND - 1 ))
 
-if ${KEEPENV}; then
+if ! ${KEEPENV}; then
 	MARCH=$(sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 		/etc/make.conf)
 	export CXXFLAGS CFLAGS LDFLAGS

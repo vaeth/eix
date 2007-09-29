@@ -268,7 +268,7 @@ void add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 
 void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cachefile, string eprefix_virtual)
 {
-	static const string a = "eix*::";
+	static const string a("eix*::");
 	FILE *fp = fopen(cachefile.c_str(), "rb");
 	if(!fp)
 		return;

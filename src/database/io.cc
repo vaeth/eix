@@ -40,6 +40,14 @@
 
 using namespace std;
 
+const unsigned short
+	DBHeader::DBVersionsize,
+	BasicVersion::Primcharsize,
+	Suffix::Levelsize,
+	Version::Overlaysize,
+	MaskFlags::MaskTypesize,
+	KeywordsFlags::KeyTypesize;
+
 /** Read a string of the format { unsigned short len; char[] string;
  * (without the 0) } */
 std::string

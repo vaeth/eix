@@ -41,11 +41,11 @@
 
 class EixRcOption {
 	public:
-		static const char STRING = 0, PREFIXSTRING = 1, INTEGER = 2, BOOLEAN = 3, LOCAL = 4;
-		char type;
+		typedef enum { STRING, PREFIXSTRING, INTEGER, BOOLEAN, LOCAL } OptionType;
+		OptionType type;
 		std::string key, value, local_value, description;
 
-		EixRcOption(char t, std::string name, std::string val, std::string desc);
+		EixRcOption(OptionType t, std::string name, std::string val, std::string desc);
 };
 
 class EixRc : public std::map<std::string,std::string> {
