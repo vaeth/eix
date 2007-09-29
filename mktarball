@@ -1,4 +1,6 @@
-#! /bin/bash
+#! /bin/sh
+
+export LC_ALL=C
 
 usage() {
 	echo "Usage: mktarball"
@@ -9,14 +11,13 @@ die() {
 	exit ${2:-1}
 }
 
-mkdir build &>/dev/null
-pushd build/ &>/dev/null || die "pushd build failed"
-popd &>/dev/null || die "popd failed"
+test -d build || mkdir build >/dev/null
+test -d build || die "cannot create directory build"
 
 unset LDFLAGS CFLAGS CXXFLAGS
-if FAKEROOT="$(type -P fakeroot)"; then
+if type fakeroot >/dev/null 2>&1; then
 	./mkmake -eqn || die "mkmake -qn failed"
-	"$FAKEROOT" ./mkmake -q dist || die "mkmake dist failed"
+	fakeroot ./mkmake -q dist || die "mkmake dist failed"
 else
 	./mkmake -eq dist || die "mkmake dist failed"
 fi

@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+export LC_ALL=C
 
 proj="eix"
 svnroot="https://svn.gentooexperimental.org/${proj}"
@@ -31,4 +33,4 @@ done
 echo "Creating release tag... "
 
 svn copy ${svnroot}/trunk ${svnroot}/tags/release-${ver} \
-	-m "Tagging the ${ver} release of the ${proj} project" &>/dev/null || die "svn copy failed"
+	-m "Tagging the ${ver} release of the ${proj} project" >/dev/null || die "svn copy failed"

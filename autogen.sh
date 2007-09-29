@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/sh
 
 run ()
 {
@@ -9,8 +9,8 @@ run ()
 	fi
 }
 
-run mkdir -p config 
-which glibtoolize 2>&1 >/dev/null && run glibtoolize --force --copy --automake || run libtoolize --force --copy --automake
+run mkdir -p config
+type glibtoolize >/dev/null 2>&1 && run glibtoolize --force --copy --automake || run libtoolize --force --copy --automake
 run aclocal
 run autoheader
 run autoconf
