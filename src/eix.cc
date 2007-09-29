@@ -823,7 +823,7 @@ void print_removed(const string &dirname, const eix::ptr_list<Package> &packagel
 			char *name = ExplodeAtom::split_name(nit->c_str());
 			if(name && (!ns || ns->find(name) == ns->end()))
 				failure.push_back(cat_slash + name);
-			free(const_cast<char *>(name));
+			free(name);
 		}
 	}
 	if(failure.empty())
