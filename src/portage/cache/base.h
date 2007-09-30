@@ -32,6 +32,7 @@
 #include <eixTk/exceptions.h>
 #include <string>
 #include <map>
+#include <cstdlib>
 
 #define UNUSED(p) ((void)(p))
 

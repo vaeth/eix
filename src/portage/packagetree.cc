@@ -33,6 +33,7 @@
 #include <database/package_reader.h>
 #include <database/io.h>
 #include <algorithm>
+#include <cstdlib>
 
 using namespace std;
 

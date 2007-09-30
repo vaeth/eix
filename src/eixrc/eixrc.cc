@@ -29,6 +29,7 @@
 #include "eixrc.h"
 #include <eixTk/exceptions.h>
 #include <varsreader.h>
+#include <cstdlib>
 
 #define EIX_USERRC   "/.eixrc"
 

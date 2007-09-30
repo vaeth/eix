@@ -47,7 +47,7 @@ eix_SOURCES = eix.cc \
 			  varsreader.cc varsreader.h \
 			  cachetable.h \
 			  cli.cc cli.h \
-			  global.cc global.h \
+			  global.cc global2.cc global3.cc global4.cc global.h \
 			  portage/set_stability.h portage/conf/setmask.cc
 
 eix_LDADD = database/libdatabase.a \
@@ -62,7 +62,7 @@ eix_LDADD = database/libdatabase.a \
 # The update-tool for our database
 update_eix_SOURCES = update-eix.cc \
 				     varsreader.cc varsreader.h \
-					 global.cc \
+					 global.cc global2.cc global3.cc global4.cc global.h \
 					 portage/set_stability.h portage/conf/setmask.cc
 
 update_eix_LDADD = database/libdatabase.a \
@@ -78,7 +78,7 @@ update_eix_LDADD = database/libdatabase.a \
 # The diff-tool for our database
 diff_eix_SOURCES = diff-eix.cc \
 				   varsreader.cc varsreader.h \
-				   global.cc \
+				   global.cc global2.cc global3.cc global4.cc global.h \
 				   portage/set_stability.h portage/conf/setmask.cc
 
 diff_eix_LDADD = database/libdatabase.a \

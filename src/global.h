@@ -34,4 +34,9 @@
 /** Return a static eixrc. */
 EixRc &get_eixrc(const char *varprefix);
 
+void fill_defaults_part_1(EixRc &eixrc);
+void fill_defaults_part_2(EixRc &eixrc);
+void fill_defaults_part_3(EixRc &eixrc);
+void fill_defaults_part_4(EixRc &eixrc);
+
 #endif /* __EIXRC-GLOBALS_H__ */

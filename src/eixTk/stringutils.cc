@@ -43,7 +43,7 @@
  * darwin (macos) doesn't have strndup, it's a GNU extension
  * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
 
-#include <stdlib.h>
+#include <cstdlib>
 
 char *
 strndup(const char *s, size_t n)

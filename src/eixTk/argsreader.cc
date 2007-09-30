@@ -28,10 +28,10 @@
 
 #include "argsreader.h"
 
-#include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace std;
 

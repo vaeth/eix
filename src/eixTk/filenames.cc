@@ -26,6 +26,7 @@
 
 #include <eixTk/filenames.h>
 #include <fnmatch.h>
+#include <cstdlib>
 
 #if !defined(PATH_MAX)
 #if defined(MAXPATHLEN)

@@ -32,6 +32,7 @@
 #include <database/header.h>
 #include <portage/packagetree.h>
 #include <eixTk/filenames.h>
+#include <eixTk/stringutils.h>
 #include <portage/conf/portagesettings.h>
 
 #include <config.h>

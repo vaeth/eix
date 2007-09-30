@@ -27,7 +27,7 @@
  ***************************************************************************/
 
 #include "selectors.h"
-#include <string>
+#include <cstring>
 
 int package_selector (SCANDIR_ARG3 dent)
 {

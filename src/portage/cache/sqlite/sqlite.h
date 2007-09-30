@@ -30,6 +30,7 @@
 #define __SQLITECACHE_H__
 
 #include <portage/cache/base.h>
+#include <eixTk/stringutils.h>
 
 class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);

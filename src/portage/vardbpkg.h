@@ -31,6 +31,7 @@
 
 #include <vector>
 #include <map>
+#include <cstdlib>
 
 #include <eixTk/exceptions.h>
 #include <portage/package.h>

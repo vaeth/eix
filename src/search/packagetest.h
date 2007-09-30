@@ -31,6 +31,7 @@
 
 #include <set>
 #include <string>
+#include <cstdlib>
 
 #include <regex.h>
 #include <fnmatch.h>

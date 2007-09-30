@@ -33,6 +33,7 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <memory>
 
 #if 0
 class Package;

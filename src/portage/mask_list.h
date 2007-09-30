@@ -31,6 +31,7 @@
 
 #include <map>
 #include <string>
+#include <cstdlib>
 
 #include <eixTk/ptr_list.h>
 #include <portage/package.h>

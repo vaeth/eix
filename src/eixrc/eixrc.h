@@ -29,6 +29,7 @@
 #ifndef __EIXRC_H__
 #define __EIXRC_H__
 
+#include <cstdlib>
 #include <vector>
 #include <string>
 #include <map>

@@ -32,6 +32,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <cstdlib>
 
 /** push_back every line of file or dir into v. */
 bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_empty = true, bool recursive = false, bool remove_comments = true);

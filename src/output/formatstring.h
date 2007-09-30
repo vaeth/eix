@@ -31,6 +31,7 @@
 
 #include <stack>
 #include <iostream>
+#include <cstdlib>
 
 #include <portage/package.h>
 #include <portage/set_stability.h>

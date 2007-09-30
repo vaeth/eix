@@ -37,6 +37,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 /* Files for categories the user defined and categories from the official tree */
 #define MAKE_GLOBALS_FILE       "/etc/make.globals"

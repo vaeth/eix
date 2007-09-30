@@ -27,7 +27,7 @@
 
 #include "basicversion.h"
 #include <eixTk/test.h>
-
+#include <algorithm>
 #include <list>
 
 // - Pushback unsorted elements to vector

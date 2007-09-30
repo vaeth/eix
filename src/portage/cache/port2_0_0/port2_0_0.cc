@@ -33,7 +33,8 @@
 #include <portage/package.h>
 #include <portage/version.h>
 
-#include <string.h>
+#include <eixTk/stringutils.h>
+
 #include <dirent.h>
 
 #include <config.h>

@@ -22,6 +22,7 @@
 
 #include <ctype.h>
 #include <vector>
+#include <cstring>
 
 using namespace std;
 

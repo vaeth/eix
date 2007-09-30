@@ -28,6 +28,7 @@
 
 #include "../config.h"
 #include "cli.h"
+#include <eixTk/stringutils.h>
 
 using namespace std;
 

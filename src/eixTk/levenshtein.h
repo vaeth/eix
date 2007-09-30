@@ -21,8 +21,6 @@
 #ifndef __LEVENSHTEIN_H__
 #define __LEVENSHTEIN_H__
 
-#include <string>
-
 /** Calculates the Levenshtein distance of two strings.
  * Reference: http://www.merriampark.com/ld.htm
  * @param str_a string a

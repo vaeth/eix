@@ -27,6 +27,7 @@
  ***************************************************************************/
 
 #include "regexp.h"
+#include <cstdlib>
 
 using namespace std;
 

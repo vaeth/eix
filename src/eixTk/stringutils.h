@@ -33,6 +33,9 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <cstring>
+#include <cstdlib>
+#include <algorithm>
 
 #if !defined HAVE_STRNDUP
 /** strndup in case we don't have one. */

@@ -41,6 +41,8 @@
 
 #include <portage/package.h>
 
+#include <cstring>
+
 /* Check if we have FNM_CASEFOLD ..
  * fnmatch(3) tells me that this is a GNU extensions */
 #if defined FNM_CASEFOLD

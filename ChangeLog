@@ -7,6 +7,9 @@
 	  see http://bugs.gentoo.org/show_bug.cgi?id=193719
 	- Improve internal treatment of SetStability.
 	- Many fixes due to Emil Beinroth <emilbeinroth at gmx.net>.
+	- Decrease memory usage during compilation.
+	- More standard-conformal treatment of header files:
+	  eix should now compile with gcc-4.3
 
 *eix-0.10.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

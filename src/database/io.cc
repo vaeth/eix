@@ -34,6 +34,8 @@
 #include <database/header.h>
 #include <database/package_reader.h>
 
+#include <cstdlib>
+
 #include <eixTk/auto_ptr.h>
 
 #include <dirent.h>

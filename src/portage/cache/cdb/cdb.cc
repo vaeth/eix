@@ -33,6 +33,8 @@
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
+#include <eixTk/stringutils.h>
+
 using namespace std;
 
 /* Path to portage cache */

@@ -27,8 +27,17 @@
  ***************************************************************************/
 
 #include "global.h"
+#include <cstdlib>
 #include <eixrc/eixrc.h>
 #include <eixTk/exceptions.h>
+#include <config.h>
+
+#define DEFAULT_PART 1
+
+void fill_defaults_part_1(EixRc &eixrc)
+{
+#include <eixrc/defaults.cc>
+}
 
 /** Create a static EixRc and fill with defaults.
  * This should only be called once! */
@@ -39,7 +48,10 @@ get_eixrc_once(const char *varprefix)
 	static EixRc eixrc;
 	eixrc.varprefix = std::string(varprefix);
 
-#include <eixrc/defaults.cc>
+	fill_defaults_part_1(eixrc);
+	fill_defaults_part_2(eixrc);
+	fill_defaults_part_3(eixrc);
+	fill_defaults_part_4(eixrc);
 
 	eixrc.read();
 	return &eixrc;

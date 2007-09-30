@@ -34,7 +34,6 @@
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
-#include <string.h>
 #include <dirent.h>
 
 #include <config.h>

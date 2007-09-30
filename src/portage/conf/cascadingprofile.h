@@ -36,6 +36,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 class PortageSettings;
 class Package;

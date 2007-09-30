@@ -39,6 +39,7 @@
 #include <string>
 #include <vector>
 #include <database/io.h>
+#include <cstdlib>
 
 #include <iostream>
 class LeadNum

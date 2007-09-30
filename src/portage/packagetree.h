@@ -33,6 +33,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <cstdlib>
 
 #include <eixTk/ptr_list.h>
 #include <database/io.h>

@@ -26,8 +26,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "../config.h"
-
+#if (DEFAULT_PART == 1)
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "EIXRC",
 			"", "The file which is used instead of /etc/eixrc and ~/.eixrc.\n"
@@ -356,7 +355,9 @@ eixrc.addDefault(
 			"This variable is only used for delayed substitution.\n"
 			"It defines the color used for printing a marked package name.")
 		);
+#endif
 
+#if (DEFAULT_PART == 2)
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CHAR_UPGRADE",
 			"U",
@@ -685,7 +686,9 @@ eixrc.addDefault(
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the format for the diff-changed header symbols.")
 		);
+#endif
 
+#if (DEFAULT_PART == 3)
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_BESTSLOTS_COMPACT",
 			"{bestshort}<bestslots>{else}<availableversions>{}",
@@ -1094,7 +1097,9 @@ eixrc.addDefault(
 			LEVENSHTEIN_DISTANCE_STR,
 			"The default maximal levensthein for which a string is considered a match.")
 		);
+#endif
 
+#if (DEFAULT_PART == 4)
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "PORTDIR_CACHE_METHOD",
 			PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR\n"
@@ -1441,3 +1446,4 @@ eixrc.addDefault(
 			"This variable is ignored. You can use it to collect delayed references to\n"
 			"locally added (unused) variables so that they are printed with --dump.")
 		);
+#endif

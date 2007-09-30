@@ -45,7 +45,15 @@
 
 using namespace std;
 
-inline static void sort_installed(map<string,vector<InstVersion> > *maping);
+inline static void sort_installed(map<string,vector<InstVersion> > *maping)
+{
+	map<string,vector<InstVersion> >::iterator it = maping->begin();
+	while(it != maping->end())
+	{
+		sort(it->second.begin(), it->second.end());
+		++it;
+	}
+}
 
 /** Find installed versions of packet "name" in category "category".
  * @return NULL if not found .. else pointer to vector of versions. */
@@ -381,12 +389,3 @@ void VarDbPkg::readCategory(const char *category)
 	sort_installed(installed[category]);
 }
 
-inline static void sort_installed(map<string,vector<InstVersion> > *maping)
-{
-	map<string,vector<InstVersion> >::iterator it = maping->begin();
-	while(it != maping->end())
-	{
-		sort(it->second.begin(), it->second.end());
-		++it;
-	}
-}

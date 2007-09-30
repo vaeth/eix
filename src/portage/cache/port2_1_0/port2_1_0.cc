@@ -32,10 +32,11 @@
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
+#include <eixTk/stringutils.h>
+
 #include <map>
 #include <fstream>
 
-#include <string.h>
 #include <dirent.h>
 
 #include <config.h>

@@ -35,6 +35,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <cstdlib>
 
 #include <portage/version.h>
 #include <portage/instversion.h>
