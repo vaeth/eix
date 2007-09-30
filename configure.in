@@ -110,6 +110,8 @@ if test "x${UNIQUE_WORKS}" = "xunknown"; then
 AC_TRY_RUN([
 	  #include <vector>
 	  #include <string>
+	  #include <cstdlib>
+	  #include <algorithm>
 	  using namespace std;
 	  #define UNUSED(p) ((void)(p))
 	  int main(int argc, char** argv)
