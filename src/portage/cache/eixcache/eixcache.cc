@@ -179,6 +179,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			version->overlay_key = m_overlay_key;
 			version->set_full_keywords(it->get_full_keywords());
 			version->slot = it->slot;
+			version->restrictFlags = it->restrictFlags;
 			pkg->addVersion(version);
 			if(*(pkg->latest()) == *version)
 			{

@@ -142,6 +142,9 @@ class PackageTest {
 		void Overlay()
 		{ overlay = true; }
 
+		void Restrictions(ExtendedVersion::Restrict flags)
+		{ restrictions |= flags; }
+
 		void StabilityDefault(Package *p) const
 		{ stability->set_stability(*p); }
 
@@ -233,6 +236,7 @@ class PackageTest {
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
+		ExtendedVersion::Restrict restrictions;
 
 		std::set<Version::Overlay>
 			*overlay_list, *overlay_only_list,

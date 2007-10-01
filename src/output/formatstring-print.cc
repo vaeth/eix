@@ -31,11 +31,12 @@
 #include <eixTk/sysutils.h>
 #include <portage/vardbpkg.h>
 #include <portage/conf/portagesettings.h>
+#include <cstdlib>
 
 using namespace std;
 
 string
-get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text, const string &intermediate)
+get_extended_version(const PrintFormat *fmt, const ExtendedVersion *version, bool pure_text, const string &intermediate)
 {
 	if((!fmt->show_slots))
 		return version->getFull();
@@ -112,6 +113,25 @@ const char
 string
 getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const vector<string> &prepend)
 {
+	typedef enum {
+		PIDX_FRONT,
+		PIDX_SLOT,
+		PIDX_AFTER_SLOT,
+		PIDX_FETCH,
+		PIDX_MIRROR,
+		PIDX_OVERLAY,
+		PIDX_AFTER_OVERLAY,
+		PIDX_AFTER_ALL,
+		PIDX_DATE,
+		PIDX_AFTER_DATE,
+		PIDX_USEFLAGS,
+		PIDX_AFTER_USEFLAGS,
+		PIDX_SET_USE,
+		PIDX_AFTER_SET_USE,
+		PIDX_UNSET_USE,
+		PIDX_AFTER_UNSET_USE,
+		PIDX_BETWEEN
+	} InstIndex;
 	if(!fmt.vardb)
 		return "";
 	vector<InstVersion> *vec = fmt.vardb->getInstalledVector(p);
@@ -130,15 +150,29 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 	for(;;) {
 		if(!p.guess_slotname(*it, fmt.vardb))
 			it->slot = "?";
-		if(prepend.size() > 0)
-			ret.append(prepend[0]);
-		ret.append(get_basic_version(&fmt, &(*it), pure_text,
-			((prepend.size() > 1) ? prepend[1] : "")));
+		if(prepend.size() > PIDX_FRONT)
+			ret.append(prepend[PIDX_FRONT]);
+		ret.append(get_extended_version(&fmt, &(*it), pure_text,
+			((prepend.size() > PIDX_SLOT) ? prepend[PIDX_SLOT] : "")));
+		if(prepend.size() > PIDX_AFTER_SLOT)
+			ret.append(prepend[PIDX_AFTER_SLOT]);
+		if(fmt.print_restrictions && (prepend.size() > PIDX_FETCH))
+		{
+			if(fmt.vardb->readRestricted(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
+				if(it->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
+					ret.append(prepend[PIDX_FETCH]);
+				}
+				if((prepend.size() > PIDX_MIRROR) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_MIRROR)) {
+					ret.append(prepend[PIDX_MIRROR]);
+				}
+			}
+		}
 		if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
 			if(it->overlay_key>0) {
 				if((!p.have_same_overlay_key) || (p.largest_overlay != it->overlay_key)) {
-					if(prepend.size() > 2)
-						ret.append(prepend[2]);
+					if(prepend.size() > PIDX_OVERLAY)
+						ret.append(prepend[PIDX_OVERLAY]);
 					ret.append(fmt.overlay_keytext(it->overlay_key, !color));
 				}
 			}
@@ -147,8 +181,8 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		// Uncomment if you do not want to print unreadable overlays as "[?]"
 		// if(!it->overlay_keytext.empty())
 		{
-			if(prepend.size() > 2)
-				ret.append(prepend[2]);
+			if(prepend.size() > PIDX_OVERLAY)
+				ret.append(prepend[PIDX_OVERLAY]);
 			if(color)
 				ret.append(fmt.color_virtualkey);
 			ret.append("[");
@@ -160,8 +194,8 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			if(color)
 				ret.append(AnsiColor(AnsiColor::acDefault).asString());
 		}
-		if(prepend.size() > 3)
-			ret.append(prepend[3]);
+		if(prepend.size() > PIDX_AFTER_OVERLAY)
+			ret.append(prepend[PIDX_AFTER_OVERLAY]);
 		if(formattype & INST_WITH_DATE)
 		{
 			string date =
@@ -171,38 +205,42 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 					it->instDate);
 			if(!date.empty())
 			{
-				if(prepend.size() > 5)
-					ret.append(prepend[5]);
+				if(prepend.size() > PIDX_DATE)
+					ret.append(prepend[PIDX_DATE]);
 				ret.append(date);
-				if(prepend.size() > 6)
-					ret.append(prepend[6]);
+				if(prepend.size() > PIDX_AFTER_DATE)
+					ret.append(prepend[PIDX_AFTER_DATE]);
 			}
 		}
 		useflags = false;
 		if(formattype & INST_WITH_USEFLAGS) {
 			const char *a[4];
-			for(vector<string>::size_type i=0; i<4; ++i) {
-				a[i] = NULL;
-				if(prepend.size() > i + 9)
-					if((i == 2) || (!prepend[i + 9].empty()))
-						a[i] = prepend[i + 9].c_str();
+			size_t j = 0;
+			for(vector<string>::size_type i = PIDX_SET_USE;
+				i < PIDX_AFTER_UNSET_USE;
+				++i, ++j)
+			{
+				a[j] = NULL;
+				if(prepend.size() > i)
+					if((j == 2) || !(prepend[i].empty()))
+						a[j] = prepend[i].c_str();
 			}
 			string inst_use = get_inst_use(p, *it, fmt, a);
 			if(!inst_use.empty()) {
-				if(prepend.size() > 7)
-					ret.append(prepend[7]);
+				if(prepend.size() > PIDX_USEFLAGS)
+					ret.append(prepend[PIDX_USEFLAGS]);
 				ret.append(inst_use);
 				useflags = true;
-				if(prepend.size() > 8)
-					ret.append(prepend[8]);
+				if(prepend.size() > PIDX_AFTER_USEFLAGS)
+					ret.append(prepend[PIDX_AFTER_USEFLAGS]);
 			}
 		}
-		if(prepend.size() > 4)
-			ret.append(prepend[4]);
+		if(prepend.size() > PIDX_AFTER_ALL)
+			ret.append(prepend[PIDX_AFTER_ALL]);
 		if(++it == vec->end())
 			return ret;
-		if(prepend.size() > 13)
-			ret.append(prepend[13]);
+		if(prepend.size() > PIDX_BETWEEN)
+			ret.append(prepend[PIDX_BETWEEN]);
 		else if((formattype & INST_WITH_NEWLINE) &&
 				(useflags || fmt.style_version_lines))
 				ret.append("\n\t\t\t  ");
@@ -383,6 +421,19 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			if(! fmt->no_color)
 				cout << fmt->color_slots;
 			cout << slot;
+		}
+	}
+	if(fmt->print_restrictions)
+	{
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
+			if(! fmt->no_color)
+				cout << fmt->color_fetch;
+			cout << fmt->tag_fetch;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_MIRROR) {
+			if(! fmt->no_color)
+				cout << fmt->color_mirror;
+			cout << fmt->tag_mirror;
 		}
 	}
 	if(!exclude_overlay)

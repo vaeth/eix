@@ -30,6 +30,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <eixTk/stringutils.h>
 
 using namespace std;
 
@@ -173,7 +174,6 @@ Suffix::compare(const Suffix &b) const
 
 BasicVersion::BasicVersion(const char *str)
 {
-	slot = "";
 	if(str)
 	{
 		parseVersion(str);
@@ -368,6 +368,25 @@ BasicVersion::parsePrimary(const char *str)
 	if(isalpha(*str))
 		m_primarychar = *str++;
 	return str;
+}
+
+const ExtendedVersion::Restrict
+	ExtendedVersion::RESTRICT_NONE,
+	ExtendedVersion::RESTRICT_FETCH,
+	ExtendedVersion::RESTRICT_MIRROR;
+
+ExtendedVersion::Restrict
+ExtendedVersion::calcRestrict(const vector<string> &restrict_words)
+{
+	Restrict r = RESTRICT_NONE;
+	for(vector<string>::const_iterator it = restrict_words.begin();
+		it != restrict_words.end(); ++it) {
+		if(strcasecmp(it->c_str(), "fetch") == 0)
+			r |= RESTRICT_FETCH;
+		else if(strcasecmp(it->c_str(), "mirror") == 0)
+			r |= RESTRICT_MIRROR;
+	}
+	return r;
 }
 
 #if defined(INSTANTIATE_TEMPLATES)

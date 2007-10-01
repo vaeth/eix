@@ -45,6 +45,7 @@ using namespace std;
 const unsigned short
 	DBHeader::DBVersionsize,
 	BasicVersion::Primcharsize,
+	ExtendedVersion::Restrictsize,
 	Suffix::Levelsize,
 	Version::Overlaysize,
 	MaskFlags::MaskTypesize,
@@ -97,7 +98,9 @@ io::read_version(FILE *fp)
 #endif
 
 	// read masking
-	v->maskflags.set(io::read<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp));
+	MaskFlags::MaskType mask = io::read<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp);
+	v->maskflags.set(mask & MaskFlags::MaskType(0x0F));
+	v->restrictFlags = (ExtendedVersion::Restrict(mask >> 4) & ExtendedVersion::Restrict(0x0F));
 	v->full_keywords = io::read_string(fp);
 
 	// read primary version part
@@ -148,7 +151,8 @@ io::write_version(FILE *fp, const Version *v)
 #endif
 
 	// write masking
-	io::write<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp, v->maskflags.get());
+	io::write<MaskFlags::MaskType>(MaskFlags::MaskTypesize, fp,
+		(v->maskflags.get()) | (MaskFlags::MaskType(v->restrictFlags) << 4));
 
 	// write full keywords unless small database is required
 	io::write_string(fp, v->full_keywords);

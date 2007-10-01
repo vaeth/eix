@@ -174,7 +174,7 @@ class MarkedList : std::multimap<std::string, BasicVersion*>
 };
 
 class PrintFormat {
-	friend std::string get_basic_version(const PrintFormat *fmt, const BasicVersion *version, bool pure_text);
+	friend std::string get_extended_version(const PrintFormat *fmt, const ExtendedVersion *version, bool pure_text);
 	friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a);
 	friend std::string getFullInstalled(const Package &p, const PrintFormat &fmt);
 	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const std::vector<std::string> &prepend);
@@ -223,7 +223,8 @@ class PrintFormat {
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
 		     alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
-		     print_iuse;          /**< Print iuse data */
+		     print_iuse,          /**< Print iuse data */
+		     print_restrictions;  /**< Print mirror/fetch restrictions */
 
 		LocalMode recommend_mode;
 
@@ -232,7 +233,9 @@ class PrintFormat {
 			   color_stable,      /**< Color for stable versions */
 			   color_overlaykey,  /**< Color for the overlay key */
 			   color_virtualkey,  /**< Color for the virtual key */
-			   color_slots;       /**< Color for slots */
+			   color_slots,       /**< Color for slots */
+			   color_fetch,       /**< Color for fetch restriction */
+			   color_mirror;      /**< Color for mirror restriction */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
@@ -253,6 +256,7 @@ class PrintFormat {
 			tag_for_ex_minus_asterisk, tag_for_ex_minus_keyword,
 			tag_for_ex_alien_stable, tag_for_ex_alien_unstable,
 			tag_for_ex_missing_keyword;
+		std::string tag_fetch, tag_mirror;
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 		{
@@ -277,6 +281,8 @@ class PrintFormat {
 				color_overlaykey = AnsiColor(color_overlaykey).asString();
 				color_virtualkey = AnsiColor(color_virtualkey).asString();
 				color_slots      = AnsiColor(color_slots).asString();
+				color_fetch      = AnsiColor(color_fetch).asString();
+				color_mirror     = AnsiColor(color_mirror).asString();
 				AnsiMarker ins_marker(mark_installed);
 				mark_installed     = ins_marker.asString();
 				mark_installed_end = ins_marker.end();

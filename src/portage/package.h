@@ -315,7 +315,7 @@ class Package
 
 		/** Get the name of a slot of a version.
 		    returns NULL if not found. */
-		const char *slotname(const BasicVersion &v) const;
+		const char *slotname(const ExtendedVersion &v) const;
 
 		/** Get the name of a slot of an installed version,
 		    possibly reading it from disk.

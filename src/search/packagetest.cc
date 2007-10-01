@@ -74,6 +74,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	need     = PackageReader::NONE;
 	obsolete = overlay = installed = invert = upgrade = slotted =
 			dup_versions = dup_packages = false;
+	restrictions = ExtendedVersion::RESTRICT_NONE;
 	test_installed = INS_NONE;
 	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
 }
@@ -105,6 +106,7 @@ PackageTest::calculateNeeds() {
 		upgrade || overlay|| obsolete ||
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
+		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(test_stability_default != STABLE_NONE) ||
 		(test_stability_local != STABLE_NONE) ||
 		(test_stability_nonlocal != STABLE_NONE))
@@ -537,6 +539,32 @@ PackageTest::match(PackageReader *pkg) const
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
 		if(((p->have_duplicate_versions) & testfor) != testfor)
 			return invert;
+	}
+
+	if(restrictions != ExtendedVersion::RESTRICT_NONE) {
+		get_p();
+		bool found = false;
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if(((it->restrictFlags) & restrictions) == restrictions) {
+				found = true;
+				break;
+			}
+		}
+		if(!found) {
+			vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+			if(!installed_versions)
+				return invert;
+			for(vector<InstVersion>::iterator it = installed_versions->begin();
+				it != installed_versions->end(); ++it) {
+				vardbpkg->readRestricted(*p, *it, *header, portdir);
+				if(((it->restrictFlags) & restrictions) == restrictions) {
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				return invert;
+		}
 	}
 
 	while(obsolete) {  // -T; loop, because we break in case of success

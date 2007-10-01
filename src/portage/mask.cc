@@ -102,10 +102,10 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	const char *end = strrchr(str, ':');
 	m_test_slot = bool(end);
 	if(m_test_slot) {
-		slot = (end + 1);
+		m_slot = (end + 1);
 		// Interpret Slot "0" as empty slot (as internally always)
-		if(slot == "0")
-			slot.clear();
+		if(m_slot == "0")
+			m_slot.clear();
 	}
 
 	// Get the rest (name-version|name)
@@ -180,10 +180,10 @@ Mask::parseMask(const char *str) throw(ExBasic)
  * @param category category of package (NULL if shall not be tested)
  * @return true if applies. */
 bool
-Mask::test(const BasicVersion *bv) const
+Mask::test(const ExtendedVersion *ev) const
 {
 	if(m_test_slot) {
-		if(slot != bv->slot)
+		if(m_slot != ev->slot)
 			return false;
 	}
 	switch(m_operator)
@@ -192,26 +192,26 @@ Mask::test(const BasicVersion *bv) const
 			return true;
 
 		case maskOpGlob:
-			return strncmp(m_full.c_str(), bv->getFull(),
+			return strncmp(m_full.c_str(), ev->getFull(),
 					m_full.size()) == 0;
 
 		case maskOpLess:
-			return ((*bv) < *dynamic_cast<const BasicVersion*>(this));
+			return (*dynamic_cast<const BasicVersion*>(ev) < *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpLessEqual:
-			return ((*bv) <= *dynamic_cast<const BasicVersion*>(this));
+			return (*dynamic_cast<const BasicVersion*>(ev) <= *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpEqual:
-			return ((*bv) == *dynamic_cast<const BasicVersion*>(this));
+			return (*dynamic_cast<const BasicVersion*>(ev) == *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpGreaterEqual:
-			return ((*bv) >= *dynamic_cast<const BasicVersion*>(this));
+			return (*dynamic_cast<const BasicVersion*>(ev) >= *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpGreater:
-			return ((*bv) > *dynamic_cast<const BasicVersion*>(this));
+			return (*dynamic_cast<const BasicVersion*>(ev) > *dynamic_cast<const BasicVersion*>(this));
 
 		case maskOpRevisions:
-			return (compare_tilde(*bv) == 0);
+			return (compare_tilde(*dynamic_cast<const BasicVersion*>(ev)) == 0);
 
 		default:
 			break;

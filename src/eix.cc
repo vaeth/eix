@@ -139,6 +139,8 @@ dump_help(int exit_code)
 			"                                         provided by some overlay.\n"
 			"    --installed-in-overlay OVERLAY       Packages with an installed version\n"
 			"                                         provided from OVERLAY.\n"
+			"    --fetch               Match packages with a fetch restriction.\n"
+			"    --mirror              Match packages with a mirror restriction.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -285,6 +287,8 @@ static struct Option long_options[] = {
 	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
 	Option("installed-in-some-overlay", O_INSTALLED_SOME),
 	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
+	Option("fetch",         O_FETCH),
+	Option("mirror",        O_MIRROR),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
@@ -350,6 +354,8 @@ setup_defaults()
 	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
 	format.color_virtualkey    = rc["COLOR_VIRTUALKEY"];
 	format.color_slots         = rc["COLOR_SLOTS"];
+	format.color_fetch         = rc["COLOR_FETCH"];
+	format.color_mirror        = rc["COLOR_MIRROR"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.color_original      = rc.getBool("COLOR_ORIGINAL");
@@ -362,6 +368,7 @@ setup_defaults()
 	format.colon_slots         = rc.getBool("COLON_SLOTS");
 	format.colored_slots       = rc.getBool("COLORED_SLOTS");
 	format.recommend_mode      = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
+	format.print_restrictions  = !rc.getBool("NO_RESTRICTIONS");
 
 	format.alpha_use           = rc.getBool("SORT_INST_USE_ALPHA");
 
@@ -372,6 +379,9 @@ setup_defaults()
 	format.after_coll_iuse     = rc["FORMAT_AFTER_COLL_IUSE"];
 	format.before_slot_iuse    = rc["FORMAT_BEFORE_SLOT_IUSE"];
 	format.after_slot_iuse     = rc["FORMAT_AFTER_SLOT_IUSE"];
+
+	format.tag_fetch           = rc["TAG_FETCH"];
+	format.tag_mirror          = rc["TAG_MIRROR"];
 
 	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
 	format.tag_for_masked             = rc["TAG_FOR_MASKED"];
@@ -515,7 +525,9 @@ run_eix(int argc, char** argv)
 	PortageSettings portagesettings(eixrc, true);
 
 	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
-	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care);
+	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,
+		eixrc.getBool("RESTRICT_INSTALLED"),
+		eixrc.getBool("CARE_RESTRICT_INSTALLED"));
 	varpkg_db.check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	MarkedList *marked_list = NULL;

@@ -55,7 +55,7 @@
 /*#define NOT_FULL_USE*/
 
 /** Version expands the BasicVersion class by data relevant for versions in tree/overlays */
-class Version : public BasicVersion, public Keywords {
+class Version : public ExtendedVersion, public Keywords {
 
 	public:
 		friend void     io::write_version(FILE *fp, const Version *v);
@@ -93,7 +93,7 @@ class Version : public BasicVersion, public Keywords {
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : BasicVersion(str), overlay_key(0),
+		Version(const char* str) : ExtendedVersion(str), overlay_key(0),
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),

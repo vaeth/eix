@@ -355,6 +355,8 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
 	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
 	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
+	format_for_new.color_slots      = eixrc["COLOR_FETCH"];
+	format_for_new.color_slots      = eixrc["COLOR_MIRROR"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
@@ -364,6 +366,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_local_mask = eixrc.getBool("COLOR_LOCAL_MASK");
 
 	format_for_new.alpha_use        = eixrc.getBool("SORT_INST_USE_ALPHA");
+	format_for_new.print_restrictions = !eixrc.getBool("NO_RESTRICTIONS");
 
 	format_for_new.print_iuse       = eixrc.getBool("PRINT_IUSE");
 	format_for_new.before_iuse      = eixrc["FORMAT_BEFORE_IUSE"];
@@ -372,6 +375,9 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.after_coll_iuse  = eixrc["FORMAT_AFTER_COLL_IUSE"];
 	format_for_new.before_slot_iuse = eixrc["FORMAT_BEFORE_SLOT_IUSE"];
 	format_for_new.after_slot_iuse  = eixrc["FORMAT_AFTER_SLOT_IUSE"];
+
+	format_for_new.tag_fetch        = eixrc["TAG_FETCH"];
+	format_for_new.tag_mirror       = eixrc["TAG_MIRROR"];
 
 	format_for_new.setupColors();
 
@@ -396,7 +402,8 @@ run_diff_eix(int argc, char *argv[])
 
 	portagesettings = new PortageSettings(eixrc, true);
 
-	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care);
+	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care,
+		eixrc.getBool("RESTRICT_INSTALLED"), eixrc.getBool("CARE_RESTRICT_INSTALLED"));
 	varpkg_db->check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");

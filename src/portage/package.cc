@@ -236,7 +236,7 @@ Package::best_slots(vector<Version*> &l) const
 }
 
 const char *
-Package::slotname(const BasicVersion &v) const
+Package::slotname(const ExtendedVersion &v) const
 {
 	for(const_iterator i = begin(); i != end(); i++)
 	{
@@ -444,7 +444,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 int
 Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 {
-	BasicVersion *t_best = best();
+	ExtendedVersion *t_best = dynamic_cast<ExtendedVersion*>(best());
 	vector<InstVersion> *ins = NULL;
 	if(v)
 		ins = v->getInstalledVector(*this);
@@ -458,9 +458,9 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 		for(vector<InstVersion>::iterator it = ins->begin();
 			it != ins->end(); ++it)
 		{
-			if(*t_best > *it)
+			if(*dynamic_cast<BasicVersion*>(t_best) > *dynamic_cast<BasicVersion*>(&(*it)))
 				continue;
-			if(*t_best < *it)
+			if(*dynamic_cast<BasicVersion*>(t_best) < *dynamic_cast<BasicVersion*>(&(*it)))
 				return -1;
 			if(!test_slot)
 				return 0;

@@ -60,11 +60,13 @@ bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::
 
 
 /** Read the keywords and slot from a flat cache file. */
-void flat_get_keywords_slot_iuse(const string &filename, string &keywords, string &slot, string &iuse, BasicCache::ErrorCallback error_callback)
+void flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slot, string &iuse, string &restr, BasicCache::ErrorCallback error_callback)
 {
 	open_skipping(2, is, filename.c_str(), error_callback);
 	getline(is, slot);
-	skip_lines(5, is, filename, error_callback);
+	skip_lines(1, is, filename, error_callback);
+	getline(is, restr);
+	skip_lines(3, is, filename, error_callback);
 	getline(is, keywords);
 	skip_lines(1, is, filename, error_callback);
 	getline(is, iuse);

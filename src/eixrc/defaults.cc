@@ -161,6 +161,22 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "NO_RESTRICTIONS",
+			"false", "If false, fetch and mirror restrictions are output.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "RESTRICT_INSTALLED",
+			"true", "If true, calculate fetch and mirror restrictions for installed versions.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "CARE_RESTRICT_INSTALLED",
+			"true", "If true, read fetch and mirror restrictions for installed versions\n"
+			"always from disk. This is ignored if RESTRICT_INSTALLED=false.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DEFAULT_FORMAT",
 			"normal", "Defines whether --compact or --verbose is on by default.")
 		);
@@ -525,7 +541,10 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLEDVERSIONS",
 			"<installedversions"
-			":(%{COLOR_INST_VERSION}):():()::"
+			":(%{COLOR_INST_VERSION}):():()"
+			":(%{COLOR_FETCH})%{TAG_FETCH}"
+			":(%{COLOR_MIRROR})%{TAG_MIRROR}"
+			":::"
 			":(%{COLOR_DATE})\\(:\\)()"
 			":\\(:\\)"
 			":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>",
@@ -536,7 +555,9 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLEDVERSIONS_COMPACT",
 			"<installedversionsshortdate"
-			":(%{COLOR_INST_VERSION}):():():():"
+			":(%{COLOR_INST_VERSION}):():()"
+			"::"
+			":::"
 			":@(%{COLOR_DATE}):()"
 			":\\(:\\)"
 			":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>",
@@ -547,7 +568,10 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLEDVERSIONS_VERBOSE",
 			"<installedversions"
-			":(%{COLOR_INST_TITLE})Version\\\\:() (%{COLOR_INST_VERSION}):():():():"
+			":(%{COLOR_INST_TITLE})Version\\\\:() (%{COLOR_INST_VERSION}):():()"
+			":(%{COLOR_FETCH})%{TAG_FETCH}"
+			":(%{COLOR_MIRROR})%{TAG_MIRROR}"
+			":::"
 			":\\n                          (%{COLOR_INST_TITLE})Date\\\\:()    "
 			"(%{COLOR_DATE}):()"
 			":\\n                          (%{COLOR_INST_TITLE})USE\\\\:()     "
@@ -1027,6 +1051,16 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_FETCH",
+			"red", "Color for the fetch restriction tag.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "COLOR_MIRROR",
+			"cyan", "Color for the mirror restriction tag.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MARK_INSTALLED",
 			"inverse", "How installed packages are marked in version listings.")
 		);
@@ -1232,6 +1266,16 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "COUNT_ONLY_PRINTED",
 			"true", "If false, count independently of whether the matches are printed.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_FETCH",
+			"!f", "Tag for fetch-restricted versions.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "TAG_MIRROR",
+			"!m", "Tag for mirror-restricted versions.")
 		);
 
 #define TAG_FOR(type, default, comment) \

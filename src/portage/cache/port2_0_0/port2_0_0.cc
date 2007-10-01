@@ -83,10 +83,11 @@ bool Port2_0_0_Cache::readCategory(Category &vec) throw(ExBasic)
 			version = new Version(aux[1]);
 
 			/* Read stability from cachefile */
-			string keywords, iuse;
-			flat_get_keywords_slot_iuse(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, m_error_callback);
+			string keywords, iuse, restr;
+			flat_get_keywords_slot_iuse_restrict(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, restr, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
+			version->set_restrict(restr);
 			version->overlay_key = m_overlay_key;
 
 			pkg->addVersion(version);

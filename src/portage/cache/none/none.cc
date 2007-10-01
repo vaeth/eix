@@ -103,6 +103,7 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 
 		version->set_full_keywords(ebuild["KEYWORDS"]);
 		version->slot = ebuild["SLOT"];
+		version->set_restrict(ebuild["RESTRICT"]);
 		version->set_iuse(ebuild["IUSE"]);
 		pkg->addVersionFinalize(version);
 		if(read_onetime_info)

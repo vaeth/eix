@@ -2,6 +2,8 @@
 
 *eix-0.10.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support for RESTRICT="fetch mirror", see
+	  http://forums.gentoo.org/viewtopic-t-278819-start-355.html
 	- Introduce ALWAYS_ACCEPT_KEYWORDS and let it default to "false" to
 	  imitate the behavior of <eix-0.10.0 for ~ARCH in ACCEPT_KEYWORDS,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=193719

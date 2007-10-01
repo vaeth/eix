@@ -34,7 +34,7 @@
 #include <set>
 
 /** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
-class InstVersion : public BasicVersion, public Keywords {
+class InstVersion : public ExtendedVersion, public Keywords {
 
 	public:
 		/** For versions in vardbpkg we might not yet know the slot.
@@ -42,6 +42,8 @@ class InstVersion : public BasicVersion, public Keywords {
 		bool know_slot, read_failed;
 		/** Similarly for iuse and usedUse: */
 		bool know_use;
+		/** And the same for restricted: */
+		bool know_restricted;
 
 		time_t instDate;                   /**< Installation date according to vardbpkg */
 		std::vector<std::string> inst_iuse;/**< Useflags in iuse according to vardbpkg  */
@@ -57,6 +59,7 @@ class InstVersion : public BasicVersion, public Keywords {
 			know_slot = false;
 			read_failed = false;
 			know_use = false;
+			know_restricted = false;
 			instDate = 0;
 			know_overlay = false;
 		}
@@ -65,7 +68,7 @@ class InstVersion : public BasicVersion, public Keywords {
 		{ init(); }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		InstVersion(const char* str) : BasicVersion(str)
+		InstVersion(const char* str) : ExtendedVersion(str)
 		{ init(); }
 
 		/** The equality operator does not test the additional data */

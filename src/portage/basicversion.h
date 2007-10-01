@@ -38,10 +38,11 @@
 
 #include <string>
 #include <vector>
-#include <database/io.h>
-#include <cstdlib>
-
 #include <iostream>
+
+#include <database/io.h>
+#include <eixTk/stringutils.h>
+
 class LeadNum
 {
 	protected:
@@ -176,10 +177,6 @@ class BasicVersion
 		typedef io::Char Primchar;
 		static const unsigned short Primcharsize = io::Charsize;
 
-		/** The slot, the version represents.
-		    For saving space, the default "0" is always stored as "" */
-		std::string slot;
-
 		/** Parse the version-string pointed to by str.
 		 * If str is NULL, no parsing is done. */
 		BasicVersion(const char *str = NULL);
@@ -240,19 +237,6 @@ class BasicVersion
 		const std::vector<Suffix> &getSuffix() const
 		{ return m_suffix; }
 
-		std::string getSlotAppendix (bool colon) const
-		{
-			if(slot.length())
-			{
-				if(colon)
-					return std::string(":") + slot;
-				return std::string("(") + slot + ")";
-			}
-			return "";
-		}
-
-		std::string getFullSlotted (bool colon, const std::string& intermediate = "") const
-		{ return std::string(getFull()) + intermediate + getSlotAppendix(colon); }
 	protected:
 		/** The m_full version-string. */
 		std::string            m_full;
@@ -278,6 +262,47 @@ class BasicVersion
 		 * Thus, if this returns a pointer to '\0', there is nothing more to parse. */
 		const char *parsePrimary(const char *str);
 	private:
+};
+
+class ExtendedVersion : public BasicVersion
+{
+	public:
+		typedef io::Char Restrict;
+		static const unsigned short Restrictsize = io::Charsize;
+
+		static const Restrict
+			RESTRICT_NONE   = 0x00,
+			RESTRICT_FETCH  = 0x01,
+			RESTRICT_MIRROR = 0x02;
+
+		Restrict restrictFlags;
+
+		/** The slot, the version represents.
+		    For saving space, the default "0" is always stored as "" */
+		std::string slot;
+
+		ExtendedVersion(const char *str = NULL) : BasicVersion(str)
+		{ restrictFlags = RESTRICT_NONE; slot.clear(); }
+
+		static Restrict calcRestrict(const std::vector<std::string>& restrict_words);
+
+		static Restrict calcRestrict(const std::string& str)
+		{ return calcRestrict(split_string(str)); }
+
+		void set_restrict(const std::string& str)
+		{ restrictFlags = calcRestrict(str); }
+
+		std::string getSlotAppendix(bool colon) const
+		{
+			if(slot.empty())
+				return "";
+			if(colon)
+				return std::string(":") + slot;
+			return std::string("(") + slot + ")";
+		}
+
+		std::string getFullSlotted(bool colon, const std::string& intermediate = "") const
+		{ return std::string(getFull()) + intermediate + getSlotAppendix(colon); }
 };
 
 #endif /* __BASICVERSION_H__ */

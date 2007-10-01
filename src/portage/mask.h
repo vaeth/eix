@@ -81,6 +81,7 @@ class Mask : public BasicVersion {
 
 		std::string m_category; /**< category */
 		std::string m_name;     /**< package name */
+		std::string m_slot;
 		bool m_test_slot;       /**< must we match a slot? */
 
 		/** split a "mask string" into its components
@@ -95,7 +96,7 @@ class Mask : public BasicVersion {
 		/** Tests if the mask applies to a Version.
 		 * @param bv test this version
 		 * @return true if applies. */
-		bool test(const BasicVersion *bv) const;
+		bool test(const ExtendedVersion *bv) const;
 
 	public:
 		/** Parse mask-string. */

@@ -45,7 +45,8 @@
 
 using namespace std;
 
-inline static void sort_installed(map<string,vector<InstVersion> > *maping)
+inline static void
+sort_installed(map<string,vector<InstVersion> > *maping)
 {
 	map<string,vector<InstVersion> >::iterator it = maping->begin();
 	while(it != maping->end())
@@ -57,7 +58,8 @@ inline static void sort_installed(map<string,vector<InstVersion> > *maping)
 
 /** Find installed versions of packet "name" in category "category".
  * @return NULL if not found .. else pointer to vector of versions. */
-vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const string &name)
+vector<InstVersion> *
+VarDbPkg::getInstalledVector(const string &category, const string &name)
 {
 	map<string, map<string, vector<InstVersion> >* >::iterator map_it = installed.find(category);
 	/* Not yet read */
@@ -80,7 +82,8 @@ vector<InstVersion> *VarDbPkg::getInstalledVector(const string &category, const 
 
 /** Returns true if v is in vec. v=NULL is always in vec.
     If a serious result is found and r is nonzero, r points to that result */
-bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r)
+bool
+VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r)
 {
 	if(vec)
 	{
@@ -99,7 +102,8 @@ bool VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVers
 
 /** Returns number of installed versions of this package
  * @param p Check for this Package. */
-vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p)
+vector<InstVersion>::size_type
+VarDbPkg::numInstalled(const Package &p)
 {
 	vector<InstVersion> *vec = getInstalledVector(p);
 	if(!vec)
@@ -107,7 +111,8 @@ vector<InstVersion>::size_type VarDbPkg::numInstalled(const Package &p)
 	return vec->size();
 }
 
-bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
+bool
+VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
 {
 	if(v.know_overlay)
 		return !v.overlay_failed;
@@ -152,7 +157,8 @@ bool VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& hea
 	return false;
 }
 
-string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
+string
+VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 {
 	std::vector<std::string> lines;
 	pushback_lines(
@@ -167,7 +173,8 @@ string VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 	return "";
 }
 
-string VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
+string
+VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 {
 #if defined(USE_BZLIB)
 	BZFILE *fh = BZ2_bzopen(
@@ -256,7 +263,8 @@ string VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 #endif
 }
 
-bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const
+bool
+VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 {
 	if(v.know_slot)
 		return true;
@@ -289,11 +297,12 @@ bool VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 	}
 }
 
-bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
+bool
+VarDbPkg::readUse(const Package &p, InstVersion &v) const
 {
 	if(v.know_use)
 		return true;
-	v.know_use=true;
+	v.know_use = true;
 	v.inst_iuse.clear();
 	v.usedUse.clear();
 	set<string> iuse_set;
@@ -341,8 +350,49 @@ bool VarDbPkg::readUse(const Package &p, InstVersion &v) const
 	return true;
 }
 
+bool
+VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
+{
+	if(v.know_restricted)
+		return true;
+	v.know_restricted = true;
+	if(!care_of_restrictions) {
+		for(Package::const_iterator it = p.begin(); it != p.end(); ++it) {
+			if(*dynamic_cast<const BasicVersion*>(*it) != *dynamic_cast<BasicVersion*>(&v))
+				continue;
+			if(readSlot(p, v)) {
+				if(it->slot != v.slot)
+					continue;
+			}
+			if(readOverlay(p, v, header, portdir)) {
+				if(it->overlay_key != v.overlay_key)
+					continue;
+			}
+			v.restrictFlags = it->restrictFlags;
+			return true;
+		}
+	}
+	try {
+		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
+		vector<string> lines;
+		if(!pushback_lines((dirname + "/RESTRICT").c_str(),
+			&lines, true, false, false))
+			return false;
+		if(lines.size() == 1)
+			v.set_restrict(lines[0]);
+		else
+			v.set_restrict(join_vector(lines));
+	}
+	catch(ExBasic e) {
+		cerr << e << endl;
+		return false;
+	}
+	return true;
+}
+
 /** Read category from db-directory. */
-void VarDbPkg::readCategory(const char *category)
+void
+VarDbPkg::readCategory(const char *category)
 {
 	/* Pointers to db and category DIRectory */
 	DIR *dir_category;

@@ -205,6 +205,10 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  break;
 			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
 				  break;
+			case O_FETCH: test->Restrictions(ExtendedVersion::RESTRICT_FETCH);
+				  break;
+			case O_MIRROR: test->Restrictions(ExtendedVersion::RESTRICT_MIRROR);
+				  break;
 			case 'T': red.first = red.second = RedAtom();
 				  if(eixrc.getBool("TEST_FOR_REDUNDANCY"))
 				  {
