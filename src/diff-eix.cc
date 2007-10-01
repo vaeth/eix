@@ -355,10 +355,9 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
 	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
 	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
-	format_for_new.color_slots      = eixrc["COLOR_FETCH"];
-	format_for_new.color_slots      = eixrc["COLOR_MIRROR"];
+	format_for_new.color_fetch      = eixrc["COLOR_FETCH"];
+	format_for_new.color_mirror     = eixrc["COLOR_MIRROR"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
-	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
 	format_for_new.colon_slots      = eixrc.getBool("COLON_SLOTS");
 	format_for_new.colored_slots    = eixrc.getBool("COLORED_SLOTS");
