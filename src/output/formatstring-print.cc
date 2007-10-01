@@ -60,7 +60,7 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 	for(vector<string>::iterator it = i.inst_iuse.begin();
 		it != i.inst_iuse.end(); ++it)
 	{
-		int addindex = 0;
+		size_t addindex = 0;
 		string *curr = &ret;
 		if(i.usedUse.find(*it) == i.usedUse.end()) {
 			addindex = 2;
@@ -217,7 +217,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			const char *a[4];
 			size_t j = 0;
 			for(vector<string>::size_type i = PIDX_SET_USE;
-				i < PIDX_AFTER_UNSET_USE;
+				i <= PIDX_AFTER_UNSET_USE;
 				++i, ++j)
 			{
 				a[j] = NULL;
