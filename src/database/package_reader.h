@@ -35,11 +35,9 @@
 #include <iostream>
 #include <memory>
 
-#if 0
-class Package;
-#else
+// No forward decl of Package because gcc-3.3.6 will scream bloody
+// murder.
 #include <portage/package.h>
-#endif
 
 /// Forward-iterate for packages stored in the cachefile.
 class PackageReader {

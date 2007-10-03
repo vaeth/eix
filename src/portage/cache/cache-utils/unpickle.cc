@@ -96,7 +96,7 @@ typedef unsigned char unsigned_char;
 #define MOVE(x)     (data += x)
 #define IS_END      (data >= data_end)
 
-void static unpickle_check_dict(bool &waiting_for_value, map<string,string> &unpickled, string &buf, string &key)
+static void unpickle_check_dict(bool &waiting_for_value, map<string,string> &unpickled, string &buf, string &key)
 {
 	if(waiting_for_value) {
 		unpickled[key] = buf;
