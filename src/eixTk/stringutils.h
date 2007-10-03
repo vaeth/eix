@@ -168,12 +168,11 @@ bool sort_uniquify(std::vector<T> &v, bool vector_is_ignored = false)
 
 #endif
 
+/// Add items from s to the end of d.
 template<typename T>
 void push_backs(std::vector<T> &d, const std::vector<T> &s)
 {
-	for(typename std::vector<T>::const_iterator i = s.begin();
-		i != s.end(); ++i)
-		d.push_back(*i);
+	d.insert(d.end(), s.begin(), s.end());
 }
 
 /** Make a set from a vector. */
@@ -181,10 +180,7 @@ template<typename T>
 void make_set(std::set<T> &the_set, const std::vector<T> &the_list)
 {
 	the_set.clear();
-	for(typename std::vector<std::string>::const_iterator it = the_list.begin();
-		it != the_list.end(); ++it) {
-		the_set.insert(*it);
-	}
+	the_set.insert(the_list.begin(), the_list.end());
 }
 
 
@@ -193,8 +189,10 @@ template<typename T>
 void make_vector(std::vector<T> &the_list, const std::set<T> &the_set)
 {
 	the_list.clear();
-	for(typename std::set<std::string>::const_iterator it = the_set.begin();
-		it != the_set.end(); ++it) {
+	for(typename std::set<T>::const_iterator it(the_set.begin()),
+			it_end(the_set.end());
+		it != it_end; ++it) 
+	{
 		the_list.push_back(*it);
 	}
 }

@@ -168,24 +168,20 @@ bool pushback_files(const string &dir_path, vector<string> &into, const char *ex
 	struct dirent **namelist = NULL;
 	int num = scandir(dir_path.c_str(), &namelist,
 		pushback_files_selector, alphasort);
-	bool ok;
+
 	if(num < 0)
-		ok = false;
-	else
+		return false;
+
+	for(int i = 0; i < num; ++i)
 	{
-		ok = true;
-		for(int i = 0; i < num; ++i)
-		{
-			if(full_path)
-				into.push_back(dir_path + (namelist[i]->d_name));
-			else
-				into.push_back(namelist[i]->d_name);
-			free(namelist[i]);
-		}
+		if(full_path)
+			into.push_back(dir_path + (namelist[i]->d_name));
+		else
+			into.push_back(namelist[i]->d_name);
+		free(namelist[i]);
 	}
-	if(namelist)
-		free(namelist);
-	return ok;
+	free(namelist);
+	return true;
 }
 
 /** Cycle through map using it, until it is it_end, append all values from it
