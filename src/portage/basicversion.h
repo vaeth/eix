@@ -264,8 +264,6 @@ class ExtendedVersion : public BasicVersion
 		ExtendedVersion(const char *str = NULL) : BasicVersion(str)
 		{ restrictFlags = RESTRICT_NONE; slot.clear(); }
 
-		static Restrict calcRestrict(const std::vector<std::string>& restrict_words);
-
 		static Restrict calcRestrict(const std::string& str);
 
 		void set_restrict(const std::string& str)

@@ -20,6 +20,8 @@
 
 #include <dirent.h>
 
+#include "io.h"
+
 using namespace std;
 
 const unsigned short
@@ -276,12 +278,12 @@ io::read_packagetree(FILE *fp, io::Treesize size, PackageTree &tree)
 }
 
 #if defined(INSTANTIATE_TEMPLATES)
-template <io::Char>  read<io::Char>  (const unsigned short size, FILE *fp);
-template <io::Short> read<io::Short> (const unsigned short size, FILE *fp);
-template <io::Int>   read<io::Int>   (const unsigned short size, FILE *fp);
-template <io::Long>  read<io::Long>  (const unsigned short size, FILE *fp);
-template write<io::Char> (const unsigned short size, FILE *fp,<io::Char>  t);
-template write<io::Short>(const unsigned short size, FILE *fp,<io::Short> t);
-template write<io::Int>  (const unsigned short size, FILE *fp,<io::Int>   t);
-template write<io::Long> (const unsigned short size, FILE *fp,<io::Long>  t);
+template io::Char  io::read<io::Char>  (const unsigned short size, FILE *fp);
+template io::Short io::read<io::Short> (const unsigned short size, FILE *fp);
+template io::Int   io::read<io::Int>   (const unsigned short size, FILE *fp);
+//template io::Long io::read<io::Long> (const unsigned short size, FILE *fp);
+template void io::write<io::Char> (const unsigned short size, FILE *fp,io::Char  t);
+template void io::write<io::Short>(const unsigned short size, FILE *fp,io::Short t);
+template void io::write<io::Int>  (const unsigned short size, FILE *fp,io::Int   t);
+//template io::write<io::Long>(const unsigned short size, FILE *fp,io::Long t);
 #endif

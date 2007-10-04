@@ -356,9 +356,10 @@ const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_MIRROR;
 
 ExtendedVersion::Restrict
-ExtendedVersion::calcRestrict(const vector<string> &restrict_words)
+ExtendedVersion::calcRestrict(const string &str)
 {
 	Restrict r = RESTRICT_NONE;
+	vector<string> restrict_words = split_string(str);
 	for(vector<string>::const_iterator it = restrict_words.begin();
 		it != restrict_words.end(); ++it) {
 		if(strcasecmp(it->c_str(), "fetch") == 0)
@@ -368,10 +369,6 @@ ExtendedVersion::calcRestrict(const vector<string> &restrict_words)
 	}
 	return r;
 }
-
-ExtendedVersion::Restrict
-ExtendedVersion::calcRestrict(const string& str)
-{ return calcRestrict(split_string(str)); }
 
 #if defined(INSTANTIATE_TEMPLATES)
 template class vector<LeadNum>;
