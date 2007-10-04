@@ -1,9 +1,9 @@
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
-// Copyright (c)                                                         
-//   Wolfgang Frisch <xororand@users.sourceforge.net>                    
-//   Emil Beinroth <emilbeinroth@gmx.net>                                
+// Copyright (c)
+//   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Emil Beinroth <emilbeinroth@gmx.net>
 
 #ifndef __STRINGUTILS_H__
 #define __STRINGUTILS_H__
@@ -164,7 +164,7 @@ void make_vector(std::vector<T> &the_list, const std::set<T> &the_set)
 	the_list.clear();
 	for(typename std::set<T>::const_iterator it(the_set.begin()),
 			it_end(the_set.end());
-		it != it_end; ++it) 
+		it != it_end; ++it)
 	{
 		the_list.push_back(*it);
 	}

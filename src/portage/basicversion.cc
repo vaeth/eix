@@ -369,6 +369,10 @@ ExtendedVersion::calcRestrict(const vector<string> &restrict_words)
 	return r;
 }
 
+ExtendedVersion::Restrict
+ExtendedVersion::calcRestrict(const string& str)
+{ return calcRestrict(split_string(str)); }
+
 #if defined(INSTANTIATE_TEMPLATES)
 template class vector<LeadNum>;
 template class vector<Suffix>;

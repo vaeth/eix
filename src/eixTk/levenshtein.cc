@@ -1,8 +1,8 @@
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
-// Copyright (c)                                                         
-//   Wolfgang Frisch <xororand@users.sourceforge.net>                    
+// Copyright (c)
+//   Wolfgang Frisch <xororand@users.sourceforge.net>
 
 #include "levenshtein.h"
 

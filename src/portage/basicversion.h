@@ -266,8 +266,7 @@ class ExtendedVersion : public BasicVersion
 
 		static Restrict calcRestrict(const std::vector<std::string>& restrict_words);
 
-		static Restrict calcRestrict(const std::string& str)
-		{ return calcRestrict(split_string(str)); }
+		static Restrict calcRestrict(const std::string& str);
 
 		void set_restrict(const std::string& str)
 		{ restrictFlags = calcRestrict(str); }

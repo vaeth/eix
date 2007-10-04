@@ -14,13 +14,15 @@ libportage_a_SOURCES = basicversion.cc basicversion.h \
 					   overlay.h \
 					   vardbpkg.cc vardbpkg.h \
 					   packagetree.cc packagetree.h \
-					   keywords.cc keywords.h
+					   keywords.cc keywords.h \
+					   set_stability.cc set_stability.h
 
 TESTS = basicversion-test keywords-test
 
 noinst_PROGRAMS = basicversion-test keywords-test
 
 basicversion_test_SOURCES = basicversion_test.cc basicversion.cc
+basicversion_test_LDADD = ../eixTk/libeixTk.a
 
 keywords_test_SOURCES = keywords_test.cc keywords.cc
 keywords_test_LDADD = ../eixTk/libeixTk.a

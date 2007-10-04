@@ -1,10 +1,10 @@
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
-// Copyright (c)                                                         
-//   Wolfgang Frisch <xororand@users.sourceforge.net>                    
-//   Emil Beinroth <emilbeinroth@gmx.net>                                
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     
+// Copyright (c)
+//   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "cascadingprofile.h"
 
@@ -164,7 +164,8 @@ CascadingProfile::readPackageMasks(const string &line)
 	}
 }
 
-void CascadingProfile::ReadLink(string &path) const
+void
+CascadingProfile::ReadLink(string &path) const
 {
 	char readlink_buffer[READLINK_BUFFER];
 	string profile_linkname = (m_portagesettings->m_eprefixconf) + PROFILE_LINK;
@@ -182,7 +183,8 @@ void CascadingProfile::ReadLink(string &path) const
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
-void CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
+void
+CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 {
 	string path_buffer;
 	if(profile_dir)
@@ -209,3 +211,15 @@ void CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 	} while( getParentProfile(path_buffer) );
 
 }
+
+void
+CascadingProfile::applyMasks(Package *p) const
+{
+	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+		(*it)->maskflags.set(MaskFlags::MASK_NONE);
+	}
+	getAllowedPackages()->applyMasks(p);
+	getSystemPackages()->applyMasks(p);
+	getPackageMasks()->applyMasks(p);
+}
+
