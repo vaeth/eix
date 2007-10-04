@@ -141,9 +141,8 @@ bool sort_uniquify(T &v, bool vector_is_ignored = false)
 	typename T::iterator i = std::unique(v.begin(), v.end());
 	if(i == v.end())
 		return false;
-	if(vector_is_ignored)
-		return true;
-	v.erase(i, v.end());
+	if(! vector_is_ignored)
+		v.erase(i, v.end());
 	return true;
 }
 
@@ -152,18 +151,12 @@ bool sort_uniquify(T &v, bool vector_is_ignored = false)
 template<typename T>
 bool sort_uniquify(std::vector<T> &v, bool vector_is_ignored = false)
 {
-	std::set<T> s;
-	for(typename std::vector<T>::const_iterator i = v.begin();
-		i != v.end(); ++i)
-		s.insert(*i);
-	bool r = (s.size() != v.size());
-	if(vector_is_ignored)
-		return r;
-	v.clear();
-	for(typename std::set<T>::const_iterator i = s.begin();
-		i != s.end(); ++i)
-		v.push_back(*i);
-	return r;
+	std::set<T> s(v.begin(), v.end());
+	if(! vector_is_ignored) {
+		v.clear();
+		v.insert(v.end(), s.begin(), s.end());
+	}
+	return (s.size() != v.size());
 }
 
 #endif
