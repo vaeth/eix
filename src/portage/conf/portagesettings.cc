@@ -655,7 +655,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 
 		Keywords::Redundant redundant = i->get_redundant();
 		KeywordsFlags kf(i->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
-		(*i)->keyflags=kf;
+		i->keyflags=kf;
 		i->save_keyflags(Version::SAVEKEY_ACCEPT);
 		bool ori_is_stable = kf.havesome(KeywordsFlags::KEY_STABLE);
 
@@ -676,7 +676,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		{
 			// Create keywords_set of KEYWORDS from the ebuild
 			set<string> keywords_set;
-			make_set<string>(keywords_set, split_string((*i)->get_full_keywords()));
+			make_set<string>(keywords_set, split_string(i->get_full_keywords()));
 
 			// Create kv_set (of now active keywords), possibly testing for double keywords and -*
 			set<string> kv_set;
@@ -767,7 +767,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 
 		// Store the result:
 
-		(*i)->keyflags=kf;
+		i->keyflags=kf;
 		i->save_keyflags(Version::SAVEKEY_USER);
 		if(redundant)
 			i->set_redundant(redundant);
@@ -792,8 +792,8 @@ PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 	if(pkg->restore_keyflags(ind))
 		return;
 	for(Package::iterator t = pkg->begin(); t != pkg->end(); ++t) {
-		(*t)->set_keyflags(*accept_set, m_obsolete_minusasterisk);
-		(*t)->save_keyflags(ind);
+		t->set_keyflags(*accept_set, m_obsolete_minusasterisk);
+		t->save_keyflags(ind);
 	}
 }
 

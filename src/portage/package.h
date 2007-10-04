@@ -44,7 +44,7 @@ class VarDbPkg;
 
 /** A sorted list of pointer to Versions */
 
-class VersionList : public std::list<Version*>
+class VersionList : public eix::ptr_list<Version>
 {
 	public:
 		VersionList(Version *v) : std::list<Version*>(1, v)

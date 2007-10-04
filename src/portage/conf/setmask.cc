@@ -35,7 +35,7 @@ void
 CascadingProfile::applyMasks(Package *p) const
 {
 	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-		(*it)->maskflags.set(MaskFlags::MASK_NONE);
+		it->maskflags.set(MaskFlags::MASK_NONE);
 	}
 	getAllowedPackages()->applyMasks(p);
 	getSystemPackages()->applyMasks(p);

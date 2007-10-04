@@ -51,7 +51,7 @@ VersionList::best() const
 	for(const_reverse_iterator ri = rbegin();
 		ri != rend(); ++ri)
 	{
-		if((*ri)->keyflags.isStable() && (!(*ri)->maskflags.isHardMasked()))
+		if(ri->keyflags.isStable() && (!ri->maskflags.isHardMasked()))
 			return *ri;
 	}
 	return NULL;
