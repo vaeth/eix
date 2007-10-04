@@ -16,7 +16,7 @@ die() {
 }
 
 ver=$(grep AC_INIT configure.in | awk '{ print $2 }')
-ver=${ver/,}
+ver=${ver%%,*}
 
 ans=''
 while [ -z "${ans}" ]; do
