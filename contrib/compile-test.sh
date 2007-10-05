@@ -1,26 +1,66 @@
-#!/bin/sh
+#!/bin/bash
 # Try to compile eix with various version of gcc.
 
-die () {
-	echo "Current gcc: $gcc"
-	exit 1
+shopt -s extglob
+
+get_avail_gcc() {
+	echo /etc/env.d/gcc/!(*-hardened*|!(i?86-pc-linux-gnu-*)) \
+	| xargs -n1 basename
 }
 
-old_gcc=$(gcc-config -c)
+reset_gcc() {
+	gcc-config "${original_gcc}" >/dev/null &
+	exit
+}
 
-trap "gcc-config ${old_gcc}" EXIT
+set_status() {
+	gcc_faild[$1]="$2"
+}
 
-for gcc in /etc/env.d/gcc/i686-pc-linux-gnu-*
-do
-	[[ "$gcc" = *"-hardened"* ]] && continue
-	gcc="${gcc##*/}"
+gcc=($(get_avail_gcc))
+gcc_faild=(${gcc[@]})
+original_gcc=$(gcc-config -c)
+trap reset_gcc EXIT INT
 
-	gcc-config "${gcc}" || die
+
+for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
+	make maintainer-clean &>/dev/null
+	echo "trying ${gcc[$gcc_n]}"
+
+	if ! gcc-config "${gcc[$gcc_n]}"; then
+		set_status $gcc_n "(1 of 5) gcc-config failed"
+		continue
+	fi
 
 	source /etc/profile
-	
-	./configure CXXFLAGS="-Wall -W -Werror -g3 -ggdb3" || die
-	make clean all || die
-	make check || die
 
+	if ! ./autogen.sh; then
+		set_status $gcc_n "(2 of 5) autogen.sh failed"
+		continue
+	fi
+
+	if ! ./configure CXXFLAGS="-Wall -W ${CXXFLAGS:- -g3 -ggdb3}"; then
+		set_status $gcc_n "(3 of 5) configure failed"
+		continue
+	fi
+
+	if ! make clean all; then
+		set_status $gcc_n "(4 of 5) make clean all"
+		continue
+	fi
+
+	if ! make check; then
+		set_status $gcc_n "(5 of 5) make check"
+		continue
+	fi
+
+	set_status $gcc_n "ok"
+done
+
+echo
+echo "== all done =="
+echo
+
+for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
+	echo "${gcc[$gcc_n]}: ${gcc_faild[$gcc_n]}"
 done
