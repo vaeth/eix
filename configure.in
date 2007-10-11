@@ -91,15 +91,15 @@ fi
 dnl Use bzip2?
 AC_ARG_WITH(bzip2,[  --with-bzip2    Use libbz2 (required for detecting installed overlays)], [
 	if test "x${withval}" = "xno"; then
-		USE_BZLIB=false
+		USE_BZLIB=""
 	else
-		USE_BZLIB=true
+		USE_BZLIB="1"
 	fi
 	],
 	[
-		USE_BZLIB=""
+		USE_BZLIB="test"
 	])
-if test -z "${USE_BZLIB}"; then
+if test -n "${USE_BZLIB}"; then
 	AC_MSG_CHECKING(whether libbz2 is usable)
 	BZLIB_LIBS="-lbz2"
 	myoLIBS="${LIBS}"
@@ -111,19 +111,19 @@ if test -z "${USE_BZLIB}"; then
 	],
 	[
 		AC_MSG_RESULT(yes)
-		USE_BZLIB=true
+		USE_BZLIB="1"
 	],
 	[
 		AC_MSG_RESULT(no)
 		if test "x${USE_BZLIB}" != "xtest"; then
 			AC_MSG_ERROR("bzip2 required but libbz2 is unusable")
 		fi
-		USE_BZLIB=false
+		USE_BZLIB=""
 		BZLIB_LIBS=""
 	])
 	LIBS="${myoLIBS}"
 fi
-if ${USE_BZLIB}; then
+if test -n "${USE_BZLIB}"; then
 	AC_DEFINE(USE_BZLIB,1, Define to 1 if bzlib can be used)
 else
 	AC_MSG_WARN("no libbz2: eix will not detect installed overlays")
