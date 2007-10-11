@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.10.1, http://sourceforge.net/projects/eix/)
+AC_INIT(eix, 0.10.2, http://sourceforge.net/projects/eix/)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -44,7 +44,10 @@ AC_TRY_COMPILE([ #include <dirent.h>
   int (*select)(const struct dirent *) = 0;
   scandir(dir, namelist, select, alphasort);
 ],
-[AC_MSG_RESULT(const struct dirent *); SCANDIR_ARG3="const struct dirent *"],
+[AC_MSG_RESULT(const struct dirent *)
+ SCANDIR_ARG3="const struct dirent *"
+ SCANDIR_CAST=false
+],
 	AC_TRY_COMPILE([ #include <dirent.h>
 	],
 	[
@@ -53,25 +56,50 @@ AC_TRY_COMPILE([ #include <dirent.h>
 	  int (*select)(struct dirent *) = 0;
 	  scandir(dir, namelist, select, alphasort);
 	],
-	[AC_MSG_RESULT(struct dirent *); SCANDIR_ARG3="struct dirent *"],
-	AC_MSG_ERROR(none of them .. I don't know how to call scandir)
-	)
+	[AC_MSG_RESULT(struct dirent *)
+	 SCANDIR_ARG3="struct dirent *"
+	 SCANDIR_CAST=false
+	],
+	[AC_MSG_RESULT(neither...)
+	 AC_MSG_CHECKING(if scandir argument is void)
+		AC_TRY_COMPILE([ #include <dirent.h>
+		],
+		[
+		  const char * dir = 0;
+		  struct dirent ***namelist = 0;
+		  int (*select)(const struct dirent *) = 0;
+		  scandir(dir, namelist, reinterpret_cast<int(*)()>(select), alphasort);
+		/*scandir(dir, namelist, reinterpret_cast<int(*)(const struct dirent *)>(select), alphasort);*/
+		],
+		[AC_MSG_RESULT(yes)
+		 SCANDIR_ARG3="const struct dirent *"
+		 SCANDIR_CAST=true
+		],
+		AC_MSG_ERROR(I don't know how to call scandir)
+		)
+	])
 )
 
-AC_DEFINE_UNQUOTED(SCANDIR_ARG3, $SCANDIR_ARG3, "3th argument of scandir")
+AC_DEFINE_UNQUOTED(SCANDIR_ARG3, ${SCANDIR_ARG3}, "3th argument of scandir")
+if ${SCANDIR_CAST}; then
+	dnl AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,reinterpret_cast<int(*)()>(c),d), possible cast for scandir)
+	AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,reinterpret_cast<int(*)(const struct dirent *)>(c),d), possible cast for scandir)
+else
+	AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,c,d), possible cast for scandir)
+fi
 
 dnl Use bzip2?
 AC_ARG_WITH(bzip2,[  --with-bzip2    Use libbz2 (required for detecting installed overlays)], [
 	if test "x${withval}" = "xno"; then
-		USE_BZLIB=""
+		USE_BZLIB=false
 	else
-		USE_BZLIB="1"
+		USE_BZLIB=true
 	fi
 	],
 	[
-		USE_BZLIB="test"
+		USE_BZLIB=""
 	])
-if test -n "${USE_BZLIB}"; then
+if test -z "${USE_BZLIB}"; then
 	AC_MSG_CHECKING(whether libbz2 is usable)
 	BZLIB_LIBS="-lbz2"
 	myoLIBS="${LIBS}"
@@ -83,19 +111,19 @@ if test -n "${USE_BZLIB}"; then
 	],
 	[
 		AC_MSG_RESULT(yes)
-		USE_BZLIB="1"
+		USE_BZLIB=true
 	],
 	[
 		AC_MSG_RESULT(no)
 		if test "x${USE_BZLIB}" != "xtest"; then
 			AC_MSG_ERROR("bzip2 required but libbz2 is unusable")
 		fi
-		USE_BZLIB=""
+		USE_BZLIB=false
 		BZLIB_LIBS=""
 	])
 	LIBS="${myoLIBS}"
 fi
-if test -n "${USE_BZLIB}"; then
+if ${USE_BZLIB}; then
 	AC_DEFINE(USE_BZLIB,1, Define to 1 if bzlib can be used)
 else
 	AC_MSG_WARN("no libbz2: eix will not detect installed overlays")

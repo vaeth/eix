@@ -146,7 +146,7 @@ bool pushback_files(const string &dir_path, vector<string> &into, const char *ex
 	if(only_type)
 		pushback_files_dir_path = &dir_path;
 	struct dirent **namelist = NULL;
-	int num = scandir(dir_path.c_str(), &namelist,
+	int num = my_scandir(dir_path.c_str(), &namelist,
 		pushback_files_selector, alphasort);
 
 	if(num < 0)

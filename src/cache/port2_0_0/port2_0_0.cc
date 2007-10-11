@@ -34,7 +34,7 @@ bool Port2_0_0_Cache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath = m_prefix + PORTAGE_CACHE_PATH + m_scheme + vec.name();
 	struct dirent **dents;
-	int numfiles = scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
+	int numfiles = my_scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;
 
 	for(int i=0; i<numfiles;)

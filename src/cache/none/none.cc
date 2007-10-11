@@ -108,7 +108,7 @@ bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 	struct dirent **packages= NULL;
 
 	string catpath = m_prefix + m_scheme + "/" + vec.name();
-	int numpackages = scandir(catpath.c_str(),
+	int numpackages = my_scandir(catpath.c_str(),
 			&packages, package_selector, alphasort);
 
 	for(int i = 0; i < numpackages; ++i)
@@ -116,7 +116,7 @@ bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 		struct dirent **files = NULL;
 		string pkg_path = catpath + '/' + packages[i]->d_name;
 
-		int numfiles = scandir(pkg_path.c_str(),
+		int numfiles = my_scandir(pkg_path.c_str(),
 				&files, ebuild_selector, alphasort);
 		if(numfiles > 0)
 		{
