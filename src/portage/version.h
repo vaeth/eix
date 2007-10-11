@@ -45,8 +45,7 @@ class Version : public ExtendedVersion, public Keywords {
 		    to save memory. See the comments above NOT_FULL_USE. */
 		std::vector<std::string> iuse;
 
-		typedef io::Short Overlay;
-		static const unsigned short Overlaysize = io::Shortsize;
+		typedef io::UShort Overlay;
 
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;

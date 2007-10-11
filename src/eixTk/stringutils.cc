@@ -13,17 +13,12 @@
 
 #include "stringutils.h"
 
-// OOM_ASSERT
-#include <eixTk/exceptions.h>
-
-#include <eixTk/regexp.h>
+#include <iostream>
 
 #if !defined HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
  * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
-
-#include <cstdlib>
 
 char *
 strndup(const char *s, size_t n)
@@ -200,13 +195,3 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 		*warnminus = minuskeyword;
 	return minusasterisk;
 }
-
-#if defined(INSTANTIATE_TEMPLATES)
-template class vector<string>;
-template class set<string>;
-template void make_set(set<string> &the_set, const vector<string> &the_list);
-template void make_vector(vector<string> &the_list, const set<string> &the_set);
-template void push_backs(vector<string> &d, const vector<string> &s);
-template bool sort_uniquify(vector<string> &v, bool vector_is_ignored);
-#endif
-

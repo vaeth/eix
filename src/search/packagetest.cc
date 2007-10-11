@@ -233,8 +233,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 		return false;
 	if(t.only & r)
 	{
-		if( (vardbpkg->numInstalled(p) != 0)
-			!= (t.oins & r != 0))
+		if((vardbpkg->numInstalled(p) != 0) != ((t.oins & r) != 0))
 			return false;
 	}
 	bool test_unrestricted = !(r & t.spc);

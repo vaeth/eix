@@ -37,14 +37,14 @@ original_gcc=$(gcc-config -c)
 trap reset_gcc EXIT INT
 
 for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
-	make maintainer-clean &>/dev/null
+	make distclean &>/dev/null
 	echo "trying ${gcc[$gcc_n]}"
 
 	unset CXX
 
 	if [[ "${gcc[$gcc_n]:0:1}" != '/' ]]; then
 		if ! gcc-config "${gcc[$gcc_n]}"; then
-			set_status $gcc_n "(1 of 5) gcc-config failed"
+			set_status $gcc_n "(1 of 4) gcc-config failed"
 			continue
 		fi
 		source /etc/profile
@@ -52,23 +52,18 @@ for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 		export CXX="${gcc[$gcc_n]}"
 	fi
 
-	if ! ./autogen.sh; then
-		set_status $gcc_n "(2 of 5) autogen.sh failed"
-		continue
-	fi
-
-	if ! ./configure CXXFLAGS="-Wall -W ${CXXFLAGS:- -g3 -ggdb3}"; then
-		set_status $gcc_n "(3 of 5) configure failed"
+	if ! ./configure CXXFLAGS="-Wall -W -Werror ${CXXFLAGS}"; then
+		set_status $gcc_n "(2 of 4) configure failed"
 		continue
 	fi
 
 	if ! make clean all; then
-		set_status $gcc_n "(4 of 5) make clean all"
+		set_status $gcc_n "(3 of 4) make clean all"
 		continue
 	fi
 
 	if ! make check; then
-		set_status $gcc_n "(5 of 5) make check"
+		set_status $gcc_n "(4 of 4) make check"
 		continue
 	fi
 

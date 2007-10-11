@@ -20,7 +20,6 @@
 
 #include <eixTk/argsreader.h>
 #include <eixTk/stringutils.h>
-#include <eixTk/ansicolor.h>
 #include <eixTk/utils.h>
 #include <eixTk/filenames.h>
 

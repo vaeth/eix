@@ -81,7 +81,7 @@ std::string parse_colors(const std::string &colorstring, bool colors);
 class FormatParser {
 		friend std::string parse_colors(const std::string &colorstring, bool colors);
 	private:
-		typedef enum ParserState {
+		enum ParserState {
 			ERROR, STOP, START,
 			TEXT, COLOR, PROPERTY,
 			IF, ELSE, FI

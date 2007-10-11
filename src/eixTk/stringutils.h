@@ -15,7 +15,6 @@
 #include <set>
 #include <cstring>
 #include <cstdlib>
-#include <algorithm>
 
 #if !defined HAVE_STRNDUP
 /** strndup in case we don't have one. */
@@ -114,6 +113,9 @@ bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string>
 
 /** Sort and unique. Return true if there were double entries */
 #ifdef UNIQUE_WORKS
+
+#include <algorithm>
+
 template<typename T>
 bool sort_uniquify(T &v, bool vector_is_ignored = false)
 {

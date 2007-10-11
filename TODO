@@ -1,3 +1,4 @@
 - Template instantiation (CXXFLAGS=-frepo)
+- Make eix-cache byteorder independent
 - Support for Paludis.
 - Full support for USE-Flags.

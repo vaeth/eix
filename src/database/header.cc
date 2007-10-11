@@ -87,7 +87,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 	// Is name a number?
 	Version::Overlay number;
 	const char *s = name;
-	for( ; ((*s) >= '0') && ((*s) <= '9') ; s++);
+	for( ; ((*s) >= '0') && ((*s) <= '9') ; s++) ;
 	if(*s)
 		return false;
 	try {

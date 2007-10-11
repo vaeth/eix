@@ -369,8 +369,3 @@ ExtendedVersion::calcRestrict(const string &str)
 	}
 	return r;
 }
-
-#if defined(INSTANTIATE_TEMPLATES)
-template class vector<LeadNum>;
-template class vector<Suffix>;
-#endif

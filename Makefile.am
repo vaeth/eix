@@ -7,22 +7,28 @@
 
 AUTOMAKE_OPTIONS = foreign 1.4 dist-bzip2
 
-SUBDIRS = src manpage contrib
+SUBDIRS = src manpage
 
 CLEANFILES = doxygen.cfg cppcomplete.tags tags
 
 # Stuff from our distribution
-EXTRA_DIST = doxygen.cfg.in 
+EXTRA_DIST = doxygen.cfg.in contrib/compile-test.sh
 
-# Remove doxygen/ on clean
+# Remove things created by autogen.sh
+maintainer-clean-local:
+	$(RM) -fr "$(top_srcdir)/config"
+
+# Remove doxygen/ and rpo files (-frepo with gcc) on clean
 clean-local: doxygen-clean
+	find "$(top_srcdir)" -name '*.rpo' -delete
+
+.PHONY: doxygen
 
 # Build source docs with doxygen
-.PHONY:
 doxygen: doxygen-clean
 	@regex_cmd@ -e "s,\@PACKAGE_NAME\@,$(PACKAGE)," \
 		-e "s,\@PACKAGE_VERSION\@,$(VERSION)," doxygen.cfg.in > doxygen.cfg
-	@doxygen doxygen.cfg
+	@doxygen doxygen.cfg >/dev/null
 
 # Remove build source-docs
 doxygen-clean:

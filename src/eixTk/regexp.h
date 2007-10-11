@@ -11,7 +11,7 @@
 
 #include <sys/types.h>
 #include <regex.h>
-#include <string>
+#include <iostream>
 
 /// Handles regular expressions.
 // It is normally used within global scope so that a regular expression doesn't
@@ -19,7 +19,6 @@
 
 class Regex
 {
-
 	public:
 		/// Initalize class.
 		Regex()
@@ -32,16 +31,34 @@ class Regex
 		{ compile(regex, eflags); }
 
 		/// Free the regular expression.
-		~Regex();
+		~Regex() {
+			if(m_compiled)
+				regfree(&m_re);
+		}
 
 		/// Compile a regular expression.
-		void compile(const char *regex, int eflags = REG_ICASE);
+		void compile(const char *regex, int eflags = REG_ICASE)
+		{
+			if(m_compiled) {
+				regfree(&m_re);
+				m_compiled = false;
+			}
+			if(! regex ||! regex[0])
+				return;
+
+			int retval = regcomp(&m_re, regex, eflags|REG_EXTENDED);
+			if(retval != 0) {
+				char buf[512];
+				regerror(retval, &m_re, buf, 511);
+				std::cerr << "regcomp(" << regex << "): " << buf << std::endl;
+				exit(1);
+			}
+			m_compiled = true;
+		}
 
 		/// Does the regular expression match s?
-		bool match(const char *s);
-
-		/// Get regular expression error for a error-code.
-		std::string get_error(int code);
+		bool match(const char *s) const
+		{ return ! m_compiled || ! regexec(&m_re, s, 0, NULL, 0); }
 
 	protected:
 		/// Gets the internal regular expression structure.

@@ -826,8 +826,3 @@ PortageSettings::setMasks(Package *p, bool filemask_is_profile) const
 	profile->applyMasks(p);
 	p->save_maskflags(Version::SAVEMASK_PROFILE);
 }
-
-#if defined(INSTANTIATE_TEMPLATES)
-template class MaskList<Mask>;
-template class MaskList<KeywordMask>;
-#endif

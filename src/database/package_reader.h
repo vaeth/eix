@@ -15,6 +15,8 @@
 #include <iostream>
 #include <memory>
 
+#include <database/io.h>
+
 // No forward decl of Package because gcc-3.3.6 will scream bloody
 // murder.
 #include <portage/package.h>
@@ -33,8 +35,7 @@ class PackageReader {
 		    because it should be system independent. It must only be
 		    large enough to store the offsets occurring in the database.
 		*/
-		typedef off_t Offset;
-		static const unsigned short Offsetsize = io::Longsize;
+		typedef io::UInt Offset;
 
 		/// Initialize with file-stream and number of packages.
 		PackageReader(FILE *fp, io::Treesize size)

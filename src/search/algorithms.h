@@ -16,7 +16,7 @@
 
 #include <fnmatch.h>
 
-#include <eixTk/levenshtein.h>
+#include <search/levenshtein.h>
 #include <eixTk/regexp.h>
 
 #include <portage/package.h>

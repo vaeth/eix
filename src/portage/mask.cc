@@ -17,7 +17,6 @@
 #include <portage/package.h>
 #include <portage/version.h>
 
-#include <eixTk/regexp.h>
 #include <eixTk/exceptions.h>
 
 #include <iostream>

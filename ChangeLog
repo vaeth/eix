@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fix gcc-4.3 warnings
+	- Prefix all types in io:: with U, because they are all unsigned
+	- Replace *size constants from io:: with sizeof(..)
+	- Remove size parameter from io::read and io::write.
+
 *eix-0.10.1
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Replace full license headers with the following:

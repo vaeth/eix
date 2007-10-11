@@ -4,7 +4,7 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <eixTk/filenames.h>
+#include "filenames.h"
 #include <fnmatch.h>
 #include <cstdlib>
 

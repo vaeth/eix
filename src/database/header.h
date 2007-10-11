@@ -26,10 +26,9 @@ class DBHeader {
 		std::vector<OverlayIdent> overlays;
 
 	public:
-		typedef  io::Int DBVersion;
-		static const unsigned short DBVersionsize = io::Intsize;
+		typedef  io::UInt DBVersion;
 
-		typedef  io::Char OverlayTest;
+		typedef  io::UChar OverlayTest;
 		static const OverlayTest
 			OVTEST_NONE              = 0x00,
 			OVTEST_SAVED_PORTDIR     = 0x01,
@@ -41,7 +40,7 @@ class DBHeader {
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 
 		/** Current version of database-format. */
-		static const DBVersion current = 24;
+		static const DBVersion current = 25;
 
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */

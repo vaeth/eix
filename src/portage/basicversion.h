@@ -109,8 +109,7 @@ class LeadNum
 class Suffix
 {
 	protected:
-		typedef  io::Char Level;
-		static const unsigned short Levelsize = io::Charsize;
+		typedef  io::UChar Level;
 		Level m_suffixlevel;
 
 		LeadNum m_suffixnum;
@@ -154,8 +153,7 @@ class Suffix
 class BasicVersion
 {
 	public:
-		typedef io::Char Primchar;
-		static const unsigned short Primcharsize = io::Charsize;
+		typedef io::UChar Primchar;
 
 		/** Parse the version-string pointed to by str.
 		 * If str is NULL, no parsing is done. */
@@ -247,8 +245,7 @@ class BasicVersion
 class ExtendedVersion : public BasicVersion
 {
 	public:
-		typedef io::Char Restrict;
-		static const unsigned short Restrictsize = io::Charsize;
+		typedef io::UChar Restrict;
 
 		static const Restrict
 			RESTRICT_NONE   = 0x00,

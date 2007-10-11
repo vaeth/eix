@@ -6,66 +6,144 @@
 #     Emil Beinroth <emilbeinroth@gmx.net>
 #     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-# Build our toolkits
-SUBDIRS = eixTk eixrc database portage output search
+AUTOMAKE_OPTIONS = subdir-objects
+
+database_src = \
+database/io.cc \
+database/io.h \
+database/header.cc \
+database/header.h \
+database/package_reader.cc \
+database/package_reader.h
+
+eixtk_src = \
+eixTk/regexp.h \
+eixTk/ansicolor.h \
+eixTk/argsreader.cc \
+eixTk/argsreader.h \
+eixTk/auto_ptr.h \
+eixTk/exceptions.h \
+eixTk/filenames.cc \
+eixTk/filenames.h \
+eixTk/ptr_list.h \
+eixTk/stringutils.cc \
+eixTk/stringutils.h \
+eixTk/sysutils.cc \
+eixTk/sysutils.h \
+eixTk/utils.cc \
+eixTk/utils.h
+
+eixrc_src = \
+eixrc/eixrc.cc \
+eixrc/eixrc.h \
+global.cc \
+global2.cc \
+global3.cc \
+global4.cc \
+global.h
+
+portage_src = \
+portage/conf/portagesettings.cc \
+portage/conf/portagesettings.h \
+portage/conf/cascadingprofile.cc \
+portage/conf/cascadingprofile.h \
+portage/basicversion.cc \
+portage/basicversion.h \
+portage/instversion.h \
+portage/mask.cc \
+portage/mask.h \
+portage/package.cc \
+portage/package.h \
+portage/vardbpkg.cc \
+portage/vardbpkg.h \
+portage/packagetree.cc \
+portage/packagetree.h \
+portage/keywords.cc \
+portage/keywords.h \
+portage/mask_list.h \
+portage/overlay.h \
+portage/set_stability.cc \
+portage/set_stability.h \
+portage/version.h
+
+cache_src = \
+cachetable.h \
+cache/common/flat-reader.cc \
+cache/common/flat-reader.h \
+cache/common/selectors.cc \
+cache/common/selectors.h \
+cache/common/unpickle.cc \
+cache/common/unpickle.h \
+cache/base.cc \
+cache/base.h \
+cache/cache-map.cc \
+cache/cache-map.h \
+cache/cdb/cdb.cc \
+cache/cdb/cdb.h \
+cache/ebuild/ebuild.cc \
+cache/ebuild/ebuild.h \
+cache/eixcache/eixcache.cc \
+cache/eixcache/eixcache.h \
+cache/metadata/metadata.cc \
+cache/metadata/metadata.h \
+cache/none/none.cc \
+cache/none/none.h \
+cache/port2_0_0/port2_0_0.cc \
+cache/port2_0_0/port2_0_0.h \
+cache/port2_1_0/port2_1_0.cc \
+cache/port2_1_0/port2_1_0.h \
+cache/port2_1_2/port2_1_2.cc \
+cache/port2_1_2/port2_1_2.h \
+cache/sqlite/sqlite.cc \
+cache/sqlite/sqlite.h
+
+output_src = \
+output/formatstring.cc \
+output/formatstring.h \
+output/formatstring-print.cc \
+output/formatstring-print.h
+
+search_src =  \
+search/levenshtein.cc \
+search/levenshtein.h \
+search/algorithms.cc \
+search/algorithms.h \
+search/dbmatchcriteria.h \
+search/packagetest.cc \
+search/packagetest.h \
+search/redundancy.h 
+
+common_src = varsreader.cc varsreader.h \
+		   $(database_src) $(portage_src) $(eixtk_src) $(eixrc_src) 
 
 # Remove files we don't want ..
-CLEANFILES = cppcomplete.tags tags \
-	eix-sync eix-test-obsolete \
-	update-eix-remote update-eix-layman update-eix-functions.sh
+CLEANFILES = cppcomplete.tags tags eix-sync eix-test-obsolete \
+			 update-eix-remote update-eix-layman update-eix-functions.sh \
+			 cache/cache-map.cc
 
-EXTRA_DIST = eix-sync.in eix-test-obsolete.in \
-	update-eix-remote.in update-eix-layman.in update-eix-functions.sh.in
+EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
+			 update-eix-layman.in update-eix-functions.sh.in \
+			 eixrc/defaults.cc cache/generate-cachemap.sh
 
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
-bin_SCRIPTS  = eix-sync eix-test-obsolete \
-	update-eix-remote update-eix-layman update-eix-functions.sh
+bin_SCRIPTS  = eix-sync eix-test-obsolete update-eix-remote update-eix-layman \
+			   update-eix-functions.sh
 
 # The search-tool for our database
-eix_SOURCES = eix.cc \
-			  varsreader.cc varsreader.h \
-			  cachetable.h \
-			  cli.cc cli.h \
-			  global.cc global2.cc global3.cc global4.cc global.h
-
-eix_LDADD = database/libdatabase.a \
-			portage/conf/libportageconf.a \
-			portage/libportage.a \
-			output/liboutput.a \
-			eixTk/libeixTk.a \
-			eixrc/libeixrc.a \
-			search/libsearch.a \
-			@BZLIB_LIBS@
+eix_SOURCES = eix.cc cli.cc cli.h $(common_src) $(output_src) $(search_src)
+eix_LDADD = @BZLIB_LIBS@
 
 # The update-tool for our database
-update_eix_SOURCES = update-eix.cc \
-				     varsreader.cc varsreader.h \
-					 global.cc global2.cc global3.cc global4.cc global.h
-
-update_eix_LDADD = database/libdatabase.a \
-				   portage/conf/libportageconf.a \
-				   portage/libportage.a \
-				   portage/cache/libcache.a \
-				   eixTk/libeixTk.a \
-				   eixrc/libeixrc.a \
-				   @SQLITE_LIBS@ \
-				   @BZLIB_LIBS@
-
+update_eix_SOURCES = update-eix.cc $(common_src) $(cache_src)
+update_eix_LDADD = @SQLITE_LIBS@ @BZLIB_LIBS@
 
 # The diff-tool for our database
-diff_eix_SOURCES = diff-eix.cc \
-				   varsreader.cc varsreader.h \
-				   global.cc global2.cc global3.cc global4.cc global.h
+diff_eix_SOURCES = diff-eix.cc $(common_src) $(output_src)
+diff_eix_LDADD = @BZLIB_LIBS@
 
-diff_eix_LDADD = database/libdatabase.a \
-				 portage/cache/libcache.a \
-				 portage/conf/libportageconf.a \
-				 portage/libportage.a \
-				 output/liboutput.a \
-				 eixTk/libeixTk.a \
-				 eixrc/libeixrc.a \
-				 @BZLIB_LIBS@
+cache/cache-map.cc: cache/generate-cachemap.sh
+	"$<" > "$@"
 
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING)," \
@@ -91,3 +169,6 @@ update-eix-layman: update-eix-layman.in
 	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh'," \
 	$(srcdir)/update-eix-layman.in > update-eix-layman
 
+# Enable us to 'make clean' in src/
+clean-local:
+	find "$(srcdir)" -name '*.rpo' -delete
