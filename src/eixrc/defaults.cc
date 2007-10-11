@@ -169,6 +169,13 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "PRINT_BUGS",
+			"false",
+			"This variable is only used for delayed substitution.\n"
+			"It defines whether a bug reference is printed in verbose format.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "DIFF_PRINT_INSTALLED",
 			"true",
 			"This variable is only used for delayed substitution.\n"
@@ -817,6 +824,17 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMATLINE_BUGS",
+			"     (%{COLOR_TITLE})Find open bugs:()"
+			"      "
+			"http://bugs.gentoo.org/buglist.cgi?quicksearch="
+			"<category>%2F<name>"
+			"\\n",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"It defines the format for a line with the package bug-reference.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMATLINE_DESCRIPTION",
 			"%{!PRINT_ALWAYS}{description}%{}"
 			"     (%{COLOR_TITLE})Description:()"
@@ -922,6 +940,7 @@ eixrc.addDefault(
 			"%{FORMATLINE_RECOMMEND}"
 			"%{FORMATLINE_MARKEDVERSIONS}"
 			"%{FORMATLINE_HOMEPAGE}"
+			"%{?PRINT_BUGS}%{FORMATLINE_BUGS}%{}"
 			"%{FORMATLINE_DESCRIPTION}"
 			"%{FORMATLINE_PROVIDE}"
 			"%{FORMATLINE_LICENSES}",

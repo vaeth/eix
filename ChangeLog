@@ -8,6 +8,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New treatment of scandir, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=195411
+	- Introduce PRINT_BUGS, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=195204
 
 *eix-0.10.1
 	Emil Beinroth <emilbeinroth at gmx.net>:
