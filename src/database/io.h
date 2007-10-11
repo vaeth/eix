@@ -24,33 +24,42 @@ class PackageTree;
 class DBHeader;
 
 namespace io {
-	typedef uint8_t  UChar;
+	typedef uint8_t UChar;
+	const unsigned short UCharsize    = 1;
 	typedef uint16_t UShort;
+	const unsigned short UShortsize   = 2;
 	typedef uint32_t UInt;
+	const unsigned short UIntsize     = 4;
+//	Better do not use this (might not work on e.g. 16 bit archs):
+//	typedef uint64_t ULong;
+	const unsigned short ULongsize    = 8;
 
 	typedef io::UShort Catsize;
+	const unsigned short Catsizesize = io::UShortsize;
 	typedef io::UShort Versize;
-	typedef io::UInt   Treesize;
+	const unsigned short Versizesize = io::UShortsize;
+	typedef io::UInt Treesize;
+	const unsigned short Treesizesize = io::UIntsize;
 
 	/// Read any POD.
-	template<typename Type> Type
-	read(FILE *fp)
+	template<typename _Tp> _Tp
+	read(const unsigned short size, FILE *fp)
 	{
-		Type ret = Type(fgetc(fp)) & 0xFF;
-		for(unsigned short i = 1, shift = 8; i<sizeof(Type); i++, shift += 8) {
-			ret |= (Type(fgetc(fp)) & 0xFF) << shift;
+		_Tp ret = _Tp(fgetc(fp)) & 0xFF;
+		for(unsigned short i = 1, shift = 8; i<size; i++, shift += 8) {
+			ret |= (_Tp(fgetc(fp)) & 0xFF) << shift;
 		}
 		return ret;
 	}
 
 	/// Write any POD.
-	template<typename Type> void
-	write(FILE *fp, Type t)
+	template<typename _Tp> void
+	write(const unsigned short size, FILE *fp, _Tp t)
 	{
 		for(unsigned short i = 1; ; i++)
 		{
 			fputc(t & 0xFF, fp);
-			if(i < sizeof(Type))
+			if(i < size)
 				t >>= 8;
 			else
 				return;

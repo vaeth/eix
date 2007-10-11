@@ -4,8 +4,6 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix gcc-4.3 warnings
 	- Prefix all types in io:: with U, because they are all unsigned
-	- Replace *size constants from io:: with sizeof(..)
-	- Remove size parameter from io::read and io::write.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New treatment of scandir, see

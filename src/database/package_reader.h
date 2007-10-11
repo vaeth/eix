@@ -35,7 +35,8 @@ class PackageReader {
 		    because it should be system independent. It must only be
 		    large enough to store the offsets occurring in the database.
 		*/
-		typedef io::UInt Offset;
+		typedef off_t Offset;
+		static const unsigned short Offsetsize = io::ULongsize;
 
 		/// Initialize with file-stream and number of packages.
 		PackageReader(FILE *fp, io::Treesize size)

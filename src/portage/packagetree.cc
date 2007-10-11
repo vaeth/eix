@@ -1,10 +1,10 @@
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
-// Copyright (c)                                                         
-//   Wolfgang Frisch <xororand@users.sourceforge.net>                    
-//   Emil Beinroth <emilbeinroth@gmx.net>                                
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     
+// Copyright (c)
+//   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "packagetree.h"
 
@@ -50,10 +50,10 @@ Category::addPackage(string pkg_name)
 	return p;
 }
 
-Category::iterator 
+Category::iterator
 Category::find(const std::string &pkg_name)
 {
-	iterator i = begin(); 
+	iterator i = begin();
 	for(;
 		i != end();
 		++i)

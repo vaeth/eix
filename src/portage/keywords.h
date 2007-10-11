@@ -1,10 +1,10 @@
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
-// Copyright (c)                                                         
-//   Wolfgang Frisch <xororand@users.sourceforge.net>                    
-//   Emil Beinroth <emilbeinroth@gmx.net>                                
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     
+// Copyright (c)
+//   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __STABILITY_H__
 #define __STABILITY_H__
@@ -18,6 +18,7 @@
 class MaskFlags {
 	public:
 		typedef io::UChar MaskType;
+		static const unsigned short MaskTypesize = io::UCharsize;
 		static const MaskType
 			MASK_NONE    = 0x00,
 			MASK_PACKAGE = 0x01,
@@ -74,6 +75,7 @@ class MaskFlags {
 class KeywordsFlags {
 	public:
 		typedef io::UChar KeyType;
+		static const unsigned short KeyTypesize = io::UCharsize;
 		static const KeyType
 			KEY_EMPTY          = 0x00,
 			KEY_STABLE         = 0x01, /**< stabilized */

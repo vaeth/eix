@@ -1,10 +1,10 @@
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
-// Copyright (c)                                                         
-//   Wolfgang Frisch <xororand@users.sourceforge.net>                    
-//   Emil Beinroth <emilbeinroth@gmx.net>                                
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     
+// Copyright (c)
+//   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __BASICVERSION_H__
 #define __BASICVERSION_H__
@@ -110,6 +110,7 @@ class Suffix
 {
 	protected:
 		typedef  io::UChar Level;
+		static const unsigned short Levelsize = io::UCharsize;
 		Level m_suffixlevel;
 
 		LeadNum m_suffixnum;
@@ -154,6 +155,7 @@ class BasicVersion
 {
 	public:
 		typedef io::UChar Primchar;
+		static const unsigned short Primcharsize = io::UCharsize;
 
 		/** Parse the version-string pointed to by str.
 		 * If str is NULL, no parsing is done. */
@@ -246,6 +248,7 @@ class ExtendedVersion : public BasicVersion
 {
 	public:
 		typedef io::UChar Restrict;
+		static const unsigned short Restrictsize = io::UCharsize;
 
 		static const Restrict
 			RESTRICT_NONE   = 0x00,
