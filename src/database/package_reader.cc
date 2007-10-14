@@ -13,8 +13,6 @@
 
 #include <database/io.h>
 
-const unsigned short PackageReader::Offsetsize;
-
 void
 PackageReader::read(Attributes need)
 {
@@ -51,8 +49,7 @@ PackageReader::read(Attributes need)
 		case COLL_IUSE:
 #endif
 			{
-				io::Versize n = io::read<io::Versize>(io::Versizesize, m_fp);
-				for(io::Versize i = 0; i != n; i++ ) {
+				for(io::Versize i = io::read<io::Versize>(m_fp); i; i-- ) {
 					m_pkg->addVersion(io::read_version(m_fp));
 				}
 			}
@@ -85,7 +82,8 @@ PackageReader::next()
 		return next();
 	}
 
-	m_next =  ftello(m_fp) + io::read<PackageReader::Offset>(PackageReader::Offsetsize, m_fp);
+	io::OffsetType len = io::read<io::OffsetType>(m_fp);
+	m_next =  ftello(m_fp) + len;
 	m_have = NONE;
 	m_pkg.reset(new Package());
 	m_pkg->category = m_cat_name;

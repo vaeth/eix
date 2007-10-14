@@ -31,13 +31,6 @@ class PackageReader {
 			ALL = 7
 		};
 
-		/** In general, Offsetsize will not be sizeof(Offset),
-		    because it should be system independent. It must only be
-		    large enough to store the offsets occurring in the database.
-		*/
-		typedef off_t Offset;
-		static const unsigned short Offsetsize = io::ULongsize;
-
 		/// Initialize with file-stream and number of packages.
 		PackageReader(FILE *fp, io::Treesize size)
 			: m_fp(fp), m_frames(size), m_cat_size(0) { }

@@ -18,7 +18,6 @@
 class MaskFlags {
 	public:
 		typedef io::UChar MaskType;
-		static const unsigned short MaskTypesize = io::UCharsize;
 		static const MaskType
 			MASK_NONE    = 0x00,
 			MASK_PACKAGE = 0x01,
@@ -75,7 +74,6 @@ class MaskFlags {
 class KeywordsFlags {
 	public:
 		typedef io::UChar KeyType;
-		static const unsigned short KeyTypesize = io::UCharsize;
 		static const KeyType
 			KEY_EMPTY          = 0x00,
 			KEY_STABLE         = 0x01, /**< stabilized */

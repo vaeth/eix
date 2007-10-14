@@ -454,7 +454,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%i] \"%s\" %s (cache: %s)\n", key, overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+		INFO("[%ui] \"%s\" %s (cache: %s)\n", uint(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
@@ -515,8 +515,8 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	fclose(database_stream);
 
-	INFO("Database contains %i packages in %i categories.\n",
-		package_tree.countPackages(), dbheader.size);
+	INFO("Database contains %ui packages in %ui categories.\n",
+		uint(package_tree.countPackages()), uint(dbheader.size));
 }
 
 /** On segfault: show some instructions to help us find the bug. */

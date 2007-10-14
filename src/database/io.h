@@ -10,6 +10,7 @@
 #define EIX__IO_H__
 
 #include <string>
+#include <cstdlib>
 
 #if !defined(__OpenBSD__)
 #include <stdint.h>
@@ -24,54 +25,73 @@ class PackageTree;
 class DBHeader;
 
 namespace io {
-	typedef uint8_t UChar;
-	const unsigned short UCharsize    = 1;
-	typedef uint16_t UShort;
-	const unsigned short UShortsize   = 2;
-	typedef uint32_t UInt;
-	const unsigned short UIntsize     = 4;
-//	Better do not use this (might not work on e.g. 16 bit archs):
-//	typedef uint64_t ULong;
-	const unsigned short ULongsize    = 8;
+	typedef unsigned char UChar;
+	typedef size_t UNumber;
 
-	typedef io::UShort Catsize;
-	const unsigned short Catsizesize = io::UShortsize;
-	typedef io::UShort Versize;
-	const unsigned short Versizesize = io::UShortsize;
-	typedef io::UInt Treesize;
-	const unsigned short Treesizesize = io::UIntsize;
+	typedef UNumber Catsize;
+	typedef UNumber Versize;
+	typedef UNumber Treesize;
 
-	/// Read any POD.
-	template<typename _Tp> _Tp
-	read(const unsigned short size, FILE *fp)
+	typedef off_t OffsetType;
+	extern OffsetType counter;
+
+	inline static UChar
+	readUChar(FILE *fp)
+	{ return fgetc(fp); }
+
+	inline static void
+	writeUChar(FILE *fp, UChar c)
 	{
-		_Tp ret = _Tp(fgetc(fp)) & 0xFF;
-		for(unsigned short i = 1, shift = 8; i<size; i++, shift += 8) {
-			ret |= (_Tp(fgetc(fp)) & 0xFF) << shift;
+		if(fp)
+			fputc(c, fp);
+		else
+			counter++;
+	}
+
+	/// Read an unsigned number type
+	template<typename _Tp> _Tp
+	read(FILE *fp)
+	{
+		_Tp ret = readUChar(fp);
+		// Test the most common case explicitly to speed up:
+		if(ret != 0xFF)
+			return ret;
+		size_t toget = 1;
+		while((ret = readUChar(fp)) == 0xFF)
+			toget++;
+		for(; toget ; --toget) {
+			ret = (ret << 8) | _Tp(readUChar(fp));
 		}
 		return ret;
 	}
 
-	/// Write any POD.
+	/// Write an unsigned number type
 	template<typename _Tp> void
-	write(const unsigned short size, FILE *fp, _Tp t)
+	write(FILE *fp, _Tp t)
 	{
-		for(unsigned short i = 1; ; i++)
-		{
-			fputc(t & 0xFF, fp);
-			if(i < size)
-				t >>= 8;
-			else
-				return;
+		_Tp mask = 0xFF;
+		// Test the most common case explicitly to speed up:
+		if(t < mask) {
+			writeUChar(fp, t);
+			return;
 		}
+		unsigned int shift = 0;
+		do {
+			writeUChar(fp, 0xFF);
+			mask <<= 8;
+			shift += 8;
+		} while(t >= mask);
+		for(; shift ; shift -= 8) {
+			writeUChar(fp, (t >> shift) & 0xFF);
+		}
+		// do not rely that ( t >> 0 ) == t
+		writeUChar(fp, t & 0xFF);
 	}
 
-	/// Read a string of the format { unsigned short len; char[] string;
-	// (without the 0) }
+	/// Read a string
 	std::string read_string(FILE *fp);
 
-	/// Write a string in the format { unsigned short len; char[] string;
-	// (without the 0) }
+	/// Write a string
 	void write_string(FILE *fp, const std::string &str);
 
 	/// Read a number with leading zero's
@@ -93,9 +113,9 @@ namespace io {
 	// Write a category-header to fp
 	void write_category_header(FILE *fp, const std::string &name, io::Treesize size);
 
-
 	// Write package to stream
 	void write_package(FILE *fp, const Package &pkg);
+	void write_package_pure(FILE *fp, const Package &pkg);
 
 	void write_header(FILE *fp, const DBHeader &hdr);
 	void read_header(FILE *fp, DBHeader &hdr);

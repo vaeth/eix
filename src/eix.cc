@@ -524,8 +524,8 @@ run_eix(int argc, char** argv)
 
 	io::read_header(fp, header);
 	if(!header.isCurrent()) {
-		fprintf(stderr, "Your database-file uses an obsolete format (%i, current is %i).\n"
-				"Please run 'update-eix' and try again.\n", header.version, DBHeader::current);
+		fprintf(stderr, "Your database-file uses an obsolete format (%ui, current is %ui).\n"
+				"Please run 'update-eix' and try again.\n", uint(header.version), uint(DBHeader::current));
 		fclose(fp);
 		exit(1);
 	}
