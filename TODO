@@ -1,3 +1,2 @@
-- Template instantiation (CXXFLAGS=-frepo)
 - Support for Paludis.
 - Full support for USE-Flags.
