@@ -69,23 +69,27 @@ namespace io {
 	template<typename _Tp> void
 	write(FILE *fp, _Tp t)
 	{
-		_Tp mask = 0xFF;
-		// Test the most common case explicitly to speed up:
-		if(t < mask) {
+		if(t < 0xFF) {
 			writeUChar(fp, t);
 			return;
 		}
+		writeUChar(fp, 0xFF);
+		// We shift right 1 byte to avoid overflow
+		_Tp lowest = (t & 0xFF);
+		t >>= 8;
+		_Tp mask = 0xFF;
 		unsigned int shift = 0;
-		do {
+		while(t >= mask) {
 			writeUChar(fp, 0xFF);
 			mask <<= 8;
 			shift += 8;
-		} while(t >= mask);
+		}
 		for(; shift ; shift -= 8) {
 			writeUChar(fp, (t >> shift) & 0xFF);
 		}
 		// do not rely that ( t >> 0 ) == t
 		writeUChar(fp, t & 0xFF);
+		writeUChar(fp, lowest);
 	}
 
 	/// Read a string
