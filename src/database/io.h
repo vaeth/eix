@@ -24,6 +24,8 @@ class LeadNum;
 class PackageTree;
 class DBHeader;
 
+#define MAGICNUMCHAR 0xFF
+
 namespace io {
 	typedef unsigned char UChar;
 	typedef size_t UNumber;
@@ -48,48 +50,59 @@ namespace io {
 			counter++;
 	}
 
-	/// Read an unsigned number type
+	/// Read a nonnegative number from fp (_Tp must be big enough)
 	template<typename _Tp> _Tp
 	read(FILE *fp)
 	{
-		_Tp ret = readUChar(fp);
-		// Test the most common case explicitly to speed up:
-		if(ret != 0xFF)
-			return ret;
+		UChar c = readUChar(fp);
+		// The one-byte case is exceptional w.r.t. to leading 0:
+		if(c != MAGICNUMCHAR)
+			return c;
 		size_t toget = 1;
-		while((ret = readUChar(fp)) == 0xFF)
-			toget++;
+		while((c = readUChar(fp)) == MAGICNUMCHAR)
+			++toget;
+		_Tp ret;
+		if(c)
+			ret = c;
+		else { // leading 0 after MAGICNUMCHAR:
+			ret = _Tp(MAGICNUMCHAR);
+			--toget;
+		}
 		for(; toget ; --toget) {
 			ret = (ret << 8) | _Tp(readUChar(fp));
 		}
 		return ret;
 	}
 
-	/// Write an unsigned number type
+	/// Write nonnegative number t to fp (undefined behaviour if t < 0)
 	template<typename _Tp> void
 	write(FILE *fp, _Tp t)
 	{
-		if(t < 0xFF) {
-			writeUChar(fp, t);
+		UChar c = (t & 0xFF);
+		// Test the most common case explicitly to speed up:
+		if(t == _Tp(c)) {
+			writeUChar(fp, c);
+			if(c == MAGICNUMCHAR) // write leading 0 as flag:
+				writeUChar(fp, 0);
 			return;
 		}
-		writeUChar(fp, 0xFF);
-		// We shift right 1 byte to avoid overflow
-		_Tp lowest = (t & 0xFF);
-		t >>= 8;
 		_Tp mask = 0xFF;
-		unsigned int shift = 0;
-		while(t >= mask) {
-			writeUChar(fp, 0xFF);
+		unsigned int count = 0;
+		do {
+			writeUChar(fp, MAGICNUMCHAR);
 			mask <<= 8;
-			shift += 8;
-		}
-		for(; shift ; shift -= 8) {
-			writeUChar(fp, (t >> shift) & 0xFF);
-		}
-		// do not rely that ( t >> 0 ) == t
-		writeUChar(fp, t & 0xFF);
-		writeUChar(fp, lowest);
+			mask |= 0xFF;
+			++count;
+		} while((t & mask) != t);
+		// We have count > 0 here
+		UChar d = (t >> (8*(count--))) & 0xFF;
+		writeUChar(fp, d);
+		if(d == MAGICNUMCHAR) // write leading 0 as flag:
+			writeUChar(fp, 0);
+		while(count)
+			writeUChar(fp, (t >> (8*(count--))) & 0xFF);
+		// neither rely on (t>>0)==t nor use count-- when count==0:
+		writeUChar(fp, c);
 	}
 
 	/// Read a string
