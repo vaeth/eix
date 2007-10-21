@@ -213,7 +213,7 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 				have_onetime_info = true;
 			}
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			cerr << "Executing " << full_path <<
 				" did not produce all data.";
 			// We keep the version anyway, even with wrong keywords/slots/infos:

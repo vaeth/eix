@@ -270,7 +270,7 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 		v.know_slot = true;
 		return true;
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cerr << e << endl;
 		v.read_failed = true;
 		return false;
@@ -316,7 +316,7 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 			return false;
 		alluse = split_string(join_vector(lines, " "));
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cerr << e << endl;
 		return false;
 	}
@@ -363,7 +363,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 		else
 			v.set_restrict(join_vector(lines));
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cerr << e << endl;
 		return false;
 	}
@@ -402,7 +402,7 @@ VarDbPkg::readCategory(const char *category)
 		try {
 			instver = new InstVersion(aux[1]);
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			cerr << e << endl;
 		}
 		if(instver)

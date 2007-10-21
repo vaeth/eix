@@ -161,7 +161,7 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 			readEntry(unpickled, packagetree, categories, category);
 		}
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cerr << "Problems with " << filename <<
 			":\n" << e << endl;
 		if(packagetree)

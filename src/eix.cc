@@ -433,7 +433,7 @@ set_format()
 			format.setFormat(format_normal);
 		}
 	}
-	catch(ExBasic &e) {
+	catch(const ExBasic &e) {
 		cout << "Problems while parsing " << varname << ".\n"
 			<< e << endl;
 		exit(1);
@@ -752,7 +752,7 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 				m = new KeywordMask(lines[i].substr(0, n).c_str());
 			}
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			portage_parse_error(filename.c_str(), i, lines[i], e);
 		}
 		if(!m)
@@ -838,7 +838,7 @@ int main(int argc, char** argv)
 	try {
 		ret = run_eix(argc, argv);
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cout << e << endl;
 		return 1;
 	}

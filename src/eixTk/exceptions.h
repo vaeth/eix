@@ -42,7 +42,7 @@ class ExBasic {
 		const char *what() const
 		{ return m_msg.c_str(); }
 
-		friend std::ostream& operator<< (std::ostream& os, ExBasic& e)
+		friend std::ostream& operator<< (std::ostream& os, const ExBasic& e)
 		{ return os << e.m_func << ": " << e.m_msg; }
 
 	protected:

@@ -48,7 +48,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 				mask_vec->push_back(m);
 			}
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
 			     << "   " << e.getMessage() << endl;
 		}
@@ -326,7 +326,7 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 			if(m)
 				list->add(m);
 		}
-		catch(ExBasic e) { }
+		catch(const ExBasic &e) { }
 	}
 }
 
@@ -464,7 +464,7 @@ bool PortageUserConfig::readKeywords() {
 				m_keywords.add(m);
 			}
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			portage_parse_error(filename.c_str(), i, lines[i], e);
 		}
 	}

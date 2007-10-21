@@ -197,7 +197,7 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					if(print_property(this, entity, (static_cast<Property*>(root))->name))
 						printed = true;
 				}
-				catch(ExBasic e) {
+				catch(const ExBasic &e) {
 					cerr << e << endl;
 				}
 				break;
@@ -208,7 +208,7 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					try {
 						ok = get_property(this, entity, ief->variable.name) == ief->text.text;
 					}
-					catch(ExBasic e) {
+					catch(const ExBasic &e) {
 						cerr << e << endl;
 					}
 					ok = ief->negation ? !ok : ok;
@@ -298,7 +298,7 @@ FormatParser::state_COLOR()
 		try {
 			keller.push(new Text(AnsiColor(string(band_position, q - band_position)).asString()));
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			last_error = "Error while parsing color: " + e.getMessage();
 			return ERROR;
 		}

@@ -321,7 +321,7 @@ run_diff_eix(int argc, char *argv[])
 		varname = "DIFF_FORMAT_CHANGED";
 		format_changed = format_for_new.parseFormat(eixrc[varname].c_str());
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cout << "Problems while parsing " << varname << ".\n"
 			<< e.getMessage() << endl;
 		exit(1);
@@ -445,7 +445,7 @@ main(int argc, char** argv)
 	try {
 		ret = run_diff_eix(argc, argv);
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cout << e << endl;
 		return 1;
 	}

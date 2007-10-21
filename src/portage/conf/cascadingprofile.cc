@@ -86,7 +86,7 @@ CascadingProfile::readremoveFiles()
 				if((this->*handler) (lines[i]))
 					ret = true;
 			}
-			catch(ExBasic e)
+			catch(const ExBasic &e)
 			{
 				portage_parse_error(*file, i + 1, lines[i], e);
 			}

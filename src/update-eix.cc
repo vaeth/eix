@@ -408,7 +408,7 @@ run_update_eix(int argc, char *argv[])
 	try {
 		update(outputfile.c_str(), table, portage_settings,
 			permissions.will_modify(), excluded_overlays);
-	} catch(ExBasic &e)
+	} catch(const ExBasic &e)
 	{
 		cerr << e << endl;
 		ret = 2;
@@ -551,7 +551,7 @@ main(int argc, char** argv)
 	try {
 		ret = run_update_eix(argc, argv);
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		cout << e << endl;
 		return 1;
 	}

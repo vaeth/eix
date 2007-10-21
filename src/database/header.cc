@@ -97,7 +97,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 		if(number < minimal)
 			return false;
 	}
-	catch(ExBasic e) {
+	catch(const ExBasic &e) {
 		return false;
 	}
 	*num = number;

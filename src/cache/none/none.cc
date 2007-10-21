@@ -76,7 +76,7 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 		try {
 			ebuild.read(ebuild_name.c_str());
 		}
-		catch(ExBasic e) {
+		catch(const ExBasic &e) {
 			cerr << "Problems with reading " << ebuild_name <<
 				":\n" << e << endl;
 		}
@@ -123,7 +123,7 @@ bool NoneCache::readCategory(Category &vec) throw(ExBasic)
 			try {
 				readPackage(vec, packages[i]->d_name, &pkg_path, files, numfiles);
 			}
-			catch(ExBasic e) {
+			catch(const ExBasic &e) {
 				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
 			}
 			for(int j=0; j<numfiles; j++ )
