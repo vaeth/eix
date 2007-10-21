@@ -3,8 +3,8 @@
 *eix-0.10.2
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix gcc-4.3 warnings
-	- Prefix all types in io:: with U, because they are all unsigned
-	- Remove size parameter from io::read and io::write.
+	- Include ICC and `make distcheck` in contrib/compile-test.sh
+	- Remove useless OOM_ASSERT, WARNING and THROW macros.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New treatment of scandir, see

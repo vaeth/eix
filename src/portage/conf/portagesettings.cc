@@ -40,7 +40,6 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 		string line=*it;
 		try {
 			Mask *m = new Mask(line.c_str(), type);
-			OOM_ASSERT(m);
 			if(cat_map) {
 				cat_map->add(m);
 			}

@@ -106,7 +106,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
 	else if(p == "PROVIDE")       ret = PROVIDE;
 	else if(p == "IUSE")          ret = IUSE;
-	else THROW("Can't find MatchField called %s.", p.c_str());
+	else throw ExBasic("Can't find MatchField called %s.", p.c_str());
 	return ret;
 }
 

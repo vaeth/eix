@@ -368,7 +368,7 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 		// override with EIX_USERRC
 		char *home = getenv("HOME");
 		if(!home)
-			WARNING("No $HOME found in environment.");
+			cerr << "No $HOME found in environment." << endl;
 		else {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);
@@ -596,9 +596,10 @@ void EixRc::getRedundantFlags(const char *key,
 			return;
 		break;
 	}
-	WARNING("%s has unknown value \"%s\";\n"
-		"\tassuming value \"all-installed\" instead.",
-		key, value.c_str());
+
+	cerr << key << " has unknown value \"" << value << "\";" << endl
+	     << "\tassuming value \"all-installed\" instead." << endl;
+
 	getRedundantFlagAtom("all-installed", type, p.first);
 	getRedundantFlagAtom(NULL, type, p.second);
 }

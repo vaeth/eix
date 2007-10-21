@@ -47,7 +47,7 @@ class ExBasic {
 
 	protected:
 		std::string m_file; /**< File where the exception is constructed. */
-		int    m_line; /**< Line where the exception is constructed. */
+		int         m_line; /**< Line where the exception is constructed. */
 		std::string m_func; /**< Function where the exception is constructed. */
 		std::string m_msg;  /**< The actual message. */
 
@@ -56,14 +56,9 @@ class ExBasic {
 
 #define ExBasic(...) ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__)
 
-#define THROW(...) throw(ExBasic(__VA_ARGS__))
-#define OOM_ASSERT(x) ASSERT((x), "Out of memory.")
-
 #define ASSERT(x, ...) do { \
 	if(!(x)) throw( ExBasic("assert("#x"): " __VA_ARGS__) ); \
 } while(0)
-
-#define WARNING(...) do { fprintf(stderr, __VA_ARGS__); fputc('\n', stderr); } while(0)
 
 // Provide a common look for error-messages for parse-errors in
 // portage.{mask,keywords,..}

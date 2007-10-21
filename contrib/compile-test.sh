@@ -1,5 +1,13 @@
 #!/bin/bash
-# Try to compile eix with various version of gcc.
+#	compile-test.sh tries to compile and run eix with various version of gcc
+#	and the ICC. It also does one `make distcheck` run for a compiler that has
+#	passed the normal build test.
+#
+# This file is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Copyright (c)
+#	Emil Beinroth <emilbeinroth@gmx.net>
 
 shopt -s extglob
 
@@ -23,7 +31,7 @@ gcc_faild=(${gcc[@]})
 if which icpc &>/dev/null; then
 	# we have ICC installed, try it
 	for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
-		if [[ "${gcc[$gcc_n]}" != *"-4."* ]]; then
+		if [[ "${gcc[$gcc_n]}" = *"-3.4"* ]]; then
 			for ((gcc_i=$[${#gcc[@]}-1];gcc_i>$gcc_n;--gcc_i)); do
 				gcc[$[$gcc_i+1]]=${gcc[$gcc_i]}
 			done
@@ -44,27 +52,58 @@ for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 
 	if [[ "${gcc[$gcc_n]:0:1}" != '/' ]]; then
 		if ! gcc-config "${gcc[$gcc_n]}"; then
-			set_status $gcc_n "(1 of 4) gcc-config failed"
+			set_status $gcc_n "(1 of 6) gcc-config failed"
 			continue
 		fi
 		source /etc/profile
+		export CXXFLAGS="-Wall -W -Werror"
 	else
+		source /etc/profile
 		export CXX="${gcc[$gcc_n]}"
+		export CXXFLAGS=""
 	fi
 
-	if ! ./configure CXXFLAGS="-Wall -W -Werror ${CXXFLAGS}"; then
-		set_status $gcc_n "(2 of 4) configure failed"
+	eix_prefix=$(mktemp -dt eix-prefix.XXXXXXXXXX)
+
+	echo ./configure CXXFLAGS="${CXXFLAGS}" --prefix="$eix_prefix" \
+		--exec-prefix="$eix_prefix"
+	if ! ./configure CXXFLAGS="${CXXFLAGS}" --prefix="$eix_prefix" \
+		--exec-prefix="$eix_prefix"; then
+		set_status $gcc_n "(2 of 6) configure failed"
 		continue
 	fi
 
 	if ! make clean all; then
-		set_status $gcc_n "(3 of 4) make clean all"
+		set_status $gcc_n "(3 of 6) make clean all"
 		continue
 	fi
 
-	if ! make check; then
-		set_status $gcc_n "(4 of 4) make check"
+	# Try a make distcheck if the toolchain can build eix.
+	if ! [ "$did_distcheck" ]; then
+		if ! CXXFLAGS="${CXXFLAGS}" make distcheck; then
+			did_distcheck="failed"
+		else
+			did_distcheck="ok"
+		fi
+	fi
+
+	if ! make install; then
+		set_status $gcc_n "(4 of 6) make install (in $eix_prefix)"
 		continue
+	fi
+
+	if ! "${eix_prefix}"/bin/update-eix; then
+		set_status $gcc_n "(5 of 6) running update-eix (in $eix_prefix)"
+		continue
+	fi
+
+	if ! "${eix_prefix}"/bin/eix eix; then
+		set_status $gcc_n "(6 of 6) running eix (in $eix_prefix)"
+		continue
+	fi
+
+	if [ -d "$eix_prefix" ]; then
+		rm -fr "$eix_prefix"
 	fi
 
 	set_status $gcc_n "ok"
@@ -77,3 +116,5 @@ echo
 for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 	echo "${gcc[$gcc_n]}: ${gcc_faild[$gcc_n]}"
 done
+
+echo "distcheck: ${did_distcheck:-not run}"

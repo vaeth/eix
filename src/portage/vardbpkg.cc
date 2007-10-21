@@ -387,7 +387,6 @@ VarDbPkg::readCategory(const char *category)
 	dir_category_name.append("/");
 	map<string, vector<InstVersion> >* category_installed;
 	installed[category] = category_installed = new map<string,vector<InstVersion> >;
-	OOM_ASSERT(category_installed);
 
 	/* Cycle through this category */
 	while( (package_entry = readdir(dir_category)) != NULL )
