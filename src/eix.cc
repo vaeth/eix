@@ -728,32 +728,32 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 	vector<string> unused;
 	vector<string> lines;
 	pushback_lines(filename.c_str(), &lines, false, true);
-	for(vector<string>::size_type i = 0;
-		i<lines.size();
+	for(vector<string>::iterator i(lines.begin());
+		i != lines.end();
 		i++)
 	{
-		if(lines[i].size() == 0)
+		if(i->size() == 0)
 		{
 			continue;
 		}
 		KeywordMask *m = NULL;
 
 		try {
-			string::size_type n = lines[i].find_first_of("\t ");
+			string::size_type n = i->find_first_of("\t ");
 			if(n == string::npos) {
 				if(test_empty)
 				{
-					unused.push_back(lines[i]);
+					unused.push_back(*i);
 					continue;
 				}
-				m = new KeywordMask(lines[i].c_str());
+				m = new KeywordMask(i->c_str());
 			}
 			else {
-				m = new KeywordMask(lines[i].substr(0, n).c_str());
+				m = new KeywordMask(i->substr(0, n).c_str());
 			}
 		}
 		catch(const ExBasic &e) {
-			portage_parse_error(filename.c_str(), i, lines[i], e);
+			portage_parse_error(filename, lines.begin(), i, e);
 		}
 		if(!m)
 			continue;
@@ -766,7 +766,7 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 		}
 		if(pi == packagelist.end())
 		{
-			unused.push_back(lines[i]);
+			unused.push_back(*i);
 		}
 		delete m;
 	}

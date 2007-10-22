@@ -79,4 +79,13 @@ portage_parse_error(const std::string &file, const int line_nr, const std::strin
 	std::cerr << std::endl;
 }
 
+// Provide a common look for error-messages for parse-errors in
+// portage.{mask,keywords,..}
+template<class Iterator>
+inline void
+portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const ExBasic &e)
+{
+  portage_parse_error(file, std::distance(begin, line) + 1, *line, e);
+}
+
 #endif /* __EXCEPTIONS_H__ */

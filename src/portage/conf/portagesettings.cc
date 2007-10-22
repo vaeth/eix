@@ -305,27 +305,28 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 {
 	vector<string> lines;
 	pushback_lines(file, &lines, false, true);
-	for(vector<string>::size_type i = 0;
-		i<lines.size();
+	for(vector<string>::iterator i(lines.begin());
+		i != lines.end();
 		i++)
 	{
-		if(lines[i].empty())
+		if(i->empty())
 			continue;
 		try {
 			KeywordMask *m = NULL;
-			string::size_type n = lines[i].find_first_of("\t ");
+			string::size_type n = i->find_first_of("\t ");
 			if(n == string::npos) {
-				m = new KeywordMask(lines[i].c_str());
+				m = new KeywordMask(i->c_str());
 			}
 			else {
-				m = new KeywordMask(lines[i].substr(0, n).c_str());
-				if(m)
-					m->keywords = "1"; //lines[i].substr(n + 1);
+				m = new KeywordMask(i->substr(0, n).c_str());
+				if(m) // XXX: m does not return 0, so this is always true
+					m->keywords = "1"; //i->substr(n + 1);
 			}
-			if(m)
+			if(m) // XXX: same as above.
 				list->add(m);
 		}
-		catch(const ExBasic &e) { }
+		catch(const ExBasic &e)
+		{ }
 	}
 }
 
@@ -450,21 +451,23 @@ bool PortageUserConfig::readKeywords() {
 		}
 	}
 
-	for(vector<string>::size_type i = 0; i != lines.size(); ++i)
+	for(vector<string>::iterator i(lines.begin());
+		i != lines.end();
+		++i)
 	{
-		if(lines[i].empty())
+		if(i->empty())
 			continue;
 		try {
-			KeywordMask *m = new KeywordMask(lines[i].c_str());
-			if(m) {
-				KeywordsData *f = &(have[lines[i]]);
+			KeywordMask *m = new KeywordMask(i->c_str());
+			if(m) { // XXX: will always be true, because new will never return 0 ..
+				KeywordsData *f = &(have[*i]);
 				m->keywords       = f->keywords;
 				m->locally_double = f->locally_double;
 				m_keywords.add(m);
 			}
 		}
 		catch(const ExBasic &e) {
-			portage_parse_error(filename.c_str(), i, lines[i], e);
+			portage_parse_error(filename, lines.begin(), i, e);
 		}
 	}
 	return true;

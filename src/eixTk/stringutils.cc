@@ -140,7 +140,7 @@ split_string(const string &str, const char *at, bool ignore_empty, bool ignore_e
 }
 
 string
-join_vector(const vector<string> &vec, string glue)
+join_vector(const vector<string> &vec, const string &glue)
 {
 	vector<string>::const_iterator it = vec.begin();
 	if(it == vec.end()) {
@@ -158,7 +158,7 @@ join_vector(const vector<string> &vec, string glue)
 }
 
 bool
-resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore, bool warn_plus)
+resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore)
 {
 	bool minusasterisk = false;
 	bool minuskeyword  = false;
@@ -167,7 +167,7 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 		if(it->empty())
 			continue;
 		if((*it)[0] == '+') {
-			warn_plus && cerr << "keyword begins with '+': " << warn_plus << *it << endl;
+			cerr << "flags should not start with a '+':" << *it << endl << endl;
 			s.insert(it->substr(1));
 			continue;
 		}

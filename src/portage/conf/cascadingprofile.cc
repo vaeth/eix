@@ -80,15 +80,17 @@ CascadingProfile::readremoveFiles()
 		vector<string> lines;
 		pushback_lines(file->c_str(), &lines, true, true, true);
 
-		for(vector<string>::size_type i = 0; i < lines.size(); i++)
+		for(vector<string>::iterator i(lines.begin()), i_end(lines.end());
+			i != i_end;
+			++i)
 		{
 			try {
-				if((this->*handler) (lines[i]))
+				if((this->*handler) (*i))
 					ret = true;
 			}
 			catch(const ExBasic &e)
 			{
-				portage_parse_error(*file, i + 1, lines[i], e);
+				portage_parse_error(*file, lines.begin(), i, e);
 			}
 		}
 	}

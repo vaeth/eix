@@ -99,7 +99,7 @@ std::vector<std::string> split_string(const std::string &str, const char *at = "
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
-std::string join_vector(const std::vector<std::string> &vec, std::string glue = " ");
+std::string join_vector(const std::vector<std::string> &vec, const std::string &glue = " ");
 
 /** Resolve a vector of -/+ keywords and store the result as a set.
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
@@ -109,7 +109,7 @@ std::string join_vector(const std::vector<std::string> &vec, std::string glue = 
  * @param warnignore
  * @param warn_plus        Warn if keywords begin with a '+'.
  * @return true            if -* is contained */
-bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL, bool warn_plus = true);
+bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL);
 
 /** Sort and unique. Return true if there were double entries */
 #ifdef UNIQUE_WORKS
