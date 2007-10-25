@@ -179,7 +179,7 @@ sig_handler(int sig)
 
 const char *format_normal, *format_verbose, *format_compact;
 const char *eix_cachefile = NULL;
-const char *print_var = NULL;
+const char *var_to_print = NULL;
 
 uint8_t overlay_mode;
 
@@ -231,7 +231,7 @@ static struct Option long_options[] = {
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
 
-	Option("print",        O_PRINT_VAR,     Option::STRING,   &print_var),
+	Option("print",        O_PRINT_VAR,     Option::STRING,   &var_to_print),
 
 	Option("format",         O_FMT,         Option::STRING,   &format_normal),
 	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
@@ -451,8 +451,8 @@ run_eix(int argc, char** argv)
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, long_options);
 
-	if(print_var) {
-		PrintVar(print_var,eixrc);
+	if(var_to_print) {
+		print_var(var_to_print, eixrc);
 		exit(0);
 	}
 

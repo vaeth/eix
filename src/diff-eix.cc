@@ -96,7 +96,7 @@ bool cli_show_help    = false,
 	 cli_care,
 	 cli_quiet;
 
-const char *print_var = NULL;
+const char *var_to_print = NULL;
 
 enum cli_options {
 	O_DUMP = 300,
@@ -113,7 +113,7 @@ static struct Option long_options[] = {
 	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
 	Option("dump-deafults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults),
-	Option("print",        O_PRINT_VAR, Option::STRING,&print_var),
+	Option("print",        O_PRINT_VAR, Option::STRING,&var_to_print),
 	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
 	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
 	Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick),
@@ -278,8 +278,8 @@ run_diff_eix(int argc, char *argv[])
 	if(cli_show_version)
 		dump_version(0);
 
-	if(print_var) {
-		PrintVar(print_var,eixrc);
+	if(var_to_print) {
+		print_var(var_to_print, eixrc);
 		exit(0);
 	}
 

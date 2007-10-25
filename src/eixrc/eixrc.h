@@ -10,12 +10,15 @@
 #define __EIXRC_H__
 
 #include <cstdlib>
+#include <iostream>
 #include <vector>
 #include <string>
 #include <map>
 #include <set>
 #include <portage/keywords.h>
 #include <search/redundancy.h>
+
+#include <portage/conf/portagesettings.h>
 
 #define EIX_VARS_PREFIX "EIX_"
 #define DIFF_EIX_VARS_PREFIX "DIFF_"
@@ -88,16 +91,17 @@ class EixRc : public std::map<std::string,std::string> {
 		static std::string as_comment(const char *s);
 };
 
-#define PrintVar(print_var,eixrc) do { \
-	if(strcmp(print_var, "PORTDIR")) { \
-		const char *s = eixrc.cstr(print_var); \
-		if(s) { \
-			std::cout << s; \
-			break; \
-		} \
-	} \
-	PortageSettings ps(eixrc, false); \
-	cout << ps[print_var]; \
-} while(0)
+inline void print_var(const char *print_var, EixRc &eixrc)
+{
+	if(strcmp(print_var, "PORTDIR")) { 
+		const char *s = eixrc.cstr(print_var); 
+		if(s) { 
+			std::cout << s; 
+			return;
+		} 
+	} 
+	PortageSettings ps(eixrc, false); 
+	std::cout << ps[print_var]; 
+}
 
 #endif /* __EIXRC_H__ */

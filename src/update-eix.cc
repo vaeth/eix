@@ -179,7 +179,7 @@ bool quiet = false,
 list<const char *> exclude_args, add_args;
 list<ArgPair> method_args;
 const char *outputname = NULL;
-const char *print_var = NULL;
+const char *var_to_print = NULL;
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
@@ -187,7 +187,7 @@ static struct Option long_options[] = {
 	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet),
 	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
 	 Option("dump-defaults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
-	 Option("print",        O_PRINT_VAR, Option::STRING,  &print_var),
+	 Option("print",        O_PRINT_VAR, Option::STRING,  &var_to_print),
 	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 
@@ -299,8 +299,8 @@ run_update_eix(int argc, char *argv[])
 	if(argreader.begin() != argreader.end())
 		print_help(1);
 
-	if(print_var) {
-		PrintVar(print_var,eixrc);
+	if(var_to_print) {
+		print_var(var_to_print, eixrc);
 		exit(0);
 	}
 

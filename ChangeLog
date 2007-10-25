@@ -5,6 +5,7 @@
 	- Fix gcc-4.3 warnings
 	- Include ICC and `make distcheck` in contrib/compile-test.sh
 	- Remove useless OOM_ASSERT, WARNING and THROW macros.
+	- Replace PrintVar macro with inline function, simplify get_eixrc()
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New treatment of scandir, see
