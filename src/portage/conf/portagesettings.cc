@@ -630,7 +630,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 	}
 
-	bool shortcut = !(check & (Keywords::RED_MIXED & Keywords::RED_WEAKER));
+	bool shortcut = !(check & (Keywords::RED_MIXED | Keywords::RED_WEAKER));
 	for(Package::iterator i = p->begin();
 		i != p->end(); ++i)
 	{
