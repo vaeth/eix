@@ -280,7 +280,7 @@ run_diff_eix(int argc, char *argv[])
 		dump_version(0);
 
 	if(var_to_print) {
-		print_var(var_to_print, eixrc);
+		eixrc.print_var(var_to_print);
 		exit(0);
 	}
 

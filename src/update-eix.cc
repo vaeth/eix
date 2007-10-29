@@ -301,7 +301,7 @@ run_update_eix(int argc, char *argv[])
 		print_help(1);
 
 	if(var_to_print) {
-		print_var(var_to_print, eixrc);
+		eixrc.print_var(var_to_print);
 		exit(0);
 	}
 

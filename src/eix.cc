@@ -453,7 +453,7 @@ run_eix(int argc, char** argv)
 	ArgumentReader argreader(argc, argv, long_options);
 
 	if(var_to_print) {
-		print_var(var_to_print, eixrc);
+		eixrc.print_var(var_to_print);
 		exit(0);
 	}
 

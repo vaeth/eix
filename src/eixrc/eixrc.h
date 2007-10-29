@@ -19,8 +19,6 @@
 #include <portage/keywords.h>
 #include <search/redundancy.h>
 
-#include <portage/conf/portagesettings.h>
-
 #define EIX_VARS_PREFIX "EIX_"
 #define DIFF_EIX_VARS_PREFIX "DIFF_"
 
@@ -73,6 +71,8 @@ class EixRc : public std::map<std::string,std::string> {
 		const char *cstr(const char *var) const;
 
 		const char *prefix_cstr(const char *var) const;
+
+		void print_var(const char *var);
 	private:
 		static bool istrue(const char *s);
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi };
@@ -91,18 +91,5 @@ class EixRc : public std::map<std::string,std::string> {
 		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length = NULL);
 		static std::string as_comment(const char *s);
 };
-
-inline void print_var(const char *print_var, EixRc &eixrc)
-{
-	if(strcmp(print_var, "PORTDIR")) { 
-		const char *s = eixrc.cstr(print_var); 
-		if(s) { 
-			std::cout << s; 
-			return;
-		} 
-	} 
-	PortageSettings ps(eixrc, false); 
-	std::cout << ps[print_var]; 
-}
 
 #endif /* __EIXRC_H__ */

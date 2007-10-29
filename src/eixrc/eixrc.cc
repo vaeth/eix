@@ -12,6 +12,9 @@
 #include <varsreader.h>
 #include <cstdlib>
 
+#include <portage/conf/portagesettings.h>
+
+
 #define EIX_USERRC   "/.eixrc"
 
 #ifndef SYSCONFDIR
@@ -105,7 +108,8 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 	return true;
 }
 
-LocalMode EixRc::getLocalMode(const char *key)
+LocalMode
+EixRc::getLocalMode(const char *key)
 {
 	const char *s = (*this)[key].c_str();
 	if((*s == '+') || (strcasecmp(s, "local") == 0))
@@ -118,7 +122,8 @@ LocalMode EixRc::getLocalMode(const char *key)
 	return LOCALMODE_DEFAULT;
 }
 
-const char *EixRc::cstr(const char *var) const
+const char *
+EixRc::cstr(const char *var) const
 {
 	map<string,string>::const_iterator s = find(var);
 	if(s == end())
@@ -126,7 +131,8 @@ const char *EixRc::cstr(const char *var) const
 	return (s->second).c_str();
 }
 
-const char *EixRc::prefix_cstr(const char *var) const
+const char *
+EixRc::prefix_cstr(const char *var) const
 {
 	const char *s = cstr(var);
 	if(!s)
@@ -138,7 +144,8 @@ const char *EixRc::prefix_cstr(const char *var) const
 	return NULL;
 }
 
-void EixRc::read()
+void
+EixRc::read()
 {
 	const char *name = "PORTAGE_CONFIGROOT";
 	const char *configroot = getenv(name);
@@ -196,7 +203,8 @@ void EixRc::read()
 	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"];
 }
 
-string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)
+string
+*EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_reference, const char **errtext, string *errvar)
 {
 	string *value = &((*this)[key]);
 	if(has_reference.find(key) == has_reference.end()) {
@@ -327,7 +335,9 @@ string *EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<str
 	}
 }
 
-inline void override_by_env(map<string,string> &m) {
+inline static void
+override_by_env(map<string,string> &m)
+{
 	for(map<string,string>::iterator it = m.begin(); it != m.end(); ++it) {
 		char *val = getenv((it->first).c_str());
 		if(val)
@@ -338,7 +348,9 @@ inline void override_by_env(map<string,string> &m) {
 /** Create defaults and the main map with all variables
    (including all values required by delayed references).
    @arg has_reference is initialized to corresponding keys */
-void EixRc::read_undelayed(set<string> &has_reference) {
+void
+EixRc::read_undelayed(set<string> &has_reference)
+{
 	map<string,string> tempmap;
 	set<string> default_keys;
 
@@ -427,7 +439,8 @@ void EixRc::read_undelayed(set<string> &has_reference) {
 	}
 }
 
-void EixRc::join_delayed(const string &key, set<string> &default_keys, const map<string,string> &tempmap)
+void
+EixRc::join_delayed(const string &key, set<string> &default_keys, const map<string,string> &tempmap)
 {
 	if(default_keys.find(key) != default_keys.end())
 		return;
@@ -452,7 +465,8 @@ void EixRc::join_delayed(const string &key, set<string> &default_keys, const map
 	(*this)[key] = val;
 }
 
-EixRc::DelayedType EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length)
+EixRc::DelayedType
+EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length)
 {
 	string::size_type pos = *posref;
 	for(;; pos += 2)
@@ -522,7 +536,8 @@ EixRc::DelayedType EixRc::find_next_delayed(const string &str, string::size_type
 	}
 }
 
-void EixRc::modify_value(string &value, const string &key)
+void
+EixRc::modify_value(string &value, const string &key)
 {
 	if(value == "/") {
 		if(prefix_keys.find(key) != prefix_keys.end())
@@ -530,14 +545,16 @@ void EixRc::modify_value(string &value, const string &key)
 	}
 }
 
-void EixRc::clear()
+void
+EixRc::clear()
 {
 	defaults.clear();
 	prefix_keys.clear();
 	(dynamic_cast<map<string,string>*>(this))->clear();
 }
 
-void EixRc::addDefault(EixRcOption option)
+void
+EixRc::addDefault(EixRcOption option)
 {
 	if(option.type == EixRcOption::PREFIXSTRING)
 		prefix_keys.insert(option.key);
@@ -545,7 +562,8 @@ void EixRc::addDefault(EixRcOption option)
 	defaults.push_back(option);
 }
 
-bool EixRc::istrue(const char *s)
+bool
+EixRc::istrue(const char *s)
 {
 	if(strcasecmp(s, "true") == 0)
 		return true;
@@ -560,9 +578,8 @@ bool EixRc::istrue(const char *s)
 	return false;
 }
 
-void EixRc::getRedundantFlags(const char *key,
-	Keywords::Redundant type,
-	RedPair &p)
+void
+EixRc::getRedundantFlags(const char *key, Keywords::Redundant type, RedPair &p)
 {
 	string value=(*this)[key].c_str();
 	vector<string> a=split_string(value);
@@ -605,12 +622,14 @@ void EixRc::getRedundantFlags(const char *key,
 	getRedundantFlagAtom(NULL, type, p.second);
 }
 
-int EixRc::getInteger(const char *key)
+int
+EixRc::getInteger(const char *key)
 {
 	return atoi((*this)[key].c_str());
 }
 
-string EixRc::as_comment(const char *s)
+string
+EixRc::as_comment(const char *s)
 {
 	string ret = s;
 	string::size_type pos = 0;
@@ -622,7 +641,8 @@ string EixRc::as_comment(const char *s)
 }
 
 
-void EixRc::dumpDefaults(FILE *s, bool use_defaults)
+void
+EixRc::dumpDefaults(FILE *s, bool use_defaults)
 {
 	const char *message = use_defaults ?
 		"was locally changed to:" :
@@ -677,3 +697,18 @@ void EixRc::dumpDefaults(FILE *s, bool use_defaults)
 		}
 	}
 }
+
+void
+EixRc::print_var(const char *var)
+{
+	if(strcmp(var, "PORTDIR")) {
+		const char *s = cstr(var);
+		if(s) {
+			std::cout << s;
+			return;
+		}
+	}
+	PortageSettings ps(*this, false);
+	std::cout << ps[var];
+}
+
