@@ -111,7 +111,7 @@ GetFilename () {
 
 CalcSuCmd () {
 	local MY_CMD
-	MY_CMD="$(type -P "${1}")" || die "${1} cannot be found in $PATH"
+	MY_CMD="$(command -v "${1}")" || die "${1} cannot be found in $PATH"
 	SUCMD=("${MY_CMD}")
 	test -n "${FETCHUSER}" || test "${UID}" -ne 0 || FETCHUSER="nobody"
 	test -n "${FETCHUSER}" && \
@@ -136,7 +136,7 @@ Cleanup () {
 MakeTempDir () {
 	local COUNT
 	test -n "${TMPDIR}" && return
-	if type mktemp >/dev/null 2>&1; then
+	if command -v mktemp >/dev/null 2>&1; then
 		TMPDIR="$(mktemp -d /tmp/${0##*/}.XXXXXX)" || \
 			die "cannot create temporary directory"
 	else

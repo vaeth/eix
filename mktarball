@@ -15,7 +15,7 @@ test -d build || mkdir build >/dev/null
 test -d build || die "cannot create directory build"
 
 unset LDFLAGS CFLAGS CXXFLAGS
-if type fakeroot >/dev/null 2>&1; then
+if command -v fakeroot >/dev/null 2>&1; then
 	./mkmake -eqn || die "mkmake -qn failed"
 	fakeroot ./mkmake -q dist || die "mkmake dist failed"
 else

@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.10.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Use command -v instead of type/type -P (more POSIX compliant)
+
+*eix-0.10.2
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix gcc-4.3 warnings
 	- Include ICC and `make distcheck` in contrib/compile-test.sh
