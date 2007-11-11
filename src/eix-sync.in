@@ -387,7 +387,7 @@ CondUpdate () {
   fi
   ${EMULATEMODE} && return
   if ! eix --is-current; then
-    MyRunCommand "eix-cache uses obsolete format. Running update-eix!" \
+    MyRunCommand "eix-cache format has changed. Running update-eix!" \
         update-eix || die "update-eix failed"
   fi
 }
