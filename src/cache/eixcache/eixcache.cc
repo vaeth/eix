@@ -94,7 +94,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	io::read_header(fp, header);
 	if(!header.isCurrent()) {
 		fclose(fp);
-		const char *msg = "Cache file %s uses obsolete format %u (current is %u)"
+		const char *msg = "Cache file %s uses obsolete format %u (current is %u)";
 		if(header.version > DBHeader::current)
 			msg = "Cache file %s uses newer format %u (current is %u)";
 		m_error_callback(msg, file.c_str(),
