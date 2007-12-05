@@ -146,7 +146,7 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Read stability */
 		version->set_full_keywords(mapping["KEYWORDS"]);
-		version->slot = mapping["SLOT"];
+		version->slotname = mapping["SLOT"];
 		version->set_iuse(mapping["IUSE"]);
 		version->set_restrict(mapping["RESTRICT"]);
 		version->overlay_key = m_overlay_key;

@@ -10,6 +10,8 @@
 #ifndef __PACKAGE_READER_H__
 #define __PACKAGE_READER_H__
 
+#include <config.h>
+
 #include <stdio.h>
 #include <unistd.h>
 

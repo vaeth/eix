@@ -11,7 +11,7 @@
  * Everyone wanted something like esync from esearch .. so here it is!
  */
 
-#include "../config.h"
+#include <config.h>
 
 #include <global.h>
 #include <eixTk/argsreader.h>

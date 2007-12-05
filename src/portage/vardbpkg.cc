@@ -263,11 +263,11 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 			return false;
 		}
 		if(!lines.size())
-			v.slot = "";
+			v.slotname = "";
 		else if(lines[0] == "0")
-			v.slot = "";
+			v.slotname = "";
 		else
-			v.slot = lines[0];
+			v.slotname = lines[0];
 		v.know_slot = true;
 		return true;
 	}
@@ -342,7 +342,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 			if(*dynamic_cast<const BasicVersion*>(*it) != *dynamic_cast<BasicVersion*>(&v))
 				continue;
 			if(readSlot(p, v)) {
-				if(it->slot != v.slot)
+				if(it->slotname != v.slotname)
 					continue;
 			}
 			if(readOverlay(p, v, header, portdir)) {

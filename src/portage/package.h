@@ -37,12 +37,12 @@ class VersionList : public eix::ptr_list<Version>
 class SlotVersions
 {
 	private:
-		const char  *m_slot;
+		const char  *m_slotname;
 		VersionList  m_version_list;
 
 	public:
-		const char *slot() const
-		{ return m_slot; }
+		const char *slotname() const
+		{ return m_slotname; }
 
 		const VersionList &const_version_list() const
 		{ return m_version_list; }
@@ -51,7 +51,7 @@ class SlotVersions
 		{ return m_version_list; }
 
 		SlotVersions(const char *s, Version *v) :
-			m_slot(s), m_version_list(v)
+			m_slotname(s), m_version_list(v)
 		{ }
 };
 

@@ -17,6 +17,7 @@ AC_LANG_CPLUSPLUS
 
 AC_PROG_LN_S
 AC_PROG_CXX
+AC_FUNC_FSEEKO
 AM_PROG_LIBTOOL
 
 dnl Look for basic functions:

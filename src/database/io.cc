@@ -87,7 +87,7 @@ io::read_version(FILE *fp)
 	// read m_gentoorevision
 	v->m_gentoorevision= io::read_LeadNum(fp);
 
-	v->slot = io::read_string(fp);
+	v->slotname = io::read_string(fp);
 	v->overlay_key = io::read<Version::Overlay>(fp);
 
 	v->set_iuse(io::read_string(fp));
@@ -142,7 +142,7 @@ io::write_version(FILE *fp, const Version *v)
 	// write m_gentoorevision
 	io::write_LeadNum(fp, v->m_gentoorevision);
 
-	io::write_string(fp, v->slot);
+	io::write_string(fp, v->slotname);
 	io::write<Version::Overlay>(fp, v->overlay_key);
 	io::write_string(fp, v->get_iuse());
 }

@@ -65,7 +65,7 @@ bool Port2_0_0_Cache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords, iuse, restr;
-			flat_get_keywords_slot_iuse_restrict(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, restr, m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(catpath + "/" + dents[i]->d_name, keywords, version->slotname, iuse, restr, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);

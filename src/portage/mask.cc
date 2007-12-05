@@ -82,10 +82,10 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	const char *end = strrchr(str, ':');
 	m_test_slot = bool(end);
 	if(m_test_slot) {
-		m_slot = (end + 1);
+		m_slotname = (end + 1);
 		// Interpret Slot "0" as empty slot (as internally always)
-		if(m_slot == "0")
-			m_slot.clear();
+		if(m_slotname == "0")
+			m_slotname.clear();
 	}
 
 	// Get the rest (name-version|name)
@@ -163,7 +163,7 @@ bool
 Mask::test(const ExtendedVersion *ev) const
 {
 	if(m_test_slot) {
-		if(m_slot != ev->slot)
+		if(m_slotname != ev->slotname)
 			return false;
 	}
 	switch(m_operator)

@@ -94,7 +94,7 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	/* Create a new version and add it to package */
 	Version *version = new Version(aux[1]);
 	// reading slots and stability
-	version->slot = ARGV(6);
+	version->slotname = ARGV(6);
 	version->set_restrict(ARGV(8));
 	string keywords = ARGV(12);
 	version->set_full_keywords(keywords);

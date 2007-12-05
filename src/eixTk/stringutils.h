@@ -9,7 +9,7 @@
 #ifndef __STRINGUTILS_H__
 #define __STRINGUTILS_H__
 
-#include "../../config.h"
+#include <config.h>
 
 #include <string>
 #include <vector>

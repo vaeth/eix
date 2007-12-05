@@ -257,10 +257,10 @@ class ExtendedVersion : public BasicVersion
 
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
-		std::string slot;
+		std::string slotname;
 
 		ExtendedVersion(const char *str = NULL) : BasicVersion(str)
-		{ restrictFlags = RESTRICT_NONE; slot.clear(); }
+		{ restrictFlags = RESTRICT_NONE; slotname.clear(); }
 
 		static Restrict calcRestrict(const std::string& str);
 
@@ -269,11 +269,11 @@ class ExtendedVersion : public BasicVersion
 
 		std::string getSlotAppendix(bool colon) const
 		{
-			if(slot.empty())
+			if(slotname.empty())
 				return "";
 			if(colon)
-				return std::string(":") + slot;
-			return std::string("(") + slot + ")";
+				return std::string(":") + slotname;
+			return std::string("(") + slotname + ")";
 		}
 
 		std::string getFullSlotted(bool colon, const std::string& intermediate = "") const

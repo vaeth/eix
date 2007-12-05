@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.10.3
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fix compilation for ia64-hpux, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=201117
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Use command -v instead of type/type -P (more POSIX compliant)
 	- Clearer error messages for newer cachefile format, see

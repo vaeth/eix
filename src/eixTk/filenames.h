@@ -8,7 +8,7 @@
 #ifndef __FILENAMES_H__
 #define __FILENAMES_H__
 
-#include "../../config.h"
+#include <config.h>
 #include <eixTk/sysutils.h>
 
 #include <string>

@@ -48,7 +48,7 @@ get_map_from_cache(const char *file, map<string,string> &x)
 
 /** Read stability and other data from a metadata cache file. */
 void
-backport_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slot, string &iuse, string &rest, BasicCache::ErrorCallback error_callback)
+backport_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &rest, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> cf;
 
@@ -60,7 +60,7 @@ backport_get_keywords_slot_iuse_restrict(const string &filename, string &keyword
 		return;
 	}
 	keywords = cf["KEYWORDS"];
-	slot     = cf["SLOT"];
+	slotname = cf["SLOT"];
 	iuse     = cf["IUSE"];
 	rest     = cf["RESTRICT"];
 }
@@ -125,7 +125,7 @@ bool Port2_1_0_Cache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords, iuse, restr;
-			backport_get_keywords_slot_iuse_restrict(catpath + "/" + dents[i]->d_name, keywords, version->slot, iuse, restr, m_error_callback);
+			backport_get_keywords_slot_iuse_restrict(catpath + "/" + dents[i]->d_name, keywords, version->slotname, iuse, restr, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);

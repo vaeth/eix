@@ -204,7 +204,7 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 		version->overlay_key = m_overlay_key;
 		string keywords, iuse, restr;
 		try {
-			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slot, iuse, restr, m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);

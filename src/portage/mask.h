@@ -62,7 +62,7 @@ class Mask : public BasicVersion {
 
 		std::string m_category; /**< category */
 		std::string m_name;     /**< package name */
-		std::string m_slot;
+		std::string m_slotname;
 		bool m_test_slot;       /**< must we match a slot? */
 
 		/** split a "mask string" into its components

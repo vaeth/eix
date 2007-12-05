@@ -41,10 +41,10 @@ VersionList::best() const
 void
 SlotList::push_back_largest(Version *version)
 {
-	const char *name = (version->slot).c_str();
+	const char *name = (version->slotname).c_str();
 	for(iterator it = begin(); it != end(); ++it)
 	{
-		if(strcmp(name, it->slot()) == 0)
+		if(strcmp(name, it->slotname()) == 0)
 		{
 			(it->version_list()).push_back(version);
 			return;
@@ -58,7 +58,7 @@ SlotList::operator [] (const char *s) const
 {
 	for(const_iterator it = begin(); it != end(); ++it)
 	{
-		if(strcmp(s, it->slot()) == 0)
+		if(strcmp(s, it->slotname()) == 0)
 			return &(it->const_version_list());
 	}
 	return NULL;
@@ -137,8 +137,8 @@ void Package::addVersionFinalize(Version *version)
 {
 	Version::Overlay key = version->overlay_key;
 
-	if(version->slot == "0")
-		version->slot = "";
+	if(version->slotname == "0")
+		version->slotname = "";
 
 	/* This guarantees that we pushed our first version */
 	if(size() != 1) {
@@ -159,7 +159,7 @@ void Package::addVersionFinalize(Version *version)
 		have_nontrivial_slots = false;
 		is_system_package     = version->maskflags.isSystem();
 	}
-	if((version->slot).length())
+	if((version->slotname).length())
 		have_nontrivial_slots = true;
 	collect_iuse();
 	// We must recalculate the complete slotlist after each modification.
@@ -222,7 +222,7 @@ Package::slotname(const ExtendedVersion &v) const
 	for(const_iterator i = begin(); i != end(); i++)
 	{
 		if(**i == v)
-			return (i->slot).c_str();
+			return (i->slotname).c_str();
 	}
 	return NULL;
 }
@@ -235,7 +235,7 @@ bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 	const char *s = slotname(v);
 	if(s)
 	{
-		v.slot = s;
+		v.slotname = s;
 		v.know_slot = true;
 	}
 	if(vardbpkg->readSlot(*this, v))
@@ -246,7 +246,7 @@ bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 		// However, perhaps our package is from an old database
 		// (e.g. in diff-eix) and so there might be new slots elsewhere
 		// Therefore we better don't modify v.know_slot.
-		v.slot = slotlist.begin()->slot();
+		v.slotname = slotlist.begin()->slotname();
 		return true;
 	}
 	return false;
@@ -267,7 +267,7 @@ int Package::worse_best_slots(const Package &p) const
 		Version *t_best = (it->const_version_list()).best();
 		if(!t_best)
 			continue;
-		Version *p_best = p.best_slot(it->slot());
+		Version *p_best = p.best_slot(it->slotname());
 		if(!p_best)
 			return 1;
 		if(*t_best > *p_best)
@@ -325,7 +325,7 @@ Package::compare_best(const Package &p, bool test_slot) const
 			return -1;
 		if(t_best->overlay_key != p_best->overlay_key)
 			return 3;
-		if(test_slot && (t_best->slot != p_best->slot))
+		if(test_slot && (t_best->slotname != p_best->slotname))
 			return 3;
 		return 0;
 	}
@@ -383,7 +383,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 			}
 			continue;
 		}
-		Version *t_best_slot = best_slot((it->slot).c_str());
+		Version *t_best_slot = best_slot((it->slotname).c_str());
 		if(!t_best_slot)
 		{
 			downgrade = true;
@@ -447,7 +447,7 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 				return 0;
 			if(guess_slotname(*it, v))
 			{
-				if(t_best->slot == it->slot)
+				if(t_best->slotname == it->slotname)
 					return 0;
 			}
 			return 3;

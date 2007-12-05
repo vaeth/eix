@@ -23,10 +23,10 @@ get_extended_version(const PrintFormat *fmt, const ExtendedVersion *version, boo
 		return version->getFull();
 	if(pure_text || fmt->no_color || (!fmt->colored_slots))
 		return version->getFullSlotted(fmt->colon_slots, intermediate);
-	string slot = version->getSlotAppendix(fmt->colon_slots);
-	if(slot.empty())
+	string slotname = version->getSlotAppendix(fmt->colon_slots);
+	if(slotname.empty())
 		return version->getFull();
-	return version->getFull() + intermediate + fmt->color_slots + slot +
+	return version->getFull() + intermediate + fmt->color_slots + slotname +
 		AnsiColor::reset();
 }
 
@@ -130,7 +130,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		color = false;
 	for(;;) {
 		if(!p.guess_slotname(*it, fmt.vardb))
-			it->slot = "?";
+			it->slotname = "?";
 		if(prepend.size() > PIDX_FRONT)
 			ret.append(prepend[PIDX_FRONT]);
 		ret.append(get_extended_version(&fmt, &(*it), pure_text,
@@ -396,12 +396,12 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		cout << fmt->mark_installed_end;
 	if (with_slots && fmt->show_slots && fmt->colored_slots)
 	{
-		string slot = version->getSlotAppendix(fmt->colon_slots);
-		if(!slot.empty())
+		string slotname = version->getSlotAppendix(fmt->colon_slots);
+		if(!slotname.empty())
 		{
 			if(! fmt->no_color)
 				cout << fmt->color_slots;
-			cout << slot;
+			cout << slotname;
 		}
 	}
 	if(fmt->print_restrictions)
@@ -472,7 +472,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool full)
 		it != sl->end(); ++it)
 	{
 		if(!full) {
-			const char *s = it->slot();
+			const char *s = it->slotname();
 			if((!only_one) || fmt->style_version_lines)
 				fputs("\n\t", stdout);
 			if( !fmt->no_color)
