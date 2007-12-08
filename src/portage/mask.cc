@@ -237,9 +237,7 @@ Mask::checkMask(Package& pkg, const bool check_category, const bool check_name, 
 bool
 Mask::ismatch(Package& pkg)
 {
-	if(strcmp(pkg.name.c_str(), m_name.c_str()) != 0)
-		return false;
-	if(strcmp(pkg.category.c_str(), m_category.c_str()) != 0)
+	if (pkg.name != m_name || pkg.category != m_category)
 		return false;
 	for(Package::iterator i = pkg.begin();
 		i != pkg.end();

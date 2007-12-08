@@ -432,7 +432,7 @@ FormatParser::ParserState
 FormatParser::state_ELSE()
 {
 	Node *p = NULL, *q = NULL;
-	if(keller.size() == 0) {
+	if(keller.empty()) {
 		return START;
 	}
 	p = keller.top();
@@ -440,7 +440,7 @@ FormatParser::state_ELSE()
 	while(p->type != Node::IF || (static_cast<ConditionBlock*>(p))->final == true) {
 		p->next = q;
 		q = p;
-		if(keller.size() == 0) {
+		if(keller.empty()) {
 			last_error = "Found ELSE without IF.";
 			return ERROR;
 		}
@@ -459,7 +459,7 @@ FormatParser::ParserState
 FormatParser::state_FI()
 {
 	Node *p = NULL, *q = NULL;
-	if(keller.size() == 0) {
+	if(keller.empty()) {
 		return START;
 	}
 	p = keller.top();
@@ -467,7 +467,7 @@ FormatParser::state_FI()
 	while(p->type != Node::IF || (static_cast<ConditionBlock*>(p))->final == true) {
 		p->next = q;
 		q = p;
-		if(keller.size() == 0) {
+		if(keller.empty()) {
 			last_error = "Found FI without IF.";
 			return ERROR;
 		}

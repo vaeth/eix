@@ -4,6 +4,7 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix compilation for ia64-hpux, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=201117
+	- Minor changes (size() == 0 -> empty(), ...)
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Use command -v instead of type/type -P (more POSIX compliant)

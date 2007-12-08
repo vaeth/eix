@@ -47,7 +47,7 @@ bool CascadingProfile::getParentProfile(string &path_buffer)
 	{
 		trim(&buf);
 		/* If it's a comment or a empty line continue with the next line */
-		if(buf.size() == 0 || buf[0] == '#')
+		if(buf.empty() || buf[0] == '#')
 			continue;
 
 		path_buffer.append(buf);

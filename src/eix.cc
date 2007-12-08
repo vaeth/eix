@@ -733,7 +733,7 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 		i != lines.end();
 		i++)
 	{
-		if(i->size() == 0)
+		if(i->empty())
 		{
 			continue;
 		}
