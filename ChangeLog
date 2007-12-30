@@ -7,6 +7,7 @@
 	- Minor changes (size() == 0 -> empty(), ...)
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce PRINT_KEYWORDS, FORMAT_{BEFORE,AFTER}_KEYWORDS
 	- Use command -v instead of type/type -P (more POSIX compliant)
 	- Clearer error messages for newer cachefile format, see
 	  http://forums.gentoo.org/viewtopic-t-614015.html

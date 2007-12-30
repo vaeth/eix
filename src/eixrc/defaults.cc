@@ -985,6 +985,18 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_BEFORE_KEYWORDS",
+			" \"(cyan)", "This string is printed before KEYWORDS string for a version is output.\n"
+			"(this is only used when --versionlines and PRINT_KEYWORDS is active)")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_AFTER_KEYWORDS",
+			"()\"", "This string is printed after KEYWORDS string for a version is output.\n"
+			"(this is only used when --versionlines and PRINT_KEYWORDS is active)")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_BEFORE_IUSE",
 			" [(blue)", "This string is printed before IUSE data for a version is output.\n"
 			"(this is only used when --versionlines is active)")
@@ -1089,6 +1101,13 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "STYLE_VERSION_SORTED",
 			"false", "Defines whether --versionsorted is on by default.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "PRINT_KEYWORDS",
+			"first", "Defines whether KEYWORDS string is printed in --versionlines mode.\n"
+			"\"before\", \"first\", or \"true\" will print KEYWORDS string before IUSE,\n"
+			"\"after\" or \"last\" will print it afterwards. \"false\" will not print it.")
 		);
 
 eixrc.addDefault(

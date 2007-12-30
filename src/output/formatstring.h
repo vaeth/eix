@@ -206,6 +206,7 @@ class PrintFormat {
 		     alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
 		     print_iuse,          /**< Print iuse data */
 		     print_restrictions;  /**< Print mirror/fetch restrictions */
+		short print_keywords;     /**< Print keywords before/after (</>0) iuse data */
 
 		LocalMode recommend_mode;
 
@@ -223,7 +224,8 @@ class PrintFormat {
 			   mark_version_end;  /**< End-Marker for marked versions */
 		std::string dateFormat,       /**< The format of the long  install-date */
 		            dateFormatShort;  /**< The format of the short install-date */
-		std::string before_iuse, after_iuse,
+		std::string before_keywords, after_keywords,
+		            before_iuse, after_iuse,
 		            before_coll_iuse, after_coll_iuse,
 		            before_slot_iuse, after_slot_iuse;
 		std::string tag_for_profile, tag_for_masked,
@@ -271,6 +273,8 @@ class PrintFormat {
 				mark_version       = ver_marker.asString();
 				mark_version_end   = ver_marker.end();
 			}
+			before_keywords    = parse_colors(before_keywords, use_color);
+			after_keywords     = parse_colors(after_keywords, use_color);
 			before_iuse        = parse_colors(before_iuse, use_color);
 			after_iuse         = parse_colors(after_iuse, use_color);
 			before_coll_iuse   = parse_colors(before_coll_iuse, use_color);

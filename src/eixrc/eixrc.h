@@ -58,6 +58,8 @@ class EixRc : public std::map<std::string,std::string> {
 			return 0;
 		}
 
+		short getBeforeAfter(const char *key);
+
 		LocalMode getLocalMode(const char *key);
 
 		void getRedundantFlags(const char *key,

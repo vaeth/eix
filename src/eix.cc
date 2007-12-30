@@ -352,6 +352,9 @@ setup_defaults()
 
 	format.alpha_use           = rc.getBool("SORT_INST_USE_ALPHA");
 
+	format.print_keywords      = rc.getBeforeAfter("PRINT_KEYWORDS");
+	format.before_keywords     = rc["FORMAT_BEFORE_KEYWORDS"];
+	format.after_keywords      = rc["FORMAT_AFTER_KEYWORDS"];
 	format.print_iuse          = rc.getBool("PRINT_IUSE");
 	format.before_iuse         = rc["FORMAT_BEFORE_IUSE"];
 	format.after_iuse          = rc["FORMAT_AFTER_IUSE"];

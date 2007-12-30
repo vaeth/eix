@@ -230,6 +230,23 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 	}
 }
 
+inline static void
+print_iuse_version(const PrintFormat *fmt, const Version *version)
+{
+	if(version->iuse.empty())
+		return;
+	cout << fmt->before_iuse << join_vector(version->iuse) << fmt->after_iuse;
+}
+
+inline static void
+print_keywords_version(const PrintFormat *fmt, const Version *version)
+{
+	string keywords = version->get_full_keywords();
+	if(keywords.empty())
+		return;
+	cout << fmt->before_keywords << keywords << fmt->after_keywords;
+}
+
 void
 print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay, bool full)
 {
@@ -424,12 +441,14 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 	if(!fmt->no_color)
 		cout << AnsiColor::reset();
-	if(fmt->print_iuse && fmt->style_version_lines) {
-		if(!(version->iuse.empty())) {
-			cout << fmt->before_iuse <<
-				join_vector(version->iuse) << fmt->after_iuse;
-		}
-	}
+	if(!fmt->style_version_lines)
+		return;
+	if(fmt->print_keywords > 0)
+		print_keywords_version(fmt, version);
+	if(fmt->print_iuse)
+		print_iuse_version(fmt, version);
+	if(fmt->print_keywords < 0)
+		print_keywords_version(fmt, version);
 }
 
 void
