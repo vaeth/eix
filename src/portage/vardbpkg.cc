@@ -81,6 +81,19 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 	return false;
 }
 
+short
+VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header, const char *portdir)
+{
+	InstVersion *inst = NULL;
+	if(!isInstalled(p, v, &inst))
+		return 0;
+	if(!readOverlay(p, *inst, header, portdir))
+		return -1;
+	if((inst->overlay_key) != (v->overlay_key))
+		return 0;
+	return 1;
+}
+
 /** Returns number of installed versions of this package
  * @param p Check for this Package. */
 vector<InstVersion>::size_type
@@ -162,7 +175,7 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 		(_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
 		"rb");
 	if(!fh)
-		return false;
+		return "";
 	typedef int BufInd;
 	const BufInd bufsize = 256;
 	const BufInd strsize = 7;
@@ -170,7 +183,7 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 	BufInd bufend = BZ2_bzread(fh, buffer, bufsize);
 	if(bufend < strsize) {
 		BZ2_bzclose(fh);
-		return false;
+		return "";
 	}
 
 	// find EBUILD=... (cycling buffer if necessary)

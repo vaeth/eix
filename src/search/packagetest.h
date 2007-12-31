@@ -227,7 +227,6 @@ class PackageTest {
 		std::vector<std::string> *from_foreign_overlay_inst_list;
 		const char *portdir;
 
-		/** Lookup stuff about user flags here. */
 		PortageSettings *portagesettings;
 		/** Lookup stuff about user flags here. */
 		const SetStability *stability,

@@ -81,9 +81,13 @@ class VarDbPkg {
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
 		 * @param v If not NULL, check for this BasicVersion.
-		   If a particular version is foundand r is nonzero, r points to that version */
+		   If a particular version is found and r is nonzero, r points to that version */
 		bool isInstalled(const Package &p, const BasicVersion *v = NULL, InstVersion **r = NULL)
 		{ return isInVec(getInstalledVector(p), v, r); }
+
+		/** Test if a particular version is installed from the correct overlay.
+		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
+		short isInstalledVersion(const Package &p, const Version *v, const DBHeader& header, const char *portdir);
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */

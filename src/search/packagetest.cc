@@ -254,22 +254,15 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 			{
 				if(test_unrestricted)
 					return false;
-				// If the current version was not yet treated (i.e.
-				// we consider at most the last overlay as installed)
-				if((prev_ver == NULL) ||
-					(**pi != *prev_ver))
-				{
-					// And this version is installed
-					if(vardbpkg->isInstalled(p, *pi))
-					{
-						if(test_uninstalled)
-							continue;
-						return false;
-					}
-					else if(test_uninstalled)
-						return false;
+				short is_installed = vardbpkg->isInstalledVersion(p, *pi, *header, portdir);
+				// If in doubt about the overlay only consider as installed
+				// if the current version was not treated yet, i.e. (since we use reverse_iterator)
+				// if it is the highest version (and so usually from the last overlay)
+				if(is_installed < 0) {
+					if(prev_ver && (**pi == *prev_ver))
+						is_installed = 0;
 				}
-				else if(test_uninstalled)
+				if(test_uninstalled == !is_installed)
 					return false;
 			}
 		}
@@ -284,15 +277,10 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 			{
 				if(test_unrestricted)
 					return true;
-				// in contrast to the above loop, we do not
-				// distinguish overlays here.
-				if(vardbpkg->isInstalled(p, *pi))
-				{
-					if(test_uninstalled)
-						continue;
-					return true;
-				}
-				else if(test_uninstalled)
+				// in contrast to the above loop, we now in doubt
+				// do not distinguish overlays.
+				if(test_uninstalled ==
+					!(vardbpkg->isInstalledVersion(p, *pi, *header, portdir)))
 					return true;
 			}
 		}

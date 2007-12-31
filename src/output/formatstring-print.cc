@@ -230,7 +230,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 	}
 }
 
-inline static void
+static void
 print_iuse_version(const PrintFormat *fmt, const Version *version)
 {
 	if(version->iuse.empty())
@@ -238,7 +238,7 @@ print_iuse_version(const PrintFormat *fmt, const Version *version)
 	cout << fmt->before_iuse << join_vector(version->iuse) << fmt->after_iuse;
 }
 
-inline static void
+static void
 print_keywords_version(const PrintFormat *fmt, const Version *version)
 {
 	string keywords = version->get_full_keywords();
@@ -252,21 +252,12 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 {
 	bool is_installed = false;
 	bool is_marked = false;
-	InstVersion *inst = NULL;
 	if(!fmt->no_color)
 	{
 		if(fmt->vardb)
-			is_installed = fmt->vardb->isInstalled(*package, version, &inst);
+			is_installed = fmt->vardb->isInstalledVersion(*package, version, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str());
 		if(fmt->marked_list)
 			is_marked = fmt->marked_list->is_marked(*package, version);
-	}
-
-	// do not mark installed version if it is from a different overlay:
-	if(is_installed && inst && (!(package->have_same_overlay_key))) {
-		if(fmt->vardb->readOverlay(*package, *inst, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str())) {
-			if((inst->overlay_key) != (version->overlay_key))
-				is_installed = false;
-		}
 	}
 
 	if((!full) && fmt->style_version_lines)

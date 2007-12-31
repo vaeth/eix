@@ -8,7 +8,9 @@
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce PRINT_KEYWORDS, FORMAT_{BEFORE,AFTER}_KEYWORDS
-	- Use command -v instead of type/type -P (more POSIX compliant)
+	- Let -T check overlay for all-installed and some-installed
+	- Fix segfault for unknown repository and unreadable environment.bz2
+	- Use POSIX' command -v instead of type/type -P in scripts
 	- Clearer error messages for newer cachefile format, see
 	  http://forums.gentoo.org/viewtopic-t-614015.html
 
