@@ -20,7 +20,7 @@ class EixCache : public BasicCache {
 
 	public:
 		// @return true if successful
-		bool initialize(std::string &name);
+		bool initialize(const std::string &name);
 
 		bool can_read_multiple_categories() const
 		{ return true; }

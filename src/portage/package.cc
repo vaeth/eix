@@ -159,7 +159,7 @@ void Package::addVersionFinalize(Version *version)
 		have_nontrivial_slots = false;
 		is_system_package     = version->maskflags.isSystem();
 	}
-	if((version->slotname).length())
+	if(! (version->slotname).empty())
 		have_nontrivial_slots = true;
 	collect_iuse();
 	// We must recalculate the complete slotlist after each modification.

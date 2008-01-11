@@ -32,7 +32,7 @@ done
 cat<<END
 using namespace std;
 
-BasicCache *get_cache(string name) {
+BasicCache *get_cache(const string &name) {
 END
 
 for cache_name in $cache_names; do

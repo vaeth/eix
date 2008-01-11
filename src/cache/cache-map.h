@@ -11,6 +11,6 @@
 
 #include <cache/base.h>
 
-BasicCache *get_cache(std::string name);
+BasicCache *get_cache(const std::string &name);
 
 #endif /* __GET_H__ */

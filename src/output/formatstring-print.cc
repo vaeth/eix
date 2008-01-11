@@ -691,7 +691,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		for(vector<Version*>::const_iterator it = versions.begin();
 			it != versions.end(); ++it)
 		{
-			if(ret.length())
+			if(! ret.empty())
 				ret += " ";
 			if(with_slots)
 				ret += (*it)->getFullSlotted(fmt->colon_slots);

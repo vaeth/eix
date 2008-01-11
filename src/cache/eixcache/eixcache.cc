@@ -23,7 +23,7 @@ using namespace std;
 
 
 
-bool EixCache::initialize(string &name)
+bool EixCache::initialize(const string &name)
 {
 	vector<string> args = split_string(name, ":", false);
 	if(strcasecmp(args[0].c_str(), "eix") == 0)
@@ -42,7 +42,7 @@ bool EixCache::initialize(string &name)
 
 	m_file = "";
 	if(args.size() >= 2) {
-		if(args[1].length()) {
+		if(! args[1].empty()) {
 			m_name += " ";
 			m_name += args[1];
 			m_file = args[1];
@@ -53,7 +53,7 @@ bool EixCache::initialize(string &name)
 	m_overlay = "";
 	m_get_overlay = 0;
 	if(args.size() >= 3) {
-		if(args[2].length()) {
+		if(! args[2].empty()) {
 			m_name += " [";
 			m_name += args[2];
 			m_name += "]";
@@ -78,7 +78,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		add_categories = false;
 
 	string file;
-	if(m_file.length())
+	if(! m_file.empty())
 		file = m_prefix + m_file;
 	else
 		file = m_prefix + EIX_CACHEFILE;
