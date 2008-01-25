@@ -48,7 +48,8 @@ class PackageTest {
 		                        HOMEPAGE      , /**< Search in homepage */
 		                        IUSE          , /**< Search in iuse */
 		                        USE_ENABLED   , /**< Search in enabled  useflags of installed packages */
-		                        USE_DISABLED  ; /**< Search in disabled useflags of installed packages */
+		                        USE_DISABLED  , /**< Search in disabled useflags of installed packages */
+		                        SLOT          ; /**< Search in slots */
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled

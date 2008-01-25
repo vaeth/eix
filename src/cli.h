@@ -59,7 +59,8 @@ enum cli_options {
 	O_FETCH,
 	O_MIRROR,
 	O_EIX_CACHEFILE,
-	O_DEBUG
+	O_DEBUG,
+	O_SEARCH_SLOT
 };
 
 

@@ -131,6 +131,7 @@ dump_help(int exit_code)
 			"    -S, --description       description\n"
 			"    -A, --category-name     \"category/name\"\n"
 			"    -C, --category          category\n"
+			"        --slot              slot\n"
 			"    -s, --name              name (default)\n"
 			"    -H, --homepage          homepage\n"
 			"    -L, --license           license\n"
@@ -283,6 +284,7 @@ static struct Option long_options[] = {
 
 	// What to match in this criteria
 	Option("name",          's'),
+	Option("slot",          O_SEARCH_SLOT),
 	Option("category",      'C'),
 	Option("category-name", 'A'),
 	Option("description",   'S'),

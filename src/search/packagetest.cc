@@ -25,7 +25,8 @@ const PackageTest::MatchField
 		PackageTest::HOMEPAGE      = 0x040, /**< Search in homepage */
 		PackageTest::IUSE          = 0x080, /**< Search in iuse */
 		PackageTest::USE_ENABLED   = 0x100, /**< Search in enabled  useflags of installed packages */
-		PackageTest::USE_DISABLED  = 0x200; /**< Search in disabled useflags of installed packages */
+		PackageTest::USE_DISABLED  = 0x200, /**< Search in disabled useflags of installed packages */
+		PackageTest::SLOT          = 0x400; /**< Search in slots */
 
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE        = 0x00,
@@ -63,6 +64,8 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 void
 PackageTest::calculateNeeds() {
 	need = PackageReader::NONE;
+	if(field & SLOT)
+		setNeeds(PackageReader::VERSIONS);
 	if(field & HOMEPAGE)
 		setNeeds(PackageReader::VERSIONS);
 	if(field & PROVIDE)
@@ -107,6 +110,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
 	else if(p == "PROVIDE")       ret = PROVIDE;
 	else if(p == "IUSE")          ret = IUSE;
+	else if(p == "SLOT")          ret = SLOT;
 	else throw ExBasic("Can't find MatchField called %s.", p.c_str());
 	return ret;
 }
@@ -182,6 +186,17 @@ PackageTest::stringMatch(Package *pkg) const
 	if(field & PROVIDE && (*algorithm)(pkg->provide.c_str(), pkg))
 	{
 		return true;
+	}
+
+	if(field & SLOT)
+	{
+		for(Package::iterator it(pkg->begin());
+			it != pkg->end();
+			++it)
+		{
+			if((*algorithm)(it->slotname.c_str(), pkg))
+				return true;
+		}
 	}
 
 	if(field & IUSE)
