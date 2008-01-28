@@ -23,7 +23,7 @@ namespace eix {
 	/// An iterator type to iterate through a container containing pointers of the
 	// given data type. The special thing is the operator-> returns the same as the operator*.
 	// Taken from the obby-project (http://darcs.0x539.de/libobby) and extended.
-	template<typename type, typename container, typename base_iterator>
+	template<typename base_iterator>
 	class ptr_iterator
 		: public base_iterator
 	{
@@ -39,10 +39,10 @@ namespace eix {
 			ptr_iterator& operator=(const base_iterator& iter)
 			{ return static_cast<ptr_iterator&>( base_iterator::operator=(iter)); }
 
-			type* operator->()
+			typename base_iterator::reference operator->()
 			{ return *base_iterator::operator->(); }
 
-			const type* operator->() const
+			const typename base_iterator::reference operator->() const
 			{ return *base_iterator::operator->(); }
 	};
 
@@ -58,29 +58,21 @@ namespace eix {
 
 			/// Normal access iterator.
 			typedef ptr_iterator<
-				type,
-				std::list<type*>,
 				typename std::list<type*>::iterator
 			> iterator;
 
 			/// Constant access iterator.
 			typedef ptr_iterator<
-				type,
-				std::list<type*>,
 				typename std::list<type*>::const_iterator
 			> const_iterator;
 
 			/// Reverse access iterator.
 			typedef ptr_iterator<
-				type,
-				std::list<type*>,
 				typename std::list<type*>::reverse_iterator
 			> reverse_iterator;
 
 			/// Constant reverse access iterator.
 			typedef ptr_iterator<
-				type,
-				std::list<type*>,
 				typename std::list<type*>::const_reverse_iterator
 			> const_reverse_iterator;
 
