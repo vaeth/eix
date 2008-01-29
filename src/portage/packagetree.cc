@@ -139,13 +139,13 @@ Category &PackageTree::insert(const string pkg_name)
 				delete p;
 				return **i;
 			}
-			(dynamic_cast<eix::ptr_list<Category> *>(this))->insert(i,p);
+			eix::ptr_list<Category>::insert(i, p);
 			inserted = true;
 			break;
 		}
 	}
 	if(!inserted)
-		(dynamic_cast<eix::ptr_list<Category> *>(this))->push_back(p);
+		eix::ptr_list<Category>::push_back(p);
 	if(fast_access)
 		(*fast_access)[pkg_name] = p;
 	return *p;

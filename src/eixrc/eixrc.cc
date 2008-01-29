@@ -550,7 +550,7 @@ EixRc::clear()
 {
 	defaults.clear();
 	prefix_keys.clear();
-	(dynamic_cast<map<string,string>*>(this))->clear();
+	map<string,string>::clear();
 }
 
 void
