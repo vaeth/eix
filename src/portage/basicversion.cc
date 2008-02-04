@@ -47,24 +47,24 @@ LeadNum::parse(const char *str)
 }
 
 int
-LeadNum::compare(const LeadNum &right) const
+LeadNum::compare(const LeadNum& left, const LeadNum &right)
 {
 	/* If you modify this, do not forget that the magic value must be
 	*  the smallest one. */
 
 	// We change the order for speed: Common cases first, if possible.
-	if(m_is_zero) {
+	if(left.m_is_zero) {
 		if(!right.m_is_zero)
 			return -1;
 		// both values are 0:
-		if(m_is_magic) {
+		if(left.m_is_magic) {
 			if(right.m_is_magic)
 				return 0;
 			return -1;
 		}
 		if(right.m_is_magic)
 			return 1;
-		string::size_type l = size();
+		string::size_type l = left.size();
 		string::size_type r = right.size();
 		if(l == r)
 			return 0;
@@ -77,19 +77,19 @@ LeadNum::compare(const LeadNum &right) const
 		return 1;
 
 	// both values are nonzero:
-	if(leadzero()) {
+	if(left.leadzero()) {
 		if(right.leadzero())
-			return strcmp(c_str(), right.c_str());
+			return strcmp(left.c_str(), right.c_str());
 		return -1;
 	}
 	if(right.leadzero())
 		return 1;
 
 	// both values are without leading zero:
-	string::size_type l = size();
+	string::size_type l = left.size();
 	string::size_type r = right.size();
 	if(l == r)
-		return strcmp(c_str(), right.c_str());
+		return strcmp(left.c_str(), right.c_str());
 	if(l < r)
 		return -1;
 	return 1;
@@ -256,11 +256,12 @@ BasicVersion::parseVersion(const char *str, size_t n)
 }
 
 /** Compares the split m_primsplit numbers of another BasicVersion instances to itself. */
-int BasicVersion::comparePrimary(const BasicVersion& b) const
+int BasicVersion::comparePrimary(const BasicVersion& left,
+		const BasicVersion& right)
 {
-	vector<LeadNum>::const_iterator ait = m_primsplit.begin();
-	vector<LeadNum>::const_iterator bit = b.m_primsplit.begin();
-	for( ; (ait != m_primsplit.end()) && (bit != b.m_primsplit.end());
+	vector<LeadNum>::const_iterator ait = left.m_primsplit.begin();
+	vector<LeadNum>::const_iterator bit = right.m_primsplit.begin();
+	for( ; (ait != left.m_primsplit.end()) && (bit != right.m_primsplit.end());
 		++ait, ++bit)
 	{
 		if(*ait < *bit)
@@ -269,19 +270,20 @@ int BasicVersion::comparePrimary(const BasicVersion& b) const
 			return 1;
 	}
 	/* The one with the bigger amount of versionsplits is our winner */
-	if(ait != m_primsplit.end())
+	if(ait != left.m_primsplit.end())
 		return 1;
-	if(bit != b.m_primsplit.end())
+	if(bit != right.m_primsplit.end())
 		return -1;
 	return 0;
 }
 
 /** Compares the split m_suffixes of another BasicVersion instances to itself. */
-int BasicVersion::compareSuffix(const BasicVersion& b) const
+int BasicVersion::compareSuffix(const BasicVersion& left,
+		const BasicVersion& right)
 {
-	vector<Suffix>::const_iterator ait = m_suffix.begin();
-	vector<Suffix>::const_iterator bit = b.m_suffix.begin();
-	for( ; (ait != m_suffix.end()) && (bit != b.m_suffix.end());
+	vector<Suffix>::const_iterator ait = left.m_suffix.begin();
+	vector<Suffix>::const_iterator bit = right.m_suffix.begin();
+	for( ; (ait != left.m_suffix.end()) && (bit != right.m_suffix.end());
 		++ait, ++bit)
 	{
 		int ret = ait->compare(*bit);
@@ -289,40 +291,39 @@ int BasicVersion::compareSuffix(const BasicVersion& b) const
 			return ret;
 	}
 	static const Suffix empty;
-	const Suffix &aref = (ait == m_suffix.end()) ? empty : *ait;
-	const Suffix &bref = (bit == b.m_suffix.end()) ? empty : *bit;
+	const Suffix &aref = (ait == left.m_suffix.end()) ? empty : *ait;
+	const Suffix &bref = (bit == right.m_suffix.end()) ? empty : *bit;
 	return aref.compare(bref);
 }
 
 int
-BasicVersion::compare_tilde(const BasicVersion &basic_version) const
+BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
-	int ret = comparePrimary(basic_version);
+	int ret = comparePrimary(left, right);
 	if(ret) return ret;
 
-	if( m_primarychar < basic_version.m_primarychar ) return -1;
-	if( m_primarychar > basic_version.m_primarychar ) return  1;
-
-	return compareSuffix(basic_version);
+	if( left.m_primarychar < right.m_primarychar ) return -1;
+	if( left.m_primarychar > right.m_primarychar ) return  1;
+	return compareSuffix(left, right);
 }
 
 int
-BasicVersion::compare(const BasicVersion &basic_version) const
+BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
-	int ret = compare_tilde(basic_version);
+	int ret = compareTilde(left, right);
 	if(ret) return ret;
 
-	if( m_gentoorevision < basic_version.m_gentoorevision ) return -1;
-	if( m_gentoorevision > basic_version.m_gentoorevision ) return  1;
+	if( left.m_gentoorevision < right.m_gentoorevision ) return -1;
+	if( left.m_gentoorevision > right.m_gentoorevision ) return  1;
 
 #if defined(SAVE_VERSIONTEXT)
 	// The numbers are equal, but the strings might still be different,
 	// e.g. because of garbage or removed trailing ".0"s.
 	// In such a case, we simply compare the strings alphabetically.
 	// This is not always what you want but at least reproducible.
-	return strcmp(getFull(), basic_version.getFull());
+	return strcmp(left.getFull(), right.getFull());
 #else
-	return strcmp(m_garbage.c_str(), basic_version.m_garbage.c_str());
+	return strcmp(left.m_garbage.c_str(), right.m_garbage.c_str());
 #endif
 }
 

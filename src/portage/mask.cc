@@ -176,22 +176,22 @@ Mask::test(const ExtendedVersion *ev) const
 					m_full.size()) == 0;
 
 		case maskOpLess:
-			return (*dynamic_cast<const BasicVersion*>(ev) < *dynamic_cast<const BasicVersion*>(this));
+			return BasicVersion::compare(*this, *ev) > 0;
 
 		case maskOpLessEqual:
-			return (*dynamic_cast<const BasicVersion*>(ev) <= *dynamic_cast<const BasicVersion*>(this));
+			return BasicVersion::compare(*this, *ev) >= 0;
 
 		case maskOpEqual:
-			return (*dynamic_cast<const BasicVersion*>(ev) == *dynamic_cast<const BasicVersion*>(this));
+			return BasicVersion::compare(*this, *ev) == 0;
 
 		case maskOpGreaterEqual:
-			return (*dynamic_cast<const BasicVersion*>(ev) >= *dynamic_cast<const BasicVersion*>(this));
+			return BasicVersion::compare(*this, *ev) <= 0;
 
 		case maskOpGreater:
-			return (*dynamic_cast<const BasicVersion*>(ev) > *dynamic_cast<const BasicVersion*>(this));
+			return BasicVersion::compare(*this, *ev) < 0;
 
 		case maskOpRevisions:
-			return (compare_tilde(*dynamic_cast<const BasicVersion*>(ev)) == 0);
+			return BasicVersion::compareTilde(*this, *ev) == 0;
 
 		default:
 			break;

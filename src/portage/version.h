@@ -35,7 +35,8 @@
 
 /*#define NOT_FULL_USE*/
 
-/** Version expands the BasicVersion class by data relevant for versions in tree/overlays */
+/** Version expands the BasicVersion class by data relevant for versions in tree/overlays.
+ */
 class Version : public ExtendedVersion, public Keywords {
 
 	public:
@@ -112,23 +113,12 @@ class Version : public ExtendedVersion, public Keywords {
 
 		std::string get_iuse() const
 		{ return join_vector(iuse); }
-
-		/** The equality operator does *not* test the slots */
-		bool operator == (const Version &v) const
-		{
-			return ((*(dynamic_cast<const BasicVersion*>(this)) == dynamic_cast<const BasicVersion&>(v))
-				&& (overlay_key == v.overlay_key));
-		}
-
-		bool operator == (const BasicVersion &v) const
-		{ return (*(dynamic_cast<const BasicVersion *>(this)) == v); }
-
-		bool operator != (const Version &v) const
-		{ return !((*this) == v); }
-
-		bool operator != (const BasicVersion &v) const
-		{ return !((*this) == v); }
-
 };
+
+/** The equality operator does *not* test the slots */
+inline bool operator == (const Version& left, const Version &right)
+{ return BasicVersion::compare(left, right) == 0 && left.overlay_key == right.overlay_key; }
+inline bool operator != (const Version& left, const Version &right)
+{ return BasicVersion::compare(left, right) != 0 || left.overlay_key != right.overlay_key; }
 
 #endif /* __VERSION_H__ */

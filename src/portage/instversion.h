@@ -51,20 +51,13 @@ class InstVersion : public ExtendedVersion, public Keywords {
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
 		InstVersion(const char* str) : ExtendedVersion(str)
 		{ init(); }
-
-		/** The equality operator does not test the additional data */
-		bool operator == (const InstVersion &v) const
-		{ return (*(dynamic_cast<const BasicVersion *>(this)) == dynamic_cast<const BasicVersion&>(v)); }
-
-		bool operator == (const BasicVersion &v) const
-		{ return (*(dynamic_cast<const BasicVersion *>(this)) == v); }
-
-		bool operator != (const InstVersion &v) const
-		{ return !((*this) == v); }
-
-		bool operator != (const BasicVersion &v) const
-		{ return !((*this) == v); }
-
 };
+
+/** The equality operator does not test the additional data */
+inline bool operator == (const InstVersion& left, const InstVersion &right)
+{ return BasicVersion::compare(left, right) == 0; }
+
+inline bool operator != (const InstVersion& left, const InstVersion &right)
+{ return BasicVersion::compare(left, right) != 0; }
 
 #endif /* __INSTVERSION_H__ */

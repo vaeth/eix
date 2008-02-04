@@ -123,7 +123,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 		}
 	}
 
-	string label = readOverlayLabel(&p, dynamic_cast<BasicVersion *>(&v));
+	string label = readOverlayLabel(&p, &v);
 	if(label.empty()) {
 		if(check_installed_overlays < 0) {
 			if(p.have_same_overlay_key) {
@@ -135,7 +135,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 	else if(header.find_overlay(&v.overlay_key, label.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
 		return true;
 
-	string opath = readOverlayPath(&p, dynamic_cast<BasicVersion *>(&v));
+	string opath = readOverlayPath(&p, &v);
 	if(opath.empty()) {
 		v.overlay_keytext = label;
 		v.overlay_failed = true;

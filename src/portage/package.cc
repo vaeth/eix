@@ -425,7 +425,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 int
 Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 {
-	ExtendedVersion *t_best = dynamic_cast<ExtendedVersion*>(best());
+	ExtendedVersion *t_best = best();
 	vector<InstVersion> *ins = NULL;
 	if(v)
 		ins = v->getInstalledVector(*this);

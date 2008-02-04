@@ -90,22 +90,22 @@ class LeadNum
 		{ return m_is_magic; }
 
 		/// Compare two LeadNums.
-		int compare(const LeadNum &right) const;
-
-		// Short compare-stuff
-		bool operator <  (const LeadNum& right) const
-		{ return (compare(right) < 0); }
-		bool operator >  (const LeadNum& right) const
-		{ return (compare(right) > 0); }
-		bool operator == (const LeadNum& right) const
-		{ return (compare(right) == 0); }
-		bool operator != (const LeadNum& right) const
-		{ return (compare(right) != 0); }
-		bool operator >= (const LeadNum& right) const
-		{ return (compare(right) >= 0); }
-		bool operator <= (const LeadNum& right) const
-		{ return (compare(right) <= 0); }
+		static int compare(const LeadNum& left, const LeadNum &right);
 };
+
+// Short compare-stuff
+inline bool operator <  (const LeadNum& left, const LeadNum& right) 
+{ return (LeadNum::compare(left, right) < 0); }
+inline bool operator >  (const LeadNum& left, const LeadNum& right) 
+{ return (LeadNum::compare(left, right) > 0); }
+inline bool operator == (const LeadNum& left, const LeadNum& right)
+{ return (LeadNum::compare(left, right) == 0); }
+inline bool operator != (const LeadNum& left, const LeadNum& right)
+{ return (LeadNum::compare(left, right) != 0); }
+inline bool operator >= (const LeadNum& left, const LeadNum& right)
+{ return (LeadNum::compare(left, right) >= 0); }
+inline bool operator <= (const LeadNum& left, const LeadNum& right)
+{ return (LeadNum::compare(left, right) <= 0); }
 
 class Suffix
 {
@@ -168,35 +168,22 @@ class BasicVersion
 
 		/** Compares the split m_primsplit numbers of another BasicVersion
 		    instances to itself. */
-		int comparePrimary(const BasicVersion& basic_version) const;
+		static int comparePrimary(const BasicVersion& left, const BasicVersion& right);
 
 		/** Compares the split m_suffixes of another BasicVersion
 		    instances to itself. */
-		int compareSuffix(const BasicVersion& b) const;
+		static int compareSuffix(const BasicVersion& right, const BasicVersion& left);
 
 		/// Compare all except gentoo revisions
-		int compare_tilde(const BasicVersion &basic_version) const;
+		static int compareTilde(const BasicVersion& right, const BasicVersion& left);
 
 		/// Compare the m_full version.
-		int compare(const BasicVersion &basic_version) const;
-
-		// Short compare-stuff
-		bool operator <  (const BasicVersion& right) const
-		{ return (compare(right) < 0); }
-		bool operator >  (const BasicVersion& right) const
-		{ return (compare(right) > 0); }
-		bool operator == (const BasicVersion& right) const
-		{ return (compare(right) == 0); }
-		bool operator != (const BasicVersion& right) const
-		{ return (compare(right) != 0); }
-		bool operator >= (const BasicVersion& right) const
-		{ return (compare(right) >= 0); }
-		bool operator <= (const BasicVersion& right) const
-		{ return (compare(right) <= 0); }
+		static int compare(const BasicVersion& right, const BasicVersion& left);
 
 		// Getters for protected members
 		Primchar getPrimarychar() const
 		{ return m_primarychar; }
+
 		LeadNum getGentooRevision() const
 		{ return m_gentoorevision; }
 
@@ -242,6 +229,20 @@ class BasicVersion
 		const char *parsePrimary(const char *str);
 	private:
 };
+
+// Short compare-stuff
+inline bool operator <  (const BasicVersion& left, const BasicVersion& right)
+{ return BasicVersion::compare(left, right) < 0; }
+inline bool operator >  (const BasicVersion& left, const BasicVersion& right)
+{ return BasicVersion::compare(left, right) > 0; }
+inline bool operator == (const BasicVersion& left, const BasicVersion& right)
+{ return BasicVersion::compare(left, right) == 0; }
+inline bool operator != (const BasicVersion& left, const BasicVersion& right)
+{ return BasicVersion::compare(left, right) != 0; }
+inline bool operator >= (const BasicVersion& left, const BasicVersion& right)
+{ return BasicVersion::compare(left, right) >= 0; }
+inline bool operator <= (const BasicVersion& left, const BasicVersion& right)
+{ return BasicVersion::compare(left, right) <= 0; }
 
 class ExtendedVersion : public BasicVersion
 {
