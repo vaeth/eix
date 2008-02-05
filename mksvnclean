@@ -7,12 +7,12 @@ die() {
 	exit ${2:-1}
 }
 
-if ! [ -e Makefile ]; then
-	[ -e Makefile.in ] && [ -e configure ] \
+if ! test -e Makefile; then
+	test -e Makefile.in && test -e configure \
 		|| ./autogen.sh || die "./autogen.sh failed"
 	./configure || die "./configure failed"
 fi
-if [ -e Makefile ]; then
+if test -e Makefile; then
 	make maintainer-clean || die "make maintainer-clean failed"
 fi
 rm -vrf build config

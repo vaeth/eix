@@ -1,34 +1,13 @@
-#!/bin/bash
-# Authors: Emil Beinroth <emilbeinroth@gmx.net>
-#          Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
-
-###########################################################################
-#   eix is a small utility for searching ebuilds in the                   #
-#   Gentoo Linux portage system. It uses indexing to allow quick searches #
-#   in package descriptions with regular expressions.                     #
-#                                                                         #
-#   https://sourceforge.net/projects/eix                                  #
-#                                                                         #
-#   Copyright (c)                                                         #
-#     Wolfgang Frisch <xororand@users.sourceforge.net>                    #
-#     Emil Beinroth <emilbeinroth@gmx.net>                                #
-#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
-#                                                                         #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program; if not, write to the                         #
-#   Free Software Foundation, Inc.,                                       #
-#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
-###########################################################################
+#! /bin/sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Authors and Copyright (c):
+#   Emil Beinroth <emilbeinroth@gmx.net>
+#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#
+# This script calls emerge --sync and shows the differences.
+# See the eix manpage for details. (@PACKAGE_STRING@).
 
 . update-eix-functions.sh.in
 
@@ -41,7 +20,7 @@ LOGFILE="${LOCAL_EPREFIX_PORTAGE_EXEC}/var/log/eix-sync.log"
 PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
-Usage () {
+Usage() {
 	echo "${0##*/} [options]
 Call layman/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
 
@@ -105,12 +84,11 @@ if test -r "${LAYMANCONF}"; then
 else
 	HAVECONF=false
 fi
-declare -a AFTER_SYNC AFTER_UPDATE BEFORE_RSYNC
-ExecuteConfig () {
+ExecuteConfig() {
 	local I J MYCMD
-	AFTER_SYNC=()
-	AFTER_UPDATE=()
-	BEFORE_RSYNC=()
+	AFTER_SYNC=''
+	AFTER_UPDATE=''
+	BEFORE_RSYNC=''
 	CONFIG_OPTS=''
 	${HAVECONF} || return 0
 	while read I; do
@@ -128,10 +106,10 @@ ExecuteConfig () {
 		esac
 		[ "${1}" = 'opts' ] && continue
 		case "${MYCMD}" in
-			@@) Push AFTER_UPDATE "${J}"; continue;;
-			@)  Push AFTER_SYNC "${J}"; continue;;
-			\~) Push BEFORE_RSYNC "${J}"; continue;;
-			!)  ${NOLAYMAN} || DoExecute "${J}"; continue;;
+			'@@')	Push AFTER_UPDATE "${J}"; continue;;
+			'@')	Push AFTER_SYNC "${J}"; continue;;
+			'~')	Push BEFORE_RSYNC "${J}"; continue;;
+			'!')	${NOLAYMAN} || DoExecute "${J}"; continue;;
 		esac
 		${NOLAYMAN} && continue
 		RootTest
@@ -147,10 +125,9 @@ ExecuteConfig () {
 
 
 # Get options from cli
-declare -a EMERGECMD
 
-DefaultOpts () {
-	EMERGECMD=('emerge' '--sync')
+DefaultOpts() {
+	Push -c EMERGECMD 'emerge' '--sync'
 	CLEARCACHE=true
 	NOLAYMAN=false
 	NOHOOKS=false
@@ -187,9 +164,9 @@ while getopts "ids:2:Uul@SmMtvVqwWc:C:rRe?hH" OPTION \
 		v) VERBOSE=true;;
 		V) VERBOSE=false;;
 		q) QUIET=true;;
-		w) EMERGECMD=("emerge-webrsync");;
-		W) EMERGECMD=("emerge-delta-webrsync");;
-		c) EMERGECMD=(); EMERGECMD[0]="${OPTARG}";;
+		w) Push -c EMERGECMD 'emerge-webrsync';;
+		W) Push -c EMERGECMD 'emerge-delta-webrsync';;
+		c) Push -c EMERGECMD "${OPTARG}";;
 		C) Push EMERGECMD "${OPTARG}";;
 		r) CLEARCACHE=true;;
 		R) CLEARCACHE=false;;
@@ -203,7 +180,7 @@ ${SKIP_SYNC} && METADATA=true
 
 # We need a special function to treat the reserved word "time" like a command.
 # (Of course "eval" would do a similar thing, but would also apply to args).
-MyRun () {
+MyRun() {
 	if [ "${1}" != 'time' ]; then
 		"${@}"
 		return
@@ -216,7 +193,7 @@ MyRun () {
 # Run command
 # if VERBOSE is true, redirect 1,2 to logfile|/dev/null and use ebegin/eend
 # (instead of einfo)
-MyRunCommand () {
+MyRunCommand() {
 	local RET
 	${EMULATEMODE} && return 0
 	if ${VERBOSE}; then
@@ -233,7 +210,7 @@ MyRunCommand () {
 	return ${RET}
 }
 
-DoExecute () {
+DoExecute() {
 	${EMULATEMODE} && return 0
 	(
 		for CURRENT_COMMAND; do
@@ -244,12 +221,13 @@ DoExecute () {
 	) || die
 }
 
-DoHook () {
+DoHook() {
 	${NOHOOKS} && return 0
+	eval "set -- ${1}"
 	DoExecute "${@}"
 }
 
-RootTest () {
+RootTest() {
 	${EMULATEMODE} || return 0
 	eerror ""
 	eerror "Nothing was executed, because a heuristic shows that"
@@ -264,7 +242,7 @@ RootTest () {
 
 SED1='s!^[[:space:]]*'
 SED2="[[:space:]]*=[[:space:]]*\([^[:space:]]*\)[[:space:]]*\$!\1!p"
-SedFor () {
+SedFor() {
 	local A=''
 	test -e "${2}" && \
 		A="$(sed -n -e "${SED1}${1}${SED2}" -- "${2}" | tail -n 1)"
@@ -277,13 +255,13 @@ SedFor () {
 
 TMPFILE=''
 EXITCODE=0
-DelTemp () {
+DelTemp() {
 	[ -z "${TMPFILE}" ] || rm -f -- "${TMPFILE}"
 	TMPFILE=''
 	trap - EXIT HUP INT TERM
 	exit ${EXITCODE}
 }
-MakeTempFile () {
+MakeTempFile() {
 	local COUNT
 	if type mktemp >/dev/null 2>&1; then
 		TMPFILE="$(mktemp /tmp/${0##*/}.XXXXXX)" || \
@@ -304,7 +282,7 @@ MakeTempFile () {
 }
 
 PREPRSYNC=false
-PrepRsync () {
+PrepRsync() {
 	local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS
 	GetPortdir
 	HOSTDIR="${1#*:}"
@@ -317,14 +295,16 @@ PrepRsync () {
 	${PREPRSYNC} && return
 	PORTAGE_RSYNC_OPTS="$(portageq envvar PORTAGE_RSYNC_OPTS)"
 	PORTAGE_RSYNC_EXTRA_OPTS="$(portageq envvar PORTAGE_RSYNC_EXTRA_OPTS)"
-	for CURRENT_COMMAND in "${BEFORE_RSYNC[@]}"; do
-		eval "$(eval "${CURRENT_COMMAND}")" || die "${CURRENT_COMMAND} failed"
+	eval "set -- ${BEFORE_RSYNC}"
+	for CURRENT_COMMAND; do
+		eval "$(eval "${CURRENT_COMMAND}")" || \
+			die "${CURRENT_COMMAND} or its evaluation failed"
 	done
 	RSYNC_OPTS="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
 	PREPRSYNC=true
 }
 
-ClearCache () {
+ClearCache() {
 	${CLEARCACHE} || return 0
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
@@ -334,7 +314,7 @@ ClearCache () {
 			die "rm -rf ${LOCAL_VARCACHE}/var/cache/edb/dep/* failed"
 }
 
-CallEmergeSync () {
+CallEmergeSync() {
 	if [ -n "${SERVER}" ]; then
 		${EMULATEMODE} && return
 		PrepRsync "${SERVER}"
@@ -345,11 +325,11 @@ CallEmergeSync () {
 	fi
 	${SKIP_SYNC} && return
 	RootTest
-	MyRunCommand "Running ${EMERGECMD[*]}" \
-		time "${EMERGECMD[@]}" || die "${EMERGECMD[*]} failed"
+	eval "set -- ${EMERGECMD}"
+	MyRunCommand "Running ${*}" time "${@}" || die "${*} failed"
 }
 
-CallSyncClient () {
+CallSyncClient() {
 	${EMULATEMODE} && return
 	[ -z "${CLIENT}" ] && return
 	PrepRsync "${CLIENT}"
@@ -359,10 +339,10 @@ CallSyncClient () {
 }
 
 TESTRESULT=''
-CallEmergeMetadata () {
+CallEmergeMetadata() {
 	${DOUPDATE} && ${METADATA} || return 0
 	if [ -z "${TESTRESULT}" ]; then
-		if test "$(SedFor 'portdbapi.auxdbmodule' "${PMOD}")" = "${MODULENAME}"
+		if [ "$(SedFor 'portdbapi.auxdbmodule' "${PMOD}")" = "${MODULENAME}" ]
 		then
 			TESTRESULT='false'
 		else
@@ -379,7 +359,7 @@ CallEmergeMetadata () {
 		emerge --metadata || die "emerge --metadata failed"
 }
 
-CondUpdate () {
+CondUpdate() {
 	if ! test -f "${EIXCACHE}"; then
 		RootTest
 		MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
@@ -393,7 +373,7 @@ CondUpdate () {
 	fi
 }
 
-CopyPrevious () {
+CopyPrevious() {
 	${DOUPDATE} || return 0
 	${EMULATEMODE} && return
 	MakeTempFile
@@ -401,7 +381,7 @@ CopyPrevious () {
 		die "Could not copy database to temporary file ${TMPFILE}"
 }
 
-MovePrevious () {
+MovePrevious() {
 	${USETEMP} && return
 	(
 		umask 002
@@ -413,7 +393,7 @@ MovePrevious () {
 	chmod -- 664 "${EIXPREVIOUS}" >/dev/null 2>&1
 }
 
-UpdateDiff () {
+UpdateDiff() {
 	local D
 	${DOUPDATE} || return 0
 	if ${USETEMP}; then
@@ -432,22 +412,23 @@ UpdateDiff () {
 		MyRunCommand "Running update-eix" "update-eix" || \
 			die "Failure while running update-eix"
 	fi
-	DoHook "${AFTER_UPDATE[@]}"
+	DoHook "${AFTER_UPDATE}"
 	diff-eix -- "${D}" || die "Failed to diff against current cache"
 }
 
-MainSync () {
+MainSync() {
 	CondUpdate
 	ClearCache
 	CopyPrevious
 	ExecuteConfig 'sync'
 	CallEmergeSync
-	${SYNCHOOKS} && DoHook "${AFTER_SYNC[@]}"
+	${SYNCHOOKS} && DoHook "${AFTER_SYNC}"
 	CallSyncClient
 	CallEmergeMetadata
 	UpdateDiff
 }
 
+[ -n "${UID}" ] || UID="$(id -u)"
 if ${TEST_FOR_ROOT} && [ "${UID}" -ne 0 ]; then
 # Emulate everything to check whether we have to be root:
 	EMULATEMODE=true

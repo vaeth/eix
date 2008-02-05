@@ -7,28 +7,28 @@
 
 .\" {{{ SYNOPSIS
 .SH "SYNOPSIS"
-.BR eix
-[I<common options>] [I<OPTIONS>] I<EXPRESSION...>
+.B eix
+[I<common options>] [I<OPTIONS>] I<EXPRESSION>...
 .PP
-A I<EXPRESSION> can be:
+I<EXPRESSION> can be:
     I<EXPRESSION> [B<-a>|B<-o>] I<EXPRESSION>
     [I<local options>] I<PATTERN>
 
-.BR update-eix
+.B update-eix
 [I<common options>] [I<update-eix options>]
 
-.BR diff-eix
+.B diff-eix
 [I<common options>] I<OLD-CACHE> [I<NEW-CACHE>]
 
-.BR eix-sync
+.B eix-sync
 
 .BR "eix-test-obsolete " [ repository | no-repository | I<check_always_overlays> ]
 
-.BR update-eix-remote
+.B update-eix-remote
 
-.BR update-eix-layman
+.B update-eix-layman
 
-.BR update-eix-functions.sh
+.B update-eix-functions.sh
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -101,13 +101,13 @@ slower than without this option).
 Produce no output on stderr and stdout (fatal errors which occur at the
 beginning of execution are printed to stderr, regardless of this option).
 .TP
-.BR --dump
+.B --dump
 Show the current eixrc-variables, and their defaults as comments.
 .TP
-.BR --dump-defaults
+.B --dump-defaults
 Show the defaults of the eixrc-variables, and their current values as comments.
 .TP
-.BR --print " I<VAR>"
+.BI --print VAR
 Print the specified variable I<VAR> of eixrc or of portage settings,
 completely expanded as it would be used internally by eix.
 This is mainly used internally for scripts.
@@ -172,7 +172,7 @@ This option is best combined with -T to clean up /etc/portage/package.*
 
 Or you can combine it with -e to have no other output.
 .TP
-.BR --cache-file " I<FILE>"
+.BI --cache-file FILE
 Use I<FILE> instead of B<@EIX_CACHEFILE@>.
 
 .\" {{{ -------- Options for expressions
@@ -193,7 +193,7 @@ So you better do not use this in scripts unless you know what you are doing.
 
 If you really want to use this option as a substitute for equery in scripts,
 you might want to combine it with
-B<--format >"<B<fullinstalled>>" B<--pure-packages>.
+.B --format '<fullinstalled>' --pure-packages.
 .TP
 .BR -i ", " --multi-installed
 Only match packages which are installed in at least two different versions.
@@ -242,7 +242,7 @@ Only match system packages.
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
 .TP
-.BR --in-overlay " I<overlay>"
+.BI --in-overlay overlay
 Only match packages with at least one version in an overlay matching I<overlay>.
 
 If this option is repeated, the additional I<overlay> arguments are joined
@@ -262,7 +262,7 @@ If I<overlay> is empty (or omitted if B<--in-overlay> is the last option)
 it matches all overlays except for the "main" tree
 (i.e. B<--in-overlay ''> is the same as B<-O>).
 .TP
-.BR --only-in-overlay " I<overlay>"
+.BI --only-in-overlay overlay
 Only match packages which have only versions in an overlay matching I<overlay>.
 
 If this option is repeated, the additional I<overlay> arguments are joined
@@ -279,7 +279,7 @@ B<CHECK_INSTALLED_OVERLAYS> to true (which is not the default because
 it dramatically slows down the test).
 See B<CHECK_INSTALLED_OVERLAYS> for details.
 .TP
-.BR --installed-from-overlay " I<overlay>"
+.BI --installed-from-overlay overlay
 This is analogous to B<--in-overlay> with the difference that only
 packages are matched which have at least one version installed
 from I<overlay>.
@@ -289,20 +289,20 @@ portage tree.
 As for -J, you should set B<CHECK_INSTALLED_OVERLAYS> to true to get a
 completely reliable result.
 .TP
-.BR --installed-in-some-overlay
+.B --installed-in-some-overlay
 Only match packages with at least one installed version number which is
 also in some overlay.
 .TP
-.BR --installed-in-overlay " I<overlay>"
+.BI --installed-in-overlay overlay
 This is analogous to B<--in-overlay> with the difference that only
 packages are matched which have at least one installed version in I<overlay>.
 For instance, B<--installed-in-overlay 0> will only match those packages
 which have at least one version which is also in the regular portage tree.
 .TP
-.BR --fetch
+.B --fetch
 Only match packages which have at least one version with fetch restrictions.
 .TP
-.BR --mirror
+.B --mirror
 Only match packages which have at least one version with mirror restrictions.
 .TP
 .BR -T ", " --test-obsolete
@@ -379,13 +379,16 @@ i.e. "virtual/blackbox"
 A useflag defined by IUSE in the ebuild (B<not> that of installed packages).
 You will usually want to combine this option with -e
 .TP
-.BR --installed-with-use
+.BR --slot
+Slotname, e.g. "kde-4"
+.TP
+.B --installed-with-use
 A useflag enabled during installation of the package.
 Of course, this flag can only match if the package is installed.
 Note that the same restrictions hold as for -I, i.e. only packages will be matched
 which are still in the database.
 .TP
-.BR --installed-without-use
+.B --installed-without-use
 A useflag disabled during installation of the package.
 Of course, this flag can only match if the package is installed.
 Note that the same restrictions hold as for -I, i.e. only packages will be matched
@@ -495,13 +498,13 @@ This is version 4.1.1 which will be installed into the slot "4.1".
 .BR 3.14p:GNAT-3.14p "    or    " 3.14p(GNAT-3.14p)
 This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .TP
-.BR 2.0.0_rc1-r6
+.B 2.0.0_rc1-r6
 This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
 .TP
-.BR 1.0!f!m
+.B 1.0!f!m
 This is version 1.0 which is subject to fetch and mirror restrictions.
 .TP
-.BR 5.0-r3(5.0R3)!f
+.B 5.0-r3(5.0R3)!f
 This is version 5.0-r3 which will be installed into SLOT 5.0-r3 and has
 fetch restrictions.
 
@@ -510,56 +513,56 @@ If you used gentoo for more than a week you're probably going to immediately
 recognize the format of the masking in the versions-strings.
 Nevertheless, we are going to explain it here by some examples.
 .TP
-.BR [P]2.95.3-r8
+.B [P]2.95.3-r8
 If a mask for the package was found in the packages-files from your profile, but this
 version does not match it, the version is determined to be "masked by profile".
 .TP
-.BR [M]4.0.0_alpha20050213
+.B [M]4.0.0_alpha20050213
 The version matches a mask from /etc/portage/package.mask, $PORTDIR/profiles/package.mask
 or a package.mask from your profile. Portage calls this "masked by package.mask".
 .TP
-.BR [m]4.1.4
+.B [m]4.1.4
 The version matches a local mask (from /etc/portage/package.mask), but it is
 neither "masked by profile" nor masked in $PORTDIR/profiles/package.mask.
 .TP
-.BR {P}2.95.3-r8
+.B {P}2.95.3-r8
 The version was originally "masked by profile", but this was locally changed in /etc/portage/profile/packages.
 .TP
-.BR {M}4.0.0_alpha20050213
+.B {M}4.0.0_alpha20050213
 The version was originally masked in $PORTDIR/profiles/package.mask, but this was locally changed in /etc/portage/package.unmask.
 .TP
-.BR *3.3.3
+.B *3.3.3
 This means the version is "masked by missing keyword" but stable for an alien architecture.
 .TP
-.BR ~*3.3.3
+.B ~*3.3.3
 This version is "masked by missing keyword", stable on no architecture, but unstable on an alien architecture.
 .TP
-.BR **3.3.3
+.B **3.3.3
 This means the version is "masked by missing keyword" for all architectures.
 .TP
-.BR (**)3.4.3-r2
+.B (**)3.4.3-r2
 That version originally had no keyword, but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
 .TP
-.BR -*3.4.3-r2
+.B -*3.4.3-r2
 That version is "masked by -* keyword" for all architectures (soon obsolete).
 .TP
-.BR -0.8.14
+.B -0.8.14
 Masked by -ARCH.
 .TP
-.BR ~3.3.5.20050130
+.B ~3.3.5.20050130
 The version would be "masked by ~keyword".
 .TP
-.BR (~)3.3.5.20050130
+.B (~)3.3.5.20050130
 The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
 .TP
-.BR [M]~1.0.9626
+.B [M]~1.0.9626
 The version is both, "masked by package.mask" and "masked by ~keyword".
 .TP
-.BR [m](~)4.1.4-r1
+.B [m](~)4.1.4-r1
 The version was originally only "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
 However, the version is locally masked (in /etc/portage/package.mask).
 .TP
-.BR 3.3.1
+.B 3.3.1
 .RS
 Finally, this would be a stable version (which would be stable also without the local settings).
 .\" }}}
@@ -607,7 +610,7 @@ All versions including slots that could be installed for this package
 (-l changes output accordingly).
 The versions are printed in the according colors.
 .TP
-.BR availableversionsshort
+.B availableversionsshort
 As B<availableversions>, but do not print any slots
 .TP
 .BR fullavailable ", " fullavailableshort ", " fullavailablelong
@@ -625,7 +628,7 @@ and B<--pure-packages>.
 If you postprocess the output, do not forget that overlay data might be
 included in the output and that the same version might occur in different overlays.
 .TP
-.BR fullinstalled
+.B fullinstalled
 This is mainly a hack for scripts if you want to postprocess the output.
 For each installed version, this produces a line of the form
 "B<category/name-version>". Note that overlay information is not printed.
@@ -634,7 +637,7 @@ if you only want to see this output.
 (You will probably also want to use B<--pure-packages>).
 However, see the warning in B<--installed>.
 .TP
-.BR installedversions "[" :string  "]["  :string "]" "" ...
+.BR installedversions [ :string ][ :string ] "" ...
 All installed versions, including installation dates and useflags.
 The separator between several versions is a space unless
 useflags is nonempty or --versionlines is active: In these cases,
@@ -691,34 +694,34 @@ All installed versions (without or with installation date or with installation d
 separated by spaces. As for B<installedversions> you can also add a list
 of colon-separated strings to influence the printing.
 .TP
-.BR markedversions
+.B markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.
 .TP
-.BR overlaykey
+.B overlaykey
 if all versions are in the same overlay this expands to "overlaykey".
 When printed, "[overlaykey]" is printed with corresponding colors.
 .TP
 .BR best "  or  " bestlong
 the highest stable version, including slot information
 .TP
-.BR bestshort
+.B bestshort
 the highest stable version without slot information
 .TP
 .BR bestslots "  or  " bestslotslong
 for each slot the highest stable version (including slot information),
 separated by spaces.
 .TP
-.BR bestslotsshort
+.B bestslotsshort
 for each slot the highest stable version (without slot information),
 separated by spaces.
 .TP
-.BR system
+.B system
 expands to "system" if this package is in the system-profile
 .TP
-.BR provide
+.B provide
 the packages PROVIDE-string
 .TP
-.BR marked
+.B marked
 expands to "1" if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
 .TP
@@ -782,14 +785,14 @@ If the package is installed, print the name underlined in bright yellow,
 else in normal yellow.
 .SS Application:
 .TP
-.BR "FORMAT='{downgrade}%{FORMAT_COMPACT}{}' eix -I"
+.B FORMAT='{downgrade}%{FORMAT_COMPACT}{}' eix -I
 This will print all installed packages for which there are downgrade recommendations.
 Note that the compact format is used to output the packages:
 We cannot use B<FORMAT='{downgrade}%{FORMAT}{}'> because this would be a self-reference.
 However, if you want to use the default B<FORMAT> layout to output the packages,
 we can use B<FORMAT_COMPACT> to wrap around B<FORMAT>:
 .TP
-.BR "FORMAT_COMPACT='{downgrade}%{FORMAT}{}' eix -cI"
+.B FORMAT_COMPACT='{downgrade}%{FORMAT}{}' eix -cI
 This is as above, but the matching packages will be printed with the default (non-compact) format.
 The option B<-c> is needed so that eix will use our B<FORMAT_COMPACT> variable as the format string
 (which we "misused" as a "wrapper" for B<FORMAT> in this example).
@@ -806,18 +809,18 @@ Comments start with B<#> (all lines are cut at the first B<#>; it is not
 possible to mask B<#>). Lines can have the following forms and will be
 executed in the given order before B<emerge --sync> is executed.
 .TP
-.BR I<option(s)>
+.I option(s)
 Use I<option(s)> as default for eix-sync (in front of all other options).
 As usual, I<option(s)> must start with "B<->".
 .TP
-.BR I<Name>
-Call B<layman> -s I<Name>.
+.I Name
+Call B<layman -s> I<Name>.
 Note that B<layman> is provided by B<app-portage/layman> to sync overlays.
 .TP
 .BR *
 Call B<layman -S> (i.e. overlays are synced with layman).
 .TP
-.BR ! I<command>
+.BI ! command
 Execute I<command>. I<command> must exit successfully or B<eix-sync> will
 stop with an error.
 (Thus, B<!layman> I<Name> is more or less equivalent to
@@ -826,10 +829,10 @@ I<Name>; only different messages will be given during B<eix-sync>.)
 You can use this feature to unpack e.g. an overlay before calling B<layman>
 or to apply local fixes after B<layman> was called.
 .TP
-.BR ~ I<command>
+.BI ~ command
 This is only important if eix-sync options B<-s> or B<-2> are used.
 In this case, I<command> will be executed before the first call of B<rsync>;
-the output of I<command> is evaluated within the bash script B<eix-sync>.
+the output of I<command> is evaluated within the POSIX script B<eix-sync>.
 If I<command> or the evaluation of its output are not successful,
 B<eix-sync> will stop with an error.
 This can be used to execute e.g. B<keychain> and to return the content of
@@ -841,26 +844,26 @@ B<PORTDIR>, B<PORTDIR_SERVER>, B<PORTDIR_CLIENT>, B<SERVER>, or B<CLIENT>.
 These variables are filled with defaults when I<command> is called and
 will later be used for the B<rsync> command(s) with their obvious meaning.
 .TP
-.BR @@ I<command>
+.BI @@ command
 Adds a hook for I<command>; the actual execution of I<command> is postponed
 until B<emerge --sync> was (successfully) called.
 .TP
-.BR @ I<command>
+.BI @ command
 Adds a hook for I<command>; the actual execution of I<command> is postponed
 until B<emerge --sync> and the subsequent B<update-eix>
 was (successfully) called.
 .TP
 Some examples of useful lines in B</etc/eix-sync.conf>:
 .TP
-.BR ~keychain " " --quiet " " ~/.ssh/id_rsa " " ; " " cat " " ~/.keychain/"$(hostname)-sh"
+.B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"$(hostname)-sh"
 .TP
-.BR @update-eix-remote " " update " " /var/cache/remote-cache.tbz2
+.B @update-eix-remote update /var/cache/remote-cache.tbz2
 (The last argument can also be omitted if you do not want a local copy
 of the data).
 .TP
-.BR @@update-eix-remote " " fetch " " /var/cache/remote-cache.tbz2
+.B @@update-eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
-.BR @update-eix-remote " " add " " /var/cache/remote-cache.tbz2
+.B @update-eix-remote add /var/cache/remote-cache.tbz2
 .\" }}}
 
 .\" {{{ -------- /etc/eix-sync-overlays
@@ -903,17 +906,17 @@ some additional features:
 
 .\" {{{ -------- Special symbols
 .TP
-.BR "Special symbols for delayed substitution"
+.B Special symbols for delayed substitution
 
 .TP
 .SS
-.BR " %%{"
+.B " %%{"
 This must be used if you need B<%{> in a variable text
 (otherwise delayed substitution would take place).
 
 .TP
 .SS
-.BR "*" I<VARIABLE>
+.BI * VARIABLE
 If a delayed reference uses a variable name starting with B<*>,
 this B<*> is replaced by B<EIX_> or B<DIFF_>, depending on whether
 it is used from B<eix>/B<update-eix> or from B<diff-eix>.
@@ -925,7 +928,7 @@ the expansion of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>, respectively.
 
 .\" {{{ -------- Conditional blocks as delayed reference
 .TP
-.BR "Conditional blocks in delayed references"
+.B Conditional blocks in delayed references
 If you want to substitute several variables completely differently,
 depending on the state of a (Boolean) variable, you can use
 conditional blocks.
@@ -942,43 +945,43 @@ The special variable names B<*>I<VARIABLE> (instead of I<VARIABLE>)
 can also be used in these conditionals.
 .TP
 .SS
-.BR "%{?I<VARIABLE>}" I<TCODE> "%{}"
+.BI %{? VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to true.
 
 .TP
 .SS
-.BR "%{??I<VARIABLE>}" I<TCODE> "%{}"
+.BI %{?? VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to a nonempty string.
 
 .TP
 .SS
-.BR "%{!I<VARIABLE>}" I<TCODE> "%{}"
+.BI %{! VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to false.
 
 .TP
 .SS
-.BR "%{!?I<VARIABLE>}" I<TCODE> "%{}"
+.BI %{!? VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to the empty string.
 
 .TP
 .SS
-.BR "%{?I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+.BI %{? VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to true, otherwise I<FCODE>.
 
 .TP
 .SS
-.BR "%{??I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+.BI %{?? VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to a nonempty string,
 otherwise I<FCODE>.
 
 .TP
 .SS
-.BR "%{!I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+.BI %{! VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to false, otherwise I<FCODE>.
 
 .TP
 .SS
-.BR "%{!?I<VARIABLE>}" I<TCODE> "%{else}" I<FCODE> "%{}"
+.BI %{!? VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to the empty string,
 otherwise I<FCODE>.
 
@@ -997,13 +1000,13 @@ you can collect references to them in the B<DUMMY> variable.
 The following variables do not contain those which are used only in delayed references.
 To get a full description of the latter (and of the defaults), please use B<eix --dump>.
 .TP
-.BR DUMMY "  " (string)
+.B DUMMY "  " (string)
 This variable has no direct influence on the programs, but the content of this
 variable can be used to collect delayed references to (otherwise unused) variables
 so that they are printed with --dump or --dump-defaults.
 
 .TP
-.BR EIXRC_SOURCE "  " (string)
+.B EIXRC_SOURCE "  " (string)
 This path is prepended to source commands in /etc/eixrc.
 It is meant to be set in the environment but can also be set in /etc/eixrc.
 In the latter case, it will override the setting from the environment as soon as it is read until all files are sourced.
@@ -1021,28 +1024,28 @@ the prefix of a lot of paths in the subsequent variables;
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
-.BR "@BINDIR@/update-eix-functions.sh"
+.B @BINDIR@/update-eix-functions.sh
 
-.BR "~/.eixrc"
+.B ~/.eixrc
 
 .BR "cachefile path" "(s) passed in the commandline"
 
 .BR PORTAGE_PROFILE " (only the variable, not the link)"
 
-.BR PORTDIR
+.B PORTDIR
 
-.BR "Overlay paths"
+.B Overlay paths
 
 The last three items can be modified by B<EPREFIX_TREE>.
 
 The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
 Note that as a prefix-portage user you will want to use option -e in eix-sync.
 .TP
-.BR ROOT "  " (prefix-string)
+.B ROOT "  " (prefix-string)
 .TP
-.BR EPREFIX_TREE "  " (prefix-string)
+.B EPREFIX_TREE "  " (prefix-string)
 .TP
-.BR EPREFIX_ROOT "  " (prefix-string)
+.B EPREFIX_ROOT "  " (prefix-string)
 
 These are actually not internal variables of eix but they are just used for
 delayed substitution for the following variables analogously to B<EPREFIX>
@@ -1062,11 +1065,11 @@ paths or use only one of them).
 You can of course also use other variables as delayed references,
 e.g. you might want to set
 
-.BR EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
+.B EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
 
 if you feel that the eix cachefile should depend (only) on the profile root.
 .TP
-.BR PORTAGE_CONFIGROOT "  " (prefix-string)
+.B PORTAGE_CONFIGROOT "  " (prefix-string)
 This path is prepended to the /etc paths.
 The purpose is to respect PORTAGE_CONFIGROOT in an analogous way portage does.
 If you set this variable in the environment it will also change the path
@@ -1074,50 +1077,50 @@ where /etc/eixrc is searched. (Note that reading /etc/eixrc occurs before
 delayed substitution takes effect.)
 
 .TP
-.BR EPREFIX_PORTAGE_EXEC "  " (prefix-string)
+.B EPREFIX_PORTAGE_EXEC "  " (prefix-string)
 This path is used as a prefix for everything related to external portage tools.
 In particular, for the cache-method eix this determines the path where some private executables
 of portage are expected and where it is expected that these executables store their data.
 
 .TP
-.BR EPREFIX_SOURCE "  " (prefix-string)
+.B EPREFIX_SOURCE "  " (prefix-string)
 This path is prepended to paths occurring as the argument of source commands
 in /etc/make.conf and /etc/make.globals.
 
 .TP
-.BR EPREFIX_INSTALLED "  " (prefix-string)
+.B EPREFIX_INSTALLED "  " (prefix-string)
 This is prepended to the path where eix expects information about installed packages.
 
 .TP
-.BR EPREFIX_PORTAGE_CACHE "  " (prefix-string)
+.B EPREFIX_PORTAGE_CACHE "  " (prefix-string)
 This prefix is prepended to the portage cache.
 
 .TP
-.BR EPREFIX_ACCESS_OVERLAYS "  " (prefix-string)
+.B EPREFIX_ACCESS_OVERLAYS "  " (prefix-string)
 This prefix is prepended to overlays when their files are accessed.
 
 .TP
-.BR EPREFIX_PORTDIR "  " (prefix-string)
+.B EPREFIX_PORTDIR "  " (prefix-string)
 This path is prepended to B<PORTDIR>.
 
 .TP
-.BR EPREFIX_OVERLAYS "  " (prefix-string)
+.B EPREFIX_OVERLAYS "  " (prefix-string)
 This prefix is prepended to all entries of B<PORTAGE_OVERLAY>.
 
 .TP
-.BR EPREFIX_PROFILE "  " (prefix-string)
+.B EPREFIX_PROFILE "  " (prefix-string)
 This prefix is prepended to B<PORTAGE_PROFILE> (the variable, not the link).
 
 .TP
-.BR EPREFIX_VIRTUAL "  " (prefix-string)
+.B EPREFIX_VIRTUAL "  " (prefix-string)
 This is prepended to overlays in the eix database to test whether they exist.
 
 .TP
-.BR EIX_CACHEFILE "  " (string)
+.B EIX_CACHEFILE "  " (string)
 The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
 
 .TP
-.BR SKIP_PERMISSION_TESTS "  " (true / false)
+.B SKIP_PERMISSION_TESTS "  " (true / false)
 If B<true>, update-eix will not check for groups and permissions.
 You will probably want to set this to B<true> if you have a more sophisticated
 permission setup on your system (NSS/LDAP, acl, pam-related stuff, ...)
@@ -1180,7 +1183,7 @@ B<FORMATSTRING>)
 Define the strftime() format used to print the installation date (in normal resp. short form).
 
 .TP
-.BR FORMAT_INSTALLED_USE
+.B FORMAT_INSTALLED_USE
 Define the printf-like format used to print useflags of installed packages.
 If this string is empty, the processing is slightly faster since then these data are not read.
 
@@ -1288,16 +1291,16 @@ Never display a list of overlays.
 List all overlays for every query (even if not even one is needed).
 
 .TP
-.BR LEVENSHTEIN_DISTANCE "  " (Integer)
+.B LEVENSHTEIN_DISTANCE "  " (Integer)
 Set default levenshtein-distance.
 
 .TP
-.BR EXCLUDE_OVERLAY "  " (String)
+.B EXCLUDE_OVERLAY "  " (String)
 Set a list of wildcard patterns for overlay paths that are excluded from the index (separators are [\\n\\r\\t ]).
 See the B<update-eix> option B<--exclude-overlay>.
 
 .TP
-.BR ADD_OVERLAY "  " (String)
+.B ADD_OVERLAY "  " (String)
 Set a list of overlays that are added to the index (separators are [\\n\\r\\t ]).
 See the B<update-eix> option B<--add-overlay>.
 
@@ -1332,14 +1335,14 @@ and are meant to be used only locally.
 The following cache methods are available:
 .TP
 .SS
-.BR metadata
+.B metadata
 Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
 This is the default method which will always work if the portage tree is readable
 when you run update-eix.
 However, it is not necessarily the fastest method.
 .TP
 .SS
-.BR sqlite
+.B sqlite
 This is an extremely fast cache method if you are using portage with the
 sqlite backend as described in
 I<http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite>.
@@ -1353,7 +1356,7 @@ You must have emerged B<eix> with the appropriate USE flag
 before compilation) if you want support for this method.
 .TP
 .SS
-.BR " cdb"
+.B " cdb"
 Use this if you are using <portage-2.1 and the cdb-module from
 I<http://forums.gentoo.org/viewtopic-t-261580.html> as
 cache-backend for portage (cdb with cpickle'd dictionaries as values).
@@ -1361,7 +1364,7 @@ Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.BR portage-2.0
+.B portage-2.0
 If you are using <portage-2.1 and the default backend, you might want
 to use this one if you do not have access to the portage tree when
 you run update-eix.
@@ -1369,7 +1372,7 @@ Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.BR portage-2.1
+.B portage-2.1
 If you are using >=portage-2.1 and the default backend,
 you might want to use this one if you do not have access to the portage
 tree when you run update-eix.
@@ -1377,7 +1380,7 @@ Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.BR portage-2.1*
+.B portage-2.1*
 B<Don't use this!>
 This is an experimental attempt to use /var/cache/edb/vdb_metadata.pickle
 of >=portage-2.1.2. Currently, that file only contains the installed packages.
@@ -1387,7 +1390,7 @@ Moreover, this method depends on particular portage and python behaviour
 and may fail completely.
 .TP
 .SS
-.BR none
+.B none
 No cache-backend.
 Get the information from the ebuilds.
 The ebuild is not executed but only parsed, using some heuristics.
@@ -1397,13 +1400,13 @@ Examples of problems with this method is missing SLOT information for
 typical ebuilds from kde-base.
 .TP
 .SS
-.BR none*
+.B none*
 This is essentially the same as cache method B<none> with the difference
 that variables are not expanded in variable definitions.
 This is the cache-method B<none> from older eix versions (before 0.7.1).
 .TP
 .SS
-.BR ebuild
+.B ebuild
 For overlays, this is the most compatible but also the slowest method.
 The information is obtained via "/usr/bin/ebuild ... depend" from the ebuild.
 Since all ebuilds will get executed by bash, this may be a security risk
@@ -1417,7 +1420,7 @@ use B<env -i update-eix> when this causes problems.
 B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
 .TP
 .SS
-.BR ebuild*
+.B ebuild*
 This is something in between B<none> and B<ebuild>:
 The information is obtained via the undocumented "/usr/lib/portage/ebuild.sh".
 Thus, instead of executing a python program for each ".ebuild" as for
@@ -1563,38 +1566,38 @@ matches actually lead to some output.
 This might be useful for certain scripts if you are only interested in the
 number of matches and use e.g. B<FORMAT=''> to speed things up.
 .TP
-.BR TAG_FOR_PROFILE " " TAG_FOR_MASKED " " TAG_FOR_EX_PROFILE " " TAG_FOR_EX_MASKED " " TAG_FOR_LOCALLY_MASKED " " TAG_FOR_STABLE " " TAG_FOR_UNSTABLE " " TAG_FOR_MINUS_ASTERISK " " TAG_FOR_MINUS_KEYWORD " " TAG_FOR_ALIEN_STABLE " " TAG_FOR_ALIEN_UNSTABLE " " TAG_FOR_MISSING_KEYWORD " " TAG_FOR_EX_UNSTABLE " " TAG_FOR_EX_MINUS_ASTERISK " " TAG_FOR_EX_MINUS_KEYWORD " " TAG_FOR_EX_ALIEN_STABLE " " TAG_FOR_EX_ALIEN_UNSTABLE " " TAG_FOR_EX_MISSING_KEYWORD " " (String)
+.B TAG_FOR_PROFILE TAG_FOR_MASKED TAG_FOR_EX_PROFILE TAG_FOR_EX_MASKED TAG_FOR_LOCALLY_MASKED TAG_FOR_STABLE TAG_FOR_UNSTABLE TAG_FOR_MINUS_ASTERISK TAG_FOR_MINUS_KEYWORD TAG_FOR_ALIEN_STABLE TAG_FOR_ALIEN_UNSTABLE TAG_FOR_MISSING_KEYWORD TAG_FOR_EX_UNSTABLE TAG_FOR_EX_MINUS_ASTERISK TAG_FOR_EX_MINUS_KEYWORD TAG_FOR_EX_ALIEN_STABLE TAG_FOR_EX_ALIEN_UNSTABLE TAG_FOR_EX_MISSING_KEYWORD " " (String)
 The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP
-.BR TAG_FETCH " " TAG_MIRROR " " (String)
+.B TAG_FETCH TAG_MIRROR " " (String)
 The tags which are printed for versions with fetch or mirror restrictions.
 .TP
 .\" {{{ Default Matchfields for different strings.
-.BR MATCH_NAME_IF " " (String)
+.B MATCH_NAME_IF " " (String)
 Use NAME as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_DESCRIPTION_IF " " (String)
+.B MATCH_DESCRIPTION_IF " " (String)
 Use DESCRIPTION as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_LICENSE_IF " " (String)
+.B MATCH_LICENSE_IF " " (String)
 Use LICENSE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_CATEGORY_IF " " (String)
+.B MATCH_CATEGORY_IF " " (String)
 Use CATEGORY as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_CATEGORY_NAME_IF " " (String)
+.B MATCH_CATEGORY_NAME_IF " " (String)
 Use CATEGORY_NAME as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_HOMEPAGE_IF " " (String)
+.B MATCH_HOMEPAGE_IF " " (String)
 Use HOMEPAGE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_IUSE_IF " " (String)
+.B MATCH_IUSE_IF " " (String)
 Use USE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_PROVIDE_IF " " (String)
+.B MATCH_PROVIDE_IF " " (String)
 Use PROVIDE as default matchfield if the string match the given regex.
 .TP
-.BR MATCH_ORDER " " (String)
+.B MATCH_ORDER " " (String)
 Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
 .TP
 .\" }}}
@@ -1639,7 +1642,7 @@ if they come from a different overlay than the installed version.
 .BR NONEXISTENT_IF_MASKED "  " (true / false)
 Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 .TP
-.BR REDUNDANT_IF_DOUBLE " " (String)
+.B REDUNDANT_IF_DOUBLE " " (String)
 Applies if /etc/portage/package.keywords lists the same keyword twice
 for some/all (un-/installed) versions.
 
@@ -1651,30 +1654,30 @@ It can have the following values:
 Do not test for this type of redundancy.
 .TP
 .SS
-.BR some
+.B some
 It suffices that the redundancy occurs for some version in the database.
 .TP
 .SS
-.BR " all"
+.B " all"
 The redundancy must occur for all versions in the database.
 .TP
 .SS
-.BR some-installed
+.B some-installed
 It suffices that the redundancy occurs for some installed version.
 Uninstalled versions are ignored for this test.
 .TP
 .SS
-.BR all-installed
+.B all-installed
 The redundancy must occurs at least for all installed versions of the package.
 If no version is installed, it must occur at least once.
 .TP
 .SS
-.BR some-uninstalled
+.B some-uninstalled
 It suffices that the redundancy occurs for some uninstalled version.
 Installed versions are ignored for this test.
 .TP
 .SS
-.BR all-uninstalled
+.B all-uninstalled
 The redundancy must occurs at least for all uninstalled versions.
 If all versions in the database are installed, it must occur at least once.
 .TP
@@ -1684,11 +1687,11 @@ The test only applies if in addition no version (in case B<->)
 resp. at least some version (in case B<+>) of the package is installed.
 .TP
 .SS
-.BR "" "some of the above  " or "  some of the above"
+.RB "some of the above  " or "  some of the above"
 The result is positive if at least one of the two tests is positive.
 Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
 .TP
-.BR REDUNDANT_IF_DOUBLE_LINE " " (String)
+.B REDUNDANT_IF_DOUBLE_LINE " " (String)
 Applies if /etc/portage/package.keywords has two lines for identical targets,
 i.e. such that portage would drop the first of these lines.
 Note that lines with targets B<foo/bar> and B<=foo/bar-1> are considered as

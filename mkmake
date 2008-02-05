@@ -73,21 +73,21 @@ if ! ${KEEPENV}; then
 	fi
 	${SAFEFLAGS} || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
 fi
-[ -n "$QUIET" ] || echo "CFLAGS=$CFLAGS
-CXXFLAGS=$CXXFLAGS
-LDFLAGS=$LDFLAGS"
+[ -n "${QUIET}" ] || echo "CFLAGS=${CFLAGS}
+CXXFLAGS=${CXXFLAGS}
+LDFLAGS=${LDFLAGS}"
 if ! test -e Makefile; then
 	if ! test -e configure || ! test -e Makefile.in; then
 		echo "Running autotools..."
-		eval ./autogen.sh $QUIET || die "autogen failed"
+		eval ./autogen.sh ${QUIET} || die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure $SQLITE $BZLIB $QUIET || die "configure failed"
+	eval ./configure ${SQLITE} ${BZLIB} ${QUIET} || die "configure failed"
 fi
-$EARLYSTOP && exec make config.h
+${EARLYSTOP} && exec make config.h
 echo "Making $@..."
 type make >/dev/null 2>&1 || die "cannot find make"
-if [ -n "$QUIET" ]; then
+if [ -n "${QUIET}" ]; then
 	exec make "$@" >/dev/null 2>&1
 else
 	exec make "$@"

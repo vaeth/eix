@@ -1,32 +1,13 @@
-###########################################################################
-#   eix is a small utility for searching ebuilds in the                   #
-#   Gentoo Linux portage system. It uses indexing to allow quick searches #
-#   in package descriptions with regular expressions.                     #
-#                                                                         #
-#   https://sourceforge.net/projects/eix                                  #
-#                                                                         #
-#   Copyright (c)                                                         #
-#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
-#                                                                         #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program; if not, write to the                         #
-#   Free Software Foundation, Inc.,                                       #
-#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
-###########################################################################
-
-# This file must be "source"d by bash scripts.
+#! /bin/sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
 #
-# it contains helper functions for update-eix-remote, update-eix-layman,
+# Author and Copyright (c):
+#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#
+# This file must be "source"d by POSIX scripts.
+#
+# It contains helper functions for update-eix-remote, update-eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 LOCAL_EPREFIX_PORTAGE_EXEC="$(update-eix --print EPREFIX_PORTAGE_EXEC)"
@@ -48,7 +29,7 @@ die () {
 
 LOCAL_PORTDIR=''
 GetPortdir () {
-	test -n "${LOCAL_PORTDIR}" && return
+	[ -n "${LOCAL_PORTDIR}" ] && return
 	LOCAL_PORTDIR="$(update-eix --print PORTDIR)"
 }
 
@@ -70,44 +51,55 @@ RunCommand () {
 	return ${RET}
 }
 
-declare -a UPDATE_EIX_ARGS
-
-Push () {
-	local ARR K
-	ARR=${1}
+SedVar() {
+	local V_="${1}" A_
 	shift
-	for K; do
-		eval ${ARR}[\${#${ARR}[@]}]="\${K}"
-	done
+	eval "A_=\"\${${V_}}\""
+	A_="$(echo "X${A_}X" | sed -e '1s/^X//' -e '$s/X$//' "${@}" \
+		-e "s/'/'\\\\''/g" -e "1s/^/'/" -e "\$s/\$/'/")"
+	eval "${V_}=${A_}"
 }
 
-AddUpdateArgs () {
+Push() {
+	local A_='' S_='' V_="${1}" I_
+	shift
+	case "${V_}" in
+		-*) V_="${1}"; shift; eval "${V_}=''";;
+	esac
+	for I_; do
+		A_="${A_}${S_}$(echo "X${I_}X" | \
+			sed -e "s/'/'\\\\''/g" -e "1s/^X/'/" -e "\$s/X\$/'/")"
+		S_=' '
+	done
+	[ -z "${S_}" ] && return
+	eval "[ -z \"\${${V_}}\" ]" && S_=''
+	eval "${V_}=\"\${${V_}}\${S_}\${A_}\""
+}
+
+AddUpdateArgs() {
 	Push UPDATE_EIX_ARGS "${@}"
 }
 
-AddUpdateQuoting () {
-	local K
-	K="${1//\\/\\\\}"
-	K="${K//\?/\?}"
-	K="${K//\*/\*}"
-	K="${K//\[/\[}"
+AddUpdateQuoting() {
+	local K="$1"
 	shift
+	SedVar K -e 's/\([?*[]\)/\\\1/g'
 	AddUpdateArgs "${K}" "${@}"
 }
 
-AddMethod () {
+AddMethod() {
 	AddUpdateArgs '-m'
 	AddUpdateQuoting "${1}" "${2}"
 }
 
-AddOverlays () {
+AddOverlays() {
 	local J
 	for J; do
 		AddUpdateArgs '-a' "${J}"
 	done
 }
 
-AddExcludes () {
+AddExcludes() {
 	local J
 	for J; do
 		AddUpdateArgs '-x'
@@ -116,15 +108,16 @@ AddExcludes () {
 }
 
 ClearUpdateEixArgs () {
-	UPDATE_EIX_ARGS=()
+	UPDATE_EIX_ARGS=''
 }
 
-CallUpdateEix () {
-	RunCommand "Calling update-eix" \
-		update-eix "${UPDATE_EIX_ARGS[@]}" || die "update-eix failed"
+CallUpdateEix() {
+	eval "set -- ${UPDATE_EIX_ARGS}"
+	RunCommand "Calling update-eix" update-eix "$@" || \
+		die "update-eix failed"
 }
 
-AddLocalMethods () {
+AddLocalMethods() {
 	local I
 	GetPortdir
 	AddMethod "${LOCAL_PORTDIR}" "eix"
@@ -140,32 +133,29 @@ AddLocalMethods () {
 # Set RELATIVE to a list of all variables which are relative paths
 # (the first token in RELATIVE will be a space if the list is not empty).
 
-READLINK="$(type -p readlink)" || READLINK=''
+HAVE_READLINK=false
+command -v readlink >/dev/null 2>&1 && HAVE_READLINK=true
 NormalizeNames () {
-	local TRUENAME PREV I RSTAT=0
+	local T_ N_ I_ S_=0
 	RELATIVE=''
-	for I; do
-		eval TRUENAME="\${${I}}"
-		if test -z "${TRUENAME}"; then
-			eval ${I}=''
-			RSTAT=1
+	for I_; do
+		eval "T_=\"\${${I_}}\""
+		if [ -z "${T_}" ]; then
+			S_=1
 			continue
 		fi
-		test "${TRUENAME:0:1}" = '/' || RELATIVE="${RELATIVE} ${I}"
-		if test -n "${READLINK}"; then
-			PREV="${TRUENAME}"
-			TRUENAME="$("${READLINK}" -f -- "${TRUENAME}")" \
-				|| TRUENAME=''
-			test -n "${TRUENAME}" || TRUENAME="${PREV}"
+		case "${T_}" in
+			/*) :;;
+			*) RELATIVE="${RELATIVE} ${I_}";;
+		esac
+		if ${HAVE_READLINK}; then
+			N_="$(readlink -f -- "${T_}")" && [ -n "${N_}" ] && \
+				T_="${N_}"
 		fi
-		PREV=''
-		while test "${PREV}" != "${TRUENAME}"; do
-			PREV="${TRUENAME}"
-			TRUENAME="${TRUENAME//\/\///}"
-		done
-		test "${TRUENAME}" = '/' || TRUENAME="${TRUENAME%/}"
-		eval ${I}="\${TRUENAME}"
+		eval "${I_}=\"\${T_}\""
+		SedVar "${I_}" -e 's://*:/:g'
+		eval "[ \"\${${I_}}\" = '/' ] || ${I_}=\"\${${I_}%/}\""
 	done
-	return ${RSTAT}
+	return ${S_}
 }
 

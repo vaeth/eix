@@ -1,14 +1,17 @@
-#!/bin/bash
+#! /bin/sh
+
+export LC_ALL=C
 
 to_classname () {
-	local i=$1
-	case $1 in
+	local i="$1" j
+	case "$1" in
 		flat|port*2.0|port*2.0.*)     i=port2_0_0_;;
 		backport|port*2.1|port*2.1.0) i=port2_1_0_;;
 		port*2.1.2|port*2.1\*)        i=port2_1_2_;;
 	esac
-	echo -n ${i:0:1} | tr 'a-z' 'A-Z'
-	echo "${i:1}Cache"
+	j="${i#?}"
+	echo -n "${i%${j}}" | tr 'a-z' 'A-Z'
+	echo "${j}Cache"
 }
 
 cache_stars="none ebuild"

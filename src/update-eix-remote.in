@@ -1,29 +1,12 @@
-#!/bin/bash
-###########################################################################
-#   eix is a small utility for searching ebuilds in the                   #
-#   Gentoo Linux portage system. It uses indexing to allow quick searches #
-#   in package descriptions with regular expressions.                     #
-#                                                                         #
-#   https://sourceforge.net/projects/eix                                  #
-#                                                                         #
-#   Copyright (c)                                                         #
-#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
-#                                                                         #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program; if not, write to the                         #
-#   Free Software Foundation, Inc.,                                       #
-#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
-###########################################################################
+#! /bin/sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Author and Copyright (c):
+#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#
+# It can be used to fetch the "standard" overlay data and add it to the
+# eix database. (@PACKAGE_STRING@).
 
 . update-eix-functions.sh.in
 
@@ -81,6 +64,7 @@ Options:
 OVERLAYNR='*'
 VERBOSE=true
 FETCHUSER=''
+OPTIND=1
 while getopts 'O:vqu:o:?hH' OPTION; do
 	case "${OPTION}" in
 		O) OVERLAYNR="${OPTARG}";;
@@ -92,8 +76,6 @@ while getopts 'O:vqu:o:?hH' OPTION; do
 	esac
 done
 shift $(( ${OPTIND} - 1 ))
-
-declare -a SUCMD
 
 NEED_ARG=false
 FILENAME=''
@@ -112,12 +94,17 @@ GetFilename () {
 }
 
 CalcSuCmd () {
-	local MY_CMD
-	MY_CMD="$(command -v "${1}")" || die "${1} cannot be found in $PATH"
-	SUCMD=("${MY_CMD}")
 	[ -n "${FETCHUSER}" ] || [ "${UID}" -ne 0 ] || FETCHUSER="nobody"
-	[ -n "${FETCHUSER}" ] && \
-		SUCMD=('/bin/su' '-s' "${MY_CMD}" "${FETCHUSER}")
+	SUCMD="$(command -v "${1}")" || \
+		die "${1} cannot be found in $PATH"
+	if [ -z "${FETCHUSER}" ]; then
+		Push -c SUCMD "${@}"
+		return
+	fi
+	Push -c SUCMD "${SUCMD}"
+	shift
+	Push SUCMD "${@}"
+	Push -c SUCMD '/bin/su' '-c' "eval exec ${SUCMD}" "${FETCHUSER}"
 }
 
 CdDir () {
@@ -175,9 +162,10 @@ FetchTemp () {
 	MakeTempDir cd
 	TMPFILE="${TMPDIR}/${EIXCACHESNAME}"
 	( umask 000; : >"${TMPFILE}" )
-	CalcSuCmd wget
-	RunCommand "Fetching ${EIXCACHESNAME}" \
-		"${SUCMD[@]}" -c "${SOURCE}" || die "could not fetch ${SOURCE}"
+	CalcSuCmd wget -c "${SOURCE}"
+	eval "set -- ${SUCMD}"
+	RunCommand "Fetching ${EIXCACHESNAME}" "${@}" || \
+		die "could not fetch ${SOURCE}"
 }
 
 AddArchive () {
@@ -187,7 +175,8 @@ AddArchive () {
 	AddLocalMethods
 	for I in *
 	do
-		NAME="${I//:/_}"
+		NAME="${I}"
+		SedVar NAME -e 's/:/_/g'
 		[ "${NAME}" = "${I}" ] || mv -- "${I}" "${NAME}"
 	done
 	if [ -n "${OVERLAYNR}" ]; then
@@ -199,7 +188,7 @@ AddArchive () {
 	do
 		NAME="${I%.eix}"
 		NAME="${NAME#_usr_portage_local_}"
-		NAME="${NAME//_//}"
+		SedVar NAME -e 's#_#/#g'
 		VIRTUAL="(${NAME})"
 		AddMethod "${VIRTUAL}" "eix*:${2}/${I}${OVERLAYARG}"
 		AddOverlays "${VIRTUAL}"
@@ -247,7 +236,9 @@ Update () {
 }
 
 MAIN_COMMAND="${1}"
-shift
+[ $# -gt 0 ] && shift
+
+[ -n "${UID}" ] || UID="$(id -u)"
 
 case "${MAIN_COMMAND}" in
 	update|both)        Update "${@}";;

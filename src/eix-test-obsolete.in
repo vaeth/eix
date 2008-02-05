@@ -1,43 +1,20 @@
-#!/bin/bash
-# This script gives a structured output of eix -tTc (@PACKAGE_STRING@)
-# Author: Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
-
-###########################################################################
-#   eix is a small utility for searching ebuilds in the                   #
-#   Gentoo Linux portage system. It uses indexing to allow quick searches #
-#   in package descriptions with regular expressions.                     #
-#                                                                         #
-#   https://sourceforge.net/projects/eix                                  #
-#                                                                         #
-#   Copyright (c)                                                         #
-#     Wolfgang Frisch <xororand@users.sourceforge.net>                    #
-#     Emil Beinroth <emilbeinroth@gmx.net>                                #
-#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>                     #
-#                                                                         #
-#   This program is free software; you can redistribute it and/or modify  #
-#   it under the terms of the GNU General Public License as published by  #
-#   the Free Software Foundation; either version 2 of the License, or     #
-#   (at your option) any later version.                                   #
-#                                                                         #
-#   This program is distributed in the hope that it will be useful,       #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         #
-#   GNU General Public License for more details.                          #
-#                                                                         #
-#   You should have received a copy of the GNU General Public License     #
-#   along with this program; if not, write to the                         #
-#   Free Software Foundation, Inc.,                                       #
-#   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
-###########################################################################
+#! /bin/sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Author and Copyright (c):
+#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#
+# This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
 Eix () {
-	if test -z "$(eix '-*Tc' | head -n1)"; then
-		test -z "${1}" || echo "${1} (or test switched off)."
+	if [ -z "$(eix '-*Tc' | head -n1)" ]; then
+		[ -z "${1}" ] || echo "${1} (or test switched off)."
 		return
 	fi
-	echo
-	echo "${2}:"
-	echo
+	echo "
+${2}:
+"
 	eix -Tc
 	echo
 }
@@ -84,8 +61,9 @@ Repository () {
 	else
 		I='without'
 	fi
-	echo "The following package versions are installed $I repository information:"
-	if ! cd "$(eix --print EPREFIX_INSTALLED)"/var/db/pkg >/dev/null 2>&1; then
+	echo "The following package versions are installed ${I} repository information:"
+	if ! cd "$(eix --print EPREFIX_INSTALLED)"/var/db/pkg >/dev/null 2>&1
+	then
 		echo "${0##*/}: cannot locate your database of installed packages" >&2
 		exit 1
 	fi
@@ -93,20 +71,20 @@ Repository () {
 	C=0
 	for I in *; do
 		for J in "${I}"/*; do
-			if [ -e "${J}/repository" ]; then
+			if test -e "${J}/repository"; then
 				${1} || continue
 			else
 				${1} && continue
 			fi
 			echo "${J}"
-			C=$(( $C + 1 ))
+			C=$(( ${C} + 1 ))
 		done
 	done
-	if test $C -eq 0; then
+	if test ${C} -eq 0; then
 		echo "none"
-	elif test $C -ne 1; then
-		echo
-		echo "(total number of versions listed above: $C)"
+	elif test ${C} -ne 1; then
+		echo "
+(total number of versions listed above: ${C})"
 	fi
 	exit 0
 }
@@ -114,9 +92,11 @@ Repository () {
 COMMON="$(eix --print PORTAGE_CONFIGROOT)"
 COMMON="${COMMON}/etc/portage/package."
 
-if test $# -gt 0; then
-	test "$1" = 'no-repository' && Repository false
-	test "$1" = 'repository' && Repository true
+if [ ${#} -gt 0 ]; then
+	case "${1}" in
+		no*|No*|NO*) Repository false;;
+		re*|Re*|RE*) Repository true;;
+	esac
 	export CHECK_INSTALLED_OVERLAYS=true
 fi
 eix '-t*!'

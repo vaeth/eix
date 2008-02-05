@@ -1,9 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.10.4
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Add --slot for matching the slot of versions. eix --slot kde-4 will
-	  search packages that have at least on version with a slot that matches
-	  kde-4.
+	  search packages that have at least one version with a slot that
+	  matches kde-4.
+
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Finally use POSIX shell throughout, making bash obsolete.
+	- Clean up manpage formatting.
 
 *eix-0.10.3
 	Emil Beinroth <emilbeinroth at gmx.net>:
