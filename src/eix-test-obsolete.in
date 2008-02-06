@@ -3,7 +3,7 @@
 # terms of the GNU General Public License v2.
 #
 # Author and Copyright (c):
-#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 

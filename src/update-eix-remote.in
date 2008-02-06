@@ -3,7 +3,7 @@
 # terms of the GNU General Public License v2.
 #
 # Author and Copyright (c):
-#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 #
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).
@@ -176,8 +176,7 @@ AddArchive () {
 	for I in *
 	do
 		NAME="${I}"
-		SedVar NAME -e 's/:/_/g'
-		[ "${NAME}" = "${I}" ] || mv -- "${I}" "${NAME}"
+		Replace -g NAME ':' '_' || mv -- "${I}" "${NAME}"
 	done
 	if [ -n "${OVERLAYNR}" ]; then
 		OVERLAYARG=":${OVERLAYNR}"
@@ -188,7 +187,7 @@ AddArchive () {
 	do
 		NAME="${I%.eix}"
 		NAME="${NAME#_usr_portage_local_}"
-		SedVar NAME -e 's#_#/#g'
+		Replace -g NAME '_' '/'
 		VIRTUAL="(${NAME})"
 		AddMethod "${VIRTUAL}" "eix*:${2}/${I}${OVERLAYARG}"
 		AddOverlays "${VIRTUAL}"

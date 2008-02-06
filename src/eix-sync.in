@@ -3,8 +3,8 @@
 # terms of the GNU General Public License v2.
 #
 # Authors and Copyright (c):
-#   Emil Beinroth <emilbeinroth@gmx.net>
-#   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#   Emil Beinroth <emilbeinroth@gmx.net> (original)
+#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de> (complete rewrite)
 #
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
