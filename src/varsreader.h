@@ -10,8 +10,12 @@
 #ifndef __VARSREADER_H__
 #define __VARSREADER_H__
 
+#if defined(HAVE_TR1_CSTDINT)
+#include <tr1/cstdint>
+#else
 #if !defined(__OpenBSD__)
-#include <cstdint>
+#include <stdint.h>
+#endif
 #endif
 
 // mmap and stat stuff

@@ -21,8 +21,12 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
+#if defined(HAVE_TR1_CSTDINT)
+#include <tr1/cstdint>
+#else
 #if !defined(__OpenBSD__)
-#include <cstdint>
+#include <stdint.h>
+#endif
 #endif
 
 #include <unistd.h>

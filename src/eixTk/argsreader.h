@@ -1,4 +1,4 @@
-// vim:set noet cinoptions= sw=4 ts=4:
+// vim:set noet inoptions= sw=4 ts=4:
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
@@ -40,27 +40,27 @@ class Option
 
 	Option(const char *l, int s, enum Type t, int *i)
 		: type(t), longopt(l), shortopt(s)
-	{ u.integer(i); }
+	{ u.integer = i; }
 
 	Option(const char *l, int s, enum Type t, bool *b)
 		: type(t), longopt(l), shortopt(s)
-	{ u.boolean(b); }
+	{ u.boolean = b; }
 
 	Option(const char *l, int s, enum Type t, const char **c)
 		: type(t), longopt(l), shortopt(s)
-	{ u.str(c); }
+	{ u.str = c; }
 
 	Option(const char *l, int s, enum Type t, const char **c1, const char **c2)
 		: type(t), longopt(l), shortopt(s)
-	{ pr.first = c1; pr.second = c2; }
+	{ u.pr.first = c1; u.pr.second = c2; }
 
 	Option(const char *l, int s, enum Type t, std::list<const char*> *c)
 		: type(t), longopt(l), shortopt(s)
-	{ u.strlist(c); }
+	{ u.strlist = c; }
 
 	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c)
 		: type(t), longopt(l), shortopt(s)
-	{ u.prlist(c); }
+	{ u.prlist = c; }
 
 	Option(const char *l, int s, enum Type t = KEEP)
 		: type(t), longopt(l), shortopt(s)

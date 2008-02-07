@@ -30,6 +30,9 @@ AC_CHECK_FUNCS(strndup, , )
 dnl We use these optionally:
 AC_CHECK_FUNCS([canonicalize_file_name realpath vfork], , )
 
+dnl Compatibility Headers:
+AC_CHECK_HEADERS(tr1/cstdint)
+
 AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then
 	  AC_MSG_ERROR([error. sed is required to build the manpage.])
