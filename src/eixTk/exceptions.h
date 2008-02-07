@@ -13,8 +13,8 @@
 #include <string>
 #include <vector>
 
-#include <errno.h>
-#include <stdarg.h>
+#include <cerrno>
+#include <cstdarg>
 
 #include <eixTk/stringutils.h>
 

@@ -7,7 +7,7 @@
 
 #include "levenshtein.h"
 
-#include <ctype.h>
+#include <cctype>
 #include <vector>
 #include <cstring>
 

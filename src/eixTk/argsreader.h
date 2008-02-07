@@ -39,44 +39,44 @@ class Option
 	} type;
 
 	Option(const char *l, int s, enum Type t, int *i)
-		: type(t), longopt(l), shortopt(s), integer(i)
-	{ }
+		: type(t), longopt(l), shortopt(s)
+	{ u.integer(i); }
 
 	Option(const char *l, int s, enum Type t, bool *b)
-		: type(t), longopt(l), shortopt(s), boolean(b)
-	{ }
+		: type(t), longopt(l), shortopt(s)
+	{ u.boolean(b); }
 
 	Option(const char *l, int s, enum Type t, const char **c)
-		: type(t), longopt(l), shortopt(s), str(c)
-	{ }
+		: type(t), longopt(l), shortopt(s)
+	{ u.str(c); }
 
 	Option(const char *l, int s, enum Type t, const char **c1, const char **c2)
 		: type(t), longopt(l), shortopt(s)
 	{ pr.first = c1; pr.second = c2; }
 
 	Option(const char *l, int s, enum Type t, std::list<const char*> *c)
-		: type(t), longopt(l), shortopt(s), strlist(c)
-	{ }
+		: type(t), longopt(l), shortopt(s)
+	{ u.strlist(c); }
 
 	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c)
-		: type(t), longopt(l), shortopt(s), prlist(c)
-	{ }
+		: type(t), longopt(l), shortopt(s)
+	{ u.prlist(c); }
 
 	Option(const char *l, int s, enum Type t = KEEP)
 		: type(t), longopt(l), shortopt(s)
 	{ }
 
 	const char *longopt; ///< longopt of this pair.
-	const int  shortopt; ///< shortopt of this pair.
+	int  shortopt;       ///< shortopt of this pair.
 
-	const union { ///< Pointer to variable of argument.
+	union { ///< Pointer to variable of argument.
 		int   *integer;
 		bool  *boolean;
 		const char **str;
 		struct { const char **first; const char **second; } pr;
 		std::list<const char *> *strlist;
 		std::list<ArgPair> *prlist;
-	};
+	} u;
 };
 
 /// Represents a parameter.

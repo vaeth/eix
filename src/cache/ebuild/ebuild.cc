@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #include <config.h>
-#include <signal.h>
+#include <csignal>
 #include <sys/wait.h>
 
 using namespace std;

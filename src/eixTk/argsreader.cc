@@ -9,10 +9,11 @@
 
 #include "argsreader.h"
 
-#include <stdio.h>
-#include <ctype.h>
+#include <cstdio>
+#include <cctype>
 #include <cstring>
 #include <cstdlib>
+#include <cstdarg>
 
 using namespace std;
 
@@ -185,15 +186,15 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 			case Option::BOOLEAN_T:
 			case Option::BOOLEAN:
 					if(c->type == Option::BOOLEAN_T)
-						*c->boolean = true;
+						*(c->u.boolean) = true;
 					else if(c->type == Option::BOOLEAN_F)
-						*c->boolean = false;
+						*(c->u.boolean) = false;
 					else
-						*c->boolean = ! *c->boolean;
+						*(c->u.boolean) = ! *(c->u.boolean);
 					it = erase(it);
 					break;
 			case Option::INTEGER:
-					++*c->integer;
+					++*(c->u.integer);
 					it = erase(it);
 					break;
 			case Option::KEEP_STRING_OPTIONAL:
@@ -236,12 +237,12 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						break;
 					if((c->type == Option::STRINGLIST) || (c->type == Option::STRINGLIST_OPTIONAL))
 					{
-						c->strlist->push_back(remember);
+						c->u.strlist->push_back(remember);
 						break;
 					}
 					if((c->type == Option::STRING) || (c->type == Option::STRING_OPTIONAL))
 					{
-						*(c->str) = remember;
+						*(c->u.str) = remember;
 						break;
 					}
 					if(it == end())
@@ -258,12 +259,12 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						break;
 					if((c->type == Option::PAIR) || (c->type == Option::PAIR_OPTIONAL))
 					{
-						*((c->pr).first)  = remember;
-						*((c->pr).second) = second;
+						*((c->u.pr).first)  = remember;
+						*((c->u.pr).second) = second;
 						break;
 					}
 					//if((c->type == Option::PAIRLIST) || (c->type == Option::PAIRLIST_OPTIONAL))
-						c->prlist->push_back(ArgPair(remember, second));
+						c->u.prlist->push_back(ArgPair(remember, second));
 					break;
 			default: // KEEP
 					++it;

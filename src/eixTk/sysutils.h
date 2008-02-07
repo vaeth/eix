@@ -13,7 +13,7 @@
 class ExBasic;
 
 #include <unistd.h>
-#include <time.h>
+#include <ctime>
 
 /** Return false if the file is not writable/readable by users in the group portage. */
 bool is_writable(const char *file);

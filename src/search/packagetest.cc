@@ -35,11 +35,11 @@ const PackageTest::TestInstalled
 		PackageTest::INS_MASKED      = 0x04;
 
 const PackageTest::TestStability
-		PackageTest::STABLE_NONE      =0x00,
-		PackageTest::STABLE_FULL      =0x01,
-		PackageTest::STABLE_TESTING   =0x02,
-		PackageTest::STABLE_NONMASKED =0x04,
-		PackageTest::STABLE_SYSTEM    =0x08;
+		PackageTest::STABLE_NONE      = 0x00,
+		PackageTest::STABLE_FULL      = 0x01,
+		PackageTest::STABLE_TESTING   = 0x02,
+		PackageTest::STABLE_NONMASKED = 0x04,
+		PackageTest::STABLE_SYSTEM    = 0x08;
 
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
 {

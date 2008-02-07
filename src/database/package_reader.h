@@ -12,7 +12,7 @@
 
 #include <config.h>
 
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 
 #include <iostream>

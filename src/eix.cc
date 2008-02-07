@@ -29,11 +29,11 @@
 #include <database/header.h>
 #include <database/package_reader.h>
 
-#include <signal.h> /* signal handlers */
+#include <csignal>  /* signal handlers */
 #include <vector>
 #include <stack>
 
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
 
 #define VAR_DB_PKG "/var/db/pkg/"

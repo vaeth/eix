@@ -11,7 +11,7 @@
 #define __VARSREADER_H__
 
 #if !defined(__OpenBSD__)
-#include <stdint.h>
+#include <cstdint>
 #endif
 
 // mmap and stat stuff

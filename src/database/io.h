@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 #if !defined(__OpenBSD__)
-#include <stdint.h>
+#include <cstdint>
 #endif
 
 #include <unistd.h>

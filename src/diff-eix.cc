@@ -37,7 +37,7 @@
 
 #include <dirent.h>
 #include <sys/stat.h> /* chmod(..) */
-#include <signal.h>   /* signal handlers */
+#include <csignal>    /* signal handlers */
 
 #define VAR_DB_PKG "/var/db/pkg/"
 

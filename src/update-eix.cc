@@ -30,7 +30,7 @@
 
 #include <dirent.h>
 #include <sys/stat.h> /* chmod(..) */
-#include <signal.h>   /* signal handlers */
+#include <csignal>    /* signal handlers */
 
 #define INFO(...) printf(__VA_ARGS__)
 
