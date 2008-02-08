@@ -10,6 +10,8 @@
 #ifndef EIX__IO_H__
 #define EIX__IO_H__
 
+#include <config.h>
+
 #include <string>
 #include <cstdlib>
 

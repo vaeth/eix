@@ -10,6 +10,8 @@
 #ifndef __VARSREADER_H__
 #define __VARSREADER_H__
 
+#include <config.h>
+
 #if defined(HAVE_TR1_CSTDINT)
 #include <tr1/cstdint>
 #else

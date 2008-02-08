@@ -10,6 +10,8 @@
 #ifndef __UNPICKLE_H__
 #define __UNPICKLE_H__
 
+#include <config.h>
+
 #include <eixTk/exceptions.h>
 
 #include <map>
