@@ -17,12 +17,6 @@
 
 using namespace std;
 
-#define __ASSERT(x, ...) do { \
-	if(!(x)) { \
-		fprintf(stderr, __VA_ARGS__); exit(1); \
-	}  \
-} while(0)
-
 ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 {
 	bool seen_escape = false;
@@ -224,8 +218,10 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						++it;
 					else
 						it = erase(it);
-					if(it == end())
-						__ASSERT(optional, "Missing parameter to --%s\n", c->longopt);
+					if(it == end() && !optional) {
+						fprintf(stderr, "Missing parameter to --%s\n", c->longopt);
+						exit(-1);
+					}
 					else {
 						remember = it->m_argument;
 						if(keep)
@@ -245,8 +241,10 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						*(c->u.str) = remember;
 						break;
 					}
-					if(it == end())
-						__ASSERT(optional, "Missing second parameter to --%s\n", c->longopt);
+					if(it == end() && !optional) {
+						fprintf(stderr, "Missing second parameter to --%s\n", c->longopt);
+						exit(-1);
+					}
 					else {
 						second = it->m_argument;
 						if(keep)

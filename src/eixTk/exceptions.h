@@ -24,17 +24,22 @@ class ExBasic {
 	public:
 
 		/** Constructor exception with variable arguments. */
-		ExBasic(const std::string file, const int line, const char *func, const char *fmt, ...) {
+		ExBasic(const std::string file, const int line, const char *func)
+			: m_file(file), m_line(line), m_func(func), m_msg()
+		{ }
+
+		ExBasic(const std::string file, const int line, const char *func, const std::string &str)
+			: m_file(file), m_line(line), m_func(func), m_msg(str)
+		{ }
+
+		ExBasic& format(const char *fmt, ...) {
 			va_list ap;
 			va_start(ap, fmt);
 			char buf[1025];
 			vsnprintf(buf, 1024, fmt, ap);
 			va_end(ap);
-
 			m_msg  = buf;
-			m_file = file;
-			m_line = line;
-			m_func = func;
+			return *this;
 		}
 
 		const std::string &getMessage() const throw()
@@ -51,15 +56,10 @@ class ExBasic {
 		int         m_line; /**< Line where the exception is constructed. */
 		std::string m_func; /**< Function where the exception is constructed. */
 		std::string m_msg;  /**< The actual message. */
-
-	private:
 };
 
-#define ExBasic(...) ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__)
-
-#define ASSERT(x, ...) do { \
-	if(!(x)) throw( ExBasic("assert("#x"): " __VA_ARGS__) ); \
-} while(0)
+#define ExBasic() ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__)
+// #define ExBasic(str) ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__, str)
 
 // Provide a common look for error-messages for parse-errors in
 // portage.{mask,keywords,..}

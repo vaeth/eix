@@ -5,6 +5,8 @@
 	- Add --slot for matching the slot of versions. eix --slot kde-4 will
 	  search packages that have at least one version with a slot that
 	  matches kde-4.
+	- Remove all uses of __VA_ARGS__, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=209239
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Finally use POSIX shell throughout, making bash obsolete.

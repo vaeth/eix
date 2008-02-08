@@ -177,7 +177,7 @@ class AnsiColor {
 					light = false;
 				}
 				else {
-					throw ExBasic("Invalid brightness value '%c'.", color_name[comma_pos + 1]);
+					throw ExBasic().format("Invalid brightness value '%c'.", color_name[comma_pos + 1]);
 				}
 			}
 			comma_pos = color_name.rfind(';');

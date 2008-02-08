@@ -805,7 +805,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 			return "1";
 		return "";
 	}
-	throw(ExBasic("Unknown property '%s'.", name.c_str()));
+	throw ExBasic().format("Unknown property '%s'.", name.c_str());
 }
 
 const void *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)

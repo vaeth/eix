@@ -32,7 +32,7 @@
 #include <sys/stat.h> /* chmod(..) */
 #include <csignal>    /* signal handlers */
 
-#define INFO(...) printf(__VA_ARGS__)
+#define INFO printf
 
 using namespace std;
 
@@ -505,7 +505,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	/* And write database back to disk .. */
 	FILE *database_stream = fopen(outputfile, "wb");
-	ASSERT(database_stream, "Can't open the database file %s for writing (mode = 'wb')", outputfile);
+	if (!database_stream) {
+		throw ExBasic().format("Can't open the database file %s for writing (mode = 'wb')", outputfile);
+	}
 	if(will_modify)
 		Permissions::set_db(database_stream);
 

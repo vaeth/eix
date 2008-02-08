@@ -42,7 +42,7 @@
 #define VAR_DB_PKG "/var/db/pkg/"
 
 
-#define INFO(...) printf(__VA_ARGS__)
+#define INFO printf
 
 using namespace std;
 
@@ -130,7 +130,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 	FILE *fp = fopen(file, "rb");
 
 	if(fp == NULL) {
-		throw(ExBasic("Can't open the database file %s for reading (mode = 'rb')\n", file));
+		throw ExBasic().format("Can't open the database file %s for reading (mode = 'rb')\n", file);
 	}
 
 	io::read_header(fp, *header);
@@ -299,7 +299,7 @@ run_diff_eix(int argc, char *argv[])
 
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
 		print_help(1);
-		throw(ExBasic("Missing cache-file."));
+		throw(ExBasic().format("Missing cache-file."));
 	}
 
 	old_file = current_param->m_argument;
