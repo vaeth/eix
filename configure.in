@@ -33,6 +33,13 @@ AC_CHECK_FUNCS([canonicalize_file_name realpath vfork], , )
 dnl Compatibility Headers:
 AC_CHECK_HEADERS(tr1/cstdint)
 
+AC_MSG_CHECKING(if stdint.h can really be used)
+AC_TRY_COMPILE([ # include <stdint.h>
+],[],
+[AC_MSG_RESULT(yes)
+AC_DEFINE(USE_STDINT_H,1, Define to 1 if stdint.h can be used from C++)
+])
+
 AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then
 	  AC_MSG_ERROR([error. sed is required to build the manpage.])

@@ -13,7 +13,7 @@
 #if defined(HAVE_TR1_CSTDINT)
 #include <tr1/cstdint>
 #else
-#if !defined(__OpenBSD__)
+#if defined(USE_STDINT_H)
 #include <stdint.h>
 #endif
 #endif

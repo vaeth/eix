@@ -126,6 +126,9 @@
 /* Define to 1 if bzlib can be used */
 #undef USE_BZLIB
 
+/* Define to 1 if stdint.h can be used from C++ */
+#undef USE_STDINT_H
+
 /* Version number of package */
 #undef VERSION
 
