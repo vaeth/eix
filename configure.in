@@ -37,7 +37,9 @@ AC_MSG_CHECKING(if stdint.h can really be used)
 AC_TRY_COMPILE([ # include <stdint.h>
 ],[],
 [AC_MSG_RESULT(yes)
-AC_DEFINE(USE_STDINT_H,1, Define to 1 if stdint.h can be used from C++)
+ AC_DEFINE(USE_STDINT_H,1, Define to 1 if stdint.h can be used from C++)
+],
+[AC_MSG_RESULT(no)
 ])
 
 AC_CHECK_PROGS(regex_cmd, sed)
@@ -59,6 +61,7 @@ AC_TRY_COMPILE([ #include <dirent.h>
  SCANDIR_ARG3="const struct dirent *"
  SCANDIR_CAST=false
 ],
+[
 	AC_TRY_COMPILE([ #include <dirent.h>
 	],
 	[
@@ -89,7 +92,7 @@ AC_TRY_COMPILE([ #include <dirent.h>
 		AC_MSG_ERROR(I don't know how to call scandir)
 		)
 	])
-)
+])
 
 AC_DEFINE_UNQUOTED(SCANDIR_ARG3, ${SCANDIR_ARG3}, "3th argument of scandir")
 if ${SCANDIR_CAST}; then
