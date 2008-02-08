@@ -39,7 +39,7 @@ BasicCache *get_cache(const string &name) {
 END
 
 for cache_name in $cache_names; do
-	cache_class=$(to_classname "$cache_name")
+	cache_class=`to_classname "$cache_name"`
 	cat<<END
 	if (name == "$cache_name") {
 		return new $cache_class;
@@ -47,7 +47,7 @@ for cache_name in $cache_names; do
 END
 done
 for cache_name in $cache_stars; do
-	cache_class=$(to_classname "$cache_name")
+	cache_class=`to_classname "$cache_name"`
 	cat<<END
 	if (name == "${cache_name}*") {
 		return new $cache_class(true);
