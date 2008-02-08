@@ -178,16 +178,17 @@ ${DOUPDATE} || CLEARCACHE=false
 [ -z "${SERVER}" ] || SKIP_SYNC=true
 ${SKIP_SYNC} && METADATA=true
 
-# We need a special function to treat the reserved word "time" like a command.
-# (Of course "eval" would do a similar thing, but would also apply to args).
 MyRun() {
 	if [ "${1}" != 'time' ]; then
 		"${@}"
 		return
 	fi
 	shift
-	time "${@}"
-	return
+	if command -v time >/dev/null 2>&1; then
+		time "${@}"
+		return
+	fi
+	"${@}"
 }
 
 # Run command
@@ -263,7 +264,7 @@ DelTemp() {
 }
 MakeTempFile() {
 	local COUNT
-	if type mktemp >/dev/null 2>&1; then
+	if command -v mktemp >/dev/null 2>&1; then
 		TMPFILE="$(mktemp /tmp/${0##*/}.XXXXXX)" || \
 			die "cannot create temporary file"
 	else
