@@ -18,21 +18,28 @@
 
 #include <eixTk/stringutils.h>
 
-/** The exception for everything. */
-class ExBasic {
-
+/// Simple exception class with printf-like formating.
+class ExBasic 
+: public std::exception
+{
 	public:
-
-		/** Constructor exception with variable arguments. */
-		ExBasic(const std::string file, const int line, const char *func)
-			: m_file(file), m_line(line), m_func(func), m_msg()
+		/// Set name of function where exception is constructed.
+		ExBasic(const char *func)
+			: m_func(func), m_msg()
 		{ }
 
-		ExBasic(const std::string file, const int line, const char *func, const std::string &str)
-			: m_file(file), m_line(line), m_func(func), m_msg(str)
-		{ }
+		virtual ~ExBasic() throw() { }
 
-		ExBasic& format(const char *fmt, ...) {
+		/// Set the actual exception string.
+		ExBasic& format(const std::string &str) 
+		{
+			m_msg = str; 
+			return *this;
+		}
+
+		/// Set a printf-like formated exception string.
+		ExBasic& format(const char *fmt, ...) 
+		{
 			va_list ap;
 			va_start(ap, fmt);
 			char buf[1025];
@@ -42,27 +49,27 @@ class ExBasic {
 			return *this;
 		}
 
+		/// Return reference to message.
 		const std::string &getMessage() const throw()
 		{ return m_msg; }
 
-		const char *what() const
+		/// @see std::exception::what()
+		const char *what() const throw()
 		{ return m_msg.c_str(); }
 
 		friend std::ostream& operator<< (std::ostream& os, const ExBasic& e)
 		{ return os << e.m_func << ": " << e.m_msg; }
 
 	protected:
-		std::string m_file; /**< File where the exception is constructed. */
-		int         m_line; /**< Line where the exception is constructed. */
-		std::string m_func; /**< Function where the exception is constructed. */
-		std::string m_msg;  /**< The actual message. */
+		std::string m_func; ///< Function that threw us.
+		std::string m_msg;  ///< The actual message.
 };
 
-#define ExBasic() ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__)
-// #define ExBasic(str) ExBasic(__FILE__, __LINE__, __PRETTY_FUNCTION__, str)
+/// Automatically fill in the argument for our exceptions.
+#define ExBasic() ExBasic(__PRETTY_FUNCTION__)
 
-// Provide a common look for error-messages for parse-errors in
-// portage.{mask,keywords,..}
+/// Provide a common look for error-messages for parse-errors in
+/// portage.{mask,keywords,..}.
 inline void
 portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const ExBasic &e)
 {
@@ -70,7 +77,7 @@ portage_parse_error(const std::string &file, const int line_nr, const std::strin
 	     << line << "\"" << std::endl;
 
 	// Indent the message correctly
-	std::vector<std::string> lines = split_string(e.getMessage(), "\n", false);
+	std::vector<std::string> lines = split_string(e.what(), "\n", false);
 	for(std::vector<std::string>::iterator i = lines.begin();
 		i != lines.end();
 		++i)
@@ -80,8 +87,8 @@ portage_parse_error(const std::string &file, const int line_nr, const std::strin
 	std::cerr << std::endl;
 }
 
-// Provide a common look for error-messages for parse-errors in
-// portage.{mask,keywords,..}
+/// Provide a common look for error-messages for parse-errors in
+/// portage.{mask,keywords,..}.
 template<class Iterator>
 inline void
 portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const ExBasic &e)

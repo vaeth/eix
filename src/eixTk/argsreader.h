@@ -1,4 +1,4 @@
-// vim:set noet inoptions= sw=4 ts=4:
+// vim:set noet cinoptions= sw=4 ts=4:
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //

@@ -49,8 +49,7 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 			}
 		}
 		catch(const ExBasic &e) {
-			cerr << "-- Invalid line in " << file << ": \"" << line << "\"" << endl
-			     << "   " << e.getMessage() << endl;
+			portage_parse_error(file, lines.begin(), it, e);
 		}
 	}
 	return true;
