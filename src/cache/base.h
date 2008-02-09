@@ -38,7 +38,7 @@ bool deletePackage(Category &v, const std::string &pkg);
 class BasicCache {
 
 	public:
-		typedef void (*ErrorCallback)(const char *fmt, ...);
+		typedef void (*ErrorCallback)(const std::string &str);
 
 		BasicCache()
 		{ portagesettings = NULL; }

@@ -418,14 +418,11 @@ run_update_eix(int argc, char *argv[])
 }
 
 void
-error_callback(const char *fmt, ...)
+error_callback(const string &str)
 {
 	fputs("\n", stdout);
-	va_list ap;
-	va_start(ap, fmt);
-	vfprintf(stderr, fmt, ap);
-	va_end(ap);
-	fputs("\n", stderr);
+	fputs(str.c_str(), stdout);
+	fputs("\n", stdout);
 	INFO("     Reading    %%");
 }
 
@@ -506,7 +503,8 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	/* And write database back to disk .. */
 	FILE *database_stream = fopen(outputfile, "wb");
 	if (!database_stream) {
-		throw ExBasic().format("Can't open the database file %s for writing (mode = 'wb')", outputfile);
+		throw ExBasic().format(string("Can't open the database file ") +
+			outputfile + " for writing (mode = 'wb')");
 	}
 	if(will_modify)
 		Permissions::set_db(database_stream);

@@ -96,7 +96,7 @@ void EbuildCache::delete_cachefile()
 	if(!cachefile)
 		return;
 	if(unlink(cachefile->c_str())<0)
-		m_error_callback("Can't unlink %s", cachefile->c_str());
+		m_error_callback(string("Can't unlink ") + *cachefile);
 	cachefile = NULL;
 	remove_handler();
 }
@@ -180,7 +180,8 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 		/* Restore the old value */
 		*dotptr = '.';
 		if(ver == NULL) {
-			m_error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
+			m_error_callback(string("Can't split filename of ebuild ") +
+				*directory_path + "/" + list[i]->d_name);
 			continue;
 		}
 
@@ -192,7 +193,7 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 		string full_path = *directory_path + '/' + list[i]->d_name;
 		if(!make_cachefile(full_path.c_str(), *directory_path, *pkg, *version))
 		{
-			m_error_callback("Could not properly execute %s", full_path.c_str());
+			m_error_callback(string("Could not properly execute ") + full_path);
 			continue;
 		}
 

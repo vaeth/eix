@@ -54,13 +54,14 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	string category = ARGV(1);
 	if(argc <= 17) {
 		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback("Dataset for %s is too small", category.c_str());
+		THIS->m_error_callback(string("Dataset for ") + category + " is too small");
 		return 0;
 	}
 	string::size_type pos = category.find_first_of('/');
 	if(pos == string::npos) {
 		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback("'%s' not of the form package/category-version", category.c_str());
+		THIS->m_error_callback(string("'") + category +
+			"' not of the form package/category-version");
 		return 0;
 	}
 	string name_ver = category.substr(pos + 1);
@@ -81,7 +82,8 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	char **aux = ExplodeAtom::split(name_ver.c_str());
 	if(aux == NULL)
 	{
-		THIS->m_error_callback("Can't split '%s' into package and version.", name_ver.c_str());
+		THIS->m_error_callback("Can't split '" + name_ver +
+			" into package and version");
 		return 0;
 	}
 	/* Search for existing package */
@@ -140,8 +142,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 	if(rc)
 	{
 		sqlite3_close(db);
-		m_error_callback("Can't open cache file %s",
-			sqlitefile.c_str());
+		m_error_callback(string("Can't open cache file ") + sqlitefile);
 		return false;
 	}
 	if(pkgtree)
@@ -156,7 +157,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 		pkgtree->finish_fast_access();
 	if(rc != SQLITE_OK) {
 		sqlite_callback_error = true;
-		m_error_callback("sqlite error: %s", errormessage);
+		m_error_callback(string("sqlite error: ") + errormessage);
 	}
 	return !sqlite_callback_error;
 }
@@ -171,7 +172,7 @@ bool SqliteCache::readCategories(PackageTree *packagetree, vector<string> *categ
 	UNUSED(category);
 	UNUSED(categories);
 	m_error_callback("Cache method sqlite is not compiled in.\n"
-	"Recompile eix, using configure option --with-sqlite to add sqlite support.");
+	"Recompile eix, using configure option --with-sqlite to add sqlite support");
 	return false;
 }
 

@@ -24,8 +24,8 @@ bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::
 		is.ignore(numeric_limits<int>::max(), '\n');
 		if(is.fail())
 		{
-			error_callback("Can't read cache file %s: %s",
-					filename.c_str(), strerror(errno));
+			error_callback(string("Can't read cache file ") +
+				filename + ": " + strerror(errno));
 			return false;
 		}
 	}
@@ -36,7 +36,7 @@ bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::
 #define open_skipping(nr, is, filename, error_callback) \
 	ifstream is(filename); \
 	if(!is.is_open()) \
-		error_callback("Can't open %s: %s", (filename), strerror(errno)); \
+		error_callback(string("Can't open ") + (filename) + ": " + strerror(errno)); \
 	skip_lines(nr, is, (filename), error_callback);
 
 

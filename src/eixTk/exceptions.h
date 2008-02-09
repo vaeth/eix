@@ -19,8 +19,7 @@
 #include <eixTk/stringutils.h>
 
 /// Simple exception class with printf-like formating.
-class ExBasic 
-: public std::exception
+class ExBasic : public std::exception
 {
 	public:
 		/// Set name of function where exception is constructed.
@@ -31,21 +30,9 @@ class ExBasic
 		virtual ~ExBasic() throw() { }
 
 		/// Set the actual exception string.
-		ExBasic& format(const std::string &str) 
+		ExBasic& format(const std::string &str)
 		{
-			m_msg = str; 
-			return *this;
-		}
-
-		/// Set a printf-like formated exception string.
-		ExBasic& format(const char *fmt, ...) 
-		{
-			va_list ap;
-			va_start(ap, fmt);
-			char buf[1025];
-			vsnprintf(buf, 1024, fmt, ap);
-			va_end(ap);
-			m_msg  = buf;
+			m_msg = str;
 			return *this;
 		}
 

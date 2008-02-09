@@ -54,9 +54,8 @@ backport_get_keywords_slot_iuse_restrict(const string &filename, string &keyword
 
 	if( get_map_from_cache(filename.c_str(), cf) < 0 )
 	{
-		error_callback("Can't read cache file %s: %s",
-				filename.c_str(),
-				strerror(errno));
+		error_callback(string("Can't read cache file ") + filename
+			+ ": " + strerror(errno));
 		return;
 	}
 	keywords = cf["KEYWORDS"];
@@ -73,8 +72,8 @@ backport_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback
 
 	if( get_map_from_cache(filename, cf) < 0 )
 	{
-		error_callback("Can't read cache file %s: %s",
-				filename, strerror(errno));
+		error_callback(string("Can't read cache file ") + filename
+			+ ": " + strerror(errno));
 		return;
 	}
 
@@ -107,7 +106,8 @@ bool Port2_1_0_Cache::readCategory(Category &vec) throw(ExBasic)
 		aux = ExplodeAtom::split(dents[i]->d_name);
 		if(aux == NULL)
 		{
-			m_error_callback("Can't split '%s' into package and version.", dents[i]->d_name);
+			m_error_callback(string("Can't split '") +
+				dents[i]->d_name + "' into package and version");
 			++i;
 			continue;
 		}
@@ -149,7 +149,8 @@ bool Port2_1_0_Cache::readCategory(Category &vec) throw(ExBasic)
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(dents[i]->d_name);
 			if(!aux) {
-				m_error_callback("Can't split %s into package and version.", dents[i]->d_name);
+				m_error_callback(string("Can't split '") +
+					dents[i]->d_name + "' into package and version");
 				break;
 			}
 		} while(strcmp(aux[0], pkg->name.c_str()) == 0);

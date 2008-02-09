@@ -80,7 +80,8 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 		return false;
 	string::size_type pos = catstring.find_first_of('/');
 	if(pos == string::npos) {
-		m_error_callback("'%s' not of the form package/catstring-version", catstring.c_str());
+		m_error_callback(string("'") + catstring +
+			"' not of the form package/catstring-version");
 		return false;
 	}
 	string name_ver = catstring.substr(pos + 1);
@@ -101,7 +102,8 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	char **aux = ExplodeAtom::split(name_ver.c_str());
 	if(aux == NULL)
 	{
-		m_error_callback("Can't split '%s' into package and version.", name_ver.c_str());
+		m_error_callback(string("Can't split '") +
+			name_ver + "' into package and version");
 		return false;
 	}
 	/* Search for existing package */
@@ -143,8 +145,7 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 	MapFile picklefile(filename.c_str());
 	if( ! picklefile.isReady(&data, &end) )
 	{
-		m_error_callback("Can't read cache file %s",
-				filename.c_str());
+		m_error_callback(string("Can't read cache file ") + filename);
 		return true;
 	}
 	if(category)

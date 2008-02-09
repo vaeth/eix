@@ -505,9 +505,9 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 			case IF:       state = state_IF(); break;
 			case ELSE:     state = state_ELSE(); break;
 			case FI:       state = state_FI(); break;
-			case ERROR:    throw ExBasic().format("Bad state: ERROR.");
-			case STOP:     throw ExBasic().format("Bad state: STOP.");
-			default:       throw ExBasic().format("Bad state: undefined.");
+			case ERROR:    throw ExBasic().format("Bad state: ERROR");
+			case STOP:     throw ExBasic().format("Bad state: STOP");
+			default:       throw ExBasic().format("Bad state: undefined");
 		}
 	}
 	/* Check if the machine went into ERROR-state. */
@@ -519,9 +519,10 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 		}
 		int line = 0, column = 0;
 		getPosition(&line, &column);
-		throw ExBasic().format("Line %i, column %i: %s",
-				line, column,
-				last_error.size() > 0 ? last_error.c_str() : "Check your syntax!");
+		ostringstream ss;
+		ss << "Line " << line <<  ", column " << column << ": " <<
+			(last_error.empty() ? "Check your syntax" : last_error);
+		throw ExBasic().format(ss.str());
 	}
 	/* Pop elements and form a single linked list. */
 	Node *p = NULL, *q = NULL;

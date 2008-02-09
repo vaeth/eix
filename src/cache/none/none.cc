@@ -47,7 +47,8 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 		/* Restore the old value */
 		*dotptr = '.';
 		if(ver == NULL) {
-			m_error_callback("Can't split filename of ebuild %s/%s.", directory_path->c_str(), list[i]->d_name);
+			m_error_callback(string("Can't split filename of ebuild ") +
+				*directory_path + "/" + list[i]->d_name);
 			continue;
 		}
 		string ebuild_name = (*directory_path) + '/' + list[i]->d_name;

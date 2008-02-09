@@ -415,7 +415,7 @@ bool VarsReader::read(const char *filename)
 	}
 	filebuffer = static_cast<char *>(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 	if (filebuffer == MAP_FAILED) {
-		throw ExBasic().format("Can't map file %s.", filename);
+		throw ExBasic().format(string("Can't map file ") + filename);
 	}
 	filebuffer_end = filebuffer + st.st_size;
 	close(fd);
@@ -461,7 +461,7 @@ bool VarsReader::source(const string &filename)
 	static int depth=0;
 	++depth;
 	if (depth == 100) {
-	  throw ExBasic().format("Nesting level too deep when reading %s", filename.c_str());
+		throw ExBasic().format(string("Nesting level too deep when reading ") + filename);
 	}
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);

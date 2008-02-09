@@ -130,7 +130,8 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 	FILE *fp = fopen(file, "rb");
 
 	if(fp == NULL) {
-		throw ExBasic().format("Can't open the database file %s for reading (mode = 'rb')\n", file);
+		throw ExBasic().format(string("Can't open the database file ")
+			+ file + " for reading (mode = 'rb')");
 	}
 
 	io::read_header(fp, *header);

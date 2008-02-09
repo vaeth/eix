@@ -9,6 +9,7 @@
 
 #include "unpickle.h"
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -289,9 +290,14 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 				continue;
 			default:
 				finish();
-				throw ExBasic().format("Unsupported pickle value %x (%c)", int(unsigned_char(curr)), curr);
-				// prev = curr;
-				return;
+				{
+					ostringstream ss;
+					ss << "Unsopported pickle value " <<
+						uint(curr);
+					throw ExBasic().format(ss.str());
+					// prev = curr;
+					return;
+				}
 		}
 		if(prev == STRING)
 			unpickle_check_dict(waiting_for_value, unpickled, buf, key);
