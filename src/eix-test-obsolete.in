@@ -7,8 +7,8 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
-Eix () {
-	if [ -z "$(eix '-*Tc' | head -n1)" ]; then
+Eix() {
+	if [ -z "`eix '-*Tc' | head -n1`" ]; then
 		[ -z "${1}" ] || echo "${1} (or test switched off)."
 		return
 	fi
@@ -19,7 +19,7 @@ ${2}:
 	echo
 }
 
-NoKeywords () { export \
+NoKeywords() { export \
 	REDUNDANT_IF_DOUBLE=false \
 	REDUNDANT_IF_MIXED=false \
 	REDUNDANT_IF_WEAKER=false \
@@ -28,25 +28,25 @@ NoKeywords () { export \
 	REDUNDANT_IF_MINUSASTERISK=false
 }
 
-NoMask () { export \
+NoMask() { export \
 	REDUNDANT_IF_MASK_NO_CHANGE=false \
 	REDUNDANT_IF_MASK_DOUBLE=false
 }
 
-NoUnmask () { export \
+NoUnmask() { export \
 	REDUNDANT_IF_UNMASK_NO_CHANGE=false \
 	REDUNDANT_IF_UNMASK_DOUBLE=false
 }
 
-NoUse () { export \
+NoUse() { export \
 	REDUNDANT_IF_DOUBLE_USE=false
 }
 
-NoCflags () { export \
+NoCflags() { export \
 	REDUNDANT_IF_DOUBLE_CFLAGS=false
 }
 
-NoUninstalled () { export \
+NoUninstalled() { export \
 	REDUNDANT_IF_IN_KEYWORDS=false \
 	REDUNDANT_IF_IN_MASK=false \
 	REDUNDANT_IF_IN_UNMASK=false \
@@ -54,21 +54,22 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
-Repository () {
-	local I J C
+Repository() {
+	local I J C A
 	if ${1}; then
 		I='with'
 	else
 		I='without'
 	fi
 	echo "The following package versions are installed ${I} repository information:"
-	if ! cd "$(eix --print EPREFIX_INSTALLED)"/var/db/pkg >/dev/null 2>&1
+	if ! cd -- "`eix --print EPREFIX_INSTALLED`"/var/db/pkg >/dev/null 2>&1
 	then
 		echo "${0##*/}: cannot locate your database of installed packages" >&2
 		exit 1
 	fi
 	echo
 	C=0
+	[ "$(( 0 + 1 ))" = 1 ] && A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
 	for I in *; do
 		for J in "${I}"/*; do
 			if test -e "${J}/repository"; then
@@ -77,7 +78,7 @@ Repository () {
 				${1} && continue
 			fi
 			echo "${J}"
-			C=$(( ${C} + 1 ))
+			eval "C=${A}"
 		done
 	done
 	if test ${C} -eq 0; then
@@ -89,7 +90,7 @@ Repository () {
 	exit 0
 }
 
-COMMON="$(eix --print PORTAGE_CONFIGROOT)"
+COMMON="`eix --print PORTAGE_CONFIGROOT`"
 COMMON="${COMMON}/etc/portage/package."
 
 if [ ${#} -gt 0 ]; then

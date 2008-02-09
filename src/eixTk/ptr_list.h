@@ -41,9 +41,6 @@ namespace eix {
 
 			typename base_iterator::reference operator->()
 			{ return *base_iterator::operator->(); }
-
-			const typename base_iterator::reference operator->() const
-			{ return *base_iterator::operator->(); }
 	};
 
 	/// A list that only stores pointers to type.

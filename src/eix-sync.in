@@ -11,10 +11,10 @@
 
 . update-eix-functions.sh.in
 
-LOCAL_VARCACHE="$(update-eix --print EPREFIX_PORTAGE_CACHE)"
-EIXCACHE="$(update-eix --print EIX_CACHEFILE)"
+LOCAL_VARCACHE="`update-eix --print EPREFIX_PORTAGE_CACHE`"
+EIXCACHE="`update-eix --print EIX_CACHEFILE`"
 EIXPREVIOUS="${EIXCACHE}.previous"
-LOCAL_PORTAGE_CONFIGROOT="$(update-eix --print PORTAGE_CONFIGROOT)"
+LOCAL_PORTAGE_CONFIGROOT="`update-eix --print PORTAGE_CONFIGROOT`"
 LAYMANCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
 LOGFILE="${LOCAL_EPREFIX_PORTAGE_EXEC}/var/log/eix-sync.log"
 PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
@@ -246,7 +246,7 @@ SED2="[[:space:]]*=[[:space:]]*\([^[:space:]]*\)[[:space:]]*\$!\1!p"
 SedFor() {
 	local A=''
 	test -e "${2}" && \
-		A="$(sed -n -e "${SED1}${1}${SED2}" -- "${2}" | tail -n 1)"
+		A=`sed -n -e "${SED1}${1}${SED2}" -- "${2}" | tail -n 1`
 	A="${A%\"}"
 	A="${A#\"}"
 	A="${A%'}"
@@ -265,14 +265,14 @@ DelTemp() {
 MakeTempFile() {
 	local COUNT
 	if command -v mktemp >/dev/null 2>&1; then
-		TMPFILE="$(mktemp /tmp/${0##*/}.XXXXXX)" || \
+		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX)"` || \
 			die "cannot create temporary file"
 	else
 		COUNT=0
 		while true; do
 			[ ${COUNT} -eq 9999 ] && \
 				die "found no free tempname after 10000 attempts"
-			COUNT=$(( ${COUNT} + 1 ))
+			COUNT="`expr ${COUNT} + 1`"
 			TMPFILE="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
 			test -e "${TMPFILE}" && continue
 			: >"${TMPFILE}" || die "cannot create temporary file ${TMPFILE}"
@@ -284,7 +284,6 @@ MakeTempFile() {
 
 PREPRSYNC=false
 PrepRsync() {
-	local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS
 	GetPortdir
 	HOSTDIR="${1#*:}"
 	if [ -n "${HOSTDIR}" ] && [ "${HOSTDIR}" != "${1}" ]; then
@@ -294,12 +293,14 @@ PrepRsync() {
 	fi
 	HOSTDIR="${HOSTDIR%/}/"
 	${PREPRSYNC} && return
-	PORTAGE_RSYNC_OPTS="$(portageq envvar PORTAGE_RSYNC_OPTS)"
-	PORTAGE_RSYNC_EXTRA_OPTS="$(portageq envvar PORTAGE_RSYNC_EXTRA_OPTS)"
+	local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS C
+	PORTAGE_RSYNC_OPTS="`portageq envvar PORTAGE_RSYNC_OPTS`"
+	PORTAGE_RSYNC_EXTRA_OPTS="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
 	eval "set -- ${BEFORE_RSYNC}"
 	for CURRENT_COMMAND; do
-		eval "$(eval "${CURRENT_COMMAND}")" || \
-			die "${CURRENT_COMMAND} or its evaluation failed"
+		C=`eval "${CURRENT_COMMAND}"` || \
+			die "${CURRENT_COMMAND} failed"
+		eval "${C}"
 	done
 	RSYNC_OPTS="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
 	PREPRSYNC=true
@@ -343,7 +344,8 @@ TESTRESULT=''
 CallEmergeMetadata() {
 	${DOUPDATE} && ${METADATA} || return 0
 	if [ -z "${TESTRESULT}" ]; then
-		if [ "$(SedFor 'portdbapi.auxdbmodule' "${PMOD}")" = "${MODULENAME}" ]
+		local S=`SedFor 'portdbapi.auxdbmodule' "${PMOD}"`
+		if [ "${S}" = "${MODULENAME}" ]
 		then
 			TESTRESULT='false'
 		else
@@ -429,7 +431,7 @@ MainSync() {
 	UpdateDiff
 }
 
-[ -n "${UID}" ] || UID="$(id -u)"
+[ -n "${UID}" ] || UID="`id -u`"
 if ${TEST_FOR_ROOT} && [ "${UID}" -ne 0 ]; then
 # Emulate everything to check whether we have to be root:
 	EMULATEMODE=true

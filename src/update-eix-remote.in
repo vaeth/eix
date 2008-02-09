@@ -75,7 +75,7 @@ while getopts 'O:vqu:o:?hH' OPTION; do
 		*) Usage 0;;
 	esac
 done
-shift $(( ${OPTIND} - 1 ))
+[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
 NEED_ARG=false
 FILENAME=''
@@ -89,13 +89,13 @@ GetFilename () {
 	[ -n "${FILENAME}" ] || die "Filename argument must be nonempty"
 	case "${FILENAME}" in
 		/*|'~'*) :;;
-		*) FILENAME="$(pwd)/${FILENAME}";;
+		*) FILENAME="`pwd`/${FILENAME}";;
 	esac
 }
 
 CalcSuCmd () {
 	[ -n "${FETCHUSER}" ] || [ "${UID}" -ne 0 ] || FETCHUSER="nobody"
-	SUCMD="$(command -v "${1}")" || \
+	SUCMD=`command -v "${1}"` || \
 		die "${1} cannot be found in $PATH"
 	if [ -z "${FETCHUSER}" ]; then
 		Push -c SUCMD "${@}"
@@ -126,14 +126,14 @@ MakeTempDir () {
 	local COUNT
 	[ -n "${TMPDIR}" ] && return
 	if command -v mktemp >/dev/null 2>&1; then
-		TMPDIR="$(mktemp -d /tmp/${0##*/}.XXXXXX)" || \
+		TMPDIR=`mktemp -d "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary directory"
 	else
 		COUNT=0
 		while true; do
 			[ ${COUNT} -eq 9999 ] && \
 				die "found no free temp after 10000 attempts"
-			COUNT=$(( ${COUNT} + 1 ))
+			COUNT="`expr ${COUNT} + 1`"
 			TMPDIR="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
 			test -e "${TMPDIR}" && continue
 			mkdir "${TMPDIR}" || die "cannot create ${TMPDIR}"
@@ -235,9 +235,9 @@ Update () {
 }
 
 MAIN_COMMAND="${1}"
-[ $# -gt 0 ] && shift
+[ ${#} -gt 0 ] && shift
 
-[ -n "${UID}" ] || UID="$(id -u)"
+[ -n "${UID}" ] || UID="`id -u`"
 
 case "${MAIN_COMMAND}" in
 	update|both)        Update "${@}";;

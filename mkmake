@@ -32,7 +32,7 @@ SQLITE=''
 BZLIB=''
 PEDANTIC=false
 while getopts 'qnepusSbBc?hH' OPTION; do
-case "$OPTION" in
+case "${OPTION}" in
 	q) QUIET='>/dev/null 2>&1';;
 	n) EARLYSTOP=true;;
 	e) KEEPENV=true;;
@@ -46,11 +46,14 @@ case "$OPTION" in
 	*) Usage 1;;
 esac
 done
-shift $(( $OPTIND - 1 ))
+if [ ${OPTIND} -gt 1 ]; then
+	[ "$(( 0 + 1 ))" = 1 ] && shift "$(( ${OPTIND} - 1 ))" || \
+		shift "`expr ${OPTIND} - 1`"
+fi
 
 if ! ${KEEPENV}; then
-	MARCH=$(sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
-		/etc/make.conf)
+	MARCH="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
+		/etc/make.conf`"
 	export CXXFLAGS CFLAGS LDFLAGS
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
 	CFLAGS="-march=${MARCH} -O2 -pipe"
@@ -85,10 +88,10 @@ if ! test -e Makefile; then
 	eval ./configure ${SQLITE} ${BZLIB} ${QUIET} || die "configure failed"
 fi
 ${EARLYSTOP} && exec make config.h
-echo "Making $@..."
+echo "Making ${*}..."
 type make >/dev/null 2>&1 || die "cannot find make"
 if [ -n "${QUIET}" ]; then
-	exec make "$@" >/dev/null 2>&1
+	exec make "${@}" >/dev/null 2>&1
 else
-	exec make "$@"
+	exec make "${@}"
 fi

@@ -10,7 +10,7 @@
 # It contains helper functions for update-eix-remote, update-eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
-LOCAL_EPREFIX_PORTAGE_EXEC="$(update-eix --print EPREFIX_PORTAGE_EXEC)"
+LOCAL_EPREFIX_PORTAGE_EXEC="`update-eix --print EPREFIX_PORTAGE_EXEC`"
 
 if test -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"; then
 	. "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"
@@ -30,12 +30,12 @@ die () {
 LOCAL_PORTDIR=''
 GetPortdir () {
 	[ -n "${LOCAL_PORTDIR}" ] && return
-	LOCAL_PORTDIR="$(update-eix --print PORTDIR)"
+	LOCAL_PORTDIR="`update-eix --print PORTDIR`"
 }
 
 VERBOSE=true
 
-RunCommand () {
+RunCommand() {
 	local RET
 	if ${VERBOSE}; then
 		einfo "${1}"
@@ -49,6 +49,11 @@ RunCommand () {
 	RET=${?}
 	eend ${RET} "Problems running ${@}"
 	return ${RET}
+}
+
+[ "$(( 0 + 1 ))" = 1 ] && \
+expr() {
+	echo "$(( ${1} ${2} ${3} ))"
 }
 
 # Usage: Replace [-g] VAR Search Replace
@@ -72,7 +77,7 @@ Replace() {
 			return 1
 		fi
 		[ \${ReplaceC_} -ge 127 ] || \
-			ReplaceC_=\$(( \${ReplaceC_} + 1 ))
+			ReplaceC_=\"\`expr \${ReplaceC_} + 1\`\"
 	done
 	${1}=\"\${ReplaceA_}\${${1}}\""
 	return ${ReplaceC_}
@@ -145,7 +150,7 @@ AddLocalMethods() {
 	local I
 	GetPortdir
 	AddMethod "${LOCAL_PORTDIR}" "eix"
-	for I in $(portageq portdir_overlay) $ADD_OVERLAY
+	for I in `portageq portdir_overlay` $ADD_OVERLAY
 	do
 		AddMethod "${I}" "eix::${I}"
 	done
@@ -160,7 +165,7 @@ AddLocalMethods() {
 
 HAVE_READLINK=false
 command -v readlink >/dev/null 2>&1 && HAVE_READLINK=true
-NormalizeNames () {
+NormalizeNames() {
 	local NormA_ NormB_ NormC_ NormD_=0
 	RELATIVE=''
 	for NormC_; do
@@ -174,8 +179,8 @@ NormalizeNames () {
 			*) RELATIVE="${RELATIVE} ${NormC_}";;
 		esac
 		if ${HAVE_READLINK}; then
-			# Append A to avoid loss of trailing \n in $(...)
-			NormB_="$(readlink -f -- "${NormA_}" && echo -n A)" &&
+			# Append A to avoid loss of trailing \n in `...`
+			NormB_=`readlink -f -- "${NormA_}" && echo -n A` &&
 				NormB="${NormB%A}" && NormB="${NormB%"
 "}" &&
 				[ -n "${NormB_}" ] && \

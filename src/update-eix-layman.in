@@ -56,7 +56,7 @@ while getopts 'vqa:A:C?hH' OPTION; do
 		*) Usage 0;;
 	esac
 done
-shift $(( ${OPTIND} - 1 ))
+[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
 GetOverlays () {
 	local I
@@ -65,8 +65,8 @@ GetOverlays () {
 		[ -n "${I}" ] || continue
 		test -r "${I}" || die "cannot read ${I}"
 		Push LAYMAN_OVERLAYS \
-			$(PORTDIR_OVERLAY=''; . "${I}"; \
-				echo "${PORTDIR_OVERLAY}")
+			`PORTDIR_OVERLAY=''; . "${I}"; \
+				echo "${PORTDIR_OVERLAY}"`
 	done
 }
 
@@ -89,7 +89,7 @@ Remove () {
 }
 
 MAIN_COMMAND="${1}"
-[ $# -gt 0 ] && shift
+[ ${#} -gt 0 ] && shift
 
 case "${MAIN_COMMAND}" in
 	add*)               Add "${@}";;

@@ -15,7 +15,7 @@ die() {
 	exit ${2:-1}
 }
 
-ver=$(grep AC_INIT configure.in | awk '{ print $2 }')
+ver="`grep AC_INIT configure.in | awk '{ print $2 }'`"
 ver=${ver%%,*}
 
 ans=''
@@ -32,5 +32,6 @@ while [ -z "${ans}" ]; do
 done
 echo "Creating release tag... "
 
-svn copy ${svnroot}/trunk ${svnroot}/tags/release-${ver} \
-	-m "Tagging the ${ver} release of the ${proj} project" >/dev/null || die "svn copy failed"
+svn copy "${svnroot}/trunk ${svnroot}/tags/release-${ver}" \
+	-m "Tagging the ${ver} release of the ${proj} project" >/dev/null || \
+		die "svn copy failed"
