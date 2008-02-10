@@ -69,7 +69,8 @@ Repository() {
 	fi
 	echo
 	C=0
-	[ "$(( 0 + 1 ))" = 1 ] && A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
+	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 \
+		&& A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
 	for I in *; do
 		for J in "${I}"/*; do
 			if test -e "${J}/repository"; then

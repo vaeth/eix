@@ -57,6 +57,11 @@ unfortunately slows things down dramatically.
 If B<eix-test-obsolete> is called with any other argument, it will use
 this setting for all its tests; if called without arguments,
 B<eix-test-obsolete> will not modify B<CHECK_INSTALLED_OVERLAYS>.
+Note that the results of B<eix-test-obsolete> depend on setting of the
+B<REDUNDANT_IF_*> and B<NONEXISTENT_IF_*> variables.
+The defaults of these variables are set such that - if in doubt - the package is output.
+An exception of this rule is B<REDUNDANT_IF_MIXED> whose default was
+changed in eix-0.10.4 because the previous default has confused some people.
 
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.

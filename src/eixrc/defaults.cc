@@ -1376,11 +1376,7 @@ eixrc.addDefault(
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "NONEXISTENT_IF_OTHER_OVERLAY",
-#if defined(USE_BZLIB)
 			"true",
-#else
-			"false",
-#endif
 			"Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
 			"if they come from a different overlay than the installed version.")
 		);
@@ -1412,7 +1408,7 @@ eixrc.addDefault(
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "REDUNDANT_IF_MIXED",
-			"some",
+			"false",
 			"Applies if /etc/portage/package.keywords lists two different keywords,\n"
 			"e.g. ~ARCH and -*, for the versions in question.")
 		);

@@ -126,7 +126,7 @@ class FormatParser {
 		}
 };
 
-class MarkedList : std::multimap<std::string, BasicVersion*>
+class MarkedList : public std::multimap<std::string, BasicVersion*>
 {
 	public:
 		MarkedList() {}

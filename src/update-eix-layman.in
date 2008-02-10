@@ -13,7 +13,7 @@
 . update-eix-functions.sh.in
 
 Usage() {
-	local I R="${1}"
+	local I R="${1:-1}"
 	echo "Usage: ${0##*/} [options] command
 Add or remove local layman overlays to eix database (@PACKAGE_STRING@)
 The following commands are provided:
@@ -37,7 +37,7 @@ Options:
 	exit ${R}
 }
 
-ClearLayman () {
+ClearLayman() {
 	LAYMAN_MAKE=''
 }
 
@@ -58,7 +58,7 @@ while getopts 'vqa:A:C?hH' OPTION; do
 done
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
-GetOverlays () {
+GetOverlays() {
 	local I
 	eval "set -- ${A}"
 	for I; do
@@ -70,19 +70,19 @@ GetOverlays () {
 	done
 }
 
-Init () {
+Init() {
 	ClearUpdateEixArgs
 	GetOverlays
 	AddLocalMethods
 }
 
-Add () {
+Add() {
 	Init
 	eval "AddOverlays ${LAYMAN_OVERLAYS}"
 	CallUpdateEix
 }
 
-Remove () {
+Remove() {
 	Init
 	eval "AddExcludes ${LAYMAN_OVERLAYS}"
 	CallUpdateEix
@@ -94,7 +94,7 @@ MAIN_COMMAND="${1}"
 case "${MAIN_COMMAND}" in
 	add*)               Add "${@}";;
 	rem*|del*|rm*|sub*) Remove "${@}";;
-	*)                  Usage 1;;
+	*)                  Usage;;
 esac
 
 exit 0

@@ -21,14 +21,14 @@ else
 	exit 2
 fi
 
-die () {
+die() {
 	eerror "${*}"
 	EXITCODE=2
 	exit "${EXITCODE}"
 }
 
 LOCAL_PORTDIR=''
-GetPortdir () {
+GetPortdir() {
 	[ -n "${LOCAL_PORTDIR}" ] && return
 	LOCAL_PORTDIR="`update-eix --print PORTDIR`"
 }
@@ -51,10 +51,10 @@ RunCommand() {
 	return ${RET}
 }
 
-[ "$(( 0 + 1 ))" = 1 ] && \
+( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && eval '
 expr() {
 	echo "$(( ${1} ${2} ${3} ))"
-}
+}'
 
 # Usage: Replace [-g] VAR Search Replace
 # Search and Replace will be evaluated between " ", so quote correspondingly!
@@ -136,7 +136,7 @@ AddExcludes() {
 	done
 }
 
-ClearUpdateEixArgs () {
+ClearUpdateEixArgs() {
 	UPDATE_EIX_ARGS=''
 }
 

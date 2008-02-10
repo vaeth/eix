@@ -69,7 +69,7 @@ The following options are available:
 -R   Do not really recreate the dep-cache.
 -e   Skip heuristic tests whether you must be root.
 -h   Show this text and exit."
-	EXITCODE=${1}
+	EXITCODE=${1:-1}
 	exit ${1}
 }
 
@@ -171,7 +171,7 @@ while getopts "ids:2:Uul@SmMtvVqwWc:C:rRe?hH" OPTION \
 		r) CLEARCACHE=true;;
 		R) CLEARCACHE=false;;
 		e) TEST_FOR_ROOT=false;;
-		*) Usage 1;;
+		*) Usage 0;;
 	esac
 done
 ${DOUPDATE} || CLEARCACHE=false

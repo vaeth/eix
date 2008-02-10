@@ -13,14 +13,14 @@
 [ -n "${OVERLAYPARENT}" ] || OVERLAYPARENT="/usr/portage/local"
 EIXCACHESNAME="eix-caches.tbz2"
 
-Sanitize () {
+Sanitize() {
 	READLINK='' NormalizeNames OVERLAYPARENT \
 		|| die '$OVERLAYPARENT must not be empty'
 	[ -z "${RELATIVE}" ] || die '$OVERLAYPARENT must start with /'
 }
 Sanitize
 
-Usage () {
+Usage() {
 	echo "Usage: ${0##*/} [options] command [FILE]
 Handle some remote updates for @PACKAGE_STRING@
 The following commands are provided:
@@ -57,8 +57,8 @@ Options:
 	-o PATH Use PATH as \$OVERLAYPARENT
 	-v      Verbose (default)
 	-q      Quiet"
-	EXITCODE=${1}
-	exit "${EXITCODE}"
+	EXITCODE=${1:-1}
+	exit ${EXITCODE}
 }
 
 OVERLAYNR='*'
@@ -79,8 +79,8 @@ done
 
 NEED_ARG=false
 FILENAME=''
-GetFilename () {
-	[ ${#} -gt 1 ] && Usage 1
+GetFilename() {
+	[ ${#} -gt 1 ] && Usage
 	if [ ${#} -lt 1 ]; then
 		${NEED_ARG} && die "Filename argument is mandatory"
 		return
@@ -93,7 +93,7 @@ GetFilename () {
 	esac
 }
 
-CalcSuCmd () {
+CalcSuCmd() {
 	[ -n "${FETCHUSER}" ] || [ "${UID}" -ne 0 ] || FETCHUSER="nobody"
 	SUCMD=`command -v "${1}"` || \
 		die "${1} cannot be found in $PATH"
@@ -107,13 +107,13 @@ CalcSuCmd () {
 	Push -c SUCMD '/bin/su' '-c' "eval exec ${SUCMD}" "${FETCHUSER}"
 }
 
-CdDir () {
+CdDir() {
 	cd -- "${1}" >/dev/null || die "cannot cd to ${1}"
 }
 
 TMPDIR=''
 EXITCODE=0
-Cleanup () {
+Cleanup() {
 	cd / >/dev/null
 	if [ -n "${TMPDIR}" ]; then
 		test -d "${TMPDIR}" && rm -rf -- "${TMPDIR}"
@@ -122,7 +122,7 @@ Cleanup () {
 	trap - EXIT HUP INT TERM
 	exit "${EXITCODE}"
 }
-MakeTempDir () {
+MakeTempDir() {
 	local COUNT
 	[ -n "${TMPDIR}" ] && return
 	if command -v mktemp >/dev/null 2>&1; then
@@ -146,7 +146,7 @@ MakeTempDir () {
 }
 
 TMPSUB=''
-MakeTempSub () {
+MakeTempSub() {
 	if [ -z "${TMPSUB}" ]; then
 		MakeTempDir
 		TMPSUB="${TMPDIR}/1"
@@ -156,7 +156,7 @@ MakeTempSub () {
 }
 
 TMPFILE=''
-FetchTemp () {
+FetchTemp() {
 	local SOURCE="http://dev.gentooexperimental.org/eix_cache"
 	SOURCE="${SOURCE}/${EIXCACHESNAME}"
 	MakeTempDir cd
@@ -168,7 +168,7 @@ FetchTemp () {
 		die "could not fetch ${SOURCE}"
 }
 
-AddArchive () {
+AddArchive() {
 	local I NAME VIRTUAL OVERLAYARG
 	RunCommand "Unpacking data" tar xjf "${1}" || die "cannot unpack ${1}"
 	ClearUpdateEixArgs
@@ -197,7 +197,7 @@ AddArchive () {
 	CallUpdateEix
 }
 
-FetchCopy () {
+FetchCopy() {
 	GetFilename "${@}"
 	FetchTemp
 	[ -z "${FILENAME}" ] && return
@@ -208,12 +208,12 @@ FetchCopy () {
 	[ "${UID}" -eq 0 ] && chown -- portage:portage "${FILENAME}"
 }
 
-Fetch () {
+Fetch() {
 	NEED_ARG=true
 	FetchCopy "${@}"
 }
 
-Add () {
+Add() {
 	NEED_ARG=true
 	GetFilename "${@}"
 	test -r "${FILENAME}" || die "cannot read ${FILENAME}"
@@ -221,14 +221,14 @@ Add () {
 	AddArchive "${FILENAME}" "${TMPDIR}"
 }
 
-Remove () {
+Remove() {
 	ClearUpdateEixArgs
 	AddLocalMethods
 	export KEEP_VIRTUALS=false
 	CallUpdateEix
 }
 
-Update () {
+Update() {
 	FetchCopy "${@}"
 	MakeTempSub cd
 	AddArchive "${TMPFILE}" "${TMPSUB}"
@@ -244,7 +244,7 @@ case "${MAIN_COMMAND}" in
 	fetch*|get|wget)    Fetch "${@}";;
 	add*)               Add "${@}";;
 	rem*|del*|rm*|sub*) Remove "${@}";;
-	*)                  Usage 1;;
+	*)                  Usage;;
 esac
 
 exit 0

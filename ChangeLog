@@ -9,6 +9,10 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=209239
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Make REDUNDANT_IF_MIXED=false the default since it confused people:
+	  http://bugs.gentoo.org/show_bug.cgi?id=203067
+	- Make defaults independent of bzlib usage (considering overlays of
+	  installed packages makes always sense in current portage versions).
 	- Finally use POSIX shell throughout, making bash obsolete.
 	- Clean up manpage formatting.
 	- Some compatibility fixes, see
