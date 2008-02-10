@@ -265,7 +265,7 @@ DelTemp() {
 MakeTempFile() {
 	local COUNT
 	if command -v mktemp >/dev/null 2>&1; then
-		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX)"` || \
+		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary file"
 	else
 		COUNT=0
