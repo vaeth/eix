@@ -17,7 +17,6 @@ database/package_reader.cc \
 database/package_reader.h
 
 eixtk_src = \
-eixTk/regexp.h \
 eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
@@ -25,7 +24,9 @@ eixTk/auto_ptr.h \
 eixTk/exceptions.h \
 eixTk/filenames.cc \
 eixTk/filenames.h \
+eixTk/formated.h \
 eixTk/ptr_list.h \
+eixTk/regexp.h \
 eixTk/stringutils.cc \
 eixTk/stringutils.h \
 eixTk/sysutils.cc \

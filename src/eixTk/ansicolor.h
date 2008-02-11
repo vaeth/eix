@@ -177,8 +177,8 @@ class AnsiColor {
 					light = false;
 				}
 				else {
-					throw ExBasic().format(std::string("Invalid brightness value '") +
-						color_name[comma_pos + 1] + "'");
+					throw ExBasic("Invalid brightness value %r") 
+						% color_name[comma_pos + 1];
 				}
 			}
 			comma_pos = color_name.rfind(';');

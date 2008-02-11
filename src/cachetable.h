@@ -46,8 +46,8 @@ class CacheTable
 			BasicCache *cache = get_cache(cache_method);
 			if(cache == NULL)
 			{
-				throw ExBasic().format(std::string("Unknown cache '") +
-					cache_name + "' for directory '" + directory + "'");
+				throw ExBasic("Unknown cache %r for directory %r")
+					% cache_name % directory;
 			}
 
 			cache->setScheme(eprefixcache, eprefixport, eprefixexec, directory);

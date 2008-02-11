@@ -14,8 +14,8 @@
 #include <vector>
 
 #include <cerrno>
-#include <cstdarg>
 
+#include <eixTk/formated.h>
 #include <eixTk/stringutils.h>
 
 /// Simple exception class with printf-like formating.
@@ -23,37 +23,38 @@ class ExBasic : public std::exception
 {
 	public:
 		/// Set name of function where exception is constructed.
-		ExBasic(const char *func)
-			: m_func(func), m_msg()
+		ExBasic(const char *func, const std::string &fmt)
+			: m_func(func), formated(fmt)
 		{ }
 
 		virtual ~ExBasic() throw() { }
 
-		/// Set the actual exception string.
-		ExBasic& format(const std::string &str)
-		{
-			m_msg = str;
-			return *this;
-		}
-
 		/// Return reference to message.
-		const std::string &getMessage() const throw()
-		{ return m_msg; }
+		std::string getMessage() const throw()
+		{ return formated.str(); }
 
 		/// @see std::exception::what()
 		const char *what() const throw()
-		{ return m_msg.c_str(); }
+		{ return formated.str().c_str(); }
+
+		/// Replace placeholder in format string.
+		template<typename T>
+		ExBasic &operator % (const T& t)
+		{
+			formated % t;
+			return *this;
+		}
 
 		friend std::ostream& operator<< (std::ostream& os, const ExBasic& e)
-		{ return os << e.m_func << ": " << e.m_msg; }
+		{ return os << e.m_func << ": " << e.formated.str(); }
 
 	protected:
-		std::string m_func; ///< Function that threw us.
-		std::string m_msg;  ///< The actual message.
+		std::string m_func;   ///< Function that threw us.
+		eix::format formated; ///< Message formating.
 };
 
 /// Automatically fill in the argument for our exceptions.
-#define ExBasic() ExBasic(__PRETTY_FUNCTION__)
+#define ExBasic(s) ExBasic(__PRETTY_FUNCTION__, s)
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.

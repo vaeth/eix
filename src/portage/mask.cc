@@ -69,7 +69,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	{
 		if(*p == '\0')
 		{
-			throw ExBasic().format("Can't read category.");
+			throw ExBasic("Can't read category.");
 		}
 		++p;
 	}
@@ -96,8 +96,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 
 		if((!p) || (end && (p >= end)))
 		{
-			throw ExBasic().format("You have a operator "
-					"but we can't find a version-part.");
+			throw ExBasic("You have a operator but we can't find a version-part.");
 		}
 
 		m_name = string(str, (p - 1) - str);
@@ -111,7 +110,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		if(wildcard && wildcard[1] != '\0')
 		{
 			if(!(end && ((wildcard + 1) == end)))
-				throw ExBasic().format("A '*' is only valid at the end of a version-string.");
+				throw ExBasic("A '*' is only valid at the end of a version-string.");
 		}
 
 		// Only the = operator can have a wildcard-version
@@ -120,14 +119,14 @@ Mask::parseMask(const char *str) throw(ExBasic)
 			// A finer error-reporting
 			if(m_operator != maskOpRevisions)
 			{
-				throw ExBasic().format("A wildcard is only valid with the = operator.");
+				throw ExBasic("A wildcard is only valid with the = operator.");
 			}
 			else
 			{
-				throw ExBasic().format(
-					"A wildcard is only valid with the = operator.\n"
-					"Portage would also accept something like ~app-shells/bash-3*,\n"
-					"but behave just like ~app-shells/bash-3."
+				throw ExBasic(
+						"A wildcard is only valid with the = operator.\n"
+						"Portage would also accept something like ~app-shells/bash-3*,\n"
+						"but behave just like ~app-shells/bash-3."
 					);
 			}
 		}

@@ -74,7 +74,7 @@ bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool
 		{
 			++depth;
 			if (depth == 100)
-				throw ExBasic().format(string("Nesting level too deep in ") + dir);
+				throw ExBasic("Nesting level too deep in %r") % dir;
 			if(! pushback_lines(it->c_str(), v, remove_empty, true, remove_comments))
 				rvalue=false;
 			--depth;

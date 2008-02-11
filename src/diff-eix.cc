@@ -130,8 +130,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 	FILE *fp = fopen(file, "rb");
 
 	if(fp == NULL) {
-		throw ExBasic().format(string("Can't open the database file ")
-			+ file + " for reading (mode = 'rb')");
+		throw ExBasic("Can't open the database file %r for reading (mode = 'rb')") % file;
 	}
 
 	io::read_header(fp, *header);
@@ -300,7 +299,7 @@ run_diff_eix(int argc, char *argv[])
 
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
 		print_help(1);
-		throw(ExBasic().format("Missing cache-file."));
+		throw ExBasic("Missing cache-file.") ;
 	}
 
 	old_file = current_param->m_argument;

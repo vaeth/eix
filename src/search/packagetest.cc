@@ -111,7 +111,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "PROVIDE")       ret = PROVIDE;
 	else if(p == "IUSE")          ret = IUSE;
 	else if(p == "SLOT")          ret = SLOT;
-	else throw ExBasic().format(string("Can't find MatchField called " +p));
+	else throw ExBasic("Can't find MatchField called %r") % p;
 	return ret;
 }
 

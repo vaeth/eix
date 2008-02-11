@@ -85,7 +85,7 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 	 * the correct index with the correct result was set. */
 	if(!(v->have_saved_masks[mi]) || !(v->have_saved_keywords[ki]) ||
 		((v->saved_masks[mi]) != maskflags) || ((v->saved_keywords[ki]) != keyflags))
-		throw ExBasic().format("internal error: SetStability calculates wrong index");
+		throw ExBasic("internal error: SetStability calculates wrong index");
 #endif
 }
 

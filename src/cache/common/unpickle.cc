@@ -9,7 +9,6 @@
 
 #include "unpickle.h"
 #include <iostream>
-#include <sstream>
 
 using namespace std;
 
@@ -164,7 +163,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			if( ! is_finished() && (NEXT == 0x2) )
 				firsttime = false;
 		if(firsttime) {
-			throw ExBasic().format("wrong cpickle header");
+			throw ExBasic("wrong cpickle header");
 			finish();
 			return;
 		}
@@ -291,10 +290,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			default:
 				finish();
 				{
-					ostringstream ss;
-					ss << "Unsopported pickle value " <<
-						uint(curr);
-					throw ExBasic().format(ss.str());
+					throw ExBasic("Unsupported pickle value %r") % uint(curr);
 					// prev = curr;
 					return;
 				}

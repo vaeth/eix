@@ -503,8 +503,8 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	/* And write database back to disk .. */
 	FILE *database_stream = fopen(outputfile, "wb");
 	if (!database_stream) {
-		throw ExBasic().format(string("Can't open the database file ") +
-			outputfile + " for writing (mode = 'wb')");
+		throw ExBasic("Can't open the database file %r for writing (mode = 'wb')")
+				% outputfile;
 	}
 	if(will_modify)
 		Permissions::set_db(database_stream);

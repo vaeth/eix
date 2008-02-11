@@ -174,8 +174,7 @@ CascadingProfile::ReadLink(string &path) const
 	string profile_linkname = (m_portagesettings->m_eprefixconf) + PROFILE_LINK;
 	int len = readlink(profile_linkname.c_str() , readlink_buffer, READLINK_BUFFER - 1);
 	if(len <= 0) {
-		throw ExBasic().format(string("readlink(") +
-			profile_linkname + "failed: " + strerror(errno));
+		throw ExBasic("readlink(%r) failed: %s") % profile_linkname % strerror(errno);
 	}
 	readlink_buffer[len] = '\0';
 

@@ -238,7 +238,7 @@ string parse_colors(const string &colorstring, bool colors)
 		root != NULL; root = root->next)
 	{
 		if(root->type != Node::TEXT)
-			throw ExBasic().format("Internal error: bad node for parse_colors.");
+			throw ExBasic("Internal error: bad node for parse_colors.");
 		ret.append((static_cast<Text*>(root))->text);
 	}
 	return ret;
@@ -491,7 +491,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 	/* Initialize machine */
 	enable_colors = colors;
 	only_colors = parse_only_colors;
-	last_error.clear();
+	last_error = "Check your syntax";
 	state = START;
 	band = fmt;
 	band_position = fmt;
@@ -505,9 +505,9 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 			case IF:       state = state_IF(); break;
 			case ELSE:     state = state_ELSE(); break;
 			case FI:       state = state_FI(); break;
-			case ERROR:    throw ExBasic().format("Bad state: ERROR");
-			case STOP:     throw ExBasic().format("Bad state: STOP");
-			default:       throw ExBasic().format("Bad state: undefined");
+			case ERROR:    throw ExBasic("Bad state: ERROR");
+			case STOP:     throw ExBasic("Bad state: STOP");
+			default:       throw ExBasic("Bad state: undefined");
 		}
 	}
 	/* Check if the machine went into ERROR-state. */
@@ -519,10 +519,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 		}
 		int line = 0, column = 0;
 		getPosition(&line, &column);
-		ostringstream ss;
-		ss << "Line " << line <<  ", column " << column << ": " <<
-			(last_error.empty() ? "Check your syntax" : last_error);
-		throw ExBasic().format(ss.str());
+		throw ExBasic("Line %r, column %r: %s") % line % column % last_error;
 	}
 	/* Pop elements and form a single linked list. */
 	Node *p = NULL, *q = NULL;
