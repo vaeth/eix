@@ -26,6 +26,19 @@ namespace eix
    * - @b s  convert argument to string by using the <<-operator of std::ostream.
    * - @b r  like %s, but if argument is a string type (std::string or char *) it
    *         is enclosed in single quotes.
+   *
+   * Example usage:
+   *
+   * \code
+   *   std::string file("/etc/make.conf"), message("something bad happend");
+   *   std::cout << eix::format("problems while parsing %r -- %s") % file % message << std::endl;
+   *   // problems while parsing "/etc/make.conf" -- something bad happend
+   *
+   *   int line = 10, column = 20;
+   *   std::cout << eix::format("problems while parsing %r in line %r, column %r -- %s") 
+   *           % file % message % line % column << std::endl;
+   *   // problems while parsing "/etc/make.conf" in line 10, column 20 -- something bad happend
+   * \endcode
    */
   class format
   {
@@ -49,6 +62,16 @@ namespace eix
           return *this;
       }
 
+      /// Reset the internal state and use format_string as the new format string.
+      format& reset(const std::string& format_string)
+      {
+          m_spec = 0;
+          m_stream.str("");
+          m_format = format_string;
+          goto_next_spec(); 
+          return *this;
+      }
+
       /// Insert the value for the next placeholder.
       template<typename T>
           format& operator%(const T& s);
@@ -56,7 +79,7 @@ namespace eix
       /// Return the formated string.
       std::string str() const
       {
-          assert(m_format.empty());
+          assert(m_spec == 0);
           return m_stream.str();
       }
 
@@ -72,12 +95,15 @@ namespace eix
       /// Find the next specifiers in the format string.
       void goto_next_spec();
 
+      /// Write string t enclosed in single quotes into stream s.
       std::ostream& write_representation(std::ostream& s, const char *t)
       { return s << "'" << t << "'"; }
 
+      /// Write string t enclosed in single quotes into stream s.
       std::ostream& write_representation(std::ostream& s, const std::string &t)
       { return s << "'" << t << "'"; }
 
+      /// Write t into stream s.
       template<typename T>
           std::ostream& write_representation(std::ostream& s, const T& t)
           { return s << t; }
@@ -95,7 +121,6 @@ namespace eix
       inline format &format::operator%(const T& s)
       {
           assert(m_spec != 0);
-          assert(m_format.empty() != true);
 
           if (m_spec == 'r')
               write_representation(m_stream, s);
