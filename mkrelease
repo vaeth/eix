@@ -32,6 +32,6 @@ while [ -z "${ans}" ]; do
 done
 echo "Creating release tag... "
 
-svn copy "${svnroot}/trunk ${svnroot}/tags/release-${ver}" \
+svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}" \
 	-m "Tagging the ${ver} release of the ${proj} project" >/dev/null || \
 		die "svn copy failed"

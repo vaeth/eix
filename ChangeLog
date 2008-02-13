@@ -1,5 +1,7 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.10.5
+
 *eix-0.10.4
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Add --slot for matching the slot of versions. eix --slot kde-4 will
