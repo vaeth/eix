@@ -18,6 +18,7 @@
 #include <eixTk/auto_ptr.h>
 
 #include <dirent.h>
+#include <iostream>
 
 #include "io.h"
 
@@ -32,7 +33,9 @@ io::read_string(FILE *fp)
 	string::size_type len = io::read<string::size_type>(fp);
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
-	fread(static_cast<void *>(buf.get()), sizeof(char), len, fp);
+	if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
+		cerr << "unexpected end of file" << endl;
+	}
 	return string(buf.get());
 }
 
@@ -41,8 +44,11 @@ void
 io::write_string(FILE *fp, const string &str)
 {
 	io::write<string::size_type>(fp, str.size());
-	if(fp)
-		fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp);
+	if(fp) {
+		if(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size()) {
+			cerr << "write error" << endl;
+		}
+	}
 	else
 		counter += str.size();
 }
