@@ -14,12 +14,11 @@
 #include <portage/packagetree.h>
 #include <eixTk/filenames.h>
 #include <eixTk/stringutils.h>
+#include <eixTk/formated.h>
 #include <portage/conf/portagesettings.h>
 
 #include <config.h>
 #include <string>
-
-#include <sstream>
 
 using namespace std;
 
@@ -86,8 +85,8 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		file = m_prefix + EIX_CACHEFILE;
 	FILE *fp = fopen(file.c_str(), "rb");
 	if(!fp) {
-		m_error_callback(string("Can't read cache file ") +
-			file + ": " + strerror(errno));
+		m_error_callback(eix::format("Can't read cache file %s: %s") %
+			file % strerror(errno));
 		return false;
 	}
 
@@ -96,11 +95,9 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	io::read_header(fp, header);
 	if(!header.isCurrent()) {
 		fclose(fp);
-		ostringstream ss;
-		ss << "Cache file " << file << "uses " <<
-		((header.version > DBHeader::current) ? "newer" : "obsolete") <<
-		"format " << header.version << " (current is " << DBHeader::current << ")";
-		m_error_callback(ss.str());
+		m_error_callback(eix::format("Cache file %s uses %s format %s (current is %s)") %
+			file % ((header.version > DBHeader::current) ? "newer" : "obsolete") %
+			header.version % DBHeader::current);
 		return false;
 	}
 	if(m_only_overlay)
@@ -113,8 +110,8 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALLPATH))
 			{
 				fclose(fp);
-				m_error_callback(string("Cache file ") + file +
-					" does not contain overlay " + m_overlay);
+				m_error_callback(eix::format("Cache file %s does not contain overlay %s") %
+					file % m_overlay);
 				return false;
 			}
 			m_overlay = "";

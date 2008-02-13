@@ -14,6 +14,7 @@
 #include <portage/packagetree.h>
 
 #include <eixTk/stringutils.h>
+#include <eixTk/formated.h>
 
 #include <map>
 #include <fstream>
@@ -106,8 +107,7 @@ bool Port2_1_0_Cache::readCategory(Category &vec) throw(ExBasic)
 		aux = ExplodeAtom::split(dents[i]->d_name);
 		if(aux == NULL)
 		{
-			m_error_callback(string("Can't split '") +
-				dents[i]->d_name + "' into package and version");
+			m_error_callback(eix::format("Can't split %r into package and version") % dents[i]->d_name);
 			++i;
 			continue;
 		}
@@ -149,8 +149,7 @@ bool Port2_1_0_Cache::readCategory(Category &vec) throw(ExBasic)
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(dents[i]->d_name);
 			if(!aux) {
-				m_error_callback(string("Can't split '") +
-					dents[i]->d_name + "' into package and version");
+				m_error_callback(eix::format("Can't split %r into package and version") % dents[i]->d_name);
 				break;
 			}
 		} while(strcmp(aux[0], pkg->name.c_str()) == 0);

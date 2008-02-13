@@ -11,13 +11,13 @@
 
 #include <eixTk/ansicolor.h>
 #include <eixTk/stringutils.h>
+#include <eixTk/formated.h>
 
 #include <portage/conf/portagesettings.h>
 
 #include <iostream>
 #include <cstdlib>
 #include <map>
-#include <sstream>
 
 using namespace std;
 
@@ -142,7 +142,6 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 string
 PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 {
-	string text;
 	string start = "[";
 	string end = "]";
 	bool color = !no_color;
@@ -174,10 +173,7 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 			overlay = number;
 		}
 	}
-	stringstream ss;
-	ss << overlay;
-	ss >> text;
-	return start + text + end;
+	return eix::format("%s%s%s") % start % overlay % end;
 }
 
 bool

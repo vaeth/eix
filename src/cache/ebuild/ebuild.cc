@@ -12,6 +12,7 @@
 #include <cache/common/flat-reader.h>
 
 #include <eixTk/stringutils.h>
+#include <eixTk/formated.h>
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
@@ -96,7 +97,7 @@ void EbuildCache::delete_cachefile()
 	if(!cachefile)
 		return;
 	if(unlink(cachefile->c_str())<0)
-		m_error_callback(string("Can't unlink ") + *cachefile);
+		m_error_callback(eix::format("Can't unlink %s") % (*cachefile));
 	cachefile = NULL;
 	remove_handler();
 }
@@ -180,8 +181,8 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 		/* Restore the old value */
 		*dotptr = '.';
 		if(ver == NULL) {
-			m_error_callback(string("Can't split filename of ebuild ") +
-				*directory_path + "/" + list[i]->d_name);
+			m_error_callback(eix::format("Can't split filename of ebuild %s/%s") %
+				(*directory_path) % list[i]->d_name);
 			continue;
 		}
 
@@ -193,7 +194,7 @@ void EbuildCache::readPackage(Category &vec, const char *pkg_name, string *direc
 		string full_path = *directory_path + '/' + list[i]->d_name;
 		if(!make_cachefile(full_path.c_str(), *directory_path, *pkg, *version))
 		{
-			m_error_callback(string("Could not properly execute ") + full_path);
+			m_error_callback(eix::format("Could not properly execute %s") % full_path);
 			continue;
 		}
 

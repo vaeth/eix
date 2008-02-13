@@ -9,14 +9,15 @@
 
 #include "sqlite.h"
 
+#include <config.h>
+
+#if defined(WITH_SQLITE)
+
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
-#include <config.h>
-
-
-#if defined(WITH_SQLITE)
+#include <eixTk/formated.h>
 
 #include <sqlite3.h>
 
@@ -54,14 +55,13 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	string category = ARGV(1);
 	if(argc <= 17) {
 		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback(string("Dataset for ") + category + " is too small");
+		THIS->m_error_callback(eix::format("Dataset for %s is too small") % category);
 		return 0;
 	}
 	string::size_type pos = category.find_first_of('/');
 	if(pos == string::npos) {
 		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback(string("'") + category +
-			"' not of the form package/category-version");
+		THIS->m_error_callback(eix::format("%r not of the form package/category-version") % category);
 		return 0;
 	}
 	string name_ver = category.substr(pos + 1);
@@ -82,8 +82,7 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	char **aux = ExplodeAtom::split(name_ver.c_str());
 	if(aux == NULL)
 	{
-		THIS->m_error_callback("Can't split '" + name_ver +
-			" into package and version");
+		THIS->m_error_callback(eix::format("Can't split %r into package and version") % name_ver);
 		return 0;
 	}
 	/* Search for existing package */
@@ -142,7 +141,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 	if(rc)
 	{
 		sqlite3_close(db);
-		m_error_callback(string("Can't open cache file ") + sqlitefile);
+		m_error_callback(eix::format("Can't open cache file %s") % sqlitefile);
 		return false;
 	}
 	if(pkgtree)
@@ -157,7 +156,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 		pkgtree->finish_fast_access();
 	if(rc != SQLITE_OK) {
 		sqlite_callback_error = true;
-		m_error_callback(string("sqlite error: ") + errormessage);
+		m_error_callback(eix::format("sqlite error: ") % errormessage);
 	}
 	return !sqlite_callback_error;
 }

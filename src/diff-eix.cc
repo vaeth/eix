@@ -33,7 +33,7 @@
 #include <output/formatstring-print.h>
 
 #include <string>
-#include <sstream>
+#include <iostream>
 
 #include <dirent.h>
 #include <sys/stat.h> /* chmod(..) */

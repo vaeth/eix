@@ -10,7 +10,6 @@
 #include "basicversion.h"
 
 #include <iostream>
-#include <sstream>
 #include <eixTk/stringutils.h>
 
 using namespace std;
