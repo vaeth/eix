@@ -7,6 +7,7 @@
 	  matches kde-4.
 	- Remove all uses of __VA_ARGS__, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=209239
+	- Fix http://bugs.gentoo.org/show_bug.cgi?id=209934
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Make REDUNDANT_IF_MIXED=false the default since it confused people:

@@ -51,8 +51,10 @@ bool VarsReader::isIncremental(const char *key)
 {
 	if(incremental_keys == NULL)
 		return false;
-	while(*incremental_keys != NULL) {
-		if(fnmatch(*incremental_keys++, key, 0) == 0)
+
+	const char **it = incremental_keys;
+	while(*it != NULL) {
+		if(fnmatch(*it++, key, 0) == 0)
 			return true;
 	}
 	return false;
