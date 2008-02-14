@@ -1,6 +1,8 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.10.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix http://bugs.gentoo.org/show_bug.cgi?id=210106
 
 *eix-0.10.4
 	Emil Beinroth <emilbeinroth at gmx.net>:

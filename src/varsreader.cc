@@ -19,7 +19,10 @@
 /** Current input for FSM */
 #define INPUT (*(x))
 /** Move to next input and check for end of buffer. */
-#define NEXT_INPUT do { if(++x == filebuffer_end) CHSTATE(STOP); } while(0)
+#define NEXT_INPUT do { if(++(x) == filebuffer_end) CHSTATE(STOP); } while(0)
+#define INPUT_EOF ((x) == filebuffer_end)
+#define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) \
+	if(++(x) == filebuffer_end) STATE = state_STOP; } while(0)
 #define PREV_INPUT (--(x))
 /** Switch to different state */
 #define CHSTATE(z) do { \
@@ -61,7 +64,7 @@ bool VarsReader::isIncremental(const char *key)
 }
 
 /** Assign key=value or source file.
-    Return true if a stop is required due to ONLY_KEYWORDS_SLOT */
+    Return true if a stop is required due to ONLY_KEYWORDS_SLOT or ONLY_HAVE_READ */
 bool VarsReader::assign_key_value()
 {
 	if(sourcecmd)
@@ -230,6 +233,8 @@ void VarsReader::VALUE_DOUBLE_QUOTE()
 		{
 			NEXT_INPUT;
 			resolveReference();
+			if(INPUT_EOF)
+				return;
 			continue;
 		}
 		VALUE_APPEND(INPUT);
@@ -241,28 +246,37 @@ void VarsReader::VALUE_DOUBLE_QUOTE()
 	}
 }
 
-/** Read value not inclosed in any quotes.
+/** Read value not enclosed in any quotes.
  * Thus there are no spaces and tabs allowed. Everything must be escaped.
  * Move INPUT into buffer while it's not in [ \t\n\\]. If the value ends we call ASSIGN_KEY_VALUE.
  * [\n\t ] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
 void VarsReader::VALUE_WHITESPACE()
 {
-	while(INPUT != '\n' && INPUT != '\\' && INPUT != '\t' && INPUT != ' ') {
-		if(INPUT == '$' && (parse_flags & SUBST_VARS))
-		{
-			NEXT_INPUT;
+	while((INPUT != '\t') && (INPUT != '\n') && (INPUT != ' ')) {
+		if(INPUT == '\\') {
+			NEXT_INPUT_OR_EOF;
+			if(INPUT_EOF)
+				break;
+			CHSTATE(WHITESPACE_ESCAPE);
+		}
+		if(INPUT == '$' && (parse_flags & SUBST_VARS)) {
+			NEXT_INPUT_OR_EOF;
+			if(INPUT_EOF)
+				break;
 			resolveReference();
+			if(INPUT_EOF)
+				break;
 			continue;
 		}
 		VALUE_APPEND(INPUT);
-		NEXT_INPUT;
+		NEXT_INPUT_OR_EOF;
+		if(INPUT_EOF)
+			break;
 	}
-	switch(INPUT) {
-		case '\t':
-		case '\n':
-		case ' ':  ASSIGN_KEY_VALUE; CHSTATE(JUMP_NOISE);
-		default:   NEXT_INPUT; CHSTATE(WHITESPACE_ESCAPE);
-	}
+	ASSIGN_KEY_VALUE;
+	if(INPUT_EOF)
+		return;
+	CHSTATE(JUMP_NOISE);
 }
 
 /** Cares about \\ in double-quote values. \n is ignored, everything else is put into buffer without
@@ -328,7 +342,7 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 }
 
 /** Try to resolve references to variables.
- * If we fail we recover from it and */
+ * If we fail we recover from it. However, INPUT_EOF might be true at exit. */
 void VarsReader::resolveReference()
 {
 	char *begin = x;
@@ -337,15 +351,19 @@ void VarsReader::resolveReference()
 	unsigned int ref_key_length = 0;
 
 	while(isValidKeyCharacter(INPUT)) {
-		NEXT_INPUT;
 		++ref_key_length;
+		NEXT_INPUT_OR_EOF;
+		if(INPUT_EOF)
+			break;
 	}
 
 	if(*begin == '{') {
+		if(INPUT_EOF)
+			return;
 		if(INPUT == '}') {
 			value.append((*vars)[string(begin + sizeof(char), ref_key_length)]);
 		}
-		/** For some reseon, this fprintf crashes:
+		/** For some reason, this fprintf crashes, but it disturbs anyway
 		else
 			fprintf(stderr, "%s: Ran into '%c' while looking for '}' after '%.*s'.",
 				file_name, INPUT, ref_key_length, begin);
