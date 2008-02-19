@@ -10,8 +10,6 @@
 #ifndef __SYSUTILS_H__
 #define __SYSUTILS_H__
 
-class ExBasic;
-
 #include <unistd.h>
 #include <ctime>
 

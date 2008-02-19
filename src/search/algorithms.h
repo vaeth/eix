@@ -127,7 +127,7 @@ class WildcardAlgorithm : public BaseAlgorithm {
 	public:
 		bool operator () (const char *s, Package *p) {
 			UNUSED(p);
-			return !fnmatch(search_string.c_str(), const_cast<char *>(s), FNMATCH_FLAGS);
+			return !fnmatch(search_string.c_str(), s, FNMATCH_FLAGS);
 		}
 };
 
