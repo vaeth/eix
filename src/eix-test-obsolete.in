@@ -19,7 +19,8 @@ ${2}:
 	echo
 }
 
-NoKeywords() { export \
+NoKeywords() {
+	export \
 	REDUNDANT_IF_DOUBLE=false \
 	REDUNDANT_IF_MIXED=false \
 	REDUNDANT_IF_WEAKER=false \
@@ -28,21 +29,25 @@ NoKeywords() { export \
 	REDUNDANT_IF_MINUSASTERISK=false
 }
 
-NoMask() { export \
+NoMask() {
+	export \
 	REDUNDANT_IF_MASK_NO_CHANGE=false \
 	REDUNDANT_IF_MASK_DOUBLE=false
 }
 
-NoUnmask() { export \
+NoUnmask() {
+	export \
 	REDUNDANT_IF_UNMASK_NO_CHANGE=false \
 	REDUNDANT_IF_UNMASK_DOUBLE=false
 }
 
-NoUse() { export \
+NoUse() {
+	export \
 	REDUNDANT_IF_DOUBLE_USE=false
 }
 
-NoCflags() { export \
+NoCflags() {
+	export \
 	REDUNDANT_IF_DOUBLE_CFLAGS=false
 }
 
@@ -69,7 +74,7 @@ Repository() {
 	fi
 	echo
 	C=0
-	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 \
+	( eval '[ "$(( ${C} + 1 ))" = 1 ]' ) >/dev/null 2>&1 \
 		&& A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
 	for I in *; do
 		for J in "${I}"/*; do
@@ -135,37 +140,45 @@ eix '-t*!'
 			"Redundant in ${COMMON}cflags"
 	)
 	NoCflags
-	REDUNDANT_IF_IN_MASK=false \
-	REDUNDANT_IF_IN_UNMASK=false \
-	REDUNDANT_IF_IN_USE=false \
-	REDUNDANT_IF_IN_CFLAGS=false \
+	(
+		export \
+		REDUNDANT_IF_IN_MASK=false \
+		REDUNDANT_IF_IN_UNMASK=false \
+		REDUNDANT_IF_IN_USE=false \
+		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "No uninstalled entries in ${COMMON}keywords" \
 			"Not installed but in ${COMMON}keywords"
-	REDUNDANT_IF_IN_KEYWORDS=false \
-	REDUNDANT_IF_IN_UNMASK=false \
-	REDUNDANT_IF_IN_USE=false \
-	REDUNDANT_IF_IN_CFLAGS=false \
+	)
+	export REDUNDANT_IF_IN_KEYWORDS=false
+	(
+		export \
+		REDUNDANT_IF_IN_UNMASK=false \
+		REDUNDANT_IF_IN_USE=false \
+		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "No uninstalled entries in ${COMMON}mask" \
 			"Not installed but in ${COMMON}mask"
-	REDUNDANT_IF_IN_KEYWORDS=false \
-	REDUNDANT_IF_IN_MASK=false \
-	REDUNDANT_IF_IN_USE=false \
-	REDUNDANT_IF_IN_CFLAGS=false \
+	)
+	export REDUNDANT_IF_IN_MASK=false
+	(
+		export \
+		REDUNDANT_IF_IN_USE=false \
+		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "No uninstalled entries in ${COMMON}unmask" \
 			"Not installed but in ${COMMON}unmask"
-	REDUNDANT_IF_IN_KEYWORDS=false \
-	REDUNDANT_IF_IN_MASK=false \
-	REDUNDANT_IF_IN_UNMASK=false \
-	REDUNDANT_IF_IN_CFLAGS=false \
+	)
+	export REDUNDANT_IF_IN_UNMASK=false
+	(
+		export \
+		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "No uninstalled entries in ${COMMON}use" \
 			"Not installed but in ${COMMON}use"
-	REDUNDANT_IF_IN_KEYWORDS=false \
-	REDUNDANT_IF_IN_MASK=false \
-	REDUNDANT_IF_IN_UNMASK=false \
-	REDUNDANT_IF_IN_USE=false \
-		Eix "No uninstalled entries in ${COMMON}cflags" \
-			"Not installed but in ${COMMON}cflags"
+	)
+	export \
+	REDUNDANT_IF_IN_USE=false
+	Eix "No uninstalled entries in ${COMMON}cflags" \
+		"Not installed but in ${COMMON}cflags"
 )
-TEST_FOR_REDUNDANCY=false \
-	Eix "All installed versions of packages are in the database" \
+export \
+TEST_FOR_REDUNDANCY=false
+Eix "All installed versions of packages are in the database" \
 	"Installed packages with a version not in the database (or masked)"
