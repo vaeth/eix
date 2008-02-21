@@ -1,6 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.10.5
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Use STL for revision parsing.
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix some problems with EOF after variable names or assignments, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=210106

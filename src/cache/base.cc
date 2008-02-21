@@ -21,21 +21,9 @@ string::size_type revision_index(const string &ver)
 	string::size_type i = ver.rfind("-r");
 	if(i == string::npos)
 		return string::npos;
-	if (ver.find_first_not_of("0123456789", i+2) == std::string::npos)
-		return i;
-	return std::string::npos;
-#if 0
-	bool somenum = false;
-	for(const char *s = ver.c_str() + i + 2; *s; ++s)
-	{
-		if((*s < '0') || (*s >'9'))
-			return string::npos;
-		somenum = true;
-	}
-	if(somenum)
+	if (ver.find_first_not_of("0123456789", i + 2) == string::npos)
 		return i;
 	return string::npos;
-#endif
 }
 
 void BasicCache::setScheme(const char *prefix, const char *prefixport, const char *prefixexec, std::string scheme)
