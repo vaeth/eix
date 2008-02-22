@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.10.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix update-eix-layman broken in eix-0.10.4, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=211093
+
 *eix-0.10.5
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Use STL for revision parsing.

@@ -60,7 +60,7 @@ done
 
 GetOverlays() {
 	local I
-	eval "set -- ${A}"
+	eval "set -- ${LAYMAN_MAKE}"
 	for I; do
 		[ -n "${I}" ] || continue
 		test -r "${I}" || die "cannot read ${I}"
