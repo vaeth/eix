@@ -2,8 +2,10 @@
 
 *eix-0.10.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix update-eix-layman broken in eix-0.10.4, see
+	- Fix update-eix-layman (broken since eix-0.10.4), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=211093
+	  Thanks to Roberto Castagnola <roberto.castagnola at gmail.com>
+	  for the fix.
 
 *eix-0.10.5
 	Emil Beinroth <emilbeinroth at gmx.net>:
@@ -101,7 +103,7 @@
 	  However, the profile-mask/system-packages flags are still saved for
 	  treatment with diff-eix.
 	- Due to (b) above, the SMALL_EIX_DATABASE variable was canceled.
-	- Fix progress output. Thanks to Mark J. Olah <mjo@cs.unm.edu> for
+	- Fix progress output. Thanks to Mark J. Olah <mjo at cs.unm.edu> for
 	  reporting. See http://bugs.gentoo.org/show_bug.cgi?id=192458
 	- Fix http://bugs.gentoo.org/show_bug.cgi?id=192707
 
@@ -153,7 +155,7 @@
 	  http://sourceforge.net/tracker/index.php?
 	  func=detail&aid=1731374&group_id=128101&atid=710608
 	- Fix DIFF_FORMAT_HEADER_NEW default (was broken in eix-0.9.8;
-	  thanks to Seemant Kulleen <seemant@gentoo.org> for reporting.)
+	  thanks to Seemant Kulleen <seemant at gentoo.org> for reporting.)
 	  See also http://bugs.gentoo.org/show_bug.cgi?id=181629
 	- Introduce SKIP_PERMISSION_TESTS to deal with NSS/LDAP or other
 	  setups, see http://sourceforge.net/tracker/index.php?
@@ -182,7 +184,7 @@
 *eix-0.9.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-sync now defaults to layman instead of deprecated gensync. Thanks
-	  for the patch to Roberto Castagnola <roberto.castagnola@gmail.com>,
+	  for the patch to Roberto Castagnola <roberto.castagnola at gmail.com>
 	  see http://bugs.gentoo.org/show_bug.cgi?id=179482
 	- Introduce PRINT_COUNT_ALWAYS=never
 	- Introduce --pure-packages and --only-names
@@ -259,7 +261,7 @@
 	- Fix nocolor output. Thanks to Rick Morra for reporting
 	  http://bugs.gentoo.org/show_bug.cgi?id=170868
 	- Fix compilation issues with gcc-3.3.6.
-	  Thanks to Helmut Auer <helmut@helmutauer.de>
+	  Thanks to Helmut Auer <helmut at helmutauer.de>
 	- Minor compatibility fixes.
 
 *eix-0.9.1
@@ -376,7 +378,7 @@
 	  (i.e. ignore earlier lines if target is completely identical).
 	- Introduce REDUNDANT_IF_DOUBLE_LINES (related to previous bugfix).
 	- Some code cleanup and fixing of some compiler warnings.
-	  Thanks to KIMURA Masaru / hiyuh <hiyuh.root@gmail.com>
+	  Thanks to KIMURA Masaru / hiyuh <hiyuh.root at gmail.com>
 	  http://bugs.gentoo.org/show_bug.cgi?id=155160
 
 *eix-0.8.1
@@ -514,7 +516,7 @@
 	  Introduce very fast cache method "sqlite" which is available if
 	  eix is compiled with ./configure --with-sqlite
 	- Fix endless loop and wrong sanitize in update-eix-remote.
-	  Thanks to Stefan Schweizer <genstef@gentoo.org> for the report.
+	  Thanks to Stefan Schweizer <genstef at gentoo.org> for the report.
 	- Allow different server/client PORTDIR directory for eix-sync.
 	- Introduce --dump-defaults and fix output of --dump so that
 	  commented variables containing newlines are commented in each line.
@@ -569,7 +571,7 @@
 	- Major changes: remote support and full support for slots.
 	  For the former, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=144200
-	  the idea for the latter is due to a discussion with caster@matfyz.cz
+	  the idea for the latter is due to a discussion with caster at matfyz.cz
 	  All changes in detail:
 	- Add OVERRIDE_CACHE_METHOD, ADD_LOCAL_CACHE_METHOD, ADD_CACHE_METHOD
 	  to allow e.g. cache method metadata for a specific overlay.
@@ -675,7 +677,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- If /etc/portage/package.* is a directory, read it recursively:
 	  http://bugs.gentoo.org/show_bug.cgi?id=137784
-	- patch from caster@matfyz.cz to treat version numbers as long ints:
+	- patch from caster at matfyz.cz to treat version numbers as long ints:
 	  http://bugs.gentoo.org/show_bug.cgi?id=133732
 	- Support a "source " (and ". ") command in /etc/make.*:
 	  http://bugs.gentoo.org/show_bug.cgi?id=132874
@@ -796,9 +798,9 @@
 	  update-eix -V.
 	- Fixed a bug in the cdb-code: munmap was called for bad pointers.
 	- Fixed http://bugs.gentoo.org/show_bug.cgi?id=97914 (Thanks to
-	  David Held <andukar@andukar.org> for the patch.
+	  David Held <andukar at andukar.org> for the patch.
 	- Fixed compilation-problems http://bugs.gentoo.org/show_bug.cgi?id=98218.
-	  Patch by Cyrille Mescam <titi@oboulo.com>.
+	  Patch by Cyrille Mescam <titi at oboulo.com>.
 	- Masks like '>app-portage/eix-0.2*' are finally accepted by update-eix.
 	- Finally changed our formatstring-code! We are no longer parsing the
 	  string every time we need to print something. It's now parsed into a
@@ -830,7 +832,7 @@
 	- Overlay reading: Check result of explodePkgFilename before using it
 	- Added --version/-V options
 	- Added patch from http://bugs.gentoo.org/show_bug.cgi?id=89376
-	  by Mike Gardiner <obz@gentoo.org>
+	  by Mike Gardiner <obz at gentoo.org>
 	- Rewrote big parts of update-eix. We now have different classes for
 	  different portage cache-backends.
 	- Added a more descriptive section about ~/.eirx to the manpage.
