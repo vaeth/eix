@@ -6,6 +6,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=211093
 	  Thanks to Roberto Castagnola <roberto.castagnola at gmail.com>
 	  for the fix.
+	- Introduce "detail" option for eix-test-obsolete, see
+	  http://forums.gentoo.org/viewtopic-t-666071-highlight-.html
 
 *eix-0.10.5
 	Emil Beinroth <emilbeinroth at gmx.net>:

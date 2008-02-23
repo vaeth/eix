@@ -7,16 +7,33 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
+DETAILS=false
 Eix() {
 	if [ -z "`eix '-*Tc' | head -n1`" ]; then
 		[ -z "${1}" ] || echo "${1} (or test switched off)."
 		return
 	fi
-	echo "
+	if [ ${#} -le 2 ] || ! ${DETAILS}; then
+		echo "
 ${2}:
 "
-	eix -Tc
-	echo
+		eix -Tc
+		echo
+		return
+	fi
+	echo "
+${2}..."
+	shift 2
+	local I
+	for I; do
+		(
+			for J; do
+				[ "${I}" = "${J}" ] && continue
+				eval "export ${J}=false"
+			done
+			Eix '' "... considered as ${I}"
+		)
+	done
 }
 
 NoKeywords() {
@@ -101,10 +118,11 @@ COMMON="${COMMON}/etc/portage/package."
 
 if [ ${#} -gt 0 ]; then
 	case "${1}" in
-		no*|No*|NO*) Repository false;;
-		re*|Re*|RE*) Repository true;;
+		detail*|Detail*|DETAIL*) DETAILS=true;;
+		no*repo*|No*repo*|No*Repo*|NO*REPO*) Repository false;;
+		repo*|Repo*|REPO*) Repository true;;
+		*) export CHECK_INSTALLED_OVERLAYS=true;;
 	esac
-	export CHECK_INSTALLED_OVERLAYS=true
 fi
 eix '-t*!'
 
@@ -113,19 +131,29 @@ eix '-t*!'
 	(
 		NoMask; NoUnmask; NoUse; NoCflags; NoUninstalled
 		Eix "No redundant entries in ${COMMON}keywords" \
-			"Redundant in ${COMMON}keywords"
+			"Redundant in ${COMMON}keywords" \
+			REDUNDANT_IF_DOUBLE \
+			REDUNDANT_IF_MIXED \
+			REDUNDANT_IF_WEAKER \
+			REDUNDANT_IF_STRANGE \
+			REDUNDANT_IF_NO_CHANGE \
+			REDUNDANT_IF_MINUSASTERISK
 	)
 	NoKeywords
 	(
 		NoUnmask; NoUse; NoCflags; NoUninstalled
 		Eix "No redundant entries in ${COMMON}mask" \
-			"Redundant in ${COMMON}mask"
+			"Redundant in ${COMMON}mask" \
+			REDUNDANT_IF_MASK_NO_CHANGE \
+			REDUNDANT_IF_MASK_DOUBLE
 	)
 	NoMask
 	(
 		NoUse; NoCflags; NoUninstalled
 		Eix "No redundant entries in ${COMMON}unmask" \
-			"Redundant in ${COMMON}unmask"
+			"Redundant in ${COMMON}unmask" \
+			REDUNDANT_IF_UNMASK_NO_CHANGE \
+			REDUNDANT_IF_UNMASK_DOUBLE
 	)
 	NoUnmask
 	(
