@@ -68,7 +68,7 @@ it will temporarily set B<CHECK_INSTALLED_OVERLAYS=true> for your convenience.
 B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
 Note that to keep such remote data across update-eix calls
-you might want to set B<KEEP_VIRTUALS=true> in /etc/eixrc.
+you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
 To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
 
 B<update-eix-layman> can add or remove local layman overlays to the current database.
@@ -809,7 +809,7 @@ The option B<-c> is needed so that eix will use our B<FORMAT_COMPACT> variable a
 .\" {{{ FILES
 .SH "FILES"
 .LP
-.\" {{{ -------- /etc/eix-sync-config
+.\" {{{ -------- /etc/eix-sync.conf
 .SS /etc/eix-sync.conf
 This file stores commands and configurations to apply with B<eix-sync>.
 Comments start with B<#> (all lines are cut at the first B<#>; it is not
@@ -873,13 +873,13 @@ of the data).
 .B @update-eix-remote add /var/cache/remote-cache.tbz2
 .\" }}}
 
-.\" {{{ -------- /etc/eix-sync-overlays
+.\" {{{ -------- /var/log/eix-sync.log
 .SS /var/log/eix-sync.log
 The redirected output of B<eix-sync>. See B<eix-sync -h> for more details.
 .\" }}}
 
-.\" {{{ -------- /etc/eixrc
-.SS /etc/eixrc
+.\" {{{ -------- @SYSCONFDIR@/eixrc
+.SS @SYSCONFDIR@/eixrc
 Global configuration file. The variables in B<~/.eixrc> or from the environment
 can override the variables set in this file. See B<~/.eixrc>.
 .\" }}}
@@ -887,7 +887,7 @@ can override the variables set in this file. See B<~/.eixrc>.
 .\" {{{ -------- EIXRC
 .SS EIXRC
 If this environment variable is set, its value is used instead of the filename
-/etc/eixrc to read the configuration data. In this case, the file
+@SYSCONFDIR@/eixrc to read the configuration data. In this case, the file
 ~/.eixrc is ignored (but you can of course source it if you want it).
 .\" }}}
 
@@ -1014,8 +1014,8 @@ so that they are printed with --dump or --dump-defaults.
 
 .TP
 .B EIXRC_SOURCE "  " (string)
-This path is prepended to source commands in /etc/eixrc.
-It is meant to be set in the environment but can also be set in /etc/eixrc.
+This path is prepended to source commands in @SYSCONFDIR@/eixrc.
+It is meant to be set in the environment but can also be set in @SYSCONFDIR@/eixrc.
 In the latter case, it will override the setting from the environment as soon as it is read until all files are sourced.
 Note that when this variable takes effect, no delayed substitution is performed yet.
 
@@ -1023,7 +1023,7 @@ Note that when this variable takes effect, no delayed substitution is performed 
 .BR EPREFIX "  " (prefix-string) " (prefix-string means that this is a string, but if it has the value '/' it is changed to '')"
 
 If the environment variable B<PORTAGE_CONFIGROOT> is not set, then this
-variable is prefixed to the path where /etc/eixrc is searched
+variable is prefixed to the path where @SYSCONFDIR@/eixrc is searched
 (otherwise B<PORTAGE_CONFIGROOT> is prefixed).
 
 Moreover, this variable is used for delayed substitution to determine
@@ -1080,7 +1080,7 @@ if you feel that the eix cachefile should depend (only) on the profile root.
 This path is prepended to the /etc paths.
 The purpose is to respect PORTAGE_CONFIGROOT in an analogous way portage does.
 If you set this variable in the environment it will also change the path
-where /etc/eixrc is searched. (Note that reading /etc/eixrc occurs before
+where @SYSCONFDIR@/eixrc is searched. (Note that reading @SYSCONFDIR@/eixrc occurs before
 delayed substitution takes effect.)
 
 .TP
@@ -1127,7 +1127,7 @@ This is prepended to overlays in the eix database to test whether they exist.
 The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
 
 .TP
-.B SKIP_PERMISSION_TESTS "  " (true / false)
+.BR SKIP_PERMISSION_TESTS "  " (true / false)
 If B<true>, update-eix will not check for groups and permissions.
 You will probably want to set this to B<true> if you have a more sophisticated
 permission setup on your system (NSS/LDAP, acl, pam-related stuff, ...)

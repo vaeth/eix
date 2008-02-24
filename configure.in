@@ -20,6 +20,11 @@ AC_PROG_CXX
 AC_FUNC_FSEEKO
 AM_PROG_LIBTOOL
 
+dnl Provide basic types:
+AC_TYPE_UINT8_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+
 dnl Look for basic functions:
 AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset], ,
 			   AC_MSG_ERROR(We really need those functions ..))

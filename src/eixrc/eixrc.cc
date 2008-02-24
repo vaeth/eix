@@ -14,14 +14,16 @@
 
 #include <portage/conf/portagesettings.h>
 
-
-#define EIX_USERRC   "/.eixrc"
+#include <config.h>
+#include <configmake.h>
 
 #ifndef SYSCONFDIR
 #define SYSCONFDIR "/etc"
 #endif /* SYSCONFDIR */
 
 #define EIX_SYSTEMRC SYSCONFDIR"/eixrc"
+
+#define EIX_USERRC   "/.eixrc"
 
 using namespace std;
 

@@ -85,11 +85,12 @@ if ! test -e Makefile; then
 		eval ./autogen.sh ${QUIET} || die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure ${SQLITE} ${BZLIB} ${QUIET} || die "configure failed"
+	eval ./configure '--prefix=' ${SQLITE} ${BZLIB} ${QUIET} || \
+		die "configure failed"
 fi
 ${EARLYSTOP} && exec make config.h
 echo "Making ${*}..."
-type make >/dev/null 2>&1 || die "cannot find make"
+command -v make >/dev/null 2>&1 || die "cannot find make"
 if [ -n "${QUIET}" ]; then
 	exec make "${@}" >/dev/null 2>&1
 else
