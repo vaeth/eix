@@ -10,13 +10,6 @@
 #ifndef __BASICVERSION_H__
 #define __BASICVERSION_H__
 
-/* When this is defined, we store additionally the full versiontext
-   in the database.
-   This takes more space, but is faster, of course, and we need not take care
-   to save data in such a way that the versiontext can be constructed
-   (e.g. omitted -r, trailing .0's, trailing garbage). */
-/*#define SAVE_VERSIONTEXT 1*/
-
 #include <string>
 #include <vector>
 #include <iostream>
@@ -145,9 +138,7 @@ class Suffix
 		LeadNum getNum() const
 		{ return m_suffixnum; }
 
-#if !defined(SAVE_VERSIONTEXT)
 		std::string toString() const;
-#endif
 };
 
 /** Parse and represent a portage version-string. */
@@ -187,16 +178,12 @@ class BasicVersion
 
 		const char *getFull() const
 		{
-#if !defined(SAVE_VERSIONTEXT)
 			if(m_full.empty())
 				(const_cast<BasicVersion*>(this))->calc_full();
-#endif
 			return m_full.c_str();
 		}
 
-#if !defined(SAVE_VERSIONTEXT)
 		void calc_full();
-#endif
 
 		const std::vector<Suffix> &getSuffix() const
 		{ return m_suffix; }
@@ -205,10 +192,9 @@ class BasicVersion
 		/** The m_full version-string. */
 		std::string            m_full;
 
-#if !defined(SAVE_VERSIONTEXT)
 		/** Garbage at end of version-string */
 		std::string            m_garbage;
-#endif
+
 		/** Splitted m_primsplit-version. */
 		std::vector<LeadNum>   m_primsplit;
 

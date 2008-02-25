@@ -105,7 +105,6 @@ Suffix::defaults()
 	m_suffixnum.clear();
 }
 
-#if !defined(SAVE_VERSIONTEXT)
 string
 Suffix::toString() const
 {
@@ -114,7 +113,6 @@ Suffix::toString() const
 	ret.append(m_suffixnum.c_str());
 	return ret;
 }
-#endif
 
 bool
 Suffix::parse(const char **str_ref)
@@ -164,9 +162,7 @@ void
 BasicVersion::defaults()
 {
 	m_full.clear();
-#if !defined(SAVE_VERSIONTEXT)
 	m_garbage.clear();
-#endif
 	m_primsplit.clear();
 	m_primarychar   = '\0';
 	m_suffix.clear();
@@ -174,7 +170,6 @@ BasicVersion::defaults()
 	m_subrevision.set_magic();
 }
 
-#if !defined(SAVE_VERSIONTEXT)
 void
 BasicVersion::calc_full()
 {
@@ -204,7 +199,6 @@ BasicVersion::calc_full()
 	}
 	m_full.append(m_garbage);
 }
-#endif
 
 void
 BasicVersion::parseVersion(const char *str, size_t n)
@@ -230,22 +224,10 @@ BasicVersion::parseVersion(const char *str, size_t n)
 		}
 		if(*str != '\0')
 		{
-#if !defined(SAVE_VERSIONTEXT)
 			m_garbage = str;
-#endif
 			cerr << "Garbage at end of version string: " << str << endl;
 		}
 	}
-
-#if defined(SAVE_VERSIONTEXT)
-	// Let's remove useless 0 at the end
-	for(vector<LeadNum>::reverse_iterator ri = m_primsplit.rbegin();
-		ri != m_primsplit.rend() && ri->iszero();
-		ri++)
-	{
-		m_primsplit.pop_back();
-	}
-#endif
 }
 
 /** Compares the split m_primsplit numbers of another BasicVersion instances to itself. */
@@ -333,15 +315,11 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 	if( left.m_subrevision < right.m_subrevision ) return -1;
 	if( left.m_subrevision > right.m_subrevision ) return 1;
 
-#if defined(SAVE_VERSIONTEXT)
 	// The numbers are equal, but the strings might still be different,
 	// e.g. because of garbage or removed trailing ".0"s.
 	// In such a case, we simply compare the strings alphabetically.
 	// This is not always what you want but at least reproducible.
-	return strcmp(left.getFull(), right.getFull());
-#else
 	return strcmp(left.m_garbage.c_str(), right.m_garbage.c_str());
-#endif
 }
 
 const char *

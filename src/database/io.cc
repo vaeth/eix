@@ -63,12 +63,7 @@ io::read_version(FILE *fp)
 {
 	Version *v = new Version();
 
-#if defined(SAVE_VERSIONTEXT)
-	// read full version string
-	v->m_full = io::read_string(fp);
-#else
 	v->m_garbage = io::read_string(fp);
-#endif
 
 	// read masking
 	MaskFlags::MaskType mask = io::read<MaskFlags::MaskType>(fp);
@@ -111,12 +106,7 @@ io::write_LeadNum(FILE *fp, const LeadNum &n)
 void
 io::write_version(FILE *fp, const Version *v)
 {
-#if defined(SAVE_VERSIONTEXT)
-	// write m_full string
-	io::write_string(fp, v->m_full);
-#else
 	io::write_string(fp, v->m_garbage);
-#endif
 
 	// write masking
 	io::writeUChar(fp, (v->maskflags.get()) | (MaskFlags::MaskType(v->restrictFlags) << 4));
