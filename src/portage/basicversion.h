@@ -166,12 +166,10 @@ class BasicVersion
 		/** Parse the version-string pointed to by str. */
 		void parseVersion(const char *str, size_t n = 0);
 
-		/** Compares the split m_primsplit numbers of another BasicVersion
-		    instances to itself. */
+		/// Compare the split m_primsplit numbers
 		static int comparePrimary(const BasicVersion& left, const BasicVersion& right);
 
-		/** Compares the split m_suffixes of another BasicVersion
-		    instances to itself. */
+		/// Compare the split m_suffixes
 		static int compareSuffix(const BasicVersion& right, const BasicVersion& left);
 
 		/// Compare all except gentoo revisions
@@ -222,6 +220,9 @@ class BasicVersion
 
 		/** The optional gentoo-revision. */
 		LeadNum                m_gentoorevision;
+
+		/** The optional prefix-portage subrevision. */
+		LeadNum                m_subrevision;
 
 		/** Parse the m_primsplit-part of a version-string.
 		 * Return pointer to the end of the m_primsplit-version.

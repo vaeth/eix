@@ -13,6 +13,9 @@
 	- Install "empty" /etc/eixrc to avoid that users overlook the new
 	  recommendations and thus get problems like e.g. the one leading to
 	  http://bugs.gentoo.org/show_bug.cgi?id=211192
+	- Support prefix-portage subrevisions
+	  http://www.gentoo.org/proj/en/gentoo-alt/prefix/techdocs.xml#doc_chap2
+	  See also http://bugs.gentoo.org/show_bug.cgi?id=209239
 	- Better honour SYSCONFDIR. Use configmake.h to pass to C++ code.
 	- Let autoconf try to define uint*_t
 

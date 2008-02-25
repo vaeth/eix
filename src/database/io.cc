@@ -90,8 +90,9 @@ io::read_version(FILE *fp)
 		v->m_suffix.push_back(Suffix(l, n));
 	}
 
-	// read m_gentoorevision
+	// read m_gentoorevision and m_subrevision
 	v->m_gentoorevision= io::read_LeadNum(fp);
+	v->m_subrevision= io::read_LeadNum(fp);
 
 	v->slotname = io::read_string(fp);
 	v->overlay_key = io::read<Version::Overlay>(fp);
@@ -145,8 +146,9 @@ io::write_version(FILE *fp, const Version *v)
 		io::write_LeadNum(fp, it->m_suffixnum);
 	}
 
-	// write m_gentoorevision
+	// write m_gentoorevision and m_subrevision
 	io::write_LeadNum(fp, v->m_gentoorevision);
+	io::write_LeadNum(fp, v->m_subrevision);
 
 	io::write_string(fp, v->slotname);
 	io::write<Version::Overlay>(fp, v->overlay_key);

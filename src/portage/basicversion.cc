@@ -170,7 +170,8 @@ BasicVersion::defaults()
 	m_primsplit.clear();
 	m_primarychar   = '\0';
 	m_suffix.clear();
-	m_gentoorevision.clear();
+	m_gentoorevision.set_magic();
+	m_subrevision.set_magic();
 }
 
 #if !defined(SAVE_VERSIONTEXT)
@@ -196,6 +197,10 @@ BasicVersion::calc_full()
 	if(!m_gentoorevision.is_magic()) {
 		m_full.append("-r");
 		m_full.append(m_gentoorevision.c_str());
+		if(!m_subrevision.is_magic()) {
+			m_full.append(".");
+			m_full.append(m_subrevision.c_str());
+		}
 	}
 	m_full.append(m_garbage);
 }
@@ -206,13 +211,9 @@ BasicVersion::parseVersion(const char *str, size_t n)
 {
 	defaults();
 	if(n > 0)
-	{
 		m_full = string(str, n);
-	}
 	else
-	{
 		m_full = string(str);
-	}
 	str = parsePrimary(m_full.c_str());
 	if(*str)
 	{
@@ -223,12 +224,9 @@ BasicVersion::parseVersion(const char *str, size_t n)
 		// get optional gentoo revision
 		if(!strncmp("-r", str, 2))
 		{
-			str += 2;
-			str = m_gentoorevision.parse(str);
-		}
-		else
-		{
-			m_gentoorevision.set_magic();
+			str = m_gentoorevision.parse(str + 2);
+			if((*str == '.') && m_gentoorevision.leadzero())
+				str = m_subrevision.parse(str + 1);
 		}
 		if(*str != '\0')
 		{
@@ -237,10 +235,6 @@ BasicVersion::parseVersion(const char *str, size_t n)
 #endif
 			cerr << "Garbage at end of version string: " << str << endl;
 		}
-	}
-	else
-	{
-		m_gentoorevision.set_magic();
 	}
 
 #if defined(SAVE_VERSIONTEXT)
@@ -312,8 +306,32 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 	int ret = compareTilde(left, right);
 	if(ret) return ret;
 
-	if( left.m_gentoorevision < right.m_gentoorevision ) return -1;
-	if( left.m_gentoorevision > right.m_gentoorevision ) return  1;
+	const LeadNum *leftrev, *rightrev;
+	bool new_left, new_right;
+	if( left.m_subrevision.is_magic() || !left.m_gentoorevision.leadzero()) {
+		new_left = false;
+		leftrev = &(left.m_gentoorevision);
+	}
+	else {
+		new_left = true;
+		leftrev = new LeadNum(string(left.m_gentoorevision.c_str() + 1));
+	}
+	if( right.m_subrevision.is_magic() || !right.m_gentoorevision.leadzero()) {
+		new_right = false;
+		rightrev = &(right.m_gentoorevision);
+	}
+	else {
+		new_right = true;
+		rightrev = new LeadNum(string(right.m_gentoorevision.c_str() + 1));
+	}
+	if( (*leftrev) < (*rightrev) ) ret = -1;
+	if( (*leftrev) > (*rightrev) ) ret = 1;
+	if(new_left) delete leftrev;
+	if(new_right) delete rightrev;
+	if(ret) return ret;
+
+	if( left.m_subrevision < right.m_subrevision ) return -1;
+	if( left.m_subrevision > right.m_subrevision ) return 1;
 
 #if defined(SAVE_VERSIONTEXT)
 	// The numbers are equal, but the strings might still be different,
