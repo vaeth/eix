@@ -23,6 +23,7 @@ eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_ptr.h \
+eixTk/compare.h \
 eixTk/exceptions.h \
 eixTk/filenames.cc \
 eixTk/filenames.h \

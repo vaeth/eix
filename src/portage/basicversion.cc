@@ -1,4 +1,4 @@
-// vim:set noet cinoptions= sw=4 ts=4:
+// vim:set noet cinoptions=g0,t0,^-2,(0 sw=4 ts=4:
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
@@ -9,342 +9,239 @@
 
 #include "basicversion.h"
 
-#include <iostream>
+#include <iterator>
+
+#include <eixTk/compare.h>
+#include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
 
-using namespace std;
-
-void
-LeadNum::set_flags()
-{
-	m_is_magic = false;
-	for(std::string::const_iterator it = m_text.begin();
-		it != m_text.end(); ++it) {
-		if(*it != '0') {
-			m_is_zero = false;
-			return;
-		}
-	}
-	m_is_zero = true;
-}
-
-const char *
-LeadNum::parse(const char *str)
-{
-	m_is_magic = false;
-	const char *s = str;
-	bool iszero = true;
-	char c = *s;
-	while(isdigit(c)) {
-		if(c != '0')
-			iszero = false;
-		c = *(++s);
-	}
-	m_is_zero = iszero;
-	m_text = string(str, s);
-	return s;
-}
-
 int
-LeadNum::compare(const LeadNum& left, const LeadNum &right)
+BasicVersion::compare(const Part& left, const Part& right)
 {
-	/* If you modify this, do not forget that the magic value must be
-	*  the smallest one. */
+	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
+	// but I suppose this is not yet sanctioned by gentoo.
+	// We are going to follow the text from section 2.3 "Version Comparison" here.
+	int ret = 0;
 
-	// We change the order for speed: Common cases first, if possible.
-	if(left.m_is_zero) {
-		if(!right.m_is_zero)
-			return -1;
-		// both values are 0:
-		if(left.m_is_magic) {
-			if(right.m_is_magic)
-				return 0;
-			return -1;
+	if ((ret = eix::default_compare(left.first, right.first)))
+		return ret;
+
+	// We can short-circuit atoi(..) and use string comparison if both parts have
+	// the same length and just do string.
+	if (left.second.size() == right.second.size()) {
+		return left.second.compare(right.second);
+	}
+	else if (left.first == primary) {
+		// "[..] if a component has a leading zero, any trailing zeroes in that
+		//  component are stripped (if this makes the component empty, proceed
+		//  as if it were 0 instead), and the components are compared using a
+		//  stringwise comparison."
+
+		if (left.second.at(0) == '0' || right.second.at(0) == '0') {
+			std::string l1 = left.second;
+			std::string l2 = right.second;
+
+			rtrim(&l1, "0");
+			rtrim(&l2, "0");
+
+			return l1.compare(l2);
 		}
-		if(right.m_is_magic)
-			return 1;
-		string::size_type l = left.size();
-		string::size_type r = right.size();
-		if(l == r)
-			return 0;
-		// "" < "0" < "00" < "000" < ...
-		if(l < r)
-			return -1;
-		return 1;
+		// "If neither component has a leading zero, components are compared
+		//  using strict integer comparison."
 	}
-	if(right.m_is_zero)
-		return 1;
-
-	// both values are nonzero:
-	if(left.leadzero()) {
-		if(right.leadzero())
-			return strcmp(left.c_str(), right.c_str());
-		return -1;
-	}
-	if(right.leadzero())
-		return 1;
-
-	// both values are without leading zero:
-	string::size_type l = left.size();
-	string::size_type r = right.size();
-	if(l == r)
-		return strcmp(left.c_str(), right.c_str());
-	if(l < r)
-		return -1;
-	return 1;
+	// "The first component of the number part is compared using strict integer
+	//  comparison."
+	return eix::default_compare(atoi(left.second.c_str()), atoi(right.second.c_str()));
 }
 
-const char *Suffix::suffixlevels[]             = { "alpha", "beta", "pre", "rc", "", "p" };
-const Suffix::Level Suffix::no_suffixlevel     = 4;
-const Suffix::Level Suffix::suffix_level_count = sizeof(suffixlevels)/sizeof(char*);
-
-void
-Suffix::defaults()
-{
-	m_suffixlevel = no_suffixlevel;
-	m_suffixnum.clear();
-}
-
-string
-Suffix::toString() const
-{
-	string ret = "_";
-	ret.append(suffixlevels[m_suffixlevel]);
-	ret.append(m_suffixnum.c_str());
-	return ret;
-}
-
-bool
-Suffix::parse(const char **str_ref)
-{
-	const char *str = *str_ref;
-	if(*str == '_')
-	{
-		++str;
-		for(Level i = 0; i != suffix_level_count; ++i)
-		{
-			if(i != no_suffixlevel
-			   && strncmp(suffixlevels[i], str, strlen(suffixlevels[i])) == 0)
-			{
-				m_suffixlevel = i;
-				str += strlen(suffixlevels[i]);
-				// get suffix-level number .. "_pre123"
-				*str_ref = m_suffixnum.parse(str);
-				return true;
-			}
-		}
-	}
-	defaults();
-	return false;
-}
-
-int
-Suffix::compare(const Suffix &b) const
-{
-	if( m_suffixlevel < b.m_suffixlevel ) return -1;
-	if( m_suffixlevel > b.m_suffixlevel ) return  1;
-
-	if( m_suffixnum < b.m_suffixnum ) return -1;
-	if( m_suffixnum > b.m_suffixnum ) return  1;
-
-	return 0;
-}
-
-BasicVersion::BasicVersion(const char *str)
-{
+BasicVersion::BasicVersion(const char *str) {
 	if(str)
-	{
 		parseVersion(str);
+}
+
+inline
+std::ostream& operator<<(std::ostream& s, const BasicVersion::Part& part)
+{
+	switch (part.first) {
+		case BasicVersion::inter_rev:
+			return s << "." << part.second;
+		case BasicVersion::alpha:
+			return s << "_alpha" << part.second;
+		case BasicVersion::beta:
+			return s << "_beta" << part.second;
+		case BasicVersion::pre:
+			return s << "_pre" << part.second;
+		case BasicVersion::rc:
+			return s << "_rc" << part.second;
+		case BasicVersion::revision:
+			return s << "-r" << part.second;
+		case BasicVersion::patch:
+			return s << "_p" << part.second;
+		case BasicVersion::character:
+			return s << part.second;
+		case BasicVersion::primary:
+		case BasicVersion::first:
+			return s << "." << part.second;
 	}
+    throw ExBasic("internal error: unknown PartType on (%r,%r)") % part.first % part.second;
 }
 
 void
-BasicVersion::defaults()
+BasicVersion::rebuild() const
 {
-	m_full.clear();
-	m_garbage.clear();
-	m_primsplit.clear();
-	m_primarychar   = '\0';
-	m_suffix.clear();
-	m_gentoorevision.set_magic();
-	m_subrevision.set_magic();
+	std::stringstream ss;
+	std::copy(m_parts.begin(), m_parts.end(), std::ostream_iterator<Part>(ss));
+	m_full = ss.str().substr(1);
 }
 
 void
-BasicVersion::calc_full()
+BasicVersion::parseVersion(const std::string& str)
 {
-	m_full.empty();
-	bool first = true;
-	for(vector<LeadNum>::const_iterator it = m_primsplit.begin();
-		it != m_primsplit.end(); ++it) {
-		if(!first) {
-			m_full.append(".");
-		}
-		first = false;
-		m_full.append(it->c_str());
-	}
-	if(m_primarychar)
-		m_full.append(string(1,m_primarychar));
-	for(vector<Suffix>::const_iterator i = m_suffix.begin();
-		i != m_suffix.end(); ++i) {
-		m_full.append(i->toString());
-	}
-	if(!m_gentoorevision.is_magic()) {
-		m_full.append("-r");
-		m_full.append(m_gentoorevision.c_str());
-		if(!m_subrevision.is_magic()) {
-			m_full.append(".");
-			m_full.append(m_subrevision.c_str());
-		}
-	}
-	m_full.append(m_garbage);
-}
+	m_full = str;
 
-void
-BasicVersion::parseVersion(const char *str, size_t n)
-{
-	defaults();
-	if(n > 0)
-		m_full = string(str, n);
-	else
-		m_full = string(str);
-	str = parsePrimary(m_full.c_str());
-	if(*str)
+	std::string::size_type pos = 0;
+	std::string::size_type len = str.find_first_not_of("0123456789", pos);
+	if (len == pos) {
+		throw ExBasic("malformed (first primary) version string %r") % m_full;
+	}
+	m_parts.push_back(std::make_pair(first, str.substr(pos, len - pos)));
+
+	if (len == std::string::npos)
+		return;
+
+	pos += len;
+
+	while(str.at(pos) == '.')
 	{
-		Suffix curr_suffix;
-		while(curr_suffix.parse(&str))
-			m_suffix.push_back(curr_suffix);
-
-		// get optional gentoo revision
-		if(!strncmp("-r", str, 2))
-		{
-			str = m_gentoorevision.parse(str + 2);
-			if((*str == '.') && m_gentoorevision.leadzero())
-				str = m_subrevision.parse(str + 1);
+		len = str.find_first_not_of("0123456789", ++pos);
+		if (len == pos) {
+			throw ExBasic("malformed (primary) version string %r") % m_full;
 		}
-		if(*str != '\0')
-		{
-			m_garbage = str;
-			cerr << "Garbage at end of version string: " << str << endl;
+		m_parts.push_back(std::make_pair(primary, str.substr(pos, len - pos)));
+
+		if (len == std::string::npos)
+			return;
+
+		pos = len;
+	}
+
+	if(isalpha(str.at(pos)))
+		m_parts.push_back(std::make_pair(character, str.substr(pos++, 1)));
+
+	if (pos == str.size())
+		return;
+
+	while (str.at(pos) == '_') {
+		PartType suffix;
+		pos += 1;
+		if (str.compare(pos, 5, "alpha") == 0) {
+			pos += 5;
+			suffix = alpha;
+		}
+		else if (str.compare(pos, 4, "beta") == 0) {
+			pos += 4;
+			suffix = beta;
+		}
+		else if (str.compare(pos, 3, "pre") == 0) {
+			pos += 3;
+			suffix = pre;
+		}
+		else if (str.compare(pos, 2, "rc") == 0) {
+			pos += 2;
+			suffix = rc;
+		}
+		else if (str.compare(pos, 1, "p") == 0) {
+			pos += 1;
+			suffix = patch;
+		}
+		else {
+			throw ExBasic("malformed (suffix) version string %r") % m_full;
+		}
+
+		len = str.find_first_not_of("0123456789", pos);
+		m_parts.push_back(std::make_pair(suffix, str.substr(pos, len - pos)));
+
+		if (len == std::string::npos)
+			return;
+
+		pos = len;
+	}
+
+	// get optional gentoo revision
+	if(str.compare(pos, 2, "-r") == 0) {
+		len = str.find_first_not_of("0123456789", pos+=2);
+		m_parts.push_back(std::make_pair(revision, str.substr(pos, len-pos)));
+
+		if (len == std::string::npos)
+			return;
+		pos = len;
+
+		if (str.at(pos) == '.') {
+			// inter-revision used by prefixed portage.
+			// for example foo-1.2-r02.2
+			len = str.find_first_not_of("0123456789", ++pos);
+			m_parts.push_back(std::make_pair(inter_rev, str.substr(pos, len-pos)));
+			if (len == std::string::npos)
+				return;
+			pos = len;
 		}
 	}
-}
 
-/** Compares the split m_primsplit numbers of another BasicVersion instances to itself. */
-int BasicVersion::comparePrimary(const BasicVersion& left,
-		const BasicVersion& right)
-{
-	vector<LeadNum>::const_iterator ait = left.m_primsplit.begin();
-	vector<LeadNum>::const_iterator bit = right.m_primsplit.begin();
-	for( ; (ait != left.m_primsplit.end()) && (bit != right.m_primsplit.end());
-		++ait, ++bit)
-	{
-		if(*ait < *bit)
-			return -1;
-		if(*ait > *bit)
-			return 1;
-	}
-	/* The one with the bigger amount of versionsplits is our winner */
-	if(ait != left.m_primsplit.end())
-		return 1;
-	if(bit != right.m_primsplit.end())
-		return -1;
-	return 0;
-}
-
-/** Compares the split m_suffixes of another BasicVersion instances to itself. */
-int BasicVersion::compareSuffix(const BasicVersion& left,
-		const BasicVersion& right)
-{
-	vector<Suffix>::const_iterator ait = left.m_suffix.begin();
-	vector<Suffix>::const_iterator bit = right.m_suffix.begin();
-	for( ; (ait != left.m_suffix.end()) && (bit != right.m_suffix.end());
-		++ait, ++bit)
-	{
-		int ret = ait->compare(*bit);
-		if(ret)
-			return ret;
-	}
-	static const Suffix empty;
-	const Suffix &aref = (ait == left.m_suffix.end()) ? empty : *ait;
-	const Suffix &bref = (bit == right.m_suffix.end()) ? empty : *bit;
-	return aref.compare(bref);
-}
-
-int
-BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
-{
-	int ret = comparePrimary(left, right);
-	if(ret) return ret;
-
-	if( left.m_primarychar < right.m_primarychar ) return -1;
-	if( left.m_primarychar > right.m_primarychar ) return  1;
-	return compareSuffix(left, right);
+ 	// Now that we support inter-revision, we can be more strict about what we
+ 	// accept. We couldn't deal with it anyways .. so lets just cut if off.
+ 	throw ExBasic("garbage (%r) at end of version %r") % str.substr(pos) % getFull();
 }
 
 int
 BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
-	int ret = compareTilde(left, right);
-	if(ret) return ret;
+	std::vector<Part>::const_iterator
+		it_left(left.m_parts.begin()),
+		it_right(right.m_parts.begin());
 
-	const LeadNum *leftrev, *rightrev;
-	bool new_left, new_right;
-	if( left.m_subrevision.is_magic() || !left.m_gentoorevision.leadzero()) {
-		new_left = false;
-		leftrev = &(left.m_gentoorevision);
+	for(int ret = 0;; ++it_left, ++it_right) {
+		if (it_left == left.m_parts.end()) {
+			if (it_right == right.m_parts.end())
+				return 0;
+			else if (it_right->first < revision)
+				return 1;
+			return -1;
+		}
+		else if (it_right == right.m_parts.end()) {
+			if (it_left->first < revision)
+				return -1;
+			return 1;
+		}
+		else if ((ret = compare(*it_left, *it_right)))
+			return ret;
+		
 	}
-	else {
-		new_left = true;
-		leftrev = new LeadNum(string(left.m_gentoorevision.c_str() + 1));
-	}
-	if( right.m_subrevision.is_magic() || !right.m_gentoorevision.leadzero()) {
-		new_right = false;
-		rightrev = &(right.m_gentoorevision);
-	}
-	else {
-		new_right = true;
-		rightrev = new LeadNum(string(right.m_gentoorevision.c_str() + 1));
-	}
-	if( (*leftrev) < (*rightrev) ) ret = -1;
-	if( (*leftrev) > (*rightrev) ) ret = 1;
-	if(new_left) delete leftrev;
-	if(new_right) delete rightrev;
-	if(ret) return ret;
-
-	if( left.m_subrevision < right.m_subrevision ) return -1;
-	if( left.m_subrevision > right.m_subrevision ) return 1;
-
-	// The numbers are equal, but the strings might still be different,
-	// e.g. because of garbage or removed trailing ".0"s.
-	// In such a case, we simply compare the strings alphabetically.
-	// This is not always what you want but at least reproducible.
-	return strcmp(left.m_garbage.c_str(), right.m_garbage.c_str());
+	return 0;
 }
 
-const char *
-BasicVersion::parsePrimary(const char *str)
+int
+BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
-	string buf;
-	while(*str)
+	std::vector<Part>::const_iterator
+		it_left(left.m_parts.begin()),
+		it_right(right.m_parts.begin());
+
+	for(int ret = 0;; ++it_left, ++it_right) 
 	{
-		if(*str == '.') {
-			m_primsplit.push_back(LeadNum(buf));
-			buf.clear();
+		bool left_end = (it_left == left.m_parts.end()
+				|| it_left->first == revision);
+		bool right_end = (it_right == right.m_parts.end()
+				|| it_right->first == revision);
+		if (left_end) {
+			return right_end ? 0 : -1;
 		}
-		else if(isdigit(*str))
-			buf.push_back(*str);
-		else
-			break;
-		++str;
+		else if (right_end) {
+			return 1;
+		}
+		else if ((ret = compare(*it_left, *it_right)))
+			return ret;
 	}
-
-	if(!buf.empty())
-		m_primsplit.push_back(LeadNum(buf));
-
-	if(isalpha(*str))
-		m_primarychar = *str++;
-	return str;
+	return 0;
 }
 
 const ExtendedVersion::Restrict
@@ -353,11 +250,11 @@ const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_MIRROR;
 
 ExtendedVersion::Restrict
-ExtendedVersion::calcRestrict(const string &str)
+ExtendedVersion::calcRestrict(const std::string &str)
 {
 	Restrict r = RESTRICT_NONE;
-	vector<string> restrict_words = split_string(str);
-	for(vector<string>::const_iterator it = restrict_words.begin();
+	std::vector<std::string> restrict_words = split_string(str);
+	for(std::vector<std::string>::const_iterator it = restrict_words.begin();
 		it != restrict_words.end(); ++it) {
 		if(strcasecmp(it->c_str(), "fetch") == 0)
 			r |= RESTRICT_FETCH;
