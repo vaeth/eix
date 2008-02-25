@@ -94,17 +94,26 @@ GetFilename() {
 }
 
 CalcSuCmd() {
-	[ -n "${FETCHUSER}" ] || [ "${UID}" -ne 0 ] || FETCHUSER="nobody"
-	SUCMD=`command -v "${1}"` || \
-		die "${1} cannot be found in $PATH"
 	if [ -z "${FETCHUSER}" ]; then
-		Push -c SUCMD "${@}"
-		return
+		[ -n "${UID}" ] || UID="`id -u`"
+		if [ "${UID}" -ne 0 ]; then
+			Push -c SUCMD "${@}"
+			return
+		fi
+		FETCHUSER=nobody
 	fi
+	local SHEXEC="${SHELL}"
+	if [ -z "${SHEXEC}" ] || ! test -x "${SHELL}"; then
+		SHEXEC="`command -v sh`" && test -x "${SHEXEC}" || \
+			SHEXEC='/bin/sh'
+	fi
+	SUCMD=`command -v "${1}"` && test -x "${SUCMD}" || \
+		die "${1} cannot be found in $PATH"
 	Push -c SUCMD "${SUCMD}"
 	shift
 	Push SUCMD "${@}"
-	Push -c SUCMD '/bin/su' '-c' "eval exec ${SUCMD}" "${FETCHUSER}"
+	Push -c SUCMD '/bin/su' '-s' "${SHEXEC}" '-c' \
+		"eval exec ${SUCMD}" "${FETCHUSER}"
 }
 
 CdDir() {

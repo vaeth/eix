@@ -8,6 +8,8 @@
 	  for the fix.
 	- Introduce "detail" option for eix-test-obsolete, see
 	  http://forums.gentoo.org/viewtopic-t-666071-highlight-.html
+	- Fix update-eix-remote for users without shell (like "nobody"), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=211348
 	- Install "empty" /etc/eixrc to avoid that users overlook the new
 	  recommendations and thus get problems like e.g. the one leading to
 	  http://bugs.gentoo.org/show_bug.cgi?id=211192
