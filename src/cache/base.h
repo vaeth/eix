@@ -23,17 +23,6 @@ class Version;
 class PackageTree;
 class PortageSettings;
 
-#if 0
-// Add package to vector
-Package *addPackage(Category &v, const std::string &cat, const std::string &pkg);
-
-// Find Package and return pointer to it.
-Package *findPackage(Category &v, const char *pkg);
-
-// Remove and delete Package. */
-bool deletePackage(Category &v, const std::string &pkg);
-#endif
-
 // Parent class of every cache that eix can use. */
 class BasicCache {
 
