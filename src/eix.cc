@@ -46,8 +46,8 @@ const char *program_name = NULL;
 
 int  is_current_dbversion(const char *filename);
 void print_vector(const vector<string> &vec);
-void print_unused(const string &filename, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
-void print_removed(const string &dirname, const eix::ptr_list<Package> &packagelist);
+void print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+void print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -579,17 +579,27 @@ run_eix(int argc, char** argv)
 		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
 		cout << "\n";
 		if(eixrc.getBool("TEST_KEYWORDS"))
-			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE, all_packages);
+			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE,
+				eixrc["KEYWORDS_NONEXISTENT"],
+				all_packages);
 		if(eixrc.getBool("TEST_MASK"))
-			print_unused(eixrc.m_eprefixconf + USER_MASK_FILE,     all_packages);
+			print_unused(eixrc.m_eprefixconf + USER_MASK_FILE,
+				eixrc["MASK_NONEXISTENT"],
+				all_packages);
 		if(eixrc.getBool("TEST_UNMASK"))
-			print_unused(eixrc.m_eprefixconf + USER_UNMASK_FILE,   all_packages);
+			print_unused(eixrc.m_eprefixconf + USER_UNMASK_FILE,
+				eixrc["UNMASK_NONEXISTENT"],
+				all_packages);
 		if(eixrc.getBool("TEST_USE"))
-			print_unused(eixrc.m_eprefixconf + USER_USE_FILE,      all_packages, empty);
+			print_unused(eixrc.m_eprefixconf + USER_USE_FILE,
+				eixrc["USE_NONEXISTENT"],
+				all_packages, empty);
 		if(eixrc.getBool("TEST_CFLAGS"))
-			print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,   all_packages, empty);
+			print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,
+				eixrc["CFLAGS_NONEXISTENT"],
+				all_packages, empty);
 		if(eixrc.getBool("TEST_REMOVED"))
-			print_removed(var_db_pkg, all_packages);
+			print_removed(var_db_pkg, eixrc["INSTALLED_NONEXISTENT"], all_packages);
 	}
 
 	/* Sort the found matches by rating */
@@ -729,24 +739,35 @@ void print_vector(const vector<string> &vec)
 	cout << "--\n\n";
 }
 
-void print_unused(const string &filename, const eix::ptr_list<Package> &packagelist, bool test_empty)
+void print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
+	set<string> excludes;
+	bool know_excludes = false;
 	pushback_lines(filename.c_str(), &lines, false, true);
 	for(vector<string>::iterator i(lines.begin());
 		i != lines.end();
 		i++)
 	{
 		if(i->empty())
-		{
 			continue;
+		if(!know_excludes) {
+			know_excludes = true;
+			if(!excludefile.empty()) {
+				vector<string> excl;
+				pushback_lines(excludefile.c_str(), &excl, false, true);
+				make_set(excludes, split_string(join_vector(excl)));
+			}
 		}
+
 		KeywordMask *m = NULL;
 
 		try {
 			string::size_type n = i->find_first_of("\t ");
 			if(n == string::npos) {
+				if(excludes.find(*i) != excludes.end())
+					continue;
 				if(test_empty)
 				{
 					unused.push_back(*i);
@@ -755,7 +776,10 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 				m = new KeywordMask(i->c_str());
 			}
 			else {
-				m = new KeywordMask(i->substr(0, n).c_str());
+				string it = i->substr(0, n);
+				if(excludes.find(it) != excludes.end())
+					continue;
+				m = new KeywordMask(it.c_str());
 			}
 		}
 		catch(const ExBasic &e) {
@@ -770,11 +794,10 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 			if(m->ismatch(**pi))
 				break;
 		}
-		if(pi == packagelist.end())
-		{
-			unused.push_back(*i);
-		}
 		delete m;
+		if(pi != packagelist.end())
+			continue;
+		unused.push_back(*i);
 	}
 	if(unused.empty())
 		cout << "No non-matching";
@@ -792,7 +815,7 @@ void print_unused(const string &filename, const eix::ptr_list<Package> &packagel
 	return;
 }
 
-void print_removed(const string &dirname, const eix::ptr_list<Package> &packagelist)
+void print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist)
 {
 	/* For faster testing, we build a category->name set */
 	map< string, set<string> > cat_name;
@@ -804,6 +827,8 @@ void print_removed(const string &dirname, const eix::ptr_list<Package> &packagel
 	vector<string> failure;
 
 	/* Read all installed packages (not versions!) and fill failures */
+	set<string> excludes;
+	bool know_excludes = false;
 	vector<string> categories;
 	pushback_files(dirname, categories, NULL, 2, true, false);
 	for(vector<string>::const_iterator cit = categories.begin();
@@ -818,8 +843,23 @@ void print_removed(const string &dirname, const eix::ptr_list<Package> &packagel
 			nit != names.end(); ++nit )
 		{
 			char *name = ExplodeAtom::split_name(nit->c_str());
-			if(name && (!ns || ns->find(name) == ns->end()))
-				failure.push_back(cat_slash + name);
+			if(!name)
+				continue;
+			if((!ns) || (ns->find(name) == ns->end())) {
+				if(!know_excludes) {
+					know_excludes = true;
+					if(!excludefile.empty()) {
+						vector<string> excl;
+						pushback_lines(excludefile.c_str(), &excl, false, true);
+						make_set(excludes, split_string(join_vector(excl)));
+					}
+				}
+				if(excludes.find(name) == excludes.end()) {
+					string fullname = cat_slash + name;
+					if(excludes.find(fullname) == excludes.end())
+						failure.push_back(cat_slash + name);
+				}
+			}
 			free(name);
 		}
 	}

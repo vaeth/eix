@@ -1500,6 +1500,43 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "NOWARN_DIR",
+			"%{PORTAGE_CONFIGROOT}/etc/portage",
+			"This variable is only used for delayed substitution.\n"
+			"It defines whether all information lines are printed (even if empty).")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "KEYWORDS_NONEXISTENT",
+			"%{NOWARN_DIR}/package.keywords.nonexistent",
+			"Entries listed in this file/dir are excluded for -t TEST_KEYWORDS")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "MASK_NONEXISTENT",
+			"%{NOWARN_DIR}/package.mask.nonexistent",
+			"Entries listed in this file/dir are excluded for -t TEST_MASK")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "UNMASK_NONEXISTENT",
+			"%{NOWARN_DIR}/package.unmask.nonexistent",
+			"Entries listed in this file/dir are excluded for -t TEST_UNMASK")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "USE_NONEXISTENT",
+			"%{NOWARN_DIR}/package.use.nonexistent",
+			"Entries listed in this file/dir are excluded for -t TEST_USE")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "CFLAGS_NONEXISTENT",
+			"%{NOWARN_DIR}/package.cflags.nonexistent",
+			"Entries listed in this file/dir are excluded for -t TEST_CFLAGS")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "INSTALLED_NONEXISTENT",
+			"%{NOWARN_DIR}/package.installed.nonexistent",
+			"Packages listed in this file/dir are excluded for -t TEST_REMOVED")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DUMMY",
 			"",
 			"This variable is ignored. You can use it to collect delayed references to\n"

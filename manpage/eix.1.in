@@ -178,6 +178,11 @@ are available, respectively.
 This option is best combined with B<-T> to clean up /etc/portage/package.*
 
 Or you can combine it with B<-e> to have no other output.
+
+If you have a reason to exclude certain entries/packages from this test,
+you can write those entries into a file /etc/portage/package.*.nonexistent
+where *=keywords,mask,unmask,use,cflags,installed.
+These files (and how to modify their filenames) are described later.
 .TP
 .BI --cache-file FILE
 Use I<FILE> instead of B<@EIX_CACHEFILE@>.
@@ -1783,7 +1788,39 @@ This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 .BR REDUNDANT_IF_IN_CFLAGS "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
 See the above comments about this file.
+.TP
+.BR KEYWORDS_NONEXISTENT "  " (String)
+This is the filename of /etc/portage/package.keywords.nonexistent
+.TP
+.BR MASK_NONEXISTENT "  " (String)
+This is the filename of /etc/portage/package.mask.nonexistent
+.TP
+.BR UNMASK_NONEXISTENT "  " (String)
+This is the filename of /etc/portage/package.unmask.nonexistent
+.TP
+.BR USE_NONEXISTENT "  " (String)
+This is the filename of /etc/portage/package.use.nonexistent
+.TP
+.BR CFLAGS_NONEXISTENT "  " (String)
+This is the filename of /etc/portage/package.cflags.nonexistent
+.TP
+.BR INSTALLED_NONEXISTENT "  " (String)
+This is the filename of /etc/portage/package.installed.nonexistent
 .\" }}}
+.\" }}}
+
+.\" {{{ /etc/portage/package.*.nonexistent
+.SS /etc/portage/package.{keywords,mask,unmask,use,cflags}.nonexistent
+If an entry (separated by space or newline) matches the first word of a line
+in the corresponding /etc/portage/package.{keywords,mask,unmask,use,cflags}
+file, this line is excluded from the -t tests (for names not in the database).
+You can use this to eliminate certain warning from -t.
+.SS /etc/portage/package.installed.nonexistent
+This is similar to the other /etc/portage/package.*.nonexistent files
+with the difference that it eliminates messages from -t about installed
+packages which had been removed from the database.
+The entries of this file are of the form "category/name", but you can also
+omit the "category/" part (although this is not recommended).
 .\" }}}
 
 .\" {{{ -------- @EIX_CACHEFILE@
