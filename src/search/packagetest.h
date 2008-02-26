@@ -53,18 +53,19 @@ class PackageTest {
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled
-					INS_NONE,
-					INS_NONEXISTENT, /**< Test for nonexistent installed packages */
-					INS_OVERLAY,     /**< Test for nonexistent overlays of installed packages */
-					INS_MASKED;      /**< Test for masked installed packages */
+					INS_NONE        = 0x00,
+					INS_NONEXISTENT = 0x01, /**< Test for nonexistent installed packages */
+					INS_OVERLAY     = 0x02, /**< Test for nonexistent overlays of installed packages */
+					INS_MASKED      = 0x04, /**< Test for masked installed packages */
+					INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
 
 		typedef uint8_t TestStability;
 		static const TestStability
-					STABLE_NONE,
-					STABLE_FULL,     /**< Test for stable keyword */
-					STABLE_TESTING,  /**< Test for testing keyword */
-					STABLE_NONMASKED,/**< Test for non-masked packages */
-					STABLE_SYSTEM;   /**< Test for system packages */
+					STABLE_NONE      = 0x00,
+					STABLE_FULL      = 0x01, /**< Test for stable keyword */
+					STABLE_TESTING   = 0x02, /**< Test for testing keyword */
+					STABLE_NONMASKED = 0x04, /**< Test for non-masked packages */
+					STABLE_SYSTEM    = 0x08; /**< Test for system packages */
 
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);
@@ -255,6 +256,12 @@ class PackageTest {
 
 		bool have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const;
 		bool have_redundant(const Package &p, Keywords::Redundant r) const;
+
+		static Keywords::Redundant nowarn_keywords(const Package &p);
+		static Keywords::Redundant nowarn_mask(const Package &p);
+		static Keywords::Redundant nowarn_use(const Package &p);
+		static Keywords::Redundant nowarn_cflags(const Package &p);
+		static TestInstalled nowarn_installed(const Package &p);
 };
 
 #endif /* __PACKAGETEST_H__ */

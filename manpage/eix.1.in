@@ -336,6 +336,11 @@ will not find entries for e.g. renamed or removed (from the portage tree) packag
 Use B<-t> to find the latter.
 
 Therefore, this option is best combined with -t to find also other types of obsolete entries.
+
+If you have a reason to exclude certain packages from this test,
+you can write those entries into a file /etc/portage/package.*.nowarn
+where *=keywords,mask,unmask,use,cflags,installed.
+These files (and how to modify their filenames) are described later.
 .TP
 .BR -| ", " --pipe
 (Recall that a shell will not pass an unquoted B<|> sign, so quote properly).
@@ -1806,6 +1811,24 @@ This is the filename of /etc/portage/package.cflags.nonexistent
 .TP
 .BR INSTALLED_NONEXISTENT "  " (String)
 This is the filename of /etc/portage/package.installed.nonexistent
+.TP
+.BR KEYWORDS_NOWARN "  " (String)
+This is the filename of /etc/portage/package.keywords.nowarn
+.TP
+.BR MASK_NOWARN "  " (String)
+This is the filename of /etc/portage/package.mask.nowarn
+.TP
+.BR UNMASK_NOWARN "  " (String)
+This is the filename of /etc/portage/package.unmask.nowarn
+.TP
+.BR USE_NOWARN "  " (String)
+This is the filename of /etc/portage/package.use.nowarn
+.TP
+.BR CFLAGS_NOWARN "  " (String)
+This is the filename of /etc/portage/package.cflags.nowarn
+.TP
+.BR INSTALLED_NOWARN "  " (String)
+This is the filename of /etc/portage/package.installed.nowarn
 .\" }}}
 .\" }}}
 
@@ -1821,6 +1844,49 @@ with the difference that it eliminates messages from -t about installed
 packages which had been removed from the database.
 The entries of this file are of the form "category/name", but you can also
 omit the "category/" part (although this is not recommended).
+.\" }}}
+
+.\" {{{ /etc/portage/package.*.nowarn
+.SS /etc/portage/package.keywords.nowarn
+With this file you can switch off test for -T for particular packages.
+The format of the file is as follows:
+Each line should start with the package (in the form "category/name")
+for which you want to switch off some tests; then you can list
+(separated by spaces) the tests which you want to switch off.
+For example, the line
+
+.B sys-kernel/hardened-sources no_change weaker
+
+in this file will cause that -T does not find the package
+sys-kernel/hardened-sources if the only cause for it would be that
+B<REDUNDANT_IF_NO_CHANGE> or B<REDUNDANT_IF_WEAKER> is set.
+
+You can list a package several times in this file; the listed tests are
+then cumulative for the corresponding package.
+Since all other /etc/portage/package.*.nowarn files have the same policy,
+you can just merge all these into one file if you prefer (you can e.g. set
+the B<*_NOWARN> variables to the same filenames).
+
+Available tests in /etc/portage/package.keywords.nowarn are
+B<in_keywords>, B<no_change>, B<double>, B<mixed>, B<weaker>,
+B<minusasterisk>, B<double_line>, and they correspond to the analogous
+B<REDUNDNANT_IF_*> variable.
+.SS /etc/portage/package.mask.nowarn
+This is analogous to the above with the difference that the available tests are
+B<in_mask>, B<mask_no_change>, B<double_masked>
+.SS /etc/portage/package.unmask.nowarn
+This is analogous to the above with the difference that the available tests are
+B<in_unmask>, B<unmask_no_change>, B<double_unmasked>
+.SS /etc/portage/package.use.nowarn
+This is analogous to the above with the difference that the available tests are
+B<in_use>, B<double_use>
+.SS /etc/portage/package.cflags.nowarn
+This is analogous to the above with the difference that the available tests are
+B<in_cflags>, B<double_cflags>
+.SS /etc/portage/package.installed.nowarn
+This is analogous to the above with the difference that the available tests are
+B<nonexistent>, B<masked>, B<other_overlay> which correspond to the respective variables
+B<TEST_FOR_NONEXISTENT>, B<NONEXISTENT_IF_MASKED>, B<NONEXISTENT_IF_OTHER_OVERLAY>
 .\" }}}
 
 .\" {{{ -------- @EIX_CACHEFILE@

@@ -3,6 +3,7 @@
 *eix-0.10.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce /etc/portage/package.*.nonexistent
+	- Introduce /etc/portage/package.*.nowarn
 	- Fix update-eix-layman (broken since eix-0.10.4), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=211093
 	  Thanks to Roberto Castagnola <roberto.castagnola at gmail.com>

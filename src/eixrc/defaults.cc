@@ -1500,40 +1500,70 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "NOWARN_DIR",
+		EixRcOption(EixRcOption::STRING, "EIXCFGDIR",
 			"%{PORTAGE_CONFIGROOT}/etc/portage",
 			"This variable is only used for delayed substitution.\n"
-			"It defines whether all information lines are printed (even if empty).")
+			"It is the directory where eix searches for its package.*.* config files")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "KEYWORDS_NONEXISTENT",
-			"%{NOWARN_DIR}/package.keywords.nonexistent",
+			"%{EIXCFGDIR}/package.keywords.nonexistent",
 			"Entries listed in this file/dir are excluded for -t TEST_KEYWORDS")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "MASK_NONEXISTENT",
-			"%{NOWARN_DIR}/package.mask.nonexistent",
+			"%{EIXCFGDIR}/package.mask.nonexistent",
 			"Entries listed in this file/dir are excluded for -t TEST_MASK")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "UNMASK_NONEXISTENT",
-			"%{NOWARN_DIR}/package.unmask.nonexistent",
+			"%{EIXCFGDIR}/package.unmask.nonexistent",
 			"Entries listed in this file/dir are excluded for -t TEST_UNMASK")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "USE_NONEXISTENT",
-			"%{NOWARN_DIR}/package.use.nonexistent",
+			"%{EIXCFGDIR}/package.use.nonexistent",
 			"Entries listed in this file/dir are excluded for -t TEST_USE")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "CFLAGS_NONEXISTENT",
-			"%{NOWARN_DIR}/package.cflags.nonexistent",
+			"%{EIXCFGDIR}/package.cflags.nonexistent",
 			"Entries listed in this file/dir are excluded for -t TEST_CFLAGS")
 		);
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "INSTALLED_NONEXISTENT",
-			"%{NOWARN_DIR}/package.installed.nonexistent",
+			"%{EIXCFGDIR}/package.installed.nonexistent",
 			"Packages listed in this file/dir are excluded for -t TEST_REMOVED")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "KEYWORDS_NOWARN",
+			"%{EIXCFGDIR}/package.keywords.nowarn",
+			"Exceptional packages for -T tests of /etc/portage/package.keywords")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "MASK_NOWARN",
+			"%{EIXCFGDIR}/package.mask.nowarn",
+			"Exceptional packages for -T tests of /etc/portage/package.mask")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "UNMASK_NOWARN",
+			"%{EIXCFGDIR}/package.unmask.nowarn",
+			"Exceptional packages for -T tests of /etc/portage/package.unmask")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "USE_NOWARN",
+			"%{EIXCFGDIR}/package.use.nowarn",
+			"Exceptional packages for -T tests of /etc/portage/package.use")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "CFLAGS_NOWARN",
+			"%{EIXCFGDIR}/package.cflags.nowarn",
+			"Exceptional packages for -T tests of /etc/portage/package.cflags")
+		);
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "INSTALLED_NOWARN",
+			"%{EIXCFGDIR}/package.installed.nowarn",
+			"Exceptional packages for -T tests of installed packages")
 		);
 
 eixrc.addDefault(

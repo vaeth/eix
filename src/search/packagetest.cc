@@ -29,17 +29,17 @@ const PackageTest::MatchField
 		PackageTest::SLOT          = 0x400; /**< Search in slots */
 
 const PackageTest::TestInstalled
-		PackageTest::INS_NONE        = 0x00,
-		PackageTest::INS_NONEXISTENT = 0x01,
-		PackageTest::INS_OVERLAY     = 0x02,
-		PackageTest::INS_MASKED      = 0x04;
+		PackageTest::INS_NONE,
+		PackageTest::INS_NONEXISTENT,
+		PackageTest::INS_OVERLAY,
+		PackageTest::INS_MASKED;
 
 const PackageTest::TestStability
-		PackageTest::STABLE_NONE      = 0x00,
-		PackageTest::STABLE_FULL      = 0x01,
-		PackageTest::STABLE_TESTING   = 0x02,
-		PackageTest::STABLE_NONMASKED = 0x04,
-		PackageTest::STABLE_SYSTEM    = 0x08;
+		PackageTest::STABLE_NONE,
+		PackageTest::STABLE_FULL,
+		PackageTest::STABLE_TESTING,
+		PackageTest::STABLE_NONMASKED,
+		PackageTest::STABLE_SYSTEM;
 
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
 {
@@ -306,7 +306,6 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 bool
 PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 {
-	r &= redundant_flags;
 	if(r == Keywords::RED_NOTHING)
 		return false;
 	if(have_redundant(p, r, first_test))
@@ -316,7 +315,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	return false;
 }
 
-inline bool
+static bool
 stabilitytest(const Package *p, PackageTest::TestStability what)
 {
 	if(what == PackageTest::STABLE_NONE)
@@ -558,66 +557,80 @@ PackageTest::match(PackageReader *pkg) const
 
 		get_p();
 
-		if(redundant_flags & Keywords::RED_ALL_MASKSTUFF)
+		Keywords::Redundant r = redundant_flags & Keywords::RED_ALL_MASKSTUFF;
+		if(r)
 		{
-			if(portagesettings->user_config->setMasks(p, redundant_flags))
+			r &= nowarn_mask(*p);
+			if(r && portagesettings->user_config->setMasks(p, r))
 			{
-				if(have_redundant(*p, Keywords::RED_DOUBLE_MASK))
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_MASK))
 					break;
-				if(have_redundant(*p, Keywords::RED_DOUBLE_UNMASK))
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_UNMASK))
 					break;
-				if(have_redundant(*p, Keywords::RED_MASK))
+				if(have_redundant(*p, r & Keywords::RED_MASK))
 					break;
-				if(have_redundant(*p, Keywords::RED_UNMASK))
+				if(have_redundant(*p, r & Keywords::RED_UNMASK))
 					break;
-				if(have_redundant(*p, Keywords::RED_IN_MASK))
+				if(have_redundant(*p, r & Keywords::RED_IN_MASK))
 					break;
-				if(have_redundant(*p, Keywords::RED_IN_UNMASK))
+				if(have_redundant(*p, r & Keywords::RED_IN_UNMASK))
 					break;
 			}
 		}
-		if(redundant_flags & Keywords::RED_ALL_KEYWORDS)
+		r = redundant_flags & Keywords::RED_ALL_KEYWORDS;
+		if(r)
 		{
-			bool applied = portagesettings->user_config->setKeyflags(p, redundant_flags);
-			if(applied)
+			r &= nowarn_keywords(*p);
+			if(r && portagesettings->user_config->setKeyflags(p, r))
 			{
-				if(have_redundant(*p, Keywords::RED_DOUBLE))
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE))
 					break;
-				if(have_redundant(*p, Keywords::RED_MIXED))
+				if(have_redundant(*p, r & Keywords::RED_MIXED))
 					break;
-				if(have_redundant(*p, Keywords::RED_WEAKER))
+				if(have_redundant(*p, r & Keywords::RED_WEAKER))
 					break;
-				if(have_redundant(*p, Keywords::RED_STRANGE))
+				if(have_redundant(*p, r & Keywords::RED_STRANGE))
 					break;
-				if(have_redundant(*p, Keywords::RED_NO_CHANGE))
+				if(have_redundant(*p, r & Keywords::RED_NO_CHANGE))
 					break;
-				if(have_redundant(*p, Keywords::RED_IN_KEYWORDS))
+				if(have_redundant(*p, r & Keywords::RED_IN_KEYWORDS))
+					break;
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_LINE))
+					break;
+				if(have_redundant(*p, r & Keywords::RED_MINUSASTERISK))
 					break;
 			}
 		}
-		if(redundant_flags & (Keywords::RED_DOUBLE_USE|Keywords::RED_IN_USE)) {
-			if(portagesettings->user_config->CheckUse(p, redundant_flags))
+		r = redundant_flags & Keywords::RED_ALL_USE;
+		if(r) {
+			r &= nowarn_use(*p);
+			if(r && portagesettings->user_config->CheckUse(p, r))
 			{
-				if(have_redundant(*p, Keywords::RED_DOUBLE_USE))
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_USE))
 					break;
-				if(have_redundant(*p, Keywords::RED_IN_USE))
+				if(have_redundant(*p, r & Keywords::RED_IN_USE))
 					break;
 			}
 		}
-		if(redundant_flags & (Keywords::RED_DOUBLE_CFLAGS|Keywords::RED_IN_CFLAGS)) {
-			if(portagesettings->user_config->CheckCflags(p, redundant_flags)) {
-				if(have_redundant(*p, Keywords::RED_DOUBLE_CFLAGS))
+		r = redundant_flags & Keywords::RED_ALL_CFLAGS;
+		if(r) {
+			r &= nowarn_cflags(*p);
+			if(r && portagesettings->user_config->CheckCflags(p, r)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_CFLAGS))
 					break;
-				if(have_redundant(*p, Keywords::RED_IN_CFLAGS))
+				if(have_redundant(*p, r & Keywords::RED_IN_CFLAGS))
 					break;
 			}
 		}
 		if(test_installed == INS_NONE)
 			return invert;
+		TestInstalled t = test_installed & nowarn_installed(*p);
+		if(t == INS_NONE)
+			return invert;
 		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
 		if(!installed_versions)
 			return invert;
-		if(test_installed & INS_MASKED) {
+		if(t & INS_MASKED) {
 			portagesettings->user_config->setMasks(p);
 			portagesettings->user_config->setKeyflags(p);
 		}
@@ -631,11 +644,11 @@ PackageTest::match(PackageReader *pkg) const
 				Version *version = *version_it;
 				if(*version != *current)
 					continue;
-				if(test_installed && INS_MASKED) {
+				if(t & INS_MASKED) {
 					if(!version->keyflags.isStable())
 						continue;
 				}
-				if(test_installed & INS_OVERLAY) {
+				if(t & INS_OVERLAY) {
 					if(!vardbpkg->readOverlay(*p, *current, *header, portdir))
 						continue;
 					if(current->overlay_key != version_it->overlay_key)
@@ -691,3 +704,231 @@ PackageTest::match(PackageReader *pkg) const
 	return (!invert);
 }
 
+static void
+getlines(const char *varname, vector<string> &lines)
+{
+	EixRc &rc = get_eixrc(NULL);
+	lines.clear();
+	string &name = rc[varname];
+	if(name.empty())
+		return;
+	pushback_lines(name.c_str(), &lines, false, true);
+}
+
+Keywords::Redundant
+PackageTest::nowarn_keywords(const Package &p)
+{
+	static bool know_file = false;
+	static map<string, Keywords::Redundant> m;
+	map<string, Keywords::Redundant>::const_iterator i;
+	if(!know_file) {
+		know_file=true; m.clear();
+		vector<string> lines;
+		getlines("KEYWORDS_NOWARN", lines);
+		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+			vector<string> s = split_string(*it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et = s.begin();
+			Keywords::Redundant r;
+			i = m.find(*et);
+			if(i == m.end())
+				r = Keywords::RED_ALL_KEYWORDS;
+			else
+				r = i->second;
+			for(++et; et != s.end(); ++et) {
+				if(strcasecmp(et->c_str(), "in_keywords") == 0)
+					r &= ~Keywords::RED_IN_KEYWORDS;
+				else if(strcasecmp(et->c_str(), "no_change") == 0)
+					r &= ~Keywords::RED_NO_CHANGE;
+				else if(strcasecmp(et->c_str(), "double") == 0)
+					r &= ~Keywords::RED_DOUBLE;
+				else if(strcasecmp(et->c_str(), "mixed") == 0)
+					r &= ~Keywords::RED_MIXED;
+				else if(strcasecmp(et->c_str(), "weaker") == 0)
+					r &= ~Keywords::RED_WEAKER;
+				else if(strcasecmp(et->c_str(), "strange") == 0)
+					r &= ~Keywords::RED_STRANGE;
+				else if(strcasecmp(et->c_str(), "minusasterisk") == 0)
+					r &= ~Keywords::RED_MINUSASTERISK;
+				else if(strcasecmp(et->c_str(), "double_line") == 0)
+					r &= ~Keywords::RED_DOUBLE_LINE;
+			}
+			m[s[0]] = r;
+		}
+	}
+	i = m.find(p.category + "/" + p.name);
+	if(i == m.end())
+		return Keywords::RED_ALL_KEYWORDS;
+	return i->second;
+}
+
+Keywords::Redundant
+PackageTest::nowarn_mask(const Package &p)
+{
+	static bool know_file = false;
+	static map<string, Keywords::Redundant> m;
+	map<string, Keywords::Redundant>::const_iterator i;
+	if(!know_file) {
+		know_file=true; m.clear();
+		vector<string> lines;
+		getlines("MASK_NOWARN", lines);
+		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+			vector<string> s = split_string(*it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et = s.begin();
+			Keywords::Redundant r;
+			i = m.find(*et);
+			if(i == m.end())
+				r = Keywords::RED_ALL_MASKSTUFF;
+			else
+				r = i->second;
+			for(++et; et != s.end(); ++et) {
+				if(strcasecmp(et->c_str(), "in_mask") == 0)
+					r &= ~Keywords::RED_IN_MASK;
+				else if(strcasecmp(et->c_str(), "mask_no_change") == 0)
+					r &= ~Keywords::RED_MASK;
+				else if(strcasecmp(et->c_str(), "double_masked") == 0)
+					r &= ~Keywords::RED_DOUBLE_MASK;
+			}
+			m[s[0]] = r;
+		}
+		getlines("UNMASK_NOWARN", lines);
+		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+			vector<string> s = split_string(*it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et = s.begin();
+			i = m.find(*et);
+			Keywords::Redundant r;
+			if(i == m.end())
+				r = Keywords::RED_ALL_MASKSTUFF;
+			else
+				r = i->second;
+			for(++et; et != s.end(); ++et) {
+				if(strcasecmp(et->c_str(), "in_unmask") == 0)
+					r &= ~Keywords::RED_IN_UNMASK;
+				else if(strcasecmp(et->c_str(), "unmask_no_change") == 0)
+					r &= ~Keywords::RED_UNMASK;
+				else if(strcasecmp(et->c_str(), "double_unmasked") == 0)
+					r &= ~Keywords::RED_DOUBLE_UNMASK;
+			}
+			m[s[0]] = r;
+		}
+	}
+	i = m.find(p.category + "/" + p.name);
+	if(i == m.end())
+		return Keywords::RED_ALL_MASKSTUFF;
+	return i->second;
+}
+
+Keywords::Redundant
+PackageTest::nowarn_use(const Package &p)
+{
+	static bool know_file = false;
+	static map<string, Keywords::Redundant> m;
+	map<string, Keywords::Redundant>::const_iterator i;
+	if(!know_file) {
+		know_file=true; m.clear();
+		vector<string> lines;
+		getlines("USE_NOWARN", lines);
+		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+			vector<string> s = split_string(*it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et = s.begin();
+			Keywords::Redundant r;
+			i = m.find(*et);
+			if(i == m.end())
+				r = Keywords::RED_ALL_USE;
+			else
+				r = i->second;
+			for(++et; et != s.end(); ++et) {
+				if(strcasecmp(et->c_str(), "in_use") == 0)
+					r &= ~Keywords::RED_IN_USE;
+				else if(strcasecmp(et->c_str(), "double_use") == 0)
+					r &= ~Keywords::RED_DOUBLE_USE;
+			}
+			m[s[0]] = r;
+		}
+	}
+	i = m.find(p.category + "/" + p.name);
+	if(i == m.end())
+		return Keywords::RED_ALL_USE;
+	return i->second;
+}
+
+Keywords::Redundant
+PackageTest::nowarn_cflags(const Package &p)
+{
+	static bool know_file = false;
+	static map<string, Keywords::Redundant> m;
+	map<string, Keywords::Redundant>::const_iterator i;
+	if(!know_file) {
+		know_file=true; m.clear();
+		vector<string> lines;
+		getlines("CFLAGS_NOWARN", lines);
+		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+			vector<string> s = split_string(*it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et = s.begin();
+			Keywords::Redundant r;
+			i = m.find(*et);
+			if(i == m.end())
+				r = Keywords::RED_ALL_CFLAGS;
+			else
+				r = i->second;
+			for(++et; et != s.end(); ++et) {
+				if(strcasecmp(et->c_str(), "in_cflags") == 0)
+					r &= ~Keywords::RED_IN_CFLAGS;
+				else if(strcasecmp(et->c_str(), "double_cflags") == 0)
+					r &= ~Keywords::RED_DOUBLE_CFLAGS;
+			}
+			m[s[0]] = r;
+		}
+	}
+	i = m.find(p.category + "/" + p.name);
+	if(i == m.end())
+		return Keywords::RED_ALL_CFLAGS;
+	return i->second;
+}
+
+PackageTest::TestInstalled
+PackageTest::nowarn_installed(const Package &p)
+{
+	static bool know_file = false;
+	static map<string, TestInstalled> m;
+	map<string, TestInstalled>::const_iterator i;
+	if(!know_file) {
+		know_file=true; m.clear();
+		vector<string> lines;
+		getlines("INSTALLED_NOWARN", lines);
+		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
+			vector<string> s = split_string(*it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et = s.begin();
+			Keywords::Redundant r;
+			i = m.find(*et);
+			if(i == m.end())
+				r = INS_SOME;
+			else
+				r = i->second;
+			for(++et; et != s.end(); ++et) {
+				if(strcasecmp(et->c_str(), "nonexistent") == 0)
+					r = INS_NONE;
+				else if(strcasecmp(et->c_str(), "masked") == 0)
+					r &= ~INS_OVERLAY;
+				else if(strcasecmp(et->c_str(), "other_overlay") == 0)
+					r &= ~INS_MASKED;
+			}
+			m[s[0]] = r;
+		}
+	}
+	i = m.find(p.category + "/" + p.name);
+	if(i == m.end())
+		return INS_SOME;
+	return i->second;
+}
