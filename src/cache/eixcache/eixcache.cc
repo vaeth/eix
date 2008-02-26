@@ -158,7 +158,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 				if(it->overlay_key != m_get_overlay)
 					continue;
 			}
-			Version *version = new Version(it->getFull().c_str());
+			Version *version = new Version(it->getFull());
 			version->overlay_key = m_overlay_key;
 			version->set_full_keywords(it->get_full_keywords());
 			version->slotname = it->slotname;

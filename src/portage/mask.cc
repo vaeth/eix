@@ -139,7 +139,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		else
 		{
 			if(end)
-				parseVersion(string(str, end - str));
+				parseVersion(str, end - str);
 			else
 				parseVersion(str);
 		}
@@ -171,15 +171,8 @@ Mask::test(const ExtendedVersion *ev) const
 			return true;
 
 		case maskOpGlob:
-			{ 
-				// '=*' operator has to remove leading zeros
-				// see match_from_list in portage_dep.py
-				const std::string& s1(getFull()); 
-				const std::string& s2(ev->getFull()); 
-				const std::string::size_type start = s1.find_first_not_of("0"); 
-				const std::string::size_type total = s1.size() - start; 
-				return s2.compare(s2.find_first_not_of("0"), total, s1, start, total) == 0; 
-			}
+			return strncmp(m_full.c_str(), ev->getFull(),
+					m_full.size()) == 0;
 
 		case maskOpLess:
 			return BasicVersion::compare(*this, *ev) > 0;

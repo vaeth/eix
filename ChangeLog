@@ -1,14 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.10.6
-	Emil Beinroth <emilbeinroth at gmx.net>:
-	- Kill SAVE_VERSIONTEXT
-	- Simplify BasicVersion (with inter-revision support) and use std::string
-	  instead of charptr. Put all parts of the version string into one vector.
-	  Changed io-code to write one vector with all version parts.
-	- Fix comparison of BasicVersion (see comments in basicversion.cc)
-	- Fix wildcard operator for masks (leading zeros must be stripped).
-
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce /etc/portage/package.*.nonexistent
 	- Fix update-eix-layman (broken since eix-0.10.4), see

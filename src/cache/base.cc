@@ -115,3 +115,48 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 	env["PV"]           = mainversion;
 	env["P"]            = package.name + "-" + mainversion;
 }
+
+#if 0
+Package *
+addPackage(Category &v, const string &cat, const string &pkg)
+{
+	Package *p = new Package(cat, pkg);
+	OOM_ASSERT(p);
+	v.push_back(p);
+	return p;
+}
+
+Package *
+findPackage(Category &v, const char *pkg)
+{
+	Package *ret = NULL;
+	for(Category::iterator i = v.begin();
+		i != v.end();
+		++i)
+	{
+		if((*i)->name == pkg) {
+			ret = *i;
+			break;
+		}
+	}
+	return ret;
+}
+
+bool
+deletePackage(Category &v, const string &pkg)
+{
+	bool ret = false;
+	for(Category::iterator i = v.begin();
+		i != v.end();
+		++i)
+	{
+		if((*i)->name == pkg) {
+			delete *i;
+			v.erase(i);
+			ret = true;
+			break;
+		}
+	}
+	return false;
+}
+#endif
