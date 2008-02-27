@@ -114,7 +114,7 @@ Show the current eixrc-variables, and their defaults as comments.
 .B --dump-defaults
 Show the defaults of the eixrc-variables, and their current values as comments.
 .TP
-.BI --print VAR
+.BI "--print " VAR
 Print the specified variable I<VAR> of eixrc or of portage settings,
 completely expanded as it would be used internally by eix.
 This is mainly used internally for scripts.
@@ -184,7 +184,7 @@ you can write those entries into a file /etc/portage/package.*.nonexistent
 where *=keywords,mask,unmask,use,cflags,installed.
 These files (and how to modify their filenames) are described later.
 .TP
-.BI --cache-file FILE
+.BI "--cache-file " FILE
 Use I<FILE> instead of B<@EIX_CACHEFILE@>.
 
 .\" {{{ -------- Options for expressions
@@ -254,7 +254,7 @@ Only match system packages.
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
 .TP
-.BI --in-overlay overlay
+.BI "--in-overlay " overlay
 Only match packages with at least one version in an overlay matching I<overlay>.
 
 If this option is repeated, the additional I<overlay> arguments are joined
@@ -274,7 +274,7 @@ If I<overlay> is empty (or omitted if B<--in-overlay> is the last option)
 it matches all overlays except for the "main" tree
 (i.e. B<--in-overlay ''> is the same as B<-O>).
 .TP
-.BI --only-in-overlay overlay
+.BI "--only-in-overlay " overlay
 Only match packages which have only versions in an overlay matching I<overlay>.
 
 If this option is repeated, the additional I<overlay> arguments are joined
@@ -291,7 +291,7 @@ B<CHECK_INSTALLED_OVERLAYS> to true (which is not the default because
 it dramatically slows down the test).
 See B<CHECK_INSTALLED_OVERLAYS> for details.
 .TP
-.BI --installed-from-overlay overlay
+.BI "--installed-from-overlay " overlay
 This is analogous to B<--in-overlay> with the difference that only
 packages are matched which have at least one version installed
 from I<overlay>.
@@ -305,7 +305,7 @@ completely reliable result.
 Only match packages with at least one installed version number which is
 also in some overlay.
 .TP
-.BI --installed-in-overlay overlay
+.BI "--installed-in-overlay " overlay
 This is analogous to B<--in-overlay> with the difference that only
 packages are matched which have at least one installed version in I<overlay>.
 For instance, B<--installed-in-overlay 0> will only match those packages
@@ -1834,12 +1834,13 @@ This is the filename of /etc/portage/package.installed.nowarn
 
 .\" {{{ /etc/portage/package.*.nonexistent
 .SS /etc/portage/package.{keywords,mask,unmask,use,cflags}.nonexistent
+Similarly as /etc/portage/package.*, this can be a file or a directory.
 If an entry (separated by space or newline) matches the first word of a line
 in the corresponding /etc/portage/package.{keywords,mask,unmask,use,cflags}
 file, this line is excluded from the -t tests (for names not in the database).
 You can use this to eliminate certain warning from -t.
 .SS /etc/portage/package.installed.nonexistent
-This is similar to the other /etc/portage/package.*.nonexistent files
+This is similar to the other /etc/portage/package.*.nonexistent files/dirs
 with the difference that it eliminates messages from -t about installed
 packages which had been removed from the database.
 The entries of this file are of the form "category/name", but you can also
@@ -1848,7 +1849,8 @@ omit the "category/" part (although this is not recommended).
 
 .\" {{{ /etc/portage/package.*.nowarn
 .SS /etc/portage/package.keywords.nowarn
-With this file you can switch off test for -T for particular packages.
+Similarly as /etc/portage/package.*, this can be a file or a directory.
+With this file/dir you can switch off test for -T for particular packages.
 The format of the file is as follows:
 Each line should start with the package (in the form "category/name")
 for which you want to switch off some tests; then you can list
@@ -1873,20 +1875,20 @@ B<minusasterisk>, B<double_line>, and they correspond to the analogous
 B<REDUNDNANT_IF_*> variable.
 .SS /etc/portage/package.mask.nowarn
 This is analogous to the above with the difference that the available tests are
-B<in_mask>, B<mask_no_change>, B<double_masked>
+B<in_mask>, B<mask_no_change>, B<double_masked>.
 .SS /etc/portage/package.unmask.nowarn
 This is analogous to the above with the difference that the available tests are
-B<in_unmask>, B<unmask_no_change>, B<double_unmasked>
+B<in_unmask>, B<unmask_no_change>, B<double_unmasked>.
 .SS /etc/portage/package.use.nowarn
 This is analogous to the above with the difference that the available tests are
-B<in_use>, B<double_use>
+B<in_use>, B<double_use>.
 .SS /etc/portage/package.cflags.nowarn
 This is analogous to the above with the difference that the available tests are
-B<in_cflags>, B<double_cflags>
+B<in_cflags>, B<double_cflags>.
 .SS /etc/portage/package.installed.nowarn
 This is analogous to the above with the difference that the available tests are
 B<nonexistent>, B<masked>, B<other_overlay> which correspond to the respective variables
-B<TEST_FOR_NONEXISTENT>, B<NONEXISTENT_IF_MASKED>, B<NONEXISTENT_IF_OTHER_OVERLAY>
+B<TEST_FOR_NONEXISTENT>, B<NONEXISTENT_IF_MASKED>, B<NONEXISTENT_IF_OTHER_OVERLAY>.
 .\" }}}
 
 .\" {{{ -------- @EIX_CACHEFILE@
@@ -1911,7 +1913,8 @@ profile is known.)
 The output with the default B<OVERLAYS_LIST=all-used-renumbered> is confusing when one wants
 to use the overlay number in some eix variable/command-argument.
 
-There is no cache method setting which gets information from overlays fast and reliable -
+There is no cache method setting which gets information from overlays
+(for which no portage cache metadata is available) fast and reliable -
 you must always choose between one of these two extremes.
 The default is the fast one, but it shows often false slots and has other problems.
 
