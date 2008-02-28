@@ -119,7 +119,7 @@ BasicVersion::parseVersion(const std::string& str)
 
 	pos += len;
 
-	while(str.at(pos) == '.')
+	while(str.at(pos) == '.') {
 		len = str.find_first_not_of("0123456789", ++pos);
 		if (len == pos) {
 			throw ExBasic("malformed (primary at %r) version string %r")
@@ -131,7 +131,7 @@ BasicVersion::parseVersion(const std::string& str)
 			return;
 
 		pos = len;
-
+	}
 
 	if(isalpha(str.at(pos)))
 		m_parts.push_back(Part(character, str.substr(pos++, 1)));

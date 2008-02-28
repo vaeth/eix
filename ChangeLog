@@ -1,6 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.10.6
+*eix-0.11.0
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- kill SAVE_VERSIONTEXT
 	- rewrite parts of BasicVersion and store versions as a vector of Parts
