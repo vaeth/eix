@@ -1,6 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.10.6
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- kill SAVE_VERSIONTEXT
+	- rewrite parts of BasicVersion and store versions as a vector of Parts
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce /etc/portage/package.*.nonexistent
 	- Introduce /etc/portage/package.*.nowarn

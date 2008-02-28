@@ -10,7 +10,7 @@
 
 #include <string>
 #include <sstream>
-#include <iostream>
+#include <ostream>
 #include <cassert>
 
 namespace eix
@@ -25,7 +25,8 @@ namespace eix
    * Recognized specifiers are:
    * - @b s  convert argument to string by using the <<-operator of std::ostream.
    * - @b r  like %s, but if argument is a string type (std::string or char *) it
-   *         is enclosed in single quotes.
+   *         is enclosed in single quotes. For string::size_type, this will
+   *         print "<string::npos>" if the argument equals to std::string::npos.
    *
    * Example usage:
    *
@@ -102,6 +103,14 @@ namespace eix
       /// Write string t enclosed in single quotes into stream s.
       std::ostream& write_representation(std::ostream& s, const std::string &t)
       { return s << "'" << t << "'"; }
+
+      /// Write size_type or "<string::npos>" to stream.
+      std::ostream& write_representation(std::ostream& s, const std::string::size_type &t)
+      {
+          if (t == std::string::npos)
+              return s << "<string::npos>";
+          return s << t;
+      }
 
       /// Write t into stream s.
       template<typename T>

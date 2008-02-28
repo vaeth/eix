@@ -26,6 +26,14 @@ using namespace std;
 
 io::OffsetType io::counter;
 
+namespace io {
+	/// Read a number with leading zero's
+	BasicVersion::Part read_Part(FILE *fp);
+
+	/// Write a number with leading zero's
+	void write_Part(FILE *fp, const BasicVersion::Part &n);
+}
+
 /** Read a string */
 string
 io::read_string(FILE *fp)
@@ -53,22 +61,28 @@ io::write_string(FILE *fp, const string &str)
 		counter += str.size();
 }
 
-LeadNum io::read_LeadNum(FILE *fp)
+#define MAXTYP (32)
+
+BasicVersion::Part io::read_Part(FILE *fp)
 {
-	return LeadNum(io::read_string(fp).c_str());
+	std::string::size_type len = io::read<std::string::size_type>(fp);
+	BasicVersion::PartType type(BasicVersion::PartType(len % MAXTYP));
+	len /= MAXTYP;
+	if(len > 0) {
+		eix::auto_list<char> buf(new char[len + 1]);
+		buf.get()[len] = 0;
+		if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
+			cerr << "unexpected end of file" << endl;
+		}
+		return BasicVersion::Part(type, string(buf.get()));
+	}
+	return BasicVersion::Part(type, "");
 }
 
 Version *
 io::read_version(FILE *fp)
 {
 	Version *v = new Version();
-
-#if defined(SAVE_VERSIONTEXT)
-	// read full version string
-	v->m_full = io::read_string(fp);
-#else
-	v->m_garbage = io::read_string(fp);
-#endif
 
 	// read masking
 	MaskFlags::MaskType mask = io::read<MaskFlags::MaskType>(fp);
@@ -77,22 +91,9 @@ io::read_version(FILE *fp)
 	v->full_keywords = io::read_string(fp);
 
 	// read primary version part
-	for(size_t i = io::read<vector<LeadNum>::size_type>(fp); i; --i) {
-		v->m_primsplit.push_back(io::read_LeadNum(fp));
+	for(size_t i = io::read<vector<BasicVersion::Part>::size_type>(fp); i; --i) {
+		v->m_parts.push_back(io::read_Part(fp));
 	}
-
-	v->m_primarychar = io::readUChar(fp);
-
-	// read m_suffix
-	for(size_t i = io::read<vector<Suffix>::size_type>(fp); i; --i) {
-		Suffix::Level l = io::read<Suffix::Level>(fp);
-		LeadNum       n = io::read_LeadNum(fp);
-		v->m_suffix.push_back(Suffix(l, n));
-	}
-
-	// read m_gentoorevision and m_subrevision
-	v->m_gentoorevision= io::read_LeadNum(fp);
-	v->m_subrevision= io::read_LeadNum(fp);
 
 	v->slotname = io::read_string(fp);
 	v->overlay_key = io::read<Version::Overlay>(fp);
@@ -103,21 +104,24 @@ io::read_version(FILE *fp)
 }
 
 void
-io::write_LeadNum(FILE *fp, const LeadNum &n)
+io::write_Part(FILE *fp, const BasicVersion::Part &n)
 {
-	io::write_string(fp, n.represent());
+	io::write<string::size_type>(fp, n.second.size()*MAXTYP + n.first);
+	if(n.second.size() > 0) {
+		if(fp) {
+			if(fwrite(static_cast<const void *>(n.second.c_str()),
+						sizeof(char), n.second.size(), fp) != n.second.size()) {
+				cerr << "write error" << endl;
+			}
+		}
+		else
+			counter += n.second.size();
+	}
 }
 
 void
 io::write_version(FILE *fp, const Version *v)
 {
-#if defined(SAVE_VERSIONTEXT)
-	// write m_full string
-	io::write_string(fp, v->m_full);
-#else
-	io::write_string(fp, v->m_garbage);
-#endif
-
 	// write masking
 	io::writeUChar(fp, (v->maskflags.get()) | (MaskFlags::MaskType(v->restrictFlags) << 4));
 
@@ -125,30 +129,14 @@ io::write_version(FILE *fp, const Version *v)
 	io::write_string(fp, v->full_keywords);
 
 	// write m_primsplit
-	io::write<vector<LeadNum>::size_type>(fp, v->m_primsplit.size());
+	io::write<vector<BasicVersion::Part>::size_type>(fp, v->m_parts.size());
 
-	for(vector<LeadNum>::const_iterator it = v->m_primsplit.begin();
-		it != v->m_primsplit.end();
+	for(vector<BasicVersion::Part>::const_iterator it = v->m_parts.begin();
+		it != v->m_parts.end();
 		++it)
 	{
-		io::write_LeadNum(fp, *it);
+		io::write_Part(fp, *it);
 	}
-
-	io::writeUChar(fp, v->m_primarychar);
-
-	// write m_suffix
-	io::write<vector<Suffix>::size_type>(fp, v->m_suffix.size());
-	for(vector<Suffix>::const_iterator it = v->m_suffix.begin();
-		it != v->m_suffix.end();
-		++it)
-	{
-		io::write<Suffix::Level>(fp, it->m_suffixlevel);
-		io::write_LeadNum(fp, it->m_suffixnum);
-	}
-
-	// write m_gentoorevision and m_subrevision
-	io::write_LeadNum(fp, v->m_gentoorevision);
-	io::write_LeadNum(fp, v->m_subrevision);
 
 	io::write_string(fp, v->slotname);
 	io::write<Version::Overlay>(fp, v->overlay_key);
