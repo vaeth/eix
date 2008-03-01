@@ -155,9 +155,6 @@ print_help(int ret)
 			"\n"
 			" -m  --override-method   override cache method for matching overlays.\n"
 			"\n"
-			"You can contact the developers in #eix on irc.freenode.net or on\n"
-			"the sourceforge-page "PACKAGE_BUGREPORT".\n"
-			"There is also a wiki at "EIX_WIKI".\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n",
 		program_name);
@@ -511,8 +508,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	dbheader.size = package_tree.countCategories();
 
+	io::prep_header_hashs(dbheader, package_tree);
 	io::write_header(database_stream, dbheader);
-	io::write_packagetree(database_stream, package_tree);
+	io::write_packagetree(database_stream, package_tree, dbheader);
 
 	fclose(database_stream);
 

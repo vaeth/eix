@@ -77,9 +77,6 @@ print_help(int ret)
 		"If you omit the new-cache parameter, we'll use the\n"
 		"default cache-file "EIX_CACHEFILE".\n"
 		"\n"
-		"You can contact the developers in #eix on irc.freenode.net or on\n"
-		"the sourceforge-page "PACKAGE_BUGREPORT".\n"
-		"There is also a wiki at "EIX_WIKI".\n"
 		"This program is covered by the GNU General Public License. See COPYING for\n"
 		"further information.\n"
 		);
@@ -140,7 +137,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 		exit(1);
 	}
 
-	io::read_packagetree(fp, header->size, *body);
+	io::read_packagetree(fp, *body, *header);
 	fclose(fp);
 }
 

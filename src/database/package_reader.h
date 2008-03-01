@@ -19,6 +19,7 @@
 #include <memory>
 
 #include <database/io.h>
+#include <database/header.h>
 
 // No forward decl of Package because gcc-3.3.6 will scream bloody
 // murder.
@@ -35,8 +36,9 @@ class PackageReader {
 		};
 
 		/// Initialize with file-stream and number of packages.
-		PackageReader(FILE *fp, io::Treesize size)
-			: m_fp(fp), m_frames(size), m_cat_size(0) { }
+		PackageReader(FILE *fp, const DBHeader &hdr)
+			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), header(&hdr)
+		{ }
 
 		/// Read attributes from the database into the current package.
 		void read(Attributes need = ALL);
@@ -70,6 +72,7 @@ class PackageReader {
 		Attributes        m_have;
 		std::auto_ptr<Package> m_pkg;
 
+		const DBHeader   *header;
 	private:
 };
 

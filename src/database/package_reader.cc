@@ -31,7 +31,7 @@ PackageReader::read(Attributes need)
 			if(need == DESCRIPTION)
 				break;
 		case DESCRIPTION:
-			m_pkg->provide = io::read_string(m_fp);
+			m_pkg->provide = io::read_hash_string(m_fp, header->provide_hash);
 			if(need == PROVIDE)
 				break;
 		case PROVIDE:
@@ -39,11 +39,11 @@ PackageReader::read(Attributes need)
 			if(need == HOMEPAGE)
 				break;
 		case HOMEPAGE:
-			m_pkg->licenses = io::read_string(m_fp);
+			m_pkg->licenses = io::read_hash_string(m_fp, header->license_hash);
 			if(need == LICENSE)
 				break;
 		case LICENSE:
-			m_pkg->coll_iuse = io::read_string(m_fp);
+			m_pkg->coll_iuse = io::read_hash_words(m_fp, header->iuse_hash);
 #if defined(NOT_FULL_USE)
 			if(need == COLL_IUSE)
 				break;
@@ -51,7 +51,7 @@ PackageReader::read(Attributes need)
 #endif
 			{
 				for(io::Versize i = io::read<io::Versize>(m_fp); i; i-- ) {
-					m_pkg->addVersion(io::read_version(m_fp));
+					m_pkg->addVersion(io::read_version(m_fp, *header));
 				}
 			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);

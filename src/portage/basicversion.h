@@ -34,6 +34,8 @@ public:
 		primary,
 		first
 	};
+	// This must be larger than PartType elements and should be a power of 2.
+	static const std::string::size_type max_type = 32;
 
 	typedef std::pair<PartType,std::string> Part;
 

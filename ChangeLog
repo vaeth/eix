@@ -10,6 +10,7 @@
 	- Introduce /etc/portage/package.*.nowarn
 	- Introduce "detail" option for eix-test-obsolete, see
 	  http://forums.gentoo.org/viewtopic-t-666071-highlight-.html
+	- Shrink database file by hashing common words.
 	- Fix REDUNDANT_IF_DOUBLE_LINE, REDUNDANT_IF_MINUS_ASTERISK and also
 	  fix corresponding parts in eix-test-obsolete.
 	- Fix update-eix-layman (broken since eix-0.10.4), see

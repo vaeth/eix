@@ -10,10 +10,7 @@
 #ifndef __DBHEADER_H__
 #define __DBHEADER_H__
 
-#include <set>
-#include <vector>
-#include <string>
-
+#include <eixTk/stringutils.h>
 #include <portage/version.h>
 #include <portage/overlay.h>
 
@@ -27,6 +24,13 @@ class DBHeader {
 		std::vector<OverlayIdent> overlays;
 
 	public:
+		StringHash
+			provide_hash,
+			license_hash,
+			keywords_hash,
+			iuse_hash,
+			slot_hash;
+
 		typedef  io::UNumber DBVersion;
 
 		typedef  io::UChar OverlayTest;

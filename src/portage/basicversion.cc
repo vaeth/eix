@@ -15,6 +15,8 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
 
+const std::string::size_type BasicVersion::max_type;
+
 int
 BasicVersion::compare(const Part& left, const Part& right)
 {

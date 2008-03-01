@@ -40,8 +40,8 @@
 class Version : public ExtendedVersion, public Keywords {
 
 	public:
-		friend void     io::write_version(FILE *fp, const Version *v);
-		friend Version *io::read_version(FILE *fp);
+		friend void     io::write_version(FILE *fp, const Version *v, const DBHeader &hdr);
+		friend Version *io::read_version(FILE *fp, const DBHeader &hdr);
 
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty
 		    to save memory. See the comments above NOT_FULL_USE. */

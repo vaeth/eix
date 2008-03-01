@@ -10,6 +10,8 @@
 #ifndef EIX__IO_H__
 #define EIX__IO_H__
 
+#include <eixTk/stringutils.h>
+
 #include <config.h>
 
 #include <string>
@@ -117,11 +119,20 @@ namespace io {
 	/// Write a string
 	void write_string(FILE *fp, const std::string &str);
 
+	inline void write_hash_string(FILE *fp, const StringHash& hash, const std::string &s)
+	{ io::write<StringHash::Index>(fp, hash.get_index(s)); }
+
+	inline std::string read_hash_string(FILE *fp, const StringHash& hash)
+	{ return hash.get_string(io::read<StringHash::Index>(fp)); }
+
+	void write_hash_words(FILE *fp, const StringHash& hash, const std::string &words);
+	std::string read_hash_words(FILE *fp, const StringHash& hash);
+
 	/// Read a version from fp
-	Version *read_version(FILE *fp);
+	Version *read_version(FILE *fp, const DBHeader &hdr);
 
 	// Write a version to fp
-	void write_version(FILE *fp, const Version *v);
+	void write_version(FILE *fp, const Version *v, const DBHeader &hdr);
 
 	// Read a category-header from fp
 	io::Treesize read_category_header(FILE *fp, std::string &name);
@@ -130,14 +141,17 @@ namespace io {
 	void write_category_header(FILE *fp, const std::string &name, io::Treesize size);
 
 	// Write package to stream
-	void write_package(FILE *fp, const Package &pkg);
-	void write_package_pure(FILE *fp, const Package &pkg);
+	void write_package(FILE *fp, const Package &pkg, const DBHeader &hdr);
+	void write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr);
 
+	void write_hash(FILE *fp, const StringHash& hash);
+	void read_hash(FILE *fp, StringHash& hash);
+	void prep_header_hashs(DBHeader &hdr, const PackageTree &tree);
 	void write_header(FILE *fp, const DBHeader &hdr);
 	void read_header(FILE *fp, DBHeader &hdr);
 
-	void write_packagetree(FILE *fp, const PackageTree &pkg);
-	void read_packagetree(FILE *fp, io::Treesize size, PackageTree &tree);
+	void write_packagetree(FILE *fp, const PackageTree &pkg, const DBHeader &hdr);
+	void read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr);
 }
 
 #endif /* EIX__IO_H__ */

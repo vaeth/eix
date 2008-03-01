@@ -147,9 +147,6 @@ dump_help(int exit_code)
 			"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
 			"                          (default: "LEVENSHTEIN_DISTANCE_STR")\n"
 			"\n"
-			"You can contact the developers in #eix on irc.freenode.net or on\n"
-			"the sourceforge-page "PACKAGE_BUGREPORT".\n"
-			"There is also a wiki at "EIX_WIKI".\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n",
 		program_name);
@@ -555,7 +552,7 @@ run_eix(int argc, char** argv)
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages;
 
-	PackageReader reader(fp, header.size);
+	PackageReader reader(fp, header);
 	while(reader.next())
 	{
 		if(query->match(&reader))

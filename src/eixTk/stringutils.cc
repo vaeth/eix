@@ -196,3 +196,51 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 		*warnminus = minuskeyword;
 	return minusasterisk;
 }
+
+void
+StringHash::store_string(const string &s)
+{
+	map<string, Index>::const_iterator i = str_map.find(s);
+	if(i != str_map.end())
+		return;
+	str_map[s] = str_vec.size();
+	str_vec.push_back(s);
+}
+
+void
+StringHash::store_words(const std::string &s)
+{
+	vector<string> v = split_string(s);
+	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
+		store_string(*i);
+}
+
+StringHash::Index
+StringHash::get_index(const string &s) const
+{
+	map<string, Index>::const_iterator i = str_map.find(s);
+	if(i == str_map.end()) {
+		fprintf(stderr, "Internal error: Trying to shortcut non-hashed string.");
+		exit(-1);
+	}
+	return i->second;
+}
+
+string
+StringHash::get_string(Index i) const
+{
+	if(i >= str_vec.size()) {
+		fprintf(stderr, "Database corrupt: Nonexistent hash required");
+		exit(-1);
+	}
+	return str_vec[i];
+}
+
+void
+StringHash::output(const char *s) const
+{
+	if(s)
+		cout << s << ":\n";
+	for(vector<string>::const_iterator i = str_vec.begin(); i != str_vec.end(); ++i)
+		cout << *i << "\n";
+}

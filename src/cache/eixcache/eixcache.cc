@@ -121,7 +121,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	if(packagetree)
 		packagetree->need_fast_access(categories);
 
-	for(PackageReader reader(fp, header.size); reader.next(); reader.skip())
+	for(PackageReader reader(fp, header); reader.next(); reader.skip())
 	{
 		reader.read(PackageReader::NAME);
 		Package *p = reader.get();
