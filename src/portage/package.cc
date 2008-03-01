@@ -75,7 +75,7 @@ void Package::checkDuplicates(const Version *version)
 		return;
 	for(iterator i = begin(); i != end(); ++i)
 	{
-		if(*(dynamic_cast<BasicVersion *>(*i)) == *(dynamic_cast<const BasicVersion *>(version)))
+		if(BasicVersion::compare(**i, *version) == 0)
 		{
 			if(no_overlay)
 			{
@@ -439,10 +439,11 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 		for(vector<InstVersion>::iterator it = ins->begin();
 			it != ins->end(); ++it)
 		{
-			if(*dynamic_cast<BasicVersion*>(t_best) > *dynamic_cast<BasicVersion*>(&(*it)))
-				continue;
-			if(*dynamic_cast<BasicVersion*>(t_best) < *dynamic_cast<BasicVersion*>(&(*it)))
-				return -1;
+			switch (BasicVersion::compare(*t_best, *it))
+			{
+				case  1: continue;  // >
+				case -1: return -1; // <
+			}
 			if(!test_slot)
 				return 0;
 			if(guess_slotname(*it, v))

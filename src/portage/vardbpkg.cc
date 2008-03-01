@@ -352,7 +352,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 	v.know_restricted = true;
 	if(!care_of_restrictions) {
 		for(Package::const_iterator it = p.begin(); it != p.end(); ++it) {
-			if(*dynamic_cast<const BasicVersion*>(*it) != *dynamic_cast<BasicVersion*>(&v))
+			if(BasicVersion::compare(**it, v) != 0)
 				continue;
 			if(readSlot(p, v)) {
 				if(it->slotname != v.slotname)

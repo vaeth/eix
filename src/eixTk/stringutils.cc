@@ -264,7 +264,7 @@ StringHash::operator[](StringHash::size_type i) const
 		fprintf(stderr, "Database corrupt: Nonexistent hash required");
 		exit(-1);
 	}
-	return (*dynamic_cast<const vector<string> *>(this))[i];
+	return vector<string>::operator[](i);
 }
 
 void
