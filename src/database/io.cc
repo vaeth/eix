@@ -217,47 +217,53 @@ io::write_package(FILE *fp, const Package &pkg, const DBHeader &hdr)
 void
 io::write_hash(FILE *fp, const StringHash& hash)
 {
-	StringHash::Index e = hash.get_size();
-	io::write<StringHash::Index>(fp, e);
-	for(StringHash::Index i = 0; i < e; ++i)
-		io::write_string(fp, hash.get_string(i));
+	StringHash::size_type e = hash.size();
+	io::write<StringHash::size_type>(fp, e);
+	for(StringHash::const_iterator i = hash.begin(); i != hash.end(); ++i)
+		io::write_string(fp, *i);
 }
 
 void
 io::read_hash(FILE *fp, StringHash& hash)
 {
-	StringHash::Index e = io::read<StringHash::Index>(fp);
-	hash.clear();
-	for(StringHash::Index i = 0; i < e; ++i)
+	hash.init(false);
+	for(StringHash::size_type i = io::read<StringHash::size_type>(fp);
+		i; --i)
 		hash.store_string(io::read_string(fp));
+	hash.finalize();
 }
 
 void
 io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 {
-	hdr.provide_hash.clear();
-	hdr.license_hash.clear();
-	hdr.keywords_hash.clear();
-	hdr.slot_hash.clear();
-	hdr.iuse_hash.clear();
+	hdr.provide_hash.init(true);
+	hdr.license_hash.init(true);
+	hdr.keywords_hash.init(true);
+	hdr.slot_hash.init(true);
+	hdr.iuse_hash.init(true);
 	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
 	{
 		for(Category::iterator p = ci->begin();
 			p != ci->end(); ++p)
 		{
-			hdr.provide_hash.store_string(p->provide);
-			hdr.license_hash.store_string(p->licenses);
+			hdr.provide_hash.hash_string(p->provide);
+			hdr.license_hash.hash_string(p->licenses);
 #if defined(NOT_FULL_USE)
-			hdr.iuse_hash.store_words(p->coll_iuse);
+			hdr.iuse_hash.hash_words(p->coll_iuse);
 #endif
 			for(Package::iterator v = p->begin();
 				v != p->end(); ++v) {
-				hdr.keywords_hash.store_words(v->get_full_keywords());
-				hdr.iuse_hash.store_words(v->get_iuse());
-				hdr.slot_hash.store_string(v->slotname);
+				hdr.keywords_hash.hash_words(v->get_full_keywords());
+				hdr.iuse_hash.hash_words(v->get_iuse());
+				hdr.slot_hash.hash_string(v->slotname);
 			}
 		}
 	}
+	hdr.provide_hash.finalize();
+	hdr.license_hash.finalize();
+	hdr.keywords_hash.finalize();
+	hdr.slot_hash.finalize();
+	hdr.iuse_hash.finalize();
 }
 
 void
@@ -272,11 +278,11 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 		io::write_string(fp, overlay.path);
 		io::write_string(fp, overlay.label);
 	}
-	write_hash(fp, hdr.provide_hash);
-	write_hash(fp, hdr.license_hash);
-	write_hash(fp, hdr.keywords_hash);
-	write_hash(fp, hdr.iuse_hash);
-	write_hash(fp, hdr.slot_hash);
+	io::write_hash(fp, hdr.provide_hash);
+	io::write_hash(fp, hdr.license_hash);
+	io::write_hash(fp, hdr.keywords_hash);
+	io::write_hash(fp, hdr.iuse_hash);
+	io::write_hash(fp, hdr.slot_hash);
 }
 
 void
@@ -290,18 +296,11 @@ io::read_header(FILE *fp, DBHeader &hdr)
 		string path = io::read_string(fp);
 		hdr.addOverlay(OverlayIdent(path.c_str(), io::read_string(fp).c_str()));
 	}
-	read_hash(fp, hdr.provide_hash);
-	read_hash(fp, hdr.license_hash);
-	read_hash(fp, hdr.keywords_hash);
-	read_hash(fp, hdr.iuse_hash);
-	read_hash(fp, hdr.slot_hash);
-#if 0
-	hdr.provide_hash.output("provide_hash");
-	hdr.license_hash.output("license_hash");
-	hdr.keywords_hash.output("keywords_hash");
-	hdr.iuse_hash.output("iuse_hash");
-	hdr.slot_hash.output("slot_hash");
-#endif
+	io::read_hash(fp, hdr.provide_hash);
+	io::read_hash(fp, hdr.license_hash);
+	io::read_hash(fp, hdr.keywords_hash);
+	io::read_hash(fp, hdr.iuse_hash);
+	io::read_hash(fp, hdr.slot_hash);
 }
 
 void

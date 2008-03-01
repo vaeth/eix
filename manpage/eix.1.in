@@ -119,6 +119,21 @@ Print the specified variable I<VAR> of eixrc or of portage settings,
 completely expanded as it would be used internally by eix.
 This is mainly used internally for scripts.
 .TP
+.B --print-all-useflags
+print all IUSE words used in some version.
+.TP
+.B --print-all-keywords
+print all KEYWORDS used in some version.
+.TP
+.B --print-all-slots
+print all SLOT strings used in some version.
+.TP
+.B --print-all-provides
+print all PROVIDE strings used in some package.
+.TP
+.B --print-all-licenses
+print all LICENSE strings used in some package.
+.TP
 .BR -V ", " --version
 Print version and exit.
 .TP

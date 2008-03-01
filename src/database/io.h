@@ -120,10 +120,10 @@ namespace io {
 	void write_string(FILE *fp, const std::string &str);
 
 	inline void write_hash_string(FILE *fp, const StringHash& hash, const std::string &s)
-	{ io::write<StringHash::Index>(fp, hash.get_index(s)); }
+	{ io::write<StringHash::size_type>(fp, hash.get_index(s)); }
 
 	inline std::string read_hash_string(FILE *fp, const StringHash& hash)
-	{ return hash.get_string(io::read<StringHash::Index>(fp)); }
+	{ return hash[io::read<StringHash::size_type>(fp)]; }
 
 	void write_hash_words(FILE *fp, const StringHash& hash, const std::string &words);
 	std::string read_hash_words(FILE *fp, const StringHash& hash);

@@ -70,6 +70,11 @@ dump_help(int exit_code)
 			"     --dump                dump variables to stdout\n"
 			"     --dump-defaults       dump default values of variables\n"
 			"     --print               print the expanded value of a variable\n"
+			"     --print-all-useflags  print all IUSE words used in some version\n"
+			"     --print-all-keywords  print all KEYWORDS used in some version\n"
+			"     --print-all-slots     print all SLOT strings used in some version\n"
+			"     --print-all-provides  print all PROVIDE strings used in some package\n"
+			"     --print-all-licenses  print all LICENSE strings used in some package\n"
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -200,7 +205,12 @@ static struct LocalOptions {
 		 test_unused,
 		 do_debug,
 		 ignore_etc_portage,
-		 is_current;
+		 is_current,
+		 hash_iuse,
+		 hash_keywords,
+		 hash_slot,
+		 hash_provide,
+		 hash_license;
 } rc_options;
 
 /** Arguments and shortopts. */
@@ -227,6 +237,12 @@ static struct Option long_options[] = {
 	Option("debug",        O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
 
 	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
+
+	Option("print-all-useflags", O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse),
+	Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords),
+	Option("print-all-slots",     O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot),
+	Option("print-all-provides",  O_HASH_PROVIDE,  Option::BOOLEAN_T, &rc_options.hash_provide),
+	Option("print-all-licenses",  O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license),
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
 
@@ -531,6 +547,32 @@ run_eix(int argc, char** argv)
 				"Please run 'update-eix' and try again.\n", uint(header.version), uint(DBHeader::current));
 		fclose(fp);
 		exit(1);
+	}
+
+	if(rc_options.hash_iuse) {
+		fclose(fp);
+		header.iuse_hash.output();
+		exit(0);
+	}
+	if(rc_options.hash_keywords) {
+		fclose(fp);
+		header.keywords_hash.output();
+		exit(0);
+	}
+	if(rc_options.hash_slot) {
+		fclose(fp);
+		header.slot_hash.output();
+		exit(0);
+	}
+	if(rc_options.hash_provide) {
+		fclose(fp);
+		header.provide_hash.output();
+		exit(0);
+	}
+	if(rc_options.hash_license) {
+		fclose(fp);
+		header.license_hash.output();
+		exit(0);
 	}
 
 	LocalMode local_mode = LOCALMODE_DEFAULT;

@@ -200,11 +200,30 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 void
 StringHash::store_string(const string &s)
 {
-	map<string, Index>::const_iterator i = str_map.find(s);
+	if(finalized) {
+		fprintf(stderr, "Internal error: Storing required after finalizing");
+		exit(-1);
+	}
+	push_back(s);
+}
+
+void
+StringHash::hash_string(const string &s)
+{
+	if(finalized) {
+		fprintf(stderr, "Internal error: Hashing required after finalizing");
+		exit(-1);
+	}
+	if(!hashing) {
+		fprintf(stderr, "Internal error: Hashing required in non-hash mode");
+		exit(-1);
+	}
+	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
 	if(i != str_map.end())
 		return;
-	str_map[s] = str_vec.size();
-	str_vec.push_back(s);
+	// For the moment, use str_map only as a set: Wait for finalize()
+	str_map[s] = 0;//size();
+	//store_string(s);
 }
 
 void
@@ -215,10 +234,22 @@ StringHash::store_words(const std::string &s)
 		store_string(*i);
 }
 
-StringHash::Index
+void
+StringHash::hash_words(const std::string &s)
+{
+	vector<string> v = split_string(s);
+	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
+		hash_string(*i);
+}
+
+StringHash::size_type
 StringHash::get_index(const string &s) const
 {
-	map<string, Index>::const_iterator i = str_map.find(s);
+	if(!finalized) {
+		fprintf(stderr, "Internal error: Index required before sorting.");
+		exit(-1);
+	}
+	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
 	if(i == str_map.end()) {
 		fprintf(stderr, "Internal error: Trying to shortcut non-hashed string.");
 		exit(-1);
@@ -227,13 +258,13 @@ StringHash::get_index(const string &s) const
 }
 
 string
-StringHash::get_string(Index i) const
+StringHash::operator[](StringHash::size_type i) const
 {
-	if(i >= str_vec.size()) {
+	if(i >= size()) {
 		fprintf(stderr, "Database corrupt: Nonexistent hash required");
 		exit(-1);
 	}
-	return str_vec[i];
+	return (*dynamic_cast<const vector<string> *>(this))[i];
 }
 
 void
@@ -241,6 +272,22 @@ StringHash::output(const char *s) const
 {
 	if(s)
 		cout << s << ":\n";
-	for(vector<string>::const_iterator i = str_vec.begin(); i != str_vec.end(); ++i)
+	for(vector<string>::const_iterator i = begin(); i != end(); ++i)
 		cout << *i << "\n";
+}
+
+void
+StringHash::finalize()
+{
+	if(finalized)
+		return;
+	finalized = true;
+	if(!hashing)
+		return;
+	clear();
+	for(map<string, size_type>::iterator it = str_map.begin();
+		it != str_map.end(); ++it) {
+		it->second = size();
+		push_back(it->first);
+	}
 }

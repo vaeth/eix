@@ -8,6 +8,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce /etc/portage/package.*.nonexistent
 	- Introduce /etc/portage/package.*.nowarn
+	- Introduce --print-all-* options
 	- Introduce "detail" option for eix-test-obsolete, see
 	  http://forums.gentoo.org/viewtopic-t-666071-highlight-.html
 	- Shrink database file by hashing common words.

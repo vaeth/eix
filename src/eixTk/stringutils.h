@@ -174,25 +174,32 @@ void make_vector(std::vector<T> &the_list, const std::set<T> &the_set)
 	}
 }
 
-class StringHash {
+class StringHash : public std::vector<std::string>
+{
 	public:
-		typedef std::vector<std::string>::size_type Index;
+		StringHash(bool will_hash = true) : hashing(will_hash), finalized(false)
+		{ }
+
+		void init(bool will_hash)
+		{
+			hashing = will_hash; finalized = false;
+			clear(); str_map.clear();
+		}
+
+		void finalize();
 
 		void store_string(const std::string &s);
 		void store_words(const std::string &s);
-		Index get_index(const std::string &s) const;
-		std::string get_string(Index i) const;
-
-		Index get_size() const
-		{ return str_vec.size(); }
-
-		void clear()
-		{ str_map.clear(); str_vec.clear(); }
+		void hash_string(const std::string &s);
+		void hash_words(const std::string &s);
+		StringHash::size_type get_index(const std::string &s) const;
 
 		void output(const char *s = NULL) const;
+
+		std::string operator[](StringHash::size_type i) const;
 	private:
-		std::map<std::string, Index> str_map;
-		std::vector<std::string> str_vec;
+		bool hashing, finalized;
+		std::map<std::string, StringHash::size_type> str_map;
 };
 
 
