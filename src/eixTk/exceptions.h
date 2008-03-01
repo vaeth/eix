@@ -24,33 +24,38 @@ class ExBasic : public std::exception
 	public:
 		/// Set name of function where exception is constructed.
 		ExBasic(const char *func, const std::string &fmt)
-			: m_func(func), formated(fmt)
+			: m_func(func), m_formated(fmt)
 		{ }
 
 		virtual ~ExBasic() throw() { }
 
 		/// Return reference to message.
-		std::string getMessage() const throw()
-		{ return formated.str(); }
+		const std::string& getMessage() const throw()
+		{
+			if (m_cache.empty())
+				m_cache = m_formated.str();
+			return m_cache;
+		}
 
 		/// @see std::exception::what()
 		const char *what() const throw()
-		{ return formated.str().c_str(); }
+		{ return getMessage().c_str(); }
 
 		/// Replace placeholder in format string.
 		template<typename T>
 		ExBasic &operator % (const T& t)
 		{
-			formated % t;
+			m_formated % t;
 			return *this;
 		}
 
 		friend std::ostream& operator<< (std::ostream& os, const ExBasic& e)
-		{ return os << e.m_func << ": " << e.formated.str(); }
+		{ return os << e.m_func << ": " << e.m_formated.str(); }
 
 	protected:
 		std::string m_func;   ///< Function that threw us.
-		eix::format formated; ///< Message formating.
+		eix::format m_formated; ///< Message formating.
+		mutable std::string m_cache; ///< Mesage that we got from m_formated;
 };
 
 /// Automatically fill in the argument for our exceptions.

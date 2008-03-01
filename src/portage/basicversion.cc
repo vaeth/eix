@@ -111,8 +111,10 @@ BasicVersion::parseVersion(const std::string& str)
 
 	std::string::size_type pos = 0;
 	std::string::size_type len = str.find_first_not_of("0123456789", pos);
-	if (len == pos) {
-		throw ExBasic("malformed (first primary at %r) version string %r") % str % pos;
+	if (len == pos || pos == str.size()) {
+		m_parts.push_back(Part(garbage, str.substr(pos)));
+		throw ExBasic("malformed (first primary at %r) version string %r, "
+					  "adding version anyways") % pos % str;
 	}
 	m_parts.push_back(Part(first, str.substr(pos, len - pos)));
 
@@ -123,9 +125,10 @@ BasicVersion::parseVersion(const std::string& str)
 
 	while(str.at(pos) == '.') {
 		len = str.find_first_not_of("0123456789", ++pos);
-		if (len == pos) {
-			throw ExBasic("malformed (primary at %r) version string %r")
-				% str % pos;
+		if (len == pos || pos == str.size()) {
+			m_parts.push_back(Part(garbage, str.substr(pos)));
+			throw ExBasic("malformed (primary at %r) version string %r, "
+						  "adding version anyways") % pos % str;
 		}
 		m_parts.push_back(Part(primary, str.substr(pos, len - pos)));
 
@@ -165,8 +168,9 @@ BasicVersion::parseVersion(const std::string& str)
 			suffix = patch;
 		}
 		else {
-			throw ExBasic("malformed (suffix at %r) version string %r")
-				% str % pos;
+			m_parts.push_back(Part(garbage, str.substr(pos-1)));
+			throw ExBasic("malformed (suffix at %r) version string %r, "
+						  "adding version anyways") % pos % str;
 		}
 
 		len = str.find_first_not_of("0123456789", pos);
@@ -199,7 +203,8 @@ BasicVersion::parseVersion(const std::string& str)
 	}
 
 	// warn about garbage, but accept it
-	std::cerr << (eix::format("garbage (%r) at end of version %r") 
+	std::cerr << (eix::format("garbage (%r) at end of version %r, "
+							  "adding version anyways") 
 				  % str.substr(pos) % str) << std::endl;
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
