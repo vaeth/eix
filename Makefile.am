@@ -12,7 +12,7 @@ SUBDIRS = src manpage
 CLEANFILES = doxygen.cfg cppcomplete.tags tags
 
 # Stuff from our distribution
-EXTRA_DIST = doxygen.cfg.in contrib/compile-test.sh
+EXTRA_DIST = doxygen.cfg.in
 
 # Remove things created by autogen.sh
 maintainer-clean-local:
