@@ -83,7 +83,7 @@ EbuildExec::make_tempfile()
 		return false;
 	calc_permissions();
 	if(set_uid || set_gid)
-		fchown(fd, (set_uid ? uid : -1) , (set_gid ? gid : -1));
+		fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)));
 	cachefile = new string(temp);
 	free(temp);
 	close(fd);
