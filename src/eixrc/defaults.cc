@@ -117,6 +117,30 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EBUILD_USER",
+			"portage", "The user which is used for running bash on ebuilds when\n"
+			"cache method ebuild or ebuild* is used. See EBUILD_UID.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EBUILD_GROUP",
+			"%{EBUILD_USER}", "The group which is used for running bash on ebuilds when\n"
+			"cache method ebuild or ebuild* is used. See EBUILD_UID.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EBUILD_UID",
+			"250", "If EBUILD_USER is empty or nonexistent, use this user id.\n"
+			"In this case and if ${EBUILD_UID} <= 0, the user id is not changed.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "EBUILD_GID",
+			"%{EBUILD_UID}", "If EBUILD_GROUP is empty or nonexistent, use this group id.\n"
+			"In this case and if ${EBUILD_UID} <= 0, the group id is not changed.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "QUICKMODE",
 			"false", "Whether --quick is on by default.")
 		);

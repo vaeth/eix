@@ -444,7 +444,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			INFO("Excluding \"%s\" %s (cache: %s)\n", overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
 			continue;
 		}
-		short key = dbheader.addOverlay(overlay);
+		Version::Overlay key = dbheader.addOverlay(overlay);
 		cache->setKey(key);
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);

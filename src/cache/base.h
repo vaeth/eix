@@ -11,6 +11,7 @@
 #define __BASICCACHE_H__
 
 #include <eixTk/exceptions.h>
+#include <portage/version.h>
 #include <string>
 #include <map>
 #include <cstdlib>
@@ -19,7 +20,6 @@
 
 class Category;
 class Package;
-class Version;
 class PackageTree;
 class PortageSettings;
 
@@ -57,7 +57,7 @@ class BasicCache {
 		void setScheme(const char *prefix, const char *prefixport, const char *prefixexec, std::string scheme);
 
 		/// Set overlay-key
-		void setKey(short key)
+		void setKey(Version::Overlay key)
 		{ m_overlay_key = key; }
 
 		// Get scheme for this cache
@@ -100,7 +100,7 @@ class BasicCache {
 	protected:
 		std::string m_scheme, m_prefix, m_prefix_exec;
 		bool have_prefix, have_prefix_exec;
-		short  m_overlay_key;
+		Version::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
 		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
 

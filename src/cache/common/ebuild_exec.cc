@@ -10,16 +10,19 @@
 #include "ebuild_exec.h"
 
 #include <cache/base.h>
+#include <global.h>
 
 #include <config.h>
 #include <csignal>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 using namespace std;
 
 const char *EBUILD_SH_EXEC     = "/usr/lib/portage/bin/ebuild.sh";
 const char *EBUILD_EXEC        = "/usr/bin/ebuild";
 const char *EBUILD_DEPEND_TEMP = "/var/cache/edb/dep/aux_db_key_temp";
+
 
 EbuildExec *EbuildExec::handler_arg;
 void
@@ -78,6 +81,9 @@ EbuildExec::make_tempfile()
 	int fd = mkstemp(temp);
 	if(fd == -1)
 		return false;
+	calc_permissions();
+	if(set_uid || set_gid)
+		fchown(fd, (set_uid ? uid : -1) , (set_gid ? gid : -1));
 	cachefile = new string(temp);
 	free(temp);
 	close(fd);
@@ -89,7 +95,7 @@ EbuildExec::delete_cachefile()
 {
 	if(!cachefile)
 		return;
-	if(unlink(cachefile->c_str())<0)
+	if(unlink(cachefile->c_str()) < 0)
 		base->m_error_callback(eix::format("Can't unlink %s") % (*cachefile));
 	cachefile = NULL;
 	remove_handler();
@@ -112,6 +118,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	}
 	else
 		cachefile = new string(base->m_prefix_exec + EBUILD_DEPEND_TEMP);
+	calc_permissions();
 #if defined(HAVE_VFORK)
 	pid_t child = vfork();
 #else
@@ -123,6 +130,10 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	}
 	if(child == 0)
 	{
+		if(set_gid)
+			setgid(gid);
+		if(set_uid)
+			setuid(uid);
 		if(!use_ebuild_sh)
 		{
 			string ebuild = base->m_prefix_exec + EBUILD_EXEC;
@@ -149,4 +160,34 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		return NULL;
 	}
 	return cachefile;
+}
+
+bool EbuildExec::know_permissions = false;
+bool EbuildExec::set_uid, EbuildExec::set_gid;
+uid_t EbuildExec::uid;
+gid_t EbuildExec::gid;
+
+void
+EbuildExec::calc_permissions()
+{
+	if(know_permissions)
+		return;
+	know_permissions = set_uid = set_gid = true;
+	EixRc &eix = get_eixrc(NULL);
+	string &s = eix["EBUILD_USER"];
+	if(s.empty() || !get_uid_of(s.c_str(), &uid)) {
+		int i = eix.getInteger("EBUILD_UID");
+		if(i > 0)
+			uid = i;
+		else
+			set_uid = false;
+	}
+	s = eix["EBUILD_GROUP"];
+	if(s.empty() || !get_uid_of(s.c_str(), &gid)) {
+		int i = eix.getInteger("EBUILD_GID");
+		if(i > 0)
+			gid = i;
+		else
+			set_gid = false;
+	}
 }

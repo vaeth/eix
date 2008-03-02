@@ -108,6 +108,9 @@ ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_p
 		string keywords, restr, iuse;
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
 		set_checking(version->slotname, "SLOT", ebuild, &ok);
+		// Empty SLOT is not ok:
+		//if(ok && ebuild_exec && version->slotname.empty())
+		//	ok = false;
 		set_checking(restr, "RESTRICT", ebuild);
 		set_checking(iuse, "IUSE", ebuild, &ok);
 		if(read_onetime_info)

@@ -1438,13 +1438,16 @@ this is the most compatible but also the slowest method.
 The information is obtained via "/usr/bin/ebuild ... depend" from the ebuild.
 Since all ebuilds will get executed by bash, this may be a security risk
 if you do not trust all ".ebuild" scripts or your environment variables.
+B<update-eix> will attempt to change the user/group to
+B<EBUILD_USER>/B<EBUILD_GROUP> (using B<EBUILD_UID>/B<EBUILD_GID> if the former
+makes no sense) before executing the ebuild.
 Intentionally, the environment is not cleared before the actual execution
 so that you can pass further variables to the ebuild.
 However, this can also lead to unexpected behaviour or even a security risk
 since many bash scripts may be tricked with strange environments.
 use B<env -i update-eix> when this causes problems.
 
-B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
+.B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 .TP
 .SS
 .B ebuild*
@@ -1461,16 +1464,19 @@ success may depend more on the portage version.
 However, this method is considerably faster than B<ebuild> and stable
 enough to treat e.g. typical ebuilds from kde-base.
 
-B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
+.B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 .TP
 .SS
 .BR parse|ebuild ", " parse*|ebuild ", " parse|ebuild* "(or " mixed "), " parse*|ebuild* ", " mixed
 This is a mixture of B<parse>/B<parse> and B<ebuild>/B<ebuild*>.
 Each ebuild is first scanned as with method B<parse>/B<parse*>.
-If the obtained result appears to be faulty or to have missing information,
+If the obtained result has missing information or appears strange,
 the ebuild is treated as with cache method B<ebuild>/B<ebuild*>.
+As a rule of thumb, this method is much faster than B<ebuild>/B<ebuild*>
+but still much slower than B<parse>/B<parse*>.
+It has the same security risks as B<ebuild>/B<ebuild*>, of course.
 
-B<If you are not completely sure about the .ebuilds for which you use this cache method, you should run update-eix with reduced permissions (and using the --output option).>
+.B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 .TP
 .SS
 .BR eix "  or   "  eix:I<FILE> "  or  " eix:I<FILE>:I<overlay>

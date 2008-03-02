@@ -7,6 +7,8 @@
 	  is a security risk if you have untrusted ebuilds in your overlay!
 	  Use OVERLAY_CACHE_METHOD="parse" if you do not trust your overlays!
 	- Introduce new cache methods parse{,*}|ebuild{,*}
+	- Introduce EBUILD_{USER,GROUP,UID,GID} to make cache method ebuild{,*}
+	  more secure.
 	- Rename cache methods none{,*} to parse{,*} to force users to
 	  observe that the new cache methods exist. The name "none" was
 	  misleading anyway.

@@ -10,6 +10,8 @@
 #ifndef __EBUILD_EXEC_H__
 #define __EBUILD_EXEC_H__
 
+#include <eixTk/sysutils.h>
+
 #include <string>
 
 class BasicCache;
@@ -27,9 +29,14 @@ class EbuildExec {
 		signal_handler *handleTERM, *handleINT, *handleHUP;
 		bool use_ebuild_sh;
 
+		static bool know_permissions, set_uid, set_gid;
+		static uid_t uid;
+		static gid_t gid;
+
 		void add_handler();
 		void remove_handler();
 		bool make_tempfile();
+		static void calc_permissions();
 	public:
 		std::string *make_cachefile(const char *name, const std::string &dir, const Package &package, const Version &version);
 		void delete_cachefile();
