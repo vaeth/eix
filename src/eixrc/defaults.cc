@@ -1161,7 +1161,7 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "OVERLAY_CACHE_METHOD",
-			"none", "Portage cache-backend that should be used for the overlays.\n"
+			"parse|ebuild*", "Portage cache-backend that should be used for the overlays.\n"
 			"(metadata/sqlite/cdb/portage-2.0/portage-2.1/none[*]/ebuild[*]/eix[*][:*])")
 		);
 

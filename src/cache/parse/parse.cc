@@ -7,7 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "none.h"
+#include "parse.h"
 
 #include <cache/common/selectors.h>
 #include <cache/common/flat-reader.h>
@@ -24,7 +24,27 @@
 
 using namespace std;
 
-void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
+void
+ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild, bool *ok)
+{
+	bool check = (ebuild_exec && ok && (*ok));
+	const string *s = ebuild.find(item);
+	if(!s) {
+		str.clear();
+		if(check)
+			*ok = false;
+		return;
+	}
+	str = *s;
+	if(!check)
+		return;
+	if((str.find_first_of('`') != string::npos) ||
+		(str.find("$(") != string::npos))
+		*ok = false;
+}
+
+void
+ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_path, struct dirent **list, size_t numfiles) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -34,7 +54,7 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 	else
 		pkg = vec.addPackage(pkg_name);
 
-	for(int i = 0; i < numfiles; ++i)
+	for(size_t i = 0; i < numfiles; ++i)
 	{
 		/* Check if this is an ebuild  */
 		char* dotptr = strrchr(list[i]->d_name, '.');
@@ -80,24 +100,41 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 			ebuild.read(ebuild_name.c_str());
 		}
 		catch(const ExBasic &e) {
-			cerr << "Problems with reading " << ebuild_name <<
-				":\n" << e << endl;
+			m_error_callback(eix::format("Could not properly execute %s") % ebuild_name
+				% ebuild_name % ":\n" % e);
 		}
 
-		version->set_full_keywords(ebuild["KEYWORDS"]);
-		version->slotname = ebuild["SLOT"];
-		version->set_restrict(ebuild["RESTRICT"]);
-		version->set_iuse(ebuild["IUSE"]);
-		pkg->addVersionFinalize(version);
+		bool ok = true;
+		string keywords, restr, iuse;
+		set_checking(keywords, "KEYWORDS", ebuild, &ok);
+		set_checking(version->slotname, "SLOT", ebuild, &ok);
+		set_checking(restr, "RESTRICT", ebuild);
+		set_checking(iuse, "IUSE", ebuild, &ok);
 		if(read_onetime_info)
 		{
-			pkg->homepage = ebuild["HOMEPAGE"];
-			pkg->licenses = ebuild["LICENSE"];
-			pkg->desc     = ebuild["DESCRIPTION"];
-			pkg->provide  = ebuild["PROVIDE"];
+			set_checking(pkg->homepage, "HOMEPAGE",    ebuild, &ok);
+			set_checking(pkg->licenses, "LICENSE",     ebuild, &ok);
+			set_checking(pkg->desc,     "DESCRIPTION", ebuild, &ok);
+			set_checking(pkg->provide,  "PROVIDE",     ebuild);
 
 			have_onetime_info = true;
 		}
+		if(!ok) {
+			string *cachefile = ebuild_exec->make_cachefile(ebuild_name.c_str(), *directory_path, *pkg, *version);
+			if(cachefile) {
+				flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, m_error_callback);
+				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
+				ebuild_exec->delete_cachefile();
+			}
+			else
+				m_error_callback(eix::format("Could not properly execute %s") % ebuild_name);
+		}
+
+		version->set_full_keywords(keywords);
+		version->set_restrict(restr);
+		version->set_iuse(iuse);
+		pkg->addVersionFinalize(version);
+
 		free(ver);
 	}
 
@@ -106,7 +143,7 @@ void NoneCache::readPackage(Category &vec, const char *pkg_name, string *directo
 	}
 }
 
-bool NoneCache::readCategory(Category &vec) throw(ExBasic)
+bool ParseCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 

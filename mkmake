@@ -8,6 +8,7 @@ Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
+  -0  Do not pass --add-extra-cache=yes to ./configure
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
   -u  Define NOT_FULL_USE
   -s  With sqlite
@@ -31,9 +32,11 @@ NOT_FULL_USE=false
 SQLITE=''
 BZLIB=''
 PEDANTIC=false
-while getopts 'qnepusSbBc?hH' OPTION; do
+EXTRA_CACHE='--enable-extra-cache=yes'
+while getopts 'q0nepusSbBc?hH' OPTION; do
 case "${OPTION}" in
 	q) QUIET='>/dev/null 2>&1';;
+	0) EXTRA_CACHE='';;
 	n) EARLYSTOP=true;;
 	e) KEEPENV=true;;
 	p) PEDANTIC=true;;
@@ -47,8 +50,8 @@ case "${OPTION}" in
 esac
 done
 if [ ${OPTIND} -gt 1 ]; then
-	[ "$(( 0 + 1 ))" = 1 ] && shift "$(( ${OPTIND} - 1 ))" || \
-		shift "`expr ${OPTIND} - 1`"
+	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 &&
+	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
 if ! ${KEEPENV}; then
@@ -64,7 +67,7 @@ if ! ${KEEPENV}; then
 	if ${PEDANTIC}; then
 		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
 		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=2"
-		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization -Wstack-protector"
+		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization"
 		#CFLAGS="${CFLAGS} -Wunreachable-code -Wpadded"
 		#CFLAGS="${CFLAGS} -Wswitch-enum -Waggregate-return -Winline -Wmissing-format-attribute"
 		CXXFLAGS="${CFLAGS} -Wabi -Wctor-dtor-privacy -Wstrict-null-sentinel -Wold-style-cast -Woverloaded-virtual -Wsign-promo"
@@ -85,7 +88,7 @@ if ! test -e Makefile; then
 		eval ./autogen.sh ${QUIET} || die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure '--prefix=' ${SQLITE} ${BZLIB} ${QUIET} || \
+	eval ./configure '--prefix=' ${SQLITE} ${BZLIB} ${EXTRA_CACHE} ${QUIET} || \
 		die "configure failed"
 fi
 ${EARLYSTOP} && exec make config.h

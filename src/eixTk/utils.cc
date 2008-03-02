@@ -38,7 +38,7 @@ bool pushback_lines_file(const char *file, vector<string> *v, bool remove_empty,
 			trim(&line);
 
 			if(remove_comments) {
-				string::size_type x = line.find_first_of("#");
+				string::size_type x = line.find_first_of('#');
 				if(x != string::npos)
 				{
 					line.erase(x);

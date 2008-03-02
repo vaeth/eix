@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.11.0, http://sourceforge.net/projects/eix/)
+AC_INIT(eix, 0.12.0, http://sourceforge.net/projects/eix/)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -99,7 +99,7 @@ AC_TRY_COMPILE([ #include <dirent.h>
 	])
 ])
 
-AC_DEFINE_UNQUOTED(SCANDIR_ARG3, ${SCANDIR_ARG3}, "3th argument of scandir")
+AC_DEFINE_UNQUOTED(SCANDIR_ARG3, ${SCANDIR_ARG3}, "3rd argument of scandir")
 if ${SCANDIR_CAST}; then
 	dnl AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,reinterpret_cast<int(*)()>(c),d), possible cast for scandir)
 	AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,reinterpret_cast<int(*)(const struct dirent *)>(c),d), possible cast for scandir)
@@ -149,16 +149,27 @@ else
 fi
 AC_SUBST(BZLIB_LIBS)
 
+dnl Use obsoleted cache method?
+AC_ARG_ENABLE(  extra_cache,[  --enable-extra-cache    enable unsupported cache method portage-2.1* ], [
+		case "${enableval}" in
+			yes) extra_cache=true;;
+			no)  extra_cache=false;;
+			*) AC_MSG_ERROR(bad value ${enableval} for --enable-extra-cache);;
+		esac
+	],[
+		extra_cache=false
+	])
+AM_CONDITIONAL(EXTRA_CACHE, ${extra_cache})
+
 dnl Check if std::unique works
 AC_MSG_CHECKING(whether std::unique seems to work)
-AC_ARG_WITH(unique,[  --with-unique   Assume that unique works ], [
-		if test "x${withval}" = "xno"; then
-			UNIQUE_WORKS=""
-		else
-			UNIQUE_WORKS="1"
-		fi
-	],
-	[
+AC_ARG_ENABLE(unique,[  --enable-unique         assume that unique works ], [
+		case "${enableval}" in
+			yes) UNIQUE_WORKS="1";;
+			no)  UNIQUE_WORKS="";;
+			*) AC_MSG_ERROR(bad value ${enableval} for --enable-unique);;
+		esac
+	],[
 		UNIQUE_WORKS="unknown"
 	])
 if test "x${UNIQUE_WORKS}" = "xunknown"; then
@@ -214,17 +225,32 @@ if test -n "${UNIQUE_WORKS}"; then
 fi
 
 dnl Do we have -Wl,--as-needed?
-ac_old_ldflags="${LDFLAGS}"
-LDFLAGS="-Wl,--as-needed"
 AC_MSG_CHECKING(if --as-needed works)
-AC_TRY_LINK(
-	[],
-	[],
-	[AC_MSG_RESULT(yes)
-	 ac_old_ldflags="${ac_old_ldflags} -Wl,--as-needed"
-	],
-	[AC_MSG_RESULT(no)])
-LDFLAGS="${ac_old_ldflags}"
+AC_ARG_ENABLE(  as_needed,[  --enable-as-needed      enable -Wl,--as-needed ], [
+		case "${enableval}" in
+			yes) as_needed="1";;
+			no)  as_needed="";;
+			*) AC_MSG_ERROR(bad value ${enableval} for --enable-as_needed);;
+		esac
+	],[
+		as_needed="unknown"
+	])
+if test x"${as_needed}" = x"unknown"; then
+	ac_old_ldflags="${LDFLAGS}"
+	LDFLAGS="-Wl,--as-needed"
+	AC_TRY_LINK(
+		[],
+		[],
+		[as_needed="1"],
+		[as_needed=""])
+	LDFLAGS="${ac_old_ldflags}"
+fi
+if test -n "$as_needed"; then
+	AC_MSG_RESULT(yes)
+	LDFLAGS="${LDFLAGS} -Wl,--as-needed"
+else
+	AC_MSG_RESULT(no)
+fi
 
 dnl What about sqlite?
 AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite ],[

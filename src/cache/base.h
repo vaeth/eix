@@ -36,7 +36,7 @@ bool deletePackage(Category &v, const std::string &pkg);
 
 // Parent class of every cache that eix can use. */
 class BasicCache {
-
+		friend class EbuildExec;
 	public:
 		typedef void (*ErrorCallback)(const std::string &str);
 

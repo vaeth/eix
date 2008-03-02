@@ -16,10 +16,10 @@ test -d build || die "cannot create directory build"
 
 unset LDFLAGS CFLAGS CXXFLAGS
 if command -v fakeroot >/dev/null 2>&1; then
-	./mkmake -eqn || die "mkmake -qn failed"
-	fakeroot ./mkmake -q dist || die "mkmake dist failed"
+	./mkmake -0eqn || die "mkmake -qn failed"
+	fakeroot ./mkmake -0q dist || die "mkmake dist failed"
 else
-	./mkmake -eq dist || die "mkmake dist failed"
+	./mkmake -0eq dist || die "mkmake dist failed"
 fi
 
 for i in *.tar*; do

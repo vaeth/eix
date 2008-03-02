@@ -16,7 +16,7 @@ namespace eix
   /// compare two objects.
   /// @return 0 if equal, 1 if left > right or -1 if left < right.
   template<typename T>
-      int default_compare(const T& left, const T& right) 
+      int default_compare(const T& left, const T& right)
       {
           if (left == right)
               return 0;
@@ -32,8 +32,8 @@ namespace eix
   numeric_compare(const std::string& left, const std::string& right)
   {
       // strip leading 0's
-      const std::string::size_type lstart = left.find_first_not_of("0");
-      const std::string::size_type rstart = right.find_first_not_of("0");
+      const std::string::size_type lstart = left.find_first_not_of('0');
+      const std::string::size_type rstart = right.find_first_not_of('0');
 
       // check if one is longer, that one would be bigger
       const int size_result = default_compare(left.size() - (lstart == std::string::npos ? 0 : lstart),

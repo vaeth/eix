@@ -1,5 +1,21 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.11.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- BE AWARE!!
+	  The new default OVERLAY_CACHE_METHOD="parse|ebuild*"
+	  is a security risk if you have untrusted ebuilds in your overlay!
+	  Use OVERLAY_CACHE_METHOD="parse" if you do not trust your overlays!
+	- Introduce new cache methods parse{,*}|ebuild{,*}
+	- Rename cache methods none{,*} to parse{,*} to force users to
+	  observe that the new cache methods exist. The name "none" was
+	  misleading anyway.
+	- Remove broken cache method portage-2.1* unless a corresponding
+	  ./configure option is used (which is mainly for testing purposes).
+	- Introduce --enable-as-needed to override the -Wl,--as-needed test,
+	  see the comments in http://bugs.gentoo.org/show_bug.cgi?id=209239
+	- Fix some pedantic compiler warnings; make basicversion.cc using std.
+
 *eix-0.11.0
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- kill SAVE_VERSIONTEXT

@@ -74,6 +74,8 @@ cache_src = \
 cachetable.h \
 cache/common/flat-reader.cc \
 cache/common/flat-reader.h \
+cache/common/ebuild_exec.cc \
+cache/common/ebuild_exec.h \
 cache/common/selectors.cc \
 cache/common/selectors.h \
 cache/common/unpickle.cc \
@@ -90,16 +92,26 @@ cache/eixcache/eixcache.cc \
 cache/eixcache/eixcache.h \
 cache/metadata/metadata.cc \
 cache/metadata/metadata.h \
-cache/none/none.cc \
-cache/none/none.h \
+cache/parse/parse.cc \
+cache/parse/parse.h \
 cache/port2_0_0/port2_0_0.cc \
 cache/port2_0_0/port2_0_0.h \
 cache/port2_1_0/port2_1_0.cc \
 cache/port2_1_0/port2_1_0.h \
-cache/port2_1_2/port2_1_2.cc \
-cache/port2_1_2/port2_1_2.h \
 cache/sqlite/sqlite.cc \
 cache/sqlite/sqlite.h
+
+extra_cache_src = \
+cache/port2_1_2/port2_1_2.cc \
+cache/port2_1_2/port2_1_2.h
+
+if EXTRA_CACHE
+extra_cache = portage-2.1.2
+add_cache_src = $(extra_cache_src)
+else
+extra_cache =
+add_cache_src =
+endif
 
 output_src = \
 output/formatstring.cc \
@@ -134,14 +146,15 @@ EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
 # Our binaries
 bin_PROGRAMS = update-eix eix diff-eix
 bin_SCRIPTS  = eix-sync eix-test-obsolete update-eix-remote update-eix-layman \
-			   update-eix-functions.sh
+			 update-eix-functions.sh
 
 # The search-tool for our database
 eix_SOURCES = eix.cc cli.cc cli.h $(common_src) $(output_src) $(search_src)
 eix_LDADD = @BZLIB_LIBS@
 
 # The update-tool for our database
-update_eix_SOURCES = update-eix.cc $(common_src) $(cache_src)
+update_eix_SOURCES = update-eix.cc $(common_src) $(cache_src) $(add_cache_src)
+EXTRA_update_eix_SOURCES = $(extra_cache_src)
 update_eix_LDADD = @SQLITE_LIBS@ @BZLIB_LIBS@
 
 # The diff-tool for our database
@@ -149,7 +162,7 @@ diff_eix_SOURCES = diff-eix.cc $(common_src) $(output_src)
 diff_eix_LDADD = @BZLIB_LIBS@
 
 cache/cache-map.cc: cache/generate-cachemap.sh
-	"$<" > "$@"
+	"$<" $(extra_cache) > "$@"
 
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \

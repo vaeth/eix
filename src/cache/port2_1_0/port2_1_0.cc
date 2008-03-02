@@ -38,7 +38,7 @@ get_map_from_cache(const char *file, map<string,string> &x)
 
 	while(getline(is, lbuf))
 	{
-		string::size_type p = lbuf.find_first_of("=");
+		string::size_type p = lbuf.find_first_of('=');
 		if(p == string::npos)
 			continue;
 		x[lbuf.substr(0, p)] = lbuf.substr(p + 1);

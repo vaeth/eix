@@ -439,11 +439,11 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 		for(vector<InstVersion>::iterator it = ins->begin();
 			it != ins->end(); ++it)
 		{
-			switch (BasicVersion::compare(*t_best, *it))
-			{
-				case  1: continue;  // >
-				case -1: return -1; // <
-			}
+			int vgl = BasicVersion::compare(*t_best, *it);
+			if(vgl > 0)
+				continue;
+			if(vgl < 0)
+				return -1;
 			if(!test_slot)
 				return 0;
 			if(guess_slotname(*it, v))

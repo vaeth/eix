@@ -91,6 +91,13 @@ class VarsReader {
 			return (*vars)[key];
 		}
 
+		const std::string *find(std::string key) const {
+			std::map<std::string,std::string>::const_iterator i = vars->find(key);
+			if(i == vars->end())
+				return NULL;
+			return &(i->second);
+		}
+
 	private:
 		/** Kepper of the holy state. */
 		enum States {

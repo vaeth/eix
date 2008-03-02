@@ -15,7 +15,9 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
 
-const std::string::size_type BasicVersion::max_type;
+using namespace std;
+
+const string::size_type BasicVersion::max_type;
 
 int
 BasicVersion::compare(const Part& left, const Part& right)
@@ -40,8 +42,8 @@ BasicVersion::compare(const Part& left, const Part& right)
 		//  stringwise comparison."
 
 		if (left.second.at(0) == '0' || right.second.at(0) == '0') {
-			std::string l1 = left.second;
-			std::string l2 = right.second;
+			string l1 = left.second;
+			string l2 = right.second;
 
 			rtrim(&l1, "0");
 			rtrim(&l2, "0");
@@ -67,7 +69,7 @@ BasicVersion::BasicVersion(const char *str) {
 }
 
 inline
-std::ostream& operator<<(std::ostream& s, const BasicVersion::Part& part)
+ostream& operator<<(ostream& s, const BasicVersion::Part& part)
 {
 	switch (part.first) {
 		case BasicVersion::garbage:
@@ -88,29 +90,30 @@ std::ostream& operator<<(std::ostream& s, const BasicVersion::Part& part)
 			return s << "_p" << part.second;
 		case BasicVersion::character:
 			return s << part.second;
-		case BasicVersion::primary:
-		case BasicVersion::first:
+		default:
+		// case BasicVersion::primary:
+		// case BasicVersion::first:
 			return s << "." << part.second;
 	}
 	throw ExBasic("internal error: unknown PartType on (%r,%r)")
-		% part.first % part.second;
+		% int(part.first) % part.second;
 }
 
 void
 BasicVersion::rebuild() const
 {
-	std::stringstream ss;
-	std::copy(m_parts.begin(), m_parts.end(), std::ostream_iterator<Part>(ss));
+	stringstream ss;
+	copy(m_parts.begin(), m_parts.end(), ostream_iterator<Part>(ss));
 	m_full = ss.str().substr(1);
 }
 
 void
-BasicVersion::parseVersion(const std::string& str)
+BasicVersion::parseVersion(const string& str)
 {
 	m_full = str;
 
-	std::string::size_type pos = 0;
-	std::string::size_type len = str.find_first_not_of("0123456789", pos);
+	string::size_type pos = 0;
+	string::size_type len = str.find_first_not_of("0123456789", pos);
 	if (len == pos || pos == str.size()) {
 		m_parts.push_back(Part(garbage, str.substr(pos)));
 		throw ExBasic("malformed (first primary at %r) version string %r, "
@@ -118,7 +121,7 @@ BasicVersion::parseVersion(const std::string& str)
 	}
 	m_parts.push_back(Part(first, str.substr(pos, len - pos)));
 
-	if (len == std::string::npos)
+	if (len == string::npos)
 		return;
 
 	pos += len;
@@ -132,7 +135,7 @@ BasicVersion::parseVersion(const std::string& str)
 		}
 		m_parts.push_back(Part(primary, str.substr(pos, len - pos)));
 
-		if (len == std::string::npos)
+		if (len == string::npos)
 			return;
 
 		pos = len;
@@ -176,7 +179,7 @@ BasicVersion::parseVersion(const std::string& str)
 		len = str.find_first_not_of("0123456789", pos);
 		m_parts.push_back(Part(suffix, str.substr(pos, len - pos)));
 
-		if (len == std::string::npos)
+		if (len == string::npos)
 			return;
 
 		pos = len;
@@ -187,7 +190,7 @@ BasicVersion::parseVersion(const std::string& str)
 		len = str.find_first_not_of("0123456789", pos+=2);
 		m_parts.push_back(Part(revision, str.substr(pos, len-pos)));
 
-		if (len == std::string::npos)
+		if (len == string::npos)
 			return;
 		pos = len;
 
@@ -196,23 +199,23 @@ BasicVersion::parseVersion(const std::string& str)
 			// for example foo-1.2-r02.2
 			len = str.find_first_not_of("0123456789", ++pos);
 			m_parts.push_back(Part(inter_rev, str.substr(pos, len-pos)));
-			if (len == std::string::npos)
+			if (len == string::npos)
 				return;
 			pos = len;
 		}
 	}
 
 	// warn about garbage, but accept it
-	std::cerr << (eix::format("garbage (%r) at end of version %r, "
+	cerr << (eix::format("garbage (%r) at end of version %r, "
 							  "adding version anyways") 
-				  % str.substr(pos) % str) << std::endl;
+				  % str.substr(pos) % str) << endl;
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
 
 int
 BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
-	std::vector<Part>::const_iterator
+	vector<Part>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
@@ -239,7 +242,7 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 int
 BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
-	std::vector<Part>::const_iterator
+	vector<Part>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
@@ -267,11 +270,11 @@ const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_MIRROR;
 
 ExtendedVersion::Restrict
-ExtendedVersion::calcRestrict(const std::string &str)
+ExtendedVersion::calcRestrict(const string &str)
 {
 	Restrict r = RESTRICT_NONE;
-	std::vector<std::string> restrict_words = split_string(str);
-	for(std::vector<std::string>::const_iterator it = restrict_words.begin();
+	vector<string> restrict_words = split_string(str);
+	for(vector<string>::const_iterator it = restrict_words.begin();
 		it != restrict_words.end(); ++it) {
 		if(strcasecmp(it->c_str(), "fetch") == 0)
 			r |= RESTRICT_FETCH;
