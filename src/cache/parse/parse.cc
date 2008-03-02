@@ -35,7 +35,7 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 			*ok = false;
 		return;
 	}
-	str = *s;
+	str = join_vector(split_string(*s));
 	if(!check)
 		return;
 	if((str.find_first_of('`') != string::npos) ||
