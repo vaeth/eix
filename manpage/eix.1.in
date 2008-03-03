@@ -469,13 +469,9 @@ Define the verbose layout for results as I<FORMAT>
 .SS Special options for B<update-eix>
 .TP
 .BR  -o " " I<outputfile> ", " --output " " I<outputfile>
-Use this option if you are running B<update-eix> with reduced permissions
-or if you want to generate an eix-database for distribution
-(e.g. to avoid security problems of cache methods B<ebuild> and B<ebuild*>
-and to keep your original database).
-With this option, B<update-eix> will not test about permissions and will
-write its output to I<outputfile> instead of B<@EIX_CACHEFILE@>.
-
+With this option, B<update-eix> will write the eix database to I<outputfile>
+instead of B<@EIX_CACHEFILE@>, without testing or changing any permissions
+of that file.
 .TP
 .BR  -a " " I<overlay> ", " --add-overlay " " I<overlay>
 This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/make.conf
