@@ -497,7 +497,11 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		}
 	}
 
+	INFO("Calculating hash tables ..\n");
+	io::prep_header_hashs(dbheader, package_tree);
+
 	/* And write database back to disk .. */
+	INFO("Writing database file %s ..\n", outputfile);
 	FILE *database_stream = fopen(outputfile, "wb");
 	if (!database_stream) {
 		throw ExBasic("Can't open the database file %r for writing (mode = 'wb')")
@@ -508,7 +512,6 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	dbheader.size = package_tree.countCategories();
 
-	io::prep_header_hashs(dbheader, package_tree);
 	io::write_header(database_stream, dbheader);
 	io::write_packagetree(database_stream, package_tree, dbheader);
 

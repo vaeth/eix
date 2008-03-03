@@ -8,16 +8,17 @@
 	  Use OVERLAY_CACHE_METHOD="parse" if you do not trust your overlays!
 	- Introduce new cache methods parse{,*}|ebuild{,*}
 	- Introduce EBUILD_{USER,GROUP,UID,GID} to make cache method ebuild{,*}
-	  more secure.
-	- Rename cache methods none{,*} to parse{,*} to force users to
-	  observe that the new cache methods exist. The name "none" was
-	  misleading anyway.
+	  reasonably secure.
+	- Rename cache methods none{,*} to parse{,*} to force users of "none"
+	  to observe that the new cache method parse|ebuild* exists (and
+	  probably switch to it).  The name "none" was misleading anyway.
 	- Fix spaces in results for cache method none{,*}/parse{,*}
 	- Remove broken cache method portage-2.1* unless a corresponding
 	  ./configure option is used (which is mainly for testing purposes).
 	- Introduce --enable-as-needed to override the -Wl,--as-needed test,
 	  see the comments in http://bugs.gentoo.org/show_bug.cgi?id=209239
 	- Fix some pedantic compiler warnings; make basicversion.cc using std.
+	- Make update-eix slightly more verbose.
 
 *eix-0.11.0
 	Emil Beinroth <emilbeinroth at gmx.net>:
