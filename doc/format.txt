@@ -1,0 +1,262 @@
+=======================
+eix - index file format
+=======================
+:Authors:   Martin Väth <vaeth AT mathematik DOT uni-wuerzburg DOT de> (active), 
+            Emil Beinroth <emilbeinroth AT gmx DOT net> (active),
+            Wolfgang Frisch <xororand AT users DOT sourceforge DOT net> (inactive)
+:Copyright: This file is part of the eix project and distributed under the
+            terms of the GNU General Public License v2.
+
+This article describes the format of the eix index file, usually located at /var/cache/eix. The
+format includes a version field in the header_ block. The current version is **25**.
+
+.. contents:: **Table of Contents**:
+    :backlinks: none
+
+Overall layout
+==============
+
+The file is made up of blocks of data, which may in turn contain other other blocks. It can be said
+[#vector-in-header]_ that the header contains the category blocks, which contain the package blocks,
+which contain the version blocks, ... do you see the pattern?
+
+  .. container:: layout-block  header-block
+
+    File Header
+
+    .. container:: layout-block category-block
+
+      1th Category
+
+      .. container:: layout-block package-block
+
+        1th Package in 1th Category
+
+        .. container:: layout-block version-block
+
+          1th Version of this Package
+
+        .. container:: layout-block version-block
+
+          [..]
+
+      .. container:: layout-block package-block
+
+        2nd Package in 1th Category
+
+        [..]
+
+    .. container:: layout-block category-block
+
+      2nd Category
+
+      [..]
+
+
+.. [#vector-in-header]
+
+  The problem with this is that the category_ blocks do not directly follow the `Number of
+  categories` field, so it's not a perfect vector_. Furthermore, the name `Header` is missleading
+  and should probably split into `Header` and `Body`.
+
+Basic Datatypes
+===============
+
+This section covers the datatypes `number` and `vector` (resp. `string`) which are used in the index
+file.
+
+Number
+------
+
+The index file contains non-negative integer values only. The format we use avoids fixed length
+integers by encoding the number of bytes into the integer itself. It has a bias towards numbers
+smaller than 0xFF, which are encoded into a single byte.
+
+    To determine the number of bytes used, you must first count how often the byte **0xFF** occurs at
+    the beginning of the number.
+    Let `n` be this count (`n` may be 0). Then, as a rule, there will follow `n+1` bytes that
+    contain the actual integer stored in big-endian byte order (highest byte first).
+
+    *But* since it would be impossible to store any number that has a leading 0xFF with this format,
+    a leading 0xFF is stored as 0x00. Meaning, if a 0x00 byte follows the last 0xFF, you must
+    interpret this byte as 0xFF inside the number.
+
+
+Examples:
+
+    ==========  ==================================
+    Number      Bytes stored in the file
+    ==========  ==================================
+    0x00        0x00
+    0xFE        0xFE
+    0xFF        0xFF 0x00
+    0x0100      0xFF 0x01 0x00
+    0x01FF      0xFF 0x01 0xFF
+    0xFEFF      0xFF 0xFE 0xFF
+    0xFF00      0xFF 0xFF 0x00 0x00
+    0xFF01      0xFF 0xFF 0x00 0x01
+    0x010000    0xFF 0xFF 0x01 0x00 0x00
+    0xABCDEF    0xFF 0xFF 0xAB 0xCD 0xEF
+    0xFFABCD    0xFF 0xFF 0xFF 0x00 0xAB 0xCD
+    0x01ABCDEF  0xFF 0xFF 0xFF 0x01 0xAB 0xCD 0xEF
+    ==========  ==================================
+
+
+Vector
+------
+
+Vectors (or lists) are extensively used throughout the index file. They are stored as the number_ of
+elements, followed by the elements themselves.
+
+====== =====================
+Type   Content
+====== =====================
+Number Number of elements (`n`)
+\      1th element
+\      ...
+\      `n`\th element
+====== =====================
+
+String
+------
+
+Strings are stored as a vector_ of characters. A trailing '\\0' is not included.
+
+
+Data blocks
+===========
+
+Header
+------------
+
+====== =======
+Type   Content
+====== =======
+Number File format version
+Number Number of categories
+Vector Overlay_ blocks
+====== =======
+
+
+Overlay
+-------
+
+====== =======
+Type   Content
+====== =======
+String overlay path
+String label (repository name)
+====== =======
+
+Category
+---------------
+
+====== =======
+Type   Content
+====== =======
+String Name of category
+Vector Package_\s in this category
+====== =======
+
+Package
+-------------
+
+========= =======
+Type      Content
+========= =======
+Number    Offset to the next package in the eix cache file (in bytes; counting starts after the number)
+String    Package name
+String    Description
+String    Provide
+String    Homepage
+String    Licenses, e.g. MPL-1.1 NPL-1.1
+String    IUSE flags (all useflags of all versions of the package are added). This might "falsely" be the empty string if per-version IUSE flags are stored.
+Vector    Version_\s
+========= =======
+
+Version
+-------
+
+======= ============================
+Type    Content
+======= ============================
+char    Mask bitset for the current $ARCH:
+
+          :0x00: none of the following
+          :0x01: masked by package.mask
+          :0x02: masked by profile
+          :0x04: version of package is a system-package
+
+        Since eix-0.10.1 the higher bits contain the restrict status:
+
+          :0x10: RESTRICT=fetch
+          :0x20: RESTRICT=mirror
+
+String  Full keywords string of the ebuild.
+Vector  VersionPart_\s
+String  Slot name. The slot name "0" is stored as "".
+Number  Index of the portage overlay (in the overlays block)
+String  Useflags of this version. This might "falsely" be the empty string if only per-package IUSE
+        flags are stored.
+======= ============================
+
+
+VersionPart
+-----------
+
+A VersionPart has two parts, a number_ (referred to as *type*) and a string_ (referred to as *value*).
+
+To save a byte, encode the type into the length-part of the value string. The lower 5 bit of the
+length part contain the type.
+
+For the type, these named values are possible:
+
+  ===== =========== ================================
+  Value Name        Content of value
+  ===== =========== ================================
+  0     `garbage`   garbage that was found after any valid version string
+  1     `alpha`     number of "_alpha" (may be empty)
+  2     `beta`      number of "_beta" (may be empty)
+  3     `pre`       number of "_pre" (may be empty)
+  4     `rc`        number of "_rc" (may be empty)
+  5     `revision`  number of "-r" (may be empty)
+  6     `inter_rev` number of inter-revision [#inter-revisions]_
+  7     `patch`     number of "_p" (may be empty)
+  8     `char`      single character
+  9     `primary`   numeric version part
+  10    `first`     first numeric version part
+  ===== =========== ================================
+
+As example, we can split the version string `1.2c_pre12_alpha-r01.01-foo` like this:
+
+ (first, "1") (primary, "2") (char, "c") (pre, "12") (alpha, "") (revision, "01") (inter_rev, "01") (garbage, "-foo")
+
+If you want to reconstruct a version string, you must iterate through the vector of parts and for
+each part append a specific prefix and the value stored in the string. The prefixes you need should
+be obvious, but here they are anyways:
+
+  ========== =================
+  Prefix     Name
+  ========== =================
+  "." (dot)  primary, inter_rev
+  "" (empty) first, char, garbage
+  "_alpha"   alpha
+  "_beta"    beta
+  "_pre"     pre
+  "_rc"      rc
+  "-r"       revision
+  "_p"       patch
+  ========== =================
+
+
+.. [#inter-revisions] inter-revision ares used by gentoo-alt to keep their prefixed portage tree in
+                      sync with the main tree
+                      http://www.gentoo.org/proj/en/gentoo-alt/prefix/techdocs.xml#doc_chap2_sect5
+
+
+Historical notes
+================
+
+- Since version 17, the format of this file is architecture-independent.
+
+.. vim:set tw=100 ft=rst:

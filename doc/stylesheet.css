@@ -1,0 +1,71 @@
+@import url(html4css1.css);
+
+body {
+    /* 
+     * max-width: 70em;
+     * margin: 0px auto; 
+     */
+
+    font-family: verdana, serif;
+    font-size: 90%;
+}
+
+table.docinfo {
+    text-align: left;
+}
+
+h1.title {
+    font-family: verdana;
+}
+
+h1 {
+    font-family: georgia;
+}
+
+h1, h2, h3 {
+    font-weight: normal;
+    color: #777;
+}
+
+div.section {
+    clear: both;
+}
+
+div.section div.section{
+    padding-left: 5px;
+}
+
+td.field-body {
+    white-space: pre;
+}
+
+tt {
+    background: #eeb;
+}
+
+
+.layout-block p {
+    font-size: small;
+}
+
+.layout-block {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid black;
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+
+.header-block {
+    background: #d5f3d5;
+}
+.category-block {
+    background: #f1e3e2;
+}
+.package-block {
+    background: #e2e7f1;
+}
+.version-block {
+    background: #f1f1e2;
+}
