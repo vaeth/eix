@@ -12,6 +12,7 @@
 	- Rename cache methods none{,*} to parse{,*} to force users of "none"
 	  to observe that the new cache method parse|ebuild* exists (and
 	  probably switch to it).  The name "none" was misleading anyway.
+	- Make "compact" format look more compact.
 	- Fix spaces in results for cache method none{,*}/parse{,*}
 	- Remove broken cache method portage-2.1* unless a corresponding
 	  ./configure option is used (which is mainly for testing purposes).

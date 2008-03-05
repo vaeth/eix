@@ -726,6 +726,18 @@ eixrc.addDefault(
 
 #if (DEFAULT_PART == 3)
 eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_BESTVERSION_COMPACT",
+			"{bestshort}<best>{else}"
+			// Do you want to know *why* there is no best version, also in FORMAT_COMPACT?
+			// Choose you poison by commenting either next line or line afterwards...
+			//"<availableversions>"
+			"(%{COLOR_MASKED})--()"
+			"{}",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"It defines the compact format for the best version.")
+		);
+
+eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_BESTSLOTS_COMPACT",
 			"{bestshort}<bestslots>{else}<availableversions>{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
@@ -950,7 +962,7 @@ eixrc.addDefault(
 				"%{INSTALLEDVERSIONS_COMPACT}"
 				"{recommend} -> %{FORMAT_BESTSLOTS_COMPACT}{}"
 			"{else}"
-				"%{FORMAT_BESTSLOTS_COMPACT}"
+				"%{FORMAT_BESTVERSION_COMPACT}"
 			"{}"
 			"()\\): <description>",
 			"Define the compact output shown when -c is used.")
