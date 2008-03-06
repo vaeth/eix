@@ -732,16 +732,16 @@ When printed, "[overlaykey]" is printed with corresponding colors.
 .BR best "  or  " bestlong
 the highest stable version, including slot information
 .TP
-.B bestshort
-the highest stable version without slot information
+.BR bestshort " or " bestshort*
+the highest stable (or testing, respectively) version without slot information
 .TP
-.BR bestslots "  or  " bestslotslong
-for each slot the highest stable version (including slot information),
-separated by spaces.
+.BR bestslots ", " bestslotslong ", " bestslots* ", or " bestslotslong*
+for each slot the highest stable (or stable, respectively) version
+with slot information, separated by spaces.
 .TP
-.B bestslotsshort
-for each slot the highest stable version (without slot information),
-separated by spaces.
+.BR bestslotsshort " or " bestslotshort*
+for each slot the highest stable (or testing, respectively) version
+without slot information, separated by spaces.
 .TP
 .B system
 expands to "system" if this package is in the system-profile

@@ -727,7 +727,7 @@ eixrc.addDefault(
 #if (DEFAULT_PART == 3)
 eixrc.addDefault(
 		EixRcOption(EixRcOption::BOOLEAN, "NOBEST_COMPACT",
-			"false",
+			"true",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"If true, compact format prints no version if none is installable.")
 		);
@@ -773,12 +773,18 @@ eixrc.addDefault(
 
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "FORMAT_BEST_COMPACT",
-			"{bestshort}<best>{else}"
-				"%{?NOBEST_COMPACT}"
-					"%{FORMAT_NOBEST}"
-				"%{else}"
-					"<availableversions>"
-				"%{}"
+			"{bestshort}"
+				"<best>"
+			"{else}"
+				"{bestshort*}"
+					"<bestshort*>"
+				"{else}"
+					"%{?NOBEST_COMPACT}"
+						"%{FORMAT_NOBEST}"
+					"%{else}"
+						"<availableversions>"
+					"%{}"
+				"{}"
 			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the compact format for the best version(s).")
@@ -789,11 +795,15 @@ eixrc.addDefault(
 			"{bestshort}"
 				"<bestslots>"
 			"{else}"
-				"%{?NOBEST_CHANGE}"
-					"%{FORMAT_NOBEST_CHANGE}"
-				"%{else}"
-					"<availableversions>"
-				"%{}"
+				"{bestshort*}"
+					"<bestslots*>"
+				"{else}"
+					"%{?NOBEST_CHANGE}"
+						"%{FORMAT_NOBEST_CHANGE}"
+					"%{else}"
+						"<availableversions>"
+					"%{}"
+				"{}"
 			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the compact format for the best version(s) in case of changes.")
@@ -802,13 +812,17 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_BEST",
 			"{bestshort}"
-				"<bestslots>"
+				"<best>"
 			"{else}"
-				"%{?DIFF_NOBEST}"
-					"%{FORMAT_NOBEST}"
-				"%{else}"
-					"<availableversions>"
-				"%{}"
+				"{bestshort*}"
+					"<best*>"
+				"{else}"
+					"%{?DIFF_NOBEST}"
+						"%{FORMAT_NOBEST}"
+					"%{else}"
+						"<availableversions>"
+					"%{}"
+				"{}"
 			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the diff-eix format for the best version(s).")
@@ -819,11 +833,15 @@ eixrc.addDefault(
 			"{bestshort}"
 				"<bestslots>"
 			"{else}"
-				"%{?DIFF_NOBEST_CHANGE}"
-					"%{FORMAT_NOBEST_CHANGE}"
-				"%{else}"
-					"<availableversions>"
-				"%{}"
+				"{bestshort*}"
+					"<bestslots*>"
+				"{else}"
+					"%{?DIFF_NOBEST_CHANGE}"
+						"%{FORMAT_NOBEST_CHANGE}"
+					"%{else}"
+						"<availableversions>"
+					"%{}"
+				"{}"
 			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the diff-eix format for the best version(s) in case of changes.")

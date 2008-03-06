@@ -18,25 +18,25 @@ Overall layout
 
 The file is made up of blocks of data,
 which may in turn contain other other blocks. [#vector-vs-blocks]_
-The first block is a special File Header.
+The first block is a special header.
 The remaining blocks are the categories which in turn contain the package blocks
 which contain the version blocks, ...
 
   .. container:: layout-block  header-block
 
-    File Header
+    Header_
 
   .. container:: layout-block category-block
 
-    1st Category
+    1st Category_
 
     .. container:: layout-block package-block
 
-      1st Package in 1st Category
+      1st Package_ in 1st Category
 
       .. container:: layout-block version-block
 
-        1st Version of this Package
+        1st Version_ of this Package
 
       .. container:: layout-block version-block
 
@@ -44,13 +44,13 @@ which contain the version blocks, ...
 
     .. container:: layout-block package-block
 
-      2nd Package in 1st Category
+      2nd Package_ in 1st Category
 
       [..]
 
   .. container:: layout-block category-block
 
-    2nd Category
+    2nd Category_
 
     [..]
 
@@ -59,11 +59,9 @@ which contain the version blocks, ...
 
   Most blocks here occur as a `vector` (described below), i.e. the
   first entry is the number of elements, followed by the individual elements.
-  However, if not stated explicitly that a block is a `vector` there is
-  no explicit indication in the file how many elements it has.
-  For example, the total number of categories has to be calculated implicitly
-  by the number of packages (stored in the File Header) and the size of the
-  individual categories.
+  However, if not stated explicitly that a block is a `vector`, it is
+  indicated otherwise in the file how many elements it has.
+  For example, the number of category blocks is contained in the header_.
 
 Basic Datatypes
 ===============
@@ -157,8 +155,8 @@ Header
 Type   Content
 ====== =======
 Number File format version
-Number Number of categories
-Vector Overlay_ blocks
+Number Number of Category_ blocks
+Vector Overlay_\s
 Hash   Hash for "Provide"
 Hash   Hash for "Licenses"
 Hash   Hash for "Keywords"

@@ -27,12 +27,15 @@ const Package::Duplicates
 bool Package::upgrade_to_best;
 
 Version *
-VersionList::best() const
+VersionList::best(bool allow_unstable) const
 {
 	for(const_reverse_iterator ri = rbegin();
 		ri != rend(); ++ri)
 	{
-		if(ri->keyflags.isStable() && (!ri->maskflags.isHardMasked()))
+		if(ri->maskflags.isHardMasked())
+			continue;
+		if(ri->keyflags.isStable() ||
+			(allow_unstable && ri->keyflags.isUnstable()))
 			return *ri;
 	}
 	return NULL;
@@ -169,20 +172,19 @@ void Package::addVersionFinalize(Version *version)
 }
 
 Version *
-Package::best() const
+Package::best(bool allow_unstable) const
 {
-	Version *ret = NULL;
 	for(const_reverse_iterator ri = rbegin();
 		ri != rend();
 		++ri)
 	{
-		if(ri->keyflags.isStable() && !ri->maskflags.isHardMasked())
-		{
-			ret = *ri;
-			break;
-		}
+		if(ri->maskflags.isHardMasked())
+			continue;
+		if(ri->keyflags.isStable() ||
+			(allow_unstable && ri->keyflags.isUnstable()))
+			return *ri;
 	}
-	return ret;
+	return NULL;
 }
 
 void
@@ -204,13 +206,13 @@ Package::best_slot(const char *slot_name) const
 }
 
 void
-Package::best_slots(vector<Version*> &l) const
+Package::best_slots(vector<Version*> &l, bool allow_unstable) const
 {
 	l.clear();
 	for(SlotList::const_iterator sit = slotlist.begin();
 		sit != slotlist.end(); ++sit)
 	{
-		Version *p = (sit->const_version_list()).best();
+		Version *p = (sit->const_version_list()).best(allow_unstable);
 		if(p)
 			l.push_back(p);
 	}

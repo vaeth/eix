@@ -540,38 +540,6 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 	string plainname = prepend[0];
 	prepend.erase(prepend.begin());
 
-	if((name == "availableversions") ||
-		(name == "availableversionslong") ||
-		(name == "availableversionsshort")) {
-		print_versions(fmt, entity, (name != "availableversionsshort"), false);
-		return true;
-	}
-	if((name == "fullavailable") ||
-		(name == "fullavailablelong") ||
-		(name == "fullavailableshort")) {
-		print_versions(fmt, entity, (name != "fullavailableshort"), true);
-		return true;
-	}
-	if((plainname == "installedversions") ||
-		(plainname == "installedversionsdate") ||
-		(plainname == "installedversionsshortdate") ||
-		(plainname == "installedversionsshort")) {
-		if(!fmt->vardb)
-			return false;
-		char formattype = 0;
-		if(plainname != "installedversionsshort") {
-			formattype = INST_WITH_DATE;
-			if(plainname == "installedversions")
-				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
-			else if(plainname == "installedversionsshortdate")
-				formattype |= INST_SHORTDATE;
-		}
-		string s = getInstalledString(*entity, *fmt, false, formattype, prepend);
-		if(s.empty())
-			return false;
-		cout << s;
-		return true;
-	}
 	if(plainname == "fullinstalled") {
 		string s = getFullInstalled(*entity, *fmt);
 		if(s.empty())
@@ -587,26 +555,49 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		}
 		return false;
 	}
-	if((name == "best") ||
-		(name == "bestlong") ||
-		(name == "bestshort")) {
-		Version *best = entity->best();
-		if(best == NULL)
-			return false;
-		print_version(fmt, best, entity, (name != "bestshort"), false, false);
+	if(name.find("availableversions") != string::npos) {
+		print_versions(fmt, entity, (name.find("short") != string::npos), false);
 		return true;
 	}
-	if((name == "bestslots") ||
-		(name == "bestslotslong") ||
-		(name == "bestslotsshort")) {
+	if(name.find("fullavailable") != string::npos) {
+		print_versions(fmt, entity, (name.find("short") != string::npos), true);
+		return true;
+	}
+	if(plainname.find("installedversions") != string::npos) {
+		if(!fmt->vardb)
+			return false;
+		char formattype = 0;
+		if(plainname != "installedversionsshort") {
+			formattype = INST_WITH_DATE;
+			if(plainname == "installedversions")
+				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
+			else
+				formattype |= INST_SHORTDATE;
+		}
+		string s = getInstalledString(*entity, *fmt, false, formattype, prepend);
+		if(s.empty())
+			return false;
+		cout << s;
+		return true;
+	}
+	if(name.find("best") != string::npos) {
+		bool with_slots = (name.find("short") != string::npos);
+		bool accept_unstable = (name.find_first_of('*') != string::npos);
+		if(name.find("slot") == string::npos) {
+			Version *best = entity->best(accept_unstable);
+			if(best == NULL)
+				return false;
+			print_version(fmt, best, entity, with_slots, false, false);
+			return true;
+		}
 		vector<Version*> versions;
-		entity->best_slots(versions);
+		entity->best_slots(versions, accept_unstable);
 		for(vector<Version*>::const_iterator it = versions.begin();
 			it != versions.end(); ++it)
 		{
 			if(it != versions.begin())
 				cout << " ";
-			print_version(fmt, *it, entity, (name != "bestslotshort"), false, false);
+			print_version(fmt, *it, entity, with_slots, false, false);
 		}
 		return (versions.begin() != versions.end());
 	}
@@ -622,41 +613,18 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 {
 	const Package *entity = static_cast<const Package *>(void_entity);
 
-	if(name == "category") {
+	if(name == "category")
 		return entity->category;
-	}
-	if(name == "name") {
+	if(name == "name")
 		return entity->name;
-	}
-	if(name == "description") {
+	if(name == "description")
 		return entity->desc;
-	}
-	if(name == "homepage") {
+	if(name == "homepage")
 		return entity->homepage;
-	}
-	if(name == "licenses") {
+	if(name == "licenses")
 		return entity->licenses;
-	}
-	if((name == "installedversions") ||
-		(name == "installedversionsdate") ||
-		(name == "installedversionsshortdate") ||
-		(name == "installedversionsshort")) {
-		if(!fmt->vardb)
-			return "";
-		char formattype = 0;
-		if(name != "installedversionsshort") {
-			formattype = INST_WITH_DATE;
-			if(name == "installedversions")
-				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
-			else if(name == "installedversionsshortdate")
-				formattype |= INST_SHORTDATE;
-		}
-		vector<string> prepend;
-		return getInstalledString(*entity, *fmt, true, formattype, prepend);
-	}
-	if(name == "provide") {
+	if(name == "provide")
 		return entity->provide;
-	}
 	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key) {
@@ -670,23 +638,127 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		}
 		return "";
 	}
-	if((name == "best") ||
-		(name == "bestlong") ||
-		(name == "bestshort")) {
-		Version *best = entity->best();
-		if(best == NULL) {
-			return "";
+	if(name == "marked") {
+		if(fmt->marked_list)
+		{
+			if(fmt->marked_list->is_marked(*entity))
+				return "1";
 		}
-		if(fmt->show_slots && (name != "bestshort"))
-			return best->getFullSlotted(fmt->colon_slots);
-		return best->getFull();
+		return "";
 	}
-	if((name == "bestslots") ||
-		(name == "bestslotslong") ||
-		(name == "bestslotsshort")) {
-		bool with_slots = (name != "bestslotshort");
+	if(name == "markedversions") {
+		if(fmt->marked_list)
+			return fmt->marked_list->getMarkedString(*entity);
+		return "";
+	}
+	if(name == "upgrade") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, true, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "upgradeorinstall") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, false, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "downgrade") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->must_downgrade(fmt->vardb, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "recommend") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, true, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "recommendorinstall") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, false, true);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "bestupgrade") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, true, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "bestupgradeorinstall") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->can_upgrade(fmt->vardb, false, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "bestdowngrade") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->must_downgrade(fmt->vardb, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "bestrecommend") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, true, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name == "bestrecommendorinstall") {
+		LocalCopy copy(fmt, const_cast<Package*>(entity));
+		bool result = entity->recommend(fmt->vardb, false, false);
+		copy.restore(const_cast<Package*>(entity));
+		if(result)
+			return "1";
+		return "";
+	}
+	if(name.find("installedversions") != string::npos) {
+		if(!fmt->vardb)
+			return "";
+		char formattype = 0;
+		if(name != "installedversionsshort") {
+			formattype = INST_WITH_DATE;
+			if(name == "installedversions")
+				formattype |= INST_WITH_USEFLAGS|INST_WITH_NEWLINE;
+			else
+				formattype |= INST_SHORTDATE;
+		}
+		vector<string> prepend;
+		return getInstalledString(*entity, *fmt, true, formattype, prepend);
+	}
+	if(name.find("best") != string::npos) {
+		bool with_slots = (name.find("short") != string::npos);
+		bool accept_unstable = (name.find_first_of('*') != string::npos);
+		if(name.find("slot") == string::npos) {
+			Version *best = entity->best(accept_unstable);
+			if(best == NULL) {
+				return "";
+			}
+			if(with_slots && fmt->show_slots)
+				return best->getFullSlotted(fmt->colon_slots);
+			return best->getFull();
+		}
 		vector<Version*> versions;
-		entity->best_slots(versions);
+		entity->best_slots(versions, accept_unstable);
 		string ret;
 		for(vector<Version*>::const_iterator it = versions.begin();
 			it != versions.end(); ++it)
@@ -699,111 +771,6 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 				ret += (*it)->getFull();
 		}
 		return ret;
-	}
-	if(name == "marked")
-	{
-		if(fmt->marked_list)
-		{
-			if(fmt->marked_list->is_marked(*entity))
-				return "1";
-		}
-		return "";
-	}
-	if(name == "markedversions")
-	{
-		if(fmt->marked_list)
-			return fmt->marked_list->getMarkedString(*entity);
-		return "";
-	}
-	if(name == "upgrade")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, true, true);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "upgradeorinstall")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, false, true);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "downgrade")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->must_downgrade(fmt->vardb, true);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "recommend")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, true, true);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "recommendorinstall")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, false, true);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "bestupgrade")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, true, false);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "bestupgradeorinstall")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, false, false);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "bestdowngrade")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->must_downgrade(fmt->vardb, false);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "bestrecommend")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, true, false);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "bestrecommendorinstall")
-	{
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, false, false);
-		copy.restore(const_cast<Package*>(entity));
-		if(result)
-			return "1";
-		return "";
 	}
 	throw ExBasic("Unknown property %r") % name;
 }

@@ -31,7 +31,7 @@ class VersionList : public eix::ptr_list<Version>
 		VersionList(Version *v) : std::list<Version*>(1, v)
 		{ }
 
-		Version* best() const;
+		Version* best(bool allow_unstable = false) const;
 };
 
 class SlotVersions
@@ -178,11 +178,11 @@ class Package
 
 		void calculate_slotlist();
 
-		Version *best() const;
+		Version *best(bool allow_unstable = false) const;
 
 		Version *best_slot(const char *slot_name) const;
 
-		void best_slots(std::vector<Version*> &l) const;
+		void best_slots(std::vector<Version*> &l, bool allow_unstable = false) const;
 
 		/** Test whether p has a worse best_slot().
 		    @return

@@ -12,7 +12,9 @@
 	- Rename cache methods none{,*} to parse{,*} to force users of "none"
 	  to observe that the new cache method parse|ebuild* exists (and
 	  probably switch to it).  The name "none" was misleading anyway.
-	- Introduce *NOBEST_* variables to make compact format be more compact.
+	- Introduce *-versions of the best/bestslot format strings to avoid
+	  printing of all available versions for diff-eix or eix -c.
+	- Introduce *NOBEST_* to make diff-eix or eix -c more compact.
 	- Introduce --with-rst configure option for database docu html.
 	- Fix spaces in results for cache method none{,*}/parse{,*}
 	- Remove broken cache method portage-2.1* unless a corresponding
