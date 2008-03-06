@@ -108,7 +108,7 @@ else
 fi
 
 dnl Use bzip2?
-AC_ARG_WITH(bzip2,[  --with-bzip2    Use libbz2 (required for detecting installed overlays)], [
+AC_ARG_WITH(bzip2,[  --with-bzip2            Use libbz2 (required for detecting installed overlays)], [
 	if test "x${withval}" = "xno"; then
 		USE_BZLIB=""
 	else
@@ -145,9 +145,22 @@ fi
 if test -n "${USE_BZLIB}"; then
 	AC_DEFINE(USE_BZLIB,1, Define to 1 if bzlib can be used)
 else
-	AC_MSG_WARN("no libbz2: eix will not detect installed overlays")
+	AC_MSG_WARN("no libbz2: eix will not detect installed overlays reliably")
 fi
 AC_SUBST(BZLIB_LIBS)
+
+dnl Use rst?
+AC_ARG_WITH(rst,[  --with-rst              Use rst2html.py to document cache file format in html ], [
+	if test "x${withval}" = "xno"; then
+		rst=false
+	else
+		rst=true
+	fi
+	],
+	[
+		rst=false
+	])
+AM_CONDITIONAL(USE_RST, ${rst})
 
 dnl Use obsoleted cache method?
 AC_ARG_ENABLE(  extra_cache,[  --enable-extra-cache    enable unsupported cache method portage-2.1* ], [
@@ -253,7 +266,7 @@ else
 fi
 
 dnl What about sqlite?
-AC_ARG_WITH(sqlite,[  --with-sqlite   Compile in support for cache method sqlite ],[
+AC_ARG_WITH(sqlite,[  --with-sqlite           Compile in support for cache method sqlite ],[
 		if test "x${withval}" = "xno"; then
 			SQLITE_LIBS=""
 		else
@@ -282,7 +295,7 @@ AC_ARG_WITH(portdir-cache-method,[  --with-portdir-cache-method=STR  default POR
 AC_DEFINE_UNQUOTED(PORTDIR_CACHE_METHOD, "${PORTDIR_CACHE_METHOD}", default PORTDIR_CACHE_METHOD)
 AC_SUBST(PORTDIR_CACHE_METHOD)
 
-AC_ARG_WITH(eprefix-default,[  --with-eprefix-default=STR  default EPREFIX],
+AC_ARG_WITH(eprefix-default,[  --with-eprefix-default=STR       default EPREFIX],
 		[EPREFIX_DEFAULT=${withval}],
 		[EPREFIX_DEFAULT=""])
 
@@ -293,7 +306,7 @@ fi
 AC_DEFINE_UNQUOTED(EPREFIX_DEFAULT, "$EPREFIX_DEFAULT", default EPREFIX)
 AC_SUBST(EPREFIX_DEFAULT)
 
-AC_ARG_WITH(root-default,[  --with-root-default=STR  default ROOT],
+AC_ARG_WITH(root-default,[  --with-root-default=STR          default ROOT],
 		[ROOT_DEFAULT=${withval}],
 		[ROOT_DEFAULT=""])
 
@@ -337,7 +350,7 @@ if test "x$GCC" != x; then
 fi
 
 dnl Done!
-AC_OUTPUT(Makefile manpage/Makefile src/Makefile)
+AC_OUTPUT(Makefile manpage/Makefile src/Makefile doc/Makefile)
 
 echo ""
 echo " $PACKAGE version $VERSION configured successfully."

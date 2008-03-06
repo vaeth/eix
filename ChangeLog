@@ -12,7 +12,8 @@
 	- Rename cache methods none{,*} to parse{,*} to force users of "none"
 	  to observe that the new cache method parse|ebuild* exists (and
 	  probably switch to it).  The name "none" was misleading anyway.
-	- Make "compact" format look more compact.
+	- Introduce *NOBEST_* variables to make compact format be more compact.
+	- Introduce --with-rst configure option for database docu html.
 	- Fix spaces in results for cache method none{,*}/parse{,*}
 	- Remove broken cache method portage-2.1* unless a corresponding
 	  ./configure option is used (which is mainly for testing purposes).
@@ -20,6 +21,9 @@
 	  see the comments in http://bugs.gentoo.org/show_bug.cgi?id=209239
 	- Fix some pedantic compiler warnings; make basicversion.cc using std.
 	- Make update-eix slightly more verbose.
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Add documentation for database format.
 
 *eix-0.11.0
 	Emil Beinroth <emilbeinroth at gmx.net>:

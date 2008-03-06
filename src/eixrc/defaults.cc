@@ -726,29 +726,107 @@ eixrc.addDefault(
 
 #if (DEFAULT_PART == 3)
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "FORMAT_BESTVERSION_COMPACT",
+		EixRcOption(EixRcOption::BOOLEAN, "NOBEST_COMPACT",
+			"false",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"If true, compact format prints no version if none is installable.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "NOBEST_CHANGE",
+			"true",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"If true, compact format prints no versions if all installable vanished.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_NOBEST",
+			"false",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"If true, diff-eix prints no version if none is installable.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::BOOLEAN, "DIFF_NOBEST_CHANGE",
+			"false",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"If true, diff-eix prints no versions if all installable vanished.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_NOBEST",
+			"(%{COLOR_MASKED})"
+			"--"
+			"()",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"It defines what to print if no version number is printed.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_NOBEST_CHANGE",
+			"(%{COLOR_MASKED})"
+			"??"
+			"()",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"It defines what to print after \"->\" if there is no installable.")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "FORMAT_BEST_COMPACT",
 			"{bestshort}<best>{else}"
-			// Do you want to know *why* there is no best version, also in FORMAT_COMPACT?
-			// Choose you poison by commenting either next line or line afterwards...
-			//"<availableversions>"
-			"(%{COLOR_MASKED})--()"
+				"%{?NOBEST_COMPACT}"
+					"%{FORMAT_NOBEST}"
+				"%{else}"
+					"<availableversions>"
+				"%{}"
 			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-			"It defines the compact format for the best version.")
+			"It defines the compact format for the best version(s).")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "FORMAT_BESTSLOTS_COMPACT",
-			"{bestshort}<bestslots>{else}<availableversions>{}",
+		EixRcOption(EixRcOption::STRING, "FORMAT_BEST_CHANGE",
+			"{bestshort}"
+				"<bestslots>"
+			"{else}"
+				"%{?NOBEST_CHANGE}"
+					"%{FORMAT_NOBEST_CHANGE}"
+				"%{else}"
+					"<availableversions>"
+				"%{}"
+			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-			"It defines the compact format for the best versions/slots.")
+			"It defines the compact format for the best version(s) in case of changes.")
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_BESTSLOTS",
-			"%{FORMAT_BESTSLOTS_COMPACT}",
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_BEST",
+			"{bestshort}"
+				"<bestslots>"
+			"{else}"
+				"%{?DIFF_NOBEST}"
+					"%{FORMAT_NOBEST}"
+				"%{else}"
+					"<availableversions>"
+				"%{}"
+			"{}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-			"It defines the diff-eix format for the best versions/slots.")
+			"It defines the diff-eix format for the best version(s).")
+		);
+
+eixrc.addDefault(
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_BEST_CHANGE",
+			"{bestshort}"
+				"<bestslots>"
+			"{else}"
+				"%{?DIFF_NOBEST_CHANGE}"
+					"%{FORMAT_NOBEST_CHANGE}"
+				"%{else}"
+					"<availableversions>"
+				"%{}"
+			"{}",
+			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+			"It defines the diff-eix format for the best version(s) in case of changes.")
 		);
 
 eixrc.addDefault(
@@ -761,7 +839,7 @@ eixrc.addDefault(
 			"{else}"
 				"<oldavailableversions>"
 			"{}"
-			"() -> %{DIFF_FORMAT_BESTSLOTS}",
+			"() -> %{DIFF_FORMAT_BEST_CHANGE}",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the diff-eix format for changed versions.")
 		);
@@ -823,8 +901,8 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "DIFF_FORMATLINE_BESTSLOTS",
-			"\\(%{DIFF_FORMAT_BESTSLOTS}())",
+		EixRcOption(EixRcOption::STRING, "DIFF_FORMATLINE_BEST",
+			"\\(%{DIFF_FORMAT_BEST}())",
 			"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 			"It defines the diff-eix line for the best versions/slots.")
 		);
@@ -884,7 +962,7 @@ eixrc.addDefault(
 		);
 
 eixrc.addDefault(
-		EixRcOption(EixRcOption::STRING, "FORMATLINE_BESTSLOTS",
+		EixRcOption(EixRcOption::STRING, "FORMATLINE_BEST",
 			"%{!PRINT_ALWAYS}{bestshort}%{}"
 			"     (%{COLOR_TITLE})Best versions/slot:()"
 			"%{?PRINT_ALWAYS}{bestshort}%{}"
@@ -960,9 +1038,9 @@ eixrc.addDefault(
 			" \\({marked}(%{COLOR_MARKED_VERSION})<markedversions>(); {}"
 			"{installedversionsshort}"
 				"%{INSTALLEDVERSIONS_COMPACT}"
-				"{recommend} -> %{FORMAT_BESTSLOTS_COMPACT}{}"
+				"{recommend} -> %{FORMAT_BEST_CHANGE}{}"
 			"{else}"
-				"%{FORMAT_BESTVERSION_COMPACT}"
+				"%{FORMAT_BEST_COMPACT}"
 			"{}"
 			"()\\): <description>",
 			"Define the compact output shown when -c is used.")
@@ -973,7 +1051,7 @@ eixrc.addDefault(
 			"%{FORMATLINE_NAME_VERBOSE}"
 			"%{FORMATLINE_AVAILABLEVERSIONS}"
 			"%{FORMATLINE_INSTALLEDVERSIONS_VERBOSE}"
-			"%{FORMATLINE_BESTSLOTS}"
+			"%{FORMATLINE_BEST}"
 			"%{FORMATLINE_RECOMMEND}"
 			"%{FORMATLINE_MARKEDVERSIONS}"
 			"%{FORMATLINE_HOMEPAGE}"
@@ -987,7 +1065,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_NEW",
 			"%{DIFF_FORMATLINE_NAME_NEW}"
-			"%{DIFF_FORMATLINE_BESTSLOTS}"
+			"%{DIFF_FORMATLINE_BEST}"
 			"%{DIFF_FORMATLINE}",
 			"Define the format used for new packages.")
 		);
@@ -995,7 +1073,7 @@ eixrc.addDefault(
 eixrc.addDefault(
 		EixRcOption(EixRcOption::STRING, "DIFF_FORMAT_DELETE",
 			"%{DIFF_FORMATLINE_NAME_DELETE}"
-			"%{DIFF_FORMATLINE_BESTSLOTS}"
+			"%{DIFF_FORMATLINE_BEST}"
 			"%{DIFF_FORMATLINE}",
 			"Define the format used for packages that were deleted.")
 		);

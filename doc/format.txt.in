@@ -1,14 +1,14 @@
 =======================
 eix - index file format
 =======================
-:Authors:   Martin Väth <vaeth AT mathematik DOT uni-wuerzburg DOT de> (active), 
+:Authors:   Martin Väth <vaeth AT mathematik DOT uni-wuerzburg DOT de> (active),
             Emil Beinroth <emilbeinroth AT gmx DOT net> (active),
             Wolfgang Frisch <xororand AT users DOT sourceforge DOT net> (inactive)
 :Copyright: This file is part of the eix project and distributed under the
             terms of the GNU General Public License v2.
 
 This article describes the format of the eix index file, usually located at /var/cache/eix. The
-format includes a version field in the header_ block. The current version is **25**.
+format includes a version field in the header_ block. The current version is **@CURRENT@** (@PACKAGE_STRING@).
 
 .. contents:: **Table of Contents**:
     :backlinks: none
@@ -16,54 +16,59 @@ format includes a version field in the header_ block. The current version is **2
 Overall layout
 ==============
 
-The file is made up of blocks of data, which may in turn contain other other blocks. It can be said
-[#vector-in-header]_ that the header contains the category blocks, which contain the package blocks,
-which contain the version blocks, ... do you see the pattern?
+The file is made up of blocks of data,
+which may in turn contain other other blocks. [#vector-vs-blocks]_
+The first block is a special File Header.
+The remaining blocks are the categories which in turn contain the package blocks
+which contain the version blocks, ...
 
   .. container:: layout-block  header-block
 
     File Header
 
-    .. container:: layout-block category-block
+  .. container:: layout-block category-block
 
-      1th Category
+    1st Category
 
-      .. container:: layout-block package-block
+    .. container:: layout-block package-block
 
-        1th Package in 1th Category
+      1st Package in 1st Category
 
-        .. container:: layout-block version-block
+      .. container:: layout-block version-block
 
-          1th Version of this Package
+        1st Version of this Package
 
-        .. container:: layout-block version-block
-
-          [..]
-
-      .. container:: layout-block package-block
-
-        2nd Package in 1th Category
+      .. container:: layout-block version-block
 
         [..]
 
-    .. container:: layout-block category-block
+    .. container:: layout-block package-block
 
-      2nd Category
+      2nd Package in 1st Category
 
       [..]
 
+  .. container:: layout-block category-block
 
-.. [#vector-in-header]
+    2nd Category
 
-  The problem with this is that the category_ blocks do not directly follow the `Number of
-  categories` field, so it's not a perfect vector_. Furthermore, the name `Header` is missleading
-  and should probably split into `Header` and `Body`.
+    [..]
+
+
+.. [#vector-vs-blocks]
+
+  Most blocks here occur as a `vector` (described below), i.e. the
+  first entry is the number of elements, followed by the individual elements.
+  However, if not stated explicitly that a block is a `vector` there is
+  no explicit indication in the file how many elements it has.
+  For example, the total number of categories has to be calculated implicitly
+  by the number of packages (stored in the File Header) and the size of the
+  individual categories.
 
 Basic Datatypes
 ===============
 
-This section covers the datatypes `number` and `vector` (resp. `string`) which are used in the index
-file.
+This section covers the datatypes `number` and `vector` (resp. `string`) which are used in the index file.
 
 Number
 ------
@@ -112,7 +117,7 @@ elements, followed by the elements themselves.
 Type   Content
 ====== =====================
 Number Number of elements (`n`)
-\      1th element
+\      1st element
 \      ...
 \      `n`\th element
 ====== =====================
@@ -121,6 +126,25 @@ String
 ------
 
 Strings are stored as a vector_ of characters. A trailing '\\0' is not included.
+
+
+Hash
+----
+
+A hash is a vector_ of string_\s.
+
+
+HashedString
+------------
+
+A number_ which is considered as an index in the corresponding hash_;
+0 denotes the first string of the hash, 1 the second, ...
+
+HashedWords
+-----------
+
+A vector_ of HashedString_\s.
+The resulting strings are meant to be concatenated, with spaces as separators.
 
 
 Data blocks
@@ -135,6 +159,11 @@ Type   Content
 Number File format version
 Number Number of categories
 Vector Overlay_ blocks
+Hash   Hash for "Provide"
+Hash   Hash for "Licenses"
+Hash   Hash for "Keywords"
+Hash   Hash for "Useflags"
+Hash   Hash for "Slot"
 ====== =======
 
 
@@ -161,53 +190,52 @@ Vector Package_\s in this category
 Package
 -------------
 
-========= =======
-Type      Content
-========= =======
-Number    Offset to the next package in the eix cache file (in bytes; counting starts after the number)
-String    Package name
-String    Description
-String    Provide
-String    Homepage
-String    Licenses, e.g. MPL-1.1 NPL-1.1
-String    IUSE flags (all useflags of all versions of the package are added). This might "falsely" be the empty string if per-version IUSE flags are stored.
-Vector    Version_\s
-========= =======
+============ =======
+Type         Content
+============ =======
+Number       Offset to the next package in the eix cache file (in bytes; counting starts after the number)
+String       Package name
+String       Description
+HashedWords  Provide
+String       Homepage
+HashedString Licenses, e.g. MPL-1.1 NPL-1.1
+HashedWords  Useflags (all useflags of all versions of the package are added). This might "falsely" be the empty string if per-version IUSE flags are stored.
+Vector       Version_\s
+============ =======
 
 Version
 -------
 
-======= ============================
-Type    Content
-======= ============================
-char    Mask bitset for the current $ARCH:
+============ ============================
+Type         Content
+============ ============================
+char         Mask bitset for the current $ARCH:
 
-          :0x00: none of the following
-          :0x01: masked by package.mask
-          :0x02: masked by profile
-          :0x04: version of package is a system-package
+               :0x00: none of the following
+               :0x01: masked by package.mask
+               :0x02: masked by profile
+               :0x04: version of package is a system-package
 
-        Since eix-0.10.1 the higher bits contain the restrict status:
+             Since eix-0.10.1 the higher bits contain the restrict status:
 
-          :0x10: RESTRICT=fetch
-          :0x20: RESTRICT=mirror
+               :0x10: RESTRICT=fetch
+               :0x20: RESTRICT=mirror
 
-String  Full keywords string of the ebuild.
-Vector  VersionPart_\s
-String  Slot name. The slot name "0" is stored as "".
-Number  Index of the portage overlay (in the overlays block)
-String  Useflags of this version. This might "falsely" be the empty string if only per-package IUSE
-        flags are stored.
-======= ============================
+HashedWords  Full keywords string of the ebuild.
+Vector       VersionPart_\s
+HashedString Slot name. The slot name "0" is stored as "".
+Number       Index of the portage overlay (in the overlays block)
+HashedWords  Useflags of this version. This might "falsely" be empty if only per-package IUSE flags are stored.
+============ ============================
 
 
 VersionPart
 -----------
 
-A VersionPart has two parts, a number_ (referred to as *type*) and a string_ (referred to as *value*).
+A VersionPart consists of two data: a number (referred to as *type*) and a "string_" (referred to as *value*).
 
-To save a byte, encode the type into the length-part of the value string. The lower 5 bit of the
-length part contain the type.
+The number is encoded in the lower 5 bits of the length-part of the "string_";
+of course, the actual length is shifted by the same number of bits.
 
 For the type, these named values are possible:
 
@@ -227,13 +255,13 @@ For the type, these named values are possible:
   10    `first`     first numeric version part
   ===== =========== ================================
 
-As example, we can split the version string `1.2c_pre12_alpha-r01.01-foo` like this:
+As an example, we split the version string `1.2c_pre12_alpha-r01.01-foo` like this:
 
  (first, "1") (primary, "2") (char, "c") (pre, "12") (alpha, "") (revision, "01") (inter_rev, "01") (garbage, "-foo")
 
-If you want to reconstruct a version string, you must iterate through the vector of parts and for
-each part append a specific prefix and the value stored in the string. The prefixes you need should
-be obvious, but here they are anyways:
+To reconstruct a version string, iterate through the vector of parts,
+and for each part append a specific prefix and the value stored in the string.
+The prefixes you need should be obvious, but here they are listed anyway:
 
   ========== =================
   Prefix     Name

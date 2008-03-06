@@ -342,6 +342,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_original   = eixrc.getBool("COLOR_ORIGINAL");
 	format_for_new.color_local_mask = eixrc.getBool("COLOR_LOCAL_MASK");
 
+	format_for_new.slot_sorted      = false;
 	format_for_new.alpha_use        = eixrc.getBool("SORT_INST_USE_ALPHA");
 	format_for_new.print_restrictions = !eixrc.getBool("NO_RESTRICTIONS");
 

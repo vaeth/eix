@@ -7,7 +7,7 @@
 
 AUTOMAKE_OPTIONS = foreign 1.4 dist-bzip2
 
-SUBDIRS = src manpage
+SUBDIRS = src manpage doc
 
 CLEANFILES = doxygen.cfg cppcomplete.tags tags
 

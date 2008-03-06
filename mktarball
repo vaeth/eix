@@ -11,6 +11,7 @@ die() {
 	exit ${2:-1}
 }
 
+test -e Makefile || test -e configure || test -e Makefile.in && ./mksvnclean
 test -d build || mkdir build >/dev/null
 test -d build || die "cannot create directory build"
 
