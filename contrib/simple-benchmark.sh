@@ -43,6 +43,9 @@ add_stat() {
     stats[${#stats[@]}]=$1
 }
 
+echo -n "caching phase .. "
+echo $(real "$@")
+
 for((i=0;i<$sample_size;++i)); do
     this_time=$(real "$@")
     echo job \#$i -- $(pad $this_time)
