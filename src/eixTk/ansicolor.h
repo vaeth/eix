@@ -177,7 +177,7 @@ class AnsiColor {
 					light = false;
 				}
 				else {
-					throw ExBasic("Invalid brightness value %r") 
+					throw ExBasic("Invalid brightness value %r")
 						% color_name[comma_pos + 1];
 				}
 			}

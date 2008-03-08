@@ -207,7 +207,7 @@ BasicVersion::parseVersion(const string& str)
 
 	// warn about garbage, but accept it
 	cerr << (eix::format("garbage (%r) at end of version %r, "
-							  "adding version anyways") 
+							  "adding version anyways")
 				  % str.substr(pos) % str) << endl;
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
@@ -234,7 +234,7 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 		}
 		else if ((ret = compare(*it_left, *it_right)))
 			return ret;
-		
+
 	}
 	return 0;
 }
@@ -246,7 +246,7 @@ BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
-	for(int ret = 0;; ++it_left, ++it_right) 
+	for(int ret = 0;; ++it_left, ++it_right)
 	{
 		bool left_end = (it_left == left.m_parts.end()
 				|| it_left->first == revision);

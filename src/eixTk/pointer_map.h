@@ -16,7 +16,7 @@ namespace eix
 {
     /// std::less for pointers to objects.
     template<typename T>
-    struct ptr_less 
+    struct ptr_less
         : public std::binary_function<const T*, const T*, bool>
     {
         bool operator()(const T* const& arg_1, const T* const& arg_2) const
@@ -37,7 +37,7 @@ namespace eix
         typedef std::map<const key_type*, value_type*, ptr_less<key_type> >
             tree_type;
 
-        typedef second_ptr_iter<typename tree_type::iterator, value_type> 
+        typedef second_ptr_iter<typename tree_type::iterator, value_type>
             iterator;
 
         typedef second_ptr_iter<typename tree_type::const_iterator, const value_type>
@@ -59,7 +59,7 @@ namespace eix
         const_iterator end() const
         { return const_iterator(m_tree.end()); }
 
-        bool empty() const 
+        bool empty() const
         { return m_tree.empty(); }
 
         size_type size() const

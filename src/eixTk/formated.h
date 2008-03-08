@@ -36,7 +36,7 @@ namespace eix
    *   // problems while parsing "/etc/make.conf" -- something bad happend
    *
    *   int line = 10, column = 20;
-   *   std::cout << eix::format("problems while parsing %r in line %r, column %r -- %s") 
+   *   std::cout << eix::format("problems while parsing %r in line %r, column %r -- %s")
    *           % file % message % line % column << std::endl;
    *   // problems while parsing "/etc/make.conf" in line 10, column 20 -- something bad happend
    * \endcode
@@ -69,7 +69,7 @@ namespace eix
           m_spec = 0;
           m_stream.str("");
           m_format = format_string;
-          goto_next_spec(); 
+          goto_next_spec();
           return *this;
       }
 
@@ -85,7 +85,7 @@ namespace eix
       }
 
       /// Convenience wrapper for str().
-      operator std::string () 
+      operator std::string ()
       { return str(); }
 
       /// Write formated string to ostream os.

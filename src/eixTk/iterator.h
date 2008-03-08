@@ -42,7 +42,7 @@ namespace eix
      * "second" attribute.
      */
     template<typename base_iterator, typename T>
-    class second_ptr_iter 
+    class second_ptr_iter
     : public base_iterator
     {
     public:
