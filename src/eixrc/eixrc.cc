@@ -15,7 +15,6 @@
 #include <portage/conf/portagesettings.h>
 
 #include <config.h>
-#include <configmake.h>
 
 #ifndef SYSCONFDIR
 #define SYSCONFDIR "/etc"
