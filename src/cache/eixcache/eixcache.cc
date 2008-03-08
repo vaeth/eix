@@ -92,8 +92,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 
 	DBHeader header;
 
-	io::read_header(fp, header);
-	if(!header.isCurrent()) {
+	if(!io::read_header(fp, header)) {
 		fclose(fp);
 		m_error_callback(eix::format("Cache file %s uses %s format %s (current is %s)") %
 			file % ((header.version > DBHeader::current) ? "newer" : "obsolete") %

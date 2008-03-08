@@ -148,7 +148,8 @@ namespace io {
 	void read_hash(FILE *fp, StringHash& hash);
 	void prep_header_hashs(DBHeader &hdr, const PackageTree &tree);
 	void write_header(FILE *fp, const DBHeader &hdr);
-	void read_header(FILE *fp, DBHeader &hdr);
+	// return false if version does not match. However, fp is not closed.
+	bool read_header(FILE *fp, DBHeader &hdr);
 
 	void write_packagetree(FILE *fp, const PackageTree &pkg, const DBHeader &hdr);
 	void read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr);

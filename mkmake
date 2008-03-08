@@ -9,6 +9,7 @@ Available options are
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
   -0  Do not pass --add-extra-cache=yes to ./configure
+  -1/2/3 Generate 1/2/3 binaries
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
   -u  Define NOT_FULL_USE
   -s  With sqlite
@@ -32,11 +33,15 @@ NOT_FULL_USE=false
 SQLITE=''
 BZLIB=''
 PEDANTIC=false
-EXTRA_CACHE='--enable-extra-cache=yes'
-while getopts 'q0nepusSbBc?hH' OPTION; do
+EXTRA_CACHE='--enable-extra-cache'
+SEPARATE=''
+while getopts 'q0123nepusSbBc?hH' OPTION; do
 case "${OPTION}" in
 	q) QUIET='>/dev/null 2>&1';;
 	0) EXTRA_CACHE='';;
+	1) SEPARATE='--disable-separate-binaries';;
+	2) SEPARATE='--enable-separate-update';;
+	3) SEPARATE='--enable-separate-binaries';;
 	n) EARLYSTOP=true;;
 	e) KEEPENV=true;;
 	p) PEDANTIC=true;;
@@ -88,7 +93,7 @@ if ! test -e Makefile; then
 		eval ./autogen.sh ${QUIET} || die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure '--prefix=' ${SQLITE} ${BZLIB} ${EXTRA_CACHE} ${QUIET} || \
+	eval ./configure "--prefix=" ${SQLITE} ${BZLIB} ${EXTRA_CACHE} ${SEPARATE} ${QUIET} || \
 		die "configure failed"
 fi
 ${EARLYSTOP} && exec make config.h

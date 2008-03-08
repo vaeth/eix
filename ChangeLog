@@ -1,5 +1,17 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.12.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Do not die on obsolete eix cache files, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=212637
+	- Default to create only one binary file. This needs less disk space
+	  but more memory. Moreover, it means that the eix binary needs shared
+	  libraries which are otherwise only needed for update-eix
+	  (e.g. sqlite). The ./configure options --enable-separate-binaries or
+	  --enable-separate-update can be used to get the previous behaviour
+	  or to split only update-eix into a separate binary, respectively.
+	- Avoid libtool usage, since no libraries have to be built anymore.
+
 *eix-0.12.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- BE AWARE!!

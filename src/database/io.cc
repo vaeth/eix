@@ -285,10 +285,13 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write_hash(fp, hdr.slot_hash);
 }
 
-void
+bool
 io::read_header(FILE *fp, DBHeader &hdr)
 {
 	hdr.version = io::read<DBHeader::DBVersion>(fp);
+	if(!hdr.isCurrent())
+		return false;
+
 	hdr.size    = io::read<io::Catsize>(fp);
 
 	for(Version::Overlay overlay_sz = io::read<Version::Overlay>(fp);
@@ -301,6 +304,7 @@ io::read_header(FILE *fp, DBHeader &hdr)
 	io::read_hash(fp, hdr.keywords_hash);
 	io::read_hash(fp, hdr.iuse_hash);
 	io::read_hash(fp, hdr.slot_hash);
+	return true;
 }
 
 void

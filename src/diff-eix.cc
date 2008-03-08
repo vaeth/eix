@@ -12,6 +12,7 @@
  */
 
 #include <config.h>
+#include <main/main.h>
 
 #include <global.h>
 #include <eixTk/argsreader.h>
@@ -36,8 +37,6 @@
 #include <iostream>
 
 #include <dirent.h>
-#include <sys/stat.h> /* chmod(..) */
-#include <csignal>    /* signal handlers */
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
@@ -46,21 +45,19 @@
 
 using namespace std;
 
-void   signal_handler(int sig);
-
-PortageSettings *portagesettings;
-SetStability   *set_stability_old, *set_stability_new;
-PrintFormat     format_for_new(get_package_property, print_package_property);
-PrintFormat     format_for_old;
-VarDbPkg       *varpkg_db;
-DBHeader        old_header, new_header;
-Node           *format_new, *format_delete, *format_changed;
+static PortageSettings *portagesettings;
+static SetStability   *set_stability_old, *set_stability_new;
+static PrintFormat     format_for_new(get_package_property, print_package_property);
+static PrintFormat     format_for_old;
+static VarDbPkg       *varpkg_db;
+static DBHeader        old_header, new_header;
+static Node           *format_new, *format_delete, *format_changed;
 
 static void
 print_help(int ret)
 {
 	printf(
-		"diff-eix [options] old-cache [new-cache]\n"
+		"Usage: %s [options] old-cache [new-cache]\n"
 		"\n"
 		" -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
 		"     --care              always read slots of installed packages\n"
@@ -74,12 +71,9 @@ print_help(int ret)
 		" -h, --help              show a short help screen\n"
 		" -V, --version           show version-string\n"
 		"\n"
-		"If you omit the new-cache parameter, we'll use the\n"
-		"default cache-file "EIX_CACHEFILE".\n"
-		"\n"
 		"This program is covered by the GNU General Public License. See COPYING for\n"
-		"further information.\n"
-		);
+		"further information.\n",
+		program_name);
 
 	if(ret != -1) {
 		exit(ret);
@@ -130,8 +124,8 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 		throw ExBasic("Can't open the database file %r for reading (mode = 'rb')") % file;
 	}
 
-	io::read_header(fp, *header);
-	if(!header->isCurrent()) {
+	if(!io::read_header(fp, *header)) {
+		fclose(fp);
 		fprintf(stderr, "%s uses an obsolete database format (%u, current is %u).\n",
 				file, uint(header->version), uint(DBHeader::current));
 		exit(1);
@@ -423,33 +417,4 @@ run_diff_eix(int argc, char *argv[])
 	delete varpkg_db;
 	delete portagesettings;
 	return 0;
-}
-
-/** On segfault: show some instructions to help us find the bug. */
-void
-signal_handler(int sig)
-{
-	if(sig == SIGSEGV)
-		fprintf(stderr,
-				"Received SIGSEGV - you probably found a bug in eix.\n"
-				"Please post the output of eix -V along with your bugreport.\n"
-				"Sorry for the inconvenience.\n");
-	exit(1);
-}
-
-int
-main(int argc, char** argv)
-{
-	/* Install signal handler for segfaults */
-	signal(SIGSEGV, signal_handler);
-
-	int ret = 0;
-	try {
-		ret = run_diff_eix(argc, argv);
-	}
-	catch(const ExBasic &e) {
-		cout << e << endl;
-		return 1;
-	}
-	return ret;
 }

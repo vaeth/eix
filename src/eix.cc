@@ -8,6 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
+#include <main/main.h>
 
 #include <global.h>
 #include <set>
@@ -29,7 +30,6 @@
 #include <database/header.h>
 #include <database/package_reader.h>
 
-#include <csignal>  /* signal handlers */
 #include <vector>
 #include <stack>
 
@@ -38,16 +38,12 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
-
 using namespace std;
 
-/** The name under which we have been called. */
-const char *program_name = NULL;
-
-int  is_current_dbversion(const char *filename);
-void print_vector(const vector<string> &vec);
-void print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
-void print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist);
+static int  is_current_dbversion(const char *filename);
+static void print_vector(const vector<string> &vec);
+static void print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+static void print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -161,33 +157,13 @@ dump_help(int exit_code)
 	}
 }
 
-/** On segfault: show some instructions to help us find the bug. */
-void
-sig_handler(int sig)
-{
-	if(sig == SIGSEGV)
-		fprintf(stderr,
-				"Received SIGSEGV - you probably found a bug in eix.\n"
-				"Please proceed with the following few instructions and help us find the bug:\n"
-				" * install gdb (sys-dev/gdb)\n"
-				" * compile eix with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
-				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
-				" * type \"run\" and wait for the segfault to happen\n"
-				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
-				" * post a bugreport and be sure to include the output from gdb ..\n"
-				"\n"
-				"Sorry for the inconvenience and thanks in advance!\n",
-				program_name, program_name);
-	exit(1);
-}
+static const char *format_normal, *format_verbose, *format_compact;
+static const char *eix_cachefile = NULL;
+static const char *var_to_print = NULL;
 
-const char *format_normal, *format_verbose, *format_compact;
-const char *eix_cachefile = NULL;
-const char *var_to_print = NULL;
+static uint8_t overlay_mode;
 
-uint8_t overlay_mode;
-
-PrintFormat format(get_package_property, print_package_property);
+static PrintFormat format(get_package_property, print_package_property);
 
 /** Local options for argument reading. */
 static struct LocalOptions {
@@ -316,7 +292,7 @@ static struct Option long_options[] = {
 };
 
 /** Setup default values for all global variables. */
-void
+static void
 setup_defaults()
 {
 	EixRc &rc = get_eixrc(NULL);
@@ -416,7 +392,7 @@ setup_defaults()
 		overlay_mode = 3;
 }
 
-bool
+static bool
 print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_used)
 {
 	bool printed_overlay = false;
@@ -434,7 +410,7 @@ print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_us
 	return printed_overlay;
 }
 
-void
+static void
 set_format()
 {
 	string varname;
@@ -541,11 +517,10 @@ run_eix(int argc, char** argv)
 
 	DBHeader header;
 
-	io::read_header(fp, header);
-	if(!header.isCurrent()) {
+	if(!io::read_header(fp, header)) {
+		fclose(fp);
 		fprintf(stderr, "Your database file uses different format %u (current is %u).\n"
 				"Please run 'update-eix' and try again.\n", uint(header.version), uint(DBHeader::current));
-		fclose(fp);
 		exit(1);
 	}
 
@@ -755,7 +730,8 @@ run_eix(int argc, char** argv)
 	return EXIT_SUCCESS;
 }
 
-int is_current_dbversion(const char *filename) {
+static int
+is_current_dbversion(const char *filename) {
 	DBHeader header;
 	FILE *fp = fopen(filename, "rb");
 	if(!fp)
@@ -764,13 +740,14 @@ int is_current_dbversion(const char *filename) {
 				"Did you forget to create it with 'update-eix'?\n", filename);
 		return 1;
 	}
-	io::read_header(fp, header);
+	bool is_current = io::read_header(fp, header);
 	fclose(fp);
 
-	return header.isCurrent() ? 0 : 1;
+	return (is_current ? 0 : 1);
 }
 
-void print_vector(const vector<string> &vec)
+static void
+print_vector(const vector<string> &vec)
 {
 	cout << ":\n\n";
 	for(vector<string>::const_iterator it=vec.begin(); it != vec.end(); it++)
@@ -778,7 +755,8 @@ void print_vector(const vector<string> &vec)
 	cout << "--\n\n";
 }
 
-void print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty)
+static void
+print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
@@ -854,7 +832,8 @@ void print_unused(const string &filename, const string &excludefile, const eix::
 	return;
 }
 
-void print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist)
+static void
+print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist)
 {
 	/* For faster testing, we build a category->name set */
 	map< string, set<string> > cat_name;
@@ -910,22 +889,4 @@ void print_removed(const string &dirname, const string &excludefile, const eix::
 	cout << "The following installed packages are not in the database";
 	print_vector(failure);
 	return;
-}
-
-int main(int argc, char** argv)
-{
-	program_name = argv[0];
-
-	/* Install signal handler */
-	signal(SIGSEGV, sig_handler);
-
-	int ret = 0;
-	try {
-		ret = run_eix(argc, argv);
-	}
-	catch(const ExBasic &e) {
-		cout << e << endl;
-		return 1;
-	}
-	return ret;
 }

@@ -8,6 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
+#include <main/main.h>
 
 #include <global.h>
 #include <eixTk/argsreader.h>
@@ -30,15 +31,12 @@
 
 #include <dirent.h>
 #include <sys/stat.h> /* chmod(..) */
-#include <csignal>    /* signal handlers */
 
 #define INFO printf
 
 using namespace std;
 
-char *program_name = NULL;
-void sig_handler(int sig);
-void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels);
+static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels);
 
 class Permissions {
 	private:
@@ -135,7 +133,7 @@ bool Permissions::know_root, Permissions::am_root;
 static void
 print_help(int ret)
 {
-	printf( "%s [options]\n"
+	printf( "Usage: %s [options]\n"
 			"\n"
 			" -h, --help              show a short help screen\n"
 			" -V, --version           show version-string\n"
@@ -168,16 +166,16 @@ enum cli_options {
 	O_PRINT_VAR
 };
 
-bool quiet = false,
+static bool quiet = false,
 	 show_help = false,
 	 show_version = false,
 	 dump_eixrc   = false,
 	 dump_defaults = false;
 
-list<const char *> exclude_args, add_args;
-list<ArgPair> method_args;
-const char *outputname = NULL;
-const char *var_to_print = NULL;
+static list<const char *> exclude_args, add_args;
+static list<ArgPair> method_args;
+static const char *outputname = NULL;
+static const char *var_to_print = NULL;
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
@@ -221,14 +219,16 @@ class Override {
 		{ }
 };
 
-void add_pathnames(vector<Pathname> &add_list, const vector<string> to_add, bool must_resolve)
+static void
+add_pathnames(vector<Pathname> &add_list, const vector<string> to_add, bool must_resolve)
 {
 	for(vector<string>::const_iterator it = to_add.begin();
 		it != to_add.end(); ++it)
 		add_list.push_back(Pathname(*it, must_resolve));
 }
 
-void add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
+static void
+add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 {
 	vector<string> v = split_string(eixrc[s]," \t\n\r");
 	if(v.size() & 1)
@@ -244,18 +244,24 @@ void add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 	}
 }
 
-void add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cachefile, string eprefix_virtual)
+static void
+add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cachefile, string eprefix_virtual)
 {
 	static const string a("eix*::");
 	FILE *fp = fopen(cachefile.c_str(), "rb");
-	if(!fp)
+	if(!fp) {
+		INFO("KEEP_VIRTUALS is ignored: there is no previous %s \n", cachefile.c_str());
 		return;
+	}
 
+	INFO("Adding virtual overlays from %s ..\n", cachefile.c_str());
 	DBHeader header;
-	io::read_header(fp, header);
+	bool is_current = io::read_header(fp, header);
 	fclose(fp);
-	if(!header.isCurrent())
+	if(!is_current) {
+		fprintf(stderr, "Warning: KEEP_VIRTUALS ignored because database format has changed\n");
 		return;
+	}
 	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
 	{
 		string overlay = eprefix_virtual + header.getOverlay(i).path;
@@ -414,7 +420,7 @@ run_update_eix(int argc, char *argv[])
 	return ret;
 }
 
-void
+static void
 error_callback(const string &str)
 {
 	fputs("\n", stdout);
@@ -423,7 +429,7 @@ error_callback(const string &str)
 	INFO("     Reading    %%");
 }
 
-void
+static void
 update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels)
 {
 	DBHeader dbheader;
@@ -521,41 +527,3 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		uint(package_tree.countPackages()), uint(dbheader.size));
 }
 
-/** On segfault: show some instructions to help us find the bug. */
-void
-sig_handler(int sig)
-{
-	if(sig == SIGSEGV)
-		fprintf(stderr,
-				"Received SIGSEGV - you probably found a bug in eix.\n"
-				"Please proceed with the following few instructions and help us find the bug:\n"
-				" * install gdb (sys-dev/gdb)\n"
-				" * compile eix with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
-				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
-				" * type \"run\" and wait for the segfault to happen\n"
-				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
-				" * post a bugreport and be sure to include the output from gdb ..\n"
-				"\n"
-				"Sorry for the inconvenience and thanks in advance!\n",
-				program_name, program_name);
-	exit(1);
-}
-
-int
-main(int argc, char** argv)
-{
-	program_name = argv[0];
-
-	/* Install signal handler for segfaults */
-	signal(SIGSEGV, sig_handler);
-
-	int ret = 0;
-	try {
-		ret = run_update_eix(argc, argv);
-	}
-	catch(const ExBasic &e) {
-		cout << e << endl;
-		return 1;
-	}
-	return ret;
-}

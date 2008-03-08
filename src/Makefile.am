@@ -129,37 +129,132 @@ search/packagetest.cc \
 search/packagetest.h \
 search/redundancy.h
 
-common_src = varsreader.cc varsreader.h \
+# Common to all binaries:
+common_ldadd = @BZLIB_LIBS@
+common_src = varsreader.cc varsreader.h main/main.h \
 		   $(database_src) $(portage_src) $(eixtk_src) $(eixrc_src)
+extra_common_src = eixrc/defaults.cc main/main.cc \
+		   main/main_eix.cc main/main_diff_eix.cc main/main_update_eix.cc \
+		   main/main_output.cc main/main_all.cc
+
+# The search-tool for our database
+eix_only_ldadd =
+eix_only_src = eix.cc cli.cc cli.h $(search_src)
+extra_eix_only_src =
+
+# The diff-tool for our database
+diff_eix_only_ladadd =
+diff_eix_only_src = diff-eix.cc
+extra_diff_eix_only_src =
+
+# Common to the previous two tools, but not common to all tools
+output_only_ldadd =
+output_only_src = $(output_src)
+extra_output_only_src =
+
+# The update-tool for our database
+update_eix_only_ldadd = @SQLITE_LIBS@
+update_eix_only_src = update-eix.cc $(cache_src) $(add_cache_src)
+extra_update_eix_src = $(extra_cache_src)
 
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags eix-sync eix-test-obsolete \
 			 update-eix-remote update-eix-layman update-eix-functions.sh \
 			 configmake.h eixrc/eixrc \
-			 cache/cache-map.cc
+			 cache/cache-map.cc \
+			 diff-eix$(EXEEXT) update-eix$(EXEEXT)
 
 EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
 			 update-eix-layman.in update-eix-functions.sh.in \
-			 eixrc/eixrc.in \
-			 eixrc/defaults.cc cache/generate-cachemap.sh
+			 eixrc/eixrc.in cache/generate-cachemap.sh
 
 # Our binaries
-bin_PROGRAMS = update-eix eix diff-eix
 bin_SCRIPTS  = eix-sync eix-test-obsolete update-eix-remote update-eix-layman \
 			 update-eix-functions.sh
 
-# The search-tool for our database
-eix_SOURCES = eix.cc cli.cc cli.h $(common_src) $(output_src) $(search_src)
-eix_LDADD = @BZLIB_LIBS@
+if SEPARATE_UPDATE
 
-# The update-tool for our database
-update_eix_SOURCES = update-eix.cc $(common_src) $(cache_src) $(add_cache_src)
-EXTRA_update_eix_SOURCES = $(extra_cache_src)
-update_eix_LDADD = @SQLITE_LIBS@ @BZLIB_LIBS@
+if SEPARATE_BINARIES
 
-# The diff-tool for our database
-diff_eix_SOURCES = diff-eix.cc $(common_src) $(output_src)
-diff_eix_LDADD = @BZLIB_LIBS@
+# Generate all three binaries separately:
+bin_PROGRAMS = update-eix eix diff-eix
+eix_LDADD = $(eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
+eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) \
+	main/main_eix.cc
+EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_output_only_src) $(extra_common_src)
+diff_eix_LDADD = $(diff_eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
+diff_eix_SOURCES = $(diff_eix_only_src) $(output_only_src) $(common_src) \
+	main/main_diff_eix.cc
+EXTRA_diff_eix_SOURCES = $(extra_diff_eix_src) $(extra_output_only_src) $(extra_common_src)
+update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
+update_eix_SOURCES = $(update_eix_only_src) $(common_src) \
+	main/main_update_eix.cc
+EXTRA_update_eix_SOURCES = $(extra_update_eix_src) $(extra_common_src)
+
+else
+
+# Generate only update-eix separately:
+bin_PROGRAMS = update-eix eix
+noinst_DATA = diff-eix$(EXEEXT)
+
+diff-eix$(EXEEXT): eix$(EXEEXT)
+	test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
+
+uninstall-local:
+	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
+		rm -- $(bindir)/diff-eix$(EXEEXT)
+
+install-exec-hook:
+	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+
+eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(output_only_src) $(common_src) \
+	main/main_output.cc
+EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_output_only_src) $(extra_common_src)
+update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
+update_eix_SOURCES = $(update_eix_only_src) $(common_src) \
+	main/main_update_eix.cc
+EXTRA_update_eix_SOURCES = $(extra_cache_src) $(extra_common_src)
+
+endif
+else
+
+# Generate only one binary:
+bin_PROGRAMS = eix
+noinst_DATA = diff-eix$(EXEEXT) update-eix$(EXEEXT)
+
+diff-eix$(EXEEXT): eix$(EXEEXT)
+	test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
+
+update-eix$(EXEEXT): eix$(EXEEXT)
+	test ! -e update-eix$(EXEEXT) || rm update-eix$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) update-eix$(EXEEXT)
+
+uninstall-local:
+	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
+		rm -- $(bindir)/diff-eix$(EXEEXT)
+	test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
+		rm -- $(bindir)/update-eix$(EXEEXT)
+
+install-exec-hook:
+	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
+
+eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(update_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(update_eix_only_src) $(output_only_src) $(common_src) \
+	main/main_all.cc
+EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_update_eix_src) $(extra_output_only_src) $(extra_common_src)
+
+endif
+
 
 cache/cache-map.cc: cache/generate-cachemap.sh
 	"$<" $(extra_cache) > "$@"
