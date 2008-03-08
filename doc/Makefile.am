@@ -15,7 +15,7 @@ format.txt: format.txt.in
 	A=`@regex_cmd@ -n -e 's/^.*static * const *.* current *= *\([0-9]*\) *;.*$$/\1/p' ../src/database/header.h` ; \
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@CURRENT\@,$${A},g" \
-	"$@.in" > "$@"
+	"$<" > "$@"
 
 
 format.html: format.txt $(css_data)
