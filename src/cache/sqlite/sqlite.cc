@@ -71,11 +71,11 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	Category *dest_cat;
 	if(THIS->category) {
 		dest_cat = THIS->category;
-		if(dest_cat->name() != category)
+		if(dest_cat->name != category)
 			return 0;
 	}
 	else {
-		dest_cat = THIS->packagetree->find(category);
+		dest_cat = THIS->packagetree->get(category);
 		if(!dest_cat)
 			return 0;
 	}
@@ -144,16 +144,12 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 		m_error_callback(eix::format("Can't open cache file %s") % sqlitefile);
 		return false;
 	}
-	if(pkgtree)
-		pkgtree->need_fast_access(categories);
 	callback_arg = this;
 	sqlite_callback_error = false;
 	packagetree = pkgtree;
 	category = cat;
 	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, 0, &errormessage);
 	sqlite3_close(db);
-	if(pkgtree)
-		pkgtree->finish_fast_access();
 	if(rc != SQLITE_OK) {
 		sqlite_callback_error = true;
 		m_error_callback(eix::format("sqlite error: ") % errormessage);

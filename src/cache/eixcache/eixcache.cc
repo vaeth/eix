@@ -74,6 +74,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		packagetree = NULL;
 		categories = NULL;
 	}
+
 	bool add_categories = (categories != NULL);
 	if(never_add_categories)
 		add_categories = false;
@@ -117,9 +118,6 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		}
 	}
 
-	if(packagetree)
-		packagetree->need_fast_access(categories);
-
 	for(PackageReader reader(fp, header); reader.next(); reader.skip())
 	{
 		reader.read(PackageReader::NAME);
@@ -130,13 +128,13 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		}
 		else if(category)
 		{
-			if(category->name() != p->category)
+			if(category->name != p->category)
 				continue;
 			dest_cat = category;
 		}
 		else
 		{
-			dest_cat = packagetree->find(p->category);
+			dest_cat = packagetree->get(p->category);
 			if(!dest_cat)
 				continue;
 		}
@@ -180,8 +178,6 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			dest_cat->deletePackage(p->name);
 	}
 	fclose(fp);
-	if(packagetree)
-		packagetree->finish_fast_access();
 	if(add_categories)
 		packagetree->add_missing_categories(*categories);
 	return true;

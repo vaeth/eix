@@ -168,7 +168,7 @@ class DiffTrees
 				old_cat != old_tree.end();
 				++old_cat)
 			{
-				diff_category(**old_cat, new_tree[old_cat->name()]);
+				diff_category(**old_cat, new_tree[old_cat->name]);
 			}
 
 			// Know we've only new package in the new_tree
@@ -214,7 +214,7 @@ class DiffTrees
 
 				// Remove the old packages
 				delete *old_pkg;
-				old_pkg = old_cat.erase(old_pkg);
+				old_cat.erase(old_pkg++);
 			}
 		}
 };

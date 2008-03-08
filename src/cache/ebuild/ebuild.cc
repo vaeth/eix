@@ -106,7 +106,7 @@ EbuildCache::readCategory(Category &vec) throw(ExBasic)
 {
 	struct dirent **packages= NULL;
 
-	string catpath = m_prefix + m_scheme + '/' + vec.name();
+	string catpath = m_prefix + m_scheme + '/' + vec.name;
 	int numpackages = my_scandir(catpath.c_str(),
 			&packages, package_selector, alphasort);
 

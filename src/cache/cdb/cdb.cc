@@ -100,7 +100,7 @@ class Cdb {
 
 bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 {
-	string cdbfile = m_prefix + PORTAGE_CACHE_PATH + m_scheme + vec.name() + ".cdb";
+	string cdbfile = m_prefix + PORTAGE_CACHE_PATH + m_scheme + vec.name + ".cdb";
 	uint32_t dlen;
 	void *data;
 	string key;

@@ -17,6 +17,12 @@
 	  not just the name of the file); Remove configmake.h and add SYSCONFDIR
 	  to AM_CXXFLAGS (as mentioned in the autoconf manual); "make distcheck"
 	  works again
+	- Remove fast_access in PackageTree and add a container (eix::pointer_map)
+	  that provides the same functionality in a generic way.
+	- Use pointer_map for Category (hello speed-up).
+	- Move ptr_iterator from ptr_list.h to new header iterator.h and fix const
+	  issues with ptr_iterator. Add second_ptr_iter that iterators over
+	  "second" attributes of normal map iterators.
 
 *eix-0.12.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
