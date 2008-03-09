@@ -217,7 +217,7 @@ class DiffTrees
 				// Note that erase might invalidate iterator
 				Category::iterator to_erase = old_pkg++;
 				string next_name;
-				if(old_pkg == old_cat.end())
+				if(old_pkg != old_cat.end())
 					next_name = old_pkg->name;
 				else
 					have_next = false;

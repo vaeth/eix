@@ -91,11 +91,11 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	Category *dest_cat;
 	if(category) {
 		dest_cat = category;
-		if(dest_cat->name() != catstring)
+		if(dest_cat->name != catstring)
 			return false;
 	}
 	else {
-		dest_cat = packagetree->find(catstring);
+		dest_cat = packagetree->get(catstring);
 		if(!dest_cat)
 			return false;
 	}
@@ -152,8 +152,6 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 		packagetree = NULL;
 		categories = NULL;
 	}
-	if(packagetree)
-		packagetree->need_fast_access(categories);
 	try {
 		Unpickler unpickler(data, end);
 		while(! unpickler.is_finished())
@@ -165,12 +163,8 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 	catch(const ExBasic &e) {
 		cerr << "Problems with " << filename <<
 			":\n" << e << endl;
-		if(packagetree)
-			packagetree->finish_fast_access();
 		return false;
 	}
-	if(packagetree)
-		packagetree->finish_fast_access();
 	return true;
 }
 
