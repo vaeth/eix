@@ -150,7 +150,7 @@ dump_help(int exit_code)
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n",
-		program_name);
+		program_name.c_str());
 
 	if(exit_code != -1) {
 		exit(exit_code);

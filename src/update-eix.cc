@@ -155,7 +155,7 @@ print_help(int ret)
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n",
-		program_name);
+		program_name.c_str());
 
 	exit(ret);
 }

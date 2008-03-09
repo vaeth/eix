@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.12.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Improve treatment of argv[0] (for --help)
+
 *eix-0.12.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Do not die on obsolete eix cache files, see

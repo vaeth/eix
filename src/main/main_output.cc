@@ -7,5 +7,6 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#define OUTPUT_BINARY 1
+#define EIX_BINARY 1
+#define DIFF_EIX_BINARY 1
 #include "main.cc"
