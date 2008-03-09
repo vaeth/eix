@@ -224,7 +224,7 @@ class DiffTrees
 				delete *to_erase;
 				old_cat.erase(to_erase);
 				if(have_next)
-					old_pkg = old_cat.find(name);
+					old_pkg = old_cat.find(next_name);
 			}
 		}
 };
