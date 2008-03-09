@@ -193,7 +193,8 @@ class DiffTrees
 		{
 			Category::iterator old_pkg = old_cat.begin();
 
-			while(old_pkg != old_cat.end())
+			bool have_next = (old_pkg != old_cat.end());
+			while(have_next)
 			{
 				Category::iterator new_pkg = new_cat.find(old_pkg->name);
 
@@ -212,9 +213,18 @@ class DiffTrees
 					new_cat.erase(new_pkg);
 				}
 
-				// Remove the old packages
-				delete *old_pkg;
-				old_cat.erase(old_pkg++);
+				// Remove the old package:
+				// Note that erase might invalidate iterator
+				Category::iterator to_erase = old_pkg++;
+				string next_name;
+				if(old_pkg == old_cat.end())
+					next_name = old_pkg->name;
+				else
+					have_next = false;
+				delete *to_erase;
+				old_cat.erase(to_erase);
+				if(have_next)
+					old_pkg = old_cat.find(name);
 			}
 		}
 };
