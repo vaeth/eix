@@ -193,8 +193,7 @@ class DiffTrees
 		{
 			Category::iterator old_pkg = old_cat.begin();
 
-			bool have_next = (old_pkg != old_cat.end());
-			while(have_next)
+			while(old_pkg != old_cat.end())
 			{
 				Category::iterator new_pkg = new_cat.find(old_pkg->name);
 
