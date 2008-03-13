@@ -89,6 +89,14 @@ bool is_dir(const char *file)
 	return S_ISDIR(stat_buf.st_mode);
 }
 
+bool is_file(const char *file)
+{
+	struct stat stat_buf;
+	if(lstat(file, &stat_buf) != 0)
+		return false;
+	return S_ISREG(stat_buf.st_mode);
+}
+
 /** Return mtime of file. */
 time_t get_mtime(const char *file)
 {

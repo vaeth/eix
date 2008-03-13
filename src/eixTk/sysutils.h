@@ -17,6 +17,7 @@
 bool is_writable(const char *file);
 
 bool is_dir(const char *file);
+bool is_file(const char *file);
 
 /** Return true if the current user is in the group_name. */
 bool user_in_group(const char *group_name);

@@ -25,11 +25,22 @@ const char *EBUILD_DEPEND_TEMP = "/var/cache/edb/dep/aux_db_key_temp";
 
 
 EbuildExec *EbuildExec::handler_arg;
+volatile sig_atomic_t processing_signal = 0;
+
 void
 ebuild_sig_handler(int sig)
 {
-	UNUSED(sig);
-	EbuildExec::handler_arg->delete_cachefile();
+	if(processing_signal)
+		raise(sig);
+	
+	processing_signal = 1;
+	EbuildExec::handler_arg->got_exit_signal = true;
+	EbuildExec::handler_arg->type_of_exit_signal = sig;
+	if(EbuildExec::handler_arg->exit_on_signal) {
+		EbuildExec::handler_arg->remove_handler();
+		processing_signal = 0;
+		raise(sig);
+	}
 }
 
 // Take care:
@@ -46,6 +57,7 @@ EbuildExec::add_handler()
 	handler_arg = this;
 	// Set the signals "empty" to avoid a race condition:
 	// On a signal, we should cleanup only the signals actually set.
+	got_exit_signal = exit_on_signal = false;
 	handleHUP  = handleINT = handleTERM = ebuild_sig_handler;
 	have_set_signals = true;
 	handleHUP  = signal(SIGHUP, ebuild_sig_handler);
@@ -82,8 +94,11 @@ EbuildExec::make_tempfile()
 	if(fd == -1)
 		return false;
 	calc_permissions();
-	if(set_uid || set_gid)
-		fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)));
+	if(set_uid || set_gid) {
+		if(fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)))) {
+//			base->m_error_callback(eix::format("Can't change ownership of tempfile %s") % temp);
+		}
+	}
 	cachefile = new string(temp);
 	free(temp);
 	close(fd);
@@ -95,8 +110,14 @@ EbuildExec::delete_cachefile()
 {
 	if(!cachefile)
 		return;
-	if(unlink(cachefile->c_str()) < 0)
-		base->m_error_callback(eix::format("Can't unlink %s") % (*cachefile));
+	if(is_file(cachefile->c_str())) {
+		if(unlink(cachefile->c_str()) < 0)
+			base->m_error_callback(eix::format("Can't unlink tempfile %s") % (cachefile->c_str()));
+		else if(is_file(cachefile->c_str()))
+			base->m_error_callback(eix::format("Tempfile %s still there after unlink") % (cachefile->c_str()));
+	}
+	else
+		base->m_error_callback(eix::format("Tempfile %s is not a file") % (cachefile->c_str()));
 	cachefile = NULL;
 	remove_handler();
 }
@@ -108,8 +129,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	add_handler();
 	if(use_ebuild_sh)
 	{
-		if(!make_tempfile())
-		{
+		if(!make_tempfile()) {
 			remove_handler();
 			return NULL;
 		}
@@ -130,6 +150,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	}
 	if(child == 0)
 	{
+		exit_on_signal = true;
 		if(set_gid)
 			setgid(gid);
 		if(set_uid)
@@ -152,11 +173,13 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", static_cast<const char *>(NULL), myenv);
 		exit(2);
 	}
+	exit_on_signal = 0;
 	int exec_status;
 	while( waitpid( child, &exec_status, 0) != child ) ;
-	if(exec_status)
-	{
+	if(exec_status || got_exit_signal) {
 		delete_cachefile();
+		if(got_exit_signal)
+			raise(type_of_exit_signal);
 		return NULL;
 	}
 	return cachefile;

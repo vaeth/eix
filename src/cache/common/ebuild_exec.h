@@ -23,10 +23,11 @@ class EbuildExec {
 	private:
 		const BasicCache *base;
 		static EbuildExec *handler_arg;
-		bool have_set_signals;
+		volatile bool have_set_signals, got_exit_signal, exit_on_signal;
+		volatile int type_of_exit_signal;
 		std::string *cachefile;
 		typedef void signal_handler(int sig);
-		signal_handler *handleTERM, *handleINT, *handleHUP;
+		volatile signal_handler *handleTERM, *handleINT, *handleHUP;
 		bool use_ebuild_sh;
 
 		static bool know_permissions, set_uid, set_gid;
