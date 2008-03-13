@@ -2,7 +2,8 @@
 
 *eix-0.12.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Improve treatment of argv[0] (for --help)
+	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
+	- Improve treatment of argv[0] (for --help).
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Replace "$@.in" with "$<" in Makefile.am (which gives us the real path,

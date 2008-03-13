@@ -50,13 +50,13 @@ NoKeywords() {
 NoMask() {
 	export \
 	REDUNDANT_IF_MASK_NO_CHANGE=false \
-	REDUNDANT_IF_MASK_DOUBLE=false
+	REDUNDANT_IF_DOUBLE_MASKED=false
 }
 
 NoUnmask() {
 	export \
 	REDUNDANT_IF_UNMASK_NO_CHANGE=false \
-	REDUNDANT_IF_UNMASK_DOUBLE=false
+	REDUNDANT_IF_DOUBLE_UNMASKED=false
 }
 
 NoUse() {
@@ -147,7 +147,7 @@ eix '-t*!'
 		Eix "No redundant entries in ${COMMON}mask" \
 			"Redundant in ${COMMON}mask" \
 			REDUNDANT_IF_MASK_NO_CHANGE \
-			REDUNDANT_IF_MASK_DOUBLE
+			REDUNDANT_IF_DOUBLE_MASKED
 	)
 	NoMask
 	(
@@ -155,7 +155,7 @@ eix '-t*!'
 		Eix "No redundant entries in ${COMMON}unmask" \
 			"Redundant in ${COMMON}unmask" \
 			REDUNDANT_IF_UNMASK_NO_CHANGE \
-			REDUNDANT_IF_UNMASK_DOUBLE
+			REDUNDANT_IF_DOUBLE_UNMASKED
 	)
 	NoUnmask
 	(

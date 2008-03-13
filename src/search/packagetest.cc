@@ -67,7 +67,7 @@ PackageTest::calculateNeeds() {
 	if(field & SLOT)
 		setNeeds(PackageReader::VERSIONS);
 	if(field & HOMEPAGE)
-		setNeeds(PackageReader::VERSIONS);
+		setNeeds(PackageReader::HOMEPAGE);
 	if(field & PROVIDE)
 		setNeeds(PackageReader::PROVIDE);
 	if(field & LICENSE)
@@ -75,7 +75,7 @@ PackageTest::calculateNeeds() {
 	if(field & DESCRIPTION)
 		setNeeds(PackageReader::DESCRIPTION);
 	if(field & CATEGORY)
-		setNeeds(PackageReader::NAME);
+		setNeeds(PackageReader::NONE);
 	if(field & CATEGORY_NAME)
 		setNeeds(PackageReader::NAME);
 	if(field & NAME)
@@ -153,65 +153,45 @@ PackageTest::setPattern(const char *p)
 bool
 PackageTest::stringMatch(Package *pkg) const
 {
-	if(field & NAME && (*algorithm)(pkg->name.c_str(), pkg))
-	{
+	if((field & NAME) && (*algorithm)(pkg->name.c_str(), pkg))
 		return true;
-	}
 
-	if(field & DESCRIPTION && (*algorithm)(pkg->desc.c_str(), pkg))
-	{
+	if((field & DESCRIPTION) && (*algorithm)(pkg->desc.c_str(), pkg))
 		return true;
-	}
 
-	if(field & LICENSE && (*algorithm)(pkg->licenses.c_str(), pkg))
-	{
+	if((field & LICENSE) && (*algorithm)(pkg->licenses.c_str(), pkg))
 		return true;
-	}
 
-	if(field & CATEGORY && (*algorithm)(pkg->category.c_str(), pkg))
-	{
+	if((field & CATEGORY) && (*algorithm)(pkg->category.c_str(), pkg))
 		return true;
-	}
 
 	if(field & CATEGORY_NAME && (*algorithm)((pkg->category + "/" + pkg->name).c_str(), pkg))
-	{
 		return true;
-	}
 
-	if(field & HOMEPAGE && (*algorithm)(pkg->homepage.c_str(), pkg))
-	{
+	if((field & HOMEPAGE) && (*algorithm)(pkg->homepage.c_str(), pkg))
 		return true;
-	}
 
-	if(field & PROVIDE && (*algorithm)(pkg->provide.c_str(), pkg))
-	{
+	if((field & PROVIDE) && (*algorithm)(pkg->provide.c_str(), pkg))
 		return true;
-	}
 
-	if(field & SLOT)
-	{
+	if(field & SLOT) {
 		for(Package::iterator it(pkg->begin());
-			it != pkg->end();
-			++it)
-		{
+			it != pkg->end(); ++it) {
 			if((*algorithm)(it->slotname.c_str(), pkg))
 				return true;
 		}
 	}
 
-	if(field & IUSE)
-	{
+	if(field & IUSE) {
 		vector<string> s=split_string(pkg->coll_iuse);
 		for(vector<string>::const_iterator it = s.begin();
-			it != s.end(); ++it)
-		{
+			it != s.end(); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
 		}
 	}
 
-	if(field & (USE_ENABLED | USE_DISABLED))
-	{
+	if(field & (USE_ENABLED | USE_DISABLED)) {
 		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*pkg);
 		if(!installed_versions)
 			return false;
