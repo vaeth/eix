@@ -103,6 +103,10 @@ std::vector<std::string> split_string(const std::string &str, const char *at = "
  * @param glue glue between the elements. */
 std::string join_vector(const std::vector<std::string> &vec, const std::string &glue = " ");
 
+/** Join a string-set
+ * @param glue glue between the elements. */
+std::string join_set(const std::set<std::string> &vec, const std::string &glue = " ");
+
 /** Resolve a vector of -/+ keywords and store the result as a set.
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
  * are found, they (and the -keyword) are removed.

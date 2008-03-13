@@ -200,7 +200,7 @@ class MaskList
 				++m)
 			{
 				rvalue = 1;
-				m->checkMask(*p, false, false, check);
+				m->checkMask(*p, check);
 				switch(m->get_type())
 				{
 					case Mask::maskMask:

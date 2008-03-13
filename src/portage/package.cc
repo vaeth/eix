@@ -109,29 +109,21 @@ Package::sortedPushBack(Version *v)
 	push_back(v);
 }
 
-void Package::add_coll_iuse(const string &s)
+void Package::collect_iuse(const Version *version)
 {
-	vector<string> iuse = split_string(coll_iuse + " " + s);
-	sort_uniquify(iuse);
-	coll_iuse = join_vector(iuse);
-}
+	if (version->iuse_vector().empty())
+		return;
 
-void Package::collect_iuse()
-{
-	vector<string> iuse = split_string(coll_iuse);
-	for(iterator it = begin(); it != end(); ++it) {
-		if((it->iuse).empty())
-			continue;
-		iuse.insert(iuse.end(), (it->iuse).begin(), (it->iuse).end());
+	/// collect iuse
+	std::copy(version->iuse_vector().begin(), version->iuse_vector().end(),
+			std::inserter(m_collected_iuse, m_collected_iuse.begin()));
+
 #if defined(NOT_FULL_USE)
-		// Clear iuse to save memory:
-		(it->iuse).clear();
+	// Clear iuse to save memory:
+	(it->iuse).clear();
 #else
-		versions_have_full_use = true;
+	versions_have_full_use = true;
 #endif
-	}
-	sort_uniquify(iuse);
-	coll_iuse = join_vector(iuse);
 }
 
 /** Finishes addVersionStart() after the remaining data
@@ -164,11 +156,15 @@ void Package::addVersionFinalize(Version *version)
 	}
 	if(! (version->slotname).empty())
 		have_nontrivial_slots = true;
-	collect_iuse();
+
+	collect_iuse(version);
+
 	// We must recalculate the complete slotlist after each modification.
 	// The reason is that the pointers might go into nirvana, because
 	// a push_back might move the whole list.
-	calculate_slotlist();
+
+	// Mark current slotlist as invalid.
+	m_has_cached_slotlist = false;
 }
 
 Version *
@@ -188,18 +184,18 @@ Package::best(bool allow_unstable) const
 }
 
 void
-Package::calculate_slotlist()
+Package::build_slotslit() const
 {
-	slotlist.clear();
-	for(iterator it = begin(); it != end(); ++it)
-		slotlist.push_back_largest(*it);
+	m_slotlist.clear();
+	for(const_iterator it = begin(); it != end(); ++it)
+		m_slotlist.push_back_largest(*it);
 }
 
 
 Version *
 Package::best_slot(const char *slot_name) const
 {
-	const VersionList *vl = slotlist[slot_name];
+	const VersionList *vl = slotlist()[slot_name];
 	if(!vl)
 		return NULL;
 	return vl->best();
@@ -209,8 +205,8 @@ void
 Package::best_slots(vector<Version*> &l, bool allow_unstable) const
 {
 	l.clear();
-	for(SlotList::const_iterator sit = slotlist.begin();
-		sit != slotlist.end(); ++sit)
+	for(SlotList::const_iterator sit = slotlist().begin();
+		sit != slotlist().end(); ++sit)
 	{
 		Version *p = (sit->const_version_list()).best(allow_unstable);
 		if(p)
@@ -242,13 +238,13 @@ bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 	}
 	if(vardbpkg->readSlot(*this, v))
 		return true;
-	if(slotlist.size() == 1)
+	if(slotlist().size() == 1)
 	{
 		// There is only one slot, so the choice seems clear.
 		// However, perhaps our package is from an old database
 		// (e.g. in diff-eix) and so there might be new slots elsewhere
 		// Therefore we better don't modify v.know_slot.
-		v.slotname = slotlist.begin()->slotname();
+		v.slotname = slotlist().begin()->slotname();
 		return true;
 	}
 	return false;
@@ -263,8 +259,8 @@ bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 int Package::worse_best_slots(const Package &p) const
 {
 	int ret = 0;
-	for(SlotList::const_iterator it = slotlist.begin();
-		it != slotlist.end(); ++it)
+	for(SlotList::const_iterator it = slotlist().begin();
+		it != slotlist().end(); ++it)
 	{
 		Version *t_best = (it->const_version_list()).best();
 		if(!t_best)

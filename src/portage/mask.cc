@@ -134,7 +134,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		if(wildcard)
 		{
 			m_operator = maskOpGlob;
-			m_full = string(str, wildcard);
+			m_cached_full = string(str, wildcard);
 		}
 		else
 		{
@@ -225,12 +225,8 @@ Mask::match(Package &pkg) const
  * @param pkg            package you want tested
  * @param check_name     true if name should be tested */
 void
-Mask::checkMask(Package& pkg, const bool check_category, const bool check_name, Keywords::Redundant check)
+Mask::checkMask(Package& pkg, Keywords::Redundant check)
 {
-	if((check_name && pkg.name.c_str() != m_name)
-		|| (check_category && pkg.category.c_str() != m_category))
-		return;
-
 	for(Package::iterator i = pkg.begin();
 		i != pkg.end();
 		++i)
@@ -245,13 +241,9 @@ Mask::ismatch(Package& pkg)
 {
 	if (pkg.name != m_name || pkg.category != m_category)
 		return false;
-	for(Package::iterator i = pkg.begin();
-		i != pkg.end();
-		++i)
-	{
+	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i)
 		if(test(*i))
 			return true;
-	}
 	return false;
 }
 

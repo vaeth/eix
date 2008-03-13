@@ -174,7 +174,8 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		}
 		if(have_onetime_info) { // if the package exists:
 			// add coll_iuse from the saved data
-			pkg->add_coll_iuse(p->coll_iuse);
+			pkg->add_coll_iuse(p->coll_iuse_vector().begin(),
+					p->coll_iuse_vector().end());
 		}
 		else
 			dest_cat->deletePackage(p->name);

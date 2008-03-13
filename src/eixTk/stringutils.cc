@@ -141,6 +141,24 @@ split_string(const string &str, const char *at, bool ignore_empty, bool ignore_e
 }
 
 string
+join_set(const set<string> &vec, const string &glue)
+{
+	set<string>::const_iterator it = vec.begin();
+	if(it == vec.end()) {
+		return "";
+	}
+	string ret;
+	for(;;) {
+		ret.append(*it);
+		if(++it == vec.end()) {
+			break;
+		}
+		ret.append(glue);
+	}
+	return ret;
+}
+
+string
 join_vector(const vector<string> &vec, const string &glue)
 {
 	vector<string>::const_iterator it = vec.begin();

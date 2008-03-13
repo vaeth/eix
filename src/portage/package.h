@@ -17,6 +17,7 @@
 #include <vector>
 #include <map>
 #include <cstdlib>
+#include <sstream>
 
 #include <portage/version.h>
 #include <portage/instversion.h>
@@ -69,6 +70,8 @@ class Package
 	: public eix::ptr_list<Version>
 {
 	public:
+		friend class PackageReader;
+
 		/** True if duplicated versions are found in for this package.
 		 * That means e.g. that version 0.2 is found in two overlays. */
 		typedef uint8_t Duplicates;
@@ -79,11 +82,15 @@ class Package
 
 		Duplicates have_duplicate_versions;
 
-		/** \c slotlist is always sorted with respect to the
-		    first version. Moreover, this list is complete, i.e. it
-		    contains also the trivial slot (-> each version is
-		    contained exactly in one slot) */
-		SlotList slotlist;
+
+		const SlotList& slotlist() const
+		{
+			if (! m_has_cached_slotlist) {
+				build_slotslit();
+				m_has_cached_slotlist = true;
+			}
+			return m_slotlist;
+		}
 
 		/** True if at least one slot is nonempty (different from "0") */
 		bool have_nontrivial_slots;
@@ -104,7 +111,29 @@ class Package
 		std::string category, name, desc, homepage, licenses, provide;
 
 		/** Collected IUSE for all versions of that package */
-		std::string coll_iuse;
+		const std::string& coll_iuse() const
+		{
+			if (m_collected_iuse_cache.empty())
+				m_collected_iuse_cache = join_set(m_collected_iuse);
+			return m_collected_iuse_cache;
+		}
+
+		const std::set<std::string>& coll_iuse_vector() const
+		{ return m_collected_iuse; }
+
+		template<typename Iter>
+		void add_coll_iuse(const Iter& a, const Iter& b)
+		{ 
+			m_collected_iuse.insert(a, b); 
+			m_collected_iuse_cache.clear();
+		}
+
+		void add_coll_iuse(const std::string &s)
+		{
+			m_collected_iuse_cache.clear();
+			m_collected_iuse.insert(s);
+		}
+
 #if !defined(NOT_FULL_USE)
 		/** Does at least one version have individual iuse data? */
 		bool versions_have_full_use;
@@ -118,7 +147,7 @@ class Package
 		{ defaults(); }
 
 		/// Fill in name and category and preset with defaults
-		Package(std::string c, std::string n)
+		Package(const std::string& c, const std::string& n)
 			: category(c), name(n)
 		{ defaults(); }
 
@@ -135,12 +164,6 @@ class Package
 		/** Finishes addVersion() after the remaining data
 		    have been filled */
 		void addVersionFinalize(Version *version);
-
-		/** This is called by addVersionFinalize() to calculate
-		    coll_iuse and to save memory by freeing original iuse */
-		void collect_iuse();
-
-		void add_coll_iuse(const std::string &s);
 
 		/** Adds a version to "the versions" list. */
 		void addVersion(Version *version)
@@ -175,8 +198,6 @@ class Package
 			}
 			return true;
 		}
-
-		void calculate_slotlist();
 
 		Version *best(bool allow_unstable = false) const;
 
@@ -308,6 +329,24 @@ class Package
 		{ return *rbegin(); }
 
 	protected:
+		/** \c slotlist is always sorted with respect to the
+		    first version. Moreover, this list is complete, i.e. it
+		    contains also the trivial slot (-> each version is
+		    contained exactly in one slot) */
+		mutable SlotList m_slotlist;
+		mutable bool m_has_cached_slotlist;
+
+		/// Create new slotlist. Const because we operate on mutable cache
+		/// types.
+		void build_slotslit() const;
+
+		std::set<std::string> m_collected_iuse;
+		mutable std::string m_collected_iuse_cache;
+
+		/** This is called by addVersionFinalize() to calculate
+		    coll_iuse and to save memory by freeing original iuse */
+		void collect_iuse(const Version *version);
+
 		/** Check if a package has duplicated vsions. */
 		void checkDuplicates(const Version *version);
 
@@ -315,6 +354,7 @@ class Package
 
 		void defaults()
 		{
+			m_has_cached_slotlist = false;
 			is_system_package = false;
 			have_same_overlay_key = true;
 			at_least_two_overlays = false;

@@ -62,11 +62,10 @@ io::write_string(FILE *fp, const string &str)
 }
 
 void
-io::write_hash_words(FILE *fp, const StringHash& hash, const string &words)
+io::write_hash_words(FILE *fp, const StringHash& hash, const vector<string>& words)
 {
-	vector<string> v = split_string(words);
-	io::write<vector<string>::size_type>(fp, v.size());
-	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
+	io::write<vector<string>::size_type>(fp, words.size());
+	for(vector<string>::const_iterator i = words.begin(); i != words.end(); ++i)
 		io::write_hash_string(fp, hash, *i);
 }
 
@@ -112,7 +111,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	v->full_keywords = io::read_hash_words(fp, hdr.keywords_hash);
 
 	// read primary version part
-	for(vector<BasicVersion::Part>::size_type i = io::read<vector<BasicVersion::Part>::size_type>(fp);
+	for(list<BasicVersion::Part>::size_type i = io::read<list<BasicVersion::Part>::size_type>(fp);
 		i; --i) {
 		v->m_parts.push_back(io::read_Part(fp));
 	}
@@ -120,7 +119,9 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	v->slotname = io::read_hash_string(fp, hdr.slot_hash);
 	v->overlay_key = io::read<Version::Overlay>(fp);
 
-	v->set_iuse(io::read_hash_words(fp, hdr.iuse_hash));
+	io::read_hash_container(fp, hdr.iuse_hash, std::inserter(v->m_iuse, v->m_iuse.end()));
+	// we can assume the list is ordered and unique, no sort_uniquify needed
+
 	//v->save_maskflags(Version::SAVEMASK_FILE);// This is done in package_reader
 	return v;
 }
@@ -148,12 +149,12 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	io::writeUChar(fp, (v->maskflags.get()) | (MaskFlags::MaskType(v->restrictFlags) << 4));
 
 	// write full keywords unless small database is required
-	io::write_hash_words(fp, hdr.keywords_hash, v->get_full_keywords());
+	io::write_hash_words(fp, hdr.keywords_hash, split_string(v->get_full_keywords()));
 
 	// write m_primsplit
-	io::write<vector<BasicVersion::Part>::size_type>(fp, v->m_parts.size());
+	io::write<list<BasicVersion::Part>::size_type>(fp, v->m_parts.size());
 
-	for(vector<BasicVersion::Part>::const_iterator it = v->m_parts.begin();
+	for(list<BasicVersion::Part>::const_iterator it = v->m_parts.begin();
 		it != v->m_parts.end();
 		++it)
 	{
@@ -162,7 +163,7 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 
 	io::write_hash_string(fp, hdr.slot_hash, v->slotname);
 	io::write<Version::Overlay>(fp, v->overlay_key);
-	io::write_hash_words(fp, hdr.iuse_hash, v->get_iuse());
+	io::write_hash_words(fp, hdr.iuse_hash, v->m_iuse);
 }
 
 io::Treesize
@@ -191,7 +192,7 @@ io::write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr)
 #if defined(NOT_FULL_USE)
 	io::write_hash_words(fp, hdr.iuse_hash, pkg.coll_iuse);
 #else
-	io::write_hash_words(fp, hdr.iuse_hash, "");
+	io::write_hash_words(fp, hdr.iuse_hash, std::vector<std::string>());
 #endif
 
 	// write all version entries
@@ -254,7 +255,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 			for(Package::iterator v = p->begin();
 				v != p->end(); ++v) {
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
-				hdr.iuse_hash.hash_words(v->get_iuse());
+				hdr.iuse_hash.hash_words(v->iuse());
 				hdr.slot_hash.hash_string(v->slotname);
 			}
 		}

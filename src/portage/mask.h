@@ -86,7 +86,7 @@ class Mask : public BasicVersion {
 		eix::ptr_list<Version> match(Package &pkg) const;
 
 		const char *getVersion() const
-		{ return m_full.c_str(); }
+		{ return m_cached_full.c_str(); }
 
 		const char *getName() const
 		{ return m_name.c_str(); }
@@ -101,7 +101,7 @@ class Mask : public BasicVersion {
 		 * @param pkg            package you want tested
 		 * @param check_name     true if name should be tested
 		 * @param check_category true if category should be tested */
-		void checkMask(Package& pkg, const bool check_category, const bool check_name, Keywords::Redundant check = Keywords::RED_NOTHING);
+		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		bool ismatch(Package& pkg);
 };

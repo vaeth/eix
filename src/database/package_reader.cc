@@ -43,7 +43,8 @@ PackageReader::read(Attributes need)
 			if(need == LICENSE)
 				break;
 		case LICENSE:
-			m_pkg->coll_iuse = io::read_hash_words(m_fp, header->iuse_hash);
+			io::read_hash_container(m_fp, header->iuse_hash,
+					std::inserter(m_pkg->m_collected_iuse, m_pkg->m_collected_iuse.begin()));
 #if defined(NOT_FULL_USE)
 			if(need == COLL_IUSE)
 				break;

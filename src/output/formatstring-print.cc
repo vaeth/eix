@@ -233,9 +233,9 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 static void
 print_iuse_version(const PrintFormat *fmt, const Version *version)
 {
-	if(version->iuse.empty())
+	if(version->iuse_vector().empty())
 		return;
-	cout << fmt->before_iuse << join_vector(version->iuse) << fmt->after_iuse;
+	cout << fmt->before_iuse << version->iuse() << fmt->after_iuse;
 }
 
 static void
@@ -462,8 +462,8 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 		print_coll_iuse = false;
 #endif
 	if(print_coll_iuse) {
-		if(!(p->coll_iuse.empty())) {
-			cout << fmt->before_coll_iuse << p->coll_iuse << fmt->after_coll_iuse;
+		if(!(p->coll_iuse().empty())) {
+			cout << fmt->before_coll_iuse << p->coll_iuse() << fmt->after_coll_iuse;
 		}
 	}
 }
@@ -476,7 +476,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool full)
 		print_versions_versions(fmt, p, false, full);
 		return;
 	}
-	const SlotList *sl = &(p->slotlist);
+	const SlotList *sl = &(p->slotlist());
 	bool only_one = (sl->size() == 1);
 	for(SlotList::const_iterator it = sl->begin();
 		it != sl->end(); ++it)
@@ -516,8 +516,8 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool full)
 		print_coll_iuse = false;
 #endif
 	if(print_coll_iuse) {
-		if(!(p->coll_iuse.empty())) {
-			cout << fmt->before_slot_iuse << p->coll_iuse << fmt->after_slot_iuse;
+		if(!(p->coll_iuse().empty())) {
+			cout << fmt->before_slot_iuse << p->coll_iuse() << fmt->after_slot_iuse;
 		}
 	}
 }

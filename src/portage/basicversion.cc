@@ -104,13 +104,13 @@ BasicVersion::rebuild() const
 {
 	stringstream ss;
 	copy(m_parts.begin(), m_parts.end(), ostream_iterator<Part>(ss));
-	m_full = ss.str().substr(1);
+	m_cached_full = ss.str().substr(1);
 }
 
 void
 BasicVersion::parseVersion(const string& str)
 {
-	m_full = str;
+	m_cached_full = str;
 
 	string::size_type pos = 0;
 	string::size_type len = str.find_first_not_of("0123456789", pos);
@@ -215,7 +215,7 @@ BasicVersion::parseVersion(const string& str)
 int
 BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
-	vector<Part>::const_iterator
+	list<Part>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
@@ -242,7 +242,7 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 int
 BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
-	vector<Part>::const_iterator
+	list<Part>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 

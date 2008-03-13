@@ -20,7 +20,7 @@
 
 /* If NOT_FULL_USE is defined, then the iuse data will be handled per package
    and not per version to save memory and disk space.
-   More precisely, if NOT_FULL_USE is defined then the version::iuse entry
+   More precisely, if NOT_FULL_USE is defined then the version::m_iuse entry
    will be empty most of the time:
    The entry is cleared in Package::collect_iuse() which is called by
    Package::addVersionFinalize() / Package::addVersion()
@@ -42,10 +42,6 @@ class Version : public ExtendedVersion, public Keywords {
 	public:
 		friend void     io::write_version(FILE *fp, const Version *v, const DBHeader &hdr);
 		friend Version *io::read_version(FILE *fp, const DBHeader &hdr);
-
-		/** If NOT_FULL_USE is defined, this might "falsely" be empty
-		    to save memory. See the comments above NOT_FULL_USE. */
-		std::vector<std::string> iuse;
 
 		typedef io::UNumber Overlay;
 
@@ -107,12 +103,28 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void set_iuse(const std::string &i)
 		{
-			iuse = split_string(i);
-			sort_uniquify(iuse);
+			m_iuse = split_string(i);
+			sort_uniquify(m_iuse);
+			m_cached_iuse.clear(); // invalided cache
 		}
 
-		std::string get_iuse() const
-		{ return join_vector(iuse); }
+		const std::string& iuse() const
+		{
+			if (m_cached_iuse.empty() && ! m_iuse.empty())
+				m_cached_iuse = join_vector(m_iuse);
+			return m_cached_iuse;
+		}
+
+		const std::vector<std::string>& iuse_vector() const
+		{ return m_iuse; }
+
+	protected:
+		/** If NOT_FULL_USE is defined, this might "falsely" be empty
+		    to save memory. See the comments above NOT_FULL_USE. */
+		std::vector<std::string> m_iuse;
+
+		/// joind strings from m_iuse; clear if you change m_iuse.
+		mutable std::string m_cached_iuse;
 };
 
 /** The equality operator does *not* test the slots */

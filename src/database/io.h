@@ -125,8 +125,15 @@ namespace io {
 	inline std::string read_hash_string(FILE *fp, const StringHash& hash)
 	{ return hash[io::read<StringHash::size_type>(fp)]; }
 
-	void write_hash_words(FILE *fp, const StringHash& hash, const std::string &words);
+	void write_hash_words(FILE *fp, const StringHash& hash, const std::vector<std::string>& words);
 	std::string read_hash_words(FILE *fp, const StringHash& hash);
+
+	template<typename _InserIter>
+	void read_hash_container(FILE *fp, const StringHash& hash, _InserIter iter)
+	{
+		for(UNumber e = io::read<UNumber>(fp); e != 0; --e)
+			*iter++ = io::read_hash_string(fp, hash);
+	}
 
 	/// Read a version from fp
 	Version *read_version(FILE *fp, const DBHeader &hdr);

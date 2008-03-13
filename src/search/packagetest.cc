@@ -183,9 +183,9 @@ PackageTest::stringMatch(Package *pkg) const
 	}
 
 	if(field & IUSE) {
-		vector<string> s=split_string(pkg->coll_iuse);
-		for(vector<string>::const_iterator it = s.begin();
-			it != s.end(); ++it) {
+		//vector<string> s=split_string(pkg->coll_iuse);
+		for(set<string>::const_iterator it = pkg->coll_iuse_vector().begin();
+			it != pkg->coll_iuse_vector().end(); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
 		}
@@ -383,7 +383,7 @@ PackageTest::match(PackageReader *pkg) const
 		if(! (p->have_nontrivial_slots))
 			return invert;
 		if(multi_slot)
-			if( (p->slotlist).size() <= 1 )
+			if( (p->slotlist()).size() <= 1 )
 				return invert;
 	}
 

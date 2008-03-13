@@ -11,7 +11,7 @@
 #define __BASICVERSION_H__
 
 #include <string>
-#include <vector>
+#include <list>
 
 #include <database/io.h>
 #include <eixTk/stringutils.h>
@@ -34,6 +34,7 @@ public:
 		primary,
 		first
 	};
+
 	// This must be larger than PartType elements and should be a power of 2.
 	static const std::string::size_type max_type = 32;
 
@@ -50,24 +51,25 @@ public:
 	/// Compare all except gentoo revisions
 	static int compareTilde(const BasicVersion& right, const BasicVersion& left);
 
-	/// Compare the m_full version.
+	/// Compare the m_cached_full version.
 	static int compare(const BasicVersion& right, const BasicVersion& left);
 
 	const std::string& getFull() const
 	{
-		if(this->m_full.empty())
+		if(this->m_cached_full.empty())
 			this->rebuild();
-		return this->m_full;
+		return this->m_cached_full;
 	}
 
 	void rebuild() const;
 
 protected:
-	/// The m_full version-string.
-	mutable std::string m_full;
+	/// The full version-string. This is usually only used as a cache for the
+	/// result of rebuild. That's why this is mutable
+	mutable std::string m_cached_full;
 
 	/// Splitted m_primsplit-version.
-	std::vector< Part > m_parts;
+	std::list< Part > m_parts;
 
 	static int compare(const Part& left, const Part& right);
 };
