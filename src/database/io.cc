@@ -243,7 +243,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 	hdr.iuse_hash.init(true);
 	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
 	{
-		for(Category::const_iterator p = ci->begin();
+		for(Category::iterator p = ci->begin();
 			p != ci->end(); ++p)
 		{
 			hdr.provide_hash.hash_string(p->provide);
@@ -251,7 +251,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 #if defined(NOT_FULL_USE)
 			hdr.iuse_hash.hash_words(p->coll_iuse);
 #endif
-			for(Package::const_iterator v = p->begin();
+			for(Package::iterator v = p->begin();
 				v != p->end(); ++v) {
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
 				hdr.iuse_hash.hash_words(v->get_iuse());
@@ -315,7 +315,7 @@ io::write_packagetree(FILE *fp, const PackageTree &tree, const DBHeader &hdr)
 		// Write category-header followed by a list of the packages.
 		io::write_category_header(fp, ci->name, io::Treesize(ci->size()));
 
-		for(Category::const_iterator p = ci->begin();
+		for(Category::iterator p = ci->begin();
 			p != ci->end();
 			++p)
 		{
@@ -334,6 +334,6 @@ io::read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr)
 	while(reader.next())
 	{
 		p = reader.release();
-		tree[p->category].insert(p);
+		tree[p->category].push_back(p);
 	}
 }

@@ -30,8 +30,6 @@ eixTk/exceptions.h \
 eixTk/filenames.cc \
 eixTk/filenames.h \
 eixTk/formated.h \
-eixTk/iterator.h \
-eixTk/pointer_map.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \
 eixTk/stringutils.cc \

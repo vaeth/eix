@@ -10,72 +10,69 @@
 #ifndef __PACKAGETREE_H__
 #define __PACKAGETREE_H__
 
+#include <map>
 #include <string>
+#include <list>
+#include <vector>
+#include <cstdlib>
 
+#include <eixTk/ptr_list.h>
 #include <database/io.h>
-#include <eixTk/pointer_map.h>
-#include <portage/package.h>
 
-namespace eix
-{
-	template<typename T>
-	struct get_name : public std::unary_function<T*, const std::string*>
-	{
-		const std::string* operator()(T* value)
-		{ return &value->name; }
-	};
-}
+class Package;
+class DBHeader;
 
-class Category :
-	public eix::pointer_map<std::string, Package, eix::get_name<Package> >
-{
+class Category : public eix::ptr_list<Package> {
+
 	public:
-		Category(const std::string& name)
+		const std::string name;
+
+		Category(const std::string &name)
 			: name(name)
 		{ }
 
 		~Category()
-		{ eix::delete_all(begin(), end()); }
+		{ delete_and_clear(); }
 
-		Package* findPackage(const std::string& name)
-		{ return get(name); }
+		Package *findPackage(const std::string &pkg_name) const;
+		bool deletePackage(const std::string &pkg_name);
+		Package *addPackage(const std::string &pkg_name);
 
-		Package* addPackage(const std::string& name)
-		{ return insert(new Package(this->name, name)); }
-
-		void deletePackage(const std::string& name)
-		{
-			iterator it = find(name);
-			delete *it;
-			erase(it);
-		}
-
-		const std::string name;
+		iterator find(const std::string &name);
 };
 
-class PackageTree :
-	public eix::pointer_map<std::string, Category, eix::get_name<Category> >
-{
-	public:
-		PackageTree(const std::set<std::string> &categories)
-		{
-			for(std::set<std::string>::const_iterator it(categories.begin());
-				it != categories.end();
-				++it)
-			{
-				insert(new Category(*it));
-			}
-		}
+class PackageTree : public eix::ptr_list<Category> {
 
-		PackageTree()
+	public:
+		PackageTree() : fast_access(NULL)
 		{ }
+
+		~PackageTree()
+		{ delete_and_clear(); }
+
+		Package *findPackage(const std::string &category, const std::string &name) const;
+		bool deletePackage(const std::string &category, const std::string &name);
+
+		Category *find(const std::string name) const;
+		Category &insert(const std::string name);
+
+		Category &operator [] (const std::string name)
+		{
+			Category *p=find(name);
+			if(p)
+				return *p;
+			return insert(name);
+		}
+		void need_fast_access(const std::vector<std::string> *add_cat);
+		void finish_fast_access();
 
 		void add_missing_categories(std::vector<std::string> &categories) const;
 
 		io::Treesize countPackages() const;
-
 		io::Catsize countCategories() const
 		{ return size(); }
+	protected:
+		std::map<std::string, Category*> *fast_access;
 };
 
 #endif /* __PACKAGETREE_H__ */
