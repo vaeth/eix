@@ -15,6 +15,7 @@ sysconf_DATA = eixrc/eixrc
 database_src = \
 database/io.cc \
 database/io.h \
+database/types.h \
 database/header.cc \
 database/header.h \
 database/package_reader.cc \
