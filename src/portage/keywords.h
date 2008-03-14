@@ -146,7 +146,7 @@ inline bool operator != (const KeywordsFlags& left, const KeywordsFlags& right)
 class Keywords
 {
 	public:
-		typedef uint32_t Redundant;
+		typedef unsigned int Redundant;
 		static const Redundant
 			RED_NOTHING       = 0x00000, /**< None of the following           */
 			RED_DOUBLE        = 0x00001, /**< Same keyword twice              */
