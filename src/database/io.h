@@ -11,6 +11,7 @@
 #define EIX__IO_H__
 
 #include <eixTk/stringutils.h>
+#include <database/types.h>
 
 #include <config.h>
 
@@ -30,21 +31,10 @@
 class Package;
 class Version;
 class PackageTree;
-class DBHeader;
 
 #define MAGICNUMCHAR 0xFF
 
 namespace io {
-	typedef unsigned char UChar;
-	typedef size_t UNumber;
-
-	typedef UNumber Catsize;
-	typedef UNumber Versize;
-	typedef UNumber Treesize;
-
-	typedef off_t OffsetType;
-	extern OffsetType counter;
-
 	inline static UChar
 	readUChar(FILE *fp)
 	{ return fgetc(fp); }

@@ -10,7 +10,7 @@
 #define __CRITERIA_H__
 
 #include <search/packagetest.h>
-#include <database/package_reader.h>
+#include <database/types.h>
 
 /** Recursively match packages agains a chain of tests. */
 class Matchatom {
