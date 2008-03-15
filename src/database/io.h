@@ -10,23 +10,14 @@
 #ifndef EIX__IO_H__
 #define EIX__IO_H__
 
+#include <config.h>
+
 #include <eixTk/stringutils.h>
 #include <database/types.h>
 
-#include <config.h>
-
 #include <string>
+#include <cstdio>
 #include <cstdlib>
-
-#if defined(HAVE_TR1_CSTDINT)
-#include <tr1/cstdint>
-#else
-#if defined(USE_STDINT_H)
-#include <stdint.h>
-#endif
-#endif
-
-#include <unistd.h>
 
 class Package;
 class Version;
@@ -56,7 +47,7 @@ namespace io {
 		// The one-byte case is exceptional w.r.t. to leading 0:
 		if(c != MAGICNUMCHAR)
 			return c;
-		size_t toget = 1;
+		unsigned int toget = 1;
 		while((c = readUChar(fp)) == MAGICNUMCHAR)
 			++toget;
 		_Tp ret;

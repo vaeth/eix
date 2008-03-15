@@ -15,18 +15,18 @@
 using namespace std;
 
 const PackageTest::MatchField
-		PackageTest::NONE          = 0x000, /**< Search in name */
-		PackageTest::NAME          = 0x001, /**< Search in name */
-		PackageTest::DESCRIPTION   = 0x002, /**< Search in description */
-		PackageTest::PROVIDE       = 0x004, /**< Search in provides */
-		PackageTest::LICENSE       = 0x008, /**< Search in license */
-		PackageTest::CATEGORY      = 0x010, /**< Search in category */
-		PackageTest::CATEGORY_NAME = 0x020, /**< Search in category/name */
-		PackageTest::HOMEPAGE      = 0x040, /**< Search in homepage */
-		PackageTest::IUSE          = 0x080, /**< Search in iuse */
-		PackageTest::USE_ENABLED   = 0x100, /**< Search in enabled  useflags of installed packages */
-		PackageTest::USE_DISABLED  = 0x200, /**< Search in disabled useflags of installed packages */
-		PackageTest::SLOT          = 0x400; /**< Search in slots */
+		PackageTest::NONE         , /**< Search in name */
+		PackageTest::NAME         , /**< Search in name */
+		PackageTest::DESCRIPTION  , /**< Search in description */
+		PackageTest::PROVIDE      , /**< Search in provides */
+		PackageTest::LICENSE      , /**< Search in license */
+		PackageTest::CATEGORY     , /**< Search in category */
+		PackageTest::CATEGORY_NAME, /**< Search in category/name */
+		PackageTest::HOMEPAGE     , /**< Search in homepage */
+		PackageTest::IUSE         , /**< Search in iuse */
+		PackageTest::USE_ENABLED  , /**< Search in enabled  useflags of installed packages */
+		PackageTest::USE_DISABLED , /**< Search in disabled useflags of installed packages */
+		PackageTest::SLOT         ; /**< Search in slots */
 
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE,

@@ -74,7 +74,7 @@ class Package
 
 		/** True if duplicated versions are found in for this package.
 		 * That means e.g. that version 0.2 is found in two overlays. */
-		typedef uint8_t Duplicates;
+		typedef unsigned char Duplicates;
 		static const Duplicates
 			DUP_NONE,
 			DUP_SOME,    /* Duplicate versions are somewhere */
