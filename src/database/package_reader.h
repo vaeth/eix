@@ -18,7 +18,7 @@
 #include <iostream>
 #include <memory>
 
-#include <database/types.h>
+#include <database/io.h>
 #include <database/header.h>
 
 // No forward decl of Package because gcc-3.3.6 will scream bloody

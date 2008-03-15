@@ -12,6 +12,14 @@
 
 #include <config.h>
 
+#if defined(HAVE_TR1_CSTDINT)
+#include <tr1/cstdint>
+#else
+#if defined(USE_STDINT_H)
+#include <stdint.h>
+#endif
+#endif
+
 // mmap and stat stuff
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -26,7 +34,7 @@
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
 class VarsReader {
 	public:
-		typedef unsigned char Flags;
+		typedef uint8_t Flags;
 		static const Flags
 			NONE                 = 0x00, /**< Flag: No flags set; normal behavior. */
 			ONLY_KEYWORDS_SLOT   = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */

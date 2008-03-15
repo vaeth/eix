@@ -14,7 +14,7 @@
 #include <vector>
 
 #include <eixTk/stringutils.h>
-#include <database/types.h>
+#include <database/io.h>
 
 class MaskFlags {
 	public:
@@ -146,7 +146,7 @@ inline bool operator != (const KeywordsFlags& left, const KeywordsFlags& right)
 class Keywords
 {
 	public:
-		typedef unsigned int Redundant;
+		typedef uint32_t Redundant;
 		static const Redundant
 			RED_NOTHING       = 0x00000, /**< None of the following           */
 			RED_DOUBLE        = 0x00001, /**< Same keyword twice              */

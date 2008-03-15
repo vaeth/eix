@@ -13,7 +13,7 @@
 #include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>
 #include <output/formatstring.h>
-#include <database/types.h>
+#include <database/header.h>
 
 class SetStability;
 Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);

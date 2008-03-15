@@ -161,7 +161,7 @@ static const char *format_normal, *format_verbose, *format_compact;
 static const char *eix_cachefile = NULL;
 static const char *var_to_print = NULL;
 
-static unsigned char overlay_mode;
+static uint8_t overlay_mode;
 
 static PrintFormat format(get_package_property, print_package_property);
 

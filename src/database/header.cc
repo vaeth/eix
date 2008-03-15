@@ -9,6 +9,8 @@
 
 #include "header.h"
 
+#include <database/io.h>
+
 #include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/filenames.h>

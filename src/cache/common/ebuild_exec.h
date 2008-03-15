@@ -27,8 +27,7 @@ class EbuildExec {
 		volatile int type_of_exit_signal;
 		std::string *cachefile;
 		typedef void signal_handler(int sig);
-		// cache/common/ebuild_exec.h|30| error: ignoring 'volatile' qualifiers added to function type 'void ()(int)'
-		/* volatile */ signal_handler *handleTERM, *handleINT, *handleHUP;
+		volatile signal_handler *handleTERM, *handleINT, *handleHUP;
 		bool use_ebuild_sh;
 
 		static bool know_permissions, set_uid, set_gid;

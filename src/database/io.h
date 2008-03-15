@@ -10,22 +10,41 @@
 #ifndef EIX__IO_H__
 #define EIX__IO_H__
 
+#include <eixTk/stringutils.h>
+
 #include <config.h>
 
-#include <eixTk/stringutils.h>
-#include <database/types.h>
-
 #include <string>
-#include <cstdio>
 #include <cstdlib>
+
+#if defined(HAVE_TR1_CSTDINT)
+#include <tr1/cstdint>
+#else
+#if defined(USE_STDINT_H)
+#include <stdint.h>
+#endif
+#endif
+
+#include <unistd.h>
 
 class Package;
 class Version;
 class PackageTree;
+class DBHeader;
 
 #define MAGICNUMCHAR 0xFF
 
 namespace io {
+	typedef unsigned char UChar;
+	typedef size_t UNumber;
+
+	typedef UNumber Catsize;
+	typedef UNumber Versize;
+	typedef UNumber Treesize;
+
+	typedef off_t OffsetType;
+	extern OffsetType counter;
+
 	inline static UChar
 	readUChar(FILE *fp)
 	{ return fgetc(fp); }
@@ -47,7 +66,7 @@ namespace io {
 		// The one-byte case is exceptional w.r.t. to leading 0:
 		if(c != MAGICNUMCHAR)
 			return c;
-		unsigned int toget = 1;
+		size_t toget = 1;
 		while((c = readUChar(fp)) == MAGICNUMCHAR)
 			++toget;
 		_Tp ret;

@@ -10,6 +10,8 @@
 #include "packagetree.h"
 
 #include <portage/package.h>
+#include <database/header.h>
+#include <database/package_reader.h>
 #include <algorithm>
 #include <cstdlib>
 

@@ -17,7 +17,7 @@
 #include <cstdlib>
 
 #include <eixTk/ptr_list.h>
-#include <database/types.h>
+#include <database/io.h>
 
 class Package;
 class DBHeader;

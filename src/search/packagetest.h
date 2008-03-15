@@ -22,8 +22,6 @@
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
 #include <portage/conf/portagesettings.h>
-
-#include <database/types.h>
 #include <database/package_reader.h>
 
 #include <eixTk/exceptions.h>
@@ -33,26 +31,27 @@
 
 #include <portage/set_stability.h>
 
+class DBHeader;
+
 /** Test a package if it matches some criteria. */
 class PackageTest {
 
 	public:
-		typedef unsigned short MatchField;
-		static const MatchField 
-					NONE          = 0x000, /**< Search in name */
-					NAME          = 0x001, /**< Search in name */
-					DESCRIPTION   = 0x002, /**< Search in description */
-					PROVIDE       = 0x004, /**< Search in provides */
-					LICENSE       = 0x008, /**< Search in license */
-					CATEGORY      = 0x010, /**< Search in category */
-					CATEGORY_NAME = 0x020, /**< Search in category/name */
-					HOMEPAGE      = 0x040, /**< Search in homepage */
-					IUSE          = 0x080, /**< Search in iuse */
-					USE_ENABLED   = 0x100, /**< Search in enabled  useflags of installed packages */
-					USE_DISABLED  = 0x200, /**< Search in disabled useflags of installed packages */
-					SLOT          = 0x400; /**< Search in slots */
+		typedef uint16_t MatchField;
+		static const MatchField NONE          , /**< Search in name */
+		                        NAME          , /**< Search in name */
+		                        DESCRIPTION   , /**< Search in description */
+		                        PROVIDE       , /**< Search in provides */
+		                        LICENSE       , /**< Search in license */
+		                        CATEGORY      , /**< Search in category */
+		                        CATEGORY_NAME , /**< Search in category/name */
+		                        HOMEPAGE      , /**< Search in homepage */
+		                        IUSE          , /**< Search in iuse */
+		                        USE_ENABLED   , /**< Search in enabled  useflags of installed packages */
+		                        USE_DISABLED  , /**< Search in disabled useflags of installed packages */
+		                        SLOT          ; /**< Search in slots */
 
-		typedef unsigned char TestInstalled;
+		typedef uint8_t TestInstalled;
 		static const TestInstalled
 					INS_NONE        = 0x00,
 					INS_NONEXISTENT = 0x01, /**< Test for nonexistent installed packages */
@@ -60,7 +59,7 @@ class PackageTest {
 					INS_MASKED      = 0x04, /**< Test for masked installed packages */
 					INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
 
-		typedef unsigned char TestStability;
+		typedef uint8_t TestStability;
 		static const TestStability
 					STABLE_NONE      = 0x00,
 					STABLE_FULL      = 0x01, /**< Test for stable keyword */
