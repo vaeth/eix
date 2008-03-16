@@ -13,15 +13,19 @@
 #include <cache/base.h>
 
 class MetadataCache : public BasicCache {
+	protected:
+		bool metadata, have_override_path;
+		std::string override_path;
 
 	public:
+		bool initialize(const std::string &name);
+
 		bool readCategory(Category &vec) throw(ExBasic);
 
 		bool use_prefixport() const
-		{ return true; }
+		{ return metadata; }
 
-		const char *getType() const
-		{ return "metadata"; }
+		const char *getType() const;
 };
 
 #endif /* __METADATA_H__ */

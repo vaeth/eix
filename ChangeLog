@@ -1,35 +1,37 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.12.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
-	- Fix signal handling for *ebuild* cache methods.
-	- Improve treatment of argv[0] (for --help).
-
 	Emil Beinroth <emilbeinroth at gmx.net>:
-	- Replace "$@.in" with "$<" in Makefile.am (which gives us the real path,
-	  not just the name of the file); Remove configmake.h and add SYSCONFDIR
-	  to AM_CXXFLAGS (as mentioned in the autoconf manual); "make distcheck"
-	  works again
-
+	- Replace "$@.in" with "$<" in Makefile.am (which gives us the real
+	  path, not just the name of the file); Remove configmake.h and add
+	  SYSCONFDIR to AM_CXXFLAGS (as mentioned in the autoconf manual);
+	  "make distcheck" works again.
 	- BasicVersion: Store m_parts as list, so we don't have reallocation
 	  overhead.
 	- Version: hold iuse as vector, not as string so we don't need to
 	  split/join so much. Join vector only on request and cache result.
-	- Package: Do not split/join collected iuse everytime a version is added,
-	  instead store a set of useflags in the package, and add the new iuse
-	  from the version. Only join the flags into a string if iuse() is 
-	  called (and cache the result for subsequent calls).
+	- Package: Do not split/join collected iuse everytime a version is
+	  added, instead store a set of useflags in the package, and add the
+	  new iuse from the version. Only join the flags into a string if
+	  iuse() is called (and cache the result for subsequent calls).
 	  Also, do not rebuild the slotlist everytime a version was added, but
-	  rather only build a slotlist if one is actually requested by 
+	  rather only build a slotlist if one is actually requested by
 	  slotlist() (and cache the resulting slotlist).
-	- database: Remove splitting/joining of strings/vectors, since we now have
-	  vectors/sets in Package, Version, etc. This brings a huge speed
+	- database: Remove splitting/joining of strings/vectors, since we now
+	  have vectors/sets in Package, Version, etc. This brings a huge speed
 	  improvement for version reading.
+	- Move stdint.h stuff into eixTk/inttypes.h and include. Add static
+	  assertion macro EIX_STATIC_ASSERT. Add database/types.h and include
+	  if needed.
 
-    - Move stdint.h stuff into eixTk/inttypes.h and include. Add static
-	  assertion macro EIX_STATIC_ASSERT. Add database/types.h and include if
-	  needed.
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
+	- Fix signal handling for *ebuild* cache methods.
+	- Improve treatment of argv[0] (for --help).
+	- Make metadata and flat/portage-2.0 use the same functions.
+	- Introduce metadata:PATH and flat:PATH to allow usage of metadata
+	  calculated by paludis. Thanks for the idea to
+	  Leonardo Valeri Manera <l.valerimanera at gmail.com>
 
 *eix-0.12.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

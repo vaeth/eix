@@ -98,8 +98,6 @@ cache/metadata/metadata.cc \
 cache/metadata/metadata.h \
 cache/parse/parse.cc \
 cache/parse/parse.h \
-cache/port2_0_0/port2_0_0.cc \
-cache/port2_0_0/port2_0_0.h \
 cache/port2_1_0/port2_1_0.cc \
 cache/port2_1_0/port2_1_0.h \
 cache/sqlite/sqlite.cc \

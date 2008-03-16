@@ -1367,11 +1367,15 @@ and are meant to be used only locally.
 The following cache methods are available:
 .TP
 .SS
-.B metadata
-Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache/).
+.BR metadata " or " metadata:I<PATH>
+Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache).
 This is the default method which will always work if the portage tree is readable
 when you run update-eix.
-However, it is not necessarily the fastest method.
+
+If you provide I<PATH>, it overrides the above path; in this case, it must be
+the full path (i.e. no prefix is used). You might want to provide I<PATH> if
+you use paludis to generate the metadata in the corresponding directory.
+See also cache method B<flat> below.
 .TP
 .SS
 .B sqlite
@@ -1396,12 +1400,14 @@ Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.B portage-2.0
-If you are using <portage-2.1 and the default backend, you might want
-to use this one if you do not have access to the portage tree when
-you run update-eix.
-Note that in contrast to the default B<metadata> cache method you must
-use B<emerge --metadata> before you call B<update-eix> with this method.
+.BR flat ", " portage-2.0 ", " flat:I<PATH> ", or " portage-2.0:I<PATH>
+This is similar to B<metadata> with the difference that the metadata is
+expected in the directory I<PATH>/<${PORTAGE_OR_OVERLAY_DIR}>.
+If I<PATH> is omitted, it defaults to B</var/cache/edb/dep>.
+
+You can use this cache method with <portage-2.1 and the default backend
+or if you are using paludis to generate the metadata in the corresponding
+directory.
 .TP
 .SS
 .B portage-2.1

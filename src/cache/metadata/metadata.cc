@@ -22,8 +22,50 @@
 
 using namespace std;
 
-/* Path to portage cache */
+/* Subpath to metadata cache *with* trailing / */
 #define METADATA_PATH "/metadata/cache/"
+/* Path to portage-2.0 cache *without* trailing / (since scheme will be appended) */
+#define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
+
+bool
+MetadataCache::initialize(const string &name)
+{
+	string pure_name = name;
+	string::size_type i = pure_name.find_first_of(':');
+	if(i != string::npos) {
+		pure_name.erase(i);
+		have_override_path = true;
+		override_path = name.substr(i + 1);
+	}
+	else
+		have_override_path = false;
+	if(strcasecmp(pure_name.c_str(), "metadata") == 0) {
+		metadata = true;
+		return true;
+	}
+	if((strcasecmp(pure_name.c_str(), "flat") == 0) ||
+		(strcasecmp(pure_name.c_str(), "portage-2.0") == 0) ||
+		(strcasecmp(pure_name.c_str(), "portage-2.0.51") == 0)) {
+		metadata = false;
+		return true;
+	}
+	return false;
+}
+
+const char *
+MetadataCache::getType() const
+{
+	static string s;
+	if(metadata)
+		s = "metadata";
+	else
+		s = "flat";
+	if(have_override_path) {
+		s.append(":");
+		s.append(override_path);
+	}
+	return s.c_str();
+}
 
 static int cachefiles_selector (SCANDIR_ARG3 dent)
 {
@@ -33,12 +75,32 @@ static int cachefiles_selector (SCANDIR_ARG3 dent)
 
 bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 {
-	string catpath = m_prefix + m_scheme + METADATA_PATH + vec.name;
+	string catpath;
+	if(have_override_path) {
+		catpath = override_path;
+		if(!metadata)
+			catpath.append(m_scheme);
+	}
+	else {
+		catpath = m_prefix;
+		if(metadata) {
+			// m_scheme is actually the portdir
+			catpath.append(m_scheme);
+			catpath.append(METADATA_PATH);
+		}
+		else {
+			catpath.append(PORTAGE_CACHE_PATH);
+			catpath.append(m_scheme);
+		}
+	}
+	if(catpath.empty() || (*(catpath.rbegin()) != '/'))
+		catpath.append("/");
+	catpath.append(vec.name);
 	struct dirent **dents;
 	int numfiles = my_scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
 	char **aux = NULL;
 
-	for(int i=0; i<numfiles;)
+	for(int i = 0; i < numfiles; )
 	{
 		Version *version;
 		Version *newest = NULL;
@@ -105,7 +167,7 @@ bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 	if(numfiles > 0)
 	{
-		for(int i=0; i<numfiles; i++ )
+		for(int i = 0; i < numfiles; i++ )
 			free(dents[i]);
 		free(dents);
 	}
