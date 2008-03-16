@@ -13,7 +13,7 @@
 #include <string>
 #include <list>
 
-#include <database/io.h>
+#include <database/types.h>
 #include <eixTk/stringutils.h>
 
 /** Parse and represent a portage version-string. */

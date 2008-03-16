@@ -10,15 +10,8 @@
 #ifndef __VARSREADER_H__
 #define __VARSREADER_H__
 
-#include <config.h>
 
-#if defined(HAVE_TR1_CSTDINT)
-#include <tr1/cstdint>
-#else
-#if defined(USE_STDINT_H)
-#include <stdint.h>
-#endif
-#endif
+#include <eixTk/inttypes.h>
 
 // mmap and stat stuff
 #include <sys/types.h>

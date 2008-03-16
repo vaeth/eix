@@ -27,6 +27,10 @@
 	  vectors/sets in Package, Version, etc. This brings a huge speed
 	  improvement for version reading.
 
+    - Move stdint.h stuff into eixTk/inttypes.h and include. Add static
+	  assertion macro EIX_STATIC_ASSERT. Add database/types.h and include if
+	  needed.
+
 *eix-0.12.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Do not die on obsolete eix cache files, see

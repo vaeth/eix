@@ -22,16 +22,17 @@
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
 #include <portage/conf/portagesettings.h>
+
+#include <database/types.h>
 #include <database/package_reader.h>
 
 #include <eixTk/exceptions.h>
+#include <eixTk/inttypes.h>
 
 #include <search/algorithms.h>
 #include <search/redundancy.h>
 
 #include <portage/set_stability.h>
-
-class DBHeader;
 
 /** Test a package if it matches some criteria. */
 class PackageTest {

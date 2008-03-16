@@ -161,7 +161,16 @@ static const char *format_normal, *format_verbose, *format_compact;
 static const char *eix_cachefile = NULL;
 static const char *var_to_print = NULL;
 
-static uint8_t overlay_mode;
+enum OverlayMode
+{
+	mode_list_used_renumbered  = 0,
+	mode_list_used             = 1,
+	mode_list_all_if_any       = 2,
+	mode_list_all              = 3,
+	mode_list_none             = 4
+};
+
+static OverlayMode overlay_mode;
 
 static PrintFormat format(get_package_property, print_package_property);
 
@@ -380,16 +389,16 @@ setup_defaults()
 
 	string overlay = rc["OVERLAYS_LIST"];
 	if(overlay.find("if") != string::npos)
-		overlay_mode = 2;
+		overlay_mode = mode_list_all_if_any;
 	else if(overlay.find("number") != string::npos)
-		overlay_mode = 0;
+		overlay_mode = mode_list_used_renumbered;
 	else if(overlay.find("used") != string::npos)
-		overlay_mode = 1;
+		overlay_mode = mode_list_used;
 	else if((overlay.find("no") != string::npos) ||
 		(overlay.find("false") != string::npos))
-		overlay_mode = 4;
+		overlay_mode = mode_list_none;
 	else
-		overlay_mode = 3;
+		overlay_mode = mode_list_all;
 }
 
 static bool
@@ -493,7 +502,7 @@ run_eix(int argc, char** argv)
 	format.setupColors();
 
 	if(rc_options.pure_packages) {
-		overlay_mode = 4;
+		overlay_mode = mode_list_none;
 	}
 
 	PortageSettings portagesettings(eixrc, true);
@@ -622,7 +631,7 @@ run_eix(int argc, char** argv)
 	}
 
 	format.set_marked_list(marked_list);
-	if(overlay_mode != 0)
+	if(overlay_mode != mode_list_used_renumbered)
 		format.set_overlay_translations(NULL);
 	if(header.countOverlays())
 	{
@@ -648,7 +657,7 @@ run_eix(int argc, char** argv)
 		if(it->largest_overlay)
 		{
 			need_overlay_table = true;
-			if(overlay_mode <= 1)
+			if(overlay_mode <= mode_list_used)
 			{
 				for(Package::iterator ver = it->begin();
 					ver != it->end(); ++ver)
@@ -659,7 +668,7 @@ run_eix(int argc, char** argv)
 				}
 			}
 		}
-		if(overlay_mode != 0) {
+		if(overlay_mode != mode_list_used_renumbered) {
 			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				if(only_printed)
 					count++;
@@ -668,12 +677,12 @@ run_eix(int argc, char** argv)
 	}
 	switch(overlay_mode)
 	{
-		case 3: need_overlay_table = true;  break;
-		case 4: need_overlay_table = false; break;
+		case mode_list_all: need_overlay_table = true;  break;
+		case mode_list_none: need_overlay_table = false; break;
 		default: break;
 	}
 	vector<Version::Overlay> overlay_num(header.countOverlays(), 0);
-	if(overlay_mode == 0)
+	if(overlay_mode == mode_list_used_renumbered)
 	{
 		short i = 1;
 		vector<bool>::iterator  uit = overlay_used.begin();
@@ -695,7 +704,7 @@ run_eix(int argc, char** argv)
 	if(need_overlay_table)
 	{
 		printed_overlay = print_overlay_table(format, header,
-			(overlay_mode <= 1)? &overlay_used : NULL);
+			(overlay_mode <= mode_list_used)? &overlay_used : NULL);
 	}
 
 	short print_count_always = eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never");

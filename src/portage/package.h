@@ -11,6 +11,7 @@
 #define __PACKAGE_H__
 
 #include <eixTk/ptr_list.h>
+#include <eixTk/inttypes.h>
 
 #include <list>
 #include <string>

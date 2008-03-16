@@ -15,6 +15,7 @@ sysconf_DATA = eixrc/eixrc
 database_src = \
 database/io.cc \
 database/io.h \
+database/types.h \
 database/header.cc \
 database/header.h \
 database/package_reader.cc \
@@ -30,6 +31,7 @@ eixTk/exceptions.h \
 eixTk/filenames.cc \
 eixTk/filenames.h \
 eixTk/formated.h \
+eixTk/inttypes.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \
 eixTk/stringutils.cc \

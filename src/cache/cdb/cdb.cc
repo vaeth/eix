@@ -16,6 +16,7 @@
 
 #include <eixTk/stringutils.h>
 #include <eixTk/formated.h>
+#include <eixTk/inttypes.h>
 
 using namespace std;
 

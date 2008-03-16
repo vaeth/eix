@@ -12,6 +12,7 @@
 
 #include <config.h>
 
+#include <eixTk/inttypes.h>
 #include <eixTk/exceptions.h>
 
 #include <map>
@@ -23,17 +24,7 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
-#if defined(HAVE_TR1_CSTDINT)
-#include <tr1/cstdint>
-#else
-#if defined(USE_STDINT_H)
-#include <stdint.h>
-#endif
-#endif
-
 #include <unistd.h>
-
-#include <config.h>
 
 #define UINT32_PACK(out,in)   uint32_pack(out,in)
 #define UINT32_UNPACK(in,out) uint32_unpack(in,out)

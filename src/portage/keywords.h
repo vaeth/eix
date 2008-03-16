@@ -13,8 +13,9 @@
 #include <set>
 #include <vector>
 
+#include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
-#include <database/io.h>
+#include <database/types.h>
 
 class MaskFlags {
 	public:
