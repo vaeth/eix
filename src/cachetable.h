@@ -47,7 +47,7 @@ class CacheTable
 			if(cache == NULL)
 			{
 				throw ExBasic("Unknown cache %r for directory %r")
-					% cache_name % directory;
+					% cache_method % directory;
 			}
 
 			cache->setScheme(eprefixcache, eprefixport, eprefixexec, directory);

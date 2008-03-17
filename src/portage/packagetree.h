@@ -27,8 +27,8 @@ class Category : public eix::ptr_list<Package> {
 	public:
 		const std::string name;
 
-		Category(const std::string &name)
-			: name(name)
+		Category(const std::string &category_name)
+			: name(category_name)
 		{ }
 
 		~Category()
