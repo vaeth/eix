@@ -71,10 +71,13 @@ if ! ${KEEPENV}; then
 	${SAFEFLAGS} || CFLAGS="${CFLAGS} -pedantic"
 	if ${PEDANTIC}; then
 		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
-		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=2"
-		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization"
+		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=1"
+		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization"
+		#CFLAGS="${CFLAGS} -Wconversion"
 		#CFLAGS="${CFLAGS} -Wunreachable-code -Wpadded"
 		#CFLAGS="${CFLAGS} -Wswitch-enum -Waggregate-return -Winline -Wmissing-format-attribute"
+		# gcc-4.3:
+		CFLAGS="${CFLAGS} -Wlogical-op -Wsign-conversion -Wvla"
 		CXXFLAGS="${CFLAGS} -Wabi -Wctor-dtor-privacy -Wstrict-null-sentinel -Wold-style-cast -Woverloaded-virtual -Wsign-promo"
 		#CXXFLAGS="${CXXFLAGS} -Weffc++ "
 		CFLAGS="${CFLAGS} -Wtraditional -Wc++-compat -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wpointer-sign"

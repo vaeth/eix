@@ -201,7 +201,7 @@ EbuildExec::calc_permissions()
 	if(s.empty() || !get_uid_of(s.c_str(), &uid)) {
 		int i = eix.getInteger("EBUILD_UID");
 		if(i > 0)
-			uid = i;
+			uid = uid_t(i);
 		else
 			set_uid = false;
 	}
@@ -209,7 +209,7 @@ EbuildExec::calc_permissions()
 	if(s.empty() || !get_uid_of(s.c_str(), &gid)) {
 		int i = eix.getInteger("EBUILD_GID");
 		if(i > 0)
-			gid = i;
+			gid = gid_t(i);
 		else
 			set_gid = false;
 	}

@@ -13,6 +13,6 @@
  * @param str_a string a
  * @param str_b string b
  * @return int Levenshtein distance of str_a <> str_b */
-int get_levenshtein_distance( const char *str_a, const char *str_b );
+unsigned int get_levenshtein_distance( const char *str_a, const char *str_b );
 
 #endif /* __LEVENSHTEIN_H__ */

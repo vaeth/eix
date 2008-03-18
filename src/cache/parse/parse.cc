@@ -164,18 +164,18 @@ bool ParseCache::readCategory(Category &vec) throw(ExBasic)
 		if(numfiles > 0)
 		{
 			try {
-				readPackage(vec, packages[i]->d_name, &pkg_path, files, numfiles);
+				readPackage(vec, packages[i]->d_name, &pkg_path, files, size_t(numfiles));
 			}
 			catch(const ExBasic &e) {
 				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
 			}
-			for(int j=0; j<numfiles; j++ )
+			for(int j = 0; j < numfiles; ++j)
 				free(files[j]);
 			free(files);
 		}
 	}
 
-	for(int i = 0; i < numpackages; i++ )
+	for(int i = 0; i < numpackages; ++i)
 		free(packages[i]);
 	if(numpackages > 0)
 		free(packages);

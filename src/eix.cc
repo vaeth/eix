@@ -684,7 +684,7 @@ run_eix(int argc, char** argv)
 	vector<Version::Overlay> overlay_num(header.countOverlays(), 0);
 	if(overlay_mode == mode_list_used_renumbered)
 	{
-		short i = 1;
+		Version::Overlay i = 1;
 		vector<bool>::iterator  uit = overlay_used.begin();
 		vector<Version::Overlay>::iterator nit = overlay_num.begin();
 		for(; uit != overlay_used.end(); ++uit, ++nit)

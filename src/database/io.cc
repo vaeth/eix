@@ -129,7 +129,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 void
 io::write_Part(FILE *fp, const BasicVersion::Part &n)
 {
-	io::write<string::size_type>(fp, n.second.size()*BasicVersion::max_type + n.first);
+	io::write<string::size_type>(fp, n.second.size()*BasicVersion::max_type + string::size_type(n.first));
 	if(n.second.size() > 0) {
 		if(fp) {
 			if(fwrite(static_cast<const void *>(n.second.c_str()),

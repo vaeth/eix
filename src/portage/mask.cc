@@ -49,7 +49,7 @@ void
 Mask::parseMask(const char *str) throw(ExBasic)
 {
 	// determine comparison operator
-	int i = 0;
+	unsigned int i = 0;
 	for(; operators[i].str != NULL; ++i)
 	{
 		if(strncmp(str, operators[i].str,
