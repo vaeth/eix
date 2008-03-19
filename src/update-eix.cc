@@ -455,7 +455,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%u] \"%s\" %s (cache: %s)\n", uint(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+		INFO("[%u] \"%s\" %s (cache: %s)\n", key, overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
@@ -524,6 +524,6 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	fclose(database_stream);
 
 	INFO("Database contains %u packages in %u categories.\n",
-		uint(package_tree.countPackages()), uint(dbheader.size));
+		package_tree.countPackages(), dbheader.size);
 }
 

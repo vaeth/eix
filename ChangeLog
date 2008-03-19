@@ -23,6 +23,9 @@
 	- Move stdint.h stuff into eixTk/inttypes.h and include. Add static
 	  assertion macro EIX_STATIC_ASSERT. Add database/types.h and include
 	  if needed.
+	- Removing uint(..), as most are not needed (they are applied to
+	  unsigned values) and the char conversion can be done with int(..).
+	  http://bugs.gentoo.org/show_bug.cgi?id=213769
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.

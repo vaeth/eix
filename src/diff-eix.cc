@@ -127,7 +127,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 	if(!io::read_header(fp, *header)) {
 		fclose(fp);
 		fprintf(stderr, "%s uses an obsolete database format (%u, current is %u).\n",
-				file, uint(header->version), uint(DBHeader::current));
+				file, header->version, DBHeader::current);
 		exit(1);
 	}
 
@@ -406,7 +406,7 @@ run_diff_eix(int argc, char *argv[])
 	DiffTrees differ(varpkg_db,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),
 		!eixrc.getBool("DIFF_NO_SLOTS"));
-	INFO("Diffing databases (%u - %u packages)\n", uint(old_tree.countPackages()), uint(new_tree.countPackages()));
+	INFO("Diffing databases (%u - %u packages)\n", old_tree.countPackages(), new_tree.countPackages());
 
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;

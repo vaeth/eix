@@ -529,7 +529,7 @@ run_eix(int argc, char** argv)
 	if(!io::read_header(fp, header)) {
 		fclose(fp);
 		fprintf(stderr, "Your database file uses different format %u (current is %u).\n"
-				"Please run 'update-eix' and try again.\n", uint(header.version), uint(DBHeader::current));
+				"Please run 'update-eix' and try again.\n", header.version, DBHeader::current);
 		exit(1);
 	}
 

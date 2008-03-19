@@ -290,7 +290,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			default:
 				finish();
 				{
-					throw ExBasic("Unsupported pickle value %r") % uint(curr);
+					throw ExBasic("Unsupported pickle value %r") % int(curr);
 					// prev = curr;
 					return;
 				}
