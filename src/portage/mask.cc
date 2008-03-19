@@ -27,14 +27,18 @@ using namespace std;
 /** Data-driven programming is nice :).
  * Must be in order .. no previous operator is allowed to be a prefix of a
  * following operator. */
-Mask::OperatorTable Mask::operators[] = {
-	{ "<=", Mask::maskOpLessEqual },
-	{ "<" , Mask::maskOpLess },
-	{ ">=", Mask::maskOpGreaterEqual },
-	{ ">" , Mask::maskOpGreater },
-	{ "=" , Mask::maskOpEqual },
-	{ "~" , Mask::maskOpRevisions },
-	{ ""  , Mask::maskOpAll /* this must be the last one */ }
+static const struct OperatorTable {
+	const char *str;
+	unsigned char len;
+	Mask::Operator op;
+} operators[] = {
+	{ "<=", 2, Mask::maskOpLessEqual },
+	{ "<" , 1, Mask::maskOpLess },
+	{ ">=", 2, Mask::maskOpGreaterEqual },
+	{ ">" , 1, Mask::maskOpGreater },
+	{ "=" , 1, Mask::maskOpEqual },
+	{ "~" , 1, Mask::maskOpRevisions },
+	{ ""  , 0, Mask::maskOpAll /* this must be the last one */ }
 };
 
 /** Constructor. */
@@ -49,19 +53,18 @@ void
 Mask::parseMask(const char *str) throw(ExBasic)
 {
 	// determine comparison operator
-	unsigned int i = 0;
-	for(; operators[i].str != NULL; ++i)
+	for(unsigned int i = 0;
+		i < sizeof(operators) / sizeof(OperatorTable);
+		++i)
 	{
-		if(strncmp(str, operators[i].str,
-		           strlen(operators[i].str)) == 0)
+		if(strncmp(str, operators[i].str, operators[i].len) == 0)
 		{
 			m_operator = operators[i].op;
+			// Skip the operator-part
+			str += strlen(operators[i].str);
 			break;
 		}
 	}
-
-	// Skip the operator-part
-	str += strlen(operators[i].str);
 
 	// Get the category
 	const char *p = str;

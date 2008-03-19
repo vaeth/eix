@@ -49,13 +49,6 @@ class Mask : public BasicVersion {
 			maskOpRevisions, maskOpGlob
 		} Operator;
 
-		typedef struct {
-			const char *str;
-			Mask::Operator op;
-		} OperatorTable;
-
-		static OperatorTable operators[];
-
 	private:
 		Operator m_operator; /**< Operator for mask. */
 		Type m_type;   /**< Mask type for this mask. */
