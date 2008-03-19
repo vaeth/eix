@@ -266,34 +266,6 @@ if test -n "${UNIQUE_WORKS}"; then
 	AC_DEFINE(UNIQUE_WORKS,1, Define to 1 if std::unique() works reliable)
 fi
 
-dnl Do we have -Wl,--as-needed?
-AC_MSG_CHECKING(if --as-needed works)
-AC_ARG_ENABLE(  as_needed,[  --enable-as-needed      enable -Wl,--as-needed ], [
-		case "${enableval}" in
-			yes) as_needed="1";;
-			no)  as_needed="";;
-			*) AC_MSG_ERROR(bad value ${enableval} for --enable-as_needed);;
-		esac
-	],[
-		as_needed="unknown"
-	])
-if test x"${as_needed}" = x"unknown"; then
-	ac_old_ldflags="${LDFLAGS}"
-	LDFLAGS="-Wl,--as-needed"
-	AC_TRY_LINK(
-		[],
-		[],
-		[as_needed="1"],
-		[as_needed=""])
-	LDFLAGS="${ac_old_ldflags}"
-fi
-if test -n "$as_needed"; then
-	AC_MSG_RESULT(yes)
-	LDFLAGS="${LDFLAGS} -Wl,--as-needed"
-else
-	AC_MSG_RESULT(no)
-fi
-
 dnl What about sqlite?
 AC_ARG_WITH(sqlite,[  --with-sqlite           Compile in support for cache method sqlite ],[
 		if test "x${withval}" = "xno"; then

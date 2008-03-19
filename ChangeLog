@@ -26,6 +26,7 @@
 	- Removing uint(..), as most are not needed (they are applied to
 	  unsigned values) and the char conversion can be done with int(..).
 	  http://bugs.gentoo.org/show_bug.cgi?id=213769
+	- Kill --as-needed, see http://bugs.gentoo.org/show_bug.cgi?id=213199
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
@@ -1083,3 +1084,5 @@
 
 	xororand <xororand at users.sourceforge.net>:
 	- Renamed portagedb to eix
+
+# vim:set ts=8 tw=78 noet:
