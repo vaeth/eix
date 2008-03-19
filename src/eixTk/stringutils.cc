@@ -275,7 +275,7 @@ StringHash::get_index(const string &s) const
 	return i->second;
 }
 
-string
+const string&
 StringHash::operator[](StringHash::size_type i) const
 {
 	if(i >= size()) {

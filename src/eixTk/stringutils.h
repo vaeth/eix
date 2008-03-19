@@ -200,7 +200,7 @@ class StringHash : public std::vector<std::string>
 
 		void output(const char *s = NULL) const;
 
-		std::string operator[](StringHash::size_type i) const;
+		const std::string& operator[](StringHash::size_type i) const;
 	private:
 		bool hashing, finalized;
 		std::map<std::string, StringHash::size_type> str_map;
