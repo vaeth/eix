@@ -38,6 +38,8 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
+typedef unsigned int PercentU; /// The type for %u
+
 using namespace std;
 
 static int  is_current_dbversion(const char *filename);
@@ -528,8 +530,10 @@ run_eix(int argc, char** argv)
 
 	if(!io::read_header(fp, header)) {
 		fclose(fp);
-		fprintf(stderr, "Your database file uses different format %u (current is %u).\n"
-				"Please run 'update-eix' and try again.\n", header.version, DBHeader::current);
+		fprintf(stderr, "%s was created with an incompatible update-eix:\n"
+				"It uses database format %u (current is %u).\n"
+				"Please run 'update-eix' and try again.\n",
+				cachefile.c_str(), PercentU(header.version), PercentU(DBHeader::current));
 		exit(1);
 	}
 

@@ -88,20 +88,20 @@ class ESMAlgorithm : public BaseAlgorithm {
 class FuzzyAlgorithm : public BaseAlgorithm {
 
 	protected:
-		int max_levenshteindistance;
+		unsigned int max_levenshteindistance;
 
 		/** FIXME: We need to have a package->levenshtein mapping that we can
 		 * access from the static FuzzyAlgorithm::compare.
 		 * I really don't know how to do this .. */
-		static std::map<std::string, int> levenshtein_map;
+		static std::map<std::string, unsigned int> levenshtein_map;
 
 	public:
-		FuzzyAlgorithm(int max) {
+		FuzzyAlgorithm(unsigned int max) {
 			max_levenshteindistance = max;
 		}
 
 		bool operator () (const char *s, Package *p) {
-			int  d  = get_levenshtein_distance(search_string.c_str(), s);
+			unsigned int  d  = get_levenshtein_distance(search_string.c_str(), s);
 			bool ok = (d <= max_levenshteindistance);
 			if(ok)
 			{

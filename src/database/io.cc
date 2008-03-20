@@ -34,6 +34,12 @@ namespace io {
 	void write_Part(FILE *fp, const BasicVersion::Part &n);
 }
 
+void
+io::eof()
+{
+	cerr << "unexpected end of file or read error" << endl;
+}
+
 /** Read a string */
 string
 io::read_string(FILE *fp)
@@ -41,9 +47,8 @@ io::read_string(FILE *fp)
 	string::size_type len = io::read<string::size_type>(fp);
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
-	if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
-		cerr << "unexpected end of file" << endl;
-	}
+	if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)
+		io::eof();
 	return string(buf.get());
 }
 

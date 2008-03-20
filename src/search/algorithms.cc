@@ -16,4 +16,4 @@ using namespace std;
 
 #include "algorithms.h"
 
-map<string, int> FuzzyAlgorithm::levenshtein_map;
+map<string, unsigned int> FuzzyAlgorithm::levenshtein_map;

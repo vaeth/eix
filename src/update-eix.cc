@@ -34,6 +34,8 @@
 
 #define INFO printf
 
+typedef unsigned int PercentU; /// The type for %u
+
 using namespace std;
 
 static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels);
@@ -455,7 +457,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%u] \"%s\" %s (cache: %s)\n", key, overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+		INFO("[%u] \"%s\" %s (cache: %s)\n", PercentU(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
 		INFO("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
@@ -524,6 +526,6 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	fclose(database_stream);
 
 	INFO("Database contains %u packages in %u categories.\n",
-		package_tree.countPackages(), dbheader.size);
+		PercentU(package_tree.countPackages()), PercentU(dbheader.size));
 }
 

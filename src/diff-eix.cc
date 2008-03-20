@@ -43,6 +43,8 @@
 
 #define INFO printf
 
+typedef unsigned int PercentU; /// The type for %u
+
 using namespace std;
 
 static PortageSettings *portagesettings;
@@ -126,8 +128,9 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 
 	if(!io::read_header(fp, *header)) {
 		fclose(fp);
-		fprintf(stderr, "%s uses an obsolete database format (%u, current is %u).\n",
-				file, header->version, DBHeader::current);
+		fprintf(stderr, "%s was created with an incompatible update-eix:\n"
+				"It uses database format %u (current is %u).\n",
+				file, PercentU(header->version), PercentU(DBHeader::current));
 		exit(1);
 	}
 

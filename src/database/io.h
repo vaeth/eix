@@ -26,9 +26,17 @@ class PackageTree;
 #define MAGICNUMCHAR 0xFF
 
 namespace io {
+	void eof();
+
 	inline static UChar
 	readUChar(FILE *fp)
-	{ return fgetc(fp); }
+	{
+		int c = fgetc(fp);
+		if(c != EOF)
+			return UChar(c);
+		io::eof();
+		return 0;
+	}
 
 	inline static void
 	writeUChar(FILE *fp, UChar c)
