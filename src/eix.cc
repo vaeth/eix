@@ -38,8 +38,6 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
-typedef unsigned int PercentU; /// The type for %u
-
 using namespace std;
 
 static int  is_current_dbversion(const char *filename);

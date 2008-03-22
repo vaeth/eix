@@ -34,8 +34,6 @@
 
 #define INFO printf
 
-typedef unsigned int PercentU; /// The type for %u
-
 using namespace std;
 
 static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels);
@@ -196,6 +194,8 @@ static struct Option long_options[] = {
 
 	 Option(0 ,                0)
 };
+
+static PercentStatus *reading_percent_status;
 
 class Pathname {
 	private:
@@ -425,10 +425,9 @@ run_update_eix(int argc, char *argv[])
 static void
 error_callback(const string &str)
 {
-	fputs("\n", stdout);
-	fputs(str.c_str(), stdout);
-	fputs("\n", stdout);
-	INFO("     Reading    %%");
+	reading_percent_status->interprint_start();
+	cerr << str << endl;
+	reading_percent_status->interprint_end();
 }
 
 static void
@@ -458,32 +457,29 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->setErrorCallback(error_callback);
 
 		INFO("[%u] \"%s\" %s (cache: %s)\n", PercentU(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
-		INFO("     Reading ");
+		reading_percent_status = new PercentStatus("     Reading ");
 		if(cache->can_read_multiple_categories())
 		{
-			PercentStatus percent_status(1);
+			reading_percent_status->start(1);
 			cache->setErrorCallback(error_callback);
-			if(cache->readCategories(&package_tree, categories)) {
-				++percent_status;
-			}
-			else {
-				INFO("\b\b\b\baborted\n");
-			}
+			if(cache->readCategories(&package_tree, categories))
+				++(*reading_percent_status);
+			else
+				reading_percent_status->reprint("aborted\n");
 		}
 		else
 		{
-			PercentStatus percent_status(categories->size());
+			reading_percent_status->start(categories->size());
 
 			/* iterator through categories */
 			for(vector<string>::iterator ci = categories->begin();
 				ci != categories->end();
 				++ci)
 			{
-				if(cache->readCategory(package_tree[*ci])) {
-					++percent_status;
-				}
+				if(cache->readCategory(package_tree[*ci]))
+					++(*reading_percent_status);
 				else {
-					INFO("\b\b\b\baborted\n");
+					reading_percent_status->reprint("aborted\n");
 					break;
 				}
 			}

@@ -43,8 +43,6 @@
 
 #define INFO printf
 
-typedef unsigned int PercentU; /// The type for %u
-
 using namespace std;
 
 static PortageSettings *portagesettings;

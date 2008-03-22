@@ -6,8 +6,7 @@
 	  path, not just the name of the file); Remove configmake.h and add
 	  SYSCONFDIR to AM_CXXFLAGS (as mentioned in the autoconf manual);
 	  "make distcheck" works again.
-	- BasicVersion: Store m_parts as list, so we don't have reallocation
-	  overhead.
+	- BasicVersion: Store m_parts as list (avoids reallocation overhead).
 	- Version: hold iuse as vector, not as string so we don't need to
 	  split/join so much. Join vector only on request and cache result.
 	- Package: Do not split/join collected iuse everytime a version is
@@ -23,22 +22,22 @@
 	- Move stdint.h stuff into eixTk/inttypes.h and include. Add static
 	  assertion macro EIX_STATIC_ASSERT. Add database/types.h and include
 	  if needed.
-	- Removing uint(..), as most are not needed (they are applied to
-	  unsigned values) and the char conversion can be done with int(..).
-	  http://bugs.gentoo.org/show_bug.cgi?id=213769
+	- Remove uint, see http://bugs.gentoo.org/show_bug.cgi?id=213769
 	- Kill --as-needed, see http://bugs.gentoo.org/show_bug.cgi?id=213199
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix REDUNDANT_IF_DOUBLE_{UN,}MASKED in eix-test-obsolete.
-	- Fix signal handling for *ebuild* cache methods.
-	- Improve treatment of argv[0] (for --help).
-	- Make metadata and flat/portage-2.0 use the same functions.
 	- Introduce metadata:PATH and flat:PATH to allow usage of metadata
 	  calculated by paludis. Thanks for the idea to
 	  Leonardo Valeri Manera <l.valerimanera at gmail.com>
-	- Honour EPREFIX_PORTAGE_EXEC in parse{*,}|ebuild{*,}. This should fix
+	- Fix signal handling for ebuild* (and parse{,*}|ebuild*) cache.
+	- Honour EPREFIX_PORTAGE_EXEC in parse{,*}|ebuild{,*}. This should fix
 	  http://bugs.gentoo.org/show_bug.cgi?id=213248
 	  Thanks to Fabian Groffen <grobian at gentoo.org> for finding out.
+	- Improve treatment of argv[0] (for --help).
+	- Merge implementation of metadata and flat/portage-2.0.
+	- Improve interplay of error messages and percent status.
+	- Avoid some hangs on damaged eix files.
 
 *eix-0.12.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

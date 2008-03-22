@@ -35,46 +35,57 @@ bool pushback_files(const std::string &dir_path, std::vector<std::string> &into,
  * to the value with the same key in append_to. */
 void join_map(std::map<std::string,std::string> *append_to, std::map<std::string,std::string>::iterator it, std::map<std::string,std::string>::iterator it_end);
 
+typedef unsigned int PercentU; /// The type for %u
+
 /** A percent status for stdout.
  * Only shows a status */
 class PercentStatus {
+	protected:
+		std::string m_prefix;
+		static const unsigned int hundred = 100;
+		unsigned int m_max, m_run;
+		bool on_start;
 	public:
-		/** Calculacte step-width.
-		 * @param max number of steps you want to do. */
-		PercentStatus(unsigned int max = 0)
+		void reprint(const char *special = NULL, bool back = true) const
 		{
-			m_max = m_run = 0;
-			if(max != 0) {
-				start(max);
-			}
+			if(back)
+				fputs("\b\b\b\b", stdout);
+			if(special)
+				puts(special);
+			else if(on_start)
+				fputs("  0%", stdout);
+			else if(m_run >= m_max)
+				puts("100%");
+			else
+				printf("%3u%%", PercentU((hundred * m_run) / m_max));
+			fflush(stdout);
 		}
 
-		/** Start status. */
+		void interprint_start()
+		{ reprint("", false); }
+
+		void interprint_end(const char *special = NULL)
+		{ fputs(m_prefix.c_str(), stdout); reprint(special, false); }
+
+		void init(unsigned int max)
+		{ m_max = max; m_run = 0; on_start = true; }
+
+		PercentStatus(const char *prefix) : m_prefix(prefix)
+		{ init(0); }
+
+		/** Start status.
+		 * @param max number of steps you want to do. */
 		void start(unsigned int max)
-		{
-			m_max = max;
-			m_run = 0;
-			printf("  0%%");
-		}
+		{ init(max); interprint_end(); }
 
 		/** Print next step. */
 		void operator ++()
 		{
-			if(++m_run == m_max)
-			{
-				puts("\b\b\b\b" "100%");
-				fflush(stdout);
-				return;
-			}
-
-			printf("\b\b\b\b" "%3u%%", (hundred * m_run) / m_max );
-			fflush(stdout);
+			on_start = false;
+			if(m_run < m_max)
+				m_run++;
+			reprint(NULL, true);
 		}
-
-	protected:
-		static const unsigned int hundred = 100;
-		unsigned int m_max, /**<Number of steps. */
-					 m_run;
 };
 
 /* Print version of eix to stdout. */
