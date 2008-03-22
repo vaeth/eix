@@ -100,7 +100,7 @@ ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_p
 			ebuild.read(ebuild_name.c_str());
 		}
 		catch(const ExBasic &e) {
-			m_error_callback(eix::format("Could not properly parse %s: %s") % ebuild_name % e);
+			m_error_callback(eix::format("Could not properly parse %s: %s") % ebuild_name % e.getMessage());
 		}
 
 		bool ok = true;

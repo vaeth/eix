@@ -36,6 +36,9 @@
 	- Introduce metadata:PATH and flat:PATH to allow usage of metadata
 	  calculated by paludis. Thanks for the idea to
 	  Leonardo Valeri Manera <l.valerimanera at gmail.com>
+	- Honour EPREFIX_PORTAGE_EXEC in parse{*,}|ebuild{*,}. This should fix
+	  http://bugs.gentoo.org/show_bug.cgi?id=213248
+	  Thanks to Fabian Groffen <grobian at gentoo.org> for finding out.
 
 *eix-0.12.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
