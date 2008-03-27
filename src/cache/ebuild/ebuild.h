@@ -22,7 +22,7 @@ class EbuildCache : public BasicCache {
 			ebuild_exec(use_sh, this)
 		{ }
 
-		void readPackage(Category &vec, const char *pkg_name, std::string *directory_path, struct dirent **list, int numfiles) throw(ExBasic);
+		void readPackage(Category &vec, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
 		bool readCategory(Category &vec) throw(ExBasic);
 
 		bool use_prefixport() const

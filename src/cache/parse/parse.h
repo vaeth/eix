@@ -22,7 +22,7 @@ class ParseCache : public BasicCache {
 		EbuildExec *ebuild_exec;
 
 		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULL);
-		void readPackage(Category &vec, const char *pkg_name, std::string *directory_path, struct dirent **list, size_t numfiles) throw(ExBasic);
+		void readPackage(Category &vec, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
 	public:
 		ParseCache(bool no_substitute = false, bool mixed = false, bool use_sh = false) :
 			BasicCache(),

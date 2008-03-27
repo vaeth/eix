@@ -132,6 +132,7 @@ ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
 	}
 	fprintf(stderr, "Unknown option --%s\n", long_opt);
 	exit(-1);
+	return -1;// never reached, but might avoid compiler warning
 }
 
 /** Check if short_opt is a known option.
@@ -148,6 +149,7 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 	}
 	fprintf(stderr, "Unknown option -%c\n", short_opt);
 	exit(-1);
+	return -1;// never reached, but might avoid compiler warning
 }
 
 void

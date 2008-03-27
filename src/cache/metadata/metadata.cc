@@ -12,13 +12,12 @@
 
 #include <eixTk/stringutils.h>
 #include <eixTk/formated.h>
+#include <eixTk/utils.h>
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
 #include <dirent.h>
-
-#include <config.h>
 
 using namespace std;
 
@@ -67,13 +66,15 @@ MetadataCache::getType() const
 	return s.c_str();
 }
 
-static int cachefiles_selector (SCANDIR_ARG3 dent)
+static int
+cachefiles_selector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
+bool
+MetadataCache::readCategory(Category &vec) throw(ExBasic)
 {
 	string catpath;
 	if(have_override_path) {
@@ -96,21 +97,21 @@ bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 	if(catpath.empty() || (*(catpath.rbegin()) != '/'))
 		catpath.append("/");
 	catpath.append(vec.name);
-	struct dirent **dents;
-	int numfiles = my_scandir(catpath.c_str(), &dents, cachefiles_selector, alphasort);
-	char **aux = NULL;
+	vector<string> names;
+	if(!scandir_cc(catpath, names, cachefiles_selector))
+		return false;
 
-	for(int i = 0; i < numfiles; )
+	for(vector<string>::const_iterator it = names.begin();
+		it != names.end(); )
 	{
 		Version *version;
 		Version *newest = NULL;
 
 		/* Split string into package and version, and catch any errors. */
-		aux = ExplodeAtom::split(dents[i]->d_name);
-		if(aux == NULL)
-		{
-			m_error_callback(eix::format("Can't split %r into package and version") % dents[i]->d_name);
-			++i;
+		char **aux = ExplodeAtom::split(it->c_str());
+		if(!aux) {
+			m_error_callback(eix::format("Can't split %r into package and version") % (*it));
+			++it;
 			continue;
 		}
 
@@ -118,7 +119,7 @@ bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		Package *pkg = vec.findPackage(aux[0]);
 
 		/* If none was found create one */
-		if(pkg == NULL)
+		if(!pkg)
 			pkg = vec.addPackage(aux[0]);
 
 		do {
@@ -127,7 +128,7 @@ bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords, iuse, restr;
-			flat_get_keywords_slot_iuse_restrict(catpath + "/" + dents[i]->d_name, keywords, version->slotname, iuse, restr, m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(catpath + "/" + (*it), keywords, version->slotname, iuse, restr, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);
@@ -137,39 +138,29 @@ bool MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			if(*(pkg->latest()) == *version)
 				newest = version;
 
-			/* If this is the last file we break so we can get the full
-			 * information after this while-loop. If we still have more files
-			 * ahead we can just read the next file. */
-			if(++i == numfiles)
-				break;
-
 			/* Free old split */
 			free(aux[0]);
 			free(aux[1]);
 
+			/* If this is the last file we break so we can get the full
+			 * information after this while-loop. If we still have more files
+			 * ahead we can just read the next file. */
+			if(++it == names.end())
+				break;
+
 			/* Split new filename into package and version, and catch any errors. */
-			aux = ExplodeAtom::split(dents[i]->d_name);
+			aux = ExplodeAtom::split(it->c_str());
 			if(!aux) {
-				m_error_callback(eix::format("Can't split %r into package and version") % dents[i]->d_name);
+				m_error_callback(eix::format("Can't split %r into package and version") % (*it));
+				++it;
 				break;
 			}
-		} while(strcmp(aux[0], pkg->name.c_str()) == 0);
-		if(aux)
-		{
-			free(aux[0]);
-			free(aux[1]);
-		}
+		} while(!strcmp(aux[0], pkg->name.c_str()));
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			flat_read_file(string(catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
+			flat_read_file((catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
 	}
 
-	if(numfiles > 0)
-	{
-		for(int i = 0; i < numfiles; i++ )
-			free(dents[i]);
-		free(dents);
-	}
 	return true;
 }

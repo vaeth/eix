@@ -108,9 +108,6 @@
 /* default ROOT */
 #undef ROOT_DEFAULT
 
-/* "3rd argument of scandir" */
-#undef SCANDIR_ARG3
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
@@ -148,9 +145,6 @@
    <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
    #define below would cause a syntax error. */
 #undef _UINT8_T
-
-/* possible cast for scandir */
-#undef my_scandir
 
 /* Define to the type of an unsigned integer type of width exactly 16 bits if
    such a type exists and the standard includes do not define it. */

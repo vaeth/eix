@@ -17,15 +17,10 @@
 #include <portage/version.h>
 #include <portage/packagetree.h>
 
-#include <map>
-
-#include <dirent.h>
-#include <unistd.h>
-
 using namespace std;
 
 void
-EbuildCache::readPackage(Category &vec, const char *pkg_name, string *directory_path, struct dirent **list, int numfiles) throw(ExBasic)
+EbuildCache::readPackage(Category &vec, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -35,22 +30,23 @@ EbuildCache::readPackage(Category &vec, const char *pkg_name, string *directory_
 	else
 		pkg = vec.addPackage(pkg_name);
 
-	for(int i = 0; i<numfiles; ++i)
+	for(vector<string>::const_iterator it = files.begin();
+		it != files.end(); ++it)
 	{
 		/* Check if this is an ebuild  */
-		char* dotptr = strrchr(list[i]->d_name, '.');
-		if( !(dotptr) || strcmp(dotptr,".ebuild") )
+		string::size_type pos = it->length();
+		static const string::size_type append_size = 7;
+		if(pos <= append_size)
+			continue;
+		pos -= append_size;
+		if(it->compare(pos, append_size, ".ebuild"))
 			continue;
 
-		/* For splitting the version, we cut off the .ebuild */
-		*dotptr = '\0';
 		/* Check if we can split it */
-		char* ver = ExplodeAtom::split_version(list[i]->d_name);
-		/* Restore the old value */
-		*dotptr = '.';
-		if(ver == NULL) {
+		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());
+		if(!ver) {
 			m_error_callback(eix::format("Can't split filename of ebuild %s/%s") %
-				(*directory_path) % list[i]->d_name);
+				directory_path % (*it));
 			continue;
 		}
 
@@ -58,20 +54,20 @@ EbuildCache::readPackage(Category &vec, const char *pkg_name, string *directory_
 		Version *version = new Version(ver);
 		pkg->addVersionStart(version);
 
-		/* Exectue the external program to generate cachefile */
-		string full_path = *directory_path + '/' + list[i]->d_name;
-		string *cachefile = ebuild_exec.make_cachefile(full_path.c_str(), *directory_path, *pkg, *version);
-		if(!cachefile)
-		{
+		/* Execute the external program to generate cachefile */
+		string full_path = directory_path + '/' + (*it);
+		string *cachefile = ebuild_exec.make_cachefile(full_path.c_str(), directory_path, *pkg, *version);
+		if(!cachefile) {
 			m_error_callback(eix::format("Could not properly execute %s") % full_path);
 			continue;
 		}
 
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;
-		if( have_onetime_info )
+		if(have_onetime_info) {
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
+		}
 		version->overlay_key = m_overlay_key;
 		string keywords, iuse, restr;
 		try {
@@ -79,15 +75,13 @@ EbuildCache::readPackage(Category &vec, const char *pkg_name, string *directory_
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);
-			if(read_onetime_info)
-			{
+			if(read_onetime_info) {
 				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 				have_onetime_info = true;
 			}
 		}
 		catch(const ExBasic &e) {
-			cerr << "Executing " << full_path <<
-				" did not produce all data.";
+			m_error_callback(eix::format("Executing %s did not produce all data") % full_path);
 			// We keep the version anyway, even with wrong keywords/slots/infos:
 			have_onetime_info = true;
 		}
@@ -96,41 +90,27 @@ EbuildCache::readPackage(Category &vec, const char *pkg_name, string *directory_
 		ebuild_exec.delete_cachefile();
 	}
 
-	if(!have_onetime_info) {
+	if(!have_onetime_info)
 		vec.deletePackage(pkg_name);
-	}
 }
 
 bool
 EbuildCache::readCategory(Category &vec) throw(ExBasic)
 {
-	struct dirent **packages= NULL;
+	vector<string> packages;
 
 	string catpath = m_prefix + m_scheme + '/' + vec.name;
-	int numpackages = my_scandir(catpath.c_str(),
-			&packages, package_selector, alphasort);
+	if(!scandir_cc(catpath, packages, package_selector))
+		return false;
 
-	for(int i = 0; i < numpackages; ++i)
-	{
-		struct dirent **files = NULL;
-		string pkg_path = catpath + '/' + packages[i]->d_name;
+	for(vector<string>::const_iterator pit = packages.begin();
+		pit != packages.end(); ++pit) {
+		vector<string> files;
+		string pkg_path = catpath + '/' + (*pit);
 
-		int numfiles = my_scandir(pkg_path.c_str(),
-				&files, ebuild_selector, alphasort);
-		if(numfiles > 0)
-		{
-			readPackage(vec, packages[i]->d_name, &pkg_path, files, numfiles);
-			for(int j=0; j<numfiles; j++ )
-				free(files[j]);
-			free(files);
-		}
+		if(scandir_cc(pkg_path, files, ebuild_selector))
+			readPackage(vec, *pit, pkg_path, files);
 	}
-
-	for(int i = 0; i < numpackages; i++ )
-		free(packages[i]);
-	if(numpackages > 0)
-		free(packages);
-
 	return true;
 }
 

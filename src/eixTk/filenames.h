@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include <dirent.h>
+
 /** canonicalize_file_name() if possible or some substitute */
 std::string normalize_path(const char *path, bool resolve = true);
 

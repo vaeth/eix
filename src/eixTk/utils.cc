@@ -16,6 +16,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/stringutils.h>
 
+#include <algorithm>
 #include <fstream>
 #include <sys/types.h>
 #include <dirent.h>
@@ -23,12 +24,34 @@
 #include <unistd.h>
 #include <cstdlib>
 
+
 using namespace std;
 
 const unsigned int PercentStatus::hundred;
 
+bool
+scandir_cc(const string &dir, std::vector<std::string> &namelist, select_dirent select, bool sorted)
+{
+	namelist.clear();
+	DIR *dirhandle = opendir(dir.c_str());
+	if(!dirhandle)
+		return false;
+	const struct dirent *d;
+	while((d = readdir(dirhandle)) != NULL) {
+		const char *name = d->d_name;
+		// Omit "." and ".." since we must not rely on their existence anyway
+		if(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))
+			namelist.push_back(name);
+	}
+	closedir(dirhandle);
+	if(sorted)
+		sort(namelist.begin(), namelist.end());
+	return true;
+}
+
 /** push_back every line of file into v. */
-bool pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments)
+bool
+pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments)
 {
 	string line;
 	ifstream ifstr(file);
@@ -92,7 +115,8 @@ static const char **pushback_files_exclude;
 static bool pushback_files_no_hidden;
 static short pushback_files_only_type;
 static const string *pushback_files_dir_path; // defined if pushback_files_only_type is nonzero
-int pushback_files_selector(SCANDIR_ARG3 dir_entry)
+int
+pushback_files_selector(SCANDIR_ARG3 dir_entry)
 {
 	// Empty names shouldn't occur. Just to be sure, we ignore them:
 	if(!((dir_entry->d_name)[0]))
@@ -110,9 +134,9 @@ int pushback_files_selector(SCANDIR_ARG3 dir_entry)
 	}
 	if(pushback_files_exclude)
 	{
-		const char **_p = pushback_files_exclude;
-		for( ; *_p ; ++_p) /* Look if it's in exclude */
-			if(strcmp(*_p, dir_entry->d_name) == 0)
+		// Look if it's in exclude
+		for(const char **p = pushback_files_exclude ; *p ; ++p)
+			if(strcmp(*p, dir_entry->d_name) == 0)
 				return 0;
 	}
 	if(!pushback_files_only_type)
@@ -120,12 +144,14 @@ int pushback_files_selector(SCANDIR_ARG3 dir_entry)
 	struct stat static_stat;
 	if(stat(((*pushback_files_dir_path) + dir_entry->d_name).c_str(), &static_stat))
 		return 0;
-	if(pushback_files_only_type & 1)
+	if(pushback_files_only_type & 1) {
 		if(S_ISREG(static_stat.st_mode))
 			return 1;
-	if(pushback_files_only_type & 2)
+	}
+	if(pushback_files_only_type & 2) {
 		if(S_ISDIR(static_stat.st_mode))
 			return 1;
+	}
 	return 0;
 }
 
@@ -146,22 +172,16 @@ bool pushback_files(const string &dir_path, vector<string> &into, const char *ex
 	pushback_files_only_type = only_type;
 	if(only_type)
 		pushback_files_dir_path = &dir_path;
-	struct dirent **namelist = NULL;
-	int num = my_scandir(dir_path.c_str(), &namelist,
-		pushback_files_selector, alphasort);
-
-	if(num < 0)
+	vector<string> namelist;
+	if(!scandir_cc(dir_path, namelist, pushback_files_selector))
 		return false;
-
-	for(int i = 0; i < num; ++i)
-	{
+	for(vector<string>::const_iterator it = namelist.begin();
+		it != namelist.end(); ++it) {
 		if(full_path)
-			into.push_back(dir_path + (namelist[i]->d_name));
+			into.push_back(dir_path + (*it));
 		else
-			into.push_back(namelist[i]->d_name);
-		free(namelist[i]);
+			into.push_back(*it);
 	}
-	free(namelist);
 	return true;
 }
 

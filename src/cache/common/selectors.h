@@ -10,8 +10,7 @@
 #ifndef __SELECTORS_H__
 #define __SELECTORS_H__
 
-#include <config.h>
-#include <dirent.h>
+#include <eixTk/utils.h>
 
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);

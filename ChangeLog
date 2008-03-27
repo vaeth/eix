@@ -2,6 +2,16 @@
 
 *eix-0.12.2
 	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fix sqlite error messages
+
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to
+	  Jeremy <jer.gentoo at gmail.com> for the hints, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=195411
+	- Fix possible endless loop for cache method metadata and portage-2.1
+
+*eix-0.12.2
+	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Replace "$@.in" with "$<" in Makefile.am (which gives us the real
 	  path, not just the name of the file); Remove configmake.h and add
 	  SYSCONFDIR to AM_CXXFLAGS (as mentioned in the autoconf manual);

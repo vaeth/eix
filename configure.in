@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.12.2, http://sourceforge.net/projects/eix/)
+AC_INIT(eix, 0.12.3, http://sourceforge.net/projects/eix/)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -79,61 +79,6 @@ AC_TRY_COMPILE([ # include <stdint.h>
 AC_CHECK_PROGS(regex_cmd, sed)
 if test x$regex_cmd = "x"; then
 	  AC_MSG_ERROR([error. sed is required to build the manpage.])
-fi
-
-dnl Check what type of argument scandir wants
-AC_MSG_CHECKING(if scandir argument is const struct dirent * or struct dirent *)
-AC_TRY_COMPILE([ #include <dirent.h>
-],
-[
-  const char * dir = 0;
-  struct dirent ***namelist = 0;
-  int (*select)(const struct dirent *) = 0;
-  scandir(dir, namelist, select, alphasort);
-],
-[AC_MSG_RESULT(const struct dirent *)
- SCANDIR_ARG3="const struct dirent *"
- SCANDIR_CAST=false
-],
-[
-	AC_TRY_COMPILE([ #include <dirent.h>
-	],
-	[
-	  const char * dir = 0;
-	  struct dirent ***namelist = 0;
-	  int (*select)(struct dirent *) = 0;
-	  scandir(dir, namelist, select, alphasort);
-	],
-	[AC_MSG_RESULT(struct dirent *)
-	 SCANDIR_ARG3="struct dirent *"
-	 SCANDIR_CAST=false
-	],
-	[AC_MSG_RESULT(neither...)
-	 AC_MSG_CHECKING(if scandir argument is void)
-		AC_TRY_COMPILE([ #include <dirent.h>
-		],
-		[
-		  const char * dir = 0;
-		  struct dirent ***namelist = 0;
-		  int (*select)(const struct dirent *) = 0;
-		  scandir(dir, namelist, reinterpret_cast<int(*)()>(select), alphasort);
-		/*scandir(dir, namelist, reinterpret_cast<int(*)(const struct dirent *)>(select), alphasort);*/
-		],
-		[AC_MSG_RESULT(yes)
-		 SCANDIR_ARG3="const struct dirent *"
-		 SCANDIR_CAST=true
-		],
-		AC_MSG_ERROR(I don't know how to call scandir)
-		)
-	])
-])
-
-AC_DEFINE_UNQUOTED(SCANDIR_ARG3, ${SCANDIR_ARG3}, "3rd argument of scandir")
-if ${SCANDIR_CAST}; then
-	dnl AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,reinterpret_cast<int(*)()>(c),d), possible cast for scandir)
-	AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,reinterpret_cast<int(*)(const struct dirent *)>(c),d), possible cast for scandir)
-else
-	AC_DEFINE_UNQUOTED(my_scandir(a,b,c,d), scandir(a,b,c,d), possible cast for scandir)
 fi
 
 dnl Use bzip2?

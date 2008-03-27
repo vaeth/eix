@@ -8,19 +8,17 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "parse.h"
-
 #include <cache/common/selectors.h>
 #include <cache/common/flat-reader.h>
-#include <varsreader.h>
+
+#include <eixTk/stringutils.h>
+#include <eixTk/formated.h>
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/formated.h>
+#include <varsreader.h>
 
-#include <dirent.h>
-
-#include <config.h>
+#include <map>
 
 using namespace std;
 
@@ -44,7 +42,7 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 }
 
 void
-ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_path, struct dirent **list, size_t numfiles) throw(ExBasic)
+ParseCache::readPackage(Category &vec, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
@@ -54,34 +52,38 @@ ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_p
 	else
 		pkg = vec.addPackage(pkg_name);
 
-	for(size_t i = 0; i < numfiles; ++i)
+	for(vector<string>::const_iterator it = files.begin();
+		it != files.end(); ++it)
 	{
 		/* Check if this is an ebuild  */
-		char* dotptr = strrchr(list[i]->d_name, '.');
-		if( !(dotptr) || strcmp(dotptr,".ebuild") )
+		string::size_type pos = it->length();
+		static const string::size_type append_size = 7;
+		if(pos <= append_size)
+			continue;
+		pos -= append_size;
+		if(it->compare(pos, append_size, ".ebuild"))
 			continue;
 
-		/* For splitting the version, we cut off the .ebuild */
-		*dotptr = '\0';
 		/* Check if we can split it */
-		char* ver = ExplodeAtom::split_version(list[i]->d_name);
-		/* Restore the old value */
-		*dotptr = '.';
-		if(ver == NULL) {
+		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());
+		if(!ver) {
 			m_error_callback(eix::format("Can't split filename of ebuild %s/%s") %
-				(*directory_path) % list[i]->d_name);
+				directory_path % (*it));
 			continue;
 		}
-		string ebuild_name = (*directory_path) + '/' + list[i]->d_name;
 
 		/* Make version and add it to package. */
 		Version *version = new Version(ver);
 		pkg->addVersionStart(version);
+
+		string full_path = directory_path + '/' + (*it);
+
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;
-		if( have_onetime_info )
+		if( have_onetime_info ) {
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
+		}
 		/* read the ebuild */
 		VarsReader::Flags flags = VarsReader::NONE;
 		if(!read_onetime_info)
@@ -90,17 +92,17 @@ ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_p
 		if(!nosubst)
 		{
 			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
-			env_add_package(env, *pkg, *version, *directory_path, ebuild_name.c_str());
+			env_add_package(env, *pkg, *version, directory_path, full_path.c_str());
 		}
 		VarsReader ebuild(flags);
 		if(flags & VarsReader::INTO_MAP)
 			ebuild.useMap(&env);
 		version->overlay_key = m_overlay_key;
 		try {
-			ebuild.read(ebuild_name.c_str());
+			ebuild.read(full_path.c_str());
 		}
 		catch(const ExBasic &e) {
-			m_error_callback(eix::format("Could not properly parse %s: %s") % ebuild_name % e.getMessage());
+			m_error_callback(eix::format("Could not properly parse %s: %s") % full_path % e.getMessage());
 		}
 
 		bool ok = true;
@@ -122,14 +124,14 @@ ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_p
 			have_onetime_info = true;
 		}
 		if(!ok) {
-			string *cachefile = ebuild_exec->make_cachefile(ebuild_name.c_str(), *directory_path, *pkg, *version);
+			string *cachefile = ebuild_exec->make_cachefile(full_path.c_str(), directory_path, *pkg, *version);
 			if(cachefile) {
 				flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, m_error_callback);
 				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 				ebuild_exec->delete_cachefile();
 			}
 			else
-				m_error_callback(eix::format("Could not properly execute %s") % ebuild_name);
+				m_error_callback(eix::format("Could not properly execute %s") % full_path);
 		}
 
 		version->set_full_keywords(keywords);
@@ -147,37 +149,19 @@ ParseCache::readPackage(Category &vec, const char *pkg_name, string *directory_p
 
 bool ParseCache::readCategory(Category &vec) throw(ExBasic)
 {
-	struct dirent **packages= NULL;
+	vector<string> packages;
 
-	string catpath = m_prefix + m_scheme + "/" + vec.name;
-	int numpackages = my_scandir(catpath.c_str(),
-			&packages, package_selector, alphasort);
+	string catpath = m_prefix + m_scheme + '/' + vec.name;
+	if(!scandir_cc(catpath, packages, package_selector))
+		return false;
 
-	for(int i = 0; i < numpackages; ++i)
-	{
-		struct dirent **files = NULL;
-		string pkg_path = catpath + '/' + packages[i]->d_name;
+	for(vector<string>::const_iterator pit = packages.begin();
+		pit != packages.end(); ++pit) {
+		vector<string> files;
+		string pkg_path = catpath + '/' + (*pit);
 
-		int numfiles = my_scandir(pkg_path.c_str(),
-				&files, ebuild_selector, alphasort);
-		if(numfiles > 0)
-		{
-			try {
-				readPackage(vec, packages[i]->d_name, &pkg_path, files, size_t(numfiles));
-			}
-			catch(const ExBasic &e) {
-				cerr << "Error while reading " << pkg_path << ":\n" << e << endl;
-			}
-			for(int j = 0; j < numfiles; ++j)
-				free(files[j]);
-			free(files);
-		}
+		if(scandir_cc(pkg_path, files, ebuild_selector))
+			readPackage(vec, *pit, pkg_path, files);
 	}
-
-	for(int i = 0; i < numpackages; ++i)
-		free(packages[i]);
-	if(numpackages > 0)
-		free(packages);
-
 	return true;
 }

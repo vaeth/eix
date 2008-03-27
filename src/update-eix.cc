@@ -476,12 +476,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 				ci != categories->end();
 				++ci)
 			{
-				if(cache->readCategory(package_tree[*ci]))
-					++(*reading_percent_status);
-				else {
-					reading_percent_status->reprint("aborted\n");
-					break;
-				}
+				// ignore return value of bad categories
+				cache->readCategory(package_tree[*ci]);
+				++(*reading_percent_status);
 			}
 		}
 	}

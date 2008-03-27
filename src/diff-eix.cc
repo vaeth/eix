@@ -407,7 +407,7 @@ run_diff_eix(int argc, char *argv[])
 	DiffTrees differ(varpkg_db,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),
 		!eixrc.getBool("DIFF_NO_SLOTS"));
-	INFO("Diffing databases (%u - %u packages)\n", old_tree.countPackages(), new_tree.countPackages());
+	INFO("Diffing databases (%u - %u packages)\n", PercentU(old_tree.countPackages()), PercentU(new_tree.countPackages()));
 
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;

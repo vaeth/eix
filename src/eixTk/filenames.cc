@@ -8,6 +8,7 @@
 #include "filenames.h"
 #include <fnmatch.h>
 #include <cstdlib>
+#include <cstring>
 
 #if !defined(PATH_MAX)
 #if defined(MAXPATHLEN)

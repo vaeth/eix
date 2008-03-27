@@ -9,6 +9,7 @@
 
 #include "selectors.h"
 #include <cstring>
+#include <dirent.h>
 
 int package_selector (SCANDIR_ARG3 dent)
 {
