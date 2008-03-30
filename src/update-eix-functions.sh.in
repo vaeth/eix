@@ -142,7 +142,7 @@ ClearUpdateEixArgs() {
 
 CallUpdateEix() {
 	eval "set -- ${UPDATE_EIX_ARGS}"
-	RunCommand "Calling update-eix" update-eix "$@" || \
+	RunCommand "Calling update-eix" update-eix "${@}" || \
 		die "update-eix failed"
 }
 
@@ -150,10 +150,25 @@ AddLocalMethods() {
 	local I
 	GetPortdir
 	AddMethod "${LOCAL_PORTDIR}" "eix"
-	for I in `portageq portdir_overlay` $ADD_OVERLAY
+	for I in `portageq portdir_overlay` ${ADD_OVERLAY}
 	do
 		AddMethod "${I}" "eix::${I}"
 	done
+}
+
+# Remove optional trailing newline from all variables (arguments).
+# This is necessary as some shells won't take ${Var%"[newline]"}
+NEWLINE_STRING='
+'
+Chomp() {
+	local ChompA_ ChompB_ ChompC_
+	for ChompA_; do
+		eval "ChompB_=\"\${${ChompA_}}\""
+		ChompC_="${ChompB_%?}"
+		[ "${ChompC_}${NEWLINE_STRING}" = "${ChompB_}" ] &&
+			eval "${ChompA_}=\"\${ChompC_}\""
+	done
+	true
 }
 
 # Consider variables (arguments) as paths and normalize them.
@@ -180,9 +195,8 @@ NormalizeNames() {
 		esac
 		if ${HAVE_READLINK}; then
 			# Append A to avoid loss of trailing \n in `...`
-			NormB_=`readlink -f -- "${NormA_}" && echo -n A` &&
-				NormB="${NormB%A}" && NormB="${NormB%"
-"}" &&
+			NormB_=`readlink -f -- "${NormA_}" && echo A` && \
+				NormB_="${NormB_%A}" && Chomp NormB_ && \
 				[ -n "${NormB_}" ] && \
 					NormA_="${NormB_}"
 		fi
