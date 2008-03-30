@@ -50,7 +50,7 @@ class ExBasic : public std::exception
 		}
 
 		friend std::ostream& operator<< (std::ostream& os, const ExBasic& e)
-		{ return os << e.m_func << ": " << e.m_formated.str(); }
+		{ return os << e.m_func << ": " << e.getMessage(); }
 
 	protected:
 		std::string m_func;   ///< Function that threw us.
@@ -61,29 +61,46 @@ class ExBasic : public std::exception
 class SysError : public std::exception
 {
 	const std::string m_func;
-	const std::string m_message;
+	const std::string m_error;
+
+	eix::format m_formated; ///< Message formating.
+	mutable std::string m_cache; ///< Mesage that we got from m_formated;
 
 	public:
-		SysError(const char *func, const std::string& message, int error_number = 0)
-			: m_func(func), m_message(get_message(message, error_number))
+		SysError(const char *func, const std::string& format, int error_number = 0)
+			: m_func(func),
+			  m_error(strerror(error_number ? error_number : errno)),
+			  m_formated(format)
 		{ }
 
 		virtual ~SysError() throw() { }
 
+		/// Return reference to message.
+		const std::string& getMessage() const throw()
+		{
+			if (m_cache.empty()) {
+				m_cache = m_formated.str();
+				if (! m_cache.empty())
+					m_cache.append(": ");
+				m_cache.append(m_error);
+			}
+			return m_cache;
+		}
+
+		/// @see std::exception::what()
 		const char *what() const throw()
-		{ return m_message.c_str(); }
+		{ return getMessage().c_str(); }
+
+		/// Replace placeholder in format string.
+		template<typename T>
+		SysError &operator % (const T& t)
+		{
+			m_formated % t;
+			return *this;
+		}
 
 		friend std::ostream& operator<< (std::ostream& os, const SysError& e)
-		{ return os << e.m_func << ": " << e.what(); }
-
-	protected:
-		static std::string get_message(const std::string& message, int error_number)
-		{
-			const std::string error_text(strerror(error_number ? error_number : errno));
-			if (message.empty())
-				return std::string("system error: ") + error_text;
-			return message + ": " + error_text;
-		}
+		{ return os << e.m_func << ": " << e.getMessage(); }
 };
 
 /// Automatically fill in the argument for our exceptions.
