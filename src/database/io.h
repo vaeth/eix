@@ -13,6 +13,7 @@
 #include <config.h>
 
 #include <eixTk/stringutils.h>
+#include <eixTk/exceptions.h>
 #include <database/types.h>
 
 #include <string>
@@ -26,23 +27,26 @@ class PackageTree;
 #define MAGICNUMCHAR 0xFF
 
 namespace io {
-	void eof();
-
 	inline static UChar
 	readUChar(FILE *fp)
 	{
 		int c = fgetc(fp);
-		if(c != EOF)
-			return UChar(c);
-		io::eof();
-		return 0;
+		if(c == EOF) {
+			if (feof(fp))
+				throw ExBasic("error while reading from database: end of file");
+			else
+				throw SysError("error while reading from database");
+		}
+		return UChar(c);
 	}
 
 	inline static void
 	writeUChar(FILE *fp, UChar c)
 	{
-		if(fp)
-			fputc(c, fp);
+		if(fp) {
+			if (fputc(c, fp) == EOF)
+				throw SysError("error while writing to database");
+		}
 		else
 			counter++;
 	}

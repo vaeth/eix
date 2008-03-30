@@ -3,6 +3,8 @@
 *eix-0.12.2
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix sqlite error messages
+	- Add SysError exception and use it in database code, so we throw
+	  errors and don't hang if there is something wrong with the database.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to

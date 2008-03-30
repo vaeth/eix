@@ -34,12 +34,6 @@ namespace io {
 	void write_Part(FILE *fp, const BasicVersion::Part &n);
 }
 
-void
-io::eof()
-{
-	cerr << "unexpected end of file or read error" << endl;
-}
-
 /** Read a string */
 string
 io::read_string(FILE *fp)
@@ -47,8 +41,12 @@ io::read_string(FILE *fp)
 	string::size_type len = io::read<string::size_type>(fp);
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
-	if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)
-		io::eof();
+	if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
+		if (feof(fp))
+			throw ExBasic("error while reading from database: end of file");
+		else
+			throw SysError("error while reading from database");
+	}
 	return string(buf.get());
 }
 
@@ -59,7 +57,7 @@ io::write_string(FILE *fp, const string &str)
 	io::write<string::size_type>(fp, str.size());
 	if(fp) {
 		if(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size()) {
-			cerr << "write error" << endl;
+			throw SysError("error while writing to database");
 		}
 	}
 	else
@@ -97,7 +95,10 @@ io::read_Part(FILE *fp)
 		eix::auto_list<char> buf(new char[len + 1]);
 		buf.get()[len] = 0;
 		if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
-			cerr << "unexpected end of file" << endl;
+			if (feof(fp))
+				throw ExBasic("error while reading from database: end of file");
+			else
+				throw SysError("error while reading from database");
 		}
 		return BasicVersion::Part(type, string(buf.get()));
 	}
@@ -139,7 +140,7 @@ io::write_Part(FILE *fp, const BasicVersion::Part &n)
 		if(fp) {
 			if(fwrite(static_cast<const void *>(n.second.c_str()),
 						sizeof(char), n.second.size(), fp) != n.second.size()) {
-				cerr << "write error" << endl;
+				throw SysError("error while writing to database");
 			}
 		}
 		else

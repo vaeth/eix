@@ -58,13 +58,42 @@ class ExBasic : public std::exception
 		mutable std::string m_cache; ///< Mesage that we got from m_formated;
 };
 
+class SysError : public std::exception
+{
+	const std::string m_func;
+	const std::string m_message;
+
+	public:
+		SysError(const char *func, const std::string& message, int error_number = 0)
+			: m_func(func), m_message(get_message(message, error_number))
+		{ }
+
+		virtual ~SysError() throw() { }
+
+		const char *what() const throw()
+		{ return m_message.c_str(); }
+
+		friend std::ostream& operator<< (std::ostream& os, const SysError& e)
+		{ return os << e.m_func << ": " << e.what(); }
+
+	protected:
+		static std::string get_message(const std::string& message, int error_number)
+		{
+			const std::string error_text(strerror(error_number ? error_number : errno));
+			if (message.empty())
+				return std::string("system error: ") + error_text;
+			return message + ": " + error_text;
+		}
+};
+
 /// Automatically fill in the argument for our exceptions.
 #define ExBasic(s) ExBasic(__PRETTY_FUNCTION__, s)
+#define SysError(s) SysError(__PRETTY_FUNCTION__, s)
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
 inline void
-portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const ExBasic &e)
+portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const std::exception &e)
 {
 	std::cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \""
 	     << line << "\"" << std::endl;
@@ -84,7 +113,7 @@ portage_parse_error(const std::string &file, const int line_nr, const std::strin
 /// portage.{mask,keywords,..}.
 template<class Iterator>
 inline void
-portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const ExBasic &e)
+portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::exception &e)
 {
   portage_parse_error(file, std::distance(begin, line) + 1, *line, e);
 }
