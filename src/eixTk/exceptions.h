@@ -29,8 +29,12 @@ class ExBasic : public std::exception
 
 		virtual ~ExBasic() throw() { }
 
+		/// return signature of throwing function
+		virtual const std::string& from() const throw()
+		{ return m_func; }
+
 		/// Return reference to message.
-		const std::string& getMessage() const throw()
+		virtual const std::string& getMessage() const throw()
 		{
 			if (m_cache.empty())
 				m_cache = m_formated.str();
@@ -38,7 +42,7 @@ class ExBasic : public std::exception
 		}
 
 		/// @see std::exception::what()
-		const char *what() const throw()
+		virtual const char *what() const throw()
 		{ return getMessage().c_str(); }
 
 		/// Replace placeholder in format string.
@@ -49,37 +53,28 @@ class ExBasic : public std::exception
 			return *this;
 		}
 
-		friend std::ostream& operator<< (std::ostream& os, const ExBasic& e)
-		{ return os << e.m_func << ": " << e.getMessage(); }
-
-	protected:
+	private:
 		std::string m_func;   ///< Function that threw us.
 		eix::format m_formated; ///< Message formating.
-		mutable std::string m_cache; ///< Mesage that we got from m_formated;
+		mutable std::string m_cache; ///< Message that we got from m_formated;
 };
 
-class SysError : public std::exception
+/// Like ExBasic, but append system error message.
+class SysError : public ExBasic
 {
-	const std::string m_func;
-	const std::string m_error;
-
-	eix::format m_formated; ///< Message formating.
-	mutable std::string m_cache; ///< Mesage that we got from m_formated;
-
 	public:
-		SysError(const char *func, const std::string& format, int error_number = 0)
-			: m_func(func),
-			  m_error(strerror(error_number ? error_number : errno)),
-			  m_formated(format)
+		SysError(const char *func, const std::string& format, int e = 0)
+			: ExBasic(func, format),
+			  m_error(strerror(e ? e : errno))
 		{ }
 
 		virtual ~SysError() throw() { }
 
 		/// Return reference to message.
-		const std::string& getMessage() const throw()
+		virtual const std::string& getMessage() const throw()
 		{
 			if (m_cache.empty()) {
-				m_cache = m_formated.str();
+				m_cache = ExBasic::getMessage();
 				if (! m_cache.empty())
 					m_cache.append(": ");
 				m_cache.append(m_error);
@@ -87,25 +82,25 @@ class SysError : public std::exception
 			return m_cache;
 		}
 
-		/// @see std::exception::what()
-		const char *what() const throw()
-		{ return getMessage().c_str(); }
-
 		/// Replace placeholder in format string.
 		template<typename T>
 		SysError &operator % (const T& t)
 		{
-			m_formated % t;
+			ExBasic::operator%(t);
 			return *this;
 		}
 
-		friend std::ostream& operator<< (std::ostream& os, const SysError& e)
-		{ return os << e.m_func << ": " << e.getMessage(); }
+	private:
+		const std::string m_error; // result of strerror
+		mutable std::string m_cache; // formated message from ExBasic
 };
 
 /// Automatically fill in the argument for our exceptions.
 #define ExBasic(s) ExBasic(__PRETTY_FUNCTION__, s)
 #define SysError(s) SysError(__PRETTY_FUNCTION__, s)
+
+inline std::ostream& operator<< (std::ostream& os, const ExBasic& e)
+{ return os << e.from() << ": " << e.getMessage(); }
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
