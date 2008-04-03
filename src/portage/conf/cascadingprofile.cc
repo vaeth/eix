@@ -30,31 +30,25 @@ using namespace std;
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 
-/** Look for parent profile of the profile pointed to by path_buffer. Write
- * the path for the new profile into path_buffer and return true; Return false
- * if there is no parent profile. */
-bool CascadingProfile::getParentProfile(string &path_buffer)
+/** Add all files from profile ans its parents to m_profile_files. */
+void CascadingProfile::addProfile(const string &profile)
 {
-	string buf;
+	pushback_files(profile, m_profile_files, profile_exclude, 3);
 
 	/* Open stream and check if it's open */
-	ifstream ifstr((path_buffer + "parent").c_str());
+	ifstream ifstr((profile + "parent").c_str());
 	if(! ifstr.is_open())
-		return false;
+		return;
 
 	/* while there are lines in the file */
-	while(getline(ifstr, buf))
+	for(string buf; getline(ifstr, buf); )
 	{
 		trim(&buf);
 		/* If it's a comment or a empty line continue with the next line */
 		if(buf.empty() || buf[0] == '#')
 			continue;
-
-		path_buffer.append(buf);
-		path_buffer.append("/");
-		return true;
+		addProfile(profile + buf + "/");
 	}
-	return false;
 }
 
 bool
@@ -208,11 +202,7 @@ CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 	if(path_buffer[path_buffer.size() - 1] != '/')
 		path_buffer.append("/");
 
-	do {
-		/* Don't care about errors when reading profile. */
-		(void) pushback_files(path_buffer, m_profile_files, profile_exclude, 3);
-	} while( getParentProfile(path_buffer) );
-
+	addProfile(path_buffer);
 }
 
 void

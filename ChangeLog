@@ -9,6 +9,7 @@
 	  categories with packages, not just as a stream of packages.
 	  Only do seek in PackageReader::skip() if we didn't read all
 	  information.
+	- Add support for multiple inheritance in "parent" files of profiles.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to

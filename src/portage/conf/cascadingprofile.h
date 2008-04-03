@@ -37,12 +37,8 @@ class CascadingProfile {
 
 	private:
 
-		/** Cycle through profile.
-		 * Look for parent profile of the profile pointed to by path_buffer Write the path for the new
-		 * profile into path_buffer and return true Return false if there is no parent profile.
-		 * @param path_buffer Path to the profile (new profile is written into this thing)
-		 * @return false if there is no parent profile */
-		bool getParentProfile(std::string &path_buffer);
+		/** Add all files from profile ans its parents to m_profile_files. */
+		void addProfile(const std::string &profile);
 
 		/** Read all "packages" files found in profile.
 		 * Populate m_system and m_system_allowed.
