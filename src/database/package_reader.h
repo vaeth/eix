@@ -61,6 +61,19 @@ class PackageReader {
 		// Read the package-header.
 		bool next();
 
+
+		/// Go into the next (or first) category part.
+		// @return false if there are none more.
+		bool nextCategory();
+
+		/// Read the whole next package in the current category.
+		// @return false if there are none more.
+		bool nextPackage();
+
+		/// Return name of current category.
+		const std::string& category() const
+		{ return m_cat_name; }
+
 	protected:
 		FILE             *m_fp;
 

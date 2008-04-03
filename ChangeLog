@@ -5,6 +5,10 @@
 	- Fix sqlite error messages
 	- Add SysError exception and use it in database code, so we throw
 	  errors and don't hang if there is something wrong with the database.
+	- Make io::read_packagetree a little faster by reading the database as
+	  categories with packages, not just as a stream of packages.
+	  Only do seek in PackageReader::skip() if we didn't read all
+	  information.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to

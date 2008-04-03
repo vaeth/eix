@@ -67,7 +67,9 @@ PackageReader::read(Attributes need)
 void
 PackageReader::skip()
 {
-	fseeko(m_fp, m_next , SEEK_SET);
+	// only seek if needed
+	if (m_have != ALL)
+		fseeko(m_fp, m_next , SEEK_SET);
 	m_pkg.reset();
 }
 
@@ -90,5 +92,32 @@ PackageReader::next()
 	m_pkg.reset(new Package());
 	m_pkg->category = m_cat_name;
 
+	return true;
+}
+
+bool
+PackageReader::nextCategory()
+{
+	if(m_frames-- == 0)
+		return false;
+
+	m_cat_size = io::read_category_header(m_fp, m_cat_name);
+	return true;
+}
+
+bool
+PackageReader::nextPackage()
+{
+	if (m_cat_size-- == 0)
+		return false;
+
+	/* Ignore the offset and read the whole package at once.
+	 */
+
+	io::read<io::OffsetType>(m_fp);
+	m_have = NONE;
+	m_pkg.reset(new Package());
+	m_pkg->category = m_cat_name;
+	read(ALL);
 	return true;
 }

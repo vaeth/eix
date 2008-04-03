@@ -336,11 +336,10 @@ void
 io::read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr)
 {
 	PackageReader reader(fp, hdr);
-	Package *p = NULL;
-
-	while(reader.next())
-	{
-		p = reader.release();
-		tree[p->category].push_back(p);
+	while(reader.nextCategory()) {
+		Category &cat = tree[reader.category()];
+		while (reader.nextPackage()) {
+			cat.push_back(reader.release());
+		}
 	}
 }
