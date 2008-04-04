@@ -199,16 +199,15 @@ class DiffTrees
 				Category::iterator new_pkg = new_cat.find(old_pkg->name);
 
 				// Lost a package
-				if(new_pkg == new_cat.end())
+				if(new_pkg == new_cat.end()) {
 					lost_package(*old_pkg);
+				}
+				else {
+					// Best version differs
+					if(best_differs(*new_pkg, *old_pkg))
+						changed_package(*old_pkg, *new_pkg);
 
-				// Best version differs
-				else if(best_differs(*new_pkg, *old_pkg))
-					changed_package(*old_pkg, *new_pkg);
-
-				// Remove the new package
-				if(new_pkg != new_cat.end())
-				{
+					// Remove the new package
 					delete *new_pkg;
 					new_cat.erase(new_pkg);
 				}
@@ -228,9 +227,7 @@ class DiffTrees
 void
 print_changed_package(Package *op, Package *np)
 {
-	Package *p[2];
-	p[0] = op;
-	p[1] = np;
+	Package *p[2] = { op, np };
 	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
