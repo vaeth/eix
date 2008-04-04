@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.12.4
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Drop EIX_WIKI and use PACKAGE_BUGREPORT; Label Wolfgang and Roland
+	  as inactive developers, so they are less likely to be bothered with
+	  emails.
+
 *eix-0.12.3
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix sqlite error messages

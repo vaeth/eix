@@ -1994,9 +1994,10 @@ Martin V\[:a]th  <vaeth at mathematik.uni-wuerzburg.de> (developer, current main
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 
-Wolfgang Frisch <xororand at users.sourceforge.net> (developer, initial author)
 
-Roland Wittmann <linuxcommando at users.sourceforge.net> (developer)
+Wolfgang Frisch <xororand at users.sourceforge.net> (inactive developer, initial author)
+
+Roland Wittmann <linuxcommando at users.sourceforge.net> (inactive developer)
 .\" }}}
 
 .\" {{{ SEE ALSO
@@ -2012,6 +2013,6 @@ Roland Wittmann <linuxcommando at users.sourceforge.net> (developer)
 .\" Related software .. e.g. stuff we use
 .BR layman (8)
 .LP
-Further information can be found in our WiKi at \fI@EIX_WIKI@\fR.
+The eix homepage \fI@PACKAGE_BUGREPORT@\fR provides further information and links.
 .\" }}}
 .\" vim:set tw=90 expandtab foldenable foldmethod=marker foldlevel=0 :

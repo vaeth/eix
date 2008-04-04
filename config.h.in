@@ -3,9 +3,6 @@
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
-/* Location of eix-wiki */
-#undef EIX_WIKI
-
 /* default EPREFIX */
 #undef EPREFIX_DEFAULT
 

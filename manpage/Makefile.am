@@ -8,7 +8,7 @@ eix.1: eix.1.in
 	@regex_cmd@ -e 's/$$Date:[^,]*, *\([^)]*\)[^\$$]*\$$/\1/' \
 	    -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
-	    -e "s,\@EIX_WIKI\@,$(EIX_WIKI),g" \
+	    -e "s,\@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g" \
 	    -e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE),g" \
 	    -e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD),g" \
 	    -e "s,\@BINDIR\@,$(bindir),g" \
