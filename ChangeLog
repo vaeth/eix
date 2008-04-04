@@ -1,6 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.12.2
+*eix-0.12.3
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Fix sqlite error messages
 	- Add SysError exception and use it in database code, so we throw
