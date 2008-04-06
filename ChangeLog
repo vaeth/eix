@@ -5,6 +5,9 @@
 	- Drop EIX_WIKI and use PACKAGE_BUGREPORT; Label Wolfgang and Roland
 	  as inactive developers, so they are less likely to be bothered with
 	  emails.
+	- Fix http://bugs.gentoo.org/show_bug.cgi?id=216483, a mask like
+	  =app-portage/eix-0* triggered an exception. 
+	  Affected versions are >=eix-0.12.0.
 
 *eix-0.12.3
 	Emil Beinroth <emilbeinroth at gmx.net>:

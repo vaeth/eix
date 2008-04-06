@@ -180,6 +180,12 @@ Mask::test(const ExtendedVersion *ev) const
 				const std::string& s1(getFull());
 				const std::string& s2(ev->getFull());
 				const std::string::size_type start = s1.find_first_not_of('0');
+
+				/* If the version part contains only zeros, everything is
+				 * masked. http://bugs.gentoo.org/show_bug.cgi?id=216483 */
+				if (start == std::string::npos)
+					return true;
+
 				const std::string::size_type total = s1.size() - start;
 				return s2.compare(s2.find_first_not_of('0'), total, s1, start, total) == 0;
 			}
