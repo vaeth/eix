@@ -48,6 +48,12 @@ BasicVersion::compare(const Part& left, const Part& right)
 			rtrim(&l1, "0");
 			rtrim(&l2, "0");
 
+			/* No need to check if stripping zeros makes the component empty,
+			 * since that only happens for components that _only_ contain zeros
+			 * and comparing to "0" or "" will yield the same result - every
+			 * other possible value is bigger.
+			 */
+
 			return l1.compare(l2);
 		}
 		// "If neither component has a leading zero, components are compared

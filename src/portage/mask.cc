@@ -177,17 +177,30 @@ Mask::test(const ExtendedVersion *ev) const
 			{
 				// '=*' operator has to remove leading zeros
 				// see match_from_list in portage_dep.py
-				const std::string& s1(getFull());
-				const std::string& s2(ev->getFull());
-				const std::string::size_type start = s1.find_first_not_of('0');
+				const std::string& my_string(getFull());
+				const std::string& version_string(ev->getFull());
 
-				/* If the version part contains only zeros, everything is
-				 * masked. http://bugs.gentoo.org/show_bug.cgi?id=216483 */
-				if (start == std::string::npos)
-					return true;
+				std::string::size_type my_start = my_string.find_first_not_of('0');
+				std::string::size_type version_start = version_string.find_first_not_of('0');
 
-				const std::string::size_type total = s1.size() - start;
-				return s2.compare(s2.find_first_not_of('0'), total, s1, start, total) == 0;
+				/* Otherwise, if a component has a leading zero, any trailing
+				 * zeroes in that component are stripped (if this makes the
+				 * component empty, proceed as if it were 0 instead), and the
+				 * components are compared using a stringwise comparison. 
+				 */
+
+				if (my_start == std::string::npos)
+					my_start = my_string.size() - 1;
+				else if(! isdigit(my_string[my_start]))
+					my_start -= 1;
+
+				if (version_start == std::string::npos)
+					version_start = version_string.size() - 1;
+				else if(! isdigit(version_string[version_start]))
+					version_start -= 1;
+
+				const std::string::size_type total = my_string.size() - my_start;
+				return version_string.compare(version_start, total, my_string, my_start, total) == 0;
 			}
 
 		case maskOpLess:
