@@ -6,8 +6,14 @@
 	  as inactive developers, so they are less likely to be bothered with
 	  emails.
 	- Fix http://bugs.gentoo.org/show_bug.cgi?id=216483, a mask like
-	  =app-portage/eix-0* triggered an exception. 
+	  =app-portage/eix-0* triggered an exception.
 	  Affected versions are >=eix-0.12.0.
+
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Let update-eix first process options like --print.
+	  This should also fix script problems with KEEP_VIRTUAL=true.
+	  Thanks to tzopik <tzopik at gmail.com> for reporting and
+	  investigating. See http://bugs.gentoo.org/show_bug.cgi?id=216972
 
 *eix-0.12.3
 	Emil Beinroth <emilbeinroth at gmx.net>:

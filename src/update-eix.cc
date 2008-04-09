@@ -284,6 +284,50 @@ run_update_eix(int argc, char *argv[])
 	string eix_cachefile = eixrc["EIX_CACHEFILE"];
 	string outputfile;
 
+	/* Setup ArgumentReader. */
+	ArgumentReader argreader(argc, argv, long_options);
+
+	/* Honour a wish for silence */
+	if(quiet) {
+		close(1);
+		close(2);
+	}
+
+	/* We do not want any arguments except options */
+	if(argreader.begin() != argreader.end())
+		print_help(1);
+	if(show_help)
+		print_help(0);
+	if(show_version)
+		dump_version(0);
+
+	if(var_to_print) {
+		eixrc.print_var(var_to_print);
+		exit(0);
+	}
+	if(dump_eixrc || dump_defaults) {
+		eixrc.dumpDefaults(stdout, dump_defaults);
+		exit(0);
+	}
+
+	/* set the outputfile */
+	if(outputname) {
+		skip_permission_tests = true;
+		outputfile = outputname;
+	}
+	else {
+		skip_permission_tests = eixrc.getBool("SKIP_PERMISSION_TESTS");
+		outputfile = eix_cachefile;
+	}
+
+	/* Check for correct permissions. */
+	Permissions permissions(outputfile, skip_permission_tests);
+	permissions.check_db();
+
+	INFO("Reading Portage settings ..\n");
+	PortageSettings portage_settings(eixrc, false);
+
+	/* Build default (overlay/method/...) lists, using environment vars */
 	vector<Override> override_list;
 	add_override(override_list, eixrc, "CACHE_METHOD");
 	add_override(override_list, eixrc, "ADD_CACHE_METHOD");
@@ -298,27 +342,7 @@ run_update_eix(int argc, char *argv[])
 	add_override(override_list, eixrc, "OVERRIDE_CACHE_METHOD");
 	add_override(override_list, eixrc, "ADD_OVERRIDE_CACHE_METHOD");
 
-	/* Setup ArgumentReader. */
-	ArgumentReader argreader(argc, argv, long_options);
-
-	/* We do not want any arguments except options */
-	if(argreader.begin() != argreader.end())
-		print_help(1);
-
-	if(var_to_print) {
-		eixrc.print_var(var_to_print);
-		exit(0);
-	}
-
-	/* set the outputfile */
-	if(outputname) {
-		skip_permission_tests = true;
-		outputfile = outputname;
-	}
-	else {
-		skip_permission_tests = eixrc.getBool("SKIP_PERMISSION_TESTS");
-		outputfile = eix_cachefile;
-	}
+	/* Modify default (overlay/method/...) lists, using command line args */
 	for(list<const char*>::iterator it = exclude_args.begin();
 		it != exclude_args.end(); ++it)
 		excluded_list.push_back(Pathname(*it, true));
@@ -328,32 +352,6 @@ run_update_eix(int argc, char *argv[])
 	for(list<ArgPair>::iterator it = method_args.begin();
 		it != method_args.end(); ++it)
 		override_list.push_back(Override(Pathname(it->first, true), it->second));
-
-	Permissions permissions(outputfile, skip_permission_tests);
-
-	if(show_help)
-		print_help(0);
-
-	if(show_version) {
-		dump_version(0);
-	}
-
-	/* Honor a wish for silence */
-	if(quiet) {
-		close(1);
-		close(2);
-	}
-
-	if(dump_eixrc || dump_defaults) {
-		eixrc.dumpDefaults(stdout, dump_defaults);
-		exit(0);
-	}
-
-	/* Check for correct permissions. */
-	permissions.check_db();
-
-	INFO("Reading Portage settings ..\n");
-	PortageSettings portage_settings(eixrc, false);
 
 	/* Normalize names: */
 
