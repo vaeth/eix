@@ -31,19 +31,17 @@ using namespace std;
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 
 /** Add all files from profile ans its parents to m_profile_files. */
-void CascadingProfile::addProfile(const string &profile)
+void CascadingProfile::addProfile(const string &profile, unsigned int depth)
 {
-	/* Open stream and check if it's open */
-	ifstream ifstr((profile + "parent").c_str());
-	if(ifstr.is_open()) {
-		/* while there are lines in the file */
-		for(string buf; getline(ifstr, buf); ) {
-			trim(&buf);
-			/* If it's a comment or a empty line continue with the next line */
-			if(buf.empty() || buf[0] == '#')
-				continue;
-			addProfile(profile + buf + "/");
-		}
+	// Use pushback_lines to avoid keeping file descriptor open:
+	// Who know what's our limit of open file descriptors.
+	vector<string> parents;
+	if(depth >= 255)
+		cerr << "Recursion level for cascading profiles exceeded; stopping reading parents" << endl;
+	else if(pushback_lines((profile + "parent").c_str(), &parents)) {
+		for(vector<string>::const_iterator it = parents.begin();
+			it != parents.end(); ++it)
+			addProfile(profile + (*it) + '/', depth + 1);
 	}
 	pushback_files(profile, m_profile_files, profile_exclude, 3);
 }

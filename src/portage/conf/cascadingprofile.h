@@ -38,7 +38,7 @@ class CascadingProfile {
 	private:
 
 		/** Add all files from profile ans its parents to m_profile_files. */
-		void addProfile(const std::string &profile);
+		void addProfile(const std::string &profile, unsigned int depth = 0);
 
 		/** Read all "packages" files found in profile.
 		 * Populate m_system and m_system_allowed.

@@ -17,6 +17,8 @@
 	  Thanks to tzopik <tzopik at gmail.com> for reporting and
 	  investigating. See http://bugs.gentoo.org/show_bug.cgi?id=216972
 	- Conversion of all latin1 characters to unicode.
+	- Fix segfault/endless loop when loops in profile/**/parent data occur.
+	- Decrease required number of simultaneously open files.
 
 *eix-0.12.3
 	Emil Beinroth <emilbeinroth at gmx.net>:
