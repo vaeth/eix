@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin VÃ¤th <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __PORTAGESETTINGS_H
 #define __PORTAGESETTINGS_H

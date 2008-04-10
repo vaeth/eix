@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin VÃ¤th <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __PORT2_1_2_H__
 #define __PORT2_1_2_H__

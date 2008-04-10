@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin VÃ¤th <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "cascadingprofile.h"
 
@@ -33,22 +33,19 @@ static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 /** Add all files from profile ans its parents to m_profile_files. */
 void CascadingProfile::addProfile(const string &profile)
 {
-	pushback_files(profile, m_profile_files, profile_exclude, 3);
-
 	/* Open stream and check if it's open */
 	ifstream ifstr((profile + "parent").c_str());
-	if(! ifstr.is_open())
-		return;
-
-	/* while there are lines in the file */
-	for(string buf; getline(ifstr, buf); )
-	{
-		trim(&buf);
-		/* If it's a comment or a empty line continue with the next line */
-		if(buf.empty() || buf[0] == '#')
-			continue;
-		addProfile(profile + buf + "/");
+	if(ifstr.is_open()) {
+		/* while there are lines in the file */
+		for(string buf; getline(ifstr, buf); ) {
+			trim(&buf);
+			/* If it's a comment or a empty line continue with the next line */
+			if(buf.empty() || buf[0] == '#')
+				continue;
+			addProfile(profile + buf + "/");
+		}
 	}
+	pushback_files(profile, m_profile_files, profile_exclude, 3);
 }
 
 bool

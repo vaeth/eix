@@ -5,7 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin VÃ¤th <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
 #include <main/main.h>
@@ -252,7 +252,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 	static const string a("eix*::");
 	FILE *fp = fopen(cachefile.c_str(), "rb");
 	if(!fp) {
-		INFO("KEEP_VIRTUALS is ignored: there is no previous %s \n", cachefile.c_str());
+		INFO("KEEP_VIRTUALS is ignored: there is no previous %s\n", cachefile.c_str());
 		return;
 	}
 

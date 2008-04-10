@@ -3,7 +3,7 @@
 // terms of the GNU General Public License v2.
 //
 // Copyright (c)
-//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+//   Martin VÃ¤th <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __EIXCACHE_H__
 #define __EIXCACHE_H__
