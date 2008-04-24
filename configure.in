@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.12.4, http://eix.sourceforge.net)
+AC_INIT(eix, 0.12.5, http://eix.sourceforge.net)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 

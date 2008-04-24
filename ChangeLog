@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.12.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Ignore leading + or - for /var/db/pkg/*/*/{,I}USE for EAPI-1.
+	  Thanks to Leonardo Valeri Manera <l.valerimanera at gmail.com>
+
 *eix-0.12.4
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Drop EIX_WIKI and use PACKAGE_BUGREPORT; Label Wolfgang and Roland

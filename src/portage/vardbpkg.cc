@@ -308,27 +308,24 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 			&lines, true, false, false))
 			return false;
 		v.inst_iuse = split_string(join_vector(lines, " "));
+		for(vector<string>::iterator it = v.inst_iuse.begin();
+			it != v.inst_iuse.end(); ++it) {
+			while((it->at(0) == '+') || (it->at(0) == '-'))
+				it->erase(0, 1);
+		}
 		sort_uniquify(v.inst_iuse);
 		make_set<string>(iuse_set, v.inst_iuse);
-		/* If you do not want the alphabetical order in v.inst_iuse
-		   but instead the original order in the IUSE file,
-		   use the following code instead of the above 4 lines.
 
-		vector<string> iuse = split_string(join_vector(lines, " "));
-		for(vector<string>::iterator it = iuse.begin();
-			it != iuse.end(); ++it)
-		{
-			if(iuse_set.find(*it) != iuse_set.end())
-				continue;
-			iuse_set.insert(*it);
-			v.inst_iuse.push_back(*it);
-		}
-		*/
 		lines.clear();
 		if(!pushback_lines((dirname + "/USE").c_str(),
 			&lines, true, false, false))
 			return false;
 		alluse = split_string(join_vector(lines, " "));
+		for(vector<string>::iterator it = alluse.begin();
+			it != alluse.end(); ++it) {
+			while((it->at(0) == '+') || (it->at(0) == '-'))
+				it->erase(0, 1);
+		}
 	}
 	catch(const ExBasic &e) {
 		cerr << e << endl;
