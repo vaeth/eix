@@ -104,6 +104,11 @@ class Version : public ExtendedVersion, public Keywords {
 		void set_iuse(const std::string &i)
 		{
 			m_iuse = split_string(i);
+			for(std::vector<std::string>::iterator it = m_iuse.begin();
+				it != m_iuse.end(); ++it) {
+				while((it->at(0) == '+') || (it->at(0) == '-'))
+					it->erase(0, 1);
+			}
 			sort_uniquify(m_iuse);
 			m_cached_iuse.clear(); // invalided cache
 		}
