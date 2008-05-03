@@ -57,10 +57,11 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 	ifstream ifstr(file);
 	if(!ifstr.is_open())
 		return false;
-	do {
-		if( ifstr.bad() ) {
-			ifstr.close();
-			return false;
+	bool ok = true;
+	while(!ifstr.eof()) {
+		if(ifstr.bad()) {
+			ok = false;
+			break;
 		}
 		getline(ifstr, line);
 		trim(&line);
@@ -75,10 +76,11 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 
 		if((!remove_empty) || (!line.empty()))
 			v->push_back(line);
-	} while( !ifstr.eof() );
-	bool was_bad = ifstr.bad();
+	}
+	if(ok)
+		ok = !ifstr.bad();
 	ifstr.close();
-	return was_bad;
+	return ok;
 }
 
 /** push_back every line of file or dir into v. */
