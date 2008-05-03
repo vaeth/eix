@@ -55,30 +55,30 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 {
 	string line;
 	ifstream ifstr(file);
-	if( ifstr.is_open() ) {
-		do {
-			getline(ifstr, line);
-			trim(&line);
+	if(!ifstr.is_open())
+		return false;
+	do {
+		if( ifstr.bad() ) {
+			ifstr.close();
+			return false;
+		}
+		getline(ifstr, line);
+		trim(&line);
 
-			if(remove_comments) {
-				string::size_type x = line.find_first_of('#');
-				if(x != string::npos)
-				{
-					line.erase(x);
-					trim(&line);
-				}
+		if(remove_comments) {
+			string::size_type x = line.find_first_of('#');
+			if(x != string::npos) {
+				line.erase(x);
+				trim(&line);
 			}
+		}
 
-			if(remove_empty && line.empty())
-				continue;
+		if((!remove_empty) || (!line.empty()))
 			v->push_back(line);
-			if( ifstr.bad() )
-				return false;
-		} while( !ifstr.eof() );
-		ifstr.close();
-		return true;
-	}
-	return false;
+	} while( !ifstr.eof() );
+	bool was_bad = ifstr.bad();
+	ifstr.close();
+	return was_bad;
 }
 
 /** push_back every line of file or dir into v. */
