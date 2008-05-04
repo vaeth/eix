@@ -1182,6 +1182,15 @@ If true, diff-eix will only consider version changes for installed packages.
 If true, diff-eix will not consider slots for version changes.
 
 .TP
+.BR DIFF_SEPARATE_DELETED "  " (true / false)
+If true, diff-eix will print deleted packages in a section on their own.
+Otherwise, diff-eix will mix deleted and changed packages "alphabetically".
+
+.TP
+.BR DIFF_PRINT_HEADER "  " (true / false)
+If true, diff-eix will print a header info line.
+
+.TP
 .BR NO_RESTRICTIONS "  " (true / false)
 If false, fetch and mirror restrictions are output.
 

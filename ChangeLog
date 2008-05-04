@@ -2,11 +2,14 @@
 
 *eix-0.12.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce DIFF_SEPARATE_DELETED and let it default to true.
+	- Introduce DIFF_PRINT_HEADER.
 	- Ignore leading + or - for /var/db/pkg/*/*/{,I}USE for paludis.
 	  Do the same with IUSE data in packages for EAPI=1. Thanks for the
 	  hint to Leonardo Valeri Manera <l.valerimanera at gmail.com>
 	- Fix error handling in pushback_lines_file(), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=220119
+	- Reorganize eixrc/defaults.cc
 
 *eix-0.12.4
 	Emil Beinroth <emilbeinroth at gmx.net>:

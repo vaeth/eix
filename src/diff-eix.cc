@@ -157,8 +157,9 @@ class DiffTrees
 		found_func found_package;
 		changed_func changed_package;
 
-		DiffTrees(VarDbPkg *vardbpkg, bool only_installed, bool compare_slots) :
-			m_vardbpkg(vardbpkg), m_only_installed(only_installed), m_slots(compare_slots)
+		DiffTrees(VarDbPkg *vardbpkg, bool only_installed, bool compare_slots, bool separate_deleted) :
+			m_vardbpkg(vardbpkg), m_only_installed(only_installed),
+			m_slots(compare_slots), m_separate_deleted(separate_deleted)
 		{ }
 
 		/// Diff the trees and run callbacks
@@ -166,30 +167,33 @@ class DiffTrees
 		{
 			// Diff every category from the old tree with the category from the new tree
 			for(PackageTree::iterator old_cat = old_tree.begin();
-				old_cat != old_tree.end();
-				++old_cat)
-			{
+				old_cat != old_tree.end(); ++old_cat) {
 				diff_category(**old_cat, new_tree[old_cat->name]);
 			}
 
-			// Know we've only new package in the new_tree
+			// Now we've only new package in the new_tree
+			// and lost packages in the old_tree
+
+			if(m_separate_deleted) {
+				for(PackageTree::iterator old_cat = old_tree.begin();
+					old_cat != old_tree.end(); ++old_cat) {
+					for_each(old_cat->begin(), old_cat->end(), lost_package);
+				}
+			}
 			for(PackageTree::iterator new_cat = new_tree.begin();
-				new_cat != new_tree.end();
-				++new_cat)
-			{
-				// Print packages as new
+				new_cat != new_tree.end(); ++new_cat) {
 				for_each(new_cat->begin(), new_cat->end(), found_package);
 			}
 		}
 	private:
 		VarDbPkg *m_vardbpkg;
-		bool m_only_installed, m_slots;
+		bool m_only_installed, m_slots, m_separate_deleted;
 
 		bool best_differs(const Package *new_pkg, const Package *old_pkg)
 		{ return new_pkg->differ(*old_pkg, m_vardbpkg, true, m_only_installed, m_slots); }
 
 		/// Diff two categories and run callbacks.
-		// Remove already diffed packages.
+		/// Remove already diffed packages from both categories.
 		void diff_category(Category &old_cat, Category &new_cat)
 		{
 			Category::iterator old_pkg = old_cat.begin();
@@ -198,8 +202,12 @@ class DiffTrees
 			{
 				Category::iterator new_pkg = new_cat.find(old_pkg->name);
 
-				// Lost a package
 				if(new_pkg == new_cat.end()) {
+					// Lost a package
+					if(m_separate_deleted) {
+						++old_pkg;
+						continue;
+					}
 					lost_package(*old_pkg);
 				}
 				else {
@@ -403,8 +411,14 @@ run_diff_eix(int argc, char *argv[])
 
 	DiffTrees differ(varpkg_db,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),
-		!eixrc.getBool("DIFF_NO_SLOTS"));
-	INFO("Diffing databases (%u - %u packages)\n", PercentU(old_tree.countPackages()), PercentU(new_tree.countPackages()));
+		!eixrc.getBool("DIFF_NO_SLOTS"),
+		eixrc.getBool("DIFF_SEPARATE_DELETED"));
+
+	if(eixrc.getBool("DIFF_PRINT_HEADER")) {
+		INFO("Diffing databases (%u - %u packages)\n",
+			PercentU(old_tree.countPackages()),
+			PercentU(new_tree.countPackages()));
+	}
 
 	differ.lost_package    = print_lost_package;
 	differ.found_package   = print_found_package;
