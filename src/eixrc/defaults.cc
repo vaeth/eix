@@ -971,11 +971,11 @@ AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 
 AddOption(STRING, "PORTDIR_CACHE_METHOD",
 	PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR\n"
-	"(metadata/sqlite/cdb/portage-2.0/portage-2.1/none[*]/ebuild[*]/eix[*][:*])");
+	"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])");
 
 AddOption(STRING, "OVERLAY_CACHE_METHOD",
 	"parse|ebuild*", "Portage cache-backend that should be used for the overlays.\n"
-	"(metadata/sqlite/cdb/portage-2.0/portage-2.1/none[*]/ebuild[*]/eix[*][:*])");
+	"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])");
 
 AddOption(STRING, "CACHE_METHOD",
 	"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain paths.\n"

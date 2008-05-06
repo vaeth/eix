@@ -10,6 +10,8 @@
 	- Fix error handling in pushback_lines_file(), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=220119
 	- Reorganize eixrc/defaults.cc
+	- Minor documentation fixes, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=219066
 
 *eix-0.12.4
 	Emil Beinroth <emilbeinroth at gmx.net>:

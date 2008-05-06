@@ -1478,8 +1478,8 @@ enough to treat e.g. typical ebuilds from kde-base.
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 .TP
 .SS
-.BR parse|ebuild ", " parse*|ebuild ", " parse|ebuild* "(or " mixed "), " parse*|ebuild* ", " mixed
-This is a mixture of B<parse>/B<parse> and B<ebuild>/B<ebuild*>.
+.BR parse|ebuild ", " parse*|ebuild ", " parse|ebuild* ", " parse*|ebuild*
+This is a mixture of B<parse>/B<parse*> and B<ebuild>/B<ebuild*>.
 Each ebuild is first scanned as with method B<parse>/B<parse*>.
 If the obtained result has missing information or appears strange,
 the ebuild is treated as with cache method B<ebuild>/B<ebuild*>.
