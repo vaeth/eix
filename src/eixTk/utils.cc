@@ -67,7 +67,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 		if((!remove_empty) || (!line.empty()))
 			v->push_back(line);
 	}
-	return ! ifstr.eof(); // not eof is an error
+	return ifstr.eof(); // if we have eof, everything went well
 }
 
 /** push_back every line of file or dir into v. */
