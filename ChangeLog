@@ -9,6 +9,8 @@
 	  hint to Leonardo Valeri Manera <l.valerimanera at gmail.com>
 	- Fix error handling in pushback_lines_file(), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=220119
+	- Fix some bsd shell incompatibilities in scripts, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=220397
 	- Reorganize eixrc/defaults.cc
 	- Minor documentation fixes, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=219066

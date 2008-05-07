@@ -66,18 +66,18 @@ Replace() {
 		-*) ReplaceC_=0; shift;;
 	esac
 	eval "while {
-		ReplaceB_=\"\${${1}%%\"${2}\"*}\"
+		ReplaceB_=\${${1}%%\"${2}\"*}
 		[ \"\${ReplaceB_}\" != \"\${${1}}\" ]
 	}
 	do
 		ReplaceA_=\"\${ReplaceA_}\${ReplaceB_}${3}\"
-		${1}=\"\${${1}#*\"${2}\"}\"
+		${1}=\${${1}#*\"${2}\"}
 		if [ -z \"\${ReplaceC_}\" ]; then
 			${1}=\"\${ReplaceA_}\${${1}}\"
 			return 1
 		fi
 		[ \${ReplaceC_} -ge 127 ] || \
-			ReplaceC_=\"\`expr \${ReplaceC_} + 1\`\"
+			ReplaceC_=\`expr \${ReplaceC_} + 1\`
 	done
 	${1}=\"\${ReplaceA_}\${${1}}\""
 	return ${ReplaceC_}
