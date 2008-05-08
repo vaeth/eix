@@ -76,6 +76,9 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 {
 	string full = version.getFull();
 	string eroot;
+
+	// Set default variables
+
 	const char *envptr = getenv("PATH");
 	if(envptr)
 		env["PATH"] = envptr;
@@ -92,14 +95,22 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 		env["EPREFIX"] = m_prefix;
 		env["EROOT"]   = eroot;
 	}
-	env["PORTDIR_OVERLAY"] = (*portagesettings)["PORTDIR_OVERLAY"];
-	string portdir         = (*portagesettings)["PORTDIR"];
-	env["PORTDIR"]         = portdir;
+	string portdir      = (*portagesettings)["PORTDIR"];
+	env["ECLASSDIR"]    = eroot + portdir + "/eclass";
+
+	// Set variables from portagesettings (make.globals/make.conf/...)
+	// (Possibly overriding defaults)
+
+	for(PortageSettings::const_iterator it = portagesettings->begin();
+		it != portagesettings->end(); ++it) {
+		env[it->first] = it->second;
+	}
+
+	// Set ebuild-specific variables
 
 	env["EBUILD"]       = ebuild_full;
 	env["O"]            = ebuild_dir;
 	env["FILESDIR"]     = ebuild_dir + "/files";
-	env["ECLASSDIR"]    = eroot + portdir + "/eclass";
 	env["EBUILD_PHASE"] = "depend";
 	env["CATEGORY"]     = package.category;
 	env["PN"]           = package.name;
