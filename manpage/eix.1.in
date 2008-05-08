@@ -1468,8 +1468,8 @@ Thus, instead of executing a python program for each ".ebuild" as for
 cache-method B<ebuild>, "only" a lengthy shell-script and the ebuild itself
 is executed (hence, also this method is unsafe if you do not trust all
 ".ebuild" scripts).
-All environment variables are cleared, and only some .ebuild variables
-like $P are set when the ebuild is executed.
+All environment variables except for PATH are cleared,
+and only some .ebuild variables like $P are set when the ebuild is executed.
 This method is not quite as compatible as the method B<ebuild>, and its
 success may depend more on the portage version.
 However, this method is considerably faster than B<ebuild> and stable

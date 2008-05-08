@@ -12,8 +12,12 @@
 	- Fix some bsd shell incompatibilities in scripts, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=220397
 	- Reorganize eixrc/defaults.cc
-	- Minor documentation fixes, see
+	- export PATH to ebuild.sh, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=219066
+	- Minor documentation fixes
+
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Simplify pushback_lines_file()
 
 *eix-0.12.4
 	Emil Beinroth <emilbeinroth at gmx.net>:

@@ -76,10 +76,13 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 {
 	string full = version.getFull();
 	string eroot;
-	const char *root = getenv("ROOT");
-	if(root) {
-		env["ROOT"] = root;
-		eroot = root + m_prefix;
+	const char *envptr = getenv("PATH");
+	if(envptr)
+		env["PATH"] = envptr;
+	envptr = getenv("ROOT");
+	if(envptr) {
+		env["ROOT"] = envptr;
+		eroot = envptr + m_prefix;
 	}
 	else {
 		env["ROOT"] = "/";
