@@ -51,6 +51,11 @@ AddOption(PREFIXSTRING, "EPREFIX_ROOT",
 AddOption(PREFIXSTRING, "PORTAGE_CONFIGROOT",
 	"%{EPREFIX}", "This path is prepended to the /etc paths.");
 
+AddOption(PREFIXSTRING, "MAKE_GLOBALS",
+	"%{EPREFIX}/usr/share/portage/config/make.globals",
+	"This file is used instead of %{PORTAGE_CONFIGROOT}/etc/make.globals\n"
+	"if it exists. This is reasonable for >=portage-2.2*");
+
 AddOption(PREFIXSTRING, "EPREFIX_PORTAGE_EXEC",
 	"%{EPREFIX}", "This prefix is used in connection with external portage tools.");
 

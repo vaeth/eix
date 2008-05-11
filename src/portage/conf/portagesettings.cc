@@ -18,6 +18,7 @@
 #include <portage/version.h>
 
 #include <eixTk/utils.h>
+#include <eixTk/sysutils.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/filenames.h>
 
@@ -167,7 +168,11 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 	m_eprefixaccessoverlays = eixrc["EPREFIX_ACCESS_OVERLAYS"];
 
 	const string &eprefixsource = eixrc["EPREFIX_SOURCE"];
-	read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
+	const string &make_globals  = eixrc["MAKE_GLOBALS"];
+	if(is_file(make_globals.c_str()))
+		read_config(make_globals, eprefixsource);
+	else
+		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
 
 	override_by_env(test_in_env_early);

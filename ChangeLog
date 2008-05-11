@@ -11,6 +11,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=220119
 	- Fix some bsd shell incompatibilities in scripts, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=220397
+	- Introduce MAKE_GLOBALS default /usr/share/portage/config/make.globals
+	  See http://bugs.gentoo.org/show_bug.cgi?id=221271
 	- Reorganize eixrc/defaults.cc
 	- Export PATH and other portagesettings variables to ebuild.sh, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=219066
