@@ -1105,6 +1105,12 @@ where @SYSCONFDIR@/eixrc is searched. (Note that reading @SYSCONFDIR@/eixrc occu
 delayed substitution takes effect.)
 
 .TP
+.B MAKE_GLOBALS "  " (string)
+If this file exists, it is used instead of
+B<%{PORTAGE_CONFIGROOT}/etc/make.globals>
+The default value corresponds to >=portage-2.2* behavior.
+
+.TP
 .B EPREFIX_PORTAGE_EXEC "  " (prefix-string)
 This path is used as a prefix for everything related to external portage tools.
 In particular, for the cache-method eix this determines the path where some private executables
