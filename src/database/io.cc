@@ -154,8 +154,8 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	// write masking
 	io::writeUChar(fp, (v->maskflags.get()) | (MaskFlags::MaskType(v->restrictFlags) << 4));
 
-	// write full keywords unless small database is required
-	io::write_hash_words(fp, hdr.keywords_hash, split_string(v->get_full_keywords()));
+	// write full keywords
+	io::write_hash_words(fp, hdr.keywords_hash, v->get_full_keywords());
 
 	// write m_primsplit
 	io::write<list<BasicVersion::Part>::size_type>(fp, v->m_parts.size());

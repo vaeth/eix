@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.12.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix format documentation: Provide is HashedString not HashedWords
+	  (this will probably change when eix format changes again).
+	  Thanks to Charlie Shepherd <masterdriverz at gmail.com> for reporting
+	- Simplify calling of write_hash_words()
+
 *eix-0.12.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce DIFF_SEPARATE_DELETED and let it default to true.

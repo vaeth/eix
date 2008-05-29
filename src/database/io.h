@@ -119,6 +119,9 @@ namespace io {
 	{ return hash[io::read<StringHash::size_type>(fp)]; }
 
 	void write_hash_words(FILE *fp, const StringHash& hash, const std::vector<std::string>& words);
+	inline void write_hash_words(FILE *fp, const StringHash& hash, const std::string& words)
+	{ write_hash_words(fp, hash, split_string(words)); }
+
 	std::string read_hash_words(FILE *fp, const StringHash& hash);
 
 	template<typename _InserIter>
