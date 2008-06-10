@@ -2,6 +2,9 @@
 
 *eix-0.12.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix treatment of "-" in slotnames.
+	  Thanks to Edward "Hades" <edward.hades at gmail.com>,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=225773
 	- Fix format documentation: Provide is HashedString not HashedWords
 	  (this will probably change when eix format changes again).
 	  Thanks to Charlie Shepherd <masterdriverz at gmail.com> for reporting

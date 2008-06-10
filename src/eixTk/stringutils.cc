@@ -47,7 +47,7 @@ ExplodeAtom::get_start_of_version(const char* str)
 	// There must be at least one symbol before the version:
 	if(!*(str++))
 		return NULL;
-	while(*str)
+	while((*str) && (*str != ':'))
 	{
 		if(*str++ == '-'
 		   && (*str >= 48
