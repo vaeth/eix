@@ -37,7 +37,7 @@ class Mask : public BasicVersion {
 		 * entry in package.mask, entry in package.unmask */
 		typedef enum {
 			maskTypeNone, maskAllowedByProfile,
-			maskInSystem,
+			maskInSystem, maskInWorld,
 			maskMask, maskUnmask
 		} Type;
 
@@ -68,9 +68,9 @@ class Mask : public BasicVersion {
 		void apply(Version *ve, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		/** Tests if the mask applies to a Version.
-		 * @param bv test this version
+		 * @param ev test this version
 		 * @return true if applies. */
-		bool test(const ExtendedVersion *bv) const;
+		bool test(const ExtendedVersion *ev) const;
 
 	public:
 		/** Parse mask-string. */
@@ -92,8 +92,7 @@ class Mask : public BasicVersion {
 
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
-		 * @param check_name     true if name should be tested
-		 * @param check_category true if category should be tested */
+		 * @param check          Redundancy checks which should apply */
 		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		bool ismatch(Package& pkg);

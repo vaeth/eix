@@ -128,13 +128,14 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::string m_eprefixportdir;
 		std::string m_eprefixoverlays;
 		std::string m_eprefixaccessoverlays;
+		std::string m_world;
 
 		PortageUserConfig *user_config;
 
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(EixRc &eixrc, bool getlocal);
+		PortageSettings(EixRc &eixrc, bool getlocal, bool init_world);
 
 		/** Free memory. */
 		~PortageSettings();

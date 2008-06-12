@@ -86,6 +86,16 @@ AddOption(PREFIXSTRING, "EPREFIX_VIRTUAL",
 AddOption(STRING, "EIX_CACHEFILE",
 	"%{EPREFIX}" EIX_CACHEFILE, "This file is the default eix cache.");
 
+AddOption(STRING, "EIX_WORLD",
+	"%{EPREFIX_ROOT}/var/lib/portage/world", "This file is considered as the world file.");
+
+AddOption(BOOLEAN, "SAVE_WORLD",
+	"false", "Store the information of the world file in the cache file.\n"
+	"Set this only if you want that everybody is be able to get this informations.");
+
+AddOption(BOOLEAN, "CURRENT_WORLD",
+	"true", "Prefer the current world file (if readable) over the data in the cachefile.");
+
 AddOption(BOOLEAN, "SKIP_PERMISSION_TESTS",
 	"false", "Whether to test for group and permissions.  You must set this to true\n"
 	"if you use more sophisticated permission setups (e.g. NSS/LDAP).");
@@ -165,6 +175,11 @@ AddOption(STRING, "COLOR_NAME",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the name of packages.");
 
+AddOption(STRING, "COLOR_WORLD",
+	"green,1",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the name of world packages.");
+
 AddOption(STRING, "COLOR_CATEGORY",
 	"",
 	"This variable is only used for delayed substitution.\n"
@@ -174,6 +189,11 @@ AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
 	"yellow",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the category of system packages.");
+
+AddOption(STRING, "COLOR_CATEGORY_WORLD",
+	"%{COLOR_WORLD}",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the category of world packages.");
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"cyan,1",
@@ -475,7 +495,24 @@ AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
 	"It defines the format for diff-eix for installed versions.");
 
 AddOption(STRING, "FORMAT_NAME",
-	"{system}(%{COLOR_CATEGORY_SYSTEM}){else}(%{COLOR_CATEGORY}){}<category>()/{marked}(%{COLOR_MARKED_NAME}){else}(%{COLOR_NAME}){}<name>()",
+	"{system}"
+		"(%{COLOR_CATEGORY_SYSTEM})"
+	"{else}"
+		"{world}"
+			"(%{COLOR_CATEGORY_WORLD})"
+		"{else}"
+			"(%{COLOR_CATEGORY})"
+		"{}"
+	"{}<category>()/"
+	"{marked}"
+		"(%{COLOR_MARKED_NAME})"
+	"{else}"
+		"{world}"
+			"(%{COLOR_WORLD})"
+		"{else}"
+			"(%{COLOR_NAME})"
+		"{}"
+	"{}<name>()",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for the printing the package name.");
 

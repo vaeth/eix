@@ -117,7 +117,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 
 	// Do not really check if the package is only at one overlay.
 	if(check_installed_overlays == 0) {
-		if(p.have_same_overlay_key) {
+		if(p.have_same_overlay_key()) {
 			v.overlay_key = p.largest_overlay;
 			return true;
 		}
@@ -126,7 +126,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 	string label = readOverlayLabel(&p, &v);
 	if(label.empty()) {
 		if(check_installed_overlays < 0) {
-			if(p.have_same_overlay_key) {
+			if(p.have_same_overlay_key()) {
 				v.overlay_key = p.largest_overlay;
 				return true;
 			}

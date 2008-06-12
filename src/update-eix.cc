@@ -325,7 +325,7 @@ run_update_eix(int argc, char *argv[])
 	permissions.check_db();
 
 	INFO("Reading Portage settings ..\n");
-	PortageSettings portage_settings(eixrc, false);
+	PortageSettings portage_settings(eixrc, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
 	vector<Override> override_list;

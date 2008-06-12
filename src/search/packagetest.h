@@ -129,6 +129,9 @@ class PackageTest {
 		void Restrictions(ExtendedVersion::Restrict flags)
 		{ restrictions |= flags; }
 
+		void World()
+		{ world = true; }
+
 		void StabilityDefault(Package *p) const
 		{ stability->set_stability(*p); }
 
@@ -216,7 +219,7 @@ class PackageTest {
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
 		bool overlay, obsolete;
-		bool upgrade;
+		bool upgrade, world;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;

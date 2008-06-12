@@ -54,7 +54,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	obsolete = overlay = installed = invert = upgrade = slotted =
+	obsolete = world = overlay = installed = invert = upgrade = slotted =
 			dup_versions = dup_packages = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	test_installed = INS_NONE;
@@ -87,7 +87,7 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		upgrade || overlay|| obsolete ||
+		upgrade || overlay || obsolete || world ||
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
@@ -380,7 +380,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(slotted) { // -1 or -2
 		get_p();
-		if(! (p->have_nontrivial_slots))
+		if(! (p->have_nontrivial_slots()))
 			return invert;
 		if(multi_slot)
 			if( (p->slotlist()).size() <= 1 )
@@ -488,10 +488,10 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		if(dup_packages_overlay)
 		{
-			if(!(p->at_least_two_overlays))
+			if(!(p->at_least_two_overlays()))
 				return invert;
 		}
-		else if(p->have_same_overlay_key)
+		else if(p->have_same_overlay_key())
 			return invert;
 	}
 
@@ -677,6 +677,13 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		StabilityNonlocal(p);
 		if(!stabilitytest(p, test_stability_nonlocal))
+			return invert;
+	}
+
+	if(world) { // --world
+		get_p();
+		StabilityDefault(p);
+		if(!p->is_world_package())
 			return invert;
 	}
 

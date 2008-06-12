@@ -726,7 +726,7 @@ EixRc::print_var(const char *var)
 			return;
 		}
 	}
-	PortageSettings ps(*this, false);
+	PortageSettings ps(*this, false, true);
 	std::cout << ps[var];
 }
 

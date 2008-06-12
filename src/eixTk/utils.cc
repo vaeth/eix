@@ -50,7 +50,7 @@ scandir_cc(const string &dir, std::vector<std::string> &namelist, select_dirent 
 }
 
 /** push_back every line of file into v. */
-bool
+static bool
 pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments)
 {
 	string line;

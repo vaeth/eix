@@ -20,11 +20,24 @@ Package::~Package()
 }
 
 const Package::Duplicates
-	Package::DUP_NONE     = 0x00,
-	Package::DUP_SOME     = 0x01,
-	Package::DUP_OVERLAYS = 0x03;
+	Package::DUP_NONE,
+	Package::DUP_SOME,
+	Package::DUP_OVERLAYS;
 
 bool Package::upgrade_to_best;
+
+const Package::Versioncollects
+	Package::COLLECT_NONE,
+	Package::COLLECT_HAVE_NONTRIVIAL_SLOTS,
+	Package::COLLECT_HAVE_SAME_OVERLAY_KEY,
+	Package::COLLECT_AT_LEAST_TWO_OVERLAYS,
+	Package::COLLECT_DEFAULT;
+
+const Package::Localcollects
+	Package::LCOLLECT_NONE,
+	Package::LCOLLECT_SYSTEM,
+	Package::LCOLLECT_WORLD,
+	Package::LCOLLECT_DEFAULT;
 
 Version *
 VersionList::best(bool allow_unstable) const
@@ -128,7 +141,8 @@ void Package::collect_iuse(const Version *version)
 
 /** Finishes addVersionStart() after the remaining data
     have been filled */
-void Package::addVersionFinalize(Version *version)
+void
+Package::addVersionFinalize(Version *version)
 {
 	Version::Overlay key = version->overlay_key;
 
@@ -139,23 +153,34 @@ void Package::addVersionFinalize(Version *version)
 	if(size() != 1) {
 		if(largest_overlay != key)
 		{
-			have_same_overlay_key = false;
+			version_collects &= ~COLLECT_HAVE_SAME_OVERLAY_KEY;
 			if(largest_overlay && key)
-				at_least_two_overlays = true;
+				version_collects |= COLLECT_AT_LEAST_TWO_OVERLAYS;
 			if(largest_overlay < key)
 				largest_overlay = key;
 		}
-		if(is_system_package) {
-			is_system_package = version->maskflags.isSystem();
+		if(!is_system_package()) {
+			if(version->maskflags.isSystem())
+				local_collects |= LCOLLECT_SYSTEM;
+		}
+		if(!is_world_package()) {
+			if(version->maskflags.isWorld())
+				local_collects |= LCOLLECT_WORLD;
 		}
 	}
 	else {
 		largest_overlay       = key;
-		have_nontrivial_slots = false;
-		is_system_package     = version->maskflags.isSystem();
+		version_collects      = COLLECT_DEFAULT;
+		local_collects        = LCOLLECT_DEFAULT;
+		if(version->maskflags.isSystem())
+			local_collects |= LCOLLECT_SYSTEM;
+		if(version->maskflags.isWorld())
+			local_collects |= LCOLLECT_WORLD;
+		if(version->maskflags.isWorld())
+			local_collects |= LCOLLECT_WORLD;
 	}
 	if(! (version->slotname).empty())
-		have_nontrivial_slots = true;
+		version_collects |= COLLECT_HAVE_NONTRIVIAL_SLOTS;
 
 	collect_iuse(version);
 
@@ -165,6 +190,27 @@ void Package::addVersionFinalize(Version *version)
 
 	// Mark current slotlist as invalid.
 	m_has_cached_slotlist = false;
+}
+
+/** Call this after modifying system or world state of versions */
+void
+Package::finalize_masks()
+{
+	bool system = false, world = false;
+	for(iterator i = begin(); i != end(); ++i) {
+		if(i->maskflags.isSystem())
+			system = true;
+		if(i->maskflags.isWorld())
+			world = true;
+	}
+	if(system)
+		local_collects |= LCOLLECT_SYSTEM;
+	else
+		local_collects &= ~LCOLLECT_SYSTEM;
+	if(world)
+		local_collects |= LCOLLECT_WORLD;
+	else
+		local_collects &= ~LCOLLECT_WORLD;
 }
 
 Version *

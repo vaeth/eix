@@ -381,7 +381,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_for_ex_alien_unstable  = eixrc["TAG_FOR_EX_ALIEN_UNSTABLE"];
 	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
 
-	portagesettings = new PortageSettings(eixrc, true);
+	portagesettings = new PortageSettings(eixrc, true, false);
 
 	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care,
 		eixrc.getBool("RESTRICT_INSTALLED"), eixrc.getBool("CARE_RESTRICT_INSTALLED"));

@@ -158,7 +158,7 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 }
 
 /** Read make.globals and make.conf. */
-PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
+PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 {
 	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");
 	m_eprefixconf     = eixrc.m_eprefixconf;
@@ -196,7 +196,24 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal)
 		ref = join_vector(overlayvec);
 	}
 
-	profile     = new CascadingProfile(this);
+	profile = new CascadingProfile(this, init_world);
+	{
+		bool read_world = false;
+		if(init_world) {
+			if(eixrc.getBool("SAVE_WORLD"))
+				read_world = true;
+		}
+		else {
+			if(eixrc.getBool("CURRENT_WORLD"))
+				read_world = true;
+		}
+		if(read_world) {
+			if(grab_masks(eixrc["EIX_WORLD"].c_str(), Mask::maskInWorld, &(profile->m_world), false)) {
+				profile->use_world = true;
+			}
+		}
+	}
+
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
 	profile->listaddProfile();
 	profile->readMakeDefaults();
@@ -815,6 +832,7 @@ PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mas
 	else
 		setProfileMasks(p);
 	bool rvalue = m_localmasks.applyMasks(p, check);
+	p->finalize_masks();
 	p->save_maskflags(ind);
 	return rvalue;
 }

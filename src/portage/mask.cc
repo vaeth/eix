@@ -158,8 +158,6 @@ Mask::parseMask(const char *str) throw(ExBasic)
 }
 
 /** Tests if the mask applies to a Version.
- * @param name name of package (NULL if shall not be tested)
- * @param category category of package (NULL if shall not be tested)
  * @return true if applies. */
 bool
 Mask::test(const ExtendedVersion *ev) const
@@ -245,7 +243,7 @@ Mask::match(Package &pkg) const
 
 /** Sets the stability members of all version in package according to the mask.
  * @param pkg            package you want tested
- * @param check_name     true if name should be tested */
+ * @param check          Redundancy checks which should apply */
 void
 Mask::checkMask(Package& pkg, Keywords::Redundant check)
 {
@@ -317,6 +315,12 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 				ve->maskflags.setbits(MaskFlags::MASK_SYSTEM);
 			else
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
+			break;
+		case maskInWorld:
+			if( ve->maskflags.isWorld() )
+				break;
+			if( test(ve) )
+				ve->maskflags.setbits(MaskFlags::MASK_WORLD);
 			break;
 		case maskAllowedByProfile:
 			if( ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */

@@ -266,6 +266,9 @@ Only match packages which have at least one non-masked version.
 .BR --system ", " --system+ ", " --system-
 Only match system packages.
 .TP
+.BR --world
+Only match world packages.
+.TP
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
 .TP
@@ -744,17 +747,20 @@ for each slot the highest stable (or testing, respectively) version
 without slot information, separated by spaces.
 .TP
 .B system
-expands to "system" if this package is in the system-profile
+expands to "system" if this package is in the system profile
+.TP
+.B world
+expands to "world" if this package is in the world file
 .TP
 .B provide
 the packages PROVIDE-string
 .TP
 .B marked
-expands to "1" if the package was passed with the B<--pipe> option.
+expands to "marked" if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
 .TP
 .BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
-B<upgrade> expands to "1" if the package is installed and at least one slot can be upgraded
+B<upgrade> expands to "upgrade" if the package is installed and at least one slot can be upgraded
 (or the best stable version is a new slot and B<UPDATE_TO_HIGHEST_SLOT> is true).
 The other variables test similarly whether the package can be upgraded or newly installed,
 should be downgraded, can/should be upgraded/downgraded,
@@ -767,7 +773,7 @@ is taken into account (and not all slots).
 .TP
 .BR better ", " worse ", " differ ", " bestbetter ", " bestworse ", " bestdiffer
 this can only be used in conditionals in B<DIFF_FORMAT_CHANGED>.
-B<better> expands to "1" if the new package has a new slot or a better stable
+B<better> expands to "better" if the new package has a new slot or a better stable
 version (or the same best stable version but from a different overlay number)
 for some slot than the old package.
 B<worse> means analogously that the old package had at least one better slot
@@ -1152,6 +1158,25 @@ This is prepended to overlays in the eix database to test whether they exist.
 .TP
 .B EIX_CACHEFILE "  " (string)
 The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
+
+.TP
+.B EIX_WORLD "  " (string)
+The file eix considers as the world file. Note that usually
+this file is only readable if you are a member of the portage group.
+To avoid needing this permissions you can use the following:
+
+.TP
+.BR SAVE_WORLD "  " (true / false)
+If you set this to true, the information of your world file is stored in @EIX_CACHEFILE@.
+Note that this means that anybody who can read this file has the information about
+the content of your world file.
+Make sure that this is really what you want if you set this to true.
+
+.TP
+.BR CURRENT_WORLD "  " (true / false)
+If false, then the world file information stored in @EIX_CACHEFILE@ is used,
+even if your current world file is readable.
+Otherwise, your current world file (if it is readable) overrides that information.
 
 .TP
 .BR SKIP_PERMISSION_TESTS "  " (true / false)

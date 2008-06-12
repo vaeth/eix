@@ -111,6 +111,7 @@ dump_help(int exit_code)
 			"    --testing[+-]         Match packages with a testing or stable version.\n"
 			"    --non-masked[+-]      Match packages with a non-masked version.\n"
 			"    --system[+-]          Match system packages.\n"
+			"    --world               Match world packages.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
 			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
@@ -250,6 +251,7 @@ static struct Option long_options[] = {
 	Option("stable",        O_STABLE_DEFAULT),
 	Option("testing",       O_TESTING_DEFAULT),
 	Option("non-masked",    O_NONMASKED_DEFAULT),
+	Option("world",         O_WORLD),
 	Option("system",        O_SYSTEM_DEFAULT),
 	Option("stable+",       O_STABLE_LOCAL),
 	Option("testing+",      O_TESTING_LOCAL),
@@ -505,7 +507,7 @@ run_eix(int argc, char** argv)
 		overlay_mode = mode_list_none;
 	}
 
-	PortageSettings portagesettings(eixrc, true);
+	PortageSettings portagesettings(eixrc, true, false);
 
 	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,

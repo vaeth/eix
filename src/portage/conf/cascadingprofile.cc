@@ -203,11 +203,26 @@ CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 void
 CascadingProfile::applyMasks(Package *p) const
 {
-	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-		(*it)->maskflags.set(MaskFlags::MASK_NONE);
+	if(m_init_world || use_world) {
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			(*it)->maskflags.set(MaskFlags::MASK_NONE);
+		}
+	}
+	else {
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if((*it)->maskflags.isWorld()) {
+				(*it)->maskflags.set(MaskFlags::MASK_WORLD);
+			}
+			else {
+				(*it)->maskflags.set(MaskFlags::MASK_NONE);
+			}
+		}
 	}
 	getAllowedPackages()->applyMasks(p);
 	getSystemPackages()->applyMasks(p);
 	getPackageMasks()->applyMasks(p);
+	if(use_world)
+		getWorldPackages()->applyMasks(p);
+	p->finalize_masks();
 }
 

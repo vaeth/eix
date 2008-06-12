@@ -212,7 +212,8 @@ char         Mask bitset for the current $ARCH:
                :0x00: none of the following
                :0x01: masked by package.mask
                :0x02: masked by profile
-               :0x04: version of package is a system-package
+               :0x04: version of package is a system package
+               :0x08: version of package is a world package
 
              Since eix-0.10.1 the higher bits contain the restrict status:
 

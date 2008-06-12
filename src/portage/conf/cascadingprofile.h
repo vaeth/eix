@@ -26,13 +26,16 @@ class Package;
 class CascadingProfile {
 
 	public:
+		bool use_world;
+		MaskList<Mask> m_world;          /**< Packages in world. This must be set externally */
 
 	protected:
+		bool m_init_world;
 		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
-		MaskList<Mask> m_system;         /**< Packages in m_system profile. */
-		MaskList<Mask> m_system_allowed; /**< Packages that are not in m_system profile but only allowed to have specific versions.*/
+		MaskList<Mask> m_system;         /**< Packages in system profile. */
+		MaskList<Mask> m_system_allowed; /**< Packages that are not in system profile but only allowed to have specific versions.*/
 		MaskList<Mask> m_package_masks;  /**< Masks from package.masks */
 
 	private:
@@ -48,8 +51,12 @@ class CascadingProfile {
 
 		void ReadLink(std::string &path) const;
 	public:
-		CascadingProfile(PortageSettings *portagesettings)
-		{ m_portagesettings = portagesettings; }
+		CascadingProfile(PortageSettings *portagesettings, bool init_world)
+		{
+			m_portagesettings = portagesettings;
+			use_world = false;
+			m_init_world = init_world;
+		}
 
 		/** Read all "make.defaults" files previously added by listadd... */
 		void readMakeDefaults();
@@ -76,6 +83,11 @@ class CascadingProfile {
 		/** Get all m_system packages. */
 		const MaskList<Mask> *getSystemPackages() const {
 			return &m_system;
+		}
+
+		/** Get all m_system packages. */
+		const MaskList<Mask> *getWorldPackages() const {
+			return &m_world;
 		}
 
 		/** Get packages that are not in m_system profile but only allowed to have specific versions .*/

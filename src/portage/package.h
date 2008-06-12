@@ -77,12 +77,36 @@ class Package
 		 * That means e.g. that version 0.2 is found in two overlays. */
 		typedef uint8_t Duplicates;
 		static const Duplicates
-			DUP_NONE,
-			DUP_SOME,    /* Duplicate versions are somewhere */
-			DUP_OVERLAYS;/* Duplicate versions are both in overlays */
+			DUP_NONE     = 0x00,
+			DUP_SOME     = 0x01, /* Duplicate versions are somewhere */
+			DUP_OVERLAYS = 0x03; /* Duplicate versions are both in overlays */
 
 		Duplicates have_duplicate_versions;
 
+		/** The largest overlay from which one of the version comes. */
+		Version::Overlay largest_overlay;
+
+		typedef uint8_t Versioncollects;
+		static const Versioncollects
+			COLLECT_NONE                  = 0x00,
+			COLLECT_HAVE_NONTRIVIAL_SLOTS = 0x01,
+			COLLECT_HAVE_SAME_OVERLAY_KEY = 0x02,
+			COLLECT_AT_LEAST_TWO_OVERLAYS = 0x04,
+			COLLECT_DEFAULT               = COLLECT_HAVE_SAME_OVERLAY_KEY;
+		Versioncollects version_collects;
+
+		typedef uint8_t Localcollects;
+		static const Localcollects
+			LCOLLECT_NONE    = 0x00,
+			LCOLLECT_SYSTEM  = 0x01,
+			LCOLLECT_WORLD   = 0x02,
+			LCOLLECT_DEFAULT = LCOLLECT_NONE;
+		Localcollects local_collects;
+
+		std::vector<Localcollects> saved_collects;
+
+		/** Package properties (stored in db) */
+		std::string category, name, desc, homepage, licenses, provide;
 
 		const SlotList& slotlist() const
 		{
@@ -94,22 +118,24 @@ class Package
 		}
 
 		/** True if at least one slot is nonempty (different from "0") */
-		bool have_nontrivial_slots;
+		bool have_nontrivial_slots() const
+		{ return (version_collects & COLLECT_HAVE_NONTRIVIAL_SLOTS); }
 
 		/** True if all versions come from one overlay. */
-		bool have_same_overlay_key;
+		bool have_same_overlay_key() const
+		{ return (version_collects & COLLECT_HAVE_SAME_OVERLAY_KEY); }
 
 		/** True if all versions come from at least two overlays. */
-		bool at_least_two_overlays;
+		bool at_least_two_overlays() const
+		{ return (version_collects & COLLECT_AT_LEAST_TWO_OVERLAYS); }
 
-		/** The largest overlay from which one of the version comes. */
-		Version::Overlay largest_overlay;
+		/** True if any version is in the system profile. */
+		bool is_system_package() const
+		{ return (local_collects & LCOLLECT_SYSTEM); }
 
-		/** True if every version is in the system-profile. */
-		bool is_system_package;
-
-		/** Package properties (stored in db) */
-		std::string category, name, desc, homepage, licenses, provide;
+		/** True if any version is in the world file. */
+		bool is_world_package() const
+		{ return (local_collects & LCOLLECT_WORLD); }
 
 		/** Collected IUSE for all versions of that package */
 		const std::string& coll_iuse() const
@@ -124,8 +150,8 @@ class Package
 
 		template<typename Iter>
 		void add_coll_iuse(const Iter& a, const Iter& b)
-		{ 
-			m_collected_iuse.insert(a, b); 
+		{
+			m_collected_iuse.insert(a, b);
 			m_collected_iuse_cache.clear();
 		}
 
@@ -144,12 +170,14 @@ class Package
 		static bool upgrade_to_best;
 
 		/// Preset with defaults
-		Package()
+		Package() :
+			saved_collects(Version::SAVEMASK_SIZE, LCOLLECT_DEFAULT)
 		{ defaults(); }
 
 		/// Fill in name and category and preset with defaults
-		Package(const std::string& c, const std::string& n)
-			: category(c), name(n)
+		Package(const std::string& c, const std::string& n) :
+			saved_collects(Version::SAVEMASK_SIZE, LCOLLECT_DEFAULT),
+			category(c), name(n)
 		{ defaults(); }
 
 		/** De-constructor, delete content of Version-list. */
@@ -170,6 +198,9 @@ class Package
 		void addVersion(Version *version)
 		{ addVersionStart(version); addVersionFinalize(version); }
 
+		/** Call this after modifying system or world state of versions */
+		void finalize_masks();
+
 		void save_keyflags(Version::SavedKeyIndex i)
 		{
 			for(iterator it = begin(); it != end(); ++it)
@@ -178,12 +209,14 @@ class Package
 
 		void save_maskflags(Version::SavedMaskIndex i)
 		{
+			saved_collects[i] = local_collects;
 			for(iterator it = begin(); it != end(); ++it)
 				it->save_maskflags(i);
 		}
 
 		bool restore_keyflags(Version::SavedKeyIndex i)
 		{
+			local_collects = saved_collects[i];
 			for(iterator it = begin(); it != end(); ++it) {
 				if(!(it->restore_keyflags(i)))
 					return false;
@@ -356,11 +389,9 @@ class Package
 		void defaults()
 		{
 			m_has_cached_slotlist = false;
-			is_system_package = false;
-			have_same_overlay_key = true;
-			at_least_two_overlays = false;
 			have_duplicate_versions = DUP_NONE;
-			have_nontrivial_slots = false;
+			version_collects = COLLECT_DEFAULT;
+			local_collects = LCOLLECT_DEFAULT;
 #if !defined(NOT_FULL_USE)
 			versions_have_full_use = false;
 #endif

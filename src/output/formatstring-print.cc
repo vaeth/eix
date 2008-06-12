@@ -151,7 +151,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		}
 		if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
 			if(it->overlay_key>0) {
-				if((!p.have_same_overlay_key) || (p.largest_overlay != it->overlay_key)) {
+				if((!p.have_same_overlay_key()) || (p.largest_overlay != it->overlay_key)) {
 					if(prepend.size() > PIDX_OVERLAY)
 						ret.append(prepend[PIDX_OVERLAY]);
 					ret.append(fmt.overlay_keytext(it->overlay_key, !color));
@@ -427,7 +427,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 	if(!exclude_overlay)
 	{
-		if(!package->have_same_overlay_key && version->overlay_key)
+		if(!package->have_same_overlay_key() && version->overlay_key)
 			cout << fmt->overlay_keytext(version->overlay_key);
 	}
 	if(!fmt->no_color)
@@ -471,7 +471,7 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 void
 print_versions_slots(const PrintFormat *fmt, const Package* p, bool full)
 {
-	if(!p->have_nontrivial_slots)
+	if(!p->have_nontrivial_slots())
 	{
 		print_versions_versions(fmt, p, false, full);
 		return;
@@ -549,7 +549,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 	}
 	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
-		if(ov_key && entity->have_same_overlay_key) {
+		if(ov_key && entity->have_same_overlay_key()) {
 			cout << fmt->overlay_keytext(ov_key);
 			return true;
 		}
@@ -627,14 +627,20 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		return entity->provide;
 	if(name == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
-		if(ov_key && entity->have_same_overlay_key) {
+		if(ov_key && entity->have_same_overlay_key()) {
 			return fmt->overlay_keytext(ov_key, false);
 		}
 		return "";
 	}
 	if(name == "system") {
-		if(entity->is_system_package) {
+		if(entity->is_system_package()) {
 			return "system";
+		}
+		return "";
+	}
+	if(name == "world") {
+		if(entity->is_world_package()) {
+			return "world";
 		}
 		return "";
 	}
@@ -642,7 +648,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		if(fmt->marked_list)
 		{
 			if(fmt->marked_list->is_marked(*entity))
-				return "1";
+				return "marked";
 		}
 		return "";
 	}
@@ -656,7 +662,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->can_upgrade(fmt->vardb, true, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "upgrade";
 		return "";
 	}
 	if(name == "upgradeorinstall") {
@@ -664,7 +670,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->can_upgrade(fmt->vardb, false, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "upgrade";
 		return "";
 	}
 	if(name == "downgrade") {
@@ -672,7 +678,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->must_downgrade(fmt->vardb, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "downgrade";
 		return "";
 	}
 	if(name == "recommend") {
@@ -680,7 +686,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->recommend(fmt->vardb, true, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "recommend";
 		return "";
 	}
 	if(name == "recommendorinstall") {
@@ -688,7 +694,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->recommend(fmt->vardb, false, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "recommend";
 		return "";
 	}
 	if(name == "bestupgrade") {
@@ -696,7 +702,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->can_upgrade(fmt->vardb, true, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "upgrade";
 		return "";
 	}
 	if(name == "bestupgradeorinstall") {
@@ -704,7 +710,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->can_upgrade(fmt->vardb, false, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "upgrade";
 		return "";
 	}
 	if(name == "bestdowngrade") {
@@ -712,7 +718,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->must_downgrade(fmt->vardb, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "downgrade";
 		return "";
 	}
 	if(name == "bestrecommend") {
@@ -720,7 +726,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->recommend(fmt->vardb, true, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "recommend";
 		return "";
 	}
 	if(name == "bestrecommendorinstall") {
@@ -728,7 +734,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		bool result = entity->recommend(fmt->vardb, false, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
-			return "1";
+			return "recommend";
 		return "";
 	}
 	if(name.find("installedversions") != string::npos) {
@@ -805,7 +811,7 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "1";
+			return "better";
 		return "";
 	}
 	if(name == "bestbetter")
@@ -816,7 +822,7 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "1";
+			return "better";
 		return "";
 	}
 	if(name == "worse")
@@ -827,7 +833,7 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "1";
+			return "worse";
 		return "";
 	}
 	if(name == "bestworse")
@@ -838,7 +844,7 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "1";
+			return "worse";
 		return "";
 	}
 	if(name == "differ")
@@ -849,7 +855,7 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "1";
+			return "differ";
 		return "";
 	}
 	if(name == "bestdiffer")
@@ -860,7 +866,7 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "1";
+			return "differ";
 		return "";
 	}
 	string new_name;
