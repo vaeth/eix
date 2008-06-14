@@ -12,6 +12,9 @@
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
+/* Define to 1 if you have the <climits> header file. */
+#undef HAVE_CLIMITS
+
 /* Define to 1 if you have the `fnmatch' function. */
 #undef HAVE_FNMATCH
 
@@ -20,6 +23,9 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -59,6 +65,9 @@
 
 /* Define to 1 if you have the `strrchr' function. */
 #undef HAVE_STRRCHR
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H

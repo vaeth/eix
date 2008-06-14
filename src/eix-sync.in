@@ -97,13 +97,13 @@ ExecuteConfig() {
 		while [ "${J# }" != "${J}" ]; do J="${J#?}"; done
 		[ -n "${J}" ] || continue
 		case "${J}" in
+			'!!'*) [ "${1}" = 'opts' ] && eval "${J#??}"
+				continue;;
 			!*)  J="${J#?}"; MYCMD='!';;
 			@@*) J="${J#??}"; MYCMD='@@';;
 			@*)  J="${J#?}"; MYCMD='@';;
 			\~*) J="${J#?}"; MYCMD='~';;
 			-*)  CONFIG_OPTS="${CONFIG_OPTS} ${J}"; continue;;
-			'export '*) [ "${1}" = 'opts' ] && eval "${J}"
-				continue;;
 			*)   MYCMD="layman";;
 		esac
 		[ "${1}" = 'opts' ] && continue

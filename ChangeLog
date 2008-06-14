@@ -5,8 +5,8 @@
 	- Support for world. You need execute permissions of /var/lib/portage
 	  or run update-eix with such permissions and set SAVE_WORLD=true
 	  to make use of this feature.
-	- Allow "export" lines in eix-sync to override e.g. FORCE_USECOLORS,
-	  see http://bugs.gentoo.org/show_bug.cgi?id=225963
+	- Allow "!!" lines in eix-sync to override environment variables like
+	  FORCE_USECOLORS, see http://bugs.gentoo.org/show_bug.cgi?id=225963
 	- Fix treatment of "-" in slotnames.
 	  Thanks to Edward "Hades" <edward.hades at gmail.com> for the patch,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=225773
