@@ -263,7 +263,7 @@ cache/cache-map.cc: cache/generate-cachemap.sh
 
 eix-sync: eix-sync.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh',g" \
+	    -e "s,\./update-eix-functions\.sh\.in,'$(bindir)/update-eix-functions.sh',g" \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 	"$<" > "$@"
 

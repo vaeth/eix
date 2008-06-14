@@ -10,7 +10,7 @@
 # It can add or remove local layman overlays to the current eix
 # database. (@PACKAGE_STRING@).
 
-. update-eix-functions.sh.in
+. ./update-eix-functions.sh.in
 
 Usage() {
 	local I R="${1:-1}"

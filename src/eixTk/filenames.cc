@@ -10,6 +10,26 @@
 #include <cstdlib>
 #include <cstring>
 
+// Try to read PATH_MAX from climits/limits:
+
+#if defined(HAVE_CLIMITS)
+#include <climits>
+#else
+#if defined(HAVE_LIMITS_H)
+#include <limits.h>
+#endif
+#endif
+
+// On some systems PATH_MAX is only contained in sys/param.h:
+
+#if !defined(PATH_MAX)
+#if defined(HAVE_SYS_PARAM_H)
+#include <sys/param.h>
+#endif
+#endif
+
+// If we still don't have PATH_MAX, try to use MAXPATHLEN:
+
 #if !defined(PATH_MAX)
 #if defined(MAXPATHLEN)
 #define PATH_MAX MAXPATHLEN

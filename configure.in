@@ -67,6 +67,12 @@ AC_CHECK_FUNCS([canonicalize_file_name realpath vfork], , )
 dnl Compatibility Headers:
 AC_CHECK_HEADERS(tr1/cstdint)
 
+dnl Further headers:
+AC_CHECK_HEADERS(climits)
+AC_CHECK_HEADERS(limits.h)
+AC_CHECK_HEADERS(sys/param.h)
+
+
 AC_MSG_CHECKING(if stdint.h can really be used)
 AC_TRY_COMPILE([ # include <stdint.h>
 ],[],

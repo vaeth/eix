@@ -862,6 +862,19 @@ I<Name>; only different messages will be given during B<eix-sync>.)
 
 You can use this feature to unpack e.g. an overlay before calling B<layman>
 or to apply local fixes after B<layman> was called.
+For security reasons, I<command> is run in a subshell (hence it is not
+possible to set environment variables). If you need to set environment
+variables use:
+.TP
+.BI export remainder
+This is similar to B<! export> I<remainder> with the difference that
+it actually works as expected because it is not run in a subshell.
+Moreover, this is unconditionally executed, i.e. even if options -u or -l are used.
+No sanity checks are made, i.e. you can misuse this I<remainder> and e.g. put a ";"
+in there to execute arbitrary shell code within the content of the eix-sync shell.
+Only make use of this "feature" if you know what you are doing:
+You can easily override e.g. internal eix-sync shell functions or variables,
+and since eix-sync is usually called as root, this can be very dangerous.
 .TP
 .BI ~ command
 This is only important if eix-sync options B<-s> or B<-2> are used.
@@ -888,6 +901,10 @@ until B<emerge --sync> and the subsequent B<update-eix>
 was (successfully) called.
 .TP
 Some examples of useful lines in B</etc/eix-sync.conf>:
+.TP
+.B -rv
+.TP
+.B export FORCE_USECOLORS=true
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"$(hostname)-sh"
 .TP

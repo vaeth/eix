@@ -9,7 +9,7 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-. update-eix-functions.sh.in
+. ./update-eix-functions.sh.in
 
 LOCAL_VARCACHE="`update-eix --print EPREFIX_PORTAGE_CACHE`"
 EIXCACHE="`update-eix --print EIX_CACHEFILE`"
@@ -102,6 +102,8 @@ ExecuteConfig() {
 			@*)  J="${J#?}"; MYCMD='@';;
 			\~*) J="${J#?}"; MYCMD='~';;
 			-*)  CONFIG_OPTS="${CONFIG_OPTS} ${J}"; continue;;
+			'export '*) [ "${1}" = 'opts' ] && eval "${J}"
+				continue;;
 			*)   MYCMD="layman";;
 		esac
 		[ "${1}" = 'opts' ] && continue
@@ -216,7 +218,7 @@ DoExecute() {
 	(
 		for CURRENT_COMMAND; do
 			MyRunCommand "Executing ${CURRENT_COMMAND}" \
-			eval "${CURRENT_COMMAND}" ||
+			eval "${CURRENT_COMMAND}" || \
 			die "Something went wrong with ${CURRENT_COMMAND}"
 		done
 	) || die

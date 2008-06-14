@@ -8,7 +8,7 @@
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).
 
-. update-eix-functions.sh.in
+. ./update-eix-functions.sh.in
 
 [ -n "${OVERLAYPARENT}" ] || OVERLAYPARENT="/usr/portage/local"
 EIXCACHESNAME="eix-caches.tbz2"
