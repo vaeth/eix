@@ -1142,6 +1142,8 @@ MATCH_IF(CATEGORY_NAME, "/");
 MATCH_IF(HOMEPAGE,      ".*");
 MATCH_IF(PROVIDE,       "^virtual/");
 MATCH_IF(IUSE,          ".*");
+MATCH_IF(SLOT,          ".*");
+MATCH_IF(INSTALLED_SLOT,".*");
 
 AddOption(STRING, "MATCH_ORDER",
 	"PROVIDE CATEGORY_NAME NAME", "Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.");

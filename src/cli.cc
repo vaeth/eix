@@ -263,6 +263,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			          *test |= PackageTest::USE_ENABLED;   break;
 			case O_INSTALLED_WITHOUT_USE:
 			          *test |= PackageTest::USE_DISABLED;  break;
+			case O_INSTALLED_SLOT:
+			          *test |= PackageTest::INSTALLED_SLOT;break;
 			// }}}
 
 			// Check for algorithms {{{

@@ -2,9 +2,10 @@
 
 *eix-0.12.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Support for world. You need execute permissions of /var/lib/portage
-	  or run update-eix with such permissions and set SAVE_WORLD=true
-	  to make use of this feature.
+	- Support for world file. You need execute permissions for
+	  /var/lib/portage or set SAVE_WORLD=true and run update-eix with
+	  such permissions to make use of this feature.
+	- Introduce --installed-slot, MATCH_IF_*SLOT
 	- Allow "!!" lines in eix-sync to override environment variables like
 	  FORCE_USECOLORS, see http://bugs.gentoo.org/show_bug.cgi?id=225963
 	- Fix treatment of "-" in slotnames.
@@ -13,11 +14,11 @@
 	- Fix PATH_MAX headers on FreeBSD-7. Thanks to
 	  Javier Villavicencio <the_paya at gentoo.org> for the patch, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=226499
-	- Fix recognition of system packages according to local settings
+	- Fix recognition of system packages according to local settings.
 	- Fix format documentation: Provide is HashedString not HashedWords
 	  (this will probably change when eix format changes again).
 	  Thanks to Charlie Shepherd <masterdriverz at gmail.com> for reporting
-	- Simplify calling of write_hash_words()
+	- Minor internal changes, e.g. simplify write_hash_words()
 
 *eix-0.12.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -35,7 +36,7 @@
 	- Reorganize eixrc/defaults.cc
 	- Export PATH and other portagesettings variables to ebuild.sh, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=219066
-	- Minor documentation fixes
+	- Minor documentation fixes.
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Simplify pushback_lines_file()

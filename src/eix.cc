@@ -133,12 +133,13 @@ dump_help(int exit_code)
 			"    -S, --description       description\n"
 			"    -A, --category-name     \"category/name\"\n"
 			"    -C, --category          category\n"
-			"        --slot              slot\n"
 			"    -s, --name              name (default)\n"
 			"    -H, --homepage          homepage\n"
 			"    -L, --license           license\n"
 			"    -P, --provide           provides\n"
 			"    -U, --use               useflag (of the ebuild)\n"
+			"    --slot                  slot\n"
+			"    --installed-slot        slot of installed version\n"
 			"    --installed-with-use    enabled useflag (of installed package)\n"
 			"    --installed-without-use disabled useflag (of installed package)\n"
 			"\n"
@@ -268,6 +269,7 @@ static struct Option long_options[] = {
 	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
 	Option("installed-in-some-overlay", O_INSTALLED_SOME),
 	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
+	Option("installed-slot",O_INSTALLED_SLOT,           Option::KEEP_STRING_OPTIONAL),
 	Option("fetch",         O_FETCH),
 	Option("mirror",        O_MIRROR),
 	Option("dup-packages",  'd'),

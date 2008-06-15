@@ -102,7 +102,7 @@ This will in particular make sure that you get an up-/downgrade
 recommendation if a slot name of an installed version changes.
 Note that this will dramatically decrease the speed at the first call.
 (If your filesystem has a reasonable cache, later calls are almost not
-slower than without this option).
+slower than without this option.)
 .TP
 .BR -q ", " --quiet "   (toggle)"
 Produce no output on stderr and stdout (fatal errors which occur at the
@@ -414,8 +414,12 @@ i.e. "virtual/blackbox"
 A useflag defined by IUSE in the ebuild (B<not> that of installed packages).
 You will usually want to combine this option with -e
 .TP
-.BR --slot
-Slotname, e.g. "kde-4"
+.B --slot
+Slotname of a version in the database, e.g. "kde-4"
+.TP
+.B --installed-slot
+Slotname of an installed version.
+Recall that without option B<--care> (or B<CAREMODE=true>) the slotname might be guessed.
 .TP
 .B --installed-with-use
 A useflag enabled during installation of the package.
@@ -1697,6 +1701,12 @@ Use USE as default matchfield if the string match the given regex.
 .TP
 .B MATCH_PROVIDE_IF " " (String)
 Use PROVIDE as default matchfield if the string match the given regex.
+.TP
+.B MATCH_SLOT_IF " " (String)
+Use SLOT as default matchfield if the string match the given regex.
+.TP
+.B MATCH_INSTALLED_SLOT_IF " " (String)
+Use INSTALLED_SLOT as default matchfield if the string match the given regex.
 .TP
 .B MATCH_ORDER " " (String)
 Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.

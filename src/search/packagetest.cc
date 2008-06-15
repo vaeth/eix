@@ -15,18 +15,19 @@
 using namespace std;
 
 const PackageTest::MatchField
-		PackageTest::NONE          = 0x000, /**< Search in name */
-		PackageTest::NAME          = 0x001, /**< Search in name */
-		PackageTest::DESCRIPTION   = 0x002, /**< Search in description */
-		PackageTest::PROVIDE       = 0x004, /**< Search in provides */
-		PackageTest::LICENSE       = 0x008, /**< Search in license */
-		PackageTest::CATEGORY      = 0x010, /**< Search in category */
-		PackageTest::CATEGORY_NAME = 0x020, /**< Search in category/name */
-		PackageTest::HOMEPAGE      = 0x040, /**< Search in homepage */
-		PackageTest::IUSE          = 0x080, /**< Search in iuse */
-		PackageTest::USE_ENABLED   = 0x100, /**< Search in enabled  useflags of installed packages */
-		PackageTest::USE_DISABLED  = 0x200, /**< Search in disabled useflags of installed packages */
-		PackageTest::SLOT          = 0x400; /**< Search in slots */
+		PackageTest::NONE,
+		PackageTest::NAME,
+		PackageTest::DESCRIPTION,
+		PackageTest::PROVIDE,
+		PackageTest::LICENSE,
+		PackageTest::CATEGORY,
+		PackageTest::CATEGORY_NAME,
+		PackageTest::HOMEPAGE,
+		PackageTest::IUSE,
+		PackageTest::USE_ENABLED,
+		PackageTest::USE_DISABLED,
+		PackageTest::SLOT,
+		PackageTest::INSTALLED_SLOT;
 
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE,
@@ -64,7 +65,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 void
 PackageTest::calculateNeeds() {
 	need = PackageReader::NONE;
-	if(field & SLOT)
+	if(field & (SLOT | INSTALLED_SLOT))
 		setNeeds(PackageReader::VERSIONS);
 	if(field & HOMEPAGE)
 		setNeeds(PackageReader::HOMEPAGE);
@@ -111,6 +112,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "PROVIDE")       ret = PROVIDE;
 	else if(p == "IUSE")          ret = IUSE;
 	else if(p == "SLOT")          ret = SLOT;
+	else if(p == "INSTALLED_SLOT")ret = INSTALLED_SLOT;
 	else throw ExBasic("Can't find MatchField called %r") % p;
 	return ret;
 }
@@ -191,10 +193,24 @@ PackageTest::stringMatch(Package *pkg) const
 		}
 	}
 
+	if(! (field & (USE_ENABLED | USE_DISABLED | INSTALLED_SLOT)))
+		return false;
+
+	vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*pkg);
+	if(!installed_versions)
+		return false;
+
+	if(field & INSTALLED_SLOT) {
+		for(vector<InstVersion>::iterator it = installed_versions->begin();
+			it != installed_versions->end(); ++it) {
+			if(!vardbpkg->readSlot(*pkg, *it))
+				continue;
+			if((*algorithm)(it->slotname.c_str(), pkg))
+				return true;
+		}
+	}
+
 	if(field & (USE_ENABLED | USE_DISABLED)) {
-		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*pkg);
-		if(!installed_versions)
-			return false;
 		for(vector<InstVersion>::iterator it = installed_versions->begin();
 			it != installed_versions->end(); ++it) {
 			if(!vardbpkg->readUse(*pkg, *it))
