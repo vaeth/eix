@@ -27,7 +27,7 @@ using namespace std;
 class MapFile {
 	private:
 		void *pf_data;
-		size_t pf_data_size;
+		off_t pf_data_size;
 
 		bool mapData(int fd) {
 			struct stat st;

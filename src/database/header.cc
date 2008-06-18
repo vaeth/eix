@@ -90,7 +90,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 	if(*s)
 		return false;
 	try {
-		number = atoi(name);
+		number = my_atoi(name);
 		if(number >= countOverlays())
 			return false;
 		if(number < minimal)

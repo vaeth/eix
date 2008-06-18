@@ -18,11 +18,21 @@
 #include <cstring>
 #include <cstdlib>
 
-#if !defined HAVE_STRNDUP
+#if !defined(HAVE_STRNDUP)
 /** strndup in case we don't have one. */
 #include <unistd.h>
 char *strndup(const char *s, size_t n);
-#endif /* !defined HAVE_STRNDUP */
+#endif /* !defined(HAVE_STRNDUP) */
+
+#if defined(HAVE_STRTOUL)
+#define my_atoi(a) strtoul(a, NULL, 10)
+#else
+#if defined(HAVE_STRTOL)
+#define my_atoi(a) strtol(a, NULL, 10)
+#else
+#define my_atoi(a) atoi(a)
+#endif
+#endif
 
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {

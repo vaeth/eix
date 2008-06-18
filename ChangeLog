@@ -18,7 +18,7 @@
 	- Fix format documentation: Provide is HashedString not HashedWords
 	  (this will probably change when eix format changes again).
 	  Thanks to Charlie Shepherd <masterdriverz at gmail.com> for reporting
-	- Minor internal changes, e.g. simplify write_hash_words()
+	- Minor simplifications and compatibility fixes.
 
 *eix-0.12.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

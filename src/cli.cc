@@ -270,12 +270,10 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			// Check for algorithms {{{
 			case 'f': if(++arg != end
 					 && arg->type == Parameter::ARGUMENT
-					 && is_numeric(arg->m_argument))
-				  {
-					  test->setAlgorithm(new FuzzyAlgorithm(atoi(arg->m_argument)));
+					 && is_numeric(arg->m_argument)) {
+					  test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
 				  }
-				  else
-				  {
+				  else {
 					  test->setAlgorithm(new FuzzyAlgorithm(LEVENSHTEIN_DISTANCE));
 					  arg--;
 				  }

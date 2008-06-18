@@ -199,17 +199,17 @@ EbuildExec::calc_permissions()
 	EixRc &eix = get_eixrc(NULL);
 	string &s = eix["EBUILD_USER"];
 	if(s.empty() || !get_uid_of(s.c_str(), &uid)) {
-		int i = eix.getInteger("EBUILD_UID");
+		uid_t i = eix.getInteger("EBUILD_UID");
 		if(i > 0)
-			uid = uid_t(i);
+			uid = i;
 		else
 			set_uid = false;
 	}
 	s = eix["EBUILD_GROUP"];
 	if(s.empty() || !get_uid_of(s.c_str(), &gid)) {
-		int i = eix.getInteger("EBUILD_GID");
+		gid_t i = eix.getInteger("EBUILD_GID");
 		if(i > 0)
-			gid = gid_t(i);
+			gid = i;
 		else
 			set_gid = false;
 	}

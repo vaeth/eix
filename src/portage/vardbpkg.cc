@@ -253,7 +253,7 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 	return path;
 #else
 	UNUSED(p); UNUSED(v);
-	return ""
+	return "";
 #endif
 }
 

@@ -16,7 +16,7 @@
 
 #include <iostream>
 
-#if !defined HAVE_STRNDUP
+#if !defined(HAVE_STRNDUP)
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
  * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
@@ -36,7 +36,7 @@ strndup(const char *s, size_t n)
 	}
 	return r;
 }
-#endif /* !defined HAVE_STRNDUP */
+#endif /* !defined(HAVE_STRNDUP) */
 
 using namespace std;
 

@@ -52,7 +52,7 @@ get_levenshtein_distance(const char *str_a, const char *str_b)
 		{
 			char ci = tolower(str_a[i-1]);
 			char cj = tolower(str_b[j-1]);
-			cost = (ci==cj) ? 0:1;
+			cost = !(ci == cj);
 
 			unsigned int a = matrix[i-1][j] + 1;
 			unsigned int b = matrix[i][j-1] + 1;

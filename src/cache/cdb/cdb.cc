@@ -28,7 +28,7 @@ class Cdb {
 		bool is_ready;
 
 		uint32_t *cdb_data;
-		size_t cdb_data_size;
+		off_t cdb_data_size;
 		uint32_t *cdb_records_end;
 		uint32_t *current;
 

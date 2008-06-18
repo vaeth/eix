@@ -123,8 +123,12 @@ class Permissions {
 			gid_t g;
 			uid_t u;
 			if(get_gid_of("portage", &g) && get_uid_of("portage", &u)) {
-				fchown(fileno(database), u, g);
-				fchmod(fileno(database), 00664);
+				if(fchown(fileno(database), u, g)) {
+					cerr << "warning: cannot change ownership of cachefile" << endl;
+				}
+				if(fchmod(fileno(database), 00664)) {
+					cerr << "warning: cannot change permissions for cachefile" << endl;
+				}
 			}
 		}
 };

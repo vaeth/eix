@@ -66,7 +66,7 @@ class EixRc : public std::map<std::string,std::string> {
 			Keywords::Redundant type,
 			RedPair &p);
 
-		int getInteger(const char *key);
+		unsigned int getInteger(const char *key);
 
 		void dumpDefaults(FILE *s, bool use_defaults);
 

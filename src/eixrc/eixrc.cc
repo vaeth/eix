@@ -9,6 +9,7 @@
 
 #include "eixrc.h"
 #include <eixTk/exceptions.h>
+#include <eixTk/stringutils.h>
 #include <varsreader.h>
 #include <cstdlib>
 
@@ -640,10 +641,10 @@ EixRc::getRedundantFlags(const char *key, Keywords::Redundant type, RedPair &p)
 	getRedundantFlagAtom(NULL, type, p.second);
 }
 
-int
+unsigned int
 EixRc::getInteger(const char *key)
 {
-	return atoi((*this)[key].c_str());
+	return my_atoi((*this)[key].c_str());
 }
 
 string
