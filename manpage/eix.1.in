@@ -906,7 +906,19 @@ was (successfully) called.
 .TP
 Some examples of useful lines in B</etc/eix-sync.conf>:
 .TP
-.B -rv
+.B -v
+Use this if you want to see (instead of loggin) by default what is going on.
+You can still revert the original behaviour by passing option -V.
+.TP
+.B -r -M
+Use this if you use e.g. PORTDIR_CACHE_METHOD=portage-2.1 and
+B<FEATURES=metadata-transfer> is inactive or disabled (which is the default
+in newer portage versions).
+Depending on your needs you might want to use also B<-r> or B<-M> alone or
+replace B<-M> by the line
+.TP
+.B @@emerge --regen
+to use B<emerge --regen> instead of B<emerge --metadata>.
 .TP
 .B !!export FORCE_USECOLORS="${FORCE_USECOLORS:-true}"
 .TP
@@ -914,7 +926,7 @@ Some examples of useful lines in B</etc/eix-sync.conf>:
 .TP
 .B @update-eix-remote update /var/cache/remote-cache.tbz2
 (The last argument can also be omitted if you do not want a local copy
-of the data).
+of the data.)
 .TP
 .B @@update-eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
@@ -1476,7 +1488,8 @@ If you are using >=portage-2.1 and the default backend,
 you might want to use this one if you do not have access to the portage
 tree when you run update-eix.
 Note that in contrast to the default B<metadata> cache method you must
-use B<emerge --metadata> before you call B<update-eix> with this method.
+run B<emerge --metadata> before you call B<update-eix> with this method.
+You will probably want to use a corresponding option in eix-sync in this case.
 .TP
 .SS
 .B parse

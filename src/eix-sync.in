@@ -37,36 +37,41 @@ contain default options which are processed before the command line options.
 Note that \"--\" in the default options will forbid command line options.
 The following options are available:
 
--i   Ignore all previous options (useful to ignore the default options).
+-i   Ignore all previous options (useful to ignore ${LAYMANCONF} options).
 -d   Only show differences to the previously saved database and exit.
-     This is equivalent to diff-eix ${EIXPREVIOUS}.
--s [USER@]SERVER[:DIR] Sync via rsync from SERVER. This option implies -m.
+     Except for executing the !! lines in ${LAYMANCONF}
+     this is the same as diff-eix ${EIXPREVIOUS}.
+-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
      USER defaults to current user and DIR defaults to \$PORTDIR
 -2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after update-eix (@ entries)
      and do not show differences. This option implies -R
--u   Update database only and show differences. This is equivalent to -l@ms ''
+-u   Update database only and show differences. This is equivalent to -l@s ''
 -l   Do not call layman (and the !commands in ${LAYMANCONF}).
-     However, the postponed hooks (@ and @@ entries) will be executed anyway.
+     However, the !! lines and postponed hooks (@ and @@ entries)
+     will be executed anyway.
 -@   Do not execute the hooks (@ and @@ entries) of ${LAYMANCONF}.
 -S   Do not execute the hooks after emerge --sync (@@ entries).
--m   Run emerge --metadata but not emerge --sync.
-     emerge --metadata is skipped if you use portage's metadata overlay module
-     or if option -U is used.
--M   Run emerge --metadata in addition to emerge --sync.
-     This is probably only useful in conjunction with -c.
+-M   Run emerge --metadata. You might need this when you use e.g.
+     PORTDIR_CACHE_METHOD=portage-2.1 and a newer portage version when
+     FEATURES=metadata-transfer is inactive or disabled.
+-m   Run emerge --metadata but skip emerge --sync.
+-N   Skip emerge --metadata if it was activated by -M or -m.
 -t   Use temporary file to save the current database (-d will not be possible).
 -v   Do not redirect output of update-eix and emerge into logfile.
--V   Cancel previous -v (useful if you used -v in /etc/eix-sync.conf)
+-V   Cancel previous -v (useful if you used -v in ${LAYMANCONF})
 -q   Be quiet (close stdout, redirecting into logfile)
 -w   Run emerge-webrsync instead of emerge --sync.
 -W   Run emerge-delta-webrsync instead of emerge --sync.
 -c CMD Run CMD instead of emerge --sync.
 -C OPT Add OPT to the emerge --sync command (or whatever is used instead).
--r   Really recreate the dep-cache (rm -rf ${LOCAL_VARCACHE}/var/cache/edb/dep/*) (default).
--R   Do not really recreate the dep-cache.
+     This option can be used accumulatively.
+-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
+     use e.g. PORTDIR_CACHE_METHOD=portage-2.1 and FEATURES=metadata-transfer
+     is active. (This option is not default anymore).
+-R   Cancel previous -r (e.g. if it was used in ${LAYMANCONF}).
 -e   Skip heuristic tests whether you must be root.
 -h   Show this text and exit."
 	EXITCODE=${1:-1}
@@ -130,7 +135,7 @@ ExecuteConfig() {
 
 DefaultOpts() {
 	Push -c EMERGECMD 'emerge' '--sync'
-	CLEARCACHE=true
+	CLEARCACHE=false
 	NOLAYMAN=false
 	NOHOOKS=false
 	VERBOSE=false
@@ -148,7 +153,7 @@ DefaultOpts() {
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uul@SmMtvVqwWc:C:rRe?hH" OPTION \
+while getopts "ids:2:Uul@SmMNtvVqwWc:C:rRe?hH" OPTION \
 	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
 	case "${OPTION}" in
 		i) DefaultOpts;;
@@ -160,8 +165,9 @@ while getopts "ids:2:Uul@SmMtvVqwWc:C:rRe?hH" OPTION \
 		l) NOLAYMAN=true;;
 		@) NOHOOKS=true;;
 		S) SYNCHOOKS=false;;
-		m) SKIP_SYNC=true;;
+		m) SKIP_SYNC=true; METADATA=true;;
 		M) METADATA=true;;
+		N) METADATA=false;;
 		t) USETEMP=true;;
 		v) VERBOSE=true;;
 		V) VERBOSE=false;;
@@ -176,9 +182,7 @@ while getopts "ids:2:Uul@SmMtvVqwWc:C:rRe?hH" OPTION \
 		*) Usage 0;;
 	esac
 done
-${DOUPDATE} || CLEARCACHE=false
 [ -z "${SERVER}" ] || SKIP_SYNC=true
-${SKIP_SYNC} && METADATA=true
 
 MyRun() {
 	if [ "${1}" != 'time' ]; then
@@ -345,20 +349,6 @@ CallSyncClient() {
 TESTRESULT=''
 CallEmergeMetadata() {
 	${DOUPDATE} && ${METADATA} || return 0
-	if [ -z "${TESTRESULT}" ]; then
-		local S=`SedFor 'portdbapi.auxdbmodule' "${PMOD}"`
-		if [ "${S}" = "${MODULENAME}" ]
-		then
-			TESTRESULT='false'
-		else
-			TESTRESULT='true'
-		fi
-	fi
-	if [ "${TESTRESULT}" = 'false' ]; then
-		${EMULATEMODE} || \
-			einfo "emerge --metadata is skipped due to settings in ${PMOD}"
-		return
-	fi
 	RootTest
 	MyRunCommand "Running emerge --metadata" \
 		emerge --metadata || die "emerge --metadata failed"

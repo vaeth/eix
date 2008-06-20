@@ -6,6 +6,12 @@
 	  /var/lib/portage or set SAVE_WORLD=true and run update-eix with
 	  such permissions to make use of this feature.
 	- Introduce --installed-slot, MATCH_IF_*SLOT
+	- The new defaults for eix-sync now neither call emerge --metadata
+	  nor clean /var/cache/edb. You might want to set up an appropriate
+	  /etc/eix-sync.conf with previous defaults if you use a cache method
+	  depending on this like "portage-2.1" (most users are not affected).
+	  See the manpage and eix-sync -h for details. See the discussion in
+	  http://bugs.gentoo.org/show_bug.cgi?id=202535
 	- Allow "!!" lines in eix-sync to override environment variables like
 	  FORCE_USECOLORS, see http://bugs.gentoo.org/show_bug.cgi?id=225963
 	- Fix treatment of "-" in slotnames.
