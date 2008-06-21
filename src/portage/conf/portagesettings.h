@@ -114,6 +114,16 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::set<std::string>    m_accepted_keywords_set, m_arch_set,
 		                        *m_local_arch_set;
 
+		MaskList<SetMask>        m_package_sets;
+
+		std::vector<std::string> set_names;
+
+		bool know_world_sets;
+		bool world_system;
+		std::vector<std::string> world_sets;
+		bool num_up_to_date;
+		std::vector<Version::SetsIndex> world_sets_num;
+
 		/** Your cascading profile, excluding local settings */
 		CascadingProfile  *profile;
 
@@ -144,6 +154,17 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
 		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
 
+
+		void read_world_sets(const char *file);
+		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
+		void calc_world_sets(Package *p);
+		void get_setnames(std::vector<std::string> &names, const Package *p) const;
+		std::string get_setnames(const Package *p) const;
+		void update_num();
+		void read_local_sets(const std::string &dir_path);
+		const std::vector<std::string> *get_world_sets() const
+		{ return &world_sets; }
+
 		/** Return vector of all possible all categories.
 		 * Reads categories on first call. */
 		std::vector<std::string> *getCategories();
@@ -152,6 +173,9 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		/// Set stability according to arch or local ACCEPTED_KEYWORDS
 		void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
+
+		const MaskList<SetMask> *getPackageSets() const
+		{ return &m_package_sets; }
 };
 
 #endif

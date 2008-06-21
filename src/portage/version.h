@@ -17,6 +17,7 @@
 #include <eixTk/utils.h>
 
 #include <iostream>
+#include <algorithm>
 
 /* If NOT_FULL_USE is defined, then the iuse data will be handled per package
    and not per version to save memory and disk space.
@@ -45,6 +46,8 @@ class Version : public ExtendedVersion, public Keywords {
 
 		typedef io::UNumber Overlay;
 
+		typedef std::vector<std::string>::size_type SetsIndex;
+
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
 
@@ -61,6 +64,8 @@ class Version : public ExtendedVersion, public Keywords {
 		std::vector<bool>          have_saved_keywords;
 		std::vector<MaskFlags>     saved_masks;
 		std::vector<bool>          have_saved_masks;
+
+		std::vector<SetsIndex> sets_indizes;
 
 		Version() : overlay_key(0),
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
@@ -122,6 +127,15 @@ class Version : public ExtendedVersion, public Keywords {
 
 		const std::vector<std::string>& iuse_vector() const
 		{ return m_iuse; }
+
+		bool is_in_set(SetsIndex m_set) const
+		{ return (std::find(sets_indizes.begin(), sets_indizes.end(), m_set) != sets_indizes.end()); }
+
+		void add_to_set(SetsIndex m_set)
+		{
+			if(!is_in_set(m_set))
+				sets_indizes.push_back(m_set);
+		}
 
 	protected:
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty

@@ -18,6 +18,8 @@
 #include <cstring>
 #include <cstdlib>
 
+#define UNUSED(p) ((void)(p))
+
 #if !defined(HAVE_STRNDUP)
 /** strndup in case we don't have one. */
 #include <unistd.h>

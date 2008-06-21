@@ -439,6 +439,8 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	vector<string> *categories = portage_settings.getCategories();
 	PackageTree package_tree;
 
+	dbheader.world_sets = *(portage_settings.get_world_sets());
+
 	for(eix::ptr_list<BasicCache>::iterator it = cache_table.begin();
 		it != cache_table.end();
 		++it)

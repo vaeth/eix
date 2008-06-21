@@ -129,10 +129,13 @@ print all KEYWORDS used in some version.
 print all SLOT strings used in some version.
 .TP
 .B --print-all-provides
-print all PROVIDE strings used in some package.
+print all PROVIDE words used in some package.
 .TP
 .B --print-all-licenses
 print all LICENSE strings used in some package.
+.TP
+.B --print-world-sets
+print the world sets.
 .TP
 .BR -V ", " --version
 Print version and exit.
@@ -268,6 +271,9 @@ Only match system packages.
 .TP
 .BR --world
 Only match world packages.
+.TP
+.BR --world-sets
+Only match world_sets packages.
 .TP
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
@@ -410,9 +416,8 @@ i.e. "GPL-2"
 .BR -P ", " --provide
 i.e. "virtual/blackbox"
 .TP
-.BR -U ", " --use
-A useflag defined by IUSE in the ebuild (B<not> that of installed packages).
-You will usually want to combine this option with -e
+.BR --set
+Name of a package set of a version in the database, e.g. "system"
 .TP
 .B --slot
 Slotname of a version in the database, e.g. "kde-4"
@@ -420,6 +425,10 @@ Slotname of a version in the database, e.g. "kde-4"
 .B --installed-slot
 Slotname of an installed version.
 Recall that without option B<--care> (or B<CAREMODE=true>) the slotname might be guessed.
+.TP
+.BR -U ", " --use
+A useflag defined by IUSE in the ebuild (B<not> that of installed packages).
+You will usually want to combine this option with -e
 .TP
 .B --installed-with-use
 A useflag enabled during installation of the package.
@@ -732,6 +741,9 @@ of colon-separated strings to influence the printing.
 .B markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.
 .TP
+.B packagesets
+The name of all sets to which the package belongs, separated by spaces.
+.TP
 .B overlaykey
 if all versions are in the same overlay this expands to "overlaykey".
 When printed, "[overlaykey]" is printed with corresponding colors.
@@ -755,6 +767,9 @@ expands to "system" if this package is in the system profile
 .TP
 .B world
 expands to "world" if this package is in the world file
+.TP
+.B world_sets
+expands to "world_sets" if this package is in world sets
 .TP
 .B provide
 the packages PROVIDE-string
@@ -1196,7 +1211,16 @@ The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
 .B EIX_WORLD "  " (string)
 The file eix considers as the world file. Note that usually
 this file is only readable if you are a member of the portage group.
-To avoid needing this permissions you can use the following:
+To avoid needing this permissions you can use B<SAVE_WORLD>.
+
+.TP
+.B EIX_WORLD_SETS "  " (string)
+The file eix considers as the world_sets file.
+The same remarks as for B<EIX_WORLD> hold true.
+
+.TP
+.B EIX_LOCAL_SETS "  " (string)
+The directory which contains the locally defined sets.
 
 .TP
 .BR SAVE_WORLD "  " (true / false)
@@ -1692,34 +1716,37 @@ The tags which are printed for versions with fetch or mirror restrictions.
 .TP
 .\" {{{ Default Matchfields for different strings.
 .B MATCH_NAME_IF " " (String)
-Use NAME as default matchfield if the string match the given regex.
+Use NAME as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_DESCRIPTION_IF " " (String)
-Use DESCRIPTION as default matchfield if the string match the given regex.
+Use DESCRIPTION as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_LICENSE_IF " " (String)
-Use LICENSE as default matchfield if the string match the given regex.
+Use LICENSE as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_CATEGORY_IF " " (String)
-Use CATEGORY as default matchfield if the string match the given regex.
+Use CATEGORY as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_CATEGORY_NAME_IF " " (String)
-Use CATEGORY_NAME as default matchfield if the string match the given regex.
+Use CATEGORY_NAME as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_HOMEPAGE_IF " " (String)
-Use HOMEPAGE as default matchfield if the string match the given regex.
+Use HOMEPAGE as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_IUSE_IF " " (String)
-Use USE as default matchfield if the string match the given regex.
+Use USE as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_PROVIDE_IF " " (String)
-Use PROVIDE as default matchfield if the string match the given regex.
+Use PROVIDE as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_SLOT_IF " " (String)
-Use SLOT as default matchfield if the string match the given regex.
+Use SLOT as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_INSTALLED_SLOT_IF " " (String)
-Use INSTALLED_SLOT as default matchfield if the string match the given regex.
+Use INSTALLED_SLOT as default matchfield if the string matches the given regex.
+.TP
+.B MATCH_SET_IF " " (String)
+Use SET as default matchfield if the string matches the given regex.
 .TP
 .B MATCH_ORDER " " (String)
 Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.

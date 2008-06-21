@@ -52,7 +52,8 @@ class PackageTest {
 			USE_ENABLED   =0x0100, /**< Search in enabled  useflags of installed packages */
 			USE_DISABLED  =0x0200, /**< Search in disabled useflags of installed packages */
 			SLOT          =0x0400, /**< Search in slots */
-			INSTALLED_SLOT=0x0800; /**< Search in installed slots */
+			INSTALLED_SLOT=0x0800, /**< Search in installed slots */
+			SET           =0x1000; /**< Search in sets */
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled

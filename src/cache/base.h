@@ -16,8 +16,6 @@
 #include <map>
 #include <cstdlib>
 
-#define UNUSED(p) ((void)(p))
-
 class Category;
 class Package;
 class PackageTree;

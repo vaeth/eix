@@ -1,7 +1,8 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.12.6
+*eix-0.13.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support for package sets.
 	- Support for world file. You need execute permissions for
 	  /var/lib/portage or set SAVE_WORLD=true and run update-eix with
 	  such permissions to make use of this feature.
@@ -21,9 +22,8 @@
 	  Javier Villavicencio <the_paya at gentoo.org> for the patch, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=226499
 	- Fix recognition of system packages according to local settings.
-	- Fix format documentation: Provide is HashedString not HashedWords
-	  (this will probably change when eix format changes again).
-	  Thanks to Charlie Shepherd <masterdriverz at gmail.com> for reporting
+	- Provide is now HashedWords. Thanks to
+	  Charlie Shepherd <masterdriverz at gmail.com> for reporting.
 	- Minor simplifications and compatibility fixes.
 
 *eix-0.12.5

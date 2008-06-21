@@ -257,6 +257,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			case 'H': *test |= PackageTest::HOMEPAGE;      break;
 			case 'P': *test |= PackageTest::PROVIDE;       break;
 			case 'U': *test |= PackageTest::IUSE;          break;
+			case O_SEARCH_SET:
+			          *test |= PackageTest::SET;           break;
 			case O_SEARCH_SLOT:
 			          *test |= PackageTest::SLOT;          break;
 			case O_INSTALLED_WITH_USE:

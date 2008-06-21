@@ -17,7 +17,9 @@ const MaskFlags::MaskType
 	MaskFlags::MASK_PROFILE,
 	MaskFlags::MASK_HARD,
 	MaskFlags::MASK_SYSTEM,
-	MaskFlags::MASK_WORLD;
+	MaskFlags::MASK_WORLD,
+	MaskFlags::MASK_WORLD_SETS,
+	MaskFlags::MASK_SAVE;
 
 const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_EMPTY,

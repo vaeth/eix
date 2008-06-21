@@ -24,6 +24,7 @@
 #include <portage/instversion.h>
 
 class VarDbPkg;
+class PortageSettings;
 
 /** A sorted list of pointer to Versions */
 
@@ -97,10 +98,11 @@ class Package
 
 		typedef uint8_t Localcollects;
 		static const Localcollects
-			LCOLLECT_NONE    = 0x00,
-			LCOLLECT_SYSTEM  = 0x01,
-			LCOLLECT_WORLD   = 0x02,
-			LCOLLECT_DEFAULT = LCOLLECT_NONE;
+			LCOLLECT_NONE       = 0x00,
+			LCOLLECT_SYSTEM     = 0x01,
+			LCOLLECT_WORLD      = 0x02,
+			LCOLLECT_WORLD_SETS = 0x04,
+			LCOLLECT_DEFAULT    = LCOLLECT_NONE;
 		Localcollects local_collects;
 
 		std::vector<Localcollects> saved_collects;
@@ -136,6 +138,10 @@ class Package
 		/** True if any version is in the world file. */
 		bool is_world_package() const
 		{ return (local_collects & LCOLLECT_WORLD); }
+
+		/** True if any version is in the world file. */
+		bool is_world_sets_package() const
+		{ return (local_collects & LCOLLECT_WORLD_SETS); }
 
 		/** Collected IUSE for all versions of that package */
 		const std::string& coll_iuse() const
@@ -198,7 +204,7 @@ class Package
 		void addVersion(Version *version)
 		{ addVersionStart(version); addVersionFinalize(version); }
 
-		/** Call this after modifying system or world state of versions */
+		/** Call this after modifying system or world state of versions. */
 		void finalize_masks();
 
 		void save_keyflags(Version::SavedKeyIndex i)

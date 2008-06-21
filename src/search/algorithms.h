@@ -32,8 +32,6 @@
 #define FNMATCH_FLAGS 0
 #endif /* defined FNM_CASEFOLD */
 
-#define UNUSED(p) ((void)(p))
-
 /** That's how every Algorithm will look like. */
 class BaseAlgorithm {
 

@@ -89,6 +89,12 @@ AddOption(STRING, "EIX_CACHEFILE",
 AddOption(STRING, "EIX_WORLD",
 	"%{EPREFIX_ROOT}/var/lib/portage/world", "This file is considered as the world file.");
 
+AddOption(STRING, "EIX_WORLD_SETS",
+	"%{EIX_WORLD}_sets", "This file is considered as the world_sets file.");
+
+AddOption(STRING, "EIX_LOCAL_SETS",
+	"%{PORTAGE_CONFIGROOT}/etc/portage/sets", "This directory contains the locally defined sets.");
+
 AddOption(BOOLEAN, "SAVE_WORLD",
 	"false", "Store the information of the world file in the cache file.\n"
 	"Set this only if you want that everybody is be able to get this informations.");
@@ -180,6 +186,11 @@ AddOption(STRING, "COLOR_WORLD",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the name of world packages.");
 
+AddOption(STRING, "COLOR_WORLD_SETS",
+	"yellow,1",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the name of world sets packages.");
+
 AddOption(STRING, "COLOR_CATEGORY",
 	"",
 	"This variable is only used for delayed substitution.\n"
@@ -194,6 +205,11 @@ AddOption(STRING, "COLOR_CATEGORY_WORLD",
 	"%{COLOR_WORLD}",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the category of world packages.");
+
+AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
+	"%{COLOR_WORLD_SETS}",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the category of world sets packages.");
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"cyan,1",
@@ -296,6 +312,11 @@ AddOption(STRING, "COLOR_MARKED_VERSION",
 	"%{COLOR_MARKED_NAME}",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing a marked version of a packages.");
+
+AddOption(STRING, "COLOR_PACKAGESETS",
+	"yellow,1",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the package sets.");
 
 AddOption(STRING, "COLOR_MARKED_NAME",
 	"red,1;%{MARK_VERSIONS}",
@@ -501,7 +522,11 @@ AddOption(STRING, "FORMAT_NAME",
 		"{world}"
 			"(%{COLOR_CATEGORY_WORLD})"
 		"{else}"
-			"(%{COLOR_CATEGORY})"
+			"{world_sets}"
+				"(%{COLOR_CATEGORY_WORLD_SETS})"
+			"{else}"
+				"(%{COLOR_CATEGORY})"
+			"{}"
 		"{}"
 	"{}<category>()/"
 	"{marked}"
@@ -510,7 +535,11 @@ AddOption(STRING, "FORMAT_NAME",
 		"{world}"
 			"(%{COLOR_WORLD})"
 		"{else}"
-			"(%{COLOR_NAME})"
+			"{world_sets}"
+				"(%{COLOR_WORLD_SETS})"
+			"{else}"
+				"(%{COLOR_NAME})"
+			"{}"
 		"{}"
 	"{}<name>()",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
@@ -763,6 +792,16 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with marked versions.");
 
+AddOption(STRING, "FORMATLINE_PACKAGESETS",
+	"%{!PRINT_ALWAYS}{setnames}%{}"
+	"     (%{COLOR_TITLE})Package sets:()"
+	"%{?PRINT_ALWAYS}{setnames}%{}"
+	"        "
+	"(%{COLOR_PACKAGESETS})<setnames>()"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with package sets.");
+
 AddOption(STRING, "FORMATLINE_HOMEPAGE",
 	"%{!PRINT_ALWAYS}{homepage}%{}"
 	"     (%{COLOR_TITLE})Homepage:()"
@@ -870,6 +909,7 @@ AddOption(STRING, "FORMAT_VERBOSE",
 	"%{FORMATLINE_BEST}"
 	"%{FORMATLINE_RECOMMEND}"
 	"%{FORMATLINE_MARKEDVERSIONS}"
+	"%{FORMATLINE_PACKAGESETS}"
 	"%{FORMATLINE_HOMEPAGE}"
 	"%{?PRINT_BUGS}%{FORMATLINE_BUGS}%{}"
 	"%{FORMATLINE_DESCRIPTION}"
@@ -1142,6 +1182,7 @@ MATCH_IF(CATEGORY_NAME, "/");
 MATCH_IF(HOMEPAGE,      ".*");
 MATCH_IF(PROVIDE,       "^virtual/");
 MATCH_IF(IUSE,          ".*");
+MATCH_IF(SET,           ".*");
 MATCH_IF(SLOT,          ".*");
 MATCH_IF(INSTALLED_SLOT,".*");
 

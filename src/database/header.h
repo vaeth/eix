@@ -31,6 +31,8 @@ class DBHeader {
 			iuse_hash,
 			slot_hash;
 
+		std::vector<std::string> world_sets;
+
 		typedef  io::UNumber DBVersion;
 
 		typedef  io::UChar OverlayTest;
@@ -45,7 +47,7 @@ class DBHeader {
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 
 		/** Current version of database-format. */
-		static const DBVersion current = 26;
+		static const DBVersion current = 27;
 
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */

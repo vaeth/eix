@@ -644,6 +644,15 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		}
 		return "";
 	}
+	if(name == "world_sets") {
+		if(entity->is_world_sets_package()) {
+			return "world_sets";
+		}
+		return "";
+	}
+	if(name == "setnames") {
+		return fmt->portagesettings->get_setnames(entity);
+	}
 	if(name == "marked") {
 		if(fmt->marked_list)
 		{

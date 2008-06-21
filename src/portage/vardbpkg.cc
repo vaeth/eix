@@ -22,8 +22,6 @@
 #include <bzlib.h>
 #endif
 
-#define UNUSED(p) ((void)(p)
-
 using namespace std;
 
 inline static void

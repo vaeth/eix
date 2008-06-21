@@ -162,6 +162,7 @@ Hash   Hash for "Licenses"
 Hash   Hash for "Keywords"
 Hash   Hash for "Useflags"
 Hash   Hash for "Slot"
+Vector world_sets
 ====== =======
 
 
@@ -194,7 +195,7 @@ Type         Content
 Number       Offset to the next package in the eix cache file (in bytes; counting starts after the number)
 String       Package name
 String       Description
-HashedString Provide. (The type will probably change to HashedWords in future eix versions.)
+HashedWords  Provide
 String       Homepage
 HashedString Licenses, e.g. MPL-1.1 NPL-1.1
 HashedWords  Useflags (all useflags of all versions of the package are added). This might "falsely" be the empty string if per-version IUSE flags are stored.

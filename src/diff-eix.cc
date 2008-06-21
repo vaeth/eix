@@ -116,7 +116,7 @@ static struct Option long_options[] = {
 };
 
 void
-load_db(const char *file, DBHeader *header, PackageTree *body)
+load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
 {
 	FILE *fp = fopen(file, "rb");
 
@@ -131,6 +131,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body)
 				file, PercentU(header->version), PercentU(DBHeader::current));
 		exit(1);
 	}
+	ps->store_world_sets(&(header->world_sets));
 
 	io::read_packagetree(fp, *body, *header);
 	fclose(fp);
@@ -393,13 +394,13 @@ run_diff_eix(int argc, char *argv[])
 	set_stability_new = new SetStability(portagesettings, local_settings, false, always_accept_keywords);
 	format_for_new.recommend_mode = eixrc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
-	PackageTree old_tree;
-	load_db(old_file.c_str(), &old_header, &old_tree);
-	set_stability_old->set_stability(old_tree);
-
 	PackageTree new_tree;
-	load_db(new_file.c_str(), &new_header, &new_tree);
+	load_db(new_file.c_str(), &new_header, &new_tree, portagesettings);
 	set_stability_new->set_stability(new_tree);
+
+	PackageTree old_tree;
+	load_db(old_file.c_str(), &old_header, &old_tree, portagesettings);
+	set_stability_old->set_stability(old_tree);
 
 	format_for_new.set_overlay_translations(NULL);
 

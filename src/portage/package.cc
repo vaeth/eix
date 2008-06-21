@@ -37,6 +37,7 @@ const Package::Localcollects
 	Package::LCOLLECT_NONE,
 	Package::LCOLLECT_SYSTEM,
 	Package::LCOLLECT_WORLD,
+	Package::LCOLLECT_WORLD_SETS,
 	Package::LCOLLECT_DEFAULT;
 
 Version *
@@ -167,6 +168,10 @@ Package::addVersionFinalize(Version *version)
 			if(version->maskflags.isWorld())
 				local_collects |= LCOLLECT_WORLD;
 		}
+		if(!is_world_sets_package()) {
+			if(version->maskflags.isWorldSets())
+				local_collects |= LCOLLECT_WORLD_SETS;
+		}
 	}
 	else {
 		largest_overlay       = key;
@@ -176,8 +181,8 @@ Package::addVersionFinalize(Version *version)
 			local_collects |= LCOLLECT_SYSTEM;
 		if(version->maskflags.isWorld())
 			local_collects |= LCOLLECT_WORLD;
-		if(version->maskflags.isWorld())
-			local_collects |= LCOLLECT_WORLD;
+		if(version->maskflags.isWorldSets())
+			local_collects |= LCOLLECT_WORLD_SETS;
 	}
 	if(! (version->slotname).empty())
 		version_collects |= COLLECT_HAVE_NONTRIVIAL_SLOTS;
@@ -196,12 +201,14 @@ Package::addVersionFinalize(Version *version)
 void
 Package::finalize_masks()
 {
-	bool system = false, world = false;
+	bool system = false, world = false, world_sets = false;
 	for(iterator i = begin(); i != end(); ++i) {
 		if(i->maskflags.isSystem())
 			system = true;
 		if(i->maskflags.isWorld())
 			world = true;
+		if(i->maskflags.isWorldSets())
+			world_sets  = true;
 	}
 	if(system)
 		local_collects |= LCOLLECT_SYSTEM;
@@ -211,6 +218,10 @@ Package::finalize_masks()
 		local_collects |= LCOLLECT_WORLD;
 	else
 		local_collects &= ~LCOLLECT_WORLD;
+	if(world_sets)
+		local_collects |= LCOLLECT_WORLD_SETS;
+	else
+		local_collects &= ~LCOLLECT_WORLD_SETS;
 }
 
 Version *

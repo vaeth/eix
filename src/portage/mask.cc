@@ -17,6 +17,7 @@
 #include <portage/keywords.h>
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/conf/portagesettings.h>
 
 #include <eixTk/exceptions.h>
 
@@ -243,15 +244,27 @@ Mask::match(Package &pkg) const
 
 /** Sets the stability members of all version in package according to the mask.
  * @param pkg            package you want tested
+ * @param ps             PortageSettings (for sets and world_system)
  * @param check          Redundancy checks which should apply */
 void
-Mask::checkMask(Package& pkg, Keywords::Redundant check)
+Mask::checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check)
 {
-	for(Package::iterator i = pkg.begin();
-		i != pkg.end();
-		++i)
-	{
+	UNUSED(ps);
+	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i)
 		apply(*i, check);
+	return;
+}
+
+void
+SetMask::checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check)
+{
+	UNUSED(check);
+	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i) {
+		if(i->is_in_set(m_set)) // No need to check: Already in set
+			continue;
+		if(!test(*i))
+			continue;
+		i->add_to_set(m_set);
 	}
 	return;
 }

@@ -12,7 +12,7 @@
 
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
-#include <portage/basicversion.h>
+#include <portage/version.h>
 #include <portage/keywords.h>
 
 #include <map>
@@ -20,6 +20,7 @@
 
 class Version;
 class Package;
+class PortageSettings;
 
 //  >app-shells/bash-3*      <- NOT ALLOWED
 //  ~app-shells/bash-3*      <- OK, BUT DOESN'T SELECT bash-3.0-r12; SELECT
@@ -31,6 +32,7 @@ class Package;
 class Mask : public BasicVersion {
 
 	public:
+
 		/** Describes the type of a mask.
 		 * Nothing specific, entry in "packages"-file but not in
 		 * system-profile, entry in packages-file and in system-profile,
@@ -49,7 +51,7 @@ class Mask : public BasicVersion {
 			maskOpRevisions, maskOpGlob
 		} Operator;
 
-	private:
+	protected:
 		Operator m_operator; /**< Operator for mask. */
 		Type m_type;   /**< Mask type for this mask. */
 
@@ -92,8 +94,9 @@ class Mask : public BasicVersion {
 
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
+		 * @param ps             PortageSettings (for sets and world_system)
 		 * @param check          Redundancy checks which should apply */
-		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
+		void checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		bool ismatch(Package& pkg);
 };
@@ -106,6 +109,18 @@ class KeywordMask : public Mask {
 
 		std::string keywords;
 		bool locally_double;
+};
+
+class SetMask : public Mask {
+	public:
+
+		SetMask(const char *str, Version::SetsIndex set_index) :
+			Mask(str, maskTypeNone), m_set(set_index)
+		{ }
+
+		void checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check = Keywords::RED_NOTHING);
+
+		Version::SetsIndex m_set;
 };
 
 #endif /* __MASK_H__ */

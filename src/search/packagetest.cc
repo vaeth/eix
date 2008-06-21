@@ -27,6 +27,7 @@ const PackageTest::MatchField
 		PackageTest::USE_ENABLED,
 		PackageTest::USE_DISABLED,
 		PackageTest::SLOT,
+		PackageTest::SET,
 		PackageTest::INSTALLED_SLOT;
 
 const PackageTest::TestInstalled
@@ -65,7 +66,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 void
 PackageTest::calculateNeeds() {
 	need = PackageReader::NONE;
-	if(field & (SLOT | INSTALLED_SLOT))
+	if(field & (SLOT | SET))
 		setNeeds(PackageReader::VERSIONS);
 	if(field & HOMEPAGE)
 		setNeeds(PackageReader::HOMEPAGE);
@@ -77,13 +78,11 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::DESCRIPTION);
 	if(field & CATEGORY)
 		setNeeds(PackageReader::NONE);
-	if(field & CATEGORY_NAME)
-		setNeeds(PackageReader::NAME);
-	if(field & NAME)
+	if(field & (NAME | CATEGORY_NAME))
 		setNeeds(PackageReader::NAME);
 	if(field & IUSE)
 		setNeeds(PackageReader::COLL_IUSE);
-	if(field & (USE_ENABLED | USE_DISABLED))
+	if(field & (USE_ENABLED | USE_DISABLED | INSTALLED_SLOT))
 		setNeeds(PackageReader::NAME);
 	if(installed)
 		setNeeds(PackageReader::NAME);
@@ -111,6 +110,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
 	else if(p == "PROVIDE")       ret = PROVIDE;
 	else if(p == "IUSE")          ret = IUSE;
+	else if(p == "SET")           ret = SET;
 	else if(p == "SLOT")          ret = SLOT;
 	else if(p == "INSTALLED_SLOT")ret = INSTALLED_SLOT;
 	else throw ExBasic("Can't find MatchField called %r") % p;
@@ -188,6 +188,17 @@ PackageTest::stringMatch(Package *pkg) const
 		//vector<string> s=split_string(pkg->coll_iuse);
 		for(set<string>::const_iterator it = pkg->coll_iuse_vector().begin();
 			it != pkg->coll_iuse_vector().end(); ++it) {
+			if((*algorithm)(it->c_str(), NULL))
+				return true;
+		}
+	}
+
+	if(field & SET) {
+		vector<string> setnames;
+		StabilityLocal(pkg);
+		portagesettings->get_setnames(setnames, pkg);
+		for(vector<string>::const_iterator it = setnames.begin();
+			it != setnames.end(); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
 		}

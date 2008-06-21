@@ -112,7 +112,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 
 	// read masking
 	MaskFlags::MaskType mask = io::read<MaskFlags::MaskType>(fp);
-	v->maskflags.set(mask & MaskFlags::MaskType(0x0F));
+	v->maskflags.set(mask & MaskFlags::MASK_SAVE);
 	v->restrictFlags = (ExtendedVersion::Restrict(mask >> 4) & ExtendedVersion::Restrict(0x0F));
 	v->full_keywords = io::read_hash_words(fp, hdr.keywords_hash);
 
@@ -152,7 +152,7 @@ void
 io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 {
 	// write masking
-	io::writeUChar(fp, (v->maskflags.get()) | (MaskFlags::MaskType(v->restrictFlags) << 4));
+	io::writeUChar(fp, ((v->maskflags.get()) & MaskFlags::MASK_SAVE) | (MaskFlags::MaskType(v->restrictFlags) << 4));
 
 	// write full keywords
 	io::write_hash_words(fp, hdr.keywords_hash, v->get_full_keywords());
@@ -192,7 +192,7 @@ io::write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr)
 {
 	io::write_string(fp, pkg.name);
 	io::write_string(fp, pkg.desc);
-	io::write_hash_string(fp, hdr.provide_hash, pkg.provide);
+	io::write_hash_words(fp, hdr.provide_hash, pkg.provide);
 	io::write_string(fp, pkg.homepage);
 	io::write_hash_string(fp, hdr.license_hash, pkg.licenses);
 #if defined(NOT_FULL_USE)
@@ -253,7 +253,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 		for(Category::iterator p = ci->begin();
 			p != ci->end(); ++p)
 		{
-			hdr.provide_hash.hash_string(p->provide);
+			hdr.provide_hash.hash_words(p->provide);
 			hdr.license_hash.hash_string(p->licenses);
 #if defined(NOT_FULL_USE)
 			hdr.iuse_hash.hash_words(p->coll_iuse);
@@ -290,6 +290,11 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write_hash(fp, hdr.keywords_hash);
 	io::write_hash(fp, hdr.iuse_hash);
 	io::write_hash(fp, hdr.slot_hash);
+
+	io::write<vector<string>::size_type>(fp, hdr.world_sets.size());
+	for(vector<string>::const_iterator it = hdr.world_sets.begin();
+		it != hdr.world_sets.end(); ++it)
+		io::write_string(fp, *it);
 }
 
 bool
@@ -306,11 +311,16 @@ io::read_header(FILE *fp, DBHeader &hdr)
 		string path = io::read_string(fp);
 		hdr.addOverlay(OverlayIdent(path.c_str(), io::read_string(fp).c_str()));
 	}
+
 	io::read_hash(fp, hdr.provide_hash);
 	io::read_hash(fp, hdr.license_hash);
 	io::read_hash(fp, hdr.keywords_hash);
 	io::read_hash(fp, hdr.iuse_hash);
 	io::read_hash(fp, hdr.slot_hash);
+
+	for(vector<string>::size_type sets_sz = io::read<vector<string>::size_type>(fp);
+		sets_sz; --sets_sz)
+		hdr.world_sets.push_back(io::read_string(fp));
 	return true;
 }
 

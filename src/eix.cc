@@ -71,6 +71,7 @@ dump_help(int exit_code)
 			"     --print-all-slots     print all SLOT strings used in some version\n"
 			"     --print-all-provides  print all PROVIDE strings used in some package\n"
 			"     --print-all-licenses  print all LICENSE strings used in some package\n"
+			"     --print-world-sets    print the world sets\n"
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -137,9 +138,10 @@ dump_help(int exit_code)
 			"    -H, --homepage          homepage\n"
 			"    -L, --license           license\n"
 			"    -P, --provide           provides\n"
-			"    -U, --use               useflag (of the ebuild)\n"
+			"    --set                   set name\n"
 			"    --slot                  slot\n"
 			"    --installed-slot        slot of installed version\n"
+			"    -U, --use               useflag (of the ebuild)\n"
 			"    --installed-with-use    enabled useflag (of installed package)\n"
 			"    --installed-without-use disabled useflag (of installed package)\n"
 			"\n"
@@ -197,7 +199,8 @@ static struct LocalOptions {
 		 hash_keywords,
 		 hash_slot,
 		 hash_provide,
-		 hash_license;
+		 hash_license,
+		 world_sets;
 } rc_options;
 
 /** Arguments and shortopts. */
@@ -227,9 +230,10 @@ static struct Option long_options[] = {
 
 	Option("print-all-useflags", O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse),
 	Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords),
-	Option("print-all-slots",     O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot),
-	Option("print-all-provides",  O_HASH_PROVIDE,  Option::BOOLEAN_T, &rc_options.hash_provide),
-	Option("print-all-licenses",  O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license),
+	Option("print-all-slots",    O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot),
+	Option("print-all-provides", O_HASH_PROVIDE,  Option::BOOLEAN_T, &rc_options.hash_provide),
+	Option("print-all-licenses", O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license),
+	Option("print-world-sets",   O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets),
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
 
@@ -293,6 +297,7 @@ static struct Option long_options[] = {
 	Option("license",       'L'),
 	Option("homepage",      'H'),
 	Option("provide",       'P'),
+	Option("set",           O_SEARCH_SET),
 	Option("use",           'U'),
 	Option("installed-with-use",    O_INSTALLED_WITH_USE),
 	Option("installed-without-use", O_INSTALLED_WITHOUT_USE),
@@ -538,6 +543,7 @@ run_eix(int argc, char** argv)
 				cachefile.c_str(), PercentU(header.version), PercentU(DBHeader::current));
 		exit(1);
 	}
+	portagesettings.store_world_sets(&(header.world_sets));
 
 	if(rc_options.hash_iuse) {
 		fclose(fp);
@@ -562,6 +568,13 @@ run_eix(int argc, char** argv)
 	if(rc_options.hash_license) {
 		fclose(fp);
 		header.license_hash.output();
+		exit(0);
+	}
+	if(rc_options.world_sets) {
+		fclose(fp);
+		const vector<string> *p = portagesettings.get_world_sets();
+		for(vector<string>::const_iterator it = p->begin(); it != p->end(); ++it)
+			cout << *it << "\n";
 		exit(0);
 	}
 

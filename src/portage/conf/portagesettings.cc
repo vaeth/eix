@@ -28,11 +28,13 @@
 
 #include <fstream>
 #include <fnmatch.h>
+#include <algorithm>
 
 
 using namespace std;
 
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive)
+bool
+grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive)
 {
 	vector<string> lines;
 	if( ! pushback_lines(file, &lines, true, recursive))
@@ -56,6 +58,25 @@ bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vect
 	return true;
 }
 
+static bool
+grab_setmasks(const char *file, MaskList<SetMask> *masklist, Version::SetsIndex i, bool recursive = false)
+{
+	vector<string> lines;
+	if( ! pushback_lines(file, &lines, true, recursive))
+		return false;
+	for(vector<string>::iterator it=lines.begin(); it<lines.end(); ++it)
+	{
+		string line=*it;
+		try {
+			SetMask *m = new SetMask(line.c_str(), i);
+			masklist->add(m);
+		}
+		catch(const ExBasic &e) {
+			portage_parse_error(file, lines.begin(), it, e);
+		}
+	}
+	return true;
+}
 
 /** Keys that should accumulate their content rathern then replace. */
 static const char *default_accumulating_keys[] = {
@@ -198,6 +219,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 	profile = new CascadingProfile(this, init_world);
 	{
+		store_world_sets(NULL);
 		bool read_world = false;
 		if(init_world) {
 			if(eixrc.getBool("SAVE_WORLD"))
@@ -211,7 +233,9 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 			if(grab_masks(eixrc["EIX_WORLD"].c_str(), Mask::maskInWorld, &(profile->m_world), false)) {
 				profile->use_world = true;
 			}
+			read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
 		}
+		read_local_sets(eixrc["EIX_LOCAL_SETS"]);
 	}
 
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
@@ -264,6 +288,135 @@ PortageSettings::~PortageSettings()
 	}
 	if(user_config) {
 		delete user_config;
+	}
+}
+
+void
+PortageSettings::read_world_sets(const char *file)
+{
+	vector<string> lines;
+	if(!pushback_lines(file, &lines, true, false))
+		return;
+	vector<string> the_sets;
+	for(vector<string>::const_iterator it = lines.begin();
+		it != lines.end(); ++it) {
+		string s;
+		if((*it)[0] == '@')
+			s = it->substr(1);
+		else
+			s = *it;
+		if(s.empty())
+			continue;
+		the_sets.push_back(s);
+	}
+	store_world_sets(&the_sets, true);
+}
+
+void
+PortageSettings::store_world_sets(const std::vector<std::string> *s_world_sets, bool override)
+{
+	if(!s_world_sets) {
+		// set defaults:
+		know_world_sets = false;
+		num_up_to_date = false;
+		world_sets.clear();
+		world_system = false;
+		return;
+	}
+	if((!override) && know_world_sets)
+		return;
+	know_world_sets = true;
+	num_up_to_date = false;
+	world_sets.clear();
+	world_system = false;
+	for(vector<string>::const_iterator it = s_world_sets->begin();
+		it != s_world_sets->end(); ++it) {
+		if(it->empty())
+			continue;
+		if((*it) == "system")
+			world_system = true;
+		world_sets.push_back(*it);
+	}
+}
+
+void
+PortageSettings::update_num()
+{
+	num_up_to_date = true;
+	world_sets_num.clear();
+	for(Version::SetsIndex i = 0; i != set_names.size(); ++i) {
+		if(std::find(world_sets.begin(), world_sets.end(), set_names[i]) !=
+			world_sets.end())
+			world_sets_num.push_back(i);
+	}
+}
+
+void
+PortageSettings::calc_world_sets(Package *p)
+{
+	if(!num_up_to_date)
+		update_num();
+	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+		if(world_system) {
+			if(it->maskflags.isSystem()) {
+				it->maskflags.setbits(MaskFlags::MASK_WORLD_SETS);
+				continue;
+			}
+		}
+		bool world = false;
+		for(std::vector<Version::SetsIndex>::const_iterator sit = it->sets_indizes.begin();
+			sit != it->sets_indizes.end(); ++sit) {
+			if(std::find(world_sets_num.begin(), world_sets_num.end(), *sit) != world_sets_num.end()) {
+				world = true;
+				break;
+			}
+		}
+		if(world)
+			it->maskflags.setbits(MaskFlags::MASK_WORLD_SETS);
+	}
+}
+
+void
+PortageSettings::get_setnames(vector<string> &names, const Package *p) const
+{
+	names.clear();
+	if(world_system && p->is_system_package())
+		names.push_back("system");
+	vector<Version::SetsIndex> sets_num;
+	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
+		for(std::vector<Version::SetsIndex>::const_iterator sit = it->sets_indizes.begin();
+			sit != it->sets_indizes.end(); ++sit) {
+			if(std::find(sets_num.begin(), sets_num.end(), *sit) == sets_num.end())
+				sets_num.push_back(*sit);
+		}
+	}
+	for(vector<Version::SetsIndex>::const_iterator sit = sets_num.begin();
+		sit != sets_num.end(); ++sit)
+		names.push_back(set_names[*sit]);
+}
+
+std::string
+PortageSettings::get_setnames(const Package *p) const
+{
+	vector<string> names;
+	get_setnames(names, p);
+	return join_vector(names);
+}
+
+
+static const char *sets_exclude[] = { "..", "." , "system", NULL };
+
+void
+PortageSettings::read_local_sets(const string &dir_path)
+{
+	num_up_to_date = false;
+	set_names.clear();
+	string dir_slash = dir_path;
+	if(dir_slash[dir_slash.size() - 1] != '/')
+			dir_slash.append("/");
+	pushback_files(dir_path, set_names, sets_exclude, 0, false, false);
+	for(Version::SetsIndex i = 0; i != set_names.size(); ++i) {
+		grab_setmasks((dir_slash + set_names[i]).c_str(), &m_package_sets, i);
 	}
 }
 
@@ -831,7 +984,9 @@ PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mas
 	}
 	else
 		setProfileMasks(p);
-	bool rvalue = m_localmasks.applyMasks(p, check);
+	bool rvalue = m_localmasks.applyMasks(p, *m_settings, check);
+	m_settings->getPackageSets()->applyMasks(p, *m_settings, check);
+	m_settings->calc_world_sets(p);
 	p->finalize_masks();
 	p->save_maskflags(ind);
 	return rvalue;

@@ -31,7 +31,7 @@ PackageReader::read(Attributes need)
 			if(need == DESCRIPTION)
 				break;
 		case DESCRIPTION:
-			m_pkg->provide = io::read_hash_string(m_fp, header->provide_hash);
+			m_pkg->provide = io::read_hash_words(m_fp, header->provide_hash);
 			if(need == PROVIDE)
 				break;
 		case PROVIDE:
