@@ -218,13 +218,11 @@ CascadingProfile::applyMasks(Package *p) const
 			}
 		}
 	}
-	getAllowedPackages()->applyMasks(p, *m_portagesettings);
-	getSystemPackages()->applyMasks(p, *m_portagesettings);
-	getPackageMasks()->applyMasks(p, *m_portagesettings);
+	getAllowedPackages()->applyMasks(p);
+	getSystemPackages()->applyMasks(p);
+	getPackageMasks()->applyMasks(p);
 	if(use_world)
-		getWorldPackages()->applyMasks(p, *m_portagesettings);
-	m_portagesettings->getPackageSets()->applyMasks(p, *m_portagesettings);
-	m_portagesettings->calc_world_sets(p);
-	p->finalize_masks();
+		getWorldPackages()->applyMasks(p);
+	m_portagesettings->finalize(p);
 }
 

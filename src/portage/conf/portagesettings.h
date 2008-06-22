@@ -131,6 +131,12 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void read_config(const std::string &name, const std::string &prefix);
 
 		void addOverlayProfiles(CascadingProfile *p) const;
+
+		void read_world_sets(const char *file);
+		void calc_world_sets(Package *p);
+
+		const MaskList<SetMask> *getPackageSets() const
+		{ return &m_package_sets; }
 	public:
 		bool m_obsolete_minusasterisk;
 		std::string m_eprefixconf;
@@ -154,10 +160,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
 		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
 
-
-		void read_world_sets(const char *file);
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
-		void calc_world_sets(Package *p);
 		void get_setnames(std::vector<std::string> &names, const Package *p) const;
 		std::string get_setnames(const Package *p) const;
 		void update_num();
@@ -174,8 +177,11 @@ class PortageSettings : public std::map<std::string,std::string> {
 		/// Set stability according to arch or local ACCEPTED_KEYWORDS
 		void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
 
-		const MaskList<SetMask> *getPackageSets() const
-		{ return &m_package_sets; }
+		void calc_local_sets(Package *p) const
+		{ m_package_sets.applyMasks(p); }
+
+		void finalize(Package *p)
+		{ calc_world_sets(p); p->finalize_masks(); }
 };
 
 #endif

@@ -133,7 +133,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 	}
 	ps->store_world_sets(&(header->world_sets));
 
-	io::read_packagetree(fp, *body, *header);
+	io::read_packagetree(fp, *body, *header, ps);
 	fclose(fp);
 }
 

@@ -23,6 +23,7 @@
 class Package;
 class Version;
 class PackageTree;
+class PortageSettings;
 
 #define MAGICNUMCHAR 0xFF
 
@@ -155,7 +156,7 @@ namespace io {
 	bool read_header(FILE *fp, DBHeader &hdr);
 
 	void write_packagetree(FILE *fp, const PackageTree &pkg, const DBHeader &hdr);
-	void read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr);
+	void read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr, PortageSettings *ps);
 }
 
 #endif /* EIX__IO_H__ */

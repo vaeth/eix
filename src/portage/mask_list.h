@@ -186,7 +186,7 @@ class MaskList
 		}
 
 		// return true if some masks applied
-		bool applyMasks(Package *p, const PortageSettings &ps, Keywords::Redundant check = Keywords::RED_NOTHING) const
+		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const
 		{
 			const eix::ptr_list<_type> *l = get(p);
 			if(l == NULL)
@@ -200,7 +200,7 @@ class MaskList
 				++m)
 			{
 				rvalue = 1;
-				m->checkMask(*p, ps, check);
+				m->checkMask(*p, check);
 				switch(m->get_type())
 				{
 					case Mask::maskMask:

@@ -20,7 +20,6 @@
 
 class Version;
 class Package;
-class PortageSettings;
 
 //  >app-shells/bash-3*      <- NOT ALLOWED
 //  ~app-shells/bash-3*      <- OK, BUT DOESN'T SELECT bash-3.0-r12; SELECT
@@ -94,9 +93,8 @@ class Mask : public BasicVersion {
 
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
-		 * @param ps             PortageSettings (for sets and world_system)
 		 * @param check          Redundancy checks which should apply */
-		void checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check = Keywords::RED_NOTHING);
+		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		bool ismatch(Package& pkg);
 };
@@ -118,7 +116,7 @@ class SetMask : public Mask {
 			Mask(str, maskTypeNone), m_set(set_index)
 		{ }
 
-		void checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check = Keywords::RED_NOTHING);
+		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		Version::SetsIndex m_set;
 };

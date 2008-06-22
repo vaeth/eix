@@ -11,6 +11,7 @@
 
 #include <portage/package.h>
 #include <portage/version.h>
+#include <portage/conf/portagesettings.h>
 
 #include <database/io.h>
 
@@ -54,6 +55,12 @@ PackageReader::read(Attributes need)
 				for(io::Versize i = io::read<io::Versize>(m_fp); i; i-- ) {
 					m_pkg->addVersion(io::read_version(m_fp, *header));
 				}
+				if(m_portagesettings) {
+					m_portagesettings->calc_local_sets(&(*m_pkg));
+					m_portagesettings->finalize(&(*m_pkg));
+				}
+				else
+					m_pkg->finalize_masks();
 			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
 		//case COLL_IUSE: // If NOT_FULL_USE

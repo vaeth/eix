@@ -65,7 +65,7 @@ if ! ${KEEPENV}; then
 	export CXXFLAGS CFLAGS LDFLAGS
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
 	CFLAGS="-march=${MARCH} -O2 -pipe"
-	${SAFEFLAGS} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
+	${SAFEFLAGS} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -funsafe-loop-optimizations -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
 	${NOT_FULL_USE} && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
 	CFLAGS="${CFLAGS} -D_GLIBCXX_DEBUG -g -ggdb3 -Wall -Wextra"
 	${SAFEFLAGS} || CFLAGS="${CFLAGS} -pedantic"

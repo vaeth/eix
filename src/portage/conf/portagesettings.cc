@@ -404,7 +404,7 @@ PortageSettings::get_setnames(const Package *p) const
 }
 
 
-static const char *sets_exclude[] = { "..", "." , "system", NULL };
+static const char *sets_exclude[] = { "..", "." , "system", "world", NULL };
 
 void
 PortageSettings::read_local_sets(const string &dir_path)
@@ -984,10 +984,8 @@ PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mas
 	}
 	else
 		setProfileMasks(p);
-	bool rvalue = m_localmasks.applyMasks(p, *m_settings, check);
-	m_settings->getPackageSets()->applyMasks(p, *m_settings, check);
-	m_settings->calc_world_sets(p);
-	p->finalize_masks();
+	bool rvalue = m_localmasks.applyMasks(p, check);
+	m_settings->finalize(p);
 	p->save_maskflags(ind);
 	return rvalue;
 }

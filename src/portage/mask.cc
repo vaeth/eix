@@ -247,16 +247,15 @@ Mask::match(Package &pkg) const
  * @param ps             PortageSettings (for sets and world_system)
  * @param check          Redundancy checks which should apply */
 void
-Mask::checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check)
+Mask::checkMask(Package& pkg, Keywords::Redundant check)
 {
-	UNUSED(ps);
 	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i)
 		apply(*i, check);
 	return;
 }
 
 void
-SetMask::checkMask(Package& pkg, const PortageSettings &ps, Keywords::Redundant check)
+SetMask::checkMask(Package& pkg, Keywords::Redundant check)
 {
 	UNUSED(check);
 	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i) {

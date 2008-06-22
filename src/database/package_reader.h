@@ -25,6 +25,8 @@
 // murder.
 #include <portage/package.h>
 
+class PortageSettings;
+
 /// Forward-iterate for packages stored in the cachefile.
 class PackageReader {
 
@@ -35,9 +37,10 @@ class PackageReader {
 			ALL = 7
 		};
 
-		/// Initialize with file-stream and number of packages.
-		PackageReader(FILE *fp, const DBHeader &hdr)
-			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), header(&hdr)
+		/** Initialize with file-stream and number of packages.
+		    @arg ps is used to define the local package sets while version reading */
+		PackageReader(FILE *fp, const DBHeader &hdr, PortageSettings *ps = NULL)
+			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), header(&hdr), m_portagesettings(ps)
 		{ }
 
 		/// Read attributes from the database into the current package.
@@ -86,6 +89,7 @@ class PackageReader {
 		std::auto_ptr<Package> m_pkg;
 
 		const DBHeader   *header;
+		PortageSettings  *m_portagesettings;
 	private:
 };
 

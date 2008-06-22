@@ -597,7 +597,7 @@ run_eix(int argc, char** argv)
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages;
 
-	PackageReader reader(fp, header);
+	PackageReader reader(fp, header, &portagesettings);
 	while(reader.next())
 	{
 		if(query->match(&reader))

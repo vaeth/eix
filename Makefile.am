@@ -20,7 +20,7 @@ maintainer-clean-local:
 
 # Remove doxygen/ and rpo files (-frepo with gcc) on clean
 clean-local: doxygen-clean
-	find "$(top_srcdir)" -name '*.rpo' -delete
+	@find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -v -- '{}' '+'
 
 .PHONY: doxygen
 
@@ -32,4 +32,4 @@ doxygen: doxygen-clean
 
 # Remove build source-docs
 doxygen-clean:
-	@rm -fr doxygen
+	@$(RM) -fr doxygen

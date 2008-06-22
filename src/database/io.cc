@@ -343,9 +343,9 @@ io::write_packagetree(FILE *fp, const PackageTree &tree, const DBHeader &hdr)
 }
 
 void
-io::read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr)
+io::read_packagetree(FILE *fp, PackageTree &tree, const DBHeader &hdr, PortageSettings *ps)
 {
-	PackageReader reader(fp, hdr);
+	PackageReader reader(fp, hdr, ps);
 	while(reader.nextCategory()) {
 		Category &cat = tree[reader.category()];
 		while (reader.nextPackage()) {
