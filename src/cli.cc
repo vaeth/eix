@@ -112,6 +112,10 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  break;
 			case O_WORLD: test->World();
 				  break;
+			case O_WORLD_ALL: test->World(true);
+				  break;
+			case O_WORLD_SET: test->WorldSet();
+				  break;
 			case O_SYSTEM_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_SYSTEM);
 				  break;
 			case O_STABLE_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_FULL);

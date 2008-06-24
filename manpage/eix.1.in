@@ -271,9 +271,15 @@ Only match system packages.
 .TP
 .BR --world
 Only match world packages.
+Contrary to "emerge @world" this does not include packages contained
+in a package set in world.
+To include the latter use B<--world-all>.
 .TP
-.BR --world-sets
-Only match world_sets packages.
+.BR --world-all
+Only match world packages or of a package set in world.
+.TP
+.BR --world-set
+Only match packages in a package set in world.
 .TP
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.

@@ -132,8 +132,11 @@ class PackageTest {
 		void Restrictions(ExtendedVersion::Restrict flags)
 		{ restrictions |= flags; }
 
-		void World()
-		{ world = true; }
+		void World(bool match_also_system = false)
+		{ world = true; world_both = match_also_system; }
+
+		void WorldSet()
+		{ worldset = true; }
 
 		void StabilityDefault(Package *p) const
 		{ stability->set_stability(*p); }
@@ -222,7 +225,7 @@ class PackageTest {
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
 		bool overlay, obsolete;
-		bool upgrade, world;
+		bool upgrade, world, world_both, worldset;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;

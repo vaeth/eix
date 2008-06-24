@@ -56,8 +56,8 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	obsolete = world = overlay = installed = invert = upgrade = slotted =
-			dup_versions = dup_packages = false;
+	obsolete = world = worldset = overlay = installed = invert = upgrade =
+		slotted = dup_versions = dup_packages = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	test_installed = INS_NONE;
 	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
@@ -87,7 +87,7 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		upgrade || overlay || obsolete || world ||
+		upgrade || overlay || obsolete || world || worldset ||
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
@@ -706,10 +706,14 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(world) { // --world
+	if(world || worldset ) { // --world, --world-all, --world-set
 		get_p();
 		StabilityDefault(p);
-		if(!p->is_world_package())
+		if(world && !p->is_world_package()) {
+			if((!world_both) || !p->is_world_sets_package())
+				return invert;
+		}
+		if(worldset && !p->is_world_sets_package())
 			return invert;
 	}
 

@@ -113,6 +113,8 @@ dump_help(int exit_code)
 			"    --non-masked[+-]      Match packages with a non-masked version.\n"
 			"    --system[+-]          Match system packages.\n"
 			"    --world               Match world packages.\n"
+			"    --world-all           Match packages of world or of a world set.\n"
+			"    --world-set           Match packages of a world set.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
 			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
@@ -138,7 +140,7 @@ dump_help(int exit_code)
 			"    -H, --homepage          homepage\n"
 			"    -L, --license           license\n"
 			"    -P, --provide           provides\n"
-			"    --set                   set name\n"
+			"    --set                   local package set name\n"
 			"    --slot                  slot\n"
 			"    --installed-slot        slot of installed version\n"
 			"    -U, --use               useflag (of the ebuild)\n"
@@ -257,6 +259,8 @@ static struct Option long_options[] = {
 	Option("testing",       O_TESTING_DEFAULT),
 	Option("non-masked",    O_NONMASKED_DEFAULT),
 	Option("world",         O_WORLD),
+	Option("world-all",     O_WORLD_ALL),
+	Option("world-set",     O_WORLD_SET),
 	Option("system",        O_SYSTEM_DEFAULT),
 	Option("stable+",       O_STABLE_LOCAL),
 	Option("testing+",      O_TESTING_LOCAL),
