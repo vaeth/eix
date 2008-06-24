@@ -17,7 +17,7 @@
 #include <dirent.h>
 
 /** canonicalize_file_name() if possible or some substitute */
-std::string normalize_path(const char *path, bool resolve = true);
+std::string normalize_path(const char *path, bool resolve = true, bool want_slash = false);
 
 /** Compare whether two (normalized) filenames are identical */
 bool same_filenames(const char *mask, const char *name, bool glob = false, bool resolve_mask = true);

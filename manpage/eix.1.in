@@ -417,7 +417,10 @@ i.e. "GPL-2"
 i.e. "virtual/blackbox"
 .TP
 .BR --set
-Name of a package set of a version in the database, e.g. "system"
+Name of a local package set of a version in the database
+(i.e. corresponding to a file in B</etc/portage/system>).
+The "system" package is intentionally excluded here, since the latter
+should be tested with B<--system[+-]>.
 .TP
 .B --slot
 Slotname of a version in the database, e.g. "kde-4"
@@ -741,8 +744,9 @@ of colon-separated strings to influence the printing.
 .B markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.
 .TP
-.B packagesets
-The name of all sets to which the package belongs, separated by spaces.
+.BR setnames ", " allsetnames
+The name of all local sets to which the package belongs, separated by spaces.
+With B<allsetnames> also the "system" set name is included.
 .TP
 .B overlaykey
 if all versions are in the same overlay this expands to "overlaykey".

@@ -793,11 +793,11 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"It defines the format for a line with marked versions.");
 
 AddOption(STRING, "FORMATLINE_PACKAGESETS",
-	"%{!PRINT_ALWAYS}{setnames}%{}"
+	"%{!PRINT_ALWAYS}{setnames*}%{}"
 	"     (%{COLOR_TITLE})Package sets:()"
-	"%{?PRINT_ALWAYS}{setnames}%{}"
+	"%{?PRINT_ALWAYS}{setnames*}%{}"
 	"        "
-	"(%{COLOR_PACKAGESETS})<setnames>()"
+	"(%{COLOR_PACKAGESETS})<setnames*>()"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with package sets.");

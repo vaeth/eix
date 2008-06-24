@@ -41,15 +41,13 @@ class CascadingProfile {
 	private:
 
 		/** Add all files from profile ans its parents to m_profile_files. */
-		void addProfile(const std::string &profile, unsigned int depth = 0);
+		void addProfile(const char *profile, unsigned int depth = 0);
 
 		/** Read all "packages" files found in profile.
 		 * Populate m_system and m_system_allowed.
 		 * @return true if data was changed */
 		bool readPackages(const std::string &line);
 		bool readPackageMasks(const std::string &line);
-
-		void ReadLink(std::string &path) const;
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world)
 		{

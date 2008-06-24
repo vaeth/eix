@@ -650,6 +650,9 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		}
 		return "";
 	}
+	if(name == "allsetnames") {
+		return fmt->portagesettings->get_setnames(entity, true);
+	}
 	if(name == "setnames") {
 		return fmt->portagesettings->get_setnames(entity);
 	}

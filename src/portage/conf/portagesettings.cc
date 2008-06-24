@@ -377,29 +377,25 @@ PortageSettings::calc_world_sets(Package *p)
 }
 
 void
-PortageSettings::get_setnames(vector<string> &names, const Package *p) const
+PortageSettings::get_setnames(vector<string> &names, const Package *p, bool also_nonlocal) const
 {
 	names.clear();
-	if(world_system && p->is_system_package())
-		names.push_back("system");
-	vector<Version::SetsIndex> sets_num;
 	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
 		for(std::vector<Version::SetsIndex>::const_iterator sit = it->sets_indizes.begin();
 			sit != it->sets_indizes.end(); ++sit) {
-			if(std::find(sets_num.begin(), sets_num.end(), *sit) == sets_num.end())
-				sets_num.push_back(*sit);
+			names.push_back(set_names[*sit]);
 		}
 	}
-	for(vector<Version::SetsIndex>::const_iterator sit = sets_num.begin();
-		sit != sets_num.end(); ++sit)
-		names.push_back(set_names[*sit]);
+	if(also_nonlocal && p->is_system_package())
+		names.push_back("system");
+	sort_uniquify(names);
 }
 
 std::string
-PortageSettings::get_setnames(const Package *p) const
+PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 {
 	vector<string> names;
-	get_setnames(names, p);
+	get_setnames(names, p, also_nonlocal);
 	return join_vector(names);
 }
 

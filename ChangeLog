@@ -15,6 +15,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=202535
 	- Allow "!!" lines in eix-sync to override environment variables like
 	  FORCE_USECOLORS, see http://bugs.gentoo.org/show_bug.cgi?id=225963
+	- Treat /etc/make.profile with normalize_path(). This should fix
+	  http://bugs.gentoo.org/show_bug.cgi?id=229091
 	- Fix treatment of "-" in slotnames.
 	  Thanks to Edward "Hades" <edward.hades at gmail.com> for the patch,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=225773

@@ -195,7 +195,6 @@ PackageTest::stringMatch(Package *pkg) const
 
 	if(field & SET) {
 		vector<string> setnames;
-		StabilityLocal(pkg);
 		portagesettings->get_setnames(setnames, pkg);
 		for(vector<string>::const_iterator it = setnames.begin();
 			it != setnames.end(); ++it) {

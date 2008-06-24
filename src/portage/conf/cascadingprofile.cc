@@ -10,6 +10,7 @@
 #include "cascadingprofile.h"
 
 #include <eixTk/utils.h>
+#include <eixTk/filenames.h>
 #include <varsreader.h>
 #include <portage/package.h>
 #include <portage/conf/portagesettings.h>
@@ -20,10 +21,6 @@
 
 /* Path to symlink to profile */
 #define PROFILE_LINK "/etc/make.profile"
-#define PROFILE_LINK_DIRECTORY "/etc/"
-
-/* Buffer size for the readlink-call */
-#define READLINK_BUFFER 128
 
 using namespace std;
 
@@ -31,19 +28,28 @@ using namespace std;
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 
 /** Add all files from profile ans its parents to m_profile_files. */
-void CascadingProfile::addProfile(const string &profile, unsigned int depth)
+void CascadingProfile::addProfile(const char *profile, unsigned int depth)
 {
 	// Use pushback_lines to avoid keeping file descriptor open:
 	// Who know what's our limit of open file descriptors.
-	vector<string> parents;
 	if(depth >= 255)
 		cerr << "Recursion level for cascading profiles exceeded; stopping reading parents" << endl;
-	else if(pushback_lines((profile + "parent").c_str(), &parents)) {
+	string s = normalize_path(profile, true, true);
+	if(s.empty())
+		return;
+	vector<string> parents;
+	if(pushback_lines((s + "parent").c_str(), &parents)) {
 		for(vector<string>::const_iterator it = parents.begin();
-			it != parents.end(); ++it)
-			addProfile(profile + (*it) + '/', depth + 1);
+			it != parents.end(); ++it) {
+			if(it->empty())
+				continue;
+			if((*it)[0] == '/')
+				addProfile(it->c_str(), depth + 1);
+			else
+				addProfile((s + (*it)).c_str(), depth + 1);
+		}
 	}
-	pushback_files(profile, m_profile_files, profile_exclude, 3);
+	pushback_files(s, m_profile_files, profile_exclude, 3);
 }
 
 bool
@@ -156,48 +162,22 @@ CascadingProfile::readPackageMasks(const string &line)
 	}
 }
 
-void
-CascadingProfile::ReadLink(string &path) const
-{
-	char readlink_buffer[READLINK_BUFFER];
-	string profile_linkname = (m_portagesettings->m_eprefixconf) + PROFILE_LINK;
-	int len = readlink(profile_linkname.c_str() , readlink_buffer, READLINK_BUFFER - 1);
-	if(len <= 0) {
-		throw ExBasic("readlink(%r) failed: %s") % profile_linkname % strerror(errno);
-	}
-	readlink_buffer[len] = '\0';
-
-	path = readlink_buffer;
-	/* If it's a relative path prepend the dirname of ${PORTAGE_CONFIGROOT}/PROFILE_LINK_DIRECTORY */
-	if( path[0] != '/' ) {
-		path.insert(0, (m_portagesettings->m_eprefixconf) + PROFILE_LINK_DIRECTORY);
-	}
-}
-
 /** Cycle through profile and put path to files into this->m_profile_files. */
 void
 CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 {
-	string path_buffer;
-	if(profile_dir)
-		path_buffer = profile_dir;
-	else
+	if(profile_dir) {
+		addProfile(profile_dir);
+		return;
+	}
 	{
-		path_buffer = (*m_portagesettings)["PORTAGE_PROFILE"];
-		if(path_buffer.empty()) {
-			ReadLink(path_buffer);
-			if(path_buffer.empty())
-				return;
-		}
-		else {
-			path_buffer.insert(0, m_portagesettings->m_eprefixprofile);
+		string &s = (*m_portagesettings)["PORTAGE_PROFILE"];
+		if(!s.empty()) {
+			addProfile(s.c_str());
+			return;
 		}
 	}
-
-	if(path_buffer[path_buffer.size() - 1] != '/')
-		path_buffer.append("/");
-
-	addProfile(path_buffer);
+	addProfile(((m_portagesettings->m_eprefixconf) + PROFILE_LINK).c_str());
 }
 
 void

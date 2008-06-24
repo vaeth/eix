@@ -65,10 +65,11 @@ string normalize_path(const char *path, bool resolve)
 #define normalize_path(a,b) original_normalize_path(a,b)
 #endif
 
-string normalize_path(const char *path, bool resolve)
+string normalize_path(const char *path, bool resolve, bool want_slash)
 {
 	if(!*path)
 		return "";
+	string name;
 	if(resolve)
 	{
 		char *normalized = NULL;
@@ -110,12 +111,12 @@ string normalize_path(const char *path, bool resolve)
 		}
 #endif
 		if(normalized) {
-			string name(normalized);
+			name = normalized;
 			free(normalized);
-			return name;
 		}
 	}
-	string name(path);
+	else
+		name = path;
 	for(string::size_type i = 0; i < name.size(); ++i)
 	{
 		// Erase all / following one /
@@ -131,12 +132,18 @@ string normalize_path(const char *path, bool resolve)
 				name.erase(i + 1, n);
 		}
 	}
-	// Erase trailing / if it is not the first character
+	// Erase trailing / if it is not the first character and !want_slash
+	// Possibly append / if want_slash
+
 	string::size_type s = name.size();
-	if(s > 1) {
-		if(name[--s] == '/')
+	if(!s)
+		return name;
+	if(name[--s] == '/') {
+		if((!s) && (!want_slash))
 			name.erase(s, 1);
 	}
+	else if(want_slash)
+		return name + '/';
 	return name;
 }
 
