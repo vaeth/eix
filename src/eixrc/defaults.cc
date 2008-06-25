@@ -792,12 +792,22 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with marked versions.");
 
+AddOption(BOOLEAN, "ALL_SETNAMES",
+	"true",
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines whether to include \"system\" in package sets output.");
+
+AddOption(STRING, "PRINT_SETNAMES",
+	"%{?ALL_SETNAMES}all%{}setnames",
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It is the command used to print the package set names.");
+
 AddOption(STRING, "FORMATLINE_PACKAGESETS",
-	"%{!PRINT_ALWAYS}{setnames*}%{}"
+	"%{!PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
 	"     (%{COLOR_TITLE})Package sets:()"
-	"%{?PRINT_ALWAYS}{setnames*}%{}"
+	"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
 	"        "
-	"(%{COLOR_PACKAGESETS})<setnames*>()"
+	"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>()"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with package sets.");

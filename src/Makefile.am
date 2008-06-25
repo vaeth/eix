@@ -277,12 +277,12 @@ update-eix-functions.sh: update-eix-functions.sh.in
 
 update-eix-remote: update-eix-remote.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh',g" \
+	    -e "s,\./update-eix-functions\.sh\.in,'$(bindir)/update-eix-functions.sh',g" \
 	"$<" > "$@"
 
 update-eix-layman: update-eix-layman.in
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	    -e "s,update-eix-functions.sh.in,'$(bindir)/update-eix-functions.sh',g" \
+	    -e "s,\./update-eix-functions\.sh\.in,'$(bindir)/update-eix-functions.sh',g" \
 	"$<" > "$@"
 
 eixrc/eixrc: eixrc/eixrc.in
