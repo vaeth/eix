@@ -4,8 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix defaults for FORMATLINE_PACKAGESETS, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=229355
-	- Fix broken replacement update-eix-functions.sh path, see
-	  http://bugs.gentoo.org/show_bug.cgi?id=229419
+	- Fix broken replacement update-eix-functions.sh path and a bug in
+	  normalize_path(), see http://bugs.gentoo.org/show_bug.cgi?id=229419
 
 *eix-0.13.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

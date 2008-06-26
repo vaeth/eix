@@ -47,7 +47,7 @@ string normalize_path(const char *path, bool resolve)
 #if !defined(HAVE_CANONICALIZE_FILE_NAME)
 	cerr << "out";
 #endif
-	cerr << " canonicalize_filename(), with";
+	cerr << " canonicalize_file_name(), with";
 #if !defined(HAVE_REALPATH)
 	cerr << "out";
 #endif
@@ -63,6 +63,12 @@ string normalize_path(const char *path, bool resolve)
 	return s;
 }
 #define normalize_path(a,b) original_normalize_path(a,b)
+#endif
+
+#if !defined(HAVE_CANONICALIZE_FILE_NAME)
+#if !defined(HAVE_REALPATH)
+#error "Neither canonicalize_file_name() nor realpath() are available."
+#endif
 #endif
 
 string normalize_path(const char *path, bool resolve, bool want_slash)
@@ -114,6 +120,8 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 			name = normalized;
 			free(normalized);
 		}
+		else
+			name = path;
 	}
 	else
 		name = path;
