@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.13.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Extend the manpage concerning the description of expressions, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=229625
+
 *eix-0.13.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix defaults for FORMATLINE_PACKAGESETS, see

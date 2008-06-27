@@ -8,11 +8,10 @@
 .\" {{{ SYNOPSIS
 .SH "SYNOPSIS"
 .B eix
-[I<common options>] [I<OPTIONS>] I<EXPRESSION>...
+[I<common options>] [I<OPTIONS>] I<EXPRESSION> [[B<-a>|B<-o>|B<--and>|B<--or>] I<EXPRESSION> ...]
 .PP
-I<EXPRESSION> can be:
-    I<EXPRESSION> [B<-a>|B<-o>] I<EXPRESSION>
-    [I<local options>] I<PATTERN>
+An I<EXPRESSION> consists of local options (described below) and a pattern
+(which may be omitted, i.e. empty).
 
 .B update-eix
 [I<common options>] [I<update-eix options>]
@@ -207,8 +206,38 @@ Use I<FILE> instead of B<@EIX_CACHEFILE@>.
 
 .\" {{{ -------- Options for expressions
 .SS Options for expressions
-Note that some further implicit (though slow) tests are possible using
-B<FORMATSTRING> (see below).
+Expressions are used to narrow which packages eix prints.
+
+An expression may contain several of the options below (including the
+options for B<operation selection> and selection of the B<match algorithm>)
+and a pattern (which may be omitted).
+All these options are local to that expression, i.e. everything is "reset"
+when the next expression starts.
+
+The expression finishes with the pattern or with one of the logical
+concatenating options B<--and> or B<--or> (which may be abbreviated by
+B<-a> or B<-o>, respectively) after which the next expression can follow.
+If neither B<--and> nor B<--or> is used between two expressions
+(i.e. if the first expression finishes with the pattern), then
+B<--and> or B<--or> is assumed implicitly, depending on the value of the
+configuration variable B<DEFAULT_IS_OR>.
+
+In order for a package to match the expression it must satisfy B<all>
+match criteria selected by the local options B<and> the pattern contained
+in the expression (if such a pattern was given) must match.
+An exception of this rule is of course when the option B<--not> is used
+within the local options of the expressions in which case the complete result
+(of the whole expression) is negated.
+
+The logical operators B<--and> or B<--or> have both the same precedence and
+are evaluated from left to right. It is currently not possible to parenthesize
+the results of logical operators in a different way or to negate a result of
+a logical concatenation.
+
+Note that besides using this expression syntax a different way of implicit
+(though slow) package selection on various other criteria is possible by
+defining B<FORMATSTRING> (see below) using conditionals such that it outputs
+an empty string for the undesired packages.
 .TP
 .BR -I ", " --installed
 Only match installed packages.
@@ -400,27 +429,30 @@ Invert the expression given.
 .SS Operation selection
 .TP
 Define the fields that the expression should be tested on. Multiple fields may be used.
+If you do not specify some of these options, the default depends on the expression which
+you use and on the setting of the B<MATCH_*> configuration variables:
+typically, it is B<--name> or B<--category-name>.
 .TP
 .BR -s ", " --name
-i.e. "eix" (default)
+e.g. "eix"
 .TP
 .BR -S ", " --description
-i.e. "Small utility for searching .."
+e.g. "Small utility for searching .."
 .TP
 .BR -C ", " --category
-i.e. "app-portage"
+e.g. "app-portage"
 .TP
 .BR -A ", " --category-name
-i.e. "app-portage/eix"
+e.g. "app-portage/eix"
 .TP
 .BR -H ", " --homepage
-i.e. "http://sourceforge.net/projects/eix"
+e.g. "http://sourceforge.net/projects/eix"
 .TP
 .BR -L ", " --license
-i.e. "GPL-2"
+e.g. "GPL-2"
 .TP
 .BR -P ", " --provide
-i.e. "virtual/blackbox"
+e.g. "virtual/blackbox"
 .TP
 .BR --set
 Name of a local package set of a version in the database
@@ -436,7 +468,7 @@ Slotname of an installed version.
 Recall that without option B<--care> (or B<CAREMODE=true>) the slotname might be guessed.
 .TP
 .BR -U ", " --use
-A useflag defined by IUSE in the ebuild (B<not> that of installed packages).
+A useflag defined by IUSE in some version by some of the ebuilds of the package.
 You will usually want to combine this option with -e
 .TP
 .B --installed-with-use
