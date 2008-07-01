@@ -205,9 +205,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 			full.append("/usr/portage");
 		else
 			full.append(ref);
-		ref = normalize_path(full.c_str(), true);
-		if(ref[ref.size() - 1] != '/')
-			ref.append("/");
+		ref = normalize_path(full.c_str(), true, true);
 	}
 	/* Normalize overlays and erase duplicates */
 	{

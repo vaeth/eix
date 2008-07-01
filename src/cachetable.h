@@ -27,9 +27,10 @@ class CacheTable
 
 		void addCache(const char *eprefixcache, const char *eprefixport, const char *eprefixexec, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override)
 		{
-			for(CacheTable::iterator it=begin(); it != end(); ++it)
+			for(CacheTable::iterator it=begin(); it != end(); ++it) {
 				if(same_filenames(directory, (it->getPath()).c_str()))
 					return;
+			}
 			const char *cache_method = cache_name.c_str();
 			if(override)
 			{

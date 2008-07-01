@@ -65,12 +65,7 @@ string normalize_path(const char *path, bool resolve)
 #define normalize_path(a,b) original_normalize_path(a,b)
 #endif
 
-#if !defined(HAVE_CANONICALIZE_FILE_NAME)
-#if !defined(HAVE_REALPATH)
-#error "Neither canonicalize_file_name() nor realpath() are available."
-#endif
-#endif
-
+#include <iostream>
 string normalize_path(const char *path, bool resolve, bool want_slash)
 {
 	if(!*path)
@@ -147,8 +142,8 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 	if(!s)
 		return name;
 	if(name[--s] == '/') {
-		if((!s) && (!want_slash))
-			name.erase(s, 1);
+		if(s && (!want_slash))
+			name.erase(s);
 	}
 	else if(want_slash)
 		return name + '/';
@@ -158,8 +153,8 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 /** Compare whether two (normalized) filenames are identical */
 bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask)
 {
-	string m = normalize_path(mask, resolve_mask);
-	string n = normalize_path(name, false);
+	string m = normalize_path(mask, resolve_mask, false);
+	string n = normalize_path(name, false, false);
 	if(!glob)
 		return (m == n);
 	return (fnmatch(m.c_str(), n.c_str(), 0) == 0);

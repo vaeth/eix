@@ -4,6 +4,10 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Extend the manpage concerning the description of expressions, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=229625
+	- Fix buggy want_slash=false in normalize_path(), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=230341
+	- Do not demand canonicalize_file_name() or realpath():
+	  The profile reading should even work without symlink resolving.
 
 *eix-0.13.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
