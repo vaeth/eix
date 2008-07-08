@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.13.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Improve format description of world/world_sets
+
 *eix-0.13.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Extend the manpage concerning the description of expressions, see

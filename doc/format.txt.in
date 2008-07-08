@@ -162,9 +162,11 @@ Hash   Hash for "Licenses"
 Hash   Hash for "Keywords"
 Hash   Hash for "Useflags"
 Hash   Hash for "Slot"
-Vector world_sets
+Vector names of world sets
 ====== =======
 
+The names of world sets are the names (without leading @) of the world sets
+stored in /var/lib/portage/world_sets. If SAVE_WORLD=false, the list is empty.
 
 Overlay
 -------
@@ -213,8 +215,8 @@ char         Mask bitset for the current $ARCH:
                :0x00: none of the following
                :0x01: masked by package.mask
                :0x02: masked by profile
-               :0x04: version of package is a system package
-               :0x08: version of package is a world package
+               :0x04: version is in @system
+               :0x08: version is in @world (if SAVE_WORLD=true)
 
              Since eix-0.10.1 the higher bits contain the restrict status:
 
