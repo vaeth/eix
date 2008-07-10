@@ -12,7 +12,7 @@
 
 . ./update-eix-functions.sh.in
 
-Usage() {
+Usage () {
 	local I R
 	R=${1:-1}
 	echo "Usage: ${0##*/} [options] command
@@ -42,31 +42,38 @@ Options:
 	exit ${R}
 }
 
-ClearLayman() {
+ClearLaymanMake () {
 	Push -c LAYMAN_MAKE
 }
 
-PushLaymanMake() {
-	local M
+PushLaymanMake () {
+	local M R
+	R=1
 	for M; do
-		[ -n "${M}" ] && test -r "${M}" && Push LAYMAN_MAKE "${M}"
+		[ -n "${M}" ] || continue
+		test -r "${M}" || continue
+		Push LAYMAN_MAKE "${M}"
+		R=0
 	done
+	return ${R}
 }
 
-PrintLaymanMake() {
+PrintLaymanMake () {
 	python -c "from layman.config import Config
 print Config()['make_conf']" "${@}" 2>/dev/null
 }
 
-CalcLaymanMake() {
+CalcLaymanMake () {
 	local L
-	L=`PrintLaymanMake "${@}"` || L='/usr/local/portage/layman/make.conf'
+	L=`PrintLaymanMake "${@}"` || return
 	PushLaymanMake "${L}"
 }
 
 GetPortdir
-ClearLayman
-PushLaymanMake
+ClearLaymanMake
+CalcLaymanMake || \
+	PushLaymanMake '/usr/local/portage/layman/make.conf' || \
+	PushLaymanMake "${LOCAL_PORTDIR:-/}local/layman/make.conf"
 LAYMAN_OVERLAYS=''
 
 while getopts 'vqa:A:c:C?hH' OPTION; do
@@ -76,13 +83,13 @@ while getopts 'vqa:A:c:C?hH' OPTION; do
 		a) Push LAYMAN_OVERLAYS "${OPTARG}";;
 		c) CalcLaymanMake -c "${OPTARG}";;
 		A) PushLaymanMake "${OPTARG}";;
-		C) ClearLayman;;
+		C) ClearLaymanMake;;
 		*) Usage 0;;
 	esac
 done
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
-GetOverlays() {
+GetOverlays () {
 	local I
 	eval "set -- ${LAYMAN_MAKE}"
 	for I; do
@@ -92,19 +99,19 @@ GetOverlays() {
 	done
 }
 
-Init() {
+Init () {
 	ClearUpdateEixArgs
 	GetOverlays
 	AddLocalMethods
 }
 
-Add() {
+Add () {
 	Init
 	eval "AddOverlays ${LAYMAN_OVERLAYS}"
 	CallUpdateEix
 }
 
-Remove() {
+Remove () {
 	Init
 	eval "AddExcludes ${LAYMAN_OVERLAYS}"
 	CallUpdateEix
