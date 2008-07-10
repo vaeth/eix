@@ -13,7 +13,8 @@
 . ./update-eix-functions.sh.in
 
 Usage() {
-	local I R="${1:-1}"
+	local I R
+	R=${1:-1}
 	echo "Usage: ${0##*/} [options] command
 Add or remove local layman overlays to eix database (@PACKAGE_STRING@)
 The following commands are provided:
@@ -22,36 +23,59 @@ add:	Add the local layman overlays to the eix database
 remove:	Remove the local layman overlays from the eix database.
 
 Options:
-	-a OVERLAY  Add overlay to the list of layman overlays.
-	-A PATH     Add PATH to the sourced make.conf's used to determine
-	            the layman overlays. Current value:"
+	-a OVERLAY    Add overlay to the list of layman overlays.
+	-A PATH       Add PATH to the sourced make.conf's used to determine
+	              the layman overlays. Current value:"
 	eval "set -- ${LAYMAN_MAKE}"
-	for I; do
+	[ ${#} -eq 0 ] && set -- \
+		'none (i.e. no readable layman make.conf specified)'
+	for I
+	do
 		echo \
 "	            	${I}"
 	done
 	echo \
-"	-C          Clear the above list.
-	-v          Verbose (default)
-	-q          Quiet"
+"	-C            Clear the above list
+	-c LAYMAN_CFG Use layman.cfg file to determine entry for above list
+	-v            Verbose (default)
+	-q            Quiet"
 	exit ${R}
 }
 
 ClearLayman() {
-	LAYMAN_MAKE=''
+	Push -c LAYMAN_MAKE
+}
+
+PushLaymanMake() {
+	local M
+	for M; do
+		[ -n "${M}" ] && test -r "${M}" && Push LAYMAN_MAKE "${M}"
+	done
+}
+
+PrintLaymanMake() {
+	python -c "from layman.config import Config
+print Config()['make_conf']" "${@}" 2>/dev/null
+}
+
+CalcLaymanMake() {
+	local L
+	L=`PrintLaymanMake "${@}"` || L='/usr/local/portage/layman/make.conf'
+	PushLaymanMake "${L}"
 }
 
 GetPortdir
 ClearLayman
-Push LAYMAN_MAKE "${LOCAL_PORTDIR:-/}local/layman/make.conf"
+PushLaymanMake
 LAYMAN_OVERLAYS=''
 
-while getopts 'vqa:A:C?hH' OPTION; do
+while getopts 'vqa:A:c:C?hH' OPTION; do
 	case "${OPTION}" in
 		v) VERBOSE=true;;
 		q) VERBOSE=false;;
 		a) Push LAYMAN_OVERLAYS "${OPTARG}";;
-		A) Push LAYMAN_MAKE "${OPTARG}";;
+		c) CalcLaymanMake -c "${OPTARG}";;
+		A) PushLaymanMake "${OPTARG}";;
 		C) ClearLayman;;
 		*) Usage 0;;
 	esac
@@ -62,9 +86,7 @@ GetOverlays() {
 	local I
 	eval "set -- ${LAYMAN_MAKE}"
 	for I; do
-		[ -n "${I}" ] || continue
-		test -r "${I}" || die "cannot read ${I}"
-		Push LAYMAN_OVERLAYS \
+		[ -n "${I}" ] && test -r "${I}" && Push LAYMAN_OVERLAYS \
 			`PORTDIR_OVERLAY=''; . "${I}"; \
 				echo "${PORTDIR_OVERLAY}"`
 	done
