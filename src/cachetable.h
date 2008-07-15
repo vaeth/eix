@@ -10,7 +10,7 @@
 #ifndef __CACHETABLE_H__
 #define __CACHETABLE_H__
 
-#include <cache/cache-map.h>
+#include <cache/cache_map.h>
 #include <eixTk/ptr_list.h>
 #include <eixTk/filenames.h>
 

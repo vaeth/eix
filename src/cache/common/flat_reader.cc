@@ -7,7 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "flat-reader.h"
+#include "flat_reader.h"
 #include <eixTk/stringutils.h>
 #include <portage/package.h>
 

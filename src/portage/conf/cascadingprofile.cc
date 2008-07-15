@@ -35,6 +35,9 @@ void CascadingProfile::addProfile(const char *profile, unsigned int depth)
 	if(depth >= 255)
 		cerr << "Recursion level for cascading profiles exceeded; stopping reading parents" << endl;
 	string s = normalize_path(profile, true, true);
+#if defined(DEBUG_PROFILE_PATHS)
+	cout << "Adding to  Profile:\n\t(" << profile << ") -> \"" << s << "\"" << endl;
+#endif
 	if(s.empty())
 		return;
 	vector<string> parents;

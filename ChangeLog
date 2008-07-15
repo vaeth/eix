@@ -2,6 +2,12 @@
 
 *eix-0.13.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- New cache method "metadata-assign" needed for alt-gentoo, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=231808
+	- Rename some of the other cache methods to have a consistent scheme
+	  (metadata->metadata-flat, portage-2.0->flat, portage-2.1->assign).
+	  Also treat internally flat/assign and metadata-flat/assign by the
+	  same class, i.e. remove the port2_1_0 directory completely.
 	- Use python in update-eix-layman to parse layman.cfg for its
 	  make.conf, see http://bugs.gentoo.org/show_bug.cgi?id=230788
 	- Improve format description of world/world_sets

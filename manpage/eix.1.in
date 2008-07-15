@@ -968,9 +968,9 @@ Use this if you want to see (instead of loggin) by default what is going on.
 You can still revert the original behaviour by passing option -V.
 .TP
 .B -r -M
-Use this if you use e.g. PORTDIR_CACHE_METHOD=portage-2.1 and
-B<FEATURES=metadata-transfer> is inactive or disabled (which is the default
-in newer portage versions).
+Use this if you use e.g. PORTDIR_CACHE_METHOD=assign and
+B<FEATURES=metadata-transfer> is inactive or disabled
+(the latter is the default in newer portage versions).
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
 replace B<-M> by the line
 .TP
@@ -1506,7 +1506,7 @@ and are meant to be used only locally.
 The following cache methods are available:
 .TP
 .SS
-.BR metadata " or " metadata:I<PATH>
+.BR metadata-flat " or " metadata-flat:I<PATH>
 Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache).
 This is the default method which will always work if the portage tree is readable
 when you run update-eix.
@@ -1515,6 +1515,12 @@ If you provide I<PATH>, it overrides the above path; in this case, it must be
 the full path (i.e. no prefix is used). You might want to provide I<PATH> if
 you use paludis to generate the metadata in the corresponding directory.
 See also cache method B<flat> below.
+.TP
+.SS
+.BR metadata-assign " or " metadata-assign:I<PATH>
+This is similar to B<metadata-flat> with the difference that the files within
+the metadata cache are expected to be in an "assignment format"
+(TYPE=value) which is the case in some alt-gentoo trees.
 .TP
 .SS
 .B sqlite
@@ -1535,12 +1541,12 @@ before compilation) if you want support for this method.
 Use this if you are using <portage-2.1 and the cdb-module from
 I<http://forums.gentoo.org/viewtopic-t-261580.html> as
 cache-backend for portage (cdb with cpickle'd dictionaries as values).
-Note that in contrast to the default B<metadata> cache method you must
+Note that in contrast to the default B<metadata-*> cache methods you must
 use B<emerge --metadata> before you call B<update-eix> with this method.
 .TP
 .SS
-.BR flat ", " portage-2.0 ", " flat:I<PATH> ", or " portage-2.0:I<PATH>
-This is similar to B<metadata> with the difference that the metadata is
+.BR flat " or " flat:I<PATH>
+This is similar to B<metadata-flat> with the difference that the metadata is
 expected in the directory I<PATH>/<${PORTAGE_OR_OVERLAY_DIR}>.
 If I<PATH> is omitted, it defaults to B</var/cache/edb/dep>.
 
@@ -1549,11 +1555,15 @@ or if you are using paludis to generate the metadata in the corresponding
 directory.
 .TP
 .SS
-.B portage-2.1
+.B assign " or " assign:I<PATH>
+This is analogous to B<flat> with the difference that the files are
+expected to be in an "assignment format" (TYPE=value).
+This is the case if you use portage-2.1 with the default backend.
+
 If you are using >=portage-2.1 and the default backend,
 you might want to use this one if you do not have access to the portage
 tree when you run update-eix.
-Note that in contrast to the default B<metadata> cache method you must
+Note that in contrast to the default B<metadata-*> cache methods you must
 run B<emerge --metadata> before you call B<update-eix> with this method.
 You will probably want to use a corresponding option in eix-sync in this case.
 .TP
@@ -2116,19 +2126,28 @@ B<eix> was formerly known as B<portagedb>. The name was changed because a part o
 portage is also called portagedb, which was a bit confusing for everyone.
 
 The functionality of update-eix was once triggered by using the -u switch on eix.
-It was than separated to provide better maintainability. Thus update-eix
-came to life.
-
-portage-2.1 and portage-2.1.1 doesn't remove the old dep-cache, thus eix would
-always find packages that are not in portage anymore. To circumvent this, eix-sync
-deletes the old cache (rm -rf /var/cache/edb/dep/*).
+It was than separated to provide better maintainability.
+Thus update-eix came to life.
+Meanwhile, it is the same executable with functionality distinguished by its call name.
 
 Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
 reasonable anymore to use different variable names for eix and diff-eix.
 Hence, all corresponding B<DIFF_*> variables have vanished.
 
-The cache methods B<flat> and B<backport> are now called B<portage-2.0>
-and B<portage-2.1>, respectively (the obsolete names are still supported).
+The cache method B<metadata-flat> was previously just called B<metadata>.
+The cache method B<assign> was previously called B<backport> or B<portage-2.1>.
+The cache method B<flat> had previously the name B<portage-2.0> which was even preferred.
+Anyway, the obsolete names are still supported.
+
+portage-2.1 and portage-2.1.1 doesn't remove the old dep-cache, thus eix does
+always find packages that are not in portage anymore if the B<flat>/B<assign>
+cache method is used.
+To circumvent this, eix-sync used to delete the old cache
+(rm -rf /var/cache/edb/dep/*).
+Since most people have no need to use this cache method anymore and
+deleting the old cache slows down the next portage run, this is
+not the default anymore (but still available as an option which can be
+put into /etc/eix-sync.conf).
 
 eix-sync used to default to gensync instead of layman.
 See the description of /etc/eix-sync.conf how you can still use the

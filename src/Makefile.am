@@ -76,8 +76,10 @@ portage/version.h
 
 cache_src = \
 cachetable.h \
-cache/common/flat-reader.cc \
-cache/common/flat-reader.h \
+cache/common/assign_reader.cc \
+cache/common/assign_reader.h \
+cache/common/flat_reader.cc \
+cache/common/flat_reader.h \
 cache/common/ebuild_exec.cc \
 cache/common/ebuild_exec.h \
 cache/common/selectors.cc \
@@ -86,8 +88,8 @@ cache/common/unpickle.cc \
 cache/common/unpickle.h \
 cache/base.cc \
 cache/base.h \
-cache/cache-map.cc \
-cache/cache-map.h \
+cache/cache_map.cc \
+cache/cache_map.h \
 cache/cdb/cdb.cc \
 cache/cdb/cdb.h \
 cache/ebuild/ebuild.cc \
@@ -98,8 +100,6 @@ cache/metadata/metadata.cc \
 cache/metadata/metadata.h \
 cache/parse/parse.cc \
 cache/parse/parse.h \
-cache/port2_1_0/port2_1_0.cc \
-cache/port2_1_0/port2_1_0.h \
 cache/sqlite/sqlite.cc \
 cache/sqlite/sqlite.h
 
@@ -163,12 +163,12 @@ extra_update_eix_src = $(extra_cache_src)
 CLEANFILES = cppcomplete.tags tags eix-sync eix-test-obsolete \
 			 update-eix-remote update-eix-layman update-eix-functions.sh \
 			 eixrc/eixrc \
-			 cache/cache-map.cc \
+			 cache/cache_map.cc \
 			 diff-eix$(EXEEXT) update-eix$(EXEEXT)
 
 EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
 			 update-eix-layman.in update-eix-functions.sh.in \
-			 eixrc/eixrc.in cache/generate-cachemap.sh
+			 eixrc/eixrc.in cache/generate_cachemap.sh
 
 # Our binaries
 bin_SCRIPTS  = eix-sync eix-test-obsolete update-eix-remote update-eix-layman \
@@ -258,7 +258,7 @@ EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_update_eix_sr
 endif
 
 
-cache/cache-map.cc: cache/generate-cachemap.sh
+cache/cache_map.cc: cache/generate_cachemap.sh
 	"$<" $(extra_cache) > "$@"
 
 eix-sync: eix-sync.in

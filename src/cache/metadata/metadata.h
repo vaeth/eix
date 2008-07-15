@@ -14,7 +14,7 @@
 
 class MetadataCache : public BasicCache {
 	protected:
-		bool metadata, have_override_path;
+		bool metadata, flat, have_override_path;
 		std::string override_path;
 
 	public:

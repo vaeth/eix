@@ -9,7 +9,7 @@
 
 #include "parse.h"
 #include <cache/common/selectors.h>
-#include <cache/common/flat-reader.h>
+#include <cache/common/flat_reader.h>
 
 #include <eixTk/stringutils.h>
 #include <eixTk/formated.h>

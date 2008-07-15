@@ -10,6 +10,7 @@
 #ifndef __FLATREADER_H__
 #define __FLATREADER_H__
 
+
 #include <eixTk/exceptions.h>
 #include <portage/keywords.h>
 #include <cache/base.h>

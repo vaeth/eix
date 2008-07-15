@@ -8,7 +8,8 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "metadata.h"
-#include <cache/common/flat-reader.h>
+#include <cache/common/flat_reader.h>
+#include <cache/common/assign_reader.h>
 
 #include <eixTk/stringutils.h>
 #include <eixTk/formated.h>
@@ -38,13 +39,30 @@ MetadataCache::initialize(const string &name)
 	}
 	else
 		have_override_path = false;
-	if(strcasecmp(pure_name.c_str(), "metadata") == 0) {
+	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
+		(strcasecmp(pure_name.c_str(), "metadata-flat") == 0)) {
+		flat = true;
+		metadata = true;
+		return true;
+	}
+	if((strcasecmp(pure_name.c_str(), "metadata*") == 0) ||
+		(strcasecmp(pure_name.c_str(), "metadata-assign") == 0)) {
+		flat = false;
 		metadata = true;
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "flat") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.0") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.0.51") == 0)) {
+		flat = true;
+		metadata = false;
+		return true;
+	}
+	if((strcasecmp(pure_name.c_str(), "assign") == 0) ||
+		(strcasecmp(pure_name.c_str(), "backport") == 0) ||
+		(strcasecmp(pure_name.c_str(), "portage-2.1") == 0) ||
+		(strcasecmp(pure_name.c_str(), "portage-2.1.0") == 0)) {
+		flat = false;
 		metadata = false;
 		return true;
 	}
@@ -56,9 +74,11 @@ MetadataCache::getType() const
 {
 	static string s;
 	if(metadata)
-		s = "metadata";
+		s = "metadata-";
+	if(flat)
+		s.append("flat");
 	else
-		s = "flat";
+		s.append("assign");
 	if(have_override_path) {
 		s.append(":");
 		s.append(override_path);
@@ -72,6 +92,9 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 	return (dent->d_name[0] != '.'
 			&& strchr(dent->d_name, '-') != 0);
 }
+
+typedef void (*x_get_keywords_slot_iuse_restrict_t)(const string &filename, string &keywords, string &slotname, string &iuse, string &rest, BasicCache::ErrorCallback error_callback);
+typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
 bool
 MetadataCache::readCategory(Category &vec) throw(ExBasic)
@@ -101,6 +124,16 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 	if(!scandir_cc(catpath, names, cachefiles_selector))
 		return false;
 
+	x_get_keywords_slot_iuse_restrict_t x_get_keywords_slot_iuse_restrict;
+	x_read_file_t x_read_file;
+	if(flat) {
+		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
+		x_read_file = flat_read_file;
+	}
+	else {
+		x_get_keywords_slot_iuse_restrict = assign_get_keywords_slot_iuse_restrict;
+		x_read_file = assign_read_file;
+	}
 	for(vector<string>::const_iterator it = names.begin();
 		it != names.end(); )
 	{
@@ -128,7 +161,7 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Read stability from cachefile */
 			string keywords, iuse, restr;
-			flat_get_keywords_slot_iuse_restrict(catpath + "/" + (*it), keywords, version->slotname, iuse, restr, m_error_callback);
+			(*x_get_keywords_slot_iuse_restrict)(catpath + "/" + (*it), keywords, version->slotname, iuse, restr, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);
@@ -159,7 +192,7 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			flat_read_file((catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
+			(*x_read_file)((catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
 	}
 
 	return true;
