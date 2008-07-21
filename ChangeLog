@@ -10,6 +10,7 @@
 	  same class, i.e. remove the port2_1_0 directory completely.
 	- Use python in update-eix-layman to parse layman.cfg for its
 	  make.conf, see http://bugs.gentoo.org/show_bug.cgi?id=230788
+	- Improve pkg-config error treatment
 	- Improve format description of world/world_sets
 
 *eix-0.13.2

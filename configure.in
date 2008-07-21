@@ -218,19 +218,28 @@ if test -n "${UNIQUE_WORKS}"; then
 fi
 
 dnl What about sqlite?
+AC_MSG_CHECKING(whether sqlite should be used)
 AC_ARG_WITH(sqlite,[  --with-sqlite           Compile in support for cache method sqlite ],[
 		if test "x${withval}" = "xno"; then
+			AC_MSG_RESULT(no)
 			SQLITE_LIBS=""
 		else
-			SQLITE_LIBS="`pkg-config --libs sqlite3`"
+			AC_MSG_RESULT(yes)
+			SQLITE_LIBS="`pkg-config --libs sqlite3`" || SQLITE_LIBS=""
 			# If pkg-config is not available or failed, we use a default
 			if test -z "${SQLITE_LIBS}"; then
+				AC_MSG_WARN(ignoring pkg-config and using -lsqlite3)
 				SQLITE_LIBS="-lsqlite3"
 			fi
 		fi
 	],
 	[
-		SQLITE_LIBS="`pkg-config --libs sqlite3 2>/dev/null`"
+		SQLITE_LIBS="`pkg-config --libs sqlite3 2>/dev/null`" || SQLITE_LIBS=""
+		if test -n "${SQLITE_LIBS}"; then
+			AC_MSG_RESULT(yes)
+		else
+			AC_MSG_RESULT(no. Use --with-sqlite3 if this autodetection is false)
+		fi
 	])
 
 if test -n "${SQLITE_LIBS}"; then
