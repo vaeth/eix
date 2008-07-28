@@ -13,6 +13,11 @@
 	- Improve pkg-config error treatment
 	- Improve format description of world/world_sets
 
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- If -v is not given, use /dev/null as input for the commands in
+	  eix-sync. That way they will die if they expect input from stdin
+	  (--ask option for emerge)
+
 *eix-0.13.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Extend the manpage concerning the description of expressions, see

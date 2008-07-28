@@ -211,7 +211,7 @@ MyRunCommand() {
 	fi
 	ebegin "${1}"
 	shift
-	MyRun "${@}" >>"${REDIRECT}" 2>&1
+	MyRun "${@}" </dev/null >>"${REDIRECT}" 2>&1
 	RET=${?}
 	eend "${RET}" "Problems running ${@}"
 	return ${RET}
