@@ -201,7 +201,6 @@ MyRun() {
 # if VERBOSE is true, redirect 1,2 to logfile|/dev/null and use ebegin/eend
 # (instead of einfo)
 MyRunCommand() {
-	local RET
 	${EMULATEMODE} && return 0
 	if ${VERBOSE}; then
 		einfo "${1}"
@@ -209,10 +208,26 @@ MyRunCommand() {
 		MyRun "${@}"
 		return "${?}"
 	fi
+	local RET
 	ebegin "${1}"
 	shift
-	MyRun "${@}" </dev/null >>"${REDIRECT}" 2>&1
-	RET=${?}
+	if ${QUIET}; then
+		MyRun "${@}" </dev/null 2>&1
+		RET=${?}
+	elif [ "${REDIRECT}" = '/dev/null' ]; then
+		MyRun "${@}" </dev/null
+	else
+		# &4 and output collecting is only used to get the exit status
+		# of the first command in the pipeline. This should be
+		# rewritten if somebody knows how to do this well (non-bash).
+		# &3 is only needed, because we must use &1 for the pipeline.
+		RET=`{
+			{
+				MyRun "${@}" </dev/null 2>&1 1>&3
+				echo ${?} >&4
+			} | tee -a /dev/stderr
+		} 4>&1 1>>"${REDIRECT}" 3>&1`
+	fi
 	eend "${RET}" "Problems running ${@}"
 	return ${RET}
 }
@@ -269,11 +284,11 @@ DelTemp() {
 	exit ${EXITCODE}
 }
 MakeTempFile() {
-	local COUNT
 	if command -v mktemp >/dev/null 2>&1; then
 		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary file"
 	else
+		local COUNT
 		COUNT=0
 		while true; do
 			[ ${COUNT} -eq 9999 ] && \
@@ -389,8 +404,8 @@ MovePrevious() {
 }
 
 UpdateDiff() {
-	local D
 	${DOUPDATE} || return 0
+	local D
 	if ${USETEMP}; then
 		${EMULATEMODE} && return
 		D="${TMPFILE}"

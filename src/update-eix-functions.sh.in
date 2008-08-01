@@ -36,16 +36,16 @@ GetPortdir() {
 VERBOSE=true
 
 RunCommand() {
-	local RET
 	if ${VERBOSE}; then
 		einfo "${1}"
 		shift
 		"${@}"
 		return ${?}
 	fi
+	local RET
 	ebegin "${1}"
 	shift
-	"${@}" >/dev/null 2>&1
+	"${@}" >/dev/null
 	RET=${?}
 	eend ${RET} "Problems running ${@}"
 	return ${RET}

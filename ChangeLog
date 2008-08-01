@@ -12,11 +12,14 @@
 	  make.conf, see http://bugs.gentoo.org/show_bug.cgi?id=230788
 	- Improve pkg-config error treatment
 	- Improve format description of world/world_sets
+	- Without -v or -q, let eix-sync tee stderr, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=233132
+	  If somebody finds a clean (non-bash) way to get the error status
+	  of the first command in the pipeline, this code should be rewritten.
 
 	Emil Beinroth <emilbeinroth at gmx.net>:
-	- If -v is not given, use /dev/null as input for the commands in
-	  eix-sync. That way they will die if they expect input from stdin
-	  (--ask option for emerge)
+	- Without -v, use /dev/null as input in eix-sync; this will let
+	  emerge --ask --sync die.
 
 *eix-0.13.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

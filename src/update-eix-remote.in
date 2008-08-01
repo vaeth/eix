@@ -132,12 +132,12 @@ Cleanup() {
 	exit "${EXITCODE}"
 }
 MakeTempDir() {
-	local COUNT
 	[ -n "${TMPDIR}" ] && return
 	if command -v mktemp >/dev/null 2>&1; then
 		TMPDIR=`mktemp -d "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary directory"
 	else
+		local COUNT
 		COUNT=0
 		while true; do
 			[ ${COUNT} -eq 9999 ] && \
@@ -166,8 +166,8 @@ MakeTempSub() {
 
 TMPFILE=''
 FetchTemp() {
-	local SOURCE="http://dev.gentooexperimental.org/eix_cache"
-	SOURCE="${SOURCE}/${EIXCACHESNAME}"
+	local SOURCE
+	SOURCE="http://dev.gentooexperimental.org/eix_cache/${EIXCACHESNAME}"
 	MakeTempDir cd
 	TMPFILE="${TMPDIR}/${EIXCACHESNAME}"
 	( umask 000; : >"${TMPFILE}" )
