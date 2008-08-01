@@ -963,9 +963,9 @@ was (successfully) called.
 .TP
 Some examples of useful lines in B</etc/eix-sync.conf>:
 .TP
-.B -v
-Use this if you want to see (instead of loggin) by default what is going on.
-You can still revert the original behaviour by passing option -V.
+.B -C --ignore-default-opts
+Use this line if you have --ask in EMERGE_DEFAULT_OPTS in /etc/make.conf
+but do not want to get asked for eix-sync.
 .TP
 .B -r -M
 Use this if you use e.g. PORTDIR_CACHE_METHOD=assign and
@@ -2152,6 +2152,10 @@ put into /etc/eix-sync.conf).
 eix-sync used to default to gensync instead of layman.
 See the description of /etc/eix-sync.conf how you can still use the
 deprecated gensync if you want to.
+
+eix-sync no longer supports logging; options -v and -V have been removed.
+This avoids problems like no visible output with EMERGE_DEFAULT_OPTS=--ask.
+You should now use redirection when you want to use eix-sync in a cronjob.
 .\" }}}
 
 .\" {{{ AUTHORS

@@ -12,14 +12,20 @@
 
 LOCAL_EPREFIX_PORTAGE_EXEC="`update-eix --print EPREFIX_PORTAGE_EXEC`"
 
-if test -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"; then
-	. "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh"
-elif test -r "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"; then
-	. "${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
-else
+# This must happen in a function to enforce an empty argument list.
+read_functions() {
+	local I
+	for I in "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh" \
+		"${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
+	do
+		test -r "${I}" || continue
+		. "${I}"
+		return
+	done
 	echo "${0##*/}: Cannot read functions.sh" >&2
 	exit 2
-fi
+}
+read_functions
 
 die() {
 	eerror "${*}"

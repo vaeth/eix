@@ -12,14 +12,12 @@
 	  make.conf, see http://bugs.gentoo.org/show_bug.cgi?id=230788
 	- Improve pkg-config error treatment
 	- Improve format description of world/world_sets
-	- Without -v or -q, let eix-sync tee stderr, see
+	- Fix reading functions.sh (force an empty argument list)
+	- If you use eix-sync in a cronjob you now have to redirect yourself:
+	  Remove logging support of eix-sync (and drop options -v and -V).
+	  This should fix all problems with the emerge --ask option, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=233132
-	  If somebody finds a clean (non-bash) way to get the error status
-	  of the first command in the pipeline, this code should be rewritten.
-
-	Emil Beinroth <emilbeinroth at gmx.net>:
-	- Without -v, use /dev/null as input in eix-sync; this will let
-	  emerge --ask --sync die.
+	  If you use eix-sync in a cronjob you now have to redirect yourself!
 
 *eix-0.13.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

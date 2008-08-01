@@ -15,8 +15,7 @@ LOCAL_VARCACHE="`update-eix --print EPREFIX_PORTAGE_CACHE`"
 EIXCACHE="`update-eix --print EIX_CACHEFILE`"
 EIXPREVIOUS="${EIXCACHE}.previous"
 LOCAL_PORTAGE_CONFIGROOT="`update-eix --print PORTAGE_CONFIGROOT`"
-LAYMANCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
-LOGFILE="${LOCAL_EPREFIX_PORTAGE_EXEC}/var/log/eix-sync.log"
+EIXSYNCCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
 PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
@@ -24,22 +23,20 @@ Usage() {
 	echo "${0##*/} [options]
 Call layman/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
 
-Unless the -v option is used, the output of most commands is redirected to
-    ${LOGFILE}.
 Unless the -t option is used, the old database will be saved to
     ${EIXPREVIOUS}.
 
-The file ${LAYMANCONF} determines for which overlays layman is called.
+The file ${EIXSYNCCONF} determines for which overlays layman is called.
 You can also add certain hooks in that file - \"man eix\" for details.
 
-The file ${LAYMANCONF} and the environment variable EIX_SYNC_OPTS can
+The file ${EIXSYNCCONF} and the environment variable EIX_SYNC_OPTS can
 contain default options which are processed before the command line options.
 Note that \"--\" in the default options will forbid command line options.
 The following options are available:
 
--i   Ignore all previous options (useful to ignore ${LAYMANCONF} options).
+-i   Ignore all previous options (useful to ignore ${EIXSYNCCONF} options).
 -d   Only show differences to the previously saved database and exit.
-     Except for executing the !! lines in ${LAYMANCONF}
+     Except for executing the !! lines in ${EIXSYNCCONF}
      this is the same as diff-eix ${EIXPREVIOUS}.
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
      USER defaults to current user and DIR defaults to \$PORTDIR
@@ -49,10 +46,10 @@ The following options are available:
 -U   Do not touch the database and omit the hooks after update-eix (@ entries)
      and do not show differences. This option implies -R
 -u   Update database only and show differences. This is equivalent to -l@s ''
--l   Do not call layman (and the !commands in ${LAYMANCONF}).
+-l   Do not call layman (and the !commands in ${EIXSYNCCONF}).
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
--@   Do not execute the hooks (@ and @@ entries) of ${LAYMANCONF}.
+-@   Do not execute the hooks (@ and @@ entries) of ${EIXSYNCCONF}.
 -S   Do not execute the hooks after emerge --sync (@@ entries).
 -M   Run emerge --metadata. You might need this when you use e.g.
      PORTDIR_CACHE_METHOD=portage-2.1 and a newer portage version when
@@ -60,9 +57,7 @@ The following options are available:
 -m   Run emerge --metadata but skip emerge --sync.
 -N   Skip emerge --metadata if it was activated by -M or -m.
 -t   Use temporary file to save the current database (-d will not be possible).
--v   Do not redirect output of update-eix and emerge into logfile.
--V   Cancel previous -v (useful if you used -v in ${LAYMANCONF})
--q   Be quiet (close stdout, redirecting into logfile)
+-q   Be quiet (close stdout)
 -w   Run emerge-webrsync instead of emerge --sync.
 -W   Run emerge-delta-webrsync instead of emerge --sync.
 -c CMD Run CMD instead of emerge --sync.
@@ -71,7 +66,7 @@ The following options are available:
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=portage-2.1 and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
--R   Cancel previous -r (e.g. if it was used in ${LAYMANCONF}).
+-R   Cancel previous -r (e.g. if it was used in ${EIXSYNCCONF}).
 -e   Skip heuristic tests whether you must be root.
 -h   Show this text and exit."
 	EXITCODE=${1:-1}
@@ -84,7 +79,7 @@ DiffOnly() {
 	die "Could not execute diff-eix"
 }
 
-if test -r "${LAYMANCONF}"; then
+if test -r "${EIXSYNCCONF}"; then
 	HAVECONF=true
 else
 	HAVECONF=false
@@ -127,7 +122,7 @@ ExecuteConfig() {
 		fi
 		MyRunCommand "Syncing portage overlay '${J}'"
 			"${MYCMD}" -s "${J}" || die "${MYCMD} -s ${J} failed"
-	done <"${LAYMANCONF}"
+	done <"${EIXSYNCCONF}"
 }
 
 
@@ -138,7 +133,6 @@ DefaultOpts() {
 	CLEARCACHE=false
 	NOLAYMAN=false
 	NOHOOKS=false
-	VERBOSE=false
 	QUIET=false
 	USETEMP=false
 	METADATA=false
@@ -153,7 +147,7 @@ DefaultOpts() {
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uul@SmMNtvVqwWc:C:rRe?hH" OPTION \
+while getopts "ids:2:Uul@SmMNtqwWc:C:rRe?hH" OPTION \
 	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
 	case "${OPTION}" in
 		i) DefaultOpts;;
@@ -169,8 +163,6 @@ while getopts "ids:2:Uul@SmMNtvVqwWc:C:rRe?hH" OPTION \
 		M) METADATA=true;;
 		N) METADATA=false;;
 		t) USETEMP=true;;
-		v) VERBOSE=true;;
-		V) VERBOSE=false;;
 		q) QUIET=true;;
 		w) Push -c EMERGECMD 'emerge-webrsync';;
 		W) Push -c EMERGECMD 'emerge-delta-webrsync';;
@@ -189,48 +181,22 @@ MyRun() {
 		"${@}"
 		return
 	fi
+	# treat 'time' separately to allow for shell builtin
 	shift
+	# Of course, 'time' is a feature, i.e. things should still work even
+	# if neither the shell nor the time command is available.
 	if command -v time >/dev/null 2>&1; then
-		time "${@}"
+		time -p "${@}"
 		return
 	fi
 	"${@}"
 }
 
-# Run command
-# if VERBOSE is false, redirect 1,2 to logfile|/dev/null and use ebegin/eend
-# (instead of einfo)
 MyRunCommand() {
 	${EMULATEMODE} && return 0
-	if ${VERBOSE}; then
-		einfo "${1}"
-		shift
-		MyRun "${@}"
-		return "${?}"
-	fi
-	local RET
-	ebegin "${1}"
+	einfo "${1}"
 	shift
-	if ${QUIET}; then
-		MyRun "${@}" </dev/null 2>&1
-		RET=${?}
-	elif [ "${REDIRECT}" = '/dev/null' ]; then
-		MyRun "${@}" </dev/null >/dev/null
-		RET=${?}
-	else
-		# &4 and output collecting is only used to get the exit status
-		# of the first command in the pipeline. This should be
-		# rewritten if somebody knows how to do this well (non-bash).
-		# &3 is only needed, because we must use &1 for the pipeline.
-		RET=`{
-			{
-				MyRun "${@}" </dev/null 2>&1 1>&3
-				echo ${?} >&4
-			} | tee -a /dev/stderr
-		} 4>&1 1>>"${REDIRECT}" 3>&1`
-	fi
-	eend "${RET}" "Problems running ${@}"
-	return ${RET}
+	MyRun "${@}"
 }
 
 DoExecute() {
@@ -259,7 +225,7 @@ RootTest() {
 	einfo  "However, the heuristic might be wrong, e.g. if you use EPREFIX."
 	einfo  "If you want to skip this test temporarily, use option -e."
 	einfo  "If you want to skip this test permanently, put option -e"
-	einfo  "into the file ${LAYMANCONF}."
+	einfo  "into the file ${EIXSYNCCONF}."
 	die    ""
 }
 
@@ -447,23 +413,7 @@ if ${TEST_FOR_ROOT} && [ "${UID}" -ne 0 ]; then
 fi
 EMULATEMODE=false
 
-# Clean out logfile and redirect
-if (
-	umask 002
-	if ${QUIET} || ! ${VERBOSE}; then
-		: >"${LOGFILE}" || exit 1
-		[ "${UID}" -eq 0 ] && \
-		chown -- portage:portage "${LOGFILE}" >/dev/null 2>&1
-	fi
-	exit 0
-	) >/dev/null 2>&1
-then
-	REDIRECT="${LOGFILE}"
-else
-	REDIRECT=/dev/null
-	eerror "Redirection to ${LOGFILE} failed. Using ${REDIRECT} instead"
-fi
-${QUIET} && exec >>"${REDIRECT}"
+${QUIET} && exec >/dev/null
 
 MainSync
 
