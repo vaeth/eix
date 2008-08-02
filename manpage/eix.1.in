@@ -27,7 +27,7 @@ An I<EXPRESSION> consists of local options (described below) and a pattern
 
 .B update-eix-layman
 
-.B update-eix-functions.sh
+.B functions-eix.sh
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -73,9 +73,12 @@ To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
 B<update-eix-layman> can add or remove local layman overlays to the current database.
 To get more help on B<update-eix-layman> call B<update-eix-layman -h>.
 
-B<update-eix-functions.sh> are helper functions used by B<update-eix-remote>
-and B<update-eix-layman>.
+B<functions-eix.sh> are helper functions used by B<eix-sync>,
+B<update-eix-remote> and B<update-eix-layman>.
 You might want to use them for your own similar scripts.
+Note that immediately after sourcing B<functions-eix.sh> you will probably
+want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
+with the corresponding I<ARGS>.
 .\" }}}
 
 .\" {{{ OPTIONS
@@ -1148,7 +1151,7 @@ the prefix of a lot of paths in the subsequent variables;
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
-.B @BINDIR@/update-eix-functions.sh
+.B @BINDIR@/functions-eix.sh
 
 .B ~/.eixrc
 
@@ -2156,6 +2159,9 @@ deprecated gensync if you want to.
 eix-sync no longer supports logging; options -v and -V have been removed.
 This avoids problems like no visible output with EMERGE_DEFAULT_OPTS=--ask.
 You should now use redirection when you want to use eix-sync in a cronjob.
+
+B<functions-eix.sh> was previously called <update-eix-functions.sh>;
+however, the latter name was misleading since most are general helper functions.
 .\" }}}
 
 .\" {{{ AUTHORS

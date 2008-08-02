@@ -4,7 +4,8 @@ CLEANFILES = eix.1 cppcomplete.tags tags
 man_MANS = eix.1
 EXTRA_DIST = eix.1.in
 
-eix.1: eix.1.in
+SUFFIXES = .in
+.in:
 	@regex_cmd@ -e 's/$$Date:[^,]*, *\([^)]*\)[^\$$]*\$$/\1/' \
 	    -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \

@@ -13,7 +13,7 @@
 LOCAL_EPREFIX_PORTAGE_EXEC="`update-eix --print EPREFIX_PORTAGE_EXEC`"
 
 # This must happen in a function to enforce an empty argument list.
-read_functions() {
+read_functions () {
 	local I
 	for I in "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh" \
 		"${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
@@ -25,23 +25,22 @@ read_functions() {
 	echo "${0##*/}: Cannot read functions.sh" >&2
 	exit 2
 }
-read_functions
 
-die() {
+die () {
 	eerror "${*}"
 	EXITCODE=2
 	exit "${EXITCODE}"
 }
 
 LOCAL_PORTDIR=''
-GetPortdir() {
+GetPortdir () {
 	[ -n "${LOCAL_PORTDIR}" ] && return
 	LOCAL_PORTDIR="`update-eix --print PORTDIR`"
 }
 
 VERBOSE=true
 
-RunCommand() {
+RunCommand () {
 	if ${VERBOSE}; then
 		einfo "${1}"
 		shift
@@ -58,7 +57,7 @@ RunCommand() {
 }
 
 ( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && eval '
-expr() {
+expr () {
 	echo "$(( ${1} ${2} ${3} ))"
 }'
 
@@ -66,7 +65,7 @@ expr() {
 # Search and Replace will be evaluated between " ", so quote correspondingly!
 # Option -g means: Replace all occurrences
 # Exit status is the number of replacements (or 127 if there are more)
-Replace() {
+Replace () {
 	local ReplaceA_='' ReplaceB_ ReplaceC_=''
 	case "${1}" in
 		-*) ReplaceC_=0; shift;;
@@ -93,7 +92,7 @@ Replace() {
 # Append all Args to VAR, quoted such that
 #    eval "${VAR}" is 'safe' and groups Args correctly.
 # With option -c, VAR is cleaned in advance.
-Push() {
+Push () {
 	case "${1}" in
 		-*) shift; eval "${1}=''";;
 	esac
@@ -109,11 +108,11 @@ Push() {
 	done"
 }
 
-AddUpdateArgs() {
+AddUpdateArgs () {
 	Push UPDATE_EIX_ARGS "${@}"
 }
 
-AddUpdateQuoting() {
+AddUpdateQuoting () {
 	local K="$1"
 	shift
 	Replace -g K '?' '\\?'
@@ -122,19 +121,19 @@ AddUpdateQuoting() {
 	AddUpdateArgs "${K}" "${@}"
 }
 
-AddMethod() {
+AddMethod () {
 	AddUpdateArgs '-m'
 	AddUpdateQuoting "${1}" "${2}"
 }
 
-AddOverlays() {
+AddOverlays () {
 	local J
 	for J; do
 		AddUpdateArgs '-a' "${J}"
 	done
 }
 
-AddExcludes() {
+AddExcludes () {
 	local J
 	for J; do
 		AddUpdateArgs '-x'
@@ -142,17 +141,17 @@ AddExcludes() {
 	done
 }
 
-ClearUpdateEixArgs() {
+ClearUpdateEixArgs () {
 	UPDATE_EIX_ARGS=''
 }
 
-CallUpdateEix() {
+CallUpdateEix () {
 	eval "set -- ${UPDATE_EIX_ARGS}"
 	RunCommand "Calling update-eix" update-eix "${@}" || \
 		die "update-eix failed"
 }
 
-AddLocalMethods() {
+AddLocalMethods () {
 	local I
 	GetPortdir
 	AddMethod "${LOCAL_PORTDIR}" "eix"
@@ -166,7 +165,7 @@ AddLocalMethods() {
 # This is necessary as some shells won't take ${Var%"[newline]"}
 NEWLINE_STRING='
 '
-Chomp() {
+Chomp () {
 	local ChompA_ ChompB_ ChompC_
 	for ChompA_; do
 		eval "ChompB_=\"\${${ChompA_}}\""
@@ -186,7 +185,7 @@ Chomp() {
 
 HAVE_READLINK=false
 command -v readlink >/dev/null 2>&1 && HAVE_READLINK=true
-NormalizeNames() {
+NormalizeNames () {
 	local NormA_ NormB_ NormC_ NormD_=0
 	RELATIVE=''
 	for NormC_; do

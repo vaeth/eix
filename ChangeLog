@@ -8,16 +8,29 @@
 	  (metadata->metadata-flat, portage-2.0->flat, portage-2.1->assign).
 	  Also treat internally flat/assign and metadata-flat/assign by the
 	  same class, i.e. remove the port2_1_0 directory completely.
+	  The obsolete names will keep getting supported for quite a while,
+	  but the update-eix output only uses the new names.
+	- Rename update-eix-functions.sh into functions-eix.sh
+	  I am aware that this will break several user scripts, but these
+	  scripts are not so hard to fix either (or you can make a symlink)
+	  and getting rid of the obsolete misleading name was long overdue.
+	- You now should call "read_functions [args]" after sourcing
+	  functions-eix.sh; this will read baselayout's functions.sh with
+	  the corresponding [args]. This fixes the error that the "-C"
+	  argument was possibly passed to the sourced script in some shells,
+	  mistakenly producing non-colored output when the user passed "-C"
+	  to some script. In the new manner you can now determine explicitly
+	  what should be passed and how.
 	- Use python in update-eix-layman to parse layman.cfg for its
 	  make.conf, see http://bugs.gentoo.org/show_bug.cgi?id=230788
-	- Improve pkg-config error treatment
-	- Improve format description of world/world_sets
-	- Fix reading functions.sh (force an empty argument list)
-	- If you use eix-sync in a cronjob you now have to redirect yourself:
-	  Remove logging support of eix-sync (and drop options -v and -V).
+	- Remove logging support of eix-sync (and drop options -v and -V).
 	  This should fix all problems with the emerge --ask option, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=233132
-	  If you use eix-sync in a cronjob you now have to redirect yourself!
+	  If you use eix-sync in a cronjob you now have to redirect manually!
+	- Improve pkg-config error treatment
+	- Improve format description of world/world_sets
+	- Use inference rules in Makefile where $< is used (needed by POSIX).
+	  This also avoids separate rules for separate *.in files.
 
 *eix-0.13.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

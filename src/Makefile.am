@@ -161,18 +161,18 @@ extra_update_eix_src = $(extra_cache_src)
 
 # Remove files we don't want ..
 CLEANFILES = cppcomplete.tags tags eix-sync eix-test-obsolete \
-			 update-eix-remote update-eix-layman update-eix-functions.sh \
+			 update-eix-remote update-eix-layman functions-eix.sh \
 			 eixrc/eixrc \
 			 cache/cache_map.cc \
 			 diff-eix$(EXEEXT) update-eix$(EXEEXT)
 
 EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
-			 update-eix-layman.in update-eix-functions.sh.in \
+			 update-eix-layman.in functions-eix.sh.in \
 			 eixrc/eixrc.in cache/generate_cachemap.sh
 
 # Our binaries
 bin_SCRIPTS  = eix-sync eix-test-obsolete update-eix-remote update-eix-layman \
-			 update-eix-functions.sh
+			 functions-eix.sh
 
 if SEPARATE_UPDATE
 
@@ -259,38 +259,17 @@ endif
 
 
 cache/cache_map.cc: cache/generate_cachemap.sh
-	"$<" $(extra_cache) > "$@"
+	"cache/generate_cachemap.sh" $(extra_cache) > "$@"
 
-eix-sync: eix-sync.in
+SUFFIXES = .in
+.in:
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	    -e "s,\./update-eix-functions\.sh\.in,'$(bindir)/update-eix-functions.sh',g" \
+	    -e "s,\./functions-eix\.sh\.in,'$(bindir)/functions-eix.sh',g" \
 	    -e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
-	"$<" > "$@"
-
-eix-test-obsolete: eix-test-obsolete.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	"$<" > "$@"
-
-update-eix-functions.sh: update-eix-functions.sh.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	"$<" > "$@"
-
-update-eix-remote: update-eix-remote.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	    -e "s,\./update-eix-functions\.sh\.in,'$(bindir)/update-eix-functions.sh',g" \
-	"$<" > "$@"
-
-update-eix-layman: update-eix-layman.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-	    -e "s,\./update-eix-functions\.sh\.in,'$(bindir)/update-eix-functions.sh',g" \
-	"$<" > "$@"
-
-eixrc/eixrc: eixrc/eixrc.in
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 	    -e "s,\@BINDIR\@,$(bindir),g" \
 	    -e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
 	"$<" > "$@"
 
 # Enable us to 'make clean' in src/
 clean-local:
-	find "$(srcdir)" -name '*.rpo' -delete
+	@find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -v -- '{}' '+'

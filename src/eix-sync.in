@@ -9,7 +9,8 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-. ./update-eix-functions.sh.in
+. ./functions-eix.sh.in
+read_functions
 
 LOCAL_VARCACHE="`update-eix --print EPREFIX_PORTAGE_CACHE`"
 EIXCACHE="`update-eix --print EIX_CACHEFILE`"
@@ -19,7 +20,7 @@ EIXSYNCCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
 PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
-Usage() {
+Usage () {
 	echo "${0##*/} [options]
 Call layman/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
 
@@ -73,7 +74,7 @@ The following options are available:
 	exit ${1}
 }
 
-DiffOnly() {
+DiffOnly () {
 	test -e "${EIXPREVIOUS}" || die "No previous database ${EIXPREVIOUS} exists"
 	exec diff-eix -- "${EIXPREVIOUS}"
 	die "Could not execute diff-eix"
@@ -84,7 +85,7 @@ if test -r "${EIXSYNCCONF}"; then
 else
 	HAVECONF=false
 fi
-ExecuteConfig() {
+ExecuteConfig () {
 	local I J MYCMD
 	AFTER_SYNC=''
 	AFTER_UPDATE=''
@@ -128,7 +129,7 @@ ExecuteConfig() {
 
 # Get options from cli
 
-DefaultOpts() {
+DefaultOpts () {
 	Push -c EMERGECMD 'emerge' '--sync'
 	CLEARCACHE=false
 	NOLAYMAN=false
@@ -176,7 +177,7 @@ while getopts "ids:2:Uul@SmMNtqwWc:C:rRe?hH" OPTION \
 done
 [ -z "${SERVER}" ] || SKIP_SYNC=true
 
-MyRun() {
+MyRun () {
 	if [ "${1}" != 'time' ]; then
 		"${@}"
 		return
@@ -192,14 +193,14 @@ MyRun() {
 	"${@}"
 }
 
-MyRunCommand() {
+MyRunCommand () {
 	${EMULATEMODE} && return 0
 	einfo "${1}"
 	shift
 	MyRun "${@}"
 }
 
-DoExecute() {
+DoExecute () {
 	${EMULATEMODE} && return 0
 	(
 		for CURRENT_COMMAND; do
@@ -210,13 +211,13 @@ DoExecute() {
 	) || die
 }
 
-DoHook() {
+DoHook () {
 	${NOHOOKS} && return 0
 	eval "set -- ${1}"
 	DoExecute "${@}"
 }
 
-RootTest() {
+RootTest () {
 	${EMULATEMODE} || return 0
 	eerror ""
 	eerror "Nothing was executed, because a heuristic shows that"
@@ -231,7 +232,7 @@ RootTest() {
 
 SED1='s!^[[:space:]]*'
 SED2="[[:space:]]*=[[:space:]]*\([^[:space:]]*\)[[:space:]]*\$!\1!p"
-SedFor() {
+SedFor () {
 	local A=''
 	test -e "${2}" && \
 		A=`sed -n -e "${SED1}${1}${SED2}" -- "${2}" | tail -n 1`
@@ -244,13 +245,13 @@ SedFor() {
 
 TMPFILE=''
 EXITCODE=0
-DelTemp() {
+DelTemp () {
 	[ -z "${TMPFILE}" ] || rm -f -- "${TMPFILE}"
 	TMPFILE=''
 	trap - EXIT HUP INT TERM
 	exit ${EXITCODE}
 }
-MakeTempFile() {
+MakeTempFile () {
 	if command -v mktemp >/dev/null 2>&1; then
 		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary file"
@@ -271,7 +272,7 @@ MakeTempFile() {
 }
 
 PREPRSYNC=false
-PrepRsync() {
+PrepRsync () {
 	GetPortdir
 	HOSTDIR="${1#*:}"
 	if [ -n "${HOSTDIR}" ] && [ "${HOSTDIR}" != "${1}" ]; then
@@ -294,7 +295,7 @@ PrepRsync() {
 	PREPRSYNC=true
 }
 
-ClearCache() {
+ClearCache () {
 	${CLEARCACHE} || return 0
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
@@ -304,7 +305,7 @@ ClearCache() {
 			die "rm -rf ${LOCAL_VARCACHE}/var/cache/edb/dep/* failed"
 }
 
-CallEmergeSync() {
+CallEmergeSync () {
 	if [ -n "${SERVER}" ]; then
 		${EMULATEMODE} && return
 		PrepRsync "${SERVER}"
@@ -319,7 +320,7 @@ CallEmergeSync() {
 	MyRunCommand "Running ${*}" time "${@}" || die "${*} failed"
 }
 
-CallSyncClient() {
+CallSyncClient () {
 	${EMULATEMODE} && return
 	[ -z "${CLIENT}" ] && return
 	PrepRsync "${CLIENT}"
@@ -329,14 +330,14 @@ CallSyncClient() {
 }
 
 TESTRESULT=''
-CallEmergeMetadata() {
+CallEmergeMetadata () {
 	${DOUPDATE} && ${METADATA} || return 0
 	RootTest
 	MyRunCommand "Running emerge --metadata" \
 		emerge --metadata || die "emerge --metadata failed"
 }
 
-CondUpdate() {
+CondUpdate () {
 	if ! test -f "${EIXCACHE}"; then
 		RootTest
 		MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
@@ -350,7 +351,7 @@ CondUpdate() {
 	fi
 }
 
-CopyPrevious() {
+CopyPrevious () {
 	${DOUPDATE} || return 0
 	${EMULATEMODE} && return
 	MakeTempFile
@@ -358,7 +359,7 @@ CopyPrevious() {
 		die "Could not copy database to temporary file ${TMPFILE}"
 }
 
-MovePrevious() {
+MovePrevious () {
 	${USETEMP} && return
 	(
 		umask 002
@@ -370,7 +371,7 @@ MovePrevious() {
 	chmod -- 664 "${EIXPREVIOUS}" >/dev/null 2>&1
 }
 
-UpdateDiff() {
+UpdateDiff () {
 	${DOUPDATE} || return 0
 	local D
 	if ${USETEMP}; then
@@ -393,7 +394,7 @@ UpdateDiff() {
 	diff-eix -- "${D}" || die "Failed to diff against current cache"
 }
 
-MainSync() {
+MainSync () {
 	CondUpdate
 	ClearCache
 	CopyPrevious
