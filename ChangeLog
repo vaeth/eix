@@ -27,6 +27,7 @@
 	  This should fix all problems with the emerge --ask option, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=233132
 	  If you use eix-sync in a cronjob you now have to redirect manually!
+	- Be more verbose in ./configure output
 	- Improve pkg-config error treatment
 	- Improve format description of world/world_sets
 	- Use inference rules in Makefile where $< is used (needed by POSIX).

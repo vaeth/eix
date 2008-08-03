@@ -25,7 +25,7 @@ class Port2_1_2_Cache : public BasicCache {
 		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
 
 		const char *getType() const
-		{ return "portage-2.1*"; }
+		{ return "portage-2.1"; }
 };
 
 #endif /* __PORT2_1_2_H__ */

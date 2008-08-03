@@ -3,7 +3,7 @@
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
-/* default EPREFIX */
+/* Default EPREFIX */
 #undef EPREFIX_DEFAULT
 
 /* Version of gcc */
@@ -117,10 +117,10 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* default PORTDIR_CACHE_METHOD */
+/* Default PORTDIR_CACHE_METHOD */
 #undef PORTDIR_CACHE_METHOD
 
-/* default ROOT */
+/* Default ROOT */
 #undef ROOT_DEFAULT
 
 /* Define to 1 if you have the ANSI C header files. */

@@ -5,7 +5,7 @@ export LC_ALL=C
 to_classname () {
 	local i="$1" j
 	case "$1" in
-		port*2.1.2|port*2.1\*)        i=port2_1_2_;;
+		port*2.1*)        i=port2_1_2_;;
 	esac
 	j="${i#?}"
 	echo -n "${i%${j}}" | tr 'a-z' 'A-Z'
@@ -18,7 +18,7 @@ cache_includes="metadata eixcache $extra_caches"
 cache_names="$extra_caches"
 if [ "${1}" = "portage-2.1.2" ]; then
 	cache_includes="$cache_includes port2_1_2"
-	cache_names="$cache_names portage-2.1.2 portage-2.1*"
+	cache_names="$cache_names portage-2.1.2 portage-2.1"
 fi
 
 cat<<END
