@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Correctly interpret package.keywords: multiple lines with same mask
+	  are combined; only use default keywords if combination is empty.
+
 *eix-0.13.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New cache method "metadata-assign" needed for alt-gentoo, see

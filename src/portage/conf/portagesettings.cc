@@ -578,18 +578,22 @@ bool PortageUserConfig::readKeywords() {
 
 	pushback_lines(filename.c_str(), &lines, false, true);
 
-	/* Read only the last line for each "first" entry, e.g. in the example
-		foo/bar 1
-		foo/bar 2
-		=foo/bar-1 3
-		=foo/bar-1 4
-	   the line 1 and 3 are ignored but 2 and 4 are both put to keywords
-	   (even if they should influence each other).
-	   This is strange, but this is the way portage does it.
-
-	   We read in two passes, first creating the actual list in a map
-	   (and remember BTW which were doubled) and then we push the map
-	   in the original order to m_keywords */
+	/* Build a dictionary of atom -> arguments, e.g. in the example
+	 *   foo/bar 1
+	 *   foo/bar 2
+	 *   =foo/bar-1 3
+	 *   =foo/bar-1 4
+	 *
+	 * the resulting dictionary would look like this
+	 *   foo/bar    -> 1 2
+	 *   =foo/bar-1 -> 3 4
+	 *
+	 * default keywords (~ARCH) are only attached if the value in the
+	 * dictionary is empty.
+	 *
+	 * We read in two passes, first creating the dictionary (and remember BTW
+	 * which were doubled) and then create the KeywordMask from them.
+	 */
 
 	map<string, KeywordsData> have;
 	for(vector<string>::size_type i = 0; i < lines.size(); ++i)
@@ -601,11 +605,10 @@ bool PortageUserConfig::readKeywords() {
 		string name, content;
 		if(n == string::npos) {
 			name = lines[i];
-			content = fscked_arch;
 		}
 		else {
 			name = lines[i].substr(0, n);
-			content = lines[i].substr(n + 1);
+			content = lines[i].substr(n);
 		}
 		lines[i] = name;
 		map<string, KeywordsData>::iterator old = have.find(name);
@@ -616,7 +619,7 @@ bool PortageUserConfig::readKeywords() {
 		}
 		else {
 			(old->second).locally_double = true;
-			(old->second).keywords = content;
+			(old->second).keywords.append(content);
 		}
 	}
 
@@ -630,7 +633,7 @@ bool PortageUserConfig::readKeywords() {
 			KeywordMask *m = new KeywordMask(i->c_str());
 			if(m) { // XXX: will always be true, because new will never return 0 ..
 				KeywordsData *f = &(have[*i]);
-				m->keywords       = f->keywords;
+				m->keywords       = f->keywords.empty() ? fscked_arch : f->keywords;
 				m->locally_double = f->locally_double;
 				m_keywords.add(m);
 			}
