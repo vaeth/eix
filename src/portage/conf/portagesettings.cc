@@ -488,11 +488,9 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 			}
 			else {
 				m = new KeywordMask(i->substr(0, n).c_str());
-				if(m) // XXX: m does not return 0, so this is always true
-					m->keywords = "1"; //i->substr(n + 1);
+				m->keywords = "1"; //i->substr(n + 1);
 			}
-			if(m) // XXX: same as above.
-				list->add(m);
+			list->add(m);
 		}
 		catch(const ExBasic &e)
 		{ }
@@ -631,12 +629,10 @@ bool PortageUserConfig::readKeywords() {
 			continue;
 		try {
 			KeywordMask *m = new KeywordMask(i->c_str());
-			if(m) { // XXX: will always be true, because new will never return 0 ..
-				KeywordsData *f = &(have[*i]);
-				m->keywords       = f->keywords.empty() ? fscked_arch : f->keywords;
-				m->locally_double = f->locally_double;
-				m_keywords.add(m);
-			}
+			KeywordsData *f = &(have[*i]);
+			m->keywords       = f->keywords.empty() ? fscked_arch : f->keywords;
+			m->locally_double = f->locally_double;
+			m_keywords.add(m);
 		}
 		catch(const ExBasic &e) {
 			portage_parse_error(filename, lines.begin(), i, e);
