@@ -80,6 +80,15 @@ DiffOnly () {
 	die "Could not execute diff-eix"
 }
 
+DoExecute () {
+	${EMULATEMODE} && return 0
+	local CURRENT_COMMAND
+	for CURRENT_COMMAND; do
+		eval "${CURRENT_COMMAND}" || \
+			die "Something went wrong with ${CURRENT_COMMAND}"
+	done
+}
+
 if test -r "${EIXSYNCCONF}"; then
 	HAVECONF=true
 else
@@ -98,7 +107,7 @@ ExecuteConfig () {
 		while [ "${J# }" != "${J}" ]; do J="${J#?}"; done
 		[ -n "${J}" ] || continue
 		case "${J}" in
-			'!!'*) [ "${1}" = 'opts' ] && eval "${J#??}"
+			'!!'*) [ "${1}" = 'opts' ] && DoExecute "${J#??}"
 				continue;;
 			!*)  J="${J#?}"; MYCMD='!';;
 			@@*) J="${J#??}"; MYCMD='@@';;
@@ -198,17 +207,6 @@ MyRunCommand () {
 	einfo "${1}"
 	shift
 	MyRun "${@}"
-}
-
-DoExecute () {
-	${EMULATEMODE} && return 0
-	(
-		for CURRENT_COMMAND; do
-			MyRunCommand "Executing ${CURRENT_COMMAND}" \
-			eval "${CURRENT_COMMAND}" || \
-			die "Something went wrong with ${CURRENT_COMMAND}"
-		done
-	) || die
 }
 
 DoHook () {

@@ -919,26 +919,27 @@ Note that B<layman> is provided by B<app-portage/layman> to sync overlays.
 Call B<layman -S> (i.e. overlays are synced with layman).
 .TP
 .BI ! command
-Execute I<command>. I<command> must exit successfully or B<eix-sync> will
-stop with an error.
-(Thus, B<!layman> I<Name> is more or less equivalent to
-I<Name>; only different messages will be given during B<eix-sync>.)
+Evaluate I<command> within the eix-sync shell.
+I<command> must exit successfully or B<eix-sync> will stop with an error.
+(Thus, B<!layman> I<Name> is more or less equivalent to I<Name>.)
+Close e.g. the command with "; true" if you want that the exit status
+is ignored.
 
 You can use this feature to unpack e.g. an overlay before calling B<layman>
 or to apply local fixes after B<layman> was called.
-For security reasons, I<command> is run in a subshell (hence it is not
-possible to set environment variables). If you need to set environment
-variables use:
+
+In contrast to earlier eix versions, I<command> does not output anything
+(use einfo if you want that), and it is not evaluated within a subshell,
+i.e. you can also modify environment variables or begin/end redirection
+as you like.
+The disadvantage is that you can also easily override internal eix-sync
+variables or functions by accident; if in doubt, put your command in
+braces ( ... ) to start it in a subshell.
 .TP
 .BI !! command
-This is similar to B<!> I<command> with the difference that I<command>
-is not executed in a subshell. Moreover, I<command> is unconditionally executed,
-i.e. even if options -d, -u, or -l are used.
-The intention is that you can use I<command> to override (conditionally or
-unconditionally) environment variables.
-Be very careful when you use this feature:
-You can easily override e.g. internal eix-sync shell functions or variables,
-and since eix-sync is usually called as root, this can be very dangerous.
+This is similar to B<!> I<command> with the difference that
+I<command> is unconditionally executed, i.e. even if
+options -d, -u, or -l are used.
 .TP
 .BI ~ command
 This is only important if eix-sync options B<-s> or B<-2> are used.
@@ -980,7 +981,21 @@ replace B<-M> by the line
 .B @@emerge --regen
 to use B<emerge --regen> instead of B<emerge --metadata>.
 .TP
+.B !exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
+Send the output to a logfile (with correct permissions).
+The "true" at the end is to force continuing even if the "chown" failed.
+If you do not want to redirect the output of the final B<diff-eix>, you might
+want to combine this with
+.TP
+.B @@exec >/dev/tty
+Output the B<diff-eix> stat to the terminal, even if redirection occurred.
+.TP
+.B @@exit 0
+Do not execute B<diff-eix> at all.
+.TP
 .B !!export FORCE_USECOLORS="${FORCE_USECOLORS:-true}"
+Unless FORCE_USECOLORS is set differently in your environment, eix output
+will be colored even if you use redirection.
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"$(hostname)-sh"
 .TP

@@ -1,8 +1,16 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.13.4
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Correctly interpret package.keywords: multiple lines with same mask
 	  are combined; only use default keywords if combination is empty.
+
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Let eix-sync be tacit on hooks and evaluate them in current shell.
+	  This makes hooks more powerful and gives the user the ability to
+	  treat redirection manually to some extent, see
+	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
+	  group_id=128101&atid=710611
 
 *eix-0.13.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
