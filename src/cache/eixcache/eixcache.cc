@@ -162,6 +162,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			version->set_full_keywords(it->get_full_keywords());
 			version->slotname = it->slotname;
 			version->restrictFlags = it->restrictFlags;
+			version->set_iuse(it->iuse());
 			pkg->addVersion(version);
 			if(*(pkg->latest()) == *version)
 			{

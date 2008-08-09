@@ -142,7 +142,7 @@ class Version : public ExtendedVersion, public Keywords {
 		    to save memory. See the comments above NOT_FULL_USE. */
 		std::vector<std::string> m_iuse;
 
-		/// joind strings from m_iuse; clear if you change m_iuse.
+		/// joint strings from m_iuse; clear if you change m_iuse.
 		mutable std::string m_cached_iuse;
 };
 

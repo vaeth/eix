@@ -11,6 +11,7 @@
 	  treat redirection manually to some extent, see
 	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
 	  group_id=128101&atid=710611
+	- Fix cache method eix: Do not forget about iuse for each version.
 
 *eix-0.13.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
