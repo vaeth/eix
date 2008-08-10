@@ -70,7 +70,10 @@ bool VarsReader::assign_key_value()
 	if(sourcecmd)
 	{
 		sourcecmd=false;
-		source(value);
+		if (! source(value)) {
+			std::cerr << eix::format("failed to source %r") % value
+				<< std::endl;
+		}
 		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);
 	}
 	if( (parse_flags & ONLY_KEYWORDS_SLOT) )

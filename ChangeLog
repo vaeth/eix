@@ -4,6 +4,7 @@
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Correctly interpret package.keywords: multiple lines with same mask
 	  are combined; only use default keywords if combination is empty.
+	- Print warning if "source" failed.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let eix-sync be tacit on hooks and evaluate them in current shell.
