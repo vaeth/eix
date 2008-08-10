@@ -649,7 +649,7 @@ static const ArchUsed
 	ARCH_ALIENSTABLE    = 3,
 	ARCH_ALIENUNSTABLE  = 4,
 	ARCH_EVERYTHING     = 5,
-	ARCH_MINUSASTERISK  = 6; // -* always matches -T WEAKER becuse it is higher than arch_needed default
+	ARCH_MINUSASTERISK  = 6; // -* always matches -T WEAKER because it is higher than arch_needed default
 
 static inline ArchUsed
 apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
