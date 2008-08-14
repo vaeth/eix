@@ -883,17 +883,26 @@ If the package is installed, print the name underlined in bright yellow,
 else in normal yellow.
 .SS Application:
 .TP
-.B FORMAT='{downgrade}%{FORMAT_COMPACT}{}' eix -I
+.B FORMAT='{downgrade}%{FORMAT_ALL}{}' eix -I
 This will print all installed packages for which there are downgrade recommendations.
-Note that the compact format is used to output the packages:
-We cannot use B<FORMAT='{downgrade}%{FORMAT}{}'> because this would be a self-reference.
-However, if you want to use the default B<FORMAT> layout to output the packages,
-we can use B<FORMAT_COMPACT> to wrap around B<FORMAT>:
+Note that B<FORMAT='{downgrade}%{FORMAT}{}'> does not work, because this would be
+a self-referential definition in the delayed substitution:
+Of course, a variable cannot be defined by an expansion of itself.
+For this reason, the content of B<FORMAT> and similar variables has become
+very simple since eix-0.13.4: It is just B<%{FORMAT_ALL}>
+(and similarly for other variables).
+So one can easily insert the full definition of the original value of
+B<FORMAT> (which we have done in the above example).
+
+Note that if you want to have compact output in the above example, you cannot
+just append the option B<-c>, because appending this option just has the
+effect that for the format string the variable B<FORMAT_COMPACT> is used
+instead of B<FORMAT>. So, to have compact output, you should use either
 .TP
-.B FORMAT_COMPACT='{downgrade}%{FORMAT}{}' eix -cI
-This is as above, but the matching packages will be printed with the default (non-compact) format.
-The option B<-c> is needed so that eix will use our B<FORMAT_COMPACT> variable as the format string
-(which we "misused" as a "wrapper" for B<FORMAT> in this example).
+.B FORMAT_COMPACT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -Ic
+or even simpler and with the same effect:
+.TP
+.B FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I
 .\" }}}
 .\" }}}
 
@@ -919,7 +928,7 @@ Note that B<layman> is provided by B<app-portage/layman> to sync overlays.
 Call B<layman -S> (i.e. overlays are synced with layman).
 .TP
 .BI ! command
-Evaluate I<command> within the eix-sync shell.
+Evaluate I<command> within the B<eix-sync> shell script (in the same shell).
 I<command> must exit successfully or B<eix-sync> will stop with an error.
 (Thus, B<!layman> I<Name> is more or less equivalent to I<Name>.)
 Close e.g. the command with "; true" if you want that the exit status
@@ -934,23 +943,24 @@ i.e. you can also modify environment variables or begin/end redirection
 as you like.
 The disadvantage is that you can also easily override internal eix-sync
 variables or functions by accident; if in doubt, put your command in
-braces ( ... ) to start it in a subshell.
+braces (...) to start it in a subshell.
 .TP
 .BI !! command
 This is similar to B<!> I<command> with the difference that
 I<command> is unconditionally executed, i.e. even if
 options -d, -u, or -l are used.
+It is meant to set environment variables for the other programs.
 .TP
 .BI ~ command
 This is only important if eix-sync options B<-s> or B<-2> are used.
 In this case, I<command> will be executed before the first call of B<rsync>;
-the output of I<command> is evaluated within the POSIX script B<eix-sync>.
+the output of I<command> is evaluated within the B<eix-sync> shell.
 If I<command> or the evaluation of its output are not successful,
 B<eix-sync> will stop with an error.
 This can be used to execute e.g. B<keychain> and to return the content of
 the appropriate I<~/.keychain/*-sh> file or to return export-commands for
 the current B<SSH_AUTH_SOCK> and B<SSH_AGENT_PID>.
-Is is also admissible that the output of I<command> is a command which
+It is also admissible that the output of I<command> is a command which
 modifies the variables B<PORTAGE_RSYNC_OPTS>, B<PORTAGE_RSYNC_EXTRA_OPTS>,
 B<PORTDIR>, B<PORTDIR_SERVER>, B<PORTDIR_CLIENT>, B<SERVER>, or B<CLIENT>.
 These variables are filled with defaults when I<command> is called and
@@ -962,8 +972,7 @@ until B<emerge --sync> was (successfully) called.
 .TP
 .BI @ command
 Adds a hook for I<command>; the actual execution of I<command> is postponed
-until B<emerge --sync> and the subsequent B<update-eix>
-was (successfully) called.
+until B<emerge --sync> and the subsequent B<update-eix> was (successfully) called.
 .TP
 Some examples of useful lines in B</etc/eix-sync.conf>:
 .TP
@@ -1006,11 +1015,6 @@ of the data.)
 .B @@update-eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
 .B @update-eix-remote add /var/cache/remote-cache.tbz2
-.\" }}}
-
-.\" {{{ -------- /var/log/eix-sync.log
-.SS /var/log/eix-sync.log
-The redirected output of B<eix-sync>. See B<eix-sync -h> for more details.
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc
@@ -1354,14 +1358,22 @@ This is slower but more reliable, i.e. it will also find out whether restriction
 
 .TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (Strings)
-Define the normal, compact and verbose layout for results printed by B<eix> (See
-B<FORMATSTRING>)
+Define the normal, compact and verbose layout for results printed by B<eix>.
+See B<FORMATSTRING>.
+Since eix-0.13.4 these variables just expand to delayed substitution of the
+variables B<FORMAT_ALL>, B<FORMAT_ALL_COMPACT>, or B<FORMAT_ALL_VERBOSE>,
+respectively.
+The intention of this simple definition is that it is very easy to refer
+to the default definition when you change the definition of B<FORMAT>.
 
 .TP
 .BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (Strings)
 Define the format for packages that were added, removed or for which the highest
-stable versions has changed. This is only used by B<diff-eix> (See
-B<FORMATSTRING>)
+stable versions has changed. This is only used by B<diff-eix>.
+See B<FORMATSTRING>.
+Since eix-0.13.4 these variables just expand to delayed substitution of the
+variables B<DIFF_FORMAT_ALL_NEW>, B<DIFF_FORMAT_ALL_DELETE>, or
+B<DIFF_FORMAT_ALL_CHANGED>, respectively.
 
 .TP
 .BR FORMAT_INSTALLATION_DATE ", " FORMAT_SHORT_INSTALLATION_DATE

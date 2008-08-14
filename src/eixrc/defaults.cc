@@ -891,16 +891,17 @@ AddOption(STRING, "DIFF_FORMATLINE",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for diff-eix after the versions.");
 
-AddOption(STRING, "FORMAT",
+AddOption(STRING, "FORMAT_ALL",
 	"%{FORMATLINE_NAME}"
 	"%{FORMATLINE_AVAILABLEVERSIONS}"
 	"%{FORMATLINE_INSTALLEDVERSIONS}"
 	"%{FORMATLINE_MARKEDVERSIONS}"
 	"%{FORMATLINE_HOMEPAGE}"
 	"%{FORMATLINE_DESCRIPTION}",
-	"Define the format for the normal output of searches.");
+	"This format is only used for delayed substitution in FORMAT.\n"
+	"It defines the format of the normal output of eix.");
 
-AddOption(STRING, "FORMAT_COMPACT",
+AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"%{FORMATLINE_NAME_COMPACT}"
 	" \\({marked}(%{COLOR_MARKED_VERSION})<markedversions>(); {}"
 	"{installedversionsshort}"
@@ -910,9 +911,10 @@ AddOption(STRING, "FORMAT_COMPACT",
 		"%{FORMAT_BEST_COMPACT}"
 	"{}"
 	"()\\): <description>",
-	"Define the compact output shown when -c is used.");
+	"This format is only used for delayed substitution in FORMAT_COMPACT.\n"
+	"It defines the format of the compact output of eix (option -c).");
 
-AddOption(STRING, "FORMAT_VERBOSE",
+AddOption(STRING, "FORMAT_ALL_VERBOSE",
 	"%{FORMATLINE_NAME_VERBOSE}"
 	"%{FORMATLINE_AVAILABLEVERSIONS}"
 	"%{FORMATLINE_INSTALLEDVERSIONS_VERBOSE}"
@@ -925,25 +927,59 @@ AddOption(STRING, "FORMAT_VERBOSE",
 	"%{FORMATLINE_DESCRIPTION}"
 	"%{FORMATLINE_PROVIDE}"
 	"%{FORMATLINE_LICENSES}",
-	"Defines the verbose output for eix (-v).");
+	"This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
+	"It defines the format of the verbose output of eix (option -v).");
 
-AddOption(STRING, "DIFF_FORMAT_NEW",
+AddOption(STRING, "FORMAT",
+	"%{FORMAT_ALL}",
+	"The format of the normal output of eix.\n"
+	"Do not modify it in a config file; modify FORMAT_ALL instead.");
+
+AddOption(STRING, "FORMAT_COMPACT",
+	"%{FORMAT_ALL_COMPACT}",
+	"The format of the compact output of eix (option -c).\n"
+	"Do not modify it in a config file; modify FORMAT_ALL_COMPACT instead.");
+
+AddOption(STRING, "FORMAT_VERBOSE",
+	"%{FORMAT_ALL_VERBOSE}",
+	"The format of the verbose output of eix (option -v).\n"
+	"Do not modify it in a config file; modify FORMAT_ALL_VERBOSE instead.");
+
+AddOption(STRING, "DIFF_FORMAT_ALL_NEW",
 	"%{DIFF_FORMATLINE_NAME_NEW}"
 	"%{DIFF_FORMATLINE_BEST}"
 	"%{DIFF_FORMATLINE}",
-	"Define the format used for new packages.");
+	"This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
+	"It defines the format used for new packages (diff-eix).");
 
-AddOption(STRING, "DIFF_FORMAT_DELETE",
+AddOption(STRING, "DIFF_FORMAT_ALL_DELETE",
 	"%{DIFF_FORMATLINE_NAME_DELETE}"
 	"%{DIFF_FORMATLINE_BEST}"
 	"%{DIFF_FORMATLINE}",
-	"Define the format used for packages that were deleted.");
+	"This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
+	"It defines the format used for packages that were deleted (diff-eix).");
 
-AddOption(STRING, "DIFF_FORMAT_CHANGED",
+AddOption(STRING, "DIFF_FORMAT_ALL_CHANGED",
 	"%{DIFF_FORMATLINE_NAME_CHANGED}"
 	"%{DIFF_FORMATLINE_CHANGED_VERSIONS}"
 	"%{DIFF_FORMATLINE}",
-	"Define the format used for packages that were deleted.");
+	"This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
+	"It defines the format used for packages that were changed (diff-eix).");
+
+AddOption(STRING, "DIFF_FORMAT_NEW",
+	"%{DIFF_FORMAT_ALL_NEW}",
+	"The format used for new packages (diff-eix).\n"
+	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead.");
+
+AddOption(STRING, "DIFF_FORMAT_DELETE",
+	"%{DIFF_FORMAT_ALL_DELETE}",
+	"The format used for packages that were deleted (diff-eix).\n"
+	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead.");
+
+AddOption(STRING, "DIFF_FORMAT_CHANGED",
+	"%{DIFF_FORMAT_ALL_CHANGED}",
+	"The format used for packages that were changed (diff-eix).\n"
+	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead.");
 
 AddOption(STRING, "FORMAT_INSTALLATION_DATE",
 	"%X %x",

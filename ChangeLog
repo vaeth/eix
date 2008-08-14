@@ -12,7 +12,11 @@
 	  treat redirection manually to some extent, see
 	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
 	  group_id=128101&atid=710611
-	- Fix cache method eix: Do not forget about iuse for each version.
+	- Fix cache method eix: Previously, iuse (version-wise) was forgotten.
+	- Change default definitions of FORMAT_* and DIFF_FORMAT_* so that it
+	  is easier to make "wrappers" around them (e.g. on the commandline).
+	- Remove mentioning of /var/log/eix-sync.log from the manpage.
+	  This logfile was obsoleted already in eix-0.13.3.
 
 *eix-0.13.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
