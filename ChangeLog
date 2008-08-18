@@ -12,11 +12,17 @@
 	  treat redirection manually to some extent, see
 	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
 	  group_id=128101&atid=710611
+	- Introduce EIX_PREFIX to split the previous double meaning of EPREFIX,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=235011
+	  Now EPREFIX has a meaning similar to that of prefix-portage.
+	  For chroot environment you should set EIX_PREFIX instead;
+	  The EIX_PREFIX environment variable now also wins over
+	  PORTAGE_CONFIGROOT for the /etc/eixrc path.
 	- Fix cache method eix: Previously, iuse (version-wise) was forgotten.
 	- Change default definitions of FORMAT_* and DIFF_FORMAT_* so that it
 	  is easier to make "wrappers" around them (e.g. on the commandline).
-	- Remove mentioning of /var/log/eix-sync.log from the manpage.
-	  This logfile was obsoleted already in eix-0.13.3.
+	- Remove mentioning of /var/log/eix-sync.log from the manpage;
+	  this logfile was obsoleted already in eix-0.13.3.
 
 *eix-0.13.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

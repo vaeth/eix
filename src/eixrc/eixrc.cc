@@ -149,21 +149,21 @@ EixRc::prefix_cstr(const char *var) const
 void
 EixRc::read()
 {
-	const char *name = "PORTAGE_CONFIGROOT";
-	const char *configroot = getenv(name);
-	if(configroot) {
-		m_eprefixconf = configroot;
-		modify_value(m_eprefixconf, name);
-	}
+	const char *name = "EIX_PREFIX";
+	const char *eixrc_prefix = getenv(name);
+	if(eixrc_prefix)
+		m_eprefixconf = eixrc_prefix;
 	else {
-		name = "EPREFIX";
-		configroot = getenv(name);
-		if(configroot)
-			m_eprefixconf = configroot;
-		else
-			m_eprefixconf = EPREFIX_DEFAULT;
-		modify_value(m_eprefixconf, name);
+		name = "PORTAGE_CONFIGROOT";
+		eixrc_prefix = getenv(name);
+		if(eixrc_prefix)
+			m_eprefixconf = eixrc_prefix;
+		else {
+			name = "EIX_PREFIX";
+			m_eprefixconf = EIX_PREFIX_DEFAULT;
+		}
 	}
+	modify_value(m_eprefixconf, name);
 
 	set<string> has_reference;
 

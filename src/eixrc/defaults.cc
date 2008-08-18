@@ -22,12 +22,13 @@ AddOption(PREFIXSTRING, "EIXRC_SOURCE",
 	"If set in /etc/eixrc it temporarily overrides the environment.\n"
 	"You must not use delayed substitution in this variable.");
 
-AddOption(PREFIXSTRING, "EPREFIX",
-	EPREFIX_DEFAULT, "If this variable is set in the environment and PORTAGE_CONFIGROOT is unset,\n"
-	"then this variable is prefixed to the path where /etc/eixrc is searched.\n"
-	"Moreover, this variable is used for delayed substitution for path prefixes.\n"
-	"It influences most paths except for $HOME/.eixrc, the cache file\n"
-	"passed in the command line, PORTAGE_PROFILE, PORTDIR, and overlays.");
+AddOption(PREFIXSTRING, "EIX_PREFIX",
+	EIX_PREFIX_DEFAULT,
+	"If this variable is set in the environment, then it is prefixed\n"
+	"to the path where /etc/eixrc is searched. If it is not set in the\n"
+	"environment, then PORTAGE_CONFIGROOT is used instead.\n"
+	"If both are unset, the EIX_PREFIX default value is used instead.\n"
+	"Moreover, EIX_PREFIX is used for delayed substitution for EPREFIX.");
 
 AddOption(PREFIXSTRING, "ROOT",
 	ROOT_DEFAULT, "This variable is only used for delayed substitution.\n"
@@ -35,6 +36,12 @@ AddOption(PREFIXSTRING, "ROOT",
 	"passed in the command line, PORTAGE_PROFILE, PORTDIR,\n"
 	"and overlays. In contrast to EPREFIX, further exceptions are:\n"
 	"PORTAGE_CONFIGROOT, portage/scripts-internal stuff and the eix cachefile.");
+
+AddOption(PREFIXSTRING, "EPREFIX",
+	"%{EIX_PREFIX}" EPREFIX_DEFAULT,
+	"This variable is used for delayed substitution for path prefixes.\n"
+	"It influences most paths except for $HOME/.eixrc, the cache file\n"
+	"passed in the command line, PORTAGE_PROFILE, PORTDIR, and overlays.");
 
 AddOption(PREFIXSTRING, "EPREFIX_TREE",
 	"", "This variable is only used for delayed substitution.\n"

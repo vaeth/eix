@@ -309,6 +309,18 @@ AC_ARG_WITH(eprefix-default,[  --with-eprefix-default=STR       default EPREFIX]
 AC_DEFINE_UNQUOTED(EPREFIX_DEFAULT, "${EPREFIX_DEFAULT}",[ Default EPREFIX])
 AC_SUBST(EPREFIX_DEFAULT)
 
+AC_ARG_WITH(eprefix-default,[  --with-eix-prefix-default=STR    default EIX_PREFIX],
+		[
+			EIX_PREFIX_DEFAULT="${withval}"
+			test "x${EIX_PREFIX_DEFAULT}" = "x/" && EIX_PREFIX_DEFAULT=""
+			AC_MSG_NOTICE([Changing default: EIX_PREFIX=${EIX_PREFIX_DEFAULT}])
+		],[
+			EIX_PREFIX_DEFAULT=""
+		])
+
+AC_DEFINE_UNQUOTED(EIX_PREFIX_DEFAULT, "${EIX_PREFIX_DEFAULT}",[ Default EIX_PREFIX])
+AC_SUBST(EIX_PREFIX_DEFAULT)
+
 AC_ARG_WITH(root-default,[  --with-root-default=STR          default ROOT],
 		[
 			ROOT_DEFAULT="${withval}"

@@ -3,6 +3,9 @@
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
+/* Default EIX_PREFIX */
+#undef EIX_PREFIX_DEFAULT
+
 /* Default EPREFIX */
 #undef EPREFIX_DEFAULT
 

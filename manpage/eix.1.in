@@ -1159,14 +1159,27 @@ In the latter case, it will override the setting from the environment as soon as
 Note that when this variable takes effect, no delayed substitution is performed yet.
 
 .TP
-.BR EPREFIX "  " (prefix-string) " (prefix-string means that this is a string, but if it has the value '/' it is changed to '')"
+.BR EIX_PREFIX "  " (prefix-string) " (prefix-string means that this is a string, but if it has the value '/' it is changed to '')"
 
-If the environment variable B<PORTAGE_CONFIGROOT> is not set, then this
-variable is prefixed to the path where @SYSCONFDIR@/eixrc is searched
-(otherwise B<PORTAGE_CONFIGROOT> is prefixed).
+This is essentially meant to be set in the environment if you want to use a chroot:
+It is prefixed to the path where @SYSCONFDIR@/eixrc is searched.
+If it is unset, the value of the environment variable B<PORTAGE_CONFIGROOT>
+is prefixed.
+The default value (typically empty) of this variable is used, if neither is
+set in the environment.
 
 Moreover, this variable is used for delayed substitution to determine
 the prefix of a lot of paths in the subsequent variables;
+see B<eix --dump> to see in detail in which other variables it occurs.
+In the current default, it influences all paths with the following exceptions:
+
+.TP
+.BR EPREFIX "  " (prefix-string)
+The default value of this variable stems from EIX_PREFIX, appended with
+a configure-specific default (for prefix-portage).
+This variable has no meaning on its own, but it is used for
+delayed substitution to determine the prefix of a lot of paths in the
+subsequent variables (if their default is not changed);
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
