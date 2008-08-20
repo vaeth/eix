@@ -9,6 +9,8 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
+TIME_BEGIN="`date +%s 2>/dev/null`" || TIME_BEGIN=''
+
 . ./functions-eix.sh.in
 read_functions
 
@@ -58,6 +60,7 @@ The following options are available:
 -m   Run emerge --metadata but skip emerge --sync.
 -N   Skip emerge --metadata if it was activated by -M or -m.
 -t   Use temporary file to save the current database (-d will not be possible).
+-T   Do not measure time
 -q   Be quiet (close stdout)
 -w   Run emerge-webrsync instead of emerge --sync.
 -W   Run emerge-delta-webrsync instead of emerge --sync.
@@ -140,11 +143,13 @@ ExecuteConfig () {
 
 DefaultOpts () {
 	Push -c EMERGECMD 'emerge' '--sync'
+	DIFFONLY=false
 	CLEARCACHE=false
 	NOLAYMAN=false
 	NOHOOKS=false
 	QUIET=false
 	USETEMP=false
+	MEASURE_TIME=true
 	METADATA=false
 	SKIP_SYNC=false
 	SERVER=''
@@ -157,11 +162,11 @@ DefaultOpts () {
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uul@SmMNtqwWc:C:rRe?hH" OPTION \
+while getopts "ids:2:Uul@SmMNtTqwWc:C:rRe?hH" OPTION \
 	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
 	case "${OPTION}" in
 		i) DefaultOpts;;
-		d) DiffOnly;;
+		d) DIFFONLY=true;;
 		s) SERVER="${OPTARG}";;
 		2) CLIENT="${OPTARG}";;
 		U) DOUPDATE=false;;
@@ -173,6 +178,7 @@ while getopts "ids:2:Uul@SmMNtqwWc:C:rRe?hH" OPTION \
 		M) METADATA=true;;
 		N) METADATA=false;;
 		t) USETEMP=true;;
+		T) MEASURE_TIME=false;;
 		q) QUIET=true;;
 		w) Push -c EMERGECMD 'emerge-webrsync';;
 		W) Push -c EMERGECMD 'emerge-delta-webrsync';;
@@ -184,20 +190,34 @@ while getopts "ids:2:Uul@SmMNtqwWc:C:rRe?hH" OPTION \
 		*) Usage 0;;
 	esac
 done
+${DIFFONLY} && DiffOnly
 [ -z "${SERVER}" ] || SKIP_SYNC=true
 
+${MEASURE_TIME} || TIME_BEGIN=''
+MEASURE_TIME=false
+case "${TIME_BEGIN}" in
+	*[0-9]*) [ "${TIME_BEGIN}" -gt 99 ] && (
+			T=`expr "${TIME_BEGIN}" - 99 2>/dev/null` || T=0
+			[ "${T}" -gt 0 ] && [ "${TIME_BEGIN}" -gt "${T}" ]
+		) >/dev/null 2>&1 && MEASURE_TIME=true;;
+esac
+
 MyRun () {
-	if [ "${1}" != 'time' ]; then
-		"${@}"
-		return
-	fi
-	# treat 'time' separately to allow for shell builtin
-	shift
-	# Of course, 'time' is a feature, i.e. things should still work even
-	# if neither the shell nor the time command is available.
-	if command -v time >/dev/null 2>&1; then
-		time -p "${@}"
-		return
+	if [ "${1}" = '-t' ]; then
+		if ${MEASURE_TIME}; then
+			local TIMEVAR B E R
+			TIMEVAR="${2}"
+			shift 2
+			B="`date +%s 2>/dev/null`" || MEASURE_TIME=false
+			"${@}"
+			R=${?}
+			${MEASURE_TIME} && E="`date +%s 2>/dev/null`" \
+				|| MEASURE_TIME=false
+			${MEASURE_TIME} && \
+				eval "TIME_${TIMEVAR}"'=`expr "${E}" - "${B}"`'
+			return ${R}
+		fi
+		shift 2
 	fi
 	"${@}"
 }
@@ -241,14 +261,45 @@ SedFor () {
 	echo "${A}"
 }
 
+TIME_IUPDATE=''
+TIME_SYNC=''
+TIME_CLIENT=''
+TIME_METADATA=''
+TIME_UPDATE=''
+TIME_DIFF=''
+PrintTimes () {
+	${MEASURE_TIME} || return 0
+	MEASURE_TIME=false
+	einfo "Time statistics:"
+	[ -n "${TIME_IUPDATE}" ] && [ "${TIME_IUPDATE}" -gt 0 ] && \
+		printf "%6d seconds for initial update-eix\n" "${TIME_IUPDATE}"
+	[ -n "${TIME_SYNC}" ] && [ "${TIME_SYNC}" -gt 0 ] && \
+		printf "%6d seconds for syncing\n" "${TIME_SYNC}"
+	[ -n "${TIME_CLIENT}" ] && [ "${TIME_CLIENT}" -gt 0 ] && \
+		printf "%6d seconds for client syncing\n" "${TIME_CLIENT}"
+	[ -n "${TIME_METADATA}" ] && [ "${TIME_METADATA}" -gt 0 ] && \
+		printf "%6d seconds for metadata update\n" "${TIME_METADATA}"
+	[ -n "${TIME_UPDATE}" ] && [ "${TIME_UPDATE}" -gt 0 ] && \
+		printf "%6d seconds for update-eix\n" "${TIME_UPDATE}"
+	[ -n "${TIME_DIFF}" ] && [ "${TIME_DIFF}" -gt 0 ] && \
+		printf "%6d seconds for diff-eix\n" "${TIME_DIFF}"
+	local FTIME
+	FTIME="`date +%s 2>/dev/null`" || return
+	FTIME=`expr "${FTIME}" - "${TIME_BEGIN}" 2>/dev/null` && \
+		printf "%6d seconds total\n" "${FTIME}"
+}
+
 TMPFILE=''
 EXITCODE=0
-DelTemp () {
+ExitAll () {
 	[ -z "${TMPFILE}" ] || rm -f -- "${TMPFILE}"
 	TMPFILE=''
 	trap - EXIT HUP INT TERM
+	PrintTimes
 	exit ${EXITCODE}
 }
+${MEASURE_TIME} && trap ExitAll EXIT HUP INT TERM
+
 MakeTempFile () {
 	if command -v mktemp >/dev/null 2>&1; then
 		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX"` || \
@@ -266,7 +317,7 @@ MakeTempFile () {
 			break
 		done
 	fi
-	trap DelTemp EXIT HUP INT TERM
+	trap ExitAll EXIT HUP INT TERM
 }
 
 PREPRSYNC=false
@@ -307,7 +358,7 @@ CallEmergeSync () {
 	if [ -n "${SERVER}" ]; then
 		${EMULATEMODE} && return
 		PrepRsync "${SERVER}"
-		MyRunCommand "rsyncing from ${HOSTDIR}" \
+		MyRunCommand "rsyncing from ${HOSTDIR}" -t SYNC \
 			rsync $RSYNC_OPTS "${HOSTDIR}" "${LOCAL_PORTDIR}" || \
 				die "Could not rsync from ${HOSTDIR}"
 		return
@@ -315,14 +366,14 @@ CallEmergeSync () {
 	${SKIP_SYNC} && return
 	RootTest
 	eval "set -- ${EMERGECMD}"
-	MyRunCommand "Running ${*}" time "${@}" || die "${*} failed"
+	MyRunCommand "Running ${*}" -t SYNC "${@}" || die "${*} failed"
 }
 
 CallSyncClient () {
 	${EMULATEMODE} && return
 	[ -z "${CLIENT}" ] && return
 	PrepRsync "${CLIENT}"
-	MyRunCommand "rsyncing to ${HOSTDIR}" \
+	MyRunCommand "rsyncing to ${HOSTDIR}" -t CLIENT \
 		rsync ${RSYNC_OPTS} "${LOCAL_PORTDIR}" "${HOSTDIR}" || \
 			die "Could not rsync to ${HOSTDIR}"
 }
@@ -331,7 +382,7 @@ TESTRESULT=''
 CallEmergeMetadata () {
 	${DOUPDATE} && ${METADATA} || return 0
 	RootTest
-	MyRunCommand "Running emerge --metadata" \
+	MyRunCommand "Running emerge --metadata" -t METADATA
 		emerge --metadata || die "emerge --metadata failed"
 }
 
@@ -339,13 +390,14 @@ CondUpdate () {
 	if ! test -f "${EIXCACHE}"; then
 		RootTest
 		MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
-				update-eix || die "update-eix failed"
+			-t IUPDATE update-eix || die "update-eix failed"
 		return
 	fi
 	${EMULATEMODE} && return
 	if ! eix --is-current; then
-		MyRunCommand "eix-cache format has changed. Running update-eix!" \
-				update-eix || die "update-eix failed"
+		MyRunCommand \
+			"eix-cache format has changed. Running update-eix!" \
+			-t IUPDATE update-eix || die "update-eix failed"
 	fi
 }
 
@@ -385,11 +437,13 @@ UpdateDiff () {
 		einfo "update-eix was apparently already called in a hook"
 	else
 		MovePrevious
-		MyRunCommand "Running update-eix" "update-eix" || \
+		MyRunCommand "Running update-eix" -t UPDATE "update-eix" || \
 			die "Failure while running update-eix"
 	fi
 	DoHook "${AFTER_UPDATE}"
-	diff-eix -- "${D}" || die "Failed to diff against current cache"
+	MyRunCommand "Calling diff-eix" -t DIFF diff-eix -- "${D}" || \
+		die "Failed to diff against current cache"
+	PrintTimes
 }
 
 MainSync () {

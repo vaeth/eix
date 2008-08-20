@@ -12,6 +12,8 @@
 	  treat redirection manually to some extent, see
 	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
 	  group_id=128101&atid=710611
+	- Improve calculation of times in eix-sync; avoid time command, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=235269
 	- Introduce EIX_PREFIX to split the previous double meaning of EPREFIX,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=235011
 	  Now EPREFIX has a meaning similar to that of prefix-portage.
