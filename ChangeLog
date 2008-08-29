@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.13.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix -u in manpage, see http://bugs.gentoo.org/show_bug.cgi?id=236036
+
 *eix-0.13.4
 	Emil Beinroth <emilbeinroth at gmx.net>:
 	- Correctly interpret package.keywords: multiple lines with same mask
