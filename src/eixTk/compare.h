@@ -33,11 +33,15 @@ namespace eix
 	{
 		// strip leading 0's
 		std::string::size_type lstart = left.find_first_not_of('0');
-		if (lstart == std::string::npos)
-			lstart = 0;
 		std::string::size_type rstart = right.find_first_not_of('0');
+		// Special cases: number is 0 or string is empty
+		if (lstart == std::string::npos) {
+			if(rstart == std::string::npos)
+				return 0;
+			return -1;
+		}
 		if (rstart == std::string::npos)
-			rstart = 0;
+			return 1;
 
 		// check if one is longer, that one would be bigger
 		int size_result = default_compare(left.size() - lstart, right.size() - rstart);
