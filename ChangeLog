@@ -2,6 +2,9 @@
 
 *eix-0.13.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix segfault in numeric comparison of 0 and number with leading 0,
+	  see http://forums.gentoo.org/viewtopic-t-278819-start-375.html
+	- Disable autotools maintainer mode which seems to be broken anyway.
 	- Fix -u in manpage, see http://bugs.gentoo.org/show_bug.cgi?id=236036
 
 *eix-0.13.4

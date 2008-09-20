@@ -25,13 +25,13 @@ BasicVersion::compare(const Part& left, const Part& right)
 	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
 	// but I suppose this is not yet sanctioned by gentoo.
 	// We are going to follow the text from section 2.3 "Version Comparison" here.
-	int ret = 0;
 
-	if ((ret = eix::default_compare(left.first, right.first)))
+	int ret = eix::default_compare(left.first, right.first);
+	if (ret)
 		return ret;
 
-	// We can short-circuit numeric_compare(..) and use string comparison if both parts have
-	// the same length and just do string.
+	// We can short-circuit numeric_compare(..) and cutting of trailing 0
+	// by using string comparison if both parts have the same length.
 	if (left.second.size() == right.second.size()) {
 		return left.second.compare(right.second);
 	}

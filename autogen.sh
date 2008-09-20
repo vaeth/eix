@@ -12,6 +12,6 @@ run ()
 run mkdir -p config
 #type glibtoolize >/dev/null 2>&1 && run glibtoolize --force --copy --automake || run libtoolize --force --copy --automake
 run aclocal
-run autoheader
 run autoconf
+run autoheader
 run automake -af --copy
