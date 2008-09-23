@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.13.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix ./configure --with-eprefix-default/--with-eix-prefix-default.
+	  Thanks to Michał Bartoszkiewicz <mbartoszkiewicz@gmail.com> for
+	  investigating, see http://bugs.gentoo.org/show_bug.cgi?id=235011
+
 *eix-0.13.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix segfault in numeric comparison of 0 and number with leading 0,

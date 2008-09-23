@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.13.5, http://eix.sourceforge.net)
+AC_INIT(eix, 0.13.6, http://eix.sourceforge.net)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -310,7 +310,7 @@ AC_ARG_WITH(eprefix-default,[  --with-eprefix-default=STR       default EPREFIX]
 AC_DEFINE_UNQUOTED(EPREFIX_DEFAULT, "${EPREFIX_DEFAULT}",[ Default EPREFIX])
 AC_SUBST(EPREFIX_DEFAULT)
 
-AC_ARG_WITH(eprefix-default,[  --with-eix-prefix-default=STR    default EIX_PREFIX],
+AC_ARG_WITH(eix-prefix-default,[  --with-eix-prefix-default=STR    default EIX_PREFIX],
 		[
 			EIX_PREFIX_DEFAULT="${withval}"
 			test "x${EIX_PREFIX_DEFAULT}" = "x/" && EIX_PREFIX_DEFAULT=""
