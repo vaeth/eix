@@ -272,8 +272,20 @@ BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 
 const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_NONE,
+	ExtendedVersion::RESTRICT_BINCHECKS,
+	ExtendedVersion::RESTRICT_STRIP,
+	ExtendedVersion::RESTRICT_TEST,
+	ExtendedVersion::RESTRICT_USERPRIV,
+	ExtendedVersion::RESTRICT_INSTALLSOURCES,
 	ExtendedVersion::RESTRICT_FETCH,
-	ExtendedVersion::RESTRICT_MIRROR;
+	ExtendedVersion::RESTRICT_MIRROR,
+	ExtendedVersion::RESTRICT_PRIMARYURI,
+	ExtendedVersion::RESTRICT_BINDIST;
+const ExtendedVersion::Properties
+	ExtendedVersion::PROPERTIES_NONE,
+	ExtendedVersion::PROPERTIES_INTERACTIVE,
+	ExtendedVersion::PROPERTIES_LIVE,
+	ExtendedVersion::PROPERTIES_VIRTUAL;
 
 ExtendedVersion::Restrict
 ExtendedVersion::calcRestrict(const string &str)
@@ -282,10 +294,41 @@ ExtendedVersion::calcRestrict(const string &str)
 	vector<string> restrict_words = split_string(str);
 	for(vector<string>::const_iterator it = restrict_words.begin();
 		it != restrict_words.end(); ++it) {
-		if(strcasecmp(it->c_str(), "fetch") == 0)
+		if(strcmp(it->c_str(), "fetch") == 0)
 			r |= RESTRICT_FETCH;
-		else if(strcasecmp(it->c_str(), "mirror") == 0)
+		else if(strcmp(it->c_str(), "mirror") == 0)
 			r |= RESTRICT_MIRROR;
+		else if(strcmp(it->c_str(), "primaryuri") == 0)
+			r |= RESTRICT_PRIMARYURI;
+		else if(strcmp(it->c_str(), "binchecks") == 0)
+			r |= RESTRICT_BINCHECKS;
+		else if(strcmp(it->c_str(), "bindist") == 0)
+			r |= RESTRICT_BINDIST;
+		else if(strcmp(it->c_str(), "installsources") == 0)
+			r |= RESTRICT_INSTALLSOURCES;
+		else if(strcmp(it->c_str(), "strip") == 0)
+			r |= RESTRICT_STRIP;
+		else if(strcmp(it->c_str(), "test") == 0)
+			r |= RESTRICT_TEST;
+		else if(strcmp(it->c_str(), "userpriv") == 0)
+			r |= RESTRICT_USERPRIV;
 	}
 	return r;
+}
+
+ExtendedVersion::Properties
+ExtendedVersion::calcProperties(const string &str)
+{
+	Properties p = PROPERTIES_NONE;
+	vector<string> properties_words = split_string(str);
+	for(vector<string>::const_iterator it = properties_words.begin();
+		it != properties_words.end(); ++it) {
+		if(strcmp(it->c_str(), "interactive") == 0)
+			p |= PROPERTIES_INTERACTIVE;
+		else if(strcmp(it->c_str(), "live") == 0)
+			p |= PROPERTIES_LIVE;
+		else if(strcmp(it->c_str(), "virtual") == 0)
+			p |= PROPERTIES_VIRTUAL;
+	}
+	return p;
 }

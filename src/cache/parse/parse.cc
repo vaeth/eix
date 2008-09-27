@@ -106,13 +106,14 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		}
 
 		bool ok = true;
-		string keywords, restr, iuse;
+		string keywords, restr, props, iuse;
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
 		set_checking(version->slotname, "SLOT", ebuild, &ok);
 		// Empty SLOT is not ok:
 		//if(ok && ebuild_exec && version->slotname.empty())
 		//	ok = false;
 		set_checking(restr, "RESTRICT", ebuild);
+		set_checking(props, "PROPERTIES", ebuild);
 		set_checking(iuse, "IUSE", ebuild, &ok);
 		if(read_onetime_info)
 		{
@@ -126,7 +127,7 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		if(!ok) {
 			string *cachefile = ebuild_exec->make_cachefile(full_path.c_str(), directory_path, *pkg, *version);
 			if(cachefile) {
-				flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, m_error_callback);
+				flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, m_error_callback);
 				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 				ebuild_exec->delete_cachefile();
 			}
@@ -136,6 +137,7 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 
 		version->set_full_keywords(keywords);
 		version->set_restrict(restr);
+		version->set_properties(props);
 		version->set_iuse(iuse);
 		pkg->addVersionFinalize(version);
 

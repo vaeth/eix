@@ -123,7 +123,7 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 		/* Split string into package and version, and catch any errors. */
 		char **aux = ExplodeAtom::split(key.c_str());
 		if(aux == NULL) {
-			m_error_callback(eix::format("Can't split %r into package and version") % key);
+			m_error_callback(eix::format("Cannot split %r into package and version") % key);
 			continue;
 		}
 		/* Search for existing package */
@@ -150,6 +150,7 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 		version->slotname = mapping["SLOT"];
 		version->set_iuse(mapping["IUSE"]);
 		version->set_restrict(mapping["RESTRICT"]);
+		version->set_properties(mapping["PROPERTIES"]);
 		version->overlay_key = m_overlay_key;
 		pkg->addVersionFinalize(version);
 

@@ -93,7 +93,7 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-typedef void (*x_get_keywords_slot_iuse_restrict_t)(const string &filename, string &keywords, string &slotname, string &iuse, string &rest, BasicCache::ErrorCallback error_callback);
+typedef void (*x_get_keywords_slot_iuse_restrict_t)(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, BasicCache::ErrorCallback error_callback);
 typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
 bool
@@ -160,11 +160,12 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			version = new Version(aux[1]);
 
 			/* Read stability from cachefile */
-			string keywords, iuse, restr;
-			(*x_get_keywords_slot_iuse_restrict)(catpath + "/" + (*it), keywords, version->slotname, iuse, restr, m_error_callback);
+			string keywords, iuse, restr, props;
+			(*x_get_keywords_slot_iuse_restrict)(catpath + "/" + (*it), keywords, version->slotname, iuse, restr, props, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);
+			version->set_properties(props);
 			version->overlay_key = m_overlay_key;
 
 			pkg->addVersion(version);

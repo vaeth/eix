@@ -375,11 +375,53 @@ packages are matched which have at least one installed version in I<overlay>.
 For instance, B<--installed-in-overlay 0> will only match those packages
 which have at least one version which is also in the regular portage tree.
 .TP
-.B --fetch
-Only match packages which have at least one version with fetch restrictions.
+.B --restrict-fetch
+Only match packages which have at least one version with RESTRICT=fetch.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
 .TP
-.B --mirror
-Only match packages which have at least one version with mirror restrictions.
+.B --restrict-mirror
+Only match packages which have at least one version with RESTRICT=mirror.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-primaryuri
+Only match packages which have at least one version with RESTRICT=primaryuri.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-binchecks
+Only match packages which have at least one version with RESTRICT=binchecks.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-strip
+Only match packages which have at least one version with RESTRICT=strip.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-test
+Only match packages which have at least one version with RESTRICT=test.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-userpriv
+Only match packages which have at least one version with RESTRICT=userpriv.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-installsources
+Only match packages which have at least one version with RESTRICT=installsources.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --restrict-bindist
+Only match packages which have at least one version with RESTRICT=bindist.
+If used with other RESTRICT tests, the version must satisfy all simultaneously.
+.TP
+.B --properties-interactive
+Only match packages which have at least one version with PROPERTIES=interactive
+If used with other PROPERTIES tests, the version must satisfy all simultaneously.
+.TP
+.B --properties-live
+Only match packages which have at least one version with PROPERTIES=live
+If used with other PROPERTIES tests, the version must satisfy all simultaneously.
+.TP
+.B --properties-virtual
+Only match packages which have at least one version with PROPERTIES=virtual
+If used with other PROPERTIES tests, the version must satisfy all simultaneously.
 .TP
 .BR -T ", " --test-obsolete
 Only match obsolete packages.
@@ -591,8 +633,10 @@ This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .B 2.0.0_rc1-r6
 This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
 .TP
-.B 1.0!f!m
-This is version 1.0 which is subject to fetch and mirror restrictions.
+.B 1.0+i+l+v!f!m!p!b!s!t!u!i!d
+This is version 1.0 which is subject to
+PROPERTIES="interactive live virtual" as well as
+RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist"
 .TP
 .B 5.0-r3(5.0R3)!f
 This is version 5.0-r3 which will be installed into SLOT 5.0-r3 and has
@@ -742,33 +786,53 @@ list of strings. These strings will be output on the following places:
 
 .BR "3rd string: " "After versionnumber + slotname"
 
-.BR "4th string: " "For fetch-restricted versions"
+.BR "4th string: " "Before overlay (if overlay is printed)"
 
-.BR "5th string: " "For mirror-restricted versions"
+.BR "5th string: " "After version number + slotname + rsetrictions + overlay"
 
-.BR "6th string: " "Before overlay (if overlay is printed)"
+.BR "6th string: " "After each complete entry"
 
-.BR "7th string: " "After version number + slotname + rsetrictions + overlay"
+.BR "7th string: " "In front of the installation date (if it is printed)"
 
-.BR "8th string: " "After each complete entry"
+.BR "8th string: " "After the installation date (if it is printed)"
 
-.BR "9th string: " "In front of the installation date (if it is printed)"
+.BR "9th string: " "In front of the useflags (if they are printed)"
 
-.BR "10th string: " "After the installation date (if it is printed)"
+.BR "10th string: " "After the useflags (if they are printed)"
 
-.BR "11th string: " "In front of the useflags (if they are printed)"
+.BR "11th string: " "Before each set useflag"
 
-.BR "12th string: " "After the useflags (if they are printed)"
+.BR "12th string: " "After each set useflag"
 
-.BR "13th string: " "Before each set useflag"
+.BR "13th string: " "Before each unset useflag. This defaults to '-'"
 
-.BR "14th string: " "After each set useflag"
+.BR "14th string: " "After each unset useflag."
 
-.BR "15th string: " "Before each unset useflag. This defaults to '-'"
+.BR "15th string: " "For RESTRICT=fetch"
 
-.BR "16th string: " "After each unset useflag."
+.BR "16th string: " "For RESTRICT=mirror"
 
-.BR "17th string: " "Between two entries. The default is either (space) or (newlines + 3 tabs + 2 spaces), depending on whether useflags are printed or --versionlines is in effect"
+.BR "17th string: " "For RESTRICT=primaryury"
+
+.BR "18th string: " "For PROPERTIES=interactive"
+
+.BR "19th string: " "For PROPERTIES=live"
+
+.BR "20th string: " "For PROPERTIES=virtual"
+
+.BR "21th string: " "For RESTRICT=binchecks"
+
+.BR "22th string: " "For RESTRICT=strip"
+
+.BR "23th string: " "For RESTRICT=test"
+
+.BR "24th string: " "For RESTRICT=userpriv"
+
+.BR "25th string: " "For RESTRICT=installsources"
+
+.BR "26th string: " "For RESTRICT=bindist"
+
+.BR "27th string: " "Between two entries. The default is either (space) or (newlines + 3 tabs + 2 spaces), depending on whether useflags are printed or --versionlines is in effect"
 
 .BR "later strings " "are ignored"
 
@@ -1359,7 +1423,7 @@ If true, diff-eix will print a header info line.
 
 .TP
 .BR NO_RESTRICTIONS "  " (true / false)
-If false, fetch and mirror restrictions are output.
+If false, RESTRICTION and PROPERTIES data is output.
 
 .TP
 .BR RESTRICT_INSTALLED "  " (true / false)
@@ -1409,9 +1473,15 @@ These strings are printed before/after the IUSE data for a version
 (resp. the collected IUSE for all versions of the package [in one-slotted resp. in slot-sorted displaymode]) is printed.
 
 .TP
-.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_FETCH ", " COLOR_MIRROR ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
-Define the color for masked versions, stable versions, unstable versions, slots, fetch-restricted version, mirror-restricted versions,
+.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
+Define the color for masked versions, stable versions, unstable versions, slots, fetch-restricted version,
 the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).
+Use the same syntax as you would inside ().
+See B<FORMATSTRING>.
+
+.TP
+.BR COLOR_RESTRICT_FETCH ", " COLOR_RESTRICT_MIRROR ", " COLOR_RESTRICT_PRIMARYURI ", " COLOR_RESTRICT_BINCHECKS ", " COLOR_RESTRICT_STRIP ", " COLOR_RESTRICT_TEST ", "  COLOR_RESTRICT_USERPRIV ", " COLOR_RESTRICT_INSTALLSOURCES ", " COLOR_RESTRICT_BINDIST ", " COLOR_PROPERTIES_INTERACTIVE ", " COLOR_PROPERTIES_LIVE ", " COLOR_PROPERTIES_VIRTUAL ", "
+Define the color for tags corresponding to the RESTRICT or PROPERTIES settings.
 Use the same syntax as you would inside ().
 See B<FORMATSTRING>.
 
@@ -1808,8 +1878,8 @@ number of matches and use e.g. B<FORMAT=''> to speed things up.
 .B TAG_FOR_PROFILE TAG_FOR_MASKED TAG_FOR_EX_PROFILE TAG_FOR_EX_MASKED TAG_FOR_LOCALLY_MASKED TAG_FOR_STABLE TAG_FOR_UNSTABLE TAG_FOR_MINUS_ASTERISK TAG_FOR_MINUS_KEYWORD TAG_FOR_ALIEN_STABLE TAG_FOR_ALIEN_UNSTABLE TAG_FOR_MISSING_KEYWORD TAG_FOR_EX_UNSTABLE TAG_FOR_EX_MINUS_ASTERISK TAG_FOR_EX_MINUS_KEYWORD TAG_FOR_EX_ALIEN_STABLE TAG_FOR_EX_ALIEN_UNSTABLE TAG_FOR_EX_MISSING_KEYWORD " " (String)
 The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP
-.B TAG_FETCH TAG_MIRROR " " (String)
-The tags which are printed for versions with fetch or mirror restrictions.
+.B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL " " (String)
+The tags which are printed for versions with the corresponding RESTRICT or PROPERTIES settings.
 .TP
 .\" {{{ Default Matchfields for different strings.
 .B MATCH_NAME_IF " " (String)

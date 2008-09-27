@@ -154,11 +154,11 @@ AddOption(BOOLEAN, "NO_RESTRICTIONS",
 	"false", "If false, fetch and mirror restrictions are output.");
 
 AddOption(BOOLEAN, "RESTRICT_INSTALLED",
-	"true", "If true, calculate fetch and mirror restrictions for installed versions.");
+	"true", "If true, calculate RESTRICT for installed versions.");
 
 AddOption(BOOLEAN, "CARE_RESTRICT_INSTALLED",
-	"true", "If true, read fetch and mirror restrictions for installed versions\n"
-	"always from disk. This is ignored if RESTRICT_INSTALLED=false.");
+	"true", "If true, read RESTRICT for installed versions\n"
+	"always from disk. This is ignored if PROPERTIES_INSTALLED=false.");
 
 AddOption(STRING, "DEFAULT_FORMAT",
 	"normal", "Defines whether --compact or --verbose is on by default.");
@@ -329,7 +329,6 @@ AddOption(STRING, "COLOR_MARKED_NAME",
 	"red,1;%{MARK_VERSIONS}",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing a marked package name.");
-
 #endif
 
 #if (DEFAULT_PART == 2)
@@ -454,36 +453,69 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 AddOption(STRING, "INSTALLEDVERSIONS",
 	"<installedversions"
 	":(%{COLOR_INST_VERSION}):():()"
-	":(%{COLOR_FETCH})%{TAG_FETCH}"
-	":(%{COLOR_MIRROR})%{TAG_MIRROR}"
 	":::"
 	":(%{COLOR_DATE})\\(:\\)()"
 	":\\(:\\)"
-	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>",
+	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
+	":(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
+	":(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
+	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
+	":(%{COLOR_RESTRICT_FETCH})%{TAG_RESTRICT_FETCH}"
+	":(%{COLOR_RESTRICT_MIRROR})%{TAG_RESTRICT_MIRROR}"
+	":(%{COLOR_RESTRICT_PRIMARYURY})%{TAG_RESTRICT_PRIMARYURY}"
+	":(%{COLOR_RESTRICT_BINCHECKS})%{TAG_RESTRICT_BINCHECKS}"
+	":(%{COLOR_RESTRICT_STRIP})%{TAG_RESTRICT_STRIP}"
+	":(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
+	":(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
+	":(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
+	":(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
+	">",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions normally.");
 
 AddOption(STRING, "INSTALLEDVERSIONS_COMPACT",
 	"<installedversionsshortdate"
 	":(%{COLOR_INST_VERSION}):():()"
-	"::"
 	":::"
 	":@(%{COLOR_DATE}):()"
 	":\\(:\\)"
-	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>",
+	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
+	":" // "(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
+	":" // "(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
+	":" // "(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
+	":" // "(%{COLOR_RESTRICT_FETCH})%{TAG_RESTRICT_FETCH}"
+	":" // "(%{COLOR_RESTRICT_MIRROR})%{TAG_RESTRICT_MIRROR}"
+	":" // "(%{COLOR_RESTRICT_PRIMARYURY})%{TAG_RESTRICT_PRIMARYURY}"
+	":" // "(%{COLOR_RESTRICT_BINCHECKS})%{TAG_RESTRICT_BINCHECKS}"
+	":" // "(%{COLOR_RESTRICT_STRIP})%{TAG_RESTRICT_STRIP}"
+	":" // "(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
+	":" // "(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
+	":" // "(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
+	":" // "(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
+	">",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions compactly.");
 
 AddOption(STRING, "INSTALLEDVERSIONS_VERBOSE",
 	"<installedversions"
 	":(%{COLOR_INST_TITLE})Version\\\\:() (%{COLOR_INST_VERSION}):():()"
-	":(%{COLOR_FETCH})%{TAG_FETCH}"
-	":(%{COLOR_MIRROR})%{TAG_MIRROR}"
 	":::"
 	":\\n                          (%{COLOR_INST_TITLE})Date\\\\:()    "
 	"(%{COLOR_DATE}):()"
 	":\\n                          (%{COLOR_INST_TITLE})USE\\\\:()     "
 	"::(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
+	":(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
+	":(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
+	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
+	":(%{COLOR_RESTRICT_FETCH})%{TAG_RESTRICT_FETCH}"
+	":(%{COLOR_RESTRICT_MIRROR})%{TAG_RESTRICT_MIRROR}"
+	":(%{COLOR_RESTRICT_PRIMARYURY})%{TAG_RESTRICT_PRIMARYURY}"
+	":(%{COLOR_RESTRICT_BINCHECKS})%{TAG_RESTRICT_BINCHECKS}"
+	":(%{COLOR_RESTRICT_STRIP})%{TAG_RESTRICT_STRIP}"
+	":(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
+	":(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
+	":(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
+	":(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
 	":\\n                          >",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions verbosely.");
@@ -620,9 +652,6 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
 	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for the diff-changed header symbols.");
-#endif
-
-#if (DEFAULT_PART == 3)
 
 AddOption(BOOLEAN, "NOBEST_COMPACT",
 	"true",
@@ -798,6 +827,9 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with marked versions.");
+#endif
+
+#if (DEFAULT_PART == 3)
 
 AddOption(BOOLEAN, "ALL_SETNAMES",
 	"true",
@@ -1046,11 +1078,47 @@ AddOption(STRING, "COLOR_VIRTUALKEY",
 AddOption(STRING, "COLOR_SLOTS",
 	"red,1", "Color for slots.");
 
-AddOption(STRING, "COLOR_FETCH",
-	"red", "Color for the fetch restriction tag.");
+AddOption(STRING, "COLOR_RESTRICT",
+	"red", "Color for the restriction tags. This is only used for delayed substitution.");
 
-AddOption(STRING, "COLOR_MIRROR",
-	"cyan", "Color for the mirror restriction tag.");
+AddOption(STRING, "COLOR_PROPERTIES",
+	"cyan", "Color for the properties tags. This is only used for delayed substitution.");
+
+AddOption(STRING, "COLOR_RESTRICT_FETCH",
+	"%{COLOR_RESTRICT}", "Color for the fetch restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_MIRROR",
+	"%{COLOR_RESTRICT}", "Color for the mirror restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_PRIMARYURI",
+	"%{COLOR_RESTRICT}", "Color for the primaryuri restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_BINCHECKS",
+	"%{COLOR_RESTRICT}", "Color for the binchecks restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_STRIP",
+	"%{COLOR_RESTRICT}", "Color for the strip restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_TEST",
+	"%{COLOR_RESTRICT}", "Color for the test restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_USERPRIV",
+	"%{COLOR_RESTRICT}", "Color for the userpriv restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_INSTALLSOURCES",
+	"%{COLOR_RESTRICT}", "Color for the installsources restriction tag.");
+
+AddOption(STRING, "COLOR_RESTRICT_BINDIST",
+	"%{COLOR_RESTRICT}", "Color for the bindist restriction tag.");
+
+AddOption(STRING, "COLOR_PROPERTIES_INTERACTIVE",
+	"%{COLOR_PROPERTIES}", "Color for the interactive properties tag.");
+
+AddOption(STRING, "COLOR_PROPERTIES_LIVE",
+	"%{COLOR_PROPERTIES}", "Color for the live properties tag.");
+
+AddOption(STRING, "COLOR_PROPERTIES_VIRTUAL",
+	"%{COLOR_PROPERTIES}", "Color for the virtual properties tag.");
 
 AddOption(STRING, "MARK_INSTALLED",
 	"inverse", "How installed packages are marked in version listings.");
@@ -1192,11 +1260,42 @@ AddOption(STRING, "PRINT_COUNT_ALWAYS",
 AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
 	"true", "If false, count independently of whether the matches are printed.");
 
-AddOption(STRING, "TAG_FETCH",
-	"!f", "Tag for fetch-restricted versions.");
+AddOption(STRING, "TAG_RESTRICT_FETCH",
+	"!f", "Tag for RESTRICT=fetch.");
 
-AddOption(STRING, "TAG_MIRROR",
-	"!m", "Tag for mirror-restricted versions.");
+AddOption(STRING, "TAG_RESTRICT_MIRROR",
+	"!m", "Tag for RESTRICT=mirror.");
+
+AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
+	"!p", "Tag for RESTRICT=primaryuri.");
+
+AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
+	"!b", "Tag for RESTRICT=binchecks.");
+
+AddOption(STRING, "TAG_RESTRICT_STRIP",
+	"!s", "Tag for RESTRICT=strip.");
+
+AddOption(STRING, "TAG_RESTRICT_TEST",
+	"!t", "Tag for RESTRICT=test.");
+
+AddOption(STRING, "TAG_RESTRICT_USERPRIV",
+	"!u", "Tag for RESTRICT=userpriv.");
+
+AddOption(STRING, "TAG_RESTRICT_INSTALLSOURCES",
+	"!i", "Tag for RESTRICT=installsources.");
+
+AddOption(STRING, "TAG_RESTRICT_BINDIST",
+	"!d", "Tag for RESTRICT=bindist.");
+
+AddOption(STRING, "TAG_PROPERTIES_INTERACTIVE",
+	"+i", "Tag for PROPERTIES=interactive.");
+
+AddOption(STRING, "TAG_PROPERTIES_LIVE",
+	"+l", "Tag for PROPERTIES=live.");
+
+AddOption(STRING, "TAG_PROPERTIES_VIRTUAL",
+	"+v", "Tag for PROPERTIES=virtual.");
+
 
 #define TAG_FOR(opt_type, opt_default, opt_comment) \
 	AddOption(STRING, "TAG_FOR_" #opt_type, \

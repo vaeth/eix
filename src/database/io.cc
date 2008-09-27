@@ -113,8 +113,9 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	// read masking
 	MaskFlags::MaskType mask = io::read<MaskFlags::MaskType>(fp);
 	v->maskflags.set(mask & MaskFlags::MASK_SAVE);
-	v->restrictFlags = (ExtendedVersion::Restrict(mask >> 4) & ExtendedVersion::Restrict(0x0F));
-	v->full_keywords = io::read_hash_words(fp, hdr.keywords_hash);
+	v->propertiesFlags = io::readUChar(fp);
+	v->restrictFlags   = io::read<ExtendedVersion::Restrict>(fp);
+	v->full_keywords   = io::read_hash_words(fp, hdr.keywords_hash);
 
 	// read primary version part
 	for(list<BasicVersion::Part>::size_type i = io::read<list<BasicVersion::Part>::size_type>(fp);
@@ -152,7 +153,9 @@ void
 io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 {
 	// write masking
-	io::writeUChar(fp, ((v->maskflags.get()) & MaskFlags::MASK_SAVE) | (MaskFlags::MaskType(v->restrictFlags) << 4));
+	io::writeUChar(fp, (v->maskflags.get()) & MaskFlags::MASK_SAVE);
+	io::writeUChar(fp, v->propertiesFlags);
+	io::write<ExtendedVersion::Restrict>(fp, v->restrictFlags);
 
 	// write full keywords
 	io::write_hash_words(fp, hdr.keywords_hash, v->get_full_keywords());

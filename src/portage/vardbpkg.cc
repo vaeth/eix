@@ -345,22 +345,25 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 	if(v.know_restricted)
 		return true;
 	v.know_restricted = true;
-	if(!care_of_restrictions) {
-		for(Package::const_iterator it = p.begin(); it != p.end(); ++it) {
-			if(BasicVersion::compare(**it, v) != 0)
+	v.restrictFlags = ExtendedVersion::RESTRICT_NONE;
+	v.propertiesFlags = ExtendedVersion::PROPERTIES_NONE;
+	for(Package::const_iterator it = p.begin(); it != p.end(); ++it) {
+		if(BasicVersion::compare(**it, v) != 0)
+			continue;
+		if(readSlot(p, v)) {
+			if(it->slotname != v.slotname)
 				continue;
-			if(readSlot(p, v)) {
-				if(it->slotname != v.slotname)
-					continue;
-			}
-			if(readOverlay(p, v, header, portdir)) {
-				if(it->overlay_key != v.overlay_key)
-					continue;
-			}
-			v.restrictFlags = it->restrictFlags;
-			return true;
 		}
+		if(readOverlay(p, v, header, portdir)) {
+			if(it->overlay_key != v.overlay_key)
+				continue;
+		}
+		v.restrictFlags = it->restrictFlags;
+		v.propertiesFlags = it->propertiesFlags;
+		break;
 	}
+	if(!care_of_restrictions)
+		return true;
 	try {
 		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
 		vector<string> lines;

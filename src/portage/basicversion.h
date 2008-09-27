@@ -91,14 +91,28 @@ inline bool operator <= (const BasicVersion& left, const BasicVersion& right)
 class ExtendedVersion : public BasicVersion
 {
 	public:
-		typedef io::UChar Restrict;
+		typedef uint16_t Restrict;
+		static const Restrict // order according to frequency...
+			RESTRICT_NONE           = 0x0000,
+			RESTRICT_BINCHECKS      = 0x0001,
+			RESTRICT_STRIP          = 0x0002,
+			RESTRICT_TEST           = 0x0004,
+			RESTRICT_USERPRIV       = 0x0008,
+			RESTRICT_INSTALLSOURCES = 0x0010,
+			RESTRICT_FETCH          = 0x0020,
+			RESTRICT_MIRROR         = 0x0040,
+			RESTRICT_PRIMARYURI     = 0x0080,
+			RESTRICT_BINDIST        = 0x0100;
 
-		static const Restrict
-			RESTRICT_NONE   = 0x00,
-			RESTRICT_FETCH  = 0x01,
-			RESTRICT_MIRROR = 0x02;
+		typedef io::UChar Properties;
+		static const Properties
+			PROPERTIES_NONE        = 0x00,
+			PROPERTIES_INTERACTIVE = 0x01,
+			PROPERTIES_LIVE        = 0x02,
+			PROPERTIES_VIRTUAL     = 0x04;
 
 		Restrict restrictFlags;
+		Properties propertiesFlags;
 
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
@@ -108,9 +122,13 @@ class ExtendedVersion : public BasicVersion
 		{ restrictFlags = RESTRICT_NONE; slotname.clear(); }
 
 		static Restrict calcRestrict(const std::string& str);
+		static Properties calcProperties(const std::string& str);
 
 		void set_restrict(const std::string& str)
 		{ restrictFlags = calcRestrict(str); }
+
+		void set_properties(const std::string& str)
+		{ propertiesFlags = calcProperties(str); }
 
 		std::string getSlotAppendix(bool colon) const
 		{

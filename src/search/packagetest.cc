@@ -59,6 +59,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	obsolete = world = worldset = overlay = installed = invert = upgrade =
 		slotted = dup_versions = dup_packages = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
+	properties = ExtendedVersion::PROPERTIES_NONE;
 	test_installed = INS_NONE;
 	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
 }
@@ -91,6 +92,7 @@ PackageTest::calculateNeeds() {
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
+		(properties != ExtendedVersion::PROPERTIES_NONE) ||
 		(test_stability_default != STABLE_NONE) ||
 		(test_stability_local != STABLE_NONE) ||
 		(test_stability_nonlocal != STABLE_NONE))
@@ -546,6 +548,32 @@ PackageTest::match(PackageReader *pkg) const
 				it != installed_versions->end(); ++it) {
 				vardbpkg->readRestricted(*p, *it, *header, portdir);
 				if(((it->restrictFlags) & restrictions) == restrictions) {
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				return invert;
+		}
+	}
+
+	if(properties != ExtendedVersion::PROPERTIES_NONE) {
+		get_p();
+		bool found = false;
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if(((it->propertiesFlags) & properties) == properties) {
+				found = true;
+				break;
+			}
+		}
+		if(!found) {
+			vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+			if(!installed_versions)
+				return invert;
+			for(vector<InstVersion>::iterator it = installed_versions->begin();
+				it != installed_versions->end(); ++it) {
+				vardbpkg->readRestricted(*p, *it, *header, portdir);
+				if(((it->propertiesFlags) & properties) == properties) {
 					found = true;
 					break;
 				}

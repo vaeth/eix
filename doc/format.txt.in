@@ -218,10 +218,21 @@ char         Mask bitset for the current $ARCH:
                :0x04: version is in @system
                :0x08: version is in @world (if SAVE_WORLD=true)
 
-             Since eix-0.10.1 the higher bits contain the restrict status:
+char         Mask bitset for the PROPERTIES variable:
+               :0x01: PROPERTIES=interactive
+               :0x02: PROPERTIES=live
+               :0x04: PROPERTIES=virtual
 
-               :0x10: RESTRICT=fetch
-               :0x20: RESTRICT=mirror
+Number       Mask bitset for the RESTRICT variable:
+               :0x0001: RESTRICT=binchecks
+               :0x0002: RESTRICT=strip
+               :0x0004: RESTRICT=test
+               :0x0008: RESTRICT=userpriv
+               :0x0010: RESTRICT=installsources
+               :0x0020: RESTRICT=fetch
+               :0x0040: RESTRICT=mirror
+               :0x0080: RESTRICT=primaryury
+               :0x0100: RESTRICT=bindist
 
 HashedWords  Full keywords string of the ebuild.
 Vector       VersionPart_\s

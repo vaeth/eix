@@ -39,7 +39,7 @@ get_map_from_cache(const char *file, map<string,string> &x)
 
 /** Read stability and other data from an "assign type" cache file. */
 void
-assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &rest, BasicCache::ErrorCallback error_callback)
+assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> cf;
 
@@ -52,7 +52,8 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 	keywords = cf["KEYWORDS"];
 	slotname = cf["SLOT"];
 	iuse     = cf["IUSE"];
-	rest     = cf["RESTRICT"];
+	restr    = cf["RESTRICT"];
+	props    = cf["PROPERTIES"];
 }
 
 /** Read an "assign type" cache file. */

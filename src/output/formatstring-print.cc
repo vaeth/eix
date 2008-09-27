@@ -98,8 +98,6 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		PIDX_FRONT,
 		PIDX_SLOT,
 		PIDX_AFTER_SLOT,
-		PIDX_FETCH,
-		PIDX_MIRROR,
 		PIDX_OVERLAY,
 		PIDX_AFTER_OVERLAY,
 		PIDX_AFTER_ALL,
@@ -111,6 +109,18 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		PIDX_AFTER_SET_USE,
 		PIDX_UNSET_USE,
 		PIDX_AFTER_UNSET_USE,
+		PIDX_PROPERTIES_INTERACTIVE,
+		PIDX_PROPERTIES_LIVE,
+		PIDX_PROPERTIES_VIRTUAL,
+		PIDX_RESTRICT_FETCH,
+		PIDX_RESTRICT_MIRROR,
+		PIDX_RESTRICT_PRIMARYURI,
+		PIDX_RESTRICT_BINCHECKS,
+		PIDX_RESTRICT_STRIP,
+		PIDX_RESTRICT_TEST,
+		PIDX_RESTRICT_USERPRIV,
+		PIDX_RESTRICT_INSTALLSOURCES,
+		PIDX_RESTRICT_BINDIST,
 		PIDX_BETWEEN
 	} InstIndex;
 	if(!fmt.vardb)
@@ -137,15 +147,56 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			((prepend.size() > PIDX_SLOT) ? prepend[PIDX_SLOT] : "")));
 		if(prepend.size() > PIDX_AFTER_SLOT)
 			ret.append(prepend[PIDX_AFTER_SLOT]);
-		if(fmt.print_restrictions && (prepend.size() > PIDX_FETCH))
+		if(fmt.print_restrictions && (prepend.size() > PIDX_PROPERTIES_INTERACTIVE))
 		{
 			if(fmt.vardb->readRestricted(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
-				if(it->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
-					ret.append(prepend[PIDX_FETCH]);
+				if((prepend.size() > PIDX_PROPERTIES_INTERACTIVE) &&
+					(it->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE)) {
+					ret.append(prepend[PIDX_PROPERTIES_INTERACTIVE]);
 				}
-				if((prepend.size() > PIDX_MIRROR) &&
+				if((prepend.size() > PIDX_PROPERTIES_LIVE) &&
+					(it->propertiesFlags & ExtendedVersion::PROPERTIES_LIVE)) {
+					ret.append(prepend[PIDX_PROPERTIES_LIVE]);
+				}
+				if((prepend.size() > PIDX_PROPERTIES_VIRTUAL) &&
+					(it->propertiesFlags & ExtendedVersion::PROPERTIES_VIRTUAL)) {
+					ret.append(prepend[PIDX_PROPERTIES_VIRTUAL]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_FETCH) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_FETCH)) {
+					ret.append(prepend[PIDX_RESTRICT_FETCH]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_MIRROR) &&
 					(it->restrictFlags & ExtendedVersion::RESTRICT_MIRROR)) {
-					ret.append(prepend[PIDX_MIRROR]);
+					ret.append(prepend[PIDX_RESTRICT_MIRROR]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_PRIMARYURI) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_PRIMARYURI)) {
+					ret.append(prepend[PIDX_RESTRICT_PRIMARYURI]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_BINCHECKS) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_BINCHECKS)) {
+					ret.append(prepend[PIDX_RESTRICT_BINCHECKS]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_STRIP) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_STRIP)) {
+					ret.append(prepend[PIDX_RESTRICT_STRIP]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_TEST) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_TEST)) {
+					ret.append(prepend[PIDX_RESTRICT_TEST]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_USERPRIV) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_USERPRIV)) {
+					ret.append(prepend[PIDX_RESTRICT_USERPRIV]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_INSTALLSOURCES) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_INSTALLSOURCES)) {
+					ret.append(prepend[PIDX_RESTRICT_INSTALLSOURCES]);
+				}
+				if((prepend.size() > PIDX_RESTRICT_BINDIST) &&
+					(it->restrictFlags & ExtendedVersion::RESTRICT_BINDIST)) {
+					ret.append(prepend[PIDX_RESTRICT_BINDIST]);
 				}
 			}
 		}
@@ -414,15 +465,65 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 	if(fmt->print_restrictions)
 	{
+		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE) {
+			if(! fmt->no_color)
+				cout << fmt->color_properties_interactive;
+			cout << fmt->tag_properties_interactive;
+		}
+		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_LIVE) {
+			if(! fmt->no_color)
+				cout << fmt->color_properties_live;
+			cout << fmt->tag_properties_live;
+		}
+		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_VIRTUAL) {
+			if(! fmt->no_color)
+				cout << fmt->color_properties_virtual;
+			cout << fmt->tag_properties_virtual;
+		}
 		if(version->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
 			if(! fmt->no_color)
-				cout << fmt->color_fetch;
-			cout << fmt->tag_fetch;
+				cout << fmt->color_restrict_fetch;
+			cout << fmt->tag_restrict_fetch;
 		}
 		if(version->restrictFlags & ExtendedVersion::RESTRICT_MIRROR) {
 			if(! fmt->no_color)
-				cout << fmt->color_mirror;
-			cout << fmt->tag_mirror;
+				cout << fmt->color_restrict_mirror;
+			cout << fmt->tag_restrict_mirror;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_PRIMARYURI) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_primaryuri;
+			cout << fmt->tag_restrict_primaryuri;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_BINCHECKS) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_binchecks;
+			cout << fmt->tag_restrict_binchecks;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_STRIP) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_strip;
+			cout << fmt->tag_restrict_strip;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_TEST) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_test;
+			cout << fmt->tag_restrict_test;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_USERPRIV) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_userpriv;
+			cout << fmt->tag_restrict_userpriv;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_installsources;
+			cout << fmt->tag_restrict_installsources;
+		}
+		if(version->restrictFlags & ExtendedVersion::RESTRICT_BINDIST) {
+			if(! fmt->no_color)
+				cout << fmt->color_restrict_bindist;
+			cout << fmt->tag_restrict_bindist;
 		}
 	}
 	if(!exclude_overlay)

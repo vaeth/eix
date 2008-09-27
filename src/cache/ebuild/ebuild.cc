@@ -69,12 +69,13 @@ EbuildCache::readPackage(Category &vec, const string &pkg_name, const string &di
 				read_onetime_info = false;
 		}
 		version->overlay_key = m_overlay_key;
-		string keywords, iuse, restr;
+		string keywords, iuse, restr, props;
 		try {
-			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, m_error_callback);
 			version->set_full_keywords(keywords);
 			version->set_iuse(iuse);
 			version->set_restrict(restr);
+			version->set_properties(props);
 			if(read_onetime_info) {
 				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 				have_onetime_info = true;

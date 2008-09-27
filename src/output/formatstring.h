@@ -216,8 +216,18 @@ class PrintFormat {
 			   color_overlaykey,  /**< Color for the overlay key */
 			   color_virtualkey,  /**< Color for the virtual key */
 			   color_slots,       /**< Color for slots */
-			   color_fetch,       /**< Color for fetch restriction */
-			   color_mirror;      /**< Color for mirror restriction */
+			   color_restrict_fetch,          /**< Color for RESTRICT=fetch */
+			   color_restrict_mirror,         /**< Color for RESTRICT=mirror */
+			   color_restrict_primaryuri,     /**< Color for RESTRICT=primaryuri */
+			   color_restrict_binchecks,      /**< Color for RESTRICT=binchecks */
+			   color_restrict_strip,          /**< Color for RESTRICT=strip */
+			   color_restrict_test,           /**< Color for RESTRICT=test */
+			   color_restrict_userpriv,       /**< Color for RESTRICT=userpriv */
+			   color_restrict_installsources, /**< Color for RESTRICT=installsources */
+			   color_restrict_bindist,        /**< Color for RESTRICT=bindist */
+			   color_properties_interactive,  /**< Color for PROPERTIES=interactive */
+			   color_properties_live,         /**< Color for PROPERTIES=live */
+			   color_properties_virtual;      /**< Color for PROPERTIES=live */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
@@ -238,8 +248,19 @@ class PrintFormat {
 			tag_for_ex_unstable,
 			tag_for_ex_minus_asterisk, tag_for_ex_minus_keyword,
 			tag_for_ex_alien_stable, tag_for_ex_alien_unstable,
-			tag_for_ex_missing_keyword;
-		std::string tag_fetch, tag_mirror;
+			tag_for_ex_missing_keyword,
+			tag_restrict_fetch,
+			tag_restrict_mirror,
+			tag_restrict_primaryuri,
+			tag_restrict_binchecks,
+			tag_restrict_strip,
+			tag_restrict_test,
+			tag_restrict_userpriv,
+			tag_restrict_installsources,
+			tag_restrict_bindist,
+			tag_properties_interactive,
+			tag_properties_live,
+			tag_properties_virtual;
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 		{
@@ -264,8 +285,18 @@ class PrintFormat {
 				color_overlaykey = AnsiColor(color_overlaykey).asString();
 				color_virtualkey = AnsiColor(color_virtualkey).asString();
 				color_slots      = AnsiColor(color_slots).asString();
-				color_fetch      = AnsiColor(color_fetch).asString();
-				color_mirror     = AnsiColor(color_mirror).asString();
+				color_restrict_fetch          = AnsiColor(color_restrict_fetch).asString();
+				color_restrict_mirror         = AnsiColor(color_restrict_mirror).asString();
+				color_restrict_primaryuri     = AnsiColor(color_restrict_primaryuri).asString();
+				color_restrict_binchecks      = AnsiColor(color_restrict_binchecks).asString();
+				color_restrict_strip          = AnsiColor(color_restrict_strip).asString();
+				color_restrict_test           = AnsiColor(color_restrict_test).asString();
+				color_restrict_userpriv       = AnsiColor(color_restrict_userpriv).asString();
+				color_restrict_installsources = AnsiColor(color_restrict_installsources).asString();
+				color_restrict_bindist        = AnsiColor(color_restrict_bindist).asString();
+				color_properties_interactive  = AnsiColor(color_properties_interactive).asString();
+				color_properties_live         = AnsiColor(color_properties_live).asString();
+				color_properties_virtual      = AnsiColor(color_properties_virtual).asString();
 				AnsiMarker ins_marker(mark_installed);
 				mark_installed     = ins_marker.asString();
 				mark_installed_end = ins_marker.end();

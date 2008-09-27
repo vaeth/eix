@@ -97,6 +97,10 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	// reading slots and stability
 	version->slotname = ARGV(6);
 	version->set_restrict(ARGV(8));
+	if(argc <= 19)
+		version->set_properties("");
+	else
+		version->set_properties(ARGV(19));
 	string keywords = ARGV(12);
 	version->set_full_keywords(keywords);
 	string iuse = ARGV(14);

@@ -334,14 +334,25 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
 	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
 	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
-	format_for_new.color_fetch      = eixrc["COLOR_FETCH"];
-	format_for_new.color_mirror     = eixrc["COLOR_MIRROR"];
 	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
 	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
 	format_for_new.colon_slots      = eixrc.getBool("COLON_SLOTS");
 	format_for_new.colored_slots    = eixrc.getBool("COLORED_SLOTS");
 	format_for_new.color_original   = eixrc.getBool("COLOR_ORIGINAL");
 	format_for_new.color_local_mask = eixrc.getBool("COLOR_LOCAL_MASK");
+
+	format_for_new.color_restrict_fetch          = eixrc["COLOR_RESTRICT_FETCH"];
+	format_for_new.color_restrict_mirror         = eixrc["COLOR_RESTRICT_MIRROR"];
+	format_for_new.color_restrict_primaryuri     = eixrc["COLOR_RESTRICT_PRIMARYURI"];
+	format_for_new.color_restrict_binchecks      = eixrc["COLOR_RESTRICT_BINCHECKS"];
+	format_for_new.color_restrict_strip          = eixrc["COLOR_RESTRICT_STRIP"];
+	format_for_new.color_restrict_test           = eixrc["COLOR_RESTRICT_TEST"];
+	format_for_new.color_restrict_userpriv       = eixrc["COLOR_RESTRICT_USERPRIV"];
+	format_for_new.color_restrict_installsources = eixrc["COLOR_RESTRICT_INSTALLSOURCES"];
+	format_for_new.color_restrict_bindist        = eixrc["COLOR_RESTRICT_BINDIST"];
+	format_for_new.color_properties_interactive  = eixrc["COLOR_PROPERTIES_INTERACTIVE"];
+	format_for_new.color_properties_live         = eixrc["COLOR_PROPERTIES_LIVE"];
+	format_for_new.color_properties_virtual      = eixrc["COLOR_PROPERTIES_VIRTUAL"];
 
 	format_for_new.slot_sorted      = false;
 	format_for_new.alpha_use        = eixrc.getBool("SORT_INST_USE_ALPHA");
@@ -358,10 +369,20 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.before_slot_iuse = eixrc["FORMAT_BEFORE_SLOT_IUSE"];
 	format_for_new.after_slot_iuse  = eixrc["FORMAT_AFTER_SLOT_IUSE"];
 
-	format_for_new.tag_fetch        = eixrc["TAG_FETCH"];
-	format_for_new.tag_mirror       = eixrc["TAG_MIRROR"];
-
 	format_for_new.setupColors();
+
+	format_for_new.tag_restrict_fetch          = eixrc["TAG_RESTRICT_FETCH"];
+	format_for_new.tag_restrict_mirror         = eixrc["TAG_RESTRICT_MIRROR"];
+	format_for_new.tag_restrict_primaryuri     = eixrc["TAG_RESTRICT_PRIMARYURI"];
+	format_for_new.tag_restrict_binchecks      = eixrc["TAG_RESTRICT_BINCHECKS"];
+	format_for_new.tag_restrict_strip          = eixrc["TAG_RESTRICT_STRIP"];
+	format_for_new.tag_restrict_test           = eixrc["TAG_RESTRICT_TEST"];
+	format_for_new.tag_restrict_userpriv       = eixrc["TAG_RESTRICT_USERPRIV"];
+	format_for_new.tag_restrict_installsources = eixrc["TAG_RESTRICT_INSTALLSOURCES"];
+	format_for_new.tag_restrict_bindist        = eixrc["TAG_RESTRICT_BINDIST"];
+	format_for_new.tag_properties_interactive  = eixrc["TAG_PROPERTIES_INTERACTIVE"];
+	format_for_new.tag_properties_live         = eixrc["TAG_PROPERTIES_LIVE"];
+	format_for_new.tag_properties_virtual      = eixrc["TAG_PROPERTIES_VIRTUAL"];
 
 	format_for_new.tag_for_profile            = eixrc["TAG_FOR_PROFILE"];
 	format_for_new.tag_for_masked             = eixrc["TAG_FOR_MASKED"];

@@ -124,8 +124,18 @@ dump_help(int exit_code)
 			"                                         provided by some overlay.\n"
 			"    --installed-in-overlay OVERLAY       Packages with an installed version\n"
 			"                                         provided from OVERLAY.\n"
-			"    --fetch               Match packages with a fetch restriction.\n"
-			"    --mirror              Match packages with a mirror restriction.\n"
+			"    --restrict-fetch          Match packages with RESTRICT=fetch.\n"
+			"    --restrict-mirror         Match packages with RESTRICT=mirror.\n"
+			"    --restrict-primaryuri     Match packages with RESTRICT=primaryuri.\n"
+			"    --restrict-binchecks      Match packages with RESTRICT=binchecks.\n"
+			"    --restrict-strip          Match packages with RESTRICT=strip.\n"
+			"    --restrict-test           Match packages with RESTRICT=test.\n"
+			"    --restrict-userpriv       Match packages with RESTRICT=userpriv.\n"
+			"    --restrict-installsources Match packages with RESTRICT=installsources.\n"
+			"    --restrict-bindist        Match packages with RESTRICT=bindist.\n"
+			"    --properties-interactive  Match packages with PROPERTIES=interactive.\n"
+			"    --properties-live         Match packages with PROPERTIES=live.\n"
+			"    --properties-virtual      Match packages with PROPERTIES=virtual.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -278,8 +288,18 @@ static struct Option long_options[] = {
 	Option("installed-in-some-overlay", O_INSTALLED_SOME),
 	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
 	Option("installed-slot",O_INSTALLED_SLOT,           Option::KEEP_STRING_OPTIONAL),
-	Option("fetch",         O_FETCH),
-	Option("mirror",        O_MIRROR),
+	Option("restrict-fetch",         O_RESTRICT_FETCH),
+	Option("restrict-mirror",        O_RESTRICT_MIRROR),
+	Option("restrict-primaryuri",    O_RESTRICT_PRIMARYURI),
+	Option("restrict-binchecks",     O_RESTRICT_BINCHECKS),
+	Option("restrict-strip",         O_RESTRICT_STRIP),
+	Option("restrict-test",          O_RESTRICT_TEST),
+	Option("restrict-userpriv",      O_RESTRICT_USERPRIV),
+	Option("restrict-installsources",O_RESTRICT_INSTALLSOURCES),
+	Option("restrict-bindist",       O_RESTRICT_BINDIST),
+	Option("properties-interactive", O_PROPERTIES_INTERACTIVE),
+	Option("properties-live",        O_PROPERTIES_LIVE),
+	Option("properties-virtual",     O_PROPERTIES_VIRTUAL),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
@@ -347,8 +367,19 @@ setup_defaults()
 	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
 	format.color_virtualkey    = rc["COLOR_VIRTUALKEY"];
 	format.color_slots         = rc["COLOR_SLOTS"];
-	format.color_fetch         = rc["COLOR_FETCH"];
-	format.color_mirror        = rc["COLOR_MIRROR"];
+
+	format.color_restrict_fetch          = rc["COLOR_RESTRICT_FETCH"];
+	format.color_restrict_mirror         = rc["COLOR_RESTRICT_MIRROR"];
+	format.color_restrict_primaryuri     = rc["COLOR_RESTRICT_PRIMARYURI"];
+	format.color_restrict_binchecks      = rc["COLOR_RESTRICT_BINCHECKS"];
+	format.color_restrict_strip          = rc["COLOR_RESTRICT_STRIP"];
+	format.color_restrict_test           = rc["COLOR_RESTRICT_TEST"];
+	format.color_restrict_userpriv       = rc["COLOR_RESTRICT_USERPRIV"];
+	format.color_restrict_installsources = rc["COLOR_RESTRICT_INSTALLSOURCES"];
+	format.color_restrict_bindist        = rc["COLOR_RESTRICT_BINDIST"];
+	format.color_properties_interactive  = rc["COLOR_PROPERTIES_INTERACTIVE"];
+	format.color_properties_live         = rc["COLOR_PROPERTIES_LIVE"];
+	format.color_properties_virtual      = rc["COLOR_PROPERTIES_VIRTUAL"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.color_original      = rc.getBool("COLOR_ORIGINAL");
@@ -376,8 +407,18 @@ setup_defaults()
 	format.before_slot_iuse    = rc["FORMAT_BEFORE_SLOT_IUSE"];
 	format.after_slot_iuse     = rc["FORMAT_AFTER_SLOT_IUSE"];
 
-	format.tag_fetch           = rc["TAG_FETCH"];
-	format.tag_mirror          = rc["TAG_MIRROR"];
+	format.tag_restrict_fetch          = rc["TAG_RESTRICT_FETCH"];
+	format.tag_restrict_mirror         = rc["TAG_RESTRICT_MIRROR"];
+	format.tag_restrict_primaryuri     = rc["TAG_RESTRICT_PRIMARYURI"];
+	format.tag_restrict_binchecks      = rc["TAG_RESTRICT_BINCHECKS"];
+	format.tag_restrict_strip          = rc["TAG_RESTRICT_STRIP"];
+	format.tag_restrict_test           = rc["TAG_RESTRICT_TEST"];
+	format.tag_restrict_userpriv       = rc["TAG_RESTRICT_USERPRIV"];
+	format.tag_restrict_installsources = rc["TAG_RESTRICT_INSTALLSOURCES"];
+	format.tag_restrict_bindist        = rc["TAG_RESTRICT_BINDIST"];
+	format.tag_properties_interactive  = rc["TAG_PROPERTIES_INTERACTIVE"];
+	format.tag_properties_live         = rc["TAG_PROPERTIES_LIVE"];
+	format.tag_properties_virtual      = rc["TAG_PROPERTIES_VIRTUAL"];
 
 	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
 	format.tag_for_masked             = rc["TAG_FOR_MASKED"];

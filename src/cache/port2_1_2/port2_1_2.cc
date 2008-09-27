@@ -119,6 +119,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	version->set_full_keywords(mapper["KEYWORDS"]);
 	version->set_iuse(mapper["IUSE"]);
 	version->set_restrict(mapper["RESTRICT"]);
+	version->set_properties(mapper["PROPERTIES"]);
 	pkg->addVersion(version);
 
 	/* For the newest version, add all remaining data */

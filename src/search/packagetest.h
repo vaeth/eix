@@ -132,6 +132,9 @@ class PackageTest {
 		void Restrictions(ExtendedVersion::Restrict flags)
 		{ restrictions |= flags; }
 
+		void Properties(ExtendedVersion::Properties flags)
+		{ properties |= flags; }
+
 		void World(bool match_also_system = false)
 		{ world = true; world_both = match_also_system; }
 
@@ -230,6 +233,7 @@ class PackageTest {
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;
 		ExtendedVersion::Restrict restrictions;
+		ExtendedVersion::Properties properties;
 
 		std::set<Version::Overlay>
 			*overlay_list, *overlay_only_list,
