@@ -21,6 +21,8 @@
 
 #include <sqlite3.h>
 
+#include <map>
+
 using namespace std;
 
 /* Path to portage cache */
@@ -32,13 +34,95 @@ using namespace std;
 SqliteCache *SqliteCache::callback_arg;
 #define THIS SqliteCache::callback_arg
 
-#define ARGV(i) (argv[i] ? argv[i] : "")
+
+/** The following is all related to get the proper index for the lookups */
+
+typedef enum {
+	SQ_NAME,
+	SQ_SLOT,
+	SQ_RESTRICT,
+	SQ_HOMEPAGE,
+	SQ_LICENSE,
+	SQ_DESCRIPTION,
+	SQ_KEYWORDS,
+	SQ_IUSE,
+	SQ_PROVIDE,
+	SQ_PROPERTIES,
+	SQ_LAST
+} mynames;
+
+static map<string,int> namemap;
+static vector<int> default_trueindex(SQ_LAST, 0);
+
+inline static void
+init_data(int true_index, int my_index, const char *s)
+{
+	namemap[s] = my_index;
+	default_trueindex[my_index] = true_index;
+}
+
+inline static void
+init_namemap()
+{
+	init_data( 1, SQ_NAME,        "portage_package_key");
+	init_data( 6, SQ_SLOT,        "SLOT");
+	init_data( 8, SQ_RESTRICT,    "RESTRICT");
+	init_data( 9, SQ_HOMEPAGE,    "HOMEPAGE");
+	init_data(10, SQ_LICENSE,     "LICENSE");
+	init_data(11, SQ_DESCRIPTION, "DESCRIPTION");
+	init_data(12, SQ_KEYWORDS,    "KEYWORDS");
+	init_data(14, SQ_IUSE,        "IUSE");
+	init_data(17, SQ_PROVIDE,     "PROVIDE");
+	init_data(19, SQ_PROPERTIES,  "PROPERTIES");
+}
+
+inline static int
+calc_trueindex(int argc, char **azColName, vector<int> &trueindex)
+{
+	if(namemap.empty())
+		init_namemap();
+	trueindex = default_trueindex;
+	for(int i = 0; i < argc; ++i) {
+		map<string,int>::const_iterator it = namemap.find(azColName[i]);
+		if(it != namemap.end())
+			trueindex[it->second] = i;
+	}
+	int maxindex = -1;
+	for(int i = 0; i < SQ_LAST; ++i) {
+		int curr = trueindex[i];
+		// Shortcut if we have not reached the maximum
+		if(maxindex >= curr)
+			continue;
+		// Is the true index out of range?
+		if(argc <= curr) {
+			trueindex[i] = -1;
+			// PROPERTIES may be missing - this is ok
+			if(i == SQ_PROPERTIES)
+				continue;
+		}
+		maxindex = trueindex[i];
+	}
+	return maxindex;
+}
+
+inline static const char *
+sq_getarg(char **argv, vector<int> &trueindex, const int i)
+{
+	int t = trueindex[i];
+	if(t >= 0) { // index in range?
+		const char *r = argv[t];
+		if(r)
+			return r;
+	}
+	return "";
+}
+#define ARGV(i) sq_getarg(argv,trueindex,i)
 
 int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 {
-	UNUSED(NotUsed); UNUSED(azColName);
+	UNUSED(NotUsed);
 #if 0
-	for(int i = 0; i<argc; i++) {
+	for(int i = 0; i<argc; ++i) {
 		cout << i << ": " << azColName[i] << " = " <<  ARGV(i) << "\n";
 	}
 	return 0;
@@ -47,13 +131,20 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	if(THIS->sqlite_callback_error)
 		return 0;
 
-	if(argc <= 1) {
+	vector<int> &trueindex = THIS->trueindex;
+	int maxindex = THIS->maxindex;
+	if(!maxindex) {
+		maxindex = calc_trueindex(argc, azColName, trueindex);
+		THIS->maxindex = maxindex;
+	}
+
+	if(argc <= trueindex[SQ_NAME]) {
 		THIS->sqlite_callback_error = true;
 		THIS->m_error_callback("Dataset does not contain a package name");
 		return 0;
 	}
-	string category = ARGV(1);
-	if(argc <= 17) {
+	string category = ARGV(SQ_NAME);
+	if(argc <= maxindex) {
 		THIS->sqlite_callback_error = true;
 		THIS->m_error_callback(eix::format("Dataset for %s is too small") % category);
 		return 0;
@@ -95,25 +186,22 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	/* Create a new version and add it to package */
 	Version *version = new Version(aux[1]);
 	// reading slots and stability
-	version->slotname = ARGV(6);
-	version->set_restrict(ARGV(8));
-	if(argc <= 19)
-		version->set_properties("");
-	else
-		version->set_properties(ARGV(19));
-	string keywords = ARGV(12);
+	version->slotname = ARGV(SQ_SLOT);
+	version->set_restrict(ARGV(SQ_RESTRICT));
+	version->set_properties(ARGV(SQ_PROPERTIES));
+	string keywords = ARGV(SQ_KEYWORDS);
 	version->set_full_keywords(keywords);
-	string iuse = ARGV(14);
+	string iuse = ARGV(SQ_IUSE);
 	version->set_iuse(iuse);
 	pkg->addVersion(version);
 
 	/* For the newest version, add all remaining data */
 	if(*(pkg->latest()) == *version)
 	{
-		pkg->homepage = ARGV(9);
-		pkg->licenses = ARGV(10);
-		pkg->desc     = ARGV(11);
-		pkg->provide  = ARGV(17);
+		pkg->homepage = ARGV(SQ_HOMEPAGE);
+		pkg->licenses = ARGV(SQ_LICENSE);
+		pkg->desc     = ARGV(SQ_DESCRIPTION);
+		pkg->provide  = ARGV(SQ_PROVIDE);
 	}
 	/* Free old split */
 	free(aux[0]);
@@ -152,6 +240,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 		pkgtree->need_fast_access(categories);
 	callback_arg = this;
 	sqlite_callback_error = false;
+	maxindex = 0;
 	packagetree = pkgtree;
 	category = cat;
 	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, 0, &errormessage);

@@ -12,11 +12,15 @@
 
 #include <cache/base.h>
 #include <eixTk/stringutils.h>
+#include <vector>
 
 class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 
 	private:
+		std::vector<int> trueindex;
+		int maxindex;
+
 		/** This variable is actually the this-parameter for our sqlite_callback function.
 		    Note that this makes readCategories non-reentrant. */
 		static SqliteCache *callback_arg;

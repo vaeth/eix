@@ -3,6 +3,8 @@
 *eix-0.14.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support for PROPERTIES and RESTRICT.
+	- Inquire sqlite database more flexible. This should fix
+	  http://bugs.gentoo.org/show_bug.cgi?id=238942
 	- Fix ./configure --with-eprefix-default/--with-eix-prefix-default.
 	  Thanks to Michał Bartoszkiewicz <mbartoszkiewicz@gmail.com> for
 	  investigating, see http://bugs.gentoo.org/show_bug.cgi?id=235011
