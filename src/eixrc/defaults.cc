@@ -151,14 +151,14 @@ AddOption(BOOLEAN, "DIFF_PRINT_HEADER",
 	"true", "Should diff-eix print a header info line?");
 
 AddOption(BOOLEAN, "NO_RESTRICTIONS",
-	"false", "If false, fetch and mirror restrictions are output.");
+	"false", "If false, RESTRICT and PROPERTIES values are output.");
 
 AddOption(BOOLEAN, "RESTRICT_INSTALLED",
-	"true", "If true, calculate RESTRICT for installed versions.");
+	"true", "If true, calculate RESTRICT/PROPERTIES for installed versions.");
 
 AddOption(BOOLEAN, "CARE_RESTRICT_INSTALLED",
-	"true", "If true, read RESTRICT for installed versions\n"
-	"always from disk. This is ignored if PROPERTIES_INSTALLED=false.");
+	"true", "If true, read RESTRICT for installed versions always from disk.\n"
+	"This is ignored if PROPERTIES_INSTALLED=false.");
 
 AddOption(STRING, "DEFAULT_FORMAT",
 	"normal", "Defines whether --compact or --verbose is on by default.");
@@ -467,7 +467,7 @@ AddOption(STRING, "FORMAT_INST_RESTRICT",
 	":(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
 	":(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
 	":(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
-	":(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
+	":(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the RESTRICT part of the installedversions format.\n"
 	"Do not omit trailing parts here.");
@@ -491,7 +491,7 @@ AddOption(STRING, "FORMAT_INST_PROPRESTRICT_VERBOSE",
 	"Do not omit trailing parts here.");
 
 AddOption(STRING, "FORMAT_INST_USEFLAGS",
-	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
+	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the Useflags part of INSTALLEDVERSIONS*.");
 
@@ -530,7 +530,7 @@ AddOption(STRING, "INSTALLEDVERSIONS_VERBOSE",
 	":\\n                          (%{COLOR_INST_TITLE})USE\\\\:()     "
 	":"
 	"%{FORMAT_INST_USEFLAGS}"
-	"%{FORMAT_INST_PROPRESTRICT_COMPACT}"
+	"%{FORMAT_INST_PROPRESTRICT_VERBOSE}"
 	":\\n                          "
 	">",
 	"This variable is only used for delayed substitution.\n"

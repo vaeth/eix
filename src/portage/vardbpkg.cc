@@ -368,8 +368,12 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
 		vector<string> lines;
 		if(!pushback_lines((dirname + "/RESTRICT").c_str(),
-			&lines, true, false, false))
-			return false;
+			&lines, true, false, false)) {
+			// It is OK that this file does not exist:
+			// Portage does this if RESTRICT is not set.
+			v.restrictFlags = ExtendedVersion::RESTRICT_NONE;
+			return true;
+		}
 		if(lines.size() == 1)
 			v.set_restrict(lines[0]);
 		else

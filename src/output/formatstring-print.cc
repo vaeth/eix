@@ -149,55 +149,46 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 			ret.append(prepend[PIDX_AFTER_SLOT]);
 		if(fmt.print_restrictions && (prepend.size() > PIDX_PROPERTIES_INTERACTIVE))
 		{
-			if(fmt.vardb->readRestricted(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
-				if((prepend.size() > PIDX_PROPERTIES_INTERACTIVE) &&
-					(it->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE)) {
+			fmt.vardb->readRestricted(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str());
+			ExtendedVersion::Properties p = it->propertiesFlags;
+			if(p && (prepend.size() > PIDX_PROPERTIES_INTERACTIVE)) {
+				if(p & ExtendedVersion::PROPERTIES_INTERACTIVE)
 					ret.append(prepend[PIDX_PROPERTIES_INTERACTIVE]);
-				}
 				if((prepend.size() > PIDX_PROPERTIES_LIVE) &&
-					(it->propertiesFlags & ExtendedVersion::PROPERTIES_LIVE)) {
+					(p & ExtendedVersion::PROPERTIES_LIVE))
 					ret.append(prepend[PIDX_PROPERTIES_LIVE]);
-				}
 				if((prepend.size() > PIDX_PROPERTIES_VIRTUAL) &&
-					(it->propertiesFlags & ExtendedVersion::PROPERTIES_VIRTUAL)) {
+					(p & ExtendedVersion::PROPERTIES_VIRTUAL))
 					ret.append(prepend[PIDX_PROPERTIES_VIRTUAL]);
-				}
-				if((prepend.size() > PIDX_RESTRICT_FETCH) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_FETCH)) {
+			}
+			ExtendedVersion::Restrict r = it->restrictFlags;
+			if(r && (prepend.size() > PIDX_RESTRICT_FETCH)) {
+				if(r & ExtendedVersion::RESTRICT_FETCH)
 					ret.append(prepend[PIDX_RESTRICT_FETCH]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_MIRROR) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_MIRROR)) {
+					(r & ExtendedVersion::RESTRICT_MIRROR))
 					ret.append(prepend[PIDX_RESTRICT_MIRROR]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_PRIMARYURI) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_PRIMARYURI)) {
+					(r & ExtendedVersion::RESTRICT_PRIMARYURI))
 					ret.append(prepend[PIDX_RESTRICT_PRIMARYURI]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_BINCHECKS) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_BINCHECKS)) {
+					(r & ExtendedVersion::RESTRICT_BINCHECKS))
 					ret.append(prepend[PIDX_RESTRICT_BINCHECKS]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_STRIP) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_STRIP)) {
+					(r & ExtendedVersion::RESTRICT_STRIP))
 					ret.append(prepend[PIDX_RESTRICT_STRIP]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_TEST) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_TEST)) {
+					(r & ExtendedVersion::RESTRICT_TEST))
 					ret.append(prepend[PIDX_RESTRICT_TEST]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_USERPRIV) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_USERPRIV)) {
+					(r & ExtendedVersion::RESTRICT_USERPRIV))
 					ret.append(prepend[PIDX_RESTRICT_USERPRIV]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_INSTALLSOURCES) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_INSTALLSOURCES)) {
+					(r & ExtendedVersion::RESTRICT_INSTALLSOURCES))
 					ret.append(prepend[PIDX_RESTRICT_INSTALLSOURCES]);
-				}
 				if((prepend.size() > PIDX_RESTRICT_BINDIST) &&
-					(it->restrictFlags & ExtendedVersion::RESTRICT_BINDIST)) {
+					(r & ExtendedVersion::RESTRICT_BINDIST))
 					ret.append(prepend[PIDX_RESTRICT_BINDIST]);
-				}
 			}
 		}
 		if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
