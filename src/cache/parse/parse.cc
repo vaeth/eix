@@ -110,8 +110,8 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
 		set_checking(version->slotname, "SLOT", ebuild, &ok);
 		// Empty SLOT is not ok:
-		//if(ok && ebuild_exec && version->slotname.empty())
-		//	ok = false;
+		if(ok && ebuild_exec && version->slotname.empty())
+			ok = false;
 		set_checking(restr, "RESTRICT", ebuild);
 		set_checking(props, "PROPERTIES", ebuild);
 		set_checking(iuse, "IUSE", ebuild, &ok);
