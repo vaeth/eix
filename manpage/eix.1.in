@@ -377,51 +377,51 @@ which have at least one version which is also in the regular portage tree.
 .TP
 .B --restrict-fetch
 Only match packages which have at least one version with RESTRICT=fetch.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-mirror
 Only match packages which have at least one version with RESTRICT=mirror.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-primaryuri
 Only match packages which have at least one version with RESTRICT=primaryuri.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-binchecks
 Only match packages which have at least one version with RESTRICT=binchecks.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-strip
 Only match packages which have at least one version with RESTRICT=strip.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-test
 Only match packages which have at least one version with RESTRICT=test.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-userpriv
 Only match packages which have at least one version with RESTRICT=userpriv.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-installsources
 Only match packages which have at least one version with RESTRICT=installsources.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --restrict-bindist
 Only match packages which have at least one version with RESTRICT=bindist.
-If used with other RESTRICT tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-interactive
 Only match packages which have at least one version with PROPERTIES=interactive
-If used with other PROPERTIES tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-live
 Only match packages which have at least one version with PROPERTIES=live
-If used with other PROPERTIES tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-virtual
 Only match packages which have at least one version with PROPERTIES=virtual
-If used with other PROPERTIES tests, the version must satisfy all simultaneously.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .BR -T ", " --test-obsolete
 Only match obsolete packages.

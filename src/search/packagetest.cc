@@ -531,11 +531,13 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(restrictions != ExtendedVersion::RESTRICT_NONE) {
+	if((restrictions != ExtendedVersion::RESTRICT_NONE) ||
+		(properties != ExtendedVersion::PROPERTIES_NONE)) {
 		get_p();
 		bool found = false;
 		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(((it->restrictFlags) & restrictions) == restrictions) {
+			if((((it->restrictFlags) & restrictions) == restrictions) &&
+				(((it->propertiesFlags) & properties) == properties)) {
 				found = true;
 				break;
 			}
@@ -547,33 +549,8 @@ PackageTest::match(PackageReader *pkg) const
 			for(vector<InstVersion>::iterator it = installed_versions->begin();
 				it != installed_versions->end(); ++it) {
 				vardbpkg->readRestricted(*p, *it, *header, portdir);
-				if(((it->restrictFlags) & restrictions) == restrictions) {
-					found = true;
-					break;
-				}
-			}
-			if(!found)
-				return invert;
-		}
-	}
-
-	if(properties != ExtendedVersion::PROPERTIES_NONE) {
-		get_p();
-		bool found = false;
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(((it->propertiesFlags) & properties) == properties) {
-				found = true;
-				break;
-			}
-		}
-		if(!found) {
-			vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
-			if(!installed_versions)
-				return invert;
-			for(vector<InstVersion>::iterator it = installed_versions->begin();
-				it != installed_versions->end(); ++it) {
-				vardbpkg->readRestricted(*p, *it, *header, portdir);
-				if(((it->propertiesFlags) & properties) == properties) {
+				if((((it->restrictFlags) & restrictions) == restrictions) &&
+					(((it->propertiesFlags) & properties) == properties)) {
 					found = true;
 					break;
 				}
