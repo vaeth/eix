@@ -450,25 +450,60 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the string used for \"changed package\" separators (diff-eix).");
 
-AddOption(STRING, "INSTALLEDVERSIONS",
-	"<installedversions"
-	":(%{COLOR_INST_VERSION}):():()"
-	":::"
-	":(%{COLOR_DATE})\\(:\\)()"
-	":\\(:\\)"
-	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
+AddOption(STRING, "FORMAT_INST_PROPERTIES",
 	":(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
 	":(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
-	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
+	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the PROPERTIES part of the installedversions format.\n"
+	"Do not omit trailing parts here.");
+
+AddOption(STRING, "FORMAT_INST_RESTRICT",
 	":(%{COLOR_RESTRICT_FETCH})%{TAG_RESTRICT_FETCH}"
 	":(%{COLOR_RESTRICT_MIRROR})%{TAG_RESTRICT_MIRROR}"
-	":(%{COLOR_RESTRICT_PRIMARYURY})%{TAG_RESTRICT_PRIMARYURY}"
+	":(%{COLOR_RESTRICT_PRIMARYURI})%{TAG_RESTRICT_PRIMARYURI}"
 	":(%{COLOR_RESTRICT_BINCHECKS})%{TAG_RESTRICT_BINCHECKS}"
 	":(%{COLOR_RESTRICT_STRIP})%{TAG_RESTRICT_STRIP}"
 	":(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
 	":(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
 	":(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
 	":(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
+	"This variable is only used for delayed substitution.\n"
+	"It defines the RESTRICT part of the installedversions format.\n"
+	"Do not omit trailing parts here.");
+
+AddOption(STRING, "FORMAT_INST_PROPRESTRICT",
+	"%{FORMAT_INST_PROPERTIES}%{FORMAT_INST_RESTRICT}",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the PROPERTIES/RESTRICT part of INSTALLEDVERSIONS.\n"
+	"Trailing parts can be omitted.");
+
+AddOption(STRING, "FORMAT_INST_PROPRESTRICT_COMPACT",
+	"",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the PROPERTIES/RESTRICT part of INSTALLEDVERSIONS_COMPACT.\n"
+	"Trailing parts can be omitted.");
+
+AddOption(STRING, "FORMAT_INST_PROPRESTRICT_VERBOSE",
+	"%{FORMAT_INST_PROPERTIES}%{FORMAT_INST_RESTRICT}",
+	"This variable is only used for delayed substitution.\n"
+	"It defines the PROPERTIES/RESTRICT part of INSTALLEDVERSIONS_VERBOSE.\n"
+	"Do not omit trailing parts here.");
+
+AddOption(STRING, "FORMAT_INST_USEFLAGS",
+	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
+	"This variable is only used for delayed substitution.\n"
+	"It defines the Useflags part of INSTALLEDVERSIONS*.");
+
+AddOption(STRING, "INSTALLEDVERSIONS",
+	"<installedversions"
+	":(%{COLOR_INST_VERSION}):():()"
+	":::"
+	":(%{COLOR_DATE})\\(:\\)()"
+	":\\(:\\)"
+	"%{FORMAT_INST_USEFLAGS}"
+	"%{FORMAT_INST_PROPRESTRICT}"
+	// ":"
 	">",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions normally.");
@@ -479,19 +514,9 @@ AddOption(STRING, "INSTALLEDVERSIONS_COMPACT",
 	":::"
 	":@(%{COLOR_DATE}):()"
 	":\\(:\\)"
-	":(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
-	":" // "(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
-	":" // "(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
-	":" // "(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
-	":" // "(%{COLOR_RESTRICT_FETCH})%{TAG_RESTRICT_FETCH}"
-	":" // "(%{COLOR_RESTRICT_MIRROR})%{TAG_RESTRICT_MIRROR}"
-	":" // "(%{COLOR_RESTRICT_PRIMARYURY})%{TAG_RESTRICT_PRIMARYURY}"
-	":" // "(%{COLOR_RESTRICT_BINCHECKS})%{TAG_RESTRICT_BINCHECKS}"
-	":" // "(%{COLOR_RESTRICT_STRIP})%{TAG_RESTRICT_STRIP}"
-	":" // "(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
-	":" // "(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
-	":" // "(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
-	":" // "(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
+	"%{FORMAT_INST_USEFLAGS}"
+	"%{FORMAT_INST_PROPRESTRICT_COMPACT}"
+	// ":"
 	">",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions compactly.");
@@ -503,20 +528,11 @@ AddOption(STRING, "INSTALLEDVERSIONS_VERBOSE",
 	":\\n                          (%{COLOR_INST_TITLE})Date\\\\:()    "
 	"(%{COLOR_DATE}):()"
 	":\\n                          (%{COLOR_INST_TITLE})USE\\\\:()     "
-	"::(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()"
-	":(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
-	":(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
-	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
-	":(%{COLOR_RESTRICT_FETCH})%{TAG_RESTRICT_FETCH}"
-	":(%{COLOR_RESTRICT_MIRROR})%{TAG_RESTRICT_MIRROR}"
-	":(%{COLOR_RESTRICT_PRIMARYURY})%{TAG_RESTRICT_PRIMARYURY}"
-	":(%{COLOR_RESTRICT_BINCHECKS})%{TAG_RESTRICT_BINCHECKS}"
-	":(%{COLOR_RESTRICT_STRIP})%{TAG_RESTRICT_STRIP}"
-	":(%{COLOR_RESTRICT_TEST})%{TAG_RESTRICT_TEST}"
-	":(%{COLOR_RESTRICT_USERPRIV})%{TAG_RESTRICT_USERPRIV}"
-	":(%{COLOR_RESTRICT_INSTALLSOURCES})%{TAG_RESTRICT_INSTALLSOURCES}"
-	":(%{COLOR_RESTRICT_BINDIST})%{TAG_RESTRICT_BINDIST}"
-	":\\n                          >",
+	":"
+	"%{FORMAT_INST_USEFLAGS}"
+	"%{FORMAT_INST_PROPRESTRICT_COMPACT}"
+	":\\n                          "
+	">",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions verbosely.");
 

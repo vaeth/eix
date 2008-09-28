@@ -231,7 +231,7 @@ Number       Mask bitset for the RESTRICT variable:
                :0x0010: RESTRICT=installsources
                :0x0020: RESTRICT=fetch
                :0x0040: RESTRICT=mirror
-               :0x0080: RESTRICT=primaryury
+               :0x0080: RESTRICT=primaryuri
                :0x0100: RESTRICT=bindist
 
 HashedWords  Full keywords string of the ebuild.

@@ -808,17 +808,17 @@ list of strings. These strings will be output on the following places:
 
 .BR "14th string: " "After each unset useflag."
 
-.BR "15th string: " "For RESTRICT=fetch"
+.BR "15th string: " "For PROPERTIES=interactive"
 
-.BR "16th string: " "For RESTRICT=mirror"
+.BR "16th string: " "For PROPERTIES=live"
 
-.BR "17th string: " "For RESTRICT=primaryury"
+.BR "17th string: " "For PROPERTIES=virtual"
 
-.BR "18th string: " "For PROPERTIES=interactive"
+.BR "18th string: " "For RESTRICT=fetch"
 
-.BR "19th string: " "For PROPERTIES=live"
+.BR "19th string: " "For RESTRICT=mirror"
 
-.BR "20th string: " "For PROPERTIES=virtual"
+.BR "20th string: " "For RESTRICT=primaryuri"
 
 .BR "21th string: " "For RESTRICT=binchecks"
 
