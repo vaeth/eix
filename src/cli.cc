@@ -216,6 +216,8 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  break;
 			case O_PROPERTIES_VIRTUAL: test->Properties(ExtendedVersion::PROPERTIES_VIRTUAL);
 				  break;
+			case O_PROPERTIES_SET: test->Properties(ExtendedVersion::PROPERTIES_SET);
+				  break;
 			case 'T': red.first = red.second = RedAtom();
 				  if(eixrc.getBool("TEST_FOR_REDUNDANCY"))
 				  {

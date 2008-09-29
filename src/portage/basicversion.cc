@@ -10,6 +10,7 @@
 #include "basicversion.h"
 
 #include <iterator>
+#include <map>
 
 #include <eixTk/compare.h>
 #include <eixTk/exceptions.h>
@@ -285,7 +286,55 @@ const ExtendedVersion::Properties
 	ExtendedVersion::PROPERTIES_NONE,
 	ExtendedVersion::PROPERTIES_INTERACTIVE,
 	ExtendedVersion::PROPERTIES_LIVE,
-	ExtendedVersion::PROPERTIES_VIRTUAL;
+	ExtendedVersion::PROPERTIES_VIRTUAL,
+	ExtendedVersion::PROPERTIES_SET;
+
+static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
+	private:
+		void mapinit(const char *s, ExtendedVersion::Restrict r)
+		{ (*this)[s] = r; }
+	public:
+		RestrictMap()
+		{
+			mapinit("fetch",          ExtendedVersion::RESTRICT_FETCH);
+			mapinit("mirror",         ExtendedVersion::RESTRICT_MIRROR);
+			mapinit("primaryuri",     ExtendedVersion::RESTRICT_PRIMARYURI);
+			mapinit("binchecks",      ExtendedVersion::RESTRICT_BINCHECKS);
+			mapinit("bindist",        ExtendedVersion::RESTRICT_BINDIST);
+			mapinit("installsources", ExtendedVersion::RESTRICT_INSTALLSOURCES);
+			mapinit("strip",          ExtendedVersion::RESTRICT_STRIP);
+			mapinit("test",           ExtendedVersion::RESTRICT_TEST);
+			mapinit("userpriv",       ExtendedVersion::RESTRICT_USERPRIV);
+		}
+		ExtendedVersion::Restrict getRestrict(const string& s)
+		{
+			map<string,ExtendedVersion::Restrict>::const_iterator i = find(s);
+			if(i != end())
+				return i->second;
+			return ExtendedVersion::RESTRICT_NONE;
+		}
+} restrict_map;
+
+static class PropertiesMap : public map<string,ExtendedVersion::Properties> {
+	private:
+		void mapinit(const char *s, ExtendedVersion::Properties p)
+		{ (*this)[s] = p; }
+	public:
+		PropertiesMap()
+		{
+			mapinit("interactive", ExtendedVersion::PROPERTIES_INTERACTIVE);
+			mapinit("live",        ExtendedVersion::PROPERTIES_LIVE);
+			mapinit("virtual",     ExtendedVersion::PROPERTIES_VIRTUAL);
+			mapinit("set",         ExtendedVersion::PROPERTIES_SET);
+		}
+		ExtendedVersion::Properties getProperties(const string& s)
+		{
+			map<string,ExtendedVersion::Properties>::const_iterator i = find(s);
+			if(i != end())
+				return i->second;
+			return ExtendedVersion::PROPERTIES_NONE;
+		}
+} properties_map;
 
 ExtendedVersion::Restrict
 ExtendedVersion::calcRestrict(const string &str)
@@ -293,26 +342,8 @@ ExtendedVersion::calcRestrict(const string &str)
 	Restrict r = RESTRICT_NONE;
 	vector<string> restrict_words = split_string(str);
 	for(vector<string>::const_iterator it = restrict_words.begin();
-		it != restrict_words.end(); ++it) {
-		if(strcmp(it->c_str(), "fetch") == 0)
-			r |= RESTRICT_FETCH;
-		else if(strcmp(it->c_str(), "mirror") == 0)
-			r |= RESTRICT_MIRROR;
-		else if(strcmp(it->c_str(), "primaryuri") == 0)
-			r |= RESTRICT_PRIMARYURI;
-		else if(strcmp(it->c_str(), "binchecks") == 0)
-			r |= RESTRICT_BINCHECKS;
-		else if(strcmp(it->c_str(), "bindist") == 0)
-			r |= RESTRICT_BINDIST;
-		else if(strcmp(it->c_str(), "installsources") == 0)
-			r |= RESTRICT_INSTALLSOURCES;
-		else if(strcmp(it->c_str(), "strip") == 0)
-			r |= RESTRICT_STRIP;
-		else if(strcmp(it->c_str(), "test") == 0)
-			r |= RESTRICT_TEST;
-		else if(strcmp(it->c_str(), "userpriv") == 0)
-			r |= RESTRICT_USERPRIV;
-	}
+		it != restrict_words.end(); ++it)
+		r |= restrict_map.getRestrict(*it);
 	return r;
 }
 
@@ -322,13 +353,7 @@ ExtendedVersion::calcProperties(const string &str)
 	Properties p = PROPERTIES_NONE;
 	vector<string> properties_words = split_string(str);
 	for(vector<string>::const_iterator it = properties_words.begin();
-		it != properties_words.end(); ++it) {
-		if(strcmp(it->c_str(), "interactive") == 0)
-			p |= PROPERTIES_INTERACTIVE;
-		else if(strcmp(it->c_str(), "live") == 0)
-			p |= PROPERTIES_LIVE;
-		else if(strcmp(it->c_str(), "virtual") == 0)
-			p |= PROPERTIES_VIRTUAL;
-	}
+		it != properties_words.end(); ++it)
+		p |= properties_map.getProperties(*it);
 	return p;
 }

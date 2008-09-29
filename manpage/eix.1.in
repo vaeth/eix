@@ -423,6 +423,10 @@ If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simul
 Only match packages which have at least one version with PROPERTIES=virtual
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
+.B --properties-set
+Only match packages which have at least one version with PROPERTIES=set
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+.TP
 .BR -T ", " --test-obsolete
 Only match obsolete packages.
 
@@ -633,9 +637,9 @@ This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .B 2.0.0_rc1-r6
 This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
 .TP
-.B 1.0+i+l+v!f!m!p!b!s!t!u!i!d
+.B 1.0+i+l+v+s!f!m!p!b!s!t!u!i!d
 This is version 1.0 which is subject to
-PROPERTIES="interactive live virtual" as well as
+PROPERTIES="interactive live virtual set" as well as
 RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist"
 .TP
 .B 5.0-r3(5.0R3)!f
@@ -814,25 +818,27 @@ list of strings. These strings will be output on the following places:
 
 .BR "17th string: " "For PROPERTIES=virtual"
 
-.BR "18th string: " "For RESTRICT=fetch"
+.BR "18th string: " "For PROPERTIES=set"
 
-.BR "19th string: " "For RESTRICT=mirror"
+.BR "19th string: " "For RESTRICT=fetch"
 
-.BR "20th string: " "For RESTRICT=primaryuri"
+.BR "20th string: " "For RESTRICT=mirror"
 
-.BR "21th string: " "For RESTRICT=binchecks"
+.BR "21th string: " "For RESTRICT=primaryuri"
 
-.BR "22th string: " "For RESTRICT=strip"
+.BR "22th string: " "For RESTRICT=binchecks"
 
-.BR "23th string: " "For RESTRICT=test"
+.BR "23th string: " "For RESTRICT=strip"
 
-.BR "24th string: " "For RESTRICT=userpriv"
+.BR "24th string: " "For RESTRICT=test"
 
-.BR "25th string: " "For RESTRICT=installsources"
+.BR "25th string: " "For RESTRICT=userpriv"
 
-.BR "26th string: " "For RESTRICT=bindist"
+.BR "26th string: " "For RESTRICT=installsources"
 
-.BR "27th string: " "Between two entries. The default is either (space) or (newlines + 3 tabs + 2 spaces), depending on whether useflags are printed or --versionlines is in effect"
+.BR "27th string: " "For RESTRICT=bindist"
+
+.BR "28th string: " "Between two entries. The default is either (space) or (newlines + 3 tabs + 2 spaces), depending on whether useflags are printed or --versionlines is in effect"
 
 .BR "later strings " "are ignored"
 
@@ -1480,7 +1486,7 @@ Use the same syntax as you would inside ().
 See B<FORMATSTRING>.
 
 .TP
-.BR COLOR_RESTRICT_FETCH ", " COLOR_RESTRICT_MIRROR ", " COLOR_RESTRICT_PRIMARYURI ", " COLOR_RESTRICT_BINCHECKS ", " COLOR_RESTRICT_STRIP ", " COLOR_RESTRICT_TEST ", "  COLOR_RESTRICT_USERPRIV ", " COLOR_RESTRICT_INSTALLSOURCES ", " COLOR_RESTRICT_BINDIST ", " COLOR_PROPERTIES_INTERACTIVE ", " COLOR_PROPERTIES_LIVE ", " COLOR_PROPERTIES_VIRTUAL ", "
+.BR COLOR_RESTRICT_FETCH ", " COLOR_RESTRICT_MIRROR ", " COLOR_RESTRICT_PRIMARYURI ", " COLOR_RESTRICT_BINCHECKS ", " COLOR_RESTRICT_STRIP ", " COLOR_RESTRICT_TEST ", "  COLOR_RESTRICT_USERPRIV ", " COLOR_RESTRICT_INSTALLSOURCES ", " COLOR_RESTRICT_BINDIST ", " COLOR_PROPERTIES_INTERACTIVE ", " COLOR_PROPERTIES_LIVE ", " COLOR_PROPERTIES_VIRTUAL ", " COLOR_PROPERTIES_SET
 Define the color for tags corresponding to the RESTRICT or PROPERTIES settings.
 Use the same syntax as you would inside ().
 See B<FORMATSTRING>.
@@ -1878,7 +1884,7 @@ number of matches and use e.g. B<FORMAT=''> to speed things up.
 .B TAG_FOR_PROFILE TAG_FOR_MASKED TAG_FOR_EX_PROFILE TAG_FOR_EX_MASKED TAG_FOR_LOCALLY_MASKED TAG_FOR_STABLE TAG_FOR_UNSTABLE TAG_FOR_MINUS_ASTERISK TAG_FOR_MINUS_KEYWORD TAG_FOR_ALIEN_STABLE TAG_FOR_ALIEN_UNSTABLE TAG_FOR_MISSING_KEYWORD TAG_FOR_EX_UNSTABLE TAG_FOR_EX_MINUS_ASTERISK TAG_FOR_EX_MINUS_KEYWORD TAG_FOR_EX_ALIEN_STABLE TAG_FOR_EX_ALIEN_UNSTABLE TAG_FOR_EX_MISSING_KEYWORD " " (String)
 The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP
-.B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL " " (String)
+.B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL TAG_PROPERTIES_SET " " (String)
 The tags which are printed for versions with the corresponding RESTRICT or PROPERTIES settings.
 .TP
 .\" {{{ Default Matchfields for different strings.

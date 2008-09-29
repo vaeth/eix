@@ -227,7 +227,8 @@ class PrintFormat {
 			   color_restrict_bindist,        /**< Color for RESTRICT=bindist */
 			   color_properties_interactive,  /**< Color for PROPERTIES=interactive */
 			   color_properties_live,         /**< Color for PROPERTIES=live */
-			   color_properties_virtual;      /**< Color for PROPERTIES=live */
+			   color_properties_virtual,      /**< Color for PROPERTIES=virtual */
+			   color_properties_set;          /**< Color for PROPERTIES=set */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
 			   mark_version,      /**< Marker for marked versions */
@@ -260,7 +261,8 @@ class PrintFormat {
 			tag_restrict_bindist,
 			tag_properties_interactive,
 			tag_properties_live,
-			tag_properties_virtual;
+			tag_properties_virtual,
+			tag_properties_set;
 
 		PrintFormat(GetProperty get_callback = NULL, PrintProperty print_callback = NULL)
 		{
@@ -297,6 +299,7 @@ class PrintFormat {
 				color_properties_interactive  = AnsiColor(color_properties_interactive).asString();
 				color_properties_live         = AnsiColor(color_properties_live).asString();
 				color_properties_virtual      = AnsiColor(color_properties_virtual).asString();
+				color_properties_set          = AnsiColor(color_properties_set).asString();
 				AnsiMarker ins_marker(mark_installed);
 				mark_installed     = ins_marker.asString();
 				mark_installed_end = ins_marker.end();

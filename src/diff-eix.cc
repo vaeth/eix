@@ -353,6 +353,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.color_properties_interactive  = eixrc["COLOR_PROPERTIES_INTERACTIVE"];
 	format_for_new.color_properties_live         = eixrc["COLOR_PROPERTIES_LIVE"];
 	format_for_new.color_properties_virtual      = eixrc["COLOR_PROPERTIES_VIRTUAL"];
+	format_for_new.color_properties_set          = eixrc["COLOR_PROPERTIES_SET"];
 
 	format_for_new.slot_sorted      = false;
 	format_for_new.alpha_use        = eixrc.getBool("SORT_INST_USE_ALPHA");
@@ -383,6 +384,7 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.tag_properties_interactive  = eixrc["TAG_PROPERTIES_INTERACTIVE"];
 	format_for_new.tag_properties_live         = eixrc["TAG_PROPERTIES_LIVE"];
 	format_for_new.tag_properties_virtual      = eixrc["TAG_PROPERTIES_VIRTUAL"];
+	format_for_new.tag_properties_set          = eixrc["TAG_PROPERTIES_SET"];
 
 	format_for_new.tag_for_profile            = eixrc["TAG_FOR_PROFILE"];
 	format_for_new.tag_for_masked             = eixrc["TAG_FOR_MASKED"];

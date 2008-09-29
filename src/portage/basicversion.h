@@ -105,11 +105,12 @@ class ExtendedVersion : public BasicVersion
 			RESTRICT_BINDIST        = 0x0100;
 
 		typedef io::UChar Properties;
-		static const Properties
+		static const Properties // order according to frequency...
 			PROPERTIES_NONE        = 0x00,
 			PROPERTIES_INTERACTIVE = 0x01,
 			PROPERTIES_LIVE        = 0x02,
-			PROPERTIES_VIRTUAL     = 0x04;
+			PROPERTIES_VIRTUAL     = 0x04,
+			PROPERTIES_SET         = 0x08;
 
 		Restrict restrictFlags;
 		Properties propertiesFlags;

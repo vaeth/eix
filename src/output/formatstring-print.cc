@@ -112,6 +112,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		PIDX_PROPERTIES_INTERACTIVE,
 		PIDX_PROPERTIES_LIVE,
 		PIDX_PROPERTIES_VIRTUAL,
+		PIDX_PROPERTIES_SET,
 		PIDX_RESTRICT_FETCH,
 		PIDX_RESTRICT_MIRROR,
 		PIDX_RESTRICT_PRIMARYURI,
@@ -160,6 +161,9 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 				if((prepend.size() > PIDX_PROPERTIES_VIRTUAL) &&
 					(p & ExtendedVersion::PROPERTIES_VIRTUAL))
 					ret.append(prepend[PIDX_PROPERTIES_VIRTUAL]);
+				if((prepend.size() > PIDX_PROPERTIES_SET) &&
+					(p & ExtendedVersion::PROPERTIES_SET))
+					ret.append(prepend[PIDX_PROPERTIES_SET]);
 			}
 			ExtendedVersion::Restrict r = it->restrictFlags;
 			if(r && (prepend.size() > PIDX_RESTRICT_FETCH)) {
@@ -470,6 +474,11 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			if(! fmt->no_color)
 				cout << fmt->color_properties_virtual;
 			cout << fmt->tag_properties_virtual;
+		}
+		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_SET) {
+			if(! fmt->no_color)
+				cout << fmt->color_properties_set;
+			cout << fmt->tag_properties_set;
 		}
 		if(version->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
 			if(! fmt->no_color)

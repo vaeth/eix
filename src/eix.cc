@@ -136,6 +136,7 @@ dump_help(int exit_code)
 			"    --properties-interactive  Match packages with PROPERTIES=interactive.\n"
 			"    --properties-live         Match packages with PROPERTIES=live.\n"
 			"    --properties-virtual      Match packages with PROPERTIES=virtual.\n"
+			"    --properties-set          Match packages with PROPERTIES=set.\n"
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
@@ -300,6 +301,7 @@ static struct Option long_options[] = {
 	Option("properties-interactive", O_PROPERTIES_INTERACTIVE),
 	Option("properties-live",        O_PROPERTIES_LIVE),
 	Option("properties-virtual",     O_PROPERTIES_VIRTUAL),
+	Option("properties-set",         O_PROPERTIES_SET),
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
@@ -380,6 +382,7 @@ setup_defaults()
 	format.color_properties_interactive  = rc["COLOR_PROPERTIES_INTERACTIVE"];
 	format.color_properties_live         = rc["COLOR_PROPERTIES_LIVE"];
 	format.color_properties_virtual      = rc["COLOR_PROPERTIES_VIRTUAL"];
+	format.color_properties_set          = rc["COLOR_PROPERTIES_SET"];
 
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
 	format.color_original      = rc.getBool("COLOR_ORIGINAL");
@@ -419,6 +422,7 @@ setup_defaults()
 	format.tag_properties_interactive  = rc["TAG_PROPERTIES_INTERACTIVE"];
 	format.tag_properties_live         = rc["TAG_PROPERTIES_LIVE"];
 	format.tag_properties_virtual      = rc["TAG_PROPERTIES_VIRTUAL"];
+	format.tag_properties_set          = rc["TAG_PROPERTIES_SET"];
 
 	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
 	format.tag_for_masked             = rc["TAG_FOR_MASKED"];

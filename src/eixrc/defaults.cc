@@ -453,7 +453,8 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 AddOption(STRING, "FORMAT_INST_PROPERTIES",
 	":(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
 	":(%{COLOR_PROPERTIES_LIVE})%{TAG_PROPERTIES_LIVE}"
-	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}",
+	":(%{COLOR_PROPERTIES_VIRTUAL})%{TAG_PROPERTIES_VIRTUAL}"
+	":(%{COLOR_PROPERTIES_SET})%{TAG_PROPERTIES_SET}",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the PROPERTIES part of the installedversions format.\n"
 	"Do not omit trailing parts here.");
@@ -1136,6 +1137,9 @@ AddOption(STRING, "COLOR_PROPERTIES_LIVE",
 AddOption(STRING, "COLOR_PROPERTIES_VIRTUAL",
 	"%{COLOR_PROPERTIES}", "Color for the virtual properties tag.");
 
+AddOption(STRING, "COLOR_PROPERTIES_SET",
+	"%{COLOR_PROPERTIES}", "Color for the set properties tag.");
+
 AddOption(STRING, "MARK_INSTALLED",
 	"inverse", "How installed packages are marked in version listings.");
 
@@ -1311,6 +1315,9 @@ AddOption(STRING, "TAG_PROPERTIES_LIVE",
 
 AddOption(STRING, "TAG_PROPERTIES_VIRTUAL",
 	"+v", "Tag for PROPERTIES=virtual.");
+
+AddOption(STRING, "TAG_PROPERTIES_SET",
+	"+s", "Tag for PROPERTIES=set.");
 
 
 #define TAG_FOR(opt_type, opt_default, opt_comment) \
