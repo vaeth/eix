@@ -79,7 +79,7 @@ sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
     the constructor, all functions should be const or static.
 */
 
-static class TrueIndex : public map<string,int> {
+static class TrueIndex : public map<string,vector<int>::size_type> {
 	public:
 		typedef enum {
 			NAME,
@@ -97,7 +97,7 @@ static class TrueIndex : public map<string,int> {
 		vector<int> default_trueindex;
 
 	private:
-		void mapinit(int true_index, int my_index, const char *s)
+		void mapinit(int true_index, vector<int>::size_type my_index, const char *s)
 		{
 			(*this)[s] = my_index;
 			default_trueindex[my_index] = true_index;
@@ -122,12 +122,12 @@ static class TrueIndex : public map<string,int> {
 		{
 			trueindex = default_trueindex;
 			for(int i = 0; i < argc; ++i) {
-				map<string,int>::const_iterator it = find(azColName[i]);
+				map<string,vector<int>::size_type>::const_iterator it = find(azColName[i]);
 				if(it != end())
 					trueindex[it->second] = i;
 			}
 			int maxindex = -1;
-			for(int i = 0; i < TrueIndex::LAST; ++i) {
+			for(vector<int>::size_type i = 0; i < TrueIndex::LAST; ++i) {
 				int curr = trueindex[i];
 				// Shortcut if we have not reached the maximum
 				if(maxindex >= curr)
@@ -144,7 +144,7 @@ static class TrueIndex : public map<string,int> {
 			return maxindex;
 		}
 
-		static const char *c_str(const char **argv, vector<int> &trueindex, const int i)
+		static const char *c_str(const char **argv, vector<int> &trueindex, const vector<int>::size_type i)
 		{
 			int t = trueindex[i];
 			if(t < 0)
