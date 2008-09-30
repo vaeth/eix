@@ -18,6 +18,7 @@ class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 
 	private:
+		void sqlite_callback_cpp(int argc, const char **argv, const char **azColName);
 		std::vector<int> trueindex;
 		int maxindex;
 

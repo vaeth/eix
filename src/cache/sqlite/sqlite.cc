@@ -29,11 +29,33 @@ using namespace std;
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
 
 
-/** All stuff related to our  sqlite_callback() */
+
+/** All stuff related to our sqlite_callback()
+    Essentially, this is just a C-wrapper to get the implicit this argument in */
 
 SqliteCache *SqliteCache::callback_arg;
-#define THIS SqliteCache::callback_arg
 
+inline static const char *
+welldefine(const char *s)
+{
+	if(s)
+		return s;
+	return "";
+}
+
+int
+sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
+{
+	UNUSED(NotUsed);
+#if 0
+	for(int i = 0; i<argc; ++i) {
+		cout << i << ": " << azColName[i] << " = " <<  welldefine(argv[i]) << "\n";
+	}
+#else
+	SqliteCache::callback_arg->sqlite_callback_cpp(argc, const_cast<const char **>(argv), const_cast<const char **>(azColName));
+#endif
+	return 0;
+}
 
 /**
     The following is all related to get the proper index for the lookups.
@@ -46,10 +68,15 @@ SqliteCache *SqliteCache::callback_arg;
     The class TrueIndex and the static (and only) instance handle_trueindex
     is used to calculate the initial value of trueindex/maxindex
     at the first database access by first filling it with default parameters
-    and - for the case that  appropriate data is stored in azColName -
-    modifying this correspondingly: This has the advantage that if portage
-    should later change the names, we still have (hopefully correct)
+    and - for the case that appropriate data is stored in azColName -
+    modifying this correspondingly: This has the advantage that if some
+    portage versions use different names, we still have (hopefully correct)
     default values.
+
+    The class TrueIndex itself is independent of SqliteCache and gets passed
+    all required data by parameters. Note that it stores nothing except for
+    the static default data, and so, except for the first initialization in
+    the constructor, all functions should be const or static.
 */
 
 static class TrueIndex : public map<string,int> {
@@ -91,7 +118,7 @@ static class TrueIndex : public map<string,int> {
 			mapinit(19, PROPERTIES,  "PROPERTIES");
 		}
 
-		int calc(int argc, char **azColName, vector<int> &trueindex)
+		int calc(int argc, const char **azColName, vector<int> &trueindex) const
 		{
 			trueindex = default_trueindex;
 			for(int i = 0; i < argc; ++i) {
@@ -117,14 +144,7 @@ static class TrueIndex : public map<string,int> {
 			return maxindex;
 		}
 
-		static const char *welldefine(const char *s)
-		{
-			if(s)
-				return s;
-			return "";
-		}
-
-		static const char *c_str(char **argv, vector<int> &trueindex, const int i)
+		static const char *c_str(const char **argv, vector<int> &trueindex, const int i)
 		{
 			int t = trueindex[i];
 			if(t < 0)
@@ -133,63 +153,52 @@ static class TrueIndex : public map<string,int> {
 		}
 } handle_trueindex;
 
-int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
+void
+SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azColName)
 {
-	UNUSED(NotUsed);
-#if 0
-	for(int i = 0; i<argc; ++i) {
-		cout << i << ": " << azColName[i] << " = " <<  TrueIndex::welldefine(argv[i]) << "\n";
-	}
-	return 0;
-#endif
 	// If an earlier error occurred, we ignore later calls:
-	if(THIS->sqlite_callback_error)
-		return 0;
+	if(sqlite_callback_error)
+		return;
 
-	vector<int> &trueindex = THIS->trueindex;
-	int maxindex = THIS->maxindex;
-	if(!maxindex) {
+	if(!maxindex)
 		maxindex = handle_trueindex.calc(argc, azColName, trueindex);
-		THIS->maxindex = maxindex;
-	}
 
 	if(argc <= trueindex[TrueIndex::NAME]) {
-		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback("Dataset does not contain a package name");
-		return 0;
+		sqlite_callback_error = true;
+		m_error_callback("Dataset does not contain a package name");
+		return;
 	}
-	string category = TrueIndex::c_str(argv, trueindex, TrueIndex::NAME);
+	string catarg = TrueIndex::c_str(argv, trueindex, TrueIndex::NAME);
 	if(argc <= maxindex) {
-		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback(eix::format("Dataset for %s is too small") % category);
-		return 0;
+		sqlite_callback_error = true;
+		m_error_callback(eix::format("Dataset for %s is too small") % catarg);
+		return;
 	}
-	string::size_type pos = category.find_first_of('/');
+	string::size_type pos = catarg.find_first_of('/');
 	if(pos == string::npos) {
-		THIS->sqlite_callback_error = true;
-		THIS->m_error_callback(eix::format("%r not of the form package/category-version") % category);
-		return 0;
+		sqlite_callback_error = true;
+		m_error_callback(eix::format("%r not of the form package/category-version") % catarg);
+		return;
 	}
-	string name_ver = category.substr(pos + 1);
-	category.resize(pos);
-	// Does the category match?
+	string name_ver = catarg.substr(pos + 1);
+	catarg.resize(pos);
+	// Does the catarg match category?
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
-	if(THIS->category) {
-		dest_cat = THIS->category;
-		if(dest_cat->name != category)
-			return 0;
+	if(category) {
+		dest_cat = category;
+		if(dest_cat->name != catarg)
+			return;
 	}
 	else {
-		dest_cat = THIS->packagetree->find(category);
+		dest_cat = packagetree->find(catarg);
 		if(!dest_cat)
-			return 0;
+			return;
 	}
 	char **aux = ExplodeAtom::split(name_ver.c_str());
-	if(aux == NULL)
-	{
-		THIS->m_error_callback(eix::format("Can't split %r into package and version") % name_ver);
-		return 0;
+	if(aux == NULL) {
+		m_error_callback(eix::format("Can't split %r into package and version") % name_ver);
+		return;
 	}
 	/* Search for existing package */
 	Package *pkg = dest_cat->findPackage(aux[0]);
@@ -221,7 +230,6 @@ int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	/* Free old split */
 	free(aux[0]);
 	free(aux[1]);
-	return 0;
 }
 
 bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories, Category *cat) throw(ExBasic)
