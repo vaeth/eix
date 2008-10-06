@@ -16,7 +16,9 @@ class MetadataCache : public BasicCache {
 	protected:
 		bool metadata, flat, have_override_path;
 		std::string override_path;
+		std::string m_type;
 
+		void setType(bool set_flat, bool set_metadata);
 	public:
 		bool initialize(const std::string &name);
 
@@ -25,7 +27,8 @@ class MetadataCache : public BasicCache {
 		bool use_prefixport() const
 		{ return metadata; }
 
-		const char *getType() const;
+		const char *getType() const
+		{ return m_type.c_str(); }
 };
 
 #endif /* __METADATA_H__ */

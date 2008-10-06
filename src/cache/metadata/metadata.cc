@@ -41,49 +41,47 @@ MetadataCache::initialize(const string &name)
 		have_override_path = false;
 	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
 		(strcasecmp(pure_name.c_str(), "metadata-flat") == 0)) {
-		flat = true;
-		metadata = true;
+		setType(true, true);
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "metadata*") == 0) ||
 		(strcasecmp(pure_name.c_str(), "metadata-assign") == 0)) {
-		flat = false;
-		metadata = true;
+		setType(false, true);
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "flat") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.0") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.0.51") == 0)) {
-		flat = true;
-		metadata = false;
+		setType(true, false);
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "assign") == 0) ||
 		(strcasecmp(pure_name.c_str(), "backport") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.1") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.1.0") == 0)) {
-		flat = false;
-		metadata = false;
+		setType(false, false);
 		return true;
 	}
 	return false;
 }
 
-const char *
-MetadataCache::getType() const
+void
+MetadataCache::setType(bool set_flat, bool set_metadata)
 {
-	static string s;
-	if(metadata)
-		s = "metadata-";
-	if(flat)
-		s.append("flat");
+	metadata = set_metadata;
+	if(set_metadata)
+		m_type = "metadata-";
 	else
-		s.append("assign");
+		m_type.clear();
+	flat = set_flat;
+	if(set_flat)
+		m_type.append("flat");
+	else
+		m_type.append("assign");
 	if(have_override_path) {
-		s.append(":");
-		s.append(override_path);
+		m_type.append(":");
+		m_type.append(override_path);
 	}
-	return s.c_str();
 }
 
 static int
