@@ -1641,8 +1641,8 @@ when you run update-eix.
 
 If you provide I<PATH>, it overrides the above path; in this case, it must be
 the full path (i.e. no prefix is used). You might want to provide I<PATH> if
-you use paludis to generate the metadata in the corresponding directory.
-See also cache method B<flat> below.
+you use some package manager to generate the metadata in the corresponding
+directory.
 .TP
 .SS
 .BR metadata-assign " or " metadata-assign:I<PATH>
@@ -1675,12 +1675,10 @@ use B<emerge --metadata> before you call B<update-eix> with this method.
 .SS
 .BR flat " or " flat:I<PATH>
 This is similar to B<metadata-flat> with the difference that the metadata is
-expected in the directory I<PATH>/<${PORTAGE_OR_OVERLAY_DIR}>.
+expected in the directory I<PATH>I<${PORTAGE_OR_OVERLAY_DIR}>.
 If I<PATH> is omitted, it defaults to B</var/cache/edb/dep>.
 
-You can use this cache method with <portage-2.1 and the default backend
-or if you are using paludis to generate the metadata in the corresponding
-directory.
+You can use this cache method with <portage-2.1 and the default backend.
 .TP
 .SS
 .B assign " or " assign:I<PATH>
@@ -1694,6 +1692,15 @@ tree when you run update-eix.
 Note that in contrast to the default B<metadata-*> cache methods you must
 run B<emerge --metadata> before you call B<update-eix> with this method.
 You will probably want to use a corresponding option in eix-sync in this case.
+.TP
+.SS
+.BR repo-flat " or " repo-flat:I<PATH> " or " repo-assign " or " repo-assign:I<PATH>
+This is analogous to B<flat>/B<assign> with the difference that the metadata is
+expected in the directory I<PATH>B</>I<${repo_name}>.
+(This broken naming scheme is needed for paludis but will break if e.g. no
+repo_name file is contained in the overlay or if repo_name contains illegal
+filename character; you are responsible for the correctness of the paths
+if you use this method.)
 .TP
 .SS
 .B parse

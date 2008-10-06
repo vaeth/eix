@@ -41,38 +41,53 @@ MetadataCache::initialize(const string &name)
 		have_override_path = false;
 	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
 		(strcasecmp(pure_name.c_str(), "metadata-flat") == 0)) {
-		setType(true, true);
+		setType(PATH_METADATA, true);
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "metadata*") == 0) ||
 		(strcasecmp(pure_name.c_str(), "metadata-assign") == 0)) {
-		setType(false, true);
+		setType(PATH_METADATA, false);
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "flat") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.0") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.0.51") == 0)) {
-		setType(true, false);
+		setType(PATH_FULL, true);
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "assign") == 0) ||
 		(strcasecmp(pure_name.c_str(), "backport") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.1") == 0) ||
 		(strcasecmp(pure_name.c_str(), "portage-2.1.0") == 0)) {
-		setType(false, false);
+		setType(PATH_FULL, false);
+		return true;
+	}
+	if(strcasecmp(pure_name.c_str(), "repo-flat") == 0) {
+		setType(PATH_REPOSITORY, true);
+		return true;
+	}
+	if(strcasecmp(pure_name.c_str(), "repo-assign") == 0) {
+		setType(PATH_REPOSITORY, false);
 		return true;
 	}
 	return false;
 }
 
 void
-MetadataCache::setType(bool set_flat, bool set_metadata)
+MetadataCache::setType(PathType set_path_type, bool set_flat)
 {
-	metadata = set_metadata;
-	if(set_metadata)
-		m_type = "metadata-";
-	else
-		m_type.clear();
+	path_type = set_path_type;
+	switch(set_path_type) {
+		case PATH_METADATA:
+			m_type = "metadata-";
+			break;
+		case PATH_REPOSITORY:
+			m_type = "repo-";
+			break;
+		// case PATH_FULL:
+		default:
+			m_type.clear();
+	}
 	flat = set_flat;
 	if(set_flat)
 		m_type.append("flat");
@@ -100,19 +115,36 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 	string catpath;
 	if(have_override_path) {
 		catpath = override_path;
-		if(!metadata)
-			catpath.append(m_scheme);
+		switch(path_type) {
+			case PATH_METADATA:
+				catpath.append(m_scheme);
+				break;
+			case PATH_REPOSITORY:
+				catpath.append("/");
+				catpath.append(m_overlay_name);
+				break;
+			default:
+			// case PATH_FULL:
+				break;
+		}
 	}
 	else {
 		catpath = m_prefix;
-		if(metadata) {
-			// m_scheme is actually the portdir
-			catpath.append(m_scheme);
-			catpath.append(METADATA_PATH);
-		}
-		else {
-			catpath.append(PORTAGE_CACHE_PATH);
-			catpath.append(m_scheme);
+		switch(path_type) {
+			case PATH_METADATA:
+				// m_scheme is actually the portdir
+				catpath.append(m_scheme);
+				catpath.append(METADATA_PATH);
+				break;
+			case PATH_REPOSITORY:
+				catpath.append(PORTAGE_CACHE_PATH);
+				catpath.append(m_scheme);
+				break;
+			default:
+			// case PATH_FULL:
+				catpath.append(PORTAGE_CACHE_PATH);
+				catpath.append("/");
+				catpath.append(m_overlay_name);
 		}
 	}
 	if(catpath.empty() || (*(catpath.rbegin()) != '/'))

@@ -457,6 +457,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		}
 		Version::Overlay key = dbheader.addOverlay(overlay);
 		cache->setKey(key);
+		cache->setOverlayName(overlay.label);
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 

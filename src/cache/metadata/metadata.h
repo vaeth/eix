@@ -14,18 +14,24 @@
 
 class MetadataCache : public BasicCache {
 	protected:
-		bool metadata, flat, have_override_path;
+		typedef enum {
+			PATH_METADATA,
+			PATH_FULL,
+			PATH_REPOSITORY
+		} PathType;
+		PathType path_type;
+		bool flat, have_override_path;
 		std::string override_path;
 		std::string m_type;
 
-		void setType(bool set_flat, bool set_metadata);
+		void setType(PathType set_path_type, bool set_flat);
 	public:
 		bool initialize(const std::string &name);
 
 		bool readCategory(Category &vec) throw(ExBasic);
 
 		bool use_prefixport() const
-		{ return metadata; }
+		{ return (path_type == PATH_METADATA); }
 
 		const char *getType() const
 		{ return m_type.c_str(); }

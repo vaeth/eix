@@ -47,6 +47,10 @@ class BasicCache {
 		void setKey(Version::Overlay key)
 		{ m_overlay_key = key; }
 
+		/// Set overlay-name
+		void setOverlayName(std::string name)
+		{ m_overlay_name = name; }
+
 		// Get scheme for this cache
 		std::string getPath() const
 		{ return m_scheme; }
@@ -86,6 +90,7 @@ class BasicCache {
 
 	protected:
 		std::string m_scheme, m_prefix, m_prefix_exec;
+		std::string m_overlay_name;
 		bool have_prefix, have_prefix_exec;
 		Version::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
