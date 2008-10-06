@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix visible output of cache methods metadata/flat, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=240038
+	- Provide --installed-unstable, --installed-testing, --installed-masked
+	  see http://bugs.gentoo.org/show_bug.cgi?id=240010
 
 *eix-0.14.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

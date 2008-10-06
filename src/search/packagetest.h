@@ -126,6 +126,9 @@ class PackageTest {
 		void SetStabilityNonlocal(TestStability require)
 		{  test_stability_nonlocal |= require; }
 
+		void SetInstability(TestStability avoid)
+		{  test_instability |= avoid; }
+
 		void Overlay()
 		{ overlay = true; }
 
@@ -253,6 +256,7 @@ class PackageTest {
 		TestInstalled test_installed;
 		TestStability test_stability_default,
 			test_stability_local, test_stability_nonlocal;
+		TestStability test_instability;
 
 		static MatchField name2field(const std::string &p) throw(ExBasic);
 		static MatchField get_matchfield(const char *p) throw(ExBasic);
@@ -270,6 +274,7 @@ class PackageTest {
 
 		bool have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const;
 		bool have_redundant(const Package &p, Keywords::Redundant r) const;
+		bool instabilitytest(const Package *p, TestStability what) const;
 
 		static Keywords::Redundant nowarn_keywords(const Package &p);
 		static Keywords::Redundant nowarn_mask(const Package &p);

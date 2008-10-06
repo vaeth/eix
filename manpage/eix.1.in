@@ -291,17 +291,24 @@ Otherwise, this decision is based upon B<UPGRADE_LOCAL_MODE>.
 If you want to see only packages with downgrade recommendations, you might make
 use of the B<FORMATSTRING> features described below.
 .TP
-.BR --stable ", " --stable+ ", " --stable-
-Only match packages which have at least one stable (non-masked) version.
+.BR --stable ", " --testing ", " --non-masked ", " --system
+Only match packages which have at least one version which is stable (and non-masked),
+testing or stable (and non-masked), non-masked, or in system, respectively.
+If several of these options are combined in one test, it is the same version
+which must satisfy all.
 .TP
-.BR --testing ", " --testing+ ", " --testing-
-Only match packages which have at least one testing or stable (non-masked) version.
+.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+
+This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=true>.
 .TP
-.BR --non-masked ", " --non-masked+ ", " --non-masked-
-Only match packages which have at least one non-masked version.
+.BR --stable- ", " --testing- ", " --non-masked- ", " --system-
+This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=false>.
 .TP
-.BR --system ", " --system+ ", " --system-
-Only match system packages.
+.BR --installed-unstable ", " --installed-testing ", " --installed-masked
+Only match packages which have at least one version installed which has
+at least one non-stable, testing, or masked version installed
+(the test acts as if B<LOCAL_PORTAGE_CONFIG=false>).
+If several of these options are combined in one test, it is the same version
+which must satisfy all.
 .TP
 .BR --world
 Only match world packages.

@@ -112,6 +112,9 @@ dump_help(int exit_code)
 			"    --testing[+-]         Match packages with a testing or stable version.\n"
 			"    --non-masked[+-]      Match packages with a non-masked version.\n"
 			"    --system[+-]          Match system packages.\n"
+			"    --installed-unstable  Match packages with a non-stable installed version.\n"
+			"    --installed-testing   Match packages with a testing    installed version.\n"
+			"    --installed-masked    Match packages with a masked     installed version.\n"
 			"    --world               Match world packages.\n"
 			"    --world-all           Match packages of world or of a world set.\n"
 			"    --world-set           Match packages of a world set.\n"
@@ -281,6 +284,9 @@ static struct Option long_options[] = {
 	Option("testing-",      O_TESTING_NONLOCAL),
 	Option("non-masked-",   O_NONMASKED_NONLOCAL),
 	Option("system-",       O_SYSTEM_NONLOCAL),
+	Option("installed-unstable", O_INSTALLED_UNSTABLE),
+	Option("installed-testing",  O_INSTALLED_TESTING),
+	Option("installed-masked",   O_INSTALLED_MASKED),
 	Option("overlay",              'O'),
 	Option("installed-overlay",    'J'),
 	Option("installed-from-overlay",O_FROM_OVERLAY,     Option::KEEP_STRING_OPTIONAL),

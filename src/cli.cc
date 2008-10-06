@@ -134,6 +134,12 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  break;
 			case O_SYSTEM_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_SYSTEM);
 				  break;
+			case O_INSTALLED_UNSTABLE: test->SetInstability(PackageTest::STABLE_FULL);
+				  break;
+			case O_INSTALLED_TESTING: test->SetInstability(PackageTest::STABLE_TESTING);
+				  break;
+			case O_INSTALLED_MASKED: test->SetInstability(PackageTest::STABLE_NONMASKED);
+				  break;
 			case O_OVERLAY:
 				  if(optional_increase(arg, end)) {
 					header.get_overlay_vector(

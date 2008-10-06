@@ -45,7 +45,7 @@ const PackageTest::TestStability
 
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
 {
-	vardbpkg =  &vdb;
+	vardbpkg = &vdb;
 	portagesettings = &p;
 	stability= &set_stability;
 	header   = &dbheader;
@@ -61,6 +61,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
 	test_installed = INS_NONE;
+	test_instability =
 	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
 }
 
@@ -93,6 +94,7 @@ PackageTest::calculateNeeds() {
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(properties != ExtendedVersion::PROPERTIES_NONE) ||
+		(test_instability != STABLE_NONE) ||
 		(test_stability_default != STABLE_NONE) ||
 		(test_stability_local != STABLE_NONE) ||
 		(test_stability_nonlocal != STABLE_NONE))
@@ -347,6 +349,27 @@ stabilitytest(const Package *p, PackageTest::TestStability what)
 		if(what & PackageTest::STABLE_TESTING)
 			continue;
 		// what & PackageTest::STABLE_NONMASKED
+			return true;
+	}
+	return false;
+}
+
+bool
+PackageTest::instabilitytest(const Package *p, TestStability what) const
+{
+	if(what == STABLE_NONE)
+		return true;
+	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
+		TestStability have = STABLE_NONE;
+		if(it->maskflags.isHardMasked())
+			have |= (STABLE_FULL | STABLE_NONMASKED);
+		if(!it->keyflags.isStable())
+			have |= STABLE_FULL;
+		if(it->keyflags.isUnstable())
+			have |= (STABLE_FULL | STABLE_TESTING);
+		if((what & have) != what)
+			continue;
+		if(vardbpkg->isInstalledVersion(*p, *it, *header, portdir))
 			return true;
 	}
 	return false;
@@ -708,6 +731,14 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		StabilityNonlocal(p);
 		if(!stabilitytest(p, test_stability_nonlocal))
+			return invert;
+	}
+
+	if(test_instability != STABLE_NONE)
+	{ // --installed-unstable --installed-testing --installed-masked
+		get_p();
+		StabilityNonlocal(p);
+		if(!instabilitytest(p, test_instability))
 			return invert;
 	}
 
