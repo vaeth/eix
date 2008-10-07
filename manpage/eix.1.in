@@ -1697,10 +1697,12 @@ You will probably want to use a corresponding option in eix-sync in this case.
 .BR repo-flat " or " repo-flat:I<PATH> " or " repo-assign " or " repo-assign:I<PATH>
 This is analogous to B<flat>/B<assign> with the difference that the metadata is
 expected in the directory I<PATH>B</>I<${repo_name}>.
-(This broken naming scheme is needed for paludis but will break if e.g. no
-repo_name file is contained in the overlay or if repo_name contains illegal
-filename character; you are responsible for the correctness of the paths
-if you use this method.)
+If I<${repo_name}> is empty, the name B<x->I<XXX> is assumed where I<XXX>
+is the last nonzero path component of the portage/overlay directory.
+This corresponds to the naming scheme of paludis.
+If this gives a wrong path for some overlay, you can still manually override
+this with e.g.
+.BI "OVERRIDE_CACHE_METHOD='" bad_overlay " " metadata-assign ":" correct_path "'".
 .TP
 .SS
 .B parse

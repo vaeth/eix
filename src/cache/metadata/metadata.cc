@@ -22,10 +22,10 @@
 
 using namespace std;
 
-/* Subpath to metadata cache *with* trailing / */
-#define METADATA_PATH "/metadata/cache/"
-/* Path to portage-2.0 cache *without* trailing / (since scheme will be appended) */
-#define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
+/* Subpath to metadata cache */
+#define METADATA_PATH "metadata/cache"
+/* Path to portage-2.0 cache */
+#define PORTAGE_CACHE_PATH "var/cache/edb/dep"
 
 bool
 MetadataCache::initialize(const string &name)
@@ -115,40 +115,52 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 	string catpath;
 	if(have_override_path) {
 		catpath = override_path;
-		switch(path_type) {
-			case PATH_METADATA:
-				catpath.append(m_scheme);
-				break;
-			case PATH_REPOSITORY:
-				catpath.append("/");
-				catpath.append(m_overlay_name);
-				break;
-			default:
-			// case PATH_FULL:
-				break;
-		}
 	}
 	else {
 		catpath = m_prefix;
-		switch(path_type) {
-			case PATH_METADATA:
-				// m_scheme is actually the portdir
-				catpath.append(m_scheme);
-				catpath.append(METADATA_PATH);
-				break;
-			case PATH_REPOSITORY:
-				catpath.append(PORTAGE_CACHE_PATH);
-				catpath.append(m_scheme);
-				break;
-			default:
-			// case PATH_FULL:
-				catpath.append(PORTAGE_CACHE_PATH);
-				catpath.append("/");
-				catpath.append(m_overlay_name);
+		if(path_type == PATH_METADATA) {
+			// m_scheme is actually the portdir
+			catpath.append(m_scheme);
+			optional_append(catpath, '/');
+			catpath.append(METADATA_PATH);
+		}
+		else {
+		// path_type == PATH_REPOSITORY || path_type == PATH_FULL
+			optional_append(catpath, '/');
+			catpath.append(PORTAGE_CACHE_PATH);
 		}
 	}
-	if(catpath.empty() || (*(catpath.rbegin()) != '/'))
-		catpath.append("/");
+	switch(path_type) {
+		case PATH_FULL:
+			catpath.append(m_scheme);
+			break;
+		case PATH_REPOSITORY:
+			optional_append(catpath, '/');
+			if(m_overlay_name.empty()) {
+				// Paludis' way of resolving missing repo_name:
+				catpath.append("x-");
+				string::size_type p = m_scheme.size();
+				while(p) {
+					string::size_type c = m_scheme.rfind('/', p);
+					if(c == string::npos) {
+						catpath.append(m_scheme.substr(0,p));
+						break;
+					}
+					if(c == --p)
+						continue;
+					catpath.append(m_scheme.substr(c + 1, p - c));
+					break;
+				}
+			}
+			else {
+				catpath.append(m_overlay_name);
+			}
+			break;
+		default:
+		// case PATH_METADATA:
+			break;
+	}
+	optional_append(catpath, '/');
 	catpath.append(vec.name);
 	vector<string> names;
 	if(!scandir_cc(catpath, names, cachefiles_selector))

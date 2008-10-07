@@ -64,6 +64,14 @@ is_numeric(const char *str)
 	return true;
 }
 
+/** Add symbol if it is not already the last one */
+inline void
+optional_append(std::string &s, char symbol)
+{
+	if(s.empty() || ((*(s.rbegin()) != symbol)))
+		s.append(1, symbol);
+}
+
 /** Trim characters on left side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed
