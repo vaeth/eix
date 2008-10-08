@@ -62,6 +62,7 @@ portage/mask.cc \
 portage/mask.h \
 portage/package.cc \
 portage/package.h \
+portage/packagesets.h \
 portage/vardbpkg.cc \
 portage/vardbpkg.h \
 portage/packagetree.cc \
