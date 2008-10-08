@@ -306,9 +306,10 @@ static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
 			mapinit("test",           ExtendedVersion::RESTRICT_TEST);
 			mapinit("userpriv",       ExtendedVersion::RESTRICT_USERPRIV);
 		}
-		ExtendedVersion::Restrict getRestrict(const string& s)
+
+		ExtendedVersion::Restrict getRestrict(const string& s) const
 		{
-			map<string,ExtendedVersion::Restrict>::const_iterator i = find(s);
+			RestrictMap::const_iterator i = find(s);
 			if(i != end())
 				return i->second;
 			return ExtendedVersion::RESTRICT_NONE;
@@ -327,9 +328,10 @@ static class PropertiesMap : public map<string,ExtendedVersion::Properties> {
 			mapinit("virtual",     ExtendedVersion::PROPERTIES_VIRTUAL);
 			mapinit("set",         ExtendedVersion::PROPERTIES_SET);
 		}
-		ExtendedVersion::Properties getProperties(const string& s)
+
+		ExtendedVersion::Properties getProperties(const string& s) const
 		{
-			map<string,ExtendedVersion::Properties>::const_iterator i = find(s);
+			PropertiesMap::const_iterator i = find(s);
 			if(i != end())
 				return i->second;
 			return ExtendedVersion::PROPERTIES_NONE;
