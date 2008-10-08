@@ -138,8 +138,8 @@ class PackageTest {
 		void Properties(ExtendedVersion::Properties flags)
 		{ properties |= flags; }
 
-		void World(bool match_also_system = false)
-		{ world = true; world_both = match_also_system; }
+		void World(bool match_also_sets = false)
+		{ world = true; world_both = match_also_sets; }
 
 		void WorldSet()
 		{ worldset = true; }

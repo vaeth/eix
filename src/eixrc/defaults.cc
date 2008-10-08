@@ -1243,6 +1243,9 @@ AddOption(BOOLEAN, "RECOMMEND_LOCAL_MODE",
 AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
 	"true", "If true, upgrade tests succeed for installed packages with new higher slots");
 
+AddOption(BOOLEAN, "RECURSIVE_SETS",
+	"true", "Are packages/sets in included sets part of the parent set?");
+
 AddOption(BOOLEAN, "PRINT_SLOTS",
 	"true", "If false, no slot information is printed.");
 

@@ -13,6 +13,7 @@
 #include <database/io.h>
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
+#include <portage/packagesets.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 
@@ -45,8 +46,6 @@ class Version : public ExtendedVersion, public Keywords {
 		friend Version *io::read_version(FILE *fp, const DBHeader &hdr);
 
 		typedef io::UNumber Overlay;
-
-		typedef std::vector<std::string>::size_type SetsIndex;
 
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;

@@ -1834,6 +1834,10 @@ B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.
 If true, all upgrade tests will give a positive result for an installed
 package for which not the slot with the best stable version is installed.
 .TP
+.BR RECURSIVE_SETS " " (true / false)
+If true, then sets and packages which are contained in an included set
+are considered as part of the parent set.
+.TP
 .BR PRINT_SLOTS " " (true / false)
 If B<false>, no slot information is printed.
 .TP

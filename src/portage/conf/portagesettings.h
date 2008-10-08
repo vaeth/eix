@@ -117,12 +117,13 @@ class PortageSettings : public std::map<std::string,std::string> {
 		MaskList<SetMask>        m_package_sets;
 
 		std::vector<std::string> set_names;
+		std::vector<SetsList>    parent_sets;
+		std::vector<SetsList>    children_sets;
 
 		bool know_world_sets;
-		bool world_system;
 		std::vector<std::string> world_sets;
-		bool num_up_to_date;
-		std::vector<Version::SetsIndex> world_sets_num;
+		bool world_setslist_up_to_date;
+		SetsList world_setslist;
 
 		/** Your cascading profile, excluding local settings */
 		CascadingProfile  *profile;
@@ -132,12 +133,17 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		void addOverlayProfiles(CascadingProfile *p) const;
 
+		void calc_recursive_sets(Package *p) const;
+
 		void read_world_sets(const char *file);
 		void calc_world_sets(Package *p);
+
+		void update_world_setslist();
 
 		const MaskList<SetMask> *getPackageSets() const
 		{ return &m_package_sets; }
 	public:
+		bool m_recurse_sets;
 		bool m_obsolete_minusasterisk;
 		std::string m_eprefixconf;
 		std::string m_eprefixprofile;
@@ -163,7 +169,6 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
 		void get_setnames(std::vector<std::string> &names, const Package *p, bool also_nonlocal = false) const;
 		std::string get_setnames(const Package *p, bool also_nonlocal = false) const;
-		void update_num();
 		void read_local_sets(const std::string &dir_path);
 		const std::vector<std::string> *get_world_sets() const
 		{ return &world_sets; }
@@ -177,11 +182,18 @@ class PortageSettings : public std::map<std::string,std::string> {
 		/// Set stability according to arch or local ACCEPTED_KEYWORDS
 		void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
 
+		void add_name(SetsList &l, const std::string &s, bool recurse) const;
+
 		void calc_local_sets(Package *p) const
-		{ m_package_sets.applyMasks(p); }
+		{
+			m_package_sets.applyMasks(p);
+			if(m_recurse_sets)
+				calc_recursive_sets(p);
+		}
 
 		void finalize(Package *p)
 		{ calc_world_sets(p); p->finalize_masks(); }
 };
 
 #endif
+

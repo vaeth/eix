@@ -39,6 +39,7 @@ static const struct OperatorTable {
 	{ ">" , 1, Mask::maskOpGreater },
 	{ "=" , 1, Mask::maskOpEqual },
 	{ "~" , 1, Mask::maskOpRevisions },
+	{ "@" , 1, Mask::maskIsSet },
 	{ ""  , 0, Mask::maskOpAll /* this must be the last one */ }
 };
 
@@ -65,6 +66,11 @@ Mask::parseMask(const char *str) throw(ExBasic)
 			str += strlen(operators[i].str);
 			break;
 		}
+	}
+	if(m_operator == maskIsSet) {
+		m_category = SET_CATEGORY;
+		m_name = str;
+		return;
 	}
 
 	// Get the category
@@ -154,7 +160,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		if(end)
 			m_name = string(str, end - str);
 		else
-			m_name = string(str);
+			m_name = str;
 	}
 }
 
@@ -221,9 +227,10 @@ Mask::test(const ExtendedVersion *ev) const
 			return BasicVersion::compareTilde(*this, *ev) == 0;
 
 		default:
+		// case maskIsSet: makes no sense
 			break;
 	}
-	return false; // Never reached
+	return false;
 }
 
 eix::ptr_list<Version>

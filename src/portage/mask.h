@@ -21,6 +21,9 @@
 class Version;
 class Package;
 
+// A category which may not occur (i.e. which is reserved for maskIsSet)
+#define SET_CATEGORY "@/"
+
 //  >app-shells/bash-3*      <- NOT ALLOWED
 //  ~app-shells/bash-3*      <- OK, BUT DOESN'T SELECT bash-3.0-r12; SELECT
 //                              ONLY ~app-shells/bash-3
@@ -47,7 +50,8 @@ class Mask : public BasicVersion {
 			maskOpAll, maskOpEqual,
 			maskOpLess, maskOpLessEqual,
 			maskOpGreaterEqual, maskOpGreater,
-			maskOpRevisions, maskOpGlob
+			maskOpRevisions, maskOpGlob,
+			maskIsSet
 		} Operator;
 
 	protected:
@@ -97,6 +101,9 @@ class Mask : public BasicVersion {
 		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
 		bool ismatch(Package& pkg);
+
+		bool is_set() const
+		{ return (m_operator == maskIsSet); }
 };
 
 class KeywordMask : public Mask {
@@ -112,13 +119,13 @@ class KeywordMask : public Mask {
 class SetMask : public Mask {
 	public:
 
-		SetMask(const char *str, Version::SetsIndex set_index) :
+		SetMask(const char *str, SetsIndex set_index) :
 			Mask(str, maskTypeNone), m_set(set_index)
 		{ }
 
 		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
-		Version::SetsIndex m_set;
+		SetsIndex m_set;
 };
 
 #endif /* __MASK_H__ */
