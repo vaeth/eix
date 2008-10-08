@@ -239,7 +239,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 			}
 			read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
 		}
-		read_local_sets(eixrc["EIX_LOCAL_SETS"]);
+		read_local_sets(split_string(eixrc["EIX_LOCAL_SETS"]));
 	}
 
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
@@ -418,17 +418,26 @@ PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 static const char *sets_exclude[] = { "..", "." , "system", "world", NULL };
 
 void
-PortageSettings::read_local_sets(const string &dir_path)
+PortageSettings::read_local_sets(const vector<string> &dir_list)
 {
 	world_setslist_up_to_date = false;
 	set_names.clear();
-	string dir_slash = dir_path;
-	if(dir_slash[dir_slash.size() - 1] != '/')
-			dir_slash.append("/");
-	pushback_files(dir_path, set_names, sets_exclude, 0, false, false);
+
+	vector<vector<string>::size_type> dir_size(dir_list.size());
+	for(vector<string>::size_type i = 0; i != dir_list.size(); ++i) {
+		vector<string>::size_type s = set_names.size();
+		pushback_files(dir_list[i], set_names, sets_exclude, 0, false, false);
+		dir_size[i] = set_names.size() - s;
+	}
 	vector<vector<string> > child_names(set_names.size());
-	for(SetsIndex i = 0; i != set_names.size(); ++i) {
-		grab_setmasks((dir_slash + set_names[i]).c_str(), &m_package_sets, i, child_names[i]);
+	SetsIndex c = 0;
+	for(vector<string>::size_type i = 0; i != dir_list.size(); ++i) {
+		string dir_slash = dir_list[i];
+		optional_append(dir_slash, '/');
+		for(vector<string>::size_type j = 0; j != dir_size[i]; ++j) {
+			grab_setmasks((dir_slash + set_names[c]).c_str(), &m_package_sets, c, child_names[c]);
+			++c;
+		}
 	}
 
 	// calculate children_sets and parent_sets:

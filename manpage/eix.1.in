@@ -1376,7 +1376,10 @@ The same remarks as for B<EIX_WORLD> hold true.
 
 .TP
 .B EIX_LOCAL_SETS "  " (string)
-The directory which contains the locally defined sets.
+This is a space separated list of directories which contains locally defined sets.
+Usually this is /etc/portage/sets, but you might also want other directories,
+e.g. if you define another multiset directory with "world-candidate = False"
+in /etc/portage/sets.conf.
 
 .TP
 .BR SAVE_WORLD "  " (true / false)

@@ -169,7 +169,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
 		void get_setnames(std::vector<std::string> &names, const Package *p, bool also_nonlocal = false) const;
 		std::string get_setnames(const Package *p, bool also_nonlocal = false) const;
-		void read_local_sets(const std::string &dir_path);
+		void read_local_sets(const std::vector<std::string> &dir_list);
 		const std::vector<std::string> *get_world_sets() const
 		{ return &world_sets; }
 
