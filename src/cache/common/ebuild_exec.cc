@@ -174,14 +174,19 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", static_cast<const char *>(NULL), myenv);
 		exit(17);
 	}
-	exit_on_signal = 0;
+	exit_on_signal = false;
 	int exec_status;
 	while( waitpid( child, &exec_status, 0) != child ) { }
-	if(exec_status || got_exit_signal) {
-		if(exec_status)
-			base->m_error_callback(eix::format("Execution failed with status %d") % exec_status);
+	if(got_exit_signal || !(WIFEXITED(exec_status))) {
+		if(WEXITSTATUS(exec_status))
+			base->m_error_callback(eix::format("Execution failed with status %s") % WEXITSTATUS(exec_status));
 		if(got_exit_signal)
-			base->m_error_callback(eix::format("Got signal %d") % type_of_exit_signal);
+			base->m_error_callback(eix::format("Got signal %s") % type_of_exit_signal);
+		if(WIFSIGNALED(exec_status)) {
+			got_exit_signal = true;
+			type_of_exit_signal = WTERMSIG(exec_status);
+			base->m_error_callback(eix::format("Child got signal %s") % type_of_exit_signal);
+		}
 		delete_cachefile();
 		if(got_exit_signal)
 			raise(type_of_exit_signal);
