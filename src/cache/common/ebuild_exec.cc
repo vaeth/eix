@@ -112,12 +112,12 @@ EbuildExec::delete_cachefile()
 		return;
 	if(is_file(cachefile->c_str())) {
 		if(unlink(cachefile->c_str()) < 0)
-			base->m_error_callback(eix::format("Can't unlink tempfile %s") % (cachefile->c_str()));
+			base->m_error_callback(eix::format("Can't unlink tempfile %s") % cachefile);
 		else if(is_file(cachefile->c_str()))
-			base->m_error_callback(eix::format("Tempfile %s still there after unlink") % (cachefile->c_str()));
+			base->m_error_callback(eix::format("Tempfile %s still there after unlink") % cachefile);
 	}
 	else
-		base->m_error_callback(eix::format("Tempfile %s is not a file") % (cachefile->c_str()));
+		base->m_error_callback(eix::format("Tempfile %s is not a file") % cachefile);
 	cachefile = NULL;
 	remove_handler();
 }
@@ -130,6 +130,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	if(use_ebuild_sh)
 	{
 		if(!make_tempfile()) {
+			base->m_error_callback("Creation of tempfile failed");
 			remove_handler();
 			return NULL;
 		}
@@ -159,7 +160,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		{
 			string ebuild = base->m_prefix_exec + EBUILD_EXEC;
 			execl(ebuild.c_str(), ebuild.c_str(), name, "depend", static_cast<const char *>(NULL));
-			exit(2);
+			exit(17);
 		}
 		const char **myenv = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
 		const char **ptr = myenv;
@@ -171,12 +172,16 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		*ptr = NULL;
 		string ebuild_sh = base->m_prefix_exec + EBUILD_SH_EXEC;
 		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", static_cast<const char *>(NULL), myenv);
-		exit(2);
+		exit(17);
 	}
 	exit_on_signal = 0;
 	int exec_status;
-	while( waitpid( child, &exec_status, 0) != child ) ;
+	while( waitpid( child, &exec_status, 0) != child ) { }
 	if(exec_status || got_exit_signal) {
+		if(exec_status)
+			base->m_error_callback(eix::format("Execution failed with status %d") % exec_status);
+		if(got_exit_signal)
+			base->m_error_callback(eix::format("Got signal %d") % type_of_exit_signal);
 		delete_cachefile();
 		if(got_exit_signal)
 			raise(type_of_exit_signal);
