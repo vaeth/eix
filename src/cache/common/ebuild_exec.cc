@@ -140,11 +140,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	else
 		cachefile = new string(base->m_prefix_exec + EBUILD_DEPEND_TEMP);
 	calc_permissions();
-#if defined(HAVE_VFORK)
-	pid_t child = vfork();
-#else
 	pid_t child = fork();
-#endif
 	if(child == -1) {
 		base->m_error_callback("Forking failed");
 		return NULL;
