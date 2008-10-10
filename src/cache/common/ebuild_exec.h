@@ -13,6 +13,7 @@
 #include <eixTk/sysutils.h>
 
 #include <string>
+#include <vector>
 
 class BasicCache;
 class Package;
@@ -23,22 +24,29 @@ class EbuildExec {
 	private:
 		const BasicCache *base;
 		static EbuildExec *handler_arg;
-		volatile bool have_set_signals, got_exit_signal, exit_on_signal;
+		volatile bool have_set_signals, got_exit_signal, cache_defined;
 		volatile int type_of_exit_signal;
-		std::string *cachefile;
+		std::string cachefile;
 		typedef void signal_handler(int sig);
 		// cache/common/ebuild_exec.h|30| error: ignoring 'volatile' qualifiers added to function type 'void ()(int)'
 		/* volatile */ signal_handler *handleTERM, *handleINT, *handleHUP;
 		bool use_ebuild_sh;
+		/// local data for make_cachefile which should be saved for vfork:
+		const char *exec_name;
+		const char **c_env;
+		int exec_status;
+		std::vector<std::string> *envstrings;
+		void calc_environment(const char *name, const std::string &dir, const Package &package, const Version &version);
 
-		static bool know_permissions, set_uid, set_gid;
+		static std::string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
+		static bool know_settings, set_uid, set_gid;
 		static uid_t uid;
 		static gid_t gid;
 
 		void add_handler();
 		void remove_handler();
 		bool make_tempfile();
-		static void calc_permissions();
+		static void calc_settings();
 	public:
 		std::string *make_cachefile(const char *name, const std::string &dir, const Package &package, const Version &version);
 		void delete_cachefile();
@@ -46,7 +54,7 @@ class EbuildExec {
 		EbuildExec(bool will_use_sh, const BasicCache *b) :
 			base(b),
 			have_set_signals(false),
-			cachefile(NULL),
+			cache_defined(false),
 			use_ebuild_sh(will_use_sh)
 		{ }
 

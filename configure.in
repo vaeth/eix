@@ -75,7 +75,7 @@ dnl Well define the following if we don't have one:
 AC_CHECK_FUNCS([strndup strtoul strtol atoi], , )
 
 dnl We use these optionally:
-AC_CHECK_FUNCS([canonicalize_file_name realpath], , )
+AC_CHECK_FUNCS([canonicalize_file_name realpath vfork], , )
 
 dnl Compatibility Headers:
 AC_CHECK_HEADERS(tr1/cstdint)
@@ -333,6 +333,32 @@ AC_ARG_WITH(root-default,[  --with-root-default=STR          default ROOT],
 
 AC_DEFINE_UNQUOTED(ROOT_DEFAULT, "${ROOT_DEFAULT}",[ Default ROOT])
 AC_SUBST(ROOT_DEFAULT)
+
+AC_MSG_CHECKING([for default of EXEC_EBUILD_SH])
+AC_ARG_WITH(exec-ebuild-sh-default,[  --with-ebuild-sh-default=STR     default EXEC_EBUILD_SH],
+		[
+			EBUILD_SH_DEFAULT="${withval}"
+			test "x${EBUILD_SH_DEFAULT}" = "x/" && EBUILD_SH_DEFAULT=""
+			DESCRIPTION='on request'
+			AC_MSG_NOTICE([EBUILD_SH=${EBUILD_SH_DEFAULT} (on request)])
+		],[
+			EBUILD_SH_DEFAULT='/usr/lib/portage/bin/ebuild.sh'
+			if ! test -d "${EPREFIX_DEFAULT}/usr/lib" && \
+				test -d "${EPREFIX_DEFAULT}/usr/lib64"
+			then
+				EBUILD_SH_DEFAULT='/usr/lib64/portage/bin/ebuild.sh'
+			fi
+			if test -x "${EPREFIX_DEFAULT}${EBUILD_SH_DEFAULT}"
+			then
+				DESCRIPTION='autodetected'
+			else
+				DESCRIPTION='guessed'
+			fi
+		])
+
+AC_MSG_RESULT([\"${EBUILD_SH_DEFAULT}\" (${DESCRIPTION})])
+AC_DEFINE_UNQUOTED(EBUILD_SH_DEFAULT, "${EBUILD_SH_DEFAULT}",[ Default EXEC_EBUILD_SH (without prefix)])
+AC_SUBST(EBUILD_SH_DEFAULT)
 
 dnl Check endianess
 AC_C_BIGENDIAN

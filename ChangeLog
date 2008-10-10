@@ -5,11 +5,16 @@
 	- Support sets in masks or sets; provide RECURSIVE_SETS.
 	- Provide --installed-unstable, --installed-testing, --installed-masked
 	  see http://bugs.gentoo.org/show_bug.cgi?id=240010
-	- Use fork() in ebuild[*]: vfork() seems to cause memory corruption
-	  in certain cases, see http://bugs.gentoo.org/show_bug.cgi?id=240460
 	- Make EIX_LOCAL_SETS a list of directories.
 	- Fix visible output of cache methods metadata/flat, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=240038
+	- Introduce ./configure --with-ebuild-sh-default and
+	  EXEC_EBUILD, EXEC_EBUILD_SH, EBUILD_DEPEND_TEMP to allow
+	  customization to nonstandard paths, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=240460
+	  Default is autodetection which works in the above case.
+	- Be extremely careful about vfork() usage to fix segfault from
+	  http://bugs.gentoo.org/show_bug.cgi?id=240460
 	- New cache methods repo-* support paludis' path scheme.
 	- Be more verbose on execution failures for update-eix.
 

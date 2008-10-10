@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Default EXEC_EBUILD_SH (without prefix) */
+#undef EBUILD_SH_DEFAULT
+
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
@@ -92,6 +95,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `vfork' function. */
+#undef HAVE_VFORK
 
 /* Maximal levenshtein-distance for matches */
 #undef LEVENSHTEIN_DISTANCE

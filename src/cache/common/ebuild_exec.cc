@@ -16,31 +16,17 @@
 #include <csignal>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 using namespace std;
 
-const char *EBUILD_SH_EXEC     = "/usr/lib/portage/bin/ebuild.sh";
-const char *EBUILD_EXEC        = "/usr/bin/ebuild";
-const char *EBUILD_DEPEND_TEMP = "/var/cache/edb/dep/aux_db_key_temp";
-
-
 EbuildExec *EbuildExec::handler_arg;
-volatile sig_atomic_t processing_signal = 0;
 
 void
 ebuild_sig_handler(int sig)
 {
-	if(processing_signal)
-		raise(sig);
-	
-	processing_signal = 1;
 	EbuildExec::handler_arg->got_exit_signal = true;
 	EbuildExec::handler_arg->type_of_exit_signal = sig;
-	if(EbuildExec::handler_arg->exit_on_signal) {
-		EbuildExec::handler_arg->remove_handler();
-		processing_signal = 0;
-		raise(sig);
-	}
 }
 
 // Take care:
@@ -57,7 +43,7 @@ EbuildExec::add_handler()
 	handler_arg = this;
 	// Set the signals "empty" to avoid a race condition:
 	// On a signal, we should cleanup only the signals actually set.
-	got_exit_signal = exit_on_signal = false;
+	got_exit_signal = false;
 	handleHUP  = handleINT = handleTERM = ebuild_sig_handler;
 	have_set_signals = true;
 	handleHUP  = signal(SIGHUP, ebuild_sig_handler);
@@ -93,13 +79,14 @@ EbuildExec::make_tempfile()
 	int fd = mkstemp(temp);
 	if(fd == -1)
 		return false;
-	calc_permissions();
+	calc_settings();
 	if(set_uid || set_gid) {
 		if(fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)))) {
 //			base->m_error_callback(eix::format("Can't change ownership of tempfile %s") % temp);
 		}
 	}
-	cachefile = new string(temp);
+	cachefile = temp;
+	cache_defined = true;
 	free(temp);
 	close(fd);
 	return true;
@@ -108,100 +95,141 @@ EbuildExec::make_tempfile()
 void
 EbuildExec::delete_cachefile()
 {
-	if(!cachefile)
+	if(!cache_defined)
 		return;
-	if(is_file(cachefile->c_str())) {
-		if(unlink(cachefile->c_str()) < 0)
-			base->m_error_callback(eix::format("Can't unlink tempfile %s") % cachefile);
-		else if(is_file(cachefile->c_str()))
-			base->m_error_callback(eix::format("Tempfile %s still there after unlink") % cachefile);
+	const char *c = cachefile.c_str();
+	if(is_file(c)) {
+		if(unlink(c) < 0)
+			base->m_error_callback(eix::format("Can't unlink tempfile %s") % c);
+		else if(is_file(c))
+			base->m_error_callback(eix::format("Tempfile %s still there after unlink") % c);
 	}
 	else
-		base->m_error_callback(eix::format("Tempfile %s is not a file") % cachefile);
-	cachefile = NULL;
+		base->m_error_callback(eix::format("Tempfile %s is not a file") % c);
 	remove_handler();
+	cache_defined = false;
+	cachefile.clear();
 }
+
+/// This is a subfunction of make_cachefile() to ensure that make_cachefile()
+/// has no local variable when vfork() is called.
+void
+EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
+{
+	if(!use_ebuild_sh)
+		return;
+	map<string, string> env;
+	base->env_add_package(env, package, version, dir, name);
+	env["dbkey"] = cachefile;
+
+	// transform env into c_env (pointing to envstrings[i].c_str())
+	c_env = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
+	vector<string>::size_type i = 0;
+	if(!env.empty()) {
+		envstrings = new vector<string>(env.size());
+		for(map<string, string>::const_iterator it = env.begin();
+			it != env.end(); ++it) {
+			(*envstrings)[i] = ((it->first) + '=' + (it->second));
+			c_env[i] = (*envstrings)[i].c_str();
+			++i;
+		}
+	}
+	c_env[i] = NULL;
+}
+
+static const int EXECLE_FAILED=17;
 
 string *
 EbuildExec::make_cachefile(const char *name, const string &dir, const Package &package, const Version &version)
 {
-	map<string, string> env;
+	calc_settings();
+
+	// Make cachefile and calculate exec_name
+
 	add_handler();
-	if(use_ebuild_sh)
-	{
+	if(use_ebuild_sh) {
+		exec_name = exec_ebuild_sh.c_str();
 		if(!make_tempfile()) {
 			base->m_error_callback("Creation of tempfile failed");
 			remove_handler();
 			return NULL;
 		}
-		base->env_add_package(env, package, version, dir, name);
-		env["dbkey"] = *cachefile;
 	}
-	else
-		cachefile = new string(base->m_prefix_exec + EBUILD_DEPEND_TEMP);
-	calc_permissions();
+	else {
+		exec_name = exec_ebuild.c_str();
+		cachefile = ebuild_depend_temp;
+		cache_defined = true;
+	}
+	calc_environment(name, dir, package, version);
+
+#if defined(HAVE_VFORK)
+	pid_t child = vfork();
+#else
 	pid_t child = fork();
+#endif
 	if(child == -1) {
 		base->m_error_callback("Forking failed");
 		return NULL;
 	}
 	if(child == 0)
 	{
-		exit_on_signal = true;
 		if(set_gid)
 			setgid(gid);
 		if(set_uid)
 			setuid(uid);
-		if(!use_ebuild_sh)
-		{
-			string ebuild = base->m_prefix_exec + EBUILD_EXEC;
-			execl(ebuild.c_str(), ebuild.c_str(), name, "depend", static_cast<const char *>(NULL));
-			exit(17);
-		}
-		const char **myenv = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
-		const char **ptr = myenv;
-		for(map<string, string>::const_iterator it = env.begin();
-			it != env.end(); ++it, ++ptr) {
-			string *s = new string((it->first) + '=' + (it->second));
-			*ptr = s->c_str();
-		}
-		*ptr = NULL;
-		string ebuild_sh = base->m_prefix_exec + EBUILD_SH_EXEC;
-		execle(ebuild_sh.c_str(), ebuild_sh.c_str(), "depend", static_cast<const char *>(NULL), myenv);
-		exit(17);
+		if(use_ebuild_sh)
+			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULL), c_env);
+		else
+			execl(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL));
+		_exit(EXECLE_FAILED);
 	}
-	exit_on_signal = false;
-	int exec_status;
 	while( waitpid( child, &exec_status, 0) != child ) { }
-	if(got_exit_signal || !(WIFEXITED(exec_status))) {
-		if(WEXITSTATUS(exec_status))
-			base->m_error_callback(eix::format("Execution failed with status %s") % WEXITSTATUS(exec_status));
-		if(got_exit_signal)
-			base->m_error_callback(eix::format("Got signal %s") % type_of_exit_signal);
-		if(WIFSIGNALED(exec_status)) {
-			got_exit_signal = true;
-			type_of_exit_signal = WTERMSIG(exec_status);
-			base->m_error_callback(eix::format("Child got signal %s") % type_of_exit_signal);
-		}
+
+	// Free memory needed only for the child process:
+	if(c_env)
+		free(c_env);
+	if(envstrings)
+		delete envstrings;
+
+	// Only now we check for the child exit status or signals:
+	if(got_exit_signal)
+		base->m_error_callback(eix::format("Got signal %s") % type_of_exit_signal);
+	else if(WIFSIGNALED(exec_status)) {
+		got_exit_signal = true;
+		type_of_exit_signal = WTERMSIG(exec_status);
+		base->m_error_callback(eix::format("Ebuild got signal %s") % type_of_exit_signal);
+	}
+	if(got_exit_signal) {
 		delete_cachefile();
-		if(got_exit_signal)
-			raise(type_of_exit_signal);
+		raise(type_of_exit_signal);
 		return NULL;
 	}
-	return cachefile;
+	if(WIFEXITED(exec_status)) {
+		if(!(WEXITSTATUS(exec_status))) // the only good case:
+			return &cachefile;
+		if((WEXITSTATUS(exec_status)) == EXECLE_FAILED)
+			base->m_error_callback(eix::format("Could not start %s") % exec_name);
+		else
+			base->m_error_callback(eix::format("Ebuild failed with status %s") % WEXITSTATUS(exec_status));
+	}
+	else
+		base->m_error_callback("Child aborted in a strange way");
+	delete_cachefile();
+	return NULL;
 }
 
-bool EbuildExec::know_permissions = false;
+bool EbuildExec::know_settings = false;
 bool EbuildExec::set_uid, EbuildExec::set_gid;
 uid_t EbuildExec::uid;
 gid_t EbuildExec::gid;
+string EbuildExec::exec_ebuild, EbuildExec::exec_ebuild_sh, EbuildExec::ebuild_depend_temp;
 
 void
-EbuildExec::calc_permissions()
+EbuildExec::calc_settings()
 {
-	if(know_permissions)
+	if(know_settings)
 		return;
-	know_permissions = set_uid = set_gid = true;
+	know_settings = set_uid = set_gid = true;
 	EixRc &eix = get_eixrc(NULL);
 	string &s = eix["EBUILD_USER"];
 	if(s.empty() || !get_uid_of(s.c_str(), &uid)) {
@@ -219,4 +247,7 @@ EbuildExec::calc_permissions()
 		else
 			set_gid = false;
 	}
+	exec_ebuild = eix["EXEC_EBUILD"];
+	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
+	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];
 }
