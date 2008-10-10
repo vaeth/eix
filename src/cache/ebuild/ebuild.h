@@ -28,9 +28,6 @@ class EbuildCache : public BasicCache {
 		bool use_prefixport() const
 		{ return true; }
 
-		bool use_prefixexec() const
-		{ return true; }
-
 		const char *getType() const
 		{
 			if(ebuild_exec.use_sh())

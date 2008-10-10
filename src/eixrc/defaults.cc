@@ -49,7 +49,6 @@ AddOption(PREFIXSTRING, "EPREFIX_TREE",
 
 AddOption(PREFIXSTRING, "EPREFIX_ROOT",
 	"%{??EPREFIX}%{EPREFIX}%{else}%{ROOT}%{}",
-	"This variable is only used for delayed substitution.\n"
 	"It applies for those paths for which EPREFIX and ROOT should both apply.\n"
 	"So you can decide here what to do if both are nonempty. For instance,\n"
 	"the choice %{EPREFIX}%{ROOT} will apply both; the default applies EPREFIX\n"
@@ -64,7 +63,9 @@ AddOption(PREFIXSTRING, "MAKE_GLOBALS",
 	"if it exists. This is reasonable for >=portage-2.2*");
 
 AddOption(PREFIXSTRING, "EPREFIX_PORTAGE_EXEC",
-	"%{EPREFIX}", "This prefix is used in connection with external portage tools.");
+	"%{EPREFIX}",
+	"This variable is only used for delayed substitution.\n"
+	"It is used as prefix in the EXEC_EBUILD* and EBUILD_DEPEND_TEMP defaults.");
 
 AddOption(PREFIXSTRING, "EPREFIX_SOURCE",
 	"%{EPREFIX_PORTAGE_EXEC}", "This path is prepended to source commands in /etc/make.{conf,globals}.");

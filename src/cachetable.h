@@ -25,7 +25,7 @@ class CacheTable
 		~CacheTable()
 		{ delete_and_clear(); }
 
-		void addCache(const char *eprefixcache, const char *eprefixport, const char *eprefixexec, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override)
+		void addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override)
 		{
 			for(CacheTable::iterator it=begin(); it != end(); ++it) {
 				if(same_filenames(directory, (it->getPath()).c_str()))
@@ -51,7 +51,7 @@ class CacheTable
 					% cache_method % directory;
 			}
 
-			cache->setScheme(eprefixcache, eprefixport, eprefixexec, directory);
+			cache->setScheme(eprefixcache, eprefixport, directory);
 			push_back(cache);
 		}
 };

@@ -13,6 +13,8 @@
 	  customization to nonstandard paths, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=240460
 	  Default is autodetection which works in the above case.
+	- Remove EPREFIX_PORTAGE_EXEC (except for delayed substitution
+	  for the above new variables).
 	- Be extremely careful about vfork() usage to fix segfault from
 	  http://bugs.gentoo.org/show_bug.cgi?id=240460
 	- New cache methods repo-* support paludis' path scheme.

@@ -44,9 +44,6 @@ class ParseCache : public BasicCache {
 		bool use_prefixport() const
 		{ return true; }
 
-		bool use_prefixexec() const
-		{ return ebuild_exec; }
-
 		const char *getType() const
 		{
 			if(ebuild_exec) {

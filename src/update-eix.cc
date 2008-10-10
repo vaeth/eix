@@ -386,7 +386,6 @@ run_update_eix(int argc, char *argv[])
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())
 			table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 				NULL,
-				eixrc.prefix_cstr("EPREFIX_PORTAGE_EXEC"),
 				portage_settings["PORTDIR"].c_str(),
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
@@ -401,7 +400,6 @@ run_update_eix(int argc, char *argv[])
 					portage_settings.overlays[i].c_str(), true, false) == excluded_overlays.end())
 				table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 					eixrc.prefix_cstr("EPREFIX_ACCESS_OVERLAYS"),
-					eixrc.prefix_cstr("EPREFIX_PORTAGE_EXEC"),
 					portage_settings.overlays[i].c_str(),
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr);
 			else

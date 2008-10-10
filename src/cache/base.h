@@ -37,11 +37,8 @@ class BasicCache {
 		virtual bool use_prefixport() const
 		{ return false; }
 
-		virtual bool use_prefixexec() const
-		{ return false; }
-
 		/// Set scheme for this cache
-		void setScheme(const char *prefix, const char *prefixport, const char *prefixexec, std::string scheme);
+		void setScheme(const char *prefix, const char *prefixport, std::string scheme);
 
 		/// Set overlay-key
 		void setKey(Version::Overlay key)
@@ -89,9 +86,9 @@ class BasicCache {
 		{ return readCategories(NULL, NULL, &vec); }
 
 	protected:
-		std::string m_scheme, m_prefix, m_prefix_exec;
+		std::string m_scheme, m_prefix;
 		std::string m_overlay_name;
-		bool have_prefix, have_prefix_exec;
+		bool have_prefix;
 		Version::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
 		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
