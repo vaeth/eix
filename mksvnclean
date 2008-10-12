@@ -3,7 +3,7 @@
 export LC_ALL=C
 
 die() {
-	echo "$1"
+	printf "%s\n" "${1}"
 	exit ${2:-1}
 }
 
@@ -17,5 +17,9 @@ if test -e Makefile; then
 fi
 rm -vrf build config
 rm -vf aclocal.m4 configure config.h.in~
+for j in tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+do
+	rm -vf eix-*.$j
+done
 find . '(' -name 'Makefile.in' -o -name 'svn-commit*.tmp' ')' -exec rm -v -- '{}' '+'
 svn cleanup

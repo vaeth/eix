@@ -3,7 +3,7 @@
 export LC_ALL=C
 
 Usage() {
-	echo "Usage: ./${0##*/} [options] args-for-make
+	printf "%s\n" "Usage: ${0##*/} [options] args-for-make
 Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
@@ -20,8 +20,8 @@ Available options are
 	exit ${1}
 }
 
-die() {
-	echo "${1}"
+Die() {
+	printf "%s: %s\n" "${0##*/}" "${1}"
 	exit ${2:-1}
 }
 
@@ -93,15 +93,15 @@ LDFLAGS=${LDFLAGS}"
 if ! test -e Makefile; then
 	if ! test -e configure || ! test -e Makefile.in; then
 		echo "Running autotools..."
-		eval ./autogen.sh ${QUIET} || die "autogen failed"
+		eval ./autogen.sh ${QUIET} || Die "autogen failed"
 	fi
 	echo "Running configure..."
 	eval ./configure "--prefix=" ${SQLITE} ${BZLIB} ${EXTRA_CACHE} ${SEPARATE} ${QUIET} || \
-		die "configure failed"
+		Die "configure failed"
 fi
 ${EARLYSTOP} && exec make config.h
 echo "Making ${*}..."
-command -v make >/dev/null 2>&1 || die "cannot find make"
+command -v make >/dev/null 2>&1 || Die "cannot find make"
 if [ -n "${QUIET}" ]; then
 	exec make "${@}" >/dev/null 2>&1
 else

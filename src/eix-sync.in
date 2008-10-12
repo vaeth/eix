@@ -23,7 +23,7 @@ PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
 MODULENAME='cache.metadata_overlay.database'
 
 Usage () {
-	echo "${0##*/} [options]
+	printf "%s\n" "${0##*/} [options]
 Call layman/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
 
 Unless the -t option is used, the old database will be saved to
@@ -246,19 +246,6 @@ RootTest () {
 	einfo  "If you want to skip this test permanently, put option -e"
 	einfo  "into the file ${EIXSYNCCONF}."
 	die    ""
-}
-
-SED1='s!^[[:space:]]*'
-SED2="[[:space:]]*=[[:space:]]*\([^[:space:]]*\)[[:space:]]*\$!\1!p"
-SedFor () {
-	local A=''
-	test -e "${2}" && \
-		A=`sed -n -e "${SED1}${1}${SED2}" -- "${2}" | tail -n 1`
-	A="${A%\"}"
-	A="${A#\"}"
-	A="${A%'}"
-	A="${A#'}"
-	echo "${A}"
 }
 
 TIME_IUPDATE=''

@@ -2,31 +2,51 @@
 
 export LC_ALL=C
 
-usage() {
-	echo "Usage: mktarball"
+Usage() {
+	printf "%s\n" "Usage: ${0##*/} [all|bzip2]"
+	exit ${1}
 }
 
-die() {
-	echo "$1"
+Die() {
+	printf "%s: %s\n" "${0##*/}" "${1}"
 	exit ${2:-1}
 }
 
+MAKEARCH="dist-lzma"
+[ $# -ne 0 ] && [ -n "${1}" ] && case "${1}" in
+	h*|H*|*\?*|-*) Usage;;
+	b*|B*) MAKEARCH="dist-bzip2";;
+	l*|L*|'') :;;
+	*) MAKEARCH="${MAKEARCH} dist";;
+esac
+
 test -e Makefile || test -e configure || test -e Makefile.in && ./mksvnclean
-test -d build || mkdir build >/dev/null
-test -d build || die "cannot create directory build"
 
 unset LDFLAGS CFLAGS CXXFLAGS
 if command -v fakeroot >/dev/null 2>&1; then
-	./mkmake -0eqn || die "mkmake -qn failed"
-	fakeroot ./mkmake -0q dist || die "mkmake dist failed"
+	./mkmake -0eqn || Die "./mkmake -qn failed"
+	DOCMD='fakeroot ./mkmake -0q'
+	DOMSK='fakeroot ./mkmake'
 else
-	./mkmake -0eq dist || die "mkmake dist failed"
+	DOCMD='./mkmake -0eq'
+	DOMSG='./mkmake'
 fi
-
-for i in *.tar*; do
-	md5sum "$i" >"$i.md5"
-	mv "$i" "$i.md5" build
+for i in ${MAKEARCH}
+do
+	${DOCMD} ${i} || Die "${DOMSG} ${i} failed" ${?}
 done
 
-echo "Tarball is at build/"
-echo "Note that to tag the release in svn you should run mkrelease"
+found=false
+for j in tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+do
+	for i in "${PWD}"/eix-*.${j}
+	do
+		test -f "${i}" || continue
+		$found || echo "Available tarballs:"
+		found=true
+		printf "\t%s\n" "${i}"
+	done
+done
+$found || Die "For some reason no tarball was created"
+echo "The tarballs will be removed with ./mksvnclean
+Note that to tag the release in svn you should run mkrelease"

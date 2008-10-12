@@ -16,7 +16,7 @@ read_functions
 Usage () {
 	local I R
 	R=${1:-1}
-	echo "Usage: ${0##*/} [options] command
+	printf "%s" "Usage: ${0##*/} [options] command
 Add or remove local layman overlays to eix database (@PACKAGE_STRING@)
 The following commands are provided:
 
@@ -32,11 +32,11 @@ Options:
 		'none (i.e. no readable layman make.conf specified)'
 	for I
 	do
-		echo \
-"	            	${I}"
+		printf "%s\t%s" "
+	              " "${I}"
 	done
-	echo \
-"	-C            Clear the above list
+	printf "%s\n" "
+	-C            Clear the above list
 	-c LAYMAN_CFG Use layman.cfg file to determine entry for above list
 	-v            Verbose (default)
 	-q            Quiet"
@@ -96,7 +96,7 @@ GetOverlays () {
 	for I; do
 		[ -n "${I}" ] && test -r "${I}" && Push LAYMAN_OVERLAYS \
 			`PORTDIR_OVERLAY=''; . "${I}"; \
-				echo "${PORTDIR_OVERLAY}"`
+				printf "%s" "${PORTDIR_OVERLAY}"`
 	done
 }
 

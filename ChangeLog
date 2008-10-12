@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.14.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix scripts to use proper printf instead of echo.
+
 *eix-0.14.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support sets in masks or sets; provide RECURSIVE_SETS.

@@ -8,21 +8,23 @@
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
 DETAILS=false
+Die () {
+	printf "%s: %s\n" "${0##*/}" "${1}" >&2
+	exit ${2:-1}
+}
+
 Eix () {
 	if [ -z "`eix '-*Tc' | head -n1`" ]; then
-		[ -z "${1}" ] || echo "${1} (or test switched off)."
+		[ -z "${1}" ] || printf "%s\n" "${1} (or test switched off)."
 		return
 	fi
 	if [ ${#} -le 2 ] || ! ${DETAILS}; then
-		echo "
-${2}:
-"
+		printf "\n%s:\n" "${2}"
 		eix -Tc
-		echo
+		printf "\n"
 		return
 	fi
-	echo "
-${2}..."
+	printf "\n%s\n" "${2}..."
 	shift 2
 	local I
 	for I; do
@@ -84,13 +86,10 @@ Repository () {
 	else
 		I='without'
 	fi
-	echo "The following package versions are installed ${I} repository information:"
-	if ! cd -- "`eix --print EPREFIX_INSTALLED`"/var/db/pkg >/dev/null 2>&1
-	then
-		echo "${0##*/}: cannot locate your database of installed packages" >&2
-		exit 1
-	fi
-	echo
+	cd -- "`eix --print EPREFIX_INSTALLED`"/var/db/pkg >/dev/null 2>&1 \
+		|| Die "cannot locate your database of installed packages"
+	printf "%s\n\n" \
+	"The following package versions are installed ${I} repository information:"
 	C=0
 	( eval '[ "$(( ${C} + 1 ))" = 1 ]' ) >/dev/null 2>&1 \
 		&& A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
@@ -101,15 +100,14 @@ Repository () {
 			else
 				${1} && continue
 			fi
-			echo "${J}"
+			printf "%s\n" "${J}"
 			eval "C=${A}"
 		done
 	done
 	if test ${C} -eq 0; then
-		echo "none"
+		printf "%s\n" "none"
 	elif test ${C} -ne 1; then
-		echo "
-(total number of versions listed above: ${C})"
+		printf "\n%s\n" "(total number of versions listed above: ${C})"
 	fi
 	exit 0
 }

@@ -22,7 +22,7 @@ read_functions () {
 		. "${I}"
 		return
 	done
-	echo "${0##*/}: Cannot read functions.sh" >&2
+	printf "%s: %s" "${0##*/}" "cannot read functions.sh" >&2
 	exit 2
 }
 
@@ -200,7 +200,7 @@ NormalizeNames () {
 		esac
 		if ${HAVE_READLINK}; then
 			# Append A to avoid loss of trailing \n in `...`
-			NormB_=`readlink -f -- "${NormA_}" && echo A` && \
+			NormB_=`readlink -f -- "${NormA_}" ; printf A` && \
 				NormB_="${NormB_%A}" && Chomp NormB_ && \
 				[ -n "${NormB_}" ] && \
 					NormA_="${NormB_}"

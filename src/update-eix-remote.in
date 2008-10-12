@@ -22,7 +22,7 @@ Sanitize () {
 Sanitize
 
 Usage () {
-	echo "Usage: ${0##*/} [options] command [FILE]
+	printf "%s\n" "Usage: ${0##*/} [options] command [FILE]
 Handle some remote updates for @PACKAGE_STRING@
 The following commands are provided:
 
