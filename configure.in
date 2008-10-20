@@ -335,12 +335,10 @@ AC_DEFINE_UNQUOTED(ROOT_DEFAULT, "${ROOT_DEFAULT}",[ Default ROOT])
 AC_SUBST(ROOT_DEFAULT)
 
 AC_MSG_CHECKING([for default of EXEC_EBUILD_SH])
-AC_ARG_WITH(exec-ebuild-sh-default,[  --with-ebuild-sh-default=STR     default EXEC_EBUILD_SH],
+AC_ARG_WITH(ebuild-sh-default,[  --with-ebuild-sh-default=STR     default EXEC_EBUILD_SH],
 		[
 			EBUILD_SH_DEFAULT="${withval}"
-			test "x${EBUILD_SH_DEFAULT}" = "x/" && EBUILD_SH_DEFAULT=""
 			DESCRIPTION='on request'
-			AC_MSG_NOTICE([EBUILD_SH=${EBUILD_SH_DEFAULT} (on request)])
 		],[
 			EBUILD_SH_DEFAULT='/usr/lib/portage/bin/ebuild.sh'
 			if ! test -d "${EPREFIX_DEFAULT}/usr/lib" && \
@@ -356,7 +354,10 @@ AC_ARG_WITH(exec-ebuild-sh-default,[  --with-ebuild-sh-default=STR     default E
 			fi
 		])
 
-AC_MSG_RESULT([\"${EBUILD_SH_DEFAULT}\" (${DESCRIPTION})])
+test "x${EBUILD_SH_DEFAULT}" = "x/" && EBUILD_SH_DEFAULT=""
+EBUILD_SH_MSG=${EBUILD_SH_DEFAULT}
+test -n "${EBUILD_SH_MSG}" || EBUILD_SH_MSG='""'
+AC_MSG_RESULT([${EBUILD_SH_MSG} (${DESCRIPTION})])
 AC_DEFINE_UNQUOTED(EBUILD_SH_DEFAULT, "${EBUILD_SH_DEFAULT}",[ Default EXEC_EBUILD_SH (without prefix)])
 AC_SUBST(EBUILD_SH_DEFAULT)
 

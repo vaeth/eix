@@ -8,6 +8,7 @@
 	  resolving which will never be available in eix. See
 	  http://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
+	- Fix typo in name --with-ebuild-sh-default
 
 *eix-0.14.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
