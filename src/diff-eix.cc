@@ -265,7 +265,6 @@ run_diff_eix(int argc, char *argv[])
 	cli_quick = eixrc.getBool("QUICKMODE");
 	cli_care  = eixrc.getBool("CAREMODE");
 	cli_quiet = eixrc.getBool("QUIETMODE");
-	Package::upgrade_to_best = eixrc.getBool("UPGRADE_TO_HIGHEST_SLOT");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);

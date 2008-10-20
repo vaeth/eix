@@ -1250,11 +1250,13 @@ AddOption(BOOLEAN, "RECOMMEND_LOCAL_MODE",
 	"", "if +/-, recommendations for up- or downgrade will act as if\n"
 	"LOCAL_PORTAGE_CONFIG=true/false");
 
-AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
-	"true", "If true, upgrade tests succeed for installed packages with new higher slots");
-
 AddOption(BOOLEAN, "RECURSIVE_SETS",
 	"true", "Are packages/sets in included sets part of the parent set?");
+
+AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
+	"true", "If true, upgrade tests succeed for installed packages with new higher slots.\n"
+	"Use the files SLOT_UPGRADE_FORBID or SLOT_UPGRADE_ALLOW, respectively,\n"
+	"to specify exceptions.");
 
 AddOption(BOOLEAN, "PRINT_SLOTS",
 	"true", "If false, no slot information is printed.");
@@ -1505,6 +1507,16 @@ AddOption(STRING, "EIXCFGDIR",
 	"%{PORTAGE_CONFIGROOT}/etc/portage",
 	"This variable is only used for delayed substitution.\n"
 	"It is the directory where eix searches for its package.*.* config files");
+
+AddOption(BOOLEAN, "SLOT_UPGRADE_FORBID",
+	"%{EIXCFGDIR}/package.slot_upgrade_forbid",
+	"If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in this file/dir are\n"
+	"treated as if UPGRADE_TO_HIGHEST_SLOT=false.");
+
+AddOption(BOOLEAN, "SLOT_UPGRADE_ALLOW",
+	"%{EIXCFGDIR}/package.slot_upgrade_allow",
+	"If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in this file/dir are\n"
+	"treated as if UPGRADE_TO_HIGHEST_SLOT=true.");
 
 AddOption(STRING, "KEYWORDS_NONEXISTENT",
 	"%{EIXCFGDIR}/package.keywords.nonexistent",

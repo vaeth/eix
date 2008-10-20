@@ -109,6 +109,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		friend class CascadingProfile;
 		friend class PortageUserConfig;
 
+		EixRc *settings_rc;
 		std::vector<std::string> m_categories; /**< Vector of all allowed categories. */
 		std::vector<std::string> m_accepted_keywords;
 		std::set<std::string>    m_accepted_keywords_set, m_arch_set,
@@ -119,6 +120,9 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> set_names;
 		std::vector<SetsList>    parent_sets;
 		std::vector<SetsList>    children_sets;
+
+		bool know_upgrade_policy, upgrade_policy;
+		MaskList<Mask> upgrade_policy_exceptions;
 
 		bool know_world_sets;
 		std::vector<std::string> world_sets;
@@ -183,6 +187,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
 
 		void add_name(SetsList &l, const std::string &s, bool recurse) const;
+
+		bool calc_allow_upgrade_slots(const Package *p);
 
 		void calc_local_sets(Package *p) const
 		{

@@ -1830,6 +1830,9 @@ B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.
 .BR UPGRADE_TO_HIGHEST_SLOT " " (true / false)
 If true, all upgrade tests will give a positive result for an installed
 package for which not the slot with the best stable version is installed.
+Exceptions to this general policy can be specified in
+B</etc/portage/package.slot_upgrade_forbid> or
+B</etc/portage/package.slot_upgrade_allow>, respectively.
 .TP
 .BR RECURSIVE_SETS " " (true / false)
 If true, then sets and packages which are contained in an included set
@@ -2118,6 +2121,12 @@ This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
 See the above comments about this file.
 .TP
+.BR SLOT_UPGRADE_FORBID "  " (String)
+This is the filename of /etc/portage/package.slot_upgrade_forbid
+.TP
+.BR SLOT_UPGRADE_ALLOW "  " (String)
+This is the filename of /etc/portage/package.slot_upgrade_allow
+.TP
 .BR KEYWORDS_NONEXISTENT "  " (String)
 This is the filename of /etc/portage/package.keywords.nonexistent
 .TP
@@ -2154,6 +2163,13 @@ This is the filename of /etc/portage/package.cflags.nowarn
 .BR INSTALLED_NOWARN "  " (String)
 This is the filename of /etc/portage/package.installed.nowarn
 .\" }}}
+.\" }}}
+
+.\" {{{ /etc/portage/package.slot_upgrade*
+.SS /etc/portage/package.slot_upgrade_{forbid,allow}
+Similarly as all other /etc/portage/package.*, this can be a file or directory.
+The entries of this file are of the form "category/name" (separated by newlines).
+The corresponding packages are treated as exceptions for B<UPGRADE_TO_HIGHEST_SLOT>.
 .\" }}}
 
 .\" {{{ /etc/portage/package.*.nonexistent

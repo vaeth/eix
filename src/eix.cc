@@ -449,8 +449,6 @@ setup_defaults()
 	format.tag_for_ex_alien_unstable  = rc["TAG_FOR_EX_ALIEN_UNSTABLE"];
 	format.tag_for_ex_missing_keyword = rc["TAG_FOR_EX_MISSING_KEYWORD"];
 
-	Package::upgrade_to_best   = rc.getBool("UPGRADE_TO_HIGHEST_SLOT");
-
 	string overlay = rc["OVERLAYS_LIST"];
 	if(overlay.find("if") != string::npos)
 		overlay_mode = mode_list_all_if_any;

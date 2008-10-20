@@ -2,6 +2,11 @@
 
 *eix-0.14.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce /etc/portage/package.slot_upgrade_{allow,forbid}
+	  to allow exceptions from the general UPGRADE_TO_HIGHEST_SLOT policy.
+	  This can be used as manual workaround for the missing dependency
+	  resolving which will never be available in eix. See
+	  http://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
 
 *eix-0.14.1

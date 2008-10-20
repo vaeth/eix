@@ -11,6 +11,7 @@
 
 #include <portage/version.h>
 #include <portage/vardbpkg.h>
+#include <portage/conf/portagesettings.h>
 
 using namespace std;
 
@@ -19,12 +20,12 @@ Package::~Package()
 	delete_and_clear();
 }
 
+PortageSettings *Package::portage_settings;
+
 const Package::Duplicates
 	Package::DUP_NONE,
 	Package::DUP_SOME,
 	Package::DUP_OVERLAYS;
-
-bool Package::upgrade_to_best;
 
 const Package::Versioncollects
 	Package::COLLECT_NONE,
@@ -513,6 +514,40 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 	if((!only_installed) && t_best)
 		return 4;
 	return 0;
+}
+
+/** can we upgrade v or has v different slots? */
+bool
+Package::can_upgrade(VarDbPkg *v, bool only_installed, bool test_slots) const
+{
+	if(!test_slots)
+		return (check_best(v, only_installed, false) > 0);
+	bool upgrade_to_best;
+	if(!know_upgrade_slots) {
+		upgrade_to_best = portage_settings->calc_allow_upgrade_slots(this);
+		(const_cast<Package*>(this))->know_upgrade_slots = true;
+		(const_cast<Package*>(this))->allow_upgrade_slots = upgrade_to_best;
+	}
+	else
+		upgrade_to_best = allow_upgrade_slots;
+	if(upgrade_to_best) {
+		if(check_best(v, only_installed, true) > 0)
+			return true;
+	}
+	return (check_best_slots(v, only_installed) > 0);
+}
+
+/** must we downgrade v or has v different categories/slots? */
+bool
+Package::must_downgrade(VarDbPkg *v, bool test_slots) const
+{
+	int c = check_best(v, true, test_slots);
+	if((c < 0) || (c == 3))
+		return true;
+	if(!test_slots)
+		return false;
+	c = check_best_slots(v, true);
+	return ((c < 0) || (c == 2));
 }
 
 void

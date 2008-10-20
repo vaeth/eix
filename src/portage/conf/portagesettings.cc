@@ -186,6 +186,8 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 /** Read make.globals and make.conf. */
 PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 {
+	Package::portage_settings = this;
+	settings_rc = &eixrc;
 	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");
 	m_recurse_sets    = eixrc.getBool("RECURSIVE_SETS");
 	m_eprefixconf     = eixrc.m_eprefixconf;
@@ -485,6 +487,21 @@ PortageSettings::calc_recursive_sets(Package *p) const
 	}
 }
 
+bool
+PortageSettings::calc_allow_upgrade_slots(const Package *p)
+{
+	if(!know_upgrade_policy) {
+		upgrade_policy = settings_rc->getBool("UPGRADE_TO_HIGHEST_SLOT");
+		upgrade_policy_exceptions.clear();
+		const string &exceptions = (*settings_rc)[upgrade_policy ?
+			"SLOT_UPGRADE_FORBID" : "SLOT_UPGRADE_ALLOW"];
+		if(!exceptions.empty())
+			grab_masks(exceptions.c_str(), Mask::maskTypeNone, &upgrade_policy_exceptions, NULL, true);
+	}
+	if((!upgrade_policy_exceptions.empty()) && upgrade_policy_exceptions.get(p))
+		return !upgrade_policy;
+	return upgrade_policy;
+}
 
 /** Return vector of all possible categories.
  * Reads categories on first call. */

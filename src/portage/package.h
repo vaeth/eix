@@ -66,6 +66,8 @@ class SlotList : public std::vector<SlotVersions>
 		const VersionList *operator [] (const char *s) const;
 };
 
+class PortageSettings;
+
 /** A class to represent a package in portage It contains various information
  * about a package, including a sorted(!) list of versions. */
 class Package
@@ -109,6 +111,9 @@ class Package
 
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
+
+		static PortageSettings *portage_settings;
+		bool allow_upgrade_slots, know_upgrade_slots;
 
 		const SlotList& slotlist() const
 		{
@@ -171,9 +176,6 @@ class Package
 		/** Does at least one version have individual iuse data? */
 		bool versions_have_full_use;
 #endif
-
-		/** How upgrades for new better slots are treated in tests */
-		static bool upgrade_to_best;
 
 		/// Preset with defaults
 		Package() :
@@ -317,29 +319,10 @@ class Package
 		int check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */
-		bool can_upgrade(VarDbPkg *v, bool only_installed, bool test_slots) const
-		{
-			if(!test_slots)
-				return (check_best(v, only_installed, false) > 0);
-			if(upgrade_to_best)
-			{
-				if(check_best(v, only_installed, true) > 0)
-					return true;
-			}
-			return (check_best_slots(v, only_installed) > 0);
-		}
+		bool can_upgrade(VarDbPkg *v, bool only_installed, bool test_slots) const;
 
 		/** must we downgrade v or has v different categories/slots? */
-		bool must_downgrade(VarDbPkg *v, bool test_slots) const
-		{
-			int c = check_best(v, true, test_slots);
-			if((c < 0) || (c == 3))
-				return true;
-			if(!test_slots)
-				return false;
-			c = check_best_slots(v, true);
-			return ((c < 0) || (c == 2));
-		}
+		bool must_downgrade(VarDbPkg *v, bool test_slots) const;
 
 		/** do we have an upgrade/downgrade recommendation? */
 		bool recommend(VarDbPkg *v, bool only_installed, bool test_slots) const
@@ -394,7 +377,7 @@ class Package
 
 		void defaults()
 		{
-			m_has_cached_slotlist = false;
+			know_upgrade_slots = m_has_cached_slotlist = false;
 			have_duplicate_versions = DUP_NONE;
 			version_collects = COLLECT_DEFAULT;
 			local_collects = LCOLLECT_DEFAULT;
