@@ -113,7 +113,9 @@ class Package
 		std::string category, name, desc, homepage, licenses, provide;
 
 		static PortageSettings *portage_settings;
-		bool allow_upgrade_slots, know_upgrade_slots;
+		/** Our cache for portage_settings->calc_allow_upgrade_slots().
+		    mutable since it is just a cache. */
+		mutable bool allow_upgrade_slots, know_upgrade_slots;
 
 		const SlotList& slotlist() const
 		{

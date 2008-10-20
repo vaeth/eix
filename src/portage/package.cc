@@ -522,15 +522,11 @@ Package::can_upgrade(VarDbPkg *v, bool only_installed, bool test_slots) const
 {
 	if(!test_slots)
 		return (check_best(v, only_installed, false) > 0);
-	bool upgrade_to_best;
 	if(!know_upgrade_slots) {
-		upgrade_to_best = portage_settings->calc_allow_upgrade_slots(this);
-		(const_cast<Package*>(this))->know_upgrade_slots = true;
-		(const_cast<Package*>(this))->allow_upgrade_slots = upgrade_to_best;
+		allow_upgrade_slots = portage_settings->calc_allow_upgrade_slots(this);
+		know_upgrade_slots = true;
 	}
-	else
-		upgrade_to_best = allow_upgrade_slots;
-	if(upgrade_to_best) {
+	if(allow_upgrade_slots) {
 		if(check_best(v, only_installed, true) > 0)
 			return true;
 	}
