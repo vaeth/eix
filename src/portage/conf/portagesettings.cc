@@ -188,6 +188,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 {
 	Package::portage_settings = this;
 	settings_rc = &eixrc;
+	know_upgrade_policy = false;
 	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");
 	m_recurse_sets    = eixrc.getBool("RECURSIVE_SETS");
 	m_eprefixconf     = eixrc.m_eprefixconf;
