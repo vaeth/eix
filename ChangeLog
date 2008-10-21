@@ -8,6 +8,13 @@
 	  resolving which will never be available in eix. See
 	  http://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
+	- Introduce <fullbest...> format.
+	- Introduce <bestslotsupgrade...> (and <fullbestslotsupgrade...>)
+	  format as a reaction to several requests, the latest being
+	  http://forums.gentoo.org/viewtopic-t-278819-start-393.html
+	  But please please note that if you use this in a script to call
+	  emerge you are almost surely doing something wrong.
+	  See the manpage for more details.
 	- Fix typo in name --with-ebuild-sh-default
 
 *eix-0.14.1

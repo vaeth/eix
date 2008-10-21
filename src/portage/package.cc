@@ -45,10 +45,10 @@ VersionList::best(bool allow_unstable) const
 	for(const_reverse_iterator ri = rbegin();
 		ri != rend(); ++ri)
 	{
-		if(ri->maskflags.isHardMasked())
+		if((*ri)->maskflags.isHardMasked())
 			continue;
-		if(ri->keyflags.isStable() ||
-			(allow_unstable && ri->keyflags.isUnstable()))
+		if((*ri)->keyflags.isStable() ||
+			(allow_unstable && (*ri)->keyflags.isUnstable()))
 			return *ri;
 	}
 	return NULL;
@@ -81,8 +81,19 @@ SlotList::operator [] (const char *s) const
 }
 
 
+bool
+Package::calc_allow_upgrade_slots(PortageSettings *ps) const
+{
+	if(know_upgrade_slots)
+		return allow_upgrade_slots;
+	know_upgrade_slots = true;
+	allow_upgrade_slots = ps->calc_allow_upgrade_slots(this);
+	return allow_upgrade_slots;
+}
+
 /** Check if a package has duplicated versions. */
-void Package::checkDuplicates(const Version *version)
+void
+Package::checkDuplicates(const Version *version)
 {
 	if(have_duplicate_versions == DUP_OVERLAYS)
 		return;
@@ -122,7 +133,8 @@ Package::sortedPushBack(Version *v)
 	push_back(v);
 }
 
-void Package::collect_iuse(const Version *version)
+void
+Package::collect_iuse(const Version *version)
 {
 	if (version->iuse_vector().empty())
 		return;
@@ -249,12 +261,12 @@ Package::build_slotslit() const
 
 
 Version *
-Package::best_slot(const char *slot_name) const
+Package::best_slot(const char *slot_name, bool allow_unstable) const
 {
 	const VersionList *vl = slotlist()[slot_name];
 	if(!vl)
 		return NULL;
-	return vl->best();
+	return vl->best(allow_unstable);
 }
 
 void
@@ -270,6 +282,55 @@ Package::best_slots(vector<Version*> &l, bool allow_unstable) const
 	}
 }
 
+void
+Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const
+{
+	versions.clear();
+	if(!v)
+		return;
+	vector<InstVersion> *ins = v->getInstalledVector(*this);
+	if(!ins)
+		return;
+	if(ins->empty())
+		return;
+	bool added_best = false;
+	set<Version*> versionset;
+	for(vector<InstVersion>::iterator it = ins->begin();
+		it != ins->end() ; ++it) {
+		if(guess_slotname(*it, v)) {
+			Version *bv = best_slot((it->slotname).c_str(), allow_unstable);
+			if(*bv != *it)
+				versionset.insert(bv);
+		}
+		else {
+			// Perhaps the slot was removed:
+			Version *bv = best(allow_unstable);
+			added_best = true;
+			if(*bv != *it)
+				versionset.insert(bv);
+		}
+	}
+	if(!added_best) {
+		if(calc_allow_upgrade_slots(ps)) {
+			Version *bv = best(allow_unstable);
+			versionset.insert(bv);
+		}
+	}
+	for(set<Version*>::const_iterator it = versionset.begin();
+		it != versionset.end(); ++it) {
+		bool found = false;
+		for(vector<InstVersion>::const_iterator insit = ins->begin();
+			insit != ins->end(); ++insit) {
+			if(*insit == **it) {
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+			versions.push_back(*it);
+	}
+}
+
 const char *
 Package::slotname(const ExtendedVersion &v) const
 {
@@ -280,7 +341,9 @@ Package::slotname(const ExtendedVersion &v) const
 	}
 	return NULL;
 }
-bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
+
+bool
+Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 {
 	if(vardbpkg->care_slots())
 		return vardbpkg->readSlot(*this, v);
@@ -312,7 +375,8 @@ bool Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 	-  3: p has no worse best_slot, but an identical
 	      from a different overlay
 	-  0: else */
-int Package::worse_best_slots(const Package &p) const
+int
+Package::worse_best_slots(const Package &p) const
 {
 	int ret = 0;
 	for(SlotList::const_iterator it = slotlist().begin();
@@ -408,13 +472,12 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	vector<InstVersion> *ins = NULL;
 	if(v)
 		ins = v->getInstalledVector(*this);
-	if(ins)
+	if(ins) {
 		if(!ins->size())
 			ins = NULL;
-	if(!ins)
-	{
-		if(!only_installed)
-		{
+	}
+	if(!ins) {
+		if(!only_installed) {
 			if(best())
 				return 4;
 		}
@@ -423,33 +486,27 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	bool downgrade = false;
 	bool upgrade = false;
 	for(vector<InstVersion>::iterator it = ins->begin();
-		it != ins->end() ; ++it)
-	{
-		if(!guess_slotname(*it, v))
-		{
+		it != ins->end() ; ++it) {
+		if(!guess_slotname(*it, v)) {
 			// Perhaps the slot was removed:
 			downgrade = true;
 			Version *t_best = best();
-			if(t_best)
-			{
+			if(t_best) {
 				if(*t_best > *it)
 					upgrade = true;
 			}
 			continue;
 		}
 		Version *t_best_slot = best_slot((it->slotname).c_str());
-		if(!t_best_slot)
-		{
+		if(!t_best_slot) {
 			downgrade = true;
 			continue;
 		}
-		if(*t_best_slot < *it)
-		{
+		if(*t_best_slot < *it) {
 			downgrade = true;
 			continue;
 		}
-		if(*t_best_slot != *it)
-		{
+		if(*t_best_slot != *it) {
 			upgrade = true;
 			continue;
 		}
@@ -512,36 +569,6 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 	if((!only_installed) && t_best)
 		return 4;
 	return 0;
-}
-
-/** can we upgrade v or has v different slots? */
-bool
-Package::can_upgrade(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const
-{
-	if(!test_slots)
-		return (check_best(v, only_installed, false) > 0);
-	if(!know_upgrade_slots) {
-		allow_upgrade_slots = ps->calc_allow_upgrade_slots(this);
-		know_upgrade_slots = true;
-	}
-	if(allow_upgrade_slots) {
-		if(check_best(v, only_installed, true) > 0)
-			return true;
-	}
-	return (check_best_slots(v, only_installed) > 0);
-}
-
-/** must we downgrade v or has v different categories/slots? */
-bool
-Package::must_downgrade(VarDbPkg *v, bool test_slots) const
-{
-	int c = check_best(v, true, test_slots);
-	if((c < 0) || (c == 3))
-		return true;
-	if(!test_slots)
-		return false;
-	c = check_best_slots(v, true);
-	return ((c < 0) || (c == 2));
 }
 
 void

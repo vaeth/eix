@@ -28,7 +28,7 @@ class PortageSettings;
 
 /** A sorted list of pointer to Versions */
 
-class VersionList : public eix::ptr_list<Version>
+class VersionList : public std::list<Version*>
 {
 	public:
 		VersionList(Version *v) : std::list<Version*>(1, v)
@@ -112,9 +112,10 @@ class Package
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
 
-		/** Our PortageSettings::calc_allow_upgrade_slots(this) cache;
+		/** Our calc_allow_upgrade_slots(this) cache;
 		    mutable since it is just a cache. */
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
+		bool calc_allow_upgrade_slots(PortageSettings *ps) const;
 
 		const SlotList& slotlist() const
 		{
@@ -244,9 +245,11 @@ class Package
 
 		Version *best(bool allow_unstable = false) const;
 
-		Version *best_slot(const char *slot_name) const;
+		Version *best_slot(const char *slot_name, bool allow_unstable = false) const;
 
 		void best_slots(std::vector<Version*> &l, bool allow_unstable = false) const;
+
+		void best_slots_upgrade(std::vector<Version*> &versions, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const;
 
 		/** Test whether p has a worse best_slot().
 		    @return
@@ -320,10 +323,28 @@ class Package
 		int check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */
-		bool can_upgrade(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const;
+		bool can_upgrade(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const
+		{
+			if(!test_slots)
+				return (check_best(v, only_installed, false) > 0);
+			if(calc_allow_upgrade_slots(ps)) {
+				if(check_best(v, only_installed, true) > 0)
+					return true;
+			}
+			return (check_best_slots(v, only_installed) > 0);
+		}
 
 		/** must we downgrade v or has v different categories/slots? */
-		bool must_downgrade(VarDbPkg *v, bool test_slots) const;
+		bool must_downgrade(VarDbPkg *v, bool test_slots) const
+		{
+			int c = check_best(v, true, test_slots);
+			if((c < 0) || (c == 3))
+				return true;
+			if(!test_slots)
+				return false;
+			c = check_best_slots(v, true);
+			return ((c < 0) || (c == 2));
+		}
 
 		/** do we have an upgrade/downgrade recommendation? */
 		bool recommend(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const

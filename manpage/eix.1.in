@@ -879,12 +879,29 @@ the highest stable version, including slot information
 the highest stable (or testing, respectively) version without slot information
 .TP
 .BR bestslots ", " bestslotslong ", " bestslots* ", or " bestslotslong*
-for each slot the highest stable (or stable, respectively) version
+for each slot the highest stable (or testing, respectively) version
 with slot information, separated by spaces.
 .TP
 .BR bestslotsshort " or " bestslotshort*
 for each slot the highest stable (or testing, respectively) version
 without slot information, separated by spaces.
+.TP
+.BR bestslotsupgrade...
+As the corresponding B<bestslots...> but choose only those versions which
+probably will appear after the upgrade.
+In particular, B<fullbestslotsupgrade> (see below) might be used in a script
+to feed portage with the packages which presumably need to be upgraded,
+i.e. as some broken temporary substitute for
+B<emerge -Du --with-bdeps y @world @system> if your world file was lost or damaged.
+However, you should use this at most as a temporary substitute until you fix your world file.
+If you use such a script regularly, you are doing something fundamentally wrong.
+B<This is strongly discouraged!> The correct solution is to fix your world file
+by adding all those packages you really want and to unmerge those packages
+(e.g. with emerge --depclean) which are not pulled in as dependencies of
+world/system.
+.TP
+.BR fullbest...
+As the corresponding B<best...>, but format the output as in B<fullavailable>.
 .TP
 .B system
 expands to "system" if this package is in the system profile
@@ -896,7 +913,7 @@ expands to "world" if this package is in the world file
 expands to "world_sets" if this package is in world sets
 .TP
 .B provide
-the packages PROVIDE-string
+the package PROVIDE string
 .TP
 .B marked
 expands to "marked" if the package was passed with the B<--pipe> option.
