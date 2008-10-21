@@ -158,8 +158,8 @@ class DiffTrees
 		found_func found_package;
 		changed_func changed_package;
 
-		DiffTrees(VarDbPkg *vardbpkg, bool only_installed, bool compare_slots, bool separate_deleted) :
-			m_vardbpkg(vardbpkg), m_only_installed(only_installed),
+		DiffTrees(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) :
+			m_vardbpkg(vardbpkg), m_portage_settings(portage_settings), m_only_installed(only_installed),
 			m_slots(compare_slots), m_separate_deleted(separate_deleted)
 		{ }
 
@@ -188,10 +188,11 @@ class DiffTrees
 		}
 	private:
 		VarDbPkg *m_vardbpkg;
+		PortageSettings *m_portage_settings;
 		bool m_only_installed, m_slots, m_separate_deleted;
 
 		bool best_differs(const Package *new_pkg, const Package *old_pkg)
-		{ return new_pkg->differ(*old_pkg, m_vardbpkg, true, m_only_installed, m_slots); }
+		{ return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots); }
 
 		/// Diff two categories and run callbacks.
 		/// Remove already diffed packages from both categories.
@@ -432,7 +433,7 @@ run_diff_eix(int argc, char *argv[])
 	set_virtual(&format_for_old, old_header, eprefix_virtual);
 	set_virtual(&format_for_new, new_header, eprefix_virtual);
 
-	DiffTrees differ(varpkg_db,
+	DiffTrees differ(varpkg_db, portagesettings,
 		eixrc.getBool("DIFF_ONLY_INSTALLED"),
 		!eixrc.getBool("DIFF_NO_SLOTS"),
 		eixrc.getBool("DIFF_SEPARATE_DELETED"));

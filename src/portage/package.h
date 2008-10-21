@@ -112,8 +112,7 @@ class Package
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
 
-		static PortageSettings *portage_settings;
-		/** Our cache for portage_settings->calc_allow_upgrade_slots().
+		/** Our PortageSettings::calc_allow_upgrade_slots(this) cache;
 		    mutable since it is just a cache. */
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
 
@@ -321,22 +320,22 @@ class Package
 		int check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */
-		bool can_upgrade(VarDbPkg *v, bool only_installed, bool test_slots) const;
+		bool can_upgrade(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const;
 
 		/** must we downgrade v or has v different categories/slots? */
 		bool must_downgrade(VarDbPkg *v, bool test_slots) const;
 
 		/** do we have an upgrade/downgrade recommendation? */
-		bool recommend(VarDbPkg *v, bool only_installed, bool test_slots) const
+		bool recommend(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const
 		{
-			return can_upgrade(v, only_installed, test_slots) ||
+			return can_upgrade(v, ps, only_installed, test_slots) ||
 				must_downgrade(v, test_slots);
 		}
 
-		bool differ(const Package &p, VarDbPkg *v, bool only_installed, bool testvardb, bool test_slots) const
+		bool differ(const Package &p, VarDbPkg *v, PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const
 		{
 			if(testvardb)
-				return recommend(v, only_installed, test_slots);
+				return recommend(v, ps, only_installed, test_slots);
 			return differ(p, test_slots);
 		}
 

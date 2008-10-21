@@ -772,7 +772,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "upgrade") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, true, true);
+		bool result = entity->can_upgrade(fmt->vardb, fmt->portagesettings, true, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "upgrade";
@@ -780,7 +780,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "upgradeorinstall") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, false, true);
+		bool result = entity->can_upgrade(fmt->vardb, fmt->portagesettings, false, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "upgrade";
@@ -796,7 +796,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "recommend") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, true, true);
+		bool result = entity->recommend(fmt->vardb, fmt->portagesettings, true, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "recommend";
@@ -804,7 +804,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "recommendorinstall") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, false, true);
+		bool result = entity->recommend(fmt->vardb, fmt->portagesettings, false, true);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "recommend";
@@ -812,7 +812,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "bestupgrade") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, true, false);
+		bool result = entity->can_upgrade(fmt->vardb, fmt->portagesettings, true, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "upgrade";
@@ -820,7 +820,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "bestupgradeorinstall") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, false, false);
+		bool result = entity->can_upgrade(fmt->vardb, fmt->portagesettings, false, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "upgrade";
@@ -836,7 +836,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "bestrecommend") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, true, false);
+		bool result = entity->recommend(fmt->vardb, fmt->portagesettings, true, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "recommend";
@@ -844,7 +844,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	}
 	if(name == "bestrecommendorinstall") {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, false, false);
+		bool result = entity->recommend(fmt->vardb, fmt->portagesettings, false, false);
 		copy.restore(const_cast<Package*>(entity));
 		if(result)
 			return "recommend";

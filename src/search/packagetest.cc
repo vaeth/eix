@@ -706,7 +706,7 @@ PackageTest::match(PackageReader *pkg) const
 			StabilityLocal(p);
 		else if(upgrade_local_mode == LOCALMODE_NONLOCAL)
 			StabilityNonlocal(p);
-		if(! (p->recommend(vardbpkg, true, true)))
+		if(! (p->recommend(vardbpkg, portagesettings, true, true)))
 			return invert;
 	}
 

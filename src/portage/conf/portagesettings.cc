@@ -186,7 +186,6 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 /** Read make.globals and make.conf. */
 PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 {
-	Package::portage_settings = this;
 	settings_rc = &eixrc;
 	know_upgrade_policy = false;
 	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");

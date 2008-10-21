@@ -20,8 +20,6 @@ Package::~Package()
 	delete_and_clear();
 }
 
-PortageSettings *Package::portage_settings;
-
 const Package::Duplicates
 	Package::DUP_NONE,
 	Package::DUP_SOME,
@@ -518,12 +516,12 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 
 /** can we upgrade v or has v different slots? */
 bool
-Package::can_upgrade(VarDbPkg *v, bool only_installed, bool test_slots) const
+Package::can_upgrade(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const
 {
 	if(!test_slots)
 		return (check_best(v, only_installed, false) > 0);
 	if(!know_upgrade_slots) {
-		allow_upgrade_slots = portage_settings->calc_allow_upgrade_slots(this);
+		allow_upgrade_slots = ps->calc_allow_upgrade_slots(this);
 		know_upgrade_slots = true;
 	}
 	if(allow_upgrade_slots) {
