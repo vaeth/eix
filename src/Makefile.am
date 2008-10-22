@@ -220,7 +220,7 @@ EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_output_only_s
 update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
 update_eix_SOURCES = $(update_eix_only_src) $(common_src) \
 	main/main_update_eix.cc
-EXTRA_update_eix_SOURCES = $(extra_cache_src) $(extra_common_src)
+EXTRA_update_eix_SOURCES = $(extra_update_eix_src) $(extra_common_src)
 
 endif
 else
@@ -252,9 +252,9 @@ install-exec-hook:
 	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
 
 eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(update_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(update_eix_only_src) $(output_only_src) $(common_src) \
+eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_eix_only_src) $(update_eix_only_src) \
 	main/main_all.cc
-EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_update_eix_src) $(extra_output_only_src) $(extra_common_src)
+EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_src) $(extra_diff_eix_src) $(extra_update_eix_src)
 
 endif
 

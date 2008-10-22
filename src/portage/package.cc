@@ -338,6 +338,8 @@ Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, 
 	if(!v)
 		return false;
 	vector<InstVersion> *ins = v->getInstalledVector(*this);
+	if(!ins)
+		return false;
 	bool need_best = !check_slots;
 	if(check_slots) {
 		for(vector<InstVersion>::iterator it = ins->begin();
