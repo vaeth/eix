@@ -231,6 +231,8 @@ class PrintFormat {
 			   color_properties_set;          /**< Color for PROPERTIES=set */
 		std::string mark_installed,   /**< Marker for installed packages */
 			   mark_installed_end,/**< End-Marker for installed packages */
+			   mark_upgrade,      /**< Marker for upgrade candidate versions */
+			   mark_upgrade_end,  /**< End-Marker for upgrade candidate versions */
 			   mark_version,      /**< Marker for marked versions */
 			   mark_version_end;  /**< End-Marker for marked versions */
 		std::string dateFormat,       /**< The format of the long  install-date */
@@ -303,6 +305,9 @@ class PrintFormat {
 				AnsiMarker ins_marker(mark_installed);
 				mark_installed     = ins_marker.asString();
 				mark_installed_end = ins_marker.end();
+				AnsiMarker upgrade_marker(mark_upgrade);
+				mark_upgrade       = upgrade_marker.asString();
+				mark_upgrade_end   = upgrade_marker.end();
 				AnsiMarker ver_marker(mark_version);
 				mark_version       = ver_marker.asString();
 				mark_version_end   = ver_marker.end();

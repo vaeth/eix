@@ -1153,6 +1153,9 @@ AddOption(STRING, "COLOR_PROPERTIES_SET",
 AddOption(STRING, "MARK_INSTALLED",
 	"inverse", "How installed packages are marked in version listings.");
 
+AddOption(STRING, "MARK_UPGRADE",
+	"bold", "How upgrade candidates are marked in version listings.");
+
 AddOption(STRING, "MARK_VERSIONS",
 	"underline", "How the package versions passed with --pipe are marked in version listings.");
 

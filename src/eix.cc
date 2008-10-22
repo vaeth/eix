@@ -394,6 +394,7 @@ setup_defaults()
 	format.color_original      = rc.getBool("COLOR_ORIGINAL");
 	format.color_local_mask    = rc.getBool("COLOR_LOCAL_MASK");
 	format.mark_installed      = rc["MARK_INSTALLED"];
+	format.mark_upgrade        = rc["MARK_UPGRADE"];
 	format.mark_version        = rc["MARK_VERSIONS"];
 	format.show_slots          = rc.getBool("PRINT_SLOTS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");

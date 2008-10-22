@@ -249,7 +249,11 @@ class Package
 
 		void best_slots(std::vector<Version*> &l, bool allow_unstable = false) const;
 
+		/** Calculate list of uninstalled upgrade candidates */
 		void best_slots_upgrade(std::vector<Version*> &versions, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const;
+
+		/** Is version an (installed or uninstalled) upgrade candidate? */
+		bool is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const;
 
 		/** Test whether p has a worse best_slot().
 		    @return

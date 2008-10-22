@@ -298,10 +298,14 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 {
 	bool is_installed = false;
 	bool is_marked = false;
+	bool is_upgrade = false;
 	if(!fmt->no_color)
 	{
-		if(fmt->vardb)
+		if(fmt->vardb) {
 			is_installed = fmt->vardb->isInstalledVersion(*package, version, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str());
+			if(!is_installed)
+				is_upgrade = package->is_best_upgrade(true, version, const_cast<VarDbPkg*>(fmt->vardb), const_cast<PortageSettings*>(fmt->portagesettings), false);
+		}
 		if(fmt->marked_list)
 			is_marked = fmt->marked_list->is_marked(*package, version);
 	}
@@ -429,6 +433,8 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 
 	if (is_installed)
 		cout << fmt->mark_installed;
+	else if (is_upgrade)
+		cout << fmt->mark_upgrade;
 	if (is_marked)
 		cout << fmt->mark_version;
 	if (full)
@@ -441,12 +447,15 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		cout << fmt->mark_version_end;
 		if(is_installed &&
 			(fmt->mark_version_end != fmt->mark_installed_end))
-		{
 			cout << fmt->mark_installed_end;
-		}
+		else if(is_upgrade &&
+			(fmt->mark_version_end != fmt->mark_upgrade_end))
+			cout << fmt->mark_upgrade_end;
 	}
 	else if (is_installed)
 		cout << fmt->mark_installed_end;
+	else if(is_upgrade)
+		cout << fmt->mark_upgrade_end;
 	if(with_slots && fmt->show_slots && fmt->colored_slots) {
 		string slotname = version->getSlotAppendix(fmt->colon_slots);
 		if(!slotname.empty())

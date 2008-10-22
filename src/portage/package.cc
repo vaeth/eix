@@ -293,29 +293,30 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, PortageSett
 		return;
 	if(ins->empty())
 		return;
-	bool added_best = false;
+	bool need_best = false;
 	set<Version*> versionset;
 	for(vector<InstVersion>::iterator it = ins->begin();
 		it != ins->end() ; ++it) {
 		if(guess_slotname(*it, v)) {
 			Version *bv = best_slot((it->slotname).c_str(), allow_unstable);
-			if(*bv != *it)
+			if(bv && (*bv != *it))
 				versionset.insert(bv);
 		}
-		else {
-			// Perhaps the slot was removed:
-			Version *bv = best(allow_unstable);
-			added_best = true;
-			if(*bv != *it)
-				versionset.insert(bv);
-		}
+		else // Perhaps the slot was removed:
+			need_best=true;
 	}
-	if(!added_best) {
-		if(calc_allow_upgrade_slots(ps)) {
-			Version *bv = best(allow_unstable);
+	if(!need_best) {
+		if(calc_allow_upgrade_slots(ps))
+			need_best = true;
+	}
+	if(need_best) {
+		Version *bv = best(allow_unstable);
+		if(bv)
 			versionset.insert(bv);
-		}
 	}
+	if(versionset.empty())
+		return;
+	// Return only uninstalled versions:
 	for(set<Version*>::const_iterator it = versionset.begin();
 		it != versionset.end(); ++it) {
 		bool found = false;
@@ -329,6 +330,35 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, PortageSett
 		if(!found)
 			versions.push_back(*it);
 	}
+}
+
+bool
+Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const
+{
+	if(!v)
+		return false;
+	vector<InstVersion> *ins = v->getInstalledVector(*this);
+	bool need_best = !check_slots;
+	if(check_slots) {
+		for(vector<InstVersion>::iterator it = ins->begin();
+			it != ins->end() ; ++it) {
+			if(guess_slotname(*it, v)) {
+				if(version == best_slot((it->slotname).c_str(), allow_unstable))
+					return true;
+			}
+			else // Perhaps the slot was removed:
+				need_best = true;
+		}
+		if(!need_best) {
+			if(calc_allow_upgrade_slots(ps))
+				need_best = true;
+		}
+	}
+	if(need_best) {
+		if(version == best(allow_unstable))
+			return true;
+	}
+	return false;
 }
 
 const char *

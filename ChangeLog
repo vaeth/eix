@@ -8,6 +8,7 @@
 	  resolving which will never be available in eix. See
 	  http://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
+	- Introduce MARK_UPGRADE.
 	- Introduce <fullbest...> format.
 	- Introduce <bestslotsupgrade...> (and <fullbestslotsupgrade...>)
 	  format as a reaction to several requests, the latest being
