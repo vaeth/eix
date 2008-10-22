@@ -600,10 +600,10 @@ EixRc::getBeforeAfter(const char *key)
 void
 EixRc::getRedundantFlags(const char *key, Keywords::Redundant type, RedPair &p)
 {
-	string value=(*this)[key].c_str();
-	vector<string> a=split_string(value);
+	string value = (*this)[key];
+	vector<string> a = split_string(value);
 
-	for(;;)// a dummy loop for break on errors
+	for(;;) // a dummy loop for break on errors
 	{
 		vector<string>::iterator it = a.begin();
 		if(it == a.end())

@@ -218,7 +218,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	/* Normalize overlays and erase duplicates */
 	{
 		string &ref = (*this)["PORTDIR_OVERLAY"];
-		vector<string> overlayvec = split_string(ref);
+		vector<string> overlayvec = split_string(ref, spaces, true, true, true);
 		add_overlay_vector(overlayvec, true, true);
 		ref = join_vector(overlayvec);
 	}
@@ -241,7 +241,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 			}
 			read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
 		}
-		read_local_sets(split_string(eixrc["EIX_LOCAL_SETS"]));
+		read_local_sets(split_string(eixrc["EIX_LOCAL_SETS"], spaces, true, true, true));
 	}
 
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());

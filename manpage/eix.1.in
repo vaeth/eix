@@ -958,16 +958,23 @@ current (i.e. new) package.
 .\" {{{ -------- Colors
 .SS Colors
 .TP
-(I<NAME>,I<BRIGHTNESS>;I<MARKER>)
+(I<NAME>,I<BRIGHTNESS>;I<MARKERS>)
 Each of the ",I<BRIGHTNESS>" and ";I<MARKERS>" parts may be omitted.
 
 If I<BRIGHTNESS> is 1, eix prints the corresponding 'light' (bold) color for
 I<NAME>, or normal color if I<BRIGHTNESS> is 0.
 
-Available colors are:
-I<default black red green yellow blue purple cyan gray>
+An empty I<NAME> means "default" and in contrast to "none" resets output to
+default color and no markers.
 
-Available markers are:
+An empty (or omitted) I<MARKERS> means "none", i.e. no attribute change.
+Several marker attributes can be specified simultaneously
+(separate them by ",").
+
+Available colors are:
+I<default none black red green yellow blue purple cyan gray>
+
+Available marker attributes are:
 I<none bold underline blink inverse>
 .\" }}}
 
@@ -1515,10 +1522,17 @@ See B<FORMATSTRING>.
 .TP
 .BR MARK_INSTALLED "  " (none ", " bold ", " underline ", " blink ", " inverse)
 Mark the installed packages by this attribute when displaying versions.
+Several of the above attributes may be combined (separate them by ",").
+
+.TP
+.BR MARK_UPGRADE "  " (none ", " bold ", " underline ", " blink ", " inverse)
+Mark upgrade candidates by this attribute when displaying versions.
+Several of the above attributes may be combined (separate them by ",").
 
 .TP
 .BR MARK_VERSIONS "  " (none ", " bold ", " underline ", " blink ", " inverse)
 Mark the package versions passed with B<--pipe> by this attribute.
+Several of the above attributes may be combined (separate them by ",").
 
 .TP
 .BR FORCE_USECOLORS "  " (true / false)

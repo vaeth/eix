@@ -99,6 +99,8 @@ ExplodeAtom::split(const char* str)
 	return out;
 }
 
+extern const char *spaces = " \t\r\n";
+
 vector<string>
 split_string(const string &str, const char *at, bool ignore_empty, bool ignore_escaped, bool remove_escape)
 {

@@ -9,6 +9,8 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=236036
 	- Fix scripts to use proper printf instead of echo.
 	- Introduce MARK_UPGRADE.
+	- Allow combining marker attributes, e.g. MARK_UPGRADE="bold,underline"
+	- Allow escaping for all variables containing space-separated paths.
 	- Introduce <fullbest...> format.
 	- Introduce <bestslotsupgrade...> (and <fullbestslotsupgrade...>)
 	  format as a reaction to several requests, the latest being
