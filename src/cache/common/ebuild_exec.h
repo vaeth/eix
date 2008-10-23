@@ -39,6 +39,7 @@ class EbuildExec {
 		void calc_environment(const char *name, const std::string &dir, const Package &package, const Version &version);
 
 		static std::string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
+		static std::string portage_rootpath, portage_bin_path;
 		static bool know_settings, set_uid, set_gid;
 		static uid_t uid;
 		static gid_t gid;

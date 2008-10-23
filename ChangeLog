@@ -2,6 +2,11 @@
 
 *eix-0.14.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
+	  Note that ebuild.sh uses it to calculate PATH, so be careful!
+
+*eix-0.14.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce /etc/portage/package.slot_upgrade_{allow,forbid}
 	  to allow exceptions from the general UPGRADE_TO_HIGHEST_SLOT policy.
 	  This can be used as manual workaround for the missing dependency

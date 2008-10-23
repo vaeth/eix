@@ -1423,6 +1423,16 @@ at the beginning but will stop with a (perhaps misleading) error message when
 trying to access the cache file without proper permissions.
 
 .TP
+.BR EBUILD_USER ", " EBUILD_GROUP ", " EBUILD_UID ", " EBUILD_GID
+These variables determine the permissions for cache methods B<ebuild>/B<ebuild*>.
+See these cache methods for more details
+
+.TP
+.BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
+If nonempty, these variables are passed unchanged to ebuild.sh for cache method B<ebuild*>.
+Note that ebuild.sh uses these variables to calculate the PATH, so this may be a severe security issue.
+
+.TP
 .BR QUICKMODE "  " (true / false)
 If true, eix and diff-eix will use B<--quick> by default.
 
@@ -1775,6 +1785,8 @@ cache-method B<ebuild>, "only" a lengthy shell-script and the ebuild itself
 is executed (hence, also this method is unsafe if you do not trust all
 ".ebuild" scripts).
 Most environment variables except for portage variables and PATH are cleared;
+PORTAGE_BIN_PATH and PORTAGE_ROOTPATH are exported (be aware that ebuild.sh
+uses these to calculate the PATH, so this may be a severe security issue);
 some .ebuild-specific variables like $P are set when the ebuild is executed.
 This method is not quite as compatible as the method B<ebuild>, and its
 success may depend more on the portage version.

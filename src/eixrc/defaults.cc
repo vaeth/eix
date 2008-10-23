@@ -139,6 +139,14 @@ AddOption(STRING, "EBUILD_GID",
 	"%{EBUILD_UID}", "If EBUILD_GROUP is empty or nonexistent, use this group id.\n"
 	"In this case and if ${EBUILD_UID} <= 0, the group id is not changed.");
 
+AddOption(STRING, "PORTAGE_ROOTPATH",
+	PORTAGE_ROOTPATH_DEFAULT, "This variable is passed unchanged to ebuild.sh\n"
+	"Usually ebuild.sh uses it to calculate the PATH.");
+
+AddOption(STRING, "PORTAGE_BIN_PATH",
+	PORTAGE_BIN_PATH_DEFAULT, "This variable is passed unchanged to ebuild.sh\n"
+	"Usually ebuild.sh uses it to calculate the PATH.");
+
 AddOption(BOOLEAN, "QUICKMODE",
 	"false", "Whether --quick is on by default.");
 

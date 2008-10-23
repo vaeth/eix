@@ -122,6 +122,10 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	map<string, string> env;
 	base->env_add_package(env, package, version, dir, name);
 	env["dbkey"] = cachefile;
+	if(!portage_rootpath.empty())
+		env["PORTAGE_ROOTPATH"] = portage_rootpath;
+	if(!portage_bin_path.empty())
+		env["PORTAGE_BIN_PATH"] = portage_bin_path;
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
 	c_env = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
@@ -224,6 +228,7 @@ bool EbuildExec::set_uid, EbuildExec::set_gid;
 uid_t EbuildExec::uid;
 gid_t EbuildExec::gid;
 string EbuildExec::exec_ebuild, EbuildExec::exec_ebuild_sh, EbuildExec::ebuild_depend_temp;
+string EbuildExec::portage_rootpath, EbuildExec::portage_bin_path;
 
 void
 EbuildExec::calc_settings()
@@ -251,4 +256,6 @@ EbuildExec::calc_settings()
 	exec_ebuild = eix["EXEC_EBUILD"];
 	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];
+	portage_rootpath = eix["PORTAGE_ROOTPATH"];
+	portage_bin_path = eix["PORTAGE_BIN_PATH"];
 }

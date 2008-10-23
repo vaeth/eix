@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.14.2, http://eix.sourceforge.net)
+AC_INIT(eix, 0.14.3, http://eix.sourceforge.net)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -360,6 +360,29 @@ test -n "${EBUILD_SH_MSG}" || EBUILD_SH_MSG='""'
 AC_MSG_RESULT([${EBUILD_SH_MSG} (${DESCRIPTION})])
 AC_DEFINE_UNQUOTED(EBUILD_SH_DEFAULT, "${EBUILD_SH_DEFAULT}",[ Default EXEC_EBUILD_SH (without prefix)])
 AC_SUBST(EBUILD_SH_DEFAULT)
+
+AC_ARG_WITH(portage-rootpath,[  --with-portage-rootpath=STR      default PORTAGE_ROOTPATH],
+		[
+			PORTAGE_ROOTPATH_DEFAULT="${withval}"
+			AC_MSG_NOTICE([Using PORTAGE_ROOTPATH=${PORTAGE_ROOTPATH_DEFAULT}])
+		],[
+			PORTAGE_ROOTPATH_DEFAULT=""
+		])
+
+AC_DEFINE_UNQUOTED(PORTAGE_ROOTPATH_DEFAULT, "${PORTAGE_ROOTPATH_DEFAULT}",[ Default PORTAGE_ROOTPATH])
+AC_SUBST(PORTAGE_ROOTPATH_DEFAULT)
+
+AC_ARG_WITH(portage-bin-path,[  --with-portage-bin-path=STR      default PORTAGE_BIN_PATH],
+		[
+			PORTAGE_BIN_PATH_DEFAULT="${withval}"
+			AC_MSG_NOTICE([Using PORTAGE_BIN_PATH=${PORTAGE_BIN_PATH_DEFAULT}])
+		],[
+			PORTAGE_BIN_PATH_DEFAULT=""
+		])
+
+AC_DEFINE_UNQUOTED(PORTAGE_BIN_PATH_DEFAULT, "${PORTAGE_BIN_PATH_DEFAULT}",[ Default PORTAGE_BIN_PATH])
+AC_SUBST(PORTAGE_BIN_PATH_DEFAULT)
+
 
 dnl Check endianess
 AC_C_BIGENDIAN
