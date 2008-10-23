@@ -37,7 +37,7 @@ class SetsList : public std::vector<SetsIndex>
 		}
 
 		bool has(SetsIndex i) const
-		{ return (find(begin(), end(), i) != end()); }
+		{ return (std::find(begin(), end(), i) != end()); }
 
 		/// @return true if something has changed
 		bool add(SetsIndex i)

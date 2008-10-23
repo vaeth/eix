@@ -75,7 +75,20 @@ namespace eix
 
       /// Insert the value for the next placeholder.
       template<typename T>
-          format& operator%(const T& s);
+          format& operator%(const T& s)
+      {
+          assert(m_spec != 0);
+
+          if (m_spec == 'r')
+              write_representation(m_stream, s);
+          else if (m_spec == 's')
+              m_stream << s;
+          else
+              assert(string(s) == "unknown specifier");
+
+          goto_next_spec();
+          return *this;
+      }
 
       /// Return the formated string.
       std::string str() const
@@ -94,7 +107,30 @@ namespace eix
 
   protected:
       /// Find the next specifiers in the format string.
-      void goto_next_spec();
+      void goto_next_spec()
+      {
+          m_spec = 0;
+          std::string::size_type next = m_format.find('%');
+          if (next == std::string::npos || m_format.size() < next+2) {
+              // there are no more specifier, so we move the remaining text to
+              // our stream.
+              m_stream << m_format;
+              m_format.clear();
+          }
+          else if (m_format.at(next+1) == '%') {
+              // %% gives a single %
+              m_stream << m_format.substr(0, next+1);
+              m_format.erase(0, next+2);
+              goto_next_spec();
+          }
+          else {
+              // remember the specifier so we can use it in the next call to
+              // the %-operator.
+              m_spec = m_format.at(next+1);
+              m_stream << m_format.substr(0, next);
+              m_format.erase(0, next+2);
+          }
+      }
 
       /// Write string t enclosed in single quotes into stream s.
       std::ostream& write_representation(std::ostream& s, const char *t)
@@ -126,45 +162,5 @@ namespace eix
       std::string m_format;
   };
 
-  template<typename T>
-      inline format &format::operator%(const T& s)
-      {
-          assert(m_spec != 0);
-
-          if (m_spec == 'r')
-              write_representation(m_stream, s);
-          else if (m_spec == 's')
-              m_stream << s;
-          else
-              assert(! "unknown specifier");
-
-          goto_next_spec();
-          return *this;
-      }
-
-  inline void format::goto_next_spec()
-  {
-      m_spec = 0;
-      std::string::size_type next = m_format.find('%');
-      if (next == std::string::npos || m_format.size() < next+2) {
-          // there are no more specifier, so we move the remaining text to our
-          // stream.
-          m_stream << m_format;
-          m_format.clear();
-      }
-      else if (m_format.at(next+1) == '%') {
-          // %% gives a single %
-          m_stream << m_format.substr(0, next+1);
-          m_format.erase(0, next+2);
-          goto_next_spec();
-      }
-      else {
-          // remember the specifier so we can use it in the next call to the
-          // %-operator.
-          m_spec = m_format.at(next+1);
-          m_stream << m_format.substr(0, next);
-          m_format.erase(0, next+2);
-      }
-  }
 }
 #endif /* __GUARD__FORMATED_H__ */
