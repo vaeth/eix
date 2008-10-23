@@ -116,6 +116,7 @@ EbuildExec::delete_cachefile()
 void
 EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
 {
+	c_env = NULL; envstrings = NULL;
 	if(!use_ebuild_sh)
 		return;
 	map<string, string> env;
