@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __EXCEPTIONS_H__
 #define __EXCEPTIONS_H__
@@ -71,16 +72,7 @@ class SysError : public ExBasic
 		virtual ~SysError() throw() { }
 
 		/// Return reference to message.
-		virtual const std::string& getMessage() const throw()
-		{
-			if (m_cache.empty()) {
-				m_cache = ExBasic::getMessage();
-				if (! m_cache.empty())
-					m_cache.append(": ");
-				m_cache.append(m_error);
-			}
-			return m_cache;
-		}
+		virtual const std::string& getMessage() const throw();
 
 		/// Replace placeholder in format string.
 		template<typename T>
@@ -100,52 +92,37 @@ class SysError : public ExBasic
 #define SysError(s) SysError(__PRETTY_FUNCTION__, s)
 
 inline std::ostream& operator<< (std::ostream& os, const ExBasic& e)
-{ return os << e.from() << ": " << e.getMessage(); }
-
-/// Provide a common look for error-messages for parse-errors in
-/// portage.{mask,keywords,..}.
-inline void
-portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const std::exception &e)
 {
-	std::cerr << "-- Invalid line in "<< file << "("<< line_nr <<"): \""
-	     << line << "\"" << std::endl;
-
-	// Indent the message correctly
-	std::vector<std::string> lines = split_string(e.what(), "\n", false);
-	for(std::vector<std::string>::iterator i = lines.begin();
-		i != lines.end();
-		++i)
-	{
-		std::cerr << "    " << *i << std::endl;
-	}
-	std::cerr << std::endl;
+	return os << e.from() << ": " << e.getMessage();
 }
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
+void portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const std::exception &e);
+
 template<class Iterator>
 inline void
 portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::exception &e)
 {
-  portage_parse_error(file, std::distance(begin, line) + 1, *line, e);
+	portage_parse_error(file, std::distance(begin, line) + 1, *line, e);
 }
 
-namespace eix 
-{ 
-	template<bool B> 
-		struct _StaticAssert; 
+namespace eix
+{
+	template<bool B>
+		struct _StaticAssert;
 
-	template<> 
-		struct _StaticAssert<true> 
-		{ static void empty(void) { } }; 
-} 
+	template<>
+		struct _StaticAssert<true>
+		{ static void empty(void) { } };
+}
 
-/** Static assertion of expr. 
- * 
- * Fail to compile if expr is false because _StaticAssert<T>::empty is only 
- * defined for _StaticAssert<true>::empty.  empty() is a empty function and the 
- * call should get optimized away be the compiler. 
- */ 
-#define EIX_STATIC_ASSERT(expr) eix::_StaticAssert<expr>::empty() 
+/** Static assertion of expr.
+ *
+ * Fail to compile if expr is false because _StaticAssert<T>::empty is only
+ * defined for _StaticAssert<true>::empty.  empty() is a empty function and the
+ * call should get optimized away be the compiler.
+ */
+#define EIX_STATIC_ASSERT(expr) eix::_StaticAssert<expr>::empty()
 
 #endif /* __EXCEPTIONS_H__ */

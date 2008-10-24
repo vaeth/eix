@@ -308,7 +308,7 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		v.inst_iuse = split_string(join_vector(lines, " "));
 		for(vector<string>::iterator it = v.inst_iuse.begin();
 			it != v.inst_iuse.end(); ++it) {
-			while((it->at(0) == '+') || (it->at(0) == '-'))
+			while(((*it)[0] == '+') || ((*it)[0] == '-'))
 				it->erase(0, 1);
 		}
 		sort_uniquify(v.inst_iuse);
@@ -321,7 +321,7 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		alluse = split_string(join_vector(lines, " "));
 		for(vector<string>::iterator it = alluse.begin();
 			it != alluse.end(); ++it) {
-			while((it->at(0) == '+') || (it->at(0) == '-'))
+			while(((*it)[0] == '+') || ((*it)[0] == '-'))
 				it->erase(0, 1);
 		}
 	}

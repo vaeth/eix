@@ -22,7 +22,7 @@
 #include <database/io.h>
 #include <portage/packagetree.h>
 
-#include <cachetable.h>
+#include <cache/cachetable.h>
 
 #include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>

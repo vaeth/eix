@@ -11,6 +11,7 @@
 #include <portage/version.h>
 #include <portage/set_stability.h>
 #include <eixTk/filenames.h>
+#include <eixTk/utils.h>
 
 using namespace std;
 
@@ -101,24 +102,36 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::VERSIONS);
 }
 
+inline static const map<string,PackageTest::MatchField>&
+static_match_field_map()
+{
+	static map<string,PackageTest::MatchField> match_field_map;
+	match_field_map["NONE"]           = PackageTest::NONE;
+	match_field_map["NAME"]           = PackageTest::NAME;
+	match_field_map["DESCRIPTION"]    = PackageTest::DESCRIPTION;
+	match_field_map["LICENSE"]        = PackageTest::LICENSE;
+	match_field_map["CATEGORY"]       = PackageTest::CATEGORY;
+	match_field_map["CATEGORY_NAME"]  = PackageTest::CATEGORY_NAME;
+	match_field_map["HOMEPAGE"]       = PackageTest::HOMEPAGE;
+	match_field_map["PROVIDE"]        = PackageTest::PROVIDE;
+	match_field_map["IUSE"]           = PackageTest::IUSE;
+	match_field_map["SET"]            = PackageTest::SET;
+	match_field_map["SLOT"]           = PackageTest::SLOT;
+	match_field_map["INSTALLED_SLOT"] = PackageTest::INSTALLED_SLOT;
+	return match_field_map;
+}
+
 PackageTest::MatchField
 PackageTest::name2field(const string &p) throw(ExBasic)
 {
-	MatchField ret = NONE;
-	if(p == "NONE")               ret = NONE;
-	else if(p == "NAME")          ret = NAME;
-	else if(p == "DESCRIPTION")   ret = DESCRIPTION;
-	else if(p == "LICENSE")       ret = LICENSE;
-	else if(p == "CATEGORY")      ret = CATEGORY;
-	else if(p == "CATEGORY_NAME") ret = CATEGORY_NAME;
-	else if(p == "HOMEPAGE")      ret = HOMEPAGE;
-	else if(p == "PROVIDE")       ret = PROVIDE;
-	else if(p == "IUSE")          ret = IUSE;
-	else if(p == "SET")           ret = SET;
-	else if(p == "SLOT")          ret = SLOT;
-	else if(p == "INSTALLED_SLOT")ret = INSTALLED_SLOT;
-	else throw ExBasic("Can't find MatchField called %r") % p;
-	return ret;
+	const static map<string,MatchField>& match_field_map =
+		static_match_field_map();
+	map<string,MatchField>::const_iterator it = match_field_map.find(p);
+	if(it == match_field_map.end()) {
+		throw ExBasic("Can't find MatchField %r") % p;
+		return NONE;
+	}
+	return it->second;
 }
 
 PackageTest::MatchField

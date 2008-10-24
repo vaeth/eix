@@ -36,6 +36,9 @@ char *strndup(const char *s, size_t n);
 #endif
 #endif
 
+/** Spaces for split strings */
+extern const char *spaces;
+
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {
 
@@ -77,7 +80,7 @@ optional_append(std::string &s, char symbol)
  * @param delims characters that should me removed
  * @return trimmed string */
 inline void
-ltrim(std::string *str, const char *delims = " \t\r\n")
+ltrim(std::string *str, const char *delims = spaces)
 {
 	// trim leading whitespace
 	std::string::size_type notwhite = str->find_first_not_of(delims);
@@ -92,7 +95,7 @@ ltrim(std::string *str, const char *delims = " \t\r\n")
  * @param delims characters that should me removed
  * @return trimmed string */
 inline void
-rtrim(std::string *str, const char *delims = " \t\r\n")
+rtrim(std::string *str, const char *delims = spaces)
 {
 	// trim trailing whitespace
 	std::string::size_type  notwhite = str->find_last_not_of(delims);
@@ -107,14 +110,11 @@ rtrim(std::string *str, const char *delims = " \t\r\n")
  * @param delims characters that should me removed
  * @return trimmed string */
 inline void
-trim(std::string *str, const char *delims = " \t\r\n")
+trim(std::string *str, const char *delims = spaces)
 {
 	ltrim(str, delims);
 	rtrim(str, delims);
 }
-
-/** Spaces for split strings */
-extern const char *spaces;
 
 /** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.

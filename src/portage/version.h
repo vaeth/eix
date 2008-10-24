@@ -14,10 +14,9 @@
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
 #include <portage/packagesets.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/utils.h>
 
-#include <iostream>
+#include <eixTk/stringutils.h>
+
 #include <algorithm>
 
 /* If NOT_FULL_USE is defined, then the iuse data will be handled per package
@@ -40,7 +39,6 @@
 /** Version expands the BasicVersion class by data relevant for versions in tree/overlays.
  */
 class Version : public ExtendedVersion, public Keywords {
-
 	public:
 		friend void     io::write_version(FILE *fp, const Version *v, const DBHeader &hdr);
 		friend Version *io::read_version(FILE *fp, const DBHeader &hdr);
@@ -105,24 +103,21 @@ class Version : public ExtendedVersion, public Keywords {
 			return false;
 		}
 
+		/// Although this function is long, code gets longer if we don't inline it.
+		//  If somebody does understand this, please let me know.
 		void set_iuse(const std::string &i)
 		{
 			m_iuse = split_string(i);
 			for(std::vector<std::string>::iterator it = m_iuse.begin();
 				it != m_iuse.end(); ++it) {
-				while((it->at(0) == '+') || (it->at(0) == '-'))
+				while(((*it)[0] == '+') || ((*it)[0] == '-'))
 					it->erase(0, 1);
 			}
 			sort_uniquify(m_iuse);
 			m_cached_iuse.clear(); // invalided cache
 		}
 
-		const std::string& iuse() const
-		{
-			if (m_cached_iuse.empty() && ! m_iuse.empty())
-				m_cached_iuse = join_vector(m_iuse);
-			return m_cached_iuse;
-		}
+		const std::string& iuse() const;
 
 		const std::vector<std::string>& iuse_vector() const
 		{ return m_iuse; }
@@ -147,8 +142,8 @@ class Version : public ExtendedVersion, public Keywords {
 
 /** The equality operator does *not* test the slots */
 inline bool operator == (const Version& left, const Version &right)
-{ return BasicVersion::compare(left, right) == 0 && left.overlay_key == right.overlay_key; }
+{ return (!BasicVersion::compare(left, right)) && (left.overlay_key == right.overlay_key); }
 inline bool operator != (const Version& left, const Version &right)
-{ return BasicVersion::compare(left, right) != 0 || left.overlay_key != right.overlay_key; }
+{ return (!BasicVersion::compare(left, right)) || (left.overlay_key != right.overlay_key); }
 
 #endif /* __VERSION_H__ */

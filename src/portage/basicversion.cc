@@ -42,7 +42,7 @@ BasicVersion::compare(const Part& left, const Part& right)
 		//  as if it were 0 instead), and the components are compared using a
 		//  stringwise comparison."
 
-		if (left.second.at(0) == '0' || right.second.at(0) == '0') {
+		if ((left.second)[0] == '0' || (right.second)[0] == '0') {
 			string l1 = left.second;
 			string l2 = right.second;
 
@@ -133,7 +133,7 @@ BasicVersion::parseVersion(const string& str)
 
 	pos += len;
 
-	while(str.at(pos) == '.') {
+	while(str[pos] == '.') {
 		len = str.find_first_not_of("0123456789", ++pos);
 		if (len == pos || pos == str.size()) {
 			m_parts.push_back(Part(garbage, str.substr(pos)));
@@ -148,15 +148,15 @@ BasicVersion::parseVersion(const string& str)
 		pos = len;
 	}
 
-	if(isalpha(str.at(pos)))
+	if(isalpha(str[pos]))
 		m_parts.push_back(Part(character, str.substr(pos++, 1)));
 
 	if (pos == str.size())
 		return;
 
-	while (str.at(pos) == '_') {
+	while (str[pos] == '_') {
 		PartType suffix;
-		pos += 1;
+		pos ++;
 		if (str.compare(pos, 5, "alpha") == 0) {
 			pos += 5;
 			suffix = alpha;
@@ -174,7 +174,7 @@ BasicVersion::parseVersion(const string& str)
 			suffix = rc;
 		}
 		else if (str.compare(pos, 1, "p") == 0) {
-			pos += 1;
+			pos ++;
 			suffix = patch;
 		}
 		else {
@@ -201,7 +201,7 @@ BasicVersion::parseVersion(const string& str)
 			return;
 		pos = len;
 
-		if (str.at(pos) == '.') {
+		if (str[pos] == '.') {
 			// inter-revision used by prefixed portage.
 			// for example foo-1.2-r02.2
 			len = str.find_first_not_of("0123456789", ++pos);
@@ -213,9 +213,9 @@ BasicVersion::parseVersion(const string& str)
 	}
 
 	// warn about garbage, but accept it
-	cerr << (eix::format("garbage (%r) at end of version %r, "
-							  "adding version anyway")
-				  % str.substr(pos) % str) << endl;
+	cerr << (eix::format("garbage (%s) at end of version %r, "
+				"adding version anyway")
+				% str.substr(pos) % str) << endl;
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
 

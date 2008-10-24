@@ -7,23 +7,14 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __OVERLAY_H__
-#define __OVERLAY_H__
+#include "version.h"
 
-#include <string>
+using namespace std;
 
-class OverlayIdent {
-	public:
-		std::string path, label;
-
-		OverlayIdent(const char *Path, const char *Label) :
-			path(Path), label(Label)
-		{ }
-
-		void readLabel(const char *Path);
-
-		std::string human_readable() const;
-};
-
-
-#endif /* __OVERLAY_H__ */
+const string&
+Version::iuse() const
+{
+	if(m_cached_iuse.empty() && ! m_iuse.empty())
+		m_cached_iuse = join_vector(m_iuse);
+	return m_cached_iuse;
+}

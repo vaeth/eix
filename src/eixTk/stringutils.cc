@@ -16,6 +16,10 @@
 
 #include <iostream>
 
+using namespace std;
+
+const char *spaces = " \t\r\n";
+
 #if !defined(HAVE_STRNDUP)
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
@@ -29,16 +33,13 @@ strndup(const char *s, size_t n)
 	while(*p++ && n--);
 	n = p - s - 1;
 	r = static_cast<char *>(malloc(n + 1));
-	if(r != NULL)
-	{
+	if(r) {
 		memcpy(r, s, n);
 		r[n] = 0;
 	}
 	return r;
 }
 #endif /* !defined(HAVE_STRNDUP) */
-
-using namespace std;
 
 const char *
 ExplodeAtom::get_start_of_version(const char* str)
@@ -66,10 +67,7 @@ ExplodeAtom::split_version(const char* str)
 	const char *x = get_start_of_version(str);
 
 	if(x)
-	{
 		return strdup(x);
-	}
-
 	return NULL;
 }
 
@@ -79,10 +77,7 @@ ExplodeAtom::split_name(const char* str)
 	const char *x = get_start_of_version(str);
 
 	if(x)
-	{
 		return strndup(str, ((x - 1) - str));
-	}
-
 	return NULL;
 }
 
@@ -98,8 +93,6 @@ ExplodeAtom::split(const char* str)
 	out[1] = strdup(x);
 	return out;
 }
-
-extern const char *spaces = " \t\r\n";
 
 vector<string>
 split_string(const string &str, const char *at, bool ignore_empty, bool ignore_escaped, bool remove_escape)

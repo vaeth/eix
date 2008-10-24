@@ -22,14 +22,17 @@ database/package_reader.cc \
 database/package_reader.h
 
 eixtk_src = \
+eixTk/ansicolor.cc \
 eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_ptr.h \
 eixTk/compare.h \
+eixTk/exceptions.cc \
 eixTk/exceptions.h \
 eixTk/filenames.cc \
 eixTk/filenames.h \
+eixTk/formated.cc \
 eixTk/formated.h \
 eixTk/inttypes.h \
 eixTk/ptr_list.h \
@@ -70,13 +73,16 @@ portage/packagetree.h \
 portage/keywords.cc \
 portage/keywords.h \
 portage/mask_list.h \
+portage/overlay.cc \
 portage/overlay.h \
 portage/set_stability.cc \
 portage/set_stability.h \
+portage/version.cc \
 portage/version.h
 
 cache_src = \
-cachetable.h \
+cache/cachetable.cc \
+cache/cachetable.h \
 cache/common/assign_reader.cc \
 cache/common/assign_reader.h \
 cache/common/flat_reader.cc \
