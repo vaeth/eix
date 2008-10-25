@@ -2,6 +2,7 @@
 
 *eix-0.14.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild)
 	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
 	  Note that ebuild.sh uses it to calculate PATH, so be careful!
 	- Small code cleanup (changes in inline/static/global; header files)
@@ -27,6 +28,7 @@
 	  emerge you are almost surely doing something wrong.
 	  See the manpage for more details.
 	- Fix typo in name --with-ebuild-sh-default
+	- Fix segfault for cache methods ebuild and parse[*]|ebuild.
 
 *eix-0.14.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -47,6 +49,9 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=240460
 	- New cache methods repo-* support paludis' path scheme.
 	- Be more verbose on execution failures for update-eix.
+	- Cache method ebuild (without "*") and parse[*]|ebuild are broken in
+	  this release! (I observed only after the release that they segfault).
+	  Please upgrade to >=eix-0.14.2 if you need one of these methods.
 
 *eix-0.14.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
