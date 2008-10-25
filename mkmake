@@ -16,7 +16,8 @@ Available options are
   -S  Without sqlite
   -b  With bzlib
   -B  Without bzlib
-  -c  Use only debugging-safe CXXFLAGS"
+  -c  Use only debugging-safe CXXFLAGS
+  -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1}
 }
 
@@ -35,7 +36,8 @@ BZLIB=''
 PEDANTIC=false
 EXTRA_CACHE='--enable-extra-cache'
 SEPARATE=''
-while getopts 'q0123nepusSbBc?hH' OPTION; do
+CHOWN=false
+while getopts 'q0123nepusSbBcr?hH' OPTION; do
 case "${OPTION}" in
 	q) QUIET='>/dev/null 2>&1';;
 	0) EXTRA_CACHE='';;
@@ -51,15 +53,25 @@ case "${OPTION}" in
 	b) BZLIB='--with-bzip2';;
 	B) BZLIB='--without-bzip2';;
 	c) SAFEFLAGS=true;;
+	r) CHOWN=true;;
 	*) Usage 1;;
 esac
 done
-if [ ${OPTIND} -gt 1 ]; then
+if [ ${OPTIND} -gt 1 ]
+then
 	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 &&
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
-if ! ${KEEPENV}; then
+if ${CHOWN}
+then
+	ls /root >/dev/null 2>&1 && \
+		Die "You should not really be root when you use -r" 2
+	chown -R root:root .
+fi
+
+if ! ${KEEPENV}
+then
 	MARCH="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 		/etc/make.conf`"
 	export CXXFLAGS CFLAGS LDFLAGS
@@ -91,8 +103,10 @@ fi
 [ -n "${QUIET}" ] || echo "CFLAGS=${CFLAGS}
 CXXFLAGS=${CXXFLAGS}
 LDFLAGS=${LDFLAGS}"
-if ! test -e Makefile; then
-	if ! test -e configure || ! test -e Makefile.in; then
+if ! test -e Makefile
+then
+	if ! test -e configure || ! test -e Makefile.in
+	then
 		echo "Running autotools..."
 		eval ./autogen.sh ${QUIET} || Die "autogen failed"
 	fi
@@ -103,7 +117,8 @@ fi
 ${EARLYSTOP} && exec make config.h
 echo "Making ${*}..."
 command -v make >/dev/null 2>&1 || Die "cannot find make"
-if [ -n "${QUIET}" ]; then
+if [ -n "${QUIET}" ]
+then
 	exec make "${@}" >/dev/null 2>&1
 else
 	exec make "${@}"

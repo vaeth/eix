@@ -3,7 +3,9 @@
 export LC_ALL=C
 
 Usage() {
-	printf "%s\n" "Usage: ${0##*/} [all|bzip2]"
+	printf "%s\n" "Usage: ${0##*/} [all|bzip2]
+If you do not want autodetection of fakeroot-ng/fakeroot,
+define FAKEROOT correspondingly"
 	exit ${1}
 }
 
@@ -12,41 +14,47 @@ Die() {
 	exit ${2:-1}
 }
 
+Run() {
+	printf "%s\n" "${*}"
+	"${@}" || Die "${*} failed" ${?}
+}
+
 MAKEARCH="dist-lzma"
-[ $# -ne 0 ] && [ -n "${1}" ] && case "${1}" in
+[ ${#} -ne 0 ] && [ -n "${1}" ] && case "${1}" in
 	h*|H*|*\?*|-*) Usage;;
 	b*|B*) MAKEARCH="dist-bzip2";;
 	l*|L*|'') :;;
 	*) MAKEARCH="${MAKEARCH} dist";;
 esac
 
-test -e Makefile || test -e configure || test -e Makefile.in && ./mksvnclean
+test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
 
 unset LDFLAGS CFLAGS CXXFLAGS
-if command -v fakeroot >/dev/null 2>&1; then
-	./mkmake -0eqn || Die "./mkmake -qn failed"
-	DOCMD='fakeroot ./mkmake -0q'
-	DOMSK='fakeroot ./mkmake'
+[ -z "${FAKEROOT}" ] && command -v fakeroot-ng >/dev/null 2>&1 && FAKEROOT=fakeroot-ng
+[ -z "${FAKEROOT}" ] && command -v fakeroot >/dev/null 2>&1 && FAKEROOT=fakeroot
+if command -v "${FAKEROOT}" >/dev/null 2>&1
+then
+	Run ./mkmake -0eqn
+	DOCMD="${FAKEROOT} ./mkmake -0qr"
 else
-	DOCMD='./mkmake -0eq'
-	DOMSG='./mkmake'
+	DOCMD="./mkmake -0eq"
 fi
 for i in ${MAKEARCH}
 do
-	${DOCMD} ${i} || Die "${DOMSG} ${i} failed" ${?}
+	Run ${DOCMD} "${i}"
 done
 
 found=false
 for j in tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 do
-	for i in "${PWD}"/eix-*.${j}
+	for i in "${PWD}"/eix-*."${j}"
 	do
 		test -f "${i}" || continue
-		$found || echo "Available tarballs:"
+		${found} || echo "Available tarballs:"
 		found=true
 		printf "\t%s\n" "${i}"
 	done
 done
-$found || Die "For some reason no tarball was created"
+${found} || Die "For some reason no tarball was created"
 echo "The tarballs will be removed with ./mksvnclean
 Note that to tag the release in svn you should run mkrelease"
