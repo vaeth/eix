@@ -2,12 +2,15 @@
 
 *eix-0.14.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild)
+	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild).
 	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
 	  Note that ebuild.sh uses it to calculate PATH, so be careful!
-	- Small code cleanup (changes in inline/static/global; header files)
+	- Small code cleanup (changes in inline/static/global; header files).
 	- Fix various compilation problems, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=243396
+	- Introduce <empty...> to produce only category/name:slot output.
+	- Change <full...> to produce less output (simplifies postprocessing).
+	- Introduce <=full...>/<=empty...> to produce output portage likes.
 
 *eix-0.14.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

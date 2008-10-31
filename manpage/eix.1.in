@@ -750,7 +750,7 @@ printed. If used to print a property, the name B<must be enclosed in square brac
 .BR name ", " category ", " homepage ", " licenses
 The name, category, homepage and licenses for the current package.
 .TP
-.BR availableversions "  or  " availableversionslong
+.BR availableversions
 All versions including slots that could be installed for this package
 (-l changes output accordingly).
 The versions are printed in the according colors.
@@ -758,26 +758,23 @@ The versions are printed in the according colors.
 .B availableversionsshort
 As B<availableversions>, but do not print any slots
 .TP
-.BR fullavailable ", " fullavailableshort ", " fullavailablelong
+.BR fullavailable ", " fullavailableshort ", " =fullavailable ", " =fullavailableshort ", "  emptyavailable ", " emptyavailableshort ", " =emptyavailable ", " =emptyavailableshort
 This is mainly a hack for scripts if you want to postprocess the output.
-It is somewhat similar to B<availableversions*> but it produces for each
-installed version a line of the form B<category/name-version> instead of
-the plain version number. Keywords/masks are printed in front of the line
-and slots (unless you use B<fullavailableshort>) are printed after the version.
-Overlays and useflags (the format depending on whether B<-l> is in effect)
-are also printed after the version.
+It is somewhat similar to B<availableversions>, but it produces for each
+installed version a line of the form B<category/name:slot-version[overlay]>
+or B<=category/name:slot-version> instead of the plain version number.
+The B<:slot> part is omitted if it appears unnecessary or if the "B<short>" variant is used.
+The B<=> and B<-version> parts are omitted for the "B<empty>" variant.
 
 If you use this, it is likely that you also want to use B<-x> (otherwise,
-you might wonder about the sorting) and probably also B<EIX_PRINT_IUSE=false>
-and B<--pure-packages>.
-If you postprocess the output, do not forget that overlay data might be
-included in the output and that the same version might occur in different overlays.
+you might wonder about the sorting) and probably also B<--pure-packages>.
+If you use "=" do not forget that identical lines might be output
+if the same version occurs in several overlays.
 .TP
-.B fullinstalled
+.BR fullinstalled ", "  fullinstalledshort ", " =fullinstalled ", " =fullinstalledshort ", " emptyinstalled ", " emptyinstalledshort ", " =emptyinstalledshort ", " =emptyinstalledshort
 This is mainly a hack for scripts if you want to postprocess the output.
-For each installed version, this produces a line of the form
-"B<category/name-version>". Note that overlay information is not printed.
-To speed up things you should use option B<-i> in addition
+For each installed version, this produces a line analogous to the above B<fullavailable>/...
+To speed up things you should use option B<-I> in addition
 if you only want to see this output.
 (You will probably also want to use B<--pure-packages>).
 However, see the warning in B<--installed>.
@@ -889,7 +886,7 @@ without slot information, separated by spaces.
 .BR bestslotsupgrade...
 As the corresponding B<bestslots...> but choose only those versions which
 probably will appear after the upgrade.
-In particular, B<fullbestslotsupgrade> (see below) might be used in a script
+In particular, B<=emptybestslotsupgrade> (see below) might be used in a script
 to feed portage with the packages which presumably need to be upgraded,
 i.e. as some broken temporary substitute for
 B<emerge -Du --with-bdeps y @world @system> if your world file was lost or damaged.
@@ -900,8 +897,12 @@ by adding all those packages you really want and to unmerge those packages
 (e.g. with emerge --depclean) which are not pulled in as dependencies of
 world/system.
 .TP
-.BR fullbest...
-As the corresponding B<best...>, but format the output as in B<fullavailable>.
+.BR fullbest... ", " =fullbest... ", " emptybest... ", " =emptybest...
+This is mainly a hack for scripts if you want to postprocess the output.
+It acts as the corresponding B<best...>, but formats the output as in the above described B<fullavailable>/...
+To speed things up, you should use option B<-u> if you only want to see this output.
+(You will probably also want to use B<--pure-packages>).
+However, see the warnings in B<bestslotsupgrade>.
 .TP
 .B system
 expands to "system" if this package is in the system profile

@@ -67,7 +67,7 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 }
 
 string
-getFullInstalled(const Package &p, const PrintFormat &fmt)
+getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, char full)
 {
 	if(!fmt.vardb)
 		return "";
@@ -81,7 +81,27 @@ getFullInstalled(const Package &p, const PrintFormat &fmt)
 		it != vec->end(); ++it) {
 		if(!ret.empty())
 			ret.append("\n");
-		ret.append(p.category + "/" + p.name + "-" + it->getFull());
+		if(full == -1)
+			ret.append("=");
+		ret.append(p.category + "/" + p.name);
+		if(with_slots) {
+			if(p.guess_slotname(*it, fmt.vardb))
+				ret.append(it->getSlotAppendix(true));
+			else
+				it->slotname = "?";
+		}
+		if((full != -2) && (full != 2)) {
+			ret.append("-");
+			ret.append(it->getFull());
+		}
+		if(full > 0) {
+			if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
+				if(it->overlay_key>0) {
+					if((!p.have_same_overlay_key()) || (p.largest_overlay != it->overlay_key))
+						ret.append(fmt.overlay_keytext(it->overlay_key));
+				}
+			}
+		}
 	}
 	return ret;
 }
@@ -294,13 +314,28 @@ print_keywords_version(const PrintFormat *fmt, const Version *version)
 }
 
 void
-print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, bool exclude_overlay, bool full)
+print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, char full)
 {
+	if(full) {
+		if(full == -1)
+			cout << "=";
+		cout << package->category << "/" << package->name;
+		if(with_slots && fmt->show_slots) {
+			cout << version->getSlotAppendix(true);
+		}
+		if((full != -2) && (full != 2))
+			cout <<  "-" << version->getFull();
+		if(full > 0) {
+			if(!package->have_same_overlay_key() && version->overlay_key)
+				cout << fmt->overlay_keytext(version->overlay_key);
+		}
+		return;
+	}
+
 	bool is_installed = false;
 	bool is_marked = false;
 	bool is_upgrade = false;
-	if(!fmt->no_color)
-	{
+	if(!fmt->no_color) {
 		if(fmt->vardb) {
 			is_installed = fmt->vardb->isInstalledVersion(*package, version, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str());
 			if(!is_installed)
@@ -310,7 +345,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			is_marked = fmt->marked_list->is_marked(*package, version);
 	}
 
-	if((!full) && fmt->style_version_lines)
+	if(fmt->style_version_lines)
 		fputs("\n\t\t", stdout);
 
 	bool need_color = !(fmt->no_color);
@@ -428,7 +463,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 	}
 	cout << mask_text << keyword_text;
 
-	if ((!full) && fmt->style_version_lines)
+	if(fmt->style_version_lines)
 		fputs("\t", stdout);
 
 	if (is_installed)
@@ -437,8 +472,6 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		cout << fmt->mark_upgrade;
 	if (is_marked)
 		cout << fmt->mark_version;
-	if (full)
-		cout << package->category << "/" << package->name << "-";
 	if (with_slots && fmt->show_slots && (!fmt->colored_slots))
 		cout << version->getFullSlotted(fmt->colon_slots);
 	else
@@ -465,7 +498,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			cout << slotname;
 		}
 	}
-	if((!full) && fmt->print_restrictions) {
+	if(fmt->print_restrictions) {
 		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE) {
 			if(! fmt->no_color)
 				cout << fmt->color_properties_interactive;
@@ -532,10 +565,8 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 			cout << fmt->tag_restrict_bindist;
 		}
 	}
-	if(!exclude_overlay) {
-		if(!package->have_same_overlay_key() && version->overlay_key)
-			cout << fmt->overlay_keytext(version->overlay_key);
-	}
+	if(!package->have_same_overlay_key() && version->overlay_key)
+		cout << fmt->overlay_keytext(version->overlay_key);
 	if(!fmt->no_color)
 		cout << AnsiColor::reset();
 	if(!fmt->style_version_lines)
@@ -549,9 +580,8 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 }
 
 void
-print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots, bool full, const vector<Version*> *versions)
+print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots, char full, const vector<Version*> *versions)
 {
-	bool exclude_overlay = (full && versions);
 	bool printed = false;
 	for(Package::const_iterator vit = p->begin(); vit != p->end(); ++vit) {
 		if(versions) {
@@ -562,14 +592,14 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 			if(full)
 				cout << "\n";
 			else if(!fmt->style_version_lines)
-			cout << " ";
+				cout << " ";
 		}
-		print_version(fmt, *vit, p, with_slots, exclude_overlay, full);
+		print_version(fmt, *vit, p, with_slots, full);
 		printed = true;
 	}
 	if(printed && !fmt->no_color)
 		cout << AnsiColor::reset();
-	if(versions)
+	if(full || versions)
 		return;
 	bool print_coll_iuse = fmt->print_iuse;
 #if !defined(NOT_FULL_USE)
@@ -584,15 +614,16 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 }
 
 void
-print_versions_slots(const PrintFormat *fmt, const Package* p, bool full, const vector<Version*> *versions)
+print_versions_slots(const PrintFormat *fmt, const Package* p, bool with_slots, char full, const vector<Version*> *versions)
 {
 	if(!p->have_nontrivial_slots()) {
 		print_versions_versions(fmt, p, false, full, versions);
 		return;
 	}
+	if(!full)
+		with_slots = false;
 	const SlotList *sl = &(p->slotlist());
 	bool only_one = (sl->size() == 1);
-	bool exclude_overlay = (full && versions);
 	for(SlotList::const_iterator it = sl->begin();
 		it != sl->end(); ++it) {
 		if(!full) {
@@ -624,13 +655,13 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool full, const 
 			}
 			else if(printed && !fmt->style_version_lines)
 				cout << " ";
-			print_version(fmt, *vit, p, full, exclude_overlay, full);
+			print_version(fmt, *vit, p, with_slots, full);
 			printed = true;
 		}
 		if(printed && !fmt->no_color)
 			cout << AnsiColor::reset();
 	}
-	if(versions)
+	if(full || versions)
 		return;
 	bool print_coll_iuse = fmt->print_iuse;
 #if !defined(NOT_FULL_USE)
@@ -645,10 +676,10 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool full, const 
 }
 
 void
-print_versions(const PrintFormat *fmt, const Package* p, bool with_slots, bool full, const vector<Version*> *versions)
+print_versions(const PrintFormat *fmt, const Package* p, bool with_slots, char full, const vector<Version*> *versions)
 {
 	if(fmt->slot_sorted)
-		print_versions_slots(fmt, p, full, versions);
+		print_versions_slots(fmt, p, with_slots, full, versions);
 	else
 		print_versions_versions(fmt, p, with_slots, full, versions);
 }
@@ -662,14 +693,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 	string plainname = prepend[0];
 	prepend.erase(prepend.begin());
 
-	if(plainname == "fullinstalled") {
-		string s = getFullInstalled(*entity, *fmt);
-		if(s.empty())
-			return false;
-		cout << s;
-		return true;
-	}
-	if(name == "overlaykey") {
+	if(plainname == "overlaykey") {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key()) {
 			cout << fmt->overlay_keytext(ov_key);
@@ -677,17 +701,34 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		}
 		return false;
 	}
-	if(name.find("availableversions") != string::npos) {
-		print_versions(fmt, entity, (name.find("short") != string::npos), false, NULL);
+	if(plainname.find("available") != string::npos) {
+		char full = 0;
+		if(plainname.find("full") != string::npos)
+			full = 1;
+		if(plainname.find('=') != string::npos)
+			full = -1;
+		if(plainname.find("empty") != string::npos)
+			full = (full < 0) ? -2 : 2;
+		print_versions(fmt, entity, (plainname.find("short") == string::npos), full, NULL);
 		return true;
 	}
-	if(name.find("fullavailable") != string::npos) {
-		print_versions(fmt, entity, (name.find("short") != string::npos), true, NULL);
-		return true;
-	}
-	if(plainname.find("installedversions") != string::npos) {
+	if(plainname.find("installed") != string::npos) {
 		if(!fmt->vardb)
 			return false;
+		char full = 0;
+		if(plainname.find("full") != string::npos)
+			full = 1;
+		if(plainname.find('=') != string::npos)
+			full = -1;
+		if(plainname.find("empty") != string::npos)
+			full = (full < 0) ? -2 : 2;
+		if(full) {
+			string s = getFullInstalled(*entity, *fmt, (plainname.find("short") == string::npos), full);
+			if(s.empty())
+				return false;
+			cout << s;
+			return true;
+		}
 		char formattype = 0;
 		if(plainname != "installedversionsshort") {
 			formattype = INST_WITH_DATE;
@@ -702,27 +743,32 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		cout << s;
 		return true;
 	}
-	if(name.find("best") != string::npos) {
-		bool with_slots = (name.find("short") != string::npos);
-		bool accept_unstable = (name.find_first_of('*') != string::npos);
-		bool use_full = (name.find("full") != string::npos);
-		if(name.find("slot") == string::npos) {
+	if(plainname.find("best") != string::npos) {
+		bool with_slots = (plainname.find("short") == string::npos);
+		bool accept_unstable = (plainname.find_first_of('*') != string::npos);
+		char full = 0;
+		if(plainname.find("full") != string::npos)
+			full = 1;
+		if(plainname.find('=') != string::npos)
+			full = -1;
+		if(plainname.find("empty") != string::npos)
+			full = (full < 0) ? -2 : 2;
+		if(plainname.find("slot") == string::npos) {
 			Version *best = entity->best(accept_unstable);
 			if(best == NULL)
 				return false;
-			print_version(fmt, best, entity, with_slots, use_full, use_full);
+			print_version(fmt, best, entity, with_slots, full);
 			return true;
 		}
 		vector<Version*> versions;
-		if(name.find("upgrade") != string::npos) {
+		if(plainname.find("upgrade") != string::npos)
 			entity->best_slots_upgrade(versions, fmt->vardb, fmt->portagesettings, accept_unstable);
-		}
 		else
 			entity->best_slots(versions, accept_unstable);
-		print_versions_versions(fmt, entity, with_slots, use_full, &versions);
+		print_versions_versions(fmt, entity, with_slots, full, &versions);
 		return (versions.begin() != versions.end());
 	}
-	string s = get_package_property(fmt, void_entity, name);
+	string s = get_package_property(fmt, void_entity, plainname);
 	if(s.empty())
 		return false;
 	cout << s;
@@ -885,7 +931,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		return getInstalledString(*entity, *fmt, true, formattype, prepend);
 	}
 	if(name.find("best") != string::npos) {
-		bool with_slots = (name.find("short") != string::npos);
+		bool with_slots = (name.find("short") == string::npos);
 		bool accept_unstable = (name.find_first_of('*') != string::npos);
 		if(name.find("slot") == string::npos) {
 			Version *best = entity->best(accept_unstable);
