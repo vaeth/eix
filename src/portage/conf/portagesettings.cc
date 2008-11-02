@@ -863,8 +863,6 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	if(keyword_masks && (!keyword_masks->empty()))
 	{
 		rvalue = true;
-		for(Package::iterator i = p->begin(); i != p->end(); ++i)
-			push_backs<string>(sorted_by_versions[*i], m_settings->m_accepted_keywords);
 		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
 			it != keyword_masks->end();
 			++it)
@@ -890,20 +888,43 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	for(Package::iterator i = p->begin();
 		i != p->end(); ++i)
 	{
-		// Calculate ACCEPT_KEYWORDS state:
+		// Calculate ACCEPT_KEYWORDS (with package.keywords sets) state:
 
 		Keywords::Redundant redundant = i->get_redundant();
-		KeywordsFlags kf(i->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
-		i->keyflags=kf;
-		i->save_keyflags(Version::SAVEKEY_ACCEPT);
+		vector<string> kv = m_settings->m_accepted_keywords;
+		vector<string>::size_type kvsize = kv.size();
+		KeywordsFlags kf;
+		bool use_default;
+		if(i->sets_indizes.empty())
+			use_default = true;
+		else {
+			pushback_set_accepted_keywords(kv, *i);
+			if(kv.size() == kvsize)
+				use_default = true;
+			else {
+				set<string> s;
+				resolve_plus_minus(s, kv, obsolete_minusasterisk);
+				make_vector(kv, s);
+				kf.set(i->get_keyflags(s, obsolete_minusasterisk));
+				kvsize = kv.size();
+				use_default = false;
+			}
+		}
+		if(use_default) {
+			kf.set(i->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
+			i->keyflags = kf;
+			i->save_keyflags(Version::SAVEKEY_ACCEPT);
+		}
 		bool ori_is_stable = kf.havesome(KeywordsFlags::KEY_STABLE);
 
 		// Were keywords added from /etc/portage/package.keywords?
-		vector<string> &kv = sorted_by_versions[*i];
-		bool calc_lkw = !kv.empty();
+		vector<string> &kvnew = sorted_by_versions[*i];
+		bool calc_lkw = rvalue;
 		if(calc_lkw) {
-			if(kv.size() != m_settings->m_accepted_keywords.size())
+			if(!kvnew.empty()) {
 				redundant |= Keywords::RED_IN_KEYWORDS;
+				push_backs(kv, kvnew);
+			}
 			else if((check & (Keywords::RED_ALL_KEYWORDS &
 				~(Keywords::RED_DOUBLE_LINE | Keywords::RED_IN_KEYWORDS)))
 				== Keywords::RED_NOTHING)
@@ -932,25 +953,22 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			else
 				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk);
 			if(minusasterisk && !obsolete_minusasterisk)
-					redundant |= (check & Keywords::RED_MINUSASTERISK);
+				redundant |= (check & Keywords::RED_MINUSASTERISK);
 
-			// First apply the original ACCEPT_KEYWORDS,
+			// First apply the original ACCEPT_KEYWORDS (with package.keywords sets),
 			// removing them from kv_set meanwhile.
 			// The point is that we temporarily disable "check" so that
 			// ACCEPT_KEYWORDS does not trigger any -T alarm.
 			bool stable = false;
-			for(vector<string>::iterator orikv = m_settings->m_accepted_keywords.begin();
-				orikv != m_settings->m_accepted_keywords.end(); ++orikv)
-			{
-				{	// Tests whether keyword is admissible and remove it:
-					set<string>::iterator where = kv_set.find(*orikv);
-					if(where == kv_set.end()) {
-						// The original keyword was removed by -...
-						continue;
-					}
-					kv_set.erase(where);
+			for(vector<string>::size_type i = 0; i != kv.size(); ++i) {
+				// Tests whether keyword is admissible and remove it:
+				set<string>::iterator where = kv_set.find(kv[i]);
+				if(where == kv_set.end()) {
+					// The original keyword was removed by -...
+					continue;
 				}
-				if(apply_keyword(*orikv, keywords_set, kf,
+				kv_set.erase(where);
+				if(apply_keyword(kv[i], keywords_set, kf,
 					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
 					redundant, Keywords::RED_NOTHING, true)
@@ -1012,6 +1030,21 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			i->set_redundant(redundant);
 	}
 	return rvalue;
+}
+
+void
+PortageUserConfig::pushback_set_accepted_keywords(vector<string> &result, const Version *v) const
+{
+	for(vector<SetsIndex>::const_iterator it = v->sets_indizes.begin();
+		it != v->sets_indizes.end(); ++it) {
+		const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(m_settings->set_names[*it]);
+		if(!keyword_masks)
+			continue;
+		for(eix::ptr_list<KeywordMask>::const_iterator i = keyword_masks->begin();
+			i != keyword_masks->end(); ++i) {
+			push_backs(result, split_string(i->keywords));
+		}
+	}
 }
 
 /// Set stability according to arch or local ACCEPT_KEYWORDS

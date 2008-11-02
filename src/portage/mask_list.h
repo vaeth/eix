@@ -157,33 +157,33 @@ class MaskList
 #if 0
 		void print() const
 		{
-			for(const_iterator it = super::begin(); it != super::end(); ++it)
-			{
+			for(const_iterator it = super::begin(); it != super::end(); ++it) {
 				for(const_cat_iterator t = it->second.begin();
 					t != it->second.end();
-					++t)
-				{
+					++t) {
 					for(const_mask_iterator m = t->second.begin();
-						m != t->second.end(); ++m) {
+						m != t->second.end(); ++m)
 							m->print();
-					}
 				}
 			}
 		}
 #endif
 
-		const eix::ptr_list<_type> *get(const Package *p) const
+		const eix::ptr_list<_type> *get(const std::string &name, const std::string &category = SET_CATEGORY) const
 		{
-			const_iterator it = super::find(p->category);
+			const_iterator it = super::find(category);
 			if(it == super::end())
 				return NULL;
 
-			const_cat_iterator t = it->second.find(p->name);
+			const_cat_iterator t = it->second.find(name);
 			if(t == it->second.end())
 				return NULL;
 
 			return &(t->second);
 		}
+
+		const eix::ptr_list<_type> *get(const Package *p) const
+		{ return get(p->name, p->category); }
 
 		// return true if some masks applied
 		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const

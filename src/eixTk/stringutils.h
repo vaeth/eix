@@ -136,7 +136,6 @@ std::string join_set(const std::set<std::string> &vec, const std::string &glue =
  * @param obsolete_minus   If true do not treat -* special and keep -keyword.
  * @param warnminus        Set if there was -keyword which did not apply for
  * @param warnignore
- * @param warn_plus        Warn if keywords begin with a '+'.
  * @return true            if -* is contained */
 bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL);
 
@@ -179,12 +178,19 @@ void push_backs(std::vector<T> &d, const std::vector<T> &s)
 	d.insert(d.end(), s.begin(), s.end());
 }
 
-/** Make a set from a vector. */
+/// Insert a whole vector to a set.
+template<typename T>
+void insert_list(std::set<T> &the_set, const std::vector<T> &the_list)
+{
+	the_set.insert(the_list.begin(), the_list.end());
+}
+
+/// Make a set from a vector.
 template<typename T>
 void make_set(std::set<T> &the_set, const std::vector<T> &the_list)
 {
 	the_set.clear();
-	the_set.insert(the_list.begin(), the_list.end());
+	insert_list(the_set, the_list);
 }
 
 

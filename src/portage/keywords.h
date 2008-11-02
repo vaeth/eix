@@ -204,7 +204,7 @@ class Keywords
 		void set_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
 		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
 
-		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
+		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus) const
 		{ return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords, obsolete_minus); }
 
 		void set_redundant(Redundant or_redundant = true)

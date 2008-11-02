@@ -73,6 +73,7 @@ class PortageUserConfig {
 		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
 		static void ReadVersionFile (const char *file, MaskList<KeywordMask> *list);
 
+		void pushback_set_accepted_keywords(std::vector<std::string> &result, const Version *v) const;
 	public:
 		PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile);
 

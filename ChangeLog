@@ -2,6 +2,9 @@
 
 *eix-0.14.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Allow @set (from EIX_LOCAL_SETS) in /etc/portage/package.keywords.
+	  This is more than portage currently does, although it is planned:
+	  http://bugs.gentoo.org/show_bug.cgi?id=244366
 	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild).
 	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
 	  Note that ebuild.sh uses it to calculate PATH, so be careful!
