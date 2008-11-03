@@ -2288,6 +2288,29 @@ will perform certain permission tests in advance.
 .\" {{{ BUGS
 .SH "BUGS (and sort of FAQ)"
 .LP
+eix does not and probably never will support dependencies and/or useflags.
+In particular, this means that eix -u output will be in general different
+than the output of an emerge update command - rely only the latter for your system
+(see also the comments to B<bestslotsupgrade...>).
+This holds in particular also for the upgrades of packages with slots.
+The variable B<UPGRADE_TO_HIGHEST_SLOT> and manual exceptions
+in B</etc/portage/package.slot_upgrade_forbid> or
+B</etc/portage/package.slot_upgrade_allow>, respectively, can be used to
+manually work around some of these shortcomings somewhat.
+
+eix does not and never will fully support all sets which portage does support.
+Currently, it appears that even the proposed way of PROPERTIES=set to put
+packages in the tree will never be supported by eix (because eix would need
+full support for dependencies and useflags to handle these).
+As a manual workaround you can specify e.g. in your B</etc/eixrc>
+
+.B EIX_LOCAL_SETS='%{PORTAGE_CONFIGROOT}/etc/portage/sets
+.B %{PORTAGE_CONFIGROOT}/etc/portage/sets.eix-only'
+
+and put into the directory B</etc/portage/sets.eix-only> definition files
+(in the same syntax as B</etc/portage/sets>) of those sets which you e.g. refer
+to in B</etc/portage/package.keywords>.
+
 diff-eix does never consider /etc/portage/profile. (Reason: The saved database
 contains only the masking state according to the original profile, but not the
 profile itself.

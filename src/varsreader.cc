@@ -251,11 +251,11 @@ void VarsReader::VALUE_DOUBLE_QUOTE()
 
 /** Read value not enclosed in any quotes.
  * Thus there are no spaces and tabs allowed. Everything must be escaped.
- * Move INPUT into buffer while it's not in [ \t\n\\]. If the value ends we call ASSIGN_KEY_VALUE.
- * [\n\t ] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
+ * Move INPUT into buffer while it's not in [ \t\n\r\\]. If the value ends we call ASSIGN_KEY_VALUE.
+ * [ \t\r\n] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
 void VarsReader::VALUE_WHITESPACE()
 {
-	while((INPUT != '\t') && (INPUT != '\n') && (INPUT != ' ')) {
+	while((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n')) {
 		if(INPUT == '\\') {
 			NEXT_INPUT_OR_EOF;
 			if(INPUT_EOF)
@@ -490,7 +490,7 @@ bool VarsReader::source(const string &filename)
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
 	includefile.setPrefix(source_prefix);
-	string currprefix;
+	string currprefix = source_prefix;
 	if((parse_flags & ALLOW_SOURCE_VARNAME) == ALLOW_SOURCE_VARNAME) {
 		if(vars) {
 			// Be careful to not declare the variable...
