@@ -348,9 +348,13 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
  * If we fail we recover from it. However, INPUT_EOF might be true at exit. */
 void VarsReader::resolveReference()
 {
+	bool brace = false;
 	char *begin = x;
-	if(INPUT == '{')
+	if(INPUT == '{') {
+		brace = true;
 		NEXT_INPUT;
+		begin = x;
+	}
 	unsigned int ref_key_length = 0;
 
 	while(isValidKeyCharacter(INPUT)) {
@@ -360,22 +364,17 @@ void VarsReader::resolveReference()
 			break;
 	}
 
-	if(*begin == '{') {
+	if(brace) {
 		if(INPUT_EOF)
 			return;
 		if(INPUT == '}') {
-			value.append((*vars)[string(begin + sizeof(char), ref_key_length)]);
+			if(ref_key_length)
+				value.append((*vars)[string(begin, ref_key_length)]);
+			NEXT_INPUT;
 		}
-		/** For some reason, this fprintf crashes, but it disturbs anyway
-		else
-			fprintf(stderr, "%s: Ran into '%c' while looking for '}' after '%.*s'.",
-				file_name, INPUT, ref_key_length, begin);
-		*/
-		NEXT_INPUT;
 	}
-	else {
+	else if(ref_key_length)
 		value.append((*vars)[string(begin, ref_key_length)]);
-	}
 	return;
 }
 

@@ -103,19 +103,7 @@ class Version : public ExtendedVersion, public Keywords {
 			return false;
 		}
 
-		/// Although this function is long, code gets longer if we don't inline it.
-		//  If somebody does understand this, please let me know.
-		void set_iuse(const std::string &i)
-		{
-			m_iuse = split_string(i);
-			for(std::vector<std::string>::iterator it = m_iuse.begin();
-				it != m_iuse.end(); ++it) {
-				while(((*it)[0] == '+') || ((*it)[0] == '-'))
-					it->erase(0, 1);
-			}
-			sort_uniquify(m_iuse);
-			m_cached_iuse.clear(); // invalided cache
-		}
+		void set_iuse(const std::string &i);
 
 		const std::string& iuse() const;
 

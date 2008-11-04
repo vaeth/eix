@@ -140,8 +140,7 @@ Package::collect_iuse(const Version *version)
 		return;
 
 	/// collect iuse
-	std::copy(version->iuse_vector().begin(), version->iuse_vector().end(),
-			std::inserter(m_collected_iuse, m_collected_iuse.begin()));
+	insert_list(m_collected_iuse, version->iuse_vector());
 
 #if defined(NOT_FULL_USE)
 	// Clear iuse to save memory:

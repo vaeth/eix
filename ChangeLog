@@ -7,6 +7,9 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=244366
 	- Document in bugs section of the man page how eix shortcomings for
 	  sets can be partially (manually) circumvented.
+	- Introduce <empty...> to produce only category/name:slot output.
+	- Change <full...> to produce less output (simplifies postprocessing).
+	- Introduce <=full...>/<=empty...> to produce output portage likes.
 	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild).
 	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
 	  Note that ebuild.sh uses it to calculate PATH, so be careful!
@@ -14,10 +17,11 @@
 	- Fix various compilation problems, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=243396
 	- Fix ERPEFIX_SOURCE (previously it had no effect...)
-	- Fix varsreader.cc to deal also with files following DOS conventions.
-	- Introduce <empty...> to produce only category/name:slot output.
-	- Change <full...> to produce less output (simplifies postprocessing).
-	- Introduce <=full...>/<=empty...> to produce output portage likes.
+	- Fix varsreader.cc to deal also with files following DOS conventions;
+	  improve handling of unclosed "${".
+	- Fix segfault and hash problems with USE="--" (which might occur
+	  if e.g. cache method parse fails), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=238216
 
 *eix-0.14.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
