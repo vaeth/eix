@@ -11,6 +11,7 @@
 #define __BASICVERSION_H__
 
 #include <database/types.h>
+#include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
 
 #include <list>

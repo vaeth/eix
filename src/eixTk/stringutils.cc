@@ -15,6 +15,7 @@
 #include "stringutils.h"
 
 #include <iostream>
+#include <cstdio>
 
 using namespace std;
 

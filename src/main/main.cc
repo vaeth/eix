@@ -12,6 +12,7 @@
 #include <eixTk/exceptions.h>
 
 #include <csignal>  /* signal handlers */
+#include <cstdio>
 
 // You must define - in config.h, by -D... or by a wrapper file -
 // one or several of
