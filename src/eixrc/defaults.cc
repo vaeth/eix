@@ -1391,12 +1391,12 @@ MATCH_IF(CATEGORY_NAME, "/");
 MATCH_IF(HOMEPAGE,      ".*");
 MATCH_IF(PROVIDE,       "^virtual/");
 MATCH_IF(IUSE,          ".*");
-MATCH_IF(SET,           ".*");
+MATCH_IF(SET,           "^\\\\?\\@");
 MATCH_IF(SLOT,          ".*");
 MATCH_IF(INSTALLED_SLOT,".*");
 
 AddOption(STRING, "MATCH_ORDER",
-	"PROVIDE CATEGORY_NAME NAME", "Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.");
+	"PROVIDE SET CATEGORY_NAME NAME", "Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.");
 
 AddOption(BOOLEAN, "TEST_FOR_EMPTY",
 	"true", "Defines whether empty entries in /etc/portage/package.* are shown with -t.");

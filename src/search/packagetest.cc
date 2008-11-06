@@ -216,6 +216,8 @@ PackageTest::stringMatch(Package *pkg) const
 			it != setnames.end(); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
+			if((*algorithm)((string("@") + *it).c_str(), NULL))
+				return true;
 		}
 	}
 
