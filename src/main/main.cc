@@ -11,8 +11,6 @@
 #include <main/main.h>
 #include <eixTk/exceptions.h>
 
-#include <string>
-
 #include <csignal>  /* signal handlers */
 
 // You must define - in config.h, by -D... or by a wrapper file -

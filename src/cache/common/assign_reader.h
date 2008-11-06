@@ -10,10 +10,8 @@
 #ifndef __ASSIGNREADER_H__
 #define __ASSIGNREADER_H__
 
-#include <eixTk/exceptions.h>
 #include <portage/keywords.h>
 #include <cache/base.h>
-#include <string>
 
 class Package;
 

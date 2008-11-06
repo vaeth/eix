@@ -14,11 +14,6 @@
 #include <portage/mask_list.h>
 #include <portage/package.h>
 
-#include <map>
-#include <string>
-#include <vector>
-#include <cstdlib>
-
 class PortageSettings;
 class Package;
 

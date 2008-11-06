@@ -12,7 +12,6 @@
 
 #include <portage/basicversion.h>
 #include <portage/version.h>
-#include <set>
 
 /** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
 class InstVersion : public ExtendedVersion, public Keywords {

@@ -11,11 +11,8 @@
 #include <cache/common/flat_reader.h>
 #include <cache/common/assign_reader.h>
 
-#include <eixTk/stringutils.h>
-#include <eixTk/formated.h>
 #include <eixTk/utils.h>
 #include <portage/package.h>
-#include <portage/version.h>
 #include <portage/packagetree.h>
 
 #include <dirent.h>

@@ -10,14 +10,10 @@
 #ifndef __EIXRC_H__
 #define __EIXRC_H__
 
-#include <cstdlib>
-#include <iostream>
-#include <vector>
-#include <string>
-#include <map>
-#include <set>
 #include <portage/keywords.h>
 #include <search/redundancy.h>
+
+#include <iostream>
 
 #define EIX_VARS_PREFIX "EIX_"
 #define DIFF_EIX_VARS_PREFIX "DIFF_"

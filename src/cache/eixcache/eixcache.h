@@ -9,7 +9,6 @@
 #define __EIXCACHE_H__
 
 #include <cache/base.h>
-#include <portage/version.h>
 
 class EixCache : public BasicCache {
 	private:

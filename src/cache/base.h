@@ -12,9 +12,6 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/version.h>
-#include <string>
-#include <map>
-#include <cstdlib>
 
 class Category;
 class Package;

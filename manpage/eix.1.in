@@ -1396,9 +1396,12 @@ The same remarks as for B<EIX_WORLD> hold true.
 .TP
 .B EIX_LOCAL_SETS "  " (string)
 This is a space separated list of directories which contains locally defined sets.
-Usually this is /etc/portage/sets, but you might also want other directories,
-e.g. if you define another multiset directory with "world-candidate = False"
-in /etc/portage/sets.conf.
+Its default contains B</etc/portage/sets> and B</etc/portage/sets.eix>
+as well as EIX_LOCAL_SETS_ADD so that you can just add additional directories
+to the latter variable.
+Reasons why you might want the latter is e.g. if you defined another multiset
+directory (e.g. for treatment with "world-candidate = False") in
+/etc/portage/sets.conf.
 
 .TP
 .BR SAVE_WORLD "  " (true / false)
@@ -2209,6 +2212,14 @@ This is the filename of /etc/portage/package.installed.nowarn
 .\" }}}
 .\" }}}
 
+.\" {{{ /etc/portage/sets.eix
+.SS /etc/portage/sets.eix
+This is a directory analogous to B</etc/portage/sets> (see the portage manpage).
+Since portage has some ways to define package sets which are not available for eix,
+you can use this directory to store (static) sets which you want that eix knows anway
+(e.g. so that set entries in /etc/portage/package.keywords can be treated properly).
+.\" }}}
+
 .\" {{{ /etc/portage/package.slot_upgrade*
 .SS /etc/portage/package.slot_upgrade_{forbid,allow}
 Similarly as all other /etc/portage/package.*, this can be a file or directory.
@@ -2302,14 +2313,8 @@ eix does not and never will fully support all sets which portage does support.
 Currently, it appears that even the proposed way of PROPERTIES=set to put
 packages in the tree will never be supported by eix (because eix would need
 full support for dependencies and useflags to handle these).
-As a manual workaround you can specify e.g. in your B</etc/eixrc>
-
-.B EIX_LOCAL_SETS='%{PORTAGE_CONFIGROOT}/etc/portage/sets
-.B %{PORTAGE_CONFIGROOT}/etc/portage/sets.eix-only'
-
-and put into the directory B</etc/portage/sets.eix-only> definition files
-(in the same syntax as B</etc/portage/sets>) of those sets which you e.g. refer
-to in B</etc/portage/package.keywords>.
+As a workaround you can manually define such additional sets in
+B</etc/portage/sets.eix>.
 
 diff-eix does never consider /etc/portage/profile. (Reason: The saved database
 contains only the masking state according to the original profile, but not the

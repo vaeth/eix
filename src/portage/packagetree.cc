@@ -10,8 +10,6 @@
 #include "packagetree.h"
 
 #include <portage/package.h>
-#include <algorithm>
-#include <cstdlib>
 
 using namespace std;
 

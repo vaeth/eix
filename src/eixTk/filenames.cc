@@ -9,6 +9,7 @@
 #include <fnmatch.h>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 // Try to read PATH_MAX from climits/limits:
 
@@ -39,7 +40,6 @@
 using namespace std;
 
 #if defined(DEBUG_NORMALIZE_PATH)
-#include <iostream>
 string original_normalize_path(const char *path, bool resolve);
 string normalize_path(const char *path, bool resolve)
 {
@@ -65,7 +65,6 @@ string normalize_path(const char *path, bool resolve)
 #define normalize_path(a,b) original_normalize_path(a,b)
 #endif
 
-#include <iostream>
 string normalize_path(const char *path, bool resolve, bool want_slash)
 {
 	if(!*path)

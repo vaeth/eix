@@ -13,15 +13,11 @@
 #endif /* !defined _GNU_SOURCE */
 
 #include "mask.h"
-#include <eixTk/stringutils.h> /* to get strndup on macos */
+#include <eixTk/exceptions.h>
 #include <portage/keywords.h>
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/conf/portagesettings.h>
-
-#include <eixTk/exceptions.h>
-
-#include <iostream>
 
 using namespace std;
 

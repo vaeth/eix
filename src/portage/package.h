@@ -13,15 +13,10 @@
 #include <eixTk/ptr_list.h>
 #include <eixTk/inttypes.h>
 
-#include <list>
-#include <string>
-#include <vector>
-#include <map>
-#include <cstdlib>
-#include <sstream>
-
 #include <portage/version.h>
 #include <portage/instversion.h>
+
+#include <list>
 
 class VarDbPkg;
 class PortageSettings;

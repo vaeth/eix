@@ -9,8 +9,6 @@
 
 #include "ansicolor.h"
 
-#include <map>
-
 using namespace std;
 
 const char *AnsiMarker::reset_string = "\x1B[0m";

@@ -10,14 +10,11 @@
 #ifndef __FORMATSTRING_H__
 #define __FORMATSTRING_H__
 
-#include <stack>
-#include <iostream>
-#include <cstdlib>
-
 #include <portage/package.h>
 #include <portage/set_stability.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/ansicolor.h>
+
+#include <stack>
 
 class DBHeader;
 class VarDbPkg;

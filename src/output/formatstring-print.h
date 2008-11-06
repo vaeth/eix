@@ -10,7 +10,6 @@
 #ifndef __FORMATSTRING_PRINT_H__
 #define __FORMATSTRING_PRINT_H__
 
-#include <string>
 #include <output/formatstring.h>
 #include <portage/package.h>
 #include <portage/version.h>

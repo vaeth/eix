@@ -11,10 +11,7 @@
 #include <cache/common/selectors.h>
 #include <cache/common/flat_reader.h>
 
-#include <eixTk/stringutils.h>
-#include <eixTk/formated.h>
 #include <portage/package.h>
-#include <portage/version.h>
 #include <portage/packagetree.h>
 #include <varsreader.h>
 

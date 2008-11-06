@@ -11,11 +11,6 @@
 
 #include <eixTk/exceptions.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <cstdlib>
-
 /** Current input for FSM */
 #define INPUT (*(x))
 /** Move to next input and check for end of buffer. */

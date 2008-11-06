@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <regex.h>
 #include <iostream>
+#include <cstdlib>
 
 /// Handles regular expressions.
 // It is normally used within global scope so that a regular expression doesn't

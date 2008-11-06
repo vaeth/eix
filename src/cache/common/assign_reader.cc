@@ -10,11 +10,9 @@
 #include "assign_reader.h"
 
 #include <portage/package.h>
-
-#include <map>
-#include <fstream>
-
 #include <config.h>
+
+#include <fstream>
 
 using namespace std;
 

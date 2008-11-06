@@ -10,11 +10,10 @@
 #ifndef __BASICVERSION_H__
 #define __BASICVERSION_H__
 
-#include <string>
-#include <list>
-
 #include <database/types.h>
 #include <eixTk/stringutils.h>
+
+#include <list>
 
 /** Parse and represent a portage version-string. */
 class BasicVersion

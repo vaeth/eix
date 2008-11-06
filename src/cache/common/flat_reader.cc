@@ -8,7 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "flat_reader.h"
-#include <eixTk/stringutils.h>
+
 #include <portage/package.h>
 
 #include <fstream>
@@ -19,7 +19,7 @@ using namespace std;
 inline
 bool skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
 {
-	for(int i=nr; i>0; --i)
+	for(int i = nr; i > 0; --i)
 	{
 		is.ignore(numeric_limits<int>::max(), '\n');
 		if(is.fail())

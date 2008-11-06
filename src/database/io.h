@@ -12,13 +12,10 @@
 
 #include <config.h>
 
-#include <eixTk/stringutils.h>
 #include <eixTk/exceptions.h>
 #include <database/types.h>
 
-#include <string>
 #include <cstdio>
-#include <cstdlib>
 
 class Package;
 class Version;

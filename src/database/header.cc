@@ -10,7 +10,6 @@
 #include "header.h"
 
 #include <eixTk/exceptions.h>
-#include <eixTk/stringutils.h>
 #include <eixTk/filenames.h>
 
 using namespace std;

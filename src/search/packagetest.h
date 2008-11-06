@@ -10,15 +10,6 @@
 #ifndef __PACKAGETEST_H__
 #define __PACKAGETEST_H__
 
-#include <set>
-#include <string>
-#include <cstdlib>
-
-#include <regex.h>
-#include <fnmatch.h>
-
-#include <global.h>
-
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
 #include <portage/conf/portagesettings.h>

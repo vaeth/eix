@@ -11,8 +11,8 @@
 
 #include <cache/base.h>
 #include <global.h>
-
 #include <config.h>
+
 #include <csignal>
 #include <sys/wait.h>
 #include <sys/stat.h>

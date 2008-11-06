@@ -9,11 +9,9 @@
 
 #include "vardbpkg.h"
 
-#include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 #include <eixTk/sysutils.h>
 #include <portage/basicversion.h>
-#include <portage/package.h>
 #include <database/header.h>
 
 #include <dirent.h>

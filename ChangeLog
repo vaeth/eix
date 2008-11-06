@@ -1,19 +1,22 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.14.3
+*eix-0.15.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow @set (from EIX_LOCAL_SETS) in /etc/portage/package.keywords.
 	  This is more than portage currently does, although it is planned:
 	  http://bugs.gentoo.org/show_bug.cgi?id=244366
-	- Document in bugs section of the man page how eix shortcomings for
-	  sets can be partially (manually) circumvented.
+	- Introduce /etc/portage/sets.eix in the EIX_LOCAL_SETS defaults,
+	  and document in the description of that file and in the bug section
+	  of the eix man page that eix' shortcomings for sets can be partially
+	  (manually) circumvented with this directory.
 	- Introduce <empty...> to produce only category/name:slot output.
 	- Change <full...> to produce less output (simplifies postprocessing).
 	- Introduce <=full...>/<=empty...> to produce output portage likes.
 	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild).
 	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
 	  Note that ebuild.sh uses it to calculate PATH, so be careful!
-	- Small code cleanup (changes in inline/static/global; header files).
+	- Code cleanup (changes in inline/static/global).
+	- Cleanup of header files. Some header file fixes (occur with gcc-4.4).
 	- Fix various compilation problems, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=243396
 	- Fix ERPEFIX_SOURCE (previously it had no effect...)

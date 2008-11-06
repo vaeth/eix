@@ -12,7 +12,6 @@
 
 #include <global.h>
 #include <eixTk/argsreader.h>
-#include <eixTk/stringutils.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/utils.h>
@@ -27,10 +26,7 @@
 #include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
 
-#include <string>
-
-#include <dirent.h>
-#include <sys/stat.h> /* chmod(..) */
+#include <sys/stat.h> /* fchown, fchmod */
 
 #define INFO printf
 

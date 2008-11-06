@@ -9,15 +9,7 @@
 
 #include "formatstring.h"
 
-#include <eixTk/ansicolor.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/formated.h>
-
 #include <portage/conf/portagesettings.h>
-
-#include <iostream>
-#include <cstdlib>
-#include <map>
 
 using namespace std;
 

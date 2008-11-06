@@ -10,14 +10,13 @@
 #ifndef __EXCEPTIONS_H__
 #define __EXCEPTIONS_H__
 
+#include <eixTk/formated.h>
+#include <eixTk/stringutils.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include <cerrno>
-
-#include <eixTk/formated.h>
-#include <eixTk/stringutils.h>
 
 /// Simple exception class with printf-like formating.
 class ExBasic : public std::exception

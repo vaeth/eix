@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include "io.h"
+
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/packagetree.h>
@@ -18,9 +20,6 @@
 #include <eixTk/auto_ptr.h>
 
 #include <dirent.h>
-#include <iostream>
-
-#include "io.h"
 
 using namespace std;
 

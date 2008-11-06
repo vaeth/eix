@@ -11,8 +11,6 @@
 #define __PORT2_1_2_H__
 
 #include <cache/base.h>
-#include <map>
-#include <string>
 
 class Port2_1_2_Cache : public BasicCache {
 	private:

@@ -10,10 +10,6 @@
 #ifndef __PORTAGECONF_H__
 #define __PORTAGECONF_H__
 
-#include <vector>
-#include <map>
-#include <cstdlib>
-
 #include <eixTk/exceptions.h>
 #include <portage/package.h>
 #include <portage/instversion.h>

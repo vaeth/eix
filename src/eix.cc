@@ -11,7 +11,6 @@
 #include <main/main.h>
 
 #include <global.h>
-#include <set>
 
 #include <output/formatstring.h>
 #include <output/formatstring-print.h>
@@ -29,12 +28,6 @@
 
 #include <database/header.h>
 #include <database/package_reader.h>
-
-#include <vector>
-#include <stack>
-
-#include <cstdio>
-#include <unistd.h>
 
 #define VAR_DB_PKG "/var/db/pkg/"
 

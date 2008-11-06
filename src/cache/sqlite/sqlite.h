@@ -11,8 +11,6 @@
 #define __SQLITECACHE_H__
 
 #include <cache/base.h>
-#include <eixTk/stringutils.h>
-#include <vector>
 
 class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);

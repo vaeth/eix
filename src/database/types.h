@@ -10,6 +10,8 @@
 #ifndef __GUARD__DATABASE_TYPES_H__
 #define __GUARD__DATABASE_TYPES_H__
 
+#include <cstdlib>
+
 class DBHeader;
 class PackageReader;
 

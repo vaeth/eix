@@ -15,14 +15,13 @@
 #define _GNU_SOURCE
 #endif /* !defined _GNU_SOURCE */
 
-#include <fnmatch.h>
-
 #include <search/levenshtein.h>
 #include <eixTk/regexp.h>
 
 #include <portage/package.h>
 
 #include <cstring>
+#include <fnmatch.h>
 
 /* Check if we have FNM_CASEFOLD ..
  * fnmatch(3) tells me that this is a GNU extensions */

@@ -16,7 +16,6 @@
 
 #include <global.h>
 #include <eixTk/argsreader.h>
-#include <eixTk/stringutils.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/filenames.h>
@@ -32,11 +31,6 @@
 
 #include <output/formatstring.h>
 #include <output/formatstring-print.h>
-
-#include <string>
-#include <iostream>
-
-#include <dirent.h>
 
 #define VAR_DB_PKG "/var/db/pkg/"
 

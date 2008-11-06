@@ -11,19 +11,15 @@
 #define __PACKAGE_READER_H__
 
 #include <config.h>
+#include <database/types.h>
+#include <database/header.h>
+// No forward decl of Package because gcc-3.3.6 will scream bloody murder:
+#include <portage/package.h>
 
 #include <cstdio>
 #include <unistd.h>
-
 #include <iostream>
 #include <memory>
-
-#include <database/types.h>
-#include <database/header.h>
-
-// No forward decl of Package because gcc-3.3.6 will scream bloody
-// murder.
-#include <portage/package.h>
 
 class PortageSettings;
 

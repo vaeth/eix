@@ -8,17 +8,13 @@
 #include "eixcache.h"
 
 #include <portage/package.h>
-#include <portage/version.h>
 #include <database/package_reader.h>
 #include <database/header.h>
 #include <portage/packagetree.h>
 #include <eixTk/filenames.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/formated.h>
 #include <portage/conf/portagesettings.h>
 
 #include <config.h>
-#include <string>
 
 using namespace std;
 

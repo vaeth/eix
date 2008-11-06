@@ -8,7 +8,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "unpickle.h"
-#include <iostream>
 
 using namespace std;
 

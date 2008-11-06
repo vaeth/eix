@@ -7,10 +7,9 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "config.h"
-
 #include "portagesettings.h"
 
+#include <config.h>
 #include <portage/conf/cascadingprofile.h>
 
 #include <portage/mask.h>
@@ -19,7 +18,6 @@
 
 #include <eixTk/utils.h>
 #include <eixTk/sysutils.h>
-#include <eixTk/stringutils.h>
 #include <eixTk/filenames.h>
 
 #include <eixrc/eixrc.h>

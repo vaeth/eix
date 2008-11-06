@@ -11,11 +11,7 @@
 #include <cache/common/unpickle.h>
 
 #include <portage/package.h>
-#include <portage/version.h>
 #include <portage/packagetree.h>
-
-#include <eixTk/stringutils.h>
-#include <eixTk/formated.h>
 
 #include <config.h>
 

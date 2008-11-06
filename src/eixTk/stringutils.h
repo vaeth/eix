@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef __STRINGUTILS_H__
 #define __STRINGUTILS_H__

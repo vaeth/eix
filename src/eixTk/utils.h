@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <cstdio>
 
 /** scandir which even works on poor man's systems.
     We keep the original type for the callback function

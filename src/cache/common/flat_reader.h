@@ -11,10 +11,8 @@
 #define __FLATREADER_H__
 
 
-#include <eixTk/exceptions.h>
 #include <portage/keywords.h>
 #include <cache/base.h>
-#include <string>
 
 class Package;
 

@@ -9,12 +9,11 @@
 
 #include "basicversion.h"
 
-#include <iterator>
-#include <map>
 
 #include <eixTk/compare.h>
 #include <eixTk/exceptions.h>
-#include <eixTk/stringutils.h>
+
+#include <iterator>
 
 using namespace std;
 

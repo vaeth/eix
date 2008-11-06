@@ -10,14 +10,12 @@
 #ifndef __PACKAGETREE_H__
 #define __PACKAGETREE_H__
 
-#include <map>
-#include <string>
-#include <list>
-#include <vector>
-#include <cstdlib>
-
 #include <eixTk/ptr_list.h>
 #include <database/types.h>
+
+#include <map>
+#include <string>
+#include <vector>
 
 class Package;
 class DBHeader;

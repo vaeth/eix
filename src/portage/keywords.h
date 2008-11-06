@@ -10,9 +10,6 @@
 #ifndef __STABILITY_H__
 #define __STABILITY_H__
 
-#include <set>
-#include <vector>
-
 #include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
 #include <database/types.h>

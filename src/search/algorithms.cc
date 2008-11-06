@@ -5,15 +5,10 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
-
-#include <string>
-#include <vector>
-#include <map>
-
-#include <portage/package.h>
-
-using namespace std;
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "algorithms.h"
+
+using namespace std;
 
 map<string, unsigned int> FuzzyAlgorithm::levenshtein_map;

@@ -15,9 +15,6 @@
 #include <portage/version.h>
 #include <portage/keywords.h>
 
-#include <map>
-#include <string>
-
 class Version;
 class Package;
 

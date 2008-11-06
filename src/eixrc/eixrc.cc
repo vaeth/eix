@@ -8,14 +8,10 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "eixrc.h"
-#include <eixTk/exceptions.h>
-#include <eixTk/stringutils.h>
-#include <varsreader.h>
-#include <cstdlib>
-
-#include <portage/conf/portagesettings.h>
-
 #include <config.h>
+#include <varsreader.h>
+#include <eixTk/exceptions.h>
+#include <portage/conf/portagesettings.h>
 
 #ifndef SYSCONFDIR
 #define SYSCONFDIR "/etc"

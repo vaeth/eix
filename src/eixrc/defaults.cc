@@ -109,8 +109,16 @@ AddOption(STRING, "EIX_WORLD",
 AddOption(STRING, "EIX_WORLD_SETS",
 	"%{EIX_WORLD}_sets", "This file is considered as the world_sets file.");
 
+AddOption(STRING, "EIX_LOCAL_SETS_ADD",
+	"",
+	"This variable is only used for delayed substitution.\n"
+	"It specifies directories for EIX_LOCAL_SETS.");
+
 AddOption(STRING, "EIX_LOCAL_SETS",
-	"%{PORTAGE_CONFIGROOT}/etc/portage/sets", "This is a space-separated list of directories which contain locally defined sets.");
+	"%{PORTAGE_CONFIGROOT}/etc/portage/sets\n"
+	"%{PORTAGE_CONFIGROOT}/etc/portage/sets.eix\n"
+	"%{EIX_LOCAL_SETS_ADD}",
+	"This is a space-separated list of directories containing set definitions.");
 
 AddOption(BOOLEAN, "SAVE_WORLD",
 	"false", "Store the information of the world file in the cache file.\n"

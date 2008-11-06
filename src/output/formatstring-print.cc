@@ -12,7 +12,6 @@
 #include <eixTk/sysutils.h>
 #include <portage/vardbpkg.h>
 #include <portage/conf/portagesettings.h>
-#include <cstdlib>
 
 using namespace std;
 

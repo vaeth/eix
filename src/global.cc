@@ -8,11 +8,9 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "global.h"
-#include <cstdlib>
-#include <cassert>
-#include <eixrc/eixrc.h>
-#include <eixTk/exceptions.h>
 #include <config.h>
+
+#include <cassert>
 
 #define DEFAULT_PART 1
 

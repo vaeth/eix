@@ -15,10 +15,6 @@
 #include <eixTk/inttypes.h>
 #include <eixTk/exceptions.h>
 
-#include <map>
-#include <string>
-#include <vector>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>

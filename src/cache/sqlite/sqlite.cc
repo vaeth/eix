@@ -14,14 +14,9 @@
 #if defined(WITH_SQLITE)
 
 #include <portage/package.h>
-#include <portage/version.h>
 #include <portage/packagetree.h>
 
-#include <eixTk/formated.h>
-
 #include <sqlite3.h>
-
-#include <map>
 
 using namespace std;
 

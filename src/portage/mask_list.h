@@ -10,10 +10,6 @@
 #ifndef __MASK_LIST_H__
 #define __MASK_LIST_H__
 
-#include <map>
-#include <string>
-#include <cstdlib>
-
 #include <eixTk/ptr_list.h>
 #include <portage/package.h>
 #include <portage/version.h>

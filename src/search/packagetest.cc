@@ -8,8 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "packagetest.h"
-#include <portage/version.h>
-#include <portage/set_stability.h>
+#include <global.h>
 #include <eixTk/filenames.h>
 #include <eixTk/utils.h>
 
