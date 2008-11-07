@@ -15,6 +15,10 @@
 	- Introduce <empty...> to produce only category/name:slot output.
 	- Change <full...> to produce less output (simplifies postprocessing).
 	- Introduce <=full...>/<=empty...> to produce output portage likes.
+	- Introduce %{\VAR} delayed references to avoid surprises in the
+	  expansion of list variables like EIX_LOCAL_SETS or CACHE_METHOD.
+	- Document escape mechanism of string lists in the manpage.
+	- Turn *_NOWARN *_NONEXISTENT SLOT_UPGRADE_* into string lists.
 	- Correct ChangeLog of 0.14.1/2 (segfault for cache method ebuild).
 	- Pass PORTAGE_ROOTPATH and PORTAGE_BIN_PATH to ebuild.sh.
 	  Note that ebuild.sh uses it to calculate PATH, so be careful!
@@ -28,6 +32,7 @@
 	- Fix segfault and hash problems with USE="--" (which might occur
 	  if e.g. cache method parse fails), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=238216
+	- Fix minor bugs in escape handling in lists.
 
 *eix-0.14.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

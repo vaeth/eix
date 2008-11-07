@@ -35,8 +35,8 @@ using namespace std;
 
 static int  is_current_dbversion(const char *filename);
 static void print_vector(const vector<string> &vec);
-static void print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
-static void print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist);
+static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
+static void print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist);
 
 /** Show a short help screen with options and commands. */
 static void
@@ -831,7 +831,7 @@ print_vector(const vector<string> &vec)
 }
 
 static void
-print_unused(const string &filename, const string &excludefile, const eix::ptr_list<Package> &packagelist, bool test_empty)
+print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty)
 {
 	vector<string> unused;
 	vector<string> lines;
@@ -846,10 +846,12 @@ print_unused(const string &filename, const string &excludefile, const eix::ptr_l
 			continue;
 		if(!know_excludes) {
 			know_excludes = true;
-			if(!excludefile.empty()) {
+			vector<string> excludelist = split_string(excludefiles, spaces, true, true);
+			for(vector<string>::const_iterator it = excludelist.begin();
+				it != excludelist.end(); ++it) {
 				vector<string> excl;
-				pushback_lines(excludefile.c_str(), &excl, false, true);
-				make_set(excludes, split_string(join_vector(excl)));
+				pushback_lines(it->c_str(), &excl, false, true);
+				insert_list(excludes, split_string(join_vector(excl)));
 			}
 		}
 
@@ -908,7 +910,7 @@ print_unused(const string &filename, const string &excludefile, const eix::ptr_l
 }
 
 static void
-print_removed(const string &dirname, const string &excludefile, const eix::ptr_list<Package> &packagelist)
+print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist)
 {
 	/* For faster testing, we build a category->name set */
 	map< string, set<string> > cat_name;
@@ -941,10 +943,12 @@ print_removed(const string &dirname, const string &excludefile, const eix::ptr_l
 			if((!ns) || (ns->find(name) == ns->end())) {
 				if(!know_excludes) {
 					know_excludes = true;
-					if(!excludefile.empty()) {
+					vector<string> excludelist = split_string(excludefiles, spaces, true, true);
+					for(vector<string>::const_iterator it = excludelist.begin();
+						it != excludelist.end(); ++it) {
 						vector<string> excl;
-						pushback_lines(excludefile.c_str(), &excl, false, true);
-						make_set(excludes, split_string(join_vector(excl)));
+						pushback_lines(it->c_str(), &excl, false, true);
+						insert_list(excludes, split_string(join_vector(excl)));
 					}
 				}
 				if(excludes.find(name) == excludes.end()) {

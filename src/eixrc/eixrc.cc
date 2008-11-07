@@ -248,14 +248,42 @@ string
 			return NULL;
 		}
 		visited.insert(key);
+		bool have_star = false;
+		bool have_escape = false;
+		while(varlength >= 1) {
+			bool check_next;
+			switch((*value)[varpos]) {
+				case '*':
+					have_star = check_next = true;
+					break;
+				case '\\':
+					have_escape = check_next = true;
+					break;
+				default:
+					check_next = false;
+					break;
+			}
+			if(!check_next)
+				break;
+			varpos++;
+			varlength--;
+		}
+		if(varlength < 1)
+			return NULL;
 		string *s = resolve_delayed_recurse(
-			( ((*value)[varpos] == '*') ?
-			(varprefix + value->substr(varpos + 1, varlength - 1)) :
+			(have_star ?
+			(varprefix + value->substr(varpos, varlength)) :
 			value->substr(varpos, varlength)),
 			visited, has_reference, errtext, errvar);
 		visited.erase(key);
 		if(!s)
 			return NULL;
+		string escaped;
+		if(have_escape) {
+			escaped = *s;
+			escape_string(escaped);
+			s = &escaped;
+		}
 		if(! will_test) {
 			value->replace(pos, length, *s);
 			pos += s->length();
@@ -422,17 +450,36 @@ EixRc::read_undelayed(set<string> &has_reference)
 			else
 				continue;
 			has_reference.insert(defaults[i].key);
-			if(str[pos] == '*') {
-				string s = str.substr(pos + 1, length - 2);
+			bool have_star = false;
+			while(length > 1) {
+				bool check_next;
+				switch(str[pos]) {
+					case '*':
+						have_star = check_next = true;
+						break;
+					case '\\':
+						check_next = true;
+						break;
+					default:
+						check_next = false;
+						break;
+				}
+				if(!check_next)
+					break;
+				pos++;
+				length--;
+			}
+			if(length <= 1)
+				continue;
+			string s = str.substr(pos, length - 1);
+			if(have_star) {
 				join_delayed(string(EIX_VARS_PREFIX) + s,
 					default_keys, tempmap);
 				join_delayed(string(DIFF_EIX_VARS_PREFIX) + s,
 					default_keys, tempmap);
 			}
-			else {
-				join_delayed(str.substr(pos, length - 1),
-					default_keys, tempmap);
-			}
+			else
+				join_delayed(s, default_keys, tempmap);
 		}
 	}
 }
@@ -507,13 +554,20 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 			}
 			else
 				type = DelayedVariable;
-			if((c != '*') && (c != '_') &&
-				((c < 'A') || (c > 'Z')) &&
-				((c < 'a') || (c > 'z')))
-				continue;
+			bool headsymbols = true;
 			for(;;)
 			{
 				c = str[i++];
+				if(headsymbols) {
+					switch(c) {
+						case '*':
+						case '\\':
+							continue;
+						default:
+							headsymbols = false;
+							break;
+					}
+				}
 				if ((c != '_') &&
 					((c < '0') || (c > '9')) &&
 					((c < 'A') || (c > 'Z')) &&

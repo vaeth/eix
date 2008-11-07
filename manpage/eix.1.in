@@ -854,9 +854,8 @@ It is explicitly admissible that the strings contain colors in the format
 described later: this is what you will probably use these strings for.
 .TP
 .BR installedversionsshort ", " installedversionsdate ", " installedversionsshortdate
-All installed versions (without or with installation date or with installation date in short form, respectively),
-separated by spaces. As for B<installedversions> you can also add a list
-of colon-separated strings to influence the printing.
+All installed versions (without or with installation date or with installation date in short form, respectively), separated by spaces.
+As for B<installedversions> you can also add a list of colon-separated strings to influence the printing.
 .TP
 .B markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.
@@ -1172,8 +1171,23 @@ this B<*> is replaced by B<EIX_> or B<DIFF_>, depending on whether
 it is used from B<eix>/B<update-eix> or from B<diff-eix>.
 This way you can have different defaults for these programs.
 
-For example the delayed reference B<%{*>I<VARIABLE>B<}> will insert
+For example, the delayed reference B<%{*>I<VARIABLE>B<}> will insert
 the expansion of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>, respectively.
+
+The B<\\> and B<*> attributes can be combined (order plays no role).
+.TP
+.SS
+B<\\>I<VARIABLE>
+If a delayed reference uses a variable name starting with B<\\>,
+all \\ or [\\n\\r\\t ] symbols of the (expanded)
+I<VARIABLE> content are considered as escaped.
+
+In particular, the delayed reference B<%{\\>I<VARIABLE>B<}> can be used in
+string list variables like B<CACHE_METHOD> or B<EIX_LOCAL_SETS>,
+ensuring that I<VARIABLE> produces at most one entry "as is", even if it
+should contain spaces or \\ characters.
+
+The B<\\> and B<*> attributes can be combined (order plays no role).
 .\" }}}
 
 .\" {{{ -------- Conditional blocks as delayed reference
@@ -1394,8 +1408,9 @@ The file eix considers as the world_sets file.
 The same remarks as for B<EIX_WORLD> hold true.
 
 .TP
-.B EIX_LOCAL_SETS "  " (string)
-This is a space separated list of directories which contains locally defined sets.
+.B EIX_LOCAL_SETS "  " (string list) "(the meaning of string list is explained in the next paragraph)"
+
+This is a list of directories which contains locally defined sets.
 Its default contains B</etc/portage/sets> and B</etc/portage/sets.eix>
 as well as EIX_LOCAL_SETS_ADD so that you can just add additional directories
 to the latter variable.
@@ -1403,6 +1418,12 @@ Reasons why you might want the latter is e.g. if you defined another multiset
 directory (e.g. for treatment with "world-candidate = False") in
 /etc/portage/sets.conf.
 
+For all string list variables, the possible separators between different entries are [ \\t\\r\\n].
+If you want to use such a separator within an entry, you have to escape it by B<\\>.
+Moreover, all B<\\> symbols have to be escaped analogously, since the escapes are removed, of course.
+If you want to insert a variable "as-is", you can make use of delayed substitution:
+B<%{\\>I<VAR>B<}> will insert the value of I<VAR> with all symbols from [\\ \\t\\r\\n] being escaped.
+(See delayed substitution for more details).
 .TP
 .BR SAVE_WORLD "  " (true / false)
 If you set this to true, the information of your world file is stored in @EIX_CACHEFILE@.
@@ -1484,7 +1505,7 @@ always fetched from disk, even if it could be read from a corresponding version.
 This is slower but more reliable, i.e. it will also find out whether restrictions were changed.
 
 .TP
-.BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (Strings)
+.BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE "  " (string)
 Define the normal, compact and verbose layout for results printed by B<eix>.
 See B<FORMATSTRING>.
 Since eix-0.13.4 these variables just expand to delayed substitution of the
@@ -1494,7 +1515,7 @@ The intention of this simple definition is that it is very easy to refer
 to the default definition when you change the definition of B<FORMAT>.
 
 .TP
-.BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (Strings)
+.BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (string)
 Define the format for packages that were added, removed or for which the highest
 stable versions has changed. This is only used by B<diff-eix>.
 See B<FORMATSTRING>.
@@ -1521,7 +1542,7 @@ These strings are printed before/after the IUSE data for a version
 (resp. the collected IUSE for all versions of the package [in one-slotted resp. in slot-sorted displaymode]) is printed.
 
 .TP
-.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (Strings)
+.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (string)
 Define the color for masked versions, stable versions, unstable versions, slots, fetch-restricted version,
 the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).
 Use the same syntax as you would inside ().
@@ -1628,21 +1649,21 @@ Never display a list of overlays.
 List all overlays for every query (even if not even one is needed).
 
 .TP
-.B LEVENSHTEIN_DISTANCE "  " (Integer)
+.B LEVENSHTEIN_DISTANCE "  " (integer)
 Set default levenshtein-distance.
 
 .TP
-.B EXCLUDE_OVERLAY "  " (String)
-Set a list of wildcard patterns for overlay paths that are excluded from the index (separators are [\\n\\r\\t ]).
+.B EXCLUDE_OVERLAY "  " (string list)
+Set a list of wildcard patterns for overlay paths that are excluded from the index.
 See the B<update-eix> option B<--exclude-overlay>.
 
 .TP
-.B ADD_OVERLAY "  " (String)
-Set a list of overlays that are added to the index (separators are [\\n\\r\\t ]).
+.B ADD_OVERLAY "  " (string list)
+Set a list of overlays that are added to the index.
 See the B<update-eix> option B<--add-overlay>.
 
 .TP
-.BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (Strings)
+.BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (string)
 Set the type of the cache used by portage and for overlays.
 B<PORTDIR_CACHE_METHOD> defaults to I<@PORTDIR_CACHE_METHOD@>,
 B<OVERLAY_CACHE_METHOD> to I<parse|ebuild*>.
@@ -1656,7 +1677,7 @@ You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
 
 .TP
-.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD
+.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD (string list)
 These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
 The cache method of I<overlay> is set to I<method>, overriding the
 settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
@@ -1948,47 +1969,47 @@ matches actually lead to some output.
 This might be useful for certain scripts if you are only interested in the
 number of matches and use e.g. B<FORMAT=''> to speed things up.
 .TP
-.B TAG_FOR_PROFILE TAG_FOR_MASKED TAG_FOR_EX_PROFILE TAG_FOR_EX_MASKED TAG_FOR_LOCALLY_MASKED TAG_FOR_STABLE TAG_FOR_UNSTABLE TAG_FOR_MINUS_ASTERISK TAG_FOR_MINUS_KEYWORD TAG_FOR_ALIEN_STABLE TAG_FOR_ALIEN_UNSTABLE TAG_FOR_MISSING_KEYWORD TAG_FOR_EX_UNSTABLE TAG_FOR_EX_MINUS_ASTERISK TAG_FOR_EX_MINUS_KEYWORD TAG_FOR_EX_ALIEN_STABLE TAG_FOR_EX_ALIEN_UNSTABLE TAG_FOR_EX_MISSING_KEYWORD " " (String)
+.B TAG_FOR_PROFILE TAG_FOR_MASKED TAG_FOR_EX_PROFILE TAG_FOR_EX_MASKED TAG_FOR_LOCALLY_MASKED TAG_FOR_STABLE TAG_FOR_UNSTABLE TAG_FOR_MINUS_ASTERISK TAG_FOR_MINUS_KEYWORD TAG_FOR_ALIEN_STABLE TAG_FOR_ALIEN_UNSTABLE TAG_FOR_MISSING_KEYWORD TAG_FOR_EX_UNSTABLE TAG_FOR_EX_MINUS_ASTERISK TAG_FOR_EX_MINUS_KEYWORD TAG_FOR_EX_ALIEN_STABLE TAG_FOR_EX_ALIEN_UNSTABLE TAG_FOR_EX_MISSING_KEYWORD " " (string)
 The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
 .TP
-.B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL TAG_PROPERTIES_SET " " (String)
+.B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL TAG_PROPERTIES_SET " " (string)
 The tags which are printed for versions with the corresponding RESTRICT or PROPERTIES settings.
 .TP
 .\" {{{ Default Matchfields for different strings.
-.B MATCH_NAME_IF " " (String)
+.B MATCH_NAME_IF " " (string)
 Use NAME as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_DESCRIPTION_IF " " (String)
+.B MATCH_DESCRIPTION_IF " " (string)
 Use DESCRIPTION as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_LICENSE_IF " " (String)
+.B MATCH_LICENSE_IF " " (string)
 Use LICENSE as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_CATEGORY_IF " " (String)
+.B MATCH_CATEGORY_IF " " (string)
 Use CATEGORY as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_CATEGORY_NAME_IF " " (String)
+.B MATCH_CATEGORY_NAME_IF " " (string)
 Use CATEGORY_NAME as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_HOMEPAGE_IF " " (String)
+.B MATCH_HOMEPAGE_IF " " (string)
 Use HOMEPAGE as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_IUSE_IF " " (String)
+.B MATCH_IUSE_IF " " (string)
 Use USE as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_PROVIDE_IF " " (String)
+.B MATCH_PROVIDE_IF " " (string)
 Use PROVIDE as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_SLOT_IF " " (String)
+.B MATCH_SLOT_IF " " (string)
 Use SLOT as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_INSTALLED_SLOT_IF " " (String)
+.B MATCH_INSTALLED_SLOT_IF " " (string)
 Use INSTALLED_SLOT as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_SET_IF " " (String)
+.B MATCH_SET_IF " " (string)
 Use SET as default matchfield if the string matches the given regex.
 .TP
-.B MATCH_ORDER " " (String)
+.B MATCH_ORDER " " (string)
 Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
 .TP
 .\" }}}
@@ -2033,7 +2054,7 @@ if they come from a different overlay than the installed version.
 .BR NONEXISTENT_IF_MASKED "  " (true / false)
 Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 .TP
-.B REDUNDANT_IF_DOUBLE " " (String)
+.B REDUNDANT_IF_DOUBLE " " (string)
 Applies if /etc/portage/package.keywords lists the same keyword twice
 for some/all (un-/installed) versions.
 
@@ -2082,7 +2103,7 @@ resp. at least some version (in case B<+>) of the package is installed.
 The result is positive if at least one of the two tests is positive.
 Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
 .TP
-.B REDUNDANT_IF_DOUBLE_LINE " " (String)
+.B REDUNDANT_IF_DOUBLE_LINE " " (string)
 Applies if /etc/portage/package.keywords has two lines for identical targets,
 i.e. such that portage would drop the first of these lines.
 Note that lines with targets B<foo/bar> and B<=foo/bar-1> are considered as
@@ -2167,48 +2188,50 @@ This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 .BR REDUNDANT_IF_IN_CFLAGS "  " (String ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
 See the above comments about this file.
+.\" }}}
+.\" {{{ Various filelists:
 .TP
-.BR SLOT_UPGRADE_FORBID "  " (String)
-This is the filename of /etc/portage/package.slot_upgrade_forbid
+.BR SLOT_UPGRADE_FORBID "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
 .TP
-.BR SLOT_UPGRADE_ALLOW "  " (String)
-This is the filename of /etc/portage/package.slot_upgrade_allow
+.BR SLOT_UPGRADE_ALLOW "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
-.BR KEYWORDS_NONEXISTENT "  " (String)
-This is the filename of /etc/portage/package.keywords.nonexistent
+.BR KEYWORDS_NONEXISTENT "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nonexistent
 .TP
-.BR MASK_NONEXISTENT "  " (String)
-This is the filename of /etc/portage/package.mask.nonexistent
+.BR MASK_NONEXISTENT "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nonexistent
 .TP
-.BR UNMASK_NONEXISTENT "  " (String)
-This is the filename of /etc/portage/package.unmask.nonexistent
+.BR UNMASK_NONEXISTENT "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nonexistent
 .TP
-.BR USE_NONEXISTENT "  " (String)
-This is the filename of /etc/portage/package.use.nonexistent
+.BR USE_NONEXISTENT "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.use.nonexistent
 .TP
-.BR CFLAGS_NONEXISTENT "  " (String)
-This is the filename of /etc/portage/package.cflags.nonexistent
+.BR CFLAGS_NONEXISTENT "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nonexistent
 .TP
-.BR INSTALLED_NONEXISTENT "  " (String)
-This is the filename of /etc/portage/package.installed.nonexistent
+.BR INSTALLED_NONEXISTENT "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
-.BR KEYWORDS_NOWARN "  " (String)
-This is the filename of /etc/portage/package.keywords.nowarn
+.BR KEYWORDS_NOWARN "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nowarn
 .TP
-.BR MASK_NOWARN "  " (String)
-This is the filename of /etc/portage/package.mask.nowarn
+.BR MASK_NOWARN "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nowarn
 .TP
-.BR UNMASK_NOWARN "  " (String)
-This is the filename of /etc/portage/package.unmask.nowarn
+.BR UNMASK_NOWARN "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nowarn
 .TP
-.BR USE_NOWARN "  " (String)
-This is the filename of /etc/portage/package.use.nowarn
+.BR USE_NOWARN "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.use.nowarn
 .TP
-.BR CFLAGS_NOWARN "  " (String)
-This is the filename of /etc/portage/package.cflags.nowarn
+.BR CFLAGS_NOWARN "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nowarn
 .TP
-.BR INSTALLED_NOWARN "  " (String)
-This is the filename of /etc/portage/package.installed.nowarn
+.BR INSTALLED_NOWARN "  " (string list)
+This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nowarn
 .\" }}}
 .\" }}}
 

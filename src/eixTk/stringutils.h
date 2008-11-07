@@ -117,11 +117,17 @@ trim(std::string *str, const char *delims = spaces)
 	rtrim(str, delims);
 }
 
+/** Escape all "at" and "\" characters in string. */
+void escape_string(std::string &str, const char *at = spaces);
+
 /** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.
  * @param at  Split at the occurrence of any these characters.
+ * @param ignore_empty  Remove empty strings from the result.
+ * @param handle_escape Do not split at escaped characters from "at" symbols,
+ *                      removing escapes for \\ or "at" symbols from result.
  * @return    vector of strings. */
-std::vector<std::string> split_string(const std::string &str, const char *at = spaces, bool ignore_empty = true, bool ignore_escaped = false, bool remove_escape = false);
+std::vector<std::string> split_string(const std::string &str, const char *at = spaces, const bool ignore_empty = true, const bool handle_escape = false);
 
 /** Join a string-vector.
  * @param glue glue between the elements. */

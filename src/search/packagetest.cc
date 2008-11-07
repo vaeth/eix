@@ -776,10 +776,9 @@ getlines(const char *varname, vector<string> &lines)
 {
 	EixRc &rc = get_eixrc(NULL);
 	lines.clear();
-	string &name = rc[varname];
-	if(name.empty())
-		return;
-	pushback_lines(name.c_str(), &lines, false, true);
+	vector<string> name = split_string(rc[varname], spaces, true, true);
+	for(vector<string>::const_iterator it = name.begin(); it != name.end(); ++it)
+		pushback_lines(it->c_str(), &lines, false, true);
 }
 
 Keywords::Redundant

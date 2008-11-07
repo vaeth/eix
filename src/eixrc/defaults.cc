@@ -109,17 +109,6 @@ AddOption(STRING, "EIX_WORLD",
 AddOption(STRING, "EIX_WORLD_SETS",
 	"%{EIX_WORLD}_sets", "This file is considered as the world_sets file.");
 
-AddOption(STRING, "EIX_LOCAL_SETS_ADD",
-	"",
-	"This variable is only used for delayed substitution.\n"
-	"It specifies directories for EIX_LOCAL_SETS.");
-
-AddOption(STRING, "EIX_LOCAL_SETS",
-	"%{PORTAGE_CONFIGROOT}/etc/portage/sets\n"
-	"%{PORTAGE_CONFIGROOT}/etc/portage/sets.eix\n"
-	"%{EIX_LOCAL_SETS_ADD}",
-	"This is a space-separated list of directories containing set definitions.");
-
 AddOption(BOOLEAN, "SAVE_WORLD",
 	"false", "Store the information of the world file in the cache file.\n"
 	"Set this only if you want that everybody is be able to get this informations.");
@@ -1217,9 +1206,6 @@ AddOption(STRING, "OVERLAYS_LIST",
 AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	LEVENSHTEIN_DISTANCE_STR,
 	"The default maximal levensthein for which a string is considered a match.");
-#endif
-
-#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "PORTDIR_CACHE_METHOD",
 	PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR\n"
@@ -1313,6 +1299,9 @@ AddOption(STRING, "PRINT_COUNT_ALWAYS",
 
 AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
 	"true", "If false, count independently of whether the matches are printed.");
+#endif
+
+#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
 	"!f", "Tag for RESTRICT=fetch.");
@@ -1525,65 +1514,76 @@ AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 AddOption(STRING, "EIXCFGDIR",
 	"%{PORTAGE_CONFIGROOT}/etc/portage",
 	"This variable is only used for delayed substitution.\n"
-	"It is the directory where eix searches for its package.*.* config files");
+	"It is the directory where eix searches for its package.*.*/sets.eix files");
 
 AddOption(BOOLEAN, "SLOT_UPGRADE_FORBID",
-	"%{EIXCFGDIR}/package.slot_upgrade_forbid",
-	"If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in this file/dir are\n"
-	"treated as if UPGRADE_TO_HIGHEST_SLOT=false.");
+	"%{\\EIXCFGDIR}/package.slot_upgrade_forbid",
+	"If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
+	"are treated as if UPGRADE_TO_HIGHEST_SLOT=false.");
 
 AddOption(BOOLEAN, "SLOT_UPGRADE_ALLOW",
-	"%{EIXCFGDIR}/package.slot_upgrade_allow",
-	"If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in this file/dir are\n"
-	"treated as if UPGRADE_TO_HIGHEST_SLOT=true.");
+	"%{\\EIXCFGDIR}/package.slot_upgrade_allow",
+	"If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
+	"are treated as if UPGRADE_TO_HIGHEST_SLOT=true.");
 
 AddOption(STRING, "KEYWORDS_NONEXISTENT",
-	"%{EIXCFGDIR}/package.keywords.nonexistent",
-	"Entries listed in this file/dir are excluded for -t TEST_KEYWORDS");
+	"%{\\EIXCFGDIR}/package.keywords.nonexistent",
+	"Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS");
 
 AddOption(STRING, "MASK_NONEXISTENT",
-	"%{EIXCFGDIR}/package.mask.nonexistent",
-	"Entries listed in this file/dir are excluded for -t TEST_MASK");
+	"%{\\EIXCFGDIR}/package.mask.nonexistent",
+	"Entries listed in these files/dirs are excluded for -t TEST_MASK");
 
 AddOption(STRING, "UNMASK_NONEXISTENT",
-	"%{EIXCFGDIR}/package.unmask.nonexistent",
-	"Entries listed in this file/dir are excluded for -t TEST_UNMASK");
+	"%{\\EIXCFGDIR}/package.unmask.nonexistent",
+	"Entries listed in these files/dirs are excluded for -t TEST_UNMASK");
 
 AddOption(STRING, "USE_NONEXISTENT",
-	"%{EIXCFGDIR}/package.use.nonexistent",
-	"Entries listed in this file/dir are excluded for -t TEST_USE");
+	"%{\\EIXCFGDIR}/package.use.nonexistent",
+	"Entries listed in these files/dire are excluded for -t TEST_USE");
 
 AddOption(STRING, "CFLAGS_NONEXISTENT",
-	"%{EIXCFGDIR}/package.cflags.nonexistent",
-	"Entries listed in this file/dir are excluded for -t TEST_CFLAGS");
+	"%{\\EIXCFGDIR}/package.cflags.nonexistent",
+	"Entries listed in these files/dirs are excluded for -t TEST_CFLAGS");
 
 AddOption(STRING, "INSTALLED_NONEXISTENT",
-	"%{EIXCFGDIR}/package.installed.nonexistent",
-	"Packages listed in this file/dir are excluded for -t TEST_REMOVED");
+	"%{\\EIXCFGDIR}/package.installed.nonexistent",
+	"Packages listed in these files/dirs are excluded for -t TEST_REMOVED");
 
 AddOption(STRING, "KEYWORDS_NOWARN",
-	"%{EIXCFGDIR}/package.keywords.nowarn",
+	"%{\\EIXCFGDIR}/package.keywords.nowarn",
 	"Exceptional packages for -T tests of /etc/portage/package.keywords");
 
 AddOption(STRING, "MASK_NOWARN",
-	"%{EIXCFGDIR}/package.mask.nowarn",
+	"%{\\EIXCFGDIR}/package.mask.nowarn",
 	"Exceptional packages for -T tests of /etc/portage/package.mask");
 
 AddOption(STRING, "UNMASK_NOWARN",
-	"%{EIXCFGDIR}/package.unmask.nowarn",
+	"%{\\EIXCFGDIR}/package.unmask.nowarn",
 	"Exceptional packages for -T tests of /etc/portage/package.unmask");
 
 AddOption(STRING, "USE_NOWARN",
-	"%{EIXCFGDIR}/package.use.nowarn",
+	"%{\\EIXCFGDIR}/package.use.nowarn",
 	"Exceptional packages for -T tests of /etc/portage/package.use");
 
 AddOption(STRING, "CFLAGS_NOWARN",
-	"%{EIXCFGDIR}/package.cflags.nowarn",
+	"%{\\EIXCFGDIR}/package.cflags.nowarn",
 	"Exceptional packages for -T tests of /etc/portage/package.cflags");
 
 AddOption(STRING, "INSTALLED_NOWARN",
-	"%{EIXCFGDIR}/package.installed.nowarn",
+	"%{\\EIXCFGDIR}/package.installed.nowarn",
 	"Exceptional packages for -T tests of installed packages");
+
+AddOption(STRING, "EIX_LOCAL_SETS_ADD",
+	"",
+	"This variable is only used for delayed substitution.\n"
+	"It specifies directories for EIX_LOCAL_SETS.");
+
+AddOption(STRING, "EIX_LOCAL_SETS",
+	"%{\\PORTAGE_CONFIGROOT}/etc/portage/sets "
+	"%{\\EIXCFGDIR}/sets.eix "
+	"%{EIX_LOCAL_SETS_ADD}",
+	"This is a space-separated list of directories containing set definitions.");
 
 AddOption(STRING, "DUMMY",
 	"",

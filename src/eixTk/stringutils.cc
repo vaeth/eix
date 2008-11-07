@@ -95,24 +95,34 @@ ExplodeAtom::split(const char* str)
 	return out;
 }
 
+void
+escape_string(string &str, const char *at)
+{
+	string my_at(at);
+	my_at.append("\\");
+	string::size_type pos = 0;
+	while((pos = str.find_first_of(my_at, pos)) != string::npos) {
+		str.insert(pos, 1, '\\');
+		pos += 2;
+	}
+}
+
 vector<string>
-split_string(const string &str, const char *at, bool ignore_empty, bool ignore_escaped, bool remove_escape)
+split_string(const string &str, const char *at, const bool ignore_empty, const bool handle_escape)
 {
 	vector<string> vec;
 	string::size_type last_pos = 0,
 		pos = 0;
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
-		if(ignore_escaped) {
+		if(handle_escape) {
 			bool escaped = false;
 			string::size_type s = pos;
-			while(s > 0)
-			{
+			while(s > 0) {
 				if(str[--s] != '\\')
 					break;
 				escaped = !escaped;
 			}
-			if(escaped)
-			{
+			if(escaped) {
 				++pos;
 				continue;
 			}
@@ -123,13 +133,20 @@ split_string(const string &str, const char *at, bool ignore_empty, bool ignore_e
 	}
 	if((str.size() - last_pos) > 0 || !ignore_empty)
 		vec.push_back(str.substr(last_pos));
-	if(remove_escape)
-	{
+	if(handle_escape) {
 		for(vector<string>::iterator it = vec.begin();
 			it != vec.end(); ++it) {
 			pos = 0;
-			while((pos = it->find_first_of(at, pos)) != string::npos) {
-				it->erase(pos - 1, 1);
+			while((pos = it->find('\\', pos)) != string::npos) {
+				++pos;
+				if(pos == it->size()) {
+					it->erase(pos - 1, 1);
+					break;
+				}
+				char c = (*it)[pos];
+				if((c == '\\') ||
+					(string(1, c).find_first_of(at) != string::npos))
+					it->erase(pos - 1, 1);
 			}
 		}
 	}
