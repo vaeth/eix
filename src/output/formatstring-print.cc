@@ -319,11 +319,10 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		if(full == -1)
 			cout << "=";
 		cout << package->category << "/" << package->name;
-		if(with_slots && fmt->show_slots) {
-			cout << version->getSlotAppendix(true);
-		}
 		if((full != -2) && (full != 2))
 			cout <<  "-" << version->getFull();
+		if(with_slots && fmt->show_slots)
+			cout << version->getSlotAppendix(true);
 		if(full > 0) {
 			if(!package->have_same_overlay_key() && version->overlay_key)
 				cout << fmt->overlay_keytext(version->overlay_key);

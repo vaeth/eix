@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.15.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix order for <full...> and <=full...>. Slot comes after version.
+
 *eix-0.15.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow @set (from EIX_LOCAL_SETS) in /etc/portage/package.keywords.
