@@ -30,8 +30,8 @@ esac
 test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
 
 unset LDFLAGS CFLAGS CXXFLAGS
-[ -z "${FAKEROOT}" ] && command -v fakeroot-ng >/dev/null 2>&1 && FAKEROOT=fakeroot-ng
 [ -z "${FAKEROOT}" ] && command -v fakeroot >/dev/null 2>&1 && FAKEROOT=fakeroot
+[ -z "${FAKEROOT}" ] && command -v fakeroot-ng >/dev/null 2>&1 && FAKEROOT=fakeroot-ng
 if command -v "${FAKEROOT}" >/dev/null 2>&1
 then
 	Run ./mkmake -0eqn
