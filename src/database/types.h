@@ -7,10 +7,11 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __GUARD__DATABASE_TYPES_H__
-#define __GUARD__DATABASE_TYPES_H__
+#if !defined(EIX__DATABASE_TYPES_H__)
+#define EIX__DATABASE_TYPES_H__
 
 #include <cstdlib>
+#include <unistd.h>
 
 class DBHeader;
 class PackageReader;
@@ -27,4 +28,4 @@ namespace io {
 	extern OffsetType counter;
 }
 
-#endif /* __GUARD__DATABASE_TYPES_H__ */
+#endif /* EIX__DATABASE_TYPES_H__ */

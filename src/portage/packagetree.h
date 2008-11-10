@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PACKAGETREE_H__
-#define __PACKAGETREE_H__
+#if !defined(EIX__PACKAGETREE_H__)
+#define EIX__PACKAGETREE_H__
 
 #include <eixTk/ptr_list.h>
 #include <database/types.h>
@@ -73,4 +73,4 @@ class PackageTree : public eix::ptr_list<Category> {
 		std::map<std::string, Category*> *fast_access;
 };
 
-#endif /* __PACKAGETREE_H__ */
+#endif /* EIX__PACKAGETREE_H__ */

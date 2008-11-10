@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __MASK_H__
-#define __MASK_H__
+#if !defined(EIX__MASK_H__)
+#define EIX__MASK_H__
 
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
@@ -125,4 +125,4 @@ class SetMask : public Mask {
 		SetsIndex m_set;
 };
 
-#endif /* __MASK_H__ */
+#endif /* EIX__MASK_H__ */

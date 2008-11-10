@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __FORMATSTRING_PRINT_H__
-#define __FORMATSTRING_PRINT_H__
+#if !defined(EIX__FORMATSTRING_PRINT_H__)
+#define EIX__FORMATSTRING_PRINT_H__
 
 #include <output/formatstring.h>
 #include <portage/package.h>
@@ -30,4 +30,4 @@ std::string get_package_property(const PrintFormat *fmt, const void *entity, con
 bool print_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
 std::string get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
 
-#endif /* __FORMATSTRING-PRINT_H__ */
+#endif /* EIX__FORMATSTRING-PRINT_H__ */

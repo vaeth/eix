@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __CLI_H__
-#define __CLI_H__
+#if !defined(EIX__CLI_H__)
+#define EIX__CLI_H__
 
 #include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>
@@ -89,4 +89,4 @@ enum cli_options {
 };
 
 
-#endif /* __CLI_H__ */
+#endif /* EIX__CLI_H__ */

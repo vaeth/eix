@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __FORMATSTRING_H__
-#define __FORMATSTRING_H__
+#if !defined(EIX__FORMATSTRING_H__)
+#define EIX__FORMATSTRING_H__
 
 #include <portage/package.h>
 #include <portage/set_stability.h>
@@ -396,4 +396,4 @@ class LocalCopy : public PackageSave
 
 
 
-#endif /* __FORMATSTRING_H__ */
+#endif /* EIX__FORMATSTRING_H__ */

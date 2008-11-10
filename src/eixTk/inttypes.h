@@ -6,8 +6,8 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef __GUARD__INTTYPES_H__
-#define __GUARD__INTTYPES_H__
+#if !defined(EIX__INTTYPES_H__)
+#define EIX__INTTYPES_H__
 
 #include <config.h>
 
@@ -19,4 +19,4 @@
 #endif
 #endif
 
-#endif /* __GUARD__INTTYPES_H__ */
+#endif /* EIX__INTTYPES_H__ */

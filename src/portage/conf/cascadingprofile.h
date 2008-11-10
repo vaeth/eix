@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __CASCADINGPROFILE_H__
-#define __CASCADINGPROFILE_H__
+#if !defined(EIX__CASCADINGPROFILE_H__)
+#define EIX__CASCADINGPROFILE_H__
 
 #include <eixTk/exceptions.h>
 #include <portage/mask_list.h>
@@ -94,4 +94,4 @@ class CascadingProfile {
 };
 
 
-#endif /* __CASCADINGPROFILE_H__ */
+#endif /* EIX__CASCADINGPROFILE_H__ */

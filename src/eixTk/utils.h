@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __UTILS_H__
-#define __UTILS_H__
+#if !defined(EIX__UTILS_H__)
+#define EIX__UTILS_H__
 
 #include <map>
 #include <vector>
@@ -104,4 +104,4 @@ void dump_version(int exit_code = -1);
 
 
 
-#endif /* __UTILS_H__ */
+#endif /* EIX__UTILS_H__ */

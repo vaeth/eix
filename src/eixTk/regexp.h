@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __REGEXCLASS_H__
-#define __REGEXCLASS_H__
+#if !defined(EIX__REGEXCLASS_H__)
+#define EIX__REGEXCLASS_H__
 
 #include <sys/types.h>
 #include <regex.h>

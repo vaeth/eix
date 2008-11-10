@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __STRINGUTILS_H__
-#define __STRINGUTILS_H__
+#if !defined(EIX__STRINGUTILS_H__)
+#define EIX__STRINGUTILS_H__
 
 #include <config.h>
 
@@ -147,7 +147,7 @@ std::string join_set(const std::set<std::string> &vec, const std::string &glue =
 bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL);
 
 /** Sort and unique. Return true if there were double entries */
-#ifdef UNIQUE_WORKS
+#if defined(UNIQUE_WORKS)
 
 #include <algorithm>
 
@@ -244,4 +244,4 @@ class StringHash : public std::vector<std::string>
 
 
 
-#endif /* __STRINGUTILS_H__ */
+#endif /* EIX__STRINGUTILS_H__ */

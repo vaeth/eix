@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __VARSREADER_H__
-#define __VARSREADER_H__
+#if !defined(EIX__VARSREADER_H__)
+#define EIX__VARSREADER_H__
 
 
 #include <eixTk/inttypes.h>
@@ -259,4 +259,4 @@ class VarsReader {
 
 };
 
-#endif /* __VARSREADER_H__ */
+#endif /* EIX__VARSREADER_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __SETSTABILITY_H__
-#define __SETSTABILITY_H__
+#if !defined(EIX__SETSTABILITY_H__)
+#define EIX__SETSTABILITY_H__
 
 #include <portage/version.h>
 

@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 
-#ifndef __LEVENSHTEIN_H__
-#define __LEVENSHTEIN_H__
+#if !defined(EIX__LEVENSHTEIN_H__)
+#define EIX__LEVENSHTEIN_H__
 
 /** Calculates the Levenshtein distance of two strings.
  * Reference: http://www.merriampark.com/ld.htm
@@ -15,4 +15,4 @@
  * @return int Levenshtein distance of str_a <> str_b */
 unsigned int get_levenshtein_distance( const char *str_a, const char *str_b );
 
-#endif /* __LEVENSHTEIN_H__ */
+#endif /* EIX__LEVENSHTEIN_H__ */

@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef __PTR_ITERATOR_H__
-#define __PTR_ITERATOR_H__
+#if !defined(EIX__PTR_ITERATOR_H__)
+#define EIX__PTR_ITERATOR_H__
 
 #include <list>
 
@@ -82,4 +82,4 @@ namespace eix {
 
 }
 
-#endif /* __PTR_ITERATOR_H__ */
+#endif /* EIX__PTR_ITERATOR_H__ */

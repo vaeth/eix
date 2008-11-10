@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __CACHETABLE_H__
-#define __CACHETABLE_H__
+#if !defined(EIX__CACHETABLE_H__)
+#define EIX__CACHETABLE_H__
 
 #include <cache/cache_map.h>
 #include <eixTk/ptr_list.h>
@@ -25,4 +25,4 @@ class CacheTable : public eix::ptr_list<BasicCache>
 		void addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override);
 };
 
-#endif /* __CACHETABLE_H__ */
+#endif /* EIX__CACHETABLE_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __EBUILD_H__
-#define __EBUILD_H__
+#if !defined(EIX__EBUILD_H__)
+#define EIX__EBUILD_H__
 
 #include <cache/base.h>
 #include <cache/common/ebuild_exec.h>
@@ -36,4 +36,4 @@ class EbuildCache : public BasicCache {
 		}
 };
 
-#endif /* __EBUILD_H__ */
+#endif /* EIX__EBUILD_H__ */

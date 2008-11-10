@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __SQLITECACHE_H__
-#define __SQLITECACHE_H__
+#if !defined(EIX__SQLITECACHE_H__)
+#define EIX__SQLITECACHE_H__
 
 #include <cache/base.h>
 
@@ -39,4 +39,4 @@ class SqliteCache : public BasicCache {
 		{ return "sqlite"; }
 };
 
-#endif /* __SQLITECACHE_H__ */
+#endif /* EIX__SQLITECACHE_H__ */

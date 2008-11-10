@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef __CRITERIA_H__
-#define __CRITERIA_H__
+#if !defined(EIX__CRITERIA_H__)
+#define EIX__CRITERIA_H__
 
 #include <search/packagetest.h>
 #include <database/types.h>
@@ -63,4 +63,4 @@ class Matchatom {
 		}
 };
 
-#endif /* __CRITERIA_H__ */
+#endif /* EIX__CRITERIA_H__ */

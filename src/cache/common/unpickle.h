@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __UNPICKLE_H__
-#define __UNPICKLE_H__
+#if !defined(EIX__UNPICKLE_H__)
+#define EIX__UNPICKLE_H__
 
 #include <config.h>
 
@@ -86,4 +86,4 @@ class Unpickler {
 		void get(std::map<std::string,std::string> &unpickled) throw(ExBasic);
 };
 
-#endif /* __UNPICKLE_H__ */
+#endif /* EIX__UNPICKLE_H__ */

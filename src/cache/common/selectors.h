@@ -7,12 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __SELECTORS_H__
-#define __SELECTORS_H__
+#if !defined(EIX__SELECTORS_H__)
+#define EIX__SELECTORS_H__
 
 #include <eixTk/utils.h>
 
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);
 
-#endif /* __SELECTORS_H__ */
+#endif /* EIX__SELECTORS_H__ */

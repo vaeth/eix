@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PACKAGETEST_H__
-#define __PACKAGETEST_H__
+#if !defined(EIX__PACKAGETEST_H__)
+#define EIX__PACKAGETEST_H__
 
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
@@ -274,4 +274,4 @@ class PackageTest {
 		static TestInstalled nowarn_installed(const Package &p);
 };
 
-#endif /* __PACKAGETEST_H__ */
+#endif /* EIX__PACKAGETEST_H__ */

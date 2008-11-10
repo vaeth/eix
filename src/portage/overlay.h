@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __OVERLAY_H__
-#define __OVERLAY_H__
+#if !defined(EIX__OVERLAY_H__)
+#define EIX__OVERLAY_H__
 
 #include <string>
 
@@ -26,4 +26,4 @@ class OverlayIdent {
 };
 
 
-#endif /* __OVERLAY_H__ */
+#endif /* EIX__OVERLAY_H__ */

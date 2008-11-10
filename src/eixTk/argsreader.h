@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __ARGSREADER_H__
-#define __ARGSREADER_H__
+#if !defined(EIX__ARGSREADER_H__)
+#define EIX__ARGSREADER_H__
 
 #include <list>
 
@@ -139,4 +139,4 @@ class ArgumentReader
 		void foldAndRemove(struct Option *opt_table);
 };
 
-#endif /* __ARGSREADER_H__ */
+#endif /* EIX__ARGSREADER_H__ */

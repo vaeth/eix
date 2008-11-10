@@ -7,10 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#if !defined(EIX__MAIN_H__)
+#define EIX__MAIN_H__
 
 #include <string>
 extern std::string program_name;
 
-#endif /* __MAIN_H__ */
+#endif /* EIX__MAIN_H__ */

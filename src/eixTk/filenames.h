@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __FILENAMES_H__
-#define __FILENAMES_H__
+#if !defined(EIX__FILENAMES_H__)
+#define EIX__FILENAMES_H__
 
 #include <config.h>
 #include <eixTk/sysutils.h>
@@ -43,4 +43,4 @@ bool is_virtual(const char *name)
 	return !is_dir(name);
 }
 
-#endif /* __FILENAMES_H__ */
+#endif /* EIX__FILENAMES_H__ */

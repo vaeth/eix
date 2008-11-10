@@ -3,6 +3,9 @@
 *eix-0.15.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix order for <full...> and <=full...>. Slot comes after version.
+	- Fix missing includes, http://bugs.gentoo.org/show_bug.cgi?id=246270
+	  http://bugs.gentoo.org/show_bug.cgi?id=246222
+	- Name guards in a more standard manner (no dangerous _* names).
 
 *eix-0.15.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

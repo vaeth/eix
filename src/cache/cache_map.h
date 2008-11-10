@@ -6,11 +6,11 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef __GET_H__
-#define __GET_H__
+#if !defined(EIX__GET_H__)
+#define EIX__GET_H__
 
 #include <cache/base.h>
 
 BasicCache *get_cache(const std::string &name);
 
-#endif /* __GET_H__ */
+#endif /* EIX__GET_H__ */

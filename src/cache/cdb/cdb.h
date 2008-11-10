@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __CDB_H__
-#define __CDB_H__
+#if !defined(EIX__CDB_H__)
+#define EIX__CDB_H__
 
 #include <cache/base.h>
 
@@ -21,4 +21,4 @@ class CdbCache : public BasicCache {
 		{ return "cdb"; }
 };
 
-#endif /* __CDB_H__ */
+#endif /* EIX__CDB_H__ */

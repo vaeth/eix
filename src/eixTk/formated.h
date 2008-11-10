@@ -6,8 +6,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __GUARD__FORMATED_H__
-#define __GUARD__FORMATED_H__
+#if !defined(EIX__FORMATED_H__)
+#define EIX__FORMATED_H__
 
 #include <string>
 #include <sstream>
@@ -129,4 +129,4 @@ class format
 
 }/* namespace eix */
 
-#endif /* __GUARD__FORMATED_H__ */
+#endif /* EIX__FORMATED_H__ */

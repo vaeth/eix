@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __BASICVERSION_H__
-#define __BASICVERSION_H__
+#if !defined(EIX__BASICVERSION_H__)
+#define EIX__BASICVERSION_H__
 
 #include <database/types.h>
 #include <eixTk/inttypes.h>
@@ -144,4 +144,4 @@ class ExtendedVersion : public BasicVersion
 		{ return std::string(getFull()) + intermediate + getSlotAppendix(colon); }
 };
 
-#endif /* __BASICVERSION_H__ */
+#endif /* EIX__BASICVERSION_H__ */

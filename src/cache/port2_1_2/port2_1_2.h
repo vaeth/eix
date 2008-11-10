@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PORT2_1_2_H__
-#define __PORT2_1_2_H__
+#if !defined(EIX__PORT2_1_2_H__)
+#define EIX__PORT2_1_2_H__
 
 #include <cache/base.h>
 
@@ -26,4 +26,4 @@ class Port2_1_2_Cache : public BasicCache {
 		{ return "portage-2.1"; }
 };
 
-#endif /* __PORT2_1_2_H__ */
+#endif /* EIX__PORT2_1_2_H__ */

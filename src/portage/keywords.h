@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __STABILITY_H__
-#define __STABILITY_H__
+#if !defined(EIX__STABILITY_H__)
+#define EIX__STABILITY_H__
 
 #include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
@@ -272,4 +272,4 @@ class KeywordSave {
 
 enum LocalMode { LOCALMODE_DEFAULT=0, LOCALMODE_LOCAL, LOCALMODE_NONLOCAL };
 
-#endif /* __STABILITY_H__ */
+#endif /* EIX__STABILITY_H__ */

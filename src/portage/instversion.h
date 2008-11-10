@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __INSTVERSION_H__
-#define __INSTVERSION_H__
+#if !defined(EIX__INSTVERSION_H__)
+#define EIX__INSTVERSION_H__
 
 #include <portage/basicversion.h>
 #include <portage/version.h>
@@ -59,4 +59,4 @@ inline bool operator == (const InstVersion& left, const InstVersion &right)
 inline bool operator != (const InstVersion& left, const InstVersion &right)
 { return BasicVersion::compare(left, right) != 0; }
 
-#endif /* __INSTVERSION_H__ */
+#endif /* EIX__INSTVERSION_H__ */

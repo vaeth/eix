@@ -8,9 +8,9 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 /* we use strndup */
-#if !defined _GNU_SOURCE
+#if !defined(_GNU_SOURCE)
 #define _GNU_SOURCE
-#endif /* !defined _GNU_SOURCE */
+#endif
 
 #include "mask.h"
 #include <eixTk/exceptions.h>

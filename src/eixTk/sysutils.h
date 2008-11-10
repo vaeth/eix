@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __SYSUTILS_H__
-#define __SYSUTILS_H__
+#if !defined(EIX__SYSUTILS_H__)
+#define EIX__SYSUTILS_H__
 
 #include <unistd.h>
 #include <ctime>
@@ -40,4 +40,4 @@ time_t get_mtime(const char *file);
 /** @return mydate formatted according to locales and dateFormat */
 const char *date_conv(const char *dateFormat, time_t mydate);
 
-#endif /* __SYSUTILS_H__ */
+#endif /* EIX__SYSUTILS_H__ */

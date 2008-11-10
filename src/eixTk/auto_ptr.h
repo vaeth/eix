@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef __AUTO_PTR_H__
-#define __AUTO_PTR_H__
+#if !defined(EIX__AUTO_PTR_H__)
+#define EIX__AUTO_PTR_H__
 
 namespace eix {
 
@@ -34,4 +34,4 @@ namespace eix {
 
 }
 
-#endif /* __AUTO_PTR_H__ */
+#endif /* EIX__AUTO_PTR_H__ */

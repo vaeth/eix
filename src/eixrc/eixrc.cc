@@ -13,9 +13,9 @@
 #include <eixTk/exceptions.h>
 #include <portage/conf/portagesettings.h>
 
-#ifndef SYSCONFDIR
+#if !defined(SYSCONFDIR)
 #define SYSCONFDIR "/etc"
-#endif /* SYSCONFDIR */
+#endif
 
 #define EIX_SYSTEMRC SYSCONFDIR"/eixrc"
 

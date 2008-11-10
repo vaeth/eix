@@ -7,18 +7,20 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include "sysutils.h"
+
 #include <eixTk/exceptions.h>
 
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <clocale>
 
 using namespace std;
 
-static bool is_on_list (char *const *list, const char *member)
+static bool
+is_on_list (char *const *list, const char *member)
 {
 	while (*list) {
 		if (strcmp (*list, member) == 0)
@@ -28,7 +30,8 @@ static bool is_on_list (char *const *list, const char *member)
 	return false;
 }
 
-static bool check_user_in_grp_struct(struct group *grp)
+static bool
+check_user_in_grp_struct(struct group *grp)
 {
 	struct passwd *pwd;
 	if((pwd = getpwuid(getuid())) == 0)
@@ -38,7 +41,8 @@ static bool check_user_in_grp_struct(struct group *grp)
 	return false;
 }
 
-bool user_in_group(const char *group_name)
+bool
+user_in_group(const char *group_name)
 {
 	errno = 0;
 	struct group *grp = getgrnam(group_name);
@@ -47,7 +51,8 @@ bool user_in_group(const char *group_name)
 	return check_user_in_grp_struct(grp);
 }
 
-bool get_uid_of(const char *name, uid_t *u)
+bool
+get_uid_of(const char *name, uid_t *u)
 {
 	struct passwd *pwd;
 	if((pwd = getpwnam(name)) == NULL)
@@ -56,7 +61,8 @@ bool get_uid_of(const char *name, uid_t *u)
 	return true;
 }
 
-bool get_gid_of(const char *name, gid_t *g)
+bool
+get_gid_of(const char *name, gid_t *g)
 {
 	struct group *grp = getgrnam(name);
 	if(grp == NULL)
@@ -66,7 +72,8 @@ bool get_gid_of(const char *name, gid_t *g)
 }
 
 
-bool is_writable(const char *file) //throw(ExBasic)
+bool
+is_writable(const char *file) //throw(ExBasic)
 {
 	struct stat stat_buf;
 	if(stat(file, &stat_buf) != 0) {
@@ -79,7 +86,8 @@ bool is_writable(const char *file) //throw(ExBasic)
 			&& stat_buf.st_gid == g );
 }
 
-bool is_dir(const char *file)
+bool
+is_dir(const char *file)
 {
 	struct stat stat_buf;
 	if(stat(file, &stat_buf) != 0)
@@ -87,7 +95,8 @@ bool is_dir(const char *file)
 	return S_ISDIR(stat_buf.st_mode);
 }
 
-bool is_file(const char *file)
+bool
+is_file(const char *file)
 {
 	struct stat stat_buf;
 	if(lstat(file, &stat_buf) != 0)
@@ -96,7 +105,8 @@ bool is_file(const char *file)
 }
 
 /** Return mtime of file. */
-time_t get_mtime(const char *file)
+time_t
+get_mtime(const char *file)
 {
 	struct stat stat_b;
 	if(stat(file, &stat_b))
@@ -105,7 +115,8 @@ time_t get_mtime(const char *file)
 }
 
 /** @return mydate formatted according to locales and dateFormat */
-const char *date_conv(const char *dateFormat, time_t mydate)
+const char *
+date_conv(const char *dateFormat, time_t mydate)
 {
 	const int max_datelen=256;
 	static char buffer[max_datelen];

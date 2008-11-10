@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PACKAGESETS_H__
-#define __PACKAGESETS_H__
+#if !defined(EIX__PACKAGESETS_H__)
+#define EIX__PACKAGESETS_H__
 
 #include <vector>
 #include <string>
@@ -68,4 +68,4 @@ class SetsList : public std::vector<SetsIndex>
 		{ std::vector<SetsIndex>::clear(); have_system = false; }
 };
 
-#endif /* __PACKAGESETS_H__ */
+#endif /* EIX__PACKAGESETS_H__ */

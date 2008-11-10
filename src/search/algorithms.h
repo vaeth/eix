@@ -7,13 +7,13 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __ALGORITHMS_H__
-#define __ALGORITHMS_H__
+#if !defined(EIX__ALGORITHMS_H__)
+#define EIX__ALGORITHMS_H__
 
 /* FNM_CASEFOLD is a gnu extension .. */
-#if !defined _GNU_SOURCE
+#if !defined(_GNU_SOURCE)
 #define _GNU_SOURCE
-#endif /* !defined _GNU_SOURCE */
+#endif
 
 #include <search/levenshtein.h>
 #include <eixTk/regexp.h>
@@ -25,11 +25,11 @@
 
 /* Check if we have FNM_CASEFOLD ..
  * fnmatch(3) tells me that this is a GNU extensions */
-#if defined FNM_CASEFOLD
+#if defined(FNM_CASEFOLD)
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else
 #define FNMATCH_FLAGS 0
-#endif /* defined FNM_CASEFOLD */
+#endif
 
 /** That's how every Algorithm will look like. */
 class BaseAlgorithm {
@@ -128,4 +128,4 @@ class WildcardAlgorithm : public BaseAlgorithm {
 		}
 };
 
-#endif /* __ALGORITHMS_H__ */
+#endif /* EIX__ALGORITHMS_H__ */

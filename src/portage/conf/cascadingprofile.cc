@@ -16,8 +16,6 @@
 
 #include <fstream>
 
-#include <unistd.h>
-
 /* Path to symlink to profile */
 #define PROFILE_LINK "/etc/make.profile"
 

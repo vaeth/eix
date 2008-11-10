@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __METADATA_H__
-#define __METADATA_H__
+#if !defined(EIX__METADATA_H__)
+#define EIX__METADATA_H__
 
 #include <cache/base.h>
 
@@ -37,4 +37,4 @@ class MetadataCache : public BasicCache {
 		{ return m_type.c_str(); }
 };
 
-#endif /* __METADATA_H__ */
+#endif /* EIX__METADATA_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PACKAGE_READER_H__
-#define __PACKAGE_READER_H__
+#if !defined(EIX__PACKAGE_READER_H__)
+#define EIX__PACKAGE_READER_H__
 
 #include <config.h>
 #include <database/types.h>
@@ -17,7 +17,6 @@
 #include <portage/package.h>
 
 #include <cstdio>
-#include <unistd.h>
 #include <iostream>
 #include <memory>
 
@@ -102,4 +101,4 @@ PackageReader::release()
 	return m_pkg.release();
 }
 
-#endif /* __PACKAGE_READER_H__ */
+#endif /* EIX__PACKAGE_READER_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __EBUILD_EXEC_H__
-#define __EBUILD_EXEC_H__
+#if !defined(EIX__EBUILD_EXEC_H__)
+#define EIX__EBUILD_EXEC_H__
 
 #include <eixTk/sysutils.h>
 
@@ -66,4 +66,4 @@ class EbuildExec {
 		{ return use_ebuild_sh; }
 };
 
-#endif /* __EBUILD_EXEC_H__ */
+#endif /* EIX__EBUILD_EXEC_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __DBHEADER_H__
-#define __DBHEADER_H__
+#if !defined(EIX__DBHEADER_H__)
+#define EIX__DBHEADER_H__
 
 #include <eixTk/stringutils.h>
 #include <portage/version.h>
@@ -73,4 +73,4 @@ class DBHeader {
 		bool isCurrent() const
 		{ return version == DBHeader::current; }
 };
-#endif /* __DBHEADER_H__ */
+#endif /* EIX__DBHEADER_H__ */

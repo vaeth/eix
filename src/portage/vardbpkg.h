@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PORTAGECONF_H__
-#define __PORTAGECONF_H__
+#if !defined(EIX__PORTAGECONF_H__)
+#define EIX__PORTAGECONF_H__
 
 #include <eixTk/exceptions.h>
 #include <portage/package.h>
@@ -90,4 +90,4 @@ class VarDbPkg {
 		std::vector<InstVersion>::size_type numInstalled(const Package &p);
 };
 
-#endif /* __PORTAGECONF_H__ */
+#endif /* EIX__PORTAGECONF_H__ */

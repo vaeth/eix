@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __REDUNDANCY_H__
-#define __REDUNDANCY_H__
+#if !defined(EIX__REDUNDANCY_H__)
+#define EIX__REDUNDANCY_H__
 
 #include <portage/keywords.h>
 
@@ -33,4 +33,4 @@ class RedAtom {
 
 
 
-#endif /* __REDUNDANCY_H__ */
+#endif /* EIX__REDUNDANCY_H__ */

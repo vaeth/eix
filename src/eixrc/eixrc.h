@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __EIXRC_H__
-#define __EIXRC_H__
+#if !defined(EIX__EIXRC_H__)
+#define EIX__EIXRC_H__
 
 #include <portage/keywords.h>
 #include <search/redundancy.h>
@@ -90,4 +90,4 @@ class EixRc : public std::map<std::string,std::string> {
 		static std::string as_comment(const char *s);
 };
 
-#endif /* __EIXRC_H__ */
+#endif /* EIX__EIXRC_H__ */

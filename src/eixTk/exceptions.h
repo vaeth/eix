@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __EXCEPTIONS_H__
-#define __EXCEPTIONS_H__
+#if !defined(EIX__EXCEPTIONS_H__)
+#define EIX__EXCEPTIONS_H__
 
 #include <eixTk/formated.h>
 #include <eixTk/stringutils.h>
@@ -124,4 +124,4 @@ namespace eix
  */
 #define EIX_STATIC_ASSERT(expr) eix::_StaticAssert<expr>::empty()
 
-#endif /* __EXCEPTIONS_H__ */
+#endif /* EIX__EXCEPTIONS_H__ */

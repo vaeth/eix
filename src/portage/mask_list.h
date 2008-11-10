@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __MASK_LIST_H__
-#define __MASK_LIST_H__
+#if !defined(EIX__MASK_LIST_H__)
+#define EIX__MASK_LIST_H__
 
 #include <eixTk/ptr_list.h>
 #include <portage/package.h>
@@ -234,4 +234,4 @@ class MaskList
 		}
 };
 
-#endif /* __MASK_LIST_H__ */
+#endif /* EIX__MASK_LIST_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __ANSICOLOR_H__
-#define __ANSICOLOR_H__
+#if !defined(EIX__ANSICOLOR_H__)
+#define EIX__ANSICOLOR_H__
 
 #include <eixTk/exceptions.h>
 
@@ -128,4 +128,4 @@ operator<< (std::ostream& os, AnsiColor ac)
 	return os;
 }
 
-#endif /* __ANSICOLOR_H__ */
+#endif /* EIX__ANSICOLOR_H__ */

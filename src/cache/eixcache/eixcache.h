@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __EIXCACHE_H__
-#define __EIXCACHE_H__
+#if !defined(EIX__EIXCACHE_H__)
+#define EIX__EIXCACHE_H__
 
 #include <cache/base.h>
 
@@ -30,4 +30,4 @@ class EixCache : public BasicCache {
 		{ return m_name.c_str(); }
 };
 
-#endif /* __EIXCACHE_H__ */
+#endif /* EIX__EIXCACHE_H__ */

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PACKAGE_H__
-#define __PACKAGE_H__
+#if !defined(EIX__PACKAGE_H__)
+#define EIX__PACKAGE_H__
 
 #include <eixTk/ptr_list.h>
 #include <eixTk/inttypes.h>
@@ -421,4 +421,4 @@ class PackageSave {
 };
 
 
-#endif /* __PACKAGE_H__ */
+#endif /* EIX__PACKAGE_H__ */
