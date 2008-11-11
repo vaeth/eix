@@ -41,7 +41,8 @@ GetPortdir () {
 VERBOSE=true
 
 RunCommand () {
-	if ${VERBOSE}; then
+	if ${VERBOSE}
+	then
 		einfo "${1}"
 		shift
 		"${@}"
@@ -62,7 +63,6 @@ expr () {
 }'
 
 # Usage: Replace [-g] VAR Search Replace
-# Search and Replace will be evaluated between " ", so quote correspondingly!
 # Option -g means: Replace all occurrences
 # Exit status is the number of replacements (or 127 if there are more)
 Replace () {
@@ -71,12 +71,12 @@ Replace () {
 		-*) ReplaceC_=0; shift;;
 	esac
 	eval "while {
-		ReplaceB_=\${${1}%%\"${2}\"*}
+		ReplaceB_=\${${1}%%\"\$2\"*}
 		[ \"\${ReplaceB_}\" != \"\${${1}}\" ]
 	}
 	do
-		ReplaceA_=\"\${ReplaceA_}\${ReplaceB_}${3}\"
-		${1}=\${${1}#*\"${2}\"}
+		ReplaceA_=\"\${ReplaceA_}\${ReplaceB_}\${3}\"
+		${1}=\${${1}#*\"\$2\"}
 		if [ -z \"\${ReplaceC_}\" ]; then
 			${1}=\"\${ReplaceA_}\${${1}}\"
 			return 1
@@ -99,7 +99,7 @@ Push () {
 	local PushA_="${1}" PushB_
 	shift
 	eval "for PushB_; do
-		Replace -g PushB_ \"'\" \"'\\\\\\\\''\"
+		Replace -g PushB_ \"'\" \"'\\\\''\"
 		if [ -z \"\${${PushA_}}\" ]; then
 			${PushA_}=\"'\${PushB_}'\"
 		else
@@ -115,9 +115,9 @@ AddUpdateArgs () {
 AddUpdateQuoting () {
 	local K="$1"
 	shift
-	Replace -g K '?' '\\?'
-	Replace -g K '*' '\\*'
-	Replace -g K '[' '\\['
+	Replace -g K '?' '\?'
+	Replace -g K '*' '\*'
+	Replace -g K '[' '\['
 	AddUpdateArgs "${K}" "${@}"
 }
 
@@ -128,14 +128,16 @@ AddMethod () {
 
 AddOverlays () {
 	local J
-	for J; do
+	for J
+	do
 		AddUpdateArgs '-a' "${J}"
 	done
 }
 
 AddExcludes () {
 	local J
-	for J; do
+	for J
+	do
 		AddUpdateArgs '-x'
 		AddUpdateQuoting "${J}"
 	done
@@ -152,12 +154,15 @@ CallUpdateEix () {
 }
 
 AddLocalMethods () {
-	local I
+	local I L
 	GetPortdir
 	AddMethod "${LOCAL_PORTDIR}" "eix"
 	for I in `portageq portdir_overlay` ${ADD_OVERLAY}
 	do
-		AddMethod "${I}" "eix::${I}"
+		L="${I}"
+		Replace -g L '\' '\\'
+		Replace -g L ':' '\:'
+		AddMethod "${I}" "eix::${L}"
 	done
 }
 
@@ -214,4 +219,3 @@ NormalizeNames () {
 	done
 	return ${NormD_}
 }
-

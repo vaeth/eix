@@ -179,7 +179,7 @@ FetchTemp () {
 }
 
 AddArchive () {
-	local I NAME VIRTUAL OVERLAYARG
+	local I N NAME VIRTUAL OVERLAYARG
 	RunCommand "Unpacking data" tar xjf "${1}" || die "cannot unpack ${1}"
 	ClearUpdateEixArgs
 	AddLocalMethods
@@ -199,7 +199,10 @@ AddArchive () {
 		NAME="${NAME#_usr_portage_local_}"
 		Replace -g NAME '_' '/'
 		VIRTUAL="(${NAME})"
-		AddMethod "${VIRTUAL}" "eix*:${2}/${I}${OVERLAYARG}"
+		N="${2}/${I}${OVERLAYARG}"
+		Replace -g N '\' '\\'
+		Replace -g N ':' '\:'
+		AddMethod "${VIRTUAL}" "eix*:${N}"
 		AddOverlays "${VIRTUAL}"
 		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done
