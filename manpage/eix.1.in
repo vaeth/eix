@@ -1435,7 +1435,7 @@ The file eix considers as the world_sets file.
 The same remarks as for B<EIX_WORLD> hold true.
 
 .TP
-.B EIX_LOCAL_SETS "  " ("string list") "(the meaning of string list is explained in the next paragraph)"
+.B EIX_LOCAL_SETS "  " "(string list)" "(the meaning of string list is explained in the next paragraph)"
 
 This is a list of directories which contains locally defined sets.
 Its default contains B</etc/portage/sets> and B</etc/portage/sets.eix>
@@ -1680,12 +1680,12 @@ List all overlays for every query (even if not even one is needed).
 Set default levenshtein-distance.
 
 .TP
-.B EXCLUDE_OVERLAY "  " ("string list")
+.B EXCLUDE_OVERLAY "  " "(string list)"
 Set a list of wildcard patterns for overlay paths that are excluded from the index.
 See the B<update-eix> option B<--exclude-overlay>.
 
 .TP
-.B ADD_OVERLAY "  " ("string list")
+.B ADD_OVERLAY "  " "(string list)"
 Set a list of overlays that are added to the index.
 See the B<update-eix> option B<--add-overlay>.
 
@@ -1704,7 +1704,7 @@ You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
 
 .TP
-.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD ("string list")
+.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD "  " "(string list)"
 These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
 The cache method of I<overlay> is set to I<method>, overriding the
 settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
@@ -2003,7 +2003,7 @@ The tags which are printed in front of the version numbers to make the masking/s
 The tags which are printed for versions with the corresponding RESTRICT or PROPERTIES settings.
 .TP
 .\" {{{ Default match fields and algorithms
-.B DEFAULT_MATCH_FIELD " " ("string list")
+.B DEFAULT_MATCH_FIELD " " "(string list)"
 This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_field>
 which is used to determine the default match field.
 The search pattern from the command line is matched against all the I<regular_expression>
@@ -2020,7 +2020,7 @@ B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-wit
 B<without-use> (or B<installed-without-use>),
 corresponding to the analogous command line option for the match field
 .TP
-.B DEFAULT_MATCH_ALGORITHM " " ("string list")
+.B DEFAULT_MATCH_ALGORITHM " " "(string list)"
 This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_algorithm>
 which is used to determine the default match algorithm.
 This is analogous to B<DEFAULT_MATCH_FIELD> with the only difference that I<match_algorithm>
@@ -2208,46 +2208,46 @@ See the above comments about this file.
 .\" }}}
 .\" {{{ Various filelists:
 .TP
-.BR SLOT_UPGRADE_FORBID "  " ("string list")
+.BR SLOT_UPGRADE_FORBID "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
 .TP
-.BR SLOT_UPGRADE_ALLOW "  " ("string list")
+.BR SLOT_UPGRADE_ALLOW "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
-.BR KEYWORDS_NONEXISTENT "  " ("string list")
+.BR KEYWORDS_NONEXISTENT "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nonexistent
 .TP
-.BR MASK_NONEXISTENT "  " ("string list")
+.BR MASK_NONEXISTENT "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nonexistent
 .TP
-.BR UNMASK_NONEXISTENT "  " ("string list")
+.BR UNMASK_NONEXISTENT "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nonexistent
 .TP
-.BR USE_NONEXISTENT "  " ("string list")
+.BR USE_NONEXISTENT "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.use.nonexistent
 .TP
-.BR CFLAGS_NONEXISTENT "  " ("string list")
+.BR CFLAGS_NONEXISTENT "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nonexistent
 .TP
-.BR INSTALLED_NONEXISTENT "  " ("string list")
+.BR INSTALLED_NONEXISTENT "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
-.BR KEYWORDS_NOWARN "  " ("string list")
+.BR KEYWORDS_NOWARN "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nowarn
 .TP
-.BR MASK_NOWARN "  " ("string list")
+.BR MASK_NOWARN "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nowarn
 .TP
-.BR UNMASK_NOWARN "  " ("string list")
+.BR UNMASK_NOWARN "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nowarn
 .TP
-.BR USE_NOWARN "  " ("string list")
+.BR USE_NOWARN "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.use.nowarn
 .TP
-.BR CFLAGS_NOWARN "  " ("string list")
+.BR CFLAGS_NOWARN "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nowarn
 .TP
-.BR INSTALLED_NOWARN "  " ("string list")
+.BR INSTALLED_NOWARN "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nowarn
 .\" }}}
 .\" }}}

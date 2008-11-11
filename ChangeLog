@@ -10,6 +10,7 @@
 	  or "eix @kde" also matching e.g. @kde3 as in
 	  http://bugs.gentoo.org/show_bug.cgi?id=245773
 	- Introduce DEFAULT_MATCH_FIELD; remove MATCH_.*_IF and MATCH_ORDER.
+	- Let Replace() in functions-eix.sh act on unexpanded arguments.
 	- Fix missing includes, http://bugs.gentoo.org/show_bug.cgi?id=246270
 	  http://bugs.gentoo.org/show_bug.cgi?id=246222
 	- Fix LEVENSHTEIN_DISTANCE (actually honour the variable).
