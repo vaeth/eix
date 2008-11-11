@@ -199,10 +199,10 @@ AddArchive () {
 		NAME="${NAME#_usr_portage_local_}"
 		Replace -g NAME '_' '/'
 		VIRTUAL="(${NAME})"
-		N="${2}/${I}${OVERLAYARG}"
+		N="${2}/${I}"
 		Replace -g N '\' '\\'
 		Replace -g N ':' '\:'
-		AddMethod "${VIRTUAL}" "eix*:${N}"
+		AddMethod "${VIRTUAL}" "eix*:${N}${OVERLAYARG}"
 		AddOverlays "${VIRTUAL}"
 		AddExcludes "${OVERLAYPARENT}/${NAME}"
 	done
