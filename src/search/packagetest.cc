@@ -105,19 +105,80 @@ inline static const map<string,PackageTest::MatchField>&
 static_match_field_map()
 {
 	static map<string,PackageTest::MatchField> match_field_map;
-	match_field_map["NONE"]           = PackageTest::NONE;
 	match_field_map["NAME"]           = PackageTest::NAME;
+	match_field_map["name"]           = PackageTest::NAME;
 	match_field_map["DESCRIPTION"]    = PackageTest::DESCRIPTION;
+	match_field_map["description"]    = PackageTest::DESCRIPTION;
 	match_field_map["LICENSE"]        = PackageTest::LICENSE;
+	match_field_map["license"]        = PackageTest::LICENSE;
 	match_field_map["CATEGORY"]       = PackageTest::CATEGORY;
+	match_field_map["category"]       = PackageTest::CATEGORY;
 	match_field_map["CATEGORY_NAME"]  = PackageTest::CATEGORY_NAME;
+	match_field_map["CATEGORY-NAME"]  = PackageTest::CATEGORY_NAME;
+	match_field_map["CATEGORY/NAME"]  = PackageTest::CATEGORY_NAME;
+	match_field_map["category_name"]  = PackageTest::CATEGORY_NAME;
+	match_field_map["category-name"]  = PackageTest::CATEGORY_NAME;
+	match_field_map["category/name"]  = PackageTest::CATEGORY_NAME;
 	match_field_map["HOMEPAGE"]       = PackageTest::HOMEPAGE;
+	match_field_map["homepage"]       = PackageTest::HOMEPAGE;
 	match_field_map["PROVIDE"]        = PackageTest::PROVIDE;
+	match_field_map["PROVIDES"]       = PackageTest::PROVIDE;
+	match_field_map["provide"]        = PackageTest::PROVIDE;
+	match_field_map["provides"]       = PackageTest::PROVIDE;
 	match_field_map["IUSE"]           = PackageTest::IUSE;
+	match_field_map["USE"]            = PackageTest::IUSE;
+	match_field_map["iuse"]           = PackageTest::IUSE;
+	match_field_map["use"]            = PackageTest::IUSE;
+	match_field_map["WITH_USE"]              = PackageTest::USE_ENABLED;
+	match_field_map["WITH-USE"]              = PackageTest::USE_ENABLED;
+	match_field_map["INSTALLED_WITH_USE"]    = PackageTest::USE_ENABLED;
+	match_field_map["INSTALLED-WITH-USE"]    = PackageTest::USE_ENABLED;
+	match_field_map["with_use"]              = PackageTest::USE_ENABLED;
+	match_field_map["with-use"]              = PackageTest::USE_ENABLED;
+	match_field_map["installed_with_use"]    = PackageTest::USE_ENABLED;
+	match_field_map["installed-with-use"]    = PackageTest::USE_ENABLED;
+	match_field_map["WITHOUT_USE"]           = PackageTest::USE_DISABLED;
+	match_field_map["WITHOUT-USE"]           = PackageTest::USE_DISABLED;
+	match_field_map["INSTALLED_WITHOUT_USE"] = PackageTest::USE_DISABLED;
+	match_field_map["INSTALLED-WITHOUT-USE"] = PackageTest::USE_DISABLED;
+	match_field_map["without_use"]           = PackageTest::USE_DISABLED;
+	match_field_map["without-use"]           = PackageTest::USE_DISABLED;
+	match_field_map["installed_without_use"] = PackageTest::USE_DISABLED;
+	match_field_map["installed-without-use"] = PackageTest::USE_DISABLED;
 	match_field_map["SET"]            = PackageTest::SET;
+	match_field_map["set"]            = PackageTest::SET;
 	match_field_map["SLOT"]           = PackageTest::SLOT;
+	match_field_map["slot"]           = PackageTest::SLOT;
 	match_field_map["INSTALLED_SLOT"] = PackageTest::INSTALLED_SLOT;
+	match_field_map["INSTALLED-SLOT"] = PackageTest::INSTALLED_SLOT;
+	match_field_map["INSTALLEDSLOT"]  = PackageTest::INSTALLED_SLOT;
+	match_field_map["installed_slot"] = PackageTest::INSTALLED_SLOT;
+	match_field_map["installed-slot"] = PackageTest::INSTALLED_SLOT;
+	match_field_map["installedslot"]  = PackageTest::INSTALLED_SLOT;
 	return match_field_map;
+}
+
+inline static const map<string,PackageTest::MatchAlgorithm>&
+static_match_algorithm_map()
+{
+	static map<string,PackageTest::MatchAlgorithm> match_algorithm_map;
+	match_algorithm_map["REGEX"]      = PackageTest::ALGO_REGEX;
+	match_algorithm_map["REGEXP"]     = PackageTest::ALGO_REGEX;
+	match_algorithm_map["regex"]      = PackageTest::ALGO_REGEX;
+	match_algorithm_map["regexp"]     = PackageTest::ALGO_REGEX;
+	match_algorithm_map["EXACT"]      = PackageTest::ALGO_EXACT;
+	match_algorithm_map["exact"]      = PackageTest::ALGO_EXACT;
+	match_algorithm_map["BEGIN"]      = PackageTest::ALGO_BEGIN;
+	match_algorithm_map["begin"]      = PackageTest::ALGO_BEGIN;
+	match_algorithm_map["END"]        = PackageTest::ALGO_END;
+	match_algorithm_map["end"]        = PackageTest::ALGO_END;
+	match_algorithm_map["SUBSTRING"]  = PackageTest::ALGO_SUBSTRING;
+	match_algorithm_map["substring"]  = PackageTest::ALGO_SUBSTRING;
+	match_algorithm_map["PATTERN"]    = PackageTest::ALGO_PATTERN;
+	match_algorithm_map["pattern"]    = PackageTest::ALGO_PATTERN;
+	match_algorithm_map["FUZZY"]      = PackageTest::ALGO_FUZZY;
+	match_algorithm_map["fuzzy"]      = PackageTest::ALGO_FUZZY;
+	return match_algorithm_map;
 }
 
 PackageTest::MatchField
@@ -127,42 +188,126 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 		static_match_field_map();
 	map<string,MatchField>::const_iterator it = match_field_map.find(p);
 	if(it == match_field_map.end()) {
-		throw ExBasic("Can't find MatchField %r") % p;
-		return NONE;
+		throw ExBasic("cannot find match field %r") % p;
+		return NAME;
 	}
 	return it->second;
 }
 
+PackageTest::MatchAlgorithm
+PackageTest::name2algorithm(const string &p) throw(ExBasic)
+{
+	const static map<string,MatchAlgorithm>& match_algorithm_map =
+		static_match_algorithm_map();
+	map<string,MatchAlgorithm>::const_iterator it = match_algorithm_map.find(p);
+	if(it == match_algorithm_map.end()) {
+		throw ExBasic("cannot find match algorithm %r") % p;
+		return ALGO_REGEX;
+	}
+	return it->second;
+}
+
+/// It is more convenient to make this a macro than a template,
+/// because otherwise we would have to pass initialization functions
+
+#define MatcherClassDefinition(n,t,f,d) \
+class n \
+{ \
+	private: \
+	vector<Regex*> m; \
+	vector<t> v; \
+	t default_value; \
+ \
+	public: \
+	n(const string &s) throw(ExBasic) \
+	{ \
+		vector<string> pairs = split_string(s, true); \
+		for(vector<string>::iterator it = pairs.begin(); \
+			it != pairs.end(); ++it) { \
+			string *s_ptr = &(*it); \
+			++it; \
+			if(it == pairs.end()) { \
+				default_value = f(*s_ptr); \
+				return; \
+			} \
+			m.push_back(new Regex(s_ptr->c_str())); \
+			v.push_back(f(*it)); \
+		} \
+		default_value = d; \
+	} \
+ \
+	t parse(const char *p) \
+	{ \
+		for(vector<Regex*>::size_type i = 0; i != m.size(); ++i) { \
+			if(m[i]->match(p)) \
+				return v[i]; \
+		} \
+		return default_value; \
+	} \
+}
+
+MatcherClassDefinition(MatcherField, PackageTest::MatchField, PackageTest::name2field, PackageTest::NAME);
+MatcherClassDefinition(MatcherAlgorithm, PackageTest::MatchAlgorithm, PackageTest::name2algorithm, PackageTest::ALGO_REGEX);
+
 PackageTest::MatchField
 PackageTest::get_matchfield(const char *p) throw(ExBasic)
 {
-	EixRc &rc = get_eixrc(NULL);
-	vector<string> order = split_string(rc["MATCH_ORDER"].c_str());
-	for(vector<string>::iterator it = order.begin();
-		it != order.end();
-		++it)
-	{
-		Regex re(rc["MATCH_" + *it + "_IF"].c_str());
-		if(re.match(p))
-		{
-			return name2field(*it);
-		}
+	static auto_ptr<MatcherField> m;
+	if(!m.get()) {
+		EixRc &rc = get_eixrc(NULL);
+		m = auto_ptr<MatcherField>(new MatcherField(rc["DEFAULT_MATCH_FIELD"]));
 	}
-	return NAME;
+	return m->parse(p);
+}
+
+PackageTest::MatchAlgorithm
+PackageTest::get_matchalgorithm(const char *p) throw(ExBasic)
+{
+	static auto_ptr<MatcherAlgorithm> m;
+	if(!m.get()) {
+		EixRc &rc = get_eixrc(NULL);
+		m = auto_ptr<MatcherAlgorithm>(new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]));
+	}
+	return m->parse(p);
+}
+
+void
+PackageTest::setAlgorithm(MatchAlgorithm a)
+{
+	switch(a) {
+		case ALGO_REGEX:
+			setAlgorithm(new RegexAlgorithm());
+			break;
+		case ALGO_EXACT:
+			setAlgorithm(new ExactAlgorithm());
+			break;
+		case ALGO_BEGIN:
+			setAlgorithm(new BeginAlgorithm());
+			break;
+		case ALGO_END:
+			setAlgorithm(new EndAlgorithm());
+			break;
+		case ALGO_SUBSTRING:
+			setAlgorithm(new SubstringAlgorithm());
+			break;
+		case ALGO_PATTERN:
+			setAlgorithm(new PatternAlgorithm());
+			break;
+		case ALGO_FUZZY:
+		default:
+			setAlgorithm(new FuzzyAlgorithm(get_eixrc(NULL).getInteger("LEVENSHTEIN_DISTANCE")));
+			break;
+	}
 }
 
 void
 PackageTest::setPattern(const char *p)
 {
-	if(algorithm.get() == NULL)
-	{
-		algorithm = auto_ptr<BaseAlgorithm>(new RegexAlgorithm());
-	}
+	if(!algorithm.get())
+		setAlgorithm(get_matchalgorithm(p));
 
 	if(field == NONE)
-	{
-		field = PackageTest::get_matchfield(p);
-	}
+		field = get_matchfield(p);
 
 	algorithm->setString(p);
 }
@@ -776,7 +921,7 @@ getlines(const char *varname, vector<string> &lines)
 {
 	EixRc &rc = get_eixrc(NULL);
 	lines.clear();
-	vector<string> name = split_string(rc[varname], spaces, true, true);
+	vector<string> name = split_string(rc[varname], true);
 	for(vector<string>::const_iterator it = name.begin(); it != name.end(); ++it)
 		pushback_lines(it->c_str(), &lines, false, true);
 }

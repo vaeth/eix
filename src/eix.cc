@@ -159,7 +159,6 @@ dump_help(int exit_code)
 			"    -e, --exact           Pattern is the exact string\n"
 			"    -p, --pattern         Pattern is a wildcards-pattern\n"
 			"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
-			"                          (default: "LEVENSHTEIN_DISTANCE_STR")\n"
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n",
@@ -287,7 +286,6 @@ static struct Option long_options[] = {
 	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
 	Option("installed-in-some-overlay", O_INSTALLED_SOME),
 	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
-	Option("installed-slot",O_INSTALLED_SLOT,           Option::KEEP_STRING_OPTIONAL),
 	Option("restrict-fetch",         O_RESTRICT_FETCH),
 	Option("restrict-mirror",        O_RESTRICT_MIRROR),
 	Option("restrict-primaryuri",    O_RESTRICT_PRIMARYURI),
@@ -312,10 +310,14 @@ static struct Option long_options[] = {
 	Option("regex",         'r'),
 	Option("exact",         'e'),
 	Option("pattern",       'p'),
+	Option("begin",         'b'),
+	Option("substring",     'z'),
+	Option("end",           O_END_ALGO),
 
 	// What to match in this criteria
 	Option("name",          's'),
 	Option("slot",          O_SEARCH_SLOT),
+	Option("installed-slot", O_INSTALLED_SLOT),
 	Option("category",      'C'),
 	Option("category-name", 'A'),
 	Option("description",   'S'),
@@ -846,7 +848,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 			continue;
 		if(!know_excludes) {
 			know_excludes = true;
-			vector<string> excludelist = split_string(excludefiles, spaces, true, true);
+			vector<string> excludelist = split_string(excludefiles, true);
 			for(vector<string>::const_iterator it = excludelist.begin();
 				it != excludelist.end(); ++it) {
 				vector<string> excl;
@@ -943,7 +945,7 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 			if((!ns) || (ns->find(name) == ns->end())) {
 				if(!know_excludes) {
 					know_excludes = true;
-					vector<string> excludelist = split_string(excludefiles, spaces, true, true);
+					vector<string> excludelist = split_string(excludefiles, true);
 					for(vector<string>::const_iterator it = excludelist.begin();
 						it != excludelist.end(); ++it) {
 						vector<string> excl;

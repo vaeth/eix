@@ -108,7 +108,7 @@ escape_string(string &str, const char *at)
 }
 
 vector<string>
-split_string(const string &str, const char *at, const bool ignore_empty, const bool handle_escape)
+split_string(const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 {
 	vector<string> vec;
 	string::size_type last_pos = 0,

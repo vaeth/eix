@@ -22,7 +22,7 @@ using namespace std;
 
 bool EixCache::initialize(const string &name)
 {
-	vector<string> args = split_string(name, ":", false);
+	vector<string> args = split_string(name, true, ":", false);
 	if(strcasecmp(args[0].c_str(), "eix") == 0)
 	{
 		m_name = "eix";

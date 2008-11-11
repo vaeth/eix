@@ -232,7 +232,7 @@ add_pathnames(vector<Pathname> &add_list, const vector<string> to_add, bool must
 static void
 add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 {
-	vector<string> v = split_string(eixrc[s], spaces, true, true);
+	vector<string> v = split_string(eixrc[s], true);
 	if(v.size() & 1)
 	{
 		fprintf(stderr, "%s must be a list of the form DIRECTORY METHOD\n", s);
@@ -332,9 +332,9 @@ run_update_eix(int argc, char *argv[])
 	add_override(override_list, eixrc, "CACHE_METHOD");
 	add_override(override_list, eixrc, "ADD_CACHE_METHOD");
 	vector<Pathname> excluded_list;
-	add_pathnames(excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], spaces, true, true), true);
+	add_pathnames(excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
 	vector<Pathname> add_list;
-	add_pathnames(add_list, split_string(eixrc["ADD_OVERLAY"], spaces, true, true), true);
+	add_pathnames(add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
 
 	if(eixrc.getBool("KEEP_VIRTUALS"))
 		add_virtuals(override_list, add_list, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);

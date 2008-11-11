@@ -63,8 +63,10 @@ PackageReader::read(Attributes need)
 					m_pkg->finalize_masks();
 			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
-		//case COLL_IUSE: // If NOT_FULL_USE
-		//case ALL:
+#if !defined(NOT_FULL_USE)
+		case COLL_IUSE:
+#endif
+		case ALL:
 		default:
 			break;
 	}

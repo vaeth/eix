@@ -1204,8 +1204,9 @@ AddOption(STRING, "OVERLAYS_LIST",
 	"all-used-renumbered", "Which overlays to list (all/all-if-used/all-used/all-used-renumbered/no)");
 
 AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
-	LEVENSHTEIN_DISTANCE_STR,
-	"The default maximal levensthein for which a string is considered a match.");
+	LEVENSHTEIN_DISTANCE_DEFAULT,
+	"The default maximal levensthein distance for which a string is considered a match\n"
+	"for the fuzzy match algorithm.");
 
 AddOption(STRING, "PORTDIR_CACHE_METHOD",
 	PORTDIR_CACHE_METHOD , "Portage cache-backend that should be used for PORTDIR\n"
@@ -1366,26 +1367,60 @@ TAG_FOR(EX_ALIEN_STABLE, "(*)", "originally ALIENARCH but now stable");
 TAG_FOR(EX_ALIEN_UNSTABLE, "(~*)", "originally ~ALIENARCH but now stable");
 TAG_FOR(EX_MISSING_KEYWORD, "(**)", "originally no keyword but now stable");
 
-/* fancy new feature: change default matchfield depending on the searchstring. */
-#define MATCH_IF(field, value) \
-	AddOption(STRING, "MATCH_" #field "_IF", \
-		value, "Use " #field " as default matchfield if the search string matches\n" \
-		"the given extended regular expression.")
+/* Change default match field depending on the search string. */
+#define MATCH_FIELD(name, comment, value) \
+	AddOption(STRING, "MATCH_FIELD_" name, \
+		value, "This variable is only used for delayed substitution.\n" \
+		"It is a regular expression used in DEFAULT_MATCH_FIELD for " comment ".");
 
-MATCH_IF(NAME,          ".*");
-MATCH_IF(DESCRIPTION,   ".*");
-MATCH_IF(LICENSE,       ".*");
-MATCH_IF(CATEGORY,      ".*");
-MATCH_IF(CATEGORY_NAME, "/");
-MATCH_IF(HOMEPAGE,      ".*");
-MATCH_IF(PROVIDE,       "^virtual/");
-MATCH_IF(IUSE,          ".*");
-MATCH_IF(SET,           "^\\\\?\\@");
-MATCH_IF(SLOT,          ".*");
-MATCH_IF(INSTALLED_SLOT,".*");
+MATCH_FIELD("DESCRIPTION",   "description",   "[ ]");
+MATCH_FIELD("SET",           "set",           "[@]");
+MATCH_FIELD("HOMEPAGE",      "homepage",      "http");
+MATCH_FIELD("PROVIDE",       "provide",       "virtual");
+MATCH_FIELD("CATEGORY_NAME", "category/name", "/");
+MATCH_FIELD("LICENSE",       "license",       "GPL|BSD|Art");
 
-AddOption(STRING, "MATCH_ORDER",
-	"PROVIDE SET CATEGORY_NAME NAME", "Try the regex from MATCH_(.*)_IF in this order. Use whitespaces as delimiter.");
+AddOption(STRING, "DEFAULT_MATCH_FIELD",
+	"%{\\MATCH_FIELD_DESCRIPTION} description "
+	"%{\\MATCH_FIELD_SET} set "
+	"%{\\MATCH_FIELD_HOMEPAGE} homepage "
+	"%{\\MATCH_FIELD_PROVIDE} provide "
+	"%{\\MATCH_FIELD_CATEGORY_NAME} category/name "
+	"%{\\MATCH_FIELD_LICENSE} license "
+	"name",
+	"This is a list of strings of the form regexp[ ]match_field.\n"
+	"If regexp matches the search pattern, use match_field as the default.\n"
+	"A fallback match_field may be specified as the last entry in the list.\n"
+	"Admissible values for match_field are: name, category, category/name,\n"
+	"description, license, homepage, provide, set, slot, installed-slot, use\n"
+	"with-use, without-use.");
+
+/* Change default match algorithm depending on the search string. */
+ #define MATCH_ALGORITHM(name, comment, value) \
+         AddOption(STRING, "MATCH_ALGORITHM_" name, \
+                 value, "This variable is only used for delayed substitution.\n" \
+                 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for " comment ".");
+
+MATCH_ALGORITHM("REGEX",     "regex",     "[][^$|()]");
+MATCH_ALGORITHM("PATTERN1",  "pattern",   "^[*]|[^][().][*]");
+MATCH_ALGORITHM("SUBSTRING", "substring", "[^][().][+?]");
+MATCH_ALGORITHM("EXACT",     "exact",     "^[@]");
+MATCH_ALGORITHM("BEGIN",     "begin",     "/");
+MATCH_ALGORITHM("PATTERN2",  "pattern",   "^http|^file");
+
+AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
+	"%{\\MATCH_ALGORITHM_REGEX} regex "
+	"%{\\MATCH_ALGORITHM_PATTERN1} pattern "
+	"%{\\MATCH_ALGORITHM_SUBSTRING} substring "
+	"%{\\MATCH_ALGORITHM_EXACT} exact "
+	"%{\\MATCH_ALGORITHM_BEGIN} begin "
+	"%{\\MATCH_ALGORITHM_PATTERN2} pattern "
+	"regex",
+	"This is a list of strings of the form regexp[ ]match_algorithm.\n"
+	"If regexp matches the search pattern, use match_algorithm as the default.\n"
+	"A fallback match_algorithm may be specified as the last entry in the list.\n"
+	"Admissible values for match_algorithm are: regex, pattern, substring,\n"
+	"begin, end, exact, fuzzy.");
 
 AddOption(BOOLEAN, "TEST_FOR_EMPTY",
 	"true", "Defines whether empty entries in /etc/portage/package.* are shown with -t.");

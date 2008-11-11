@@ -96,9 +96,9 @@ ostream& operator<<(ostream& s, const BasicVersion::Part& part)
 			return s << "_p" << part.second;
 		case BasicVersion::character:
 			return s << part.second;
+		case BasicVersion::primary:
+		case BasicVersion::first:
 		default:
-		// case BasicVersion::primary:
-		// case BasicVersion::first:
 			return s << "." << part.second;
 	}
 	throw ExBasic("internal error: unknown PartType on (%r,%r)")

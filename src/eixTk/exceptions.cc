@@ -32,7 +32,7 @@ portage_parse_error(const string &file, const int line_nr, const string& line, c
 		<< line << "\"" << endl;
 
 	// Indent the message correctly
-	vector<string> lines = split_string(e.what(), "\n", false);
+	vector<string> lines = split_string(e.what(), false, "\n", false);
 	for(vector<string>::iterator i = lines.begin();
 		i != lines.end();
 		++i)

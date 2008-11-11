@@ -70,13 +70,47 @@ class RegexAlgorithm : public BaseAlgorithm {
 		}
 };
 
-/** Exact-string-matching, use strcmp to test for a match. */
-class ESMAlgorithm : public BaseAlgorithm {
+/** exact string matching */
+class ExactAlgorithm : public BaseAlgorithm {
 
 	public:
 		bool operator () (const char *s, Package *p) {
 			UNUSED(p);
 			return !strcmp(search_string.c_str(), s);
+		}
+};
+
+/** substring matching */
+class SubstringAlgorithm : public BaseAlgorithm {
+
+	public:
+		bool operator () (const char *s, Package *p) {
+			UNUSED(p);
+			return (std::string(s).find(search_string) != std::string::npos);
+		}
+};
+
+/** begin-of-string matching */
+class BeginAlgorithm : public BaseAlgorithm {
+
+	public:
+		bool operator () (const char *s, Package *p) {
+			UNUSED(p);
+			return !strncmp(search_string.c_str(), s, search_string.size());
+		}
+};
+
+/** end-of-string matching */
+class EndAlgorithm : public BaseAlgorithm {
+
+	public:
+		bool operator () (const char *s, Package *p) {
+			UNUSED(p);
+			size_t l = strlen(s);
+			std::string::size_type sl = search_string.size();
+			if(l < sl)
+				return false;
+			return !strcmp(search_string.c_str(), s + (l - sl));
 		}
 };
 
@@ -119,7 +153,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 };
 
 /** Use fnmatch to test if the package matches. */
-class WildcardAlgorithm : public BaseAlgorithm {
+class PatternAlgorithm : public BaseAlgorithm {
 
 	public:
 		bool operator () (const char *s, Package *p) {

@@ -127,7 +127,7 @@ void escape_string(std::string &str, const char *at = spaces);
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result.
  * @return    vector of strings. */
-std::vector<std::string> split_string(const std::string &str, const char *at = spaces, const bool ignore_empty = true, const bool handle_escape = false);
+std::vector<std::string> split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
 
 /** Join a string-vector.
  * @param glue glue between the elements. */

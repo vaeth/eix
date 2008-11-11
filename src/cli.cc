@@ -308,21 +308,27 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					  test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
 				  }
 				  else {
-					  test->setAlgorithm(new FuzzyAlgorithm(LEVENSHTEIN_DISTANCE));
+					  test->setAlgorithm(PackageTest::ALGO_FUZZY);
 					  arg--;
 				  }
 				  break;
 			case 'r': test->setAlgorithm(new RegexAlgorithm());
 				  break;
-			case 'e': test->setAlgorithm(new ESMAlgorithm());
+			case 'e': test->setAlgorithm(new ExactAlgorithm());
 				  break;
-			case 'p': test->setAlgorithm(new WildcardAlgorithm());
+			case 'b': test->setAlgorithm(new BeginAlgorithm());
+				  break;
+			case O_END_ALGO: test->setAlgorithm(new EndAlgorithm());
+				  break;
+			case 'z': test->setAlgorithm(new SubstringAlgorithm());
+				  break;
+			case 'p': test->setAlgorithm(new PatternAlgorithm());
 				  break;
 			// }}}
 
 			// Read from pipe {{{
 			case '|':
-				test->setAlgorithm(new ESMAlgorithm());
+				test->setAlgorithm(new ExactAlgorithm());
 				*test = PackageTest::CATEGORY_NAME;
 				firsttime = true;
 				while(!cin.eof())
@@ -330,7 +336,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					string line;
 					getline(cin, line);
 					trim(&line);
-					vector<string> wordlist = split_string(line.c_str());
+					vector<string> wordlist = split_string(line);
 					vector<string>::iterator word = wordlist.begin();
 					string::size_type i;
 					for(; word != wordlist.end(); ++word)
@@ -347,7 +353,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					{
 						Matchatom *next = current->OR();
 						USE_NEXT;
-						test->setAlgorithm(new ESMAlgorithm());
+						test->setAlgorithm(new ExactAlgorithm());
 						*test = PackageTest::CATEGORY_NAME;
 					}
 					firsttime = false;

@@ -72,7 +72,7 @@ void
 AnsiMarker::initmarker(const string &markers_string) throw (ExBasic)
 {
 	markers.clear(); have_something = false;
-	vector<string> v = split_string(markers_string, ",;:- \t\r\n");
+	vector<string> v = split_string(markers_string, false, ",;:- \t\r\n");
 	markers.assign(v.size(), amNone);
 	vector<Marker>::size_type i = 0;
 	for(vector<string>::const_iterator it = v.begin();

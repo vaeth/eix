@@ -99,11 +99,8 @@
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
 
-/* Maximal levenshtein-distance for matches */
-#undef LEVENSHTEIN_DISTANCE
-
-/* Maximal levenshtein-distance for matches (as string) */
-#undef LEVENSHTEIN_DISTANCE_STR
+/* default levenshtein-distance for matches (as string) */
+#undef LEVENSHTEIN_DISTANCE_DEFAULT
 
 /* Name of package */
 #undef PACKAGE

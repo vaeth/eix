@@ -222,8 +222,8 @@ Mask::test(const ExtendedVersion *ev) const
 		case maskOpRevisions:
 			return BasicVersion::compareTilde(*this, *ev) == 0;
 
+		case maskIsSet: // makes no sense
 		default:
-		// case maskIsSet: makes no sense
 			break;
 	}
 	return false;

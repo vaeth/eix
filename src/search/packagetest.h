@@ -25,8 +25,13 @@
 
 #include <portage/set_stability.h>
 
+class MatcherField;
+class MatcherAlgorithm;
+
 /** Test a package if it matches some criteria. */
 class PackageTest {
+		friend class MatcherField;
+		friend class MatcherAlgorithm;
 
 	public:
 		typedef uint16_t MatchField;
@@ -45,6 +50,16 @@ class PackageTest {
 			SLOT          =0x0400, /**< Search in slots */
 			INSTALLED_SLOT=0x0800, /**< Search in installed slots */
 			SET           =0x1000; /**< Search in sets */
+
+		enum MatchAlgorithm {
+			ALGO_REGEX,
+			ALGO_EXACT,
+			ALGO_BEGIN,
+			ALGO_END,
+			ALGO_SUBSTRING,
+			ALGO_PATTERN,
+			ALGO_FUZZY
+		};
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled
@@ -90,6 +105,8 @@ class PackageTest {
 
 		void setAlgorithm(BaseAlgorithm *p)
 		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
+
+		void setAlgorithm(MatchAlgorithm a);
 
 		void setPattern(const char *p);
 
@@ -249,8 +266,10 @@ class PackageTest {
 			test_stability_local, test_stability_nonlocal;
 		TestStability test_instability;
 
-		static MatchField name2field(const std::string &p) throw(ExBasic);
-		static MatchField get_matchfield(const char *p) throw(ExBasic);
+		static MatchField     name2field(const std::string &p) throw(ExBasic);
+		static MatchAlgorithm name2algorithm(const std::string &p) throw(ExBasic);
+		static MatchField     get_matchfield(const char *p) throw(ExBasic);
+		static MatchAlgorithm get_matchalgorithm(const char *p) throw(ExBasic);
 
 		bool stringMatch(Package *pkg) const;
 

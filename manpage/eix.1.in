@@ -486,10 +486,16 @@ Invert the expression given.
 .\" {{{ -------- Operation selection
 .SS Operation selection
 .TP
-Define the fields that the expression should be tested on. Multiple fields may be used.
-If you do not specify some of these options, the default depends on the expression which
-you use and on the setting of the B<MATCH_*> configuration variables:
-typically, it is B<--name> or B<--category-name>.
+Define the fields that the pattern should be tested on.
+Multiple fields may be specified in one expression (the expression matches
+if the pattern matches for at least one of these field).
+If you do not specify some of these options, the default is chosen according
+to some heuristic depending on the form of your pattern.
+In most cases, the default match field will be B<--name>,
+but if e.g. your pattern contains certain symbols, it may also be
+B<--category-name>, B<--set>, B<--description>, B<--homepage>, B<--virtual>, or B<--license>.
+Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
+configuration variable explained later.
 .TP
 .BR -s ", " --name
 e.g. "eix"
@@ -544,17 +550,36 @@ which are still in the database.
 
 .\" {{{ -------- Match algorithms
 .SS "Match algorithms"
+Define the algorithm by which the match field should be tested against the expression.
+Only one algorithm can be chosen for an expression.
+If you do not specify some of these options, the default is chosen according
+to some heuristic depending on the form of your search expression.
+In most cases, the default will be B<--substring> unless your expression
+"looks" like a regular expression, a glob pattern, or an exact word
+in which case the corresponding algorithm will be used.
+Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>.
 .TP
 .BR -e ", " --exact
-Pattern is an exact string. For example, "eix -e gcc" will only show packages
+Pattern is an exact (full) string. For example, "eix -e gcc" will only show packages
 with the name "gcc".
 .TP
+.BR -b ", " --begin
+Pattern is the beginning of the string. For example, "eix -b gcc" will show the package
+with the name "gcc" but also e.g. "gcc-config".
+.TP
+.BR --end
+Pattern is the end of the string.
+.TP
+.BR -z ", " --substring
+Pattern occurs somewhere within the string.
+.TP
 .BR -f " [" I<N> "], " --fuzzy " [" I<N> "]"
-Do a fuzzy search with a maximal levenshtein-distance of I<N> (default @LEVENSHTEIN_DISTANCE@).
+Do a fuzzy search with a maximal levenshtein-distance of I<N> (default @LEVENSHTEIN_DISTANCE@)
+for the full string.
 Note that this command slows down search speed.
 .TP
 .BR -p ", " --pattern
-pattern is a wildcard-pattern. See
+pattern is a wildcard-pattern (for the full string). See
 .BR fnmatch (3)
 and/or
 .BR glob (7)
@@ -562,10 +587,12 @@ for further information. Be sure to use single quotes around patterns (to preven
 shell from intercepting any wildcards).
 .TP
 .BR -r ", " --regex
-pattern is a regexp. -r is default, so you actually not need to type -r. For further
-information, please read
+pattern is a regexp.
+Only a substring must be matched (unless ^ or $ are used);
+the empty pattern matches everything.
+For further information, please read
 .BR regex (7).
-Again, be sure to use single quotes around patterns. (Default)
+Again, be sure to use single quotes around patterns.
 .\" }}}
 .\" {{{ -------- Defining layouts
 .SS Defining layouts \fP(see B<FORMATSTRING> below)
@@ -1408,7 +1435,7 @@ The file eix considers as the world_sets file.
 The same remarks as for B<EIX_WORLD> hold true.
 
 .TP
-.B EIX_LOCAL_SETS "  " (string list) "(the meaning of string list is explained in the next paragraph)"
+.B EIX_LOCAL_SETS "  " ("string list") "(the meaning of string list is explained in the next paragraph)"
 
 This is a list of directories which contains locally defined sets.
 Its default contains B</etc/portage/sets> and B</etc/portage/sets.eix>
@@ -1653,12 +1680,12 @@ List all overlays for every query (even if not even one is needed).
 Set default levenshtein-distance.
 
 .TP
-.B EXCLUDE_OVERLAY "  " (string list)
+.B EXCLUDE_OVERLAY "  " ("string list")
 Set a list of wildcard patterns for overlay paths that are excluded from the index.
 See the B<update-eix> option B<--exclude-overlay>.
 
 .TP
-.B ADD_OVERLAY "  " (string list)
+.B ADD_OVERLAY "  " ("string list")
 Set a list of overlays that are added to the index.
 See the B<update-eix> option B<--add-overlay>.
 
@@ -1677,7 +1704,7 @@ You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
 
 .TP
-.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD (string list)
+.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD ("string list")
 These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
 The cache method of I<overlay> is set to I<method>, overriding the
 settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
@@ -1975,42 +2002,32 @@ The tags which are printed in front of the version numbers to make the masking/s
 .B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL TAG_PROPERTIES_SET " " (string)
 The tags which are printed for versions with the corresponding RESTRICT or PROPERTIES settings.
 .TP
-.\" {{{ Default Matchfields for different strings.
-.B MATCH_NAME_IF " " (string)
-Use NAME as default matchfield if the string matches the given regex.
+.\" {{{ Default match fields and algorithms
+.B DEFAULT_MATCH_FIELD " " ("string list")
+This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_field>
+which is used to determine the default match field.
+The search pattern from the command line is matched against all the I<regular_expression>
+values in this list in the given order.
+For the first match, the corresponding I<match_field> value is used as the default match field.
+You can specify a last I<match_field> (without a I<regular_expression>) in this list which is
+used as the default fallback if all matches failed; if there is no such entry, then B<name> is assumed.
+It may be convenient to use delayed substitution ${\\VAR} for I<regular_expression>
+to avoid manually inserting additional escapes.
+
+The possible values for I<match_field> are B<name>, B<category>, B<category/name>
+(or B<category-name>), B<description>, B<license>, B<homepage>, B<provide>, B<set>,
+B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
+B<without-use> (or B<installed-without-use>),
+corresponding to the analogous command line option for the match field
 .TP
-.B MATCH_DESCRIPTION_IF " " (string)
-Use DESCRIPTION as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_LICENSE_IF " " (string)
-Use LICENSE as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_CATEGORY_IF " " (string)
-Use CATEGORY as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_CATEGORY_NAME_IF " " (string)
-Use CATEGORY_NAME as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_HOMEPAGE_IF " " (string)
-Use HOMEPAGE as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_IUSE_IF " " (string)
-Use USE as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_PROVIDE_IF " " (string)
-Use PROVIDE as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_SLOT_IF " " (string)
-Use SLOT as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_INSTALLED_SLOT_IF " " (string)
-Use INSTALLED_SLOT as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_SET_IF " " (string)
-Use SET as default matchfield if the string matches the given regex.
-.TP
-.B MATCH_ORDER " " (string)
-Try regex from MATCH_\\(.*\\)_IF in this order. Use whitespaces as delimiter.
+.B DEFAULT_MATCH_ALGORITHM " " ("string list")
+This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_algorithm>
+which is used to determine the default match algorithm.
+This is analogous to B<DEFAULT_MATCH_FIELD> with the only difference that I<match_algorithm>
+specifies the default match algorithm chosen.
+The possible values for I<match_algorithm> are B<regex>, B<pattern>, B<substring>, B<begin>, B<end>, B<exact>, B<fuzzy>
+which correspond to the analogous command line option for the match algorithm.
+If no other default match algorithm default is specified, then B<regex> is used.
 .TP
 .\" }}}
 .\" {{{ Definition of Redundancy
@@ -2058,7 +2075,7 @@ Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 Applies if /etc/portage/package.keywords lists the same keyword twice
 for some/all (un-/installed) versions.
 
-B<String> describes which versions should be tested.
+B<string> describes which versions should be tested.
 It can have the following values:
 .TP
 .SS
@@ -2112,50 +2129,50 @@ even if B<foo/bar> would apply to version B<1>.
 The latter redundancy can be found implicitly with B<REDUNDANT_IF_DOUBLE_LINE>,
 B<REDUNDANT_IF_MIXED>, and B<REDUNDANT_IF_STRANGE>.
 .TP
-.BR REDUNDANT_IF_MIXED "  " (String ", see above")
+.BR REDUNDANT_IF_MIXED "  " (string ", see above")
 Applies if /etc/portage/package.keywords lists two different keywords,
 e.g. ~ARCH and -*, for the versions in question.
 .TP
-.BR REDUNDANT_IF_WEAKER "  " (String ", see above")
+.BR REDUNDANT_IF_WEAKER "  " (string ", see above")
 Applies if /etc/portage/package.keywords lists a keywords which can
 be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH
 in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,
 for the versions in question.
 .TP
-.BR REDUNDANT_IF_STRANGE "  " (String ", see above")
+.BR REDUNDANT_IF_STRANGE "  " (string ", see above")
 Applies if /etc/portage/package.keywords lists a strange keyword,
 e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,
 for the versions in question.
 .TP
-.BR REDUNDANT_IF_MINUSASTERISK "  " (String ", see above")
+.BR REDUNDANT_IF_MINUSASTERISK "  " (string ", see above")
 Applies if /etc/portage/package.keywords contains some -* entry.
 This test only applies if B<OBSOLETE_MINUSASTERISK> is false.
 .TP
-.BR REDUNDANT_IF_NO_CHANGE "  " (String ", see above")
+.BR REDUNDANT_IF_NO_CHANGE "  " (string ", see above")
 Applies if /etc/portage/package.keywords provides keywords which do not
 change the availability keywords status for the versions in question.
 .TP
-.BR REDUNDANT_IF_MASK_NO_CHANGE "  " (String ", see above")
+.BR REDUNDANT_IF_MASK_NO_CHANGE "  " (string ", see above")
 Applies if /etc/portage/package.mask contains entries
 which do not change the mask status for the versions in question.
 .TP
-.BR REDUNDANT_IF_UNMASK_NO_CHANGE "  " (String ", see above")
+.BR REDUNDANT_IF_UNMASK_NO_CHANGE "  " (string ", see above")
 Applies if /etc/portage/package.unmask contains entries
 which do not change the mask status for the versions in question.
 .TP
-.BR REDUNDANT_IF_DOUBLE_MASKED "  " (String ", see above")
+.BR REDUNDANT_IF_DOUBLE_MASKED "  " (string ", see above")
 Applies if /etc/portage/package.mask matches twice
 for the versions in question.
 .TP
-.BR REDUNDANT_IF_DOUBLE_UNMASKED "  " (String ", see above")
+.BR REDUNDANT_IF_DOUBLE_UNMASKED "  " (string ", see above")
 Applies if /etc/portage/package.unmask matches twice
 for the versions in question.
 .TP
-.BR REDUNDANT_IF_DOUBLE_USE "  " (String ", see above")
+.BR REDUNDANT_IF_DOUBLE_USE "  " (string ", see above")
 Applies if /etc/portage/package.use matches twice
 for the versions in question.
 .TP
-.BR REDUNDANT_IF_DOUBLE_CFLAGS "  " (String ", see above")
+.BR REDUNDANT_IF_DOUBLE_CFLAGS "  " (string ", see above")
 Applies if /etc/portage/package.cflags matches twice
 for the versions in question.
 Note that this file is not supported by portage, but you might e.g. have built some
@@ -2167,7 +2184,7 @@ As the other /etc/portage/package.* files, /etc/portage/package.cflags may also 
 in this case, all non-hidden files/subdirectories in this tree are read recursively,
 resolving all symbolic links.
 .TP
-.BR REDUNDANT_IF_IN_KEYWORDS "  " (String ", see above")
+.BR REDUNDANT_IF_IN_KEYWORDS "  " (string ", see above")
 Applies if /etc/portage/package.keywords contains a nonempty entry matching the versions in question
 (to find empty entries use -t).
 Of course, one will certainly not consider all matches as a redundancy
@@ -2176,61 +2193,61 @@ However, one might consider matching but non-installed packages as redundant.
 Hence, typically one might want to set this variable to the value B<-some> or the equivalent value B<-some-uninstalled>
 (or to B<false> if one thinks that entries for uninstalled packages are "normal" and not redundant).
 .TP
-.BR REDUNDANT_IF_IN_MASK "  " (String ", see above")
+.BR REDUNDANT_IF_IN_MASK "  " (string ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.mask.
 .TP
-.BR REDUNDANT_IF_IN_UNMASK "  " (String ", see above")
+.BR REDUNDANT_IF_IN_UNMASK "  " (string ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.unmask.
 .TP
-.BR REDUNDANT_IF_IN_USE "  " (String ", see above")
+.BR REDUNDANT_IF_IN_USE "  " (string ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 .TP
-.BR REDUNDANT_IF_IN_CFLAGS "  " (String ", see above")
+.BR REDUNDANT_IF_IN_CFLAGS "  " (string ", see above")
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
 See the above comments about this file.
 .\" }}}
 .\" {{{ Various filelists:
 .TP
-.BR SLOT_UPGRADE_FORBID "  " (string list)
+.BR SLOT_UPGRADE_FORBID "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
 .TP
-.BR SLOT_UPGRADE_ALLOW "  " (string list)
+.BR SLOT_UPGRADE_ALLOW "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
-.BR KEYWORDS_NONEXISTENT "  " (string list)
+.BR KEYWORDS_NONEXISTENT "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nonexistent
 .TP
-.BR MASK_NONEXISTENT "  " (string list)
+.BR MASK_NONEXISTENT "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nonexistent
 .TP
-.BR UNMASK_NONEXISTENT "  " (string list)
+.BR UNMASK_NONEXISTENT "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nonexistent
 .TP
-.BR USE_NONEXISTENT "  " (string list)
+.BR USE_NONEXISTENT "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.use.nonexistent
 .TP
-.BR CFLAGS_NONEXISTENT "  " (string list)
+.BR CFLAGS_NONEXISTENT "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nonexistent
 .TP
-.BR INSTALLED_NONEXISTENT "  " (string list)
+.BR INSTALLED_NONEXISTENT "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
-.BR KEYWORDS_NOWARN "  " (string list)
+.BR KEYWORDS_NOWARN "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nowarn
 .TP
-.BR MASK_NOWARN "  " (string list)
+.BR MASK_NOWARN "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nowarn
 .TP
-.BR UNMASK_NOWARN "  " (string list)
+.BR UNMASK_NOWARN "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nowarn
 .TP
-.BR USE_NOWARN "  " (string list)
+.BR USE_NOWARN "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.use.nowarn
 .TP
-.BR CFLAGS_NOWARN "  " (string list)
+.BR CFLAGS_NOWARN "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nowarn
 .TP
-.BR INSTALLED_NOWARN "  " (string list)
+.BR INSTALLED_NOWARN "  " ("string list")
 This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nowarn
 .\" }}}
 .\" }}}

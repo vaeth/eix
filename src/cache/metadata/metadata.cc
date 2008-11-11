@@ -81,7 +81,7 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 		case PATH_REPOSITORY:
 			m_type = "repo-";
 			break;
-		// case PATH_FULL:
+		case PATH_FULL:
 		default:
 			m_type.clear();
 	}
@@ -153,8 +153,8 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 				catpath.append(m_overlay_name);
 			}
 			break;
+		case PATH_METADATA:
 		default:
-		// case PATH_METADATA:
 			break;
 	}
 	optional_append(catpath, '/');
