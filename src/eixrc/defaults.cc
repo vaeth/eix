@@ -344,9 +344,6 @@ AddOption(STRING, "COLOR_MARKED_NAME",
 	"red,1;%{MARK_VERSIONS}",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing a marked package name.");
-#endif
-
-#if (DEFAULT_PART == 2)
 
 AddOption(STRING, "CHAR_UPGRADE",
 	"U",
@@ -464,6 +461,9 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 	"==",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the string used for \"changed package\" separators (diff-eix).");
+#endif
+
+#if (DEFAULT_PART == 2)
 
 AddOption(STRING, "FORMAT_INST_PROPERTIES",
 	":(%{COLOR_PROPERTIES_INTERACTIVE})%{TAG_PROPERTIES_INTERACTIVE}"
@@ -859,9 +859,6 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with marked versions.");
-#endif
-
-#if (DEFAULT_PART == 3)
 
 AddOption(BOOLEAN, "ALL_SETNAMES",
 	"true",
@@ -961,6 +958,9 @@ AddOption(STRING, "DIFF_FORMATLINE",
 	"%{FORMAT_OVERLAYKEY}: <description>",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for diff-eix after the versions.");
+#endif
+
+#if (DEFAULT_PART == 3)
 
 AddOption(STRING, "FORMAT_ALL",
 	"%{FORMATLINE_NAME}"
@@ -1300,9 +1300,6 @@ AddOption(STRING, "PRINT_COUNT_ALWAYS",
 
 AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
 	"true", "If false, count independently of whether the matches are printed.");
-#endif
-
-#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
 	"!f", "Tag for RESTRICT=fetch.");
@@ -1366,6 +1363,9 @@ TAG_FOR(EX_MINUS_KEYWORD, "(-)", "originally -ARCH but now stable");
 TAG_FOR(EX_ALIEN_STABLE, "(*)", "originally ALIENARCH but now stable");
 TAG_FOR(EX_ALIEN_UNSTABLE, "(~*)", "originally ~ALIENARCH but now stable");
 TAG_FOR(EX_MISSING_KEYWORD, "(**)", "originally no keyword but now stable");
+#endif
+
+#if (DEFAULT_PART == 4)
 
 /* Change default match field depending on the search string. */
 #define MATCH_FIELD(name, comment, value) \
@@ -1376,7 +1376,7 @@ TAG_FOR(EX_MISSING_KEYWORD, "(**)", "originally no keyword but now stable");
 MATCH_FIELD("DESCRIPTION",   "description",   "[ ]");
 MATCH_FIELD("SET",           "set",           "[@]");
 MATCH_FIELD("HOMEPAGE",      "homepage",      "http");
-MATCH_FIELD("PROVIDE",       "provide",       "virtual");
+MATCH_FIELD("PROVIDE",       "provide",       "virtual/");
 MATCH_FIELD("CATEGORY_NAME", "category/name", "/");
 MATCH_FIELD("LICENSE",       "license",       "GPL|BSD|Art");
 
@@ -1405,16 +1405,16 @@ MATCH_ALGORITHM("REGEX",     "regex",     "[][^$|()]");
 MATCH_ALGORITHM("PATTERN1",  "pattern",   "^[*]|[^][().][*]");
 MATCH_ALGORITHM("SUBSTRING", "substring", "[^][().][+?]");
 MATCH_ALGORITHM("EXACT",     "exact",     "^[@]");
+MATCH_ALGORITHM("PATTERN2",  "pattern",   ":");
 MATCH_ALGORITHM("BEGIN",     "begin",     "/");
-MATCH_ALGORITHM("PATTERN2",  "pattern",   "^http|^file");
 
 AddOption(STRING, "DEFAULT_MATCH_ALGORITHM",
 	"%{\\MATCH_ALGORITHM_REGEX} regex "
 	"%{\\MATCH_ALGORITHM_PATTERN1} pattern "
 	"%{\\MATCH_ALGORITHM_SUBSTRING} substring "
 	"%{\\MATCH_ALGORITHM_EXACT} exact "
-	"%{\\MATCH_ALGORITHM_BEGIN} begin "
 	"%{\\MATCH_ALGORITHM_PATTERN2} pattern "
+	"%{\\MATCH_ALGORITHM_BEGIN} begin "
 	"regex",
 	"This is a list of strings of the form regexp[ ]match_algorithm.\n"
 	"If regexp matches the search pattern, use match_algorithm as the default.\n"

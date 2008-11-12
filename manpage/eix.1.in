@@ -483,16 +483,16 @@ expressions, concatenated with B<-o>, were given.
 Invert the expression given.
 .\" }}}
 
-.\" {{{ -------- Operation selection
-.SS Operation selection
+.\" {{{ -------- Match field selection
+.SS Match field selection
 .TP
-Define the fields that the pattern should be tested on.
+The subsequent options define the fields that the pattern should be tested on.
 Multiple fields may be specified in one expression (the expression matches
-if the pattern matches for at least one of these field).
+if the pattern matches at least one of the specified fields).
 If you do not specify some of these options, the default is chosen according
 to some heuristic depending on the form of your pattern.
-In most cases, the default match field will be B<--name>,
-but if e.g. your pattern contains certain symbols, it may also be
+In most cases, the default match field will be B<--name>, but if your pattern
+looks "special" like e.g. "cat/n" or "@set", the default match field will change to
 B<--category-name>, B<--set>, B<--description>, B<--homepage>, B<--virtual>, or B<--license>.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
 configuration variable explained later.
@@ -548,16 +548,20 @@ Note that the same restrictions hold as for -I, i.e. only packages will be match
 which are still in the database.
 .\" }}}
 
-.\" {{{ -------- Match algorithms
-.SS "Match algorithms"
-Define the algorithm by which the match field should be tested against the expression.
+.\" {{{ -------- Match algorithm
+.SS "Match algorithm"
+The subsequent options define the algorithm by which the match field should be tested
+against the expression.
 Only one algorithm can be chosen for an expression.
 If you do not specify some of these options, the default is chosen according
-to some heuristic depending on the form of your search expression.
-In most cases, the default will be B<--substring> unless your expression
-"looks" like a regular expression, a glob pattern, or an exact word
-in which case the corresponding algorithm will be used.
-Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>.
+to some heuristic depending on the form of your search pattern.
+In most cases, the default will be B<--regex> unless your expression
+"looks" like a glob pattern or a substring (in which case the corresponding
+algorithm will be the default), or if the pattern has a particular content like
+"@set" or "cat/n" which most people would expect to match the whole string or
+the beginning of a string, respectively.
+Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>
+configuration variable explained later.
 .TP
 .BR -e ", " --exact
 Pattern is an exact (full) string. For example, "eix -e gcc" will only show packages
