@@ -65,4 +65,4 @@ class SetStability {
 		void set_stability(PackageTree &tree) const;
 };
 
-#endif /* __SETSTABILITY_H_ */
+#endif /* EIX__SETSTABILITY_H_ */

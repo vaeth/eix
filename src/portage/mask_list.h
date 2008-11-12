@@ -15,12 +15,12 @@
 #include <portage/version.h>
 #include <portage/mask.h>
 
-template<typename _type>
+template<typename m_Type>
 class MaskList
-	: public std::map<std::string, std::map<std::string, eix::ptr_list<_type> > >
+	: public std::map<std::string, std::map<std::string, eix::ptr_list<m_Type> > >
 {
 	public:
-		typedef typename eix::ptr_list<_type>
+		typedef typename eix::ptr_list<m_Type>
 			MskList;
 
 		typedef typename std::map<std::string, MskList>
@@ -63,10 +63,10 @@ class MaskList
 		MaskList()
 		{ }
 
-		MaskList(const MaskList<_type> &ori) : super()
+		MaskList(const MaskList<m_Type> &ori) : super()
 		{ add(ori); }
 
-		void add(const MaskList<_type> &ori)
+		void add(const MaskList<m_Type> &ori)
 		{
 			for(const_iterator it = ori.begin(); it != ori.end(); ++it)
 			{
@@ -78,7 +78,7 @@ class MaskList
 					MskList &msk = cl[t->first];
 					for(const_mask_iterator m = t->second.begin();
 						m != t->second.end(); ++m) {
-						msk.push_back(new _type(**m));
+						msk.push_back(new m_Type(**m));
 					}
 				}
 			}
@@ -89,14 +89,14 @@ class MaskList
 		    and add even unnecessarily. Note that this means that
 		    we must remove more carefully. */
 
-		bool add(_type *m)
+		bool add(m_Type *m)
 		{
 			(*this)[m->getCategory()][m->getName()].push_back(m);
 			return true;
 		}
 
 		/** @return true if actually something was removed */
-		bool remove(_type *m)
+		bool remove(m_Type *m)
 		{
 			iterator it = super::find(m->getCategory());
 			if(it == super::end())
@@ -134,7 +134,7 @@ class MaskList
 			return deleted;
 		}
 
-		void remove(const MaskList<_type> &l)
+		void remove(const MaskList<m_Type> &l)
 		{
 			for(const_iterator it = l.begin(); it != l.end(); ++it)
 			{
@@ -165,7 +165,7 @@ class MaskList
 		}
 #endif
 
-		const eix::ptr_list<_type> *get(const std::string &name, const std::string &category = SET_CATEGORY) const
+		const eix::ptr_list<m_Type> *get(const std::string &name, const std::string &category = SET_CATEGORY) const
 		{
 			const_iterator it = super::find(category);
 			if(it == super::end())
@@ -178,13 +178,13 @@ class MaskList
 			return &(t->second);
 		}
 
-		const eix::ptr_list<_type> *get(const Package *p) const
+		const eix::ptr_list<m_Type> *get(const Package *p) const
 		{ return get(p->name, p->category); }
 
 		// return true if some masks applied
 		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const
 		{
-			const eix::ptr_list<_type> *l = get(p);
+			const eix::ptr_list<m_Type> *l = get(p);
 			if(l == NULL)
 				return false;
 

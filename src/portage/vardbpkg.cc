@@ -152,7 +152,7 @@ VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 {
 	std::vector<std::string> lines;
 	pushback_lines(
-		(_directory + p->category + "/" + p->name + "-" + v->getFull() + "/repository").c_str(),
+		(m_directory + p->category + "/" + p->name + "-" + v->getFull() + "/repository").c_str(),
 		&lines, true, false, false);
 	for(std::vector<std::string>::const_iterator i = lines.begin();
 		i != lines.end(); ++i) {
@@ -168,7 +168,7 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 {
 #if defined(USE_BZLIB)
 	BZFILE *fh = BZ2_bzopen(
-		(_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
+		(m_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
 		"rb");
 	if(!fh)
 		return "";
@@ -265,7 +265,7 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 	try {
 		vector<string> lines;
 		if(!pushback_lines(
-			(_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
+			(m_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
 			&lines, true, false, false))
 		{
 			v.read_failed = true;
@@ -298,7 +298,7 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 	set<string> iuse_set;
 	vector<string> alluse;
 	try {
-		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
+		string dirname = m_directory + p.category + "/" + p.name + "-" + v.getFull();
 		vector<string> lines;
 		if(!pushback_lines((dirname + "/IUSE").c_str(),
 			&lines, true, false, false))
@@ -363,7 +363,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 	if(!care_of_restrictions)
 		return true;
 	try {
-		string dirname = _directory + p.category + "/" + p.name + "-" + v.getFull();
+		string dirname = m_directory + p.category + "/" + p.name + "-" + v.getFull();
 		vector<string> lines;
 		if(!pushback_lines((dirname + "/RESTRICT").c_str(),
 			&lines, true, false, false)) {
@@ -393,7 +393,7 @@ VarDbPkg::readCategory(const char *category)
 	struct dirent* package_entry;  /* current package dirent */
 
 	/* Open category-directory */
-	string dir_category_name = _directory + category;
+	string dir_category_name = m_directory + category;
 	if( (dir_category = opendir(dir_category_name.c_str())) == NULL) {
 		installed[category] = NULL;
 		return;

@@ -22,7 +22,7 @@ class VarDbPkg {
 	private:
 		/** Mapping of [category][package] to list versions. */
 		std::map<std::string, std::map<std::string, std::vector<InstVersion> >* > installed;
-		std::string _directory; /**< This is the db-directory. */
+		std::string m_directory; /**< This is the db-directory. */
 		bool get_slots, care_of_slots;
 		bool get_restrictions, care_of_restrictions;
 
@@ -38,7 +38,7 @@ class VarDbPkg {
 		/** Default constructor. */
 		VarDbPkg(std::string directory, bool read_slots, bool care_about_slots,
 			bool calc_restrictions, bool care_about_restrictions) :
-			_directory(directory),
+			m_directory(directory),
 			get_slots(read_slots || care_about_slots),
 			care_of_slots(care_about_slots),
 			get_restrictions(calc_restrictions),

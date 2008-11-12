@@ -4,6 +4,7 @@
 //
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #if !defined(EIX__LEVENSHTEIN_H__)
 #define EIX__LEVENSHTEIN_H__

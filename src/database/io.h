@@ -7,7 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__IO_H__
+#if !defined(EIX__IO_H__)
 #define EIX__IO_H__
 
 #include <config.h>
@@ -49,8 +49,8 @@ namespace io {
 			counter++;
 	}
 
-	/// Read a nonnegative number from fp (_Tp must be big enough)
-	template<typename _Tp> _Tp
+	/// Read a nonnegative number from fp (m_Tp must be big enough)
+	template<typename m_Tp> m_Tp
 	read(FILE *fp)
 	{
 		UChar c = readUChar(fp);
@@ -60,32 +60,32 @@ namespace io {
 		unsigned int toget = 1;
 		while((c = readUChar(fp)) == MAGICNUMCHAR)
 			++toget;
-		_Tp ret;
+		m_Tp ret;
 		if(c)
 			ret = c;
 		else { // leading 0 after MAGICNUMCHAR:
-			ret = _Tp(MAGICNUMCHAR);
+			ret = m_Tp(MAGICNUMCHAR);
 			--toget;
 		}
 		for(; toget ; --toget) {
-			ret = (ret << 8) | _Tp(readUChar(fp));
+			ret = (ret << 8) | m_Tp(readUChar(fp));
 		}
 		return ret;
 	}
 
 	/// Write nonnegative number t to fp (undefined behaviour if t < 0)
-	template<typename _Tp> void
-	write(FILE *fp, _Tp t)
+	template<typename m_Tp> void
+	write(FILE *fp, m_Tp t)
 	{
 		UChar c = (t & 0xFF);
 		// Test the most common case explicitly to speed up:
-		if(t == _Tp(c)) {
+		if(t == m_Tp(c)) {
 			writeUChar(fp, c);
 			if(c == MAGICNUMCHAR) // write leading 0 as flag:
 				writeUChar(fp, 0);
 			return;
 		}
-		_Tp mask = 0xFF;
+		m_Tp mask = 0xFF;
 		unsigned int count = 0;
 		do {
 			writeUChar(fp, MAGICNUMCHAR);
@@ -122,8 +122,8 @@ namespace io {
 
 	std::string read_hash_words(FILE *fp, const StringHash& hash);
 
-	template<typename _InserIter>
-	void read_hash_container(FILE *fp, const StringHash& hash, _InserIter iter)
+	template<typename m_Iter>
+	void read_hash_container(FILE *fp, const StringHash& hash, m_Iter iter)
 	{
 		for(UNumber e = io::read<UNumber>(fp); e != 0; --e)
 			*iter++ = io::read_hash_string(fp, hash);

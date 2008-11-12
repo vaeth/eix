@@ -109,19 +109,19 @@ portage_parse_error(const std::string &file, const Iterator &begin, const Iterat
 namespace eix
 {
 	template<bool B>
-		struct _StaticAssert;
+		struct m_StaticAssert;
 
 	template<>
-		struct _StaticAssert<true>
+		struct m_StaticAssert<true>
 		{ static void empty(void) { } };
 }
 
 /** Static assertion of expr.
  *
- * Fail to compile if expr is false because _StaticAssert<T>::empty is only
- * defined for _StaticAssert<true>::empty.  empty() is a empty function and the
- * call should get optimized away be the compiler.
+ * Fail to compile if expr is false because m_StaticAssert<T>::empty is only
+ * defined for m_StaticAssert<true>::empty.  empty() is an empty function,
+ * and the call should get optimized away be the compiler.
  */
-#define EIX_STATIC_ASSERT(expr) eix::_StaticAssert<expr>::empty()
+#define EIX_STATIC_ASSERT(expr) eix::m_StaticAssert<expr>::empty()
 
 #endif /* EIX__EXCEPTIONS_H__ */

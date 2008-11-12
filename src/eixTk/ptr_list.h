@@ -5,6 +5,7 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #if !defined(EIX__PTR_ITERATOR_H__)
 #define EIX__PTR_ITERATOR_H__
@@ -13,8 +14,8 @@
 
 namespace eix {
 
-	template<typename _Iterator>
-	void delete_all(_Iterator b, _Iterator e)
+	template<typename m_Iterator>
+	void delete_all(m_Iterator b, m_Iterator e)
 	{
 		for(; b != e; ++b)
 			delete *b;

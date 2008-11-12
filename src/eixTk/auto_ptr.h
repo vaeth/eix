@@ -5,17 +5,18 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #if !defined(EIX__AUTO_PTR_H__)
 #define EIX__AUTO_PTR_H__
 
 namespace eix {
 
-	template<typename _type>
+	template<typename m_Type>
 	class auto_list
 	{
 		public:
-			auto_list(_type *p)
+			auto_list(m_Type *p)
 				: m_p(p)
 			{ }
 
@@ -25,11 +26,11 @@ namespace eix {
 					delete[] m_p;
 			}
 
-			_type* get() const
+			m_Type* get() const
 			{ return m_p; }
 
 		protected:
-			_type* m_p;
+			m_Type* m_p;
 	};
 
 }

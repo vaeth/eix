@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef __PORTAGESETTINGS_H
-#define __PORTAGESETTINGS_H
+#if !defined(EIX__PORTAGESETTINGS_H)
+#define EIX__PORTAGESETTINGS_H
 
 #include <eixTk/exceptions.h>
 
