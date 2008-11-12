@@ -423,10 +423,22 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 	world_setslist_up_to_date = false;
 	set_names.clear();
 
+	// Pushback all set names into set_names, setting dir_size appropriately.
 	vector<vector<string>::size_type> dir_size(dir_list.size());
+	/// all_set_names is used as a cache to find duplicate set names faster
+	set<string> all_set_names;
 	for(vector<string>::size_type i = 0; i != dir_list.size(); ++i) {
+		vector<string> temporary_set_names;
+		pushback_files(dir_list[i], temporary_set_names, sets_exclude, 0, false, false);
 		vector<string>::size_type s = set_names.size();
-		pushback_files(dir_list[i], set_names, sets_exclude, 0, false, false);
+		// Avoid duplicate sets
+		for(vector<string>::const_iterator it = temporary_set_names.begin();
+			it != temporary_set_names.end(); ++it) {
+			if(all_set_names.find(*it) != all_set_names.end())
+				continue;
+			all_set_names.insert(*it);
+			set_names.push_back(*it);
+		}
 		dir_size[i] = set_names.size() - s;
 	}
 	vector<vector<string> > child_names(set_names.size());

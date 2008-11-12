@@ -1615,9 +1615,9 @@ AddOption(STRING, "EIX_LOCAL_SETS_ADD",
 	"It specifies directories for EIX_LOCAL_SETS.");
 
 AddOption(STRING, "EIX_LOCAL_SETS",
-	"%{\\PORTAGE_CONFIGROOT}/etc/portage/sets "
+	"%{EIX_LOCAL_SETS_ADD} "
 	"%{\\EIXCFGDIR}/sets.eix "
-	"%{EIX_LOCAL_SETS_ADD}",
+	"%{\\PORTAGE_CONFIGROOT}/etc/portage/sets",
 	"This is a space-separated list of directories containing set definitions.");
 
 AddOption(STRING, "DUMMY",

@@ -1451,7 +1451,8 @@ directory (e.g. for treatment with "world-candidate = False") in
 
 For all string list variables, the possible separators between different entries are [ \\t\\r\\n].
 If you want to use such a separator within an entry, you have to escape it by B<\\>.
-Moreover, all B<\\> symbols have to be escaped analogously, since the escapes are removed, of course.
+Moreover, all B<\\> symbols have to be escaped analogously, since the escapes of escapes
+and escapes of the separator symbols are removed.
 If you want to insert a variable "as-is", you can make use of delayed substitution:
 B<%{\\>I<VAR>B<}> will insert the value of I<VAR> with all symbols from [\\ \\t\\r\\n] being escaped.
 (See delayed substitution for more details).

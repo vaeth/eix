@@ -2,7 +2,6 @@
 
 *eix-0.15.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Fix order for <full...> and <=full...>. Slot comes after version.
 	- New match algorithms: --substring (-z), --begin (-b), --end
 	- Introduce DEFAULT_MATCH_ALGORITHM. This should avoid some surprises
 	  like "eix libstdc++-v3" looking for regular expressions as in
@@ -10,7 +9,11 @@
 	  or "eix @kde" also matching e.g. @kde3 as in
 	  http://bugs.gentoo.org/show_bug.cgi?id=245773
 	- Introduce DEFAULT_MATCH_FIELD; remove MATCH_.*_IF and MATCH_ORDER.
+	- Fix order for <full...> and <=full...>. Slot comes after version.
 	- Let Replace() in functions-eix.sh act on unexpanded arguments.
+	- Only read the first set definition file if the same name occurs in
+	  several directories.
+	- Fix order in EIX_LOCAL_SETS: list local before global set files.
 	- Fix missing includes, http://bugs.gentoo.org/show_bug.cgi?id=246270
 	  http://bugs.gentoo.org/show_bug.cgi?id=246222
 	- Fix LEVENSHTEIN_DISTANCE (actually honour the variable).
