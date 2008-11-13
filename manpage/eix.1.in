@@ -1443,11 +1443,11 @@ The same remarks as for B<EIX_WORLD> hold true.
 
 This is a list of directories which contains locally defined sets.
 Its default contains B</etc/portage/sets> and B</etc/portage/sets.eix>
-as well as EIX_LOCAL_SETS_ADD so that you can just add additional directories
-to the latter variable.
+as well as B<%{EIX_LOCAL_SETS_ADD}> so that you can just add additional directories
+to the variable B<%{EIX_LOCAL_SETS_ADD}> in B</etc/eixrc>.
 Reasons why you might want the latter is e.g. if you defined another multiset
-directory (e.g. for treatment with "world-candidate = False") in
-/etc/portage/sets.conf.
+directory (e.g. for some overlay or for treatment with "world-candidate = False") in
+/etc/portage/sets.conf or in the sets.conf file of some overlay.
 
 For all string list variables, the possible separators between different entries are [ \\t\\r\\n].
 If you want to use such a separator within an entry, you have to escape it by B<\\>.
@@ -2360,6 +2360,15 @@ packages in the tree will never be supported by eix (because eix would need
 full support for dependencies and useflags to handle these).
 As a workaround you can manually define such additional sets in
 B</etc/portage/sets.eix>.
+Moreover, eix does not and probably never will support reading of sets.conf files.
+If you specified additional sets/ directories e.g. in some overlay, you must
+add these additional directories manually to the B<EIX_LOCAL_SETS> variable
+in /etc/eixrc.
+The easiest way to do the latter is to put an entry like
+
+B<EIX_LOCAL_SETS_ADD=">I</path/to/overlay1/sets> I</path/to/overlay2/sets> I<...>B<">
+
+into /etc/eixrc (see the description of B<EIX_LOCAL_SETS> above).
 
 diff-eix does never consider /etc/portage/profile. (Reason: The saved database
 contains only the masking state according to the original profile, but not the
