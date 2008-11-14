@@ -647,12 +647,12 @@ Change the cache method of I<overlay>
 I<overlay> is considered as a mask, i.e. it may contain wildcards.
 If I<overlay> does not match anything in the list of overlays,
 this option has no effect.
-This option is similar to adding I<overlay> I<method> to
-B<ADD_OVERRIDE_CACHE_METHOD> but has the advantage that you need not
-modify the latter and you can also use spaces in I<overlay> or I<method>.
+This option is similar to adding the entry "I<overlay> I<method>" at the
+end of the B<OVERRIDE_CACHE_METHOD> variable.
 It is explicitly admissible to use this option repeatedly to
 override cache methods for several overlays.
 The last matching override takes precedence.
+In particular, the option overrides the content of B<OVERRIDE_CACHE_METHOD>.
 .\" }}}
 
 .\" {{{ OUTPUT
@@ -1711,22 +1711,29 @@ You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
 
 .TP
-.BR CACHE_METHOD ", " ADD_CACHE_METHOD ", " OVERRIDE_CACHE_METHOD ", " ADD_OVERRIDE_CACHE_METHOD "  " "(string list)"
-These variables are lists of the form I<overlay>[\\n\\r\\t ]I<method>.
-The cache method of I<overlay> is set to I<method>, overriding the
-settings of B<OVERLAY_CACHE_METHOD> (or of B<PORTDIR_CACHE_METHOD>
-if I<overlay> is the B<PORTDIR> directory).
+.BR CACHE_METHOD ", " OVERRIDE_CACHE_METHOD "  " "(string list)"
+These variables are string lists of the form "I<overlay> I<method> I<overlay> I<method> ...".
+The cache method of I<overlay> is set to the subsequent I<method>,
+thus overriding the default settings of B<OVERLAY_CACHE_METHOD>
+(or of B<PORTDIR_CACHE_METHOD> if I<overlay> is the B<PORTDIR> directory).
 I<overlay> is interpreted as a wildcard pattern.
 Later entries override earlier ones: The last matching entry takes precedence.
 
-The reason for several variables is that additions/changes are possible
-without touching the other variables:
-The settings of B<OVERRIDE_CACHE_METHOD> extend/override the settings of
-B<CACHE_METHOD> and, in addition, they extend/override the settings made
-by B<KEEP_VIRTUALS> (see below).
-The settings in B<ADD_CACHE_METHOD>/B<ADD_OVERRIDE_CACHE_METHOD>
-extend/override the settings of B<CACHE_METHOD>/B<OVERRIDE_CACHE_METHOD>
-and are meant to be used only locally.
+The difference between B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD> is that
+the former applies immediately while the latter can also be used to
+extend/override the changes made implicitly if B<KEEP_VIRTUALS> is used
+(see below).
+
+The default definitions of B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD>
+contain B<%{ADD_CACHE_METHOD}> and B<%{ADD_OVERRIDE_CACHE_METHOD}>, respectively.
+According to the mechanism of delayed substitution explained in another section,
+this means that the variables B<ADD_CACHE_METHOD> or
+B<ADD_OVERRIDE_CACHE_METHOD> can also be used to override the cache method locally.
+If you modify B<CACHE_METHOD> or B<OVERRIDE_CACHE_METHOD> in B</etc/eixrc>,
+it is recommended to add " B<%{ADD_CACHE_METHOD}>" or
+" B<%{ADD_OVERRIDE_CACHE_METHOD}>" (note the space in front of B<%>)
+at the end of the respective modified definitions, so that these variables
+can still be used for local overriding.
 
 The following cache methods are available:
 .TP
@@ -1906,10 +1913,10 @@ If true, update-eix will keep all virtual overlays from the previous database
 if that existed.
 This has the same effect as appending for each virtual overlay of the previous
 database the entry "I<overlay-name>" to B<ADD_OVERLAY> and appending a
-corresponding entry "I<overlay> eix*::I<overlay>" to B<ADD_CACHE_METHOD>.
+corresponding entry "I<overlay> eix*::I<overlay>" to B<CACHE_METHOD>.
 Note that this means that this option might override settings made in
-B<CACHE_METHOD> and B<ADD_CACHE_METHOD>, but it might be overridden by
-settings from B<OVERRIDE_CACHE_METHOD> and B<ADD_OVERRIDE_CACHE_METHOD>.
+B<CACHE_METHOD>, but it might be overridden by settings from
+B<OVERRIDE_CACHE_METHOD>.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, /etc/portage and B<ACCEPT_KEYWORDS> (from make.conf or the environment) are ignored.
@@ -2441,6 +2448,17 @@ You should now use redirection when you want to use eix-sync in a cronjob.
 
 B<functions-eix.sh> was previously called <update-eix-functions.sh>;
 however, the latter name was misleading since most are general helper functions.
+
+The mechanism described now by B<DEFAULT_MATCH_FIELD> has changed.
+The previous (less powerful) B<MATCH_.*_IF> and B<MATCH_ORDER> variables
+are not supported anymore.
+
+The B<ADD_CACHE_METHOD> and B<ADD_OVERRIDE_CACHE_METHOD> variables are no longer
+built-ins but only used implicitly in delayed substitution in the default of
+B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD>.
+In particular, setting the latter variables in B</etc/eixrc> without adding
+the delayed substitution " B<%{ADD_CACHE_METHOD}>" or " B<%{ADD_OVERRIDE_CACHE_METHOD}",
+respectively, will prevent the former variables to have any meaning.
 .\" }}}
 
 .\" {{{ AUTHORS

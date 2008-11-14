@@ -10,6 +10,10 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=245773
 	- Introduce DEFAULT_MATCH_FIELD; remove MATCH_.*_IF and MATCH_ORDER.
 	- Fix order for <full...> and <=full...>. Slot comes after version.
+	- Treat ADD_CACHE_METHOD and ADD_OVERRIDE_CACHE_METHOD only by
+	  delayed substitution in CACHE_METHOD or OVERRIDE_CACHE_METHOD.
+	  Note that this means that you should now add this delayed
+	  substitution to redefinitions of the latter in e.g. /etc/eixrc.
 	- Let Replace() in functions-eix.sh act on unexpanded arguments.
 	- Only read the first set definition file if the same name occurs in
 	  several directories.

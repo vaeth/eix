@@ -330,7 +330,6 @@ run_update_eix(int argc, char *argv[])
 	/* Build default (overlay/method/...) lists, using environment vars */
 	vector<Override> override_list;
 	add_override(override_list, eixrc, "CACHE_METHOD");
-	add_override(override_list, eixrc, "ADD_CACHE_METHOD");
 	vector<Pathname> excluded_list;
 	add_pathnames(excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
 	vector<Pathname> add_list;
@@ -340,7 +339,6 @@ run_update_eix(int argc, char *argv[])
 		add_virtuals(override_list, add_list, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
 
 	add_override(override_list, eixrc, "OVERRIDE_CACHE_METHOD");
-	add_override(override_list, eixrc, "ADD_OVERRIDE_CACHE_METHOD");
 
 	/* Modify default (overlay/method/...) lists, using command line args */
 	for(list<const char*>::iterator it = exclude_args.begin();

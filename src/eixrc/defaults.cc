@@ -1216,21 +1216,22 @@ AddOption(STRING, "OVERLAY_CACHE_METHOD",
 	"parse|ebuild*", "Portage cache-backend that should be used for the overlays.\n"
 	"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])");
 
+AddOption(STRING, "ADD_CACHE_METHOD",
+	"", "This variable is only used for delayed substitution in CACHE_METHOD.\n"
+	"It is meant to be a local addition to CACHE_METHOD.");
+
 AddOption(STRING, "CACHE_METHOD",
-	"", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain paths.\n"
+	"%{ADD_CACHE_METHOD}", "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain paths.\n"
 	"This is a list of pairs DIR-PATTERN METHOD. Later entries take precedence.");
 
-AddOption(STRING, "ADD_CACHE_METHOD",
-	"", "This variable is added to CACHE_METHOD.\n"
-	"This variable is meant to be set only locally.");
+AddOption(STRING, "ADD_OVERRIDE_CACHE_METHOD",
+	"", "This variable is only used for delayed substitution in OVERRIDE_CACHE_METHOD.\n"
+	"It is meant to be a local addition to OVERRIDE_CACHE_METHOD.");
 
 AddOption(STRING, "OVERRIDE_CACHE_METHOD",
-	"", "This variable can override the choices of CACHE_METHOD/ADD_CACHE_METHOD\n"
+	"%{ADD_OVERRIDE_CACHE_METHOD}",
+	"This variable can override the choices of CACHE_METHOD,\n"
 	"and in addition it can override the choices made by KEEP_VIRTUALS.");
-
-AddOption(STRING, "ADD_OVERRIDE_CACHE_METHOD",
-	"", "This variable is added to OVERRIDE_CACHE_METHOD.\n"
-	"This variable is meant to be set only locally.");
 
 AddOption(STRING, "EXCLUDE_OVERLAY",
 	"", "List of overlays that should be excluded from the index.");
