@@ -76,6 +76,7 @@ then
 		/etc/make.conf`"
 	export CXXFLAGS CFLAGS LDFLAGS
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
+	LDFLAGS="${LDFLAGS} -Wl,-z,defs -Wl,--no-undefined -Wl,--no-allow-shlib-undefined -Wl,--no-undefined-version -Wl,--warn-common -Wl,--fatal-warnings"
 	CFLAGS="-march=${MARCH} -O2 -pipe"
 	${SAFEFLAGS} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -funsafe-loop-optimizations -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
 	${NOT_FULL_USE} && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
