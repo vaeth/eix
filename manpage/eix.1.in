@@ -520,9 +520,11 @@ e.g. "virtual/blackbox"
 .TP
 .BR --set
 Name of a local package set of a version in the database
-(i.e. corresponding to a file in B</etc/portage/system>).
-The "system" package is intentionally excluded here, since the latter
-should be tested with B<--system[+-]>.
+(i.e. corresponding to a file in B</etc/portage/sets>, B</etc/portage/sets.eix>,
+or from another directory specified in B<EIX_LOCAL_SETS_ADD>;
+see the comments to B<EIX_LOCAL_SETS>).
+The "system" and "world" sets are intentionally excluded here, since the latter
+should be tested with B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-sets>.
 .TP
 .B --slot
 Slotname of a version in the database, e.g. "kde-4"
