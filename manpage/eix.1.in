@@ -2457,7 +2457,7 @@ The B<ADD_CACHE_METHOD> and B<ADD_OVERRIDE_CACHE_METHOD> variables are no longer
 built-ins but only used implicitly in delayed substitution in the default of
 B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD>.
 In particular, setting the latter variables in B</etc/eixrc> without adding
-the delayed substitution " B<%{ADD_CACHE_METHOD}>" or " B<%{ADD_OVERRIDE_CACHE_METHOD}",
+the delayed substitution " B<%{ADD_CACHE_METHOD}>" or " B<%{ADD_OVERRIDE_CACHE_METHOD}>",
 respectively, will prevent the former variables to have any meaning.
 .\" }}}
 
