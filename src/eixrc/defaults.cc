@@ -28,7 +28,8 @@ AddOption(PREFIXSTRING, "EIX_PREFIX",
 	"to the path where /etc/eixrc is searched. If it is not set in the\n"
 	"environment, then PORTAGE_CONFIGROOT is used instead.\n"
 	"If both are unset, the EIX_PREFIX default value is used instead.\n"
-	"Moreover, EIX_PREFIX is used for delayed substitution for EPREFIX.");
+	"Moreover, EIX_PREFIX is used for delayed substitution for EPREFIX\n"
+	"and EPREFIX_SOURCE.");
 
 AddOption(PREFIXSTRING, "ROOT",
 	ROOT_DEFAULT, "This variable is only used for delayed substitution.\n"
@@ -68,7 +69,7 @@ AddOption(PREFIXSTRING, "EPREFIX_PORTAGE_EXEC",
 	"It is used as prefix in the EXEC_EBUILD* and EBUILD_DEPEND_TEMP defaults.");
 
 AddOption(PREFIXSTRING, "EPREFIX_SOURCE",
-	"%{EPREFIX_PORTAGE_EXEC}", "This path is prepended to source commands in /etc/make.{conf,globals}.");
+	"%{EIX_PREFIX}", "This path is prepended to source commands in /etc/make.{conf,globals}.");
 
 AddOption(PREFIXSTRING, "EPREFIX_INSTALLED",
 	"%{EPREFIX_ROOT}", "Prefix to the path where eix expects information about installed packages.");

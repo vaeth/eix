@@ -84,7 +84,7 @@ then
 	${SAFEFLAGS} || CFLAGS="${CFLAGS} -pedantic"
 	if ${PEDANTIC}; then
 		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
-		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=1"
+		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=1 -Wstrict-overflow=5"
 		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization"
 		#CFLAGS="${CFLAGS} -Wconversion"
 		#CFLAGS="${CFLAGS} -Wunreachable-code -Wpadded"

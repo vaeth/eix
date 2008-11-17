@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.15.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Change EPREFIX_SOURCE default to %{EIX_PREFIX}, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=247227
+
 *eix-0.15.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New match algorithms: --substring (-z), --begin (-b), --end
