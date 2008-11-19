@@ -61,7 +61,7 @@ class RegexAlgorithm : public BaseAlgorithm {
 
 		void setString(std::string s) {
 			search_string = s;
-			re.compile(search_string.c_str());
+			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
 		bool operator () (const char *s, Package *p) {

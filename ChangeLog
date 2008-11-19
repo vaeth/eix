@@ -2,6 +2,9 @@
 
 *eix-0.15.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}
+	  case-sensitive to make LICENSE defaults reasonable, see
+	  http://forums.gentoo.org/viewtopic.php?p=5285010
 	- Change EPREFIX_SOURCE default to %{EIX_PREFIX}, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=247227
 

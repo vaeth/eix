@@ -236,6 +236,12 @@ class n \
 		default_value = d; \
 	} \
  \
+	~n() \
+	{ \
+		for(vector<Regex*>::iterator it = m.begin(); it != m.end(); ++it) \
+			delete *it; \
+	} \
+ \
 	t parse(const char *p) \
 	{ \
 		for(vector<Regex*>::size_type i = 0; i != m.size(); ++i) { \

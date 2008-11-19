@@ -28,7 +28,7 @@ class Regex
 		{ }
 
 		/// Initalize and compile regular expression.
-		Regex(const char *regex, int eflags = REG_ICASE)
+		Regex(const char *regex, int eflags = REG_EXTENDED)
 			: m_compiled(false)
 		{ compile(regex, eflags); }
 
@@ -39,7 +39,7 @@ class Regex
 		}
 
 		/// Compile a regular expression.
-		void compile(const char *regex, int eflags = REG_ICASE)
+		void compile(const char *regex, int eflags = REG_EXTENDED)
 		{
 			if(m_compiled) {
 				regfree(&m_re);
