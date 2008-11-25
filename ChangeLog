@@ -5,6 +5,7 @@
 	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}
 	  case-sensitive to make LICENSE defaults reasonable, see
 	  http://forums.gentoo.org/viewtopic.php?p=5285010
+	  or http://bugs.gentoo.org/show_bug.cgi?id=248677
 	- Change EPREFIX_SOURCE default to %{EIX_PREFIX}, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=247227
 

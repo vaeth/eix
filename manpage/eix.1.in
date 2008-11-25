@@ -804,7 +804,7 @@ you might wonder about the sorting) and probably also B<--pure-packages>.
 If you use "=" do not forget that identical lines might be output
 if the same version occurs in several overlays.
 .TP
-.BR fullinstalled ", "  fullinstalledshort ", " =fullinstalled ", " =fullinstalledshort ", " emptyinstalled ", " emptyinstalledshort ", " =emptyinstalledshort ", " =emptyinstalledshort
+.BR fullinstalled ", "  fullinstalledshort ", " =fullinstalled ", " =fullinstalledshort ", " emptyinstalled ", " emptyinstalledshort ", " =emptyinstalled ", " =emptyinstalledshort
 This is mainly a hack for scripts if you want to postprocess the output.
 For each installed version, this produces a line analogous to the above B<fullavailable>/...
 To speed up things you should use option B<-I> in addition
@@ -1231,7 +1231,7 @@ depending on the state of a (Boolean) variable, you can use
 conditional blocks.
 
 This is somewhat analogous to Conditional Blocks in FORMATSTRING:
-If the referenced variable expands finally to the boolean value true
+If the referenced variable expands finally to the Boolean value true
 (B<true>/B<1>/B<yes>/B<y>/B<on>) (resp. to something nonempty if you
 preceed I<VARIABLE> with an additional B<?>) the result is true
 and the corresponding block of the string is expanded.
@@ -1617,7 +1617,7 @@ If false, COLOR_ORIGINAL=false has no effect on versions which are only locally 
 
 .TP
 .BR STYLE_VERSION_SORTED "  " (true / false)
-Defines whether B<--verionsorted> is on by default.
+Defines whether B<--versionsort> is on by default.
 
 .TP
 .BR STYLE_VERSION_LINES "  " (true / false)
@@ -2220,7 +2220,7 @@ This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.use.
 This is analogous to B<REDUNDANT_IF_KEYWORDS>, but for /etc/portage/package.cflags.
 See the above comments about this file.
 .\" }}}
-.\" {{{ Various filelists:
+.\" {{{ Various file lists:
 .TP
 .BR SLOT_UPGRADE_FORBID "  " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
@@ -2270,7 +2270,7 @@ This is a list of filenames/dirnames which serve as /etc/portage/package.install
 .SS /etc/portage/sets.eix
 This is a directory analogous to B</etc/portage/sets> (see the portage manpage).
 Since portage has some ways to define package sets which are not available for eix,
-you can use this directory to store (static) sets which you want that eix knows anway
+you can use this directory to store (static) sets which you want that eix knows anyway
 (e.g. so that set entries in /etc/portage/package.keywords can be treated properly).
 .\" }}}
 
