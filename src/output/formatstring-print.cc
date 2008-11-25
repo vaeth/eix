@@ -785,11 +785,11 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		return entity->desc;
 	if(name == "homepage")
 		return entity->homepage;
-	if(find.name("license") != string::npos)
+	if(name.find("license") != string::npos)
 		return entity->licenses;
 	if(name == "provide")
 		return entity->provide;
-	if(find.name("overlay") != string::npos) {
+	if(name.find("overlay") != string::npos) {
 		Version::Overlay ov_key = entity->largest_overlay;
 		if(ov_key && entity->have_same_overlay_key()) {
 			return fmt->overlay_keytext(ov_key, false);
@@ -802,7 +802,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		return "";
 	}
 	if(name.find("world") != string::npos) {
-		if(find.name("set") != string::npos) {
+		if(name.find("set") != string::npos) {
 			if(entity->is_world_sets_package())
 				return "world_sets";
 		}
@@ -860,7 +860,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 			return "";
 		char formattype = 0;
 		if(name.find("short") != string::npos)
-			formattype = INST_SHORTDATE|INST_HUMANSIZE;
+			formattype = INST_SHORTDATE;
 		if(name.find("date") != string::npos)
 			formattype |= INST_WITH_DATE;
 		if(!formattype)
