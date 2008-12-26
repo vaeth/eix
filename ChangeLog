@@ -288,7 +288,7 @@
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Avoid scandir(), to allow compilation under Solaris 9. Thanks to
-	  Jeremy <jer.gentoo at gmail.com> for the hints, see
+	  Jeremy Olexa <darkside at gentoo.org> for the hints, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=195411
 	- Fix NormalizeNames() of update-eix-function.sh, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=215417
