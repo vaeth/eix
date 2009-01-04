@@ -239,7 +239,6 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 			}
 			read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
 		}
-		read_local_sets(split_string(eixrc["EIX_LOCAL_SETS"], true));
 	}
 
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
@@ -283,6 +282,37 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 	if(getlocal)
 		user_config = new PortageUserConfig(this, local_profile);
+
+	vector<string> sets_dirs = split_string(eixrc["EIX_LOCAL_SETS"], true);
+	// Expand relative pathnames and the magic "*" of EIX_LOCAL_SETS:
+	for(vector<string>::size_type i = 0; i != sets_dirs.size(); ) {
+		switch(sets_dirs[i][0]) {
+			case '/': // absolute path: Nothing special
+				break;
+			case '*': // the magic "*"
+				if(overlays.empty())
+					sets_dirs.erase(sets_dirs.begin() + i);
+				else {
+					string app;
+					if(sets_dirs[i].size() > 1)
+						app = sets_dirs[i].substr(1);
+					vector<string>::size_type s = overlays.size();
+					if(s > 1)
+						sets_dirs.insert(sets_dirs.begin() + i, s - 1, "");
+					for(vector<string>::const_reverse_iterator it = overlays.rbegin();
+						it != overlays.rend(); ++it)
+						sets_dirs[i++] = (*it) + app;
+				}
+				// skip ++i:
+				continue;
+			default: // relative pathname is relative to $PORTDIR:
+				sets_dirs[i].insert(0, (*this)["PORTDIR"]);
+				break;
+		}
+		++i;
+	}
+	// Now finally read the local sets:
+	read_local_sets(sets_dirs);
 }
 
 PortageSettings::~PortageSettings()

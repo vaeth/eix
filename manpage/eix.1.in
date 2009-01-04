@@ -1442,12 +1442,25 @@ The same remarks as for B<EIX_WORLD> hold true.
 
 .TP
 .B EIX_LOCAL_SETS "  " "(string list)" "(the meaning of string list is explained in the next paragraph)"
+This is a list of directories which contain locally defined sets.
+The directories are read in the given order; files with set-names which have
+been read earlier are ignored: In this sense earlier entries in
+B<EIX_LOCAL_SETS> take precedence over later entries.
 
-This is a list of directories which contains locally defined sets.
-Its default contains B</etc/portage/sets> and B</etc/portage/sets.eix>
-as well as B<%{EIX_LOCAL_SETS_ADD}> so that you can just add additional directories
+Relative directories (i.e. those not starting with B</>) are understood relative to B<$PORTDIR>.
+Entries in B<EIX_LOCAL_SETS> starting with the special symbol B<*> are interpreted in a special way:
+They are interpreted as several entries, the B<*> symbol being replaced successively by the paths
+to the overlays in reverse order (the latter in view of the fact that in a sense
+earlier entries of B<EIX_LOCAL_SETS> override later entries while for
+B<PORTDIR_OVERLAY> one expects the converse).
+
+The default of this variable contains B</etc/portage/sets>, B</etc/portage/sets.eix>, B<sets>
+(i.e. roughly B<${PORTDIR}/sets> according to the previous paragraph),
+B<*/sets> (i.e. roughly B<${PORTIDR_OVERLAY}/sets> according to the previous paragraph)
+as well as B<%{EIX_LOCAL_SETS_ADD}>.
+The reason for the latter is that you can just add additional directories
 to the variable B<%{EIX_LOCAL_SETS_ADD}> in B</etc/eixrc>.
-Reasons why you might want the latter is e.g. if you defined another multiset
+Reasons why you might want to do this is e.g. if you defined another multiset
 directory (e.g. for some overlay or for treatment with "world-candidate = False") in
 /etc/portage/sets.conf or in the sets.conf file of some overlay.
 

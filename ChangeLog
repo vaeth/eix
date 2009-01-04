@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.15.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Allow relative (to PORTDIR) paths and magic "*" (for PORTDIR_OVERLAY)
+	  in EIX_LOCAL_SETS and let the default contain "*/sets" and "sets".
+	  This is to deal with the de facto standard of some overlays to put
+	  new sets into $OVERLAY/sets.
+
 *eix-0.15.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}
