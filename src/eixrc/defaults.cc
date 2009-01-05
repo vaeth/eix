@@ -1403,7 +1403,7 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
                  value, "This variable is only used for delayed substitution.\n" \
                  "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for " comment ".");
 
-MATCH_ALGORITHM("REGEX",     "regex",     "[][^$|()]");
+MATCH_ALGORITHM("REGEX",     "regex",     "[][^$|()]|[.][*+?]");
 MATCH_ALGORITHM("PATTERN1",  "pattern",   "^[*]|[^][().][*]");
 MATCH_ALGORITHM("SUBSTRING", "substring", "[^][().][+?]");
 MATCH_ALGORITHM("EXACT",     "exact",     "^[@]");

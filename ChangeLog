@@ -6,6 +6,7 @@
 	  in EIX_LOCAL_SETS and let the default contain "*/sets" and "sets".
 	  This is to deal with the de facto standard of some overlays to put
 	  new sets into $OVERLAY/sets.
+	- More regexp-defaults (e.g. when @.* is searched).
 
 *eix-0.15.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
