@@ -8,6 +8,9 @@
 	  new sets into $OVERLAY/sets.
 	- More regexp-defaults (e.g. when @.* is searched).
 
+	Emil Beinroth <emilbeinroth at gmx.net>:
+	- Fix format string in ansicolor.cc for bug #254412
+
 *eix-0.15.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Make regex-matches in DEFAULT_MATCH_{FIELD,ALGORITHM}

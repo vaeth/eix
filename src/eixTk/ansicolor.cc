@@ -153,7 +153,7 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 	fg = name_to_color(*pure_color);
 	if(fg == acIllegal) {
 		fg = acNone;
-		throw ExBasic("Illegal color name %r %r") % (*pure_color);
+		throw ExBasic("Illegal color name %r") % (*pure_color);
 	}
 	calc_string();
 }
