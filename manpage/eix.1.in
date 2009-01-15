@@ -1621,6 +1621,10 @@ Several of the above attributes may be combined (separate them by ",").
 Use colors even when stdout is not a terminal.
 
 .TP
+.BR FORCE_PERCENTAGE "  " (true / false)
+Show the percentage progress even when stdout is not a terminal.
+
+.TP
 .BR COLOR_ORIGINAL "  " (true / false)
 If false, versions are only colored according to the local setting.
 

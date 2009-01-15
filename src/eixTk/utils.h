@@ -55,25 +55,35 @@ class PercentStatus {
 		std::string m_prefix;
 		static const unsigned int hundred = 100;
 		unsigned int m_max, m_run;
+		bool m_verbose;
 		bool on_start;
 	public:
 		void reprint(const char *special = NULL, bool back = true) const
 		{
-			if(back)
+			if(back && m_verbose)
 				fputs("\b\b\b\b", stdout);
 			if(special)
 				puts(special);
-			else if(on_start)
-				fputs("  0%", stdout);
+			else if(on_start) {
+				 if(m_verbose)
+					fputs("  0%", stdout);
+			}
 			else if(m_run >= m_max)
 				puts("100%");
-			else
+			else if(m_verbose)
 				printf("%3u%%", PercentU((hundred * m_run) / m_max));
 			fflush(stdout);
 		}
 
 		void interprint_start()
-		{ reprint("", false); }
+		{
+			if(!m_verbose) {
+				m_verbose = true;
+				reprint(NULL, false);
+				m_verbose = false;
+			}
+			reprint("", false);
+		}
 
 		void interprint_end(const char *special = NULL)
 		{ fputs(m_prefix.c_str(), stdout); reprint(special, false); }
@@ -81,7 +91,8 @@ class PercentStatus {
 		void init(unsigned int max)
 		{ m_max = max; m_run = 0; on_start = true; }
 
-		PercentStatus(const char *prefix) : m_prefix(prefix)
+		PercentStatus(const char *prefix, bool verbose) :
+			m_prefix(prefix), m_verbose(verbose)
 		{ init(0); }
 
 		/** Start status.

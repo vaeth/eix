@@ -172,6 +172,8 @@ static bool quiet = false,
 	 dump_eixrc   = false,
 	 dump_defaults = false;
 
+static bool use_percentage;
+
 static list<const char *> exclude_args, add_args;
 static list<ArgPair> method_args;
 static const char *outputname = NULL;
@@ -402,6 +404,7 @@ run_update_eix(int argc, char *argv[])
 	}
 
 	INFO("Building database (%s) ..\n", outputfile.c_str());
+	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
 
 	/* Update the database from scratch */
 	int ret = 0;
@@ -454,7 +457,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->setErrorCallback(error_callback);
 
 		INFO("[%u] \"%s\" %s (cache: %s)\n", PercentU(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
-		reading_percent_status = new PercentStatus("     Reading ");
+		reading_percent_status = new PercentStatus("     Reading ", use_percentage);
 		if(cache->can_read_multiple_categories())
 		{
 			reading_percent_status->start(1);
@@ -462,7 +465,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			if(cache->readCategories(&package_tree, categories))
 				++(*reading_percent_status);
 			else
-				reading_percent_status->reprint("aborted\n");
+				reading_percent_status->reprint("aborted");
 		}
 		else
 		{

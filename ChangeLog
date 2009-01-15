@@ -6,6 +6,10 @@
 	  in EIX_LOCAL_SETS and let the default contain "*/sets" and "sets".
 	  This is to deal with the de facto standard of some overlays to put
 	  new sets into $OVERLAY/sets.
+	- Introduce FORCE_PERCENTAGE for better cron-job handling
+	  http://sourceforge.net/tracker/index.php?func=detail&aid=2391952&
+	  group_id=128101&atid=710611
+	- Allow passing of options from eix-sync to update-eix.
 	- More regexp-defaults (e.g. when @.* is searched).
 
 	Emil Beinroth <emilbeinroth at gmx.net>:

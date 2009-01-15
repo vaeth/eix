@@ -66,7 +66,9 @@ The following options are available:
 -W   Run emerge-delta-webrsync instead of emerge --sync.
 -c CMD Run CMD instead of emerge --sync.
 -C OPT Add OPT to the emerge --sync command (or whatever is used instead).
-     This option can be used accumulatively.
+       This option can be used accumulatively.
+-o OPT Add OPT to each update-eix command.
+       This option can be used accumulatively.
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=portage-2.1 and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
@@ -92,7 +94,8 @@ DoExecute () {
 	done
 }
 
-if test -r "${EIXSYNCCONF}"; then
+if test -r "${EIXSYNCCONF}"
+then
 	HAVECONF=true
 else
 	HAVECONF=false
@@ -143,6 +146,7 @@ ExecuteConfig () {
 
 DefaultOpts () {
 	Push -c EMERGECMD 'emerge' '--sync'
+	Push -c UPDATECMD 'update-eix'
 	DIFFONLY=false
 	CLEARCACHE=false
 	NOLAYMAN=false
@@ -162,7 +166,7 @@ DefaultOpts () {
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uul@SmMNtTqwWc:C:rRe?hH" OPTION \
+while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" OPTION \
 	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
 	case "${OPTION}" in
 		i) DefaultOpts;;
@@ -184,6 +188,7 @@ while getopts "ids:2:Uul@SmMNtTqwWc:C:rRe?hH" OPTION \
 		W) Push -c EMERGECMD 'emerge-delta-webrsync';;
 		c) Push -c EMERGECMD "${OPTARG}";;
 		C) Push EMERGECMD "${OPTARG}";;
+		o) Push UPDATECMD "${OPTARG}";;
 		r) CLEARCACHE=true;;
 		R) CLEARCACHE=false;;
 		e) TEST_FOR_ROOT=false;;
@@ -376,15 +381,17 @@ CallEmergeMetadata () {
 CondUpdate () {
 	if ! test -f "${EIXCACHE}"; then
 		RootTest
+		eval "set -- ${UPDATECMD}"
 		MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
-			-t IUPDATE update-eix || die "update-eix failed"
+			-t IUPDATE "${@}" || die "update-eix failed"
 		return
 	fi
 	${EMULATEMODE} && return
 	if ! eix --is-current; then
+		eval "set -- ${UPDATECMD}"
 		MyRunCommand \
 			"eix-cache format has changed. Running update-eix!" \
-			-t IUPDATE update-eix || die "update-eix failed"
+			-t IUPDATE "${@}" || die "update-eix failed"
 	fi
 }
 
@@ -424,7 +431,8 @@ UpdateDiff () {
 		einfo "update-eix was apparently already called in a hook"
 	else
 		MovePrevious
-		MyRunCommand "Running update-eix" -t UPDATE "update-eix" || \
+		eval "set -- ${UPDATECMD}"
+		MyRunCommand "Running update-eix" -t UPDATE "${@}" || \
 			die "Failure while running update-eix"
 	fi
 	DoHook "${AFTER_UPDATE}"
@@ -446,7 +454,8 @@ MainSync () {
 }
 
 [ -n "${UID}" ] || UID="`id -u`"
-if ${TEST_FOR_ROOT} && [ "${UID}" -ne 0 ]; then
+if ${TEST_FOR_ROOT} && [ "${UID}" -ne 0 ]
+then
 # Emulate everything to check whether we have to be root:
 	EMULATEMODE=true
 	MainSync

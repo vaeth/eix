@@ -1168,6 +1168,9 @@ AddOption(STRING, "MARK_VERSIONS",
 AddOption(BOOLEAN, "FORCE_USECOLORS",
 	"false", "This turns --force-color on for every query.");
 
+AddOption(BOOLEAN, "FORCE_PERCENTAGE",
+	"false", "Show the percentage progress even in case of redirection.");
+
 AddOption(BOOLEAN, "COLOR_ORIGINAL",
 	"true", "If false, versions are only colored according to the local setting.");
 
