@@ -299,7 +299,10 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 					vector<string>::size_type s = overlays.size();
 					if(s > 1)
 						sets_dirs.insert(sets_dirs.begin() + i, s - 1, "");
-					for(vector<string>::const_reverse_iterator it = overlays.rbegin();
+					// The following should actually be const_reverse_iterator,
+					// but some compilers would then need a cast of rend(),
+					// see http://bugs.gentoo.org/show_bug.cgi?id=255711
+					for(vector<string>::reverse_iterator it = overlays.rbegin();
 						it != overlays.rend(); ++it)
 						sets_dirs[i++] = (*it) + app;
 				}

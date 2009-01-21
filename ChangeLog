@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.15.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Hack around http://bugs.gentoo.org/show_bug.cgi?id=255711
+	  (cannot compare const_backward_iterator with backward_iterator).
+
 *eix-0.15.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow relative (to PORTDIR) paths and magic "*" (for PORTDIR_OVERLAY)
