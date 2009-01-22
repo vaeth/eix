@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Hack around http://bugs.gentoo.org/show_bug.cgi?id=255711
 	  (cannot compare const_backward_iterator with backward_iterator).
+	- Use signed char instead of char for FullFlag, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=255994
 
 *eix-0.15.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

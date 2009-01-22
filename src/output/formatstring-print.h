@@ -17,12 +17,12 @@
 
 std::string get_extended_version(const PrintFormat *fmt, const ExtendedVersion *version, bool pure_text, const std::string &intermediate = "");
 std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a);
-std::string getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, char full);
+std::string getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, FullFlag full);
 std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const std::vector<std::string> &prepend);
-void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, char full);
-void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slots, char full, const std::vector<Version*> *versions);
-void print_versions_slots(const PrintFormat *fmt, const Package *p, bool with_slots, char full, const std::vector<Version*> *versions);
-void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot, char full);
+void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, FullFlag full);
+void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slots, FullFlag full, const std::vector<Version*> *versions);
+void print_versions_slots(const PrintFormat *fmt, const Package *p, bool with_slots, FullFlag full, const std::vector<Version*> *versions);
+void print_versions(const PrintFormat *fmt, const Package *p, bool with_slot, FullFlag full);
 
 bool print_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);

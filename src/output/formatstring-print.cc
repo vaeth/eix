@@ -66,7 +66,7 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 }
 
 string
-getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, char full)
+getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, FullFlag full)
 {
 	if(!fmt.vardb)
 		return "";
@@ -313,7 +313,7 @@ print_keywords_version(const PrintFormat *fmt, const Version *version)
 }
 
 void
-print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, char full)
+print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, FullFlag full)
 {
 	if(full) {
 		if(full == -1)
@@ -578,7 +578,7 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 }
 
 void
-print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots, char full, const vector<Version*> *versions)
+print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots, FullFlag full, const vector<Version*> *versions)
 {
 	bool printed = false;
 	for(Package::const_iterator vit = p->begin(); vit != p->end(); ++vit) {
@@ -612,7 +612,7 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 }
 
 void
-print_versions_slots(const PrintFormat *fmt, const Package* p, bool with_slots, char full, const vector<Version*> *versions)
+print_versions_slots(const PrintFormat *fmt, const Package* p, bool with_slots, FullFlag full, const vector<Version*> *versions)
 {
 	if(!p->have_nontrivial_slots()) {
 		print_versions_versions(fmt, p, false, full, versions);
@@ -674,7 +674,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool with_slots, 
 }
 
 void
-print_versions(const PrintFormat *fmt, const Package* p, bool with_slots, char full, const vector<Version*> *versions)
+print_versions(const PrintFormat *fmt, const Package* p, bool with_slots, FullFlag full, const vector<Version*> *versions)
 {
 	if(fmt->slot_sorted)
 		print_versions_slots(fmt, p, with_slots, full, versions);
@@ -700,7 +700,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 		return false;
 	}
 	if(plainname.find("available") != string::npos) {
-		char full = 0;
+		FullFlag full = 0;
 		if(plainname.find("full") != string::npos)
 			full = 1;
 		if(plainname.find('=') != string::npos)
@@ -713,7 +713,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 	if(plainname.find("install") != string::npos) {
 		if(!fmt->vardb)
 			return false;
-		char full = 0;
+		FullFlag full = 0;
 		if(plainname.find("full") != string::npos)
 			full = 1;
 		if(plainname.find('=') != string::npos)
@@ -743,7 +743,7 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 	if(plainname.find("best") != string::npos) {
 		bool with_slots = (plainname.find("short") == string::npos);
 		bool accept_unstable = (plainname.find_first_of('*') != string::npos);
-		char full = 0;
+		FullFlag full = 0;
 		if(plainname.find("full") != string::npos)
 			full = 1;
 		if(plainname.find('=') != string::npos)

@@ -16,6 +16,8 @@
 
 #include <stack>
 
+typedef signed char FullFlag;
+
 class DBHeader;
 class VarDbPkg;
 class PortageSettings;
@@ -154,12 +156,12 @@ class MarkedList : public std::multimap<std::string, BasicVersion*>
 class PrintFormat {
 	friend std::string get_extended_version(const PrintFormat *fmt, const ExtendedVersion *version, bool pure_text);
 	friend std::string get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a);
-	friend std::string getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, char full);
+	friend std::string getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, FullFlag full);
 	friend std::string getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const std::vector<std::string> &prepend);
-	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, char full);
-	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slots, char full, const std::vector<Version*> *versions);
-	friend void print_versions_slots(const PrintFormat *fmt, const Package *p, bool with_slots, char full, const std::vector<Version*> *versions);
-	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slots, char full);
+	friend void print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, FullFlag full);
+	friend void print_versions_versions(const PrintFormat *fmt, const Package *p, bool with_slots, FullFlag full, const std::vector<Version*> *versions);
+	friend void print_versions_slots(const PrintFormat *fmt, const Package *p, bool with_slots, FullFlag full, const std::vector<Version*> *versions);
+	friend void print_versions(const PrintFormat *fmt, const Package *p, bool with_slots, FullFlag full);
 	friend bool print_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name) throw(ExBasic);
 	friend std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name) throw(ExBasic);
 	friend class LocalCopy;
