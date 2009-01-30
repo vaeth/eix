@@ -1381,6 +1381,7 @@ TAG_FOR(EX_MISSING_KEYWORD, "(**)", "originally no keyword but now stable");
 MATCH_FIELD("DESCRIPTION",   "description",   "[ ]");
 MATCH_FIELD("SET",           "set",           "[@]");
 MATCH_FIELD("HOMEPAGE",      "homepage",      "http");
+MATCH_FIELD("VIRTUAL",       "virtuals,\nthat is for provide or category/name", "vir.*/");
 MATCH_FIELD("PROVIDE",       "provide",       "virtual/");
 MATCH_FIELD("CATEGORY_NAME", "category/name", "/");
 MATCH_FIELD("LICENSE",       "license",       "GPL|BSD|Art");
@@ -1389,6 +1390,7 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"%{\\MATCH_FIELD_DESCRIPTION} description "
 	"%{\\MATCH_FIELD_SET} set "
 	"%{\\MATCH_FIELD_HOMEPAGE} homepage "
+	"%{\\MATCH_FIELD_PROVIDE} virtual "
 	"%{\\MATCH_FIELD_PROVIDE} provide "
 	"%{\\MATCH_FIELD_CATEGORY_NAME} category/name "
 	"%{\\MATCH_FIELD_LICENSE} license "

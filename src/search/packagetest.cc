@@ -125,6 +125,8 @@ static_match_field_map()
 	match_field_map["PROVIDES"]       = PackageTest::PROVIDE;
 	match_field_map["provide"]        = PackageTest::PROVIDE;
 	match_field_map["provides"]       = PackageTest::PROVIDE;
+	match_field_map["VIRTUAL"]        = PackageTest::PROVIDE|PackageTest::CATEGORY_NAME;
+	match_field_map["virtual"]        = PackageTest::PROVIDE|PackageTest::CATEGORY_NAME;
 	match_field_map["IUSE"]           = PackageTest::IUSE;
 	match_field_map["USE"]            = PackageTest::IUSE;
 	match_field_map["iuse"]           = PackageTest::IUSE;

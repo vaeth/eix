@@ -2046,10 +2046,11 @@ It may be convenient to use delayed substitution ${\\VAR} for I<regular_expressi
 to avoid manually inserting additional escapes.
 
 The possible values for I<match_field> are B<name>, B<category>, B<category/name>
-(or B<category-name>), B<description>, B<license>, B<homepage>, B<provide>, B<set>,
+(or B<category-name>), B<description>, B<license>, B<homepage>, B<provide>, B<virtual>, B<set>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
-corresponding to the analogous command line option for the match field
+corresponding to the analogous command line option for the match field.
+The special value B<virtual> selects simultaneously the two command line options B<-A> and B<-P>.
 .TP
 .B DEFAULT_MATCH_ALGORITHM " " "(string list)"
 This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_algorithm>

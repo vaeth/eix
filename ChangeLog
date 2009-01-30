@@ -6,6 +6,10 @@
 	  (cannot compare const_backward_iterator with backward_iterator).
 	- Use signed char instead of char for FullFlag, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=255994
+	- Allow "virtual" for "provide || category-name" in DEFAULT_MATCH_FIELD
+	  and prefer this in the defaults to avoid confusion for virtual/, see
+	  http://sourceforge.net/tracker/index.php?func=detail&aid=2542891&
+	  group_id=128101&atid=710608
 
 *eix-0.15.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
