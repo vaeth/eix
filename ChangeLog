@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.15.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Be a bit more restrictive for the -H default since there are
+	  packages containing "http" in their name.
+
 *eix-0.15.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Hack around http://bugs.gentoo.org/show_bug.cgi?id=255711
