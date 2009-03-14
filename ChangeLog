@@ -2,6 +2,10 @@
 
 *eix-0.15.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce special overlay name ~ for cache methods eix/eix* to allow
+	  easily reading of previous overlay data.
+	- Fix regression which did not work for overlay labels/numbers for
+	  cache method eix/eix*.
 	- Be a bit more restrictive for the -H default since there are
 	  packages containing "http" in their name.
 

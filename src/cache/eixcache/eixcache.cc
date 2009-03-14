@@ -102,7 +102,22 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			const char *portdir = NULL;
 			if(portagesettings)
 				portdir = (*portagesettings)["PORTDIR"].c_str();
-			if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALLPATH))
+			if(m_overlay == "~") {
+				bool found = false;
+				if(!m_overlay_name.empty()) {
+					found = header.find_overlay(&m_get_overlay, m_overlay_name.c_str(), portdir, 0, DBHeader::OVTEST_LABEL);
+				}
+				if(!found) {
+					found = header.find_overlay(&m_get_overlay, m_scheme.c_str(), portdir, 0, DBHeader::OVTEST_LABEL);
+				}
+				if(!found) {
+					fclose(fp);
+					m_error_callback(eix::format("Cache file %s does not contain overlay %r [%s]") %
+						m_overlay_name % m_scheme);
+					return false;
+				}
+			}
+			else if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALL))
 			{
 				fclose(fp);
 				m_error_callback(eix::format("Cache file %s does not contain overlay %s") %

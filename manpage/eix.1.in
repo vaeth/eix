@@ -1723,6 +1723,9 @@ B<Security Warning:>
 If you do not completely trust the .ebuilds in your overlays,
 you should set B<OVERLAY_CACHE_METHOD=parse>.
 
+You might want to set temporarily B<OVERLAY_CACHE_METHOD=eix*::~> -
+as will be explained later, this will take the overlay date from the previous eix database.
+
 The available cache methods are described below.
 You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
@@ -1899,21 +1902,23 @@ As for all other cache methods, only those categories enabled by
 profile/category (in the main tree or some overlay) are read.
 If you do not want this, use B<eix*> (see below).
 
-If the I<overlay> is given, then only the entries corresponding
-to that overlay within I<FILE> are read. If I<overlay> is empty or not given,
-this means that the "main" tree in I<FILE> is read.
-I<overlay> is first considered as a wildcard pattern;
-only the first overlay name in I<FILE>
-(i.e. with the smallest number) matching I<overlay> is considered.
-If no such name exists and I<overlay> is a number, then this number is
-interpreted as the number of the overlay as stored in I<FILE>.
-Note that I<overlay> has in general no relation with the current overlay
+If I<overlay> is not given or empty, then only the "main" tree in I<FILE> is read -
+overlays within I<FILE> are ignored.
+Otherwise only the part corresponding to I<overlay> is read from I<FILE>.
+Here, "corresponding" means the first overlay from I<FILE> matching the wildcard pattern I<overlay> is used.
+"Matching" means that first the label is tested, then the path and finally also the number
+of the overlay within I<FILE>. Note that I<overlay> has in general no relation with the current overlay
 names or order - only the names/order stored in I<FILE> play a role here.
 
-The magic value B<*> as I<overlay> has a special meaning. In this case,
-all overlays in I<FILE> are read. However, this is usually not what you want:
-If I<FILE> originally contained several overlays, this overlay structure
-will appear "flattened".
+There are two exceptional values for I<overlay> which are treated by different rules:
+
+If I<overlay> has the special value "~", then the name of the current overlay label
+is used implicitly as the I<overlay> argument;
+If the current overlay label is empty or does not match, then the current overlay path is used instead.
+
+If I<overlay> has the special value "*", then B<all> overlays in I<FILE> are read.
+Note this is usually not what you want since it means that if I<FILE> originally contained several overlays,
+this overlay structure will appear "flattened".
 .TP
 .SS
 .BR eix* "  or   "  eix*:I<FILE> "  or  " eix*:I<FILE>:I<overlay>
@@ -1924,6 +1929,11 @@ were not enabled by some profile/categories file.
 This cache method is useful if I<FILE> contains information for some
 overlay directory for which the corresponding profile/categories on
 the local machine is unknown or not necessarily up-to-date.
+
+This is used for B<update-eix-remote>.
+
+Note that in particular with B<PORTDIR_CACHE_METHOD="eix*::~">,
+the overlay data is by default ust "copied" from the previous eix cachefile.
 .TP
 .BR KEEP_VIRTUALS " " (true / false)
 If true, update-eix will keep all virtual overlays from the previous database
