@@ -1724,7 +1724,8 @@ If you do not completely trust the .ebuilds in your overlays,
 you should set B<OVERLAY_CACHE_METHOD=parse>.
 
 You might want to set temporarily B<OVERLAY_CACHE_METHOD=eix*::~> -
-as will be explained later, this will take the overlay date from the previous eix database.
+as will be explained later, eix will then take by default the overlay data
+from the previous eix database.
 
 The available cache methods are described below.
 You might want to specify a different cache method only for some overlays.
@@ -1933,7 +1934,7 @@ the local machine is unknown or not necessarily up-to-date.
 This is used for B<update-eix-remote>.
 
 Note that in particular with B<PORTDIR_CACHE_METHOD="eix*::~">,
-the overlay data is by default ust "copied" from the previous eix cachefile.
+the overlay data is by default just "copied" from the previous eix cachefile.
 .TP
 .BR KEEP_VIRTUALS " " (true / false)
 If true, update-eix will keep all virtual overlays from the previous database
