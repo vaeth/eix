@@ -8,6 +8,7 @@
 	  cache method eix/eix*.
 	- Be a bit more restrictive for the -H default since there are
 	  packages containing "http" in their name.
+	- Fix segfault/endless loop when an optional last argument is omitted.
 
 *eix-0.15.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

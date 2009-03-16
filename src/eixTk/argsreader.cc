@@ -219,9 +219,11 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						++it;
 					else
 						it = erase(it);
-					if(it == end() && !optional) {
-						fprintf(stderr, "Missing parameter to --%s\n", c->longopt);
-						exit(-1);
+					if(it == end()) {
+						if(!optional) {
+							fprintf(stderr, "Missing parameter to --%s\n", c->longopt);
+							exit(-1);
+						}
 					}
 					else {
 						remember = it->m_argument;
@@ -242,9 +244,11 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						*(c->u.str) = remember;
 						break;
 					}
-					if(it == end() && !optional) {
-						fprintf(stderr, "Missing second parameter to --%s\n", c->longopt);
-						exit(-1);
+					if(it == end()) {
+						if(!optional) {
+							fprintf(stderr, "Missing second parameter to --%s\n", c->longopt);
+							exit(-1);
+						}
 					}
 					else {
 						second = it->m_argument;
