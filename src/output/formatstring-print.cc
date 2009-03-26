@@ -105,13 +105,14 @@ getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, Full
 	return ret;
 }
 
-const char
-	INST_WITH_DATE=1,      //< Installed string should contain date
-	INST_WITH_USEFLAGS=2,  //< Installed string should contain useflags
-	INST_WITH_NEWLINE=4,   //< Installed string should contain newlines
-	INST_SHORTDATE=8;      //< date should be in short format
+const FormatTypeFlags
+	INST_NONE          = 0,
+	INST_WITH_DATE     = 1,  //< Installed string should contain date
+	INST_WITH_USEFLAGS = 2,  //< Installed string should contain useflags
+	INST_WITH_NEWLINE  = 4,  //< Installed string should contain newlines
+	INST_SHORTDATE     = 8;  //< date should be in short format
 string
-getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, char formattype, const vector<string> &prepend)
+getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, FormatTypeFlags formattype, const vector<string> &prepend, bool only_marked)
 {
 	typedef enum {
 		PIDX_FRONT,
@@ -143,7 +144,9 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 		PIDX_RESTRICT_BINDIST,
 		PIDX_BETWEEN
 	} InstIndex;
-	if(!fmt.vardb)
+	if(!(fmt.vardb))
+		return "";
+	if((only_marked) && (!(fmt.marked_list)))
 		return "";
 	vector<InstVersion> *vec = fmt.vardb->getInstalledVector(p);
 	if(!vec) {
@@ -154,11 +157,26 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 	if(it == vec->end())
 		return "";
 	string ret;
-	bool useflags;
 	bool color = !fmt.no_color;
 	if(pure_text)
 		color = false;
-	for(;;) {
+	bool have_printed = false;
+	bool printed_useflags = false;
+	for( ; it != vec->end(); ++it) {
+		if(only_marked) {
+			if(!(fmt.marked_list->is_marked(p, &(*it))))
+				continue;
+		}
+		if(have_printed) {
+			if(prepend.size() > PIDX_BETWEEN)
+				ret.append(prepend[PIDX_BETWEEN]);
+			else if((formattype & INST_WITH_NEWLINE) &&
+				(printed_useflags || fmt.style_version_lines))
+				ret.append("\n\t\t\t  ");
+			else
+				ret.append(" ");
+		}
+		have_printed = true;
 		if(!p.guess_slotname(*it, fmt.vardb))
 			it->slotname = "?";
 		if(prepend.size() > PIDX_FRONT)
@@ -258,7 +276,7 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 					ret.append(prepend[PIDX_AFTER_DATE]);
 			}
 		}
-		useflags = false;
+		printed_useflags = false;
 		if(formattype & INST_WITH_USEFLAGS) {
 			const char *a[4];
 			size_t j = 0;
@@ -276,23 +294,15 @@ getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, cha
 				if(prepend.size() > PIDX_USEFLAGS)
 					ret.append(prepend[PIDX_USEFLAGS]);
 				ret.append(inst_use);
-				useflags = true;
+				printed_useflags = true;
 				if(prepend.size() > PIDX_AFTER_USEFLAGS)
 					ret.append(prepend[PIDX_AFTER_USEFLAGS]);
 			}
 		}
 		if(prepend.size() > PIDX_AFTER_ALL)
 			ret.append(prepend[PIDX_AFTER_ALL]);
-		if(++it == vec->end())
-			return ret;
-		if(prepend.size() > PIDX_BETWEEN)
-			ret.append(prepend[PIDX_BETWEEN]);
-		else if((formattype & INST_WITH_NEWLINE) &&
-				(useflags || fmt.style_version_lines))
-				ret.append("\n\t\t\t  ");
-		else
-				ret.append(" ");
 	}
+	return ret;
 }
 
 static void
@@ -707,7 +717,21 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 			full = -1;
 		if(plainname.find("empty") != string::npos)
 			full = (full < 0) ? -2 : 2;
-		print_versions(fmt, entity, (plainname.find("short") == string::npos), full, NULL);
+		vector<Version*> *versions = NULL;
+		if(plainname.find("mark") != string::npos) {
+			versions = new vector<Version*>;
+			if(fmt->marked_list) {
+				for(Package::const_iterator it = entity->begin();
+					it != entity->end(); ++it) {
+					if(fmt->marked_list->is_marked(*entity, &(**it))) {
+						versions->push_back(*it);
+					}
+				}
+			}
+		}
+		print_versions(fmt, entity, (plainname.find("short") == string::npos), full, versions);
+		if(versions)
+			delete versions;
 		return true;
 	}
 	if(plainname.find("install") != string::npos) {
@@ -727,14 +751,15 @@ print_package_property(const PrintFormat *fmt, const void *void_entity, const st
 			cout << s;
 			return true;
 		}
-		char formattype = 0;
+		FormatTypeFlags formattype = INST_NONE;
 		if(plainname.find("short") != string::npos)
 			formattype = INST_SHORTDATE;
 		if(plainname.find("date") != string::npos)
 			formattype |= INST_WITH_DATE;
 		if(!formattype)
 			formattype = INST_WITH_USEFLAGS|INST_WITH_NEWLINE|INST_WITH_DATE;
-		string s = getInstalledString(*entity, *fmt, false, formattype, prepend);
+		string s = getInstalledString(*entity, *fmt, false, formattype, prepend,
+			(name.find("mark") != string::npos));
 		if(s.empty())
 			return false;
 		cout << s;
@@ -815,17 +840,6 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 			return fmt->portagesettings->get_setnames(entity, true);
 		return fmt->portagesettings->get_setnames(entity);
 	}
-	if(name.find("marked") != string::npos) {
-		if(name == "marked") {
-			if(fmt->marked_list) {
-				if(fmt->marked_list->is_marked(*entity))
-					return "marked";
-			}
-		}
-		else if(fmt->marked_list)
-			return fmt->marked_list->getMarkedString(*entity);
-		return "";
-	}
 	if((name.find("upgrade") != string::npos) ||
 		(name.find("update") != string::npos)) {
 		LocalCopy copy(fmt, const_cast<Package*>(entity));
@@ -858,7 +872,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 	if(name.find("install") != string::npos) {
 		if(!fmt->vardb)
 			return "";
-		char formattype = 0;
+		FormatTypeFlags formattype = INST_NONE;
 		if(name.find("short") != string::npos)
 			formattype = INST_SHORTDATE;
 		if(name.find("date") != string::npos)
@@ -866,7 +880,8 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 		if(!formattype)
 			formattype = INST_WITH_USEFLAGS|INST_WITH_NEWLINE|INST_WITH_DATE;
 		vector<string> prepend;
-		return getInstalledString(*entity, *fmt, true, formattype, prepend);
+		return getInstalledString(*entity, *fmt, true, formattype, prepend,
+			(name.find("mark") != string::npos));
 	}
 	if(name.find("best") != string::npos) {
 		bool with_slots = (name.find("short") == string::npos);
@@ -894,6 +909,17 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 				ret += (*it)->getFull();
 		}
 		return ret;
+	}
+	if(name.find("marked") != string::npos) {
+		if(name == "marked") {
+			if(fmt->marked_list) {
+				if(fmt->marked_list->is_marked(*entity))
+					return "marked";
+			}
+		}
+		else if(fmt->marked_list)
+			return fmt->marked_list->getMarkedString(*entity);
+		return "";
 	}
 	throw ExBasic("Unknown property %r") % name;
 }

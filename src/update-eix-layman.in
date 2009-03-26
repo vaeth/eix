@@ -50,7 +50,8 @@ ClearLaymanMake () {
 PushLaymanMake () {
 	local M R
 	R=1
-	for M; do
+	for M
+	do
 		[ -n "${M}" ] || continue
 		test -r "${M}" || continue
 		Push LAYMAN_MAKE "${M}"
@@ -77,7 +78,8 @@ CalcLaymanMake || \
 	PushLaymanMake "${LOCAL_PORTDIR:-/}local/layman/make.conf"
 LAYMAN_OVERLAYS=''
 
-while getopts 'vqa:A:c:C?hH' OPTION; do
+while getopts 'vqa:A:c:C?hH' OPTION
+do
 	case "${OPTION}" in
 		v) VERBOSE=true;;
 		q) VERBOSE=false;;
@@ -93,7 +95,8 @@ done
 GetOverlays () {
 	local I
 	eval "set -- ${LAYMAN_MAKE}"
-	for I; do
+	for I
+	do
 		[ -n "${I}" ] && test -r "${I}" && Push LAYMAN_OVERLAYS \
 			`PORTDIR_OVERLAY=''; . "${I}"; \
 				printf "%s" "${PORTDIR_OVERLAY}"`

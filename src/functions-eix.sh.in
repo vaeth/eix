@@ -41,6 +41,7 @@ GetPortdir () {
 VERBOSE=true
 
 RunCommand () {
+	local RET
 	if ${VERBOSE}
 	then
 		einfo "${1}"
@@ -48,7 +49,6 @@ RunCommand () {
 		"${@}"
 		return ${?}
 	fi
-	local RET
 	ebegin "${1}"
 	shift
 	"${@}" >/dev/null
@@ -66,7 +66,9 @@ expr () {
 # Option -g means: Replace all occurrences
 # Exit status is the number of replacements (or 127 if there are more)
 Replace () {
-	local ReplaceA_='' ReplaceB_ ReplaceC_=''
+	local ReplaceA_ ReplaceB_ ReplaceC_
+	ReplaceA_=''
+	ReplaceC_=''
 	case "${1}" in
 		-*) ReplaceC_=0; shift;;
 	esac
@@ -93,10 +95,11 @@ Replace () {
 #    eval "${VAR}" is 'safe' and groups Args correctly.
 # With option -c, VAR is cleaned in advance.
 Push () {
+	local PushA_ PushB_
+	PushA_="${1}"
 	case "${1}" in
 		-*) shift; eval "${1}=''";;
 	esac
-	local PushA_="${1}" PushB_
 	shift
 	eval "for PushB_; do
 		Replace -g PushB_ \"'\" \"'\\\\''\"
@@ -113,7 +116,8 @@ AddUpdateArgs () {
 }
 
 AddUpdateQuoting () {
-	local K="$1"
+	local K
+	K="${1}"
 	shift
 	Replace -g K '?' '\?'
 	Replace -g K '*' '\*'
@@ -172,7 +176,8 @@ NEWLINE_STRING='
 '
 Chomp () {
 	local ChompA_ ChompB_ ChompC_
-	for ChompA_; do
+	for ChompA_
+	do
 		eval "ChompB_=\"\${${ChompA_}}\""
 		ChompC_="${ChompB_%?}"
 		[ "${ChompC_}${NEWLINE_STRING}" = "${ChompB_}" ] &&
@@ -191,7 +196,8 @@ Chomp () {
 HAVE_READLINK=false
 command -v readlink >/dev/null 2>&1 && HAVE_READLINK=true
 NormalizeNames () {
-	local NormA_ NormB_ NormC_ NormD_=0
+	local NormA_ NormB_ NormC_ NormD_
+	NormD_=0
 	RELATIVE=''
 	for NormC_; do
 		eval "NormA_=\"\${${NormC_}}\""

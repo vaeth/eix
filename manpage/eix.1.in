@@ -893,6 +893,9 @@ As for B<installedversions> you can also add a list of colon-separated strings t
 .B markedversions
 All marked (with the B<--pipe> option) versions, separated by spaces.
 .TP
+.BR ...installedmarked... ", " ...availablemarked...
+Similar as above, but print only installed versions which are marked (with the B<--pipe> option).
+.TP
 .BR setnames ", " allsetnames
 The name of all local sets to which the package belongs, separated by spaces.
 With B<allsetnames> also the "system" set name is included.

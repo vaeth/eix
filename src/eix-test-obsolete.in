@@ -14,11 +14,14 @@ Die () {
 }
 
 Eix () {
-	if [ -z "`eix '-*Tc' | head -n1`" ]; then
+	local I
+	if [ -z "`eix '-*Tc' | head -n1`" ]
+	then
 		[ -z "${1}" ] || printf "%s\n" "${1} (or test switched off)."
 		return
 	fi
-	if [ ${#} -le 2 ] || ! ${DETAILS}; then
+	if [ ${#} -le 2 ] || ! ${DETAILS}
+	then
 		printf "\n%s:\n" "${2}"
 		eix -Tc
 		printf "\n"
@@ -26,8 +29,8 @@ Eix () {
 	fi
 	printf "\n%s\n" "${2}..."
 	shift 2
-	local I
-	for I; do
+	for I
+	do
 		(
 			for J; do
 				[ "${I}" = "${J}" ] && continue
@@ -81,7 +84,8 @@ NoUninstalled () { export \
 
 Repository () {
 	local I J C A
-	if ${1}; then
+	if ${1}
+	then
 		I='with'
 	else
 		I='without'
@@ -93,7 +97,8 @@ Repository () {
 	C=0
 	( eval '[ "$(( ${C} + 1 ))" = 1 ]' ) >/dev/null 2>&1 \
 		&& A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
-	for I in *; do
+	for I in *
+	do
 		for J in "${I}"/*; do
 			if test -e "${J}/repository"; then
 				${1} || continue
@@ -104,9 +109,11 @@ Repository () {
 			eval "C=${A}"
 		done
 	done
-	if test ${C} -eq 0; then
+	if test ${C} -eq 0
+	then
 		printf "%s\n" "none"
-	elif test ${C} -ne 1; then
+	elif test ${C} -ne 1
+	then
 		printf "\n%s\n" "(total number of versions listed above: ${C})"
 	fi
 	exit 0

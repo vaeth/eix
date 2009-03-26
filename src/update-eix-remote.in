@@ -66,7 +66,8 @@ OVERLAYNR='*'
 VERBOSE=true
 FETCHUSER=''
 OPTIND=1
-while getopts 'O:vqu:o:?hH' OPTION; do
+while getopts 'O:vqu:o:?hH' OPTION
+do
 	case "${OPTION}" in
 		O) OVERLAYNR="${OPTARG}";;
 		v) VERBOSE=true;;
@@ -82,7 +83,8 @@ NEED_ARG=false
 FILENAME=''
 GetFilename () {
 	[ ${#} -gt 1 ] && Usage
-	if [ ${#} -lt 1 ]; then
+	if [ ${#} -lt 1 ]
+	then
 		${NEED_ARG} && die "Filename argument is mandatory"
 		return
 	fi
@@ -95,7 +97,9 @@ GetFilename () {
 }
 
 CalcSuCmd () {
-	if [ -z "${FETCHUSER}" ]; then
+	local SHEXEC
+	if [ -z "${FETCHUSER}" ]
+	then
 		[ -n "${UID}" ] || UID="`id -u`"
 		if [ "${UID}" -ne 0 ]; then
 			Push -c SUCMD "${@}"
@@ -103,8 +107,9 @@ CalcSuCmd () {
 		fi
 		FETCHUSER=nobody
 	fi
-	local SHEXEC="${SHELL}"
-	if [ -z "${SHEXEC}" ] || ! test -x "${SHELL}"; then
+	SHEXEC="${SHELL}"
+	if [ -z "${SHEXEC}" ] || ! test -x "${SHELL}"
+	then
 		SHEXEC="`command -v sh`" && test -x "${SHEXEC}" || \
 			SHEXEC='/bin/sh'
 	fi
@@ -133,12 +138,13 @@ Cleanup () {
 	exit "${EXITCODE}"
 }
 MakeTempDir () {
+	local COUNT
 	[ -n "${TMPDIR}" ] && return
-	if command -v mktemp >/dev/null 2>&1; then
+	if command -v mktemp >/dev/null 2>&1
+	then
 		TMPDIR=`mktemp -d "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary directory"
 	else
-		local COUNT
 		COUNT=0
 		while true; do
 			[ ${COUNT} -eq 9999 ] && \
@@ -157,7 +163,8 @@ MakeTempDir () {
 
 TMPSUB=''
 MakeTempSub () {
-	if [ -z "${TMPSUB}" ]; then
+	if [ -z "${TMPSUB}" ]
+	then
 		MakeTempDir
 		TMPSUB="${TMPDIR}/1"
 		( umask 000; mkdir -- "${TMPSUB}" )
@@ -188,7 +195,8 @@ AddArchive () {
 		NAME="${I}"
 		Replace -g NAME ':' '_' || mv -- "${I}" "${NAME}"
 	done
-	if [ -n "${OVERLAYNR}" ]; then
+	if [ -n "${OVERLAYNR}" ]
+	then
 		OVERLAYARG=":${OVERLAYNR}"
 	else
 		OVERLAYARG=''

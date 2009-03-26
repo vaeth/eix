@@ -55,7 +55,7 @@ The following options are available:
 -@   Do not execute the hooks (@ and @@ entries) of ${EIXSYNCCONF}.
 -S   Do not execute the hooks after emerge --sync (@@ entries).
 -M   Run emerge --metadata. You might need this when you use e.g.
-     PORTDIR_CACHE_METHOD=portage-2.1 and a newer portage version when
+     PORTDIR_CACHE_METHOD=flat and a newer portage version when
      FEATURES=metadata-transfer is inactive or disabled.
 -m   Run emerge --metadata but skip emerge --sync.
 -N   Skip emerge --metadata if it was activated by -M or -m.
@@ -70,7 +70,7 @@ The following options are available:
 -o OPT Add OPT to each update-eix command.
        This option can be used accumulatively.
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
-     use e.g. PORTDIR_CACHE_METHOD=portage-2.1 and FEATURES=metadata-transfer
+     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
 -R   Cancel previous -r (e.g. if it was used in ${EIXSYNCCONF}).
 -e   Skip heuristic tests whether you must be root.
@@ -86,9 +86,10 @@ DiffOnly () {
 }
 
 DoExecute () {
-	${EMULATEMODE} && return 0
 	local CURRENT_COMMAND
-	for CURRENT_COMMAND; do
+	${EMULATEMODE} && return 0
+	for CURRENT_COMMAND
+	do
 		eval "${CURRENT_COMMAND}" || \
 			die "Something went wrong with ${CURRENT_COMMAND}"
 	done
@@ -107,7 +108,8 @@ ExecuteConfig () {
 	BEFORE_RSYNC=''
 	CONFIG_OPTS=''
 	${HAVECONF} || return 0
-	while read I; do
+	while read I
+	do
 		J="${I%%#*}"
 		while [ "${J% }" != "${J}" ]; do J="${J%?}"; done
 		while [ "${J# }" != "${J}" ]; do J="${J#?}"; done
@@ -167,7 +169,8 @@ DefaultOpts
 ExecuteConfig 'opts'
 
 while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" OPTION \
-	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"; do
+	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"
+do
 	case "${OPTION}" in
 		i) DefaultOpts;;
 		d) DIFFONLY=true;;
@@ -208,9 +211,10 @@ case "${TIME_BEGIN}" in
 esac
 
 MyRun () {
-	if [ "${1}" = '-t' ]; then
+	local TIMEVAR B E R
+	if [ "${1}" = '-t' ]
+	then
 		if ${MEASURE_TIME}; then
-			local TIMEVAR B E R
 			TIMEVAR="${2}"
 			shift 2
 			B="`date +%s 2>/dev/null`" || MEASURE_TIME=false
@@ -259,23 +263,21 @@ TIME_CLIENT=''
 TIME_METADATA=''
 TIME_UPDATE=''
 TIME_DIFF=''
+PrintingTimes () {
+	[ -n "${1}" ] && [ "${1}" -gt 0 ] && \
+		printf "%6d seconds for %s\n" "${1}" "${2}"
+}
 PrintTimes () {
+	local FTIME
 	${MEASURE_TIME} || return 0
 	MEASURE_TIME=false
 	einfo "Time statistics:"
-	[ -n "${TIME_IUPDATE}" ] && [ "${TIME_IUPDATE}" -gt 0 ] && \
-		printf "%6d seconds for initial update-eix\n" "${TIME_IUPDATE}"
-	[ -n "${TIME_SYNC}" ] && [ "${TIME_SYNC}" -gt 0 ] && \
-		printf "%6d seconds for syncing\n" "${TIME_SYNC}"
-	[ -n "${TIME_CLIENT}" ] && [ "${TIME_CLIENT}" -gt 0 ] && \
-		printf "%6d seconds for client syncing\n" "${TIME_CLIENT}"
-	[ -n "${TIME_METADATA}" ] && [ "${TIME_METADATA}" -gt 0 ] && \
-		printf "%6d seconds for metadata update\n" "${TIME_METADATA}"
-	[ -n "${TIME_UPDATE}" ] && [ "${TIME_UPDATE}" -gt 0 ] && \
-		printf "%6d seconds for update-eix\n" "${TIME_UPDATE}"
-	[ -n "${TIME_DIFF}" ] && [ "${TIME_DIFF}" -gt 0 ] && \
-		printf "%6d seconds for diff-eix\n" "${TIME_DIFF}"
-	local FTIME
+	PrintingTimes "${TIME_IUPDATE}"  "initial update-eix"
+	PrintingTimes "${TIME_SYNC}"     "syncing"
+	PrintingTimes "${TIME_CLIENT}"   "client syncing"
+	PrintingTimes "${TIME_METADATA}" "metadata update"
+	PrintingTimes "${TIME_UPDATE}"   "update-eix"
+	PrintingTimes "${TIME_DIFF"      "diff-eix"
 	FTIME="`date +%s 2>/dev/null`" || return
 	FTIME=`expr "${FTIME}" - "${TIME_BEGIN}" 2>/dev/null` && \
 		printf "%6d seconds total\n" "${FTIME}"
@@ -293,11 +295,12 @@ ExitAll () {
 ${MEASURE_TIME} && trap ExitAll EXIT HUP INT TERM
 
 MakeTempFile () {
-	if command -v mktemp >/dev/null 2>&1; then
+	local COUNT
+	if command -v mktemp >/dev/null 2>&1
+	then
 		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX"` || \
 			die "cannot create temporary file"
 	else
-		local COUNT
 		COUNT=0
 		while true; do
 			[ ${COUNT} -eq 9999 ] && \
@@ -314,16 +317,17 @@ MakeTempFile () {
 
 PREPRSYNC=false
 PrepRsync () {
+	local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS C
 	GetPortdir
 	HOSTDIR="${1#*:}"
-	if [ -n "${HOSTDIR}" ] && [ "${HOSTDIR}" != "${1}" ]; then
+	if [ -n "${HOSTDIR}" ] && [ "${HOSTDIR}" != "${1}" ]
+	then
 		HOSTDIR="${1}"
 	else
 		HOSTDIR="${1%%:*}:${LOCAL_PORTDIR}"
 	fi
 	HOSTDIR="${HOSTDIR%/}/"
 	${PREPRSYNC} && return
-	local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS C
 	PORTAGE_RSYNC_OPTS="`portageq envvar PORTAGE_RSYNC_OPTS`"
 	PORTAGE_RSYNC_EXTRA_OPTS="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
 	eval "set -- ${BEFORE_RSYNC}"
@@ -347,7 +351,8 @@ ClearCache () {
 }
 
 CallEmergeSync () {
-	if [ -n "${SERVER}" ]; then
+	if [ -n "${SERVER}" ]
+	then
 		${EMULATEMODE} && return
 		PrepRsync "${SERVER}"
 		MyRunCommand "rsyncing from ${HOSTDIR}" -t SYNC \
@@ -379,7 +384,8 @@ CallEmergeMetadata () {
 }
 
 CondUpdate () {
-	if ! test -f "${EIXCACHE}"; then
+	if ! test -f "${EIXCACHE}"
+	then
 		RootTest
 		eval "set -- ${UPDATECMD}"
 		MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
@@ -387,7 +393,8 @@ CondUpdate () {
 		return
 	fi
 	${EMULATEMODE} && return
-	if ! eix --is-current; then
+	if ! eix --is-current
+	then
 		eval "set -- ${UPDATECMD}"
 		MyRunCommand \
 			"eix-cache format has changed. Running update-eix!" \
@@ -416,8 +423,8 @@ MovePrevious () {
 }
 
 UpdateDiff () {
-	${DOUPDATE} || return 0
 	local D
+	${DOUPDATE} || return 0
 	if ${USETEMP}; then
 		${EMULATEMODE} && return
 		D="${TMPFILE}"
