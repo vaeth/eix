@@ -52,20 +52,9 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 	for(vector<string>::const_iterator it = files.begin();
 		it != files.end(); ++it)
 	{
-		/* Check if this is an ebuild  */
-		string::size_type pos = it->length();
-		static const string::size_type append_size = 7;
-		if(pos <= append_size)
+		string::size_type pos = ebuild_pos(*it);
+		if(pos == string::npos)
 			continue;
-		pos -= append_size;
-		if(it->compare(pos, append_size, ".ebuild")) {
-			string::size_type epos = it->find(".ebuild-");
-			if(epos == string::npos)
-				continue;
-			if(epos + 1 == pos) // Empty EAPI is not admissible
-				continue;
-			pos = epos;
-		}
 
 		/* Check if we can split it */
 		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());

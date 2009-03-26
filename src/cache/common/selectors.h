@@ -15,4 +15,6 @@
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);
 
+std::string::size_type ebuild_pos(const std::string &str);
+
 #endif /* EIX__SELECTORS_H__ */
