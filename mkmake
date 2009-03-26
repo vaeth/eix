@@ -37,7 +37,8 @@ PEDANTIC=false
 EXTRA_CACHE='--enable-extra-cache'
 SEPARATE=''
 CHOWN=false
-while getopts 'q0123nepusSbBcr?hH' OPTION; do
+while getopts 'q0123nepusSbBcr?hH' OPTION
+do
 case "${OPTION}" in
 	q) QUIET='>/dev/null 2>&1';;
 	0) EXTRA_CACHE='';;
