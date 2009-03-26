@@ -58,8 +58,14 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		if(pos <= append_size)
 			continue;
 		pos -= append_size;
-		if(it->compare(pos, append_size, ".ebuild"))
-			continue;
+		if(it->compare(pos, append_size, ".ebuild")) {
+			string::size_type epos = it->find(".ebuild-");
+			if(epos == string::npos)
+				continue;
+			if(epos + 1 == pos) // Empty EAPI is not admissible
+				continue;
+			pos = epos;
+		}
 
 		/* Check if we can split it */
 		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());
