@@ -277,7 +277,7 @@ PrintTimes () {
 	PrintingTimes "${TIME_CLIENT}"   "client syncing"
 	PrintingTimes "${TIME_METADATA}" "metadata update"
 	PrintingTimes "${TIME_UPDATE}"   "update-eix"
-	PrintingTimes "${TIME_DIFF"      "diff-eix"
+	PrintingTimes "${TIME_DIFF}"     "diff-eix"
 	FTIME="`date +%s 2>/dev/null`" || return
 	FTIME=`expr "${FTIME}" - "${TIME_BEGIN}" 2>/dev/null` && \
 		printf "%6d seconds total\n" "${FTIME}"

@@ -96,12 +96,13 @@ Replace () {
 # With option -c, VAR is cleaned in advance.
 Push () {
 	local PushA_ PushB_
-	PushA_="${1}"
 	case "${1}" in
 		-*) shift; eval "${1}=''";;
 	esac
+	PushA_="${1}"
 	shift
-	eval "for PushB_; do
+	eval "for PushB_
+	do
 		Replace -g PushB_ \"'\" \"'\\\\''\"
 		if [ -z \"\${${PushA_}}\" ]; then
 			${PushA_}=\"'\${PushB_}'\"
