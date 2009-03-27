@@ -9,6 +9,9 @@
 
 #include "selectors.h"
 
+#include <global.h>
+#include <eixTk/regexp.h>
+
 #include <cstring>
 #include <dirent.h>
 
@@ -34,10 +37,25 @@ string::size_type ebuild_pos(const std::string &str)
 	pos -= append_size;
 	if(!(str.compare(pos, append_size, ".ebuild")))
 		return pos;
-	string::size_type epos = str.find(".ebuild-");
-	if(epos == string::npos)
-		return string::npos;
-	if(epos + 1 == pos) // Empty EAPI is not admissible
-		return string::npos;
-	return epos;
+	static Regex r;
+	static bool empty = false;
+	if(empty)
+		return false;
+	if(!r.compiled()) {
+		string m = "\\.ebuild-(";
+		EixRc eixrc = get_eixrc(NULL);
+		string &s = eixrc["EAPI_REGEX"];
+		if(s.empty()) {
+			empty = true;
+			return false;
+		}
+		m.append(s);
+		m.append(")$");
+		r.compile(m.c_str());
+	}
+	string::size_type b;
+	if(r.match(str.c_str(), &b, NULL)) {
+		return b;
+	}
+	return string::npos;
 }

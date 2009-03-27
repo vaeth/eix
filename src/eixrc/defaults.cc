@@ -1629,6 +1629,12 @@ AddOption(STRING, "EIX_LOCAL_SETS",
 	"sets",
 	"This is a space-separated list of directories containing set definitions.");
 
+AddOption(STRING, "EAPI_REGEX",
+	"[0-9]+",
+	"This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
+	"You might need to modify it according to the installed portage version.\n"
+	"Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored.");
+
 AddOption(STRING, "DUMMY",
 	"",
 	"This variable is ignored. You can use it to collect delayed references to\n"

@@ -60,11 +60,39 @@ class Regex
 
 		/// Does the regular expression match s?
 		bool match(const char *s) const
-		{ return ! m_compiled || ! regexec(&m_re, s, 0, NULL, 0); }
+		{ return ! m_compiled || ! regexec(get(), s, 0, NULL, 0); }
+
+		/// Does the regular expression match s? Get beginning/end
+		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const
+		{
+			regmatch_t pmatch[1];
+			if(!m_compiled) {
+				if(b)
+					*b = 0;
+				if(e)
+					*e = std::string::npos;
+				return true;
+			}
+			if(regexec(get(), s, 1, pmatch, 0)) {
+				if(b)
+					*b = std::string::npos;
+				if(e)
+					*e = std::string::npos;
+				return false;
+			}
+			if(b)
+				*b = pmatch[0].rm_so;
+			if(e)
+				*e = pmatch[0].rm_eo;
+			return true;
+		}
+
+		bool compiled() const
+		{ return m_compiled; }
 
 	protected:
 		/// Gets the internal regular expression structure.
-		const regex_t *get()
+		const regex_t *get() const
 		{ return &m_re; }
 
 		/// The actual regular expression (GNU C Library).

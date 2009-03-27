@@ -1474,6 +1474,17 @@ and escapes of the separator symbols are removed.
 If you want to insert a variable "as-is", you can make use of delayed substitution:
 B<%{\\>I<VAR>B<}> will insert the value of I<VAR> with all symbols from [\\ \\t\\r\\n] being escaped.
 (See delayed substitution for more details).
+
+.TP
+.B EAPI_REGEX
+This regular expression matches the recognized EAPIs in .ebuild suffixes
+which will be recognized according to GLEP 55.
+You might need to modify this expression locally according to the installed
+portage version (in order to make sure that the installed portage can parse
+the corresponding EAPIs).
+An exceptional case is if that variable is empty: In this case all EAPI-suffixed
+ebuilds are ignored.
+
 .TP
 .BR SAVE_WORLD "  " (true / false)
 If you set this to true, the information of your world file is stored in @EIX_CACHEFILE@.

@@ -2,11 +2,11 @@
 
 *eix-0.15.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Support EAPI-suffixed ebuilds (GLEP 55).
+	- Introduce EAPI_REGEX for EAPI-suffixed ebuilds (GLEP 55).
 	- Introduce ...installedmarked... and ...availablemarked... to print
 	  only those installed/available versions marked by --pipe.
 	- Fix reference to obsolete cache type in eix-sync help page.
-	- Make scripts more POSIX (e.g. "local" only at the function start).
+	- Make scripts more POSIX (e.g. "local" only at a function start).
 
 *eix-0.15.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
