@@ -85,13 +85,27 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	str = p + 1;
 
 	// If :... is appended, mark the slot part;
+	// if [...] is appended (possibly after :...), remove it
 	const char *end = strrchr(str, ':');
 	m_test_slot = bool(end);
 	if(m_test_slot) {
-		m_slotname = (end + 1);
+		const char *usestart = strrchr(end + 1, '[');
+		if(usestart && strchr(usestart + 1, ']')) {
+			if(usestart > end)
+				m_slotname = string(end + 1, usestart - end - 1);
+			else
+				m_slotname.clear();
+		}
+		else
+			m_slotname = (end + 1);
 		// Interpret Slot "0" as empty slot (as internally always)
 		if(m_slotname == "0")
 			m_slotname.clear();
+	}
+	else {
+		end = strrchr(str, '[');
+		if(end && ! strchr(end + 1, ']'))
+			end = NULL;
 	}
 
 	// Get the rest (name-version|name)

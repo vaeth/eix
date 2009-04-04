@@ -78,12 +78,13 @@ then
 	export CXXFLAGS CFLAGS LDFLAGS
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
 	LDFLAGS="${LDFLAGS} -Wl,-z,defs -Wl,--no-undefined -Wl,--no-allow-shlib-undefined -Wl,--no-undefined-version -Wl,--warn-common -Wl,--fatal-warnings"
-	CFLAGS="-march=${MARCH} -O2 -pipe"
+	CFLAGS="-march=${MARCH} -O2 -pipe -funsigned-char"
 	${SAFEFLAGS} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -funsafe-loop-optimizations -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
 	${NOT_FULL_USE} && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
 	CFLAGS="${CFLAGS} -D_GLIBCXX_DEBUG -g -ggdb3 -Wall -Wextra"
 	${SAFEFLAGS} || CFLAGS="${CFLAGS} -pedantic"
-	if ${PEDANTIC}; then
+	if ${PEDANTIC}
+	then
 		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
 		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=1 -Wstrict-overflow=5"
 		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wunsafe-loop-optimizations -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization"
