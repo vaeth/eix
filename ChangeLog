@@ -3,7 +3,11 @@
 *eix-0.15.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow USE dependencies http://bugs.gentoo.org/show_bug.cgi?id=264798
-	- Update reference to portage with sqlite
+	- Update citation reference for "portage with sqlite"
+	- Introduce EXPORT_PORTDIR_OVERLAY to export a new PORTDIR_OVERLAY with
+	  added/excluded overlays to deal with eclasses. This somewhat fixes
+	  http://bugs.gentoo.org/show_bug.cgi?id=249843
+	  and http://bugs.gentoo.org/show_bug.cgi?id=265854
 
 *eix-0.15.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

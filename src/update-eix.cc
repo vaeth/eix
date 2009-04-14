@@ -355,17 +355,22 @@ run_update_eix(int argc, char *argv[])
 
 	/* Normalize names: */
 
-	vector<string> add_overlays;
-	for(vector<Pathname>::iterator it = add_list.begin();
-		it != add_list.end(); ++it)
-		add_overlays.push_back(it->resolve(portage_settings));
-	add_list.clear();
-
 	vector<string> excluded_overlays;
 	for(vector<Pathname>::iterator it = excluded_list.begin();
 		it != excluded_list.end(); ++it)
 		excluded_overlays.push_back(it->resolve(portage_settings));
 	excluded_list.clear();
+
+	vector<string> add_overlays;
+	for(vector<Pathname>::iterator it = add_list.begin();
+		it != add_list.end(); ++it) {
+		string add_name = it->resolve(portage_settings);
+		// Let exclude override added names
+		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
+			add_name.c_str(), true) == excluded_overlays.end())
+			add_overlays.push_back(add_name);
+	}
+	add_list.clear();
 
 	map<string, string> override;
 	for(vector<Override>::iterator it = override_list.begin();
@@ -373,6 +378,37 @@ run_update_eix(int argc, char *argv[])
 		override[(it->name).resolve(portage_settings)] = it->method;
 	}
 	override_list.clear();
+
+	/* Calculate new PORTDIR_OVERLAY for export */
+
+	if(eixrc.getBool("EXPORT_PORTDIR_OVERLAY")) {
+		bool modified = false;
+		string &ref = portage_settings["PORTDIR_OVERLAY"];
+		vector<string> overlayvec = split_string(ref, true);
+		for(vector<string>::const_iterator it = add_overlays.begin();
+			it != add_overlays.end(); ++it) {
+			if(find_filenames(overlayvec.begin(), overlayvec.end(),
+				it->c_str(), false, true) == overlayvec.end()) {
+				overlayvec.push_back(*it);
+				modified = true;
+			}
+		}
+		for(vector<string>::iterator it = overlayvec.begin();
+			it != overlayvec.end(); ) {
+			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
+				it->c_str(), true) == excluded_overlays.end()) {
+				++it;
+			}
+			else {
+				it = overlayvec.erase(it);
+				modified = true;
+			}
+		}
+		if(modified) {
+			ref = join_vector(overlayvec);
+			setenv("PORTDIR_OVERLAY", ref.c_str(), 1);
+		}
+	}
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table;

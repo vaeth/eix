@@ -1243,6 +1243,9 @@ AddOption(STRING, "EXCLUDE_OVERLAY",
 AddOption(STRING, "ADD_OVERLAY",
 	"", "List of overlays that should be added to the index.");
 
+AddOption(BOOLEAN, "EXPORT_PORTDIR_OVERLAY",
+	"true", "If true and overlays are excluded or added, export modified PORTDIR_OVERLAY.");
+
 AddOption(BOOLEAN, "KEEP_VIRTUALS",
 	"false", "Keep virtuals of the old cache file by adding corresponding entries\n"
 	"implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD");

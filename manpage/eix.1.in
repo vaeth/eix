@@ -1728,6 +1728,13 @@ Set a list of overlays that are added to the index.
 See the B<update-eix> option B<--add-overlay>.
 
 .TP
+.B EXPORT_PORTDIR_OVERLAY "  " (true / false)
+If true and overlays are excluded/added, a correspondingly modified
+B<PORTDIR_OVERLAY> is exported.
+This means that in a sense also the corresponding eclasses of these overlay
+are excluded/added for cache methods eix and eix*.
+
+.TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (string)
 Set the type of the cache used by portage and for overlays.
 B<PORTDIR_CACHE_METHOD> defaults to I<@PORTDIR_CACHE_METHOD@>,
