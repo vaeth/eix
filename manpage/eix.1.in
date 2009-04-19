@@ -1129,6 +1129,21 @@ replace B<-M> by the line
 .B @@emerge --regen
 to use B<emerge --regen> instead of B<emerge --metadata>.
 .TP
+.B @@egencache --repo=local --update
+Update the metadata cache of the overlay with repository name "local"
+before update-eix is called but after calling emerge --sync.
+This can make sense if you want to use cache method B<metadata-flat>
+for that overlay and want to make sure that this metadata cache is up-to-date.
+The disadvantage is that this B<egencache> command is executed even if
+"local" was not changed (which is usually the case for local repositories).
+.TP
+.B !egencache --repo=foo --update
+Update the metadata cache of the overlay with repository name "foo";
+this makes sense if you had earlier a line B<foo> or a line B<!command to update foo>
+for updating this repository (by layman or by some other command)
+and if want to you use cache method <metadata-flat> for that overlay
+although the metadata cache is broken or not contained in that repository.
+.TP
 .B !exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
 Send the output to a logfile (with correct permissions).
 The "true" at the end is to force continuing even if the "chown" failed.
@@ -1759,7 +1774,7 @@ The cache method of I<overlay> is set to the subsequent I<method>,
 thus overriding the default settings of B<OVERLAY_CACHE_METHOD>
 (or of B<PORTDIR_CACHE_METHOD> if I<overlay> is the B<PORTDIR> directory).
 I<overlay> is interpreted as a wildcard pattern which should match the I<path> (symbolic links resolved) of the overlay
-(it is not possible to refer to repository I<name> here - you must use the true I<path>).
+(it is not possible to refer to repository's name here - you must use the true I<path>).
 Later entries override earlier ones: The last matching entry takes precedence.
 
 The difference between B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD> is that
