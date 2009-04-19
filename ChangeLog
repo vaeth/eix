@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.15.8
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix manpage: Make clear that overlays must be paths, not repo-names.
+
 *eix-0.15.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow USE dependencies http://bugs.gentoo.org/show_bug.cgi?id=264798

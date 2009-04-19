@@ -1758,7 +1758,8 @@ These variables are string lists of the form "I<overlay> I<method> I<overlay> I<
 The cache method of I<overlay> is set to the subsequent I<method>,
 thus overriding the default settings of B<OVERLAY_CACHE_METHOD>
 (or of B<PORTDIR_CACHE_METHOD> if I<overlay> is the B<PORTDIR> directory).
-I<overlay> is interpreted as a wildcard pattern.
+I<overlay> is interpreted as a wildcard pattern which should match the I<path> (symbolic links resolved) of the overlay
+(it is not possible to refer to repository I<name> here - you must use the true I<path>).
 Later entries override earlier ones: The last matching entry takes precedence.
 
 The difference between B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD> is that
