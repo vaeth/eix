@@ -24,7 +24,11 @@ GetEdir() {
 			case "${j##*/}" in
 				eix-9999*) continue;;
 			esac
-			test -f "${j}" && return
+			test -f "${j}" || continue
+			test -r "${i}/profiles/repo_name" && \
+			REPO_NAME=`cat -- "${i}"/profiles/repo_name` || \
+			REPO_NAME=''
+			return 0
 		done
 	done
 	return 1
@@ -62,6 +66,12 @@ InstallEbuildVersion () {
 		printf "%s\n" "ebuild ${EDIR}/eix-${2}.ebuild manifest"
 		ebuild -- "eix-${2}.ebuild" manifest || Die "ebuild failed"
 	) || exit
+	if [ -n "${REPO_NAME}" ] && command -v egencache >/dev/null 2>&1
+	then
+		printf "%s\n" "egencache --repo=${REPO_NAME} --update"
+		egencache --repo="${REPO_NAME}" --update || \
+			Die "egencache failed"
+	fi
 	printf "%s\n" "emerge -1 =app-portage/eix-${2}"
 	exec emerge -1 -- "=app-portage/eix-${2}"
 	Die "cannot execute emerge"
