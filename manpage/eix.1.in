@@ -1126,10 +1126,10 @@ B<FEATURES=metadata-transfer> is inactive or disabled
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
 replace B<-M> by the line
 .TP
-.B @@emerge --regen
+.B @emerge --regen
 to use B<emerge --regen> instead of B<emerge --metadata>.
 .TP
-.B @@egencache --repo=local --update
+.B @egencache --repo=local --update
 Update the metadata cache of the overlay with repository name "local"
 before update-eix is called but after calling emerge --sync.
 This can make sense if you want to use cache method B<metadata-flat>
