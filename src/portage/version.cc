@@ -11,6 +11,11 @@
 
 using namespace std;
 
+const Version::EffectiveState
+	Version::EFFECTIVE_UNSAVED,
+	Version::EFFECTIVE_USED,
+	Version::EFFECTIVE_UNUSED;
+
 const string&
 Version::iuse() const
 {
@@ -39,4 +44,21 @@ Version::set_iuse(const string &i)
 	}
 	sort_uniquify(m_iuse);
 	m_cached_iuse.clear(); // invalided cache
+}
+
+void
+Version::modify_effective_keywords(const string &modify_keys)
+{
+	if(effective_state == EFFECTIVE_UNUSED) {
+		if(!modify_keywords(effective_keywords, full_keywords, modify_keys))
+			return;
+	}
+	else if(!modify_keywords(effective_keywords, effective_keywords, modify_keys))
+		return;
+	if(effective_keywords == full_keywords) {
+		effective_state = EFFECTIVE_UNUSED;
+		effective_keywords.clear();
+	}
+	else
+		effective_state = EFFECTIVE_USED;
 }

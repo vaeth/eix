@@ -61,12 +61,18 @@ class Version : public ExtendedVersion, public Keywords {
 			SAVEEFFECTIVE_USERPROFILE, SAVEEFFECTIVE_PROFILE, SAVEEFFECTIVE_SIZE
 		} SavedEffectiveIndex;
 
+		typedef unsigned char EffectiveState;
+		static const EffectiveState
+			EFFECTIVE_UNSAVED = 0,
+			EFFECTIVE_USED    = 1,
+			EFFECTIVE_UNUSED  = 2;
+
 		std::vector<KeywordsFlags> saved_keywords;
 		std::vector<bool>          have_saved_keywords;
 		std::vector<MaskFlags>     saved_masks;
 		std::vector<bool>          have_saved_masks;
 		std::vector<std::string>   saved_effective;
-		std::vector<bool>          have_saved_effective;
+		std::vector<EffectiveState> states_effective;
 
 		std::vector<SetsIndex> sets_indizes;
 
@@ -76,7 +82,8 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
 			have_saved_masks(SAVEMASK_SIZE, false),
 			saved_effective(SAVEEFFECTIVE_SIZE, ""),
-			have_saved_effective(SAVEEFFECTIVE_SIZE, false)
+			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
+			effective_state(EFFECTIVE_UNUSED)
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
@@ -86,7 +93,8 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
 			have_saved_masks(SAVEMASK_SIZE, false),
 			saved_effective(SAVEEFFECTIVE_SIZE, ""),
-			have_saved_effective(SAVEEFFECTIVE_SIZE, false)
+			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
+			effective_state(EFFECTIVE_UNUSED)
 		{ }
 
 		void save_keyflags(SavedKeyIndex i)
@@ -97,8 +105,8 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void save_effective(SavedEffectiveIndex i)
 		{
-			have_saved_effective[i] = true;
-			saved_effective[i] = effective_keywords;
+			if((states_effective[i] = effective_state) == EFFECTIVE_USED)
+				saved_effective[i] = effective_keywords;
 		}
 
 		bool restore_keyflags(SavedKeyIndex i)
@@ -121,11 +129,14 @@ class Version : public ExtendedVersion, public Keywords {
 
 		bool restore_effective(SavedEffectiveIndex i)
 		{
-			if(have_saved_effective[i]) {
+			EffectiveState s = states_effective[i];
+			if(s == EFFECTIVE_UNSAVED)
+				return false;
+			if((effective_state = s) == EFFECTIVE_USED)
 				effective_keywords = saved_effective[i];
-				return true;
-			}
-			return false;
+			else
+				effective_keywords.clear();
+			return true;
 		}
 
 		void set_iuse(const std::string &i);
@@ -145,18 +156,25 @@ class Version : public ExtendedVersion, public Keywords {
 		}
 
 		void reset_effective_keywords()
-		{ effective_keywords = full_keywords; }
+		{ effective_state = EFFECTIVE_UNUSED; effective_keywords.clear(); }
 
 		/** Calls must be initialized with reset_effective_keywords().
 		    Call save_effective_keywords only after the last modify command! */
-		void modify_effective_keywords(const std::string &modify_keys)
-		{ modify_keywords(effective_keywords, modify_keys); }
+		void modify_effective_keywords(const std::string &modify_keys);
 
 		const std::string get_effective_keywords() const
-		{ return effective_keywords; }
+		{
+			if(effective_state == EFFECTIVE_USED)
+				return effective_keywords;
+			return full_keywords;
+		}
 
 		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus) const
-		{ return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords, obsolete_minus); }
+		{
+			if(effective_state == EFFECTIVE_USED)
+				return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords, obsolete_minus);
+			return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords, obsolete_minus);
+		}
 
 		void set_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
 		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
@@ -170,6 +188,7 @@ class Version : public ExtendedVersion, public Keywords {
 		mutable std::string m_cached_iuse;
 
 		std::string effective_keywords;
+		EffectiveState effective_state;
 };
 
 /** The equality operator does *not* test the slots */

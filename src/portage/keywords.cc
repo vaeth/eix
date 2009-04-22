@@ -111,13 +111,14 @@ const Keywords::Redundant
 	Keywords::RED_IN_CFLAGS,
 	Keywords::RED_ALL_CFLAGS;
 
-void
-Keywords::modify_keywords(string &effective_keys, const string &modify_keys)
+bool
+Keywords::modify_keywords(string &result, const string &original, const string &modify_keys)
 {
+	bool modified = false;
 	vector<string> modify = split_string(modify_keys);
 	if(modify.empty())
-		return;
-	vector<string> words = split_string(effective_keys);
+		return false;
+	vector<string> words = split_string(original);
 	for(vector<string>::const_iterator it = modify.begin();
 		it != modify.end(); ++it) {
 		if(it->empty())
@@ -125,13 +126,20 @@ Keywords::modify_keywords(string &effective_keys, const string &modify_keys)
 		if((*it)[0] == '-') {
 			vector<string>::iterator f =
 				find(words.begin(), words.end(), it->substr(1));
-			if(f != words.end())
+			if(f != words.end()) {
+				modified = true;
 				words.erase(f);
+			}
 		}
 		else {
-			if(find(words.begin(), words.end(), *it) == words.end())
+			if(find(words.begin(), words.end(), *it) == words.end()) {
+				modified = true;
 				words.push_back(*it);
+			}
 		}
 	}
-	effective_keys = join_vector(words);
+	if(!modified)
+		return false;
+	result = join_vector(words);
+	return true;
 }

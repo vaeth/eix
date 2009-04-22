@@ -198,7 +198,10 @@ class Keywords
 		std::string get_full_keywords() const
 		{ return full_keywords; }
 
-		static void modify_keywords(std::string &effective_keys, const std::string &modify_keys);
+		/** Add/substract modify keys to/from original to obtain result.
+		 *  @return false if certainly no modifications occur. In this case
+		 *  the result is not modified */
+		static bool modify_keywords(std::string &result, const std::string &original, const std::string &modify_keys);
 
 		void set_redundant(Redundant or_redundant = true)
 		{ redundant |= or_redundant; }
