@@ -57,4 +57,5 @@ do
 done
 ${found} || Die "For some reason no tarball was created"
 echo "The tarballs will be removed with ./mksvnclean
-Note that to tag the release in svn you should run mkrelease"
+To install with portage run as root ./mkemerge
+To tag the release in svn you should run ./mkrelease"

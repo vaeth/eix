@@ -31,7 +31,8 @@ class CascadingProfile {
 
 		MaskList<Mask> m_system;         /**< Packages in system profile. */
 		MaskList<Mask> m_system_allowed; /**< Packages that are not in system profile but only allowed to have specific versions.*/
-		MaskList<Mask> m_package_masks;  /**< Masks from package.masks */
+		MaskList<Mask> m_package_masks;  /**< Masks from package.mask */
+		MaskList<Mask> m_package_unmasks;/**< Masks from package.unmask */
 
 	private:
 
@@ -42,7 +43,16 @@ class CascadingProfile {
 		 * Populate m_system and m_system_allowed.
 		 * @return true if data was changed */
 		bool readPackages(const std::string &line);
+
+		/** Read all "package.mask" files found in profile.
+		 * Populate m_package_masks.
+		 * @return true if data was changed */
 		bool readPackageMasks(const std::string &line);
+
+		/** Read all "package.unmask" files found in profile.
+		 * Populate m_package_unmasks.
+		 * @return true if data was changed */
+		bool readPackageUnmasks(const std::string &line);
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world)
 		{
@@ -90,6 +100,10 @@ class CascadingProfile {
 
 		const MaskList<Mask> *getPackageMasks() const {
 			return &(m_package_masks);
+		}
+
+		const MaskList<Mask> *getPackageUnmasks() const {
+			return &(m_package_unmasks);
 		}
 };
 

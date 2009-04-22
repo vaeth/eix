@@ -70,6 +70,10 @@ CascadingProfile::readremoveFiles()
 		{
 			handler = &CascadingProfile::readPackageMasks;
 		}
+		else if(strcmp(strrchr(file->c_str(), '/'), "/package.unmask") == 0)
+		{
+			handler = &CascadingProfile::readPackageUnmasks;
+		}
 		else
 			continue;
 
@@ -162,6 +166,22 @@ CascadingProfile::readPackageMasks(const string &line)
 	}
 }
 
+bool
+CascadingProfile::readPackageUnmasks(const string &line)
+{
+	if(line[0] == '-')
+	{
+		Mask *m = new Mask(line.substr(1).c_str(), Mask::maskUnmask);
+		bool ret = m_package_unmasks.remove(m);
+		delete m;
+		return ret;
+	}
+	else
+	{
+		return m_package_unmasks.add(new Mask(line.c_str(), Mask::maskUnmask));
+	}
+}
+
 /** Cycle through profile and put path to files into this->m_profile_files. */
 void
 CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
@@ -201,6 +221,7 @@ CascadingProfile::applyMasks(Package *p) const
 	getAllowedPackages()->applyMasks(p);
 	getSystemPackages()->applyMasks(p);
 	getPackageMasks()->applyMasks(p);
+	getPackageUnmasks()->applyMasks(p);
 	if(use_world)
 		getWorldPackages()->applyMasks(p);
 	m_portagesettings->finalize(p);
