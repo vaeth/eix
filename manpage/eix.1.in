@@ -1609,8 +1609,8 @@ Define the printf-like format used to print useflags of installed packages.
 If this string is empty, the processing is slightly faster since then these data are not read.
 
 .TP
-.BR FORMAT_BEFORE_KEYWORDS ", " FORMAT_AFTER_KEYWORDS
-These strings are printed before/after the KEYWORDS string for a version is printed.
+.BR FORMAT_BEFORE_KEYWORDS ", " FORMAT_AFTER_KEYWORDS ", " FORMAT_BEFORE_EFFECTIVE_KEYWORDS ", " FORMAT_AFTER_EFFECTIVE_KEYWORDS
+These strings are printed before/after the (effective) KEYWORDS string for a version is printed.
 
 .TP
 .BR FORMAT_BEFORE_IUSE ", " FORMAT_AFTER_IUSE ", " FORMAT_BEFORE_COLL_IUSE ", " FORMAT_AFTER_COLL_IUSE ", " FORMAT_BEFORE_SLOT_IUSE ", " FORMAT_AFTER_SLOT_IUSE
@@ -2023,6 +2023,12 @@ If not B<false> and --versionlines is active, the KEYWORDS string is
 printed after the version (and before/after the IUSE data).
 Currently, B<first> and B<true> have the same meaning as B<before>,
 and B<last> has the same meaning as B<after>.
+.TP
+.BR PRINT_EFFECTIVE_KEYWORDS " " (true / false)
+If B<PRINT_KEYWORDS> is in effect and this variable is true
+and the KEYWORD of a version is modified by the profile,
+then the effective keywords (according to the profile) is printed
+after the KEYWORDS stored in the ebuild.
 .TP
 .BR PRINT_IUSE " " (true / false)
 If B<true>, print IUSE data.

@@ -219,6 +219,12 @@ class Package
 				it->save_maskflags(i);
 		}
 
+		void save_effective(Version::SavedEffectiveIndex i)
+		{
+			for(iterator it = begin(); it != end(); ++it)
+				it->save_effective(i);
+		}
+
 		bool restore_keyflags(Version::SavedKeyIndex i)
 		{
 			local_collects = saved_collects[i];
@@ -233,6 +239,15 @@ class Package
 		{
 			for(iterator it = begin(); it != end(); ++it) {
 				if(!(it->restore_maskflags(i)))
+					return false;
+			}
+			return true;
+		}
+
+		bool restore_effective(Version::SavedEffectiveIndex i)
+		{
+			for(iterator it = begin(); it != end(); ++it) {
+				if(!(it->restore_effective(i)))
 					return false;
 			}
 			return true;

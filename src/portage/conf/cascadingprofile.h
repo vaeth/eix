@@ -33,6 +33,7 @@ class CascadingProfile {
 		MaskList<Mask> m_system_allowed; /**< Packages that are not in system profile but only allowed to have specific versions.*/
 		MaskList<Mask> m_package_masks;  /**< Masks from package.mask */
 		MaskList<Mask> m_package_unmasks;/**< Masks from package.unmask */
+		MaskList<PKeywordMask> m_package_keywords;/**< Masks from package.keywords */
 
 	private:
 
@@ -53,6 +54,11 @@ class CascadingProfile {
 		 * Populate m_package_unmasks.
 		 * @return true if data was changed */
 		bool readPackageUnmasks(const std::string &line);
+
+		/** Read all "package.keywords" files found in profile.
+		 * Populate m_package_keywords.
+		 * @return true if data was changed */
+		bool readPackageKeywords(const std::string &line);
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world)
 		{
@@ -82,6 +88,7 @@ class CascadingProfile {
 		{ m_profile_files.clear(); }
 
 		void applyMasks(Package *p) const;
+		void applyKeywords(Package *p) const;
 
 		/** Get all m_system packages. */
 		const MaskList<Mask> *getSystemPackages() const {
@@ -99,11 +106,15 @@ class CascadingProfile {
 		}
 
 		const MaskList<Mask> *getPackageMasks() const {
-			return &(m_package_masks);
+			return &m_package_masks;
 		}
 
 		const MaskList<Mask> *getPackageUnmasks() const {
-			return &(m_package_unmasks);
+			return &m_package_unmasks;
+		}
+
+		const MaskList<PKeywordMask> *getPackageKeywords() const {
+			return &m_package_keywords;
 		}
 };
 

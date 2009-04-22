@@ -205,6 +205,7 @@ class PrintFormat {
 		     colored_slots,       /**< Print slots in separate color */
 		     alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
 		     print_iuse,          /**< Print iuse data */
+		     print_effective,     /**< Print effective keywords */
 		     print_restrictions;  /**< Print mirror/fetch restrictions */
 		short print_keywords;     /**< Print keywords before/after (</>0) iuse data */
 
@@ -238,6 +239,7 @@ class PrintFormat {
 		std::string dateFormat,       /**< The format of the long  install-date */
 		            dateFormatShort;  /**< The format of the short install-date */
 		std::string before_keywords, after_keywords,
+		            before_ekeywords, after_ekeywords,
 		            before_iuse, after_iuse,
 		            before_coll_iuse, after_coll_iuse,
 		            before_slot_iuse, after_slot_iuse;
@@ -314,6 +316,8 @@ class PrintFormat {
 			}
 			before_keywords    = parse_colors(before_keywords, use_color);
 			after_keywords     = parse_colors(after_keywords, use_color);
+			before_ekeywords   = parse_colors(before_ekeywords, use_color);
+			after_ekeywords    = parse_colors(after_ekeywords, use_color);
 			before_iuse        = parse_colors(before_iuse, use_color);
 			after_iuse         = parse_colors(after_iuse, use_color);
 			before_coll_iuse   = parse_colors(before_coll_iuse, use_color);

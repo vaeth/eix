@@ -198,11 +198,7 @@ class Keywords
 		std::string get_full_keywords() const
 		{ return full_keywords; }
 
-		void set_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
-		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
-
-		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus) const
-		{ return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords, obsolete_minus); }
+		static void modify_keywords(std::string &effective_keys, const std::string &modify_keys);
 
 		void set_redundant(Redundant or_redundant = true)
 		{ redundant |= or_redundant; }

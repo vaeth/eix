@@ -61,7 +61,6 @@ CascadingProfile::readremoveFiles()
 		++file)
 	{
 		bool (CascadingProfile::*handler)(const string &line);
-
 		if(strcmp(strrchr(file->c_str(), '/'), "/packages") == 0)
 		{
 			handler = &CascadingProfile::readPackages;
@@ -73,6 +72,10 @@ CascadingProfile::readremoveFiles()
 		else if(strcmp(strrchr(file->c_str(), '/'), "/package.unmask") == 0)
 		{
 			handler = &CascadingProfile::readPackageUnmasks;
+		}
+		else if(strcmp(strrchr(file->c_str(), '/'), "/package.keywords") == 0)
+		{
+			handler = &CascadingProfile::readPackageKeywords;
 		}
 		else
 			continue;
@@ -153,15 +156,13 @@ CascadingProfile::readMakeDefaults()
 bool
 CascadingProfile::readPackageMasks(const string &line)
 {
-	if(line[0] == '-')
-	{
+	if(line[0] == '-') {
 		Mask *m = new Mask(line.substr(1).c_str(), Mask::maskMask);
 		bool ret = m_package_masks.remove(m);
 		delete m;
 		return ret;
 	}
-	else
-	{
+	else {
 		return m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
 	}
 }
@@ -169,16 +170,44 @@ CascadingProfile::readPackageMasks(const string &line)
 bool
 CascadingProfile::readPackageUnmasks(const string &line)
 {
-	if(line[0] == '-')
-	{
+	if(line[0] == '-') {
 		Mask *m = new Mask(line.substr(1).c_str(), Mask::maskUnmask);
 		bool ret = m_package_unmasks.remove(m);
 		delete m;
 		return ret;
 	}
-	else
-	{
+	else {
 		return m_package_unmasks.add(new Mask(line.c_str(), Mask::maskUnmask));
+	}
+}
+
+bool
+CascadingProfile::readPackageKeywords(const string &line)
+{
+	string::size_type s = line.find(' ');
+	if(line[0] == '-') {
+		string name;
+		if(s == string::npos) {
+			name = line;
+		}
+		else {
+			if(s == 1)
+				return false;
+			name = line.substr(1, s);
+		}
+		PKeywordMask *m = new PKeywordMask(name.c_str());
+		bool ret = m_package_keywords.remove(m);
+		delete m;
+		return ret;
+	}
+	else {
+		if(s == string::npos)
+			return false;
+		if(s + 1 >= line.size())
+			return false;
+		PKeywordMask *m = new PKeywordMask(line.substr(0, s).c_str());
+		m->keywords = line.substr(s + 1);
+		return m_package_keywords.add(m);
 	}
 }
 
@@ -227,3 +256,11 @@ CascadingProfile::applyMasks(Package *p) const
 	m_portagesettings->finalize(p);
 }
 
+void
+CascadingProfile::applyKeywords(Package *p) const
+{
+	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+		it->reset_effective_keywords();
+	}
+	getPackageKeywords()->applyMasks(p);
+}

@@ -1,4 +1,4 @@
-// vim:set noet cinoptions= sw=4 ts=4:
+// vimnset noet cinoptions= sw=4 ts=4:
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
@@ -111,6 +111,16 @@ class KeywordMask : public Mask {
 
 		std::string keywords;
 		bool locally_double;
+};
+
+class PKeywordMask : public Mask {
+	public:
+
+		PKeywordMask(const char *str) : Mask(str, maskTypeNone)
+		{ }
+
+		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
+		std::string keywords;
 };
 
 class SetMask : public Mask {

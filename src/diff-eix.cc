@@ -358,6 +358,9 @@ run_diff_eix(int argc, char *argv[])
 	format_for_new.print_keywords   = eixrc.getBeforeAfter("PRINT_KEYWORDS");
 	format_for_new.before_keywords  = eixrc["FORMAT_BEFORE_KEYWORDS"];
 	format_for_new.after_keywords   = eixrc["FORMAT_AFTER_KEYWORDS"];
+	format_for_new.print_effective  = eixrc.getBool("PRINT_EFFECTIVE_KEYWORDS");
+	format_for_new.before_ekeywords = eixrc["FORMAT_BEFORE_EFFECTIVE_KEYWORDS"];
+	format_for_new.after_ekeywords  = eixrc["FORMAT_AFTER_EFFECTIVE_KEYWORDS"];
 	format_for_new.print_iuse       = eixrc.getBool("PRINT_IUSE");
 	format_for_new.before_iuse      = eixrc["FORMAT_BEFORE_IUSE"];
 	format_for_new.after_iuse       = eixrc["FORMAT_AFTER_IUSE"];

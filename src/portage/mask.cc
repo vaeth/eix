@@ -268,7 +268,17 @@ Mask::checkMask(Package& pkg, Keywords::Redundant check)
 {
 	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i)
 		apply(*i, check);
-	return;
+}
+
+void
+PKeywordMask::checkMask(Package &pkg, Keywords::Redundant check)
+{
+	UNUSED(check);
+	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i) {
+		if(test(*i)) {
+			i->modify_effective_keywords(keywords);
+		}
+	}
 }
 
 void
@@ -282,7 +292,6 @@ SetMask::checkMask(Package& pkg, Keywords::Redundant check)
 			continue;
 		i->add_to_set(m_set);
 	}
-	return;
 }
 
 bool
@@ -362,5 +371,4 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 		default:
 			break;
 	}
-	return;
 }

@@ -1063,35 +1063,47 @@ AddOption(STRING, "FORMAT_SHORT_INSTALLATION_DATE",
 
 AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
 	" \"(cyan)", "This string is printed before KEYWORDS string for a version is output.\n"
-	"(this is only used when --versionlines and PRINT_KEYWORDS is active)");
+	"(This is only used when --versionlines and PRINT_KEYWORDS is active)");
 
 AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
 	"()\"", "This string is printed after KEYWORDS string for a version is output.\n"
-	"(this is only used when --versionlines and PRINT_KEYWORDS is active)");
+	"(This is only used when --versionlines and PRINT_KEYWORDS is active)");
+
+AddOption(STRING, "PRINT_EFFECTIVE_KEYWORDS",
+	"true", "Print effective keywords if the profile modified those of the ebuild.");
+
+AddOption(STRING, "FORMAT_BEFORE_EFFECTIVE_KEYWORDS",
+	" -> \"(cyan)", "If PRINT_EFFECTIVE_KEYWORDS applies this string is printed after the\n"
+	"keywords and before the effective keywords string."
+	"(This is only used when --versionlines and PRINT_KEYWORDS is active)");
+
+AddOption(STRING, "FORMAT_AFTER_EFFECTIVE_KEYWORDS",
+	"()\"", "This string is printed after the effective keywords (if these a printed.\n"
+	"(This is only used when --versionlines and PRINT_KEYWORDS is active)");
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
 	" [(blue)", "This string is printed before IUSE data for a version is output.\n"
-	"(this is only used when --versionlines is active)");
+	"(This is only used when --versionlines is active)");
 
 AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"()]", "This string is printed after IUSE data for a version is output.\n"
-	"(this is only used when --versionlines is active)");
+	"(This is only used when --versionlines is active)");
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_IUSE",
 	" \\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
-	"(this is only used when --versionlines is inactive and there are no slots).");
+	"(This is only used when --versionlines is inactive and there are no slots).");
 
 AddOption(STRING, "FORMAT_AFTER_COLL_IUSE",
 	"()\\}", "This string is printed before IUSE data for all versions is output.\n"
-	"(this is only used when --versionlines is inactive and there are no slots).");
+	"(This is only used when --versionlines is inactive and there are no slots).");
 
 AddOption(STRING, "FORMAT_BEFORE_SLOT_IUSE",
 	"\\n\\t\\{(blue)", "This string is printed before IUSE data for all versions is output.\n"
-	"(this is only used when --versionlines is inactive and sorting is by slots).");
+	"(This is only used when --versionlines is inactive and sorting is by slots).");
 
 AddOption(STRING, "FORMAT_AFTER_SLOT_IUSE",
 	"()\\}", "This string is printed before IUSE data for all versions is output.\n"
-	"(this is only used when --versionlines is inactive and sorting is by slots).");
+	"(This is only used when --versionlines is inactive and sorting is by slots).");
 
 AddOption(STRING, "COLOR_MASKED",
 	"red", "Define color for masked versions.");

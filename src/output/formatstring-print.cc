@@ -317,9 +317,14 @@ static void
 print_keywords_version(const PrintFormat *fmt, const Version *version)
 {
 	string keywords = version->get_full_keywords();
-	if(keywords.empty())
-		return;
+	string effective = version->get_effective_keywords();
+	if(keywords.empty()) {
+		if(effective.empty() || !fmt->print_effective)
+			return;
+	}
 	cout << fmt->before_keywords << keywords << fmt->after_keywords;
+	if(fmt->print_effective && (keywords != effective))
+		cout << fmt->before_ekeywords << effective << fmt->after_ekeywords;
 }
 
 void
@@ -579,6 +584,8 @@ print_version(const PrintFormat *fmt, const Version *version, const Package *pac
 		cout << AnsiColor::reset();
 	if(!fmt->style_version_lines)
 		return;
+	if((fmt->print_keywords) && (fmt->print_effective))
+		fmt->portagesettings->get_effective_keywords_userprofile(const_cast<Package *>(package));
 	if(fmt->print_keywords > 0)
 		print_keywords_version(fmt, version);
 	if(fmt->print_iuse)

@@ -898,6 +898,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		if(p->restore_keyflags(Version::SAVEKEY_USER))
 			return false;
 	}
+	m_settings->get_effective_keywords_userprofile(p);
 
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
 	map<Version*,vector<string> > sorted_by_versions;
@@ -980,7 +981,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		{
 			// Create keywords_set of KEYWORDS from the ebuild
 			set<string> keywords_set;
-			make_set<string>(keywords_set, split_string(it->get_full_keywords()));
+			make_set<string>(keywords_set, split_string(it->get_effective_keywords()));
 
 			// Create kv_set (of now active keywords), possibly testing for double keywords and -*
 			set<string> kv_set;
@@ -1093,7 +1094,7 @@ PortageUserConfig::pushback_set_accepted_keywords(vector<string> &result, const 
 
 /// Set stability according to arch or local ACCEPT_KEYWORDS
 void
-PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
+PortageSettings::setKeyflags(Package *p, bool use_accepted_keywords) const
 {
 	const set<string> *accept_set;
 	Version::SavedKeyIndex ind;
@@ -1105,11 +1106,39 @@ PortageSettings::setKeyflags(Package *pkg, bool use_accepted_keywords) const
 		ind = Version::SAVEKEY_ARCH;
 		accept_set = &m_arch_set;
 	}
-	if(pkg->restore_keyflags(ind))
+	if(p->restore_keyflags(ind))
 		return;
-	for(Package::iterator t = pkg->begin(); t != pkg->end(); ++t) {
+	get_effective_keywords_profile(p);
+	for(Package::iterator t = p->begin(); t != p->end(); ++t) {
 		t->set_keyflags(*accept_set, m_obsolete_minusasterisk);
 		t->save_keyflags(ind);
+	}
+}
+
+void
+PortageSettings::get_effective_keywords_profile(Package *p) const
+{
+	if(!p->restore_effective(Version::SAVEEFFECTIVE_PROFILE)) {
+		profile->applyKeywords(p);
+		p->save_effective(Version::SAVEEFFECTIVE_PROFILE);
+	}
+}
+
+void
+PortageSettings::get_effective_keywords_userprofile(Package *p) const
+{
+	if(!p->restore_effective(Version::SAVEEFFECTIVE_USERPROFILE)) {
+		bool done = false;
+		if(user_config) {
+			CascadingProfile *cascade = user_config->profile;
+			if(cascade) {
+				cascade->applyKeywords(p);
+				done = true;
+			}
+		}
+		if(!done)
+			get_effective_keywords_profile(p);
+		p->save_effective(Version::SAVEEFFECTIVE_USERPROFILE);
 	}
 }
 

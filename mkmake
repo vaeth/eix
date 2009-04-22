@@ -17,6 +17,7 @@ Available options are
   -b  With bzlib
   -B  Without bzlib
   -c  Use only debugging-safe CXXFLAGS
+  -jX Use -jX (currently ${JARG})
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1}
 }
@@ -37,7 +38,8 @@ PEDANTIC=false
 EXTRA_CACHE='--enable-extra-cache'
 SEPARATE=''
 CHOWN=false
-while getopts 'q0123nepusSbBcr?hH' OPTION
+JARG='-j3'
+while getopts 'q0123nepusSbBcrj:?hH' OPTION
 do
 case "${OPTION}" in
 	q) QUIET='>/dev/null 2>&1';;
@@ -55,6 +57,7 @@ case "${OPTION}" in
 	B) BZLIB='--without-bzip2';;
 	c) SAFEFLAGS=true;;
 	r) CHOWN=true;;
+	j) [ -n "${OPTARG}" ] && JARG='-j${OPTARG}' || JARG='';;
 	*) Usage 1;;
 esac
 done
@@ -117,12 +120,12 @@ then
 	eval ./configure "--prefix=" ${SQLITE} ${BZLIB} ${EXTRA_CACHE} ${SEPARATE} ${QUIET} || \
 		Die "configure failed"
 fi
-${EARLYSTOP} && exec make config.h
+${EARLYSTOP} && exec make ${JARG} config.h
 echo "Making ${*}..."
 command -v make >/dev/null 2>&1 || Die "cannot find make"
 if [ -n "${QUIET}" ]
 then
-	exec make "${@}" >/dev/null 2>&1
+	exec make ${JARG} "${@}" >/dev/null 2>&1
 else
-	exec make "${@}"
+	exec make ${JARG} "${@}"
 fi

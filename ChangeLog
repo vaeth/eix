@@ -2,7 +2,7 @@
 
 *eix-0.15.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Support $PROFILE/package.unmask
+	- Support $PROFILE/package.keywords and $PROFILE/package.unmask
 	- manpage: Make clear that overlays must be paths, not repo-names.
 	- manpage: Give some examples for egencache hooks with eix-sync.
 

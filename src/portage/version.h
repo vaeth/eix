@@ -57,10 +57,16 @@ class Version : public ExtendedVersion, public Keywords {
 			SAVEMASK_PROFILE, SAVEMASK_FILE, SAVEMASK_SIZE
 		} SavedMaskIndex;
 
+		typedef enum {
+			SAVEEFFECTIVE_USERPROFILE, SAVEEFFECTIVE_PROFILE, SAVEEFFECTIVE_SIZE
+		} SavedEffectiveIndex;
+
 		std::vector<KeywordsFlags> saved_keywords;
 		std::vector<bool>          have_saved_keywords;
 		std::vector<MaskFlags>     saved_masks;
 		std::vector<bool>          have_saved_masks;
+		std::vector<std::string>   saved_effective;
+		std::vector<bool>          have_saved_effective;
 
 		std::vector<SetsIndex> sets_indizes;
 
@@ -68,7 +74,9 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
-			have_saved_masks(SAVEMASK_SIZE, false)
+			have_saved_masks(SAVEMASK_SIZE, false),
+			saved_effective(SAVEEFFECTIVE_SIZE, ""),
+			have_saved_effective(SAVEEFFECTIVE_SIZE, false)
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
@@ -76,7 +84,9 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
-			have_saved_masks(SAVEMASK_SIZE, false)
+			have_saved_masks(SAVEMASK_SIZE, false),
+			saved_effective(SAVEEFFECTIVE_SIZE, ""),
+			have_saved_effective(SAVEEFFECTIVE_SIZE, false)
 		{ }
 
 		void save_keyflags(SavedKeyIndex i)
@@ -84,6 +94,12 @@ class Version : public ExtendedVersion, public Keywords {
 
 		void save_maskflags(SavedMaskIndex i)
 		{ have_saved_masks[i] = true; saved_masks[i] = maskflags; }
+
+		void save_effective(SavedEffectiveIndex i)
+		{
+			have_saved_effective[i] = true;
+			saved_effective[i] = effective_keywords;
+		}
 
 		bool restore_keyflags(SavedKeyIndex i)
 		{
@@ -98,6 +114,15 @@ class Version : public ExtendedVersion, public Keywords {
 		{
 			if(have_saved_masks[i]) {
 				maskflags = saved_masks[i];
+				return true;
+			}
+			return false;
+		}
+
+		bool restore_effective(SavedEffectiveIndex i)
+		{
+			if(have_saved_effective[i]) {
+				effective_keywords = saved_effective[i];
 				return true;
 			}
 			return false;
@@ -119,6 +144,23 @@ class Version : public ExtendedVersion, public Keywords {
 				sets_indizes.push_back(m_set);
 		}
 
+		void reset_effective_keywords()
+		{ effective_keywords = full_keywords; }
+
+		/** Calls must be initialized with reset_effective_keywords().
+		    Call save_effective_keywords only after the last modify command! */
+		void modify_effective_keywords(const std::string &modify_keys)
+		{ modify_keywords(effective_keywords, modify_keys); }
+
+		const std::string get_effective_keywords() const
+		{ return effective_keywords; }
+
+		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus) const
+		{ return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords, obsolete_minus); }
+
+		void set_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
+		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
+
 	protected:
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty
 		    to save memory. See the comments above NOT_FULL_USE. */
@@ -126,6 +168,8 @@ class Version : public ExtendedVersion, public Keywords {
 
 		/// joint strings from m_iuse; clear if you change m_iuse.
 		mutable std::string m_cached_iuse;
+
+		std::string effective_keywords;
 };
 
 /** The equality operator does *not* test the slots */

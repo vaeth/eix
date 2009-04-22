@@ -195,6 +195,10 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		void finalize(Package *p)
 		{ calc_world_sets(p); p->finalize_masks(); }
+
+		void get_effective_keywords_profile(Package *p) const;
+
+		void get_effective_keywords_userprofile(Package *p) const;
 };
 
 #endif
