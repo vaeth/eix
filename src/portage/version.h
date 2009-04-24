@@ -155,6 +155,12 @@ class Version : public ExtendedVersion, public Keywords {
 				sets_indizes.push_back(m_set);
 		}
 
+		void set_full_keywords(const std::string &keywords)
+		{ full_keywords = keywords; }
+
+		std::string get_full_keywords() const
+		{ return full_keywords; }
+
 		void reset_effective_keywords()
 		{ effective_state = EFFECTIVE_UNUSED; effective_keywords.clear(); }
 
@@ -187,7 +193,7 @@ class Version : public ExtendedVersion, public Keywords {
 		/// joint strings from m_iuse; clear if you change m_iuse.
 		mutable std::string m_cached_iuse;
 
-		std::string effective_keywords;
+		std::string full_keywords, effective_keywords;
 		EffectiveState effective_state;
 };
 

@@ -187,16 +187,9 @@ class Keywords
 		Keywords(KeywordsFlags::KeyType k = KeywordsFlags::KEY_EMPTY, MaskFlags::MaskType m = MaskFlags::MASK_NONE) :
 			keyflags(k), maskflags(m)
 		{
-			full_keywords = "";
 			redundant = RED_NOTHING;
 			red_mask = 0x00;
 		}
-
-		void set_full_keywords(const std::string &keywords)
-		{ full_keywords = keywords; }
-
-		std::string get_full_keywords() const
-		{ return full_keywords; }
 
 		/** Add/substract modify keys to/from original to obtain result.
 		 *  @return false if certainly no modifications occur. In this case
@@ -234,7 +227,6 @@ class Keywords
 		{ return (red_mask & 0x08); }
 
 	protected:
-		std::string full_keywords;
 		Redundant redundant;
 		char red_mask; ///< temporary redundant-related stuff during mask testing
 
