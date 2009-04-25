@@ -19,6 +19,7 @@
 //   EIX_BINARY
 //   DIFF_EIX_BINARY
 //   UPDATE_BINARY
+//   VERSIONSORT_BINARY
 // to build the corresponding functionality into the generated binary.
 // If several are selected, main() will select depending on the call name.
 
@@ -46,6 +47,16 @@ int run_diff_eix(int argc, char *argv[]);
 #define BINARY_COLLECTION 1
 #else
 #define USE_BINARY run_diff_eix
+#endif
+#endif
+
+#if defined(VERSIONSORT_BINARY)
+int run_versionsort(int argc, char *argv[]);
+#if defined(USE_BINARY)
+#undef BINARY_COLLECTION
+#define BINARY_COLLECTION 1
+#else
+#define USE_BINARY run_versionsort
 #endif
 #endif
 
@@ -118,11 +129,18 @@ run_program(int argc, char *argv[])
 		return run_diff_eix(argc, argv);
 #endif
 #if defined(UPDATE_EIX_BINARY)
-#if defined(EIX_BINARY)
+#if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
 	if((program_name.find("update") != string::npos) ||
 		(program_name.find("UPDATE") != string::npos))
 #endif
 		return run_update_eix(argc, argv);
+#endif
+#if defined(VERSIONSORT_BINARY)
+#if defined(EIX_BINARY)
+	if((program_name.find("vers") != string::npos) ||
+		(program_name.find("VERS") != string::npos))
+#endif
+		return run_versionsort(argc, argv);
 #endif
 #if defined(EIX_BINARY)
 		return run_eix(argc, argv);

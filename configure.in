@@ -67,6 +67,25 @@ ${separate_binaries} && separate_update=true
 AM_CONDITIONAL(SEPARATE_UPDATE, ${separate_update})
 
 
+dnl Separate tools?
+AC_ARG_ENABLE( separate_tools,[  --enable-separate-tools    create separate binaries for tools (versionsort)], [
+		case "${enableval}" in
+			yes)
+				separate_tools=true
+				;;
+			no)
+				separate_tools=false
+				;;
+			*)
+				AC_MSG_ERROR([bad value ${enableval} for --enable-separate-tools])
+				;;
+		esac
+	],[
+		separate_tools=false
+	])
+AM_CONDITIONAL(SEPARATE_TOOLS, ${separate_tools})
+
+
 dnl Look for basic functions:
 AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset], ,
 			   AC_MSG_ERROR([We really need those functions ..]))

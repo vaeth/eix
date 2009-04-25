@@ -171,7 +171,9 @@ CLEANFILES = cppcomplete.tags tags eix-sync eix-test-obsolete \
 			 update-eix-remote update-eix-layman functions-eix.sh \
 			 eixrc/eixrc \
 			 cache/cache_map.cc \
-			 diff-eix$(EXEEXT) update-eix$(EXEEXT)
+			 diff-eix$(EXEEXT) \
+			 update-eix$(EXEEXT) \
+			 versionsort$(EXEEXT)
 
 EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
 			 update-eix-layman.in functions-eix.sh.in \
@@ -181,59 +183,116 @@ EXTRA_DIST = eix-sync.in eix-test-obsolete.in update-eix-remote.in \
 bin_SCRIPTS  = eix-sync eix-test-obsolete update-eix-remote update-eix-layman \
 			 functions-eix.sh
 
+if SEPARATE_TOOLS
+
+use_separate_tools = true
+tool_programs = versionsort
+tool_noinst =
+main_all = main/main_all.cc
+main_output = main/main_output.cc
+main_eix = main/main_eix.cc
+main_diff_eix = main/main_diff_eix.cc
+main_update_eix = main/main_update_eix.cc
+
+versionsort_src = versionsort.cc \
+	main/main_versionsort.cc \
+	main/main.h \
+	database/types.h \
+	eixTk/inttypes.h \
+	eixTk/stringutils.cc \
+	eixTk/stringutils.h \
+	eixTk/compare.h \
+	eixTk/exceptions.h \
+	eixTk/formated.cc \
+	eixTk/formated.h \
+	portage/basicversion.cc \
+	portage/basicversion.h
+
+else
+
+use_separate_tools = false
+tool_programs =
+tool_noinst = versionsort$(EXEEXT)
+main_all = versionsort.cc main/main_all_tools.cc
+main_output = main/main_output.cc
+main_eix = main/main_eix.cc
+main_diff_eix = main/main_diff_eix.cc
+main_update_eix = versionsort.cc main/main_update_eix_tools.cc
+uninstall_local_tools = uninstall-local-tools
+install_exec_hook_tools = install-exec-hook-tools
+
+endif
+
 if SEPARATE_UPDATE
 
 if SEPARATE_BINARIES
 
 # Generate all three binaries separately:
-bin_PROGRAMS = update-eix eix diff-eix
+bin_PROGRAMS = update-eix eix diff-eix $(tool_programs)
+noinst_DATA = $(tool_noinst)
 eix_LDADD = $(eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) \
-	main/main_eix.cc
+eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) $(main_eix)
 EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_output_only_src) $(extra_common_src)
 diff_eix_LDADD = $(diff_eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-diff_eix_SOURCES = $(diff_eix_only_src) $(output_only_src) $(common_src) \
-	main/main_diff_eix.cc
+diff_eix_SOURCES = $(diff_eix_only_src) $(output_only_src) $(common_src) $(main_diff_eix)
 EXTRA_diff_eix_SOURCES = $(extra_diff_eix_src) $(extra_output_only_src) $(extra_common_src)
 update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
-update_eix_SOURCES = $(update_eix_only_src) $(common_src) \
-	main/main_update_eix.cc
+update_eix_SOURCES = $(update_eix_only_src) $(common_src) $(main_update_eix)
 EXTRA_update_eix_SOURCES = $(extra_update_eix_src) $(extra_common_src)
 
 else
 
 # Generate only update-eix separately:
-bin_PROGRAMS = update-eix eix
-noinst_DATA = diff-eix$(EXEEXT)
+bin_PROGRAMS = update-eix eix $(tool_programs)
+noinst_DATA = diff-eix$(EXEEXT) $(tool_noinst)
 
 diff-eix$(EXEEXT): eix$(EXEEXT)
 	test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
 	$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
 
-uninstall-local:
+uninstall-local: $(uninstall_local_tools)
 	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
-		rm -- $(bindir)/diff-eix$(EXEEXT)
+		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	$(use_separate_tools) || \
+	test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
 
-install-exec-hook:
+install-exec-hook: $(install_exec_hook_tools)
 	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
 	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	$(use_separate_tools) || \
+	test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
+	$(use_separate_tools) || \
+	$(LN_S) update-eix$(EXEEXT) $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
 
 eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(output_only_src) $(common_src) \
-	main/main_output.cc
+eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(output_only_src) $(common_src) $(main_output)
 EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_output_only_src) $(extra_common_src)
 update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
-update_eix_SOURCES = $(update_eix_only_src) $(common_src) \
-	main/main_update_eix.cc
+update_eix_SOURCES = $(update_eix_only_src) $(common_src) $(main_update_eix)
 EXTRA_update_eix_SOURCES = $(extra_update_eix_src) $(extra_common_src)
 
 endif
+
+if SEPARATE_TOOLS
+
+versionsort_SOURCES = $(versionsort_src)
+
+else
+
+versionsort$(EXEEXT): update-eix$(EXEEXT)
+	test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
+	$(LN_S) update-eix$(EXEEXT) versionsort$(EXEEXT)
+
+endif
+
 else
 
 # Generate only one binary:
-bin_PROGRAMS = eix
-noinst_DATA = diff-eix$(EXEEXT) update-eix$(EXEEXT)
+bin_PROGRAMS = eix $(tool_programs)
+noinst_DATA = diff-eix$(EXEEXT) update-eix$(EXEEXT) $(tool_noinst)
 
 diff-eix$(EXEEXT): eix$(EXEEXT)
 	test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
@@ -245,9 +304,12 @@ update-eix$(EXEEXT): eix$(EXEEXT)
 
 uninstall-local:
 	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
-		rm -- $(bindir)/diff-eix$(EXEEXT)
+		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
 	test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
-		rm -- $(bindir)/update-eix$(EXEEXT)
+		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
+	$(use_separate_tools) || \
+	test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
 
 install-exec-hook:
 	test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
@@ -256,13 +318,31 @@ install-exec-hook:
 	test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
 	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
+	$(use_separate_tools) || \
+	test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
+	$(use_separate_tools) || \
+	$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
+
 
 eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(update_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_eix_only_src) $(update_eix_only_src) \
-	main/main_all.cc
+eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_eix_only_src) $(update_eix_only_src) $(main_all)
 EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_src) $(extra_diff_eix_src) $(extra_update_eix_src)
 
+if SEPARATE_TOOLS
+
+versionsort_SOURCES = $(versionsort_src)
+
+else
+
+versionsort$(EXEEXT): eix$(EXEEXT)
+	test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
+	$(LN_S) eix$(EXEEXT) versionsort$(EXEEXT)
+
 endif
+
+endif
+
 
 
 cache/cache_map.cc: cache/generate_cachemap.sh

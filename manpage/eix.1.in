@@ -28,6 +28,8 @@ An I<EXPRESSION> consists of local options (described below) and a pattern
 .B update-eix-layman
 
 .B functions-eix.sh
+
+.B versionsort
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -79,6 +81,10 @@ You might want to use them for your own similar scripts.
 Note that immediately after sourcing B<functions-eix.sh> you will probably
 want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
 with the corresponding I<ARGS>.
+
+B<versionsort> is a helper tool for scripts which cuts the version strings from its arguments
+and outputs them sorted according to the portage rules of version sorting.
+Details can be found near the end of the manpage.
 .\" }}}
 
 .\" {{{ OPTIONS
@@ -2424,6 +2430,47 @@ But only when the unmodified path @EIX_CACHEFILE@ is used, B<update-eix>
 will perform certain permission tests in advance.
 .\" }}}
 .\" }}}
+
+.\" {{{ versionsort
+.SH versionsort
+B<versionsort> is a helper tool for scripts which serves two purposes.
+It cuts the version strings from its arguments or interprets the arguments
+themselves as version strings (depending on some heuristics).
+Then it outputs the version strings in a sorted order, according to the
+portage rules of version sorting.
+If there is more than one argument, each version (including the last one)
+is followed by a newline.
+For example,
+
+.B versionsort gcc-4.4 4.4_alpha0 sys-devel/gcc-4.05 4.5
+
+will output
+
+.B 4.05
+
+.B 4.4_alpha0
+
+.B 4.4
+
+.B 4.5
+
+If you pass only one argument, eix is more sloppy about the version rules;
+even if the version part is not completely correct, it is guaranteed
+in this case that the output is string-equal to the version part.
+Thus, you can use versionsort with one argument to split the package name
+from the version part in a shell script by
+
+B<split=1-font-adobe-75dpi-1.3-r1>
+
+B<version=`versionsort "X${split}"`; name=${split%"-${version}"}>
+
+Although currently it makes no difference, it is saver in such a case
+(concerning possible future extensions of the version format)
+to let the argument(s) start with a non-number (like B<X> in the above example)
+to make sure that versionsort will really cut the version from the argument
+and cannot misinterpret the whole argument as a version.
+.\" }}}
+
 
 .\" {{{ BUGS
 .SH "BUGS (and sort of FAQ)"

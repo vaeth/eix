@@ -123,7 +123,7 @@ BasicVersion::parseVersion(const string& str)
 	if (len == pos || pos == str.size()) {
 		m_parts.push_back(Part(garbage, str.substr(pos)));
 		throw ExBasic("malformed (first primary at %r) version string %r, "
-					  "adding version anyway") % pos % str;
+					  "accepting version anyway") % pos % str;
 	}
 	m_parts.push_back(Part(first, str.substr(pos, len - pos)));
 
@@ -137,7 +137,7 @@ BasicVersion::parseVersion(const string& str)
 		if (len == pos || pos == str.size()) {
 			m_parts.push_back(Part(garbage, str.substr(pos)));
 			throw ExBasic("malformed (primary at %r) version string %r, "
-						  "adding version anyway") % pos % str;
+						  "accepting version anyway") % pos % str;
 		}
 		m_parts.push_back(Part(primary, str.substr(pos, len - pos)));
 
@@ -179,7 +179,7 @@ BasicVersion::parseVersion(const string& str)
 		else {
 			m_parts.push_back(Part(garbage, str.substr(pos-1)));
 			throw ExBasic("malformed (suffix at %r) version string %r, "
-						  "adding version anyway") % pos % str;
+						  "accepting version anyway") % pos % str;
 		}
 
 		len = str.find_first_not_of("0123456789", pos);
@@ -213,7 +213,7 @@ BasicVersion::parseVersion(const string& str)
 
 	// warn about garbage, but accept it
 	cerr << (eix::format("garbage (%s) at end of version %r, "
-				"adding version anyway")
+				"accepting version anyway")
 				% str.substr(pos) % str) << endl;
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
