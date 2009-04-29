@@ -406,7 +406,11 @@ run_update_eix(int argc, char *argv[])
 		}
 		if(modified) {
 			ref = join_vector(overlayvec);
+#if defined(HAVE_SETENV)
 			setenv("PORTDIR_OVERLAY", ref.c_str(), 1);
+#else
+			portage_settings.export_portdir_overlay = true;
+#endif
 		}
 	}
 

@@ -9,6 +9,7 @@
 
 #include "ebuild_exec.h"
 
+#include <portage/conf/portagesettings.h>
 #include <cache/base.h>
 #include <global.h>
 #include <config.h>
@@ -17,6 +18,8 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+extern char **environ;
 
 using namespace std;
 
@@ -117,15 +120,32 @@ void
 EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
 {
 	c_env = NULL; envstrings = NULL;
+#if defined(HAVE_SETENV)
 	if(!use_ebuild_sh)
 		return;
+#endif
 	map<string, string> env;
-	base->env_add_package(env, package, version, dir, name);
-	env["dbkey"] = cachefile;
-	if(!portage_rootpath.empty())
-		env["PORTAGE_ROOTPATH"] = portage_rootpath;
-	if(!portage_bin_path.empty())
-		env["PORTAGE_BIN_PATH"] = portage_bin_path;
+#if !defined(HAVE_SETENV)
+	if(!use_ebuild_sh) {
+		if(!(base->portagesettings->export_portdir_overlay))
+			return;
+		for(char **e = environ; *e; e++) {
+			const char *s = strchr(*e, '=');
+			if(s)
+				env[string(*e, s - (*e))] = s + 1;
+		}
+		env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
+	}
+	else
+#endif
+	{
+		base->env_add_package(env, package, version, dir, name);
+		env["dbkey"] = cachefile;
+		if(!portage_rootpath.empty())
+			env["PORTAGE_ROOTPATH"] = portage_rootpath;
+		if(!portage_bin_path.empty())
+			env["PORTAGE_BIN_PATH"] = portage_bin_path;
+	}
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
 	c_env = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
@@ -184,8 +204,14 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 			setuid(uid);
 		if(use_ebuild_sh)
 			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULL), c_env);
-		else
-			execl(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL));
+		else {
+#if !defined(HAVE_SETENV)
+			if(c_env)
+				execle(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL), c_env);
+			else
+#endif
+				execl(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL));
+		}
 		_exit(EXECLE_FAILED);
 	}
 	while( waitpid( child, &exec_status, 0) != child ) { }

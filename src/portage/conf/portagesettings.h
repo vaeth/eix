@@ -10,6 +10,7 @@
 #if !defined(EIX__PORTAGESETTINGS_H)
 #define EIX__PORTAGESETTINGS_H
 
+#include <config.h>
 #include <eixTk/exceptions.h>
 
 #include <portage/keywords.h>
@@ -155,6 +156,10 @@ class PortageSettings : public std::map<std::string,std::string> {
 		PortageUserConfig *user_config;
 
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
+
+#if !defined(HAVE_SETENV)
+		bool export_portdir_overlay;
+#endif
 
 		/** Read make.globals and make.conf. */
 		PortageSettings(EixRc &eixrc, bool getlocal, bool init_world);
