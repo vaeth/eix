@@ -159,7 +159,7 @@ main/main_update_eix_tools.cc \
 main/main_output.cc \
 main/main_all.cc \
 main/main_all_tools.cc \
-main/main_versionsort.cc
+main/main_tools.cc
 
 # The search-tool for our database
 eix_only_ldadd =
@@ -224,6 +224,13 @@ main_diff_eix = main/main_diff_eix.cc
 main_update_eix = main/main_update_eix.cc
 else
 # Do not generate a separate tools binary
+# Currently, we link versionsort against update-eix.
+# Once there will be further tools which are perhaps better linked again
+# eix or diff-eix, it will also be necessary to replace
+# main_eix.cc main_diff_eix.cc main_output.cc by corresponding
+# main_eix_tools.cc main_diff_eix_tools.cc main_output_tools.cc
+# (which should essentially be copies of the above and just #define something:
+# main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
 tool_noinst = versionsort$(EXEEXT)
@@ -313,7 +320,7 @@ if SEPARATE_TOOLS
 
 versionsort_SOURCES = \
 versionsort.cc \
-main/main_versionsort.cc \
+main/main_tools.cc \
 main/main.h \
 database/types.h \
 eixTk/inttypes.h \
