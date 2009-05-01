@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__LEVENSHTEIN_H__)
-#define EIX__LEVENSHTEIN_H__
+#ifndef EIX__LEVENSHTEIN_H__
+#define EIX__LEVENSHTEIN_H__ 1
 
 /** Calculates the Levenshtein distance of two strings.
  * Reference: http://www.merriampark.com/ld.htm

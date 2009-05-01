@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__DATABASE_TYPES_H__)
-#define EIX__DATABASE_TYPES_H__
+#ifndef EIX__DATABASE_TYPES_H__
+#define EIX__DATABASE_TYPES_H__ 1
 
 #include <cstdlib>
 #include <unistd.h>

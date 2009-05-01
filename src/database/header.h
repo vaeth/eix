@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__DBHEADER_H__)
-#define EIX__DBHEADER_H__
+#ifndef EIX__DBHEADER_H__
+#define EIX__DBHEADER_H__ 1
 
 #include <eixTk/stringutils.h>
 #include <portage/version.h>

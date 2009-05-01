@@ -7,11 +7,6 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-/* we use strndup */
-#if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE
-#endif
-
 #include "stringutils.h"
 
 #include <iostream>
@@ -21,7 +16,11 @@ using namespace std;
 
 const char *spaces = " \t\r\n";
 
-#if !defined(HAVE_STRNDUP)
+/* strndup() is a GNU extension
+ * However, we do not #define _GNU_SOURCE but instead make sure to
+ * #include <config.h> (at least implicitly) */
+
+#ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
  * See http://bugs.gentoo.org/show_bug.cgi?id=111912 */
@@ -40,7 +39,7 @@ strndup(const char *s, size_t n)
 	}
 	return r;
 }
-#endif /* !defined(HAVE_STRNDUP) */
+#endif /* HAVE_STRNDUP */
 
 const char *
 ExplodeAtom::get_start_of_version(const char* str)

@@ -46,7 +46,7 @@ PackageReader::read(Attributes need)
 		case LICENSE:
 			io::read_hash_container(m_fp, header->iuse_hash,
 					std::inserter(m_pkg->m_collected_iuse, m_pkg->m_collected_iuse.begin()));
-#if defined(NOT_FULL_USE)
+#ifdef NOT_FULL_USE
 			if(need == COLL_IUSE)
 				break;
 		case COLL_IUSE:
@@ -63,7 +63,7 @@ PackageReader::read(Attributes need)
 					m_pkg->finalize_masks();
 			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
-#if !defined(NOT_FULL_USE)
+#ifndef NOT_FULL_USE
 		case COLL_IUSE:
 #endif
 		case ALL:

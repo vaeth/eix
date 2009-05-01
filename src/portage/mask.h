@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__MASK_H__)
-#define EIX__MASK_H__
+#ifndef EIX__MASK_H__
+#define EIX__MASK_H__ 1
 
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>

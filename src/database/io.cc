@@ -197,7 +197,7 @@ io::write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr)
 	io::write_hash_words(fp, hdr.provide_hash, pkg.provide);
 	io::write_string(fp, pkg.homepage);
 	io::write_hash_string(fp, hdr.license_hash, pkg.licenses);
-#if defined(NOT_FULL_USE)
+#ifdef NOT_FULL_USE
 	io::write_hash_words(fp, hdr.iuse_hash, pkg.coll_iuse);
 #else
 	io::write_hash_words(fp, hdr.iuse_hash, std::vector<std::string>());
@@ -257,7 +257,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 		{
 			hdr.provide_hash.hash_words(p->provide);
 			hdr.license_hash.hash_string(p->licenses);
-#if defined(NOT_FULL_USE)
+#ifdef NOT_FULL_USE
 			hdr.iuse_hash.hash_words(p->coll_iuse);
 #endif
 			for(Package::iterator v = p->begin();

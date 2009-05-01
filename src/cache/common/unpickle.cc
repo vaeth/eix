@@ -172,7 +172,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 		switch(curr) {
 			case BINGET:
 				index = unsigned_char(NEXT);
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "BINGET: " << index << "\n";
 #endif
 				if(prev == STRING)
@@ -187,7 +187,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 					index = arg;
 					MOVE(4);
 				}
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "BINGET: " << index << "\n";
 #endif
 				if(prev == STRING)
@@ -197,7 +197,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 				continue;
 			case BINPUT:
 				index = unsigned_char(NEXT);
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "BINPUT: " << (int)index << "\n";
 #endif
 				if(prev == STRING)
@@ -210,14 +210,14 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 					index = arg;
 					MOVE(4);
 				}
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "BINPUT: " << index << "\n";
 #endif
 				if(prev == STRING)
 					insert(index, buf);
 				continue;
 			case BININT:
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "BININT\n";
 #endif
 				MOVE(sizeof(int));
@@ -228,7 +228,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 					unsigned char len = NEXT;
 					buf = string(data, len);
 					MOVE(len);
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 					cout << "STRING: " << buf << "\n";
 #endif
 				}
@@ -241,14 +241,14 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 					MOVE(4);
 					buf = string(data, len);
 					MOVE(len);
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 					cout << "STRING: " << buf << "\n";
 #endif
 				}
 				prev = STRING;
 				break;
 			case SETITEMS:
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				{
 					unsigned char i = *data;
 					cout << "SETITEMS: " << (int)i << "\n";
@@ -258,13 +258,13 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 				// prev = SETITEMS;
 				return;
 			case MARK:
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "MARK\n";
 #endif
 				prev = MARK;
 				continue;
 			case EMPTY_DICT:
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "EMPTY_DICT\n";
 #endif
 				prev = EMPTY_DICT;
@@ -274,13 +274,13 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 					unsigned char len = NEXT;
 					MOVE(len);
 				}
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "LONG1\n";
 #endif
 				prev = LONG;
 				break;
 			case STOP:
-#if defined(TEST_UNPICKLE)
+#ifdef TEST_UNPICKLE
 				cout << "STOP\n";
 #endif
 				finish();

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PACKAGE_READER_H__)
-#define EIX__PACKAGE_READER_H__
+#ifndef EIX__PACKAGE_READER_H__
+#define EIX__PACKAGE_READER_H__ 1
 
 #include <config.h>
 #include <database/types.h>

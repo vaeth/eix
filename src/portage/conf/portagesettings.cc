@@ -185,7 +185,7 @@ void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool m
 PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 {
 	settings_rc = &eixrc;
-#if !defined(HAVE_SETENV)
+#ifndef HAVE_SETENV
 	export_portdir_overlay = false;
 #endif
 	know_upgrade_policy = false;

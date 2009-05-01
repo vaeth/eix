@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__BASICCACHE_H__)
-#define EIX__BASICCACHE_H__
+#ifndef EIX__BASICCACHE_H__
+#define EIX__BASICCACHE_H__ 1
 
 #include <eixTk/exceptions.h>
 #include <portage/version.h>

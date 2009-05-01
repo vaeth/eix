@@ -13,7 +13,7 @@
 #include <eixTk/exceptions.h>
 #include <portage/conf/portagesettings.h>
 
-#if !defined(SYSCONFDIR)
+#ifndef SYSCONFDIR
 #define SYSCONFDIR "/etc"
 #endif
 

@@ -16,7 +16,7 @@
 
 #include <dirent.h>
 
-#if defined(USE_BZLIB)
+#ifdef USE_BZLIB
 #include <bzlib.h>
 #endif
 
@@ -166,7 +166,7 @@ VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 string
 VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 {
-#if defined(USE_BZLIB)
+#ifdef USE_BZLIB
 	BZFILE *fh = BZ2_bzopen(
 		(m_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
 		"rb");

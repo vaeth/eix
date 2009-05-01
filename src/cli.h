@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__CLI_H__)
-#define EIX__CLI_H__
+#ifndef EIX__CLI_H__
+#define EIX__CLI_H__ 1
 
 #include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__CASCADINGPROFILE_H__)
-#define EIX__CASCADINGPROFILE_H__
+#ifndef EIX__CASCADINGPROFILE_H__
+#define EIX__CASCADINGPROFILE_H__ 1
 
 #include <eixTk/exceptions.h>
 #include <portage/mask_list.h>

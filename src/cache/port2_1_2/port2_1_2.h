@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PORT2_1_2_H__)
-#define EIX__PORT2_1_2_H__
+#ifndef EIX__PORT2_1_2_H__
+#define EIX__PORT2_1_2_H__ 1
 
 #include <cache/base.h>
 

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__ARGSREADER_H__)
-#define EIX__ARGSREADER_H__
+#ifndef EIX__ARGSREADER_H__
+#define EIX__ARGSREADER_H__ 1
 
 #include <list>
 

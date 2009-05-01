@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PTR_ITERATOR_H__)
-#define EIX__PTR_ITERATOR_H__
+#ifndef EIX__PTR_ITERATOR_H__
+#define EIX__PTR_ITERATOR_H__ 1
 
 #include <list>
 

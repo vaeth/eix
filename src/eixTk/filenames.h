@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__FILENAMES_H__)
-#define EIX__FILENAMES_H__
+#ifndef EIX__FILENAMES_H__
+#define EIX__FILENAMES_H__ 1
 
 #include <config.h>
 #include <eixTk/sysutils.h>

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__FORMATSTRING_H__)
-#define EIX__FORMATSTRING_H__
+#ifndef EIX__FORMATSTRING_H__
+#define EIX__FORMATSTRING_H__ 1
 
 #include <portage/package.h>
 #include <portage/set_stability.h>

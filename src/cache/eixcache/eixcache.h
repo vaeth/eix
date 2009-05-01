@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__EIXCACHE_H__)
-#define EIX__EIXCACHE_H__
+#ifndef EIX__EIXCACHE_H__
+#define EIX__EIXCACHE_H__ 1
 
 #include <cache/base.h>
 

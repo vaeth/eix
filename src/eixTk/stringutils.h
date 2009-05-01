@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__STRINGUTILS_H__)
-#define EIX__STRINGUTILS_H__
+#ifndef EIX__STRINGUTILS_H__
+#define EIX__STRINGUTILS_H__ 1
 
 #include <config.h>
 
@@ -21,16 +21,16 @@
 
 #define UNUSED(p) ((void)(p))
 
-#if !defined(HAVE_STRNDUP)
+#ifndef HAVE_STRNDUP
 /** strndup in case we don't have one. */
 #include <unistd.h>
 char *strndup(const char *s, size_t n);
-#endif /* !defined(HAVE_STRNDUP) */
+#endif
 
-#if defined(HAVE_STRTOUL)
+#ifdef HAVE_STRTOUL
 #define my_atoi(a) strtoul(a, NULL, 10)
 #else
-#if defined(HAVE_STRTOL)
+#ifdef HAVE_STRTOL
 #define my_atoi(a) strtol(a, NULL, 10)
 #else
 #define my_atoi(a) atoi(a)
@@ -147,7 +147,7 @@ std::string join_set(const std::set<std::string> &vec, const std::string &glue =
 bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL);
 
 /** Sort and unique. Return true if there were double entries */
-#if defined(UNIQUE_WORKS)
+#ifdef UNIQUE_WORKS
 
 #include <algorithm>
 

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__AUTO_PTR_H__)
-#define EIX__AUTO_PTR_H__
+#ifndef EIX__AUTO_PTR_H__
+#define EIX__AUTO_PTR_H__ 1
 
 namespace eix {
 

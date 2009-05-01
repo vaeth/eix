@@ -120,12 +120,12 @@ void
 EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
 {
 	c_env = NULL; envstrings = NULL;
-#if defined(HAVE_SETENV)
+#ifdef HAVE_SETENV
 	if(!use_ebuild_sh)
 		return;
 #endif
 	map<string, string> env;
-#if !defined(HAVE_SETENV)
+#ifndef HAVE_SETENV
 	if(!use_ebuild_sh) {
 		if(!(base->portagesettings->export_portdir_overlay))
 			return;
@@ -187,7 +187,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	}
 	calc_environment(name, dir, package, version);
 
-#if defined(HAVE_VFORK)
+#ifdef HAVE_VFORK
 	pid_t child = vfork();
 #else
 	pid_t child = fork();
@@ -205,7 +205,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		if(use_ebuild_sh)
 			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULL), c_env);
 		else {
-#if !defined(HAVE_SETENV)
+#ifndef HAVE_SETENV
 			if(c_env)
 				execle(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL), c_env);
 			else

@@ -6,8 +6,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__COMPARE_H__)
-#define EIX__COMPARE_H__
+#ifndef EIX__COMPARE_H__
+#define EIX__COMPARE_H__ 1
 
 #include <string>
 

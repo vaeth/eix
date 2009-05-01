@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PACKAGESETS_H__)
-#define EIX__PACKAGESETS_H__
+#ifndef EIX__PACKAGESETS_H__
+#define EIX__PACKAGESETS_H__ 1
 
 #include <vector>
 #include <string>

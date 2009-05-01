@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__SYSUTILS_H__)
-#define EIX__SYSUTILS_H__
+#ifndef EIX__SYSUTILS_H__
+#define EIX__SYSUTILS_H__ 1
 
 #include <unistd.h>
 #include <ctime>

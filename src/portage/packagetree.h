@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PACKAGETREE_H__)
-#define EIX__PACKAGETREE_H__
+#ifndef EIX__PACKAGETREE_H__
+#define EIX__PACKAGETREE_H__ 1
 
 #include <eixTk/ptr_list.h>
 #include <database/types.h>

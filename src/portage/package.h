@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PACKAGE_H__)
-#define EIX__PACKAGE_H__
+#ifndef EIX__PACKAGE_H__
+#define EIX__PACKAGE_H__ 1
 
 #include <eixTk/ptr_list.h>
 #include <eixTk/inttypes.h>
@@ -169,7 +169,7 @@ class Package
 			m_collected_iuse.insert(s);
 		}
 
-#if !defined(NOT_FULL_USE)
+#ifndef NOT_FULL_USE
 		/** Does at least one version have individual iuse data? */
 		bool versions_have_full_use;
 #endif
@@ -417,7 +417,7 @@ class Package
 			have_duplicate_versions = DUP_NONE;
 			version_collects = COLLECT_DEFAULT;
 			local_collects = LCOLLECT_DEFAULT;
-#if !defined(NOT_FULL_USE)
+#ifndef NOT_FULL_USE
 			versions_have_full_use = false;
 #endif
 		}

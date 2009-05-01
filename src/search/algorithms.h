@@ -7,25 +7,21 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__ALGORITHMS_H__)
-#define EIX__ALGORITHMS_H__
-
-/* FNM_CASEFOLD is a gnu extension .. */
-#if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE
-#endif
+#ifndef EIX__ALGORITHMS_H__
+#define EIX__ALGORITHMS_H__ 1
 
 #include <search/levenshtein.h>
 #include <eixTk/regexp.h>
 
 #include <portage/package.h>
 
-#include <cstring>
 #include <fnmatch.h>
 
 /* Check if we have FNM_CASEFOLD ..
- * fnmatch(3) tells me that this is a GNU extensions */
-#if defined(FNM_CASEFOLD)
+ * fnmatch(3) tells that this is a GNU extension.
+ * However, we do not #define _GNU_SOURCE but instead make sure to
+ * #include <config.h> (at least implicitly) */
+#ifdef FNM_CASEFOLD
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else
 #define FNMATCH_FLAGS 0

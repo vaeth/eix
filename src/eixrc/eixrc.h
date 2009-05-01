@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__EIXRC_H__)
-#define EIX__EIXRC_H__
+#ifndef EIX__EIXRC_H__
+#define EIX__EIXRC_H__ 1
 
 #include <portage/keywords.h>
 #include <search/redundancy.h>

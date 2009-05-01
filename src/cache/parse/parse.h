@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PARSECACHE_H__)
-#define EIX__PARSECACHE_H__
+#ifndef EIX__PARSECACHE_H__
+#define EIX__PARSECACHE_H__ 1
 
 #include <cache/base.h>
 #include <cache/common/ebuild_exec.h>

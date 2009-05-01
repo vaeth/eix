@@ -617,7 +617,7 @@ print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slot
 	if(full || versions)
 		return;
 	bool print_coll_iuse = fmt->print_iuse;
-#if !defined(NOT_FULL_USE)
+#ifndef NOT_FULL_USE
 	if((fmt->style_version_lines) && (p->versions_have_full_use))
 		print_coll_iuse = false;
 #endif
@@ -679,7 +679,7 @@ print_versions_slots(const PrintFormat *fmt, const Package* p, bool with_slots, 
 	if(full || versions)
 		return;
 	bool print_coll_iuse = fmt->print_iuse;
-#if !defined(NOT_FULL_USE)
+#ifndef NOT_FULL_USE
 	if((fmt->style_version_lines) && (p->versions_have_full_use))
 		print_coll_iuse = false;
 #endif

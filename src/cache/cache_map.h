@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#if !defined(EIX__GET_H__)
-#define EIX__GET_H__
+#ifndef EIX__GET_H__
+#define EIX__GET_H__ 1
 
 #include <cache/base.h>
 

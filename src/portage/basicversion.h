@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__BASICVERSION_H__)
-#define EIX__BASICVERSION_H__
+#ifndef EIX__BASICVERSION_H__
+#define EIX__BASICVERSION_H__ 1
 
 #include <database/types.h>
 #include <eixTk/inttypes.h>

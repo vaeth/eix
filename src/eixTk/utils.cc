@@ -187,10 +187,10 @@ void join_map(map<string,string> *append_to, map<string,string>::iterator it, ma
 void dump_version(int exit_code)
 {
 	fputs(PACKAGE_STRING" ("
-#if defined(GCC_VERSION)
+#ifdef GCC_VERSION
 			"gcc-"GCC_VERSION", "
 #endif
-#if defined(TARGET)
+#ifdef TARGET
 			TARGET
 #endif
 			")\n", stdout);

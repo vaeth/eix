@@ -26,23 +26,23 @@
 #undef USE_BINARY
 #undef BINARY_COLLECTION
 
-#if defined(EIX_BINARY)
+#ifdef EIX_BINARY
 int run_eix(int argc, char *argv[]);
 #define USE_BINARY run_eix
 #endif
 
-#if defined(UPDATE_EIX_BINARY)
+#ifdef UPDATE_EIX_BINARY
 int run_update_eix(int argc, char *argv[]);
-#if defined(USE_BINARY)
+#ifdef USE_BINARY
 #define BINARY_COLLECTION 1
 #else
 #define USE_BINARY run_update_eix
 #endif
 #endif
 
-#if defined(DIFF_EIX_BINARY)
+#ifdef DIFF_EIX_BINARY
 int run_diff_eix(int argc, char *argv[]);
-#if defined(USE_BINARY)
+#ifdef USE_BINARY
 #undef BINARY_COLLECTION
 #define BINARY_COLLECTION 1
 #else
@@ -50,9 +50,9 @@ int run_diff_eix(int argc, char *argv[]);
 #endif
 #endif
 
-#if defined(VERSIONSORT_BINARY)
+#ifdef VERSIONSORT_BINARY
 int run_versionsort(int argc, char *argv[]);
-#if defined(USE_BINARY)
+#ifdef USE_BINARY
 #undef BINARY_COLLECTION
 #define BINARY_COLLECTION 1
 #else
@@ -60,13 +60,13 @@ int run_versionsort(int argc, char *argv[]);
 #endif
 #endif
 
-#if defined(BINARY_COLLECTION)
+#ifdef BINARY_COLLECTION
 static int run_program(int argc, char *argv[]);
 #undef USE_BINARY
 #define USE_BINARY run_program
 #endif
 
-#if !defined(USE_BINARY)
+#ifndef USE_BINARY
 #error "You must #define one of the *BINARY switches, see comments in main.cc"
 #endif
 
@@ -119,30 +119,30 @@ sanitize_filename(string &s)
 	}
 }
 
-#if defined(BINARY_COLLECTION)
+#ifdef BINARY_COLLECTION
 static int
 run_program(int argc, char *argv[])
 {
-#if defined(DIFF_EIX_BINARY)
+#ifdef DIFF_EIX_BINARY
 	if((program_name.find("diff") != string::npos) ||
 		(program_name.find("DIFF") != string::npos))
 		return run_diff_eix(argc, argv);
 #endif
-#if defined(UPDATE_EIX_BINARY)
+#ifdef UPDATE_EIX_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
 	if((program_name.find("update") != string::npos) ||
 		(program_name.find("UPDATE") != string::npos))
 #endif
 		return run_update_eix(argc, argv);
 #endif
-#if defined(VERSIONSORT_BINARY)
-#if defined(EIX_BINARY)
+#ifdef VERSIONSORT_BINARY
+#ifdef EIX_BINARY
 	if((program_name.find("vers") != string::npos) ||
 		(program_name.find("VERS") != string::npos))
 #endif
 		return run_versionsort(argc, argv);
 #endif
-#if defined(EIX_BINARY)
+#ifdef EIX_BINARY
 		return run_eix(argc, argv);
 #endif
 }

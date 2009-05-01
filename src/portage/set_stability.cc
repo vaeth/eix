@@ -13,7 +13,7 @@
 #include <portage/conf/cascadingprofile.h>
 #include <portage/packagetree.h>
 
-#if !defined(ALWAYS_RECALCULATE_STABILITY)
+#ifndef ALWAYS_RECALCULATE_STABILITY
 
 /* Calculating the index manually makes it sometimes unnecessary
  * to recalculate the stability setting of the whole package.
@@ -59,7 +59,7 @@ SetStability::set_stability(bool get_local, Package &package) const
 void
 SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsFlags &keyflags, const Version *v, const Package *p) const
 {
-#if !defined(ALWAYS_RECALCULATE_STABILITY)
+#ifndef ALWAYS_RECALCULATE_STABILITY
 	// Can we avoid the calculation by getting the saved flags?
 	Version::SavedMaskIndex mi = mask_index(get_local);
 	Version::SavedKeyIndex ki = keyword_index(get_local);
@@ -75,7 +75,7 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 	maskflags = v->maskflags;
 	keyflags  = v->keyflags;
 	saved.restore(const_cast<Package *>(p));
-#if !defined(ALWAYS_RECALCULATE_STABILITY)
+#ifndef ALWAYS_RECALCULATE_STABILITY
 	/* The next test should actually be unnecessary.
 	 * But in the above calculation of keyword_index or mask_index
 	 * there might easily be a forgotten case (in particular, since

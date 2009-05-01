@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__SETSTABILITY_H__)
-#define EIX__SETSTABILITY_H__
+#ifndef EIX__SETSTABILITY_H__
+#define EIX__SETSTABILITY_H__ 1
 
 #include <portage/version.h>
 
@@ -27,7 +27,7 @@ class SetStability {
 		const PortageSettings *portagesettings;
 		bool m_local, m_filemask_is_profile, m_always_accept_keywords;
 
-#if !defined(ALWAYS_RECALCULATE_STABILITY)
+#ifndef ALWAYS_RECALCULATE_STABILITY
 		/* Calculating the index manually makes it sometimes unnecessary
 		 * to recalculate the stability setting of the whole package.
 		 * Of course, this is clumsy, because we must take care about how

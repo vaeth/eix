@@ -7,11 +7,6 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-/* we use strndup */
-#if !defined(_GNU_SOURCE)
-#define _GNU_SOURCE
-#endif
-
 #include "mask.h"
 #include <eixTk/exceptions.h>
 #include <portage/keywords.h>

@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#if !defined(EIX__CRITERIA_H__)
-#define EIX__CRITERIA_H__
+#ifndef EIX__CRITERIA_H__
+#define EIX__CRITERIA_H__ 1
 
 #include <search/packagetest.h>
 #include <database/types.h>

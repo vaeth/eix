@@ -142,7 +142,7 @@ Package::collect_iuse(const Version *version)
 	/// collect iuse
 	insert_list(m_collected_iuse, version->iuse_vector());
 
-#if defined(NOT_FULL_USE)
+#ifdef NOT_FULL_USE
 	// Clear iuse to save memory:
 	(it->iuse).clear();
 #else

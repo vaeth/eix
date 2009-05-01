@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__PORTAGESETTINGS_H)
-#define EIX__PORTAGESETTINGS_H
+#ifndef EIX__PORTAGESETTINGS_H
+#define EIX__PORTAGESETTINGS_H 1
 
 #include <config.h>
 #include <eixTk/exceptions.h>
@@ -157,7 +157,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
 
-#if !defined(HAVE_SETENV)
+#ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
 

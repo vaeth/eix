@@ -6,15 +6,15 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#if !defined(EIX__INTTYPES_H__)
-#define EIX__INTTYPES_H__
+#ifndef EIX__INTTYPES_H__
+#define EIX__INTTYPES_H__ 1
 
 #include <config.h>
 
-#if defined(HAVE_TR1_CSTDINT)
+#ifdef HAVE_TR1_CSTDINT
 #include <tr1/cstdint>
 #else
-#if defined(USE_STDINT_H)
+#ifdef USE_STDINT_H
 #include <stdint.h>
 #endif
 #endif

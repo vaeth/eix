@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__UNPICKLE_H__)
-#define EIX__UNPICKLE_H__
+#ifndef EIX__UNPICKLE_H__
+#define EIX__UNPICKLE_H__ 1
 
 #include <config.h>
 
@@ -28,7 +28,7 @@
 inline static void uint32_pack(char *out, uint32_t in);
 inline static void uint32_unpack(const char *in, uint32_t *out);
 
-#if defined(WORDS_BIGENDIAN)
+#ifdef WORDS_BIGENDIAN
 /* For the big-endian machines */
 
 /* Adopted from python-cdb (which adopted it from libowfat :) */
@@ -46,7 +46,7 @@ inline static void uint32_unpack(const char *in, uint32_t *out) {
 		(uint32_t(uint8_t(in[0]))));
 }
 
-#else  /* defined(WORDS_BIGENDIAN) */
+#else /* #ifndef WORDS_BIGENDIAN */
 /* This is for the little-endian pppl */
 
 /* Adopted from python-cdb (which adopted it from libowfat) */
@@ -58,7 +58,7 @@ inline static void uint32_unpack(const char *in, uint32_t *out) {
 	*out = *(reinterpret_cast<const uint32_t*>(in));
 }
 
-#endif /* defined(WORDS_BIGENDIAN) */
+#endif /* WORDS_BIGENDIAN */
 
 /** For cdb cache */
 bool unpickle_get_mapping(char *data, unsigned int data_len, std::map<std::string,std::string> &unpickled);

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__FLATREADER_H__)
-#define EIX__FLATREADER_H__
+#ifndef EIX__FLATREADER_H__
+#define EIX__FLATREADER_H__ 1
 
 
 #include <portage/keywords.h>

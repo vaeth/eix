@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#if !defined(EIX__EXCEPTIONS_H__)
-#define EIX__EXCEPTIONS_H__
+#ifndef EIX__EXCEPTIONS_H__
+#define EIX__EXCEPTIONS_H__ 1
 
 #include <eixTk/formated.h>
 #include <eixTk/stringutils.h>

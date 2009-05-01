@@ -11,7 +11,7 @@
 
 #include <config.h>
 
-#if defined(WITH_SQLITE)
+#ifdef WITH_SQLITE
 
 #include <portage/package.h>
 #include <portage/packagetree.h>

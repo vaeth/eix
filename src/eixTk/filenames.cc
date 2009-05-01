@@ -13,46 +13,46 @@
 
 // Try to read PATH_MAX from climits/limits:
 
-#if defined(HAVE_CLIMITS)
+#ifdef HAVE_CLIMITS
 #include <climits>
 #else
-#if defined(HAVE_LIMITS_H)
+#ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
 #endif
 
 // On some systems PATH_MAX is only contained in sys/param.h:
 
-#if !defined(PATH_MAX)
-#if defined(HAVE_SYS_PARAM_H)
+#ifndef PATH_MAX
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
 #endif
 
 // If we still don't have PATH_MAX, try to use MAXPATHLEN:
 
-#if !defined(PATH_MAX)
-#if defined(MAXPATHLEN)
+#ifndef PATH_MAX
+#ifdef MAXPATHLEN
 #define PATH_MAX MAXPATHLEN
 #endif
 #endif
 
 using namespace std;
 
-#if defined(DEBUG_NORMALIZE_PATH)
+#ifdef DEBUG_NORMALIZE_PATH
 string original_normalize_path(const char *path, bool resolve);
 string normalize_path(const char *path, bool resolve)
 {
 	cerr << "Debug: Calling normalize_path(\"" << path << "\", " << resolve << ")...\nDebug: (with";
-#if !defined(HAVE_CANONICALIZE_FILE_NAME)
+#ifndef HAVE_CANONICALIZE_FILE_NAME
 	cerr << "out";
 #endif
 	cerr << " canonicalize_file_name(), with";
-#if !defined(HAVE_REALPATH)
+#ifndef HAVE_REALPATH
 	cerr << "out";
 #endif
 	cerr << " realpath(), with";
-#if defined(PATH_MAX)
+#ifdef PATH_MAX
 	cerr << " PATH_MAX=" << PATH_MAX;
 #else
 	cerr << "out PATH_MAX";
@@ -73,7 +73,7 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 	if(resolve)
 	{
 		char *normalized = NULL;
-#if defined(HAVE_CANONICALIZE_FILE_NAME)
+#ifdef HAVE_CANONICALIZE_FILE_NAME
 		normalized = canonicalize_file_name(path);
 		if(normalized) {
 			if(!*normalized) {
@@ -82,9 +82,9 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 			}
 		}
 #endif
-#if defined(HAVE_REALPATH)
+#ifdef HAVE_REALPATH
 		if(!normalized) {
-#if defined(PATH_MAX)
+#ifdef PATH_MAX
 			// Some implementations of realpath are vulnerable
 			// against internal buffer overflow, so better test:
 			if(strlen(path) < PATH_MAX) {
