@@ -35,7 +35,7 @@ check_user_in_grp_struct(struct group *grp)
 {
 	struct passwd *pwd;
 	if((pwd = getpwuid(getuid())) == 0)
-		throw ExBasic("getpwuid() tells me that my uid is not known to this system.");
+		throw ExBasic(_("getpwuid() tells me that my uid is not known to this system."));
 	if(is_on_list(grp->gr_mem, pwd->pw_name))
 		return true;
 	return false;
@@ -47,7 +47,7 @@ user_in_group(const char *group_name)
 	errno = 0;
 	struct group *grp = getgrnam(group_name);
 	if(grp == NULL)
-		throw ExBasic("getgrnam(%r) failed: %s") % group_name % strerror(errno);
+		throw ExBasic(_("getgrnam(%r) failed: %s")) % group_name % strerror(errno);
 	return check_user_in_grp_struct(grp);
 }
 

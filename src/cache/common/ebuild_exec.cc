@@ -85,7 +85,7 @@ EbuildExec::make_tempfile()
 	calc_settings();
 	if(set_uid || set_gid) {
 		if(fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)))) {
-//			base->m_error_callback(eix::format("Can't change ownership of tempfile %s") % temp);
+//			base->m_error_callback(eix::format(_("Can't change ownership of tempfile %s")) % temp);
 		}
 	}
 	cachefile = temp;
@@ -103,12 +103,12 @@ EbuildExec::delete_cachefile()
 	const char *c = cachefile.c_str();
 	if(is_file(c)) {
 		if(unlink(c) < 0)
-			base->m_error_callback(eix::format("Can't unlink tempfile %s") % c);
+			base->m_error_callback(eix::format(_("Can't unlink tempfile %s")) % c);
 		else if(is_file(c))
-			base->m_error_callback(eix::format("Tempfile %s still there after unlink") % c);
+			base->m_error_callback(eix::format(_("Tempfile %s still there after unlink")) % c);
 	}
 	else
-		base->m_error_callback(eix::format("Tempfile %s is not a file") % c);
+		base->m_error_callback(eix::format(_("Tempfile %s is not a file")) % c);
 	remove_handler();
 	cache_defined = false;
 	cachefile.clear();
@@ -175,7 +175,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	if(use_ebuild_sh) {
 		exec_name = exec_ebuild_sh.c_str();
 		if(!make_tempfile()) {
-			base->m_error_callback("Creation of tempfile failed");
+			base->m_error_callback(_("Creation of tempfile failed"));
 			remove_handler();
 			return NULL;
 		}
@@ -193,7 +193,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	pid_t child = fork();
 #endif
 	if(child == -1) {
-		base->m_error_callback("Forking failed");
+		base->m_error_callback(_("Forking failed"));
 		return NULL;
 	}
 	if(child == 0)
@@ -224,11 +224,11 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 
 	// Only now we check for the child exit status or signals:
 	if(got_exit_signal)
-		base->m_error_callback(eix::format("Got signal %s") % type_of_exit_signal);
+		base->m_error_callback(eix::format(_("Got signal %s")) % type_of_exit_signal);
 	else if(WIFSIGNALED(exec_status)) {
 		got_exit_signal = true;
 		type_of_exit_signal = WTERMSIG(exec_status);
-		base->m_error_callback(eix::format("Ebuild got signal %s") % type_of_exit_signal);
+		base->m_error_callback(eix::format(_("Ebuild got signal %s")) % type_of_exit_signal);
 	}
 	if(got_exit_signal) {
 		delete_cachefile();
@@ -239,12 +239,12 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		if(!(WEXITSTATUS(exec_status))) // the only good case:
 			return &cachefile;
 		if((WEXITSTATUS(exec_status)) == EXECLE_FAILED)
-			base->m_error_callback(eix::format("Could not start %s") % exec_name);
+			base->m_error_callback(eix::format(_("Could not start %s")) % exec_name);
 		else
-			base->m_error_callback(eix::format("Ebuild failed with status %s") % WEXITSTATUS(exec_status));
+			base->m_error_callback(eix::format(_("Ebuild failed with status %s")) % WEXITSTATUS(exec_status));
 	}
 	else
-		base->m_error_callback("Child aborted in a strange way");
+		base->m_error_callback(_("Child aborted in a strange way"));
 	delete_cachefile();
 	return NULL;
 }

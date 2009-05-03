@@ -182,7 +182,7 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		/* Split string into package and version, and catch any errors. */
 		char **aux = ExplodeAtom::split(it->c_str());
 		if(!aux) {
-			m_error_callback(eix::format("Can't split %r into package and version") % (*it));
+			m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
 			++it;
 			continue;
 		}
@@ -224,7 +224,7 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(it->c_str());
 			if(!aux) {
-				m_error_callback(eix::format("Can't split %r into package and version") % (*it));
+				m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
 				++it;
 				break;
 			}

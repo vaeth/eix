@@ -30,10 +30,10 @@ void CascadingProfile::addProfile(const char *profile, unsigned int depth)
 	// Use pushback_lines to avoid keeping file descriptor open:
 	// Who know what's our limit of open file descriptors.
 	if(depth >= 255)
-		cerr << "Recursion level for cascading profiles exceeded; stopping reading parents" << endl;
+		cerr << _("Recursion level for cascading profiles exceeded; stopping reading parents") << endl;
 	string s = normalize_path(profile, true, true);
 #ifdef DEBUG_PROFILE_PATHS
-	cout << "Adding to  Profile:\n\t(" << profile << ") -> \"" << s << "\"" << endl;
+	cout << eix::format_("Adding to Profile:\n\t(%s) -> %r\n") % profile % s;
 #endif
 	if(s.empty())
 		return;

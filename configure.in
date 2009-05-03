@@ -299,6 +299,42 @@ then
 	AC_DEFINE(UNIQUE_WORKS,1,[ Define to 1 if std::unique() works reliable])
 fi
 
+dnl What about gettext?
+ifdef(,[`
+AC_MSG_CHECKING([whether gettext should be used])
+AC_ARG_WITH(gettext,
+	AS_HELP_STRING([--with-gettext],
+	[Use gettext for internationalization support]),
+	[
+		if test x"${withval}" = x'no'
+		then
+			with_i18n=false
+			msg_i18n=' (on request)'
+		else
+			with_i18n=true
+			msg_i18n=''
+		fi
+	],[
+		with_i18n=true
+		msg_i18n=' (autodetected)'
+	])
+
+USE_NLS=''
+if ${with_i18n}
+then
+	AM_GNU_GETTEXT
+fi
+if test x"${USE_NLS}" = x'yes'
+then
+	test -z "${msg_i18n}" && msg_i18n=' (on request)'
+	AC_MSG_RESULT([yes${msg_i18n}])
+else
+	test -z "${msg_i18n}" && msg_i18n=' (autodetected; despite request)'
+	AC_MSG_RESULT([no${msg_i18n}])
+fi
+'])
+
+
 dnl What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
 AC_ARG_WITH(sqlite,

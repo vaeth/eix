@@ -50,7 +50,7 @@ static Node           *format_new, *format_delete, *format_changed;
 static void
 print_help(int ret)
 {
-	printf(
+	printf(_(
 		"Usage: %s [options] old-cache [new-cache]\n"
 		"\n"
 		" -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
@@ -66,7 +66,7 @@ print_help(int ret)
 		" -V, --version           show version-string\n"
 		"\n"
 		"This program is covered by the GNU General Public License. See COPYING for\n"
-		"further information.\n",
+		"further information.\n"),
 		program_name.c_str());
 
 	if(ret != -1) {
@@ -115,14 +115,16 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 	FILE *fp = fopen(file, "rb");
 
 	if(fp == NULL) {
-		throw ExBasic("Can't open the database file %r for reading (mode = 'rb')") % file;
+		throw ExBasic(_("Can't open the database file %r for reading (mode = 'rb')")) % file;
 	}
 
 	if(!io::read_header(fp, *header)) {
 		fclose(fp);
-		fprintf(stderr, "%s was created with an incompatible update-eix:\n"
-				"It uses database format %u (current is %u).\n",
-				file, PercentU(header->version), PercentU(DBHeader::current));
+		cerr << (eix::format(_(
+			"%s was created with an incompatible update-eix:\n"
+			"It uses database format %s (current is %s)."))
+			% file % PercentU(header->version)) % PercentU(DBHeader::current)
+			<< endl;
 		exit(1);
 	}
 	ps->store_world_sets(&(header->world_sets));
@@ -291,7 +293,7 @@ run_diff_eix(int argc, char *argv[])
 
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
 		print_help(1);
-		throw ExBasic("Missing cache-file.") ;
+		throw ExBasic(_("Missing cache-file.")) ;
 	}
 
 	old_file = current_param->m_argument;
@@ -315,8 +317,8 @@ run_diff_eix(int argc, char *argv[])
 		format_changed = format_for_new.parseFormat(eixrc[varname].c_str());
 	}
 	catch(const ExBasic &e) {
-		cout << "Problems while parsing " << varname << ".\n"
-			<< e.getMessage() << endl;
+		cerr << eix::format(_("Problems while parsing %s:\n")) % varname
+			<< e << endl;
 		exit(1);
 	}
 
@@ -438,7 +440,7 @@ run_diff_eix(int argc, char *argv[])
 		eixrc.getBool("DIFF_SEPARATE_DELETED"));
 
 	if(eixrc.getBool("DIFF_PRINT_HEADER")) {
-		INFO("Diffing databases (%u - %u packages)\n",
+		INFO(_("Diffing databases (%u -> %u packages)\n"),
 			PercentU(old_tree.countPackages()),
 			PercentU(new_tree.countPackages()));
 	}

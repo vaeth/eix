@@ -83,7 +83,7 @@ bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool
 		{
 			++depth;
 			if (depth == 100)
-				throw ExBasic("Nesting level too deep in %r") % dir;
+				throw ExBasic(_("Nesting level too deep in %r")) % dir;
 			if(! pushback_lines(it->c_str(), v, remove_empty, true, remove_comments))
 				rvalue=false;
 			--depth;
@@ -186,14 +186,21 @@ void join_map(map<string,string> *append_to, map<string,string>::iterator it, ma
 
 void dump_version(int exit_code)
 {
-	fputs(PACKAGE_STRING" ("
+	fputs(PACKAGE_STRING
+#if defined(GCC_VERSION) || defined(TARGET)
+		" ("
 #ifdef GCC_VERSION
-			"gcc-"GCC_VERSION", "
+			"gcc-"GCC_VERSION
+#ifdef TARGET
+				", "
+#endif
 #endif
 #ifdef TARGET
 			TARGET
 #endif
-			")\n", stdout);
+		")"
+#endif
+		"\n", stdout);
 	if(exit_code != -1) {
 		exit(exit_code);
 	}

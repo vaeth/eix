@@ -59,7 +59,7 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		/* Check if we can split it */
 		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());
 		if(!ver) {
-			m_error_callback(eix::format("Can't split filename of ebuild %s/%s") %
+			m_error_callback(eix::format(_("Can't split filename of ebuild %s/%s")) %
 				directory_path % (*it));
 			continue;
 		}
@@ -94,7 +94,7 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 			ebuild.read(full_path.c_str());
 		}
 		catch(const ExBasic &e) {
-			m_error_callback(eix::format("Could not properly parse %s: %s") % full_path % e.getMessage());
+			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % full_path % e.getMessage());
 		}
 
 		bool ok = true;
@@ -124,7 +124,7 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 				ebuild_exec->delete_cachefile();
 			}
 			else
-				m_error_callback(eix::format("Could not properly execute %s") % full_path);
+				m_error_callback(eix::format(_("Could not properly execute %s")) % full_path);
 		}
 
 		version->set_full_keywords(keywords);

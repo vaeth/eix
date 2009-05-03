@@ -66,7 +66,7 @@ bool VarsReader::assign_key_value()
 	{
 		sourcecmd=false;
 		if (! source(value)) {
-			std::cerr << eix::format("failed to source %r") % value
+			std::cerr << eix::format(_("failed to source %r")) % value
 				<< std::endl;
 		}
 		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);

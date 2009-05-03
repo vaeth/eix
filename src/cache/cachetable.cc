@@ -34,7 +34,7 @@ CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const ch
 	}
 	BasicCache *cache = get_cache(cache_method);
 	if(!cache) {
-		throw ExBasic("Unknown cache %r for directory %r")
+		throw ExBasic(_("Unknown cache %r for directory %r"))
 			% cache_method % directory;
 	}
 

@@ -10,6 +10,7 @@
 #include <config.h>
 #include <main/main.h>
 
+#include <eixTk/formated.h>
 #include <portage/basicversion.h>
 
 #include <algorithm>
@@ -31,7 +32,7 @@ parse_version(const char *v)
 	}
 	if(((*v) >= '0') && ((*v) <= '9'))
 		return v;
-	cerr << "cannot determine version of " << v << endl;
+	cerr << eix::format(_("cannot determine version of %s")) % v << endl;
 	exit(1);
 }
 

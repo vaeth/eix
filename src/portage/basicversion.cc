@@ -101,7 +101,7 @@ ostream& operator<<(ostream& s, const BasicVersion::Part& part)
 		default:
 			return s << "." << part.second;
 	}
-	throw ExBasic("internal error: unknown PartType on (%r,%r)")
+	throw ExBasic(_("internal error: unknown PartType on (%r,%r)"))
 		% int(part.first) % part.second;
 }
 
@@ -122,8 +122,9 @@ BasicVersion::parseVersion(const string& str)
 	string::size_type len = str.find_first_not_of("0123456789", pos);
 	if (len == pos || pos == str.size()) {
 		m_parts.push_back(Part(garbage, str.substr(pos)));
-		throw ExBasic("malformed (first primary at %r) version string %r, "
-					  "accepting version anyway") % pos % str;
+		throw ExBasic(_(
+			"malformed (first primary at %r) version string %r\n"))
+			% pos % str;
 	}
 	m_parts.push_back(Part(first, str.substr(pos, len - pos)));
 
@@ -136,8 +137,9 @@ BasicVersion::parseVersion(const string& str)
 		len = str.find_first_not_of("0123456789", ++pos);
 		if (len == pos || pos == str.size()) {
 			m_parts.push_back(Part(garbage, str.substr(pos)));
-			throw ExBasic("malformed (primary at %r) version string %r, "
-						  "accepting version anyway") % pos % str;
+			throw ExBasic(_(
+				"malformed (primary at %r) version string %r\n"))
+				% pos % str;
 		}
 		m_parts.push_back(Part(primary, str.substr(pos, len - pos)));
 
@@ -178,8 +180,9 @@ BasicVersion::parseVersion(const string& str)
 		}
 		else {
 			m_parts.push_back(Part(garbage, str.substr(pos-1)));
-			throw ExBasic("malformed (suffix at %r) version string %r, "
-						  "accepting version anyway") % pos % str;
+			throw ExBasic(_(
+				"malformed (suffix at %r) version string %r"))
+				% pos % str;
 		}
 
 		len = str.find_first_not_of("0123456789", pos);
@@ -212,9 +215,10 @@ BasicVersion::parseVersion(const string& str)
 	}
 
 	// warn about garbage, but accept it
-	cerr << (eix::format("garbage (%s) at end of version %r, "
-				"accepting version anyway")
-				% str.substr(pos) % str) << endl;
+	cerr << eix::format(_(
+		"garbage (%s) at end of version %r\n"
+		"accepting version anyway"))
+		% str.substr(pos) % str << endl;
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
 

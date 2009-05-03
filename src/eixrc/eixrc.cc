@@ -174,12 +174,11 @@ EixRc::read()
 		const char *errtext;
 		string errvar;
 		if(resolve_delayed_recurse(defaults[i].key, visited,
-			has_reference, &errtext, &errvar) == NULL)
-		{
-			cerr << "fatal config error: " << errtext
-				<< " in delayed substitution of " << errvar
-				<< "\n";
-			exit(2);
+			has_reference, &errtext, &errvar) == NULL) {
+			cerr << eix::format(_(
+				"fatal config error: %s in delayed substitution of %s"))
+				% errtext % errvar << endl;
+			exit(1);
 		}
 	}
 
@@ -188,8 +187,7 @@ EixRc::read()
 	{
 		string &str = it->second;
 		string::size_type pos = 0;
-		for(;; pos += 2)
-		{
+		for(;; pos += 2) {
 			pos = str.find("%%{", pos);
 			if(pos == string::npos)
 				break;
@@ -220,12 +218,12 @@ string
 			return value;
 		}
 		if(type == DelayedFi) {
-			*errtext = "FI without IF";
+			*errtext = _("FI without IF");
 			*errvar = key;
 			return NULL;
 		}
 		if(type == DelayedElse) {
-			*errtext = "ELSE without IF";
+			*errtext = _("ELSE without IF");
 			*errvar = key;
 			return NULL;
 		}
@@ -243,7 +241,7 @@ string
 			varlength-=2;
 		}
 		if(visited.find(key) != visited.end()) {
-			*errtext = "self-reference";
+			*errtext = _("self-reference");
 			*errvar = key;
 			return NULL;
 		}
@@ -330,7 +328,7 @@ string
 				if(curr_count)
 					continue;
 				if(gotelse) {
-					*errtext = "double ELSE";
+					*errtext = _("double ELSE");
 					*errvar = key;
 					return NULL;
 				}
@@ -353,7 +351,7 @@ string
 				continue;
 			}
 			if(type == DelayedNotFound) {
-				*errtext = "IF without FI";
+				*errtext = _("IF without FI");
 				*errvar = key;
 				return NULL;
 			}
@@ -407,7 +405,7 @@ EixRc::read_undelayed(set<string> &has_reference)
 		// override with EIX_USERRC
 		char *home = getenv("HOME");
 		if(!home)
-			cerr << "No $HOME found in environment." << endl;
+			cerr << _("No $HOME found in environment.") << endl;
 		else {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);
@@ -627,6 +625,12 @@ EixRc::istrue(const char *s)
 		return true;
 	if(strcasecmp(s, "on") == 0)
 		return true;
+	if(strcasecmp(s, _("true")) == 0)
+		return true;
+	if(strcasecmp(s, _("yes")) == 0)
+		return true;
+	if(strcasecmp(s, _("on")) == 0)
+		return true;
 	return false;
 }
 
@@ -641,6 +645,14 @@ EixRc::getBeforeAfter(const char *key)
 	if(!strcasecmp(s, "after"))
 		return -1;
 	if(!strcasecmp(s, "last"))
+		return -2;
+	if(!strcasecmp(s, _("first")))
+		return 2;
+	if(!strcasecmp(s, _("before")))
+		return 1;
+	if(!strcasecmp(s, _("after")))
+		return -1;
+	if(!strcasecmp(s, _("last")))
 		return -2;
 	if(istrue(s))
 		return 1;
@@ -669,7 +681,8 @@ EixRc::getRedundantFlags(const char *key, Keywords::Redundant type, RedPair &p)
 		const char *s = it->c_str();
 		if((strcasecmp(s, "or") == 0) ||
 			(strcasecmp(s, "||") == 0) ||
-			(strcasecmp(s, "|") == 0))
+			(strcasecmp(s, "|") == 0) ||
+			(strcasecmp(s, _("or")) == 0))
 		{
 			++it;
 			if(it == a.end())
@@ -684,8 +697,10 @@ EixRc::getRedundantFlags(const char *key, Keywords::Redundant type, RedPair &p)
 		break;
 	}
 
-	cerr << key << " has unknown value \"" << value << "\";" << endl
-	     << "\tassuming value \"all-installed\" instead." << endl;
+	cerr << eix::format(_(
+		"%s has unknown value %r\n"
+		"\tassuming value 'all-installed' instead."))
+		% key % value << endl;
 
 	getRedundantFlagAtom("all-installed", type, p.first);
 	getRedundantFlagAtom(NULL, type, p.second);
@@ -714,8 +729,8 @@ void
 EixRc::dumpDefaults(FILE *s, bool use_defaults)
 {
 	const char *message = use_defaults ?
-		"was locally changed to:" :
-		"changed locally, default was:";
+		_("was locally changed to:") :
+		_("changed locally, default was:");
 	for(vector<EixRcOption>::size_type i = 0;
 		i < defaults.size();
 		++i)
@@ -738,8 +753,8 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 		const char *key   = defaults[i].key.c_str();
 		const char *value = defaults[i].local_value.c_str();
 		if(!typestring) {
-			fprintf(s,
-				"# locally added:\n%s='%s'\n\n",
+			fprintf(s, "# %s\n%s='%s'\n\n",
+				_("locally added:"),
 				key, value);
 			continue;
 		}

@@ -1170,7 +1170,7 @@ PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mas
 	}
 	if(file_mask_is_profile) {
 		if(!(p->restore_maskflags(Version::SAVEMASK_FILE))) {
-			throw ExBasic("internal error: Tried to restore nonlocal mask without saving");
+			throw ExBasic(_("internal error: Tried to restore nonlocal mask without saving"));
 		}
 	}
 	else
@@ -1186,7 +1186,7 @@ PortageSettings::setMasks(Package *p, bool filemask_is_profile) const
 {
 	if(filemask_is_profile) {
 		if(!(p->restore_maskflags(Version::SAVEMASK_FILE))) {
-			throw ExBasic("internal error: Tried to restore nonlocal mask without saving");
+			throw ExBasic(_("internal error: Tried to restore nonlocal mask without saving"));
 		}
 		return;
 	}

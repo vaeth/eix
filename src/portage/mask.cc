@@ -68,9 +68,8 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	const char *p = str;
 	while(*p != '/')
 	{
-		if(*p == '\0')
-		{
-			throw ExBasic("Can't read category.");
+		if(*p == '\0') {
+			throw ExBasic(_("Can't read category."));
 		}
 		++p;
 	}
@@ -109,9 +108,8 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		// There must be a version somewhere
 		p = ExplodeAtom::get_start_of_version(str);
 
-		if((!p) || (end && (p >= end)))
-		{
-			throw ExBasic("You have a operator but we can't find a version-part.");
+		if((!p) || (end && (p >= end))) {
+			throw ExBasic(_("You have a operator but we can't find a version-part."));
 		}
 
 		m_name = string(str, (p - 1) - str);
@@ -125,24 +123,22 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		if(wildcard && wildcard[1] != '\0')
 		{
 			if(!(end && ((wildcard + 1) == end)))
-				throw ExBasic("A '*' is only valid at the end of a version-string.");
+				throw ExBasic(_("A '*' is only valid at the end of a version-string."));
 		}
 
 		// Only the = operator can have a wildcard-version
 		if(m_operator != maskOpEqual && wildcard)
 		{
 			// A finer error-reporting
-			if(m_operator != maskOpRevisions)
-			{
-				throw ExBasic("A wildcard is only valid with the = operator.");
+			if(m_operator != maskOpRevisions) {
+				throw ExBasic(_("A wildcard is only valid with the = operator."));
 			}
-			else
-			{
-				throw ExBasic(
+			else {
+				throw ExBasic(_(
 						"A wildcard is only valid with the = operator.\n"
 						"Portage would also accept something like ~app-shells/bash-3*,\n"
 						"but behave just like ~app-shells/bash-3."
-					);
+					));
 			}
 		}
 

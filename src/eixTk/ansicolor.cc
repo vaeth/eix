@@ -80,7 +80,7 @@ AnsiMarker::initmarker(const string &markers_string) throw (ExBasic)
 		Marker mk = name_to_marker(*it);
 		if(mk == amIllegal) {
 			mk = amNone;
-			throw ExBasic("Illegal marker name %r") % *it;
+			throw ExBasic(_("Illegal marker name %r")) % *it;
 		}
 		markers[i++] = mk;
 	}
@@ -134,7 +134,7 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 		else if(color_name[curr] == '0')
 			light = false;
 		else {
-			throw ExBasic("Invalid brightness value %r") % color_name[curr];
+			throw ExBasic(_("Invalid brightness value %r")) % color_name[curr];
 		}
 		curr = color_name.find(';', curr);
 	}
@@ -153,7 +153,7 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 	fg = name_to_color(*pure_color);
 	if(fg == acIllegal) {
 		fg = acNone;
-		throw ExBasic("Illegal color name %r") % (*pure_color);
+		throw ExBasic(_("Illegal color name %r")) % (*pure_color);
 	}
 	calc_string();
 }

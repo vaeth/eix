@@ -106,21 +106,21 @@ bool CdbCache::readCategory(Category &vec) throw(ExBasic)
 	Cdb cdb(cdbfile.c_str());
 	if( ! cdb.isReady() )
 	{
-		m_error_callback(eix::format("Can't read cache file %s") % cdbfile);
+		m_error_callback(eix::format(_("Can't read cache file %s")) % cdbfile);
 		return true;
 	}
 	while( ! cdb.end() ) {
 		key = cdb.get(&dlen, &data);
 		map<string,string> mapping;
 		if( ! unpickle_get_mapping(static_cast<char *>(data), dlen, mapping)) {
-			m_error_callback(eix::format("Problems with %s.. skipping") % key);
+			m_error_callback(eix::format(_("Problems with %s.. skipping")) % key);
 			continue;
 		}
 
 		/* Split string into package and version, and catch any errors. */
 		char **aux = ExplodeAtom::split(key.c_str());
 		if(aux == NULL) {
-			m_error_callback(eix::format("Cannot split %r into package and version") % key);
+			m_error_callback(eix::format(_("Cannot split %r into package and version")) % key);
 			continue;
 		}
 		/* Search for existing package */

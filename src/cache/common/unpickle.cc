@@ -162,7 +162,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			if( ! is_finished() && (NEXT == 0x2) )
 				firsttime = false;
 		if(firsttime) {
-			throw ExBasic("wrong cpickle header");
+			throw ExBasic(_("wrong cpickle header"));
 			finish();
 			return;
 		}
@@ -289,7 +289,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			default:
 				finish();
 				{
-					throw ExBasic("Unsupported pickle value %r") % int(curr);
+					throw ExBasic(_("Unsupported pickle value %r")) % int(curr);
 					// prev = curr;
 					return;
 				}

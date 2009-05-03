@@ -80,7 +80,7 @@ static void
 sig_handler(int sig)
 {
 	if(sig == SIGSEGV)
-		fprintf(stderr,
+		fprintf(stderr, _(
 				"Received SIGSEGV - you probably found a bug in eix.\n"
 				"Please proceed with the following few instructions and help us find the bug:\n"
 				" * install gdb (sys-dev/gdb)\n"
@@ -90,7 +90,7 @@ sig_handler(int sig)
 				" * type \"bt\" to get a backtrace (this helps us a lot)\n"
 				" * post a bugreport and be sure to include the output from gdb ..\n"
 				"\n"
-				"Sorry for the inconvenience and thanks in advance!\n",
+				"Sorry for the inconvenience and thanks in advance!\n"),
 				program_name.c_str(), program_name.c_str());
 	exit(1);
 }

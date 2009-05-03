@@ -44,7 +44,8 @@ sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
 	UNUSED(NotUsed);
 #if 0
 	for(int i = 0; i<argc; ++i) {
-		cout << i << ": " << azColName[i] << " = " <<  welldefine(argv[i]) << "\n";
+		cout << eix::format("%s: %s = %s\n")
+			% i % azColName[i] % welldefine(argv[i]);
 	}
 #else
 	SqliteCache::callback_arg->sqlite_callback_cpp(argc, const_cast<const char **>(argv), const_cast<const char **>(azColName));
@@ -160,19 +161,19 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 
 	if(argc <= trueindex[TrueIndex::NAME]) {
 		sqlite_callback_error = true;
-		m_error_callback("Dataset does not contain a package name");
+		m_error_callback(_("sqlite dataset does not contain a package name"));
 		return;
 	}
 	string catarg = TrueIndex::c_str(argv, trueindex, TrueIndex::NAME);
 	if(argc <= maxindex) {
 		sqlite_callback_error = true;
-		m_error_callback(eix::format("Dataset for %s is too small") % catarg);
+		m_error_callback(eix::format(_("sqlite dataset for %s is too small")) % catarg);
 		return;
 	}
 	string::size_type pos = catarg.find_first_of('/');
 	if(pos == string::npos) {
 		sqlite_callback_error = true;
-		m_error_callback(eix::format("%r not of the form package/category-version") % catarg);
+		m_error_callback(eix::format(_("%r not of the form package/category-version")) % catarg);
 		return;
 	}
 	string name_ver = catarg.substr(pos + 1);
@@ -192,7 +193,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	}
 	char **aux = ExplodeAtom::split(name_ver.c_str());
 	if(aux == NULL) {
-		m_error_callback(eix::format("Can't split %r into package and version") % name_ver);
+		m_error_callback(eix::format(_("Can't split %r into package and version")) % name_ver);
 		return;
 	}
 	/* Search for existing package */
@@ -240,7 +241,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 	string::size_type pos = sqlitefile.find_last_not_of('/');
 	if(pos == string::npos)
 	{
-		m_error_callback("Database path incorrect");
+		m_error_callback(_("Database path incorrect"));
 		return false;
 	}
 	sqlitefile.resize(pos + 1);
@@ -251,7 +252,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 	if(rc)
 	{
 		sqlite3_close(db);
-		m_error_callback(eix::format("Can't open cache file %s") % sqlitefile);
+		m_error_callback(eix::format(_("Can't open cache file %s")) % sqlitefile);
 		return false;
 	}
 	if(pkgtree)
@@ -268,7 +269,7 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 		pkgtree->finish_fast_access();
 	if(rc != SQLITE_OK) {
 		sqlite_callback_error = true;
-		m_error_callback(eix::format("sqlite error: %s") % errormessage);
+		m_error_callback(eix::format(_("sqlite error: %s")) % errormessage);
 	}
 	return !sqlite_callback_error;
 }
@@ -282,8 +283,8 @@ bool SqliteCache::readCategories(PackageTree *packagetree, vector<string> *categ
 	UNUSED(packagetree);
 	UNUSED(category);
 	UNUSED(categories);
-	m_error_callback("Cache method sqlite is not compiled in.\n"
-	"Recompile eix, using configure option --with-sqlite to add sqlite support");
+	m_error_callback(_("Cache method sqlite is not compiled in.\n"
+		"Recompile eix, using configure option --with-sqlite to add sqlite support"));
 	return false;
 }
 

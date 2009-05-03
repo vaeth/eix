@@ -31,9 +31,9 @@ namespace io {
 		int c = fgetc(fp);
 		if(c == EOF) {
 			if (feof(fp))
-				throw ExBasic("error while reading from database: end of file");
+				throw ExBasic(_("error while reading from database: end of file"));
 			else
-				throw SysError("error while reading from database");
+				throw SysError(_("error while reading from database"));
 		}
 		return UChar(c);
 	}
@@ -43,7 +43,7 @@ namespace io {
 	{
 		if(fp) {
 			if (fputc(c, fp) == EOF)
-				throw SysError("error while writing to database");
+				throw SysError(_("error while writing to database"));
 		}
 		else
 			counter++;

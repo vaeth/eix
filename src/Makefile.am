@@ -34,6 +34,7 @@ eixTk/filenames.cc \
 eixTk/filenames.h \
 eixTk/formated.cc \
 eixTk/formated.h \
+eixTk/i18n.h \
 eixTk/inttypes.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \

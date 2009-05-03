@@ -9,6 +9,8 @@
 
 #include "argsreader.h"
 
+#include <eixTk/i18n.h>
+
 #include <cstdio>
 #include <cctype>
 #include <cstring>
@@ -130,7 +132,7 @@ ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
 			return opt_table->shortopt;
 		++opt_table;
 	}
-	fprintf(stderr, "Unknown option --%s\n", long_opt);
+	fprintf(stderr, _("Unknown option --%s\n"), long_opt);
 	exit(-1);
 	return -1;// never reached, but might avoid compiler warning
 }
@@ -147,7 +149,7 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 			return short_opt;
 		++opt_table;
 	}
-	fprintf(stderr, "Unknown option -%c\n", short_opt);
+	fprintf(stderr, _("Unknown option -%c\n"), short_opt);
 	exit(-1);
 	return -1;// never reached, but might avoid compiler warning
 }
@@ -221,7 +223,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 						it = erase(it);
 					if(it == end()) {
 						if(!optional) {
-							fprintf(stderr, "Missing parameter to --%s\n", c->longopt);
+							fprintf(stderr, _("Missing parameter to --%s\n"), c->longopt);
 							exit(-1);
 						}
 					}
@@ -246,7 +248,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 					}
 					if(it == end()) {
 						if(!optional) {
-							fprintf(stderr, "Missing second parameter to --%s\n", c->longopt);
+							fprintf(stderr, _("Missing second parameter to --%s\n"), c->longopt);
 							exit(-1);
 						}
 					}

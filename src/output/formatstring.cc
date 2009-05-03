@@ -226,7 +226,7 @@ string parse_colors(const string &colorstring, bool colors)
 		root != NULL; root = root->next)
 	{
 		if(root->type != Node::TEXT)
-			throw ExBasic("Internal error: bad node for parse_colors.");
+			throw ExBasic(_("Internal error: bad node for parse_colors."));
 		ret.append((static_cast<Text*>(root))->text);
 	}
 	return ret;
@@ -280,7 +280,7 @@ FormatParser::state_COLOR()
 {
 	char *q = strchr(band_position, ')');
 	if(q == NULL) {
-		last_error = "'(' without closing ')'";
+		last_error = _("'(' without closing ')'");
 		return ERROR;
 	}
 	if(enable_colors) {
@@ -288,7 +288,7 @@ FormatParser::state_COLOR()
 			keller.push(new Text(AnsiColor(string(band_position, q - band_position)).asString()));
 		}
 		catch(const ExBasic &e) {
-			last_error = "Error while parsing color: " + e.getMessage();
+			last_error = eix::format(_("Error while parsing color: %s")) % e.getMessage();
 			return ERROR;
 		}
 	}
@@ -301,7 +301,7 @@ FormatParser::state_PROPERTY()
 {
 	char *q = strchr(band_position, '>');
 	if(q == NULL) {
-		last_error = "'<' without closing '>'";
+		last_error = _("'<' without closing '>'");
 		return ERROR;
 	}
 	keller.push(new Property(parse_colors(
@@ -337,7 +337,7 @@ FormatParser::state_IF()
 	/* Look for negation */
 	band_position = seek_character(band_position);
 	if(*band_position == '\0' || *band_position == '}') {
-		last_error = "Ran into end-of-string or '}' while looking for possible negation-mark (!) in condition.";
+		last_error = _("Ran into end-of-string or '}' while looking for possible negation-mark (!) in condition.");
 		return ERROR;
 	}
 	if(*band_position == '!') {
@@ -350,7 +350,7 @@ FormatParser::state_IF()
 
 	band_position = seek_character(band_position);
 	if(*band_position == '\0' || *band_position == '}') {
-		last_error = "Ran into end-of-string or '}' while looking for property-name in condition.";
+		last_error = _("Ran into end-of-string or '}' while looking for property-name in condition.");
 		return ERROR;
 	}
 	unsigned int i = 0;
@@ -359,7 +359,7 @@ FormatParser::state_IF()
 		++i;
 	}
 	if(i == 0 || !*band_position) {
-		last_error = "Ran into end-of-string while reading property-name.";
+		last_error = _("Ran into end-of-string while reading property-name.");
 		return ERROR;
 	}
 	n->variable = Property(string(band_position - i, i));
@@ -373,14 +373,14 @@ FormatParser::state_IF()
 	}
 	/* This MUST be a '=' */
 	if(*band_position != '=') {
-		last_error = "Unknown operator in if-construct.";
+		last_error = _("Unknown operator in if-construct.");
 		return ERROR;
 	}
 	++band_position;
 
 	band_position = seek_character(band_position);
 	if(!*band_position) {
-		last_error = "Run into end-of-string while looking for right-hand of condition.";
+		last_error = _("Run into end-of-string while looking for right-hand of condition.");
 		return ERROR;
 	}
 
@@ -429,7 +429,7 @@ FormatParser::state_ELSE()
 		p->next = q;
 		q = p;
 		if(keller.empty()) {
-			last_error = "Found ELSE without IF.";
+			last_error = _("Found ELSE without IF.");
 			return ERROR;
 		}
 		p = keller.top();
@@ -456,7 +456,7 @@ FormatParser::state_FI()
 		p->next = q;
 		q = p;
 		if(keller.empty()) {
-			last_error = "Found FI without IF.";
+			last_error = _("Found FI without IF.");
 			return ERROR;
 		}
 		p = keller.top();
@@ -479,7 +479,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 	/* Initialize machine */
 	enable_colors = colors;
 	only_colors = parse_only_colors;
-	last_error = "Check your syntax";
+	last_error = _("Check your syntax");
 	state = START;
 	band = fmt;
 	band_position = fmt;
@@ -493,9 +493,9 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 			case IF:       state = state_IF(); break;
 			case ELSE:     state = state_ELSE(); break;
 			case FI:       state = state_FI(); break;
-			case ERROR:    throw ExBasic("Bad state: ERROR");
-			case STOP:     throw ExBasic("Bad state: STOP");
-			default:       throw ExBasic("Bad state: undefined");
+			case ERROR:    throw ExBasic(_("Bad state: ERROR"));
+			case STOP:     throw ExBasic(_("Bad state: STOP"));
+			default:       throw ExBasic(_("Bad state: undefined"));
 		}
 	}
 	/* Check if the machine went into ERROR-state. */
@@ -507,7 +507,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 		}
 		int line = 0, column = 0;
 		getPosition(&line, &column);
-		throw ExBasic("Line %r, column %r: %s") % line % column % last_error;
+		throw ExBasic(_("Line %r, column %r: %s")) % line % column % last_error;
 	}
 	/* Pop elements and form a single linked list. */
 	Node *p = NULL, *q = NULL;

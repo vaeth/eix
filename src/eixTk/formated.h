@@ -9,10 +9,13 @@
 #ifndef EIX__FORMATED_H__
 #define EIX__FORMATED_H__ 1
 
+#include <eixTk/i18n.h>
+
 #include <string>
 #include <sstream>
 #include <ostream>
 #include <cassert>
+#include <cstdlib>
 
 namespace eix {
 
@@ -33,11 +36,11 @@ Example usage:
 
 \code
   std::string file("/etc/make.conf"), message("something bad happend");
-  std::cout << eix::format("problems while parsing %r -- %s") % file % message << std::endl;
+  std::cout << eix::format(_("problems while parsing %r -- %s")) % file % message << std::endl;
   // problems while parsing "/etc/make.conf" -- something bad happend
 
   int line = 10, column = 20;
-  std::cout << eix::format("problems while parsing %r in line %r, column %r -- %s")
+  std::cout << eix::format(_("problems while parsing %r in line %r, column %r -- %s"))
           % file % message % line % column << std::endl;
   // problems while parsing "/etc/make.conf" in line 10, column 20 -- something bad happend
 \endcode */
@@ -72,16 +75,27 @@ class format
 		template<typename T>
 		format& operator%(const T& s)
 		{
-			assert(m_spec != 0);
-
-			if (m_spec == 'r')
-				write_representation(m_stream, s);
-			else if (m_spec == 's')
-				m_stream << s;
-			else {
-				assert(std::string(1, m_spec) == "unknown specifier");
+			switch(m_spec) {
+				case 's':
+					m_stream << s;
+					break;
+				case 'r':
+					write_representation(m_stream, s);
+					break;
+#ifndef NDEBUG
+				case 0:
+					std::cerr << formated(_("format specifier missing"))
+						<< std::endl;
+					exit(1);
+#endif
+				default:
+#ifndef NDEBUG
+					std::cerr << formated(_("unknown format specifier '%%%s'")) % m_spec
+						<< std::endl;
+					exit(1);
+#endif
+					break;
 			}
-
 			goto_next_spec();
 			return *this;
 		}

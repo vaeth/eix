@@ -928,7 +928,7 @@ get_package_property(const PrintFormat *fmt, const void *void_entity, const stri
 			return fmt->marked_list->getMarkedString(*entity);
 		return "";
 	}
-	throw ExBasic("Unknown property %r") % name;
+	throw ExBasic(_("Unknown property %r")) % name;
 }
 
 const void *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)

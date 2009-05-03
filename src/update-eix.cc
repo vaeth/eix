@@ -84,14 +84,18 @@ class Permissions {
 				{
 					if(!test_writable())
 					{
-						cerr << cachefile << " must be writable by group portage.\n";
+						cerr << eix::format(_(
+							"%s must be writable by group portage."))
+							% cachefile << endl;
 						exit(1);
 					}
 					if(!am_i_root())
 					{
 						if(!user_in_group("portage")) {
-							cerr << "You must be in the portage group to update the database.\n" <<
-								"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test.\n";
+							cerr << _(
+								"You must be in the portage group to update the database.\n"
+								"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test.")
+								<< endl;
 							exit(1);
 						}
 					}
@@ -102,7 +106,9 @@ class Permissions {
 				if(!am_i_root())
 				{
 					if(must_modify) {
-						cerr << "User 'root' is needed to initially generate the database.\n";
+						cerr << _(
+							"User 'root' is needed to initially generate the database.")
+							<< endl;
 						exit(1);
 					}
 					modify = false;
@@ -120,10 +126,10 @@ class Permissions {
 			uid_t u;
 			if(get_gid_of("portage", &g) && get_uid_of("portage", &u)) {
 				if(fchown(fileno(database), u, g)) {
-					cerr << "warning: cannot change ownership of cachefile" << endl;
+					cerr << _("warning: cannot change ownership of cachefile") << endl;
 				}
 				if(fchmod(fileno(database), 00664)) {
-					cerr << "warning: cannot change permissions for cachefile" << endl;
+					cerr << _("warning: cannot change permissions for cachefile") << endl;
 				}
 			}
 		}
@@ -133,7 +139,7 @@ bool Permissions::know_root, Permissions::am_root;
 static void
 print_help(int ret)
 {
-	printf( "Usage: %s [options]\n"
+	printf(_("Usage: %s [options]\n"
 			"\n"
 			" -h, --help              show a short help screen\n"
 			" -V, --version           show version-string\n"
@@ -154,7 +160,7 @@ print_help(int ret)
 			" -m  --override-method   override cache method for matching overlays.\n"
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
-			"further information.\n",
+			"further information.\n"),
 		program_name.c_str());
 
 	exit(ret);
@@ -237,7 +243,7 @@ add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 	vector<string> v = split_string(eixrc[s], true);
 	if(v.size() & 1)
 	{
-		fprintf(stderr, "%s must be a list of the form DIRECTORY METHOD\n", s);
+		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD\n")) % s << endl;
 		exit(1);
 	}
 	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it)
@@ -254,16 +260,16 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 	static const string a("eix*::");
 	FILE *fp = fopen(cachefile.c_str(), "rb");
 	if(!fp) {
-		INFO("KEEP_VIRTUALS is ignored: there is no previous %s\n", cachefile.c_str());
+		INFO(_("KEEP_VIRTUALS is ignored: there is no previous %s\n"), cachefile.c_str());
 		return;
 	}
 
-	INFO("Adding virtual overlays from %s ..\n", cachefile.c_str());
+	INFO(_("Adding virtual overlays from %s ..\n"), cachefile.c_str());
 	DBHeader header;
 	bool is_current = io::read_header(fp, header);
 	fclose(fp);
 	if(!is_current) {
-		fprintf(stderr, "Warning: KEEP_VIRTUALS ignored because database format has changed\n");
+		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
 		return;
 	}
 	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
@@ -326,7 +332,7 @@ run_update_eix(int argc, char *argv[])
 	Permissions permissions(outputfile, skip_permission_tests);
 	permissions.check_db();
 
-	INFO("Reading Portage settings ..\n");
+	INFO(_("Reading Portage settings ..\n"));
 	PortageSettings portage_settings(eixrc, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
@@ -426,7 +432,7 @@ run_update_eix(int argc, char *argv[])
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
 		else
-			INFO("Excluded %s\n", portage_settings["PORTDIR"].c_str());
+			INFO(_("Excluded as overlay: %s\n"), portage_settings["PORTDIR"].c_str());
 
 		portage_settings.add_overlay_vector(add_overlays, false);
 
@@ -439,11 +445,11 @@ run_update_eix(int argc, char *argv[])
 					portage_settings.overlays[i].c_str(),
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr);
 			else
-				INFO("Excluded %s\n", portage_settings.overlays[i].c_str());
+				INFO(_("Excluded overlay %s\n"), portage_settings.overlays[i].c_str());
 		}
 	}
 
-	INFO("Building database (%s) ..\n", outputfile.c_str());
+	INFO(_("Building database (%s) ..\n"), outputfile.c_str());
 	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
 
 	/* Update the database from scratch */
@@ -487,7 +493,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		OverlayIdent overlay(cache->getPath().c_str(), "");
 		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end()) {
-			INFO("Excluding \"%s\" %s (cache: %s)\n", overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+			INFO(_("Excluding \"%s\" %s (cache: %s)\n"), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
 			continue;
 		}
 		Version::Overlay key = dbheader.addOverlay(overlay);
@@ -496,8 +502,8 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO("[%u] \"%s\" %s (cache: %s)\n", PercentU(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
-		reading_percent_status = new PercentStatus("     Reading ", use_percentage);
+		INFO(_("[%u] \"%s\" %s (cache: %s)\n"), PercentU(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+		reading_percent_status = new PercentStatus(_("     Reading "), use_percentage);
 		if(cache->can_read_multiple_categories())
 		{
 			reading_percent_status->start(1);
@@ -505,7 +511,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			if(cache->readCategories(&package_tree, categories))
 				++(*reading_percent_status);
 			else
-				reading_percent_status->reprint("aborted");
+				reading_percent_status->reprint(_("aborted"));
 		}
 		else
 		{
@@ -524,7 +530,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	}
 
 	/* Now apply all masks .. */
-	INFO("Applying masks ..\n");
+	INFO(_("Applying masks ..\n"));
 	for(PackageTree::iterator c = package_tree.begin();
 		c != package_tree.end();
 		++c)
@@ -538,15 +544,15 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		}
 	}
 
-	INFO("Calculating hash tables ..\n");
+	INFO(_("Calculating hash tables ..\n"));
 	io::prep_header_hashs(dbheader, package_tree);
 
 	/* And write database back to disk .. */
-	INFO("Writing database file %s ..\n", outputfile);
+	INFO(_("Writing database file %s ..\n"), outputfile);
 	FILE *database_stream = fopen(outputfile, "wb");
 	if (!database_stream) {
-		throw ExBasic("Can't open the database file %r for writing (mode = 'wb')")
-				% outputfile;
+		throw ExBasic(_("Can't open the database file %r for writing (mode = 'wb')"))
+			% outputfile;
 	}
 	if(will_modify)
 		Permissions::set_db(database_stream);
@@ -558,7 +564,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	fclose(database_stream);
 
-	INFO("Database contains %u packages in %u categories.\n",
+	INFO(_("Database contains %u packages in %u categories.\n"),
 		PercentU(package_tree.countPackages()), PercentU(dbheader.size));
 }
 

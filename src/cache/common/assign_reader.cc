@@ -41,10 +41,9 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 {
 	map<string,string> cf;
 
-	if( get_map_from_cache(filename.c_str(), cf) < 0 )
-	{
-		error_callback(string("Can't read cache file ") + filename
-			+ ": " + strerror(errno));
+	if(get_map_from_cache(filename.c_str(), cf) < 0) {
+		error_callback(eix::format(_("Can't read cache file %s: "))
+			% filename % strerror(errno));
 		return;
 	}
 	keywords = cf["KEYWORDS"];
@@ -60,13 +59,11 @@ assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback e
 {
 	map<string,string> cf;
 
-	if( get_map_from_cache(filename, cf) < 0 )
-	{
-		error_callback(string("Can't read cache file ") + filename
-			+ ": " + strerror(errno));
+	if(get_map_from_cache(filename, cf) < 0) {
+		error_callback(eix::format(_("Can't read cache file %s: "))
+			% filename % strerror(errno));
 		return;
 	}
-
 	pkg->homepage = cf["HOMEPAGE"];
 	pkg->licenses = cf["LICENSE"];
 	pkg->desc     = cf["DESCRIPTION"];

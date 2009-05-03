@@ -9,6 +9,7 @@
 
 #include "global.h"
 #include <config.h>
+#include <eixTk/i18n.h>
 
 #define DEFAULT_PART 2
 

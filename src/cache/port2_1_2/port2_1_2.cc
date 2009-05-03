@@ -77,7 +77,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 		return false;
 	string::size_type pos = catstring.find_first_of('/');
 	if(pos == string::npos) {
-		m_error_callback(eix::format("%r not of the form package/catstring-version") % catstring);
+		m_error_callback(eix::format(_("%r not of the form package/catstring-version")) % catstring);
 		return false;
 	}
 	string name_ver = catstring.substr(pos + 1);
@@ -98,7 +98,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	char **aux = ExplodeAtom::split(name_ver.c_str());
 	if(aux == NULL)
 	{
-		m_error_callback(eix::format("Can't split %r into package and version") % name_ver);
+		m_error_callback(eix::format(_("Can't split %r into package and version")) % name_ver);
 		return false;
 	}
 	/* Search for existing package */
@@ -141,7 +141,7 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 	MapFile picklefile(filename.c_str());
 	if( ! picklefile.isReady(&data, &end) )
 	{
-		m_error_callback(eix::format("Can't read cache file %s") % filename);
+		m_error_callback(eix::format(_("Can't read cache file %s")) % filename);
 		return true;
 	}
 	if(category)
@@ -160,8 +160,8 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 		}
 	}
 	catch(const ExBasic &e) {
-		cerr << "Problems with " << filename <<
-			":\n" << e << endl;
+		cerr << eix::format(_("Problems with %s:\n")) % filename
+			<< e << endl;
 		if(packagetree)
 			packagetree->finish_fast_access();
 		return false;

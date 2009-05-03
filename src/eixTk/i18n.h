@@ -7,13 +7,11 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "global.h"
-#include <config.h>
-#include <eixTk/i18n.h>
+#ifndef EIX__I18B_H__
+#define EIX__I18N_H__ 1
 
-#define DEFAULT_PART 3
+//#define _(a) gettext(a)
 
-void fill_defaults_part_3(EixRc &eixrc)
-{
-#include <eixrc/defaults.cc>
-}
+#define _(a) a
+
+#endif /* EIX__I18N_H__ */

@@ -28,8 +28,8 @@ SysError::getMessage() const throw()
 void
 portage_parse_error(const string &file, const int line_nr, const string& line, const exception &e)
 {
-	cerr << "-- Invalid line in " << file << "(" << line_nr << "): \""
-		<< line << "\"" << endl;
+	cerr << eix::format(_("-- Invalid line %s in %s: %r"))
+		% line_nr % file % line << endl;
 
 	// Indent the message correctly
 	vector<string> lines = split_string(e.what(), false, "\n", false);

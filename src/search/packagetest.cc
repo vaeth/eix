@@ -190,7 +190,7 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 		static_match_field_map();
 	map<string,MatchField>::const_iterator it = match_field_map.find(p);
 	if(it == match_field_map.end()) {
-		throw ExBasic("cannot find match field %r") % p;
+		throw ExBasic(_("cannot find match field %r")) % p;
 		return NAME;
 	}
 	return it->second;
@@ -203,7 +203,7 @@ PackageTest::name2algorithm(const string &p) throw(ExBasic)
 		static_match_algorithm_map();
 	map<string,MatchAlgorithm>::const_iterator it = match_algorithm_map.find(p);
 	if(it == match_algorithm_map.end()) {
-		throw ExBasic("cannot find match algorithm %r") % p;
+		throw ExBasic(_("cannot find match algorithm %r")) % p;
 		return ALGO_REGEX;
 	}
 	return it->second;

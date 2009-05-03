@@ -9,6 +9,8 @@
 
 #include "stringutils.h"
 
+#include <eixTk/formated.h>
+
 #include <iostream>
 #include <cstdio>
 
@@ -198,7 +200,8 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 		if(it->empty())
 			continue;
 		if((*it)[0] == '+') {
-			cerr << "flags should not start with a '+':" << *it << endl << endl;
+			cerr << eix::format(_("flags should not start with a '+': %s")) % *it
+				<< endl;
 			s.insert(it->substr(1));
 			continue;
 		}
@@ -231,7 +234,7 @@ void
 StringHash::store_string(const string &s)
 {
 	if(finalized) {
-		fprintf(stderr, "Internal error: Storing required after finalizing");
+		fprintf(stderr, _("Internal error: Storing required after finalizing"));
 		exit(-1);
 	}
 	push_back(s);
@@ -241,11 +244,11 @@ void
 StringHash::hash_string(const string &s)
 {
 	if(finalized) {
-		fprintf(stderr, "Internal error: Hashing required after finalizing");
+		fprintf(stderr, _("Internal error: Hashing required after finalizing"));
 		exit(-1);
 	}
 	if(!hashing) {
-		fprintf(stderr, "Internal error: Hashing required in non-hash mode");
+		fprintf(stderr, _("Internal error: Hashing required in non-hash mode"));
 		exit(-1);
 	}
 	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
@@ -276,12 +279,12 @@ StringHash::size_type
 StringHash::get_index(const string &s) const
 {
 	if(!finalized) {
-		fprintf(stderr, "Internal error: Index required before sorting.");
+		fprintf(stderr, _("Internal error: Index required before sorting."));
 		exit(-1);
 	}
 	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
 	if(i == str_map.end()) {
-		fprintf(stderr, "Internal error: Trying to shortcut non-hashed string.");
+		fprintf(stderr, _("Internal error: Trying to shortcut non-hashed string."));
 		exit(-1);
 	}
 	return i->second;
@@ -291,7 +294,7 @@ const string&
 StringHash::operator[](StringHash::size_type i) const
 {
 	if(i >= size()) {
-		fprintf(stderr, "Database corrupt: Nonexistent hash required");
+		fprintf(stderr, _("Database corrupt: Nonexistent hash required"));
 		exit(-1);
 	}
 	return vector<string>::operator[](i);

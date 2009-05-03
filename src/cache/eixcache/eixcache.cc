@@ -81,7 +81,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		file = m_prefix + EIX_CACHEFILE;
 	FILE *fp = fopen(file.c_str(), "rb");
 	if(!fp) {
-		m_error_callback(eix::format("Can't read cache file %s: %s") %
+		m_error_callback(eix::format(_("Can't read cache file %s: %s")) %
 			file % strerror(errno));
 		return false;
 	}
@@ -90,9 +90,12 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 
 	if(!io::read_header(fp, header)) {
 		fclose(fp);
-		m_error_callback(eix::format("Cache file %s uses %s format %s (current is %s)") %
-			file % ((header.version > DBHeader::current) ? "newer" : "obsolete") %
-			header.version % DBHeader::current);
+		if(header.version > DBHeader::current)
+		m_error_callback(eix::format(
+			(header.version > DBHeader::current) ?
+			_("Cache file %s uses newer format %s (current is %s)") :
+			_("Cache file %s uses obsolete format %s (current is %s)"))
+			% file % header.version % DBHeader::current);
 		return false;
 	}
 	if(m_only_overlay)
@@ -112,7 +115,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 				}
 				if(!found) {
 					fclose(fp);
-					m_error_callback(eix::format("Cache file %s does not contain overlay %r [%s]") %
+					m_error_callback(eix::format(_("Cache file %s does not contain overlay %r [%s]")) %
 						m_overlay_name % m_scheme);
 					return false;
 				}
@@ -120,7 +123,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			else if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALL))
 			{
 				fclose(fp);
-				m_error_callback(eix::format("Cache file %s does not contain overlay %s") %
+				m_error_callback(eix::format(_("Cache file %s does not contain overlay %s")) %
 					file % m_overlay);
 				return false;
 			}

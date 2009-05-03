@@ -37,7 +37,7 @@ EbuildCache::readPackage(Category &vec, const string &pkg_name, const string &di
 		/* Check if we can split it */
 		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());
 		if(!ver) {
-			m_error_callback(eix::format("Can't split filename of ebuild %s/%s") %
+			m_error_callback(eix::format(_("Can't split filename of ebuild %s/%s")) %
 				directory_path % (*it));
 			continue;
 		}
@@ -50,7 +50,7 @@ EbuildCache::readPackage(Category &vec, const string &pkg_name, const string &di
 		string full_path = directory_path + '/' + (*it);
 		string *cachefile = ebuild_exec.make_cachefile(full_path.c_str(), directory_path, *pkg, *version);
 		if(!cachefile) {
-			m_error_callback(eix::format("Could not properly execute %s") % full_path);
+			m_error_callback(eix::format(_("Could not properly execute %s")) % full_path);
 			continue;
 		}
 
@@ -74,7 +74,7 @@ EbuildCache::readPackage(Category &vec, const string &pkg_name, const string &di
 			}
 		}
 		catch(const ExBasic &e) {
-			m_error_callback(eix::format("Executing %s did not produce all data") % full_path);
+			m_error_callback(eix::format(_("Executing %s did not produce all data")) % full_path);
 			// We keep the version anyway, even with wrong keywords/slots/infos:
 			have_onetime_info = true;
 		}
