@@ -120,10 +120,10 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 
 	if(!io::read_header(fp, *header)) {
 		fclose(fp);
-		cerr << (eix::format(_(
+		cerr << eix::format(_(
 			"%s was created with an incompatible update-eix:\n"
 			"It uses database format %s (current is %s)."))
-			% file % PercentU(header->version)) % PercentU(DBHeader::current)
+			% file % PercentU(header->version) % PercentU(DBHeader::current)
 			<< endl;
 		exit(1);
 	}
@@ -317,8 +317,8 @@ run_diff_eix(int argc, char *argv[])
 		format_changed = format_for_new.parseFormat(eixrc[varname].c_str());
 	}
 	catch(const ExBasic &e) {
-		cerr << eix::format(_("Problems while parsing %s:\n")) % varname
-			<< e << endl;
+		cerr << eix::format(_("Problems while parsing %s: %s\n"))
+			% varname % e << endl;
 		exit(1);
 	}
 

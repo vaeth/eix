@@ -8,7 +8,8 @@
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\"
+localedir = $(datadir)/locale
+AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(localedir)\"
 
 sysconf_DATA = eixrc/eixrc
 
@@ -140,7 +141,7 @@ search/packagetest.h \
 search/redundancy.h
 
 # Common to all binaries:
-common_ldadd = @BZLIB_LIBS@
+common_ldadd = @BZLIB_LIBS@ $(LTLIBINTL)
 common_src = \
 varsreader.cc \
 varsreader.h \

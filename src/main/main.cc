@@ -13,6 +13,9 @@
 
 #include <csignal>  /* signal handlers */
 #include <cstdio>
+#ifdef ENABLE_NLS
+#include <clocale>
+#endif
 
 // You must define - in config.h, by -D... or by a wrapper file -
 // one or several of
@@ -151,6 +154,14 @@ run_program(int argc, char *argv[])
 int
 main(int argc, char** argv)
 {
+
+#ifdef ENABLE_NLS
+	/* Initialize GNU gettext support */
+	setlocale (LC_ALL, "");
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	textdomain (PACKAGE);
+#endif
+
 	/* Install signal handler for segfaults */
 	signal(SIGSEGV, sig_handler);
 

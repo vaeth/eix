@@ -149,7 +149,7 @@ print_help(int ret)
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
-			" -o  --output            output to another file than "EIX_CACHEFILE"\n"
+			" -o  --output            output to another file than %s\n"
 			"                         In addition, all permission checks are omitted.\n"
 			" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
 			"                         Note that you can also exclude PORTDIR\n"
@@ -161,7 +161,7 @@ print_help(int ret)
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n"),
-		program_name.c_str());
+		EIX_CACHEFILE, program_name.c_str());
 
 	exit(ret);
 }
@@ -432,7 +432,7 @@ run_update_eix(int argc, char *argv[])
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
 		else
-			INFO(_("Excluded as overlay: %s\n"), portage_settings["PORTDIR"].c_str());
+			INFO(_("Excluded PORTDIR: %s\n"), portage_settings["PORTDIR"].c_str());
 
 		portage_settings.add_overlay_vector(add_overlays, false);
 

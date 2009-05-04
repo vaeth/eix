@@ -151,7 +151,7 @@ AddOption(STRING, "EBUILD_USER",
 AddOption(STRING, "EBUILD_GROUP",
 	"%{EBUILD_USER}", _(
 	"The group which is used for running bash on ebuilds when\n"
-	"cache method ebuild or ebuild* is used. See EBUILD_UID."));
+	"cache method ebuild or ebuild* is used. See EBUILD_GID."));
 
 AddOption(STRING, "EBUILD_UID",
 	"250", _(
@@ -161,7 +161,7 @@ AddOption(STRING, "EBUILD_UID",
 AddOption(STRING, "EBUILD_GID",
 	"%{EBUILD_UID}", _(
 	"If EBUILD_GROUP is empty or nonexistent, use this group id.\n"
-	"In this case and if ${EBUILD_UID} <= 0, the group id is not changed."));
+	"In this case and if ${EBUILD_GID} <= 0, the group id is not changed."));
 
 AddOption(STRING, "PORTAGE_ROOTPATH",
 	PORTAGE_ROOTPATH_DEFAULT, _(
@@ -489,7 +489,7 @@ AddOption(STRING, "STRING_PLAIN_INSTALLED",
 AddOption(STRING, "STRING_PLAIN_UNINSTALLED",
 	"*", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"plain\" tagging unintalled packages."));
+	"It defines the string used for \"plain\" tagging uninstalled packages."));
 
 AddOption(STRING, "DIFF_STRING_NEW",
 	">>", _(
@@ -1107,12 +1107,12 @@ AddOption(STRING, "FORMAT_SHORT_INSTALLATION_DATE",
 AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
 	" \"(cyan)", _(
 	"This string is printed before KEYWORDS string for a version is output.\n"
-	"(This is only used when --versionlines and PRINT_KEYWORDS is active)"));
+	"(This is only used when --versionlines and PRINT_KEYWORDS are active)"));
 
 AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
 	"()\"", _(
 	"This string is printed after KEYWORDS string for a version is output.\n"
-	"(This is only used when --versionlines and PRINT_KEYWORDS is active)"));
+	"(This is only used when --versionlines and PRINT_KEYWORDS are active)"));
 
 AddOption(STRING, "PRINT_EFFECTIVE_KEYWORDS",
 	"true", _(
@@ -1121,13 +1121,13 @@ AddOption(STRING, "PRINT_EFFECTIVE_KEYWORDS",
 AddOption(STRING, "FORMAT_BEFORE_EFFECTIVE_KEYWORDS",
 	" -> \"(cyan)", _(
 	"If PRINT_EFFECTIVE_KEYWORDS applies this string is printed after the\n"
-	"keywords and before the effective keywords string."
-	"(This is only used when --versionlines and PRINT_KEYWORDS is active)"));
+	"keywords and before the effective keywords string.\n"
+	"(This is only used when --versionlines and PRINT_KEYWORDS are active)"));
 
 AddOption(STRING, "FORMAT_AFTER_EFFECTIVE_KEYWORDS",
 	"()\"", _(
-	"This string is printed after the effective keywords (if these a printed.\n"
-	"(This is only used when --versionlines and PRINT_KEYWORDS is active)"));
+	"This string is printed after the effective keywords (if these are printed).\n"
+	"(This is only used when --versionlines and PRINT_KEYWORDS are active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
 	" [(blue)", _(
@@ -1146,7 +1146,7 @@ AddOption(STRING, "FORMAT_BEFORE_COLL_IUSE",
 
 AddOption(STRING, "FORMAT_AFTER_COLL_IUSE",
 	"()\\}", _(
-	"This string is printed before IUSE data for all versions is output.\n"
+	"This string is printed after IUSE data for all versions is output.\n"
 	"(This is only used when --versionlines is inactive and there are no slots)."));
 
 AddOption(STRING, "FORMAT_BEFORE_SLOT_IUSE",
@@ -1332,7 +1332,7 @@ AddOption(STRING, "ADD_CACHE_METHOD",
 
 AddOption(STRING, "CACHE_METHOD",
 	"%{ADD_CACHE_METHOD}", _(
-	"Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for certain paths.\n"
+	"Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for particular paths.\n"
 	"This is a list of pairs DIR-PATTERN METHOD. Later entries take precedence."));
 
 AddOption(STRING, "ADD_OVERRIDE_CACHE_METHOD",
@@ -1373,12 +1373,12 @@ AddOption(BOOLEAN, "ALWAYS_ACCEPT_KEYWORDS",
 
 AddOption(BOOLEAN, "UPGRADE_LOCAL_MODE",
 	"", _(
-	"if +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false."));
+	"If +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false."));
 
 AddOption(BOOLEAN, "RECOMMEND_LOCAL_MODE",
 	"", _(
-	"if +/-, recommendations for up- or downgrade will act as if\n"
-	"LOCAL_PORTAGE_CONFIG=true/false"));
+	"If +/-, recommendations for up- or downgrade will act as if\n"
+	"LOCAL_PORTAGE_CONFIG=true/false."));
 
 AddOption(BOOLEAN, "RECURSIVE_SETS",
 	"true", _(
@@ -1397,12 +1397,12 @@ AddOption(BOOLEAN, "PRINT_SLOTS",
 AddOption(BOOLEAN, "EIX_PRINT_IUSE",
 	"true", _(
 	"This variable is only used for delayed substitution.\n"
-	"If false, no IUSE data is printed for eix"));
+	"If false, no IUSE data is printed for eix."));
 
 AddOption(BOOLEAN, "DIFF_PRINT_IUSE",
 	"false", _(
 	"This variable is only used for delayed substitution.\n"
-	"If false, no IUSE data is printed for diff-eix"));
+	"If false, no IUSE data is printed for diff-eix."));
 
 AddOption(BOOLEAN, "PRINT_IUSE",
 	"%{*PRINT_IUSE}", _(
@@ -1769,36 +1769,38 @@ AddOption(STRING, "REDUNDANT_IF_DOUBLE_UNMASKED",
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_USE",
 	"some", _(
-	"Applies if /etc/portage/package.use matches twice"));
+	"Applies if /etc/portage/package.use matches twice\n"
+	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
 	"some", _(
-	"Applies if /etc/portage/package.cflags matches twice"));
+	"Applies if /etc/portage/package.cflags matches twice\n"
+	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_KEYWORDS",
 	"-some", _(
-	"Applies if /etc/portage/package.keywords contains a matching entry"));
+	"Applies if /etc/portage/package.keywords contains a matching entry."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_MASK",
 	"-some", _(
-	"Applies if /etc/portage/package.mask matches"));
+	"Applies if /etc/portage/package.mask matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_UNMASK",
 	"-some", _(
-	"Applies if /etc/portage/package.mask matches"));
+	"Applies if /etc/portage/package.unmask matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_USE",
 	"-some", _(
-	"Applies if /etc/portage/package.use matches"));
+	"Applies if /etc/portage/package.use matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 	"-some", _(
-	"Applies if /etc/portage/package.cflags matches"));
+	"Applies if /etc/portage/package.cflags matches."));
 
 AddOption(STRING, "EIXCFGDIR",
 	"%{PORTAGE_CONFIGROOT}/etc/portage", _(
 	"This variable is only used for delayed substitution.\n"
-	"It is the directory where eix searches for its package.*.*/sets.eix files"));
+	"It is the directory where eix searches for its package.*.*/sets.eix files."));
 
 AddOption(BOOLEAN, "SLOT_UPGRADE_FORBID",
 	"%{\\EIXCFGDIR}/package.slot_upgrade_forbid", _(
@@ -1812,51 +1814,51 @@ AddOption(BOOLEAN, "SLOT_UPGRADE_ALLOW",
 
 AddOption(STRING, "KEYWORDS_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.keywords.nonexistent", _(
-	"Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS"));
+	"Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."));
 
 AddOption(STRING, "MASK_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.mask.nonexistent", _(
-	"Entries listed in these files/dirs are excluded for -t TEST_MASK"));
+	"Entries listed in these files/dirs are excluded for -t TEST_MASK."));
 
 AddOption(STRING, "UNMASK_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.unmask.nonexistent", _(
-	"Entries listed in these files/dirs are excluded for -t TEST_UNMASK"));
+	"Entries listed in these files/dirs are excluded for -t TEST_UNMASK."));
 
 AddOption(STRING, "USE_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.use.nonexistent", _(
-	"Entries listed in these files/dire are excluded for -t TEST_USE"));
+	"Entries listed in these files/dire are excluded for -t TEST_USE."));
 
 AddOption(STRING, "CFLAGS_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.cflags.nonexistent", _(
-	"Entries listed in these files/dirs are excluded for -t TEST_CFLAGS"));
+	"Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."));
 
 AddOption(STRING, "INSTALLED_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.installed.nonexistent", _(
-	"Packages listed in these files/dirs are excluded for -t TEST_REMOVED"));
+	"Packages listed in these files/dirs are excluded for -t TEST_REMOVED."));
 
 AddOption(STRING, "KEYWORDS_NOWARN",
 	"%{\\EIXCFGDIR}/package.keywords.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.keywords"));
+	"Exceptional packages for -T tests of /etc/portage/package.keywords."));
 
 AddOption(STRING, "MASK_NOWARN",
 	"%{\\EIXCFGDIR}/package.mask.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.mask"));
+	"Exceptional packages for -T tests of /etc/portage/package.mask."));
 
 AddOption(STRING, "UNMASK_NOWARN",
 	"%{\\EIXCFGDIR}/package.unmask.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.unmask"));
+	"Exceptional packages for -T tests of /etc/portage/package.unmask."));
 
 AddOption(STRING, "USE_NOWARN",
 	"%{\\EIXCFGDIR}/package.use.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.use"));
+	"Exceptional packages for -T tests of /etc/portage/package.use."));
 
 AddOption(STRING, "CFLAGS_NOWARN",
 	"%{\\EIXCFGDIR}/package.cflags.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.cflags"));
+	"Exceptional packages for -T tests of /etc/portage/package.cflags."));
 
 AddOption(STRING, "INSTALLED_NOWARN",
 	"%{\\EIXCFGDIR}/package.installed.nowarn", _(
-	"Exceptional packages for -T tests of installed packages"));
+	"Exceptional packages for -T tests of installed packages."));
 
 AddOption(STRING, "EIX_LOCAL_SETS_ADD",
 	"", _(

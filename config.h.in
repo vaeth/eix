@@ -12,6 +12,10 @@
 /* Default EIX_PREFIX */
 #undef EIX_PREFIX_DEFAULT
 
+/* Define to 1 if translation of program messages to the user's native
+   language is requested. */
+#undef ENABLE_NLS
+
 /* Default EPREFIX */
 #undef EPREFIX_DEFAULT
 
@@ -21,14 +25,35 @@
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
 /* Define to 1 if you have the <climits> header file. */
 #undef HAVE_CLIMITS
+
+/* Define if the GNU dcgettext() function is already present or preinstalled.
+   */
+#undef HAVE_DCGETTEXT
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
 
 /* Define to 1 if you have the `fnmatch' function. */
 #undef HAVE_FNMATCH
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
+
+/* Define if the GNU gettext() function is already present or preinstalled. */
+#undef HAVE_GETTEXT
+
+/* Define if you have the iconv() function and it works. */
+#undef HAVE_ICONV
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -104,6 +129,10 @@
 
 /* default levenshtein-distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
 
 /* Name of package */
 #undef PACKAGE

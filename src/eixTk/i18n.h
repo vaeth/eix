@@ -10,8 +10,15 @@
 #ifndef EIX__I18B_H__
 #define EIX__I18N_H__ 1
 
-//#define _(a) gettext(a)
+#include <config.h>
 
+#ifdef ENABLE_NLS
+
+#include <libintl.h>
+#define _(a) gettext(a)
+
+#else /* !defined(ENABLE_NLS) */
 #define _(a) a
+#endif
 
 #endif /* EIX__I18N_H__ */

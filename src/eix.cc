@@ -48,7 +48,7 @@ dump_help(int exit_code)
 			"EXPRESSION is true or false. Packages for which the EXPRESSION gives true,\n"
 			"are included in the final report.\n"
 			"\n"
-			"A EXPRESSION can be:\n"
+			"An EXPRESSION can be:\n"
 			"    EXPRESSION [-o|-a] EXPRESSION\n"
 			"    [local-options] PATTERN\n"
 			"\n"
@@ -73,7 +73,7 @@ dump_help(int exit_code)
 			"                           combined with -T to clean up /etc/portage/package.*\n"
 			"     -Q, --quick (toggle)  don't read unguessable slots of installed packages\n"
 			"         --care            always read slots of installed packages\n"
-			"         --cache-file      use another cache-file instead of "EIX_CACHEFILE"\n"
+			"         --cache-file      use another cache-file instead of %s\n"
 			"\n"
 			"   Output:\n"
 			"     -q, --quiet (toggle)   (no) output\n"
@@ -157,12 +157,15 @@ dump_help(int exit_code)
 			"  Type of Pattern:\n"
 			"    -r, --regex           Pattern is a regexp (default)\n"
 			"    -e, --exact           Pattern is the exact string\n"
+			"    -z, --substring       Pattern is a substring\n"
+			"    -b, --begin           Pattern is the beginning of the string\n"
+			"        --end             Pattern is the end       of the string\n"
 			"    -p, --pattern         Pattern is a wildcards-pattern\n"
 			"    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n"),
-		program_name.c_str());
+		EIX_CACHEFILE, program_name.c_str());
 
 	if(exit_code != -1) {
 		exit(exit_code);
@@ -499,8 +502,8 @@ set_format()
 		}
 	}
 	catch(const ExBasic &e) {
-		cerr << eix::format(_("Problems while parsing %s:\n")) % varname
-			<< e << endl;
+		cerr << eix::format(_("Problems while parsing %s: %s\n"))
+			% varname % e << endl;
 		exit(1);
 	}
 }
@@ -913,8 +916,8 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 		return;
 	}
 	cout << eix::format(test_empty ?
-		_("Matching or empty entries in %s:\n\n") :
-		_("Matching entries in %s:\n\n"))
+		_("Non-matching or empty entries in %s:\n\n") :
+		_("Non-matching entries in %s:\n\n"))
 		% filename;
 	print_vector(unused);
 }

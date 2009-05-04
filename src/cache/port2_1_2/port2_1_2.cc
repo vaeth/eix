@@ -160,8 +160,8 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 		}
 	}
 	catch(const ExBasic &e) {
-		cerr << eix::format(_("Problems with %s:\n")) % filename
-			<< e << endl;
+		cerr << eix::format(_("Problems with %s: %s\n")) % filename % e
+			<< endl;
 		if(packagetree)
 			packagetree->finish_fast_access();
 		return false;

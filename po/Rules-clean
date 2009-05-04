@@ -1,0 +1,8 @@
+maintainer-clean:
+	for i in *; \
+		do case "$${i}" in \
+			en?boldquot.po|en?quot.po) true;; \
+			Makevars|POTFILES.in|LINGUAS|Rules-clean|*.po) continue;; \
+		esac; \
+		rm -- "$${i}"; \
+	done

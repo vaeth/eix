@@ -288,7 +288,7 @@ FormatParser::state_COLOR()
 			keller.push(new Text(AnsiColor(string(band_position, q - band_position)).asString()));
 		}
 		catch(const ExBasic &e) {
-			last_error = eix::format(_("Error while parsing color: %s")) % e.getMessage();
+			last_error = eix::format(_("Error while parsing color: %s")) % e;
 			return ERROR;
 		}
 	}

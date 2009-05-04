@@ -4,19 +4,24 @@
 #   Copyright (c)
 #     Wolfgang Frisch <xororand@users.sourceforge.net>
 #     Emil Beinroth <emilbeinroth@gmx.net>
+#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 AUTOMAKE_OPTIONS = foreign 1.4 dist-bzip2
 
-SUBDIRS = src manpage doc
+SUBDIRS = po src manpage doc
 
 CLEANFILES = doxygen.cfg cppcomplete.tags tags
 
 # Stuff from our distribution
-EXTRA_DIST = doxygen.cfg.in
+EXTRA_DIST = config/config.rpath doxygen.cfg.in
+
+ACLOCAL_AMFLAGS = -I m4
 
 # Remove things created by autogen.sh
 maintainer-clean-local:
-	$(RM) -fr "$(top_srcdir)/config"
+	@$(RM) -vfr "$(top_srcdir)/build" "$(top_srcdir)/config" "$(top_srcdir)/m4"
+	@$(RM) -vf "$(top_srcdir)/ABOUT-NLS" "$(top_srcdir)/aclocal.m4"
+	@$(RM) -vf "$(top_srcdir)/configure" "$(top_srcdir)/config.h.in~"
 
 # Remove doxygen/ and rpo files (-frepo with gcc) on clean
 clean-local: doxygen-clean
