@@ -14,10 +14,12 @@
 read_functions
 
 Usage () {
-	local I R
-	R=${1:-1}
-	printf "%s" "Usage: ${0##*/} [options] command
-Add or remove local layman overlays to eix database (@PACKAGE_STRING@)
+	local i n p
+	exitcode="${1:-1}"
+	n="${0##*/}"
+	p='@PACKAGE_STRING@'
+	eval_gettext 'Usage: ${n} [options] command
+Add or remove local layman overlays to eix database (${p})
 The following commands are provided:
 
 add:	Add the local layman overlays to the eix database
@@ -25,39 +27,41 @@ remove:	Remove the local layman overlays from the eix database.
 
 Options:
 	-a OVERLAY    Add overlay to the list of layman overlays.
-	-A PATH       Add PATH to the sourced make.conf's used to determine
-	              the layman overlays. Current value:"
-	eval "set -- ${LAYMAN_MAKE}"
-	[ ${#} -eq 0 ] && set -- \
-		'none (i.e. no readable layman make.conf specified)'
-	for I
+	-A PATH       Add PATH to the sourced make.conf-s used to determine
+	              the layman overlays. Current value:'
+	eval "set -- ${layman_make}"
+	[ ${#} -eq 0 ] && set -- "`gettext \
+		'none (i.e. no readable layman make.conf specified)'`"
+	for i
 	do
-		printf "%s\t%s" "
-	              " "${I}"
+		printf '%s\t%s' '
+	              ' "${i}"
 	done
-	printf "%s\n" "
-	-C            Clear the above list
+	echo
+	gettext \
+'	-C            Clear the above list
 	-c LAYMAN_CFG Use layman.cfg file to determine entry for above list
 	-v            Verbose (default)
-	-q            Quiet"
-	exit ${R}
+	-q            Quiet'
+	echo
+	exit ${exitcode}
 }
 
 ClearLaymanMake () {
-	Push -c LAYMAN_MAKE
+	Push -c layman_make
 }
 
 PushLaymanMake () {
-	local M R
-	R=1
-	for M
+	local m r
+	r=1
+	for m
 	do
-		[ -n "${M}" ] || continue
-		test -r "${M}" || continue
-		Push LAYMAN_MAKE "${M}"
-		R=0
+		[ -n "${m}" ] || continue
+		test -r "${m}" || continue
+		Push layman_make "${m}"
+		r=0
 	done
-	return ${R}
+	return ${r}
 }
 
 PrintLaymanMake () {
@@ -66,24 +70,25 @@ print Config()['make_conf']" "${@}" 2>/dev/null
 }
 
 CalcLaymanMake () {
-	local L
-	L=`PrintLaymanMake "${@}"` || return
-	PushLaymanMake "${L}"
+	local l
+	l=`PrintLaymanMake "${@}"` || return
+	PushLaymanMake "${l}"
 }
 
 GetPortdir
 ClearLaymanMake
 CalcLaymanMake || \
 	PushLaymanMake '/usr/local/portage/layman/make.conf' || \
-	PushLaymanMake "${LOCAL_PORTDIR:-/}local/layman/make.conf"
-LAYMAN_OVERLAYS=''
+	PushLaymanMake "${local_portdir:-/}local/layman/make.conf"
+layman_overlays=''
 
-while getopts 'vqa:A:c:C?hH' OPTION
+OPTIND=1
+while getopts 'vqa:A:c:C?hH' opt
 do
-	case "${OPTION}" in
-		v) VERBOSE=true;;
-		q) VERBOSE=false;;
-		a) Push LAYMAN_OVERLAYS "${OPTARG}";;
+	case "${opt}" in
+		v) verbose=true;;
+		q) verbose=false;;
+		a) Push layman_overlays "${OPTARG}";;
 		c) CalcLaymanMake -c "${OPTARG}";;
 		A) PushLaymanMake "${OPTARG}";;
 		C) ClearLaymanMake;;
@@ -93,13 +98,13 @@ done
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
 GetOverlays () {
-	local I
-	eval "set -- ${LAYMAN_MAKE}"
-	for I
+	local i
+	eval "set -- ${layman_make}"
+	for i
 	do
-		[ -n "${I}" ] && test -r "${I}" && Push LAYMAN_OVERLAYS \
-			`PORTDIR_OVERLAY=''; . "${I}"; \
-				printf "%s" "${PORTDIR_OVERLAY}"`
+		[ -n "${i}" ] && test -r "${i}" && Push layman_overlays \
+			`PORTDIR_OVERLAY=''; . "${i}"; \
+				printf '%s' "${PORTDIR_OVERLAY}"`
 	done
 }
 
@@ -111,20 +116,20 @@ Init () {
 
 Add () {
 	Init
-	eval "AddOverlays ${LAYMAN_OVERLAYS}"
+	eval "AddOverlays ${layman_overlays}"
 	CallUpdateEix
 }
 
 Remove () {
 	Init
-	eval "AddExcludes ${LAYMAN_OVERLAYS}"
+	eval "AddExcludes ${layman_overlays}"
 	CallUpdateEix
 }
 
-MAIN_COMMAND="${1}"
+main_command="${1}"
 [ ${#} -gt 0 ] && shift
 
-case "${MAIN_COMMAND}" in
+case "${main_command}" in
 	add*)               Add "${@}";;
 	rem*|del*|rm*|sub*) Remove "${@}";;
 	*)                  Usage;;

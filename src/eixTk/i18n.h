@@ -16,9 +16,11 @@
 
 #include <libintl.h>
 #define _(a) gettext(a)
+#define N_(a) ngettext(a)
 
 #else /* !defined(ENABLE_NLS) */
 #define _(a) a
+#define N_(a) a
 #endif
 
 #endif /* EIX__I18N_H__ */

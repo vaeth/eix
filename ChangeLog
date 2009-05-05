@@ -5,8 +5,10 @@
 	- Add NLS support and experimental translation into German.
 	- Add versionsort helper tool (and ./configure --enable-separate-tool)
 	- Support $PROFILE/package.keywords and $PROFILE/package.unmask
-	- Workaround setenv() for http://bugs.gentoo.org/show_bug.cgi?id=267807
-	- Some autotools/preprocessor cleanup
+	- Workaround setenv for http://bugs.gentoo.org/show_bug.cgi?id=267807
+	- Use non-capital variable names in scripts.
+	- Minor bugfixes in scripts.
+	- Some autotools/preprocessor cleanup.
 	- manpage: Make clear that overlays must be paths, not repo-names.
 	- manpage: Give some examples for egencache hooks with eix-sync.
 

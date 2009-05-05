@@ -7,36 +7,38 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
-DETAILS=false
+. ./functions-eix.sh.in
+read_gettext
+
+details=false
 Die () {
-	printf "%s: %s\n" "${0##*/}" "${1}" >&2
+	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
 }
 
 Eix () {
-	local I
+	local i
 	if [ -z "`eix '-*Tc' | head -n1`" ]
 	then
-		[ -z "${1}" ] || printf "%s\n" "${1} (or test switched off)."
+		[ -z "${1}" ] || printf "%s\n" "${1}"
 		return
 	fi
-	if [ ${#} -le 2 ] || ! ${DETAILS}
+	printf '\n%s\n' "${2}..."
+	if [ ${#} -le 2 ] || ! ${details}
 	then
-		printf "\n%s:\n" "${2}"
 		eix -Tc
-		printf "\n"
+		printf '\n'
 		return
 	fi
-	printf "\n%s\n" "${2}..."
 	shift 2
-	for I
+	for i
 	do
 		(
-			for J; do
-				[ "${I}" = "${J}" ] && continue
-				eval "export ${J}=false"
+			for j; do
+				[ "${i}" = "${j}" ] && continue
+				eval "export ${j}=false"
 			done
-			Eix '' "... considered as ${I}"
+			Eix '' "`eval_gettext '... considered as ${i}'`"
 		)
 	done
 }
@@ -83,48 +85,52 @@ NoUninstalled () { export \
 }
 
 Repository () {
-	local I J C A
+	local i j c
 	if ${1}
 	then
-		I='with'
+		i="`gettext \
+'The following package versions are installed with repository information:'`"
 	else
-		I='without'
+		i="`gettext \
+'The following package versions are installed without repository information:'`"
 	fi
 	cd -- "`eix --print EPREFIX_INSTALLED`"/var/db/pkg >/dev/null 2>&1 \
-		|| Die "cannot locate your database of installed packages"
-	printf "%s\n\n" \
-	"The following package versions are installed ${I} repository information:"
-	C=0
-	( eval '[ "$(( ${C} + 1 ))" = 1 ]' ) >/dev/null 2>&1 \
-		&& A='$(( ${C} + 1 ))' || A='`expr "${C}" + 1`'
-	for I in *
+		|| Die "`gettext \
+			'cannot locate your database of installed packages'`"
+	printf "%s\n\n" "${i}"
+	c=0
+	for i in *
 	do
-		for J in "${I}"/*; do
-			if test -e "${J}/repository"; then
+		for j in "${i}"/*; do
+			if test -e "${j}/repository"; then
 				${1} || continue
 			else
 				${1} && continue
 			fi
-			printf "%s\n" "${J}"
-			eval "C=${A}"
+			printf '%s\n' "${j}"
+			c=`expr "${c}" + 1`
 		done
 	done
-	if test ${C} -eq 0
+	if [ ${c} -eq 0 ]
 	then
-		printf "%s\n" "none"
-	elif test ${C} -ne 1
+		gettext 'none'
+		echo
+	elif [ ${c} -ne 1 ]
 	then
-		printf "\n%s\n" "(total number of versions listed above: ${C})"
+		echo
+		eval_gettext '(total number of versions listed above: ${c})'
+		echo
 	fi
 	exit 0
 }
 
-COMMON="`eix --print PORTAGE_CONFIGROOT`"
-COMMON="${COMMON}/etc/portage/package."
+rump="`eix --print PORTAGE_CONFIGROOT`"
+rump="${rump}/etc/portage/package."
 
-if [ ${#} -gt 0 ]; then
+if [ ${#} -gt 0 ]
+then
 	case "${1}" in
-		detail*|Detail*|DETAIL*) DETAILS=true;;
+		detail*|Detail*|DETAIL*) details=true;;
 		no*repo*|No*repo*|No*Repo*|NO*REPO*) Repository false;;
 		repo*|Repo*|REPO*) Repository true;;
 		*) export CHECK_INSTALLED_OVERLAYS=true;;
@@ -136,8 +142,9 @@ eix '-t*!'
 	export TEST_FOR_NONEXISTENT=false
 	(
 		NoMask; NoUnmask; NoUse; NoCflags; NoUninstalled
-		Eix "No redundant entries in ${COMMON}keywords" \
-			"Redundant in ${COMMON}keywords" \
+		Eix "`eval_gettext \
+'No redundant entries in ${rump}keywords (or test switched off).'`" \
+			"`eval_gettext 'Redundant in ${rump}keywords:'`" \
 			REDUNDANT_IF_DOUBLE \
 			REDUNDANT_IF_MIXED \
 			REDUNDANT_IF_WEAKER \
@@ -149,30 +156,34 @@ eix '-t*!'
 	NoKeywords
 	(
 		NoUnmask; NoUse; NoCflags; NoUninstalled
-		Eix "No redundant entries in ${COMMON}mask" \
-			"Redundant in ${COMMON}mask" \
+		Eix "`eval_gettext \
+'No redundant entries in ${rump}mask (or test switched off).'`" \
+			"`eval_gettext 'Redundant in ${rump}mask:'`" \
 			REDUNDANT_IF_MASK_NO_CHANGE \
 			REDUNDANT_IF_DOUBLE_MASKED
 	)
 	NoMask
 	(
 		NoUse; NoCflags; NoUninstalled
-		Eix "No redundant entries in ${COMMON}unmask" \
-			"Redundant in ${COMMON}unmask" \
+		Eix "`eval_gettext \
+'No redundant entries in ${rump}unmask (or test switched off).'`" \
+			"`eval_gettext 'Redundant in ${rump}unmask:'`" \
 			REDUNDANT_IF_UNMASK_NO_CHANGE \
 			REDUNDANT_IF_DOUBLE_UNMASKED
 	)
 	NoUnmask
 	(
 		NoCflags; NoUninstalled
-		Eix "No redundant entries in ${COMMON}use" \
-			"Redundant in ${COMMON}use"
+		Eix "`eval_gettext \
+'No redundant entries in ${rump}use (or test switched off).'`" \
+			"`eval_gettext 'Redundant in ${rump}use:'`" \
 	)
 	NoUse
 	(
 		NoUninstalled
-		Eix "No redundant entries in ${COMMON}cflags" \
-			"Redundant in ${COMMON}cflags"
+		Eix "`eval_gettext \
+'No redundant entries in ${rump}cflags (or test switched off).'`" \
+			"`eval_gettext 'Redundant in ${rump}cflags:'`" \
 	)
 	NoCflags
 	(
@@ -181,8 +192,9 @@ eix '-t*!'
 		REDUNDANT_IF_IN_UNMASK=false \
 		REDUNDANT_IF_IN_USE=false \
 		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "No uninstalled entries in ${COMMON}keywords" \
-			"Not installed but in ${COMMON}keywords"
+		Eix "`eval_gettext \
+'No uninstalled entries in ${rump}keywords (or test switched off).'`" \
+			"`eval_gettext 'Not installed but in ${rump}keywords:'`"
 	)
 	export REDUNDANT_IF_IN_KEYWORDS=false
 	(
@@ -190,30 +202,36 @@ eix '-t*!'
 		REDUNDANT_IF_IN_UNMASK=false \
 		REDUNDANT_IF_IN_USE=false \
 		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "No uninstalled entries in ${COMMON}mask" \
-			"Not installed but in ${COMMON}mask"
+		Eix "`eval_gettext \
+'No uninstalled entries in ${rump}mask (or test switched off).'`" \
+			"`eval_gettext 'Not installed but in ${rump}mask:'`"
 	)
 	export REDUNDANT_IF_IN_MASK=false
 	(
 		export \
 		REDUNDANT_IF_IN_USE=false \
 		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "No uninstalled entries in ${COMMON}unmask" \
-			"Not installed but in ${COMMON}unmask"
+		Eix "`eval_gettext \
+'No uninstalled entries in ${rump}unmask (or test switched off).'`" \
+			"`eval_gettext 'Not installed but in ${rump}unmask:'`"
 	)
 	export REDUNDANT_IF_IN_UNMASK=false
 	(
 		export \
 		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "No uninstalled entries in ${COMMON}use" \
-			"Not installed but in ${COMMON}use"
+		Eix "`eval_gettext \
+'No uninstalled entries in ${rump}use (or test switched off).'`" \
+			"`eval_gettext 'Not installed but in ${rump}use:'`"
 	)
 	export \
 	REDUNDANT_IF_IN_USE=false
-	Eix "No uninstalled entries in ${COMMON}cflags" \
-		"Not installed but in ${COMMON}cflags"
+	Eix "`eval_gettext \
+'No uninstalled entries in ${rump}cflags (or test switched off).'`" \
+		"`eval_gettext 'Not installed but in ${rump}cflags:'`"
 )
 export \
 TEST_FOR_REDUNDANCY=false
-Eix "All installed versions of packages are in the database" \
-	"Installed packages with a version not in the database (or masked)"
+Eix "`gettext \
+	'All installed versions of packages are in the database.'`" \
+	"`gettext \
+	'Installed packages with a version not in the database (or masked):'`"

@@ -10,39 +10,78 @@
 # It contains helper functions for update-eix-remote, update-eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
-LOCAL_EPREFIX_PORTAGE_EXEC="`update-eix --print EPREFIX_PORTAGE_EXEC`"
+local_eprefix_portage_exec="`update-eix --print EPREFIX_PORTAGE_EXEC`"
+
+read_gettext () {
+	local i
+	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
+	read_gettext_status=0
+	export TEXTDOMAIN='@TEXTDOMAIN@'
+	{
+		. gettext.sh && return
+		i="`command -v gettext.sh 2>/dev/null`" && \
+			[ -n "${i}" ] && . "${i}" && return
+		. /usr/bin/gettext.sh && return
+	} >/dev/null 2>&1
+	eval '
+	gettext() {
+		printf "%s" "${*}"
+	}
+	eval_gettext() {
+		eval "printf \"%s\" \"${*}\""
+	}
+	ngettext() {
+		gettext "${@}"
+	}
+	eval_ngettext() {
+		eval_gettext "${@}"
+	}
+	'
+	read_gettext_status=1
+	return 1
+}
 
 # This must happen in a function to enforce an empty argument list.
 read_functions () {
-	local I
-	for I in "${LOCAL_EPREFIX_PORTAGE_EXEC}/etc/init.d/functions.sh" \
-		"${LOCAL_EPREFIX_PORTAGE_EXEC}/sbin/functions.sh"
+	local i
+	read_gettext
+	for i in "${local_eprefix_portage_exec}/etc/init.d/functions.sh" \
+		"${local_eprefix_portage_exec}/sbin/functions.sh"
 	do
-		test -r "${I}" || continue
-		. "${I}"
+		test -r "${i}" || continue
+		. "${i}"
 		return
 	done
-	printf "%s: %s" "${0##*/}" "cannot read functions.sh" >&2
+	printf '%s: %s' "${0##*/}" "`gettext 'cannot read functions.sh'`" >&2
 	exit 2
 }
 
 die () {
 	eerror "${*}"
-	EXITCODE=2
-	exit "${EXITCODE}"
+	exitcode=2
+	exit "${exitcode}"
 }
 
-LOCAL_PORTDIR=''
+per_line () {
+	local i
+	while IFS='
+' read i
+	do
+		"${@}" "${i}"
+	done
+}
+
+local_portdir=''
 GetPortdir () {
-	[ -n "${LOCAL_PORTDIR}" ] && return
-	LOCAL_PORTDIR="`update-eix --print PORTDIR`"
+	[ -n "${local_portdir}" ] && return
+	local_portdir="`update-eix --print PORTDIR`"
 }
 
-VERBOSE=true
+verbose=true
 
 RunCommand () {
-	local RET
-	if ${VERBOSE}
+	local ret c
+	if ${verbose}
 	then
 		einfo "${1}"
 		shift
@@ -52,9 +91,10 @@ RunCommand () {
 	ebegin "${1}"
 	shift
 	"${@}" >/dev/null
-	RET=${?}
-	eend ${RET} "Problems running ${@}"
-	return ${RET}
+	ret=${?}
+	c="${*}"
+	eend ${ret} "`eval_gettext 'Problems running ${c}'`"
+	return ${ret}
 }
 
 ( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && eval '
@@ -113,17 +153,17 @@ Push () {
 }
 
 AddUpdateArgs () {
-	Push UPDATE_EIX_ARGS "${@}"
+	Push update_eix_args "${@}"
 }
 
 AddUpdateQuoting () {
-	local K
-	K="${1}"
+	local k
+	k="${1}"
 	shift
-	Replace -g K '?' '\?'
-	Replace -g K '*' '\*'
-	Replace -g K '[' '\['
-	AddUpdateArgs "${K}" "${@}"
+	Replace -g k '?' '\?'
+	Replace -g k '*' '\*'
+	Replace -g k '[' '\['
+	AddUpdateArgs "${k}" "${@}"
 }
 
 AddMethod () {
@@ -132,48 +172,48 @@ AddMethod () {
 }
 
 AddOverlays () {
-	local J
-	for J
+	local j
+	for j
 	do
-		AddUpdateArgs '-a' "${J}"
+		AddUpdateArgs '-a' "${j}"
 	done
 }
 
 AddExcludes () {
-	local J
-	for J
+	local j
+	for j
 	do
 		AddUpdateArgs '-x'
-		AddUpdateQuoting "${J}"
+		AddUpdateQuoting "${j}"
 	done
 }
 
 ClearUpdateEixArgs () {
-	UPDATE_EIX_ARGS=''
+	update_eix_args=''
 }
 
 CallUpdateEix () {
-	eval "set -- ${UPDATE_EIX_ARGS}"
-	RunCommand "Calling update-eix" update-eix "${@}" || \
-		die "update-eix failed"
+	eval "set -- ${update_eix_args}"
+	RunCommand "`gettext 'Calling update-eix'`" update-eix "${@}" || \
+		die "`gettext 'update-eix failed'`"
 }
 
 AddLocalMethods () {
-	local I L
+	local i l
 	GetPortdir
-	AddMethod "${LOCAL_PORTDIR}" "eix"
-	for I in `portageq portdir_overlay` ${ADD_OVERLAY}
+	AddMethod "${local_portdir}" "eix"
+	for i in `portageq portdir_overlay` ${ADD_OVERLAY}
 	do
-		L="${I}"
-		Replace -g L '\' '\\'
-		Replace -g L ':' '\:'
-		AddMethod "${I}" "eix::${L}"
+		l="${i}"
+		Replace -g l '\' '\\'
+		Replace -g l ':' '\:'
+		AddMethod "${i}" "eix::${l}"
 	done
 }
 
 # Remove optional trailing newline from all variables (arguments).
 # This is necessary as some shells won't take ${Var%"[newline]"}
-NEWLINE_STRING='
+newline_string='
 '
 Chomp () {
 	local ChompA_ ChompB_ ChompC_
@@ -181,26 +221,27 @@ Chomp () {
 	do
 		eval "ChompB_=\"\${${ChompA_}}\""
 		ChompC_="${ChompB_%?}"
-		[ "${ChompC_}${NEWLINE_STRING}" = "${ChompB_}" ] &&
+		[ "${ChompC_}${newline_string}" = "${ChompB_}" ] &&
 			eval "${ChompA_}=\"\${ChompC_}\""
 	done
 	true
 }
 
 # Consider variables (arguments) as paths and normalize them.
-# If HAVE_READLINK=true (if possible), use readlink to resolve to "true"
+# If have_readlink=true (if possible), use readlink to resolve to "true"
 # pathnames.
 # Return with 1 if at least one variable is empty.
-# Set RELATIVE to a list of all variables which are relative paths
-# (the first token in RELATIVE will be a space if the list is not empty).
+# Set relative to a list of all variables which are relative paths
+# (the first token in relative will be a space if the list is not empty).
 
-HAVE_READLINK=false
-command -v readlink >/dev/null 2>&1 && HAVE_READLINK=true
+have_readlink=false
+command -v readlink >/dev/null 2>&1 && have_readlink=true
 NormalizeNames () {
 	local NormA_ NormB_ NormC_ NormD_
 	NormD_=0
-	RELATIVE=''
-	for NormC_; do
+	relative=''
+	for NormC_
+	do
 		eval "NormA_=\"\${${NormC_}}\""
 		if [ -z "${NormA_}" ]; then
 			NormD_=1
@@ -208,9 +249,9 @@ NormalizeNames () {
 		fi
 		case "${NormA_}" in
 			/*) :;;
-			*) RELATIVE="${RELATIVE} ${NormC_}";;
+			*) relative="${relative} ${NormC_}";;
 		esac
-		if ${HAVE_READLINK}; then
+		if ${have_readlink}; then
 			# Append A to avoid loss of trailing \n in `...`
 			NormB_=`readlink -f -- "${NormA_}" ; printf A` && \
 				NormB_="${NormB_%A}" && Chomp NormB_ && \

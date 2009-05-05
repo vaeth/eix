@@ -9,50 +9,51 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-TIME_BEGIN="`date +%s 2>/dev/null`" || TIME_BEGIN=''
+time_begin="`date +%s 2>/dev/null`" || time_begin=''
 
 . ./functions-eix.sh.in
 read_functions
 
-LOCAL_VARCACHE="`update-eix --print EPREFIX_PORTAGE_CACHE`"
-EIXCACHE="`update-eix --print EIX_CACHEFILE`"
-EIXPREVIOUS="${EIXCACHE}.previous"
-LOCAL_PORTAGE_CONFIGROOT="`update-eix --print PORTAGE_CONFIGROOT`"
-EIXSYNCCONF="${LOCAL_PORTAGE_CONFIGROOT}/etc/eix-sync.conf"
-PMOD="${LOCAL_PORTAGE_CONFIGROOT}/etc/portage/modules"
-MODULENAME='cache.metadata_overlay.database'
+local_varcache="`update-eix --print EPREFIX_PORTAGE_CACHE`"
+eixcache="`update-eix --print EIX_CACHEFILE`"
+eixprevious="${eixcache}.previous"
+local_portage_configroot="`update-eix --print PORTAGE_CONFIGROOT`"
+eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
 Usage () {
-	printf "%s\n" "${0##*/} [options]
-Call layman/emerge --sync/--metadata and/or show updates. (@PACKAGE_STRING@)
+	local n p
+	n="${0##*/}"
+	p='@PACKAGE_STRING@'
+	eval_gettext 'Usage: ${n} [options]
+Call layman/emerge --sync/--metadata and/or show updates. (${p})
 
 Unless the -t option is used, the old database will be saved to
-    ${EIXPREVIOUS}.
+    ${eixprevious}.
 
-The file ${EIXSYNCCONF} determines for which overlays layman is called.
-You can also add certain hooks in that file - \"man eix\" for details.
+The file ${eixsyncconf} determines for which overlays layman is called.
+You can also add certain hooks in that file - "man eix" for details.
 
-The file ${EIXSYNCCONF} and the environment variable EIX_SYNC_OPTS can
+The file ${eixsyncconf} and the environment variable EIX_SYNC_OPTS can
 contain default options which are processed before the command line options.
-Note that \"--\" in the default options will forbid command line options.
+Note that "--" in the default options will forbid command line options.
 The following options are available:
 
--i   Ignore all previous options (useful to ignore ${EIXSYNCCONF} options).
+-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).
 -d   Only show differences to the previously saved database and exit.
-     Except for executing the !! lines in ${EIXSYNCCONF}
-     this is the same as diff-eix ${EIXPREVIOUS}.
+     Except for executing the !! lines in ${eixsyncconf}
+     this is the same as diff-eix ${eixprevious}.
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
-     USER defaults to current user and DIR defaults to \$PORTDIR
+     USER defaults to current user and DIR defaults to PORTDIR
 -2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after update-eix (@ entries)
      and do not show differences. This option implies -R
--u   Update database only and show differences. This is equivalent to -l@s ''
--l   Do not call layman (and the !commands in ${EIXSYNCCONF}).
+-u   Update database only and show differences. This is equivalent to -l@s ""
+-l   Do not call layman (and the !commands in ${eixsyncconf}).
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
--@   Do not execute the hooks (@ and @@ entries) of ${EIXSYNCCONF}.
+-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.
 -S   Do not execute the hooks after emerge --sync (@@ entries).
 -M   Run emerge --metadata. You might need this when you use e.g.
      PORTDIR_CACHE_METHOD=flat and a newer portage version when
@@ -72,159 +73,166 @@ The following options are available:
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
--R   Cancel previous -r (e.g. if it was used in ${EIXSYNCCONF}).
+-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
 -e   Skip heuristic tests whether you must be root.
--h   Show this text and exit."
-	EXITCODE=${1:-1}
-	exit ${1}
+-h   Show this text and exit.'
+	echo
+	exitcode=${1:-1}
+	exit ${exitcode}
 }
 
 DiffOnly () {
-	test -e "${EIXPREVIOUS}" || die "No previous database ${EIXPREVIOUS} exists"
-	exec diff-eix -- "${EIXPREVIOUS}"
-	die "Could not execute diff-eix"
+	test -e "${eixprevious}" || die "`eval_gettext \
+		'No previous database ${eixprevious} exists'`"
+	exec diff-eix -- "${eixprevious}"
+	die "`gettext 'Could not execute diff-eix'`"
 }
 
 DoExecute () {
-	local CURRENT_COMMAND
-	${EMULATEMODE} && return 0
-	for CURRENT_COMMAND
+	local curr_cmd
+	${emulatemode} && return 0
+	for curr_cmd
 	do
-		eval "${CURRENT_COMMAND}" || \
-			die "Something went wrong with ${CURRENT_COMMAND}"
+		eval "${curr_cmd}" || die "`eval_gettext \
+			'Something went wrong with ${curr_cmd}'`"
 	done
 }
 
-if test -r "${EIXSYNCCONF}"
+if test -r "${eixsyncconf}"
 then
-	HAVECONF=true
+	haveconf=true
 else
-	HAVECONF=false
+	haveconf=false
 fi
 ExecuteConfig () {
-	local I J MYCMD
-	AFTER_SYNC=''
-	AFTER_UPDATE=''
-	BEFORE_RSYNC=''
-	CONFIG_OPTS=''
-	${HAVECONF} || return 0
-	while read I
+	local i j mycmd
+	after_sync=''
+	after_update=''
+	before_rsync=''
+	config_opts=''
+	${haveconf} || return 0
+	while read i
 	do
-		J="${I%%#*}"
-		while [ "${J% }" != "${J}" ]; do J="${J%?}"; done
-		while [ "${J# }" != "${J}" ]; do J="${J#?}"; done
-		[ -n "${J}" ] || continue
-		case "${J}" in
-			'!!'*) [ "${1}" = 'opts' ] && DoExecute "${J#??}"
+		j="${i%%#*}"
+		while [ "${j% }" != "${j}" ]; do j="${j%?}"; done
+		while [ "${j# }" != "${j}" ]; do j="${j#?}"; done
+		[ -n "${j}" ] || continue
+		case "${j}" in
+			'!!'*) [ "${1}" = 'opts' ] && DoExecute "${j#??}"
 				continue;;
-			!*)  J="${J#?}"; MYCMD='!';;
-			@@*) J="${J#??}"; MYCMD='@@';;
-			@*)  J="${J#?}"; MYCMD='@';;
-			\~*) J="${J#?}"; MYCMD='~';;
-			-*)  CONFIG_OPTS="${CONFIG_OPTS} ${J}"; continue;;
-			*)   MYCMD="layman";;
+			!*)  j="${j#?}"; mycmd='!';;
+			@@*) j="${j#??}"; mycmd='@@';;
+			@*)  j="${j#?}"; mycmd='@';;
+			\~*) j="${j#?}"; mycmd='~';;
+			-*)  config_opts="${config_opts} ${j}"; continue;;
+			*)   mycmd="layman";;
 		esac
 		[ "${1}" = 'opts' ] && continue
-		case "${MYCMD}" in
-			'@@')	Push AFTER_UPDATE "${J}"; continue;;
-			'@')	Push AFTER_SYNC "${J}"; continue;;
-			'~')	Push BEFORE_RSYNC "${J}"; continue;;
-			'!')	${NOLAYMAN} || DoExecute "${J}"; continue;;
+		case "${mycmd}" in
+			'@@')	Push after_update "${j}"; continue;;
+			'@')	Push after_sync "${j}"; continue;;
+			'~')	Push before_rsync "${j}"; continue;;
+			'!')	${nolayman} || DoExecute "${j}"; continue;;
 		esac
-		${NOLAYMAN} && continue
+		${nolayman} && continue
 		RootTest
-		if [ "${J}" = '*' ]; then
-			MyRunCommand "Syncing all portage overlays"
-				"${MYCMD}" -S || die "${MYCMD} -S failed"
-			continue;
+		if [ "${j}" = '*' ]; then
+			MyRunCommand \
+				"`gettext 'Syncing all portage overlays'`" \
+				"${mycmd}" -S || die "`eval_gettext \
+					'${mycmd} -S failed'`"
+			continue
 		fi
-		MyRunCommand "Syncing portage overlay '${J}'"
-			"${MYCMD}" -s "${J}" || die "${MYCMD} -s ${J} failed"
-	done <"${EIXSYNCCONF}"
+		MyRunCommand \
+			"`eval_gettext 'Syncing portage overlay ${j}'`" \
+			"${mycmd}" -s "${j}" || die "`eval_gettext \
+					'${mycmd} -s ${j} failed'`"
+	done <"${eixsyncconf}"
 }
 
 
 # Get options from cli
 
 DefaultOpts () {
-	Push -c EMERGECMD 'emerge' '--sync'
-	Push -c UPDATECMD 'update-eix'
-	DIFFONLY=false
-	CLEARCACHE=false
-	NOLAYMAN=false
-	NOHOOKS=false
-	QUIET=false
-	USETEMP=false
-	MEASURE_TIME=true
-	METADATA=false
-	SKIP_SYNC=false
-	SERVER=''
-	CLIENT=''
-	DOUPDATE=true
-	SYNCHOOKS=true
-	TEST_FOR_ROOT=true
+	Push -c emergecmd 'emerge' '--sync'
+	Push -c updatecmd 'update-eix'
+	diffonly=false
+	clearcache=false
+	nolayman=false
+	nohooks=false
+	quiet=false
+	usetemp=false
+	measure_time=true
+	metadata=false
+	skip_sync=false
+	server=''
+	client=''
+	doupdate=true
+	synchooks=true
+	test_for_root=true
 }
 
 DefaultOpts
 ExecuteConfig 'opts'
 
-while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" OPTION \
-	${CONFIG_OPTS} ${EIX_SYNC_OPTS} "${@}"
+OPTIND=1
+while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" opt \
+	${config_opts} ${EIX_SYNC_OPTS} "${@}"
 do
-	case "${OPTION}" in
+	case "${opt}" in
 		i) DefaultOpts;;
-		d) DIFFONLY=true;;
-		s) SERVER="${OPTARG}";;
-		2) CLIENT="${OPTARG}";;
-		U) DOUPDATE=false;;
-		u) NOLAYMAN=true; NOHOOKS=true; SKIP_SYNC=true; SERVER='';;
-		l) NOLAYMAN=true;;
-		@) NOHOOKS=true;;
-		S) SYNCHOOKS=false;;
-		m) SKIP_SYNC=true; METADATA=true;;
-		M) METADATA=true;;
-		N) METADATA=false;;
-		t) USETEMP=true;;
-		T) MEASURE_TIME=false;;
-		q) QUIET=true;;
-		w) Push -c EMERGECMD 'emerge-webrsync';;
-		W) Push -c EMERGECMD 'emerge-delta-webrsync';;
-		c) Push -c EMERGECMD "${OPTARG}";;
-		C) Push EMERGECMD "${OPTARG}";;
-		o) Push UPDATECMD "${OPTARG}";;
-		r) CLEARCACHE=true;;
-		R) CLEARCACHE=false;;
-		e) TEST_FOR_ROOT=false;;
+		d) diffonly=true;;
+		s) server="${OPTARG}";;
+		2) client="${OPTARG}";;
+		U) doupdate=false;;
+		u) nolayman=true; nohooks=true; skip_sync=true; server='';;
+		l) nolayman=true;;
+		@) nohooks=true;;
+		S) synchooks=false;;
+		m) skip_sync=true; metadata=true;;
+		M) metadata=true;;
+		N) metadata=false;;
+		t) usetemp=true;;
+		T) measure_time=false;;
+		q) quiet=true;;
+		w) Push -c emergecmd 'emerge-webrsync';;
+		W) Push -c emergecmd 'emerge-delta-webrsync';;
+		c) Push -c emergecmd "${OPTARG}";;
+		C) Push emergecmd "${OPTARG}";;
+		o) Push updatecmd "${OPTARG}";;
+		r) clearcache=true;;
+		R) clearcache=false;;
+		e) test_for_root=false;;
 		*) Usage 0;;
 	esac
 done
-${DIFFONLY} && DiffOnly
-[ -z "${SERVER}" ] || SKIP_SYNC=true
+${diffonly} && DiffOnly
+[ -z "${server}" ] || skip_sync=true
 
-${MEASURE_TIME} || TIME_BEGIN=''
-MEASURE_TIME=false
-case "${TIME_BEGIN}" in
-	*[0-9]*) [ "${TIME_BEGIN}" -gt 99 ] && (
-			T=`expr "${TIME_BEGIN}" - 99 2>/dev/null` || T=0
-			[ "${T}" -gt 0 ] && [ "${TIME_BEGIN}" -gt "${T}" ]
-		) >/dev/null 2>&1 && MEASURE_TIME=true;;
+${measure_time} || time_begin=''
+measure_time=false
+case "${time_begin}" in
+	*[0-9]*) [ "${time_begin}" -gt 99 ] && (
+			t=`expr "${time_begin}" - 99 2>/dev/null` || t=0
+			[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
+		) >/dev/null 2>&1 && measure_time=true;;
 esac
 
 MyRun () {
-	local TIMEVAR B E R
+	local timevar b e r
 	if [ "${1}" = '-t' ]
 	then
-		if ${MEASURE_TIME}; then
-			TIMEVAR="${2}"
+		if ${measure_time}; then
+			timevar="time_${2}"
 			shift 2
-			B="`date +%s 2>/dev/null`" || MEASURE_TIME=false
+			b="`date '+%s' 2>/dev/null`" || measure_time=false
 			"${@}"
-			R=${?}
-			${MEASURE_TIME} && E="`date +%s 2>/dev/null`" \
-				|| MEASURE_TIME=false
-			${MEASURE_TIME} && \
-				eval "TIME_${TIMEVAR}"'=`expr "${E}" - "${B}"`'
-			return ${R}
+			r=${?}
+			${measure_time} && e="`date +%s 2>/dev/null`" \
+				|| measure_time=false
+			${measure_time} && \
+				eval "${timevar}"'=`expr "${e}" - "${b}"`'
+			return ${r}
 		fi
 		shift 2
 	fi
@@ -232,219 +240,241 @@ MyRun () {
 }
 
 MyRunCommand () {
-	${EMULATEMODE} && return 0
+	${emulatemode} && return 0
 	einfo "${1}"
 	shift
 	MyRun "${@}"
 }
 
 DoHook () {
-	${NOHOOKS} && return 0
+	${nohooks} && return 0
 	eval "set -- ${1}"
 	DoExecute "${@}"
 }
 
 RootTest () {
-	${EMULATEMODE} || return 0
-	eerror ""
-	eerror "Nothing was executed, because a heuristic shows that"
-	eerror "root permissions are required to execute everything successfully."
-	einfo  ""
-	einfo  "However, the heuristic might be wrong, e.g. if you use EPREFIX."
-	einfo  "If you want to skip this test temporarily, use option -e."
-	einfo  "If you want to skip this test permanently, put option -e"
-	einfo  "into the file ${EIXSYNCCONF}."
-	die    ""
+	local i
+	${emulatemode} || return 0
+	gettext '
+Nothing was executed, because a heuristic shows that
+root permissions are required to execute everything successfully.' | \
+		per_line eerror
+	eval_gettext '
+However, the heuristic might be wrong, e.g. if you use EPREFIX.
+If you want to skip this test temporarily, use option -e.
+If you want to skip this test permanently, put option -e
+into the file ${eixsyncconf}.' | per_line einfo
+	die    ''
 }
 
-TIME_IUPDATE=''
-TIME_SYNC=''
-TIME_CLIENT=''
-TIME_METADATA=''
-TIME_UPDATE=''
-TIME_DIFF=''
+time_iupdate=''
+time_sync=''
+time_client=''
+time_metadata=''
+time_update=''
+time_diff=''
 PrintingTimes () {
 	[ -n "${1}" ] && [ "${1}" -gt 0 ] && \
-		printf "%6d seconds for %s\n" "${1}" "${2}"
+		printf "`gettext '%6d seconds for %s\n'`" "${1}" "${2}"
 }
 PrintTimes () {
-	local FTIME
-	${MEASURE_TIME} || return 0
-	MEASURE_TIME=false
+	local ftime
+	${measure_time} || return 0
+	measure_time=false
 	einfo "Time statistics:"
-	PrintingTimes "${TIME_IUPDATE}"  "initial update-eix"
-	PrintingTimes "${TIME_SYNC}"     "syncing"
-	PrintingTimes "${TIME_CLIENT}"   "client syncing"
-	PrintingTimes "${TIME_METADATA}" "metadata update"
-	PrintingTimes "${TIME_UPDATE}"   "update-eix"
-	PrintingTimes "${TIME_DIFF}"     "diff-eix"
-	FTIME="`date +%s 2>/dev/null`" || return
-	FTIME=`expr "${FTIME}" - "${TIME_BEGIN}" 2>/dev/null` && \
-		printf "%6d seconds total\n" "${FTIME}"
+	PrintingTimes "${time_iupdate}"  "`gettext 'initial update-eix'`"
+	PrintingTimes "${time_sync}"     "`gettext 'syncing'`"
+	PrintingTimes "${time_client}"   "`gettext 'client syncing'`"
+	PrintingTimes "${time_metadata}" "`gettext 'metadata update'`"
+	PrintingTimes "${time_update}"   "`gettext 'update-eix'`"
+	PrintingTimes "${time_diff}"     "`gettext 'diff-eix'`"
+	ftime="`date '+%s' 2>/dev/null`" || return
+	ftime=`expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
+		printf '%6d seconds total\n' "${ftime}"
 }
 
-TMPFILE=''
-EXITCODE=0
+tmpfile=''
+exitcode=0
 ExitAll () {
-	[ -z "${TMPFILE}" ] || rm -f -- "${TMPFILE}"
-	TMPFILE=''
+	[ -z "${tmpfile}" ] || rm -f -- "${tmpfile}"
+	tmpfile=''
 	trap - EXIT HUP INT TERM
 	PrintTimes
-	exit ${EXITCODE}
+	exit ${exitcode}
 }
-${MEASURE_TIME} && trap ExitAll EXIT HUP INT TERM
+${measure_time} && trap ExitAll EXIT HUP INT TERM
 
 MakeTempFile () {
-	local COUNT
+	local count
 	if command -v mktemp >/dev/null 2>&1
 	then
-		TMPFILE=`mktemp "/tmp/${0##*/}.XXXXXX"` || \
-			die "cannot create temporary file"
+		tmpfile=`mktemp "/tmp/${0##*/}.XXXXXXXX"` || \
+			die "`gettext 'cannot create temporary file'`"
 	else
-		COUNT=0
+		count=0
 		while true; do
-			[ ${COUNT} -eq 9999 ] && \
-				die "found no free tempname after 10000 attempts"
-			COUNT="`expr ${COUNT} + 1`"
-			TMPFILE="/tmp/${0##*/}.$$.${RANDOM}.${RANDOM}.${RANDOM}"
-			test -e "${TMPFILE}" && continue
-			: >"${TMPFILE}" || die "cannot create temporary file ${TMPFILE}"
+			[ ${count} -eq 9999 ] && die "`gettext \
+				'found no free tempname after 10000 attempts'`"
+			count="`expr ${count} + 1`"
+			tmpfile="/tmp/${0##*/}.$$.${RANDOM}.${count}.${RANDOM}"
+			test -e "${tmpfile}" && continue
+			: >"${tmpfile}" || die "`eval_gettext \
+				'cannot create temporary file ${tmpfile}'`"
 			break
 		done
 	fi
 	trap ExitAll EXIT HUP INT TERM
 }
 
-PREPRSYNC=false
+preprsync=false
 PrepRsync () {
-	local CURRENT_COMMAND PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS C
+	local curr_cmd PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS c
 	GetPortdir
-	HOSTDIR="${1#*:}"
-	if [ -n "${HOSTDIR}" ] && [ "${HOSTDIR}" != "${1}" ]
+	hostdir="${1#*:}"
+	if [ -n "${hostdir}" ] && [ "${hostdir}" != "${1}" ]
 	then
-		HOSTDIR="${1}"
+		hostdir="${1}"
 	else
-		HOSTDIR="${1%%:*}:${LOCAL_PORTDIR}"
+		hostdir="${1%%:*}:${local_portdir}"
 	fi
-	HOSTDIR="${HOSTDIR%/}/"
-	${PREPRSYNC} && return
+	hostdir="${hostdir%/}/"
+	${preprsync} && return
 	PORTAGE_RSYNC_OPTS="`portageq envvar PORTAGE_RSYNC_OPTS`"
 	PORTAGE_RSYNC_EXTRA_OPTS="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
-	eval "set -- ${BEFORE_RSYNC}"
-	for CURRENT_COMMAND; do
-		C=`eval "${CURRENT_COMMAND}"` || \
-			die "${CURRENT_COMMAND} failed"
-		eval "${C}"
+	eval "set -- ${before_rsync}"
+	for curr_cmd
+	do
+		c=`eval "${curr_cmd}"` || \
+			die "`eval_gettext '${curr_cmd} failed'`"
+		eval "${c}"
 	done
-	RSYNC_OPTS="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
-	PREPRSYNC=true
+	rsync_opts="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
+	preprsync=true
 }
 
 ClearCache () {
-	${CLEARCACHE} || return 0
+	${clearcache} || return 0
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
 	RootTest
-	MyRunCommand "Removing old portage-cache in ${LOCAL_VARCACHE}/var/cache/edb/dep" \
-		rm -rf -- "${LOCAL_VARCACHE}"/var/cache/edb/dep/* || \
-			die "rm -rf ${LOCAL_VARCACHE}/var/cache/edb/dep/* failed"
+	MyRunCommand "`eval_gettext \
+	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
+		rm -rf -- "${local_varcache}"/var/cache/edb/dep/* || \
+		die "`eval_gettext \
+		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
 }
 
 CallEmergeSync () {
-	if [ -n "${SERVER}" ]
+	local runarg
+	if [ -n "${server}" ]
 	then
-		${EMULATEMODE} && return
-		PrepRsync "${SERVER}"
-		MyRunCommand "rsyncing from ${HOSTDIR}" -t SYNC \
-			rsync $RSYNC_OPTS "${HOSTDIR}" "${LOCAL_PORTDIR}" || \
-				die "Could not rsync from ${HOSTDIR}"
+		${emulatemode} && return
+		PrepRsync "${server}"
+		MyRunCommand "rsyncing from ${hostdir}" -t sync \
+		rsync ${rsync_opts} "${hostdir}" "${local_portdir}" || \
+			die "`eval_gettext 'Could not rsync from ${hostdir}'`"
 		return
 	fi
-	${SKIP_SYNC} && return
+	${skip_sync} && return
 	RootTest
-	eval "set -- ${EMERGECMD}"
-	MyRunCommand "Running ${*}" -t SYNC "${@}" || die "${*} failed"
+	eval "set -- ${emergecmd}"
+	runarg="${*}"
+	MyRunCommand "`eval_gettext 'Running ${runarg}'`" -t sync "${@}" \
+		|| die "`eval_gettext '${runarg} failed'`"
 }
 
 CallSyncClient () {
-	${EMULATEMODE} && return
-	[ -z "${CLIENT}" ] && return
-	PrepRsync "${CLIENT}"
-	MyRunCommand "rsyncing to ${HOSTDIR}" -t CLIENT \
-		rsync ${RSYNC_OPTS} "${LOCAL_PORTDIR}" "${HOSTDIR}" || \
-			die "Could not rsync to ${HOSTDIR}"
+	${emulatemode} && return
+	[ -z "${client}" ] && return
+	PrepRsync "${client}"
+	MyRunCommand "`eval_gettext 'rsyncing to ${hostdir}'`" -t client \
+		rsync ${rsync_opts} "${local_portdir}" "${hostdir}" || \
+			die "`eval_gettext 'Could not rsync to ${hostdir}'`"
 }
 
 TESTRESULT=''
 CallEmergeMetadata () {
-	${DOUPDATE} && ${METADATA} || return 0
+	${doupdate} && ${metadata} || return 0
 	RootTest
-	MyRunCommand "Running emerge --metadata" -t METADATA
-		emerge --metadata || die "emerge --metadata failed"
+	MyRunCommand "`gettext 'Running emerge --metadata'`" -t metadata
+		emerge --metadata || \
+		die "`gettext 'emerge --metadata failed'`"
 }
 
 CondUpdate () {
-	if ! test -f "${EIXCACHE}"
+	if ! test -f "${eixcache}"
 	then
 		RootTest
-		eval "set -- ${UPDATECMD}"
-		MyRunCommand "eix-cache doesn't exist. Running update-eix!" \
-			-t IUPDATE "${@}" || die "update-eix failed"
+		eval "set -- ${updatecmd}"
+		MyRunCommand "`gettext \
+			'eix-cache does not exist. Running update-eix!'`" \
+			-t iupdate "${@}" || \
+				die "`gettext 'update-eix failed'`"
 		return
 	fi
-	${EMULATEMODE} && return
+	${emulatemode} && return
 	if ! eix --is-current
 	then
-		eval "set -- ${UPDATECMD}"
-		MyRunCommand \
-			"eix-cache format has changed. Running update-eix!" \
-			-t IUPDATE "${@}" || die "update-eix failed"
+		eval "set -- ${updatecmd}"
+		MyRunCommand "`gettext \
+			'eix-cache format has changed. Running update-eix!'`" \
+			-t iupdate "${@}" || \
+				die "`gettext 'update-eix failed'`"
+
 	fi
 }
 
 CopyPrevious () {
-	${DOUPDATE} || return 0
-	${EMULATEMODE} && return
+	${doupdate} || return 0
+	${emulatemode} && return
 	MakeTempFile
-	( umask 002 ; cp -- "${EIXCACHE}" "${TMPFILE}" ) ||
-		die "Could not copy database to temporary file ${TMPFILE}"
+	( umask 002 ; cp -- "${eixcache}" "${tmpfile}" ) || \
+		die "`eval_gettext \
+		'Could not copy database to temporary file ${tmpfile}'`"
 }
 
 MovePrevious () {
-	${USETEMP} && return
+	${usetemp} && return
 	(
 		umask 002
-		MyRunCommand "Copying old ${EIXCACHE} cache to ${EIXPREVIOUS}" \
-		mv -f -- "${TMPFILE}" "${EIXPREVIOUS}"
-	) || die "Could not move ${TMPFILE} to ${EIXPREVIOUS}"
+		MyRunCommand "`eval_gettext \
+			'Copying old ${eixcache} cache to ${eixprevious}'`" \
+		mv -f -- "${tmpfile}" "${eixprevious}"
+	) || \
+	die "`eval_gettext 'Could not move ${tmpfile} to ${eixprevious}'`"
 	[ "${UID}" -eq 0 ] && \
-		chown -- portage:portage "${EIXPREVIOUS}" >/dev/null 2>&1
-	chmod -- 664 "${EIXPREVIOUS}" >/dev/null 2>&1
+		chown -- portage:portage "${eixprevious}" >/dev/null 2>&1
+	chmod -- 664 "${eixprevious}" >/dev/null 2>&1
 }
 
 UpdateDiff () {
-	local D
-	${DOUPDATE} || return 0
-	if ${USETEMP}; then
-		${EMULATEMODE} && return
-		D="${TMPFILE}"
+	local d
+	${doupdate} || return 0
+	if ${usetemp}
+	then
+		${emulatemode} && return
+		d="${tmpfile}"
 	else
-		D="${EIXPREVIOUS}"
-		test -e "${D}" || RootTest
-		${EMULATEMODE} && return
+		d="${eixprevious}"
+		test -e "${d}" || RootTest
+		${emulatemode} && return
 	fi
-	if test "${EIXCACHE}" -nt "${TMPFILE}"; then
+	if test "${eixcache}" -nt "${tmpfile}"
+	then
 		MovePrevious
-		einfo "update-eix was apparently already called in a hook"
+		einfo "`gettext \
+			'update-eix was apparently already called in a hook'`"
 	else
 		MovePrevious
-		eval "set -- ${UPDATECMD}"
-		MyRunCommand "Running update-eix" -t UPDATE "${@}" || \
-			die "Failure while running update-eix"
+		eval "set -- ${updatecmd}"
+		MyRunCommand "`gettext 'Running update-eix'`" \
+			-t update "${@}" || \
+			die "`gettext 'Failure while running update-eix'`"
 	fi
-	DoHook "${AFTER_UPDATE}"
-	MyRunCommand "Calling diff-eix" -t DIFF diff-eix -- "${D}" || \
-		die "Failed to diff against current cache"
+	DoHook "${after_update}"
+	MyRunCommand "`gettext 'Calling diff-eix'`" \
+		-t diff diff-eix -- "${d}" || \
+		die "`gettext 'Failed to diff against current cache'`"
 	PrintTimes
 }
 
@@ -454,22 +484,22 @@ MainSync () {
 	CopyPrevious
 	ExecuteConfig 'sync'
 	CallEmergeSync
-	${SYNCHOOKS} && DoHook "${AFTER_SYNC}"
+	${synchooks} && DoHook "${after_sync}"
 	CallSyncClient
 	CallEmergeMetadata
 	UpdateDiff
 }
 
 [ -n "${UID}" ] || UID="`id -u`"
-if ${TEST_FOR_ROOT} && [ "${UID}" -ne 0 ]
+if ${test_for_root} && [ "${UID}" -ne 0 ]
 then
 # Emulate everything to check whether we have to be root:
-	EMULATEMODE=true
+	emulatemode=true
 	MainSync
 fi
-EMULATEMODE=false
+emulatemode=false
 
-${QUIET} && exec >/dev/null
+${quiet} && exec >/dev/null
 
 MainSync
 

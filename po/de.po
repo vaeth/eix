@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
-"Report-Msgid-Bugs-To: vaeth@mathematik.uni-wuerzburg.de\n"
-"POT-Creation-Date: 2009-05-04 22:24+0200\n"
+"Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
+"POT-Creation-Date: 2009-05-06 00:49+0200\n"
 "PO-Revision-Date: 2009-05-04 22:13+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -16,6 +16,655 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/eix-sync.sh:27
+#, sh-format
+msgid ""
+"Usage: ${n} [options]\n"
+"Call layman/emerge --sync/--metadata and/or show updates. (${p})\n"
+"\n"
+"Unless the -t option is used, the old database will be saved to\n"
+"    ${eixprevious}.\n"
+"\n"
+"The file ${eixsyncconf} determines for which overlays layman is called.\n"
+"You can also add certain hooks in that file - \"man eix\" for details.\n"
+"\n"
+"The file ${eixsyncconf} and the environment variable EIX_SYNC_OPTS can\n"
+"contain default options which are processed before the command line "
+"options.\n"
+"Note that \"--\" in the default options will forbid command line options.\n"
+"The following options are available:\n"
+"\n"
+"-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
+"-d   Only show differences to the previously saved database and exit.\n"
+"     Except for executing the !! lines in ${eixsyncconf}\n"
+"     this is the same as diff-eix ${eixprevious}.\n"
+"-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
+"     USER defaults to current user and DIR defaults to PORTDIR\n"
+"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull "
+"syncing;\n"
+"     you should later call eix-sync -u locally on CLIENT.\n"
+"     If you already have synced you might want to combine this option with -"
+"uU.\n"
+"-U   Do not touch the database and omit the hooks after update-eix (@ "
+"entries)\n"
+"     and do not show differences. This option implies -R\n"
+"-u   Update database only and show differences. This is equivalent to -l@s "
+"\"\"\n"
+"-l   Do not call layman (and the !commands in ${eixsyncconf}).\n"
+"     However, the !! lines and postponed hooks (@ and @@ entries)\n"
+"     will be executed anyway.\n"
+"-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
+"-S   Do not execute the hooks after emerge --sync (@@ entries).\n"
+"-M   Run emerge --metadata. You might need this when you use e.g.\n"
+"     PORTDIR_CACHE_METHOD=flat and a newer portage version when\n"
+"     FEATURES=metadata-transfer is inactive or disabled.\n"
+"-m   Run emerge --metadata but skip emerge --sync.\n"
+"-N   Skip emerge --metadata if it was activated by -M or -m.\n"
+"-t   Use temporary file to save the current database (-d will not be "
+"possible).\n"
+"-T   Do not measure time\n"
+"-q   Be quiet (close stdout)\n"
+"-w   Run emerge-webrsync instead of emerge --sync.\n"
+"-W   Run emerge-delta-webrsync instead of emerge --sync.\n"
+"-c CMD Run CMD instead of emerge --sync.\n"
+"-C OPT Add OPT to the emerge --sync command (or whatever is used instead).\n"
+"       This option can be used accumulatively.\n"
+"-o OPT Add OPT to each update-eix command.\n"
+"       This option can be used accumulatively.\n"
+"-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when "
+"you\n"
+"     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
+"     is active. (This option is not default anymore).\n"
+"-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
+"-e   Skip heuristic tests whether you must be root.\n"
+"-h   Show this text and exit."
+msgstr ""
+"Aufruf: ${n} [Optionen]\n"
+"Ruft layman/emerge --sync/--metadata auf oder/und zeigt updates.\n"
+"(${p})\n"
+"\n"
+"Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
+"    ${eixprevious}\n"
+"gespeichert.\n"
+"Die Datei ${eixsyncconf} gibt an, für welche Overlays Layman "
+"aufgerufenwird.\n"
+"Es ist auch möglich, Hooks in diese Datei zu schreiben.\n"
+"\"man eix\" erklärt Genaueres hierzu.\n"
+"\n"
+"Die Datei ${eixsyncconf} und die Environment-Variable EIX_SYNC_OPTS\n"
+"können Default-Optionen beinhalten, die vor den Kommandozeilenoptionen\n"
+"aktiv werden. Insbesondeere wird \"--\" in den Default-Optionen alle\n"
+"Kommandozeilenoptionen verhindern.\n"
+"Die Optionen sind:\n"
+"\n"
+"-i   Ignoriere vorherige Optionen (sinnvoll bei ${eixsyncconf}).\n"
+"-d   Zeige nur die Unterschiede zur gespeicherten Datenbank an.\n"
+"     Außer dass auch die !!-Zeilen in ${eixsyncconf} ausgeführt werden,\n"
+"     ist dies das gleiche wie diff-eix ${eixprevious}.\n"
+"-s [USER@]SERVER[:DIR] Synce via rsync vom SERVER.\n"
+"     USER/DIR sind per Default der augenblickliche User und PORTDIR.\n"
+"-2 [USER@]CLIENT[:DIR] Synce via rsync *auf* den CLIENT, falls das Syncen\n"
+"     zuvor erfolgreich war. Danach sollte auf dem CLIENT eix-sync -u\n"
+"     aufgerufen werden. Falls bereits gesynct wurde, ist es sinnvoll,\n"
+"     diese Option mit mit -uU zu kombinieren.\n"
+"-U   Die Datenbank wird nicht geändert, die Hooks nach update-eix\n"
+"     (@-Zeilen) werden nicht ausgeführt, und natürlich wird diff-eix\n"
+"     nicht aufgerufen. Diese Option impliziert -R\n"
+"-u   Führe nur das Datenbank-Update durch und zeige die Unterschiede.\n"
+"     dies ist gleichbedeutend mit -l@s \"\"\n"
+"-l   Kein Layman (und keine !-Zeilen in ${eixsyncconf});\n"
+"     Aber die !!-Zeilen und nachgestellte Hooks (@- und @@-Zeilen)\n"
+"     werden dennoch ausgeführt.\n"
+"-@   Keine Hooks (@- und @@-Zeilen) aus ${eixsyncconf}.\n"
+"-S   Keine Hooks nach emerge --sync (@@-Zeilen).\n"
+"-M   Mit emerge --metadata. Dies ist beispielsweise nötig bei\n"
+"     PORTDIR_CACHE_METHOD=flat und neuere Portage-Versionen, wenn\n"
+"     FEATURES=metadata-transfer inaktiv oder ausgeschaltet ist.\n"
+"-m   Mit emerge --metadata aber ohne emerge --sync.\n"
+"-N   Kein emerge --metadata, selbst wenn -M oder -m benutzt wurde.\n"
+"-t   Speichere die aktuelle Datenbank nur in Temporärfile. Dies schließt\n"
+"     natürlich ein späteres -d aus.\n"
+"-T   Keine Zeitmessungen\n"
+"-q   Keine Ausgabe (schließt stdout)\n"
+"-w   Benutze emerge-webrsync statt emerge --sync.\n"
+"-W   Benutze emerge-delta-webrsync statt emerge --sync.\n"
+"-c CMD Benutze CMD statt emerge --sync.\n"
+"-C OPT Fügt Option OPT dem emerge --sync (oder dem Ersatz dafür) hinzu.\n"
+"       Diese Option kann wiederholt aufgerufen werden.\n"
+"-o OPT Fügt Option OPT jedem Aufruf von update-eix hinzu.\n"
+"       Diese Option kann wiederholt aufgerufen werden.\n"
+"-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
+"     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
+"     aktiv sind. (Diese Option ist kein Default mehr).\n"
+"-R   Löscht vorherghendes -r (z.B. aus einem ${eixsyncconf}).\n"
+"-e   Vermeidet heuristischen Test, ob Rootrechte benötigt werden.\n"
+"-h   Zeigt diesen Text und beendet das Programm danach."
+
+#: src/eix-sync.sh:86
+#, sh-format
+msgid "No previous database ${eixprevious} exists"
+msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
+
+#: src/eix-sync.sh:88
+msgid "Could not execute diff-eix"
+msgstr "Konnte %s nicht korrekt ausführen"
+
+#: src/eix-sync.sh:97
+#, sh-format
+msgid "Something went wrong with ${curr_cmd}"
+msgstr "Fehler beim Aufruf von ${curr_cmd}"
+
+#: src/eix-sync.sh:141
+msgid "Syncing all portage overlays"
+msgstr "Synce alle Portage-Overlays"
+
+#: src/eix-sync.sh:143
+#, sh-format
+msgid "${mycmd} -S failed"
+msgstr "${mycmd} -S schlug fehl"
+
+#: src/eix-sync.sh:147
+#, sh-format
+msgid "Syncing portage overlay ${j}"
+msgstr "Synce Portage-Overlay ${j}"
+
+#: src/eix-sync.sh:149
+#, sh-format
+msgid "${mycmd} -s ${j} failed"
+msgstr "${mycmd} -s ${j} schlug fehl"
+
+#: src/eix-sync.sh:258
+msgid ""
+"\n"
+"Nothing was executed, because a heuristic shows that\n"
+"root permissions are required to execute everything successfully."
+msgstr ""
+"\n"
+"Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
+"Root-Recht benötigt werden, um alles erfolgreich auszuführen."
+
+#: src/eix-sync.sh:262
+#, sh-format
+msgid ""
+"\n"
+"However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
+"If you want to skip this test temporarily, use option -e.\n"
+"If you want to skip this test permanently, put option -e\n"
+"into the file ${eixsyncconf}."
+msgstr ""
+
+#: src/eix-sync.sh:278
+msgid "%6d seconds for %s\\n"
+msgstr "%6d Sekunden für %s\\n"
+
+#: src/eix-sync.sh:285
+msgid "initial update-eix"
+msgstr "erstes update-eix"
+
+#: src/eix-sync.sh:286
+msgid "syncing"
+msgstr "syncen"
+
+#: src/eix-sync.sh:287
+msgid "client syncing"
+msgstr "client syncen"
+
+#: src/eix-sync.sh:288
+msgid "metadata update"
+msgstr "metadata update"
+
+#: src/eix-sync.sh:289
+msgid "update-eix"
+msgstr "update-eix"
+
+#: src/eix-sync.sh:290
+msgid "diff-eix"
+msgstr "diff-eix"
+
+#: src/eix-sync.sh:312
+msgid "cannot create temporary file"
+msgstr "kann keine Temporärdatei erzeugen"
+
+#: src/eix-sync.sh:317 src/update-eix-remote.sh:163
+msgid "found no free tempname after 10000 attempts"
+msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
+
+#: src/eix-sync.sh:322
+#, sh-format
+msgid "cannot create temporary file ${tmpfile}"
+msgstr "kann Temporärdatei ${tmpfile} nicht erzeugen"
+
+#: src/eix-sync.sh:348
+#, sh-format
+msgid "${curr_cmd} failed"
+msgstr "${curr_cmd} schlug fehl"
+
+#: src/eix-sync.sh:361
+#, sh-format
+msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
+msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
+
+#: src/eix-sync.sh:364
+#, sh-format
+msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
+msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
+
+#: src/eix-sync.sh:375
+#, sh-format
+msgid "Could not rsync from ${hostdir}"
+msgstr "Konnte nicht von ${hostdir} rsyncen"
+
+#: src/eix-sync.sh:382
+#, sh-format
+msgid "Running ${runarg}"
+msgstr "Starte ${runarg}"
+
+#: src/eix-sync.sh:383
+#, sh-format
+msgid "${runarg} failed"
+msgstr "${runarg} schlug fehl"
+
+#: src/eix-sync.sh:390
+#, sh-format
+msgid "rsyncing to ${hostdir}"
+msgstr "rsync auf ${hostdir}"
+
+#: src/eix-sync.sh:392
+#, sh-format
+msgid "Could not rsync to ${hostdir}"
+msgstr "Konnte nicht auf ${hostdir} rsyncen"
+
+#: src/eix-sync.sh:399
+msgid "Running emerge --metadata"
+msgstr "Starte emerge --metadata"
+
+#: src/eix-sync.sh:401
+msgid "emerge --metadata failed"
+msgstr "emerge --metadata schlug fehl"
+
+#: src/eix-sync.sh:410
+msgid "eix-cache does not exist. Running update-eix!"
+msgstr "Eix-Cache existiert nicht. Starten von update-eix."
+
+#: src/eix-sync.sh:412 src/eix-sync.sh:422 src/functions-eix.sh.in:198
+msgid "update-eix failed"
+msgstr "update-eix schlug fehl"
+
+#: src/eix-sync.sh:420
+msgid "eix-cache format has changed. Running update-eix!"
+msgstr "Eix-Cache-Format hat sich geändert. Starten von update-eix."
+
+#: src/eix-sync.sh:433
+#, sh-format
+msgid "Could not copy database to temporary file ${tmpfile}"
+msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
+
+#: src/eix-sync.sh:441
+#, sh-format
+msgid "Copying old ${eixcache} cache to ${eixprevious}"
+msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
+
+#: src/eix-sync.sh:444
+#, sh-format
+msgid "Could not move ${tmpfile} to ${eixprevious}"
+msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
+
+#: src/eix-sync.sh:466
+msgid "update-eix was apparently already called in a hook"
+msgstr "update-eix wurde anscheinend bereits in einem Hook aufgerufen"
+
+#: src/eix-sync.sh:470
+msgid "Running update-eix"
+msgstr "Starte update-eix"
+
+#: src/eix-sync.sh:472
+msgid "Failure while running update-eix"
+msgstr "Problem beim Ausführen von update-eix"
+
+#: src/eix-sync.sh:475
+msgid "Calling diff-eix"
+msgstr "Starte diff-eix"
+
+#: src/eix-sync.sh:477
+msgid "Failed to diff against current cache"
+msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
+
+#: src/eix-test-obsolete.sh:41
+#, sh-format
+msgid "... considered as ${i}"
+msgstr "... wegen ${i}"
+
+#: src/eix-test-obsolete.sh:92
+msgid ""
+"The following package versions are installed with repository information:"
+msgstr ""
+"Die folgenden Paketversonen sind mit Repository-Information installiert:"
+
+#: src/eix-test-obsolete.sh:95
+msgid ""
+"The following package versions are installed without repository information:"
+msgstr ""
+"Die folgenden Paketversonen sind ohne Repository-Information installiert:"
+
+#: src/eix-test-obsolete.sh:99
+msgid "cannot locate your database of installed packages"
+msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
+
+#: src/eix-test-obsolete.sh:116
+msgid "none"
+msgstr "keine"
+
+#: src/eix-test-obsolete.sh:121
+#, sh-format
+msgid "(total number of versions listed above: ${c})"
+msgstr "(Gesamtzahl obiger Versionen: ${c})"
+
+#: src/eix-test-obsolete.sh:146
+#, sh-format
+msgid "No redundant entries in ${rump}keywords (or test switched off)."
+msgstr "Keine Redundanz in ${rump}keywords (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:147
+#, sh-format
+msgid "Redundant in ${rump}keywords:"
+msgstr "Redundant in ${rump}keywords:"
+
+#: src/eix-test-obsolete.sh:160
+#, sh-format
+msgid "No redundant entries in ${rump}mask (or test switched off)."
+msgstr "Keine Redundanz in ${rump}mask (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:161
+#, sh-format
+msgid "Redundant in ${rump}mask:"
+msgstr "Redundant in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:169
+#, sh-format
+msgid "No redundant entries in ${rump}unmask (or test switched off)."
+msgstr "Keine Redundanz in ${rump}unmask (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:170
+#, sh-format
+msgid "Redundant in ${rump}unmask:"
+msgstr "Redundant in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:178
+#, sh-format
+msgid "No redundant entries in ${rump}use (or test switched off)."
+msgstr "Keine Redundanz in ${rump}use (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:179
+#, sh-format
+msgid "Redundant in ${rump}use:"
+msgstr "Redundant in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:185
+#, sh-format
+msgid "No redundant entries in ${rump}cflags (or test switched off)."
+msgstr "Keine Redundanz in ${rump}cflags (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:186
+#, sh-format
+msgid "Redundant in ${rump}cflags:"
+msgstr "Redundant in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:196
+#, sh-format
+msgid "No uninstalled entries in ${rump}keywords (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}keywords (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:197
+#, sh-format
+msgid "Not installed but in ${rump}keywords:"
+msgstr "Uninstalliert, aber in ${rump}keywords:"
+
+#: src/eix-test-obsolete.sh:206
+#, sh-format
+msgid "No uninstalled entries in ${rump}mask (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}mask (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:207
+#, sh-format
+msgid "Not installed but in ${rump}mask:"
+msgstr "Uninstalliert, aber in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:215
+#, sh-format
+msgid "No uninstalled entries in ${rump}unmask (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}unmask (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:216
+#, sh-format
+msgid "Not installed but in ${rump}unmask:"
+msgstr "Uninstalliert, aber in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:223
+#, sh-format
+msgid "No uninstalled entries in ${rump}use (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}use (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:224
+#, sh-format
+msgid "Not installed but in ${rump}use:"
+msgstr "Uninstalliert, aber in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:229
+#, sh-format
+msgid "No uninstalled entries in ${rump}cflags (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}cflags (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:230
+#, sh-format
+msgid "Not installed but in ${rump}cflags:"
+msgstr "Uninstalliert, aber in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:235
+msgid "All installed versions of packages are in the database."
+msgstr "Alle installierten Paketversionen sind in der Datenbank."
+
+#: src/eix-test-obsolete.sh:237
+msgid "Installed packages with a version not in the database (or masked):"
+msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
+
+#: src/functions-eix.sh.in:55
+msgid "cannot read functions.sh"
+msgstr "kann functions.sh nicht sourcen"
+
+#: src/functions-eix.sh.in:96
+#, sh-format
+msgid "Problems running ${c}"
+msgstr "Probleme mit ${c}"
+
+#: src/functions-eix.sh.in:197
+msgid "Calling update-eix"
+msgstr "Starte updat-eix"
+
+#: src/update-eix-layman.sh:21
+#, sh-format
+msgid ""
+"Usage: ${n} [options] command\n"
+"Add or remove local layman overlays to eix database (${p})\n"
+"The following commands are provided:\n"
+"\n"
+"add:\tAdd the local layman overlays to the eix database\n"
+"remove:\tRemove the local layman overlays from the eix database.\n"
+"\n"
+"Options:\n"
+"\t-a OVERLAY    Add overlay to the list of layman overlays.\n"
+"\t-A PATH       Add PATH to the sourced make.conf-s used to determine\n"
+"\t              the layman overlays. Current value:"
+msgstr ""
+"Aufruf: ${n} [Optionen] Kommando\n"
+"Fügt lokale Layman-Overlays zur eix-Datenbank hinzu oder entfernt sie.\n"
+"${p})\n"
+"Die folgenden Kommandos gibt es:\n"
+"\n"
+"add:\tHinzufügen eines lokalen Layman-Overlays (zur Eix-Datenbank)\n"
+"remove:\tEntfernen eines lokalen Layman-Overlays.\n"
+"\n"
+"Optionen:\n"
+"\t-a OVERLAY    Fügt OVERLAY zur Liste der Layman-Overlays hinzu.\n"
+"\t-A PATH       Fügt PATH zu den gesourcten make.conf-s hinzu, die die\n"
+"\t              Layman-Overlays angeben. Aktueller Wert:"
+
+#: src/update-eix-layman.sh:34
+msgid "none (i.e. no readable layman make.conf specified)"
+msgstr "keiner (d.h. kein lesbares Layman-make.conf angegeben)"
+
+#: src/update-eix-layman.sh:42
+msgid ""
+"\t-C            Clear the above list\n"
+"\t-c LAYMAN_CFG Use layman.cfg file to determine entry for above list\n"
+"\t-v            Verbose (default)\n"
+"\t-q            Quiet"
+msgstr ""
+"\t-C            Leert die obige Liste\n"
+"\t-c LAYMAN_CFG Benutzt layman.cfg-file zur Berechnung der Listeneinträge\n"
+"\t-v            Ausführliche Ausgabe (Default)\n"
+"\t-q            Keine Ausgabe"
+
+#: src/update-eix-remote.sh:19
+#, sh-format
+msgid "$OVERLAYPARENT must not be empty"
+msgstr "$OVERLAYPARENT darf nicht leer sein"
+
+#: src/update-eix-remote.sh:21
+#, sh-format
+msgid "$OVERLAYPARENT must start with /"
+msgstr "$OVERLAYPARENT muss mit / beginnen"
+
+#: src/update-eix-remote.sh:29
+#, sh-format
+msgid ""
+"Usage: ${n} [options] command [FILE]\n"
+"Handle some remote updates for ${p}\n"
+"The following commands are provided:\n"
+"\n"
+"update: Fetch the eix-caches of some layman overlays into a temporary file\n"
+"        resp. into FILE and add them to the eix database.\n"
+"        To keep this data across update-eix calls, you might want to set\n"
+"        KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)\n"
+"fetch:  Only fetch the overlays into FILE\n"
+"add:    Only add the overlays from FILE to the eix database.\n"
+"remove: Remove all temporarily added virtual overlays from the eix "
+"database;\n"
+"        this is similar to\n"
+"        \tKEEP_VIRTUALS=false update-eix\n"
+"        but faster (without actual updating where possible).\n"
+"\n"
+"It is strongly recommended to use the update/fetch commands with very "
+"limited\n"
+"permissions. Permissions are dropped when run as root or with the \"-u nobody"
+"\"\n"
+"option. Do not use \"-u root\".\n"
+"\n"
+"For \"update\" and \"add\" all corresponding local overlay paths are "
+"excluded\n"
+"from the current database to avoid confusion. The local paths are "
+"determined\n"
+"by prefixing the path\n"
+"\t${OVERLAYPARENT}\n"
+"You can modify this value by setting the environment variable OVERLAYPARENT\n"
+"or with the -o option. If you do not want this feature, set OVERLAYPARENT\n"
+"to some path not containing any overlays.\n"
+"\n"
+"Options:\n"
+"\t-O x    Extract from the cache files within FILE only overlay Nr. x,\n"
+"\t        i.e. use cache method eix*:...:x for reading these cache files.\n"
+"\t        Default for x is * (which means all overlays in each files)\n"
+"\t        See \"man eix\" for details on cache method eix*.\n"
+"\t-u USER Call wget as USER. Defaults to \"nobody\" if called as root.\n"
+"\t-o PATH Use PATH as OVERLAYPARENT\n"
+"\t-v      Verbose (default)\n"
+"\t-q      Quiet"
+msgstr ""
+"Aufruf: ${n} [Optionen] Kommando [FILE]\n"
+"Remote-Updates der Datenbank von ${p}\n"
+"Es gibt folgende Kommandos:\n"
+"\n"
+"update: Holt die eix-caches einiger Layman-Overlays in ein Temporärfile\n"
+"        bzw. nach FILE und fügt sie zur Eix-Datenbank hinzu.\n"
+"        Um die Information beim nächsten update-eix-Aufruf beizubehalten,\n"
+"        kann es sinnvoll sein, KEEP_VIRTUALS=true in /etc/eixrc\n"
+"        (oder in ~/.eixrc) zu setzen.\n"
+"fetch:  Holt nur die Overlay-Daten nach FILE\n"
+"add:    Fügt nur die Overlay-Daten aus FILE der Eix-Datenbank hinzu.\n"
+"remove: Entfernt alle temporär hinzugefügten virtuellen Overlays aus der\n"
+"        Eix-Datenbank. Dies ist in etwa das selbe wie\n"
+"        \tKEEP_VIRTUALS=false update-eix\n"
+"        aber schneller (da falls möglich nichts geupdated wird).\n"
+"\n"
+"Es wird stark empfehl, die Update/Fetch-Kommandos mit sehr eingeschränkten\n"
+"Rechten auszuführen. Dies geschieht beispielsweise beim Aufruf als Root\n"
+"oder mit mit der Option \"-u nobodoy\". Benutzen Sie nicht \"-u root\".\n"
+"\n"
+"Für \"update\" und \"add\" werden zur Vermeidung von Verwechslungen alle\n"
+"lokalen Overlay-Pfade von der aktuellen Datenbank ausgeschlossen.\n"
+"Dies lokalen Pfade werden durch Voranstellen des Pfades\n"
+"\t${OVERLAYPARENT}\n"
+"bestimmt. Dieser Wert kann durch die Environment-Variable OVERLAYPARENT\n"
+"oder mit der Option -o geändert werden. Falls Sie dieses Feature nicht\n"
+"wollen, setzen Sie OVERLAYPARENT einfach auf einen Pfad, der keine\n"
+"Overlays enthält.\n"
+"Optionen:\n"
+"\t-O x    Wählt aus dem Cachefile in FILE nur den Overlay x aus,\n"
+"\t        d.h. die Cachemethode eix*:...:x wird zum Lesen dieser Cachefiles\n"
+"\t        benutzt. Def Default für x ist * (was bedeutet: alle Overlays).\n"
+"\t        \"man eix\" enthält mehr Details hinzu (s. Cachemethode eix*).\n"
+"\t-u USER Ruft wget als USER auf. Beim Aufruf als root ist der Default\n"
+"          hierfür \"nobody\".\n"
+"\t-o PATH Benutzt PATH als OVERLAYPARENT\n"
+"\t-v      Ausführliche Ausgabe (Default)\n"
+"\t-q      Keine Ausgabe"
+
+#: src/update-eix-remote.sh:94
+msgid "Filename argument is mandatory"
+msgstr "Filenamen-Argument wird benötigt"
+
+#: src/update-eix-remote.sh:99
+msgid "Filename argument must be nonempty"
+msgstr "Filenamen-Argument darf nicht leer sein"
+
+#: src/update-eix-remote.sh:125
+#, sh-format
+msgid "${a} cannot be found in PATH"
+msgstr "${a} nicht gefunden (im PATH)"
+
+#: src/update-eix-remote.sh:137
+#, sh-format
+msgid "cannot cd to ${a}"
+msgstr "Kann nicht nach Directory ${a} wechseln"
+
+#: src/update-eix-remote.sh:158
+msgid "cannot create temporary directory"
+msgstr "Kann kein temporäres Directory erzeugen"
+
+#: src/update-eix-remote.sh:168
+#, sh-format
+msgid "cannot create temporary dir ${tmpdir}"
+msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
+
+#: src/update-eix-remote.sh:197
+#, sh-format
+msgid "Fetching ${eixcachesname}"
+msgstr "Download von ${eixcachesname}"
+
+#: src/update-eix-remote.sh:198
+#, sh-format
+msgid "could not fetch ${addr}"
+msgstr "konnte ${addr} nicht downloaden"
+
+#: src/update-eix-remote.sh:205
+#, sh-format
+msgid "cannot unpack ${i}"
+msgstr "kann ${i} nicht auspacken"
+
+#: src/update-eix-remote.sh:256
+#, sh-format
+msgid "cannot read ${filename}"
+msgstr "kann Datei ${filename} nicht lesen"
 
 #: src/diff-eix.cc:54
 #, c-format
@@ -387,7 +1036,7 @@ msgstr "%s Treffer.\n"
 #: src/eix.cc:913
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
-msgstr "Einträge in %s passen und sind nicht leer .\n"
+msgstr "Einträge in %s passen und sind nicht leer.\n"
 
 #: src/eix.cc:914
 #, c-format
@@ -417,7 +1066,7 @@ msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
 msgstr ""
-"Die Nameen aller installierten Pakete sind in der Datenbank.\n"
+"Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
 #: src/eix.cc:981
@@ -425,169 +1074,8 @@ msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
 msgstr ""
-"Folgende installierte Pakete sind nicht in  der Datenbank:\n"
+"Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
-
-#: src/update-eix.cc:88
-#, c-format
-msgid "%s must be writable by group portage."
-msgstr "%s muss für die Grupper portage beschreibbar sein."
-
-#: src/update-eix.cc:96
-msgid ""
-"You must be in the portage group to update the database.\n"
-"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test."
-msgstr ""
-"Zum Datenbank-Update ist Zugehörigkeit zur Gruppe portage nötig.\n"
-"Durch Setzen von SKIP_PERMISSION_TESTS kann dieser Test verhindert werden."
-
-#: src/update-eix.cc:110
-msgid "User 'root' is needed to initially generate the database."
-msgstr "Nur 'root' kann anfänglich die Datenbank generieren."
-
-#: src/update-eix.cc:129
-msgid "warning: cannot change ownership of cachefile"
-msgstr "Warnung: Kann Benutzer des Cachefiles nicht ändern"
-
-#: src/update-eix.cc:132
-msgid "warning: cannot change permissions for cachefile"
-msgstr "Warnung: Kann Rechte des Cachefiles nicht ändern"
-
-#: src/update-eix.cc:142
-#, c-format
-msgid ""
-"Usage: %s [options]\n"
-"\n"
-" -h, --help              show a short help screen\n"
-" -V, --version           show version-string\n"
-"     --dump              show eixrc-variables\n"
-"     --dump-defaults     show default eixrc-variables\n"
-"     --print             print the expanded value of a variable\n"
-"\n"
-" -q, --quiet             produce no output\n"
-"\n"
-" -o  --output            output to another file than %s\n"
-"                         In addition, all permission checks are omitted.\n"
-" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
-"                         Note that you can also exclude PORTDIR\n"
-"                         using this option.\n"
-"\n"
-" -a  --add-overlay       add an overlay to the update-process.\n"
-"\n"
-" -m  --override-method   override cache method for matching overlays.\n"
-"\n"
-"This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"
-msgstr ""
-"Aufruf: %s [Optionen]\n"
-"\n"
-" -h, --help              Ausgabe eines Hilfstexts\n"
-" -V, --version           Ausgabe der Versionsnummer\n"
-"     --dump              Ausgabe aller internen Variablen of stdout\n"
-"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
-"     --print             Ausgabe eines expandierten Variablenwerts\n"
-"\n"
-" -q, --quiet             keine Ausgabe\n"
-"\n"
-" -o  --output            Ausgabe in eine anderes File als %s\n"
-"                         Außerdemm werden keine Rechte getestet.\n"
-" -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
-"                         aus. Man kann auch PORTDIR mit dieser\n"
-"                         Option ausschließen.\n"
-"\n"
-" -a  --add-overlay       Für Overlay zum Update-Process hinzu.\n"
-"\n"
-" -m  --override-method   Änder Cache-Methode für passenden Overlay.\n"
-"\n"
-"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
-"weitere Informationen.\n"
-
-#: src/update-eix.cc:246
-#, c-format
-msgid "%s must be a list of the form DIRECTORY METHOD\n"
-msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
-
-#: src/update-eix.cc:263
-#, c-format
-msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
-msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
-
-#: src/update-eix.cc:267
-#, c-format
-msgid "Adding virtual overlays from %s ..\n"
-msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
-
-#: src/update-eix.cc:272
-msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
-msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
-
-#: src/update-eix.cc:335
-msgid "Reading Portage settings ..\n"
-msgstr "Lese Portage-Konfiguration...\n"
-
-#: src/update-eix.cc:435
-#, c-format
-msgid "Excluded PORTDIR: %s\n"
-msgstr "Ausschluss von PORTDIR: %s\n"
-
-#: src/update-eix.cc:448
-#, c-format
-msgid "Excluded overlay %s\n"
-msgstr "Ausschluss von Overlay: %s\n"
-
-#: src/update-eix.cc:452
-#, c-format
-msgid "Building database (%s) ..\n"
-msgstr "Erzeuge Datenkbank (%s) ...\n"
-
-#: src/update-eix.cc:496
-#, c-format
-msgid "Excluding \"%s\" %s (cache: %s)\n"
-msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
-
-#: src/update-eix.cc:505
-#, c-format
-msgid "[%u] \"%s\" %s (cache: %s)\n"
-msgstr "[%u] \"%s\" %s (Cache: %s)\n"
-
-#: src/update-eix.cc:506
-msgid "     Reading "
-msgstr "     Lese "
-
-#: src/update-eix.cc:514
-msgid "aborted"
-msgstr "Abbruch"
-
-#: src/update-eix.cc:533
-msgid "Applying masks ..\n"
-msgstr "Maskiere Pakete...\n"
-
-#: src/update-eix.cc:547
-msgid "Calculating hash tables ..\n"
-msgstr "Berechne Hash-Tabellen...\n"
-
-#: src/update-eix.cc:551
-#, c-format
-msgid "Writing database file %s ..\n"
-msgstr "Schreibe Datenbankfile %s...\n"
-
-#: src/update-eix.cc:554
-msgid "Can't open the database file %r for writing (mode = 'wb')"
-msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
-
-#: src/update-eix.cc:567
-#, c-format
-msgid "Database contains %u packages in %u categories.\n"
-msgstr "Datenbank enthält %u Pakete in %u Kategorien.\n"
-
-#: src/varsreader.cc:69
-msgid "failed to source %r"
-msgstr "Kann %r nicht sourcen"
-
-#: src/versionsort.cc:35
-#, c-format
-msgid "cannot determine version of %s"
-msgstr "Kann Version von '%s' nicht finden"
 
 #: src/cache/cachetable.cc:37
 msgid "Unknown cache %r for directory %r"
@@ -1048,7 +1536,6 @@ msgstr ""
 "Cachefile."
 
 #: src/eixrc/defaults.cc:143
-#, fuzzy
 msgid ""
 "Whether to test for group and permissions.  You must set this to true\n"
 "if you use more sophisticated permission setups (e.g. NSS/LDAP)."
@@ -2161,7 +2648,6 @@ msgstr ""
 "Slots gibt)."
 
 #: src/eixrc/defaults.cc:1149
-#, fuzzy
 msgid ""
 "This string is printed after IUSE data for all versions is output.\n"
 "(This is only used when --versionlines is inactive and there are no slots)."
@@ -3012,7 +3498,6 @@ msgstr ""
 "doppelt zutrifft."
 
 #: src/eixrc/defaults.cc:1777
-#, fuzzy
 msgid ""
 "Applies if /etc/portage/package.cflags matches twice\n"
 "for the versions in question."
@@ -3435,3 +3920,164 @@ msgstr "unbekanntes Suchfeld %r"
 #: src/search/packagetest.cc:206
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
+
+#: src/update-eix.cc:88
+#, c-format
+msgid "%s must be writable by group portage."
+msgstr "%s muss für die Grupper portage beschreibbar sein."
+
+#: src/update-eix.cc:96
+msgid ""
+"You must be in the portage group to update the database.\n"
+"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test."
+msgstr ""
+"Zum Datenbank-Update ist Zugehörigkeit zur Gruppe portage nötig.\n"
+"Durch Setzen von SKIP_PERMISSION_TESTS kann dieser Test verhindert werden."
+
+#: src/update-eix.cc:110
+msgid "User 'root' is needed to initially generate the database."
+msgstr "Nur 'root' kann anfänglich die Datenbank generieren."
+
+#: src/update-eix.cc:129
+msgid "warning: cannot change ownership of cachefile"
+msgstr "Warnung: Kann Benutzer des Cachefiles nicht ändern"
+
+#: src/update-eix.cc:132
+msgid "warning: cannot change permissions for cachefile"
+msgstr "Warnung: Kann Rechte des Cachefiles nicht ändern"
+
+#: src/update-eix.cc:142
+#, c-format
+msgid ""
+"Usage: %s [options]\n"
+"\n"
+" -h, --help              show a short help screen\n"
+" -V, --version           show version-string\n"
+"     --dump              show eixrc-variables\n"
+"     --dump-defaults     show default eixrc-variables\n"
+"     --print             print the expanded value of a variable\n"
+"\n"
+" -q, --quiet             produce no output\n"
+"\n"
+" -o  --output            output to another file than %s\n"
+"                         In addition, all permission checks are omitted.\n"
+" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
+"                         Note that you can also exclude PORTDIR\n"
+"                         using this option.\n"
+"\n"
+" -a  --add-overlay       add an overlay to the update-process.\n"
+"\n"
+" -m  --override-method   override cache method for matching overlays.\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"
+msgstr ""
+"Aufruf: %s [Optionen]\n"
+"\n"
+" -h, --help              Ausgabe eines Hilfstexts\n"
+" -V, --version           Ausgabe der Versionsnummer\n"
+"     --dump              Ausgabe aller internen Variablen of stdout\n"
+"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
+"     --print             Ausgabe eines expandierten Variablenwerts\n"
+"\n"
+" -q, --quiet             keine Ausgabe\n"
+"\n"
+" -o  --output            Ausgabe in eine anderes File als %s\n"
+"                         Außerdemm werden keine Rechte getestet.\n"
+" -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
+"                         aus. Man kann auch PORTDIR mit dieser\n"
+"                         Option ausschließen.\n"
+"\n"
+" -a  --add-overlay       Für Overlay zum Update-Process hinzu.\n"
+"\n"
+" -m  --override-method   Änder Cache-Methode für passenden Overlay.\n"
+"\n"
+"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
+"weitere Informationen.\n"
+
+#: src/update-eix.cc:246
+#, c-format
+msgid "%s must be a list of the form DIRECTORY METHOD\n"
+msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
+
+#: src/update-eix.cc:263
+#, c-format
+msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
+msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
+
+#: src/update-eix.cc:267
+#, c-format
+msgid "Adding virtual overlays from %s ..\n"
+msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
+
+#: src/update-eix.cc:272
+msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
+msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
+
+#: src/update-eix.cc:335
+msgid "Reading Portage settings ..\n"
+msgstr "Lese Portage-Konfiguration...\n"
+
+#: src/update-eix.cc:435
+#, c-format
+msgid "Excluded PORTDIR: %s\n"
+msgstr "Ausschluss von PORTDIR: %s\n"
+
+#: src/update-eix.cc:448
+#, c-format
+msgid "Excluded overlay %s\n"
+msgstr "Ausschluss von Overlay: %s\n"
+
+#: src/update-eix.cc:452
+#, c-format
+msgid "Building database (%s) ..\n"
+msgstr "Erzeuge Datenkbank (%s) ...\n"
+
+#: src/update-eix.cc:496
+#, c-format
+msgid "Excluding \"%s\" %s (cache: %s)\n"
+msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
+
+#: src/update-eix.cc:505
+#, c-format
+msgid "[%u] \"%s\" %s (cache: %s)\n"
+msgstr "[%u] \"%s\" %s (Cache: %s)\n"
+
+#: src/update-eix.cc:506
+msgid "     Reading "
+msgstr "     Lese "
+
+#: src/update-eix.cc:514
+msgid "aborted"
+msgstr "Abbruch"
+
+#: src/update-eix.cc:533
+msgid "Applying masks ..\n"
+msgstr "Maskiere Pakete...\n"
+
+#: src/update-eix.cc:547
+msgid "Calculating hash tables ..\n"
+msgstr "Berechne Hash-Tabellen...\n"
+
+#: src/update-eix.cc:551
+#, c-format
+msgid "Writing database file %s ..\n"
+msgstr "Schreibe Datenbankfile %s...\n"
+
+#: src/update-eix.cc:554
+msgid "Can't open the database file %r for writing (mode = 'wb')"
+msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
+
+#: src/update-eix.cc:567
+#, c-format
+msgid "Database contains %u packages in %u categories.\n"
+msgstr "Datenbank enthält %u Pakete in %u Kategorien.\n"
+
+#: src/varsreader.cc:69
+msgid "failed to source %r"
+msgstr "Kann %r nicht sourcen"
+
+#: src/versionsort.cc:35
+#, c-format
+msgid "cannot determine version of %s"
+msgstr "Kann Version von '%s' nicht finden"

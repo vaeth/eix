@@ -1,0 +1,15 @@
+
+MYSRC = $(top_builddir)/src
+
+$(MYSRC)/eix-sync.sh:
+	( cd $(MYSRC) && $(MAKE) eix-sync.sh )
+
+$(MYSRC)/eix-test-obsolete.sh:
+	( cd $(MYSRC) && $(MAKE) eix-test-obsolete.sh )
+
+$(MYSRC)/update-eix-layman.sh:
+	( cd $(MYSRC) && $(MAKE) update-eix-layman.sh )
+
+$(MYSRC)/update-eix-remote.sh:
+	( cd $(MYSRC) && $(MAKE) update-eix-remote.sh )
+

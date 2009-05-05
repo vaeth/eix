@@ -184,7 +184,9 @@ update_eix_only_src = update-eix.cc $(cache_src) $(add_cache_src)
 extra_update_eix_src = $(extra_cache_src)
 
 # Remove files we don't want ..
-CLEANFILES = cppcomplete.tags tags \
+CLEANFILES = \
+cppcomplete.tags \
+tags \
 eix-sync \
 eix-test-obsolete \
 update-eix-remote \
@@ -194,7 +196,11 @@ eixrc/eixrc \
 cache/cache_map.cc \
 diff-eix$(EXEEXT) \
 update-eix$(EXEEXT) \
-versionsort$(EXEEXT)
+versionsort$(EXEEXT) \
+eix-sync.sh \
+eix-test-obsolete.sh \
+update-eix-layman.sh \
+update-eix-remote.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
@@ -375,6 +381,19 @@ install-exec-hook:
 cache/cache_map.cc: cache/generate_cachemap.sh
 	"cache/generate_cachemap.sh" $(extra_cache) > "$@"
 
+eix-sync.sh:
+	$(LN_S) eix-sync.in eix-sync.sh
+
+eix-test-obsolete.sh:
+	$(LN_S) eix-test-obsolete.in eix-test-obsolete.sh
+
+update-eix-layman.sh:
+	$(LN_S) update-eix-layman.in update-eix-layman.sh
+
+update-eix-remote.sh:
+	$(LN_S) update-eix-remote.in update-eix-remote.sh
+
+
 SUFFIXES = .in
 .in:
 	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
@@ -382,6 +401,7 @@ SUFFIXES = .in
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
+		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		"$<" > "$@"
 
 # Enable us to 'make clean' in src/
