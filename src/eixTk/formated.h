@@ -17,6 +17,11 @@
 #include <cassert>
 #include <cstdlib>
 
+#ifndef NDEBUG
+// std::cerr
+#include <iostream>
+#endif
+
 namespace eix {
 
 /** printf-like, typesafe text formating that replaces tokens in the given
@@ -84,13 +89,13 @@ class format
 					break;
 #ifndef NDEBUG
 				case 0:
-					std::cerr << formated(_("format specifier missing"))
+					std::cerr << _("format specifier missing")
 						<< std::endl;
 					exit(1);
 #endif
 				default:
 #ifndef NDEBUG
-					std::cerr << formated(_("unknown format specifier '%%%s'")) % m_spec
+					std::cerr << format(_("unknown format specifier '%%%s'")) % m_spec
 						<< std::endl;
 					exit(1);
 #endif

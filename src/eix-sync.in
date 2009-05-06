@@ -12,7 +12,7 @@
 time_begin="`date +%s 2>/dev/null`" || time_begin=''
 
 . ./functions-eix.sh.in
-read_functions
+ReadFunctions
 
 local_varcache="`update-eix --print EPREFIX_PORTAGE_CACHE`"
 eixcache="`update-eix --print EIX_CACHEFILE`"
@@ -255,16 +255,17 @@ DoHook () {
 RootTest () {
 	local i
 	${emulatemode} || return 0
-	gettext '
-Nothing was executed, because a heuristic shows that
-root permissions are required to execute everything successfully.' | \
-		per_line eerror
-	eval_gettext '
-However, the heuristic might be wrong, e.g. if you use EPREFIX.
+	{ echo; gettext \
+'Nothing was executed, because a heuristic shows that root permissions
+are required to execute everything successfully.'
+		echo; } | PerLine eerror
+	{ echo; eval_gettext \
+'However, the heuristic might be wrong, e.g. if you use EPREFIX.
 If you want to skip this test temporarily, use option -e.
 If you want to skip this test permanently, put option -e
-into the file ${eixsyncconf}.' | per_line einfo
-	die    ''
+into the file ${eixsyncconf}.'
+		echo; } | PerLine einfo
+	die ''
 }
 
 time_iupdate=''
@@ -281,7 +282,7 @@ PrintTimes () {
 	local ftime
 	${measure_time} || return 0
 	measure_time=false
-	einfo "Time statistics:"
+	einfo "`gettext 'Time statistics:'`"
 	PrintingTimes "${time_iupdate}"  "`gettext 'initial update-eix'`"
 	PrintingTimes "${time_sync}"     "`gettext 'syncing'`"
 	PrintingTimes "${time_client}"   "`gettext 'client syncing'`"
@@ -290,7 +291,7 @@ PrintTimes () {
 	PrintingTimes "${time_diff}"     "`gettext 'diff-eix'`"
 	ftime="`date '+%s' 2>/dev/null`" || return
 	ftime=`expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
-		printf '%6d seconds total\n' "${ftime}"
+		printf "`gettext '%6d seconds total\n'`" "${ftime}"
 }
 
 tmpfile=''

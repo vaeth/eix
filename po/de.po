@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-05-06 00:49+0200\n"
+"POT-Creation-Date: 2009-05-06 15:04+0200\n"
 "PO-Revision-Date: 2009-05-04 22:13+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -81,15 +81,14 @@ msgid ""
 "-h   Show this text and exit."
 msgstr ""
 "Aufruf: ${n} [Optionen]\n"
-"Ruft layman/emerge --sync/--metadata auf oder/und zeigt updates.\n"
-"(${p})\n"
+"Dieses Script gehört zu ${p}.\n"
+"Es ruft layman/emerge --sync/--metadata auf und/oder zeigt updates.\n"
 "\n"
 "Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
 "    ${eixprevious}\n"
 "gespeichert.\n"
-"Die Datei ${eixsyncconf} gibt an, für welche Overlays Layman "
-"aufgerufenwird.\n"
-"Es ist auch möglich, Hooks in diese Datei zu schreiben.\n"
+"Die Datei ${eixsyncconf} gibt an, für welche Overlays Layman\n"
+"aufgerufen wird. Es ist auch möglich, Hooks in diese Datei zu schreiben.\n"
 "\"man eix\" erklärt Genaueres hierzu.\n"
 "\n"
 "Die Datei ${eixsyncconf} und die Environment-Variable EIX_SYNC_OPTS\n"
@@ -174,159 +173,168 @@ msgstr "Synce Portage-Overlay ${j}"
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:258
+#: src/eix-sync.sh:259
 msgid ""
-"\n"
-"Nothing was executed, because a heuristic shows that\n"
-"root permissions are required to execute everything successfully."
+"Nothing was executed, because a heuristic shows that root permissions\n"
+"are required to execute everything successfully."
 msgstr ""
-"\n"
 "Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
 "Root-Recht benötigt werden, um alles erfolgreich auszuführen."
 
-#: src/eix-sync.sh:262
+#: src/eix-sync.sh:263
 #, sh-format
 msgid ""
-"\n"
 "However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
 "If you want to skip this test temporarily, use option -e.\n"
 "If you want to skip this test permanently, put option -e\n"
 "into the file ${eixsyncconf}."
 msgstr ""
+"Die Heuristik kann aber falsch sein, beispielsweise mit EPREFIX.\n"
+"Mit der Option -e kann der heuristische Test temporär umgangen werden.\n"
+"Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
+"das File ${eixsyncconf} ein."
 
-#: src/eix-sync.sh:278
+#: src/eix-sync.sh:279
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
 #: src/eix-sync.sh:285
+msgid "Time statistics:"
+msgstr "Benötigte Zeit:"
+
+#: src/eix-sync.sh:286
 msgid "initial update-eix"
 msgstr "erstes update-eix"
 
-#: src/eix-sync.sh:286
+#: src/eix-sync.sh:287
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:287
+#: src/eix-sync.sh:288
 msgid "client syncing"
 msgstr "client syncen"
 
-#: src/eix-sync.sh:288
+#: src/eix-sync.sh:289
 msgid "metadata update"
 msgstr "metadata update"
 
-#: src/eix-sync.sh:289
+#: src/eix-sync.sh:290
 msgid "update-eix"
 msgstr "update-eix"
 
-#: src/eix-sync.sh:290
+#: src/eix-sync.sh:291
 msgid "diff-eix"
 msgstr "diff-eix"
 
-#: src/eix-sync.sh:312
+#: src/eix-sync.sh:294
+msgid "%6d seconds total\\n"
+msgstr "%6d Sekunden insgesamt\\n"
+
+#: src/eix-sync.sh:313
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:317 src/update-eix-remote.sh:163
+#: src/eix-sync.sh:318 src/update-eix-remote.sh:163
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
-#: src/eix-sync.sh:322
+#: src/eix-sync.sh:323
 #, sh-format
 msgid "cannot create temporary file ${tmpfile}"
 msgstr "kann Temporärdatei ${tmpfile} nicht erzeugen"
 
-#: src/eix-sync.sh:348
+#: src/eix-sync.sh:349
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:361
+#: src/eix-sync.sh:362
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:364
+#: src/eix-sync.sh:365
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:375
+#: src/eix-sync.sh:376
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:382
+#: src/eix-sync.sh:383
 #, sh-format
 msgid "Running ${runarg}"
 msgstr "Starte ${runarg}"
 
-#: src/eix-sync.sh:383
+#: src/eix-sync.sh:384
 #, sh-format
 msgid "${runarg} failed"
 msgstr "${runarg} schlug fehl"
 
-#: src/eix-sync.sh:390
+#: src/eix-sync.sh:391
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:392
+#: src/eix-sync.sh:393
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:399
+#: src/eix-sync.sh:400
 msgid "Running emerge --metadata"
 msgstr "Starte emerge --metadata"
 
-#: src/eix-sync.sh:401
+#: src/eix-sync.sh:402
 msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
-#: src/eix-sync.sh:410
+#: src/eix-sync.sh:411
 msgid "eix-cache does not exist. Running update-eix!"
 msgstr "Eix-Cache existiert nicht. Starten von update-eix."
 
-#: src/eix-sync.sh:412 src/eix-sync.sh:422 src/functions-eix.sh.in:198
+#: src/eix-sync.sh:413 src/eix-sync.sh:423 src/functions-eix.sh.in:169
 msgid "update-eix failed"
 msgstr "update-eix schlug fehl"
 
-#: src/eix-sync.sh:420
+#: src/eix-sync.sh:421
 msgid "eix-cache format has changed. Running update-eix!"
 msgstr "Eix-Cache-Format hat sich geändert. Starten von update-eix."
 
-#: src/eix-sync.sh:433
+#: src/eix-sync.sh:434
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:441
+#: src/eix-sync.sh:442
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
 msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
 
-#: src/eix-sync.sh:444
+#: src/eix-sync.sh:445
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:466
+#: src/eix-sync.sh:467
 msgid "update-eix was apparently already called in a hook"
 msgstr "update-eix wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:470
+#: src/eix-sync.sh:471
 msgid "Running update-eix"
 msgstr "Starte update-eix"
 
-#: src/eix-sync.sh:472
+#: src/eix-sync.sh:473
 msgid "Failure while running update-eix"
 msgstr "Problem beim Ausführen von update-eix"
 
-#: src/eix-sync.sh:475
+#: src/eix-sync.sh:476
 msgid "Calling diff-eix"
 msgstr "Starte diff-eix"
 
-#: src/eix-sync.sh:477
+#: src/eix-sync.sh:478
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
@@ -468,16 +476,16 @@ msgstr "Alle installierten Paketversionen sind in der Datenbank."
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
-#: src/functions-eix.sh.in:55
+#: src/functions-eix.sh.in:26
 msgid "cannot read functions.sh"
 msgstr "kann functions.sh nicht sourcen"
 
-#: src/functions-eix.sh.in:96
+#: src/functions-eix.sh.in:67
 #, sh-format
 msgid "Problems running ${c}"
 msgstr "Probleme mit ${c}"
 
-#: src/functions-eix.sh.in:197
+#: src/functions-eix.sh.in:168
 msgid "Calling update-eix"
 msgstr "Starte updat-eix"
 
@@ -497,8 +505,8 @@ msgid ""
 "\t              the layman overlays. Current value:"
 msgstr ""
 "Aufruf: ${n} [Optionen] Kommando\n"
-"Fügt lokale Layman-Overlays zur eix-Datenbank hinzu oder entfernt sie.\n"
-"${p})\n"
+"Dieses Script gehört zu ${p}.\n"
+"Es fügt lokale Layman-Overlays zur eix-Datenbank hinzu oder entfernt sie.\n"
 "Die folgenden Kommandos gibt es:\n"
 "\n"
 "add:\tHinzufügen eines lokalen Layman-Overlays (zur Eix-Datenbank)\n"
@@ -539,7 +547,7 @@ msgstr "$OVERLAYPARENT muss mit / beginnen"
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command [FILE]\n"
-"Handle some remote updates for ${p}\n"
+"Get data from a remote datebase for ${p}.\n"
 "The following commands are provided:\n"
 "\n"
 "update: Fetch the eix-caches of some layman overlays into a temporary file\n"
@@ -558,13 +566,12 @@ msgid ""
 "limited\n"
 "permissions. Permissions are dropped when run as root or with the \"-u nobody"
 "\"\n"
-"option. Do not use \"-u root\".\n"
+"option. Do not use \"-u root\"!\n"
 "\n"
 "For \"update\" and \"add\" all corresponding local overlay paths are "
 "excluded\n"
-"from the current database to avoid confusion. The local paths are "
-"determined\n"
-"by prefixing the path\n"
+"from the update of the current database to avoid confusion.\n"
+"These local paths are determined by prefixing the path\n"
 "\t${OVERLAYPARENT}\n"
 "You can modify this value by setting the environment variable OVERLAYPARENT\n"
 "or with the -o option. If you do not want this feature, set OVERLAYPARENT\n"
@@ -581,7 +588,7 @@ msgid ""
 "\t-q      Quiet"
 msgstr ""
 "Aufruf: ${n} [Optionen] Kommando [FILE]\n"
-"Remote-Updates der Datenbank von ${p}\n"
+"Holt Daten aus einer Remote-Datenbank für ${p}.\n"
 "Es gibt folgende Kommandos:\n"
 "\n"
 "update: Holt die eix-caches einiger Layman-Overlays in ein Temporärfile\n"
@@ -596,13 +603,14 @@ msgstr ""
 "        \tKEEP_VIRTUALS=false update-eix\n"
 "        aber schneller (da falls möglich nichts geupdated wird).\n"
 "\n"
-"Es wird stark empfehl, die Update/Fetch-Kommandos mit sehr eingeschränkten\n"
-"Rechten auszuführen. Dies geschieht beispielsweise beim Aufruf als Root\n"
-"oder mit mit der Option \"-u nobodoy\". Benutzen Sie nicht \"-u root\".\n"
+"Es wird stark empfohlen, die Update/Fetch-Kommandos nur mit sehr\n"
+"eingeschränkten Rechten auszuführen. Dies geschieht beispielsweise beim\n"
+"Aufruf als Root oder mit mit der Option \"-u nobodoy\".\n"
+"Benutzen Sie keinesfalls \"-u root\"!\n"
 "\n"
 "Für \"update\" und \"add\" werden zur Vermeidung von Verwechslungen alle\n"
-"lokalen Overlay-Pfade von der aktuellen Datenbank ausgeschlossen.\n"
-"Dies lokalen Pfade werden durch Voranstellen des Pfades\n"
+"lokalen Overlay-Pfade beim Update der aktuellen Datenbank ausgeschlossen.\n"
+"Diese lokalen Pfade werden durch Voranstellen des Pfades\n"
 "\t${OVERLAYPARENT}\n"
 "bestimmt. Dieser Wert kann durch die Environment-Variable OVERLAYPARENT\n"
 "oder mit der Option -o geändert werden. Falls Sie dieses Feature nicht\n"
@@ -1301,11 +1309,11 @@ msgstr "Zweiter Parameter zu --%s fehlt\n"
 msgid "-- Invalid line %s in %s: %r"
 msgstr "-- Unerlaubte Zeile %s in %s: %r"
 
-#: src/eixTk/formated.h:87
+#: src/eixTk/formated.h:92
 msgid "format specifier missing"
 msgstr "Format-Zeichen fehlt"
 
-#: src/eixTk/formated.h:93
+#: src/eixTk/formated.h:98
 #, c-format
 msgid "unknown format specifier '%%%s'"
 msgstr "Unbekannte Formatangabe '%%%s'"

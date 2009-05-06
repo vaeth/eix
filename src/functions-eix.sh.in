@@ -12,39 +12,10 @@
 
 local_eprefix_portage_exec="`update-eix --print EPREFIX_PORTAGE_EXEC`"
 
-read_gettext () {
-	local i
-	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
-	read_gettext_status=0
-	export TEXTDOMAIN='@TEXTDOMAIN@'
-	{
-		. gettext.sh && return
-		i="`command -v gettext.sh 2>/dev/null`" && \
-			[ -n "${i}" ] && . "${i}" && return
-		. /usr/bin/gettext.sh && return
-	} >/dev/null 2>&1
-	eval '
-	gettext() {
-		printf "%s" "${*}"
-	}
-	eval_gettext() {
-		eval "printf \"%s\" \"${*}\""
-	}
-	ngettext() {
-		gettext "${@}"
-	}
-	eval_ngettext() {
-		eval_gettext "${@}"
-	}
-	'
-	read_gettext_status=1
-	return 1
-}
-
 # This must happen in a function to enforce an empty argument list.
-read_functions () {
+ReadFunctions () {
 	local i
-	read_gettext
+	ReadGettext
 	for i in "${local_eprefix_portage_exec}/etc/init.d/functions.sh" \
 		"${local_eprefix_portage_exec}/sbin/functions.sh"
 	do
@@ -62,7 +33,7 @@ die () {
 	exit "${exitcode}"
 }
 
-per_line () {
+PerLine () {
 	local i
 	while IFS='
 ' read i
@@ -267,3 +238,48 @@ NormalizeNames () {
 	done
 	return ${NormD_}
 }
+
+read_gettext_status=''
+ReadGettext () {
+	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
+	case "${USE_NLS-@USE_NLS@}" in
+		''|n*|N*|f*|F*|0)
+			read_gettext_status=1;;
+		*)	ReadGettextSub >/dev/null 2>&1
+			read_gettext_status=${?};;
+	esac
+	if [ ${read_gettext_status} -eq 0 ]
+	then
+		export TEXTDOMAIN='@TEXTDOMAIN@'
+		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
+		return
+	fi
+	gettext () {
+		printf '%s' "${*}"
+	}
+	eval_gettext () {
+		local l
+		l="${*}"
+		Replace -g l '\' '\\'
+		Replace -g l '$(' '\$('
+		Replace -g l '`' '\`'
+		Replace -g l '"' '\"'
+		eval "printf '%s' \"${l}\""
+	}
+	ngettext () {
+		gettext "${@}"
+	}
+	eval_ngettext () {
+		eval_gettext "${@}"
+	}
+	return 1
+}
+
+ReadGettextSub () {
+	local i
+	. gettext.sh && return
+	i="`command -v gettext.sh 2>/dev/null`" && \
+		[ -n "${i}" ] && . "${i}" && return
+	. /usr/bin/gettext.sh
+}
+

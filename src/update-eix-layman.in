@@ -11,7 +11,7 @@
 # database. (@PACKAGE_STRING@).
 
 . ./functions-eix.sh.in
-read_functions
+ReadFunctions
 
 Usage () {
 	local i n p

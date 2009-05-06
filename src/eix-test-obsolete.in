@@ -8,7 +8,7 @@
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
 . ./functions-eix.sh.in
-read_gettext
+ReadGettext
 
 details=false
 Die () {

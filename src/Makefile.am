@@ -402,6 +402,8 @@ SUFFIXES = .in
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
+		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
+		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
 		"$<" > "$@"
 
 # Enable us to 'make clean' in src/

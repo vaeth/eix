@@ -9,7 +9,7 @@
 # eix database. (@PACKAGE_STRING@).
 
 . ./functions-eix.sh.in
-read_functions
+ReadFunctions
 
 : ${OVERLAYPARENT:=/usr/portage/local}
 eixcachesname='eix-caches.tbz2'
@@ -27,7 +27,7 @@ Usage () {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] command [FILE]
-Handle some remote updates for ${p}
+Get data from a remote datebase for ${p}.
 The following commands are provided:
 
 update: Fetch the eix-caches of some layman overlays into a temporary file
@@ -43,11 +43,11 @@ remove: Remove all temporarily added virtual overlays from the eix database;
 
 It is strongly recommended to use the update/fetch commands with very limited
 permissions. Permissions are dropped when run as root or with the "-u nobody"
-option. Do not use "-u root".
+option. Do not use "-u root"!
 
 For "update" and "add" all corresponding local overlay paths are excluded
-from the current database to avoid confusion. The local paths are determined
-by prefixing the path
+from the update of the current database to avoid confusion.
+These local paths are determined by prefixing the path
 	${OVERLAYPARENT}
 You can modify this value by setting the environment variable OVERLAYPARENT
 or with the -o option. If you do not want this feature, set OVERLAYPARENT
