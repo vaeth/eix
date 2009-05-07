@@ -41,7 +41,7 @@ else
 fi
 for i in ${MAKEARCH}
 do
-	Run ${DOCMD} "${i}"
+	Run ${DOCMD} "UPDATEPOFILES=" "${i}"
 done
 
 found=false
