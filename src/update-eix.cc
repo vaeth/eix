@@ -28,9 +28,12 @@
 
 #include <sys/stat.h> /* fchown, fchmod */
 
-#define INFO printf
 
 using namespace std;
+
+inline void
+INFO(const string &s)
+{ cout << s; }
 
 static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels);
 
@@ -260,11 +263,13 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 	static const string a("eix*::");
 	FILE *fp = fopen(cachefile.c_str(), "rb");
 	if(!fp) {
-		INFO(_("KEEP_VIRTUALS is ignored: there is no previous %s\n"), cachefile.c_str());
+		INFO(eix::format(_(
+			"KEEP_VIRTUALS is ignored: there is no previous %s\n"))
+			% cachefile);
 		return;
 	}
 
-	INFO(_("Adding virtual overlays from %s ..\n"), cachefile.c_str());
+	INFO(eix::format(_("Adding virtual overlays from %s ..\n")) % cachefile);
 	DBHeader header;
 	bool is_current = io::read_header(fp, header);
 	fclose(fp);
@@ -432,7 +437,8 @@ run_update_eix(int argc, char *argv[])
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
 		else
-			INFO(_("Excluded PORTDIR: %s\n"), portage_settings["PORTDIR"].c_str());
+			INFO(eix::format(_("Excluded PORTDIR: %s\n"))
+				% portage_settings["PORTDIR"]);
 
 		portage_settings.add_overlay_vector(add_overlays, false);
 
@@ -445,11 +451,12 @@ run_update_eix(int argc, char *argv[])
 					portage_settings.overlays[i].c_str(),
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr);
 			else
-				INFO(_("Excluded overlay %s\n"), portage_settings.overlays[i].c_str());
+				INFO(eix::format(_("Excluded overlay %s\n"))
+					% portage_settings.overlays[i]);
 		}
 	}
 
-	INFO(_("Building database (%s) ..\n"), outputfile.c_str());
+	INFO(eix::format(_("Building database (%s) ..\n")) % outputfile);
 	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
 
 	/* Update the database from scratch */
@@ -493,7 +500,10 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		OverlayIdent overlay(cache->getPath().c_str(), "");
 		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end()) {
-			INFO(_("Excluding \"%s\" %s (cache: %s)\n"), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
+				% overlay.label
+				% cache->getPathHumanReadable()
+				% cache->getType());
 			continue;
 		}
 		Version::Overlay key = dbheader.addOverlay(overlay);
@@ -502,7 +512,11 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 
-		INFO(_("[%u] \"%s\" %s (cache: %s)\n"), PercentU(key), overlay.label.c_str(), cache->getPathHumanReadable().c_str(), cache->getType());
+		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))
+			% key
+			% overlay.label
+			% cache->getPathHumanReadable()
+			% cache->getType());
 		reading_percent_status = new PercentStatus(_("     Reading "), use_percentage);
 		if(cache->can_read_multiple_categories())
 		{
@@ -548,7 +562,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	io::prep_header_hashs(dbheader, package_tree);
 
 	/* And write database back to disk .. */
-	INFO(_("Writing database file %s ..\n"), outputfile);
+	INFO(eix::format(_("Writing database file %s ..\n")) % outputfile);
 	FILE *database_stream = fopen(outputfile, "wb");
 	if (!database_stream) {
 		throw ExBasic(_("Can't open the database file %r for writing (mode = 'wb')"))
@@ -564,7 +578,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	fclose(database_stream);
 
-	INFO(_("Database contains %u packages in %u categories.\n"),
-		PercentU(package_tree.countPackages()), PercentU(dbheader.size));
+	INFO(eix::format(_("Database contains %s packages in %s categories.\n"))
+		% package_tree.countPackages() % dbheader.size);
 }
 

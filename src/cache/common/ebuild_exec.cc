@@ -214,7 +214,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		}
 		_exit(EXECLE_FAILED);
 	}
-	while( waitpid( child, &exec_status, 0) != child ) { }
+	while(waitpid(-1, &exec_status, 0) != child ) { }
 
 	// Free memory needed only for the child process:
 	if(c_env)

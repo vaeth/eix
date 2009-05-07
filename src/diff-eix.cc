@@ -34,10 +34,11 @@
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
-
-#define INFO printf
-
 using namespace std;
+
+inline void
+INFO(const string &s)
+{ cout << s; }
 
 static PortageSettings *portagesettings;
 static SetStability   *set_stability_old, *set_stability_new;
@@ -123,7 +124,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 		cerr << eix::format(_(
 			"%s was created with an incompatible update-eix:\n"
 			"It uses database format %s (current is %s)."))
-			% file % PercentU(header->version) % PercentU(DBHeader::current)
+			% file % (header->version) % DBHeader::current
 			<< endl;
 		exit(1);
 	}
@@ -440,9 +441,9 @@ run_diff_eix(int argc, char *argv[])
 		eixrc.getBool("DIFF_SEPARATE_DELETED"));
 
 	if(eixrc.getBool("DIFF_PRINT_HEADER")) {
-		INFO(_("Diffing databases (%u -> %u packages)\n"),
-			PercentU(old_tree.countPackages()),
-			PercentU(new_tree.countPackages()));
+		INFO(eix::format(_("Diffing databases (%s -> %s packages)\n"))
+			% old_tree.countPackages()
+			% new_tree.countPackages());
 	}
 
 	differ.lost_package    = print_lost_package;

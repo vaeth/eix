@@ -2,7 +2,7 @@ maintainer-clean-local:
 	for i in *; \
 		do case "$${i}" in \
 			en@boldquot.po|en@quot.po|Rules-quot) true;; \
-			Makevars|POTFILES.in|LINGUAS|Rules-*|*.po) continue;; \
+			Makevars|POTFILES.in|LINGUAS|Rules-*|*.po|my-*) continue;; \
 		esac; \
 		rm -- "$${i}"; \
 	done

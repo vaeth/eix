@@ -1,0 +1,46 @@
+#! /usr/bin/env sh
+# Sometimes msgmerge --update does not make a backup when it should,
+# so we make our own and ignore that of msgmerge.
+# Moreover, if the only change is the POT-Creation-Date,
+# then we undo the change of msgmerge --update
+MSGMERGE="${1}"
+shift
+fil="./${1}"
+tmp="${fil}.tmp"
+if [ -n "${1}" ] && test -f "${fil}" && cp -p "${fil}" "${tmp}"
+then
+	"${MSGMERGE}" --update "${@}"
+	ret=${?}
+else
+	echo "my-update: could not copy ${fil} to ${tmp}" >&2
+	exit 2
+fi
+if cmp -s "${tmp}" "${fil}" >/dev/null >&2
+then
+	echo "my-update: ${MSGMERGE} did not change ${fil}"
+	rm "${tmp}"
+	exit ${ret}
+fi
+tempa="${fil}-temp1"
+tempb="${fil}-temp2"
+sed -e '/^"POT-Creation-Date:/d' "${tmp}" >"${tempa}"
+sed -e '/^"POT-Creation-Date:/d' "${fil}" >"${tempb}"
+if cmp -s "${tempa}" "${tempb}" >/dev/null >&2
+then
+	echo "
+----------------------------------------------------
+my-update: Undoing redundant ${MSGMERGE} for ${fil}
+----------------------------------------------------
+"
+	mv "${tmp}" "${fil}"
+else
+	bak="${fil}.bak"
+	echo "
+----------------------------------------------------
+my-update: Backup of previous ${fil} is in ${bak}
+----------------------------------------------------
+"
+	mv "${tmp}" "${bak}"
+fi
+rm "${tempa}" "${tempb}"
+exit ${ret}

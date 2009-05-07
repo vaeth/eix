@@ -598,7 +598,7 @@ run_eix(int argc, char** argv)
 			"%s was created with an incompatible update-eix:\n"
 			"It uses database format %s (current is %s).\n"
 			"Please run 'update-eix' and try again."))
-			% cachefile % PercentU(header.version) % PercentU(DBHeader::current)
+			% cachefile % header.version % DBHeader::current
 			<< endl;
 		exit(1);
 	}

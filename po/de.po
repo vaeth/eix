@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-05-06 15:04+0200\n"
-"PO-Revision-Date: 2009-05-04 22:13+0200\n"
+"POT-Creation-Date: 2009-05-07 19:33+0200\n"
+"PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -674,7 +674,7 @@ msgstr "kann ${i} nicht auspacken"
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
 
-#: src/diff-eix.cc:54
+#: src/diff-eix.cc:55
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
@@ -712,11 +712,11 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/diff-eix.cc:118
+#: src/diff-eix.cc:119
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Kann Datenbankfile %r nicht zum Lesen öffnen (mode = 'rb')"
 
-#: src/diff-eix.cc:124
+#: src/diff-eix.cc:125
 #, c-format
 msgid ""
 "%s was created with an incompatible update-eix:\n"
@@ -725,19 +725,19 @@ msgstr ""
 "%s wurde mit inkompatiblem update-eix erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/diff-eix.cc:296
+#: src/diff-eix.cc:297
 msgid "Missing cache-file."
 msgstr "Fehlendes Cachefile."
 
-#: src/diff-eix.cc:320 src/eix.cc:505
+#: src/diff-eix.cc:321 src/eix.cc:505
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/diff-eix.cc:443
+#: src/diff-eix.cc:444
 #, c-format
-msgid "Diffing databases (%u -> %u packages)\n"
-msgstr "Vergleiche Datenbanken (%u -> %u Pakete)\n"
+msgid "Diffing databases (%s -> %s packages)\n"
+msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
 
 #: src/eix.cc:45
 #, c-format
@@ -3929,12 +3929,12 @@ msgstr "unbekanntes Suchfeld %r"
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
 
-#: src/update-eix.cc:88
+#: src/update-eix.cc:91
 #, c-format
 msgid "%s must be writable by group portage."
 msgstr "%s muss für die Grupper portage beschreibbar sein."
 
-#: src/update-eix.cc:96
+#: src/update-eix.cc:99
 msgid ""
 "You must be in the portage group to update the database.\n"
 "If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test."
@@ -3942,19 +3942,19 @@ msgstr ""
 "Zum Datenbank-Update ist Zugehörigkeit zur Gruppe portage nötig.\n"
 "Durch Setzen von SKIP_PERMISSION_TESTS kann dieser Test verhindert werden."
 
-#: src/update-eix.cc:110
+#: src/update-eix.cc:113
 msgid "User 'root' is needed to initially generate the database."
 msgstr "Nur 'root' kann anfänglich die Datenbank generieren."
 
-#: src/update-eix.cc:129
+#: src/update-eix.cc:132
 msgid "warning: cannot change ownership of cachefile"
 msgstr "Warnung: Kann Benutzer des Cachefiles nicht ändern"
 
-#: src/update-eix.cc:132
+#: src/update-eix.cc:135
 msgid "warning: cannot change permissions for cachefile"
 msgstr "Warnung: Kann Rechte des Cachefiles nicht ändern"
 
-#: src/update-eix.cc:142
+#: src/update-eix.cc:145
 #, c-format
 msgid ""
 "Usage: %s [options]\n"
@@ -4003,83 +4003,83 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/update-eix.cc:246
+#: src/update-eix.cc:249
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD\n"
 msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
 
-#: src/update-eix.cc:263
+#: src/update-eix.cc:267
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
 
-#: src/update-eix.cc:267
+#: src/update-eix.cc:272
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 
-#: src/update-eix.cc:272
+#: src/update-eix.cc:277
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/update-eix.cc:335
+#: src/update-eix.cc:340
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/update-eix.cc:435
+#: src/update-eix.cc:440
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/update-eix.cc:448
+#: src/update-eix.cc:454
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/update-eix.cc:452
+#: src/update-eix.cc:459
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/update-eix.cc:496
+#: src/update-eix.cc:503
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/update-eix.cc:505
+#: src/update-eix.cc:515
 #, c-format
-msgid "[%u] \"%s\" %s (cache: %s)\n"
-msgstr "[%u] \"%s\" %s (Cache: %s)\n"
+msgid "[%s] \"%s\" %s (cache: %s)\n"
+msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/update-eix.cc:506
+#: src/update-eix.cc:520
 msgid "     Reading "
 msgstr "     Lese "
 
-#: src/update-eix.cc:514
+#: src/update-eix.cc:528
 msgid "aborted"
 msgstr "Abbruch"
 
-#: src/update-eix.cc:533
+#: src/update-eix.cc:547
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/update-eix.cc:547
+#: src/update-eix.cc:561
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/update-eix.cc:551
+#: src/update-eix.cc:565
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/update-eix.cc:554
+#: src/update-eix.cc:568
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/update-eix.cc:567
+#: src/update-eix.cc:581
 #, c-format
-msgid "Database contains %u packages in %u categories.\n"
-msgstr "Datenbank enthält %u Pakete in %u Kategorien.\n"
+msgid "Database contains %s packages in %s categories.\n"
+msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
 
 #: src/varsreader.cc:69
 msgid "failed to source %r"
@@ -4088,4 +4088,4 @@ msgstr "Kann %r nicht sourcen"
 #: src/versionsort.cc:35
 #, c-format
 msgid "cannot determine version of %s"
-msgstr "Kann Version von '%s' nicht finden"
+msgstr "kann Version von '%s' nicht bestimmen"

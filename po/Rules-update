@@ -1,0 +1,3 @@
+
+MSGMERGE_UPDATE := $(srcdir)/my-update '$(MSGMERGE)'
+
