@@ -47,7 +47,7 @@ namespace eix {
 	/// A list that only stores pointers to type.
 	template<typename type>
 	class ptr_list
-		: virtual public std::list<type*>
+		: public std::list<type*>
 	{
 		public:
 			using std::list<type*>::begin;
@@ -76,8 +76,8 @@ namespace eix {
 
 			void delete_and_clear()
 			{
-				delete_all(begin(), end());
-				clear();
+				delete_all(std::list<type*>::begin(), std::list<type*>::end());
+				std::list<type*>::clear();
 			}
 	};
 

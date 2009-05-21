@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.16.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Minor compatibility tweaks for gcc-4.4 and glibc-2.10
+
 *eix-0.16.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add NLS support and experimental translation into German.

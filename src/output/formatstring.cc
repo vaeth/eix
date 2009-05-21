@@ -278,7 +278,7 @@ FormatParser::state_TEXT()
 FormatParser::ParserState
 FormatParser::state_COLOR()
 {
-	char *q = strchr(band_position, ')');
+	const char *q = strchr(band_position, ')');
 	if(q == NULL) {
 		last_error = _("'(' without closing ')'");
 		return ERROR;
@@ -299,7 +299,7 @@ FormatParser::state_COLOR()
 FormatParser::ParserState
 FormatParser::state_PROPERTY()
 {
-	char *q = strchr(band_position, '>');
+	const char *q = strchr(band_position, '>');
 	if(q == NULL) {
 		last_error = _("'<' without closing '>'");
 		return ERROR;
