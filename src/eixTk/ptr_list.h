@@ -76,8 +76,8 @@ namespace eix {
 
 			void delete_and_clear()
 			{
-				delete_all(std::list<type*>::begin(), std::list<type*>::end());
-				std::list<type*>::clear();
+				delete_all(begin(), end());
+				clear();
 			}
 	};
 
