@@ -101,8 +101,6 @@ cache/cache_map.cc \
 cache/cache_map.h \
 cache/cdb/cdb.cc \
 cache/cdb/cdb.h \
-cache/ebuild/ebuild.cc \
-cache/ebuild/ebuild.h \
 cache/eixcache/eixcache.cc \
 cache/eixcache/eixcache.h \
 cache/metadata/metadata.cc \

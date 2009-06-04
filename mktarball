@@ -23,7 +23,7 @@ MAKEARCH="dist-lzma"
 [ ${#} -ne 0 ] && [ -n "${1}" ] && case "${1}" in
 	h*|H*|*\?*|-*) Usage;;
 	b*|B*) MAKEARCH="dist-bzip2";;
-	l*|L*|'') :;;
+	l*|L*|'') MAKEARCH="dist-lzma";;
 	*) MAKEARCH="${MAKEARCH} dist";;
 esac
 
@@ -45,7 +45,7 @@ do
 done
 
 found=false
-for j in tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 do
 	for i in "${PWD}"/eix-*."${j}"
 	do

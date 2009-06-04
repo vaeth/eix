@@ -35,7 +35,7 @@ class BasicCache {
 		{ return false; }
 
 		/// Set scheme for this cache
-		void setScheme(const char *prefix, const char *prefixport, std::string scheme);
+		virtual void setScheme(const char *prefix, const char *prefixport, std::string scheme);
 
 		/// Set overlay-key
 		void setKey(Version::Overlay key)
@@ -82,6 +82,12 @@ class BasicCache {
 		virtual bool readCategory(Category &vec) throw(ExBasic)
 		{ return readCategories(NULL, NULL, &vec); }
 
+		virtual bool readCategoryPrepare(Category &vec) throw(ExBasic)
+		{ UNUSED(vec); return true; }
+
+		void readCategoryFinalize()
+		{}
+
 	protected:
 		std::string m_scheme, m_prefix;
 		std::string m_overlay_name;
@@ -89,7 +95,6 @@ class BasicCache {
 		Version::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
 		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
-
 	public:
 		PortageSettings *portagesettings;
 };

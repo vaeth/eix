@@ -10,6 +10,7 @@
 #include "parse.h"
 #include <cache/common/selectors.h>
 #include <cache/common/flat_reader.h>
+#include <cache/metadata/metadata.h>
 
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -18,6 +19,79 @@
 #include <map>
 
 using namespace std;
+
+bool
+ParseCache::initialize(const string &name)
+{
+	vector<string> names = split_string(name, true, "#");
+	vector<string>::const_iterator it_name = names.begin();
+	if(it_name == names.end())
+		return false;
+	vector<string> s = split_string(*it_name, false, "|");
+	if(s.empty())
+		return false;
+	try_parse = nosubst = false;
+	bool try_ebuild = false, use_sh = false;
+	for(vector<string>::const_iterator it = s.begin(); it != s.end(); ++it) {
+		if(*it == "parse") {
+			try_parse = true; nosubst = false;
+		}
+		else if(*it == "parse*") {
+			try_parse = true; nosubst = true;
+		}
+		else if(*it == "ebuild") {
+			try_ebuild = true; use_sh = false;
+		}
+		else if(*it == "ebuild*") {
+			try_ebuild = true; use_sh = true;
+		}
+		else
+			return false;
+	}
+	if(try_ebuild)
+		ebuild_exec = new EbuildExec(use_sh, this);
+	while(++it_name != names.end()) {
+		MetadataCache *p = new MetadataCache;
+		if(p->initialize(*it_name)) {
+			further.push_back(p);
+			continue;
+		}
+		delete p;
+		return false;
+	}
+	return true;
+}
+
+const char *
+ParseCache::getType() const
+{
+	static string s;
+	if(try_parse) {
+		if(nosubst)
+			s = "parse*";
+		else
+			s = "parse";
+	}
+	if(ebuild_exec) {
+		const char *t;
+		if(ebuild_exec->use_sh())
+			t = "ebuild*";
+		else
+			t = "ebuild";
+		if(s.empty())
+			s = t;
+		else {
+			s.append("|");
+			s.append(t);
+		}
+	}
+	for(vector<BasicCache*>::const_iterator it = further.begin();
+		it != further.end(); ++it) {
+		s.append("#");
+		s.append((*it)->getType());
+	}
+	return s.c_str();
+}
 
 void
 ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild, bool *ok)
@@ -39,19 +113,76 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 }
 
 void
+ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version)
+{
+	string keywords, restr, props, iuse;
+	bool ok = try_parse;
+	if(ok) {
+		VarsReader::Flags flags = VarsReader::NONE;
+		if(!read_onetime_info)
+			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
+		map<string, string> env;
+		if(!nosubst) {
+			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
+			env_add_package(env, *pkg, *version, dirpath, fullpath);
+		}
+		VarsReader ebuild(flags);
+		if(flags & VarsReader::INTO_MAP)
+			ebuild.useMap(&env);
+		version->overlay_key = m_overlay_key;
+		try {
+			ebuild.read(fullpath);
+		}
+		catch(const ExBasic &e) {
+			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % fullpath % e.getMessage());
+		}
+
+		set_checking(keywords, "KEYWORDS", ebuild, &ok);
+		set_checking(version->slotname, "SLOT", ebuild, &ok);
+		// Empty SLOT is not ok:
+		if(ok && ebuild_exec && version->slotname.empty())
+			ok = false;
+		set_checking(restr, "RESTRICT", ebuild);
+		set_checking(props, "PROPERTIES", ebuild);
+		set_checking(iuse, "IUSE", ebuild, &ok);
+		if(read_onetime_info) {
+			set_checking(pkg->homepage, "HOMEPAGE",    ebuild, &ok);
+			set_checking(pkg->licenses, "LICENSE",     ebuild, &ok);
+			set_checking(pkg->desc,     "DESCRIPTION", ebuild, &ok);
+			set_checking(pkg->provide,  "PROVIDE",     ebuild);
+			have_onetime_info = true;
+		}
+	}
+	if(!ok) {
+		string *cachefile = ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version);
+		if(cachefile) {
+			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, m_error_callback);
+			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
+			ebuild_exec->delete_cachefile();
+		}
+		else
+			m_error_callback(eix::format(_("Could not properly execute %s")) % fullpath);
+	}
+	version->set_full_keywords(keywords);
+	version->set_restrict(restr);
+	version->set_properties(props);
+	version->set_iuse(iuse);
+	pkg->addVersionFinalize(version);
+}
+
+void
 ParseCache::readPackage(Category &vec, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
 {
 	bool have_onetime_info = false;
 
 	Package *pkg = vec.findPackage(pkg_name);
-	if( pkg )
+	if(pkg)
 		have_onetime_info = true;
 	else
 		pkg = vec.addPackage(pkg_name);
 
 	for(vector<string>::const_iterator it = files.begin();
-		it != files.end(); ++it)
-	{
+		it != files.end(); ++it) {
 		string::size_type pos = ebuild_pos(*it);
 		if(pos == string::npos)
 			continue;
@@ -76,62 +207,9 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
 		}
-		/* read the ebuild */
-		VarsReader::Flags flags = VarsReader::NONE;
-		if(!read_onetime_info)
-			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
-		map<string, string> env;
-		if(!nosubst)
-		{
-			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
-			env_add_package(env, *pkg, *version, directory_path, full_path.c_str());
-		}
-		VarsReader ebuild(flags);
-		if(flags & VarsReader::INTO_MAP)
-			ebuild.useMap(&env);
 		version->overlay_key = m_overlay_key;
-		try {
-			ebuild.read(full_path.c_str());
-		}
-		catch(const ExBasic &e) {
-			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % full_path % e.getMessage());
-		}
 
-		bool ok = true;
-		string keywords, restr, props, iuse;
-		set_checking(keywords, "KEYWORDS", ebuild, &ok);
-		set_checking(version->slotname, "SLOT", ebuild, &ok);
-		// Empty SLOT is not ok:
-		if(ok && ebuild_exec && version->slotname.empty())
-			ok = false;
-		set_checking(restr, "RESTRICT", ebuild);
-		set_checking(props, "PROPERTIES", ebuild);
-		set_checking(iuse, "IUSE", ebuild, &ok);
-		if(read_onetime_info)
-		{
-			set_checking(pkg->homepage, "HOMEPAGE",    ebuild, &ok);
-			set_checking(pkg->licenses, "LICENSE",     ebuild, &ok);
-			set_checking(pkg->desc,     "DESCRIPTION", ebuild, &ok);
-			set_checking(pkg->provide,  "PROVIDE",     ebuild);
-
-			have_onetime_info = true;
-		}
-		if(!ok) {
-			string *cachefile = ebuild_exec->make_cachefile(full_path.c_str(), directory_path, *pkg, *version);
-			if(cachefile) {
-				flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, m_error_callback);
-				flat_read_file(cachefile->c_str(), pkg, m_error_callback);
-				ebuild_exec->delete_cachefile();
-			}
-			else
-				m_error_callback(eix::format(_("Could not properly execute %s")) % full_path);
-		}
-
-		version->set_full_keywords(keywords);
-		version->set_restrict(restr);
-		version->set_properties(props);
-		version->set_iuse(iuse);
-		pkg->addVersionFinalize(version);
+		parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
 
 		free(ver);
 	}
@@ -141,12 +219,32 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 	}
 }
 
-bool ParseCache::readCategory(Category &vec) throw(ExBasic)
+bool
+ParseCache::readCategoryPrepare(Category &vec) throw(ExBasic)
 {
-	vector<string> packages;
+	further_works.clear();
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		further_works.push_back((*it)->readCategoryPrepare(vec));
+	catpath = m_prefix + m_scheme + '/' + vec.name;
+	return scandir_cc(catpath, packages, package_selector);
+}
 
-	string catpath = m_prefix + m_scheme + '/' + vec.name;
-	if(!scandir_cc(catpath, packages, package_selector))
+void
+ParseCache::readCategoryFinalize()
+{
+	further_works.clear();
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		(*it)->readCategoryFinalize();
+	catpath.clear();
+	packages.clear();
+}
+
+bool
+ParseCache::readCategory(Category &vec) throw(ExBasic)
+{
+	if(!readCategoryPrepare(vec))
 		return false;
 
 	for(vector<string>::const_iterator pit = packages.begin();
@@ -157,5 +255,6 @@ bool ParseCache::readCategory(Category &vec) throw(ExBasic)
 		if(scandir_cc(pkg_path, files, ebuild_selector))
 			readPackage(vec, *pit, pkg_path, files);
 	}
+	readCategoryFinalize();
 	return true;
 }

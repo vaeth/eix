@@ -6,7 +6,7 @@
 #     Emil Beinroth <emilbeinroth@gmx.net>
 #     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AUTOMAKE_OPTIONS = foreign 1.4 dist-bzip2
+AUTOMAKE_OPTIONS = foreign 1.4 dist-lzma
 
 SUBDIRS = po src manpage doc
 

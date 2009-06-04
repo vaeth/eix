@@ -33,8 +33,6 @@ src/cache/common/selectors.cc
 src/cache/common/selectors.h
 src/cache/common/unpickle.cc
 src/cache/common/unpickle.h
-src/cache/ebuild/ebuild.cc
-src/cache/ebuild/ebuild.h
 src/cache/eixcache/eixcache.cc
 src/cache/eixcache/eixcache.h
 src/cache/metadata/metadata.cc

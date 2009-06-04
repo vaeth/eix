@@ -94,6 +94,14 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 		m_type.append(":");
 		m_type.append(override_path);
 	}
+	if(set_flat) {
+		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
+		x_read_file = flat_read_file;
+	}
+	else {
+		x_get_keywords_slot_iuse_restrict = assign_get_keywords_slot_iuse_restrict;
+		x_read_file = assign_read_file;
+	}
 }
 
 static int
@@ -103,13 +111,9 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 			&& strchr(dent->d_name, '-') != 0);
 }
 
-typedef void (*x_get_keywords_slot_iuse_restrict_t)(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, BasicCache::ErrorCallback error_callback);
-typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
-
 bool
-MetadataCache::readCategory(Category &vec) throw(ExBasic)
+MetadataCache::readCategoryPrepare(Category &vec) throw(ExBasic)
 {
-	string catpath;
 	if(have_override_path) {
 		catpath = override_path;
 	}
@@ -159,23 +163,24 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 	}
 	optional_append(catpath, '/');
 	catpath.append(vec.name);
-	vector<string> names;
-	if(!scandir_cc(catpath, names, cachefiles_selector))
-		return false;
 
-	x_get_keywords_slot_iuse_restrict_t x_get_keywords_slot_iuse_restrict;
-	x_read_file_t x_read_file;
-	if(flat) {
-		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
-		x_read_file = flat_read_file;
-	}
-	else {
-		x_get_keywords_slot_iuse_restrict = assign_get_keywords_slot_iuse_restrict;
-		x_read_file = assign_read_file;
-	}
+	return scandir_cc(catpath, names, cachefiles_selector);
+}
+
+void
+MetadataCache::readCategoryFinalize()
+{
+	catpath.clear();
+	names.clear();
+}
+
+bool
+MetadataCache::readCategory(Category &vec) throw(ExBasic)
+{
+	if(!readCategoryPrepare(vec))
+		return false;
 	for(vector<string>::const_iterator it = names.begin();
-		it != names.end(); )
-	{
+		it != names.end(); ) {
 		Version *version;
 		Version *newest = NULL;
 
@@ -234,6 +239,6 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		if(newest) // provided we have read the "last" version
 			(*x_read_file)((catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
 	}
-
+	readCategoryFinalize();
 	return true;
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-05-07 19:33+0200\n"
+"POT-Creation-Date: 2009-06-04 06:07+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1173,21 +1173,6 @@ msgstr "Falscher Cpickle-Header"
 msgid "Unsupported pickle value %r"
 msgstr "Nicht unterstützter Pickle-Wert %r"
 
-#: src/cache/ebuild/ebuild.cc:40 src/cache/parse/parse.cc:62
-#, c-format
-msgid "Can't split filename of ebuild %s/%s"
-msgstr "Kann Filenamen des Ebuilds %s/%s nicht unterteilen"
-
-#: src/cache/ebuild/ebuild.cc:53 src/cache/parse/parse.cc:127
-#, c-format
-msgid "Could not properly execute %s"
-msgstr "Konnte %s nicht korrekt ausführen"
-
-#: src/cache/ebuild/ebuild.cc:77
-#, c-format
-msgid "Executing %s did not produce all data"
-msgstr "Ausführzung von %s erzeugt nicht alle Daten"
-
 #: src/cache/eixcache/eixcache.cc:96
 #, c-format
 msgid "Cache file %s uses newer format %s (current is %s)"
@@ -1207,15 +1192,25 @@ msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Cachefile %s enthölt nicht Overlay %s"
 
-#: src/cache/metadata/metadata.cc:185 src/cache/metadata/metadata.cc:227
+#: src/cache/metadata/metadata.cc:190 src/cache/metadata/metadata.cc:232
 #: src/cache/port2_1_2/port2_1_2.cc:101 src/cache/sqlite/sqlite.cc:196
 msgid "Can't split %r into package and version"
 msgstr "Kann %r nicht in Paket und Version unterteilen"
 
-#: src/cache/parse/parse.cc:97
+#: src/cache/parse/parse.cc:137
 #, c-format
 msgid "Could not properly parse %s: %s"
 msgstr "Fehler beim Parsen von %s: %s"
+
+#: src/cache/parse/parse.cc:164
+#, c-format
+msgid "Could not properly execute %s"
+msgstr "Konnte %s nicht korrekt ausführen"
+
+#: src/cache/parse/parse.cc:193
+#, c-format
+msgid "Can't split filename of ebuild %s/%s"
+msgstr "Kann Filenamen des Ebuilds %s/%s nicht unterteilen"
 
 #: src/cache/port2_1_2/port2_1_2.cc:80
 msgid "%r not of the form package/catstring-version"
@@ -4089,3 +4084,6 @@ msgstr "Kann %r nicht sourcen"
 #, c-format
 msgid "cannot determine version of %s"
 msgstr "kann Version von '%s' nicht bestimmen"
+
+#~ msgid "Executing %s did not produce all data"
+#~ msgstr "Ausführzung von %s erzeugt nicht alle Daten"
