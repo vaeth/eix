@@ -426,7 +426,7 @@ run_update_eix(int argc, char *argv[])
 	}
 
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
-	CacheTable table;
+	CacheTable table(eixrc["CACHE_METHOD_PARSE"]);
 	{
 		map<string, string> *override_ptr = (override.size() ? &override : NULL);
 		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),

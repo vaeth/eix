@@ -1315,6 +1315,10 @@ AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	"The default maximal levensthein distance for which a string is considered a match\n"
 	"for the fuzzy match algorithm."));
 
+AddOption(STRING, "CACHE_METHOD_PARSE",
+	"#metadata-flat#assign", _(
+	"This string is appended to all cache methods using parse[*] or ebuild[*]."));
+
 AddOption(STRING, "PORTDIR_CACHE_METHOD",
 	PORTDIR_CACHE_METHOD, _(
 	"Portage cache-backend that should be used for PORTDIR\n"

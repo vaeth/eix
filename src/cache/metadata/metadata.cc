@@ -174,6 +174,18 @@ MetadataCache::readCategoryFinalize()
 	names.clear();
 }
 
+void
+MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
+{
+	string keywords, iuse, restr, props;
+	(*x_get_keywords_slot_iuse_restrict)(catpath + "/" + pkg_name + "-" + ver_name, keywords, version->slotname, iuse, restr, props, m_error_callback);
+	version->set_full_keywords(keywords);
+	version->set_iuse(iuse);
+	version->set_restrict(restr);
+	version->set_properties(props);
+	version->overlay_key = m_overlay_key;
+}
+
 bool
 MetadataCache::readCategory(Category &vec) throw(ExBasic)
 {
@@ -183,6 +195,7 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		it != names.end(); ) {
 		Version *version;
 		Version *newest = NULL;
+		string neweststring;
 
 		/* Split string into package and version, and catch any errors. */
 		char **aux = ExplodeAtom::split(it->c_str());
@@ -199,22 +212,17 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 		if(!pkg)
 			pkg = vec.addPackage(aux[0]);
 
-		do {
+		for(;;) {
 			/* Make version and add it to package. */
 			version = new Version(aux[1]);
 
-			/* Read stability from cachefile */
-			string keywords, iuse, restr, props;
-			(*x_get_keywords_slot_iuse_restrict)(catpath + "/" + (*it), keywords, version->slotname, iuse, restr, props, m_error_callback);
-			version->set_full_keywords(keywords);
-			version->set_iuse(iuse);
-			version->set_restrict(restr);
-			version->set_properties(props);
-			version->overlay_key = m_overlay_key;
+			get_version_info(aux[0], aux[1], version);
 
 			pkg->addVersion(version);
-			if(*(pkg->latest()) == *version)
+			if(*(pkg->latest()) == *version) {
 				newest = version;
+				neweststring = aux[1];
+			}
 
 			/* Free old split */
 			free(aux[0]);
@@ -233,11 +241,16 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 				++it;
 				break;
 			}
-		} while(!strcmp(aux[0], pkg->name.c_str()));
+			if(strcmp(aux[0], pkg->name.c_str())) {
+				free(aux[0]);
+				free(aux[1]);
+				break;
+			}
+		}
 
 		/* Read the cache file of the last version completely */
 		if(newest) // provided we have read the "last" version
-			(*x_read_file)((catpath + "/" + pkg->name + "-" + newest->getFull()).c_str(), pkg, m_error_callback);
+			get_common_info((pkg->name).c_str(), neweststring.c_str(), pkg);
 	}
 	readCategoryFinalize();
 	return true;

@@ -93,6 +93,54 @@ ParseCache::getType() const
 	return s.c_str();
 }
 
+ParseCache::~ParseCache()
+{
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		delete *it;
+	if(ebuild_exec) {
+		ebuild_exec->delete_cachefile();
+		delete ebuild_exec;
+		ebuild_exec = NULL;
+	}
+}
+
+void
+ParseCache::setScheme(const char *prefix, const char *prefixport, std::string scheme)
+{
+	BasicCache::setScheme(prefix, prefixport, scheme);
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		(*it)->setScheme(prefix, prefixport, scheme);
+}
+
+void
+ParseCache::setKey(Version::Overlay key)
+{
+	BasicCache::setKey(key);
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		(*it)->setKey(key);
+}
+
+void
+ParseCache::setOverlayName(std::string name)
+{
+	BasicCache::setOverlayName(name);
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		(*it)->setOverlayName(name);
+}
+
+void
+ParseCache::setErrorCallback(ErrorCallback error_callback)
+{
+	BasicCache::setErrorCallback(error_callback);
+	for(std::vector<BasicCache*>::iterator it = further.begin();
+		it != further.end(); ++it)
+		(*it)->setErrorCallback(error_callback);
+}
+
 void
 ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild, bool *ok)
 {
@@ -115,6 +163,7 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 void
 ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version)
 {
+	version->overlay_key = m_overlay_key;
 	string keywords, restr, props, iuse;
 	bool ok = try_parse;
 	if(ok) {
@@ -129,7 +178,6 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		VarsReader ebuild(flags);
 		if(flags & VarsReader::INTO_MAP)
 			ebuild.useMap(&env);
-		version->overlay_key = m_overlay_key;
 		try {
 			ebuild.read(fullpath);
 		}
@@ -203,13 +251,32 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;
-		if( have_onetime_info ) {
+		if(have_onetime_info) {
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
 		}
-		version->overlay_key = m_overlay_key;
 
-		parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
+		time_t ebuild_time = 0;
+		vector<BasicCache*>::const_iterator it;
+		for(it = further.begin(); it != further.end(); ++it) {
+			time_t t = (*it)->get_time(pkg_name.c_str(), ver);
+			if(!t)
+				continue;
+			if(!ebuild_time)
+				ebuild_time = get_mtime(full_path.c_str());
+			if(t > ebuild_time)
+				break;
+		}
+		if(it == further.end()) {
+			parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
+		}
+		else {
+			get_version_info(pkg_name.c_str(), ver, version);
+			if(read_onetime_info) {
+				get_common_info(pkg_name.c_str(), ver, pkg);
+				have_onetime_info = true;
+			}
+		}
 
 		free(ver);
 	}

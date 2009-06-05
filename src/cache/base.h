@@ -11,6 +11,7 @@
 #define EIX__BASICCACHE_H__ 1
 
 #include <eixTk/exceptions.h>
+#include <eixTk/sysutils.h>
 #include <portage/version.h>
 
 class Category;
@@ -38,11 +39,11 @@ class BasicCache {
 		virtual void setScheme(const char *prefix, const char *prefixport, std::string scheme);
 
 		/// Set overlay-key
-		void setKey(Version::Overlay key)
+		virtual void setKey(Version::Overlay key)
 		{ m_overlay_key = key; }
 
 		/// Set overlay-name
-		void setOverlayName(std::string name)
+		virtual void setOverlayName(std::string name)
 		{ m_overlay_name = name; }
 
 		// Get scheme for this cache
@@ -56,7 +57,7 @@ class BasicCache {
 		std::string getPathHumanReadable() const;
 
 		/// Set callback function to be used in case of errors
-		void setErrorCallback(ErrorCallback error_callback)
+		virtual void setErrorCallback(ErrorCallback error_callback)
 		{ m_error_callback = error_callback; }
 
 		// @return name of Cache (formatted for good printing)
@@ -85,8 +86,17 @@ class BasicCache {
 		virtual bool readCategoryPrepare(Category &vec) throw(ExBasic)
 		{ UNUSED(vec); return true; }
 
-		void readCategoryFinalize()
+		virtual void readCategoryFinalize()
 		{}
+
+		virtual time_t get_time(const char *pkg_name, const char *ver_name) const
+		{ UNUSED(pkg_name); UNUSED(ver_name); return 0; }
+
+		virtual void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
+		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(version); }
+
+		virtual void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
+		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(pkg); }
 
 	protected:
 		std::string m_scheme, m_prefix;

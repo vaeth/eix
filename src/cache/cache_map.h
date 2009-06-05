@@ -11,6 +11,6 @@
 
 #include <cache/base.h>
 
-BasicCache *get_cache(const std::string &name);
+BasicCache *get_cache(const std::string &name, const std::string &appending);
 
 #endif /* EIX__GET_H__ */

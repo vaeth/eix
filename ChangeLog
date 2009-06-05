@@ -2,6 +2,14 @@
 
 *eix-0.16.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Allow optional #metadata-method(s) for cache method parse/ebuild,
+	  if up-to-date metadata is found for the ebuild.
+	  This speeds up things enormously if metadata is provided by an
+	  overlay-maintainer (using: egencache --repo=foo --update).
+	  Of course, it is still faster to use the metadata method directly.
+	- Introduce CACHE_METHOD_PARSE to add the above automagically.
+	- Internal change: merge cache methods parse and ebuild.
+	- Fix memory leak in metadata.cc (aux was not freed in some cases).
 	- Minor compatibility tweaks for gcc-4.4 and glibc-2.10
 
 *eix-0.16.0

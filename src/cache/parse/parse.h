@@ -35,25 +35,12 @@ class ParseCache : public BasicCache {
 
 		bool initialize(const std::string &name);
 
-		~ParseCache()
-		{
-			for(std::vector<BasicCache*>::iterator it = further.begin();
-				it != further.end(); ++it)
-				delete *it;
-			if(ebuild_exec) {
-				ebuild_exec->delete_cachefile();
-				delete ebuild_exec;
-				ebuild_exec = NULL;
-			}
-		}
+		~ParseCache();
 
-		void setScheme(const char *prefix, const char *prefixport, std::string scheme)
-		{
-			BasicCache::setScheme(prefix, prefixport, scheme);
-			for(std::vector<BasicCache*>::iterator it = further.begin();
-				it != further.end(); ++it)
-				(*it)->setScheme(prefix, prefixport, scheme);
-		}
+		void setScheme(const char *prefix, const char *prefixport, std::string scheme);
+		void setKey(Version::Overlay key);
+		void setOverlayName(std::string name);
+		void setErrorCallback(ErrorCallback error_callback);
 
 		bool readCategory(Category &vec) throw(ExBasic);
 		bool readCategoryPrepare(Category &vec) throw(ExBasic);

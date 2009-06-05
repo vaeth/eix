@@ -15,7 +15,7 @@ to_classname () {
 
 cache_stars=""
 cache_plain="sqlite cdb $cache_stars"
-cache_vary="parse eix metadata"
+cache_vary="eix metadata"
 cache_includes="parse eixcache metadata $cache_plain"
 if [ "${1}" = "portage-2.1.2" ]
 then
@@ -37,7 +37,7 @@ done
 cat<<END
 using namespace std;
 
-BasicCache *get_cache(const string &name) {
+BasicCache *get_cache(const string &name, const string &appending) {
 END
 
 for cache_name in $cache_plain
@@ -56,6 +56,14 @@ do
 		return new $cache_class(true);
 END
 done
+cat<<END
+	{
+		ParseCache *p = new ParseCache;
+		if(p->initialize(name + appending))
+			return p;
+		delete p;
+	}
+END
 for cache_name in $cache_vary
 do
 	cache_class=`to_classname "$cache_name"`

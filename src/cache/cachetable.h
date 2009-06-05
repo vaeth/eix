@@ -18,7 +18,12 @@
 
 class CacheTable : public eix::ptr_list<BasicCache>
 {
+	private:
+		std::string m_appending;
 	public:
+		CacheTable(const std::string &appending) : m_appending(appending)
+		{ }
+
 		~CacheTable()
 		{ delete_and_clear(); }
 

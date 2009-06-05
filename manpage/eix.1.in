@@ -257,7 +257,8 @@ However, you should better not have such packages at all
 (better put these packages in overlays in case you need to reinstall them).
 To find such packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
 but be aware that eix -t does not obey the usual B<FORMAT> rules for these packages.
-So you better do not use this in scripts unless you know what you are doing.
+So you better do not use this in scripts unless you know
+what you are doing.
 
 If you really want to use this option as a substitute for equery in scripts,
 you might want to combine it with
@@ -1749,11 +1750,21 @@ Set a list of overlays that are added to the index.
 See the B<update-eix> option B<--add-overlay>.
 
 .TP
-.B EXPORT_PORTDIR_OVERLAY "  " (true / false)
+.BR EXPORT_PORTDIR_OVERLAY "  " (true / false)
 If true and overlays are excluded/added, a correspondingly modified
 B<PORTDIR_OVERLAY> is exported.
 This means that in a sense also the corresponding eclasses of these overlay
 are excluded/added for cache methods eix and eix*.
+
+.TP
+.B CACHE_METHOD_PARSE (string)
+This string is appended to all cache methods using parse/parse*/ebuild/ebuild*.
+It defaults to B<#metadata-flat#assign>.
+Unless you have a very special setup (or an ancient portage version) this is always what you want:
+It means that if current metadata is available for the ebuild, this is used instead of
+parsing/executing the ebuild.
+The latter is in principle either not completely reliable or slow,
+i.e. the metadata (if available and up-to-date) is always preferable.
 
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD "  " (string)
@@ -1876,23 +1887,48 @@ this with e.g.
 .BI "OVERRIDE_CACHE_METHOD='" bad_overlay " " metadata-assign ":" correct_path "'".
 .TP
 .SS
-.B parse
+.BR parse "[" # metadata-method "]..."
 Get the information from the ebuilds, parsing it using some heuristics.
 Hence, this method has no security risk but possibly some other problems.
 For example, if variables are only set in eclasses, this method will not see them.
 Examples of problems with this method is missing SLOT information for
 typical ebuilds from kde-base or stupid version numbers for gcc cross-compilers.
 This is the cache-method B<none> from older eix versions (before 0.11.1).
+
+It is optionally possible to append one or several strings of the form
+B<#>I<metadata-method> where I<metadata-method> is any of the above mentioned
+cache methods (excluding B<sqlite> and B<cdb>).
+In this case, the metadata-methods are used to check whether they contain
+newer information than the ebuild.
+If this is the case, the metadata is used instead of the ebuild
+(the first matching metadata wins).
+
+Usually this is what you want, especially for overlays, since the metadata
+is more reliable than the results of cache method B<parse>.
+Of course, this is only useful if the overlay I<foo> contains metadata
+which is regularly updated by the overlay maintainer using
+
+.B egencache --repo=I<foo> --update
+
+(whether this is done for layman overlays depends on the overlay maintainer;
+for your local overlays you can of course use the above command manually).
+
+Since this is usually what you want, the string in B<CACHE_METHOD_PARSE>
+is appended by default to the cache method B<parse>.
+
+Note, however, that if you know in advance that the metadata information of
+the overlay is up-to-date, it is faster to use the corresponding
+metadata-method directly.
 .TP
 .SS
-.B parse*
+.BR parse* "[" # "metadata-method]..."
 This is essentially the same as cache method B<parse> with the difference
 that variables are not expanded in variable definitions.
 This is the cache-method B<none*> from older eix versions (before 0.11.1)
 and cache-method B<none> from very old eix versions (before 0.7.1)
 .TP
 .SS
-.B ebuild
+.BR ebuild "[" # "metadata-method]..."
 If no portage cache is available (e.g. for overlays)
 this is the most compatible but also the slowest method.
 The information is obtained via "/usr/bin/ebuild ... depend" from the ebuild.
@@ -1908,9 +1944,11 @@ since many bash scripts may be tricked with strange environments.
 use B<env -i update-eix> when this causes problems.
 
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
+
+Concerning the optional appendix, see the description of the cache method B<parse>.
 .TP
 .SS
-.B ebuild*
+.BR ebuild* "[" # "metadata-method]..."
 This is a slightly faster and slightly less compatible version of B<ebuild>:
 The information is obtained via the undocumented "/usr/lib/portage/ebuild.sh".
 Thus, instead of executing a python program for each ".ebuild" as for
@@ -1929,7 +1967,7 @@ enough to treat e.g. typical ebuilds from kde-base.
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 .TP
 .SS
-.BR parse|ebuild ", " parse*|ebuild ", " parse|ebuild* ", " parse*|ebuild*
+.BR parse|ebuild ", " parse*|ebuild ", " parse|ebuild* ", " parse*|ebuild*  " [" # "metadata-method]..."
 This is a mixture of B<parse>/B<parse*> and B<ebuild>/B<ebuild*>.
 Each ebuild is first scanned as with method B<parse>/B<parse*>.
 If the obtained result has missing information or appears strange,

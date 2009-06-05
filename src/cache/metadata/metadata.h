@@ -41,6 +41,12 @@ class MetadataCache : public BasicCache {
 		bool readCategoryPrepare(Category &vec) throw(ExBasic);
 		void readCategoryFinalize();
 
+		time_t get_time(const char *pkg_name, const char *ver_name) const
+		{ return get_mtime((catpath + "/" + pkg_name + "-" + ver_name).c_str()); }
+		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const;
+		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
+		{ (*x_read_file)((catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }
+
 		bool use_prefixport() const
 		{ return (path_type == PATH_METADATA); }
 

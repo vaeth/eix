@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-04 06:07+0200\n"
+"POT-Creation-Date: 2009-06-04 16:58+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1192,22 +1192,22 @@ msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Cachefile %s enthölt nicht Overlay %s"
 
-#: src/cache/metadata/metadata.cc:190 src/cache/metadata/metadata.cc:232
+#: src/cache/metadata/metadata.cc:203 src/cache/metadata/metadata.cc:240
 #: src/cache/port2_1_2/port2_1_2.cc:101 src/cache/sqlite/sqlite.cc:196
 msgid "Can't split %r into package and version"
 msgstr "Kann %r nicht in Paket und Version unterteilen"
 
-#: src/cache/parse/parse.cc:137
+#: src/cache/parse/parse.cc:185
 #, c-format
 msgid "Could not properly parse %s: %s"
 msgstr "Fehler beim Parsen von %s: %s"
 
-#: src/cache/parse/parse.cc:164
+#: src/cache/parse/parse.cc:212
 #, c-format
 msgid "Could not properly execute %s"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/cache/parse/parse.cc:193
+#: src/cache/parse/parse.cc:241
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Kann Filenamen des Ebuilds %s/%s nicht unterteilen"
@@ -2854,6 +2854,11 @@ msgstr ""
 "Match-Algorithmus."
 
 #: src/eixrc/defaults.cc:1320
+msgid "This string is appended to all cache methods using parse[*] or ebuild[*]."
+msgstr "Dieser String wird jeweils bei den Cache-Methoden parse[*] oder\n"
+"ebuild[*] hinzugefügt."
+
+#: src/eixrc/defaults.cc:1324
 msgid ""
 "Portage cache-backend that should be used for PORTDIR\n"
 "(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
@@ -2863,7 +2868,7 @@ msgstr ""
 "(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
 "*])"
 
-#: src/eixrc/defaults.cc:1325
+#: src/eixrc/defaults.cc:1329
 msgid ""
 "Portage cache-backend that should be used for the overlays.\n"
 "(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
@@ -2873,7 +2878,7 @@ msgstr ""
 "(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
 "*])"
 
-#: src/eixrc/defaults.cc:1330
+#: src/eixrc/defaults.cc:1334
 msgid ""
 "This variable is only used for delayed substitution in CACHE_METHOD.\n"
 "It is meant to be a local addition to CACHE_METHOD."
@@ -2881,7 +2886,7 @@ msgstr ""
 "Diese Variable wird nur für Delayed Substitution in CACHE_METHOD benutzt.\n"
 "Sie ist für lokale Erweiterungen von CACHE_METHOD gedacht."
 
-#: src/eixrc/defaults.cc:1335
+#: src/eixrc/defaults.cc:1339
 msgid ""
 "Overrides OVERLAY_CACHE_METHOD or PORTDIR_CACHE_METHOD for particular "
 "paths.\n"
@@ -2891,7 +2896,7 @@ msgstr ""
 "Directories. Dies ist eine Liste von Paaren DIR-PATTERN METHOD.\n"
 "Spätere Einträge überschreiben frühere."
 
-#: src/eixrc/defaults.cc:1340
+#: src/eixrc/defaults.cc:1344
 msgid ""
 "This variable is only used for delayed substitution in "
 "OVERRIDE_CACHE_METHOD.\n"
@@ -2901,7 +2906,7 @@ msgstr ""
 "benutzt.\n"
 "Sie ist für lokale Erweiterungen von OVERRIDE_CACHE_METHOD gedacht."
 
-#: src/eixrc/defaults.cc:1345
+#: src/eixrc/defaults.cc:1349
 msgid ""
 "This variable can override the choices of CACHE_METHOD,\n"
 "and in addition it can override the choices made by KEEP_VIRTUALS."
@@ -2909,22 +2914,22 @@ msgstr ""
 "Diese Variable kann die Angaben aus CACHE_METHOD und zusätzlich auch\n"
 "die von KEEP_VIRTUALS gesetzten Defaults überschreiben."
 
-#: src/eixrc/defaults.cc:1350
+#: src/eixrc/defaults.cc:1354
 msgid "List of overlays that should be excluded from the index."
 msgstr "Liste aus Overlays, die vom Indizieren ausgenommen werden sollen."
 
-#: src/eixrc/defaults.cc:1354
+#: src/eixrc/defaults.cc:1358
 msgid "List of overlays that should be added to the index."
 msgstr "Liste zusätzlich zu indizierender Overlays."
 
-#: src/eixrc/defaults.cc:1358
+#: src/eixrc/defaults.cc:1362
 msgid ""
 "If true and overlays are excluded or added, export modified PORTDIR_OVERLAY."
 msgstr ""
 "Falls Overlay hinzugefügt oder ausgeschlossen wurden und diese Variable\n"
 "wahr ist, wird ein modifiziertes PORTDIR_OVERLAY exportiert."
 
-#: src/eixrc/defaults.cc:1362
+#: src/eixrc/defaults.cc:1366
 msgid ""
 "Keep virtuals of the old cache file by adding corresponding entries\n"
 "implicitly to the values of ADD_OVERLAY and ADD_CACHE_METHOD"
@@ -2933,11 +2938,11 @@ msgstr ""
 "indem implizit entsprechende Werte zu ADD_OVERLAY und ADD_CACHE_METHOD\n"
 "hinzugefügt werden?"
 
-#: src/eixrc/defaults.cc:1367
+#: src/eixrc/defaults.cc:1371
 msgid "If false, /etc/portage and ACCEPT_KEYWORDS are ignored."
 msgstr "Im negativen Fall wird /etc/portage und ACCEPT_KEYWORDS ignoriert."
 
-#: src/eixrc/defaults.cc:1371
+#: src/eixrc/defaults.cc:1375
 msgid ""
 "If true, ACCEPT_KEYWORDS is used even without LOCAL_PORTAGE_CONFIG,\n"
 "e.g. to determine the \"default\" stability."
@@ -2945,13 +2950,13 @@ msgstr ""
 "Soll ACCEPT_KEYWORDS selbst ohne LOCAL_PORTAGE_CONFIG benutzt werden,\n"
 "um beispielsweise die \"default\"-Stabilität zu berechnen?"
 
-#: src/eixrc/defaults.cc:1376
+#: src/eixrc/defaults.cc:1380
 msgid "If +/-, eix -u will match as if LOCAL_PORTAGE_CONFIG=true/false."
 msgstr ""
 "Bei +/- wird eix -u die betroffenen Pakete bestimmen, als wenn\n"
 "LOCAL_PORTAGE_CONFIG=true/false gessetzt wäre."
 
-#: src/eixrc/defaults.cc:1380
+#: src/eixrc/defaults.cc:1384
 msgid ""
 "If +/-, recommendations for up- or downgrade will act as if\n"
 "LOCAL_PORTAGE_CONFIG=true/false."
@@ -2959,13 +2964,13 @@ msgstr ""
 "Bei +/- werden Empfehlungen für Up- oder Downgrades bestimmt, als wenn\n"
 "LOCAL_PORTAGE_CONFIG=true/false gesetzt wäre."
 
-#: src/eixrc/defaults.cc:1385
+#: src/eixrc/defaults.cc:1389
 msgid "Are packages/sets in included sets part of the parent set?"
 msgstr ""
 "Sollen Pakete/Sets, die von Sets inkludiert werden, als Teil dieser\n"
 "übergeordneten Sets behandelt werden?"
 
-#: src/eixrc/defaults.cc:1389
+#: src/eixrc/defaults.cc:1393
 msgid ""
 "If true, upgrade tests succeed for installed packages with new higher "
 "slots.\n"
@@ -2977,11 +2982,11 @@ msgstr ""
 "Mit den Files SLOT_UPGRADE_FORBID bzw. SLOT_UPGRADE_ALLOW können Ausnahmen,\n"
 "dieses generellen Defaults spezifiziert werden."
 
-#: src/eixrc/defaults.cc:1395
+#: src/eixrc/defaults.cc:1399
 msgid "If false, no slot information is printed."
 msgstr "Sollen Slotangaben ausgegeben werden?"
 
-#: src/eixrc/defaults.cc:1399
+#: src/eixrc/defaults.cc:1403
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "If false, no IUSE data is printed for eix."
@@ -2989,7 +2994,7 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie bestimmt, ob eix die IUSE-Daten ausgibt."
 
-#: src/eixrc/defaults.cc:1404
+#: src/eixrc/defaults.cc:1408
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "If false, no IUSE data is printed for diff-eix."
@@ -2997,17 +3002,17 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie bestimmt, ob diff-eix die IUSE-Daten ausgibt."
 
-#: src/eixrc/defaults.cc:1409
+#: src/eixrc/defaults.cc:1413
 msgid "If false, no IUSE data is printed."
 msgstr "Sollen die IUSE-Daten ausgegeben werden?"
 
-#: src/eixrc/defaults.cc:1413
+#: src/eixrc/defaults.cc:1417
 msgid "If false, sort installed useflags by whether they are set."
 msgstr ""
 "Im Negativfall werden die Useflags nach gesetzten/ungesetzten\n"
 "sortiert."
 
-#: src/eixrc/defaults.cc:1417
+#: src/eixrc/defaults.cc:1421
 msgid ""
 "Allowed values are true/false/repository.\n"
 "If true, always check from which overlay a package version was installed.\n"
@@ -3028,7 +3033,7 @@ msgstr ""
 "falsch sein, wenn die betreffende Version aus einem Overlay installiert\n"
 "wurde, in dem es das Paket nicht mehr gibt."
 
-#: src/eixrc/defaults.cc:1426
+#: src/eixrc/defaults.cc:1430
 msgid ""
 "If true, treat -* in /etc/portage/package.keywords as <=portage-2.1.2\n"
 "Since >=portage-2.1.2-r4, -* is practically obsolete and replaced\n"
@@ -3038,7 +3043,7 @@ msgstr ""
 "behandelt werden? Dies ist seit >=portage-2.1.2-r4 obsolet und wurde\n"
 "durch ** ersetzt, das alles akzeptiert (es gibt auch * und ~*)."
 
-#: src/eixrc/defaults.cc:1432
+#: src/eixrc/defaults.cc:1436
 msgid ""
 "Allowed values are true/false/never.\n"
 "If true, always print the number of matches (even 0 or 1) in the last line."
@@ -3047,153 +3052,153 @@ msgstr ""
 "Im ersten Falle wird die Anzahl der Treffer (selbst bei 0 oder 1) als\n"
 "letzte Zeile ausgegeben."
 
-#: src/eixrc/defaults.cc:1437
+#: src/eixrc/defaults.cc:1441
 msgid "If false, count independently of whether the matches are printed."
 msgstr ""
 "Im Negativfall ist die Anzahl unabhängig davon, ob ein Treffer\n"
 "aufgrund des Formatstrings eine Ausgabe erzeugt."
 
-#: src/eixrc/defaults.cc:1441
+#: src/eixrc/defaults.cc:1445
 msgid "Tag for RESTRICT=fetch."
 msgstr "Das Tag für RESTRICT=fetch."
 
-#: src/eixrc/defaults.cc:1445
+#: src/eixrc/defaults.cc:1449
 msgid "Tag for RESTRICT=mirror."
 msgstr "Das Tag für RESTRICT=mirror."
 
-#: src/eixrc/defaults.cc:1449
+#: src/eixrc/defaults.cc:1453
 msgid "Tag for RESTRICT=primaryuri."
 msgstr "Das Tag für RESTRICT=primaryuri."
 
-#: src/eixrc/defaults.cc:1453
+#: src/eixrc/defaults.cc:1457
 msgid "Tag for RESTRICT=binchecks."
 msgstr "Das Tag für RESTRICT=binchecks."
 
-#: src/eixrc/defaults.cc:1457
+#: src/eixrc/defaults.cc:1461
 msgid "Tag for RESTRICT=strip."
 msgstr "Das Tag für RESTRICT=strip."
 
-#: src/eixrc/defaults.cc:1461
+#: src/eixrc/defaults.cc:1465
 msgid "Tag for RESTRICT=test."
 msgstr "Das Tag für RESTRICT=test."
 
-#: src/eixrc/defaults.cc:1465
+#: src/eixrc/defaults.cc:1469
 msgid "Tag for RESTRICT=userpriv."
 msgstr "Das Tag für RESTRICT=userpriv."
 
-#: src/eixrc/defaults.cc:1469
+#: src/eixrc/defaults.cc:1473
 msgid "Tag for RESTRICT=installsources."
 msgstr "Das Tag für RESTRICT=installsources."
 
-#: src/eixrc/defaults.cc:1473
+#: src/eixrc/defaults.cc:1477
 msgid "Tag for RESTRICT=bindist."
 msgstr "Das Tag für RESTRICT=bindist."
 
-#: src/eixrc/defaults.cc:1477
+#: src/eixrc/defaults.cc:1481
 msgid "Tag for PROPERTIES=interactive."
 msgstr "Das Tag für PROPERTIES=interactive."
 
-#: src/eixrc/defaults.cc:1481
+#: src/eixrc/defaults.cc:1485
 msgid "Tag for PROPERTIES=live."
 msgstr "Das Tag für PROPERTIES=live."
 
-#: src/eixrc/defaults.cc:1485
+#: src/eixrc/defaults.cc:1489
 msgid "Tag for PROPERTIES=virtual."
 msgstr "Das Tag für PROPERTIES=virtual."
 
-#: src/eixrc/defaults.cc:1489
+#: src/eixrc/defaults.cc:1493
 msgid "Tag for PROPERTIES=set."
 msgstr "Das Tag für PROPERTIES=set."
 
-#: src/eixrc/defaults.cc:1493
+#: src/eixrc/defaults.cc:1497
 msgid "Tag for \"profile masked\" versions."
 msgstr "Das Tag für \"Profile-maskierte\" Versionen."
 
-#: src/eixrc/defaults.cc:1497
+#: src/eixrc/defaults.cc:1501
 msgid "Tag for \"package.masked\" versions."
 msgstr "Das Tag für \"package.masked\" Versionen."
 
-#: src/eixrc/defaults.cc:1501
+#: src/eixrc/defaults.cc:1505
 msgid "Tag for \"originally profile masked but unmasked\" versions."
 msgstr ""
 "Das Tag für Versionen, die ursprünglich \"Profile-maskiert\" waren,\n"
 "jetzt aber unmaskiert sind."
 
-#: src/eixrc/defaults.cc:1505
+#: src/eixrc/defaults.cc:1509
 msgid "Tag for \"originally package.masked but unmasked\" versions."
 msgstr ""
 "Das Tag für Versionen, die ursprünglich \"package.maskiert\" waren,\n"
 "jetzt aber unmaskiert sind."
 
-#: src/eixrc/defaults.cc:1509
+#: src/eixrc/defaults.cc:1513
 msgid "Tag for \"only locally masked\" versions."
 msgstr "Das Tag für \"nur lokal maskierte\" Versionen."
 
-#: src/eixrc/defaults.cc:1513
+#: src/eixrc/defaults.cc:1517
 msgid "Tag for \"stable\" versions."
 msgstr "Das Tag für \"stable\" Versionen."
 
-#: src/eixrc/defaults.cc:1517
+#: src/eixrc/defaults.cc:1521
 msgid "Tag for \"unstable\" versions."
 msgstr "Das Tag für \"instabile\" versionen."
 
-#: src/eixrc/defaults.cc:1521
+#: src/eixrc/defaults.cc:1525
 msgid "Tag for \"-*\" versions."
 msgstr "Das Tag für \"-*\" Versionen."
 
-#: src/eixrc/defaults.cc:1525
+#: src/eixrc/defaults.cc:1529
 msgid "Tag for \"-ARCH\" versions."
 msgstr "Das Tag für \"-ARCH\" Versionen."
 
-#: src/eixrc/defaults.cc:1529
+#: src/eixrc/defaults.cc:1533
 msgid "Tag for \"ALIENARCH\" versions."
 msgstr "Das Tag für \"ALIENARCH\" Versionen."
 
-#: src/eixrc/defaults.cc:1533
+#: src/eixrc/defaults.cc:1537
 msgid "Tag for \"~ALIENARCH\" versions."
 msgstr "Das Tag für \"~ALIENARCH\" Versionen."
 
-#: src/eixrc/defaults.cc:1537
+#: src/eixrc/defaults.cc:1541
 msgid "Tag for \"no keyword\" versions."
 msgstr "Das Tag für \"kein Keyword\" Versionen."
 
-#: src/eixrc/defaults.cc:1541
+#: src/eixrc/defaults.cc:1545
 msgid "Tag for \"originally unstable but now stable\" versions."
 msgstr ""
 "Tag für Versionen die urspünglich \"instabil\" waren,\n"
 "jetzt aber stabil sind."
 
-#: src/eixrc/defaults.cc:1545
+#: src/eixrc/defaults.cc:1549
 msgid "Tag for \"originally -* but now stable\" versions."
 msgstr ""
 "Tag für Versionen die urspünglich \"-*\" waren,\n"
 "jetzt aber stabil sind."
 
-#: src/eixrc/defaults.cc:1549
+#: src/eixrc/defaults.cc:1553
 msgid "Tag for \"originally -ARCH but now stable\" versions."
 msgstr ""
 "Tag für Versionen die urspünglich \"-ARCH\" waren,\n"
 "jetzt aber stabil sind."
 
-#: src/eixrc/defaults.cc:1553
+#: src/eixrc/defaults.cc:1557
 msgid "Tag for \"originally ALIENARCH but now stable\" versions."
 msgstr ""
 "Tag für Versionen die urspünglich \"ALIENARCH\" waren,\n"
 "jetzt aber stabil sind."
 
-#: src/eixrc/defaults.cc:1557
+#: src/eixrc/defaults.cc:1561
 msgid "Tag for \"originally ~ALIENARCH but now stable\" versions."
 msgstr ""
 "Tag für Versionen die urspünglich \"~ALIENARCH\" waren,\n"
 "jetzt aber stabil sind."
 
-#: src/eixrc/defaults.cc:1561
+#: src/eixrc/defaults.cc:1565
 msgid "Tag for \"originally no keyword but now stable\" versions."
 msgstr ""
 "Tag für Versionen die urspünglich \"kein Keyword\" waren,\n"
 "jetzt aber stabil sind."
 
-#: src/eixrc/defaults.cc:1569
+#: src/eixrc/defaults.cc:1573
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for description."
@@ -3202,7 +3207,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"description\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1574
+#: src/eixrc/defaults.cc:1578
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for set."
@@ -3211,7 +3216,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"set\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1579
+#: src/eixrc/defaults.cc:1583
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for homepage."
@@ -3220,7 +3225,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"homepage\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1584
+#: src/eixrc/defaults.cc:1588
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for virtuals,\n"
@@ -3230,7 +3235,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"virtuals\" (\"provide\" oder \"category/name\") benutzt wird."
 
-#: src/eixrc/defaults.cc:1590
+#: src/eixrc/defaults.cc:1594
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for provide."
@@ -3239,7 +3244,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"provide\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1595
+#: src/eixrc/defaults.cc:1599
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for category/name."
@@ -3248,7 +3253,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"category/name\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1600
+#: src/eixrc/defaults.cc:1604
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_FIELD for license."
@@ -3257,7 +3262,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von DEFAULT_MATCH_FIELD\n"
 "bei \"license\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1612
+#: src/eixrc/defaults.cc:1616
 msgid ""
 "This is a list of strings of the form regexp[ ]match_field.\n"
 "If regexp matches the search pattern, use match_field as the default.\n"
@@ -3273,7 +3278,7 @@ msgstr ""
 "name, category, category/name, description, license, homepage, provide,\n"
 "set, slot, installed-slot, use, with-use, without-use."
 
-#: src/eixrc/defaults.cc:1621
+#: src/eixrc/defaults.cc:1625
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for regex."
@@ -3282,7 +3287,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von\n"
 "DEFAULT_MATCH_ALGORITHM bei \"regex\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1626 src/eixrc/defaults.cc:1641
+#: src/eixrc/defaults.cc:1630 src/eixrc/defaults.cc:1645
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for pattern."
@@ -3291,7 +3296,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von\n"
 "DEFAULT_MATCH_ALGORITHM bei \"pattern\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1631
+#: src/eixrc/defaults.cc:1635
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for substring."
@@ -3300,7 +3305,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von\n"
 "DEFAULT_MATCH_ALGORITHM bei \"substring\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1636
+#: src/eixrc/defaults.cc:1640
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for exact."
@@ -3309,7 +3314,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von\n"
 "DEFAULT_MATCH_ALGORITHM bei \"exact\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1646
+#: src/eixrc/defaults.cc:1650
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is a regular expression used in DEFAULT_MATCH_ALGORITHM for begin."
@@ -3318,7 +3323,7 @@ msgstr ""
 "Es handelt sich um einen regulären Ausdruck, der von\n"
 "DEFAULT_MATCH_ALGORITHM bei \"begin\" benutzt wird."
 
-#: src/eixrc/defaults.cc:1657
+#: src/eixrc/defaults.cc:1661
 msgid ""
 "This is a list of strings of the form regexp[ ]match_algorithm.\n"
 "If regexp matches the search pattern, use match_algorithm as the default.\n"
@@ -3334,43 +3339,43 @@ msgstr ""
 "Matchalgorithmus sind: regex, pattern, substring,\n"
 "begin, end, exact, fuzzy."
 
-#: src/eixrc/defaults.cc:1665
+#: src/eixrc/defaults.cc:1669
 msgid ""
 "Defines whether empty entries in /etc/portage/package.* are shown with -t."
 msgstr ""
 "Sollen bei -t leere Einträge aus /etc/portage/package.* gemeldet werden?"
 
-#: src/eixrc/defaults.cc:1669
+#: src/eixrc/defaults.cc:1673
 msgid "Defines whether /etc/portage/package.keywords is tested with -t."
 msgstr "Soll /etc/portage/package.keywords bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:1673
+#: src/eixrc/defaults.cc:1677
 msgid "Defines whether /etc/portage/package.mask is tested with -t."
 msgstr "Soll /etc/portage/package.mask bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:1677
+#: src/eixrc/defaults.cc:1681
 msgid "Defines whether /etc/portage/package.unmask is tested with -t."
 msgstr "Soll /etc/portage/package.unmask bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:1681
+#: src/eixrc/defaults.cc:1685
 msgid "Defines whether /etc/portage/package.use is tested with -t."
 msgstr "Soll /etc/portage/package.use bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:1685
+#: src/eixrc/defaults.cc:1689
 msgid "Defines whether /etc/portage/package.cflags is tested with -t."
 msgstr "Soll /etc/portage/package.cflags bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:1689
+#: src/eixrc/defaults.cc:1693
 msgid "Defines whether removed packages are tested with -t."
 msgstr "Sollen gelöschte Pakete bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:1693
+#: src/eixrc/defaults.cc:1697
 msgid "Defines whether non-existing installed versions are positive for -T."
 msgstr ""
 "Sollen nicht-existente installierte Versionen bei -T einen Treffer\n"
 "ergeben?"
 
-#: src/eixrc/defaults.cc:1697
+#: src/eixrc/defaults.cc:1701
 msgid ""
 "Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
 "if they come from a different overlay than the installed version."
@@ -3379,18 +3384,18 @@ msgstr ""
 "nichtexistent gelten, die von einem anderen Overlay als die installierte\n"
 "kommen."
 
-#: src/eixrc/defaults.cc:1702
+#: src/eixrc/defaults.cc:1706
 msgid ""
 "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT."
 msgstr ""
 "Legt fest, ob für TEST_FOR_NONEXISTENT maskierte Versionen als\n"
 "nichtexistent gelten."
 
-#: src/eixrc/defaults.cc:1706
+#: src/eixrc/defaults.cc:1710
 msgid "Defines whether redundant entries are positive for -T."
 msgstr "Legt fest, ob redundante Einträge für -T einen Treffer ergeben."
 
-#: src/eixrc/defaults.cc:1710
+#: src/eixrc/defaults.cc:1714
 msgid ""
 "If true modify ARCH by ACCEPT_KEYWORDS.\n"
 "This determines which keywords are considered as ARCH or OTHERARCH."
@@ -3398,7 +3403,7 @@ msgstr ""
 "Soll ARCH durch ACCEPT_KEYWORDS modifiziert werden?\n"
 "Dies legt fest, welche Keywords als ARCH oder OTHERARCH aufgefasst weden."
 
-#: src/eixrc/defaults.cc:1715
+#: src/eixrc/defaults.cc:1719
 msgid ""
 "Applies if /etc/portage/package.keywords lists the same keyword twice\n"
 "for the versions in question."
@@ -3406,14 +3411,14 @@ msgstr ""
 "Testet, ob /etc/portage/package.keywords für die fraglichen Versionen\n"
 "ein Keyword doppelt enthält."
 
-#: src/eixrc/defaults.cc:1720
+#: src/eixrc/defaults.cc:1724
 msgid ""
 "Applies if /etc/portage/package.keywords has two lines for identical target."
 msgstr ""
 "Testet, ob /etc/portage/package.keywords für die fraglichen Versionen\n"
 "zwei Zeilen enthält."
 
-#: src/eixrc/defaults.cc:1724
+#: src/eixrc/defaults.cc:1728
 msgid ""
 "Applies if /etc/portage/package.keywords lists two different keywords,\n"
 "e.g. ~ARCH and -*, for the versions in question."
@@ -3421,7 +3426,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.keywords für die fraglichen Versionen\n"
 "zwei verschieden Keywords angibt, wie etwa ~ARCH und -*."
 
-#: src/eixrc/defaults.cc:1729
+#: src/eixrc/defaults.cc:1733
 msgid ""
 "Applies if /etc/portage/package.keywords lists a keywords which can\n"
 "be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
@@ -3433,7 +3438,7 @@ msgstr ""
 "etwa -*, ~OTHERARCH oder ~OTHERARCH anstatt ~ARCH, oder ~OTHERARCH\n"
 "anstatt OTHERARCH."
 
-#: src/eixrc/defaults.cc:1736
+#: src/eixrc/defaults.cc:1740
 msgid ""
 "Applies if /etc/portage/package.keywords lists a strange keyword\n"
 "e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
@@ -3443,7 +3448,7 @@ msgstr ""
 "ein seltsames Keyword enthält, etwas UNKNOWNARCH (unbekannt für das\n"
 "ebuild und ARCH) oder -OTHERARCH."
 
-#: src/eixrc/defaults.cc:1742
+#: src/eixrc/defaults.cc:1746
 msgid ""
 "Applies if /etc/portage/package.keywords contains some -* entry.\n"
 "This test only applies if OBSOLETE_MINUSASTERISK is false."
@@ -3452,7 +3457,7 @@ msgstr ""
 "Dieser Test kommt nur im Fall eines negativen OBSOLETE_MINUSASTERISK\n"
 "zum Einsatz."
 
-#: src/eixrc/defaults.cc:1747
+#: src/eixrc/defaults.cc:1751
 msgid ""
 "Applies if /etc/portage/package.keywords provides keywords which do not\n"
 "change the availability keywords status for the versions in question."
@@ -3460,7 +3465,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.keywords für die fraglichen Versionen\n"
 "ein Keyword enthält, das den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:1752
+#: src/eixrc/defaults.cc:1756
 msgid ""
 "Applies if /etc/portage/package.mask contains entries\n"
 "which do not change the mask status for the versions in question."
@@ -3468,7 +3473,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.mask für die fraglichen Versionen\n"
 "Einträge enthält, die den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:1757
+#: src/eixrc/defaults.cc:1761
 msgid ""
 "Applies if /etc/portage/package.unmask contains entries\n"
 "which do not change the mask status for the versions in question."
@@ -3476,7 +3481,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.unmask für die fraglichen Versionen\n"
 "Einträge enthält, die den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:1762
+#: src/eixrc/defaults.cc:1766
 msgid ""
 "Applies if /etc/portage/package.mask matches twice\n"
 "for the versions in question."
@@ -3484,7 +3489,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.mask für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:1767
+#: src/eixrc/defaults.cc:1771
 msgid ""
 "Applies if /etc/portage/package.unmask matches twice\n"
 "for the versions in question."
@@ -3492,7 +3497,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.unmask für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:1772
+#: src/eixrc/defaults.cc:1776
 msgid ""
 "Applies if /etc/portage/package.use matches twice\n"
 "for the versions in question."
@@ -3500,7 +3505,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.use für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:1777
+#: src/eixrc/defaults.cc:1781
 msgid ""
 "Applies if /etc/portage/package.cflags matches twice\n"
 "for the versions in question."
@@ -3508,37 +3513,37 @@ msgstr ""
 "Testet, ob /etc/portage/package.cflags für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:1782
+#: src/eixrc/defaults.cc:1786
 msgid "Applies if /etc/portage/package.keywords contains a matching entry."
 msgstr ""
 "Testet, ob /etc/portage/package.keywords auf die fraglichenVersionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:1786
+#: src/eixrc/defaults.cc:1790
 msgid "Applies if /etc/portage/package.mask matches."
 msgstr ""
 "Testet, ob /etc/portage/package.mask auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:1790
+#: src/eixrc/defaults.cc:1794
 msgid "Applies if /etc/portage/package.unmask matches."
 msgstr ""
 "Testet, ob /etc/portage/package.unmask auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:1794
+#: src/eixrc/defaults.cc:1798
 msgid "Applies if /etc/portage/package.use matches."
 msgstr ""
 "Testet, ob /etc/portage/package.use auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:1798
+#: src/eixrc/defaults.cc:1802
 msgid "Applies if /etc/portage/package.cflags matches."
 msgstr ""
 "Testet, ob /etc/portage/package.cflags auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:1802
+#: src/eixrc/defaults.cc:1806
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the directory where eix searches for its package.*.*/sets.eix files."
@@ -3547,7 +3552,7 @@ msgstr ""
 "Sie enthält das Directory, in dem eix nach seinen\n"
 "package.*.*/sets.eix-Files sucht."
 
-#: src/eixrc/defaults.cc:1807
+#: src/eixrc/defaults.cc:1811
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=false."
@@ -3555,7 +3560,7 @@ msgstr ""
 "Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete dieses Files/Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=false wäre."
 
-#: src/eixrc/defaults.cc:1812
+#: src/eixrc/defaults.cc:1816
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=true."
@@ -3563,79 +3568,79 @@ msgstr ""
 "Falls UPGRADE_TO_HIGHEST_SLOT=false werden Pakete dieses Files/Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=true wäre."
 
-#: src/eixrc/defaults.cc:1817
+#: src/eixrc/defaults.cc:1821
 msgid "Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."
 msgstr ""
 "Einträge diese Files/Directories werden von -t TEST_KEYWORDS\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:1821
+#: src/eixrc/defaults.cc:1825
 msgid "Entries listed in these files/dirs are excluded for -t TEST_MASK."
 msgstr ""
 "Einträge diese Files/Directories werden von -t TEST_MASK\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:1825
+#: src/eixrc/defaults.cc:1829
 msgid "Entries listed in these files/dirs are excluded for -t TEST_UNMASK."
 msgstr ""
 "Einträge diese Files/Directories werden von -t TEST_UNMASK\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:1829
+#: src/eixrc/defaults.cc:1833
 msgid "Entries listed in these files/dire are excluded for -t TEST_USE."
 msgstr ""
 "Einträge diese Files/Directories werden von -t TEST_USE\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:1833
+#: src/eixrc/defaults.cc:1837
 msgid "Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."
 msgstr ""
 "Einträge diese Files/Directories werden von -t TEST_CFLAGS\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:1837
+#: src/eixrc/defaults.cc:1841
 msgid "Packages listed in these files/dirs are excluded for -t TEST_REMOVED."
 msgstr ""
 "Einträge diese Files/Directories werden von -t TEST_REMOVED\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:1841
+#: src/eixrc/defaults.cc:1845
 msgid "Exceptional packages for -T tests of /etc/portage/package.keywords."
 msgstr ""
 "Einträge diese Files/Directories werden von -T bzgl.\n"
 "/etc/portage/package.keywords-Tests ausgenommen."
 
-#: src/eixrc/defaults.cc:1845
+#: src/eixrc/defaults.cc:1849
 msgid "Exceptional packages for -T tests of /etc/portage/package.mask."
 msgstr ""
 "Einträge diese Files/Directories werden von -T bzgl.\n"
 "/etc/portage/package.mask-Tests ausgenommen."
 
-#: src/eixrc/defaults.cc:1849
+#: src/eixrc/defaults.cc:1853
 msgid "Exceptional packages for -T tests of /etc/portage/package.unmask."
 msgstr ""
 "Einträge diese Files/Directories werden von -T bzgl.\n"
 "/etc/portage/package.unmask-Tests ausgenommen."
 
-#: src/eixrc/defaults.cc:1853
+#: src/eixrc/defaults.cc:1857
 msgid "Exceptional packages for -T tests of /etc/portage/package.use."
 msgstr ""
 "Einträge diese Files/Directories werden von -T bzgl.\n"
 "/etc/portage/package.use-Tests ausgenommen."
 
-#: src/eixrc/defaults.cc:1857
+#: src/eixrc/defaults.cc:1861
 msgid "Exceptional packages for -T tests of /etc/portage/package.cflags."
 msgstr ""
 "Einträge diese Files/Directories werden von -T bzgl.\n"
 "/etc/portage/package.cflags-Tests ausgenommen."
 
-#: src/eixrc/defaults.cc:1861
+#: src/eixrc/defaults.cc:1865
 msgid "Exceptional packages for -T tests of installed packages."
 msgstr ""
 "Einträge diese Files/Directories werden von -T bzgl.\n"
 "Tests auf installierte Pakete ausgenommen."
 
-#: src/eixrc/defaults.cc:1865
+#: src/eixrc/defaults.cc:1869
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It specifies directories for EIX_LOCAL_SETS."
@@ -3643,14 +3648,14 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie gibt die Directories für EIX_LOCAL_SETS an."
 
-#: src/eixrc/defaults.cc:1874
+#: src/eixrc/defaults.cc:1878
 msgid ""
 "This is a space-separated list of directories containing set definitions."
 msgstr ""
 "Dies ist eine Liste von Directories (durch Leerzeichen getrennt) mit\n"
 "Set-Definitionen."
 
-#: src/eixrc/defaults.cc:1878
+#: src/eixrc/defaults.cc:1882
 msgid ""
 "This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
 "You might need to modify it according to the installed portage version.\n"
@@ -3661,7 +3666,7 @@ msgstr ""
 "Portage-Version angepasst werden. Wenn er leer ist, werden alle\n"
 "Ebuilds mit EAPI-Suffixen (s. GLEP 55) ignoriert."
 
-#: src/eixrc/defaults.cc:1884
+#: src/eixrc/defaults.cc:1888
 msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."
@@ -4086,4 +4091,4 @@ msgid "cannot determine version of %s"
 msgstr "kann Version von '%s' nicht bestimmen"
 
 #~ msgid "Executing %s did not produce all data"
-#~ msgstr "Ausführzung von %s erzeugt nicht alle Daten"
+#~ msgstr "Ausführung von %s erzeugt nicht alle Daten"
