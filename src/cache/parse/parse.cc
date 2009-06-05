@@ -264,16 +264,16 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 				continue;
 			if(!ebuild_time)
 				ebuild_time = get_mtime(full_path.c_str());
-			if(t > ebuild_time)
+			if(t >= ebuild_time)
 				break;
 		}
 		if(it == further.end()) {
 			parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
 		}
 		else {
-			get_version_info(pkg_name.c_str(), ver, version);
+			(*it)->get_version_info(pkg_name.c_str(), ver, version);
 			if(read_onetime_info) {
-				get_common_info(pkg_name.c_str(), ver, pkg);
+				(*it)->get_common_info(pkg_name.c_str(), ver, pkg);
 				have_onetime_info = true;
 			}
 		}

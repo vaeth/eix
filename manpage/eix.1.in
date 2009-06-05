@@ -1916,9 +1916,11 @@ for your local overlays you can of course use the above command manually).
 Since this is usually what you want, the string in B<CACHE_METHOD_PARSE>
 is appended by default to the cache method B<parse>.
 
-Note, however, that if you know in advance that the metadata information of
-the overlay is up-to-date, it is faster to use the corresponding
-metadata-method directly.
+Of course, if you know in advance that the metadata information of the
+overlay is up-to-date, it is (slightly) faster to use directly to use
+the corresponding metadata method (usually B<metadata-flat>).
+The latter makes sense if you e.g. call B<egencache> from a script which you
+use to sync the overlay (e.g. in eix-sync).
 .TP
 .SS
 .BR parse* "[" # "metadata-method]..."
