@@ -1759,11 +1759,11 @@ are excluded/added for cache methods eix and eix*.
 .TP
 .B CACHE_METHOD_PARSE (string)
 This string is appended to all cache methods using parse/parse*/ebuild/ebuild*.
-It defaults to B<#metadata-flat#assign>.
-Unless you have a very special setup (or an ancient portage version) this is always what you want:
+Its default contains B<#metadata-flat>.
+Unless you have a very special setup this is always what you want:
 It means that if current metadata is available for the ebuild, this is used instead of
 parsing/executing the ebuild.
-The latter is in principle either not completely reliable or slow,
+The latter is in principle not completely reliable (parsing) or rather slow (executing),
 i.e. the metadata (if available and up-to-date) is always preferable.
 
 .TP
@@ -1943,11 +1943,12 @@ Intentionally, the environment is not cleared before the actual execution
 so that you can pass further variables to the ebuild.
 However, this can also lead to unexpected behaviour or even a security risk
 since many bash scripts may be tricked with strange environments.
-use B<env -i update-eix> when this causes problems.
+Use B<env -i update-eix> when this causes problems.
 
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 
-Concerning the optional appendix, see the description of the cache method B<parse>.
+Concerning the optional appendices B<#>I<metadata-method>, see the description of the cache method B<parse>.
+Note that if corresponding metadata is available this will be essentially faster than executing the ebuild.
 .TP
 .SS
 .BR ebuild* "[" # "metadata-method]..."
