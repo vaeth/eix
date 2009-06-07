@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.16.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Default to SAVE_WORLD=true: I doubt that the world file is that
+	  security relevant, and I guess many users don't know the feature.
+
 *eix-0.16.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow optional #metadata-method(s) for cache method parse/ebuild,

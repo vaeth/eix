@@ -130,9 +130,9 @@ AddOption(STRING, "EIX_WORLD_SETS",
 	"This file is considered as the world_sets file."));
 
 AddOption(BOOLEAN, "SAVE_WORLD",
-	"false", _(
+	"true", _(
 	"Store the information of the world file in the cache file.\n"
-	"Set this only if you want that everybody is be able to get this informations."));
+	"Set this to false if you do not want that everybody can get this information."));
 
 AddOption(BOOLEAN, "CURRENT_WORLD",
 	"true", _(
