@@ -308,7 +308,7 @@ bin_PROGRAMS = eix $(tool_programs)
 noinst_DATA = diff-eix$(EXEEXT) update-eix$(EXEEXT) $(tool_noinst)
 
 diff-eix$(EXEEXT): eix$(EXEEXT)
-	@echo "  LN XX " "$@"
+	@echo "  LN    " "$@"
 	@test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
 	@$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
 
