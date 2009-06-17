@@ -13,6 +13,7 @@ AC_CANONICAL_TARGET
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE()
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_LANG_CPLUSPLUS
 
@@ -21,6 +22,7 @@ AC_GNU_SOURCE
 
 AC_PROG_LN_S
 
+dnl Unfortunately, gettext requires libtool on some systems:
 AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 AM_GNU_GETTEXT_VERSION([0.17])
@@ -487,5 +489,10 @@ dnl Done!
 AC_OUTPUT(Makefile manpage/Makefile src/Makefile doc/Makefile po/Makefile.in)
 
 echo "
- ${PACKAGE} version ${VERSION} configured successfully.
- Good luck with make :)"
+
+${PACKAGE} version ${VERSION} configured successfully.
+
+CC:       ${CC}
+CXXFLAGS: ${CXXFLAGS}
+LDFLAGS:  ${LDFLAGS}
+"

@@ -31,9 +31,10 @@ clean-local: doxygen-clean
 
 # Build source docs with doxygen
 doxygen: doxygen-clean
-	@regex_cmd@ -e "s,\@PACKAGE_NAME\@,$(PACKAGE)," \
+	@echo "doxygen.cf.in -> doxygen.cfg"
+	@@regex_cmd@ -e "s,\@PACKAGE_NAME\@,$(PACKAGE)," \
 		-e "s,\@PACKAGE_VERSION\@,$(VERSION)," doxygen.cfg.in > doxygen.cfg
-	@doxygen doxygen.cfg >/dev/null
+	doxygen doxygen.cfg >/dev/null
 
 # Remove build source-docs
 doxygen-clean:

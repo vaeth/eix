@@ -282,8 +282,9 @@ bin_PROGRAMS = update-eix eix $(tool_programs)
 noinst_DATA = diff-eix$(EXEEXT) $(tool_noinst)
 
 diff-eix$(EXEEXT): eix$(EXEEXT)
-	test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
-	$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
+	@echo "  LN    " "$@"
+	@test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
+	@$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
 
 eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
 eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(output_only_src) $(common_src) $(main_output)
@@ -307,12 +308,14 @@ bin_PROGRAMS = eix $(tool_programs)
 noinst_DATA = diff-eix$(EXEEXT) update-eix$(EXEEXT) $(tool_noinst)
 
 diff-eix$(EXEEXT): eix$(EXEEXT)
-	test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
-	$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
+	@echo "  LN XX " "$@"
+	@test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
+	@$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
 
 update-eix$(EXEEXT): eix$(EXEEXT)
-	test ! -e update-eix$(EXEEXT) || rm update-eix$(EXEEXT)
-	$(LN_S) eix$(EXEEXT) update-eix$(EXEEXT)
+	@echo "  LN    " "$@"
+	@test ! -e update-eix$(EXEEXT) || rm update-eix$(EXEEXT)
+	@$(LN_S) eix$(EXEEXT) update-eix$(EXEEXT)
 
 
 eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(update_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
@@ -343,58 +346,64 @@ else
 # !SEPARATE_TOOLS
 
 versionsort$(EXEEXT): $(versionsort_link)
-	test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
-	$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
+	@test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
+	@$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
 
 endif
 
 uninstall-local:
-	$(use_separate_tools) || \
+	@$(use_separate_tools) || \
 		test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
-	$(use_separate_update_eix) || \
+	@$(use_separate_update_eix) || \
 		test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
-	$(use_separate_diff_eix) || \
+	@$(use_separate_diff_eix) || \
 		test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
 
 install-exec-hook:
-	$(use_separate_tools) || \
+	@$(use_separate_tools) || \
 		test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
-	$(use_separate_tools) || \
+	@$(use_separate_tools) || \
 		$(LN_S) $(versionsort_link) $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
-	$(use_separate_update_eix) || \
+	@$(use_separate_update_eix) || \
 		test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
-	$(use_separate_update_eix) || \
+	@$(use_separate_update_eix) || \
 		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
-	$(use_separate_diff_eix) || \
+	@$(use_separate_diff_eix) || \
 		test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
-	$(use_separate_diff_eix) || \
+	@$(use_separate_diff_eix) || \
 		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
 
 cache/cache_map.cc: cache/generate_cachemap.sh
-	"cache/generate_cachemap.sh" $(extra_cache) > "$@"
+	@echo "  SH    " "$@"
+	@"cache/generate_cachemap.sh" $(extra_cache) > "$@"
 
 eix-sync.sh:
-	$(LN_S) eix-sync.in eix-sync.sh
+	@echo "  LN    " "$@"
+	@$(LN_S) eix-sync.in "$@"
 
 eix-test-obsolete.sh:
-	$(LN_S) eix-test-obsolete.in eix-test-obsolete.sh
+	@echo "  LN    " "$@"
+	@$(LN_S) eix-test-obsolete.in "$@"
 
 update-eix-layman.sh:
-	$(LN_S) update-eix-layman.in update-eix-layman.sh
+	@echo "  LN    " "$@"
+	@$(LN_S) update-eix-layman.in "$@"
 
 update-eix-remote.sh:
-	$(LN_S) update-eix-remote.in update-eix-remote.sh
+	@echo "  LN    " "$@"
+	@$(LN_S) update-eix-remote.in "$@"
 
 
 SUFFIXES = .in
 .in:
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
+	@echo "  SED   " "$@"
+	@@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\./functions-eix\.sh\.in,'$(bindir)/functions-eix.sh',g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \

@@ -4,6 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Default to SAVE_WORLD=true: I doubt that the world file is that
 	  security relevant, and I guess many users don't know the feature.
+	- Build system defaults to silent rules in case of >=automake-1.11.
 
 *eix-0.16.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
