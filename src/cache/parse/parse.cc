@@ -229,17 +229,17 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 	else
 		pkg = vec.addPackage(pkg_name);
 
-	for(vector<string>::const_iterator it = files.begin();
-		it != files.end(); ++it) {
-		string::size_type pos = ebuild_pos(*it);
+	for(vector<string>::const_iterator fileit = files.begin();
+		fileit != files.end(); ++fileit) {
+		string::size_type pos = ebuild_pos(*fileit);
 		if(pos == string::npos)
 			continue;
 
 		/* Check if we can split it */
-		char *ver = ExplodeAtom::split_version(it->substr(0, pos).c_str());
+		char *ver = ExplodeAtom::split_version(fileit->substr(0, pos).c_str());
 		if(!ver) {
 			m_error_callback(eix::format(_("Can't split filename of ebuild %s/%s")) %
-				directory_path % (*it));
+				directory_path % (*fileit));
 			continue;
 		}
 
@@ -247,7 +247,7 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		Version *version = new Version(ver);
 		pkg->addVersionStart(version);
 
-		string full_path = directory_path + '/' + (*it);
+		string full_path = directory_path + '/' + (*fileit);
 
 		/* For the latest version read/change corresponding data */
 		bool read_onetime_info = true;

@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.16.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix multiple declaration of local variable, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=275300
+	  Thanks to Stuart Shelton <srcshelton at gmail.com> for the patch.
+
 *eix-0.16.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Default to SAVE_WORLD=true: I doubt that the world file is that
