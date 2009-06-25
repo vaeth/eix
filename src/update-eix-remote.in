@@ -14,18 +14,14 @@ ReadFunctions
 : ${OVERLAYPARENT:=/usr/portage/local}
 eixcachesname='eix-caches.tbz2'
 
-Sanitize () {
-	have_readlink=false NormalizeNames OVERLAYPARENT \
-		|| die "`gettext '$OVERLAYPARENT must not be empty'`"
-	[ -z "${relative}" ] || \
-		die "`gettext '$OVERLAYPARENT must start with /'`"
-}
-Sanitize
+local_portage_configroot="`update-eix --print PORTAGE_CONFIGROOT`"
+eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
 Usage () {
-	local n p
+	local n p f
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
+	f="${filearg:-(none)}"
 	eval_gettext 'Usage: ${n} [options] command [FILE]
 Get data from a remote datebase for ${p}.
 The following commands are provided:
@@ -34,7 +30,7 @@ update: Fetch the eix-caches of some layman overlays into a temporary file
         resp. into FILE and add them to the eix database.
         To keep this data across update-eix calls, you might want to set
         KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)
-fetch:  Only fetch the overlays into FILE
+fetch:  Only fetch the overlays into FILE.
 add:    Only add the overlays from FILE to the eix database.
 remove: Remove all temporarily added virtual overlays from the eix database;
         this is similar to
@@ -53,51 +49,106 @@ You can modify this value by setting the environment variable OVERLAYPARENT
 or with the -o option. If you do not want this feature, set OVERLAYPARENT
 to some path not containing any overlays.
 
-Options:
-	-O x    Extract from the cache files within FILE only overlay Nr. x,
-	        i.e. use cache method eix*:...:x for reading these cache files.
-	        Default for x is * (which means all overlays in each files)
-	        See "man eix" for details on cache method eix*.
-	-u USER Call wget as USER. Defaults to "nobody" if called as root.
-	-o PATH Use PATH as OVERLAYPARENT
-	-v      Verbose (default)
-	-q      Quiet'
+Options can be specified in
+	${eixremoteconf}
+and in the environment variable EIX_REMOTE_OPTS.
+This data is evalued, so be aware of security risks.
+Moreover, "--" in the default options will forbid command line options.
+The following options are available:
+
+-f FILE This is the same as giving FILE as the last argument.
+        This is mainly useful for default options. Current value:
+        	${f}
+-O x    Extract from the cache files within FILE only overlay Nr. x,
+        i.e. use cache method eix*:...:x for reading these cache files.
+        Current value: ${overlaynr}
+        See "man eix" for details on cache method eix*.
+-u USER Call wget as USER. Ignored if not set unless you are root.
+-U USER Call wget as USER if called as root. Currently "${fetchroot}"
+-o PATH Use PATH as OVERLAYPARENT
+-i      Ignore all previous options (override settings)
+-v      Verbose (default)
+-q      Quiet'
 	echo
 	exitcode=${1:-1}
 	exit ${exitcode}
 }
 
-overlaynr='*'
-verbose=true
-fetchuser=''
+Sanitize () {
+	have_readlink=false NormalizeNames OVERLAYPARENT \
+		|| die "`gettext '$OVERLAYPARENT must not be empty'`"
+	[ -z "${relative}" ] || \
+		die "`gettext '$OVERLAYPARENT must start with /'`"
+}
+
+DefaultOpts () {
+	overlaynr='*'
+	verbose=true
+	fetchuser=''
+	fetchroot='nobody'
+	filearg=''
+}
+
+ReadConfig () {
+	local i j
+	config_opts=''
+	test -r "${eixremoteconf}" || return 0
+	while read i
+	do
+		j="${i}"
+		while true; do
+			case "${j}" in
+				' '*|'	'*) j="${j#?}";;
+				*' '|*'	') j="${j%?}";;
+				'#'*) j=''; break;;
+				*) break;;
+			esac
+		done
+		[ -z "${j}" ] && continue
+		config_opts="${config_opts} ${j}"
+	done <"${eixremoteconf}"
+}
+
+Sanitize
+DefaultOpts
+ReadConfig
+
+eval "Push -c opt ${config_opts} ${EIX_REMOTE_OPTS}"
+Push opt "${@}"
+eval "set -- ${opt}"
 OPTIND=1
-while getopts 'O:vqu:o:?hH' opt
+while getopts 'f:O:vqu:U:o:i?hH' opt
 do
 	case "${opt}" in
+		f) filearg="${OPTARG}";;
 		O) overlaynr="${OPTARG}";;
 		v) verbose=true;;
 		q) verbose=false;;
 		u) fetchuser="${OPTARG}";;
+		U) fetchroot="${OPTARG}";;
 		o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
+		i) DefaultOpts;;
 		*) Usage 0;;
 	esac
 done
+opt=''
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
 need_arg=false
-filename=''
 GetFilename () {
 	[ ${#} -gt 1 ] && Usage
 	if [ ${#} -lt 1 ]
 	then
-		${need_arg} && \
-			die "`gettext 'Filename argument is mandatory'`"
-		return
+		filename="${filearg}"
+	else
+		filename="${1}"
 	fi
-	filename="${1}"
-	[ -n "${filename}" ] || \
-		die "`gettext 'Filename argument must be nonempty'`"
+	if [ -z "${filename}" ]; then
+				return
+	fi
 	case "${filename}" in
+		'') ${need_arg} &&
+			die "`gettext 'Filename argument is mandatory'`";;
 		/*|'~'*) :;;
 		*) filename="`pwd`/${filename}";;
 	esac
@@ -112,7 +163,7 @@ CalcSuCmd () {
 			Push -c sucmd "${@}"
 			return
 		fi
-		fetchuser=nobody
+		fetchuser=${fetchroot}
 	fi
 	shexec="${SHELL}"
 	if [ -z "${shexec}" ] || ! test -x "${SHELL}"

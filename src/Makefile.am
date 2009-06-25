@@ -11,7 +11,10 @@ AUTOMAKE_OPTIONS = subdir-objects
 localedir = $(datadir)/locale
 AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(localedir)\"
 
-sysconf_DATA = eixrc/eixrc
+sysconf_DATA = \
+eixrc/eixrc \
+eix-sync.conf \
+eix-remote.conf
 
 database_src = \
 database/io.cc \
@@ -190,7 +193,7 @@ eix-test-obsolete \
 update-eix-remote \
 update-eix-layman \
 functions-eix.sh \
-eixrc/eixrc \
+$(sysconf_DATA) \
 cache/cache_map.cc \
 diff-eix$(EXEEXT) \
 update-eix$(EXEEXT) \
@@ -208,6 +211,8 @@ update-eix-remote.in \
 update-eix-layman.in \
 functions-eix.sh.in \
 eixrc/eixrc.in \
+eix-sync.conf.in \
+eix-remote.conf.in \
 cache/generate_cachemap.sh
 
 # Additional binaries (scripts) we will install

@@ -70,7 +70,8 @@ B<update-eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
 Note that to keep such remote data across update-eix calls
 you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
-To get more help on B<update-eix-remote> call B<update-eix-remote -h>.
+To get more help on B<update-eix-remote> call B<update-eix-remote -h>
+and see the documentation of I</etc/eix-remote.conf> below.
 
 B<update-eix-layman> can add or remove local layman overlays to the current database.
 To get more help on B<update-eix-layman> call B<update-eix-layman -h>.
@@ -1064,7 +1065,9 @@ executed in the given order before B<emerge --sync> is executed.
 .TP
 .I option(s)
 Use I<option(s)> as default for eix-sync (in front of all other options).
-As usual, I<option(s)> must start with "B<->".
+As usual, I<option(s)> must start with "B<->". I<option(s)> will be evaluated.
+You can also store options in the environment variable EIX_SYNC_OPTS which
+will also be evaluated.
 .TP
 .I Name
 Call B<layman -s> I<Name>.
@@ -1176,6 +1179,14 @@ of the data.)
 .B @@update-eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
 .B @update-eix-remote add /var/cache/remote-cache.tbz2
+.\" }}}
+
+.\" {{{ -------- /etc/eix-remote.conf
+.SS @SYSCONFDIR@/eix-remote.conf
+This file can contain default options for B<update-eix-remote>.
+The options will be evaluated.
+You can also store options in the environment variable EIX_REMOTE_OPTS
+which will also be evaluated.
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc

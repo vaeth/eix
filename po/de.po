@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-17 20:05+0200\n"
+"POT-Creation-Date: 2009-06-25 10:35+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -32,7 +32,8 @@ msgid ""
 "The file ${eixsyncconf} and the environment variable EIX_SYNC_OPTS can\n"
 "contain default options which are processed before the command line "
 "options.\n"
-"Note that \"--\" in the default options will forbid command line options.\n"
+"This data is evalued, so be aware of security risks.\n"
+"Moreover, \"--\" in the default options will forbid command line options.\n"
 "The following options are available:\n"
 "\n"
 "-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
@@ -93,8 +94,9 @@ msgstr ""
 "\n"
 "Die Datei ${eixsyncconf} und die Environment-Variable EIX_SYNC_OPTS\n"
 "können Default-Optionen beinhalten, die vor den Kommandozeilenoptionen\n"
-"aktiv werden. Insbesondeere wird \"--\" in den Default-Optionen alle\n"
-"Kommandozeilenoptionen verhindern.\n"
+"aktiv werden. Beachte, dass diese evaluiert werden, also Vorsicht!\n"
+"Natürlich wird \"--\" in den Default-Optionen alle Kommandozeilenoptionen\n"
+"verhindern.\n"
 "Die Optionen sind:\n"
 "\n"
 "-i   Ignoriere vorherige Optionen (sinnvoll bei ${eixsyncconf}).\n"
@@ -140,40 +142,40 @@ msgstr ""
 "-e   Vermeidet heuristischen Test, ob Rootrechte benötigt werden.\n"
 "-h   Zeigt diesen Text und beendet das Programm danach."
 
-#: src/eix-sync.sh:86
+#: src/eix-sync.sh:87
 #, sh-format
 msgid "No previous database ${eixprevious} exists"
 msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
 
-#: src/eix-sync.sh:88
+#: src/eix-sync.sh:89
 msgid "Could not execute diff-eix"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/eix-sync.sh:97
+#: src/eix-sync.sh:98
 #, sh-format
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Fehler beim Aufruf von ${curr_cmd}"
 
-#: src/eix-sync.sh:141
+#: src/eix-sync.sh:148
 msgid "Syncing all portage overlays"
 msgstr "Synce alle Portage-Overlays"
 
-#: src/eix-sync.sh:143
+#: src/eix-sync.sh:150
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "${mycmd} -S schlug fehl"
 
-#: src/eix-sync.sh:147
+#: src/eix-sync.sh:154
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Synce Portage-Overlay ${j}"
 
-#: src/eix-sync.sh:149
+#: src/eix-sync.sh:156
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:259
+#: src/eix-sync.sh:269
 msgid ""
 "Nothing was executed, because a heuristic shows that root permissions\n"
 "are required to execute everything successfully."
@@ -181,7 +183,7 @@ msgstr ""
 "Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
 "Root-Recht benötigt werden, um alles erfolgreich auszuführen."
 
-#: src/eix-sync.sh:263
+#: src/eix-sync.sh:273
 #, sh-format
 msgid ""
 "However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
@@ -194,147 +196,147 @@ msgstr ""
 "Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
 "das File ${eixsyncconf} ein."
 
-#: src/eix-sync.sh:279
+#: src/eix-sync.sh:289
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:285
+#: src/eix-sync.sh:295
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:286
+#: src/eix-sync.sh:296
 msgid "initial update-eix"
 msgstr "erstes update-eix"
 
-#: src/eix-sync.sh:287
+#: src/eix-sync.sh:297
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:288
+#: src/eix-sync.sh:298
 msgid "client syncing"
 msgstr "client syncen"
 
-#: src/eix-sync.sh:289
+#: src/eix-sync.sh:299
 msgid "metadata update"
 msgstr "metadata update"
 
-#: src/eix-sync.sh:290
+#: src/eix-sync.sh:300
 msgid "update-eix"
 msgstr "update-eix"
 
-#: src/eix-sync.sh:291
+#: src/eix-sync.sh:301
 msgid "diff-eix"
 msgstr "diff-eix"
 
-#: src/eix-sync.sh:294
+#: src/eix-sync.sh:304
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:313
+#: src/eix-sync.sh:323
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:318 src/update-eix-remote.sh:163
+#: src/eix-sync.sh:328 src/update-eix-remote.sh:214
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
-#: src/eix-sync.sh:323
+#: src/eix-sync.sh:333
 #, sh-format
 msgid "cannot create temporary file ${tmpfile}"
 msgstr "kann Temporärdatei ${tmpfile} nicht erzeugen"
 
-#: src/eix-sync.sh:349
+#: src/eix-sync.sh:359
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:362
+#: src/eix-sync.sh:372
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:365
+#: src/eix-sync.sh:375
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:376
+#: src/eix-sync.sh:386
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:383
+#: src/eix-sync.sh:393
 #, sh-format
 msgid "Running ${runarg}"
 msgstr "Starte ${runarg}"
 
-#: src/eix-sync.sh:384
+#: src/eix-sync.sh:394
 #, sh-format
 msgid "${runarg} failed"
 msgstr "${runarg} schlug fehl"
 
-#: src/eix-sync.sh:391
+#: src/eix-sync.sh:401
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:393
+#: src/eix-sync.sh:403
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:400
+#: src/eix-sync.sh:410
 msgid "Running emerge --metadata"
 msgstr "Starte emerge --metadata"
 
-#: src/eix-sync.sh:402
+#: src/eix-sync.sh:412
 msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
-#: src/eix-sync.sh:411
+#: src/eix-sync.sh:421
 msgid "eix-cache does not exist. Running update-eix!"
 msgstr "Eix-Cache existiert nicht. Starten von update-eix."
 
-#: src/eix-sync.sh:413 src/eix-sync.sh:423 src/functions-eix.sh.in:169
+#: src/eix-sync.sh:423 src/eix-sync.sh:433 src/functions-eix.sh.in:169
 msgid "update-eix failed"
 msgstr "update-eix schlug fehl"
 
-#: src/eix-sync.sh:421
+#: src/eix-sync.sh:431
 msgid "eix-cache format has changed. Running update-eix!"
 msgstr "Eix-Cache-Format hat sich geändert. Starten von update-eix."
 
-#: src/eix-sync.sh:434
+#: src/eix-sync.sh:444
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:442
+#: src/eix-sync.sh:452
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
 msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
 
-#: src/eix-sync.sh:445
+#: src/eix-sync.sh:455
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:467
+#: src/eix-sync.sh:477
 msgid "update-eix was apparently already called in a hook"
 msgstr "update-eix wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:471
+#: src/eix-sync.sh:481
 msgid "Running update-eix"
 msgstr "Starte update-eix"
 
-#: src/eix-sync.sh:473
+#: src/eix-sync.sh:483
 msgid "Failure while running update-eix"
 msgstr "Problem beim Ausführen von update-eix"
 
-#: src/eix-sync.sh:476
+#: src/eix-sync.sh:486
 msgid "Calling diff-eix"
 msgstr "Starte diff-eix"
 
-#: src/eix-sync.sh:478
+#: src/eix-sync.sh:488
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
@@ -533,17 +535,7 @@ msgstr ""
 "\t-v            Ausführliche Ausgabe (Default)\n"
 "\t-q            Keine Ausgabe"
 
-#: src/update-eix-remote.sh:19
-#, sh-format
-msgid "$OVERLAYPARENT must not be empty"
-msgstr "$OVERLAYPARENT darf nicht leer sein"
-
-#: src/update-eix-remote.sh:21
-#, sh-format
-msgid "$OVERLAYPARENT must start with /"
-msgstr "$OVERLAYPARENT muss mit / beginnen"
-
-#: src/update-eix-remote.sh:29
+#: src/update-eix-remote.sh:25
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command [FILE]\n"
@@ -554,7 +546,7 @@ msgid ""
 "        resp. into FILE and add them to the eix database.\n"
 "        To keep this data across update-eix calls, you might want to set\n"
 "        KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)\n"
-"fetch:  Only fetch the overlays into FILE\n"
+"fetch:  Only fetch the overlays into FILE.\n"
 "add:    Only add the overlays from FILE to the eix database.\n"
 "remove: Remove all temporarily added virtual overlays from the eix "
 "database;\n"
@@ -577,15 +569,26 @@ msgid ""
 "or with the -o option. If you do not want this feature, set OVERLAYPARENT\n"
 "to some path not containing any overlays.\n"
 "\n"
-"Options:\n"
-"\t-O x    Extract from the cache files within FILE only overlay Nr. x,\n"
-"\t        i.e. use cache method eix*:...:x for reading these cache files.\n"
-"\t        Default for x is * (which means all overlays in each files)\n"
-"\t        See \"man eix\" for details on cache method eix*.\n"
-"\t-u USER Call wget as USER. Defaults to \"nobody\" if called as root.\n"
-"\t-o PATH Use PATH as OVERLAYPARENT\n"
-"\t-v      Verbose (default)\n"
-"\t-q      Quiet"
+"Options can be specified in\n"
+"\t${eixremoteconf}\n"
+"and in the environment variable EIX_REMOTE_OPTS.\n"
+"This data is evalued, so be aware of security risks.\n"
+"Moreover, \"--\" in the default options will forbid command line options.\n"
+"The following options are available:\n"
+"\n"
+"-f FILE This is the same as giving FILE as the last argument.\n"
+"        This is mainly useful for default options. Current value:\n"
+"        \t${f}\n"
+"-O x    Extract from the cache files within FILE only overlay Nr. x,\n"
+"        i.e. use cache method eix*:...:x for reading these cache files.\n"
+"        Current value: ${overlaynr}\n"
+"        See \"man eix\" for details on cache method eix*.\n"
+"-u USER Call wget as USER. Ignored if not set unless you are root.\n"
+"-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
+"-o PATH Use PATH as OVERLAYPARENT\n"
+"-i      Ignore all previous options (override settings)\n"
+"-v      Verbose (default)\n"
+"-q      Quiet"
 msgstr ""
 "Aufruf: ${n} [Optionen] Kommando [FILE]\n"
 "Holt Daten aus einer Remote-Datenbank für ${p}.\n"
@@ -616,60 +619,80 @@ msgstr ""
 "oder mit der Option -o geändert werden. Falls Sie dieses Feature nicht\n"
 "wollen, setzen Sie OVERLAYPARENT einfach auf einen Pfad, der keine\n"
 "Overlays enthält.\n"
-"Optionen:\n"
-"\t-O x    Wählt aus dem Cachefile in FILE nur den Overlay x aus,\n"
-"\t        d.h. die Cachemethode eix*:...:x wird zum Lesen dieser Cachefiles\n"
-"\t        benutzt. Def Default für x ist * (was bedeutet: alle Overlays).\n"
-"\t        \"man eix\" enthält mehr Details hinzu (s. Cachemethode eix*).\n"
-"\t-u USER Ruft wget als USER auf. Beim Aufruf als root ist der Default\n"
-"          hierfür \"nobody\".\n"
-"\t-o PATH Benutzt PATH als OVERLAYPARENT\n"
-"\t-v      Ausführliche Ausgabe (Default)\n"
-"\t-q      Keine Ausgabe"
+"\n"
+"Optionen können in\n"
+"\t${eixremoteconf}\n"
+"und in der Environment-Variablen EIX_REMOTE_OPTS angegeben werden.\n"
+"Diese werden evaluiert, also Vorsicht!\n"
+"Ein \"--\" hier wird natürlich alle Kommandozeilen-Optionen verhindern.\n"
+"Die folgenden Optionen gibt es:\n"
+"\n"
+"-f FILE Dies ist äquivalent mit FILE als letztem Argument.\n"
+"        Als Default-Option kann dies nützlich sein. Aktueller Wert:\n"
+"        \t${f}\n"
+"-O x    Wählt aus dem Cachefile in FILE nur den Overlay x aus, d.h. die\n"
+"        Cachemethode eix*:...:x wird zum Lesen dieser Cachefiles benutzt\n"
+"        Aktueller Wert: ${overlaynr}\n"
+"        \"man eix\" enthält mehr Details hinzu (s. Cachemethode eix*).\n"
+"-u USER Call wget as USER. Ignored if not set unless you are root.\n"
+"-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
+"-u USER Ruft wget als USER auf. Wird diese Option nicht angegeben, so\n"
+"        findet nur beim Aufruf unter root ein Benutzerwechsel statt.\n"
+"-U USER Ruft wget als USER auf, wenn root der aufrufende Benutzer ist.\n"
+"        Aktueller Wert: \"nobody\".\n"
+"-o PATH Benutzt PATH als OVERLAYPARENT\n"
+"-v      Ausführliche Ausgabe (Default)\n"
+"-q      Keine Ausgabe"
 
-#: src/update-eix-remote.sh:94
+#: src/update-eix-remote.sh:79
+#, sh-format
+msgid "$OVERLAYPARENT must not be empty"
+msgstr "$OVERLAYPARENT darf nicht leer sein"
+
+#: src/update-eix-remote.sh:81
+#, sh-format
+msgid "$OVERLAYPARENT must start with /"
+msgstr "$OVERLAYPARENT muss mit / beginnen"
+
+#: src/update-eix-remote.sh:151
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/update-eix-remote.sh:99
-msgid "Filename argument must be nonempty"
-msgstr "Filenamen-Argument darf nicht leer sein"
-
-#: src/update-eix-remote.sh:125
+#: src/update-eix-remote.sh:176
 #, sh-format
 msgid "${a} cannot be found in PATH"
 msgstr "${a} nicht gefunden (im PATH)"
 
-#: src/update-eix-remote.sh:137
+#: src/update-eix-remote.sh:188
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/update-eix-remote.sh:158
+#: src/update-eix-remote.sh:209
 msgid "cannot create temporary directory"
 msgstr "Kann kein temporäres Directory erzeugen"
 
-#: src/update-eix-remote.sh:168
+#: src/update-eix-remote.sh:219
 #, sh-format
 msgid "cannot create temporary dir ${tmpdir}"
 msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
 
-#: src/update-eix-remote.sh:197
+#: src/update-eix-remote.sh:248
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/update-eix-remote.sh:198
+#: src/update-eix-remote.sh:249
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/update-eix-remote.sh:205
+#: src/update-eix-remote.sh:256
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
 
-#: src/update-eix-remote.sh:256
+#: src/update-eix-remote.sh:307
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
@@ -4091,6 +4114,9 @@ msgstr "Kann %r nicht sourcen"
 #, c-format
 msgid "cannot determine version of %s"
 msgstr "kann Version von '%s' nicht bestimmen"
+
+#~ msgid "Filename argument must be nonempty"
+#~ msgstr "Filenamen-Argument darf nicht leer sein"
 
 #~ msgid "Executing %s did not produce all data"
 #~ msgstr "Ausführung von %s erzeugt nicht alle Daten"

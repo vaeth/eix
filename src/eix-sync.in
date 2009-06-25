@@ -35,7 +35,8 @@ You can also add certain hooks in that file - "man eix" for details.
 
 The file ${eixsyncconf} and the environment variable EIX_SYNC_OPTS can
 contain default options which are processed before the command line options.
-Note that "--" in the default options will forbid command line options.
+This data is evalued, so be aware of security risks.
+Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
 -i   Ignore all previous options (useful to ignore ${eixsyncconf} options).
@@ -113,10 +114,16 @@ ExecuteConfig () {
 	${haveconf} || return 0
 	while read i
 	do
-		j="${i%%#*}"
-		while [ "${j% }" != "${j}" ]; do j="${j%?}"; done
-		while [ "${j# }" != "${j}" ]; do j="${j#?}"; done
-		[ -n "${j}" ] || continue
+		j="${i}"
+		while true; do
+			case "${j}" in
+				' '*|'	'*) j="${j#?}";;
+				*' '|*'	') j="${j%?}";;
+				'#'*) j=''; break;;
+				*) break;;
+			esac
+		done
+		[ -z "${j}" ] && continue
 		case "${j}" in
 			'!!'*) [ "${1}" = 'opts' ] && DoExecute "${j#??}"
 				continue;;
@@ -175,9 +182,11 @@ DefaultOpts () {
 DefaultOpts
 ExecuteConfig 'opts'
 
+eval "Push -c opt ${config_opts} ${EIX_SYNC_OPTS}"
+Push opt "${@}"
+eval "set -- ${opt}"
 OPTIND=1
-while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" opt \
-	${config_opts} ${EIX_SYNC_OPTS} "${@}"
+while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" opt
 do
 	case "${opt}" in
 		i) DefaultOpts;;
@@ -206,6 +215,7 @@ do
 		*) Usage 0;;
 	esac
 done
+opt=''
 ${diffonly} && DiffOnly
 [ -z "${server}" ] || skip_sync=true
 
