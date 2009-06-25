@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-25 17:38+0200\n"
+"POT-Creation-Date: 2009-06-25 19:11+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -39,7 +39,7 @@ msgid ""
 "-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
 "-d   Only show differences to the previously saved database and exit.\n"
 "     Except for executing the !! lines in ${eixsyncconf}\n"
-"     this is the same as diff-eix ${eixprevious}.\n"
+"     this is the same as eix-diff ${eixprevious}.\n"
 "-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
 "     USER defaults to current user and DIR defaults to PORTDIR\n"
 "-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull "
@@ -47,7 +47,7 @@ msgid ""
 "     you should later call eix-sync -u locally on CLIENT.\n"
 "     If you already have synced you might want to combine this option with -"
 "uU.\n"
-"-U   Do not touch the database and omit the hooks after update-eix (@ "
+"-U   Do not touch the database and omit the hooks after eix-update (@ "
 "entries)\n"
 "     and do not show differences. This option implies -R\n"
 "-u   Update database only and show differences. This is equivalent to -l@s "
@@ -71,7 +71,7 @@ msgid ""
 "-c CMD Run CMD instead of emerge --sync.\n"
 "-C OPT Add OPT to the emerge --sync command (or whatever is used instead).\n"
 "       This option can be used accumulatively.\n"
-"-o OPT Add OPT to each update-eix command.\n"
+"-o OPT Add OPT to each eix-update command.\n"
 "       This option can be used accumulatively.\n"
 "-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when "
 "you\n"
@@ -102,15 +102,15 @@ msgstr ""
 "-i   Ignoriere vorherige Optionen (sinnvoll bei ${eixsyncconf}).\n"
 "-d   Zeige nur die Unterschiede zur gespeicherten Datenbank an.\n"
 "     Außer dass auch die !!-Zeilen in ${eixsyncconf} ausgeführt werden,\n"
-"     ist dies das gleiche wie diff-eix ${eixprevious}.\n"
+"     ist dies das gleiche wie eix-diff ${eixprevious}.\n"
 "-s [USER@]SERVER[:DIR] Synce via rsync vom SERVER.\n"
 "     USER/DIR sind per Default der augenblickliche User und PORTDIR.\n"
 "-2 [USER@]CLIENT[:DIR] Synce via rsync *auf* den CLIENT, falls das Syncen\n"
 "     zuvor erfolgreich war. Danach sollte auf dem CLIENT eix-sync -u\n"
 "     aufgerufen werden. Falls bereits gesynct wurde, ist es sinnvoll,\n"
 "     diese Option mit mit -uU zu kombinieren.\n"
-"-U   Die Datenbank wird nicht geändert, die Hooks nach update-eix\n"
-"     (@-Zeilen) werden nicht ausgeführt, und natürlich wird diff-eix\n"
+"-U   Die Datenbank wird nicht geändert, die Hooks nach eix-update\n"
+"     (@-Zeilen) werden nicht ausgeführt, und natürlich wird eix-diff\n"
 "     nicht aufgerufen. Diese Option impliziert -R\n"
 "-u   Führe nur das Datenbank-Update durch und zeige die Unterschiede.\n"
 "     dies ist gleichbedeutend mit -l@s \"\"\n"
@@ -133,7 +133,7 @@ msgstr ""
 "-c CMD Benutze CMD statt emerge --sync.\n"
 "-C OPT Fügt Option OPT dem emerge --sync (oder dem Ersatz dafür) hinzu.\n"
 "       Diese Option kann wiederholt aufgerufen werden.\n"
-"-o OPT Fügt Option OPT jedem Aufruf von update-eix hinzu.\n"
+"-o OPT Fügt Option OPT jedem Aufruf von eix-update hinzu.\n"
 "       Diese Option kann wiederholt aufgerufen werden.\n"
 "-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
 "     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
@@ -148,7 +148,7 @@ msgid "No previous database ${eixprevious} exists"
 msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
 
 #: src/eix-sync.sh:89
-msgid "Could not execute diff-eix"
+msgid "Could not execute eix-diff"
 msgstr "Konnte %s nicht korrekt ausführen"
 
 #: src/eix-sync.sh:98
@@ -205,8 +205,8 @@ msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
 #: src/eix-sync.sh:296
-msgid "initial update-eix"
-msgstr "erstes update-eix"
+msgid "initial eix-update"
+msgstr "erstes eix-update"
 
 #: src/eix-sync.sh:297
 msgid "syncing"
@@ -221,12 +221,12 @@ msgid "metadata update"
 msgstr "metadata update"
 
 #: src/eix-sync.sh:300
-msgid "update-eix"
-msgstr "update-eix"
+msgid "eix-update"
+msgstr "eix-update"
 
 #: src/eix-sync.sh:301
-msgid "diff-eix"
-msgstr "diff-eix"
+msgid "eix-diff"
+msgstr "eix-diff"
 
 #: src/eix-sync.sh:304
 msgid "%6d seconds total\\n"
@@ -236,7 +236,7 @@ msgstr "%6d Sekunden insgesamt\\n"
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:328 src/update-eix-remote.sh:208
+#: src/eix-sync.sh:328 src/eix-remote.sh:208
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
@@ -294,16 +294,16 @@ msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
 #: src/eix-sync.sh:421
-msgid "eix-cache does not exist. Running update-eix!"
-msgstr "Eix-Cache existiert nicht. Starten von update-eix."
+msgid "eix-cache does not exist. Running eix-update!"
+msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
-#: src/eix-sync.sh:423 src/eix-sync.sh:433 src/functions-eix.sh.in:170
-msgid "update-eix failed"
-msgstr "update-eix schlug fehl"
+#: src/eix-sync.sh:423 src/eix-sync.sh:433 src/eix-functions.sh.in:170
+msgid "eix-update failed"
+msgstr "eix-update schlug fehl"
 
 #: src/eix-sync.sh:431
-msgid "eix-cache format has changed. Running update-eix!"
-msgstr "Eix-Cache-Format hat sich geändert. Starten von update-eix."
+msgid "eix-cache format has changed. Running eix-update!"
+msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
 
 #: src/eix-sync.sh:444
 #, sh-format
@@ -321,20 +321,20 @@ msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
 #: src/eix-sync.sh:477
-msgid "update-eix was apparently already called in a hook"
-msgstr "update-eix wurde anscheinend bereits in einem Hook aufgerufen"
+msgid "eix-update was apparently already called in a hook"
+msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
 #: src/eix-sync.sh:481
-msgid "Running update-eix"
-msgstr "Starte update-eix"
+msgid "Running eix-update"
+msgstr "Starte eix-update"
 
 #: src/eix-sync.sh:483
-msgid "Failure while running update-eix"
-msgstr "Problem beim Ausführen von update-eix"
+msgid "Failure while running eix-update"
+msgstr "Problem beim Ausführen von eix-update"
 
 #: src/eix-sync.sh:486
-msgid "Calling diff-eix"
-msgstr "Starte diff-eix"
+msgid "Calling eix-diff"
+msgstr "Starte eix-diff"
 
 #: src/eix-sync.sh:488
 msgid "Failed to diff against current cache"
@@ -478,20 +478,20 @@ msgstr "Alle installierten Paketversionen sind in der Datenbank."
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
-#: src/functions-eix.sh.in:26
+#: src/eix-functions.sh.in:26
 msgid "cannot read functions.sh"
 msgstr "kann functions.sh nicht sourcen"
 
-#: src/functions-eix.sh.in:67
+#: src/eix-functions.sh.in:67
 #, sh-format
 msgid "Problems running ${c}"
 msgstr "Probleme mit ${c}"
 
-#: src/functions-eix.sh.in:169
-msgid "Calling update-eix"
+#: src/eix-functions.sh.in:169
+msgid "Calling eix-update"
 msgstr "Starte updat-eix"
 
-#: src/update-eix-layman.sh:21
+#: src/eix-layman.sh:21
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
@@ -519,11 +519,11 @@ msgstr ""
 "\t-A PATH       Fügt PATH zu den gesourcten make.conf-s hinzu, die die\n"
 "\t              Layman-Overlays angeben. Aktueller Wert:"
 
-#: src/update-eix-layman.sh:34
+#: src/eix-layman.sh:34
 msgid "none (i.e. no readable layman make.conf specified)"
 msgstr "keiner (d.h. kein lesbares Layman-make.conf angegeben)"
 
-#: src/update-eix-layman.sh:42
+#: src/eix-layman.sh:42
 msgid ""
 "\t-C            Clear the above list\n"
 "\t-c LAYMAN_CFG Use layman.cfg file to determine entry for above list\n"
@@ -535,7 +535,7 @@ msgstr ""
 "\t-v            Ausführliche Ausgabe (Default)\n"
 "\t-q            Keine Ausgabe"
 
-#: src/update-eix-remote.sh:25
+#: src/eix-remote.sh:25
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command [FILE]\n"
@@ -544,14 +544,14 @@ msgid ""
 "\n"
 "update: Fetch the eix-caches of some layman overlays into a temporary file\n"
 "        resp. into FILE and add them to the eix database.\n"
-"        To keep this data across update-eix calls, you might want to set\n"
+"        To keep this data across eix-update calls, you might want to set\n"
 "        KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)\n"
 "fetch:  Only fetch the overlays into FILE.\n"
 "add:    Only add the overlays from FILE to the eix database.\n"
 "remove: Remove all temporarily added virtual overlays from the eix "
 "database;\n"
 "        this is similar to\n"
-"        \tKEEP_VIRTUALS=false update-eix\n"
+"        \tKEEP_VIRTUALS=false eix-update\n"
 "        but faster (without actual updating where possible).\n"
 "\n"
 "It is strongly recommended to use the update/fetch commands with very "
@@ -592,14 +592,14 @@ msgstr ""
 "\n"
 "update: Holt die eix-caches einiger Layman-Overlays in ein Temporärfile\n"
 "        bzw. nach FILE und fügt sie zur Eix-Datenbank hinzu.\n"
-"        Um die Information beim nächsten update-eix-Aufruf beizubehalten,\n"
+"        Um die Information beim nächsten eix-update-Aufruf beizubehalten,\n"
 "        kann es sinnvoll sein, KEEP_VIRTUALS=true in /etc/eixrc\n"
 "        (oder in ~/.eixrc) zu setzen.\n"
 "fetch:  Holt nur die Overlay-Daten nach FILE\n"
 "add:    Fügt nur die Overlay-Daten aus FILE der Eix-Datenbank hinzu.\n"
 "remove: Entfernt alle temporär hinzugefügten virtuellen Overlays aus der\n"
 "        Eix-Datenbank. Dies ist in etwa das selbe wie\n"
-"        \tKEEP_VIRTUALS=false update-eix\n"
+"        \tKEEP_VIRTUALS=false eix-update\n"
 "        aber schneller (da falls möglich nichts geupdated wird).\n"
 "\n"
 "Es wird stark empfohlen, die Update/Fetch-Kommandos nur mit sehr\n"
@@ -636,130 +636,65 @@ msgstr ""
 "-v      Ausführliche Ausgabe (Default)\n"
 "-q      Keine Ausgabe"
 
-#: src/update-eix-remote.sh:75
+#: src/eix-remote.sh:75
 #, sh-format
 msgid "$OVERLAYPARENT must not be empty"
 msgstr "$OVERLAYPARENT darf nicht leer sein"
 
-#: src/update-eix-remote.sh:77
+#: src/eix-remote.sh:77
 #, sh-format
 msgid "$OVERLAYPARENT must start with /"
 msgstr "$OVERLAYPARENT muss mit / beginnen"
 
-#: src/update-eix-remote.sh:145
+#: src/eix-remote.sh:145
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/update-eix-remote.sh:170
+#: src/eix-remote.sh:170
 #, sh-format
 msgid "${a} cannot be found in PATH"
 msgstr "${a} nicht gefunden (im PATH)"
 
-#: src/update-eix-remote.sh:182
+#: src/eix-remote.sh:182
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/update-eix-remote.sh:203
+#: src/eix-remote.sh:203
 msgid "cannot create temporary directory"
 msgstr "Kann kein temporäres Directory erzeugen"
 
-#: src/update-eix-remote.sh:213
+#: src/eix-remote.sh:213
 #, sh-format
 msgid "cannot create temporary dir ${tmpdir}"
 msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
 
-#: src/update-eix-remote.sh:242
+#: src/eix-remote.sh:242
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/update-eix-remote.sh:243
+#: src/eix-remote.sh:243
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/update-eix-remote.sh:250
+#: src/eix-remote.sh:250
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
 
-#: src/update-eix-remote.sh:318
+#: src/eix-remote.sh:318
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
-
-#: src/diff-eix.cc:55
-#, c-format
-msgid ""
-"Usage: %s [options] old-cache [new-cache]\n"
-"\n"
-" -Q, --quick (toggle)    do (not) read unguessable slots of installed "
-"packages\n"
-"     --care              always read slots of installed packages\n"
-" -q, --quiet (toggle)    (no) output\n"
-" -n, --nocolor           don't use colors in output\n"
-" -F, --force-color       force colors on things that are not a terminal\n"
-"     --dump              dump variables to stdout\n"
-"     --dump-defaults     dump default values of variables\n"
-"     --print             print the expanded value of a variable\n"
-"\n"
-" -h, --help              show a short help screen\n"
-" -V, --version           show version-string\n"
-"\n"
-"This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"
-msgstr ""
-"Aufruf: %s [options] old-cache [new-cache]\n"
-"\n"
-" -Q, --quick (toggle)    Ignoriere unbekannte Slots installierter Pakete\n"
-"     --care              Lese immer die Slots installierter Pakete\n"
-" -q, --quiet (toggle)    keine Ausgabe\n"
-" -n, --nocolor           keine Farben\n"
-" -F, --force-color       Farben auch wenn Ausgabe nicht auf Terminal geht\n"
-"     --dump              Ausgabe aller internen Variablen of stdout\n"
-"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
-"     --print             Ausgabe eines expandierten Variablenwerts\n"
-"\n"
-" -h, --help              Ausgabe eines Hilfstexts\n"
-" -V, --version           Ausgabe der Versionsnummer\n"
-"\n"
-"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
-"weitere Informationen.\n"
-
-#: src/diff-eix.cc:119
-msgid "Can't open the database file %r for reading (mode = 'rb')"
-msgstr "Kann Datenbankfile %r nicht zum Lesen öffnen (mode = 'rb')"
-
-#: src/diff-eix.cc:125
-#, c-format
-msgid ""
-"%s was created with an incompatible update-eix:\n"
-"It uses database format %s (current is %s)."
-msgstr ""
-"%s wurde mit inkompatiblem update-eix erzeugt:\n"
-"Es benutzt Datenbank-Format %s (aktuell ist %s)."
-
-#: src/diff-eix.cc:297
-msgid "Missing cache-file."
-msgstr "Fehlendes Cachefile."
-
-#: src/diff-eix.cc:321 src/eix.cc:512
-#, c-format
-msgid "Problems while parsing %s: %s\n"
-msgstr "Probleme beim Parsen von %s: %s\n"
-
-#: src/diff-eix.cc:444
-#, c-format
-msgid "Diffing databases (%s -> %s packages)\n"
-msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
 
 #: src/eix.cc:45
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
 "\n"
-"Search for packages in the index generated by update-eix.\n"
+"Search for packages in the index generated by eix-update.\n"
 "EXPRESSION is true or false. Packages for which the EXPRESSION gives true,\n"
 "are included in the final report.\n"
 "\n"
@@ -893,7 +828,7 @@ msgid ""
 msgstr ""
 "Aufruf: %s [Optionen] EXPRESSION\n"
 "\n"
-"Durchsucht die von update-eix generierte Datenbank.\n"
+"Durchsucht die von eix-update generierte Datenbank.\n"
 "Es werden diejenigen Pakete ausgegeben, für die EXPRESSION einen wahren\n"
 "Ausdruck ergibt.\n"
 "\n"
@@ -1026,25 +961,30 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
+#: src/eix.cc:512 src/eix-diff.cc:321
+#, c-format
+msgid "Problems while parsing %s: %s\n"
+msgstr "Probleme beim Parsen von %s: %s\n"
+
 #: src/eix.cc:594 src/eix.cc:852
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
-"Did you forget to create it with 'update-eix'?"
+"Did you forget to create it with 'eix-update'?"
 msgstr ""
 "Kann Datenbankfile %s nicht zum Lesen öffnen (mode = 'rb')\n"
-"Wurde es denn mit 'update-eix' erzeugt?"
+"Wurde es denn mit 'eix-update' erzeugt?"
 
 #: src/eix.cc:605
 #, c-format
 msgid ""
-"%s was created with an incompatible update-eix:\n"
+"%s was created with an incompatible eix-update:\n"
 "It uses database format %s (current is %s).\n"
-"Please run 'update-eix' and try again."
+"Please run 'eix-update' and try again."
 msgstr ""
-"%s wurd mit inkompatiblem update-eix erzeugt:\n"
+"%s wurd mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
-"Bitte mit 'update-eix' neu erzeugen."
+"Bitte mit 'eix-update' neu erzeugen."
 
 #: src/eix.cc:816 src/eix.cc:832
 #, c-format
@@ -1103,6 +1043,223 @@ msgid ""
 msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
+
+#: src/eix-diff.cc:55
+#, c-format
+msgid ""
+"Usage: %s [options] old-cache [new-cache]\n"
+"\n"
+" -Q, --quick (toggle)    do (not) read unguessable slots of installed "
+"packages\n"
+"     --care              always read slots of installed packages\n"
+" -q, --quiet (toggle)    (no) output\n"
+" -n, --nocolor           don't use colors in output\n"
+" -F, --force-color       force colors on things that are not a terminal\n"
+"     --dump              dump variables to stdout\n"
+"     --dump-defaults     dump default values of variables\n"
+"     --print             print the expanded value of a variable\n"
+"\n"
+" -h, --help              show a short help screen\n"
+" -V, --version           show version-string\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"
+msgstr ""
+"Aufruf: %s [options] old-cache [new-cache]\n"
+"\n"
+" -Q, --quick (toggle)    Ignoriere unbekannte Slots installierter Pakete\n"
+"     --care              Lese immer die Slots installierter Pakete\n"
+" -q, --quiet (toggle)    keine Ausgabe\n"
+" -n, --nocolor           keine Farben\n"
+" -F, --force-color       Farben auch wenn Ausgabe nicht auf Terminal geht\n"
+"     --dump              Ausgabe aller internen Variablen of stdout\n"
+"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
+"     --print             Ausgabe eines expandierten Variablenwerts\n"
+"\n"
+" -h, --help              Ausgabe eines Hilfstexts\n"
+" -V, --version           Ausgabe der Versionsnummer\n"
+"\n"
+"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
+"weitere Informationen.\n"
+
+#: src/eix-diff.cc:119
+msgid "Can't open the database file %r for reading (mode = 'rb')"
+msgstr "Kann Datenbankfile %r nicht zum Lesen öffnen (mode = 'rb')"
+
+#: src/eix-diff.cc:125
+#, c-format
+msgid ""
+"%s was created with an incompatible eix-update:\n"
+"It uses database format %s (current is %s)."
+msgstr ""
+"%s wurde mit inkompatiblem eix-update erzeugt:\n"
+"Es benutzt Datenbank-Format %s (aktuell ist %s)."
+
+#: src/eix-diff.cc:297
+msgid "Missing cache-file."
+msgstr "Fehlendes Cachefile."
+
+#: src/eix-diff.cc:444
+#, c-format
+msgid "Diffing databases (%s -> %s packages)\n"
+msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
+
+#: src/eix-update.cc:91
+#, c-format
+msgid "%s must be writable by group portage."
+msgstr "%s muss für die Grupper portage beschreibbar sein."
+
+#: src/eix-update.cc:99
+msgid ""
+"You must be in the portage group to update the database.\n"
+"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test."
+msgstr ""
+"Zum Datenbank-Update ist Zugehörigkeit zur Gruppe portage nötig.\n"
+"Durch Setzen von SKIP_PERMISSION_TESTS kann dieser Test verhindert werden."
+
+#: src/eix-update.cc:113
+msgid "User 'root' is needed to initially generate the database."
+msgstr "Nur 'root' kann anfänglich die Datenbank generieren."
+
+#: src/eix-update.cc:132
+msgid "warning: cannot change ownership of cachefile"
+msgstr "Warnung: Kann Benutzer des Cachefiles nicht ändern"
+
+#: src/eix-update.cc:135
+msgid "warning: cannot change permissions for cachefile"
+msgstr "Warnung: Kann Rechte des Cachefiles nicht ändern"
+
+#: src/eix-update.cc:145
+#, c-format
+msgid ""
+"Usage: %s [options]\n"
+"\n"
+" -h, --help              show a short help screen\n"
+" -V, --version           show version-string\n"
+"     --dump              show eixrc-variables\n"
+"     --dump-defaults     show default eixrc-variables\n"
+"     --print             print the expanded value of a variable\n"
+"\n"
+" -q, --quiet             produce no output\n"
+"\n"
+" -o  --output            output to another file than %s\n"
+"                         In addition, all permission checks are omitted.\n"
+" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
+"                         Note that you can also exclude PORTDIR\n"
+"                         using this option.\n"
+"\n"
+" -a  --add-overlay       add an overlay to the update-process.\n"
+"\n"
+" -m  --override-method   override cache method for matching overlays.\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"
+msgstr ""
+"Aufruf: %s [Optionen]\n"
+"\n"
+" -h, --help              Ausgabe eines Hilfstexts\n"
+" -V, --version           Ausgabe der Versionsnummer\n"
+"     --dump              Ausgabe aller internen Variablen of stdout\n"
+"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
+"     --print             Ausgabe eines expandierten Variablenwerts\n"
+"\n"
+" -q, --quiet             keine Ausgabe\n"
+"\n"
+" -o  --output            Ausgabe in eine anderes File als %s\n"
+"                         Außerdemm werden keine Rechte getestet.\n"
+" -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
+"                         aus. Man kann auch PORTDIR mit dieser\n"
+"                         Option ausschließen.\n"
+"\n"
+" -a  --add-overlay       Für Overlay zum Update-Process hinzu.\n"
+"\n"
+" -m  --override-method   Änder Cache-Methode für passenden Overlay.\n"
+"\n"
+"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
+"weitere Informationen.\n"
+
+#: src/eix-update.cc:249
+#, c-format
+msgid "%s must be a list of the form DIRECTORY METHOD\n"
+msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
+
+#: src/eix-update.cc:267
+#, c-format
+msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
+msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
+
+#: src/eix-update.cc:272
+#, c-format
+msgid "Adding virtual overlays from %s ..\n"
+msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
+
+#: src/eix-update.cc:277
+msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
+msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
+
+#: src/eix-update.cc:340
+msgid "Reading Portage settings ..\n"
+msgstr "Lese Portage-Konfiguration...\n"
+
+#: src/eix-update.cc:440
+#, c-format
+msgid "Excluded PORTDIR: %s\n"
+msgstr "Ausschluss von PORTDIR: %s\n"
+
+#: src/eix-update.cc:454
+#, c-format
+msgid "Excluded overlay %s\n"
+msgstr "Ausschluss von Overlay: %s\n"
+
+#: src/eix-update.cc:459
+#, c-format
+msgid "Building database (%s) ..\n"
+msgstr "Erzeuge Datenkbank (%s) ...\n"
+
+#: src/eix-update.cc:503
+#, c-format
+msgid "Excluding \"%s\" %s (cache: %s)\n"
+msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
+
+#: src/eix-update.cc:515
+#, c-format
+msgid "[%s] \"%s\" %s (cache: %s)\n"
+msgstr "[%s] \"%s\" %s (Cache: %s)\n"
+
+#: src/eix-update.cc:520
+msgid "     Reading "
+msgstr "     Lese "
+
+#: src/eix-update.cc:528
+msgid "aborted"
+msgstr "Abbruch"
+
+#: src/eix-update.cc:547
+msgid "Applying masks ..\n"
+msgstr "Maskiere Pakete...\n"
+
+#: src/eix-update.cc:561
+msgid "Calculating hash tables ..\n"
+msgstr "Berechne Hash-Tabellen...\n"
+
+#: src/eix-update.cc:565
+#, c-format
+msgid "Writing database file %s ..\n"
+msgstr "Schreibe Datenbankfile %s...\n"
+
+#: src/eix-update.cc:568
+msgid "Can't open the database file %r for writing (mode = 'wb')"
+msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
+
+#: src/eix-update.cc:581
+#, c-format
+msgid "Database contains %s packages in %s categories.\n"
+msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
+
+#: src/versionsort.cc:35
+#, c-format
+msgid "cannot determine version of %s"
+msgstr "kann Version von '%s' nicht bestimmen"
 
 #: src/cache/cachetable.cc:37
 msgid "Unknown cache %r for directory %r"
@@ -1379,6 +1536,10 @@ msgstr "getgrnam(%r) schlug fehl: %s"
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
+#: src/eixTk/varsreader.cc:69
+msgid "failed to source %r"
+msgstr "Kann %r nicht sourcen"
+
 #: src/eixrc/defaults.cc:18
 msgid ""
 "The file which is used instead of /etc/eixrc and ~/.eixrc.\n"
@@ -1619,20 +1780,20 @@ msgstr "Ob --quiet per Default aktiviert ist."
 
 #: src/eixrc/defaults.cc:190
 msgid ""
-"If true, diff-eix will only consider version changes for installed packages."
-msgstr "Soll diff-eix nur Versionsänderungen installierter Pakete ausgeben?"
+"If true, eix-diff will only consider version changes for installed packages."
+msgstr "Soll eix-diff nur Versionsänderungen installierter Pakete ausgeben?"
 
 #: src/eixrc/defaults.cc:194
-msgid "If true, diff-eix will not consider slots for version changes."
-msgstr "Soll diff-eix Slots bei Versionsänderungen ignorieren?"
+msgid "If true, eix-diff will not consider slots for version changes."
+msgstr "Soll eix-diff Slots bei Versionsänderungen ignorieren?"
 
 #: src/eixrc/defaults.cc:198
-msgid "If false, diff-eix will mix deleted and changed packages"
-msgstr "Im negativen Fall wird diff-eix gelöschte und geänderte Pakete mischen"
+msgid "If false, eix-diff will mix deleted and changed packages"
+msgstr "Im negativen Fall wird eix-diff gelöschte und geänderte Pakete mischen"
 
 #: src/eixrc/defaults.cc:202
-msgid "Should diff-eix print a header info line?"
-msgstr "Soll diff-eix am Info-Kopfzeile ausgeben?"
+msgid "Should eix-diff print a header info line?"
+msgstr "Soll eix-diff am Info-Kopfzeile ausgeben?"
 
 #: src/eixrc/defaults.cc:206
 msgid "If false, RESTRICT and PROPERTIES values are output."
@@ -1677,10 +1838,10 @@ msgstr ""
 #: src/eixrc/defaults.cc:233
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines whether diff-eix will output installed versions."
+"It defines whether eix-diff will output installed versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie legt fest, ob diff-eix installierte Versionen ausgivt."
+"Sie legt fest, ob eix-diff installierte Versionen ausgivt."
 
 #: src/eixrc/defaults.cc:243
 msgid ""
@@ -1793,50 +1954,50 @@ msgstr ""
 #: src/eixrc/defaults.cc:310
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for \"better version\" tags (diff-eix)."
+"It defines the color used for \"better version\" tags (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der \"bessere Version\"-Tags (diff-eix)."
+"Sie definiert die Farbe der \"bessere Version\"-Tags (eix-diff)."
 
 #: src/eixrc/defaults.cc:315
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for \"worse version\" tags (diff-eix)."
+"It defines the color used for \"worse version\" tags (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der \"schlechtere Version\"-Tags (diff-eix)."
+"Sie definiert die Farbe der \"schlechtere Version\"-Tags (eix-diff)."
 
 #: src/eixrc/defaults.cc:320
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for \"new package\" tags (diff-eix)."
+"It defines the color used for \"new package\" tags (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der \"neues Paket\"-Tags (diff-eix)."
+"Sie definiert die Farbe der \"neues Paket\"-Tags (eix-diff)."
 
 #: src/eixrc/defaults.cc:325
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for \"new package\" separators (diff-eix)."
+"It defines the color used for \"new package\" separators (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der \"neues Paket\"-Trenner (diff-eix)."
+"Sie definiert die Farbe der \"neues Paket\"-Trenner (eix-diff)."
 
 #: src/eixrc/defaults.cc:330
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for \"deleted package\" separators (diff-eix)."
+"It defines the color used for \"deleted package\" separators (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der \"gelöschtes Paket\"-Trenner (diff-eix)."
+"Sie definiert die Farbe der \"gelöschtes Paket\"-Trenner (eix-diff)."
 
 #: src/eixrc/defaults.cc:335
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for \"changed package\" separators (diff-eix)."
+"It defines the color used for \"changed package\" separators (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der \"geändertes Paket\"-Trenner (diff-eix)."
+"Sie definiert die Farbe der \"geändertes Paket\"-Trenner (eix-diff)."
 
 #: src/eixrc/defaults.cc:340
 msgid ""
@@ -1973,26 +2134,26 @@ msgstr ""
 #: src/eixrc/defaults.cc:422
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the character printed for new packages (diff-eix)."
+"It defines the character printed for new packages (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält das Zeichen für neue Pakete (diff-eix)."
+"Sie enthält das Zeichen für neue Pakete (eix-diff)."
 
 #: src/eixrc/defaults.cc:427
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the character used for \"better version\" tags (diff-eix)."
+"It defines the character used for \"better version\" tags (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält das Zeichen für \"bessere Version\"-Tags (diff-eix)."
+"Sie enthält das Zeichen für \"bessere Version\"-Tags (eix-diff)."
 
 #: src/eixrc/defaults.cc:432
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the character used for \"worse version\" tags (diff-eix)."
+"It defines the character used for \"worse version\" tags (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält das Zeichen für \"schlechtere Version\"-Tags (diff-eix)."
+"Sie enthält das Zeichen für \"schlechtere Version\"-Tags (eix-diff)."
 
 #: src/eixrc/defaults.cc:437
 msgid ""
@@ -2022,26 +2183,26 @@ msgstr ""
 #: src/eixrc/defaults.cc:471
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the tag printed for new packages (diff-eix)."
+"It defines the tag printed for new packages (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält das Tag für neue Pakete (diff-eix)."
+"Sie enthält das Tag für neue Pakete (eix-diff)."
 
 #: src/eixrc/defaults.cc:476
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the tag used for \"better version\" (diff-eix)."
+"It defines the tag used for \"better version\" (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält das Tag für \"bessere Version\" (diff-eix)."
+"Sie enthält das Tag für \"bessere Version\" (eix-diff)."
 
 #: src/eixrc/defaults.cc:481
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the tag used for \"worse version\" (diff-eix)."
+"It defines the tag used for \"worse version\" (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält das Tag für \"schlechtere Version\" (diff-eix)."
+"Sie enthält das Tag für \"schlechtere Version\" (eix-diff)."
 
 #: src/eixrc/defaults.cc:486
 msgid ""
@@ -2062,26 +2223,26 @@ msgstr ""
 #: src/eixrc/defaults.cc:496
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the string used for \"new package\" separators (diff-eix)."
+"It defines the string used for \"new package\" separators (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält den \"neues Paket\"-Trenner (diff-eix)."
+"Sie enthält den \"neues Paket\"-Trenner (eix-diff)."
 
 #: src/eixrc/defaults.cc:501
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the string used for \"deleted package\" separators (diff-eix)."
+"It defines the string used for \"deleted package\" separators (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält den \"gelöschtes Paket\"-Trenner (diff-eix)."
+"Sie enthält den \"gelöschtes Paket\"-Trenner (eix-diff)."
 
 #: src/eixrc/defaults.cc:506
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the string used for \"changed package\" separators (diff-eix)."
+"It defines the string used for \"changed package\" separators (eix-diff)."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enthält den \"geändertes Paket\"-Trenner (diff-eix)."
+"Sie enthält den \"geändertes Paket\"-Trenner (eix-diff)."
 
 #: src/eixrc/defaults.cc:517
 msgid ""
@@ -2185,10 +2346,10 @@ msgstr ""
 #: src/eixrc/defaults.cc:630
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the format for diff-eix for installed versions."
+"It defines the format for eix-diff for installed versions."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie ist das Format für diff-eix für installierte Versionen."
+"Sie ist das Format für eix-diff für installierte Versionen."
 
 #: src/eixrc/defaults.cc:660
 msgid ""
@@ -2267,19 +2428,19 @@ msgstr ""
 #: src/eixrc/defaults.cc:744
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"If true, diff-eix prints no version if none is installable."
+"If true, eix-diff prints no version if none is installable."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie legt fest, ob diff-eix keine Version drucken soll, falls keine\n"
+"Sie legt fest, ob eix-diff keine Version drucken soll, falls keine\n"
 "installierbar ist."
 
 #: src/eixrc/defaults.cc:749
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"If true, diff-eix prints no versions if all installable vanished."
+"If true, eix-diff prints no versions if all installable vanished."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie legt fest, ob diff-eix keine Version drucken soll, falls alle\n"
+"Sie legt fest, ob eix-diff keine Version drucken soll, falls alle\n"
 "installierbaren verschwunden sind."
 
 #: src/eixrc/defaults.cc:756
@@ -2318,27 +2479,27 @@ msgstr ""
 #: src/eixrc/defaults.cc:814
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the diff-eix format for the best version(s)."
+"It defines the eix-diff format for the best version(s)."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie ist das Format für diff-eix für die beste(n) Version(en)."
+"Sie ist das Format für eix-diff für die beste(n) Version(en)."
 
 #: src/eixrc/defaults.cc:831
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the diff-eix format for the best version(s) in case of changes."
+"It defines the eix-diff format for the best version(s) in case of changes."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie ist das Format für diff-eix für die beste(n) Version(en) im Falle von\n"
+"Sie ist das Format für eix-diff für die beste(n) Version(en) im Falle von\n"
 "Änderungen."
 
 #: src/eixrc/defaults.cc:844
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the diff-eix format for changed versions."
+"It defines the eix-diff format for changed versions."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie ist das Format für diff-eix für geänderte Versionen."
+"Sie ist das Format für eix-diff für geänderte Versionen."
 
 #: src/eixrc/defaults.cc:849
 msgid ""
@@ -2383,18 +2544,18 @@ msgstr ""
 #: src/eixrc/defaults.cc:889
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the diff-eix line for the best versions/slots."
+"It defines the eix-diff line for the best versions/slots."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie definiert die diff-eix-Zeile für die besten Versionen pro Slot."
+"Sie definiert die eix-diff-Zeile für die besten Versionen pro Slot."
 
 #: src/eixrc/defaults.cc:894
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the diff-eix line for changed versions."
+"It defines the eix-diff line for changed versions."
 msgstr ""
 "Diese Variable dient nur zur Delayed Substition in *FORMAT_*-Strings.\n"
-"Sie definiert die diff-eix-Zeile für geänderte Versionen."
+"Sie definiert die eix-diff-Zeile für geänderte Versionen."
 
 #: src/eixrc/defaults.cc:904
 msgid ""
@@ -2487,10 +2648,10 @@ msgstr ""
 #: src/eixrc/defaults.cc:1003
 msgid ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"It defines the format for diff-eix after the versions."
+"It defines the format for eix-diff after the versions."
 msgstr ""
 "This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-"Sie ist das Format für diff-eix nach Ausgabe der Versionen."
+"Sie ist das Format für eix-diff nach Ausgabe der Versionen."
 
 #: src/eixrc/defaults.cc:1016
 msgid ""
@@ -2546,51 +2707,51 @@ msgstr ""
 #: src/eixrc/defaults.cc:1067
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
-"It defines the format used for new packages (diff-eix)."
+"It defines the format used for new packages (eix-diff)."
 msgstr ""
 "Dieses Format dient nur zur Delayed Substituion in DIFF_FORMAT_NEW.\n"
-"Es ist das Format für neue Pakete (diff-eix)."
+"Es ist das Format für neue Pakete (eix-diff)."
 
 #: src/eixrc/defaults.cc:1074
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
-"It defines the format used for packages that were deleted (diff-eix)."
+"It defines the format used for packages that were deleted (eix-diff)."
 msgstr ""
 "Dieses Format dient nur zur Delayed Substituion in DIFF_FORMAT_DELETE.\n"
-"Es ist das Format für gelöschte Pakete (diff-eix)."
+"Es ist das Format für gelöschte Pakete (eix-diff)."
 
 #: src/eixrc/defaults.cc:1081
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
-"It defines the format used for packages that were changed (diff-eix)."
+"It defines the format used for packages that were changed (eix-diff)."
 msgstr ""
 "Dieses Format dient nur zur Delayed Substituion in DIFF_FORMAT_CHANGED.\n"
-"Es ist das Format für geänderte Pakete (diff-eix)."
+"Es ist das Format für geänderte Pakete (eix-diff)."
 
 #: src/eixrc/defaults.cc:1086
 msgid ""
-"The format used for new packages (diff-eix).\n"
+"The format used for new packages (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."
 msgstr ""
-"Das format für neue Pakete (diff-eix).\n"
+"Das format für neue Pakete (eix-diff).\n"
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_NEW."
 
 #: src/eixrc/defaults.cc:1091
 msgid ""
-"The format used for packages that were deleted (diff-eix).\n"
+"The format used for packages that were deleted (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."
 msgstr ""
-"Das format für gelöschte Pakete (diff-eix).\n"
+"Das format für gelöschte Pakete (eix-diff).\n"
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_DELETE."
 
 #: src/eixrc/defaults.cc:1096
 msgid ""
-"The format used for packages that were changed (diff-eix).\n"
+"The format used for packages that were changed (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."
 msgstr ""
-"Das format für geänderte Pakete (diff-eix).\n"
+"Das format für geänderte Pakete (eix-diff).\n"
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_CHANGED."
 
@@ -3018,10 +3179,10 @@ msgstr ""
 #: src/eixrc/defaults.cc:1408
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"If false, no IUSE data is printed for diff-eix."
+"If false, no IUSE data is printed for eix-diff."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie bestimmt, ob diff-eix die IUSE-Daten ausgibt."
+"Sie bestimmt, ob eix-diff die IUSE-Daten ausgibt."
 
 #: src/eixrc/defaults.cc:1413
 msgid "If false, no IUSE data is printed."
@@ -3949,167 +4110,6 @@ msgstr "unbekanntes Suchfeld %r"
 #: src/search/packagetest.cc:206
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
-
-#: src/update-eix.cc:91
-#, c-format
-msgid "%s must be writable by group portage."
-msgstr "%s muss für die Grupper portage beschreibbar sein."
-
-#: src/update-eix.cc:99
-msgid ""
-"You must be in the portage group to update the database.\n"
-"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test."
-msgstr ""
-"Zum Datenbank-Update ist Zugehörigkeit zur Gruppe portage nötig.\n"
-"Durch Setzen von SKIP_PERMISSION_TESTS kann dieser Test verhindert werden."
-
-#: src/update-eix.cc:113
-msgid "User 'root' is needed to initially generate the database."
-msgstr "Nur 'root' kann anfänglich die Datenbank generieren."
-
-#: src/update-eix.cc:132
-msgid "warning: cannot change ownership of cachefile"
-msgstr "Warnung: Kann Benutzer des Cachefiles nicht ändern"
-
-#: src/update-eix.cc:135
-msgid "warning: cannot change permissions for cachefile"
-msgstr "Warnung: Kann Rechte des Cachefiles nicht ändern"
-
-#: src/update-eix.cc:145
-#, c-format
-msgid ""
-"Usage: %s [options]\n"
-"\n"
-" -h, --help              show a short help screen\n"
-" -V, --version           show version-string\n"
-"     --dump              show eixrc-variables\n"
-"     --dump-defaults     show default eixrc-variables\n"
-"     --print             print the expanded value of a variable\n"
-"\n"
-" -q, --quiet             produce no output\n"
-"\n"
-" -o  --output            output to another file than %s\n"
-"                         In addition, all permission checks are omitted.\n"
-" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
-"                         Note that you can also exclude PORTDIR\n"
-"                         using this option.\n"
-"\n"
-" -a  --add-overlay       add an overlay to the update-process.\n"
-"\n"
-" -m  --override-method   override cache method for matching overlays.\n"
-"\n"
-"This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"
-msgstr ""
-"Aufruf: %s [Optionen]\n"
-"\n"
-" -h, --help              Ausgabe eines Hilfstexts\n"
-" -V, --version           Ausgabe der Versionsnummer\n"
-"     --dump              Ausgabe aller internen Variablen of stdout\n"
-"     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
-"     --print             Ausgabe eines expandierten Variablenwerts\n"
-"\n"
-" -q, --quiet             keine Ausgabe\n"
-"\n"
-" -o  --output            Ausgabe in eine anderes File als %s\n"
-"                         Außerdemm werden keine Rechte getestet.\n"
-" -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
-"                         aus. Man kann auch PORTDIR mit dieser\n"
-"                         Option ausschließen.\n"
-"\n"
-" -a  --add-overlay       Für Overlay zum Update-Process hinzu.\n"
-"\n"
-" -m  --override-method   Änder Cache-Methode für passenden Overlay.\n"
-"\n"
-"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
-"weitere Informationen.\n"
-
-#: src/update-eix.cc:249
-#, c-format
-msgid "%s must be a list of the form DIRECTORY METHOD\n"
-msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
-
-#: src/update-eix.cc:267
-#, c-format
-msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
-msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
-
-#: src/update-eix.cc:272
-#, c-format
-msgid "Adding virtual overlays from %s ..\n"
-msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
-
-#: src/update-eix.cc:277
-msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
-msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
-
-#: src/update-eix.cc:340
-msgid "Reading Portage settings ..\n"
-msgstr "Lese Portage-Konfiguration...\n"
-
-#: src/update-eix.cc:440
-#, c-format
-msgid "Excluded PORTDIR: %s\n"
-msgstr "Ausschluss von PORTDIR: %s\n"
-
-#: src/update-eix.cc:454
-#, c-format
-msgid "Excluded overlay %s\n"
-msgstr "Ausschluss von Overlay: %s\n"
-
-#: src/update-eix.cc:459
-#, c-format
-msgid "Building database (%s) ..\n"
-msgstr "Erzeuge Datenkbank (%s) ...\n"
-
-#: src/update-eix.cc:503
-#, c-format
-msgid "Excluding \"%s\" %s (cache: %s)\n"
-msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
-
-#: src/update-eix.cc:515
-#, c-format
-msgid "[%s] \"%s\" %s (cache: %s)\n"
-msgstr "[%s] \"%s\" %s (Cache: %s)\n"
-
-#: src/update-eix.cc:520
-msgid "     Reading "
-msgstr "     Lese "
-
-#: src/update-eix.cc:528
-msgid "aborted"
-msgstr "Abbruch"
-
-#: src/update-eix.cc:547
-msgid "Applying masks ..\n"
-msgstr "Maskiere Pakete...\n"
-
-#: src/update-eix.cc:561
-msgid "Calculating hash tables ..\n"
-msgstr "Berechne Hash-Tabellen...\n"
-
-#: src/update-eix.cc:565
-#, c-format
-msgid "Writing database file %s ..\n"
-msgstr "Schreibe Datenbankfile %s...\n"
-
-#: src/update-eix.cc:568
-msgid "Can't open the database file %r for writing (mode = 'wb')"
-msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
-
-#: src/update-eix.cc:581
-#, c-format
-msgid "Database contains %s packages in %s categories.\n"
-msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
-
-#: src/varsreader.cc:69
-msgid "failed to source %r"
-msgstr "Kann %r nicht sourcen"
-
-#: src/versionsort.cc:35
-#, c-format
-msgid "cannot determine version of %s"
-msgstr "kann Version von '%s' nicht bestimmen"
 
 #~ msgid "Filename argument must be nonempty"
 #~ msgstr "Filenamen-Argument darf nicht leer sein"

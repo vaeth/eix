@@ -8,13 +8,13 @@
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).
 
-. ./functions-eix.sh.in
+. ./eix-functions.sh.in
 ReadFunctions
 
 : ${OVERLAYPARENT:=/usr/portage/local}
 eixcachesname='eix-caches.tbz2'
 
-local_portage_configroot="`update-eix --print PORTAGE_CONFIGROOT`"
+local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
 Usage () {
@@ -28,13 +28,13 @@ The following commands are provided:
 
 update: Fetch the eix-caches of some layman overlays into a temporary file
         resp. into FILE and add them to the eix database.
-        To keep this data across update-eix calls, you might want to set
+        To keep this data across eix-update calls, you might want to set
         KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)
 fetch:  Only fetch the overlays into FILE.
 add:    Only add the overlays from FILE to the eix database.
 remove: Remove all temporarily added virtual overlays from the eix database;
         this is similar to
-        	KEEP_VIRTUALS=false update-eix
+        	KEEP_VIRTUALS=false eix-update
         but faster (without actual updating where possible).
 
 It is strongly recommended to use the update/fetch commands with very limited

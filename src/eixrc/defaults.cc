@@ -187,19 +187,19 @@ AddOption(BOOLEAN, "QUIETMODE",
 
 AddOption(BOOLEAN, "DIFF_ONLY_INSTALLED",
 	"false", _(
-	"If true, diff-eix will only consider version changes for installed packages."));
+	"If true, eix-diff will only consider version changes for installed packages."));
 
 AddOption(BOOLEAN, "DIFF_NO_SLOTS",
 	"false", _(
-	"If true, diff-eix will not consider slots for version changes."));
+	"If true, eix-diff will not consider slots for version changes."));
 
 AddOption(BOOLEAN, "DIFF_SEPARATE_DELETED",
 	"true", _(
-	"If false, diff-eix will mix deleted and changed packages"));
+	"If false, eix-diff will mix deleted and changed packages"));
 
 AddOption(BOOLEAN, "DIFF_PRINT_HEADER",
 	"true", _(
-	"Should diff-eix print a header info line?"));
+	"Should eix-diff print a header info line?"));
 
 AddOption(BOOLEAN, "NO_RESTRICTIONS",
 	"false", _(
@@ -231,7 +231,7 @@ AddOption(BOOLEAN, "PRINT_BUGS",
 AddOption(BOOLEAN, "DIFF_PRINT_INSTALLED",
 	"true", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines whether diff-eix will output installed versions."));
+	"It defines whether eix-diff will output installed versions."));
 
 AddOption(STRING, "COLOR_TITLE",
 	"green",
@@ -308,32 +308,32 @@ AddOption(STRING, "DIFF_COLOR_INST_STABILIZE",
 AddOption(STRING, "DIFF_COLOR_BETTER",
 	"yellow,1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"better version\" tags (diff-eix)."));
+	"It defines the color used for \"better version\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_WORSE",
 	"red,1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"worse version\" tags (diff-eix)."));
+	"It defines the color used for \"worse version\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_NEW_TAG",
 	"%{DIFF_COLOR_NEW}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"new package\" tags (diff-eix)."));
+	"It defines the color used for \"new package\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_NEW",
 	"%{COLOR_TITLE},1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"new package\" separators (diff-eix)."));
+	"It defines the color used for \"new package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_DELETE",
 	"red,1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"deleted package\" separators (diff-eix)."));
+	"It defines the color used for \"deleted package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_CHANGED",
 	"yellow", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"changed package\" separators (diff-eix)."));
+	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
 AddOption(STRING, "COLOR_INST_TAG",
 	"%{COLOR_TITLE},1;inverse", _(
@@ -420,17 +420,17 @@ AddOption(STRING, "DIFF_CHAR_INST_STABILIZE",
 AddOption(STRING, "DIFF_CHAR_NEW",
 	"N", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for new packages (diff-eix)."));
+	"It defines the character printed for new packages (eix-diff)."));
 
 AddOption(STRING, "DIFF_CHAR_BETTER",
 	">", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the character used for \"better version\" tags (diff-eix)."));
+	"It defines the character used for \"better version\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_CHAR_WORSE",
 	"\\<", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the character used for \"worse version\" tags (diff-eix)."));
+	"It defines the character used for \"worse version\" tags (eix-diff)."));
 
 AddOption(STRING, "TAG_UPGRADE",
 	"(%{COLOR_UPGRADE})%{CHAR_UPGRADE}()", _(
@@ -469,17 +469,17 @@ AddOption(STRING, "TAG_STABILIZE",
 AddOption(STRING, "TAG_NEW",
 	"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}()", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for new packages (diff-eix)."));
+	"It defines the tag printed for new packages (eix-diff)."));
 
 AddOption(STRING, "TAG_BETTER",
 	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}()", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the tag used for \"better version\" (diff-eix)."));
+	"It defines the tag used for \"better version\" (eix-diff)."));
 
 AddOption(STRING, "TAG_WORSE",
 	"(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}()", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the tag used for \"worse version\" (diff-eix)."));
+	"It defines the tag used for \"worse version\" (eix-diff)."));
 
 AddOption(STRING, "STRING_PLAIN_INSTALLED",
 	"%{STRING_PLAIN_UNINSTALLED}", _(
@@ -494,17 +494,17 @@ AddOption(STRING, "STRING_PLAIN_UNINSTALLED",
 AddOption(STRING, "DIFF_STRING_NEW",
 	">>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"new package\" separators (diff-eix)."));
+	"It defines the string used for \"new package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_STRING_DELETE",
 	"\\<\\<", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"deleted package\" separators (diff-eix)."));
+	"It defines the string used for \"deleted package\" separators (eix-diff)."));
 
 AddOption(STRING, "DIFF_STRING_CHANGED",
 	"==", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"changed package\" separators (diff-eix)."));
+	"It defines the string used for \"changed package\" separators (eix-diff)."));
 #endif
 
 #if (DEFAULT_PART == 2)
@@ -628,7 +628,7 @@ AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
 	"{installedversionsshort}%{INSTALLEDVERSIONS_COMPACT}; {}"
 	"", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for diff-eix for installed versions."));
+	"It defines the format for eix-diff for installed versions."));
 
 AddOption(STRING, "FORMAT_NAME",
 	"{system}"
@@ -742,12 +742,12 @@ AddOption(BOOLEAN, "NOBEST_CHANGE",
 AddOption(BOOLEAN, "DIFF_NOBEST",
 	"false", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"If true, diff-eix prints no version if none is installable."));
+	"If true, eix-diff prints no version if none is installable."));
 
 AddOption(BOOLEAN, "DIFF_NOBEST_CHANGE",
 	"false", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"If true, diff-eix prints no versions if all installable vanished."));
+	"If true, eix-diff prints no versions if all installable vanished."));
 
 AddOption(STRING, "FORMAT_NOBEST",
 	"(%{COLOR_MASKED})"
@@ -812,7 +812,7 @@ AddOption(STRING, "DIFF_FORMAT_BEST",
 		"{}"
 	"{}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the diff-eix format for the best version(s)."));
+	"It defines the eix-diff format for the best version(s)."));
 
 AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
 	"{bestshort}"
@@ -829,7 +829,7 @@ AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
 		"{}"
 	"{}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the diff-eix format for the best version(s) in case of changes."));
+	"It defines the eix-diff format for the best version(s) in case of changes."));
 
 AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
 	"%{?DIFF_PRINT_INSTALLED}"
@@ -842,7 +842,7 @@ AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
 	"{}"
 	"() -> %{DIFF_FORMAT_BEST_CHANGE}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the diff-eix format for changed versions."));
+	"It defines the eix-diff format for changed versions."));
 
 AddOption(STRING, "FORMAT_OVERLAYKEY",
 	"{overlaykey} <overlaykey>{}", _(
@@ -887,12 +887,12 @@ AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
 AddOption(STRING, "DIFF_FORMATLINE_BEST",
 	"\\(%{DIFF_FORMAT_BEST}())", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the diff-eix line for the best versions/slots."));
+	"It defines the eix-diff line for the best versions/slots."));
 
 AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
 	"\\(%{DIFF_FORMAT_CHANGED_VERSIONS})", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the diff-eix line for changed versions."));
+	"It defines the eix-diff line for changed versions."));
 
 AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{!PRINT_ALWAYS}{marked}%{}"
@@ -1001,7 +1001,7 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 AddOption(STRING, "DIFF_FORMATLINE",
 	"%{FORMAT_OVERLAYKEY}: <description>", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for diff-eix after the versions."));
+	"It defines the format for eix-diff after the versions."));
 #endif
 
 #if (DEFAULT_PART == 3)
@@ -1065,35 +1065,35 @@ AddOption(STRING, "DIFF_FORMAT_ALL_NEW",
 	"%{DIFF_FORMATLINE_BEST}"
 	"%{DIFF_FORMATLINE}", _(
 	"This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
-	"It defines the format used for new packages (diff-eix)."));
+	"It defines the format used for new packages (eix-diff)."));
 
 AddOption(STRING, "DIFF_FORMAT_ALL_DELETE",
 	"%{DIFF_FORMATLINE_NAME_DELETE}"
 	"%{DIFF_FORMATLINE_BEST}"
 	"%{DIFF_FORMATLINE}", _(
 	"This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
-	"It defines the format used for packages that were deleted (diff-eix)."));
+	"It defines the format used for packages that were deleted (eix-diff)."));
 
 AddOption(STRING, "DIFF_FORMAT_ALL_CHANGED",
 	"%{DIFF_FORMATLINE_NAME_CHANGED}"
 	"%{DIFF_FORMATLINE_CHANGED_VERSIONS}"
 	"%{DIFF_FORMATLINE}", _(
 	"This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
-	"It defines the format used for packages that were changed (diff-eix)."));
+	"It defines the format used for packages that were changed (eix-diff)."));
 
 AddOption(STRING, "DIFF_FORMAT_NEW",
 	"%{DIFF_FORMAT_ALL_NEW}", _(
-	"The format used for new packages (diff-eix).\n"
+	"The format used for new packages (eix-diff).\n"
 	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."));
 
 AddOption(STRING, "DIFF_FORMAT_DELETE",
 	"%{DIFF_FORMAT_ALL_DELETE}", _(
-	"The format used for packages that were deleted (diff-eix).\n"
+	"The format used for packages that were deleted (eix-diff).\n"
 	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."));
 
 AddOption(STRING, "DIFF_FORMAT_CHANGED",
 	"%{DIFF_FORMAT_ALL_CHANGED}", _(
-	"The format used for packages that were changed (diff-eix).\n"
+	"The format used for packages that were changed (eix-diff).\n"
 	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."));
 
 AddOption(STRING, "FORMAT_INSTALLATION_DATE",
@@ -1406,7 +1406,7 @@ AddOption(BOOLEAN, "EIX_PRINT_IUSE",
 AddOption(BOOLEAN, "DIFF_PRINT_IUSE",
 	"false", _(
 	"This variable is only used for delayed substitution.\n"
-	"If false, no IUSE data is printed for diff-eix."));
+	"If false, no IUSE data is printed for eix-diff."));
 
 AddOption(BOOLEAN, "PRINT_IUSE",
 	"%{*PRINT_IUSE}", _(

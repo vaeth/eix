@@ -7,9 +7,9 @@ $(MYSRC)/eix-sync.sh:
 $(MYSRC)/eix-test-obsolete.sh:
 	( cd $(MYSRC) && $(MAKE) eix-test-obsolete.sh )
 
-$(MYSRC)/update-eix-layman.sh:
-	( cd $(MYSRC) && $(MAKE) update-eix-layman.sh )
+$(MYSRC)/eix-layman.sh:
+	( cd $(MYSRC) && $(MAKE) eix-layman.sh )
 
-$(MYSRC)/update-eix-remote.sh:
-	( cd $(MYSRC) && $(MAKE) update-eix-remote.sh )
+$(MYSRC)/eix-remote.sh:
+	( cd $(MYSRC) && $(MAKE) eix-remote.sh )
 

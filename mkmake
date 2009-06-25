@@ -2,14 +2,15 @@
 
 export LC_ALL=C
 
-Usage() {
+Usage () {
 	printf "%s\n" "Usage: ${0##*/} [options] args-for-make
 Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
   -0  Do not pass --add-extra-cache=yes to ./configure
-  -1/2/3 Generate 1/2/3 binaries
+  -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
+  -4  Enable separate tools
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
   -u  Define NOT_FULL_USE
   -s  With sqlite
@@ -20,10 +21,15 @@ Available options are
   -C  Avoid CCACHE
   -jX Use -jX (currently ${jarg})
   -r  Change also directory permissions to root (for fakeroot-ng)"
-	exit ${1}
+	exit ${1:-1}
 }
 
-Die() {
+Info () {
+	${quiet} && return
+	printf "%s\n" "${*}"
+}
+
+Die () {
 	printf "%s: %s\n" "${0##*/}" "${1}"
 	exit ${2:-1}
 }
@@ -37,7 +43,7 @@ SetCcache () {
 	esac
 	if [ -n "${PATH}" ]
 	then
-		echo "PATH=${i}:${PATH}"
+		Info "PATH=${i}:\${PATH}"
 		PATH="${i}:${PATH}"
 	fi
 	[ -n "${CCACHE_DIR}" ] && return
@@ -48,7 +54,7 @@ SetCcache () {
 			&& test -d "${j}" && break
 	done
 	[ -z "${j}" ] && return
-	${quiet} || echo "CCACHE_DIR=${j}"
+	Info "CCACHE_DIR=${j}"
 	export CCACHE_DIR
 	CCACHE_DIR="${j}"
 }
@@ -71,11 +77,12 @@ OPTIND=1
 while getopts 'q0123nepusSbBcrj:?hH' opt
 do
 case "${opt}" in
-	q) quiet='>/dev/null 2>&1';;
+	q) quiet=true;;
 	0) extra_cache='';;
 	1) separate='--disable-separate-binaries';;
 	2) separate='--enable-separate-update';;
 	3) separate='--enable-separate-binaries';;
+	4) separate='--enable-separate-tools';;
 	n) earlystop=true;;
 	e) keepenv=true;;
 	p) pedantic=true;;
@@ -88,7 +95,7 @@ case "${opt}" in
 	C) use_ccache=false;;
 	r) use_chown=true;;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
-	*) Usage 1;;
+	*) Usage 0;;
 esac
 done
 if [ ${OPTIND} -gt 1 ]
@@ -140,7 +147,7 @@ then
 	fi
 	${safeflags} || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
 fi
-${quiet} || echo "CFLAGS=${CFLAGS}
+Info "CFLAGS=${CFLAGS}
 CXXFLAGS=${CXXFLAGS}
 LDFLAGS=${LDFLAGS}"
 if ! test -e Makefile

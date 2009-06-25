@@ -8,7 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #define EIX_BINARY 1
-#define DIFF_EIX_BINARY 1
-#define UPDATE_EIX_BINARY 1
+#define DIFF_BINARY 1
+#define UPDATE_BINARY 1
 #define VERSIONSORT_BINARY 1
 #include "main.cc"

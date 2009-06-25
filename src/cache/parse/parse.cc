@@ -14,7 +14,7 @@
 
 #include <portage/package.h>
 #include <portage/packagetree.h>
-#include <varsreader.h>
+#include <eixTk/varsreader.h>
 
 #include <map>
 

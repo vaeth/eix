@@ -20,7 +20,7 @@
 // You must define - in config.h, by -D... or by a wrapper file -
 // one or several of
 //   EIX_BINARY
-//   DIFF_EIX_BINARY
+//   DIFF_BINARY
 //   UPDATE_BINARY
 //   VERSIONSORT_BINARY
 // to build the corresponding functionality into the generated binary.
@@ -34,7 +34,7 @@ int run_eix(int argc, char *argv[]);
 #define USE_BINARY run_eix
 #endif
 
-#ifdef UPDATE_EIX_BINARY
+#ifdef UPDATE_BINARY
 int run_update_eix(int argc, char *argv[]);
 #ifdef USE_BINARY
 #define BINARY_COLLECTION 1
@@ -43,7 +43,7 @@ int run_update_eix(int argc, char *argv[]);
 #endif
 #endif
 
-#ifdef DIFF_EIX_BINARY
+#ifdef DIFF_BINARY
 int run_diff_eix(int argc, char *argv[]);
 #ifdef USE_BINARY
 #undef BINARY_COLLECTION
@@ -126,12 +126,12 @@ sanitize_filename(string &s)
 static int
 run_program(int argc, char *argv[])
 {
-#ifdef DIFF_EIX_BINARY
+#ifdef DIFF_BINARY
 	if((program_name.find("diff") != string::npos) ||
 		(program_name.find("DIFF") != string::npos))
 		return run_diff_eix(argc, argv);
 #endif
-#ifdef UPDATE_EIX_BINARY
+#ifdef UPDATE_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
 	if((program_name.find("update") != string::npos) ||
 		(program_name.find("UPDATE") != string::npos))

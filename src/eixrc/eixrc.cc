@@ -9,7 +9,7 @@
 
 #include "eixrc.h"
 #include <config.h>
-#include <varsreader.h>
+#include <eixTk/varsreader.h>
 #include <eixTk/exceptions.h>
 #include <portage/conf/portagesettings.h>
 
@@ -473,7 +473,7 @@ EixRc::read_undelayed(set<string> &has_reference)
 			if(have_star) {
 				join_delayed(string(EIX_VARS_PREFIX) + s,
 					default_keys, tempmap);
-				join_delayed(string(DIFF_EIX_VARS_PREFIX) + s,
+				join_delayed(string(DIFF_VARS_PREFIX) + s,
 					default_keys, tempmap);
 			}
 			else

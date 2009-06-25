@@ -13,37 +13,37 @@
 An I<EXPRESSION> consists of local options (described below) and a pattern
 (which may be omitted, i.e. empty).
 
-.B update-eix
-[I<common options>] [I<update-eix options>]
+.B eix-update
+[I<common options>] [I<eix-update options>]
 
-.B diff-eix
+.B eix-diff
 [I<common options>] I<OLD-CACHE> [I<NEW-CACHE>]
 
 .B eix-sync
 
 .BR "eix-test-obsolete " [ detail | repo | no-repo | I<check_always_overlays> ]
 
-.B update-eix-remote
+.B eix-remote
 
-.B update-eix-layman
+.B eix-layman
 
-.B functions-eix.sh
+.B eix-functions.sh
 
 .B versionsort
 .\" }}}
 
 .\" {{{ DESCRIPTION
 .SH "DESCRIPTION"
-B<update-eix> generates a binary cache from your local portage-tree and overlays.
+B<eix-update> generates a binary cache from your local portage-tree and overlays.
 B<eix> searches this cache for packages that match the criteria you specified.
-B<diff-eix> compares two binary caches and finds packages that were added, removed or for
+B<eix-diff> compares two binary caches and finds packages that were added, removed or for
 which the highest stable versions has changed.
 
 All of these programs and scripts read the configuration files described later.
 B<eix-sync> has an additional separate configuration file.
 
 B<eix-sync> can sync the portage/overlay trees and compare them with the old cache
-using B<diff-eix>.
+using B<eix-diff>.
 To get more help on B<eix-sync> call B<eix-sync -h> and see the documentation
 of I</etc/eix-sync.conf> below.
 
@@ -66,20 +66,20 @@ without repository files, you might want to set B<CHECK_INSTALLED_OVERLAYS=true>
 If B<eix-test-obsolete> is called with any argument not mentioned above,
 it will temporarily set B<CHECK_INSTALLED_OVERLAYS=true> for your convenience.
 
-B<update-eix-remote> can sync an eix database from an external server and
+B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
-Note that to keep such remote data across update-eix calls
+Note that to keep such remote data across eix-update calls
 you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
-To get more help on B<update-eix-remote> call B<update-eix-remote -h>
+To get more help on B<eix-remote> call B<eix-remote -h>
 and see the documentation of I</etc/eix-remote.conf> below.
 
-B<update-eix-layman> can add or remove local layman overlays to the current database.
-To get more help on B<update-eix-layman> call B<update-eix-layman -h>.
+B<eix-layman> can add or remove local layman overlays to the current database.
+To get more help on B<eix-layman> call B<eix-layman -h>.
 
-B<functions-eix.sh> are helper functions used by B<eix-sync>,
-B<update-eix-remote> and B<update-eix-layman>.
+B<eix-functions.sh> are helper functions used by B<eix-sync>,
+B<eix-remote> and B<eix-layman>.
 You might want to use them for your own similar scripts.
-Note that immediately after sourcing B<functions-eix.sh> you will probably
+Note that immediately after sourcing B<eix-functions.sh> you will probably
 want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
 with the corresponding I<ARGS>.
 
@@ -92,19 +92,19 @@ Details can be found near the end of the manpage.
 .SH "OPTIONS"
 .\" {{{ -------- Common options
 .SS Common options
-These options are common to B<eix>, B<diff-eix>, and B<update-eix>.
+These options are common to B<eix>, B<eix-diff>, and B<eix-update>.
 .TP
 .BR -h ", " --help
 Print a help screen and exit.
 .TP
-.BR -Q ", " --quick "   (toggle)    (not for B<update-eix>)"
+.BR -Q ", " --quick "   (toggle)    (not for B<eix-update>)"
 Do (not) read the slots of installed versions which cannot be guessed
 (i.e. installed versions of packages with at least two different slots
 for which the installed version is not in the database anymore).
-Note that with this option, eix and diff-eix might report false positives
+Note that with this option, eix and eix-diff might report false positives
 for up-/downgrade recommendations for these packages.
 .TP
-.BR --care "    (not for B<update-eix>)"
+.BR --care "    (not for B<eix-update>)"
 This deactivates --quick, and moreover, slots of installed version are
 always read instead of relying on the guess of the slot.
 This will in particular make sure that you get an up-/downgrade
@@ -629,11 +629,11 @@ Define the compact layout for results as I<FORMAT>
 Define the verbose layout for results as I<FORMAT>
 .\" }}}
 .\" }}}
-.\" {{{ -------- Options for update-eix
-.SS Special options for B<update-eix>
+.\" {{{ -------- Options for eix-update
+.SS Special options for B<eix-update>
 .TP
 .BR  -o " " I<outputfile> ", " --output " " I<outputfile>
-With this option, B<update-eix> will write the eix database to I<outputfile>
+With this option, B<eix-update> will write the eix database to I<outputfile>
 instead of B<@EIX_CACHEFILE@>, without testing or changing any permissions
 of that file.
 .TP
@@ -1129,7 +1129,7 @@ until B<emerge --sync> was (successfully) called.
 .TP
 .BI @ command
 Adds a hook for I<command>; the actual execution of I<command> is postponed
-until B<emerge --sync> and the subsequent B<update-eix> was (successfully) called.
+until B<emerge --sync> and the subsequent B<eix-update> was (successfully) called.
 .TP
 Some examples of useful lines in B</etc/eix-sync.conf>:
 .TP
@@ -1149,7 +1149,7 @@ to use B<emerge --regen> instead of B<emerge --metadata>.
 .TP
 .B @egencache --repo=local --update
 Update the metadata cache of the overlay with repository name "local"
-before update-eix is called but after calling emerge --sync.
+before eix-update is called but after calling emerge --sync.
 This can make sense if you want to use cache method B<metadata-flat>
 for that overlay and want to make sure that this metadata cache is up-to-date.
 The disadvantage is that this B<egencache> command is executed even if
@@ -1165,33 +1165,33 @@ although the metadata cache is broken or not contained in that repository.
 .B !exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
 Send the output to a logfile (with correct permissions).
 The "true" at the end is to force continuing even if the "chown" failed.
-If you do not want to redirect the output of the final B<diff-eix>, you might
+If you do not want to redirect the output of the final B<eix-diff>, you might
 want to combine this with
 .TP
 .B @@exec >/dev/tty
-Output the B<diff-eix> stat to the terminal, even if redirection occurred.
+Output the B<eix-diff> stat to the terminal, even if redirection occurred.
 .TP
 .B @@exit 0
-Do not execute B<diff-eix> at all.
+Do not execute B<eix-diff> at all.
 .TP
 .B !!export FORCE_USECOLORS="${FORCE_USECOLORS:-true}"
 Unless FORCE_USECOLORS is set differently in your environment, eix output
 will be colored even if you use redirection.
 .TP
-.B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"$(hostname)-sh"
+.B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"`hostname`-sh"
 .TP
-.B @update-eix-remote update /var/cache/remote-cache.tbz2
+.B @eix-remote update "`portageq portdir`/local/layman/eix-caches.tar.bz2"
 (The last argument can also be omitted if you do not want a local copy
-of the data.)
+of the data in the /usr/portage/local/layman directory.)
 .TP
-.B @@update-eix-remote fetch /var/cache/remote-cache.tbz2
+.B @@eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
-.B @update-eix-remote add /var/cache/remote-cache.tbz2
+.B @eix-remote add /var/cache/remote-cache.tbz2
 .\" }}}
 
 .\" {{{ -------- /etc/eix-remote.conf
 .SS @SYSCONFDIR@/eix-remote.conf
-This file can contain default options for B<update-eix-remote>.
+This file can contain default options for B<eix-remote>.
 The options will be evaluated.
 You can also store options in the environment variable EIX_REMOTE_OPTS
 which will also be evaluated.
@@ -1245,7 +1245,7 @@ This must be used if you need B<%{> in a variable text
 .BI * VARIABLE
 If a delayed reference uses a variable name starting with B<*>,
 this B<*> is replaced by B<EIX_> or B<DIFF_>, depending on whether
-it is used from B<eix>/B<update-eix> or from B<diff-eix>.
+it is used from B<eix>/B<eix-update> or from B<eix-diff>.
 This way you can have different defaults for these programs.
 
 For example, the delayed reference B<%{*>I<VARIABLE>B<}> will insert
@@ -1378,7 +1378,7 @@ subsequent variables (if their default is not changed);
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
-.B @BINDIR@/functions-eix.sh
+.B @BINDIR@/eix-functions.sh
 
 .B ~/.eixrc
 
@@ -1541,11 +1541,11 @@ Otherwise, your current world file (if it is readable) overrides that informatio
 
 .TP
 .BR SKIP_PERMISSION_TESTS "  " (true / false)
-If B<true>, update-eix will not check for groups and permissions.
+If B<true>, eix-update will not check for groups and permissions.
 You will probably want to set this to B<true> if you have a more sophisticated
 permission setup on your system (NSS/LDAP, acl, pam-related stuff, ...)
 in which case eix might guess wrong permissions.
-The only negative side effect is that update-eix does not break with an error
+The only negative side effect is that eix-update does not break with an error
 at the beginning but will stop with a (perhaps misleading) error message when
 trying to access the cache file without proper permissions.
 
@@ -1561,15 +1561,15 @@ Note that ebuild.sh uses these variables to calculate the PATH, so this may be a
 
 .TP
 .BR QUICKMODE "  " (true / false)
-If true, eix and diff-eix will use B<--quick> by default.
+If true, eix and eix-diff will use B<--quick> by default.
 
 .TP
 .BR CAREMODE "  " (true / false)
-If true, eix and diff-eix will use B<--care>.
+If true, eix and eix-diff will use B<--care>.
 
 .TP
 .BR QUIETMODE "  " (true / false)
-If true, eix and diff-eix will use B<--quiet> by default.
+If true, eix and eix-diff will use B<--quiet> by default.
 
 .TP
 .BR DEFAULT_FORMAT "  " (normal / compact / verbose)
@@ -1577,20 +1577,20 @@ Defines whether B<--compact> or B<--verbose> is on by default.
 
 .TP
 .BR DIFF_ONLY_INSTALLED "  " (true / false)
-If true, diff-eix will only consider version changes for installed packages.
+If true, eix-diff will only consider version changes for installed packages.
 
 .TP
 .BR DIFF_NO_SLOTS "  " (true / false)
-If true, diff-eix will not consider slots for version changes.
+If true, eix-diff will not consider slots for version changes.
 
 .TP
 .BR DIFF_SEPARATE_DELETED "  " (true / false)
-If true, diff-eix will print deleted packages in a section on their own.
-Otherwise, diff-eix will mix deleted and changed packages "alphabetically".
+If true, eix-diff will print deleted packages in a section on their own.
+Otherwise, eix-diff will mix deleted and changed packages "alphabetically".
 
 .TP
 .BR DIFF_PRINT_HEADER "  " (true / false)
-If true, diff-eix will print a header info line.
+If true, eix-diff will print a header info line.
 
 .TP
 .BR NO_RESTRICTIONS "  " (true / false)
@@ -1619,7 +1619,7 @@ to the default definition when you change the definition of B<FORMAT>.
 .TP
 .BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (string)
 Define the format for packages that were added, removed or for which the highest
-stable versions has changed. This is only used by B<diff-eix>.
+stable versions has changed. This is only used by B<eix-diff>.
 See B<FORMATSTRING>.
 Since eix-0.13.4 these variables just expand to delayed substitution of the
 variables B<DIFF_FORMAT_ALL_NEW>, B<DIFF_FORMAT_ALL_DELETE>, or
@@ -1761,12 +1761,12 @@ Set default levenshtein-distance.
 .TP
 .B EXCLUDE_OVERLAY "  " "(string list)"
 Set a list of wildcard patterns for overlay paths that are excluded from the index.
-See the B<update-eix> option B<--exclude-overlay>.
+See the B<eix-update> option B<--exclude-overlay>.
 
 .TP
 .B ADD_OVERLAY "  " "(string list)"
 Set a list of overlays that are added to the index.
-See the B<update-eix> option B<--add-overlay>.
+See the B<eix-update> option B<--add-overlay>.
 
 .TP
 .BR EXPORT_PORTDIR_OVERLAY "  " (true / false)
@@ -1835,7 +1835,7 @@ The following cache methods are available:
 .BR metadata-flat " or " metadata-flat:I<PATH>
 Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache).
 This is the default method which will always work if the portage tree is readable
-when you run update-eix.
+when you run eix-update.
 
 If you provide I<PATH>, it overrides the above path; in this case, it must be
 the full path (i.e. no prefix is used). You might want to provide I<PATH> if
@@ -1857,7 +1857,7 @@ I<http://gentoo-wiki.com/TIP_speed_up_portage_with_sqlite>
 which might be still accessible at
 I<http://gentoo-wiki.info/TIP_speed_up_portage_with_sqlite>).
 Note that in contrast to the default B<metadata> cache method you must
-use B<emerge --metadata> before you call B<update-eix> with this method.
+use B<emerge --metadata> before you call B<eix-update> with this method.
 
 Since the support of this cache method requires B<sqlite> to be installed,
 this method is not necessarily compiled in.
@@ -1871,7 +1871,7 @@ Use this if you are using <portage-2.1 and the cdb-module from
 I<http://forums.gentoo.org/viewtopic-t-261580.html> as
 cache-backend for portage (cdb with cpickle'd dictionaries as values).
 Note that in contrast to the default B<metadata-*> cache methods you must
-use B<emerge --metadata> before you call B<update-eix> with this method.
+use B<emerge --metadata> before you call B<eix-update> with this method.
 .TP
 .SS
 .BR flat " or " flat:I<PATH>
@@ -1889,9 +1889,9 @@ This is the case if you use portage-2.1 with the default backend.
 
 If you are using >=portage-2.1 and the default backend,
 you might want to use this one if you do not have access to the portage
-tree when you run update-eix.
+tree when you run eix-update.
 Note that in contrast to the default B<metadata-*> cache methods you must
-run B<emerge --metadata> before you call B<update-eix> with this method.
+run B<emerge --metadata> before you call B<eix-update> with this method.
 You will probably want to use a corresponding option in eix-sync in this case.
 .TP
 .SS
@@ -1955,14 +1955,14 @@ this is the most compatible but also the slowest method.
 The information is obtained via "/usr/bin/ebuild ... depend" from the ebuild.
 Since all ebuilds will get executed by bash, this may be a security risk
 if you do not trust all ".ebuild" scripts or your environment variables.
-B<update-eix> will attempt to change the user/group to
+B<eix-update> will attempt to change the user/group to
 B<EBUILD_USER>/B<EBUILD_GROUP> (using B<EBUILD_UID>/B<EBUILD_GID> if the former
 makes no sense) before executing the ebuild.
 Intentionally, the environment is not cleared before the actual execution
 so that you can pass further variables to the ebuild.
 However, this can also lead to unexpected behaviour or even a security risk
 since many bash scripts may be tricked with strange environments.
-Use B<env -i update-eix> when this causes problems.
+Use B<env -i eix-update> when this causes problems.
 
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 
@@ -2002,7 +2002,7 @@ It has the same security risks as B<ebuild>/B<ebuild*>, of course.
 .TP
 .SS
 .BR eix "  or   "  eix:I<FILE> "  or  " eix:I<FILE>:I<overlay>
-Use the cachefile I<FILE> previously generated by B<update-eix>.
+Use the cachefile I<FILE> previously generated by B<eix-update>.
 If omitted or empty, I<FILE> defaults to @EIX_CACHEFILE@.
 
 As for all other cache methods, only those categories enabled by
@@ -2037,13 +2037,13 @@ This cache method is useful if I<FILE> contains information for some
 overlay directory for which the corresponding profile/categories on
 the local machine is unknown or not necessarily up-to-date.
 
-This is used for B<update-eix-remote>.
+This is used for B<eix-remote>.
 
 Note that in particular with B<PORTDIR_CACHE_METHOD="eix*::~">,
 the overlay data is by default just "copied" from the previous eix cachefile.
 .TP
 .BR KEEP_VIRTUALS " " (true / false)
-If true, update-eix will keep all virtual overlays from the previous database
+If true, eix-update will keep all virtual overlays from the previous database
 if that existed.
 This has the same effect as appending for each virtual overlay of the previous
 database the entry "I<overlay-name>" to B<ADD_OVERLAY> and appending a
@@ -2067,7 +2067,7 @@ match as if B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.
 .TP
 .BR RECOMMEND_LOCAL_MODE " " (+ "  or " local / - " or " non-local "/anything else" )
 If this variable is B<+> / B<-> the upgrade/downgrade recommendations
-as well as in diff-eix the tests for version changes will act as is
+as well as in eix-diff the tests for version changes will act as is
 B<LOCAL_PORTAGE_CONFIG> was set to B<true> / B<false>.
 .TP
 .BR UPGRADE_TO_HIGHEST_SLOT " " (true / false)
@@ -2486,7 +2486,7 @@ B<TEST_FOR_NONEXISTENT>, B<NONEXISTENT_IF_MASKED>, B<NONEXISTENT_IF_OTHER_OVERLA
 This is the binary database for eix.
 The path can be changed with the B<EIX_CACHEFILE> variable
 (which by default honours B<EPREFIX> via delayed reference).
-But only when the unmodified path @EIX_CACHEFILE@ is used, B<update-eix>
+But only when the unmodified path @EIX_CACHEFILE@ is used, B<eix-update>
 will perform certain permission tests in advance.
 .\" }}}
 .\" }}}
@@ -2561,7 +2561,7 @@ B<EIX_LOCAL_SETS_ADD=">I</path/to/overlay1/sets> I</path/to/overlay2/sets> I<...
 
 into /etc/eixrc (see the description of B<EIX_LOCAL_SETS> above).
 
-diff-eix does never consider /etc/portage/profile. (Reason: The saved database
+eix-diff does never consider /etc/portage/profile. (Reason: The saved database
 contains only the masking state according to the original profile, but not the
 profile itself.
 On the other hand, /etc/portage/profile can only be interpreted when the
@@ -2596,13 +2596,27 @@ On the other hand, there are still many things which cannot be configured...
 B<eix> was formerly known as B<portagedb>. The name was changed because a part of
 portage is also called portagedb, which was a bit confusing for everyone.
 
-The functionality of update-eix was once triggered by using the -u switch on eix.
+The functionality of eix-update was once triggered by using the -u switch on eix.
 It was than separated to provide better maintainability.
-Thus update-eix came to life.
+Thus B<update-eix> came to life.
 Meanwhile, it is the same executable with functionality distinguished by its call name.
+and the original name update-eix was renamed into B<eix-update>.
+
+Also B<eix-diff> was previously called B<diff-eix>,
+B<eix-remote> was previously called B<update-eix-remote>,
+B<eix-layman> was previously called B<update-eix-layman>, and
+B<eix-functions.sh> was previously called B<functions-eix.sh> (and earlier even B<update-eix-functions.sh>.
+The reason for all these renamings is to have a more consistent naming scheme:
+All programs belonging to eix now start with eix-* (with the exception of
+B<versionsort> which is more or less just an independent tool).
+If you cannot get accustomed to this new naming scheme or have scripts depending
+on the old names, you can use symbolic links for the original names;
+this is explicitly supported and is not intended to be deprecated.
+Only such symbolic links are not installed anymore by default, because
+new users will not need them.
 
 Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
-reasonable anymore to use different variable names for eix and diff-eix.
+reasonable anymore to use different variable names for eix and eix-diff.
 Hence, all corresponding B<DIFF_*> variables have vanished.
 
 The cache method B<metadata-flat> was previously just called B<metadata>.
@@ -2610,8 +2624,8 @@ The cache method B<assign> was previously called B<backport> or B<portage-2.1>.
 The cache method B<flat> had previously the name B<portage-2.0> which was even preferred.
 Anyway, the obsolete names are still supported.
 
-portage-2.1 and portage-2.1.1 doesn't remove the old dep-cache, thus eix does
-always find packages that are not in portage anymore if the B<flat>/B<assign>
+portage-2.1 and portage-2.1.1 doesn't remove the old dep-cache, thus eix might
+find packages that are not in portage anymore if the B<flat>/B<assign>
 cache method is used.
 To circumvent this, eix-sync used to delete the old cache
 (rm -rf /var/cache/edb/dep/*).
@@ -2627,9 +2641,6 @@ deprecated gensync if you want to.
 eix-sync no longer supports logging; options -v and -V have been removed.
 This avoids problems like no visible output with EMERGE_DEFAULT_OPTS=--ask.
 You should now use redirection when you want to use eix-sync in a cronjob.
-
-B<functions-eix.sh> was previously called <update-eix-functions.sh>;
-however, the latter name was misleading since most are general helper functions.
 
 The mechanism described now by B<DEFAULT_MATCH_FIELD> has changed.
 The previous (less powerful) B<MATCH_.*_IF> and B<MATCH_ORDER> variables

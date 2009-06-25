@@ -10,7 +10,7 @@
 #include "utils.h"
 
 #include "config.h"
-#include <global.h>
+#include <eixrc/global.h>
 #include <eixTk/exceptions.h>
 
 #include <algorithm>

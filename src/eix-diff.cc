@@ -14,7 +14,7 @@
 #include <config.h>
 #include <main/main.h>
 
-#include <global.h>
+#include <eixrc/global.h>
 #include <eixTk/argsreader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
@@ -122,7 +122,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 	if(!io::read_header(fp, *header)) {
 		fclose(fp);
 		cerr << eix::format(_(
-			"%s was created with an incompatible update-eix:\n"
+			"%s was created with an incompatible eix-update:\n"
 			"It uses database format %s (current is %s)."))
 			% file % (header->version) % DBHeader::current
 			<< endl;
@@ -258,7 +258,7 @@ run_diff_eix(int argc, char *argv[])
 
 	format_for_new.no_color   = (isatty(1) != 1);
 
-	EixRc &eixrc = get_eixrc(DIFF_EIX_VARS_PREFIX);
+	EixRc &eixrc = get_eixrc(DIFF_VARS_PREFIX);
 
 	cli_quick = eixrc.getBool("QUICKMODE");
 	cli_care  = eixrc.getBool("CAREMODE");

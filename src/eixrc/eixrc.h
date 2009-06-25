@@ -16,7 +16,7 @@
 #include <iostream>
 
 #define EIX_VARS_PREFIX "EIX_"
-#define DIFF_EIX_VARS_PREFIX "DIFF_"
+#define DIFF_VARS_PREFIX "DIFF_"
 
 class EixRcOption {
 	public:

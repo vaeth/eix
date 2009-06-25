@@ -22,7 +22,7 @@
 
 #include <eixrc/eixrc.h>
 
-#include <varsreader.h>
+#include <eixTk/varsreader.h>
 
 #include <fstream>
 #include <fnmatch.h>

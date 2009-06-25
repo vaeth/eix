@@ -7,10 +7,10 @@
 #
 # This file must be "source"d by POSIX scripts.
 #
-# It contains helper functions for update-eix-remote, update-eix-layman,
+# It contains helper functions for eix-remote, eix-layman,
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
-local_eprefix_portage_exec="`update-eix --print EPREFIX_PORTAGE_EXEC`"
+local_eprefix_portage_exec="`eix-update --print EPREFIX_PORTAGE_EXEC`"
 
 # This must happen in a function to enforce an empty argument list.
 ReadFunctions () {
@@ -45,7 +45,7 @@ PerLine () {
 local_portdir=''
 GetPortdir () {
 	[ -n "${local_portdir}" ] && return
-	local_portdir="`update-eix --print PORTDIR`"
+	local_portdir="`eix-update --print PORTDIR`"
 }
 
 verbose=true
@@ -166,8 +166,8 @@ ClearUpdateEixArgs () {
 
 CallUpdateEix () {
 	eval "set -- ${update_eix_args}"
-	RunCommand "`gettext 'Calling update-eix'`" update-eix "${@}" || \
-		die "`gettext 'update-eix failed'`"
+	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" || \
+		die "`gettext 'eix-update failed'`"
 }
 
 AddLocalMethods () {

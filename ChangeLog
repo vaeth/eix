@@ -1,13 +1,22 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.16.3
+*eix-0.17.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Renames: update-eix -> eix-update, diff-eix -> eix-diff,
+	  update-eix-remote -> eix-remote, update-eix-layman -> eix-layman,
+	  functions-eix.sh -> eix-functions.sh
+	  The purpose is to get a consistent naming scheme: all eix-related
+	  programs now start with eix-* (except versionsort).
+	  If you want to keep the old names, create corresponding symlinks:
+	  This is explicitly supported and not going to be deprecated, but
+	  such symlinks are not installed by default anymore, because new
+	  users will not need them.
 	- Introduce /etc/eix-remote.conf and EIX_REMOTE_OPTS
-	- Introduce some new options for update-eix-remote (useful as defaults)
+	- Introduce some new options for eix-remote (useful as defaults)
 	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated
 	- Install sample /etc/*.conf
-	- update-eix-remote: Show resolved labels during update.
-	- update-eix-remote: remove -O; argument is calculated automatically.
+	- eix-remote: Show resolved labels during update.
+	- eix-remote: remove -O; argument is calculated automatically.
 	- Introduce --print-overlay-{path,label}
 	- Fix multiple declaration of local variable, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=275300

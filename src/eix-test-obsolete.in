@@ -7,7 +7,7 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
-. ./functions-eix.sh.in
+. ./eix-functions.sh.in
 ReadGettext
 
 details=false

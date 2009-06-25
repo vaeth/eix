@@ -11,7 +11,7 @@
 
 #include <portage/conf/portagesettings.h>
 #include <cache/base.h>
-#include <global.h>
+#include <eixrc/global.h>
 #include <config.h>
 
 #include <csignal>

@@ -9,7 +9,7 @@
 
 #include "selectors.h"
 
-#include <global.h>
+#include <eixrc/global.h>
 #include <eixTk/regexp.h>
 
 #include <cstring>

@@ -10,7 +10,7 @@
 #include <config.h>
 #include <main/main.h>
 
-#include <global.h>
+#include <eixrc/global.h>
 #include <eixTk/argsreader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>

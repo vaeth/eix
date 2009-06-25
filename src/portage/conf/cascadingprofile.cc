@@ -11,7 +11,7 @@
 
 #include <eixTk/utils.h>
 #include <eixTk/filenames.h>
-#include <varsreader.h>
+#include <eixTk/varsreader.h>
 #include <portage/conf/portagesettings.h>
 
 #include <fstream>

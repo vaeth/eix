@@ -8,7 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "packagetest.h"
-#include <global.h>
+#include <eixrc/global.h>
 #include <eixTk/filenames.h>
 #include <eixTk/utils.h>
 

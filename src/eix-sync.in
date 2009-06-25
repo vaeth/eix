@@ -11,13 +11,13 @@
 
 time_begin="`date +%s 2>/dev/null`" || time_begin=''
 
-. ./functions-eix.sh.in
+. ./eix-functions.sh.in
 ReadFunctions
 
-local_varcache="`update-eix --print EPREFIX_PORTAGE_CACHE`"
-eixcache="`update-eix --print EIX_CACHEFILE`"
+local_varcache="`eix-update --print EPREFIX_PORTAGE_CACHE`"
+eixcache="`eix-update --print EIX_CACHEFILE`"
 eixprevious="${eixcache}.previous"
-local_portage_configroot="`update-eix --print PORTAGE_CONFIGROOT`"
+local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
 Usage () {
@@ -42,13 +42,13 @@ The following options are available:
 -i   Ignore all previous options (useful to ignore ${eixsyncconf} options).
 -d   Only show differences to the previously saved database and exit.
      Except for executing the !! lines in ${eixsyncconf}
-     this is the same as diff-eix ${eixprevious}.
+     this is the same as eix-diff ${eixprevious}.
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
      USER defaults to current user and DIR defaults to PORTDIR
 -2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
--U   Do not touch the database and omit the hooks after update-eix (@ entries)
+-U   Do not touch the database and omit the hooks after eix-update (@ entries)
      and do not show differences. This option implies -R
 -u   Update database only and show differences. This is equivalent to -l@s ""
 -l   Do not call layman (and the !commands in ${eixsyncconf}).
@@ -69,7 +69,7 @@ The following options are available:
 -c CMD Run CMD instead of emerge --sync.
 -C OPT Add OPT to the emerge --sync command (or whatever is used instead).
        This option can be used accumulatively.
--o OPT Add OPT to each update-eix command.
+-o OPT Add OPT to each eix-update command.
        This option can be used accumulatively.
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
@@ -85,8 +85,8 @@ The following options are available:
 DiffOnly () {
 	test -e "${eixprevious}" || die "`eval_gettext \
 		'No previous database ${eixprevious} exists'`"
-	exec diff-eix -- "${eixprevious}"
-	die "`gettext 'Could not execute diff-eix'`"
+	exec eix-diff -- "${eixprevious}"
+	die "`gettext 'Could not execute eix-diff'`"
 }
 
 DoExecute () {
@@ -162,7 +162,7 @@ ExecuteConfig () {
 
 DefaultOpts () {
 	Push -c emergecmd 'emerge' '--sync'
-	Push -c updatecmd 'update-eix'
+	Push -c updatecmd 'eix-update'
 	diffonly=false
 	clearcache=false
 	nolayman=false
@@ -293,12 +293,12 @@ PrintTimes () {
 	${measure_time} || return 0
 	measure_time=false
 	einfo "`gettext 'Time statistics:'`"
-	PrintingTimes "${time_iupdate}"  "`gettext 'initial update-eix'`"
+	PrintingTimes "${time_iupdate}"  "`gettext 'initial eix-update'`"
 	PrintingTimes "${time_sync}"     "`gettext 'syncing'`"
 	PrintingTimes "${time_client}"   "`gettext 'client syncing'`"
 	PrintingTimes "${time_metadata}" "`gettext 'metadata update'`"
-	PrintingTimes "${time_update}"   "`gettext 'update-eix'`"
-	PrintingTimes "${time_diff}"     "`gettext 'diff-eix'`"
+	PrintingTimes "${time_update}"   "`gettext 'eix-update'`"
+	PrintingTimes "${time_diff}"     "`gettext 'eix-diff'`"
 	ftime="`date '+%s' 2>/dev/null`" || return
 	ftime=`expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
 		printf "`gettext '%6d seconds total\n'`" "${ftime}"
@@ -418,9 +418,9 @@ CondUpdate () {
 		RootTest
 		eval "set -- ${updatecmd}"
 		MyRunCommand "`gettext \
-			'eix-cache does not exist. Running update-eix!'`" \
+			'eix-cache does not exist. Running eix-update!'`" \
 			-t iupdate "${@}" || \
-				die "`gettext 'update-eix failed'`"
+				die "`gettext 'eix-update failed'`"
 		return
 	fi
 	${emulatemode} && return
@@ -428,9 +428,9 @@ CondUpdate () {
 	then
 		eval "set -- ${updatecmd}"
 		MyRunCommand "`gettext \
-			'eix-cache format has changed. Running update-eix!'`" \
+			'eix-cache format has changed. Running eix-update!'`" \
 			-t iupdate "${@}" || \
-				die "`gettext 'update-eix failed'`"
+				die "`gettext 'eix-update failed'`"
 
 	fi
 }
@@ -474,17 +474,17 @@ UpdateDiff () {
 	then
 		MovePrevious
 		einfo "`gettext \
-			'update-eix was apparently already called in a hook'`"
+			'eix-update was apparently already called in a hook'`"
 	else
 		MovePrevious
 		eval "set -- ${updatecmd}"
-		MyRunCommand "`gettext 'Running update-eix'`" \
+		MyRunCommand "`gettext 'Running eix-update'`" \
 			-t update "${@}" || \
-			die "`gettext 'Failure while running update-eix'`"
+			die "`gettext 'Failure while running eix-update'`"
 	fi
 	DoHook "${after_update}"
-	MyRunCommand "`gettext 'Calling diff-eix'`" \
-		-t diff diff-eix -- "${d}" || \
+	MyRunCommand "`gettext 'Calling eix-diff'`" \
+		-t diff eix-diff -- "${d}" || \
 		die "`gettext 'Failed to diff against current cache'`"
 	PrintTimes
 }

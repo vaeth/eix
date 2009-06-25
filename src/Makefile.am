@@ -13,8 +13,8 @@ AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(localedir)\"
 
 sysconf_DATA = \
 eixrc/eixrc \
-eix-sync.conf \
-eix-remote.conf
+eixrc/eix-sync.conf \
+eixrc/eix-remote.conf
 
 database_src = \
 database/io.cc \
@@ -47,16 +47,18 @@ eixTk/stringutils.h \
 eixTk/sysutils.cc \
 eixTk/sysutils.h \
 eixTk/utils.cc \
-eixTk/utils.h
+eixTk/utils.h \
+eixTk/varsreader.cc \
+eixTk/varsreader.h
 
 eixrc_src = \
 eixrc/eixrc.cc \
 eixrc/eixrc.h \
-global.cc \
-global2.cc \
-global3.cc \
-global4.cc \
-global.h
+eixrc/global1.cc \
+eixrc/global2.cc \
+eixrc/global3.cc \
+eixrc/global4.cc \
+eixrc/global.h
 
 portage_src = \
 portage/conf/portagesettings.cc \
@@ -144,8 +146,6 @@ search/redundancy.h
 # Common to all binaries:
 common_ldadd = @BZLIB_LIBS@ $(LTLIBINTL)
 common_src = \
-varsreader.cc \
-varsreader.h \
 main/main.h \
 $(database_src) \
 $(portage_src) \
@@ -156,9 +156,9 @@ extra_common_src = \
 eixrc/defaults.cc \
 main/main.cc \
 main/main_eix.cc \
-main/main_diff_eix.cc \
-main/main_update_eix.cc \
-main/main_update_eix_tools.cc \
+main/main_diff.cc \
+main/main_update.cc \
+main/main_update_tools.cc \
 main/main_output.cc \
 main/main_all.cc \
 main/main_all_tools.cc \
@@ -170,9 +170,9 @@ eix_only_src = eix.cc cli.cc cli.h $(search_src)
 extra_eix_only_src =
 
 # The diff-tool for our database
-diff_eix_only_ladadd =
-diff_eix_only_src = diff-eix.cc
-extra_diff_eix_only_src =
+diff_only_ldadd =
+diff_only_src = eix-diff.cc
+extra_diff_only_src =
 
 # Common to the previous two tools, but not common to all tools
 output_only_ldadd =
@@ -180,9 +180,9 @@ output_only_src = $(output_src)
 extra_output_only_src =
 
 # The update-tool for our database
-update_eix_only_ldadd = @SQLITE_LIBS@
-update_eix_only_src = update-eix.cc $(cache_src) $(add_cache_src)
-extra_update_eix_src = $(extra_cache_src)
+update_only_ldadd = @SQLITE_LIBS@
+update_only_src = eix-update.cc $(cache_src) $(add_cache_src)
+extra_update_src = $(extra_cache_src)
 
 # Remove files we don't want ..
 CLEANFILES = \
@@ -190,38 +190,38 @@ cppcomplete.tags \
 tags \
 eix-sync \
 eix-test-obsolete \
-update-eix-remote \
-update-eix-layman \
-functions-eix.sh \
+eix-remote \
+eix-layman \
+eix-functions.sh \
 $(sysconf_DATA) \
 cache/cache_map.cc \
-diff-eix$(EXEEXT) \
-update-eix$(EXEEXT) \
+eix-diff$(EXEEXT) \
+eix-update$(EXEEXT) \
 versionsort$(EXEEXT) \
 eix-sync.sh \
 eix-test-obsolete.sh \
-update-eix-layman.sh \
-update-eix-remote.sh
+eix-layman.sh \
+eix-remote.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
 eix-sync.in \
 eix-test-obsolete.in \
-update-eix-remote.in \
-update-eix-layman.in \
-functions-eix.sh.in \
+eix-remote.in \
+eix-layman.in \
+eix-functions.sh.in \
 eixrc/eixrc.in \
-eix-sync.conf.in \
-eix-remote.conf.in \
+eixrc/eix-sync.conf.in \
+eixrc/eix-remote.conf.in \
 cache/generate_cachemap.sh
 
 # Additional binaries (scripts) we will install
 bin_SCRIPTS  = \
 eix-sync \
 eix-test-obsolete \
-update-eix-remote \
-update-eix-layman \
-functions-eix.sh
+eix-remote \
+eix-layman \
+eix-functions.sh
 
 if SEPARATE_TOOLS
 # Generate a separate tools binary (currently only versionsort)
@@ -231,15 +231,15 @@ tool_noinst =
 main_all = main/main_all.cc
 main_output = main/main_output.cc
 main_eix = main/main_eix.cc
-main_diff_eix = main/main_diff_eix.cc
-main_update_eix = main/main_update_eix.cc
+main_diff = main/main_diff.cc
+main_update = main/main_update.cc
 else
 # Do not generate a separate tools binary
-# Currently, we link versionsort against update-eix.
+# Currently, we link versionsort against eix-update.
 # Once there will be further tools which are perhaps better linked again
-# eix or diff-eix, it will also be necessary to replace
-# main_eix.cc main_diff_eix.cc main_output.cc by corresponding
-# main_eix_tools.cc main_diff_eix_tools.cc main_output_tools.cc
+# eix or eix-diff, it will also be necessary to replace
+# main_eix.cc main_diff.cc main_output.cc by corresponding
+# main_eix_tools.cc main_diff_tools.cc main_output_tools.cc
 # (which should essentially be copies of the above and just #define something:
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
@@ -248,84 +248,84 @@ tool_noinst = versionsort$(EXEEXT)
 main_all = versionsort.cc main/main_all_tools.cc
 main_output = main/main_output.cc
 main_eix = main/main_eix.cc
-main_diff_eix = main/main_diff_eix.cc
-main_update_eix = versionsort.cc main/main_update_eix_tools.cc
+main_diff = main/main_diff.cc
+main_update = versionsort.cc main/main_update_tools.cc
 endif
 
 # begin of big case distinction for generation of separate binaries
 if SEPARATE_UPDATE
 
-# We have a separate update-eix, so we link versionsort to it
-use_separate_update_eix = true
-versionsort_link = update-eix$(EXEEXT)
+# We have a separate eix-update, so we link versionsort to it
+use_separate_update = true
+versionsort_link = eix-update$(EXEEXT)
 
 if SEPARATE_BINARIES
 
-use_separate_diff_eix = true
+use_separate_diff = true
 
 # Generate all three binaries separately:
-bin_PROGRAMS = update-eix eix diff-eix $(tool_programs)
+bin_PROGRAMS = eix-update eix eix-diff $(tool_programs)
 noinst_DATA = $(tool_noinst)
 
 eix_LDADD = $(eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
 eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) $(main_eix)
 EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_output_only_src) $(extra_common_src)
-diff_eix_LDADD = $(diff_eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-diff_eix_SOURCES = $(diff_eix_only_src) $(output_only_src) $(common_src) $(main_diff_eix)
-EXTRA_diff_eix_SOURCES = $(extra_diff_eix_src) $(extra_output_only_src) $(extra_common_src)
-update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
-update_eix_SOURCES = $(update_eix_only_src) $(common_src) $(main_update_eix)
-EXTRA_update_eix_SOURCES = $(extra_update_eix_src) $(extra_common_src)
+eix_diff_LDADD = $(diff_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
+eix_diff_SOURCES = $(diff_only_src) $(output_only_src) $(common_src) $(main_diff)
+EXTRA_eix_diff_SOURCES = $(extra_eix_diff_src) $(extra_output_only_src) $(extra_common_src)
+eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
+eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update)
+EXTRA_eix_update_SOURCES = $(extra_update_src) $(extra_common_src)
 
 else
 # !SEPARATE_BINARIES
 
-use_separate_diff_eix = false
+use_separate_diff = false
 
-# Generate only update-eix separately:
-bin_PROGRAMS = update-eix eix $(tool_programs)
-noinst_DATA = diff-eix$(EXEEXT) $(tool_noinst)
+# Generate only eix-update separately:
+bin_PROGRAMS = eix-update eix $(tool_programs)
+noinst_DATA = eix-diff$(EXEEXT) $(tool_noinst)
 
-diff-eix$(EXEEXT): eix$(EXEEXT)
+eix-diff$(EXEEXT): eix$(EXEEXT)
 	@echo "  LN    " "$@"
-	@test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
-	@$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
+	@test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
+	@$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
-eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(diff_eix_only_src) $(output_only_src) $(common_src) $(main_output)
-EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_diff_eix_src) $(extra_output_only_src) $(extra_common_src)
-update_eix_LDADD = $(update_eix_only_ldadd) $(common_ldadd)
-update_eix_SOURCES = $(update_eix_only_src) $(common_src) $(main_update_eix)
-EXTRA_update_eix_SOURCES = $(extra_update_eix_src) $(extra_common_src)
+eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_SOURCES = $(eix_only_src) $(diff_only_src) $(output_only_src) $(common_src) $(main_output)
+EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_eix_diff_src) $(extra_output_only_src) $(extra_common_src)
+eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
+eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update)
+EXTRA_eix_update_SOURCES = $(extra_update_src) $(extra_common_src)
 
 endif
 
 else
 # !SEPARATE_UPDATE
 
-# We do not have a separate update-eix, so we link versionsort to eix
-use_separate_update_eix = false
+# We do not have a separate eix-update, so we link versionsort to eix
+use_separate_update = false
 versionsort_link = eix$(EXEEXT)
 
-# Generate neither diff-eix nor update-eix separately:
-use_separate_diff_eix = false
+# Generate neither eix-diff nor eix-update separately:
+use_separate_diff = false
 bin_PROGRAMS = eix $(tool_programs)
-noinst_DATA = diff-eix$(EXEEXT) update-eix$(EXEEXT) $(tool_noinst)
+noinst_DATA = eix-diff$(EXEEXT) eix-update$(EXEEXT) $(tool_noinst)
 
-diff-eix$(EXEEXT): eix$(EXEEXT)
+eix-diff$(EXEEXT): eix$(EXEEXT)
 	@echo "  LN    " "$@"
-	@test ! -e diff-eix$(EXEEXT) || rm diff-eix$(EXEEXT)
-	@$(LN_S) eix$(EXEEXT) diff-eix$(EXEEXT)
+	@test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
+	@$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
-update-eix$(EXEEXT): eix$(EXEEXT)
+eix-update$(EXEEXT): eix$(EXEEXT)
 	@echo "  LN    " "$@"
-	@test ! -e update-eix$(EXEEXT) || rm update-eix$(EXEEXT)
-	@$(LN_S) eix$(EXEEXT) update-eix$(EXEEXT)
+	@test ! -e eix-update$(EXEEXT) || rm eix-update$(EXEEXT)
+	@$(LN_S) eix$(EXEEXT) eix-update$(EXEEXT)
 
 
-eix_LDADD = $(eix_only_ldadd) $(diff_eix_only_ldadd) $(update_eix_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_eix_only_src) $(update_eix_only_src) $(main_all)
-EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_src) $(extra_diff_eix_src) $(extra_update_eix_src)
+eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_only_src) $(update_only_src) $(main_all)
+EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_src) $(extra_eix_diff_src) $(extra_update_src)
 
 endif
 # end of big case distinction for generation of separate binaries
@@ -360,12 +360,12 @@ uninstall-local:
 	@$(use_separate_tools) || \
 		test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
 		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
-	@$(use_separate_update_eix) || \
-		test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
-	@$(use_separate_diff_eix) || \
-		test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	@$(use_separate_update) || \
+		test ! -e $(DESTDIR)$(bindir)/eix-update$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/eix-update$(EXEEXT)
+	@$(use_separate_diff) || \
+		test ! -e $(DESTDIR)$(bindir)/eix-diff$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
 
 install-exec-hook:
 	@$(use_separate_tools) || \
@@ -373,16 +373,16 @@ install-exec-hook:
 		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
 	@$(use_separate_tools) || \
 		$(LN_S) $(versionsort_link) $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
-	@$(use_separate_update_eix) || \
-		test ! -e $(DESTDIR)$(bindir)/update-eix$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
-	@$(use_separate_update_eix) || \
-		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT)
-	@$(use_separate_diff_eix) || \
-		test ! -e $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
-	@$(use_separate_diff_eix) || \
-		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT)
+	@$(use_separate_update) || \
+		test ! -e $(DESTDIR)$(bindir)/eix-update$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/eix-update$(EXEEXT)
+	@$(use_separate_update) || \
+		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/eix-update$(EXEEXT)
+	@$(use_separate_diff) || \
+		test ! -e $(DESTDIR)$(bindir)/eix-diff$(EXEEXT) || \
+		rm -- $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
+	@$(use_separate_diff) || \
+		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
 
 cache/cache_map.cc: cache/generate_cachemap.sh
 	@echo "  SH    " "$@"
@@ -396,20 +396,20 @@ eix-test-obsolete.sh:
 	@echo "  LN    " "$@"
 	@$(LN_S) eix-test-obsolete.in "$@"
 
-update-eix-layman.sh:
+eix-layman.sh:
 	@echo "  LN    " "$@"
-	@$(LN_S) update-eix-layman.in "$@"
+	@$(LN_S) eix-layman.in "$@"
 
-update-eix-remote.sh:
+eix-remote.sh:
 	@echo "  LN    " "$@"
-	@$(LN_S) update-eix-remote.in "$@"
+	@$(LN_S) eix-remote.in "$@"
 
 
 SUFFIXES = .in
 .in:
 	@echo "  SED   " "$@"
 	@@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-		-e "s,\./functions-eix\.sh\.in,'$(bindir)/functions-eix.sh',g" \
+		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \

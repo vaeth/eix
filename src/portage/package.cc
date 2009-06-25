@@ -392,7 +392,7 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 	{
 		// There is only one slot, so the choice seems clear.
 		// However, perhaps our package is from an old database
-		// (e.g. in diff-eix) and so there might be new slots elsewhere
+		// (e.g. in eix-diff) and so there might be new slots elsewhere
 		// Therefore we better don't modify v.know_slot.
 		v.slotname = slotlist().begin()->slotname();
 		return true;
