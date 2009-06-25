@@ -8,26 +8,26 @@ Die() {
 }
 
 [ "`id -u`" -eq 0 ] || Die "only root may execute this script"
-CURR='.'
+curr='.'
 
-DISTDIR="`portageq distdir`"
-[ -n "${DISTDIR}" ] && test -d "${DISTDIR}" || Die "cannot determine DISTDIR"
+distdir="`portageq distdir`"
+[ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
 GetEdir() {
 	local o i j
 	o="`portageq portdir_overlay`"
 	for i in ${o}
 	do
-		EDIR="${i}/app-portage/eix"
-		for j in "${EDIR}"/eix-*.ebuild
+		edir="${i}/app-portage/eix"
+		for j in "${edir}"/eix-*.ebuild
 		do
 			case "${j##*/}" in
 				eix-9999*) continue;;
 			esac
 			test -f "${j}" || continue
 			test -r "${i}/profiles/repo_name" && \
-			REPO_NAME=`cat -- "${i}"/profiles/repo_name` || \
-			REPO_NAME=''
+			repo_name=`cat -- "${i}"/profiles/repo_name` || \
+			repo_name=''
 			return 0
 		done
 	done
@@ -39,7 +39,7 @@ MoveEbuild () {
 	test -f "${1}" && return
 	local i n
 	n=''
-	for i in "${EDIR}"/eix-*.ebuild
+	for i in "${edir}"/eix-*.ebuild
 	do
 		case "${i##*/}" in
 			eix-9999*) continue;;
@@ -57,19 +57,19 @@ RmOpt() {
 InstallEbuildVersion () {
 	chown portage:portage -- "${1}"
 	chmod 664 -- "${1}"
-	printf "%s\n" "Moving ${1} -> ${DISTDIR}"
-	mv -- "${1}" "${DISTDIR}/${1##*/}"
-	MoveEbuild "${EDIR}/eix-${2}.ebuild"
+	printf "%s\n" "Moving ${1} -> ${distdir}"
+	mv -- "${1}" "${distdir}/${1##*/}"
+	MoveEbuild "${edir}/eix-${2}.ebuild"
 	(
-		cd -- "${EDIR}" || Die "cannot change to ${EDIR}"
+		cd -- "${edir}" || Die "cannot change to ${edir}"
 		RmOpt "Manifest" || Die "cannot remove Manifest"
-		printf "%s\n" "ebuild ${EDIR}/eix-${2}.ebuild manifest"
+		printf "%s\n" "ebuild ${edir}/eix-${2}.ebuild manifest"
 		ebuild -- "eix-${2}.ebuild" manifest || Die "ebuild failed"
 	) || exit
-	if [ -n "${REPO_NAME}" ] && command -v egencache >/dev/null 2>&1
+	if [ -n "${repo_name}" ] && command -v egencache >/dev/null 2>&1
 	then
-		printf "%s\n" "egencache --repo=${REPO_NAME} --update"
-		egencache --repo="${REPO_NAME}" --update || \
+		printf "%s\n" "egencache --repo=${repo_name} --update"
+		egencache --repo="${repo_name}" --update || \
 			Die "egencache failed"
 	fi
 	printf "%s\n" "emerge -1 =app-portage/eix-${2}"
@@ -81,7 +81,7 @@ DoFirst () {
 	local i j v
 	for j in tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 	do
-		for i in "${CURR}"/eix-*.${j}
+		for i in "${curr}"/eix-*.${j}
 		do
 			test -e "${i}" || continue
 			v="${i##*/eix-}"
@@ -90,7 +90,7 @@ DoFirst () {
 			return
 		done
 	done
-	Die "No tarball found in ${CURR}"
+	Die "No tarball found in ${curr}"
 }
 
 DoFirst || exit

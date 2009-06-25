@@ -128,6 +128,14 @@ Print the specified variable I<VAR> of eixrc or of portage settings,
 completely expanded as it would be used internally by eix.
 This is mainly used internally for scripts.
 .TP
+.BI "--print-overlay-path " OVERLAY
+Print the path of the first overlay matching I<OVERLAY>.
+I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
+.TP
+.BI "--print-overlay-label " OVERLAY
+Print the path of the first overlay matching I<OVERLAY>.
+I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
+.TP
 .B --print-all-useflags
 print all IUSE words used in some version.
 .TP

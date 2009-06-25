@@ -6,6 +6,9 @@
 	- Introduce some new options for update-eix-remote (useful as defaults)
 	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated
 	- Install sample /etc/*.conf
+	- update-eix-remote: Show resolved labels during update.
+	- update-eix-remote: remove -O; argument is calculated automatically.
+	- Introduce --print-overlay-{path,label}
 	- Fix multiple declaration of local variable, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=275300
 	  Thanks to Stuart Shelton <srcshelton at gmail.com> for the patch.

@@ -19,12 +19,12 @@ Run() {
 	"${@}" || Die "${*} failed" ${?}
 }
 
-MAKEARCH="dist-lzma"
+makearch="dist-lzma"
 [ ${#} -ne 0 ] && [ -n "${1}" ] && case "${1}" in
 	h*|H*|*\?*|-*) Usage;;
-	b*|B*) MAKEARCH="dist-bzip2";;
-	l*|L*|'') MAKEARCH="dist-lzma";;
-	*) MAKEARCH="${MAKEARCH} dist";;
+	b*|B*) makearch="dist-bzip2";;
+	l*|L*|'') makearch="dist-lzma";;
+	*) makearch="${makearch} dist";;
 esac
 
 test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
@@ -35,13 +35,13 @@ unset LDFLAGS CFLAGS CXXFLAGS
 if command -v "${FAKEROOT}" >/dev/null 2>&1
 then
 	Run ./mkmake -0eqn
-	DOCMD="${FAKEROOT} ./mkmake -0qr"
+	docmd="${FAKEROOT} ./mkmake -0qr"
 else
-	DOCMD="./mkmake -0eq"
+	docmd="./mkmake -0eq"
 fi
-for i in ${MAKEARCH}
+for i in ${makearch}
 do
-	Run ${DOCMD} "UPDATEPOFILES=" "${i}"
+	Run ${docmd} "UPDATEPOFILES=" "${i}"
 done
 
 found=false

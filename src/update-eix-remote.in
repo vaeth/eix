@@ -59,10 +59,6 @@ The following options are available:
 -f FILE This is the same as giving FILE as the last argument.
         This is mainly useful for default options. Current value:
         	${f}
--O x    Extract from the cache files within FILE only overlay Nr. x,
-        i.e. use cache method eix*:...:x for reading these cache files.
-        Current value: ${overlaynr}
-        See "man eix" for details on cache method eix*.
 -u USER Call wget as USER. Ignored if not set unless you are root.
 -U USER Call wget as USER if called as root. Currently "${fetchroot}"
 -o PATH Use PATH as OVERLAYPARENT
@@ -82,7 +78,6 @@ Sanitize () {
 }
 
 DefaultOpts () {
-	overlaynr='*'
 	verbose=true
 	fetchuser=''
 	fetchroot='nobody'
@@ -117,11 +112,10 @@ eval "Push -c opt ${config_opts} ${EIX_REMOTE_OPTS}"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts 'f:O:vqu:U:o:i?hH' opt
+while getopts 'f:vqu:U:o:i?hH' opt
 do
 	case "${opt}" in
 		f) filearg="${OPTARG}";;
-		O) overlaynr="${OPTARG}";;
 		v) verbose=true;;
 		q) verbose=false;;
 		u) fetchuser="${OPTARG}";;
@@ -250,7 +244,7 @@ FetchTemp () {
 }
 
 AddArchive () {
-	local i n name virtual overlayarg
+	local i p l n name virtual overlayarg
 	i="${1}"
 	RunCommand "Unpacking data" tar xjf "${i}" || \
 		die "`eval_gettext 'cannot unpack ${i}'`"
@@ -261,24 +255,41 @@ AddArchive () {
 		name="${i}"
 		Replace -g name ':' '_' || mv -- "${i}" "${name}"
 	done
-	if [ -n "${overlaynr}" ]
-	then
-		overlayarg=":${overlaynr}"
-	else
-		overlayarg=''
-	fi
 	for i in *
 	do
 		name="${i%.eix}"
-		name="${name#_usr_portage_local_}"
-		Replace -g name '_' '/'
-		virtual="(${name})"
-		n="${2}/${i}"
+		case "${name}" in
+			*_layman_*)
+				n="${name##*_layman_}"
+				name="${name%_layman_*}"
+				Replace -g name '_' '/'
+				name="${name}/layman/${n}"
+				virtual="layman/${n}"
+				;;
+			*)
+				Replace -g name '_' '/'
+				virtual="${name#*local/}"
+				;;
+		esac
+		name="/${name#/}"
+		virtual="(${virtual})"
+		n="${name##*/}"
 		Replace -g n '\' '\\'
-		Replace -g n ':' '\:'
-		AddMethod "${virtual}" "eix*:${n}${overlayarg}"
+		Replace -g n '?' '\?'
+		Replace -g n '*' '\*'
+		Replace -g n '[' '\['
+		n="*/layman/*${n}"
+		p="${2}/${i}"
+		l=`EIX_CACHEFILE="${p}" eix --print-overlay-label "${n}"` || {
+			printf "%s\n" "`eval_gettext "${i} broken"`" >&2
+			continue
+		}
+		printf "%s -> %s\n" "${virtual}" "${l:-\"\"}"
+		Replace -g p '\' '\\'
+		Replace -g p ':' '\:'
+		AddMethod "${virtual}" "eix*:${p}:${n}"
 		AddOverlays "${virtual}"
-		AddExcludes "${OVERLAYPARENT}/${name}"
+		AddExcludes "${OVERLAYPARENT}${name}"
 	done
 	export KEEP_VIRTUALS=true
 	CallUpdateEix

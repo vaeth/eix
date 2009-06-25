@@ -65,6 +65,8 @@ dump_help(int exit_code)
 			"     --print-all-provides  print all PROVIDE strings used in some package\n"
 			"     --print-all-licenses  print all LICENSE strings used in some package\n"
 			"     --print-world-sets    print the world sets\n"
+			"     --print-overlay-path  print the path of specified overlay\n"
+			"     --print-overlay-label print label of specified overlay\n"
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -175,6 +177,8 @@ dump_help(int exit_code)
 static const char *format_normal, *format_verbose, *format_compact;
 static const char *eix_cachefile = NULL;
 static const char *var_to_print = NULL;
+static const char *overlaypath_to_print = NULL;
+static const char *overlaylabel_to_print = NULL;
 
 enum OverlayMode
 {
@@ -249,6 +253,9 @@ static struct Option long_options[] = {
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
 
 	Option("print",        O_PRINT_VAR,     Option::STRING,   &var_to_print),
+
+	Option("print-overlay-path",   O_PRINT_OPATH, Option::STRING, &overlaypath_to_print),
+	Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING, &overlaylabel_to_print),
 
 	Option("format",         O_FMT,         Option::STRING,   &format_normal),
 	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
@@ -657,6 +664,22 @@ run_eix(int argc, char** argv)
 	eix::ptr_list<Package> all_packages;
 
 	PackageReader reader(fp, header, &portagesettings);
+	if(overlaypath_to_print || overlaylabel_to_print) {
+		fclose(fp);
+		Version::Overlay num;
+		const char *osearch = overlaypath_to_print;
+		bool print_path = osearch;
+		if(!print_path)
+			osearch = overlaylabel_to_print;
+		if(!header.find_overlay(&num, osearch, NULL, 0, DBHeader::OVTEST_ALL))
+			exit(1);
+		const OverlayIdent& overlay = header.getOverlay(num);
+		if(print_path)
+			cout << overlay.path;
+		else
+			cout << overlay.label;
+		exit(0);
+	}
 	while(reader.next())
 	{
 		if(query->match(&reader))

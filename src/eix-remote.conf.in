@@ -1,0 +1,8 @@
+# @SYSCONFDIR@/eix-remote.conf
+#
+# In this file and in the environment variable EIX_REMOTE_OPTS you can store
+# default options for update-eix-remote. Both are evaluated, so you can use
+# shell functions to calculate arguments. Be sure to quote correctly.
+# Typical examples:
+# -f "`portageq portdir`/local/layman/eix-caches.tar.bz2"
+# -U wwwuser

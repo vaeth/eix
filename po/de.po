@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-25 10:35+0200\n"
+"POT-Creation-Date: 2009-06-25 17:38+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -236,7 +236,7 @@ msgstr "%6d Sekunden insgesamt\\n"
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:328 src/update-eix-remote.sh:214
+#: src/eix-sync.sh:328 src/update-eix-remote.sh:208
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
@@ -297,7 +297,7 @@ msgstr "emerge --metadata schlug fehl"
 msgid "eix-cache does not exist. Running update-eix!"
 msgstr "Eix-Cache existiert nicht. Starten von update-eix."
 
-#: src/eix-sync.sh:423 src/eix-sync.sh:433 src/functions-eix.sh.in:169
+#: src/eix-sync.sh:423 src/eix-sync.sh:433 src/functions-eix.sh.in:170
 msgid "update-eix failed"
 msgstr "update-eix schlug fehl"
 
@@ -487,7 +487,7 @@ msgstr "kann functions.sh nicht sourcen"
 msgid "Problems running ${c}"
 msgstr "Probleme mit ${c}"
 
-#: src/functions-eix.sh.in:168
+#: src/functions-eix.sh.in:169
 msgid "Calling update-eix"
 msgstr "Starte updat-eix"
 
@@ -579,10 +579,6 @@ msgid ""
 "-f FILE This is the same as giving FILE as the last argument.\n"
 "        This is mainly useful for default options. Current value:\n"
 "        \t${f}\n"
-"-O x    Extract from the cache files within FILE only overlay Nr. x,\n"
-"        i.e. use cache method eix*:...:x for reading these cache files.\n"
-"        Current value: ${overlaynr}\n"
-"        See \"man eix\" for details on cache method eix*.\n"
 "-u USER Call wget as USER. Ignored if not set unless you are root.\n"
 "-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
 "-o PATH Use PATH as OVERLAYPARENT\n"
@@ -630,10 +626,6 @@ msgstr ""
 "-f FILE Dies ist äquivalent mit FILE als letztem Argument.\n"
 "        Als Default-Option kann dies nützlich sein. Aktueller Wert:\n"
 "        \t${f}\n"
-"-O x    Wählt aus dem Cachefile in FILE nur den Overlay x aus, d.h. die\n"
-"        Cachemethode eix*:...:x wird zum Lesen dieser Cachefiles benutzt\n"
-"        Aktueller Wert: ${overlaynr}\n"
-"        \"man eix\" enthält mehr Details hinzu (s. Cachemethode eix*).\n"
 "-u USER Call wget as USER. Ignored if not set unless you are root.\n"
 "-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
 "-u USER Ruft wget als USER auf. Wird diese Option nicht angegeben, so\n"
@@ -644,55 +636,55 @@ msgstr ""
 "-v      Ausführliche Ausgabe (Default)\n"
 "-q      Keine Ausgabe"
 
-#: src/update-eix-remote.sh:79
+#: src/update-eix-remote.sh:75
 #, sh-format
 msgid "$OVERLAYPARENT must not be empty"
 msgstr "$OVERLAYPARENT darf nicht leer sein"
 
-#: src/update-eix-remote.sh:81
+#: src/update-eix-remote.sh:77
 #, sh-format
 msgid "$OVERLAYPARENT must start with /"
 msgstr "$OVERLAYPARENT muss mit / beginnen"
 
-#: src/update-eix-remote.sh:151
+#: src/update-eix-remote.sh:145
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/update-eix-remote.sh:176
+#: src/update-eix-remote.sh:170
 #, sh-format
 msgid "${a} cannot be found in PATH"
 msgstr "${a} nicht gefunden (im PATH)"
 
-#: src/update-eix-remote.sh:188
+#: src/update-eix-remote.sh:182
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/update-eix-remote.sh:209
+#: src/update-eix-remote.sh:203
 msgid "cannot create temporary directory"
 msgstr "Kann kein temporäres Directory erzeugen"
 
-#: src/update-eix-remote.sh:219
+#: src/update-eix-remote.sh:213
 #, sh-format
 msgid "cannot create temporary dir ${tmpdir}"
 msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
 
-#: src/update-eix-remote.sh:248
+#: src/update-eix-remote.sh:242
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/update-eix-remote.sh:249
+#: src/update-eix-remote.sh:243
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/update-eix-remote.sh:256
+#: src/update-eix-remote.sh:250
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
 
-#: src/update-eix-remote.sh:307
+#: src/update-eix-remote.sh:318
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
@@ -752,7 +744,7 @@ msgstr ""
 msgid "Missing cache-file."
 msgstr "Fehlendes Cachefile."
 
-#: src/diff-eix.cc:321 src/eix.cc:505
+#: src/diff-eix.cc:321 src/eix.cc:512
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
@@ -788,6 +780,8 @@ msgid ""
 "     --print-all-provides  print all PROVIDE strings used in some package\n"
 "     --print-all-licenses  print all LICENSE strings used in some package\n"
 "     --print-world-sets    print the world sets\n"
+"     --print-overlay-path  print the path of specified overlay\n"
+"     --print-overlay-label print label of specified overlay\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching "
@@ -920,6 +914,8 @@ msgstr ""
 "     --print-all-provides  Ausgabe aller irgendwo benutzten PROVIDE-Werte\n"
 "     --print-all-licenses  Ausgabe aller irgendwo benutzten LICENSE-Werte\n"
 "     --print-world-sets    Ausgabe aller Sets in world\n"
+"     --print-overlay-path  Ausgabe des Pfads des angegebenen Overlays\n"
+"     --print-overlay-label Ausgabe des Labels des angegebenen Overlays\n"
 "\n"
 "   Speziell:\n"
 "     -t  --test-non-matching Gib vor anderen Ausgaben nicht-"
@@ -1030,7 +1026,7 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:587 src/eix.cc:829
+#: src/eix.cc:594 src/eix.cc:852
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1039,7 +1035,7 @@ msgstr ""
 "Kann Datenbankfile %s nicht zum Lesen öffnen (mode = 'rb')\n"
 "Wurde es denn mit 'update-eix' erzeugt?"
 
-#: src/eix.cc:598
+#: src/eix.cc:605
 #, c-format
 msgid ""
 "%s was created with an incompatible update-eix:\n"
@@ -1050,31 +1046,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'update-eix' neu erzeugen."
 
-#: src/eix.cc:793 src/eix.cc:809
+#: src/eix.cc:816 src/eix.cc:832
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:796
+#: src/eix.cc:819
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:802
+#: src/eix.cc:825
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:913
+#: src/eix.cc:936
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:914
+#: src/eix.cc:937
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:919
+#: src/eix.cc:942
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1083,7 +1079,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:920
+#: src/eix.cc:943
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1092,7 +1088,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:978
+#: src/eix.cc:1001
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1100,7 +1096,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:981
+#: src/eix.cc:1004
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"

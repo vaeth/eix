@@ -17,7 +17,8 @@ Available options are
   -b  With bzlib
   -B  Without bzlib
   -c  Use only debugging-safe CXXFLAGS
-  -jX Use -jX (currently ${JARG})
+  -C  Avoid CCACHE
+  -jX Use -jX (currently ${jarg})
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1}
 }
@@ -27,37 +28,66 @@ Die() {
 	exit ${2:-1}
 }
 
-QUIET=''
-EARLYSTOP=false
-KEEPENV=false
-SAFEFLAGS=false
-NOT_FULL_USE=false
-SQLITE=''
-BZLIB=''
-PEDANTIC=false
-EXTRA_CACHE='--enable-extra-cache'
-SEPARATE=''
-CHOWN=false
-JARG='-j3'
-while getopts 'q0123nepusSbBcrj:?hH' OPTION
+SetCcache () {
+	local i j
+	i='/usr/lib/ccache/bin'
+	test -d "${i}" || return
+	case "${PATH}" in
+		"${i}:"*|*":${i}:"*) return;;
+	esac
+	if [ -n "${PATH}" ]
+	then
+		echo "PATH=${i}:${PATH}"
+		PATH="${i}:${PATH}"
+	fi
+	[ -n "${CCACHE_DIR}" ] && return
+	for i in "${HOME}/.ccache" ../ccache
+	do
+		[ -z "${i}" ] && continue
+		j=`readlink -f -- "${i}"` && [ -n "${j}" ] \
+			&& test -d "${j}" && break
+	done
+	[ -z "${j}" ] && return
+	${quiet} || echo "CCACHE_DIR=${j}"
+	export CCACHE_DIR
+	CCACHE_DIR="${j}"
+}
+
+
+quiet=false
+earlystop=false
+keepenv=false
+safeflags=false
+not_full_use=false
+sqlite=''
+bzlib=''
+pedantic=false
+extra_cache='--enable-extra-cache'
+separate=''
+use_chown=false
+jarg='-j3'
+use_ccache=true
+OPTIND=1
+while getopts 'q0123nepusSbBcrj:?hH' opt
 do
-case "${OPTION}" in
-	q) QUIET='>/dev/null 2>&1';;
-	0) EXTRA_CACHE='';;
-	1) SEPARATE='--disable-separate-binaries';;
-	2) SEPARATE='--enable-separate-update';;
-	3) SEPARATE='--enable-separate-binaries';;
-	n) EARLYSTOP=true;;
-	e) KEEPENV=true;;
-	p) PEDANTIC=true;;
-	u) NOT_FULL_USE=true;;
-	s) SQLITE='--with-sqlite';;
-	S) SQLITE='--without-sqlite';;
-	b) BZLIB='--with-bzip2';;
-	B) BZLIB='--without-bzip2';;
-	c) SAFEFLAGS=true;;
-	r) CHOWN=true;;
-	j) [ -n "${OPTARG}" ] && JARG='-j${OPTARG}' || JARG='';;
+case "${opt}" in
+	q) quiet='>/dev/null 2>&1';;
+	0) extra_cache='';;
+	1) separate='--disable-separate-binaries';;
+	2) separate='--enable-separate-update';;
+	3) separate='--enable-separate-binaries';;
+	n) earlystop=true;;
+	e) keepenv=true;;
+	p) pedantic=true;;
+	u) not_full_use=true;;
+	s) sqlite='--with-sqlite';;
+	S) sqlite='--without-sqlite';;
+	b) bzlib='--with-bzip2';;
+	B) bzlib='--without-bzip2';;
+	c) safeflags=true;;
+	C) use_ccache=false;;
+	r) use_chown=true;;
+	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
 	*) Usage 1;;
 esac
 done
@@ -67,26 +97,30 @@ then
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
-if ${CHOWN}
+${quiet} && quietredirect='>/dev/null 2>&1' || quietredirect=''
+
+if ${use_chown}
 then
 	ls /root >/dev/null 2>&1 && \
 		Die "You should not really be root when you use -r" 2
 	chown -R root:root .
 fi
 
-if ! ${KEEPENV}
+${use_ccache} && SetCcache
+
+if ! ${keepenv}
 then
-	MARCH="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
+	march="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 		/etc/make.conf`"
 	export CXXFLAGS CFLAGS LDFLAGS
 	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
 	LDFLAGS="${LDFLAGS} -Wl,-z,defs -Wl,--no-undefined -Wl,--no-allow-shlib-undefined -Wl,--no-undefined-version -Wl,--warn-common -Wl,--fatal-warnings"
-	CFLAGS="-march=${MARCH} -O2 -pipe -funsigned-char"
-	${SAFEFLAGS} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -funsafe-loop-optimizations -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
-	${NOT_FULL_USE} && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
+	CFLAGS="-march=${march} -O2 -pipe -funsigned-char"
+	${safeflags} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -funsafe-loop-optimizations -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
+	${not_full_use} && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
 	CFLAGS="${CFLAGS} -D_GLIBCXX_DEBUG -g -ggdb3 -Wall -Wextra"
-	${SAFEFLAGS} || CFLAGS="${CFLAGS} -pedantic"
-	if ${PEDANTIC}
+	${safeflags} || CFLAGS="${CFLAGS} -pedantic"
+	if ${pedantic}
 	then
 		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
 		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=1 -Wstrict-overflow=5"
@@ -101,12 +135,12 @@ then
 		CFLAGS="${CFLAGS} -Wtraditional -Wc++-compat -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wpointer-sign"
 		#CXXFLAGS="${CXXFLAGS} -Werror"
 	else
-		${SAFEFLAGS} || CFLAGS="${CFLAGS} -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG"
+		${safeflags} || CFLAGS="${CFLAGS} -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG"
 		CXXFLAGS="${CFLAGS} -Werror"
 	fi
-	${SAFEFLAGS} || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
+	${safeflags} || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
 fi
-[ -n "${QUIET}" ] || echo "CFLAGS=${CFLAGS}
+${quiet} || echo "CFLAGS=${CFLAGS}
 CXXFLAGS=${CXXFLAGS}
 LDFLAGS=${LDFLAGS}"
 if ! test -e Makefile
@@ -114,18 +148,20 @@ then
 	if ! test -e configure || ! test -e Makefile.in
 	then
 		echo "Running autotools..."
-		eval ./autogen.sh ${QUIET} || Die "autogen failed"
+		eval ./autogen.sh ${quietredirect} || Die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure "--prefix=" ${SQLITE} ${BZLIB} ${EXTRA_CACHE} ${SEPARATE} ${QUIET} || \
+	eval ./configure "--prefix=" ${sqlite} ${bzlib} ${extra_cache} ${separate} ${quietredirect} || \
 		Die "configure failed"
 fi
-${EARLYSTOP} && exec make ${JARG} config.h
+${earlystop} && {
+	exec make ${jarg} config.h || Die "cannot exec make"
+}
 echo "Making ${*}..."
 command -v make >/dev/null 2>&1 || Die "cannot find make"
-if [ -n "${QUIET}" ]
+if ${quiet}
 then
-	exec make ${JARG} "${@}" >/dev/null 2>&1
+	exec make ${jarg} "${@}" >/dev/null 2>&1
 else
-	exec make ${JARG} "${@}"
+	exec make ${jarg} "${@}"
 fi

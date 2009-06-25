@@ -131,6 +131,7 @@ AddUpdateQuoting () {
 	local k
 	k="${1}"
 	shift
+	Replace -g k '\' '\\'
 	Replace -g k '?' '\?'
 	Replace -g k '*' '\*'
 	Replace -g k '[' '\['
