@@ -30,11 +30,11 @@ echo testing eix located in "$eix_prefix"
 
 make -C "$eix_prefix"
 
-echo '>> running installed update-eix'
-EIX_CACHEFILE="$installed_cache" update-eix || die
+echo '>> running installed eix-update'
+EIX_CACHEFILE="$installed_cache" eix-update || die
 
-echo '>> running installed update-eix'
-EIX_CACHEFILE="$testing_cache" "$eix_prefix"/update-eix || did
+echo '>> running installed eix-update'
+EIX_CACHEFILE="$testing_cache" "$eix_prefix"/eix-update || did
 
 EIX_CACHEFILE="$installed_cache" eix > "$installed_output" || die
 EIX_CACHEFILE="$testing_cache" "$eix_prefix"/eix > "$testing_output" || die

@@ -92,8 +92,8 @@ for ((gcc_n=0;gcc_n<"${#gcc[@]}";++gcc_n)); do
 		continue
 	fi
 
-	if ! "${eix_prefix}"/bin/update-eix; then
-		set_status $gcc_n "(5 of 6) running update-eix (in $eix_prefix)"
+	if ! "${eix_prefix}"/bin/eix-update; then
+		set_status $gcc_n "(5 of 6) running eix-update (in $eix_prefix)"
 		continue
 	fi
 

@@ -109,7 +109,7 @@ GetOverlays () {
 }
 
 Init () {
-	ClearUpdateEixArgs
+	ClearUpdateArgs
 	GetOverlays
 	AddLocalMethods
 }
@@ -117,13 +117,13 @@ Init () {
 Add () {
 	Init
 	eval "AddOverlays ${layman_overlays}"
-	CallUpdateEix
+	CallUpdate
 }
 
 Remove () {
 	Init
 	eval "AddExcludes ${layman_overlays}"
-	CallUpdateEix
+	CallUpdate
 }
 
 main_command="${1}"

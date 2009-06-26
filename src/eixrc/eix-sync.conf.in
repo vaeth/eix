@@ -5,6 +5,8 @@
 # shell functions to calculate arguments. Be sure to quote correctly.
 # Moreover, you can also use hooks to call layman or update some caches.
 # See "man eix" for more details.
-# Just one example: On a machine which gets its PORTDIR from another machine
-# you might want to put here the line
+#
+# Just one example: On a machine which gets its PORTDIR copied or exported
+# from another machine you might want to put here the line
 # -uT
+#

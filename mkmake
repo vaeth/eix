@@ -47,7 +47,7 @@ SetCcache () {
 		PATH="${i}:${PATH}"
 	fi
 	[ -n "${CCACHE_DIR}" ] && return
-	for i in "${HOME}/.ccache" ../ccache
+	for i in "${HOME}/.ccache" ../ccache ../../ccache
 	do
 		[ -z "${i}" ] && continue
 		j=`readlink -f -- "${i}"` && [ -n "${j}" ] \

@@ -54,10 +54,10 @@ AC_ARG_ENABLE(separate_binaries,
 	])
 AM_CONDITIONAL(SEPARATE_BINARIES, ${separate_binaries})
 
-dnl Separate update-eix?
+dnl Separate eix-update?
 AC_ARG_ENABLE(separate_update,
 	AS_HELP_STRING([--enable-separate-update],
-	[create a separate update-eix binary]),
+	[create a separate eix-update binary]),
 	[
 		case "${enableval}" in
 			yes)

@@ -5,12 +5,15 @@
 	- Renames: update-eix -> eix-update, diff-eix -> eix-diff,
 	  update-eix-remote -> eix-remote, update-eix-layman -> eix-layman,
 	  functions-eix.sh -> eix-functions.sh
-	  The purpose is to get a consistent naming scheme: all eix-related
-	  programs now start with eix-* (except versionsort).
+	  The purpose is to get a consistent naming scheme: All programs of
+	  eix now start with eix-* (except versionsort).
 	  If you want to keep the old names, create corresponding symlinks:
 	  This is explicitly supported and not going to be deprecated, but
-	  such symlinks are not installed by default anymore, because new
-	  users will not need them.
+	  such symlinks are not installed automatically, because new
+	  users will not need them. So it is advisable to fix your scripts if
+	  they should ever run on newer systems. Also two functions in
+	  eix-functions.sh and a corresponding internal variable have been
+	  renamed, see the HISTORY section in "man eix" for further details.
 	- Introduce /etc/eix-remote.conf and EIX_REMOTE_OPTS
 	- Introduce some new options for eix-remote (useful as defaults)
 	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated

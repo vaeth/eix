@@ -2612,8 +2612,20 @@ B<versionsort> which is more or less just an independent tool).
 If you cannot get accustomed to this new naming scheme or have scripts depending
 on the old names, you can use symbolic links for the original names;
 this is explicitly supported and is not intended to be deprecated.
-Only such symbolic links are not installed anymore by default, because
-new users will not need them.
+However, such symlinks are not installed automatically, because new users will not need them.
+So it is advisable to fix your scripts if they should ever run on newer systems.
+Moreover, also in eix-functions.sh two functions have been renamed for consistency reasons
+(CallUpdateEix -> CallUpdate and ClearUpdateEixArgs -> ClearUpdateArgs),
+and also the internal variable they use has been renamed, but the latter
+was never intended to be used by scripts.
+Hence, if you really do not want to fix your scripts, you might need to make
+functions-eix.sh a wrapper script with e.g. the content
+
+B<.> B<">I<Path to eix-functions.sh>B<">
+
+B<CallUpdateEix () { CallUpdate "${@}"; }>
+
+B<ClearUpdateEixArgs () { CLearUpdateArgs "${@}"; }>
 
 Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
 reasonable anymore to use different variable names for eix and eix-diff.

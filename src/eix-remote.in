@@ -248,7 +248,7 @@ AddArchive () {
 	i="${1}"
 	RunCommand "Unpacking data" tar xjf "${i}" || \
 		die "`eval_gettext 'cannot unpack ${i}'`"
-	ClearUpdateEixArgs
+	ClearUpdateArgs
 	AddLocalMethods
 	for i in *
 	do
@@ -292,7 +292,7 @@ AddArchive () {
 		AddExcludes "${OVERLAYPARENT}${name}"
 	done
 	export KEEP_VIRTUALS=true
-	CallUpdateEix
+	CallUpdate
 }
 
 FetchCopy () {
@@ -321,10 +321,10 @@ Add () {
 }
 
 Remove () {
-	ClearUpdateEixArgs
+	ClearUpdateArgs
 	AddLocalMethods
 	export KEEP_VIRTUALS=false
-	CallUpdateEix
+	CallUpdate
 }
 
 Update () {

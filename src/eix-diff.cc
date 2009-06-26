@@ -252,7 +252,7 @@ print_lost_package(Package *p)
 
 
 int
-run_diff_eix(int argc, char *argv[])
+run_eix_diff(int argc, char *argv[])
 {
 	string old_file, new_file;
 

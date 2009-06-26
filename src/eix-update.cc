@@ -289,7 +289,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 }
 
 int
-run_update_eix(int argc, char *argv[])
+run_eix_update(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);

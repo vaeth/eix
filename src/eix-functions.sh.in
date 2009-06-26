@@ -124,7 +124,7 @@ Push () {
 }
 
 AddUpdateArgs () {
-	Push update_eix_args "${@}"
+	Push update_args "${@}"
 }
 
 AddUpdateQuoting () {
@@ -160,12 +160,12 @@ AddExcludes () {
 	done
 }
 
-ClearUpdateEixArgs () {
-	update_eix_args=''
+ClearUpdateArgs () {
+	update_args=''
 }
 
-CallUpdateEix () {
-	eval "set -- ${update_eix_args}"
+CallUpdate () {
+	eval "set -- ${update_args}"
 	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" || \
 		die "`gettext 'eix-update failed'`"
 }

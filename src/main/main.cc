@@ -35,21 +35,21 @@ int run_eix(int argc, char *argv[]);
 #endif
 
 #ifdef UPDATE_BINARY
-int run_update_eix(int argc, char *argv[]);
+int run_eix_update(int argc, char *argv[]);
 #ifdef USE_BINARY
 #define BINARY_COLLECTION 1
 #else
-#define USE_BINARY run_update_eix
+#define USE_BINARY run_eix_update
 #endif
 #endif
 
 #ifdef DIFF_BINARY
-int run_diff_eix(int argc, char *argv[]);
+int run_eix_diff(int argc, char *argv[]);
 #ifdef USE_BINARY
 #undef BINARY_COLLECTION
 #define BINARY_COLLECTION 1
 #else
-#define USE_BINARY run_diff_eix
+#define USE_BINARY run_eix_diff
 #endif
 #endif
 
@@ -129,14 +129,14 @@ run_program(int argc, char *argv[])
 #ifdef DIFF_BINARY
 	if((program_name.find("diff") != string::npos) ||
 		(program_name.find("DIFF") != string::npos))
-		return run_diff_eix(argc, argv);
+		return run_eix_diff(argc, argv);
 #endif
 #ifdef UPDATE_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
 	if((program_name.find("update") != string::npos) ||
 		(program_name.find("UPDATE") != string::npos))
 #endif
-		return run_update_eix(argc, argv);
+		return run_eix_update(argc, argv);
 #endif
 #ifdef VERSIONSORT_BINARY
 #ifdef EIX_BINARY
