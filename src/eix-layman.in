@@ -34,24 +34,24 @@ The following commands are provided:
 add:    Add the local layman overlays to the eix database
 remove: Remove the local layman overlays from the eix database.
 
-Options:
-	-a OVERLAY    Add overlay to the list of layman overlays.
-	-A PATH       Add PATH to the sourced make.confs used to determine
-	              the layman overlays. Current value:'
+Available options:
+
+-a OVERLAY    Add overlay to the list of layman overlays.
+-A PATH       Add PATH to the sourced make.confs used to determine
+              the layman overlays. Current value:'
 	eval "set -- ${layman_make}"
 	[ ${#} -eq 0 ] && set -- "`gettext \
 		'none (i.e. no readable layman make.conf specified)'`"
 	for i
 	do
 		printf '%s%s' '
-	              ' "${i}"
+              ' "${i}"
 	done
-	echo
-	gettext \
-'	-C            Clear the above list
-	-c LAYMAN_CFG Use layman.cfg file to determine entry for above list
-	-v            Verbose (default)
-	-q            Quiet'
+	gettext '
+-C            Clear the above list
+-c LAYMAN_CFG Use layman.cfg file to determine entry for above list
+-v            Verbose (default)
+-q            Quiet'
 	echo
 	exit ${exitcode}
 }
