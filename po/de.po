@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-25 19:11+0200\n"
+"POT-Creation-Date: 2009-06-27 02:00+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -236,7 +236,7 @@ msgstr "%6d Sekunden insgesamt\\n"
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:328 src/eix-remote.sh:208
+#: src/eix-sync.sh:328 src/eix-remote.sh:218
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
@@ -535,7 +535,7 @@ msgstr ""
 "\t-v            Ausführliche Ausgabe (Default)\n"
 "\t-q            Keine Ausgabe"
 
-#: src/eix-remote.sh:25
+#: src/eix-remote.sh:35
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command [FILE]\n"
@@ -578,7 +578,7 @@ msgid ""
 "\n"
 "-f FILE This is the same as giving FILE as the last argument.\n"
 "        This is mainly useful for default options. Current value:\n"
-"        \t${f}\n"
+"        ${f}\n"
 "-u USER Call wget as USER. Ignored if not set unless you are root.\n"
 "-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
 "-o PATH Use PATH as OVERLAYPARENT\n"
@@ -625,64 +625,67 @@ msgstr ""
 "\n"
 "-f FILE Dies ist äquivalent mit FILE als letztem Argument.\n"
 "        Als Default-Option kann dies nützlich sein. Aktueller Wert:\n"
-"        \t${f}\n"
-"-u USER Call wget as USER. Ignored if not set unless you are root.\n"
-"-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
+"        ${f}\n"
 "-u USER Ruft wget als USER auf. Wird diese Option nicht angegeben, so\n"
 "        findet nur beim Aufruf unter root ein Benutzerwechsel statt.\n"
 "-U USER Ruft wget als USER auf, wenn root der aufrufende Benutzer ist.\n"
-"        Aktueller Wert: \"nobody\".\n"
+"        Aktueller Wert: \"${fetchroot}\".\n"
 "-o PATH Benutzt PATH als OVERLAYPARENT\n"
 "-v      Ausführliche Ausgabe (Default)\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:75
+#: src/eix-remote.sh:85
 #, sh-format
 msgid "$OVERLAYPARENT must not be empty"
 msgstr "$OVERLAYPARENT darf nicht leer sein"
 
-#: src/eix-remote.sh:77
+#: src/eix-remote.sh:87
 #, sh-format
 msgid "$OVERLAYPARENT must start with /"
 msgstr "$OVERLAYPARENT muss mit / beginnen"
 
-#: src/eix-remote.sh:145
+#: src/eix-remote.sh:155
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:170
+#: src/eix-remote.sh:180
 #, sh-format
 msgid "${a} cannot be found in PATH"
 msgstr "${a} nicht gefunden (im PATH)"
 
-#: src/eix-remote.sh:182
+#: src/eix-remote.sh:192
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/eix-remote.sh:203
+#: src/eix-remote.sh:213
 msgid "cannot create temporary directory"
 msgstr "Kann kein temporäres Directory erzeugen"
 
-#: src/eix-remote.sh:213
+#: src/eix-remote.sh:223
 #, sh-format
 msgid "cannot create temporary dir ${tmpdir}"
 msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
 
-#: src/eix-remote.sh:242
+#: src/eix-remote.sh:252
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:243
+#: src/eix-remote.sh:253
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:250
+#: src/eix-remote.sh:260
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
+
+#: src/eix-remote.sh:278
+#, sh-format
+msgid "${i} is broken"
+msgstr "${i} ist defekt"
 
 #: src/eix-remote.sh:318
 #, sh-format

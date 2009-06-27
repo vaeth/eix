@@ -11,15 +11,15 @@
 	  This is explicitly supported and not going to be deprecated, but
 	  such symlinks are not installed automatically, because new
 	  users will not need them. So it is advisable to fix your scripts if
-	  they should ever run on newer systems. Also two functions in
-	  eix-functions.sh and a corresponding internal variable have been
-	  renamed, see the HISTORY section in "man eix" for further details.
+	  they should ever run on newer systems. Also in eix-functions.sh two
+	  functions and a corresponding internal variable have been renamed,
+	  see the HISTORY section in "man eix" for further details.
 	- Introduce /etc/eix-remote.conf and EIX_REMOTE_OPTS
-	- Introduce some new options for eix-remote (useful as defaults)
+	- eix-remote: Introduce -U and -f (useful as defaults)
 	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated
 	- Install sample /etc/*.conf
-	- eix-remote: Show resolved labels during update.
-	- eix-remote: remove -O; argument is calculated automatically.
+	- eix-remote: Include label names and correct paths in virtual names.
+	- eix-remote: Remove -O since remote script now produces proper files.
 	- Introduce --print-overlay-{path,label}
 	- Fix multiple declaration of local variable, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=275300

@@ -11,11 +11,21 @@
 . ./eix-functions.sh.in
 ReadFunctions
 
-: ${OVERLAYPARENT:=/usr/portage/local}
-eixcachesname='eix-caches.tbz2'
+addr='http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2'
 
 local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
+
+PrintLaymanStorage () {
+	python -c "from layman.config import Config
+print Config()['storage']" "${@}" 2>/dev/null
+}
+
+if [ -z "${OVERLAYPARENT}" ]
+then
+	OVERLAYPARENT=`PrintLaymanStorage` || OVERLAYPARENT=''
+	: ${OVERLAYPARENT:=/usr/portage/local/layman}
+fi
 
 Usage () {
 	local n p f
@@ -58,7 +68,7 @@ The following options are available:
 
 -f FILE This is the same as giving FILE as the last argument.
         This is mainly useful for default options. Current value:
-        	${f}
+        ${f}
 -u USER Call wget as USER. Ignored if not set unless you are root.
 -U USER Call wget as USER if called as root. Currently "${fetchroot}"
 -o PATH Use PATH as OVERLAYPARENT
@@ -232,8 +242,8 @@ MakeTempSub () {
 
 tmpfile=''
 FetchTemp () {
-	local addr
-	addr="http://dev.gentooexperimental.org/eix_cache/${eixcachesname}"
+	local eixcachesname
+	eixcachesname="${addr##*/}"
 	MakeTempDir cd
 	tmpfile="${tmpdir}/${eixcachesname}"
 	( umask 000; : >"${tmpfile}" )
@@ -252,44 +262,34 @@ AddArchive () {
 	AddLocalMethods
 	for i in *
 	do
-		name="${i}"
-		Replace -g name ':' '_' || mv -- "${i}" "${name}"
-	done
-	for i in *
-	do
-		name="${i%.eix}"
-		case "${name}" in
-			*_layman_*)
-				n="${name##*_layman_}"
-				name="${name%_layman_*}"
-				Replace -g name '_' '/'
-				name="${name}/layman/${n}"
-				virtual="layman/${n}"
-				;;
-			*)
-				Replace -g name '_' '/'
-				virtual="${name#*local/}"
-				;;
-		esac
-		name="/${name#/}"
-		virtual="(${virtual})"
-		n="${name##*/}"
-		Replace -g n '\' '\\'
-		Replace -g n '?' '\?'
-		Replace -g n '*' '\*'
-		Replace -g n '[' '\['
-		n="*/layman/*${n}"
+		n="${i%.eix}"
+		while true; do
+			case "${n}" in
+				_*) n="${n#_}";;
+				*_*_*_*) n="${n#*_}";;
+				*) break;;
+			esac
+		done
+		Replace -g n '_' '?'
+		n="*/${n}"
 		p="${2}/${i}"
-		l=`EIX_CACHEFILE="${p}" eix --print-overlay-label "${n}"` || {
-			printf "%s\n" "`eval_gettext "${i} broken"`" >&2
+		name=`EIX_CACHEFILE="${p}" eix --print-overlay-path "${n}"` \
+			&& [ -n "${name}" ] || {
+			printf '%s\n' "`eval_gettext '${i} is broken'`" >&2
 			continue
 		}
-		printf "%s -> %s\n" "${virtual}" "${l:-\"\"}"
+		l=`EIX_CACHEFILE="${p}" eix --print-overlay-label "${n}"` || \
+			l=''
+		[ -z "${l}" ] && l='(no repo_name)'
+		name="${name##*/}"
+		virtual="layman/${name}"
+		printf '%s -> %s\n' "${virtual}" "${l}"
+		[ "${l}" = "${name}" ] || virtual="${virtual}: ${l}"
 		Replace -g p '\' '\\'
 		Replace -g p ':' '\:'
 		AddMethod "${virtual}" "eix*:${p}:${n}"
 		AddOverlays "${virtual}"
-		AddExcludes "${OVERLAYPARENT}${name}"
+		AddExcludes "${OVERLAYPARENT}/${name}"
 	done
 	export KEEP_VIRTUALS=true
 	CallUpdate
