@@ -43,9 +43,9 @@ option. Do not use "-u root"!
 For "update" and "add" all corresponding local layman overlay paths are
 excluded from the update of the current database to avoid confusion.
 These local paths are determined by prefixing the path
-	${OVERLAY_LAYMAN}
-You can modify this value with the -o option or by setting the environment
-variable OVERLAY_LAYMAN. If you do not want this feature (i.e. if you want
+	${LOCAL_LAYMAN}
+You can modify this value with the -l option or by setting the environment
+variable LOCAL_LAYMAN. If you do not want this feature (i.e. if you want
 to see your local layman overlays and the remote layman overlays),
 use here some path not containing any overlays (usually "/" will do).
 
@@ -61,8 +61,10 @@ The following options are available:
         ${f}
 -u USER Call wget as USER. Ignored if not set unless you are root.
 -U USER Call wget as USER if called as root. Currently "${fetchroot}"
--o PATH Use PATH as OVERLAY_LAYMAN
--i      Ignore all previous options (override settings)
+-l PATH Use PATH as LOCAL_LAYMAN
+-a ADDR Use ADDR as remote database address. Current value:
+        ${addr}
+-i      Ignore all previous options (e.g. of local defaults).
 -v      Verbose (default)
 -q      Quiet'
 	echo
@@ -70,11 +72,11 @@ The following options are available:
 	exit ${exitcode}
 }
 
-SanitizeOverlaylayman () {
-	have_readlink=false NormalizeNames OVERLAY_LAYMAN \
-		|| die "`gettext '$OVERLAY_LAYMAN must not be empty'`"
+SanitizeLocalLayman () {
+	have_readlink=false NormalizeNames LOCAL_LAYMAN \
+		|| die "`gettext '$LOCAL_LAYMAN must not be empty'`"
 	[ -z "${relative}" ] || \
-		die "`gettext '$OVERLAY_LAYMAN must start with /'`"
+		die "`gettext '$LOCAL_LAYMAN must start with /'`"
 }
 
 PrintLaymanStorage () {
@@ -82,21 +84,21 @@ PrintLaymanStorage () {
 print Config()['storage']" "${@}" 2>/dev/null
 }
 
-SetOverlaylayman () {
+SetLocalLayman () {
 	local i
 	for i
 	do
-		[ -n "${i}" ] && test -d "${i}" && OVERLAY_LAYMAN="${i}" \
+		[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN="${i}" \
 			&& return
 	done
 	return 1
 }
 
-InitOverlaylayman () {
+InitLocalLayman () {
 	local l
-	[ -n "${OVERLAY_LAYMAN}" ] && return
+	[ -n "${LOCAL_LAYMAN}" ] && return
 	l="`PrintLaymanStorage`" || l=''
-	SetOverlaylayman "${l}" \
+	SetLocalLayman "${l}" \
 		'/usr/local/portage/layman' \
 		"${local_portdir:-/}local/layman/make.conf"
 }
@@ -128,8 +130,8 @@ ReadConfig () {
 	done <"${eixremoteconf}"
 }
 
-InitOverlaylayman
-SanitizeOverlaylayman
+InitLocalLayman
+SanitizeLocalLayman
 DefaultOpts
 ReadConfig
 
@@ -137,7 +139,7 @@ eval "Push -c opt ${config_opts} ${EIX_REMOTE_OPTS}"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts 'f:vqu:U:o:i?hH' opt
+while getopts 'f:vqu:U:l:a:i?hH' opt
 do
 	case "${opt}" in
 		f) filearg="${OPTARG}";;
@@ -145,7 +147,8 @@ do
 		q) verbose=false;;
 		u) fetchuser="${OPTARG}";;
 		U) fetchroot="${OPTARG}";;
-		o) OVERLAY_LAYMAN="${OPTARG}"; SanitizeOverlaylayman;;
+		l) LOCAL_LAYMAN="${OPTARG}"; SanitizeLocalLayman;;
+		a) addr="${OPTARG}";;
 		i) DefaultOpts;;
 		*) Usage 0;;
 	esac
@@ -304,7 +307,7 @@ AddArchive () {
 		Replace -g p ':' '\:'
 		AddMethod "${virtual}" "eix*:${p}:${n}"
 		AddOverlays "${virtual}"
-		AddExcludes "${OVERLAY_LAYMAN}/${name}"
+		AddExcludes "${LOCAL_LAYMAN}/${name}"
 	done
 	export KEEP_VIRTUALS=true
 	CallUpdate

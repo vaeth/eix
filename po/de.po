@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-27 09:59+0200\n"
+"POT-Creation-Date: 2009-06-27 10:17+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -236,7 +236,7 @@ msgstr "%6d Sekunden insgesamt\\n"
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:328 src/eix-remote.sh:233
+#: src/eix-sync.sh:328 src/eix-remote.sh:236
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
@@ -583,9 +583,9 @@ msgid ""
 "For \"update\" and \"add\" all corresponding local layman overlay paths are\n"
 "excluded from the update of the current database to avoid confusion.\n"
 "These local paths are determined by prefixing the path\n"
-"\t${OVERLAY_LAYMAN}\n"
-"You can modify this value with the -o option or by setting the environment\n"
-"variable OVERLAY_LAYMAN. If you do not want this feature (i.e. if you want\n"
+"\t${LOCAL_LAYMAN}\n"
+"You can modify this value with the -l option or by setting the environment\n"
+"variable LOCAL_LAYMAN. If you do not want this feature (i.e. if you want\n"
 "to see your local layman overlays and the remote layman overlays),\n"
 "use here some path not containing any overlays (usually \"/\" will do).\n"
 "\n"
@@ -601,8 +601,10 @@ msgid ""
 "        ${f}\n"
 "-u USER Call wget as USER. Ignored if not set unless you are root.\n"
 "-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
-"-o PATH Use PATH as OVERLAY_LAYMAN\n"
-"-i      Ignore all previous options (override settings)\n"
+"-l PATH Use PATH as LOCAL_LAYMAN\n"
+"-a ADDR Use ADDR as remote database address. Current value:\n"
+"        ${addr}\n"
+"-i      Ignore all previous options (e.g. of local defaults).\n"
 "-v      Verbose (default)\n"
 "-q      Quiet"
 msgstr ""
@@ -630,12 +632,12 @@ msgstr ""
 "Für \"update\" und \"add\" werden zur Vermeidung von Verwechslungen alle\n"
 "lokalen Layman-Overlay-Pfade beim Update der aktuellen Datenbank.\n"
 "ausgeschlossen. Diese lokalen Pfade werden durch Voranstellen des Pfades\n"
-"\t${OVERLAY_LAYMAN}\n"
-"bestimmt. Dieser Wert kann durch die Option -o oder durch Setzen der\n"
-"Environment-Variable OVERLAY_LAYMAN geändert werden.\n"
+"\t${LOCAL_LAYMAN}\n"
+"bestimmt. Dieser Wert kann durch die Option -l oder durch Setzen der\n"
+"Environment-Variable LOCAL_LAYMAN geändert werden.\n"
 "Falls Sie dieses Feature nicht wollen, d.h. falls Sie wollen, dass sowohl\n"
 "die lokalen Layman-Overlays als auch die Remote Layman-Overlays in der\n"
-"Datenbank stehen, setzen Sie OVERLAY_LAYMAN einfach auf einen Pfad, der\n"
+"Datenbank stehen, setzen Sie LOCAL_LAYMAN einfach auf einen Pfad, der\n"
 "keine Overlays enthält (normalerweise genügt \"/\").\n"
 "\n"
 "Optionen können in\n"
@@ -651,65 +653,68 @@ msgstr ""
 "-u USER Ruft wget als USER auf. Wird diese Option nicht angegeben, so\n"
 "        findet nur beim Aufruf unter root ein Benutzerwechsel statt.\n"
 "-U USER Ruft wget als USER auf, wenn root der aufrufende Benutzer ist.\n"
-"        Aktueller Wert: \"${fetchroot}\".\n"
-"-o PATH Benutzt PATH als OVERLAY_LAYMAN\n"
+"        Aktueller Wert: \"${fetchroot}\"\n"
+"-l PATH Benutzt PATH als LOCAL_LAYMAN\n"
+"-a ADDR Benutze ADDR zum Abholen der Daten. Aktueller Wert:\n"
+"        ${addr}\n"
+"-i      Ignoriere all vorherigen Optionen (etwa von lokalen Defaults).\n"
 "-v      Ausführliche Ausgabe (Default)\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:75
-#, sh-format
-msgid "$OVERLAY_LAYMAN must not be empty"
-msgstr "$OVERLAY_LAYMAN darf nicht leer sein"
-
 #: src/eix-remote.sh:77
 #, sh-format
-msgid "$OVERLAY_LAYMAN must start with /"
-msgstr "$OVERLAY_LAYMAN muss mit / beginnen"
+msgid "$LOCAL_LAYMAN must not be empty"
+msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:170
+#: src/eix-remote.sh:79
+#, sh-format
+msgid "$LOCAL_LAYMAN must start with /"
+msgstr "$LOCAL_LAYMAN muss mit / beginnen"
+
+#: src/eix-remote.sh:173
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:195
+#: src/eix-remote.sh:198
 #, sh-format
 msgid "${a} cannot be found in PATH"
 msgstr "${a} nicht gefunden (im PATH)"
 
-#: src/eix-remote.sh:207
+#: src/eix-remote.sh:210
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/eix-remote.sh:228
+#: src/eix-remote.sh:231
 msgid "cannot create temporary directory"
 msgstr "Kann kein temporäres Directory erzeugen"
 
-#: src/eix-remote.sh:238
+#: src/eix-remote.sh:241
 #, sh-format
 msgid "cannot create temporary dir ${tmpdir}"
 msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
 
-#: src/eix-remote.sh:267
+#: src/eix-remote.sh:270
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:268
+#: src/eix-remote.sh:271
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:275
+#: src/eix-remote.sh:278
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
 
-#: src/eix-remote.sh:293
+#: src/eix-remote.sh:296
 #, sh-format
 msgid "${i} is broken"
 msgstr "${i} ist defekt"
 
-#: src/eix-remote.sh:333
+#: src/eix-remote.sh:336
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"

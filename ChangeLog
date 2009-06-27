@@ -15,13 +15,14 @@
 	  functions and a corresponding internal variable have been renamed,
 	  see the HISTORY section in "man eix" for further details.
 	- Introduce /etc/eix-remote.conf and EIX_REMOTE_OPTS
-	- eix-remote: Introduce -U and -f (useful as defaults)
-	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated
+	- eix-remote: Introduce -U -f -a (useful as defaults)
+	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated.
 	- Install sample /etc/*.conf
 	- eix-remote: Include label names and correct paths in virtual names.
 	- eix-remote: Remove -O since remote script now produces proper files.
-	- eix-remote: Rename OVERLAYPARENT into OVERLAY_LAYMAN since now one
-	  more level is required. Improve documentation of that feature.
+	- eix-remote: Rename OVERLAYPARENT into LOCAL_LAYMAN and -o into -l
+	  since now not the parent but the full path are required.
+	  Improve documentation of that feature.
 	- Introduce --print-overlay-{path,label}
 	- OVERLAYS_LIST=all now also prints the main tree as 0th entry.
 	- Fix multiple declaration of local variable, see
