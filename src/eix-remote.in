@@ -16,17 +16,6 @@ addr='http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2'
 local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
-PrintLaymanStorage () {
-	python -c "from layman.config import Config
-print Config()['storage']" "${@}" 2>/dev/null
-}
-
-if [ -z "${OVERLAYPARENT}" ]
-then
-	OVERLAYPARENT=`PrintLaymanStorage` || OVERLAYPARENT=''
-	: ${OVERLAYPARENT:=/usr/portage/local/layman}
-fi
-
 Usage () {
 	local n p f
 	n="${0##*/}"
@@ -51,13 +40,14 @@ It is strongly recommended to use the update/fetch commands with very limited
 permissions. Permissions are dropped when run as root or with the "-u nobody"
 option. Do not use "-u root"!
 
-For "update" and "add" all corresponding local overlay paths are excluded
-from the update of the current database to avoid confusion.
+For "update" and "add" all corresponding local layman overlay paths are
+excluded from the update of the current database to avoid confusion.
 These local paths are determined by prefixing the path
-	${OVERLAYPARENT}
-You can modify this value by setting the environment variable OVERLAYPARENT
-or with the -o option. If you do not want this feature, set OVERLAYPARENT
-to some path not containing any overlays.
+	${OVERLAY_LAYMAN}
+You can modify this value with the -o option or by setting the environment
+variable OVERLAY_LAYMAN. If you do not want this feature (i.e. if you want
+to see your local layman overlays and the remote layman overlays),
+use here some path not containing any overlays (usually "/" will do).
 
 Options can be specified in
 	${eixremoteconf}
@@ -71,7 +61,7 @@ The following options are available:
         ${f}
 -u USER Call wget as USER. Ignored if not set unless you are root.
 -U USER Call wget as USER if called as root. Currently "${fetchroot}"
--o PATH Use PATH as OVERLAYPARENT
+-o PATH Use PATH as OVERLAY_LAYMAN
 -i      Ignore all previous options (override settings)
 -v      Verbose (default)
 -q      Quiet'
@@ -80,11 +70,35 @@ The following options are available:
 	exit ${exitcode}
 }
 
-Sanitize () {
-	have_readlink=false NormalizeNames OVERLAYPARENT \
-		|| die "`gettext '$OVERLAYPARENT must not be empty'`"
+SanitizeOverlaylayman () {
+	have_readlink=false NormalizeNames OVERLAY_LAYMAN \
+		|| die "`gettext '$OVERLAY_LAYMAN must not be empty'`"
 	[ -z "${relative}" ] || \
-		die "`gettext '$OVERLAYPARENT must start with /'`"
+		die "`gettext '$OVERLAY_LAYMAN must start with /'`"
+}
+
+PrintLaymanStorage () {
+	python -c "from layman.config import Config
+print Config()['storage']" "${@}" 2>/dev/null
+}
+
+SetOverlaylayman () {
+	local i
+	for i
+	do
+		[ -n "${i}" ] && test -d "${i}" && OVERLAY_LAYMAN="${i}" \
+			&& return
+	done
+	return 1
+}
+
+InitOverlaylayman () {
+	local l
+	[ -n "${OVERLAY_LAYMAN}" ] && return
+	l="`PrintLaymanStorage`" || l=''
+	SetOverlaylayman "${l}" \
+		'/usr/local/portage/layman' \
+		"${local_portdir:-/}local/layman/make.conf"
 }
 
 DefaultOpts () {
@@ -114,7 +128,8 @@ ReadConfig () {
 	done <"${eixremoteconf}"
 }
 
-Sanitize
+InitOverlaylayman
+SanitizeOverlaylayman
 DefaultOpts
 ReadConfig
 
@@ -130,7 +145,7 @@ do
 		q) verbose=false;;
 		u) fetchuser="${OPTARG}";;
 		U) fetchroot="${OPTARG}";;
-		o) OVERLAYPARENT="${OPTARG}"; Sanitize;;
+		o) OVERLAY_LAYMAN="${OPTARG}"; SanitizeOverlaylayman;;
 		i) DefaultOpts;;
 		*) Usage 0;;
 	esac
@@ -289,7 +304,7 @@ AddArchive () {
 		Replace -g p ':' '\:'
 		AddMethod "${virtual}" "eix*:${p}:${n}"
 		AddOverlays "${virtual}"
-		AddExcludes "${OVERLAYPARENT}/${name}"
+		AddExcludes "${OVERLAY_LAYMAN}/${name}"
 	done
 	export KEEP_VIRTUALS=true
 	CallUpdate

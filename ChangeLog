@@ -20,10 +20,14 @@
 	- Install sample /etc/*.conf
 	- eix-remote: Include label names and correct paths in virtual names.
 	- eix-remote: Remove -O since remote script now produces proper files.
+	- eix-remote: Rename OVERLAYPARENT into OVERLAY_LAYMAN since now one
+	  more level is required. Improve documentation of that feature.
 	- Introduce --print-overlay-{path,label}
+	- OVERLAYS_LIST=all now also prints the main tree as 0th entry.
 	- Fix multiple declaration of local variable, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=275300
 	  Thanks to Stuart Shelton <srcshelton at gmail.com> for the patch.
+	- Better document eix-layman.
 
 *eix-0.16.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

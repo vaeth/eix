@@ -74,10 +74,11 @@ To get more help on B<eix-remote> call B<eix-remote -h>
 and see the documentation of I</etc/eix-remote.conf> below.
 
 B<eix-layman> can add or remove local layman overlays to the current database.
+You might want to use this if you do not source layman's make.conf in your local I</etc/make.conf>.
 To get more help on B<eix-layman> call B<eix-layman -h>.
+B<eix-layman> is also meant as an example script how to use B<eix-functions.sh>:
 
-B<eix-functions.sh> are helper functions used by B<eix-sync>,
-B<eix-remote> and B<eix-layman>.
+B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
 You might want to use them for your own similar scripts.
 Note that immediately after sourcing B<eix-functions.sh> you will probably
 want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
@@ -352,7 +353,11 @@ Note that if you use the default B<OVERLAYS_LIST=all-used-renumbered>
 you do not see the correct overlay numbers; to get a list of the correct
 overlay numbers you can e.g. call
 
-B<OVERLAYS_LIST=all eix -e ''>
+B<OVERLAYS_LIST=all eix --not>
+
+or in scripts better
+
+B<OVERLAYS_LIST=all PRINT_COUNT_ALWAYS=never eix -!>
 
 The special values B<0> or B<$PORTDIR> match the "main" tree (which in
 this connection is considered as the 0'th overlay).

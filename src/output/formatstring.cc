@@ -137,32 +137,33 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 	string start = "[";
 	string end = "]";
 	bool color = !no_color;
-	if( never_color )
+	if(never_color)
 		color = false;
-	if( color )
-	{
+	if(color) {
 		if(is_virtual(overlay))
 			start = color_virtualkey + start;
 		else
 			start = color_overlaykey + start;
 		end += AnsiColor(AnsiColor::acDefault).asString();
 	}
-	vector<Version::Overlay>::size_type index = overlay - 1;
-	if(overlay_used)
-		(*overlay_used)[index] = true;
-	if(some_overlay_used)
-		*some_overlay_used = true;
-	if(overlay_translations) {
-		overlay = (*overlay_translations)[index];
-		if(!overlay) {
-			Version::Overlay number = 0;
-			for(vector<Version::Overlay>::iterator it = overlay_translations->begin();
-				it != overlay_translations->end(); ++it) {
-				if(number < *it)
-					number = *it;
+	if(overlay) {
+		vector<Version::Overlay>::size_type index = overlay - 1;
+		if(overlay_used)
+			(*overlay_used)[index] = true;
+		if(some_overlay_used)
+			*some_overlay_used = true;
+		if(overlay_translations) {
+			overlay = (*overlay_translations)[index];
+			if(!overlay) {
+				Version::Overlay number = 0;
+				for(vector<Version::Overlay>::iterator it = overlay_translations->begin();
+					it != overlay_translations->end(); ++it) {
+					if(number < *it)
+						number = *it;
+				}
+				(*overlay_translations)[index] = ++number;
+				overlay = number;
 			}
-			(*overlay_translations)[index] = ++number;
-			overlay = number;
 		}
 	}
 	return eix::format("%s%s%s") % start % overlay % end;

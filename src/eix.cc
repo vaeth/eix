@@ -476,13 +476,12 @@ static bool
 print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_used)
 {
 	bool printed_overlay = false;
-	for(Version::Overlay i = 1;
-		i != header.countOverlays();
-		++i)
-	{
-		if(overlay_used)
+	for(Version::Overlay i = (overlay_mode == mode_list_all) ? 0 : 1;
+		i != header.countOverlays(); ++i) {
+		if(i && overlay_used) {
 			if(!((*overlay_used)[i-1]))
 				continue;
+		}
 		cout << fmt.overlay_keytext(i) << " ";
 		cout << header.getOverlay(i).human_readable() << "\n";
 		printed_overlay = true;

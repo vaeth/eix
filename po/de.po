@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-06-27 02:00+0200\n"
+"POT-Creation-Date: 2009-06-27 09:24+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -236,7 +236,7 @@ msgstr "%6d Sekunden insgesamt\\n"
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:328 src/eix-remote.sh:218
+#: src/eix-sync.sh:328 src/eix-remote.sh:233
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
@@ -495,35 +495,55 @@ msgstr "Starte updat-eix"
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
-"Add or remove local layman overlays to eix database (${p})\n"
+"Add or remove local layman overlays to the eix database (${p}).\n"
+"\n"
+"Explanation: If your /etc/make.conf does not source layman/make.conf,\n"
+"then the layman overlays are not considered as part of you PORTDIR_OVERLAY;\n"
+"in this case, they are are usually not added to your eix database and thus\n"
+"cannot be found with eix.\n"
+"However, you might want to add/remove them temporarily to your eix database\n"
+"without changing your /etc/make.conf. This is the purpose of this script.\n"
+"This script is also meant as an example how to use eix-functions.sh.\n"
+"\n"
 "The following commands are provided:\n"
 "\n"
-"add:\tAdd the local layman overlays to the eix database\n"
-"remove:\tRemove the local layman overlays from the eix database.\n"
+"add:    Add the local layman overlays to the eix database\n"
+"remove: Remove the local layman overlays from the eix database.\n"
 "\n"
 "Options:\n"
 "\t-a OVERLAY    Add overlay to the list of layman overlays.\n"
-"\t-A PATH       Add PATH to the sourced make.conf-s used to determine\n"
+"\t-A PATH       Add PATH to the sourced make.confs used to determine\n"
 "\t              the layman overlays. Current value:"
 msgstr ""
 "Aufruf: ${n} [Optionen] Kommando\n"
 "Dieses Script gehört zu ${p}.\n"
 "Es fügt lokale Layman-Overlays zur eix-Datenbank hinzu oder entfernt sie.\n"
+"\n"
+"Falls Laymans make.conf nicht in /etc/make.conf gesourced wird, werden die\n"
+"Layman Overlays nicht als Teil von PORTDIR_OVERLAY angesehen; in diesem "
+"Fall\n"
+"werden sie normalerweise nicht zur Eix-Datenbank hinzugefügt und können "
+"daher\n"
+"nicht mit eix durchsucht werden.\n"
+"Dieses Skript dient dazu, sie temporär zur Eix-Datenbank hinzuzufügen oder\n"
+"sie zu entfernen, ohne dazu /etc/make.conf ändern zu müssen.\n"
+"Außerdem dient es als Beispiel zur Benutzung von eix-functions.sh.\n"
+"\n"
 "Die folgenden Kommandos gibt es:\n"
 "\n"
-"add:\tHinzufügen eines lokalen Layman-Overlays (zur Eix-Datenbank)\n"
-"remove:\tEntfernen eines lokalen Layman-Overlays.\n"
+"add:    Hinzufügen eines lokalen Layman-Overlays (zur Eix-Datenbank)\n"
+"remove: Entfernen eines lokalen Layman-Overlays.\n"
 "\n"
 "Optionen:\n"
 "\t-a OVERLAY    Fügt OVERLAY zur Liste der Layman-Overlays hinzu.\n"
-"\t-A PATH       Fügt PATH zu den gesourcten make.conf-s hinzu, die die\n"
+"\t-A PATH       Fügt PATH zu den gesourcten make.confs hinzu, die die\n"
 "\t              Layman-Overlays angeben. Aktueller Wert:"
 
-#: src/eix-layman.sh:34
+#: src/eix-layman.sh:43
 msgid "none (i.e. no readable layman make.conf specified)"
 msgstr "keiner (d.h. kein lesbares Layman-make.conf angegeben)"
 
-#: src/eix-layman.sh:42
+#: src/eix-layman.sh:51
 msgid ""
 "\t-C            Clear the above list\n"
 "\t-c LAYMAN_CFG Use layman.cfg file to determine entry for above list\n"
@@ -535,7 +555,7 @@ msgstr ""
 "\t-v            Ausführliche Ausgabe (Default)\n"
 "\t-q            Keine Ausgabe"
 
-#: src/eix-remote.sh:35
+#: src/eix-remote.sh:24
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command [FILE]\n"
@@ -560,14 +580,14 @@ msgid ""
 "\"\n"
 "option. Do not use \"-u root\"!\n"
 "\n"
-"For \"update\" and \"add\" all corresponding local overlay paths are "
-"excluded\n"
-"from the update of the current database to avoid confusion.\n"
+"For \"update\" and \"add\" all corresponding local layman overlay paths are\n"
+"excluded from the update of the current database to avoid confusion.\n"
 "These local paths are determined by prefixing the path\n"
-"\t${OVERLAYPARENT}\n"
-"You can modify this value by setting the environment variable OVERLAYPARENT\n"
-"or with the -o option. If you do not want this feature, set OVERLAYPARENT\n"
-"to some path not containing any overlays.\n"
+"\t${OVERLAY_LAYMAN}\n"
+"You can modify this value with the -o option or by setting the environment\n"
+"variable OVERLAY_LAYMAN. If you do not want this feature (i.e. if you want\n"
+"to see your local layman overlays and the remote layman overlays),\n"
+"use here some path not containing any overlays (usually \"/\" will do).\n"
 "\n"
 "Options can be specified in\n"
 "\t${eixremoteconf}\n"
@@ -581,7 +601,7 @@ msgid ""
 "        ${f}\n"
 "-u USER Call wget as USER. Ignored if not set unless you are root.\n"
 "-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
-"-o PATH Use PATH as OVERLAYPARENT\n"
+"-o PATH Use PATH as OVERLAY_LAYMAN\n"
 "-i      Ignore all previous options (override settings)\n"
 "-v      Verbose (default)\n"
 "-q      Quiet"
@@ -608,13 +628,15 @@ msgstr ""
 "Benutzen Sie keinesfalls \"-u root\"!\n"
 "\n"
 "Für \"update\" und \"add\" werden zur Vermeidung von Verwechslungen alle\n"
-"lokalen Overlay-Pfade beim Update der aktuellen Datenbank ausgeschlossen.\n"
-"Diese lokalen Pfade werden durch Voranstellen des Pfades\n"
-"\t${OVERLAYPARENT}\n"
-"bestimmt. Dieser Wert kann durch die Environment-Variable OVERLAYPARENT\n"
-"oder mit der Option -o geändert werden. Falls Sie dieses Feature nicht\n"
-"wollen, setzen Sie OVERLAYPARENT einfach auf einen Pfad, der keine\n"
-"Overlays enthält.\n"
+"lokalen Layman-Overlay-Pfade beim Update der aktuellen Datenbank.\n"
+"ausgeschlossen. Diese lokalen Pfade werden durch Voranstellen des Pfades\n"
+"\t${OVERLAY_LAYMAN}\n"
+"bestimmt. Dieser Wert kann durch die Option -o oder durch Setzen der\n"
+"Environment-Variable OVERLAY_LAYMAN geändert werden.\n"
+"Falls Sie dieses Feature nicht wollen, d.h. falls Sie wollen, dass sowohl\n"
+"die lokalen Layman-Overlays als auch die Remote Layman-Overlays in der\n"
+"Datenbank stehen, setzen Sie OVERLAY_LAYMAN einfach auf einen Pfad, der\n"
+"keine Overlays enthält (normalerweise genügt \"/\").\n"
 "\n"
 "Optionen können in\n"
 "\t${eixremoteconf}\n"
@@ -630,64 +652,64 @@ msgstr ""
 "        findet nur beim Aufruf unter root ein Benutzerwechsel statt.\n"
 "-U USER Ruft wget als USER auf, wenn root der aufrufende Benutzer ist.\n"
 "        Aktueller Wert: \"${fetchroot}\".\n"
-"-o PATH Benutzt PATH als OVERLAYPARENT\n"
+"-o PATH Benutzt PATH als OVERLAY_LAYMAN\n"
 "-v      Ausführliche Ausgabe (Default)\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:85
+#: src/eix-remote.sh:75
 #, sh-format
-msgid "$OVERLAYPARENT must not be empty"
-msgstr "$OVERLAYPARENT darf nicht leer sein"
+msgid "$OVERLAY_LAYMAN must not be empty"
+msgstr "$OVERLAY_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:87
+#: src/eix-remote.sh:77
 #, sh-format
-msgid "$OVERLAYPARENT must start with /"
-msgstr "$OVERLAYPARENT muss mit / beginnen"
+msgid "$OVERLAY_LAYMAN must start with /"
+msgstr "$OVERLAY_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:155
+#: src/eix-remote.sh:170
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:180
+#: src/eix-remote.sh:195
 #, sh-format
 msgid "${a} cannot be found in PATH"
 msgstr "${a} nicht gefunden (im PATH)"
 
-#: src/eix-remote.sh:192
+#: src/eix-remote.sh:207
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/eix-remote.sh:213
+#: src/eix-remote.sh:228
 msgid "cannot create temporary directory"
 msgstr "Kann kein temporäres Directory erzeugen"
 
-#: src/eix-remote.sh:223
+#: src/eix-remote.sh:238
 #, sh-format
 msgid "cannot create temporary dir ${tmpdir}"
 msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
 
-#: src/eix-remote.sh:252
+#: src/eix-remote.sh:267
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:253
+#: src/eix-remote.sh:268
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:260
+#: src/eix-remote.sh:275
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
 
-#: src/eix-remote.sh:278
+#: src/eix-remote.sh:293
 #, sh-format
 msgid "${i} is broken"
 msgstr "${i} ist defekt"
 
-#: src/eix-remote.sh:318
+#: src/eix-remote.sh:333
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
@@ -964,12 +986,12 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:512 src/eix-diff.cc:321
+#: src/eix.cc:510 src/eix-diff.cc:321
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:594 src/eix.cc:852
+#: src/eix.cc:592 src/eix.cc:850
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -978,7 +1000,7 @@ msgstr ""
 "Kann Datenbankfile %s nicht zum Lesen öffnen (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:605
+#: src/eix.cc:603
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -989,31 +1011,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:816 src/eix.cc:832
+#: src/eix.cc:814 src/eix.cc:830
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:819
+#: src/eix.cc:817
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:825
+#: src/eix.cc:823
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:936
+#: src/eix.cc:934
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:937
+#: src/eix.cc:935
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:942
+#: src/eix.cc:940
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1022,7 +1044,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:943
+#: src/eix.cc:941
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1031,7 +1053,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1001
+#: src/eix.cc:999
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1039,7 +1061,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1004
+#: src/eix.cc:1002
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"

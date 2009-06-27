@@ -19,22 +19,31 @@ Usage () {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] command
-Add or remove local layman overlays to eix database (${p})
+Add or remove local layman overlays to the eix database (${p}).
+
+Explanation: If your /etc/make.conf does not source layman/make.conf,
+then the layman overlays are not considered as part of you PORTDIR_OVERLAY;
+in this case, they are are usually not added to your eix database and thus
+cannot be found with eix.
+However, you might want to add/remove them temporarily to your eix database
+without changing your /etc/make.conf. This is the purpose of this script.
+This script is also meant as an example how to use eix-functions.sh.
+
 The following commands are provided:
 
-add:	Add the local layman overlays to the eix database
-remove:	Remove the local layman overlays from the eix database.
+add:    Add the local layman overlays to the eix database
+remove: Remove the local layman overlays from the eix database.
 
 Options:
 	-a OVERLAY    Add overlay to the list of layman overlays.
-	-A PATH       Add PATH to the sourced make.conf-s used to determine
+	-A PATH       Add PATH to the sourced make.confs used to determine
 	              the layman overlays. Current value:'
 	eval "set -- ${layman_make}"
 	[ ${#} -eq 0 ] && set -- "`gettext \
 		'none (i.e. no readable layman make.conf specified)'`"
 	for i
 	do
-		printf '%s\t%s' '
+		printf '%s%s' '
 	              ' "${i}"
 	done
 	echo
@@ -71,8 +80,8 @@ print Config()['make_conf']" "${@}" 2>/dev/null
 
 CalcLaymanMake () {
 	local l
-	l=`PrintLaymanMake "${@}"` || return
-	PushLaymanMake "${l}"
+	l=`PrintLaymanMake "${@}"` || l=''
+	[ -n "${l}" ] && PushLaymanMake "${l}"
 }
 
 GetPortdir
