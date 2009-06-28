@@ -11,7 +11,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 localedir = $(datadir)/locale
 AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(localedir)\"
 
-sysconf_DATA = \
+nodist_sysconf_DATA = \
 eixrc/eixrc \
 eixrc/eix-sync.conf \
 eixrc/eix-remote.conf
@@ -24,6 +24,8 @@ database/header.cc \
 database/header.h \
 database/package_reader.cc \
 database/package_reader.h
+
+nodist_database_src =
 
 eixtk_src = \
 eixTk/ansicolor.cc \
@@ -51,6 +53,8 @@ eixTk/utils.h \
 eixTk/varsreader.cc \
 eixTk/varsreader.h
 
+nodist_eixtk_src =
+
 eixrc_src = \
 eixrc/eixrc.cc \
 eixrc/eixrc.h \
@@ -59,6 +63,8 @@ eixrc/global2.cc \
 eixrc/global3.cc \
 eixrc/global4.cc \
 eixrc/global.h
+
+nodist_eixrc_src =
 
 portage_src = \
 portage/conf/portagesettings.cc \
@@ -87,6 +93,8 @@ portage/set_stability.h \
 portage/version.cc \
 portage/version.h
 
+nodist_portage_src =
+
 cache_src = \
 cache/cachetable.cc \
 cache/cachetable.h \
@@ -102,7 +110,6 @@ cache/common/unpickle.cc \
 cache/common/unpickle.h \
 cache/base.cc \
 cache/base.h \
-cache/cache_map.cc \
 cache/cache_map.h \
 cache/cdb/cdb.cc \
 cache/cdb/cdb.h \
@@ -115,16 +122,24 @@ cache/parse/parse.h \
 cache/sqlite/sqlite.cc \
 cache/sqlite/sqlite.h
 
+nodist_cache_src = \
+cache/cache_map.cc
+
 extra_cache_src = \
 cache/port2_1_2/port2_1_2.cc \
 cache/port2_1_2/port2_1_2.h
 
+nodist_extra_cache_src=
+
+
 if EXTRA_CACHE
 extra_cache = portage-2.1.2
 add_cache_src = $(extra_cache_src)
+nodist_add_cache_src = $(nodist_extra_cache_src)
 else
 extra_cache =
 add_cache_src =
+nodist_add_cache_src =
 endif
 
 output_src = \
@@ -132,6 +147,8 @@ output/formatstring.cc \
 output/formatstring.h \
 output/formatstring-print.cc \
 output/formatstring-print.h
+
+nodist_output_src =
 
 search_src = \
 search/levenshtein.cc \
@@ -143,14 +160,23 @@ search/packagetest.cc \
 search/packagetest.h \
 search/redundancy.h
 
+nodist_search_src =
+
 # Common to all binaries:
 common_ldadd = @BZLIB_LIBS@ $(LTLIBINTL)
+
 common_src = \
 main/main.h \
 $(database_src) \
 $(portage_src) \
 $(eixtk_src) \
 $(eixrc_src)
+
+nodist_common_src = \
+$(nodist_database_src) \
+$(nodist_portage_src) \
+$(nodist_eixtk_src) \
+$(nodist_eixrc_src)
 
 extra_common_src = \
 eixrc/defaults.cc \
@@ -164,37 +190,60 @@ main/main_all.cc \
 main/main_all_tools.cc \
 main/main_tools.cc
 
+nodist_extra_common_src =
+
 # The search-tool for our database
 eix_only_ldadd =
 eix_only_src = eix.cc cli.cc cli.h $(search_src)
+nodist_eix_only_src = $(nodist_search_src)
 extra_eix_only_src =
+nodist_extra_eix_only_src =
 
 # The diff-tool for our database
 diff_only_ldadd =
 diff_only_src = eix-diff.cc
+nodist_diff_only_src =
 extra_diff_only_src =
+nodist_extra_diff_only_src =
 
 # Common to the previous two tools, but not common to all tools
 output_only_ldadd =
 output_only_src = $(output_src)
+nodist_output_only_src = $(nodist_output_src)
 extra_output_only_src =
+nodist_extra_output_only_src =
 
 # The update-tool for our database
 update_only_ldadd = @SQLITE_LIBS@
 update_only_src = eix-update.cc $(cache_src) $(add_cache_src)
-extra_update_src = $(extra_cache_src)
+nodist_update_only_src = $(nodist_cache_src) $(nodist_add_cache_src)
+extra_update_only_src = $(extra_cache_src)
+nodist_extra_update_only_src =
+
+# Additional binaries (scripts) we will install
+nodist_bin_SCRIPTS  = \
+eix-sync \
+eix-test-obsolete \
+eix-remote \
+eix-layman \
+eix-functions.sh
 
 # Remove files we don't want ..
 CLEANFILES = \
 cppcomplete.tags \
 tags \
-eix-sync \
-eix-test-obsolete \
-eix-remote \
-eix-layman \
-eix-functions.sh \
-$(sysconf_DATA) \
-cache/cache_map.cc \
+$(nodist_sysconf_DATA) \
+$(nodist_bin_SCRIPTS) \
+$(nodist_eix_only_src) \
+$(nodist_extra_eix_only_src) \
+$(nodist_diff_only_src) \
+$(nodist_extra_diff_only_src) \
+$(nodist_output_only_src) \
+$(nodist_extra_output_only_src) \
+$(nodist_update_only_src) \
+$(nodist_extra_update_only_src) \
+$(nodist_common_src) \
+$(nodist_extra_common_src) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
 versionsort$(EXEEXT) \
@@ -215,24 +264,16 @@ eixrc/eix-sync.conf.in \
 eixrc/eix-remote.conf.in \
 cache/generate_cachemap.sh
 
-# Additional binaries (scripts) we will install
-bin_SCRIPTS  = \
-eix-sync \
-eix-test-obsolete \
-eix-remote \
-eix-layman \
-eix-functions.sh
-
 if SEPARATE_TOOLS
 # Generate a separate tools binary (currently only versionsort)
 use_separate_tools = true
 tool_programs = versionsort
 tool_noinst =
-main_all = main/main_all.cc
-main_output = main/main_output.cc
-main_eix = main/main_eix.cc
-main_diff = main/main_diff.cc
-main_update = main/main_update.cc
+main_all_src  = main/main_all.cc
+main_output_src = main/main_output.cc
+main_eix_src = main/main_eix.cc
+main_diff_src = main/main_diff.cc
+main_update_src = main/main_update.cc
 else
 # Do not generate a separate tools binary
 # Currently, we link versionsort against eix-update.
@@ -244,13 +285,18 @@ else
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
-tool_noinst = versionsort$(EXEEXT)
-main_all = versionsort.cc main/main_all_tools.cc
-main_output = main/main_output.cc
-main_eix = main/main_eix.cc
-main_diff = main/main_diff.cc
-main_update = versionsort.cc main/main_update_tools.cc
+noinst_tool = versionsort$(EXEEXT)
+main_all_src = versionsort.cc main/main_all_tools.cc
+main_output_src = main/main_output.cc
+main_eix_src = main/main_eix.cc
+main_diff_src = main/main_diff.cc
+main_update_src = versionsort.cc main/main_update_tools.cc
 endif
+noinst_main_all_src =
+noinst_main_output_src =
+noinst_main_eix_src =
+noinst_main_diff_src =
+noinst_main_update_src =
 
 # begin of big case distinction for generation of separate binaries
 if SEPARATE_UPDATE
@@ -265,17 +311,23 @@ use_separate_diff = true
 
 # Generate all three binaries separately:
 bin_PROGRAMS = eix-update eix eix-diff $(tool_programs)
-noinst_DATA = $(tool_noinst)
+noinst_DATA = $(noinst_tool)
 
 eix_LDADD = $(eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) $(main_eix)
-EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_output_only_src) $(extra_common_src)
+eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) $(main_eix_src)
+nodist_eix_SOURCES = $(nodist_eix_only_src) $(nodist_output_only_src) $(nodist_common_src) $(nodist_main_eix_src)
+EXTRA_eix_SOURCES = $(extra_eix_only_src) $(extra_output_only_src) $(extra_common_src)
+nodist_EXTRA_eix_SOURCES = $(nodist_extra_eix_only_src) $(nodist_extra_output_only_src) $(nodist_extra_common_src)
 eix_diff_LDADD = $(diff_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-eix_diff_SOURCES = $(diff_only_src) $(output_only_src) $(common_src) $(main_diff)
-EXTRA_eix_diff_SOURCES = $(extra_eix_diff_src) $(extra_output_only_src) $(extra_common_src)
+eix_diff_SOURCES = $(diff_only_src) $(output_only_src) $(common_src) $(main_diff_src)
+nodist_eix_diff_SOURCES = $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_common_src) $(nodist_main_diff_src)
+EXTRA_eix_diff_SOURCES = $(extra_diff_only_src) $(extra_output_only_src) $(extra_common_src)
+nodist_EXTRA_eix_diff_SOURCES = $(nodist_extra_output_only_src) $(nodist_extra_common_src)
 eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
-eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update)
-EXTRA_eix_update_SOURCES = $(extra_update_src) $(extra_common_src)
+eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update_src)
+nodist_eix_update_SOURCES = $(nodist_update_only_src) $(nodist_output_only_src) $(nodist_main_update_src)
+EXTRA_eix_update_SOURCES = $(extra_update_only_src) $(extra_common_src)
+nodist_EXTRA_eix_update_SOURCES = $(nodist_extra_update_only_src) $(nodist_extra_common_src)
 
 else
 # !SEPARATE_BINARIES
@@ -284,7 +336,7 @@ use_separate_diff = false
 
 # Generate only eix-update separately:
 bin_PROGRAMS = eix-update eix $(tool_programs)
-noinst_DATA = eix-diff$(EXEEXT) $(tool_noinst)
+noinst_DATA = eix-diff$(EXEEXT) $(noinst_tool)
 
 eix-diff$(EXEEXT): eix$(EXEEXT)
 	@echo "  LN    " "$@"
@@ -292,11 +344,15 @@ eix-diff$(EXEEXT): eix$(EXEEXT)
 	@$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
 eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(diff_only_src) $(output_only_src) $(common_src) $(main_output)
-EXTRA_eix_SOURCES = $(extra_eix_src) $(extra_eix_diff_src) $(extra_output_only_src) $(extra_common_src)
+eix_SOURCES = $(eix_only_src) $(diff_only_src) $(output_only_src) $(common_src) $(main_output_src)
+nodist_eix_SOURCES = $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_common_src) $(nodist_main_output_src)
+EXTRA_eix_SOURCES = $(extra_eix_only_src) $(extra_diff_only_src) $(extra_output_only_src) $(extra_common_src)
+nodist_EXTRA_eix_SOURCES = $(nodist_extra_eix_only_src) $(nodist_extra_diff_only_src) $(nodist_extra_output_only_src) $(nodist_extra_common_src)
 eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
-eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update)
-EXTRA_eix_update_SOURCES = $(extra_update_src) $(extra_common_src)
+eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update_src)
+nodist_eix_update_SOURCES = $(nodist_update_only_src) $(nodist_common_src) $(nodist_main_update_src)
+EXTRA_eix_update_SOURCES = $(extra_update_only_src) $(extra_common_src)
+nodist_EXTRA_eix_update_SOURCES = $(nodist_extra_update_only_src) $(nodist_extra_common_src)
 
 endif
 
@@ -310,7 +366,7 @@ versionsort_link = eix$(EXEEXT)
 # Generate neither eix-diff nor eix-update separately:
 use_separate_diff = false
 bin_PROGRAMS = eix $(tool_programs)
-noinst_DATA = eix-diff$(EXEEXT) eix-update$(EXEEXT) $(tool_noinst)
+noinst_DATA = eix-diff$(EXEEXT) eix-update$(EXEEXT) $(noinst_tool)
 
 eix-diff$(EXEEXT): eix$(EXEEXT)
 	@echo "  LN    " "$@"
@@ -324,8 +380,10 @@ eix-update$(EXEEXT): eix$(EXEEXT)
 
 
 eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_only_src) $(update_only_src) $(main_all)
-EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_src) $(extra_eix_diff_src) $(extra_update_src)
+eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_only_src) $(update_only_src) $(main_all_src)
+nodist_eix_SOURCES = $(nodist_common_src) $(nodist_output_only_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_update_only_src) $(nodist_main_all_src)
+EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_only_src) $(extra_diff_only_src) $(extra_update_only_src)
+nodist_EXTRA_eix_SOURCES = $(nodist_extra_common_src) $(nodist_extra_output_only_src) $(nodist_extra_eix_only_src) $(nodist_extra_diff_only_src) $(nodist_extra_update_only_src)
 
 endif
 # end of big case distinction for generation of separate binaries

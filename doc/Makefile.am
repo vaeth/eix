@@ -8,7 +8,7 @@ doc_rst =
 endif
 css_data = stylesheet.css html4css1.css
 
-noinst_DATA = format.txt $(doc_rst)
+nodist_noinst_DATA = format.txt $(doc_rst)
 EXTRA_DIST = format.txt.in $(css_data)
 
 SUFFIXES = .in

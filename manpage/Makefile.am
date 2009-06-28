@@ -1,7 +1,7 @@
 # Makefile.am for manpage of eix
 
 CLEANFILES = eix.1 cppcomplete.tags tags
-man_MANS = eix.1
+nodist_man_MANS = eix.1
 EXTRA_DIST = eix.1.in
 
 SUFFIXES = .in

@@ -2,11 +2,15 @@
 
 export LC_ALL=C
 
+makearch=''
+fakeroot=''
+[ -z "${fakeroot}" ] && command -v fakeroot >/dev/null 2>&1 && fakeroot='fakeroot'
+[ -z "${fakeroot}" ] && command -v fakeroot-ng >/dev/null 2>&1 && fakeroot='fakeroot-ng'
+
 Usage() {
-	printf "%s\n" "Usage: ${0##*/} [all|bzip2]
-If you do not want autodetection of fakeroot-ng/fakeroot,
-define FAKEROOT correspondingly"
-	exit ${1}
+	printf "%s\n" "Usage: ${0##*/} [options] xz|lzma|bzip2|gzip|default
+Options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
+	exit ${1:-1}
 }
 
 Die() {
@@ -19,23 +23,33 @@ Run() {
 	"${@}" || Die "${*} failed" ${?}
 }
 
-makearch="dist-lzma"
-[ ${#} -ne 0 ] && [ -n "${1}" ] && case "${1}" in
-	h*|H*|*\?*|-*) Usage;;
-	b*|B*) makearch="dist-bzip2";;
-	l*|L*|'') makearch="dist-lzma";;
-	*) makearch="${makearch} dist";;
-esac
+while [ ${#} -gt 0 ]
+do
+	opt="${1#-}"
+	opt="${opt#-}"
+	case "${opt#dist-}" in
+		x*|X*) makearch="${makearch} dist-xz";;
+		l*|L*) makearch="${makearch} dist-lzma";;
+		b*|B*) makearch="${makearch} dist-bzip2";;
+		g*|G*) makearch="${makearch} dist-gzip";;
+		d*|D*) makearch="${makearch} dist";;
+		f*ng) fakeroot='fakeroot-ng';;
+		f*) fakeroot='fakeroot';;
+		F*|n*f*) fakeroot='';;
+		help|h|H|\?) Usage 0;;
+		*) Usage;;
+	esac
+	shift
+done
+[ -z "${makearch}" ] && Usage
 
 test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
 
 unset LDFLAGS CFLAGS CXXFLAGS
-[ -z "${FAKEROOT}" ] && command -v fakeroot >/dev/null 2>&1 && FAKEROOT=fakeroot
-[ -z "${FAKEROOT}" ] && command -v fakeroot-ng >/dev/null 2>&1 && FAKEROOT=fakeroot-ng
-if command -v "${FAKEROOT}" >/dev/null 2>&1
+if [ -n "${fakeroot}" ] && command -v "${fakeroot}" >/dev/null 2>&1
 then
 	Run ./mkmake -0eqn
-	docmd="${FAKEROOT} ./mkmake -0qr"
+	docmd="${fakeroot} ./mkmake -0qr"
 else
 	docmd="./mkmake -0eq"
 fi
@@ -56,6 +70,7 @@ do
 	done
 done
 ${found} || Die "For some reason no tarball was created"
-echo "The tarballs will be removed with ./mksvnclean
+printf "%s\n" \
+"The tarballs will be removed with ./mksvnclean
 To install with portage run as root ./mkemerge
 To tag the release in svn you should run ./mkrelease"

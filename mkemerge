@@ -79,13 +79,13 @@ InstallEbuildVersion () {
 
 DoFirst () {
 	local i j v
-	for j in tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+	for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 	do
-		for i in "${curr}"/eix-*.${j}
+		for i in "${curr}"/eix-*."${j}"
 		do
 			test -e "${i}" || continue
 			v="${i##*/eix-}"
-			v="${v%.${j}}"
+			v=${v%".${j}"}
 			InstallEbuildVersion "${i}" "${v}"
 			return
 		done
