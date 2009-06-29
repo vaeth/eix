@@ -12,6 +12,23 @@ AC_CANONICAL_TARGET
 
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
+
+[
+# This must appear after option parsing and before automake initialization.
+# Its purpose is to ignore user-specified --disable-dependency-tracking
+# unless the user also explicitly calls --disable-silent-rules.
+# This is not nice (first, because it uses undocumented behaviour and
+# second, because it overrides user's ./configure options even in a way
+# not shown with ./configure --help), but it seems necessary, because
+# --disable-dependency-tracking might be part of Gentoo's default, so
+# we better hack it here instead of loosing silent rules later with some
+# changes of the ebuild or of the package manager.
+# Although this hack uses undocumented behaviour, since it only sets a
+# variable, I suppose that the worst thing which can happen is that it
+# is ignored...
+test x"${enable_silent_rules}" = x'no' || enable_dependency_tracking=yes
+]
+
 AM_INIT_AUTOMAKE()
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
