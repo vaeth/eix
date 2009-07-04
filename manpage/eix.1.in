@@ -2610,27 +2610,24 @@ and the original name update-eix was renamed into B<eix-update>.
 Also B<eix-diff> was previously called B<diff-eix>,
 B<eix-remote> was previously called B<update-eix-remote>,
 B<eix-layman> was previously called B<update-eix-layman>, and
-B<eix-functions.sh> was previously called B<functions-eix.sh> (and earlier even B<update-eix-functions.sh>.
+B<eix-functions.sh> was previously called B<functions-eix.sh> (and much earlier B<update-eix-functions.sh>).
 The reason for all these renamings is to have a more consistent naming scheme:
 All programs belonging to eix now start with eix-* (with the exception of
 B<versionsort> which is more or less just an independent tool).
 If you cannot get accustomed to this new naming scheme or have scripts depending
 on the old names, you can use symbolic links for the original names;
 this is explicitly supported and is not intended to be deprecated.
-However, such symlinks are not installed automatically, because new users will not need them.
-So it is advisable to fix your scripts if they should ever run on newer systems.
-Moreover, also in eix-functions.sh two functions have been renamed for consistency reasons
-(CallUpdateEix -> CallUpdate and ClearUpdateEixArgs -> ClearUpdateArgs),
-and also the internal variable they use has been renamed, but the latter
-was never intended to be used by scripts.
-Hence, if you really do not want to fix your scripts, you might need to make
-functions-eix.sh a wrapper script with e.g. the content
-
-B<.> B<">I<Path to eix-functions.sh>B<">
-
-B<CallUpdateEix () { CallUpdate "${@}"; }>
-
-B<ClearUpdateEixArgs () { CLearUpdateArgs "${@}"; }>
+Moreover, if you call eix' B<./configure> with B<--enable-obsolete-symlinks> or
+B<--enable-obsolete-reminder> then such symlinks (or wrappers which also
+print a reminder about the obsolete names, respectively) are installed automatically.
+However, such symlinks are not installed by default, because new users will not need them.
+So it is advisable to update your scripts to the new names if they should ever run on newer systems.
+Moreover, also in B<eix-functions.sh> two functions have been renamed for consistency reasons
+(B<CallUpdateEix> -> B<CallUpdate> and B<ClearUpdateEixArgs> -> B<ClearUpdateArgs>),
+and also the internal variable they use has been renamed (but the latter was never intended to be used by scripts).
+If you use one of the above mentioned B<./configure> options, then also a wrapper for
+B<functions-eix.sh> will be installed which supports the obsolete function names
+(and prints a warning when they are used in case of B<--enable-obsolete-reminder>).
 
 Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
 reasonable anymore to use different variable names for eix and eix-diff.

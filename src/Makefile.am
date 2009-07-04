@@ -220,13 +220,27 @@ nodist_update_only_src = $(nodist_cache_src) $(nodist_add_cache_src)
 extra_update_only_src = $(extra_cache_src)
 nodist_extra_update_only_src =
 
+if OBSOLETE_REMINDER
+reminder_install=functions-eix.sh
+install_obsolete_symlinks=false
+else
+if OBSOLETE_SYMLINKS
+reminder_install=functions-eix.sh
+install_obsolete_symlinks=true
+else
+reminder_install=
+install_obsolete_symlinks=false
+endif
+endif
+
 # Additional binaries (scripts) we will install
 nodist_bin_SCRIPTS  = \
 eix-sync \
 eix-test-obsolete \
 eix-remote \
 eix-layman \
-eix-functions.sh
+eix-functions.sh \
+$(reminder_install)
 
 # Remove files we don't want ..
 CLEANFILES = \
@@ -250,7 +264,9 @@ versionsort$(EXEEXT) \
 eix-sync.sh \
 eix-test-obsolete.sh \
 eix-layman.sh \
-eix-remote.sh
+eix-remote.sh \
+reminder.sh \
+functions-eix.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
@@ -259,6 +275,7 @@ eix-test-obsolete.in \
 eix-remote.in \
 eix-layman.in \
 eix-functions.sh.in \
+functions-eix.sh.in \
 eixrc/eixrc.in \
 eixrc/eix-sync.conf.in \
 eixrc/eix-remote.conf.in \
@@ -441,6 +458,17 @@ install-exec-hook:
 		rm -- $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
 	@$(use_separate_diff) || \
 		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
+	@if $(install_obsolete_symlinks); then \
+		$(LN_S) eix-update$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT) \
+		$(LN_S) eix-diff$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) \
+		$(LN_S) eix-remote $(DESTDIR)$(bindir)/update-eix-remote \
+		$(LN_S) eix-layman $(DESTDIR)$(bindir)/update-eix-layman \
+	@elif test -n "$(reminder_install)"; then \
+		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/update-eix$(EXEEXT) \
+		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) \
+		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/update-eix-remote \
+		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/update-eix-layman \
+	@fi
 
 cache/cache_map.cc: cache/generate_cachemap.sh
 	@echo "  SH    " "$@"
@@ -462,6 +490,19 @@ eix-remote.sh:
 	@echo "  LN    " "$@"
 	@$(LN_S) eix-remote.in "$@"
 
+if OBSOLETE_REMINDER
+functions-eix.sh: reminder.sh
+	@echo "  SED   " "$@"
+	@@regex_cmd@ -e '/^#[ \t]*![ \]*REMIND.*{/,/^#[ \t]*}/d' \
+		-e '/^#[ \t]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
+		reminder.sh >"$@"
+else
+functions-eix.sh: reminder.sh
+	@echo "  SED   " "$@"
+	@@regex_cmd@ -e '/^#[ \t]*REMIND.*{/,/^#[ \t]*}/d' \
+		-e '/^#[ \t]*![ \]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
+		reminder.sh >"$@"
+endif
 
 SUFFIXES = .in
 .in:

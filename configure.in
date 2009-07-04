@@ -93,7 +93,6 @@ AC_ARG_ENABLE(separate_update,
 ${separate_binaries} && separate_update=true
 AM_CONDITIONAL(SEPARATE_UPDATE, ${separate_update})
 
-
 dnl Separate tools?
 AC_ARG_ENABLE(separate_tools,
 	AS_HELP_STRING([--enable-separate-tools],
@@ -114,6 +113,48 @@ AC_ARG_ENABLE(separate_tools,
 		separate_tools=false
 	])
 AM_CONDITIONAL(SEPARATE_TOOLS, ${separate_tools})
+
+dnl Symlinks for obsolete names?
+AC_ARG_ENABLE(obsolete_symlinks,
+	AS_HELP_STRING([--enable-obsolete-symlinks],
+	[create a separate binary for each program]),
+	[
+		case "${enableval}" in
+			yes)
+				obsolete_symlinks=true
+				;;
+			no)
+				obsolete_symlinks=false
+				;;
+			*)
+				AC_MSG_ERROR([bad value ${enableval} for --enable-obsolete-symlinks])
+				;;
+		esac
+	],[
+		obsolete_symlinks=false
+	])
+AM_CONDITIONAL(OBSOLETE_SYMLINKS, ${obsolete_symlinks})
+
+dnl Symlinks for obsolete names?
+AC_ARG_ENABLE(obsolete_reminder,
+	AS_HELP_STRING([--enable-obsolete-reminder],
+	[create a separate binary for each program]),
+	[
+		case "${enableval}" in
+			yes)
+				obsolete_reminder=true
+				;;
+			no)
+				obsolete_reminder=false
+				;;
+			*)
+				AC_MSG_ERROR([bad value ${enableval} for --enable-obsolete-reminder])
+				;;
+		esac
+	],[
+		obsolete_reminder=false
+	])
+AM_CONDITIONAL(OBSOLETE_REMINDER, ${obsolete_reminder})
 
 dnl Look for basic functions:
 AC_FUNC_FSEEKO
