@@ -21,7 +21,7 @@ An I<EXPRESSION> consists of local options (described below) and a pattern
 
 .B eix-sync
 
-.BR "eix-test-obsolete " [ detail | repo | no-repo | I<check_always_overlays> ]
+.B "eix-test-obsolete "
 
 .B eix-remote
 
@@ -48,23 +48,9 @@ To get more help on B<eix-sync> call B<eix-sync -h> and see the documentation
 of I</etc/eix-sync.conf> below.
 
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
-the output of B<eix -tTc> in a more organized manner.
-Note that the results of B<eix-test-obsolete> depend on setting of the
-B<REDUNDANT_IF_*> and B<NONEXISTENT_IF_*> variables.
-The defaults of these variables are set such that - if in doubt - the package is output.
-An exception of this rule is B<REDUNDANT_IF_MIXED> whose default was
-changed in eix-0.10.4 because the previous default has confused some people.
-In case you are wondering why some package is shown by B<eix-test-obsolete>,
-you can use the argument B<detail> which shows even more details.
-
-If you pass B<eix-test-obsolete> the particular argument B<repo> or B<no-repo>,
-it will display all package versions which have been installed with/without
-repository data (which is only created by >=portage-2.1.3).
-To avoid false heuristic assumptions about the overlays used for versions
-without repository files, you might want to set B<CHECK_INSTALLED_OVERLAYS=true>
-(see below) which unfortunately slows things down dramatically.
-If B<eix-test-obsolete> is called with any argument not mentioned above,
-it will temporarily set B<CHECK_INSTALLED_OVERLAYS=true> for your convenience.
+the output of B<eix -tTc> in a more organized manner or to check for packages
+installed with/without repository information.
+To get more help on B<eix-test-obsolete> call <eix-test-obsolete -h>.
 
 B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.

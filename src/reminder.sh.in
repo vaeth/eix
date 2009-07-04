@@ -54,7 +54,6 @@ fi
 # }
 
 . ./eix-functions.sh.in
-ReadFunctions
 
 ClearUpdateEixArgs () {
 # REMIND {

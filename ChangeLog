@@ -27,6 +27,7 @@
 	- eix-remote: Rename OVERLAYPARENT into LOCAL_LAYMAN and -o into -l
 	  since now not the parent but the full path are required.
 	  Improve documentation of that feature.
+	- eix-test-obsolete: Require argument and support options.
 	- Introduce --print-overlay-{path,label}
 	- OVERLAYS_LIST=all now also prints the main tree as 0th entry.
 	- Fix multiple declaration of local variable, see

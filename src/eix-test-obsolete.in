@@ -10,7 +10,41 @@
 . ./eix-functions.sh.in
 ReadGettext
 
-details=false
+details=true
+
+Usage () {
+	local n p
+	n="${0##*/}"
+	p='@PACKAGE_STRING@'
+	eval_gettext 'Usage: ${n} [options] detail|brief|repo|no-repo
+This is a wrapper script for eix (${p}).
+
+It calls eix -tTc several times with various variable settings in order to
+display missing packages or packages with obsolete entries in
+/etc/portage/package.* in a more organized manner than eix -tTc would do alone.
+The speed and displayed details depend on whether you use the argument
+"detail" or "brief". Note that the result depends on your settings of the
+REDUNDANT_IF_* and NONEXISTENT_IF_* variables.
+
+The following options are available:
+	-c  use CHECK_INSTALLED_OVERLAYS=true
+	-C  use CHECK_INSTALLED_OVERLAYS=repository
+
+If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not modified.
+The (recommended) default for CHECK_INSTALLED_OVERLAYS is \"repository\" which
+is much faster then CHECK_INSTALLED_OVERLAYS=true but works only reliable for
+packages installed with repository information (which is done by all recent
+portage versions).
+
+You can check which packages are installed with/without this repository
+information by using the argument "repo"/"no-repo".
+
+The argument can always be abbreviated, e.g. instead of "brief" you can just
+use "b".'
+	echo
+	exit ${1:-1}
+}
+
 Die () {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
@@ -102,6 +136,7 @@ Repository () {
 	for i in *
 	do
 		for j in "${i}"/*; do
+			test -d "${j}" || continue
 			if test -e "${j}/repository"; then
 				${1} || continue
 			else
@@ -124,20 +159,28 @@ Repository () {
 	exit 0
 }
 
-rump="`eix --print PORTAGE_CONFIGROOT`"
-rump="${rump}/etc/portage/package."
-
-if [ ${#} -gt 0 ]
-then
-	case "${1}" in
-		detail*|Detail*|DETAIL*) details=true;;
-		no*repo*|No*repo*|No*Repo*|NO*REPO*) Repository false;;
-		repo*|Repo*|REPO*) Repository true;;
-		*) export CHECK_INSTALLED_OVERLAYS=true;;
+OPTIND=1
+while getopts "cC?hH" opt
+do
+	case "${opt}" in
+		c) export CHECK_INSTALLED_OVERLAYS=true;;
+		C) export CHECK_INSTALLED_OVERLAYS=repository;;
+		*) Usage 0;;
 	esac
-fi
+done
+[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+[ ${#} -ne 1 ] && Usage
+case "${1}" in
+	b*|B*) details=false;;
+	n*|N*) Repository false;;
+	r*|R*) Repository true;;
+	h*|H*) Usage 0;;
+esac
+
 eix '-t*!'
 
+rump="`eix --print PORTAGE_CONFIGROOT`"
+rump="${rump}/etc/portage/package."
 (
 	export TEST_FOR_NONEXISTENT=false
 	(
