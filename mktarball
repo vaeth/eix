@@ -9,7 +9,7 @@ fakeroot=''
 
 Usage() {
 	printf "%s\n" "Usage: ${0##*/} [options] xz|lzma|bzip2|gzip|default
-Options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
+options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 	exit ${1:-1}
 }
 

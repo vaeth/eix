@@ -106,21 +106,20 @@ ParseConfigLine () {
 	while true
 	do
 		case "${j}" in
-			' '*|'	'*) j="${j#?}";;
-			*' '|*'	') j="${j%?}";;
-			'#'*) j=''; break;;
+			' '*|'	'*)	j="${j#?}";;
+			*' '|*'	')	j="${j%?}";;
+			''|'#'*)	return;;
 			*) break;;
 		esac
 	done
-	[ -z "${j}" ] && return
 	case "${j}" in
-		'!!'*) [ "${1}" = 'opts' ] && DoExecute "${j#??}"; return;;
-		!*)  j="${j#?}"; mycmd='!';;
-		@@*) j="${j#??}"; mycmd='@@';;
-		@*)  j="${j#?}"; mycmd='@';;
-		\~*) j="${j#?}"; mycmd='~';;
-		-*)  config_opts="${config_opts} ${j}"; return;;
-		*)   mycmd="layman";;
+		'!!'*)	[ "${1}" = 'opts' ] && DoExecute "${j#??}"; return;;
+		!*)	j="${j#?}"; mycmd='!';;
+		@@*)	j="${j#??}"; mycmd='@@';;
+		@*)	j="${j#?}"; mycmd='@';;
+		\~*)	j="${j#?}"; mycmd='~';;
+		-*)	config_opts="${config_opts} ${j}"; return;;
+		*)	mycmd="layman";;
 	esac
 	[ "${1}" = 'opts' ] && return
 	case "${mycmd}" in
@@ -141,14 +140,10 @@ ParseConfigLine () {
 	"${mycmd}" -s "${j}" || die "`eval_gettext '${mycmd} -s ${j} failed'`"
 }
 
-if test -r "${eixsyncconf}"
-then
-	haveconf=true
-else
-	haveconf=false
-fi
+test -r "${eixsyncconf}" && haveconf=true || haveconf=false
+eix_sync_conf="`eix-update --print EIX_SYNC_CONF`"
 ExecuteConfig () {
-	local i r
+	local i
 	after_sync=''
 	after_update=''
 	before_rsync=''
@@ -157,15 +152,12 @@ ExecuteConfig () {
 	do
 		ParseConfigLine "${1}" "${i}"
 	done <"${eixsyncconf}"
-	r="`eix --print EIX_SYNC_CONF`
-"
-	while i=${r%%"
-"*} && [ -n "${i}" ]
+	while read i
 	do
 		ParseConfigLine "${1}" "${i}"
-		r=${r#*"
-"}
-	done
+	done <<END_EIX_SYNC_CONF
+${eix_sync_conf}
+END_EIX_SYNC_CONF
 }
 
 

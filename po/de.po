@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-07-04 18:24+0200\n"
+"POT-Creation-Date: 2009-07-04 21:43+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -134,9 +134,9 @@ msgstr ""
 "-W   Benutze emerge-delta-webrsync statt emerge --sync.\n"
 "-c CMD Benutze CMD statt emerge --sync.\n"
 "-C OPT Fügt Option OPT dem emerge --sync (oder dem Ersatz dafür) hinzu.\n"
-"       Diese Option kann wiederholt aufgerufen werden.\n"
+"       Diese Option kann akkumulativ benutzt werden.\n"
 "-o OPT Fügt Option OPT jedem Aufruf von eix-update hinzu.\n"
-"       Diese Option kann wiederholt aufgerufen werden.\n"
+"       Diese Option kann akkumulativ benutzt werden.\n"
 "-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
 "     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
 "     aktiv sind. (Diese Option ist kein Default mehr).\n"
@@ -158,26 +158,26 @@ msgstr "Konnte %s nicht korrekt ausführen"
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Fehler beim Aufruf von ${curr_cmd}"
 
-#: src/eix-sync.sh:136
+#: src/eix-sync.sh:135
 msgid "Syncing all portage overlays"
 msgstr "Synce alle Portage-Overlays"
 
-#: src/eix-sync.sh:137
+#: src/eix-sync.sh:136
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "${mycmd} -S schlug fehl"
 
-#: src/eix-sync.sh:140
+#: src/eix-sync.sh:139
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Synce Portage-Overlay ${j}"
 
-#: src/eix-sync.sh:141
+#: src/eix-sync.sh:140
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:280
+#: src/eix-sync.sh:272
 msgid ""
 "Nothing was executed, because a heuristic shows that root permissions\n"
 "are required to execute everything successfully."
@@ -185,7 +185,7 @@ msgstr ""
 "Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
 "Root-Recht benötigt werden, um alles erfolgreich auszuführen."
 
-#: src/eix-sync.sh:284
+#: src/eix-sync.sh:276
 #, sh-format
 msgid ""
 "However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
@@ -198,147 +198,147 @@ msgstr ""
 "Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
 "das File ${eixsyncconf} ein."
 
-#: src/eix-sync.sh:300
+#: src/eix-sync.sh:292
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:306
+#: src/eix-sync.sh:298
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:307
+#: src/eix-sync.sh:299
 msgid "initial eix-update"
 msgstr "Erstes eix-update"
 
-#: src/eix-sync.sh:308
+#: src/eix-sync.sh:300
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:309
+#: src/eix-sync.sh:301
 msgid "client syncing"
 msgstr "Client syncen"
 
-#: src/eix-sync.sh:310
+#: src/eix-sync.sh:302
 msgid "metadata update"
 msgstr "Metadata update"
 
-#: src/eix-sync.sh:311
+#: src/eix-sync.sh:303
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:312
+#: src/eix-sync.sh:304
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:315
+#: src/eix-sync.sh:307
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:334
+#: src/eix-sync.sh:326
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
-#: src/eix-sync.sh:339 src/eix-remote.sh:213
+#: src/eix-sync.sh:331 src/eix-remote.sh:213
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
-#: src/eix-sync.sh:344
+#: src/eix-sync.sh:336
 #, sh-format
 msgid "cannot create temporary file ${tmpfile}"
 msgstr "kann Temporärdatei ${tmpfile} nicht erzeugen"
 
-#: src/eix-sync.sh:370
+#: src/eix-sync.sh:362
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:383
+#: src/eix-sync.sh:375
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:386
+#: src/eix-sync.sh:378
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:397
+#: src/eix-sync.sh:389
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:404
+#: src/eix-sync.sh:396
 #, sh-format
 msgid "Running ${runarg}"
 msgstr "Starte ${runarg}"
 
-#: src/eix-sync.sh:405
+#: src/eix-sync.sh:397
 #, sh-format
 msgid "${runarg} failed"
 msgstr "${runarg} schlug fehl"
 
-#: src/eix-sync.sh:412
+#: src/eix-sync.sh:404
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:414
+#: src/eix-sync.sh:406
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:421
+#: src/eix-sync.sh:413
 msgid "Running emerge --metadata"
 msgstr "Starte emerge --metadata"
 
-#: src/eix-sync.sh:423
+#: src/eix-sync.sh:415
 msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
-#: src/eix-sync.sh:432
+#: src/eix-sync.sh:424
 msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
-#: src/eix-sync.sh:434 src/eix-sync.sh:444 src/eix-functions.sh.in:170
+#: src/eix-sync.sh:426 src/eix-sync.sh:436 src/eix-functions.sh.in:170
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-sync.sh:442
+#: src/eix-sync.sh:434
 msgid "eix-cache format has changed. Running eix-update!"
 msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
 
-#: src/eix-sync.sh:455
+#: src/eix-sync.sh:447
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:463
+#: src/eix-sync.sh:455
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
 msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
 
-#: src/eix-sync.sh:466
+#: src/eix-sync.sh:458
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:488
+#: src/eix-sync.sh:480
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:492
+#: src/eix-sync.sh:484
 msgid "Running eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-sync.sh:494
+#: src/eix-sync.sh:486
 msgid "Failure while running eix-update"
 msgstr "Problem beim Ausführen von eix-update"
 
-#: src/eix-sync.sh:497
+#: src/eix-sync.sh:489
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:499
+#: src/eix-sync.sh:491
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
@@ -404,20 +404,18 @@ msgstr ""
 "\t-h  Zeigt diesen Hilfetext an\n"
 "\n"
 "Optionen -b und -d sind dafür gedacht, in EIX_TEST_OBSOLETE_OPTS zum\n"
-"festlegen des Defaults benutzt zu werden.\n"
+"Festlegen des Defaults benutzt zu werden.\n"
 "\n"
-"Ohne -c und -C wird CHECK_INSTALLED_OVERLAYS nicht modifiziert.\n"
+"Ohne -c oder -C wird CHECK_INSTALLED_OVERLAYS nicht modifiziert.\n"
 "Der (empfohlene) Default für CHECK_INSTALLED_OVERLAYS ist \\\"repository\\"
 "\".\n"
 "Dies ist viel schneller als CHECK_INSTALLED_OVERLAYS=true, funktioniert "
 "aber\n"
-"nur für diejenigen Pakete zuverlässig, die mit Repository-Informationen\n"
+"nur für diejenigen Pakete zuverlässig, die mit Repository-Information\n"
 "installiert wurden (alle neueren Portage-Versionen tun dies).\n"
 "\n"
-"Um auszugeben, welche Pakete mit/ohne diese Repository-Informationen\n"
-"installiert wurden, rufen Sie dieses Skript mit dem Argument \"repo\"/\"no-"
-"repo\"\n"
-"auf.\n"
+"Aufruf des Skripts mit dem Argument \"repo\"/\"no-repo\" listet die Pakete,\n"
+"die mit/ohne Repository-Information installiert wurden.\n"
 "\n"
 "Das Argument kann stets abgekürzt werden; beispielsweise kann \"b\" statt\n"
 "\"brief\" benutzt werden."
