@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-07-04 12:36+0200\n"
+"POT-Creation-Date: 2009-07-04 12:50+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -429,120 +429,120 @@ msgstr ""
 msgid "cannot locate your database of installed packages"
 msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
 
-#: src/eix-test-obsolete.sh:150
+#: src/eix-test-obsolete.sh:151
 msgid "none"
 msgstr "keine"
 
-#: src/eix-test-obsolete.sh:155
+#: src/eix-test-obsolete.sh:156
 #, sh-format
 msgid "(total number of versions listed above: ${c})"
 msgstr "(Gesamtzahl obiger Versionen: ${c})"
 
-#: src/eix-test-obsolete.sh:188
+#: src/eix-test-obsolete.sh:189
 #, sh-format
 msgid "No redundant entries in ${rump}keywords (or test switched off)."
 msgstr "Keine Redundanz in ${rump}keywords (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:189
+#: src/eix-test-obsolete.sh:190
 #, sh-format
 msgid "Redundant in ${rump}keywords:"
 msgstr "Redundant in ${rump}keywords:"
 
-#: src/eix-test-obsolete.sh:202
+#: src/eix-test-obsolete.sh:203
 #, sh-format
 msgid "No redundant entries in ${rump}mask (or test switched off)."
 msgstr "Keine Redundanz in ${rump}mask (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:203
+#: src/eix-test-obsolete.sh:204
 #, sh-format
 msgid "Redundant in ${rump}mask:"
 msgstr "Redundant in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:211
+#: src/eix-test-obsolete.sh:212
 #, sh-format
 msgid "No redundant entries in ${rump}unmask (or test switched off)."
 msgstr "Keine Redundanz in ${rump}unmask (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:212
+#: src/eix-test-obsolete.sh:213
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
 msgstr "Redundant in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:220
+#: src/eix-test-obsolete.sh:221
 #, sh-format
 msgid "No redundant entries in ${rump}use (or test switched off)."
 msgstr "Keine Redundanz in ${rump}use (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:221
+#: src/eix-test-obsolete.sh:222
 #, sh-format
 msgid "Redundant in ${rump}use:"
 msgstr "Redundant in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:227
+#: src/eix-test-obsolete.sh:228
 #, sh-format
 msgid "No redundant entries in ${rump}cflags (or test switched off)."
 msgstr "Keine Redundanz in ${rump}cflags (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:228
+#: src/eix-test-obsolete.sh:229
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
 msgstr "Redundant in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:238
+#: src/eix-test-obsolete.sh:239
 #, sh-format
 msgid "No uninstalled entries in ${rump}keywords (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}keywords (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:239
+#: src/eix-test-obsolete.sh:240
 #, sh-format
 msgid "Not installed but in ${rump}keywords:"
 msgstr "Uninstalliert, aber in ${rump}keywords:"
 
-#: src/eix-test-obsolete.sh:248
+#: src/eix-test-obsolete.sh:249
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}mask (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:249
+#: src/eix-test-obsolete.sh:250
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Uninstalliert, aber in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:257
+#: src/eix-test-obsolete.sh:258
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}unmask (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:258
+#: src/eix-test-obsolete.sh:259
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Uninstalliert, aber in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:265
+#: src/eix-test-obsolete.sh:266
 #, sh-format
 msgid "No uninstalled entries in ${rump}use (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}use (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:266
+#: src/eix-test-obsolete.sh:267
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Uninstalliert, aber in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:271
+#: src/eix-test-obsolete.sh:272
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}cflags (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:272
+#: src/eix-test-obsolete.sh:273
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Uninstalliert, aber in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:277
+#: src/eix-test-obsolete.sh:278
 msgid "All installed versions of packages are in the database."
 msgstr "Alle installierten Paketversionen sind in der Datenbank."
 
-#: src/eix-test-obsolete.sh:279
+#: src/eix-test-obsolete.sh:280
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
