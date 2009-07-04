@@ -222,8 +222,10 @@ nodist_extra_update_only_src =
 
 if OBSOLETE_REMINDER
 reminder_install=functions-eix.sh
+install_obsolete_reminder=true
 install_obsolete_symlinks=false
 else
+install_obsolete_reminder=false
 if OBSOLETE_SYMLINKS
 reminder_install=functions-eix.sh
 install_obsolete_symlinks=true
@@ -275,7 +277,7 @@ eix-test-obsolete.in \
 eix-remote.in \
 eix-layman.in \
 eix-functions.sh.in \
-functions-eix.sh.in \
+reminder.sh.in \
 eixrc/eixrc.in \
 eixrc/eix-sync.conf.in \
 eixrc/eix-remote.conf.in \
@@ -433,42 +435,42 @@ endif
 
 uninstall-local:
 	@$(use_separate_tools) || \
-		test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
+		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	@$(use_separate_update) || \
-		test ! -e $(DESTDIR)$(bindir)/eix-update$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/eix-update$(EXEEXT)
+		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
 	@$(use_separate_diff) || \
-		test ! -e $(DESTDIR)$(bindir)/eix-diff$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
+		test ! -e "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 
 install-exec-hook:
 	@$(use_separate_tools) || \
-		test ! -e $(DESTDIR)$(bindir)/versionsort$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
+		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	@$(use_separate_tools) || \
-		$(LN_S) $(versionsort_link) $(DESTDIR)$(bindir)/versionsort$(EXEEXT)
+		$(LN_S) "$(versionsort_link)" "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	@$(use_separate_update) || \
-		test ! -e $(DESTDIR)$(bindir)/eix-update$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/eix-update$(EXEEXT)
+		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
 	@$(use_separate_update) || \
-		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/eix-update$(EXEEXT)
+		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
 	@$(use_separate_diff) || \
-		test ! -e $(DESTDIR)$(bindir)/eix-diff$(EXEEXT) || \
-		rm -- $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
+		test ! -e "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 	@$(use_separate_diff) || \
-		$(LN_S) eix$(EXEEXT) $(DESTDIR)$(bindir)/eix-diff$(EXEEXT)
+		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 	@if $(install_obsolete_symlinks); then \
-		$(LN_S) eix-update$(EXEEXT) $(DESTDIR)$(bindir)/update-eix$(EXEEXT) \
-		$(LN_S) eix-diff$(EXEEXT) $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) \
-		$(LN_S) eix-remote $(DESTDIR)$(bindir)/update-eix-remote \
-		$(LN_S) eix-layman $(DESTDIR)$(bindir)/update-eix-layman \
-	@elif test -n "$(reminder_install)"; then \
-		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/update-eix$(EXEEXT) \
-		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/diff-eix$(EXEEXT) \
-		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/update-eix-remote \
-		$(LN_S) functions-eix.sh $(DESTDIR)$(bindir)/update-eix-layman \
-	@fi
+		$(LN_S) "eix-update$(EXEEXT)" "$(DESTDIR)$(bindir)/update-eix$(EXEEXT)" && \
+		$(LN_S) "eix-diff$(EXEEXT)" "$(DESTDIR)$(bindir)/diff-eix$(EXEEXT)" && \
+		$(LN_S) 'eix-remote' "$(DESTDIR)$(bindir)/update-eix-remote" && \
+		$(LN_S) 'eix-layman' "$(DESTDIR)$(bindir)/update-eix-layman"; \
+	elif $(install_obsolete_reminder); then \
+		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/update-eix$(EXEEXT)" && \
+		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/diff-eix$(EXEEXT)" && \
+		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/update-eix-remote" && \
+		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/update-eix-layman"; \
+	fi
 
 cache/cache_map.cc: cache/generate_cachemap.sh
 	@echo "  SH    " "$@"

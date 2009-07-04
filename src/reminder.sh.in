@@ -1,0 +1,71 @@
+#! /usr/bin/env sh
+#
+# This is only a compatibility wrapper of @PACKAGE_STRING@
+# It should better not be used.
+#
+# !REMIND {
+# Its only purpose is to support your old scripts which use obsolete names.
+# However, the better solution is to update your scripts. This wrapper was only
+# installed because eix ./configure was called with --enable-obsolete-symlinks.
+# With --enables--obsolete-reminder a variant of this wrapper would have been
+# installed which also prints a reminder when being used.
+# }
+# REMIND {
+# It prints a reminder warning and waits a bit if it is used.
+# Its only purpose is to inform you when a script uses an obsolete name. It was
+# installed because eix ./configure was called with --enable-obsolete-reminder.
+# If --enables--obsolete-symlinks would have been used instead then a
+# silent version of this wrapper would have been installed.
+# However, the better solution is to use none of these options and to update
+# your scripts instead to use the new names.
+
+oldname="${0##*/}"
+case "${oldname}" in
+	diff-eix) newname=eix-diff;;
+	update-eix) newname=eix-update;;
+	update-eix-remote) newname=eix-remote;;
+	update-eix-layman) newname=eix-layman;;
+	*) newname=eix-functions.sh
+	oldname=functions-eix.sh;;
+esac
+
+Remind () {
+	printf '%s\n' "${1} is a deprecated name since eix-0.17.0.
+Please use ${2} instead." >&2
+}
+
+Sleeper () {
+	printf '%s\n' 'Sleeping for 5 seconds...' >&2
+	sleep 5
+}
+
+Remind "${oldname}" "${newname}"
+if [ "${newname}" = 'eix-functions.sh' ]
+then
+	printf '%s\n' \
+'Please note also that the functions ClearUpdateEixArgs and CallUpdateEix
+have been renamed.'
+	Sleeper
+else
+	Sleeper
+	exec "${newname}" "${@}"
+	exit 2
+fi
+# }
+
+. ./eix-functions.sh.in
+ReadFunctions
+
+ClearUpdateEixArgs () {
+# REMIND {
+	Remind ClearUpdateEixArgs UpdateEixArgs
+# }
+	ClearUpdateArgs "${@}"
+}
+
+CallUpdateEix () {
+# REMIND {
+	Remind CallUpdateEix CallUpdate
+# }
+	CallUpdate "${@}"
+}
