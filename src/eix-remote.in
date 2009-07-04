@@ -49,11 +49,9 @@ variable LOCAL_LAYMAN. If you do not want this feature (i.e. if you want
 to see your local layman overlays and the remote layman overlays),
 use here some path not containing any overlays (usually "/" will do).
 
-Options can be specified in
-	${eixremoteconf}
-and in the environment variable EIX_REMOTE_OPTS.
+Options can be specified in the eix (or environment) variable EIX_REMOTE_OPTS.
 This data is evalued, so be aware of security risks.
-Moreover, "--" in the default options will forbid command line options.
+Moreover, "--" in this variable will exclude further command line options.
 The following options are available:
 
 -f FILE This is the same as giving FILE as the last argument.
@@ -110,32 +108,11 @@ DefaultOpts () {
 	filearg=''
 }
 
-ReadConfig () {
-	local i j
-	config_opts=''
-	test -r "${eixremoteconf}" || return 0
-	while read i
-	do
-		j="${i}"
-		while true; do
-			case "${j}" in
-				' '*|'	'*) j="${j#?}";;
-				*' '|*'	') j="${j%?}";;
-				'#'*) j=''; break;;
-				*) break;;
-			esac
-		done
-		[ -z "${j}" ] && continue
-		config_opts="${config_opts} ${j}"
-	done <"${eixremoteconf}"
-}
-
 InitLocalLayman
 SanitizeLocalLayman
 DefaultOpts
-ReadConfig
 
-eval "Push -c opt ${config_opts} ${EIX_REMOTE_OPTS}"
+eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1

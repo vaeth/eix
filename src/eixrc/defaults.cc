@@ -24,6 +24,32 @@ AddOption(PREFIXSTRING, "EIXRC_SOURCE",
 	"If set in /etc/eixrc it temporarily overrides the environment.\n"
 	"You must not use delayed substitution in this variable."));
 
+AddOption(STRING, "EIX_SYNC_OPTS",
+	"", _(
+	"This variable is used for delayed substitution in EIX_SYNC_CONF.\n"
+	"It contains code which is evaluated by eix-sync, so be aware of security!"));
+
+AddOption(STRING, "EIX_SYNC_CONF",
+	"%{EIX_SYNC_OPTS}", _(
+	"The content of this variable is appended to /etc/eix-sync.conf\n"
+	"In particular, it can be used to override options set in that file.\n"
+	"Parts of this variable are evaluated in eix-sync: Be aware of security!"));
+
+AddOption(STRING, "EIX_REMOTE_OPTS",
+	"", _(
+	"This variable contains default options for the eix-remote script.\n"
+	"Note that its content is evaluated, so quote correctly. Typical example:\n"
+	"EIX_REMOTE_OPTS='-f \"`portageq portdir`/local/layman/eix-caches.tar.bz2\"'"));
+
+AddOption(STRING, "EIX_LAYMAN_OPTS",
+	"", _(
+	"This variable contains default options for the eix-layman script.\n"
+	"Note that its content is evaluated, so quote correctly."));
+
+AddOption(STRING, "EIX_TEST_OBSOLETE_OPTS",
+	"", _(
+	"This variable contains default options for the eix-test-obsolete script."));
+
 AddOption(PREFIXSTRING, "EIX_PREFIX",
 	EIX_PREFIX_DEFAULT, _(
 	"If this variable is set in the environment, then it is prefixed\n"

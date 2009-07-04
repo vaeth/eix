@@ -30,12 +30,13 @@ Call layman/emerge --sync/--metadata and/or show updates. (${p})
 Unless the -t option is used, the old database will be saved to
     ${eixprevious}.
 
-The file ${eixsyncconf} determines for which overlays layman is called.
-You can also add certain hooks in that file - "man eix" for details.
+The file ${eixsyncconf} and the eix (environment) variable EIX_SYNC_CONF
+(which defaults to delayed substitution of EIX_SYNC_OPTS) determine for
+which overlays layman is called, which default options are used, and they
+can contain various hooks - "man eix" for details.
 
-The file ${eixsyncconf} and the environment variable EIX_SYNC_OPTS can
-contain default options which are processed before the command line options.
-This data is evalued, so be aware of security risks.
+Be aware that e.g. the default EIX_SYNC_OPTS are evaluated so be sure to
+quote them correctly and care about security risks.
 Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
@@ -99,6 +100,47 @@ DoExecute () {
 	done
 }
 
+ParseConfigLine () {
+	local j mycmd
+	j="${2}"
+	while true
+	do
+		case "${j}" in
+			' '*|'	'*) j="${j#?}";;
+			*' '|*'	') j="${j%?}";;
+			'#'*) j=''; break;;
+			*) break;;
+		esac
+	done
+	[ -z "${j}" ] && return
+	case "${j}" in
+		'!!'*) [ "${1}" = 'opts' ] && DoExecute "${j#??}"; return;;
+		!*)  j="${j#?}"; mycmd='!';;
+		@@*) j="${j#??}"; mycmd='@@';;
+		@*)  j="${j#?}"; mycmd='@';;
+		\~*) j="${j#?}"; mycmd='~';;
+		-*)  config_opts="${config_opts} ${j}"; return;;
+		*)   mycmd="layman";;
+	esac
+	[ "${1}" = 'opts' ] && return
+	case "${mycmd}" in
+		'@@')	Push after_update "${j}"; return;;
+		'@')	Push after_sync "${j}"; return;;
+		'~')	Push before_rsync "${j}"; return;;
+		'!')	${nolayman} || DoExecute "${j}"; return;;
+	esac
+	${nolayman} && return
+	RootTest
+	if [ "${j}" = '*' ]
+	then
+		MyRunCommand "`gettext 'Syncing all portage overlays'`" \
+		"${mycmd}" -S || die "`eval_gettext '${mycmd} -S failed'`"
+		return
+	fi
+	MyRunCommand "`eval_gettext 'Syncing portage overlay ${j}'`" \
+	"${mycmd}" -s "${j}" || die "`eval_gettext '${mycmd} -s ${j} failed'`"
+}
+
 if test -r "${eixsyncconf}"
 then
 	haveconf=true
@@ -106,55 +148,24 @@ else
 	haveconf=false
 fi
 ExecuteConfig () {
-	local i j mycmd
+	local i r
 	after_sync=''
 	after_update=''
 	before_rsync=''
 	config_opts=''
-	${haveconf} || return 0
-	while read i
+	${haveconf} && while read i
 	do
-		j="${i}"
-		while true; do
-			case "${j}" in
-				' '*|'	'*) j="${j#?}";;
-				*' '|*'	') j="${j%?}";;
-				'#'*) j=''; break;;
-				*) break;;
-			esac
-		done
-		[ -z "${j}" ] && continue
-		case "${j}" in
-			'!!'*) [ "${1}" = 'opts' ] && DoExecute "${j#??}"
-				continue;;
-			!*)  j="${j#?}"; mycmd='!';;
-			@@*) j="${j#??}"; mycmd='@@';;
-			@*)  j="${j#?}"; mycmd='@';;
-			\~*) j="${j#?}"; mycmd='~';;
-			-*)  config_opts="${config_opts} ${j}"; continue;;
-			*)   mycmd="layman";;
-		esac
-		[ "${1}" = 'opts' ] && continue
-		case "${mycmd}" in
-			'@@')	Push after_update "${j}"; continue;;
-			'@')	Push after_sync "${j}"; continue;;
-			'~')	Push before_rsync "${j}"; continue;;
-			'!')	${nolayman} || DoExecute "${j}"; continue;;
-		esac
-		${nolayman} && continue
-		RootTest
-		if [ "${j}" = '*' ]; then
-			MyRunCommand \
-				"`gettext 'Syncing all portage overlays'`" \
-				"${mycmd}" -S || die "`eval_gettext \
-					'${mycmd} -S failed'`"
-			continue
-		fi
-		MyRunCommand \
-			"`eval_gettext 'Syncing portage overlay ${j}'`" \
-			"${mycmd}" -s "${j}" || die "`eval_gettext \
-					'${mycmd} -s ${j} failed'`"
+		ParseConfigLine "${1}" "${i}"
 	done <"${eixsyncconf}"
+	r="`eix --print EIX_SYNC_CONF`
+"
+	while i=${r%%"
+"*} && [ -n "${i}" ]
+	do
+		ParseConfigLine "${1}" "${i}"
+		r=${r#*"
+"}
+	done
 }
 
 
@@ -182,7 +193,7 @@ DefaultOpts () {
 DefaultOpts
 ExecuteConfig 'opts'
 
-eval "Push -c opt ${config_opts} ${EIX_SYNC_OPTS}"
+eval "Push -c opt ${config_opts}"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1

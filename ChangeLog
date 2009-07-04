@@ -18,10 +18,12 @@
 	  variable have been renamed to match the new naming scheme (for the
 	  functions, a wrapper is provided if you use the above configure
 	  options). See the HISTORY section in "man eix" for further details.
-	- Introduce /etc/eix-remote.conf and EIX_REMOTE_OPTS
+	- Introduce EIX_SYNC_CONF (and slightly modified EIX_SYNC_OPTS)
+	  EIX_REMOTE_OPTS, EIX_LAYMAN_OPTS, EIX_TEST_OBSOLETE_OPTS
+	  These defaults are now evaluated in the corresponding scripts,
+	  so be aware about quoting and security!
+	- eix-sync: Introduce options and corresponding calling conventions.
 	- eix-remote: Introduce -U -f -a (useful as defaults)
-	- Options from /etc/eix-sync.conf and EIX_SYNC_OPTS are now evaluated.
-	- Install sample /etc/*.conf
 	- eix-remote: Include label names and correct paths in virtual names.
 	- eix-remote: Remove -O since remote script now produces proper files.
 	- eix-remote: Rename OVERLAYPARENT into LOCAL_LAYMAN and -o into -l

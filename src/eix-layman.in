@@ -91,6 +91,9 @@ CalcLaymanMake || \
 	PushLaymanMake "${local_portdir:-/}local/layman/make.conf"
 layman_overlays=''
 
+eval "Push -c opt `eix-update --print EIX_LAYMAN_OPTS`"
+Push opt "${@}"
+eval "set -- ${opt}"
 OPTIND=1
 while getopts 'vqa:A:c:C?hH' opt
 do

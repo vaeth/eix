@@ -29,6 +29,12 @@ REDUNDANT_IF_* and NONEXISTENT_IF_* variables.
 The following options are available:
 	-c  use CHECK_INSTALLED_OVERLAYS=true
 	-C  use CHECK_INSTALLED_OVERLAYS=repository
+	-d  This can be used instead of the argument "detail"
+	-b  This can be used instead of the argument "brief"
+	-h  Show this help text
+
+Options -b and -d are meant as to be used in EIX_TEST_OBSOLETE_OPTS to specify
+the default behavior.
 
 If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not modified.
 The (recommended) default for CHECK_INSTALLED_OVERLAYS is \"repository\" which
@@ -39,8 +45,7 @@ portage versions).
 You can check which packages are installed with/without this repository
 information by using the argument "repo"/"no-repo".
 
-The argument can always be abbreviated, e.g. instead of "brief" you can just
-use "b".'
+The argument can be abbreviated, e.g. instead of "brief" you can just use "b".'
 	echo
 	exit ${1:-1}
 }
@@ -159,18 +164,29 @@ Repository () {
 	exit 0
 }
 
+myarg=''
+# Once an option with paths as arguments is introduced, it is probably
+# necessary to turn the next command into eval "Push -c ..."
+# In the moment this seems not necessary, so we avoid that security ris:
+Push -c opt `eix --print EIX_TEST_OBSOLETE_OPTS`
+Push opt "${@}"
+eval "set -- ${opt}"
 OPTIND=1
-while getopts "cC?hH" opt
+while getopts "cCdb?hH" opt
 do
 	case "${opt}" in
 		c) export CHECK_INSTALLED_OVERLAYS=true;;
 		C) export CHECK_INSTALLED_OVERLAYS=repository;;
+		d) myarg='detail';;
+		b) myarg='brief';;
 		*) Usage 0;;
 	esac
 done
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
-[ ${#} -ne 1 ] && Usage
-case "${1}" in
+[ ${#} -gt 1 ] && Usage
+[ ${#} -eq 1 ] && myarg="${1}"
+case "${myarg:--}" in
+	'-') Usage;;
 	b*|B*) details=false;;
 	n*|N*) Repository false;;
 	r*|R*) Repository true;;

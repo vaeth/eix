@@ -12,9 +12,7 @@ localedir = $(datadir)/locale
 AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(localedir)\"
 
 nodist_sysconf_DATA = \
-eixrc/eixrc \
-eixrc/eix-sync.conf \
-eixrc/eix-remote.conf
+eixrc/eixrc
 
 database_src = \
 database/io.cc \
@@ -279,8 +277,6 @@ eix-layman.in \
 eix-functions.sh.in \
 reminder.sh.in \
 eixrc/eixrc.in \
-eixrc/eix-sync.conf.in \
-eixrc/eix-remote.conf.in \
 cache/generate_cachemap.sh
 
 if SEPARATE_TOOLS
