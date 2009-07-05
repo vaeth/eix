@@ -174,7 +174,7 @@ AddLocalMethods () {
 	local i l
 	GetPortdir
 	AddMethod "${local_portdir}" "eix"
-	for i in `portageq portdir_overlay` ${ADD_OVERLAY}
+	for i in `portageq portdir_overlay` `eix-update --print ADD_OVERLAY`
 	do
 		l="${i}"
 		Replace -g l '\' '\\'
@@ -185,18 +185,35 @@ AddLocalMethods () {
 
 # Remove optional trailing newline from all variables (arguments).
 # This is necessary as some shells won't take ${Var%"[newline]"}
-newline_string='
-'
 Chomp () {
-	local ChompA_ ChompB_ ChompC_
+	local ChompA_ ChompB_
 	for ChompA_
 	do
 		eval "ChompB_=\"\${${ChompA_}}\""
-		ChompC_="${ChompB_%?}"
-		[ "${ChompC_}${newline_string}" = "${ChompB_}" ] &&
-			eval "${ChompA_}=\"\${ChompC_}\""
+		case "${ChompB_}" in
+			*'
+')
+			ChompB_="${ChompB_%?}"
+			eval "${ChompA_}=\"\${ChompB_}\"";;
+		esac
 	done
-	true
+}
+
+# Consider variables (arguments) as commands and expand them to full path.
+# Dies if a command cannot be found.
+
+Pathify () {
+	local PathifyA_ PathifyB_ PathifyC_
+	for PathifyC_
+	do
+		eval "PathifyA_=\"\${${PathifyC_}}\""
+		PathifyB_=`command -v "${PathifyA_}"; printf A` && \
+			PathifyB_="${PathifyB_%A}" && Chomp PathifyB_ && \
+			[ -n "${PathifyB_}" ] && test -x "${PathifyB_}" || \
+			die "`eval_gettext \
+				'${PathifyA_} cannot be found in path'`"
+		eval "${PathifyC_}=\${PathifyB_}"
+	done
 }
 
 # Consider variables (arguments) as paths and normalize them.
@@ -206,10 +223,13 @@ Chomp () {
 # Set relative to a list of all variables which are relative paths
 # (the first token in relative will be a space if the list is not empty).
 
-have_readlink=false
-command -v readlink >/dev/null 2>&1 && have_readlink=true
 NormalizeNames () {
 	local NormA_ NormB_ NormC_ NormD_
+	if [ -z "${have_readlink}" ]
+	then
+		command -v readlink >/dev/null 2>&1 \
+			&& have_readlink=true || have_readlink=false
+	fi
 	NormD_=0
 	relative=''
 	for NormC_
@@ -224,8 +244,8 @@ NormalizeNames () {
 			*) relative="${relative} ${NormC_}";;
 		esac
 		if ${have_readlink}; then
-			# Append A to avoid loss of trailing \n in `...`
-			NormB_=`readlink -f -- "${NormA_}" ; printf A` && \
+			# Append A to avoid loss of trailing space in `...`
+			NormB_=`readlink -f -- "${NormA_}"; printf A` && \
 				NormB_="${NormB_%A}" && Chomp NormB_ && \
 				[ -n "${NormB_}" ] && \
 					NormA_="${NormB_}"
@@ -284,3 +304,43 @@ ReadGettextSub () {
 	. /usr/bin/gettext.sh
 }
 
+AssignTempEmulate () {
+	local AssignTempA_ AssignTempB_ AssignTempC_
+	AssignTempA_=0
+	while [ ${AssignTempA_} -le 9999 ]
+	do
+		AssignTempB_="`od -An -N2 -x /dev/random 2>/dev/null`" || \
+			AssignTempB_=''
+		AssignTempB_="${AssignTempB_#* }${AssignTempA_}${RANDOM}"
+		AssignTempB_="/tmp/${0##*/}.${$}${RANDOM}${AssignTempB_}"
+		# We cannot avoid a race condition:
+		# So at least we minimize it to one line.
+		if [ "${2}" = '-d' ]
+		then
+			! test -e "${AssignTempB_}" && mkdir "${AssignTempB_}"
+		else
+			! test -e "${AssignTempB_}" && : >"${AssignTempB_}"
+		fi && eval "${1}=\"\${AssignTempB_}\"" && return
+		AssignTempA_="`expr ${AssignTempA_} + 1`"
+	done
+	die "`gettext 'found no free tempname after 10000 attempts'`"
+}
+
+have_mktemp=''
+AssignTemp () {
+	eval "${1}=''"
+	if [ -z "${have_mktemp}" ]
+	then
+		command -v mktemp >/dev/null 2>&1 \
+			&& have_mktemp=true || have_mktemp=false
+	fi
+	if ${have_mktemp}
+	then
+		eval "${1}=\`mktemp ${2} \"/tmp/\${0##*/}.XXXXXXXX\"\`"
+	else
+		AssignTempEmulate "${@}"
+	fi && return
+	[ "${2}" = '-d' ] && \
+		die "`gettext 'cannot create temporary directory'`"
+	die "`gettext 'cannot create temporary file'`"
+}

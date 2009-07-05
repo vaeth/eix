@@ -13,6 +13,7 @@ Available options are
   -4  Enable separate tools
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
   -u  Define NOT_FULL_USE
+  -U  Do not --enable-unique
   -s  With sqlite
   -S  Without sqlite
   -b  With bzlib
@@ -69,12 +70,13 @@ sqlite=''
 bzlib=''
 pedantic=false
 extra_cache='--enable-extra-cache'
+unique='--enable-unique'
 separate=''
 use_chown=false
 jarg='-j3'
 use_ccache=true
 OPTIND=1
-while getopts 'q0123nepusSbBcrj:?hH' opt
+while getopts 'q0123nepuUsSbBcrj:?hH' opt
 do
 case "${opt}" in
 	q) quiet=true;;
@@ -87,6 +89,7 @@ case "${opt}" in
 	e) keepenv=true;;
 	p) pedantic=true;;
 	u) not_full_use=true;;
+	U) unique='';;
 	s) sqlite='--with-sqlite';;
 	S) sqlite='--without-sqlite';;
 	b) bzlib='--with-bzip2';;
@@ -158,7 +161,7 @@ then
 		eval ./autogen.sh ${quietredirect} || Die "autogen failed"
 	fi
 	echo "Running configure..."
-	eval ./configure "--prefix=" ${sqlite} ${bzlib} ${extra_cache} ${separate} ${quietredirect} || \
+	eval ./configure "--prefix=" ${sqlite} ${bzlib} ${extra_cache} ${separate} ${unique} ${quietredirect} || \
 		Die "configure failed"
 fi
 ${earlystop} && {

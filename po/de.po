@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-07-04 21:43+0200\n"
+"POT-Creation-Date: 2009-07-05 12:16+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -234,111 +234,98 @@ msgstr "eix-diff"
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:326
-msgid "cannot create temporary file"
-msgstr "kann keine Temporärdatei erzeugen"
-
-#: src/eix-sync.sh:331 src/eix-remote.sh:213
-msgid "found no free tempname after 10000 attempts"
-msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
-
-#: src/eix-sync.sh:336
-#, sh-format
-msgid "cannot create temporary file ${tmpfile}"
-msgstr "kann Temporärdatei ${tmpfile} nicht erzeugen"
-
-#: src/eix-sync.sh:362
+#: src/eix-sync.sh:345
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:375
+#: src/eix-sync.sh:358
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:378
+#: src/eix-sync.sh:361
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:389
+#: src/eix-sync.sh:372
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:396
+#: src/eix-sync.sh:379
 #, sh-format
 msgid "Running ${runarg}"
 msgstr "Starte ${runarg}"
 
-#: src/eix-sync.sh:397
+#: src/eix-sync.sh:380
 #, sh-format
 msgid "${runarg} failed"
 msgstr "${runarg} schlug fehl"
 
-#: src/eix-sync.sh:404
+#: src/eix-sync.sh:387
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:406
+#: src/eix-sync.sh:389
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:413
+#: src/eix-sync.sh:396
 msgid "Running emerge --metadata"
 msgstr "Starte emerge --metadata"
 
-#: src/eix-sync.sh:415
+#: src/eix-sync.sh:398
 msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
-#: src/eix-sync.sh:424
+#: src/eix-sync.sh:407
 msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
-#: src/eix-sync.sh:426 src/eix-sync.sh:436 src/eix-functions.sh.in:170
+#: src/eix-sync.sh:409 src/eix-sync.sh:419 src/eix-functions.sh.in:170
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-sync.sh:434
+#: src/eix-sync.sh:417
 msgid "eix-cache format has changed. Running eix-update!"
 msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
 
-#: src/eix-sync.sh:447
+#: src/eix-sync.sh:430
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:455
+#: src/eix-sync.sh:438
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
 msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
 
-#: src/eix-sync.sh:458
+#: src/eix-sync.sh:441
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:480
+#: src/eix-sync.sh:463
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:484
+#: src/eix-sync.sh:467
 msgid "Running eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-sync.sh:486
+#: src/eix-sync.sh:469
 msgid "Failure while running eix-update"
 msgstr "Problem beim Ausführen von eix-update"
 
-#: src/eix-sync.sh:489
+#: src/eix-sync.sh:472
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:491
+#: src/eix-sync.sh:474
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
@@ -571,6 +558,23 @@ msgstr "Probleme mit ${c}"
 msgid "Calling eix-update"
 msgstr "Starte updat-eix"
 
+#: src/eix-functions.sh.in:214
+#, sh-format
+msgid "${PathifyA_} cannot be found in path"
+msgstr "${PathifyA_} nicht gefunden (im PATH)"
+
+#: src/eix-functions.sh.in:326
+msgid "found no free tempname after 10000 attempts"
+msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
+
+#: src/eix-functions.sh.in:344
+msgid "cannot create temporary directory"
+msgstr "kann keine temporäres Directory erzeugen"
+
+#: src/eix-functions.sh.in:345
+msgid "cannot create temporary file"
+msgstr "kann keine Temporärdatei erzeugen"
+
 #: src/eix-layman.sh:21
 #, sh-format
 msgid ""
@@ -660,9 +664,8 @@ msgid ""
 "\n"
 "It is strongly recommended to use the update/fetch commands with very "
 "limited\n"
-"permissions. Permissions are dropped when run as root or with the \"-u nobody"
-"\"\n"
-"option. Do not use \"-u root\"!\n"
+"permissions. Permissions are dropped when run as root (cf. default in -U)\n"
+"or when the -u option is specified. Do not use \"-u root\"!\n"
 "\n"
 "For \"update\" and \"add\" all corresponding local layman overlay paths are\n"
 "excluded from the update of the current database to avoid confusion.\n"
@@ -685,6 +688,7 @@ msgid ""
 "        ${f}\n"
 "-u USER Call wget as USER. Ignored if not set unless you are root.\n"
 "-U USER Call wget as USER if called as root. Currently \"${fetchroot}\"\n"
+"-s/-S   Use sudo/su to change user permission. Currently: ${suprg}\n"
 "-l PATH Use PATH as LOCAL_LAYMAN\n"
 "-a ADDR Use ADDR as remote database address. Current value:\n"
 "        ${addr}\n"
@@ -710,7 +714,7 @@ msgstr ""
 "\n"
 "Es wird stark empfohlen, die Update/Fetch-Kommandos nur mit sehr\n"
 "eingeschränkten Rechten auszuführen. Dies geschieht beispielsweise beim\n"
-"Aufruf als Root oder mit mit der Option \"-u nobodoy\".\n"
+"Aufruf als Root (gemäß dem Default von -U) oder mit der Option -u.\n"
 "Benutzen Sie keinesfalls \"-u root\"!\n"
 "\n"
 "Für \"update\" und \"add\" werden zur Vermeidung von Verwechslungen alle\n"
@@ -736,6 +740,7 @@ msgstr ""
 "        findet nur beim Aufruf unter root ein Benutzerwechsel statt.\n"
 "-U USER Ruft wget als USER auf, wenn root der aufrufende Benutzer ist.\n"
 "        Aktueller Wert: \"${fetchroot}\"\n"
+"-s/-S   Nutze sudo/su zum Ändern der Rechte. Aktueller Wert: ${suprg}\n"
 "-l PATH Benutzt PATH als LOCAL_LAYMAN\n"
 "-a ADDR Benutze ADDR zum Abholen der Daten. Aktueller Wert:\n"
 "        ${addr}\n"
@@ -743,60 +748,46 @@ msgstr ""
 "-v      Ausführliche Ausgabe (Default)\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:75
+#: src/eix-remote.sh:76
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:77
+#: src/eix-remote.sh:78
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:150
+#: src/eix-remote.sh:168
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:175
-#, sh-format
-msgid "${a} cannot be found in PATH"
-msgstr "${a} nicht gefunden (im PATH)"
-
-#: src/eix-remote.sh:187
+#: src/eix-remote.sh:209
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/eix-remote.sh:208
-msgid "cannot create temporary directory"
-msgstr "Kann kein temporäres Directory erzeugen"
-
-#: src/eix-remote.sh:218
-#, sh-format
-msgid "cannot create temporary dir ${tmpdir}"
-msgstr "Kann temporäres Directory ${tmpdir} nicht anlegen"
-
-#: src/eix-remote.sh:247
+#: src/eix-remote.sh:252
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:248
+#: src/eix-remote.sh:253
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:255
+#: src/eix-remote.sh:260
 #, sh-format
 msgid "cannot unpack ${i}"
 msgstr "kann ${i} nicht auspacken"
 
-#: src/eix-remote.sh:273
+#: src/eix-remote.sh:278
 #, sh-format
 msgid "${i} is broken"
 msgstr "${i} ist defekt"
 
-#: src/eix-remote.sh:313
+#: src/eix-remote.sh:318
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"

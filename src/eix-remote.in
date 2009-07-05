@@ -37,8 +37,8 @@ remove: Remove all temporarily added virtual overlays from the eix database;
         but faster (without actual updating where possible).
 
 It is strongly recommended to use the update/fetch commands with very limited
-permissions. Permissions are dropped when run as root or with the "-u nobody"
-option. Do not use "-u root"!
+permissions. Permissions are dropped when run as root (cf. default in -U)
+or when the -u option is specified. Do not use "-u root"!
 
 For "update" and "add" all corresponding local layman overlay paths are
 excluded from the update of the current database to avoid confusion.
@@ -59,6 +59,7 @@ The following options are available:
         ${f}
 -u USER Call wget as USER. Ignored if not set unless you are root.
 -U USER Call wget as USER if called as root. Currently "${fetchroot}"
+-s/-S   Use sudo/su to change user permission. Currently: ${suprg}
 -l PATH Use PATH as LOCAL_LAYMAN
 -a ADDR Use ADDR as remote database address. Current value:
         ${addr}
@@ -101,7 +102,22 @@ InitLocalLayman () {
 		"${local_portdir:-/}local/layman/make.conf"
 }
 
+CalcSuprg () {
+	local i
+	for i
+	do
+		suprgpath="${i}"
+		suprg="${i##*/}"
+		case "${i}" in
+			/*) test -x "${i}" && break;;
+			*) command -v "${i}" >/dev/null 2>&1 && break;;
+		esac
+	done
+}
+
+
 DefaultOpts () {
+	CalcSuprg /usr/bin/sudo /bin/su sudo su
 	verbose=true
 	fetchuser=''
 	fetchroot='nobody'
@@ -116,7 +132,7 @@ eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts 'f:vqu:U:l:a:i?hH' opt
+while getopts 'f:vqu:U:l:a:sSi?hH' opt
 do
 	case "${opt}" in
 		f) filearg="${OPTARG}";;
@@ -126,6 +142,8 @@ do
 		U) fetchroot="${OPTARG}";;
 		l) LOCAL_LAYMAN="${OPTARG}"; SanitizeLocalLayman;;
 		a) addr="${OPTARG}";;
+		s) CalcSuprg /usr/bin/sudo sudo;;
+		S) CalcSuprg /bin/su su;;
 		i) DefaultOpts;;
 		*) Usage 0;;
 	esac
@@ -164,20 +182,24 @@ CalcSuCmd () {
 		fi
 		fetchuser=${fetchroot}
 	fi
+	sucmd="${suprgpath}"
+	a="${1}"
+	shift
+	Pathify sucmd a
+	Push -c sucmd "${sucmd}"
+	if [ "${suprg}" = 'sudo' ]
+	then
+		Push sucmd -u "${fetchuser}" -- "${a}" "${@}"
+		return
+	fi
 	shexec="${SHELL}"
 	if [ -z "${shexec}" ] || ! test -x "${SHELL}"
 	then
-		shexec="`command -v sh`" && test -x "${shexec}" || \
-			shexec='/bin/sh'
+		shexec='sh'
 	fi
-	a="${1}"
-	sucmd=`command -v "${a}"` && test -x "${sucmd}" || \
-		die "`eval_gettext '${a} cannot be found in PATH'`"
-	Push -c sucmd "${sucmd}"
-	shift
-	Push sucmd "${@}"
-	Push -c sucmd '/bin/su' '-s' "${shexec}" '-c' \
-		"eval exec ${sucmd}" "${fetchuser}"
+	Pathify shexec
+	Push -c a "${a}" "${@}"
+	Push sucmd '-s' "${shexec}" '-c' "eval exec ${a}" "${fetchuser}"
 }
 
 CdDir () {
@@ -200,25 +222,8 @@ Cleanup () {
 	exit "${exitcode}"
 }
 MakeTempDir () {
-	local count
 	[ -n "${tmpdir}" ] && return
-	if command -v mktemp >/dev/null 2>&1
-	then
-		tmpdir=`mktemp -d "/tmp/${0##*/}.XXXXXXXX"` || \
-			die "`gettext 'cannot create temporary directory'`"
-	else
-		count=0
-		while true; do
-			[ ${count} -eq 9999 ] && die "`gettext \
-				'found no free tempname after 10000 attempts'`"
-			count="`expr ${count} + 1`"
-			tmpdir="/tmp/${0##*/}.$$.${RANDOM}.${count}.${RANDOM}"
-			test -e "${tmpdir}" && continue
-			mkdir "${tmpdir}" || die "`eval_gettext \
-				'cannot create temporary dir ${tmpdir}'`"
-			break
-		done
-	fi
+	AssignTemp tmpdir -d
 	trap Cleanup EXIT HUP INT TERM
 	chmod -- 755 "${tmpdir}"
 	[ -z "${1}" ] || CdDir "${tmpdir}"

@@ -319,24 +319,7 @@ ExitAll () {
 ${measure_time} && trap ExitAll EXIT HUP INT TERM
 
 MakeTempFile () {
-	local count
-	if command -v mktemp >/dev/null 2>&1
-	then
-		tmpfile=`mktemp "/tmp/${0##*/}.XXXXXXXX"` || \
-			die "`gettext 'cannot create temporary file'`"
-	else
-		count=0
-		while true; do
-			[ ${count} -eq 9999 ] && die "`gettext \
-				'found no free tempname after 10000 attempts'`"
-			count="`expr ${count} + 1`"
-			tmpfile="/tmp/${0##*/}.$$.${RANDOM}.${count}.${RANDOM}"
-			test -e "${tmpfile}" && continue
-			: >"${tmpfile}" || die "`eval_gettext \
-				'cannot create temporary file ${tmpfile}'`"
-			break
-		done
-	fi
+	AssignTemp tmpfile
 	trap ExitAll EXIT HUP INT TERM
 }
 

@@ -25,6 +25,7 @@
 	- eix-sync: Introduce options and corresponding calling conventions.
 	- eix-remote: Introduce -U -f -a (useful as defaults)
 	- eix-remote: Include label names and correct paths in virtual names.
+	- eix-remote: Optionally use sudo to change permissions
 	- eix-remote: Remove -O since remote script now produces proper files.
 	- eix-remote: Rename OVERLAYPARENT into LOCAL_LAYMAN and -o into -l
 	  since now not the parent but the full path are required.
