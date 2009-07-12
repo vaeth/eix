@@ -159,7 +159,7 @@ AM_CONDITIONAL(OBSOLETE_REMINDER, ${obsolete_reminder})
 dnl Look for basic functions:
 AC_FUNC_FSEEKO
 AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset], ,
-			   AC_MSG_ERROR([We really need those functions ..]))
+			AC_MSG_ERROR([We really need those functions ..]))
 
 dnl Well define the following if we don't have one:
 AC_CHECK_FUNCS([strndup strtoul strtol], , )
@@ -193,14 +193,17 @@ fi
 
 dnl Use bzip2?
 AC_MSG_CHECKING([whether libbz2 should be used])
-AC_ARG_WITH(bzip2,[  --with-bzip2            Use libbz2 (required for detecting installed overlays)], [
-	if test x"${withval}" = x'no'
-	then
-		use_bzlib=false
-		AC_MSG_RESULT([no (on request)])
-	else
-		use_bzlib=true
-	fi
+AC_ARG_WITH(bzip2,
+	AS_HELP_STRING([--with-bzip2],
+	[Use libbz2 (required for detecting installed overlays)]),
+	[
+		if test x"${withval}" = x'no'
+		then
+			use_bzlib=false
+			AC_MSG_RESULT([no (on request)])
+		else
+			use_bzlib=true
+		fi
 	],
 	[
 		use_bzlib=''

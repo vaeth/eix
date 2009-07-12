@@ -2,7 +2,7 @@
 
 *eix-0.17.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Use AC_USE_SYSTEM_EXTENSIONS instead of obsolete AC_GNU_SOURCE
+	- Minor fixes for autoconf.
 
 *eix-0.17.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
