@@ -6,7 +6,7 @@
 #  Emil Beinroth <emilbeinroth@gmx.net>
 #  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AC_INIT(eix, 0.17.0, http://eix.sourceforge.net)
+AC_INIT(eix, 0.17.1, http://eix.sourceforge.net)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
 
@@ -35,7 +35,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AC_LANG_CPLUSPLUS
 
 AC_PROG_CXX
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_LN_S
 

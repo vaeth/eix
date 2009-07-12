@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.17.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Use AC_USE_SYSTEM_EXTENSIONS instead of obsolete AC_GNU_SOURCE
+
 *eix-0.17.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Renames: update-eix -> eix-update, diff-eix -> eix-diff,
