@@ -2,7 +2,7 @@
 
 *eix-0.17.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Minor fixes for autoconf.
+	- Minor tweaks and fixes for autotools.
 
 *eix-0.17.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -127,7 +127,7 @@
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
 
-/* default levenshtein-distance for matches (as string) */
+/* Default Levenshtein distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.

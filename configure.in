@@ -53,8 +53,7 @@ AC_TYPE_UINT32_T
 dnl Separate binaries?
 AC_ARG_ENABLE(separate_binaries,
 	AS_HELP_STRING([--enable-separate-binaries],
-	[create a separate binary for each program]),
-	[
+	[create a separate binary for each program]),[
 		case "${enableval}" in
 			yes)
 				separate_binaries=true
@@ -74,8 +73,7 @@ AM_CONDITIONAL(SEPARATE_BINARIES, ${separate_binaries})
 dnl Separate eix-update?
 AC_ARG_ENABLE(separate_update,
 	AS_HELP_STRING([--enable-separate-update],
-	[create a separate eix-update binary]),
-	[
+	[create a separate eix-update binary]),[
 		case "${enableval}" in
 			yes)
 				separate_update=true
@@ -96,8 +94,7 @@ AM_CONDITIONAL(SEPARATE_UPDATE, ${separate_update})
 dnl Separate tools?
 AC_ARG_ENABLE(separate_tools,
 	AS_HELP_STRING([--enable-separate-tools],
-	[create separate binaries for tools (versionsort)]),
-	[
+	[create separate binaries for tools (versionsort)]),[
 		case "${enableval}" in
 			yes)
 				separate_tools=true
@@ -117,8 +114,7 @@ AM_CONDITIONAL(SEPARATE_TOOLS, ${separate_tools})
 dnl Symlinks for obsolete names?
 AC_ARG_ENABLE(obsolete_symlinks,
 	AS_HELP_STRING([--enable-obsolete-symlinks],
-	[create a separate binary for each program]),
-	[
+	[create a separate binary for each program]),[
 		case "${enableval}" in
 			yes)
 				obsolete_symlinks=true
@@ -138,8 +134,7 @@ AM_CONDITIONAL(OBSOLETE_SYMLINKS, ${obsolete_symlinks})
 dnl Symlinks for obsolete names?
 AC_ARG_ENABLE(obsolete_reminder,
 	AS_HELP_STRING([--enable-obsolete-reminder],
-	[create a separate binary for each program]),
-	[
+	[create a separate binary for each program]),[
 		case "${enableval}" in
 			yes)
 				obsolete_reminder=true
@@ -158,45 +153,57 @@ AM_CONDITIONAL(OBSOLETE_REMINDER, ${obsolete_reminder})
 
 dnl Look for basic functions:
 AC_FUNC_FSEEKO
-AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset], ,
-			AC_MSG_ERROR([We really need those functions ..]))
+AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset],[],[
+	AC_MSG_ERROR([We really need this function ..])
+])
 
 dnl Well define the following if we don't have one:
-AC_CHECK_FUNCS([strndup strtoul strtol], , )
+AC_CHECK_FUNCS([strndup strtoul strtol])
 
 dnl We use these optionally:
-AC_CHECK_FUNCS([canonicalize_file_name realpath vfork setenv], , )
+AC_CHECK_FUNCS([canonicalize_file_name realpath vfork setenv])
 
-dnl Compatibility Headers:
-AC_CHECK_HEADERS(tr1/cstdint)
+dnl Optional header files:
+AC_CHECK_HEADERS([sys/param.h])
 
-dnl Further headers:
-AC_CHECK_HEADERS(climits)
-AC_CHECK_HEADERS(limits.h)
-AC_CHECK_HEADERS(sys/param.h)
-
-
-AC_MSG_CHECKING([if stdint.h can really be used])
-AC_TRY_COMPILE([ # include <stdint.h>
-],[],
-[AC_MSG_RESULT([yes])
-	AC_DEFINE(USE_STDINT_H,1,[ Define to 1 if stdint.h can be used from C++])
-],
-[AC_MSG_RESULT([no])
+dnl If climits exists, we need not check for limits.h
+AC_CHECK_HEADERS([climits limits.h],[
+	break
 ])
+
+dnl If tr1/cstdint exists we need not check for stdint.h.
+dnl For stdint.h it is important that we also check that it compiles.
+dnl Although this is included in AC_CHECK_HEADERS since autoconf-2.64,
+dnl we prefer to not rely on the used autoconf version and so check manually.
+AC_CHECK_HEADERS([tr1/cstdint],[
+	check_stdint_h=false
+],[
+	check_stdint_h=true
+])
+if ${check_stdint_h}
+then
+	AC_MSG_CHECKING([if stdint.h can really be used])
+	AC_TRY_COMPILE([
+#include <stdint.h>
+		],[],[
+			AC_MSG_RESULT([yes])
+			AC_DEFINE(USE_STDINT_H,1,[ Define to 1 if stdint.h can be used from C++])
+		],[
+			AC_MSG_RESULT([no])
+		])
+fi
 
 AC_CHECK_PROGS(regex_cmd, sed)
 if test -z "${regex_cmd}"
 then
-	AC_MSG_ERROR([error. sed is required to build the manpage])
+	AC_MSG_ERROR([sed is required])
 fi
 
 dnl Use bzip2?
 AC_MSG_CHECKING([whether libbz2 should be used])
 AC_ARG_WITH(bzip2,
 	AS_HELP_STRING([--with-bzip2],
-	[Use libbz2 (required for detecting installed overlays)]),
-	[
+	[Use libbz2 (required for detecting installed overlays)]),[
 		if test x"${withval}" = x'no'
 		then
 			use_bzlib=false
@@ -204,8 +211,7 @@ AC_ARG_WITH(bzip2,
 		else
 			use_bzlib=true
 		fi
-	],
-	[
+	],[
 		use_bzlib=''
 	])
 if test x"${use_bzlib}" != x'false'
@@ -213,12 +219,11 @@ then
 	BZLIB_LIBS='-lbz2'
 	myoLIBS="${LIBS}"
 	LIBS="${LIBS} ${BZLIB_LIBS}"
-	AC_TRY_LINK([ #include <bzlib.h>
-	],
-	[
+	AC_TRY_LINK([
+#include <bzlib.h>
+	],[
 		BZ2_bzopen("dummy","rb");
-	],
-	[
+	],[
 		if test -z "${use_bzlib}"
 		then
 			AC_MSG_RESULT([yes (autodetected)])
@@ -226,12 +231,11 @@ then
 			AC_MSG_RESULT([yes (on request)])
 		fi
 		use_bzlib=true
-	],
-	[
+	],[
 		AC_MSG_RESULT([no (autodetected)])
 		if test -n "${use_bzlib}"
 		then
-			AC_MSG_ERROR([error. bzip2 requested but libbz2 is unusable])
+			AC_MSG_ERROR([bzip2 requested but libbz2 is unusable])
 		fi
 		use_bzlib=false
 		BZLIB_LIBS=''
@@ -247,16 +251,14 @@ AC_SUBST(BZLIB_LIBS)
 dnl Use rst?
 AC_ARG_WITH(rst,
 	AS_HELP_STRING([--with-rst],
-	[Use rst2html.py to document cache file format in html]),
-	[
+	[Use rst2html.py to document cache file format in html]),[
 		if test x"${withval}" = x'no'
 		then
 			rst=false
 		else
 			rst=true
 		fi
-	],
-	[
+	],[
 		rst=false
 	])
 AM_CONDITIONAL(USE_RST, ${rst})
@@ -264,8 +266,7 @@ AM_CONDITIONAL(USE_RST, ${rst})
 dnl Use obsoleted cache method?
 AC_ARG_ENABLE(extra_cache,
 	AS_HELP_STRING([--enable-extra-cache],
-	[enable unsupported cache method portage-2.1]),
-	[
+	[enable unsupported cache method portage-2.1]),[
 		case "${enableval}" in
 			yes)
 				extra_cache=true
@@ -290,8 +291,7 @@ dnl Check if std::unique works
 AC_MSG_CHECKING([whether std::unique seems to work])
 AC_ARG_ENABLE(unique,
 	AS_HELP_STRING([--enable-unique],
-	[assume that unique works]),
-	[
+	[assume that unique works]),[
 		case "${enableval}" in
 			yes)
 				AC_MSG_RESULT([yes (skipped test)])
@@ -311,48 +311,46 @@ AC_ARG_ENABLE(unique,
 if test -z "${unique_works}"
 then
 AC_TRY_RUN([
-	#include <vector>
-	#include <string>
-	#include <cstdlib>
-	#include <algorithm>
-	using namespace std;
-	#define UNUSED(p) ((void)(p))
-	int main(int argc, char** argv)
-	{
-		UNUSED(argc); UNUSED(argv);
-		const char *a[] = {
-				"1", "2", "2", "3", "3", "4", "4", "5", NULL,
-				"1", "1", "2", "3", "4", "5", "5", "5", NULL,
-				"1", "2", "3", "4", "5", NULL,
-				NULL };
-		const char *b[]= {
-				"1", "2", "3", "4", "5", NULL };
-		typedef vector<string>::size_type ind;
-		for(ind i = 0; a[i]; i++) {
-			vector<string> t;
-			while(a[i])
-				t.push_back(a[i++]);
-			t.erase(unique(t.begin(), t.end()), t.end());
-			for(ind j = 0; ; j++) {
-				if(j == t.size()) {
-					if(b[j])
-						return 1;
-					break;
-				}
-				if(!b[j])
+#include <vector>
+#include <string>
+#include <cstdlib>
+#include <algorithm>
+using namespace std;
+#define UNUSED(p) ((void)(p))
+int main(int argc, char** argv)
+{
+	UNUSED(argc); UNUSED(argv);
+	const char *a[] = {
+			"1", "2", "2", "3", "3", "4", "4", "5", NULL,
+			"1", "1", "2", "3", "4", "5", "5", "5", NULL,
+			"1", "2", "3", "4", "5", NULL,
+			NULL };
+	const char *b[]= {
+			"1", "2", "3", "4", "5", NULL };
+	typedef vector<string>::size_type ind;
+	for(ind i = 0; a[i]; i++) {
+		vector<string> t;
+		while(a[i])
+			t.push_back(a[i++]);
+		t.erase(unique(t.begin(), t.end()), t.end());
+		for(ind j = 0; ; j++) {
+			if(j == t.size()) {
+				if(b[j])
 					return 1;
-				if(t[j] != b[j])
-					return 1;
+				break;
 			}
+			if(!b[j])
+				return 1;
+			if(t[j] != b[j])
+				return 1;
 		}
-		return 0;
 	}
-	],
-	[
+	return 0;
+}
+],[
 		AC_MSG_RESULT([yes])
 		unique_works=true
-	],
-	[
+	],[
 		AC_MSG_RESULT([no])
 		unique_works=false
 	])
@@ -366,8 +364,7 @@ dnl What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
 AC_ARG_WITH(sqlite,
 	AS_HELP_STRING([--with-sqlite],
-	[Compile in support for cache method sqlite]),
-	[
+	[Compile in support for cache method sqlite]),[
 		if test x"${withval}" = x'no'
 		then
 			AC_MSG_RESULT([no (on request)])
@@ -384,8 +381,7 @@ AC_ARG_WITH(sqlite,
 				SQLITE_LIBS='-lsqlite3'
 			fi
 		fi
-	],
-	[
+	],[
 		command -v pkg-config >/dev/null 2>&1 \
 			&& SQLITE_LIBS="`pkg-config --libs sqlite3 2>/dev/null`" \
 			|| SQLITE_LIBS=''
@@ -407,12 +403,10 @@ AC_SUBST(SQLITE_LIBS)
 
 AC_ARG_WITH(portdir-cache-method,
 	AS_HELP_STRING([--with-portdir-cache-method=STR],
-	[default PORTDIR_CACHE_METHOD]),
-	[
+	[default PORTDIR_CACHE_METHOD]),[
 		PORTDIR_CACHE_METHOD="${withval}"
 		AC_MSG_NOTICE([Changing default: PORTDIR_CACHE_METHOD=${PORTDIR_CACHE_METHOD}])
-	],
-	[
+	],[
 		PORTDIR_CACHE_METHOD=metadata-flat
 	])
 
@@ -421,8 +415,7 @@ AC_SUBST(PORTDIR_CACHE_METHOD)
 
 AC_ARG_WITH(eprefix-default,
 	AS_HELP_STRING([--with-eprefix-default=STR],
-	[default EPREFIX]),
-	[
+	[default EPREFIX]),[
 		EPREFIX_DEFAULT="${withval}"
 		test x"${EPREFIX_DEFAULT}" = x'/' && EPREFIX_DEFAULT=''
 		AC_MSG_NOTICE([Changing default: EPREFIX=${EPREFIX_DEFAULT}])
@@ -435,8 +428,7 @@ AC_SUBST(EPREFIX_DEFAULT)
 
 AC_ARG_WITH(eix-prefix-default,
 	AS_HELP_STRING([--with-eix-prefix-default=STR],
-	[default EIX_PREFIX]),
-	[
+	[default EIX_PREFIX]),[
 		EIX_PREFIX_DEFAULT="${withval}"
 		test x"${EIX_PREFIX_DEFAULT}" = x'/' && EIX_PREFIX_DEFAULT=''
 		AC_MSG_NOTICE([Changing default: EIX_PREFIX=${EIX_PREFIX_DEFAULT}])
@@ -449,8 +441,7 @@ AC_SUBST(EIX_PREFIX_DEFAULT)
 
 AC_ARG_WITH(root-default,
 	AS_HELP_STRING([--with-root-default=STR],
-	[default ROOT]),
-	[
+	[default ROOT]),[
 		ROOT_DEFAULT="${withval}"
 		test x"${ROOT_DEFAULT}" = x'/' && ROOT_DEFAULT=''
 		AC_MSG_NOTICE([Changing default: ROOT=${ROOT_DEFAULT}])
@@ -464,8 +455,7 @@ AC_SUBST(ROOT_DEFAULT)
 AC_MSG_CHECKING([for default of EXEC_EBUILD_SH])
 AC_ARG_WITH(ebuild-sh-default,
 	AS_HELP_STRING([--with-ebuild-sh-default=STR],
-	[default EXEC_EBUILD_SH]),
-	[
+	[default EXEC_EBUILD_SH]),[
 		EBUILD_SH_DEFAULT="${withval}"
 		description='on request'
 	],[
@@ -492,8 +482,7 @@ AC_SUBST(EBUILD_SH_DEFAULT)
 
 AC_ARG_WITH(portage-rootpath,
 	AS_HELP_STRING([--with-portage-rootpath=STR],
-	[default PORTAGE_ROOTPATH]),
-	[
+	[default PORTAGE_ROOTPATH]),[
 		PORTAGE_ROOTPATH_DEFAULT="${withval}"
 		AC_MSG_NOTICE([Using PORTAGE_ROOTPATH=${PORTAGE_ROOTPATH_DEFAULT}])
 	],[
@@ -505,8 +494,7 @@ AC_SUBST(PORTAGE_ROOTPATH_DEFAULT)
 
 AC_ARG_WITH(portage-bin-path,
 	AS_HELP_STRING([--with-portage-bin-path=STR],
-	[default PORTAGE_BIN_PATH]),
-	[
+	[default PORTAGE_BIN_PATH]),[
 		PORTAGE_BIN_PATH_DEFAULT="${withval}"
 		AC_MSG_NOTICE([Using PORTAGE_BIN_PATH=${PORTAGE_BIN_PATH_DEFAULT}])
 	],[
@@ -527,7 +515,7 @@ EIX_CACHEFILE='/var/cache/eix'
 
 AC_DEFINE_UNQUOTED(EIX_CACHEFILE, "${EIX_CACHEFILE}",[ Location of the cachefile])
 
-AC_DEFINE_UNQUOTED(LEVENSHTEIN_DISTANCE_DEFAULT, "2",[ default levenshtein-distance for matches (as string)])
+AC_DEFINE_UNQUOTED(LEVENSHTEIN_DISTANCE_DEFAULT, "2",[ Default Levenshtein distance for matches (as string)])
 
 AC_DEFINE_UNQUOTED(TARGET, "${target}",[ Target system])
 
@@ -551,7 +539,7 @@ AC_OUTPUT(Makefile manpage/Makefile src/Makefile doc/Makefile po/Makefile.in)
 
 echo "
 
-${PACKAGE} version ${VERSION} configured successfully.
+${PACKAGE}-${VERSION} configured successfully.
 
 CC:       ${CC}
 CXXFLAGS: ${CXXFLAGS}

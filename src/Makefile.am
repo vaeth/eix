@@ -354,9 +354,8 @@ bin_PROGRAMS = eix-update eix $(tool_programs)
 noinst_DATA = eix-diff$(EXEEXT) $(noinst_tool)
 
 eix-diff$(EXEEXT): eix$(EXEEXT)
-	@echo "  LN    " "$@"
-	@test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
-	@$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
+	$(AM_V_at)test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
 eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd) $(common_ldadd)
 eix_SOURCES = $(eix_only_src) $(diff_only_src) $(output_only_src) $(common_src) $(main_output_src)
@@ -384,14 +383,12 @@ bin_PROGRAMS = eix $(tool_programs)
 noinst_DATA = eix-diff$(EXEEXT) eix-update$(EXEEXT) $(noinst_tool)
 
 eix-diff$(EXEEXT): eix$(EXEEXT)
-	@echo "  LN    " "$@"
-	@test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
-	@$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
+	$(AM_V_at)test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
 eix-update$(EXEEXT): eix$(EXEEXT)
-	@echo "  LN    " "$@"
-	@test ! -e eix-update$(EXEEXT) || rm eix-update$(EXEEXT)
-	@$(LN_S) eix$(EXEEXT) eix-update$(EXEEXT)
+	$(AM_V_at)test ! -e eix-update$(EXEEXT) || rm eix-update$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-update$(EXEEXT)
 
 
 eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd) $(common_ldadd)
@@ -424,39 +421,39 @@ else
 # !SEPARATE_TOOLS
 
 versionsort$(EXEEXT): $(versionsort_link)
-	@test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
-	@$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
+	$(AM_V_at)test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
 
 endif
 
 uninstall-local:
-	@$(use_separate_tools) || \
+	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
-	@$(use_separate_update) || \
+	$(AM_V_at)$(use_separate_update) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
-	@$(use_separate_diff) || \
+	$(AM_V_at)$(use_separate_diff) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 
 install-exec-hook:
-	@$(use_separate_tools) || \
+	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
-	@$(use_separate_tools) || \
+	$(AM_V_at)$(use_separate_tools) || \
 		$(LN_S) "$(versionsort_link)" "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
-	@$(use_separate_update) || \
+	$(AM_V_at)$(use_separate_update) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
-	@$(use_separate_update) || \
+	$(AM_V_at)$(use_separate_update) || \
 		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
-	@$(use_separate_diff) || \
+	$(AM_V_at)$(use_separate_diff) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
-	@$(use_separate_diff) || \
+	$(AM_V_at)$(use_separate_diff) || \
 		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
-	@if $(install_obsolete_symlinks); then \
+	$(AM_V_at)if $(install_obsolete_symlinks); then \
 		$(LN_S) "eix-update$(EXEEXT)" "$(DESTDIR)$(bindir)/update-eix$(EXEEXT)" && \
 		$(LN_S) "eix-diff$(EXEEXT)" "$(DESTDIR)$(bindir)/diff-eix$(EXEEXT)" && \
 		$(LN_S) 'eix-remote' "$(DESTDIR)$(bindir)/update-eix-remote" && \
@@ -469,43 +466,35 @@ install-exec-hook:
 	fi
 
 cache/cache_map.cc: cache/generate_cachemap.sh
-	@echo "  SH    " "$@"
-	@"cache/generate_cachemap.sh" $(extra_cache) > "$@"
+	$(AM_V_GEN)"cache/generate_cachemap.sh" $(extra_cache) > "$@"
 
 eix-sync.sh:
-	@echo "  LN    " "$@"
-	@$(LN_S) eix-sync.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-sync.in "$@"
 
 eix-test-obsolete.sh:
-	@echo "  LN    " "$@"
-	@$(LN_S) eix-test-obsolete.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-test-obsolete.in "$@"
 
 eix-layman.sh:
-	@echo "  LN    " "$@"
-	@$(LN_S) eix-layman.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-layman.in "$@"
 
 eix-remote.sh:
-	@echo "  LN    " "$@"
-	@$(LN_S) eix-remote.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-remote.in "$@"
 
 if OBSOLETE_REMINDER
 functions-eix.sh: reminder.sh
-	@echo "  SED   " "$@"
-	@@regex_cmd@ -e '/^#[ \t]*![ \]*REMIND.*{/,/^#[ \t]*}/d' \
+	$(AM_V_GEN)@regex_cmd@ -e '/^#[ \t]*![ \]*REMIND.*{/,/^#[ \t]*}/d' \
 		-e '/^#[ \t]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
 		reminder.sh >"$@"
 else
 functions-eix.sh: reminder.sh
-	@echo "  SED   " "$@"
-	@@regex_cmd@ -e '/^#[ \t]*REMIND.*{/,/^#[ \t]*}/d' \
+	$(AM_V_GEN)@regex_cmd@ -e '/^#[ \t]*REMIND.*{/,/^#[ \t]*}/d' \
 		-e '/^#[ \t]*![ \]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
 		reminder.sh >"$@"
 endif
 
 SUFFIXES = .in
 .in:
-	@echo "  SED   " "$@"
-	@@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
+	$(AM_V_GEN)@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
@@ -517,4 +506,4 @@ SUFFIXES = .in
 
 # Enable us to 'make clean' in src/
 clean-local:
-	@find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -v -- '{}' '+'
+	$(AM_V_at)find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -v -- '{}' '+'
