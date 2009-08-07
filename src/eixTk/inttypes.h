@@ -14,8 +14,12 @@
 #ifdef HAVE_TR1_CSTDINT
 #include <tr1/cstdint>
 #else
-#ifdef USE_STDINT_H
+#ifdef HAVE_CSTDINT
+#include <cstdint>
+#else
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
+#endif
 #endif
 #endif
 
