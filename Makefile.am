@@ -6,7 +6,16 @@
 #     Emil Beinroth <emilbeinroth@gmx.net>
 #     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-AUTOMAKE_OPTIONS = foreign 1.4 no-dist-gzip dist-xz
+# If you do not have access to automake-1.11 but want to compile the
+# eix repository anyway, you can also use the commented AUTOMAKE_OPTIONS:
+# then any >=automake-1.4 should do (although early versions are untested).
+# However, for creating a distribution tarball, you should not do this:
+# I would like to see in distributions only the "silent rules" default
+# (and also the .tar.xz format for the tarball, at least for the default).
+# Both of these are only available with automake-1.11, therefore the latter
+# is required by default.
+#AUTOMAKE_OPTIONS = foreign 1.4
+AUTOMAKE_OPTIONS = foreign 1.11 no-dist-gzip dist-xz
 
 SUBDIRS = po src manpage doc
 
@@ -16,6 +25,8 @@ CLEANFILES = doxygen.cfg cppcomplete.tags tags
 EXTRA_DIST = config/config.rpath doxygen.cfg.in
 
 ACLOCAL_AMFLAGS = -I m4
+
+.PHONY: doxygen doxygen-clean
 
 # Remove things created by autogen.sh
 maintainer-clean-local:
@@ -27,8 +38,6 @@ maintainer-clean-local:
 clean-local: doxygen-clean
 	$(AM_V_at)find "$(top_srcdir)" -name '*.rpo' -exec $(RM) -v -- '{}' '+'
 
-.PHONY: doxygen
-
 # Build source docs with doxygen
 doxygen: doxygen-clean
 	$(AM_V_at)@regex_cmd@ -e "s,\@PACKAGE_NAME\@,$(PACKAGE)," \
@@ -37,4 +46,4 @@ doxygen: doxygen-clean
 
 # Remove build source-docs
 doxygen-clean:
-	$(AM_V_at)$(RM) -fr doxygen
+	$(AM_V_at)$(RM) -vfr doxygen

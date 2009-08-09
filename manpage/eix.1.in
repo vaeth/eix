@@ -675,6 +675,11 @@ the content of the B<FORMATSTRING>.
 If slots are printed, the slot name is separated from the version number
 either with a colon, or the slot names are written in braces.
 You can choose the preferred modes with the B<COLON_SLOTS> variable.
+
+If B<PROPERTIES> or B<RESTRICT> are set in the ebuild, this is shown
+by default in the version string; details can be influenced by setting
+of configuration variables.
+
 Some Examples:
 .TP
 .BR 4.1.1:4.1 "    or    " 4.1.1(4.1)
@@ -697,8 +702,10 @@ fetch restrictions.
 
 .SS Masking
 If you used gentoo for more than a week you're probably going to immediately
-recognize the format of the masking in the versions-strings.
+recognize the format of the masking in the version-strings.
 Nevertheless, we are going to explain it here by some examples.
+We describe here of course only the default setting; details can be
+influenced by setting of configuration variables.
 .TP
 .B [P]2.95.3-r8
 If a mask for the package was found in the packages-files from your profile, but this
@@ -750,8 +757,75 @@ The version was originally only "masked by ~keyword", but this was locally chang
 However, the version is locally masked (in /etc/portage/package.mask).
 .TP
 .B 3.3.1
-.RS
 Finally, this would be a stable version (which would be stable also without the local settings).
+.SS eix-diff
+The output of B<eix-diff> is completely determined by configuration variables
+(B<DIFF_FORMAT_NEW>, B<DIFF_FORMAT_DELETE>, B<DIFF_FORMAT_CHANGED> and a
+lot of variables which - at least in their default setting - is used by them via delayed substitution, see below).
+The following explanation by means of examples therefore can only describe
+the behavior in the default setting of the current eix version.
+Although this default format was not changed for quite a while, no stability of
+the defaults is guaranteed for future eix versions.
+.TP
+.B "[N]   >> foo/bar (~1.0): description of foo/bar"
+The package B<foo/bar> has freshly appeared in the tree.
+.TP
+.B "[*N]  >> foo/bar (1.0): description of foo/bar"
+The package B<foo/bar> has freshly appeared in the tree.
+Moreover, it has a version (1.0) which could be installed without any sort of unmasking/keywording.
+.TP
+.B "      << foo/bar ({M}1.0): description of foo/bar"
+B<foo/bar> was removed from the tree; the previous version B<1.0>  was masked, but it is currently not masked anymore
+(probably, because the developer has cleaned up the package.mask file with the removal of the package).
+.TP
+.B "[*>]   == foo/bar (1.0): description of foo/bar"
+The status of package B<foo/bar> has changed in the tree (for your settings): It has gained a version (1.0) which could be installed without any sort of unmasking/keywords
+while in the previous tree foo/bar had no such version. Moreover, the
+.B >
+means that one slot has gained a higher version. In this case, it is actually the
+same change which is responsible for both symbols
+.B >
+and B<*>.
+.TP
+.B "[><]  == foo/bar (1.1(1) 2.0(2) -> 1.0(1) 2.1(2)): description"
+The status of package B<foo/bar> has changed in the tree (for your settings):
+The symbols on the left mean that one slot has gained a higher version which could be installed without modifying masks/keywords,
+another slot had such a highest version removed. If you consider the version strings, it becomes clear
+that slot B<2> has obtained a new version (the previous stable in this slot was B<2.0>, the new one is B<2.1>),
+and that the previously highest stable version B<1.1> of slot B<1> was removed or masked
+(the current stable version in this slot is now B<1.0>).
+.TP
+.B "[UD]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
+The status of package B<foo/bar> has changed in the tree (for your settings):
+The symbols on the left mean the one slot you have installed can be upgraded (without modifying masks/keywords),
+and that another slot you have installed was removed/masked.
+Looking at the versions on the right, it becomes clear that the installed version B<1.1> of Slot B<1>
+has been removed or masked, and that there is no other installed version of slot B<1>.
+However, a new stable version B<2.0> in slot B<2> has appeared (i.e. slot B<2> did previously not
+exist or had no stable version).
+
+Since no version of slot B<2> was installed yet, eix cannot decide in this
+situation whether the symbol "B<U>" is really appropriate: Since eix does no
+dependency tracking, it does not know whether the new slot would be pulled
+in e.g. by your world file, or whether there is only some dependency to your
+old slot.
+Therefore, the symbol "B<U>" is only shown in this situation if
+B<UPGRADE_TO_HIGHEST_SLOT=true> or if the package is listed in
+B</etc/portage/package.slot_upgrade_allow>.
+
+Actually, the output
+.B "[UD><] == foo/bar ..."
+would be more consistent, because in addition one slot has gained a
+higher stable version and the highest stable version of another slot was removed,
+but since typically this is implicitly implied by "B<U>" or "B<D>", respectively,
+it was a design decision of the default setting that if B<U> or B<D> is output
+then the symbols
+.B <
+and
+.B >
+will never output.
+You can of course build a different B<DIFF_FORMAT_HEADER_CHANGED> string
+which follows another policy.
 .\" }}}
 
 .\" {{{ FORMATSTRING
