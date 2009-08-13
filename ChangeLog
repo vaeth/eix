@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- autotools: Tweaks, updates, and minor fixes.
 	- manpage: Describe eix-diff output defaults.
+	- Support for package{s,.mask,.unmask,.keywords}.d in profiles.
+	  Use with care: Even portage does not support it yet.
 
 *eix-0.17.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

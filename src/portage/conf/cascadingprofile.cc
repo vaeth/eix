@@ -61,22 +61,26 @@ CascadingProfile::readremoveFiles()
 		++file)
 	{
 		bool (CascadingProfile::*handler)(const string &line);
-		if(strcmp(strrchr(file->c_str(), '/'), "/packages") == 0)
-		{
+		const char *filename = strrchr(file->c_str(), '/');
+		if(!filename)
+			continue;
+		filename++;
+		if(strcmp(filename), "packages") == 0)
 			handler = &CascadingProfile::readPackages;
-		}
-		else if(strcmp(strrchr(file->c_str(), '/'), "/package.mask") == 0)
-		{
+		else if(strcmp(filename), "packages.d") == 0)
+			handler = &CascadingProfile::readPackages;
+		else if(strcmp(filename), "package.mask") == 0)
 			handler = &CascadingProfile::readPackageMasks;
-		}
-		else if(strcmp(strrchr(file->c_str(), '/'), "/package.unmask") == 0)
-		{
+		else if(strcmp(filename), "package.mask.d") == 0)
+			handler = &CascadingProfile::readPackageMasks;
+		else if(strcmp(filename), "package.unmask") == 0)
 			handler = &CascadingProfile::readPackageUnmasks;
-		}
-		else if(strcmp(strrchr(file->c_str(), '/'), "/package.keywords") == 0)
-		{
+		else if(strcmp(filename), "package.unmask.d") == 0)
+			handler = &CascadingProfile::readPackageUnmasks;
+		else if(strcmp(filename), "package.keywords") == 0)
 			handler = &CascadingProfile::readPackageKeywords;
-		}
+		else if(strcmp(filename), "package.keywords.d") == 0)
+			handler = &CascadingProfile::readPackageKeywords;
 		else
 			continue;
 
