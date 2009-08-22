@@ -2,13 +2,8 @@
 
 export LC_ALL=C
 
-makearch=''
-fakeroot=''
-[ -z "${fakeroot}" ] && command -v fakeroot >/dev/null 2>&1 && fakeroot='fakeroot'
-[ -z "${fakeroot}" ] && command -v fakeroot-ng >/dev/null 2>&1 && fakeroot='fakeroot-ng'
-
 Usage() {
-	printf "%s\n" "Usage: ${0##*/} [options] xz|lzma|bzip2|gzip|default
+	printf "%s\n" "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
 options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 	exit ${1:-1}
 }
@@ -23,16 +18,21 @@ Run() {
 	"${@}" || Die "${*} failed" ${?}
 }
 
+dist='dist'
+fakeroot=''
+[ -z "${fakeroot}" ] && command -v fakeroot >/dev/null 2>&1 && fakeroot='fakeroot'
+[ -z "${fakeroot}" ] && command -v fakeroot-ng >/dev/null 2>&1 && fakeroot='fakeroot-ng'
+
 while [ ${#} -gt 0 ]
 do
 	opt="${1#-}"
 	opt="${opt#-}"
 	case "${opt#dist-}" in
-		x*|X*) makearch="${makearch} dist-xz";;
-		l*|L*) makearch="${makearch} dist-lzma";;
-		b*|B*) makearch="${makearch} dist-bzip2";;
-		g*|G*) makearch="${makearch} dist-gzip";;
-		d*|D*) makearch="${makearch} dist";;
+		x*|X*) dist='dist-xz';;
+		l*|L*) dist='dist-lzma';;
+		b*|B*) dist='dist-bzip2';;
+		g*|G*) dist='dist-gzip';;
+		d*|D*) dist='dist';;
 		f*ng) fakeroot='fakeroot-ng';;
 		f*) fakeroot='fakeroot';;
 		F*|n*f*) fakeroot='';;
@@ -41,7 +41,7 @@ do
 	esac
 	shift
 done
-[ -z "${makearch}" ] && Usage
+[ -z "${dist}" ] && Usage
 
 test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
 
@@ -53,7 +53,7 @@ then
 else
 	docmd="./mkmake -0eq"
 fi
-for i in ${makearch}
+for i in ${dist}
 do
 	Run ${docmd} "UPDATEPOFILES=" "${i}"
 done

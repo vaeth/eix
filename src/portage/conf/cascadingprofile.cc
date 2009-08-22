@@ -65,21 +65,21 @@ CascadingProfile::readremoveFiles()
 		if(!filename)
 			continue;
 		filename++;
-		if(strcmp(filename), "packages") == 0)
+		if(!strcmp(filename, "packages"))
 			handler = &CascadingProfile::readPackages;
-		else if(strcmp(filename), "packages.d") == 0)
+		else if(!strcmp(filename, "packages.d"))
 			handler = &CascadingProfile::readPackages;
-		else if(strcmp(filename), "package.mask") == 0)
+		else if(!strcmp(filename, "package.mask"))
 			handler = &CascadingProfile::readPackageMasks;
-		else if(strcmp(filename), "package.mask.d") == 0)
+		else if(!strcmp(filename, "package.mask.d"))
 			handler = &CascadingProfile::readPackageMasks;
-		else if(strcmp(filename), "package.unmask") == 0)
+		else if(!strcmp(filename, "package.unmask"))
 			handler = &CascadingProfile::readPackageUnmasks;
-		else if(strcmp(filename), "package.unmask.d") == 0)
+		else if(!strcmp(filename, "package.unmask.d"))
 			handler = &CascadingProfile::readPackageUnmasks;
-		else if(strcmp(filename), "package.keywords") == 0)
+		else if(!strcmp(filename, "package.keywords"))
 			handler = &CascadingProfile::readPackageKeywords;
-		else if(strcmp(filename), "package.keywords.d") == 0)
+		else if(!strcmp(filename, "package.keywords.d"))
 			handler = &CascadingProfile::readPackageKeywords;
 		else
 			continue;
@@ -151,7 +151,7 @@ void
 CascadingProfile::readMakeDefaults()
 {
 	for(vector<string>::size_type i = 0; i < m_profile_files.size(); ++i) {
-		if( strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0) {
+		if(!strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults")) {
 			m_portagesettings->read_config(m_profile_files[i], "");
 		}
 	}
