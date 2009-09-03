@@ -1,11 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.17.2
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Cosmetical fixes in configure.in
 
 *eix-0.17.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix missing include: http://bugs.gentoo.org/show_bug.cgi?id=283549
+	  Thanks to Michael Yang <yangofzeal at gmail.com>.
 	- autotools: Tweaks, updates, and minor fixes.
 	- manpage: Describe eix-diff output defaults.
 	- Support for package{s,.mask,.unmask,.keywords}.d in profiles.
