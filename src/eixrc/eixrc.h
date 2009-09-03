@@ -13,6 +13,7 @@
 #include <portage/keywords.h>
 #include <search/redundancy.h>
 
+#include <cstdio>
 #include <iostream>
 
 #define EIX_VARS_PREFIX "EIX_"
