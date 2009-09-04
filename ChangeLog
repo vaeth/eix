@@ -1,6 +1,26 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.17.2
+*eix-0.18.0
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Finally, dump the mess with available*/best*/installed*/empty*/full*
+	  and the distinction of printable and "test-only" properties.
+	  Instead of the flood of variations of properties for version output
+	  there are now essentially only two properties with slight variations:
+	  <availableversions:VAR> <installedversions:VAR>
+	  They interpret the variable VAR for each version as a format.
+	  Special properties like {last} are available in VAR to ease writing
+	  separators between versions or in special cases.
+	  Special care has been taken to parse VAR only once so that
+	  eix should not be dramatically slower after this change.
+	  Of course, a slight loss in the output speed was unavoidable, but
+	  this should be worth the gained flexibility and especially the
+	  simplification of writing formats.
+	- The --versionlines cases are now completely shifted to the formats.
+	- Several variables like PRINT_IUSE are now not necessary anymore
+	  since the format can now directly be modified. Many of these
+	  variables thus have been either removed or (only for backward
+	  compatibility) are implemented as delayed substitutions in the
+	  formats.
 
 *eix-0.17.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

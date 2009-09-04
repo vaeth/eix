@@ -866,118 +866,100 @@ printed. If used to print a property, the name B<must be enclosed in square brac
 .BR name ", " category ", " homepage ", " licenses
 The name, category, homepage and licenses for the current package.
 .TP
-.BR availableversions
-All versions including slots that could be installed for this package
-(-l changes output accordingly).
-The versions are printed in the according colors.
+.BR "availableversions:I<VARIABLE>" ", " "availableversions:I<VARIABLE>:I<VARSLOTS>"
+For each version, print I<VARIABLE>, interpreting it as a format string.
+If the second form is used and at least one slot of the package is nontrivial,
+then I<VARSLOTS> is used instead of I<VARIABLE>, and the versions are sorted
+according to slots.
 .TP
-.B availableversionsshort
-As B<availableversions>, but do not print any slots
+.BR "markedversions:I<VARIABLE>" ", " "markedversions:I<VARIABLE>:I<VARSLOTS>"
+This is analogous to B<availableversions> with the difference that only
+marked versions are printed.
 .TP
-.BR fullavailable ", " fullavailableshort ", " =fullavailable ", " =fullavailableshort ", "  emptyavailable ", " emptyavailableshort ", " =emptyavailable ", " =emptyavailableshort
-This is mainly a hack for scripts if you want to postprocess the output.
-It is somewhat similar to B<availableversions>, but it produces for each
-installed version a line of the form B<category/name:slot-version[overlay]>
-or B<=category/name:slot-version> instead of the plain version number.
-The B<:slot> part is omitted if it appears unnecessary or if the "B<short>" variant is used.
-The B<=> and B<-version> parts are omitted for the "B<empty>" variant.
-
-If you use this, it is likely that you also want to use B<-x> (otherwise,
-you might wonder about the sorting) and probably also B<--pure-packages>.
-If you use "=" do not forget that identical lines might be output
-if the same version occurs in several overlays.
+.BR "bestversion:I<VARIABLE>" ", " "bestversion*:I<VARIABLE>" ", " "bestslotversions:I<VARIABLE>" ", " "bestslotversions*:I<VARIABLE>" ", " "bestslotupgradeversions:I<VARIABLE>" ", " "bestslotupgradeversions*:I<VARIABLE>"
+This is analogous to B<availableversions> with the difference that only the best version
+resp. the best versions of each slot are printed.
+For the variants with B<*> also unstable versions are accepted.
+For the variants with B<upgrade> only those versions are selected which
+probably will appear after the upgrade.
 .TP
-.BR fullinstalled ", "  fullinstalledshort ", " =fullinstalled ", " =fullinstalledshort ", " emptyinstalled ", " emptyinstalledshort ", " =emptyinstalled ", " =emptyinstalledshort
-This is mainly a hack for scripts if you want to postprocess the output.
-For each installed version, this produces a line analogous to the above B<fullavailable>/...
-To speed up things you should use option B<-I> in addition
-if you only want to see this output.
-(You will probably also want to use B<--pure-packages>).
-However, see the warning in B<--installed>.
+.B "installedversions:I<VARIABLE>"
+This is analogous to B<availableversions> with the difference that only
+installed versions are printed.
 .TP
-.BR installedversions [ :string ][ :string ] "" ...
-All installed versions, including installation dates and useflags.
-The separator between several versions is a space unless
-useflags is nonempty or --versionlines is active: In these cases,
-the separator contains a newline and several tabs and spaces.
-
-When used to print the installed versions, you can add a colon-separated
-list of strings. These strings will be output on the following places:
-
-.BR "1st string: " "In front of each entry"
-
-.BR "2nd string: " "Before slotname (if slotname is printed)"
-
-.BR "3rd string: " "After versionnumber + slotname"
-
-.BR "4th string: " "Before overlay (if overlay is printed)"
-
-.BR "5th string: " "After version number + slotname + rsetrictions + overlay"
-
-.BR "6th string: " "After each complete entry"
-
-.BR "7th string: " "In front of the installation date (if it is printed)"
-
-.BR "8th string: " "After the installation date (if it is printed)"
-
-.BR "9th string: " "In front of the useflags (if they are printed)"
-
-.BR "10th string: " "After the useflags (if they are printed)"
-
-.BR "11th string: " "Before each set useflag"
-
-.BR "12th string: " "After each set useflag"
-
-.BR "13th string: " "Before each unset useflag. This defaults to '-'"
-
-.BR "14th string: " "After each unset useflag."
-
-.BR "15th string: " "For PROPERTIES=interactive"
-
-.BR "16th string: " "For PROPERTIES=live"
-
-.BR "17th string: " "For PROPERTIES=virtual"
-
-.BR "18th string: " "For PROPERTIES=set"
-
-.BR "19th string: " "For RESTRICT=fetch"
-
-.BR "20th string: " "For RESTRICT=mirror"
-
-.BR "21th string: " "For RESTRICT=primaryuri"
-
-.BR "22th string: " "For RESTRICT=binchecks"
-
-.BR "23th string: " "For RESTRICT=strip"
-
-.BR "24th string: " "For RESTRICT=test"
-
-.BR "25th string: " "For RESTRICT=userpriv"
-
-.BR "26th string: " "For RESTRICT=installsources"
-
-.BR "27th string: " "For RESTRICT=bindist"
-
-.BR "28th string: " "Between two entries. The default is either (space) or (newlines + 3 tabs + 2 spaces), depending on whether useflags are printed or --versionlines is in effect"
-
-.BR "later strings " "are ignored"
-
-You can use "\\" to escape a colon or "\\" within these strings
-(be aware that you have to escape "\\" in FORMAT* anyway, so you will usually
-have to use "\\\\:" if you want to print a colon within such a string).
-
-It is explicitly admissible that the strings contain colors in the format
-described later: this is what you will probably use these strings for.
+.B "installedmarkedversions:I<VARIABLE>"
+This is analogous to B<installedversions> with the difference that only
+marked versions are printed.
 .TP
-.BR installedversionsshort ", " installedversionsdate ", " installedversionsshortdate
-All installed versions (without or with installation date or with installation date in short form, respectively), separated by spaces.
-As for B<installedversions> you can also add a list of colon-separated strings to influence the printing.
+.BR first ", " last ", " slotfirst ", " slotlast ", " oneslot
+This must occur only in I<VARIABLE> in the context of version printing.
+You can use these flags to test whether you are currently printing the first
+or last version of the package (usually to output some additional text in these cases).
+Similarly, you can test when the printing is sorted according to slots whether
+the current version is the first or last of the current slot or if there is
+only one slot at all.
+All these properties are empty if the condition is not satisfied, otherwise 1.
 .TP
-.B markedversions
-All marked (with the B<--pipe> option) versions, separated by spaces.
+.BR slot ", " isslot ", " properties ", " restrictions ", " overlayver ", " versionkeywords
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the current slot, tags for PROPERTIES, RESTRICT, or the overlay,
+or the full keywords of the current version.
+In case of B<OVERLAYS_LIST=all-used-renumbered>, the usage of B<overlayver> might
+increase the number even if it occurs only in a test.
+Moreover, B<overlayver> is empty if the whole package is from only one overlay;
+you should use B<overlay> to print the overlay in such a case.
+The output format for B<keywords> depends on B<FORMAT_BEFORE_KEYWORDS>,
+B<FORMAT_AFTER_KEYWORDS, B<PRINT_EFFECTIVE_KEYWORDS>,
+B<FORMAT_BEFORE_EFFECTIVE_KEYWORDS>, B<FORMAT_AFTER_EFFECTIVE_KEYWORDS>.
+B<isslot> just tests whether the slot is trivial and outputs 1 in this case,
+otherwise nothing.
 .TP
-.BR ...installedmarked... ", " ...availablemarked...
-Similar as above, but print only installed versions which are marked (with the B<--pipe> option).
+.BR haveuse ", " use ", " "use:I<before_set>:I<after_set>:I<before_unset>:I<after_unset>"
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs information corresponding to the B<IUSE> (for available versions)
+or B<USE> (for installed versions) variables, respectively.
+B<haveuse> can be used to test whether an output would be nonempty
+(in this case it is 1 otherwise empty).
+For available versions, B<use> outputs the B<IUSE> variable.
+For installed versions, B<use:...> outputs the B<USE> flags and whether
+they are installed or not; the four argument strings are output at the corresponding positions.
+.TP
+.BR "date:I<VAR>"
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the installation date; the strftime() format for the date is read from
+the variable I<VAR>.
+.TP
+.B stability
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the stability tag of the current version and sets the color
+correspondingly.
+.TP
+.BR version ", " version* ", " plainversion ", " plainversion*
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the version, possibly marked or marked as installed;
+moreover, it resets the colors if necessary.
+The B<plainversion> variant just output the text without caring about colors.
+The variants with B<*> append a slotname if it is nonempty:
+The slotname is just appended as a plain text to the version, i.e. it will have
+the color of the version. Do not use this if you want that slots always
+have a fixed color: If you want the latter, output the slot manually afterwards!
+.TP
+.BR properties ", " restrictions ", " overlayver
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the version, possibly marked or marked as installed;
+moreover, it resets the colors if necessary.
+The B<plainversion> variant just output the text without caring about colors.
+The variants with B<*> append a slotname if it is nonempty:
+The slotname is just appended as a plain text to the version, i.e. it will have
+the color of the version. Do not use this if you want that slots always
+have a fixed color: If you want the latter, output the slot manually afterwards!
+.TP
+.BR installed ", " best ", " best*
+Is 1 or empty, depending on whether at least one version of the package is installed
+or has a best stable or best unstable version.
+.TP
+.B versionlines
+Is 1 or empty, depending on whether the versionlines flag was passed.
 .TP
 .BR setnames ", " allsetnames
 The name of all local sets to which the package belongs, separated by spaces.
@@ -987,59 +969,36 @@ With B<allsetnames> also the "system" set name is included.
 if all versions are in the same overlay this expands to "overlaykey".
 When printed, "[overlaykey]" is printed with corresponding colors.
 .TP
-.BR best "  or  " bestlong
-the highest stable version, including slot information
-.TP
-.BR bestshort " or " bestshort*
-the highest stable (or testing, respectively) version without slot information
-.TP
-.BR bestslots ", " bestslotslong ", " bestslots* ", or " bestslotslong*
-for each slot the highest stable (or testing, respectively) version
-with slot information, separated by spaces.
-.TP
-.BR bestslotsshort " or " bestslotshort*
-for each slot the highest stable (or testing, respectively) version
-without slot information, separated by spaces.
-.TP
-.BR bestslotsupgrade...
-As the corresponding B<bestslots...> but choose only those versions which
-probably will appear after the upgrade.
-In particular, B<=emptybestslotsupgrade> (see below) might be used in a script
-to feed portage with the packages which presumably need to be upgraded,
-i.e. as some broken temporary substitute for
-B<emerge -Du --with-bdeps y @world @system> if your world file was lost or damaged.
-However, you should use this at most as a temporary substitute until you fix your world file.
-If you use such a script regularly, you are doing something fundamentally wrong.
-B<This is strongly discouraged!> The correct solution is to fix your world file
-by adding all those packages you really want and to unmerge those packages
-(e.g. with emerge --depclean) which are not pulled in as dependencies of
-world/system.
-.TP
-.BR fullbest... ", " =fullbest... ", " emptybest... ", " =emptybest...
-This is mainly a hack for scripts if you want to postprocess the output.
-It acts as the corresponding B<best...>, but formats the output as in the above described B<fullavailable>/...
-To speed things up, you should use option B<-u> if you only want to see this output.
-(You will probably also want to use B<--pure-packages>).
-However, see the warnings in B<bestslotsupgrade>.
-.TP
 .B system
-expands to "system" if this package is in the system profile
+expands to "1" if this package is in the system profile
 .TP
 .B world
-expands to "world" if this package is in the world file
+expands to "1" if this package is in the world file
 .TP
 .B world_sets
-expands to "world_sets" if this package is in world sets
+expands to 1 if this package is in world sets
 .TP
 .B provide
 the package PROVIDE string
 .TP
 .B marked
-expands to "marked" if the package was passed with the B<--pipe> option.
+expands to 1 if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
 .TP
+.B colliuse
+The collected IUSE flags (i.e. their union) of all available versions
+of the package, separated by spaces.
+.TP
+.B haveversionuse
+In order to save memory and/or disk space, eix can be compiled to not store
+B<IUSE> flags for every single version.
+If the current package is read from such a database or eix is compiled to not
+use this information, this test expands to the empty string, otherwise to 1.
+Even if this test is negative, you can use B<use:...> in the way described earlier;
+however, the result will be empty in this case.
+.TP
 .BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
-B<upgrade> expands to "upgrade" if the package is installed and at least one slot can be upgraded
+B<upgrade> expands to 1 if the package is installed and at least one slot can be upgraded
 (or the best stable version is a new slot and B<UPDATE_TO_HIGHEST_SLOT> is true).
 The other variables test similarly whether the package can be upgraded or newly installed,
 should be downgraded, can/should be upgraded/downgraded,
@@ -1052,7 +1011,7 @@ is taken into account (and not all slots).
 .TP
 .BR better ", " worse ", " differ ", " bestbetter ", " bestworse ", " bestdiffer
 this can only be used in conditionals in B<DIFF_FORMAT_CHANGED>.
-B<better> expands to "better" if the new package has a new slot or a better stable
+B<better> expands to 1 if the new package has a new slot or a better stable
 version (or the same best stable version but from a different overlay number)
 for some slot than the old package.
 B<worse> means analogously that the old package had at least one better slot
@@ -1728,11 +1687,6 @@ If this string is empty, the processing is slightly faster since then these data
 These strings are printed before/after the (effective) KEYWORDS string for a version is printed.
 
 .TP
-.BR FORMAT_BEFORE_IUSE ", " FORMAT_AFTER_IUSE ", " FORMAT_BEFORE_COLL_IUSE ", " FORMAT_AFTER_COLL_IUSE ", " FORMAT_BEFORE_SLOT_IUSE ", " FORMAT_AFTER_SLOT_IUSE
-These strings are printed before/after the IUSE data for a version
-(resp. the collected IUSE for all versions of the package [in one-slotted resp. in slot-sorted displaymode]) is printed.
-
-.TP
 .BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (string)
 Define the color for masked versions, stable versions, unstable versions, slots, fetch-restricted version,
 the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).
@@ -1783,10 +1737,6 @@ Defines whether B<--versionsort> is on by default.
 .TP
 .BR STYLE_VERSION_LINES "  " (true / false)
 Defines whether B<--versionlines> is on by default.
-
-.TP
-.BR COLORED_SLOTS "  " (true / false)
-If false, the slotnames appended to versions are not colored.
 
 .TP
 .BR COLON_SLOTS "  " (true / false)
@@ -2173,23 +2123,11 @@ are considered as part of the parent set.
 .BR PRINT_SLOTS " " (true / false)
 If B<false>, no slot information is printed.
 .TP
-.BR PRINT_KEYWORDS " " (first / before / after / last / true / false)
-If not B<false> and --versionlines is active, the KEYWORDS string is
-printed after the version (and before/after the IUSE data).
-Currently, B<first> and B<true> have the same meaning as B<before>,
-and B<last> has the same meaning as B<after>.
-.TP
 .BR PRINT_EFFECTIVE_KEYWORDS " " (true / false)
 If B<PRINT_KEYWORDS> is in effect and this variable is true
 and the KEYWORD of a version is modified by the profile,
 then the effective keywords (according to the profile) is printed
 after the KEYWORDS stored in the ebuild.
-.TP
-.BR PRINT_IUSE " " (true / false)
-If B<true>, print IUSE data.
-If --versionlines is active, the data is printed on a per-version base.
-Otherwise all IUSE data corresponding to some version of the package is
-printed collected.
 .TP
 .BR SORT_INST_USE_ALPHA " " (true / false)
 If B<true>, print the useflags of installed packages in alphabetical order.

@@ -9,53 +9,53 @@
 
 
 #include "formatstring-print.h"
+#include <eixrc/global.h>
 #include <eixTk/sysutils.h>
 #include <portage/vardbpkg.h>
 #include <portage/conf/portagesettings.h>
 
 using namespace std;
 
-string
-get_extended_version(const PrintFormat *fmt, const ExtendedVersion *version, bool pure_text, const string &intermediate)
-{
-	if((!fmt->show_slots))
-		return version->getFull();
-	if(pure_text || fmt->no_color || (!fmt->colored_slots))
-		return version->getFullSlotted(fmt->colon_slots, intermediate);
-	string slotname = version->getSlotAppendix(fmt->colon_slots);
-	if(slotname.empty())
-		return version->getFull();
-	return version->getFull() + intermediate + fmt->color_slots + slotname +
-		AnsiColor::reset();
-}
+class VersionVariables {
+	public:
+		const Version *version;
+		InstVersion *instver;
+		bool first, last, slotfirst, slotlast, oneslot, isinst;
+		string result;
+
+		VersionVariables()
+		{
+			version = NULL;
+			instver = NULL;
+			first = last = true;
+			slotfirst = slotlast = oneslot = isinst = false;
+		}
+};
 
 string
-get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const char **a)
+PrintFormat::get_inst_use(const Package &package, InstVersion &i, vector<string> &a) const
 {
-	if(!fmt.vardb->readUse(p, i))
+	if((!vardb) || !(vardb->readUse(package, i)))
 		return "";
 	if(i.inst_iuse.empty())
 		return "";
+	a.resize(4);
 	string ret, add;
 	for(vector<string>::iterator it = i.inst_iuse.begin();
 		it != i.inst_iuse.end(); ++it)
 	{
-		size_t addindex = 0;
+		vector<string>::size_type addindex = 0;
 		string *curr = &ret;
 		if(i.usedUse.find(*it) == i.usedUse.end()) {
 			addindex = 2;
-			if(!fmt.alpha_use)
+			if(!alpha_use)
 				curr = &add;
 		}
 		if(!curr->empty())
 			curr->append(" ");
-		if(a[addindex])
-			curr->append(a[addindex]);
-		else if(addindex == 2)
-			curr->append("-");
+		curr->append(a[addindex]);
 		curr->append(*it);
-		if(a[addindex+1])
-			curr->append(a[addindex+1]);
+		curr->append(a[addindex+1]);
 	}
 	if(!add.empty()) {
 		if(!ret.empty())
@@ -66,872 +66,703 @@ get_inst_use(const Package &p, InstVersion &i, const PrintFormat &fmt, const cha
 }
 
 string
-getFullInstalled(const Package &p, const PrintFormat &fmt, bool with_slots, FullFlag full)
+PrintFormat::get_version_stability(const Version *version, const Package *package) const
 {
-	if(!fmt.vardb)
-		return "";
-	vector<InstVersion> *vec = fmt.vardb->getInstalledVector(p);
-	if(!vec) {
-		return "";
-	}
-
-	string ret;
-	for(vector<InstVersion>::iterator it = vec->begin();
-		it != vec->end(); ++it) {
-		if(!ret.empty())
-			ret.append("\n");
-		if(full == -1)
-			ret.append("=");
-		ret.append(p.category + "/" + p.name);
-		if(with_slots) {
-			if(p.guess_slotname(*it, fmt.vardb))
-				ret.append(it->getSlotAppendix(true));
-			else
-				it->slotname = "?";
-		}
-		if((full != -2) && (full != 2)) {
-			ret.append("-");
-			ret.append(it->getFull());
-		}
-		if(full > 0) {
-			if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
-				if(it->overlay_key>0) {
-					if((!p.have_same_overlay_key()) || (p.largest_overlay != it->overlay_key))
-						ret.append(fmt.overlay_keytext(it->overlay_key));
-				}
-			}
-		}
-	}
-	return ret;
-}
-
-const FormatTypeFlags
-	INST_NONE          = 0,
-	INST_WITH_DATE     = 1,  //< Installed string should contain date
-	INST_WITH_USEFLAGS = 2,  //< Installed string should contain useflags
-	INST_WITH_NEWLINE  = 4,  //< Installed string should contain newlines
-	INST_SHORTDATE     = 8;  //< date should be in short format
-string
-getInstalledString(const Package &p, const PrintFormat &fmt, bool pure_text, FormatTypeFlags formattype, const vector<string> &prepend, bool only_marked)
-{
-	typedef enum {
-		PIDX_FRONT,
-		PIDX_SLOT,
-		PIDX_AFTER_SLOT,
-		PIDX_OVERLAY,
-		PIDX_AFTER_OVERLAY,
-		PIDX_AFTER_ALL,
-		PIDX_DATE,
-		PIDX_AFTER_DATE,
-		PIDX_USEFLAGS,
-		PIDX_AFTER_USEFLAGS,
-		PIDX_SET_USE,
-		PIDX_AFTER_SET_USE,
-		PIDX_UNSET_USE,
-		PIDX_AFTER_UNSET_USE,
-		PIDX_PROPERTIES_INTERACTIVE,
-		PIDX_PROPERTIES_LIVE,
-		PIDX_PROPERTIES_VIRTUAL,
-		PIDX_PROPERTIES_SET,
-		PIDX_RESTRICT_FETCH,
-		PIDX_RESTRICT_MIRROR,
-		PIDX_RESTRICT_PRIMARYURI,
-		PIDX_RESTRICT_BINCHECKS,
-		PIDX_RESTRICT_STRIP,
-		PIDX_RESTRICT_TEST,
-		PIDX_RESTRICT_USERPRIV,
-		PIDX_RESTRICT_INSTALLSOURCES,
-		PIDX_RESTRICT_BINDIST,
-		PIDX_BETWEEN
-	} InstIndex;
-	if(!(fmt.vardb))
-		return "";
-	if((only_marked) && (!(fmt.marked_list)))
-		return "";
-	vector<InstVersion> *vec = fmt.vardb->getInstalledVector(p);
-	if(!vec) {
-		return "";
-	}
-
-	vector<InstVersion>::iterator it = vec->begin();
-	if(it == vec->end())
-		return "";
-	string ret;
-	bool color = !fmt.no_color;
-	if(pure_text)
-		color = false;
-	bool have_printed = false;
-	bool printed_useflags = false;
-	for( ; it != vec->end(); ++it) {
-		if(only_marked) {
-			if(!(fmt.marked_list->is_marked(p, &(*it))))
-				continue;
-		}
-		if(have_printed) {
-			if(prepend.size() > PIDX_BETWEEN)
-				ret.append(prepend[PIDX_BETWEEN]);
-			else if((formattype & INST_WITH_NEWLINE) &&
-				(printed_useflags || fmt.style_version_lines))
-				ret.append("\n\t\t\t  ");
-			else
-				ret.append(" ");
-		}
-		have_printed = true;
-		if(!p.guess_slotname(*it, fmt.vardb))
-			it->slotname = "?";
-		if(prepend.size() > PIDX_FRONT)
-			ret.append(prepend[PIDX_FRONT]);
-		ret.append(get_extended_version(&fmt, &(*it), pure_text,
-			((prepend.size() > PIDX_SLOT) ? prepend[PIDX_SLOT] : "")));
-		if(prepend.size() > PIDX_AFTER_SLOT)
-			ret.append(prepend[PIDX_AFTER_SLOT]);
-		if(fmt.print_restrictions && (prepend.size() > PIDX_PROPERTIES_INTERACTIVE))
-		{
-			fmt.vardb->readRestricted(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str());
-			ExtendedVersion::Properties prop = it->propertiesFlags;
-			if(prop && (prepend.size() > PIDX_PROPERTIES_INTERACTIVE)) {
-				if(prop & ExtendedVersion::PROPERTIES_INTERACTIVE)
-					ret.append(prepend[PIDX_PROPERTIES_INTERACTIVE]);
-				if((prepend.size() > PIDX_PROPERTIES_LIVE) &&
-					(prop & ExtendedVersion::PROPERTIES_LIVE))
-					ret.append(prepend[PIDX_PROPERTIES_LIVE]);
-				if((prepend.size() > PIDX_PROPERTIES_VIRTUAL) &&
-					(prop & ExtendedVersion::PROPERTIES_VIRTUAL))
-					ret.append(prepend[PIDX_PROPERTIES_VIRTUAL]);
-				if((prepend.size() > PIDX_PROPERTIES_SET) &&
-					(prop & ExtendedVersion::PROPERTIES_SET))
-					ret.append(prepend[PIDX_PROPERTIES_SET]);
-			}
-			ExtendedVersion::Restrict restr = it->restrictFlags;
-			if(restr && (prepend.size() > PIDX_RESTRICT_FETCH)) {
-				if(restr & ExtendedVersion::RESTRICT_FETCH)
-					ret.append(prepend[PIDX_RESTRICT_FETCH]);
-				if((prepend.size() > PIDX_RESTRICT_MIRROR) &&
-					(restr & ExtendedVersion::RESTRICT_MIRROR))
-					ret.append(prepend[PIDX_RESTRICT_MIRROR]);
-				if((prepend.size() > PIDX_RESTRICT_PRIMARYURI) &&
-					(restr & ExtendedVersion::RESTRICT_PRIMARYURI))
-					ret.append(prepend[PIDX_RESTRICT_PRIMARYURI]);
-				if((prepend.size() > PIDX_RESTRICT_BINCHECKS) &&
-					(restr & ExtendedVersion::RESTRICT_BINCHECKS))
-					ret.append(prepend[PIDX_RESTRICT_BINCHECKS]);
-				if((prepend.size() > PIDX_RESTRICT_STRIP) &&
-					(restr & ExtendedVersion::RESTRICT_STRIP))
-					ret.append(prepend[PIDX_RESTRICT_STRIP]);
-				if((prepend.size() > PIDX_RESTRICT_TEST) &&
-					(restr & ExtendedVersion::RESTRICT_TEST))
-					ret.append(prepend[PIDX_RESTRICT_TEST]);
-				if((prepend.size() > PIDX_RESTRICT_USERPRIV) &&
-					(restr & ExtendedVersion::RESTRICT_USERPRIV))
-					ret.append(prepend[PIDX_RESTRICT_USERPRIV]);
-				if((prepend.size() > PIDX_RESTRICT_INSTALLSOURCES) &&
-					(restr & ExtendedVersion::RESTRICT_INSTALLSOURCES))
-					ret.append(prepend[PIDX_RESTRICT_INSTALLSOURCES]);
-				if((prepend.size() > PIDX_RESTRICT_BINDIST) &&
-					(restr & ExtendedVersion::RESTRICT_BINDIST))
-					ret.append(prepend[PIDX_RESTRICT_BINDIST]);
-			}
-		}
-		if(fmt.vardb->readOverlay(p, *it, *fmt.header, (*(fmt.portagesettings))["PORTDIR"].c_str())) {
-			if(it->overlay_key>0) {
-				if((!p.have_same_overlay_key()) || (p.largest_overlay != it->overlay_key)) {
-					if(prepend.size() > PIDX_OVERLAY)
-						ret.append(prepend[PIDX_OVERLAY]);
-					ret.append(fmt.overlay_keytext(it->overlay_key, !color));
-				}
-			}
-		}
-		else
-		// Uncomment if you do not want to print unreadable overlays as "[?]"
-		// if(!it->overlay_keytext.empty())
-		{
-			if(prepend.size() > PIDX_OVERLAY)
-				ret.append(prepend[PIDX_OVERLAY]);
-			if(color)
-				ret.append(fmt.color_virtualkey);
-			ret.append("[");
-			if(it->overlay_keytext.empty())
-				ret.append("?");
-			else
-				ret.append(it->overlay_keytext);
-			ret.append("]");
-			if(color)
-				ret.append(AnsiColor(AnsiColor::acDefault).asString());
-		}
-		if(prepend.size() > PIDX_AFTER_OVERLAY)
-			ret.append(prepend[PIDX_AFTER_OVERLAY]);
-		if(formattype & INST_WITH_DATE)
-		{
-			string date =
-				date_conv(((formattype & INST_SHORTDATE) ?
-					fmt.dateFormatShort.c_str() :
-					fmt.dateFormat.c_str()),
-					it->instDate);
-			if(!date.empty())
-			{
-				if(prepend.size() > PIDX_DATE)
-					ret.append(prepend[PIDX_DATE]);
-				ret.append(date);
-				if(prepend.size() > PIDX_AFTER_DATE)
-					ret.append(prepend[PIDX_AFTER_DATE]);
-			}
-		}
-		printed_useflags = false;
-		if(formattype & INST_WITH_USEFLAGS) {
-			const char *a[4];
-			size_t j = 0;
-			for(vector<string>::size_type i = PIDX_SET_USE;
-				i <= PIDX_AFTER_UNSET_USE;
-				++i, ++j)
-			{
-				a[j] = NULL;
-				if(prepend.size() > i)
-					if((j == 2) || !(prepend[i].empty()))
-						a[j] = prepend[i].c_str();
-			}
-			string inst_use = get_inst_use(p, *it, fmt, a);
-			if(!inst_use.empty()) {
-				if(prepend.size() > PIDX_USEFLAGS)
-					ret.append(prepend[PIDX_USEFLAGS]);
-				ret.append(inst_use);
-				printed_useflags = true;
-				if(prepend.size() > PIDX_AFTER_USEFLAGS)
-					ret.append(prepend[PIDX_AFTER_USEFLAGS]);
-			}
-		}
-		if(prepend.size() > PIDX_AFTER_ALL)
-			ret.append(prepend[PIDX_AFTER_ALL]);
-	}
-	return ret;
-}
-
-static void
-print_iuse_version(const PrintFormat *fmt, const Version *version)
-{
-	if(version->iuse_vector().empty())
-		return;
-	cout << fmt->before_iuse << version->iuse() << fmt->after_iuse;
-}
-
-static void
-print_keywords_version(const PrintFormat *fmt, const Version *version)
-{
-	string keywords = version->get_full_keywords();
-	string effective = version->get_effective_keywords();
-	if(keywords.empty()) {
-		if(effective.empty() || !fmt->print_effective)
-			return;
-	}
-	cout << fmt->before_keywords << keywords << fmt->after_keywords;
-	if(fmt->print_effective && (keywords != effective))
-		cout << fmt->before_ekeywords << effective << fmt->after_ekeywords;
-}
-
-void
-print_version(const PrintFormat *fmt, const Version *version, const Package *package, bool with_slots, FullFlag full)
-{
-	if(full) {
-		if(full == -1)
-			cout << "=";
-		cout << package->category << "/" << package->name;
-		if((full != -2) && (full != 2))
-			cout <<  "-" << version->getFull();
-		if(with_slots && fmt->show_slots)
-			cout << version->getSlotAppendix(true);
-		if(full > 0) {
-			if(!package->have_same_overlay_key() && version->overlay_key)
-				cout << fmt->overlay_keytext(version->overlay_key);
-		}
-		return;
-	}
-
-	bool is_installed = false;
-	bool is_marked = false;
-	bool is_upgrade = false;
-	if(!fmt->no_color) {
-		if(fmt->vardb) {
-			is_installed = fmt->vardb->isInstalledVersion(*package, version, *(fmt->header), (*(fmt->portagesettings))["PORTDIR"].c_str());
-			if(!is_installed)
-				is_upgrade = package->is_best_upgrade(true, version, const_cast<VarDbPkg*>(fmt->vardb), const_cast<PortageSettings*>(fmt->portagesettings), false);
-		}
-		if(fmt->marked_list)
-			is_marked = fmt->marked_list->is_marked(*package, version);
-	}
-
-	if(fmt->style_version_lines)
-		fputs("\n\t\t", stdout);
-
-	bool need_color = !(fmt->no_color);
-	string mask_text, keyword_text;
+	bool need_color = !(no_color);
 
 	MaskFlags currmask(version->maskflags);
 	KeywordsFlags currkey(version->keyflags);
 	MaskFlags wasmask;
 	KeywordsFlags waskey;
-	fmt->stability->calc_version_flags(false, wasmask, waskey, version, package);
+	const string *colorp = NULL;
+	string mask_text, keyword_text;
+	stability->calc_version_flags(false, wasmask, waskey, version, package);
 	if(wasmask.isHardMasked()) {
-		if( need_color && fmt->color_original ) {
+		if( need_color && color_original ) {
 			need_color = false;
-			cout << fmt->color_masked;
+			colorp = &color_masked;
 		}
 		if(currmask.isProfileMask()) {
 			if( need_color ) {
 				need_color = false;
-				cout << fmt->color_masked;
+				colorp = &color_masked;
 			}
-			mask_text = fmt->tag_for_profile;
+			mask_text = tag_for_profile;
 		}
 		else if(currmask.isPackageMask()) {
 			if( need_color ) {
 				need_color = false;
-				cout << fmt->color_masked;
+				colorp = &color_masked;
 			}
-			mask_text = fmt->tag_for_masked;
+			mask_text = tag_for_masked;
 		}
 		else if(wasmask.isProfileMask()) {
-			mask_text = fmt->tag_for_ex_profile;
+			mask_text = tag_for_ex_profile;
 		}
 		else {
-			mask_text = fmt->tag_for_ex_masked;
+			mask_text = tag_for_ex_masked;
 		}
 	}
 	else if(currmask.isHardMasked()) {
-		if( need_color && fmt->color_local_mask ) {
+		if( need_color && color_local_mask ) {
 			need_color = false;
-			cout << fmt->color_masked;
+			colorp = &color_masked;
 		}
-		mask_text = fmt->tag_for_locally_masked;
+		mask_text = tag_for_locally_masked;
 	}
 
 	if(currkey.isStable()) {
-		if( need_color && !(fmt->color_original) ) {
+		if( need_color && !(color_original) ) {
 			need_color = false;
-			cout << fmt->color_stable;
+			colorp = &color_stable;
 		}
 		if (waskey.isStable()) {
 			if( need_color )
-				cout << fmt->color_stable;
-			keyword_text = fmt->tag_for_stable;
+				colorp = &color_stable;
+			keyword_text = tag_for_stable;
 		}
 		else if (waskey.isUnstable()) {
 			if( need_color )
-				cout << fmt->color_unstable;
-			keyword_text = fmt->tag_for_ex_unstable;
+				colorp = &color_unstable;
+			keyword_text = tag_for_ex_unstable;
 		}
 		else if (waskey.isMinusKeyword()) {
 			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_minus_keyword;
+				colorp = &color_masked;
+			keyword_text = tag_for_ex_minus_keyword;
 		}
 		else if (waskey.isAlienStable()) {
 			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_alien_stable;
+				colorp = &color_masked;
+			keyword_text = tag_for_ex_alien_stable;
 		}
 		else if (waskey.isAlienUnstable()) {
 			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_alien_unstable;
+				colorp = &color_masked;
+			keyword_text = tag_for_ex_alien_unstable;
 		}
 		else if (waskey.isMinusAsterisk()) {
 			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_minus_asterisk;
+				colorp = &color_masked;
+			keyword_text = tag_for_ex_minus_asterisk;
 		}
 		else {
 			if( need_color )
-				cout << fmt->color_masked;
-			keyword_text = fmt->tag_for_ex_missing_keyword;
+				colorp = &color_masked;
+			keyword_text = tag_for_ex_missing_keyword;
 		}
 	}
 	else if (currkey.isUnstable()) {
 		if( need_color )
-			cout << fmt->color_unstable;
-		keyword_text = fmt->tag_for_unstable;
+			colorp = &color_unstable;
+		keyword_text = tag_for_unstable;
 	}
 	else if (currkey.isMinusKeyword()) {
 		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_minus_keyword;
+			colorp = &color_masked;
+		keyword_text = tag_for_minus_keyword;
 	}
 	else if (currkey.isAlienStable()) {
 		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_alien_stable;
+			colorp = &color_masked;
+		keyword_text = tag_for_alien_stable;
 	}
 	else if (currkey.isAlienUnstable()) {
 		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_alien_unstable;
+			colorp = &color_masked;
+		keyword_text = tag_for_alien_unstable;
 	}
 	else if (currkey.isMinusAsterisk()) {
 		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_minus_asterisk;
+			colorp = &color_masked;
+		keyword_text = tag_for_minus_asterisk;
 	}
 	else {
 		if( need_color )
-			cout << fmt->color_masked;
-		keyword_text = fmt->tag_for_missing_keyword;
+			colorp = &color_masked;
+		keyword_text = tag_for_missing_keyword;
 	}
-	cout << mask_text << keyword_text;
+	mask_text.append(keyword_text);
+	if(colorp)
+		return (*colorp) + mask_text;
+	return mask_text;
+}
 
-	if(fmt->style_version_lines)
-		fputs("\t", stdout);
-
+string
+PrintFormat::get_marked_version(const Version *version, const Package *package, bool midslot) const
+{
+	string ret;;
+	bool is_installed = false;
+	bool is_marked = false;
+	bool is_upgrade = false;
+	if(!no_color) {
+		if(vardb) {
+			is_installed = vardb->isInstalledVersion(*package, version, *(header), (*(portagesettings))["PORTDIR"].c_str());
+			if(!is_installed)
+				is_upgrade = package->is_best_upgrade(true, version, const_cast<VarDbPkg*>(vardb), const_cast<PortageSettings*>(portagesettings), false);
+		}
+		if(marked_list)
+			is_marked = marked_list->is_marked(*package, version);
+	}
 	if (is_installed)
-		cout << fmt->mark_installed;
+		ret = mark_installed;
 	else if (is_upgrade)
-		cout << fmt->mark_upgrade;
+		ret = mark_upgrade;
 	if (is_marked)
-		cout << fmt->mark_version;
-	if (with_slots && fmt->show_slots && (!fmt->colored_slots))
-		cout << version->getFullSlotted(fmt->colon_slots);
+		ret.append(mark_version);
+	if(midslot)
+		ret.append(version->getFullSlotted(colon_slots));
 	else
-		cout << version->getFull();
+		ret.append(version->getFull());
 	if (is_marked) {
-		cout << fmt->mark_version_end;
+		ret.append(mark_version_end);
 		if(is_installed &&
-			(fmt->mark_version_end != fmt->mark_installed_end))
-			cout << fmt->mark_installed_end;
+			(mark_version_end != mark_installed_end))
+			ret.append(mark_installed_end);
 		else if(is_upgrade &&
-			(fmt->mark_version_end != fmt->mark_upgrade_end))
-			cout << fmt->mark_upgrade_end;
+			(mark_version_end != mark_upgrade_end))
+			ret.append(mark_upgrade_end);
 	}
 	else if (is_installed)
-		cout << fmt->mark_installed_end;
+		ret.append(mark_installed_end);
 	else if(is_upgrade)
-		cout << fmt->mark_upgrade_end;
-	if(with_slots && fmt->show_slots && fmt->colored_slots) {
-		string slotname = version->getSlotAppendix(fmt->colon_slots);
-		if(!slotname.empty())
-		{
-			if(! fmt->no_color)
-				cout << fmt->color_slots;
-			cout << slotname;
-		}
+		ret.append(mark_upgrade_end);
+	return ret;
+}
+
+string
+PrintFormat::get_properties(const ExtendedVersion *version) const
+{
+	string result;
+	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE) {
+		if(! no_color)
+			result = color_properties_interactive;
+		result.append(tag_properties_interactive);
 	}
-	if(fmt->print_restrictions) {
-		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE) {
-			if(! fmt->no_color)
-				cout << fmt->color_properties_interactive;
-			cout << fmt->tag_properties_interactive;
-		}
-		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_LIVE) {
-			if(! fmt->no_color)
-				cout << fmt->color_properties_live;
-			cout << fmt->tag_properties_live;
-		}
-		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_VIRTUAL) {
-			if(! fmt->no_color)
-				cout << fmt->color_properties_virtual;
-			cout << fmt->tag_properties_virtual;
-		}
-		if(version->propertiesFlags & ExtendedVersion::PROPERTIES_SET) {
-			if(! fmt->no_color)
-				cout << fmt->color_properties_set;
-			cout << fmt->tag_properties_set;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_fetch;
-			cout << fmt->tag_restrict_fetch;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_MIRROR) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_mirror;
-			cout << fmt->tag_restrict_mirror;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_PRIMARYURI) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_primaryuri;
-			cout << fmt->tag_restrict_primaryuri;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_BINCHECKS) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_binchecks;
-			cout << fmt->tag_restrict_binchecks;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_STRIP) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_strip;
-			cout << fmt->tag_restrict_strip;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_TEST) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_test;
-			cout << fmt->tag_restrict_test;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_USERPRIV) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_userpriv;
-			cout << fmt->tag_restrict_userpriv;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_installsources;
-			cout << fmt->tag_restrict_installsources;
-		}
-		if(version->restrictFlags & ExtendedVersion::RESTRICT_BINDIST) {
-			if(! fmt->no_color)
-				cout << fmt->color_restrict_bindist;
-			cout << fmt->tag_restrict_bindist;
-		}
+	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_LIVE) {
+		if(! no_color)
+			result.append(color_properties_live);
+		result.append(tag_properties_live);
 	}
-	if(!package->have_same_overlay_key() && version->overlay_key)
-		cout << fmt->overlay_keytext(version->overlay_key);
-	if(!fmt->no_color)
-		cout << AnsiColor::reset();
-	if(!fmt->style_version_lines)
-		return;
-	if((fmt->print_keywords) && (fmt->print_effective))
-		fmt->portagesettings->get_effective_keywords_userprofile(const_cast<Package *>(package));
-	if(fmt->print_keywords > 0)
-		print_keywords_version(fmt, version);
-	if(fmt->print_iuse)
-		print_iuse_version(fmt, version);
-	if(fmt->print_keywords < 0)
-		print_keywords_version(fmt, version);
+	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_VIRTUAL) {
+		if(! no_color)
+			result.append(color_properties_virtual);
+		result.append(tag_properties_virtual);
+	}
+	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_SET) {
+		if(! no_color)
+			result.append(color_properties_set);
+		result.append(tag_properties_set);
+	}
+	return result;
+}
+
+string
+PrintFormat::get_restrictions(const ExtendedVersion *version) const
+{
+	string result;
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
+		if(! no_color)
+			result = color_restrict_fetch;
+		result.append(tag_restrict_fetch);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_MIRROR) {
+		if(! no_color)
+			result.append(color_restrict_mirror);
+		result.append(tag_restrict_mirror);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_PRIMARYURI) {
+		if(! no_color)
+			result.append(color_restrict_primaryuri);
+		result.append(tag_restrict_primaryuri);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_BINCHECKS) {
+		if(! no_color)
+			result.append(color_restrict_binchecks);
+		result.append(tag_restrict_binchecks);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_STRIP) {
+		if(! no_color)
+			result.append(color_restrict_strip);
+		result.append(tag_restrict_strip);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_TEST) {
+		if(! no_color)
+			result.append(color_restrict_test);
+		result.append(tag_restrict_test);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_USERPRIV) {
+		if(! no_color)
+			result.append(color_restrict_userpriv);
+		result.append(tag_restrict_userpriv);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
+		if(! no_color)
+			result.append(color_restrict_installsources);
+		result.append(tag_restrict_installsources);
+	}
+	if(version->restrictFlags & ExtendedVersion::RESTRICT_BINDIST) {
+		if(! no_color)
+			result.append(color_restrict_bindist);
+		result.append(tag_restrict_bindist);
+	}
+	return result;
+}
+
+string
+PrintFormat::get_version_keywords(const Package *package, const Version *version) const
+{
+	if(print_effective)
+		portagesettings->get_effective_keywords_userprofile(const_cast<Package *>(package));
+	string keywords = version->get_full_keywords();
+	string effective = version->get_effective_keywords();
+	if(keywords.empty()) {
+		if(effective.empty() || !print_effective)
+			return "";
+	}
+	string result = before_keywords;
+	result.append(keywords);
+	result.append(after_keywords);
+	if(print_effective && (keywords != effective)) {
+		result.append(before_ekeywords);
+		result.append(effective);
+		result.append(after_ekeywords);
+	}
+	return result;
 }
 
 void
-print_versions_versions(const PrintFormat *fmt, const Package* p, bool with_slots, FullFlag full, const vector<Version*> *versions)
+PrintFormat::get_installed(const Package *package, Node *root, bool only_marked) const
 {
-	bool printed = false;
-	for(Package::const_iterator vit = p->begin(); vit != p->end(); ++vit) {
+	if(!vardb)
+		return;
+	if(only_marked && (!marked_list))
+		return;
+	vector<InstVersion> *vec = vardb->getInstalledVector(*package);
+	if(!vec)
+		return;
+	bool have_prevversion = false;
+	for(vector<InstVersion>::iterator it = vec->begin();
+		it != vec->end(); ++it) {
+		if(only_marked) {
+			if(!(marked_list->is_marked(*package, &(*it))))
+				continue;
+		}
+		if(have_prevversion) {
+			version_variables->last = false;
+			recPrint(&(version_variables->result), package, &get_package_property, root);
+			version_variables->first = false;
+		}
+		have_prevversion = true;
+		version_variables->instver = &(*it);
+	}
+	if(have_prevversion) {
+		version_variables->last = true;
+		recPrint(&(version_variables->result), package, &get_package_property, root);
+	}
+}
+
+void
+PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<Version*> *versions) const
+{
+	bool have_prevversion = false;
+	for(Package::const_iterator vit = package->begin(); vit != package->end(); ++vit) {
 		if(versions) {
 			if(find(versions->begin(), versions->end(), *vit) == versions->end())
 				continue;
 		}
-		if(printed) {
-			if(full)
-				cout << "\n";
-			else if(!fmt->style_version_lines)
-				cout << " ";
+		if(have_prevversion) {
+			version_variables->last = false;
+			recPrint(&(version_variables->result), package, &get_package_property, root);
+			version_variables->first = false;
 		}
-		print_version(fmt, *vit, p, with_slots, full);
-		printed = true;
+		have_prevversion = true;
+		version_variables->version = *vit;
 	}
-	if(printed && !fmt->no_color)
-		cout << AnsiColor::reset();
-	if(full || versions)
-		return;
-	bool print_coll_iuse = fmt->print_iuse;
-#ifndef NOT_FULL_USE
-	if((fmt->style_version_lines) && (p->versions_have_full_use))
-		print_coll_iuse = false;
-#endif
-	if(print_coll_iuse) {
-		if(!(p->coll_iuse().empty())) {
-			cout << fmt->before_coll_iuse << p->coll_iuse() << fmt->after_coll_iuse;
-		}
+	if(have_prevversion) {
+		version_variables->last = true;
+		recPrint(&(version_variables->result), package, &get_package_property, root);
 	}
 }
 
 void
-print_versions_slots(const PrintFormat *fmt, const Package* p, bool with_slots, FullFlag full, const vector<Version*> *versions)
+PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<Version*> *versions) const
 {
-	if(!p->have_nontrivial_slots()) {
-		print_versions_versions(fmt, p, false, full, versions);
-		return;
-	}
-	if(!full)
-		with_slots = false;
-	const SlotList *sl = &(p->slotlist());
-	bool only_one = (sl->size() == 1);
-	for(SlotList::const_iterator it = sl->begin();
-		it != sl->end(); ++it) {
-		if(!full) {
-			const char *s = it->slotname();
-			if((!only_one) || fmt->style_version_lines)
-				fputs("\n\t", stdout);
-			if( !fmt->no_color)
-				cout << fmt->color_slots;
-			if(s[0])
-				cout << "(" << s << ")";
-			else
-				cout << "(0)";
-			if( !fmt->no_color)
-				cout << AnsiColor::reset();
-			if( !fmt->style_version_lines)
-				cout << (only_one ? "  " : "\t");
+	const SlotList *sl = &(package->slotlist());
+	SlotList::size_type slotnum = 0;
+	if(versions) {
+		for(SlotList::const_iterator it = sl->begin();
+			it != sl->end(); ++it) {
+			const VersionList *vl = &(it->const_version_list());
+			for(VersionList::const_iterator vit = vl->begin();
+				vit != vl->end(); ++vit) {
+				if(find(versions->begin(), versions->end(), *vit) != versions->end()) {
+					++slotnum;
+					break;
+				}
+			}
 		}
+	}
+	else
+		slotnum = sl->size();
+	if(!slotnum)
+		return;
+	if(slotnum == 1)
+		version_variables->oneslot = true;
+
+	bool have_prevversion = false;
+	SlotList::size_type prevslot = slotnum + 1;
+	version_variables->slotfirst = true;
+	for(SlotList::const_iterator it = sl->begin(); slotnum; ++it, --slotnum) {
 		const VersionList *vl = &(it->const_version_list());
-		bool printed = false;
 		for(VersionList::const_iterator vit = vl->begin();
 			vit != vl->end(); ++vit) {
 			if(versions) {
 				if(find(versions->begin(), versions->end(), *vit) == versions->end())
 					continue;
 			}
-			if(full) {
-				if(printed || (it != sl->begin()))
-					cout << "\n";
+			if(have_prevversion) {
+				version_variables->last = false;
+				version_variables->slotlast = (prevslot != slotnum);
+				recPrint(&(version_variables->result), package, &get_package_property, root);
+				version_variables->first = false;
 			}
-			else if(printed && !fmt->style_version_lines)
-				cout << " ";
-			print_version(fmt, *vit, p, with_slots, full);
-			printed = true;
-		}
-		if(printed && !fmt->no_color)
-			cout << AnsiColor::reset();
-	}
-	if(full || versions)
-		return;
-	bool print_coll_iuse = fmt->print_iuse;
-#ifndef NOT_FULL_USE
-	if((fmt->style_version_lines) && (p->versions_have_full_use))
-		print_coll_iuse = false;
-#endif
-	if(print_coll_iuse) {
-		if(!(p->coll_iuse().empty())) {
-			cout << fmt->before_slot_iuse << p->coll_iuse() << fmt->after_slot_iuse;
+			have_prevversion = true;
+			version_variables->version = *vit;
+			version_variables->slotfirst = (prevslot != slotnum);
+			prevslot = slotnum;
 		}
 	}
-}
-
-void
-print_versions(const PrintFormat *fmt, const Package* p, bool with_slots, FullFlag full, const vector<Version*> *versions)
-{
-	if(fmt->slot_sorted)
-		print_versions_slots(fmt, p, with_slots, full, versions);
-	else
-		print_versions_versions(fmt, p, with_slots, full, versions);
-}
-
-bool
-print_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
-{
-	const Package *entity = static_cast<const Package *>(void_entity);
-
-	vector<string> prepend = split_string(name, true, ":", false);
-	string plainname = prepend[0];
-	prepend.erase(prepend.begin());
-
-	if(plainname.find("overlay") != string::npos) {
-		Version::Overlay ov_key = entity->largest_overlay;
-		if(ov_key && entity->have_same_overlay_key()) {
-			cout << fmt->overlay_keytext(ov_key);
-			return true;
-		}
-		return false;
+	if(have_prevversion) {
+		version_variables->last = true;
+		version_variables->slotlast = true;
+		recPrint(&(version_variables->result), package, &get_package_property, root);
 	}
-	if(plainname.find("available") != string::npos) {
-		FullFlag full = 0;
-		if(plainname.find("full") != string::npos)
-			full = 1;
-		if(plainname.find('=') != string::npos)
-			full = -1;
-		if(plainname.find("empty") != string::npos)
-			full = (full < 0) ? -2 : 2;
-		vector<Version*> *versions = NULL;
-		if(plainname.find("mark") != string::npos) {
-			versions = new vector<Version*>;
-			if(fmt->marked_list) {
-				for(Package::const_iterator it = entity->begin();
-					it != entity->end(); ++it) {
-					if(fmt->marked_list->is_marked(*entity, &(**it))) {
-						versions->push_back(*it);
-					}
-				}
-			}
-		}
-		print_versions(fmt, entity, (plainname.find("short") == string::npos), full, versions);
-		if(versions)
-			delete versions;
-		return true;
-	}
-	if(plainname.find("install") != string::npos) {
-		if(!fmt->vardb)
-			return false;
-		FullFlag full = 0;
-		if(plainname.find("full") != string::npos)
-			full = 1;
-		if(plainname.find('=') != string::npos)
-			full = -1;
-		if(plainname.find("empty") != string::npos)
-			full = (full < 0) ? -2 : 2;
-		if(full) {
-			string s = getFullInstalled(*entity, *fmt, (plainname.find("short") == string::npos), full);
-			if(s.empty())
-				return false;
-			cout << s;
-			return true;
-		}
-		FormatTypeFlags formattype = INST_NONE;
-		if(plainname.find("short") != string::npos)
-			formattype = INST_SHORTDATE;
-		if(plainname.find("date") != string::npos)
-			formattype |= INST_WITH_DATE;
-		if(!formattype)
-			formattype = INST_WITH_USEFLAGS|INST_WITH_NEWLINE|INST_WITH_DATE;
-		string s = getInstalledString(*entity, *fmt, false, formattype, prepend,
-			(name.find("mark") != string::npos));
-		if(s.empty())
-			return false;
-		cout << s;
-		return true;
-	}
-	if(plainname.find("best") != string::npos) {
-		bool with_slots = (plainname.find("short") == string::npos);
-		bool accept_unstable = (plainname.find_first_of('*') != string::npos);
-		FullFlag full = 0;
-		if(plainname.find("full") != string::npos)
-			full = 1;
-		if(plainname.find('=') != string::npos)
-			full = -1;
-		if(plainname.find("empty") != string::npos)
-			full = (full < 0) ? -2 : 2;
-		if(plainname.find("slot") == string::npos) {
-			Version *best = entity->best(accept_unstable);
-			if(best == NULL)
-				return false;
-			print_version(fmt, best, entity, with_slots, full);
-			return true;
-		}
-		vector<Version*> versions;
-		if(plainname.find("upgrade") != string::npos)
-			entity->best_slots_upgrade(versions, fmt->vardb, fmt->portagesettings, accept_unstable);
-		else
-			entity->best_slots(versions, accept_unstable);
-		print_versions_versions(fmt, entity, with_slots, full, &versions);
-		return (versions.begin() != versions.end());
-	}
-	string s = get_package_property(fmt, void_entity, plainname);
-	if(s.empty())
-		return false;
-	cout << s;
-	return true;
 }
 
 string
-get_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
+PrintFormat::get_pkg_property(const Package *package, const string &name) const throw(ExBasic)
 {
-	const Package *entity = static_cast<const Package *>(void_entity);
-
+	if(version_variables) {
+		if(name == "first") {
+			if(version_variables->first)
+				return "1";
+			return "";
+		}
+		if(name == "last") {
+			if(version_variables->last)
+				return "1";
+			return "";
+		}
+		if(name == "slotfirst") {
+			if(version_variables->slotfirst)
+				return "1";
+			return "";
+		}
+		if(name == "slotlast") {
+			if(version_variables->slotlast)
+				return "1";
+			return "";
+		}
+		if(name == "oneslot") {
+			if(version_variables->oneslot)
+				return "1";
+			return "";
+		}
+		if((name == "slot") || (name == "isslot")) {
+			const string *slot;
+			if(version_variables->isinst) {
+				InstVersion *i = version_variables->instver;
+				if((!vardb) || !(package->guess_slotname(*i, vardb)))
+					i->slotname = "?";
+				slot = &(i->slotname);
+			}
+			else
+				slot = &(version_variables->version->slotname);
+			if(name.size() != 4) {
+				if(slot->empty() || (*slot == "0"))
+					return "";
+				return "1";
+			}
+			if(slot->empty())
+				return "0";
+			return *slot;
+		}
+		if(name == "stability") {
+			if(version_variables->isinst)
+				return "";
+			return get_version_stability(version_variables->version, package);
+		}
+		if(name == "version") {
+			if(version_variables->isinst)
+				return version_variables->instver->getFull();
+			return get_marked_version(version_variables->version, package, false);
+		}
+		if(name == "version*") {
+			if(version_variables->isinst)
+				return version_variables->instver->getFullSlotted(colon_slots);
+			return get_marked_version(version_variables->version, package, true);
+		}
+		if(name == "plainversion") {
+			if(version_variables->isinst)
+				return version_variables->instver->getFull();
+			return version_variables->version->getFull();
+		}
+		if(name == "plainversion*") {
+			if(version_variables->isinst)
+				return version_variables->instver->getFullSlotted(colon_slots);
+			return version_variables->instver->getFullSlotted(colon_slots);
+		}
+		if(name == "properties") {
+			if(version_variables->isinst) {
+				if((!vardb) || (!header))
+					return "";
+				vardb->readRestricted(*package, *(version_variables->instver), *header, (*portagesettings)["PORTDIR"].c_str());
+				return get_properties(version_variables->instver);
+			}
+			return get_properties(version_variables->version);
+		}
+		if(name == "restrictions") {
+			if(version_variables->isinst) {
+				if((!vardb) || (!header))
+					return "";
+				vardb->readRestricted(*package, *(version_variables->instver), *header, (*portagesettings)["PORTDIR"].c_str());
+				return get_restrictions(version_variables->instver);
+			}
+			return get_restrictions(version_variables->version);
+		}
+		if(name == "overlayver") {
+			if(version_variables->isinst) {
+				InstVersion *i = version_variables->instver;
+				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str())))
+					return "?";
+				if(i->overlay_key > 0) {
+					if((!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key))
+						return overlay_keytext(i->overlay_key);
+				}
+				return "";
+			}
+			if(!package->have_same_overlay_key()) {
+				if(version_variables->version->overlay_key)
+					return overlay_keytext(version_variables->version->overlay_key);
+			}
+			return "";
+		}
+		if(name == "versionkeywords") {
+			if(version_variables->isinst)
+				return "";
+			return get_version_keywords(package, version_variables->version);
+		}
+		if(name == "haveuse") {
+			if(version_variables->isinst) {
+				InstVersion &i = *(version_variables->instver);
+				if(vardb && (vardb->readUse(*package, i)) && !(i.inst_iuse.empty()))
+					return "1";
+				return "";
+			}
+			if(version_variables->version->iuse_vector().empty())
+				return "";
+			return "1";
+		}
+		if(name == "use") {
+			if(version_variables->isinst)
+				return "";
+			return version_variables->version->iuse();
+		}
+		if(strncmp(name.c_str(), "use:", 4) == 0) {
+			if(version_variables->isinst) {
+				vector<string> s = split_string(name, true, ":", false);
+				s.erase(s.begin());
+				return get_inst_use(*package, *(version_variables->instver), s);
+			}
+			return "";
+		}
+		if(strncmp(name.c_str(), "date:", 5) == 0) {
+			if(version_variables->isinst) {
+				EixRc &rc = get_eixrc(NULL);
+				return date_conv(rc[name.substr(5)].c_str(),
+					version_variables->instver->instDate);
+			}
+			return "";
+		}
+	}
+	string::size_type col = name.find(':');
+	if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {
+		string plainname = name.substr(0, col);
+		string varname = name.substr(col + 1);
+		string varsortname;
+		string *parsed = NULL;
+		col = varname.find(':');
+		if(col != string::npos) {
+			varsortname = varname.substr(col + 1);
+			varname.erase(col);
+		}
+		VersionVariables variables;
+		VersionVariables *previous_variables = version_variables;
+		version_variables = &variables;
+		if(plainname.find("best") != string::npos) {
+			bool accept_unstable = (plainname.find_first_of('*') != string::npos);
+			if(plainname.find("slot") != string::npos) {
+				vector<Version*> versions;
+				if(plainname.find("upgrade") != string::npos)
+					package->best_slots_upgrade(versions, vardb, portagesettings, accept_unstable);
+				else
+					package->best_slots(versions, accept_unstable);
+				if(!versions.empty()) {
+					parsed = &varname;
+					get_versions_versorted(package, parse_variable(varname), &versions);
+				}
+			}
+			else {
+				variables.version = package->best(accept_unstable);
+				if(variables.version) {
+					parsed = &varname;
+					recPrint(&(variables.result), package, get_package_property, parse_variable(varname));
+				}
+			}
+		}
+		else {
+			bool marked = (plainname.find("mark") != string::npos);
+			if(plainname.find("install") != string::npos) {
+				variables.isinst = true;
+				parsed = &varname;
+				get_installed(package, parse_variable(varname), marked);
+			}
+			else {
+				vector<Version*> *versions = NULL;
+				if(marked) {
+					versions = new vector<Version*>;
+					for(Package::const_iterator it = package->begin();
+						it != package->end(); ++it) {
+						if(marked_list->is_marked(*package, &(**it))) {
+							versions->push_back(*it);
+						}
+					}
+				}
+				if((!versions) || !(versions->empty())) {
+					if(varsortname.empty() || !(package->have_nontrivial_slots())) {
+						parsed = &varname;
+						get_versions_versorted(package, parse_variable(varname), versions);
+					}
+					else {
+						parsed = &varsortname;
+						get_versions_slotsorted(package, parse_variable(varsortname), versions);
+					}
+				}
+				if(versions)
+					delete versions;
+			}
+		}
+		if(parsed)
+			varcache[*parsed].in_use = false;
+		version_variables = previous_variables;
+		return variables.result;
+	}
+	if(name == "installed") {
+		if(vardb) {
+			vector<InstVersion> *vec = vardb->getInstalledVector(*package);
+			if(vec && !(vec->empty()))
+				return "1";
+		}
+		return "";
+	}
+	if(name == "versionlines") {
+		if(style_version_lines)
+			return "1";
+		return "";
+	}
+	if((name == "havebest") || (name == "havebest*")) {
+		if(package->best(name.find_first_of('*') != string::npos))
+			return "1";
+		return "";
+	}
 	if(name == "category")
-		return entity->category;
+		return package->category;
 	if(name == "name")
-		return entity->name;
+		return package->name;
 	if(name == "description")
-		return entity->desc;
+		return package->desc;
 	if(name == "homepage")
-		return entity->homepage;
+		return package->homepage;
 	if(name.find("license") != string::npos)
-		return entity->licenses;
+		return package->licenses;
 	if(name == "provide")
-		return entity->provide;
+		return package->provide;
 	if(name.find("overlay") != string::npos) {
-		Version::Overlay ov_key = entity->largest_overlay;
-		if(ov_key && entity->have_same_overlay_key()) {
-			return fmt->overlay_keytext(ov_key, false);
+		Version::Overlay ov_key = package->largest_overlay;
+		if(ov_key && package->have_same_overlay_key()) {
+			return overlay_keytext(ov_key, false);
 		}
 		return "";
 	}
 	if(name == "system") {
-		if(entity->is_system_package())
-			return "system";
+		if(package->is_system_package())
+			return "1";
 		return "";
 	}
 	if(name.find("world") != string::npos) {
 		if(name.find("set") != string::npos) {
-			if(entity->is_world_sets_package())
-				return "world_sets";
+			if(package->is_world_sets_package())
+				return "1";
 		}
-		else if(entity->is_world_package())
-			return "world";
+		else if(package->is_world_package())
+			return "1";
 		return "";
 	}
 	if(name.find("set") != string::npos) {
 		if(name.find("all") != string::npos)
-			return fmt->portagesettings->get_setnames(entity, true);
-		return fmt->portagesettings->get_setnames(entity);
+			return portagesettings->get_setnames(package, true);
+		return portagesettings->get_setnames(package);
 	}
 	if((name.find("upgrade") != string::npos) ||
 		(name.find("update") != string::npos)) {
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->can_upgrade(fmt->vardb, fmt->portagesettings,
+		LocalCopy copy(this, const_cast<Package*>(package));
+		bool result = package->can_upgrade(vardb, portagesettings,
 			(name.find("install") == string::npos),
 			(name.find("best") == string::npos));
-		copy.restore(const_cast<Package*>(entity));
+		copy.restore(const_cast<Package*>(package));
 		if(result)
-			return "upgrade";
+			return "1";
 		return "";
 	}
-	if(name == "downgrade") {
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->must_downgrade(fmt->vardb, (name.find("best") == string::npos));
-		copy.restore(const_cast<Package*>(entity));
+	if(name.find("downgrade") != string::npos) {
+		LocalCopy copy(this, const_cast<Package*>(package));
+		bool result = package->must_downgrade(vardb, (name.find("best") == string::npos));
+		copy.restore(const_cast<Package*>(package));
 		if(result)
-			return "downgrade";
+			return "1";
 		return "";
 	}
 	if(name.find("recommend") != string::npos) {
-		LocalCopy copy(fmt, const_cast<Package*>(entity));
-		bool result = entity->recommend(fmt->vardb, fmt->portagesettings,
+		LocalCopy copy(this, const_cast<Package*>(package));
+		bool result = package->recommend(vardb, portagesettings,
 			(name.find("install") == string::npos),
 			(name.find("best") == string::npos));
-		copy.restore(const_cast<Package*>(entity));
+		copy.restore(const_cast<Package*>(package));
 		if(result)
-			return "recommend";
+			return "1";
 		return "";
 	}
-	if(name.find("install") != string::npos) {
-		if(!fmt->vardb)
-			return "";
-		FormatTypeFlags formattype = INST_NONE;
-		if(name.find("short") != string::npos)
-			formattype = INST_SHORTDATE;
-		if(name.find("date") != string::npos)
-			formattype |= INST_WITH_DATE;
-		if(!formattype)
-			formattype = INST_WITH_USEFLAGS|INST_WITH_NEWLINE|INST_WITH_DATE;
-		vector<string> prepend;
-		return getInstalledString(*entity, *fmt, true, formattype, prepend,
-			(name.find("mark") != string::npos));
+	if(name == "marked") {
+		if(marked_list) {
+			if(marked_list->is_marked(*package))
+				return "1";
+		}
+		return "";
 	}
-	if(name.find("best") != string::npos) {
-		bool with_slots = (name.find("short") == string::npos);
-		bool accept_unstable = (name.find_first_of('*') != string::npos);
-		if(name.find("slot") == string::npos) {
-			Version *best = entity->best(accept_unstable);
-			if(best == NULL) {
-				return "";
-			}
-			if(with_slots && fmt->show_slots)
-				return best->getFullSlotted(fmt->colon_slots);
-			return best->getFull();
-		}
-		vector<Version*> versions;
-		entity->best_slots(versions, accept_unstable);
-		string ret;
-		for(vector<Version*>::const_iterator it = versions.begin();
-			it != versions.end(); ++it)
-		{
-			if(! ret.empty())
-				ret += " ";
-			if(with_slots)
-				ret += (*it)->getFullSlotted(fmt->colon_slots);
-			else
-				ret += (*it)->getFull();
-		}
-		return ret;
-	}
-	if(name.find("marked") != string::npos) {
-		if(name == "marked") {
-			if(fmt->marked_list) {
-				if(fmt->marked_list->is_marked(*entity))
-					return "marked";
-			}
-		}
-		else if(fmt->marked_list)
-			return fmt->marked_list->getMarkedString(*entity);
+	if(name == "colliuse")
+		return package->coll_iuse();
+	if(name == "haveversionuse") {
+#ifndef NOT_FULL_USE
+		if(package->versions_have_full_use)
+			return "1";
+#endif
 		return "";
 	}
 	throw ExBasic(_("Unknown property %r")) % name;
 }
 
-const void *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
+const Package *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
 {
 	const char *s = name.c_str();
 	if(strncmp(s, "old", 3) == 0)
@@ -949,10 +780,16 @@ const void *old_or_new(string *new_name, const Package *older, const Package *ne
 }
 
 string
-get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
+get_package_property(const PrintFormat *fmt, const void *entity, const string &name)
 {
-	const Package *older = (static_cast<const Package* const*>(void_entity))[0];
-	const Package *newer = (static_cast<const Package* const*>(void_entity))[1];
+	return fmt->get_pkg_property(static_cast<const Package *>(entity), name);
+}
+
+string
+get_diff_package_property(const PrintFormat *fmt, const void *entity, const string &name)
+{
+	const Package *older = (static_cast<const Package* const*>(entity))[0];
+	const Package *newer = (static_cast<const Package* const*>(entity))[1];
 	if(name == "better")
 	{
 		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
@@ -1020,16 +857,6 @@ get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const
 		return "";
 	}
 	string new_name;
-	const void *entity = old_or_new(&new_name, older, newer, name);
-	return get_package_property(fmt, entity, new_name);
-}
-
-bool
-print_diff_package_property(const PrintFormat *fmt, const void *void_entity, const string &name) throw(ExBasic)
-{
-	const Package *older = (static_cast<const Package* const*>(void_entity))[0];
-	const Package *newer = (static_cast<const Package* const*>(void_entity))[1];
-	string new_name;
-	const void *entity = old_or_new(&new_name, older, newer, name);
-	return print_package_property(fmt, entity, new_name);
+	const Package *package = old_or_new(&new_name, older, newer, name);
+	return fmt->get_pkg_property(package, new_name);
 }

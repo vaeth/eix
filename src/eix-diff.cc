@@ -42,7 +42,7 @@ INFO(const string &s)
 
 static PortageSettings *portagesettings;
 static SetStability   *set_stability_old, *set_stability_new;
-static PrintFormat     format_for_new(get_package_property, print_package_property);
+static PrintFormat     format_for_new(get_package_property);
 static PrintFormat     format_for_old;
 static VarDbPkg       *varpkg_db;
 static DBHeader        old_header, new_header;
@@ -235,7 +235,7 @@ void
 print_changed_package(Package *op, Package *np)
 {
 	Package *p[2] = { op, np };
-	format_for_new.print(p, print_diff_package_property, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings, set_stability_new);
+	format_for_new.print(p, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
 void
@@ -323,8 +323,6 @@ run_eix_diff(int argc, char *argv[])
 		exit(1);
 	}
 
-	format_for_new.dateFormat       = eixrc["FORMAT_INSTALLATION_DATE"];
-	format_for_new.dateFormatShort  = eixrc["FORMAT_SHORT_INSTALLATION_DATE"];
 	format_for_new.color_masked     = eixrc["COLOR_MASKED"];
 	format_for_new.color_unstable   = eixrc["COLOR_UNSTABLE"];
 	format_for_new.color_stable     = eixrc["COLOR_STABLE"];
@@ -358,19 +356,11 @@ run_eix_diff(int argc, char *argv[])
 	format_for_new.alpha_use        = eixrc.getBool("SORT_INST_USE_ALPHA");
 	format_for_new.print_restrictions = !eixrc.getBool("NO_RESTRICTIONS");
 
-	format_for_new.print_keywords   = eixrc.getBeforeAfter("PRINT_KEYWORDS");
 	format_for_new.before_keywords  = eixrc["FORMAT_BEFORE_KEYWORDS"];
 	format_for_new.after_keywords   = eixrc["FORMAT_AFTER_KEYWORDS"];
 	format_for_new.print_effective  = eixrc.getBool("PRINT_EFFECTIVE_KEYWORDS");
 	format_for_new.before_ekeywords = eixrc["FORMAT_BEFORE_EFFECTIVE_KEYWORDS"];
 	format_for_new.after_ekeywords  = eixrc["FORMAT_AFTER_EFFECTIVE_KEYWORDS"];
-	format_for_new.print_iuse       = eixrc.getBool("PRINT_IUSE");
-	format_for_new.before_iuse      = eixrc["FORMAT_BEFORE_IUSE"];
-	format_for_new.after_iuse       = eixrc["FORMAT_AFTER_IUSE"];
-	format_for_new.before_coll_iuse = eixrc["FORMAT_BEFORE_COLL_IUSE"];
-	format_for_new.after_coll_iuse  = eixrc["FORMAT_AFTER_COLL_IUSE"];
-	format_for_new.before_slot_iuse = eixrc["FORMAT_BEFORE_SLOT_IUSE"];
-	format_for_new.after_slot_iuse  = eixrc["FORMAT_AFTER_SLOT_IUSE"];
 
 	format_for_new.setupColors();
 

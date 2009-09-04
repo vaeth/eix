@@ -10,6 +10,7 @@
 #include "formatstring.h"
 
 #include <portage/conf/portagesettings.h>
+#include <eixrc/global.h>
 
 using namespace std;
 
@@ -131,6 +132,23 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	fmt->StabilityNonlocal(*pkg);
 }
 
+Node *
+PrintFormat::parse_variable(const string &varname) const throw(ExBasic)
+{
+	VarParserCache::iterator f = varcache.find(varname);
+	if(f == varcache.end()) {
+		EixRc &rc = get_eixrc(NULL);
+		return varcache[varname].init(rc[varname].c_str(), !no_color, true);
+	}
+	VarParserCacheNode &v = f->second;
+	if(v.in_use) {
+		throw ExBasic(_("Variable %r calls itself for printing"))
+			% varname;
+	}
+	v.in_use = true;
+	return v.m_parser.rootnode();
+}
+
 string
 PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 {
@@ -170,7 +188,7 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 }
 
 bool
-PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty get_property, Node *root)
+PrintFormat::recPrint(string *result, const void *entity, GetProperty get_property, Node *root) const
 {
 	bool printed = false;
 	for(;
@@ -179,13 +197,27 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 	{
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
-				printed = true;
-				cout << (static_cast<Text*>(root))->text;
+				{
+					const string &t = static_cast<Text*>(root)->text;
+					if(!t.empty()) {
+						printed = true;
+						if(result)
+							result->append(t);
+						else
+							cout << t;
+					}
+				}
 				break;
 			case Node::VARIABLE:
 				try {
-					if(print_property(this, entity, (static_cast<Property*>(root))->name))
+					const string s = get_property(this, entity, (static_cast<Property*>(root))->name);
+					if(!s.empty()) {
 						printed = true;
+						if(result)
+							result->append(s);
+						else
+							cout << s;
+					}
 				}
 				catch(const ExBasic &e) {
 					cerr << e << endl;
@@ -196,18 +228,18 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
 					bool ok = false;
 					try {
-						ok = get_property(this, entity, ief->variable.name) == ief->text.text;
+						ok = (get_property(this, entity, ief->variable.name) == ief->text.text);
 					}
 					catch(const ExBasic &e) {
 						cerr << e << endl;
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
-						if(recPrint(entity, print_property, get_property, ief->if_true))
+						if(recPrint(result, entity, get_property, ief->if_true))
 							printed = true;
 					}
 					else if(!ok && ief->if_false) {
-						if(recPrint(entity, print_property, get_property, ief->if_false))
+						if(recPrint(result, entity, get_property, ief->if_false))
 							printed = true;
 					}
 				}
@@ -217,6 +249,22 @@ PrintFormat::recPrint(void *entity, PrintProperty print_property, GetProperty ge
 		}
 	}
 	return printed;
+}
+
+bool
+PrintFormat::print(void *entity, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s)
+{
+	// The four hackish variables
+	header = dbheader; vardb = vardbpkg; portagesettings = ps; stability = s;
+	version_variables = NULL;
+	varcache.clear_use();
+	version_variables = NULL;
+	bool r = recPrint(NULL, entity, get_property, root);
+	// Reset the four hackish variables
+	header = NULL; vardb = NULL; portagesettings = NULL; stability = NULL;
+	if(r)
+		fputc('\n', stdout);
+	return r;
 }
 
 string parse_colors(const string &colorstring, bool colors)
@@ -518,6 +566,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 		p->next = q;
 		q = p;
 	}
+	root_node = p;
 	/* Return root-node. */
-	return p;
+	return root_node;
 }

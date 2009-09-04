@@ -191,7 +191,7 @@ enum OverlayMode
 
 static OverlayMode overlay_mode;
 
-static PrintFormat format(get_package_property, print_package_property);
+static PrintFormat format(get_package_property);
 
 /** Local options for argument reading. */
 static struct LocalOptions {
@@ -371,9 +371,6 @@ setup_defaults()
 	   (strcasecmp(s.c_str(), "compact") == 0)) {
 		rc_options.compact_output = true;
 	}
-	format.dateFormat          = rc["FORMAT_INSTALLATION_DATE"];
-	format.dateFormatShort     = rc["FORMAT_SHORT_INSTALLATION_DATE"];
-
 	format.color_masked        = rc["COLOR_MASKED"];
 	format.color_unstable      = rc["COLOR_UNSTABLE"];
 	format.color_stable        = rc["COLOR_STABLE"];
@@ -411,19 +408,11 @@ setup_defaults()
 
 	format.alpha_use           = rc.getBool("SORT_INST_USE_ALPHA");
 
-	format.print_keywords      = rc.getBeforeAfter("PRINT_KEYWORDS");
 	format.before_keywords     = rc["FORMAT_BEFORE_KEYWORDS"];
 	format.after_keywords      = rc["FORMAT_AFTER_KEYWORDS"];
 	format.print_effective     = rc.getBool("PRINT_EFFECTIVE_KEYWORDS");
 	format.before_ekeywords    = rc["FORMAT_BEFORE_EFFECTIVE_KEYWORDS"];
 	format.after_ekeywords     = rc["FORMAT_AFTER_EFFECTIVE_KEYWORDS"];
-	format.print_iuse          = rc.getBool("PRINT_IUSE");
-	format.before_iuse         = rc["FORMAT_BEFORE_IUSE"];
-	format.after_iuse          = rc["FORMAT_AFTER_IUSE"];
-	format.before_coll_iuse    = rc["FORMAT_BEFORE_COLL_IUSE"];
-	format.after_coll_iuse     = rc["FORMAT_AFTER_COLL_IUSE"];
-	format.before_slot_iuse    = rc["FORMAT_BEFORE_SLOT_IUSE"];
-	format.after_slot_iuse     = rc["FORMAT_AFTER_SLOT_IUSE"];
 
 	format.tag_restrict_fetch          = rc["TAG_RESTRICT_FETCH"];
 	format.tag_restrict_mirror         = rc["TAG_RESTRICT_MIRROR"];

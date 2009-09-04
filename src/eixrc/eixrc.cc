@@ -634,31 +634,6 @@ EixRc::istrue(const char *s)
 	return false;
 }
 
-short
-EixRc::getBeforeAfter(const char *key)
-{
-	const char *s = (*this)[key].c_str();
-	if(!strcasecmp(s, "first"))
-		return 2;
-	if(!strcasecmp(s, "before"))
-		return 1;
-	if(!strcasecmp(s, "after"))
-		return -1;
-	if(!strcasecmp(s, "last"))
-		return -2;
-	if(!strcasecmp(s, _("first")))
-		return 2;
-	if(!strcasecmp(s, _("before")))
-		return 1;
-	if(!strcasecmp(s, _("after")))
-		return -1;
-	if(!strcasecmp(s, _("last")))
-		return -2;
-	if(istrue(s))
-		return 1;
-	return 0;
-}
-
 void
 EixRc::getRedundantFlags(const char *key, Keywords::Redundant type, RedPair &p)
 {
