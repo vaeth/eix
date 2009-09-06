@@ -150,9 +150,11 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 string
 VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 {
-	std::vector<std::string> lines;
-	pushback_lines(
-		(m_directory + p->category + "/" + p->name + "-" + v->getFull() + "/repository").c_str(),
+	vector<string> lines;
+	string dirname = m_directory + p->category + "/" + p->name + "-" + v->getFull();
+	pushback_lines((dirname + "/repository").c_str(),
+		&lines, true, false, false);
+	pushback_lines((dirname + "/REPOSITORY").c_str(),
 		&lines, true, false, false);
 	for(std::vector<std::string>::const_iterator i = lines.begin();
 		i != lines.end(); ++i) {

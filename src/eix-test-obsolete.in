@@ -142,7 +142,8 @@ Repository () {
 	do
 		for j in "${i}"/*; do
 			test -d "${j}" || continue
-			if test -e "${j}/repository"; then
+			if test -e "${j}/repository" || test -e "${j}/REPOSITORY"
+			then
 				${1} || continue
 			else
 				${1} && continue
