@@ -263,16 +263,16 @@ EbuildExec::calc_settings()
 		return;
 	know_settings = set_uid = set_gid = true;
 	EixRc &eix = get_eixrc(NULL);
-	string &s = eix["EBUILD_USER"];
-	if(s.empty() || !get_uid_of(s.c_str(), &uid)) {
+	const string &user = eix["EBUILD_USER"];
+	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
 		uid_t i = eix.getInteger("EBUILD_UID");
 		if(i > 0)
 			uid = i;
 		else
 			set_uid = false;
 	}
-	s = eix["EBUILD_GROUP"];
-	if(s.empty() || !get_uid_of(s.c_str(), &gid)) {
+	const string &group = eix["EBUILD_GROUP"];
+	if(group.empty() || !get_uid_of(group.c_str(), &gid)) {
 		gid_t i = eix.getInteger("EBUILD_GID");
 		if(i > 0)
 			gid = i;

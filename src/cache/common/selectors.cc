@@ -44,7 +44,7 @@ string::size_type ebuild_pos(const std::string &str)
 	if(!r.compiled()) {
 		string m = "\\.ebuild-(";
 		EixRc eixrc = get_eixrc(NULL);
-		string &s = eixrc["EAPI_REGEX"];
+		const string &s = eixrc["EAPI_REGEX"];
 		if(s.empty()) {
 			empty = true;
 			return false;

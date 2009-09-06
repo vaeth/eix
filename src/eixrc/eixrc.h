@@ -28,7 +28,7 @@ class EixRcOption {
 		EixRcOption(OptionType t, std::string name, std::string val, std::string desc);
 };
 
-class EixRc : public std::map<std::string,std::string> {
+class EixRc {
 	public:
 		std::string varprefix;
 		std::string m_eprefixconf;
@@ -42,10 +42,10 @@ class EixRc : public std::map<std::string,std::string> {
 
 		void addDefault(EixRcOption option);
 
-		bool getBool(const char *key)
+		bool getBool(const std::string &key)
 		{ return istrue((*this)[key].c_str()); }
 
-		short getBoolText(const char *key, const char *text)
+		short getBoolText(const std::string &key, const char *text)
 		{
 			const char *s = (*this)[key].c_str();
 			if(!strcasecmp(s, text))
@@ -55,38 +55,67 @@ class EixRc : public std::map<std::string,std::string> {
 			return 0;
 		}
 
-		LocalMode getLocalMode(const char *key);
+		LocalMode getLocalMode(const std::string &key);
 
-		void getRedundantFlags(const char *key,
+		void getRedundantFlags(const std::string &key,
 			Keywords::Redundant type,
 			RedPair &p);
 
-		unsigned int getInteger(const char *key);
+		unsigned int getInteger(const std::string &key);
 
 		void dumpDefaults(FILE *s, bool use_defaults);
 
-		const char *cstr(const char *var) const;
+		const char *cstr(const std::string &key) const;
 
-		const char *prefix_cstr(const char *var) const;
+		const char *prefix_cstr(const std::string &key) const;
 
-		void print_var(const char *var);
+		void print_var(const std::string &key);
+
+		const std::string &operator[](const std::string &key)
+		{
+			std::map<std::string,std::string>::const_iterator it = main_map.find(key);
+			if(it != main_map.end())
+				return it->second;
+			add_later_variable(key);
+			return main_map[key];
+		}
 	private:
+		std::map<std::string,std::string> main_map;
+		std::map<std::string,std::string> filevarmap;
+
 		static bool istrue(const char *s);
-		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi };
+		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
 		std::vector<EixRcOption> defaults;
 		std::set<std::string> prefix_keys;
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r);
 		void modify_value(std::string &value, const std::string &key);
 
-		std::string *resolve_delayed_recurse(std::string key, std::set<std::string> &visited, std::set<std::string> &has_reference, const char **errtext, std::string *errvar);
+		/** This will fetch a variable which was not set in the
+		    defaults (or its modification or its delayed references),
+		    i.e. it must be fetched from the config or ENV setting.
+		    Of course, it will be resolved for delayed substitutions,
+		    and delayed references are also be added similarly. */
+		void add_later_variable(const std::string &key);
 
-		  /** Create defaults and the main map with all variables
-		     (including all values required by delayed references).
-		   @arg has_reference is initialized to corresponding keys */
-		void read_undelayed(std::set<std::string> &has_reference);
-		void join_delayed(const std::string &val, std::set<std::string> &default_keys, const std::map<std::string,std::string> &tempmap);
+		void resolve_delayed(std::string key, std::set<std::string> &has_delayed);
+		std::string *resolve_delayed_recurse(std::string key, std::set<std::string> &visited, std::set<std::string> &has_delayed, const char **errtext, std::string *errvar);
+
+		/** Create defaults and main_map with all variables
+		   (including all values required by delayed references).
+		   @arg has_delayed is initialized to corresponding keys */
+		void read_undelayed(std::set<std::string> &has_delayed);
+		/** Recursively join key and its delayed references to
+		    main_map and default; set has_delayed if appropriate */
+		void join_key(const std::string &key, std::set<std::string> &has_delayed, bool add_top_to_defaults, const std::set<std::string> *exclude_defaults);
+		void join_key_rec(const std::string &key, const std::string &val, std::set<std::string> &has_delayed, const std::set<std::string> *exclude_defaults);
+		void join_key_if_new(const std::string &key, std::set<std::string> &has_delayed, const std::set<std::string> *exclude_defaults)
+		{
+			if(main_map.find(key) == main_map.end())
+				join_key(key, has_delayed, true, exclude_defaults);
+		}
+
 		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length = NULL);
-		static std::string as_comment(const char *s);
+		static std::string as_comment(const std::string &s);
 };
 
 #endif /* EIX__EIXRC_H__ */

@@ -21,6 +21,7 @@
 	  variables thus have been either removed or (only for backward
 	  compatibility) are implemented as delayed substitutions in the
 	  formats.
+	- Fix segfaults for certain malformed delayed references.
 
 *eix-0.17.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

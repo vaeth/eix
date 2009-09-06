@@ -1268,7 +1268,7 @@ some additional features:
 
 .TP
 .SS
-.B " %%{"
+.B " %{%"
 This must be used if you need B<%{> in a variable text
 (otherwise delayed substitution would take place).
 

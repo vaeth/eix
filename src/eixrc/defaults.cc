@@ -540,119 +540,142 @@ AddOption(STRING, "FORMAT_SLOT",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the slot format printed for slotsorted versions."));
 
-AddOption(STRING, "FORMAT_VERSION_SLOT",
+AddOption(STRING, "PVERSIONS",
+	"%{?COLORED_SLOTS}<version>"
+		"{isslot}"
+			"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
+			"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
+			"()"
+		"{}"
+	"%{else}<version*>%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing a plain version with its slot."));
+
+AddOption(STRING, "AVERSIONS",
+	"<stability>%{PVERSIONS}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing an available version with its slot."));
+
+AddOption(STRING, "IVERSIONS",
+	"(%{COLOR_INST_VERSION})"
 	"%{?COLORED_SLOTS}<version>"
 		"{isslot}"
 			"()"
-			"%{?COLON_SLOTS}"
-				":(%{COLOR_SLOTS})<slot>"
-			"%{else}"
-				"(%{COLOR_SLOTS})"
-				"\\(<slot>\\)"
-			"%{}"
+			"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
+			"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
 		"{}"
-	"%{else}"
-		"<version*>"
-	"%{}()", _(
+	"%{else}<version*>%{}"
+	"()", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for printing a version with its slot."));
+	"It defines the format for printing an installed version with its slot."));
 
-AddOption(STRING, "FORMAT_TVERSION_SLOT",
-	"<stability>%{FORMAT_VERSION_SLOT}", _(
+AddOption(STRING, "PVERSION",
+	"<version>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a tagged version with its slot."));
+	"It defines the format for a plain version without slot."));
 
-AddOption(STRING, "FORMAT_VERSION",
-	"<version>()", _(
+AddOption(STRING, "AVERSION",
+	"<stability>%{PVERSION}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a version without slot."));
+	"It defines the format for an available version without slot."));
 
-AddOption(STRING, "FORMAT_TVERSION",
-	"<stability>%{FORMAT_VERSION}", _(
+AddOption(STRING, "PVERSIONS_VERBOSE",
+	"%{PVERSIONS}<properties><restrictions>()<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a tagged version without slot."));
+	"It defines the format for a plain version with most data and slot."));
 
-AddOption(STRING, "FORMAT_VERSION_SLOT_VERBOSE",
-	"%{FORMAT_VERSION_SLOT}<properties><restrictions>()<overlayver>", _(
+AddOption(STRING, "AVERSIONS_VERBOSE",
+	"%{AVERSIONS}<properties><restrictions>()<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a version with all data."));
+	"It defines the format for an available version with most data and slot."));
 
-AddOption(STRING, "FORMAT_TVERSION_SLOT_VERBOSE",
-	"<stability>%{FORMAT_VERSION_SLOT_VERBOSE}", _(
+AddOption(STRING, "IVERSIONS_VERBOSE",
+	"%{IVERSIONS}<properties><restrictions>()<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a tagged version with all data."));
+	"It defines the format for an installed version with most data and slot."));
 
-AddOption(STRING, "FORMAT_VERSION_VERBOSE",
-	"%{FORMAT_VERSION}<properties><restrictions>()<overlayver>", _(
+AddOption(STRING, "PVERSION_VERBOSE",
+	"%{PVERSION}<properties><restrictions>()<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a version with all data, no slot."));
+	"It defines the format for a plain version with most data, no slot."));
 
-AddOption(STRING, "FORMAT_TVERSION_VERBOSE",
-	"<stability>%{FORMAT_VERSION_VERBOSE}", _(
+AddOption(STRING, "AVERSION_VERBOSE",
+	"%{AVERSION}<properties><restrictions>()<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a tagged version with all data, no slot."));
+	"It defines the format for an available version with most data, no slot."));
 
-AddOption(STRING, "FORMAT_VERSION_SLOT_COMPACT",
-	"%{FORMAT_VERSION_SLOT}<overlayver>", _(
+AddOption(STRING, "PVERSIONS_COMPACT",
+	"%{PVERSIONS}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a version with important data."));
+	"It defines the format for an available version with important data and slot."));
 
-AddOption(STRING, "FORMAT_TVERSION_SLOT_COMPACT",
-	"<stability>%{FORMAT_VERSION_SLOT_COMPACT}", _(
+AddOption(STRING, "AVERSIONS_COMPACT",
+	"%{AVERSIONS}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a tagged version with important data."));
+	"It defines the format for an available version with important data and slot."));
 
-AddOption(STRING, "FORMAT_VERSION_COMPACT",
-	"%{FORMAT_VERSION}<overlayver>", _(
+AddOption(STRING, "IVERSIONS_COMPACT",
+	"%{IVERSIONS}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format forg a version with important data, no slot."));
+	"It defines the format for an installed version with important data and slot."));
 
-AddOption(STRING, "FORMAT_TVERSION_COMPACT",
-	"<stability>%{FORMAT_VERSION_COMPACT}", _(
+AddOption(STRING, "PVERSION_COMPACT",
+	"%{PVERSION}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a tagged version with important data, no slot."));
+	"It defines the format for a plain version with important data, no slot."));
 
-AddOption(STRING, "FORMAT_VERSION_APPENDIX",
+AddOption(STRING, "AVERSION_COMPACT",
+	"%{AVERSION}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version with important data, no slot."));
+
+AddOption(STRING, "AVERSION_APPENDIX",
 	"<versionkeywords>"
 	"%{?PRINT_IUSE}"
-		"{haveuse}"
-			"%{FORMAT_BEFORE_IUSE}<use>%{FORMAT_AFTER_IUSE}"
-		"{}"
+		"{haveuse}%{FORMAT_BEFORE_IUSE}<use>%{FORMAT_AFTER_IUSE}{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for those data not even included in verbose versions"));
 
-AddOption(STRING, "FORMAT_VERSIONSORTED_LINES",
-	"\n\t\t<stability>\t%{FORMAT_VERSION_SLOT_VERBOSE}"
-	"%{FORMAT_VERSION_APPENDIX}", _(
+AddOption(STRING, "FORMAT_SLOTLINESKIP",
+	"\\n\\t%{FORMAT_SLOT}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip + slot with lineskip."));
+
+AddOption(STRING, "FORMAT_VERSLINESKIP",
+	"\\n\\t\\t<stability>\\t", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip + stability for available versions with lineskip."));
+
+AddOption(STRING, "FORMAT_INSTLINESKIP",
+	"\\n                          ", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip for installed versions."));
+
+AddOption(STRING, "VSORTL",
+	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
+	"%{AVERSION_APPENDIX}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a version; versionsorted with versionlines."));
 
-AddOption(STRING, "FORMAT_VERSIONSORTED",
-	"%{FORMAT_TVERSION_SLOT_VERBOSE}{!last} {}", _(
+AddOption(STRING, "VSORT",
+	"%{AVERSIONS_VERBOSE}{!last} {}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a version; versionsorted without versionlines."));
 
-AddOption(STRING, "FORMAT_SLOTSORTED_LINES",
-	"{slotfirst}"
-		"\n\t%{FORMAT_SLOT}"
-	"{}"
-	"\n\t\t<stability>\t%{FORMAT_VERSION_VERBOSE}"
-	"%{FORMAT_VERSION_APPENDIX}", _(
+AddOption(STRING, "SSORTL",
+	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
+	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
+	"%{AVERSION_APPENDIX}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
 
-AddOption(STRING, "FORMAT_SLOTSORTED",
+AddOption(STRING, "SSORT",
 	"{slotfirst}"
-		"{oneslot}"
-			"%{FORMAT_SLOT} "
-		"{else}"
-			"\n\t%{FORMAT_SLOT}\t"
-		"{}"
-	"{else}"
-		" "
-	"{}"
-	"%{FORMAT_TVERSION_VERBOSE}", _(
+		"{oneslot}%{FORMAT_SLOT} "
+		"{else}\n\t%{FORMAT_SLOT}\t{}"
+	"{else} {}"
+	"%{AVERSION_VERBOSE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a version; slotsorted without versionlines."));
 
@@ -678,27 +701,56 @@ AddOption(STRING, "FORMAT_SLOT_IUSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for collected IUSE data."));
 
-AddOption(STRING, "FORMAT_VERSIONSORTED_IUSE",
-	"%{FORMAT_VERSIONSORTED}"
+AddOption(STRING, "VSORTU",
+	"%{VSORT}"
 	"{last}%{FORMAT_COLL_IUSE}{}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It is like FORMAT_VERSIONSORTED but appends FORMAT_COLL_IUSE."));
+	"It is like VSORT but appends FORMAT_COLL_IUSE."));
 
-AddOption(STRING, "FORMAT_SLOTSORTED_IUSE",
-	"%{FORMAT_SLOTSORTED}"
+AddOption(STRING, "SSORTU",
+	"%{SSORT}"
 	"{last}%{FORMAT_SLOT_IUSE}{}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It is like FORMAT_SLOTSORTED but appends FORMAT_SLOT_IUSE."));
+	"It is like SSORT but appends FORMAT_SLOT_IUSE."));
 
-AddOption(STRING, "FORMAT_AVAILABLEVERSIONS_VERBOSE",
-	"{versionlines}"
-		"<availableversions:FORMAT_VERSIONSORTED_LINES:FORMAT_SLOTSORTED_LINES>"
-		"{!haveversionuse}"
-			"%{FORMAT_COLL_IUSE}"
-		"{}"
-	"{else}"
-		"<availableversions:FORMAT_VERSIONSORTED_IUSE:FORMAT_SLOTSORTED_IUSE>"
+AddOption(STRING, "INORMAL",
+	"%{IVERSIONS_VERBOSE}"
+	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)()"
+	"%{FORMAT_INST_USEFLAGS}"
+	"{!last}"
+		"{versionlines}%{FORMAT_INSTLINESKIP}"
+		"{else} {}"
 	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the normal format of installed versions."));
+
+AddOption(STRING, "ICOMPACT",
+	"%{IVERSIONS_COMPACT}"
+	"@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
+	"{!last} {}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the compact format of installed versions."));
+
+AddOption(STRING, "IVERBOSE",
+	"(%{COLOR_INST_TITLE})Version:() "
+	"%{IVERSIONS_VERBOSE}()"
+	"%{FORMAT_INSTLINESKIP}"
+	"(%{COLOR_INST_TITLE})Date:()    "
+	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>()"
+	"{haveuse}"
+		"%{FORMAT_INSTLINESKIP}"
+		"(%{COLOR_INST_TITLE})USE:()     "
+		"<use:(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>"
+	"{}"
+	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the compact format of installed versions."));
+
+AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
+	"{versionlines}"
+		"<availableversions:VSORTL:SSORTL>"
+		"{!haveversionuse}%{FORMAT_COLL_IUSE}{}"
+	"{else}<availableversions:VSORTU:SSORTU>{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for printing available versions."));
 
@@ -709,63 +761,18 @@ AddOption(STRING, "FORMAT_INST_USEFLAGS",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for useflags in installed versions."));
 
-AddOption(STRING, "FORMAT_INSTLINESKIP",
-	"\\n                          ", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip for installed versions."));
-
-AddOption(STRING, "FORMAT_IVERSION",
-	"(%{COLOR_INST_VERSION})%{FORMAT_VERSION_SLOT_VERBOSE}()"
-	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)()"
-	"%{FORMAT_INST_USEFLAGS}"
-	"{!last}"
-		"{versionlines}"
-			"%{FORMAT_INSTLINESKIP}"
-		"{else}"
-			" "
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the normal format of installed versions."));
-
-AddOption(STRING, "FORMAT_IVERSION_COMPACT",
-	"(%{COLOR_INST_VERSION})%{FORMAT_VERSION_SLOT_COMPACT}()"
-	"@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
-	"{!last}"
-		" "
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the compact format of installed versions."));
-
-AddOption(STRING, "FORMAT_IVERSION_VERBOSE",
-	"(%{COLOR_INST_TITLE})Version:() "
-	"(%{COLOR_INST_VERSION})%{FORMAT_VERSION_SLOT_VERBOSE}()"
-	"%{FORMAT_INSTLINESKIP}"
-	"(%{COLOR_INST_TITLE})Date:()    "
-	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>()"
-	"{haveuse}"
-		"%{FORMAT_INSTLINESKIP}"
-		"(%{COLOR_INST_TITLE})USE:()     "
-		"<use:(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>"
-	"{}"
-	"{!last}"
-		"%{FORMAT_INSTLINESKIP}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the compact format of installed versions."));
-
 AddOption(STRING, "INSTALLEDVERSIONS",
-	"<installedversions:FORMAT_IVERSION>", _(
+	"<installedversions:INORMAL>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions normally."));
 
 AddOption(STRING, "INSTALLEDVERSIONS_COMPACT",
-	"<installedversions:FORMAT_IVERSION_COMPACT>", _(
+	"<installedversions:ICOMPACT>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions compactly."));
 
 AddOption(STRING, "INSTALLEDVERSIONS_VERBOSE",
-	"<installedversions:FORMAT_IVERSION_VERBOSE>", _(
+	"<installedversions:IVERBOSE>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format used for printing installed versions verbosely."));
 
@@ -804,30 +811,20 @@ AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
 	"It defines the format for eix-diff for installed versions."));
 
 AddOption(STRING, "FORMAT_NAME",
-	"{system}"
-		"(%{COLOR_CATEGORY_SYSTEM})"
+	"{system}(%{COLOR_CATEGORY_SYSTEM})"
 	"{else}"
-		"{world}"
-			"(%{COLOR_CATEGORY_WORLD})"
+		"{world}(%{COLOR_CATEGORY_WORLD})"
 		"{else}"
-			"{world_sets}"
-				"(%{COLOR_CATEGORY_WORLD_SETS})"
-			"{else}"
-				"(%{COLOR_CATEGORY})"
-			"{}"
+			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
+			"{else}(%{COLOR_CATEGORY}){}"
 		"{}"
 	"{}<category>()/"
-	"{marked}"
-		"(%{COLOR_MARKED_NAME})"
+	"{marked}(%{COLOR_MARKED_NAME})"
 	"{else}"
-		"{world}"
-			"(%{COLOR_WORLD})"
+		"{world}(%{COLOR_WORLD})"
 		"{else}"
-			"{world_sets}"
-				"(%{COLOR_WORLD_SETS})"
-			"{else}"
-				"(%{COLOR_NAME})"
-			"{}"
+			"{world_sets}(%{COLOR_WORLD_SETS})"
+			"{else}(%{COLOR_NAME}){}"
 		"{}"
 	"{}<name>()", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
@@ -946,7 +943,7 @@ AddOption(STRING, "FORMAT_BEST_COMPACT",
 			"%{?NOBEST_COMPACT}"
 				"%{FORMAT_NOBEST}"
 			"%{else}"
-				"<availableversions:FORMAT_VERSIONSORTED>"
+				"<availableversions:VSORT>"
 			"%{}"
 		"{}"
 	"{}", _(
@@ -955,15 +952,15 @@ AddOption(STRING, "FORMAT_BEST_COMPACT",
 
 AddOption(STRING, "FORMAT_BEST_CHANGE",
 	"{havebest}"
-		"<bestslotversions:FORMAT_VERSIONSORTED>"
+		"<bestslotversions:VSORT>"
 	"{else}"
 		"{havebest*}"
-			"<bestslotversions*:FORMAT_VERSIONSORTED>"
+			"<bestslotversions*:VSORT>"
 		"{else}"
 			"%{?NOBEST_CHANGE}"
 				"%{FORMAT_NOBEST_CHANGE}"
 			"%{else}"
-				"<availableversions:FORMAT_VERSIONSORTED>"
+				"<availableversions:VSORT>"
 			"%{}"
 		"{}"
 	"{}", _(
@@ -980,7 +977,7 @@ AddOption(STRING, "DIFF_FORMAT_BEST",
 			"%{?DIFF_NOBEST}"
 				"%{FORMAT_NOBEST}"
 			"%{else}"
-				"<availableversions:FORMAT_VERSIONSORTED>"
+				"<availableversions:VSORT>"
 			"%{}"
 		"{}"
 	"{}", _(
@@ -989,15 +986,15 @@ AddOption(STRING, "DIFF_FORMAT_BEST",
 
 AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
 	"{havebest}"
-		"<bestslotversions:FORMAT_VERSIONSORTED>"
+		"<bestslotversions:VSORT>"
 	"{else}"
 		"{havebest*}"
-			"<bestslotversions*:FORMAT_VERSIONSORTED>"
+			"<bestslotversions*:VSORT>"
 		"{else}"
 			"%{?DIFF_NOBEST_CHANGE}"
 				"%{FORMAT_NOBEST_CHANGE}"
 			"%{else}"
-				"<availableversions:FORMAT_VERSIONSORTED>"
+				"<availableversions:VSORT>"
 			"%{}"
 		"{}"
 	"{}", _(
@@ -1009,9 +1006,9 @@ AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
 		"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
 	"%{}"
 	"{oldhavebest}"
-		"<oldbestslotverionss:FORMAT_VERSIONSORTED>"
+		"<oldbestslotverionss:VSORT>"
 	"{else}"
-		"<oldavailableversions:FORMAT_VERSIONSORTED>"
+		"<oldavailableversions:VSORT>"
 	"{}"
 	"() -> %{DIFF_FORMAT_BEST_CHANGE}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
@@ -1053,7 +1050,7 @@ AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"It defines the format for the diff-changed header symbols."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
-	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS_VERBOSE}\\n", _(
+	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with installed versions."));
 
@@ -1135,9 +1132,9 @@ AddOption(STRING, "FORMATLINE_BEST",
 	"%{?PRINT_ALWAYS}{havebest}%{}"
 	"  "
 	"{versionlines}"
-		"<bestslotversions:FORMAT_VERSIONSORTED_LINES>"
+		"<bestslotversions:VSORTL>"
 	"{else}"
-		"<bestslotversions:FORMAT_VERSIONSORTED>"
+		"<bestslotversions:VSORT>"
 	"{}"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
