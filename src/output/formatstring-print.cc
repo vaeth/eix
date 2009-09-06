@@ -27,8 +27,8 @@ class VersionVariables {
 		{
 			version = NULL;
 			instver = NULL;
-			first = last = true;
-			slotfirst = slotlast = oneslot = isinst = false;
+			first = last = slotfirst = slotlast = oneslot = true;
+			isinst = false;
 		}
 };
 
@@ -199,7 +199,8 @@ PrintFormat::get_marked_version(const Version *version, const Package *package, 
 		if(vardb) {
 			is_installed = vardb->isInstalledVersion(*package, version, *(header), (*(portagesettings))["PORTDIR"].c_str());
 			if(!is_installed)
-				is_upgrade = package->is_best_upgrade(true, version, const_cast<VarDbPkg*>(vardb), const_cast<PortageSettings*>(portagesettings), false);
+				is_upgrade = package->is_best_upgrade(true,
+					version, vardb, portagesettings, false);
 		}
 		if(marked_list)
 			is_marked = marked_list->is_marked(*package, version);
@@ -349,15 +350,15 @@ PrintFormat::get_installed(const Package *package, Node *root, bool only_marked)
 				continue;
 		}
 		if(have_prevversion) {
-			version_variables->last = false;
+			version_variables->last = version_variables->slotlast = false;
 			recPrint(&(version_variables->result), package, &get_package_property, root);
-			version_variables->first = false;
+			version_variables->first = version_variables->slotfirst = false;
 		}
 		have_prevversion = true;
 		version_variables->instver = &(*it);
 	}
 	if(have_prevversion) {
-		version_variables->last = true;
+		version_variables->last = version_variables->slotlast = true;
 		recPrint(&(version_variables->result), package, &get_package_property, root);
 	}
 }
@@ -372,15 +373,15 @@ PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<V
 				continue;
 		}
 		if(have_prevversion) {
-			version_variables->last = false;
+			version_variables->last = version_variables->slotlast = false;
 			recPrint(&(version_variables->result), package, &get_package_property, root);
-			version_variables->first = false;
+			version_variables->first = version_variables->slotfirst = false;
 		}
 		have_prevversion = true;
 		version_variables->version = *vit;
 	}
 	if(have_prevversion) {
-		version_variables->last = true;
+		version_variables->last = version_variables->slotlast = true;
 		recPrint(&(version_variables->result), package, &get_package_property, root);
 	}
 }
@@ -407,8 +408,7 @@ PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<
 		slotnum = sl->size();
 	if(!slotnum)
 		return;
-	if(slotnum == 1)
-		version_variables->oneslot = true;
+	version_variables->oneslot = (slotnum == 1);
 
 	bool have_prevversion = false;
 	SlotList::size_type prevslot = slotnum + 1;
@@ -563,6 +563,19 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(version_variables->version->iuse_vector().empty())
 				return "";
 			return "1";
+		}
+		if((name == "isbestupgrade") || (name == "isbestupgrade*") ||
+			(name == "isbestupgradeslot") || (name == "isbestupgradeslot*")) {
+			if(version_variables->isinst)
+				return "";
+			if(vardb && portagesettings &&
+				package->is_best_upgrade(
+					(name.find("slot") != string::npos),
+					version_variables->version,
+					vardb, portagesettings,
+					(name.find('*') != string::npos)))
+				return "1";
+			return "";
 		}
 		if(name == "use") {
 			if(version_variables->isinst)

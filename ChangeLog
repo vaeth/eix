@@ -15,6 +15,11 @@
 	  Of course, a slight loss in the output speed was unavoidable, but
 	  this should be worth the gained flexibility and especially the
 	  simplification of writing formats.
+	- For the previous empty*/full* use cases there are now example
+	  variables NAMEVERSIONS, EQNAMEVERSION, NAMESLOT, ANAMEASLOT,
+	  and ANAMESLOT; see eix --dump for further details on these.
+	  To see the effect of such an example try e.g.
+	  eix --format '<availableversions:ANAMESLOT:ANAMESLOT>' '-*' gcc
 	- The --versionlines cases are now completely shifted to the formats.
 	- Several variables like PRINT_IUSE are now not necessary anymore
 	  since the format can now directly be modified. Many of these

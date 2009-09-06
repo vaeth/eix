@@ -655,19 +655,19 @@ AddOption(STRING, "FORMAT_INSTLINESKIP",
 AddOption(STRING, "VSORTL",
 	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
 	"%{AVERSION_APPENDIX}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted with versionlines."));
 
 AddOption(STRING, "VSORT",
 	"%{AVERSIONS_VERBOSE}{!last} {}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted without versionlines."));
 
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
 	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
 	"%{AVERSION_APPENDIX}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
 
 AddOption(STRING, "SSORT",
@@ -676,7 +676,7 @@ AddOption(STRING, "SSORT",
 		"{else}\n\t%{FORMAT_SLOT}\t{}"
 	"{else} {}"
 	"%{AVERSION_VERBOSE}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted without versionlines."));
 
 AddOption(STRING, "FORMAT_COLL_IUSE",
@@ -704,13 +704,13 @@ AddOption(STRING, "FORMAT_SLOT_IUSE",
 AddOption(STRING, "VSORTU",
 	"%{VSORT}"
 	"{last}%{FORMAT_COLL_IUSE}{}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It is like VSORT but appends FORMAT_COLL_IUSE."));
 
 AddOption(STRING, "SSORTU",
 	"%{SSORT}"
 	"{last}%{FORMAT_SLOT_IUSE}{}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It is like SSORT but appends FORMAT_SLOT_IUSE."));
 
 AddOption(STRING, "INORMAL",
@@ -721,14 +721,14 @@ AddOption(STRING, "INORMAL",
 		"{versionlines}%{FORMAT_INSTLINESKIP}"
 		"{else} {}"
 	"{}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the normal format of installed versions."));
 
 AddOption(STRING, "ICOMPACT",
 	"%{IVERSIONS_COMPACT}"
 	"@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
 	"{!last} {}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the compact format of installed versions."));
 
 AddOption(STRING, "IVERBOSE",
@@ -743,8 +743,35 @@ AddOption(STRING, "IVERBOSE",
 		"<use:(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>"
 	"{}"
 	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
-	"This variable is only used for delayed substitution.\n"
+	"This variable is used as a version formatter.\n"
 	"It defines the compact format of installed versions."));
+
+AddOption(STRING, "NAMEVERSION",
+	"<category>/<name>-<plainversion>{!last}\\n{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <bestslotupgradeversions:NAMEVERSION>\n"
+	"or <installedversions:NAMEVERION> or <availableversions:NAMEVERSION>."));
+
+AddOption(STRING, "EQNAMEVERSION",
+	"=<category>/<name>-<plainversion>{!last}\\n{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
+	"or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>\n."));
+
+AddOption(STRING, "NAMESLOT",
+	"<category>/<name>:<slot>{!last}\\n{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <installedversions:NAMESLOT>."));
+
+AddOption(STRING, "ANAMEASLOT",
+	"{slotlast}<category>/<name>:<slot>{!last}\\n{}{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."));
+
+AddOption(STRING, "ANAMESLOT",
+	"{slotlast}<category>/<name>{isslot}:<slot>{}{!last}\\n{}{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
 
 AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 	"{versionlines}"

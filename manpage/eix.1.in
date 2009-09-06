@@ -259,8 +259,15 @@ So you better do not use this in scripts unless you know
 what you are doing.
 
 If you really want to use this option as a substitute for equery in scripts,
-you might want to combine it with
-.B --format '<fullinstalled>' --pure-packages.
+you might want to combine it with some of
+
+.B --format '<category>/<name>' --pure-packages
+
+.B --format '<installedversions:NAMEVERSION>' --pure-packages
+
+.B --format '<installedversions:EQNAMEVERSION>' --pure-packages
+
+.B --format '<installedversions:NAMESLOT>' --pure-packages
 .TP
 .BR -i ", " --multi-installed
 Only match packages which are installed in at least two different versions.
@@ -871,6 +878,11 @@ For each version, print I<VARIABLE>, interpreting it as a format string.
 If the second form is used and at least one slot of the package is nontrivial,
 then I<VARSLOTS> is used instead of I<VARIABLE>, and the versions are sorted
 according to slots.
+
+Useful examples for I<VARIABLE> are B<NAMEVERSION>, B<EQNAMEVERSION>,
+B<EQNAMEVERSION>, B<NAMESLOT>, B<ANAMEASLOT>, or B<ANAMESLOT>
+(the latter two should be used in the second form).
+See B<eix --dump> to see these variables in detail.
 .TP
 .BR "markedversions:I<VARIABLE>" ", " "markedversions:I<VARIABLE>:I<VARSLOTS>"
 This is analogous to B<availableversions> with the difference that only
@@ -895,10 +907,12 @@ marked versions are printed.
 This must occur only in I<VARIABLE> in the context of version printing.
 You can use these flags to test whether you are currently printing the first
 or last version of the package (usually to output some additional text in these cases).
-Similarly, you can test when the printing is sorted according to slots whether
+Similarly, when the printing is sorted according to slots you can test whether
 the current version is the first or last of the current slot or if there is
 only one slot at all.
 All these properties are empty if the condition is not satisfied, otherwise 1.
+To ease reusing code, when printing is not sorted according to slots, then
+B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
 .BR slot ", " isslot ", " properties ", " restrictions ", " overlayver ", " versionkeywords
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -913,6 +927,11 @@ B<FORMAT_AFTER_KEYWORDS, B<PRINT_EFFECTIVE_KEYWORDS>,
 B<FORMAT_BEFORE_EFFECTIVE_KEYWORDS>, B<FORMAT_AFTER_EFFECTIVE_KEYWORDS>.
 B<isslot> just tests whether the slot is trivial and outputs 1 in this case,
 otherwise nothing.
+.TP
+.BR isbestupgrade ", " isbestupgrade* ", " isbestupgradeslot ", " isbestupgradeslot*
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 if the current version is the best resp. best in the current slot for upgrading.
+For the variants with B<*> also unstable versions are considered.
 .TP
 .BR haveuse ", " use ", " "use:I<before_set>:I<after_set>:I<before_unset>:I<after_unset>"
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -2688,6 +2707,26 @@ B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD>.
 In particular, setting the latter variables in B<@SYSCONFDIR@/eixrc> without adding
 the delayed substitution " B<%{ADD_CACHE_METHOD}>" or " B<%{ADD_OVERRIDE_CACHE_METHOD}>",
 respectively, will prevent the former variables to have any meaning.
+
+Before eix-0.18.0, customizable version output properties like
+.BI "<installedversions:" "VAR" ">"
+or
+.BI "<availableversions:" "VAR" ">"
+did not exist.
+Instead there was a chaos of parameters for
+.B "<installedversions:*>"
+and a bulk of variants for printing available or installed versions for
+feeding the output to scripts like
+.BR "<fullvailableversions>"
+etc.
+Now all this has vanished: The variables B<NAMEVERSIONS>, B<EQNAMEVERSION>,
+B<NAMESLOT>, B<ANAMEASLOT>, B<ANAMESLOT> take the role of all the latter variants.
+See the description of these variables in B<eix --dump> for details.
+To see the effect of such an example try e.g.
+
+.B eix --format '<availableversions:ANAMESLOT:ANAMESLOT>' --pure-packages gcc
+
+See also the comments for the B<-I> option.
 .\" }}}
 
 .\" {{{ AUTHORS
