@@ -197,7 +197,7 @@ PrintFormat::get_marked_version(const Version *version, const Package *package, 
 	bool is_upgrade = false;
 	if(!no_color) {
 		if(vardb) {
-			is_installed = vardb->isInstalledVersion(*package, version, *(header), (*(portagesettings))["PORTDIR"].c_str());
+			is_installed = vardb->isInstalledVersion(*package, version, *header, (*portagesettings)["PORTDIR"].c_str());
 			if(!is_installed)
 				is_upgrade = package->is_best_upgrade(true,
 					version, vardb, portagesettings, false);
@@ -598,9 +598,84 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			}
 			return "";
 		}
+		if((name.find("stable") != string::npos) ||
+			(name.find("mask") != string::npos) ||
+			(name.find("keyword") != string::npos) ||
+			(name.find("asterisk") != string::npos)) {
+			if(version_variables->isinst)
+				return "";
+			const Version *version = version_variables->version;
+			MaskFlags mymask(version->maskflags);
+			KeywordsFlags mykey(version->keyflags);
+			if(name.find("was") != string::npos) {
+				stability->calc_version_flags(false, mymask, mykey,
+					version, package);
+			}
+			if(name.find("mask") != string::npos) {
+				if(name.find("hard") != string::npos) {
+					if(mymask.isHardMasked())
+						return "1";
+					return "";
+				}
+				if(name.find("profile") != string::npos) {
+					if(mymask.isProfileMask())
+						return "1";
+					return "";
+				}
+				if(mymask.isPackageMask())
+					return "1";
+				return "";
+			}
+			if(name.find("alien") != string::npos) {
+				if(name.find("unstable") != string::npos) {
+					if(mykey.isAlienUnstable())
+						return "1";
+					return "";
+				}
+				if(mykey.isAlienStable())
+					return "1";
+				return "";
+			}
+			if(name.find("unstable") != string::npos) {
+				if(mykey.isUnstable())
+					return "1";
+				return "";
+			}
+			if(name.find("stable") != string::npos) {
+				if(mykey.isStable())
+					return "1";
+				return "";
+			}
+			if(name.find("keyword") != string::npos) {
+				if(mykey.isMinusKeyword())
+					return "1";
+				return "";
+			}
+			if(mykey.isMinusAsterisk())
+				return "1";
+			return "";
+		}
+		if(name == "markedversion") {
+			if(version_variables->isinst)
+				return "";
+			if(marked_list && marked_list->is_marked(*package,
+				version_variables->version))
+				return "1";
+			return "";
+		}
+		if(name == "installedversion") {
+			if(version_variables->isinst)
+				return "1";
+			if(vardb && header && vardb->isInstalledVersion(*package,
+				version_variables->version,
+				*header, (*portagesettings)["PORTDIR"].c_str()))
+				return "1";
+			return "";
+		}
 	}
 	string::size_type col = name.find(':');
 	if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {
+		// <availableversions:VAR[:VAR]>, <installedversions:VAR>, ...
 		string plainname = name.substr(0, col);
 		string varname = name.substr(col + 1);
 		string varsortname;
@@ -614,6 +689,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		VersionVariables *previous_variables = version_variables;
 		version_variables = &variables;
 		if(plainname.find("best") != string::npos) {
+			// <bestversionslot:VAR>, ...
 			bool accept_unstable = (plainname.find_first_of('*') != string::npos);
 			if(plainname.find("slot") != string::npos) {
 				vector<Version*> versions;
@@ -627,6 +703,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 				}
 			}
 			else {
+				// <bestversion:VAR>
 				variables.version = package->best(accept_unstable);
 				if(variables.version) {
 					parsed = &varname;
@@ -637,11 +714,13 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		else {
 			bool marked = (plainname.find("mark") != string::npos);
 			if(plainname.find("install") != string::npos) {
+				// <installedversions:VAR>, ...
 				variables.isinst = true;
 				parsed = &varname;
 				get_installed(package, parse_variable(varname), marked);
 			}
 			else {
+				// <{available,marked}versions:VAR[:VAR]>, ...
 				vector<Version*> *versions = NULL;
 				if(marked) {
 					versions = new vector<Version*>;

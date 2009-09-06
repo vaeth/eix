@@ -932,6 +932,23 @@ otherwise nothing.
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 if the current version is the best resp. best in the current slot for upgrading.
 For the variants with B<*> also unstable versions are considered.
+For the colors used in B<version> or B<version*>, the tests B<isbestupgradelot>
+or B<usbestupgradeslot*>, respectively, are automatically taken into account
+for speed reasons.
+.TP
+.BR installedversion ", " markedversion
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 or the empty string depending on whether the current version is
+installed or marked, respectively.
+For the colors used in B<version> or B<version*>, these tests are
+automatically taken into account for speed reasons.
+.TP
+.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ishmasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
+This must occur only in I<VARIABLE> in the context of version printing.
+This returns 1 or empty depending whether the version has the current stability
+property according to the local or default configuration, respectively.
+The command B<stability> takes all these tests into account automatically
+for speed reasons.
 .TP
 .BR haveuse ", " use ", " "use:I<before_set>:I<after_set>:I<before_unset>:I<after_unset>"
 This must occur only in I<VARIABLE> in the context of version printing.
