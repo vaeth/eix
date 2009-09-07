@@ -26,7 +26,7 @@ class PortageSettings;
 
 class Node {
 	public:
-		enum Type { TEXT, VARIABLE, IF } type;
+		enum Type { TEXT, OUTPUT, SET, IF } type;
 		Node *next;
 		Node(Type t) {
 			type = t;
@@ -50,9 +50,11 @@ class Text : public Node {
 class Property : public Node {
 	public:
 		std::string name;
+		bool user_variable;
 
-		Property(std::string n = "") : Node(VARIABLE) {
+		Property(std::string n = "", bool user_var = false) : Node(OUTPUT) {
 			name = n;
+			user_variable = user_var;
 		}
 };
 
@@ -63,7 +65,7 @@ class ConditionBlock : public Node {
 		Property variable;
 		Text     text;
 		Node     *if_true, *if_false;
-		bool negation;
+		bool user_variable, negation;
 
 		ConditionBlock() : Node(IF) {
 			final = false;
@@ -193,6 +195,7 @@ class PrintFormat {
 		typedef std::string (*GetProperty)(const PrintFormat *fmt, const void *entity, const std::string &property);
 
 	protected:
+		mutable std::map<std::string,std::string> user_variables;
 		mutable VarParserCache varcache;
 		mutable VersionVariables *version_variables;
 		FormatParser   m_parser;

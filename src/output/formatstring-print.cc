@@ -672,6 +672,78 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 				return "1";
 			return "";
 		}
+		if(name.find("restrict") != string::npos) {
+			ExtendedVersion::Restrict restrict;
+			if(version_variables->isinst)
+				restrict = version_variables->instver->restrictFlags;
+			else
+				restrict = version_variables->version->restrictFlags;
+			if(name.find("fetch") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_FETCH)
+					return "1";
+			}
+			else if(name.find("mirror") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_MIRROR)
+					return "1";
+			}
+			else if(name.find("primary") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)
+					return "1";
+			}
+			else if(name.find("bincheck") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_BINCHECKS)
+					return "1";
+			}
+			else if(name.find("strip") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_STRIP)
+					return "1";
+			}
+			else if(name.find("test") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_TEST)
+					return "1";
+			}
+			else if(name.find("user") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_USERPRIV)
+					return "1";
+			}
+			else if(name.find("install") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)
+					return "1";
+			}
+			else if(name.find("bindist") != string::npos) {
+				if(restrict & ExtendedVersion::RESTRICT_BINDIST)
+					return "1";
+			}
+			else if(restrict != ExtendedVersion::RESTRICT_NONE)
+				return "1";
+			return "";
+		}
+		if(name.find("proper") != string::npos) {
+			ExtendedVersion::Properties properties;
+			if(version_variables->isinst)
+				properties = version_variables->instver->propertiesFlags;
+			else
+				properties = version_variables->version->propertiesFlags;
+			if(name.find("inter") != string::npos) {
+				if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)
+					return "1";
+			}
+			else if(name.find("live") != string::npos) {
+				if(properties & ExtendedVersion::PROPERTIES_LIVE)
+					return "1";
+			}
+			else if(name.find("virtual") != string::npos) {
+				if(properties & ExtendedVersion::PROPERTIES_VIRTUAL)
+					return "1";
+			}
+			else if(name.find("set") != string::npos) {
+				if(properties & ExtendedVersion::PROPERTIES_SET)
+					return "1";
+			}
+			else if(properties != ExtendedVersion::PROPERTIES_NONE)
+				return "1";
+			return "";
+		}
 	}
 	string::size_type col = name.find(':');
 	if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {

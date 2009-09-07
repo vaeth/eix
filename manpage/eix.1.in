@@ -853,15 +853,28 @@ the block is executed. Conditions can be negated so that the else-part is
 executed if the condition is true, and the if-part if the condition is false.
 The else-part can be also be completely left out.
 .TP
-.BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {}
-Execute I<TCODE> if the string resulting from expanding I<VARIABLE> is equal to
+.BR { [ ! ] I<PROPERTY> [ = I<STRING>] } I<TCODE> {}
+Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to
 I<STRING>.
 The B<!> would negate the behaviour.
 
 .TP
-.BR { [ ! ] I<VARIABLE> [ = I<STRING>] } I<TCODE> {else} I<FCODE> {}
-Execute I<TCODE> if the string resulting from expanding I<VARIABLE> is equal to
+.BR { [ ! ] I<PROPERTY> [ = I<STRING>] } I<TCODE> {else} I<FCODE> {}
+Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to
 I<STRING>.  If it's not, execute I<FCODE>.
+
+I<PROPERTY> can be either one of the Package properties specified below,
+or it can be a variable access.
+A variable access has the form B<$>I<VARIABLE>.
+I<VARIABLE> need not be initialized; its content defaults to the empty string.
+
+To change I<VARIABLE> during runtime use this syntax:
+.TP
+.BR { [ ! ] *I<VARIABLE> [ = I<STRING> ] }
+This sets the runtime variable B<VARIABLE> to I<STRING>.
+With B<!>, the result is either 1 or empty, depending on whether I<STRING> is nonmpty.
+If the trailing part (including the B<=> sign) is omitted, there is a special meaning:
+B<{*I<VARIABLE}> sets I<VARIABLE> to 1, B<{!*I<VARIABLE>}> sets I<VARIABLE> to the empty string.
 .\" }}}
 
 .\" {{{ -------- Package properties
@@ -943,12 +956,20 @@ installed or marked, respectively.
 For the colors used in B<version> or B<version*>, these tests are
 automatically taken into account for speed reasons.
 .TP
-.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ishmasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
+.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
 This must occur only in I<VARIABLE> in the context of version printing.
 This returns 1 or empty depending whether the version has the current stability
 property according to the local or default configuration, respectively.
 The command B<stability> takes all these tests into account automatically
 for speed reasons.
+.TP
+.BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 or empty depending on whether some or the corresponding B<RESTRICT> attribute is set for the version.
+.TP
+.BR properties ", " propertiesinteractive ", " propertieslive ", " propertiesvirtual ", " propertiesset
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
 .TP
 .BR haveuse ", " use ", " "use:I<before_set>:I<after_set>:I<before_unset>:I<after_unset>"
 This must occur only in I<VARIABLE> in the context of version printing.

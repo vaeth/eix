@@ -535,6 +535,108 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 
 #if (DEFAULT_PART == 2)
 
+AddOption(STRING, "STABILITY_TAGS",
+	"{!*c}{!*m}{!*s}"
+	"{washardmasked}"
+		"%{?COLOR_ORIGINAL}{*c}(%{COLOR_MASKED})%{}"
+		"{isprofilemasked}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"%{TAG_FOR_PROFILE}"
+		"{else}{ismasked}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"%{TAG_FOR_MASKED}"
+		"{else}"
+			"{profilemasked}{*m=p}"
+			"{else}{*m=m}{}"
+		"{}{}"
+	"{else}"
+		"{ishardmasked}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"%{TAG_FOR_LOCALLY_MASKED}"
+		"{}"
+	"{}"
+	"{isstable}"
+		"%{!COLOR_ORIGINAL}"
+			"{!$c}{*c}(%{COLOR_STABLE}){}"
+		"%{}"
+		"{wasstable}"
+			"{!$c}{*c}(%{COLOR_STABLE}){}"
+			"{*s=s}"
+		"{else}{wasunstable}"
+			"{!$c}{*c}(%{COLOR_UNSTABLE}){}"
+			"{*s=U}"
+		"{else}{wasminuskeyword}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"{*s=K}"
+		"{else}{wasalienstable}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"{*s=A}"
+		"{else}{wasalienunstable}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"{*s=B}"
+		"{else}{wasminusasterisk}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"{*s=M}"
+		"{else}"
+			"{!$c}{*c}(%{COLOR_MASKED}){}"
+			"{*s=N}"
+		"{}{}{}{}{}{}"
+	"{else}{isunstable}"
+		"{!$c}{*c}(%{COLOR_UNSTABLE}){}"
+		"{*s=u}"
+	"{else}{isminuskeyword}"
+		"{!$c}{*c}(%{COLOR_MASKED}){}"
+		"{*s=k}"
+	"{else}{isalienstable}"
+		"{!$c}{*c}(%{COLOR_MASKED}){}"
+		"{*s=a}"
+	"{else}{isalienunstable}"
+		"{!$c}{*c}(%{COLOR_MASKED}){}"
+		"{*s=b}"
+	"{else}{isminusasterisk}"
+		"{!$c}{*c}(%{COLOR_MASKED}){}"
+		"{*s=m}"
+	"{else}"
+		"{!$c}{*c}(%{COLOR_MASKED}){}"
+		"{*s=n}"
+	"{}{}{}{}{}{}"
+	"{$m=p}%{TAG_FOR_EX_PROFILE}{}"
+	"{$m=m}%{TAG_FOR_EX_MASKED}{}"
+	"{$s}"
+		"{$s=s}%{TAG_FOR_STABLE}"
+		"{else}{$s=u}%{TAG_FOR_UNSTABLE}"
+		"{else}{$s=k}%{TAG_FOR_MINUS_KEYWORD}"
+		"{else}{$s=a}%{TAG_FOR_ALIEN_STABLE}"
+		"{else}{$s=b}%{TAG_FOR_ALIEN_UNSTABLE}"
+		"{else}{$s=n}%{TAG_FOR_MISSING_KEYWORD}"
+		"{else}{$s=U}%{TAG_FOR_EX_UNSTABLE}"
+		"{else}{$s=K}%{TAG_FOR_EX_MINUS_KEYWORD}"
+		"{else}{$s=A}%{TAG_FOR_EX_ALIEN_STABLE}"
+		"{else}{$s=B}%{TAG_FOR_EX_ALIEN_UNSTABLE}"
+		"{else}{$s=N}%{TAG_FOR_EX_MISSING_KEYWORD}"
+		"{else}{$s=m}%{TAG_FOR_MINUS_ASTERISK}"
+		"{else}%{TAG_FOR_EX_MINUS_ASTERISK}" // {$s=M}
+		"{}{}{}{}{}{}{}{}{}{}{}{}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is an alternative implementation of <stability>; of course it is\n"
+	"more flexible but also much slower than <stability>. If you\n"
+	"want to use it, you have to quote the symbols \"{\" and \"(\" in the\n"
+	"TAG_FOR_* variables since otherwise they will be interpreted as\n"
+	"format strings for conditionals or colors, respectively."));
+
+AddOption(STRING, "FORMAT_STABILITY",
+	"<stability>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is used as a wrapper for either <stability> or %{STABILITY_TAGS}.\n"
+	"See the comments in STABILITY_TAGS if you need more customization."));
+
+AddOption(STRING, "FORMAT_PROPRESTRICT",
+	"<properties><restrictions>()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
+	"and resets the color."));
+
 AddOption(STRING, "FORMAT_SLOT",
 	"(%{COLOR_SLOTS})\\(<slot>\\)()", _(
 	"This variable is only used for delayed substitution.\n"
@@ -552,7 +654,7 @@ AddOption(STRING, "PVERSIONS",
 	"It defines the format for printing a plain version with its slot."));
 
 AddOption(STRING, "AVERSIONS",
-	"<stability>%{PVERSIONS}", _(
+	"%{FORMAT_STABILITY}%{PVERSIONS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing an available version with its slot."));
 
@@ -575,32 +677,32 @@ AddOption(STRING, "PVERSION",
 	"It defines the format for a plain version without slot."));
 
 AddOption(STRING, "AVERSION",
-	"<stability>%{PVERSION}", _(
+	"%{FORMAT_STABILITY}%{PVERSION}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version without slot."));
 
 AddOption(STRING, "PVERSIONS_VERBOSE",
-	"%{PVERSIONS}<properties><restrictions>()<overlayver>", _(
+	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with most data and slot."));
 
 AddOption(STRING, "AVERSIONS_VERBOSE",
-	"%{AVERSIONS}<properties><restrictions>()<overlayver>", _(
+	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with most data and slot."));
 
 AddOption(STRING, "IVERSIONS_VERBOSE",
-	"%{IVERSIONS}<properties><restrictions>()<overlayver>", _(
+	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with most data and slot."));
 
 AddOption(STRING, "PVERSION_VERBOSE",
-	"%{PVERSION}<properties><restrictions>()<overlayver>", _(
+	"%{PVERSION}%{FORMAT_PROPRESTRICT}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with most data, no slot."));
 
 AddOption(STRING, "AVERSION_VERBOSE",
-	"%{AVERSION}<properties><restrictions>()<overlayver>", _(
+	"%{AVERSION}%{FORMAT_PROPRESTRICT}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with most data, no slot."));
 
@@ -643,7 +745,7 @@ AddOption(STRING, "FORMAT_SLOTLINESKIP",
 	"It defines the lineskip + slot with lineskip."));
 
 AddOption(STRING, "FORMAT_VERSLINESKIP",
-	"\\n\\t\\t<stability>\\t", _(
+	"\\n\\t\\t%{FORMAT_STABILITY}\\t", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip + stability for available versions with lineskip."));
 
@@ -654,19 +756,19 @@ AddOption(STRING, "FORMAT_INSTLINESKIP",
 
 AddOption(STRING, "VSORTL",
 	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
-	"%{AVERSION_APPENDIX}", _(
+	"%{AVERSION_APPENDIX}{last}{*sorted=version}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted with versionlines."));
 
 AddOption(STRING, "VSORT",
-	"%{AVERSIONS_VERBOSE}{!last} {}", _(
+	"%{AVERSIONS_VERBOSE}{last}{*sorted=version}{else} {}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted without versionlines."));
 
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
 	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
-	"%{AVERSION_APPENDIX}", _(
+	"%{AVERSION_APPENDIX}{last}{*sorted=vslot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
 
@@ -675,7 +777,7 @@ AddOption(STRING, "SSORT",
 		"{oneslot}%{FORMAT_SLOT} "
 		"{else}\n\t%{FORMAT_SLOT}\t{}"
 	"{else} {}"
-	"%{AVERSION_VERBOSE}", _(
+	"%{AVERSION_VERBOSE}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted without versionlines."));
 
@@ -700,18 +802,6 @@ AddOption(STRING, "FORMAT_SLOT_IUSE",
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for collected IUSE data."));
-
-AddOption(STRING, "VSORTU",
-	"%{VSORT}"
-	"{last}%{FORMAT_COLL_IUSE}{}", _(
-	"This variable is used as a version formatter.\n"
-	"It is like VSORT but appends FORMAT_COLL_IUSE."));
-
-AddOption(STRING, "SSORTU",
-	"%{SSORT}"
-	"{last}%{FORMAT_SLOT_IUSE}{}", _(
-	"This variable is used as a version formatter.\n"
-	"It is like SSORT but appends FORMAT_SLOT_IUSE."));
 
 AddOption(STRING, "INORMAL",
 	"%{IVERSIONS_VERBOSE}"
@@ -777,7 +867,11 @@ AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 	"{versionlines}"
 		"<availableversions:VSORTL:SSORTL>"
 		"{!haveversionuse}%{FORMAT_COLL_IUSE}{}"
-	"{else}<availableversions:VSORTU:SSORTU>{}", _(
+	"{else}"
+		"<availableversions:VSORT:SSORT>"
+		"{$sorted=version}%{FORMAT_COLL_IUSE}"
+		"{else}%{FORMAT_SLOT_IUSE}{}"
+	"{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the verbose format for printing available versions."));
 
@@ -858,11 +952,13 @@ AddOption(STRING, "FORMAT_NAME",
 	"It defines the format for the printing the package name."));
 
 AddOption(STRING, "FORMAT_HEADER",
-	"{installed}["
-	"{upgrade}%{TAG_UPGRADE}{}"
-	"{downgrade}%{TAG_DOWNGRADE}{}"
-	"{!recommend}%{TAG_INSTALLED}{}"
-	"]{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}", _(
+	"{installed}"
+		"[{!*r}"
+		"{upgrade}{*r}%{TAG_UPGRADE}{}"
+		"{downgrade}{*r}%{TAG_DOWNGRADE}{}"
+		"{!$r}%{TAG_INSTALLED}{}"
+		"]"
+	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for the normal header symbols."));
 
@@ -874,29 +970,24 @@ AddOption(STRING, "FORMAT_HEADER_VERBOSE",
 	"It defines the format for the verbose header symbols."));
 
 AddOption(STRING, "FORMAT_HEADER_COMPACT",
-	"[{installed}"
-		"{upgrade}%{TAG_UPGRADE}{}"
-		"{downgrade}%{TAG_DOWNGRADE}{}"
-		"{!recommend}%{TAG_INSTALLED}{}"
-	"{else}"
-		"%{TAG_UNINSTALLED}"
-	"{}]", _(
+	"["
+	"{installed}"
+		"{!*r}"
+		"{upgrade}{*r}%{TAG_UPGRADE}{}"
+		"{downgrade}{*r}%{TAG_DOWNGRADE}{}"
+		"{!$r}%{TAG_INSTALLED}{}"
+	"{else}%{TAG_UNINSTALLED}{}"
+	"]", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for the compact header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
-	"["
-	"{havebest}%{TAG_STABILIZE}{}"
-	"{upgrade}%{TAG_UPGRADE}{}"
-	"{downgrade}%{TAG_DOWNGRADE}{}"
-	"{!recommend}%{TAG_NEW}{}"
-	"]"
-	"{!havebest} {}"
-	"{upgrade}"
-		"{!downgrade} {}"
-	"{else}"
-		" "
-	"{}"
+	"[{*b=\\ }{*s=\\ }{!*r}"
+	"{havebest}%{TAG_STABILIZE}{!*b}{}"
+	"{upgrade}{*r}%{TAG_UPGRADE}{}"
+	"{downgrade}{$r}{!*s}{}{*r}%{TAG_DOWNGRADE}{}"
+	"{!$r}%{TAG_NEW}{}"
+	"]<$b><$s>"
 	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for the diff-new header symbols."));
@@ -912,16 +1003,13 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
 	"It defines the format for the diff-delete header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
-	"["
-	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{}{}"
-	"{upgrade}%{TAG_UPGRADE}{}"
-	"{downgrade}%{TAG_DOWNGRADE}{}"
-	"{!upgrade}{better}%{TAG_BETTER}{}{}"
-	"{!downgrade}{worse}%{TAG_WORSE}{}{}"
-	"]"
-	"{havebest}{oldhavebest} {else}{}{else} {}"
-	"{!upgrade}{!better} {}{}"
-	"{!downgrade}{!worse} {}{}"
+	"[{*b=\\ }{*u=\\ }{*d=\\ }"
+	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{!*b}{}{}"
+	"{upgrade}{!*u}%{TAG_UPGRADE}{}"
+	"{downgrade}{!*d}%{TAG_DOWNGRADE}{}"
+	"{$u}{better}{!*u}%{TAG_BETTER}{}{}"
+	"{$d}{worse}{!*d}%{TAG_WORSE}{}{}"
+	"]<$b><$u><$d>"
 	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for the diff-changed header symbols."));

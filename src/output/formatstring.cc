@@ -208,9 +208,14 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 					}
 				}
 				break;
-			case Node::VARIABLE:
+			case Node::OUTPUT:
 				try {
-					const string s = get_property(this, entity, (static_cast<Property*>(root))->name);
+					Property *p = static_cast<Property*>(root);
+					string s;
+					if(p->user_variable)
+						s = user_variables[p->name];
+					else
+						s = get_property(this, entity, p->name);
 					if(!s.empty()) {
 						printed = true;
 						if(result)
@@ -223,15 +228,33 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 					cerr << e << endl;
 				}
 				break;
-			case Node::IF:
+			case Node::SET:
 				{
 					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
-					bool ok = false;
-					try {
-						ok = (get_property(this, entity, ief->variable.name) == ief->text.text);
+					if(ief->negation) {
+						if(ief->text.text.empty())
+							user_variables[ief->variable.name] = "1";
+						else
+							user_variables[ief->variable.name].clear();
 					}
-					catch(const ExBasic &e) {
-						cerr << e << endl;
+					else
+						user_variables[ief->variable.name] = ief->text.text;
+				}
+				break;
+			case Node::IF:
+				{
+					bool ok = false;
+					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
+					if(ief->user_variable) {
+						ok = (user_variables[ief->variable.name] == ief->text.text);
+					}
+					else {
+						try {
+							ok = (get_property(this, entity, ief->variable.name) == ief->text.text);
+						}
+						catch(const ExBasic &e) {
+							cerr << e << endl;
+						}
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
@@ -258,7 +281,7 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, DBHeader 
 	header = dbheader; vardb = vardbpkg; portagesettings = ps; stability = s;
 	version_variables = NULL;
 	varcache.clear_use();
-	version_variables = NULL;
+	user_variables.clear();
 	bool r = recPrint(NULL, entity, get_property, root);
 	// Reset the four hackish variables
 	header = NULL; vardb = NULL; portagesettings = NULL; stability = NULL;
@@ -345,6 +368,15 @@ FormatParser::state_COLOR()
 	return START;
 }
 
+inline const char *
+seek_character(const char *fmt)
+{
+	while(*fmt && isspace(*fmt)) {
+		++fmt;
+	}
+	return fmt;
+}
+
 FormatParser::ParserState
 FormatParser::state_PROPERTY()
 {
@@ -353,19 +385,20 @@ FormatParser::state_PROPERTY()
 		last_error = _("'<' without closing '>'");
 		return ERROR;
 	}
-	keller.push(new Property(parse_colors(
-		string(band_position, q - band_position), enable_colors)));
+
+	/* Look for variable */
+	bool user_variable = false;
+	if(*band_position == '$') {
+		user_variable = true;
+		++band_position;
+		band_position = seek_character(band_position);
+	}
+	keller.push(new Property(
+		parse_colors(string(band_position, q - band_position),
+			enable_colors),
+		user_variable));
 	band_position = q + 1;
 	return START;
-}
-
-const char *
-seek_character(const char *fmt)
-{
-	while(*fmt && isspace(*fmt)) {
-		++fmt;
-	}
-	return fmt;
 }
 
 FormatParser::ParserState
@@ -397,13 +430,32 @@ FormatParser::state_IF()
 		n->negation = false;
 	}
 
+	/* Look for variable */
+	band_position = seek_character(band_position);
+	if(*band_position == '\0' || *band_position == '}') {
+		last_error = _("Ran into end-of-string or '}' while looking for possible user-variable ($*) in condition.");
+		return ERROR;
+	}
+	switch(*band_position) {
+		case '*':
+			n->type = Node::SET;
+			++band_position;
+			break;
+		case '$':
+			n->user_variable = true;
+			++band_position;
+			break;
+		default:
+			n->user_variable = false;
+	}
+
 	band_position = seek_character(band_position);
 	if(*band_position == '\0' || *band_position == '}') {
 		last_error = _("Ran into end-of-string or '}' while looking for property-name in condition.");
 		return ERROR;
 	}
 	unsigned int i = 0;
-	while(*band_position && strchr(" \t\n\r}", *band_position) == NULL) {
+	while(*band_position && strchr(" \t\n\r=}", *band_position) == NULL) {
 		++band_position;
 		++i;
 	}
@@ -459,8 +511,14 @@ FormatParser::state_IF()
 		++band_position;
 	}
 	n->text = Text(textbuffer);
-	++band_position;
-	band_position = seek_character(band_position);
+	if(*band_position != '}') {
+		++band_position;
+		band_position = seek_character(band_position);
+		if(*band_position != '}') {
+			last_error = _("Run into end-of-string while looking for right-hand of condition.");
+			return ERROR;
+		}
+	}
 	++band_position;
 	return START;
 }
