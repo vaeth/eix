@@ -768,7 +768,7 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 void
 EixRc::print_var(const string &key)
 {
-	if(key == "PORTDIR") {
+	if(key != "PORTDIR") {
 		const char *s = cstr(key);
 		if(s) {
 			std::cout << s;
