@@ -9,6 +9,7 @@
 #include "print-xml.h"
 #include <portage/vardbpkg.h>
 #include <portage/set_stability.h>
+#include <database/header.h>
 
 using namespace std;
 
@@ -75,7 +76,7 @@ PrintXml::package(const Package *pkg)
 			ver != pkg->rend(); ++ver) {
 			if(know_inst.find(**ver) == know_inst.end()) {
 				know_inst.insert(**ver);
-					have_inst.insert(*ver);
+				have_inst.insert(*ver);
 			}
 		}
 	}
@@ -93,10 +94,18 @@ PrintXml::package(const Package *pkg)
 			cout << " installed=\"1\"";
 		}
 		if (!ver->slotname.empty()) {
-			cout << " slot=\"" << ver->slotname << "\"";
+			cout << " slot=\"" << escape_string(ver->slotname) << "\"";
 		}
 		if (versionInstalled) {
 			cout << " installDate=\"" << installedVersion->instDate << "\"";
+		}
+		Version::Overlay overlay_key = ver->overlay_key;
+		const OverlayIdent &overlay = hdr->getOverlay(overlay_key);
+		if(overlay_key && !overlay.path.empty()) {
+			cout << " overlay=\"" << escape_string(overlay.path) << "\"";
+		}
+		if(!overlay.label.empty()) {
+			cout << " repository=\"" << escape_string(overlay.label) << "\"";
 		}
 		cout << ">\n";
 
@@ -274,10 +283,12 @@ PrintXml::escape_string(const string &s)
 			case '&': replace = "&amp;"; break;
 			case '<': replace = "&lt;"; break;
 			case '>': replace = "&gt;"; break;
+			case '\'': replace = "&apos;"; break;
+			case '\"': replace = "&quot;"; break;
 			default: replace = NULL; break;
 		}
 		if(replace) {
-			ret.append(s.substr(prev, i - prev));
+			ret.append(s, prev, i - prev);
 			ret.append(replace);
 			prev = i + 1;
 		}
