@@ -90,6 +90,14 @@ PrintXml::package(const Package *pkg)
 		}
 
 		cout << "\t\t\t<version id=\"" << ver->getFull() << "\"";
+		Version::Overlay overlay_key = ver->overlay_key;
+		const OverlayIdent &overlay = hdr->getOverlay(overlay_key);
+		if(overlay_key && !overlay.path.empty()) {
+			cout << " overlay=\"" << escape_string(overlay.path) << "\"";
+		}
+		if(!overlay.label.empty()) {
+			cout << " repository=\"" << escape_string(overlay.label) << "\"";
+		}
 		if (versionInstalled) {
 			cout << " installed=\"1\"";
 		}
@@ -98,14 +106,6 @@ PrintXml::package(const Package *pkg)
 		}
 		if (versionInstalled) {
 			cout << " installDate=\"" << installedVersion->instDate << "\"";
-		}
-		Version::Overlay overlay_key = ver->overlay_key;
-		const OverlayIdent &overlay = hdr->getOverlay(overlay_key);
-		if(overlay_key && !overlay.path.empty()) {
-			cout << " overlay=\"" << escape_string(overlay.path) << "\"";
-		}
-		if(!overlay.label.empty()) {
-			cout << " repository=\"" << escape_string(overlay.label) << "\"";
 		}
 		cout << ">\n";
 
