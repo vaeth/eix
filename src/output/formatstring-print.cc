@@ -234,23 +234,26 @@ PrintFormat::get_marked_version(const Version *version, const Package *package, 
 string
 PrintFormat::get_properties(const ExtendedVersion *version) const
 {
+	ExtendedVersion::Restrict properties = version->propertiesFlags;
+	if(properties == ExtendedVersion::PROPERTIES_NONE)
+		return "";
 	string result;
-	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_INTERACTIVE) {
+	if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE) {
 		if(! no_color)
 			result = color_properties_interactive;
 		result.append(tag_properties_interactive);
 	}
-	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_LIVE) {
+	if(properties & ExtendedVersion::PROPERTIES_LIVE) {
 		if(! no_color)
 			result.append(color_properties_live);
 		result.append(tag_properties_live);
 	}
-	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_VIRTUAL) {
+	if(properties & ExtendedVersion::PROPERTIES_VIRTUAL) {
 		if(! no_color)
 			result.append(color_properties_virtual);
 		result.append(tag_properties_virtual);
 	}
-	if(version->propertiesFlags & ExtendedVersion::PROPERTIES_SET) {
+	if(properties & ExtendedVersion::PROPERTIES_SET) {
 		if(! no_color)
 			result.append(color_properties_set);
 		result.append(tag_properties_set);
@@ -261,48 +264,51 @@ PrintFormat::get_properties(const ExtendedVersion *version) const
 string
 PrintFormat::get_restrictions(const ExtendedVersion *version) const
 {
+	ExtendedVersion::Restrict restrict = version->restrictFlags;
+	if(restrict == ExtendedVersion::RESTRICT_NONE)
+		return "";
 	string result;
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_FETCH) {
+	if(restrict & ExtendedVersion::RESTRICT_FETCH) {
 		if(! no_color)
 			result = color_restrict_fetch;
 		result.append(tag_restrict_fetch);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_MIRROR) {
+	if(restrict & ExtendedVersion::RESTRICT_MIRROR) {
 		if(! no_color)
 			result.append(color_restrict_mirror);
 		result.append(tag_restrict_mirror);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_PRIMARYURI) {
+	if(restrict & ExtendedVersion::RESTRICT_PRIMARYURI) {
 		if(! no_color)
 			result.append(color_restrict_primaryuri);
 		result.append(tag_restrict_primaryuri);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_BINCHECKS) {
+	if(restrict & ExtendedVersion::RESTRICT_BINCHECKS) {
 		if(! no_color)
 			result.append(color_restrict_binchecks);
 		result.append(tag_restrict_binchecks);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_STRIP) {
+	if(restrict & ExtendedVersion::RESTRICT_STRIP) {
 		if(! no_color)
 			result.append(color_restrict_strip);
 		result.append(tag_restrict_strip);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_TEST) {
+	if(restrict & ExtendedVersion::RESTRICT_TEST) {
 		if(! no_color)
 			result.append(color_restrict_test);
 		result.append(tag_restrict_test);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_USERPRIV) {
+	if(restrict & ExtendedVersion::RESTRICT_USERPRIV) {
 		if(! no_color)
 			result.append(color_restrict_userpriv);
 		result.append(tag_restrict_userpriv);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
+	if(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
 		if(! no_color)
 			result.append(color_restrict_installsources);
 		result.append(tag_restrict_installsources);
 	}
-	if(version->restrictFlags & ExtendedVersion::RESTRICT_BINDIST) {
+	if(restrict & ExtendedVersion::RESTRICT_BINDIST) {
 		if(! no_color)
 			result.append(color_restrict_bindist);
 		result.append(tag_restrict_bindist);
@@ -534,8 +540,12 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		if(name == "overlayver") {
 			if(version_variables->isinst) {
 				InstVersion *i = version_variables->instver;
-				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str())))
-					return "?";
+				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str()))) {
+					if(no_color)
+						return "[?]";
+					return color_overlaykey + "[?]" +
+						AnsiColor(AnsiColor::acDefault).asString();
+				}
 				if(i->overlay_key > 0) {
 					if((!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key))
 						return overlay_keytext(i->overlay_key);

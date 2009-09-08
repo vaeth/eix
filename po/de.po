@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-07 21:00+0200\n"
+"POT-Creation-Date: 2009-09-08 16:56+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -792,7 +792,7 @@ msgstr "${i} ist defekt"
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
 
-#: src/eix.cc:45
+#: src/eix.cc:46
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -840,6 +840,7 @@ msgid ""
 "     -*, --pure-packages    Omit printing of overlay names and package "
 "number\n"
 "     --only-names           -* with format <category>/<name>\n"
+"     --xml (toggle)         output results in XML format\n"
 "     -c, --compact (toggle) compact search results\n"
 "     -v, --verbose (toggle) verbose search results\n"
 "     -x, --versionsort  (toggle) sort output by slots/versions\n"
@@ -977,6 +978,7 @@ msgstr ""
 "     -*, --pure-packages    Drucke keine Overlay-Namen und Anzahl der "
 "Pakete\n"
 "     --only-names           -* mit Format <category>/<name>\n"
+"     --xml (toggle)         Ausgabe in XML-Format\n"
 "     -c, --compact (toggle) Kompake Ausgabe\n"
 "     -v, --verbose (toggle) Ausführliche Ausgabe\n"
 "     -x, --versionsort  (toggle) Sortiere die Ausgabe nach Versionen/Slots\n"
@@ -1064,12 +1066,12 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:500 src/eix-diff.cc:321
+#: src/eix.cc:504 src/eix-diff.cc:321
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:582 src/eix.cc:840
+#: src/eix.cc:586 src/eix.cc:856
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1078,7 +1080,7 @@ msgstr ""
 "Kann Datenbankfile %s nicht zum Lesen öffnen (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:593
+#: src/eix.cc:597
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1089,31 +1091,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:804 src/eix.cc:820
+#: src/eix.cc:820 src/eix.cc:836
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:807
+#: src/eix.cc:823
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:813
+#: src/eix.cc:829
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:924
+#: src/eix.cc:940
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:925
+#: src/eix.cc:941
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:930
+#: src/eix.cc:946
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1122,7 +1124,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:931
+#: src/eix.cc:947
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1131,7 +1133,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:989
+#: src/eix.cc:1005
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1139,7 +1141,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:992
+#: src/eix.cc:1008
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -4370,7 +4372,7 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:926
+#: src/output/formatstring-print.cc:936
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 

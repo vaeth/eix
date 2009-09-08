@@ -12,6 +12,7 @@
 
 #include <eixrc/global.h>
 
+#include <output/print-xml.h>
 #include <output/formatstring.h>
 #include <output/formatstring-print.h>
 
@@ -83,6 +84,7 @@ dump_help(int exit_code)
 			"     -F, --force-color      force colorful output\n"
 			"     -*, --pure-packages    Omit printing of overlay names and package number\n"
 			"     --only-names           -* with format <category>/<name>\n"
+			"     --xml (toggle)         output results in XML format\n"
 			"     -c, --compact (toggle) compact search results\n"
 			"     -v, --verbose (toggle) verbose search results\n"
 			"     -x, --versionsort  (toggle) sort output by slots/versions\n"
@@ -206,6 +208,7 @@ static struct LocalOptions {
 		 only_names,
 		 dump_eixrc,
 		 dump_defaults,
+		 xml,
 		 test_unused,
 		 do_debug,
 		 ignore_etc_portage,
@@ -234,6 +237,7 @@ static struct Option long_options[] = {
 
 	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
 	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
+	Option("xml",          O_XML,   Option::BOOLEAN,       &rc_options.xml),
 	Option("help",         'h',     Option::BOOLEAN_T,     &rc_options.show_help),
 	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
 	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
@@ -737,20 +741,30 @@ run_eix(int argc, char** argv)
 		count = 0;
 	else
 		count = matches.size();
+	PrintXml *print_xml = NULL;
+	if(rc_options.xml) {
+		overlay_mode = mode_list_none;
+		rc_options.pure_packages = true;
+
+		print_xml = new PrintXml(&header, &varpkg_db, &stability,
+			portagesettings["PORTDIR"]);
+		print_xml->start();
+	}
 	for(eix::ptr_list<Package>::iterator it = matches.begin();
-		it != matches.end();
-		++it)
-	{
+		it != matches.end(); ++it) {
+
 		stability.set_stability(**it);
 
-		if(it->largest_overlay)
-		{
+		if(rc_options.xml) {
+			print_xml->package(*it);
+			continue;
+		}
+
+		if(it->largest_overlay) {
 			need_overlay_table = true;
-			if(overlay_mode <= mode_list_used)
-			{
+			if(overlay_mode <= mode_list_used) {
 				for(Package::iterator ver = it->begin();
-					ver != it->end(); ++ver)
-				{
+					ver != it->end(); ++ver) {
 					Version::Overlay key = ver->overlay_key;
 					if(key>0)
 						overlay_used[key - 1] = true;
@@ -764,15 +778,13 @@ run_eix(int argc, char** argv)
 			}
 		}
 	}
-	switch(overlay_mode)
-	{
-		case mode_list_all: need_overlay_table = true;  break;
+	switch(overlay_mode) {
+		case mode_list_all:  need_overlay_table = true;  break;
 		case mode_list_none: need_overlay_table = false; break;
 		default: break;
 	}
 	vector<Version::Overlay> overlay_num(header.countOverlays(), 0);
-	if(overlay_mode == mode_list_used_renumbered)
-	{
+	if(overlay_mode == mode_list_used_renumbered) {
 		Version::Overlay i = 1;
 		vector<bool>::iterator  uit = overlay_used.begin();
 		vector<Version::Overlay>::iterator nit = overlay_num.begin();
@@ -794,6 +806,10 @@ run_eix(int argc, char** argv)
 	{
 		printed_overlay = print_overlay_table(format, header,
 			(overlay_mode <= mode_list_used)? &overlay_used : NULL);
+	}
+	if(print_xml) {
+		print_xml->finish();
+		delete print_xml;
 	}
 
 	short print_count_always = eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never");

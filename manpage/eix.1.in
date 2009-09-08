@@ -931,9 +931,7 @@ B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the current slot, tags for PROPERTIES, RESTRICT, or the overlay,
 or the full keywords of the current version.
-In case of B<OVERLAYS_LIST=all-used-renumbered>, the usage of B<overlayver> might
-increase the number even if it occurs only in a test.
-Moreover, B<overlayver> is empty if the whole package is from only one overlay;
+B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
 The output format for B<keywords> depends on B<FORMAT_BEFORE_KEYWORDS>,
 B<FORMAT_AFTER_KEYWORDS, B<PRINT_EFFECTIVE_KEYWORDS>,

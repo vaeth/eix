@@ -2,6 +2,9 @@
 
 *eix-0.18.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- XML output was implemented by
+	  Bob Shaffer II <bob.shaffer.2 at gmail.com>
+	  Thanks for the contribution.
 	- Introduce runtime user-variables in format-string.
 	- Finally, dump the mess with available*/best*/installed*/empty*/full*
 	  and the distinction of printable and "test-only" properties.

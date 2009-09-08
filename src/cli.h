@@ -28,6 +28,7 @@ enum cli_options {
 	O_FMT = 256,
 	O_FMT_VERBOSE,
 	O_FMT_COMPACT,
+	O_XML,
 	O_PRINT_VAR,
 	O_PRINT_OPATH,
 	O_PRINT_OLABEL,
