@@ -183,9 +183,9 @@ PrintXml::package(const Package *pkg)
 		else if (currkey.isMinusAsterisk()) {
 			mask_text = "minus_asterisk";
 		}
-		//else {
-		//	mask_text = "missing_keyword";
-		//}
+		else {
+			mask_text = "missing_keyword";
+		}
 
 		if (mask_text) {
 			cout << "\t\t\t\t<mask type=\"" << mask_text << "\" />\n";
