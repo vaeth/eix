@@ -1,6 +1,7 @@
 #! /usr/bin/env sh
 
 export LC_ALL=C
+export XZ_OPT='--extreme'
 
 Usage() {
 	printf "%s\n" "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
