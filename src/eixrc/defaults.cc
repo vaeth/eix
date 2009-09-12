@@ -229,6 +229,7 @@ AddOption(BOOLEAN, "DIFF_PRINT_HEADER",
 
 AddOption(BOOLEAN, "NO_RESTRICTIONS",
 	"false", _(
+	"This variable is only used for delayed substitution.\n"
 	"If false, RESTRICT and PROPERTIES values are output."));
 
 AddOption(BOOLEAN, "RESTRICT_INSTALLED",
@@ -632,7 +633,9 @@ AddOption(STRING, "FORMAT_STABILITY",
 	"See the comments in STABILITY_TAGS if you need more customization."));
 
 AddOption(STRING, "FORMAT_PROPRESTRICT",
-	"<properties><restrictions>()", _(
+	"%{!NO_RESTRICTIONS}"
+		"<properties><restrictions>()"
+	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
 	"and resets the color."));
@@ -830,7 +833,7 @@ AddOption(STRING, "IVERBOSE",
 	"{haveuse}"
 		"%{FORMAT_INSTLINESKIP}"
 		"(%{COLOR_INST_TITLE})USE:()     "
-		"<use:(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>"
+		"<use>"
 	"{}"
 	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
 	"This variable is used as a version formatter.\n"
@@ -865,10 +868,12 @@ AddOption(STRING, "ANAMESLOT",
 
 AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 	"{versionlines}"
-		"<availableversions:VSORTL:SSORTL>"
+		"{slotsorted}<availableversions:VSORTL:SSORTL>"
+		"{else}<availableversions:VSORTL>{}"
 		"{!haveversionuse}%{FORMAT_COLL_IUSE}{}"
 	"{else}"
-		"<availableversions:VSORT:SSORT>"
+		"{slotsorted}<availableversions:VSORT:SSORT>"
+		"{else}<availableversions:VSORT>{}"
 		"{$sorted=version}%{FORMAT_COLL_IUSE}"
 		"{else}%{FORMAT_SLOT_IUSE}{}"
 	"{}", _(
@@ -877,7 +882,7 @@ AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 
 AddOption(STRING, "FORMAT_INST_USEFLAGS",
 	"{haveuse}"
-		"\\(<use:(%{COLOR_SET_USE}):():(%{COLOR_UNSET_USE})-:()>\\)"
+		"\\(<use>\\)"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for useflags in installed versions."));
@@ -1418,6 +1423,29 @@ AddOption(STRING, "FORMAT_AFTER_EFFECTIVE_KEYWORDS",
 	"()\"", _(
 	"This string is printed after the effective keywords (if these are printed).\n"
 	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "FORMAT_BEFORE_SET_USE",
+	"(%{COLOR_SET_USE})", _(
+	"This string is printed before each set USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_AFTER_SET_USE",
+	"()", _(
+	"This string is printed after each set USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_BEFORE_UNSET_USE",
+	"(%{COLOR_UNSET_USE})-", _(
+	"This string is printed before each unset USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
+	"()", _(
+	"This string is printed after each unset USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_AFTER_IUSE",
+	"()]", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after IUSE data for a version is output.\n"
+	"(Normally, this is only used when --versionlines is active)"));
+
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
 	" [(blue)", _(

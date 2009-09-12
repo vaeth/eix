@@ -258,11 +258,11 @@ run_eix_diff(int argc, char *argv[])
 
 	format_for_new.no_color   = (isatty(1) != 1);
 
-	EixRc &eixrc = get_eixrc(DIFF_VARS_PREFIX);
+	EixRc &rc = get_eixrc(DIFF_VARS_PREFIX);
 
-	cli_quick = eixrc.getBool("QUICKMODE");
-	cli_care  = eixrc.getBool("CAREMODE");
-	cli_quiet = eixrc.getBool("QUIETMODE");
+	cli_quick = rc.getBool("QUICKMODE");
+	cli_care  = rc.getBool("CAREMODE");
+	cli_quiet = rc.getBool("QUIETMODE");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -275,20 +275,19 @@ run_eix_diff(int argc, char *argv[])
 		dump_version(0);
 
 	if(var_to_print) {
-		eixrc.print_var(var_to_print);
+		rc.print_var(var_to_print);
 		exit(0);
 	}
 
-
 	if(cli_dump_eixrc || cli_dump_defaults) {
-		eixrc.dumpDefaults(stdout, cli_dump_defaults);
+		rc.dumpDefaults(stdout, cli_dump_defaults);
 		exit(0);
 	}
 
 	if(cli_quiet)
 		close(1);
 
-	if(eixrc.getBool("FORCE_USECOLORS")) {
+	if(rc.getBool("FORCE_USECOLORS")) {
 		format_for_new.no_color = false;
 	}
 
@@ -300,7 +299,7 @@ run_eix_diff(int argc, char *argv[])
 	old_file = current_param->m_argument;
 	++current_param;
 	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
-		new_file = eixrc["EIX_CACHEFILE"];
+		new_file = rc["EIX_CACHEFILE"];
 	}
 	else {
 		new_file = current_param->m_argument;
@@ -309,13 +308,13 @@ run_eix_diff(int argc, char *argv[])
 	const char *varname;
 	try {
 		varname = "DIFF_FORMAT_NEW";
-		format_new = format_for_new.parseFormat(eixrc[varname].c_str());
+		format_new = format_for_new.parseFormat(rc[varname].c_str());
 
 		varname = "DIFF_FORMAT_DELETE";
-		format_delete = format_for_new.parseFormat(eixrc[varname].c_str());
+		format_delete = format_for_new.parseFormat(rc[varname].c_str());
 
 		varname = "DIFF_FORMAT_CHANGED";
-		format_changed = format_for_new.parseFormat(eixrc[varname].c_str());
+		format_changed = format_for_new.parseFormat(rc[varname].c_str());
 	}
 	catch(const ExBasic &e) {
 		cerr << eix::format(_("Problems while parsing %s: %s\n"))
@@ -323,91 +322,22 @@ run_eix_diff(int argc, char *argv[])
 		exit(1);
 	}
 
-	format_for_new.color_masked     = eixrc["COLOR_MASKED"];
-	format_for_new.color_unstable   = eixrc["COLOR_UNSTABLE"];
-	format_for_new.color_stable     = eixrc["COLOR_STABLE"];
-	format_for_new.color_overlaykey = eixrc["COLOR_OVERLAYKEY"];
-	format_for_new.color_virtualkey = eixrc["COLOR_VIRTUALKEY"];
-	format_for_new.color_slots      = eixrc["COLOR_SLOTS"];
-	format_for_new.mark_installed   = eixrc["MARK_INSTALLED"];
-	format_for_new.mark_upgrade     = eixrc["MARK_UPGRADE"];
-	format_for_new.mark_version     = eixrc["MARK_VERSIONS"];
-	format_for_new.show_slots       = eixrc.getBool("PRINT_SLOTS");
-	format_for_new.colon_slots      = eixrc.getBool("COLON_SLOTS");
-	format_for_new.colored_slots    = eixrc.getBool("COLORED_SLOTS");
-	format_for_new.color_original   = eixrc.getBool("COLOR_ORIGINAL");
-	format_for_new.color_local_mask = eixrc.getBool("COLOR_LOCAL_MASK");
-
-	format_for_new.color_restrict_fetch          = eixrc["COLOR_RESTRICT_FETCH"];
-	format_for_new.color_restrict_mirror         = eixrc["COLOR_RESTRICT_MIRROR"];
-	format_for_new.color_restrict_primaryuri     = eixrc["COLOR_RESTRICT_PRIMARYURI"];
-	format_for_new.color_restrict_binchecks      = eixrc["COLOR_RESTRICT_BINCHECKS"];
-	format_for_new.color_restrict_strip          = eixrc["COLOR_RESTRICT_STRIP"];
-	format_for_new.color_restrict_test           = eixrc["COLOR_RESTRICT_TEST"];
-	format_for_new.color_restrict_userpriv       = eixrc["COLOR_RESTRICT_USERPRIV"];
-	format_for_new.color_restrict_installsources = eixrc["COLOR_RESTRICT_INSTALLSOURCES"];
-	format_for_new.color_restrict_bindist        = eixrc["COLOR_RESTRICT_BINDIST"];
-	format_for_new.color_properties_interactive  = eixrc["COLOR_PROPERTIES_INTERACTIVE"];
-	format_for_new.color_properties_live         = eixrc["COLOR_PROPERTIES_LIVE"];
-	format_for_new.color_properties_virtual      = eixrc["COLOR_PROPERTIES_VIRTUAL"];
-	format_for_new.color_properties_set          = eixrc["COLOR_PROPERTIES_SET"];
-
-	format_for_new.slot_sorted      = false;
-	format_for_new.alpha_use        = eixrc.getBool("SORT_INST_USE_ALPHA");
-	format_for_new.print_restrictions = !eixrc.getBool("NO_RESTRICTIONS");
-
-	format_for_new.before_keywords  = eixrc["FORMAT_BEFORE_KEYWORDS"];
-	format_for_new.after_keywords   = eixrc["FORMAT_AFTER_KEYWORDS"];
-	format_for_new.print_effective  = eixrc.getBool("PRINT_EFFECTIVE_KEYWORDS");
-	format_for_new.before_ekeywords = eixrc["FORMAT_BEFORE_EFFECTIVE_KEYWORDS"];
-	format_for_new.after_ekeywords  = eixrc["FORMAT_AFTER_EFFECTIVE_KEYWORDS"];
-
+	format_for_new.setupResources(rc);
+	format_for_new.slot_sorted = false;
+	format_for_new.style_version_lines = false;
 	format_for_new.setupColors();
 
-	format_for_new.tag_restrict_fetch          = eixrc["TAG_RESTRICT_FETCH"];
-	format_for_new.tag_restrict_mirror         = eixrc["TAG_RESTRICT_MIRROR"];
-	format_for_new.tag_restrict_primaryuri     = eixrc["TAG_RESTRICT_PRIMARYURI"];
-	format_for_new.tag_restrict_binchecks      = eixrc["TAG_RESTRICT_BINCHECKS"];
-	format_for_new.tag_restrict_strip          = eixrc["TAG_RESTRICT_STRIP"];
-	format_for_new.tag_restrict_test           = eixrc["TAG_RESTRICT_TEST"];
-	format_for_new.tag_restrict_userpriv       = eixrc["TAG_RESTRICT_USERPRIV"];
-	format_for_new.tag_restrict_installsources = eixrc["TAG_RESTRICT_INSTALLSOURCES"];
-	format_for_new.tag_restrict_bindist        = eixrc["TAG_RESTRICT_BINDIST"];
-	format_for_new.tag_properties_interactive  = eixrc["TAG_PROPERTIES_INTERACTIVE"];
-	format_for_new.tag_properties_live         = eixrc["TAG_PROPERTIES_LIVE"];
-	format_for_new.tag_properties_virtual      = eixrc["TAG_PROPERTIES_VIRTUAL"];
-	format_for_new.tag_properties_set          = eixrc["TAG_PROPERTIES_SET"];
+	portagesettings = new PortageSettings(rc, true, false);
 
-	format_for_new.tag_for_profile            = eixrc["TAG_FOR_PROFILE"];
-	format_for_new.tag_for_masked             = eixrc["TAG_FOR_MASKED"];
-	format_for_new.tag_for_ex_profile         = eixrc["TAG_FOR_EX_PROFILE"];
-	format_for_new.tag_for_ex_masked          = eixrc["TAG_FOR_EX_MASKED"];
-	format_for_new.tag_for_locally_masked     = eixrc["TAG_FOR_LOCALLY_MASKED"];
-	format_for_new.tag_for_stable             = eixrc["TAG_FOR_STABLE"];
-	format_for_new.tag_for_unstable           = eixrc["TAG_FOR_UNSTABLE"];
-	format_for_new.tag_for_minus_asterisk     = eixrc["TAG_FOR_MINUS_ASTERISK"];
-	format_for_new.tag_for_minus_keyword      = eixrc["TAG_FOR_MINUS_KEYWORD"];
-	format_for_new.tag_for_alien_stable       = eixrc["TAG_FOR_ALIEN_STABLE"];
-	format_for_new.tag_for_alien_unstable     = eixrc["TAG_FOR_ALIEN_UNSTABLE"];
-	format_for_new.tag_for_missing_keyword    = eixrc["TAG_FOR_MISSING_KEYWORD"];
-	format_for_new.tag_for_ex_unstable        = eixrc["TAG_FOR_EX_UNSTABLE"];
-	format_for_new.tag_for_ex_minus_asterisk  = eixrc["TAG_FOR_EX_MINUS_ASTERISK"];
-	format_for_new.tag_for_ex_minus_keyword   = eixrc["TAG_FOR_EX_MINUS_KEYWORD"];
-	format_for_new.tag_for_ex_alien_stable    = eixrc["TAG_FOR_EX_ALIEN_STABLE"];
-	format_for_new.tag_for_ex_alien_unstable  = eixrc["TAG_FOR_EX_ALIEN_UNSTABLE"];
-	format_for_new.tag_for_ex_missing_keyword = eixrc["TAG_FOR_EX_MISSING_KEYWORD"];
+	varpkg_db = new VarDbPkg(rc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care,
+		rc.getBool("RESTRICT_INSTALLED"), rc.getBool("CARE_RESTRICT_INSTALLED"));
+	varpkg_db->check_installed_overlays = rc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
-	portagesettings = new PortageSettings(eixrc, true, false);
-
-	varpkg_db = new VarDbPkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care,
-		eixrc.getBool("RESTRICT_INSTALLED"), eixrc.getBool("CARE_RESTRICT_INSTALLED"));
-	varpkg_db->check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
-
-	bool local_settings = eixrc.getBool("LOCAL_PORTAGE_CONFIG");
-	bool always_accept_keywords = eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS");
+	bool local_settings = rc.getBool("LOCAL_PORTAGE_CONFIG");
+	bool always_accept_keywords = rc.getBool("ALWAYS_ACCEPT_KEYWORDS");
 	set_stability_old = new SetStability(portagesettings, local_settings, true, always_accept_keywords);
 	set_stability_new = new SetStability(portagesettings, local_settings, false, always_accept_keywords);
-	format_for_new.recommend_mode = eixrc.getLocalMode("RECOMMEND_LOCAL_MODE");
+	format_for_new.recommend_mode = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree, portagesettings);
@@ -421,16 +351,16 @@ run_eix_diff(int argc, char *argv[])
 
 	format_for_old = format_for_new;
 
-	string eprefix_virtual = eixrc["EPREFIX_VIRTUAL"];
+	string eprefix_virtual = rc["EPREFIX_VIRTUAL"];
 	set_virtual(&format_for_old, old_header, eprefix_virtual);
 	set_virtual(&format_for_new, new_header, eprefix_virtual);
 
 	DiffTrees differ(varpkg_db, portagesettings,
-		eixrc.getBool("DIFF_ONLY_INSTALLED"),
-		!eixrc.getBool("DIFF_NO_SLOTS"),
-		eixrc.getBool("DIFF_SEPARATE_DELETED"));
+		rc.getBool("DIFF_ONLY_INSTALLED"),
+		!rc.getBool("DIFF_NO_SLOTS"),
+		rc.getBool("DIFF_SEPARATE_DELETED"));
 
-	if(eixrc.getBool("DIFF_PRINT_HEADER")) {
+	if(rc.getBool("DIFF_PRINT_HEADER")) {
 		INFO(eix::format(_("Diffing databases (%s -> %s packages)\n"))
 			% old_tree.countPackages()
 			% new_tree.countPackages());

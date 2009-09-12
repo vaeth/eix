@@ -20,6 +20,7 @@
 typedef signed char FullFlag;
 typedef unsigned char FormatTypeFlags;
 
+class EixRc;
 class DBHeader;
 class VarDbPkg;
 class PortageSettings;
@@ -205,6 +206,7 @@ class PrintFormat {
 		std::vector<bool> *overlay_used;
 		bool          *some_overlay_used;
 		MarkedList    *marked_list;
+		EixRc         *eix_rc;
 		/* The following four variables are actually a hack:
 		   This is only set temporarily during printing to avoid
 		   passing this argument through all sub-functions.
@@ -220,7 +222,7 @@ class PrintFormat {
 
 		Node *parse_variable(const std::string &varname) const throw(ExBasic);
 
-		std::string get_inst_use(const Package &package, InstVersion &i, std::vector<std::string> &a) const;
+		std::string get_inst_use(const Package &package, InstVersion &i) const;
 		std::string get_version_stability(const Version *version, const Package *package) const;
 		std::string get_marked_version(const Version *version, const Package *package, bool midslot) const;
 		std::string get_properties(const ExtendedVersion *version) const;
@@ -240,8 +242,7 @@ class PrintFormat {
 		     colon_slots,         /**< Print slots separated with colons */
 		     colored_slots,       /**< Print slots in separate color */
 		     alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
-		     print_effective,     /**< Print effective keywords */
-		     print_restrictions;  /**< Print mirror/fetch restrictions */
+		     print_effective;     /**< Print effective keywords */
 
 		LocalMode recommend_mode;
 
@@ -271,7 +272,9 @@ class PrintFormat {
 			   mark_version,      /**< Marker for marked versions */
 			   mark_version_end;  /**< End-Marker for marked versions */
 		std::string before_keywords, after_keywords,
-		            before_ekeywords, after_ekeywords;
+			before_ekeywords, after_ekeywords,
+			before_set_use, after_set_use,
+			before_unset_use, after_unset_use;
 		std::string tag_for_profile, tag_for_masked,
 			tag_for_ex_profile, tag_for_ex_masked,
 			tag_for_locally_masked, tag_for_stable,
@@ -305,49 +308,16 @@ class PrintFormat {
 			overlay_used = NULL;
 			some_overlay_used = NULL;
 			marked_list = NULL;
+			eix_rc = NULL;
 			vardb = NULL;
 			portagesettings = NULL;
 			stability = NULL;
 		}
 
-		void setupColors()
-		{
-			bool use_color = !no_color;
-			if(use_color) {
-				color_masked     = AnsiColor(color_masked).asString();
-				color_unstable   = AnsiColor(color_unstable).asString();
-				color_stable     = AnsiColor(color_stable).asString();
-				color_overlaykey = AnsiColor(color_overlaykey).asString();
-				color_virtualkey = AnsiColor(color_virtualkey).asString();
-				color_slots      = AnsiColor(color_slots).asString();
-				color_restrict_fetch          = AnsiColor(color_restrict_fetch).asString();
-				color_restrict_mirror         = AnsiColor(color_restrict_mirror).asString();
-				color_restrict_primaryuri     = AnsiColor(color_restrict_primaryuri).asString();
-				color_restrict_binchecks      = AnsiColor(color_restrict_binchecks).asString();
-				color_restrict_strip          = AnsiColor(color_restrict_strip).asString();
-				color_restrict_test           = AnsiColor(color_restrict_test).asString();
-				color_restrict_userpriv       = AnsiColor(color_restrict_userpriv).asString();
-				color_restrict_installsources = AnsiColor(color_restrict_installsources).asString();
-				color_restrict_bindist        = AnsiColor(color_restrict_bindist).asString();
-				color_properties_interactive  = AnsiColor(color_properties_interactive).asString();
-				color_properties_live         = AnsiColor(color_properties_live).asString();
-				color_properties_virtual      = AnsiColor(color_properties_virtual).asString();
-				color_properties_set          = AnsiColor(color_properties_set).asString();
-				AnsiMarker ins_marker(mark_installed);
-				mark_installed     = ins_marker.asString();
-				mark_installed_end = ins_marker.end();
-				AnsiMarker upgrade_marker(mark_upgrade);
-				mark_upgrade       = upgrade_marker.asString();
-				mark_upgrade_end   = upgrade_marker.end();
-				AnsiMarker ver_marker(mark_version);
-				mark_version       = ver_marker.asString();
-				mark_version_end   = ver_marker.end();
-			}
-			before_keywords    = parse_colors(before_keywords, use_color);
-			after_keywords     = parse_colors(after_keywords, use_color);
-			before_ekeywords   = parse_colors(before_ekeywords, use_color);
-			after_ekeywords    = parse_colors(after_ekeywords, use_color);
-		}
+		// Initialize those variables common to eix and eix-diff:
+		void setupResources(EixRc &eixrc);
+
+		void setupColors();
 
 		void clear_virtual(Version::Overlay count)
 		{

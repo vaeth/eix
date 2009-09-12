@@ -9,10 +9,11 @@
 
 
 #include "formatstring-print.h"
-#include <eixrc/global.h>
+#include <eixrc/eixrc.h>
 #include <eixTk/sysutils.h>
 #include <portage/vardbpkg.h>
 #include <portage/conf/portagesettings.h>
+#include <output/formatstring.h>
 
 using namespace std;
 
@@ -33,29 +34,33 @@ class VersionVariables {
 };
 
 string
-PrintFormat::get_inst_use(const Package &package, InstVersion &i, vector<string> &a) const
+PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 {
 	if((!vardb) || !(vardb->readUse(package, i)))
 		return "";
 	if(i.inst_iuse.empty())
 		return "";
-	a.resize(4);
 	string ret, add;
 	for(vector<string>::iterator it = i.inst_iuse.begin();
-		it != i.inst_iuse.end(); ++it)
-	{
-		vector<string>::size_type addindex = 0;
+		it != i.inst_iuse.end(); ++it) {
+		bool is_unset = false;
 		string *curr = &ret;
 		if(i.usedUse.find(*it) == i.usedUse.end()) {
-			addindex = 2;
+			is_unset = true;
 			if(!alpha_use)
 				curr = &add;
 		}
 		if(!curr->empty())
 			curr->append(" ");
-		curr->append(a[addindex]);
+		if(is_unset)
+			curr->append(before_unset_use);
+		else
+			curr->append(before_set_use);
 		curr->append(*it);
-		curr->append(a[addindex+1]);
+		if(is_unset)
+			curr->append(after_unset_use);
+		else
+			curr->append(after_set_use);
 	}
 	if(!add.empty()) {
 		if(!ret.empty())
@@ -589,21 +594,12 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		}
 		if(name == "use") {
 			if(version_variables->isinst)
-				return "";
+				return get_inst_use(*package, *(version_variables->instver));
 			return version_variables->version->iuse();
-		}
-		if(strncmp(name.c_str(), "use:", 4) == 0) {
-			if(version_variables->isinst) {
-				vector<string> s = split_string(name, true, ":", false);
-				s.erase(s.begin());
-				return get_inst_use(*package, *(version_variables->instver), s);
-			}
-			return "";
 		}
 		if(strncmp(name.c_str(), "date:", 5) == 0) {
 			if(version_variables->isinst) {
-				EixRc &rc = get_eixrc(NULL);
-				return date_conv(rc[name.substr(5)].c_str(),
+				return date_conv((*eix_rc)[name.substr(5)].c_str(),
 					version_variables->instver->instDate);
 			}
 			return "";
@@ -842,6 +838,11 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 	}
 	if(name == "versionlines") {
 		if(style_version_lines)
+			return "1";
+		return "";
+	}
+	if(name == "slotsorted") {
+		if(slot_sorted)
 			return "1";
 		return "";
 	}

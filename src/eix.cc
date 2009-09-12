@@ -375,81 +375,11 @@ setup_defaults()
 	   (strcasecmp(s.c_str(), "compact") == 0)) {
 		rc_options.compact_output = true;
 	}
-	format.color_masked        = rc["COLOR_MASKED"];
-	format.color_unstable      = rc["COLOR_UNSTABLE"];
-	format.color_stable        = rc["COLOR_STABLE"];
-	format.color_overlaykey    = rc["COLOR_OVERLAYKEY"];
-	format.color_virtualkey    = rc["COLOR_VIRTUALKEY"];
-	format.color_slots         = rc["COLOR_SLOTS"];
-
-	format.color_restrict_fetch          = rc["COLOR_RESTRICT_FETCH"];
-	format.color_restrict_mirror         = rc["COLOR_RESTRICT_MIRROR"];
-	format.color_restrict_primaryuri     = rc["COLOR_RESTRICT_PRIMARYURI"];
-	format.color_restrict_binchecks      = rc["COLOR_RESTRICT_BINCHECKS"];
-	format.color_restrict_strip          = rc["COLOR_RESTRICT_STRIP"];
-	format.color_restrict_test           = rc["COLOR_RESTRICT_TEST"];
-	format.color_restrict_userpriv       = rc["COLOR_RESTRICT_USERPRIV"];
-	format.color_restrict_installsources = rc["COLOR_RESTRICT_INSTALLSOURCES"];
-	format.color_restrict_bindist        = rc["COLOR_RESTRICT_BINDIST"];
-	format.color_properties_interactive  = rc["COLOR_PROPERTIES_INTERACTIVE"];
-	format.color_properties_live         = rc["COLOR_PROPERTIES_LIVE"];
-	format.color_properties_virtual      = rc["COLOR_PROPERTIES_VIRTUAL"];
-	format.color_properties_set          = rc["COLOR_PROPERTIES_SET"];
-
+	format.setupResources(rc);
 	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
-	format.color_original      = rc.getBool("COLOR_ORIGINAL");
-	format.color_local_mask    = rc.getBool("COLOR_LOCAL_MASK");
-	format.mark_installed      = rc["MARK_INSTALLED"];
-	format.mark_upgrade        = rc["MARK_UPGRADE"];
-	format.mark_version        = rc["MARK_VERSIONS"];
-	format.show_slots          = rc.getBool("PRINT_SLOTS");
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
-	format.colon_slots         = rc.getBool("COLON_SLOTS");
-	format.colored_slots       = rc.getBool("COLORED_SLOTS");
 	format.recommend_mode      = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
-	format.print_restrictions  = !rc.getBool("NO_RESTRICTIONS");
-
-	format.alpha_use           = rc.getBool("SORT_INST_USE_ALPHA");
-
-	format.before_keywords     = rc["FORMAT_BEFORE_KEYWORDS"];
-	format.after_keywords      = rc["FORMAT_AFTER_KEYWORDS"];
-	format.print_effective     = rc.getBool("PRINT_EFFECTIVE_KEYWORDS");
-	format.before_ekeywords    = rc["FORMAT_BEFORE_EFFECTIVE_KEYWORDS"];
-	format.after_ekeywords     = rc["FORMAT_AFTER_EFFECTIVE_KEYWORDS"];
-
-	format.tag_restrict_fetch          = rc["TAG_RESTRICT_FETCH"];
-	format.tag_restrict_mirror         = rc["TAG_RESTRICT_MIRROR"];
-	format.tag_restrict_primaryuri     = rc["TAG_RESTRICT_PRIMARYURI"];
-	format.tag_restrict_binchecks      = rc["TAG_RESTRICT_BINCHECKS"];
-	format.tag_restrict_strip          = rc["TAG_RESTRICT_STRIP"];
-	format.tag_restrict_test           = rc["TAG_RESTRICT_TEST"];
-	format.tag_restrict_userpriv       = rc["TAG_RESTRICT_USERPRIV"];
-	format.tag_restrict_installsources = rc["TAG_RESTRICT_INSTALLSOURCES"];
-	format.tag_restrict_bindist        = rc["TAG_RESTRICT_BINDIST"];
-	format.tag_properties_interactive  = rc["TAG_PROPERTIES_INTERACTIVE"];
-	format.tag_properties_live         = rc["TAG_PROPERTIES_LIVE"];
-	format.tag_properties_virtual      = rc["TAG_PROPERTIES_VIRTUAL"];
-	format.tag_properties_set          = rc["TAG_PROPERTIES_SET"];
-
-	format.tag_for_profile            = rc["TAG_FOR_PROFILE"];
-	format.tag_for_masked             = rc["TAG_FOR_MASKED"];
-	format.tag_for_ex_profile         = rc["TAG_FOR_EX_PROFILE"];
-	format.tag_for_ex_masked          = rc["TAG_FOR_EX_MASKED"];
-	format.tag_for_locally_masked     = rc["TAG_FOR_LOCALLY_MASKED"];
-	format.tag_for_stable             = rc["TAG_FOR_STABLE"];
-	format.tag_for_unstable           = rc["TAG_FOR_UNSTABLE"];
-	format.tag_for_minus_asterisk     = rc["TAG_FOR_MINUS_ASTERISK"];
-	format.tag_for_minus_keyword      = rc["TAG_FOR_MINUS_KEYWORD"];
-	format.tag_for_alien_stable       = rc["TAG_FOR_ALIEN_STABLE"];
-	format.tag_for_alien_unstable     = rc["TAG_FOR_ALIEN_UNSTABLE"];
-	format.tag_for_missing_keyword    = rc["TAG_FOR_MISSING_KEYWORD"];
-	format.tag_for_ex_unstable        = rc["TAG_FOR_EX_UNSTABLE"];
-	format.tag_for_ex_minus_asterisk  = rc["TAG_FOR_EX_MINUS_ASTERISK"];
-	format.tag_for_ex_minus_keyword   = rc["TAG_FOR_EX_MINUS_KEYWORD"];
-	format.tag_for_ex_alien_stable    = rc["TAG_FOR_EX_ALIEN_STABLE"];
-	format.tag_for_ex_alien_unstable  = rc["TAG_FOR_EX_ALIEN_UNSTABLE"];
-	format.tag_for_ex_missing_keyword = rc["TAG_FOR_EX_MISSING_KEYWORD"];
 
 	string overlay = rc["OVERLAYS_LIST"];
 	if(overlay.find("if") != string::npos)

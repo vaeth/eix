@@ -10,9 +10,9 @@
 #ifndef EIX__FORMATSTRING_PRINT_H__
 #define EIX__FORMATSTRING_PRINT_H__ 1
 
-#include <output/formatstring.h>
-#include <portage/package.h>
-#include <portage/version.h>
+#include <string>
+
+class PrintFormat;
 
 std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name);
 std::string get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name);

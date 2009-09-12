@@ -977,15 +977,16 @@ It returns 1 or empty depending on whether some or the corresponding B<RESTRICT>
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
 .TP
-.BR haveuse ", " use ", " "use:I<before_set>:I<after_set>:I<before_unset>:I<after_unset>"
+.BR haveuse ", " use
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs information corresponding to the B<IUSE> (for available versions)
 or B<USE> (for installed versions) variables, respectively.
 B<haveuse> can be used to test whether an output would be nonempty
 (in this case it is 1 otherwise empty).
 For available versions, B<use> outputs the B<IUSE> variable.
-For installed versions, B<use:...> outputs the B<USE> flags and whether
-they are installed or not; the four argument strings are output at the corresponding positions.
+For installed versions, B<use> outputs the B<USE> flags and whether they are installed or not
+(in the later case, the content of B<FORMAT_BEFORE_SET_USE>, B<FORMAT_AFTER_SET_USE>, B<FORMAT_BEFORE_UNSET_USE>, B<FORMAT_AFTER_UNSET_USE>
+is printed at the appropriate places).
 .TP
 .BR "date:I<VAR>"
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1024,13 +1025,15 @@ or has a best stable or best unstable version.
 .B versionlines
 Is 1 or empty, depending on whether the versionlines flag was passed.
 .TP
+.B slotsorted
+Is 1 or empty, depending on whether the versionsort flag was passed.
+.TP
 .BR setnames ", " allsetnames
 The name of all local sets to which the package belongs, separated by spaces.
 With B<allsetnames> also the "system" set name is included.
 .TP
 .B overlaykey
-if all versions are in the same overlay this expands to "overlaykey".
-When printed, "[overlaykey]" is printed with corresponding colors.
+If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
 .TP
 .B system
 expands to "1" if this package is in the system profile
@@ -1748,6 +1751,10 @@ If this string is empty, the processing is slightly faster since then these data
 .TP
 .BR FORMAT_BEFORE_KEYWORDS ", " FORMAT_AFTER_KEYWORDS ", " FORMAT_BEFORE_EFFECTIVE_KEYWORDS ", " FORMAT_AFTER_EFFECTIVE_KEYWORDS
 These strings are printed before/after the (effective) KEYWORDS string for a version is printed.
+
+.TP
+.BR FORMAT_BEFORE_SET_USE ", " FORMAT_AFTER_SET_USE ", " FORMAT_BEFORE_UNSET_USE ", " FORMAT_AFTER_UNSET_USE
+These strings are printed before/after the set/unset USE flags of installed versions are printed.
 
 .TP
 .BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (string)
