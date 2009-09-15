@@ -808,14 +808,14 @@ AddOption(STRING, "VSORT",
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
 	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
-	"%{AVERSION_APPENDIX}{last}{*sorted=vslot}{}", _(
+	"%{AVERSION_APPENDIX}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
 
 AddOption(STRING, "SSORT",
 	"{slotfirst}"
 		"{oneslot}%{FORMAT_SLOT} "
-		"{else}\n\t%{FORMAT_SLOT}\t{}"
+		"{else}\\n\\t%{FORMAT_SLOT}\\t{}"
 	"{else} {}"
 	"%{AVERSION_VERBOSE}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
