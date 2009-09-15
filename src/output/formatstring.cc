@@ -190,34 +190,8 @@ void
 PrintFormat::setupResources(EixRc &rc)
 {
 	eix_rc = &rc;
-	color_masked     = rc["COLOR_MASKED"];
-	color_unstable   = rc["COLOR_UNSTABLE"];
-	color_stable     = rc["COLOR_STABLE"];
 	color_overlaykey = rc["COLOR_OVERLAYKEY"];
 	color_virtualkey = rc["COLOR_VIRTUALKEY"];
-	color_slots      = rc["COLOR_SLOTS"];
-	mark_installed   = rc["MARK_INSTALLED"];
-	mark_upgrade     = rc["MARK_UPGRADE"];
-	mark_version     = rc["MARK_VERSIONS"];
-	show_slots       = rc.getBool("PRINT_SLOTS");
-	colon_slots      = rc.getBool("COLON_SLOTS");
-	colored_slots    = rc.getBool("COLORED_SLOTS");
-	color_original   = rc.getBool("COLOR_ORIGINAL");
-	color_local_mask = rc.getBool("COLOR_LOCAL_MASK");
-
-	color_restrict_fetch          = rc["COLOR_RESTRICT_FETCH"];
-	color_restrict_mirror         = rc["COLOR_RESTRICT_MIRROR"];
-	color_restrict_primaryuri     = rc["COLOR_RESTRICT_PRIMARYURI"];
-	color_restrict_binchecks      = rc["COLOR_RESTRICT_BINCHECKS"];
-	color_restrict_strip          = rc["COLOR_RESTRICT_STRIP"];
-	color_restrict_test           = rc["COLOR_RESTRICT_TEST"];
-	color_restrict_userpriv       = rc["COLOR_RESTRICT_USERPRIV"];
-	color_restrict_installsources = rc["COLOR_RESTRICT_INSTALLSOURCES"];
-	color_restrict_bindist        = rc["COLOR_RESTRICT_BINDIST"];
-	color_properties_interactive  = rc["COLOR_PROPERTIES_INTERACTIVE"];
-	color_properties_live         = rc["COLOR_PROPERTIES_LIVE"];
-	color_properties_virtual      = rc["COLOR_PROPERTIES_VIRTUAL"];
-	color_properties_set          = rc["COLOR_PROPERTIES_SET"];
 
 	before_keywords  = rc["FORMAT_BEFORE_KEYWORDS"];
 	after_keywords   = rc["FORMAT_AFTER_KEYWORDS"];
@@ -229,39 +203,6 @@ PrintFormat::setupResources(EixRc &rc)
 	after_set_use    = rc["FORMAT_AFTER_SET_USE"];
 	before_unset_use = rc["FORMAT_BEFORE_UNSET_USE"];
 	after_unset_use  = rc["FORMAT_AFTER_UNSET_USE"];
-
-	tag_restrict_fetch          = rc["TAG_RESTRICT_FETCH"];
-	tag_restrict_mirror         = rc["TAG_RESTRICT_MIRROR"];
-	tag_restrict_primaryuri     = rc["TAG_RESTRICT_PRIMARYURI"];
-	tag_restrict_binchecks      = rc["TAG_RESTRICT_BINCHECKS"];
-	tag_restrict_strip          = rc["TAG_RESTRICT_STRIP"];
-	tag_restrict_test           = rc["TAG_RESTRICT_TEST"];
-	tag_restrict_userpriv       = rc["TAG_RESTRICT_USERPRIV"];
-	tag_restrict_installsources = rc["TAG_RESTRICT_INSTALLSOURCES"];
-	tag_restrict_bindist        = rc["TAG_RESTRICT_BINDIST"];
-	tag_properties_interactive  = rc["TAG_PROPERTIES_INTERACTIVE"];
-	tag_properties_live         = rc["TAG_PROPERTIES_LIVE"];
-	tag_properties_virtual      = rc["TAG_PROPERTIES_VIRTUAL"];
-	tag_properties_set          = rc["TAG_PROPERTIES_SET"];
-
-	tag_for_profile            = rc["TAG_FOR_PROFILE"];
-	tag_for_masked             = rc["TAG_FOR_MASKED"];
-	tag_for_ex_profile         = rc["TAG_FOR_EX_PROFILE"];
-	tag_for_ex_masked          = rc["TAG_FOR_EX_MASKED"];
-	tag_for_locally_masked     = rc["TAG_FOR_LOCALLY_MASKED"];
-	tag_for_stable             = rc["TAG_FOR_STABLE"];
-	tag_for_unstable           = rc["TAG_FOR_UNSTABLE"];
-	tag_for_minus_asterisk     = rc["TAG_FOR_MINUS_ASTERISK"];
-	tag_for_minus_keyword      = rc["TAG_FOR_MINUS_KEYWORD"];
-	tag_for_alien_stable       = rc["TAG_FOR_ALIEN_STABLE"];
-	tag_for_alien_unstable     = rc["TAG_FOR_ALIEN_UNSTABLE"];
-	tag_for_missing_keyword    = rc["TAG_FOR_MISSING_KEYWORD"];
-	tag_for_ex_unstable        = rc["TAG_FOR_EX_UNSTABLE"];
-	tag_for_ex_minus_asterisk  = rc["TAG_FOR_EX_MINUS_ASTERISK"];
-	tag_for_ex_minus_keyword   = rc["TAG_FOR_EX_MINUS_KEYWORD"];
-	tag_for_ex_alien_stable    = rc["TAG_FOR_EX_ALIEN_STABLE"];
-	tag_for_ex_alien_unstable  = rc["TAG_FOR_EX_ALIEN_UNSTABLE"];
-	tag_for_ex_missing_keyword = rc["TAG_FOR_EX_MISSING_KEYWORD"];
 }
 
 void
@@ -269,34 +210,8 @@ PrintFormat::setupColors()
 {
 	bool use_color = !no_color;
 	if(use_color) {
-		color_masked     = AnsiColor(color_masked).asString();
-		color_unstable   = AnsiColor(color_unstable).asString();
-		color_stable     = AnsiColor(color_stable).asString();
 		color_overlaykey = AnsiColor(color_overlaykey).asString();
 		color_virtualkey = AnsiColor(color_virtualkey).asString();
-		color_slots      = AnsiColor(color_slots).asString();
-		color_restrict_fetch          = AnsiColor(color_restrict_fetch).asString();
-		color_restrict_mirror         = AnsiColor(color_restrict_mirror).asString();
-		color_restrict_primaryuri     = AnsiColor(color_restrict_primaryuri).asString();
-		color_restrict_binchecks      = AnsiColor(color_restrict_binchecks).asString();
-		color_restrict_strip          = AnsiColor(color_restrict_strip).asString();
-		color_restrict_test           = AnsiColor(color_restrict_test).asString();
-		color_restrict_userpriv       = AnsiColor(color_restrict_userpriv).asString();
-		color_restrict_installsources = AnsiColor(color_restrict_installsources).asString();
-		color_restrict_bindist        = AnsiColor(color_restrict_bindist).asString();
-		color_properties_interactive  = AnsiColor(color_properties_interactive).asString();
-		color_properties_live         = AnsiColor(color_properties_live).asString();
-		color_properties_virtual      = AnsiColor(color_properties_virtual).asString();
-		color_properties_set          = AnsiColor(color_properties_set).asString();
-		AnsiMarker ins_marker(mark_installed);
-		mark_installed     = ins_marker.asString();
-		mark_installed_end = ins_marker.end();
-		AnsiMarker upgrade_marker(mark_upgrade);
-		mark_upgrade       = upgrade_marker.asString();
-		mark_upgrade_end   = upgrade_marker.end();
-		AnsiMarker ver_marker(mark_version);
-		mark_version       = ver_marker.asString();
-		mark_version_end   = ver_marker.end();
 	}
 	before_keywords    = parse_colors(before_keywords, use_color);
 	after_keywords     = parse_colors(after_keywords, use_color);

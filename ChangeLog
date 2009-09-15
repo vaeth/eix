@@ -5,7 +5,9 @@
 	- XML output was implemented by
 	  Bob Shaffer II <bob.shaffer.2 at gmail.com>
 	  Thanks for the contribution.
-	- Introduce runtime user-variables in format-string.
+	- Introduce runtime variables in format-string:
+	  Now the format-string is almost a programming language;
+	  without loops or recursion, but one can loop over versions:
 	- Finally, dump the mess with available*/best*/installed*/empty*/full*
 	  and the distinction of printable and "test-only" properties.
 	  Instead of the flood of variations of properties for version output
@@ -26,11 +28,11 @@
 	  eix --format '<availableversions:ANAMESLOT:ANAMESLOT>' '-*' gcc
 	- Let = in conditionals work as documented (a long outstanding bug).
 	- The --versionlines cases are now completely shifted to the formats.
-	- Several variables like PRINT_IUSE are now not necessary anymore
-	  since the format can now directly be modified. Many of these
-	  variables thus have been either removed or (only for backward
-	  compatibility) are implemented as delayed substitutions in the
-	  formats.
+	- Many variables like PRINT_IUSE, TAG_FOR_* etc. would now be
+	  superfluous, since the format can now directly be modified.
+	  Some of these variables thus have been either removed, but for
+	  backward compatibility and "simple" modifications, most of them
+	  are still honored by means of delayed substitutions in the formats.
 	- Fix segfaults for certain malformed delayed references.
 
 *eix-0.17.1

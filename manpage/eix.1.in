@@ -495,8 +495,7 @@ I<category>B</>I<package>
 
 More precisely, in each line the first word in this format is chosen.
 The packages/versions passed this way will in the output be marked.
-For details, see the B<marked> and B<markedversions> formatstring and the
-B<MARK_VERSIONS> variable below.
+For details, see the B<marked> and B<markedversions*> formatstrings.
 
 This local option is treated as if a sequence of corresponding matching
 expressions, concatenated with B<-o>, were given.
@@ -684,8 +683,7 @@ In particular, the option overrides the content of B<OVERRIDE_CACHE_METHOD>.
 .SS Slots
 In contrast to usual output of versions in emerge, B<eix>
 can also print slot names if they are nonempty and different from "0".
-Whether this happens is determined by the B<PRINT_SLOTS> variable and by
-the content of the B<FORMATSTRING>.
+Whether this happens is determined by the content of the B<FORMATSTRING>.
 
 If slots are printed, the slot name is separated from the version number
 either with a colon, or the slot names are written in braces.
@@ -935,9 +933,9 @@ All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
-.BR slot ", " isslot ", " properties ", " restrictions ", " overlayver ", " versionkeywords
+.BR slot ", " isslot ", " overlayver ", " versionkeywords
 This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the current slot, tags for PROPERTIES, RESTRICT, or the overlay,
+It outputs the current slot, the overlay,
 or the full keywords of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
@@ -951,23 +949,16 @@ otherwise nothing.
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 if the current version is the best resp. best in the current slot for upgrading.
 For the variants with B<*> also unstable versions are considered.
-For the colors used in B<version> or B<version*>, the tests B<isbestupgradelot>
-or B<usbestupgradeslot*>, respectively, are automatically taken into account
-for speed reasons.
 .TP
 .BR installedversion ", " markedversion
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or the empty string depending on whether the current version is
 installed or marked, respectively.
-For the colors used in B<version> or B<version*>, these tests are
-automatically taken into account for speed reasons.
 .TP
 .BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
 This must occur only in I<VARIABLE> in the context of version printing.
 This returns 1 or empty depending whether the version has the current stability
 property according to the local or default configuration, respectively.
-The command B<stability> takes all these tests into account automatically
-for speed reasons.
 .TP
 .BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -993,20 +984,9 @@ This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the installation date; the strftime() format for the date is read from
 the variable I<VAR>.
 .TP
-.B stability
+.BR version
 This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the stability tag of the current version and sets the color
-correspondingly.
-.TP
-.BR version ", " version* ", " plainversion ", " plainversion*
-This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the version, possibly marked or marked as installed;
-moreover, it resets the colors if necessary.
-The B<plainversion> variant just output the text without caring about colors.
-The variants with B<*> append a slotname if it is nonempty:
-The slotname is just appended as a plain text to the version, i.e. it will have
-the color of the version. Do not use this if you want that slots always
-have a fixed color: If you want the latter, output the slot manually afterwards!
+It outputs the plain version in text form.
 .TP
 .BR properties ", " restrictions ", " overlayver
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1027,6 +1007,11 @@ Is 1 or empty, depending on whether the versionlines flag was passed.
 .TP
 .B slotsorted
 Is 1 or empty, depending on whether the versionsort flag was passed.
+.TP
+.B color
+Is 1 or empty, depending on whether colors/markers are printed.
+For instance if the output is redirected to a terminal and no opposite
+option is used, this will be empty.
 .TP
 .BR setnames ", " allsetnames
 The name of all local sets to which the package belongs, separated by spaces.
@@ -1757,34 +1742,6 @@ These strings are printed before/after the (effective) KEYWORDS string for a ver
 These strings are printed before/after the set/unset USE flags of installed versions are printed.
 
 .TP
-.BR COLOR_MASKED ", " COLOR_STABLE ", " COLOR_UNSTABLE ", " COLOR_SLOTS ", " COLOR_OVERLAYKEY ", " COLOR_VIRTUALKEY "  " (string)
-Define the color for masked versions, stable versions, unstable versions, slots, fetch-restricted version,
-the overlay-key, and the overlay-key for "virtual" overlays (which are not absolute pathnames).
-Use the same syntax as you would inside ().
-See B<FORMATSTRING>.
-
-.TP
-.BR COLOR_RESTRICT_FETCH ", " COLOR_RESTRICT_MIRROR ", " COLOR_RESTRICT_PRIMARYURI ", " COLOR_RESTRICT_BINCHECKS ", " COLOR_RESTRICT_STRIP ", " COLOR_RESTRICT_TEST ", "  COLOR_RESTRICT_USERPRIV ", " COLOR_RESTRICT_INSTALLSOURCES ", " COLOR_RESTRICT_BINDIST ", " COLOR_PROPERTIES_INTERACTIVE ", " COLOR_PROPERTIES_LIVE ", " COLOR_PROPERTIES_VIRTUAL ", " COLOR_PROPERTIES_SET
-Define the color for tags corresponding to the RESTRICT or PROPERTIES settings.
-Use the same syntax as you would inside ().
-See B<FORMATSTRING>.
-
-.TP
-.BR MARK_INSTALLED "  " (none ", " bold ", " underline ", " blink ", " inverse)
-Mark the installed packages by this attribute when displaying versions.
-Several of the above attributes may be combined (separate them by ",").
-
-.TP
-.BR MARK_UPGRADE "  " (none ", " bold ", " underline ", " blink ", " inverse)
-Mark upgrade candidates by this attribute when displaying versions.
-Several of the above attributes may be combined (separate them by ",").
-
-.TP
-.BR MARK_VERSIONS "  " (none ", " bold ", " underline ", " blink ", " inverse)
-Mark the package versions passed with B<--pipe> by this attribute.
-Several of the above attributes may be combined (separate them by ",").
-
-.TP
 .BR FORCE_USECOLORS "  " (true / false)
 Use colors even when stdout is not a terminal.
 
@@ -1793,26 +1750,12 @@ Use colors even when stdout is not a terminal.
 Show the percentage progress even when stdout is not a terminal.
 
 .TP
-.BR COLOR_ORIGINAL "  " (true / false)
-If false, versions are only colored according to the local setting.
-
-.TP
-.BR COLOR_LOCAL_MASK "  " (true / false)
-If false, COLOR_ORIGINAL=false has no effect on versions which are only locally masked (i.e. [m]).
-
-.TP
 .BR STYLE_VERSION_SORTED "  " (true / false)
 Defines whether B<--versionsort> is on by default.
 
 .TP
 .BR STYLE_VERSION_LINES "  " (true / false)
 Defines whether B<--versionlines> is on by default.
-
-.TP
-.BR COLON_SLOTS "  " (true / false)
-If true, slots are separated from the version names with a colon instead of braces.
-This has the advantage that it takes one character less than braces and
-thus makes listings of many versions shorter.
 
 .TP
 .BR DUP_PACKAGES_ONLY_OVERLAYS "  " (true / false)
@@ -2190,9 +2133,6 @@ B</etc/portage/package.slot_upgrade_allow>, respectively.
 If true, then sets and packages which are contained in an included set
 are considered as part of the parent set.
 .TP
-.BR PRINT_SLOTS " " (true / false)
-If B<false>, no slot information is printed.
-.TP
 .BR PRINT_EFFECTIVE_KEYWORDS " " (true / false)
 If B<PRINT_KEYWORDS> is in effect and this variable is true
 and the KEYWORD of a version is modified by the profile,
@@ -2246,12 +2186,6 @@ If false, print only the number of matches, independently of whether the
 matches actually lead to some output.
 This might be useful for certain scripts if you are only interested in the
 number of matches and use e.g. B<FORMAT=''> to speed things up.
-.TP
-.B TAG_FOR_PROFILE TAG_FOR_MASKED TAG_FOR_EX_PROFILE TAG_FOR_EX_MASKED TAG_FOR_LOCALLY_MASKED TAG_FOR_STABLE TAG_FOR_UNSTABLE TAG_FOR_MINUS_ASTERISK TAG_FOR_MINUS_KEYWORD TAG_FOR_ALIEN_STABLE TAG_FOR_ALIEN_UNSTABLE TAG_FOR_MISSING_KEYWORD TAG_FOR_EX_UNSTABLE TAG_FOR_EX_MINUS_ASTERISK TAG_FOR_EX_MINUS_KEYWORD TAG_FOR_EX_ALIEN_STABLE TAG_FOR_EX_ALIEN_UNSTABLE TAG_FOR_EX_MISSING_KEYWORD " " (string)
-The tags which are printed in front of the version numbers to make the masking/stability and their local settings visible.
-.TP
-.B TAG_RESTRICT_FETCH TAG_RESTRICT_MIRROR TAG_RESTRICT_PRIMARYURI TAG_RESTRICT_BINCHECKS TAG_RESTRICT_STRIP TAG_RESTRICT_TEST  TAG_RESTRICT_USERPRIV TAG_RESTRICT_INSTALLSOURCES TAG_RESTRICT_BINDIST TAG_PROPERTIES_INTERACTIVE TAG_PROPERTIES_LIVE TAG_PROPERTIES_VIRTUAL TAG_PROPERTIES_SET " " (string)
-The tags which are printed for versions with the corresponding RESTRICT or PROPERTIES settings.
 .TP
 .\" {{{ Default match fields and algorithms
 .B DEFAULT_MATCH_FIELD " " "(string list)"
@@ -2784,7 +2718,7 @@ See also the comments for the B<-I> option.
 .SH "AUTHORS"
 .LP
 
-Martin V\[:a]th  <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+Martin V\[:a]th <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 

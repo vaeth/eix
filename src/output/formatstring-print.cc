@@ -18,19 +18,33 @@
 using namespace std;
 
 class VersionVariables {
+	private:
+		const Version *m_version;
+		InstVersion *m_instver;
 	public:
-		const Version *version;
-		InstVersion *instver;
 		bool first, last, slotfirst, slotlast, oneslot, isinst;
+		bool know_restrict;
 		string result;
 
 		VersionVariables()
 		{
-			version = NULL;
-			instver = NULL;
+			m_version = NULL;
+			m_instver = NULL;
 			first = last = slotfirst = slotlast = oneslot = true;
 			isinst = false;
 		}
+
+		void setinst(InstVersion *inst)
+		{ know_restrict = false; m_instver = inst; }
+
+		void setversion(const Version *ver)
+		{ m_version = ver; }
+
+		const Version *version() const
+		{ return m_version; }
+
+		InstVersion *instver() const
+		{ return m_instver; }
 };
 
 string
@@ -68,257 +82,6 @@ PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 		ret.append(add);
 	}
 	return ret;
-}
-
-string
-PrintFormat::get_version_stability(const Version *version, const Package *package) const
-{
-	bool need_color = !(no_color);
-
-	MaskFlags currmask(version->maskflags);
-	KeywordsFlags currkey(version->keyflags);
-	MaskFlags wasmask;
-	KeywordsFlags waskey;
-	const string *colorp = NULL;
-	string mask_text, keyword_text;
-	stability->calc_version_flags(false, wasmask, waskey, version, package);
-	if(wasmask.isHardMasked()) {
-		if( need_color && color_original ) {
-			need_color = false;
-			colorp = &color_masked;
-		}
-		if(currmask.isProfileMask()) {
-			if( need_color ) {
-				need_color = false;
-				colorp = &color_masked;
-			}
-			mask_text = tag_for_profile;
-		}
-		else if(currmask.isPackageMask()) {
-			if( need_color ) {
-				need_color = false;
-				colorp = &color_masked;
-			}
-			mask_text = tag_for_masked;
-		}
-		else if(wasmask.isProfileMask()) {
-			mask_text = tag_for_ex_profile;
-		}
-		else {
-			mask_text = tag_for_ex_masked;
-		}
-	}
-	else if(currmask.isHardMasked()) {
-		if( need_color && color_local_mask ) {
-			need_color = false;
-			colorp = &color_masked;
-		}
-		mask_text = tag_for_locally_masked;
-	}
-
-	if(currkey.isStable()) {
-		if( need_color && !(color_original) ) {
-			need_color = false;
-			colorp = &color_stable;
-		}
-		if (waskey.isStable()) {
-			if( need_color )
-				colorp = &color_stable;
-			keyword_text = tag_for_stable;
-		}
-		else if (waskey.isUnstable()) {
-			if( need_color )
-				colorp = &color_unstable;
-			keyword_text = tag_for_ex_unstable;
-		}
-		else if (waskey.isMinusKeyword()) {
-			if( need_color )
-				colorp = &color_masked;
-			keyword_text = tag_for_ex_minus_keyword;
-		}
-		else if (waskey.isAlienStable()) {
-			if( need_color )
-				colorp = &color_masked;
-			keyword_text = tag_for_ex_alien_stable;
-		}
-		else if (waskey.isAlienUnstable()) {
-			if( need_color )
-				colorp = &color_masked;
-			keyword_text = tag_for_ex_alien_unstable;
-		}
-		else if (waskey.isMinusAsterisk()) {
-			if( need_color )
-				colorp = &color_masked;
-			keyword_text = tag_for_ex_minus_asterisk;
-		}
-		else {
-			if( need_color )
-				colorp = &color_masked;
-			keyword_text = tag_for_ex_missing_keyword;
-		}
-	}
-	else if (currkey.isUnstable()) {
-		if( need_color )
-			colorp = &color_unstable;
-		keyword_text = tag_for_unstable;
-	}
-	else if (currkey.isMinusKeyword()) {
-		if( need_color )
-			colorp = &color_masked;
-		keyword_text = tag_for_minus_keyword;
-	}
-	else if (currkey.isAlienStable()) {
-		if( need_color )
-			colorp = &color_masked;
-		keyword_text = tag_for_alien_stable;
-	}
-	else if (currkey.isAlienUnstable()) {
-		if( need_color )
-			colorp = &color_masked;
-		keyword_text = tag_for_alien_unstable;
-	}
-	else if (currkey.isMinusAsterisk()) {
-		if( need_color )
-			colorp = &color_masked;
-		keyword_text = tag_for_minus_asterisk;
-	}
-	else {
-		if( need_color )
-			colorp = &color_masked;
-		keyword_text = tag_for_missing_keyword;
-	}
-	mask_text.append(keyword_text);
-	if(colorp)
-		return (*colorp) + mask_text;
-	return mask_text;
-}
-
-string
-PrintFormat::get_marked_version(const Version *version, const Package *package, bool midslot) const
-{
-	string ret;;
-	bool is_installed = false;
-	bool is_marked = false;
-	bool is_upgrade = false;
-	if(!no_color) {
-		if(vardb) {
-			is_installed = vardb->isInstalledVersion(*package, version, *header, (*portagesettings)["PORTDIR"].c_str());
-			if(!is_installed)
-				is_upgrade = package->is_best_upgrade(true,
-					version, vardb, portagesettings, false);
-		}
-		if(marked_list)
-			is_marked = marked_list->is_marked(*package, version);
-	}
-	if (is_installed)
-		ret = mark_installed;
-	else if (is_upgrade)
-		ret = mark_upgrade;
-	if (is_marked)
-		ret.append(mark_version);
-	if(midslot)
-		ret.append(version->getFullSlotted(colon_slots));
-	else
-		ret.append(version->getFull());
-	if (is_marked) {
-		ret.append(mark_version_end);
-		if(is_installed &&
-			(mark_version_end != mark_installed_end))
-			ret.append(mark_installed_end);
-		else if(is_upgrade &&
-			(mark_version_end != mark_upgrade_end))
-			ret.append(mark_upgrade_end);
-	}
-	else if (is_installed)
-		ret.append(mark_installed_end);
-	else if(is_upgrade)
-		ret.append(mark_upgrade_end);
-	return ret;
-}
-
-string
-PrintFormat::get_properties(const ExtendedVersion *version) const
-{
-	ExtendedVersion::Restrict properties = version->propertiesFlags;
-	if(properties == ExtendedVersion::PROPERTIES_NONE)
-		return "";
-	string result;
-	if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE) {
-		if(! no_color)
-			result = color_properties_interactive;
-		result.append(tag_properties_interactive);
-	}
-	if(properties & ExtendedVersion::PROPERTIES_LIVE) {
-		if(! no_color)
-			result.append(color_properties_live);
-		result.append(tag_properties_live);
-	}
-	if(properties & ExtendedVersion::PROPERTIES_VIRTUAL) {
-		if(! no_color)
-			result.append(color_properties_virtual);
-		result.append(tag_properties_virtual);
-	}
-	if(properties & ExtendedVersion::PROPERTIES_SET) {
-		if(! no_color)
-			result.append(color_properties_set);
-		result.append(tag_properties_set);
-	}
-	return result;
-}
-
-string
-PrintFormat::get_restrictions(const ExtendedVersion *version) const
-{
-	ExtendedVersion::Restrict restrict = version->restrictFlags;
-	if(restrict == ExtendedVersion::RESTRICT_NONE)
-		return "";
-	string result;
-	if(restrict & ExtendedVersion::RESTRICT_FETCH) {
-		if(! no_color)
-			result = color_restrict_fetch;
-		result.append(tag_restrict_fetch);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_MIRROR) {
-		if(! no_color)
-			result.append(color_restrict_mirror);
-		result.append(tag_restrict_mirror);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_PRIMARYURI) {
-		if(! no_color)
-			result.append(color_restrict_primaryuri);
-		result.append(tag_restrict_primaryuri);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_BINCHECKS) {
-		if(! no_color)
-			result.append(color_restrict_binchecks);
-		result.append(tag_restrict_binchecks);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_STRIP) {
-		if(! no_color)
-			result.append(color_restrict_strip);
-		result.append(tag_restrict_strip);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_TEST) {
-		if(! no_color)
-			result.append(color_restrict_test);
-		result.append(tag_restrict_test);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_USERPRIV) {
-		if(! no_color)
-			result.append(color_restrict_userpriv);
-		result.append(tag_restrict_userpriv);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
-		if(! no_color)
-			result.append(color_restrict_installsources);
-		result.append(tag_restrict_installsources);
-	}
-	if(restrict & ExtendedVersion::RESTRICT_BINDIST) {
-		if(! no_color)
-			result.append(color_restrict_bindist);
-		result.append(tag_restrict_bindist);
-	}
-	return result;
 }
 
 string
@@ -366,7 +129,7 @@ PrintFormat::get_installed(const Package *package, Node *root, bool only_marked)
 			version_variables->first = version_variables->slotfirst = false;
 		}
 		have_prevversion = true;
-		version_variables->instver = &(*it);
+		version_variables->setinst(&(*it));
 	}
 	if(have_prevversion) {
 		version_variables->last = version_variables->slotlast = true;
@@ -389,7 +152,7 @@ PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<V
 			version_variables->first = version_variables->slotfirst = false;
 		}
 		have_prevversion = true;
-		version_variables->version = *vit;
+		version_variables->setversion(*vit);
 	}
 	if(have_prevversion) {
 		version_variables->last = version_variables->slotlast = true;
@@ -439,7 +202,7 @@ PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<
 				version_variables->first = false;
 			}
 			have_prevversion = true;
-			version_variables->version = *vit;
+			version_variables->setversion(*vit);
 			version_variables->slotfirst = (prevslot != slotnum);
 			prevslot = slotnum;
 		}
@@ -483,13 +246,13 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		if((name == "slot") || (name == "isslot")) {
 			const string *slot;
 			if(version_variables->isinst) {
-				InstVersion *i = version_variables->instver;
+				InstVersion *i = version_variables->instver();
 				if((!vardb) || !(package->guess_slotname(*i, vardb)))
 					i->slotname = "?";
 				slot = &(i->slotname);
 			}
 			else
-				slot = &(version_variables->version->slotname);
+				slot = &(version_variables->version()->slotname);
 			if(name.size() != 4) {
 				if(slot->empty() || (*slot == "0"))
 					return "";
@@ -499,52 +262,14 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 				return "0";
 			return *slot;
 		}
-		if(name == "stability") {
-			if(version_variables->isinst)
-				return "";
-			return get_version_stability(version_variables->version, package);
-		}
 		if(name == "version") {
 			if(version_variables->isinst)
-				return version_variables->instver->getFull();
-			return get_marked_version(version_variables->version, package, false);
-		}
-		if(name == "version*") {
-			if(version_variables->isinst)
-				return version_variables->instver->getFullSlotted(colon_slots);
-			return get_marked_version(version_variables->version, package, true);
-		}
-		if(name == "plainversion") {
-			if(version_variables->isinst)
-				return version_variables->instver->getFull();
-			return version_variables->version->getFull();
-		}
-		if(name == "plainversion*") {
-			if(version_variables->isinst)
-				return version_variables->instver->getFullSlotted(colon_slots);
-			return version_variables->instver->getFullSlotted(colon_slots);
-		}
-		if(name == "properties") {
-			if(version_variables->isinst) {
-				if((!vardb) || (!header))
-					return "";
-				vardb->readRestricted(*package, *(version_variables->instver), *header, (*portagesettings)["PORTDIR"].c_str());
-				return get_properties(version_variables->instver);
-			}
-			return get_properties(version_variables->version);
-		}
-		if(name == "restrictions") {
-			if(version_variables->isinst) {
-				if((!vardb) || (!header))
-					return "";
-				vardb->readRestricted(*package, *(version_variables->instver), *header, (*portagesettings)["PORTDIR"].c_str());
-				return get_restrictions(version_variables->instver);
-			}
-			return get_restrictions(version_variables->version);
+				return version_variables->instver()->getFull();
+			return version_variables->version()->getFull();
 		}
 		if(name == "overlayver") {
 			if(version_variables->isinst) {
-				InstVersion *i = version_variables->instver;
+				InstVersion *i = version_variables->instver();
 				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str()))) {
 					if(no_color)
 						return "[?]";
@@ -558,24 +283,24 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 				return "";
 			}
 			if(!package->have_same_overlay_key()) {
-				if(version_variables->version->overlay_key)
-					return overlay_keytext(version_variables->version->overlay_key);
+				if(version_variables->version()->overlay_key)
+					return overlay_keytext(version_variables->version()->overlay_key);
 			}
 			return "";
 		}
 		if(name == "versionkeywords") {
 			if(version_variables->isinst)
 				return "";
-			return get_version_keywords(package, version_variables->version);
+			return get_version_keywords(package, version_variables->version());
 		}
 		if(name == "haveuse") {
 			if(version_variables->isinst) {
-				InstVersion &i = *(version_variables->instver);
+				InstVersion &i = *(version_variables->instver());
 				if(vardb && (vardb->readUse(*package, i)) && !(i.inst_iuse.empty()))
 					return "1";
 				return "";
 			}
-			if(version_variables->version->iuse_vector().empty())
+			if(version_variables->version()->iuse_vector().empty())
 				return "";
 			return "1";
 		}
@@ -586,7 +311,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(vardb && portagesettings &&
 				package->is_best_upgrade(
 					(name.find("slot") != string::npos),
-					version_variables->version,
+					version_variables->version(),
 					vardb, portagesettings,
 					(name.find('*') != string::npos)))
 				return "1";
@@ -594,13 +319,13 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		}
 		if(name == "use") {
 			if(version_variables->isinst)
-				return get_inst_use(*package, *(version_variables->instver));
-			return version_variables->version->iuse();
+				return get_inst_use(*package, *(version_variables->instver()));
+			return version_variables->version()->iuse();
 		}
 		if(strncmp(name.c_str(), "date:", 5) == 0) {
 			if(version_variables->isinst) {
 				return date_conv((*eix_rc)[name.substr(5)].c_str(),
-					version_variables->instver->instDate);
+					version_variables->instver()->instDate);
 			}
 			return "";
 		}
@@ -610,7 +335,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			(name.find("asterisk") != string::npos)) {
 			if(version_variables->isinst)
 				return "";
-			const Version *version = version_variables->version;
+			const Version *version = version_variables->version();
 			MaskFlags mymask(version->maskflags);
 			KeywordsFlags mykey(version->keyflags);
 			if(name.find("was") != string::npos) {
@@ -665,7 +390,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(version_variables->isinst)
 				return "";
 			if(marked_list && marked_list->is_marked(*package,
-				version_variables->version))
+				version_variables->version()))
 				return "1";
 			return "";
 		}
@@ -673,17 +398,25 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(version_variables->isinst)
 				return "1";
 			if(vardb && header && vardb->isInstalledVersion(*package,
-				version_variables->version,
+				version_variables->version(),
 				*header, (*portagesettings)["PORTDIR"].c_str()))
 				return "1";
 			return "";
 		}
 		if(name.find("restrict") != string::npos) {
 			ExtendedVersion::Restrict restrict;
-			if(version_variables->isinst)
-				restrict = version_variables->instver->restrictFlags;
+			if(version_variables->isinst) {
+				if(!version_variables->know_restrict) {
+					if(vardb && header &&
+						(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
+						version_variables->know_restrict = true;
+					else
+						return "";
+				}
+				restrict = version_variables->instver()->restrictFlags;
+			}
 			else
-				restrict = version_variables->version->restrictFlags;
+				restrict = version_variables->version()->restrictFlags;
 			if(name.find("fetch") != string::npos) {
 				if(restrict & ExtendedVersion::RESTRICT_FETCH)
 					return "1";
@@ -726,10 +459,18 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		}
 		if(name.find("proper") != string::npos) {
 			ExtendedVersion::Properties properties;
-			if(version_variables->isinst)
-				properties = version_variables->instver->propertiesFlags;
+			if(version_variables->isinst) {
+				if(!version_variables->know_restrict) {
+					if(vardb && header &&
+						(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
+						version_variables->know_restrict = true;
+					else
+						return "";
+				}
+				properties = version_variables->instver()->propertiesFlags;
+			}
 			else
-				properties = version_variables->version->propertiesFlags;
+				properties = version_variables->version()->propertiesFlags;
 			if(name.find("inter") != string::npos) {
 				if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)
 					return "1";
@@ -782,8 +523,9 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			}
 			else {
 				// <bestversion:VAR>
-				variables.version = package->best(accept_unstable);
-				if(variables.version) {
+				const Version *ver = package->best(accept_unstable);
+				variables.setversion(ver);
+				if(ver) {
 					parsed = &varname;
 					recPrint(&(variables.result), package, get_package_property, parse_variable(varname));
 				}
@@ -845,6 +587,11 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		if(slot_sorted)
 			return "1";
 		return "";
+	}
+	if(name == "color") {
+		if(no_color)
+			return "";
+		return "1";
 	}
 	if((name == "havebest") || (name == "havebest*")) {
 		if(package->best(name.find_first_of('*') != string::npos))

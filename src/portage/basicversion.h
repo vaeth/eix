@@ -130,18 +130,6 @@ class ExtendedVersion : public BasicVersion
 
 		void set_properties(const std::string& str)
 		{ propertiesFlags = calcProperties(str); }
-
-		std::string getSlotAppendix(bool colon) const
-		{
-			if(slotname.empty())
-				return "";
-			if(colon)
-				return std::string(":") + slotname;
-			return std::string("(") + slotname + ")";
-		}
-
-		std::string getFullSlotted(bool colon, const std::string& intermediate = "") const
-		{ return std::string(getFull()) + intermediate + getSlotAppendix(colon); }
 };
 
 #endif /* EIX__BASICVERSION_H__ */

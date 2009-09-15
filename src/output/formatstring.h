@@ -223,82 +223,27 @@ class PrintFormat {
 		Node *parse_variable(const std::string &varname) const throw(ExBasic);
 
 		std::string get_inst_use(const Package &package, InstVersion &i) const;
-		std::string get_version_stability(const Version *version, const Package *package) const;
-		std::string get_marked_version(const Version *version, const Package *package, bool midslot) const;
-		std::string get_properties(const ExtendedVersion *version) const;
-		std::string get_restrictions(const ExtendedVersion *version) const;
 		std::string get_version_keywords(const Package *package, const Version *version) const;
 		void get_installed(const Package *package, Node *root, bool mark) const;
 		void get_versions_versorted(const Package *package, Node *root, std::vector<Version*> *versions) const;
 		void get_versions_slotsorted(const Package *package, Node *root, std::vector<Version*> *versions) const;
 		std::string get_pkg_property(const Package *package, const std::string &name) const throw(ExBasic);
 	public:
-		bool no_color,            /**< Shall we use colors? */
-		     color_original,      /**< Color according to non-local settings? */
-		     color_local_mask,    /**< Color [m] as masked? */
-		     style_version_lines, /**< Shall we show versions linewise? */
-		     show_slots,          /**< Shall we show slots at all? */
-		     slot_sorted,         /**< Print sorted by slots */
-		     colon_slots,         /**< Print slots separated with colons */
-		     colored_slots,       /**< Print slots in separate color */
-		     alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
-		     print_effective;     /**< Print effective keywords */
+		bool	no_color,            /**< Shall we use colors? */
+			style_version_lines, /**< Shall we show versions linewise? */
+			slot_sorted,         /**< Print sorted by slots */
+			alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
+			print_effective;     /**< Print effective keywords */
 
 		LocalMode recommend_mode;
 
-		std::string color_masked,     /**< Color for masked versions */
-			   color_unstable,    /**< Color for unstable versions */
-			   color_stable,      /**< Color for stable versions */
-			   color_overlaykey,  /**< Color for the overlay key */
-			   color_virtualkey,  /**< Color for the virtual key */
-			   color_slots,       /**< Color for slots */
-			   color_restrict_fetch,          /**< Color for RESTRICT=fetch */
-			   color_restrict_mirror,         /**< Color for RESTRICT=mirror */
-			   color_restrict_primaryuri,     /**< Color for RESTRICT=primaryuri */
-			   color_restrict_binchecks,      /**< Color for RESTRICT=binchecks */
-			   color_restrict_strip,          /**< Color for RESTRICT=strip */
-			   color_restrict_test,           /**< Color for RESTRICT=test */
-			   color_restrict_userpriv,       /**< Color for RESTRICT=userpriv */
-			   color_restrict_installsources, /**< Color for RESTRICT=installsources */
-			   color_restrict_bindist,        /**< Color for RESTRICT=bindist */
-			   color_properties_interactive,  /**< Color for PROPERTIES=interactive */
-			   color_properties_live,         /**< Color for PROPERTIES=live */
-			   color_properties_virtual,      /**< Color for PROPERTIES=virtual */
-			   color_properties_set;          /**< Color for PROPERTIES=set */
-		std::string mark_installed,   /**< Marker for installed packages */
-			   mark_installed_end,/**< End-Marker for installed packages */
-			   mark_upgrade,      /**< Marker for upgrade candidate versions */
-			   mark_upgrade_end,  /**< End-Marker for upgrade candidate versions */
-			   mark_version,      /**< Marker for marked versions */
-			   mark_version_end;  /**< End-Marker for marked versions */
-		std::string before_keywords, after_keywords,
+		std::string
+			color_overlaykey,  /**< Color for the overlay key */
+			color_virtualkey,  /**< Color for the virtual key */
+			before_keywords, after_keywords,
 			before_ekeywords, after_ekeywords,
 			before_set_use, after_set_use,
 			before_unset_use, after_unset_use;
-		std::string tag_for_profile, tag_for_masked,
-			tag_for_ex_profile, tag_for_ex_masked,
-			tag_for_locally_masked, tag_for_stable,
-			tag_for_unstable,
-			tag_for_minus_asterisk, tag_for_minus_keyword,
-			tag_for_alien_stable, tag_for_alien_unstable,
-			tag_for_missing_keyword,
-			tag_for_ex_unstable,
-			tag_for_ex_minus_asterisk, tag_for_ex_minus_keyword,
-			tag_for_ex_alien_stable, tag_for_ex_alien_unstable,
-			tag_for_ex_missing_keyword,
-			tag_restrict_fetch,
-			tag_restrict_mirror,
-			tag_restrict_primaryuri,
-			tag_restrict_binchecks,
-			tag_restrict_strip,
-			tag_restrict_test,
-			tag_restrict_userpriv,
-			tag_restrict_installsources,
-			tag_restrict_bindist,
-			tag_properties_interactive,
-			tag_properties_live,
-			tag_properties_virtual,
-			tag_properties_set;
 
 		PrintFormat(GetProperty get_callback = NULL)
 		{

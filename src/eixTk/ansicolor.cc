@@ -123,6 +123,7 @@ void AnsiColor::calc_string()
 
 AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 {
+	have_something = false;
 	// look for brightness attribute
 	string::size_type curr = color_name.find_first_of(",;");
 	string::size_type resize = curr;

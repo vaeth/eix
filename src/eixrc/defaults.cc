@@ -536,105 +536,117 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 
 #if (DEFAULT_PART == 2)
 
-AddOption(STRING, "STABILITY_TAGS",
-	"{!*c}{!*m}{!*s}"
+AddOption(STRING, "FORMAT_MASK_TAG",
+	"{!*m}"
 	"{washardmasked}"
-		"%{?COLOR_ORIGINAL}{*c}(%{COLOR_MASKED})%{}"
+		"%{?COLOR_ORIGINAL}{!$c}{*c}%{FORMAT_COLOR_MASKED}{}%{}"
 		"{isprofilemasked}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"%{TAG_FOR_PROFILE}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*m=\"%{TAG_FOR_PROFILE}\"}"
 		"{else}{ismasked}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"%{TAG_FOR_MASKED}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*m=\"%{TAG_FOR_MASKED}\"}"
 		"{else}"
-			"{profilemasked}{*m=p}"
-			"{else}{*m=m}{}"
+			"{profilemasked}{*m=\"%{TAG_FOR_EX_PROFILE}\"}"
+			"{else}{*m=\"%{TAG_FOR_EX_MASKED}\"}{}"
 		"{}{}"
 	"{else}"
 		"{ishardmasked}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"%{TAG_FOR_LOCALLY_MASKED}"
+			"%{?COLOR_LOCAL_MASK}{!$c}{*c}%{FORMAT_COLOR_MASKED}{}%{}"
+			"{*m=\"%{TAG_FOR_LOCALLY_MASKED}\"}"
 		"{}"
-	"{}"
-	"{isstable}"
-		"%{!COLOR_ORIGINAL}"
-			"{!$c}{*c}(%{COLOR_STABLE}){}"
-		"%{}"
-		"{wasstable}"
-			"{!$c}{*c}(%{COLOR_STABLE}){}"
-			"{*s=s}"
-		"{else}{wasunstable}"
-			"{!$c}{*c}(%{COLOR_UNSTABLE}){}"
-			"{*s=U}"
-		"{else}{wasminuskeyword}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"{*s=K}"
-		"{else}{wasalienstable}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"{*s=A}"
-		"{else}{wasalienunstable}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"{*s=B}"
-		"{else}{wasminusasterisk}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"{*s=M}"
-		"{else}"
-			"{!$c}{*c}(%{COLOR_MASKED}){}"
-			"{*s=N}"
-		"{}{}{}{}{}{}"
-	"{else}{isunstable}"
-		"{!$c}{*c}(%{COLOR_UNSTABLE}){}"
-		"{*s=u}"
-	"{else}{isminuskeyword}"
-		"{!$c}{*c}(%{COLOR_MASKED}){}"
-		"{*s=k}"
-	"{else}{isalienstable}"
-		"{!$c}{*c}(%{COLOR_MASKED}){}"
-		"{*s=a}"
-	"{else}{isalienunstable}"
-		"{!$c}{*c}(%{COLOR_MASKED}){}"
-		"{*s=b}"
-	"{else}{isminusasterisk}"
-		"{!$c}{*c}(%{COLOR_MASKED}){}"
-		"{*s=m}"
-	"{else}"
-		"{!$c}{*c}(%{COLOR_MASKED}){}"
-		"{*s=n}"
-	"{}{}{}{}{}{}"
-	"{$m=p}%{TAG_FOR_EX_PROFILE}{}"
-	"{$m=m}%{TAG_FOR_EX_MASKED}{}"
-	"{$s}"
-		"{$s=s}%{TAG_FOR_STABLE}"
-		"{else}{$s=u}%{TAG_FOR_UNSTABLE}"
-		"{else}{$s=k}%{TAG_FOR_MINUS_KEYWORD}"
-		"{else}{$s=a}%{TAG_FOR_ALIEN_STABLE}"
-		"{else}{$s=b}%{TAG_FOR_ALIEN_UNSTABLE}"
-		"{else}{$s=n}%{TAG_FOR_MISSING_KEYWORD}"
-		"{else}{$s=U}%{TAG_FOR_EX_UNSTABLE}"
-		"{else}{$s=K}%{TAG_FOR_EX_MINUS_KEYWORD}"
-		"{else}{$s=A}%{TAG_FOR_EX_ALIEN_STABLE}"
-		"{else}{$s=B}%{TAG_FOR_EX_ALIEN_UNSTABLE}"
-		"{else}{$s=N}%{TAG_FOR_EX_MISSING_KEYWORD}"
-		"{else}{$s=m}%{TAG_FOR_MINUS_ASTERISK}"
-		"{else}%{TAG_FOR_EX_MINUS_ASTERISK}" // {$s=M}
-		"{}{}{}{}{}{}{}{}{}{}{}{}"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It is an alternative implementation of <stability>; of course it is\n"
-	"more flexible but also much slower than <stability>. If you\n"
-	"want to use it, you have to quote the symbols \"{\" and \"(\" in the\n"
-	"TAG_FOR_* variables since otherwise they will be interpreted as\n"
-	"format strings for conditionals or colors, respectively."));
+	"It sets the runtime variable m to the masking tag, and unless the\n"
+	"runtime variable c is set, it outputs the color and sets c."));
+
+AddOption(STRING, "FORMAT_STABILITY_TAG",
+	"{isstable}"
+		"%{!COLOR_ORIGINAL}"
+			"{!$c}{*c}%{FORMAT_COLOR_STABLE}{}"
+		"%{}"
+		"{wasstable}"
+			"{!$c}{*c}%{FORMAT_COLOR_STABLE}{}"
+			"{*s=\"%{TAG_FOR_STABLE}\"}"
+		"{else}{wasunstable}"
+			"{!$c}{*c}%{FORMAT_COLOR_UNSTABLE}{}"
+			"{*s=\"%{TAG_FOR_EX_UNSTABLE}\"}"
+		"{else}{wasmissingkeyword}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*s=\"%{TAG_FOR_EX_MISSING_KEYWORD}\"}"
+		"{else}{wasalienstable}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*s=\"%{TAG_FOR_EX_ALIEN_STABLE}\"}"
+		"{else}{wasalienunstable}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*s=\"%{TAG_FOR_EX_ALIEN_UNSTABLE}\"}"
+		"{else}{wasminuskeyword}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*s=\"%{TAG_FOR_EX_MINUS_KEYWORD}\"}"
+		"{else}"//{wasminusasterisk}
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*s=\"%{TAG_FOR_EX_MINUS_ASTERISK}\"}"
+		"{}{}{}{}{}{}"
+	"{else}{isunstable}"
+		"{!$c}{*c}%{FORMAT_COLOR_UNSTABLE}{}"
+		"{*s=\"%{TAG_FOR_UNSTABLE}\"}"
+	"{else}{ismissingkeyword}"
+		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+		"{*s=\"%{TAG_FOR_MISSING_KEYWORD}\"}"
+	"{else}{isalienstable}"
+		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+		"{*s=\"%{TAG_FOR_ALIEN_STABLE}\"}"
+	"{else}{isalienunstable}"
+		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+		"{*s=\"%{TAG_FOR_ALIEN_UNSTABLE}\"}"
+	"{else}{isminuskeyword}"
+		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+		"{*s=\"%{TAG_FOR_MINUS_KEYWORD}\"}"
+	"{else}"//{isminusasterisk}
+		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+		"{*s=\"%{TAG_FOR_MINUS_ASTERISK}\"}"
+	"{}{}{}{}{}{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It sets the runtime variable m to the masking tag, and unless the\n"
+	"runtime variable c is set, it outputs the color and sets c."));
 
 AddOption(STRING, "FORMAT_STABILITY",
-	"<stability>", _(
+	"{!*c}%{FORMAT_MASK_TAG}%{FORMAT_STABILITY_TAG}<$m><$s>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It is used as a wrapper for either <stability> or %{STABILITY_TAGS}.\n"
-	"See the comments in STABILITY_TAGS if you need more customization."));
+	"It outputs the stability tag, changing the color appropriately.\n"
+	"It sets the runtime variable c depending on whether color was changed."));
+
+AddOption(STRING, "FORMAT_PROPERTIES",
+	"{properties}{*c}(%{COLOR_PROPERTIES})"
+		"{propertiesinteractive}%{TAG_PROPERTIES_INTERACTIVE}{}"
+		"{propertieslive}%{TAG_PROPERTIES_LIVE}{}"
+		"{propertiesvirtual}%{TAG_PROPERTIES_VIRTUAL}{}"
+		"{propertiesset}%{TAG_PROPERTIES_SET}{}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs the properties tag, changing the color appropriately.\n"
+	"It sets the runtime variable c if color was changed."));
+
+AddOption(STRING, "FORMAT_RESTRICT",
+	"{restrict}{*c}(%{COLOR_RESTRICT})"
+		"{restrictfetch}%{TAG_RESTRICT_FETCH}{}"
+		"{restrictmirror}%{TAG_RESTRICT_MIRROR}{}"
+		"{restrictprimaryuri}%{TAG_RESTRICT_PRIMARYURI}{}"
+		"{restrictbinchecks}%{TAG_RESTRICT_BINCHECKS}{}"
+		"{restrictstrip}%{TAG_RESTRICT_STRIP}{}"
+		"{restricttest}%{TAG_RESTRICT_TEST}{}"
+		"{restrictuserpriv}%{TAG_RESTRICT_USERPRIV}{}"
+		"{restrictinstallsources}%{TAG_RESTRICT_INSTALLSOURCES}{}"
+		"{restrictbindist}%{TAG_RESTRICT_BINDIST}{}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs the restriction tag, changing the color appropriately.\n"
+	"It sets the runtime variable c if color was changed."));
 
 AddOption(STRING, "FORMAT_PROPRESTRICT",
 	"%{!NO_RESTRICTIONS}"
-		"<properties><restrictions>()"
+		"{!*c}%{FORMAT_PROPERTIES}%{FORMAT_RESTRICT}"
+		"{$c}(){}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
@@ -645,44 +657,69 @@ AddOption(STRING, "FORMAT_SLOT",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the slot format printed for slotsorted versions."));
 
-AddOption(STRING, "PVERSIONS",
-	"%{?COLORED_SLOTS}<version>"
-		"{isslot}"
-			"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
-			"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
-			"()"
+AddOption(STRING, "FORMAT_PVERSION",
+	"{color}"
+		"{installedversion}"
+			"{*c}(none;%{MARK_INSTALLED})"
+		"{else}"
+			"{isbestupgradeslot}{*c}(none;%{MARK_UPGRADE}){}"
 		"{}"
-	"%{else}<version*>%{}", _(
+		"{markedversion}{*c}(none;%{MARK_VERSIONS}){}"
+	"{}"
+	"<version>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs an available version with various marks and sets the runtime\n"
+	"variable c if a mark was printed.\n"
+	"It should be follows by FORMAT_VERSION_END or FORMAT_VERSIONS_END."));
+
+AddOption(STRING, "FORMAT_VERSION_END",
+	"{$c}(){}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It resets all colors/markers if the runtime variable c was set."));
+
+AddOption(STRING, "FORMAT_VERSIONS_END",
+	"%{?PRINT_SLOTS}"
+		"{isslot}"
+			"%{?COLORED_SLOTS}"
+				"{$c}(){}"
+				"{*c}"
+				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
+				"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
+			"%{else}"
+				"%{?COLON_SLOTS}:<slot>"
+				"%{else}\\(<slot>\\)%{}"
+			"%{}"
+		"{}"
+	"%{}"
+	"%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs an optional slot, caring about the runtime variable c,\n"
+	"and then invokes FORMAT_VERSION_END."));
+
+AddOption(STRING, "PVERSION",
+	"%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version without slot."));
+
+AddOption(STRING, "PVERSIONS",
+	"%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing a plain version with its slot."));
 
+AddOption(STRING, "AVERSION",
+	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version without slot."));
+
 AddOption(STRING, "AVERSIONS",
-	"%{FORMAT_STABILITY}%{PVERSIONS}", _(
+	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing an available version with its slot."));
 
 AddOption(STRING, "IVERSIONS",
-	"(%{COLOR_INST_VERSION})"
-	"%{?COLORED_SLOTS}<version>"
-		"{isslot}"
-			"()"
-			"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
-			"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
-		"{}"
-	"%{else}<version*>%{}"
-	"()", _(
+	"(%{COLOR_INST_VERSION}){*c}<version>%{FORMAT_VERSIONS_END}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing an installed version with its slot."));
-
-AddOption(STRING, "PVERSION",
-	"<version>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version without slot."));
-
-AddOption(STRING, "AVERSION",
-	"%{FORMAT_STABILITY}%{PVERSION}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version without slot."));
 
 AddOption(STRING, "PVERSIONS_VERBOSE",
 	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
@@ -712,7 +749,7 @@ AddOption(STRING, "AVERSION_VERBOSE",
 AddOption(STRING, "PVERSIONS_COMPACT",
 	"%{PVERSIONS}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version with important data and slot."));
+	"It defines the format for a plain version with important data and slot."));
 
 AddOption(STRING, "AVERSIONS_COMPACT",
 	"%{AVERSIONS}<overlayver>", _(
@@ -837,16 +874,16 @@ AddOption(STRING, "IVERBOSE",
 	"{}"
 	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
 	"This variable is used as a version formatter.\n"
-	"It defines the compact format of installed versions."));
+	"It defines the verbose format of installed versions."));
 
 AddOption(STRING, "NAMEVERSION",
-	"<category>/<name>-<plainversion>{!last}\\n{}", _(
+	"<category>/<name>-<version>{!last}\\n{}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <bestslotupgradeversions:NAMEVERSION>\n"
 	"or <installedversions:NAMEVERION> or <availableversions:NAMEVERSION>."));
 
 AddOption(STRING, "EQNAMEVERSION",
-	"=<category>/<name>-<plainversion>{!last}\\n{}", _(
+	"=<category>/<name>-<version>{!last}\\n{}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
 	"or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>\n."));
@@ -1040,14 +1077,14 @@ AddOption(BOOLEAN, "DIFF_NOBEST_CHANGE",
 	"If true, eix-diff prints no versions if all installable vanished."));
 
 AddOption(STRING, "FORMAT_NOBEST",
-	"(%{COLOR_MASKED})"
+	"%{FORMAT_COLOR_MASKED}"
 	"--"
 	"()", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines what to print if no version number is printed."));
 
 AddOption(STRING, "FORMAT_NOBEST_CHANGE",
-	"(%{COLOR_MASKED})"
+	"%{FORMAT_COLOR_MASKED}"
 	"??"
 	"()", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
@@ -1157,17 +1194,17 @@ AddOption(STRING, "FORMATLINE_NAME_COMPACT",
 AddOption(STRING, "DIFF_FORMATLINE_NAME_NEW",
 	"%{DIFF_FORMAT_HEADER_NEW} %{FORMAT_NAME} ", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-new header symbols."));
+	"It defines the format for the diff-new header."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_DELETE",
 	"%{DIFF_FORMAT_HEADER_DELETE} %{FORMAT_NAME} ", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-delete header symbols."));
+	"It defines the format for the diff-delete header."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"%{DIFF_FORMAT_HEADER_CHANGED} %{FORMAT_NAME} ", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-changed header symbols."));
+	"It defines the format for the diff-changed header."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
 	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
@@ -1446,7 +1483,6 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"This string is printed after IUSE data for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
 
-
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
 	" [(blue)", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1485,15 +1521,33 @@ AddOption(STRING, "FORMAT_AFTER_SLOT_IUSE",
 
 AddOption(STRING, "COLOR_MASKED",
 	"red", _(
-	"Define color for masked versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color for masked versions."));
 
 AddOption(STRING, "COLOR_UNSTABLE",
 	"yellow", _(
-	"Define color for unstable versions"));
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color for unstable versions."));
 
 AddOption(STRING, "COLOR_STABLE",
 	"green", _(
-	"Define color for stable versions"));
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color for stable versions."));
+
+AddOption(STRING, "FORMAT_COLOR_MASKED",
+	"(%{COLOR_MASKED})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format to change the color for masked versions."));
+
+AddOption(STRING, "FORMAT_COLOR_UNSTABLE",
+	"(%{COLOR_UNSTABLE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format to change the color for unstable versions."));
+
+AddOption(STRING, "FORMAT_COLOR_STABLE",
+	"(%{COLOR_STABLE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format to change the color for stable versions."));
 
 AddOption(STRING, "COLOR_OVERLAYKEY",
 	"cyan,1", _(
@@ -1505,7 +1559,7 @@ AddOption(STRING, "COLOR_VIRTUALKEY",
 
 AddOption(STRING, "COLOR_SLOTS",
 	"red,1", _(
-	"Color for slots."));
+	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_RESTRICT",
 	"red", _(
@@ -1515,69 +1569,20 @@ AddOption(STRING, "COLOR_PROPERTIES",
 	"cyan", _(
 	"Color for the properties tags. This is only used for delayed substitution."));
 
-AddOption(STRING, "COLOR_RESTRICT_FETCH",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the fetch restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_MIRROR",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the mirror restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_PRIMARYURI",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the primaryuri restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_BINCHECKS",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the binchecks restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_STRIP",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the strip restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_TEST",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the test restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_USERPRIV",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the userpriv restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_INSTALLSOURCES",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the installsources restriction tag."));
-
-AddOption(STRING, "COLOR_RESTRICT_BINDIST",
-	"%{COLOR_RESTRICT}", _(
-	"Color for the bindist restriction tag."));
-
-AddOption(STRING, "COLOR_PROPERTIES_INTERACTIVE",
-	"%{COLOR_PROPERTIES}", _(
-	"Color for the interactive properties tag."));
-
-AddOption(STRING, "COLOR_PROPERTIES_LIVE",
-	"%{COLOR_PROPERTIES}", _(
-	"Color for the live properties tag."));
-
-AddOption(STRING, "COLOR_PROPERTIES_VIRTUAL",
-	"%{COLOR_PROPERTIES}", _(
-	"Color for the virtual properties tag."));
-
-AddOption(STRING, "COLOR_PROPERTIES_SET",
-	"%{COLOR_PROPERTIES}", _(
-	"Color for the set properties tag."));
-
 AddOption(STRING, "MARK_INSTALLED",
 	"inverse", _(
-	"How installed packages are marked in version listings."));
+	"This variable is only used for delayed substitution.\n"
+	"It defines how installed versions are marked."));
 
 AddOption(STRING, "MARK_UPGRADE",
 	"bold", _(
-	"How upgrade candidates are marked in version listings."));
+	"This variable is only used for delayed substitution.\n"
+	"It defines how upgrade candidate versions are marked."));
 
 AddOption(STRING, "MARK_VERSIONS",
 	"underline", _(
-	"How the package versions passed with --pipe are marked in version listings."));
+	"This variable is only used for delayed substitution.\n"
+	"It defines how the package versions passed with --pipe are marked."));
 
 AddOption(BOOLEAN, "FORCE_USECOLORS",
 	"false", _(
@@ -1589,10 +1594,12 @@ AddOption(BOOLEAN, "FORCE_PERCENTAGE",
 
 AddOption(BOOLEAN, "COLOR_ORIGINAL",
 	"true", _(
+	"This variable is only used for delayed substitution.\n"
 	"If false, versions are only colored according to the local setting."));
 
 AddOption(BOOLEAN, "COLOR_LOCAL_MASK",
 	"false", _(
+	"This variable is only used for delayed substitution.\n"
 	"If false, COLOR_ORIGINAL=false has no effect on versions which are\n"
 	"only locally masked (i.e. [m])."));
 
@@ -1611,6 +1618,7 @@ AddOption(BOOLEAN, "COLORED_SLOTS",
 
 AddOption(BOOLEAN, "COLON_SLOTS",
 	"false", _(
+	"This variable is only used for delayed substitution.\n"
 	"If true, separated slots from versions with a colon instead of braces."));
 
 AddOption(BOOLEAN, "DEFAULT_IS_OR",
@@ -1715,6 +1723,7 @@ AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
 
 AddOption(BOOLEAN, "PRINT_SLOTS",
 	"true", _(
+	"This variable is only used for delayed substitution.\n"
 	"If false, no slot information is printed."));
 
 AddOption(BOOLEAN, "EIX_PRINT_IUSE",
@@ -1762,127 +1771,145 @@ AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
 	"!f", _(
-	"Tag for RESTRICT=fetch."));
+	"Tag for RESTRICT=fetch. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_MIRROR",
 	"!m", _(
-	"Tag for RESTRICT=mirror."));
+	"Tag for RESTRICT=mirror. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
 	"!p", _(
-	"Tag for RESTRICT=primaryuri."));
+	"Tag for RESTRICT=primaryuri. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
 	"!b", _(
-	"Tag for RESTRICT=binchecks."));
+	"Tag for RESTRICT=binchecks. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_STRIP",
 	"!s", _(
-	"Tag for RESTRICT=strip."));
+	"Tag for RESTRICT=strip. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_TEST",
 	"!t", _(
-	"Tag for RESTRICT=test."));
+	"Tag for RESTRICT=test. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_USERPRIV",
 	"!u", _(
-	"Tag for RESTRICT=userpriv."));
+	"Tag for RESTRICT=userpriv. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_INSTALLSOURCES",
 	"!i", _(
-	"Tag for RESTRICT=installsources."));
+	"Tag for RESTRICT=installsources. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_BINDIST",
 	"!d", _(
-	"Tag for RESTRICT=bindist."));
+	"Tag for RESTRICT=bindist. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_INTERACTIVE",
 	"+i", _(
-	"Tag for PROPERTIES=interactive."));
+	"Tag for PROPERTIES=interactive. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_LIVE",
 	"+l", _(
-	"Tag for PROPERTIES=live."));
+	"Tag for PROPERTIES=live. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_VIRTUAL",
 	"+v", _(
-	"Tag for PROPERTIES=virtual."));
+	"Tag for PROPERTIES=virtual. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_SET",
 	"+s", _(
-	"Tag for PROPERTIES=set."));
+	"Tag for PROPERTIES=set. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_FOR_PROFILE",
 	"[P]", _(
-	"Tag for \"profile masked\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"profile masked\" versions."));
 
 AddOption(STRING, "TAG_FOR_MASKED",
 	"[M]", _(
-	"Tag for \"package.masked\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"package.masked\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_PROFILE",
 	"{P}", _(
-	"Tag for \"originally profile masked but unmasked\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally profile masked but unmasked\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_MASKED",
 	"{M}", _(
-	"Tag for \"originally package.masked but unmasked\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally package.masked but unmasked\" versions."));
 
 AddOption(STRING, "TAG_FOR_LOCALLY_MASKED",
 	"[m]", _(
-	"Tag for \"only locally masked\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"only locally masked\" versions."));
 
 AddOption(STRING, "TAG_FOR_STABLE",
 	"", _(
-	"Tag for \"stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_UNSTABLE",
 	"~", _(
-	"Tag for \"unstable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"unstable\" versions."));
 
 AddOption(STRING, "TAG_FOR_MINUS_ASTERISK",
 	"-*", _(
-	"Tag for \"-*\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"-*\" versions."));
 
 AddOption(STRING, "TAG_FOR_MINUS_KEYWORD",
 	"-", _(
-	"Tag for \"-ARCH\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"-ARCH\" versions."));
 
 AddOption(STRING, "TAG_FOR_ALIEN_STABLE",
 	"*", _(
-	"Tag for \"ALIENARCH\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"ALIENARCH\" versions."));
 
 AddOption(STRING, "TAG_FOR_ALIEN_UNSTABLE",
 	"~*", _(
-	"Tag for \"~ALIENARCH\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"~ALIENARCH\" versions."));
 
 AddOption(STRING, "TAG_FOR_MISSING_KEYWORD",
 	"**", _(
-	"Tag for \"no keyword\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"no keyword\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_UNSTABLE",
 	"(~)", _(
-	"Tag for \"originally unstable but now stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally unstable but now stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_MINUS_ASTERISK",
 	"(-*)", _(
-	"Tag for \"originally -* but now stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally -* but now stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_MINUS_KEYWORD",
 	"(-)", _(
-	"Tag for \"originally -ARCH but now stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally -ARCH but now stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_ALIEN_STABLE",
 	"(*)", _(
-	"Tag for \"originally ALIENARCH but now stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally ALIENARCH but now stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_ALIEN_UNSTABLE",
 	"(~*)", _(
-	"Tag for \"originally ~ALIENARCH but now stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally ~ALIENARCH but now stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_MISSING_KEYWORD",
 	"(**)", _(
-	"Tag for \"originally no keyword but now stable\" versions."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally no keyword but now stable\" versions."));
 
 #endif
 
