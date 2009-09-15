@@ -607,7 +607,7 @@ AddOption(STRING, "FORMAT_STABILITY_TAG",
 		"{*s=\"%{TAG_FOR_MINUS_ASTERISK}\"}"
 	"{}{}{}{}{}{}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It sets the runtime variable m to the masking tag, and unless the\n"
+	"It sets the runtime variable s to the stability tag, and unless the\n"
 	"runtime variable c is set, it outputs the color and sets c."));
 
 AddOption(STRING, "FORMAT_STABILITY",
@@ -624,7 +624,7 @@ AddOption(STRING, "FORMAT_PROPERTIES",
 		"{propertiesset}%{TAG_PROPERTIES_SET}{}"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It outputs the properties tag, changing the color appropriately.\n"
+	"It outputs the PROPERTIES tag, changing the color appropriately.\n"
 	"It sets the runtime variable c if color was changed."));
 
 AddOption(STRING, "FORMAT_RESTRICT",
@@ -640,7 +640,7 @@ AddOption(STRING, "FORMAT_RESTRICT",
 		"{restrictbindist}%{TAG_RESTRICT_BINDIST}{}"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It outputs the restriction tag, changing the color appropriately.\n"
+	"It outputs the RESTRICT tag, changing the color appropriately.\n"
 	"It sets the runtime variable c if color was changed."));
 
 AddOption(STRING, "FORMAT_PROPRESTRICT",

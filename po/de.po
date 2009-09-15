@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-15 22:12+0200\n"
+"POT-Creation-Date: 2009-09-16 00:48+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2394,7 +2394,7 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie enthält den \"geändertes Paket\"-Trenner (eix-diff)."
 
-#: src/eixrc/defaults.cc:559 src/eixrc/defaults.cc:609
+#: src/eixrc/defaults.cc:559
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It sets the runtime variable m to the masking tag, and unless the\n"
@@ -2402,6 +2402,16 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie definiert die Laufzeit-Variable m für das Masking-Tag, und außer falls\n"
+"die Laufzeit-Variable c gesetzt ist, ändert sie die Farbe und setzt c."
+
+#: src/eixrc/defaults.cc:609
+msgid ""
+"This variable is only used for delayed substitution.\n"
+"It sets the runtime variable s to the stability tag, and unless the\n"
+"runtime variable c is set, it outputs the color and sets c."
+msgstr ""
+"Diese Variable wird nur zur Delayed Substition benutzt.\n"
+"Sie definiert die Laufzeit-Variable s für das Stability-Tag, und außer falls\n"
 "die Laufzeit-Variable c gesetzt ist, ändert sie die Farbe und setzt c."
 
 #: src/eixrc/defaults.cc:615
@@ -2417,22 +2427,22 @@ msgstr ""
 #: src/eixrc/defaults.cc:626
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It outputs the properties tag, changing the color appropriately.\n"
+"It outputs the PROPERTIES tag, changing the color appropriately.\n"
 "It sets the runtime variable c if color was changed."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie gibt das properties tag aus und setzt die Farbe entsprechend.\n"
-"Sie setzt die Laufzeit-Variable c falls die Farbe geändert wurde."
+"Sie gibt das PROPERTIES-Tag aus und setzt die Farbe entsprechend.\n"
+"Sie setzt die Laufzeit-Variable c, falls die Farbe geändert wurde."
 
 #: src/eixrc/defaults.cc:642
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It outputs the restriction tag, changing the color appropriately.\n"
+"It outputs the RESTRICT tag, changing the color appropriately.\n"
 "It sets the runtime variable c if color was changed."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie gibt das restrictions tag aus und setzt die Farbe entsprechend.\n"
-"Sie setzt die Laufzeit-Variable c falls die Farbe geändert wurde."
+"Sie gibt das RESTRICT-Tag aus und setzt die Farbe entsprechend.\n"
+"Sie setzt die Laufzeit-Variable c, falls die Farbe geändert wurde."
 
 #: src/eixrc/defaults.cc:651
 msgid ""
