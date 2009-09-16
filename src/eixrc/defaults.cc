@@ -1094,10 +1094,10 @@ AddOption(STRING, "FORMAT_NOBEST_CHANGE",
 
 AddOption(STRING, "FORMAT_BEST_COMPACT",
 	"{havebest}"
-		"<bestversion:FORMAT_TVERSION_COMPACT>"
+		"<bestversion:AVERSIONS_COMPACT>"
 	"{else}"
 		"{havebest*}"
-			"<bestversion*:FORMAT_TVERSION_COMPACT>"
+			"<bestversion*:AVERSIONS_COMPACT>"
 		"{else}"
 			"%{?NOBEST_COMPACT}"
 				"%{FORMAT_NOBEST}"
@@ -1128,10 +1128,10 @@ AddOption(STRING, "FORMAT_BEST_CHANGE",
 
 AddOption(STRING, "DIFF_FORMAT_BEST",
 	"{havebest}"
-		"<bestversion:FORMAT_TVERSION_COMPACT>"
+		"<bestversion:AVERSIONS_COMPACT>"
 	"{else}"
 		"{havebest*}"
-			"<bestversion*:FORMAT_TVERSION_COMPACT>"
+			"<bestversion*:AVERSIONS_COMPACT>"
 		"{else}"
 			"%{?DIFF_NOBEST}"
 				"%{FORMAT_NOBEST}"
