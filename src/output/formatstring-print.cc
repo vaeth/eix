@@ -214,60 +214,503 @@ PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<
 	}
 }
 
+class Scanner {
+	public:
+		enum Prop {
+			// No scanning result:
+			PROP_NONE,
+
+			// Used only in get_diff_package_property():
+			DIFF_BETTER,
+			DIFF_BESTBETTER,
+			DIFF_WORSE,
+			DIFF_BESTWORSE,
+			DIFF_DIFFER,
+			DIFF_BESTDIFFER,
+
+			// General package properties:
+			PKG_INSTALLED,
+			PKG_VERSIONLINES,
+			PKG_SLOTSORTED,
+			PKG_COLOR,
+			PKG_HAVEBEST,
+			PKG_HAVEBESTS,
+			PKG_CATEGORY,
+			PKG_NAME,
+			PKG_DESCRIPTION,
+			PKG_HOMEPAGE,
+			PKG_LICENSES,
+			PKG_PROVIDE,
+			PKG_OVERLAYKEY,
+			PKG_SYSTEM,
+			PKG_WORLD,
+			PKG_WORLD_SETS,
+			PKG_SETNAMES,
+			PKG_ALLSETNAMES,
+			PKG_UPGRADE,
+			PKG_UPGRADEORINSTALL,
+			PKG_BESTUPGRADE,
+			PKG_BESTUPGRADEORINSTALL,
+			PKG_DOWNGRADE,
+			PKG_BESTDOWNGRADE,
+			PKG_RECOMMEND,
+			PKG_RECOMMENDORINSTALL,
+			PKG_BESTRECOMMEND,
+			PKG_BESTRECOMMENDORINSTALL,
+			PKG_MARKED,
+			PKG_COLLIUSE,
+			PKG_HAVEVERSIONUSE,
+
+			// Used only in version context:
+			VER_FIRST,
+			VER_LAST,
+			VER_SLOTFIRST,
+			VER_SLOTLAST,
+			VER_ONESLOT,
+			VER_SLOT,
+			VER_ISSLOT,
+			VER_VERSION,
+			VER_OVERLAYVER,
+			VER_VERSIONKEYWORDS,
+			VER_HAVEUSE,
+			VER_ISBESTUPGRADE,
+			VER_ISBESTUPGRADES,
+			VER_ISBESTUPGRADESLOT,
+			VER_ISBESTUPGRADESLOTS,
+			VER_MARKEDVERSION,
+			VER_INSTALLEDVERSION,
+			VER_USE,
+			VER_RESTRICT,
+			VER_RESTRICTFETCH,
+			VER_RESTRICTMIRROR,
+			VER_RESTRICTPRIMARYURI,
+			VER_RESTRICTBINCHECKS,
+			VER_RESTRICTSTRIP,
+			VER_RESTRICTTEST,
+			VER_RESTRICTUSERPRIV,
+			VER_RESTRICTINSTALLSOURCES,
+			VER_RESTRICTBINDIST,
+			VER_PROPERTIES,
+			VER_PROPERTIESINTERACTIVE,
+			VER_PROPERTIESLIVE,
+			VER_PROPERTIESVIRTUAL,
+			VER_PROPERTIESSET,
+			VER_ISHARDMASKED,
+			VER_ISPROFILEMASKED,
+			VER_ISMASKED,
+			VER_ISSTABLE,
+			VER_ISUNSTABLE,
+			VER_ISALIENSTABLE,
+			VER_ISALIENUNSTABLE,
+			VER_ISMISSINGKEYWORD,
+			VER_ISMINUSKEYWORD,
+			VER_ISMINUSASTERISK,
+			VER_WASHARDMASKED,
+			VER_WASPROFILEMASKED,
+			VER_WASMASKED,
+			VER_WASSTABLE,
+			VER_WASUNSTABLE,
+			VER_WASALIENSTABLE,
+			VER_WASALIENUNSTABLE,
+			VER_WASMISSINGKEYWORD,
+			VER_WASMINUSKEYWORD,
+			VER_WASMINUSASTERISK
+		};
+		enum PropType { PKG, VER };
+
+	protected:
+		map<string,Prop> diff;
+		map<string,pair<Prop,PropType> > prop;
+
+		void prop_pkg(const char *s, Prop p)
+		{ prop[s] = pair<Prop,PropType>(p, PKG); }
+
+		void prop_ver(const char *s, Prop p)
+		{ prop[s] = pair<Prop,PropType>(p, VER); }
+
+	public:
+		Scanner()
+		{
+			diff["better"] = DIFF_BETTER;
+			diff["bestbetter"] = DIFF_BESTBETTER;
+			diff["worse"] = DIFF_WORSE;
+			diff["bestworse"] = DIFF_BESTWORSE;
+			diff["differ"] = DIFF_DIFFER;
+			diff["bestdiffer"] = DIFF_BESTDIFFER;
+			prop_pkg("installed", PKG_INSTALLED);
+			prop_pkg("versionlines", PKG_VERSIONLINES);
+			prop_pkg("slotsorted", PKG_SLOTSORTED);
+			prop_pkg("color", PKG_COLOR);
+			prop_pkg("havebest", PKG_HAVEBEST);
+			prop_pkg("havebest*", PKG_HAVEBESTS);
+			prop_pkg("category", PKG_CATEGORY);
+			prop_pkg("name", PKG_NAME);
+			prop_pkg("description", PKG_DESCRIPTION);
+			prop_pkg("homepage", PKG_HOMEPAGE);
+			prop_pkg("licenses", PKG_LICENSES);
+			prop_pkg("provide", PKG_PROVIDE);
+			prop_pkg("overlaykey", PKG_OVERLAYKEY);
+			prop_pkg("system", PKG_SYSTEM);
+			prop_pkg("world", PKG_WORLD);
+			prop_pkg("world_sets", PKG_WORLD_SETS);
+			prop_pkg("setnames", PKG_SETNAMES);
+			prop_pkg("allsetnames", PKG_ALLSETNAMES);
+			prop_pkg("upgrade", PKG_UPGRADE);
+			prop_pkg("upgradeorinstall", PKG_UPGRADEORINSTALL);
+			prop_pkg("bestupgrade", PKG_BESTUPGRADE);
+			prop_pkg("bestupgradeorinstall", PKG_BESTUPGRADEORINSTALL);
+			prop_pkg("downgrade", PKG_DOWNGRADE);
+			prop_pkg("bestdowngrade", PKG_BESTDOWNGRADE);
+			prop_pkg("recommend", PKG_RECOMMEND);
+			prop_pkg("recommendorinstall", PKG_RECOMMENDORINSTALL);
+			prop_pkg("bestrecommend", PKG_BESTRECOMMEND);
+			prop_pkg("bestrecommendorinstall", PKG_BESTRECOMMENDORINSTALL);
+			prop_pkg("marked", PKG_MARKED);
+			prop_pkg("colliuse", PKG_COLLIUSE);
+			prop_pkg("haveversionuse", PKG_HAVEVERSIONUSE);
+			prop_ver("first", VER_FIRST);
+			prop_ver("last", VER_LAST);
+			prop_ver("slotfirst", VER_SLOTFIRST);
+			prop_ver("slotlast", VER_SLOTLAST);
+			prop_ver("oneslot", VER_ONESLOT);
+			prop_ver("slot", VER_SLOT);
+			prop_ver("isslot", VER_ISSLOT);
+			prop_ver("version", VER_VERSION);
+			prop_ver("overlayver", VER_OVERLAYVER);
+			prop_ver("versionkeywords", VER_VERSIONKEYWORDS);
+			prop_ver("haveuse", VER_HAVEUSE);
+			prop_ver("isbestupgrade", VER_ISBESTUPGRADE);
+			prop_ver("isbestupgrade*", VER_ISBESTUPGRADES);
+			prop_ver("isbestupgradeslot", VER_ISBESTUPGRADESLOT);
+			prop_ver("isbestupgradeslot*", VER_ISBESTUPGRADESLOTS);
+			prop_ver("markedversion", VER_MARKEDVERSION);
+			prop_ver("installedversion", VER_INSTALLEDVERSION);
+			prop_ver("use", VER_USE);
+			prop_ver("restrict", VER_RESTRICT);
+			prop_ver("restrictfetch", VER_RESTRICTFETCH);
+			prop_ver("restrictmirror", VER_RESTRICTMIRROR);
+			prop_ver("restrictprimaryuri", VER_RESTRICTPRIMARYURI);
+			prop_ver("restrictbinchecks", VER_RESTRICTBINCHECKS);
+			prop_ver("restrictstrip", VER_RESTRICTSTRIP);
+			prop_ver("restricttest", VER_RESTRICTTEST);
+			prop_ver("restrictuserpriv", VER_RESTRICTUSERPRIV);
+			prop_ver("restrictinstallsources", VER_RESTRICTINSTALLSOURCES);
+			prop_ver("restrictbindist", VER_RESTRICTBINDIST);
+			prop_ver("properties", VER_PROPERTIES);
+			prop_ver("propertiesinteractive", VER_PROPERTIESINTERACTIVE);
+			prop_ver("propertieslive", VER_PROPERTIESLIVE);
+			prop_ver("propertiesvirtual", VER_PROPERTIESVIRTUAL);
+			prop_ver("propertiesset", VER_PROPERTIESSET);
+			prop_ver("ishardmasked", VER_ISHARDMASKED);
+			prop_ver("isprofilemasked", VER_ISPROFILEMASKED);
+			prop_ver("ismasked", VER_ISMASKED);
+			prop_ver("isstable", VER_ISSTABLE);
+			prop_ver("isunstable", VER_ISUNSTABLE);
+			prop_ver("isalienstable", VER_ISALIENSTABLE);
+			prop_ver("isalienunstable", VER_ISALIENUNSTABLE);
+			prop_ver("ismissingkeyword", VER_ISMISSINGKEYWORD);
+			prop_ver("isminuskeyword", VER_ISMINUSKEYWORD);
+			prop_ver("isminusasterisk", VER_ISMINUSASTERISK);
+			prop_ver("washardmasked", VER_WASHARDMASKED);
+			prop_ver("wasprofilemasked", VER_WASPROFILEMASKED);
+			prop_ver("wasmasked", VER_WASMASKED);
+			prop_ver("wasstable", VER_WASSTABLE);
+			prop_ver("wasunstable", VER_WASUNSTABLE);
+			prop_ver("wasalienstable", VER_WASALIENSTABLE);
+			prop_ver("wasalienunstable", VER_WASALIENUNSTABLE);
+			prop_ver("wasmissingkeyword", VER_WASMISSINGKEYWORD);
+			prop_ver("wasminuskeyword", VER_WASMINUSKEYWORD);
+			prop_ver("wasminusasterisK", VER_WASMINUSASTERISK);
+		}
+
+		Prop get_diff(const string& s) const
+		{
+			map<string,Prop>::const_iterator it = diff.find(s);
+			if(it == diff.end())
+				return PROP_NONE;
+			return it->second;
+		}
+
+		Prop get_prop(const string& s, PropType *p) const
+		{
+			map<string,pair<Prop,PropType> >::const_iterator it = prop.find(s);
+			if(it == prop.end())
+				return PROP_NONE;
+			*p = it->second.second;
+			return it->second.first;
+		}
+};
+static Scanner scanner;
+
 string
 PrintFormat::get_pkg_property(const Package *package, const string &name) const throw(ExBasic)
 {
-	if(version_variables) {
-		if(name == "first") {
-			if(version_variables->first)
-				return "1";
-			return "";
-		}
-		if(name == "last") {
-			if(version_variables->last)
-				return "1";
-			return "";
-		}
-		if(name == "slotfirst") {
-			if(version_variables->slotfirst)
-				return "1";
-			return "";
-		}
-		if(name == "slotlast") {
-			if(version_variables->slotlast)
-				return "1";
-			return "";
-		}
-		if(name == "oneslot") {
-			if(version_variables->oneslot)
-				return "1";
-			return "";
-		}
-		if((name == "slot") || (name == "isslot")) {
-			const string *slot;
+	static const string one("1");
+	static const string empty("");
+	Scanner::PropType t = Scanner::PKG;
+	Scanner::Prop prop = scanner.get_prop(name, &t);
+	if((t == Scanner::VER) && !version_variables) {
+		throw ExBasic(_("Property %r used outside version context")) % name;
+	}
+	if(prop == Scanner::PROP_NONE) {
+		if(strncmp(name.c_str(), "date:", 5) == 0) {
+			if(!version_variables) {
+				throw ExBasic(_("Property %r used outside version context")) % name;
+			}
 			if(version_variables->isinst) {
-				InstVersion *i = version_variables->instver();
-				if((!vardb) || !(package->guess_slotname(*i, vardb)))
-					i->slotname = "?";
-				slot = &(i->slotname);
+				return date_conv((*eix_rc)[name.substr(5)].c_str(),
+					version_variables->instver()->instDate);
 			}
-			else
-				slot = &(version_variables->version()->slotname);
-			if(name.size() != 4) {
-				if(slot->empty() || (*slot == "0"))
-					return "";
-				return "1";
-			}
-			if(slot->empty())
-				return "0";
-			return *slot;
+			return empty;
 		}
-		if(name == "version") {
+		string::size_type col = name.find(':');
+		if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {
+			// <availableversions:VAR[:VAR]>, <installedversions:VAR>, ...
+			string plainname = name.substr(0, col);
+			string varname = name.substr(col + 1);
+			string varsortname;
+			string *parsed = NULL;
+			col = varname.find(':');
+			if(col != string::npos) {
+				varsortname = varname.substr(col + 1);
+				varname.erase(col);
+			}
+			VersionVariables variables;
+			VersionVariables *previous_variables = version_variables;
+			version_variables = &variables;
+			if(plainname.find("best") != string::npos) {
+				// <bestversionslot:VAR>, ...
+				bool accept_unstable = (plainname.find_first_of('*') != string::npos);
+				if(plainname.find("slot") != string::npos) {
+					vector<Version*> versions;
+					if(plainname.find("upgrade") != string::npos)
+						package->best_slots_upgrade(versions, vardb, portagesettings, accept_unstable);
+					else
+						package->best_slots(versions, accept_unstable);
+					if(!versions.empty()) {
+						parsed = &varname;
+						get_versions_versorted(package, parse_variable(varname), &versions);
+					}
+				}
+				else {
+					// <bestversion:VAR>
+					const Version *ver = package->best(accept_unstable);
+					variables.setversion(ver);
+					if(ver) {
+						parsed = &varname;
+						recPrint(&(variables.result), package, get_package_property, parse_variable(varname));
+					}
+				}
+			}
+			else {
+				bool marked = (plainname.find("mark") != string::npos);
+				if(plainname.find("install") != string::npos) {
+					// <installedversions:VAR>, ...
+					variables.isinst = true;
+					parsed = &varname;
+					get_installed(package, parse_variable(varname), marked);
+				}
+				else {
+					// <{available,marked}versions:VAR[:VAR]>, ...
+					vector<Version*> *versions = NULL;
+					if(marked) {
+						versions = new vector<Version*>;
+						for(Package::const_iterator it = package->begin();
+							it != package->end(); ++it) {
+							if(marked_list->is_marked(*package, &(**it))) {
+								versions->push_back(*it);
+							}
+						}
+					}
+					if((!versions) || !(versions->empty())) {
+						if(varsortname.empty() || !(package->have_nontrivial_slots())) {
+							parsed = &varname;
+							get_versions_versorted(package, parse_variable(varname), versions);
+						}
+						else {
+							parsed = &varsortname;
+							get_versions_slotsorted(package, parse_variable(varsortname), versions);
+						}
+					}
+					if(versions)
+						delete versions;
+				}
+			}
+			if(parsed)
+				varcache[*parsed].in_use = false;
+			version_variables = previous_variables;
+			return variables.result;
+		}
+		throw ExBasic(_("Unknown property %r")) % name;
+	}
+	bool a = false;
+	switch(prop) {
+		case Scanner::PKG_INSTALLED:
+			if(vardb) {
+				vector<InstVersion> *vec = vardb->getInstalledVector(*package);
+				if(vec && !(vec->empty()))
+					return one;
+			}
+			break;
+		case Scanner::PKG_VERSIONLINES:
+			if(style_version_lines)
+				return one;
+			break;
+		case Scanner::PKG_SLOTSORTED:
+			if(slot_sorted)
+				return one;
+			break;
+		case Scanner::PKG_COLOR:
+			if(no_color)
+				break;
+			return one;
+		case Scanner::PKG_HAVEBEST:
+			if(package->best(false))
+				return one;
+			break;
+		case Scanner::PKG_HAVEBESTS:
+			if(package->best(true))
+				return one;
+			break;
+		case Scanner::PKG_CATEGORY:
+			return package->category;
+		case Scanner::PKG_NAME:
+			return package->name;
+		case Scanner::PKG_DESCRIPTION:
+			return package->desc;
+		case Scanner::PKG_HOMEPAGE:
+			return package->homepage;
+		case Scanner::PKG_LICENSES:
+			return package->licenses;
+		case Scanner::PKG_PROVIDE:
+			return package->provide;
+		case Scanner::PKG_OVERLAYKEY:
+			{
+				Version::Overlay ov_key = package->largest_overlay;
+				if(ov_key && package->have_same_overlay_key())
+					return overlay_keytext(ov_key, false);
+			}
+			break;
+		case Scanner::PKG_SYSTEM:
+			if(package->is_system_package())
+				return one;
+			break;
+		case Scanner::PKG_WORLD:
+			if(package->is_world_package())
+				return one;
+			break;
+		case Scanner::PKG_WORLD_SETS:
+			if(package->is_world_sets_package())
+				return one;
+			break;
+		case Scanner::PKG_SETNAMES:
+			return portagesettings->get_setnames(package);
+		case Scanner::PKG_ALLSETNAMES:
+			return portagesettings->get_setnames(package, true);
+		case Scanner::PKG_UPGRADE:
+		case Scanner::PKG_UPGRADEORINSTALL:
+			a = true;
+		case Scanner::PKG_BESTUPGRADE:
+		case Scanner::PKG_BESTUPGRADEORINSTALL:
+			{
+				LocalCopy copy(this, const_cast<Package*>(package));
+				bool result = package->can_upgrade(vardb, portagesettings,
+					((prop == Scanner::PKG_UPGRADE) ||
+					 (prop == Scanner::PKG_BESTUPGRADE)),
+					a);
+				copy.restore(const_cast<Package*>(package));
+				if(result)
+					return one;
+			}
+			break;
+		case Scanner::PKG_DOWNGRADE:
+			a = true;
+		case Scanner::PKG_BESTDOWNGRADE:
+			{
+				LocalCopy copy(this, const_cast<Package*>(package));
+				bool result = package->must_downgrade(vardb, a);
+				copy.restore(const_cast<Package*>(package));
+				if(result)
+					return one;
+			}
+			break;
+		case Scanner::PKG_RECOMMEND:
+		case Scanner::PKG_RECOMMENDORINSTALL:
+			a = true;
+		case Scanner::PKG_BESTRECOMMEND:
+		case Scanner::PKG_BESTRECOMMENDORINSTALL:
+			{
+				LocalCopy copy(this, const_cast<Package*>(package));
+				bool result = package->recommend(vardb, portagesettings,
+					((prop == Scanner::PKG_RECOMMEND) ||
+					 (prop == Scanner::PKG_BESTRECOMMEND)),
+					a);
+				copy.restore(const_cast<Package*>(package));
+				if(result)
+					return one;
+			}
+			break;
+		case Scanner::PKG_MARKED:
+			if(marked_list) {
+				if(marked_list->is_marked(*package))
+					return one;
+			}
+			break;
+		case Scanner::PKG_COLLIUSE:
+			return package->coll_iuse();
+		case Scanner::PKG_HAVEVERSIONUSE:
+#ifndef NOT_FULL_USE
+			if(package->versions_have_full_use)
+				return one;
+#endif
+			break;
+		case Scanner::VER_FIRST:
+			if(version_variables->first)
+				return one;
+			break;
+		case Scanner::VER_LAST:
+			if(version_variables->last)
+				return one;
+			break;
+		case Scanner::VER_SLOTFIRST:
+			if(version_variables->slotfirst)
+				return one;
+			break;
+		case Scanner::VER_SLOTLAST:
+			if(version_variables->slotlast)
+				return one;
+			break;
+		case Scanner::VER_ONESLOT:
+			if(version_variables->oneslot)
+				return one;
+			break;
+		case Scanner::VER_SLOT:
+			a = true;
+		case Scanner::VER_ISSLOT:
+			{
+				const string *slot;
+				if(version_variables->isinst) {
+					InstVersion *i = version_variables->instver();
+					if((!vardb) || !(package->guess_slotname(*i, vardb)))
+						i->slotname = "?";
+					slot = &(i->slotname);
+				}
+				else
+					slot = &(version_variables->version()->slotname);
+				if(a) {
+					if(slot->empty())
+						return "0";
+					return *slot;
+				}
+				if((!(slot->empty())) && (*slot != "0"))
+					return one;
+			}
+			break;
+		case Scanner::VER_VERSION:
 			if(version_variables->isinst)
 				return version_variables->instver()->getFull();
 			return version_variables->version()->getFull();
-		}
-		if(name == "overlayver") {
+		case Scanner::VER_OVERLAYVER:
 			if(version_variables->isinst) {
 				InstVersion *i = version_variables->instver();
 				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str()))) {
@@ -280,420 +723,260 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					if((!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key))
 						return overlay_keytext(i->overlay_key);
 				}
-				return "";
 			}
-			if(!package->have_same_overlay_key()) {
+			else if(!package->have_same_overlay_key()) {
 				if(version_variables->version()->overlay_key)
 					return overlay_keytext(version_variables->version()->overlay_key);
 			}
-			return "";
-		}
-		if(name == "versionkeywords") {
-			if(version_variables->isinst)
-				return "";
-			return get_version_keywords(package, version_variables->version());
-		}
-		if(name == "haveuse") {
+			break;
+		case Scanner::VER_VERSIONKEYWORDS:
+			if(!(version_variables->isinst))
+				return get_version_keywords(package, version_variables->version());
+			break;
+		case Scanner::VER_HAVEUSE:
 			if(version_variables->isinst) {
 				InstVersion &i = *(version_variables->instver());
 				if(vardb && (vardb->readUse(*package, i)) && !(i.inst_iuse.empty()))
-					return "1";
-				return "";
+					return one;
+				break;
 			}
-			if(version_variables->version()->iuse_vector().empty())
-				return "";
-			return "1";
-		}
-		if((name == "isbestupgrade") || (name == "isbestupgrade*") ||
-			(name == "isbestupgradeslot") || (name == "isbestupgradeslot*")) {
+			if(!(version_variables->version()->iuse_vector().empty()))
+				return one;
+			break;
+		case Scanner::VER_ISBESTUPGRADE:
+		case Scanner::VER_ISBESTUPGRADES:
+			a = true;
+		case Scanner::VER_ISBESTUPGRADESLOT:
+		case Scanner::VER_ISBESTUPGRADESLOTS:
 			if(version_variables->isinst)
-				return "";
+				break;
 			if(vardb && portagesettings &&
 				package->is_best_upgrade(
-					(name.find("slot") != string::npos),
+					(!a),
 					version_variables->version(),
 					vardb, portagesettings,
-					(name.find('*') != string::npos)))
-				return "1";
-			return "";
-		}
-		if(name == "use") {
+					((prop == Scanner::VER_ISBESTUPGRADES) ||
+					 (prop == Scanner::VER_ISBESTUPGRADESLOTS))))
+				return one;
+			break;
+		case Scanner::VER_MARKEDVERSION:
 			if(version_variables->isinst)
-				return get_inst_use(*package, *(version_variables->instver()));
-			return version_variables->version()->iuse();
-		}
-		if(strncmp(name.c_str(), "date:", 5) == 0) {
-			if(version_variables->isinst) {
-				return date_conv((*eix_rc)[name.substr(5)].c_str(),
-					version_variables->instver()->instDate);
-			}
-			return "";
-		}
-		if((name.find("stable") != string::npos) ||
-			(name.find("mask") != string::npos) ||
-			(name.find("keyword") != string::npos) ||
-			(name.find("asterisk") != string::npos)) {
-			if(version_variables->isinst)
-				return "";
-			const Version *version = version_variables->version();
-			MaskFlags mymask(version->maskflags);
-			KeywordsFlags mykey(version->keyflags);
-			if(name.find("was") != string::npos) {
-				stability->calc_version_flags(false, mymask, mykey,
-					version, package);
-			}
-			if(name.find("mask") != string::npos) {
-				if(name.find("hard") != string::npos) {
-					if(mymask.isHardMasked())
-						return "1";
-					return "";
-				}
-				if(name.find("profile") != string::npos) {
-					if(mymask.isProfileMask())
-						return "1";
-					return "";
-				}
-				if(mymask.isPackageMask())
-					return "1";
-				return "";
-			}
-			if(name.find("alien") != string::npos) {
-				if(name.find("unstable") != string::npos) {
-					if(mykey.isAlienUnstable())
-						return "1";
-					return "";
-				}
-				if(mykey.isAlienStable())
-					return "1";
-				return "";
-			}
-			if(name.find("unstable") != string::npos) {
-				if(mykey.isUnstable())
-					return "1";
-				return "";
-			}
-			if(name.find("stable") != string::npos) {
-				if(mykey.isStable())
-					return "1";
-				return "";
-			}
-			if(name.find("keyword") != string::npos) {
-				if(mykey.isMinusKeyword())
-					return "1";
-				return "";
-			}
-			if(mykey.isMinusAsterisk())
-				return "1";
-			return "";
-		}
-		if(name == "markedversion") {
-			if(version_variables->isinst)
-				return "";
+				break;
 			if(marked_list && marked_list->is_marked(*package,
 				version_variables->version()))
-				return "1";
-			return "";
-		}
-		if(name == "installedversion") {
+				return one;
+			break;
+		case Scanner::VER_INSTALLEDVERSION:
 			if(version_variables->isinst)
-				return "1";
+				return one;
 			if(vardb && header && vardb->isInstalledVersion(*package,
 				version_variables->version(),
 				*header, (*portagesettings)["PORTDIR"].c_str()))
-				return "1";
-			return "";
-		}
-		if(name.find("restrict") != string::npos) {
-			ExtendedVersion::Restrict restrict;
-			if(version_variables->isinst) {
-				if(!version_variables->know_restrict) {
-					if(vardb && header &&
-						(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
-						version_variables->know_restrict = true;
-					else
-						return "";
+				return one;
+			break;
+		case Scanner::VER_USE:
+			if(version_variables->isinst)
+				return get_inst_use(*package, *(version_variables->instver()));
+			return version_variables->version()->iuse();
+		case Scanner::VER_RESTRICT:
+		case Scanner::VER_RESTRICTFETCH:
+		case Scanner::VER_RESTRICTMIRROR:
+		case Scanner::VER_RESTRICTPRIMARYURI:
+		case Scanner::VER_RESTRICTBINCHECKS:
+		case Scanner::VER_RESTRICTSTRIP:
+		case Scanner::VER_RESTRICTTEST:
+		case Scanner::VER_RESTRICTUSERPRIV:
+		case Scanner::VER_RESTRICTINSTALLSOURCES:
+		case Scanner::VER_RESTRICTBINDIST:
+			{
+				ExtendedVersion::Restrict restrict;
+				if(version_variables->isinst) {
+					if(!version_variables->know_restrict) {
+						if(vardb && header &&
+							(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
+							version_variables->know_restrict = true;
+						else
+							break;
+					}
+					restrict = version_variables->instver()->restrictFlags;
 				}
-				restrict = version_variables->instver()->restrictFlags;
-			}
-			else
-				restrict = version_variables->version()->restrictFlags;
-			if(name.find("fetch") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_FETCH)
-					return "1";
-			}
-			else if(name.find("mirror") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_MIRROR)
-					return "1";
-			}
-			else if(name.find("primary") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)
-					return "1";
-			}
-			else if(name.find("bincheck") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_BINCHECKS)
-					return "1";
-			}
-			else if(name.find("strip") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_STRIP)
-					return "1";
-			}
-			else if(name.find("test") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_TEST)
-					return "1";
-			}
-			else if(name.find("user") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_USERPRIV)
-					return "1";
-			}
-			else if(name.find("install") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)
-					return "1";
-			}
-			else if(name.find("bindist") != string::npos) {
-				if(restrict & ExtendedVersion::RESTRICT_BINDIST)
-					return "1";
-			}
-			else if(restrict != ExtendedVersion::RESTRICT_NONE)
-				return "1";
-			return "";
-		}
-		if(name.find("proper") != string::npos) {
-			ExtendedVersion::Properties properties;
-			if(version_variables->isinst) {
-				if(!version_variables->know_restrict) {
-					if(vardb && header &&
-						(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
-						version_variables->know_restrict = true;
-					else
-						return "";
-				}
-				properties = version_variables->instver()->propertiesFlags;
-			}
-			else
-				properties = version_variables->version()->propertiesFlags;
-			if(name.find("inter") != string::npos) {
-				if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)
-					return "1";
-			}
-			else if(name.find("live") != string::npos) {
-				if(properties & ExtendedVersion::PROPERTIES_LIVE)
-					return "1";
-			}
-			else if(name.find("virtual") != string::npos) {
-				if(properties & ExtendedVersion::PROPERTIES_VIRTUAL)
-					return "1";
-			}
-			else if(name.find("set") != string::npos) {
-				if(properties & ExtendedVersion::PROPERTIES_SET)
-					return "1";
-			}
-			else if(properties != ExtendedVersion::PROPERTIES_NONE)
-				return "1";
-			return "";
-		}
-	}
-	string::size_type col = name.find(':');
-	if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {
-		// <availableversions:VAR[:VAR]>, <installedversions:VAR>, ...
-		string plainname = name.substr(0, col);
-		string varname = name.substr(col + 1);
-		string varsortname;
-		string *parsed = NULL;
-		col = varname.find(':');
-		if(col != string::npos) {
-			varsortname = varname.substr(col + 1);
-			varname.erase(col);
-		}
-		VersionVariables variables;
-		VersionVariables *previous_variables = version_variables;
-		version_variables = &variables;
-		if(plainname.find("best") != string::npos) {
-			// <bestversionslot:VAR>, ...
-			bool accept_unstable = (plainname.find_first_of('*') != string::npos);
-			if(plainname.find("slot") != string::npos) {
-				vector<Version*> versions;
-				if(plainname.find("upgrade") != string::npos)
-					package->best_slots_upgrade(versions, vardb, portagesettings, accept_unstable);
 				else
-					package->best_slots(versions, accept_unstable);
-				if(!versions.empty()) {
-					parsed = &varname;
-					get_versions_versorted(package, parse_variable(varname), &versions);
+					restrict = version_variables->version()->restrictFlags;
+				switch(prop) {
+					case Scanner::VER_RESTRICTFETCH:
+						if(restrict & ExtendedVersion::RESTRICT_FETCH)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTMIRROR:
+						if(restrict & ExtendedVersion::RESTRICT_MIRROR)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTPRIMARYURI:
+						if(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTBINCHECKS:
+						if(restrict & ExtendedVersion::RESTRICT_BINCHECKS)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTSTRIP:
+						if(restrict & ExtendedVersion::RESTRICT_STRIP)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTTEST:
+						if(restrict & ExtendedVersion::RESTRICT_TEST)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTUSERPRIV:
+						if(restrict & ExtendedVersion::RESTRICT_USERPRIV)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTINSTALLSOURCES:
+						if(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)
+							return one;
+						break;
+					case Scanner::VER_RESTRICTBINDIST:
+						if(restrict & ExtendedVersion::RESTRICT_BINDIST)
+							return one;
+						break;
+					default:
+					//case Scanner::VER_RESTRICT:
+						if(restrict != ExtendedVersion::RESTRICT_NONE)
+							return one;
+						break;
 				}
 			}
-			else {
-				// <bestversion:VAR>
-				const Version *ver = package->best(accept_unstable);
-				variables.setversion(ver);
-				if(ver) {
-					parsed = &varname;
-					recPrint(&(variables.result), package, get_package_property, parse_variable(varname));
-				}
-			}
-		}
-		else {
-			bool marked = (plainname.find("mark") != string::npos);
-			if(plainname.find("install") != string::npos) {
-				// <installedversions:VAR>, ...
-				variables.isinst = true;
-				parsed = &varname;
-				get_installed(package, parse_variable(varname), marked);
-			}
-			else {
-				// <{available,marked}versions:VAR[:VAR]>, ...
-				vector<Version*> *versions = NULL;
-				if(marked) {
-					versions = new vector<Version*>;
-					for(Package::const_iterator it = package->begin();
-						it != package->end(); ++it) {
-						if(marked_list->is_marked(*package, &(**it))) {
-							versions->push_back(*it);
-						}
+			break;
+		case Scanner::VER_PROPERTIES:
+		case Scanner::VER_PROPERTIESINTERACTIVE:
+		case Scanner::VER_PROPERTIESLIVE:
+		case Scanner::VER_PROPERTIESVIRTUAL:
+		case Scanner::VER_PROPERTIESSET:
+			{
+				ExtendedVersion::Properties properties;
+				if(version_variables->isinst) {
+					if(!version_variables->know_restrict) {
+						if(vardb && header &&
+							(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
+							version_variables->know_restrict = true;
+						else
+							break;
 					}
+					properties = version_variables->instver()->propertiesFlags;
 				}
-				if((!versions) || !(versions->empty())) {
-					if(varsortname.empty() || !(package->have_nontrivial_slots())) {
-						parsed = &varname;
-						get_versions_versorted(package, parse_variable(varname), versions);
-					}
-					else {
-						parsed = &varsortname;
-						get_versions_slotsorted(package, parse_variable(varsortname), versions);
-					}
+				else
+					properties = version_variables->version()->propertiesFlags;
+				switch(prop) {
+					case Scanner::VER_PROPERTIESINTERACTIVE:
+						if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)
+							return one;
+						break;
+					case Scanner::VER_PROPERTIESLIVE:
+						if(properties & ExtendedVersion::PROPERTIES_LIVE)
+							return one;
+						break;
+					case Scanner::VER_PROPERTIESVIRTUAL:
+						if(properties & ExtendedVersion::PROPERTIES_VIRTUAL)
+							return one;
+						break;
+					case Scanner::VER_PROPERTIESSET:
+						if(properties & ExtendedVersion::PROPERTIES_SET)
+							return one;
+						break;
+					default:
+					//case Scanner::VER_PROPERTIESSET:
+						if(properties != ExtendedVersion::PROPERTIES_NONE)
+							return one;
+						break;
 				}
-				if(versions)
-					delete versions;
 			}
-		}
-		if(parsed)
-			varcache[*parsed].in_use = false;
-		version_variables = previous_variables;
-		return variables.result;
+			break;
+		case Scanner::VER_ISHARDMASKED:
+		case Scanner::VER_ISPROFILEMASKED:
+		case Scanner::VER_ISMASKED:
+		case Scanner::VER_ISSTABLE:
+		case Scanner::VER_ISUNSTABLE:
+		case Scanner::VER_ISALIENSTABLE:
+		case Scanner::VER_ISALIENUNSTABLE:
+		case Scanner::VER_ISMISSINGKEYWORD:
+		case Scanner::VER_ISMINUSKEYWORD:
+		case Scanner::VER_ISMINUSASTERISK:
+			a = true;
+		default:
+		//case Scanner::VER_WAS....
+			if(!(version_variables->isinst)) {
+				const Version *version = version_variables->version();
+				MaskFlags mymask(version->maskflags);
+				KeywordsFlags mykey(version->keyflags);
+				if(!a)
+					stability->calc_version_flags(false, mymask, mykey, version, package);
+				switch(prop) {
+					case Scanner::VER_ISHARDMASKED:
+					case Scanner::VER_WASHARDMASKED:
+						if(mymask.isHardMasked())
+							return one;
+						break;
+					case Scanner::VER_ISPROFILEMASKED:
+					case Scanner::VER_WASPROFILEMASKED:
+						if(mymask.isProfileMask())
+							return one;
+						break;
+					case Scanner::VER_ISMASKED:
+					case Scanner::VER_WASMASKED:
+						if(mymask.isPackageMask())
+							return one;
+						break;
+					case Scanner::VER_ISSTABLE:
+					case Scanner::VER_WASSTABLE:
+						if(mykey.isStable())
+							return one;
+						break;
+					case Scanner::VER_ISUNSTABLE:
+					case Scanner::VER_WASUNSTABLE:
+						if(mykey.isUnstable())
+							return one;
+						break;
+					case Scanner::VER_ISALIENSTABLE:
+					case Scanner::VER_WASALIENSTABLE:
+						if(mykey.isAlienStable())
+							return one;
+						break;
+					case Scanner::VER_ISALIENUNSTABLE:
+					case Scanner::VER_WASALIENUNSTABLE:
+						if(mykey.isAlienUnstable())
+							return one;
+						break;
+					case Scanner::VER_ISMISSINGKEYWORD:
+					case Scanner::VER_WASMISSINGKEYWORD:
+						if(mykey.isMissingKeyword())
+							return one;
+						break;
+					case Scanner::VER_ISMINUSKEYWORD:
+					case Scanner::VER_WASMINUSKEYWORD:
+						if(mykey.isMinusKeyword())
+							return one;
+						break;
+					default:
+					//case Scanner::VER_ISMINUSASTERISK:
+					//case Scanner::VER_WASMINUSASTERISK:
+						if(mykey.isMinusAsterisk())
+							return one;
+						break;
+				}
+			}
+			break;
 	}
-	if(name == "installed") {
-		if(vardb) {
-			vector<InstVersion> *vec = vardb->getInstalledVector(*package);
-			if(vec && !(vec->empty()))
-				return "1";
-		}
-		return "";
-	}
-	if(name == "versionlines") {
-		if(style_version_lines)
-			return "1";
-		return "";
-	}
-	if(name == "slotsorted") {
-		if(slot_sorted)
-			return "1";
-		return "";
-	}
-	if(name == "color") {
-		if(no_color)
-			return "";
-		return "1";
-	}
-	if((name == "havebest") || (name == "havebest*")) {
-		if(package->best(name.find_first_of('*') != string::npos))
-			return "1";
-		return "";
-	}
-	if(name == "category")
-		return package->category;
-	if(name == "name")
-		return package->name;
-	if(name == "description")
-		return package->desc;
-	if(name == "homepage")
-		return package->homepage;
-	if(name.find("license") != string::npos)
-		return package->licenses;
-	if(name == "provide")
-		return package->provide;
-	if(name.find("overlay") != string::npos) {
-		Version::Overlay ov_key = package->largest_overlay;
-		if(ov_key && package->have_same_overlay_key()) {
-			return overlay_keytext(ov_key, false);
-		}
-		return "";
-	}
-	if(name == "system") {
-		if(package->is_system_package())
-			return "1";
-		return "";
-	}
-	if(name.find("world") != string::npos) {
-		if(name.find("set") != string::npos) {
-			if(package->is_world_sets_package())
-				return "1";
-		}
-		else if(package->is_world_package())
-			return "1";
-		return "";
-	}
-	if(name.find("set") != string::npos) {
-		if(name.find("all") != string::npos)
-			return portagesettings->get_setnames(package, true);
-		return portagesettings->get_setnames(package);
-	}
-	if((name.find("upgrade") != string::npos) ||
-		(name.find("update") != string::npos)) {
-		LocalCopy copy(this, const_cast<Package*>(package));
-		bool result = package->can_upgrade(vardb, portagesettings,
-			(name.find("install") == string::npos),
-			(name.find("best") == string::npos));
-		copy.restore(const_cast<Package*>(package));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name.find("downgrade") != string::npos) {
-		LocalCopy copy(this, const_cast<Package*>(package));
-		bool result = package->must_downgrade(vardb, (name.find("best") == string::npos));
-		copy.restore(const_cast<Package*>(package));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name.find("recommend") != string::npos) {
-		LocalCopy copy(this, const_cast<Package*>(package));
-		bool result = package->recommend(vardb, portagesettings,
-			(name.find("install") == string::npos),
-			(name.find("best") == string::npos));
-		copy.restore(const_cast<Package*>(package));
-		if(result)
-			return "1";
-		return "";
-	}
-	if(name == "marked") {
-		if(marked_list) {
-			if(marked_list->is_marked(*package))
-				return "1";
-		}
-		return "";
-	}
-	if(name == "colliuse")
-		return package->coll_iuse();
-	if(name == "haveversionuse") {
-#ifndef NOT_FULL_USE
-		if(package->versions_have_full_use)
-			return "1";
-#endif
-		return "";
-	}
-	throw ExBasic(_("Unknown property %r")) % name;
+	return empty;
 }
 
 const Package *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
 {
 	const char *s = name.c_str();
-	if(strncmp(s, "old", 3) == 0)
-	{
+	if(strncmp(s, "old", 3) == 0) {
 		*new_name = s + 3;
 		return older;
 	}
-	if(strncmp(s, "new", 3) == 0)
-	{
+	if(strncmp(s, "new", 3) == 0) {
 		*new_name = s + 3;
 		return newer;
 	}
@@ -710,73 +993,41 @@ get_package_property(const PrintFormat *fmt, const void *entity, const string &n
 string
 get_diff_package_property(const PrintFormat *fmt, const void *entity, const string &name)
 {
+	static const string one("1");
+	static const string empty("");
 	const Package *older = (static_cast<const Package* const*>(entity))[0];
 	const Package *newer = (static_cast<const Package* const*>(entity))[1];
-	if(name == "better")
-	{
+	Scanner::Prop diff = scanner.get_diff(name);
+	if(diff != Scanner::PROP_NONE) {
 		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
 		LocalCopy copyolder(fmt, const_cast<Package*>(older));
-		bool result = newer->have_worse(*older, true);
+		bool result;
+		switch(diff) {
+			case Scanner::DIFF_BETTER:
+				result = newer->have_worse(*older, true);
+				break;
+			case Scanner::DIFF_BESTBETTER:
+				result = newer->have_worse(*older, false);
+				break;
+			case Scanner::DIFF_WORSE:
+				result = older->have_worse(*newer, true);
+				break;
+			case Scanner::DIFF_BESTWORSE:
+				result = older->have_worse(*newer, false);
+				break;
+			case Scanner::DIFF_DIFFER:
+				result = newer->differ(*older, true);
+				break;
+			default:
+			//case Scanner::DIFF_BESTDIFFER:
+				result = newer->differ(*older, false);
+				break;
+		}
 		copyolder.restore(const_cast<Package*>(older));
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
-			return "better";
-		return "";
-	}
-	if(name == "bestbetter")
-	{
-		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
-		LocalCopy copyolder(fmt, const_cast<Package*>(older));
-		bool result = newer->have_worse(*older, false);
-		copyolder.restore(const_cast<Package*>(older));
-		copynewer.restore(const_cast<Package*>(newer));
-		if(result)
-			return "better";
-		return "";
-	}
-	if(name == "worse")
-	{
-		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
-		LocalCopy copyolder(fmt, const_cast<Package*>(older));
-		bool result = older->have_worse(*newer, true);
-		copyolder.restore(const_cast<Package*>(older));
-		copynewer.restore(const_cast<Package*>(newer));
-		if(result)
-			return "worse";
-		return "";
-	}
-	if(name == "bestworse")
-	{
-		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
-		LocalCopy copyolder(fmt, const_cast<Package*>(older));
-		bool result = older->have_worse(*newer, false);
-		copyolder.restore(const_cast<Package*>(older));
-		copynewer.restore(const_cast<Package*>(newer));
-		if(result)
-			return "worse";
-		return "";
-	}
-	if(name == "differ")
-	{
-		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
-		LocalCopy copyolder(fmt, const_cast<Package*>(older));
-		bool result = newer->differ(*older, true);
-		copyolder.restore(const_cast<Package*>(older));
-		copynewer.restore(const_cast<Package*>(newer));
-		if(result)
-			return "differ";
-		return "";
-	}
-	if(name == "bestdiffer")
-	{
-		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
-		LocalCopy copyolder(fmt, const_cast<Package*>(older));
-		bool result = newer->differ(*older, false);
-		copyolder.restore(const_cast<Package*>(older));
-		copynewer.restore(const_cast<Package*>(newer));
-		if(result)
-			return "differ";
-		return "";
+			return one;
+		return empty;
 	}
 	string new_name;
 	const Package *package = old_or_new(&new_name, older, newer, name);

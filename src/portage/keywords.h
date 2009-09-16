@@ -123,22 +123,31 @@ class KeywordsFlags {
 
 		/** @return true if version is marked stable. */
 		bool isStable() const
-		{ return havesome(KeywordsFlags::KEY_STABLE); }
+		{ return havesome(KEY_STABLE); }
+
 		/** @return true if version is unstable. */
 		bool isUnstable() const
-		{ return havesome(KeywordsFlags::KEY_ARCHUNSTABLE); }
+		{ return havesome(KEY_ARCHUNSTABLE); }
+
 		/** @return true if version is masked by -* keyword. */
 		bool isMinusAsterisk() const
-		{ return havesome(KeywordsFlags::KEY_MINUSASTERISK); }
+		{ return havesome(KEY_MINUSASTERISK); }
+
 		/** @return true if version is masked by -keyword. */
 		bool isMinusKeyword() const
-		{ return havesome(KeywordsFlags::KEY_MINUSKEYWORD); }
+		{ return havesome(KEY_MINUSKEYWORD); }
+
 		/** @return true if version is masked by ALIENARCH */
 		bool isAlienStable() const
-		{ return havesome(KeywordsFlags::KEY_ALIENSTABLE); }
+		{ return havesome(KEY_ALIENSTABLE); }
+
 		/** @return true if version is masked by ~ALIENARCH */
 		bool isAlienUnstable() const
-		{ return havesome(KeywordsFlags::KEY_ALIENUNSTABLE); }
+		{ return havesome(KEY_ALIENUNSTABLE); }
+
+		/** @return true if version is masked (only) by missing keyword */
+		bool isMissingKeyword() const
+		{ return ((m_keyword == KEY_EMPTY) || (m_keyword == KEY_ARCHSTABLE)); }
 
 	protected:
 		KeyType m_keyword;

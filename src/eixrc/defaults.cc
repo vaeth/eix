@@ -547,7 +547,7 @@ AddOption(STRING, "FORMAT_MASK_TAG",
 			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
 			"{*m=\"%{TAG_FOR_MASKED}\"}"
 		"{else}"
-			"{profilemasked}{*m=\"%{TAG_FOR_EX_PROFILE}\"}"
+			"{wasprofilemasked}{*m=\"%{TAG_FOR_EX_PROFILE}\"}"
 			"{else}{*m=\"%{TAG_FOR_EX_MASKED}\"}{}"
 		"{}{}"
 	"{else}"
@@ -772,7 +772,9 @@ AddOption(STRING, "AVERSION_COMPACT",
 	"It defines the format for an available version with important data, no slot."));
 
 AddOption(STRING, "AVERSION_APPENDIX",
-	"<versionkeywords>"
+	"%{?PRINT_KEYWORDS}"
+		"<versionkeywords>"
+	"%{}"
 	"%{?PRINT_IUSE}"
 		"{haveuse}%{FORMAT_BEFORE_IUSE}<use>%{FORMAT_AFTER_IUSE}{}"
 	"%{}", _(
@@ -1445,10 +1447,15 @@ AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
 	"This string is printed after KEYWORDS string for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
 
+AddOption(STRING, "PRINT_KEYWORDS",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, print KEYWORDS for each version with --versionlines."));
+
 AddOption(STRING, "PRINT_EFFECTIVE_KEYWORDS",
 	"true", _(
 	"Print effective keywords if the profile modified those of the ebuild.\n"
-	"(Normally, this is only used when --versionlines is active)"));
+	"This is only used if PRINT_KEYWORDS gets active."));
 
 AddOption(STRING, "FORMAT_BEFORE_EFFECTIVE_KEYWORDS",
 	" -> \"(cyan)", _(
@@ -1460,6 +1467,18 @@ AddOption(STRING, "FORMAT_AFTER_EFFECTIVE_KEYWORDS",
 	"()\"", _(
 	"This string is printed after the effective keywords (if these are printed).\n"
 	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "XML_KEYWORDS",
+	"none", _(
+	"Can be full/effective/both/full*/effective*/none.\n"
+	"Depending on the value, with --xml the full/effective (or both types)\n"
+	"KEYWORDS string is output for each version.\n"
+	"With full*/effective* also both types are output if they differ."));
+
+AddOption(STRING, "XML_OVERLAY",
+	"false", _(
+	"If false, the overlay is not output with --xml.\n"
+	"For overlays without label (repository name) the overlay is output anyway."));
 
 AddOption(STRING, "FORMAT_BEFORE_SET_USE",
 	"(%{COLOR_SET_USE})", _(

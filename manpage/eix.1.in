@@ -182,6 +182,7 @@ combine this with B<--care> and export some variables like B<LOCAL_PORTAGE_CONFI
 to make sure that the preferred user output settings do not influence your output.
 If this option is active, B<OVERLAYS_LIST=none> and B<--pure-packages> are
 automatically active.
+The output format can be slightly influenced by the B<XML_*> variables.
 .TP
 .BR -* ", " --pure-packages "   (toggle)"
 (do not forget quoting if you use the short form from within a shell.)
@@ -939,7 +940,7 @@ It outputs the current slot, the overlay,
 or the full keywords of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
-The output format for B<keywords> depends on B<FORMAT_BEFORE_KEYWORDS>,
+The output format for B<versionkeywords> depends on B<FORMAT_BEFORE_KEYWORDS>,
 B<FORMAT_AFTER_KEYWORDS, B<PRINT_EFFECTIVE_KEYWORDS>,
 B<FORMAT_BEFORE_EFFECTIVE_KEYWORDS>, B<FORMAT_AFTER_EFFECTIVE_KEYWORDS>.
 B<isslot> just tests whether the slot is trivial and outputs 1 in this case,
@@ -955,7 +956,7 @@ This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or the empty string depending on whether the current version is
 installed or marked, respectively.
 .TP
-.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
+.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
 This must occur only in I<VARIABLE> in the context of version printing.
 This returns 1 or empty depending whether the version has the current stability
 property according to the local or default configuration, respectively.
@@ -988,16 +989,6 @@ the variable I<VAR>.
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the plain version in text form.
 .TP
-.BR properties ", " restrictions ", " overlayver
-This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the version, possibly marked or marked as installed;
-moreover, it resets the colors if necessary.
-The B<plainversion> variant just output the text without caring about colors.
-The variants with B<*> append a slotname if it is nonempty:
-The slotname is just appended as a plain text to the version, i.e. it will have
-the color of the version. Do not use this if you want that slots always
-have a fixed color: If you want the latter, output the slot manually afterwards!
-.TP
 .BR installed ", " best ", " best*
 Is 1 or empty, depending on whether at least one version of the package is installed
 or has a best stable or best unstable version.
@@ -1021,10 +1012,10 @@ With B<allsetnames> also the "system" set name is included.
 If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
 .TP
 .B system
-expands to "1" if this package is in the system profile
+expands to 1 if this package is in the system profile
 .TP
 .B world
-expands to "1" if this package is in the world file
+expands to 1 if this package is in the world file
 .TP
 .B world_sets
 expands to 1 if this package is in world sets
@@ -2138,6 +2129,17 @@ If B<PRINT_KEYWORDS> is in effect and this variable is true
 and the KEYWORD of a version is modified by the profile,
 then the effective keywords (according to the profile) is printed
 after the KEYWORDS stored in the ebuild.
+.TP
+.BR XML_KEYWORDS (full / effective / both / true / full* / effective* / none / false)
+With --xml, this variable decides whether full/effective (or both) types of B<KEYWORDS> are printed for each versions.
+Here, "full" is the B<KEYWORDS> string as specified in the ebuild and "effective" means its modification by the profile.
+The values B<full*>/B<effective*> are similar to B<full>/B<effective>, but both types are printed if their values differ.
+B<true>/B<false> are equivalent to B<full*>/B<none>.
+.TP
+.BR XML_OVERLAY " " (true / false)
+With --xml, this variable decides whether the overlay (i.e. its path) is output for each version.
+This has no influence for versions from overlays without label (repository name):
+For those versions the overlay is output unconditionally.
 .TP
 .BR SORT_INST_USE_ALPHA " " (true / false)
 If B<true>, print the useflags of installed packages in alphabetical order.

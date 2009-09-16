@@ -676,7 +676,7 @@ run_eix(int argc, char** argv)
 		overlay_mode = mode_list_none;
 		rc_options.pure_packages = true;
 
-		print_xml = new PrintXml(&header, &varpkg_db, &stability,
+		print_xml = new PrintXml(&header, &varpkg_db, &stability, &eixrc,
 			portagesettings["PORTDIR"]);
 		print_xml->start();
 	}

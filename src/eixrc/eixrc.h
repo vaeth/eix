@@ -55,6 +55,18 @@ class EixRc {
 			return 0;
 		}
 
+		int getBoolTextlist(const std::string &key, const char **text)
+		{
+			const char *s = (*this)[key].c_str();
+			for(int i = -1; *text; ++text, --i) {
+				if(!strcasecmp(s, *text))
+					return i;
+			}
+			if(istrue(s))
+				return 1;
+			return 0;
+		}
+
 		LocalMode getLocalMode(const std::string &key);
 
 		void getRedundantFlags(const std::string &key,

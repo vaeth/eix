@@ -7,11 +7,42 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "print-xml.h"
+#include <eixrc/eixrc.h>
 #include <portage/vardbpkg.h>
 #include <portage/set_stability.h>
 #include <database/header.h>
 
 using namespace std;
+
+void
+PrintXml::clear()
+{
+	started = false;
+	if(!rc) {
+		print_overlay = false;
+		keywords_mode = KW_NONE;
+		return;
+	}
+	print_overlay = rc->getBool("XML_OVERLAY");
+	static const char *values[] = {
+		"none",
+		"both",
+		"effective",
+		"effective*",
+		"full",
+		"full*",
+		NULL };
+	int i = rc->getBoolTextlist("XML_KEYWORDS", values);
+	switch(i) {
+		case 0:
+		case -1: keywords_mode = KW_NONE;  break;
+		case -2: keywords_mode = KW_BOTH;  break;
+		case -3: keywords_mode = KW_EFF;   break;
+		case -4: keywords_mode = KW_EFFS;  break;
+		case -5: keywords_mode = KW_FULL;  break;
+		default: keywords_mode = KW_FULLS; break;
+	}
+}
 
 void
 PrintXml::start()
@@ -91,12 +122,14 @@ PrintXml::package(const Package *pkg)
 
 		cout << "\t\t\t<version id=\"" << ver->getFull() << "\"";
 		Version::Overlay overlay_key = ver->overlay_key;
-		const OverlayIdent &overlay = hdr->getOverlay(overlay_key);
-		if(overlay_key && !overlay.path.empty()) {
-			cout << " overlay=\"" << escape_string(overlay.path) << "\"";
-		}
-		if(!overlay.label.empty()) {
-			cout << " repository=\"" << escape_string(overlay.label) << "\"";
+		if(overlay_key) {
+			const OverlayIdent &overlay = hdr->getOverlay(overlay_key);
+			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
+				cout << " overlay=\"" << escape_string(overlay.path) << "\"";
+			}
+			if(!overlay.label.empty()) {
+				cout << " repository=\"" << escape_string(overlay.label) << "\"";
+			}
 		}
 		if (versionInstalled) {
 			cout << " installed=\"1\"";
@@ -115,8 +148,6 @@ PrintXml::package(const Package *pkg)
 		KeywordsFlags waskey;
 		stability->calc_version_flags(false, wasmask, waskey, *ver, pkg);
 
-		//string full_kw = ver->get_full_keywords();
-		//string eff_kw = ver->get_effective_keywords();
 		const char *mask_text = NULL;
 		const char *unmask_text = NULL;
 		if(wasmask.isHardMasked()) {
@@ -263,8 +294,27 @@ PrintXml::package(const Package *pkg)
 			}
 		}
 
-		//cout << "\t\t\t\t<full_keywords>" << full_kw << "</full_keywords>\n";
-		//cout << "\t\t\t\t<effective_keywords>" << eff_kw << "</effective_keywords>\n";
+		if(keywords_mode != KW_NONE) {
+			bool print_full = (keywords_mode != KW_EFF);
+			bool print_effective = (keywords_mode != KW_FULL);
+			string full_kw, eff_kw;
+			if(print_full)
+				full_kw = ver->get_full_keywords();
+			if(print_effective)
+				eff_kw = ver->get_effective_keywords();
+			if((keywords_mode == KW_FULLS) || (keywords_mode == KW_EFFS)) {
+				if(full_kw == eff_kw) {
+					if(keywords_mode == KW_FULLS)
+						print_effective = false;
+					else
+						print_full = false;
+				}
+			}
+			if(print_full)
+				cout << "\t\t\t\t<keywords>" << escape_string(full_kw) << "</keywords>\n";
+			if(print_effective)
+				cout << "\t\t\t\t<effective_keywords>" << escape_string(eff_kw) << "</effective_keywords>\n";
+		}
 		cout << "\t\t\t</version>\n";
 	}
 	cout << "\t\t</package>\n";

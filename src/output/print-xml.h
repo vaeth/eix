@@ -11,6 +11,7 @@
 
 #include <portage/package.h>
 
+class EixRc;
 class DBHeader;
 class VarDbPkg;
 class SetStability;
@@ -18,32 +19,34 @@ class SetStability;
 class PrintXml {
 	protected:
 		bool started;
+		bool print_overlay;
+		enum{ KW_NONE, KW_BOTH, KW_FULL, KW_EFF, KW_FULLS, KW_EFFS } keywords_mode;
 
 		const DBHeader *hdr;
 		VarDbPkg *var_db_pkg;
 		const SetStability *stability;
+		EixRc *rc;
 		std::string portdir;
 
 		eix::ptr_list<Package>::size_type count;
 		std::string curcat;
 
-		void clear()
-		{ started = false; }
-
+		void clear();
 	public:
-		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, const std::string &port_dir)
+		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{
 			hdr = header;
 			var_db_pkg = vardb;
 			stability = set_stability;
+			rc = eixrc;
 			portdir = port_dir;
 			clear();
 		}
 
-		PrintXml(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, const std::string &port_dir)
-		{ init(header, vardb, set_stability, port_dir); }
+		PrintXml(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
+		{ init(header, vardb, set_stability, eixrc, port_dir); }
 
-		PrintXml() : hdr(NULL), var_db_pkg(NULL), stability(NULL)
+		PrintXml() : hdr(NULL), var_db_pkg(NULL), stability(NULL), rc(NULL)
 		{ clear(); }
 
 		void start();
