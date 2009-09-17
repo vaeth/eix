@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-16 22:10+0200\n"
+"POT-Creation-Date: 2009-09-17 10:21+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -4625,11 +4625,11 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:453 src/output/formatstring-print.cc:458
+#: src/output/formatstring-print.cc:456 src/output/formatstring-print.cc:549
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Loops über Versionen benutzt"
 
-#: src/output/formatstring-print.cc:544
+#: src/output/formatstring-print.cc:546
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 

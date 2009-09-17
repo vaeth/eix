@@ -17,6 +17,9 @@
 
 using namespace std;
 
+static const string one("1");
+static const string empty("");
+
 class VersionVariables {
 	private:
 		const Version *m_version;
@@ -51,9 +54,9 @@ string
 PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 {
 	if((!vardb) || !(vardb->readUse(package, i)))
-		return "";
+		return empty;
 	if(i.inst_iuse.empty())
-		return "";
+		return empty;
 	string ret, add;
 	for(vector<string>::iterator it = i.inst_iuse.begin();
 		it != i.inst_iuse.end(); ++it) {
@@ -93,7 +96,7 @@ PrintFormat::get_version_keywords(const Package *package, const Version *version
 	string effective = version->get_effective_keywords();
 	if(keywords.empty()) {
 		if(effective.empty() || !print_effective)
-			return "";
+			return empty;
 	}
 	string result = before_keywords;
 	result.append(keywords);
@@ -445,13 +448,8 @@ static Scanner scanner;
 string
 PrintFormat::get_pkg_property(const Package *package, const string &name) const throw(ExBasic)
 {
-	static const string one("1");
-	static const string empty("");
 	Scanner::PropType t = Scanner::PKG;
 	Scanner::Prop prop = scanner.get_prop(name, &t);
-	if((t == Scanner::VER) && !version_variables) {
-		throw ExBasic(_("Property %r used outside version context")) % name;
-	}
 	if(prop == Scanner::PROP_NONE) {
 		if(strncmp(name.c_str(), "date:", 5) == 0) {
 			if(!version_variables) {
@@ -465,6 +463,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		}
 		string::size_type col = name.find(':');
 		if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {
+			// Initialize loop over versions like:
 			// <availableversions:VAR[:VAR]>, <installedversions:VAR>, ...
 			string plainname = name.substr(0, col);
 			string varname = name.substr(col + 1);
@@ -475,6 +474,9 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 				varsortname = varname.substr(col + 1);
 				varname.erase(col);
 			}
+			// It is important that version_variables points to a local object:
+			// This allows loops within loop.
+			// Recursion is avoided by checking the variable names.
 			VersionVariables variables;
 			VersionVariables *previous_variables = version_variables;
 			version_variables = &variables;
@@ -542,6 +544,9 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			return variables.result;
 		}
 		throw ExBasic(_("Unknown property %r")) % name;
+	}
+	if((t == Scanner::VER) && !version_variables) {
+		throw ExBasic(_("Property %r used outside version context")) % name;
 	}
 	bool a = false;
 	switch(prop) {
@@ -993,8 +998,6 @@ get_package_property(const PrintFormat *fmt, const void *entity, const string &n
 string
 get_diff_package_property(const PrintFormat *fmt, const void *entity, const string &name)
 {
-	static const string one("1");
-	static const string empty("");
 	const Package *older = (static_cast<const Package* const*>(entity))[0];
 	const Package *newer = (static_cast<const Package* const*>(entity))[1];
 	Scanner::Prop diff = scanner.get_diff(name);

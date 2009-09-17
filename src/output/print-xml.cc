@@ -15,33 +15,41 @@
 using namespace std;
 
 void
-PrintXml::clear()
+PrintXml::runclear()
 {
 	started = false;
-	if(!rc) {
+	curcat.clear();
+	count = 0;
+}
+
+void
+PrintXml::clear(EixRc *eixrc)
+{
+	if(eixrc) {
 		print_overlay = false;
 		keywords_mode = KW_NONE;
-		return;
 	}
-	print_overlay = rc->getBool("XML_OVERLAY");
-	static const char *values[] = {
-		"none",
-		"both",
-		"effective",
-		"effective*",
-		"full",
-		"full*",
-		NULL };
-	int i = rc->getBoolTextlist("XML_KEYWORDS", values);
-	switch(i) {
-		case 0:
-		case -1: keywords_mode = KW_NONE;  break;
-		case -2: keywords_mode = KW_BOTH;  break;
-		case -3: keywords_mode = KW_EFF;   break;
-		case -4: keywords_mode = KW_EFFS;  break;
-		case -5: keywords_mode = KW_FULL;  break;
-		default: keywords_mode = KW_FULLS; break;
+	else {
+		print_overlay = eixrc->getBool("XML_OVERLAY");
+		static const char *values[] = {
+			"none",
+			"both",
+			"effective",
+			"effective*",
+			"full",
+			"full*",
+			NULL };
+		switch(eixrc->getBoolTextlist("XML_KEYWORDS", values)) {
+			case 0:
+			case -1: keywords_mode = KW_NONE;  break;
+			case -2: keywords_mode = KW_BOTH;  break;
+			case -3: keywords_mode = KW_EFF;   break;
+			case -4: keywords_mode = KW_EFFS;  break;
+			case -5: keywords_mode = KW_FULL;  break;
+			default: keywords_mode = KW_FULLS; break;
+		}
 	}
+	runclear();
 }
 
 void
@@ -50,8 +58,6 @@ PrintXml::start()
 	if(started)
 		return;
 	started = true;
-	curcat.clear();
-	count = 0;
 
 	cout << "<?xml version='1.0' encoding='UTF-8'?>\n"
 		"<eixdump>\n";
@@ -68,7 +74,7 @@ PrintXml::finish()
 	}
 	cout << "</eixdump>\n";
 
-	clear();
+	runclear();
 }
 
 void

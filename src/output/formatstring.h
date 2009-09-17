@@ -197,6 +197,10 @@ class PrintFormat {
 
 	protected:
 		mutable std::map<std::string,std::string> user_variables;
+		/* Looping over variables is a bit tricky:
+		   We store the parsed thing in VarParserCache.
+		   Additionally, we store there whether we currently loop
+		   over the variable to avoid recursion. */
 		mutable VarParserCache varcache;
 		mutable VersionVariables *version_variables;
 		FormatParser   m_parser;

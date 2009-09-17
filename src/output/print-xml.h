@@ -25,29 +25,28 @@ class PrintXml {
 		const DBHeader *hdr;
 		VarDbPkg *var_db_pkg;
 		const SetStability *stability;
-		EixRc *rc;
 		std::string portdir;
 
 		eix::ptr_list<Package>::size_type count;
 		std::string curcat;
 
-		void clear();
+		void clear(EixRc *eixrc);
+		void runclear();
 	public:
 		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{
 			hdr = header;
 			var_db_pkg = vardb;
 			stability = set_stability;
-			rc = eixrc;
 			portdir = port_dir;
-			clear();
+			clear(eixrc);
 		}
 
 		PrintXml(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{ init(header, vardb, set_stability, eixrc, port_dir); }
 
-		PrintXml() : hdr(NULL), var_db_pkg(NULL), stability(NULL), rc(NULL)
-		{ clear(); }
+		PrintXml() : hdr(NULL), var_db_pkg(NULL), stability(NULL)
+		{ clear(NULL); }
 
 		void start();
 		void package(const Package *pkg);
