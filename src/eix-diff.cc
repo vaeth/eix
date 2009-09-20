@@ -284,8 +284,12 @@ run_eix_diff(int argc, char *argv[])
 		exit(0);
 	}
 
-	if(cli_quiet)
-		close(1);
+	if(cli_quiet) {
+		if(!freopen("/dev/null", "w", stdout)) {
+			cerr << "cannot redirect to /dev/null" << endl;
+			exit(1);
+		}
+	}
 
 	if(rc.getBool("FORCE_USECOLORS")) {
 		format_for_new.no_color = false;

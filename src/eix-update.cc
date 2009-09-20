@@ -302,8 +302,10 @@ run_eix_update(int argc, char *argv[])
 
 	/* Honour a wish for silence */
 	if(quiet) {
-		close(1);
-		close(2);
+		if(!freopen("/dev/null", "w", stdout)) {
+			cerr << "cannot redirect to /dev/null" << endl;
+			exit(1);
+		}
 	}
 
 	/* We do not want any arguments except options */

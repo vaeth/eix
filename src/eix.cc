@@ -482,7 +482,10 @@ run_eix(int argc, char** argv)
 
 	// Honour a STFU
 	if(rc_options.be_quiet) {
-		close(1);
+		if(!freopen("/dev/null", "w", stdout)) {
+			cerr << "cannot redirect to /dev/null" << endl;
+			exit(1);
+		}
 	}
 
 	if(rc_options.only_names) {
