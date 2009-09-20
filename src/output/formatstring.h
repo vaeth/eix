@@ -65,6 +65,7 @@ class ConditionBlock : public Node {
 
 		Property variable;
 		Text     text;
+		enum Rhs { RHS_STRING, RHS_PROPERTY, RHS_VAR } rhs;
 		Node     *if_true, *if_false;
 		bool user_variable, negation;
 
@@ -300,7 +301,7 @@ class PrintFormat {
 		void set_marked_list(MarkedList *m_list)
 		{ marked_list = m_list; }
 
-		std::string overlay_keytext(Version::Overlay overlay, bool never_color = false) const;
+		std::string overlay_keytext(Version::Overlay overlay, bool plain = false) const;
 
 		/* return true if something was actually printed */
 		bool print(void *entity, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s);

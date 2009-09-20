@@ -149,12 +149,12 @@ PrintFormat::parse_variable(const string &varname) const throw(ExBasic)
 }
 
 string
-PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
+PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
 {
 	string start = "[";
 	string end = "]";
 	bool color = !no_color;
-	if(never_color)
+	if(plain)
 		color = false;
 	if(color) {
 		if(is_virtual(overlay))
@@ -183,6 +183,8 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool never_color) const
 			}
 		}
 	}
+	if(plain)
+		return eix::format("%s") % overlay;
 	return eix::format("%s%s%s") % start % overlay % end;
 }
 
@@ -227,10 +229,7 @@ bool
 PrintFormat::recPrint(string *result, const void *entity, GetProperty get_property, Node *root) const
 {
 	bool printed = false;
-	for(;
-		root != NULL;
-		root = root->next)
-	{
+	for(; root != NULL; root = root->next) {
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
 				{
@@ -264,29 +263,48 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 					cerr << e << endl;
 				}
 				break;
-			case Node::SET:
+			default:
+			//case Node::IF:
+			//case Node::SET:
 				{
 					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
-					if(ief->negation) {
-						if(ief->text.text.empty())
-							user_variables[ief->variable.name] = "1";
-						else
-							user_variables[ief->variable.name].clear();
+					string rhs;
+					switch(ief->rhs) {
+						case ConditionBlock::RHS_VAR:
+							rhs = user_variables[ief->text.text];
+							break;
+						case ConditionBlock::RHS_PROPERTY:
+							try {
+								rhs= get_property(this, entity, ief->text.text);
+							}
+							catch(const ExBasic &e) {
+								cerr << e << endl;
+							}
+							break;
+						default:
+						//case ConditionBlock::RHS_STRING:
+							rhs = ief->text.text;
+							break;
 					}
-					else
-						user_variables[ief->variable.name] = ief->text.text;
-				}
-				break;
-			case Node::IF:
-				{
+					if(root->type == Node::SET) {
+						if(ief->negation) {
+							if(rhs.empty())
+								user_variables[ief->variable.name] = "1";
+							else
+								user_variables[ief->variable.name].clear();
+						}
+						else
+							user_variables[ief->variable.name] = rhs;
+						break;
+					}
+					// Node::IF:
 					bool ok = false;
-					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
 					if(ief->user_variable) {
-						ok = (user_variables[ief->variable.name] == ief->text.text);
+						ok = (user_variables[ief->variable.name] == rhs);
 					}
 					else {
 						try {
-							ok = (get_property(this, entity, ief->variable.name) == ief->text.text);
+							ok = (get_property(this, entity, ief->variable.name) == rhs);
 						}
 						catch(const ExBasic &e) {
 							cerr << e << endl;
@@ -302,8 +320,6 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 							printed = true;
 					}
 				}
-				break;
-			default:
 				break;
 		}
 	}
@@ -524,18 +540,37 @@ FormatParser::state_IF()
 		return ERROR;
 	}
 
+	static const char single_quote = '\'', double_quote = '"', plain = ' ', property = '>';
+	char parse_modus;
+	switch(*band_position) {
+		case '<':
+			n->rhs = ConditionBlock::RHS_PROPERTY;
+			parse_modus = property;
+			++band_position;
+			band_position = seek_character(band_position);
+			break;
+		case '$':
+			n->rhs = ConditionBlock::RHS_VAR;
+			parse_modus = plain;
+			++band_position;
+			band_position = seek_character(band_position);
+			break;
+		case '\'':
+			n->rhs = ConditionBlock::RHS_STRING;
+			parse_modus = single_quote;
+			++band_position;
+			break;
+		case '\"':
+			n->rhs = ConditionBlock::RHS_STRING;
+			parse_modus = double_quote;
+			++band_position;
+			break;
+		default:
+			n->rhs = ConditionBlock::RHS_STRING;
+			parse_modus = plain;
+			break;
+	}
 	string textbuffer;
-	static const char single_quote = '\'', double_quote = '"', plain = ' ';
-	char parse_modus = plain;
-
-	if(*band_position == double_quote) {
-		parse_modus = double_quote;
-		++band_position;
-	}
-	else if(*band_position == single_quote) {
-		parse_modus = single_quote;
-		++band_position;
-	}
 
 	while(*band_position) {
 		if((parse_modus != plain && *band_position == parse_modus) || strchr(" \t\n\r}", *band_position) != NULL) {
@@ -551,10 +586,15 @@ FormatParser::state_IF()
 	}
 	n->text = Text(textbuffer);
 	if(*band_position != '}') {
-		++band_position;
-		band_position = seek_character(band_position);
+		if(*band_position) {
+			++band_position;
+			band_position = seek_character(band_position);
+		}
 		if(*band_position != '}') {
-			last_error = _("Run into end-of-string while looking for right-hand of condition.");
+			if(n->type == Node::SET)
+				last_error = _("Run into end-of-string while looking for right-hand of assignment.");
+			else
+				last_error = _("Run into end-of-string while looking for right-hand of condition.");
 			return ERROR;
 		}
 	}

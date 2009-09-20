@@ -231,6 +231,19 @@ class Scanner {
 			DIFF_DIFFER,
 			DIFF_BESTDIFFER,
 
+			// Used only after colon:
+			COLON_VER_DATE,
+			COLON_PKG_AVAILABLEVERSIONS,
+			COLON_PKG_MARKEDVERSIONS,
+			COLON_PKG_BESTVERSIONS,
+			COLON_PKG_BESTVERSION,
+			COLON_PKG_BESTSLOTVERSIONSS,
+			COLON_PKG_BESTSLOTVERSIONS,
+			COLON_PKG_BESTSLOTUPGRADEVERSIONSS,
+			COLON_PKG_BESTSLOTUPGRADEVERSIONS,
+			COLON_PKG_INSTALLEDMARKEDVERSIONS,
+			COLON_PKG_INSTALLEDVERSIONS,
+
 			// General package properties:
 			PKG_INSTALLED,
 			PKG_VERSIONLINES,
@@ -273,13 +286,14 @@ class Scanner {
 			VER_SLOT,
 			VER_ISSLOT,
 			VER_VERSION,
+			VER_OVERLAYNUM,
 			VER_OVERLAYVER,
 			VER_VERSIONKEYWORDS,
 			VER_HAVEUSE,
-			VER_ISBESTUPGRADE,
-			VER_ISBESTUPGRADES,
-			VER_ISBESTUPGRADESLOT,
 			VER_ISBESTUPGRADESLOTS,
+			VER_ISBESTUPGRADESLOT,
+			VER_ISBESTUPGRADES,
+			VER_ISBESTUPGRADE,
 			VER_MARKEDVERSION,
 			VER_INSTALLEDVERSION,
 			VER_USE,
@@ -323,14 +337,19 @@ class Scanner {
 
 	protected:
 		map<string,Prop> diff;
-		map<string,pair<Prop,PropType> > prop;
+		map<string,pair<Prop,PropType> > prop, colon;
+
+		void prop_colon_pkg(const char *s, Prop p)
+		{ colon[s] = pair<Prop,PropType>(p, PKG); }
+
+		void prop_colon_ver(const char *s, Prop p)
+		{ colon[s] = pair<Prop,PropType>(p, VER); }
 
 		void prop_pkg(const char *s, Prop p)
 		{ prop[s] = pair<Prop,PropType>(p, PKG); }
 
 		void prop_ver(const char *s, Prop p)
 		{ prop[s] = pair<Prop,PropType>(p, VER); }
-
 	public:
 		Scanner()
 		{
@@ -340,6 +359,17 @@ class Scanner {
 			diff["bestworse"] = DIFF_BESTWORSE;
 			diff["differ"] = DIFF_DIFFER;
 			diff["bestdiffer"] = DIFF_BESTDIFFER;
+			prop_colon_ver("date", COLON_VER_DATE);
+			prop_colon_pkg("availableversions", COLON_PKG_AVAILABLEVERSIONS);
+			prop_colon_pkg("markedversions", COLON_PKG_MARKEDVERSIONS);
+			prop_colon_pkg("bestversion*", COLON_PKG_BESTVERSIONS);
+			prop_colon_pkg("bestversion", COLON_PKG_BESTVERSION);
+			prop_colon_pkg("bestslotversions*", COLON_PKG_BESTSLOTVERSIONSS);
+			prop_colon_pkg("bestslotversions", COLON_PKG_BESTSLOTVERSIONS);
+			prop_colon_pkg("bestslotupgradeversions*", COLON_PKG_BESTSLOTUPGRADEVERSIONSS);
+			prop_colon_pkg("bestslotupgradeversions", COLON_PKG_BESTSLOTUPGRADEVERSIONS);
+			prop_colon_pkg("installedmarkedversions", COLON_PKG_INSTALLEDMARKEDVERSIONS);
+			prop_colon_pkg("installedversions", COLON_PKG_INSTALLEDVERSIONS);
 			prop_pkg("installed", PKG_INSTALLED);
 			prop_pkg("versionlines", PKG_VERSIONLINES);
 			prop_pkg("slotsorted", PKG_SLOTSORTED);
@@ -379,13 +409,14 @@ class Scanner {
 			prop_ver("slot", VER_SLOT);
 			prop_ver("isslot", VER_ISSLOT);
 			prop_ver("version", VER_VERSION);
+			prop_ver("overlaynum", VER_OVERLAYNUM);
 			prop_ver("overlayver", VER_OVERLAYVER);
 			prop_ver("versionkeywords", VER_VERSIONKEYWORDS);
 			prop_ver("haveuse", VER_HAVEUSE);
-			prop_ver("isbestupgrade", VER_ISBESTUPGRADE);
-			prop_ver("isbestupgrade*", VER_ISBESTUPGRADES);
-			prop_ver("isbestupgradeslot", VER_ISBESTUPGRADESLOT);
 			prop_ver("isbestupgradeslot*", VER_ISBESTUPGRADESLOTS);
+			prop_ver("isbestupgradeslot", VER_ISBESTUPGRADESLOT);
+			prop_ver("isbestupgrade*", VER_ISBESTUPGRADES);
+			prop_ver("isbestupgrade", VER_ISBESTUPGRADE);
 			prop_ver("markedversion", VER_MARKEDVERSION);
 			prop_ver("installedversion", VER_INSTALLEDVERSION);
 			prop_ver("use", VER_USE);
@@ -434,6 +465,15 @@ class Scanner {
 			return it->second;
 		}
 
+		Prop get_colon(const string& s, PropType *p) const
+		{
+			map<string,pair<Prop,PropType> >::const_iterator it = colon.find(s);
+			if(it == colon.end())
+				return PROP_NONE;
+			*p = it->second.second;
+			return it->second.first;
+		}
+
 		Prop get_prop(const string& s, PropType *p) const
 		{
 			map<string,pair<Prop,PropType> >::const_iterator it = prop.find(s);
@@ -450,106 +490,133 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 {
 	Scanner::PropType t = Scanner::PKG;
 	Scanner::Prop prop = scanner.get_prop(name, &t);
+	string after_colon;
 	if(prop == Scanner::PROP_NONE) {
-		if(strncmp(name.c_str(), "date:", 5) == 0) {
-			if(!version_variables) {
-				throw ExBasic(_("Property %r used outside version context")) % name;
-			}
-			if(version_variables->isinst) {
-				return date_conv((*eix_rc)[name.substr(5)].c_str(),
-					version_variables->instver()->instDate);
-			}
-			return empty;
-		}
 		string::size_type col = name.find(':');
-		if((col != string::npos) && (col > 2) && (col < name.length() - 1)) {
-			// Initialize loop over versions like:
-			// <availableversions:VAR[:VAR]>, <installedversions:VAR>, ...
-			string plainname = name.substr(0, col);
-			string varname = name.substr(col + 1);
-			string varsortname;
-			string *parsed = NULL;
-			col = varname.find(':');
-			if(col != string::npos) {
-				varsortname = varname.substr(col + 1);
-				varname.erase(col);
-			}
-			// It is important that version_variables points to a local object:
-			// This allows loops within loop.
-			// Recursion is avoided by checking the variable names.
-			VersionVariables variables;
-			VersionVariables *previous_variables = version_variables;
-			version_variables = &variables;
-			if(plainname.find("best") != string::npos) {
-				// <bestversionslot:VAR>, ...
-				bool accept_unstable = (plainname.find_first_of('*') != string::npos);
-				if(plainname.find("slot") != string::npos) {
-					vector<Version*> versions;
-					if(plainname.find("upgrade") != string::npos)
-						package->best_slots_upgrade(versions, vardb, portagesettings, accept_unstable);
-					else
-						package->best_slots(versions, accept_unstable);
-					if(!versions.empty()) {
-						parsed = &varname;
-						get_versions_versorted(package, parse_variable(varname), &versions);
-					}
-				}
-				else {
-					// <bestversion:VAR>
-					const Version *ver = package->best(accept_unstable);
-					variables.setversion(ver);
-					if(ver) {
-						parsed = &varname;
-						recPrint(&(variables.result), package, get_package_property, parse_variable(varname));
-					}
-				}
-			}
-			else {
-				bool marked = (plainname.find("mark") != string::npos);
-				if(plainname.find("install") != string::npos) {
-					// <installedversions:VAR>, ...
-					variables.isinst = true;
-					parsed = &varname;
-					get_installed(package, parse_variable(varname), marked);
-				}
-				else {
-					// <{available,marked}versions:VAR[:VAR]>, ...
-					vector<Version*> *versions = NULL;
-					if(marked) {
-						versions = new vector<Version*>;
-						for(Package::const_iterator it = package->begin();
-							it != package->end(); ++it) {
-							if(marked_list->is_marked(*package, &(**it))) {
-								versions->push_back(*it);
-							}
-						}
-					}
-					if((!versions) || !(versions->empty())) {
-						if(varsortname.empty() || !(package->have_nontrivial_slots())) {
-							parsed = &varname;
-							get_versions_versorted(package, parse_variable(varname), versions);
-						}
-						else {
-							parsed = &varsortname;
-							get_versions_slotsorted(package, parse_variable(varsortname), versions);
-						}
-					}
-					if(versions)
-						delete versions;
-				}
-			}
-			if(parsed)
-				varcache[*parsed].in_use = false;
-			version_variables = previous_variables;
-			return variables.result;
+		if(col != string::npos)
+			prop = scanner.get_colon(name.substr(0, col), &t);
+		if(prop == Scanner::PROP_NONE) {
+			throw ExBasic(_("Unknown property %r")) % name;
 		}
-		throw ExBasic(_("Unknown property %r")) % name;
+		after_colon = name.substr(col + 1);
 	}
 	if((t == Scanner::VER) && !version_variables) {
 		throw ExBasic(_("Property %r used outside version context")) % name;
 	}
 	bool a = false;
 	switch(prop) {
+		case Scanner::COLON_VER_DATE:
+			if(version_variables->isinst) {
+				return date_conv((*eix_rc)[after_colon].c_str(),
+					version_variables->instver()->instDate);
+			}
+			break;
+		case Scanner::COLON_PKG_AVAILABLEVERSIONS:
+		case Scanner::COLON_PKG_MARKEDVERSIONS:
+		case Scanner::COLON_PKG_BESTVERSIONS:
+		case Scanner::COLON_PKG_BESTVERSION:
+		case Scanner::COLON_PKG_BESTSLOTVERSIONSS:
+		case Scanner::COLON_PKG_BESTSLOTVERSIONS:
+		case Scanner::COLON_PKG_BESTSLOTUPGRADEVERSIONSS:
+		case Scanner::COLON_PKG_BESTSLOTUPGRADEVERSIONS:
+		case Scanner::COLON_PKG_INSTALLEDMARKEDVERSIONS:
+		case Scanner::COLON_PKG_INSTALLEDVERSIONS:
+			{
+				// It is important that version_variables points to a local object:
+				// This allows loops within loops.
+				// Recursion is avoided by checking the variable names.
+				VersionVariables variables;
+				VersionVariables *previous_variables = version_variables;
+				version_variables = &variables;
+				string varsortname;
+				string *parsed = NULL;
+				switch(prop) {
+					case Scanner::COLON_PKG_AVAILABLEVERSIONS:
+						a = true;
+					case Scanner::COLON_PKG_MARKEDVERSIONS:
+						{
+							vector<Version*> *versions = NULL;
+							if(!a) {
+								versions = new vector<Version*>;
+								for(Package::const_iterator it = package->begin();
+									it != package->end(); ++it) {
+									if(marked_list->is_marked(*package, &(**it))) {
+										versions->push_back(*it);
+									}
+								}
+							}
+							if(a || !(versions->empty())) {
+								string::size_type col = after_colon.find(':');
+								if((col == string::npos) || !(package->have_nontrivial_slots())) {
+									if(col != string::npos) {
+										after_colon.erase(col);
+										parsed = &after_colon;
+									}
+									get_versions_versorted(package, parse_variable(after_colon), versions);
+								}
+								else {
+									varsortname = after_colon.substr(col + 1);
+									parsed = &varsortname;
+									get_versions_slotsorted(package, parse_variable(varsortname), versions);
+								}
+							}
+							if(versions)
+								delete versions;
+						}
+						break;
+					case Scanner::COLON_PKG_BESTVERSIONS:
+						a = true;
+					case Scanner::COLON_PKG_BESTVERSION:
+						{
+							const Version *ver = package->best(a);
+							variables.setversion(ver);
+							if(ver) {
+								parsed = &after_colon;
+								recPrint(&(variables.result), package, get_package_property, parse_variable(after_colon));
+							}
+						}
+						break;
+					case Scanner::COLON_PKG_BESTSLOTVERSIONSS:
+						a = true;
+					case Scanner::COLON_PKG_BESTSLOTVERSIONS:
+						{
+							vector<Version*> versions;
+							package->best_slots(versions, a);
+							if(!versions.empty()) {
+								parsed = &after_colon;
+								get_versions_versorted(package, parse_variable(after_colon), &versions);
+							}
+						}
+						break;
+					case Scanner::COLON_PKG_BESTSLOTUPGRADEVERSIONSS:
+						a = true;
+					case Scanner::COLON_PKG_BESTSLOTUPGRADEVERSIONS:
+						{
+							vector<Version*> versions;
+							package->best_slots(versions, a);
+							if(!versions.empty()) {
+								parsed = &after_colon;
+								get_versions_versorted(package, parse_variable(after_colon), &versions);
+							}
+						}
+						break;
+					case Scanner::COLON_PKG_INSTALLEDMARKEDVERSIONS:
+						a = true;
+					default:
+					//case Scanner::COLON_PKG_INSTALLEDVERSIONS:
+						{
+							variables.isinst = true;
+							parsed = &after_colon;
+							get_installed(package, parse_variable(after_colon), a);
+						}
+						break;
+				}
+				if(parsed)
+					varcache[*parsed].in_use = false;
+				version_variables = previous_variables;
+				return variables.result;
+			}
+			break;
 		case Scanner::PKG_INSTALLED:
 			if(vardb) {
 				vector<InstVersion> *vec = vardb->getInstalledVector(*package);
@@ -715,23 +782,25 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(version_variables->isinst)
 				return version_variables->instver()->getFull();
 			return version_variables->version()->getFull();
+		case Scanner::VER_OVERLAYNUM:
+			a = true;
 		case Scanner::VER_OVERLAYVER:
 			if(version_variables->isinst) {
 				InstVersion *i = version_variables->instver();
 				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str()))) {
-					if(no_color)
+					if(a || no_color)
 						return "[?]";
 					return color_overlaykey + "[?]" +
 						AnsiColor(AnsiColor::acDefault).asString();
 				}
 				if(i->overlay_key > 0) {
-					if((!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key))
-						return overlay_keytext(i->overlay_key);
+					if(a || (!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key))
+						return overlay_keytext(i->overlay_key, a);
 				}
 			}
-			else if(!package->have_same_overlay_key()) {
+			else if(a || (!package->have_same_overlay_key())) {
 				if(version_variables->version()->overlay_key)
-					return overlay_keytext(version_variables->version()->overlay_key);
+					return overlay_keytext(version_variables->version()->overlay_key, a);
 			}
 			break;
 		case Scanner::VER_VERSIONKEYWORDS:
@@ -748,16 +817,16 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(!(version_variables->version()->iuse_vector().empty()))
 				return one;
 			break;
-		case Scanner::VER_ISBESTUPGRADE:
-		case Scanner::VER_ISBESTUPGRADES:
-			a = true;
 		case Scanner::VER_ISBESTUPGRADESLOT:
 		case Scanner::VER_ISBESTUPGRADESLOTS:
+			a = true;
+		case Scanner::VER_ISBESTUPGRADE:
+		case Scanner::VER_ISBESTUPGRADES:
 			if(version_variables->isinst)
 				break;
 			if(vardb && portagesettings &&
 				package->is_best_upgrade(
-					(!a),
+					a,
 					version_variables->version(),
 					vardb, portagesettings,
 					((prop == Scanner::VER_ISBESTUPGRADES) ||

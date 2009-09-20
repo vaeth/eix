@@ -860,15 +860,15 @@ the block is executed. Conditions can be negated so that the else-part is
 executed if the condition is true, and the if-part if the condition is false.
 The else-part can be also be completely left out.
 .TP
-.BR { [ ! ] I<PROPERTY> [ = I<STRING>] } I<TCODE> {}
-Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to
-I<STRING>.
+.BR { [ ! ] I<PROPERTY> [ = I<RHS>' ] } I<TCODE> {}
+Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to I<RHS>.
 The B<!> would negate the behaviour.
-
+I<RHS> is either a property (if enclosed in <>) or a variable (if prefixed with $)
+or a string (otherwise or if quoted).
 .TP
-.BR { [ ! ] I<PROPERTY> [ = I<STRING>] } I<TCODE> {else} I<FCODE> {}
-Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to
-I<STRING>.  If it's not, execute I<FCODE>.
+.BR { [ ! ] I<PROPERTY> [ = I<RHS>] } I<TCODE> {else} I<FCODE> {}
+Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to I<STRING>.
+If it's not, execute I<FCODE>.
 
 I<PROPERTY> can be either one of the Package properties specified below,
 or it can be a variable access.
@@ -877,7 +877,7 @@ I<VARIABLE> need not be initialized; its content defaults to the empty string.
 
 To change I<VARIABLE> during runtime use this syntax:
 .TP
-.BR { [ ! ] *I<VARIABLE> [ = I<STRING> ] }
+.BR { [ ! ] *I<VARIABLE> [ = I<RHS> ] }
 This sets the runtime variable B<VARIABLE> to I<STRING>.
 With B<!>, the result is either 1 or empty, depending on whether I<STRING> is nonmpty.
 If the trailing part (including the B<=> sign) is omitted, there is a special meaning:
@@ -934,12 +934,14 @@ All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
-.BR slot ", " isslot ", " overlayver ", " versionkeywords
+.BR slot ", " isslot ", " overlayver ", " overlaynum ", " versionkeywords
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the current slot, the overlay,
 or the full keywords of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
+B<overlaynum>, in contrast, contains the number of the overlay
+without colors unconditionally (or is empty if the package is not from an overlay).
 The output format for B<versionkeywords> depends on B<FORMAT_BEFORE_KEYWORDS>,
 B<FORMAT_AFTER_KEYWORDS, B<PRINT_EFFECTIVE_KEYWORDS>,
 B<FORMAT_BEFORE_EFFECTIVE_KEYWORDS>, B<FORMAT_AFTER_EFFECTIVE_KEYWORDS>.

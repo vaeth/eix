@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-17 10:21+0200\n"
+"POT-Creation-Date: 2009-09-20 19:02+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -4625,89 +4625,93 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:456 src/output/formatstring-print.cc:549
-msgid "Property %r used outside version context"
-msgstr "Property %r wurde außerhalb eines Loops über Versionen benutzt"
-
-#: src/output/formatstring-print.cc:546
+#: src/output/formatstring-print.cc:499
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
+
+#: src/output/formatstring-print.cc:504
+msgid "Property %r used outside version context"
+msgstr "Property %r wurde außerhalb eines Loops über Versionen benutzt"
 
 #: src/output/formatstring.cc:144
 msgid "Variable %r calls itself for printing"
 msgstr "Die Variable %r ruft sich selbst zum Drucken auf"
 
-#: src/output/formatstring.cc:337
+#: src/output/formatstring.cc:353
 msgid "Internal error: bad node for parse_colors."
 msgstr "Interner Fehler: bad node for parse_colors."
 
-#: src/output/formatstring.cc:391
+#: src/output/formatstring.cc:407
 msgid "'(' without closing ')'"
 msgstr "'(' ohne schließendes ')'"
 
-#: src/output/formatstring.cc:399
+#: src/output/formatstring.cc:415
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Fehler beim Parsen der Farbe: %s"
 
-#: src/output/formatstring.cc:421
+#: src/output/formatstring.cc:437
 msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
-#: src/output/formatstring.cc:461
+#: src/output/formatstring.cc:477
 msgid ""
 "Ran into end-of-string or '}' while looking for possible negation-mark (!) "
 "in condition."
 msgstr "Stringende oder '}' bei der Suche nach möglichem '!' bei einem Test."
 
-#: src/output/formatstring.cc:475
+#: src/output/formatstring.cc:491
 msgid ""
 "Ran into end-of-string or '}' while looking for possible user-variable ($*) "
 "in condition."
 msgstr "Stringende oder '}' bei der Suche nach möglichem '$'/'*' bei Test."
 
-#: src/output/formatstring.cc:493
+#: src/output/formatstring.cc:509
 msgid ""
 "Ran into end-of-string or '}' while looking for property-name in condition."
 msgstr "Stringende oder '}' bei der Suche nach Property-Namen bei einem Test."
 
-#: src/output/formatstring.cc:502
+#: src/output/formatstring.cc:518
 msgid "Ran into end-of-string while reading property-name."
 msgstr "Stringende bei Suche nach Property-Namen."
 
-#: src/output/formatstring.cc:516
+#: src/output/formatstring.cc:532
 msgid "Unknown operator in if-construct."
 msgstr "Unbekannter Operator in einem if-Konstrukt."
 
-#: src/output/formatstring.cc:523 src/output/formatstring.cc:557
+#: src/output/formatstring.cc:539 src/output/formatstring.cc:597
 msgid "Run into end-of-string while looking for right-hand of condition."
 msgstr "Stringende bei Suche nach rechter Seiter des Tests."
 
-#: src/output/formatstring.cc:578
+#: src/output/formatstring.cc:595
+msgid "Run into end-of-string while looking for right-hand of assignment."
+msgstr "Stringende bei Suche nach rechter Seiter der Zuweisung."
+
+#: src/output/formatstring.cc:618
 msgid "Found ELSE without IF."
 msgstr "Stieß auf ELSE ohne IF."
 
-#: src/output/formatstring.cc:605
+#: src/output/formatstring.cc:645
 msgid "Found FI without IF."
 msgstr "Stieß auf FI ohne IF."
 
-#: src/output/formatstring.cc:628
+#: src/output/formatstring.cc:668
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:642
+#: src/output/formatstring.cc:682
 msgid "Bad state: ERROR"
 msgstr "Unerlaubter Status: ERROR"
 
-#: src/output/formatstring.cc:643
+#: src/output/formatstring.cc:683
 msgid "Bad state: STOP"
 msgstr "Unerlaubter Status: STOP"
 
-#: src/output/formatstring.cc:644
+#: src/output/formatstring.cc:684
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:656
+#: src/output/formatstring.cc:696
 msgid "Line %r, column %r: %s"
 msgstr "Zeile %r, Spalte %r: %s"
 
