@@ -570,14 +570,19 @@ FormatParser::state_IF()
 			parse_modus = plain;
 			break;
 	}
-	string textbuffer;
 
+	string textbuffer;
 	while(*band_position) {
-		if((parse_modus != plain && *band_position == parse_modus) || strchr(" \t\n\r}", *band_position) != NULL) {
-			break;
+		if(parse_modus != plain) {
+			if(*band_position == parse_modus)
+				break;
 		}
-		if(*band_position == '\\' && parse_modus != single_quote) {
+		else if(strchr(" \t\n\r}", *band_position) != NULL)
+			break;
+		if((*band_position == '\\') && (parse_modus != single_quote)) {
 			textbuffer.append(get_escape(++band_position));
+			if(!*band_position)
+				break;
 		}
 		else {
 			textbuffer.append(band_position, 1);
@@ -585,6 +590,7 @@ FormatParser::state_IF()
 		++band_position;
 	}
 	n->text = Text(textbuffer);
+
 	if(*band_position != '}') {
 		if(*band_position) {
 			++band_position;
