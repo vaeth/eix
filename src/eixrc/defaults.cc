@@ -1160,16 +1160,30 @@ AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the eix-diff format for the best version(s) in case of changes."));
 
+AddOption(STRING, "DIFF_FORMAT_OLDBEST_CHANGE",
+	"{oldhavebest}"
+		"<oldbestslotversions:VSORT>"
+	"{else}"
+		"{oldhavebest*}"
+			"<oldbestslotversions*:VSORT>"
+		"{else}"
+			"%{?DIFF_NOBEST_CHANGE}"
+				"%{FORMAT_NOBEST_CHANGE}"
+			"%{else}"
+				"<oldavailableversions:VSORT>"
+			"%{}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff format for the old best versions in case of changes."));
+
 AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
 	"%{?DIFF_PRINT_INSTALLED}"
 		"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
 	"%{}"
-	"{oldhavebest}"
-		"<oldbestslotverionss:VSORT>"
-	"{else}"
-		"<oldavailableversions:VSORT>"
-	"{}"
-	"() -> %{DIFF_FORMAT_BEST_CHANGE}", _(
+	"%{DIFF_FORMAT_OLDBEST_CHANGE}"
+	" -> "
+	"%{DIFF_FORMAT_BEST_CHANGE}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the eix-diff format for changed versions."));
 

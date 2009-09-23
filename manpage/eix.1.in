@@ -1041,6 +1041,9 @@ use this information, this test expands to the empty string, otherwise to 1.
 Even if this test is negative, you can use B<use:...> in the way described earlier;
 however, the result will be empty in this case.
 .TP
+.BR havebest ", " havebest*
+Expands to 1 if the package has a best stable/unstable version.
+.TP
 .BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
 B<upgrade> expands to 1 if the package is installed and at least one slot can be upgraded
 (or the best stable version is a new slot and B<UPDATE_TO_HIGHEST_SLOT> is true).

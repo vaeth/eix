@@ -5,9 +5,11 @@
 	- Allow also properties and variable names on the right-hand side
 	  of comparisons or runtime variable assignments.
 	- Store/show +- of IUSE.
+	- Fix defaults in formatstrings (particularly for eix-diff).
+	- Fix manpage: Add some forgotten properties.
 	- Fix possible overflow in string assignment/comparison.
 	- Improve parsing of <*:*>.
-	- Fix implementation of -q which was badly broken.
+	- Fix implementation of -q which was broken in a subtle way.
 
 *eix-0.18.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
