@@ -136,11 +136,11 @@ Package::sortedPushBack(Version *v)
 void
 Package::collect_iuse(const Version *version)
 {
-	if (version->iuse_vector().empty())
+	if(version->version_iuse.empty())
 		return;
 
 	/// collect iuse
-	insert_list(m_collected_iuse, version->iuse_vector());
+	collected_iuse.insert(version->iuse());
 
 #ifdef NOT_FULL_USE
 	// Clear iuse to save memory:

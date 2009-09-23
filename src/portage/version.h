@@ -21,8 +21,8 @@
 
 /* If NOT_FULL_USE is defined, then the iuse data will be handled per package
    and not per version to save memory and disk space.
-   More precisely, if NOT_FULL_USE is defined then the version::m_iuse entry
-   will be empty most of the time:
+   More precisely, if NOT_FULL_USE is defined then the version::version_iuse
+   entry will be empty most of the time:
    The entry is cleared in Package::collect_iuse() which is called by
    Package::addVersionFinalize() / Package::addVersion()
    whenever a version is added to the package: Before clearing,
@@ -35,6 +35,70 @@
    IUSE data is assumed to be known. */
 
 /*#define NOT_FULL_USE*/
+
+class IUse : public std::string {
+	public:
+		typedef unsigned char Flags;
+		static const Flags
+			USEFLAGS_NIL    = 0,
+			USEFLAGS_NORMAL = 1,
+			USEFLAGS_PLUS   = 2,
+			USEFLAGS_MINUS  = 4;
+		Flags flags;
+
+		static Flags split(std::string &s);
+
+		std::string &name()
+		{ return *static_cast<std::string *>(this); }
+
+		const std::string &name() const
+		{ return *static_cast<const std::string *>(this); }
+
+		IUse(const std::string &s) : std::string(s)
+		{ flags = split(name()); }
+
+		IUse(const std::string &s, Flags f) : std::string(s), flags(f)
+		{ }
+
+		std::string asString() const;
+
+		bool operator=(const IUse& c) const
+		{ return (name() == c.name()); }
+};
+
+class IUseSet {
+	public:
+		void cacheString()
+		{ m_cached_iuse.clear(); }
+
+		bool empty() const
+		{ return m_iuse.empty(); }
+
+		void clear()
+		{ m_iuse.clear(); cacheString(); }
+
+		const std::set<IUse> &asSet() const
+		{ return m_iuse; }
+
+		void insert(const std::set<IUse> &iuse);
+
+		void insert(const IUseSet &iuse)
+		{ insert(iuse.asSet()); }
+
+		void insert(const std::string &iuse);
+
+		// Be sure to call cacheString() when you finish calling this
+		void insert_fast(const std::string &iuse)
+		{ insert(IUse(iuse)); }
+
+		std::string asString() const;
+
+	protected:
+		std::set<IUse> m_iuse;
+		mutable std::string m_cached_iuse;
+
+		void insert(const IUse &iuse);
+};
 
 /** Version expands the BasicVersion class by data relevant for versions in tree/overlays.
  */
@@ -75,6 +139,10 @@ class Version : public ExtendedVersion, public Keywords {
 		std::vector<EffectiveState> states_effective;
 
 		std::vector<SetsIndex> sets_indizes;
+
+		/** If NOT_FULL_USE is defined, this might "falsely" be empty
+		    to save memory. See the comments above NOT_FULL_USE. */
+		IUseSet version_iuse;
 
 		Version() : overlay_key(0),
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
@@ -139,12 +207,11 @@ class Version : public ExtendedVersion, public Keywords {
 			return true;
 		}
 
-		void set_iuse(const std::string &i);
+		void set_iuse(const std::string &i)
+		{ version_iuse.clear(); version_iuse.insert(i); }
 
-		const std::string& iuse() const;
-
-		const std::vector<std::string>& iuse_vector() const
-		{ return m_iuse; }
+		const std::string iuse() const
+		{ return version_iuse.asString(); }
 
 		bool is_in_set(SetsIndex m_set) const
 		{ return (std::find(sets_indizes.begin(), sets_indizes.end(), m_set) != sets_indizes.end()); }
@@ -186,12 +253,6 @@ class Version : public ExtendedVersion, public Keywords {
 		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
 
 	protected:
-		/** If NOT_FULL_USE is defined, this might "falsely" be empty
-		    to save memory. See the comments above NOT_FULL_USE. */
-		std::vector<std::string> m_iuse;
-
-		/// joint strings from m_iuse; clear if you change m_iuse.
-		mutable std::string m_cached_iuse;
 
 		std::string full_keywords, effective_keywords;
 		EffectiveState effective_state;

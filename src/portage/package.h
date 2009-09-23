@@ -107,6 +107,8 @@ class Package
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
 
+		IUseSet collected_iuse;
+
 		/** Our calc_allow_upgrade_slots(this) cache;
 		    mutable since it is just a cache. */
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
@@ -146,28 +148,8 @@ class Package
 		{ return (local_collects & LCOLLECT_WORLD_SETS); }
 
 		/** Collected IUSE for all versions of that package */
-		const std::string& coll_iuse() const
-		{
-			if (m_collected_iuse_cache.empty())
-				m_collected_iuse_cache = join_set(m_collected_iuse);
-			return m_collected_iuse_cache;
-		}
-
-		const std::set<std::string>& coll_iuse_vector() const
-		{ return m_collected_iuse; }
-
-		template<typename Iter>
-		void add_coll_iuse(const Iter& a, const Iter& b)
-		{
-			m_collected_iuse.insert(a, b);
-			m_collected_iuse_cache.clear();
-		}
-
-		void add_coll_iuse(const std::string &s)
-		{
-			m_collected_iuse_cache.clear();
-			m_collected_iuse.insert(s);
-		}
+		const std::string coll_iuse() const
+		{ return collected_iuse.asString(); }
 
 #ifndef NOT_FULL_USE
 		/** Does at least one version have individual iuse data? */
@@ -398,9 +380,6 @@ class Package
 		/// Create new slotlist. Const because we operate on mutable cache
 		/// types.
 		void build_slotslit() const;
-
-		std::set<std::string> m_collected_iuse;
-		mutable std::string m_collected_iuse_cache;
 
 		/** This is called by addVersionFinalize() to calculate
 		    coll_iuse and to save memory by freeing original iuse */

@@ -17,6 +17,7 @@
 
 #include <cstdio>
 
+class IUseSet;
 class Package;
 class Version;
 class PackageTree;
@@ -122,12 +123,7 @@ namespace io {
 
 	std::string read_hash_words(FILE *fp, const StringHash& hash);
 
-	template<typename m_Iter>
-	void read_hash_container(FILE *fp, const StringHash& hash, m_Iter iter)
-	{
-		for(UNumber e = io::read<UNumber>(fp); e != 0; --e)
-			*iter++ = io::read_hash_string(fp, hash);
-	}
+	void read_iuse(FILE *fp, const StringHash& hash, IUseSet &iuse);
 
 	/// Read a version from fp
 	Version *read_version(FILE *fp, const DBHeader &hdr);

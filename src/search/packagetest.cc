@@ -354,9 +354,9 @@ PackageTest::stringMatch(Package *pkg) const
 	}
 
 	if(field & IUSE) {
-		//vector<string> s=split_string(pkg->coll_iuse);
-		for(set<string>::const_iterator it = pkg->coll_iuse_vector().begin();
-			it != pkg->coll_iuse_vector().end(); ++it) {
+		vector<string> s = split_string(pkg->coll_iuse());
+		for(vector<string>::const_iterator it = s.begin();
+			it != s.end(); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
 		}

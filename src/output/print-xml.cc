@@ -252,7 +252,7 @@ PrintXml::package(const Package *pkg)
 				cout << "\t\t\t\t<iuse enabled=\"1\">" << iuse_enabled << "</iuse>\n";
 			}
 		} else {
-			if (ver->iuse_vector().size()) {
+			if (!(ver->version_iuse.empty())) {
 				cout << "\t\t\t\t<iuse>" << ver->iuse() << "</iuse>\n";
 			}
 		}

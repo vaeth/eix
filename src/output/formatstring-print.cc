@@ -814,7 +814,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					return one;
 				break;
 			}
-			if(!(version_variables->version()->iuse_vector().empty()))
+			if(!(version_variables->version()->version_iuse.empty()))
 				return one;
 			break;
 		case Scanner::VER_ISBESTUPGRADESLOT:

@@ -44,30 +44,24 @@ PackageReader::read(Attributes need)
 			if(need == LICENSE)
 				break;
 		case LICENSE:
-			io::read_hash_container(m_fp, header->iuse_hash,
-					std::inserter(m_pkg->m_collected_iuse, m_pkg->m_collected_iuse.begin()));
+			io::read_iuse(m_fp, header->iuse_hash, m_pkg->collected_iuse);
 #ifdef NOT_FULL_USE
 			if(need == COLL_IUSE)
 				break;
 		case COLL_IUSE:
 #endif
-			{
-				for(io::Versize i = io::read<io::Versize>(m_fp); i; i-- ) {
-					m_pkg->addVersion(io::read_version(m_fp, *header));
-				}
-				if(m_portagesettings) {
-					m_portagesettings->calc_local_sets(&(*m_pkg));
-					m_portagesettings->finalize(&(*m_pkg));
-				}
-				else
-					m_pkg->finalize_masks();
+			for(io::Versize i = io::read<io::Versize>(m_fp); i; i-- )
+				m_pkg->addVersion(io::read_version(m_fp, *header));
+			if(m_portagesettings) {
+				m_portagesettings->calc_local_sets(&(*m_pkg));
+				m_portagesettings->finalize(&(*m_pkg));
 			}
+			else
+				m_pkg->finalize_masks();
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
-#ifndef NOT_FULL_USE
-		case COLL_IUSE:
-#endif
-		case ALL:
 		default:
+		//case COLL_IUSE:
+		//case ALL:
 			break;
 	}
 	m_have = need;

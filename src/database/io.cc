@@ -104,6 +104,15 @@ io::read_Part(FILE *fp)
 	return BasicVersion::Part(type, "");
 }
 
+void
+io::read_iuse(FILE *fp, const StringHash& hash, IUseSet &iuse)
+{
+	iuse.clear();
+	for(io::UNumber e = io::read<io::UNumber>(fp); e; --e)
+		iuse.insert_fast(io::read_hash_string(fp, hash));
+	iuse.cacheString();
+}
+
 Version *
 io::read_version(FILE *fp, const DBHeader &hdr)
 {
@@ -125,8 +134,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	v->slotname = io::read_hash_string(fp, hdr.slot_hash);
 	v->overlay_key = io::read<Version::Overlay>(fp);
 
-	io::read_hash_container(fp, hdr.iuse_hash, std::inserter(v->m_iuse, v->m_iuse.end()));
-	// we can assume the list is ordered and unique, no sort_uniquify needed
+	io::read_iuse(fp, hdr.iuse_hash, v->version_iuse);
 
 	//v->save_maskflags(Version::SAVEMASK_FILE);// This is done in package_reader
 	return v;
@@ -171,7 +179,7 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 
 	io::write_hash_string(fp, hdr.slot_hash, v->slotname);
 	io::write<Version::Overlay>(fp, v->overlay_key);
-	io::write_hash_words(fp, hdr.iuse_hash, v->m_iuse);
+	io::write_hash_words(fp, hdr.iuse_hash, v->iuse());
 }
 
 io::Treesize

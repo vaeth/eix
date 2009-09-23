@@ -38,7 +38,7 @@ dnl In other words: For closing braces, we use lisp-type conventions.
 dnl
 dnl The unique init-command is an exception of these rules:
 dnl It must be in one line since it is parsed by primitive scripts.
-AC_INIT([eix], [0.18.0], [http://eix.sourceforge.net])
+AC_INIT([eix], [0.18.1], [http://eix.sourceforge.net])
 
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_FILES([Makefile manpage/Makefile src/Makefile doc/Makefile po/Makefile.in])
