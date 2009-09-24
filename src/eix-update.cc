@@ -97,7 +97,7 @@ class Permissions {
 						if(!user_in_group("portage")) {
 							cerr << _(
 								"You must be in the portage group to update the database.\n"
-								"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test.")
+								"Set SKIP_PERMISSION_TESTS=true to skip this test (e.g. if you use NSS/LDAP).")
 								<< endl;
 							exit(1);
 						}
@@ -109,9 +109,12 @@ class Permissions {
 				if(!am_i_root())
 				{
 					if(must_modify) {
-						cerr << _(
-							"User 'root' is needed to initially generate the database.")
-							<< endl;
+						cerr << eix::format(_(
+							"User 'root' is needed to initially generate the database.\n"
+							"Alternatively, you can generate a dummy cachefile %r\n"
+							"with write permissions for group portage.\n"
+							"Set SKIP_PERMISSION_TESTS=true to skip this test."))
+							% cachefile << endl;
 						exit(1);
 					}
 					modify = false;

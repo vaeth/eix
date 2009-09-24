@@ -9,6 +9,8 @@
 
 #include "package_reader.h"
 
+#include <config.h>
+
 #include <portage/package.h>
 #include <portage/version.h>
 #include <portage/conf/portagesettings.h>
@@ -71,8 +73,13 @@ void
 PackageReader::skip()
 {
 	// only seek if needed
-	if (m_have != ALL)
-		fseeko(m_fp, m_next , SEEK_SET);
+	if (m_have != ALL) {
+#ifdef HAVE_FSEEKO
+		fseeko(m_fp, m_next, SEEK_SET);
+#else
+		fseek(m_fp, m_next, SEEK_SET);
+#endif
+	}
 	m_pkg.reset();
 }
 
@@ -90,7 +97,14 @@ PackageReader::next()
 	}
 
 	io::OffsetType len = io::read<io::OffsetType>(m_fp);
-	m_next =  ftello(m_fp) + len;
+#ifdef HAVE_FSEEKO
+	// We rely on autoconf whose documentation states:
+	// All system with fseeko() also supply ftello()
+	m_next = ftello(m_fp) + len;
+#else
+	// We want an off_t-addition, so we cast first to be safe:
+	m_next = off_t(ftell(m_fp)) + len;
+#endif
 	m_have = NONE;
 	m_pkg.reset(new Package());
 	m_pkg->category = m_cat_name;

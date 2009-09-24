@@ -10,6 +10,9 @@
 	- Fix possible overflow in string assignment/comparison.
 	- Improve parsing of <*:*>.
 	- Fix implementation of -q which was broken in a subtle way.
+	- Use fseek/ftell on systems without fseeko/ftello, and
+	- improve error messages for failed permission tests,
+	  for both see http://bugs.gentoo.org/show_bug.cgi?id=286229
 
 *eix-0.18.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

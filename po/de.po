@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-23 14:26+0200\n"
+"POT-Creation-Date: 2009-09-24 17:44+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1217,24 +1217,33 @@ msgstr "%s muss für die Grupper portage beschreibbar sein."
 #: src/eix-update.cc:99
 msgid ""
 "You must be in the portage group to update the database.\n"
-"If you use NSS/LDAP, set SKIP_PERMISSION_TESTS to skip this test."
+"Set SKIP_PERMISSION_TESTS=true to skip this test (e.g. if you use NSS/LDAP)."
 msgstr ""
 "Zum Datenbank-Update ist Zugehörigkeit zur Gruppe portage nötig.\n"
-"Durch Setzen von SKIP_PERMISSION_TESTS kann dieser Test verhindert werden."
+"Mit SKIP_PERMISSION_TESTS=true kann dieser Test umgangen werden\n"
+"(beispielsweise wenn NSS/LDAP benutzt wird)."
 
 #: src/eix-update.cc:113
-msgid "User 'root' is needed to initially generate the database."
-msgstr "Nur 'root' kann anfänglich die Datenbank generieren."
+msgid ""
+"User 'root' is needed to initially generate the database.\n"
+"Alternatively, you can generate a dummy cachefile %r\n"
+"with write permissions for group portage.\n"
+"Set SKIP_PERMISSION_TESTS=true to skip this test."
+msgstr ""
+"Nur 'root' kann anfänglich die Datenbank generieren.\n"
+"Alternativ können Sie ein Dummy-Cachefile %r\n"
+"mit Schreibberechtigungen für die Gruppe Portage anlegen.\n"
+"Mit SKIP_PERMISSION_TESTS=true kann dieser Test umgangen werden."
 
-#: src/eix-update.cc:132
+#: src/eix-update.cc:135
 msgid "warning: cannot change ownership of cachefile"
 msgstr "Warnung: Kann Benutzer des Cachefiles nicht ändern"
 
-#: src/eix-update.cc:135
+#: src/eix-update.cc:138
 msgid "warning: cannot change permissions for cachefile"
 msgstr "Warnung: Kann Rechte des Cachefiles nicht ändern"
 
-#: src/eix-update.cc:145
+#: src/eix-update.cc:148
 #, c-format
 msgid ""
 "Usage: %s [options]\n"
@@ -1283,80 +1292,80 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-update.cc:249
+#: src/eix-update.cc:252
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD\n"
 msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
 
-#: src/eix-update.cc:267
+#: src/eix-update.cc:270
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
 
-#: src/eix-update.cc:272
+#: src/eix-update.cc:275
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 
-#: src/eix-update.cc:277
+#: src/eix-update.cc:280
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:342
+#: src/eix-update.cc:345
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:442
+#: src/eix-update.cc:445
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:456
+#: src/eix-update.cc:459
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:461
+#: src/eix-update.cc:464
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:505
+#: src/eix-update.cc:508
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:517
+#: src/eix-update.cc:520
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:522
+#: src/eix-update.cc:525
 msgid "     Reading "
 msgstr "     Lese "
 
-#: src/eix-update.cc:530
+#: src/eix-update.cc:533
 msgid "aborted"
 msgstr "Abbruch"
 
-#: src/eix-update.cc:549
+#: src/eix-update.cc:552
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:563
+#: src/eix-update.cc:566
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:567
+#: src/eix-update.cc:570
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:570
+#: src/eix-update.cc:573
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:583
+#: src/eix-update.cc:586
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
