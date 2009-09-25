@@ -285,8 +285,8 @@ run_eix_diff(int argc, char *argv[])
 	}
 
 	if(cli_quiet) {
-		if(!freopen("/dev/null", "w", stdout)) {
-			cerr << "cannot redirect to /dev/null" << endl;
+		if(!freopen(DEV_NULL, "w", stdout)) {
+			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			exit(1);
 		}
 	}

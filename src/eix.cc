@@ -482,8 +482,8 @@ run_eix(int argc, char** argv)
 
 	// Honour a STFU
 	if(rc_options.be_quiet) {
-		if(!freopen("/dev/null", "w", stdout)) {
-			cerr << "cannot redirect to /dev/null" << endl;
+		if(!freopen(DEV_NULL, "w", stdout)) {
+			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			exit(1);
 		}
 	}

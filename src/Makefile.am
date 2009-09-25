@@ -503,6 +503,7 @@ SUFFIXES = .in
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
 		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
+		-e "s,/dev/null,$(DEV_NULL),g" \
 		"$<" > "$@"
 
 # Enable us to 'make clean' in src/

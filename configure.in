@@ -90,6 +90,20 @@ AC_TYPE_UINT8_T()
 AC_TYPE_UINT16_T()
 AC_TYPE_UINT32_T()
 
+# This must be an early test, since we need the null device later in this file:
+AC_ARG_WITH([dev-null],
+	[AS_HELP_STRING([--with-null-device=STR],
+		[null device of the system, usually /dev/null])],
+	[DEV_NULL="${withval}"],
+	[DEV_NULL=""])
+AS_IF([test -z "${DEV_NULL}"],
+	[DEV_NULL="/dev/null"],
+	[AC_MSG_NOTICE([Using null device ${DEV_NULL}])])
+AC_DEFINE_UNQUOTED([DEV_NULL],
+	["${DEV_NULL}"],
+	[ Null device of the system])
+AC_SUBST([DEV_NULL])
+
 # Separate binaries?
 AC_ARG_ENABLE([separate_binaries],
 	[AS_HELP_STRING([--enable-separate-binaries],
@@ -307,15 +321,15 @@ AC_ARG_WITH([sqlite],
 	[AS_CASE(["${withval}"],
 		[no], [AC_MSG_RESULT([no (on request)])],
 		[AC_MSG_RESULT([yes (on request)])
-		AS_IF([command -v pkg-config >/dev/null 2>&1],
+		AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
 			[SQLITE_LIBS="`pkg-config --libs sqlite3`"])
 		# If pkg-config is not available or failed, we use a default
 		AS_IF([test -z "${SQLITE_LIBS}"],
 			[AC_MSG_WARN([ignoring pkg-config and using -lsqlite3])
 			SQLITE_LIBS="-lsqlite3"])])],
 	[# If autodetection of sqlite is necessary, we rely on pkg-config
-	AS_IF([command -v pkg-config >/dev/null 2>&1],
-		[SQLITE_LIBS="`pkg-config --libs sqlite3 2>/dev/null`"])
+	AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
+		[SQLITE_LIBS="`eval pkg-config --libs sqlite3 2>${DEV_NULL}`"])
 	AS_IF([test -n "${SQLITE_LIBS}"],
 		[AC_MSG_RESULT([yes (autodetected)])],
 		[AC_MSG_RESULT([no (autodetected)])])])
@@ -340,11 +354,12 @@ AC_SUBST([PORTDIR_CACHE_METHOD])
 AC_ARG_WITH([eprefix-default],
 	[AS_HELP_STRING([--with-eprefix-default=STR],
 		[default EPREFIX])],
-	[EPREFIX_DEFAULT="${withval}"
-	AS_IF([test x"${EPREFIX_DEFAULT}" = x"/"],
-		[EPREFIX_DEFAULT=""])
-	AC_MSG_NOTICE([Changing default: EPREFIX=${EPREFIX_DEFAULT}])],
-	[EPREFIX_DEFAULT=""])
+	[EPREFIX_DEFAULT="${withval}"],
+	[EPREFIX_DEFAULT="`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])
+AS_IF([test x"${EPREFIX_DEFAULT}" = x"/"],
+	[EPREFIX_DEFAULT=""],
+	[test -n "${EXPREFIX_DEFAULT}"],
+	[AC_MSG_NOTICE([Using EPREFIX=${EPREFIX_DEFAULT}])])
 AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
 	["${EPREFIX_DEFAULT}"],
 	[ Default EPREFIX])
@@ -417,7 +432,6 @@ AC_ARG_WITH([portage-bin-path],
 	[PORTAGE_BIN_PATH_DEFAULT="${withval}"
 	AC_MSG_NOTICE([Using PORTAGE_BIN_PATH=${PORTAGE_BIN_PATH_DEFAULT}])],
 	[PORTAGE_BIN_PATH_DEFAULT=""])
-
 AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
 	["${PORTAGE_BIN_PATH_DEFAULT}"],
 	[ Default PORTAGE_BIN_PATH])
