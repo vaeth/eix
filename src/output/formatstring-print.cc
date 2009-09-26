@@ -274,6 +274,7 @@ class Scanner {
 			PKG_BESTRECOMMEND,
 			PKG_BESTRECOMMENDORINSTALL,
 			PKG_MARKED,
+			PKG_HAVECOLLIUSE,
 			PKG_COLLIUSE,
 			PKG_HAVEVERSIONUSE,
 
@@ -289,13 +290,13 @@ class Scanner {
 			VER_OVERLAYNUM,
 			VER_OVERLAYVER,
 			VER_VERSIONKEYWORDS,
-			VER_HAVEUSE,
 			VER_ISBESTUPGRADESLOTS,
 			VER_ISBESTUPGRADESLOT,
 			VER_ISBESTUPGRADES,
 			VER_ISBESTUPGRADE,
 			VER_MARKEDVERSION,
 			VER_INSTALLEDVERSION,
+			VER_HAVEUSE,
 			VER_USE,
 			VER_RESTRICT,
 			VER_RESTRICTFETCH,
@@ -399,6 +400,7 @@ class Scanner {
 			prop_pkg("bestrecommend", PKG_BESTRECOMMEND);
 			prop_pkg("bestrecommendorinstall", PKG_BESTRECOMMENDORINSTALL);
 			prop_pkg("marked", PKG_MARKED);
+			prop_pkg("havecolliuse", PKG_HAVECOLLIUSE);
 			prop_pkg("colliuse", PKG_COLLIUSE);
 			prop_pkg("haveversionuse", PKG_HAVEVERSIONUSE);
 			prop_ver("first", VER_FIRST);
@@ -412,13 +414,13 @@ class Scanner {
 			prop_ver("overlaynum", VER_OVERLAYNUM);
 			prop_ver("overlayver", VER_OVERLAYVER);
 			prop_ver("versionkeywords", VER_VERSIONKEYWORDS);
-			prop_ver("haveuse", VER_HAVEUSE);
 			prop_ver("isbestupgradeslot*", VER_ISBESTUPGRADESLOTS);
 			prop_ver("isbestupgradeslot", VER_ISBESTUPGRADESLOT);
 			prop_ver("isbestupgrade*", VER_ISBESTUPGRADES);
 			prop_ver("isbestupgrade", VER_ISBESTUPGRADE);
 			prop_ver("markedversion", VER_MARKEDVERSION);
 			prop_ver("installedversion", VER_INSTALLEDVERSION);
+			prop_ver("haveuse", VER_HAVEUSE);
 			prop_ver("use", VER_USE);
 			prop_ver("restrict", VER_RESTRICT);
 			prop_ver("restrictfetch", VER_RESTRICTFETCH);
@@ -728,6 +730,10 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					return one;
 			}
 			break;
+		case Scanner::PKG_HAVECOLLIUSE:
+			if(package->iuse.empty())
+				break;
+			return one;
 		case Scanner::PKG_COLLIUSE:
 			return package->iuse.asString();
 		case Scanner::PKG_HAVEVERSIONUSE:
@@ -807,16 +813,6 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(!(version_variables->isinst))
 				return get_version_keywords(package, version_variables->version());
 			break;
-		case Scanner::VER_HAVEUSE:
-			if(version_variables->isinst) {
-				InstVersion &i = *(version_variables->instver());
-				if(vardb && (vardb->readUse(*package, i)) && !(i.inst_iuse.empty()))
-					return one;
-				break;
-			}
-			if(!(version_variables->version()->iuse.empty()))
-				return one;
-			break;
 		case Scanner::VER_ISBESTUPGRADESLOT:
 		case Scanner::VER_ISBESTUPGRADESLOTS:
 			a = true;
@@ -846,6 +842,16 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(vardb && header && vardb->isInstalledVersion(*package,
 				version_variables->version(),
 				*header, (*portagesettings)["PORTDIR"].c_str()))
+				return one;
+			break;
+		case Scanner::VER_HAVEUSE:
+			if(version_variables->isinst) {
+				InstVersion &i = *(version_variables->instver());
+				if(vardb && (vardb->readUse(*package, i)) && !(i.inst_iuse.empty()))
+					return one;
+				break;
+			}
+			if(!(version_variables->version()->iuse.empty()))
 				return one;
 			break;
 		case Scanner::VER_USE:

@@ -1029,9 +1029,10 @@ the package PROVIDE string
 expands to 1 if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
 .TP
-.B colliuse
+.BR colliuse ", " havecolliuse
 The collected IUSE flags (i.e. their union) of all available versions
 of the package, separated by spaces.
+havecolliuse expands to 1 if colliuse is nonempty; this is faster than colliuse.
 .TP
 .B haveversionuse
 In order to save memory and/or disk space, eix can be compiled to not store

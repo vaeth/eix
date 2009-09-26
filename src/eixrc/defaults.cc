@@ -825,7 +825,7 @@ AddOption(STRING, "SSORT",
 
 AddOption(STRING, "FORMAT_COLL_IUSE",
 	"%{?PRINT_IUSE}"
-		"{colliuse}"
+		"{havecolliuse}"
 			"%{FORMAT_BEFORE_COLL_IUSE}"
 			"<colliuse>"
 			"%{FORMAT_AFTER_COLL_IUSE}"
@@ -836,7 +836,7 @@ AddOption(STRING, "FORMAT_COLL_IUSE",
 
 AddOption(STRING, "FORMAT_SLOT_IUSE",
 	"%{?PRINT_IUSE}"
-		"{colliuse}"
+		"{havecolliuse}"
 			"%{FORMAT_BEFORE_SLOT_IUSE}"
 			"<colliuse>"
 			"%{FORMAT_AFTER_SLOT_IUSE}"

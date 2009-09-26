@@ -77,6 +77,28 @@ PrintXml::finish()
 	runclear();
 }
 
+static void
+print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
+{
+	bool have_found = false;
+	for(set<IUse>::const_iterator it = s.begin(); it != s.end(); ++it) {
+		if(!((it->flags) & wanted))
+			continue;
+		if(have_found) {
+			cout << " " << it->name();
+			continue;
+		}
+		have_found = true;
+		if(dflt)
+			cout << "\t\t\t\t<iuse default=\"" << dflt << "\">";
+		else
+			cout << "\t\t\t\t<iuse>";
+		cout << it->name();
+	}
+	if(have_found)
+		cout << "</iuse>\n";
+}
+
 void
 PrintXml::package(const Package *pkg)
 {
@@ -231,6 +253,13 @@ PrintXml::package(const Package *pkg)
 			cout << "\t\t\t\t<unmask type=\"" << unmask_text << "\" />\n";
 		}
 
+		if (!(ver->iuse.empty())) {
+			//cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
+			const set<IUse> &s = ver->iuse.asSet();
+			print_iuse(s, IUse::USEFLAGS_NORMAL, NULL);
+			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
+			print_iuse(s, IUse::USEFLAGS_MINUS, "-1");
+		}
 		if (versionInstalled) {
 			string iuse_disabled, iuse_enabled;
 			var_db_pkg->readUse(*pkg, *installedVersion);
@@ -246,14 +275,10 @@ PrintXml::package(const Package *pkg)
 				}
 			}
 			if (!iuse_disabled.empty()) {
-				cout << "\t\t\t\t<iuse enabled=\"0\">" << iuse_disabled << "</iuse>\n";
+				cout << "\t\t\t\t<use enabled=\"0\">" << iuse_disabled << "</use>\n";
 			}
 			if (!iuse_enabled.empty()) {
-				cout << "\t\t\t\t<iuse enabled=\"1\">" << iuse_enabled << "</iuse>\n";
-			}
-		} else {
-			if (!(ver->iuse.empty())) {
-				cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
+				cout << "\t\t\t\t<use enabled=\"1\">" << iuse_enabled << "</use>\n";
 			}
 		}
 
