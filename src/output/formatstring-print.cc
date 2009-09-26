@@ -729,7 +729,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			}
 			break;
 		case Scanner::PKG_COLLIUSE:
-			return package->coll_iuse();
+			return package->iuse.asString();
 		case Scanner::PKG_HAVEVERSIONUSE:
 #ifndef NOT_FULL_USE
 			if(package->versions_have_full_use)
@@ -814,7 +814,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					return one;
 				break;
 			}
-			if(!(version_variables->version()->version_iuse.empty()))
+			if(!(version_variables->version()->iuse.empty()))
 				return one;
 			break;
 		case Scanner::VER_ISBESTUPGRADESLOT:
@@ -851,7 +851,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::VER_USE:
 			if(version_variables->isinst)
 				return get_inst_use(*package, *(version_variables->instver()));
-			return version_variables->version()->iuse();
+			return version_variables->version()->iuse.asString();
 		case Scanner::VER_RESTRICT:
 		case Scanner::VER_RESTRICTFETCH:
 		case Scanner::VER_RESTRICTMIRROR:

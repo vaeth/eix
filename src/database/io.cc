@@ -110,7 +110,6 @@ io::read_iuse(FILE *fp, const StringHash& hash, IUseSet &iuse)
 	iuse.clear();
 	for(io::UNumber e = io::read<io::UNumber>(fp); e; --e)
 		iuse.insert_fast(io::read_hash_string(fp, hash));
-	iuse.cacheString();
 }
 
 Version *
@@ -134,7 +133,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	v->slotname = io::read_hash_string(fp, hdr.slot_hash);
 	v->overlay_key = io::read<Version::Overlay>(fp);
 
-	io::read_iuse(fp, hdr.iuse_hash, v->version_iuse);
+	io::read_iuse(fp, hdr.iuse_hash, v->iuse);
 
 	//v->save_maskflags(Version::SAVEMASK_FILE);// This is done in package_reader
 	return v;
@@ -179,7 +178,7 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 
 	io::write_hash_string(fp, hdr.slot_hash, v->slotname);
 	io::write<Version::Overlay>(fp, v->overlay_key);
-	io::write_hash_words(fp, hdr.iuse_hash, v->iuse());
+	io::write_hash_words(fp, hdr.iuse_hash, v->iuse.asVector());
 }
 
 io::Treesize
@@ -271,7 +270,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 			for(Package::iterator v = p->begin();
 				v != p->end(); ++v) {
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
-				hdr.iuse_hash.hash_words(v->iuse());
+				hdr.iuse_hash.hash_words(v->iuse.asVector());
 				hdr.slot_hash.hash_string(v->slotname);
 			}
 		}

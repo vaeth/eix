@@ -107,7 +107,7 @@ class Package
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
 
-		IUseSet collected_iuse;
+		IUseSet iuse;
 
 		/** Our calc_allow_upgrade_slots(this) cache;
 		    mutable since it is just a cache. */
@@ -146,10 +146,6 @@ class Package
 		/** True if any version is in the world file. */
 		bool is_world_sets_package() const
 		{ return (local_collects & LCOLLECT_WORLD_SETS); }
-
-		/** Collected IUSE for all versions of that package */
-		const std::string coll_iuse() const
-		{ return collected_iuse.asString(); }
 
 #ifndef NOT_FULL_USE
 		/** Does at least one version have individual iuse data? */
@@ -382,8 +378,8 @@ class Package
 		void build_slotslit() const;
 
 		/** This is called by addVersionFinalize() to calculate
-		    coll_iuse and to save memory by freeing original iuse */
-		void collect_iuse(const Version *version);
+		    collected iuse and to save memory by freeing version iuse */
+		void collect_iuse(Version *version);
 
 		/** Check if a package has duplicated vsions. */
 		void checkDuplicates(const Version *version);

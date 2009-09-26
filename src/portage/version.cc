@@ -55,6 +55,16 @@ IUse::split(string &s)
 string
 IUse::asString() const
 {
+/*
+	For the case that you want to make prefixes/postfixes(?) customizable,
+	you might need to do this independently of this function.
+	This function is used to calculate the strings stored in the cachefile,
+	so each change modifies the cachefile format.
+	The corresponding function for reading the cachefile (or the string
+	passed from the ebuild) is split() which is intentionally a bit more
+	sloppy about the syntax; so certain minor changes of the prefixes to
+	the cachefile format do not harm.
+*/
 	string prefix;
 	switch(flags) {
 		case USEFLAGS_PLUS:
@@ -86,15 +96,24 @@ IUse::asString() const
 string
 IUseSet::asString() const
 {
-	if(m_cached_iuse.empty() && ! m_iuse.empty()) {
-		for(set<IUse>::const_iterator it = m_iuse.begin();
-			it != m_iuse.end(); ++it) {
-			if(!m_cached_iuse.empty())
-				m_cached_iuse.append(" ");
-			m_cached_iuse.append(it->asString());
-		}
+	string ret;
+	for(set<IUse>::const_iterator it = m_iuse.begin();
+		it != m_iuse.end(); ++it) {
+		if(!ret.empty())
+			ret.append(" ");
+		ret.append(it->asString());
 	}
-	return m_cached_iuse;
+	return ret;
+}
+
+vector<string>
+IUseSet::asVector() const
+{
+	vector<string> ret(m_iuse.size());
+	for(set<IUse>::const_iterator it = m_iuse.begin();
+		it != m_iuse.end(); ++it)
+		ret.push_back(it->asString());
+	return ret;
 }
 
 void
@@ -103,7 +122,6 @@ IUseSet::insert(const std::set<IUse> &iuse)
 	for(set<IUse>::const_iterator it = iuse.begin();
 		it != iuse.end(); ++it)
 		insert(*it);
-	cacheString();
 }
 
 void
@@ -113,7 +131,6 @@ IUseSet::insert(const string &iuse)
 	for(vector<string>::const_iterator it = vec.begin();
 		it != vec.end(); ++it)
 		insert_fast(*it);
-	cacheString();
 }
 
 void

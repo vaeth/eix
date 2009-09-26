@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-25 17:53+0200\n"
+"POT-Creation-Date: 2009-09-26 08:31+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1528,21 +1528,21 @@ msgstr "sqlite Datensatz für %s ist zu klein"
 msgid "%r not of the form package/category-version"
 msgstr "%r hat nicht die Gestalt package/category-version"
 
-#: src/cache/sqlite/sqlite.cc:244
+#: src/cache/sqlite/sqlite.cc:242
 msgid "Database path incorrect"
 msgstr "Falscher Datenbank-Pfad"
 
-#: src/cache/sqlite/sqlite.cc:255
+#: src/cache/sqlite/sqlite.cc:253
 #, c-format
 msgid "Can't open cache file %s"
 msgstr "Kann Cachefile %s nicht öffnen"
 
-#: src/cache/sqlite/sqlite.cc:272
+#: src/cache/sqlite/sqlite.cc:270
 #, c-format
 msgid "sqlite error: %s"
 msgstr "sqlite Fehler: %s"
 
-#: src/cache/sqlite/sqlite.cc:286
+#: src/cache/sqlite/sqlite.cc:284
 msgid ""
 "Cache method sqlite is not compiled in.\n"
 "Recompile eix, using configure option --with-sqlite to add sqlite support"
@@ -1558,7 +1558,7 @@ msgstr "Fehler beim Lesen der Datenbank: Zu frühes Fileende"
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:59 src/database/io.cc:151 src/database/io.h:47
+#: src/database/io.cc:59 src/database/io.cc:150 src/database/io.h:47
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
@@ -1627,17 +1627,17 @@ msgstr "Interner Fehler: Hashing required after finalizing"
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing required in non-hash mode"
 
-#: src/eixTk/stringutils.cc:282
+#: src/eixTk/stringutils.cc:280
 #, c-format
 msgid "Internal error: Index required before sorting."
 msgstr "Interner Fehler: Index required before sorting."
 
-#: src/eixTk/stringutils.cc:287
+#: src/eixTk/stringutils.cc:285
 #, c-format
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 
-#: src/eixTk/stringutils.cc:297
+#: src/eixTk/stringutils.cc:295
 #, c-format
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"

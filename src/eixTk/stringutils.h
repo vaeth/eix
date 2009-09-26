@@ -229,9 +229,15 @@ class StringHash : public std::vector<std::string>
 		void finalize();
 
 		void store_string(const std::string &s);
-		void store_words(const std::string &s);
+		void store_words(const std::vector<std::string> &v);
+		void store_words(const std::string &s)
+		{ hash_words(split_string(s)); }
+
 		void hash_string(const std::string &s);
-		void hash_words(const std::string &s);
+		void hash_words(const std::vector<std::string> &v);
+		void hash_words(const std::string &s)
+		{ hash_words(split_string(s)); }
+
 		StringHash::size_type get_index(const std::string &s) const;
 
 		void output(const char *s = NULL) const;

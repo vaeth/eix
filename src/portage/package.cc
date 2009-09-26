@@ -134,17 +134,17 @@ Package::sortedPushBack(Version *v)
 }
 
 void
-Package::collect_iuse(const Version *version)
+Package::collect_iuse(Version *version)
 {
-	if(version->version_iuse.empty())
+	if(version->iuse.empty())
 		return;
 
 	/// collect iuse
-	collected_iuse.insert(version->iuse());
+	iuse.insert(version->iuse);
 
 #ifdef NOT_FULL_USE
 	// Clear iuse to save memory:
-	(it->iuse).clear();
+	version->iuse.clear();
 #else
 	versions_have_full_use = true;
 #endif

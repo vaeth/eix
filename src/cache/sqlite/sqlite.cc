@@ -209,10 +209,8 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	version->slotname = TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT);
 	version->set_restrict(TrueIndex::c_str(argv, trueindex, TrueIndex::RESTRICT));
 	version->set_properties(TrueIndex::c_str(argv, trueindex, TrueIndex::PROPERTIES));
-	string keywords = TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS);
-	version->set_full_keywords(keywords);
-	string iuse = TrueIndex::c_str(argv, trueindex, TrueIndex::IUSE);
-	version->set_iuse(iuse);
+	version->set_full_keywords(TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS));
+	version->set_iuse(TrueIndex::c_str(argv, trueindex, TrueIndex::IUSE));
 	pkg->addVersion(version);
 
 	/* For the newest version, add all remaining data */

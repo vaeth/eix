@@ -46,7 +46,7 @@ PackageReader::read(Attributes need)
 			if(need == LICENSE)
 				break;
 		case LICENSE:
-			io::read_iuse(m_fp, header->iuse_hash, m_pkg->collected_iuse);
+			io::read_iuse(m_fp, header->iuse_hash, m_pkg->iuse);
 #ifdef NOT_FULL_USE
 			if(need == COLL_IUSE)
 				break;

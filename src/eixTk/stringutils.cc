@@ -260,17 +260,15 @@ StringHash::hash_string(const string &s)
 }
 
 void
-StringHash::store_words(const std::string &s)
+StringHash::store_words(const vector<string> &v)
 {
-	vector<string> v = split_string(s);
 	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
 		store_string(*i);
 }
 
 void
-StringHash::hash_words(const std::string &s)
+StringHash::hash_words(const vector<string> &v)
 {
-	vector<string> v = split_string(s);
 	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
 		hash_string(*i);
 }

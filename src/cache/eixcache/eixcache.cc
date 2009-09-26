@@ -177,7 +177,7 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			version->slotname = it->slotname;
 			version->restrictFlags = it->restrictFlags;
 			version->propertiesFlags = it->propertiesFlags;
-			version->set_iuse(it->iuse());
+			version->iuse = it->iuse;
 			pkg->addVersion(version);
 			if(*(pkg->latest()) == *version)
 			{
@@ -189,8 +189,8 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 			}
 		}
 		if(have_onetime_info) { // if the package exists:
-			// add coll_iuse from the saved data
-			pkg->collected_iuse.insert(p->collected_iuse);
+			// add collected iuse from the saved data
+			pkg->iuse.insert(p->iuse);
 		}
 		else
 			dest_cat->deletePackage(p->name);
