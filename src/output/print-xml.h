@@ -33,6 +33,9 @@ class PrintXml {
 		void clear(EixRc *eixrc);
 		void runclear();
 	public:
+		typedef  io::UNumber XmlVersion;
+		static const XmlVersion current = 2;
+
 		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{
 			hdr = header;

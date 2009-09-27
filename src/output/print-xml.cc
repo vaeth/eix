@@ -14,6 +14,8 @@
 
 using namespace std;
 
+const PrintXml::XmlVersion PrintXml::current;
+
 void
 PrintXml::runclear()
 {
@@ -60,7 +62,7 @@ PrintXml::start()
 	started = true;
 
 	cout << "<?xml version='1.0' encoding='UTF-8'?>\n"
-		"<eixdump>\n";
+		"<eixdump version=\"" << current << "\">\n";
 }
 
 void
@@ -159,14 +161,12 @@ PrintXml::package(const Package *pkg)
 				cout << " repository=\"" << escape_string(overlay.label) << "\"";
 			}
 		}
-		if (versionInstalled) {
-			cout << " installed=\"1\"";
-		}
 		if (!ver->slotname.empty()) {
 			cout << " slot=\"" << escape_string(ver->slotname) << "\"";
 		}
 		if (versionInstalled) {
-			cout << " installDate=\"" << installedVersion->instDate << "\"";
+			cout << " installed=\"1\""
+			" installDate=\"" << installedVersion->instDate << "\"";
 		}
 		cout << ">\n";
 
@@ -248,9 +248,9 @@ PrintXml::package(const Package *pkg)
 
 		if (mask_text) {
 			cout << "\t\t\t\t<mask type=\"" << mask_text << "\" />\n";
-		}
-		if (unmask_text) {
-			cout << "\t\t\t\t<unmask type=\"" << unmask_text << "\" />\n";
+			if (unmask_text) {
+				cout << "\t\t\t\t<unmask type=\"" << unmask_text << "\" />\n";
+			}
 		}
 
 		if (!(ver->iuse.empty())) {

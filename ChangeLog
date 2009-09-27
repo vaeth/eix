@@ -7,6 +7,7 @@
 	- Store/show +- of IUSE.
 	- Change iuse/use output for --xml to reflect the new available data.
 	  Thanks to Bob Shaffer II <bob.shaffer.2 at gmail.com>
+	- Document the XML output format.
 	- Introduce {havecolliuse}
 	- Fix defaults in formatstrings (particularly for eix-diff).
 	- Fix manpage: Add some forgotten properties.
