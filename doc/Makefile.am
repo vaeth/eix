@@ -1,5 +1,9 @@
 
-CLEANFILES = format.txt format.html xml-format.txt
+CLEANFILES = \
+format.txt \
+format.html \
+xml-format.txt \
+xml-format.html
 
 if USE_RST
 doc_rst = format.html xml-format.html
@@ -12,8 +16,8 @@ stylesheet.css \
 html4css1.css
 
 nodist_noinst_DATA = \
-format.txt \
 $(doc_rst) \
+format.txt \
 xml-format.txt
 
 EXTRA_DIST = \
