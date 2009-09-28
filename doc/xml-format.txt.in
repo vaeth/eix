@@ -10,172 +10,174 @@ eix - XML output format
 
 This article describes the format of the XML output
 (i.e. with the --xml option) of eix.
-The current version of this format is **@CURRENTXML@** (@PACKAGE_STRING@);
-this number occurs of course in the format itself.
+The current version of this format is @CURRENTXML@ (@PACKAGE_STRING@);
+this number occurs in the format itself as the **version** attribute of
+the **eixdump** tag.
 
   .. container:: layout-block header-block
 
-   <?xml version='1.0' encoding='UTF-8'?>
+   **<?xml version='1.0' encoding='UTF-8'?>**
 
-   <eixdump version="@CURRENTXML@">
+   **<eixdump version="@CURRENTXML@">**
 
    .. container:: layout-block category-block
 
-     <category name="Name of 1st Category">
+     **<category name="** name of 1st category **">**
 
      .. container:: layout-block package-block
 
-       <package name="Name of 1st Package">
+       **<package name="** name of 1st package **">**
 
        .. container:: layout-block version-block
 
-         <version id="1st version of 1st Package" [possibly further version-attributes_, see below]>
+         **<version id="** 1st version of 1st package **"** [**,** possibly further `version attributes`_ (see below), separated by commas] **>**
 
-         [possibly version-tags_, see below]
+           [possibly `version tags`_ (see below), separated by newlines and tabs]
 
-         </version>
+         **</version>**
 
        .. container:: layout-block version-block
 
          [..]
 
-       </package>
+       **</package>**
 
      .. container:: layout-block package-block
 
-       <package name="Name of 2nd Package of 1st Category">
+       **<package name="** name of 2nd package of 1st category **">**
 
        [..]
 
-       </package>
+       **</package>**
 
      .. container:: layout-block package-block
 
        [..]
 
-     </category>
+     **</category>**
 
    .. container:: layout-block category-block
 
-     <category name="Name of 2nd Category">
+     **<category name="** name of 2nd category **">**
 
      [..]
 
-     </category>
+     **</category>**
 
    .. container:: layout-block category-block
 
      [..]
 
-   </eixdump>
+   **</eixdump>**
 
-Version-Attributes
-------------------
+
+`Version Attributes`
+--------------------
 
 The following attributes for versions can occur.
 Except for id, all of them are optional.
 
-- id="..."
+- **id="** [..] **"**
 
   The full version number (possibly including the revision number).
   Note that id is not necessarily unique for a package, since the same
   version can occur in several overlays.
   Hence, only the triple id/overlay/repository is unique.
 
-- overlay="..."
+- **overlay="** [..] **"**
 
   The overlay is usually a path.
 
-- repository="..."
+- **repository="** [..] **"**
 
   The repository name is the label of the overlay.
   Usually, each overlay should have such a label stored in profiles/repo_name.
 
-- slot="..."
+- **slot="** [..] **"**
 
   The slot name is only output if it is nonempty and different from 0.
 
-- installed="1"
+- **installed="1"**
 
   This is only output if the version is installed.
 
-- installDate="date"
+- **installDate="** [..] **"**
 
-  The date is in time_t format as a number; on most systems, this number
+  The date is in *time_t* format as a number; on most systems, this number
   means the number of seconds since epoch.
   The installDate attribute is output if and only if the installed attribute
   is output, i.e. if and only if the version is installed.
 
 
-Version-Tags
-------------
+`Version Tags`
+--------------
 
 The following tags are used within a version.
 Each of them may or may not occur,
 depending on the configuration and the version data.
 
-- <mask type="..." />
+- **<mask type="** [..] **" />**
 
   Possible values for the type are:
 
-  - profile
-  - hard
-  - package_mask
-  - keyword
-  - minus_keyword
-  - alien_stable
-  - alien_unstable
-  - minus_asterisk
-  - minus_keyword
+  - **profile**
+  - **hard**
+  - **package_mask**
+  - **keyword**
+  - **minus_keyword**
+  - **alien_stable**
+  - **alien_unstable**
+  - **minus_asterisk**
+  - **minus_keyword**
 
-- <unmask type="..." />
+- **<unmask type="** [..] **" />**
 
   This can occur only if the mask tag has occurred and describes how the
   package has been unmasked locally. Possible values for the type are:
 
-  - package_unmask
-  - package_keywords
+  - **package_unmask**
+  - **package_keywords**
 
-- <iuse>...</iuse>
+- **<iuse>** [..] **</iuse>**
 
   Here are the IUSE flags of the ebuild listed (space separated in alphabetical order).
   Only those flags are listed which have no defaults specified in the ebuild.
 
-- <iuse default="1">...</iuse>
+- **<iuse default="1">** [..] **</iuse>**
 
-  This is like <iuse>...</iuse> but lists only those IUSE flags which are
-  enabled by default (i.e. prefixed with "+") in the ebuild.
+  This is like **<iuse>** [..] **</iuse>** but lists only those IUSE flags
+  which are enabled by default (i.e. prefixed with "+") in the ebuild.
 
-- <iuse default="-1">...</iuse>
+- **<iuse default="-1">** [..] **</iuse>**
 
-  This is like <iuse>...</iuse> but lists only those IUSE flags which are
-  disabled by default (i.e. prefixed with "-") in the ebuild.
+  This is like **<iuse>** [..] **</iuse>** but lists only those IUSE flags
+  which are disabled by default (i.e. prefixed with "-") in the ebuild.
 
-- <use enabled="0">...</use>
+- **<use enabled="0">** [..] **</use>**
 
-  For installed versions, this is the list of all USE-Flags which are
+  For installed versions, this is the list of all USE flags which are
   relevant for the installed version but not enabled during emerge.
 
-- <use enabled="1">...</use>
+- **<use enabled="1">** [..] **</use>**
 
-  As above, but for enabled USE-Flags.
+  As above, but for enabled USE flags.
 
-- <restrict flag="binchecks" />
-- <restrict flag="strip" />
-- <restrict flag="test" />
-- <restrict flag="userpriv" />
-- <restrict flag="installsources" />
-- <restrict flag="fetch" />
-- <restrict flag="mirror" />
-- <restrict flag="bindist" />
-- <properties flag="interactive" />
-- <properties flag="live" />
-- <properties flag="virtual" />
-- <properties flag="set" />
-- <keywords>...</keywords>
+- **<restrict flag="binchecks" />**
+- **<restrict flag="strip" />**
+- **<restrict flag="test" />**
+- **<restrict flag="userpriv" />**
+- **<restrict flag="installsources" />**
+- **<restrict flag="fetch" />**
+- **<restrict flag="mirror" />**
+- **<restrict flag="bindist" />**
+- **<properties flag="interactive" />**
+- **<properties flag="live" />**
+- **<properties flag="virtual" />**
+- **<properties flag="set" />**
+- **<keywords>** [..] **</keywords>**
 
   This is the KEYWORDS data of the ebuild.
 
-- <effective_keywords>...</effective_keywords>
+- **<effective_keywords>** [..] **</effective_keywords>**
 
   This is the KEYWORDS data of the ebuild, modified by the profile.

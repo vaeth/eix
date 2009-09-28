@@ -1,24 +1,25 @@
 
-CLEANFILES = \
+textfiles = \
 format.txt \
+xml-format.txt
+
+htmlfiles = \
 format.html \
-xml-format.txt \
 xml-format.html
 
+CLEANFILES = \
+$(textfiles) \
+$(htmlfiles)
+
 if USE_RST
-doc_rst = format.html xml-format.html
-else
-doc_rst =
+nodist_html_DATA = $(htmlfiles)
 endif
+
+nodist_doc_DATA = $(textfiles)
 
 css_data = \
 stylesheet.css \
 html4css1.css
-
-nodist_noinst_DATA = \
-$(doc_rst) \
-format.txt \
-xml-format.txt
 
 EXTRA_DIST = \
 $(css_data) \
@@ -37,8 +38,8 @@ SUFFIXES = .in
 
 format.html: format.txt $(css_data)
 	$(AM_V_GEN)rst2html.py format.txt --embed-stylesheet \
-		--stylesheet-path=stylesheet.css > format.html
+		--stylesheet-path=stylesheet.css > "$@"
 
 xml-format.html: xml-format.txt $(css_data)
 	$(AM_V_GEN)rst2html.py xml-format.txt --embed-stylesheet \
-		--stylesheet-path=stylesheet.css > xml-format.html
+		--stylesheet-path=stylesheet.css > "$@"
