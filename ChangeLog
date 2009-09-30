@@ -18,6 +18,8 @@
 	- improve error messages for failed permission tests,
 	  for both see http://bugs.gentoo.org/show_bug.cgi?id=286229
 	- ./configure: --with-null-device, get default EPREFIX by portageq.
+	- Fix bug in variable parsing for --xml. Thanks to
+	  Bob Shaffer II <bob.shaffer.2 at gmail.com>
 
 *eix-0.18.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
