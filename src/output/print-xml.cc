@@ -27,7 +27,7 @@ PrintXml::runclear()
 void
 PrintXml::clear(EixRc *eixrc)
 {
-	if(eixrc) {
+	if(!eixrc) {
 		print_overlay = false;
 		keywords_mode = KW_NONE;
 	}
