@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.18.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix missing initialization leading to "unknown property ''" errors.
+	  A big thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
+	  http://bugs.gentoo.org/show_bug.cgi?id=287186
+
 *eix-0.18.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Allow also properties and variable names on the right-hand side
