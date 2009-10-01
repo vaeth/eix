@@ -524,7 +524,7 @@ FormatParser::state_IF()
 	if(*band_position == '}') {
 		n->text = Text("");
 		n->negation = !n->negation;
-		n->rhs = ConditionBlock::RHS_String;
+		n->rhs = ConditionBlock::RHS_STRING;
 		++band_position;
 		return START;
 	}
