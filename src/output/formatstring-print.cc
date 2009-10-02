@@ -550,10 +550,9 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 							if(a || !(versions->empty())) {
 								string::size_type col = after_colon.find(':');
 								if((col == string::npos) || !(package->have_nontrivial_slots())) {
-									if(col != string::npos) {
+									if(col != string::npos)
 										after_colon.erase(col);
-										parsed = &after_colon;
-									}
+									parsed = &after_colon;
 									get_versions_versorted(package, parse_variable(after_colon), versions);
 								}
 								else {
@@ -595,7 +594,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					case Scanner::COLON_PKG_BESTSLOTUPGRADEVERSIONS:
 						{
 							vector<Version*> versions;
-							package->best_slots(versions, a);
+							package->best_slots_upgrade(versions, vardb, portagesettings, a);
 							if(!versions.empty()) {
 								parsed = &after_colon;
 								get_versions_versorted(package, parse_variable(after_colon), &versions);

@@ -5,6 +5,12 @@
 	- Fix missing initialization leading to "unknown property ''" errors.
 	  A big thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
 	  http://bugs.gentoo.org/show_bug.cgi?id=287186
+	- Fix some false error messages about variables calling themselves.
+	  Thanks again to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
+	  for analyzing this terrible spaghetti-recursion code.
+	  http://bugs.gentoo.org/show_bug.cgi?id=287288
+	- Fix bestslotupgradeversions{,*} (in 0.18.1 it worked like
+	  bestslotversions{,*}).
 
 *eix-0.18.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

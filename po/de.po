@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-09-26 10:33+0200\n"
+"POT-Creation-Date: 2009-10-01 21:52+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -4697,43 +4697,43 @@ msgstr "Stringende oder '}' bei der Suche nach Property-Namen bei einem Test."
 msgid "Ran into end-of-string while reading property-name."
 msgstr "Stringende bei Suche nach Property-Namen."
 
-#: src/output/formatstring.cc:532
+#: src/output/formatstring.cc:533
 msgid "Unknown operator in if-construct."
 msgstr "Unbekannter Operator in einem if-Konstrukt."
 
-#: src/output/formatstring.cc:539 src/output/formatstring.cc:603
+#: src/output/formatstring.cc:540 src/output/formatstring.cc:604
 msgid "Run into end-of-string while looking for right-hand of condition."
 msgstr "Stringende bei Suche nach rechter Seiter des Tests."
 
-#: src/output/formatstring.cc:601
+#: src/output/formatstring.cc:602
 msgid "Run into end-of-string while looking for right-hand of assignment."
 msgstr "Stringende bei Suche nach rechter Seiter der Zuweisung."
 
-#: src/output/formatstring.cc:624
+#: src/output/formatstring.cc:625
 msgid "Found ELSE without IF."
 msgstr "Stieß auf ELSE ohne IF."
 
-#: src/output/formatstring.cc:651
+#: src/output/formatstring.cc:652
 msgid "Found FI without IF."
 msgstr "Stieß auf FI ohne IF."
 
-#: src/output/formatstring.cc:674
+#: src/output/formatstring.cc:675
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:688
+#: src/output/formatstring.cc:689
 msgid "Bad state: ERROR"
 msgstr "Unerlaubter Status: ERROR"
 
-#: src/output/formatstring.cc:689
+#: src/output/formatstring.cc:690
 msgid "Bad state: STOP"
 msgstr "Unerlaubter Status: STOP"
 
-#: src/output/formatstring.cc:690
+#: src/output/formatstring.cc:691
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:702
+#: src/output/formatstring.cc:703
 msgid "Line %r, column %r: %s"
 msgstr "Zeile %r, Spalte %r: %s"
 
