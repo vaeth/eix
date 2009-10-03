@@ -1040,9 +1040,8 @@ the package PROVIDE string
 expands to 1 if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
 .TP
-.BR slotted ", " haveslot
-expands to 1 if the versions of the package have at least two slots
-resp. at least one nontrivial slot name.
+.BR slots ", " slotted
+expands to 1 if there are at least two slots resp. at least one nontrivial slot.
 .TP
 .BR colliuse ", " havecolliuse
 The collected IUSE flags (i.e. their union) of all available versions
@@ -1682,6 +1681,19 @@ If true, eix and eix-diff will use B<--care>.
 .TP
 .BR QUIETMODE " " (true / false)
 If true, eix and eix-diff will use B<--quiet> by default.
+
+.TP
+.BR NEWLINE " " (true / false)
+If true, eix will print a newline after each version for which the formatstring outputs something.
+You will find B<true> convenient if you use trivial formatstrings which output only one line
+(unless you want to add the newline manually to the formatstring).
+However, if you use a formatstring which outputs versions in separate lines,
+and only those versions are output for which certain tests succeed,
+it might be rather cumbersome to keep track in the formatstring whether you must output a newline or
+whether this will happen automatically.
+In such cases you should should avoid the headache and put B<NEWLINE=false>.
+The default formatstrings of eix produce correct output for both settings
+(by checking the value of B<NEWLINE> and outputting the newline only if it is required).
 
 .TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)

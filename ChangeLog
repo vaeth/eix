@@ -12,10 +12,17 @@
 	- Fix bestslotupgradeversions{,*} (in 0.18.1 it worked like
 	  bestslotversions{,*}).
 	- Fix IUSE storing in eix-update (0.18.1 stored false empty entries).
-	- Introduce slotted, haveslot.
+	- Introduce slots, slotted.
+	- Introduce NEWLINE to avoid printing the magic newline, and even let
+	  it default to false (the default formats are adapted to work with
+	  both). This should make the life simpler for authors of complex
+	  format strings who now do not have to care about avoiding to print
+	  the final newline.
 	- Introduce XML_DATE.
 	- Introduce DATESORT example.
-	- Rename NAMESLOT to NAMEASLOT. NAMESLOT now prints slot optionally.
+	- NAMESLOT now prints the slot only if there are at least two slots.
+	  The old behaviour of printing the slot always is now available
+	  as NEWASLOT.
 
 *eix-0.18.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -274,8 +274,8 @@ class Scanner {
 			PKG_BESTRECOMMEND,
 			PKG_BESTRECOMMENDORINSTALL,
 			PKG_MARKED,
+			PKG_SLOTS,
 			PKG_SLOTTED,
-			PKG_HAVESLOT,
 			PKG_HAVECOLLIUSE,
 			PKG_COLLIUSE,
 			PKG_HAVEVERSIONUSE,
@@ -402,8 +402,8 @@ class Scanner {
 			prop_pkg("bestrecommend", PKG_BESTRECOMMEND);
 			prop_pkg("bestrecommendorinstall", PKG_BESTRECOMMENDORINSTALL);
 			prop_pkg("marked", PKG_MARKED);
+			prop_pkg("slots", PKG_SLOTS);
 			prop_pkg("slotted", PKG_SLOTTED);
-			prop_pkg("haveslot", PKG_HAVESLOT);
 			prop_pkg("havecolliuse", PKG_HAVECOLLIUSE);
 			prop_pkg("colliuse", PKG_COLLIUSE);
 			prop_pkg("haveversionuse", PKG_HAVEVERSIONUSE);
@@ -733,11 +733,11 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					return one;
 			}
 			break;
-		case Scanner::PKG_SLOTTED:
+		case Scanner::PKG_SLOTS:
 			if((package->slotlist()).size() > 1)
 				return one;
 			break;
-		case Scanner::PKG_HAVESLOT:
+		case Scanner::PKG_SLOTTED:
 			if(package->have_nontrivial_slots())
 				return one;
 			break;

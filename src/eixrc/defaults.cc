@@ -211,6 +211,10 @@ AddOption(BOOLEAN, "QUIETMODE",
 	"false", _(
 	"Whether --quiet is on by default."));
 
+AddOption(BOOLEAN, "NEWLINE",
+	"false", _(
+	"Whether a newline is added magically at the end of a package."));
+
 AddOption(BOOLEAN, "DIFF_ONLY_INSTALLED",
 	"false", _(
 	"If true, eix-diff will only consider version changes for installed packages."));
@@ -469,20 +473,15 @@ AddOption(STRING, "TAG_DOWNGRADE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the tag printed for downgrade recommendations."));
 
-AddOption(STRING, "TAG_DOWNGRADE",
-	"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for downgrade recommendations."));
-
 AddOption(STRING, "TAG_INSTALLED",
 	"(%{COLOR_INST_TAG})%{CHAR_INSTALLED}()", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for downgrade recommendations."));
+	"It defines the tag printed for installed packages."));
 
 AddOption(STRING, "TAG_UNINSTALLED",
 	"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for downgrade recommendations."));
+	"It defines the tag printed for uninstalled packages."));
 
 AddOption(STRING, "TAG_STABILIZE",
 	"{installed}"
@@ -878,35 +877,52 @@ AddOption(STRING, "IVERBOSE",
 	"This variable is used as a version formatter.\n"
 	"It defines the verbose format of installed versions."));
 
+AddOption(STRING, "VERSION_NEWLINE",
+	"%{!NEWLINE}"
+		"\\n"
+	"%{else}"
+		"{!last}\\n{}"
+	"%{}", _(
+	"This variable is used by delayed substitution in version formatters.\n"
+	"It prints a newline if it appears appropriate. If the last version might\n"
+	"be skipped (by using conditionals in your version formatter) you should\n"
+	"set NEWLINE=false since you otherwise get an additional newline\n"
+	"after the last actually printed version."));
+
 AddOption(STRING, "NAMEVERSION",
-	"<category>/<name>-<version>{!last}\\n{}", _(
+	"<category>/<name>-<version>"
+	"%{VERSION_NEWLINE}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <bestslotupgradeversions:NAMEVERSION>\n"
 	"or <installedversions:NAMEVERION> or <availableversions:NAMEVERSION>."));
 
 AddOption(STRING, "EQNAMEVERSION",
-	"=<category>/<name>-<version>{!last}\\n{}", _(
+	"=<category>/<name>-<version>"
+	"%{VERSION_NEWLINE}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
 	"or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>\n."));
 
 AddOption(STRING, "ANAMESLOT",
-	"{slotlast}<category>/<name>{slotted}:<slot>{}{!last}\\n{}{}", _(
+	"{slotlast}<category>/<name>{slots}:<slot>{}"
+	"%{VERSION_NEWLINE}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
 
 AddOption(STRING, "ANAMEASLOT",
-	"{slotlast}<category>/<name>:<slot>{!last}\\n{}{}", _(
+	"{slotlast}<category>/<name>:<slot>{!last}\\n{}{}"
+	"%{VERSION_NEWLINE}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."));
 
 AddOption(STRING, "NAMESLOT",
-	"<category>/<name>{slotted}:<slot>{}{!last}\\n{}", _(
+	"<category>/<name>{slots}:<slot>{}%{VERSION_NEWLINE}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <installedversions:NAMESLOT>."));
 
 AddOption(STRING, "NAMEASLOT",
-	"<category>/<name>:<slot>{!last}\\n{}", _(
+	"<category>/<name>:<slot>"
+	"%{VERSION_NEWLINE}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <installedversions:NAMEASLOT>."));
 
@@ -985,10 +1001,14 @@ AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS_VERBOSE",
 	"It defines the verbose format for a line with installed versions."));
 
 AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
-	"{installed}%{INSTALLEDVERSIONS_COMPACT}; {}"
-	"", _(
+	"{installed}%{INSTALLEDVERSIONS_COMPACT}; {}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for eix-diff for installed versions."));
+
+AddOption(STRING, "FORMAT_FINISH",
+	"%{!NEWLINE}\\n%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It is used at the end of a package to output a newline unless NEWLINE=true."));
 
 AddOption(STRING, "FORMAT_NAME",
 	"{system}(%{COLOR_CATEGORY_SYSTEM})"
@@ -1364,7 +1384,8 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 	"It defines the format for a line with the package licenses."));
 
 AddOption(STRING, "DIFF_FORMATLINE",
-	"%{FORMAT_OVERLAYKEY}: <description>", _(
+	"%{FORMAT_OVERLAYKEY}: <description>"
+	"%{FORMAT_FINISH}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for eix-diff after the versions."));
 
@@ -1374,7 +1395,8 @@ AddOption(STRING, "FORMAT_ALL",
 	"%{FORMATLINE_INSTALLEDVERSIONS}"
 	"%{FORMATLINE_MARKEDVERSIONS}"
 	"%{FORMATLINE_HOMEPAGE}"
-	"%{FORMATLINE_DESCRIPTION}", _(
+	"%{FORMATLINE_DESCRIPTION}"
+	"%{FORMAT_FINISH}", _(
 	"This format is only used for delayed substitution in FORMAT.\n"
 	"It defines the format of the normal output of eix."));
 
@@ -1387,7 +1409,8 @@ AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"{else}"
 		"%{FORMAT_BEST_COMPACT}"
 	"{}"
-	"()\\): <description>", _(
+	"()\\): <description>"
+	"%{FORMAT_FINISH}", _(
 	"This format is only used for delayed substitution in FORMAT_COMPACT.\n"
 	"It defines the format of the compact output of eix (option -c)."));
 
@@ -1403,7 +1426,8 @@ AddOption(STRING, "FORMAT_ALL_VERBOSE",
 	"%{?PRINT_BUGS}%{FORMATLINE_BUGS}%{}"
 	"%{FORMATLINE_DESCRIPTION}"
 	"%{FORMATLINE_PROVIDE}"
-	"%{FORMATLINE_LICENSES}", _(
+	"%{FORMATLINE_LICENSES}"
+	"%{FORMAT_FINISH}", _(
 	"This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
 	"It defines the format of the verbose output of eix (option -v)."));
 

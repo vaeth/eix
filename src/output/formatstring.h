@@ -238,6 +238,7 @@ class PrintFormat {
 			style_version_lines, /**< Shall we show versions linewise? */
 			slot_sorted,         /**< Print sorted by slots */
 			alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
+			magic_newline,       /**< Print newline automatically if output was nonempty */
 			print_effective;     /**< Print effective keywords */
 
 		LocalMode recommend_mode;
