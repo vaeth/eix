@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-03 19:13+0200\n"
+"POT-Creation-Date: 2009-10-03 19:57+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1075,7 +1075,7 @@ msgstr "Probleme beim Parsen von %s: %s\n"
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:519 src/eix.cc:789
+#: src/eix.cc:520 src/eix.cc:790
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1084,7 +1084,7 @@ msgstr ""
 "Kann Datenbankfile %s nicht zum Lesen öffnen (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:530
+#: src/eix.cc:531
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1095,31 +1095,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:753 src/eix.cc:769
+#: src/eix.cc:754 src/eix.cc:770
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:756
+#: src/eix.cc:757
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:762
+#: src/eix.cc:763
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:873
+#: src/eix.cc:874
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:874
+#: src/eix.cc:875
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:879
+#: src/eix.cc:880
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1128,7 +1128,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:880
+#: src/eix.cc:881
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1137,7 +1137,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:938
+#: src/eix.cc:939
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1145,7 +1145,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:941
+#: src/eix.cc:942
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
