@@ -8,6 +8,7 @@
 
 #include "print-xml.h"
 #include <eixrc/eixrc.h>
+#include <eixTk/sysutils.h>
 #include <portage/vardbpkg.h>
 #include <portage/set_stability.h>
 #include <database/header.h>
@@ -30,8 +31,10 @@ PrintXml::clear(EixRc *eixrc)
 	if(!eixrc) {
 		print_overlay = false;
 		keywords_mode = KW_NONE;
+		dateformat = "%s";
 	}
 	else {
+		dateformat = (*eixrc)["XML_DATE"];
 		print_overlay = eixrc->getBool("XML_OVERLAY");
 		static const char *values[] = {
 			"none",
@@ -165,8 +168,8 @@ PrintXml::package(const Package *pkg)
 			cout << " slot=\"" << escape_string(ver->slotname) << "\"";
 		}
 		if (versionInstalled) {
-			cout << " installed=\"1\""
-			" installDate=\"" << installedVersion->instDate << "\"";
+			cout << " installed=\"1\" installDate=\"" <<
+				escape_string(date_conv(dateformat.c_str(), installedVersion->instDate)) << "\"";
 		}
 		cout << ">\n";
 

@@ -110,9 +110,10 @@ vector<string>
 IUseSet::asVector() const
 {
 	vector<string> ret(m_iuse.size());
+	vector<string>::size_type i = 0;
 	for(set<IUse>::const_iterator it = m_iuse.begin();
 		it != m_iuse.end(); ++it)
-		ret.push_back(it->asString());
+		ret[i++] = it->asString();
 	return ret;
 }
 
@@ -129,8 +130,10 @@ IUseSet::insert(const string &iuse)
 {
 	vector<string> vec = split_string(iuse);
 	for(vector<string>::const_iterator it = vec.begin();
-		it != vec.end(); ++it)
+		it != vec.end(); ++it) {
 		insert_fast(*it);
+if(it->empty()) {cout << "ALARM\n"; }
+}
 }
 
 void

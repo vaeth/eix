@@ -30,7 +30,7 @@ the **eixdump** tag.
 
        .. container:: layout-block version-block
 
-         **<version id="** 1st version of 1st package **"** [**,** possibly further `version attributes`_ (see below), separated by commas] **>**
+         **<version id="** 1st version of 1st package **"** [possibly further `version attributes`_ (see below), separated by spaces] **>**
 
            [possibly `version tags`_ (see below), separated by newlines and tabs]
 
@@ -103,8 +103,7 @@ Except for id, all of them are optional.
 
 - **installDate="** [..] **"**
 
-  The date is in *time_t* format as a number; on most systems, this number
-  means the number of seconds since epoch.
+  The format of the date is determined by XML_DATE.
   The installDate attribute is output if and only if the installed attribute
   is output, i.e. if and only if the version is installed.
 

@@ -26,6 +26,7 @@ class PrintXml {
 		VarDbPkg *var_db_pkg;
 		const SetStability *stability;
 		std::string portdir;
+		std::string dateformat;
 
 		eix::ptr_list<Package>::size_type count;
 		std::string curcat;

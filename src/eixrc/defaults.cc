@@ -901,9 +901,19 @@ AddOption(STRING, "ANAMEASLOT",
 	"It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."));
 
 AddOption(STRING, "ANAMESLOT",
-	"{slotlast}<category>/<name>{isslot}:<slot>{}{!last}\\n{}{}", _(
+	"{slotlast}<category>/<name>{slotted}:<slot>{}{!last}\\n{}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
+
+AddOption(STRING, "DATESORT_DATE",
+	"%s	%x %X", _(
+	"strftime() format for printing the installation date in DATESORT"));
+
+AddOption(STRING, "DATESORT",
+	"<date:DATESORT_DATE>\\t<category>/<name>{slotted}:<slot>{}{!last}\\n{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
+	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
 
 AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 	"{versionlines}"
@@ -1493,6 +1503,10 @@ AddOption(STRING, "XML_OVERLAY",
 	"false", _(
 	"If false, the overlay is not output with --xml.\n"
 	"For overlays without label (repository name) the overlay is output anyway."));
+
+AddOption(STRING, "XML_DATE",
+	"%s", _(
+	"strftime() format for printing the installation date with --xml."));
 
 AddOption(STRING, "FORMAT_BEFORE_SET_USE",
 	"(%{COLOR_SET_USE})", _(

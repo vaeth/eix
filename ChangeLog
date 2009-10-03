@@ -11,6 +11,10 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=287288
 	- Fix bestslotupgradeversions{,*} (in 0.18.1 it worked like
 	  bestslotversions{,*}).
+	- Fix IUSE storing in eix-update (0.18.1 stored false empty entries).
+	- Introduce slotted, haveslot.
+	- Introduce XML_DATE.
+	- Introduce DATESORT example.
 
 *eix-0.18.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

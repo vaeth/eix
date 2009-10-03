@@ -900,9 +900,15 @@ then I<VARSLOTS> is used instead of I<VARIABLE>, and the versions are sorted
 according to slots.
 
 Useful examples for I<VARIABLE> are B<NAMEVERSION>, B<EQNAMEVERSION>,
-B<EQNAMEVERSION>, B<NAMESLOT>, B<ANAMEASLOT>, or B<ANAMESLOT>
-(the latter two should be used in the second form).
-See B<eix --dump> to see these variables in detail.
+B<EQNAMEVERSION>, B<NAMESLOT>, B<ANAMEASLOT>, B<ANAMESLOT>, or
+B<DATESORT>.
+Here, B<ANAMEASLOT> and B<ANAMESLOT> are meant to be used in the second form.
+Moreover, B<DATESORT> makes sense only for installed versions.
+A typical application for the latter is
+
+.B eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3
+
+See B<eix --dump> to see the variables in detail.
 .TP
 .BR "markedversions:I<VARIABLE>" ", " "markedversions:I<VARIABLE>:I<VARSLOTS>"
 This is analogous to B<availableversions> with the difference that only
@@ -996,10 +1002,10 @@ Is 1 or empty, depending on whether at least one version of the package is insta
 or has a best stable or best unstable version.
 .TP
 .B versionlines
-Is 1 or empty, depending on whether the versionlines flag was passed.
+Is 1 or empty, depending on whether the --versionlines flag was passed.
 .TP
 .B slotsorted
-Is 1 or empty, depending on whether the versionsort flag was passed.
+Is 1 or empty, depending on whether the --versionsort flag was passed.
 .TP
 .B color
 Is 1 or empty, depending on whether colors/markers are printed.
@@ -1028,6 +1034,10 @@ the package PROVIDE string
 .B marked
 expands to 1 if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
+.TP
+.BR slotted ", " haveslot
+expands to 1 if the versions of the package have at least two slots
+resp. at least one nontrivial slot name.
 .TP
 .BR colliuse ", " havecolliuse
 The collected IUSE flags (i.e. their union) of all available versions
