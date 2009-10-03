@@ -277,6 +277,10 @@ you might want to combine it with some of
 .B --format '<installedversions:EQNAMEVERSION>' --pure-packages
 
 .B --format '<installedversions:NAMESLOT>' --pure-packages
+
+.B --format '<installedversions:NAMEASLOT>' --pure-packages
+
+.B --format '<installedversions:DATESORT>' --pure-packages
 .TP
 .BR -i ", " --multi-installed
 Only match packages which are installed in at least two different versions.
@@ -900,10 +904,11 @@ then I<VARSLOTS> is used instead of I<VARIABLE>, and the versions are sorted
 according to slots.
 
 Useful examples for I<VARIABLE> are B<NAMEVERSION>, B<EQNAMEVERSION>,
-B<EQNAMEVERSION>, B<NAMESLOT>, B<ANAMEASLOT>, B<ANAMESLOT>, or
+B<EQNAMEVERSION>, B<ANAMESLOT>, B<ANAMEASLOT>, B<NAMESLOT>, B<NAMEASLOT> or
 B<DATESORT>.
-Here, B<ANAMEASLOT> and B<ANAMESLOT> are meant to be used in the second form.
-Moreover, B<DATESORT> makes sense only for installed versions.
+Here, B<ANAMESLOT> and B<ANAMEASLOT> are meant to be used in the second form
+(Mnemonic: B<A> prints the slot B<a>lways).
+Moreover, B<NAMESLOT>, B<NAMEASLOT> and B<DATESORT> makes sense only for installed versions.
 A typical application for the latter is
 
 .B eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3
@@ -2724,7 +2729,9 @@ feeding the output to scripts like
 .BR "<fullvailableversions>"
 etc.
 Now all this has vanished: The variables B<NAMEVERSIONS>, B<EQNAMEVERSION>,
-B<NAMESLOT>, B<ANAMEASLOT>, B<ANAMESLOT> take the role of all the latter variants.
+B<ANAMESLOT>, B<ANAMEASLOT>, B<NAMESLOT>, B<NAMEASLOT>, and B<DATESORT>
+take the role of all the earlier variants (where B<DATESORT> demonstrates
+a related example that was previously not available).
 See the description of these variables in B<eix --dump> for details.
 To see the effect of such an example try e.g.
 

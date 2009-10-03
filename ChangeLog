@@ -15,6 +15,7 @@
 	- Introduce slotted, haveslot.
 	- Introduce XML_DATE.
 	- Introduce DATESORT example.
+	- Rename NAMESLOT to NAMEASLOT. NAMESLOT now prints slot optionally.
 
 *eix-0.18.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

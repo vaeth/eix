@@ -890,27 +890,32 @@ AddOption(STRING, "EQNAMEVERSION",
 	"It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
 	"or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>\n."));
 
-AddOption(STRING, "NAMESLOT",
-	"<category>/<name>:<slot>{!last}\\n{}", _(
+AddOption(STRING, "ANAMESLOT",
+	"{slotlast}<category>/<name>{slotted}:<slot>{}{!last}\\n{}{}", _(
 	"This variable is used as a version formatter.\n"
-	"It is an example for usage with <installedversions:NAMESLOT>."));
+	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
 
 AddOption(STRING, "ANAMEASLOT",
 	"{slotlast}<category>/<name>:<slot>{!last}\\n{}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."));
 
-AddOption(STRING, "ANAMESLOT",
-	"{slotlast}<category>/<name>{slotted}:<slot>{}{!last}\\n{}{}", _(
+AddOption(STRING, "NAMESLOT",
+	"<category>/<name>{slotted}:<slot>{}{!last}\\n{}", _(
 	"This variable is used as a version formatter.\n"
-	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
+	"It is an example for usage with <installedversions:NAMESLOT>."));
+
+AddOption(STRING, "NAMEASLOT",
+	"<category>/<name>:<slot>{!last}\\n{}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <installedversions:NAMEASLOT>."));
 
 AddOption(STRING, "DATESORT_DATE",
 	"%s	%x %X", _(
 	"strftime() format for printing the installation date in DATESORT"));
 
 AddOption(STRING, "DATESORT",
-	"<date:DATESORT_DATE>\\t<category>/<name>{slotted}:<slot>{}{!last}\\n{}", _(
+	"<date:DATESORT_DATE>\\t%{NAMESLOT}", _(
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
 	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
