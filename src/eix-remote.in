@@ -253,11 +253,38 @@ FetchTemp () {
 		die "`eval_gettext 'could not fetch ${addr}'`"
 }
 
+BugReport () {
+	local archive
+	archive="${1}"
+	echo
+	printf '\n'
+	eval_gettext \
+'Probably your eix cachefile was *not* updated successfully.
+Unless the above messages suggest another cause or you specified a
+wrong filename, the most likely cause of this is that the server uses
+another eix version than you or produced broken data. Please inspect
+	${archive}
+whether this is a valid *.tar.bz2 archive containing eix cachefiles
+(if it has already been deleted, download it using fetch).
+If this is not the case (but was freshly downloaded), please report a bug.
+Note that the archive is *not* broken if only the cachefile format versions
+differ: In that case only report a bug if the eix cachefile format versions
+in the downloaded file are *older* than that of the most current ~x86 eix
+version in the portage tree (but first retry after several days before
+reporting such a bug to give the server maintainers a chance to upgrade
+after a version bump of eix).
+Conversely, if the downloaded versions are even newer than that supported by
+your eix, you will have to upgrade to the most current ~x86 version of eix
+to use eix-update: This inconvenience cannot be avoided and is not a bug!'
+}
+
 AddArchive () {
-	local i p l n name virtual overlayarg
-	i="${1}"
-	RunCommand "Unpacking data" tar xjf "${i}" || \
-		die "`eval_gettext 'cannot unpack ${i}'`"
+	local a i p l n name virtual overlayarg msg die_on_update_failure
+	a="${1}"
+	RunCommand "Unpacking data" tar xjf "${a}" || {
+		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
+		die "${msg}"
+	}
 	ClearUpdateArgs
 	AddLocalMethods
 	for i in *
@@ -276,6 +303,7 @@ AddArchive () {
 		name=`EIX_CACHEFILE="${p}" eix --print-overlay-path "${n}"` \
 			&& [ -n "${name}" ] || {
 			printf '%s\n' "`eval_gettext '${i} is broken'`" >&2
+			exitcode=1
 			continue
 		}
 		l=`EIX_CACHEFILE="${p}" eix --print-overlay-label "${n}"` || \
@@ -291,8 +319,19 @@ AddArchive () {
 		AddOverlays "${virtual}"
 		AddExcludes "${LOCAL_LAYMAN}/${name}"
 	done
+	msg=''
+	[ ${exitcode} -ne 0 ] && \
+		msg="`eval_gettext 'could not read all eix cachefiles of ${a}'`"
+	die_on_update_failure=false
 	export KEEP_VIRTUALS=true
-	CallUpdate
+	CallUpdate || {
+		exitcode=${?}
+		msg=`gettext 'eix-update failed'; \
+			[ -n "${msg}" ] && printf '\n%s' "${msg}"`
+	}
+	[ -z "${msg}" ] && return
+	msg=`printf '%s' "${msg}"; BugReport "${a}"`
+	die "${msg}"
 }
 
 FetchCopy () {

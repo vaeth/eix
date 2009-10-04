@@ -1,7 +1,40 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.18.2
+	- PLEASE NOTICE: The adding of +- data to USE-Flags to the cachefile
+	  in eix-0.18.1 came without a version jump of eix to not force you to
+	  regenerate it. Of course, you will only get the new information if
+	  you regenerate the cachefile with eix-update/eix-sync. If you use
+	  KEEP_VIRTUALS=yes (or configured eix to use cache method eix::...)
+	  these information is  of course not magically upgraded either.
+	  For KEEP_VIRTUALS this means typically that the information is only
+	  upgraded after the next (successfull) run of eix-remote, however:
+
+	- WARNING: Currently, the remote server which eix-remote accesses does
+	  not produce correct data (when you get error messages, the problem
+	  is probably still not fixed - with "eix fetch FILE" you will see
+	  that the fetched data FILE is just a few bytes long); please then
+	  retry only in a few days.
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce {slots}, {slotted}.
+	- Introduce NEWLINE to avoid printing the magic newline after a
+	  package, and even let it default to false (the default formats are
+	  now adapted to work with both setting of NEWLINE; but if you use
+	  your own formats and do not want to modify these, you will want to
+	  set NEWLINE=true in /etc/eixrc to get the previous behavior).
+	  The new default NEWLINE=false should make the life simpler for
+	  authors of complex format strings who now do not have to care
+	  about avoiding to print the final newline: I recommend to use
+	  NEWLINE=true only as a temporary workaround until you upgrade your
+	  formatstrings. Maybe NEWLINE will be passed out in some future
+	  version of eix (when this happens, the behaviour is certainly that
+	  of NEWLINE=false).
+	- Introduce DATESORT example.
+	- NAMESLOT now prints the slot only if there are at least two slots.
+	  The old behaviour of printing the slot always is now available
+	  as NAMEASLOT.
+	- Introduce XML_DATE.
 	- Fix missing initialization leading to "unknown property ''" errors.
 	  A big thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
 	  http://bugs.gentoo.org/show_bug.cgi?id=287186
@@ -11,18 +44,9 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=287288
 	- Fix bestslotupgradeversions{,*} (in 0.18.1 it worked like
 	  bestslotversions{,*}).
-	- Fix IUSE storing in eix-update (0.18.1 stored false empty entries).
-	- Introduce slots, slotted.
-	- Introduce NEWLINE to avoid printing the magic newline, and even let
-	  it default to false (the default formats are adapted to work with
-	  both). This should make the life simpler for authors of complex
-	  format strings who now do not have to care about avoiding to print
-	  the final newline.
-	- Introduce XML_DATE.
-	- Introduce DATESORT example.
-	- NAMESLOT now prints the slot only if there are at least two slots.
-	  The old behaviour of printing the slot always is now available
-	  as NEWASLOT.
+	- Fix IUSE storing in eix-update (0.18.1 stored false empty entries);
+	  this causes --xml to falsely output an additional leading space in
+	  the output of the first useflag tag of each version.
 
 *eix-0.18.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

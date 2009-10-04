@@ -1695,6 +1695,14 @@ In such cases you should should avoid the headache and put B<NEWLINE=false>.
 The default formatstrings of eix produce correct output for both settings
 (by checking the value of B<NEWLINE> and outputting the newline only if it is required).
 
+Unless you need to support formatstring which you had previously written,
+I recommend to leave the default B<NEWLINE=false> and to add manually a B<\\n>
+(or an explicit newline) at the end of your formatstring.
+Moreover, if you had written formatstrings, I recommend to upgrade them to
+output this newline instead of setting B<NEWLINE=true>; this option really
+just exists for backward compatibility and might be removed in future versions
+of eix.
+
 .TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Defines whether B<--compact> or B<--verbose> is on by default.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-03 19:57+0200\n"
+"POT-Creation-Date: 2009-10-04 10:39+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -286,7 +286,8 @@ msgstr "emerge --metadata schlug fehl"
 msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
-#: src/eix-sync.sh:409 src/eix-sync.sh:419 src/eix-functions.sh.in:170
+#: src/eix-sync.sh:409 src/eix-sync.sh:419 src/eix-functions.sh.in:171
+#: src/eix-remote.sh:329
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -554,24 +555,24 @@ msgstr "kann functions.sh nicht sourcen"
 msgid "Problems running ${c}"
 msgstr "Probleme mit ${c}"
 
-#: src/eix-functions.sh.in:169
+#: src/eix-functions.sh.in:170
 msgid "Calling eix-update"
 msgstr "Starte updat-eix"
 
-#: src/eix-functions.sh.in:214
+#: src/eix-functions.sh.in:215
 #, sh-format
 msgid "${PathifyA_} cannot be found in path"
 msgstr "${PathifyA_} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:326
+#: src/eix-functions.sh.in:327
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
-#: src/eix-functions.sh.in:344
+#: src/eix-functions.sh.in:345
 msgid "cannot create temporary directory"
 msgstr "kann keine temporäres Directory erzeugen"
 
-#: src/eix-functions.sh.in:345
+#: src/eix-functions.sh.in:346
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
@@ -777,17 +778,67 @@ msgstr "Download von ${eixcachesname}"
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:260
+#: src/eix-remote.sh:261
 #, sh-format
-msgid "cannot unpack ${i}"
-msgstr "kann ${i} nicht auspacken"
+msgid ""
+"Probably your eix cachefile was *not* updated successfully.\n"
+"Unless the above messages suggest another cause or you specified a\n"
+"wrong filename, the most likely cause of this is that the server uses\n"
+"another eix version than you or produced broken data. Please inspect\n"
+"\t${archive}\n"
+"whether this is a valid *.tar.bz2 archive containing eix cachefiles\n"
+"(if it has already been deleted, download it using fetch).\n"
+"If this is not the case (but was freshly downloaded), please report a bug.\n"
+"Note that the archive is *not* broken if only the cachefile format versions\n"
+"differ: In that case only report a bug if the eix cachefile format versions\n"
+"in the downloaded file are *older* than that of the most current ~x86 eix\n"
+"version in the portage tree (but first retry after several days before\n"
+"reporting such a bug to give the server maintainers a chance to upgrade\n"
+"after a version bump of eix).\n"
+"Conversely, if the downloaded versions are even newer than that supported "
+"by\n"
+"your eix, you will have to upgrade to the most current ~x86 version of eix\n"
+"to use eix-update: This inconvenience cannot be avoided and is not a bug!"
+msgstr ""
+"Wahrscheinlich wurde das eix-Cachefile nicht erfolgreich ge-updated.\n"
+"Falls die obigen Meldungen keine andere Ursache nahelegen und falls Sie\n"
+"keinen falschen Filenamen angegeben haben, ist die wahrscheinlichste\n"
+"Ursache, dass der Server eine andere eix-Version benutzt, oder dass er\n"
+"kaputte Daten produziert hat. Untersuchen Sie bitte, ob\n"
+"\t${archive}\n"
+"ein korrektes *.tar.bz2-Archiv mit Eix-Cachefiles ist (falls es bereits\n"
+"gelöscht wurde, laden Sie es mit fetch herunter).\n"
+"Falls das nicht der Fall ist (und es neu heruntergeladen wurde), melden Sie\n"
+"bitte den Fehler. Beachten Sie aber, dass das Archiv *nicht* kaputt ist,\n"
+"falls sich nur die Versionsnummern der Cachefile-Formate unterscheiden.\n"
+"Melden Sie in diesem Fall nur dann einen Fehler, wenn diejenigen vom\n"
+"heruntergeladenen File *älter* sind, als die des aktuellen ~x86 eix im\n"
+"Portage-Baum (aber warten Sie mit der Meldung zunächst, bis sie es nach\n"
+"einigen Tagen erneut probiert haben: Schließlich brauchen die Maintainer\n"
+"des Servers auch einige Zeit, bis sie eix nach einem Versionssprung\n"
+"upgraden). Falls umgekehrt die Versionen der heruntergeladenen\n"
+"Eix-Cachefiles sogar neuer sind, als diejenigen, die Ihrem eix bekannt "
+"sind,\n"
+"müssen Sie zunächst auf die aktuellste ~x86-Version von eix upgraden, um\n"
+"eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
+"vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:278
+#: src/eix-remote.sh:284
+#, sh-format
+msgid "cannot unpack ${a}"
+msgstr "kann ${a} nicht auspacken"
+
+#: src/eix-remote.sh:304
 #, sh-format
 msgid "${i} is broken"
 msgstr "${i} ist defekt"
 
-#: src/eix-remote.sh:318
+#: src/eix-remote.sh:323
+#, sh-format
+msgid "could not read all eix cachefiles of ${a}"
+msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
+
+#: src/eix-remote.sh:356
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"

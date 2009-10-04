@@ -164,10 +164,11 @@ ClearUpdateArgs () {
 	update_args=''
 }
 
+die_on_update_failure=true
 CallUpdate () {
 	eval "set -- ${update_args}"
-	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" || \
-		die "`gettext 'eix-update failed'`"
+	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" && return
+	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
 }
 
 AddLocalMethods () {
