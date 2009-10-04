@@ -302,7 +302,8 @@ AddArchive () {
 		p="${2}/${i}"
 		name=`EIX_CACHEFILE="${p}" eix --print-overlay-path "${n}"` \
 			&& [ -n "${name}" ] || {
-			printf '%s\n' "`eval_gettext '${i} is broken'`" >&2
+			printf '%s\n' "`eval_gettext \
+				'problems arised with cachefile ${i}'`" >&2
 			exitcode=1
 			continue
 		}

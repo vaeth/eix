@@ -22,5 +22,9 @@ for i in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 do
 	rm -vf -- eix-*."${i}"
 done
-find . '(' -name 'Makefile.in' -o -name 'svn-commit*.tmp' ')' -exec rm -v -- '{}' '+'
+find . '(' -name 'Makefile.in' -o \
+	-name 'svn-commit*.tmp' -o \
+	-name 'tmpsvn[0-9][0-9]*' -o \
+	-name 'tmpwrk[0-9][0-9]*' \
+	')' -exec rm -v -- '{}' '+'
 svn cleanup

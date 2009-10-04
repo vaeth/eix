@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-04 10:39+0200\n"
+"POT-Creation-Date: 2009-10-04 12:20+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -287,7 +287,7 @@ msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
 #: src/eix-sync.sh:409 src/eix-sync.sh:419 src/eix-functions.sh.in:171
-#: src/eix-remote.sh:329
+#: src/eix-remote.sh:330
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -778,7 +778,7 @@ msgstr "Download von ${eixcachesname}"
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:261
+#: src/eix-remote.sh:262
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -823,22 +823,22 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:284
+#: src/eix-remote.sh:285
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "kann ${a} nicht auspacken"
 
-#: src/eix-remote.sh:304
+#: src/eix-remote.sh:306
 #, sh-format
-msgid "${i} is broken"
-msgstr "${i} ist defekt"
+msgid "problems arised with cachefile ${i}"
+msgstr "Cachefile ${i} verursachte Probleme"
 
-#: src/eix-remote.sh:323
+#: src/eix-remote.sh:325
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:356
+#: src/eix-remote.sh:358
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
