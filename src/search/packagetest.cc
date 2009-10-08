@@ -57,7 +57,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
 	obsolete = world = worldset = overlay = installed = invert = upgrade =
-		slotted = dup_versions = dup_packages = false;
+		binary = slotted = dup_versions = dup_packages = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
 	test_installed = INS_NONE;
@@ -89,7 +89,7 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		upgrade || overlay || obsolete || world || worldset ||
+		upgrade || overlay || obsolete || binary || world || worldset ||
 		from_overlay_inst_list || from_foreign_overlay_inst_list ||
 		overlay_list || overlay_only_list || in_overlay_inst_list ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
@@ -741,6 +741,31 @@ PackageTest::match(PackageReader *pkg) const
 				vardbpkg->readRestricted(*p, *it, *header, portdir);
 				if((((it->restrictFlags) & restrictions) == restrictions) &&
 					(((it->propertiesFlags) & properties) == properties)) {
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				return invert;
+		}
+	}
+
+	if(binary) { // --binary
+		get_p();
+		bool found = false;
+		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+			if(it->have_bin_pkg(portagesettings, p)) {
+				found = true;
+				break;
+			}
+		}
+		if(!found) {
+			vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
+			if(!installed_versions)
+				return invert;
+			for(vector<InstVersion>::iterator it = installed_versions->begin();
+				it != installed_versions->end(); ++it) {
+				if(it->have_bin_pkg(portagesettings, p)) {
 					found = true;
 					break;
 				}

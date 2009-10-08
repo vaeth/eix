@@ -146,6 +146,9 @@ class PackageTest {
 		void Properties(ExtendedVersion::Properties flags)
 		{ properties |= flags; }
 
+		void Binary()
+		{ binary = true; }
+
 		void World(bool match_also_sets = false)
 		{ world = true; world_both = match_also_sets; }
 
@@ -239,7 +242,7 @@ class PackageTest {
 		bool installed, multi_installed, invert;
 		bool slotted, multi_slot;
 		bool overlay, obsolete;
-		bool upgrade, world, world_both, worldset;
+		bool upgrade, binary, world, world_both, worldset;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;

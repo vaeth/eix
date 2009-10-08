@@ -9,9 +9,11 @@
 
 #include "basicversion.h"
 
-
 #include <eixTk/compare.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/sysutils.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/package.h>
 
 #include <iterator>
 
@@ -361,4 +363,32 @@ ExtendedVersion::calcProperties(const string &str)
 		it != properties_words.end(); ++it)
 		p |= properties_map.getProperties(*it);
 	return p;
+}
+
+const ExtendedVersion::HaveBinPkg
+	ExtendedVersion::HAVEBINPKG_UNKNOWN,
+	ExtendedVersion::HAVEBINPKG_NO,
+	ExtendedVersion::HAVEBINPKG_YES;
+
+bool
+ExtendedVersion::have_bin_pkg(PortageSettings *ps, const Package *pkg)
+{
+	switch(have_bin_pkg_m) {
+		case HAVEBINPKG_UNKNOWN:
+			{
+				string &s = (*ps)["PKGDIR"];
+				if((s.empty()) || !is_file((s + "/" + pkg->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
+					have_bin_pkg_m = HAVEBINPKG_NO;
+					return false;
+				}
+				have_bin_pkg_m = HAVEBINPKG_YES;
+			}
+			break;
+		case HAVEBINPKG_NO:
+			return false;
+		default:
+		// case HAVEBINPKG_YES;
+			break;
+	}
+	return true;
 }

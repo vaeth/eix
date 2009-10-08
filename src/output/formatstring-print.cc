@@ -258,6 +258,7 @@ class Scanner {
 			PKG_LICENSES,
 			PKG_PROVIDE,
 			PKG_OVERLAYKEY,
+			PKG_BINARY,
 			PKG_SYSTEM,
 			PKG_WORLD,
 			PKG_WORLD_SETS,
@@ -300,6 +301,7 @@ class Scanner {
 			VER_INSTALLEDVERSION,
 			VER_HAVEUSE,
 			VER_USE,
+			VER_ISBINARY,
 			VER_RESTRICT,
 			VER_RESTRICTFETCH,
 			VER_RESTRICTMIRROR,
@@ -386,6 +388,7 @@ class Scanner {
 			prop_pkg("licenses", PKG_LICENSES);
 			prop_pkg("provide", PKG_PROVIDE);
 			prop_pkg("overlaykey", PKG_OVERLAYKEY);
+			prop_pkg("binary", PKG_BINARY);
 			prop_pkg("system", PKG_SYSTEM);
 			prop_pkg("world", PKG_WORLD);
 			prop_pkg("world_sets", PKG_WORLD_SETS);
@@ -426,6 +429,7 @@ class Scanner {
 			prop_ver("installedversion", VER_INSTALLEDVERSION);
 			prop_ver("haveuse", VER_HAVEUSE);
 			prop_ver("use", VER_USE);
+			prop_ver("isbinary", VER_ISBINARY);
 			prop_ver("restrict", VER_RESTRICT);
 			prop_ver("restrictfetch", VER_RESTRICTFETCH);
 			prop_ver("restrictmirror", VER_RESTRICTMIRROR);
@@ -661,6 +665,24 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			return package->licenses;
 		case Scanner::PKG_PROVIDE:
 			return package->provide;
+		case Scanner::PKG_BINARY:
+			{
+				for(Package::const_iterator it = package->begin(); it != package->end(); ++it) {
+					if(it->have_bin_pkg(portagesettings, package))
+						return one;
+				}
+				if(!vardb)
+					break;
+				vector<InstVersion> *vec = vardb->getInstalledVector(*package);
+				if(!vec)
+					break;
+				for(vector<InstVersion>::iterator it = vec->begin();
+					it != vec->end(); ++it) {
+					if(it->have_bin_pkg(portagesettings, package))
+						return one;
+				}
+			}
+			break;
 		case Scanner::PKG_OVERLAYKEY:
 			{
 				Version::Overlay ov_key = package->largest_overlay;
@@ -869,6 +891,15 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(version_variables->isinst)
 				return get_inst_use(*package, *(version_variables->instver()));
 			return version_variables->version()->iuse.asString();
+		case Scanner::VER_ISBINARY:
+			if(version_variables->isinst) {
+				if(version_variables->instver()->have_bin_pkg(portagesettings, package))
+					return one;
+				break;
+			}
+			if(const_cast<Version*>(version_variables->version())->have_bin_pkg(portagesettings, package))
+				return one;
+			break;
 		case Scanner::VER_RESTRICT:
 		case Scanner::VER_RESTRICTFETCH:
 		case Scanner::VER_RESTRICTMIRROR:

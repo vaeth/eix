@@ -115,6 +115,7 @@ dump_help(int exit_code)
 			"    --world               Match world packages.\n"
 			"    --world-all           Match packages of world or of a world set.\n"
 			"    --world-set           Match packages of a world set.\n"
+			"    --binary              Match packages with *.tbz2 files.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
 			"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
@@ -278,6 +279,7 @@ static struct Option long_options[] = {
 	Option("stable",        O_STABLE_DEFAULT),
 	Option("testing",       O_TESTING_DEFAULT),
 	Option("non-masked",    O_NONMASKED_DEFAULT),
+	Option("binary",        O_BINARY),
 	Option("world",         O_WORLD),
 	Option("world-all",     O_WORLD_ALL),
 	Option("world-set",     O_WORLD_SET),

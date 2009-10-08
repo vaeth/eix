@@ -236,6 +236,11 @@ AddOption(BOOLEAN, "NO_RESTRICTIONS",
 	"This variable is only used for delayed substitution.\n"
 	"If false, RESTRICT and PROPERTIES values are output."));
 
+AddOption(BOOLEAN, "NO_BINARY",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"If false, tags are output for packages/versions with *.tbz2 files."));
+
 AddOption(BOOLEAN, "RESTRICT_INSTALLED",
 	"true", _(
 	"If true, calculate RESTRICT/PROPERTIES for installed versions."));
@@ -651,6 +656,16 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
 	"and resets the color."));
 
+AddOption(STRING, "FORMAT_BINARY",
+	"%{!NO_BINARY}"
+		"{isbinary}"
+			"(%{COLOR_BINARY})%{TAG_BINARY}()"
+		"{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
+	"and resets the color."));
+
 AddOption(STRING, "FORMAT_SLOT",
 	"(%{COLOR_SLOTS})\\(<slot>\\)()", _(
 	"This variable is only used for delayed substitution.\n"
@@ -721,27 +736,27 @@ AddOption(STRING, "IVERSIONS",
 	"It defines the format for printing an installed version with its slot."));
 
 AddOption(STRING, "PVERSIONS_VERBOSE",
-	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
+	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with most data and slot."));
 
 AddOption(STRING, "AVERSIONS_VERBOSE",
-	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
+	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with most data and slot."));
 
 AddOption(STRING, "IVERSIONS_VERBOSE",
-	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}<overlayver>", _(
+	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with most data and slot."));
 
 AddOption(STRING, "PVERSION_VERBOSE",
-	"%{PVERSION}%{FORMAT_PROPRESTRICT}<overlayver>", _(
+	"%{PVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with most data, no slot."));
 
 AddOption(STRING, "AVERSION_VERBOSE",
-	"%{AVERSION}%{FORMAT_PROPRESTRICT}<overlayver>", _(
+	"%{AVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with most data, no slot."));
 
@@ -1637,6 +1652,10 @@ AddOption(STRING, "COLOR_SLOTS",
 	"red,1", _(
 	"Color for slots. This is only used for delayed substitution."));
 
+AddOption(STRING, "COLOR_BINARY",
+	"blue,1", _(
+	"Color for versions with *.tbz2. This is only used for delayed substitution."));
+
 AddOption(STRING, "COLOR_RESTRICT",
 	"red", _(
 	"Color for the restriction tags. This is only used for delayed substitution."));
@@ -1844,6 +1863,10 @@ AddOption(STRING, "PRINT_COUNT_ALWAYS",
 AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
 	"true", _(
 	"If false, count independently of whether the matches are printed."));
+
+AddOption(STRING, "TAG_BINARY",
+	"\\{tbz2}", _(
+	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
 	"!f", _(

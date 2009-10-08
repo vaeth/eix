@@ -88,6 +88,9 @@ inline bool operator >= (const BasicVersion& left, const BasicVersion& right)
 inline bool operator <= (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) <= 0; }
 
+class PortageSettings;
+class Package;
+
 class ExtendedVersion : public BasicVersion
 {
 	public:
@@ -115,12 +118,23 @@ class ExtendedVersion : public BasicVersion
 		Restrict restrictFlags;
 		Properties propertiesFlags;
 
+		typedef io::UChar HaveBinPkg;
+		static const HaveBinPkg
+			HAVEBINPKG_UNKNOWN = 0x00,
+			HAVEBINPKG_NO      = 0x01,
+			HAVEBINPKG_YES     = 0x02;
+		HaveBinPkg have_bin_pkg_m;
+
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
 		std::string slotname;
 
-		ExtendedVersion(const char *str = NULL) : BasicVersion(str)
-		{ restrictFlags = RESTRICT_NONE; slotname.clear(); }
+		ExtendedVersion(const char *str = NULL) :
+			BasicVersion(str),
+			restrictFlags(RESTRICT_NONE),
+			propertiesFlags(PROPERTIES_NONE),
+			have_bin_pkg_m(HAVEBINPKG_UNKNOWN)
+		{ }
 
 		static Restrict calcRestrict(const std::string& str);
 		static Properties calcProperties(const std::string& str);
@@ -130,6 +144,8 @@ class ExtendedVersion : public BasicVersion
 
 		void set_properties(const std::string& str)
 		{ propertiesFlags = calcProperties(str); }
+
+		bool have_bin_pkg(PortageSettings *ps, const Package *pkg);
 };
 
 #endif /* EIX__BASICVERSION_H__ */

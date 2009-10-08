@@ -34,6 +34,8 @@
 	- NAMESLOT now prints the slot only if there are at least two slots.
 	  The old behaviour of printing the slot always is now available
 	  as NAMEASLOT.
+	- Feature Request http://bugs.gentoo.org/show_bug.cgi?id=288031
+	  Introduce --binary, {binary}, {isbinary} and use it in defaults.
 	- Introduce XML_DATE.
 	- Fix missing initialization leading to "unknown property ''" errors.
 	  A big thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
