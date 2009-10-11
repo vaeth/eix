@@ -71,6 +71,8 @@ portage/conf/cascadingprofile.cc \
 portage/conf/cascadingprofile.h \
 portage/basicversion.cc \
 portage/basicversion.h \
+portage/extendedversion.cc \
+portage/extendedversion.h \
 portage/instversion.h \
 portage/mask.cc \
 portage/mask.h \
@@ -165,15 +167,15 @@ common_ldadd = @BZLIB_LIBS@ $(LTLIBINTL)
 
 common_src = \
 main/main.h \
+$(eixtk_src) \
 $(database_src) \
 $(portage_src) \
-$(eixtk_src) \
 $(eixrc_src)
 
 nodist_common_src = \
+$(nodist_eixtk_src) \
 $(nodist_database_src) \
 $(nodist_portage_src) \
-$(nodist_eixtk_src) \
 $(nodist_eixrc_src)
 
 extra_common_src = \
@@ -329,21 +331,21 @@ use_separate_diff = true
 bin_PROGRAMS = eix-update eix eix-diff $(tool_programs)
 noinst_DATA = $(noinst_tool)
 
-eix_LDADD = $(eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(output_only_src) $(common_src) $(main_eix_src)
-nodist_eix_SOURCES = $(nodist_eix_only_src) $(nodist_output_only_src) $(nodist_common_src) $(nodist_main_eix_src)
+eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(output_common_only_ldadd)
+eix_SOURCES = $(common_src) $(eix_only_src) $(output_only_src) $(main_eix_src)
+nodist_eix_SOURCES = $(nodist_common_src) $(nodist_eix_only_src) $(nodist_output_only_src) $(nodist_main_eix_src)
 EXTRA_eix_SOURCES = $(extra_eix_only_src) $(extra_output_only_src) $(extra_common_src)
 nodist_EXTRA_eix_SOURCES = $(nodist_extra_eix_only_src) $(nodist_extra_output_only_src) $(nodist_extra_common_src)
-eix_diff_LDADD = $(diff_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
-eix_diff_SOURCES = $(diff_only_src) $(output_only_src) $(common_src) $(main_diff_src)
-nodist_eix_diff_SOURCES = $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_common_src) $(nodist_main_diff_src)
-EXTRA_eix_diff_SOURCES = $(extra_diff_only_src) $(extra_output_only_src) $(extra_common_src)
-nodist_EXTRA_eix_diff_SOURCES = $(nodist_extra_output_only_src) $(nodist_extra_common_src)
-eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
-eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update_src)
+eix_diff_LDADD = $(common_ldadd) $(diff_only_ldadd) $(output_common_only_ldadd)
+eix_diff_SOURCES = $(common_src) $(diff_only_src) $(output_only_src) $(main_diff_src)
+nodist_eix_diff_SOURCES = $(nodist_common_src) $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_main_diff_src)
+EXTRA_eix_diff_SOURCES = $(extra_common_src) $(extra_diff_only_src) $(extra_output_only_src)
+nodist_EXTRA_eix_diff_SOURCES = $(nodist_extra_common_src) $(nodist_extra_output_only_src)
+eix_update_LDADD = $(common_ldadd) $(update_only_ldadd)
+eix_update_SOURCES = $(common_src) $(update_only_src) $(main_update_src)
 nodist_eix_update_SOURCES = $(nodist_update_only_src) $(nodist_output_only_src) $(nodist_main_update_src)
-EXTRA_eix_update_SOURCES = $(extra_update_only_src) $(extra_common_src)
-nodist_EXTRA_eix_update_SOURCES = $(nodist_extra_update_only_src) $(nodist_extra_common_src)
+EXTRA_eix_update_SOURCES = $(extra_common_src) $(extra_update_only_src)
+nodist_EXTRA_eix_update_SOURCES = $(nodist_extra_common_src) $(nodist_extra_update_only_src)
 
 else
 # !SEPARATE_BINARIES
@@ -358,16 +360,16 @@ eix-diff$(EXEEXT): eix$(EXEEXT)
 	$(AM_V_at)test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
-eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd) $(common_ldadd)
-eix_SOURCES = $(eix_only_src) $(diff_only_src) $(output_only_src) $(common_src) $(main_output_src)
-nodist_eix_SOURCES = $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_common_src) $(nodist_main_output_src)
-EXTRA_eix_SOURCES = $(extra_eix_only_src) $(extra_diff_only_src) $(extra_output_only_src) $(extra_common_src)
-nodist_EXTRA_eix_SOURCES = $(nodist_extra_eix_only_src) $(nodist_extra_diff_only_src) $(nodist_extra_output_only_src) $(nodist_extra_common_src)
-eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
-eix_update_SOURCES = $(update_only_src) $(common_src) $(main_update_src)
-nodist_eix_update_SOURCES = $(nodist_update_only_src) $(nodist_common_src) $(nodist_main_update_src)
-EXTRA_eix_update_SOURCES = $(extra_update_only_src) $(extra_common_src)
-nodist_EXTRA_eix_update_SOURCES = $(nodist_extra_update_only_src) $(nodist_extra_common_src)
+eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd)
+eix_SOURCES = $(common_src) $(eix_only_src) $(diff_only_src) $(output_only_src) $(main_output_src)
+nodist_eix_SOURCES = $(nodist_common_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_main_output_src)
+EXTRA_eix_SOURCES = $(extra_common_src) $(extra_eix_only_src) $(extra_diff_only_src) $(extra_output_only_src)
+nodist_EXTRA_eix_SOURCES = $(nodist_extra_common_src) $(nodist_extra_eix_only_src) $(nodist_extra_diff_only_src) $(nodist_extra_output_only_src)
+eix_update_LDADD = $(common_ldadd) $(update_only_ldadd)
+eix_update_SOURCES = $(common_src) $(update_only_src) $(main_update_src)
+nodist_eix_update_SOURCES = $(nodist_common_src) $(nodist_update_only_src) $(nodist_main_update_src)
+EXTRA_eix_update_SOURCES = $(extra_common_src) $(extra_update_only_src)
+nodist_EXTRA_eix_update_SOURCES = $(nodist_extra_common_src) $(nodist_extra_update_only_src)
 
 endif
 
@@ -392,7 +394,7 @@ eix-update$(EXEEXT): eix$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-update$(EXEEXT)
 
 
-eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd)
 eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_only_src) $(update_only_src) $(main_all_src)
 nodist_eix_SOURCES = $(nodist_common_src) $(nodist_output_only_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_update_only_src) $(nodist_main_all_src)
 EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_only_src) $(extra_diff_only_src) $(extra_update_only_src)
@@ -404,9 +406,6 @@ endif
 if SEPARATE_TOOLS
 
 versionsort_SOURCES = \
-versionsort.cc \
-main/main_tools.cc \
-main/main.h \
 database/types.h \
 eixTk/inttypes.h \
 eixTk/stringutils.cc \
@@ -416,7 +415,10 @@ eixTk/exceptions.h \
 eixTk/formated.cc \
 eixTk/formated.h \
 portage/basicversion.cc \
-portage/basicversion.h
+portage/basicversion.h \
+versionsort.cc \
+main/main_tools.cc \
+main/main.h
 
 else
 # !SEPARATE_TOOLS
@@ -503,6 +505,7 @@ SUFFIXES = .in
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
 		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
+		-e "s,\@DEFAULT_REMOTE_FILE\@,$(DEFAULT_REMOTE_FILE),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		"$<" > "$@"
 

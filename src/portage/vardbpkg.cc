@@ -11,7 +11,6 @@
 
 #include <eixTk/utils.h>
 #include <eixTk/sysutils.h>
-#include <portage/basicversion.h>
 #include <database/header.h>
 
 #include <dirent.h>

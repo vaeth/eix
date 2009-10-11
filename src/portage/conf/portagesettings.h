@@ -118,8 +118,10 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<SetsList>    parent_sets;
 		std::vector<SetsList>    children_sets;
 
-		bool know_upgrade_policy, upgrade_policy;
-		MaskList<Mask> upgrade_policy_exceptions;
+		/** One may argue whether reading the settings for the upgrade policy
+		/ * is only a cache, but it makes things simpler if we say so */
+		mutable bool know_upgrade_policy, upgrade_policy;
+		mutable MaskList<Mask> upgrade_policy_exceptions;
 
 		bool know_world_sets;
 		std::vector<std::string> world_sets;
@@ -160,6 +162,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
+		const std::string &operator[](const std::string &var) const;
+		using std::map<std::string,std::string>::operator[];
 
 		/** Read make.globals and make.conf. */
 		PortageSettings(EixRc &eixrc, bool getlocal, bool init_world);
@@ -189,7 +193,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		void add_name(SetsList &l, const std::string &s, bool recurse) const;
 
-		bool calc_allow_upgrade_slots(const Package *p);
+		bool calc_allow_upgrade_slots(const Package *p) const;
 
 		void calc_local_sets(Package *p) const
 		{

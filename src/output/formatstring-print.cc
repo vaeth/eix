@@ -897,7 +897,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					return one;
 				break;
 			}
-			if(const_cast<Version*>(version_variables->version())->have_bin_pkg(portagesettings, package))
+			if(version_variables->version()->have_bin_pkg(portagesettings, package))
 				return one;
 			break;
 		case Scanner::VER_RESTRICT:

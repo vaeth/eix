@@ -224,7 +224,7 @@ CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 		return;
 	}
 	{
-		string &s = (*m_portagesettings)["PORTAGE_PROFILE"];
+		const string &s = (*m_portagesettings)["PORTAGE_PROFILE"];
 		if(!s.empty()) {
 			addProfile(s.c_str());
 			return;

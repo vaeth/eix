@@ -1,12 +1,18 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.18.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add ./configure --with-remote-file=STR (mandatory: empty default!)
+	- code cleanup (prefer some const/mutable over nonconst solutions)
+	- Fix linking versionsort http://bugs.gentoo.org/show_bug.cgi?id=288514
+
 *eix-0.18.2
 	- PLEASE NOTICE: The adding of +- data to USE-Flags to the cachefile
-	  in eix-0.18.1 came without a version jump of eix to not force you to
+	  in eix-0.18.1 came without a version format jump to not force you to
 	  regenerate it. Of course, you will only get the new information if
 	  you regenerate the cachefile with eix-update/eix-sync. If you use
 	  KEEP_VIRTUALS=yes (or configured eix to use cache method eix::...)
-	  these information is  of course not magically upgraded either.
+	  these information is of course not magically upgraded either.
 	  For KEEP_VIRTUALS this means typically that the information is only
 	  upgraded after the next (successfull) run of eix-remote, however:
 

@@ -31,6 +31,16 @@
 
 using namespace std;
 
+const std::string &
+PortageSettings::operator[](const std::string &var) const
+{
+	static string empty;
+	map<string,string>::const_iterator it = map<string,string>::find(var);
+	if(it == map<string,string>::end())
+		return empty;
+	return it->second;
+}
+
 bool
 grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Mask*> *mask_vec, bool recursive)
 {
@@ -534,7 +544,7 @@ PortageSettings::calc_recursive_sets(Package *p) const
 }
 
 bool
-PortageSettings::calc_allow_upgrade_slots(const Package *p)
+PortageSettings::calc_allow_upgrade_slots(const Package *p) const
 {
 	if(!know_upgrade_policy) {
 		upgrade_policy = settings_rc->getBool("UPGRADE_TO_HIGHEST_SLOT");

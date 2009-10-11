@@ -11,7 +11,7 @@
 . ./eix-functions.sh.in
 ReadFunctions
 
-addr='http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2'
+addr='@DEFAULT_REMOTE_FILE@'
 
 local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
@@ -244,10 +244,14 @@ tmpfile=''
 FetchTemp () {
 	local eixcachesname
 	eixcachesname="${addr##*/}"
+	[ -z "${eixcachesname}" ] && die "`eval_gettext \
+'remote address is not properly set.
+Please specify a valid remote file with option -a.
+The default should have been set with ./configure --remote-file'`"
 	MakeTempDir cd
 	tmpfile="${tmpdir}/${eixcachesname}"
 	( umask 000; : >"${tmpfile}" )
-	CalcSuCmd wget -c "${addr}"
+	CalcSuCmd wget -c -- "${addr}"
 	eval "set -- ${sucmd}"
 	RunCommand "`eval_gettext 'Fetching ${eixcachesname}'`" "${@}" || \
 		die "`eval_gettext 'could not fetch ${addr}'`"

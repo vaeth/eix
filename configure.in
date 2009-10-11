@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be  in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.18.2], [http://eix.sourceforge.net])
+AC_INIT([eix], [0.18.3], [http://eix.sourceforge.net])
 
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_FILES([
@@ -448,6 +448,13 @@ AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
 	[ Default PORTAGE_BIN_PATH])
 AC_SUBST([PORTAGE_BIN_PATH_DEFAULT])
 
+AC_ARG_WITH([remote-file],
+	[AS_HELP_STRING([--with-remote-file=STR],
+		[default remote file for eix-remote])],
+	[DEFAULT_REMOTE_PATH="${withval}"],
+	[DEFAULT_REMOTE_PATH=""])
+AC_MSG_NOTICE([Using DEFAULT_REMOTE_PATH=${DEFAULT_REMOTE_PATH}])
+AC_SUBST([DEFAULT_REMOTE_PATH])
 
 # Check endianess
 AC_C_BIGENDIAN()

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-08 21:47+0200\n"
+"POT-Creation-Date: 2009-10-11 12:20+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -287,7 +287,7 @@ msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
 #: src/eix-sync.sh:409 src/eix-sync.sh:419 src/eix-functions.sh.in:171
-#: src/eix-remote.sh:330
+#: src/eix-remote.sh:334
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -768,17 +768,28 @@ msgstr "Filenamen-Argument wird benötigt"
 msgid "cannot cd to ${a}"
 msgstr "Kann nicht nach Directory ${a} wechseln"
 
-#: src/eix-remote.sh:252
+#: src/eix-remote.sh:248
+#, sh-format
+msgid ""
+"remote address is not properly set.\n"
+"Please specify a valid remote file with option -a.\n"
+"The default should have been set with ./configure --remote-file"
+msgstr ""
+"Keine gültige Remote-Addresse angegeben.\n"
+"Übergeben Sie bitte ein gültiges Remote-File mit der Option -a.\n"
+"Der Default hätte mit ./configure --remote-file gesetzt werden sollen."
+
+#: src/eix-remote.sh:256
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:253
+#: src/eix-remote.sh:257
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:262
+#: src/eix-remote.sh:266
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -823,22 +834,22 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:285
+#: src/eix-remote.sh:289
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "kann ${a} nicht auspacken"
 
-#: src/eix-remote.sh:306
+#: src/eix-remote.sh:310
 #, sh-format
 msgid "problems arised with cachefile ${i}"
 msgstr "Cachefile ${i} verursachte Probleme"
 
-#: src/eix-remote.sh:325
+#: src/eix-remote.sh:329
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:358
+#: src/eix-remote.sh:362
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
@@ -3647,7 +3658,8 @@ msgstr "Farbe für Slots. Dies wird nur für Delayed Substitution benutzt."
 #: src/eixrc/defaults.cc:1657
 msgid ""
 "Color for versions with *.tbz2. This is only used for delayed substitution."
-msgstr "Farbe für Versionen mit *.tbz2-Files.\n"
+msgstr ""
+"Farbe für Versionen mit *.tbz2-Files.\n"
 "Dies wird nur für Delayed Substitution benutzt."
 
 #: src/eixrc/defaults.cc:1661
@@ -4882,23 +4894,23 @@ msgstr "Unerlaubter Status: undefiniert"
 msgid "Line %r, column %r: %s"
 msgstr "Zeile %r, Spalte %r: %s"
 
-#: src/portage/basicversion.cc:106
+#: src/portage/basicversion.cc:103
 msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "Interner Fehler: unknown PartType on (%r,%r)"
 
-#: src/portage/basicversion.cc:128
+#: src/portage/basicversion.cc:125
 msgid "malformed (first primary at %r) version string %r\n"
 msgstr "Versionsstring unerlaubt (erstes Primary bei %r): %r\n"
 
-#: src/portage/basicversion.cc:143
+#: src/portage/basicversion.cc:140
 msgid "malformed (primary at %r) version string %r\n"
 msgstr "Versionsstring unerlaubt (Primary bei %r): %r\n"
 
-#: src/portage/basicversion.cc:186
+#: src/portage/basicversion.cc:183
 msgid "malformed (suffix at %r) version string %r"
 msgstr "Versionsstring unerlaubt (Suffix bei %r): %r"
 
-#: src/portage/basicversion.cc:221
+#: src/portage/basicversion.cc:218
 msgid ""
 "garbage (%s) at end of version %r\n"
 "accepting version anyway"
@@ -4913,10 +4925,10 @@ msgstr ""
 "Rekusrionslevel für cascading Profiles überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1173
-#: src/portage/conf/portagesettings.cc:1189
+#: src/portage/conf/portagesettings.cc:1183
+#: src/portage/conf/portagesettings.cc:1199
 msgid "internal error: Tried to restore nonlocal mask without saving"
-msgstr "interner Fehler: Tried to restore nonlocal mask without saving"
+msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
 #: src/portage/mask.cc:72
 msgid "Can't read category."

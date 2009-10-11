@@ -82,7 +82,7 @@ SlotList::operator [] (const char *s) const
 
 
 bool
-Package::calc_allow_upgrade_slots(PortageSettings *ps) const
+Package::calc_allow_upgrade_slots(const PortageSettings *ps) const
 {
 	if(know_upgrade_slots)
 		return allow_upgrade_slots;
@@ -282,7 +282,7 @@ Package::best_slots(vector<Version*> &l, bool allow_unstable) const
 }
 
 void
-Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const
+Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
 	versions.clear();
 	if(!v)
@@ -332,7 +332,7 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, PortageSett
 }
 
 bool
-Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const
+Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
 	if(!v)
 		return false;

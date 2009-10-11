@@ -112,7 +112,7 @@ class Package
 		/** Our calc_allow_upgrade_slots(this) cache;
 		    mutable since it is just a cache. */
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
-		bool calc_allow_upgrade_slots(PortageSettings *ps) const;
+		bool calc_allow_upgrade_slots(const PortageSettings *ps) const;
 
 		const SlotList& slotlist() const
 		{
@@ -238,10 +238,10 @@ class Package
 		void best_slots(std::vector<Version*> &l, bool allow_unstable = false) const;
 
 		/** Calculate list of uninstalled upgrade candidates */
-		void best_slots_upgrade(std::vector<Version*> &versions, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const;
+		void best_slots_upgrade(std::vector<Version*> &versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
 
 		/** Is version an (installed or uninstalled) upgrade candidate? */
-		bool is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, PortageSettings *ps, bool allow_unstable) const;
+		bool is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
 
 		/** Test whether p has a worse best_slot().
 		    @return
@@ -315,7 +315,7 @@ class Package
 		int check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */
-		bool can_upgrade(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const
+		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const
 		{
 			if(!test_slots)
 				return (check_best(v, only_installed, false) > 0);
@@ -339,13 +339,13 @@ class Package
 		}
 
 		/** do we have an upgrade/downgrade recommendation? */
-		bool recommend(VarDbPkg *v, PortageSettings *ps, bool only_installed, bool test_slots) const
+		bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const
 		{
 			return can_upgrade(v, ps, only_installed, test_slots) ||
 				must_downgrade(v, test_slots);
 		}
 
-		bool differ(const Package &p, VarDbPkg *v, PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const
+		bool differ(const Package &p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const
 		{
 			if(testvardb)
 				return recommend(v, ps, only_installed, test_slots);

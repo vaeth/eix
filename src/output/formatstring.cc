@@ -329,7 +329,7 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 }
 
 bool
-PrintFormat::print(void *entity, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s)
+PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
 {
 	// The four hackish variables
 	header = dbheader; vardb = vardbpkg; portagesettings = ps; stability = s;

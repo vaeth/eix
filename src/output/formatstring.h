@@ -217,9 +217,9 @@ class PrintFormat {
 		   passing this argument through all sub-functions.
 		   We do it that way since we do not want to set it "globally":
 		   The pointers might possibly have changed until we use them */
-		DBHeader      *header;
-		VarDbPkg      *vardb;
-		PortageSettings *portagesettings;
+		const DBHeader *header;
+		VarDbPkg       *vardb;
+		const PortageSettings *portagesettings;
 		const SetStability *stability;
 
 		/* return true if something was actually printed */
@@ -305,14 +305,14 @@ class PrintFormat {
 		std::string overlay_keytext(Version::Overlay overlay, bool plain = false) const;
 
 		/* return true if something was actually printed */
-		bool print(void *entity, GetProperty get_property, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s);
+		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s);
 
 		/* return true if something was actually printed */
-		bool print(void *entity, Node *root, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s)
+		bool print(void *entity, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
 		{ return print(entity, m_get_property, root, dbheader, vardbpkg, ps, s); }
 
 		/* return true if something was actually printed */
-		bool print(void *entity, DBHeader *dbheader, VarDbPkg *vardbpkg, PortageSettings *ps, const SetStability *s)
+		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
 		{ return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s); }
 
 		Node *parseFormat(const char *fmt) throw(ExBasic)
