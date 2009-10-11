@@ -2,27 +2,21 @@
 
 *eix-0.18.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Add ./configure --with-remote-file=STR (mandatory: empty default!)
-	- code cleanup (prefer some const/mutable over nonconst solutions)
+	- Add ./configure --with-remote-file=STR
+	- Make ./configure slightly be more verbose
+	- code cleanup (nonconst->const/mutable, configure.in: local macros)
 	- Fix linking versionsort http://bugs.gentoo.org/show_bug.cgi?id=288514
 
 *eix-0.18.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- PLEASE NOTICE: The adding of +- data to USE-Flags to the cachefile
 	  in eix-0.18.1 came without a version format jump to not force you to
 	  regenerate it. Of course, you will only get the new information if
 	  you regenerate the cachefile with eix-update/eix-sync. If you use
 	  KEEP_VIRTUALS=yes (or configured eix to use cache method eix::...)
-	  these information is of course not magically upgraded either.
+	  this information is of course not magically upgraded either.
 	  For KEEP_VIRTUALS this means typically that the information is only
-	  upgraded after the next (successfull) run of eix-remote, however:
-
-	- WARNING: Currently, the remote server which eix-remote accesses does
-	  not produce correct data (when you get error messages, the problem
-	  is probably still not fixed - with "eix fetch FILE" you will see
-	  that the fetched data FILE is just a few bytes long); please then
-	  retry only in a few days.
-
-	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	  upgraded after the next (successfull) run of eix-remote.
 	- Introduce {slots}, {slotted}.
 	- Introduce NEWLINE to avoid printing the magic newline after a
 	  package, and even let it default to false (the default formats are

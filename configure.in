@@ -31,6 +31,8 @@ dnl indent level; all further args also start in a new line after the comma.
 dnl Exception is the AS_CASE macro where value and action are on the same line,
 dnl separated only with a space (and the indent level is increased for the
 dnl action if it needs more than one line).
+dnl Similar exceptions are macros where the arguments are closely connected
+dnl (like calls of most MV_* macros defined later).
 dnl
 dnl Commas and closing braces are appended without leading space or newlines;
 dnl in particular, no extra space is used even if several indent levels are
@@ -41,7 +43,7 @@ dnl There are two exceptions of these rules:
 dnl 1. If an argument has many items (like AC_CONFIG_FILES),
 dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
-dnl 2. The AC_INIT macro must be  in one line since it is parsed by
+dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
 AC_INIT([eix], [0.18.3], [http://eix.sourceforge.net])
 
@@ -101,15 +103,47 @@ AC_TYPE_UINT8_T()
 AC_TYPE_UINT16_T()
 AC_TYPE_UINT32_T()
 
+dnl Some frequently used macros:
+dnl
+dnl MV_ENABLE([varname], [option]):
+dnl Checks whether ${enableval} is yes or no and sets ${varname}=true/false.
+dnl If neither is the case, it dies with an error output for --enable-option
+AC_DEFUN([MV_ENABLE],
+	[AS_CASE(["${enableval}"],
+		[yes], [$1=true],
+		[no], [$1=false],
+		[AC_MSG_ERROR([bad value ${enableval} for --enable-$2])])])
+dnl
+dnl MV_MSG_RESULT([text], [comment]): behaves like
+dnl AC_MSG_RESULT([text (comment)]) or AC_MSG_RESULT([text])
+dnl depending on whether the argument comment is given or not.
+AC_DEFUN([MV_MSG_RESULT],
+	[m4_ifval([$2],
+		[AC_MSG_RESULT([$1 ($2)])],
+		[AC_MSG_RESULT([$1])])])
+dnl
+dnl MV_MSG_RESULTVAR([${var}], [comment]) behaves like
+dnl MV_MSG_RESULT([${var:-(empty)}],[comment]) (but is more compatible)
+AC_DEFUN([MV_MSG_RESULTVAR],
+	[AS_IF([test -z "$1"],
+		[MV_MSG_RESULT([(empty)], $2)],
+		[MV_MSG_RESULT([$1], $2)])])
+dnl
+dnl MV_PREFIX([var]) sets var to "" if it is "/".
+AC_DEFUN([MV_PREFIX],
+	[AS_IF([test x"${$1}" = x"/"],
+		[$1=""])])
+
 # This must be an early test, since we need the null device later in this file:
+AC_MSG_CHECKING([for null-device])
 AC_ARG_WITH([dev-null],
 	[AS_HELP_STRING([--with-null-device=STR],
 		[null device of the system, usually /dev/null])],
 	[DEV_NULL="${withval}"],
 	[DEV_NULL=""])
 AS_IF([test -z "${DEV_NULL}"],
-	[DEV_NULL="/dev/null"],
-	[AC_MSG_NOTICE([Using null device ${DEV_NULL}])])
+	[DEV_NULL="/dev/null"])
+AC_MSG_RESULT([${DEV_NULL}])
 AC_DEFINE_UNQUOTED([DEV_NULL],
 	["${DEV_NULL}"],
 	[ Null device of the system])
@@ -119,10 +153,7 @@ AC_SUBST([DEV_NULL])
 AC_ARG_ENABLE([separate_binaries],
 	[AS_HELP_STRING([--enable-separate-binaries],
 		[create a separate binary for each program])],
-	[AS_CASE(["${enableval}"],
-		[yes], [separate_binaries=true],
-		[no], [separate_binaries=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-separate-binaries])])],
+	[MV_ENABLE([separate_binaries], [separate-binaries])],
 	[separate_binaries=false])
 AM_CONDITIONAL([SEPARATE_BINARIES],
 	[${separate_binaries}])
@@ -131,10 +162,7 @@ AM_CONDITIONAL([SEPARATE_BINARIES],
 AC_ARG_ENABLE([separate_update],
 	[AS_HELP_STRING([--enable-separate-update],
 		[create a separate eix-update binary])],
-	[AS_CASE(["${enableval}"],
-		[yes], [separate_update=true],
-		[no], [separate_update=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-separate-update])])],
+	[MV_ENABLE([separate_update], [separate-update])],
 	[separate_update=false])
 AS_IF([${separate_binaries}],
 	[separate_update=true])
@@ -145,10 +173,7 @@ AM_CONDITIONAL([SEPARATE_UPDATE],
 AC_ARG_ENABLE([separate_tools],
 	[AS_HELP_STRING([--enable-separate-tools],
 		[create separate binaries for tools (versionsort)])],
-	[AS_CASE(["${enableval}"],
-		[yes], [separate_tools=true],
-		[no], [separate_tools=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-separate-tools])])],
+	[MV_ENABLE([separate_tools], [separate-tools])],
 	[separate_tools=false])
 AM_CONDITIONAL([SEPARATE_TOOLS],
 	[${separate_tools}])
@@ -157,10 +182,7 @@ AM_CONDITIONAL([SEPARATE_TOOLS],
 AC_ARG_ENABLE([obsolete_symlinks],
 	[AS_HELP_STRING([--enable-obsolete-symlinks],
 		[create a separate binary for each program])],
-	[AS_CASE(["${enableval}"],
-		[yes], [obsolete_symlinks=true],
-		[no], [obsolete_symlinks=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-obsolete-symlinks])])],
+	[MV_ENABLE([obsolete_symlinks], [obsolete-symlinks])],
 	[obsolete_symlinks=false])
 AM_CONDITIONAL(OBSOLETE_SYMLINKS,
 	[${obsolete_symlinks}])
@@ -169,10 +191,7 @@ AM_CONDITIONAL(OBSOLETE_SYMLINKS,
 AC_ARG_ENABLE([obsolete_reminder],
 	[AS_HELP_STRING([--enable-obsolete-reminder],
 		[create a separate binary for each program])],
-	[AS_CASE(["${enableval}"],
-		[yes], [obsolete_reminder=true],
-		[no], [obsolete_reminder=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-obsolete-reminder])])],
+	[MV_ENABLE([obsolete_reminder], [obsolete-reminder])],
 	[obsolete_reminder=false])
 AM_CONDITIONAL([OBSOLETE_REMINDER],
 	[${obsolete_reminder}])
@@ -209,11 +228,12 @@ AS_CASE(["${regex_cmd}"],
 
 # Use bzip2?
 AC_MSG_CHECKING([whether libbz2 should be used])
-AC_ARG_WITH([bzip2],[AS_HELP_STRING([--with-bzip2],
-	[Use libbz2 (required for detecting installed overlays)])],
+AC_ARG_WITH([bzip2],
+	[AS_HELP_STRING([--with-bzip2],
+		[Use libbz2 (required for detecting installed overlays)])],
 	[AS_CASE(["${withval}"],
 		[no], [use_bzlib=false
-			AC_MSG_RESULT([no (on request)])],
+			MV_MSG_RESULT([no], [on request])],
 		[use_bzlib=true])],
 	[use_bzlib=""])
 AS_IF([test x"${use_bzlib}" != x"false"],
@@ -227,10 +247,10 @@ AS_IF([test x"${use_bzlib}" != x"false"],
 BZ2_bzopen("dummy","rb");
 		]])],
 		[AS_IF([test -z "${use_bzlib}"],
-			[AC_MSG_RESULT([yes (autodetected)])],
-			[AC_MSG_RESULT([yes (on request)])])
+			[MV_MSG_RESULT([yes], [autodetected])],
+			[MV_MSG_RESULT([yes], [on request])])
 		use_bzlib=true],
-		[AC_MSG_RESULT([no (autodetected)])
+		[MV_MSG_RESULT([no], [autodetected])
 		AS_IF([test -n "${use_bzlib}"],
 			[AC_MSG_ERROR([bzip2 requested but libbz2 is unusable])])
 		use_bzlib=false
@@ -256,13 +276,10 @@ AM_CONDITIONAL([USE_RST], [${rst}])
 AC_ARG_ENABLE([extra_cache],
 	[AS_HELP_STRING([--enable-extra-cache],
 		[enable unsupported cache method portage-2.1])],
-	[AS_CASE(["${enableval}"],
-		[yes], [extra_cache=true],
-		[no], [extra_cache=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-extra-cache])])],
+	[MV_ENABLE([extra_cache], [extra-cache])],
 	[extra_cache=false])
 AS_IF([${extra_cache}],
-	[AC_MSG_NOTICE([Unsupported cache method portage-2.1 enabled on request])])
+	[AC_MSG_WARN([Unsupported cache method portage-2.1 enabled on request])])
 AM_CONDITIONAL([EXTRA_CACHE],
 	[${extra_cache}])
 
@@ -271,12 +288,8 @@ AC_MSG_CHECKING([whether std::unique seems to work])
 AC_ARG_ENABLE([unique],
 	[AS_HELP_STRING([--enable-unique],
 		[assume that unique works])],
-	[AS_CASE(["${enableval}"],
-		[yes], [AC_MSG_RESULT([yes (skipped test)])
-			unique_works=true],
-		[no], [AC_MSG_RESULT([no (skipped test)])
-			unique_works=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-unique])])],
+	[MV_ENABLE([unique_works], [unique-works])
+	MV_MSG_RESULT([${enableval}], [skipped test])],
 	[unique_works=""])
 AS_IF([test -z "${unique_works}"],
 	[AC_RUN_IFELSE([AC_LANG_PROGRAM([[
@@ -316,7 +329,7 @@ for(ind i = 0; a[i]; i++) {
 		unique_works=true],
 		[AC_MSG_RESULT([no])
 		unique_works=false],
-		[AC_MSG_RESULT([assuming yes (crosscompile)])
+		[MV_MSG_RESULT([assuming yes], [crosscompile guess])
 		unique_works=true])])
 AS_IF([${unique_works}],
 	[AC_DEFINE([UNIQUE_WORKS],
@@ -330,8 +343,8 @@ AC_ARG_WITH([sqlite],
 	[AS_HELP_STRING([--with-sqlite],
 		[Compile in support for cache method sqlite])],
 	[AS_CASE(["${withval}"],
-		[no], [AC_MSG_RESULT([no (on request)])],
-		[AC_MSG_RESULT([yes (on request)])
+		[no], [MV_MSG_RESULT([no], [on request])],
+		[MV_MSG_RESULT([yes], [on request])
 		AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
 			[SQLITE_LIBS="`pkg-config --libs sqlite3`"])
 		# If pkg-config is not available or failed, we use a default
@@ -342,67 +355,72 @@ AC_ARG_WITH([sqlite],
 	AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
 		[SQLITE_LIBS="`eval pkg-config --libs sqlite3 2>${DEV_NULL}`"])
 	AS_IF([test -n "${SQLITE_LIBS}"],
-		[AC_MSG_RESULT([yes (autodetected)])],
-		[AC_MSG_RESULT([no (autodetected)])])])
+		[MV_MSG_RESULT([yes], [autodetected])],
+		[MV_MSG_RESULT([no], [autodetected])])])
 AS_IF([test -n "${SQLITE_LIBS}"],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
 		[ Define to 1 if cache method sqlite is wanted])])
 AC_SUBST([SQLITE_LIBS])
 
-
+AC_MSG_CHECKING([PORTDIR_CACHE_METHOD default])
 AC_ARG_WITH([portdir-cache-method],
 	[AS_HELP_STRING([--with-portdir-cache-method=STR],
 		[default PORTDIR_CACHE_METHOD])],
 	[PORTDIR_CACHE_METHOD="${withval}"
-	AC_MSG_NOTICE([Changing default: PORTDIR_CACHE_METHOD=${PORTDIR_CACHE_METHOD}])],
-	[PORTDIR_CACHE_METHOD="metadata-flat"])
+	description="on request"],
+	[PORTDIR_CACHE_METHOD="metadata-flat"
+	description="default"])
+MV_MSG_RESULT([${PORTDIR_CACHE_METHOD}], [${description}])
 AC_DEFINE_UNQUOTED([PORTDIR_CACHE_METHOD],
 	["${PORTDIR_CACHE_METHOD}"],
 	[ Default PORTDIR_CACHE_METHOD])
 AC_SUBST([PORTDIR_CACHE_METHOD])
 
+AC_MSG_CHECKING([EPREFIX default])
 AC_ARG_WITH([eprefix-default],
 	[AS_HELP_STRING([--with-eprefix-default=STR],
 		[default EPREFIX])],
 	[EPREFIX_DEFAULT="${withval}"],
 	[EPREFIX_DEFAULT="`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])
-AS_IF([test x"${EPREFIX_DEFAULT}" = x"/"],
-	[EPREFIX_DEFAULT=""],
-	[test -n "${EXPREFIX_DEFAULT}"],
-	[AC_MSG_NOTICE([Using EPREFIX=${EPREFIX_DEFAULT}])])
+MV_PREFIX(EPREFIX_DEFAULT)
+MV_MSG_RESULTVAR([${EPREFIX_DEFAULT}])
 AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
 	["${EPREFIX_DEFAULT}"],
 	[ Default EPREFIX])
 AC_SUBST([EPREFIX_DEFAULT])
 
+AC_MSG_CHECKING([EIX_PREFIX default])
 AC_ARG_WITH([eix-prefix-default],
 	[AS_HELP_STRING([--with-eix-prefix-default=STR],
 		[default EIX_PREFIX])],
 	[EIX_PREFIX_DEFAULT="${withval}"
 		AS_IF([test x"${EIX_PREFIX_DEFAULT}" = x"/"],
-			[EIX_PREFIX_DEFAULT=""])
-		AC_MSG_NOTICE([Changing default: EIX_PREFIX=${EIX_PREFIX_DEFAULT}])],
+			[EIX_PREFIX_DEFAULT=""])],
 	[EIX_PREFIX_DEFAULT=""])
+MV_PREFIX(EPREFIX_DEFAULT)
+MV_MSG_RESULTVAR([${EIX_PREFIX_DEFAULT}])
 AC_DEFINE_UNQUOTED([EIX_PREFIX_DEFAULT],
 	["${EIX_PREFIX_DEFAULT}"],
 	[ Default EIX_PREFIX])
 AC_SUBST([EIX_PREFIX_DEFAULT])
 
+AC_MSG_CHECKING([ROOT default])
 AC_ARG_WITH([root-default],
 	[AS_HELP_STRING([--with-root-default=STR],
 		[default ROOT])],
 	[ROOT_DEFAULT="${withval}"
 		AS_IF([test x"${ROOT_DEFAULT}" = x"/"],
-			[ROOT_DEFAULT=""])
-		AC_MSG_NOTICE([Changing default: ROOT=${ROOT_DEFAULT}])],
+			[ROOT_DEFAULT=""])],
 	[ROOT_DEFAULT=""])
+MV_PREFIX(ROOT_DEFAULT)
+MV_MSG_RESULTVAR([${ROOT_DEFAULT}])
 AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	["${ROOT_DEFAULT}"],
 	[ Default ROOT])
 AC_SUBST([ROOT_DEFAULT])
 
-AC_MSG_CHECKING([for default of EXEC_EBUILD_SH])
+AC_MSG_CHECKING([EXEC_EBUILD_SH default])
 AC_ARG_WITH([ebuild-sh-default],
 	[AS_HELP_STRING([--with-ebuild-sh-default=STR],
 		[default EXEC_EBUILD_SH])],
@@ -415,80 +433,78 @@ AC_ARG_WITH([ebuild-sh-default],
 	AS_IF([test -x "${EPREFIX_DEFAULT}${EBUILD_SH_DEFAULT}"],
 		[description="autodetected"],
 		[description="guessed"])])
-AS_IF([test x"${EBUILD_SH_DEFAULT}" = x"/"],
-	[EBUILD_SH_DEFAULT=""])
-EBUILD_SH_MSG=${EBUILD_SH_DEFAULT}
-AS_IF([test -z "${EBUILD_SH_MSG}"],
-	[EBUILD_SH_MSG="\"\""])
-AC_MSG_RESULT([${EBUILD_SH_MSG} (${description})])
+MV_PREFIX(EBUILD_SH_DEFAULT)
+MV_MSG_RESULTVAR([${EBUILD_SH_DEFAULT}], [${description}])
 AC_DEFINE_UNQUOTED([EBUILD_SH_DEFAULT],
 	["${EBUILD_SH_DEFAULT}"],
 	[ Default EXEC_EBUILD_SH (without prefix)])
 AC_SUBST([EBUILD_SH_DEFAULT])
 
+AC_MSG_CHECKING([PORTAGE_ROOTPATH default])
 AC_ARG_WITH([portage-rootpath],
 	[AS_HELP_STRING([--with-portage-rootpath=STR],
 		[default PORTAGE_ROOTPATH])],
 	[PORTAGE_ROOTPATH_DEFAULT="${withval}"
 	AC_MSG_NOTICE([Using PORTAGE_ROOTPATH=${PORTAGE_ROOTPATH_DEFAULT}])],
 	[PORTAGE_ROOTPATH_DEFAULT=""])
+MV_MSG_RESULTVAR([${PORTAGE_ROOTPATH_DEFAULT}])
 AC_DEFINE_UNQUOTED([PORTAGE_ROOTPATH_DEFAULT],
 	["${PORTAGE_ROOTPATH_DEFAULT}"],
 	[ Default PORTAGE_ROOTPATH])
 AC_SUBST([PORTAGE_ROOTPATH_DEFAULT])
 
+AC_MSG_CHECKING([PORTAGE_BIN_PATH default])
 AC_ARG_WITH([portage-bin-path],
 	[AS_HELP_STRING([--with-portage-bin-path=STR],
 		[default PORTAGE_BIN_PATH])],
-	[PORTAGE_BIN_PATH_DEFAULT="${withval}"
-	AC_MSG_NOTICE([Using PORTAGE_BIN_PATH=${PORTAGE_BIN_PATH_DEFAULT}])],
+	[PORTAGE_BIN_PATH_DEFAULT="${withval}"],
 	[PORTAGE_BIN_PATH_DEFAULT=""])
+MV_MSG_RESULTVAR([${PORTAGE_BIN_PATH_DEFAULT}])
 AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
 	["${PORTAGE_BIN_PATH_DEFAULT}"],
 	[ Default PORTAGE_BIN_PATH])
 AC_SUBST([PORTAGE_BIN_PATH_DEFAULT])
 
+AC_MSG_CHECKING([default remote path])
 AC_ARG_WITH([remote-file],
 	[AS_HELP_STRING([--with-remote-file=STR],
 		[default remote file for eix-remote])],
 	[DEFAULT_REMOTE_PATH="${withval}"],
-	[DEFAULT_REMOTE_PATH=""])
-AC_MSG_NOTICE([Using DEFAULT_REMOTE_PATH=${DEFAULT_REMOTE_PATH}])
+	[DEFAULT_REMOTE_PATH="http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2"])
+MV_MSG_RESULTVAR([${DEFAULT_REMOTE_PATH}])
 AC_SUBST([DEFAULT_REMOTE_PATH])
 
 # Check endianess
 AC_C_BIGENDIAN()
 
-AM_CFLAGS=""
-AM_CXXFLAGS=""
-
 EIX_CACHEFILE="/var/cache/eix"
-
 AC_DEFINE_UNQUOTED([EIX_CACHEFILE],
 	["${EIX_CACHEFILE}"],
 	[ Location of the cachefile])
+AC_SUBST([EIX_CACHEFILE])
 
 AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	["2"],
 	[ Default Levenshtein distance for matches (as string)])
+AC_SUBST([LEVENSHTEIN_DISTANCE])
 
 AC_DEFINE_UNQUOTED([TARGET],
 	["${target}"],
 	[ Target system])
 
-AC_SUBST([EIX_CACHEFILE])
-AC_SUBST([LEVENSHTEIN_DISTANCE])
-
-AC_SUBST([PACKAGE_STRING])
+AM_CFLAGS=""
+AM_CXXFLAGS=""
 AC_SUBST([AM_CXXFLAGS])
 
 AS_IF([test -n "${GCC}"],
 	[AC_MSG_CHECKING([gcc version])
 	gcc_v=`${CC} -dumpversion`
+	AC_MSG_RESULT([${gcc_v}])
 	AC_DEFINE_UNQUOTED([GCC_VERSION],
 		["${gcc_v}"],
-		[ Version of gcc])
-	AC_MSG_RESULT([${gcc_v}])])
+		[ Version of gcc])])
+
+AC_SUBST([PACKAGE_STRING])
 
 # Done!
 AC_OUTPUT()
