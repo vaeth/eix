@@ -101,7 +101,7 @@ EbuildExec::delete_cachefile()
 	if(!cache_defined)
 		return;
 	const char *c = cachefile.c_str();
-	if(is_file(c)) {
+	if(is_pure_file(c)) {
 		if(unlink(c) < 0)
 			base->m_error_callback(eix::format(_("Can't unlink tempfile %s")) % c);
 		else if(is_file(c))

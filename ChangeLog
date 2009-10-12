@@ -6,6 +6,8 @@
 	- Make ./configure slightly be more verbose
 	- code cleanup (nonconst->const/mutable, configure.in: local macros)
 	- Fix linking versionsort http://bugs.gentoo.org/show_bug.cgi?id=288514
+	- Let *.tbz2 recognition also work with symlinks (needed for older
+	  portage versions): http://bugs.gentoo.org/show_bug.cgi?id=288031
 
 *eix-0.18.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

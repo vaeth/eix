@@ -99,6 +99,15 @@ bool
 is_file(const char *file)
 {
 	struct stat stat_buf;
+	if(stat(file, &stat_buf) != 0)
+		return false;
+	return S_ISREG(stat_buf.st_mode);
+}
+
+bool
+is_pure_file(const char *file)
+{
+	struct stat stat_buf;
 	if(lstat(file, &stat_buf) != 0)
 		return false;
 	return S_ISREG(stat_buf.st_mode);
