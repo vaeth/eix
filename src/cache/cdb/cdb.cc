@@ -77,9 +77,9 @@ class Cdb {
 		string get(uint32_t *dlen, void **data) {
 			uint32_t klen;
 			UINT32_UNPACK(reinterpret_cast<char *>(current), &klen);
-			current++;
+			++current;
 			UINT32_UNPACK(reinterpret_cast<char *>(current), dlen);
-			current++;
+			++current;
 			string key(reinterpret_cast<char *>(current), klen);
 			current = reinterpret_cast<uint32_t*>((reinterpret_cast<char *>(current)) + (klen));
 			*data = current;

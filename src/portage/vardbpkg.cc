@@ -221,7 +221,7 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 	bool done = false;
 	for(;;) {
 		char *ptr = buffer + i;
-		for(; i < bufend; i++) {
+		for(; i < bufend; ++i) {
 			if(buffer[i] == '\n') {
 				done = true;
 				break;

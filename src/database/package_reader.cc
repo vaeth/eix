@@ -52,7 +52,7 @@ PackageReader::read(Attributes need)
 				break;
 		case COLL_IUSE:
 #endif
-			for(io::Versize i = io::read<io::Versize>(m_fp); i; i-- )
+			for(io::Versize i = io::read<io::Versize>(m_fp); i; --i)
 				m_pkg->addVersion(io::read_version(m_fp, *header));
 			if(m_portagesettings) {
 				m_portagesettings->calc_local_sets(&(*m_pkg));

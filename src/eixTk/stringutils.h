@@ -18,6 +18,7 @@
 #include <map>
 #include <cstring>
 #include <cstdlib>
+#include <cctype>
 
 #define UNUSED(p) ((void)(p))
 

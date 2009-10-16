@@ -289,7 +289,7 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write<io::Catsize>(fp, hdr.size);
 
 	io::write<Version::Overlay>(fp, hdr.countOverlays());
-	for(Version::Overlay i = 0; i != hdr.countOverlays(); i++) {
+	for(Version::Overlay i = 0; i != hdr.countOverlays(); ++i) {
 		const OverlayIdent& overlay = hdr.getOverlay(i);
 		io::write_string(fp, overlay.path);
 		io::write_string(fp, overlay.label);

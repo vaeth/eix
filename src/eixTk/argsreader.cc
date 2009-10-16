@@ -23,13 +23,12 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 	bool seen_escape = false;
 	name = argv[0];
 	unsigned int paramarg_remain = 0;
-	for(int i = 1; i<argc ; i++)
-	{
+	for(int i = 1; i < argc ; ++i) {
 		if(seen_escape || paramarg_remain)
 		{
 			push_back(Parameter(argv[i]));
 			if(paramarg_remain)
-				paramarg_remain--;
+				--paramarg_remain;
 			continue;
 		}
 
@@ -67,7 +66,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 					if(paramarg_remain)
 					{
 						push_back(Parameter(ptr));
-						paramarg_remain--;
+						--paramarg_remain;
 						break;
 					}
 					opt = lookup_shortopt(c, opt_table);

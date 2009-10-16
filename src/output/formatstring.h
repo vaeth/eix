@@ -126,7 +126,7 @@ class FormatParser {
 				y = x;
 				x = strchr(x, '\n');
 				if(x) {
-					x ++;
+					++x;
 					++*line;
 					*column = band_position - y;
 				}

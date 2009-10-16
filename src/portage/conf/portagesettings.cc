@@ -31,13 +31,14 @@
 
 using namespace std;
 
+static string emptystring;
+
 const std::string &
 PortageSettings::operator[](const std::string &var) const
 {
-	static string empty;
 	map<string,string>::const_iterator it = map<string,string>::find(var);
 	if(it == map<string,string>::end())
-		return empty;
+		return emptystring;
 	return it->second;
 }
 
@@ -311,7 +312,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 						app = sets_dirs[i].substr(1);
 					vector<string>::size_type s = overlays.size();
 					if(s > 1)
-						sets_dirs.insert(sets_dirs.begin() + i, s - 1, "");
+						sets_dirs.insert(sets_dirs.begin() + i, s - 1, emptystring);
 					// The following should actually be const_reverse_iterator,
 					// but some compilers would then need a cast of rend(),
 					// see http://bugs.gentoo.org/show_bug.cgi?id=255711
@@ -621,9 +622,7 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 	vector<string> lines;
 	pushback_lines(file, &lines, false, true);
 	for(vector<string>::iterator i(lines.begin());
-		i != lines.end();
-		i++)
-	{
+		i != lines.end(); ++i) {
 		if(i->empty())
 			continue;
 		try {

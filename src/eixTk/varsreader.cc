@@ -495,7 +495,7 @@ bool VarsReader::source(const string &filename)
 	}
 	int rvalue=includefile.read((currprefix + filename).c_str());
 	parse_flags |= (includefile.parse_flags & HAVE_READ);
-	depth--;
+	--depth;
 	return rvalue;
 }
 

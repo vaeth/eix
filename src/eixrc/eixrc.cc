@@ -44,12 +44,12 @@ EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 		return true;
 	}
 	if(*s == '+') {
-		s++;
+		++s;
 		r.only |= type;
 		r.oins |= type;
 	}
 	else if(*s == '-') {
-		s++;
+		++s;
 		r.only |= type;
 		r.oins &= ~type;
 	}
@@ -230,8 +230,8 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 		string::size_type varlength = length - 3;
 		if((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
 			will_test = true;
-			varpos++;
-			varlength--;
+			++varpos;
+			--varlength;
 		}
 		else if((type == DelayedIfEmpty) || (type == DelayedIfNonempty)) {
 			will_test = true;
@@ -261,8 +261,8 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 			}
 			if(!check_next)
 				break;
-			varpos++;
-			varlength--;
+			++varpos;
+			--varlength;
 		}
 		if(varlength < 1)
 			return NULL;
@@ -344,7 +344,7 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 				continue;
 			}
 			if((type == DelayedIfTrue) || (type == DelayedIfFalse)) {
-				curr_count ++;
+				++curr_count;
 				continue;
 			}
 			if(type == DelayedNotFound) {
@@ -488,8 +488,8 @@ EixRc::join_key_rec(const string &key, const string &val, set<string> &has_delay
 			}
 			if(!check_next)
 				break;
-			pos++;
-			length--;
+			++pos;
+			--length;
 		}
 		if(length <= 1)
 			continue;
@@ -574,10 +574,7 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 							break;
 					}
 				}
-				if ((c != '_') &&
-					((c < '0') || (c > '9')) &&
-					((c < 'A') || (c > 'Z')) &&
-					((c < 'a') || (c > 'z')))
+				if ((c != '_') && !isalnum(c))
 					break;
 			}
 			if(c != '}')

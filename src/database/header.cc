@@ -55,7 +55,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 		return true;
 	}
 	if(testmode & OVTEST_LABEL) {
-		for(Version::Overlay i = minimal; i != countOverlays(); i++) {
+		for(Version::Overlay i = minimal; i != countOverlays(); ++i) {
 			if(getOverlay(i).label == name) {
 				*num = i;
 				return true;
@@ -71,7 +71,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 				}
 			}
 		}
-		for(Version::Overlay i = minimal; i != countOverlays(); i++) {
+		for(Version::Overlay i = minimal; i != countOverlays(); ++i) {
 			if(same_filenames(name, getOverlay(i).path.c_str(), true)) {
 				if((i == 0) && ! (testmode & OVTEST_SAVED_PORTDIR))
 					continue;
@@ -84,9 +84,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 		return false;
 	// Is name a number?
 	Version::Overlay number;
-	const char *s = name;
-	for( ; ((*s) >= '0') && ((*s) <= '9') ; s++) ;
-	if(*s)
+	if(!is_numeric(name))
 		return false;
 	try {
 		number = my_atoi(name);
@@ -106,6 +104,6 @@ void
 DBHeader::get_overlay_vector(set<Version::Overlay> *overlayset, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
 {
 	Version::Overlay curr;
-	for(curr = minimal; find_overlay(&curr, name, portdir, curr, testmode); curr++)
+	for(curr = minimal; find_overlay(&curr, name, portdir, curr, testmode); ++curr)
 		overlayset->insert(curr);
 }

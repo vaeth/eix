@@ -105,7 +105,7 @@ class PercentStatus {
 		{
 			on_start = false;
 			if(m_run < m_max)
-				m_run++;
+				++m_run;
 			reprint(NULL, true);
 		}
 };

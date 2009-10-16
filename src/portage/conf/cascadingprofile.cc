@@ -64,7 +64,7 @@ CascadingProfile::readremoveFiles()
 		const char *filename = strrchr(file->c_str(), '/');
 		if(!filename)
 			continue;
-		filename++;
+		++filename;
 		if(!strcmp(filename, "packages"))
 			handler = &CascadingProfile::readPackages;
 		else if(!strcmp(filename, "packages.d"))

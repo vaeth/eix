@@ -156,7 +156,7 @@ BasicVersion::parseVersion(const string& str)
 
 	while (str[pos] == '_') {
 		PartType suffix;
-		pos ++;
+		++pos;
 		if (str.compare(pos, 5, "alpha") == 0) {
 			pos += 5;
 			suffix = alpha;
@@ -174,7 +174,7 @@ BasicVersion::parseVersion(const string& str)
 			suffix = rc;
 		}
 		else if (str.compare(pos, 1, "p") == 0) {
-			pos ++;
+			++pos;
 			suffix = patch;
 		}
 		else {

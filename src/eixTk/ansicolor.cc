@@ -129,7 +129,7 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 	string::size_type resize = curr;
 	if((curr != string::npos) && (color_name[curr] == ','))
 	{
-		curr++;
+		++curr;
 		if(color_name[curr] == '1')
 			light = true;
 		else if(color_name[curr] == '0')

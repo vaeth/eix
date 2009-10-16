@@ -47,7 +47,7 @@ namespace io {
 				throw SysError(_("error while writing to database"));
 		}
 		else
-			counter++;
+			++counter;
 	}
 
 	/// Read a nonnegative number from fp (m_Tp must be big enough)

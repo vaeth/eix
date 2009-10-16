@@ -665,7 +665,7 @@ run_eix(int argc, char** argv)
 	if(header.countOverlays())
 	{
 		format.clear_virtual(header.countOverlays());
-		for(Version::Overlay i = 1; i != header.countOverlays(); i++)
+		for(Version::Overlay i = 1; i != header.countOverlays(); ++i)
 			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
 	}
 	bool need_overlay_table = false;
@@ -710,7 +710,7 @@ run_eix(int argc, char** argv)
 		if(overlay_mode != mode_list_used_renumbered) {
 			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				if(only_printed)
-					count++;
+					++count;
 			}
 		}
 	}
@@ -733,7 +733,7 @@ run_eix(int argc, char** argv)
 			++it) {
 			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				if(only_printed)
-					count++;
+					++count;
 			}
 		}
 	}
@@ -803,7 +803,7 @@ is_current_dbversion(const char *filename) {
 static void
 print_vector(const vector<string> &vec)
 {
-	for(vector<string>::const_iterator it=vec.begin(); it != vec.end(); it++)
+	for(vector<string>::const_iterator it=vec.begin(); it != vec.end(); ++it)
 		cout << *it << "\n";
 	cout << "--\n\n";
 }
@@ -817,9 +817,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 	bool know_excludes = false;
 	pushback_lines(filename.c_str(), &lines, false, true);
 	for(vector<string>::iterator i(lines.begin());
-		i != lines.end();
-		i++)
-	{
+		i != lines.end(); ++i) {
 		if(i->empty())
 			continue;
 		if(!know_excludes) {

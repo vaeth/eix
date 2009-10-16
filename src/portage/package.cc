@@ -365,8 +365,7 @@ Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, 
 const char *
 Package::slotname(const ExtendedVersion &v) const
 {
-	for(const_iterator i = begin(); i != end(); i++)
-	{
+	for(const_iterator i = begin(); i != end(); ++i) {
 		if(**i == v)
 			return (i->slotname).c_str();
 	}

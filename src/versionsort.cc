@@ -30,7 +30,7 @@ parse_version(const char *v)
 		free(s);
 		return r.c_str();
 	}
-	if(((*v) >= '0') && ((*v) <= '9'))
+	if(isdigit(*v))
 		return v;
 	cerr << eix::format(_("cannot determine version of %s")) % v << endl;
 	exit(1);

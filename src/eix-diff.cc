@@ -140,7 +140,7 @@ set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virt
 	if(!header.countOverlays())
 		return;
 	fmt->clear_virtual(header.countOverlays());
-	for(Version::Overlay i = 1; i != header.countOverlays(); i++)
+	for(Version::Overlay i = 1; i != header.countOverlays(); ++i)
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 

@@ -311,7 +311,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  }
 				  else {
 					  test->setAlgorithm(PackageTest::ALGO_FUZZY);
-					  arg--;
+					  --arg;
 				  }
 				  break;
 			case 'r': test->setAlgorithm(new RegexAlgorithm());

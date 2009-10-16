@@ -129,7 +129,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	if(!use_ebuild_sh) {
 		if(!(base->portagesettings->export_portdir_overlay))
 			return;
-		for(char **e = environ; *e; e++) {
+		for(char **e = environ; *e; ++e) {
 			const char *s = strchr(*e, '=');
 			if(s)
 				env[string(*e, s - (*e))] = s + 1;

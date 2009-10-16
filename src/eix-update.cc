@@ -280,8 +280,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
 		return;
 	}
-	for(Version::Overlay i = 0; i != header.countOverlays(); i++)
-	{
+	for(Version::Overlay i = 0; i != header.countOverlays(); ++i) {
 		string overlay = eprefix_virtual + header.getOverlay(i).path;
 		if(!is_virtual(overlay.c_str()))
 			continue;

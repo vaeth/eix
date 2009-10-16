@@ -12,6 +12,7 @@
 
 
 #include <eixTk/inttypes.h>
+#include <eixTk/stringutils.h>
 
 // mmap and stat stuff
 #include <sys/types.h>
@@ -20,6 +21,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
+#include <cctype>
 #include <string>
 #include <map>
 
@@ -238,14 +240,12 @@ class VarsReader {
 
 		/** True if c matches [A-Z_0-9] */
 		virtual bool isValidKeyCharacter(char c) {
-			return ((c >= 'A' && c <= 'Z')
-					|| c == '_' || (c >= '0' && c <= '9'));
+			return (isupper(c) || c == '_' || (isdigit(c)));
 		}
 
 		/** True if c matches [A-Z_] */
 		virtual bool isValidKeyCharacterStart(char c) {
-			return ((c >= 'A' && c <= 'Z')
-					|| c == '_' );
+			return (isupper(c) || c == '_' );
 		}
 
 		const char *file_name; /**< Name of parsed file. */

@@ -25,7 +25,7 @@ is_on_list (char *const *list, const char *member)
 	while (*list) {
 		if (strcmp (*list, member) == 0)
 			return true;
-		list++;
+		++list;
 	}
 	return false;
 }
