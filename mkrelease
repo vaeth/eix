@@ -7,7 +7,7 @@ svnroot="https://svn.gentooexperimental.org/${proj}"
 
 usage() {
 	echo "Usage: mkrelease"
-	echo "Verify in advance to have AC_INIT set correctly in configure.in"
+	echo "Verify in advance to have AC_INIT set correctly in configure.ac"
 }
 
 die() {
@@ -15,7 +15,7 @@ die() {
 	exit ${2:-1}
 }
 
-ver="`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.in`"
+ver="`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`"
 ans=''
 while [ -z "${ans}" ]
 do

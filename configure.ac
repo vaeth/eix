@@ -46,6 +46,7 @@ dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
 AC_INIT([eix], [0.18.3], [http://eix.sourceforge.net])
+AC_PREREQ([2.61])
 
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_FILES([
@@ -55,10 +56,10 @@ AC_CONFIG_FILES([
 		doc/Makefile
 		po/Makefile.in
 	])
+AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_TARGET()
 
 AM_MAINTAINER_MODE()
-AM_CONFIG_HEADER([config.h])
 
 # The following must appear after option parsing and before automake's
 # initialization.
