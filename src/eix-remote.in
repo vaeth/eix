@@ -11,7 +11,7 @@
 . ./eix-functions.sh.in
 ReadFunctions
 
-addr='@DEFAULT_REMOTE_FILE@'
+addr='@DEFAULT_REMOTE_PATH@'
 
 local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"

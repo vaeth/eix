@@ -505,7 +505,7 @@ SUFFIXES = .in
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
 		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
-		-e "s,\@DEFAULT_REMOTE_FILE\@,$(DEFAULT_REMOTE_FILE),g" \
+		-e "s,\@DEFAULT_REMOTE_PATH\@,$(DEFAULT_REMOTE_PATH),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		"$<" > "$@"
 
