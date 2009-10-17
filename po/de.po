@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-17 00:12+0200\n"
+"POT-Creation-Date: 2009-10-17 11:42+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1466,50 +1466,50 @@ msgstr "%r lässt sich nicht in Paket und Version aufteilen"
 msgid "Can't read cache file %s: "
 msgstr "Kann Cachefile %s nicht lesen: "
 
-#: src/cache/common/ebuild_exec.cc:106
+#: src/cache/common/ebuild_exec.cc:105
 #, c-format
 msgid "Can't unlink tempfile %s"
 msgstr "Kann Temporärfile %s nicht löschen"
 
-#: src/cache/common/ebuild_exec.cc:108
+#: src/cache/common/ebuild_exec.cc:107
 #, c-format
 msgid "Tempfile %s still there after unlink"
 msgstr "Temporärfile %s trotz Löschens vorhanden"
 
-#: src/cache/common/ebuild_exec.cc:111
+#: src/cache/common/ebuild_exec.cc:110
 #, c-format
 msgid "Tempfile %s is not a file"
 msgstr "Temporärfile %s ist keine Datei"
 
-#: src/cache/common/ebuild_exec.cc:178
+#: src/cache/common/ebuild_exec.cc:177
 msgid "Creation of tempfile failed"
 msgstr "Kann kein Temporärfile erzeugen"
 
-#: src/cache/common/ebuild_exec.cc:196
+#: src/cache/common/ebuild_exec.cc:195
 msgid "Forking failed"
 msgstr "Forken schlug fehl"
 
-#: src/cache/common/ebuild_exec.cc:227
+#: src/cache/common/ebuild_exec.cc:226
 #, c-format
 msgid "Got signal %s"
 msgstr "Erhielt Signal %s"
 
-#: src/cache/common/ebuild_exec.cc:231
+#: src/cache/common/ebuild_exec.cc:230
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ebuild erhielt Signal %s"
 
-#: src/cache/common/ebuild_exec.cc:242
+#: src/cache/common/ebuild_exec.cc:241
 #, c-format
 msgid "Could not start %s"
 msgstr "Konnte mit %s nicht beginnen"
 
-#: src/cache/common/ebuild_exec.cc:244
+#: src/cache/common/ebuild_exec.cc:243
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ebuild schlug fehl mit Status %s"
 
-#: src/cache/common/ebuild_exec.cc:247
+#: src/cache/common/ebuild_exec.cc:246
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
@@ -1638,22 +1638,22 @@ msgstr "Unbekannter Helligkeitswert %r"
 msgid "Illegal color name %r"
 msgstr "Unbekannter Farbname %r"
 
-#: src/eixTk/argsreader.cc:134
+#: src/eixTk/argsreader.cc:133
 #, c-format
 msgid "Unknown option --%s\n"
 msgstr "Unbekannte Option --%s\n"
 
-#: src/eixTk/argsreader.cc:151
+#: src/eixTk/argsreader.cc:150
 #, c-format
 msgid "Unknown option -%c\n"
 msgstr "Unbekannte Option -%c\n"
 
-#: src/eixTk/argsreader.cc:225
+#: src/eixTk/argsreader.cc:224
 #, c-format
 msgid "Missing parameter to --%s\n"
 msgstr "Parameter zu --%s fehlt\n"
 
-#: src/eixTk/argsreader.cc:250
+#: src/eixTk/argsreader.cc:249
 #, c-format
 msgid "Missing second parameter to --%s\n"
 msgstr "Zweiter Parameter zu --%s fehlt\n"
@@ -1671,37 +1671,37 @@ msgstr "Format-Zeichen fehlt"
 msgid "unknown format specifier '%%%s'"
 msgstr "Unbekannte Formatangabe '%%%s'"
 
-#: src/eixTk/stringutils.cc:203
+#: src/eixTk/stringutils.cc:205
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
-#: src/eixTk/stringutils.cc:237
+#: src/eixTk/stringutils.cc:239
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Interner Fehler: Storing required after finalizing"
 
-#: src/eixTk/stringutils.cc:247
+#: src/eixTk/stringutils.cc:249
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Interner Fehler: Hashing required after finalizing"
 
-#: src/eixTk/stringutils.cc:251
+#: src/eixTk/stringutils.cc:253
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing required in non-hash mode"
 
-#: src/eixTk/stringutils.cc:280
+#: src/eixTk/stringutils.cc:282
 #, c-format
 msgid "Internal error: Index required before sorting."
 msgstr "Interner Fehler: Index required before sorting."
 
-#: src/eixTk/stringutils.cc:285
+#: src/eixTk/stringutils.cc:287
 #, c-format
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 
-#: src/eixTk/stringutils.cc:295
+#: src/eixTk/stringutils.cc:297
 #, c-format
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
@@ -1714,11 +1714,11 @@ msgstr "getpwuid() sagt, dass meine uid unbekannt ist."
 msgid "getgrnam(%r) failed: %s"
 msgstr "getgrnam(%r) schlug fehl: %s"
 
-#: src/eixTk/utils.cc:86
+#: src/eixTk/utils.cc:83
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:69
+#: src/eixTk/varsreader.cc:75
 msgid "failed to source %r"
 msgstr "Kann %r nicht sourcen"
 
@@ -4812,85 +4812,85 @@ msgstr "Unbekannte Property %r"
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Loops über Versionen benutzt"
 
-#: src/output/formatstring.cc:144
+#: src/output/formatstring.cc:145
 msgid "Variable %r calls itself for printing"
 msgstr "Die Variable %r ruft sich selbst zum Drucken auf"
 
-#: src/output/formatstring.cc:355
+#: src/output/formatstring.cc:356
 msgid "Internal error: bad node for parse_colors."
 msgstr "Interner Fehler: bad node for parse_colors."
 
-#: src/output/formatstring.cc:409
+#: src/output/formatstring.cc:410
 msgid "'(' without closing ')'"
 msgstr "'(' ohne schließendes ')'"
 
-#: src/output/formatstring.cc:417
+#: src/output/formatstring.cc:418
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Fehler beim Parsen der Farbe: %s"
 
-#: src/output/formatstring.cc:439
+#: src/output/formatstring.cc:440
 msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
-#: src/output/formatstring.cc:479
+#: src/output/formatstring.cc:480
 msgid ""
 "Ran into end-of-string or '}' while looking for possible negation-mark (!) "
 "in condition."
 msgstr "Stringende oder '}' bei der Suche nach möglichem '!' bei einem Test."
 
-#: src/output/formatstring.cc:493
+#: src/output/formatstring.cc:494
 msgid ""
 "Ran into end-of-string or '}' while looking for possible user-variable ($*) "
 "in condition."
 msgstr "Stringende oder '}' bei der Suche nach möglichem '$'/'*' bei Test."
 
-#: src/output/formatstring.cc:511
+#: src/output/formatstring.cc:512
 msgid ""
 "Ran into end-of-string or '}' while looking for property-name in condition."
 msgstr "Stringende oder '}' bei der Suche nach Property-Namen bei einem Test."
 
-#: src/output/formatstring.cc:520
+#: src/output/formatstring.cc:521
 msgid "Ran into end-of-string while reading property-name."
 msgstr "Stringende bei Suche nach Property-Namen."
 
-#: src/output/formatstring.cc:535
+#: src/output/formatstring.cc:536
 msgid "Unknown operator in if-construct."
 msgstr "Unbekannter Operator in einem if-Konstrukt."
 
-#: src/output/formatstring.cc:542 src/output/formatstring.cc:606
+#: src/output/formatstring.cc:543 src/output/formatstring.cc:605
 msgid "Run into end-of-string while looking for right-hand of condition."
 msgstr "Stringende bei Suche nach rechter Seiter des Tests."
 
-#: src/output/formatstring.cc:604
+#: src/output/formatstring.cc:603
 msgid "Run into end-of-string while looking for right-hand of assignment."
 msgstr "Stringende bei Suche nach rechter Seiter der Zuweisung."
 
-#: src/output/formatstring.cc:627
+#: src/output/formatstring.cc:626
 msgid "Found ELSE without IF."
 msgstr "Stieß auf ELSE ohne IF."
 
-#: src/output/formatstring.cc:654
+#: src/output/formatstring.cc:653
 msgid "Found FI without IF."
 msgstr "Stieß auf FI ohne IF."
 
-#: src/output/formatstring.cc:677
+#: src/output/formatstring.cc:676
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:691
+#: src/output/formatstring.cc:690
 msgid "Bad state: ERROR"
 msgstr "Unerlaubter Status: ERROR"
 
-#: src/output/formatstring.cc:692
+#: src/output/formatstring.cc:691
 msgid "Bad state: STOP"
 msgstr "Unerlaubter Status: STOP"
 
-#: src/output/formatstring.cc:693
+#: src/output/formatstring.cc:692
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:705
+#: src/output/formatstring.cc:704
 msgid "Line %r, column %r: %s"
 msgstr "Zeile %r, Spalte %r: %s"
 

@@ -270,10 +270,12 @@ PrintXml::package(const Package *pkg)
 			set<string> usedUse = installedVersion->usedUse;
 			for (vector<string>::iterator iu = inst_iuse.begin(); iu != inst_iuse.end(); iu++) {
 				if (usedUse.find(*iu) == usedUse.end()) {
-					if (!iuse_disabled.empty()) iuse_disabled.append(" ");
+					if (!iuse_disabled.empty())
+						iuse_disabled.append(1, ' ');
 					iuse_disabled.append(*iu);
 				} else {
-					if (!iuse_enabled.empty()) iuse_enabled.append(" ");
+					if (!iuse_enabled.empty())
+						iuse_enabled.append(1, ' ');
 					iuse_enabled.append(*iu);
 				}
 			}

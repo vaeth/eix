@@ -11,6 +11,12 @@
 
 #include <eixTk/exceptions.h>
 
+// mmap and stat stuff
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+
 /** Current input for FSM */
 #define INPUT (*(x))
 /** Move to next input and check for end of buffer. */
@@ -143,7 +149,9 @@ void VarsReader::JUMP_WHITESPACE()
 		case 's':  {
 				int i=0;
 				const char *begin = x;
-				while(isalpha(INPUT)) { NEXT_INPUT; ++i; }
+				while(isalpha(INPUT, localeC)) {
+					NEXT_INPUT; ++i;
+				}
 				if((i!=6) || strncmp("source", begin, 6) != 0)
 				{
 					CHSTATE(JUMP_NOISE);

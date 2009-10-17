@@ -10,8 +10,12 @@
 #ifndef EIX__DATABASE_TYPES_H__
 #define EIX__DATABASE_TYPES_H__ 1
 
+#include <config.h>
+
 #include <cstdlib>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 class DBHeader;
 class PackageReader;

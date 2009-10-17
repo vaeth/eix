@@ -81,13 +81,13 @@ ParseCache::getType() const
 		if(s.empty())
 			s = t;
 		else {
-			s.append("|");
+			s.append(1, '|');
 			s.append(t);
 		}
 	}
 	for(vector<BasicCache*>::const_iterator it = further.begin();
 		it != further.end(); ++it) {
-		s.append("#");
+		s.append(1, '#');
 		s.append((*it)->getType());
 	}
 	return s.c_str();

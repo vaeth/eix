@@ -4,8 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add ./configure --with-remote-file=STR
 	- Make ./configure slightly be more verbose
-	- Code cleanup (nonconst->const/mutable, prefer prefix ++/--,
-	  use cctype tests, configure.in->configure.ac: use local macros)
+	- Code cleanup (nonconst->const/mutable, prefer prefix ++/--, headers,
+	  use localeC cctype, configure.in->configure.ac: use local macros)
 	- Fix linking versionsort http://bugs.gentoo.org/show_bug.cgi?id=288514
 	- Let *.tbz2 recognition also work with symlinks (needed for older
 	  portage versions): http://bugs.gentoo.org/show_bug.cgi?id=288031

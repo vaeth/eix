@@ -574,7 +574,7 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 							break;
 					}
 				}
-				if ((c != '_') && !isalnum(c))
+				if((!isalnum(c, localeC)) && (c != '_'))
 					break;
 			}
 			if(c != '}')

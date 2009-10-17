@@ -4,12 +4,13 @@
 //
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "levenshtein.h"
 
-#include <cctype>
-#include <vector>
-#include <cstring>
+#include <eixTk/stringutils.h>
+
+#include <algorithm>
 
 using namespace std;
 
@@ -19,46 +20,44 @@ using namespace std;
  * @param str_b string b
  * @return int Levenshtein distance of str_a <> str_b
  */
-unsigned int
+Levenshtein
 get_levenshtein_distance(const char *str_a, const char *str_b)
 {
-	unsigned int n,m;
-	unsigned int cost;
-	vector< vector<unsigned int> > matrix;
+	size_t n,m;
+	vector< vector<Levenshtein> > matrix;
 
 	n = strlen(str_a);
 	m = strlen(str_b);
-	if(!n) return m;
-	if(!m) return n;
+	if(!n)
+		return m;
+	if(!m)
+		return n;
 
 	// initialize the matrix' dimensions
 	matrix.resize(n + 1);
-	for(unsigned int i = 0; i <= n; ++i)
-	{
-		matrix[i].resize( m+1 );
-		fill( matrix[i].begin(), matrix[i].end(), 0);
+	matrix[0].resize(m + 1);
+	for(vector< vector<Levenshtein> >::size_type i = 1; i <= n; ++i) {
+		matrix[i].resize(m + 1);
+		fill(matrix[i].begin(), matrix[i].end(), 0);
 	}
 
 	// fill the 1st column/row with str_a / str_b
-	for(unsigned int i = 0; i <= n; ++i)
+	for(vector< vector<Levenshtein> >::size_type i = 0; i <= n; ++i)
 		matrix[i][0] = i;
-	for(unsigned int j = 0; j <= m; ++j)
+	for(vector<Levenshtein>::size_type j = 0; j <= m; ++j)
 		matrix[0][j] = j;
 
 	// calculate the matrix
-	for(unsigned int i = 1; i <= n; ++i)
-	{
-		for(unsigned int j = 1; j <= m; ++j)
-		{
-			char ci = tolower(str_a[i-1]);
-			char cj = tolower(str_b[j-1]);
-			cost = !(ci == cj);
+	for(vector< vector<Levenshtein> >::size_type i = 1; i <= n; ++i) {
+		for(vector<Levenshtein>::size_type j = 1; j <= m; ++j) {
+			char ci = tolower(str_a[i - 1], localeC);
+			char cj = tolower(str_b[j - 1], localeC);
 
-			unsigned int a = matrix[i-1][j] + 1;
-			unsigned int b = matrix[i][j-1] + 1;
-			unsigned int c = matrix[i-1][j-1] + cost;
+			Levenshtein a = matrix[i - 1][j] + 1;
+			Levenshtein b = matrix[i][j - 1] + 1;
+			Levenshtein c = matrix[i - 1][j - 1] + !(ci == cj);
 
-			matrix[i][j] = min(a, min(b,c));
+			matrix[i][j] = min(a, min(b, c));
 		}
 	}
 

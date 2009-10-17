@@ -30,7 +30,7 @@ parse_version(const char *v)
 		free(s);
 		return r.c_str();
 	}
-	if(isdigit(*v))
+	if(isdigit(*v, localeC))
 		return v;
 	cerr << eix::format(_("cannot determine version of %s")) % v << endl;
 	exit(1);

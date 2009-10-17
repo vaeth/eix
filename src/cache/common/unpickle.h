@@ -20,8 +20,6 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 
-#include <unistd.h>
-
 #define UINT32_PACK(out,in)   uint32_pack(out,in)
 #define UINT32_UNPACK(in,out) uint32_unpack(in,out)
 

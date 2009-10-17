@@ -488,7 +488,7 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 		}
 		dir_size[i] = set_names.size() - s;
 	}
-	vector<vector<string> > child_names(set_names.size());
+	vector< vector<string> > child_names(set_names.size());
 	SetsIndex c = 0;
 	for(vector<string>::size_type i = 0; i != dir_list.size(); ++i) {
 		string dir_slash = dir_list[i];
@@ -913,7 +913,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	m_settings->get_effective_keywords_userprofile(p);
 
 	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
-	map<Version*,vector<string> > sorted_by_versions;
+	map<Version*, vector<string> > sorted_by_versions;
 	bool rvalue = false;
 
 	bool obsolete_minusasterisk = m_settings->m_obsolete_minusasterisk;

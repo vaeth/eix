@@ -25,6 +25,9 @@
 /* Version of gcc */
 #undef GCC_VERSION
 
+/* Define to 1 if you have the `atoi' function. */
+#undef HAVE_ATOI
+
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 

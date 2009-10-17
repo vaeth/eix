@@ -78,7 +78,7 @@ io::read_hash_words(FILE *fp, const StringHash& hash)
 	for(vector<string>::size_type e = io::read<vector<string>::size_type>(fp);
 		e ; --e) {
 		if(!r.empty())
-			r.append(" ");
+			r.append(1, ' ');
 		r.append(io::read_hash_string(fp, hash));
 	}
 	return r;

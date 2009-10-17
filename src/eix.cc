@@ -887,7 +887,7 @@ static void
 print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist)
 {
 	/* For faster testing, we build a category->name set */
-	map< string, set<string> > cat_name;
+	map<string, set<string> > cat_name;
 	for(eix::ptr_list<Package>::const_iterator pit = packagelist.begin();
 		pit != packagelist.end(); ++pit )
 		cat_name[pit->category].insert(pit->name);
@@ -906,7 +906,7 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 		vector<string> names;
 		string cat_slash = *cit + "/";
 		pushback_files(dirname + cat_slash, names, NULL, 2, true, false);
-		map< string, set<string> >::const_iterator cat = cat_name.find(*cit);
+		map<string, set<string> >::const_iterator cat = cat_name.find(*cit);
 		const set<string> *ns = ( (cat == cat_name.end()) ? NULL : &(cat->second) );
 		for(vector<string>::const_iterator nit = names.begin();
 			nit != names.end(); ++nit )

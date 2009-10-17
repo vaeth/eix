@@ -68,7 +68,7 @@ PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 				curr = &add;
 		}
 		if(!curr->empty())
-			curr->append(" ");
+			curr->append(1, ' ');
 		if(is_unset)
 			curr->append(before_unset_use);
 		else
@@ -81,7 +81,7 @@ PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 	}
 	if(!add.empty()) {
 		if(!ret.empty())
-			ret.append(" ");
+			ret.append(1, ' ');
 		ret.append(add);
 	}
 	return ret;
@@ -341,8 +341,8 @@ class Scanner {
 		enum PropType { PKG, VER };
 
 	protected:
-		map<string,Prop> diff;
-		map<string,pair<Prop,PropType> > prop, colon;
+		map<string, Prop> diff;
+		map<string, pair<Prop,PropType> > prop, colon;
 
 		void prop_colon_pkg(const char *s, Prop p)
 		{ colon[s] = pair<Prop,PropType>(p, PKG); }
@@ -469,7 +469,7 @@ class Scanner {
 
 		Prop get_diff(const string& s) const
 		{
-			map<string,Prop>::const_iterator it = diff.find(s);
+			map<string, Prop>::const_iterator it = diff.find(s);
 			if(it == diff.end())
 				return PROP_NONE;
 			return it->second;
@@ -477,7 +477,7 @@ class Scanner {
 
 		Prop get_colon(const string& s, PropType *p) const
 		{
-			map<string,pair<Prop,PropType> >::const_iterator it = colon.find(s);
+			map<string, pair<Prop,PropType> >::const_iterator it = colon.find(s);
 			if(it == colon.end())
 				return PROP_NONE;
 			*p = it->second.second;
@@ -486,7 +486,7 @@ class Scanner {
 
 		Prop get_prop(const string& s, PropType *p) const
 		{
-			map<string,pair<Prop,PropType> >::const_iterator it = prop.find(s);
+			map<string, pair<Prop,PropType> >::const_iterator it = prop.find(s);
 			if(it == prop.end())
 				return PROP_NONE;
 			*p = it->second.second;

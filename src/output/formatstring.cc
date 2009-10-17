@@ -18,6 +18,7 @@ string
 get_escape(const char *p)
 {
 	switch(*p) {
+		case 0:
 		case '\\': return string("\\");
 		case 'n':  return string("\n");
 		case 'r':  return string("\r");
@@ -112,7 +113,7 @@ string MarkedList::getMarkedString(const Package &pkg) const
 		it != marked->end(); ++it )
 	{
 		if(!ret.empty())
-			ret.append(" ");
+			ret.append(1, ' ');
 		ret.append(it->getFull());
 	}
 	delete marked;
@@ -425,7 +426,7 @@ FormatParser::state_COLOR()
 inline const char *
 seek_character(const char *fmt)
 {
-	while(*fmt && isspace(*fmt)) {
+	while(*fmt && isspace(*fmt, localeC)) {
 		++fmt;
 	}
 	return fmt;
@@ -512,10 +513,10 @@ FormatParser::state_IF()
 		return ERROR;
 	}
 	unsigned int i = 0;
-	while(*band_position && strchr(" \t\n\r=}", *band_position) == NULL) {
-		++band_position;
+	for(char c = *band_position;
+		c && (c != '}') && !(isspace(c, localeC));
+		c = *(++band_position))
 		++i;
-	}
 	if(i == 0 || !*band_position) {
 		last_error = _("Ran into end-of-string while reading property-name.");
 		return ERROR;
@@ -575,29 +576,27 @@ FormatParser::state_IF()
 	}
 
 	string textbuffer;
-	while(*band_position) {
+	for(char c = *band_position; c; c = *(++band_position)) {
 		if(parse_modus != plain) {
-			if(*band_position == parse_modus)
+			if(c == parse_modus)
 				break;
 		}
-		else if(strchr(" \t\n\r}", *band_position) != NULL)
+		else if((c == '}') || isspace(c))
 			break;
-		if((*band_position == '\\') && (parse_modus != single_quote)) {
+		if((c == '\\') && (parse_modus != single_quote)) {
 			textbuffer.append(get_escape(++band_position));
 			if(!*band_position)
 				break;
 		}
 		else {
-			textbuffer.append(band_position, 1);
+			textbuffer.append(1, c);
 		}
-		++band_position;
 	}
 	n->text = Text(textbuffer);
 
 	if(*band_position != '}') {
 		if(*band_position) {
-			++band_position;
-			band_position = seek_character(band_position);
+			band_position = seek_character(band_position + 1);
 		}
 		if(*band_position != '}') {
 			if(n->type == Node::SET)

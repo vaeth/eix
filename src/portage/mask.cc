@@ -197,12 +197,12 @@ Mask::test(const ExtendedVersion *ev) const
 
 				if (my_start == std::string::npos)
 					my_start = my_string.size() - 1;
-				else if(! isdigit(my_string[my_start]))
+				else if(!isdigit(my_string[my_start], localeC))
 					my_start -= 1;
 
 				if (version_start == std::string::npos)
 					version_start = version_string.size() - 1;
-				else if(! isdigit(version_string[version_start]))
+				else if(!isdigit(version_string[version_start], localeC))
 					version_start -= 1;
 
 				const std::string::size_type total = my_string.size() - my_start;

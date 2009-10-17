@@ -12,19 +12,21 @@
 
 #include <config.h>
 
+#include <locale>
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
 #include <cstring>
 #include <cstdlib>
-#include <cctype>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #define UNUSED(p) ((void)(p))
 
 #ifndef HAVE_STRNDUP
 /** strndup in case we don't have one. */
-#include <unistd.h>
 char *strndup(const char *s, size_t n);
 #endif
 
@@ -40,6 +42,8 @@ char *strndup(const char *s, size_t n);
 
 /** Spaces for split strings */
 extern const char *spaces;
+
+extern std::locale localeC;
 
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {
@@ -63,9 +67,10 @@ class ExplodeAtom {
 inline bool
 is_numeric(const char *str)
 {
-	while( (*str) )
-		if( !isdigit(*str++) )
+	for(char c = *str; c; c=*(++str)) {
+		if(!isdigit(c, localeC))
 			return false;
+	}
 	return true;
 }
 

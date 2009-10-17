@@ -203,14 +203,22 @@ AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset],
 	[],
 	[AC_MSG_ERROR([We really need this function ..])])
 
+# We need at least one of the following, the former the better
+AC_CHECK_FUNCS([strtoul strtol atoi],
+	[break],
+	[AC_MSG_ERROR([At least one of strtoul/strtoll/atoi is needed ..])])
+
 # Well define the following if we don't have one:
-AC_CHECK_FUNCS([strndup strtoul strtol])
+AC_CHECK_FUNCS([strndup])
 
 # We use these optionally:
 AC_CHECK_FUNCS([canonicalize_file_name realpath vfork setenv])
 
 # Optional header files:
 AC_CHECK_HEADERS([sys/param.h])
+
+# Not sure whether this is optional; however it probably exists on all systems
+AC_CHECK_HEADERS([unistd.h])
 
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],

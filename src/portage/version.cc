@@ -100,7 +100,7 @@ IUseSet::asString() const
 	for(set<IUse>::const_iterator it = m_iuse.begin();
 		it != m_iuse.end(); ++it) {
 		if(!ret.empty())
-			ret.append(" ");
+			ret.append(1, ' ');
 		ret.append(it->asString());
 	}
 	return ret;

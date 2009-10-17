@@ -10,8 +10,12 @@
 #ifndef EIX__SYSUTILS_H__
 #define EIX__SYSUTILS_H__ 1
 
-#include <unistd.h>
+#include <config.h>
+
 #include <ctime>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 /** Return false if the file is not writable/readable by users in the group portage. */
 bool is_writable(const char *file);

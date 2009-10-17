@@ -9,11 +9,13 @@
 #ifndef EIX__LEVENSHTEIN_H__
 #define EIX__LEVENSHTEIN_H__ 1
 
+typedef unsigned int Levenshtein;
+
 /** Calculates the Levenshtein distance of two strings.
  * Reference: http://www.merriampark.com/ld.htm
  * @param str_a string a
  * @param str_b string b
- * @return int Levenshtein distance of str_a <> str_b */
-unsigned int get_levenshtein_distance( const char *str_a, const char *str_b );
+ * @return unsigned int Levenshtein distance of str_a <> str_b */
+Levenshtein get_levenshtein_distance( const char *str_a, const char *str_b );
 
 #endif /* EIX__LEVENSHTEIN_H__ */

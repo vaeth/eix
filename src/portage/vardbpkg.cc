@@ -22,9 +22,9 @@
 using namespace std;
 
 inline static void
-sort_installed(map<string,vector<InstVersion> > *maping)
+sort_installed(map<string, vector<InstVersion> > *maping)
 {
-	map<string,vector<InstVersion> >::iterator it = maping->begin();
+	map<string, vector<InstVersion> >::iterator it = maping->begin();
 	while(it != maping->end())
 	{
 		sort(it->second.begin(), it->second.end());
@@ -399,9 +399,9 @@ VarDbPkg::readCategory(const char *category)
 		installed[category] = NULL;
 		return;
 	}
-	dir_category_name.append("/");
+	dir_category_name.append(1, '/');
 	map<string, vector<InstVersion> >* category_installed;
-	installed[category] = category_installed = new map<string,vector<InstVersion> >;
+	installed[category] = category_installed = new map<string, vector<InstVersion> >;
 
 	/* Cycle through this category */
 	while( (package_entry = readdir(dir_category)) != NULL )

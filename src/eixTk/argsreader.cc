@@ -12,7 +12,6 @@
 #include <eixTk/i18n.h>
 
 #include <cstdio>
-#include <cctype>
 #include <cstring>
 #include <cstdlib>
 

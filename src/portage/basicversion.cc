@@ -148,7 +148,7 @@ BasicVersion::parseVersion(const string& str)
 		pos = len;
 	}
 
-	if(isalpha(str[pos]))
+	if(isalpha(str[pos], localeC))
 		m_parts.push_back(Part(character, str.substr(pos++, 1)));
 
 	if (pos == str.size())

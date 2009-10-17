@@ -10,20 +10,8 @@
 #ifndef EIX__VARSREADER_H__
 #define EIX__VARSREADER_H__ 1
 
-
 #include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
-
-// mmap and stat stuff
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/mman.h>
-
-#include <cctype>
-#include <string>
-#include <map>
 
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
@@ -49,7 +37,8 @@ class VarsReader {
 
 
 		/** Init and parse the FSM depending on supplied flags. */
-		VarsReader(Flags flags) {
+		VarsReader(Flags flags)
+		{
 			parse_flags = flags;
 			if( ! (parse_flags & INTO_MAP) ) {
 				vars = new std::map<std::string,std::string>;
@@ -57,9 +46,10 @@ class VarsReader {
 		}
 
 		/** Free memory. */
-		virtual ~VarsReader() {
+		virtual ~VarsReader()
+		{
 			if( !(parse_flags & INTO_MAP) )
-				delete  vars;
+				delete vars;
 		}
 
 		/** Read file.
@@ -72,21 +62,25 @@ class VarsReader {
 		}
 
 		/** Prefix (path resp. varname) used for sourcing */
-		void setPrefix(std::string prefix) {
+		void setPrefix(std::string prefix)
+		{
 			source_prefix = prefix;
 		}
 
 		/** Set array of keys which values should be prepended to the new value. */
-		void accumulatingKeys(const char **keys) {
+		void accumulatingKeys(const char **keys)
+		{
 			incremental_keys = keys;
 		}
 
 		/** Operator that helps us to be used like a map. */
-		std::string& operator[] (std::string key) {
+		std::string& operator[] (std::string key)
+		{
 			return (*vars)[key];
 		}
 
-		const std::string *find(std::string key) const {
+		const std::string *find(std::string key) const
+		{
 			std::map<std::string,std::string>::const_iterator i = vars->find(key);
 			if(i == vars->end())
 				return NULL;
@@ -212,19 +206,19 @@ class VarsReader {
 		    adding variables and changed HAVE_READ to current instance. */
 		bool source(const std::string &filename);
 
-		unsigned int key_len; /**< Lenght of the key. */
+		unsigned int key_len; /**< Length of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
 
-		char *x;         /**< Pointer to current position in filebuffer. */
-		bool sourcecmd; /* A flag whether we are currently parsing a source command */
+		char *x;        /**< Pointer to current position in filebuffer. */
+		bool sourcecmd; /**< A flag whether we are currently parsing a source command */
 
-		std::string value;     /**< Buffy for value */
+		std::string value; /**< Buffy for value */
 
 		Flags parse_flags; /**< Flags for configuration of parser. */
 
 	protected:
-		char *filebuffer, /**< The filebuffer everyone is taking about. */
-			 *filebuffer_end; /**< Marks the end of the filebuffer. */
+		char *filebuffer,     /**< The filebuffer everyone is taking about. */
+		     *filebuffer_end; /**< Marks the end of the filebuffer. */
 		const char **incremental_keys; /**< c-array of pattern for keys which values
 										 should be prepended to the new value. */
 		/** Mapping of key to value. */
@@ -238,15 +232,13 @@ class VarsReader {
 		 * @warning You need to call deinit() if you called this function. */
 		void initFsm();
 
-		/** True if c matches [A-Z_0-9] */
-		virtual bool isValidKeyCharacter(char c) {
-			return (isupper(c) || c == '_' || (isdigit(c)));
-		}
+		/** True if c matches [A-Za-z0-9_] */
+		virtual bool isValidKeyCharacter(char c)
+		{ return (isalnum(c, localeC) || (c == '_')); }
 
-		/** True if c matches [A-Z_] */
-		virtual bool isValidKeyCharacterStart(char c) {
-			return (isupper(c) || c == '_' );
-		}
+		/** True if c matches [A-Za-z_] */
+		virtual bool isValidKeyCharacterStart(char c)
+		{ return (isalpha(c, localeC) || (c == '_')); }
 
 		const char *file_name; /**< Name of parsed file. */
 

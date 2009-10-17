@@ -91,7 +91,7 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 	else
 		m_type.append("assign");
 	if(have_override_path) {
-		m_type.append(":");
+		m_type.append(1, ':');
 		m_type.append(override_path);
 	}
 	if(set_flat) {

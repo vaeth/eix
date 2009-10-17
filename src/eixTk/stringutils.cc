@@ -18,6 +18,8 @@ using namespace std;
 
 const char *spaces = " \t\r\n";
 
+locale localeC("C");
+
 /* strndup() is a GNU extension
  * However, we do not #define _GNU_SOURCE but instead make sure to
  * #include <config.h> (at least implicitly) */
