@@ -502,7 +502,7 @@ FormatParser::state_IF()
 	unsigned int i = 0;
 	const char *name_start = band_position;
 	for(char c = *band_position;
-		(!c) && (c != '}') && (c != '=') && !(isspace(c));
+		c && (c != '}') && (c != '=') && !(isspace(c));
 		c = *(++band_position))
 		++i;
 	if(!i) {
