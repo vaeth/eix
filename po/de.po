@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-17 11:42+0200\n"
+"POT-Creation-Date: 2009-10-18 18:20+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -4833,64 +4833,44 @@ msgstr "Fehler beim Parsen der Farbe: %s"
 msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
-#: src/output/formatstring.cc:480
-msgid ""
-"Ran into end-of-string or '}' while looking for possible negation-mark (!) "
-"in condition."
-msgstr "Stringende oder '}' bei der Suche nach möglichem '!' bei einem Test."
+#: src/output/formatstring.cc:509
+msgid "No name of property/variable found after '{'."
+msgstr "Kein Name einer Property/Variablen nach '{' gefunden."
 
-#: src/output/formatstring.cc:494
-msgid ""
-"Ran into end-of-string or '}' while looking for possible user-variable ($*) "
-"in condition."
-msgstr "Stringende oder '}' bei der Suche nach möglichem '$'/'*' bei Test."
+#: src/output/formatstring.cc:513 src/output/formatstring.cc:534
+#: src/output/formatstring.cc:593
+msgid "Found '{' without closing '}'."
+msgstr " '{' ohne schließendes '}' gefunden."
 
-#: src/output/formatstring.cc:512
-msgid ""
-"Ran into end-of-string or '}' while looking for property-name in condition."
-msgstr "Stringende oder '}' bei der Suche nach Property-Namen bei einem Test."
+#: src/output/formatstring.cc:528
+msgid "Unexpected symbol %r found after '{'."
+msgstr "Unerwartetes Symbol %r nach '{'."
 
-#: src/output/formatstring.cc:521
-msgid "Ran into end-of-string while reading property-name."
-msgstr "Stringende bei Suche nach Property-Namen."
-
-#: src/output/formatstring.cc:536
-msgid "Unknown operator in if-construct."
-msgstr "Unbekannter Operator in einem if-Konstrukt."
-
-#: src/output/formatstring.cc:543 src/output/formatstring.cc:605
-msgid "Run into end-of-string while looking for right-hand of condition."
-msgstr "Stringende bei Suche nach rechter Seiter des Tests."
-
-#: src/output/formatstring.cc:603
-msgid "Run into end-of-string while looking for right-hand of assignment."
-msgstr "Stringende bei Suche nach rechter Seiter der Zuweisung."
-
-#: src/output/formatstring.cc:626
+#: src/output/formatstring.cc:614
 msgid "Found ELSE without IF."
-msgstr "Stieß auf ELSE ohne IF."
+msgstr "ELSE ohne IF gefunden."
 
-#: src/output/formatstring.cc:653
+#: src/output/formatstring.cc:641
 msgid "Found FI without IF."
-msgstr "Stieß auf FI ohne IF."
+msgstr "FI ohne IF gefunden."
 
-#: src/output/formatstring.cc:676
+#: src/output/formatstring.cc:664
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:690
+#: src/output/formatstring.cc:678
 msgid "Bad state: ERROR"
-msgstr "Unerlaubter Status: ERROR"
+msgstr "Schlechter Status: ERROR"
 
-#: src/output/formatstring.cc:691
+#: src/output/formatstring.cc:679
 msgid "Bad state: STOP"
 msgstr "Unerlaubter Status: STOP"
 
-#: src/output/formatstring.cc:692
+#: src/output/formatstring.cc:680
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:704
+#: src/output/formatstring.cc:692
 msgid "Line %r, column %r: %s"
 msgstr "Zeile %r, Spalte %r: %s"
 

@@ -476,52 +476,44 @@ FormatParser::state_IF()
 
 	/* Look for negation */
 	band_position = seek_character(band_position);
-	if(*band_position == '\0' || *band_position == '}') {
-		last_error = _("Ran into end-of-string or '}' while looking for possible negation-mark (!) in condition.");
-		return ERROR;
-	}
 	if(*band_position == '!') {
 		n->negation = true;
-		++band_position;
+		band_position = seek_character(band_position + 1);
 	}
 	else {
 		n->negation = false;
 	}
 
 	/* Look for variable */
-	band_position = seek_character(band_position);
-	if(*band_position == '\0' || *band_position == '}') {
-		last_error = _("Ran into end-of-string or '}' while looking for possible user-variable ($*) in condition.");
-		return ERROR;
-	}
 	switch(*band_position) {
 		case '*':
 			n->type = Node::SET;
-			++band_position;
+			n->user_variable = true;
+			band_position = seek_character(band_position + 1);
 			break;
 		case '$':
 			n->user_variable = true;
-			++band_position;
+			band_position = seek_character(band_position + 1);
 			break;
 		default:
 			n->user_variable = false;
 	}
 
-	band_position = seek_character(band_position);
-	if(*band_position == '\0' || *band_position == '}') {
-		last_error = _("Ran into end-of-string or '}' while looking for property-name in condition.");
-		return ERROR;
-	}
 	unsigned int i = 0;
+	const char *name_start = band_position;
 	for(char c = *band_position;
-		c && (c != '}') && !(isspace(c, localeC));
+		(!c) && (c != '}') && (c != '=') && !(isspace(c));
 		c = *(++band_position))
 		++i;
-	if(i == 0 || !*band_position) {
-		last_error = _("Ran into end-of-string while reading property-name.");
+	if(!i) {
+		last_error = _("No name of property/variable found after '{'.");
 		return ERROR;
 	}
-	n->variable = Property(string(band_position - i, i));
+	if(!*band_position) {
+		last_error = _("Found '{' without closing '}'.");
+		return ERROR;
+	}
+	n->variable = Property(string(name_start, i));
 
 	band_position = seek_character(band_position);
 	if(*band_position == '}') {
@@ -533,14 +525,13 @@ FormatParser::state_IF()
 	}
 	/* This MUST be a '=' */
 	if(*band_position != '=') {
-		last_error = _("Unknown operator in if-construct.");
+		last_error = eix::format(_("Unexpected symbol %r found after '{'.")) % (*band_position);
 		return ERROR;
 	}
-	++band_position;
 
-	band_position = seek_character(band_position);
+	band_position = seek_character(band_position + 1);
 	if(!*band_position) {
-		last_error = _("Run into end-of-string while looking for right-hand of condition.");
+		last_error = _("Found '{' without closing '}'.");
 		return ERROR;
 	}
 
@@ -599,10 +590,7 @@ FormatParser::state_IF()
 			band_position = seek_character(band_position + 1);
 		}
 		if(*band_position != '}') {
-			if(n->type == Node::SET)
-				last_error = _("Run into end-of-string while looking for right-hand of assignment.");
-			else
-				last_error = _("Run into end-of-string while looking for right-hand of condition.");
+			last_error = _("Found '{' without closing '}'.");
 			return ERROR;
 		}
 	}
