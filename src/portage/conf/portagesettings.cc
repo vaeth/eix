@@ -974,13 +974,17 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 		bool ori_is_stable = kf.havesome(KeywordsFlags::KEY_STABLE);
 
+		set<string> *kv_set_nofile = NULL;
+
 		// Were keywords added from /etc/portage/package.keywords?
-		vector<string> &kvnew = sorted_by_versions[*it];
+		vector<string> &kvfile = sorted_by_versions[*it];
 		bool calc_lkw = rvalue;
 		if(calc_lkw) {
-			if(!kvnew.empty()) {
+			if(!kvfile.empty()) {
 				redundant |= Keywords::RED_IN_KEYWORDS;
-				push_backs(kv, kvnew);
+				kv_set_nofile = new set<string>;
+				resolve_plus_minus(*kv_set_nofile, kv, obsolete_minusasterisk);
+				push_backs(kv, kvfile);
 			}
 			else if((check & (Keywords::RED_ALL_KEYWORDS &
 				~(Keywords::RED_DOUBLE_LINE | Keywords::RED_IN_KEYWORDS)))
@@ -1017,21 +1021,34 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			// The point is that we temporarily disable "check" so that
 			// ACCEPT_KEYWORDS does not trigger any -T alarm.
 			bool stable = false;
-			for(vector<string>::size_type i = 0; i != kv.size(); ++i) {
-				// Tests whether keyword is admissible and remove it:
-				set<string>::iterator where = kv_set.find(kv[i]);
-				if(where == kv_set.end()) {
-					// The original keyword was removed by -...
-					continue;
+			set<string>::const_iterator sit, sit_end;
+			if(kv_set_nofile) {
+				sit = kv_set_nofile->begin();
+				sit_end = kv_set_nofile->end();
+			}
+			else {
+				sit = kv_set.begin();
+				sit_end = kv_set.end();
+			}
+			for( ; sit != sit_end; ++sit) {
+				if(kv_set_nofile) {
+					// Tests whether keyword is admissible and remove it from kv_set:
+					set<string>::iterator where = kv_set.find(*sit);
+					if(where == kv_set.end()) {
+						// The original keyword was removed by -...
+						continue;
+					}
+					kv_set.erase(where);
 				}
-				kv_set.erase(where);
-				if(apply_keyword(kv[i], keywords_set, kf,
+				if(apply_keyword(*sit, keywords_set, kf,
 					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
 					redundant, Keywords::RED_NOTHING, true)
 					!= ARCH_NOTHING)
 					stable = true;
 			}
+			if(kv_set_nofile)
+				delete kv_set_nofile;
 
 			// Now apply the remaining keywords (i.e. from /etc/portage/package.keywords)
 			ArchUsed arch_used = ARCH_NOTHING;
