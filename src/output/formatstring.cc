@@ -14,7 +14,7 @@
 
 using namespace std;
 
-string
+static string
 get_escape(const char *p)
 {
 	switch(*p) {

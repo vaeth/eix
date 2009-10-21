@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-18 18:20+0200\n"
+"POT-Creation-Date: 2009-10-21 15:42+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1614,15 +1614,15 @@ msgstr ""
 "Cache-Methode sqlite ist nicht einkompiliert.\n"
 "Rekompilieren Sie eix mit ./configure-Option --with-sqlite"
 
-#: src/database/io.cc:45 src/database/io.cc:98 src/database/io.h:35
+#: src/database/io.cc:45 src/database/io.cc:98 src/database/io.h:36
 msgid "error while reading from database: end of file"
 msgstr "Fehler beim Lesen der Datenbank: Zu frühes Fileende"
 
-#: src/database/io.cc:47 src/database/io.cc:100 src/database/io.h:37
+#: src/database/io.cc:47 src/database/io.cc:100 src/database/io.h:38
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:59 src/database/io.cc:150 src/database/io.h:47
+#: src/database/io.cc:59 src/database/io.cc:150 src/database/io.h:48
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
@@ -4777,14 +4777,14 @@ msgstr "lokal geändert. Default war:"
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 
-#: src/main/main.cc:87
+#: src/main/main.cc:82
 #, c-format
 msgid ""
 "Received SIGSEGV - you probably found a bug in eix.\n"
 "Please proceed with the following few instructions and help us find the "
 "bug:\n"
 " * install gdb (sys-dev/gdb)\n"
-" * compile eix with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
+" * compile eix with FEATURES=\"nostrip\" USE=\"debug\"\n"
 " * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
 " * type \"run\" and wait for the segfault to happen\n"
 " * type \"bt\" to get a backtrace (this helps us a lot)\n"
@@ -4796,11 +4796,11 @@ msgstr ""
 "Helfen Sie uns bitte den Bug zu finden, indem Sie den folgenden\n"
 "Anweisungen folgen:\n"
 " * Installieren Sie gdb (sys-dev/gdb)\n"
-" * Compilieren Sie eix mit FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
+" * Compilieren Sie eix mit FEATURES=\"nostrip\" USE=\"debug\"\n"
 " * Starten Sie gdb mit \"gdb --args %s Parameter_für_%s\"\n"
 " * Nach \"run\" sollte der Segfault auftreten.\n"
 " * Nach \"bt\" erhalten Sie ein Backtrace (dies hilft uns enorm).\n"
-" * Melden Sie einen Bugreport mit der Ausgabe des gdb.\n"
+" * Melden Sie einen Bug mit der Ausgabe des gdb.\n"
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 

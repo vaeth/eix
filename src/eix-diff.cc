@@ -110,7 +110,7 @@ static struct Option long_options[] = {
 	Option(0, 0)
 };
 
-void
+static void
 load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
 {
 	FILE *fp = fopen(file, "rb");
@@ -134,7 +134,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 	fclose(fp);
 }
 
-void
+static void
 set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual)
 {
 	if(!header.countOverlays())
@@ -231,20 +231,20 @@ class DiffTrees
  * a) the package does not exist in the new tree :) or
  * b) the new package has a different best-match than the old. */
 
-void
+static void
 print_changed_package(Package *op, Package *np)
 {
 	Package *p[2] = { op, np };
 	format_for_new.print(p, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
-void
+static void
 print_found_package(Package *p)
 {
 	format_for_new.print(p, format_new, &new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
-void
+static void
 print_lost_package(Package *p)
 {
 	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings, set_stability_old);

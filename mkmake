@@ -18,10 +18,10 @@ Available options are
   -S  Without sqlite
   -b  With bzlib
   -B  Without bzlib
-  -c  Use only debugging-safe CXXFLAGS
-  -o  Use optimizing CXXFLAGS
   -C  Avoid CCACHE
   -jX Use -jX (currently ${jarg})
+  -c OPT Add OPT to ./configure
+  -Q  Do not --enable-quickcheck
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1:-1}
 }
@@ -47,6 +47,7 @@ SetCcache () {
 	then
 		Info "PATH=${i}:\${PATH}"
 		PATH="${i}:${PATH}"
+		export PATH
 	fi
 	[ -n "${CCACHE_DIR}" ] && return
 	for i in "${HOME}/.ccache" ../ccache ../../ccache
@@ -65,42 +66,39 @@ SetCcache () {
 quiet=false
 earlystop=false
 keepenv=false
-safeflags=false
-optimize=false
 not_full_use=false
-sqlite=''
-bzlib=''
 pedantic=false
-extra_cache='--enable-extra-cache'
-unique='--enable-unique'
-separate=''
+extra_cache=true
+unique=true
 use_chown=false
 jarg='-j3'
 use_ccache=true
+configure_extra='--prefix=""'
+quickcheck=true
 OPTIND=1
-while getopts 'q0123nepuUsSbBcorj:?hH' opt
+while getopts 'q0123nepuUsSbBrc:j:?hH' opt
 do
 case "${opt}" in
 	q) quiet=true;;
-	0) extra_cache='';;
-	1) separate='--disable-separate-binaries';;
-	2) separate='--enable-separate-update';;
-	3) separate='--enable-separate-binaries';;
-	4) separate='--enable-separate-tools';;
+	0) extra_cache=false;;
+	1) configure_extra="${configure_extra} --disable-separate-binaries";;
+	2) configure_extra="${configure_extra} --enable-separate-update";;
+	3) configure_extra="${configure_extra} --enable-separate-binaries";;
+	4) configure_extra="${configure_extra} --enable-separate-tools";;
 	n) earlystop=true;;
 	e) keepenv=true;;
 	p) pedantic=true;;
 	u) not_full_use=true;;
-	U) unique='';;
-	s) sqlite='--with-sqlite';;
-	S) sqlite='--without-sqlite';;
-	b) bzlib='--with-bzip2';;
-	B) bzlib='--without-bzip2';;
-	c) safeflags=true;;
-	o) optimize=true;;
+	U) unique=false;;
+	s) configure_extra="${configure_extra} --with-sqlite";;
+	S) configure_extra="${configure_extra} --without-sqlite";;
+	b) configure_extra="${configure_extra} --with-bzip2";;
+	B) configure_extra="${configure_extra} --without-bzip2";;
 	C) use_ccache=false;;
+	c) configure_extra="${configure_extra} ${OPTARG}";;
 	r) use_chown=true;;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
+	Q) quickcheck=false;;
 	*) Usage 0;;
 esac
 done
@@ -109,6 +107,10 @@ then
 	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 &&
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
+
+${unique} && configure_extra="${configure_extra} --enable-unique"
+${extra_cache} && configure_extra="${configure_extra} --enable-extra-cache"
+${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 
 ${quiet} && quietredirect='>/dev/null 2>&1' || quietredirect=''
 
@@ -125,42 +127,19 @@ if ! ${keepenv}
 then
 	march="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 		/etc/make.conf`"
-	export CXXFLAGS CFLAGS LDFLAGS
-	LDFLAGS='-Wl,--sort-common -Wl,-O1 -Wl,-z,combreloc -Wl,--relax -Wl,-z,now'
-	LDFLAGS="${LDFLAGS} -Wl,-z,defs -Wl,--no-undefined -Wl,--no-allow-shlib-undefined -Wl,--no-undefined-version -Wl,--warn-common -Wl,--fatal-warnings"
-	CFLAGS="-march=${march} -O2 -pipe -funsigned-char -Wall -Wextra"
-	${safeflags} || CFLAGS="${CFLAGS} -fomit-frame-pointer -O3 -O4 -fno-ident -fPIC -ftracer -funsafe-loop-optimizations -ftree-vectorize -ftree-vectorizer-verbose=0 -funswitch-loops -frename-registers -fweb -finline-functions -fgcse-after-reload -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
-	${not_full_use} && CFLAGS="${CFLAGS} -DNOT_FULL_USE"
-	if ${safeflags}
-	then
-		CFLAGS="${CFLAGS} -D_GLIBCXX_DEBUG -g -ggdb3"
-	else
-		CFLAGS="${CFLAGS} -pedantic -D_FORTIFY_SOURCE=2 -fstack-protector"
-		${optimize} || CFLAGS="${CFLAGS} -ffast-math -combine -fmerge-all-constants -fgcse-sm -fgcse-las -fpredictive-commoning -fdirectives-only -ftree-switch-conversion -fgraphite -floop-interchange -floop-strip-mine -floop-block"
-	fi
+	export CXXFLAGS LDFLAGS
+	CFLAGS="-march=${march} -O2 -pipe"
+	CXXFLAGS="${CFLAGS}"
+	${not_full_use} && CXXFLAGS="${CXXFLAGS} -DNOT_FULL_USE"
 	if ${pedantic}
 	then
-		CFLAGS="${CFLAGS} -fstrict-aliasing -fstack-protector"
-		CFLAGS="${CFLAGS} -Wformat=2 -Winit-self -Wmissing-include-dirs -Wswitch-default -Wunused -Wunused-parameter -Wstrict-aliasing=1 -Wstrict-overflow=5"
-		CFLAGS="${CFLAGS} -Wfloat-equal  -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wsign-compare -Wmissing-field-initializers -Wmissing-noreturn -Wnormalized=nfkc -Wpacked -Wredundant-decls -Winvalid-pch -Wlong-long -Wvolatile-register-var -Wdisabled-optimization"
-		#CFLAGS="${CFLAGS} -Wunsafe-loop-optimizations"
-		#CFLAGS="${CFLAGS} -Wconversion"
-		#CFLAGS="${CFLAGS} -Wunreachable-code -Wpadded"
-		#CFLAGS="${CFLAGS} -Wswitch-enum -Waggregate-return -Winline -Wmissing-format-attribute"
-		# gcc-4.3:
-		CFLAGS="${CFLAGS} -Wlogical-op -Wsign-conversion -Wvla"
-		CXXFLAGS="${CFLAGS} -Wabi -Wctor-dtor-privacy -Wstrict-null-sentinel -Wold-style-cast -Woverloaded-virtual -Wsign-promo"
-		#CXXFLAGS="${CXXFLAGS} -Weffc++ "
-		CFLAGS="${CFLAGS} -Wtraditional -Wc++-compat -Wstrict-prototypes -Wold-style-definition -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Wpointer-sign"
-		#CXXFLAGS="${CXXFLAGS} -Werror"
+		configure_extra="${configure_extra} --enable-strong-warnings"
 	else
-		${safeflags} || CFLAGS="${CFLAGS} -DNDEBUG -DG_DISABLE_ASSERT -DNO_DEBUG"
-		CXXFLAGS="${CFLAGS} -Werror"
+		configure_extra="${configure_extra} --enable-warnings"
+		CXXFLAGS="${CXXFLAGS} -Werror"
 	fi
-	${safeflags} || CXXFLAGS="${CXXFLAGS} -fvisibility-inlines-hidden -fno-enforce-eh-specs"
-	fi
-Info "CFLAGS=${CFLAGS}
-CXXFLAGS=${CXXFLAGS}
+fi
+Info "CXXFLAGS=${CXXFLAGS}
 LDFLAGS=${LDFLAGS}"
 if ! test -e Makefile
 then
@@ -169,8 +148,8 @@ then
 		echo "Running autotools..."
 		eval ./autogen.sh ${quietredirect} || Die "autogen failed"
 	fi
-	echo "Running configure..."
-	eval ./configure "--prefix=" ${sqlite} ${bzlib} ${extra_cache} ${separate} ${unique} ${quietredirect} || \
+	echo "Running configure" ${configure_extra}
+	eval ./configure ${configure_extra} ${quietredirect} || \
 		Die "configure failed"
 fi
 ${earlystop} && {

@@ -23,8 +23,6 @@ dnl All strings are quoted in " " (even if ' ' could be used or is easier).
 dnl
 dnl We use M4SH instead of sh, i.e. no "if", "case", "&&", "||" from the sh
 dnl but only the M4SH equivalents - this avoids some unexpected troubles.
-dnl Only if there is no other way, we possibly use !, && or || within a test
-dnl to combine tests, e.g. within the first argument of AS_IF.
 dnl
 dnl After the first macro arg, we start a new line and increase the
 dnl indent level; all further args also start in a new line after the comma.
@@ -87,9 +85,201 @@ m4_ifdef([AM_SILENT_RULES],
 	[AM_SILENT_RULES([yes])])
 
 AC_LANG_CPLUSPLUS()
-
 AC_PROG_CXX()
+
+AC_ARG_ENABLE([debugging],
+	[AS_HELP_STRING([--enable-debugging],
+		[set flags appropriate for debugging])],
+	[MV_ENABLE([debugging], [debugging])],
+	[debugging=false])
+
+AC_ARG_ENABLE([optimization],
+	[AS_HELP_STRING([--disable-optimization],
+		[do not append optimization flags])],
+	[MV_ENABLE([optimization], [optimization])],
+	[optimization=true])
+
+AC_ARG_ENABLE([strong_optimization],
+	[AS_HELP_STRING([--enable-strong-optimization],
+		[use also optimization flags which might not work on broken compilers])],
+	[MV_ENABLE([strong_optimization], [strong_optimization])],
+	[strong_optimization=false])
+
+AC_ARG_ENABLE([warnings],
+	[AS_HELP_STRING([--enable-warnings],
+		[append warning/testing flags; might produce worse code])],
+	[MV_ENABLE([warnings], [warnings])],
+	[warnings=false])
+
+AC_ARG_ENABLE([strong_warnings],
+	[AS_HELP_STRING([--enable-strong-warnings],
+		[append flags to get lots of mostly unimportant warnings])],
+	[MV_ENABLE([strong_warnings], [strong_warnings])],
+	[strong_warnings=false])
+
+AC_ARG_ENABLE([security],
+	[AS_HELP_STRING([--disable-security],
+		[do not append security relevant options to flags])],
+	[MV_ENABLE([security], [security])],
+	[security=true])
+
+AC_ARG_ENABLE([quickcheck],
+	[AS_HELP_STRING([--enable-quickcheck],
+		[do not check whether flags work when adding them])],
+	[MV_ENABLE([quickcheck], [quickcheck])],
+	[quickcheck=false])
+
+AS_IF([${debugging}],
+	[CFLAGS=""
+	CXXFLAGS=""
+	LDFLAGS=""])
+
 AC_USE_SYSTEM_EXTENSIONS()
+
+AS_IF([${strong_optimization}],
+	[optimization=true])
+AS_IF([${strong_warnings}],
+	[warnings=true])
+AS_IF([${debugging}],
+	[strong_optimization=false
+	MV_ADDFLAGS(CXXFLAGS, [ \
+			-O \
+			-g \
+			-ggdb3 \
+		], [${quickcheck}])],
+	[${optimization}],
+		[MV_ADDFLAGS(CXXFLAGS, [ \
+			-fomit-frame-pointer \
+			-frename-registers \
+			-fstrict-aliasing \
+			-fmerge-all-constants \
+			-funsafe-loop-optimizations \
+			-finline-functions \
+			-ffast-math \
+			-fgcse-sm \
+			-fgcse-las \
+			-fgcse-after-reload \
+			-fpredictive-commoning \
+			-ftree-switch-conversion \
+			-fno-ident \
+			-fvisibility=hidden \
+			-fvisibility-inlines-hidden \
+			-fno-enforce-eh-specs \
+			-DNDEBUG \
+			-DNO_DEBUG \
+			-DG_DISABLE_ASSERT \
+		], [${quickcheck}])
+		MV_ADDLDFLAGS([ \
+			-Wl,-O1 \
+			-Wl,--relax \
+			-Wl,--sort-common \
+			-Wl,-z,combreloc \
+		], [${quickcheck}])])
+AS_IF([${strong_optimization}],
+		[MV_ADDFLAGS(CXXFLAGS, [ \
+			-fweb \
+			-ftree-vectorize \
+			-fgraphite \
+			-floop-interchange \
+			-floop-strip-mine \
+			-floop-block \
+		], [${quickcheck}])
+		MV_ADDLDFLAGS([ \
+			-Wl,-O9 \
+		], [${quickcheck}])])
+AS_IF([${warnings}],
+	[security=true
+	MV_ADDFLAGS(CXXFLAGS, [ \
+			-fdirectives-only \
+			-funsigned-char \
+			-fPIC \
+			-ftracer \
+			-pedantic \
+			-D_FILE_OFFSET_BITS=64 \
+			-D_LARGEFILE_SOURCE \
+			-D_LARGEFILE64_SOURCE \
+			-D_GLIBCXX_DEBUG \
+			-Wall \
+			-Wextra \
+			-Wformat=2 \
+			-Winit-self \
+			-Wmissing-include-dirs \
+			-Wswitch-default \
+			-Wunused \
+			-Wunused-parameter \
+			-Wstrict-aliasing=1 \
+			-Wstrict-overflow=5 \
+			-Wfloat-equal \
+			-Wundef \
+			-Wshadow \
+			-Wpointer-arith \
+			-Wcast-qual \
+			-Wcast-align \
+			-Wwrite-strings \
+			-Wsign-compare \
+			-Wmissing-field-initializers \
+			-Wnormalized=nfkc \
+			-Wpacked \
+			-Wredundant-decls \
+			-Winvalid-pch \
+			-Wlong-long \
+			-Wvolatile-register-var \
+			-Wdisabled-optimization \
+			-Wlogical-op \
+			-Wvla \
+			-Wabi \
+			-Wctor-dtor-privacy \
+			-Wstrict-null-sentinel \
+			-Woverloaded-virtual \
+			-Wsign-promo \
+			-Wmissing-declarations \
+			-Wmissing-format-attribute \
+		], [${quickcheck}])
+dnl			-Wtraditional \
+dnl			-Wc++-compat \
+dnl			-Wstrict-prototypes \
+dnl			-Wold-style-definition \
+dnl			-Wmissing-prototypes \
+dnl			-Wnested-externs \
+dnl			-Wpointer-sign \
+	MV_ADDLDFLAGS([ \
+			-Wl,-z,defs \
+			-Wl,--no-undefined \
+			-Wl,--no-allow-shlib-undefined \
+			-Wl,--no-undefined-version \
+			-Wl,--warn-common \
+			-Wl,--fatal-warnings \
+		], [${quickcheck}])])
+AS_IF([${strong_warnings}],
+	[MV_ADDFLAGS(CXXFLAGS, [ \
+			-Wsign-conversion \
+			-Wold-style-cast \
+			-Wmissing-noreturn \
+		], [${quickcheck}])])
+dnl			-Wconversion \
+dnl			-Wswitch-enum \
+dnl			-Wunsafe-loop-optimizations \
+dnl			-Wpadded \
+dnl			-Wunreachable-code \
+dnl			-Waggregate-return \
+dnl			-Winline \
+dnl			-Weffc++ \
+AS_IF([${security}],
+	[MV_ADDFLAGS(CXXFLAGS, [ \
+			-D_FORTIFY_SOURCE=2 \
+			-fstack-protector \
+		], [${quickcheck}])
+	MV_ADDLDFLAGS([ \
+			-Wl,-z,now \
+		], [${quickcheck}])])
+AS_IF([${quickcheck}],
+	[AC_MSG_CHECKING([Whether quickcheck mode was appropriate])
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
+		[AC_MSG_RESULT([yes])],
+		[AC_MSG_RESULT([no])
+		echo "export CXXFLAGS='${CXXFLAGS}'"
+		echo "export LDFLAGS='${LDFLAGS}'"
+		AC_MSG_ERROR([Compiling/linking a simple program failed. Try --disable-quickcheck])])])
 
 AC_PROG_LN_S()
 
@@ -103,37 +293,6 @@ AM_GNU_GETTEXT([external])
 AC_TYPE_UINT8_T()
 AC_TYPE_UINT16_T()
 AC_TYPE_UINT32_T()
-
-dnl Some frequently used macros:
-dnl
-dnl MV_ENABLE([varname], [option]):
-dnl Checks whether ${enableval} is yes or no and sets ${varname}=true/false.
-dnl If neither is the case, it dies with an error output for --enable-option
-AC_DEFUN([MV_ENABLE],
-	[AS_CASE(["${enableval}"],
-		[yes], [$1=true],
-		[no], [$1=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-$2])])])
-dnl
-dnl MV_MSG_RESULT([text], [comment]): behaves like
-dnl AC_MSG_RESULT([text (comment)]) or AC_MSG_RESULT([text])
-dnl depending on whether the argument comment is given or not.
-AC_DEFUN([MV_MSG_RESULT],
-	[m4_ifval([$2],
-		[AC_MSG_RESULT([$1 ($2)])],
-		[AC_MSG_RESULT([$1])])])
-dnl
-dnl MV_MSG_RESULTVAR([${var}], [comment]) behaves like
-dnl MV_MSG_RESULT([${var:-(empty)}],[comment]) (but is more compatible)
-AC_DEFUN([MV_MSG_RESULTVAR],
-	[AS_IF([test -z "$1"],
-		[MV_MSG_RESULT([(empty)], $2)],
-		[MV_MSG_RESULT([$1], $2)])])
-dnl
-dnl MV_PREFIX([var]) sets var to "" if it is "/".
-AC_DEFUN([MV_PREFIX],
-	[AS_IF([test x"${$1}" = x"/"],
-		[$1=""])])
 
 # This must be an early test, since we need the null device later in this file:
 AC_MSG_CHECKING([for null-device])
@@ -436,9 +595,10 @@ AC_ARG_WITH([ebuild-sh-default],
 	[EBUILD_SH_DEFAULT="${withval}"
 		description="on request"],
 	[EBUILD_SH_DEFAULT="/usr/lib/portage/bin/ebuild.sh"
-	AS_IF([! test -d "${EPREFIX_DEFAULT}/usr/lib" && \
-		test -d "${EPREFIX_DEFAULT}/usr/lib64"],
-		[EBUILD_SH_DEFAULT="/usr/lib64/portage/bin/ebuild.sh"])
+	AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib"],
+		[],
+		AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib64"],
+			[EBUILD_SH_DEFAULT="/usr/lib64/portage/bin/ebuild.sh"]))
 	AS_IF([test -x "${EPREFIX_DEFAULT}${EBUILD_SH_DEFAULT}"],
 		[description="autodetected"],
 		[description="guessed"])])
@@ -500,10 +660,6 @@ AC_DEFINE_UNQUOTED([TARGET],
 	["${target}"],
 	[ Target system])
 
-AM_CFLAGS=""
-AM_CXXFLAGS=""
-AC_SUBST([AM_CXXFLAGS])
-
 AS_IF([test -n "${GCC}"],
 	[AC_MSG_CHECKING([gcc version])
 	gcc_v=`${CC} -dumpversion`
@@ -521,7 +677,6 @@ echo "
 
 ${PACKAGE}-${VERSION} configured successfully.
 
-CC:       ${CC}
 CXXFLAGS: ${CXXFLAGS}
 LDFLAGS:  ${LDFLAGS}
 

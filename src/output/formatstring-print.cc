@@ -1091,7 +1091,8 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 	return empty;
 }
 
-const Package *old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
+static const Package *
+old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
 {
 	const char *s = name.c_str();
 	if(strncmp(s, "old", 3) == 0) {

@@ -30,12 +30,10 @@
 #undef BINARY_COLLECTION
 
 #ifdef EIX_BINARY
-int run_eix(int argc, char *argv[]);
 #define USE_BINARY run_eix
 #endif
 
 #ifdef UPDATE_BINARY
-int run_eix_update(int argc, char *argv[]);
 #ifdef USE_BINARY
 #define BINARY_COLLECTION 1
 #else
@@ -44,7 +42,6 @@ int run_eix_update(int argc, char *argv[]);
 #endif
 
 #ifdef DIFF_BINARY
-int run_eix_diff(int argc, char *argv[]);
 #ifdef USE_BINARY
 #undef BINARY_COLLECTION
 #define BINARY_COLLECTION 1
@@ -54,7 +51,6 @@ int run_eix_diff(int argc, char *argv[]);
 #endif
 
 #ifdef VERSIONSORT_BINARY
-int run_versionsort(int argc, char *argv[]);
 #ifdef USE_BINARY
 #undef BINARY_COLLECTION
 #define BINARY_COLLECTION 1
@@ -64,7 +60,6 @@ int run_versionsort(int argc, char *argv[]);
 #endif
 
 #ifdef BINARY_COLLECTION
-static int run_program(int argc, char *argv[]);
 #undef USE_BINARY
 #define USE_BINARY run_program
 #endif
@@ -87,7 +82,7 @@ sig_handler(int sig)
 				"Received SIGSEGV - you probably found a bug in eix.\n"
 				"Please proceed with the following few instructions and help us find the bug:\n"
 				" * install gdb (sys-dev/gdb)\n"
-				" * compile eix with FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\"\n"
+				" * compile eix with FEATURES=\"nostrip\" USE=\"debug\"\n"
 				" * enter gdb with \"gdb --args %s your_arguments_for_%s\"\n"
 				" * type \"run\" and wait for the segfault to happen\n"
 				" * type \"bt\" to get a backtrace (this helps us a lot)\n"

@@ -2,8 +2,9 @@
 
 run ()
 {
-	echo ">>> $@" 1>&2
-	if ! "$@"; then
+	echo ">>> ${*}" 1>&2
+	if ! "${@}"
+	then
 		echo BUMMM 1>&2
 		exit 1
 	fi
@@ -17,7 +18,7 @@ else
 	run libtoolize --force --copy --automake
 fi
 run autopoint
-run aclocal
+run aclocal -I m4 -I mvm4
 run autoconf
 run autoheader
 run automake -af --copy

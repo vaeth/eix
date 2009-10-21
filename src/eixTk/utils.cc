@@ -98,7 +98,7 @@ static const char **pushback_files_exclude;
 static bool pushback_files_no_hidden;
 static short pushback_files_only_type;
 static const string *pushback_files_dir_path; // defined if pushback_files_only_type is nonzero
-int
+static int
 pushback_files_selector(SCANDIR_ARG3 dir_entry)
 {
 	// Empty names shouldn't occur. Just to be sure, we ignore them:

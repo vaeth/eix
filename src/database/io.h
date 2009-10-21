@@ -13,6 +13,7 @@
 #include <config.h>
 
 #include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
 #include <database/types.h>
 
 #include <cstdio>
