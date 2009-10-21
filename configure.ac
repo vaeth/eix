@@ -87,6 +87,8 @@ m4_ifdef([AM_SILENT_RULES],
 AC_LANG_CPLUSPLUS()
 AC_PROG_CXX()
 
+# Now our flag mangling options:
+
 AC_ARG_ENABLE([debugging],
 	[AS_HELP_STRING([--enable-debugging],
 		[set flags appropriate for debugging])],
@@ -129,12 +131,21 @@ AC_ARG_ENABLE([quickcheck],
 	[MV_ENABLE([quickcheck], [quickcheck])],
 	[quickcheck=false])
 
+# Now start the flag mangling:
+
 AS_IF([${debugging}],
 	[CFLAGS=""
 	CXXFLAGS=""
 	LDFLAGS=""])
 
+# Note that the (potential) resetting of the flags was necessary *before*
+# (potentially) modifying flags for system extensions.
+# On the other hand, we must check for system extensions before we compile
+# test programs to find out the other flags.
+
 AC_USE_SYSTEM_EXTENSIONS()
+
+# Only now the flag mangling can continue:
 
 AS_IF([${strong_optimization}],
 	[optimization=true])
@@ -172,6 +183,9 @@ AS_IF([${debugging}],
 		MV_ADDLDFLAGS([ \
 			-Wl,-O1 \
 			-Wl,--relax \
+			-Wl,--hash-style=gnu \
+			-Wl,--enable-new-dtags \
+			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
 		], [${quickcheck}])])
@@ -271,6 +285,7 @@ AS_IF([${security}],
 		], [${quickcheck}])
 	MV_ADDLDFLAGS([ \
 			-Wl,-z,now \
+			-Wl,-z,relro \
 		], [${quickcheck}])])
 AS_IF([${quickcheck}],
 	[AC_MSG_CHECKING([Whether quickcheck mode was appropriate])
