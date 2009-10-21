@@ -275,6 +275,7 @@ class Scanner {
 			PKG_BESTRECOMMEND,
 			PKG_BESTRECOMMENDORINSTALL,
 			PKG_MARKED,
+			PKG_HAVEMARKEDVERSION,
 			PKG_SLOTS,
 			PKG_SLOTTED,
 			PKG_HAVECOLLIUSE,
@@ -405,6 +406,7 @@ class Scanner {
 			prop_pkg("bestrecommend", PKG_BESTRECOMMEND);
 			prop_pkg("bestrecommendorinstall", PKG_BESTRECOMMENDORINSTALL);
 			prop_pkg("marked", PKG_MARKED);
+			prop_pkg("havemarkedversion", PKG_HAVEMARKEDVERSION);
 			prop_pkg("slots", PKG_SLOTS);
 			prop_pkg("slotted", PKG_SLOTTED);
 			prop_pkg("havecolliuse", PKG_HAVECOLLIUSE);
@@ -753,6 +755,15 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			if(marked_list) {
 				if(marked_list->is_marked(*package))
 					return one;
+			}
+			break;
+		case Scanner::PKG_HAVEMARKEDVERSION:
+			if(marked_list) {
+				for(Package::const_iterator it = package->begin();
+					it != package->end(); ++it) {
+					if(marked_list->is_marked(*package, &(**it)))
+						return one;
+				}
 			}
 			break;
 		case Scanner::PKG_SLOTS:

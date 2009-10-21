@@ -671,6 +671,12 @@ AddOption(STRING, "FORMAT_SLOT",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the slot format printed for slotsorted versions."));
 
+AddOption(STRING, "VERSION",
+	"<version>{!last} {}", _(
+	"This variable is used for  <markedversions:VERSION>.\n"
+	"It just gives the plain version name without anything else.\n"
+	"You can use it similarly for e.g. <availableversions:VERSION>."));
+
 AddOption(STRING, "FORMAT_PVERSION",
 	"{color}"
 		"{installedversion}"
@@ -1288,11 +1294,11 @@ AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
 	"It defines the eix-diff line for changed versions."));
 
 AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
-	"%{!PRINT_ALWAYS}{marked}%{}"
+	"%{!PRINT_ALWAYS}{havemarkedversion}%{}"
 	"     (%{COLOR_TITLE})Marked:()"
-	"%{?PRINT_ALWAYS}{marked}%{}"
+	"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
 	"              "
-	"(%{COLOR_MARKED_VERSION})<markedversions>()"
+	"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>()"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with marked versions."));
@@ -1417,7 +1423,8 @@ AddOption(STRING, "FORMAT_ALL",
 
 AddOption(STRING, "FORMAT_ALL_COMPACT",
 	"%{FORMATLINE_NAME_COMPACT}"
-	" \\({marked}(%{COLOR_MARKED_VERSION})<markedversions>(); {}"
+	" \\("
+	"{havemarkedversion}(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(); {}"
 	"{installed}"
 		"%{INSTALLEDVERSIONS_COMPACT}"
 		"{recommend} -> %{FORMAT_BEST_CHANGE}{}"

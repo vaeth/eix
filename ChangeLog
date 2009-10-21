@@ -9,6 +9,9 @@
 	- Make ./configure slightly be more verbose
 	- Code cleanup (nonconst->const/mutable, prefer prefix ++/--, headers,
 	  use localeC cctype, configure.in->configure.ac, mvmacros)
+	- Fix: Do not use obsoleted {markedversions} in the defaults.
+	- Introduce {havemarkedversion}.
+	- Fix some segfaults when unknown attributes are used by mistake.
 	- Fix linking versionsort http://bugs.gentoo.org/show_bug.cgi?id=288514
 	- Let *.tbz2 recognition also work with symlinks (needed for older
 	  portage versions): http://bugs.gentoo.org/show_bug.cgi?id=288031

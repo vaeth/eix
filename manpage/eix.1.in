@@ -507,7 +507,7 @@ I<category>B</>I<package>
 
 More precisely, in each line the first word in this format is chosen.
 The packages/versions passed this way will in the output be marked.
-For details, see the B<marked> and B<markedversions*> formatstrings.
+For details, see the B<marked> and B<markedversions:*> formatstrings.
 
 This local option is treated as if a sequence of corresponding matching
 expressions, concatenated with B<-o>, were given.
@@ -1055,6 +1055,10 @@ the package PROVIDE string
 .B marked
 expands to 1 if the package was passed with the B<--pipe> option.
 This is mainly only useful in tests.
+.TP
+.BR havemarkedversion
+Is 1 or empty, depending on whether at least one available version of the package is marked.
+Note that it is possible that a package is marked although none of its available versions is marked.
 .TP
 .BR slots ", " slotted
 expands to 1 if there are at least two slots resp. at least one nontrivial slot.

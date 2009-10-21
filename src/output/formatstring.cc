@@ -252,8 +252,15 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 					string s;
 					if(p->user_variable)
 						s = user_variables[p->name];
-					else
-						s = get_property(this, entity, p->name);
+					else {
+						try {
+							s = get_property(this, entity, p->name);
+						}
+						catch(const ExBasic &e) {
+							cerr << e << endl;
+							s.clear();
+						}
+					}
 					if(!s.empty()) {
 						printed = true;
 						if(result)
@@ -278,10 +285,11 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 							break;
 						case ConditionBlock::RHS_PROPERTY:
 							try {
-								rhs= get_property(this, entity, ief->text.text);
+								rhs = get_property(this, entity, ief->text.text);
 							}
 							catch(const ExBasic &e) {
 								cerr << e << endl;
+								rhs.clear();
 							}
 							break;
 						default:
@@ -311,6 +319,7 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 						}
 						catch(const ExBasic &e) {
 							cerr << e << endl;
+							ok = rhs.empty();
 						}
 					}
 					ok = ief->negation ? !ok : ok;
