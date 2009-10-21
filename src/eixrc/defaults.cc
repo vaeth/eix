@@ -673,7 +673,7 @@ AddOption(STRING, "FORMAT_SLOT",
 
 AddOption(STRING, "VERSION",
 	"<version>{!last} {}", _(
-	"This variable is used for  <markedversions:VERSION>.\n"
+	"This variable is used for <markedversions:VERSION>.\n"
 	"It just gives the plain version name without anything else.\n"
 	"You can use it similarly for e.g. <availableversions:VERSION>."));
 
