@@ -76,7 +76,7 @@ use_ccache=true
 configure_extra='--prefix=""'
 quickcheck=true
 OPTIND=1
-while getopts 'q0123nepuUsSbBrc:j:?hH' opt
+while getopts 'q01234nepuUsSbBrQCc:j:?hH' opt
 do
 case "${opt}" in
 	q) quiet=true;;
@@ -94,11 +94,11 @@ case "${opt}" in
 	S) configure_extra="${configure_extra} --without-sqlite";;
 	b) configure_extra="${configure_extra} --with-bzip2";;
 	B) configure_extra="${configure_extra} --without-bzip2";;
+	r) use_chown=true;;
+	Q) quickcheck=false;;
 	C) use_ccache=false;;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
-	r) use_chown=true;;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
-	Q) quickcheck=false;;
 	*) Usage 0;;
 esac
 done
