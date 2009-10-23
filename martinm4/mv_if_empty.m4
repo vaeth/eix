@@ -12,7 +12,7 @@ AC_DEFUN([MV_IF_EMPTY],
 		[AS_IF([test x"$1" = x""],
 			[$2],
 			[$3])],
-		[$3])])
+		[$2])])
 dnl
 dnl MV_IF_NONEMPTY([ARG], [if-true], [if-false])
 dnl Expands to if-true or if-false, depending on whether ARG is M4SH-nonempty

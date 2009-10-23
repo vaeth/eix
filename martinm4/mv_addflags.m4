@@ -37,14 +37,11 @@ AC_DEFUN([MV_ADDFLAGS],
 						[AC_MSG_RESULT([no])
 						mv_result=false])
 					$2="${mv_saveflags}"],
-					[m4_ifval([$6],
-						[AS_IF([$6],
-							[MV_MSG_RESULT([yes],
-								[unchecked])
-							mv_result=true],
-							[MV_MSG_RESULT([no],
-								[unchecked])
-							mv_result=false])])])
+					[AS_IF([$6],
+						[MV_MSG_RESULT([yes], [on request])
+						mv_result=true],
+						[MV_MSG_RESULT([no], [on request])
+						mv_result=false])])
 				AS_IF([${mv_result}],
 					[MV_APPEND([mv_s$2_cache],
 						[${mv_currflag}])],
