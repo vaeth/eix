@@ -313,12 +313,12 @@ AS_IF([${security}],
 		], [${myldfatal}], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:
-MV_APPEND([CXXFLAGS], [${mycxxadd}])
-MV_APPEND([LDFLAGS], [${myldadd}])
+MV_PREPEND([CXXFLAGS], [${mycxxadd}])
+MV_PREPEND([LDFLAGS], [${myldadd}])
 MV_APPEND([mycxxflagstext], [${mycxxadd}], [
-CXXFLAGS-additions: ])
+CXXFLAGS_PREPEND: ])
 MV_APPEND([myldflagstext], [${myldadd}], [
-LDFLAGS-additions: ])
+LDFLAGS_PREPEND: ])
 
 # For --enable-quickcheck, we do at least one (collected) safety check;
 # otherwise, the error messages may be too confusing for the user:
