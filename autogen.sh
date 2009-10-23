@@ -18,7 +18,7 @@ else
 	run libtoolize --force --copy --automake
 fi
 run autopoint
-run aclocal -I m4 -I mvm4
+run aclocal -I m4 -I martinm4
 run autoconf
 run autoheader
 run automake -af --copy

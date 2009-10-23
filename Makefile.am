@@ -26,7 +26,7 @@ dist_doc_DATA = AUTHORS ChangeLog
 # Stuff from our distribution
 EXTRA_DIST = config/config.rpath doxygen.cfg.in
 
-ACLOCAL_AMFLAGS = -I m4 -I mvm4
+ACLOCAL_AMFLAGS = -I m4 -I martinm4
 
 .PHONY: doxygen doxygen-clean
 

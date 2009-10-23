@@ -15,6 +15,6 @@ dnl
 dnl MV_MSG_RESULTVAR([${var}], [comment]) behaves like
 dnl MV_MSG_RESULT([${var:-(empty)}],[comment]) (but is more compatible)
 AC_DEFUN([MV_MSG_RESULTVAR],
-	[AS_IF([test -z "$1"],
-		[MV_MSG_RESULT([(empty)], $2)],
-		[MV_MSG_RESULT([$1], $2)])])
+	[MV_IF_EMPTY([$1],
+		[MV_MSG_RESULT([(empty)], [$2])],
+		[MV_MSG_RESULT([$1], [$2])])])

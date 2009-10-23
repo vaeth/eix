@@ -133,7 +133,6 @@ AC_ARG_ENABLE([quickcheck],
 
 # Some implicit dependencies of these options.
 dnl We could mix this with the cases later on, but for clarity we do it here:
-
 AS_IF([${strong_optimization}],
 	[optimization=true])
 AS_IF([${strong_warnings}],
@@ -145,50 +144,46 @@ AS_IF([${warnings}],
 	[security=true])
 
 # Now start the flag mangling:
-
 AS_IF([${debugging}],
 	[CFLAGS=""
 	CXXFLAGS=""
-	LDFLAGS=""
-	myoricxxflags="(deleted)"
-	myorildflags="(deleted)"],
-	[myoricxxflags="${CXXFLAGS}"
-	myorildflags="${LDFLAGS}"])
+	LDFLAGS=""])
+mycxxflagstext="${CXXFLAGS}"
+myldflagstext="${LDFLAGS}"
 
 # Note that the (potential) resetting of the flags was necessary *before*
 # (potentially) modifying flags for system extensions.
 # On the other hand, we must check for system extensions before we compile
 # test programs to find out the other flags.
-
 AC_USE_SYSTEM_EXTENSIONS()
 
 # Only now the flag mangling can continue:
-
-# At first, we must get our "fatal" flags for later calls:
-
+#
+# At first, we must calculate our [fatal-flags] and [mode] arguments
 mycxxfatal=""
 myldfatal=""
-mycxxadd=""
-myldadd=""
 AS_IF([${quickcheck}],
-	[],
-	[MV_ADDFLAGS([CXXFLAGS], [mycxxfatal], [ \
+	[quicktrue=true
+	quickfalse=false],
+	[quicktrue=""
+	quickfalse=""
+	MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
 			-Werror \
 		])
-	MV_ADDLDFLAGS([myldfatal], [ \
+	MV_ADDFLAGS([myldfatal], [LDFLAGS], [LINK], [ \
 			-Wl,--fatal-warnings \
 		])])
 
 # Now the actual testing:
-
+mycxxadd=""
+myldadd=""
 AS_IF([${debugging}],
-	[MV_ADDFLAGS([CXXFLAGS], [mycxxadd], [ \
-			-O \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-g \
 			-ggdb3 \
-		], [${mycxxfatal}], [${quickcheck}])])
+		], [${mycxxfatal}], [${quicktrue}])])
 AS_IF([${optimization}],
-	[MV_ADDFLAGS([CXXFLAGS], [mycxxadd], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fomit-frame-pointer \
 			-frename-registers \
 			-fstrict-aliasing \
@@ -208,8 +203,8 @@ AS_IF([${optimization}],
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${mycxxfatal}], [${quickcheck}])
-	MV_ADDLDFLAGS([myldadd], [ \
+		], [${mycxxfatal}], [${quicktrue}])
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--hash-style=gnu \
@@ -217,22 +212,22 @@ AS_IF([${optimization}],
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_optimization}],
-	[MV_ADDFLAGS([CXXFLAGS], [mycxxadd], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fweb \
 			-ftree-vectorize \
 			-fgraphite \
 			-floop-interchange \
 			-floop-strip-mine \
 			-floop-block \
-		], [${mycxxfatal}], [${quickcheck}])
-	MV_ADDLDFLAGS([myldadd], [ \
+		], [${mycxxfatal}], [${quicktrue}])
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-O9 \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${warnings}],
 	[security=true
-	MV_ADDFLAGS([CXXFLAGS], [mycxxadd], [ \
+	MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fdirectives-only \
 			-funsigned-char \
 			-fPIC \
@@ -277,7 +272,7 @@ AS_IF([${warnings}],
 			-Wsign-promo \
 			-Wmissing-declarations \
 			-Wmissing-format-attribute \
-		], [${mycxxfatal}], [${quickcheck}])
+		], [${mycxxfatal}], [${quicktrue}])
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
 dnl			-Wstrict-prototypes \
@@ -285,20 +280,20 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
-	MV_ADDLDFLAGS([myldadd], [ \
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
 			-Wl,--warn-common \
 			-Wl,--fatal-warnings \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_warnings}],
-	[MV_ADDFLAGS([CXXFLAGS], [mycxxadd], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${mycxxfatal}], [${quickcheck}])])
+		], [${mycxxfatal}], [${quicktrue}])])
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
 dnl			-Wunsafe-loop-optimizations \
@@ -308,17 +303,25 @@ dnl			-Waggregate-return \
 dnl			-Winline \
 dnl			-Weffc++ \
 AS_IF([${security}],
-	[MV_ADDFLAGS([CXXFLAGS], [mycxxadd], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
-		], [${mycxxfatal}], [${quickcheck}])
-	MV_ADDLDFLAGS([myldadd], [ \
+		], [${mycxxfatal}], [${quicktrue}])
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-z,now \
 			-Wl,-z,relro \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 
-CXXFLAGS="${CXXFLAGS} ${mycxxadd}"
-LDFLAGS="${LDFLAGS} ${myldadd}"
+# We are done with testing, the real flag mangling takes place:
+MV_APPEND([CXXFLAGS], [${mycxxadd}])
+MV_APPEND([LDFLAGS], [${myldadd}])
+MV_APPEND([mycxxflagstext], [${mycxxadd}], [
+CXXFLAGS-additions: ])
+MV_APPEND([myldflagstext], [${myldadd}], [
+LDFLAGS-additions: ])
+
+# For --enable-quickcheck, we do at least one (collected) safety check;
+# otherwise, the error messages may be too confusing for the user:
 AS_IF([${quickcheck}],
 	[AC_MSG_CHECKING([whether quickcheck mode was appropriate])
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
@@ -348,7 +351,7 @@ AC_ARG_WITH([dev-null],
 		[null device of the system, usually /dev/null])],
 	[DEV_NULL="${withval}"],
 	[DEV_NULL=""])
-AS_IF([test -z "${DEV_NULL}"],
+MV_IF_EMPTY([${DEV_NULL}],
 	[DEV_NULL="/dev/null"])
 AC_MSG_RESULT([${DEV_NULL}])
 AC_DEFINE_UNQUOTED([DEV_NULL],
@@ -461,12 +464,12 @@ AS_IF([test x"${use_bzlib}" != x"false"],
 		[[
 BZ2_bzopen("dummy","rb");
 		]])],
-		[AS_IF([test -z "${use_bzlib}"],
+		[MV_IF_EMPTY([${use_bzlib}],
 			[MV_MSG_RESULT([yes], [autodetected])],
 			[MV_MSG_RESULT([yes], [on request])])
 		use_bzlib=true],
 		[MV_MSG_RESULT([no], [autodetected])
-		AS_IF([test -n "${use_bzlib}"],
+		MV_IF_NONEMPTY([${use_bzlib}],
 			[AC_MSG_ERROR([bzip2 requested but libbz2 is unusable])])
 		use_bzlib=false
 		BZLIB_LIBS=""])
@@ -505,8 +508,6 @@ AC_ARG_ENABLE([unique],
 		[assume that unique works])],
 	[MV_ENABLE([unique_works], [unique-works])
 	MV_MSG_RESULT([${enableval}], [skipped test])],
-	[unique_works=""])
-AS_IF([test -z "${unique_works}"],
 	[AC_RUN_IFELSE([AC_LANG_PROGRAM([[
 #include <vector>
 #include <string>
@@ -563,16 +564,16 @@ AC_ARG_WITH([sqlite],
 		AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
 			[SQLITE_LIBS="`pkg-config --libs sqlite3`"])
 		# If pkg-config is not available or failed, we use a default
-		AS_IF([test -z "${SQLITE_LIBS}"],
+		MV_IF_EMPTY([${SQLITE_LIBS}],
 			[AC_MSG_WARN([ignoring pkg-config and using -lsqlite3])
 			SQLITE_LIBS="-lsqlite3"])])],
 	[# If autodetection of sqlite is necessary, we rely on pkg-config
 	AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
 		[SQLITE_LIBS="`eval pkg-config --libs sqlite3 2>${DEV_NULL}`"])
-	AS_IF([test -n "${SQLITE_LIBS}"],
-		[MV_MSG_RESULT([yes], [autodetected])],
-		[MV_MSG_RESULT([no], [autodetected])])])
-AS_IF([test -n "${SQLITE_LIBS}"],
+	MV_IF_EMPTY([${SQLITE_LIBS}],
+		[MV_MSG_RESULT([no], [autodetected])],
+		[MV_MSG_RESULT([yes], [autodetected])])])
+MV_IF_NONEMPTY([${SQLITE_LIBS}],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
 		[ Define to 1 if cache method sqlite is wanted])])
@@ -707,7 +708,7 @@ AC_DEFINE_UNQUOTED([TARGET],
 	["${target}"],
 	[ Target system])
 
-AS_IF([test -n "${GCC}"],
+MV_IF_NONEMPTY([${GCC}],
 	[AC_MSG_CHECKING([gcc version])
 	gcc_v=`${CC} -dumpversion`
 	AC_MSG_RESULT([${gcc_v}])
@@ -724,10 +725,8 @@ echo "
 
 ${PACKAGE}-${VERSION} configured successfully.
 
-CXXFLAGS: ${myoricxxflags}
-(added): ${mycxxadd}
+CXXFLAGS: ${mycxxflagstext}
 
-LDFLAGS:  ${myorildflags}
-(added): ${myldadd}
+LDFLAGS:  ${myldflagstext}
 
 "
