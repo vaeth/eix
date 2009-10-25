@@ -61,23 +61,34 @@ Category::addPackage(const string cat_name, const string &pkg_name)
 	return p;
 }
 
-
-Category *PackageTree::find(const string &cat_name) const
+Category *
+PackageTree::find(const string &cat_name) const
 {
 	const_iterator f = Categories::find(cat_name);
-	if(unlikely(f == end()))
+	if(unlikely(f == end())) {
 		return NULL;
+	}
 	return f->second;
 }
 
-Category &PackageTree::insert(const string &pkg_name)
+Category &
+PackageTree::insert(const string &cat_name)
 {
-	pair<Categories::iterator,bool> n(Categories::insert(Categories::value_type(pkg_name, NULL)));
+	pair<Categories::iterator,bool> n(Categories::insert(Categories::value_type(cat_name, NULL)));
 	Category *&catpoint = (n.first)->second;
 	if(n.second) {
 		return *(catpoint = new Category);
 	}
 	return *catpoint;
+}
+
+void
+PackageTree::insert(const vector<string> &cat_vec)
+{
+	for(vector<string>::const_iterator it(cat_vec.begin());
+		likely(it != cat_vec.end()); ++it) {
+		insert(*it);
+	}
 }
 
 Package *

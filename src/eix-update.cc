@@ -508,7 +508,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 {
 	DBHeader dbheader;
 	vector<string> *categories(portage_settings.getCategories());
-	PackageTree package_tree;
+	PackageTree package_tree(*categories);
 
 	dbheader.world_sets = *(portage_settings.get_world_sets());
 

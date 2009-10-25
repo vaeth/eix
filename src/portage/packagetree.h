@@ -15,6 +15,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <cstddef>
 
@@ -53,10 +54,14 @@ class PackageTree : public std::map<std::string, Category*> {
 		PackageTree()
 		{ }
 
+		PackageTree(const std::vector<std::string> &cat_vec)
+		{ insert(cat_vec); }
+
 		~PackageTree();
 
 		Category *find(const std::string &cat_name) const;
 		Category &insert(const std::string &cat_name);
+		void insert(const std::vector<std::string> &cat_vec);
 
 		Category &operator[](const std::string &cat_name)
 		{ return insert(cat_name); }
