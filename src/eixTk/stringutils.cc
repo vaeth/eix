@@ -10,13 +10,29 @@
 #include "stringutils.h"
 
 #include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
 
 #include <iostream>
+#include <locale>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <cstddef>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#ifndef HAVE_STRNDUP
+#include <sys/types.h>
+#endif
 
 using namespace std;
 
-const char *spaces = " \t\r\n";
+const char *spaces(" \t\r\n");
+
+const string emptystring(""), one("1");
 
 locale localeC("C");
 
@@ -32,9 +48,9 @@ locale localeC("C");
 char *
 strndup(const char *s, size_t n)
 {
-	char       *r = NULL;
-	const char *p = s;
-	while(*p++ && n--);
+	char *r(NULL);
+	const char *p(s);
+	while(likely(*p++ && n--));
 	n = p - s - 1;
 	r = static_cast<char *>(malloc(n + 1));
 	if(r) {
@@ -48,29 +64,22 @@ strndup(const char *s, size_t n)
 const char *
 ExplodeAtom::get_start_of_version(const char* str)
 {
-	const char *x = NULL;
+	const char *x(NULL);
 	// There must be at least one symbol before the version:
-	if(!*(str++))
+	if(unlikely(*(str++) == '\0'))
 		return NULL;
-	while((*str) && (*str != ':'))
-	{
-		if(*str++ == '-'
-		   && (*str >= 48
-			   && *str <= 57))
-		{
+	while(likely((*str != '\0') && (*str != ':'))) {
+		if(unlikely((*str++ == '-') && (isdigit(*str, localeC))))
 			x = str;
-		}
 	}
-
 	return x;
 }
 
 char *
 ExplodeAtom::split_version(const char* str)
 {
-	const char *x = get_start_of_version(str);
-
-	if(x)
+	const char *x(get_start_of_version(str));
+	if(likely(x != NULL))
 		return strdup(x);
 	return NULL;
 }
@@ -78,9 +87,8 @@ ExplodeAtom::split_version(const char* str)
 char *
 ExplodeAtom::split_name(const char* str)
 {
-	const char *x = get_start_of_version(str);
-
-	if(x)
+	const char *x(get_start_of_version(str));
+	if(likely(x != NULL))
 		return strndup(str, ((x - 1) - str));
 	return NULL;
 }
@@ -89,9 +97,9 @@ char **
 ExplodeAtom::split(const char* str)
 {
 	static char* out[2] = { NULL, NULL };
-	const char *x = get_start_of_version(str);
+	const char *x(get_start_of_version(str));
 
-	if(!x)
+	if(unlikely(x == NULL))
 		return NULL;
 	out[0] = strndup(str, ((x - 1) - str));
 	out[1] = strdup(x);
@@ -103,23 +111,21 @@ escape_string(string &str, const char *at)
 {
 	string my_at(at);
 	my_at.append("\\");
-	string::size_type pos = 0;
-	while((pos = str.find_first_of(my_at, pos)) != string::npos) {
+	string::size_type pos(0);
+	while(unlikely((pos = str.find_first_of(my_at, pos)) != string::npos)) {
 		str.insert(pos, 1, '\\');
 		pos += 2;
 	}
 }
 
-vector<string>
-split_string(const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+void
+split_string(vector<string> &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 {
-	vector<string> vec;
-	string::size_type last_pos = 0,
-		pos = 0;
+	string::size_type last_pos(0), pos(0);
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
 		if(handle_escape) {
-			bool escaped = false;
-			string::size_type s = pos;
+			bool escaped(false);
+			string::size_type s(pos);
 			while(s > 0) {
 				if(str[--s] != '\\')
 					break;
@@ -137,8 +143,8 @@ split_string(const string &str, const bool handle_escape, const char *at, const 
 	if((str.size() - last_pos) > 0 || !ignore_empty)
 		vec.push_back(str.substr(last_pos));
 	if(handle_escape) {
-		for(vector<string>::iterator it = vec.begin();
-			it != vec.end(); ++it) {
+		for(vector<string>::iterator it(vec.begin());
+			likely(it != vec.end()); ++it) {
 			pos = 0;
 			while((pos = it->find('\\', pos)) != string::npos) {
 				++pos;
@@ -146,22 +152,21 @@ split_string(const string &str, const bool handle_escape, const char *at, const 
 					it->erase(pos - 1, 1);
 					break;
 				}
-				char c = (*it)[pos];
+				char c((*it)[pos]);
 				if((c == '\\') ||
 					(string(1, c).find_first_of(at) != string::npos))
 					it->erase(pos - 1, 1);
 			}
 		}
 	}
-	return vec;
 }
 
 string
 join_set(const set<string> &vec, const string &glue)
 {
-	set<string>::const_iterator it = vec.begin();
+	set<string>::const_iterator it(vec.begin());
 	if(it == vec.end()) {
-		return "";
+		return emptystring;
 	}
 	string ret;
 	for(;;) {
@@ -177,9 +182,9 @@ join_set(const set<string> &vec, const string &glue)
 string
 join_vector(const vector<string> &vec, const string &glue)
 {
-	vector<string>::const_iterator it = vec.begin();
+	vector<string>::const_iterator it(vec.begin());
 	if(it == vec.end()) {
-		return "";
+		return emptystring;
 	}
 	string ret;
 	for(;;) {
@@ -195,10 +200,9 @@ join_vector(const vector<string> &vec, const string &glue)
 bool
 resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore)
 {
-	bool minusasterisk = false;
-	bool minuskeyword  = false;
-	s.clear();
-	for(vector<string>::const_iterator it = l.begin(); it != l.end(); ++it) {
+	bool minusasterisk(false);
+	bool minuskeyword(false);
+	for(vector<string>::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
 		if(it->empty())
 			continue;
 		if((*it)[0] == '+') {
@@ -215,7 +219,7 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 					continue;
 				}
 			}
-			string key = it->substr(1);
+			string key(it->substr(1));
 			if(s.erase(key))
 				continue;
 			if(warnignore) {
@@ -253,7 +257,7 @@ StringHash::hash_string(const string &s)
 		fprintf(stderr, _("Internal error: Hashing required in non-hash mode"));
 		exit(-1);
 	}
-	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
+	map<string, StringHash::size_type>::const_iterator i(str_map.find(s));
 	if(i != str_map.end())
 		return;
 	// For the moment, use str_map only as a set: Wait for finalize()
@@ -264,14 +268,15 @@ StringHash::hash_string(const string &s)
 void
 StringHash::store_words(const vector<string> &v)
 {
-	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
+	for(vector<string>::const_iterator i(v.begin()); likely(i != v.end()); ++i) {
 		store_string(*i);
+	}
 }
 
 void
 StringHash::hash_words(const vector<string> &v)
 {
-	for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i)
+	for(vector<string>::const_iterator i(v.begin()); likely(i != v.end()); ++i)
 		hash_string(*i);
 }
 
@@ -318,8 +323,8 @@ StringHash::finalize()
 	if(!hashing)
 		return;
 	clear();
-	for(map<string, size_type>::iterator it = str_map.begin();
-		it != str_map.end(); ++it) {
+	for(map<string, size_type>::iterator it(str_map.begin());
+		likely(it != str_map.end()); ++it) {
 		it->second = size();
 		push_back(it->first);
 	}

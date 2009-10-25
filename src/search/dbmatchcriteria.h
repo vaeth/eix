@@ -5,20 +5,22 @@
 // Copyright (c)
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
+//   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #ifndef EIX__CRITERIA_H__
 #define EIX__CRITERIA_H__ 1
 
 #include <search/packagetest.h>
-#include <database/types.h>
+
+#include <memory>
 
 /** Recursively match packages agains a chain of tests. */
 class Matchatom {
 
 	private:
 		std::auto_ptr<Matchatom> or_chain,  /**< OR'ed criteria */
-		                    and_chain; /**< AND'ed criteria */
-		std::auto_ptr<PackageTest>        test;      /**< Test for this criteria. */
+		                         and_chain; /**< AND'ed criteria */
+		std::auto_ptr<PackageTest> test;    /**< Test for this criteria. */
 
 	public:
 		/** Create a new Matchatom, link it as OR to this criteria and set basic setting.
@@ -43,15 +45,11 @@ class Matchatom {
 			test->finalize();
 		}
 
-		void finalize() throw(std::string) {
-			// Please move along, nothin' to see here!
-		}
-
 		/** Check if this criteria matches.
 		 * @param p Package to match
 		 * @return true if match; else false */
 		bool match(PackageReader *p) {
-			bool is_match = test->match(p);
+			bool is_match(test->match(p));
 
 			/* Check AND/OR'ed criteria */
 			if(and_chain.get() && is_match)

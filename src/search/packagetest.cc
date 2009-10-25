@@ -8,9 +8,35 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "packagetest.h"
-#include <eixrc/global.h>
+
+#include <database/package_reader.h>
+#include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/regexp.h>
+#include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
+#include <eixrc/eixrc.h>
+#include <eixrc/global.h>
+#include <portage/basicversion.h>
+#include <portage/conf/cascadingprofile.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/extendedversion.h>
+#include <portage/package.h>
+#include <portage/vardbpkg.h>
+
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstring>
+
+class DBHeader;
+class SetStability;
 
 using namespace std;
 
@@ -90,8 +116,10 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete || binary || world || worldset ||
-		from_overlay_inst_list || from_foreign_overlay_inst_list ||
-		overlay_list || overlay_only_list || in_overlay_inst_list ||
+		(from_overlay_inst_list != NULL) ||
+		(from_foreign_overlay_inst_list != NULL) ||
+		(overlay_list != NULL) || (overlay_only_list != NULL) ||
+		(in_overlay_inst_list != NULL) ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(properties != ExtendedVersion::PROPERTIES_NONE) ||
 		(test_instability != STABLE_NONE) ||
@@ -186,10 +214,9 @@ static_match_algorithm_map()
 PackageTest::MatchField
 PackageTest::name2field(const string &p) throw(ExBasic)
 {
-	const static map<string,MatchField>& match_field_map =
-		static_match_field_map();
-	map<string,MatchField>::const_iterator it = match_field_map.find(p);
-	if(it == match_field_map.end()) {
+	const static map<string,MatchField>& match_field_map(static_match_field_map());
+	map<string,MatchField>::const_iterator it(match_field_map.find(p));
+	if(unlikely(it == match_field_map.end())) {
 		throw ExBasic(_("cannot find match field %r")) % p;
 		return NAME;
 	}
@@ -199,10 +226,9 @@ PackageTest::name2field(const string &p) throw(ExBasic)
 PackageTest::MatchAlgorithm
 PackageTest::name2algorithm(const string &p) throw(ExBasic)
 {
-	const static map<string,MatchAlgorithm>& match_algorithm_map =
-		static_match_algorithm_map();
-	map<string,MatchAlgorithm>::const_iterator it = match_algorithm_map.find(p);
-	if(it == match_algorithm_map.end()) {
+	const static map<string,MatchAlgorithm>& match_algorithm_map(static_match_algorithm_map());
+	map<string,MatchAlgorithm>::const_iterator it(match_algorithm_map.find(p));
+	if(unlikely(it == match_algorithm_map.end())) {
 		throw ExBasic(_("cannot find match algorithm %r")) % p;
 		return ALGO_REGEX;
 	}
@@ -223,10 +249,11 @@ class n \
 	public: \
 	n(const string &s) throw(ExBasic) \
 	{ \
-		vector<string> pairs = split_string(s, true); \
-		for(vector<string>::iterator it = pairs.begin(); \
-			it != pairs.end(); ++it) { \
-			string *s_ptr = &(*it); \
+		vector<string> pairs; \
+		split_string(pairs, s, true); \
+		for(vector<string>::iterator it(pairs.begin()); \
+			likely(it != pairs.end()); ++it) { \
+			string *s_ptr(&(*it)); \
 			++it; \
 			if(it == pairs.end()) { \
 				default_value = f(*s_ptr); \
@@ -240,13 +267,13 @@ class n \
  \
 	~n() \
 	{ \
-		for(vector<Regex*>::iterator it = m.begin(); it != m.end(); ++it) \
+		for(vector<Regex*>::iterator it(m.begin()); likely(it != m.end()); ++it) \
 			delete *it; \
 	} \
  \
 	t parse(const char *p) \
 	{ \
-		for(vector<Regex*>::size_type i = 0; i != m.size(); ++i) { \
+		for(vector<Regex*>::size_type i(0); likely(i != m.size()); ++i) { \
 			if(m[i]->match(p)) \
 				return v[i]; \
 		} \
@@ -262,7 +289,7 @@ PackageTest::get_matchfield(const char *p) throw(ExBasic)
 {
 	static auto_ptr<MatcherField> m;
 	if(!m.get()) {
-		EixRc &rc = get_eixrc(NULL);
+		EixRc &rc(get_eixrc(NULL));
 		m = auto_ptr<MatcherField>(new MatcherField(rc["DEFAULT_MATCH_FIELD"]));
 	}
 	return m->parse(p);
@@ -273,7 +300,7 @@ PackageTest::get_matchalgorithm(const char *p) throw(ExBasic)
 {
 	static auto_ptr<MatcherAlgorithm> m;
 	if(!m.get()) {
-		EixRc &rc = get_eixrc(NULL);
+		EixRc &rc(get_eixrc(NULL));
 		m = auto_ptr<MatcherAlgorithm>(new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]));
 	}
 	return m->parse(p);
@@ -347,14 +374,14 @@ PackageTest::stringMatch(Package *pkg) const
 
 	if(field & SLOT) {
 		for(Package::iterator it(pkg->begin());
-			it != pkg->end(); ++it) {
+			likely(it != pkg->end()); ++it) {
 			if((*algorithm)(it->slotname.c_str(), pkg))
 				return true;
 		}
 	}
 
 	if(field & IUSE) {
-		const set<IUse> &s = pkg->iuse.asSet();
+		const set<IUse> &s(pkg->iuse.asSet());
 		for(set<IUse>::const_iterator it = s.begin();
 			it != s.end(); ++it) {
 			if((*algorithm)(it->name().c_str(), NULL))
@@ -365,8 +392,8 @@ PackageTest::stringMatch(Package *pkg) const
 	if(field & SET) {
 		vector<string> setnames;
 		portagesettings->get_setnames(setnames, pkg);
-		for(vector<string>::const_iterator it = setnames.begin();
-			it != setnames.end(); ++it) {
+		for(vector<string>::const_iterator it(setnames.begin());
+			likely(it != setnames.end()); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;
 			if((*algorithm)((string("@") + *it).c_str(), NULL))
@@ -377,13 +404,13 @@ PackageTest::stringMatch(Package *pkg) const
 	if(! (field & (USE_ENABLED | USE_DISABLED | INSTALLED_SLOT)))
 		return false;
 
-	vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*pkg);
-	if(!installed_versions)
+	vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*pkg));
+	if(installed_versions == NULL)
 		return false;
 
 	if(field & INSTALLED_SLOT) {
-		for(vector<InstVersion>::iterator it = installed_versions->begin();
-			it != installed_versions->end(); ++it) {
+		for(vector<InstVersion>::iterator it(installed_versions->begin());
+			likely(it != installed_versions->end()); ++it) {
 			if(!vardbpkg->readSlot(*pkg, *it))
 				continue;
 			if((*algorithm)(it->slotname.c_str(), pkg))
@@ -392,20 +419,20 @@ PackageTest::stringMatch(Package *pkg) const
 	}
 
 	if(field & (USE_ENABLED | USE_DISABLED)) {
-		for(vector<InstVersion>::iterator it = installed_versions->begin();
+		for(vector<InstVersion>::iterator it(installed_versions->begin());
 			it != installed_versions->end(); ++it) {
 			if(!vardbpkg->readUse(*pkg, *it))
 				continue;
 			if(field & USE_ENABLED) {
-				for(set<string>::iterator uit = (it->usedUse).begin();
-					uit != (it->usedUse).end(); ++uit) {
+				for(set<string>::iterator uit((it->usedUse).begin());
+					likely(uit != (it->usedUse).end()); ++uit) {
 					if((*algorithm)(uit->c_str(), NULL))
 						return true;
 				}
 			}
 			if(field & USE_DISABLED) {
-				for(vector<string>::iterator uit = (it->inst_iuse).begin();
-					uit != (it->inst_iuse).end(); ++uit) {
+				for(vector<string>::iterator uit((it->inst_iuse).begin());
+					likely(uit != (it->inst_iuse).end()); ++uit) {
 					if(!(*algorithm)(uit->c_str(), NULL))
 						continue;
 					if((it->usedUse).find(*uit) == (it->usedUse).end())
@@ -429,14 +456,14 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 		if((vardbpkg->numInstalled(p) != 0) != ((t.oins & r) != 0))
 			return false;
 	}
-	bool test_unrestricted = !(r & t.spc);
-	bool test_uninstalled = !(r & t.ins);
+	bool test_unrestricted(!(r & t.spc));
+	bool test_uninstalled(!(r & t.ins));
 	if(r & t.all)// test all, all-installed or all-uninstalled
 	{
-		bool rvalue = false;
-		BasicVersion *prev_ver = NULL;
-		for(Package::const_reverse_iterator pi = p.rbegin();
-			pi != p.rend();
+		bool rvalue(false);
+		BasicVersion *prev_ver(NULL);
+		for(Package::const_reverse_iterator pi(p.rbegin());
+			likely(pi != p.rend());
 			prev_ver = *pi, ++pi)
 		{
 			// "all" should also mean at least once:
@@ -446,7 +473,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 			{
 				if(test_unrestricted)
 					return false;
-				short is_installed = vardbpkg->isInstalledVersion(p, *pi, *header, portdir);
+				short is_installed(vardbpkg->isInstalledVersion(p, *pi, *header, portdir));
 				// If in doubt about the overlay only consider as installed
 				// if the current version was not treated yet, i.e. (since we use reverse_iterator)
 				// if it is the highest version (and so usually from the last overlay)
@@ -462,9 +489,8 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 	}
 	else// test some or some-installed
 	{
-		for(Package::const_iterator pi = p.begin();
-			pi != p.end(); ++pi)
-		{
+		for(Package::const_iterator pi(p.begin());
+			likely(pi != p.end()); ++pi) {
 			if((pi->get_redundant()) & r)
 			{
 				if(test_unrestricted)
@@ -495,9 +521,9 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 static bool
 stabilitytest(const Package *p, PackageTest::TestStability what)
 {
-	if(what == PackageTest::STABLE_NONE)
+	if(likely(what == PackageTest::STABLE_NONE))
 		return true;
-	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
+	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
 		if(what & PackageTest::STABLE_SYSTEM) {
 			if(!it->maskflags.isSystem())
 				continue;
@@ -524,10 +550,10 @@ stabilitytest(const Package *p, PackageTest::TestStability what)
 bool
 PackageTest::instabilitytest(const Package *p, TestStability what) const
 {
-	if(what == STABLE_NONE)
+	if(likely(what == STABLE_NONE))
 		return true;
-	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
-		TestStability have = STABLE_NONE;
+	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
+		TestStability have(STABLE_NONE);
 		if(it->maskflags.isHardMasked())
 			have |= (STABLE_FULL | STABLE_NONMASKED);
 		if(!it->keyflags.isStable())
@@ -543,7 +569,7 @@ PackageTest::instabilitytest(const Package *p, TestStability what) const
 }
 
 #define get_p() do { \
-	if(!p) \
+	if(unlikely(p == NULL)) \
 		p = pkg->get(); \
 } while(0)
 
@@ -551,7 +577,7 @@ PackageTest::instabilitytest(const Package *p, TestStability what) const
 bool
 PackageTest::match(PackageReader *pkg) const
 {
-	Package *p = NULL;
+	Package *p(NULL);
 
 	pkg->read(need);
 
@@ -590,13 +616,13 @@ PackageTest::match(PackageReader *pkg) const
 	      ensure the versions really have been read for the package.
 	*/
 
-	if(algorithm.get() != NULL) {
+	if(unlikely(algorithm.get() != NULL)) {
 		get_p();
 		if(!stringMatch(p))
 			return invert;
 	}
 
-	if(slotted) { // -1 or -2
+	if(unlikely(slotted)) { // -1 or -2
 		get_p();
 		if(! (p->have_nontrivial_slots()))
 			return invert;
@@ -605,17 +631,17 @@ PackageTest::match(PackageReader *pkg) const
 				return invert;
 	}
 
-	if(overlay) { // -O
+	if(unlikely(overlay)) { // -O
 		get_p();
 		if(!(p->largest_overlay))
 			return invert;
 	}
 
-	if(overlay_list) { // --in-overlay
+	if(unlikely(overlay_list != NULL)) { // --in-overlay
 		get_p();
 		bool have = false;
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(overlay_list->find(it->overlay_key) == overlay_list->end())
+		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
+			if(unlikely(overlay_list->find(it->overlay_key) == overlay_list->end()))
 				continue;
 			have = true;
 			break;
@@ -624,39 +650,40 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(overlay_only_list) { // --only-in-overlay
+	if(unlikely(overlay_only_list != NULL)) { // --only-in-overlay
 		get_p();
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(overlay_only_list->find(it->overlay_key) == overlay_only_list->end())
+		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
+			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end()))
 				return invert;
 		}
 	}
 
-	if(installed) { // -i or -I
+	if(unlikely(installed)) { // -i or -I
 		get_p();
-		vector<BasicVersion>::size_type s = vardbpkg->numInstalled(*p);
-		if(!s)
+		vector<BasicVersion>::size_type s(vardbpkg->numInstalled(*p));
+		if(s == 0)
 			return invert;
 		if(s == 1)
 			if(multi_installed)
 				return invert;
 	}
 
-	if(in_overlay_inst_list) { // --installed-in-[some-]overlay
+	if(unlikely(in_overlay_inst_list != NULL)) {
+		// --installed-in-[some-]overlay
 		get_p();
-		bool have = false;
-		bool get_installed = true;
-		vector<InstVersion> *installed_versions = NULL;
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+		bool have(false);
+		bool get_installed(true);
+		vector<InstVersion> *installed_versions(NULL);
+		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(in_overlay_inst_list->find(it->overlay_key) == in_overlay_inst_list->end())
 				continue;
 			if(get_installed) {
 				get_installed = false;
 				installed_versions = vardbpkg->getInstalledVector(*p);
 			}
-			if(!installed_versions)
+			if(installed_versions == NULL)
 				continue;
-			if(VarDbPkg::isInVec(installed_versions,*it)) {
+			if(VarDbPkg::isInVec(installed_versions, *it)) {
 				have = true;
 				break;
 			}
@@ -665,17 +692,18 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(from_overlay_inst_list ||
-	   from_foreign_overlay_inst_list) { // -J or --installed-from-overlay
+	if(unlikely((from_overlay_inst_list != NULL) ||
+	   (from_foreign_overlay_inst_list != NULL))) {
+	   // -J or --installed-from-overlay
 		get_p();
-		bool have = false;
-		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
-		if(!installed_versions)
+		bool have(false);
+		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
+		if(installed_versions == NULL)
 			return invert;
-		for(vector<InstVersion>::iterator it = installed_versions->begin();
-			it != installed_versions->end(); ++it) {
+		for(vector<InstVersion>::iterator it(installed_versions->begin());
+			likely(it != installed_versions->end()); ++it) {
 			if(vardbpkg->readOverlay(*p, *it, *header, portdir)) {
-				if(!from_overlay_inst_list)
+				if(from_overlay_inst_list == NULL)
 					continue;
 				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end())
 					continue;
@@ -684,13 +712,13 @@ PackageTest::match(PackageReader *pkg) const
 			}
 			if((it->overlay_keytext).empty())
 				continue;
-			if(!from_foreign_overlay_inst_list)
+			if(from_foreign_overlay_inst_list == NULL)
 				continue;
-			for(vector<string>::iterator foreign = from_foreign_overlay_inst_list->begin();
+			for(vector<string>::iterator foreign(from_foreign_overlay_inst_list->begin());
 				foreign != from_foreign_overlay_inst_list->end(); ++foreign) {
-				if(foreign->empty() ||
+				if(unlikely(foreign->empty() ||
 					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, false) ||
-					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, true)) {
+					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, true))) {
 					have = true;
 					break;
 				}
@@ -702,7 +730,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(dup_packages) { // -d
+	if(unlikely(dup_packages)) { // -d
 		get_p();
 		if(dup_packages_overlay)
 		{
@@ -713,34 +741,34 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(dup_versions) { // -D
+	if(unlikely(dup_versions)) { // -D
 		get_p();
-		Package::Duplicates testfor = ((dup_versions_overlay) ?
+		Package::Duplicates testfor((dup_versions_overlay) ?
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
 		if(((p->have_duplicate_versions) & testfor) != testfor)
 			return invert;
 	}
 
-	if((restrictions != ExtendedVersion::RESTRICT_NONE) ||
-		(properties != ExtendedVersion::PROPERTIES_NONE)) {
+	if(unlikely((restrictions != ExtendedVersion::RESTRICT_NONE) ||
+		(properties != ExtendedVersion::PROPERTIES_NONE))) {
 		get_p();
-		bool found = false;
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if((((it->restrictFlags) & restrictions) == restrictions) &&
-				(((it->propertiesFlags) & properties) == properties)) {
+		bool found(false);
+		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
+			if(unlikely((((it->restrictFlags) & restrictions) == restrictions) &&
+				(((it->propertiesFlags) & properties) == properties))) {
 				found = true;
 				break;
 			}
 		}
 		if(!found) {
-			vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
-			if(!installed_versions)
+			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
+			if(installed_versions == NULL)
 				return invert;
-			for(vector<InstVersion>::iterator it = installed_versions->begin();
-				it != installed_versions->end(); ++it) {
+			for(vector<InstVersion>::iterator it(installed_versions->begin());
+				likely(it != installed_versions->end()); ++it) {
 				vardbpkg->readRestricted(*p, *it, *header, portdir);
-				if((((it->restrictFlags) & restrictions) == restrictions) &&
-					(((it->propertiesFlags) & properties) == properties)) {
+				if(unlikely((((it->restrictFlags) & restrictions) == restrictions) &&
+					(((it->propertiesFlags) & properties) == properties))) {
 					found = true;
 					break;
 				}
@@ -752,20 +780,20 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(binary) { // --binary
 		get_p();
-		bool found = false;
-		for(Package::iterator it = p->begin(); it != p->end(); ++it) {
-			if(it->have_bin_pkg(portagesettings, p)) {
+		bool found(false);
+		for(Package::iterator it(p->begin()); it != p->end(); ++it) {
+			if(unlikely(it->have_bin_pkg(portagesettings, p))) {
 				found = true;
 				break;
 			}
 		}
 		if(!found) {
-			vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
-			if(!installed_versions)
+			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
+			if(installed_versions == NULL)
 				return invert;
-			for(vector<InstVersion>::iterator it = installed_versions->begin();
-				it != installed_versions->end(); ++it) {
-				if(it->have_bin_pkg(portagesettings, p)) {
+			for(vector<InstVersion>::iterator it(installed_versions->begin());
+				likely(it != installed_versions->end()); ++it) {
+				if(unlikely(it->have_bin_pkg(portagesettings, p))) {
 					found = true;
 					break;
 				}
@@ -775,7 +803,7 @@ PackageTest::match(PackageReader *pkg) const
 		}
 	}
 
-	while(obsolete) {  // -T; loop, because we break in case of success
+	while(unlikely(obsolete)) { // -T; loop, because we break in case of success
 		// Can some test succeed at all?
 		if((test_installed == INS_NONE) &&
 			(redundant_flags == Keywords::RED_NOTHING))
@@ -783,9 +811,8 @@ PackageTest::match(PackageReader *pkg) const
 
 		get_p();
 
-		Keywords::Redundant r = redundant_flags & Keywords::RED_ALL_MASKSTUFF;
-		if(r)
-		{
+		Keywords::Redundant r(redundant_flags & Keywords::RED_ALL_MASKSTUFF);
+		if(r != Keywords::RED_NOTHING) {
 			r &= nowarn_mask(*p);
 			if(r && portagesettings->user_config->setMasks(p, r))
 			{
@@ -804,8 +831,7 @@ PackageTest::match(PackageReader *pkg) const
 			}
 		}
 		r = redundant_flags & Keywords::RED_ALL_KEYWORDS;
-		if(r)
-		{
+		if(r != Keywords::RED_NOTHING) {
 			r &= nowarn_keywords(*p);
 			if(r && portagesettings->user_config->setKeyflags(p, r))
 			{
@@ -828,7 +854,7 @@ PackageTest::match(PackageReader *pkg) const
 			}
 		}
 		r = redundant_flags & Keywords::RED_ALL_USE;
-		if(r) {
+		if(r != Keywords::RED_NOTHING) {
 			r &= nowarn_use(*p);
 			if(r && portagesettings->user_config->CheckUse(p, r))
 			{
@@ -839,7 +865,7 @@ PackageTest::match(PackageReader *pkg) const
 			}
 		}
 		r = redundant_flags & Keywords::RED_ALL_CFLAGS;
-		if(r) {
+		if(r != Keywords::RED_NOTHING) {
 			r &= nowarn_cflags(*p);
 			if(r && portagesettings->user_config->CheckCflags(p, r)) {
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_CFLAGS))
@@ -850,24 +876,23 @@ PackageTest::match(PackageReader *pkg) const
 		}
 		if(test_installed == INS_NONE)
 			return invert;
-		TestInstalled t = test_installed & nowarn_installed(*p);
+		TestInstalled t(test_installed & nowarn_installed(*p));
 		if(t == INS_NONE)
 			return invert;
-		vector<InstVersion> *installed_versions = vardbpkg->getInstalledVector(*p);
-		if(!installed_versions)
+		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
+		if(installed_versions == NULL)
 			return invert;
 		if(t & INS_MASKED) {
 			portagesettings->user_config->setMasks(p);
 			portagesettings->user_config->setKeyflags(p);
 		}
-		vector<InstVersion>::iterator current = installed_versions->begin();
-		for( ; current != installed_versions->end(); ++current)
+		vector<InstVersion>::iterator current(installed_versions->begin());
+		for( ; likely(current != installed_versions->end()); ++current)
 		{
-			bool not_all_found = true;
-			for(Package::iterator version_it = p->begin();
-				version_it != p->end(); ++version_it)
-			{
-				Version *version = *version_it;
+			bool not_all_found(true);
+			for(Package::iterator version_it(p->begin());
+				likely(version_it != p->end()); ++version_it) {
+				Version *version(*version_it);
 				if(*version != *current)
 					continue;
 				if(t & INS_MASKED) {
@@ -890,7 +915,7 @@ PackageTest::match(PackageReader *pkg) const
 		return invert;
 	}
 
-	if(upgrade) { // -u
+	if(unlikely(upgrade)) { // -u
 		get_p();
 		if(upgrade_local_mode == LOCALMODE_DEFAULT)
 			StabilityDefault(p);
@@ -902,7 +927,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(test_stability_default != STABLE_NONE)
+	if(unlikely(test_stability_default != STABLE_NONE))
 	{ // --stable, --testing, --non-masked, --system
 		get_p();
 		StabilityDefault(p);
@@ -910,7 +935,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(test_stability_local != STABLE_NONE)
+	if(unlikely(test_stability_local != STABLE_NONE))
 	{ // --stable+, --testing+, --non-masked+, --system+
 		get_p();
 		StabilityLocal(p);
@@ -918,7 +943,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(test_stability_nonlocal != STABLE_NONE)
+	if(unlikely(test_stability_nonlocal != STABLE_NONE))
 	{ // --stable-, --testing-, --non-masked-, --system-
 		get_p();
 		StabilityNonlocal(p);
@@ -926,7 +951,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(test_instability != STABLE_NONE)
+	if(unlikely(test_instability != STABLE_NONE))
 	{ // --installed-unstable --installed-testing --installed-masked
 		get_p();
 		StabilityNonlocal(p);
@@ -934,7 +959,7 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(world || worldset ) { // --world, --world-all, --world-set
+	if(unlikely(world || worldset)) { // --world, --world-all, --world-set
 		get_p();
 		StabilityDefault(p);
 		if(world && !p->is_world_package()) {
@@ -952,35 +977,38 @@ PackageTest::match(PackageReader *pkg) const
 static void
 getlines(const char *varname, vector<string> &lines)
 {
-	EixRc &rc = get_eixrc(NULL);
+	EixRc &rc(get_eixrc(NULL));
 	lines.clear();
-	vector<string> name = split_string(rc[varname], true);
-	for(vector<string>::const_iterator it = name.begin(); it != name.end(); ++it)
+	vector<string> name;
+	split_string(name, rc[varname], true);
+	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it)
 		pushback_lines(it->c_str(), &lines, false, true);
 }
 
 Keywords::Redundant
 PackageTest::nowarn_keywords(const Package &p)
 {
-	static bool know_file = false;
+	static bool know_file(false);
 	static map<string, Keywords::Redundant> m;
 	map<string, Keywords::Redundant>::const_iterator i;
-	if(!know_file) {
+	if(unlikely(!know_file)) {
 		know_file=true; m.clear();
 		vector<string> lines;
 		getlines("KEYWORDS_NOWARN", lines);
-		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-			vector<string> s = split_string(*it);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
 			if(s.empty())
 				continue;
-			vector<string>::const_iterator et = s.begin();
+			vector<string>::const_iterator et(s.begin());
 			Keywords::Redundant r;
 			i = m.find(*et);
 			if(i == m.end())
 				r = Keywords::RED_ALL_KEYWORDS;
 			else
 				r = i->second;
-			for(++et; et != s.end(); ++et) {
+			for(++et; likely(et != s.end()); ++et) {
 				if(strcasecmp(et->c_str(), "in_keywords") == 0)
 					r &= ~Keywords::RED_IN_KEYWORDS;
 				else if(strcasecmp(et->c_str(), "no_change") == 0)
@@ -1010,25 +1038,27 @@ PackageTest::nowarn_keywords(const Package &p)
 Keywords::Redundant
 PackageTest::nowarn_mask(const Package &p)
 {
-	static bool know_file = false;
+	static bool know_file(false);
 	static map<string, Keywords::Redundant> m;
 	map<string, Keywords::Redundant>::const_iterator i;
-	if(!know_file) {
+	if(unlikely(!know_file)) {
 		know_file=true; m.clear();
 		vector<string> lines;
 		getlines("MASK_NOWARN", lines);
-		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-			vector<string> s = split_string(*it);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
 			if(s.empty())
 				continue;
-			vector<string>::const_iterator et = s.begin();
+			vector<string>::const_iterator et(s.begin());
 			Keywords::Redundant r;
 			i = m.find(*et);
 			if(i == m.end())
 				r = Keywords::RED_ALL_MASKSTUFF;
 			else
 				r = i->second;
-			for(++et; et != s.end(); ++et) {
+			for(++et; likely(et != s.end()); ++et) {
 				if(strcasecmp(et->c_str(), "in_mask") == 0)
 					r &= ~Keywords::RED_IN_MASK;
 				else if(strcasecmp(et->c_str(), "mask_no_change") == 0)
@@ -1039,18 +1069,20 @@ PackageTest::nowarn_mask(const Package &p)
 			m[s[0]] = r;
 		}
 		getlines("UNMASK_NOWARN", lines);
-		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-			vector<string> s = split_string(*it);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
 			if(s.empty())
 				continue;
-			vector<string>::const_iterator et = s.begin();
+			vector<string>::const_iterator et(s.begin());
 			i = m.find(*et);
 			Keywords::Redundant r;
 			if(i == m.end())
 				r = Keywords::RED_ALL_MASKSTUFF;
 			else
 				r = i->second;
-			for(++et; et != s.end(); ++et) {
+			for(++et; likely(et != s.end()); ++et) {
 				if(strcasecmp(et->c_str(), "in_unmask") == 0)
 					r &= ~Keywords::RED_IN_UNMASK;
 				else if(strcasecmp(et->c_str(), "unmask_no_change") == 0)
@@ -1070,25 +1102,27 @@ PackageTest::nowarn_mask(const Package &p)
 Keywords::Redundant
 PackageTest::nowarn_use(const Package &p)
 {
-	static bool know_file = false;
+	static bool know_file(false);
 	static map<string, Keywords::Redundant> m;
 	map<string, Keywords::Redundant>::const_iterator i;
-	if(!know_file) {
+	if(unlikely(!know_file)) {
 		know_file=true; m.clear();
 		vector<string> lines;
 		getlines("USE_NOWARN", lines);
-		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-			vector<string> s = split_string(*it);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
 			if(s.empty())
 				continue;
-			vector<string>::const_iterator et = s.begin();
+			vector<string>::const_iterator et(s.begin());
 			Keywords::Redundant r;
 			i = m.find(*et);
 			if(i == m.end())
 				r = Keywords::RED_ALL_USE;
 			else
 				r = i->second;
-			for(++et; et != s.end(); ++et) {
+			for(++et; likely(et != s.end()); ++et) {
 				if(strcasecmp(et->c_str(), "in_use") == 0)
 					r &= ~Keywords::RED_IN_USE;
 				else if(strcasecmp(et->c_str(), "double_use") == 0)
@@ -1106,25 +1140,27 @@ PackageTest::nowarn_use(const Package &p)
 Keywords::Redundant
 PackageTest::nowarn_cflags(const Package &p)
 {
-	static bool know_file = false;
+	static bool know_file(false);
 	static map<string, Keywords::Redundant> m;
 	map<string, Keywords::Redundant>::const_iterator i;
-	if(!know_file) {
+	if(unlikely(!know_file)) {
 		know_file=true; m.clear();
 		vector<string> lines;
 		getlines("CFLAGS_NOWARN", lines);
-		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-			vector<string> s = split_string(*it);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
 			if(s.empty())
 				continue;
-			vector<string>::const_iterator et = s.begin();
+			vector<string>::const_iterator et(s.begin());
 			Keywords::Redundant r;
 			i = m.find(*et);
 			if(i == m.end())
 				r = Keywords::RED_ALL_CFLAGS;
 			else
 				r = i->second;
-			for(++et; et != s.end(); ++et) {
+			for(++et; likely(et != s.end()); ++et) {
 				if(strcasecmp(et->c_str(), "in_cflags") == 0)
 					r &= ~Keywords::RED_IN_CFLAGS;
 				else if(strcasecmp(et->c_str(), "double_cflags") == 0)
@@ -1142,25 +1178,27 @@ PackageTest::nowarn_cflags(const Package &p)
 PackageTest::TestInstalled
 PackageTest::nowarn_installed(const Package &p)
 {
-	static bool know_file = false;
+	static bool know_file(false);
 	static map<string, TestInstalled> m;
 	map<string, TestInstalled>::const_iterator i;
-	if(!know_file) {
+	if(unlikely(!know_file)) {
 		know_file=true; m.clear();
 		vector<string> lines;
 		getlines("INSTALLED_NOWARN", lines);
-		for(vector<string>::const_iterator it = lines.begin(); it != lines.end(); ++it) {
-			vector<string> s = split_string(*it);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
 			if(s.empty())
 				continue;
-			vector<string>::const_iterator et = s.begin();
+			vector<string>::const_iterator et(s.begin());
 			Keywords::Redundant r;
 			i = m.find(*et);
 			if(i == m.end())
 				r = INS_SOME;
 			else
 				r = i->second;
-			for(++et; et != s.end(); ++et) {
+			for(++et; likely(et != s.end()); ++et) {
 				if(strcasecmp(et->c_str(), "nonexistent") == 0)
 					r = INS_NONE;
 				else if(strcasecmp(et->c_str(), "masked") == 0)

@@ -10,19 +10,23 @@
 #ifndef EIX__IO_H__
 #define EIX__IO_H__ 1
 
-#include <config.h>
-
+#include <database/types.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
-#include <database/types.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+
+#include <string>
+#include <vector>
 
 #include <cstdio>
 
+class DBHeader;
 class IUseSet;
 class Package;
-class Version;
 class PackageTree;
 class PortageSettings;
+class Version;
 
 #define MAGICNUMCHAR 0xFF
 
@@ -30,8 +34,8 @@ namespace io {
 	inline static UChar
 	readUChar(FILE *fp)
 	{
-		int c = fgetc(fp);
-		if(c == EOF) {
+		int c(fgetc(fp));
+		if(unlikely(c == EOF)) {
 			if (feof(fp))
 				throw ExBasic(_("error while reading from database: end of file"));
 			else
@@ -59,7 +63,7 @@ namespace io {
 		// The one-byte case is exceptional w.r.t. to leading 0:
 		if(c != MAGICNUMCHAR)
 			return c;
-		unsigned int toget = 1;
+		unsigned int toget(1);
 		while((c = readUChar(fp)) == MAGICNUMCHAR)
 			++toget;
 		m_Tp ret;
@@ -79,7 +83,7 @@ namespace io {
 	template<typename m_Tp> void
 	write(FILE *fp, m_Tp t)
 	{
-		UChar c = (t & 0xFF);
+		UChar c(t & 0xFF);
 		// Test the most common case explicitly to speed up:
 		if(t == m_Tp(c)) {
 			writeUChar(fp, c);
@@ -87,8 +91,8 @@ namespace io {
 				writeUChar(fp, 0);
 			return;
 		}
-		m_Tp mask = 0xFF;
-		unsigned int count = 0;
+		m_Tp mask(0xFF);
+		unsigned int count(0);
 		do {
 			writeUChar(fp, MAGICNUMCHAR);
 			mask <<= 8;
@@ -96,7 +100,7 @@ namespace io {
 			++count;
 		} while((t & mask) != t);
 		// We have count > 0 here
-		UChar d = (t >> (8*(count--))) & 0xFF;
+		UChar d((t >> (8*(count--))) & 0xFF);
 		writeUChar(fp, d);
 		if(d == MAGICNUMCHAR) // write leading 0 as flag:
 			writeUChar(fp, 0);

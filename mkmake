@@ -8,7 +8,8 @@ Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
-  -0  Do not pass --add-extra-cache=yes to ./configure
+  -E  Do not pass --enable-extra-cache to ./configure
+  -0  Do not pass --enable-separate-* to ./configure
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
   -4  Enable separate tools
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
@@ -62,13 +63,13 @@ SetCcache () {
 	CCACHE_DIR="${j}"
 }
 
-
 quiet=false
 earlystop=false
 keepenv=false
 not_full_use=false
 pedantic=false
 extra_cache=true
+separate_all=true
 unique=true
 use_chown=false
 jarg='-j3'
@@ -76,11 +77,12 @@ use_ccache=true
 configure_extra='--prefix=""'
 quickcheck=true
 OPTIND=1
-while getopts 'q01234nepuUsSbBrQCc:j:?hH' opt
+while getopts 'qE01234nepuUsSbBrQCc:j:?hH' opt
 do
 case "${opt}" in
 	q) quiet=true;;
-	0) extra_cache=false;;
+	E) extra_cache=false;;
+	0) separate_all=false;;
 	1) configure_extra="${configure_extra} --disable-separate-binaries";;
 	2) configure_extra="${configure_extra} --enable-separate-update";;
 	3) configure_extra="${configure_extra} --enable-separate-binaries";;
@@ -111,6 +113,7 @@ fi
 ${unique} && configure_extra="${configure_extra} --enable-unique"
 ${extra_cache} && configure_extra="${configure_extra} --enable-extra-cache"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
+${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
 
 ${quiet} && quietredirect='>/dev/null 2>&1' || quietredirect=''
 

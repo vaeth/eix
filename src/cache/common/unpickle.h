@@ -11,14 +11,12 @@
 #define EIX__UNPICKLE_H__ 1
 
 #include <config.h>
-
 #include <eixTk/inttypes.h>
 #include <eixTk/exceptions.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
+#include <map>
+#include <string>
+#include <vector>
 
 #define UINT32_PACK(out,in)   uint32_pack(out,in)
 #define UINT32_UNPACK(in,out) uint32_unpack(in,out)

@@ -10,28 +10,36 @@
 #include "sysutils.h"
 
 #include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
 
-#include <sys/types.h>
-#include <pwd.h>
-#include <grp.h>
-#include <sys/stat.h>
+#include <string>
+
 #include <clocale>
+#include <cstddef>
+#include <cstring>
+#include <ctime>
+#include <grp.h>
+#include <pwd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace std;
 
 static bool
 is_on_list (char *const *list, const char *member)
 {
-	while (*list) {
-		if (strcmp (*list, member) == 0)
+	while(likely(*list != NULL)) {
+		if(unlikely(strcmp(*list, member) == 0)) {
 			return true;
+		}
 		++list;
 	}
 	return false;
 }
 
 static bool
-check_user_in_grp_struct(struct group *grp)
+check_user_in_grp_struct(struct group *grp) throw(ExBasic)
 {
 	struct passwd *pwd;
 	if((pwd = getpwuid(getuid())) == 0)
@@ -42,7 +50,7 @@ check_user_in_grp_struct(struct group *grp)
 }
 
 bool
-user_in_group(const char *group_name)
+user_in_group(const char *group_name) throw(ExBasic)
 {
 	errno = 0;
 	struct group *grp = getgrnam(group_name);
@@ -54,8 +62,8 @@ user_in_group(const char *group_name)
 bool
 get_uid_of(const char *name, uid_t *u)
 {
-	struct passwd *pwd;
-	if((pwd = getpwnam(name)) == NULL)
+	struct passwd *pwd(getpwnam(name));
+	if(unlikely(pwd == NULL))
 		return false;
 	*u = pwd->pw_uid;
 	return true;
@@ -64,20 +72,19 @@ get_uid_of(const char *name, uid_t *u)
 bool
 get_gid_of(const char *name, gid_t *g)
 {
-	struct group *grp = getgrnam(name);
-	if(grp == NULL)
+	struct group *grp(getgrnam(name));
+	if(unlikely(grp == NULL))
 		return false;
 	*g = grp->gr_gid;
 	return true;
 }
 
-
 bool
 is_writable(const char *file) //throw(ExBasic)
 {
 	struct stat stat_buf;
-	if(stat(file, &stat_buf) != 0) {
-		//throw(ExBasic("file %s not found. ", file));
+	if(unlikely(stat(file, &stat_buf) != 0)) {
+		//throw ExBasic(_("file %s not found.")) % file;
 		return false;
 	}
 	gid_t g;
@@ -90,7 +97,7 @@ bool
 is_dir(const char *file)
 {
 	struct stat stat_buf;
-	if(stat(file, &stat_buf) != 0)
+	if(unlikely(stat(file, &stat_buf) != 0))
 		return false;
 	return S_ISDIR(stat_buf.st_mode);
 }
@@ -99,7 +106,7 @@ bool
 is_file(const char *file)
 {
 	struct stat stat_buf;
-	if(stat(file, &stat_buf) != 0)
+	if(unlikely(stat(file, &stat_buf) != 0))
 		return false;
 	return S_ISREG(stat_buf.st_mode);
 }
@@ -108,7 +115,7 @@ bool
 is_pure_file(const char *file)
 {
 	struct stat stat_buf;
-	if(lstat(file, &stat_buf) != 0)
+	if(unlikely(lstat(file, &stat_buf) != 0))
 		return false;
 	return S_ISREG(stat_buf.st_mode);
 }
@@ -118,7 +125,7 @@ time_t
 get_mtime(const char *file)
 {
 	struct stat stat_b;
-	if(stat(file, &stat_b))
+	if(unlikely(stat(file, &stat_b)))
 		return 0;
 	return stat_b.st_mtime;
 }
@@ -131,7 +138,7 @@ date_conv(const char *dateFormat, time_t mydate)
 	static char buffer[max_datelen];
 	string old_lcall = setlocale(LC_ALL, NULL);
 	setlocale(LC_ALL, "");
-	struct tm *loctime = localtime (&mydate);
+	struct tm *loctime(localtime (&mydate));
 	strftime(buffer, max_datelen, dateFormat, loctime);
 	setlocale(LC_ALL, old_lcall.c_str());
 	return buffer;

@@ -10,8 +10,9 @@
 #ifndef EIX__ASSIGNREADER_H__
 #define EIX__ASSIGNREADER_H__ 1
 
-#include <portage/keywords.h>
 #include <cache/base.h>
+
+#include <string>
 
 class Package;
 

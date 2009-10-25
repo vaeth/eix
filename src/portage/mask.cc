@@ -9,10 +9,19 @@
 
 #include "mask.h"
 #include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/unused.h>
+#include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/package.h>
 #include <portage/version.h>
-#include <portage/conf/portagesettings.h>
+
+#include <string>
+
+#include <cstddef>
+#include <cstring>
 
 using namespace std;
 
@@ -46,45 +55,46 @@ void
 Mask::parseMask(const char *str) throw(ExBasic)
 {
 	// determine comparison operator
-	for(unsigned int i = 0;
-		i < sizeof(operators) / sizeof(OperatorTable);
-		++i)
-	{
-		if(strncmp(str, operators[i].str, operators[i].len) == 0)
-		{
+	for(unsigned int i(0); ; ++i) {
+		unsigned char len = operators[i].len;
+		if(unlikely(len == 0)) {
+			// no operator
+			m_operator = operators[i].op;
+			break;
+		}
+		if(unlikely(strncmp(str, operators[i].str, len) == 0)) {
 			m_operator = operators[i].op;
 			// Skip the operator-part
 			str += strlen(operators[i].str);
+			if(unlikely(m_operator == maskIsSet)) {
+				m_category = SET_CATEGORY;
+				m_name = str;
+				return;
+			}
 			break;
 		}
 	}
-	if(m_operator == maskIsSet) {
-		m_category = SET_CATEGORY;
-		m_name = str;
-		return;
-	}
 
 	// Get the category
-	const char *p = str;
-	while(*p != '/')
-	{
-		if(*p == '\0') {
+	const char *p(str);
+	string::size_type l(0);
+	for(; likely(*p != '/'); ++l, ++p) {
+		if(unlikely(*p == '\0')) {
 			throw ExBasic(_("Can't read category."));
 		}
-		++p;
 	}
-	m_category = string(str, p - str);
+	m_category = string(str, l);
 
 	// Skip category-part
 	str = p + 1;
 
 	// If :... is appended, mark the slot part;
 	// if [...] is appended (possibly after :...), remove it
-	const char *end = strrchr(str, ':');
+	const char *end(strrchr(str, ':'));
 	m_test_slot = bool(end);
 	if(m_test_slot) {
-		const char *usestart = strrchr(end + 1, '[');
-		if(usestart && strchr(usestart + 1, ']')) {
+		const char *usestart(strrchr(end + 1, '['));
+		if((usestart != NULL) && strchr(usestart + 1, ']')) {
 			if(usestart > end)
 				m_slotname = string(end + 1, usestart - end - 1);
 			else
@@ -108,7 +118,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		// There must be a version somewhere
 		p = ExplodeAtom::get_start_of_version(str);
 
-		if((!p) || (end && (p >= end))) {
+		if(unlikely((p == NULL) || ((end != NULL) && (p >= end)))) {
 			throw ExBasic(_("You have a operator but we can't find a version-part."));
 		}
 
@@ -116,40 +126,31 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		str = p;
 
 		// Check for wildcard-version
-		const char *wildcard = strchr(str, '*');
-		if(wildcard && end && (wildcard >= end))
-			wildcard = NULL;
-
-		if(wildcard && wildcard[1] != '\0')
-		{
-			if(!(end && ((wildcard + 1) == end)))
+		const char *wildcard(strchr(str, '*'));
+		if(unlikely((unlikely(wildcard != NULL)) &&
+			(likely((end == NULL) || (wildcard <= end))))) {
+			if(unlikely((wildcard[1] != '\0') ||
+				unlikely((end != NULL) && (wildcard + 1 == end)))) {
 				throw ExBasic(_("A '*' is only valid at the end of a version-string."));
-		}
-
-		// Only the = operator can have a wildcard-version
-		if(m_operator != maskOpEqual && wildcard)
-		{
-			// A finer error-reporting
-			if(m_operator != maskOpRevisions) {
-				throw ExBasic(_("A wildcard is only valid with the = operator."));
 			}
-			else {
-				throw ExBasic(_(
+			// Only the = operator can have a wildcard-version
+			if(unlikely(m_operator != maskOpEqual)) {
+				// A finer error-reporting
+				if(m_operator != maskOpRevisions) {
+					throw ExBasic(_("A wildcard is only valid with the = operator."));
+				}
+				else {
+					throw ExBasic(_(
 						"A wildcard is only valid with the = operator.\n"
 						"Portage would also accept something like ~app-shells/bash-3*,\n"
-						"but behave just like ~app-shells/bash-3."
-					));
+						"but behave just like ~app-shells/bash-3."));
+				}
 			}
-		}
-
-		if(wildcard)
-		{
 			m_operator = maskOpGlob;
 			m_cached_full = string(str, wildcard);
 		}
-		else
-		{
-			if(end)
+		else {
+			if(end != NULL)
 				parseVersion(string(str, end - str));
 			else
 				parseVersion(str);
@@ -158,7 +159,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	else
 	{
 		// Everything else is the package-name
-		if(end)
+		if(end != NULL)
 			m_name = string(str, end - str);
 		else
 			m_name = str;
@@ -186,13 +187,13 @@ Mask::test(const ExtendedVersion *ev) const
 				const std::string& my_string(getFull());
 				const std::string& version_string(ev->getFull());
 
-				std::string::size_type my_start = my_string.find_first_not_of('0');
-				std::string::size_type version_start = version_string.find_first_not_of('0');
+				std::string::size_type my_start(my_string.find_first_not_of('0'));
+				std::string::size_type version_start(version_string.find_first_not_of('0'));
 
 				/* Otherwise, if a component has a leading zero, any trailing
 				 * zeroes in that component are stripped (if this makes the
 				 * component empty, proceed as if it were 0 instead), and the
-				 * components are compared using a stringwise comparison. 
+				 * components are compared using a stringwise comparison.
 				 */
 
 				if (my_start == std::string::npos)
@@ -205,7 +206,7 @@ Mask::test(const ExtendedVersion *ev) const
 				else if(!isdigit(version_string[version_start], localeC))
 					version_start -= 1;
 
-				const std::string::size_type total = my_string.size() - my_start;
+				const std::string::size_type total(my_string.size() - my_start);
 				return version_string.compare(version_start, total, my_string, my_start, total) == 0;
 			}
 
@@ -238,12 +239,8 @@ eix::ptr_list<Version>
 Mask::match(Package &pkg) const
 {
 	eix::ptr_list<Version> ret;
-	for(Package::iterator it = pkg.begin();
-		it != pkg.end();
-		++it)
-	{
-		if(test(*it))
-		{
+	for(Package::iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
+		if(test(*it)) {
 			ret.push_back(*it);
 		}
 	}
@@ -252,20 +249,20 @@ Mask::match(Package &pkg) const
 
 /** Sets the stability members of all version in package according to the mask.
  * @param pkg            package you want tested
- * @param ps             PortageSettings (for sets and world_system)
  * @param check          Redundancy checks which should apply */
 void
 Mask::checkMask(Package& pkg, Keywords::Redundant check)
 {
-	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i)
+	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		apply(*i, check);
+	}
 }
 
 void
-PKeywordMask::checkMask(Package &pkg, Keywords::Redundant check)
+PKeywordMask::checkMask(Package &pkg, Keywords::Redundant check ATTRIBUTE_UNUSED)
 {
 	UNUSED(check);
-	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i) {
+	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(test(*i)) {
 			i->modify_effective_keywords(keywords);
 		}
@@ -273,10 +270,10 @@ PKeywordMask::checkMask(Package &pkg, Keywords::Redundant check)
 }
 
 void
-SetMask::checkMask(Package& pkg, Keywords::Redundant check)
+SetMask::checkMask(Package& pkg, Keywords::Redundant check ATTRIBUTE_UNUSED)
 {
 	UNUSED(check);
-	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i) {
+	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(i->is_in_set(m_set)) // No need to check: Already in set
 			continue;
 		if(!test(*i))
@@ -290,9 +287,10 @@ Mask::ismatch(Package& pkg)
 {
 	if (pkg.name != m_name || pkg.category != m_category)
 		return false;
-	for(Package::iterator i = pkg.begin(); i != pkg.end(); ++i)
+	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(test(*i))
 			return true;
+	}
 	return false;
 }
 

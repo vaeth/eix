@@ -10,23 +10,28 @@
 #ifndef EIX__PACKAGETEST_H__
 #define EIX__PACKAGETEST_H__ 1
 
-#include <portage/vardbpkg.h>
-#include <portage/version.h>
-#include <portage/conf/portagesettings.h>
-
-#include <database/types.h>
 #include <database/package_reader.h>
-
 #include <eixTk/exceptions.h>
 #include <eixTk/inttypes.h>
-
+#include <portage/extendedversion.h>
+#include <portage/keywords.h>
+#include <portage/package.h>
+#include <portage/set_stability.h>
+#include <portage/version.h>
 #include <search/algorithms.h>
 #include <search/redundancy.h>
 
-#include <portage/set_stability.h>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
 
-class MatcherField;
+#include <cstddef>
+
 class MatcherAlgorithm;
+class MatcherField;
+class PortageSettings;
+class VarDbPkg;
 
 /** Test a package if it matches some criteria. */
 class PackageTest {

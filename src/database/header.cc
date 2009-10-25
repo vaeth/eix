@@ -11,6 +11,13 @@
 
 #include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <portage/version.h>
+
+#include <set>
+
+#include <cstddef>
 
 using namespace std;
 
@@ -46,7 +53,7 @@ DBHeader::addOverlay(const OverlayIdent& overlay)
 
 bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
 {
-	if(minimal > countOverlays())
+	if(unlikely(minimal > countOverlays()))
 		return false;
 	if(*name == '\0') {
 		if(countOverlays() == 1)
@@ -55,7 +62,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 		return true;
 	}
 	if(testmode & OVTEST_LABEL) {
-		for(Version::Overlay i = minimal; i != countOverlays(); ++i) {
+		for(Version::Overlay i(minimal); likely(i != countOverlays()); ++i) {
 			if(getOverlay(i).label == name) {
 				*num = i;
 				return true;
@@ -64,14 +71,14 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 	}
 	if(testmode & OVTEST_PATH) {
 		if(minimal == 0) {
-			if(portdir) {
+			if(portdir != NULL) {
 				if(same_filenames(name, portdir, true)) {
 					*num = 0;
 					return true;
 				}
 			}
 		}
-		for(Version::Overlay i = minimal; i != countOverlays(); ++i) {
+		for(Version::Overlay i(minimal); i != countOverlays(); ++i) {
 			if(same_filenames(name, getOverlay(i).path.c_str(), true)) {
 				if((i == 0) && ! (testmode & OVTEST_SAVED_PORTDIR))
 					continue;
@@ -103,7 +110,8 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 void
 DBHeader::get_overlay_vector(set<Version::Overlay> *overlayset, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
 {
-	Version::Overlay curr;
-	for(curr = minimal; find_overlay(&curr, name, portdir, curr, testmode); ++curr)
+	for(Version::Overlay curr(minimal);
+		find_overlay(&curr, name, portdir, curr, testmode); ++curr) {
 		overlayset->insert(curr);
+	}
 }

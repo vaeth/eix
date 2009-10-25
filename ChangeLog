@@ -1,5 +1,39 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.19.0
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- This is a major rewrite (although hopefully not visible to the user;
+	  perhaps it is slightly faster which however is hardly visible, since
+	  the main bulk is the I/O governed by the kernel).
+	     Visible changes:
+	- Fix name output on help-screens.
+	     The rest are internal changes of the code:
+	- Change of #include style: Do not rely on implicit includes;
+	  include in the file exactly those things needed, ignoring that
+	  include files might include other files.
+	  This slows down compilation but is cleaner w.r.t. dependencies.
+	- Use likely()/unlikely() inflationary to hopefully improve
+	  branch prediction. If you provide code make sure that
+	  likely()/unlikely() is only used with Boolean arguments
+	  (although gcc supports also int arguments, but do not rely on this).
+	- Make use of attribute unused/noreturn if supported.
+	- Other style changes: Prefer constructor argument over assignment,
+	  because it *may* be faster on some systems.
+	- Use clean comparison with NULL instead of Boolean test.
+	  This might be slightly slower on badly optimizing compilers but is
+	  cleaner and can be used with likely()/unlikely().
+	     "Hacks" for speed increase:
+	- Pass return by reference in split_string(). Actually, split_string()
+	  (and similarly resolve_plus_minus()) do not clean() the results now
+	  which is not only faster by itself but also sometimes avoids extra
+	  calls of push_backs() for the result.
+	- Make list of categories a std::map; this also avoids the ugly
+	  fast_access()-hacks which Emil hates so much. The disadvantage is
+	  that now the category names have to be passed separately, since it
+	  makes no sense to store them redundantly twice.
+	- Use switch()es instead of subsequent tests in eixrc.cc
+	- Add only finished packages to a Category, not erasing afterwards.
+
 *eix-0.18.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add ./configure --with-remote-file=STR

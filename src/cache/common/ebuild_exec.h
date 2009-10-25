@@ -10,10 +10,10 @@
 #ifndef EIX__EBUILD_EXEC_H__
 #define EIX__EBUILD_EXEC_H__ 1
 
-#include <eixTk/sysutils.h>
-
 #include <string>
 #include <vector>
+
+#include <sys/types.h>
 
 class BasicCache;
 class Package;

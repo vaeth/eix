@@ -8,15 +8,28 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "ebuild_exec.h"
-
-#include <portage/conf/portagesettings.h>
 #include <cache/base.h>
-#include <eixrc/global.h>
 #include <config.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/sysutils.h>
+#include <eixrc/eixrc.h>
+#include <eixrc/global.h>
+
+#include <map>
+#include <string>
+#include <vector>
 
 #include <csignal>
-#include <sys/wait.h>
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 extern char **environ;
 
@@ -74,15 +87,15 @@ EbuildExec::remove_handler()
 bool
 EbuildExec::make_tempfile()
 {
-	char *temp = static_cast<char *>(malloc(256 * sizeof(char)));
-	if(!temp)
+	char *temp(static_cast<char *>(malloc(256 * sizeof(char))));
+	if(unlikely(temp == NULL))
 		return false;
 	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");
-	int fd = mkstemp(temp);
+	int fd(mkstemp(temp));
 	if(fd == -1)
 		return false;
 	calc_settings();
-	if(set_uid || set_gid) {
+	if((set_uid != 0) || (set_gid != 0)) {
 		if(fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)))) {
 //			base->m_error_callback(eix::format(_("Can't change ownership of tempfile %s")) % temp);
 		}
@@ -97,9 +110,9 @@ EbuildExec::make_tempfile()
 void
 EbuildExec::delete_cachefile()
 {
-	if(!cache_defined)
+	if(unlikely(!cache_defined))
 		return;
-	const char *c = cachefile.c_str();
+	const char *c(cachefile.c_str());
 	if(is_pure_file(c)) {
 		if(unlink(c) < 0)
 			base->m_error_callback(eix::format(_("Can't unlink tempfile %s")) % c);
@@ -128,9 +141,9 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	if(!use_ebuild_sh) {
 		if(!(base->portagesettings->export_portdir_overlay))
 			return;
-		for(char **e = environ; *e; ++e) {
-			const char *s = strchr(*e, '=');
-			if(s)
+		for(char **e(environ); likely(*e != NULL); ++e) {
+			const char *s(strchr(*e, '='));
+			if(likely(s != NULL))
 				env[string(*e, s - (*e))] = s + 1;
 		}
 		env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
@@ -140,15 +153,15 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	{
 		base->env_add_package(env, package, version, dir, name);
 		env["dbkey"] = cachefile;
-		if(!portage_rootpath.empty())
+		if(likely(!portage_rootpath.empty()))
 			env["PORTAGE_ROOTPATH"] = portage_rootpath;
-		if(!portage_bin_path.empty())
+		if(likely(!portage_bin_path.empty()))
 			env["PORTAGE_BIN_PATH"] = portage_bin_path;
 	}
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
 	c_env = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
-	vector<string>::size_type i = 0;
+	vector<string>::size_type i(0);
 	if(!env.empty()) {
 		envstrings = new vector<string>(env.size());
 		for(map<string, string>::const_iterator it = env.begin();
@@ -258,21 +271,21 @@ string EbuildExec::portage_rootpath, EbuildExec::portage_bin_path;
 void
 EbuildExec::calc_settings()
 {
-	if(know_settings)
+	if(likely(know_settings))
 		return;
 	know_settings = set_uid = set_gid = true;
-	EixRc &eix = get_eixrc(NULL);
-	const string &user = eix["EBUILD_USER"];
+	EixRc &eix(get_eixrc(NULL));
+	const string &user(eix["EBUILD_USER"]);
 	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
-		uid_t i = eix.getInteger("EBUILD_UID");
+		uid_t i(eix.getInteger("EBUILD_UID"));
 		if(i > 0)
 			uid = i;
 		else
 			set_uid = false;
 	}
-	const string &group = eix["EBUILD_GROUP"];
-	if(group.empty() || !get_uid_of(group.c_str(), &gid)) {
-		gid_t i = eix.getInteger("EBUILD_GID");
+	const string &group(eix["EBUILD_GROUP"]);
+	if(group.empty() || (get_uid_of(group.c_str(), &gid) == 0)) {
+		gid_t i(eix.getInteger("EBUILD_GID"));
 		if(i > 0)
 			gid = i;
 		else

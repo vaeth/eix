@@ -10,16 +10,18 @@
 #ifndef EIX__PACKAGE_READER_H__
 #define EIX__PACKAGE_READER_H__ 1
 
-#include <config.h>
 #include <database/types.h>
 #include <database/header.h>
-// No forward decl of Package because gcc-3.3.6 will scream bloody murder:
 #include <portage/package.h>
 
-#include <cstdio>
-#include <iostream>
 #include <memory>
+#include <string>
 
+#include <cstddef>
+#include <cstdio>
+#include <sys/types.h>
+
+class DBHeader;
 class PortageSettings;
 
 /// Forward-iterate for packages stored in the cachefile.
@@ -44,7 +46,8 @@ class PackageReader {
 		/// Get pointer to the package.
 		// It's possible that some attributes of the package are not yet read
 		// from the database.
-		Package *get() const;
+		Package *get() const
+		{ return m_pkg.get(); }
 
 		/// Skip the current package.
 		// The current package is deleted and the file pointer is moved to the
@@ -53,12 +56,15 @@ class PackageReader {
 
 		/// Release the package.
 		// Complete the current package, and release it.
-		Package *release();
+		Package *release()
+		{
+			read();
+			return m_pkg.release();
+		}
 
 		/// Return true if there is a next package.
 		// Read the package-header.
 		bool next();
-
 
 		/// Go into the next (or first) category part.
 		// @return false if there are none more.
@@ -87,18 +93,5 @@ class PackageReader {
 		PortageSettings  *m_portagesettings;
 	private:
 };
-
-inline Package *
-PackageReader::get() const
-{
-	return m_pkg.get();
-}
-
-inline Package *
-PackageReader::release()
-{
-	read();
-	return m_pkg.release();
-}
 
 #endif /* EIX__PACKAGE_READER_H__ */

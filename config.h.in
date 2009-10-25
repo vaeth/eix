@@ -28,6 +28,12 @@
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
 
+/* Define to 1 if __attribute__ ((__noreturn__)) can be used */
+#undef HAVE_ATTRIBUTE_NORETURN
+
+/* Define to 1 if __attribute__ ((__unused__)) can be used */
+#undef HAVE_ATTRIBUTE_UNUSED
+
 /* Define to 1 if you have the `canonicalize_file_name' function. */
 #undef HAVE_CANONICALIZE_FILE_NAME
 
@@ -135,6 +141,9 @@
 
 /* Define to 1 if you have the `vfork' function. */
 #undef HAVE_VFORK
+
+/* Define to 1 if __builtin_expect can be used */
+#undef HAVE___BUILTIN_EXPECT
 
 /* Default Levenshtein distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT

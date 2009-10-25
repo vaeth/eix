@@ -9,10 +9,17 @@
 
 #include "assign_reader.h"
 
+#include <cache/base.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
 #include <portage/package.h>
-#include <config.h>
 
 #include <fstream>
+#include <map>
+#include <string>
+
+#include <cstring>
 
 using namespace std;
 
@@ -24,9 +31,8 @@ get_map_from_cache(const char *file, map<string,string> &x)
 	if(!is.is_open())
 		return -1;
 
-	while(getline(is, lbuf))
-	{
-		string::size_type p = lbuf.find_first_of('=');
+	while(likely(getline(is, lbuf) != 0)) {
+		string::size_type p(lbuf.find('='));
 		if(p == string::npos)
 			continue;
 		x[lbuf.substr(0, p)] = lbuf.substr(p + 1);
@@ -41,7 +47,7 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 {
 	map<string,string> cf;
 
-	if(get_map_from_cache(filename.c_str(), cf) < 0) {
+	if(unlikely(get_map_from_cache(filename.c_str(), cf) < 0)) {
 		error_callback(eix::format(_("Can't read cache file %s: "))
 			% filename % strerror(errno));
 		return;
@@ -59,7 +65,7 @@ assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback e
 {
 	map<string,string> cf;
 
-	if(get_map_from_cache(filename, cf) < 0) {
+	if(unlikely(get_map_from_cache(filename, cf) < 0)) {
 		error_callback(eix::format(_("Can't read cache file %s: "))
 			% filename % strerror(errno));
 		return;

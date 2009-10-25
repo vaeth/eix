@@ -9,6 +9,9 @@
 
 #include "algorithms.h"
 
+#include <map>
+#include <string>
+
 using namespace std;
 
 map<string, unsigned int> FuzzyAlgorithm::levenshtein_map;

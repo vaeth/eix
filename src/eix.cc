@@ -7,28 +7,45 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <config.h>
-#include <main/main.h>
-
-#include <eixrc/global.h>
-
-#include <output/print-xml.h>
-#include <output/formatstring.h>
-#include <output/formatstring-print.h>
-
-#include <portage/conf/cascadingprofile.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/set_stability.h>
-
-#include <eixTk/argsreader.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/utils.h>
-#include <eixTk/filenames.h>
-
 #include "cli.h"
-
+#include <config.h>
 #include <database/header.h>
 #include <database/package_reader.h>
+#include <eixTk/argsreader.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/filenames.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/ptr_list.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/utils.h>
+#include <eixrc/eixrc.h>
+#include <eixrc/global.h>
+#include <main/main.h>
+#include <output/formatstring-print.h>
+#include <output/formatstring.h>
+#include <output/print-xml.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/keywords.h>
+#include <portage/mask.h>
+#include <portage/package.h>
+#include <portage/set_stability.h>
+#include <portage/vardbpkg.h>
+#include <portage/version.h>
+#include <search/algorithms.h>
+#include <search/dbmatchcriteria.h>
+
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
@@ -170,7 +187,7 @@ dump_help(int exit_code)
 			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n"),
-		EIX_CACHEFILE, program_name.c_str());
+		program_name.c_str(), EIX_CACHEFILE);
 
 	if(exit_code != -1) {
 		exit(exit_code);
@@ -178,10 +195,10 @@ dump_help(int exit_code)
 }
 
 static const char *format_normal, *format_verbose, *format_compact;
-static const char *eix_cachefile = NULL;
-static const char *var_to_print = NULL;
-static const char *overlaypath_to_print = NULL;
-static const char *overlaylabel_to_print = NULL;
+static const char *eix_cachefile(NULL);
+static const char *var_to_print(NULL);
+static const char *overlaypath_to_print(NULL);
+static const char *overlaylabel_to_print(NULL);
 
 enum OverlayMode
 {
@@ -356,10 +373,10 @@ static struct Option long_options[] = {
 static void
 setup_defaults()
 {
-	EixRc &rc = get_eixrc(NULL);
+	EixRc &rc(get_eixrc(NULL));
 
 	// Setup defaults
-	(void) memset(&rc_options, 0, sizeof(rc_options));
+	memset(&rc_options, 0, sizeof(rc_options));
 
 	rc_options.quick           = rc.getBool("QUICKMODE");
 	rc_options.be_quiet        = rc.getBool("QUIETMODE");
@@ -368,13 +385,13 @@ setup_defaults()
 	format_verbose             = rc["FORMAT_VERBOSE"].c_str();
 	format_compact             = rc["FORMAT_COMPACT"].c_str();
 	format_normal              = rc["FORMAT"].c_str();
-	string s                   = rc["DEFAULT_FORMAT"];
-	if((strcasecmp(s.c_str(), "FORMAT_VERBOSE") == 0) ||
-	   (strcasecmp(s.c_str(), "verbose") == 0)) {
+	string s(rc["DEFAULT_FORMAT"]);
+	if(unlikely(strcasecmp(s.c_str(), "FORMAT_VERBOSE") == 0) ||
+		unlikely(strcasecmp(s.c_str(), "verbose") == 0)) {
 		rc_options.verbose_output = true;
 	}
-	else if((strcasecmp(s.c_str(), "FORMAT_COMPACT") == 0) ||
-	   (strcasecmp(s.c_str(), "compact") == 0)) {
+	else if(unlikely(strcasecmp(s.c_str(), "FORMAT_COMPACT") == 0) ||
+		unlikely(strcasecmp(s.c_str(), "compact") == 0)) {
 		rc_options.compact_output = true;
 	}
 	format.setupResources(rc);
@@ -383,15 +400,15 @@ setup_defaults()
 	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
 	format.recommend_mode      = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
-	string overlay = rc["OVERLAYS_LIST"];
+	string overlay(rc["OVERLAYS_LIST"]);
 	if(overlay.find("if") != string::npos)
 		overlay_mode = mode_list_all_if_any;
-	else if(overlay.find("number") != string::npos)
+	else if(likely(overlay.find("number") != string::npos))
 		overlay_mode = mode_list_used_renumbered;
-	else if(overlay.find("used") != string::npos)
+	else if(likely(overlay.find("used") != string::npos))
 		overlay_mode = mode_list_used;
-	else if((overlay.find("no") != string::npos) ||
-		(overlay.find("false") != string::npos))
+	else if(unlikely(overlay.find("no") != string::npos) ||
+		unlikely(overlay.find("false") != string::npos))
 		overlay_mode = mode_list_none;
 	else
 		overlay_mode = mode_list_all;
@@ -400,9 +417,9 @@ setup_defaults()
 static bool
 print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_used)
 {
-	bool printed_overlay = false;
-	for(Version::Overlay i = (overlay_mode == mode_list_all) ? 0 : 1;
-		i != header.countOverlays(); ++i) {
+	bool printed_overlay(false);
+	for(Version::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
+		likely(i != header.countOverlays()); ++i) {
 		if(i && overlay_used) {
 			if(!((*overlay_used)[i-1]))
 				continue;
@@ -419,11 +436,11 @@ set_format()
 {
 	string varname;
 	try {
-		if(rc_options.verbose_output) {
+		if(unlikely(rc_options.verbose_output)) {
 			varname = "FORMAT_VERBOSE";
 			format.setFormat(format_verbose);
 		}
-		else if(rc_options.compact_output) {
+		else if(unlikely(rc_options.compact_output)) {
 			varname = "FORMAT_COMPACT";
 			format.setFormat(format_compact);
 		}
@@ -442,7 +459,7 @@ set_format()
 int
 run_eix(int argc, char** argv)
 {
-	EixRc &eixrc = get_eixrc(EIX_VARS_PREFIX);
+	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
 
 	// Setup defaults for all global variables like rc_options
 	setup_defaults();
@@ -450,47 +467,47 @@ run_eix(int argc, char** argv)
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, long_options);
 
-	if(var_to_print) {
+	if(unlikely(var_to_print != NULL)) {
 		eixrc.print_var(var_to_print);
 		exit(0);
 	}
 
 	string cachefile;
-	if(eix_cachefile)
+	if(unlikely(eix_cachefile != NULL))
 		cachefile = eix_cachefile;
 	else
 		cachefile = eixrc["EIX_CACHEFILE"];
 
 	// Only check if the versions uses the current layout
-	if(rc_options.is_current) {
+	if(unlikely(rc_options.is_current)) {
 		return is_current_dbversion(cachefile.c_str());
 	}
 
 	// Dump eixrc-stuff
-	if(rc_options.dump_eixrc || rc_options.dump_defaults) {
+	if(unlikely(rc_options.dump_eixrc || rc_options.dump_defaults)) {
 		eixrc.dumpDefaults(stdout, rc_options.dump_defaults);
 		exit(0);
 	}
 
 	// Show help screen
-	if(rc_options.show_help) {
+	if(unlikely(rc_options.show_help)) {
 		dump_help(0);
 	}
 
 	// Show version
-	if(rc_options.show_version) {
+	if(unlikely(rc_options.show_version)) {
 		dump_version(0);
 	}
 
 	// Honour a STFU
-	if(rc_options.be_quiet) {
+	if(unlikely(rc_options.be_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			exit(1);
 		}
 	}
 
-	if(rc_options.only_names) {
+	if(unlikely(rc_options.only_names)) {
 		rc_options.pure_packages = true;
 		format.setFormat("<category>/<name>");
 		format.magic_newline = true;
@@ -500,24 +517,24 @@ run_eix(int argc, char** argv)
 
 	format.setupColors();
 
-	if(rc_options.pure_packages) {
+	if(unlikely(rc_options.pure_packages)) {
 		overlay_mode = mode_list_none;
 	}
 
 	PortageSettings portagesettings(eixrc, true, false);
 
-	string var_db_pkg = eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG;
+	string var_db_pkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG);
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,
 		eixrc.getBool("RESTRICT_INSTALLED"),
 		eixrc.getBool("CARE_RESTRICT_INSTALLED"));
 	varpkg_db.check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
-	MarkedList *marked_list = NULL;
+	MarkedList *marked_list(NULL);
 	Matchatom *query;
 
 	/* Open database file */
-	FILE *fp = fopen(cachefile.c_str(), "rb");
-	if(!fp) {
+	FILE *fp(fopen(cachefile.c_str(), "rb"));
+	if(unlikely(fp == NULL)) {
 		cerr << eix::format(_(
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
@@ -527,7 +544,7 @@ run_eix(int argc, char** argv)
 
 	DBHeader header;
 
-	if(!io::read_header(fp, header)) {
+	if(unlikely(!io::read_header(fp, header))) {
 		fclose(fp);
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
@@ -539,41 +556,42 @@ run_eix(int argc, char** argv)
 	}
 	portagesettings.store_world_sets(&(header.world_sets));
 
-	if(rc_options.hash_iuse) {
+	if(unlikely(rc_options.hash_iuse)) {
 		fclose(fp);
 		header.iuse_hash.output();
 		exit(0);
 	}
-	if(rc_options.hash_keywords) {
+	if(unlikely(rc_options.hash_keywords)) {
 		fclose(fp);
 		header.keywords_hash.output();
 		exit(0);
 	}
-	if(rc_options.hash_slot) {
+	if(unlikely(rc_options.hash_slot)) {
 		fclose(fp);
 		header.slot_hash.output();
 		exit(0);
 	}
-	if(rc_options.hash_provide) {
+	if(unlikely(rc_options.hash_provide)) {
 		fclose(fp);
 		header.provide_hash.output();
 		exit(0);
 	}
-	if(rc_options.hash_license) {
+	if(unlikely(rc_options.hash_license)) {
 		fclose(fp);
 		header.license_hash.output();
 		exit(0);
 	}
-	if(rc_options.world_sets) {
+	if(unlikely(rc_options.world_sets)) {
 		fclose(fp);
-		const vector<string> *p = portagesettings.get_world_sets();
-		for(vector<string>::const_iterator it = p->begin(); it != p->end(); ++it)
+		const vector<string> *p(portagesettings.get_world_sets());
+		for(vector<string>::const_iterator it(p->begin());
+			likely(it != p->end()); ++it)
 			cout << *it << "\n";
 		exit(0);
 	}
 
-	LocalMode local_mode = LOCALMODE_DEFAULT;
-	if(!eixrc.getBool("LOCAL_PORTAGE_CONFIG")) {
+	LocalMode local_mode(LOCALMODE_DEFAULT);
+	if(unlikely(!eixrc.getBool("LOCAL_PORTAGE_CONFIG"))) {
 		rc_options.ignore_etc_portage = true;
 		local_mode = LOCALMODE_NONLOCAL;
 	}
@@ -592,92 +610,93 @@ run_eix(int argc, char** argv)
 	eix::ptr_list<Package> all_packages;
 
 	PackageReader reader(fp, header, &portagesettings);
-	if(overlaypath_to_print || overlaylabel_to_print) {
+	if(unlikely((overlaypath_to_print != NULL) || (overlaylabel_to_print != NULL))) {
 		fclose(fp);
 		Version::Overlay num;
-		const char *osearch = overlaypath_to_print;
-		bool print_path = osearch;
+		const char *osearch(overlaypath_to_print);
+		bool print_path(osearch != NULL);
 		if(!print_path)
 			osearch = overlaylabel_to_print;
-		if(!header.find_overlay(&num, osearch, NULL, 0, DBHeader::OVTEST_ALL))
+		if(unlikely(!header.find_overlay(&num, osearch, NULL, 0, DBHeader::OVTEST_ALL)))
 			exit(1);
-		const OverlayIdent& overlay = header.getOverlay(num);
+		const OverlayIdent& overlay(header.getOverlay(num));
 		if(print_path)
 			cout << overlay.path;
 		else
 			cout << overlay.label;
 		exit(0);
 	}
-	while(reader.next())
-	{
-		if(query->match(&reader))
-		{
-			Package *release=reader.release();
+	while(likely(reader.next())) {
+		if(unlikely(query->match(&reader))) {
+			Package *release(reader.release());
 			matches.push_back(release);
 			if(rc_options.test_unused)
 				all_packages.push_back(release);
 		}
-		else
-		{
-			if(rc_options.test_unused)
+		else {
+			if(unlikely(rc_options.test_unused))
 				all_packages.push_back(reader.release());
 			else
 				reader.skip();
 		}
 	}
 	fclose(fp);
-	if(rc_options.test_unused)
-	{
-		bool empty = eixrc.getBool("TEST_FOR_EMPTY");
+	if(unlikely(rc_options.test_unused)) {
+		bool empty(eixrc.getBool("TEST_FOR_EMPTY"));
 		cout << "\n";
-		if(eixrc.getBool("TEST_KEYWORDS"))
+		if(likely(eixrc.getBool("TEST_KEYWORDS"))) {
 			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE,
 				eixrc["KEYWORDS_NONEXISTENT"],
 				all_packages);
-		if(eixrc.getBool("TEST_MASK"))
+		}
+		if(likely(eixrc.getBool("TEST_MASK"))) {
 			print_unused(eixrc.m_eprefixconf + USER_MASK_FILE,
 				eixrc["MASK_NONEXISTENT"],
 				all_packages);
-		if(eixrc.getBool("TEST_UNMASK"))
+		}
+		if(likely(eixrc.getBool("TEST_UNMASK"))) {
 			print_unused(eixrc.m_eprefixconf + USER_UNMASK_FILE,
 				eixrc["UNMASK_NONEXISTENT"],
 				all_packages);
-		if(eixrc.getBool("TEST_USE"))
+		}
+		if(likely(eixrc.getBool("TEST_USE"))) {
 			print_unused(eixrc.m_eprefixconf + USER_USE_FILE,
 				eixrc["USE_NONEXISTENT"],
 				all_packages, empty);
-		if(eixrc.getBool("TEST_CFLAGS"))
+		}
+		if(likely(eixrc.getBool("TEST_CFLAGS"))) {
 			print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,
 				eixrc["CFLAGS_NONEXISTENT"],
 				all_packages, empty);
-		if(eixrc.getBool("TEST_REMOVED"))
+		}
+		if(likely(eixrc.getBool("TEST_REMOVED"))) {
 			print_removed(var_db_pkg, eixrc["INSTALLED_NONEXISTENT"], all_packages);
+		}
 	}
 
 	/* Sort the found matches by rating */
-	if(FuzzyAlgorithm::sort_by_levenshtein()) {
+	if(unlikely(FuzzyAlgorithm::sort_by_levenshtein())) {
 		matches.sort(FuzzyAlgorithm::compare);
 	}
 
 	format.set_marked_list(marked_list);
 	if(overlay_mode != mode_list_used_renumbered)
 		format.set_overlay_translations(NULL);
-	if(header.countOverlays())
-	{
+	if(header.countOverlays() != 0) {
 		format.clear_virtual(header.countOverlays());
-		for(Version::Overlay i = 1; i != header.countOverlays(); ++i)
+		for(Version::Overlay i(1); likely(i != header.countOverlays()); ++i)
 			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
 	}
-	bool need_overlay_table = false;
+	bool need_overlay_table(false);
 	vector<bool> overlay_used(header.countOverlays(), false);
 	format.set_overlay_used(&overlay_used, &need_overlay_table);
 	eix::ptr_list<Package>::size_type count;
-	bool only_printed = eixrc.getBool("COUNT_ONLY_PRINTED");
+	bool only_printed(eixrc.getBool("COUNT_ONLY_PRINTED"));
 	if(only_printed)
 		count = 0;
 	else
 		count = matches.size();
-	PrintXml *print_xml = NULL;
+	PrintXml *print_xml(NULL);
 	if(rc_options.xml) {
 		overlay_mode = mode_list_none;
 		rc_options.pure_packages = true;
@@ -686,23 +705,23 @@ run_eix(int argc, char** argv)
 			portagesettings["PORTDIR"]);
 		print_xml->start();
 	}
-	for(eix::ptr_list<Package>::iterator it = matches.begin();
-		it != matches.end(); ++it) {
+	for(eix::ptr_list<Package>::iterator it(matches.begin());
+		likely(it != matches.end()); ++it) {
 
 		stability.set_stability(**it);
 
-		if(rc_options.xml) {
+		if(unlikely(rc_options.xml)) {
 			print_xml->package(*it);
 			continue;
 		}
 
-		if(it->largest_overlay) {
+		if(it->largest_overlay != 0) {
 			need_overlay_table = true;
 			if(overlay_mode <= mode_list_used) {
-				for(Package::iterator ver = it->begin();
-					ver != it->end(); ++ver) {
-					Version::Overlay key = ver->overlay_key;
-					if(key>0)
+				for(Package::iterator ver(it->begin());
+					likely(ver != it->end()); ++ver) {
+					Version::Overlay key(ver->overlay_key);
+					if(key > 0)
 						overlay_used[key - 1] = true;
 				}
 			}
@@ -721,44 +740,45 @@ run_eix(int argc, char** argv)
 	}
 	vector<Version::Overlay> overlay_num(header.countOverlays(), 0);
 	if(overlay_mode == mode_list_used_renumbered) {
-		Version::Overlay i = 1;
-		vector<bool>::iterator  uit = overlay_used.begin();
-		vector<Version::Overlay>::iterator nit = overlay_num.begin();
-		for(; uit != overlay_used.end(); ++uit, ++nit)
-			if(*uit == true)
+		Version::Overlay i(1);
+		vector<bool>::iterator uit(overlay_used.begin());
+		vector<Version::Overlay>::iterator nit(overlay_num.begin());
+		for(; likely(uit != overlay_used.end()); ++uit, ++nit) {
+			if(*uit == true) {
 				*nit = i++;
+			}
+		}
 		format.set_overlay_translations(&overlay_num);
-		for(eix::ptr_list<Package>::iterator it = matches.begin();
-			it != matches.end();
-			++it) {
+		for(eix::ptr_list<Package>::iterator it(matches.begin());
+			likely(it != matches.end()); ++it) {
 			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				if(only_printed)
 					++count;
 			}
 		}
 	}
-	bool printed_overlay = false;
+	bool printed_overlay(false);
 	if(need_overlay_table)
 	{
 		printed_overlay = print_overlay_table(format, header,
 			(overlay_mode <= mode_list_used)? &overlay_used : NULL);
 	}
-	if(print_xml) {
+	if(unlikely(print_xml != NULL)) {
 		print_xml->finish();
 		delete print_xml;
 	}
 
-	short print_count_always = eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never");
-	if((print_count_always >= 0) && !rc_options.pure_packages)
+	short print_count_always(eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
+	if(likely((print_count_always >= 0) && !rc_options.pure_packages))
 	{
-		if(!count) {
+		if(unlikely(count == 0)) {
 			if(print_count_always)
 				cout << eix::format(_("Found %s matches.\n"))
 					% eix::ptr_list<Package>::size_type(0);
 			else
 				cout << _("No matches found.\n");
 		}
-		else if(count == 1) {
+		else if(unlikely(count == 1)) {
 			if(print_count_always) {
 				if(printed_overlay)
 					cout << "\n";
@@ -785,16 +805,15 @@ run_eix(int argc, char** argv)
 static int
 is_current_dbversion(const char *filename) {
 	DBHeader header;
-	FILE *fp = fopen(filename, "rb");
-	if(!fp)
-	{
+	FILE *fp(fopen(filename, "rb"));
+	if(unlikely(fp == NULL)) {
 		cerr << eix::format(_(
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
 			% filename << endl;
 		return 1;
 	}
-	bool is_current = io::read_header(fp, header);
+	bool is_current(io::read_header(fp, header));
 	fclose(fp);
 
 	return (is_current ? 0 : 1);
@@ -803,8 +822,10 @@ is_current_dbversion(const char *filename) {
 static void
 print_vector(const vector<string> &vec)
 {
-	for(vector<string>::const_iterator it=vec.begin(); it != vec.end(); ++it)
+	for(vector<string>::const_iterator it(vec.begin());
+		likely(it != vec.end()); ++it) {
 		cout << *it << "\n";
+	}
 	cout << "--\n\n";
 }
 
@@ -814,39 +835,37 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 	vector<string> unused;
 	vector<string> lines;
 	set<string> excludes;
-	bool know_excludes = false;
-	pushback_lines(filename.c_str(), &lines, false, true);
+	bool know_excludes(false);
+	pushback_lines(filename.c_str(), &lines, true, true);
 	for(vector<string>::iterator i(lines.begin());
-		i != lines.end(); ++i) {
-		if(i->empty())
-			continue;
-		if(!know_excludes) {
+		likely(i != lines.end()); ++i) {
+		if(unlikely(!know_excludes)) {
 			know_excludes = true;
-			vector<string> excludelist = split_string(excludefiles, true);
-			for(vector<string>::const_iterator it = excludelist.begin();
-				it != excludelist.end(); ++it) {
+			vector<string> excludelist;
+			split_string(excludelist, excludefiles, true);
+			for(vector<string>::const_iterator it(excludelist.begin());
+				likely(it != excludelist.end()); ++it) {
 				vector<string> excl;
 				pushback_lines(it->c_str(), &excl, false, true);
 				insert_list(excludes, split_string(join_vector(excl)));
 			}
 		}
 
-		KeywordMask *m = NULL;
+		KeywordMask *m(NULL);
 
 		try {
-			string::size_type n = i->find_first_of("\t ");
+			string::size_type n(i->find_first_of("\t "));
 			if(n == string::npos) {
-				if(excludes.find(*i) != excludes.end())
+				if(unlikely(excludes.find(*i) != excludes.end()))
 					continue;
-				if(test_empty)
-				{
+				if(unlikely(test_empty)) {
 					unused.push_back(*i);
 					continue;
 				}
 				m = new KeywordMask(i->c_str());
 			}
 			else {
-				string it = i->substr(0, n);
+				string it(i->substr(0, n));
 				if(excludes.find(it) != excludes.end())
 					continue;
 				m = new KeywordMask(it.c_str());
@@ -858,9 +877,8 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 		if(!m)
 			continue;
 
-		eix::ptr_list<Package>::const_iterator pi;
-		for(pi = packagelist.begin(); pi != packagelist.end(); ++pi)
-		{
+		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());
+		for( ; likely(pi != packagelist.end()); ++pi) {
 			if(m->ismatch(**pi))
 				break;
 		}
@@ -888,45 +906,45 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 {
 	/* For faster testing, we build a category->name set */
 	map<string, set<string> > cat_name;
-	for(eix::ptr_list<Package>::const_iterator pit = packagelist.begin();
-		pit != packagelist.end(); ++pit )
+	for(eix::ptr_list<Package>::const_iterator pit(packagelist.begin());
+		likely(pit != packagelist.end()); ++pit) {
 		cat_name[pit->category].insert(pit->name);
+	}
 
 	/* This will contain categories/packages to be printed */
 	vector<string> failure;
 
 	/* Read all installed packages (not versions!) and fill failures */
 	set<string> excludes;
-	bool know_excludes = false;
+	bool know_excludes(false);
 	vector<string> categories;
 	pushback_files(dirname, categories, NULL, 2, true, false);
-	for(vector<string>::const_iterator cit = categories.begin();
-		cit != categories.end(); ++cit )
-	{
+	for(vector<string>::const_iterator cit(categories.begin());
+		likely(cit != categories.end()); ++cit) {
 		vector<string> names;
-		string cat_slash = *cit + "/";
+		string cat_slash(*cit + "/");
 		pushback_files(dirname + cat_slash, names, NULL, 2, true, false);
-		map<string, set<string> >::const_iterator cat = cat_name.find(*cit);
-		const set<string> *ns = ( (cat == cat_name.end()) ? NULL : &(cat->second) );
-		for(vector<string>::const_iterator nit = names.begin();
-			nit != names.end(); ++nit )
-		{
-			char *name = ExplodeAtom::split_name(nit->c_str());
-			if(!name)
+		map<string, set<string> >::const_iterator cat(cat_name.find(*cit));
+		const set<string> *ns( (cat == cat_name.end()) ? NULL : &(cat->second) );
+		for(vector<string>::const_iterator nit(names.begin());
+			likely(nit != names.end()); ++nit) {
+			char *name(ExplodeAtom::split_name(nit->c_str()));
+			if(unlikely(name == NULL))
 				continue;
-			if((!ns) || (ns->find(name) == ns->end())) {
-				if(!know_excludes) {
+			if(unlikely((ns == NULL) || (ns->find(name) == ns->end()))) {
+				if(unlikely(!know_excludes)) {
 					know_excludes = true;
-					vector<string> excludelist = split_string(excludefiles, true);
-					for(vector<string>::const_iterator it = excludelist.begin();
-						it != excludelist.end(); ++it) {
+					vector<string> excludelist;
+					split_string(excludelist, excludefiles, true);
+					for(vector<string>::const_iterator it(excludelist.begin());
+						likely(it != excludelist.end()); ++it) {
 						vector<string> excl;
 						pushback_lines(it->c_str(), &excl, false, true);
 						insert_list(excludes, split_string(join_vector(excl)));
 					}
 				}
-				if(excludes.find(name) == excludes.end()) {
-					string fullname = cat_slash + name;
+				if(likely(excludes.find(name) == excludes.end())) {
+					string fullname(cat_slash + name);
 					if(excludes.find(fullname) == excludes.end())
 						failure.push_back(cat_slash + name);
 				}
@@ -934,8 +952,7 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 			free(name);
 		}
 	}
-	if(failure.empty())
-	{
+	if(likely(failure.empty())) {
 		cout << _("The names of all installed packages are in the database.\n\n");
 		return;
 	}

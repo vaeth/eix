@@ -10,17 +10,23 @@
 #ifndef EIX__ALGORITHMS_H__
 #define EIX__ALGORITHMS_H__ 1
 
-#include <search/levenshtein.h>
+#include <config.h>
 #include <eixTk/regexp.h>
-
+#include <eixTk/unused.h>
 #include <portage/package.h>
+#include <search/levenshtein.h>
 
+#include <map>
+#include <string>
+
+#include <cstddef>
+#include <cstring>
 #include <fnmatch.h>
 
 /* Check if we have FNM_CASEFOLD ..
  * fnmatch(3) tells that this is a GNU extension.
  * However, we do not #define _GNU_SOURCE but instead make sure to
- * #include <config.h> (at least implicitly) */
+ * #include <config.h> */
 #ifdef FNM_CASEFOLD
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else
@@ -34,15 +40,17 @@ class BaseAlgorithm {
 		std::string search_string;
 
 	public:
-		virtual void setString(std::string s) {
+		virtual void setString(std::string s)
+		{
 			search_string = s;
 		}
 
-		virtual ~BaseAlgorithm() {
+		virtual ~BaseAlgorithm()
+		{
 			// Nothin' to see here, please move along
 		}
 
-		virtual bool operator () (const char *s, Package *p) = 0;
+		virtual bool operator()(const char *s, Package *p) = 0;
 };
 
 /** Use regex to test strings for a match. */
@@ -55,12 +63,14 @@ class RegexAlgorithm : public BaseAlgorithm {
 		RegexAlgorithm()
 		{ }
 
-		void setString(std::string s) {
+		void setString(std::string s)
+		{
 			search_string = s;
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		bool operator () (const char *s, Package *p) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		{
 			UNUSED(p);
 			return re.match(s);
 		}
@@ -70,7 +80,8 @@ class RegexAlgorithm : public BaseAlgorithm {
 class ExactAlgorithm : public BaseAlgorithm {
 
 	public:
-		bool operator () (const char *s, Package *p) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		{
 			UNUSED(p);
 			return !strcmp(search_string.c_str(), s);
 		}
@@ -80,7 +91,8 @@ class ExactAlgorithm : public BaseAlgorithm {
 class SubstringAlgorithm : public BaseAlgorithm {
 
 	public:
-		bool operator () (const char *s, Package *p) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		{
 			UNUSED(p);
 			return (std::string(s).find(search_string) != std::string::npos);
 		}
@@ -90,7 +102,8 @@ class SubstringAlgorithm : public BaseAlgorithm {
 class BeginAlgorithm : public BaseAlgorithm {
 
 	public:
-		bool operator () (const char *s, Package *p) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		{
 			UNUSED(p);
 			return !strncmp(search_string.c_str(), s, search_string.size());
 		}
@@ -100,9 +113,10 @@ class BeginAlgorithm : public BaseAlgorithm {
 class EndAlgorithm : public BaseAlgorithm {
 
 	public:
-		bool operator () (const char *s, Package *p) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		{
 			UNUSED(p);
-			size_t l = strlen(s);
+			std::string::size_type l(strlen(s));
 			std::string::size_type sl = search_string.size();
 			if(l < sl)
 				return false;
@@ -123,27 +137,30 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		static std::map<std::string, unsigned int> levenshtein_map;
 
 	public:
-		FuzzyAlgorithm(unsigned int max) {
+		FuzzyAlgorithm(unsigned int max)
+		{
 			max_levenshteindistance = max;
 		}
 
-		bool operator () (const char *s, Package *p) {
-			unsigned int  d  = get_levenshtein_distance(search_string.c_str(), s);
-			bool ok = (d <= max_levenshteindistance);
-			if(ok)
-			{
-				if(p)
+		bool operator()(const char *s, Package *p)
+		{
+			unsigned int d(get_levenshtein_distance(search_string.c_str(), s));
+			bool ok(d <= max_levenshteindistance);
+			if(ok) {
+				if(p != NULL)
 					levenshtein_map[p->category + "/" + p->name] = d;
 			}
 			return ok;
 		}
 
-		static bool compare(Package *p1, Package *p2)  {
+		static bool compare(Package *p1, Package *p2)
+		{
 			return (levenshtein_map[p1->category + "/" + p1->name]
 					< levenshtein_map[p2->category + "/" + p2->name]);
 		}
 
-		static bool sort_by_levenshtein() {
+		static bool sort_by_levenshtein()
+		{
 			return levenshtein_map.size() > 0;
 		}
 };
@@ -152,7 +169,8 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 class PatternAlgorithm : public BaseAlgorithm {
 
 	public:
-		bool operator () (const char *s, Package *p) {
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		{
 			UNUSED(p);
 			return !fnmatch(search_string.c_str(), s, FNMATCH_FLAGS);
 		}

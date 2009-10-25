@@ -11,8 +11,16 @@
 #define EIX__PARSECACHE_H__ 1
 
 #include <cache/base.h>
-#include <cache/common/ebuild_exec.h>
+#include <eixTk/exceptions.h>
+#include <portage/version.h>
 
+#include <string>
+#include <vector>
+
+#include <cstddef>
+
+class Category;
+class EbuildExec;
 class VarsReader;
 
 class ParseCache : public BasicCache {
@@ -27,23 +35,22 @@ class ParseCache : public BasicCache {
 
 		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULL);
 		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version);
-		void readPackage(Category &vec, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
+		void readPackage(const char *cat_name, Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
 	public:
-		ParseCache() : BasicCache(),
-			ebuild_exec(NULL)
+		ParseCache() : BasicCache(), ebuild_exec(NULL)
 		{ }
 
 		bool initialize(const std::string &name);
 
 		~ParseCache();
 
-		void setScheme(const char *prefix, const char *prefixport, std::string scheme);
+		void setScheme(const char *prefix, const char *prefixport, const std::string &scheme);
 		void setKey(Version::Overlay key);
-		void setOverlayName(std::string name);
+		void setOverlayName(const std::string &name);
 		void setErrorCallback(ErrorCallback error_callback);
 
-		bool readCategory(Category &vec) throw(ExBasic);
-		bool readCategoryPrepare(Category &vec) throw(ExBasic);
+		bool readCategory(const char *cat_name, Category &cat) throw(ExBasic);
+		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
 		void readCategoryFinalize();
 
 		bool use_prefixport() const

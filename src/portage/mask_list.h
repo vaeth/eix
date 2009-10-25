@@ -10,10 +10,16 @@
 #ifndef EIX__MASK_LIST_H__
 #define EIX__MASK_LIST_H__ 1
 
+#include <eixTk/likely.h>
 #include <eixTk/ptr_list.h>
+#include <portage/keywords.h>
 #include <portage/package.h>
-#include <portage/version.h>
 #include <portage/mask.h>
+
+#include <map>
+#include <string>
+
+#include <cstddef>
 
 template<typename m_Type>
 class MaskList
@@ -49,12 +55,10 @@ class MaskList
 
 		~MaskList()
 		{
-			for(iterator it = super::begin(); it != super::end(); ++it)
-			{
-				for(cat_iterator t = it->second.begin();
-					t != it->second.end();
-					++t)
-				{
+			for(iterator it(super::begin());
+				likely(it != super::end()); ++it) {
+				for(cat_iterator t(it->second.begin());
+					likely(t != it->second.end()); ++t) {
 					t->second.delete_and_clear();
 				}
 			}
@@ -68,16 +72,14 @@ class MaskList
 
 		void add(const MaskList<m_Type> &ori)
 		{
-			for(const_iterator it = ori.begin(); it != ori.end(); ++it)
-			{
-				CatList &cl = (*this)[it->first];
-				for(const_cat_iterator t = it->second.begin();
-					t != it->second.end();
-					++t)
-				{
-					MskList &msk = cl[t->first];
-					for(const_mask_iterator m = t->second.begin();
-						m != t->second.end(); ++m) {
+			for(const_iterator it(ori.begin());
+				likely(it != ori.end()); ++it) {
+				CatList &cl((*this)[it->first]);
+				for(const_cat_iterator t(it->second.begin());
+					likely(t != it->second.end()); ++t) {
+					MskList &msk(cl[t->first]);
+					for(const_mask_iterator m(t->second.begin());
+						likely(m != t->second.end()); ++m) {
 						msk.push_back(new m_Type(**m));
 					}
 				}
@@ -98,18 +100,17 @@ class MaskList
 		/** @return true if actually something was removed */
 		bool remove(m_Type *m)
 		{
-			iterator it = super::find(m->getCategory());
+			iterator it(super::find(m->getCategory()));
 			if(it == super::end())
 				return false;
 
-			cat_iterator t = it->second.find(m->getName());
+			cat_iterator t(it->second.find(m->getName()));
 			if(t == it->second.end())
 				return false;
 
-			bool deleted = false;
-			mask_iterator mi = t->second.begin();
-			while(mi != t->second.end())
-			{
+			bool deleted(false);
+			mask_iterator mi(t->second.begin());
+			while(mi != t->second.end()) {
 				if(**mi == *m)
 				{
 					deleted = true;
@@ -136,14 +137,12 @@ class MaskList
 
 		void remove(const MaskList<m_Type> &l)
 		{
-			for(const_iterator it = l.begin(); it != l.end(); ++it)
+			for(const_iterator it(l.begin()); likely(it != l.end()); ++it)
 			{
-				for(const_cat_iterator t = it->second.begin();
-					t != it->second.end();
-					++t)
-				{
-					for(const_mask_iterator m = t->second.begin();
-						m != t->second.end(); ++m) {
+				for(const_cat_iterator t(it->second.begin());
+					likely(t != it->second.end()); ++t) {
+					for(const_mask_iterator m(t->second.begin());
+						likely(m != t->second.end()); ++m) {
 							remove(*m);
 					}
 				}
@@ -153,13 +152,14 @@ class MaskList
 #if 0
 		void print() const
 		{
-			for(const_iterator it = super::begin(); it != super::end(); ++it) {
-				for(const_cat_iterator t = it->second.begin();
-					t != it->second.end();
-					++t) {
-					for(const_mask_iterator m = t->second.begin();
-						m != t->second.end(); ++m)
+			for(const_iterator it(super::begin());
+				likely(it != super::end()); ++it) {
+				for(const_cat_iterator t(it->second.begin());
+					likely(t != it->second.end()); ++t) {
+					for(const_mask_iterator m(t->second.begin());
+						likely(m != t->second.end()); ++m) {
 							m->print();
+					}
 				}
 			}
 		}
@@ -167,11 +167,11 @@ class MaskList
 
 		const eix::ptr_list<m_Type> *get(const std::string &name, const std::string &category = SET_CATEGORY) const
 		{
-			const_iterator it = super::find(category);
+			const_iterator it(super::find(category));
 			if(it == super::end())
 				return NULL;
 
-			const_cat_iterator t = it->second.find(name);
+			const_cat_iterator t(it->second.find(name));
 			if(t == it->second.end())
 				return NULL;
 
@@ -188,22 +188,20 @@ class MaskList
 			if(l == NULL)
 				return false;
 
-			bool rvalue = false;
-			bool had_mask = false;
-			bool had_unmask = false;
-			for(const_mask_iterator m = l->begin();
-				m != l->end();
-				++m)
-			{
+			bool rvalue(false);
+			bool had_mask(false);
+			bool had_unmask(false);
+			for(const_mask_iterator m(l->begin());
+				likely(m != l->end()); ++m) {
 				rvalue = 1;
 				m->checkMask(*p, check);
 				switch(m->get_type())
 				{
 					case Mask::maskMask:
-						had_mask=true;
+						had_mask = true;
 						break;
 					case Mask::maskUnmask:
-						had_unmask=true;
+						had_unmask = true;
 						break;
 					default:
 						break;
@@ -215,9 +213,8 @@ class MaskList
 				had_unmask = false;
 			if(had_mask || had_unmask)
 			{
-				for(Package::iterator i = p->begin();
-					i != p->end(); ++i)
-				{
+				for(Package::iterator i(p->begin());
+					likely(i != p->end()); ++i) {
 					if(had_mask)
 					{
 						if(!i->was_masked())

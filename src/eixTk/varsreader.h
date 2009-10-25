@@ -13,6 +13,11 @@
 #include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
 
+#include <map>
+#include <string>
+
+#include <cstddef>
+
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
 class VarsReader {
@@ -20,7 +25,7 @@ class VarsReader {
 		typedef uint8_t Flags;
 		static const Flags
 			NONE                 = 0x00, /**< Flag: No flags set; normal behavior. */
-			ONLY_KEYWORDS_SLOT   = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, than exit the parser. */
+			ONLY_KEYWORDS_SLOT   = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
 			KEYWORDS_READ        = 0x02, /**< Flag: Have already read "KEYWORDS" once. */
 			SLOT_READ            = 0x04, /**< Flag: Have already read "SLOT" once. */
 			SUBST_VARS           = 0x08, /**< Flag: Allow references to variable in declarations
@@ -57,7 +62,8 @@ class VarsReader {
 		bool read(const char *filename);
 
 		/** Use a supplied map for variables. */
-		void useMap(std::map<std::string,std::string> *vars_map) {
+		void useMap(std::map<std::string,std::string> *vars_map)
+		{
 			vars = vars_map;
 		}
 
@@ -81,7 +87,7 @@ class VarsReader {
 
 		const std::string *find(std::string key) const
 		{
-			std::map<std::string,std::string>::const_iterator i = vars->find(key);
+			std::map<std::string,std::string>::const_iterator i(vars->find(key));
 			if(i == vars->end())
 				return NULL;
 			return &(i->second);

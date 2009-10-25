@@ -6,23 +6,31 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "eixcache.h"
-
-#include <portage/package.h>
-#include <database/package_reader.h>
+#include <config.h>
 #include <database/header.h>
+#include <database/package_reader.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <portage/package.h>
 #include <portage/packagetree.h>
-#include <eixTk/filenames.h>
 #include <portage/conf/portagesettings.h>
 
-#include <config.h>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
 
 using namespace std;
 
-
-
 bool EixCache::initialize(const string &name)
 {
-	vector<string> args = split_string(name, true, ":", false);
+	vector<string> args;
+	split_string(args, name, true, ":", false);
 	if(strcasecmp(args[0].c_str(), "eix") == 0)
 	{
 		m_name = "eix";
@@ -64,13 +72,9 @@ bool EixCache::initialize(const string &name)
 	return (args.size() <= 3);
 }
 
-bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
+bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categories, const char *cat_name, Category *category) throw(ExBasic)
 {
-	if(category) {
-		packagetree = NULL;
-		categories = NULL;
-	}
-	bool add_categories = (categories != NULL);
+	bool add_categories(categories != NULL);
 	if(never_add_categories)
 		add_categories = false;
 
@@ -79,8 +83,8 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		file = m_prefix + m_file;
 	else
 		file = m_prefix + EIX_CACHEFILE;
-	FILE *fp = fopen(file.c_str(), "rb");
-	if(!fp) {
+	FILE *fp(fopen(file.c_str(), "rb"));
+	if(unlikely(fp == NULL)) {
 		m_error_callback(eix::format(_("Can't read cache file %s: %s")) %
 			file % strerror(errno));
 		return false;
@@ -100,13 +104,13 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 	}
 	if(m_only_overlay)
 	{
-		if(!m_overlay.empty())
+		if(likely(!m_overlay.empty()))
 		{
-			const char *portdir = NULL;
+			const char *portdir(NULL);
 			if(portagesettings)
 				portdir = (*portagesettings)["PORTDIR"].c_str();
 			if(m_overlay == "~") {
-				bool found = false;
+				bool found(false);
 				if(!m_overlay_name.empty()) {
 					found = header.find_overlay(&m_get_overlay, m_overlay_name.c_str(), portdir, 0, DBHeader::OVTEST_LABEL);
 				}
@@ -131,47 +135,46 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		}
 	}
 
-	if(packagetree)
-		packagetree->need_fast_access(categories);
-
 	for(PackageReader reader(fp, header); reader.next(); reader.skip())
 	{
 		reader.read(PackageReader::NAME);
-		Package *p = reader.get();
+		Package *p(reader.get());
 		Category *dest_cat;
 		if(add_categories) {
 			dest_cat = &((*packagetree)[p->category]);
 		}
-		else if(category)
+		else if(packagetree == NULL)
 		{
-			if(category->name != p->category)
+			if(cat_name != p->category)
 				continue;
 			dest_cat = category;
 		}
 		else
 		{
 			dest_cat = packagetree->find(p->category);
-			if(!dest_cat)
+			if(unlikely(dest_cat == NULL))
 				continue;
 		}
 
 		reader.read(PackageReader::VERSIONS);
 		p = reader.get();
-		bool have_onetime_info = false;
-		Package *pkg = dest_cat->findPackage(p->name);
-		if(pkg == NULL)
-			pkg = dest_cat->addPackage(p->name);
-		else
-			have_onetime_info = true;
-		for(Package::iterator it = p->begin();
-			it != p->end(); ++it)
+		bool have_onetime_info, have_pkg;
+		Package *pkg(dest_cat->findPackage(p->name));
+		if(pkg == NULL) {
+			have_onetime_info = have_pkg = false;
+			pkg = new Package(p->category, p->name);
+		}
+		else {
+			have_onetime_info = have_pkg = true;
+		}
+		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it)
 		{
 			if(m_only_overlay)
 			{
-				if(it->overlay_key != m_get_overlay)
+				if(likely(it->overlay_key != m_get_overlay))
 					continue;
 			}
-			Version *version = new Version(it->getFull().c_str());
+			Version *version(new Version(it->getFull().c_str()));
 			version->overlay_key = m_overlay_key;
 			version->set_full_keywords(it->get_full_keywords());
 			version->slotname = it->slotname;
@@ -191,14 +194,14 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		if(have_onetime_info) { // if the package exists:
 			// add collected iuse from the saved data
 			pkg->iuse.insert(p->iuse);
+			if(!have_pkg) {
+				dest_cat->addPackage(pkg);
+			}
 		}
-		else
-			dest_cat->deletePackage(p->name);
+		else {
+			delete pkg;
+		}
 	}
 	fclose(fp);
-	if(packagetree)
-		packagetree->finish_fast_access();
-	if(add_categories)
-		packagetree->add_missing_categories(*categories);
 	return true;
 }

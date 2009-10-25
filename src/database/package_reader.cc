@@ -10,51 +10,55 @@
 #include "package_reader.h"
 
 #include <config.h>
-
+#include <database/io.h>
+#include <database/types.h>
+#include <eixTk/likely.h>
+#include <portage/conf/portagesettings.h>
 #include <portage/package.h>
 #include <portage/version.h>
-#include <portage/conf/portagesettings.h>
 
-#include <database/io.h>
+#include <cstddef>
+#include <cstdio>
+#include <sys/types.h>
 
 void
 PackageReader::read(Attributes need)
 {
-	if(m_have >= need) // Already got this one.
+	if(likely(m_have >= need)) // Already got this one.
 		return;
 
 	switch(m_have)
 	{
 		case NONE:
 			m_pkg->name = io::read_string(m_fp);
-			if(need == NAME)
+			if(unlikely(need == NAME))
 				break;
 		case NAME:
 			m_pkg->desc = io::read_string(m_fp);
-			if(need == DESCRIPTION)
+			if(unlikely(need == DESCRIPTION))
 				break;
 		case DESCRIPTION:
 			m_pkg->provide = io::read_hash_words(m_fp, header->provide_hash);
-			if(need == PROVIDE)
+			if(unlikely(need == PROVIDE))
 				break;
 		case PROVIDE:
 			m_pkg->homepage = io::read_string(m_fp);
-			if(need == HOMEPAGE)
+			if(unlikely(need == HOMEPAGE))
 				break;
 		case HOMEPAGE:
 			m_pkg->licenses = io::read_hash_string(m_fp, header->license_hash);
-			if(need == LICENSE)
+			if(unlikely(need == LICENSE))
 				break;
 		case LICENSE:
 			io::read_iuse(m_fp, header->iuse_hash, m_pkg->iuse);
 #ifdef NOT_FULL_USE
-			if(need == COLL_IUSE)
+			if(unlikely(need == COLL_IUSE))
 				break;
 		case COLL_IUSE:
 #endif
-			for(io::Versize i = io::read<io::Versize>(m_fp); i; --i)
+			for(io::Versize i(io::read<io::Versize>(m_fp)); likely(i); --i)
 				m_pkg->addVersion(io::read_version(m_fp, *header));
-			if(m_portagesettings) {
+			if(likely(m_portagesettings != NULL)) {
 				m_portagesettings->calc_local_sets(&(*m_pkg));
 				m_portagesettings->finalize(&(*m_pkg));
 			}
@@ -86,17 +90,15 @@ PackageReader::skip()
 bool
 PackageReader::next()
 {
-	if(m_cat_size-- == 0)
-	{
-		if(m_frames-- == 0)
-		{
+	if(unlikely(m_cat_size-- == 0)) {
+		if(unlikely(m_frames-- == 0)) {
 			return false;
 		}
 		m_cat_size = io::read_category_header(m_fp, m_cat_name);
 		return next();
 	}
 
-	io::OffsetType len = io::read<io::OffsetType>(m_fp);
+	io::OffsetType len(io::read<io::OffsetType>(m_fp));
 #ifdef HAVE_FSEEKO
 	// We rely on autoconf whose documentation states:
 	// All system with fseeko() also supply ftello()
@@ -115,7 +117,7 @@ PackageReader::next()
 bool
 PackageReader::nextCategory()
 {
-	if(m_frames-- == 0)
+	if(unlikely(m_frames-- == 0))
 		return false;
 
 	m_cat_size = io::read_category_header(m_fp, m_cat_name);
@@ -125,7 +127,7 @@ PackageReader::nextCategory()
 bool
 PackageReader::nextPackage()
 {
-	if (m_cat_size-- == 0)
+	if(unlikely(m_cat_size-- == 0))
 		return false;
 
 	/* Ignore the offset and read the whole package at once.

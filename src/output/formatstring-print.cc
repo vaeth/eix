@@ -9,16 +9,31 @@
 
 
 #include "formatstring-print.h"
-#include <eixrc/eixrc.h>
+#include <config.h>
+#include <eixTk/ansicolor.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
-#include <portage/vardbpkg.h>
-#include <portage/conf/portagesettings.h>
+#include <eixrc/eixrc.h>
 #include <output/formatstring.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/extendedversion.h>
+#include <portage/instversion.h>
+#include <portage/keywords.h>
+#include <portage/package.h>
+#include <portage/vardbpkg.h>
+#include <portage/version.h>
+
+#include <string>
+#include <vector>
+#include <map>
+
+#include <cstddef>
+#include <cstring>
 
 using namespace std;
-
-static const string one("1");
-static const string empty("");
 
 class VersionVariables {
 	private:
@@ -53,15 +68,15 @@ class VersionVariables {
 string
 PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 {
-	if((!vardb) || !(vardb->readUse(package, i)))
-		return empty;
+	if((unlikely(vardb == NULL)) || !(vardb->readUse(package, i)))
+		return emptystring;
 	if(i.inst_iuse.empty())
-		return empty;
+		return emptystring;
 	string ret, add;
-	for(vector<string>::iterator it = i.inst_iuse.begin();
-		it != i.inst_iuse.end(); ++it) {
-		bool is_unset = false;
-		string *curr = &ret;
+	for(vector<string>::iterator it(i.inst_iuse.begin());
+		likely(it != i.inst_iuse.end()); ++it) {
+		bool is_unset(false);
+		string *curr(&ret);
 		if(i.usedUse.find(*it) == i.usedUse.end()) {
 			is_unset = true;
 			if(!alpha_use)
@@ -92,13 +107,13 @@ PrintFormat::get_version_keywords(const Package *package, const Version *version
 {
 	if(print_effective)
 		portagesettings->get_effective_keywords_userprofile(const_cast<Package *>(package));
-	string keywords = version->get_full_keywords();
-	string effective = version->get_effective_keywords();
+	string keywords(version->get_full_keywords());
+	string effective(version->get_effective_keywords());
 	if(keywords.empty()) {
 		if(effective.empty() || !print_effective)
-			return empty;
+			return emptystring;
 	}
-	string result = before_keywords;
+	string result(before_keywords);
 	result.append(keywords);
 	result.append(after_keywords);
 	if(print_effective && (keywords != effective)) {
@@ -112,18 +127,18 @@ PrintFormat::get_version_keywords(const Package *package, const Version *version
 void
 PrintFormat::get_installed(const Package *package, Node *root, bool only_marked) const
 {
-	if(!vardb)
+	if(unlikely(vardb == NULL))
 		return;
-	if(only_marked && (!marked_list))
+	if(unlikely((unlikely(only_marked)) && (marked_list == NULL)))
 		return;
-	vector<InstVersion> *vec = vardb->getInstalledVector(*package);
-	if(!vec)
+	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
+	if(vec == NULL)
 		return;
-	bool have_prevversion = false;
-	for(vector<InstVersion>::iterator it = vec->begin();
-		it != vec->end(); ++it) {
-		if(only_marked) {
-			if(!(marked_list->is_marked(*package, &(*it))))
+	bool have_prevversion(false);
+	for(vector<InstVersion>::iterator it(vec->begin());
+		likely(it != vec->end()); ++it) {
+		if(unlikely(only_marked)) {
+			if(likely(!(marked_list->is_marked(*package, &(*it)))))
 				continue;
 		}
 		if(have_prevversion) {
@@ -143,10 +158,11 @@ PrintFormat::get_installed(const Package *package, Node *root, bool only_marked)
 void
 PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<Version*> *versions) const
 {
-	bool have_prevversion = false;
-	for(Package::const_iterator vit = package->begin(); vit != package->end(); ++vit) {
-		if(versions) {
-			if(find(versions->begin(), versions->end(), *vit) == versions->end())
+	bool have_prevversion(false);
+	for(Package::const_iterator vit(package->begin());
+		likely(vit != package->end()); ++vit) {
+		if(unlikely(versions != NULL)) {
+			if(likely(find(versions->begin(), versions->end(), *vit) == versions->end()))
 				continue;
 		}
 		if(have_prevversion) {
@@ -166,15 +182,15 @@ PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<V
 void
 PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<Version*> *versions) const
 {
-	const SlotList *sl = &(package->slotlist());
-	SlotList::size_type slotnum = 0;
-	if(versions) {
-		for(SlotList::const_iterator it = sl->begin();
-			it != sl->end(); ++it) {
-			const VersionList *vl = &(it->const_version_list());
-			for(VersionList::const_iterator vit = vl->begin();
-				vit != vl->end(); ++vit) {
-				if(find(versions->begin(), versions->end(), *vit) != versions->end()) {
+	const SlotList *sl(&(package->slotlist()));
+	SlotList::size_type slotnum(0);
+	if(unlikely(versions != NULL)) {
+		for(SlotList::const_iterator it(sl->begin());
+			likely(it != sl->end()); ++it) {
+			const VersionList *vl(&(it->const_version_list()));
+			for(VersionList::const_iterator vit(vl->begin());
+				likely(vit != vl->end()); ++vit) {
+				if(unlikely(find(versions->begin(), versions->end(), *vit) != versions->end())) {
 					++slotnum;
 					break;
 				}
@@ -183,19 +199,19 @@ PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<
 	}
 	else
 		slotnum = sl->size();
-	if(!slotnum)
+	if(unlikely(slotnum == 0))
 		return;
 	version_variables->oneslot = (slotnum == 1);
 
-	bool have_prevversion = false;
-	SlotList::size_type prevslot = slotnum + 1;
+	bool have_prevversion(false);
+	SlotList::size_type prevslot(slotnum + 1);
 	version_variables->slotfirst = true;
-	for(SlotList::const_iterator it = sl->begin(); slotnum; ++it, --slotnum) {
-		const VersionList *vl = &(it->const_version_list());
-		for(VersionList::const_iterator vit = vl->begin();
-			vit != vl->end(); ++vit) {
-			if(versions) {
-				if(find(versions->begin(), versions->end(), *vit) == versions->end())
+	for(SlotList::const_iterator it(sl->begin()); likely(slotnum != 0); ++it, --slotnum) {
+		const VersionList *vl(&(it->const_version_list()));
+		for(VersionList::const_iterator vit(vl->begin());
+			likely(vit != vl->end()); ++vit) {
+			if(unlikely(versions != NULL)) {
+				if(likely(find(versions->begin(), versions->end(), *vit) == versions->end()))
 					continue;
 			}
 			if(have_prevversion) {
@@ -471,7 +487,7 @@ class Scanner {
 
 		Prop get_diff(const string& s) const
 		{
-			map<string, Prop>::const_iterator it = diff.find(s);
+			map<string, Prop>::const_iterator it(diff.find(s));
 			if(it == diff.end())
 				return PROP_NONE;
 			return it->second;
@@ -479,7 +495,7 @@ class Scanner {
 
 		Prop get_colon(const string& s, PropType *p) const
 		{
-			map<string, pair<Prop,PropType> >::const_iterator it = colon.find(s);
+			map<string, pair<Prop,PropType> >::const_iterator it(colon.find(s));
 			if(it == colon.end())
 				return PROP_NONE;
 			*p = it->second.second;
@@ -488,7 +504,7 @@ class Scanner {
 
 		Prop get_prop(const string& s, PropType *p) const
 		{
-			map<string, pair<Prop,PropType> >::const_iterator it = prop.find(s);
+			map<string, pair<Prop,PropType> >::const_iterator it(prop.find(s));
 			if(it == prop.end())
 				return PROP_NONE;
 			*p = it->second.second;
@@ -500,22 +516,22 @@ static Scanner scanner;
 string
 PrintFormat::get_pkg_property(const Package *package, const string &name) const throw(ExBasic)
 {
-	Scanner::PropType t = Scanner::PKG;
-	Scanner::Prop prop = scanner.get_prop(name, &t);
+	Scanner::PropType t(Scanner::PKG);
+	Scanner::Prop prop(scanner.get_prop(name, &t));
 	string after_colon;
 	if(prop == Scanner::PROP_NONE) {
-		string::size_type col = name.find(':');
-		if(col != string::npos)
+		string::size_type col(name.find(':'));
+		if(likely(col != string::npos))
 			prop = scanner.get_colon(name.substr(0, col), &t);
-		if(prop == Scanner::PROP_NONE) {
+		if(unlikely(prop == Scanner::PROP_NONE)) {
 			throw ExBasic(_("Unknown property %r")) % name;
 		}
 		after_colon = name.substr(col + 1);
 	}
-	if((t == Scanner::VER) && !version_variables) {
+	if(unlikely((t == Scanner::VER) && (version_variables == NULL))) {
 		throw ExBasic(_("Property %r used outside version context")) % name;
 	}
-	bool a = false;
+	bool a(false);
 	switch(prop) {
 		case Scanner::COLON_VER_DATE:
 			if(version_variables->isinst) {
@@ -538,27 +554,27 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 				// This allows loops within loops.
 				// Recursion is avoided by checking the variable names.
 				VersionVariables variables;
-				VersionVariables *previous_variables = version_variables;
+				VersionVariables *previous_variables(version_variables);
 				version_variables = &variables;
 				string varsortname;
-				string *parsed = NULL;
+				string *parsed(NULL);
 				switch(prop) {
 					case Scanner::COLON_PKG_AVAILABLEVERSIONS:
 						a = true;
 					case Scanner::COLON_PKG_MARKEDVERSIONS:
 						{
-							vector<Version*> *versions = NULL;
-							if(!a) {
+							vector<Version*> *versions(NULL);
+							if(unlikely(!a)) {
 								versions = new vector<Version*>;
-								for(Package::const_iterator it = package->begin();
-									it != package->end(); ++it) {
-									if(marked_list->is_marked(*package, &(**it))) {
+								for(Package::const_iterator it(package->begin());
+									likely(it != package->end()); ++it) {
+									if(unlikely(marked_list->is_marked(*package, &(**it)))) {
 										versions->push_back(*it);
 									}
 								}
 							}
-							if(a || !(versions->empty())) {
-								string::size_type col = after_colon.find(':');
+							if(likely(a || !(versions->empty()))) {
+								string::size_type col(after_colon.find(':'));
 								if((col == string::npos) || !(package->have_nontrivial_slots())) {
 									if(col != string::npos)
 										after_colon.erase(col);
@@ -571,7 +587,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 									get_versions_slotsorted(package, parse_variable(varsortname), versions);
 								}
 							}
-							if(versions)
+							if(versions != NULL)
 								delete versions;
 						}
 						break;
@@ -579,9 +595,9 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 						a = true;
 					case Scanner::COLON_PKG_BESTVERSION:
 						{
-							const Version *ver = package->best(a);
+							const Version *ver(package->best(a));
 							variables.setversion(ver);
-							if(ver) {
+							if(likely(ver != NULL)) {
 								parsed = &after_colon;
 								recPrint(&(variables.result), package, get_package_property, parse_variable(after_colon));
 							}
@@ -630,8 +646,8 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			break;
 		case Scanner::PKG_INSTALLED:
 			if(vardb) {
-				vector<InstVersion> *vec = vardb->getInstalledVector(*package);
-				if(vec && !(vec->empty()))
+				vector<InstVersion> *vec(vardb->getInstalledVector(*package));
+				if((vec != NULL) && (likely(!(vec->empty()))))
 					return one;
 			}
 			break;
@@ -669,17 +685,17 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			return package->provide;
 		case Scanner::PKG_BINARY:
 			{
-				for(Package::const_iterator it = package->begin(); it != package->end(); ++it) {
+				for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
 					if(it->have_bin_pkg(portagesettings, package))
 						return one;
 				}
-				if(!vardb)
+				if(unlikely(vardb == NULL))
 					break;
-				vector<InstVersion> *vec = vardb->getInstalledVector(*package);
-				if(!vec)
+				vector<InstVersion> *vec(vardb->getInstalledVector(*package));
+				if(vec == NULL)
 					break;
-				for(vector<InstVersion>::iterator it = vec->begin();
-					it != vec->end(); ++it) {
+				for(vector<InstVersion>::iterator it(vec->begin());
+					likely(it != vec->end()); ++it) {
 					if(it->have_bin_pkg(portagesettings, package))
 						return one;
 				}
@@ -687,7 +703,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			break;
 		case Scanner::PKG_OVERLAYKEY:
 			{
-				Version::Overlay ov_key = package->largest_overlay;
+				Version::Overlay ov_key(package->largest_overlay);
 				if(ov_key && package->have_same_overlay_key())
 					return overlay_keytext(ov_key, false);
 			}
@@ -715,10 +731,10 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::PKG_BESTUPGRADEORINSTALL:
 			{
 				LocalCopy copy(this, const_cast<Package*>(package));
-				bool result = package->can_upgrade(vardb, portagesettings,
+				bool result(package->can_upgrade(vardb, portagesettings,
 					((prop == Scanner::PKG_UPGRADE) ||
 					 (prop == Scanner::PKG_BESTUPGRADE)),
-					a);
+					a));
 				copy.restore(const_cast<Package*>(package));
 				if(result)
 					return one;
@@ -729,7 +745,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::PKG_BESTDOWNGRADE:
 			{
 				LocalCopy copy(this, const_cast<Package*>(package));
-				bool result = package->must_downgrade(vardb, a);
+				bool result(package->must_downgrade(vardb, a));
 				copy.restore(const_cast<Package*>(package));
 				if(result)
 					return one;
@@ -742,25 +758,25 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::PKG_BESTRECOMMENDORINSTALL:
 			{
 				LocalCopy copy(this, const_cast<Package*>(package));
-				bool result = package->recommend(vardb, portagesettings,
+				bool result(package->recommend(vardb, portagesettings,
 					((prop == Scanner::PKG_RECOMMEND) ||
 					 (prop == Scanner::PKG_BESTRECOMMEND)),
-					a);
+					a));
 				copy.restore(const_cast<Package*>(package));
 				if(result)
 					return one;
 			}
 			break;
 		case Scanner::PKG_MARKED:
-			if(marked_list) {
-				if(marked_list->is_marked(*package))
+			if(likely(marked_list != NULL)) {
+				if(unlikely(marked_list->is_marked(*package)))
 					return one;
 			}
 			break;
 		case Scanner::PKG_HAVEMARKEDVERSION:
 			if(marked_list) {
-				for(Package::const_iterator it = package->begin();
-					it != package->end(); ++it) {
+				for(Package::const_iterator it(package->begin());
+					likely(it != package->end()); ++it) {
 					if(marked_list->is_marked(*package, &(**it)))
 						return one;
 				}
@@ -812,8 +828,8 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			{
 				const string *slot;
 				if(version_variables->isinst) {
-					InstVersion *i = version_variables->instver();
-					if((!vardb) || !(package->guess_slotname(*i, vardb)))
+					InstVersion *i(version_variables->instver());
+					if(unlikely((vardb == NULL) || !(package->guess_slotname(*i, vardb))))
 						i->slotname = "?";
 					slot = &(i->slotname);
 				}
@@ -836,8 +852,10 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			a = true;
 		case Scanner::VER_OVERLAYVER:
 			if(version_variables->isinst) {
-				InstVersion *i = version_variables->instver();
-				if((!vardb) || (!header) || !(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str()))) {
+				InstVersion *i(version_variables->instver());
+				if(unlikely((unlikely(vardb == NULL)) ||
+					(unlikely(header == NULL)) ||
+					(unlikely(!(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str())))))) {
 					if(a || no_color)
 						return "[?]";
 					return color_overlaykey + "[?]" +
@@ -854,7 +872,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			}
 			break;
 		case Scanner::VER_VERSIONKEYWORDS:
-			if(!(version_variables->isinst))
+			if(likely(version_variables->isinst))
 				return get_version_keywords(package, version_variables->version());
 			break;
 		case Scanner::VER_ISBESTUPGRADESLOT:
@@ -862,37 +880,42 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			a = true;
 		case Scanner::VER_ISBESTUPGRADE:
 		case Scanner::VER_ISBESTUPGRADES:
-			if(version_variables->isinst)
+			if(unlikely(version_variables->isinst))
 				break;
-			if(vardb && portagesettings &&
-				package->is_best_upgrade(
+			if(unlikely((likely(vardb != NULL)) && (likely(portagesettings != NULL)) &&
+				unlikely(package->is_best_upgrade(
 					a,
 					version_variables->version(),
 					vardb, portagesettings,
 					((prop == Scanner::VER_ISBESTUPGRADES) ||
-					 (prop == Scanner::VER_ISBESTUPGRADESLOTS))))
+					 (prop == Scanner::VER_ISBESTUPGRADESLOTS))))))
 				return one;
 			break;
 		case Scanner::VER_MARKEDVERSION:
-			if(version_variables->isinst)
+			if(unlikely(version_variables->isinst))
 				break;
-			if(marked_list && marked_list->is_marked(*package,
-				version_variables->version()))
+			if(unlikely((likely(marked_list != NULL)) && (unlikely(marked_list->is_marked(*package,
+				version_variables->version())))))
 				return one;
 			break;
 		case Scanner::VER_INSTALLEDVERSION:
-			if(version_variables->isinst)
+			if(unlikely(version_variables->isinst))
 				return one;
-			if(vardb && header && vardb->isInstalledVersion(*package,
-				version_variables->version(),
-				*header, (*portagesettings)["PORTDIR"].c_str()))
+			if(unlikely((likely(vardb != NULL)) && (likely(header != NULL)) &&
+				(unlikely(vardb->isInstalledVersion(*package,
+					version_variables->version(),
+					*header, (*portagesettings)["PORTDIR"].c_str()))))) {
 				return one;
+			}
 			break;
 		case Scanner::VER_HAVEUSE:
 			if(version_variables->isinst) {
-				InstVersion &i = *(version_variables->instver());
-				if(vardb && (vardb->readUse(*package, i)) && !(i.inst_iuse.empty()))
+				InstVersion &i(*(version_variables->instver()));
+				if((likely(vardb != NULL)) &&
+					(likely(vardb->readUse(*package, i)))
+					&& !(i.inst_iuse.empty())) {
 					return one;
+				}
 				break;
 			}
 			if(!(version_variables->version()->iuse.empty()))
@@ -937,44 +960,44 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					restrict = version_variables->version()->restrictFlags;
 				switch(prop) {
 					case Scanner::VER_RESTRICTFETCH:
-						if(restrict & ExtendedVersion::RESTRICT_FETCH)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_FETCH))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTMIRROR:
-						if(restrict & ExtendedVersion::RESTRICT_MIRROR)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_MIRROR))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTPRIMARYURI:
-						if(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_PRIMARYURI))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTBINCHECKS:
-						if(restrict & ExtendedVersion::RESTRICT_BINCHECKS)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_BINCHECKS))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTSTRIP:
-						if(restrict & ExtendedVersion::RESTRICT_STRIP)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_STRIP))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTTEST:
-						if(restrict & ExtendedVersion::RESTRICT_TEST)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_TEST))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTUSERPRIV:
-						if(restrict & ExtendedVersion::RESTRICT_USERPRIV)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_USERPRIV))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTINSTALLSOURCES:
-						if(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES))
 							return one;
 						break;
 					case Scanner::VER_RESTRICTBINDIST:
-						if(restrict & ExtendedVersion::RESTRICT_BINDIST)
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_BINDIST))
 							return one;
 						break;
 					default:
 					//case Scanner::VER_RESTRICT:
-						if(restrict != ExtendedVersion::RESTRICT_NONE)
+						if(unlikely(restrict != ExtendedVersion::RESTRICT_NONE))
 							return one;
 						break;
 				}
@@ -1001,24 +1024,24 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					properties = version_variables->version()->propertiesFlags;
 				switch(prop) {
 					case Scanner::VER_PROPERTIESINTERACTIVE:
-						if(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)
+						if(unlikely(properties & ExtendedVersion::PROPERTIES_INTERACTIVE))
 							return one;
 						break;
 					case Scanner::VER_PROPERTIESLIVE:
-						if(properties & ExtendedVersion::PROPERTIES_LIVE)
+						if(unlikely(properties & ExtendedVersion::PROPERTIES_LIVE))
 							return one;
 						break;
 					case Scanner::VER_PROPERTIESVIRTUAL:
-						if(properties & ExtendedVersion::PROPERTIES_VIRTUAL)
+						if(unlikely(properties & ExtendedVersion::PROPERTIES_VIRTUAL))
 							return one;
 						break;
 					case Scanner::VER_PROPERTIESSET:
-						if(properties & ExtendedVersion::PROPERTIES_SET)
+						if(unlikely(properties & ExtendedVersion::PROPERTIES_SET))
 							return one;
 						break;
 					default:
 					//case Scanner::VER_PROPERTIESSET:
-						if(properties != ExtendedVersion::PROPERTIES_NONE)
+						if(unlikely(properties != ExtendedVersion::PROPERTIES_NONE))
 							return one;
 						break;
 				}
@@ -1037,7 +1060,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			a = true;
 		default:
 		//case Scanner::VER_WAS....
-			if(!(version_variables->isinst)) {
+			if(likely(!(version_variables->isinst))) {
 				const Version *version = version_variables->version();
 				MaskFlags mymask(version->maskflags);
 				KeywordsFlags mykey(version->keyflags);
@@ -1099,13 +1122,13 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			}
 			break;
 	}
-	return empty;
+	return emptystring;
 }
 
 static const Package *
 old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
 {
-	const char *s = name.c_str();
+	const char *s(name.c_str());
 	if(strncmp(s, "old", 3) == 0) {
 		*new_name = s + 3;
 		return older;
@@ -1127,10 +1150,10 @@ get_package_property(const PrintFormat *fmt, const void *entity, const string &n
 string
 get_diff_package_property(const PrintFormat *fmt, const void *entity, const string &name)
 {
-	const Package *older = (static_cast<const Package* const*>(entity))[0];
-	const Package *newer = (static_cast<const Package* const*>(entity))[1];
-	Scanner::Prop diff = scanner.get_diff(name);
-	if(diff != Scanner::PROP_NONE) {
+	const Package *older((static_cast<const Package* const*>(entity))[0]);
+	const Package *newer((static_cast<const Package* const*>(entity))[1]);
+	Scanner::Prop diff(scanner.get_diff(name));
+	if(unlikely(diff != Scanner::PROP_NONE)) {
 		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
 		LocalCopy copyolder(fmt, const_cast<Package*>(older));
 		bool result;
@@ -1159,9 +1182,9 @@ get_diff_package_property(const PrintFormat *fmt, const void *entity, const stri
 		copynewer.restore(const_cast<Package*>(newer));
 		if(result)
 			return one;
-		return empty;
+		return emptystring;
 	}
 	string new_name;
-	const Package *package = old_or_new(&new_name, older, newer, name);
+	const Package *package(old_or_new(&new_name, older, newer, name));
 	return fmt->get_pkg_property(package, new_name);
 }

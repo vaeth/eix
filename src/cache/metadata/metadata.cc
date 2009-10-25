@@ -8,13 +8,23 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "metadata.h"
-#include <cache/common/flat_reader.h>
 #include <cache/common/assign_reader.h>
-
+#include <cache/common/flat_reader.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 #include <dirent.h>
 
 using namespace std;
@@ -27,8 +37,8 @@ using namespace std;
 bool
 MetadataCache::initialize(const string &name)
 {
-	string pure_name = name;
-	string::size_type i = pure_name.find_first_of(':');
+	string pure_name(name);
+	string::size_type i(pure_name.find(':'));
 	if(i != string::npos) {
 		pure_name.erase(i);
 		have_override_path = true;
@@ -112,7 +122,7 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 }
 
 bool
-MetadataCache::readCategoryPrepare(Category &vec) throw(ExBasic)
+MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 {
 	if(have_override_path) {
 		catpath = override_path;
@@ -140,9 +150,9 @@ MetadataCache::readCategoryPrepare(Category &vec) throw(ExBasic)
 			if(m_overlay_name.empty()) {
 				// Paludis' way of resolving missing repo_name:
 				catpath.append("x-");
-				string::size_type p = m_scheme.size();
+				string::size_type p(m_scheme.size());
 				while(p) {
-					string::size_type c = m_scheme.rfind('/', p);
+					string::size_type c(m_scheme.rfind('/', p));
 					if(c == string::npos) {
 						catpath.append(m_scheme.substr(0,p));
 						break;
@@ -162,7 +172,7 @@ MetadataCache::readCategoryPrepare(Category &vec) throw(ExBasic)
 			break;
 	}
 	optional_append(catpath, '/');
-	catpath.append(vec.name);
+	catpath.append(cat_name);
 
 	return scandir_cc(catpath, names, cachefiles_selector);
 }
@@ -187,30 +197,31 @@ MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Vers
 }
 
 bool
-MetadataCache::readCategory(Category &vec) throw(ExBasic)
+MetadataCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
 {
-	if(!readCategoryPrepare(vec))
+	if(!readCategoryPrepare(cat_name))
 		return false;
-	for(vector<string>::const_iterator it = names.begin();
-		it != names.end(); ) {
+	for(vector<string>::const_iterator it(names.begin());
+		likely(it != names.end()); ) {
 		Version *version;
-		Version *newest = NULL;
+		Version *newest(NULL);
 		string neweststring;
 
 		/* Split string into package and version, and catch any errors. */
-		char **aux = ExplodeAtom::split(it->c_str());
-		if(!aux) {
+		char **aux(ExplodeAtom::split(it->c_str()));
+		if(unlikely(aux == NULL)) {
 			m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
 			++it;
 			continue;
 		}
 
 		/* Search for existing package */
-		Package *pkg = vec.findPackage(aux[0]);
+		Package *pkg(cat.findPackage(aux[0]));
 
 		/* If none was found create one */
-		if(!pkg)
-			pkg = vec.addPackage(aux[0]);
+		if(pkg == NULL) {
+			pkg = cat.addPackage(cat_name, aux[0]);
+		}
 
 		for(;;) {
 			/* Make version and add it to package. */
@@ -236,7 +247,7 @@ MetadataCache::readCategory(Category &vec) throw(ExBasic)
 
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(it->c_str());
-			if(!aux) {
+			if(unlikely(aux == NULL)) {
 				m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
 				++it;
 				break;

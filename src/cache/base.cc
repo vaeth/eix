@@ -9,16 +9,23 @@
 
 #include "base.h"
 
+#include <eixTk/likely.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/conf/portagesettings.h>
+
+#include <map>
+#include <string>
+
+#include <cstddef>
+#include <cstdlib>
 
 using namespace std;
 
 static inline
 string::size_type revision_index(const string &ver)
 {
-	string::size_type i = ver.rfind("-r");
+	string::size_type i(ver.rfind("-r"));
 	if(i == string::npos)
 		return string::npos;
 	if (ver.find_first_not_of("0123456789", i + 2) == string::npos)
@@ -26,7 +33,7 @@ string::size_type revision_index(const string &ver)
 	return string::npos;
 }
 
-void BasicCache::setScheme(const char *prefix, const char *prefixport, std::string scheme)
+void BasicCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme)
 {
 	m_scheme = scheme;
 	if(use_prefixport())
@@ -51,7 +58,7 @@ string BasicCache::getPrefixedPath() const
 
 string BasicCache::getPathHumanReadable() const
 {
-	string ret = m_scheme;
+	string ret(m_scheme);
 	if(have_prefix) {
 		ret.append(" in ");
 		ret.append(m_prefix);
@@ -61,16 +68,16 @@ string BasicCache::getPathHumanReadable() const
 
 void BasicCache::env_add_package(map<string,string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const
 {
-	string full = version.getFull();
+	string full(version.getFull());
 	string eroot;
 
 	// Set default variables
 
-	const char *envptr = getenv("PATH");
-	if(envptr)
+	const char *envptr(getenv("PATH"));
+	if(likely(envptr != NULL))
 		env["PATH"] = envptr;
 	envptr = getenv("ROOT");
-	if(envptr) {
+	if(unlikely(envptr != NULL)) {
 		env["ROOT"] = envptr;
 		eroot = envptr + m_prefix;
 	}
@@ -82,14 +89,14 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 		env["EPREFIX"] = m_prefix;
 		env["EROOT"]   = eroot;
 	}
-	string portdir      = (*portagesettings)["PORTDIR"];
-	env["ECLASSDIR"]    = eroot + portdir + "/eclass";
+	string portdir((*portagesettings)["PORTDIR"]);
+	env["ECLASSDIR"] = eroot + portdir + "/eclass";
 
 	// Set variables from portagesettings (make.globals/make.conf/...)
 	// (Possibly overriding defaults)
 
-	for(PortageSettings::const_iterator it = portagesettings->begin();
-		it != portagesettings->end(); ++it) {
+	for(PortageSettings::const_iterator it(portagesettings->begin());
+		likely(it != portagesettings->end()); ++it) {
 		env[it->first] = it->second;
 	}
 
@@ -104,7 +111,7 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 	env["PVR"]          = full;
 	env["PF"]           = package.name + "-" + full;
 	string mainversion;
-	string::size_type ind = revision_index(full);
+	string::size_type ind(revision_index(full));
 	if(ind == string::npos) {
 		env["PR"]   = "r0";
 		mainversion = full;

@@ -10,9 +10,13 @@
 #ifndef EIX__STABILITY_H__
 #define EIX__STABILITY_H__ 1
 
-#include <eixTk/inttypes.h>
-#include <eixTk/stringutils.h>
 #include <database/types.h>
+#include <eixTk/inttypes.h>
+
+#include <set>
+#include <string>
+
+#include <cstddef>
 
 class MaskFlags {
 	public:

@@ -9,9 +9,15 @@
 
 #include "selectors.h"
 
-#include <eixrc/global.h>
+#include <eixTk/likely.h>
 #include <eixTk/regexp.h>
+#include <eixTk/utils.h>
+#include <eixrc/eixrc.h>
+#include <eixrc/global.h>
 
+#include <string>
+
+#include <cstddef>
 #include <cstring>
 #include <dirent.h>
 
@@ -30,23 +36,23 @@ int ebuild_selector (SCANDIR_ARG3 dent)
 
 string::size_type ebuild_pos(const std::string &str)
 {
-	string::size_type pos = str.length();
-	static const string::size_type append_size = 7;
+	string::size_type pos(str.length());
+	static const string::size_type append_size(7);
 	if(pos <= append_size)
 		return string::npos;
 	pos -= append_size;
-	if(!(str.compare(pos, append_size, ".ebuild")))
+	if(unlikely(str.compare(pos, append_size, ".ebuild") == 0))
 		return pos;
 	static Regex r;
-	static bool empty = false;
-	if(empty)
+	static bool is_empty = false;
+	if(unlikely(is_empty))
 		return false;
-	if(!r.compiled()) {
-		string m = "\\.ebuild-(";
-		EixRc eixrc = get_eixrc(NULL);
+	if(unlikely(!r.compiled())) {
+		string m("\\.ebuild-(");
+		EixRc eixrc(get_eixrc(NULL));
 		const string &s = eixrc["EAPI_REGEX"];
 		if(s.empty()) {
-			empty = true;
+			is_empty = true;
 			return false;
 		}
 		m.append(s);

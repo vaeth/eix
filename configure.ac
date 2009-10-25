@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.18.3], [http://eix.sourceforge.net])
+AC_INIT([eix], [0.19.0], [http://eix.sourceforge.net])
 AC_PREREQ([2.61])
 
 AC_CONFIG_AUX_DIR([config])
@@ -426,9 +426,6 @@ AC_CHECK_FUNCS([canonicalize_file_name realpath vfork setenv])
 # Optional header files:
 AC_CHECK_HEADERS([sys/param.h])
 
-# Not sure whether this is optional; however it probably exists on all systems
-AC_CHECK_HEADERS([unistd.h])
-
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],
 	[break])
@@ -460,8 +457,7 @@ AS_IF([test x"${use_bzlib}" != x"false"],
 	LIBS="${LIBS} ${BZLIB_LIBS}"
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <bzlib.h>
-		]],
-		[[
+		]], [[
 BZ2_bzopen("dummy","rb");
 		]])],
 		[MV_IF_EMPTY([${use_bzlib}],
@@ -501,6 +497,63 @@ AS_IF([${extra_cache}],
 AM_CONDITIONAL([EXTRA_CACHE],
 	[${extra_cache}])
 
+# Check if __builtin_expect works
+AC_MSG_CHECKING([whether __builtin_expect can be used])
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[]], [[
+if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
+	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
+	return 1;
+		]])],
+	[AC_MSG_RESULT([yes])
+	bi_expect_works=true],
+	[AC_MSG_RESULT([no])
+	bi_expect_works=false],
+	[AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[
+if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
+	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
+	return 1;
+		]])],
+		[AC_MSG_RESULT([yes], [crosscompile guess])
+		bi_expect_works = true],
+		[AC_MSG_RESULT([no], [crosscompile guess])
+		bi_expect_works = false])])
+AS_IF([${bi_expect_works}],
+	[AC_DEFINE([HAVE___BUILTIN_EXPECT],
+		[1],
+		[ Define to 1 if __builtin_expect can be used])])
+
+# Check if __attribute__ ((__unused__)) works
+AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+int dummy(int i __attribute__ ((__unused__))) { return 0; }
+		]], [[
+return dummy(1);
+		]])],
+		[AC_MSG_RESULT([yes])
+		attribute_unused=true],
+		[AC_MSG_RESULT([no])
+		attribute_unused=false])
+AS_IF([${attribute_unused}],
+	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
+		[1],
+		[ Define to 1 if __attribute__ ((__unused__)) can be used])])
+
+# Check if __attribute__ ((__noreturn__)) works
+AC_MSG_CHECKING([whether __attribute__ ((__noreturn__)) can be used])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+int dummy(int i __attribute__ ((__noreturn__))) { return 0; }
+		]], [[
+return dummy(1);
+		]])],
+		[AC_MSG_RESULT([yes])
+		attribute_noreturn=true],
+		[AC_MSG_RESULT([no])
+		attribute_noreturn=false])
+AS_IF([${attribute_noreturn}],
+	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
+		[1],
+		[ Define to 1 if __attribute__ ((__noreturn__)) can be used])])
+
 # Check if std::unique works
 AC_MSG_CHECKING([whether std::unique seems to work])
 AC_ARG_ENABLE([unique],
@@ -523,12 +576,12 @@ const char *a[] = {
 const char *b[]= {
 	"1", "2", "3", "4", "5", NULL };
 typedef std::vector<std::string>::size_type ind;
-for(ind i = 0; a[i]; i++) {
+for(ind i(0); a[i]; ++i) {
 	std::vector<std::string> t;
 	while(a[i])
 		t.push_back(a[i++]);
-	t.erase(unique(t.begin(), t.end()), t.end());
-	for(ind j = 0; ; j++) {
+	t.erase(std::unique(t.begin(), t.end()), t.end());
+	for(ind j(0); ; ++j) {
 		if(j == t.size()) {
 			if(b[j])
 				return 1;

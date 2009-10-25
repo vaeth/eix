@@ -11,9 +11,10 @@
 #define EIX__UTILS_H__ 1
 
 #include <map>
-#include <vector>
 #include <string>
-#include <cstdlib>
+#include <vector>
+
+#include <cstddef>
 #include <cstdio>
 
 /** scandir which even works on poor man's systems.

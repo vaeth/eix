@@ -10,10 +10,14 @@
 #ifndef EIX__SETSTABILITY_H__
 #define EIX__SETSTABILITY_H__ 1
 
+#include <config.h>
+
 #include <portage/version.h>
 
-class Package;
 class Category;
+class KeywordFlags;
+class MaskFlags;
+class Package;
 class PackageTree;
 class PortageSettings;
 

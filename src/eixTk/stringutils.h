@@ -11,21 +11,23 @@
 #define EIX__STRINGUTILS_H__ 1
 
 #include <config.h>
+#include <eixTk/likely.h>
 
 #include <locale>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
-#include <map>
-#include <cstring>
-#include <cstdlib>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
+#ifdef UNIQUE_WORKS
+#include <algorithm>
 #endif
 
-#define UNUSED(p) ((void)(p))
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 
 #ifndef HAVE_STRNDUP
+#include <sys/types.h>
 /** strndup in case we don't have one. */
 char *strndup(const char *s, size_t n);
 #endif
@@ -42,6 +44,8 @@ char *strndup(const char *s, size_t n);
 
 /** Spaces for split strings */
 extern const char *spaces;
+
+extern const std::string emptystring, one;
 
 extern std::locale localeC;
 
@@ -67,7 +71,7 @@ class ExplodeAtom {
 inline bool
 is_numeric(const char *str)
 {
-	for(char c = *str; c; c=*(++str)) {
+	for(char c(*str); likely(c != '\0'); c = *(++str)) {
 		if(!isdigit(c, localeC))
 			return false;
 	}
@@ -90,7 +94,7 @@ inline void
 ltrim(std::string *str, const char *delims = spaces)
 {
 	// trim leading whitespace
-	std::string::size_type notwhite = str->find_first_not_of(delims);
+	std::string::size_type notwhite(str->find_first_not_of(delims));
 	if(notwhite != std::string::npos)
 		str->erase(0, notwhite);
 	else
@@ -105,7 +109,7 @@ inline void
 rtrim(std::string *str, const char *delims = spaces)
 {
 	// trim trailing whitespace
-	std::string::size_type  notwhite = str->find_last_not_of(delims);
+	std::string::size_type notwhite(str->find_last_not_of(delims));
 	if(notwhite != std::string::npos)
 		str->erase(notwhite+1);
 	else
@@ -127,13 +131,30 @@ trim(std::string *str, const char *delims = spaces)
 void escape_string(std::string &str, const char *at = spaces);
 
 /** Split a string into multiple strings.
+ * @param vec Will contain the result. Actually the result is pushed_back;
+ *            so if you have no new vec, you must usually call vec.clean()
+ *            in advance.
+ * @param str Reference to the string that should be splitted.
+ * @param at  Split at the occurrence of any these characters.
+ * @param ignore_empty  Remove empty strings from the result.
+ * @param handle_escape Do not split at escaped characters from "at" symbols,
+ *                      removing escapes for \\ or "at" symbols from result. */
+void split_string(std::vector<std::string> &vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
+
+/** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.
  * @param at  Split at the occurrence of any these characters.
  * @param ignore_empty  Remove empty strings from the result.
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result.
- * @return    vector of strings. */
-std::vector<std::string> split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
+ * @return the resulting vector */
+inline std::vector<std::string>
+split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+{
+	std::vector<std::string> vec;
+	split_string(vec, str, handle_escape, at, ignore_empty);
+	return vec;
+}
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
@@ -146,6 +167,7 @@ std::string join_set(const std::set<std::string> &vec, const std::string &glue =
 /** Resolve a vector of -/+ keywords and store the result as a set.
  * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
  * are found, they (and the -keyword) are removed.
+ * @param s will get influenced by the string; it is not cleared in advance!
  * @param obsolete_minus   If true do not treat -* special and keep -keyword.
  * @param warnminus        Set if there was -keyword which did not apply for
  * @param warnignore
@@ -155,13 +177,11 @@ bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string>
 /** Sort and unique. Return true if there were double entries */
 #ifdef UNIQUE_WORKS
 
-#include <algorithm>
-
 template<typename T>
 bool sort_uniquify(T &v, bool vector_is_ignored = false)
 {
 	std::sort(v.begin(), v.end());
-	typename T::iterator i = std::unique(v.begin(), v.end());
+	typename T::iterator i(std::unique(v.begin(), v.end()));
 	if(i == v.end())
 		return false;
 	if(! vector_is_ignored)
@@ -214,8 +234,7 @@ void make_vector(std::vector<T> &the_list, const std::set<T> &the_set)
 	the_list.clear();
 	for(typename std::set<T>::const_iterator it(the_set.begin()),
 			it_end(the_set.end());
-		it != it_end; ++it)
-	{
+		likely(it != it_end); ++it) {
 		the_list.push_back(*it);
 	}
 }
@@ -253,7 +272,5 @@ class StringHash : public std::vector<std::string>
 		bool hashing, finalized;
 		std::map<std::string, StringHash::size_type> str_map;
 };
-
-
 
 #endif /* EIX__STRINGUTILS_H__ */

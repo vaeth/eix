@@ -11,10 +11,21 @@
 #define EIX__PORTAGESETTINGS_H 1
 
 #include <config.h>
-#include <eixTk/exceptions.h>
-
 #include <portage/keywords.h>
+#include <portage/mask.h>
 #include <portage/mask_list.h>
+#include <portage/package.h>
+
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+
+class CascadingProfile;
+class EixRc;
+class Version;
 
 /* Files for categories the user defined and categories from the official tree */
 #define MAKE_GLOBALS_FILE       "/etc/make.globals"
@@ -28,11 +39,6 @@
 #define USER_PROFILE_DIR        "/etc/portage/profile"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
 #define PORTDIR_MASK_FILE       "profiles/package.mask"
-
-class Mask;
-class Package;
-class EixRc;
-class CascadingProfile;
 
 /** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
 bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false);

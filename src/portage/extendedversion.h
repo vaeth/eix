@@ -13,10 +13,13 @@
 #include <portage/basicversion.h>
 #include <database/types.h>
 #include <eixTk/inttypes.h>
-#include <eixTk/stringutils.h>
 
-class PortageSettings;
+#include <string>
+
+#include <cstddef>
+
 class Package;
+class PortageSettings;
 
 class ExtendedVersion : public BasicVersion
 {

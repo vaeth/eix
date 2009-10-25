@@ -8,9 +8,14 @@
 
 #include "levenshtein.h"
 
+#include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 
 #include <algorithm>
+#include <vector>
+
+#include <cstring>
+#include <sys/types.h>
 
 using namespace std;
 
@@ -36,22 +41,22 @@ get_levenshtein_distance(const char *str_a, const char *str_b)
 	// initialize the matrix' dimensions
 	matrix.resize(n + 1);
 	matrix[0].resize(m + 1);
-	for(vector< vector<Levenshtein> >::size_type i = 1; i <= n; ++i) {
+	for(vector< vector<Levenshtein> >::size_type i(1); likely(i <= n); ++i) {
 		matrix[i].resize(m + 1);
 		fill(matrix[i].begin(), matrix[i].end(), 0);
 	}
 
 	// fill the 1st column/row with str_a / str_b
-	for(vector< vector<Levenshtein> >::size_type i = 0; i <= n; ++i)
+	for(vector< vector<Levenshtein> >::size_type i(0); likely(i <= n); ++i)
 		matrix[i][0] = i;
-	for(vector<Levenshtein>::size_type j = 0; j <= m; ++j)
+	for(vector<Levenshtein>::size_type j(0); likely(j <= m); ++j)
 		matrix[0][j] = j;
 
 	// calculate the matrix
-	for(vector< vector<Levenshtein> >::size_type i = 1; i <= n; ++i) {
-		for(vector<Levenshtein>::size_type j = 1; j <= m; ++j) {
-			char ci = tolower(str_a[i - 1], localeC);
-			char cj = tolower(str_b[j - 1], localeC);
+	for(vector< vector<Levenshtein> >::size_type i(1); likely(i <= n); ++i) {
+		for(vector<Levenshtein>::size_type j(1); likely(j <= m); ++j) {
+			char ci(tolower(str_a[i - 1], localeC));
+			char cj(tolower(str_b[j - 1], localeC));
 
 			Levenshtein a = matrix[i - 1][j] + 1;
 			Levenshtein b = matrix[i][j - 1] + 1;

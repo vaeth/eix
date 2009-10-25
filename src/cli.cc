@@ -8,14 +8,29 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "cli.h"
-#include <config.h>
+#include <database/header.h>
+#include <eixTk/argsreader.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <eixrc/eixrc.h>
+#include <output/formatstring.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/set_stability.h>
+#include <portage/vardbpkg.h>
+#include <search/dbmatchcriteria.h>
+#include <search/packagetest.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdlib>
 
 using namespace std;
 
 #define FINISH_CURRENT do { \
 	current->setTest(test); \
-	current->finalize(); \
 } while(0)
 
 #define USE_NEXT do { \
@@ -26,8 +41,8 @@ using namespace std;
 
 inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
 {
-	ArgumentReader::iterator next = arg;
-	if(++next == end)
+	ArgumentReader::iterator next(arg);
+	if(unlikely(++next == end))
 		return false;
 	arg = next;
 	return true;
@@ -37,33 +52,28 @@ Matchatom *
 parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
 	/* Our root Matchatom. */
-	Matchatom   *root    = new Matchatom();
-	Matchatom   *current = root;
-	PackageTest *test    = new PackageTest(varpkg_db, portagesettings, stability, header);
+	Matchatom   *root(new Matchatom());
+	Matchatom   *current(root);
+	PackageTest *test(new PackageTest(varpkg_db, portagesettings, stability, header));
 
-	bool need_logical_operator = false;
-	bool have_default_operator = false;
-	bool default_operator = false;
-	while(arg != end)
-	{
+	bool need_logical_operator(false);
+	bool have_default_operator(false);
+	bool default_operator(false);
+	while(likely(arg != end)) {
 		// Check for logical operator {{{
 		{
-			Matchatom *next = NULL;
+			Matchatom *next(NULL);
 
-			if(**arg == 'a')
-			{
+			if(unlikely(**arg == 'a')) {
 				next = current->AND();
 				++arg;
 			}
-			else if(**arg == 'o')
-			{
+			else if(unlikely(**arg == 'o')) {
 				next = current->OR();
 				++arg;
 			}
-			else if(need_logical_operator)
-			{
-				if(!have_default_operator)
-				{
+			else if(unlikely(need_logical_operator)) {
+				if(unlikely(!have_default_operator)) {
 					have_default_operator = true;
 					default_operator = eixrc.getBool("DEFAULT_IS_OR");
 				}
@@ -73,8 +83,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					next = current->AND();
 			}
 
-			if(next != NULL)
-			{
+			if(likely(next != NULL)) {
 				USE_NEXT;
 				need_logical_operator = false;
 				continue;
@@ -227,8 +236,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			case O_PROPERTIES_SET: test->Properties(ExtendedVersion::PROPERTIES_SET);
 				  break;
 			case 'T': red.first = red.second = RedAtom();
-				  if(eixrc.getBool("TEST_FOR_REDUNDANCY"))
-				  {
+				  if(likely(eixrc.getBool("TEST_FOR_REDUNDANCY"))) {
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
 						Keywords::RED_DOUBLE, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LINE",
@@ -267,8 +275,7 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 						Keywords::RED_IN_CFLAGS, red);
 				  }
 				  test_installed = PackageTest::INS_NONE;
-				  if(eixrc.getBool("TEST_FOR_NONEXISTENT"))
-				  {
+				  if(likely(eixrc.getBool("TEST_FOR_NONEXISTENT"))) {
 					test_installed |= PackageTest::INS_NONEXISTENT;
 					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
 						test_installed |= PackageTest::INS_MASKED;
@@ -304,14 +311,14 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			// }}}
 
 			// Check for algorithms {{{
-			case 'f': if(++arg != end
-					 && arg->type == Parameter::ARGUMENT
-					 && is_numeric(arg->m_argument)) {
-					  test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
+			case 'f': if(unlikely((++arg != end)
+					&& (arg->type == Parameter::ARGUMENT)
+					&& is_numeric(arg->m_argument))) {
+					test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
 				  }
 				  else {
-					  test->setAlgorithm(PackageTest::ALGO_FUZZY);
-					  --arg;
+					test->setAlgorithm(PackageTest::ALGO_FUZZY);
+					--arg;
 				  }
 				  break;
 			case 'r': test->setAlgorithm(new RegexAlgorithm());
@@ -333,33 +340,31 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				test->setAlgorithm(new ExactAlgorithm());
 				*test = PackageTest::CATEGORY_NAME;
 				firsttime = true;
-				while(!cin.eof())
-				{
+				while(likely(!cin.eof())) {
 					string line;
 					getline(cin, line);
 					trim(&line);
-					vector<string> wordlist = split_string(line);
-					vector<string>::iterator word = wordlist.begin();
-					string::size_type i;
-					for(; word != wordlist.end(); ++word)
-					{
+					vector<string> wordlist;
+					split_string(wordlist, line);
+					vector<string>::iterator word(wordlist.begin());
+					for(string::size_type i; likely(word != wordlist.end()); ++word) {
 						i = word->find("/");
 						if(i == string::npos)
 							continue;
 						if(word->find("/", i + 1) == string::npos)
 							break;
 					}
-					if(word == wordlist.end())
+					if(unlikely(word == wordlist.end()))
 						continue;
-					if(! firsttime)
-					{
+					if(unlikely(firsttime))
+						firsttime = false;
+					else {
 						Matchatom *next = current->OR();
 						USE_NEXT;
 						test->setAlgorithm(new ExactAlgorithm());
 						*test = PackageTest::CATEGORY_NAME;
 					}
-					firsttime = false;
-					char **name_ver = ExplodeAtom::split(word->c_str());
+					char **name_ver(ExplodeAtom::split(word->c_str()));
 					const char *name, *ver;
 					if(name_ver)
 					{
@@ -371,8 +376,9 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 						name = word->c_str();
 						ver  = NULL;
 					}
-					if(!(*marked_list))
+					if(unlikely(*marked_list == NULL)) {
 						*marked_list = new MarkedList();
+					}
 					(*marked_list)->add(name, ver);
 					test->setPattern(name);
 					if(name_ver)

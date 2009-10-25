@@ -8,24 +8,33 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "basicversion.h"
-
 #include <eixTk/compare.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 
+#include <algorithm>
+#include <iostream>
 #include <iterator>
+#include <list>
+#include <ostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
 const string::size_type BasicVersion::max_type;
 
-int
+short
 BasicVersion::compare(const Part& left, const Part& right)
 {
 	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
 	// but I suppose this is not yet sanctioned by gentoo.
 	// We are going to follow the text from section 2.3 "Version Comparison" here.
 
-	int ret = eix::default_compare(left.first, right.first);
+	short ret(eix::default_compare(left.first, right.first));
 	if (ret)
 		return ret;
 
@@ -41,8 +50,8 @@ BasicVersion::compare(const Part& left, const Part& right)
 		//  stringwise comparison."
 
 		if ((left.second)[0] == '0' || (right.second)[0] == '0') {
-			string l1 = left.second;
-			string l2 = right.second;
+			string l1(left.second);
+			string l2(right.second);
 
 			rtrim(&l1, "0");
 			rtrim(&l2, "0");
@@ -66,11 +75,6 @@ BasicVersion::compare(const Part& left, const Part& right)
 	// "The first component of the number part is compared using strict integer
 	//  comparison."
 	return eix::numeric_compare(left.second, right.second);
-}
-
-BasicVersion::BasicVersion(const char *str) {
-	if(str)
-		parseVersion(str);
 }
 
 inline
@@ -117,9 +121,9 @@ BasicVersion::parseVersion(const string& str)
 {
 	m_cached_full = str;
 
-	string::size_type pos = 0;
-	string::size_type len = str.find_first_not_of("0123456789", pos);
-	if (len == pos || pos == str.size()) {
+	string::size_type pos(0);
+	string::size_type len(str.find_first_not_of("0123456789", pos));
+	if(unlikely(len == pos || pos == str.size())) {
 		m_parts.push_back(Part(garbage, str.substr(pos)));
 		throw ExBasic(_(
 			"malformed (first primary at %r) version string %r\n"))
@@ -134,7 +138,7 @@ BasicVersion::parseVersion(const string& str)
 
 	while(str[pos] == '.') {
 		len = str.find_first_not_of("0123456789", ++pos);
-		if (len == pos || pos == str.size()) {
+		if(unlikely(len == pos || pos == str.size())) {
 			m_parts.push_back(Part(garbage, str.substr(pos)));
 			throw ExBasic(_(
 				"malformed (primary at %r) version string %r\n"))
@@ -221,14 +225,14 @@ BasicVersion::parseVersion(const string& str)
 	m_parts.push_back(Part(garbage, str.substr(pos)));
 }
 
-int
+short
 BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
 	list<Part>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
-	for(int ret = 0;; ++it_left, ++it_right) {
+	for(short ret(0); ; ++it_left, ++it_right) {
 		if (it_left == left.m_parts.end()) {
 			if (it_right == right.m_parts.end())
 				return 0;
@@ -248,15 +252,14 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 	return 0;
 }
 
-int
+short
 BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
 	list<Part>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
-	for(int ret = 0;; ++it_left, ++it_right)
-	{
+	for(short ret(0); ; ++it_left, ++it_right) {
 		bool left_end = (it_left == left.m_parts.end()
 				|| it_left->first == revision);
 		bool right_end = (it_right == right.m_parts.end()

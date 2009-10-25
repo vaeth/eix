@@ -5,20 +5,17 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__I18B_H__
-#define EIX__I18N_H__ 1
+#ifndef EIX__LIKELY_H__
+#define EIX__LIKELY_H__ 1
 
 #include <config.h>
 
-#ifdef ENABLE_NLS
-
-#include <libintl.h>
-#define _(a) gettext(a)
-#define N_(a) ngettext(a)
-
-#else /* !defined(ENABLE_NLS) */
-#define _(a) a
-#define N_(a) a
+#ifdef HAVE___BUILTIN_EXPECT
+#define likely(x)	__builtin_expect((x),1)
+#define unlikely(x)	__builtin_expect((x),0)
+#else
+#define likely(x)	(x)
+#define unlikely(x)	(x)
 #endif
 
-#endif /* EIX__I18N_H__ */
+#endif /* EIX__LIKELY_H__ */

@@ -10,12 +10,10 @@
 #ifndef EIX__SYSUTILS_H__
 #define EIX__SYSUTILS_H__ 1
 
-#include <config.h>
+#include <eixTk/exceptions.h>
 
 #include <ctime>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#include <sys/types.h>
 
 /** Return false if the file is not writable/readable by users in the group portage. */
 bool is_writable(const char *file);
@@ -25,7 +23,7 @@ bool is_file(const char *file);
 bool is_pure_file(const char *file);
 
 /** Return true if the current user is in the group_name. */
-bool user_in_group(const char *group_name);
+bool user_in_group(const char *group_name) throw(ExBasic);
 
 /** Get uid of a user.
  * @param u pointer to uid_t .. uid is stored there.

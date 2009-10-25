@@ -8,19 +8,24 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "flat_reader.h"
-
+#include <cache/base.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
 #include <portage/package.h>
 
 #include <fstream>
 #include <limits>
+#include <string>
+
+#include <cstring>
 
 using namespace std;
 
 inline bool
 skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
 {
-	for(int i = nr; i > 0; --i)
-	{
+	for(int i(nr); likely(i > 0); --i) {
 		is.ignore(numeric_limits<int>::max(), '\n');
 		if(is.fail())
 		{
@@ -29,7 +34,6 @@ skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::Error
 			return false;
 		}
 	}
-
 	return true;
 }
 
@@ -67,8 +71,7 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 	skip_lines(5, is, filename, error_callback);
 	string linebuf;
 	// Read the rest
-	for(int linenr = 5; getline(is, linebuf); ++linenr)
-	{
+	for(int linenr(5); likely(getline(is, linebuf) != 0); ++linenr) {
 		switch(linenr)
 		{
 			case 5:  pkg->homepage = linebuf; break;

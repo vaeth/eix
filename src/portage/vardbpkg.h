@@ -10,9 +10,15 @@
 #ifndef EIX__PORTAGECONF_H__
 #define EIX__PORTAGECONF_H__ 1
 
-#include <eixTk/exceptions.h>
-#include <portage/package.h>
+#include <eixTk/likely.h>
 #include <portage/instversion.h>
+#include <portage/package.h>
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include <cstddef>
 
 class PrintFormat;
 class DBHeader;
@@ -46,9 +52,9 @@ class VarDbPkg {
 		{ }
 
 		~VarDbPkg() {
-			std::map<std::string, std::map<std::string, std::vector<InstVersion> >* >::iterator it = installed.begin();
-			while(it != installed.end()) {
-				delete it++->second;
+			for(std::map<std::string, std::map<std::string, std::vector<InstVersion> >* >::iterator it(installed.begin());
+				likely(it != installed.end()); ++it) {
+				delete it->second;
 			}
 		}
 
@@ -68,7 +74,7 @@ class VarDbPkg {
 		 * @return NULL if not found .. else pointer to vector of versions. */
 		std::vector<InstVersion> *getInstalledVector(const Package &p) {
 			return getInstalledVector(p.category, p.name);
-		};
+		}
 
 		/** Returns true if v is in vec. v=NULL is always in vec.
 		    If a serious result is found and r is nonzero, r points to that result */

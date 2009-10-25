@@ -9,11 +9,27 @@
 
 #include "port2_1_2.h"
 #include <cache/common/unpickle.h>
-
+#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/unused.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
+#include <portage/version.h>
 
-#include <config.h>
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdlib>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace std;
 
@@ -28,7 +44,7 @@ class MapFile {
 		bool mapData(int fd) {
 			struct stat st;
 			if (fstat(fd,&st) == 0) {
-				void *x = mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+				void *x(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 				if (x != MAP_FAILED) {
 					pf_data_size = st.st_size;
 					pf_data = x;
@@ -42,7 +58,7 @@ class MapFile {
 		MapFile(const char *file) {
 			pf_data = NULL;
 			pf_data_size = 0;
-			int fd = open(file, O_RDONLY);
+			int fd(open(file, O_RDONLY));
 			if(fd == -1) {
 				return;
 			}
@@ -60,7 +76,7 @@ class MapFile {
 		}
 
 		bool isReady(const char **data, const char **end) {
-			if(!pf_data)
+			if(pf_data == NULL)
 				return false;
 			*data = static_cast<const char *>(pf_data);
 			*end = (static_cast<const char *>(pf_data)) + pf_data_size;
@@ -69,47 +85,46 @@ class MapFile {
 };
 
 bool
-Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories, Category *category)
+Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories ATTRIBUTE_UNUSED, const char *cat_name, Category *category)
 {
 	UNUSED(categories);
-	string catstring = mapper["KEY"];
+	string catstring(mapper["KEY"]);
 	if(catstring.empty())
 		return false;
-	string::size_type pos = catstring.find_first_of('/');
-	if(pos == string::npos) {
+	string::size_type pos(catstring.find('/'));
+	if(unlikely(pos == string::npos)) {
 		m_error_callback(eix::format(_("%r not of the form package/catstring-version")) % catstring);
 		return false;
 	}
-	string name_ver = catstring.substr(pos + 1);
+	string name_ver(catstring.substr(pos + 1));
 	catstring.resize(pos);
 	// Does the category match?
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
-	if(category) {
+	if(unlikely(packagetree == NULL)) {
 		dest_cat = category;
-		if(dest_cat->name != catstring)
+		if(cat_name != catstring)
 			return false;
 	}
 	else {
 		dest_cat = packagetree->find(catstring);
-		if(!dest_cat)
+		if(dest_cat == NULL)
 			return false;
 	}
-	char **aux = ExplodeAtom::split(name_ver.c_str());
-	if(aux == NULL)
-	{
+	char **aux(ExplodeAtom::split(name_ver.c_str()));
+	if(unlikely(aux == NULL)) {
 		m_error_callback(eix::format(_("Can't split %r into package and version")) % name_ver);
 		return false;
 	}
 	/* Search for existing package */
-	Package *pkg = dest_cat->findPackage(aux[0]);
+	Package *pkg(dest_cat->findPackage(aux[0]));
 
 	/* If none was found create one */
 	if(pkg == NULL)
-		pkg = dest_cat->addPackage(aux[0]);
+		pkg = dest_cat->addPackage(catstring, aux[0]);
 
 	/* Create a new version and add it to package */
-	Version *version = new Version(aux[1]);
+	Version *version(new Version(aux[1]));
 	// reading slots and stability
 	version->slotname = mapper["SLOT"];
 	version->set_full_keywords(mapper["KEYWORDS"]);
@@ -132,7 +147,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	return true;
 }
 
-bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category) throw(ExBasic)
+bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::string> *categories, const char *cat_name, Category *category) throw(ExBasic)
 {
 	string filename = m_prefix + PORTAGE_PICKLE;
 	const char *data, *end;
@@ -144,30 +159,19 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 		m_error_callback(eix::format(_("Can't read cache file %s")) % filename);
 		return true;
 	}
-	if(category)
-	{
-		packagetree = NULL;
-		categories = NULL;
-	}
-	if(packagetree)
-		packagetree->need_fast_access(categories);
 	try {
 		Unpickler unpickler(data, end);
 		while(! unpickler.is_finished())
 		{
 			unpickler.get(unpickled);
-			readEntry(unpickled, packagetree, categories, category);
+			readEntry(unpickled, packagetree, categories, cat_name, category);
 		}
 	}
 	catch(const ExBasic &e) {
 		cerr << eix::format(_("Problems with %s: %s\n")) % filename % e
 			<< endl;
-		if(packagetree)
-			packagetree->finish_fast_access();
 		return false;
 	}
-	if(packagetree)
-		packagetree->finish_fast_access();
 	return true;
 }
 

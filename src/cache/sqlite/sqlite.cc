@@ -8,13 +8,29 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "sqlite.h"
-
 #include <config.h>
 
 #ifdef WITH_SQLITE
 
+#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/unused.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
+#include <portage/version.h>
+
+#ifdef SQLITE_ONLY_DEBUG
+#include <iostream>
+#endif
+#include <map>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdlib>
 
 #include <sqlite3.h>
 
@@ -33,17 +49,17 @@ SqliteCache *SqliteCache::callback_arg;
 inline static const char *
 welldefine(const char *s)
 {
-	if(s)
+	if(s != NULL)
 		return s;
 	return "";
 }
 
 int
-sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName)
+sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **azColName)
 {
 	UNUSED(NotUsed);
-#if 0
-	for(int i = 0; i<argc; ++i) {
+#ifdef SQLITE_ONLY_DEBUG
+	for(int i(0); likely(i < argc); ++i) {
 		cout << eix::format("%s: %s = %s\n")
 			% i % azColName[i] % welldefine(argv[i]);
 	}
@@ -117,14 +133,14 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 		int calc(int argc, const char **azColName, vector<int> &trueindex) const
 		{
 			trueindex = default_trueindex;
-			for(int i = 0; i < argc; ++i) {
-				map<string,vector<int>::size_type>::const_iterator it = find(azColName[i]);
+			for(int i(0); i < argc; ++i) {
+				map<string,vector<int>::size_type>::const_iterator it(find(azColName[i]));
 				if(it != end())
 					trueindex[it->second] = i;
 			}
-			int maxindex = -1;
-			for(vector<int>::size_type i = 0; i < TrueIndex::LAST; ++i) {
-				int curr = trueindex[i];
+			int maxindex(-1);
+			for(vector<int>::size_type i(0); likely(i < TrueIndex::LAST); ++i) {
+				int curr(trueindex[i]);
 				// Shortcut if we have not reached the maximum
 				if(maxindex >= curr)
 					continue;
@@ -142,7 +158,7 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 
 		static const char *c_str(const char **argv, vector<int> &trueindex, const vector<int>::size_type i)
 		{
-			int t = trueindex[i];
+			int t(trueindex[i]);
 			if(t < 0)
 				return "";
 			return welldefine(argv[t]);
@@ -153,7 +169,7 @@ void
 SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azColName)
 {
 	// If an earlier error occurred, we ignore later calls:
-	if(sqlite_callback_error)
+	if(unlikely(sqlite_callback_error))
 		return;
 
 	if(!maxindex)
@@ -164,47 +180,47 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		m_error_callback(_("sqlite dataset does not contain a package name"));
 		return;
 	}
-	string catarg = TrueIndex::c_str(argv, trueindex, TrueIndex::NAME);
+	string catarg(TrueIndex::c_str(argv, trueindex, TrueIndex::NAME));
 	if(argc <= maxindex) {
 		sqlite_callback_error = true;
 		m_error_callback(eix::format(_("sqlite dataset for %s is too small")) % catarg);
 		return;
 	}
-	string::size_type pos = catarg.find_first_of('/');
+	string::size_type pos(catarg.find('/'));
 	if(pos == string::npos) {
 		sqlite_callback_error = true;
 		m_error_callback(eix::format(_("%r not of the form package/category-version")) % catarg);
 		return;
 	}
-	string name_ver = catarg.substr(pos + 1);
+	string name_ver(catarg.substr(pos + 1));
 	catarg.resize(pos);
 	// Does the catarg match category?
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
-	if(category) {
+	if(unlikely(packagetree == NULL)) {
 		dest_cat = category;
-		if(dest_cat->name != catarg)
+		if(cat_name != catarg)
 			return;
 	}
 	else {
 		dest_cat = packagetree->find(catarg);
-		if(!dest_cat)
+		if(unlikely(dest_cat == NULL))
 			return;
 	}
-	char **aux = ExplodeAtom::split(name_ver.c_str());
-	if(aux == NULL) {
+	char **aux(ExplodeAtom::split(name_ver.c_str()));
+	if(unlikely(aux == NULL)) {
 		m_error_callback(eix::format(_("Can't split %r into package and version")) % name_ver);
 		return;
 	}
 	/* Search for existing package */
-	Package *pkg = dest_cat->findPackage(aux[0]);
+	Package *pkg(dest_cat->findPackage(aux[0]));
 
 	/* If none was found create one */
 	if(pkg == NULL)
-		pkg = dest_cat->addPackage(aux[0]);
+		pkg = dest_cat->addPackage(catarg, aux[0]);
 
 	/* Create a new version and add it to package */
-	Version *version = new Version(aux[1]);
+	Version *version(new Version(aux[1]));
 	// reading slots and stability
 	version->slotname = TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT);
 	version->set_restrict(TrueIndex::c_str(argv, trueindex, TrueIndex::RESTRICT));
@@ -226,19 +242,14 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	free(aux[1]);
 }
 
-bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories, Category *cat) throw(ExBasic)
+bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories ATTRIBUTE_UNUSED, const char *catname, Category *cat) throw(ExBasic)
 {
-	if(cat)
-	{
-		pkgtree = NULL;
-		categories = NULL;
-	}
-	char *errormessage = NULL;
-	string sqlitefile = m_prefix + PORTAGE_CACHE_PATH + m_scheme;
+	UNUSED(categories);
+	char *errormessage(NULL);
+	string sqlitefile(m_prefix + PORTAGE_CACHE_PATH + m_scheme);
 	// Cut all trailing '/' and append ".sqlite" to the name
-	string::size_type pos = sqlitefile.find_last_not_of('/');
-	if(pos == string::npos)
-	{
+	string::size_type pos(sqlitefile.find_last_not_of('/'));
+	if(unlikely(pos == string::npos)) {
 		m_error_callback(_("Database path incorrect"));
 		return false;
 	}
@@ -246,25 +257,22 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 	sqlitefile.append(".sqlite");
 
 	sqlite3 *db;
-	int rc = sqlite3_open(sqlitefile.c_str(), &db);
+	int rc(sqlite3_open(sqlitefile.c_str(), &db));
 	if(rc)
 	{
 		sqlite3_close(db);
 		m_error_callback(eix::format(_("Can't open cache file %s")) % sqlitefile);
 		return false;
 	}
-	if(pkgtree)
-		pkgtree->need_fast_access(categories);
 	callback_arg = this;
 	sqlite_callback_error = false;
 	maxindex = 0;
 	packagetree = pkgtree;
 	category = cat;
+	cat_name = catname;
 	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, 0, &errormessage);
 	sqlite3_close(db);
 	trueindex.clear();
-	if(pkgtree)
-		pkgtree->finish_fast_access();
 	if(rc != SQLITE_OK) {
 		sqlite_callback_error = true;
 		m_error_callback(eix::format(_("sqlite error: %s")) % errormessage);
@@ -274,9 +282,12 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 
 #else /* Not WITH_SQLITE */
 
+#include <eixTk/i18n.h>
+#include <eixTk/unused.h>
+
 using namespace std;
 
-bool SqliteCache::readCategories(PackageTree *packagetree, vector<string> *categories, Category *category) throw(ExBasic)
+bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, vector<string> *categories ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) throw(ExBasic)
 {
 	UNUSED(packagetree);
 	UNUSED(category);

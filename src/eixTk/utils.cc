@@ -8,14 +8,22 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "utils.h"
-
-#include "config.h"
-#include <eixrc/global.h>
+#include <config.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <eixrc/global.h>
 
 #include <algorithm>
 #include <fstream>
-#include <sys/types.h>
+#include <map>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 #include <dirent.h>
 #include <sys/stat.h>
 
@@ -24,7 +32,7 @@ using namespace std;
 const unsigned int PercentStatus::hundred;
 
 bool
-scandir_cc(const string &dir, std::vector<std::string> &namelist, select_dirent select, bool sorted)
+scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bool sorted)
 {
 	namelist.clear();
 	DIR *dirhandle = opendir(dir.c_str());
@@ -32,9 +40,9 @@ scandir_cc(const string &dir, std::vector<std::string> &namelist, select_dirent 
 		return false;
 	const struct dirent *d;
 	while((d = readdir(dirhandle)) != NULL) {
-		const char *name = d->d_name;
+		const char *name(d->d_name);
 		// Omit "." and ".." since we must not rely on their existence anyway
-		if(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))
+		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d)))
 			namelist.push_back(name);
 	}
 	closedir(dirhandle);
@@ -49,10 +57,10 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 {
 	string line;
 	ifstream ifstr(file);
-	while (getline(ifstr, line)) {
+	while(likely(getline(ifstr, line) != 0)) {
 		if(remove_comments) {
-			string::size_type x = line.find_first_of('#');
-			if(x != string::npos)
+			string::size_type x(line.find('#'));
+			if(unlikely(x != string::npos))
 				line.erase(x);
 		}
 
@@ -68,21 +76,20 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, bool remove_comments)
 {
 	static const char *files_exclude[] = { "..", "." , NULL };
-	static int depth=0;
+	static int depth(0);
 	vector<string> files;
 	string dir(file);
 	dir += "/";
 	if(recursive && pushback_files(dir, files, files_exclude, 3))
 	{
-		bool rvalue=true;
-		for(vector<string>::iterator it=files.begin();
-			it<files.end(); ++it)
-		{
+		bool rvalue(true);
+		for(vector<string>::iterator it(files.begin());
+			likely(it != files.end()); ++it) {
 			++depth;
 			if (depth == 100)
 				throw ExBasic(_("Nesting level too deep in %r")) % dir;
-			if(! pushback_lines(it->c_str(), v, remove_empty, true, remove_comments))
-				rvalue=false;
+			if(unlikely(!pushback_lines(it->c_str(), v, remove_empty, true, remove_comments)))
+				rvalue = false;
 			--depth;
 		}
 		return rvalue;
@@ -105,8 +112,7 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
 	if(!((dir_entry->d_name)[0]))
 		return 0;
 
-	if(pushback_files_no_hidden)
-	{
+	if(likely(pushback_files_no_hidden)) {
 		// files starting with '.' are hidden.
 		if((dir_entry->d_name)[0] == '.')
 			return 0;
@@ -118,14 +124,14 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
 	if(pushback_files_exclude)
 	{
 		// Look if it's in exclude
-		for(const char **p = pushback_files_exclude ; *p ; ++p)
-			if(strcmp(*p, dir_entry->d_name) == 0)
+		for(const char **p(pushback_files_exclude); likely(*p != NULL); ++p)
+			if(unlikely(strcmp(*p, dir_entry->d_name) == 0))
 				return 0;
 	}
-	if(!pushback_files_only_type)
+	if(likely(pushback_files_only_type == 0))
 		return 1;
 	struct stat static_stat;
-	if(stat(((*pushback_files_dir_path) + dir_entry->d_name).c_str(), &static_stat))
+	if(unlikely(stat(((*pushback_files_dir_path) + dir_entry->d_name).c_str(), &static_stat)))
 		return 0;
 	if(pushback_files_only_type & 1) {
 		if(S_ISREG(static_stat.st_mode))
@@ -158,8 +164,8 @@ bool pushback_files(const string &dir_path, vector<string> &into, const char *ex
 	vector<string> namelist;
 	if(!scandir_cc(dir_path, namelist, pushback_files_selector))
 		return false;
-	for(vector<string>::const_iterator it = namelist.begin();
-		it != namelist.end(); ++it) {
+	for(vector<string>::const_iterator it(namelist.begin());
+		likely(it != namelist.end()); ++it) {
 		if(full_path)
 			into.push_back(dir_path + (*it));
 		else
@@ -172,8 +178,7 @@ bool pushback_files(const string &dir_path, vector<string> &into, const char *ex
  * to the value with the same key in append_to. */
 void join_map(map<string,string> *append_to, map<string,string>::iterator it, map<string,string>::iterator it_end)
 {
-	while(it != it_end)
-	{
+	while(likely(it != it_end)) {
 		(*append_to)[it->first] =
 			( ((*append_to)[it->first].size() != 0)
 			  ? (*append_to)[it->first] + " " + it->second : it->second );

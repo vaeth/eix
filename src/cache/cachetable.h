@@ -10,11 +10,11 @@
 #ifndef EIX__CACHETABLE_H__
 #define EIX__CACHETABLE_H__ 1
 
-#include <cache/cache_map.h>
+#include <cache/base.h>
 #include <eixTk/ptr_list.h>
 
-#include <string>
 #include <map>
+#include <string>
 
 class CacheTable : public eix::ptr_list<BasicCache>
 {

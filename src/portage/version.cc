@@ -8,6 +8,12 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "version.h"
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+
+#include <set>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -18,11 +24,11 @@ const IUse::Flags
 	IUse::USEFLAGS_MINUS;
 
 IUse::Flags
-IUse::split(string &s)
+IUse::parse(string &s)
 {
-	Flags ret = USEFLAGS_NIL;
-	string::size_type c;
-	for(c = 0; c < s.length(); ++c) {
+	Flags ret(USEFLAGS_NIL);
+	string::size_type c(0);
+	for( ; likely(c < s.length()); ++c) {
 		switch(s[c]) {
 			case '+':
 				ret |= USEFLAGS_PLUS;
@@ -44,7 +50,7 @@ IUse::split(string &s)
 		}
 		break;
 	}
-	if(!c)
+	if(c == 0)
 		return USEFLAGS_NORMAL;
 	s.erase(0, c);
 	if(ret == USEFLAGS_NIL)
@@ -61,7 +67,7 @@ IUse::asString() const
 	This function is used to calculate the strings stored in the cachefile,
 	so each change modifies the cachefile format.
 	The corresponding function for reading the cachefile (or the string
-	passed from the ebuild) is split() which is intentionally a bit more
+	passed from the ebuild) is parse() which is intentionally a bit more
 	sloppy about the syntax; so certain minor changes of the prefixes to
 	the cachefile format do not harm.
 */
@@ -97,8 +103,8 @@ string
 IUseSet::asString() const
 {
 	string ret;
-	for(set<IUse>::const_iterator it = m_iuse.begin();
-		it != m_iuse.end(); ++it) {
+	for(set<IUse>::const_iterator it(m_iuse.begin());
+		likely(it != m_iuse.end()); ++it) {
 		if(!ret.empty())
 			ret.append(1, ' ');
 		ret.append(it->asString());
@@ -110,42 +116,42 @@ vector<string>
 IUseSet::asVector() const
 {
 	vector<string> ret(m_iuse.size());
-	vector<string>::size_type i = 0;
-	for(set<IUse>::const_iterator it = m_iuse.begin();
-		it != m_iuse.end(); ++it)
-		ret[i++] = it->asString();
+	vector<string>::size_type i(0);
+	for(set<IUse>::const_iterator it(m_iuse.begin());
+		likely(it != m_iuse.end()); ++i, ++it)
+		ret[i] = it->asString();
 	return ret;
 }
 
 void
 IUseSet::insert(const std::set<IUse> &iuse)
 {
-	for(set<IUse>::const_iterator it = iuse.begin();
-		it != iuse.end(); ++it)
+	for(set<IUse>::const_iterator it(iuse.begin());
+		likely(it != iuse.end()); ++it)
 		insert(*it);
 }
 
 void
 IUseSet::insert(const string &iuse)
 {
-	vector<string> vec = split_string(iuse);
-	for(vector<string>::const_iterator it = vec.begin();
-		it != vec.end(); ++it) {
+	vector<string> vec;
+	split_string(vec, iuse);
+	for(vector<string>::const_iterator it(vec.begin());
+		likely(it != vec.end()); ++it) {
 		insert_fast(*it);
-if(it->empty()) {cout << "ALARM\n"; }
-}
+	}
 }
 
 void
 IUseSet::insert(const IUse &iuse)
 {
-	set<IUse>::iterator it = m_iuse.find(iuse);
+	set<IUse>::iterator it(m_iuse.find(iuse));
 	if(it == m_iuse.end()) {
 		m_iuse.insert(iuse);
 		return;
 	}
-	IUse::Flags oriflags = it->flags;
-	IUse::Flags newflags = oriflags | (iuse.flags);
+	IUse::Flags oriflags(it->flags);
+	IUse::Flags newflags(oriflags | (iuse.flags));
 	if(newflags == oriflags)
 		return;
 	m_iuse.erase(it);
@@ -166,7 +172,7 @@ Version::modify_effective_keywords(const string &modify_keys)
 	}
 	else if(!modify_keywords(effective_keywords, effective_keywords, modify_keys))
 		return;
-	if(effective_keywords == full_keywords) {
+	if(likely(effective_keywords == full_keywords)) {
 		effective_state = EFFECTIVE_UNUSED;
 		effective_keywords.clear();
 	}

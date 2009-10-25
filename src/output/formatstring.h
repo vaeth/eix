@@ -10,20 +10,27 @@
 #ifndef EIX__FORMATSTRING_H__
 #define EIX__FORMATSTRING_H__ 1
 
+#include <eixTk/exceptions.h>
+#include <portage/basicversion.h>
 #include <portage/package.h>
 #include <portage/set_stability.h>
-#include <eixTk/ansicolor.h>
-#include <eixTk/exceptions.h>
+#include <portage/version.h>
 
 #include <stack>
+#include <string>
+#include <map>
+#include <vector>
+
+#include <cstddef>
 
 typedef signed char FullFlag;
 typedef unsigned char FormatTypeFlags;
 
-class EixRc;
 class DBHeader;
-class VarDbPkg;
+class EixRc;
+class Package;
 class PortageSettings;
+class VarDbPkg;
 
 class Node {
 	public:
@@ -119,20 +126,8 @@ class FormatParser {
 		Node *rootnode()
 		{ return root_node; }
 
-		/* Calculate line and column of current position. */
-		int getPosition(int *line, int *column) {
-			const char *x = band, *y = band;
-			while(x <= band_position && x) {
-				y = x;
-				x = strchr(x, '\n');
-				if(x) {
-					++x;
-					++*line;
-					*column = band_position - y;
-				}
-			}
-			return band_position - band;
-		}
+		/** Calculate line and column of current position. */
+		int getPosition(int *line, int *column);
 };
 
 class MarkedList : public std::multimap<std::string, BasicVersion*>
@@ -141,7 +136,7 @@ class MarkedList : public std::multimap<std::string, BasicVersion*>
 		MarkedList() {}
 		~MarkedList()
 		{
-			for(const_iterator it = begin(); it != end(); ++it)
+			for(const_iterator it(begin()); it != end(); ++it)
 			{
 				if(it->second)
 					delete it->second;

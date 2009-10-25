@@ -8,12 +8,20 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "set_stability.h"
-
-#include <portage/conf/portagesettings.h>
+#include <config.h>
+#include <eixTk/likely.h>
 #include <portage/conf/cascadingprofile.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/keywords.h>
+#include <portage/package.h>
 #include <portage/packagetree.h>
+#include <portage/version.h>
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
+#ifndef NDEBUG
+#include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#endif
 
 /* Calculating the index manually makes it sometimes unnecessary
  * to recalculate the stability setting of the whole package.
@@ -61,9 +69,9 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 {
 #ifndef ALWAYS_RECALCULATE_STABILITY
 	// Can we avoid the calculation by getting the saved flags?
-	Version::SavedMaskIndex mi = mask_index(get_local);
-	Version::SavedKeyIndex ki = keyword_index(get_local);
-	if(v->have_saved_masks[mi] && v->have_saved_keywords[ki]) {
+	Version::SavedMaskIndex mi(mask_index(get_local));
+	Version::SavedKeyIndex ki(keyword_index(get_local));
+	if(likely(v->have_saved_masks[mi] && v->have_saved_keywords[ki])) {
 		maskflags = v->saved_masks[mi];
 		keyflags  = v->saved_keywords[ki];
 		return;
@@ -76,6 +84,7 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 	keyflags  = v->keyflags;
 	saved.restore(const_cast<Package *>(p));
 #ifndef ALWAYS_RECALCULATE_STABILITY
+#ifndef NDEBUG
 	/* The next test should actually be unnecessary.
 	 * But in the above calculation of keyword_index or mask_index
 	 * there might easily be a forgotten case (in particular, since
@@ -87,20 +96,21 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 		((v->saved_masks[mi]) != maskflags) || ((v->saved_keywords[ki]) != keyflags))
 		throw ExBasic(_("internal error: SetStability calculates wrong index"));
 #endif
+#endif
 }
 
 void
 SetStability::set_stability(Category &category) const
 {
-	for(Category::iterator it = category.begin();
-		it != category.end(); ++it)
+	for(Category::iterator it(category.begin());
+		likely(it != category.end()); ++it)
 		set_stability(**it);
 }
 
 void
 SetStability::set_stability(PackageTree &tree) const
 {
-	for(PackageTree::iterator it = tree.begin();
-		it != tree.end(); ++it)
-		set_stability(**it);
+	for(PackageTree::iterator it(tree.begin());
+		likely(it != tree.end()); ++it)
+		set_stability(*(it->second));
 }

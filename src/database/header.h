@@ -10,9 +10,14 @@
 #ifndef EIX__DBHEADER_H__
 #define EIX__DBHEADER_H__ 1
 
+#include <database/types.h>
 #include <eixTk/stringutils.h>
 #include <portage/version.h>
 #include <portage/overlay.h>
+
+#include <set>
+#include <string>
+#include <vector>
 
 /** Representation of a database-header.
  * Contains your arch, the version of the db, the number of packages/categories

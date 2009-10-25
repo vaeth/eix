@@ -10,10 +10,14 @@
 #ifndef EIX__REGEXCLASS_H__
 #define EIX__REGEXCLASS_H__ 1
 
-#include <sys/types.h>
-#include <regex.h>
+#include <eixTk/likely.h>
+
 #include <iostream>
+#include <string>
+
+#include <cstddef>
 #include <cstdlib>
+#include <regex.h>
 
 /// Handles regular expressions.
 // It is normally used within global scope so that a regular expression doesn't
@@ -41,15 +45,15 @@ class Regex
 		/// Compile a regular expression.
 		void compile(const char *regex, int eflags = REG_EXTENDED)
 		{
-			if(m_compiled) {
+			if(unlikely(m_compiled)) {
 				regfree(&m_re);
 				m_compiled = false;
 			}
 			if(! regex ||! regex[0])
 				return;
 
-			int retval = regcomp(&m_re, regex, eflags|REG_EXTENDED);
-			if(retval != 0) {
+			int retval(regcomp(&m_re, regex, eflags|REG_EXTENDED));
+			if(unlikely(retval != 0)) {
 				char buf[512];
 				regerror(retval, &m_re, buf, 511);
 				std::cerr << "regcomp(" << regex << "): " << buf << std::endl;

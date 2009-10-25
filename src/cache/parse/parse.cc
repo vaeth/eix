@@ -8,31 +8,47 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "parse.h"
+#include <cache/base.h>
 #include <cache/common/selectors.h>
 #include <cache/common/flat_reader.h>
 #include <cache/metadata/metadata.h>
-
+#include <cache/common/ebuild_exec.h>
 #include <portage/package.h>
+#include <portage/version.h>
 #include <portage/packagetree.h>
 #include <eixTk/varsreader.h>
+#include <eixTk/sysutils.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/likely.h>
+#include <eixTk/formated.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
 
 #include <map>
+#include <vector>
+#include <string>
+
+#include <cstddef>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
 bool
 ParseCache::initialize(const string &name)
 {
-	vector<string> names = split_string(name, true, "#");
-	vector<string>::const_iterator it_name = names.begin();
-	if(it_name == names.end())
+	vector<string> names;
+	split_string(names, name, true, "#");
+	vector<string>::const_iterator it_name(names.begin());
+	if(unlikely(it_name == names.end()))
 		return false;
-	vector<string> s = split_string(*it_name, false, "|");
-	if(s.empty())
+	vector<string> s;
+	split_string(s, *it_name, false, "|");
+	if(unlikely(s.empty()))
 		return false;
 	try_parse = nosubst = false;
-	bool try_ebuild = false, use_sh = false;
-	for(vector<string>::const_iterator it = s.begin(); it != s.end(); ++it) {
+	bool try_ebuild(false), use_sh(false);
+	for(vector<string>::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
 		if(*it == "parse") {
 			try_parse = true; nosubst = false;
 		}
@@ -51,7 +67,7 @@ ParseCache::initialize(const string &name)
 	if(try_ebuild)
 		ebuild_exec = new EbuildExec(use_sh, this);
 	while(++it_name != names.end()) {
-		MetadataCache *p = new MetadataCache;
+		MetadataCache *p(new MetadataCache);
 		if(p->initialize(*it_name)) {
 			further.push_back(p);
 			continue;
@@ -72,7 +88,7 @@ ParseCache::getType() const
 		else
 			s = "parse";
 	}
-	if(ebuild_exec) {
+	if(ebuild_exec != NULL) {
 		const char *t;
 		if(ebuild_exec->use_sh())
 			t = "ebuild*";
@@ -85,8 +101,8 @@ ParseCache::getType() const
 			s.append(t);
 		}
 	}
-	for(vector<BasicCache*>::const_iterator it = further.begin();
-		it != further.end(); ++it) {
+	for(vector<BasicCache*>::const_iterator it(further.begin());
+		likely(it != further.end()); ++it) {
 		s.append(1, '#');
 		s.append((*it)->getType());
 	}
@@ -95,10 +111,10 @@ ParseCache::getType() const
 
 ParseCache::~ParseCache()
 {
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
 		delete *it;
-	if(ebuild_exec) {
+	if(ebuild_exec != NULL) {
 		ebuild_exec->delete_cachefile();
 		delete ebuild_exec;
 		ebuild_exec = NULL;
@@ -106,11 +122,11 @@ ParseCache::~ParseCache()
 }
 
 void
-ParseCache::setScheme(const char *prefix, const char *prefixport, std::string scheme)
+ParseCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme)
 {
 	BasicCache::setScheme(prefix, prefixport, scheme);
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
 		(*it)->setScheme(prefix, prefixport, scheme);
 }
 
@@ -118,17 +134,17 @@ void
 ParseCache::setKey(Version::Overlay key)
 {
 	BasicCache::setKey(key);
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
 		(*it)->setKey(key);
 }
 
 void
-ParseCache::setOverlayName(std::string name)
+ParseCache::setOverlayName(const std::string &name)
 {
 	BasicCache::setOverlayName(name);
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
 		(*it)->setOverlayName(name);
 }
 
@@ -136,17 +152,17 @@ void
 ParseCache::setErrorCallback(ErrorCallback error_callback)
 {
 	BasicCache::setErrorCallback(error_callback);
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
 		(*it)->setErrorCallback(error_callback);
 }
 
 void
 ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild, bool *ok)
 {
-	bool check = (ebuild_exec && ok && (*ok));
-	const string *s = ebuild.find(item);
-	if(!s) {
+	bool check((ebuild_exec != NULL) && (ok != NULL) && (*ok));
+	const string *s(ebuild.find(item));
+	if(s == NULL) {
 		str.clear();
 		if(check)
 			*ok = false;
@@ -155,7 +171,7 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 	str = join_vector(split_string(*s));
 	if(!check)
 		return;
-	if((str.find_first_of('`') != string::npos) ||
+	if((str.find('`') != string::npos) ||
 		(str.find("$(") != string::npos))
 		*ok = false;
 }
@@ -165,9 +181,9 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 {
 	version->overlay_key = m_overlay_key;
 	string keywords, restr, props, iuse;
-	bool ok = try_parse;
+	bool ok(try_parse);
 	if(ok) {
-		VarsReader::Flags flags = VarsReader::NONE;
+		VarsReader::Flags flags(VarsReader::NONE);
 		if(!read_onetime_info)
 			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
 		map<string, string> env;
@@ -188,7 +204,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
 		set_checking(version->slotname, "SLOT", ebuild, &ok);
 		// Empty SLOT is not ok:
-		if(ok && ebuild_exec && version->slotname.empty())
+		if(ok && (ebuild_exec != NULL) && version->slotname.empty())
 			ok = false;
 		set_checking(restr, "RESTRICT", ebuild);
 		set_checking(props, "PROPERTIES", ebuild);
@@ -202,8 +218,8 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		}
 	}
 	if(!ok) {
-		string *cachefile = ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version);
-		if(cachefile) {
+		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version));
+		if(likely(cachefile != NULL)) {
 			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
@@ -219,46 +235,49 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 }
 
 void
-ParseCache::readPackage(Category &vec, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
+ParseCache::readPackage(const char *cat_name, Category &cat, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
 {
-	bool have_onetime_info = false;
+	bool have_onetime_info, have_pkg;
 
-	Package *pkg = vec.findPackage(pkg_name);
-	if(pkg)
-		have_onetime_info = true;
-	else
-		pkg = vec.addPackage(pkg_name);
+	Package *pkg(cat.findPackage(pkg_name));
+	if(pkg != NULL) {
+		have_onetime_info = have_pkg = true;
+	}
+	else {
+		have_onetime_info = have_pkg = false;
+		pkg = new Package(cat_name, pkg_name);
+	}
 
-	for(vector<string>::const_iterator fileit = files.begin();
-		fileit != files.end(); ++fileit) {
-		string::size_type pos = ebuild_pos(*fileit);
+	for(vector<string>::const_iterator fileit(files.begin());
+		likely(fileit != files.end()); ++fileit) {
+		string::size_type pos(ebuild_pos(*fileit));
 		if(pos == string::npos)
 			continue;
 
 		/* Check if we can split it */
-		char *ver = ExplodeAtom::split_version(fileit->substr(0, pos).c_str());
-		if(!ver) {
+		char *ver(ExplodeAtom::split_version(fileit->substr(0, pos).c_str()));
+		if(unlikely(ver == NULL)) {
 			m_error_callback(eix::format(_("Can't split filename of ebuild %s/%s")) %
 				directory_path % (*fileit));
 			continue;
 		}
 
 		/* Make version and add it to package. */
-		Version *version = new Version(ver);
+		Version *version(new Version(ver));
 		pkg->addVersionStart(version);
 
-		string full_path = directory_path + '/' + (*fileit);
+		string full_path(directory_path + '/' + (*fileit));
 
 		/* For the latest version read/change corresponding data */
-		bool read_onetime_info = true;
+		bool read_onetime_info(true);
 		if(have_onetime_info) {
 			if(*(pkg->latest()) != *version)
 				read_onetime_info = false;
 		}
 
-		time_t ebuild_time = 0;
-		vector<BasicCache*>::const_iterator it;
-		for(it = further.begin(); it != further.end(); ++it) {
+		time_t ebuild_time(0);
+		vector<BasicCache*>::const_iterator it(further.begin());
+		for(; likely(it != further.end()); ++it) {
 			time_t t = (*it)->get_time(pkg_name.c_str(), ver);
 			if(!t)
 				continue;
@@ -281,19 +300,24 @@ ParseCache::readPackage(Category &vec, const string &pkg_name, const string &dir
 		free(ver);
 	}
 
-	if(!have_onetime_info) {
-		vec.deletePackage(pkg_name);
+	if(have_onetime_info) {
+		if(!have_pkg) {
+			cat.addPackage(pkg);
+		}
+	}
+	else {
+		delete pkg;
 	}
 }
 
 bool
-ParseCache::readCategoryPrepare(Category &vec) throw(ExBasic)
+ParseCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 {
 	further_works.clear();
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
-		further_works.push_back((*it)->readCategoryPrepare(vec));
-	catpath = m_prefix + m_scheme + '/' + vec.name;
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
+		further_works.push_back((*it)->readCategoryPrepare(cat_name));
+	catpath = m_prefix + m_scheme + '/' + cat_name;
 	return scandir_cc(catpath, packages, package_selector);
 }
 
@@ -301,26 +325,26 @@ void
 ParseCache::readCategoryFinalize()
 {
 	further_works.clear();
-	for(std::vector<BasicCache*>::iterator it = further.begin();
-		it != further.end(); ++it)
+	for(std::vector<BasicCache*>::iterator it(further.begin());
+		likely(it != further.end()); ++it)
 		(*it)->readCategoryFinalize();
 	catpath.clear();
 	packages.clear();
 }
 
 bool
-ParseCache::readCategory(Category &vec) throw(ExBasic)
+ParseCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
 {
-	if(!readCategoryPrepare(vec))
+	if(!readCategoryPrepare(cat_name))
 		return false;
 
-	for(vector<string>::const_iterator pit = packages.begin();
-		pit != packages.end(); ++pit) {
+	for(vector<string>::const_iterator pit(packages.begin());
+		likely(pit != packages.end()); ++pit) {
 		vector<string> files;
 		string pkg_path = catpath + '/' + (*pit);
 
 		if(scandir_cc(pkg_path, files, ebuild_selector))
-			readPackage(vec, *pit, pkg_path, files);
+			readPackage(cat_name, cat, *pit, pkg_path, files);
 	}
 	readCategoryFinalize();
 	return true;

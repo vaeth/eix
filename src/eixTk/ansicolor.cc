@@ -9,11 +9,20 @@
 
 #include "ansicolor.h"
 
+#include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+
+#include <map>
+#include <string>
+#include <vector>
+
 #include <cstdio>
 
 using namespace std;
 
-const char *AnsiMarker::reset_string = "\x1B[0m";
+const char *AnsiMarker::reset_string("\x1B[0m");
 
 inline static const map<string,AnsiMarker::Marker>&
 static_marker_map()
@@ -72,12 +81,13 @@ void
 AnsiMarker::initmarker(const string &markers_string) throw (ExBasic)
 {
 	markers.clear(); have_something = false;
-	vector<string> v = split_string(markers_string, false, ",;:- \t\r\n");
+	vector<string> v;
+	split_string(v, markers_string, false, ",;:- \t\r\n");
 	markers.assign(v.size(), amNone);
-	vector<Marker>::size_type i = 0;
+	vector<Marker>::size_type i(0);
 	for(vector<string>::const_iterator it = v.begin();
-		it != v.end(); ++it) {
-		Marker mk = name_to_marker(*it);
+		likely(it != v.end()); ++it) {
+		Marker mk(name_to_marker(*it));
 		if(mk == amIllegal) {
 			mk = amNone;
 			throw ExBasic(_("Illegal marker name %r")) % *it;
@@ -91,11 +101,11 @@ void
 AnsiMarker::calc_string()
 {
 	string_begin.clear();
-	for(vector<Marker>::const_iterator it = markers.begin();
-		it != markers.end(); ++it) {
+	for(vector<Marker>::const_iterator it(markers.begin());
+		unlikely(it != markers.end()); ++it) {
 		if(*it == amNone)
 			continue;
-		static const int len = 20;
+		static const int len(20);
 		char buf[len];
 		snprintf(buf, len, "\x1B[%dm", int(*it));
 		string_begin.append(buf);
@@ -111,7 +121,7 @@ void AnsiColor::calc_string()
 		return;
 	}
 	have_something = true;
-	static const int len = 20;
+	static const int len(20);
 	char buf[len];
 	if(fg == acDefault)
 		snprintf(buf, len, "\x1B[0m\x1B[%dm", int(light));
@@ -125,8 +135,8 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 {
 	have_something = false;
 	// look for brightness attribute
-	string::size_type curr = color_name.find_first_of(",;");
-	string::size_type resize = curr;
+	string::size_type curr(color_name.find_first_of(",;"));
+	string::size_type resize(curr);
 	if((curr != string::npos) && (color_name[curr] == ','))
 	{
 		++curr;

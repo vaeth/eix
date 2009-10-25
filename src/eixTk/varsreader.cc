@@ -10,18 +10,26 @@
 #include "varsreader.h"
 
 #include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 
-// mmap and stat stuff
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <iostream>
+#include <map>
+#include <string>
+
+#include <cstring>
+#include <cstddef>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/mman.h>
 
 /** Current input for FSM */
 #define INPUT (*(x))
 /** Move to next input and check for end of buffer. */
-#define NEXT_INPUT do { if(++(x) == filebuffer_end) CHSTATE(STOP); } while(0)
-#define INPUT_EOF ((x) == filebuffer_end)
+#define NEXT_INPUT do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(STOP); } while(0)
+#define INPUT_EOF (unlikely((x) == filebuffer_end))
 #define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) \
 	if(++(x) == filebuffer_end) STATE = state_STOP; } while(0)
 #define PREV_INPUT (--(x))
@@ -56,8 +64,8 @@ bool VarsReader::isIncremental(const char *key)
 	if(incremental_keys == NULL)
 		return false;
 
-	const char **it = incremental_keys;
-	while(*it != NULL) {
+	const char **it(incremental_keys);
+	while(likely(*it != NULL)) {
 		if(fnmatch(*it++, key, 0) == 0)
 			return true;
 	}
@@ -68,24 +76,22 @@ bool VarsReader::isIncremental(const char *key)
     Return true if a stop is required due to ONLY_KEYWORDS_SLOT or ONLY_HAVE_READ */
 bool VarsReader::assign_key_value()
 {
-	if(sourcecmd)
-	{
+	if(unlikely(sourcecmd)) {
 		sourcecmd=false;
-		if (! source(value)) {
+		if(unlikely(!source(value))) {
 			std::cerr << eix::format(_("failed to source %r")) % value
 				<< std::endl;
 		}
 		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);
 	}
-	if( (parse_flags & ONLY_KEYWORDS_SLOT) )
-	{
-		if(strncmp("KEYWORDS=", key_begin, 9) == 0)
+	if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
+		if(unlikely(strncmp("KEYWORDS=", key_begin, 9) == 0))
 		{
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= KEYWORDS_READ;
 			return (parse_flags & SLOT_READ);
 		}
-		else if(strncmp("SLOT=", key_begin, 5) == 0)
+		else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0))
 		{
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= SLOT_READ;
@@ -112,7 +118,7 @@ bool VarsReader::assign_key_value()
  * '\n' -> [RV] (and check if we are at EOF, EOF's only occur after a newline) -> JUMP_WHITESPACE */
 void VarsReader::JUMP_NOISE()
 {
-	while(INPUT != '#' && INPUT != '\n' && INPUT != '\'' && INPUT != '"' && INPUT != '\\') NEXT_INPUT;
+	while(likely(INPUT != '#' && INPUT != '\n' && INPUT != '\'' && INPUT != '"' && INPUT != '\\')) NEXT_INPUT;
 	switch(INPUT) {
 		case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
 		case '\\':  NEXT_INPUT; CHSTATE(NOISE_ESCAPE);
@@ -128,7 +134,7 @@ void VarsReader::JUMP_NOISE()
  * Read until the next '\n' comes in. Then move to JUMP_NOISE. */
 void VarsReader::JUMP_COMMENT()
 {
-	while(INPUT != '\n') NEXT_INPUT;
+	while(likely(INPUT != '\n')) NEXT_INPUT;
 	CHSTATE(JUMP_NOISE);
 }
 
@@ -142,38 +148,43 @@ void VarsReader::JUMP_WHITESPACE()
 	sourcecmd=false;
 	while(INPUT == '\t' || INPUT == ' ') NEXT_INPUT;
 	switch(INPUT) {
-		case '#':  NEXT_INPUT;
-			   while(INPUT != '\n') NEXT_INPUT;
-			   CHSTATE(JUMP_WHITESPACE);
-			   break;
-		case 's':  {
-				int i=0;
-				const char *begin = x;
-				while(isalpha(INPUT, localeC)) {
+		case '#':
+			NEXT_INPUT;
+			while(likely(INPUT != '\n')) {
+				NEXT_INPUT;
+			}
+			CHSTATE(JUMP_WHITESPACE);
+			break;
+		case 's':
+			{
+				int i(0);
+				const char *begin(x);
+				while(likely(isalpha(INPUT, localeC))) {
 					NEXT_INPUT; ++i;
 				}
-				if((i!=6) || strncmp("source", begin, 6) != 0)
-				{
+				if(unlikely((i!=6) || strncmp("source", begin, 6) != 0)) {
 					CHSTATE(JUMP_NOISE);
 					break;
 				}
-			   }
-			   --x;
-		case '.':  NEXT_INPUT;
-			   if((parse_flags & ALLOW_SOURCE) &&
-			     (INPUT == '\t' || INPUT == ' '))
-			   {
+			}
+			--x;
+		case '.':
+			NEXT_INPUT;
+			if((parse_flags & ALLOW_SOURCE) &&
+				(INPUT == '\t' || INPUT == ' ')) {
 				sourcecmd=true;
 				CHSTATE(EVAL_VALUE);
-			   }
-			   else
+			}
+			else
 				CHSTATE(JUMP_NOISE);
-			   break;
-		default:   if(isValidKeyCharacterStart(INPUT)) {
-					   key_begin = x;
-					   CHSTATE(FIND_ASSIGNMENT);
-				   }
-				   CHSTATE(JUMP_NOISE);
+			break;
+		default:
+			if(isValidKeyCharacterStart(INPUT)) {
+				key_begin = x;
+				CHSTATE(FIND_ASSIGNMENT);
+			}
+			CHSTATE(JUMP_NOISE);
+			break;
 	}
 }
 
@@ -186,7 +197,7 @@ void VarsReader::JUMP_WHITESPACE()
 void VarsReader::FIND_ASSIGNMENT()
 {
 	key_len = 0;
-	while(isValidKeyCharacter(INPUT)) { NEXT_INPUT; ++key_len;}
+	while(likely(isValidKeyCharacter(INPUT))) { NEXT_INPUT; ++key_len;}
 	switch(INPUT) {
 		case '=':  CHSTATE(EVAL_VALUE);
 		case '#':  NEXT_INPUT; CHSTATE(JUMP_COMMENT);
@@ -221,7 +232,7 @@ void VarsReader::EVAL_VALUE()
  * '\\' -> [RV] SINGLE_QUOTE_ESCAPE | '\'' -> [RV] JUMP_NOISE */
 void VarsReader::VALUE_SINGLE_QUOTE()
 {
-	while(INPUT != '\'') {
+	while(likely(INPUT != '\'')) {
 		VALUE_APPEND(INPUT);
 		NEXT_INPUT;
 	}
@@ -234,9 +245,8 @@ void VarsReader::VALUE_SINGLE_QUOTE()
  * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE | '"' -> [RV] JUMP_NOISE */
 void VarsReader::VALUE_DOUBLE_QUOTE()
 {
-	while(INPUT != '"' && INPUT != '\\') {
-		if(INPUT == '$' && (parse_flags & SUBST_VARS))
-		{
+	while(likely(INPUT != '"' && INPUT != '\\')) {
+		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
 			NEXT_INPUT;
 			resolveReference();
 			if(INPUT_EOF)
@@ -258,14 +268,14 @@ void VarsReader::VALUE_DOUBLE_QUOTE()
  * [ \t\r\n] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
 void VarsReader::VALUE_WHITESPACE()
 {
-	while((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n')) {
-		if(INPUT == '\\') {
+	while(likely((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n'))) {
+		if(unlikely(INPUT == '\\')) {
 			NEXT_INPUT_OR_EOF;
 			if(INPUT_EOF)
 				break;
 			CHSTATE(WHITESPACE_ESCAPE);
 		}
-		if(INPUT == '$' && (parse_flags & SUBST_VARS)) {
+		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
 			NEXT_INPUT_OR_EOF;
 			if(INPUT_EOF)
 				break;
@@ -348,17 +358,17 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 }
 
 /** Try to resolve references to variables.
- * If we fail we recover from it. However, INPUT_EOF might be true at exit. */
+ * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
 void VarsReader::resolveReference()
 {
-	bool brace = false;
-	char *begin = x;
+	bool brace(false);
+	char *begin(x);
 	if(INPUT == '{') {
 		brace = true;
 		NEXT_INPUT;
 		begin = x;
 	}
-	unsigned int ref_key_length = 0;
+	unsigned int ref_key_length(0);
 
 	while(isValidKeyCharacter(INPUT)) {
 		++ref_key_length;
@@ -368,7 +378,7 @@ void VarsReader::resolveReference()
 	}
 
 	if(brace) {
-		if(INPUT_EOF)
+		if(unlikely(INPUT_EOF))
 			return;
 		if(INPUT == '}') {
 			if(ref_key_length)
@@ -376,7 +386,7 @@ void VarsReader::resolveReference()
 			NEXT_INPUT;
 		}
 	}
-	else if(ref_key_length)
+	else if(likely(ref_key_length != 0))
 		value.append((*vars)[string(begin, ref_key_length)]);
 	return;
 }
@@ -426,8 +436,7 @@ void VarsReader::initFsm()
 bool VarsReader::read(const char *filename)
 {
 	struct stat st;
-	int fd = 0;
-	fd = open(filename, O_RDONLY);
+	int fd(open(filename, O_RDONLY));
 	if(fd == -1)
 		return false;
 	if(fstat(fd, &st)) {
@@ -440,7 +449,7 @@ bool VarsReader::read(const char *filename)
 	}
 	filebuffer = static_cast<char *>(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 	if (filebuffer == MAP_FAILED) {
-		throw ExBasic("Can't map file %r") % filename;
+		throw ExBasic(_("Can't map file %r")) % filename;
 	}
 	filebuffer_end = filebuffer + st.st_size;
 	close(fd);
@@ -483,25 +492,25 @@ bool VarsReader::read(const char *filename)
     adding variables and changed HAVE_READ to current instance. */
 bool VarsReader::source(const string &filename)
 {
-	static int depth=0;
+	static int depth(0);
 	++depth;
 	if (depth == 100) {
-		throw ExBasic("Nesting level too deep when reading %r") % filename;
+		throw ExBasic(_("Nesting level too deep when reading %r")) % filename;
 	}
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
 	includefile.setPrefix(source_prefix);
-	string currprefix = source_prefix;
+	string currprefix(source_prefix);
 	if((parse_flags & ALLOW_SOURCE_VARNAME) == ALLOW_SOURCE_VARNAME) {
-		if(vars) {
+		if(vars != NULL) {
 			// Be careful to not declare the variable...
-			map<string,string>::iterator it = vars->find(source_prefix);
+			map<string,string>::iterator it(vars->find(source_prefix));
 			if(it != vars->end())
 				currprefix = it->second;
 		}
 	}
-	int rvalue=includefile.read((currprefix + filename).c_str());
+	int rvalue(includefile.read((currprefix + filename).c_str()));
 	parse_flags |= (includefile.parse_flags & HAVE_READ);
 	--depth;
 	return rvalue;

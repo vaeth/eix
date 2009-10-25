@@ -11,6 +11,17 @@
 #define EIX__METADATA_H__ 1
 
 #include <cache/base.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/sysutils.h>
+
+#include <string>
+#include <vector>
+
+#include <ctime>
+
+class Category;
+class Package;
+class Version;
 
 class MetadataCache : public BasicCache {
 
@@ -36,9 +47,9 @@ class MetadataCache : public BasicCache {
 	public:
 		bool initialize(const std::string &name);
 
-		bool readCategory(Category &vec) throw(ExBasic);
+		bool readCategory(const char *cat_name, Category &cat) throw(ExBasic);
 
-		bool readCategoryPrepare(Category &vec) throw(ExBasic);
+		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
 		void readCategoryFinalize();
 
 		time_t get_time(const char *pkg_name, const char *ver_name) const

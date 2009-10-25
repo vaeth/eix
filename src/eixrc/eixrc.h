@@ -11,10 +11,15 @@
 #define EIX__EIXRC_H__ 1
 
 #include <portage/keywords.h>
+
 #include <search/redundancy.h>
 
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
 #include <cstdio>
-#include <iostream>
 
 #define EIX_VARS_PREFIX "EIX_"
 #define DIFF_VARS_PREFIX "DIFF_"
@@ -45,27 +50,9 @@ class EixRc {
 		bool getBool(const std::string &key)
 		{ return istrue((*this)[key].c_str()); }
 
-		short getBoolText(const std::string &key, const char *text)
-		{
-			const char *s = (*this)[key].c_str();
-			if(!strcasecmp(s, text))
-				return -1;
-			if(istrue(s))
-				return 1;
-			return 0;
-		}
+		short getBoolText(const std::string &key, const char *text);
 
-		int getBoolTextlist(const std::string &key, const char **text)
-		{
-			const char *s = (*this)[key].c_str();
-			for(int i = -1; *text; ++text, --i) {
-				if(!strcasecmp(s, *text))
-					return i;
-			}
-			if(istrue(s))
-				return 1;
-			return 0;
-		}
+		short getBoolTextlist(const std::string &key, const char **text);
 
 		LocalMode getLocalMode(const std::string &key);
 
@@ -83,23 +70,18 @@ class EixRc {
 
 		void print_var(const std::string &key);
 
-		const std::string &operator[](const std::string &key)
-		{
-			std::map<std::string,std::string>::const_iterator it = main_map.find(key);
-			if(it != main_map.end())
-				return it->second;
-			add_later_variable(key);
-			return main_map[key];
-		}
+		const std::string &operator[](const std::string &key);
 	private:
 		std::map<std::string,std::string> main_map;
 		std::map<std::string,std::string> filevarmap;
-
-		static bool istrue(const char *s);
-		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
 		std::vector<EixRcOption> defaults;
 		std::set<std::string> prefix_keys;
+
+		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
+
+		static bool istrue(const char *s);
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r);
+
 		void modify_value(std::string &value, const std::string &key);
 
 		/** This will fetch a variable which was not set in the
@@ -120,13 +102,9 @@ class EixRc {
 		    main_map and default; set has_delayed if appropriate */
 		void join_key(const std::string &key, std::set<std::string> &has_delayed, bool add_top_to_defaults, const std::set<std::string> *exclude_defaults);
 		void join_key_rec(const std::string &key, const std::string &val, std::set<std::string> &has_delayed, const std::set<std::string> *exclude_defaults);
-		void join_key_if_new(const std::string &key, std::set<std::string> &has_delayed, const std::set<std::string> *exclude_defaults)
-		{
-			if(main_map.find(key) == main_map.end())
-				join_key(key, has_delayed, true, exclude_defaults);
-		}
+		void join_key_if_new(const std::string &key, std::set<std::string> &has_delayed, const std::set<std::string> *exclude_defaults);
 
-		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length = NULL);
+		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length);
 		static std::string as_comment(const std::string &s);
 };
 

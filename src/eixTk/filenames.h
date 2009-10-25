@@ -8,13 +8,11 @@
 #ifndef EIX__FILENAMES_H__
 #define EIX__FILENAMES_H__ 1
 
-#include <config.h>
+#include <eixTk/likely.h>
 #include <eixTk/sysutils.h>
 
 #include <string>
 #include <vector>
-
-#include <dirent.h>
 
 /** canonicalize_file_name() if possible or some substitute */
 std::string normalize_path(const char *path, bool resolve = true, bool want_slash = false);
@@ -28,9 +26,11 @@ std::vector<std::string>::const_iterator find_filenames(const std::vector<std::s
 		const std::vector<std::string>::const_iterator end, const char *search,
 		bool list_of_patterns = false, bool resolve_list = false)
 {
-	for(std::vector<std::string>::const_iterator i = start; i != end; ++i)
-		if(same_filenames(i->c_str(), search, list_of_patterns, resolve_list))
+	for(std::vector<std::string>::const_iterator i(start); likely(i != end); ++i) {
+		if(unlikely(same_filenames(i->c_str(), search, list_of_patterns, resolve_list))) {
 			return i;
+		}
+	}
 	return end;
 }
 

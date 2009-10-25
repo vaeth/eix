@@ -8,10 +8,20 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "package.h"
-
-#include <portage/version.h>
-#include <portage/vardbpkg.h>
+#include <config.h>
+#include <eixTk/likely.h>
+#include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/instversion.h>
+#include <portage/keywords.h>
+#include <portage/vardbpkg.h>
+#include <portage/version.h>
+
+#include <vector>
+#include <set>
+
+#include <cstddef>
+#include <cstring>
 
 using namespace std;
 
@@ -42,9 +52,7 @@ const Package::Localcollects
 Version *
 VersionList::best(bool allow_unstable) const
 {
-	for(const_reverse_iterator ri = rbegin();
-		ri != rend(); ++ri)
-	{
+	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
 		if((*ri)->maskflags.isHardMasked())
 			continue;
 		if((*ri)->keyflags.isStable() ||
@@ -57,11 +65,9 @@ VersionList::best(bool allow_unstable) const
 void
 SlotList::push_back_largest(Version *version)
 {
-	const char *name = (version->slotname).c_str();
-	for(iterator it = begin(); it != end(); ++it)
-	{
-		if(strcmp(name, it->slotname()) == 0)
-		{
+	const char *name((version->slotname).c_str());
+	for(iterator it(begin()); likely(it != end()); ++it) {
+		if(unlikely(strcmp(name, it->slotname()) == 0)) {
 			(it->version_list()).push_back(version);
 			return;
 		}
@@ -72,23 +78,20 @@ SlotList::push_back_largest(Version *version)
 const VersionList *
 SlotList::operator [] (const char *s) const
 {
-	for(const_iterator it = begin(); it != end(); ++it)
-	{
-		if(strcmp(s, it->slotname()) == 0)
+	for(const_iterator it(begin()); likely(it != end()); ++it) {
+		if(unlikely(strcmp(s, it->slotname()) == 0))
 			return &(it->const_version_list());
 	}
 	return NULL;
 }
 
-
 bool
 Package::calc_allow_upgrade_slots(const PortageSettings *ps) const
 {
-	if(know_upgrade_slots)
+	if(likely(know_upgrade_slots))
 		return allow_upgrade_slots;
 	know_upgrade_slots = true;
-	allow_upgrade_slots = ps->calc_allow_upgrade_slots(this);
-	return allow_upgrade_slots;
+	return (allow_upgrade_slots = ps->calc_allow_upgrade_slots(this));
 }
 
 /** Check if a package has duplicated versions. */
@@ -97,20 +100,16 @@ Package::checkDuplicates(const Version *version)
 {
 	if(have_duplicate_versions == DUP_OVERLAYS)
 		return;
-	bool no_overlay = !(version->overlay_key);
+	bool no_overlay(!(version->overlay_key));
 	if(no_overlay && (have_duplicate_versions == DUP_SOME))
 		return;
-	for(iterator i = begin(); i != end(); ++i)
-	{
-		if(BasicVersion::compare(**i, *version) == 0)
-		{
-			if(no_overlay)
-			{
+	for(iterator i(begin()); likely(i != end()); ++i) {
+		if(unlikely(BasicVersion::compare(**i, *version) == 0)) {
+			if(no_overlay) {
 				have_duplicate_versions = DUP_SOME;
 				return;
 			}
-			if(i->overlay_key)
-			{
+			if(i->overlay_key) {
 				have_duplicate_versions = DUP_OVERLAYS;
 				return;
 			}
@@ -122,10 +121,8 @@ Package::checkDuplicates(const Version *version)
 void
 Package::sortedPushBack(Version *v)
 {
-	for(iterator i = begin(); i != end(); ++i)
-	{
-		if(*v < **i)
-		{
+	for(iterator i(begin()); likely(i != end()); ++i) {
+		if(*v < **i) {
 			insert(i, v);
 			return;
 		}
@@ -155,10 +152,10 @@ Package::collect_iuse(Version *version)
 void
 Package::addVersionFinalize(Version *version)
 {
-	Version::Overlay key = version->overlay_key;
+	Version::Overlay key(version->overlay_key);
 
 	if(version->slotname == "0")
-		version->slotname = "";
+		version->slotname.clear();
 
 	/* This guarantees that we pushed our first version */
 	if(size() != 1) {
@@ -187,7 +184,7 @@ Package::addVersionFinalize(Version *version)
 		largest_overlay       = key;
 		version_collects      = COLLECT_DEFAULT;
 		local_collects        = LCOLLECT_DEFAULT;
-		if(version->maskflags.isSystem())
+		if(unlikely(version->maskflags.isSystem()))
 			local_collects |= LCOLLECT_SYSTEM;
 		if(version->maskflags.isWorld())
 			local_collects |= LCOLLECT_WORLD;
@@ -211,16 +208,16 @@ Package::addVersionFinalize(Version *version)
 void
 Package::finalize_masks()
 {
-	bool system = false, world = false, world_sets = false;
-	for(iterator i = begin(); i != end(); ++i) {
-		if(i->maskflags.isSystem())
+	bool system(false), world(false), world_sets(false);
+	for(iterator i(begin()); likely(i != end()); ++i) {
+		if(unlikely(i->maskflags.isSystem()))
 			system = true;
 		if(i->maskflags.isWorld())
 			world = true;
 		if(i->maskflags.isWorldSets())
 			world_sets  = true;
 	}
-	if(system)
+	if(unlikely(system))
 		local_collects |= LCOLLECT_SYSTEM;
 	else
 		local_collects &= ~LCOLLECT_SYSTEM;
@@ -237,10 +234,7 @@ Package::finalize_masks()
 Version *
 Package::best(bool allow_unstable) const
 {
-	for(const_reverse_iterator ri = rbegin();
-		ri != rend();
-		++ri)
-	{
+	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
 		if(ri->maskflags.isHardMasked())
 			continue;
 		if(ri->keyflags.isStable() ||
@@ -254,16 +248,17 @@ void
 Package::build_slotslit() const
 {
 	m_slotlist.clear();
-	for(const_iterator it = begin(); it != end(); ++it)
+	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		m_slotlist.push_back_largest(*it);
+	}
 }
 
 
 Version *
 Package::best_slot(const char *slot_name, bool allow_unstable) const
 {
-	const VersionList *vl = slotlist()[slot_name];
-	if(!vl)
+	const VersionList *vl(slotlist()[slot_name]);
+	if(vl == NULL)
 		return NULL;
 	return vl->best(allow_unstable);
 }
@@ -272,12 +267,12 @@ void
 Package::best_slots(vector<Version*> &l, bool allow_unstable) const
 {
 	l.clear();
-	for(SlotList::const_iterator sit = slotlist().begin();
-		sit != slotlist().end(); ++sit)
-	{
-		Version *p = (sit->const_version_list()).best(allow_unstable);
-		if(p)
+	for(SlotList::const_iterator sit(slotlist().begin());
+		likely(sit != slotlist().end()); ++sit) {
+		Version *p((sit->const_version_list()).best(allow_unstable));
+		if(p != NULL) {
 			l.push_back(p);
+		}
 	}
 }
 
@@ -285,20 +280,18 @@ void
 Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
 	versions.clear();
-	if(!v)
+	if(unlikely(v == NULL))
 		return;
-	vector<InstVersion> *ins = v->getInstalledVector(*this);
-	if(!ins)
+	vector<InstVersion> *ins(v->getInstalledVector(*this));
+	if((ins == NULL) || (ins->empty()))
 		return;
-	if(ins->empty())
-		return;
-	bool need_best = false;
+	bool need_best(false);
 	set<Version*> versionset;
-	for(vector<InstVersion>::iterator it = ins->begin();
+	for(vector<InstVersion>::iterator it(ins->begin());
 		it != ins->end() ; ++it) {
 		if(guess_slotname(*it, v)) {
-			Version *bv = best_slot((it->slotname).c_str(), allow_unstable);
-			if(bv && (*bv != *it))
+			Version *bv(best_slot((it->slotname).c_str(), allow_unstable));
+			if((bv != NULL) && (*bv != *it))
 				versionset.insert(bv);
 		}
 		else // Perhaps the slot was removed:
@@ -309,18 +302,18 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 			need_best = true;
 	}
 	if(need_best) {
-		Version *bv = best(allow_unstable);
-		if(bv)
+		Version *bv(best(allow_unstable));
+		if(bv != NULL)
 			versionset.insert(bv);
 	}
 	if(versionset.empty())
 		return;
 	// Return only uninstalled versions:
-	for(set<Version*>::const_iterator it = versionset.begin();
-		it != versionset.end(); ++it) {
-		bool found = false;
-		for(vector<InstVersion>::const_iterator insit = ins->begin();
-			insit != ins->end(); ++insit) {
+	for(set<Version*>::const_iterator it(versionset.begin());
+		likely(it != versionset.end()); ++it) {
+		bool found(false);
+		for(vector<InstVersion>::const_iterator insit(ins->begin());
+			likely(insit != ins->end()); ++insit) {
 			if(*insit == **it) {
 				found = true;
 				break;
@@ -334,15 +327,15 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 bool
 Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
-	if(!v)
+	if(unlikely(v == NULL))
 		return false;
-	vector<InstVersion> *ins = v->getInstalledVector(*this);
-	if(!ins)
+	vector<InstVersion> *ins(v->getInstalledVector(*this));
+	if(ins == NULL)
 		return false;
-	bool need_best = !check_slots;
+	bool need_best(!check_slots);
 	if(check_slots) {
-		for(vector<InstVersion>::iterator it = ins->begin();
-			it != ins->end() ; ++it) {
+		for(vector<InstVersion>::iterator it(ins->begin());
+			likely(it != ins->end()); ++it) {
 			if(guess_slotname(*it, v)) {
 				if(version == best_slot((it->slotname).c_str(), allow_unstable))
 					return true;
@@ -365,9 +358,10 @@ Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, 
 const char *
 Package::slotname(const ExtendedVersion &v) const
 {
-	for(const_iterator i = begin(); i != end(); ++i) {
-		if(**i == v)
+	for(const_iterator i(begin()); likely(i != end()); ++i) {
+		if(**i == v) {
 			return (i->slotname).c_str();
+		}
 	}
 	return NULL;
 }
@@ -377,11 +371,10 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 {
 	if(vardbpkg->care_slots())
 		return vardbpkg->readSlot(*this, v);
-	if(v.know_slot)
+	if(likely(v.know_slot))
 		return true;
-	const char *s = slotname(v);
-	if(s)
-	{
+	const char *s(slotname(v));
+	if(s != NULL) {
 		v.slotname = s;
 		v.know_slot = true;
 	}
@@ -408,14 +401,13 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 int
 Package::worse_best_slots(const Package &p) const
 {
-	int ret = 0;
-	for(SlotList::const_iterator it = slotlist().begin();
-		it != slotlist().end(); ++it)
-	{
-		Version *t_best = (it->const_version_list()).best();
+	int ret(0);
+	for(SlotList::const_iterator it(slotlist().begin());
+		it != slotlist().end(); ++it) {
+		Version *t_best((it->const_version_list()).best());
 		if(!t_best)
 			continue;
-		Version *p_best = p.best_slot(it->slotname());
+		Version *p_best(p.best_slot(it->slotname()));
 		if(!p_best)
 			return 1;
 		if(*t_best > *p_best)
@@ -438,8 +430,8 @@ Package::worse_best_slots(const Package &p) const
 int
 Package::compare_best_slots(const Package &p) const
 {
-	int worse  = worse_best_slots(p);
-	int better = p.worse_best_slots(*this);
+	int worse(worse_best_slots(p));
+	int better(p.worse_best_slots(*this));
 	if(worse == 1)
 	{
 		if(better == 1)
@@ -463,10 +455,9 @@ Package::compare_best_slots(const Package &p) const
 int
 Package::compare_best(const Package &p, bool test_slot) const
 {
-	Version *t_best = best();
-	Version *p_best = p.best();
-	if(t_best && p_best)
-	{
+	Version *t_best(best());
+	Version *p_best(p.best());
+	if((t_best != NULL) && (p_best != NULL)) {
 		if(*t_best > *p_best)
 			return 1;
 		if(*t_best < *p_best)
@@ -477,9 +468,9 @@ Package::compare_best(const Package &p, bool test_slot) const
 			return 3;
 		return 0;
 	}
-	if(t_best)
+	if(t_best != NULL)
 		return 1;
-	if(p_best)
+	if(p_best != NULL)
 		return -1;
 	return 0;
 }
@@ -499,24 +490,20 @@ Package::compare_best(const Package &p, bool test_slot) const
 int
 Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 {
-	vector<InstVersion> *ins = NULL;
-	if(v)
+	vector<InstVersion> *ins(NULL);
+	if(likely(v != NULL))
 		ins = v->getInstalledVector(*this);
-	if(ins) {
-		if(!ins->size())
-			ins = NULL;
-	}
-	if(!ins) {
+	if((ins == NULL) || ins->empty()) {
 		if(!only_installed) {
 			if(best())
 				return 4;
 		}
 		return 0;
 	}
-	bool downgrade = false;
-	bool upgrade = false;
-	for(vector<InstVersion>::iterator it = ins->begin();
-		it != ins->end() ; ++it) {
+	bool downgrade(false);
+	bool upgrade(false);
+	for(vector<InstVersion>::iterator it(ins->begin());
+		likely(it != ins->end()); ++it) {
 		if(!guess_slotname(*it, v)) {
 			// Perhaps the slot was removed:
 			downgrade = true;
@@ -527,7 +514,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 			}
 			continue;
 		}
-		Version *t_best_slot = best_slot((it->slotname).c_str());
+		Version *t_best_slot(best_slot((it->slotname).c_str()));
 		if(!t_best_slot) {
 			downgrade = true;
 			continue;
@@ -566,21 +553,16 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 int
 Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 {
-	ExtendedVersion *t_best = best();
-	vector<InstVersion> *ins = NULL;
-	if(v)
+	ExtendedVersion *t_best(best());
+	vector<InstVersion> *ins(NULL);
+	if(likely(v != NULL))
 		ins = v->getInstalledVector(*this);
-	if(ins)
-		if(!ins->size())
-			ins = NULL;
-	if(ins)
-	{
+	if((ins != NULL) && !ins->empty()) {
 		if(!t_best)
 			return -1;
-		for(vector<InstVersion>::iterator it = ins->begin();
-			it != ins->end(); ++it)
-		{
-			int vgl = BasicVersion::compare(*t_best, *it);
+		for(vector<InstVersion>::iterator it(ins->begin());
+			likely(it != ins->end()); ++it) {
+			short vgl(BasicVersion::compare(*t_best, *it));
 			if(vgl > 0)
 				continue;
 			if(vgl < 0)
@@ -605,21 +587,21 @@ void
 PackageSave::store(const Package *p)
 {
 	data.clear();
-	if(!p)
+	if(p == NULL)
 		return;
-	for(Package::const_iterator it = p->begin();
-		it != p->end(); ++it)
+	for(Package::const_iterator it(p->begin());
+		likely(it != p->end()); ++it)
 		data[*it] = KeywordSave(*it);
 }
 
 void
 PackageSave::restore(Package *p) const
 {
-	if(data.empty())
+	if(unlikely(data.empty()))
 		return;
-	for(Package::iterator it = p->begin();
-		it != p->end(); ++it) {
-		DataType::const_iterator d = data.find(*it);
+	for(Package::iterator it(p->begin());
+		likely(it != p->end()); ++it) {
+		DataType::const_iterator d(data.find(*it));
 		if(d == data.end())
 			continue;
 		d->second.restore(*it);

@@ -40,6 +40,7 @@ eixTk/formated.cc \
 eixTk/formated.h \
 eixTk/i18n.h \
 eixTk/inttypes.h \
+eixTk/likely.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \
 eixTk/stringutils.cc \
@@ -48,6 +49,7 @@ eixTk/sysutils.cc \
 eixTk/sysutils.h \
 eixTk/utils.cc \
 eixTk/utils.h \
+eixTk/unused.h \
 eixTk/varsreader.cc \
 eixTk/varsreader.h
 
@@ -273,6 +275,7 @@ functions-eix.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
+check_includes \
 eix-sync.in \
 eix-test-obsolete.in \
 eix-remote.in \
@@ -414,6 +417,8 @@ eixTk/compare.h \
 eixTk/exceptions.h \
 eixTk/formated.cc \
 eixTk/formated.h \
+eixTk/i18n.h \
+eixTk/unused.h \
 portage/basicversion.cc \
 portage/basicversion.h \
 versionsort.cc \

@@ -9,7 +9,9 @@
 #ifndef EIX__GET_H__
 #define EIX__GET_H__ 1
 
-#include <cache/base.h>
+#include <string>
+
+class BasicCache;
 
 BasicCache *get_cache(const std::string &name, const std::string &appending);
 

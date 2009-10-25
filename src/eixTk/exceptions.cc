@@ -8,6 +8,15 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "exceptions.h"
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+
+#include <exception>
+#include <iostream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -32,11 +41,9 @@ portage_parse_error(const string &file, const int line_nr, const string& line, c
 		% line_nr % file % line << endl;
 
 	// Indent the message correctly
-	vector<string> lines = split_string(e.what(), false, "\n", false);
-	for(vector<string>::iterator i = lines.begin();
-		i != lines.end();
-		++i)
-	{
+	vector<string> lines;
+	split_string(lines, e.what(), false, "\n", false);
+	for(vector<string>::iterator i(lines.begin()); likely(i != lines.end()); ++i) {
 		cerr << "    " << *i << endl;
 	}
 	cerr << endl;

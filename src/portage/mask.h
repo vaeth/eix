@@ -12,11 +12,15 @@
 
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
-#include <portage/version.h>
+#include <portage/basicversion.h>
 #include <portage/keywords.h>
+#include <portage/packagesets.h>
 
-class Version;
+#include <string>
+
+class ExtendedVersion;
 class Package;
+class Version;
 
 // A category which may not occur (i.e. which is reserved for maskIsSet)
 #define SET_CATEGORY "@/"

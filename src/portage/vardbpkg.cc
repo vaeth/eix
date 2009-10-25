@@ -8,11 +8,28 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "vardbpkg.h"
-
-#include <eixTk/utils.h>
-#include <eixTk/sysutils.h>
+#include <config.h>
 #include <database/header.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/sysutils.h>
+#include <eixTk/unused.h>
+#include <eixTk/utils.h>
+#include <portage/basicversion.h>
+#include <portage/extendedversion.h>
+#include <portage/instversion.h>
 
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 #include <dirent.h>
 
 #ifdef USE_BZLIB
@@ -24,11 +41,9 @@ using namespace std;
 inline static void
 sort_installed(map<string, vector<InstVersion> > *maping)
 {
-	map<string, vector<InstVersion> >::iterator it = maping->begin();
-	while(it != maping->end())
-	{
+	for(map<string, vector<InstVersion> >::iterator it(maping->begin());
+		likely(it != maping->end()); ++it) {
 		sort(it->second.begin(), it->second.end());
-		++it;
 	}
 }
 
@@ -37,20 +52,20 @@ sort_installed(map<string, vector<InstVersion> > *maping)
 vector<InstVersion> *
 VarDbPkg::getInstalledVector(const string &category, const string &name)
 {
-	map<string, map<string, vector<InstVersion> >* >::iterator map_it = installed.find(category);
+	map<string, map<string, vector<InstVersion> >* >::iterator map_it(installed.find(category));
 	/* Not yet read */
 	if(map_it == installed.end()) {
 		readCategory(category.c_str());
 		return getInstalledVector(category, name);
 	}
 
-	map<string, vector<InstVersion> >* installed_cat = map_it->second;
+	map<string, vector<InstVersion> >* installed_cat(map_it->second);
 	/* No such category in db-directory. */
-	if(!installed_cat)
+	if(installed_cat == NULL)
 		return NULL;
 
 	/* Find packet */
-	map<string, vector<InstVersion> >::iterator cat_it = installed_cat->find(name);
+	map<string, vector<InstVersion> >::iterator cat_it(installed_cat->find(name));
 	if(cat_it == installed_cat->end())
 		return NULL; /* Not installed */
 	return &(cat_it->second);
@@ -61,13 +76,12 @@ VarDbPkg::getInstalledVector(const string &category, const string &name)
 bool
 VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r)
 {
-	if(vec)
-	{
-		if(!v)
+	if(likely(vec != NULL)) {
+		if(unlikely(v == NULL))
 			return true;
-		for(vector<InstVersion>::size_type i = 0; i < vec->size(); ++i) {
+		for(vector<InstVersion>::size_type i(0); likely(i < vec->size()); ++i) {
 			if((*vec)[i] == *v) {
-				if(r)
+				if(r != NULL)
 					*r = &((*vec)[i]);
 				return true;
 			}
@@ -79,7 +93,7 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 short
 VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header, const char *portdir)
 {
-	InstVersion *inst = NULL;
+	InstVersion *inst(NULL);
 	if(!isInstalled(p, v, &inst))
 		return 0;
 	if(!readOverlay(p, *inst, header, portdir))
@@ -94,8 +108,8 @@ VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader&
 vector<InstVersion>::size_type
 VarDbPkg::numInstalled(const Package &p)
 {
-	vector<InstVersion> *vec = getInstalledVector(p);
-	if(!vec)
+	vector<InstVersion> *vec(getInstalledVector(p));
+	if(vec == NULL)
 		return 0;
 	return vec->size();
 }
@@ -103,7 +117,7 @@ VarDbPkg::numInstalled(const Package &p)
 bool
 VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
 {
-	if(v.know_overlay)
+	if(likely(v.know_overlay))
 		return !v.overlay_failed;
 
 	v.know_overlay = true;
@@ -112,16 +126,16 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 
 	// Do not really check if the package is only at one overlay.
 	if(check_installed_overlays == 0) {
-		if(p.have_same_overlay_key()) {
+		if(likely(p.have_same_overlay_key())) {
 			v.overlay_key = p.largest_overlay;
 			return true;
 		}
 	}
 
-	string label = readOverlayLabel(&p, &v);
+	string label(readOverlayLabel(&p, &v));
 	if(label.empty()) {
 		if(check_installed_overlays < 0) {
-			if(p.have_same_overlay_key()) {
+			if(likely(p.have_same_overlay_key())) {
 				v.overlay_key = p.largest_overlay;
 				return true;
 			}
@@ -130,7 +144,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 	else if(header.find_overlay(&v.overlay_key, label.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
 		return true;
 
-	string opath = readOverlayPath(&p, &v);
+	string opath(readOverlayPath(&p, &v));
 	if(opath.empty()) {
 		v.overlay_keytext = label;
 		v.overlay_failed = true;
@@ -150,50 +164,46 @@ string
 VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 {
 	vector<string> lines;
-	string dirname = m_directory + p->category + "/" + p->name + "-" + v->getFull();
+	string dirname(m_directory + p->category + "/" + p->name + "-" + v->getFull());
 	pushback_lines((dirname + "/repository").c_str(),
 		&lines, true, false, false);
 	pushback_lines((dirname + "/REPOSITORY").c_str(),
 		&lines, true, false, false);
-	for(std::vector<std::string>::const_iterator i = lines.begin();
-		i != lines.end(); ++i) {
-		if(i->empty())
-			continue;
-		return *i;
-	}
-	return "";
+	if(lines.empty())
+		return emptystring;
+	return lines[0];
 }
 
+#ifdef USE_BZLIB
 string
 VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 {
-#ifdef USE_BZLIB
-	BZFILE *fh = BZ2_bzopen(
+	BZFILE *fh(BZ2_bzopen(
 		(m_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
-		"rb");
-	if(!fh)
-		return "";
+		"rb"));
+	if(fh == NULL)
+		return emptystring;
 	typedef int BufInd;
-	const BufInd bufsize = 256;
-	const BufInd strsize = 7;
+	const BufInd bufsize(256);
+	const BufInd strsize(7);
 	char buffer[bufsize + 1];
-	BufInd bufend = BZ2_bzread(fh, buffer, bufsize);
+	BufInd bufend(BZ2_bzread(fh, buffer, bufsize));
 	if(bufend < strsize) {
 		BZ2_bzclose(fh);
-		return "";
+		return emptystring;
 	}
 
 	// find EBUILD=... (cycling buffer if necessary)
-	BufInd i = 0;
-	bool in_newline = true;
+	BufInd i(0);
+	bool in_newline(true);
 	for(;;) {
-		if(i + strsize < bufend) {
+		if(likely(i + strsize < bufend)) {
 			if(in_newline &&
 				(strncmp(buffer + i, "EBUILD=", strsize) == 0))
 				break;
 		}
 		else {
-			BufInd j = bufend - i;
+			BufInd j(bufend - i);
 			if(j)
 				strncpy(buffer, buffer + i, j);
 			bufend = BZ2_bzread(fh, buffer + j, bufsize - j);
@@ -201,14 +211,14 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 				bufend += j;
 			if(bufend < strsize) {
 				BZ2_bzclose(fh);
-				return "";
+				return emptystring;
 			}
 			i = 0;
 			continue;
 		}
 		in_newline = false;
-		while(i < bufend) {
-			if(buffer[i++] == '\n') {
+		while(likely(i < bufend)) {
+			if(unlikely(buffer[i++] == '\n')) {
 				in_newline = true;
 				break;
 			}
@@ -218,9 +228,9 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 
 	// Store EBUILD=  content in path (cycling buffer if necessary)
 	string path;
-	bool done = false;
+	bool done(false);
 	for(;;) {
-		char *ptr = buffer + i;
+		char *ptr(buffer + i);
 		for(; i < bufend; ++i) {
 			if(buffer[i] == '\n') {
 				done = true;
@@ -240,19 +250,23 @@ VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
 	BZ2_bzclose(fh);
 
 	// Chop /*/*/*
-	string::size_type l = path.size() + 1;
-	for(int c = 0; c < 3; c++) {
+	string::size_type l(path.size() + 1);
+	for(int c(0); likely(c < 3); c++) {
 		l = path.rfind('/', l - 1);
 		if(l == string::npos)
-			return "";
+			return emptystring;
 	}
 	path.erase(l);
 	return path;
-#else
-	UNUSED(p); UNUSED(v);
-	return "";
-#endif
 }
+#else
+string
+VarDbPkg::readOverlayPath(const Package *p ATTRIBUTE_UNUSED, const BasicVersion *v ATTRIBUTE_UNUSED) const
+{
+	UNUSED(p); UNUSED(v);
+	return emptystring;
+}
+#endif
 
 bool
 VarDbPkg::readSlot(const Package &p, InstVersion &v) const
@@ -265,17 +279,16 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 		return false;
 	try {
 		vector<string> lines;
-		if(!pushback_lines(
+		if(unlikely(!pushback_lines(
 			(m_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
-			&lines, true, false, false))
-		{
+			&lines, true, false, false))) {
 			v.read_failed = true;
 			return false;
 		}
-		if(!lines.size())
-			v.slotname = "";
+		if(lines.empty())
+			v.slotname = emptystring;
 		else if(lines[0] == "0")
-			v.slotname = "";
+			v.slotname = emptystring;
 		else
 			v.slotname = lines[0];
 		v.know_slot = true;
@@ -299,13 +312,13 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 	set<string> iuse_set;
 	vector<string> alluse;
 	try {
-		string dirname = m_directory + p.category + "/" + p.name + "-" + v.getFull();
+		string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
 		vector<string> lines;
-		if(!pushback_lines((dirname + "/IUSE").c_str(),
-			&lines, true, false, false))
+		if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
+			&lines, true, false, false)))
 			return false;
-		v.inst_iuse = split_string(join_vector(lines, " "));
-		for(vector<string>::iterator it = v.inst_iuse.begin();
+		split_string(v.inst_iuse, join_vector(lines, " "));
+		for(vector<string>::iterator it(v.inst_iuse.begin());
 			it != v.inst_iuse.end(); ++it) {
 			while(((*it)[0] == '+') || ((*it)[0] == '-'))
 				it->erase(0, 1);
@@ -314,11 +327,11 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		make_set<string>(iuse_set, v.inst_iuse);
 
 		lines.clear();
-		if(!pushback_lines((dirname + "/USE").c_str(),
-			&lines, true, false, false))
+		if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
+			&lines, true, false, false)))
 			return false;
-		alluse = split_string(join_vector(lines, " "));
-		for(vector<string>::iterator it = alluse.begin();
+		split_string(alluse, join_vector(lines, " "));
+		for(vector<string>::iterator it(alluse.begin());
 			it != alluse.end(); ++it) {
 			while(((*it)[0] == '+') || ((*it)[0] == '-'))
 				it->erase(0, 1);
@@ -328,9 +341,8 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		cerr << e << endl;
 		return false;
 	}
-	for(vector<string>::iterator it = alluse.begin();
-		it != alluse.end(); ++it)
-	{
+	for(vector<string>::iterator it(alluse.begin());
+		likely(it != alluse.end()); ++it) {
 		if(iuse_set.find(*it) != iuse_set.end()) {
 			v.usedUse.insert(*it);
 		}
@@ -341,20 +353,20 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 bool
 VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
 {
-	if(v.know_restricted)
+	if(likely(v.know_restricted))
 		return true;
 	v.know_restricted = true;
 	v.restrictFlags = ExtendedVersion::RESTRICT_NONE;
 	v.propertiesFlags = ExtendedVersion::PROPERTIES_NONE;
-	for(Package::const_iterator it = p.begin(); it != p.end(); ++it) {
+	for(Package::const_iterator it(p.begin()); likely(it != p.end()); ++it) {
 		if(BasicVersion::compare(**it, v) != 0)
 			continue;
 		if(readSlot(p, v)) {
-			if(it->slotname != v.slotname)
+			if(unlikely(it->slotname != v.slotname))
 				continue;
 		}
 		if(readOverlay(p, v, header, portdir)) {
-			if(it->overlay_key != v.overlay_key)
+			if(unlikely(it->overlay_key != v.overlay_key))
 				continue;
 		}
 		v.restrictFlags = it->restrictFlags;
@@ -364,10 +376,10 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 	if(!care_of_restrictions)
 		return true;
 	try {
-		string dirname = m_directory + p.category + "/" + p.name + "-" + v.getFull();
+		string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
 		vector<string> lines;
-		if(!pushback_lines((dirname + "/RESTRICT").c_str(),
-			&lines, true, false, false)) {
+		if(unlikely(!pushback_lines((dirname + "/RESTRICT").c_str(),
+			&lines, true, false, false))) {
 			// It is OK that this file does not exist:
 			// Portage does this if RESTRICT is not set.
 			v.restrictFlags = ExtendedVersion::RESTRICT_NONE;
@@ -394,7 +406,7 @@ VarDbPkg::readCategory(const char *category)
 	struct dirent* package_entry;  /* current package dirent */
 
 	/* Open category-directory */
-	string dir_category_name = m_directory + category;
+	string dir_category_name(m_directory + category);
 	if( (dir_category = opendir(dir_category_name.c_str())) == NULL) {
 		installed[category] = NULL;
 		return;
@@ -404,13 +416,11 @@ VarDbPkg::readCategory(const char *category)
 	installed[category] = category_installed = new map<string, vector<InstVersion> >;
 
 	/* Cycle through this category */
-	while( (package_entry = readdir(dir_category)) != NULL )
-	{
-
+	while(likely( (package_entry = readdir(dir_category)) != NULL )) {
 		if(package_entry->d_name[0] == '.')
 			continue; /* Don't want dot-stuff */
-		char **aux = ExplodeAtom::split( package_entry->d_name);
-		InstVersion *instver = NULL;
+		char **aux(ExplodeAtom::split( package_entry->d_name));
+		InstVersion *instver(NULL);
 		if(aux == NULL)
 			continue;
 		try {
@@ -419,13 +429,11 @@ VarDbPkg::readCategory(const char *category)
 		catch(const ExBasic &e) {
 			cerr << e << endl;
 		}
-		if(instver)
-		{
+		if(instver != NULL) {
 			instver->instDate = get_mtime((dir_category_name + package_entry->d_name).c_str());
 			(*category_installed)[aux[0]].push_back(*instver);
 			delete instver;
 		}
-
 		free(aux[0]);
 		free(aux[1]);
 	}

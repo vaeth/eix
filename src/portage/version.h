@@ -11,13 +11,19 @@
 #define EIX__VERSION_H__ 1
 
 #include <database/io.h>
+#include <database/types.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/packagesets.h>
 
-#include <eixTk/stringutils.h>
-
 #include <algorithm>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <cstdio>
+
+class DBHeader;
 
 /* If NOT_FULL_USE is defined, then the iuse data will be handled per package
    and not per version to save memory and disk space.
@@ -34,8 +40,6 @@
    and thus calculating the package-wide IUSE) before the package-wide
    IUSE data is assumed to be known. */
 
-/*#define NOT_FULL_USE*/
-
 class IUse : public std::string {
 	public:
 		typedef unsigned char Flags;
@@ -46,7 +50,7 @@ class IUse : public std::string {
 			USEFLAGS_MINUS  = 4;
 		Flags flags;
 
-		static Flags split(std::string &s);
+		static Flags parse(std::string &s);
 
 		std::string &name()
 		{ return *static_cast<std::string *>(this); }
@@ -55,7 +59,7 @@ class IUse : public std::string {
 		{ return *static_cast<const std::string *>(this); }
 
 		IUse(const std::string &s) : std::string(s)
-		{ flags = split(name()); }
+		{ flags = parse(name()); }
 
 		IUse(const std::string &s, Flags f) : std::string(s), flags(f)
 		{ }
@@ -197,7 +201,7 @@ class Version : public ExtendedVersion, public Keywords {
 
 		bool restore_effective(SavedEffectiveIndex i)
 		{
-			EffectiveState s = states_effective[i];
+			EffectiveState s(states_effective[i]);
 			if(s == EFFECTIVE_UNSAVED)
 				return false;
 			if((effective_state = s) == EFFECTIVE_USED)

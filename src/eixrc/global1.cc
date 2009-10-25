@@ -9,7 +9,10 @@
 
 #include "global.h"
 #include <config.h>
+#include <eixrc/eixrc.h>
 #include <eixTk/i18n.h>
+
+#include <string>
 
 #include <cassert>
 
@@ -20,6 +23,8 @@ void fill_defaults_part_1(EixRc &eixrc)
 #include <eixrc/defaults.cc>
 }
 
+using namespace std;
+
 /** Create a static EixRc and fill with defaults.
  * This should only be called once! */
 static
@@ -28,7 +33,7 @@ get_eixrc_once(const char *varprefix)
 {
 	static EixRc eixrc;
 	assert(varprefix);
-	eixrc.varprefix = std::string(varprefix);
+	eixrc.varprefix = string(varprefix);
 
 	fill_defaults_part_1(eixrc);
 	fill_defaults_part_2(eixrc);
@@ -45,6 +50,6 @@ get_eixrc_once(const char *varprefix)
 EixRc &
 get_eixrc(const char *varprefix)
 {
-	static EixRc &rc = get_eixrc_once(varprefix);
+	static EixRc &rc(get_eixrc_once(varprefix));
 	return rc;
 }

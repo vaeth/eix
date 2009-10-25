@@ -10,12 +10,15 @@
 #ifndef EIX__CLI_H__
 #define EIX__CLI_H__ 1
 
-#include <search/dbmatchcriteria.h>
 #include <eixTk/argsreader.h>
-#include <output/formatstring.h>
-#include <database/types.h>
 
+class EixRc;
+class VarDbPkg;
+class PortageSettings;
 class SetStability;
+class DBHeader;
+class MarkedList;
+class Matchatom;
 Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
 
 /*	If you want to add a new parameter to eix just insert a line into

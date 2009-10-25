@@ -10,7 +10,7 @@
 #ifndef EIX__EIXRC_GLOBALS_H__
 #define EIX__EIXRC_GLOBALS_H__ 1
 
-#include <eixrc/eixrc.h>
+class EixRc;
 
 /** Return a static eixrc. */
 EixRc &get_eixrc(const char *varprefix);

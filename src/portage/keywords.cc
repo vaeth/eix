@@ -9,6 +9,13 @@
 
 #include "keywords.h"
 
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+
+#include <set>
+#include <string>
+#include <vector>
+
 using namespace std;
 
 const MaskFlags::MaskType
@@ -37,11 +44,12 @@ const KeywordsFlags::KeyType
 KeywordsFlags::KeyType
 KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const string &keywords, bool obsolete_minus)
 {
-	KeyType m = KEY_EMPTY;
+	KeyType m(KEY_EMPTY);
 	std::set<string> keywords_set;
 	make_set<string>(keywords_set, split_string(keywords));
-	for(std::set<string>::const_iterator it = keywords_set.begin(); it != keywords_set.end(); ++it) {
-		bool found = false;
+	for(std::set<string>::const_iterator it(keywords_set.begin());
+		likely(it != keywords_set.end()); ++it) {
+		bool found(false);
 		if((*it)[0] == '-') {
 			if(*it == "-*")
 				m |= KEY_MINUSASTERISK;
@@ -114,18 +122,19 @@ const Keywords::Redundant
 bool
 Keywords::modify_keywords(string &result, const string &original, const string &modify_keys)
 {
-	bool modified = false;
-	vector<string> modify = split_string(modify_keys);
+	bool modified(false);
+	vector<string> modify;
+	split_string(modify, modify_keys);
 	if(modify.empty())
 		return false;
-	vector<string> words = split_string(original);
-	for(vector<string>::const_iterator it = modify.begin();
+	vector<string> words;
+	split_string(words, original);
+	for(vector<string>::const_iterator it(modify.begin());
 		it != modify.end(); ++it) {
 		if(it->empty())
 			continue;
 		if((*it)[0] == '-') {
-			vector<string>::iterator f =
-				find(words.begin(), words.end(), it->substr(1));
+			vector<string>::iterator f(find(words.begin(), words.end(), it->substr(1)));
 			if(f != words.end()) {
 				modified = true;
 				words.erase(f);

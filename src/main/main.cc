@@ -7,12 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include "main.h"
 #include <config.h>
-#include <main/main.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+
+#include <iostream>
+#include <string>
 
 #include <csignal>  /* signal handlers */
 #include <cstdio>
+#include <cstdlib>
 #ifdef ENABLE_NLS
 #include <clocale>
 #endif
@@ -99,19 +105,16 @@ static void
 sanitize_filename(string &s)
 {
 	for(;;) {
-		string::size_type i = s.find_last_of('/');
-		if( i == string::npos )
+		string::size_type i(s.find_last_of('/'));
+		if(unlikely(i == string::npos)) {
 			return;// There was no path
-		if(++i != s.size()) {
+		}
+		if(likely(++i != s.size())) {
 			s.erase(0, i);
-			// Since, by definition, this is called only once, we
-			// need no memory management: Just one static string.
-			static string keep(s);
-			s = keep.c_str();
 		}
 		// Trailing '/'. Should not happen, but exec can pass anything.
 		i = s.find_last_not_of('/');
-		if(i == string::npos)
+		if(unlikely(i == string::npos))
 			return;// Name consists only of '/' - better not touch.
 		// Otherwise, cut all trailing / and repeat business
 		s.erase(i + 1);
@@ -123,21 +126,21 @@ static int
 run_program(int argc, char *argv[])
 {
 #ifdef DIFF_BINARY
-	if((program_name.find("diff") != string::npos) ||
-		(program_name.find("DIFF") != string::npos))
+	if(unlikely((program_name.find("diff") != string::npos) ||
+		(program_name.find("DIFF") != string::npos)))
 		return run_eix_diff(argc, argv);
 #endif
 #ifdef UPDATE_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
-	if((program_name.find("update") != string::npos) ||
-		(program_name.find("UPDATE") != string::npos))
+	if(unlikely((program_name.find("update") != string::npos) ||
+		(program_name.find("UPDATE") != string::npos)))
 #endif
 		return run_eix_update(argc, argv);
 #endif
 #ifdef VERSIONSORT_BINARY
 #ifdef EIX_BINARY
-	if((program_name.find("vers") != string::npos) ||
-		(program_name.find("VERS") != string::npos))
+	if(likely((program_name.find("vers") != string::npos) ||
+		(program_name.find("VERS") != string::npos)))
 #endif
 		return run_versionsort(argc, argv);
 #endif
@@ -161,7 +164,7 @@ main(int argc, char** argv)
 	/* Install signal handler for segfaults */
 	signal(SIGSEGV, sig_handler);
 
-	int ret = 0;
+	int ret(0);
 	try {
 		program_name = argv[0];
 		sanitize_filename(program_name);

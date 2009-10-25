@@ -11,6 +11,13 @@
 #define EIX__SQLITECACHE_H__ 1
 
 #include <cache/base.h>
+#include <eixTk/exceptions.h>
+
+#include <string>
+#include <vector>
+
+class Category;
+class PackageTree;
 
 class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
@@ -28,12 +35,13 @@ class SqliteCache : public BasicCache {
 		/** Parameter passing to sqlite_callback() */
 		PackageTree *packagetree;
 		Category *category;
+		const char *cat_name;
 
 	public:
 		bool can_read_multiple_categories() const
 		{ return true; }
 
-		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, const char *catname, Category *cat) throw(ExBasic);
 
 		const char *getType() const
 		{ return "sqlite"; }

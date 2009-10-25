@@ -9,7 +9,11 @@
 
 #include "overlay.h"
 
+#include <eixTk/likely.h>
 #include <eixTk/utils.h>
+
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -18,13 +22,13 @@ OverlayIdent::readLabel(const char *Path)
 {
 	vector<string> lines;
 	pushback_lines((string(Path) + "/profiles/repo_name").c_str(), &lines, true, false, false);
-	for(vector<string>::const_iterator i = lines.begin(); i != lines.end(); ++i) {
+	for(vector<string>::const_iterator i(lines.begin()); likely(i != lines.end()); ++i) {
 		if(i->empty())
 			continue;
 		label = *i;
 		return;
 	}
-	label = "";
+	label.clear();
 }
 
 string

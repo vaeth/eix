@@ -11,26 +11,33 @@
  * Everyone wanted something like esync from esearch .. so here it is!
  */
 
-#include <config.h>
-#include <main/main.h>
-
-#include <eixrc/global.h>
+#include <database/header.h>
+#include <database/io.h>
 #include <eixTk/argsreader.h>
 #include <eixTk/exceptions.h>
-#include <eixTk/sysutils.h>
 #include <eixTk/filenames.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
 #include <eixTk/utils.h>
-
-#include <database/header.h>
+#include <eixrc/eixrc.h>
+#include <eixrc/global.h>
+#include <main/main.h>
+#include <output/formatstring-print.h>
+#include <output/formatstring.h>
+#include <portage/conf/portagesettings.h>
+#include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/set_stability.h>
-
 #include <portage/vardbpkg.h>
-#include <portage/conf/cascadingprofile.h>
-#include <portage/conf/portagesettings.h>
 
-#include <output/formatstring.h>
-#include <output/formatstring-print.h>
+#include <algorithm>
+#include <iostream>
+#include <string>
+
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
@@ -75,15 +82,15 @@ print_help(int ret)
 	}
 }
 
-bool cli_show_help    = false,
-	 cli_show_version = false,
-	 cli_dump_eixrc   = false,
-	 cli_dump_defaults = false,
-	 cli_quick,
-	 cli_care,
-	 cli_quiet;
+bool cli_show_help(false),
+	cli_show_version(false),
+	cli_dump_eixrc(false),
+	cli_dump_defaults(false),
+	cli_quick,
+	cli_care,
+	cli_quiet;
 
-const char *var_to_print = NULL;
+const char *var_to_print(NULL);
 
 enum cli_options {
 	O_DUMP = 300,
@@ -111,15 +118,15 @@ static struct Option long_options[] = {
 };
 
 static void
-load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
+load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) throw(ExBasic)
 {
-	FILE *fp = fopen(file, "rb");
+	FILE *fp(fopen(file, "rb"));
 
-	if(fp == NULL) {
+	if(unlikely(fp == NULL)) {
 		throw ExBasic(_("Can't open the database file %r for reading (mode = 'rb')")) % file;
 	}
 
-	if(!io::read_header(fp, *header)) {
+	if(unlikely(!io::read_header(fp, *header))) {
 		fclose(fp);
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
@@ -140,7 +147,7 @@ set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virt
 	if(!header.countOverlays())
 		return;
 	fmt->clear_virtual(header.countOverlays());
-	for(Version::Overlay i = 1; i != header.countOverlays(); ++i)
+	for(Version::Overlay i(1); i != header.countOverlays(); ++i)
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 
@@ -164,23 +171,23 @@ class DiffTrees
 		void diff(PackageTree &old_tree, PackageTree &new_tree)
 		{
 			// Diff every category from the old tree with the category from the new tree
-			for(PackageTree::iterator old_cat = old_tree.begin();
+			for(PackageTree::iterator old_cat(old_tree.begin());
 				old_cat != old_tree.end(); ++old_cat) {
-				diff_category(**old_cat, new_tree[old_cat->name]);
+				diff_category(*(old_cat->second), new_tree[old_cat->first]);
 			}
 
 			// Now we've only new package in the new_tree
 			// and lost packages in the old_tree
 
 			if(m_separate_deleted) {
-				for(PackageTree::iterator old_cat = old_tree.begin();
+				for(PackageTree::iterator old_cat(old_tree.begin());
 					old_cat != old_tree.end(); ++old_cat) {
-					for_each(old_cat->begin(), old_cat->end(), lost_package);
+					for_each(old_cat->second->begin(), old_cat->second->end(), lost_package);
 				}
 			}
 			for(PackageTree::iterator new_cat = new_tree.begin();
 				new_cat != new_tree.end(); ++new_cat) {
-				for_each(new_cat->begin(), new_cat->end(), found_package);
+				for_each(new_cat->second->begin(), new_cat->second->end(), found_package);
 			}
 		}
 	private:
@@ -195,13 +202,12 @@ class DiffTrees
 		/// Remove already diffed packages from both categories.
 		void diff_category(Category &old_cat, Category &new_cat)
 		{
-			Category::iterator old_pkg = old_cat.begin();
+			Category::iterator old_pkg(old_cat.begin());
 
-			while(old_pkg != old_cat.end())
-			{
-				Category::iterator new_pkg = new_cat.find(old_pkg->name);
+			while(likely(old_pkg != old_cat.end())) {
+				Category::iterator new_pkg(new_cat.find(old_pkg->name));
 
-				if(new_pkg == new_cat.end()) {
+				if(unlikely(new_pkg == new_cat.end())) {
 					// Lost a package
 					if(m_separate_deleted) {
 						++old_pkg;
@@ -211,7 +217,7 @@ class DiffTrees
 				}
 				else {
 					// Best version differs
-					if(best_differs(*new_pkg, *old_pkg))
+					if(unlikely(best_differs(*new_pkg, *old_pkg)))
 						changed_package(*old_pkg, *new_pkg);
 
 					// Remove the new package
@@ -250,15 +256,14 @@ print_lost_package(Package *p)
 	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings, set_stability_old);
 }
 
-
 int
 run_eix_diff(int argc, char *argv[])
 {
 	string old_file, new_file;
 
-	format_for_new.no_color   = (isatty(1) != 1);
+	format_for_new.no_color = (isatty(1) != 1);
 
-	EixRc &rc = get_eixrc(DIFF_VARS_PREFIX);
+	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
 
 	cli_quick = rc.getBool("QUICKMODE");
 	cli_care  = rc.getBool("CAREMODE");
@@ -268,23 +273,23 @@ run_eix_diff(int argc, char *argv[])
 	ArgumentReader argreader(argc, argv, long_options);
 	ArgumentReader::iterator current_param = argreader.begin();
 
-	if(cli_show_help)
+	if(unlikely(cli_show_help))
 		print_help(0);
 
-	if(cli_show_version)
+	if(unlikely(cli_show_version))
 		dump_version(0);
 
-	if(var_to_print) {
+	if(unlikely(var_to_print != NULL)) {
 		rc.print_var(var_to_print);
 		exit(0);
 	}
 
-	if(cli_dump_eixrc || cli_dump_defaults) {
+	if(unlikely(cli_dump_eixrc || cli_dump_defaults)) {
 		rc.dumpDefaults(stdout, cli_dump_defaults);
 		exit(0);
 	}
 
-	if(cli_quiet) {
+	if(unlikely(cli_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			exit(1);
@@ -295,14 +300,14 @@ run_eix_diff(int argc, char *argv[])
 		format_for_new.no_color = false;
 	}
 
-	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
-		print_help(1);
-		throw ExBasic(_("Missing cache-file.")) ;
+	if(unlikely((current_param == argreader.end()) || (current_param->type != Parameter::ARGUMENT))) {
+		cerr << _("Missing cache-file.");
+		exit(1);
 	}
 
 	old_file = current_param->m_argument;
 	++current_param;
-	if(current_param == argreader.end() || current_param->type != Parameter::ARGUMENT) {
+	if((current_param == argreader.end()) || (current_param->type != Parameter::ARGUMENT)) {
 		new_file = rc["EIX_CACHEFILE"];
 	}
 	else {
@@ -337,8 +342,8 @@ run_eix_diff(int argc, char *argv[])
 		rc.getBool("RESTRICT_INSTALLED"), rc.getBool("CARE_RESTRICT_INSTALLED"));
 	varpkg_db->check_installed_overlays = rc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
-	bool local_settings = rc.getBool("LOCAL_PORTAGE_CONFIG");
-	bool always_accept_keywords = rc.getBool("ALWAYS_ACCEPT_KEYWORDS");
+	bool local_settings(rc.getBool("LOCAL_PORTAGE_CONFIG"));
+	bool always_accept_keywords(rc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 	set_stability_old = new SetStability(portagesettings, local_settings, true, always_accept_keywords);
 	set_stability_new = new SetStability(portagesettings, local_settings, false, always_accept_keywords);
 	format_for_new.recommend_mode = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
@@ -355,7 +360,7 @@ run_eix_diff(int argc, char *argv[])
 
 	format_for_old = format_for_new;
 
-	string eprefix_virtual = rc["EPREFIX_VIRTUAL"];
+	string eprefix_virtual(rc["EPREFIX_VIRTUAL"]);
 	set_virtual(&format_for_old, old_header, eprefix_virtual);
 	set_virtual(&format_for_new, new_header, eprefix_virtual);
 
@@ -364,7 +369,7 @@ run_eix_diff(int argc, char *argv[])
 		!rc.getBool("DIFF_NO_SLOTS"),
 		rc.getBool("DIFF_SEPARATE_DELETED"));
 
-	if(rc.getBool("DIFF_PRINT_HEADER")) {
+	if(likely(rc.getBool("DIFF_PRINT_HEADER"))) {
 		INFO(eix::format(_("Diffing databases (%s -> %s packages)\n"))
 			% old_tree.countPackages()
 			% new_tree.countPackages());

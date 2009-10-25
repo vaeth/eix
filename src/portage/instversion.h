@@ -11,6 +11,13 @@
 #define EIX__INSTVERSION_H__ 1
 
 #include <portage/extendedversion.h>
+#include <portage/version.h>
+
+#include <string>
+#include <vector>
+#include <set>
+
+#include <ctime>
 
 /** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
 class InstVersion : public ExtendedVersion, public Keywords {

@@ -9,18 +9,22 @@
 #ifndef EIX__FORMATED_H__
 #define EIX__FORMATED_H__ 1
 
-#include <eixTk/i18n.h>
+#include <config.h>
 
-#include <string>
-#include <sstream>
 #include <ostream>
+#include <sstream>
+#include <string>
+
 #include <cassert>
-#include <cstdlib>
 
 #ifndef NDEBUG
-// std::cerr
+#include <eixTk/i18n.h>
+
 #include <iostream>
+
+#include <cstdlib>
 #endif
+
 
 namespace eix {
 

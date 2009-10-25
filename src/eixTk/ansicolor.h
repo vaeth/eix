@@ -12,6 +12,10 @@
 
 #include <eixTk/exceptions.h>
 
+#include <ostream>
+#include <string>
+#include <vector>
+
 class AnsiColor;
 
 /** A class for using ANSI markers

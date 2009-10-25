@@ -8,9 +8,24 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "formatstring.h"
-
-#include <portage/conf/portagesettings.h>
+#include <eixTk/ansicolor.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <eixrc/eixrc.h>
+#include <portage/basicversion.h>
+#include <portage/version.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstring>
+
+class PortageSettings;
 
 using namespace std;
 
@@ -53,18 +68,16 @@ MarkedList::CIPair MarkedList::equal_range_pkg(const Package &pkg) const
     the package was marked with a non-version argument */
 vector<BasicVersion> *MarkedList::get_marked_vector(const Package &pkg, bool *nonversion) const
 {
-	CIPair beg_end = equal_range_pkg(pkg);
-	if(nonversion)
+	CIPair beg_end(equal_range_pkg(pkg));
+	if(nonversion != NULL)
 		*nonversion = false;
-	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
+	if(likely((beg_end.first == end()) || (beg_end.first == beg_end.second)))// no match
 		return NULL;
-	vector<BasicVersion> *ret = NULL;
-	for(const_iterator it = beg_end.first ; it != beg_end.second; ++it)
-	{
-		BasicVersion *p = it->second;
-		if(!p)
-		{
-			if(nonversion)
+	vector<BasicVersion> *ret(NULL);
+	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it) {
+		BasicVersion *p(it->second);
+		if(p == NULL) {
+			if(nonversion != NULL)
 				*nonversion = true;
 			continue;
 		}
@@ -85,14 +98,12 @@ bool MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 	CIPair beg_end = equal_range_pkg(pkg);
 	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
 		return false;
-	if(!ver)	// do not care about versions
+	if(ver == NULL) // do not care about versions
 		return true;
-	for(const_iterator it = beg_end.first ; it != beg_end.second; ++it )
-	{
-		BasicVersion *p = it->second;
-		if(p)
-		{
-			if(*p == *ver)
+	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it ) {
+		BasicVersion *p(it->second);
+		if(p != NULL) {
+			if(unlikely(*p == *ver))
 				return true;
 		}
 	}
@@ -103,15 +114,14 @@ bool MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 string MarkedList::getMarkedString(const Package &pkg) const
 {
 	bool nonversion;
-	vector<BasicVersion> *marked = get_marked_vector(pkg, &nonversion);
-	if(!marked)
+	vector<BasicVersion> *marked(get_marked_vector(pkg, &nonversion));
+	if(marked == NULL)
 		return nonversion ? "*" : "";
 	string ret;
 	if(nonversion)
 		ret = "*";
-	for(vector<BasicVersion>::const_iterator it = marked->begin();
-		it != marked->end(); ++it )
-	{
+	for(vector<BasicVersion>::const_iterator it(marked->begin());
+		likely(it != marked->end()); ++it ) {
 		if(!ret.empty())
 			ret.append(1, ' ');
 		ret.append(it->getFull());
@@ -136,12 +146,12 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 Node *
 PrintFormat::parse_variable(const string &varname) const throw(ExBasic)
 {
-	VarParserCache::iterator f = varcache.find(varname);
+	VarParserCache::iterator f(varcache.find(varname));
 	if(f == varcache.end()) {
 		return varcache[varname].init((*eix_rc)[varname].c_str(), !no_color, true);
 	}
-	VarParserCacheNode &v = f->second;
-	if(v.in_use) {
+	VarParserCacheNode &v(f->second);
+	if(unlikely(v.in_use)) {
 		throw ExBasic(_("Variable %r calls itself for printing"))
 			% varname;
 	}
@@ -152,9 +162,9 @@ PrintFormat::parse_variable(const string &varname) const throw(ExBasic)
 string
 PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
 {
-	string start = "[";
-	string end = "]";
-	bool color = !no_color;
+	string start("[");
+	string end("]");
+	bool color(!no_color);
 	if(plain)
 		color = false;
 	if(color) {
@@ -173,9 +183,9 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
 		if(overlay_translations) {
 			overlay = (*overlay_translations)[index];
 			if(!overlay) {
-				Version::Overlay number = 0;
-				for(vector<Version::Overlay>::iterator it = overlay_translations->begin();
-					it != overlay_translations->end(); ++it) {
+				Version::Overlay number(0);
+				for(vector<Version::Overlay>::iterator it(overlay_translations->begin());
+					likely(it != overlay_translations->end()); ++it) {
 					if(number < *it)
 						number = *it;
 				}
@@ -213,7 +223,7 @@ PrintFormat::setupResources(EixRc &rc)
 void
 PrintFormat::setupColors()
 {
-	bool use_color = !no_color;
+	bool use_color(!no_color);
 	if(use_color) {
 		color_overlaykey = AnsiColor(color_overlaykey).asString();
 		color_virtualkey = AnsiColor(color_virtualkey).asString();
@@ -231,12 +241,12 @@ PrintFormat::setupColors()
 bool
 PrintFormat::recPrint(string *result, const void *entity, GetProperty get_property, Node *root) const
 {
-	bool printed = false;
-	for(; root != NULL; root = root->next) {
+	bool printed(false);
+	for(; likely(root != NULL); root = root->next) {
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
 				{
-					const string &t = static_cast<Text*>(root)->text;
+					const string &t(static_cast<Text*>(root)->text);
 					if(!t.empty()) {
 						printed = true;
 						if(result)
@@ -248,7 +258,7 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 				break;
 			case Node::OUTPUT:
 				try {
-					Property *p = static_cast<Property*>(root);
+					Property *p(static_cast<Property*>(root));
 					string s;
 					if(p->user_variable)
 						s = user_variables[p->name];
@@ -309,7 +319,7 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 						break;
 					}
 					// Node::IF:
-					bool ok = false;
+					bool ok(false);
 					if(ief->user_variable) {
 						ok = (user_variables[ief->variable.name] == rhs);
 					}
@@ -346,7 +356,7 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBH
 	version_variables = NULL;
 	varcache.clear_use();
 	user_variables.clear();
-	bool r = recPrint(NULL, entity, get_property, root);
+	bool r(recPrint(NULL, entity, get_property, root));
 	// Reset the four hackish variables
 	header = NULL; vardb = NULL; portagesettings = NULL; stability = NULL;
 	if(r && magic_newline)
@@ -367,6 +377,23 @@ string parse_colors(const string &colorstring, bool colors)
 	}
 	return ret;
 }
+
+int
+FormatParser::getPosition(int *line, int *column)
+{
+	const char *x(band), *y(band);
+	while(x <= band_position && x) {
+		y = x;
+		x = strchr(x, '\n');
+		if(x) {
+			++x;
+			++*line;
+			*column = band_position - y;
+		}
+	}
+	return band_position - band;
+}
+
 
 FormatParser::ParserState
 FormatParser::state_START()
@@ -395,7 +422,7 @@ FormatParser::ParserState
 FormatParser::state_TEXT()
 {
 	string textbuffer;
-	const char *end_of_text = "<{(";
+	const char *end_of_text("<{(");
 	if(only_colors)
 		end_of_text = "(";
 	while(*band_position && (strchr(end_of_text, *band_position ) == NULL)) {
@@ -414,7 +441,7 @@ FormatParser::state_TEXT()
 FormatParser::ParserState
 FormatParser::state_COLOR()
 {
-	const char *q = strchr(band_position, ')');
+	const char *q(strchr(band_position, ')'));
 	if(q == NULL) {
 		last_error = _("'(' without closing ')'");
 		return ERROR;
@@ -444,14 +471,14 @@ seek_character(const char *fmt)
 FormatParser::ParserState
 FormatParser::state_PROPERTY()
 {
-	const char *q = strchr(band_position, '>');
+	const char *q(strchr(band_position, '>'));
 	if(q == NULL) {
 		last_error = _("'<' without closing '>'");
 		return ERROR;
 	}
 
 	/* Look for variable */
-	bool user_variable = false;
+	bool user_variable(false);
 	if(*band_position == '$') {
 		user_variable = true;
 		++band_position;
@@ -480,7 +507,7 @@ FormatParser::state_IF()
 		return FI;
 	}
 
-	ConditionBlock *n = new ConditionBlock;
+	ConditionBlock *n(new ConditionBlock);
 	keller.push(n);
 
 	/* Look for negation */
@@ -508,9 +535,9 @@ FormatParser::state_IF()
 			n->user_variable = false;
 	}
 
-	unsigned int i = 0;
-	const char *name_start = band_position;
-	for(char c = *band_position;
+	unsigned int i(0);
+	const char *name_start(band_position);
+	for(char c(*band_position);
 		c && (c != '}') && (c != '=') && !(isspace(c));
 		c = *(++band_position))
 		++i;
@@ -576,7 +603,7 @@ FormatParser::state_IF()
 	}
 
 	string textbuffer;
-	for(char c = *band_position; c; c = *(++band_position)) {
+	for(char c(*band_position); likely(c != '\0'); c = *(++band_position)) {
 		if(parse_modus != plain) {
 			if(c == parse_modus)
 				break;
@@ -610,7 +637,7 @@ FormatParser::state_IF()
 FormatParser::ParserState
 FormatParser::state_ELSE()
 {
-	Node *p = NULL, *q = NULL;
+	Node *p(NULL), *q(NULL);
 	if(keller.empty()) {
 		return START;
 	}
@@ -696,12 +723,12 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 			delete keller.top();
 			keller.pop();
 		}
-		int line = 0, column = 0;
+		int line(0), column(0);
 		getPosition(&line, &column);
 		throw ExBasic(_("Line %r, column %r: %s")) % line % column % last_error;
 	}
 	/* Pop elements and form a single linked list. */
-	Node *p = NULL, *q = NULL;
+	Node *p(NULL), *q(NULL);
 	while(keller.size() != 0) {
 		p = keller.top();
 		keller.pop();

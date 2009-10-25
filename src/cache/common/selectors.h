@@ -12,6 +12,8 @@
 
 #include <eixTk/utils.h>
 
+#include <string>
+
 int package_selector (SCANDIR_ARG3 dent);
 int ebuild_selector (SCANDIR_ARG3 dent);
 

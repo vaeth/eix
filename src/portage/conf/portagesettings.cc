@@ -8,30 +8,37 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "portagesettings.h"
-
 #include <config.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/filenames.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/ptr_list.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/sysutils.h>
+#include <eixTk/utils.h>
+#include <eixTk/varsreader.h>
+#include <eixrc/eixrc.h>
 #include <portage/conf/cascadingprofile.h>
-
+#include <portage/keywords.h>
 #include <portage/mask.h>
+#include <portage/mask_list.h>
 #include <portage/package.h>
+#include <portage/packagesets.h>
 #include <portage/version.h>
 
-#include <eixTk/utils.h>
-#include <eixTk/sysutils.h>
-#include <eixTk/filenames.h>
-
-#include <eixrc/eixrc.h>
-
-#include <eixTk/varsreader.h>
-
-#include <fstream>
-#include <fnmatch.h>
 #include <algorithm>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <fnmatch.h>
 
 using namespace std;
-
-static string emptystring;
 
 const std::string &
 PortageSettings::operator[](const std::string &var) const
@@ -48,11 +55,10 @@ grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, vector<Ma
 	vector<string> lines;
 	if( ! pushback_lines(file, &lines, true, recursive))
 		return false;
-	for(vector<string>::iterator it=lines.begin(); it<lines.end(); ++it)
-	{
-		string line=*it;
+	for(vector<string>::iterator it(lines.begin()); likely(it < lines.end()); ++it) {
+		string line(*it);
 		try {
-			Mask *m = new Mask(line.c_str(), type);
+			Mask *m(new Mask(line.c_str(), type));
 			if(cat_map) {
 				cat_map->add(m);
 			}
@@ -73,9 +79,8 @@ grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector
 	vector<string> lines;
 	if( ! pushback_lines(file, &lines, true, recursive))
 		return false;
-	for(vector<string>::iterator it=lines.begin(); it<lines.end(); ++it)
-	{
-		string line=*it;
+	for(vector<string>::iterator it(lines.begin()); likely(it < lines.end()); ++it) {
+		string line(*it);
 		try {
 			SetMask *m = new SetMask(line.c_str(), i);
 			if(m->is_set()) {
@@ -132,18 +137,16 @@ inline static bool is_accumulating(const char **accumulating, const char *key)
 
 void PortageSettings::override_by_env(const char **vars)
 {
-	const char *var;
-	while((var = *(vars++)) != NULL)
-	{
-		const char *e = getenv(var);
-		if(!e)
+	for(const char *var(*vars); likely(var != NULL); var = *(++vars)) {
+		const char *e(getenv(var));
+		if(e == NULL)
 			continue;
 		if(!is_accumulating(default_accumulating_keys, var))
 		{
 			(*this)[var] = e;
 			continue;
 		}
-		string &ref = ((*this)[var]);
+		string &ref((*this)[var]);
 		if(ref.empty())
 			ref = e;
 		else
@@ -172,8 +175,7 @@ string PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 
 void PortageSettings::add_overlay(string &path, bool resolve, bool modify)
 {
-
-	string name = resolve_overlay_name(path, resolve);
+	string name(resolve_overlay_name(path, resolve));
 	if(modify)
 		path = name;
 	/* If the overlay exists, don't add it */
@@ -188,8 +190,9 @@ void PortageSettings::add_overlay(string &path, bool resolve, bool modify)
 
 void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool modify)
 {
-	for(vector<string>::iterator it = v.begin(); it != v.end(); ++it)
+	for(vector<string>::iterator it(v.begin()); likely(it != v.end()); ++it) {
 		add_overlay(*it, resolve, modify);
+	}
 }
 
 /** Read make.globals and make.conf. */
@@ -208,8 +211,8 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	m_eprefixoverlays = eixrc["EPREFIX_OVERLAYS"];
 	m_eprefixaccessoverlays = eixrc["EPREFIX_ACCESS_OVERLAYS"];
 
-	const string &eprefixsource = eixrc["EPREFIX_SOURCE"];
-	const string &make_globals  = eixrc["MAKE_GLOBALS"];
+	const string &eprefixsource(eixrc["EPREFIX_SOURCE"]);
+	const string &make_globals(eixrc["MAKE_GLOBALS"]);
 	if(is_file(make_globals.c_str()))
 		read_config(make_globals, eprefixsource);
 	else
@@ -219,8 +222,8 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	override_by_env(test_in_env_early);
 	/* Normalize "PORTDIR": */
 	{
-		string &ref = (*this)["PORTDIR"];
-		string full = m_eprefixportdir;
+		string &ref((*this)["PORTDIR"]);
+		string full(m_eprefixportdir);
 		if(ref.empty())
 			full.append("/usr/portage");
 		else
@@ -229,37 +232,36 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	}
 	/* Normalize overlays and erase duplicates */
 	{
-		string &ref = (*this)["PORTDIR_OVERLAY"];
-		vector<string> overlayvec = split_string(ref, true);
+		string &ref((*this)["PORTDIR_OVERLAY"]);
+		vector<string> overlayvec;
+		split_string(overlayvec, ref, true);
 		add_overlay_vector(overlayvec, true, true);
 		ref = join_vector(overlayvec);
 	}
 
 	profile = new CascadingProfile(this, init_world);
-	{
-		store_world_sets(NULL);
-		bool read_world = false;
-		if(init_world) {
-			if(eixrc.getBool("SAVE_WORLD"))
-				read_world = true;
+	store_world_sets(NULL);
+	bool read_world = false;
+	if(init_world) {
+		if(eixrc.getBool("SAVE_WORLD"))
+			read_world = true;
+	}
+	else {
+		if(eixrc.getBool("CURRENT_WORLD"))
+			read_world = true;
+	}
+	if(read_world) {
+		if(grab_masks(eixrc["EIX_WORLD"].c_str(), Mask::maskInWorld, &(profile->m_world), false)) {
+			profile->use_world = true;
 		}
-		else {
-			if(eixrc.getBool("CURRENT_WORLD"))
-				read_world = true;
-		}
-		if(read_world) {
-			if(grab_masks(eixrc["EIX_WORLD"].c_str(), Mask::maskInWorld, &(profile->m_world), false)) {
-				profile->use_world = true;
-			}
-			read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
-		}
+		read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
 	}
 
 	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
 	profile->listaddProfile();
 	profile->readMakeDefaults();
 	profile->readremoveFiles();
-	CascadingProfile *local_profile = NULL;
+	CascadingProfile *local_profile(NULL);
 	if(getlocal)
 		local_profile = new CascadingProfile(*profile);
 	addOverlayProfiles(profile);
@@ -284,9 +286,12 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	}
 	override_by_env(test_in_env_late);
 
-	m_accepted_keywords = split_string((*this)["ARCH"]);
+	m_accepted_keywords.clear();
+	split_string(m_accepted_keywords, (*this)["ARCH"]);
+	m_arch_set.clear()
 	resolve_plus_minus(m_arch_set, m_accepted_keywords, m_obsolete_minusasterisk);
-	push_backs<string>(m_accepted_keywords, split_string((*this)["ACCEPT_KEYWORDS"]));
+	split_string(m_accepted_keywords, (*this)["ACCEPT_KEYWORDS"]));
+	m_accepted_keywords_set.clear();
 	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords, m_obsolete_minusasterisk);
 	make_vector<string>(m_accepted_keywords, m_accepted_keywords_set);
 	if(eixrc.getBool("ACCEPT_KEYWORDS_AS_ARCH"))
@@ -297,9 +302,10 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	if(getlocal)
 		user_config = new PortageUserConfig(this, local_profile);
 
-	vector<string> sets_dirs = split_string(eixrc["EIX_LOCAL_SETS"], true);
+	vector<string> sets_dirs;
+	split_string(sets_dirs, eixrc["EIX_LOCAL_SETS"], true);
 	// Expand relative pathnames and the magic "*" of EIX_LOCAL_SETS:
-	for(vector<string>::size_type i = 0; i != sets_dirs.size(); ) {
+	for(vector<string>::size_type i(0); likely(i != sets_dirs.size()); ) {
 		switch(sets_dirs[i][0]) {
 			case '/': // absolute path: Nothing special
 				break;
@@ -310,15 +316,16 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 					string app;
 					if(sets_dirs[i].size() > 1)
 						app = sets_dirs[i].substr(1);
-					vector<string>::size_type s = overlays.size();
+					vector<string>::size_type s(overlays.size());
 					if(s > 1)
 						sets_dirs.insert(sets_dirs.begin() + i, s - 1, emptystring);
 					// The following should actually be const_reverse_iterator,
 					// but some compilers would then need a cast of rend(),
 					// see http://bugs.gentoo.org/show_bug.cgi?id=255711
-					for(vector<string>::reverse_iterator it = overlays.rbegin();
-						it != overlays.rend(); ++it)
+					for(vector<string>::reverse_iterator it(overlays.rbegin());
+						likely(it != overlays.rend()); ++it) {
 						sets_dirs[i++] = (*it) + app;
+					}
 				}
 				// skip ++i:
 				continue;
@@ -334,10 +341,10 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 PortageSettings::~PortageSettings()
 {
-	if(profile) {
+	if(profile != NULL) {
 		delete profile;
 	}
-	if(user_config) {
+	if(user_config != NULL) {
 		delete user_config;
 	}
 }
@@ -349,8 +356,8 @@ PortageSettings::read_world_sets(const char *file)
 	if(!pushback_lines(file, &lines, true, false))
 		return;
 	vector<string> the_sets;
-	for(vector<string>::const_iterator it = lines.begin();
-		it != lines.end(); ++it) {
+	for(vector<string>::const_iterator it(lines.begin());
+		likely(it != lines.end()); ++it) {
 		string s;
 		if((*it)[0] == '@')
 			s = it->substr(1);
@@ -378,8 +385,8 @@ PortageSettings::store_world_sets(const std::vector<std::string> *s_world_sets, 
 	know_world_sets = true;
 	world_setslist_up_to_date = false;
 	world_sets.clear();
-	for(vector<string>::const_iterator it = s_world_sets->begin();
-		it != s_world_sets->end(); ++it) {
+	for(vector<string>::const_iterator it(s_world_sets->begin());
+		likely(it != s_world_sets->end()); ++it) {
 		if(it->empty())
 			continue;
 		world_sets.push_back(*it);
@@ -393,7 +400,7 @@ PortageSettings::add_name(SetsList &l, const string &s, bool recurse) const
 		l.add_system();
 		return;
 	}
-	for(SetsIndex i = 0; i != set_names.size(); ++i) {
+	for(SetsIndex i(0); likely(i != set_names.size()); ++i) {
 		if(s == set_names[i]) {
 			l.add(i);
 			if(recurse)
@@ -408,8 +415,8 @@ PortageSettings::update_world_setslist()
 {
 	world_setslist_up_to_date = true;
 	world_setslist.clear();
-	for(vector<string>::const_iterator it = world_sets.begin();
-		it != world_sets.end(); ++it)
+	for(vector<string>::const_iterator it(world_sets.begin());
+		likely(it != world_sets.end()); ++it)
 		add_name(world_setslist, *it, m_recurse_sets);
 }
 
@@ -418,15 +425,15 @@ PortageSettings::calc_world_sets(Package *p)
 {
 	if(!world_setslist_up_to_date)
 		update_world_setslist();
-	for(Package::iterator it = p->begin(); it != p->end(); ++it) {
+	for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 		if(world_setslist.has_system()) {
 			if(it->maskflags.isSystem()) {
 				it->maskflags.setbits(MaskFlags::MASK_WORLD_SETS);
 				continue;
 			}
 		}
-		bool world = false;
-		for(std::vector<SetsIndex>::const_iterator sit = it->sets_indizes.begin();
+		bool world(false);
+		for(std::vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
 			sit != it->sets_indizes.end(); ++sit) {
 			if(std::find(world_setslist.begin(), world_setslist.end(), *sit) != world_setslist.end()) {
 				world = true;
@@ -442,9 +449,9 @@ void
 PortageSettings::get_setnames(vector<string> &names, const Package *p, bool also_nonlocal) const
 {
 	names.clear();
-	for(Package::const_iterator it = p->begin(); it != p->end(); ++it) {
-		for(std::vector<SetsIndex>::const_iterator sit = it->sets_indizes.begin();
-			sit != it->sets_indizes.end(); ++sit) {
+	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
+		for(std::vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
+			likely(sit != it->sets_indizes.end()); ++sit) {
 			names.push_back(set_names[*sit]);
 		}
 	}
@@ -474,13 +481,13 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 	vector<vector<string>::size_type> dir_size(dir_list.size());
 	/// all_set_names is used as a cache to find duplicate set names faster
 	set<string> all_set_names;
-	for(vector<string>::size_type i = 0; i != dir_list.size(); ++i) {
+	for(vector<string>::size_type i(0); likely(i != dir_list.size()); ++i) {
 		vector<string> temporary_set_names;
 		pushback_files(dir_list[i], temporary_set_names, sets_exclude, 0, false, false);
-		vector<string>::size_type s = set_names.size();
+		vector<string>::size_type s(set_names.size());
 		// Avoid duplicate sets
-		for(vector<string>::const_iterator it = temporary_set_names.begin();
-			it != temporary_set_names.end(); ++it) {
+		for(vector<string>::const_iterator it(temporary_set_names.begin());
+			likely(it != temporary_set_names.end()); ++it) {
 			if(all_set_names.find(*it) != all_set_names.end())
 				continue;
 			all_set_names.insert(*it);
@@ -489,11 +496,11 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 		dir_size[i] = set_names.size() - s;
 	}
 	vector< vector<string> > child_names(set_names.size());
-	SetsIndex c = 0;
-	for(vector<string>::size_type i = 0; i != dir_list.size(); ++i) {
-		string dir_slash = dir_list[i];
+	SetsIndex c(0);
+	for(vector<string>::size_type i(0); likely(i != dir_list.size()); ++i) {
+		string dir_slash(dir_list[i]);
 		optional_append(dir_slash, '/');
-		for(vector<string>::size_type j = 0; j != dir_size[i]; ++j) {
+		for(vector<string>::size_type j(0); likely(j != dir_size[i]); ++j) {
 			grab_setmasks((dir_slash + set_names[c]).c_str(), &m_package_sets, c, child_names[c]);
 			++c;
 		}
@@ -508,17 +515,18 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 	parent_sets.assign(set_names.size(), SetsList());
 
 	// First, we resolve all the set names:
-	for(SetsIndex i = 0; i != set_names.size(); ++i) {
-		for(vector<string>::const_iterator it = child_names[i].begin();
-			it != child_names[i].end(); ++it)
+	for(SetsIndex i(0); likely(i != set_names.size()); ++i) {
+		for(vector<string>::const_iterator it(child_names[i].begin());
+			likely(it != child_names[i].end()); ++it) {
 			add_name(children_sets[i], *it, m_recurse_sets);
+		}
 	}
 
 	// Now we recurse:
-	for(bool startnew = true; startnew; ) {
+	for(bool startnew(true); likely(startnew); ) {
 		startnew = false;
-		for(SetsIndex i = 0; i != set_names.size(); ++i) {
-			for(SetsList::const_iterator it = children_sets[i].begin();
+		for(SetsIndex i(0); likely(i != set_names.size()); ++i) {
+			for(SetsList::const_iterator it(children_sets[i].begin());
 				it != children_sets[i].end(); ++it) {
 				parent_sets[*it].add(i);
 				if(children_sets[i].add(children_sets[*it])) {
@@ -533,7 +541,7 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 void
 PortageSettings::calc_recursive_sets(Package *p) const
 {
-	for(Package::iterator vi = p->begin(); vi != p->end(); ++vi) {
+	for(Package::iterator vi(p->begin()); likely(vi != p->end()); ++vi) {
 		SetsList will_add;
 		for(vector<SetsIndex>::const_iterator it = vi->sets_indizes.begin();
 			it != vi->sets_indizes.end(); ++it)
@@ -547,16 +555,18 @@ PortageSettings::calc_recursive_sets(Package *p) const
 bool
 PortageSettings::calc_allow_upgrade_slots(const Package *p) const
 {
-	if(!know_upgrade_policy) {
+	if(unlikely(!know_upgrade_policy)) {
 		upgrade_policy = settings_rc->getBool("UPGRADE_TO_HIGHEST_SLOT");
 		upgrade_policy_exceptions.clear();
-		vector<string> exceptions = split_string(((*settings_rc)[upgrade_policy ?
+		vector<string> exceptions;
+		split_string(exceptions, ((*settings_rc)[upgrade_policy ?
 				"SLOT_UPGRADE_FORBID" : "SLOT_UPGRADE_ALLOW"]), true);
-		for(vector<string>::const_iterator it = exceptions.begin();
-			it != exceptions.end(); ++it)
+		for(vector<string>::const_iterator it(exceptions.begin());
+			likely(it != exceptions.end()); ++it) {
 			grab_masks(it->c_str(), Mask::maskTypeNone, &upgrade_policy_exceptions, NULL, true);
+		}
 	}
-	if((!upgrade_policy_exceptions.empty()) && upgrade_policy_exceptions.get(p))
+	if(unlikely(!upgrade_policy_exceptions.empty()) && upgrade_policy_exceptions.get(p))
 		return !upgrade_policy;
 	return upgrade_policy;
 }
@@ -571,12 +581,10 @@ vector<string> *PortageSettings::getCategories()
 		pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &m_categories);
 
 		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
-		for(vector<string>::iterator i = overlays.begin();
-			i != overlays.end();
-			++i)
-		{
+		for(vector<string>::iterator i(overlays.begin());
+			likely(i != overlays.end()); ++i) {
 			pushback_lines((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
-			               &m_categories);
+				&m_categories);
 		}
 
 		sort_uniquify(m_categories);
@@ -587,9 +595,10 @@ vector<string> *PortageSettings::getCategories()
 void
 PortageSettings::addOverlayProfiles(CascadingProfile *p) const
 {
-	for(vector<string>::const_iterator i = overlays.begin();
-		i != overlays.end(); ++i)
+	for(vector<string>::const_iterator i(overlays.begin());
+		likely(i != overlays.end()); ++i) {
 		p->listaddFile((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str());
+	}
 }
 
 PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile)
@@ -611,8 +620,8 @@ PortageUserConfig::~PortageUserConfig()
 bool
 PortageUserConfig::readMasks()
 {
-	bool mask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, &m_localmasks, true);
-	bool unmask_ok = grab_masks(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, &m_localmasks, true);
+	bool mask_ok(grab_masks(((m_settings->m_eprefixconf) + USER_MASK_FILE).c_str(), Mask::maskMask, &m_localmasks, true));
+	bool unmask_ok(grab_masks(((m_settings->m_eprefixconf) + USER_UNMASK_FILE).c_str(), Mask::maskUnmask, &m_localmasks, true));
 	return mask_ok && unmask_ok;
 }
 
@@ -622,12 +631,12 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 	vector<string> lines;
 	pushback_lines(file, &lines, false, true);
 	for(vector<string>::iterator i(lines.begin());
-		i != lines.end(); ++i) {
+		likely(i != lines.end()); ++i) {
 		if(i->empty())
 			continue;
 		try {
-			KeywordMask *m = NULL;
-			string::size_type n = i->find_first_of("\t ");
+			KeywordMask *m(NULL);
+			string::size_type n(i->find_first_of("\t "));
 			if(n == string::npos) {
 				m = new KeywordMask(i->c_str());
 			}
@@ -645,41 +654,34 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 /// @return true if some mask from list applied
 bool PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in)
 {
-	const eix::ptr_list<KeywordMask> *keyword_masks = list->get(p);
+	const eix::ptr_list<KeywordMask> *keyword_masks(list->get(p));
 	map<Version*,char> sorted_by_versions;
 
 	if(!keyword_masks)
 		return false;
 	if(keyword_masks->empty())
 		return false;
-	for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
-		it != keyword_masks->end();
-		++it)
-	{
-		eix::ptr_list<Version> matches = it->match(*p);
+	for(eix::ptr_list<KeywordMask>::const_iterator it(keyword_masks->begin());
+		likely(it != keyword_masks->end()); ++it) {
+		eix::ptr_list<Version> matches(it->match(*p));
 
-		for(eix::ptr_list<Version>::iterator  v = matches.begin();
-			v != matches.end();
-			++v)
-		{
+		for(eix::ptr_list<Version>::iterator v(matches.begin());
+			likely(v != matches.end()); ++v) {
 			if(it->keywords.empty())
 				continue;
-			char &s = sorted_by_versions[*v];
-			if(s)
+			char &s(sorted_by_versions[*v]);
+			if(s == 1)
 				s = 2;
 			else
 				s = 1;
 		}
 	}
 
-	for(Package::iterator i = p->begin();
-		i != p->end();
-		++i)
-	{
-		char s = sorted_by_versions[*i];
-		if(!s)
+	for(Package::iterator i(p->begin()); likely(i != p->end()); ++i) {
+		char s(sorted_by_versions[*i]);
+		if(s == 0)
 			continue;
-		Keywords::Redundant redundant = flag_in | i->get_redundant();
+		Keywords::Redundant redundant(flag_in | i->get_redundant());
 		if(s == 2)
 			redundant |= flag_double;
 		i->set_redundant(redundant);
@@ -739,12 +741,11 @@ bool PortageUserConfig::readKeywords() {
 	 */
 
 	map<string, KeywordsData> have;
-	for(vector<string>::size_type i = 0; i < lines.size(); ++i)
-	{
+	for(vector<string>::size_type i(0); likely(i < lines.size()); ++i) {
 		if(lines[i].empty())
 			continue;
 
-		string::size_type n = lines[i].find_first_of("\t ");
+		string::size_type n(lines[i].find_first_of("\t "));
 		string name, content;
 		if(n == string::npos) {
 			name = lines[i];
@@ -754,9 +755,9 @@ bool PortageUserConfig::readKeywords() {
 			content = lines[i].substr(n);
 		}
 		lines[i] = name;
-		map<string, KeywordsData>::iterator old = have.find(name);
+		map<string, KeywordsData>::iterator old(have.find(name));
 		if(old == have.end()) {
-			KeywordsData *f = &(have[name]);
+			KeywordsData *f(&(have[name]));
 			f->locally_double = false;
 			f->keywords = content;
 		}
@@ -767,13 +768,11 @@ bool PortageUserConfig::readKeywords() {
 	}
 
 	for(vector<string>::iterator i(lines.begin());
-		i != lines.end();
-		++i)
-	{
+		likely(i != lines.end()); ++i) {
 		if(i->empty())
 			continue;
 		try {
-			KeywordMask *m = new KeywordMask(i->c_str());
+			KeywordMask *m(new KeywordMask(i->c_str()));
 			KeywordsData *f = &(have[*i]);
 			m->keywords       = f->keywords.empty() ? fscked_arch : f->keywords;
 			m->locally_double = f->locally_double;
@@ -833,7 +832,7 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 		// have_searched is the "flag" which we have already tested.
 		const string *s;
 		string r;
-		char have_searched = key[0];
+		char have_searched(key[0]);
 		if((have_searched == '-') || (have_searched == '~')) {
 			r = key.substr(1); s = &r;
 		}
@@ -905,32 +904,26 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 bool
 PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 {
-	if((check & Keywords::RED_ALL_KEYWORDS) == Keywords::RED_NOTHING)
-	{
+	if((check & Keywords::RED_ALL_KEYWORDS) == Keywords::RED_NOTHING) {
 		if(p->restore_keyflags(Version::SAVEKEY_USER))
 			return false;
 	}
 	m_settings->get_effective_keywords_userprofile(p);
 
-	const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(p);
+	const eix::ptr_list<KeywordMask> *keyword_masks(m_keywords.get(p));
 	map<Version*, vector<string> > sorted_by_versions;
-	bool rvalue = false;
+	bool rvalue(false);
 
-	bool obsolete_minusasterisk = m_settings->m_obsolete_minusasterisk;
-	if(keyword_masks && (!keyword_masks->empty()))
-	{
+	bool obsolete_minusasterisk(m_settings->m_obsolete_minusasterisk);
+	if((keyword_masks != NULL) && (!keyword_masks->empty())) {
 		rvalue = true;
-		for(eix::ptr_list<KeywordMask>::const_iterator it = keyword_masks->begin();
-			it != keyword_masks->end();
-			++it)
-		{
-			eix::ptr_list<Version> matches = it->match(*p);
+		for(eix::ptr_list<KeywordMask>::const_iterator it(keyword_masks->begin());
+			likely(it != keyword_masks->end()); ++it) {
+			eix::ptr_list<Version> matches(it->match(*p));
 
-			for(eix::ptr_list<Version>::iterator  v = matches.begin();
-				v != matches.end();
-				++v)
-			{
-				push_backs<string>(sorted_by_versions[*v], split_string(it->keywords));
+			for(eix::ptr_list<Version>::iterator v(matches.begin());
+				likely(v != matches.end()); ++v) {
+				split_string(sorted_by_versions[*v], it->keywords);
 				// Set RED_DOUBLE_LINE depending on locally_double
 				if(it->locally_double) {
 					if(check & Keywords::RED_DOUBLE_LINE)
@@ -941,15 +934,13 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 	}
 
-	bool shortcut = !(check & (Keywords::RED_MIXED | Keywords::RED_WEAKER));
-	for(Package::iterator it = p->begin();
-		it != p->end(); ++it)
-	{
+	bool shortcut(!(check & (Keywords::RED_MIXED | Keywords::RED_WEAKER)));
+	for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 		// Calculate ACCEPT_KEYWORDS (with package.keywords sets) state:
 
-		Keywords::Redundant redundant = it->get_redundant();
-		vector<string> kv = m_settings->m_accepted_keywords;
-		vector<string>::size_type kvsize = kv.size();
+		Keywords::Redundant redundant(it->get_redundant());
+		vector<string> kv(m_settings->m_accepted_keywords);
+		vector<string>::size_type kvsize(kv.size());
 		KeywordsFlags kf;
 		bool use_default;
 		if(it->sets_indizes.empty())
@@ -972,13 +963,13 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			it->keyflags = kf;
 			it->save_keyflags(Version::SAVEKEY_ACCEPT);
 		}
-		bool ori_is_stable = kf.havesome(KeywordsFlags::KEY_STABLE);
+		bool ori_is_stable(kf.havesome(KeywordsFlags::KEY_STABLE));
 
-		set<string> *kv_set_nofile = NULL;
+		set<string> *kv_set_nofile(NULL);
 
 		// Were keywords added from /etc/portage/package.keywords?
-		vector<string> &kvfile = sorted_by_versions[*it];
-		bool calc_lkw = rvalue;
+		vector<string> &kvfile(sorted_by_versions[*it]);
+		bool calc_lkw(rvalue);
 		if(calc_lkw) {
 			if(!kvfile.empty()) {
 				redundant |= Keywords::RED_IN_KEYWORDS;
@@ -1003,10 +994,10 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			set<string> kv_set;
 			bool minusasterisk;
 			if(check & Keywords::RED_DOUBLE) {
-				vector<string> sorted = kv;
+				vector<string> sorted(kv);
 				if(sort_uniquify(sorted, true))
 					redundant |= Keywords::RED_DOUBLE;
-				bool minuskeyword = false;
+				bool minuskeyword(false);
 				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk, &minuskeyword, &(m_settings->m_accepted_keywords_set));
 				if(minuskeyword)
 					redundant |= Keywords::RED_DOUBLE;
@@ -1020,7 +1011,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			// removing them from kv_set meanwhile.
 			// The point is that we temporarily disable "check" so that
 			// ACCEPT_KEYWORDS does not trigger any -T alarm.
-			bool stable = false;
+			bool stable(false);
 			set<string>::const_iterator sit, sit_end;
 			if(kv_set_nofile) {
 				sit = kv_set_nofile->begin();
@@ -1030,10 +1021,10 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 				sit = kv_set.begin();
 				sit_end = kv_set.end();
 			}
-			for( ; sit != sit_end; ++sit) {
+			for( ; likely(sit != sit_end); ++sit) {
 				if(kv_set_nofile) {
 					// Tests whether keyword is admissible and remove it from kv_set:
-					set<string>::iterator where = kv_set.find(*sit);
+					set<string>::iterator where(kv_set.find(*sit));
 					if(where == kv_set.end()) {
 						// The original keyword was removed by -...
 						continue;
@@ -1051,18 +1042,18 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 				delete kv_set_nofile;
 
 			// Now apply the remaining keywords (i.e. from /etc/portage/package.keywords)
-			ArchUsed arch_used = ARCH_NOTHING;
-			for(set<string>::iterator kvi = kv_set.begin();
-				kvi != kv_set.end(); ++kvi) {
-				ArchUsed arch_curr = apply_keyword(*kvi, keywords_set, kf,
+			ArchUsed arch_used(ARCH_NOTHING);
+			for(set<string>::iterator kvi(kv_set.begin());
+				likely(kvi != kv_set.end()); ++kvi) {
+				ArchUsed arch_curr(apply_keyword(*kvi, keywords_set, kf,
 					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
-					redundant, check, shortcut);
+					redundant, check, shortcut));
 				if(arch_curr == ARCH_NOTHING)
 					continue;
 				if(arch_used < arch_curr)
 					arch_used = arch_curr;
-				if(stable || ori_is_stable)
+				if(unlikely(stable || ori_is_stable))
 					redundant |= (check & Keywords::RED_MIXED);
 				stable = true;
 			}
@@ -1081,7 +1072,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					arch_needed = ARCH_ALIENUNSTABLE;
 				else
 					arch_needed = ARCH_EVERYTHING;
-				if(arch_used > arch_needed)
+				if(unlikely(arch_used > arch_needed))
 					redundant |= Keywords::RED_WEAKER;
 			}
 
@@ -1111,12 +1102,12 @@ PortageUserConfig::pushback_set_accepted_keywords(vector<string> &result, const 
 {
 	for(vector<SetsIndex>::const_iterator it = v->sets_indizes.begin();
 		it != v->sets_indizes.end(); ++it) {
-		const eix::ptr_list<KeywordMask> *keyword_masks = m_keywords.get(m_settings->set_names[*it]);
-		if(!keyword_masks)
+		const eix::ptr_list<KeywordMask> *keyword_masks(m_keywords.get(m_settings->set_names[*it]));
+		if(keyword_masks == NULL)
 			continue;
-		for(eix::ptr_list<KeywordMask>::const_iterator i = keyword_masks->begin();
-			i != keyword_masks->end(); ++i) {
-			push_backs(result, split_string(i->keywords));
+		for(eix::ptr_list<KeywordMask>::const_iterator i(keyword_masks->begin());
+			likely(i != keyword_masks->end()); ++i) {
+			split_string(result, i->keywords);
 		}
 	}
 }
@@ -1138,7 +1129,7 @@ PortageSettings::setKeyflags(Package *p, bool use_accepted_keywords) const
 	if(p->restore_keyflags(ind))
 		return;
 	get_effective_keywords_profile(p);
-	for(Package::iterator t = p->begin(); t != p->end(); ++t) {
+	for(Package::iterator t(p->begin()); likely(t != p->end()); ++t) {
 		t->set_keyflags(*accept_set, m_obsolete_minusasterisk);
 		t->save_keyflags(ind);
 	}
@@ -1157,9 +1148,9 @@ void
 PortageSettings::get_effective_keywords_userprofile(Package *p) const
 {
 	if(!p->restore_effective(Version::SAVEEFFECTIVE_USERPROFILE)) {
-		bool done = false;
+		bool done(false);
 		if(user_config) {
-			CascadingProfile *cascade = user_config->profile;
+			CascadingProfile *cascade(user_config->profile);
 			if(cascade) {
 				cascade->applyKeywords(p);
 				done = true;
@@ -1187,21 +1178,21 @@ PortageUserConfig::setProfileMasks(Package *p) const
 bool
 PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mask_is_profile) const
 {
-	Version::SavedMaskIndex ind = file_mask_is_profile ?
-		Version::SAVEMASK_USERFILE : Version::SAVEMASK_USER;
+	Version::SavedMaskIndex ind(file_mask_is_profile ?
+		Version::SAVEMASK_USERFILE : Version::SAVEMASK_USER);
 	if((check & Keywords::RED_ALL_KEYWORDS) == Keywords::RED_NOTHING)
 	{
 		if(p->restore_maskflags(ind))
 			return false;
 	}
 	if(file_mask_is_profile) {
-		if(!(p->restore_maskflags(Version::SAVEMASK_FILE))) {
+		if(unlikely(!(p->restore_maskflags(Version::SAVEMASK_FILE)))) {
 			throw ExBasic(_("internal error: Tried to restore nonlocal mask without saving"));
 		}
 	}
 	else
 		setProfileMasks(p);
-	bool rvalue = m_localmasks.applyMasks(p, check);
+	bool rvalue(m_localmasks.applyMasks(p, check));
 	m_settings->finalize(p);
 	p->save_maskflags(ind);
 	return rvalue;

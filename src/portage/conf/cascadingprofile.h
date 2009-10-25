@@ -11,8 +11,13 @@
 #define EIX__CASCADINGPROFILE_H__ 1
 
 #include <eixTk/exceptions.h>
+#include <portage/mask.h>
 #include <portage/mask_list.h>
-#include <portage/package.h>
+
+#include <string>
+#include <vector>
+
+#include <cstddef>
 
 class PortageSettings;
 class Package;
@@ -60,12 +65,11 @@ class CascadingProfile {
 		 * @return true if data was changed */
 		bool readPackageKeywords(const std::string &line);
 	public:
-		CascadingProfile(PortageSettings *portagesettings, bool init_world)
-		{
-			m_portagesettings = portagesettings;
-			use_world = false;
-			m_init_world = init_world;
-		}
+		CascadingProfile(PortageSettings *portagesettings, bool init_world) :
+			use_world(false),
+			m_init_world(init_world),
+			m_portagesettings(portagesettings)
+		{ }
 
 		/** Read all "make.defaults" files previously added by listadd... */
 		void readMakeDefaults();

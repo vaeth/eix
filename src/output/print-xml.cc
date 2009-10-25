@@ -7,11 +7,25 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "print-xml.h"
-#include <eixrc/eixrc.h>
-#include <eixTk/sysutils.h>
-#include <portage/vardbpkg.h>
-#include <portage/set_stability.h>
 #include <database/header.h>
+#include <eixTk/likely.h>
+#include <eixTk/sysutils.h>
+#include <eixrc/eixrc.h>
+#include <portage/extendedversion.h>
+#include <portage/instversion.h>
+#include <portage/keywords.h>
+#include <portage/overlay.h>
+#include <portage/package.h>
+#include <portage/set_stability.h>
+#include <portage/vardbpkg.h>
+#include <portage/version.h>
+
+#include <set>
+#include <string>
+#include <vector>
+#include <iostream>
+
+#include <cstddef>
 
 using namespace std;
 
@@ -28,7 +42,7 @@ PrintXml::runclear()
 void
 PrintXml::clear(EixRc *eixrc)
 {
-	if(!eixrc) {
+	if(unlikely(eixrc == NULL)) {
 		print_overlay = false;
 		keywords_mode = KW_NONE;
 		dateformat = "%s";
@@ -60,7 +74,7 @@ PrintXml::clear(EixRc *eixrc)
 void
 PrintXml::start()
 {
-	if(started)
+	if(unlikely(started))
 		return;
 	started = true;
 
@@ -85,16 +99,16 @@ PrintXml::finish()
 static void
 print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
 {
-	bool have_found = false;
-	for(set<IUse>::const_iterator it = s.begin(); it != s.end(); ++it) {
+	bool have_found(false);
+	for(set<IUse>::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
 		if(!((it->flags) & wanted))
 			continue;
-		if(have_found) {
+		if(likely(have_found)) {
 			cout << " " << it->name();
 			continue;
 		}
 		have_found = true;
-		if(dflt)
+		if(dflt != NULL)
 			cout << "\t\t\t\t<iuse default=\"" << dflt << "\">";
 		else
 			cout << "\t\t\t\t<iuse>";
@@ -107,28 +121,28 @@ print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
 void
 PrintXml::package(const Package *pkg)
 {
-	if(!started)
+	if(unlikely(!started))
 		start();
-	if (curcat != pkg->category) {
+	if(unlikely(curcat != pkg->category)) {
 		if (!curcat.empty()) {
 			cout << "\t</category>\n";
 		}
 		curcat = pkg->category;
-		cout << "\t<category name=\"" << curcat << "\">\n";
+		cout << "\t<category name=\"" << escape_string(curcat) << "\">\n";
 	}
 	// category, name, desc, homepage, licenses, provide;
-	cout << "\t\t<package name=\"" << pkg->name << "\">\n";
-	cout << "\t\t\t<description>" << escape_string(pkg->desc) << "</description>\n";
-	cout << "\t\t\t<homepage>" << escape_string(pkg->homepage) << "</homepage>\n";
+	cout << "\t\t<package name=\"" << escape_string(pkg->name) << "\">\n"
+		"\t\t\t<description>" << escape_string(pkg->desc) << "</description>\n"
+		"\t\t\t<homepage>" << escape_string(pkg->homepage) << "</homepage>\n";
 
 	set<const Version*> have_inst;
-	if(var_db_pkg && var_db_pkg->isInstalled(*pkg)) {
+	if((likely(var_db_pkg != NULL)) && var_db_pkg->isInstalled(*pkg)) {
 		set<BasicVersion> know_inst;
 		// First we check which versions are installed with correct overlays.
-		if(hdr) {
+		if(likely(hdr != NULL)) {
 			// Package is a 'list' of Versions with added members ^^
-			for(Package::const_iterator ver = pkg->begin();
-				ver != pkg->end(); ++ver) {
+			for(Package::const_iterator ver(pkg->begin());
+				likely(ver != pkg->end()); ++ver) {
 				if(var_db_pkg->isInstalledVersion(*pkg, *ver, *hdr, portdir.c_str()) > 0) {
 					know_inst.insert(**ver);
 					have_inst.insert(*ver);
@@ -136,8 +150,8 @@ PrintXml::package(const Package *pkg)
 			}
 		}
 		// From the remaining ones we choose the last.
-		for(Package::const_reverse_iterator ver = pkg->rbegin();
-			ver != pkg->rend(); ++ver) {
+		for(Package::const_reverse_iterator ver(pkg->rbegin());
+			likely(ver != pkg->rend()); ++ver) {
 			if(know_inst.find(**ver) == know_inst.end()) {
 				know_inst.insert(**ver);
 				have_inst.insert(*ver);
@@ -145,18 +159,18 @@ PrintXml::package(const Package *pkg)
 		}
 	}
 
-	for (Package::const_iterator ver = pkg->begin(); ver != pkg->end(); ++ver) {
-		bool versionInstalled = false;
-		InstVersion *installedVersion = NULL;
+	for(Package::const_iterator ver(pkg->begin()); likely(ver != pkg->end()); ++ver) {
+		bool versionInstalled(false);
+		InstVersion *installedVersion(NULL);
 		if(have_inst.find(*ver) != have_inst.end()) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion))
 				versionInstalled = true;
 		}
 
-		cout << "\t\t\t<version id=\"" << ver->getFull() << "\"";
-		Version::Overlay overlay_key = ver->overlay_key;
-		if(overlay_key) {
-			const OverlayIdent &overlay = hdr->getOverlay(overlay_key);
+		cout << "\t\t\t<version id=\"" << escape_string(ver->getFull()) << "\"";
+		Version::Overlay overlay_key(ver->overlay_key);
+		if(unlikely(overlay_key != 0)) {
+			const OverlayIdent &overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
 				cout << " overlay=\"" << escape_string(overlay.path) << "\"";
 			}
@@ -179,8 +193,8 @@ PrintXml::package(const Package *pkg)
 		KeywordsFlags waskey;
 		stability->calc_version_flags(false, wasmask, waskey, *ver, pkg);
 
-		const char *mask_text = NULL;
-		const char *unmask_text = NULL;
+		const char *mask_text(NULL);
+		const char *unmask_text(NULL);
 		if(wasmask.isHardMasked()) {
 			if(currmask.isProfileMask()) {
 				mask_text = "profile";
@@ -258,7 +272,7 @@ PrintXml::package(const Package *pkg)
 
 		if (!(ver->iuse.empty())) {
 			//cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
-			const set<IUse> &s = ver->iuse.asSet();
+			const set<IUse> &s(ver->iuse.asSet());
 			print_iuse(s, IUse::USEFLAGS_NORMAL, NULL);
 			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
 			print_iuse(s, IUse::USEFLAGS_MINUS, "-1");
@@ -287,59 +301,59 @@ PrintXml::package(const Package *pkg)
 			}
 		}
 
-		ExtendedVersion::Restrict restrict = ver->restrictFlags;
-		if ( restrict != ExtendedVersion::RESTRICT_NONE) {
-			if (restrict & ExtendedVersion::RESTRICT_BINCHECKS) {
+		ExtendedVersion::Restrict restrict(ver->restrictFlags);
+		if(unlikely(restrict != ExtendedVersion::RESTRICT_NONE)) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINCHECKS)) {
 				cout << "\t\t\t\t<restrict flag=\"binchecks\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_STRIP) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_STRIP)) {
 				cout << "\t\t\t\t<restrict flag=\"strip\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_TEST) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_TEST)) {
 				cout << "\t\t\t\t<restrict flag=\"test\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_USERPRIV) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_USERPRIV)) {
 				cout << "\t\t\t\t<restrict flag=\"userpriv\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_INSTALLSOURCES)) {
 				cout << "\t\t\t\t<restrict flag=\"installsources\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_FETCH) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_FETCH)) {
 				cout << "\t\t\t\t<restrict flag=\"fetch\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_MIRROR) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_MIRROR)) {
 				cout << "\t\t\t\t<restrict flag=\"mirror\" />\n";
 			}
-			if (restrict & ExtendedVersion::RESTRICT_BINDIST) {
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINDIST)) {
 				cout << "\t\t\t\t<restrict flag=\"bindist\" />\n";
 			}
 		}
-		ExtendedVersion::Restrict properties = ver->propertiesFlags;
-		if(properties != ExtendedVersion::PROPERTIES_NONE) {
-			if (properties & ExtendedVersion::PROPERTIES_INTERACTIVE) {
+		ExtendedVersion::Restrict properties(ver->propertiesFlags);
+		if(unlikely(properties != ExtendedVersion::PROPERTIES_NONE)) {
+			if(unlikely(properties & ExtendedVersion::PROPERTIES_INTERACTIVE)) {
 				cout << "\t\t\t\t<properties flag=\"interactive\" />\n";
 			}
-			if (properties & ExtendedVersion::PROPERTIES_LIVE) {
+			if(unlikely(properties & ExtendedVersion::PROPERTIES_LIVE)) {
 				cout << "\t\t\t\t<properties flag=\"live\" />\n";
 			}
-			if (properties & ExtendedVersion::PROPERTIES_VIRTUAL) {
+			if(unlikely(properties & ExtendedVersion::PROPERTIES_VIRTUAL)) {
 				cout << "\t\t\t\t<properties flag=\"virtual\" />\n";
 			}
-			if (properties & ExtendedVersion::PROPERTIES_SET) {
+			if(unlikely(properties & ExtendedVersion::PROPERTIES_SET)) {
 				cout << "\t\t\t\t<properties flag=\"set\" />\n";
 			}
 		}
 
 		if(keywords_mode != KW_NONE) {
-			bool print_full = (keywords_mode != KW_EFF);
-			bool print_effective = (keywords_mode != KW_FULL);
+			bool print_full(keywords_mode != KW_EFF);
+			bool print_effective(keywords_mode != KW_FULL);
 			string full_kw, eff_kw;
 			if(print_full)
 				full_kw = ver->get_full_keywords();
 			if(print_effective)
 				eff_kw = ver->get_effective_keywords();
 			if((keywords_mode == KW_FULLS) || (keywords_mode == KW_EFFS)) {
-				if(full_kw == eff_kw) {
+				if(likely(full_kw == eff_kw)) {
 					if(keywords_mode == KW_FULLS)
 						print_effective = false;
 					else
@@ -361,9 +375,9 @@ string
 PrintXml::escape_string(const string &s)
 {
 	string ret;
-	string::size_type prev = 0;
-	string::size_type len = s.length();
-	for(string::size_type i = 0; i < len; ++i) {
+	string::size_type prev(0);
+	string::size_type len(s.length());
+	for(string::size_type i(0); likely(i < len); ++i) {
 		const char *replace;
 		switch(s[i]) {
 			case '&': replace = "&amp;"; break;
@@ -373,13 +387,13 @@ PrintXml::escape_string(const string &s)
 			case '\"': replace = "&quot;"; break;
 			default: replace = NULL; break;
 		}
-		if(replace) {
+		if(unlikely(replace != NULL)) {
 			ret.append(s, prev, i - prev);
 			ret.append(replace);
 			prev = i + 1;
 		}
 	}
-	if(!prev)
+	if(likely(prev == 0))
 		return s;
 	if(prev < len)
 		ret.append(s, prev, len - prev);

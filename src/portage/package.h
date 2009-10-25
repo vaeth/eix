@@ -10,13 +10,20 @@
 #ifndef EIX__PACKAGE_H__
 #define EIX__PACKAGE_H__ 1
 
-#include <eixTk/ptr_list.h>
+#include <config.h>
 #include <eixTk/inttypes.h>
-
-#include <portage/version.h>
+#include <eixTk/likely.h>
+#include <eixTk/ptr_list.h>
 #include <portage/instversion.h>
+#include <portage/keywords.h>
+#include <portage/version.h>
 
 #include <list>
+#include <map>
+#include <string>
+#include <vector>
+
+#include <cstddef>
 
 class VarDbPkg;
 class PortageSettings;
@@ -60,8 +67,6 @@ class SlotList : public std::vector<SlotVersions>
 		void push_back_largest(Version *version);
 		const VersionList *operator [] (const char *s) const;
 };
-
-class PortageSettings;
 
 /** A class to represent a package in portage It contains various information
  * about a package, including a sorted(!) list of versions. */
@@ -186,47 +191,53 @@ class Package
 
 		void save_keyflags(Version::SavedKeyIndex i)
 		{
-			for(iterator it = begin(); it != end(); ++it)
+			for(iterator it(begin()); likely(it != end()); ++it) {
 				it->save_keyflags(i);
+			}
 		}
 
 		void save_maskflags(Version::SavedMaskIndex i)
 		{
 			saved_collects[i] = local_collects;
-			for(iterator it = begin(); it != end(); ++it)
+			for(iterator it(begin()); likely(it != end()); ++it) {
 				it->save_maskflags(i);
+			}
 		}
 
 		void save_effective(Version::SavedEffectiveIndex i)
 		{
-			for(iterator it = begin(); it != end(); ++it)
+			for(iterator it(begin()); likely(it != end()); ++it) {
 				it->save_effective(i);
+			}
 		}
 
 		bool restore_keyflags(Version::SavedKeyIndex i)
 		{
 			local_collects = saved_collects[i];
-			for(iterator it = begin(); it != end(); ++it) {
-				if(!(it->restore_keyflags(i)))
+			for(iterator it(begin()); likely(it != end()); ++it) {
+				if(unlikely(!(it->restore_keyflags(i)))) {
 					return false;
+				}
 			}
 			return true;
 		}
 
 		bool restore_maskflags(Version::SavedMaskIndex i)
 		{
-			for(iterator it = begin(); it != end(); ++it) {
-				if(!(it->restore_maskflags(i)))
+			for(iterator it(begin()); likely(it != end()); ++it) {
+				if(unlikely(!(it->restore_maskflags(i)))) {
 					return false;
+				}
 			}
 			return true;
 		}
 
 		bool restore_effective(Version::SavedEffectiveIndex i)
 		{
-			for(iterator it = begin(); it != end(); ++it) {
-				if(!(it->restore_effective(i)))
+			for(iterator it(begin()); likely(it != end()); ++it) {
+				if(unlikely(!(it->restore_effective(i)))) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -329,7 +340,7 @@ class Package
 		/** must we downgrade v or has v different categories/slots? */
 		bool must_downgrade(VarDbPkg *v, bool test_slots) const
 		{
-			int c = check_best(v, true, test_slots);
+			int c(check_best(v, true, test_slots));
 			if((c < 0) || (c == 3))
 				return true;
 			if(!test_slots)

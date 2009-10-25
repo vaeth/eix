@@ -10,9 +10,10 @@
 #ifndef EIX__BASICVERSION_H__
 #define EIX__BASICVERSION_H__ 1
 
-#include <eixTk/stringutils.h>
-
 #include <list>
+#include <string>
+
+#include <cstddef>
 
 /** Parse and represent a portage version-string. */
 class BasicVersion
@@ -39,7 +40,8 @@ public:
 	typedef std::pair<PartType,std::string> Part;
 
 	/// Parse the version-string pointed to by str. If str is NULL, no parsing is done.
-	BasicVersion(const char *str = NULL);
+	BasicVersion(const char *str = NULL)
+	{ if(str != NULL) parseVersion(str); }
 
 	virtual ~BasicVersion() { }
 
@@ -47,10 +49,10 @@ public:
 	void parseVersion(const std::string& str);
 
 	/// Compare all except gentoo revisions
-	static int compareTilde(const BasicVersion& right, const BasicVersion& left);
+	static short compareTilde(const BasicVersion& right, const BasicVersion& left);
 
 	/// Compare the m_cached_full version.
-	static int compare(const BasicVersion& right, const BasicVersion& left);
+	static short compare(const BasicVersion& right, const BasicVersion& left);
 
 	const std::string& getFull() const
 	{
@@ -69,7 +71,7 @@ protected:
 	/// Splitted m_primsplit-version.
 	std::list< Part > m_parts;
 
-	static int compare(const Part& left, const Part& right);
+	static short compare(const Part& left, const Part& right);
 };
 
 // Short compare-stuff

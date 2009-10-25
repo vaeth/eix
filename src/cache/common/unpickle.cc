@@ -8,6 +8,18 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "unpickle.h"
+#include <config.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/inttypes.h>
+#include <eixTk/likely.h>
+
+#ifdef TEST_UNPICKLE
+#include <iostream>
+#endif
+#include <map>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -59,7 +71,7 @@ typedef unsigned char unsigned_char;
 #define EMPTY_TUPLE ')'
 #define SETITEMS    'u'
 
-#define PROTO	 '\x80' /* identify pickle protocol */
+#define PROTO    '\x80' /* identify pickle protocol */
 #define NEWOBJ   '\x81' /* build object by applying cls.__new__ to argtuple */
 #define EXT1     '\x82' /* push object from extension registry; 1-byte index */
 #define EXT2     '\x83' /* ditto, but 2-byte index */
@@ -91,21 +103,21 @@ static void unpickle_check_dict(bool &waiting_for_value, map<string,string> &unp
 /** For cdb cache */
 bool unpickle_get_mapping(char *data, unsigned int data_len, map<string,string> &unpickled)
 {
-	char ret = 1;
-	char *data_end = data + data_len;
-	bool waiting_for_value = false;
+	char ret(1);
+	char *data_end(data + data_len);
+	bool waiting_for_value(false);
 	string key;
 
-	if(NEXT != PROTO)
+	if(unlikely(NEXT != PROTO))
 		return false;
 
-	if(NEXT != 0x2)
+	if(unlikely(NEXT != 0x2))
 		return false;
 
-	if(NEXT != EMPTY_DICT)
+	if(unlikely(NEXT != EMPTY_DICT))
 		return false;
 
-	while( ! IS_END && (ret = NEXT) ) {
+	while(likely(!(IS_END)&& (ret = NEXT))) {
 		switch(ret) {
 			case BINPUT:
 				MOVE(1);
@@ -157,18 +169,20 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 	string buf, key;
 
 	unpickled.clear();
-	if(firsttime) {
-		if( ! is_finished() && (NEXT == PROTO) )
-			if( ! is_finished() && (NEXT == 0x2) )
+	if(unlikely(firsttime)) {
+		if(likely((!is_finished()) && (NEXT == PROTO))) {
+			if(likely((!is_finished()) && (NEXT == 0x2))) {
 				firsttime = false;
-		if(firsttime) {
+			}
+		}
+		if(unlikely(firsttime)) {
 			throw ExBasic(_("wrong cpickle header"));
 			finish();
 			return;
 		}
 	}
 
-	while( ! is_finished() && (curr = NEXT) ) {
+	while(likely((!is_finished()) && (curr = NEXT))) {
 		switch(curr) {
 			case BINGET:
 				index = unsigned_char(NEXT);
@@ -198,7 +212,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			case BINPUT:
 				index = unsigned_char(NEXT);
 #ifdef TEST_UNPICKLE
-				cout << "BINPUT: " << (int)index << "\n";
+				cout << "BINPUT: " << int(index) << "\n";
 #endif
 				if(prev == STRING)
 					insert(index, buf);
@@ -225,7 +239,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 				continue;
 			case SHORT_BINSTRING:
 				{
-					unsigned char len = NEXT;
+					unsigned char len(NEXT);
 					buf = string(data, len);
 					MOVE(len);
 #ifdef TEST_UNPICKLE
@@ -250,8 +264,8 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 			case SETITEMS:
 #ifdef TEST_UNPICKLE
 				{
-					unsigned char i = *data;
-					cout << "SETITEMS: " << (int)i << "\n";
+					unsigned char i(*data);
+					cout << "SETITEMS: " << int(i) << "\n";
 				}
 #endif
 				MOVE(1);
@@ -271,7 +285,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 				continue;
 			case LONG1:
 				{
-					unsigned char len = NEXT;
+					unsigned char len(NEXT);
 					MOVE(len);
 				}
 #ifdef TEST_UNPICKLE
@@ -306,7 +320,7 @@ Unpickler::get(map<string,string> &unpickled) throw(ExBasic)
 
 void Unpickler::insert(vector<string>::size_type index, string string)
 {
-	if(index >= wasput.size())
+	if(unlikely(index >= wasput.size()))
 		wasput.resize(index + 100);
 	wasput[index] = string;
 }

@@ -8,10 +8,15 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "extendedversion.h"
-
+#include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/sysutils.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/package.h>
-#include <eixTk/sysutils.h>
+
+#include <map>
+#include <vector>
+#include <string>
 
 using namespace std;
 
@@ -59,7 +64,7 @@ static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
 
 		ExtendedVersion::Restrict getRestrict(const string& s) const
 		{
-			RestrictMap::const_iterator i = find(s);
+			RestrictMap::const_iterator i(find(s));
 			if(i != end())
 				return i->second;
 			return ExtendedVersion::RESTRICT_NONE;
@@ -81,7 +86,7 @@ static class PropertiesMap : public map<string,ExtendedVersion::Properties> {
 
 		ExtendedVersion::Properties getProperties(const string& s) const
 		{
-			PropertiesMap::const_iterator i = find(s);
+			PropertiesMap::const_iterator i(find(s));
 			if(i != end())
 				return i->second;
 			return ExtendedVersion::PROPERTIES_NONE;
@@ -91,22 +96,26 @@ static class PropertiesMap : public map<string,ExtendedVersion::Properties> {
 ExtendedVersion::Restrict
 ExtendedVersion::calcRestrict(const string &str)
 {
-	Restrict r = RESTRICT_NONE;
-	vector<string> restrict_words = split_string(str);
-	for(vector<string>::const_iterator it = restrict_words.begin();
-		it != restrict_words.end(); ++it)
+	Restrict r(RESTRICT_NONE);
+	vector<string> restrict_words;
+	split_string(restrict_words, str);
+	for(vector<string>::const_iterator it(restrict_words.begin());
+		likely(it != restrict_words.end()); ++it) {
 		r |= restrict_map.getRestrict(*it);
+	}
 	return r;
 }
 
 ExtendedVersion::Properties
 ExtendedVersion::calcProperties(const string &str)
 {
-	Properties p = PROPERTIES_NONE;
-	vector<string> properties_words = split_string(str);
-	for(vector<string>::const_iterator it = properties_words.begin();
-		it != properties_words.end(); ++it)
+	Properties p(PROPERTIES_NONE);
+	vector<string> properties_words;
+	split_string(properties_words, str);
+	for(vector<string>::const_iterator it(properties_words.begin());
+		it != properties_words.end(); ++it) {
 		p |= properties_map.getProperties(*it);
+	}
 	return p;
 }
 
@@ -116,8 +125,8 @@ ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) con
 	switch(have_bin_pkg_m) {
 		case HAVEBINPKG_UNKNOWN:
 			{
-				const string &s = (*ps)["PKGDIR"];
-				if((s.empty()) || !is_file((s + "/" + pkg->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
+				const string &s((*ps)["PKGDIR"]);
+				if((s.empty()) || !is_file((s + "/" + pkg ->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
 					have_bin_pkg_m = HAVEBINPKG_NO;
 					return false;
 				}

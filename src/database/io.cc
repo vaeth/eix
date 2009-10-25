@@ -8,18 +8,27 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "io.h"
-
-#include <portage/package.h>
-#include <portage/version.h>
-#include <portage/packagetree.h>
-#include <portage/overlay.h>
-
+#include <config.h>
 #include <database/header.h>
 #include <database/package_reader.h>
-
+#include <database/types.h>
 #include <eixTk/auto_ptr.h>
+#include <eixTk/exceptions.h>
+#include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <portage/basicversion.h>
+#include <portage/extendedversion.h>
+#include <portage/keywords.h>
+#include <portage/overlay.h>
+#include <portage/package.h>
+#include <portage/packagetree.h>
+#include <portage/version.h>
 
-#include <dirent.h>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <cstdio>
 
 using namespace std;
 
@@ -37,10 +46,10 @@ namespace io {
 string
 io::read_string(FILE *fp)
 {
-	string::size_type len = io::read<string::size_type>(fp);
+	string::size_type len(io::read<string::size_type>(fp));
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
-	if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
+	if(unlikely(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)) {
 		if (feof(fp))
 			throw ExBasic(_("error while reading from database: end of file"));
 		else
@@ -54,8 +63,8 @@ void
 io::write_string(FILE *fp, const string &str)
 {
 	io::write<string::size_type>(fp, str.size());
-	if(fp) {
-		if(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size()) {
+	if(fp != NULL) {
+		if(unlikely(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size())) {
 			throw SysError(_("error while writing to database"));
 		}
 	}
@@ -67,7 +76,7 @@ void
 io::write_hash_words(FILE *fp, const StringHash& hash, const vector<string>& words)
 {
 	io::write<vector<string>::size_type>(fp, words.size());
-	for(vector<string>::const_iterator i = words.begin(); i != words.end(); ++i)
+	for(vector<string>::const_iterator i(words.begin()); likely(i != words.end()); ++i)
 		io::write_hash_string(fp, hash, *i);
 }
 
@@ -75,8 +84,8 @@ string
 io::read_hash_words(FILE *fp, const StringHash& hash)
 {
 	string r;
-	for(vector<string>::size_type e = io::read<vector<string>::size_type>(fp);
-		e ; --e) {
+	for(vector<string>::size_type e(io::read<vector<string>::size_type>(fp));
+		likely(e != 0); --e) {
 		if(!r.empty())
 			r.append(1, ' ');
 		r.append(io::read_hash_string(fp, hash));
@@ -87,13 +96,13 @@ io::read_hash_words(FILE *fp, const StringHash& hash)
 BasicVersion::Part
 io::read_Part(FILE *fp)
 {
-	string::size_type len = io::read<string::size_type>(fp);
+	string::size_type len(io::read<string::size_type>(fp));
 	BasicVersion::PartType type(BasicVersion::PartType(len % BasicVersion::max_type));
 	len /= BasicVersion::max_type;
 	if(len > 0) {
 		eix::auto_list<char> buf(new char[len + 1]);
 		buf.get()[len] = 0;
-		if(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len) {
+		if(likely(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)) {
 			if (feof(fp))
 				throw ExBasic(_("error while reading from database: end of file"));
 			else
@@ -115,18 +124,18 @@ io::read_iuse(FILE *fp, const StringHash& hash, IUseSet &iuse)
 Version *
 io::read_version(FILE *fp, const DBHeader &hdr)
 {
-	Version *v = new Version();
+	Version *v(new Version());
 
 	// read masking
-	MaskFlags::MaskType mask = io::read<MaskFlags::MaskType>(fp);
+	MaskFlags::MaskType mask(io::read<MaskFlags::MaskType>(fp));
 	v->maskflags.set(mask & MaskFlags::MASK_SAVE);
 	v->propertiesFlags = io::readUChar(fp);
 	v->restrictFlags   = io::read<ExtendedVersion::Restrict>(fp);
 	v->full_keywords   = io::read_hash_words(fp, hdr.keywords_hash);
 
 	// read primary version part
-	for(list<BasicVersion::Part>::size_type i = io::read<list<BasicVersion::Part>::size_type>(fp);
-		i; --i) {
+	for(list<BasicVersion::Part>::size_type i(io::read<list<BasicVersion::Part>::size_type>(fp));
+		likely(i != 0); --i) {
 		v->m_parts.push_back(io::read_Part(fp));
 	}
 
@@ -145,8 +154,8 @@ io::write_Part(FILE *fp, const BasicVersion::Part &n)
 	io::write<string::size_type>(fp, n.second.size()*BasicVersion::max_type + string::size_type(n.first));
 	if(n.second.size() > 0) {
 		if(fp) {
-			if(fwrite(static_cast<const void *>(n.second.c_str()),
-						sizeof(char), n.second.size(), fp) != n.second.size()) {
+			if(unlikely(fwrite(static_cast<const void *>(n.second.c_str()),
+						sizeof(char), n.second.size(), fp) != n.second.size())) {
 				throw SysError(_("error while writing to database"));
 			}
 		}
@@ -169,10 +178,8 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	// write m_primsplit
 	io::write<list<BasicVersion::Part>::size_type>(fp, v->m_parts.size());
 
-	for(list<BasicVersion::Part>::const_iterator it = v->m_parts.begin();
-		it != v->m_parts.end();
-		++it)
-	{
+	for(list<BasicVersion::Part>::const_iterator it(v->m_parts.begin());
+		likely(it != v->m_parts.end()); ++it) {
 		io::write_Part(fp, *it);
 	}
 
@@ -213,10 +220,7 @@ io::write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr)
 	// write all version entries
 	io::write<io::Versize>(fp, pkg.size());
 
-	for(Package::const_iterator i = pkg.begin();
-		i != pkg.end();
-		++i)
-	{
+	for(Package::const_iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		io::write_version(fp, *i, hdr);
 	}
 }
@@ -233,19 +237,21 @@ io::write_package(FILE *fp, const Package &pkg, const DBHeader &hdr)
 void
 io::write_hash(FILE *fp, const StringHash& hash)
 {
-	StringHash::size_type e = hash.size();
+	StringHash::size_type e(hash.size());
 	io::write<StringHash::size_type>(fp, e);
-	for(StringHash::const_iterator i = hash.begin(); i != hash.end(); ++i)
+	for(StringHash::const_iterator i(hash.begin()); likely(i != hash.end()); ++i) {
 		io::write_string(fp, *i);
+	}
 }
 
 void
 io::read_hash(FILE *fp, StringHash& hash)
 {
 	hash.init(false);
-	for(StringHash::size_type i = io::read<StringHash::size_type>(fp);
-		i; --i)
+	for(StringHash::size_type i(io::read<StringHash::size_type>(fp));
+		likely(i != 0); --i) {
 		hash.store_string(io::read_string(fp));
+	}
 	hash.finalize();
 }
 
@@ -257,18 +263,15 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 	hdr.keywords_hash.init(true);
 	hdr.slot_hash.init(true);
 	hdr.iuse_hash.init(true);
-	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
-	{
-		for(Category::iterator p = ci->begin();
-			p != ci->end(); ++p)
-		{
+	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
+		Category *ci(c->second);
+		for(Category::iterator p(ci->begin()); likely(p != ci->end()); ++p) {
 			hdr.provide_hash.hash_words(p->provide);
 			hdr.license_hash.hash_string(p->licenses);
 #ifdef NOT_FULL_USE
 			hdr.iuse_hash.hash_words(p->coll_iuse);
 #endif
-			for(Package::iterator v = p->begin();
-				v != p->end(); ++v) {
+			for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
 				hdr.iuse_hash.hash_words(v->iuse.asVector());
 				hdr.slot_hash.hash_string(v->slotname);
@@ -289,7 +292,7 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write<io::Catsize>(fp, hdr.size);
 
 	io::write<Version::Overlay>(fp, hdr.countOverlays());
-	for(Version::Overlay i = 0; i != hdr.countOverlays(); ++i) {
+	for(Version::Overlay i(0); likely(i != hdr.countOverlays()); ++i) {
 		const OverlayIdent& overlay = hdr.getOverlay(i);
 		io::write_string(fp, overlay.path);
 		io::write_string(fp, overlay.label);
@@ -301,8 +304,8 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write_hash(fp, hdr.slot_hash);
 
 	io::write<vector<string>::size_type>(fp, hdr.world_sets.size());
-	for(vector<string>::const_iterator it = hdr.world_sets.begin();
-		it != hdr.world_sets.end(); ++it)
+	for(vector<string>::const_iterator it(hdr.world_sets.begin());
+		likely(it != hdr.world_sets.end()); ++it)
 		io::write_string(fp, *it);
 }
 
@@ -310,14 +313,14 @@ bool
 io::read_header(FILE *fp, DBHeader &hdr)
 {
 	hdr.version = io::read<DBHeader::DBVersion>(fp);
-	if(!hdr.isCurrent())
+	if(unlikely(!hdr.isCurrent()))
 		return false;
 
 	hdr.size    = io::read<io::Catsize>(fp);
 
-	for(Version::Overlay overlay_sz = io::read<Version::Overlay>(fp);
-		overlay_sz; --overlay_sz) {
-		string path = io::read_string(fp);
+	for(Version::Overlay overlay_sz(io::read<Version::Overlay>(fp));
+		likely(overlay_sz != 0); --overlay_sz) {
+		string path(io::read_string(fp));
 		hdr.addOverlay(OverlayIdent(path.c_str(), io::read_string(fp).c_str()));
 	}
 
@@ -327,8 +330,8 @@ io::read_header(FILE *fp, DBHeader &hdr)
 	io::read_hash(fp, hdr.iuse_hash);
 	io::read_hash(fp, hdr.slot_hash);
 
-	for(vector<string>::size_type sets_sz = io::read<vector<string>::size_type>(fp);
-		sets_sz; --sets_sz)
+	for(vector<string>::size_type sets_sz(io::read<vector<string>::size_type>(fp));
+		likely(sets_sz != 0); --sets_sz)
 		hdr.world_sets.push_back(io::read_string(fp));
 	return true;
 }
@@ -336,15 +339,13 @@ io::read_header(FILE *fp, DBHeader &hdr)
 void
 io::write_packagetree(FILE *fp, const PackageTree &tree, const DBHeader &hdr)
 {
-	for(PackageTree::const_iterator ci = tree.begin(); ci != tree.end(); ++ci)
-	{
-		// Write category-header followed by a list of the packages.
-		io::write_category_header(fp, ci->name, io::Treesize(ci->size()));
+	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
+		Category *ci(c->second);
 
-		for(Category::iterator p = ci->begin();
-			p != ci->end();
-			++p)
-		{
+		// Write category-header followed by a list of the packages.
+		io::write_category_header(fp, c->first, io::Treesize(ci->size()));
+
+		for(Category::iterator p(ci->begin()); likely(p != ci->end()); ++p) {
 			// write package to fp
 			io::write_package(fp, **p, hdr);
 		}

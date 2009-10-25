@@ -11,11 +11,14 @@
 #define EIX__CDB_H__ 1
 
 #include <cache/base.h>
+#include <eixTk/exceptions.h>
+
+class Category;
 
 class CdbCache : public BasicCache {
 
 	public:
-		bool readCategory(Category &vec) throw(ExBasic);
+		bool readCategory(const char *cat_name, Category &cat) throw(ExBasic);
 
 		const char *getType() const
 		{ return "cdb"; }

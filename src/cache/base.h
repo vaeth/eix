@@ -12,7 +12,15 @@
 
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
+#include <eixTk/unused.h>
 #include <portage/version.h>
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include <cstddef>
+#include <ctime>
 
 class Category;
 class Package;
@@ -36,14 +44,14 @@ class BasicCache {
 		{ return false; }
 
 		/// Set scheme for this cache
-		virtual void setScheme(const char *prefix, const char *prefixport, std::string scheme);
+		virtual void setScheme(const char *prefix, const char *prefixport, const std::string &scheme);
 
 		/// Set overlay-key
 		virtual void setKey(Version::Overlay key)
 		{ m_overlay_key = key; }
 
 		/// Set overlay-name
-		virtual void setOverlayName(std::string name)
+		virtual void setOverlayName(const std::string &name)
 		{ m_overlay_name = name; }
 
 		// Get scheme for this cache
@@ -74,28 +82,28 @@ class BasicCache {
 		    @param category if non-null, the function is identical to readCategory
 		    @return false if an error occurred so fatal that further calls
 		    with this scheme (even with other categories) are useless. */
-		virtual bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, Category *category = NULL) throw(ExBasic)
-		{ UNUSED(packagetree); UNUSED(categories); UNUSED(category); return 1; }
+		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, std::vector<std::string> *categories ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULL, Category *category ATTRIBUTE_UNUSED = NULL) throw(ExBasic)
+		{ UNUSED(packagetree); UNUSED(categories); UNUSED(cat_name); UNUSED(category); return 1; }
 
 		/// Read Cache for a category
 		/** @return false if an error occurred so fatal that further calls
 		    with this scheme (even with other categories) are useless. */
-		virtual bool readCategory(Category &vec) throw(ExBasic)
-		{ return readCategories(NULL, NULL, &vec); }
+		virtual bool readCategory(const char *cat_name, Category &cat) throw(ExBasic)
+		{ return readCategories(NULL, NULL, cat_name, &cat); }
 
-		virtual bool readCategoryPrepare(Category &vec) throw(ExBasic)
-		{ UNUSED(vec); return true; }
+		virtual bool readCategoryPrepare(const char *cat_name ATTRIBUTE_UNUSED) throw(ExBasic)
+		{ UNUSED(cat_name); return true; }
 
 		virtual void readCategoryFinalize()
 		{}
 
-		virtual time_t get_time(const char *pkg_name, const char *ver_name) const
+		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); return 0; }
 
-		virtual void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
+		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(version); }
 
-		virtual void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
+		virtual void get_common_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(pkg); }
 
 	protected:

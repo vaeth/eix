@@ -9,20 +9,22 @@
 
 #include "argsreader.h"
 
+#include <eixTk/likely.h>
 #include <eixTk/i18n.h>
 
+#include <cstddef>
 #include <cstdio>
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
 ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 {
-	bool seen_escape = false;
+	bool seen_escape(false);
 	name = argv[0];
-	unsigned int paramarg_remain = 0;
-	for(int i = 1; i < argc ; ++i) {
+	unsigned int paramarg_remain(0);
+	for(int i(1); likely(i < argc) ; ++i) {
 		if(seen_escape || paramarg_remain)
 		{
 			push_back(Parameter(argv[i]));
@@ -31,7 +33,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 			continue;
 		}
 
-		char *ptr = argv[i];
+		char *ptr(argv[i]);
 		if(*ptr != '-')
 		{
 			push_back(Parameter(ptr));
@@ -40,14 +42,14 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 		int opt;
 		switch(*++ptr)
 		{
-			case 0:
+			case '\0':
 				push_back(Parameter("-"));
 				continue;
 			case '-':
 				/* something that begins with -- */
 				switch(*++ptr)
 				{
-					case 0:
+					case '\0':
 						/* a lonely -- */
 						seen_escape = true;
 						continue;
@@ -60,7 +62,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 				break;
 			default:
 				/* some shortopts */
-				for(char c = *ptr; c != '\0' ; c = *++ptr)
+				for(char c(*ptr); likely(c != '\0'); c = *++ptr)
 				{
 					if(paramarg_remain)
 					{
@@ -81,10 +83,10 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 Option *
 ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 {
-	while( (opt_table->longopt || opt_table->shortopt) )
-	{
-		if( (opt_table->shortopt) && (opt_table->shortopt == opt) )
+	while(likely((opt_table->longopt || opt_table->shortopt))) {
+		if(unlikely((opt_table->shortopt) && (opt_table->shortopt == opt))) {
 			return opt_table;
+		}
 		++opt_table;
 	}
 	return NULL;
@@ -93,7 +95,7 @@ ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 unsigned int
 ArgumentReader::numargs(const int opt, struct Option *opt_table)
 {
-	Option *c = lookup_option(opt, opt_table);
+	Option *c(lookup_option(opt, opt_table));
 	if(c == NULL)
 		return 0;
 	switch(c->type)
@@ -124,10 +126,10 @@ ArgumentReader::numargs(const int opt, struct Option *opt_table)
 int
 ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
 {
-	while( (opt_table->longopt || opt_table->shortopt) )
-	{
-		if( (opt_table->longopt) && strcmp(opt_table->longopt, long_opt) == 0 )
+	while(likely(opt_table->longopt || opt_table->shortopt)) {
+		if(unlikely((opt_table->longopt) && (strcmp(opt_table->longopt, long_opt) == 0))) {
 			return opt_table->shortopt;
+		}
 		++opt_table;
 	}
 	fprintf(stderr, _("Unknown option --%s\n"), long_opt);
@@ -155,26 +157,24 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 void
 ArgumentReader::foldAndRemove(struct Option *opt_table)
 {
-	ArgumentReader::iterator it = begin();
+	ArgumentReader::iterator it(begin());
 	while(it != end())
 	{
-		if(it->type == Parameter::ARGUMENT)
-		{
+		if(unlikely(it->type == Parameter::ARGUMENT)) {
 			++it;
 			continue;
 		}
 
-		Option *c = lookup_option(it->m_option, opt_table);
-		if(c == NULL)
-		{
+		Option *c(lookup_option(it->m_option, opt_table));
+		if(unlikely(c == NULL)) {
 			++it;
 			continue;
 		}
 
-		const char *remember = "";
-		const char *second = "";
-		bool keep = false;
-		bool optional = false;
+		const char *remember("");
+		const char *second("");
+		bool keep(false);
+		bool optional(false);
 		switch(c->type)
 		{
 			case Option::BOOLEAN_F:

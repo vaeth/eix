@@ -8,6 +8,8 @@
 
 #include "formated.h"
 
+#include <string>
+
 using namespace std;
 using namespace eix;
 
@@ -36,7 +38,7 @@ void
 format::goto_next_spec()
 {
 	m_spec = 0;
-	string::size_type next = m_format.find('%');
+	string::size_type next(m_format.find('%'));
 	if (next == string::npos || m_format.size() < next + 2) {
 		// there are no more specifier, so we move the remaining text to
 		// our stream.
