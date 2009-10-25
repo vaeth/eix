@@ -164,6 +164,8 @@ print_help(int ret)
 			"     --dump              show eixrc-variables\n"
 			"     --dump-defaults     show default eixrc-variables\n"
 			"     --print             print the expanded value of a variable\n"
+			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
+			" -F, --force-color       force \"color\" on things that are not a terminal\n"
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
@@ -213,6 +215,8 @@ static struct Option long_options[] = {
 	 Option("print",        O_PRINT_VAR, Option::STRING,  &var_to_print),
 	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
+	 Option("nocolor",        'n',     Option::BOOLEAN_F, &use_percentage),
+	 Option("force-color",    'F',     Option::BOOLEAN_T, &use_percentage),
 
 	 Option("exclude-overlay",'x',     Option::STRINGLIST,&exclude_args),
 	 Option("add-overlay",    'a',     Option::STRINGLIST,&add_args),
@@ -310,6 +314,8 @@ run_eix_update(int argc, char *argv[])
 	bool skip_permission_tests;
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
 	string outputfile;
+
+	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -477,7 +483,6 @@ run_eix_update(int argc, char *argv[])
 	}
 
 	INFO(eix::format(_("Building database (%s) ..\n")) % outputfile);
-	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
 
 	/* Update the database from scratch */
 	try {

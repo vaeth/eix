@@ -7,6 +7,9 @@
 	  the main bulk is the I/O governed by the kernel).
 	     Visible changes:
 	- Fix name output on help-screens.
+	- Allow --nocolor/--force-colors also for eix-update (although this is
+	  a misnomer, since it is about the percentage status; the
+	  corresponding variables stay separated FORCE_PERCENTAGE/FORCE_COLORS)
 	     The rest are internal changes of the code:
 	- Change of #include style: Do not rely on implicit includes;
 	  include in the file exactly those things needed, ignoring that

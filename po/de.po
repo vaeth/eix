@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-25 20:01+0100\n"
+"POT-Creation-Date: 2009-10-25 21:45+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1135,7 +1135,7 @@ msgstr ""
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:505 src/eix-diff.cc:294 src/eix-update.cc:320
+#: src/eix.cc:505 src/eix-diff.cc:294 src/eix-update.cc:326
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
@@ -1244,7 +1244,7 @@ msgstr ""
 "     --care              Lese immer die Slots installierter Pakete\n"
 " -q, --quiet (toggle)    keine Ausgabe\n"
 " -n, --nocolor           keine Farben\n"
-" -F, --force-color       Farben auch wenn Ausgabe nicht auf Terminal geht\n"
+" -F, --force-color       Farben, auch wenn Ausgabe nicht auf Terminal geht\n"
 "     --dump              Ausgabe aller internen Variablen of stdout\n"
 "     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
@@ -1321,6 +1321,8 @@ msgid ""
 "     --dump              show eixrc-variables\n"
 "     --dump-defaults     show default eixrc-variables\n"
 "     --print             print the expanded value of a variable\n"
+" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
+" -F, --force-color       force \"color\" on things that are not a terminal\n"
 "\n"
 " -q, --quiet             produce no output\n"
 "\n"
@@ -1344,6 +1346,8 @@ msgstr ""
 "     --dump              Ausgabe aller internen Variablen of stdout\n"
 "     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
+" -n, --nocolor           Unterdrücken von Effekten (Prozent-Status)\n"
+" -F, --force-color       Effekte, auch wenn Ausgabe nicht auf Terminal geht\n"
 "\n"
 " -q, --quiet             keine Ausgabe\n"
 "\n"
@@ -1360,80 +1364,80 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-update.cc:265
+#: src/eix-update.cc:269
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD\n"
 msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
 
-#: src/eix-update.cc:282
+#: src/eix-update.cc:286
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
 
-#: src/eix-update.cc:287
+#: src/eix-update.cc:291
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 
-#: src/eix-update.cc:292
+#: src/eix-update.cc:296
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:356
+#: src/eix-update.cc:362
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:458
+#: src/eix-update.cc:464
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:473
+#: src/eix-update.cc:479
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:479
+#: src/eix-update.cc:485
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:519
+#: src/eix-update.cc:524
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:531
+#: src/eix-update.cc:536
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:536
+#: src/eix-update.cc:541
 msgid "     Reading "
 msgstr "     Lese "
 
-#: src/eix-update.cc:544
+#: src/eix-update.cc:549
 msgid "aborted"
 msgstr "Abbruch"
 
-#: src/eix-update.cc:561
+#: src/eix-update.cc:566
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:572
+#: src/eix-update.cc:577
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:576
+#: src/eix-update.cc:581
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:579
+#: src/eix-update.cc:584
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:592
+#: src/eix-update.cc:597
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -1671,37 +1675,37 @@ msgstr "Format-Zeichen fehlt"
 msgid "unknown format specifier '%%%s'"
 msgstr "Unbekannte Formatangabe '%%%s'"
 
-#: src/eixTk/stringutils.cc:211
+#: src/eixTk/stringutils.cc:209
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
-#: src/eixTk/stringutils.cc:245
+#: src/eixTk/stringutils.cc:243
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Interner Fehler: Storing required after finalizing"
 
-#: src/eixTk/stringutils.cc:255
+#: src/eixTk/stringutils.cc:253
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Interner Fehler: Hashing required after finalizing"
 
-#: src/eixTk/stringutils.cc:259
+#: src/eixTk/stringutils.cc:257
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing required in non-hash mode"
 
-#: src/eixTk/stringutils.cc:289
+#: src/eixTk/stringutils.cc:287
 #, c-format
 msgid "Internal error: Index required before sorting."
 msgstr "Interner Fehler: Index required before sorting."
 
-#: src/eixTk/stringutils.cc:294
+#: src/eixTk/stringutils.cc:292
 #, c-format
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 
-#: src/eixTk/stringutils.cc:304
+#: src/eixTk/stringutils.cc:302
 #, c-format
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
@@ -4925,8 +4929,8 @@ msgstr ""
 "Rekusrionslevel für cascading Profiles überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1188
-#: src/portage/conf/portagesettings.cc:1204
+#: src/portage/conf/portagesettings.cc:1190
+#: src/portage/conf/portagesettings.cc:1206
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 

@@ -288,9 +288,9 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 	m_accepted_keywords.clear();
 	split_string(m_accepted_keywords, (*this)["ARCH"]);
-	m_arch_set.clear()
+	m_arch_set.clear();
 	resolve_plus_minus(m_arch_set, m_accepted_keywords, m_obsolete_minusasterisk);
-	split_string(m_accepted_keywords, (*this)["ACCEPT_KEYWORDS"]));
+	split_string(m_accepted_keywords, (*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keywords_set.clear();
 	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords, m_obsolete_minusasterisk);
 	make_vector<string>(m_accepted_keywords, m_accepted_keywords_set);
