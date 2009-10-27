@@ -6,10 +6,12 @@
 	  perhaps it is slightly faster which however is hardly visible, since
 	  the main bulk is the I/O governed by the kernel).
 	     Visible changes:
+	- New cache method sqlite*.
 	- Fix name output on help-screens.
 	- Allow --nocolor/--force-colors also for eix-update (although this is
 	  a misnomer, since it is about the percentage status; the
 	  corresponding variables stay separated FORCE_PERCENTAGE/FORCE_COLORS)
+	- configure: More verbose output concerning options for flag mangling
 	     The rest are internal changes of the code:
 	- Change of #include style: Do not rely on implicit includes;
 	  include in the file exactly those things needed, ignoring that
@@ -30,10 +32,12 @@
 	  (and similarly resolve_plus_minus()) do not clean() the results now
 	  which is not only faster by itself but also sometimes avoids extra
 	  calls of push_backs() for the result.
-	- Make list of categories a std::map; this also avoids the ugly
-	  fast_access()-hacks which Emil hates so much. The disadvantage is
-	  that now the category names have to be passed separately, since it
-	  makes no sense to store them redundantly twice.
+	- Make packagetree a std::map of categories; this also avoids the ugly
+	  fast_access()-hacks which Emil hates so much. Another advantage is
+	  that now only this tree is needed for BasicCache::readCategories.
+	  A disadvantage is that either the names would have to be stored
+	  redundantly, or they have to be passed separately, e.g. for
+	  BasicCache::readCategory; currently, the latter happens.
 	- Use switch()es instead of subsequent tests in eixrc.cc
 	- Add only finished packages to a Category, not erasing afterwards.
 

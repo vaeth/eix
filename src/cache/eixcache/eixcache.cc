@@ -72,12 +72,8 @@ bool EixCache::initialize(const string &name)
 	return (args.size() <= 3);
 }
 
-bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categories, const char *cat_name, Category *category) throw(ExBasic)
+bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
 {
-	bool add_categories(categories != NULL);
-	if(never_add_categories)
-		add_categories = false;
-
 	string file;
 	if(! m_file.empty())
 		file = m_prefix + m_file;
@@ -140,20 +136,18 @@ bool EixCache::readCategories(PackageTree *packagetree, vector<string> *categori
 		reader.read(PackageReader::NAME);
 		Package *p(reader.get());
 		Category *dest_cat;
-		if(add_categories) {
-			dest_cat = &((*packagetree)[p->category]);
-		}
-		else if(packagetree == NULL)
-		{
-			if(cat_name != p->category)
+		if(unlikely(packagetree == NULL)) {
+			if(likely(cat_name != p->category))
 				continue;
 			dest_cat = category;
 		}
-		else
-		{
+		else if(never_add_categories) {
 			dest_cat = packagetree->find(p->category);
 			if(unlikely(dest_cat == NULL))
 				continue;
+		}
+		else {
+			dest_cat = &((*packagetree)[p->category]);
 		}
 
 		reader.read(PackageReader::VERSIONS);

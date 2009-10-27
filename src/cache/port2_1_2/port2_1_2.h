@@ -15,20 +15,19 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 class Category;
 class PackageTree;
 
 class Port2_1_2_Cache : public BasicCache {
 	private:
-		bool readEntry(std::map<std::string,std::string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories, const char *cat_name, Category *category);
+		bool readEntry(std::map<std::string,std::string> &mapper, PackageTree *packagetree, const char *cat_name, Category *category);
 
 	public:
 		bool can_read_multiple_categories() const
 		{ return true; }
 
-		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, const char *cat_name, Category *category) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic);
 
 		const char *getType() const
 		{ return "portage-2.1"; }

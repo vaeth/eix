@@ -76,20 +76,16 @@ class BasicCache {
 		{ return false; }
 
 		/// If available, the function to read multiple categories.
-		/** Note that "categories" might possibly grow if categories should be added.
-		    @param packagetree must point to packagetree (if category is not null)
-		    @param categories must point to list of categories (if category is not null)
-		    @param category if non-null, the function is identical to readCategory
-		    @return false if an error occurred so fatal that further calls
-		    with this scheme (even with other categories) are useless. */
-		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, std::vector<std::string> *categories ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULL, Category *category ATTRIBUTE_UNUSED = NULL) throw(ExBasic)
-		{ UNUSED(packagetree); UNUSED(categories); UNUSED(cat_name); UNUSED(category); return 1; }
+		/** @param packagetree should point to packagetree. The other parameters are only used if packagetree is NULL:
+		    @param cat_name If packagetree is NULL, only packages with this category name are read.
+		    @param category If packagetree is NULL, the packages matching cat_name are added to this category.
+		    @return false if an error occurred */
+		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULL, Category *category ATTRIBUTE_UNUSED = NULL) throw(ExBasic)
+		{ UNUSED(packagetree); UNUSED(cat_name); UNUSED(category); return 1; }
 
-		/// Read Cache for a category
-		/** @return false if an error occurred so fatal that further calls
-		    with this scheme (even with other categories) are useless. */
+		/// Read Cache for an individual category. If not overloaded, then readCategories must be overloaded
 		virtual bool readCategory(const char *cat_name, Category &cat) throw(ExBasic)
-		{ return readCategories(NULL, NULL, cat_name, &cat); }
+		{ return readCategories(NULL, cat_name, &cat); }
 
 		virtual bool readCategoryPrepare(const char *cat_name ATTRIBUTE_UNUSED) throw(ExBasic)
 		{ UNUSED(cat_name); return true; }

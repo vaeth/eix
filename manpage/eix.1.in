@@ -1969,6 +1969,16 @@ this method is not necessarily compiled in.
 You must have emerged B<eix> with the appropriate USE flag
 (or in a manual installation used I<./configure --with-sqlite>
 before compilation) if you want support for this method.
+
+As for all other cache methods, only those categories enabled by
+profile/category (in the main tree or some overlay) are read.
+If you do not want this, use B<sqlite*> (see below).
+.TP
+.SS
+.B sqlite*
+This is analogous to the cache method B<eix> with the difference that
+all categories found in I<FILE> are added, even those categories which
+were not enabled by some profile/categories file.
 .TP
 .SS
 .B " cdb"

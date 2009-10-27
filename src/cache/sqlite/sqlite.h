@@ -23,6 +23,7 @@ class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
 
 	private:
+		bool never_add_categories;
 		void sqlite_callback_cpp(int argc, const char **argv, const char **azColName);
 		std::vector<int> trueindex;
 		int maxindex;
@@ -38,13 +39,20 @@ class SqliteCache : public BasicCache {
 		const char *cat_name;
 
 	public:
+		SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories)
+		{ }
+
 		bool can_read_multiple_categories() const
 		{ return true; }
 
-		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, const char *catname, Category *cat) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, const char *catname, Category *cat) throw(ExBasic);
 
 		const char *getType() const
-		{ return "sqlite"; }
+		{
+			if(never_add_categories)
+				return "sqlite";
+			return "sqlite*";
+		}
 };
 
 #endif /* EIX__SQLITECACHE_H__ */

@@ -14,7 +14,6 @@
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
-#include <eixTk/unused.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/version.h>
@@ -22,7 +21,6 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <vector>
 
 #include <cstddef>
 #include <cstdlib>
@@ -85,9 +83,8 @@ class MapFile {
 };
 
 bool
-Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree, std::vector<std::string> *categories ATTRIBUTE_UNUSED, const char *cat_name, Category *category)
+Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree, const char *cat_name, Category *category)
 {
-	UNUSED(categories);
 	string catstring(mapper["KEY"]);
 	if(catstring.empty())
 		return false;
@@ -102,9 +99,9 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
 	if(unlikely(packagetree == NULL)) {
-		dest_cat = category;
-		if(cat_name != catstring)
+		if(catstring != cat_name)
 			return false;
+		dest_cat = category;
 	}
 	else {
 		dest_cat = packagetree->find(catstring);
@@ -147,7 +144,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	return true;
 }
 
-bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::string> *categories, const char *cat_name, Category *category) throw(ExBasic)
+bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
 {
 	string filename = m_prefix + PORTAGE_PICKLE;
 	const char *data, *end;
@@ -164,7 +161,7 @@ bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, std::vector<std::
 		while(! unpickler.is_finished())
 		{
 			unpickler.get(unpickled);
-			readEntry(unpickled, packagetree, categories, cat_name, category);
+			readEntry(unpickled, packagetree, cat_name, category);
 		}
 	}
 	catch(const ExBasic &e) {

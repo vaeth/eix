@@ -92,56 +92,98 @@ AC_PROG_CXX()
 AC_ARG_ENABLE([debugging],
 	[AS_HELP_STRING([--enable-debugging],
 		[set flags appropriate for debugging])],
-	[MV_ENABLE([debugging], [debugging])],
-	[debugging=false])
-
-AC_ARG_ENABLE([optimization],
-	[AS_HELP_STRING([--disable-optimization],
-		[do not append optimization flags])],
-	[MV_ENABLE([optimization], [optimization])],
-	[optimization=true])
-
-AC_ARG_ENABLE([strong_optimization],
-	[AS_HELP_STRING([--enable-strong-optimization],
-		[use also optimization flags which might not work on broken compilers])],
-	[MV_ENABLE([strong_optimization], [strong_optimization])],
-	[strong_optimization=false])
-
-AC_ARG_ENABLE([warnings],
-	[AS_HELP_STRING([--enable-warnings],
-		[append warning/testing flags; might produce worse code])],
-	[MV_ENABLE([warnings], [warnings])],
-	[warnings=false])
-
-AC_ARG_ENABLE([strong_warnings],
-	[AS_HELP_STRING([--enable-strong-warnings],
-		[append flags to get lots of mostly unimportant warnings])],
-	[MV_ENABLE([strong_warnings], [strong_warnings])],
-	[strong_warnings=false])
+	[MV_ENABLE([debugging], [debugging])
+	cmt_debugging="on request"],
+	[debugging=false
+	cmt_debugging=""])
 
 AC_ARG_ENABLE([security],
 	[AS_HELP_STRING([--disable-security],
 		[do not append security relevant options to flags])],
-	[MV_ENABLE([security], [security])],
-	[security=true])
+	[MV_ENABLE([security], [security]),
+	security=''
+	cmt_security="on request"],
+	[security=true
+	cmt_security="default"])
+
+AC_ARG_ENABLE([optimization],
+	[AS_HELP_STRING([--disable-optimization],
+		[do not append optimization flags])],
+	[MV_ENABLE([optimization], [optimization])
+	cmt_optimization="on request"],
+	[optimization=true
+	cmt_optimization="default"])
+
+AC_ARG_ENABLE([strong_optimization],
+	[AS_HELP_STRING([--enable-strong-optimization],
+		[use also optimization flags which might not work on broken compilers])],
+	[MV_ENABLE([strong_optimization], [strong_optimization])
+	cmt_strong_optimization="on request"],
+	[strong_optimization=false
+	cmt_strong_optimization=""])
+
+AC_ARG_ENABLE([warnings],
+	[AS_HELP_STRING([--enable-warnings],
+		[append warning/testing flags; might produce worse code])],
+	[MV_ENABLE([warnings], [warnings])
+	cmt_warnings="on request"],
+	[warnings=false
+	cmt_warnings=""])
+
+AC_ARG_ENABLE([strong_warnings],
+	[AS_HELP_STRING([--enable-strong-warnings],
+		[append flags to get lots of mostly unimportant warnings])],
+	[MV_ENABLE([strong_warnings], [strong_warnings])
+	cmt_strong_warnings="on request"],
+	[strong_warnings=false
+	cmt_strong_warnings=""])
 
 AC_ARG_ENABLE([quickcheck],
 	[AS_HELP_STRING([--enable-quickcheck],
 		[do not check whether flags work when adding them])],
-	[MV_ENABLE([quickcheck], [quickcheck])],
-	[quickcheck=false])
+	[MV_ENABLE([quickcheck], [quickcheck])
+	cmt_quickcheck="on request"],
+	[quickcheck=false
+	cmt_quickcheck=""])
 
 # Some implicit dependencies of these options.
-dnl We could mix this with the cases later on, but for clarity we do it here:
+# We do this here explicitly and output the results
+
+AC_MSG_CHECKING([whether debugging options should be used])
+MV_MSG_RESULT_BIN([${debugging}], [${cmt_debugging}])
+
+AC_MSG_CHECKING([whether strong optimization options should be used])
+AS_IF([${debugging}],
+	[strong_optimization=false
+	cmt_strong_optimization="disabled by debugging"])
+MV_MSG_RESULT_BIN([${strong_optimization}], [${cmt_strong_optimization}])
+
+AC_MSG_CHECKING([whether optimization options should be used])
 AS_IF([${strong_optimization}],
-	[optimization=true])
-AS_IF([${strong_warnings}],
-	[warnings=true])
+	[optimization=true
+	cmt_optimization="forced by strong optimization"])
 AS_IF([${debugging}],
 	[optimization=false
-	strong_optimization=false])
+	cmt_optimization="disabled by debugging"])
+MV_MSG_RESULT_BIN([${optimization}], [${cmt_optimization}])
+
+AC_MSG_CHECKING([whether strong warning options should be used])
+MV_MSG_RESULT_BIN([${strong_warnings}], [${cmt_strong_warnings}])
+
+AC_MSG_CHECKING([whether warning options should be used])
+AS_IF([${strong_warnings}],
+	[warnings=true
+	cmt_warnings="forced by strong warnings"])
+MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
+
+AC_MSG_CHECKING([whether security options should be used])
 AS_IF([${warnings}],
-	[security=true])
+	[security=true
+	cmt_security="forced by warnings"])
+MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
+
+AC_MSG_CHECKING([whether options should not be tested individually])
+MV_MSG_RESULT_BIN([${quickcheck}], [${cmt_quickcheck}])
 
 # Now start the flag mangling:
 AS_IF([${debugging}],
@@ -323,10 +365,10 @@ LDFLAGS_PREPEND: ])
 # For --enable-quickcheck, we do at least one (collected) safety check;
 # otherwise, the error messages may be too confusing for the user:
 AS_IF([${quickcheck}],
-	[AC_MSG_CHECKING([whether quickcheck mode was appropriate])
+	[AC_MSG_CHECKING([whether non-checking of options was appropriate])
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
-		[AC_MSG_RESULT([yes])],
-		[AC_MSG_RESULT([no])
+		[MV_MSG_RESULT([yes])],
+		[MV_MSG_RESULT([no])
 		echo "export CXXFLAGS='${CXXFLAGS}'"
 		echo "export LDFLAGS='${LDFLAGS}'"
 		AC_MSG_ERROR([Compiling/linking a simple program failed. Try --disable-quickcheck])])])
@@ -353,7 +395,7 @@ AC_ARG_WITH([dev-null],
 	[DEV_NULL=""])
 MV_IF_EMPTY([${DEV_NULL}],
 	[DEV_NULL="/dev/null"])
-AC_MSG_RESULT([${DEV_NULL}])
+MV_MSG_RESULT([${DEV_NULL}])
 AC_DEFINE_UNQUOTED([DEV_NULL],
 	["${DEV_NULL}"],
 	[ Null device of the system])
@@ -499,23 +541,20 @@ AM_CONDITIONAL([EXTRA_CACHE],
 
 # Check if __builtin_expect works
 AC_MSG_CHECKING([whether __builtin_expect can be used])
-AC_RUN_IFELSE([AC_LANG_PROGRAM([[]], [[
+AC_DEFUN([BUILTIN_EXPECT_PROGRAM], [AC_LANG_PROGRAM([[]], [[
 if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
 	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
 	return 1;
-		]])],
-	[AC_MSG_RESULT([yes])
+		]])])
+AC_RUN_IFELSE([BUILDIN_EXPECT_PROGRAM],
+	[MV_MSG_RESULT([yes])
 	bi_expect_works=true],
-	[AC_MSG_RESULT([no])
+	[MV_MSG_RESULT([no])
 	bi_expect_works=false],
-	[AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[
-if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
-	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
-	return 1;
-		]])],
-		[AC_MSG_RESULT([yes], [crosscompile guess])
+	[AC_LINK_IFELSE([BUILTIN_EXPECT_PROGRAM],
+		[MV_MSG_RESULT([yes], [crosscompile guess])
 		bi_expect_works = true],
-		[AC_MSG_RESULT([no], [crosscompile guess])
+		[MV_MSG_RESULT([no], [crosscompile guess])
 		bi_expect_works = false])])
 AS_IF([${bi_expect_works}],
 	[AC_DEFINE([HAVE___BUILTIN_EXPECT],
@@ -529,9 +568,9 @@ int dummy(int i __attribute__ ((__unused__))) { return 0; }
 		]], [[
 return dummy(1);
 		]])],
-		[AC_MSG_RESULT([yes])
+		[MV_MSG_RESULT([yes])
 		attribute_unused=true],
-		[AC_MSG_RESULT([no])
+		[MV_MSG_RESULT([no])
 		attribute_unused=false])
 AS_IF([${attribute_unused}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
@@ -545,9 +584,9 @@ int dummy(int i __attribute__ ((__noreturn__))) { return 0; }
 		]], [[
 return dummy(1);
 		]])],
-		[AC_MSG_RESULT([yes])
+		[MV_MSG_RESULT([yes])
 		attribute_noreturn=true],
-		[AC_MSG_RESULT([no])
+		[MV_MSG_RESULT([no])
 		attribute_noreturn=false])
 AS_IF([${attribute_noreturn}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
@@ -594,9 +633,9 @@ for(ind i(0); a[i]; ++i) {
 	}
 }
 		]])],
-		[AC_MSG_RESULT([yes])
+		[MV_MSG_RESULT([yes])
 		unique_works=true],
-		[AC_MSG_RESULT([no])
+		[MV_MSG_RESULT([no])
 		unique_works=false],
 		[MV_MSG_RESULT([assuming yes], [crosscompile guess])
 		unique_works=true])])
@@ -653,7 +692,7 @@ AC_ARG_WITH([eprefix-default],
 	[EPREFIX_DEFAULT="${withval}"],
 	[EPREFIX_DEFAULT="`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])
 MV_PREFIX(EPREFIX_DEFAULT)
-MV_MSG_RESULTVAR([${EPREFIX_DEFAULT}])
+MV_MSG_RESULT_VAR([${EPREFIX_DEFAULT}])
 AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
 	["${EPREFIX_DEFAULT}"],
 	[ Default EPREFIX])
@@ -668,7 +707,7 @@ AC_ARG_WITH([eix-prefix-default],
 			[EIX_PREFIX_DEFAULT=""])],
 	[EIX_PREFIX_DEFAULT=""])
 MV_PREFIX(EPREFIX_DEFAULT)
-MV_MSG_RESULTVAR([${EIX_PREFIX_DEFAULT}])
+MV_MSG_RESULT_VAR([${EIX_PREFIX_DEFAULT}])
 AC_DEFINE_UNQUOTED([EIX_PREFIX_DEFAULT],
 	["${EIX_PREFIX_DEFAULT}"],
 	[ Default EIX_PREFIX])
@@ -683,7 +722,7 @@ AC_ARG_WITH([root-default],
 			[ROOT_DEFAULT=""])],
 	[ROOT_DEFAULT=""])
 MV_PREFIX(ROOT_DEFAULT)
-MV_MSG_RESULTVAR([${ROOT_DEFAULT}])
+MV_MSG_RESULT_VAR([${ROOT_DEFAULT}])
 AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	["${ROOT_DEFAULT}"],
 	[ Default ROOT])
@@ -704,7 +743,7 @@ AC_ARG_WITH([ebuild-sh-default],
 		[description="autodetected"],
 		[description="guessed"])])
 MV_PREFIX(EBUILD_SH_DEFAULT)
-MV_MSG_RESULTVAR([${EBUILD_SH_DEFAULT}], [${description}])
+MV_MSG_RESULT_VAR([${EBUILD_SH_DEFAULT}], [${description}])
 AC_DEFINE_UNQUOTED([EBUILD_SH_DEFAULT],
 	["${EBUILD_SH_DEFAULT}"],
 	[ Default EXEC_EBUILD_SH (without prefix)])
@@ -716,7 +755,7 @@ AC_ARG_WITH([portage-rootpath],
 		[default PORTAGE_ROOTPATH])],
 	[PORTAGE_ROOTPATH_DEFAULT="${withval}"],
 	[PORTAGE_ROOTPATH_DEFAULT=""])
-MV_MSG_RESULTVAR([${PORTAGE_ROOTPATH_DEFAULT}])
+MV_MSG_RESULT_VAR([${PORTAGE_ROOTPATH_DEFAULT}])
 AC_DEFINE_UNQUOTED([PORTAGE_ROOTPATH_DEFAULT],
 	["${PORTAGE_ROOTPATH_DEFAULT}"],
 	[ Default PORTAGE_ROOTPATH])
@@ -728,7 +767,7 @@ AC_ARG_WITH([portage-bin-path],
 		[default PORTAGE_BIN_PATH])],
 	[PORTAGE_BIN_PATH_DEFAULT="${withval}"],
 	[PORTAGE_BIN_PATH_DEFAULT=""])
-MV_MSG_RESULTVAR([${PORTAGE_BIN_PATH_DEFAULT}])
+MV_MSG_RESULT_VAR([${PORTAGE_BIN_PATH_DEFAULT}])
 AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
 	["${PORTAGE_BIN_PATH_DEFAULT}"],
 	[ Default PORTAGE_BIN_PATH])
@@ -740,7 +779,7 @@ AC_ARG_WITH([remote-file],
 		[default remote file for eix-remote])],
 	[DEFAULT_REMOTE_PATH="${withval}"],
 	[DEFAULT_REMOTE_PATH="http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2"])
-MV_MSG_RESULTVAR([${DEFAULT_REMOTE_PATH}])
+MV_MSG_RESULT_VAR([${DEFAULT_REMOTE_PATH}])
 AC_SUBST([DEFAULT_REMOTE_PATH])
 
 # Check endianess
@@ -764,7 +803,7 @@ AC_DEFINE_UNQUOTED([TARGET],
 MV_IF_NONEMPTY([${GCC}],
 	[AC_MSG_CHECKING([gcc version])
 	gcc_v=`${CC} -dumpversion`
-	AC_MSG_RESULT([${gcc_v}])
+	MV_MSG_RESULT([${gcc_v}])
 	AC_DEFINE_UNQUOTED([GCC_VERSION],
 		["${gcc_v}"],
 		[ Version of gcc])])

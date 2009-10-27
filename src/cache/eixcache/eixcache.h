@@ -12,7 +12,6 @@
 #include <cache/base.h>
 
 #include <string>
-#include <vector>
 
 class Category;
 class PackateTree;
@@ -31,7 +30,7 @@ class EixCache : public BasicCache {
 		bool can_read_multiple_categories() const
 		{ return true; }
 
-		bool readCategories(PackageTree *packagetree, std::vector<std::string> *categories, const char *name, Category *category) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, const char *name, Category *category) throw(ExBasic);
 
 		const char *getType() const
 		{ return m_name.c_str(); }

@@ -507,8 +507,7 @@ static void
 update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels) throw(ExBasic)
 {
 	DBHeader dbheader;
-	vector<string> *categories(portage_settings.getCategories());
-	PackageTree package_tree(*categories);
+	PackageTree package_tree(*portage_settings.getCategories());
 
 	dbheader.world_sets = *(portage_settings.get_world_sets());
 
@@ -543,20 +542,20 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		{
 			reading_percent_status->start(1);
 			cache->setErrorCallback(error_callback);
-			if(cache->readCategories(&package_tree, categories))
+			if(cache->readCategories(&package_tree))
 				++(*reading_percent_status);
 			else
 				reading_percent_status->reprint(_("aborted"));
 		}
 		else
 		{
-			reading_percent_status->start(categories->size());
+			reading_percent_status->start(package_tree.size());
 
 			/* iterator through categories */
-			for(vector<string>::iterator ci(categories->begin());
-				unlikely(ci != categories->end()); ++ci) {
+			for(PackageTree::const_iterator ci(package_tree.begin());
+				unlikely(ci != package_tree.end()); ++ci) {
 				// ignore return value of bad categories
-				cache->readCategory(ci->c_str(), package_tree[*ci]);
+				cache->readCategory(ci->first.c_str(), *(ci->second));
 				++(*reading_percent_status);
 			}
 		}

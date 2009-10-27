@@ -13,8 +13,8 @@ to_classname () {
 	echo "${j}Cache"
 }
 
-cache_stars=""
-cache_plain="sqlite cdb $cache_stars"
+cache_stars="sqlite"
+cache_plain="sqlite cdb"
 cache_vary="eix metadata"
 cache_includes="parse eixcache metadata $cache_plain"
 if [ "${1}" = "portage-2.1.2" ]

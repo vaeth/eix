@@ -198,14 +198,17 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
 	if(unlikely(packagetree == NULL)) {
-		dest_cat = category;
 		if(cat_name != catarg)
 			return;
+		dest_cat = category;
 	}
-	else {
+	else if(never_add_categories) {
 		dest_cat = packagetree->find(catarg);
 		if(unlikely(dest_cat == NULL))
 			return;
+	}
+	else {
+		dest_cat =  &((*packagetree)[catarg]);
 	}
 	char **aux(ExplodeAtom::split(name_ver.c_str()));
 	if(unlikely(aux == NULL)) {
@@ -242,9 +245,8 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	free(aux[1]);
 }
 
-bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categories ATTRIBUTE_UNUSED, const char *catname, Category *cat) throw(ExBasic)
+bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) throw(ExBasic)
 {
-	UNUSED(categories);
 	char *errormessage(NULL);
 	string sqlitefile(m_prefix + PORTAGE_CACHE_PATH + m_scheme);
 	// Cut all trailing '/' and append ".sqlite" to the name
@@ -287,11 +289,11 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, vector<string> *categorie
 
 using namespace std;
 
-bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, vector<string> *categories ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) throw(ExBasic)
+bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) throw(ExBasic)
 {
-	UNUSED(packagetree);
-	UNUSED(category);
-	UNUSED(categories);
+	UNUSED(pkgtree);
+	UNUSED(catname);
+	UNUSED(cat);
 	m_error_callback(_("Cache method sqlite is not compiled in.\n"
 		"Recompile eix, using configure option --with-sqlite to add sqlite support"));
 	return false;
