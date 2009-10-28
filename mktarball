@@ -49,7 +49,7 @@ test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
 unset LDFLAGS CFLAGS CXXFLAGS
 if [ -n "${fakeroot}" ] && command -v "${fakeroot}" >/dev/null 2>&1
 then
-	Run ./mkmake -0UQEeqn
+	Run ./mkmake -0QEeqn
 	docmd="${fakeroot} ./mkmake -0QEeqr"
 else
 	docmd="./mkmake -0QEeq"
