@@ -16,9 +16,10 @@
 #include <portage/set_stability.h>
 #include <portage/version.h>
 
+#include <map>
+#include <set>
 #include <stack>
 #include <string>
-#include <map>
 #include <vector>
 
 #include <cstddef>
@@ -147,7 +148,7 @@ class MarkedList : public std::multimap<std::string, BasicVersion*>
 		/** Return pointer to (newly allocated) sorted vector of marked versions,
 		    or NULL. With nonversion argument, its content will decide whether
 		    the package was marked with a non-version argument */
-		std::vector<BasicVersion> *get_marked_vector(const Package &pkg, bool *nonversion = NULL) const;
+		std::set<BasicVersion> *get_marked_versions(const Package &pkg, bool *nonversion = NULL) const;
 		/** Return true if pkg is marked. If ver is non-NULL also *ver must match */
 		bool is_marked(const Package &pkg, const BasicVersion *ver = NULL) const;
 		/** Return String of marked versions (sorted) */

@@ -45,23 +45,23 @@ bool EixCache::initialize(const string &name)
 	else
 		return false;
 
-	m_file = "";
+	m_file.clear();
 	if(args.size() >= 2) {
 		if(! args[1].empty()) {
-			m_name += " ";
-			m_name += args[1];
+			m_name.append(1, ' ');
+			m_name.append(args[1]);
 			m_file = args[1];
 		}
 	}
 
 	m_only_overlay = true;
-	m_overlay = "";
+	m_overlay.clear();
 	m_get_overlay = 0;
 	if(args.size() >= 3) {
 		if(! args[2].empty()) {
-			m_name += " [";
-			m_name += args[2];
-			m_name += "]";
+			m_name.append(" [");
+			m_name.append(args[2]);
+			m_name.append("]");
 			if(args[2] == "*") {
 				m_only_overlay = false;
 			}

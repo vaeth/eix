@@ -50,9 +50,9 @@ unset LDFLAGS CFLAGS CXXFLAGS
 if [ -n "${fakeroot}" ] && command -v "${fakeroot}" >/dev/null 2>&1
 then
 	Run ./mkmake -0UQEeqn
-	docmd="${fakeroot} ./mkmake -0UQEeqr"
+	docmd="${fakeroot} ./mkmake -0QEeqr"
 else
-	docmd="./mkmake -0UQEeq"
+	docmd="./mkmake -0QEeq"
 fi
 for i in ${dist}
 do

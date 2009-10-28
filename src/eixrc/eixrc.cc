@@ -552,7 +552,7 @@ EixRc::join_key_rec(const string &key, const string &val, set<string> &has_delay
 		}
 		if(unlikely(length <= 1))
 			continue;
-		string s(val.substr(pos, length - 1));
+		string s(val, pos, length - 1);
 		if(unlikely(have_star)) {
 			join_key_if_new(string(EIX_VARS_PREFIX) + s,
 				has_delayed, exclude_defaults);

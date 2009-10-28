@@ -93,7 +93,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 		m_error_callback(eix::format(_("%r not of the form package/catstring-version")) % catstring);
 		return false;
 	}
-	string name_ver(catstring.substr(pos + 1));
+	string name_ver(catstring, pos + 1);
 	catstring.resize(pos);
 	// Does the category match?
 	// Currently, we do not add non-matching categories with this method.

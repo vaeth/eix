@@ -182,15 +182,15 @@ class PortageSettings : public std::map<std::string,std::string> {
 		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
 
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
-		void get_setnames(std::vector<std::string> &names, const Package *p, bool also_nonlocal = false) const;
+		void get_setnames(std::set<std::string> &names, const Package *p, bool also_nonlocal = false) const;
 		std::string get_setnames(const Package *p, bool also_nonlocal = false) const;
 		void read_local_sets(const std::vector<std::string> &dir_list);
 		const std::vector<std::string> *get_world_sets() const
 		{ return &world_sets; }
 
-		/** Return vector of all possible all categories.
-		 * Reads categories on first call. */
-		std::vector<std::string> *getCategories();
+		/** pushback categories from profiles to vec. Categories may be duplicate.
+		    Result is not cashed, i.e. this should be called only once. */
+		void pushback_categories(std::vector<std::string> &vec);
 
 		void setMasks(Package *p, bool filemask_is_profile = false) const;
 

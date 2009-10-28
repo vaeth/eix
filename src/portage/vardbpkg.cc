@@ -304,7 +304,7 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 bool
 VarDbPkg::readUse(const Package &p, InstVersion &v) const
 {
-	if(v.know_use)
+	if(likely(v.know_use))
 		return true;
 	v.know_use = true;
 	v.inst_iuse.clear();
@@ -317,30 +317,32 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 		if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
 			&lines, true, false, false)))
 			return false;
-		split_string(v.inst_iuse, join_vector(lines, " "));
-		for(vector<string>::iterator it(v.inst_iuse.begin());
-			it != v.inst_iuse.end(); ++it) {
-			while(((*it)[0] == '+') || ((*it)[0] == '-'))
-				it->erase(0, 1);
-		}
-		sort_uniquify(v.inst_iuse);
-		make_set<string>(iuse_set, v.inst_iuse);
+		join_and_split(v.inst_iuse, lines);
 
 		lines.clear();
 		if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
 			&lines, true, false, false)))
 			return false;
-		split_string(alluse, join_vector(lines, " "));
-		for(vector<string>::iterator it(alluse.begin());
-			it != alluse.end(); ++it) {
-			while(((*it)[0] == '+') || ((*it)[0] == '-'))
-				it->erase(0, 1);
-		}
+		join_and_split(alluse, lines);
 	}
 	catch(const ExBasic &e) {
 		cerr << e << endl;
 		return false;
 	}
+	for(vector<string>::iterator it(v.inst_iuse.begin());
+		it != v.inst_iuse.end(); ++it) {
+		while(((*it)[0] == '+') || ((*it)[0] == '-'))
+			it->erase(0, 1);
+	}
+	make_set<string>(iuse_set, v.inst_iuse);
+	make_vector<string>(v.inst_iuse, iuse_set);
+
+	for(vector<string>::iterator it(alluse.begin());
+		it != alluse.end(); ++it) {
+		while(((*it)[0] == '+') || ((*it)[0] == '-'))
+			it->erase(0, 1);
+	}
+
 	for(vector<string>::iterator it(alluse.begin());
 		likely(it != alluse.end()); ++it) {
 		if(iuse_set.find(*it) != iuse_set.end()) {
@@ -388,7 +390,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 		if(lines.size() == 1)
 			v.set_restrict(lines[0]);
 		else
-			v.set_restrict(join_vector(lines));
+			v.set_restrict(join_to_string(lines));
 	}
 	catch(const ExBasic &e) {
 		cerr << e << endl;

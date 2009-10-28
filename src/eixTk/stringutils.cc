@@ -32,7 +32,7 @@ using namespace std;
 
 const char *spaces(" \t\r\n");
 
-const string emptystring(""), one("1");
+const string emptystring(""), one("1"), space(" ");
 
 locale localeC("C");
 
@@ -118,12 +118,29 @@ escape_string(string &str, const char *at)
 	}
 }
 
+inline static void
+erase_escapes(string &s, const char *at)
+{
+	string::size_type pos(0);
+	while((pos = s.find('\\', pos)) != string::npos) {
+		++pos;
+		if(pos == s.size()) {
+			s.erase(pos - 1, 1);
+			break;
+		}
+		char c(s[pos]);
+		if((c == '\\') || (strchr(at, c) != NULL))
+			s.erase(pos - 1, 1);
+	}
+}
+
+template <typename T>
 void
-split_string(vector<string> &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+split_string_template(T &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 {
 	string::size_type last_pos(0), pos(0);
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
-		if(handle_escape) {
+		if(unlikely(handle_escape)) {
 			bool escaped(false);
 			string::size_type s(pos);
 			while(s > 0) {
@@ -135,67 +152,52 @@ split_string(vector<string> &vec, const string &str, const bool handle_escape, c
 				++pos;
 				continue;
 			}
+			string r(str, last_pos, pos - last_pos);
+			erase_escapes(r, at);
+			if(likely((!r.empty()) || !ignore_empty))
+				push_back(vec, r);
 		}
-		if((pos - last_pos) > 0 || !ignore_empty)
-			vec.push_back(str.substr(last_pos, pos - last_pos));
+		else if(likely((pos > last_pos) || !ignore_empty))
+			push_back(vec, str.substr(last_pos, pos - last_pos));
 		last_pos = ++pos;
 	}
-	if((str.size() - last_pos) > 0 || !ignore_empty)
-		vec.push_back(str.substr(last_pos));
-	if(handle_escape) {
-		for(vector<string>::iterator it(vec.begin());
-			likely(it != vec.end()); ++it) {
-			pos = 0;
-			while((pos = it->find('\\', pos)) != string::npos) {
-				++pos;
-				if(pos == it->size()) {
-					it->erase(pos - 1, 1);
-					break;
-				}
-				char c((*it)[pos]);
-				if((c == '\\') ||
-					(string(1, c).find_first_of(at) != string::npos))
-					it->erase(pos - 1, 1);
-			}
+	if(unlikely(handle_escape)) {
+		string r(str, last_pos);
+		erase_escapes(r, at);
+		if(likely((!r.empty()) || !ignore_empty))
+			push_back(vec, r);
+	}
+	else if(likely((str.size() > last_pos) || !ignore_empty))
+		push_back(vec, str.substr(last_pos));
+}
+
+void
+split_string(vector<string> &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+{ split_string_template< vector<string> >(vec, str, handle_escape, at, ignore_empty); }
+
+void
+split_string(set<string> &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+{ split_string_template< set<string> >(vec, str, handle_escape, at, ignore_empty); }
+
+template <typename T>
+void
+join_to_string_template(string &s, const T &vec, const string &glue)
+{
+	for(typename T::const_iterator it(vec.begin()); likely(it != vec.end()); ++it) {
+		if(likely(!s.empty())) {
+			s.append(glue);
 		}
+		s.append(*it);
 	}
 }
 
-string
-join_set(const set<string> &vec, const string &glue)
-{
-	set<string>::const_iterator it(vec.begin());
-	if(it == vec.end()) {
-		return emptystring;
-	}
-	string ret;
-	for(;;) {
-		ret.append(*it);
-		if(++it == vec.end()) {
-			break;
-		}
-		ret.append(glue);
-	}
-	return ret;
-}
+void
+join_to_string(string &s, const vector<string> &vec, const string &glue)
+{ join_to_string_template< vector<string> >(s, vec, glue); }
 
-string
-join_vector(const vector<string> &vec, const string &glue)
-{
-	vector<string>::const_iterator it(vec.begin());
-	if(it == vec.end()) {
-		return emptystring;
-	}
-	string ret;
-	for(;;) {
-		ret.append(*it);
-		if(++it == vec.end()) {
-			break;
-		}
-		ret.append(glue);
-	}
-	return ret;
-}
+void
+join_to_string(string &s, const set<string> &vec, const string &glue)
+{ join_to_string_template< set<string> >(s, vec, glue); }
 
 bool
 resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore)
@@ -203,15 +205,15 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 	bool minusasterisk(false);
 	bool minuskeyword(false);
 	for(vector<string>::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
-		if(it->empty())
+		if(unlikely(it->empty()))
 			continue;
-		if((*it)[0] == '+') {
+		if(unlikely((*it)[0] == '+')) {
 			cerr << eix::format(_("flags should not start with a '+': %s")) % *it
 				<< endl;
 			s.insert(it->substr(1));
 			continue;
 		}
-		if((*it)[0] == '-') {
+		if(unlikely((*it)[0] == '-')) {
 			if(*it == "-*") {
 				minusasterisk = true;
 				if(!obsolete_minus) {
@@ -219,7 +221,7 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 					continue;
 				}
 			}
-			string key(it->substr(1));
+			string key(*it, 1);
 			if(s.erase(key))
 				continue;
 			if(warnignore) {
@@ -284,13 +286,13 @@ StringHash::size_type
 StringHash::get_index(const string &s) const
 {
 	if(!finalized) {
-		fprintf(stderr, _("Internal error: Index required before sorting."));
-		exit(-1);
+		cerr << _("Internal error: Index required before sorting.") << endl;
+		exit(2);
 	}
 	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
 	if(i == str_map.end()) {
-		fprintf(stderr, _("Internal error: Trying to shortcut non-hashed string."));
-		exit(-1);
+		cerr << _("Internal error: Trying to shortcut non-hashed string.") << endl;
+		exit(2);
 	}
 	return i->second;
 }
@@ -299,8 +301,8 @@ const string&
 StringHash::operator[](StringHash::size_type i) const
 {
 	if(i >= size()) {
-		fprintf(stderr, _("Database corrupt: Nonexistent hash required"));
-		exit(-1);
+		cerr << _("Database corrupt: Nonexistent hash required");
+		exit(2);
 	}
 	return vector<string>::operator[](i);
 }
@@ -308,10 +310,11 @@ StringHash::operator[](StringHash::size_type i) const
 void
 StringHash::output(const char *s) const
 {
-	if(s)
+	if(unlikely(s != NULL))
 		cout << s << ":\n";
-	for(vector<string>::const_iterator i = begin(); i != end(); ++i)
+	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
 		cout << *i << "\n";
+	}
 }
 
 void

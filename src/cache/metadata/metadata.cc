@@ -42,7 +42,7 @@ MetadataCache::initialize(const string &name)
 	if(i != string::npos) {
 		pure_name.erase(i);
 		have_override_path = true;
-		override_path = name.substr(i + 1);
+		override_path.assign(name, i + 1, string::npos);
 	}
 	else
 		have_override_path = false;
@@ -154,12 +154,12 @@ MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 				while(p) {
 					string::size_type c(m_scheme.rfind('/', p));
 					if(c == string::npos) {
-						catpath.append(m_scheme.substr(0,p));
+						catpath.append(m_scheme, 0,p);
 						break;
 					}
 					if(c == --p)
 						continue;
-					catpath.append(m_scheme.substr(c + 1, p - c));
+					catpath.append(m_scheme, c + 1, p - c);
 					break;
 				}
 			}

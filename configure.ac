@@ -593,57 +593,6 @@ AS_IF([${attribute_noreturn}],
 		[1],
 		[ Define to 1 if __attribute__ ((__noreturn__)) can be used])])
 
-# Check if std::unique works
-AC_MSG_CHECKING([whether std::unique seems to work])
-AC_ARG_ENABLE([unique],
-	[AS_HELP_STRING([--enable-unique],
-		[assume that unique works])],
-	[MV_ENABLE([unique_works], [unique-works])
-	MV_MSG_RESULT([${enableval}], [skipped test])],
-	[AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-#include <vector>
-#include <string>
-#include <cstdlib>
-#include <algorithm>
-		]],
-		[[
-const char *a[] = {
-	"1", "2", "2", "3", "3", "4", "4", "5", NULL,
-	"1", "1", "2", "3", "4", "5", "5", "5", NULL,
-	"1", "2", "3", "4", "5", NULL,
-	NULL };
-const char *b[]= {
-	"1", "2", "3", "4", "5", NULL };
-typedef std::vector<std::string>::size_type ind;
-for(ind i(0); a[i]; ++i) {
-	std::vector<std::string> t;
-	while(a[i])
-		t.push_back(a[i++]);
-	t.erase(std::unique(t.begin(), t.end()), t.end());
-	for(ind j(0); ; ++j) {
-		if(j == t.size()) {
-			if(b[j])
-				return 1;
-			break;
-		}
-		if(!b[j])
-			return 1;
-		if(t[j] != b[j])
-			return 1;
-	}
-}
-		]])],
-		[MV_MSG_RESULT([yes])
-		unique_works=true],
-		[MV_MSG_RESULT([no])
-		unique_works=false],
-		[MV_MSG_RESULT([assuming yes], [crosscompile guess])
-		unique_works=true])])
-AS_IF([${unique_works}],
-	[AC_DEFINE([UNIQUE_WORKS],
-		[1],
-		[ Define to 1 if std::unique() works reliable])])
-
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
 SQLITE_LIBS=""

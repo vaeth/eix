@@ -12,6 +12,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 
+#include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
@@ -147,8 +148,9 @@ Keywords::modify_keywords(string &result, const string &original, const string &
 			}
 		}
 	}
-	if(!modified)
+	if(likely(!modified))
 		return false;
-	result = join_vector(words);
+	result.clear();
+	join_to_string(result, words);
 	return true;
 }

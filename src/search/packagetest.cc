@@ -390,9 +390,9 @@ PackageTest::stringMatch(Package *pkg) const
 	}
 
 	if(field & SET) {
-		vector<string> setnames;
+		set<string> setnames;
 		portagesettings->get_setnames(setnames, pkg);
-		for(vector<string>::const_iterator it(setnames.begin());
+		for(set<string>::const_iterator it(setnames.begin());
 			likely(it != setnames.end()); ++it) {
 			if((*algorithm)(it->c_str(), NULL))
 				return true;

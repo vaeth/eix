@@ -35,7 +35,7 @@ get_map_from_cache(const char *file, map<string,string> &x)
 		string::size_type p(lbuf.find('='));
 		if(p == string::npos)
 			continue;
-		x[lbuf.substr(0, p)] = lbuf.substr(p + 1);
+		x[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
 	}
 	is.close();
 	return x.size();

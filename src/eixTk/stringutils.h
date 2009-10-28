@@ -18,9 +18,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#ifdef UNIQUE_WORKS
-#include <algorithm>
-#endif
 
 #include <cstddef>
 #include <cstdlib>
@@ -45,7 +42,7 @@ char *strndup(const char *s, size_t n);
 /** Spaces for split strings */
 extern const char *spaces;
 
-extern const std::string emptystring, one;
+extern const std::string emptystring, one, space;
 
 extern std::locale localeC;
 
@@ -131,15 +128,16 @@ trim(std::string *str, const char *delims = spaces)
 void escape_string(std::string &str, const char *at = spaces);
 
 /** Split a string into multiple strings.
- * @param vec Will contain the result. Actually the result is pushed_back;
- *            so if you have no new vec, you must usually call vec.clean()
- *            in advance.
+ * @param vec Will contain the result. Actually the result is pushed_back
+ *            or inserted, respectively. So if you have no new vec,
+ *            you must usually call vec.clear() in advance.
  * @param str Reference to the string that should be splitted.
  * @param at  Split at the occurrence of any these characters.
  * @param ignore_empty  Remove empty strings from the result.
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result. */
 void split_string(std::vector<std::string> &vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
+void split_string(std::set<std::string> &vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
 
 /** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.
@@ -156,53 +154,72 @@ split_string(const std::string &str, const bool handle_escape = false, const cha
 	return vec;
 }
 
+template<typename T>
+void push_back(std::vector<T> &v, const T &e)
+{ v.push_back(e); }
+
+template<typename T>
+void push_back(std::set<T> &s, const T &e)
+{ s.insert(e); }
+
 /** Join a string-vector.
  * @param glue glue between the elements. */
-std::string join_vector(const std::vector<std::string> &vec, const std::string &glue = " ");
+void join_to_string(std::string &s, const std::vector<std::string> &vec, const std::string &glue = space);
 
 /** Join a string-set
  * @param glue glue between the elements. */
-std::string join_set(const std::set<std::string> &vec, const std::string &glue = " ");
+void join_to_string(std::string &s, const std::set<std::string> &vec, const std::string &glue = space);
 
-/** Resolve a vector of -/+ keywords and store the result as a set.
- * If we find a -keyword we look for a (+)keyword. If one ore more (+)keywords
- * are found, they (and the -keyword) are removed.
+/** Join a string-vector or string-set
+ * @param glue glue between the elements. */
+template<typename T>
+inline std::string
+join_to_string(T &vec, const std::string &glue = space)
+{
+	std::string ret;
+	join_to_string(ret, vec, glue);
+	return ret;
+}
+
+/** Calls split_string() with a vector and then join_to_string().
+ * @param source string to split
+ * @param dest   result. May be identical to source. */
+inline void
+split_and_join(std::string &dest, const std::string &source, const std::string &glue = space, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+{
+	std::vector<std::string> vec;
+	split_string(vec, source, handle_escape, at, ignore_empty);
+	join_to_string(dest, vec, glue);
+}
+
+/** Calls split_string() with a vector and then join_to_string().
+ * @param source string to split
+ * @return result. */
+inline std::string
+split_and_join_string(const std::string &source, const std::string &glue = space, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+{
+	std::string r;
+	split_and_join(r, source, glue, handle_escape, at, ignore_empty);
+	return r;
+}
+
+/** Calls join_to_string() and then split_string() */
+template<typename Td, typename Ts>
+void
+join_and_split(Td &vec, const Ts &s, const std::string &glue = space, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+{
+	std::string t;
+	join_to_string(t, s, glue);
+	split_string(vec, t, handle_escape, at, ignore_empty);
+}
+
+/** Resolve a vector of -/+ keywords to a set of actually set keywords.
  * @param s will get influenced by the string; it is not cleared in advance!
  * @param obsolete_minus   If true do not treat -* special and keep -keyword.
  * @param warnminus        Set if there was -keyword which did not apply for
  * @param warnignore
  * @return true            if -* is contained */
 bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL);
-
-/** Sort and unique. Return true if there were double entries */
-#ifdef UNIQUE_WORKS
-
-template<typename T>
-bool sort_uniquify(T &v, bool vector_is_ignored = false)
-{
-	std::sort(v.begin(), v.end());
-	typename T::iterator i(std::unique(v.begin(), v.end()));
-	if(i == v.end())
-		return false;
-	if(! vector_is_ignored)
-		v.erase(i, v.end());
-	return true;
-}
-
-#else
-
-template<typename T>
-bool sort_uniquify(std::vector<T> &v, bool vector_is_ignored = false)
-{
-	std::set<T> s(v.begin(), v.end());
-	if(! vector_is_ignored) {
-		v.clear();
-		v.insert(v.end(), s.begin(), s.end());
-	}
-	return (s.size() != v.size());
-}
-
-#endif
 
 /// Add items from s to the end of d.
 template<typename T>

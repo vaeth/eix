@@ -168,11 +168,12 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 			*ok = false;
 		return;
 	}
-	str = join_vector(split_string(*s));
+	str.clear();
+	split_and_join(str, *s);
 	if(!check)
 		return;
-	if((str.find('`') != string::npos) ||
-		(str.find("$(") != string::npos))
+	if(unlikely((str.find('`') != string::npos) ||
+		(str.find("$(") != string::npos)))
 		*ok = false;
 }
 

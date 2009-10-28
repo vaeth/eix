@@ -14,7 +14,6 @@ Available options are
   -4  Enable separate tools
   -p  Use pedantic warnings (but no error on warnings) when modifying flags
   -u  Define NOT_FULL_USE
-  -U  Do not --enable-unique
   -s  With sqlite
   -S  Without sqlite
   -b  With bzlib
@@ -70,14 +69,13 @@ not_full_use=false
 pedantic=false
 extra_cache=true
 separate_all=true
-unique=true
 use_chown=false
 jarg='-j3'
 use_ccache=true
 configure_extra='--prefix=""'
 quickcheck=true
 OPTIND=1
-while getopts 'qE01234nepuUsSbBrQCc:j:?hH' opt
+while getopts 'qE01234nepusSbBrQCc:j:?hH' opt
 do
 case "${opt}" in
 	q) quiet=true;;
@@ -91,7 +89,6 @@ case "${opt}" in
 	e) keepenv=true;;
 	p) pedantic=true;;
 	u) not_full_use=true;;
-	U) unique=false;;
 	s) configure_extra="${configure_extra} --with-sqlite";;
 	S) configure_extra="${configure_extra} --without-sqlite";;
 	b) configure_extra="${configure_extra} --with-bzip2";;
@@ -110,7 +107,6 @@ then
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
-${unique} && configure_extra="${configure_extra} --enable-unique"
 ${extra_cache} && configure_extra="${configure_extra} --enable-extra-cache"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"

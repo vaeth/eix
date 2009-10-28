@@ -15,8 +15,7 @@
 
 #include <cstddef>
 
-/** Parse and represent a portage version-string. */
-class BasicVersion
+class BasicPart
 {
 public:
 	enum PartType
@@ -33,12 +32,37 @@ public:
 		primary,
 		first
 	};
-
 	// This must be larger than PartType elements and should be a power of 2.
 	static const std::string::size_type max_type = 32;
+	PartType parttype;
+	std::string partcontent;
 
-	typedef std::pair<PartType,std::string> Part;
+	BasicPart(PartType p) : parttype(p), partcontent()
+	{ }
 
+	BasicPart(PartType p, std::string s) : parttype(p), partcontent(s)
+	{ }
+
+	BasicPart(PartType p, std::string s, std::string::size_type start) : parttype(p), partcontent(s, start)
+	{ }
+
+	BasicPart(PartType p, std::string s, std::string::size_type start, std::string::size_type end) : parttype(p), partcontent(s, start, end)
+	{ }
+
+	BasicPart(PartType p, char c) : parttype(p), partcontent(1, c)
+	{ }
+
+	BasicPart(PartType p, const char *s) : parttype(p), partcontent(s)
+	{ }
+
+	static short compare(const BasicPart& left, const BasicPart& right);
+};
+
+
+/** Parse and represent a portage version-string. */
+class BasicVersion
+{
+public:
 	/// Parse the version-string pointed to by str. If str is NULL, no parsing is done.
 	BasicVersion(const char *str = NULL)
 	{ if(str != NULL) parseVersion(str); }
@@ -69,10 +93,9 @@ protected:
 	mutable std::string m_cached_full;
 
 	/// Splitted m_primsplit-version.
-	std::list< Part > m_parts;
-
-	static short compare(const Part& left, const Part& right);
+	std::list< BasicPart > m_parts;
 };
+
 
 // Short compare-stuff
 inline bool operator <  (const BasicVersion& left, const BasicVersion& right)

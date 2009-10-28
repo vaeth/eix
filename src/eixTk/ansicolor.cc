@@ -156,7 +156,7 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 	const string *pure_color;
 	string pure_color_save;
 	if(resize != string::npos) {
-		pure_color_save = color_name.substr(0,resize);
+		pure_color_save.assign(color_name, 0, resize);
 		pure_color = &pure_color_save;
 	}
 	else

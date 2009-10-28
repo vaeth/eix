@@ -9,8 +9,8 @@
 	- New cache method sqlite*.
 	- Fix name output on help-screens.
 	- Allow --nocolor/--force-colors also for eix-update (although this is
-	  a misnomer, since it is about the percentage status; the
-	  corresponding variables stay separated FORCE_PERCENTAGE/FORCE_COLORS)
+	  a misnomer, since it is about the percentage status; the variables
+	  stay separated with appropriate names: FORCE_PERCENTAGE/FORCE_COLORS)
 	- configure: More verbose output concerning options for flag mangling
 	     The rest are internal changes of the code:
 	- Change of #include style: Do not rely on implicit includes;
@@ -22,16 +22,24 @@
 	  likely()/unlikely() is only used with Boolean arguments
 	  (although gcc supports also int arguments, but do not rely on this).
 	- Make use of attribute unused/noreturn if supported.
+	- Avoid usage of std::unique() since usually it is better to use a
+	  set anyway. Moreover, since it is broken on some systems, the
+	  configure test can now be avoided.
 	- Other style changes: Prefer constructor argument over assignment,
 	  because it *may* be faster on some systems.
 	- Use clean comparison with NULL instead of Boolean test.
 	  This might be slightly slower on badly optimizing compilers but is
 	  cleaner and can be used with likely()/unlikely().
 	     "Hacks" for speed increase:
+	- Use string::string/assign/append with args instead of substr()
+	  where possible.
+	- Make BasicPart a class of its own with sane constructors, allowing
+	  avoidance of substr().
 	- Pass return by reference in split_string(). Actually, split_string()
-	  (and similarly resolve_plus_minus()) do not clean() the results now
+	  (and similarly resolve_plus_minus()) do not clear() the results now
 	  which is not only faster by itself but also sometimes avoids extra
 	  calls of push_backs() for the result.
+	- Similarly, let also join_to_string act on references and not clear()
 	- Make packagetree a std::map of categories; this also avoids the ugly
 	  fast_access()-hacks which Emil hates so much. Another advantage is
 	  that now only this tree is needed for BasicCache::readCategories.
@@ -39,7 +47,8 @@
 	  redundantly, or they have to be passed separately, e.g. for
 	  BasicCache::readCategory; currently, the latter happens.
 	- Use switch()es instead of subsequent tests in eixrc.cc
-	- Add only finished packages to a Category, not erasing afterwards.
+	- Add only finished packages to a Category instead of hackishly
+	  erasing afterwards if unfinished.
 
 *eix-0.18.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

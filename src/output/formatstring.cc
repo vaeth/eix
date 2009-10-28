@@ -19,6 +19,7 @@
 #include <portage/version.h>
 
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -66,14 +67,14 @@ MarkedList::CIPair MarkedList::equal_range_pkg(const Package &pkg) const
 /** Return pointer to (newly allocated) sorted vector of marked versions,
     or NULL. With nonversion argument, its content will decide whether
     the package was marked with a non-version argument */
-vector<BasicVersion> *MarkedList::get_marked_vector(const Package &pkg, bool *nonversion) const
+set<BasicVersion> *MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
 {
 	CIPair beg_end(equal_range_pkg(pkg));
 	if(nonversion != NULL)
 		*nonversion = false;
 	if(likely((beg_end.first == end()) || (beg_end.first == beg_end.second)))// no match
 		return NULL;
-	vector<BasicVersion> *ret(NULL);
+	set<BasicVersion> *ret(NULL);
 	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it) {
 		BasicVersion *p(it->second);
 		if(p == NULL) {
@@ -81,14 +82,12 @@ vector<BasicVersion> *MarkedList::get_marked_vector(const Package &pkg, bool *no
 				*nonversion = true;
 			continue;
 		}
-		if(ret)
-			ret->push_back(*p);
-		else
-			ret = new vector<BasicVersion>(1,*p);
+		if(ret == NULL)
+			ret = new set<BasicVersion>;
+		ret->insert(*p);
 	}
-	if(!ret)// No version was explicitly marked
+	if(likely(ret == NULL))// No version was explicitly marked
 		return NULL;
-	sort_uniquify(*ret);
 	return ret;
 }
 
@@ -114,13 +113,13 @@ bool MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 string MarkedList::getMarkedString(const Package &pkg) const
 {
 	bool nonversion;
-	vector<BasicVersion> *marked(get_marked_vector(pkg, &nonversion));
+	set<BasicVersion> *marked(get_marked_versions(pkg, &nonversion));
 	if(marked == NULL)
 		return nonversion ? "*" : "";
 	string ret;
 	if(nonversion)
 		ret = "*";
-	for(vector<BasicVersion>::const_iterator it(marked->begin());
+	for(set<BasicVersion>::const_iterator it(marked->begin());
 		likely(it != marked->end()); ++it ) {
 		if(!ret.empty())
 			ret.append(1, ' ');

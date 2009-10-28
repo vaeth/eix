@@ -209,7 +209,7 @@ CascadingProfile::readPackageKeywords(const string &line)
 		else {
 			if(s == 1)
 				return false;
-			name = line.substr(1, s);
+			name.assign(line, 1, s);
 		}
 		PKeywordMask *m(new PKeywordMask(name.c_str()));
 		bool ret(m_package_keywords.remove(m));
@@ -222,7 +222,7 @@ CascadingProfile::readPackageKeywords(const string &line)
 		if(s + 1 >= line.size())
 			return false;
 		PKeywordMask *m(new PKeywordMask(line.substr(0, s).c_str()));
-		m->keywords = line.substr(s + 1);
+		m->keywords.assign(line, s + 1, string::npos);
 		return m_package_keywords.add(m);
 	}
 }

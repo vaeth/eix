@@ -526,7 +526,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		if(unlikely(prop == Scanner::PROP_NONE)) {
 			throw ExBasic(_("Unknown property %r")) % name;
 		}
-		after_colon = name.substr(col + 1);
+		after_colon.assign(name, col + 1, string::npos);
 	}
 	if(unlikely((t == Scanner::VER) && (version_variables == NULL))) {
 		throw ExBasic(_("Property %r used outside version context")) % name;
@@ -582,7 +582,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 									get_versions_versorted(package, parse_variable(after_colon), versions);
 								}
 								else {
-									varsortname = after_colon.substr(col + 1);
+									varsortname.assign(after_colon, col + 1, string::npos);
 									parsed = &varsortname;
 									get_versions_slotsorted(package, parse_variable(varsortname), versions);
 								}

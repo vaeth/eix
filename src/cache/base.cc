@@ -117,8 +117,8 @@ void BasicCache::env_add_package(map<string,string> &env, const Package &package
 		mainversion = full;
 	}
 	else {
-		env["PR"]   = full.substr(ind + 1);
-		mainversion = full.substr(0, ind);
+		env["PR"].assign(full, ind + 1, string::npos);
+		mainversion.assign(full, 0, ind);
 	}
 	env["PV"]           = mainversion;
 	env["P"]            = package.name + "-" + mainversion;

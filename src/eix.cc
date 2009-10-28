@@ -847,7 +847,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 				likely(it != excludelist.end()); ++it) {
 				vector<string> excl;
 				pushback_lines(it->c_str(), &excl, false, true);
-				insert_list(excludes, split_string(join_vector(excl)));
+				join_and_split(excludes, excl);
 			}
 		}
 
@@ -865,7 +865,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 				m = new KeywordMask(i->c_str());
 			}
 			else {
-				string it(i->substr(0, n));
+				string it(*i, 0, n);
 				if(excludes.find(it) != excludes.end())
 					continue;
 				m = new KeywordMask(it.c_str());
@@ -874,7 +874,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 		catch(const ExBasic &e) {
 			portage_parse_error(filename, lines.begin(), i, e);
 		}
-		if(!m)
+		if(m == NULL)
 			continue;
 
 		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());
@@ -940,7 +940,7 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 						likely(it != excludelist.end()); ++it) {
 						vector<string> excl;
 						pushback_lines(it->c_str(), &excl, false, true);
-						insert_list(excludes, split_string(join_vector(excl)));
+						join_and_split(excludes, excl);
 					}
 				}
 				if(likely(excludes.find(name) == excludes.end())) {

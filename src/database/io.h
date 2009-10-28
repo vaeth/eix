@@ -47,7 +47,7 @@ namespace io {
 	inline static void
 	writeUChar(FILE *fp, UChar c)
 	{
-		if(fp) {
+		if(fp != NULL) {
 			if (fputc(c, fp) == EOF)
 				throw SysError(_("error while writing to database"));
 		}

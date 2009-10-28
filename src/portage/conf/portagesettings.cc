@@ -236,7 +236,8 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		vector<string> overlayvec;
 		split_string(overlayvec, ref, true);
 		add_overlay_vector(overlayvec, true, true);
-		ref = join_vector(overlayvec);
+		ref.clear();
+		ref = join_to_string(overlayvec);
 	}
 
 	profile = new CascadingProfile(this, init_world);
@@ -315,7 +316,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 				else {
 					string app;
 					if(sets_dirs[i].size() > 1)
-						app = sets_dirs[i].substr(1);
+						app.assign(sets_dirs[i], 1, string::npos);
 					vector<string>::size_type s(overlays.size());
 					if(s > 1)
 						sets_dirs.insert(sets_dirs.begin() + i, s - 1, emptystring);
@@ -360,7 +361,7 @@ PortageSettings::read_world_sets(const char *file)
 		likely(it != lines.end()); ++it) {
 		string s;
 		if((*it)[0] == '@')
-			s = it->substr(1);
+			s.assign(*it, 1, string::npos);
 		else
 			s = *it;
 		if(s.empty())
@@ -446,26 +447,25 @@ PortageSettings::calc_world_sets(Package *p)
 }
 
 void
-PortageSettings::get_setnames(vector<string> &names, const Package *p, bool also_nonlocal) const
+PortageSettings::get_setnames(set<string> &names, const Package *p, bool also_nonlocal) const
 {
 	names.clear();
 	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
 		for(std::vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
 			likely(sit != it->sets_indizes.end()); ++sit) {
-			names.push_back(set_names[*sit]);
+			names.insert(set_names[*sit]);
 		}
 	}
 	if(also_nonlocal && p->is_system_package())
-		names.push_back("system");
-	sort_uniquify(names);
+		names.insert("system");
 }
 
 std::string
 PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 {
-	vector<string> names;
+	set<string> names;
 	get_setnames(names, p, also_nonlocal);
-	return join_vector(names);
+	return join_to_string(names);
 }
 
 
@@ -571,25 +571,20 @@ PortageSettings::calc_allow_upgrade_slots(const Package *p) const
 	return upgrade_policy;
 }
 
-/** Return vector of all possible categories.
- * Reads categories on first call. */
-vector<string> *PortageSettings::getCategories()
+/** pushback categories from profiles to vec. Categories may be duplicate.
+    Result is not cashed, i.e. this should be called only once. */
+void PortageSettings::pushback_categories(vector<string> &vec)
 {
-	if(m_categories.empty()) {
-		/* Merge categories from /etc/portage/categories and
-		 * portdir/profile/categories */
-		pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &m_categories);
+	/* Merge categories from /etc/portage/categories and
+	 * portdir/profile/categories */
+	pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &vec);
 
-		pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &m_categories);
-		for(vector<string>::iterator i(overlays.begin());
-			likely(i != overlays.end()); ++i) {
-			pushback_lines((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
-				&m_categories);
-		}
-
-		sort_uniquify(m_categories);
+	pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &vec);
+	for(vector<string>::iterator i(overlays.begin());
+		likely(i != overlays.end()); ++i) {
+		pushback_lines((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
+			&vec);
 	}
-	return &m_categories;
 }
 
 void
@@ -708,14 +703,13 @@ bool PortageUserConfig::readKeywords() {
 	// Prepend a ~ to every token.
 	string fscked_arch;
 	{
-		vector<string> archvec;
+		set<string> archset;
 		for(set<string>::const_iterator it = m_settings->m_arch_set.begin(); it != m_settings->m_arch_set.end(); ++it) {
 			if(strchr("-~", (*it)[0]) == NULL) {
-				archvec.push_back(string("~") + *it);
+				archset.insert(string("~") + *it);
 			}
 		}
-		sort_uniquify(archvec);
-		fscked_arch = join_vector(archvec);
+		join_to_string(fscked_arch, archset);
 	}
 
 	vector<string> lines;
@@ -751,8 +745,8 @@ bool PortageUserConfig::readKeywords() {
 			name = lines[i];
 		}
 		else {
-			name = lines[i].substr(0, n);
-			content = lines[i].substr(n);
+			name.assign(lines[i], 0, n);
+			content.assign(lines[i], n, string::npos);
 		}
 		lines[i] = name;
 		map<string, KeywordsData>::iterator old(have.find(name));
@@ -834,7 +828,8 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 		string r;
 		char have_searched(key[0]);
 		if((have_searched == '-') || (have_searched == '~')) {
-			r = key.substr(1); s = &r;
+			r.assign(key, 1, string::npos);
+			s = &r;
 		}
 		else {
 			s = &key; have_searched = '\0';
@@ -994,8 +989,9 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			set<string> kv_set;
 			bool minusasterisk;
 			if(check & Keywords::RED_DOUBLE) {
-				vector<string> sorted(kv);
-				if(sort_uniquify(sorted, true))
+				set<string> sorted;
+				make_set<string>(sorted, kv);
+				if(kv.size() != sorted.size())
 					redundant |= Keywords::RED_DOUBLE;
 				bool minuskeyword(false);
 				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk, &minuskeyword, &(m_settings->m_accepted_keywords_set));

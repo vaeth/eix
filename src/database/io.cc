@@ -24,6 +24,7 @@
 #include <portage/packagetree.h>
 #include <portage/version.h>
 
+#include <list>
 #include <string>
 #include <vector>
 
@@ -35,11 +36,11 @@ using namespace std;
 io::OffsetType io::counter;
 
 namespace io {
-	/// Read a number with leading zero's
-	BasicVersion::Part read_Part(FILE *fp);
+/// Read a number with leading zero's
+static BasicPart read_Part(FILE *fp);
 
-	/// Write a number with leading zero's
-	void write_Part(FILE *fp, const BasicVersion::Part &n);
+/// Write a number with leading zero's
+static void write_Part(FILE *fp, const BasicPart &n);
 }
 
 /** Read a string */
@@ -93,24 +94,24 @@ io::read_hash_words(FILE *fp, const StringHash& hash)
 	return r;
 }
 
-BasicVersion::Part
+static BasicPart
 io::read_Part(FILE *fp)
 {
 	string::size_type len(io::read<string::size_type>(fp));
-	BasicVersion::PartType type(BasicVersion::PartType(len % BasicVersion::max_type));
-	len /= BasicVersion::max_type;
-	if(len > 0) {
+	BasicPart::PartType type(BasicPart::PartType(len % BasicPart::max_type));
+	len /= BasicPart::max_type;
+	if(len != 0) {
 		eix::auto_list<char> buf(new char[len + 1]);
 		buf.get()[len] = 0;
-		if(likely(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)) {
+		if(unlikely(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)) {
 			if (feof(fp))
 				throw ExBasic(_("error while reading from database: end of file"));
 			else
 				throw SysError(_("error while reading from database"));
 		}
-		return BasicVersion::Part(type, string(buf.get()));
+		return BasicPart(type, string(buf.get()));
 	}
-	return BasicVersion::Part(type, "");
+	return BasicPart(type);
 }
 
 void
@@ -134,7 +135,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	v->full_keywords   = io::read_hash_words(fp, hdr.keywords_hash);
 
 	// read primary version part
-	for(list<BasicVersion::Part>::size_type i(io::read<list<BasicVersion::Part>::size_type>(fp));
+	for(list<BasicPart>::size_type i(io::read<list<BasicPart>::size_type>(fp));
 		likely(i != 0); --i) {
 		v->m_parts.push_back(io::read_Part(fp));
 	}
@@ -148,19 +149,20 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	return v;
 }
 
-void
-io::write_Part(FILE *fp, const BasicVersion::Part &n)
+static void
+io::write_Part(FILE *fp, const BasicPart &n)
 {
-	io::write<string::size_type>(fp, n.second.size()*BasicVersion::max_type + string::size_type(n.first));
-	if(n.second.size() > 0) {
-		if(fp) {
-			if(unlikely(fwrite(static_cast<const void *>(n.second.c_str()),
-						sizeof(char), n.second.size(), fp) != n.second.size())) {
+	const string &content = n.partcontent;
+	io::write<string::size_type>(fp, content.size()*BasicPart::max_type + string::size_type(n.parttype));
+	if(!content.empty()) {
+		if(fp != NULL) {
+			if(unlikely(fwrite(static_cast<const void *>(content.c_str()),
+						sizeof(char), content.size(), fp) != content.size())) {
 				throw SysError(_("error while writing to database"));
 			}
 		}
 		else
-			counter += n.second.size();
+			counter += content.size();
 	}
 }
 
@@ -176,9 +178,9 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	io::write_hash_words(fp, hdr.keywords_hash, v->get_full_keywords());
 
 	// write m_primsplit
-	io::write<list<BasicVersion::Part>::size_type>(fp, v->m_parts.size());
+	io::write<list<BasicPart>::size_type>(fp, v->m_parts.size());
 
-	for(list<BasicVersion::Part>::const_iterator it(v->m_parts.begin());
+	for(list<BasicPart>::const_iterator it(v->m_parts.begin());
 		likely(it != v->m_parts.end()); ++it) {
 		io::write_Part(fp, *it);
 	}

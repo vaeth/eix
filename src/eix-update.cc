@@ -439,7 +439,8 @@ run_eix_update(int argc, char *argv[])
 			}
 		}
 		if(unlikely(modified)) {
-			ref = join_vector(overlayvec);
+			ref.clear();
+			join_to_string(ref, overlayvec);
 #ifdef HAVE_SETENV
 			setenv("PORTDIR_OVERLAY", ref.c_str(), 1);
 #else
@@ -507,7 +508,9 @@ static void
 update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels) throw(ExBasic)
 {
 	DBHeader dbheader;
-	PackageTree package_tree(*portage_settings.getCategories());
+	vector<string> categories;
+	portage_settings.pushback_categories(categories);
+	PackageTree package_tree(categories);
 
 	dbheader.world_sets = *(portage_settings.get_world_sets());
 

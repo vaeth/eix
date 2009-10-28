@@ -192,7 +192,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		m_error_callback(eix::format(_("%r not of the form package/category-version")) % catarg);
 		return;
 	}
-	string name_ver(catarg.substr(pos + 1));
+	string name_ver(catarg, pos + 1);
 	catarg.resize(pos);
 	// Does the catarg match category?
 	// Currently, we do not add non-matching categories with this method.
