@@ -546,7 +546,7 @@ if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
 	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
 	return 1;
 		]])])
-AC_RUN_IFELSE([BUILDIN_EXPECT_PROGRAM],
+AC_RUN_IFELSE([BUILTIN_EXPECT_PROGRAM],
 	[MV_MSG_RESULT([yes])
 	bi_expect_works=true],
 	[MV_MSG_RESULT([no])
@@ -564,7 +564,10 @@ AS_IF([${bi_expect_works}],
 # Check if __attribute__ ((__unused__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-int dummy(int i __attribute__ ((__unused__))) { return 0; }
+static int dummy(int i);
+static int
+dummy(int i __attribute__ ((__unused__)))
+{ return 0; }
 		]], [[
 return dummy(1);
 		]])],
@@ -580,9 +583,13 @@ AS_IF([${attribute_unused}],
 # Check if __attribute__ ((__noreturn__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__noreturn__)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-int dummy(int i __attribute__ ((__noreturn__))) { return 0; }
+#include <cstdlib>
+static void dummy() __attribute__ ((__noreturn__));
+static void
+dummy()
+{ exit(0); }
 		]], [[
-return dummy(1);
+dummy()
 		]])],
 		[MV_MSG_RESULT([yes])
 		attribute_noreturn=true],
