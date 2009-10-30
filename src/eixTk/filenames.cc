@@ -69,7 +69,7 @@ string normalize_path(const char *path, bool resolve)
 	cerr << "out PATH_MAX";
 #endif
 	cerr << ")\n";
-	string s = original_normalize_path(path,resolve);
+	string s(original_normalize_path(path,resolve));
 	cerr << "Debug: ... returned with: \"" << s << "\"\n";
 	return s;
 }
@@ -113,7 +113,7 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 #endif
 			// Let normalized="" act as normalized=NULL:
 			if(likely(normalized != NULL)) {
-				if(unlikely(*normalized = '\0')) {
+				if(unlikely(*normalized == '\0')) {
 					free(normalized);
 					normalized = NULL;
 				}
