@@ -29,8 +29,6 @@
 
 using namespace std;
 
-const unsigned int PercentStatus::hundred;
-
 bool
 scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bool sorted)
 {

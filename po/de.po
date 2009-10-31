@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-31 11:05+0100\n"
+"POT-Creation-Date: 2009-10-31 19:15+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1142,7 +1142,7 @@ msgstr ""
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:511 src/eix-diff.cc:294 src/eix-update.cc:326
+#: src/eix.cc:511 src/eix-diff.cc:294 src/eix-update.cc:327
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
@@ -1284,12 +1284,12 @@ msgstr "Fehlendes Cachefile."
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
 
-#: src/eix-update.cc:102
+#: src/eix-update.cc:103
 #, c-format
 msgid "%s must be writable by group portage."
 msgstr "%s muss für die Grupper portage beschreibbar sein."
 
-#: src/eix-update.cc:110
+#: src/eix-update.cc:111
 msgid ""
 "You must be in the portage group to update the database.\n"
 "Set SKIP_PERMISSION_TESTS=true to skip this test (e.g. if you use NSS/LDAP)."
@@ -1298,7 +1298,7 @@ msgstr ""
 "Mit SKIP_PERMISSION_TESTS=true kann dieser Test umgangen werden\n"
 "(beispielsweise wenn NSS/LDAP benutzt wird)."
 
-#: src/eix-update.cc:124
+#: src/eix-update.cc:125
 msgid ""
 "User 'root' is needed to initially generate the database.\n"
 "Alternatively, you can generate a dummy cachefile %r\n"
@@ -1310,15 +1310,15 @@ msgstr ""
 "mit Schreibberechtigungen für die Gruppe Portage anlegen.\n"
 "Mit SKIP_PERMISSION_TESTS=true kann dieser Test umgangen werden."
 
-#: src/eix-update.cc:146
+#: src/eix-update.cc:147
 msgid "warning: cannot change ownership of cachefile"
 msgstr "Warnung: Benutzer des Cachefiles kann nicht geändert werden"
 
-#: src/eix-update.cc:149
+#: src/eix-update.cc:150
 msgid "warning: cannot change permissions for cachefile"
 msgstr "Warnung: Rechte des Cachefiles können nicht geändert werden"
 
-#: src/eix-update.cc:160
+#: src/eix-update.cc:161
 #, c-format
 msgid ""
 "Usage: %s [options]\n"
@@ -1371,80 +1371,103 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-update.cc:269
+#: src/eix-update.cc:270
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD\n"
 msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein\n"
 
-#: src/eix-update.cc:286
+#: src/eix-update.cc:287
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
 
-#: src/eix-update.cc:291
+#: src/eix-update.cc:292
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 
-#: src/eix-update.cc:296
+#: src/eix-update.cc:297
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:362
+#: src/eix-update.cc:363
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:465
+#: src/eix-update.cc:466
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:480
+#: src/eix-update.cc:481
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:486
+#: src/eix-update.cc:487
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:526
+#: src/eix-update.cc:527
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:538
+#: src/eix-update.cc:539
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:543
-msgid "     Reading "
-msgstr "     Lese "
+#: src/eix-update.cc:546
+msgid "     Reading Packages .. "
+msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:551
-msgid "aborted"
+#: src/eix-update.cc:550 src/eix-update.cc:572
+msgid "Finished"
+msgstr "Fertig"
+
+#: src/eix-update.cc:550
+msgid "Aborted"
 msgstr "Abbruch"
 
+#: src/eix-update.cc:555
+#, c-format
+msgid "     Reading category %s|%s (%s%%)"
+msgstr "     Lese Category %s|%s (%s%%)"
+
+#: src/eix-update.cc:560
+#, c-format
+msgid "     Reading %s categories of packages .. "
+msgstr "     Paketdaten aus %s Categorien werden gelesen... "
+
 #: src/eix-update.cc:568
+#, c-format
+msgid ": %s .."
+msgstr ": %s ..."
+
+#: src/eix-update.cc:572
+msgid " Finished"
+msgstr " Fertig"
+
+#: src/eix-update.cc:578
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:579
+#: src/eix-update.cc:589
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:583
+#: src/eix-update.cc:593
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:586
+#: src/eix-update.cc:596
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:599
+#: src/eix-update.cc:609
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -1722,7 +1745,7 @@ msgstr "getpwuid() sagt, dass meine uid unbekannt ist."
 msgid "getgrnam(%r) failed: %s"
 msgstr "getgrnam(%r) schlug fehl: %s"
 
-#: src/eixTk/utils.cc:90
+#: src/eixTk/utils.cc:88
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
@@ -4789,7 +4812,7 @@ msgid ""
 "\tassuming value 'all-installed' instead."
 msgstr ""
 "%s hat unbekannten Wert %r\n"
-"\tNehme statt dessen 'all-installed'."
+"\tAls Ersatz wird 'all-installed' benutzt."
 
 #: src/eixrc/eixrc.cc:777
 msgid "was locally changed to:"

@@ -17,10 +17,11 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/percentage.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
-#include <eixTk/utils.h>
 #include <eixTk/unused.h>
+#include <eixTk/utils.h>
 #include <eixrc/eixrc.h>
 #include <eixrc/global.h>
 #include <main/main.h>
@@ -540,28 +541,37 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			% overlay.label
 			% cache->getPathHumanReadable()
 			% cache->getType());
-		reading_percent_status = new PercentStatus(_("     Reading "), use_percentage);
-		if(cache->can_read_multiple_categories())
-		{
-			reading_percent_status->start(1);
+		reading_percent_status = new PercentStatus;
+		if(cache->can_read_multiple_categories()) {
+			reading_percent_status->init(_("     Reading Packages .. "));
 			cache->setErrorCallback(error_callback);
-			if(cache->readCategories(&package_tree))
-				++(*reading_percent_status);
-			else
-				reading_percent_status->reprint(_("aborted"));
+			reading_percent_status->finish(
+				likely(cache->readCategories(&package_tree)) ?
+				_("Finished") : _("Aborted"));
 		}
-		else
-		{
-			reading_percent_status->start(package_tree.size());
+		else {
+			if(use_percentage) {
+				reading_percent_status->init(
+					_("     Reading category %s|%s (%s%%)"),
+					package_tree.size());
+			}
+			else {
+				reading_percent_status->init(eix::format(
+					_("     Reading %s categories of packages .. ")) %
+					package_tree.size());
+			}
 
 			/* iterator through categories */
 			for(PackageTree::const_iterator ci(package_tree.begin());
 				unlikely(ci != package_tree.end()); ++ci) {
 				// ignore return value of bad categories
+				reading_percent_status->next(eix::format(_(": %s ..")) % ci->first);
 				cache->readCategory(ci->first.c_str(), *(ci->second));
-				++(*reading_percent_status);
 			}
+			reading_percent_status->finish(use_percentage ?
+				_(" Finished") :_("Finished"));
 		}
+		delete reading_percent_status;
 	}
 
 	/* Now apply all masks .. */

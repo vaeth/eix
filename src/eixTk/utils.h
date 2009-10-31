@@ -15,7 +15,6 @@
 #include <vector>
 
 #include <cstddef>
-#include <cstdio>
 
 /** scandir which even works on poor man's systems.
     We keep the original type for the callback function
@@ -46,70 +45,6 @@ bool pushback_files(const std::string &dir_path, std::vector<std::string> &into,
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
 void join_map(std::map<std::string,std::string> *append_to, std::map<std::string,std::string>::iterator it, std::map<std::string,std::string>::iterator it_end);
-
-typedef unsigned int PercentU; /// The type for %u
-
-/** A percent status for stdout.
- * Only shows a status */
-class PercentStatus {
-	protected:
-		std::string m_prefix;
-		static const unsigned int hundred = 100;
-		unsigned int m_max, m_run;
-		bool m_verbose;
-		bool on_start;
-	public:
-		void reprint(const char *special = NULL, bool back = true) const
-		{
-			if(back && m_verbose)
-				fputs("\b\b\b\b", stdout);
-			if(special)
-				puts(special);
-			else if(on_start) {
-				 if(m_verbose)
-					fputs("  0%", stdout);
-			}
-			else if(m_run >= m_max)
-				puts("100%");
-			else if(m_verbose)
-				printf("%3u%%", PercentU((hundred * m_run) / m_max));
-			fflush(stdout);
-		}
-
-		void interprint_start()
-		{
-			if(!m_verbose) {
-				m_verbose = true;
-				reprint(NULL, false);
-				m_verbose = false;
-			}
-			reprint("", false);
-		}
-
-		void interprint_end(const char *special = NULL)
-		{ fputs(m_prefix.c_str(), stdout); reprint(special, false); }
-
-		void init(unsigned int max)
-		{ m_max = max; m_run = 0; on_start = true; }
-
-		PercentStatus(const char *prefix, bool verbose) :
-			m_prefix(prefix), m_verbose(verbose)
-		{ init(0); }
-
-		/** Start status.
-		 * @param max number of steps you want to do. */
-		void start(unsigned int max)
-		{ init(max); interprint_end(); }
-
-		/** Print next step. */
-		void operator ++()
-		{
-			on_start = false;
-			if(m_run < m_max)
-				++m_run;
-			reprint(NULL, true);
-		}
-};
 
 /* Print version of eix to stdout. */
 void dump_version(int exit_code = -1);

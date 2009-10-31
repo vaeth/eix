@@ -133,6 +133,18 @@ cache/port2_1_2/port2_1_2.h
 
 nodist_extra_cache_src=
 
+percentage_src = \
+eixTk/percentage.cc \
+eixTk/percentage.h
+
+nodist_percentage_src =
+
+printxml_src = \
+output/print-xml.cc \
+output/print-xml.h
+
+nodist_printxml_src =
+
 
 if EXTRA_CACHE
 extra_cache = portage-2.1.2
@@ -196,9 +208,8 @@ nodist_extra_common_src =
 
 # The search-tool for our database
 eix_only_ldadd =
-eix_only_src = eix.cc cli.cc cli.h \
-	output/print-xml.cc output/print-xml.h $(search_src)
-nodist_eix_only_src = $(nodist_search_src)
+eix_only_src = eix.cc cli.cc cli.h $(printxml_src) $(search_src)
+nodist_eix_only_src = $(nodist_printxml_src) $(nodist_search_src)
 extra_eix_only_src =
 nodist_extra_eix_only_src =
 
@@ -218,8 +229,8 @@ nodist_extra_output_only_src =
 
 # The update-tool for our database
 update_only_ldadd = @SQLITE_LIBS@
-update_only_src = eix-update.cc $(cache_src) $(add_cache_src)
-nodist_update_only_src = $(nodist_cache_src) $(nodist_add_cache_src)
+update_only_src = eix-update.cc $(percentage_src) $(cache_src) $(add_cache_src)
+nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src) $(nodist_add_cache_src)
 extra_update_only_src = $(extra_cache_src)
 nodist_extra_update_only_src =
 

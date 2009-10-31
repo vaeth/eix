@@ -19,6 +19,7 @@
 	  The new systematic is: Unless you specify *-file/*-set, both are
 	  admissible, and --world* implies @system, but --selected* does not.
 	- New cache method sqlite*.
+	- eix-update: improve percentage output.
 	- Allow --nocolor/--force-colors also for eix-update (although this is
 	  a misnomer, since it is about the percentage status; the variables
 	  stay separated with appropriate names: FORCE_PERCENTAGE/FORCE_COLORS)
@@ -44,6 +45,7 @@
 	- Use clean comparison with NULL instead of Boolean test.
 	  This might be slightly slower on badly optimizing compilers but is
 	  cleaner and can be used with likely()/unlikely().
+	- Fix memory leak with percentage output
 	     "Hacks" for speed increase:
 	- Use string::string/assign/append with args instead of substr()
 	  where possible.
