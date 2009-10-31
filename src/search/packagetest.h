@@ -13,6 +13,7 @@
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/inttypes.h>
+#include <eixTk/likely.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/package.h>
@@ -85,28 +86,7 @@ class PackageTest {
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);
 
-		~PackageTest() {
-			if(overlay_list) {
-				delete overlay_list;
-				overlay_list = NULL;
-			}
-			if(overlay_only_list) {
-				delete overlay_only_list;
-				overlay_only_list = NULL;
-			}
-			if(in_overlay_inst_list) {
-				delete in_overlay_inst_list;
-				in_overlay_inst_list = NULL;
-			}
-			if(from_overlay_inst_list) {
-				delete from_overlay_inst_list;
-				from_overlay_inst_list = NULL;
-			}
-			if(from_foreign_overlay_inst_list) {
-				delete from_foreign_overlay_inst_list;
-				from_foreign_overlay_inst_list = NULL;
-			}
-		}
+		~PackageTest();
 
 		void setAlgorithm(BaseAlgorithm *p)
 		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
@@ -121,11 +101,24 @@ class PackageTest {
 		void finalize()
 		{ calculateNeeds(); }
 
-		void Installed(bool multi = false)
-		{ installed = true; multi_installed = multi; }
+		// The constructor of the class *must* set the least restrictive choice.
+		// Since --selected --world must act like --selected, the less restrictive
+		// choice (here --selected) must change the variable unconditionally,
+		// and so the default set in the constructor must have been opposite.
+		// We thus name the variables such that the less restrictive version
+		// corresponds to false/NULL and let the constructor set all to false/NULL.
 
-		void Slotted(bool multi = false)
-		{ slotted = true; multi_slot = multi; }
+		void Installed()
+		{ installed = true; }
+
+		void MultiInstalled()
+		{ installed = multi_installed = true; }
+
+		void Slotted()
+		{ slotted = true; }
+
+		void MultiSlotted()
+		{ slotted = multi_slot = true; }
 
 		void Upgrade(LocalMode local_mode)
 		{  upgrade = true; upgrade_local_mode = local_mode; }
@@ -154,11 +147,23 @@ class PackageTest {
 		void Binary()
 		{ binary = true; }
 
-		void World(bool match_also_sets = false)
-		{ world = true; world_both = match_also_sets; }
+		void WorldAll()
+		{ world = true; }
+
+		void WorldFile()
+		{ world = world_only_file = true; }
+
+		void SelectedAll()
+		{ world = world_only_selected = true; }
+
+		void SelectedFile()
+		{ world = world_only_selected = world_only_file = true; }
 
 		void WorldSet()
 		{ worldset = true; }
+
+		void SelectedSet()
+		{ worldset = worldset_only_selected = true; }
 
 		void StabilityDefault(Package *p) const
 		{ stability->set_stability(*p); }
@@ -171,35 +176,35 @@ class PackageTest {
 
 		std::set<Version::Overlay> *OverlayList()
 		{
-			if(!overlay_list)
+			if(likely(overlay_list == NULL))
 				overlay_list = new std::set<Version::Overlay>;
 			return overlay_list;
 		}
 
 		std::set<Version::Overlay> *OverlayOnlyList()
 		{
-			if(!overlay_only_list)
+			if(likely(overlay_only_list == NULL))
 				overlay_only_list = new std::set<Version::Overlay>;
 			return overlay_only_list;
 		}
 
 		std::set<Version::Overlay> *InOverlayInstList()
 		{
-			if(!in_overlay_inst_list)
+			if(likely(in_overlay_inst_list == NULL))
 				in_overlay_inst_list = new std::set<Version::Overlay>;
 			return in_overlay_inst_list;
 		}
 
 		std::set<Version::Overlay> *FromOverlayInstList()
 		{
-			if(!from_overlay_inst_list)
+			if(likely(from_overlay_inst_list == NULL))
 				from_overlay_inst_list = new std::set<Version::Overlay>;
 			return from_overlay_inst_list;
 		}
 
 		std::vector<std::string> *FromForeignOverlayInstList()
 		{
-			if(!from_foreign_overlay_inst_list)
+			if(likely(from_foreign_overlay_inst_list == NULL))
 				from_foreign_overlay_inst_list = new std::vector<std::string>;
 			return from_foreign_overlay_inst_list;
 		}
@@ -244,10 +249,12 @@ class PackageTest {
 		std::auto_ptr<BaseAlgorithm> algorithm;
 
 		/** Other flags for tests */
-		bool installed, multi_installed, invert;
-		bool slotted, multi_slot;
-		bool overlay, obsolete;
-		bool upgrade, binary, world, world_both, worldset;
+		bool invert,
+			overlay, obsolete, upgrade, binary,
+			installed, multi_installed,
+			slotted, multi_slot,
+			world, world_only_file, world_only_selected,
+			worldset, worldset_only_selected;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;

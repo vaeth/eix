@@ -99,11 +99,11 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 			// Check local options {{{
 			case 'I': test->Installed();
 				  break;
-			case 'i': test->Installed(true);
+			case 'i': test->MultiInstalled();
 				  break;
 			case '1': test->Slotted();
 				  break;
-			case '2': test->Slotted(true);
+			case '2': test->MultiSlotted();
 				  break;
 			case 'u': test->Upgrade(eixrc.getLocalMode("UPGRADE_LOCAL_MODE"));
 				  break;
@@ -121,11 +121,17 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 				  break;
 			case O_BINARY: test->Binary();
 				  break;
-			case O_WORLD: test->World();
+			case O_SELECTED_FILE: test->SelectedFile();
 				  break;
-			case O_WORLD_ALL: test->World(true);
+			case O_SELECTED_SET: test->SelectedSet();
+				  break;
+			case O_SELECTED_ALL: test->SelectedAll();
+				  break;
+			case O_WORLD_FILE: test->WorldFile();
 				  break;
 			case O_WORLD_SET: test->WorldSet();
+				  break;
+			case O_WORLD_ALL: test->WorldAll();
 				  break;
 			case O_SYSTEM_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_SYSTEM);
 				  break;

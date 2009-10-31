@@ -336,16 +336,30 @@ If several of these options are combined in one test, it is the same version
 which must satisfy all.
 .TP
 .BR --world
-Only match world packages.
-Contrary to "emerge @world" this does not include packages contained
-in a package set in world.
-To include the latter use B<--world-all>.
+Only match @world packages.
+This is analogous to "emerge @world", i.e. it includes not only packages in
+the world file but also in world sets and the @system set.
+If you do not want to have all included, choose the appropriate alternative
+option.
 .TP
-.BR --world-all
-Only match world packages or of a package set in world.
+.BR --world-file
+This only matches packages from the world file or from the @system set.
 .TP
 .BR --world-set
-Only match packages in a package set in world.
+This only matches packages from world_set or from the @system set.
+.TP
+.BR --selected
+Only match @selected packages.
+This is analogous to "emerge @selected", i.e. it includes not only packages in
+the world file but also in world_sets (if you have @system contained in the
+world_sets file, then the behaviour is of course identical to B<--world>).
+If you do not want to have both included, choose the appropriate alternative option.
+.TP
+.BR --selected-file
+This only matches packages from the world file.
+.TP
+.BR --selected-set
+This only matches packages from world_set.
 .TP
 .BR --binary
 Only match packages with a binary file (*.tbz2) in PKGDIR.

@@ -82,13 +82,40 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	obsolete = world = worldset = overlay = installed = invert = upgrade =
-		binary = slotted = dup_versions = dup_packages = false;
+	invert = overlay = obsolete = upgrade = binary =
+		installed = multi_installed =
+		slotted = multi_slot =
+		world = world_only_selected = world_only_file =
+		worldset = worldset_only_selected =
+		dup_versions = dup_packages = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
 	test_installed = INS_NONE;
 	test_instability =
 	test_stability_default = test_stability_local = test_stability_nonlocal = STABLE_NONE;
+}
+
+PackageTest::~PackageTest() {
+	if(overlay_list != NULL) {
+		delete overlay_list;
+		overlay_list = NULL;
+	}
+	if(overlay_only_list != NULL) {
+		delete overlay_only_list;
+		overlay_only_list = NULL;
+	}
+	if(in_overlay_inst_list != NULL) {
+		delete in_overlay_inst_list;
+		in_overlay_inst_list = NULL;
+	}
+	if(from_overlay_inst_list != NULL) {
+		delete from_overlay_inst_list;
+		from_overlay_inst_list = NULL;
+	}
+	if(from_foreign_overlay_inst_list != NULL) {
+		delete from_foreign_overlay_inst_list;
+		from_foreign_overlay_inst_list = NULL;
+	}
 }
 
 void
@@ -959,15 +986,23 @@ PackageTest::match(PackageReader *pkg) const
 			return invert;
 	}
 
-	if(unlikely(world || worldset)) { // --world, --world-all, --world-set
+	if(unlikely(world || worldset)) {
+		// --world, --world-all, --world-set
+		// --selected, --selected-all, --selected-set
 		get_p();
 		StabilityDefault(p);
 		if(world && !p->is_world_package()) {
-			if((!world_both) || !p->is_world_sets_package())
-				return invert;
+			if(world_only_file || !p->is_world_sets_package()) {
+				if(world_only_selected || !p->is_system_package()) {
+					return invert;
+				}
+			}
 		}
-		if(worldset && !p->is_world_sets_package())
-			return invert;
+		if(worldset && !p->is_world_sets_package()) {
+			if(worldset_only_selected || !p->is_system_package()) {
+				return invert;
+			}
+		}
 	}
 
 	// all tests succeeded:

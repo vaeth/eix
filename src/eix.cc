@@ -125,13 +125,16 @@ dump_help(int exit_code)
 			"    --stable[+-]          Match packages with a stable version\n"
 			"    --testing[+-]         Match packages with a testing or stable version.\n"
 			"    --non-masked[+-]      Match packages with a non-masked version.\n"
-			"    --system[+-]          Match system packages.\n"
+			"    --system[+-]          Match @system packages.\n"
 			"    --installed-unstable  Match packages with a non-stable installed version.\n"
 			"    --installed-testing   Match packages with a testing    installed version.\n"
 			"    --installed-masked    Match packages with a masked     installed version.\n"
-			"    --world               Match world packages.\n"
-			"    --world-all           Match packages of world or of a world set.\n"
-			"    --world-set           Match packages of a world set.\n"
+			"    --world-file          Match packages of world file or @system.\n"
+			"    --world-set           Match packages of a world set or @system.\n"
+			"    --world               Match packages of @world (file, set or @system).\n"
+			"    --selected-file       Match packages of world file.\n"
+			"    --selected-set        Match packages of a world set.\n"
+			"    --selected            Match packages of @selected (world file or set).\n"
 			"    --binary              Match packages with *.tbz2 files.\n"
 			"    -O, --overlay                        Match packages from overlays.\n"
 			"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
@@ -297,9 +300,12 @@ static struct Option long_options[] = {
 	Option("testing",       O_TESTING_DEFAULT),
 	Option("non-masked",    O_NONMASKED_DEFAULT),
 	Option("binary",        O_BINARY),
-	Option("world",         O_WORLD),
-	Option("world-all",     O_WORLD_ALL),
+	Option("world-file",    O_WORLD_FILE),
 	Option("world-set",     O_WORLD_SET),
+	Option("world",         O_WORLD_ALL),
+	Option("selected-file", O_SELECTED_FILE),
+	Option("selected-set",  O_SELECTED_SET),
+	Option("selected",      O_SELECTED_ALL),
 	Option("system",        O_SYSTEM_DEFAULT),
 	Option("stable+",       O_STABLE_LOCAL),
 	Option("testing+",      O_TESTING_LOCAL),
