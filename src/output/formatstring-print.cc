@@ -872,7 +872,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			}
 			break;
 		case Scanner::VER_VERSIONKEYWORDS:
-			if(likely(version_variables->isinst))
+			if(likely(!version_variables->isinst))
 				return get_version_keywords(package, version_variables->version());
 			break;
 		case Scanner::VER_ISBESTUPGRADESLOT:
