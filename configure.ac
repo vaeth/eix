@@ -459,11 +459,16 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 	[break],
 	[AC_MSG_ERROR([At least one of strtoul/strtoll/atoi is needed ..])])
 
-# Well define the following if we don't have one:
+# We define the following if we don't have it:
 AC_CHECK_FUNCS([strndup])
 
 # We use these optionally:
 AC_CHECK_FUNCS([canonicalize_file_name realpath vfork setenv])
+
+# We use getuid() on systems without geteuid():
+AC_CHECK_FUNCS([geteuid getuid],
+	[break],
+	[AC_MSG_ERROR([At least one of geteuid/getuid is needed ..])])
 
 # Optional header files:
 AC_CHECK_HEADERS([sys/param.h])

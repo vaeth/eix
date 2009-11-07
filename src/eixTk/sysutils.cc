@@ -8,7 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "sysutils.h"
-
+#include <config.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -23,8 +23,19 @@
 #include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 using namespace std;
+
+uid_t
+my_geteuid()
+{
+#ifdef HAVE_GETEUID
+	return geteuid();
+#else
+	return getuid();
+#endif
+}
 
 static bool
 is_on_list (char *const *list, const char *member)
@@ -42,8 +53,8 @@ static bool
 check_user_in_grp_struct(struct group *grp) throw(ExBasic)
 {
 	struct passwd *pwd;
-	if((pwd = getpwuid(getuid())) == 0)
-		throw ExBasic(_("getpwuid() tells me that my uid is not known to this system."));
+	if((pwd = getpwuid(my_geteuid())) == 0)
+		throw ExBasic(_("getpwuid() tells me that my effective uid is not known to this system."));
 	if(is_on_list(grp->gr_mem, pwd->pw_name))
 		return true;
 	return false;
@@ -134,7 +145,7 @@ get_mtime(const char *file)
 const char *
 date_conv(const char *dateFormat, time_t mydate)
 {
-	const int max_datelen=256;
+	const int max_datelen = 256;
 	static char buffer[max_datelen];
 	string old_lcall = setlocale(LC_ALL, NULL);
 	setlocale(LC_ALL, "");

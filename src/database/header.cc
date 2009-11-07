@@ -32,7 +32,7 @@ const DBHeader::OverlayTest
 	DBHeader::OVTEST_ALL;
 const DBHeader::DBVersion DBHeader::current;
 
-/** Get string for key from directory-table. */
+/** Get overlay for key from table. */
 const OverlayIdent &
 DBHeader::getOverlay(Version::Overlay key) const
 {

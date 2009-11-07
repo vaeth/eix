@@ -67,18 +67,18 @@ Check 'eixTk/stringutils\.h' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e i
 Check 'eixTk/unused\.h' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED' -e 'ATTRIBUTE_NORETURN'
 
 Check 'iostream' -e '[^a-z]cout[^a-z]' -e '[^a-z]cerr[^a-z]' -e '[^a-z]cin[^a-z]'
-Check 'map' -e '[^_]map<'
+Check 'map' -e '[^_]map<' -e '^map<'
 Check 'set' -e '[^_]set<'
-Check 'string' -e '[^_]string[^>"]'
+Check 'string' -e '[^_]string[^>".,;a-z ]' -e 'std::string' -e '[^_]string [a-zA-Z_0-9]* *[;=(]' -e '[a-z]<string[,>]' -e 'const string '
 Check 'vector' -e '[^_]vector<'
 
 Check 'cstddef' -e NULL
-Check 'cstdio' -e fopen -e fclose -e '[^A-Z_]FILE[^A-Z_]' -e 'printf[ (]' -e fseek
+Check 'cstdio' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf(' -e fseek
 Check 'cstdlib' -e '[^_a-z]exit[^_]' -e 'free[^a-z]' -e malloc -e getenv -e strtol
 Check 'cstring' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strcase -e strerror -e memset -e memcpy
 Check 'ctime' -e time_t
 Check 'fcntl\.h' -e '[^a-z_.]open(' -e '[^a-z_.]close(' -e '[^a-z_.]open (' -e '[^a-z_.]close ('
-Check 'unistd\.h' -e '[^a-z]_exit' -e setuid
+Check 'unistd\.h' -e '[^a-z]_exit' -e setuid -e getuid
 Check 'sys/types\.h' -e uid_t -e gid_t -e "size_t[^y]" -e off_t
 Check 'sys/stat\.h' -e fchown -e fchmod -e 'stat[^a-z]'
 Check 'sys/mman\.h' -e mmap

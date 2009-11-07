@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include <cstddef>
 #include <cstdio>
 
 class DBHeader;

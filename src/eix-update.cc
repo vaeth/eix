@@ -71,7 +71,7 @@ class Permissions {
 			if(likely(know_root))
 				return am_root;
 			know_root = true;
-			am_root = (getuid() == 0);
+			am_root = (my_geteuid() == 0);
 			return am_root;
 		}
 

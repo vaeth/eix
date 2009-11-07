@@ -22,6 +22,8 @@ bool is_dir(const char *file);
 bool is_file(const char *file);
 bool is_pure_file(const char *file);
 
+uid_t my_geteuid();
+
 /** Return true if the current user is in the group_name. */
 bool user_in_group(const char *group_name) throw(ExBasic);
 

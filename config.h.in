@@ -64,8 +64,14 @@
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 
+/* Define to 1 if you have the `geteuid' function. */
+#undef HAVE_GETEUID
+
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
+
+/* Define to 1 if you have the `getuid' function. */
+#undef HAVE_GETUID
 
 /* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV

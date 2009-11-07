@@ -13,7 +13,6 @@
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
 
-#include <string>
 #include <vector>
 
 class Category;

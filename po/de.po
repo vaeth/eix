@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://eix.sourceforge.net\n"
-"POT-Creation-Date: 2009-10-31 19:15+0100\n"
+"POT-Creation-Date: 2009-11-07 19:54+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1648,15 +1648,15 @@ msgstr ""
 "Cache-Methode sqlite ist nicht einkompiliert.\n"
 "Rekompilieren Sie eix mit ./configure-Option --with-sqlite"
 
-#: src/database/io.cc:55 src/database/io.cc:108 src/database/io.h:40
+#: src/database/io.cc:55 src/database/io.cc:108 src/database/io.h:41
 msgid "error while reading from database: end of file"
 msgstr "Fehler beim Lesen der Datenbank: Zu frühes Fileende"
 
-#: src/database/io.cc:57 src/database/io.cc:110 src/database/io.h:42
+#: src/database/io.cc:57 src/database/io.cc:110 src/database/io.h:43
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:69 src/database/io.cc:161 src/database/io.h:52
+#: src/database/io.cc:69 src/database/io.cc:161 src/database/io.h:53
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
@@ -1737,11 +1737,11 @@ msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 
-#: src/eixTk/sysutils.cc:46
-msgid "getpwuid() tells me that my uid is not known to this system."
-msgstr "getpwuid() sagt, dass meine uid unbekannt ist."
+#: src/eixTk/sysutils.cc:57
+msgid "getpwuid() tells me that my effective uid is not known to this system."
+msgstr "getpwuid() liefert, dass die EUID dem System unbekannt sei."
 
-#: src/eixTk/sysutils.cc:58
+#: src/eixTk/sysutils.cc:69
 msgid "getgrnam(%r) failed: %s"
 msgstr "getgrnam(%r) schlug fehl: %s"
 

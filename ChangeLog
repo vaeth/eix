@@ -26,6 +26,7 @@
 	- Fix name output on --help.
 	- Fix: Now --world-file --world really behaves like --world-file as it
 	  should be according to the logic.
+	- Fix: Check effective uid instead of uid.
 	- configure: More verbose output concerning options for flag mangling
 	     The rest are internal changes of the code:
 	- Change of #include style: Do not rely on implicit includes;

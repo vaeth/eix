@@ -57,7 +57,7 @@ class DBHeader {
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */
 
-		/** Get overlay for key from directory-table. */
+		/** Get overlay for key from table. */
 		const OverlayIdent& getOverlay(Version::Overlay key) const;
 
 		/** Add overlay to directory-table and return key. */
