@@ -135,7 +135,7 @@ then
 		configure_extra="${configure_extra} --enable-strong-warnings"
 	else
 		configure_extra="${configure_extra} --enable-warnings"
-		CXXFLAGS="${CXXFLAGS} -Werror"
+		#CXXFLAGS="${CXXFLAGS} -Werror"
 	fi
 fi
 Info "CXXFLAGS=${CXXFLAGS}

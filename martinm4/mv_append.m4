@@ -9,9 +9,10 @@ dnl Append [text] to VAR, inserting  [sep] if VAR and [text] are nonempty.
 dnl If [sep] is empty, a space is assumed as [sep].
 AC_DEFUN([MV_APPEND],
 	[MV_IF_NONEMPTY([$2],
-		[MV_IF_EMPTY([${$1}],
-			[$1="$2"],
-			[$1="${$1}m4_ifval([$3], [$3], [ ])$2"])])])
+		[AS_VAR_IF([$1], [],
+			[AS_VAR_SET([$1], ["$2"])],
+			[AS_VAR_APPEND([$1],
+				["m4_ifval([$3], [$3], [ ])$2"])])])])
 dnl
 dnl MV_PREPEND([VAR], [text], [sep])
 dnl Prepend [text] to VAR, inserting  [sep] if VAR and [text] are nonempty.
@@ -19,5 +20,6 @@ dnl If [sep] is empty, a space is assumed as [sep].
 AC_DEFUN([MV_PREPEND],
 	[MV_IF_NONEMPTY([$2],
 		[MV_IF_EMPTY([${$1}],
-			[$1="$2"],
-			[$1="$2m4_ifval([$3], [$3], [ ])${$1}"])])])
+			[AS_VAR_SET([$1], ["$2"])],
+			[AS_VAR_SET([$1],
+				["$2m4_ifval([$3], [$3], [ ])${$1}"])])])])

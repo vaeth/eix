@@ -43,8 +43,8 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.19.0], [http://eix.sourceforge.net])
-AC_PREREQ([2.61])
+AC_INIT([eix], [0.19.0], [http://sourceforge.net/projects/eix/], [eix], [http://eix.sourceforge.net/])
+AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_FILES([
@@ -73,16 +73,16 @@ AM_MAINTAINER_MODE()
 # Although this hack uses undocumented behaviour, it is not that hackish:
 # It only sets a variable, so I suppose that the worst thing which can
 # happen is that it is ignored...
-AS_IF([test x"${enable_silent_rules}" != x"no"],
+AS_VAR_IF([enable_silent_rules], [no],
+	[],
 	[AS_CASE(["${enable_dependency_tracking}"],
 		[yes], [],
 		[no], [AC_MSG_WARN([Ignoring --disable-dependency-tracking as it interferes with silent rules])],
 		[AC_MSG_NOTICE([Trying to enable dependency tracking for consistency with silent rules])])
-	enable_dependency_tracking=yes])
+	AS_VAR_SET([enable_dependency_tracking], [yes])])
 
 AM_INIT_AUTOMAKE()
-m4_ifdef([AM_SILENT_RULES],
-	[AM_SILENT_RULES([yes])])
+AM_SILENT_RULES([yes])
 
 AC_LANG_CPLUSPLUS()
 AC_PROG_CXX()
@@ -92,59 +92,59 @@ AC_PROG_CXX()
 AC_ARG_ENABLE([debugging],
 	[AS_HELP_STRING([--enable-debugging],
 		[set flags appropriate for debugging])],
-	[MV_ENABLE([debugging], [debugging])
-	cmt_debugging="on request"],
-	[debugging=false
-	cmt_debugging=""])
+	[MV_ENABLE([debugging])
+	AS_VAR_SET([cmt_debugging], ["on request"])],
+	[AS_VAR_SET([debugging], [false])
+	AS_VAR_SET([cmt_debugging], [])])
 
 AC_ARG_ENABLE([security],
 	[AS_HELP_STRING([--disable-security],
 		[do not append security relevant options to flags])],
-	[MV_ENABLE([security], [security]),
-	security=''
-	cmt_security="on request"],
-	[security=true
-	cmt_security="default"])
+	[MV_ENABLE([security])
+	AS_VAR_SET([security], [])
+	AS_VAR_SET([cmt_security], ["on request"])],
+	[AS_VAR_SET([security], [true])
+	AS_VAR_SET([cmt_security], ["default"])])
 
 AC_ARG_ENABLE([optimization],
 	[AS_HELP_STRING([--disable-optimization],
 		[do not append optimization flags])],
-	[MV_ENABLE([optimization], [optimization])
-	cmt_optimization="on request"],
-	[optimization=true
-	cmt_optimization="default"])
+	[MV_ENABLE([optimization])
+	AS_VAR_SET([cmt_optimization], ["on request"])],
+	[AS_VAR_SET([optimization], [true])
+	AS_VAR_SET([cmt_optimization], ["default"])])
 
 AC_ARG_ENABLE([strong_optimization],
 	[AS_HELP_STRING([--enable-strong-optimization],
 		[use also optimization flags which might not work on broken compilers])],
-	[MV_ENABLE([strong_optimization], [strong_optimization])
-	cmt_strong_optimization="on request"],
-	[strong_optimization=false
-	cmt_strong_optimization=""])
+	[MV_ENABLE([strong-optimization])
+	AS_VAR_SET([cmt_strong_optimization], ["on request"])],
+	[AS_VAR_SET([strong_optimization], [false])
+	AS_VAR_SET([cmt_strong_optimization], [])])
 
 AC_ARG_ENABLE([warnings],
 	[AS_HELP_STRING([--enable-warnings],
 		[append warning/testing flags; might produce worse code])],
-	[MV_ENABLE([warnings], [warnings])
-	cmt_warnings="on request"],
-	[warnings=false
-	cmt_warnings=""])
+	[MV_ENABLE([warnings])
+	AS_VAR_SET([cmt_warnings], ["on request"])],
+	[AS_VAR_SET([warnings], [false])
+	AS_VAR_SET([cmt_warnings], [])])
 
 AC_ARG_ENABLE([strong_warnings],
 	[AS_HELP_STRING([--enable-strong-warnings],
 		[append flags to get lots of mostly unimportant warnings])],
-	[MV_ENABLE([strong_warnings], [strong_warnings])
-	cmt_strong_warnings="on request"],
-	[strong_warnings=false
-	cmt_strong_warnings=""])
+	[MV_ENABLE([strong-warnings])
+	AS_VAR_SET([cmt_strong_warnings], ["on request"])],
+	[AS_VAR_SET([strong_warnings], [false])
+	AS_VAR_SET([cmt_strong_warnings], [])])
 
 AC_ARG_ENABLE([quickcheck],
 	[AS_HELP_STRING([--enable-quickcheck],
 		[do not check whether flags work when adding them])],
-	[MV_ENABLE([quickcheck], [quickcheck])
-	cmt_quickcheck="on request"],
-	[quickcheck=false
-	cmt_quickcheck=""])
+	[MV_ENABLE([quickcheck])
+	AS_VAR_SET([cmt_quickcheck], ["on request"])],
+	[AS_VAR_SET([quickcheck], [false])
+	AS_VAR_SET([cmt_quickcheck], [])])
 
 # Some implicit dependencies of these options.
 # We do this here explicitly and output the results
@@ -154,17 +154,17 @@ MV_MSG_RESULT_BIN([${debugging}], [${cmt_debugging}])
 
 AC_MSG_CHECKING([whether strong optimization options should be used])
 AS_IF([${debugging}],
-	[strong_optimization=false
-	cmt_strong_optimization="disabled by debugging"])
+	[AS_VAR_SET([strong_optimization], [false])
+	AS_VAR_SET([cmt_strong_optimization], ["disabled by debugging"])])
 MV_MSG_RESULT_BIN([${strong_optimization}], [${cmt_strong_optimization}])
 
 AC_MSG_CHECKING([whether optimization options should be used])
 AS_IF([${strong_optimization}],
-	[optimization=true
-	cmt_optimization="forced by strong optimization"])
+	[AS_VAR_SET([optimization], [true])
+	AS_VAR_SET([cmt_optimization], ["forced by strong optimization"])])
 AS_IF([${debugging}],
-	[optimization=false
-	cmt_optimization="disabled by debugging"])
+	[AS_VAR_SET([optimization], [false])
+	AS_VAR_SET([cmt_optimization], ["disabled by debugging"])])
 MV_MSG_RESULT_BIN([${optimization}], [${cmt_optimization}])
 
 AC_MSG_CHECKING([whether strong warning options should be used])
@@ -172,14 +172,14 @@ MV_MSG_RESULT_BIN([${strong_warnings}], [${cmt_strong_warnings}])
 
 AC_MSG_CHECKING([whether warning options should be used])
 AS_IF([${strong_warnings}],
-	[warnings=true
-	cmt_warnings="forced by strong warnings"])
+	[AS_VAR_SET([warnings], [true])
+	AS_VAR_SET([cmt_warnings], ["forced by strong warnings"])])
 MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
 
 AC_MSG_CHECKING([whether security options should be used])
 AS_IF([${warnings}],
-	[security=true
-	cmt_security="forced by warnings"])
+	[AS_VAR_SET([security], [true])
+	AS_VAR_SET([cmt_security], ["forced by warnings"])])
 MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
 
 AC_MSG_CHECKING([whether options should not be tested individually])
@@ -187,11 +187,11 @@ MV_MSG_RESULT_BIN([${quickcheck}], [${cmt_quickcheck}])
 
 # Now start the flag mangling:
 AS_IF([${debugging}],
-	[CFLAGS=""
-	CXXFLAGS=""
-	LDFLAGS=""])
-mycxxflagstext="${CXXFLAGS}"
-myldflagstext="${LDFLAGS}"
+	[AS_VAR_SET([CFLAGS], [])
+	AS_VAR_SET([CXXFLAGS], [])
+	AS_VAR_SET([LDFLAGS], [])])
+AS_VAR_COPY([mycxxflagstext], [CXXFLAGS])
+AS_VAR_COPY([myldflagstext], [LDFLAGS])
 
 # Note that the (potential) resetting of the flags was necessary *before*
 # (potentially) modifying flags for system extensions.
@@ -202,14 +202,11 @@ AC_USE_SYSTEM_EXTENSIONS()
 # Only now the flag mangling can continue:
 #
 # At first, we must calculate our [fatal-flags] and [mode] arguments
-mycxxfatal=""
-myldfatal=""
+AS_VAR_SET([mycxxfatal], [])
+AS_VAR_SET([myldfatal], [])
 AS_IF([${quickcheck}],
-	[quicktrue=true
-	quickfalse=false],
-	[quicktrue=""
-	quickfalse=""
-	MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
+	[],
+	[MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
 			-Werror \
 		])
 	MV_ADDFLAGS([myldfatal], [LDFLAGS], [LINK], [ \
@@ -217,13 +214,13 @@ AS_IF([${quickcheck}],
 		])])
 
 # Now the actual testing:
-mycxxadd=""
-myldadd=""
+AS_VAR_SET([mycxxadd], [])
+AS_VAR_SET([myldadd], [])
 AS_IF([${debugging}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-g \
 			-ggdb3 \
-		], [${mycxxfatal}], [${quicktrue}])])
+		], [${mycxxfatal}], [${quickcheck}])])
 AS_IF([${optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fomit-frame-pointer \
@@ -245,7 +242,7 @@ AS_IF([${optimization}],
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${mycxxfatal}], [${quicktrue}])
+		], [${mycxxfatal}], [${quickcheck}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
@@ -254,7 +251,7 @@ AS_IF([${optimization}],
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
-		], [${myldfatal}], [${quicktrue}])])
+		], [${myldfatal}], [${quickcheck}])])
 AS_IF([${strong_optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fweb \
@@ -263,13 +260,12 @@ AS_IF([${strong_optimization}],
 			-floop-interchange \
 			-floop-strip-mine \
 			-floop-block \
-		], [${mycxxfatal}], [${quicktrue}])
+		], [${mycxxfatal}], [${quickcheck}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-O9 \
-		], [${myldfatal}], [${quicktrue}])])
+		], [${myldfatal}], [${quickcheck}])])
 AS_IF([${warnings}],
-	[security=true
-	MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fdirectives-only \
 			-funsigned-char \
 			-fPIC \
@@ -314,7 +310,7 @@ AS_IF([${warnings}],
 			-Wsign-promo \
 			-Wmissing-declarations \
 			-Wmissing-format-attribute \
-		], [${mycxxfatal}], [${quicktrue}])
+		], [${mycxxfatal}], [${quickcheck}])
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
 dnl			-Wstrict-prototypes \
@@ -329,13 +325,13 @@ dnl			-Wpointer-sign \
 			-Wl,--no-undefined-version \
 			-Wl,--warn-common \
 			-Wl,--fatal-warnings \
-		], [${myldfatal}], [${quicktrue}])])
+		], [${myldfatal}], [${quickcheck}])])
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${mycxxfatal}], [${quicktrue}])])
+		], [${mycxxfatal}], [${quickcheck}])])
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
 dnl			-Wunsafe-loop-optimizations \
@@ -348,11 +344,11 @@ AS_IF([${security}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
-		], [${mycxxfatal}], [${quicktrue}])
+		], [${mycxxfatal}], [${quickcheck}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-z,now \
 			-Wl,-z,relro \
-		], [${myldfatal}], [${quicktrue}])])
+		], [${myldfatal}], [${quickcheck}])])
 
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${mycxxadd}])
@@ -369,8 +365,8 @@ AS_IF([${quickcheck}],
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
 		[MV_MSG_RESULT([yes])],
 		[MV_MSG_RESULT([no])
-		echo "export CXXFLAGS='${CXXFLAGS}'"
-		echo "export LDFLAGS='${LDFLAGS}'"
+		AS_ECHO(["export CXXFLAGS='${CXXFLAGS}'"])
+		AS_ECHO(["export LDFLAGS='${LDFLAGS}'"])
 		AC_MSG_ERROR([Compiling/linking a simple program failed. Try --disable-quickcheck])])])
 
 AC_PROG_LN_S()
@@ -391,11 +387,11 @@ AC_MSG_CHECKING([for null-device])
 AC_ARG_WITH([dev-null],
 	[AS_HELP_STRING([--with-null-device=STR],
 		[null device of the system, usually /dev/null])],
-	[DEV_NULL="${withval}"],
-	[DEV_NULL=""])
-MV_IF_EMPTY([${DEV_NULL}],
-	[DEV_NULL="/dev/null"])
-MV_MSG_RESULT([${DEV_NULL}])
+	[AS_VAR_SET([DEV_NULL], ["${withval}"])],
+	[AS_VAR_SET([DEV_NULL], [])])
+AS_VAR_IF([DEV_NULL], [],
+	[AS_VAR_SET([DEV_NULL], ["/dev/null"])])
+MV_MSG_RESULT_VAR([DEV_NULL])
 AC_DEFINE_UNQUOTED([DEV_NULL],
 	["${DEV_NULL}"],
 	[ Null device of the system])
@@ -405,8 +401,8 @@ AC_SUBST([DEV_NULL])
 AC_ARG_ENABLE([separate_binaries],
 	[AS_HELP_STRING([--enable-separate-binaries],
 		[create a separate binary for each program])],
-	[MV_ENABLE([separate_binaries], [separate-binaries])],
-	[separate_binaries=false])
+	[MV_ENABLE([separate_binaries])],
+	[AS_VAR_SET([separate_binaries], [false])])
 AM_CONDITIONAL([SEPARATE_BINARIES],
 	[${separate_binaries}])
 
@@ -414,8 +410,8 @@ AM_CONDITIONAL([SEPARATE_BINARIES],
 AC_ARG_ENABLE([separate_update],
 	[AS_HELP_STRING([--enable-separate-update],
 		[create a separate eix-update binary])],
-	[MV_ENABLE([separate_update], [separate-update])],
-	[separate_update=false])
+	[MV_ENABLE([separate-update])],
+	[AS_VAR_SET([separate_update], [false])])
 AS_IF([${separate_binaries}],
 	[separate_update=true])
 AM_CONDITIONAL([SEPARATE_UPDATE],
@@ -425,8 +421,8 @@ AM_CONDITIONAL([SEPARATE_UPDATE],
 AC_ARG_ENABLE([separate_tools],
 	[AS_HELP_STRING([--enable-separate-tools],
 		[create separate binaries for tools (versionsort)])],
-	[MV_ENABLE([separate_tools], [separate-tools])],
-	[separate_tools=false])
+	[MV_ENABLE([separate-tools])],
+	[AS_VAR_SET([separate_tools], [false])])
 AM_CONDITIONAL([SEPARATE_TOOLS],
 	[${separate_tools}])
 
@@ -434,8 +430,8 @@ AM_CONDITIONAL([SEPARATE_TOOLS],
 AC_ARG_ENABLE([obsolete_symlinks],
 	[AS_HELP_STRING([--enable-obsolete-symlinks],
 		[create a separate binary for each program])],
-	[MV_ENABLE([obsolete_symlinks], [obsolete-symlinks])],
-	[obsolete_symlinks=false])
+	[MV_ENABLE([obsolete-symlinks])],
+	[AS_VAR_SET([obsolete_symlinks], [false])])
 AM_CONDITIONAL(OBSOLETE_SYMLINKS,
 	[${obsolete_symlinks}])
 
@@ -443,8 +439,8 @@ AM_CONDITIONAL(OBSOLETE_SYMLINKS,
 AC_ARG_ENABLE([obsolete_reminder],
 	[AS_HELP_STRING([--enable-obsolete-reminder],
 		[create a separate binary for each program])],
-	[MV_ENABLE([obsolete_reminder], [obsolete-reminder])],
-	[obsolete_reminder=false])
+	[MV_ENABLE([obsolete-reminder])],
+	[AS_VAR_SET([obsolete_reminder], [false])])
 AM_CONDITIONAL([OBSOLETE_REMINDER],
 	[${obsolete_reminder}])
 
@@ -494,29 +490,31 @@ AC_ARG_WITH([bzip2],
 	[AS_HELP_STRING([--with-bzip2],
 		[Use libbz2 (required for detecting installed overlays)])],
 	[AS_CASE(["${withval}"],
-		[no], [use_bzlib=false
+		[no], [AS_VAR_SET([use_bzlib], [false])
 			MV_MSG_RESULT([no], [on request])],
-		[use_bzlib=true])],
-	[use_bzlib=""])
-AS_IF([test x"${use_bzlib}" != x"false"],
-	[BZLIB_LIBS="-lbz2"
-	myoldlibs="${LIBS}"
-	LIBS="${LIBS} ${BZLIB_LIBS}"
+		[AS_VAR_SET([use_bzlib], [true])])],
+	[AS_VAR_SET([use_bzlib], [])])
+AS_VAR_IF([use_bzlib], [false],
+	[],
+	[AS_VAR_SET([BZLIB_LIBS], ["-lbz2"])
+	AS_VAR_COPY([myoldlibs], [LIBS])
+	MV_APPEND([LIBS], ["${BZLIB_LIBS}"])
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <bzlib.h>
 		]], [[
-BZ2_bzopen("dummy","rb");
+BZ2_bzopen("dummy", "rb");
 		]])],
-		[MV_IF_EMPTY([${use_bzlib}],
+		[AS_VAR_IF([use_bzlib], [],
 			[MV_MSG_RESULT([yes], [autodetected])],
 			[MV_MSG_RESULT([yes], [on request])])
-		use_bzlib=true],
+		AS_VAR_SET([use_bzlib], [true])],
 		[MV_MSG_RESULT([no], [autodetected])
-		MV_IF_NONEMPTY([${use_bzlib}],
+		AS_VAR_IF([use_bzlib], [],
+			[],
 			[AC_MSG_ERROR([bzip2 requested but libbz2 is unusable])])
-		use_bzlib=false
-		BZLIB_LIBS=""])
-	LIBS="${myoldlibs}"])
+		AS_VAR_SET([use_bzlib], [false])
+		AS_VAR_SET([BZLIB_LIBS], [])])
+	AS_VAR_COPY([LIBS], [myoldlibs])])
 AS_IF([${use_bzlib}],
 	[AC_DEFINE([USE_BZLIB],
 		[1],
@@ -528,17 +526,17 @@ AC_ARG_WITH([rst],
 	[AS_HELP_STRING([--with-rst],
 		[Use rst2html.py to document cache file format in html])],
 	[AS_CASE(["${withval}"],
-		[no], [rst=false],
-		[rst=true])],
-	[rst=false])
+		[no], [AS_VAR_SET([rst], [false])],
+		[AS_VAR_SET([rst], [true])])],
+	[AS_VAR_SET([rst], [false])])
 AM_CONDITIONAL([USE_RST], [${rst}])
 
 # Use obsoleted cache method?
 AC_ARG_ENABLE([extra_cache],
 	[AS_HELP_STRING([--enable-extra-cache],
 		[enable unsupported cache method portage-2.1])],
-	[MV_ENABLE([extra_cache], [extra-cache])],
-	[extra_cache=false])
+	[MV_ENABLE([extra_cache])],
+	[AS_VAR_SET([extra_cache], [false])])
 AS_IF([${extra_cache}],
 	[AC_MSG_WARN([Unsupported cache method portage-2.1 enabled on request])])
 AM_CONDITIONAL([EXTRA_CACHE],
@@ -553,14 +551,14 @@ if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
 		]])])
 AC_RUN_IFELSE([BUILTIN_EXPECT_PROGRAM],
 	[MV_MSG_RESULT([yes])
-	bi_expect_works=true],
+	AS_VAR_SET([bi_expect_works], [true])],
 	[MV_MSG_RESULT([no])
-	bi_expect_works=false],
+	AS_VAR_SET([bi_expect_works], [false])],
 	[AC_LINK_IFELSE([BUILTIN_EXPECT_PROGRAM],
 		[MV_MSG_RESULT([yes], [crosscompile guess])
-		bi_expect_works = true],
+		AS_VAR_SET([bi_expect_works], [true])],
 		[MV_MSG_RESULT([no], [crosscompile guess])
-		bi_expect_works = false])])
+		AS_VAR_SET([bi_expect_works], [false])])])
 AS_IF([${bi_expect_works}],
 	[AC_DEFINE([HAVE___BUILTIN_EXPECT],
 		[1],
@@ -577,9 +575,9 @@ dummy(int i __attribute__ ((__unused__)))
 return dummy(1);
 		]])],
 		[MV_MSG_RESULT([yes])
-		attribute_unused=true],
+		AS_VAR_SET([attribute_unused], [true])],
 		[MV_MSG_RESULT([no])
-		attribute_unused=false])
+		AS_VAR_SET([attribute_unused], [false])])
 AS_IF([${attribute_unused}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
 		[1],
@@ -597,9 +595,9 @@ dummy()
 dummy()
 		]])],
 		[MV_MSG_RESULT([yes])
-		attribute_noreturn=true],
+		AS_VAR_SET([attribute_noreturn], [true])],
 		[MV_MSG_RESULT([no])
-		attribute_noreturn=false])
+		AS_VAR_SET([attribute_noreturn], [false])])
 AS_IF([${attribute_noreturn}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
 		[1],
@@ -607,7 +605,7 @@ AS_IF([${attribute_noreturn}],
 
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
-SQLITE_LIBS=""
+AS_VAR_SET([SQLITE_LIBS], [])
 AC_ARG_WITH([sqlite],
 	[AS_HELP_STRING([--with-sqlite],
 		[Compile in support for cache method sqlite])],
@@ -615,18 +613,18 @@ AC_ARG_WITH([sqlite],
 		[no], [MV_MSG_RESULT([no], [on request])],
 		[MV_MSG_RESULT([yes], [on request])
 		AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
-			[SQLITE_LIBS="`pkg-config --libs sqlite3`"])
+			[AS_VAR_SET([SQLITE_LIBS], ["`pkg-config --libs sqlite3`"])])
 		# If pkg-config is not available or failed, we use a default
-		MV_IF_EMPTY([${SQLITE_LIBS}],
+		AS_VAR_IF([SQLITE_LIBS], [],
 			[AC_MSG_WARN([ignoring pkg-config and using -lsqlite3])
-			SQLITE_LIBS="-lsqlite3"])])],
+			AS_VAR_SET([SQLITE_LIBS], ["-lsqlite3"])])])],
 	[# If autodetection of sqlite is necessary, we rely on pkg-config
 	AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
-		[SQLITE_LIBS="`eval pkg-config --libs sqlite3 2>${DEV_NULL}`"])
-	MV_IF_EMPTY([${SQLITE_LIBS}],
+		[AS_VAR_SET([SQLITE_LIBS], ["`eval pkg-config --libs sqlite3 2>${DEV_NULL}`"])])
+	AS_VAR_IF([SQLITE_LIBS], [],
 		[MV_MSG_RESULT([no], [autodetected])],
 		[MV_MSG_RESULT([yes], [autodetected])])])
-MV_IF_NONEMPTY([${SQLITE_LIBS}],
+AS_VAR_IF([SQLITE_LIBS], [],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
 		[ Define to 1 if cache method sqlite is wanted])])
@@ -636,11 +634,11 @@ AC_MSG_CHECKING([PORTDIR_CACHE_METHOD default])
 AC_ARG_WITH([portdir-cache-method],
 	[AS_HELP_STRING([--with-portdir-cache-method=STR],
 		[default PORTDIR_CACHE_METHOD])],
-	[PORTDIR_CACHE_METHOD="${withval}"
-	description="on request"],
-	[PORTDIR_CACHE_METHOD="metadata-flat"
-	description="default"])
-MV_MSG_RESULT([${PORTDIR_CACHE_METHOD}], [${description}])
+	[AS_VAR_COPY([PORTDIR_CACHE_METHOD], [withval])
+	AS_VAR_SET([description], ["on request"])],
+	[AS_VAR_SET([PORTDIR_CACHE_METHOD], ["metadata-flat"])
+	AS_VAR_SET([description], ["default"])])
+MV_MSG_RESULT_VAR([PORTDIR_CACHE_METHOD], ["${description}"])
 AC_DEFINE_UNQUOTED([PORTDIR_CACHE_METHOD],
 	["${PORTDIR_CACHE_METHOD}"],
 	[ Default PORTDIR_CACHE_METHOD])
@@ -650,10 +648,10 @@ AC_MSG_CHECKING([EPREFIX default])
 AC_ARG_WITH([eprefix-default],
 	[AS_HELP_STRING([--with-eprefix-default=STR],
 		[default EPREFIX])],
-	[EPREFIX_DEFAULT="${withval}"],
-	[EPREFIX_DEFAULT="`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])
+	[AS_VAR_COPY([EPREFIX_DEFAULT], [withval])],
+	[AS_VAR_SET([EPREFIX_DEFAULT], ["`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])])
 MV_PREFIX(EPREFIX_DEFAULT)
-MV_MSG_RESULT_VAR([${EPREFIX_DEFAULT}])
+MV_MSG_RESULT_VAR([EPREFIX_DEFAULT])
 AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
 	["${EPREFIX_DEFAULT}"],
 	[ Default EPREFIX])
@@ -663,12 +661,10 @@ AC_MSG_CHECKING([EIX_PREFIX default])
 AC_ARG_WITH([eix-prefix-default],
 	[AS_HELP_STRING([--with-eix-prefix-default=STR],
 		[default EIX_PREFIX])],
-	[EIX_PREFIX_DEFAULT="${withval}"
-		AS_IF([test x"${EIX_PREFIX_DEFAULT}" = x"/"],
-			[EIX_PREFIX_DEFAULT=""])],
-	[EIX_PREFIX_DEFAULT=""])
+	[AS_VAR_COPY([EIX_PREFIX_DEFAULT], [withval])],
+	[AS_VAR_SET([EIX_PREFIX_DEFAULT], [])])
 MV_PREFIX(EPREFIX_DEFAULT)
-MV_MSG_RESULT_VAR([${EIX_PREFIX_DEFAULT}])
+MV_MSG_RESULT_VAR([EIX_PREFIX_DEFAULT])
 AC_DEFINE_UNQUOTED([EIX_PREFIX_DEFAULT],
 	["${EIX_PREFIX_DEFAULT}"],
 	[ Default EIX_PREFIX])
@@ -678,12 +674,10 @@ AC_MSG_CHECKING([ROOT default])
 AC_ARG_WITH([root-default],
 	[AS_HELP_STRING([--with-root-default=STR],
 		[default ROOT])],
-	[ROOT_DEFAULT="${withval}"
-		AS_IF([test x"${ROOT_DEFAULT}" = x"/"],
-			[ROOT_DEFAULT=""])],
-	[ROOT_DEFAULT=""])
+	[AS_VAR_COPY([ROOT_DEFAULT], [withval])],
+	[AS_VAR_SET([ROOT_DEFAULT], [])])
 MV_PREFIX(ROOT_DEFAULT)
-MV_MSG_RESULT_VAR([${ROOT_DEFAULT}])
+MV_MSG_RESULT_VAR([ROOT_DEFAULT])
 AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	["${ROOT_DEFAULT}"],
 	[ Default ROOT])
@@ -693,18 +687,18 @@ AC_MSG_CHECKING([EXEC_EBUILD_SH default])
 AC_ARG_WITH([ebuild-sh-default],
 	[AS_HELP_STRING([--with-ebuild-sh-default=STR],
 		[default EXEC_EBUILD_SH])],
-	[EBUILD_SH_DEFAULT="${withval}"
-		description="on request"],
-	[EBUILD_SH_DEFAULT="/usr/lib/portage/bin/ebuild.sh"
+	[AS_VAR_COPY([EBUILD_SH_DEFAULT], [withval])
+	AS_VAR_SET([description], ["on request"])],
+	[AS_VAR_SET([EBUILD_SH_DEFAULT], ["/usr/lib/portage/bin/ebuild.sh"])
 	AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib"],
 		[],
-		AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib64"],
-			[EBUILD_SH_DEFAULT="/usr/lib64/portage/bin/ebuild.sh"]))
+		[AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib64"],
+			[AS_VAR_SET([EBUILD_SH_DEFAULT], ["/usr/lib64/portage/bin/ebuild.sh"])])])
 	AS_IF([test -x "${EPREFIX_DEFAULT}${EBUILD_SH_DEFAULT}"],
-		[description="autodetected"],
-		[description="guessed"])])
+		[AS_VAR_SET([description], ["autodetected"])],
+		[AS_VAR_SET([description], ["guessed"])])])
 MV_PREFIX(EBUILD_SH_DEFAULT)
-MV_MSG_RESULT_VAR([${EBUILD_SH_DEFAULT}], [${description}])
+MV_MSG_RESULT_VAR([EBUILD_SH_DEFAULT], [${description}])
 AC_DEFINE_UNQUOTED([EBUILD_SH_DEFAULT],
 	["${EBUILD_SH_DEFAULT}"],
 	[ Default EXEC_EBUILD_SH (without prefix)])
@@ -714,9 +708,9 @@ AC_MSG_CHECKING([PORTAGE_ROOTPATH default])
 AC_ARG_WITH([portage-rootpath],
 	[AS_HELP_STRING([--with-portage-rootpath=STR],
 		[default PORTAGE_ROOTPATH])],
-	[PORTAGE_ROOTPATH_DEFAULT="${withval}"],
-	[PORTAGE_ROOTPATH_DEFAULT=""])
-MV_MSG_RESULT_VAR([${PORTAGE_ROOTPATH_DEFAULT}])
+	[AS_VAR_COPY([PORTAGE_ROOTPATH_DEFAULT], [withval])],
+	[AS_VAR_SET([PORTAGE_ROOTPATH_DEFAULT], [])])
+MV_MSG_RESULT_VAR([PORTAGE_ROOTPATH_DEFAULT])
 AC_DEFINE_UNQUOTED([PORTAGE_ROOTPATH_DEFAULT],
 	["${PORTAGE_ROOTPATH_DEFAULT}"],
 	[ Default PORTAGE_ROOTPATH])
@@ -726,9 +720,9 @@ AC_MSG_CHECKING([PORTAGE_BIN_PATH default])
 AC_ARG_WITH([portage-bin-path],
 	[AS_HELP_STRING([--with-portage-bin-path=STR],
 		[default PORTAGE_BIN_PATH])],
-	[PORTAGE_BIN_PATH_DEFAULT="${withval}"],
-	[PORTAGE_BIN_PATH_DEFAULT=""])
-MV_MSG_RESULT_VAR([${PORTAGE_BIN_PATH_DEFAULT}])
+	[AS_VAR_COPY([PORTAGE_BIN_PATH_DEFAULT], [withval])],
+	[AS_VAR_SET([PORTAGE_BIN_PATH_DEFAULT], [])])
+MV_MSG_RESULT_VAR([PORTAGE_BIN_PATH_DEFAULT])
 AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
 	["${PORTAGE_BIN_PATH_DEFAULT}"],
 	[ Default PORTAGE_BIN_PATH])
@@ -738,9 +732,10 @@ AC_MSG_CHECKING([default remote path])
 AC_ARG_WITH([remote-file],
 	[AS_HELP_STRING([--with-remote-file=STR],
 		[default remote file for eix-remote])],
-	[DEFAULT_REMOTE_PATH="${withval}"],
-	[DEFAULT_REMOTE_PATH="http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2"])
-MV_MSG_RESULT_VAR([${DEFAULT_REMOTE_PATH}])
+	[AS_VAR_COPY([DEFAULT_REMOTE_PATH], [withval])],
+	[AS_VAR_SET([DEFAULT_REMOTE_PATH],
+		["http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2"])])
+MV_MSG_RESULT_VAR([DEFAULT_REMOTE_PATH])
 AC_SUBST([DEFAULT_REMOTE_PATH])
 
 # Check endianess
@@ -761,7 +756,8 @@ AC_DEFINE_UNQUOTED([TARGET],
 	["${target}"],
 	[ Target system])
 
-MV_IF_NONEMPTY([${GCC}],
+AS_VAR_IF([GCC], [],
+	[],
 	[AC_MSG_CHECKING([gcc version])
 	gcc_v=`${CC} -dumpversion`
 	MV_MSG_RESULT([${gcc_v}])
@@ -769,12 +765,10 @@ MV_IF_NONEMPTY([${GCC}],
 		["${gcc_v}"],
 		[ Version of gcc])])
 
-AC_SUBST([PACKAGE_STRING])
-
 # Done!
 AC_OUTPUT()
 
-echo "
+AS_ECHO(["
 
 ${PACKAGE}-${VERSION} configured successfully.
 
@@ -782,4 +776,4 @@ CXXFLAGS: ${mycxxflagstext}
 
 LDFLAGS:  ${myldflagstext}
 
-"
+"])

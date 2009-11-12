@@ -12,6 +12,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/unused.h>
 
 #include <iostream>
 #include <string>
@@ -78,6 +79,8 @@ using namespace std;
 
 /** The name under which we have been called. */
 string program_name;
+
+static void sig_handler(int sig) ATTRIBUTE_NORETURN;
 
 /** On segfault: show some instructions to help us find the bug. */
 static void

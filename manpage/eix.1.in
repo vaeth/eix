@@ -2654,10 +2654,11 @@ and cannot misinterpret the whole argument as a version.
 .\" {{{ BUGS
 .SH "BUGS (and sort of FAQ)"
 .LP
+For bugreports use either \fI@PACKAGE_BUGREPORT@\fR or Gentoo's bugzilla \fIhttp://bugs.gentoo.org/\fR
+
 eix does not and probably never will support dependencies and/or useflags.
 In particular, this means that eix -u output will be in general different
-than the output of an emerge update command - rely only the latter for your system
-(see also the comments to B<bestslotsupgrade...>).
+from the output of an emerge update command - rely only the latter for your system.
 This holds in particular also for the upgrades of packages with slots.
 The variable B<UPGRADE_TO_HIGHEST_SLOT> and manual exceptions
 in B</etc/portage/package.slot_upgrade_forbid> or
@@ -2671,7 +2672,7 @@ full support for dependencies and useflags to handle these).
 As a workaround you can manually define such additional sets in
 B</etc/portage/sets.eix>.
 Moreover, eix does not and probably never will support reading of sets.conf files.
-If you specified additional sets/ directories e.g. in some overlay, you must
+If you specified additional B<sets/> directories e.g. in some overlay, you must
 add these additional directories manually to the B<EIX_LOCAL_SETS> variable
 in @SYSCONFDIR@/eixrc.
 The easiest way to do the latter is to put an entry like
@@ -2831,6 +2832,6 @@ Roland Wittmann <linuxcommando at users.sourceforge.net> (inactive developer)
 .\" Related software .. e.g. stuff we use
 .BR layman (8)
 .LP
-The eix homepage \fI@PACKAGE_BUGREPORT@\fR provides further information and links.
+The eix homepage \fI@PACKAGE_URL@\fR provides further information and links.
 .\" }}}
 .\" vim:set tw=90 expandtab foldenable foldmethod=marker foldlevel=0 :

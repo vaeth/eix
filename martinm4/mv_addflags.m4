@@ -27,21 +27,21 @@ AC_DEFUN([MV_ADDFLAGS],
 				[*" ${mv_currflag} "*], [mv_result=true],
 				[AC_MSG_CHECKING([whether $2=${mv_currflag} is known])
 				MV_IF_EMPTY([$6],
-					[mv_saveflags="${$2}"
+					[AS_VAR_COPY([mv_saveflags], [$2])
 					MV_APPEND([$2], [$5])
 					MV_APPEND([$2], [${mv_currflag}])
 					m4_indir([AC_$3_IFELSE],
 						[AC_LANG_PROGRAM([[]], [[]])],
 						[AC_MSG_RESULT([yes])
-						mv_result=true],
+						AS_VAR_SET([mv_result], [true])],
 						[AC_MSG_RESULT([no])
-						mv_result=false])
-					$2="${mv_saveflags}"],
+						AS_VAR_SET([mv_result], [false])])
+					AS_VAR_COPY([$2], [mv_saveflags])],
 					[AS_IF([$6],
 						[MV_MSG_RESULT([yes], [on request])
-						mv_result=true],
+						AS_VAR_SET([mv_result], [true])],
 						[MV_MSG_RESULT([no], [on request])
-						mv_result=false])])
+						AS_VAR_SET([mv_result], [false])])])
 				AS_IF([${mv_result}],
 					[MV_APPEND([mv_s$2_cache],
 						[${mv_currflag}])],

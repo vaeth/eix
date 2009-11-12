@@ -4,11 +4,12 @@ dnl
 dnl Copyright (c)
 dnl  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 dnl
-dnl MV_ENABLE([varname], [option]):
-dnl Checks whether ${enableval} is yes or no and sets ${varname}=true/false.
+dnl MV_ENABLE([option]):
+dnl Checks whether ${enableval} is yes or no and sets ${option}=true/false.
+dnl (the variable undergoes AS_TR_SH, of course).
 dnl If neither is the case, it dies with an error output for --enable-option
 AC_DEFUN([MV_ENABLE],
 	[AS_CASE(["${enableval}"],
-		[yes], [$1=true],
-		[no], [$1=false],
-		[AC_MSG_ERROR([bad value ${enableval} for --enable-$2])])])
+		[yes], [AS_VAR_SET([AS_TR_SH([$1])], [true])],
+		[no], [AS_VAR_SET([AS_TR_SH([$1])], [false])],
+		[AC_MSG_ERROR([bad value ${enableval} for --enable-$1])])])
