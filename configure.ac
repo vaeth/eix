@@ -625,6 +625,7 @@ AC_ARG_WITH([sqlite],
 		[MV_MSG_RESULT([no], [autodetected])],
 		[MV_MSG_RESULT([yes], [autodetected])])])
 AS_VAR_IF([SQLITE_LIBS], [],
+	[],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
 		[ Define to 1 if cache method sqlite is wanted])])
