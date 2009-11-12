@@ -48,7 +48,9 @@
 	  This might be slightly slower on badly optimizing compilers but is
 	  cleaner and can be used with likely()/unlikely().
 	- Fix memory leak with percentage output
+	- Avoid incompatible usage of ! in scripts.
 	     "Hacks" for speed increase:
+	- In Scripts: Use : instead of true
 	- Use string::string/assign/append with args instead of substr()
 	  where possible.
 	- Make BasicPart a class of its own with sane constructors, allowing

@@ -48,7 +48,7 @@ GetPortdir () {
 	local_portdir="`eix-update --print PORTDIR`"
 }
 
-verbose=true
+verbose=:
 
 RunCommand () {
 	local ret c
@@ -164,7 +164,7 @@ ClearUpdateArgs () {
 	update_args=''
 }
 
-die_on_update_failure=true
+die_on_update_failure=:
 CallUpdate () {
 	eval "set -- ${update_args}"
 	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" && return
@@ -218,7 +218,7 @@ Pathify () {
 }
 
 # Consider variables (arguments) as paths and normalize them.
-# If have_readlink=true (if possible), use readlink to resolve to "true"
+# If have_readlink=: (if possible), use readlink to resolve to ":"
 # pathnames.
 # Return with 1 if at least one variable is empty.
 # Set relative to a list of all variables which are relative paths
@@ -229,7 +229,7 @@ NormalizeNames () {
 	if [ -z "${have_readlink}" ]
 	then
 		command -v readlink >/dev/null 2>&1 \
-			&& have_readlink=true || have_readlink=false
+			&& have_readlink=: || have_readlink=false
 	fi
 	NormD_=0
 	relative=''
@@ -252,8 +252,8 @@ NormalizeNames () {
 					NormA_="${NormB_}"
 		fi
 		eval "${NormC_}=\"\${NormA_}\""
-		while ! Replace -g "${NormC_}" '//' '/'; do
-			:
+		while :; do
+			Replace -g "${NormC_}" '//' '/' && break
 		done
 		eval "[ \"\${${NormC_}}\" = '/' ] || \
 			${NormC_}=\"\${${NormC_}%/}\""
@@ -318,9 +318,9 @@ AssignTempEmulate () {
 		# So at least we minimize it to one line.
 		if [ "${2}" = '-d' ]
 		then
-			! test -e "${AssignTempB_}" && mkdir "${AssignTempB_}"
+			test ! -e "${AssignTempB_}" && mkdir "${AssignTempB_}"
 		else
-			! test -e "${AssignTempB_}" && : >"${AssignTempB_}"
+			test ! -e "${AssignTempB_}" && : >"${AssignTempB_}"
 		fi && eval "${1}=\"\${AssignTempB_}\"" && return
 		AssignTempA_="`expr ${AssignTempA_} + 1`"
 	done
@@ -333,7 +333,7 @@ AssignTemp () {
 	if [ -z "${have_mktemp}" ]
 	then
 		command -v mktemp >/dev/null 2>&1 \
-			&& have_mktemp=true || have_mktemp=false
+			&& have_mktemp=: || have_mktemp=false
 	fi
 	if ${have_mktemp}
 	then

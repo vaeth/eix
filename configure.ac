@@ -17,7 +17,7 @@ dnl
 dnl Macro calls always start with an opening brace; possibly we just use ().
 dnl All macro arguments are quoted, no matter whether it is necessary or not.
 dnl (Local)/global sh variables are (non-)/capital and used with {} braces.
-dnl Unless we use them as a command (like true/false) they are always quoted,
+dnl Unless we use them as a command (like :/false) they are always quoted,
 dnl no matter whether it is necessary or not.
 dnl All strings are quoted in " " (even if ' ' could be used or is easier).
 dnl
@@ -103,7 +103,7 @@ AC_ARG_ENABLE([security],
 	[MV_ENABLE([security])
 	AS_VAR_SET([security], [])
 	AS_VAR_SET([cmt_security], ["on request"])],
-	[AS_VAR_SET([security], [true])
+	[AS_VAR_SET([security], [:])
 	AS_VAR_SET([cmt_security], ["default"])])
 
 AC_ARG_ENABLE([optimization],
@@ -111,7 +111,7 @@ AC_ARG_ENABLE([optimization],
 		[do not append optimization flags])],
 	[MV_ENABLE([optimization])
 	AS_VAR_SET([cmt_optimization], ["on request"])],
-	[AS_VAR_SET([optimization], [true])
+	[AS_VAR_SET([optimization], [:])
 	AS_VAR_SET([cmt_optimization], ["default"])])
 
 AC_ARG_ENABLE([strong_optimization],
@@ -160,7 +160,7 @@ MV_MSG_RESULT_BIN([${strong_optimization}], [${cmt_strong_optimization}])
 
 AC_MSG_CHECKING([whether optimization options should be used])
 AS_IF([${strong_optimization}],
-	[AS_VAR_SET([optimization], [true])
+	[AS_VAR_SET([optimization], [:])
 	AS_VAR_SET([cmt_optimization], ["forced by strong optimization"])])
 AS_IF([${debugging}],
 	[AS_VAR_SET([optimization], [false])
@@ -172,13 +172,13 @@ MV_MSG_RESULT_BIN([${strong_warnings}], [${cmt_strong_warnings}])
 
 AC_MSG_CHECKING([whether warning options should be used])
 AS_IF([${strong_warnings}],
-	[AS_VAR_SET([warnings], [true])
+	[AS_VAR_SET([warnings], [:])
 	AS_VAR_SET([cmt_warnings], ["forced by strong warnings"])])
 MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
 
 AC_MSG_CHECKING([whether security options should be used])
 AS_IF([${warnings}],
-	[AS_VAR_SET([security], [true])
+	[AS_VAR_SET([security], [:])
 	AS_VAR_SET([cmt_security], ["forced by warnings"])])
 MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
 
@@ -394,7 +394,7 @@ AS_VAR_IF([DEV_NULL], [],
 MV_MSG_RESULT_VAR([DEV_NULL])
 AC_DEFINE_UNQUOTED([DEV_NULL],
 	["${DEV_NULL}"],
-	[ Null device of the system])
+	[Null device of the system])
 AC_SUBST([DEV_NULL])
 
 # Separate binaries?
@@ -413,7 +413,7 @@ AC_ARG_ENABLE([separate_update],
 	[MV_ENABLE([separate-update])],
 	[AS_VAR_SET([separate_update], [false])])
 AS_IF([${separate_binaries}],
-	[separate_update=true])
+	[AS_VAR_SET([separate_update], [:])])
 AM_CONDITIONAL([SEPARATE_UPDATE],
 	[${separate_update}])
 
@@ -492,13 +492,13 @@ AC_ARG_WITH([bzip2],
 	[AS_CASE(["${withval}"],
 		[no], [AS_VAR_SET([use_bzlib], [false])
 			MV_MSG_RESULT([no], [on request])],
-		[AS_VAR_SET([use_bzlib], [true])])],
+		[AS_VAR_SET([use_bzlib], [:])])],
 	[AS_VAR_SET([use_bzlib], [])])
 AS_VAR_IF([use_bzlib], [false],
 	[],
 	[AS_VAR_SET([BZLIB_LIBS], ["-lbz2"])
 	AS_VAR_COPY([myoldlibs], [LIBS])
-	MV_APPEND([LIBS], ["${BZLIB_LIBS}"])
+	MV_APPEND([LIBS], [${BZLIB_LIBS}])
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <bzlib.h>
 		]], [[
@@ -507,7 +507,7 @@ BZ2_bzopen("dummy", "rb");
 		[AS_VAR_IF([use_bzlib], [],
 			[MV_MSG_RESULT([yes], [autodetected])],
 			[MV_MSG_RESULT([yes], [on request])])
-		AS_VAR_SET([use_bzlib], [true])],
+		AS_VAR_SET([use_bzlib], [:])],
 		[MV_MSG_RESULT([no], [autodetected])
 		AS_VAR_IF([use_bzlib], [],
 			[],
@@ -518,7 +518,7 @@ BZ2_bzopen("dummy", "rb");
 AS_IF([${use_bzlib}],
 	[AC_DEFINE([USE_BZLIB],
 		[1],
-		[ Define to 1 if bzlib can be used])])
+		[Define to 1 if bzlib can be used])])
 AC_SUBST(BZLIB_LIBS)
 
 # Use rst?
@@ -527,7 +527,7 @@ AC_ARG_WITH([rst],
 		[Use rst2html.py to document cache file format in html])],
 	[AS_CASE(["${withval}"],
 		[no], [AS_VAR_SET([rst], [false])],
-		[AS_VAR_SET([rst], [true])])],
+		[AS_VAR_SET([rst], [:])])],
 	[AS_VAR_SET([rst], [false])])
 AM_CONDITIONAL([USE_RST], [${rst}])
 
@@ -551,18 +551,18 @@ if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
 		]])])
 AC_RUN_IFELSE([BUILTIN_EXPECT_PROGRAM],
 	[MV_MSG_RESULT([yes])
-	AS_VAR_SET([bi_expect_works], [true])],
+	AS_VAR_SET([bi_expect_works], [:])],
 	[MV_MSG_RESULT([no])
 	AS_VAR_SET([bi_expect_works], [false])],
 	[AC_LINK_IFELSE([BUILTIN_EXPECT_PROGRAM],
 		[MV_MSG_RESULT([yes], [crosscompile guess])
-		AS_VAR_SET([bi_expect_works], [true])],
+		AS_VAR_SET([bi_expect_works], [:])],
 		[MV_MSG_RESULT([no], [crosscompile guess])
 		AS_VAR_SET([bi_expect_works], [false])])])
 AS_IF([${bi_expect_works}],
 	[AC_DEFINE([HAVE___BUILTIN_EXPECT],
 		[1],
-		[ Define to 1 if __builtin_expect can be used])])
+		[Define to 1 if __builtin_expect can be used])])
 
 # Check if __attribute__ ((__unused__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])
@@ -575,13 +575,13 @@ dummy(int i __attribute__ ((__unused__)))
 return dummy(1);
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_unused], [true])],
+		AS_VAR_SET([attribute_unused], [:])],
 		[MV_MSG_RESULT([no])
 		AS_VAR_SET([attribute_unused], [false])])
 AS_IF([${attribute_unused}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
 		[1],
-		[ Define to 1 if __attribute__ ((__unused__)) can be used])])
+		[Define to 1 if __attribute__ ((__unused__)) can be used])])
 
 # Check if __attribute__ ((__noreturn__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__noreturn__)) can be used])
@@ -595,13 +595,13 @@ dummy()
 dummy()
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_noreturn], [true])],
+		AS_VAR_SET([attribute_noreturn], [:])],
 		[MV_MSG_RESULT([no])
 		AS_VAR_SET([attribute_noreturn], [false])])
 AS_IF([${attribute_noreturn}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
 		[1],
-		[ Define to 1 if __attribute__ ((__noreturn__)) can be used])])
+		[Define to 1 if __attribute__ ((__noreturn__)) can be used])])
 
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
@@ -628,7 +628,7 @@ AS_VAR_IF([SQLITE_LIBS], [],
 	[],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
-		[ Define to 1 if cache method sqlite is wanted])])
+		[Define to 1 if cache method sqlite is wanted])])
 AC_SUBST([SQLITE_LIBS])
 
 AC_MSG_CHECKING([PORTDIR_CACHE_METHOD default])
@@ -639,10 +639,10 @@ AC_ARG_WITH([portdir-cache-method],
 	AS_VAR_SET([description], ["on request"])],
 	[AS_VAR_SET([PORTDIR_CACHE_METHOD], ["metadata-flat"])
 	AS_VAR_SET([description], ["default"])])
-MV_MSG_RESULT_VAR([PORTDIR_CACHE_METHOD], ["${description}"])
+MV_MSG_RESULT_VAR([PORTDIR_CACHE_METHOD], [${description}])
 AC_DEFINE_UNQUOTED([PORTDIR_CACHE_METHOD],
 	["${PORTDIR_CACHE_METHOD}"],
-	[ Default PORTDIR_CACHE_METHOD])
+	[Default PORTDIR_CACHE_METHOD])
 AC_SUBST([PORTDIR_CACHE_METHOD])
 
 AC_MSG_CHECKING([EPREFIX default])
@@ -655,7 +655,7 @@ MV_PREFIX(EPREFIX_DEFAULT)
 MV_MSG_RESULT_VAR([EPREFIX_DEFAULT])
 AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
 	["${EPREFIX_DEFAULT}"],
-	[ Default EPREFIX])
+	[Default EPREFIX])
 AC_SUBST([EPREFIX_DEFAULT])
 
 AC_MSG_CHECKING([EIX_PREFIX default])
@@ -668,7 +668,7 @@ MV_PREFIX(EPREFIX_DEFAULT)
 MV_MSG_RESULT_VAR([EIX_PREFIX_DEFAULT])
 AC_DEFINE_UNQUOTED([EIX_PREFIX_DEFAULT],
 	["${EIX_PREFIX_DEFAULT}"],
-	[ Default EIX_PREFIX])
+	[Default EIX_PREFIX])
 AC_SUBST([EIX_PREFIX_DEFAULT])
 
 AC_MSG_CHECKING([ROOT default])
@@ -681,7 +681,7 @@ MV_PREFIX(ROOT_DEFAULT)
 MV_MSG_RESULT_VAR([ROOT_DEFAULT])
 AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	["${ROOT_DEFAULT}"],
-	[ Default ROOT])
+	[Default ROOT])
 AC_SUBST([ROOT_DEFAULT])
 
 AC_MSG_CHECKING([EXEC_EBUILD_SH default])
@@ -702,7 +702,7 @@ MV_PREFIX(EBUILD_SH_DEFAULT)
 MV_MSG_RESULT_VAR([EBUILD_SH_DEFAULT], [${description}])
 AC_DEFINE_UNQUOTED([EBUILD_SH_DEFAULT],
 	["${EBUILD_SH_DEFAULT}"],
-	[ Default EXEC_EBUILD_SH (without prefix)])
+	[Default EXEC_EBUILD_SH (without prefix)])
 AC_SUBST([EBUILD_SH_DEFAULT])
 
 AC_MSG_CHECKING([PORTAGE_ROOTPATH default])
@@ -714,7 +714,7 @@ AC_ARG_WITH([portage-rootpath],
 MV_MSG_RESULT_VAR([PORTAGE_ROOTPATH_DEFAULT])
 AC_DEFINE_UNQUOTED([PORTAGE_ROOTPATH_DEFAULT],
 	["${PORTAGE_ROOTPATH_DEFAULT}"],
-	[ Default PORTAGE_ROOTPATH])
+	[Default PORTAGE_ROOTPATH])
 AC_SUBST([PORTAGE_ROOTPATH_DEFAULT])
 
 AC_MSG_CHECKING([PORTAGE_BIN_PATH default])
@@ -726,7 +726,7 @@ AC_ARG_WITH([portage-bin-path],
 MV_MSG_RESULT_VAR([PORTAGE_BIN_PATH_DEFAULT])
 AC_DEFINE_UNQUOTED([PORTAGE_BIN_PATH_DEFAULT],
 	["${PORTAGE_BIN_PATH_DEFAULT}"],
-	[ Default PORTAGE_BIN_PATH])
+	[Default PORTAGE_BIN_PATH])
 AC_SUBST([PORTAGE_BIN_PATH_DEFAULT])
 
 AC_MSG_CHECKING([default remote path])
@@ -745,26 +745,26 @@ AC_C_BIGENDIAN()
 EIX_CACHEFILE="/var/cache/eix"
 AC_DEFINE_UNQUOTED([EIX_CACHEFILE],
 	["${EIX_CACHEFILE}"],
-	[ Location of the cachefile])
+	[Location of the cachefile])
 AC_SUBST([EIX_CACHEFILE])
 
 AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	["2"],
-	[ Default Levenshtein distance for matches (as string)])
+	[Default Levenshtein distance for matches (as string)])
 AC_SUBST([LEVENSHTEIN_DISTANCE])
 
 AC_DEFINE_UNQUOTED([TARGET],
 	["${target}"],
-	[ Target system])
+	[Target system])
 
 AS_VAR_IF([GCC], [],
 	[],
 	[AC_MSG_CHECKING([gcc version])
 	gcc_v=`${CC} -dumpversion`
-	MV_MSG_RESULT([${gcc_v}])
+	MV_MSG_RESULT_VAR([gcc_v])
 	AC_DEFINE_UNQUOTED([GCC_VERSION],
 		["${gcc_v}"],
-		[ Version of gcc])])
+		[Version of gcc])])
 
 # Done!
 AC_OUTPUT()

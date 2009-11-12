@@ -11,7 +11,7 @@ dnl succeeds with the corresponding [CFLAGS]. The flag is skipped if it is
 dnl already contained in [ADDCFLAGS] or in [CFLAGS] or if it was already
 dnl tested earlier (in case of positive earlier test, it is added, of course).
 dnl It is admissible that [ADDCFLAGS] is the same as [CFLAGS].
-dnl If [mode] is given and true/false, no COMPILE|LINK is done but just the
+dnl If [mode] is given and :/false, no COMPILE|LINK is done but just the
 dnl result of [mode] is used.
 dnl The [sh-list of fatal-flags] (if given) is added to CFLAGS during testing.
 dnl The idea of the latter is that [fatal-flags] should be something like
@@ -24,7 +24,7 @@ AC_DEFUN([MV_ADDFLAGS],
 		AS_CASE([" ${$1} ${$2} ${mv_f$2_cache} "],
 			[*" ${mv_currflag} "*], [],
 			[AS_CASE([" ${mv_s$2_cache} "],
-				[*" ${mv_currflag} "*], [mv_result=true],
+				[*" ${mv_currflag} "*], [mv_result=:],
 				[AC_MSG_CHECKING([whether $2=${mv_currflag} is known])
 				MV_IF_EMPTY([$6],
 					[AS_VAR_COPY([mv_saveflags], [$2])
@@ -33,13 +33,13 @@ AC_DEFUN([MV_ADDFLAGS],
 					m4_indir([AC_$3_IFELSE],
 						[AC_LANG_PROGRAM([[]], [[]])],
 						[AC_MSG_RESULT([yes])
-						AS_VAR_SET([mv_result], [true])],
+						AS_VAR_SET([mv_result], [:])],
 						[AC_MSG_RESULT([no])
 						AS_VAR_SET([mv_result], [false])])
 					AS_VAR_COPY([$2], [mv_saveflags])],
 					[AS_IF([$6],
 						[MV_MSG_RESULT([yes], [on request])
-						AS_VAR_SET([mv_result], [true])],
+						AS_VAR_SET([mv_result], [:])],
 						[MV_MSG_RESULT([no], [on request])
 						AS_VAR_SET([mv_result], [false])])])
 				AS_IF([${mv_result}],

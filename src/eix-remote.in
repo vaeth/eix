@@ -118,7 +118,7 @@ CalcSuprg () {
 
 DefaultOpts () {
 	CalcSuprg /usr/bin/sudo /bin/su sudo su
-	verbose=true
+	verbose=:
 	fetchuser=''
 	fetchroot='nobody'
 	filearg=''
@@ -136,7 +136,7 @@ while getopts 'f:vqu:U:l:a:sSi?hH' opt
 do
 	case "${opt}" in
 		f) filearg="${OPTARG}";;
-		v) verbose=true;;
+		v) verbose=:;;
 		q) verbose=false;;
 		u) fetchuser="${OPTARG}";;
 		U) fetchroot="${OPTARG}";;
@@ -193,7 +193,7 @@ CalcSuCmd () {
 		return
 	fi
 	shexec="${SHELL}"
-	if [ -z "${shexec}" ] || ! test -x "${SHELL}"
+	if [ -z "${shexec}" ] || test ! -x "${SHELL}"
 	then
 		shexec='sh'
 	fi
@@ -294,7 +294,7 @@ AddArchive () {
 	for i in *
 	do
 		n="${i%.eix}"
-		while true; do
+		while :; do
 			case "${n}" in
 				_*) n="${n#_}";;
 				*_*_*_*) n="${n#*_}";;
@@ -328,7 +328,8 @@ AddArchive () {
 	[ ${exitcode} -ne 0 ] && \
 		msg="`eval_gettext 'could not read all eix cachefiles of ${a}'`"
 	die_on_update_failure=false
-	export KEEP_VIRTUALS=true
+	export KEEP_VIRTUALS
+	KEEP_VIRTUALS=:
 	CallUpdate || {
 		exitcode=${?}
 		msg=`gettext 'eix-update failed'; \
@@ -351,12 +352,12 @@ FetchCopy () {
 }
 
 Fetch () {
-	need_arg=true
+	need_arg=:
 	FetchCopy "${@}"
 }
 
 Add () {
-	need_arg=true
+	need_arg=:
 	GetFilename "${@}"
 	test -r "${filename}" || \
 		die "`eval_gettext 'cannot read ${filename}'`"

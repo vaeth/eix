@@ -10,7 +10,7 @@
 . ./eix-functions.sh.in
 ReadGettext
 
-details=true
+nodetails=false
 
 Usage () {
 	local n p
@@ -63,7 +63,7 @@ Eix () {
 		return
 	fi
 	printf '\n%s\n' "${2}"
-	if [ ${#} -le 2 ] || ! ${details}
+	if [ ${#} -le 2 ] || ${nodetails}
 	then
 		eix -Tc
 		printf '\n'
@@ -176,7 +176,7 @@ OPTIND=1
 while getopts "cCdb?hH" opt
 do
 	case "${opt}" in
-		c) export CHECK_INSTALLED_OVERLAYS=true;;
+		c) export CHECK_INSTALLED_OVERLAYS=:;;
 		C) export CHECK_INSTALLED_OVERLAYS=repository;;
 		d) myarg='detail';;
 		b) myarg='brief';;
@@ -188,9 +188,9 @@ done
 [ ${#} -eq 1 ] && myarg="${1}"
 case "${myarg:--}" in
 	'-') Usage;;
-	b*|B*) details=false;;
+	b*|B*) nodetails=:;;
 	n*|N*) Repository false;;
-	r*|R*) Repository true;;
+	r*|R*) Repository :;;
 	h*|H*) Usage 0;;
 esac
 

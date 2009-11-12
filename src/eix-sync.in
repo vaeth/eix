@@ -103,7 +103,7 @@ DoExecute () {
 ParseConfigLine () {
 	local j mycmd
 	j="${2}"
-	while true
+	while :
 	do
 		case "${j}" in
 			' '*|'	'*)	j="${j#?}";;
@@ -140,7 +140,7 @@ ParseConfigLine () {
 	"${mycmd}" -s "${j}" || die "`eval_gettext '${mycmd} -s ${j} failed'`"
 }
 
-test -r "${eixsyncconf}" && haveconf=true || haveconf=false
+test -r "${eixsyncconf}" && haveconf=: || haveconf=false
 eix_sync_conf="`eix-update --print EIX_SYNC_CONF`"
 ExecuteConfig () {
 	local i
@@ -172,14 +172,14 @@ DefaultOpts () {
 	nohooks=false
 	quiet=false
 	usetemp=false
-	measure_time=true
+	measure_time=:
 	metadata=false
 	skip_sync=false
 	server=''
 	client=''
-	doupdate=true
-	synchooks=true
-	test_for_root=true
+	doupdate=:
+	synchooks=:
+	test_for_root=:
 }
 
 DefaultOpts
@@ -193,26 +193,26 @@ while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" opt
 do
 	case "${opt}" in
 		i) DefaultOpts;;
-		d) diffonly=true;;
+		d) diffonly=:;;
 		s) server="${OPTARG}";;
 		2) client="${OPTARG}";;
 		U) doupdate=false;;
-		u) nolayman=true; nohooks=true; skip_sync=true; server='';;
-		l) nolayman=true;;
-		@) nohooks=true;;
+		u) nolayman=:; nohooks=:; skip_sync=:; server='';;
+		l) nolayman=:;;
+		@) nohooks=:;;
 		S) synchooks=false;;
-		m) skip_sync=true; metadata=true;;
-		M) metadata=true;;
+		m) skip_sync=:; metadata=:;;
+		M) metadata=:;;
 		N) metadata=false;;
-		t) usetemp=true;;
+		t) usetemp=:;;
 		T) measure_time=false;;
-		q) quiet=true;;
+		q) quiet=:;;
 		w) Push -c emergecmd 'emerge-webrsync';;
 		W) Push -c emergecmd 'emerge-delta-webrsync';;
 		c) Push -c emergecmd "${OPTARG}";;
 		C) Push emergecmd "${OPTARG}";;
 		o) Push updatecmd "${OPTARG}";;
-		r) clearcache=true;;
+		r) clearcache=:;;
 		R) clearcache=false;;
 		e) test_for_root=false;;
 		*) Usage 0;;
@@ -220,7 +220,7 @@ do
 done
 opt=''
 ${diffonly} && DiffOnly
-[ -z "${server}" ] || skip_sync=true
+[ -z "${server}" ] || skip_sync=:
 
 ${measure_time} || time_begin=''
 measure_time=false
@@ -228,7 +228,7 @@ case "${time_begin}" in
 	*[0-9]*) [ "${time_begin}" -gt 99 ] && (
 			t=`expr "${time_begin}" - 99 2>/dev/null` || t=0
 			[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
-		) >/dev/null 2>&1 && measure_time=true;;
+		) >/dev/null 2>&1 && measure_time=:;;
 esac
 
 MyRun () {
@@ -346,7 +346,7 @@ PrepRsync () {
 		eval "${c}"
 	done
 	rsync_opts="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
-	preprsync=true
+	preprsync=:
 }
 
 ClearCache () {
@@ -399,7 +399,7 @@ CallEmergeMetadata () {
 }
 
 CondUpdate () {
-	if ! test -f "${eixcache}"
+	if test ! -f "${eixcache}"
 	then
 		RootTest
 		eval "set -- ${updatecmd}"
@@ -410,15 +410,13 @@ CondUpdate () {
 		return
 	fi
 	${emulatemode} && return
-	if ! eix --is-current
-	then
+	eix --is-current || {
 		eval "set -- ${updatecmd}"
 		MyRunCommand "`gettext \
 			'eix-cache format has changed. Running eix-update!'`" \
 			-t iupdate "${@}" || \
 				die "`gettext 'eix-update failed'`"
-
-	fi
+	}
 }
 
 CopyPrevious () {
@@ -491,7 +489,7 @@ MainSync () {
 if ${test_for_root} && [ "${UID}" -ne 0 ]
 then
 # Emulate everything to check whether we have to be root:
-	emulatemode=true
+	emulatemode=:
 	MainSync
 fi
 emulatemode=false
