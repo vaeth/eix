@@ -205,8 +205,11 @@ AC_USE_SYSTEM_EXTENSIONS()
 AS_VAR_SET([mycxxfatal], [])
 AS_VAR_SET([myldfatal], [])
 AS_IF([${quickcheck}],
-	[],
-	[MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
+	[AS_VAR_SET([quicktrue], [:])
+	AS_VAR_SET([quickfalse], [false])],
+	[AS_VAR_SET([quicktrue], [])
+	AS_VAR_SET([quickfalse], [])
+	MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
 			-Werror \
 		])
 	MV_ADDFLAGS([myldfatal], [LDFLAGS], [LINK], [ \
@@ -220,7 +223,7 @@ AS_IF([${debugging}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-g \
 			-ggdb3 \
-		], [${mycxxfatal}], [${quickcheck}])])
+		], [${mycxxfatal}], [${quicktrue}])])
 AS_IF([${optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fomit-frame-pointer \
@@ -242,7 +245,7 @@ AS_IF([${optimization}],
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${mycxxfatal}], [${quickcheck}])
+		], [${mycxxfatal}], [${quicktrue}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
@@ -251,7 +254,7 @@ AS_IF([${optimization}],
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fweb \
@@ -260,10 +263,10 @@ AS_IF([${strong_optimization}],
 			-floop-interchange \
 			-floop-strip-mine \
 			-floop-block \
-		], [${mycxxfatal}], [${quickcheck}])
+		], [${mycxxfatal}], [${quicktrue}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-O9 \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${warnings}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fdirectives-only \
@@ -310,7 +313,7 @@ AS_IF([${warnings}],
 			-Wsign-promo \
 			-Wmissing-declarations \
 			-Wmissing-format-attribute \
-		], [${mycxxfatal}], [${quickcheck}])
+		], [${mycxxfatal}], [${quicktrue}])
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
 dnl			-Wstrict-prototypes \
@@ -325,13 +328,13 @@ dnl			-Wpointer-sign \
 			-Wl,--no-undefined-version \
 			-Wl,--warn-common \
 			-Wl,--fatal-warnings \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${mycxxfatal}], [${quickcheck}])])
+		], [${mycxxfatal}], [${quicktrue}])])
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
 dnl			-Wunsafe-loop-optimizations \
@@ -344,11 +347,11 @@ AS_IF([${security}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
-		], [${mycxxfatal}], [${quickcheck}])
+		], [${mycxxfatal}], [${quicktrue}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
 			-Wl,-z,now \
 			-Wl,-z,relro \
-		], [${myldfatal}], [${quickcheck}])])
+		], [${myldfatal}], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${mycxxadd}])
