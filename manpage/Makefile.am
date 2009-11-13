@@ -6,7 +6,7 @@ EXTRA_DIST = eix.1.in
 
 SUFFIXES = .in
 .in:
-	$(AM_V_GEN)@regex_cmd@ -e 's/$$Date:[^,]*, *\([^)]*\)[^\$$]*\$$/\1/' \
+	$(AM_V_GEN)$(SED) -e 's/$$Date:[^,]*, *\([^)]*\)[^\$$]*\$$/\1/' \
 		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g" \

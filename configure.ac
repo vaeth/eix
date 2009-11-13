@@ -84,7 +84,7 @@ AS_VAR_IF([enable_silent_rules], [no],
 AM_INIT_AUTOMAKE()
 AM_SILENT_RULES([yes])
 
-AC_LANG_CPLUSPLUS()
+AC_LANG([C++])
 AC_PROG_CXX()
 
 # Now our flag mangling options:
@@ -369,18 +369,17 @@ AS_IF([${quickcheck}],
 		AS_ECHO(["export LDFLAGS='${LDFLAGS}'"])
 		AC_MSG_ERROR([Compiling/linking a simple program failed. Try --disable-quickcheck])])])
 
+# Provide external tools
 AC_PROG_LN_S()
+AC_PROG_SED()
 
-# Unfortunately, gettext requires libtool on some systems:
-AC_LIBTOOL_DLOPEN()
-AC_PROG_LIBTOOL()
+# Add the libintl support if needed.
+# It seems that libtool is unneeded for gettext.
+# Please file a bug if you cannot see the German translation on your system.
+dnl AC_LIBTOOL_DLOPEN()
+dnl AC_PROG_LIBTOOL()
 AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
-
-# Provide basic types:
-AC_TYPE_UINT8_T()
-AC_TYPE_UINT16_T()
-AC_TYPE_UINT32_T()
 
 # This must be an early test, since we need the null device later in this file:
 AC_MSG_CHECKING([for null-device])
@@ -455,11 +454,10 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 	[break],
 	[AC_MSG_ERROR([At least one of strtoul/strtoll/atoi is needed ..])])
 
-# We define the following if we don't have it:
-AC_CHECK_FUNCS([strndup])
-
 # We use these optionally:
-AC_CHECK_FUNCS([canonicalize_file_name realpath vfork setenv])
+# Concerning strndup, we have a home-brewed replacement,
+# for the others some less convenient workarounds.
+AC_CHECK_FUNCS_ONCE([strndup canonicalize_file_name realpath vfork setenv])
 
 # We use getuid() on systems without geteuid():
 AC_CHECK_FUNCS([geteuid getuid],
@@ -467,7 +465,7 @@ AC_CHECK_FUNCS([geteuid getuid],
 	[AC_MSG_ERROR([At least one of geteuid/getuid is needed ..])])
 
 # Optional header files:
-AC_CHECK_HEADERS([sys/param.h])
+AC_CHECK_HEADERS_ONCE([sys/param.h])
 
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],
@@ -476,13 +474,6 @@ AC_CHECK_HEADERS([climits limits.h],
 # If tr1/cstdint exists we need not check for stdint.h.
 AC_CHECK_HEADERS([tr1/cstdint cstdint stdint.h],
 	[break])
-
-# Standard programs:
-AC_CHECK_PROGS([regex_cmd],
-	[sed],
-	[no])
-AS_CASE(["${regex_cmd}"],
-	[no], [AC_MSG_ERROR([sed is required])])
 
 # Use bzip2?
 AC_MSG_CHECKING([whether libbz2 should be used])
@@ -741,6 +732,11 @@ AC_SUBST([DEFAULT_REMOTE_PATH])
 
 # Check endianess
 AC_C_BIGENDIAN()
+
+# Provide basic types:
+AC_TYPE_UINT8_T()
+AC_TYPE_UINT16_T()
+AC_TYPE_UINT32_T()
 
 EIX_CACHEFILE="/var/cache/eix"
 AC_DEFINE_UNQUOTED([EIX_CACHEFILE],

@@ -42,7 +42,7 @@ clean-local: doxygen-clean
 
 # Build source docs with doxygen
 doxygen: doxygen-clean
-	$(AM_V_at)@regex_cmd@ -e "s,\@PACKAGE_NAME\@,$(PACKAGE)," \
+	$(AM_V_at)$(SED) -e "s,\@PACKAGE_NAME\@,$(PACKAGE)," \
 		-e "s,\@PACKAGE_VERSION\@,$(VERSION)," doxygen.cfg.in > doxygen.cfg
 	$(AM_V_GEN)doxygen doxygen.cfg >/dev/null
 

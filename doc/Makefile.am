@@ -29,9 +29,9 @@ xml-format.txt.in
 SUFFIXES = .in
 .in:
 	$(AM_V_GEN)A='s/^.*static * const *.* current *= *\([0-9]*\) *;.*$$/\1/p' ; \
-	H=`@regex_cmd@ -n -e "$${A}" ../src/database/header.h` ; \
-	X=`@regex_cmd@ -n -e "$${A}" ../src/output/print-xml.h` ; \
-	@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
+	H=`$(SED) -n -e "$${A}" ../src/database/header.h` ; \
+	X=`$(SED) -n -e "$${A}" ../src/output/print-xml.h` ; \
+	$(SED) -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@CURRENT\@,$${H},g" \
 		-e "s,\@CURRENTXML\@,$${X},g" \
 	"$<" > "$@"

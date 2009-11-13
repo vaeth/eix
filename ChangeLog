@@ -28,8 +28,11 @@
 	  should be according to the logic.
 	- Fix: Check effective uid instead of uid.
 	- configure: More verbose output concerning options for flag mangling
+	- configure: Remove libtool again which was only added for libintl
+	  support, since I guess this is not needed when gettext is installed
+	  on non-GNU systems. Please, file a bug if my guess is wrong and you
+	  are suddenly without the German translations on some system.
 	     The rest are internal changes of the code:
-	- Use autoconf-2.64 and PACKAGE_URL.
 	- Change of #include style: Do not rely on implicit includes;
 	  include in the file exactly those things needed, ignoring that
 	  include files might include other files.
@@ -48,9 +51,10 @@
 	  This might be slightly slower on badly optimizing compilers but is
 	  cleaner and can be used with likely()/unlikely().
 	- Fix memory leak with percentage output
-	- Avoid incompatible usage of ! in scripts.
+	- Use autoconf-2.64; set PACKAGE_URL. Remove some obsolete macros.
+	- autoconf: Use *_ONCE() where possible. Use AC_PROG_SED().
+	- In Scripts: Avoid incompatible usage of !
 	     "Hacks" for speed increase:
-	- In Scripts: Use : instead of true
 	- Use string::string/assign/append with args instead of substr()
 	  where possible.
 	- Make BasicPart a class of its own with sane constructors, allowing
@@ -69,6 +73,7 @@
 	- Use switch()es instead of subsequent tests in eixrc.cc
 	- Add only finished packages to a Category instead of hackishly
 	  erasing afterwards if unfinished.
+	- In Scripts: Use ":" instead of "true"
 
 *eix-0.18.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

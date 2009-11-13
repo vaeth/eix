@@ -177,7 +177,7 @@ search/redundancy.h
 nodist_search_src =
 
 # Common to all binaries:
-common_ldadd = @BZLIB_LIBS@ $(LTLIBINTL)
+common_ldadd = @BZLIB_LIBS@ $(LIBINTL)
 
 common_src = \
 main/main.h \
@@ -501,19 +501,19 @@ eix-remote.sh:
 
 if OBSOLETE_REMINDER
 functions-eix.sh: reminder.sh
-	$(AM_V_GEN)@regex_cmd@ -e '/^#[ \t]*![ \]*REMIND.*{/,/^#[ \t]*}/d' \
+	$(AM_V_GEN)$(SED) -e '/^#[ \t]*![ \]*REMIND.*{/,/^#[ \t]*}/d' \
 		-e '/^#[ \t]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
 		reminder.sh >"$@"
 else
 functions-eix.sh: reminder.sh
-	$(AM_V_GEN)@regex_cmd@ -e '/^#[ \t]*REMIND.*{/,/^#[ \t]*}/d' \
+	$(AM_V_GEN)$(SED) -e '/^#[ \t]*REMIND.*{/,/^#[ \t]*}/d' \
 		-e '/^#[ \t]*![ \]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
 		reminder.sh >"$@"
 endif
 
 SUFFIXES = .in
 .in:
-	$(AM_V_GEN)@regex_cmd@ -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
+	$(AM_V_GEN)$(SED) -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
