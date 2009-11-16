@@ -30,12 +30,12 @@ class ParseCache : public BasicCache {
 		std::vector<bool> further_works;
 		bool try_parse, nosubst;
 		EbuildExec *ebuild_exec;
-		std::vector<std::string> packages;
-		std::string catpath;
+		std::vector<std::string> m_packages;
+		std::string m_catpath;
 
 		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULL);
 		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version);
-		void readPackage(const char *cat_name, Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
+		void readPackage(Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
 	public:
 		ParseCache() : BasicCache(), ebuild_exec(NULL)
 		{ }
@@ -49,8 +49,8 @@ class ParseCache : public BasicCache {
 		void setOverlayName(const std::string &name);
 		void setErrorCallback(ErrorCallback error_callback);
 
-		bool readCategory(const char *cat_name, Category &cat) throw(ExBasic);
 		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
+		bool readCategory(Category &cat) throw(ExBasic);
 		void readCategoryFinalize();
 
 		bool use_prefixport() const

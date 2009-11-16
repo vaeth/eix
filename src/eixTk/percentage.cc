@@ -77,18 +77,22 @@ PercentStatus::init(const string &format, Percentage total)
 void
 PercentStatus::next(const string &append_string)
 {
-	if(!m_verbose)
-		return;
 	m_append = append_string;
-	if(!m_finished) {
-		if(m_current != m_total) {
-			++m_current;
-			if(m_current == m_total) {
-				m_finished = true;
-			}
+	next();
+	reprint();
+}
+
+void
+PercentStatus::next()
+{
+	if((!m_verbose) || m_finished)
+		return;
+	if(m_current != m_total) {
+		++m_current;
+		if(m_current == m_total) {
+			m_finished = true;
 		}
 	}
-	reprint();
 }
 
 void

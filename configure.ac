@@ -95,7 +95,7 @@ AC_ARG_ENABLE([debugging],
 	[MV_ENABLE([debugging])
 	AS_VAR_SET([cmt_debugging], ["on request"])],
 	[AS_VAR_SET([debugging], [false])
-	AS_VAR_SET([cmt_debugging], [])])
+	AS_VAR_SET([cmt_debugging], ["default"])])
 
 AC_ARG_ENABLE([security],
 	[AS_HELP_STRING([--disable-security],
@@ -111,8 +111,8 @@ AC_ARG_ENABLE([optimization],
 		[do not append optimization flags])],
 	[MV_ENABLE([optimization])
 	AS_VAR_SET([cmt_optimization], ["on request"])],
-	[AS_VAR_SET([optimization], [false])
-	AS_VAR_SET([cmt_optimization], [])])
+	[AS_VAR_SET([optimization], [:])
+	AS_VAR_SET([cmt_optimization], ["default"])])
 
 AC_ARG_ENABLE([strong_optimization],
 	[AS_HELP_STRING([--enable-strong-optimization],
@@ -120,7 +120,7 @@ AC_ARG_ENABLE([strong_optimization],
 	[MV_ENABLE([strong-optimization])
 	AS_VAR_SET([cmt_strong_optimization], ["on request"])],
 	[AS_VAR_SET([strong_optimization], [false])
-	AS_VAR_SET([cmt_strong_optimization], [])])
+	AS_VAR_SET([cmt_strong_optimization], ["default"])])
 
 AC_ARG_ENABLE([warnings],
 	[AS_HELP_STRING([--enable-warnings],
@@ -128,7 +128,7 @@ AC_ARG_ENABLE([warnings],
 	[MV_ENABLE([warnings])
 	AS_VAR_SET([cmt_warnings], ["on request"])],
 	[AS_VAR_SET([warnings], [false])
-	AS_VAR_SET([cmt_warnings], [])])
+	AS_VAR_SET([cmt_warnings], ["default"])])
 
 AC_ARG_ENABLE([strong_warnings],
 	[AS_HELP_STRING([--enable-strong-warnings],
@@ -136,7 +136,7 @@ AC_ARG_ENABLE([strong_warnings],
 	[MV_ENABLE([strong-warnings])
 	AS_VAR_SET([cmt_strong_warnings], ["on request"])],
 	[AS_VAR_SET([strong_warnings], [false])
-	AS_VAR_SET([cmt_strong_warnings], [])])
+	AS_VAR_SET([cmt_strong_warnings], ["default"])])
 
 AC_ARG_ENABLE([quickcheck],
 	[AS_HELP_STRING([--enable-quickcheck],
@@ -144,7 +144,7 @@ AC_ARG_ENABLE([quickcheck],
 	[MV_ENABLE([quickcheck])
 	AS_VAR_SET([cmt_quickcheck], ["on request"])],
 	[AS_VAR_SET([quickcheck], [false])
-	AS_VAR_SET([cmt_quickcheck], [])])
+	AS_VAR_SET([cmt_quickcheck], ["default"])])
 
 # Some implicit dependencies of these options.
 # We do this here explicitly and output the results
@@ -240,12 +240,7 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
-			-fno-enforce-eh-specs \
-			-DNDEBUG \
-			-DNO_DEBUG \
-			-DG_DISABLE_ASSERT \
 		], [${mycxxfatal}], [${quicktrue}])
-dnl			-ffast-math \
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
@@ -261,7 +256,13 @@ AS_IF([${strong_optimization}],
 			-floop-interchange \
 			-floop-strip-mine \
 			-floop-block \
+			-fno-enforce-eh-specs \
+			-DNDEBUG \
+			-DNO_DEBUG \
+			-DG_DISABLE_ASSERT \
 		], [${mycxxfatal}], [${quicktrue}])
+dnl We do not use (although we could, but it would change nothing):
+dnl			-ffast-math \
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,--hash-style=gnu \
 			-Wl,--enable-new-dtags \
@@ -314,6 +315,7 @@ AS_IF([${warnings}],
 			-Wmissing-declarations \
 			-Wmissing-format-attribute \
 		], [${mycxxfatal}], [${quicktrue}])
+dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
 dnl			-Wstrict-prototypes \
@@ -334,6 +336,7 @@ AS_IF([${strong_warnings}],
 			-Wold-style-cast \
 			-Wmissing-noreturn \
 		], [${mycxxfatal}], [${quicktrue}])])
+dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
 dnl			-Wunsafe-loop-optimizations \

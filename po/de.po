@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2009-11-12 23:58+0100\n"
+"POT-Creation-Date: 2009-11-16 18:43+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1423,13 +1423,13 @@ msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 msgid "     Reading Packages .. "
 msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:550 src/eix-update.cc:572
+#: src/eix-update.cc:550 src/eix-update.cc:587
 msgid "Finished"
 msgstr "Fertig"
 
-#: src/eix-update.cc:550
-msgid "Aborted"
-msgstr "Abbruch"
+#: src/eix-update.cc:550 src/eix-update.cc:586
+msgid "ABORTED!"
+msgstr "ABBRUCH!"
 
 #: src/eix-update.cc:555
 #, c-format
@@ -1438,36 +1438,36 @@ msgstr "     Lese Category %s|%s (%s%%)"
 
 #: src/eix-update.cc:560
 #, c-format
-msgid "     Reading %s categories of packages .. "
-msgstr "     Paketdaten aus %s Categorien werden gelesen... "
+msgid "     Reading up to %s categories of packages .. "
+msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
 
-#: src/eix-update.cc:568
+#: src/eix-update.cc:576
 #, c-format
 msgid ": %s .."
 msgstr ": %s ..."
 
-#: src/eix-update.cc:572
-msgid " Finished"
-msgstr " Fertig"
+#: src/eix-update.cc:585
+msgid "EMPTY!"
+msgstr "LEER!"
 
-#: src/eix-update.cc:578
+#: src/eix-update.cc:596
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:589
+#: src/eix-update.cc:607
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:593
+#: src/eix-update.cc:611
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:596
+#: src/eix-update.cc:614
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:609
+#: src/eix-update.cc:627
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -1481,17 +1481,12 @@ msgstr "kann Version von '%s' nicht bestimmen"
 msgid "Unknown cache %r for directory %r"
 msgstr "Unbekannter Cache %r für Ordner %r"
 
-#: src/cache/cdb/cdb.cc:122 src/cache/port2_1_2/port2_1_2.cc:156
-#, c-format
-msgid "Can't read cache file %s"
-msgstr "Cachefile %s nicht lesbar"
-
-#: src/cache/cdb/cdb.cc:129
+#: src/cache/cdb/cdb.cc:143
 #, c-format
 msgid "Problems with %s.. skipping"
 msgstr "Probleme mit %s. Übergehe dieses."
 
-#: src/cache/cdb/cdb.cc:136
+#: src/cache/cdb/cdb.cc:150
 msgid "Cannot split %r into package and version"
 msgstr "%r lässt sich nicht in Paket und Version aufteilen"
 
@@ -1547,7 +1542,7 @@ msgstr "Ebuild schlug fehl mit Status %s"
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
-#: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:84
+#: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:85
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Cachefile %s nicht lesbar: %s"
@@ -1565,21 +1560,21 @@ msgstr "Falscher Cpickle-Header"
 msgid "Unsupported pickle value %r"
 msgstr "Nicht unterstützter Pickle-Wert %r"
 
-#: src/cache/eixcache/eixcache.cc:96
+#: src/cache/eixcache/eixcache.cc:97
 #, c-format
 msgid "Cache file %s uses newer format %s (current is %s)"
 msgstr "Cachefile %s benutzt neueres Formmat %s (aktuell ist %s)"
 
-#: src/cache/eixcache/eixcache.cc:97
+#: src/cache/eixcache/eixcache.cc:98
 #, c-format
 msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Formmat %s (aktuell ist %s)"
 
-#: src/cache/eixcache/eixcache.cc:118
+#: src/cache/eixcache/eixcache.cc:119
 msgid "Cache file %s does not contain overlay %r [%s]"
 msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
 
-#: src/cache/eixcache/eixcache.cc:126
+#: src/cache/eixcache/eixcache.cc:127
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Cachefile %s enthölt nicht Overlay %s"
@@ -1608,7 +1603,12 @@ msgstr "Filename des Ebuilds %s/%s kann nicht unterteilt werden"
 msgid "%r not of the form package/catstring-version"
 msgstr "%r hat nicht die Gestalt package/catstring-version"
 
-#: src/cache/port2_1_2/port2_1_2.cc:168
+#: src/cache/port2_1_2/port2_1_2.cc:157
+#, c-format
+msgid "Can't read cache file %s"
+msgstr "Cachefile %s nicht lesbar"
+
+#: src/cache/port2_1_2/port2_1_2.cc:169
 #, c-format
 msgid "Problems with %s: %s\n"
 msgstr "Probleme mit %s: %s\n"
@@ -1626,21 +1626,21 @@ msgstr "sqlite Datensatz für %s ist zu klein"
 msgid "%r not of the form package/category-version"
 msgstr "%r hat nicht die Gestalt package/category-version"
 
-#: src/cache/sqlite/sqlite.cc:255
+#: src/cache/sqlite/sqlite.cc:256
 msgid "Database path incorrect"
 msgstr "Falscher Datenbank-Pfad"
 
-#: src/cache/sqlite/sqlite.cc:266
+#: src/cache/sqlite/sqlite.cc:267
 #, c-format
 msgid "Can't open cache file %s"
 msgstr "Cachefile %s kann nicht geöffnet werden"
 
-#: src/cache/sqlite/sqlite.cc:280
+#: src/cache/sqlite/sqlite.cc:281
 #, c-format
 msgid "sqlite error: %s"
 msgstr "sqlite Fehler: %s"
 
-#: src/cache/sqlite/sqlite.cc:297
+#: src/cache/sqlite/sqlite.cc:299
 msgid ""
 "Cache method sqlite is not compiled in.\n"
 "Recompile eix, using configure option --with-sqlite to add sqlite support"

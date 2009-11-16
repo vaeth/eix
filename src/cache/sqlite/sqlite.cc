@@ -245,7 +245,8 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	free(aux[1]);
 }
 
-bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) throw(ExBasic)
+bool
+SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) throw(ExBasic)
 {
 	char *errormessage(NULL);
 	string sqlitefile(m_prefix + PORTAGE_CACHE_PATH + m_scheme);
@@ -289,7 +290,8 @@ bool SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Cate
 
 using namespace std;
 
-bool SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) throw(ExBasic)
+bool
+SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) throw(ExBasic)
 {
 	UNUSED(pkgtree);
 	UNUSED(catname);

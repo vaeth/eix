@@ -110,20 +110,34 @@ class Cdb {
 		}
 };
 
-bool CdbCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
+bool
+CdbCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 {
-	string cdbfile(m_prefix + PORTAGE_CACHE_PATH + m_scheme + cat_name + ".cdb");
+	m_catname = cat_name;
+	string catpath(m_prefix + PORTAGE_CACHE_PATH + m_scheme + cat_name + ".cdb");
+	cdb = new Cdb(catpath.c_str());
+	return cdb->isReady();
+}
+
+void
+CdbCache::readCategoryFinalize()
+{
+	if(cdb != NULL) {
+		delete cdb;
+		cdb = NULL;
+	}
+	m_catname.clear();
+}
+
+bool
+CdbCache::readCategory(Category &cat) throw(ExBasic)
+{
 	uint32_t dlen;
 	void *data;
 	string key;
 
-	Cdb cdb(cdbfile.c_str());
-	if(unlikely(!cdb.isReady())) {
-		m_error_callback(eix::format(_("Can't read cache file %s")) % cdbfile);
-		return true;
-	}
-	while(likely(!cdb.end())) {
-		key = cdb.get(&dlen, &data);
+	while(likely(!cdb->end())) {
+		key = cdb->get(&dlen, &data);
 		map<string,string> mapping;
 		if( ! unpickle_get_mapping(static_cast<char *>(data), dlen, mapping)) {
 			m_error_callback(eix::format(_("Problems with %s.. skipping")) % key);
@@ -140,7 +154,7 @@ bool CdbCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
 		Package *pkg(cat.findPackage(aux[0]));
 		/* If none was found create one */
 		if(pkg == NULL) {
-			pkg = cat.addPackage(cat_name, aux[0]);
+			pkg = cat.addPackage(m_catname, aux[0]);
 		}
 
 		/* Make version and add it to package. */
@@ -168,6 +182,5 @@ bool CdbCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
 		free(aux[0]);
 		free(aux[1]);
 	}
-
 	return true;
 }

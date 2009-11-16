@@ -74,23 +74,34 @@ class BasicCache {
 		virtual bool can_read_multiple_categories() const
 		{ return false; }
 
-		/// If available, the function to read multiple categories.
-		/** @param packagetree should point to packagetree. The other parameters are only used if packagetree is NULL:
+		/** If available, the function to read multiple categories.
+		    @param packagetree should point to packagetree. The other parameters are only used if packagetree is NULL:
 		    @param cat_name If packagetree is NULL, only packages with this category name are read.
 		    @param category If packagetree is NULL, the packages matching cat_name are added to this category.
-		    @return false if an error occurred */
+		    @return false if some error caused incomplete read. */
 		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULL, Category *category ATTRIBUTE_UNUSED = NULL) throw(ExBasic)
 		{ UNUSED(packagetree); UNUSED(cat_name); UNUSED(category); return 1; }
 
-		/// Read Cache for an individual category. If not overloaded, then readCategories must be overloaded
-		virtual bool readCategory(const char *cat_name, Category &cat) throw(ExBasic)
-		{ return readCategories(NULL, cat_name, &cat); }
+		/** Prepare reading Cache for an individual category.
+		    If not overloaded, then readCategories() must be overloaded.
+		    @return false if a trivial check shows that the category is empty.
+		    This is used in eix-update to avoid unnecessary updates of the percentage bar.
+		    In case of a false return value, readCategory() must not be called,
+		    but readCategoryFinalize() must be called anyway. */
+		virtual bool readCategoryPrepare(const char *cat_name) throw(ExBasic)
+		{ m_catname = cat_name; return true; }
 
-		virtual bool readCategoryPrepare(const char *cat_name ATTRIBUTE_UNUSED) throw(ExBasic)
-		{ UNUSED(cat_name); return true; }
+		/** Read Cache for an individual category, defined before with readCategoryPrepare().
+		    If not overloaded, then readCategories() must be overloaded.
+		    After calling this, readCategoryFinalize() must be called.
+		    @return false if some error caused incomplete read. */
+		virtual bool readCategory(Category &cat) throw(ExBasic)
+		{ return readCategories(NULL, m_catname.c_str(), &cat); }
 
+		/** This must be called to free the data stored with readCategoryPrepare().
+		    After calling this, readCategory() must not be called without a new readCategoryPrepare(). */
 		virtual void readCategoryFinalize()
-		{}
+		{ m_catname.clear(); }
 
 		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); return 0; }
@@ -102,7 +113,7 @@ class BasicCache {
 		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(pkg); }
 
 	protected:
-		std::string m_scheme, m_prefix;
+		std::string m_scheme, m_prefix, m_catname;
 		std::string m_overlay_name;
 		bool have_prefix;
 		Version::Overlay m_overlay_key;

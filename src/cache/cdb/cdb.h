@@ -12,13 +12,21 @@
 
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
+#include <cstddef>
 
 class Category;
+class Cdb;
 
 class CdbCache : public BasicCache {
-
+	private:
+		Cdb *cdb;
 	public:
-		bool readCategory(const char *cat_name, Category &cat) throw(ExBasic);
+		CdbCache() : BasicCache(), cdb(NULL)
+		{ }
+
+		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
+		bool readCategory(Category &cat) throw(ExBasic);
+		void readCategoryFinalize();
 
 		const char *getType() const
 		{ return "cdb"; }

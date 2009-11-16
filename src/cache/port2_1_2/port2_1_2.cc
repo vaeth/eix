@@ -144,7 +144,8 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 	return true;
 }
 
-bool Port2_1_2_Cache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
+bool
+Port2_1_2_Cache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
 {
 	string filename = m_prefix + PORTAGE_PICKLE;
 	const char *data, *end;

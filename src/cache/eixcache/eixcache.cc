@@ -72,7 +72,8 @@ bool EixCache::initialize(const string &name)
 	return (args.size() <= 3);
 }
 
-bool EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
+bool
+EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
 {
 	string file;
 	if(! m_file.empty())

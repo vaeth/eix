@@ -35,7 +35,7 @@ class MetadataCache : public BasicCache {
 		bool flat, have_override_path;
 		std::string override_path;
 		std::string m_type;
-		std::string catpath;
+		std::string m_catpath;
 		std::vector<std::string> names;
 
 		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, BasicCache::ErrorCallback error_callback);
@@ -47,16 +47,15 @@ class MetadataCache : public BasicCache {
 	public:
 		bool initialize(const std::string &name);
 
-		bool readCategory(const char *cat_name, Category &cat) throw(ExBasic);
-
 		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
+		bool readCategory(Category &cat) throw(ExBasic);
 		void readCategoryFinalize();
 
 		time_t get_time(const char *pkg_name, const char *ver_name) const
-		{ return get_mtime((catpath + "/" + pkg_name + "-" + ver_name).c_str()); }
+		{ return get_mtime((m_catpath + "/" + pkg_name + "-" + ver_name).c_str()); }
 		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const;
 		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
-		{ (*x_read_file)((catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }
+		{ (*x_read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }
 
 		bool use_prefixport() const
 		{ return (path_type == PATH_METADATA); }

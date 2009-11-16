@@ -547,7 +547,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			cache->setErrorCallback(error_callback);
 			reading_percent_status->finish(
 				likely(cache->readCategories(&package_tree)) ?
-				_("Finished") : _("Aborted"));
+				_("Finished") : _("ABORTED!"));
 		}
 		else {
 			if(use_percentage) {
@@ -557,19 +557,37 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			}
 			else {
 				reading_percent_status->init(eix::format(
-					_("     Reading %s categories of packages .. ")) %
+					_("     Reading up to %s categories of packages .. ")) %
 					package_tree.size());
 			}
 
 			/* iterator through categories */
+			bool aborted(false);
+			bool is_empty(true);
 			for(PackageTree::const_iterator ci(package_tree.begin());
 				unlikely(ci != package_tree.end()); ++ci) {
-				// ignore return value of bad categories
-				reading_percent_status->next(eix::format(_(": %s ..")) % ci->first);
-				cache->readCategory(ci->first.c_str(), *(ci->second));
+				if(!cache->readCategoryPrepare(ci->first.c_str())) {
+					if(use_percentage) {
+						reading_percent_status->next();
+					}
+				}
+				else {
+					if(use_percentage) {
+						reading_percent_status->next(eix::format(_(": %s ..")) % ci->first);
+					}
+					is_empty = false;
+					if(!cache->readCategory(*(ci->second))) {
+						aborted = true;
+					}
+				}
+				cache->readCategoryFinalize();
 			}
-			reading_percent_status->finish(use_percentage ?
-				_(" Finished") :_("Finished"));
+			string msg(unlikely(is_empty) ? _("EMPTY!") :
+				(unlikely(aborted) ? _("ABORTED!") :
+					_("Finished")));
+			if(use_percentage)
+				msg.insert(0, 1, ' ');
+			reading_percent_status->finish(msg);
 		}
 		delete reading_percent_status;
 	}

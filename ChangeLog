@@ -68,10 +68,10 @@
 	- Similarly, let also join_to_string act on references and not clear()
 	- Make packagetree a std::map of categories; this also avoids the ugly
 	  fast_access()-hacks which Emil hates so much. Another advantage is
-	  that now only this tree is needed for BasicCache::readCategories.
-	  A disadvantage is that either the names would have to be stored
-	  redundantly, or they have to be passed separately, e.g. for
-	  BasicCache::readCategory; currently, the latter happens.
+	  that now only this tree is needed for BasicCache::readCategories().
+	  Since the category names are not stored redundantly, they must be
+	  passed separated to BasicCache::readCategoryPrepare() which is now
+	  used anyway to avoid unnecessary percentage updates.
 	- Use switch()es instead of subsequent tests in eixrc.cc
 	- Add only finished packages to a Category instead of hackishly
 	  erasing afterwards if unfinished.

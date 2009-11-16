@@ -124,63 +124,65 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 bool
 MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 {
+	m_catname = cat_name;
 	if(have_override_path) {
-		catpath = override_path;
+		m_catpath = override_path;
 	}
 	else {
-		catpath = m_prefix;
+		m_catpath = m_prefix;
 		if(path_type == PATH_METADATA) {
 			// m_scheme is actually the portdir
-			catpath.append(m_scheme);
-			optional_append(catpath, '/');
-			catpath.append(METADATA_PATH);
+			m_catpath.append(m_scheme);
+			optional_append(m_catpath, '/');
+			m_catpath.append(METADATA_PATH);
 		}
 		else {
 		// path_type == PATH_REPOSITORY || path_type == PATH_FULL
-			optional_append(catpath, '/');
-			catpath.append(PORTAGE_CACHE_PATH);
+			optional_append(m_catpath, '/');
+			m_catpath.append(PORTAGE_CACHE_PATH);
 		}
 	}
 	switch(path_type) {
 		case PATH_FULL:
-			catpath.append(m_scheme);
+			m_catpath.append(m_scheme);
 			break;
 		case PATH_REPOSITORY:
-			optional_append(catpath, '/');
+			optional_append(m_catpath, '/');
 			if(m_overlay_name.empty()) {
 				// Paludis' way of resolving missing repo_name:
-				catpath.append("x-");
+				m_catpath.append("x-");
 				string::size_type p(m_scheme.size());
 				while(p) {
 					string::size_type c(m_scheme.rfind('/', p));
 					if(c == string::npos) {
-						catpath.append(m_scheme, 0,p);
+						m_catpath.append(m_scheme, 0,p);
 						break;
 					}
 					if(c == --p)
 						continue;
-					catpath.append(m_scheme, c + 1, p - c);
+					m_catpath.append(m_scheme, c + 1, p - c);
 					break;
 				}
 			}
 			else {
-				catpath.append(m_overlay_name);
+				m_catpath.append(m_overlay_name);
 			}
 			break;
 		case PATH_METADATA:
 		default:
 			break;
 	}
-	optional_append(catpath, '/');
-	catpath.append(cat_name);
+	optional_append(m_catpath, '/');
+	m_catpath.append(cat_name);
 
-	return scandir_cc(catpath, names, cachefiles_selector);
+	return scandir_cc(m_catpath, names, cachefiles_selector);
 }
 
 void
 MetadataCache::readCategoryFinalize()
 {
-	catpath.clear();
+	m_catname.clear();
+	m_catpath.clear();
 	names.clear();
 }
 
@@ -188,7 +190,7 @@ void
 MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
 {
 	string keywords, iuse, restr, props;
-	(*x_get_keywords_slot_iuse_restrict)(catpath + "/" + pkg_name + "-" + ver_name, keywords, version->slotname, iuse, restr, props, m_error_callback);
+	(*x_get_keywords_slot_iuse_restrict)(m_catpath + "/" + pkg_name + "-" + ver_name, keywords, version->slotname, iuse, restr, props, m_error_callback);
 	version->set_full_keywords(keywords);
 	version->set_iuse(iuse);
 	version->set_restrict(restr);
@@ -197,10 +199,8 @@ MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Vers
 }
 
 bool
-MetadataCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
+MetadataCache::readCategory(Category &cat) throw(ExBasic)
 {
-	if(!readCategoryPrepare(cat_name))
-		return false;
 	for(vector<string>::const_iterator it(names.begin());
 		likely(it != names.end()); ) {
 		Version *version;
@@ -220,7 +220,7 @@ MetadataCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
 
 		/* If none was found create one */
 		if(pkg == NULL) {
-			pkg = cat.addPackage(cat_name, aux[0]);
+			pkg = cat.addPackage(m_catname, aux[0]);
 		}
 
 		for(;;) {
@@ -263,6 +263,5 @@ MetadataCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
 		if(newest) // provided we have read the "last" version
 			get_common_info((pkg->name).c_str(), neweststring.c_str(), pkg);
 	}
-	readCategoryFinalize();
 	return true;
 }

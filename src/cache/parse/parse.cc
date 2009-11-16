@@ -236,7 +236,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 }
 
 void
-ParseCache::readPackage(const char *cat_name, Category &cat, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
+ParseCache::readPackage(Category &cat, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
 {
 	bool have_onetime_info, have_pkg;
 
@@ -246,7 +246,7 @@ ParseCache::readPackage(const char *cat_name, Category &cat, const string &pkg_n
 	}
 	else {
 		have_onetime_info = have_pkg = false;
-		pkg = new Package(cat_name, pkg_name);
+		pkg = new Package(m_catname, pkg_name);
 	}
 
 	for(vector<string>::const_iterator fileit(files.begin());
@@ -314,12 +314,13 @@ ParseCache::readPackage(const char *cat_name, Category &cat, const string &pkg_n
 bool
 ParseCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 {
+	m_catname = cat_name;
 	further_works.clear();
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it)
 		further_works.push_back((*it)->readCategoryPrepare(cat_name));
-	catpath = m_prefix + m_scheme + '/' + cat_name;
-	return scandir_cc(catpath, packages, package_selector);
+	m_catpath = m_prefix + m_scheme + '/' + cat_name;
+	return scandir_cc(m_catpath, m_packages, package_selector);
 }
 
 void
@@ -329,24 +330,21 @@ ParseCache::readCategoryFinalize()
 	for(std::vector<BasicCache*>::iterator it(further.begin());
 		likely(it != further.end()); ++it)
 		(*it)->readCategoryFinalize();
-	catpath.clear();
-	packages.clear();
+	m_catname.clear();
+	m_catpath.clear();
+	m_packages.clear();
 }
 
 bool
-ParseCache::readCategory(const char *cat_name, Category &cat) throw(ExBasic)
+ParseCache::readCategory(Category &cat) throw(ExBasic)
 {
-	if(!readCategoryPrepare(cat_name))
-		return false;
-
-	for(vector<string>::const_iterator pit(packages.begin());
-		likely(pit != packages.end()); ++pit) {
+	for(vector<string>::const_iterator pit(m_packages.begin());
+		likely(pit != m_packages.end()); ++pit) {
 		vector<string> files;
-		string pkg_path = catpath + '/' + (*pit);
+		string pkg_path = m_catpath + '/' + (*pit);
 
 		if(scandir_cc(pkg_path, files, ebuild_selector))
-			readPackage(cat_name, cat, *pit, pkg_path, files);
+			readPackage(cat, *pit, pkg_path, files);
 	}
-	readCategoryFinalize();
 	return true;
 }
