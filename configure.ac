@@ -111,8 +111,8 @@ AC_ARG_ENABLE([optimization],
 		[do not append optimization flags])],
 	[MV_ENABLE([optimization])
 	AS_VAR_SET([cmt_optimization], ["on request"])],
-	[AS_VAR_SET([optimization], [:])
-	AS_VAR_SET([cmt_optimization], ["default"])])
+	[AS_VAR_SET([optimization], [false])
+	AS_VAR_SET([cmt_optimization], [])])
 
 AC_ARG_ENABLE([strong_optimization],
 	[AS_HELP_STRING([--enable-strong-optimization],
@@ -220,19 +220,18 @@ AS_IF([${quickcheck}],
 AS_VAR_SET([mycxxadd], [])
 AS_VAR_SET([myldadd], [])
 AS_IF([${debugging}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-g \
 			-ggdb3 \
 		], [${mycxxfatal}], [${quicktrue}])])
 AS_IF([${optimization}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-fomit-frame-pointer \
 			-frename-registers \
 			-fstrict-aliasing \
 			-fmerge-all-constants \
 			-funsafe-loop-optimizations \
 			-finline-functions \
-			-ffast-math \
 			-fgcse-sm \
 			-fgcse-las \
 			-fgcse-after-reload \
@@ -246,17 +245,16 @@ AS_IF([${optimization}],
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
 		], [${mycxxfatal}], [${quicktrue}])
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
+dnl			-ffast-math \
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
-			-Wl,--hash-style=gnu \
-			-Wl,--enable-new-dtags \
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
 		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_optimization}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-fweb \
 			-ftree-vectorize \
 			-fgraphite \
@@ -264,7 +262,9 @@ AS_IF([${strong_optimization}],
 			-floop-strip-mine \
 			-floop-block \
 		], [${mycxxfatal}], [${quicktrue}])
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
+			-Wl,--hash-style=gnu \
+			-Wl,--enable-new-dtags \
 			-Wl,-O9 \
 		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${warnings}],
@@ -321,13 +321,12 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
 			-Wl,--warn-common \
-			-Wl,--fatal-warnings \
 		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
@@ -344,11 +343,11 @@ dnl			-Waggregate-return \
 dnl			-Winline \
 dnl			-Weffc++ \
 AS_IF([${security}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
 		], [${mycxxfatal}], [${quicktrue}])
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [LINK], [ \
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-z,now \
 			-Wl,-z,relro \
 		], [${myldfatal}], [${quicktrue}])])

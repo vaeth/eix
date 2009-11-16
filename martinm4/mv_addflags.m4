@@ -4,9 +4,9 @@ dnl
 dnl Copyright (c)
 dnl  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 dnl
-dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [COMPILE|LINK],
+dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [COMPILE|LINK|RUN],
 dnl     [sh-list of flags], [sh-list of fatal-flags], [mode])
-dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [COMPILE|LINK]
+dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [COMPILE|LINK|RUN]
 dnl succeeds with the corresponding [CFLAGS]. The flag is skipped if it is
 dnl already contained in [ADDCFLAGS] or in [CFLAGS] or if it was already
 dnl tested earlier (in case of positive earlier test, it is added, of course).
@@ -31,7 +31,15 @@ AC_DEFUN([MV_ADDFLAGS],
 					MV_APPEND([$2], [$5])
 					MV_APPEND([$2], [${mv_currflag}])
 					m4_indir([AC_$3_IFELSE],
-						[AC_LANG_PROGRAM([[]], [[]])],
+dnl The program should use STL and C libraries and "stress" the linker with
+dnl constant and dynamic variables, but also be standard, short and quick...
+						[AC_LANG_PROGRAM([[
+#include <vector>
+#include <cstring>
+						]], [[
+std::vector<const char*> a(1, "a");
+if (strchr(a[0], *a[0]) != *(a.begin())) return 1;
+						]])],
 						[AC_MSG_RESULT([yes])
 						AS_VAR_SET([mv_result], [:])],
 						[AC_MSG_RESULT([no])
