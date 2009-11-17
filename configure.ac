@@ -103,7 +103,7 @@ AC_ARG_ENABLE([security],
 	[MV_ENABLE([security])
 	AS_VAR_SET([security], [])
 	AS_VAR_SET([cmt_security], ["on request"])],
-	[AS_VAR_SET([security], [:])
+	[AS_VAR_SET([security], [false])
 	AS_VAR_SET([cmt_security], ["default"])])
 
 AC_ARG_ENABLE([optimization],
@@ -111,7 +111,7 @@ AC_ARG_ENABLE([optimization],
 		[do not append optimization flags])],
 	[MV_ENABLE([optimization])
 	AS_VAR_SET([cmt_optimization], ["on request"])],
-	[AS_VAR_SET([optimization], [:])
+	[AS_VAR_SET([optimization], [false])
 	AS_VAR_SET([cmt_optimization], ["default"])])
 
 AC_ARG_ENABLE([strong_optimization],
@@ -177,9 +177,9 @@ AS_IF([${strong_warnings}],
 MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
 
 AC_MSG_CHECKING([whether security options should be used])
-AS_IF([${warnings}],
-	[AS_VAR_SET([security], [:])
-	AS_VAR_SET([cmt_security], ["forced by warnings"])])
+dnl AS_IF([${warnings}],
+dnl	[AS_VAR_SET([security], [:])
+dnl	AS_VAR_SET([cmt_security], ["forced by warnings"])])
 MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
 
 AC_MSG_CHECKING([whether options should not be tested individually])
@@ -264,10 +264,13 @@ AS_IF([${strong_optimization}],
 dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
-			-Wl,--hash-style=gnu \
-			-Wl,--enable-new-dtags \
 			-Wl,-O9 \
 		], [${myldfatal}], [${quicktrue}])])
+dnl The following is never tried, since the run can succeed but the result
+dnl may fail for some unknown reason on non-GNU systems, see
+dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
+dnl			-Wl,--hash-style=gnu \
+dnl			-Wl,--enable-new-dtags \
 AS_IF([${warnings}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fdirectives-only \
