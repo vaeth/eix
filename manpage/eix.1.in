@@ -920,16 +920,22 @@ printed. If used to print a property, the name B<must be enclosed in square brac
 The name, category, homepage and licenses for the current package.
 .TP
 .BR "availableversions:I<VARIABLE>" ", " "availableversions:I<VARIABLE>:I<VARSLOTS>"
-For each version, print I<VARIABLE>, interpreting it as a format string.
+For each version, print the content of the configuration/environment variable with name
+I<VARIABLE>, interpreting it as a format string.
 If the second form is used and at least one slot of the package is nontrivial,
 then I<VARSLOTS> is used instead of I<VARIABLE>, and the versions are sorted
 according to slots.
 
+To avoid a misunderstanding: It is not possible to enter the required format directly after the colon.
+Instead, the required format must be stored in a new variable, and I<VARIABLE> and I<VARSLOTS>
+are only the names of these variables.
+
 Useful examples for I<VARIABLE> are B<NAMEVERSION>, B<EQNAMEVERSION>,
 B<EQNAMEVERSION>, B<ANAMESLOT>, B<ANAMEASLOT>, B<NAMESLOT>, B<NAMEASLOT> or
 B<DATESORT>.
-Here, B<ANAMESLOT> and B<ANAMEASLOT> are meant to be used in the second form
-(Mnemonic: B<A> prints the slot B<a>lways).
+Here, B<ANAMESLOT> and B<ANAMEASLOT> are meant to be used in the second form,
+i.e. in B<availableversions:ANAMESLOT:ANAMESLOT> or B<availableversions:ANAMEASLOT:ANAMEASLOT>
+(Mnemonic: B<A>SLOT prints the slot B<a>lways).
 Moreover, B<NAMESLOT>, B<NAMEASLOT> and B<DATESORT> makes sense only for installed versions.
 A typical application for the latter is
 
@@ -1126,8 +1132,8 @@ corresponds to that property, taking the old resp. new data into account.
 If neither B<old> nor B<new> is specified, the new version is assumed.
 For example, B<oldavailableversions:VAR> will output the previous available
 versions (using the variable B<VAR> to determine the output format)
-while B<newavailableversions:VAR> and B<availableversions:VAR> both expand
-to the available versions of the current (i.e. new) package.
+while B<newavailableversions:VAR> and B<availableversions:VAR> both will print
+the available versions of the current (i.e. new) package.
 .\" }}}
 
 .\" {{{ -------- Colors
@@ -1154,14 +1160,23 @@ I<none bold underline blink inverse>
 .\" }}}
 
 .\" {{{ -------- Example
-.SS Example:
-.TP
-{installed}(yellow,1;underline){else}(yellow,0){}<name>()
-If the package is installed, print the name underlined in bright yellow,
+.SS Examples:
+
+\fBFORMAT='{installed}(yellow,1;underline){else}(yellow,0){}<name>()}\\n' eix ...\fR
+
+If the package B<...> is installed, print the name underlined in bright yellow,
 else in normal yellow.
-.SS Application:
-.TP
-.B FORMAT='{downgrade}%{FORMAT_ALL}{}' eix -I
+
+\fBFORMAT='<category/name><installedversions:INSTFORMAT>\\n' INSTFORMAT='{first}:{}<version><date:DATEFORMAT>{!last}\\n\\t{}' DATEFORMAT='%x' eix autom*\fR
+
+This will print for every B<autom*> package the category name, and if it is installed,
+it will also print the installed versions and the installation dates.
+One could have obtained the same result by omitting B<{!last}\\t\\n{}> and writing instead B<{first}:{else}\\t\\n{}>,
+since it is of course the same whether B<\\t\\n> is printed at the end of each version except the last
+or at the beginning of each version except the first.
+
+B<FORMAT='{downgrade}%{FORMAT_ALL}{}' eix -I>
+
 This will print all installed packages for which there are downgrade recommendations.
 Note that B<FORMAT='{downgrade}%{FORMAT}{}'> does not work, because this would be
 a self-referential definition in the delayed substitution:
@@ -1176,11 +1191,12 @@ Note that if you want to have compact output in the above example, you cannot
 just append the option B<-c>, because appending this option just has the
 effect that for the format string the variable B<FORMAT_COMPACT> is used
 instead of B<FORMAT>. So, to have compact output, you should use either
-.TP
-.B FORMAT_COMPACT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -Ic
+
+B<FORMAT_COMPACT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -Ic>
+
 or even simpler and with the same effect:
-.TP
-.B FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I
+
+B<FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I>
 .\" }}}
 .\" }}}
 
