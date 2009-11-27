@@ -303,6 +303,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 			continue;
 		Pathname name(overlay, false);
 		add.push_back(name);
+		escape_string(overlay, ":");
 		override_list.push_back(Override(name, a + overlay));
 	}
 }

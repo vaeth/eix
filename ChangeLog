@@ -24,6 +24,8 @@
 	  a misnomer, since it is about the percentage status; the variables
 	  stay separated with appropriate names: FORCE_PERCENTAGE/FORCE_COLORS)
 	- Fix name output on --help.
+	- Fix: KEEP_VIRTUALS=true should now quote ":" correctly, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=294773
 	- Fix: Now --world-file --world really behaves like --world-file as it
 	  should be according to the logic.
 	- Fix: Check effective uid instead of uid.
