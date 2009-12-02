@@ -98,17 +98,16 @@ AC_ARG_ENABLE([debugging],
 	AS_VAR_SET([cmt_debugging], ["default"])])
 
 AC_ARG_ENABLE([security],
-	[AS_HELP_STRING([--disable-security],
-		[do not append security relevant options to flags])],
+	[AS_HELP_STRING([--enable-security],
+		[append security relevant options to flags])],
 	[MV_ENABLE([security])
-	AS_VAR_SET([security], [])
 	AS_VAR_SET([cmt_security], ["on request"])],
 	[AS_VAR_SET([security], [false])
 	AS_VAR_SET([cmt_security], ["default"])])
 
 AC_ARG_ENABLE([optimization],
-	[AS_HELP_STRING([--disable-optimization],
-		[do not append optimization flags])],
+	[AS_HELP_STRING([--enable-optimization],
+		[append optimization flags])],
 	[MV_ENABLE([optimization])
 	AS_VAR_SET([cmt_optimization], ["on request"])],
 	[AS_VAR_SET([optimization], [false])
