@@ -3,6 +3,7 @@
 *eix-0.19.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix ./configure --disable-security (regression of 0.19.0)
+	- Improve tests in case of --enable-security.
 
 *eix-0.19.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

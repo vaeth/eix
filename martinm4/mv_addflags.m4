@@ -33,12 +33,14 @@ AC_DEFUN([MV_ADDFLAGS],
 					m4_indir([AC_$3_IFELSE],
 dnl The program should use STL and C libraries and "stress" the linker with
 dnl constant and dynamic variables, but also be standard, short and quick...
+dnl It should also use a larger local array to test the stack.
 						[AC_LANG_PROGRAM([[
 #include <vector>
 #include <cstring>
 						]], [[
 std::vector<const char*> a(1, "a");
-if (strchr(a[0], *a[0]) != *(a.begin())) return 1;
+int my_a[1000]; for (int j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;
+return (strchr(a[0], *a[0]) == *(a.begin())) ? my_a[999] : 1;
 						]])],
 						[AC_MSG_RESULT([yes])
 						AS_VAR_SET([mv_result], [:])],

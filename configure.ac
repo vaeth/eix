@@ -348,14 +348,17 @@ dnl			-Waggregate-return \
 dnl			-Winline \
 dnl			-Weffc++ \
 AS_IF([${security}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
-			-D_FORTIFY_SOURCE=2 \
+	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
+	# since on some systems it requires also linking with a library.
+	[MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-fstack-protector \
-		], [${mycxxfatal}], [${quicktrue}])
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-z,now \
 			-Wl,-z,relro \
-		], [${myldfatal}], [${quicktrue}])])
+		], [${myldfatal}], [${quicktrue}])
+	MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+			-D_FORTIFY_SOURCE=2 \
+			-fstack-protector \
+		], [${mycxxfatal}], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${mycxxadd}])
