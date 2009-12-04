@@ -46,6 +46,7 @@ void BasicCache::setScheme(const char *prefix, const char *prefixport, const std
 		have_prefix = false;
 		m_prefix = "";
 	}
+	setSchemeFinish();
 }
 
 string BasicCache::getPrefixedPath() const

@@ -516,8 +516,11 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 	dbheader.world_sets = *(portage_settings.get_world_sets());
 
+	/* We must first initialize all caches and erase unneeded ones,
+	   because some cache methods like eixcache know about each other
+	   and call each other before we can call them in a loop afterwards. */
 	for(eix::ptr_list<BasicCache>::iterator it(cache_table.begin());
-		likely(it != cache_table.end()); ++it) {
+		likely(it != cache_table.end()); ) {
 		BasicCache *cache(*it);
 		cache->portagesettings = &portage_settings;
 
@@ -529,6 +532,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 				% overlay.label
 				% cache->getPathHumanReadable()
 				% cache->getType());
+			it = cache_table.erase(it);
 			continue;
 		}
 		Version::Overlay key(dbheader.addOverlay(overlay));
@@ -536,10 +540,16 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->setOverlayName(overlay.label);
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
+		++it;
+	}
 
+	/* Build database from scratch. */
+	for(eix::ptr_list<BasicCache>::iterator it(cache_table.begin());
+		likely(it != cache_table.end()); ++it) {
+		BasicCache *cache(*it);
 		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))
-			% key
-			% overlay.label
+			% cache->getKey()
+			% cache->getOverlayName()
 			% cache->getPathHumanReadable()
 			% cache->getType());
 		reading_percent_status = new PercentStatus;

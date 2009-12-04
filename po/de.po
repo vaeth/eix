@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2009-11-27 11:25+0100\n"
+"POT-Creation-Date: 2009-12-04 18:17+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1409,65 +1409,65 @@ msgstr "Ausschluss von Overlay: %s\n"
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:528
+#: src/eix-update.cc:531
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:540
+#: src/eix-update.cc:550
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:547
+#: src/eix-update.cc:557
 msgid "     Reading Packages .. "
 msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:551 src/eix-update.cc:588
+#: src/eix-update.cc:561 src/eix-update.cc:598
 msgid "Finished"
 msgstr "Fertig"
 
-#: src/eix-update.cc:551 src/eix-update.cc:587
+#: src/eix-update.cc:561 src/eix-update.cc:597
 msgid "ABORTED!"
 msgstr "ABBRUCH!"
 
-#: src/eix-update.cc:556
+#: src/eix-update.cc:566
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Lese Category %s|%s (%s%%)"
 
-#: src/eix-update.cc:561
+#: src/eix-update.cc:571
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
 
-#: src/eix-update.cc:577
+#: src/eix-update.cc:587
 #, c-format
 msgid ": %s .."
 msgstr ": %s ..."
 
-#: src/eix-update.cc:586
+#: src/eix-update.cc:596
 msgid "EMPTY!"
 msgstr "LEER!"
 
-#: src/eix-update.cc:597
+#: src/eix-update.cc:607
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:608
+#: src/eix-update.cc:618
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:612
+#: src/eix-update.cc:622
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:615
+#: src/eix-update.cc:625
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:628
+#: src/eix-update.cc:638
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -1542,7 +1542,7 @@ msgstr "Ebuild schlug fehl mit Status %s"
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
-#: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:85
+#: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:245
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Cachefile %s nicht lesbar: %s"
@@ -1560,24 +1560,24 @@ msgstr "Falscher Cpickle-Header"
 msgid "Unsupported pickle value %r"
 msgstr "Nicht unterstützter Pickle-Wert %r"
 
-#: src/cache/eixcache/eixcache.cc:97
-#, c-format
-msgid "Cache file %s uses newer format %s (current is %s)"
-msgstr "Cachefile %s benutzt neueres Formmat %s (aktuell ist %s)"
-
-#: src/cache/eixcache/eixcache.cc:98
-#, c-format
-msgid "Cache file %s uses obsolete format %s (current is %s)"
-msgstr "Cachefile %s benutzt veraltetes Formmat %s (aktuell ist %s)"
-
-#: src/cache/eixcache/eixcache.cc:119
+#: src/cache/eixcache/eixcache.cc:138
 msgid "Cache file %s does not contain overlay %r [%s]"
 msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
 
-#: src/cache/eixcache/eixcache.cc:127
+#: src/cache/eixcache/eixcache.cc:144
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
-msgstr "Cachefile %s enthölt nicht Overlay %s"
+msgstr "Cachefile %s enthält nicht Overlay %s"
+
+#: src/cache/eixcache/eixcache.cc:257
+#, c-format
+msgid "Cache file %s uses newer format %s (current is %s)"
+msgstr "Cachefile %s benutzt neueres Format %s (aktuell ist %s)"
+
+#: src/cache/eixcache/eixcache.cc:258
+#, c-format
+msgid "Cache file %s uses obsolete format %s (current is %s)"
+msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/cache/metadata/metadata.cc:213 src/cache/metadata/metadata.cc:251
 #: src/cache/port2_1_2/port2_1_2.cc:113 src/cache/sqlite/sqlite.cc:215

@@ -53,6 +53,14 @@ class BasicCache {
 		virtual void setOverlayName(const std::string &name)
 		{ m_overlay_name = name; }
 
+		/// Get overlay-key
+		Version::Overlay getKey() const
+		{ return m_overlay_key; }
+
+		/// Get overlay-name
+		const std::string &getOverlayName() const
+		{ return m_overlay_name; }
+
 		// Get scheme for this cache
 		std::string getPath() const
 		{ return m_scheme; }
@@ -113,6 +121,9 @@ class BasicCache {
 		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(pkg); }
 
 	protected:
+		virtual void setSchemeFinish()
+		{}
+
 		std::string m_scheme, m_prefix, m_catname;
 		std::string m_overlay_name;
 		bool have_prefix;
