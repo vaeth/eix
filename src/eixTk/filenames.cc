@@ -12,10 +12,10 @@
 
 #include <string>
 
-#include <fnmatch.h>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <fnmatch.h>
 
 #include <config.h>
 #ifdef DEBUG_NORMALIZE_PATH
@@ -166,5 +166,5 @@ bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_
 	string n(normalize_path(name, false, false));
 	if(!glob)
 		return (m == n);
-	return (fnmatch(m.c_str(), n.c_str(), 0) == 0);
+	return (!fnmatch(m.c_str(), n.c_str(), 0));
 }

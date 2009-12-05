@@ -2,6 +2,9 @@
 
 *eix-0.19.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Let eix-remote and KEEP_VIRTUAL=true use the original
+	  overlay label's (repo_name)
+	- Introduce --repo-name and REPO_NAMES to override defaults.
 	- eix-update: Treat eix-caches for the same file simultaneously.
 	  This dramatically speeds up KEEP_VIRTUALS=true
 	  When the first overlay accessing the file is displayed, actually

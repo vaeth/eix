@@ -26,6 +26,7 @@
 #include <eixrc/global.h>
 #include <main/main.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/overlay.h>
 #include <portage/packagetree.h>
 
 #include <iostream>
@@ -37,6 +38,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <fnmatch.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -46,7 +48,51 @@ inline static void
 INFO(const string &s)
 { cout << s; }
 
-static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels) throw(ExBasic);
+class Pathname {
+	private:
+		string name;
+		bool must_resolve;
+	public:
+		bool is_a_match(const string &s) const
+		{
+			if(must_resolve) {
+				return !fnmatch(name.c_str(), s.c_str(), 0);
+			}
+			return s == name;
+		}
+
+		string resolve(PortageSettings &portage_settings)
+		{ return portage_settings.resolve_overlay_name(name, must_resolve); }
+
+		Pathname(string n, bool r) : name(n), must_resolve(r)
+		{ }
+};
+
+class Override {
+	public:
+		Pathname name;
+		string method;
+
+		Override(Pathname n) : name(n)
+		{ }
+
+		Override(Pathname n, string m) : name(n), method(m)
+		{ }
+};
+
+class RepoName {
+	public:
+		Pathname name;
+		string repo_name;
+
+		RepoName(Pathname n) : name(n)
+		{ }
+
+		RepoName(Pathname n, string r) : name(n), repo_name(r)
+		{ }
+};
+
+static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels) throw(ExBasic);
 static void print_help(int ret) ATTRIBUTE_NORETURN;
 
 class Permissions {
@@ -154,7 +200,6 @@ class Permissions {
 };
 bool Permissions::know_root, Permissions::am_root;
 
-
 static void
 print_help(int ret)
 {
@@ -180,6 +225,8 @@ print_help(int ret)
 			"\n"
 			" -m  --override-method   override cache method for matching overlays.\n"
 			"\n"
+			" -r  --repo-name         set label for matching overlay.\n"
+			"\n"
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n"),
 		program_name.c_str(), EIX_CACHEFILE);
@@ -203,7 +250,7 @@ static bool
 static bool use_percentage;
 
 static list<const char *> exclude_args, add_args;
-static list<ArgPair> method_args;
+static list<ArgPair> method_args, repo_args;
 static const char *outputname(NULL);
 static const char *var_to_print(NULL);
 
@@ -222,6 +269,7 @@ static struct Option long_options[] = {
 	 Option("exclude-overlay",'x',     Option::STRINGLIST,&exclude_args),
 	 Option("add-overlay",    'a',     Option::STRINGLIST,&add_args),
 	 Option("method",         'm',     Option::PAIRLIST,  &method_args),
+	 Option("repo-name",      'r',     Option::PAIRLIST,  &repo_args),
 	 Option("output",         'o',     Option::STRING,    &outputname),
 
 	 Option(0 ,                0)
@@ -229,29 +277,6 @@ static struct Option long_options[] = {
 
 static PercentStatus *reading_percent_status;
 
-class Pathname {
-	private:
-		string name;
-		bool must_resolve;
-	public:
-		string resolve(PortageSettings &portage_settings)
-		{ return portage_settings.resolve_overlay_name(name, must_resolve); }
-
-		Pathname(string n, bool r) : name(n), must_resolve(r)
-		{ }
-};
-
-class Override {
-	public:
-		Pathname name;
-		string method;
-
-		Override(Pathname n) : name(n)
-		{ }
-
-		Override(Pathname n, string m) : name(n), method(m)
-		{ }
-};
 
 static void
 add_pathnames(vector<Pathname> &add_list, const vector<string> to_add, bool must_resolve)
@@ -267,7 +292,7 @@ add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 	vector<string> v;
 	split_string(v, eixrc[s], true);
 	if(unlikely(v.size() & 1)) {
-		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD\n")) % s << endl;
+		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD")) % s << endl;
 		exit(1);
 	}
 	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
@@ -278,11 +303,27 @@ add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 }
 
 static void
-add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cachefile, string eprefix_virtual)
+add_reponames(vector<RepoName> &repo_names, EixRc &eixrc, const char *s)
+{
+	vector<string> v;
+	split_string(v, eixrc[s], true);
+	if(unlikely(v.size() & 1)) {
+		cerr << eix::format(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s << endl;
+		exit(1);
+	}
+	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
+		RepoName r(Pathname(*it, true));
+		r.repo_name = *(++it);
+		repo_names.push_back(r);
+	}
+}
+
+static void
+add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<RepoName> &repo_names, string cachefile, string eprefix_virtual)
 {
 	static const string a("eix*::");
 	FILE *fp(fopen(cachefile.c_str(), "rb"));
-	if(!fp) {
+	if(fp == NULL) {
 		INFO(eix::format(_(
 			"KEEP_VIRTUALS is ignored: there is no previous %s\n"))
 			% cachefile);
@@ -298,14 +339,30 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, string cach
 		return;
 	}
 	for(Version::Overlay i(0); likely(i != header.countOverlays()); ++i) {
-		string overlay(eprefix_virtual + header.getOverlay(i).path);
+		const OverlayIdent &ov = header.getOverlay(i);
+		string overlay(eprefix_virtual + ov.path);
 		if(!is_virtual(overlay.c_str()))
 			continue;
 		Pathname name(overlay, false);
 		add.push_back(name);
 		escape_string(overlay, ":");
 		override_list.push_back(Override(name, a + overlay));
+		repo_names.push_back(RepoName(name, ov.label));
 	}
+}
+
+static bool
+override_label(OverlayIdent &overlay, const vector<RepoName> &repo_names)
+{
+	bool have_set(false);
+	for(vector<RepoName>::const_iterator it = repo_names.begin();
+		it != repo_names.end(); ++it) {
+		if(it->name.is_a_match(overlay.path)) {
+			overlay.label = it->repo_name;
+			have_set = true;
+		}
+	}
+	return have_set;
 }
 
 int
@@ -372,8 +429,11 @@ run_eix_update(int argc, char *argv[])
 	vector<Pathname> add_list;
 	add_pathnames(add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
 
-	if(unlikely(eixrc.getBool("KEEP_VIRTUALS")))
-		add_virtuals(override_list, add_list, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
+	vector<RepoName> repo_names;
+
+	if(unlikely(eixrc.getBool("KEEP_VIRTUALS"))) {
+		add_virtuals(override_list, add_list, repo_names, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
+	}
 
 	add_override(override_list, eixrc, "OVERRIDE_CACHE_METHOD");
 
@@ -387,6 +447,14 @@ run_eix_update(int argc, char *argv[])
 	for(list<ArgPair>::iterator it(method_args.begin());
 		unlikely(it != method_args.end()); ++it)
 		override_list.push_back(Override(Pathname(it->first, true), it->second));
+
+	/* For REPO_NAMES it is quite the opposite: */
+
+	for(list<ArgPair>::iterator it(repo_args.begin());
+		unlikely(it != repo_args.end()); ++it)
+		repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
+
+	add_reponames(repo_names, eixrc, "REPO_NAMES");
 
 	/* Normalize names: */
 
@@ -490,7 +558,7 @@ run_eix_update(int argc, char *argv[])
 	/* Update the database from scratch */
 	try {
 		update(outputfile.c_str(), table, portage_settings,
-			permissions.will_modify(), excluded_overlays);
+			permissions.will_modify(), repo_names, excluded_overlays);
 	} catch(const ExBasic &e) {
 		cerr << e << endl;
 		return 2;
@@ -507,7 +575,7 @@ error_callback(const string &str)
 }
 
 static void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<string> &exclude_labels) throw(ExBasic)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels) throw(ExBasic)
 {
 	DBHeader dbheader;
 	vector<string> categories;
@@ -526,7 +594,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 		/* Build database from scratch. */
 		OverlayIdent overlay(cache->getPath().c_str(), "");
-		overlay.readLabel(cache->getPrefixedPath().c_str());
+		if(!override_label(overlay, repo_names)) {
+			overlay.readLabel(cache->getPrefixedPath().c_str());
+		}
 		if(unlikely(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end())) {
 			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
 				% overlay.label

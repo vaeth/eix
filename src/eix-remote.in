@@ -279,7 +279,7 @@ reporting such a bug to give the server maintainers a chance to upgrade
 after a version bump of eix).
 Conversely, if the downloaded versions are even newer than that supported by
 your eix, you will have to upgrade to the most current ~x86 version of eix
-to use eix-update: This inconvenience cannot be avoided and is not a bug!'
+to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 }
 
 AddArchive () {
@@ -313,15 +313,14 @@ AddArchive () {
 		}
 		l=`EIX_CACHEFILE="${p}" eix --print-overlay-label "${n}"` || \
 			l=''
-		[ -z "${l}" ] && l='(no repo_name)'
 		name="${name##*/}"
 		virtual="layman/${name}"
-		printf '%s -> %s\n' "${virtual}" "${l}"
-		[ "${l}" = "${name}" ] || virtual="${virtual}: ${l}"
+		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
 		Replace -g p '\' '\\'
 		Replace -g p ':' '\:'
 		AddMethod "${virtual}" "eix*:${p}:${n}"
 		AddOverlays "${virtual}"
+		[ -n "${l}" ] && AddRepoName "${virtual}" "${l}"
 		AddExcludes "${LOCAL_LAYMAN}/${name}"
 	done
 	msg=''

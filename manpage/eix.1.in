@@ -702,6 +702,11 @@ It is explicitly admissible to use this option repeatedly to
 override cache methods for several overlays.
 The last matching override takes precedence.
 In particular, the option overrides the content of B<OVERRIDE_CACHE_METHOD>.
+.TP
+.BR -r " " I<overlay-path> " " I<overlay-label> ", " --repo-name " " I<overlay-path> " " I<overlay-label>
+The overlay I<overlay-path> obtains the label I<overlay-label>, independent of any other settings.
+This may be overridden by B<REPO_NAMES>.
+In contrast to B<REPO_NAMES>, I<overlay-path> is not a pattern but the exact path.
 .\" }}}
 
 .\" {{{ OUTPUT
@@ -2196,6 +2201,14 @@ corresponding entry "I<overlay> eix*::I<overlay>" to B<CACHE_METHOD>.
 Note that this means that this option might override settings made in
 B<CACHE_METHOD>, but it might be overridden by settings from
 B<OVERRIDE_CACHE_METHOD>.
+.TP
+.BR REPO_NAMES
+This variables is a string list of the form "I<dir-pattern> I<overlay-label> I<dir-pattern> I<overlay-label> ...".
+When a new cachefile is created, the overlay matching I<dir-pattern> obtains the label I<overlay-label>,
+independent of the content of its profiles/repo_name file.
+This variable can also associate label names to virtual overlays which do not possess such a file.
+In particular, this variable also overrides overlay labels set by KEEP_VIRTUALS.
+Later entries override earlier ones: The last matching entry takes precedence.
 .TP
 .BR LOCAL_PORTAGE_CONFIG " " (true / false)
 If false, /etc/portage and B<ACCEPT_KEYWORDS> (from make.conf or the environment) are ignored.

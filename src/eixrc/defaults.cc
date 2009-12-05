@@ -1778,6 +1778,14 @@ AddOption(STRING, "OVERRIDE_CACHE_METHOD",
 	"This variable can override the choices of CACHE_METHOD,\n"
 	"and in addition it can override the choices made by KEEP_VIRTUALS."));
 
+AddOption(STRING, "REPO_NAMES",
+	"", _(
+	"This is a list of pairs DIR-PATTERN OVERLAY_LABEL.\n"
+	"When a new cachefile is created, the overlay matching DIR-PATTERN obtains\n"
+	"the label OVERLAY_LABEL, independent of the content of profiles/repo_name\n"
+	"or the label associated by KEEP_VIRTUALS.\n"
+	"The last matching DIR_PATTERN takes precedence."));
+
 AddOption(STRING, "EXCLUDE_OVERLAY",
 	"", _(
 	"List of overlays that should be excluded from the index."));

@@ -143,6 +143,10 @@ AddMethod () {
 	AddUpdateQuoting "${1}" "${2}"
 }
 
+AddRepoName () {
+	AddUpdateArgs '-r' "${1}" "${2}"
+}
+
 AddOverlays () {
 	local j
 	for j
