@@ -352,45 +352,43 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 					trim(&line);
 					vector<string> wordlist;
 					split_string(wordlist, line);
-					vector<string>::iterator word(wordlist.begin());
-					for(string::size_type i; likely(word != wordlist.end()); ++word) {
-						i = word->find("/");
-						if(i == string::npos)
+					for(vector<string>::iterator word(wordlist.begin());
+						likely(word != wordlist.end()); ++word) {
+						string::size_type i(word->find("/"));
+						if((i == string::npos) || (i == 0) || (i == word->size() - 1))
 							continue;
-						if(word->find("/", i + 1) == string::npos)
-							break;
-					}
-					if(unlikely(word == wordlist.end()))
-						continue;
-					if(unlikely(firsttime))
-						firsttime = false;
-					else {
-						Matchatom *next = current->OR();
-						USE_NEXT;
-						test->setAlgorithm(new ExactAlgorithm());
-						*test = PackageTest::CATEGORY_NAME;
-					}
-					char **name_ver(ExplodeAtom::split(word->c_str()));
-					const char *name, *ver;
-					if(name_ver)
-					{
-						name = name_ver[0];
-						ver  = name_ver[1];
-					}
-					else
-					{
-						name = word->c_str();
-						ver  = NULL;
-					}
-					if(unlikely(*marked_list == NULL)) {
-						*marked_list = new MarkedList();
-					}
-					(*marked_list)->add(name, ver);
-					test->setPattern(name);
-					if(name_ver)
-					{
-						free(name_ver[0]);
-						free(name_ver[1]);
+						if(word->find("/", i + 1) != string::npos)
+							continue;
+						if(unlikely(firsttime))
+							firsttime = false;
+						else {
+							Matchatom *next = current->OR();
+							USE_NEXT;
+							test->setAlgorithm(new ExactAlgorithm());
+							*test = PackageTest::CATEGORY_NAME;
+						}
+						if((*word)[0] == '=') {
+							word->erase(0, 1);
+						}
+						char **name_ver(ExplodeAtom::split(word->c_str()));
+						const char *name, *ver;
+						if(name_ver) {
+							name = name_ver[0];
+							ver  = name_ver[1];
+						}
+						else {
+							name = word->c_str();
+							ver  = NULL;
+						}
+						if(unlikely(*marked_list == NULL)) {
+							*marked_list = new MarkedList();
+						}
+						(*marked_list)->add(name, ver);
+						test->setPattern(name);
+						if(name_ver) {
+							free(name_ver[0]);
+							free(name_ver[1]);
+						}
 					}
 				}
 				need_logical_operator = true;
