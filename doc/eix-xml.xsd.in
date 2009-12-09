@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<xsd:simpleType name="EixXmlVersion">
+  <xsd:restriction base="xsd:integer">
+    <xsd:minInclusive value="@CURRENTXML@" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="MaskType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="profile" />
+    <xsd:enumeration value="hard" />
+    <xsd:enumeration value="package_mask" />
+    <xsd:enumeration value="keyword" />
+    <xsd:enumeration value="missing_keyword" />
+    <xsd:enumeration value="alien_stable" />
+    <xsd:enumeration value="alien_unstable" />
+    <xsd:enumeration value="minus_asterisk" />
+    <xsd:enumeration value="minus_keyword" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="UnmaskType">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="package_unmask" />
+    <xsd:enumeration value="package_keywords" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="IuseDefault">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="1" />
+    <xsd:enumeration value="-1" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="UseEnabled">
+  <xsd:restriction base="xsd:integer">
+    <xsd:minInclusive value="0" />
+    <xsd:maxInclusive value="1" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="RestrictFlag">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="binchecks" />
+    <xsd:enumeration value="strip" />
+    <xsd:enumeration value="test" />
+    <xsd:enumeration value="userpriv" />
+    <xsd:enumeration value="installsources" />
+    <xsd:enumeration value="fetch" />
+    <xsd:enumeration value="mirror" />
+    <xsd:enumeration value="bindist" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="PropertiesFlag">
+  <xsd:restriction base="xsd:string">
+    <xsd:enumeration value="interactive" />
+    <xsd:enumeration value="live" />
+    <xsd:enumeration value="virtual" />
+    <xsd:enumeration value="set" />
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="StringList">
+  <xsd:list itemType="xsd:string" />
+</xsd:simpleType>
+
+<xsd:complexType name="PackageVersion">
+  <xsd:sequence>
+    <xsd:element name="mask" minOccurs="0" maxOccurs="1">
+      <xsd:complexType>
+        <xsd:attribute name="type" type="MaskType" use="required" />
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="unmask" minOccurs="0" maxOccurs="1">
+      <xsd:complexType>
+        <xsd:attribute name="type" type="UnmaskType" use="required" />
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="iuse" minOccurs="0" maxOccurs="unbounded">
+      <xsd:complexType>
+        <xsd:simpleContent>
+          <xsd:extension base="StringList">
+            <xsd:attribute name="default" type="IuseDefault" />
+          </xsd:extension>
+        </xsd:simpleContent>
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="use" minOccurs="0" maxOccurs="unbounded">
+      <xsd:complexType>
+        <xsd:simpleContent>
+          <xsd:extension base="StringList">
+            <xsd:attribute name="enabled" type="UseEnabled" />
+          </xsd:extension>
+        </xsd:simpleContent>
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="restrict" minOccurs="0" maxOccurs="unbounded">
+      <xsd:complexType>
+        <xsd:attribute name="flag" type="RestrictFlag" use="required" />
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="properties" minOccurs="0" maxOccurs="unbounded">
+      <xsd:complexType>
+        <xsd:attribute name="flag" type="PropertiesFlag" use="required" />
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="keywords" type="StringList"  minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element name="normalized_keywords" type="StringList"  minOccurs="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:string" use="required" />
+  <xsd:attribute name="overlay" type="xsd:string" />
+  <xsd:attribute name="repository" type="xsd:string" />
+  <xsd:attribute name="slot" type="xsd:string" />
+  <xsd:attribute name="installed" type="xsd:string" fixed="1" />
+  <xsd:attribute name="installDate" type="xsd:string" />
+</xsd:complexType>
+
+<xsd:element name="eixdump">
+  <xsd:complexType>
+    <xsd:sequence>
+      <xsd:element name="category" minOccurs="0" maxOccurs="unbounded">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="package" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="description" type="xsd:string" />
+                  <xsd:element name="homepage" type="xsd:string" />
+                  <xsd:element name="version" type="PackageVersion" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          <xsd:attribute name="name" type="xsd:string" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="version" type="EixXmlVersion" use="required" />
+  </xsd:complexType>
+</xsd:element>
+
+</xsd:schema>

@@ -28,6 +28,10 @@ the **eixdump** tag.
 
        **<package name="** name of 1st package **">**
 
+         **<description>** ...  **</description>**
+
+         **<homepage>** ... **</homepage>**
+
        .. container:: layout-block version-block
 
          **<version id="** 1st version of 1st package **"** [possibly further `version attributes`_ (see below), separated by spaces] **>**
@@ -123,7 +127,7 @@ depending on the configuration and the version data.
   - **hard**
   - **package_mask**
   - **keyword**
-  - **minus_keyword**
+  - **missing_keyword**
   - **alien_stable**
   - **alien_unstable**
   - **minus_asterisk**

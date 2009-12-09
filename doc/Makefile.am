@@ -7,13 +7,21 @@ htmlfiles = \
 format.html \
 xml-format.html
 
+xmldocfiles = \
+eix-xml.xsd
+
 CLEANFILES = \
 $(textfiles) \
-$(htmlfiles)
+$(htmlfiles) \
+$(xmldocfiles)
 
 if USE_RST
-nodist_html_DATA = $(htmlfiles)
+rsthtmlfiles = $(htmlfiles)
+else
+rsthtmlfiles =
 endif
+
+nodist_html_DATA = $(xmldocfiles) $(rsthtmlfiles)
 
 nodist_doc_DATA = $(textfiles)
 
@@ -24,7 +32,8 @@ html4css1.css
 EXTRA_DIST = \
 $(css_data) \
 format.txt.in \
-xml-format.txt.in
+xml-format.txt.in \
+eix-xml.xsd.in
 
 SUFFIXES = .in
 .in:
