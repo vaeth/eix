@@ -237,6 +237,8 @@ to make sure that the preferred user output settings do not influence your outpu
 If this option is active, B<OVERLAYS_LIST=none> and B<--pure-packages> are
 automatically active.
 The output format can be slightly influenced by the B<XML_*> variables.
+The XML format used is documented in human-readable form in the files xml-format.html or xml-format.txt
+and in less human-readable form (namely as an xml-scheme) in the file eix-xml.xsd
 .TP
 .BR -* ", " --pure-packages "   (toggle)"
 (do not forget quoting if you use the short form from within a shell.)
