@@ -1,11 +1,11 @@
 
 textfiles = \
-format.txt \
-xml-format.txt
+eix-db.txt \
+eix-xml.txt
 
 htmlfiles = \
-format.html \
-xml-format.html
+eix-db.html \
+eix-xml.html
 
 xmldocfiles = \
 eix-xml.xsd
@@ -31,8 +31,8 @@ html4css1.css
 
 EXTRA_DIST = \
 $(css_data) \
-format.txt.in \
-xml-format.txt.in \
+eix-db.txt.in \
+eix-xml.txt.in \
 eix-xml.xsd.in
 
 SUFFIXES = .in
@@ -45,10 +45,10 @@ SUFFIXES = .in
 		-e "s,\@CURRENTXML\@,$${X},g" \
 	"$<" > "$@"
 
-format.html: format.txt $(css_data)
-	$(AM_V_GEN)rst2html.py format.txt --embed-stylesheet \
+eix-db.html: eix-db.txt $(css_data)
+	$(AM_V_GEN)rst2html.py eix-db.txt --embed-stylesheet \
 		--stylesheet-path=stylesheet.css > "$@"
 
-xml-format.html: xml-format.txt $(css_data)
-	$(AM_V_GEN)rst2html.py xml-format.txt --embed-stylesheet \
+eix-xml.html: eix-xml.txt $(css_data)
+	$(AM_V_GEN)rst2html.py eix-xml.txt --embed-stylesheet \
 		--stylesheet-path=stylesheet.css > "$@"

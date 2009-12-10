@@ -91,6 +91,7 @@ Except for id, all of them are optional.
 - **overlay="** [..] **"**
 
   The overlay is usually a path.
+  However, for virtual overlays this may be different.
 
 - **repository="** [..] **"**
 

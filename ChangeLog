@@ -11,7 +11,8 @@
 	  all overlays are handled - the later ones only print a message.
 	- eix --pipe: Also accept leading "=", e.g. =sys-devel/gcc-4.4.2.
 	  Also accept several packages in one line (separated by spaces).
-	- Provide xml-scheme: eix-xml.xsd
+	- Provide xml-schema for the --xml output: eix-xml.xsd
+	- Rename xml-format.* and format.* into eix-xml.* and eix-db.*
 	- manpage: Give some useful examples at the very beginning.
 	- Fix xml-description (add description, homepage, missing_keyword)
 	- Fix ./configure --disable-security (regression of 0.19.0,
