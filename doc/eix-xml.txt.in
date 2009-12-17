@@ -10,9 +10,10 @@ eix - XML output format
 
 This article describes the format of the XML output
 (i.e. with the --xml option) of eix.
-The current version of this format is @CURRENTXML@ (@PACKAGE_STRING@);
+The file eix-xml.xsd contains a more accurate description (as an xml-schema).
+The current version of the format is @CURRENTXML@ (@PACKAGE_STRING@);
 this number occurs in the format itself as the **version** attribute of
-the **eixdump** tag.
+the **eixdump** element.
 
   .. container:: layout-block header-block
 
@@ -36,7 +37,7 @@ the **eixdump** tag.
 
          **<version id="** 1st version of 1st package **"** [possibly further `version attributes`_ (see below), separated by spaces] **>**
 
-           [possibly `version tags`_ (see below), separated by newlines and tabs]
+           [possibly `version elements`_ (see below), separated by newlines and tabs]
 
          **</version>**
 
@@ -113,10 +114,10 @@ Except for id, all of them are optional.
   is output, i.e. if and only if the version is installed.
 
 
-`Version Tags`
---------------
+`Version Elements`
+------------------
 
-The following tags are used within a version.
+The following elements are used within a version.
 Each of them may or may not occur,
 depending on the configuration and the version data.
 
@@ -136,7 +137,7 @@ depending on the configuration and the version data.
 
 - **<unmask type="** [..] **" />**
 
-  This can occur only if the mask tag has occurred and describes how the
+  This can occur only if the mask element has occurred and describes how the
   package has been unmasked locally. Possible values for the type are:
 
   - **package_unmask**

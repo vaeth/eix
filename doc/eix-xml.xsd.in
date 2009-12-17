@@ -7,7 +7,7 @@
 		The files eix-xml.html or eix-xml.txt provide a more informal description of this format.
 		This schema should give an accurate description; please file a bug if you
 		should observe that e.g. xmllint --schema eix-xml.xsd throws errors or warnings for the eix output.
-		The current version of the format is @CURRENTXML@.
+		The current version of the format is @CURRENTXML@ (@PACKAGE_STRING@)
 	</xsd:documentation>
 </xsd:annotation>
 
