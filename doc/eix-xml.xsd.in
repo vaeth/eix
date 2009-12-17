@@ -248,7 +248,7 @@
 		<xsd:sequence>
 			<xsd:element name="category" type="Category" minOccurs="0" maxOccurs="unbounded" />
 		</xsd:sequence>
-		<xsd:attribute name="version" type="integer" fixed="<!-- <\!-- @CURRENTXML@ --> -->" use="required" />
+		<xsd:attribute name="version" type="xsd:integer" fixed="@CURRENTXML@" use="required" />
 	</xsd:complexType>
 </xsd:element>
 
