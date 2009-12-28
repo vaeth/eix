@@ -1325,13 +1325,35 @@ B<PORTDIR>, B<PORTDIR_SERVER>, B<PORTDIR_CLIENT>, B<SERVER>, or B<CLIENT>.
 These variables are filled with defaults when I<command> is called and
 will later be used for the B<rsync> command(s) with their obvious meaning.
 .TP
-.BI @@ command
+.BI @ command
 Adds a hook for I<command>; the actual execution of I<command> is postponed
 until B<emerge --sync> was (successfully) called.
 .TP
-.BI @ command
+.BI @@ command
 Adds a hook for I<command>; the actual execution of I<command> is postponed
 until B<emerge --sync> and the subsequent B<eix-update> was (successfully) called.
+
+.TP
+Here is a B<schematic> overview of the order of hooks/commands:
+
+.BR !! " hooks"
+
+.BR "cp @EIX_CACHEFILE@ /var/cache/eix.previous"
+
+layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
+
+.BR ~ " hooks"
+
+.BR "emerge --sync"
+
+.BR @ " hooks"
+
+.BR "eix-update"
+
+.BR @@ " hooks"
+
+.BR "eix-diff /var/cache/eix.previous"
+
 .TP
 Some examples of useful lines in B<@SYSCONFDIR@/eix-sync.conf>:
 .TP
@@ -1340,7 +1362,7 @@ Use this line if you have --ask in EMERGE_DEFAULT_OPTS in /etc/make.conf
 but do not want to get asked for eix-sync.
 .TP
 .B -r -M
-Use this if you use e.g. PORTDIR_CACHE_METHOD=assign and
+Use this if you use e.g. B<PORTDIR_CACHE_METHOD=assign>, and
 B<FEATURES=metadata-transfer> is inactive or disabled
 (the latter is the default in newer portage versions).
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
@@ -1361,10 +1383,10 @@ The disadvantage is that this B<egencache> command is executed even if
 Update the metadata cache of the overlay with repository name "foo";
 this makes sense if you had earlier a line B<foo> or a line B<!command to update foo>
 for updating this repository (by layman or by some other command)
-and if want to you use cache method <metadata-flat> for that overlay
+and if you want to use cache method B<metadata-flat> for that overlay
 although the metadata cache is broken or not contained in that repository.
 .TP
-.B !exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
+.B !!exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
 Send the output to a logfile (with correct permissions).
 The "true" at the end is to force continuing even if the "chown" failed.
 If you do not want to redirect the output of the final B<eix-diff>, you might
@@ -1382,13 +1404,13 @@ will be colored even if you use redirection.
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"`hostname`-sh"
 .TP
-.B @eix-remote update "`portageq portdir`/local/layman/eix-caches.tar.bz2"
+.B @@eix-remote update B<"`portageq portdir`/local/layman/eix-caches.tar.bz2">
 (The last argument can also be omitted if you do not want a local copy
 of the data in the /usr/portage/local/layman directory.)
 .TP
-.B @@eix-remote fetch /var/cache/remote-cache.tbz2
+.B @eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
-.B @eix-remote add /var/cache/remote-cache.tbz2
+.B @@eix-remote add /var/cache/remote-cache.tbz2
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc

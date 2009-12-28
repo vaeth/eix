@@ -1,5 +1,15 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.19.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix description of @/@@-hook order in manpage and help page.
+	  Fix corresponding eix-remote example in manpage.
+	  Thanks to navid.zamani at googlemail.com
+	  http://bugs.gentoo.org/show_bug.cgi?id=296722
+	- eix-sync: Add option -L for passing options to layman,
+	  see http://sourceforge.net/tracker/index.php?
+	  func=detail&aid=2921161&group_id=128101&atid=710611
+
 *eix-0.19.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let eix-remote and KEEP_VIRTUAL=true use the original

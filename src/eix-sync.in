@@ -56,7 +56,7 @@ The following options are available:
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
 -@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.
--S   Do not execute the hooks after emerge --sync (@@ entries).
+-S   Do not execute the hooks after emerge --sync (@ entries).
 -M   Run emerge --metadata. You might need this when you use e.g.
      PORTDIR_CACHE_METHOD=flat and a newer portage version when
      FEATURES=metadata-transfer is inactive or disabled.
@@ -71,6 +71,8 @@ The following options are available:
 -C OPT Add OPT to the emerge --sync command (or whatever is used instead).
        This option can be used accumulatively.
 -o OPT Add OPT to each eix-update command.
+       This option can be used accumulatively.
+-L OPT Add OPT to each call of layman.
        This option can be used accumulatively.
 -r   Clear /var/cache/edb/dep/* before syncing. This is only useful when you
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
@@ -114,11 +116,11 @@ ParseConfigLine () {
 	done
 	case "${j}" in
 		'!!'*)	[ "${1}" = 'opts' ] && DoExecute "${j#??}"; return;;
-		!*)	j="${j#?}"; mycmd='!';;
-		@@*)	j="${j#??}"; mycmd='@@';;
-		@*)	j="${j#?}"; mycmd='@';;
-		\~*)	j="${j#?}"; mycmd='~';;
-		-*)	config_opts="${config_opts} ${j}"; return;;
+		'!'*)	j="${j#?}"; mycmd='!';;
+		'@@'*)	j="${j#??}"; mycmd='@@';;
+		'@'*)	j="${j#?}"; mycmd='@';;
+		'~'*)	j="${j#?}"; mycmd='~';;
+		'-'*)	config_opts="${config_opts} ${j}"; return;;
 		*)	mycmd="layman";;
 	esac
 	[ "${1}" = 'opts' ] && return
@@ -130,14 +132,17 @@ ParseConfigLine () {
 	esac
 	${nolayman} && return
 	RootTest
+	eval "set -- ${layman_opt}"
 	if [ "${j}" = '*' ]
 	then
 		MyRunCommand "`gettext 'Syncing all portage overlays'`" \
-		"${mycmd}" -S || die "`eval_gettext '${mycmd} -S failed'`"
+			"${mycmd}" -S "${@}" \
+			|| die "`eval_gettext '${mycmd} -S failed'`"
 		return
 	fi
 	MyRunCommand "`eval_gettext 'Syncing portage overlay ${j}'`" \
-	"${mycmd}" -s "${j}" || die "`eval_gettext '${mycmd} -s ${j} failed'`"
+		"${mycmd}" -s "${j}" "${@}" \
+		|| die "`eval_gettext '${mycmd} -s ${j} failed'`"
 }
 
 test -r "${eixsyncconf}" && haveconf=: || haveconf=false
@@ -166,6 +171,7 @@ END_EIX_SYNC_CONF
 DefaultOpts () {
 	Push -c emergecmd 'emerge' '--sync'
 	Push -c updatecmd 'eix-update'
+	Push -c layman_opt
 	diffonly=false
 	clearcache=false
 	nolayman=false
@@ -189,7 +195,7 @@ eval "Push -c opt ${config_opts}"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts "ids:2:Uul@SmMNtTqwWc:C:o:rRe?hH" opt
+while getopts "ids:2:Uul@SmMNtTqwWL:c:C:o:rRe?hH" opt
 do
 	case "${opt}" in
 		i) DefaultOpts;;
@@ -207,6 +213,7 @@ do
 		t) usetemp=:;;
 		T) measure_time=false;;
 		q) quiet=:;;
+		L) Push layman_opt "${OPTARG}";;
 		w) Push -c emergecmd 'emerge-webrsync';;
 		W) Push -c emergecmd 'emerge-delta-webrsync';;
 		c) Push -c emergecmd "${OPTARG}";;

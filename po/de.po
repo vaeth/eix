@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2009-12-05 17:17+0100\n"
+"POT-Creation-Date: 2009-12-28 13:15+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -56,7 +56,7 @@ msgid ""
 "     However, the !! lines and postponed hooks (@ and @@ entries)\n"
 "     will be executed anyway.\n"
 "-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
-"-S   Do not execute the hooks after emerge --sync (@@ entries).\n"
+"-S   Do not execute the hooks after emerge --sync (@ entries).\n"
 "-M   Run emerge --metadata. You might need this when you use e.g.\n"
 "     PORTDIR_CACHE_METHOD=flat and a newer portage version when\n"
 "     FEATURES=metadata-transfer is inactive or disabled.\n"
@@ -72,6 +72,8 @@ msgid ""
 "-C OPT Add OPT to the emerge --sync command (or whatever is used instead).\n"
 "       This option can be used accumulatively.\n"
 "-o OPT Add OPT to each eix-update command.\n"
+"       This option can be used accumulatively.\n"
+"-L OPT Add OPT to each call of layman.\n"
 "       This option can be used accumulatively.\n"
 "-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when "
 "you\n"
@@ -120,7 +122,7 @@ msgstr ""
 "     Aber die !!-Zeilen und nachgestellte Hooks (@- und @@-Zeilen)\n"
 "     werden dennoch ausgeführt.\n"
 "-@   Keine Hooks (@- und @@-Zeilen) aus ${eixsyncconf}.\n"
-"-S   Keine Hooks nach emerge --sync (@@-Zeilen).\n"
+"-S   Keine Hooks nach emerge --sync (@-Zeilen).\n"
 "-M   Mit emerge --metadata. Dies ist beispielsweise nötig bei\n"
 "     PORTDIR_CACHE_METHOD=flat und neuere Portage-Versionen, wenn\n"
 "     FEATURES=metadata-transfer inaktiv oder ausgeschaltet ist.\n"
@@ -137,6 +139,8 @@ msgstr ""
 "       Diese Option kann akkumulativ benutzt werden.\n"
 "-o OPT Fügt Option OPT jedem Aufruf von eix-update hinzu.\n"
 "       Diese Option kann akkumulativ benutzt werden.\n"
+"-L OPT Fügt Option OPT jedem Aufruf von layman hinzu.\n"
+"       Diese Option kann akkumulativ benutzt werden.\n"
 "-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
 "     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
 "     aktiv sind. (Diese Option ist kein Default mehr).\n"
@@ -144,40 +148,40 @@ msgstr ""
 "-e   Vermeidet heuristischen Test, ob Rootrechte benötigt werden.\n"
 "-h   Zeigt diesen Text und beendet das Programm danach."
 
-#: src/eix-sync.sh:88
+#: src/eix-sync.sh:90
 #, sh-format
 msgid "No previous database ${eixprevious} exists"
 msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
 
-#: src/eix-sync.sh:90
+#: src/eix-sync.sh:92
 msgid "Could not execute eix-diff"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/eix-sync.sh:99
+#: src/eix-sync.sh:101
 #, sh-format
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Fehler beim Aufruf von ${curr_cmd}"
 
-#: src/eix-sync.sh:135
+#: src/eix-sync.sh:138
 msgid "Syncing all portage overlays"
 msgstr "Synce alle Portage-Overlays"
 
-#: src/eix-sync.sh:136
+#: src/eix-sync.sh:140
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "${mycmd} -S schlug fehl"
 
-#: src/eix-sync.sh:139
+#: src/eix-sync.sh:143
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Synce Portage-Overlay ${j}"
 
-#: src/eix-sync.sh:140
+#: src/eix-sync.sh:145
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:272
+#: src/eix-sync.sh:279
 msgid ""
 "Nothing was executed, because a heuristic shows that root permissions\n"
 "are required to execute everything successfully."
@@ -185,7 +189,7 @@ msgstr ""
 "Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
 "Root-Recht benötigt werden, um alles erfolgreich auszuführen."
 
-#: src/eix-sync.sh:276
+#: src/eix-sync.sh:283
 #, sh-format
 msgid ""
 "However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
@@ -198,135 +202,135 @@ msgstr ""
 "Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
 "das File ${eixsyncconf} ein."
 
-#: src/eix-sync.sh:292
+#: src/eix-sync.sh:299
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:298
+#: src/eix-sync.sh:305
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:299
+#: src/eix-sync.sh:306
 msgid "initial eix-update"
 msgstr "Erstes eix-update"
 
-#: src/eix-sync.sh:300
+#: src/eix-sync.sh:307
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:301
+#: src/eix-sync.sh:308
 msgid "client syncing"
 msgstr "Client syncen"
 
-#: src/eix-sync.sh:302
+#: src/eix-sync.sh:309
 msgid "metadata update"
 msgstr "Metadata update"
 
-#: src/eix-sync.sh:303
+#: src/eix-sync.sh:310
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:304
+#: src/eix-sync.sh:311
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:307
+#: src/eix-sync.sh:314
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:345
+#: src/eix-sync.sh:352
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:358
+#: src/eix-sync.sh:365
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:361
+#: src/eix-sync.sh:368
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:372
+#: src/eix-sync.sh:379
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:379
+#: src/eix-sync.sh:386
 #, sh-format
 msgid "Running ${runarg}"
 msgstr "Starte ${runarg}"
 
-#: src/eix-sync.sh:380
+#: src/eix-sync.sh:387
 #, sh-format
 msgid "${runarg} failed"
 msgstr "${runarg} schlug fehl"
 
-#: src/eix-sync.sh:387
+#: src/eix-sync.sh:394
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:389
+#: src/eix-sync.sh:396
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:396
+#: src/eix-sync.sh:403
 msgid "Running emerge --metadata"
 msgstr "Starte emerge --metadata"
 
-#: src/eix-sync.sh:398
+#: src/eix-sync.sh:405
 msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
-#: src/eix-sync.sh:407
+#: src/eix-sync.sh:414
 msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
-#: src/eix-sync.sh:409 src/eix-sync.sh:418 src/eix-functions.sh.in:175
+#: src/eix-sync.sh:416 src/eix-sync.sh:425 src/eix-functions.sh.in:175
 #: src/eix-remote.sh:334
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-sync.sh:416
+#: src/eix-sync.sh:423
 msgid "eix-cache format has changed. Running eix-update!"
 msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
 
-#: src/eix-sync.sh:428
+#: src/eix-sync.sh:435
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:436
+#: src/eix-sync.sh:443
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
 msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
 
-#: src/eix-sync.sh:439
+#: src/eix-sync.sh:446
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:461
+#: src/eix-sync.sh:468
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:465
+#: src/eix-sync.sh:472
 msgid "Running eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-sync.sh:467
+#: src/eix-sync.sh:474
 msgid "Failure while running eix-update"
 msgstr "Problem beim Ausführen von eix-update"
 
-#: src/eix-sync.sh:470
+#: src/eix-sync.sh:477
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:472
+#: src/eix-sync.sh:479
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
