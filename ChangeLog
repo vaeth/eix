@@ -9,6 +9,8 @@
 	- eix-sync: Add option -L for passing options to layman,
 	  see http://sourceforge.net/tracker/index.php?
 	  func=detail&aid=2921161&group_id=128101&atid=710611
+	- "Export" EPREFIX when sourcing make.{globals,conf} so that e.g.
+	  ${EPREFIX} can be used in etc/make.conf
 
 *eix-0.19.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -154,6 +154,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 	public:
 		bool m_recurse_sets;
 		bool m_obsolete_minusasterisk;
+		std::string m_eprefix;
 		std::string m_eprefixconf;
 		std::string m_eprefixprofile;
 		std::string m_eprefixportdir;

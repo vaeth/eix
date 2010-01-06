@@ -43,7 +43,7 @@ using namespace std;
 const std::string &
 PortageSettings::operator[](const std::string &var) const
 {
-	map<string,string>::const_iterator it = map<string,string>::find(var);
+	map<string,string>::const_iterator it(map<string,string>::find(var));
 	if(it == map<string,string>::end())
 		return emptystring;
 	return it->second;
@@ -156,7 +156,8 @@ void PortageSettings::override_by_env(const char **vars)
 
 void PortageSettings::read_config(const string &name, const string &prefix)
 {
-	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
+	(*this)["EPREFIX"] = m_eprefix;
+	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::ALLOW_SOURCE);
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
 	configfile.setPrefix(prefix);
@@ -166,7 +167,7 @@ void PortageSettings::read_config(const string &name, const string &prefix)
 string PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 {
 	if(resolve) {
-		string full = m_eprefixoverlays;
+		string full(m_eprefixoverlays);
 		full.append(path);
 		return normalize_path(full.c_str(), true);
 	}
@@ -206,6 +207,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");
 	m_recurse_sets    = eixrc.getBool("RECURSIVE_SETS");
 	m_eprefixconf     = eixrc.m_eprefixconf;
+	m_eprefix         = eixrc["EPREFIX"];
 	m_eprefixprofile  = eixrc["EPREFIX_PORTAGE_PROFILE"];
 	m_eprefixportdir  = eixrc["EPREFIX_PORTDIR"];
 	m_eprefixoverlays = eixrc["EPREFIX_OVERLAYS"];

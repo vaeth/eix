@@ -459,21 +459,17 @@ bool VarsReader::read(const char *filename)
 	{
 		// parse file into separate map and append values which keys are in
 		// incremental_keys .. other keys are just replaced.
-		map<string,string> *old_values = vars;
+		map<string,string> *old_values(vars);
 		map<string,string> new_values;
 		vars = &new_values;
 		runFsm();
-		for(map<string,string>::iterator i = new_values.begin();
-			i != new_values.end();
-			++i)
-		{
-			if((*old_values)[i->first].size() > 0
-			   && isIncremental(i->first.c_str()))
-			{
+		for(map<string,string>::iterator i(new_values.begin());
+			likely(i != new_values.end()); ++i) {
+			if((!(*old_values)[i->first].empty())
+			   && isIncremental(i->first.c_str())) {
 				(*old_values)[i->first].append(" " + i->second);
 			}
-			else
-			{
+			else {
 				(*old_values)[i->first] = i->second;
 			}
 		}
