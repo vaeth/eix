@@ -32,7 +32,7 @@ class VarsReader {
 			                                  of a variable. i.e.  USE="${USE} -kde" */
 			INTO_MAP             = 0x10, /**< Flag: Init but don't parse .. you must first supply
 			                                  a pointer to map<string,string> with useMap(...) */
-			APPEND_VALUES        = 0x20, /**< Flag: appended new values rather then replace the old value. */
+			APPEND_VALUES        = 0x20, /**< Flag: Respect IncrementalKeys */
 			ALLOW_SOURCE         = 0x40, /**< Flag: Allow "source"/"." command. */
 			ALLOW_SOURCE_VARNAME = 0xc0, /**< Flag: Allow "source"/"." but
 			                                  Prefix is only a varname which

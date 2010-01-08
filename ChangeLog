@@ -11,6 +11,10 @@
 	  func=detail&aid=2921161&group_id=128101&atid=710611
 	- "Export" EPREFIX when sourcing make.{globals,conf} so that e.g.
 	  ${EPREFIX} can be used in etc/make.conf
+	- Fix incremental keys hack in varsreader.cc at the cost of speed:
+	  1. Variables now can be exported for sourcing with APPEND_VALUES.
+	  2. Perhaps the old hack could interfere with recursion (sourcing);
+	  this probably caused http://bugs.gentoo.org/show_bug.cgi?id=299904
 
 *eix-0.19.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

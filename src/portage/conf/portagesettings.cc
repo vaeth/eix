@@ -141,8 +141,7 @@ void PortageSettings::override_by_env(const char **vars)
 		const char *e(getenv(var));
 		if(e == NULL)
 			continue;
-		if(!is_accumulating(default_accumulating_keys, var))
-		{
+		if(!is_accumulating(default_accumulating_keys, var)) {
 			(*this)[var] = e;
 			continue;
 		}
@@ -157,7 +156,7 @@ void PortageSettings::override_by_env(const char **vars)
 void PortageSettings::read_config(const string &name, const string &prefix)
 {
 	(*this)["EPREFIX"] = m_eprefix;
-	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::ALLOW_SOURCE);
+	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
 	configfile.setPrefix(prefix);

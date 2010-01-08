@@ -18,6 +18,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <cstring>
 #include <cstddef>
@@ -79,8 +80,8 @@ bool VarsReader::assign_key_value()
 	if(unlikely(sourcecmd)) {
 		sourcecmd=false;
 		if(unlikely(!source(value))) {
-			std::cerr << eix::format(_("failed to source %r")) % value
-				<< std::endl;
+			cerr << eix::format(_("failed to source %r")) % value
+				<< endl;
 		}
 		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);
 	}
@@ -435,10 +436,10 @@ void VarsReader::initFsm()
 
 bool VarsReader::read(const char *filename)
 {
-	struct stat st;
 	int fd(open(filename, O_RDONLY));
 	if(fd == -1)
 		return false;
+	struct stat st;
 	if(fstat(fd, &st)) {
 		close(fd);
 		return false;
@@ -455,28 +456,31 @@ bool VarsReader::read(const char *filename)
 	close(fd);
 
 	initFsm();
-	if(parse_flags & APPEND_VALUES)
-	{
-		// parse file into separate map and append values which keys are in
-		// incremental_keys .. other keys are just replaced.
-		map<string,string> *old_values(vars);
-		map<string,string> new_values;
-		vars = &new_values;
-		runFsm();
-		for(map<string,string>::iterator i(new_values.begin());
-			likely(i != new_values.end()); ++i) {
-			if((!(*old_values)[i->first].empty())
-			   && isIncremental(i->first.c_str())) {
-				(*old_values)[i->first].append(" " + i->second);
-			}
-			else {
-				(*old_values)[i->first] = i->second;
+	if(parse_flags & APPEND_VALUES) {
+		vector<pair<string,string> > incremental;
+		// Save and clear incremental keys
+		for(map<string,string>::iterator i(vars->begin());
+			i != vars->end(); ++i) {
+			if((!i->second.empty()) &&
+				isIncremental(i->first.c_str())) {
+				incremental.push_back(*i);
+				i->second.clear();
 			}
 		}
-		vars = old_values;
+		runFsm();
+		// Prepend previous content for incremental keys
+		for(vector<pair<string,string> >::const_iterator it(incremental.begin());
+			it != incremental.end(); ++it) {
+			map<string,string>::iterator f(vars->find(it->first));
+			if(f->second.empty()) {
+				f->second = it->second;
+			}
+			else {
+				f->second = (it->second) + ' ' + (f->second);
+			}
+		}
 	}
-	else
-	{
+	else {
 		runFsm();
 	}
 	munmap(filebuffer, st.st_size);
