@@ -832,14 +832,16 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 void
 EixRc::print_var(const string &key)
 {
+	string print_append((*this)["PRINT_APPEND"]);
+	unescape_string(print_append);
 	if(likely(key != "PORTDIR")) {
 		const char *s(cstr(key));
 		if(likely(s != NULL)) {
-			cout << s;
+			cout << s << print_append;
 			return;
 		}
 	}
 	PortageSettings ps(*this, false, true);
-	cout << ps[key];
+	cout << ps[key] << print_append;
 }
 

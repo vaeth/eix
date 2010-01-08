@@ -30,24 +30,8 @@ class PortageSettings;
 
 using namespace std;
 
-static string
-get_escape(const char *p)
-{
-	switch(*p) {
-		case 0:
-		case '\\': return string("\\");
-		case 'n':  return string("\n");
-		case 'r':  return string("\r");
-		case 't':  return string("\t");
-		case 'b':  return string("\b");
-		case 'a':  return string("\a");
-		default:
-			break;
-	}
-	return string(p, 1);
-}
-
-void MarkedList::add(const char *pkg, const char *ver)
+void
+MarkedList::add(const char *pkg, const char *ver)
 {
 	pair<string, BasicVersion*> p;
 	p.first = string(pkg);
@@ -59,7 +43,8 @@ void MarkedList::add(const char *pkg, const char *ver)
 }
 
 inline
-MarkedList::CIPair MarkedList::equal_range_pkg(const Package &pkg) const
+MarkedList::CIPair
+MarkedList::equal_range_pkg(const Package &pkg) const
 {
 	return equal_range(pkg.category + "/" + pkg.name);
 }
@@ -67,7 +52,8 @@ MarkedList::CIPair MarkedList::equal_range_pkg(const Package &pkg) const
 /** Return pointer to (newly allocated) sorted vector of marked versions,
     or NULL. With nonversion argument, its content will decide whether
     the package was marked with a non-version argument */
-set<BasicVersion> *MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
+set<BasicVersion> *
+MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
 {
 	CIPair beg_end(equal_range_pkg(pkg));
 	if(nonversion != NULL)
@@ -92,7 +78,8 @@ set<BasicVersion> *MarkedList::get_marked_versions(const Package &pkg, bool *non
 }
 
 /** Return true if pkg is marked. If ver is non-NULL also *ver must match */
-bool MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
+bool
+MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 {
 	CIPair beg_end = equal_range_pkg(pkg);
 	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
@@ -110,7 +97,8 @@ bool MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 }
 
 /** Return String of marked versions (sorted) */
-string MarkedList::getMarkedString(const Package &pkg) const
+string
+MarkedList::getMarkedString(const Package &pkg) const
 {
 	bool nonversion;
 	set<BasicVersion> *marked(get_marked_versions(pkg, &nonversion));
@@ -174,7 +162,7 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
 		end += AnsiColor(AnsiColor::acDefault).asString();
 	}
 	if(overlay) {
-		vector<Version::Overlay>::size_type index = overlay - 1;
+		vector<Version::Overlay>::size_type index(overlay - 1);
 		if(overlay_used)
 			(*overlay_used)[index] = true;
 		if(some_overlay_used)
@@ -363,7 +351,8 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBH
 	return r;
 }
 
-string parse_colors(const string &colorstring, bool colors)
+string
+parse_colors(const string &colorstring, bool colors)
 {
 	string ret;
 	FormatParser parser;
@@ -426,7 +415,7 @@ FormatParser::state_TEXT()
 		end_of_text = "(";
 	while(*band_position && (strchr(end_of_text, *band_position ) == NULL)) {
 		if(*band_position == '\\') {
-			textbuffer.append(get_escape(++band_position));
+			textbuffer.append(1, get_escape(*(++band_position)));
 		}
 		else {
 			textbuffer.append(band_position, 1);
@@ -610,7 +599,7 @@ FormatParser::state_IF()
 		else if((c == '}') || isspace(c))
 			break;
 		if((c == '\\') && (parse_modus != single_quote)) {
-			textbuffer.append(get_escape(++band_position));
+			textbuffer.append(1, get_escape(*(++band_position)));
 			if(!*band_position)
 				break;
 		}
@@ -718,7 +707,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 	/* Check if the machine went into ERROR-state. */
 	if(state == ERROR) {
 		/* Clean stacks. */
-		while(keller.size() > 0) {
+		while(!keller.empty()) {
 			delete keller.top();
 			keller.pop();
 		}
@@ -728,7 +717,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 	}
 	/* Pop elements and form a single linked list. */
 	Node *p(NULL), *q(NULL);
-	while(keller.size() != 0) {
+	while(!keller.empty()) {
 		p = keller.top();
 		keller.pop();
 		p->next = q;

@@ -106,6 +106,35 @@ ExplodeAtom::split(const char* str)
 	return out;
 }
 
+char
+get_escape(char c)
+{
+	switch(c) {
+		case 0:
+		case '\\': return '\\';
+		case 'n':  return '\n';
+		case 'r':  return '\r';
+		case 't':  return '\t';
+		case 'b':  return '\b';
+		case 'a':  return '\a';
+		default:
+			break;
+	}
+	return c;
+}
+
+void
+unescape_string(string &str)
+{
+	string::size_type pos(0);
+	while(unlikely((pos = str.find_first_of('\\', pos)) != string::npos)) {
+		string::size_type p(pos + 1);
+		if(p == str.size())
+			return;
+		str.replace(pos, 2, 1, get_escape(str[p]));
+	}
+}
+
 void
 escape_string(string &str, const char *at)
 {

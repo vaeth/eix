@@ -124,6 +124,13 @@ trim(std::string *str, const char *delims = spaces)
 	rtrim(str, delims);
 }
 
+/** return the character corresponding to an escaped symbol.
+    For instance, n -> \n, \ -> \, \0 -> \ */
+char get_escape(char c);
+
+/** Resolve all escapes in a string (a safe printf) */
+void unescape_string(std::string &str);
+
 /** Escape all "at" and "\" characters in string. */
 void escape_string(std::string &str, const char *at = spaces);
 

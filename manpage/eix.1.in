@@ -169,7 +169,9 @@ Show the defaults of the eixrc-variables, and their current values as comments.
 .BI "--print " VAR
 Print the specified variable I<VAR> of eixrc or of portage settings,
 completely expanded as it would be used internally by eix.
-This is mainly used internally for scripts.
+This is mainly intended for usage in scripts or for debugging purposes.
+If you use it in scripts you might want to specify B<PRINT_APPEND> to
+get trailing spaces (see description of B<PRINT_APPEND>).
 .TP
 .BI "--print-overlay-path " OVERLAY
 Print the path of the first overlay matching I<OVERLAY>.
@@ -1810,6 +1812,19 @@ If true, eix and eix-diff will use B<--care>.
 .TP
 .BR QUIETMODE " " (true / false)
 If true, eix and eix-diff will use B<--quiet> by default.
+
+.TP
+.BR PRINT_APPEND " " (string)
+This string is appended to the output of --print.
+Standard escape sequences in this string like \\n are interpreted.
+The default is a newline for reasonable output in an interactive shell.
+Note that command substitution in shell scripts removes all trailing spaces
+so that this newline does not harm (but trailing spaces of the variable would
+be removed in the shell script anyway).
+Hence, in order to read variables from eix in a shell script without omitting
+trailing spaces, you should use a visible symbol for PRINT_APPEND and use
+for instance something like
+B<VAR="`PRINT_APPEND=x eix --print VAR`" ; VAR="${VAR%x}">
 
 .TP
 .BR NEWLINE " " (true / false)

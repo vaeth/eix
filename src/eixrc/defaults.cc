@@ -250,6 +250,12 @@ AddOption(BOOLEAN, "CARE_RESTRICT_INSTALLED",
 	"If true, read RESTRICT for installed versions always from disk.\n"
 	"This is ignored if PROPERTIES_INSTALLED=false."));
 
+AddOption(STRING, "PRINT_APPEND",
+	"\\n", _(
+	"This string is appended to the output of --print.\n"
+	"To read variables in a shell without omitting trailing spaces, use e.g.\n"
+	"VAR=\"`PRINT_APPEND=x eix --print VAR`\" ; VAR=\"${VAR%x}\""));
+
 AddOption(STRING, "DEFAULT_FORMAT",
 	"normal", _(
 	"Defines whether --compact or --verbose is on by default."));

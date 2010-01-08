@@ -2,6 +2,11 @@
 
 *eix-0.19.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce PRINT_APPEND and let it default to \n. Hence:
+	- --print now outputs a trailing newline by default!
+	  Be aware that this might break some scripts which trickily
+	  attempted to preserve trailing spaces in variables.
+	  Set PRINT_APPEND='' in /etc/eixrc to revert to the old behaviour.
 	- Fix description of @/@@-hook order in manpage and help page.
 	  Fix corresponding eix-remote example in manpage.
 	  Thanks to navid.zamani at googlemail.com
@@ -12,9 +17,9 @@
 	- "Export" EPREFIX when sourcing make.{globals,conf} so that e.g.
 	  ${EPREFIX} can be used in etc/make.conf
 	- Fix incremental keys hack in varsreader.cc at the cost of speed:
-	  1. Variables now can be exported for sourcing with APPEND_VALUES.
-	  2. Perhaps the old hack could interfere with recursion (sourcing);
-	  this probably caused http://bugs.gentoo.org/show_bug.cgi?id=299904
+	  Variables now can be exported for sourcing with APPEND_VALUES.
+	  In particular, they are not clean(ed) when accessed which caused
+	  http://bugs.gentoo.org/show_bug.cgi?id=299904
 
 *eix-0.19.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
