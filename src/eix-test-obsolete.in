@@ -7,6 +7,7 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
+read_var_prg=eix
 . ./eix-functions.sh.in
 ReadGettext
 
@@ -58,23 +59,20 @@ Die () {
 Eix () {
 	local i
 	if [ -z "`eix '-*Tc' | head -n1`" ]
-	then
-		[ -z "${1}" ] || printf "%s\n" "${1}"
+	then	[ -z "${1}" ] || printf "%s\n" "${1}"
 		return
 	fi
 	printf '\n%s\n' "${2}"
 	if [ ${#} -le 2 ] || ${nodetails}
-	then
-		eix -Tc
+	then	eix -Tc
 		printf '\n'
 		return
 	fi
 	shift 2
 	for i
-	do
-		(
-			for j; do
-				[ "${i}" = "${j}" ] && continue
+	do	(
+			for j
+			do	[ "${i}" = "${j}" ] && continue
 				eval "export ${j}=false"
 			done
 			Eix '' "`eval_gettext '... considered as ${i}'`"
@@ -126,39 +124,32 @@ NoUninstalled () { export \
 Repository () {
 	local i j c
 	if ${1}
-	then
-		i="`gettext \
+	then	i="`gettext \
 'The following package versions are installed with repository information:'`"
-	else
-		i="`gettext \
+	else	i="`gettext \
 'The following package versions are installed without repository information:'`"
 	fi
-	cd -- "`eix --print EPREFIX_INSTALLED`"/var/db/pkg >/dev/null 2>&1 \
-		|| Die "`gettext \
+	ReadVar c EPREFIX_INSTALLED
+	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
 			'cannot locate your database of installed packages'`"
 	printf "%s\n\n" "${i}"
 	c=0
 	for i in *
-	do
-		for j in "${i}"/*; do
-			test -d "${j}" || continue
+	do	for j in "${i}"/*
+		do	test -d "${j}" || continue
 			if test -e "${j}/repository" || test -e "${j}/REPOSITORY"
-			then
-				${1} || continue
-			else
-				${1} && continue
+			then	${1} || continue
+			else	${1} && continue
 			fi
 			printf '%s\n' "${j}"
 			c=`expr "${c}" + 1`
 		done
 	done
 	if [ ${c} -eq 0 ]
-	then
-		gettext 'none'
+	then	gettext 'none'
 		echo
 	elif [ ${c} -ne 1 ]
-	then
-		echo
+	then	echo
 		eval_gettext '(total number of versions listed above: ${c})'
 		echo
 	fi
@@ -174,8 +165,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
 while getopts "cCdb?hH" opt
-do
-	case "${opt}" in
+do	case "${opt}" in
 		c) export CHECK_INSTALLED_OVERLAYS=:;;
 		C) export CHECK_INSTALLED_OVERLAYS=repository;;
 		d) myarg='detail';;
@@ -196,7 +186,7 @@ esac
 
 eix '-t*!'
 
-rump="`eix --print PORTAGE_CONFIGROOT`"
+ReadVar rump PORTAGE_CONFIGROOT
 rump="${rump}/etc/portage/package."
 (
 	export TEST_FOR_NONEXISTENT=false

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2010-01-08 10:02+0100\n"
+"POT-Creation-Date: 2010-01-09 10:51+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -157,31 +157,31 @@ msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
 msgid "Could not execute eix-diff"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/eix-sync.sh:101
+#: src/eix-sync.sh:100
 #, sh-format
 msgid "Something went wrong with ${curr_cmd}"
 msgstr "Fehler beim Aufruf von ${curr_cmd}"
 
-#: src/eix-sync.sh:138
+#: src/eix-sync.sh:135
 msgid "Syncing all portage overlays"
 msgstr "Synce alle Portage-Overlays"
 
-#: src/eix-sync.sh:140
+#: src/eix-sync.sh:137
 #, sh-format
 msgid "${mycmd} -S failed"
 msgstr "${mycmd} -S schlug fehl"
 
-#: src/eix-sync.sh:143
+#: src/eix-sync.sh:140
 #, sh-format
 msgid "Syncing portage overlay ${j}"
 msgstr "Synce Portage-Overlay ${j}"
 
-#: src/eix-sync.sh:145
+#: src/eix-sync.sh:142
 #, sh-format
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:279
+#: src/eix-sync.sh:272
 msgid ""
 "Nothing was executed, because a heuristic shows that root permissions\n"
 "are required to execute everything successfully."
@@ -189,7 +189,7 @@ msgstr ""
 "Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
 "Root-Recht benötigt werden, um alles erfolgreich auszuführen."
 
-#: src/eix-sync.sh:283
+#: src/eix-sync.sh:276
 #, sh-format
 msgid ""
 "However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
@@ -202,139 +202,139 @@ msgstr ""
 "Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
 "das File ${eixsyncconf} ein."
 
-#: src/eix-sync.sh:299
+#: src/eix-sync.sh:292
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:305
+#: src/eix-sync.sh:298
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:306
+#: src/eix-sync.sh:299
 msgid "initial eix-update"
 msgstr "Erstes eix-update"
 
-#: src/eix-sync.sh:307
+#: src/eix-sync.sh:300
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:308
+#: src/eix-sync.sh:301
 msgid "client syncing"
 msgstr "Client syncen"
 
-#: src/eix-sync.sh:309
+#: src/eix-sync.sh:302
 msgid "metadata update"
 msgstr "Metadata update"
 
-#: src/eix-sync.sh:310
+#: src/eix-sync.sh:303
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:311
+#: src/eix-sync.sh:304
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:314
+#: src/eix-sync.sh:307
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:352
+#: src/eix-sync.sh:342
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:365
+#: src/eix-sync.sh:355
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:368
+#: src/eix-sync.sh:358
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:379
+#: src/eix-sync.sh:368
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:386
+#: src/eix-sync.sh:375
 #, sh-format
 msgid "Running ${runarg}"
 msgstr "Starte ${runarg}"
 
-#: src/eix-sync.sh:387
+#: src/eix-sync.sh:376
 #, sh-format
 msgid "${runarg} failed"
 msgstr "${runarg} schlug fehl"
 
-#: src/eix-sync.sh:394
+#: src/eix-sync.sh:383
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:396
+#: src/eix-sync.sh:385
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:403
+#: src/eix-sync.sh:392
 msgid "Running emerge --metadata"
 msgstr "Starte emerge --metadata"
 
-#: src/eix-sync.sh:405
+#: src/eix-sync.sh:394
 msgid "emerge --metadata failed"
 msgstr "emerge --metadata schlug fehl"
 
-#: src/eix-sync.sh:414
+#: src/eix-sync.sh:402
 msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
-#: src/eix-sync.sh:416 src/eix-sync.sh:425 src/eix-functions.sh.in:175
-#: src/eix-remote.sh:334
+#: src/eix-sync.sh:404 src/eix-sync.sh:413 src/eix-functions.sh.in:170
+#: src/eix-remote.sh:323
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-sync.sh:423
+#: src/eix-sync.sh:411
 msgid "eix-cache format has changed. Running eix-update!"
 msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
 
-#: src/eix-sync.sh:435
+#: src/eix-sync.sh:423
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:443
+#: src/eix-sync.sh:431
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
 msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
 
-#: src/eix-sync.sh:446
+#: src/eix-sync.sh:434
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:468
+#: src/eix-sync.sh:453
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:472
+#: src/eix-sync.sh:456
 msgid "Running eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-sync.sh:474
+#: src/eix-sync.sh:458
 msgid "Failure while running eix-update"
 msgstr "Problem beim Ausführen von eix-update"
 
-#: src/eix-sync.sh:477
+#: src/eix-sync.sh:461
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:479
+#: src/eix-sync.sh:463
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
-#: src/eix-test-obsolete.sh:19
+#: src/eix-test-obsolete.sh:20
 #, sh-format
 msgid ""
 "Usage: ${n} [options] detail|brief|repo|no-repo\n"
@@ -412,171 +412,167 @@ msgstr ""
 "Das Argument kann stets abgekürzt werden; beispielsweise kann \"b\" statt\n"
 "\"brief\" benutzt werden."
 
-#: src/eix-test-obsolete.sh:80
+#: src/eix-test-obsolete.sh:78
 #, sh-format
 msgid "... considered as ${i}"
 msgstr "... wegen ${i}"
 
-#: src/eix-test-obsolete.sh:131
+#: src/eix-test-obsolete.sh:128
 msgid ""
 "The following package versions are installed with repository information:"
 msgstr ""
 "Die folgenden Paketversonen sind mit Repository-Information installiert:"
 
-#: src/eix-test-obsolete.sh:134
+#: src/eix-test-obsolete.sh:130
 msgid ""
 "The following package versions are installed without repository information:"
 msgstr ""
 "Die folgenden Paketversonen sind ohne Repository-Information installiert:"
 
-#: src/eix-test-obsolete.sh:138
+#: src/eix-test-obsolete.sh:134
 msgid "cannot locate your database of installed packages"
 msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
 
-#: src/eix-test-obsolete.sh:157
-msgid "none"
-msgstr "keine"
-
-#: src/eix-test-obsolete.sh:162
+#: src/eix-test-obsolete.sh:153
 #, sh-format
 msgid "(total number of versions listed above: ${c})"
 msgstr "(Gesamtzahl obiger Versionen: ${c})"
 
-#: src/eix-test-obsolete.sh:206
+#: src/eix-test-obsolete.sh:196
 #, sh-format
 msgid "No redundant entries in ${rump}keywords (or test switched off)."
 msgstr "Keine Redundanz in ${rump}keywords (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:207
+#: src/eix-test-obsolete.sh:197
 #, sh-format
 msgid "Redundant in ${rump}keywords:"
 msgstr "Redundant in ${rump}keywords:"
 
-#: src/eix-test-obsolete.sh:220
+#: src/eix-test-obsolete.sh:210
 #, sh-format
 msgid "No redundant entries in ${rump}mask (or test switched off)."
 msgstr "Keine Redundanz in ${rump}mask (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:221
+#: src/eix-test-obsolete.sh:211
 #, sh-format
 msgid "Redundant in ${rump}mask:"
 msgstr "Redundant in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:229
+#: src/eix-test-obsolete.sh:219
 #, sh-format
 msgid "No redundant entries in ${rump}unmask (or test switched off)."
 msgstr "Keine Redundanz in ${rump}unmask (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:230
+#: src/eix-test-obsolete.sh:220
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
 msgstr "Redundant in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:238
+#: src/eix-test-obsolete.sh:228
 #, sh-format
 msgid "No redundant entries in ${rump}use (or test switched off)."
 msgstr "Keine Redundanz in ${rump}use (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:239
+#: src/eix-test-obsolete.sh:229
 #, sh-format
 msgid "Redundant in ${rump}use:"
 msgstr "Redundant in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:245
+#: src/eix-test-obsolete.sh:235
 #, sh-format
 msgid "No redundant entries in ${rump}cflags (or test switched off)."
 msgstr "Keine Redundanz in ${rump}cflags (oder Test ausgeschaltet)."
 
-#: src/eix-test-obsolete.sh:246
+#: src/eix-test-obsolete.sh:236
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
 msgstr "Redundant in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:256
+#: src/eix-test-obsolete.sh:246
 #, sh-format
 msgid "No uninstalled entries in ${rump}keywords (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}keywords (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:257
+#: src/eix-test-obsolete.sh:247
 #, sh-format
 msgid "Not installed but in ${rump}keywords:"
 msgstr "Uninstalliert, aber in ${rump}keywords:"
 
-#: src/eix-test-obsolete.sh:266
+#: src/eix-test-obsolete.sh:256
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}mask (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:267
+#: src/eix-test-obsolete.sh:257
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Uninstalliert, aber in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:275
+#: src/eix-test-obsolete.sh:265
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}unmask (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:276
+#: src/eix-test-obsolete.sh:266
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Uninstalliert, aber in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:283
+#: src/eix-test-obsolete.sh:273
 #, sh-format
 msgid "No uninstalled entries in ${rump}use (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}use (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:284
+#: src/eix-test-obsolete.sh:274
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Uninstalliert, aber in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:289
+#: src/eix-test-obsolete.sh:279
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags (or test switched off)."
 msgstr "Nichts Uninstalliertes in ${rump}cflags (oder Test ist aus)."
 
-#: src/eix-test-obsolete.sh:290
+#: src/eix-test-obsolete.sh:280
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Uninstalliert, aber in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:295
+#: src/eix-test-obsolete.sh:285
 msgid "All installed versions of packages are in the database."
 msgstr "Alle installierten Paketversionen sind in der Datenbank."
 
-#: src/eix-test-obsolete.sh:297
+#: src/eix-test-obsolete.sh:287
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
-#: src/eix-functions.sh.in:26
+#: src/eix-functions.sh.in:25
 msgid "cannot read functions.sh"
 msgstr "kann functions.sh nicht sourcen"
 
-#: src/eix-functions.sh.in:67
+#: src/eix-functions.sh.in:69
 #, sh-format
 msgid "Problems running ${c}"
 msgstr "Probleme mit ${c}"
 
-#: src/eix-functions.sh.in:174
+#: src/eix-functions.sh.in:169
 msgid "Calling eix-update"
 msgstr "Starte updat-eix"
 
-#: src/eix-functions.sh.in:219
+#: src/eix-functions.sh.in:211
 #, sh-format
 msgid "${PathifyA_} cannot be found in path"
 msgstr "${PathifyA_} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:331
+#: src/eix-functions.sh.in:317
 msgid "found no free tempname after 10000 attempts"
 msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
 
-#: src/eix-functions.sh.in:349
+#: src/eix-functions.sh.in:331
 msgid "cannot create temporary directory"
 msgstr "kann keine temporäres Directory erzeugen"
 
-#: src/eix-functions.sh.in:350
+#: src/eix-functions.sh.in:332
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
@@ -634,7 +630,7 @@ msgstr ""
 msgid "none (i.e. no readable layman make.conf specified)"
 msgstr "keiner (d.h. kein lesbares Layman-make.conf angegeben)"
 
-#: src/eix-layman.sh:50
+#: src/eix-layman.sh:49
 msgid ""
 "\n"
 "-C            Clear the above list\n"
@@ -763,16 +759,16 @@ msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:168
+#: src/eix-remote.sh:163
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:209
+#: src/eix-remote.sh:201
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Directory ${a} nicht möglich"
 
-#: src/eix-remote.sh:248
+#: src/eix-remote.sh:238
 #, sh-format
 msgid ""
 "remote address is not properly set.\n"
@@ -783,17 +779,17 @@ msgstr ""
 "Übergeben Sie bitte ein gültiges Remote-File mit der Option -a.\n"
 "Der Default hätte mit ./configure --remote-file gesetzt werden sollen."
 
-#: src/eix-remote.sh:256
+#: src/eix-remote.sh:246
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:257
+#: src/eix-remote.sh:247
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:266
+#: src/eix-remote.sh:256
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -838,22 +834,22 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:289
+#: src/eix-remote.sh:279
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "kann ${a} nicht auspacken"
 
-#: src/eix-remote.sh:310
+#: src/eix-remote.sh:299
 #, sh-format
 msgid "problems arised with cachefile ${i}"
 msgstr "Cachefile ${i} verursachte Probleme"
 
-#: src/eix-remote.sh:328
+#: src/eix-remote.sh:317
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:362
+#: src/eix-remote.sh:351
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"

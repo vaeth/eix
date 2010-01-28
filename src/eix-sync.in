@@ -14,10 +14,10 @@ time_begin="`date +%s 2>/dev/null`" || time_begin=''
 . ./eix-functions.sh.in
 ReadFunctions
 
-local_varcache="`eix-update --print EPREFIX_PORTAGE_CACHE`"
-eixcache="`eix-update --print EIX_CACHEFILE`"
+ReadVar local_varcache EPREFIX_PORTAGE_CACHE
+ReadVar eixcache EIX_CACHEFILE
 eixprevious="${eixcache}.previous"
-local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
+ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
 Usage () {
@@ -96,8 +96,7 @@ DoExecute () {
 	local curr_cmd
 	${emulatemode} && return 0
 	for curr_cmd
-	do
-		eval "${curr_cmd}" || die "`eval_gettext \
+	do	eval "${curr_cmd}" || die "`eval_gettext \
 			'Something went wrong with ${curr_cmd}'`"
 	done
 }
@@ -106,8 +105,7 @@ ParseConfigLine () {
 	local j mycmd
 	j="${2}"
 	while :
-	do
-		case "${j}" in
+	do	case "${j}" in
 			' '*|'	'*)	j="${j#?}";;
 			*' '|*'	')	j="${j%?}";;
 			''|'#'*)	return;;
@@ -134,8 +132,7 @@ ParseConfigLine () {
 	RootTest
 	eval "set -- ${layman_opt}"
 	if [ "${j}" = '*' ]
-	then
-		MyRunCommand "`gettext 'Syncing all portage overlays'`" \
+	then	MyRunCommand "`gettext 'Syncing all portage overlays'`" \
 			"${mycmd}" -S "${@}" \
 			|| die "`eval_gettext '${mycmd} -S failed'`"
 		return
@@ -146,7 +143,7 @@ ParseConfigLine () {
 }
 
 test -r "${eixsyncconf}" && haveconf=: || haveconf=false
-eix_sync_conf="`eix-update --print EIX_SYNC_CONF`"
+ReadVar eix_sync_conf EIX_SYNC_CONF
 ExecuteConfig () {
 	local i
 	after_sync=''
@@ -154,12 +151,10 @@ ExecuteConfig () {
 	before_rsync=''
 	config_opts=''
 	${haveconf} && while read i
-	do
-		ParseConfigLine "${1}" "${i}"
+	do	ParseConfigLine "${1}" "${i}"
 	done <"${eixsyncconf}"
 	while read i
-	do
-		ParseConfigLine "${1}" "${i}"
+	do	ParseConfigLine "${1}" "${i}"
 	done <<END_EIX_SYNC_CONF
 ${eix_sync_conf}
 END_EIX_SYNC_CONF
@@ -196,8 +191,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
 while getopts "ids:2:Uul@SmMNtTqwWL:c:C:o:rRe?hH" opt
-do
-	case "${opt}" in
+do	case "${opt}" in
 		i) DefaultOpts;;
 		d) diffonly=:;;
 		s) server="${OPTARG}";;
@@ -241,9 +235,8 @@ esac
 MyRun () {
 	local timevar b e r
 	if [ "${1}" = '-t' ]
-	then
-		if ${measure_time}; then
-			timevar="time_${2}"
+	then	if ${measure_time}
+		then	timevar="time_${2}"
 			shift 2
 			b="`date '+%s' 2>/dev/null`" || measure_time=false
 			"${@}"
@@ -336,10 +329,8 @@ PrepRsync () {
 	GetPortdir
 	hostdir="${1#*:}"
 	if [ -n "${hostdir}" ] && [ "${hostdir}" != "${1}" ]
-	then
-		hostdir="${1}"
-	else
-		hostdir="${1%%:*}:${local_portdir}"
+	then	hostdir="${1}"
+	else	hostdir="${1%%:*}:${local_portdir}"
 	fi
 	hostdir="${hostdir%/}/"
 	${preprsync} && return
@@ -347,8 +338,7 @@ PrepRsync () {
 	PORTAGE_RSYNC_EXTRA_OPTS="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
 	eval "set -- ${before_rsync}"
 	for curr_cmd
-	do
-		c=`eval "${curr_cmd}"` || \
+	do	c=`eval "${curr_cmd}"` || \
 			die "`eval_gettext '${curr_cmd} failed'`"
 		eval "${c}"
 	done
@@ -371,8 +361,7 @@ ClearCache () {
 CallEmergeSync () {
 	local runarg
 	if [ -n "${server}" ]
-	then
-		${emulatemode} && return
+	then	${emulatemode} && return
 		PrepRsync "${server}"
 		MyRunCommand "rsyncing from ${hostdir}" -t sync \
 		rsync ${rsync_opts} "${hostdir}" "${local_portdir}" || \
@@ -407,8 +396,7 @@ CallEmergeMetadata () {
 
 CondUpdate () {
 	if test ! -f "${eixcache}"
-	then
-		RootTest
+	then	RootTest
 		eval "set -- ${updatecmd}"
 		MyRunCommand "`gettext \
 			'eix-cache does not exist. Running eix-update!'`" \
@@ -453,21 +441,17 @@ UpdateDiff () {
 	local d
 	${doupdate} || return 0
 	if ${usetemp}
-	then
-		${emulatemode} && return
+	then	${emulatemode} && return
 		d="${tmpfile}"
-	else
-		d="${eixprevious}"
+	else	d="${eixprevious}"
 		test -e "${d}" || RootTest
 		${emulatemode} && return
 	fi
 	if test "${eixcache}" -nt "${tmpfile}"
-	then
-		MovePrevious
+	then	MovePrevious
 		einfo "`gettext \
 			'eix-update was apparently already called in a hook'`"
-	else
-		MovePrevious
+	else	MovePrevious
 		eval "set -- ${updatecmd}"
 		MyRunCommand "`gettext 'Running eix-update'`" \
 			-t update "${@}" || \
@@ -494,8 +478,7 @@ MainSync () {
 
 [ -n "${UID}" ] || UID="`id -u`"
 if ${test_for_root} && [ "${UID}" -ne 0 ]
-then
-# Emulate everything to check whether we have to be root:
+then	# Emulate everything to check whether we have to be root:
 	emulatemode=:
 	MainSync
 fi

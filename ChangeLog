@@ -1,12 +1,18 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.19.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+
 *eix-0.19.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- eix-functions.sh: Replace: returns true/false, uses $replace_count
+	- eix-functions.sh: New function ReadVar as --print wrapper
 	- Introduce PRINT_APPEND and let it default to \n. Hence:
 	- --print now outputs a trailing newline by default!
 	  Be aware that this might break some scripts which trickily
 	  attempted to preserve trailing spaces in variables.
-	  Set PRINT_APPEND='' in /etc/eixrc to revert to the old behaviour.
+	  Set PRINT_APPEND='' in /etc/eixrc to revert to the old behaviour
+	  or better patch the scripts to use ReadVar.
 	- Fix description of @/@@-hook order in manpage and help page.
 	  Fix corresponding eix-remote example in manpage.
 	  Thanks to navid.zamani at googlemail.com

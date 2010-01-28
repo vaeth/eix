@@ -18,8 +18,7 @@ cache_plain="sqlite cdb"
 cache_vary="eix metadata"
 cache_includes="parse eixcache metadata $cache_plain"
 if [ "${1}" = "portage-2.1.2" ]
-then
-	cache_includes="$cache_includes port2_1_2"
+then	cache_includes="$cache_includes port2_1_2"
 	cache_names="$cache_names portage-2.1.2 portage-2.1"
 fi
 
@@ -31,8 +30,7 @@ cat<<END
 END
 
 for cache_name in $cache_includes
-do
-	cat<<END
+do	cat<<END
 #include "$cache_name/$cache_name.h"
 END
 done
@@ -48,16 +46,14 @@ BasicCache *get_cache(const string &name, const string &appending) {
 END
 
 for cache_name in $cache_plain
-do
-	cache_class=`to_classname "$cache_name"`
+do	cache_class=`to_classname "$cache_name"`
 	cat<<END
 	if(name == "$cache_name")
 		return new $cache_class;
 END
 done
 for cache_name in $cache_stars
-do
-	cache_class=`to_classname "$cache_name"`
+do	cache_class=`to_classname "$cache_name"`
 	cat<<END
 	if(name == "${cache_name}*")
 		return new $cache_class(true);
@@ -72,8 +68,7 @@ cat<<END
 	}
 END
 for cache_name in $cache_vary
-do
-	cache_class=`to_classname "$cache_name"`
+do	cache_class=`to_classname "$cache_name"`
 	cat<<END
 	{
 		$cache_class *p(new $cache_class);

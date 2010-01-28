@@ -13,7 +13,7 @@ ReadFunctions
 
 addr='@DEFAULT_REMOTE_PATH@'
 
-local_portage_configroot="`eix-update --print PORTAGE_CONFIGROOT`"
+ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
 Usage () {
@@ -86,8 +86,7 @@ print Config()['storage']" "${@}" 2>/dev/null
 SetLocalLayman () {
 	local i
 	for i
-	do
-		[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN="${i}" \
+	do	[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN="${i}" \
 			&& return
 	done
 	return 1
@@ -105,8 +104,7 @@ InitLocalLayman () {
 CalcSuprg () {
 	local i
 	for i
-	do
-		suprgpath="${i}"
+	do	suprgpath="${i}"
 		suprg="${i##*/}"
 		case "${i}" in
 			/*) test -x "${i}" && break;;
@@ -133,8 +131,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
 while getopts 'f:vqu:U:l:a:sSi?hH' opt
-do
-	case "${opt}" in
+do	case "${opt}" in
 		f) filearg="${OPTARG}";;
 		v) verbose=:;;
 		q) verbose=false;;
@@ -155,13 +152,11 @@ need_arg=false
 GetFilename () {
 	[ ${#} -gt 1 ] && Usage
 	if [ ${#} -lt 1 ]
-	then
-		filename="${filearg}"
-	else
-		filename="${1}"
+	then	filename="${filearg}"
+	else	filename="${1}"
 	fi
-	if [ -z "${filename}" ]; then
-				return
+	if [ -z "${filename}" ]
+	then	return
 	fi
 	case "${filename}" in
 		'') ${need_arg} &&
@@ -174,10 +169,9 @@ GetFilename () {
 CalcSuCmd () {
 	local shexec a
 	if [ -z "${fetchuser}" ]
-	then
-		[ -n "${UID}" ] || UID="`id -u`"
-		if [ "${UID}" -ne 0 ]; then
-			Push -c sucmd "${@}"
+	then	[ -n "${UID}" ] || UID="`id -u`"
+		if [ "${UID}" -ne 0 ]
+		then	Push -c sucmd "${@}"
 			return
 		fi
 		fetchuser=${fetchroot}
@@ -188,14 +182,12 @@ CalcSuCmd () {
 	Pathify sucmd a
 	Push -c sucmd "${sucmd}"
 	if [ "${suprg}" = 'sudo' ]
-	then
-		Push sucmd -u "${fetchuser}" -- "${a}" "${@}"
+	then	Push sucmd -u "${fetchuser}" -- "${a}" "${@}"
 		return
 	fi
 	shexec="${SHELL}"
 	if [ -z "${shexec}" ] || test ! -x "${SHELL}"
-	then
-		shexec='sh'
+	then	shexec='sh'
 	fi
 	Pathify shexec
 	Push -c a "${a}" "${@}"
@@ -214,8 +206,7 @@ exitcode=0
 Cleanup () {
 	cd / >/dev/null
 	if [ -n "${tmpdir}" ]
-	then
-		test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
+	then	test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
 	fi
 	tmpdir=''
 	trap - EXIT HUP INT TERM
@@ -232,8 +223,7 @@ MakeTempDir () {
 tmpsub=''
 MakeTempSub () {
 	if [ -z "${tmpsub}" ]
-	then
-		MakeTempDir
+	then	MakeTempDir
 		tmpsub="${tmpdir}/1"
 		( umask 000; mkdir -- "${tmpsub}" )
 	fi
@@ -292,10 +282,9 @@ AddArchive () {
 	ClearUpdateArgs
 	AddLocalMethods
 	for i in *
-	do
-		n="${i%.eix}"
-		while :; do
-			case "${n}" in
+	do	n="${i%.eix}"
+		while :
+		do	case "${n}" in
 				_*) n="${n#_}";;
 				*_*_*_*) n="${n#*_}";;
 				*) break;;

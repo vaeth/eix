@@ -1,9 +1,10 @@
 #! /usr/bin/env sh
 
-export LC_ALL=C
+export LC_ALL
+LC_ALL=C
 
 Usage () {
-	printf "%s\n" "Usage: ${0##*/} [options] args-for-make
+	printf '%s\n' "Usage: ${0##*/} [options] args-for-make
 Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
@@ -29,11 +30,11 @@ Available options are
 
 Info () {
 	${quiet} && return
-	printf "%s\n" "${*}"
+	printf '%s\n' "${*}"
 }
 
 Die () {
-	printf "%s: %s\n" "${0##*/}" "${1}"
+	printf '%s: %s\n' "${0##*/}" "${1}"
 	exit ${2:-1}
 }
 
@@ -45,15 +46,13 @@ SetCcache () {
 		"${i}:"*|*":${i}:"*) return;;
 	esac
 	if [ -n "${PATH}" ]
-	then
-		Info "PATH=${i}:\${PATH}"
+	then	Info "PATH=${i}:\${PATH}"
 		PATH="${i}:${PATH}"
 		export PATH
 	fi
 	[ -n "${CCACHE_DIR}" ] && return
 	for i in "${HOME}/.ccache" ../ccache ../../ccache
-	do
-		[ -z "${i}" ] && continue
+	do	[ -z "${i}" ] && continue
 		j=`readlink -f -- "${i}"` && [ -n "${j}" ] \
 			&& test -d "${j}" && break
 	done
@@ -68,45 +67,43 @@ earlystop=false
 keepenv=false
 not_full_use=false
 pedantic=false
-extra_cache=true
-separate_all=true
+extra_cache=:
+separate_all=:
 use_chown=false
 jarg='-j3'
-use_ccache=true
-configure_extra='--prefix=""'
-optimization=true
-quickcheck=true
+use_ccache=:
+configure_extra='--prefix=/usr'
+optimization=:
+quickcheck=:
 OPTIND=1
 while getopts 'qE01234nepusSbBrOQCc:j:?hH' opt
-do
-case "${opt}" in
-	q) quiet=true;;
+do	case "${opt}" in
+	q) quiet=:;;
 	E) extra_cache=false;;
 	0) separate_all=false;;
 	1) configure_extra="${configure_extra} --disable-separate-binaries";;
 	2) configure_extra="${configure_extra} --enable-separate-update";;
 	3) configure_extra="${configure_extra} --enable-separate-binaries";;
 	4) configure_extra="${configure_extra} --enable-separate-tools";;
-	n) earlystop=true;;
-	e) keepenv=true;;
-	p) pedantic=true;;
-	u) not_full_use=true;;
+	n) earlystop=:;;
+	e) keepenv=:;;
+	p) pedantic=:;;
+	u) not_full_use=:;;
 	s) configure_extra="${configure_extra} --with-sqlite";;
 	S) configure_extra="${configure_extra} --without-sqlite";;
 	b) configure_extra="${configure_extra} --with-bzip2";;
 	B) configure_extra="${configure_extra} --without-bzip2";;
-	r) use_chown=true;;
+	r) use_chown=:;;
 	O) optimization=false;;
 	Q) quickcheck=false;;
 	C) use_ccache=false;;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
 	*) Usage 0;;
-esac
+	esac
 done
 if [ ${OPTIND} -gt 1 ]
-then
-	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 &&
+then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
@@ -118,8 +115,7 @@ ${optimization} && configure_extra="${configure_extra} --enable-strong-optimizat
 ${quiet} && quietredirect='>/dev/null 2>&1' || quietredirect=''
 
 if ${use_chown}
-then
-	ls /root >/dev/null 2>&1 && \
+then	ls /root >/dev/null 2>&1 && \
 		Die "You should not really be root when you use -r" 2
 	chown -R root:root .
 fi
@@ -127,8 +123,7 @@ fi
 ${use_ccache} && SetCcache
 
 if ! ${keepenv}
-then
-	march="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
+then	march="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 		/etc/make.conf`"
 	export CXXFLAGS LDFLAGS
 	CFLAGS="-march=${march} -O2 -pipe"
@@ -145,24 +140,21 @@ fi
 Info "CXXFLAGS=${CXXFLAGS}
 LDFLAGS=${LDFLAGS}"
 if ! test -e Makefile
-then
-	if ! test -e configure || ! test -e Makefile.in
-	then
-		echo "Running autotools..."
+then	if ! test -e configure || ! test -e Makefile.in
+	then	Info "Running autotools..."
 		eval ./autogen.sh ${quietredirect} || Die "autogen failed"
 	fi
-	echo "Running configure" ${configure_extra}
+	Info "Running configure" ${configure_extra}
 	eval ./configure ${configure_extra} ${quietredirect} || \
 		Die "configure failed"
 fi
 ${earlystop} && {
-	exec make ${jarg} config.h || Die "cannot exec make"
+	exec make ${jarg} config.h
+	Die "cannot exec make"
 }
-echo "Making ${*}..."
+Info "Making ${*}..."
 command -v make >/dev/null 2>&1 || Die "cannot find make"
 if ${quiet}
-then
-	exec make ${jarg} "${@}" >/dev/null 2>&1
-else
-	exec make ${jarg} "${@}"
+then	exec make ${jarg} "${@}" >/dev/null 2>&1
+else	exec make ${jarg} "${@}"
 fi

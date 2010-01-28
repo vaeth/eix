@@ -41,13 +41,11 @@ Sleeper () {
 
 Remind "${oldname}" "${newname}"
 if [ "${newname}" = 'eix-functions.sh' ]
-then
-	printf '%s\n' \
+then	printf '%s\n' \
 'Please note also that the functions ClearUpdateEixArgs and CallUpdateEix
 have been renamed.'
 	Sleeper
-else
-	Sleeper
+else	Sleeper
 	exec "${newname}" "${@}"
 	exit 2
 fi

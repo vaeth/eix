@@ -1,21 +1,22 @@
 #! /usr/bin/env sh
 
-export LC_ALL=C
-export XZ_OPT='--extreme'
+export LC_ALL XZ_OPT
+LC_ALL=C
+XZ_OPT='--extreme'
 
 Usage() {
-	printf "%s\n" "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
+	printf '%s\n' "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
 options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 	exit ${1:-1}
 }
 
 Die() {
-	printf "%s: %s\n" "${0##*/}" "${1}"
+	printf '%s: %s\n' "${0##*/}" "${1}"
 	exit ${2:-1}
 }
 
 Run() {
-	printf "%s\n" "${*}"
+	printf '%s\n' "${*}"
 	"${@}" || Die "${*} failed" ${?}
 }
 
@@ -25,8 +26,7 @@ fakeroot=''
 [ -z "${fakeroot}" ] && command -v fakeroot-ng >/dev/null 2>&1 && fakeroot='fakeroot-ng'
 
 while [ ${#} -gt 0 ]
-do
-	opt="${1#-}"
+do	opt="${1#-}"
 	opt="${opt#-}"
 	case "${opt#dist-}" in
 		x*|X*) dist='dist-xz';;
@@ -37,7 +37,7 @@ do
 		f*ng) fakeroot='fakeroot-ng';;
 		f*) fakeroot='fakeroot';;
 		F*|n*f*) fakeroot='';;
-		help|h|H|\?) Usage 0;;
+		help|h|H|'?') Usage 0;;
 		*) Usage;;
 	esac
 	shift
@@ -49,26 +49,21 @@ test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
 unset LDFLAGS CFLAGS CXXFLAGS
 mkmake_opts='-0OQEeq'
 if [ -n "${fakeroot}" ] && command -v "${fakeroot}" >/dev/null 2>&1
-then
-	Run ./mkmake ${mkmake_opts}n
+then	Run ./mkmake ${mkmake_opts}n
 	docmd="${fakeroot} ./mkmake ${mkmake_opts}r"
-else
-	docmd="./mkmake ${mkmake_opts}"
+else	docmd="./mkmake ${mkmake_opts}"
 fi
 for i in ${dist}
-do
-	Run ${docmd} "UPDATEPOFILES=" "${i}"
+do	Run ${docmd} "UPDATEPOFILES=" "${i}"
 done
 
 found=false
 for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
-do
-	for i in "${PWD}"/eix-*."${j}"
-	do
-		test -f "${i}" || continue
-		${found} || echo "Available tarballs:"
-		found=true
-		printf "\t%s\n" "${i}"
+do	for i in "${PWD}"/eix-*."${j}"
+	do	test -f "${i}" || continue
+		${found} || printf '%s\n' "Available tarballs:"
+		found=:
+		printf '\t%s\n' "${i}"
 	done
 done
 ${found} || Die "For some reason no tarball was created"

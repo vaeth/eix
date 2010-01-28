@@ -43,8 +43,7 @@ Available options:
 	[ ${#} -eq 0 ] && set -- "`gettext \
 		'none (i.e. no readable layman make.conf specified)'`"
 	for i
-	do
-		printf '%s%s' '
+	do	printf '%s%s' '
               ' "${i}"
 	done
 	gettext '
@@ -53,7 +52,7 @@ Available options:
 -v            Verbose (default)
 -q            Quiet'
 	echo
-	exit ${exitcode}
+	exit ${exitcode:-1}
 }
 
 ClearLaymanMake () {
@@ -64,8 +63,7 @@ PushLaymanMake () {
 	local m r
 	r=1
 	for m
-	do
-		[ -n "${m}" ] || continue
+	do	[ -n "${m}" ] || continue
 		test -r "${m}" || continue
 		Push layman_make "${m}"
 		r=0
@@ -96,8 +94,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
 while getopts 'vqa:A:c:C?hH' opt
-do
-	case "${opt}" in
+do	case "${opt}" in
 		v) verbose=:;;
 		q) verbose=false;;
 		a) Push layman_overlays "${OPTARG}";;
@@ -113,8 +110,7 @@ GetOverlays () {
 	local i
 	eval "set -- ${layman_make}"
 	for i
-	do
-		[ -n "${i}" ] && test -r "${i}" && Push layman_overlays \
+	do	[ -n "${i}" ] && test -r "${i}" && Push layman_overlays \
 			`PORTDIR_OVERLAY=''; . "${i}"; \
 				printf '%s' "${PORTDIR_OVERLAY}"`
 	done
@@ -142,9 +138,11 @@ main_command="${1}"
 [ ${#} -gt 0 ] && shift
 
 case "${main_command}" in
-	add*)               Add "${@}";;
-	rem*|del*|rm*|sub*) Remove "${@}";;
-	*)                  Usage;;
+add*)
+	Add "${@}";;
+rem*|del*|rm*|sub*)
+	Remove "${@}";;
+*)	Usage;;
 esac
 
 exit 0
