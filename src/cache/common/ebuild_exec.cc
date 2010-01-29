@@ -16,6 +16,7 @@
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
 #include <eixrc/global.h>
+#include <portage/conf/portagesettings.h>
 
 #include <map>
 #include <string>

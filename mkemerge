@@ -3,7 +3,7 @@
 export LC_ALL
 LC_ALL=C
 
-Die() {
+Die () {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
 }
@@ -14,7 +14,7 @@ curr='.'
 distdir="`portageq distdir`"
 [ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
-GetEdir() {
+GetEdir () {
 	local o i j
 	o="`portageq portdir_overlay`"
 	for i in ${o}
@@ -48,7 +48,7 @@ MoveEbuild () {
 	mv -- "${n}" "${1}" || Die "cannot mv ${n} ${1}"
 }
 
-RmOpt() {
+RmOpt () {
 	! test -f "${1}" || rm -- "${1}"
 }
 

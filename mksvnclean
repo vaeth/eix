@@ -3,7 +3,7 @@
 export LC_ALL
 LC_ALL=C
 
-Die() {
+Die () {
 	printf '%s\n' "${1}"
 	exit ${2:-1}
 }

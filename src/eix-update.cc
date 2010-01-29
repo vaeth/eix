@@ -41,6 +41,7 @@
 #include <fnmatch.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -667,7 +668,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 				(unlikely(aborted) ? _("ABORTED!") :
 					_("Finished")));
 			if(use_percentage)
-				msg.insert(0, 1, ' ');
+				msg.insert(string::size_type(0), 1, ' ');
 			reading_percent_status->finish(msg);
 		}
 		delete reading_percent_status;

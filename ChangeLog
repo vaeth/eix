@@ -2,6 +2,10 @@
 
 *eix-0.19.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix missing includes and type ambiguity on IRIX
+	  http://bugs.gentoo.org/show_bug.cgi?id=302626
+	  Thanks to Stuart Shelton <srcshelton at gmail.com>
+	- Unify shell-script style
 
 *eix-0.19.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

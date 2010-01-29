@@ -1,20 +1,24 @@
 #! /usr/bin/env sh
 
-export LC_ALL=C
+export LC_ALL
+LC_ALL=C
 
 proj="eix"
 svnroot="https://svn.gentooexperimental.org/${proj}"
 
-usage() {
+Usage () {
 	printf '%s\n' "Usage: ${0##*/}
 Marks a new release in the svn repository.
 Verify in advance to have AC_INIT set correctly in configure.ac"
+	exit ${1:-1}
 }
 
-Die() {
+Die () {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
 }
+
+[ ${#} -eq 0 ] || Usage
 
 ver="`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`"
 printf '%s' "Are you sure you want to release ${proj}-${ver}? (y/n) "

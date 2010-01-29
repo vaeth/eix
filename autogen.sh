@@ -1,21 +1,17 @@
 #! /usr/bin/env sh
 
-run ()
-{
-	echo ">>> ${*}" 1>&2
+run () {
+	printf '%s\n' ">>> ${*}" 1>&2
 	if ! "${@}"
-	then
-		echo BUMMM 1>&2
+	then	printf '%s\n' "failure" 1>&2
 		exit 1
 	fi
 }
 
 run mkdir -p config
 if command -v glibtoolize >/dev/null 2>&1
-then
-	echo Skipping glibtoolize --force --copy --automake
-else
-	echo Skipping libtoolize --force --copy --automake
+then	printf '%s\n' "Skipping glibtoolize --force --copy --automake"
+else	printf '%s\n' "Skipping libtoolize --force --copy --automake"
 fi
 run autopoint
 run aclocal -I m4 -I martinm4
