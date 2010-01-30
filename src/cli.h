@@ -12,14 +12,14 @@
 
 #include <eixTk/argsreader.h>
 
+class DBHeader;
 class EixRc;
-class VarDbPkg;
+class MarkedList;
+class MatchTree;
 class PortageSettings;
 class SetStability;
-class DBHeader;
-class MarkedList;
-class Matchatom;
-Matchatom *parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
+class VarDbPkg;
+void parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
 
 /*	If you want to add a new parameter to eix just insert a line into
  *	long_options. If you only want a longopt, add a new define.

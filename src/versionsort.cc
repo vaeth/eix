@@ -38,7 +38,7 @@ parse_version(const char *v)
 	}
 	if(unlikely(!(isdigit(*v, localeC)))) {
 		cerr << eix::format(_("cannot determine version of %s")) % v << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	return v;
 }

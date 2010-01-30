@@ -34,7 +34,7 @@
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
 #include <search/algorithms.h>
-#include <search/dbmatchcriteria.h>
+#include <search/matchtree.h>
 
 #include <iostream>
 #include <map>
@@ -66,9 +66,12 @@ dump_help(int exit_code)
 			"EXPRESSION is true or false. Packages for which the EXPRESSION gives true,\n"
 			"are included in the final report.\n"
 			"\n"
-			"An EXPRESSION can be:\n"
-			"    EXPRESSION [-o|-a] EXPRESSION\n"
-			"    [local-options] PATTERN\n"
+			"EXPRESSION ::= [ --not | -! ] BRACE_OR_TEST |\n"
+			"               EXPRESSION [ --and | -a ] EXPRESSION |\n"
+			"               EXPRESSION [ --or  | -o ] EXPRESSION |\n"
+			"BRACE_OR_TEST ::= --open | -( EXPRESSION --close | -) |\n"
+			"               TEST_WITH_OPTIONS\n"
+			"TEST_WITH_OPTIONS ::= TEST_OPTIONS [PATTERN]\n"
 			"\n"
 			"Global:\n"
 			"   Exclusive options:\n"
@@ -111,7 +114,7 @@ dump_help(int exit_code)
 			"         --format-compact   format string for compact output\n"
 			"         --format-verbose   format string for verbose output\n"
 			"\n"
-			"Local:\n"
+			"TEST_OPTIONS:\n"
 			"  Miscellaneous:\n"
 			"    -I, --installed       Next expression only matches installed packages.\n"
 			"    -i, --multi-installed Match packages installed in several versions.\n"
@@ -161,7 +164,6 @@ dump_help(int exit_code)
 			"    -T, --test-obsolete   Match packages with obsolete entries in\n"
 			"                          /etc/portage/package.* (see man eix).\n"
 			"                          Use -t to check non-existing packages.\n"
-			"    -!, --not (toggle)    Invert the expression.\n"
 			"    -|, --pipe            Use input from pipe of emerge -pv\n"
 			"\n"
 			"  Search Fields:\n"
@@ -192,9 +194,7 @@ dump_help(int exit_code)
 			"further information.\n"),
 		program_name.c_str(), EIX_CACHEFILE);
 
-	if(exit_code != -1) {
-		exit(exit_code);
-	}
+	exit(exit_code);
 }
 
 static const char *format_normal, *format_verbose, *format_compact;
@@ -341,7 +341,6 @@ static struct Option long_options[] = {
 	Option("dup-packages",  'd'),
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
-	Option("not",           '!'),
 	Option("pipe",          '|'),
 
 	// Algorithms for a criteria
@@ -369,8 +368,11 @@ static struct Option long_options[] = {
 	Option("installed-without-use", O_INSTALLED_WITHOUT_USE),
 
 	// What to do with the next one
+	Option("not",           '!'),
 	Option("or",            'o'),
 	Option("and",           'a'),
+	Option("open",          '('),
+	Option("close",         ')'),
 
 	Option(0 , 0)
 };
@@ -458,7 +460,7 @@ set_format()
 	catch(const ExBasic &e) {
 		cerr << eix::format(_("Problems while parsing %s: %s\n"))
 			% varname % e << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -475,7 +477,7 @@ run_eix(int argc, char** argv)
 
 	if(unlikely(var_to_print != NULL)) {
 		eixrc.print_var(var_to_print);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	string cachefile;
@@ -492,24 +494,24 @@ run_eix(int argc, char** argv)
 	// Dump eixrc-stuff
 	if(unlikely(rc_options.dump_eixrc || rc_options.dump_defaults)) {
 		eixrc.dumpDefaults(stdout, rc_options.dump_defaults);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	// Show help screen
 	if(unlikely(rc_options.show_help)) {
-		dump_help(0);
+		dump_help(EXIT_SUCCESS);
 	}
 
 	// Show version
 	if(unlikely(rc_options.show_version)) {
-		dump_version(0);
+		dump_version();
 	}
 
 	// Honour a STFU
 	if(unlikely(rc_options.be_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 
@@ -536,7 +538,6 @@ run_eix(int argc, char** argv)
 	varpkg_db.check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	MarkedList *marked_list(NULL);
-	Matchatom *query;
 
 	/* Open database file */
 	FILE *fp(fopen(cachefile.c_str(), "rb"));
@@ -545,7 +546,7 @@ run_eix(int argc, char** argv)
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
 			% cachefile << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	DBHeader header;
@@ -558,34 +559,34 @@ run_eix(int argc, char** argv)
 			"Please run 'eix-update' and try again."))
 			% cachefile % header.version % DBHeader::current
 			<< endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	portagesettings.store_world_sets(&(header.world_sets));
 
 	if(unlikely(rc_options.hash_iuse)) {
 		fclose(fp);
 		header.iuse_hash.output();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	if(unlikely(rc_options.hash_keywords)) {
 		fclose(fp);
 		header.keywords_hash.output();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	if(unlikely(rc_options.hash_slot)) {
 		fclose(fp);
 		header.slot_hash.output();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	if(unlikely(rc_options.hash_provide)) {
 		fclose(fp);
 		header.provide_hash.output();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	if(unlikely(rc_options.hash_license)) {
 		fclose(fp);
 		header.license_hash.output();
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	if(unlikely(rc_options.world_sets)) {
 		fclose(fp);
@@ -593,7 +594,7 @@ run_eix(int argc, char** argv)
 		for(vector<string>::const_iterator it(p->begin());
 			likely(it != p->end()); ++it)
 			cout << *it << "\n";
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	LocalMode local_mode(LOCALMODE_DEFAULT);
@@ -610,7 +611,8 @@ run_eix(int argc, char** argv)
 
 	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
-	query = parse_cli(eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader.begin(), argreader.end());
+	MatchTree *matchtree = new MatchTree(eixrc.getBool("DEFAULT_IS_OR"));
+	parse_cli(matchtree, eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader.begin(), argreader.end());
 
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages;
@@ -624,16 +626,16 @@ run_eix(int argc, char** argv)
 		if(!print_path)
 			osearch = overlaylabel_to_print;
 		if(unlikely(!header.find_overlay(&num, osearch, NULL, 0, DBHeader::OVTEST_ALL)))
-			exit(1);
+			exit(EXIT_FAILURE);
 		const OverlayIdent& overlay(header.getOverlay(num));
 		if(print_path)
 			cout << overlay.path;
 		else
 			cout << overlay.label;
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	while(likely(reader.next())) {
-		if(unlikely(query->match(&reader))) {
+		if(unlikely(matchtree->match(&reader))) {
 			Package *release(reader.release());
 			matches.push_back(release);
 			if(rc_options.test_unused)
@@ -647,6 +649,10 @@ run_eix(int argc, char** argv)
 		}
 	}
 	fclose(fp);
+
+	// Delete old matchtree
+	delete matchtree;
+
 	if(unlikely(rc_options.test_unused)) {
 		bool empty(eixrc.getBool("TEST_FOR_EMPTY"));
 		cout << "\n";
@@ -798,9 +804,6 @@ run_eix(int argc, char** argv)
 			cout <<  eix::format(_("Found %s matches.\n")) % count;
 		}
 	}
-
-	// Delete old query
-	delete query;
 
 	// Delete matches
 	matches.delete_and_clear();

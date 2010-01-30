@@ -184,7 +184,7 @@ void join_map(map<string,string> *append_to, map<string,string>::iterator it, ma
 	}
 }
 
-void dump_version(int exit_code)
+void dump_version()
 {
 	fputs(PACKAGE_STRING
 #if defined(GCC_VERSION) || defined(TARGET)
@@ -201,7 +201,5 @@ void dump_version(int exit_code)
 		")"
 #endif
 		"\n", stdout);
-	if(exit_code != -1) {
-		exit(exit_code);
-	}
+	exit(EXIT_SUCCESS);
 }

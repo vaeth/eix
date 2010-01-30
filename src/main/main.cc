@@ -100,7 +100,7 @@ sig_handler(int sig)
 				"\n"
 				"Sorry for the inconvenience and thanks in advance!\n"),
 				program_name.c_str(), program_name.c_str());
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 /** Cut program path (if there is one) to get only the program name. */

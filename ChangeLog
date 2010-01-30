@@ -1,11 +1,18 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.19.3
+*eix-0.20.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce -( ... -) command line parsing.
+	- Be aware if you rely in scripts on logical connectives -a -o -!
+	  or the previous strange side effects of --pipe
+	  This has dramatically changed now (therefore the version jump):
+	- Treat -a and -o left-associative (of equal precedence as previously).
+	- Treat -! as unary operator (not as a TEST_OPTION).
+	- Treat --pipe as a TEST_OPTION.
+	- Unify shell-script style.
 	- Fix missing includes and type ambiguity on IRIX
 	  http://bugs.gentoo.org/show_bug.cgi?id=302626
 	  Thanks to Stuart Shelton <srcshelton at gmail.com>
-	- Unify shell-script style
 
 *eix-0.19.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

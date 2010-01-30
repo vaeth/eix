@@ -272,7 +272,7 @@ StringHash::store_string(const string &s)
 {
 	if(finalized) {
 		fprintf(stderr, _("Internal error: Storing required after finalizing"));
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	push_back(s);
 }
@@ -282,11 +282,11 @@ StringHash::hash_string(const string &s)
 {
 	if(finalized) {
 		fprintf(stderr, _("Internal error: Hashing required after finalizing"));
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	if(!hashing) {
 		fprintf(stderr, _("Internal error: Hashing required in non-hash mode"));
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	map<string, StringHash::size_type>::const_iterator i(str_map.find(s));
 	if(i != str_map.end())
@@ -316,12 +316,12 @@ StringHash::get_index(const string &s) const
 {
 	if(!finalized) {
 		cerr << _("Internal error: Index required before sorting.") << endl;
-		exit(2);
+		exit(EXIT_FAILURE);
 	}
 	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
 	if(i == str_map.end()) {
 		cerr << _("Internal error: Trying to shortcut non-hashed string.") << endl;
-		exit(2);
+		exit(EXIT_FAILURE);
 	}
 	return i->second;
 }
@@ -331,7 +331,7 @@ StringHash::operator[](StringHash::size_type i) const
 {
 	if(i >= size()) {
 		cerr << _("Database corrupt: Nonexistent hash required");
-		exit(2);
+		exit(EXIT_FAILURE);
 	}
 	return vector<string>::operator[](i);
 }

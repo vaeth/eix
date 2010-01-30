@@ -17,7 +17,7 @@
 #include <portage/conf/portagesettings.h>
 #include <portage/set_stability.h>
 #include <portage/vardbpkg.h>
-#include <search/dbmatchcriteria.h>
+#include <search/matchtree.h>
 #include <search/packagetest.h>
 
 #include <iostream>
@@ -29,17 +29,31 @@
 
 using namespace std;
 
-#define FINISH_CURRENT do { \
-	current->setTest(test); \
+#define FINISH_FORCE do { \
+	matchtree->parse_test(test, curr_pipe); \
+	force_test = curr_pipe = false; \
+	test = NULL; \
 } while(0)
 
-#define USE_NEXT do { \
-	FINISH_CURRENT; \
-	current = next; \
+#define FINISH_TEST do { \
+	if(force_test) { \
+		FINISH_FORCE; \
+	} \
+} while(0)
+
+#define NEW_TEST do { \
 	test = new PackageTest(varpkg_db, portagesettings, stability, header); \
 } while(0)
 
-inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
+#define USE_TEST do { \
+	if(test == NULL) { \
+		NEW_TEST; \
+		force_test = true; \
+	} \
+} while(0)
+
+inline bool
+optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
 {
 	ArgumentReader::iterator next(arg);
 	if(unlikely(++next == end))
@@ -48,201 +62,233 @@ inline bool optional_increase(ArgumentReader::iterator &arg, ArgumentReader::ite
 	return true;
 }
 
-Matchatom *
-parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+void
+parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
 {
-	/* Our root Matchatom. */
-	Matchatom   *root(new Matchatom());
-	Matchatom   *current(root);
-	PackageTest *test(new PackageTest(varpkg_db, portagesettings, stability, header));
+	bool	use_pipe(false),   // A pipe is used somewhere
+		force_test(false), // There is a current test or a pipe
+		curr_pipe(false);  // There is a current pipe
+	PackageTest *test(NULL);   // The current test
 
-	bool need_logical_operator(false);
-	bool have_default_operator(false);
-	bool default_operator(false);
 	while(likely(arg != end)) {
-		// Check for logical operator {{{
-		{
-			Matchatom *next(NULL);
+		switch(**arg) {
+			// Check for logical operator {{{
+			case 'a': FINISH_TEST;
+				matchtree->parse_and();
+				break;
+			case 'o': FINISH_TEST;
+				matchtree->parse_or();
+				break;
+			case '!': FINISH_TEST;
+				matchtree->parse_negate();
+				break;
+			case '(': FINISH_TEST;
+				matchtree->parse_open();
+				break;
+			case ')': FINISH_TEST;
+				matchtree->parse_close();
+				break;
+			// }}}
 
-			if(unlikely(**arg == 'a')) {
-				next = current->AND();
-				++arg;
-			}
-			else if(unlikely(**arg == 'o')) {
-				next = current->OR();
-				++arg;
-			}
-			else if(unlikely(need_logical_operator)) {
-				if(unlikely(!have_default_operator)) {
-					have_default_operator = true;
-					default_operator = eixrc.getBool("DEFAULT_IS_OR");
-				}
-				if(default_operator)
-					next = current->OR();
-				else
-					next = current->AND();
-			}
-
-			if(likely(next != NULL)) {
-				USE_NEXT;
-				need_logical_operator = false;
-				continue;
-			}
-		}
-		// }}}
-
-		EixRc::RedPair red;
-		PackageTest::TestInstalled test_installed;
-		bool firsttime;
-		switch(**arg)
-		{
 			// Check local options {{{
-			case 'I': test->Installed();
-				  break;
-			case 'i': test->MultiInstalled();
-				  break;
-			case '1': test->Slotted();
-				  break;
-			case '2': test->MultiSlotted();
-				  break;
-			case 'u': test->Upgrade(eixrc.getLocalMode("UPGRADE_LOCAL_MODE"));
-				  break;
-			case O_UPGRADE_LOCAL:
-				  test->Upgrade(LOCALMODE_LOCAL);
-				  break;
-			case O_UPGRADE_NONLOCAL:
-				  test->Upgrade(LOCALMODE_NONLOCAL);
-				  break;
-			case O_STABLE_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_FULL);
-				  break;
-			case O_TESTING_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_TESTING);
-				  break;
-			case O_NONMASKED_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_NONMASKED);
-				  break;
-			case O_BINARY: test->Binary();
-				  break;
-			case O_SELECTED_FILE: test->SelectedFile();
-				  break;
-			case O_SELECTED_SET: test->SelectedSet();
-				  break;
-			case O_SELECTED_ALL: test->SelectedAll();
-				  break;
-			case O_WORLD_FILE: test->WorldFile();
-				  break;
-			case O_WORLD_SET: test->WorldSet();
-				  break;
-			case O_WORLD_ALL: test->WorldAll();
-				  break;
-			case O_SYSTEM_DEFAULT: test->SetStabilityDefault(PackageTest::STABLE_SYSTEM);
-				  break;
-			case O_STABLE_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_FULL);
-				  break;
-			case O_TESTING_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_TESTING);
-				  break;
-			case O_NONMASKED_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_NONMASKED);
-				  break;
-			case O_SYSTEM_LOCAL: test->SetStabilityLocal(PackageTest::STABLE_SYSTEM);
-				  break;
-			case O_STABLE_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_FULL);
-				  break;
-			case O_TESTING_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_TESTING);
-				  break;
-			case O_NONMASKED_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_NONMASKED);
-				  break;
-			case O_SYSTEM_NONLOCAL: test->SetStabilityNonlocal(PackageTest::STABLE_SYSTEM);
-				  break;
-			case O_INSTALLED_UNSTABLE: test->SetInstability(PackageTest::STABLE_FULL);
-				  break;
-			case O_INSTALLED_TESTING: test->SetInstability(PackageTest::STABLE_TESTING);
-				  break;
-			case O_INSTALLED_MASKED: test->SetInstability(PackageTest::STABLE_NONMASKED);
-				  break;
-			case O_OVERLAY:
-				  if(optional_increase(arg, end)) {
+			// --pipe is a "faked" local option but actually treated by matchtree...
+			// Note that we must *not* FINISH_TEST here!
+			case '|': force_test = curr_pipe = use_pipe = true;
+				break;
+			case 'I': USE_TEST;
+				test->Installed();
+				break;
+			case 'i': USE_TEST;
+				test->MultiInstalled();
+				break;
+			case '1': USE_TEST;
+				test->Slotted();
+				break;
+			case '2': USE_TEST;
+				test->MultiSlotted();
+				break;
+			case 'u': USE_TEST;
+				test->Upgrade(eixrc.getLocalMode("UPGRADE_LOCAL_MODE"));
+				break;
+			case O_UPGRADE_LOCAL: USE_TEST;
+				test->Upgrade(LOCALMODE_LOCAL);
+				break;
+			case O_UPGRADE_NONLOCAL: USE_TEST;
+				test->Upgrade(LOCALMODE_NONLOCAL);
+				break;
+			case O_STABLE_DEFAULT: USE_TEST;
+				test->SetStabilityDefault(PackageTest::STABLE_FULL);
+				break;
+			case O_TESTING_DEFAULT: USE_TEST;
+				test->SetStabilityDefault(PackageTest::STABLE_TESTING);
+				break;
+			case O_NONMASKED_DEFAULT: USE_TEST;
+				test->SetStabilityDefault(PackageTest::STABLE_NONMASKED);
+				break;
+			case O_BINARY: USE_TEST;
+				test->Binary();
+				break;
+			case O_SELECTED_FILE: USE_TEST;
+				test->SelectedFile();
+				break;
+			case O_SELECTED_SET: USE_TEST;
+				test->SelectedSet();
+				break;
+			case O_SELECTED_ALL: USE_TEST;
+				test->SelectedAll();
+				break;
+			case O_WORLD_FILE: USE_TEST;
+				test->WorldFile();
+				break;
+			case O_WORLD_SET: USE_TEST;
+				test->WorldSet();
+				break;
+			case O_WORLD_ALL: USE_TEST;
+				test->WorldAll();
+				break;
+			case O_SYSTEM_DEFAULT: USE_TEST;
+				test->SetStabilityDefault(PackageTest::STABLE_SYSTEM);
+				break;
+			case O_STABLE_LOCAL: USE_TEST;
+				test->SetStabilityLocal(PackageTest::STABLE_FULL);
+				break;
+			case O_TESTING_LOCAL: USE_TEST;
+				test->SetStabilityLocal(PackageTest::STABLE_TESTING);
+				break;
+			case O_NONMASKED_LOCAL: USE_TEST;
+				test->SetStabilityLocal(PackageTest::STABLE_NONMASKED);
+				break;
+			case O_SYSTEM_LOCAL: USE_TEST;
+				test->SetStabilityLocal(PackageTest::STABLE_SYSTEM);
+				break;
+			case O_STABLE_NONLOCAL: USE_TEST;
+				test->SetStabilityNonlocal(PackageTest::STABLE_FULL);
+				break;
+			case O_TESTING_NONLOCAL: USE_TEST;
+				test->SetStabilityNonlocal(PackageTest::STABLE_TESTING);
+				break;
+			case O_NONMASKED_NONLOCAL: USE_TEST;
+				test->SetStabilityNonlocal(PackageTest::STABLE_NONMASKED);
+				break;
+			case O_SYSTEM_NONLOCAL: USE_TEST;
+				test->SetStabilityNonlocal(PackageTest::STABLE_SYSTEM);
+				break;
+			case O_INSTALLED_UNSTABLE: USE_TEST;
+				test->SetInstability(PackageTest::STABLE_FULL);
+				break;
+			case O_INSTALLED_TESTING: USE_TEST;
+				test->SetInstability(PackageTest::STABLE_TESTING);
+				break;
+			case O_INSTALLED_MASKED: USE_TEST;
+				test->SetInstability(PackageTest::STABLE_NONMASKED);
+				break;
+			case O_OVERLAY: USE_TEST;
+				if(optional_increase(arg, end)) {
 					header.get_overlay_vector(
 						test->OverlayList(),
 						arg->m_argument,
 						portagesettings["PORTDIR"].c_str());
 					break;
-				  }
-			case 'O': test->Overlay();
-				  break;
-			case O_ONLY_OVERLAY:
-				  if(optional_increase(arg, end)) {
+				}
+				// No break here...
+			case 'O': USE_TEST;
+				test->Overlay();
+				break;
+			case O_ONLY_OVERLAY: USE_TEST;
+				if(optional_increase(arg, end)) {
 					header.get_overlay_vector(
 						test->OverlayOnlyList(),
 						arg->m_argument,
 						portagesettings["PORTDIR"].c_str());
 					break;
-				  }
-				  header.get_overlay_vector(
+				}
+				header.get_overlay_vector(
 					test->OverlayOnlyList(),
 					"",
 					portagesettings["PORTDIR"].c_str());
-				  break;
-			case O_INSTALLED_OVERLAY:
-				  if(optional_increase(arg, end)) {
+				break;
+			case O_INSTALLED_OVERLAY: USE_TEST;
+				if(optional_increase(arg, end)) {
 					header.get_overlay_vector(
 						test->InOverlayInstList(),
 						arg->m_argument,
 						portagesettings["PORTDIR"].c_str());
 					break;
-				  }
-				  // No break here...
-			case O_INSTALLED_SOME: header.get_overlay_vector(
+				}
+				// No break here...
+			case O_INSTALLED_SOME: USE_TEST;
+				header.get_overlay_vector(
 					test->InOverlayInstList(),
 					"",
 					portagesettings["PORTDIR"].c_str());
-				  break;
-			case O_FROM_OVERLAY:
-				  if(optional_increase(arg, end)) {
+				break;
+			case O_FROM_OVERLAY: USE_TEST;
+				if(optional_increase(arg, end)) {
 					header.get_overlay_vector(
 						test->FromOverlayInstList(),
 						arg->m_argument,
 						portagesettings["PORTDIR"].c_str());
 					test->FromForeignOverlayInstList()->push_back(arg->m_argument);
 					break;
-				  }
-				  // No break here...
-			case 'J':
-				  header.get_overlay_vector(
+				}
+				// No break here...
+			case 'J': USE_TEST;
+				header.get_overlay_vector(
 					test->FromOverlayInstList(),
 					"",
 					portagesettings["PORTDIR"].c_str());
-				  test->FromForeignOverlayInstList()->push_back("");
-				  break;
-			case 'd': test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
-				  break;
-			case 'D': test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
-				  break;
-			case O_RESTRICT_FETCH: test->Restrictions(ExtendedVersion::RESTRICT_FETCH);
-				  break;
-			case O_RESTRICT_MIRROR: test->Restrictions(ExtendedVersion::RESTRICT_MIRROR);
-				  break;
-			case O_RESTRICT_PRIMARYURI: test->Restrictions(ExtendedVersion::RESTRICT_PRIMARYURI);
-				  break;
-			case O_RESTRICT_BINCHECKS: test->Restrictions(ExtendedVersion::RESTRICT_BINCHECKS);
-				  break;
-			case O_RESTRICT_STRIP: test->Restrictions(ExtendedVersion::RESTRICT_STRIP);
-				  break;
-			case O_RESTRICT_TEST: test->Restrictions(ExtendedVersion::RESTRICT_TEST);
-				  break;
-			case O_RESTRICT_USERPRIV: test->Restrictions(ExtendedVersion::RESTRICT_USERPRIV);
-				  break;
-			case O_RESTRICT_INSTALLSOURCES: test->Restrictions(ExtendedVersion::RESTRICT_INSTALLSOURCES);
-				  break;
-			case O_RESTRICT_BINDIST: test->Restrictions(ExtendedVersion::RESTRICT_BINDIST);
-				  break;
-			case O_PROPERTIES_INTERACTIVE: test->Properties(ExtendedVersion::PROPERTIES_INTERACTIVE);
-				  break;
-			case O_PROPERTIES_LIVE: test->Properties(ExtendedVersion::PROPERTIES_LIVE);
-				  break;
-			case O_PROPERTIES_VIRTUAL: test->Properties(ExtendedVersion::PROPERTIES_VIRTUAL);
-				  break;
-			case O_PROPERTIES_SET: test->Properties(ExtendedVersion::PROPERTIES_SET);
-				  break;
-			case 'T': red.first = red.second = RedAtom();
-				  if(likely(eixrc.getBool("TEST_FOR_REDUNDANCY"))) {
+				test->FromForeignOverlayInstList()->push_back("");
+				break;
+			case 'd': USE_TEST;
+				test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
+				break;
+			case 'D': USE_TEST;
+				test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
+				break;
+			case O_RESTRICT_FETCH: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_FETCH);
+				break;
+			case O_RESTRICT_MIRROR: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_MIRROR);
+				break;
+			case O_RESTRICT_PRIMARYURI: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_PRIMARYURI);
+				break;
+			case O_RESTRICT_BINCHECKS: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_BINCHECKS);
+				break;
+			case O_RESTRICT_STRIP: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_STRIP);
+				break;
+			case O_RESTRICT_TEST: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_TEST);
+				break;
+			case O_RESTRICT_USERPRIV: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_USERPRIV);
+				break;
+			case O_RESTRICT_INSTALLSOURCES: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_INSTALLSOURCES);
+				break;
+			case O_RESTRICT_BINDIST: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_BINDIST);
+				break;
+			case O_PROPERTIES_INTERACTIVE: USE_TEST;
+				test->Properties(ExtendedVersion::PROPERTIES_INTERACTIVE);
+				break;
+			case O_PROPERTIES_LIVE: USE_TEST;
+				test->Properties(ExtendedVersion::PROPERTIES_LIVE);
+				break;
+			case O_PROPERTIES_VIRTUAL: USE_TEST;
+				test->Properties(ExtendedVersion::PROPERTIES_VIRTUAL);
+				break;
+			case O_PROPERTIES_SET: USE_TEST;
+				test->Properties(ExtendedVersion::PROPERTIES_SET);
+				break;
+			case 'T': USE_TEST;
+			{
+				EixRc::RedPair red;
+				red.first = red.second = RedAtom();
+				if(likely(eixrc.getBool("TEST_FOR_REDUNDANCY"))) {
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
 						Keywords::RED_DOUBLE, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LINE",
@@ -279,126 +325,99 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 						Keywords::RED_IN_USE, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
 						Keywords::RED_IN_CFLAGS, red);
-				  }
-				  test_installed = PackageTest::INS_NONE;
-				  if(likely(eixrc.getBool("TEST_FOR_NONEXISTENT"))) {
+				}
+				PackageTest::TestInstalled test_installed = PackageTest::INS_NONE;
+				if(likely(eixrc.getBool("TEST_FOR_NONEXISTENT"))) {
 					test_installed |= PackageTest::INS_NONEXISTENT;
 					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
 						test_installed |= PackageTest::INS_MASKED;
 					if(eixrc.getBool("NONEXISTENT_IF_OTHER_OVERLAY")) {
 						test_installed |= PackageTest::INS_OVERLAY;
 					}
-				  }
-				  test->ObsoleteCfg(red.first, red.second, test_installed);
-				  break;
-			case '!': test->Invert();
-				  break;
+				}
+				test->ObsoleteCfg(red.first, red.second, test_installed);
+			}
+				break;
 			// }}}
 
 			// Check for field-designators {{{
-			case 's': *test |= PackageTest::NAME;          break;
-			case 'C': *test |= PackageTest::CATEGORY;      break;
-			case 'A': *test |= PackageTest::CATEGORY_NAME; break;
-			case 'S': *test |= PackageTest::DESCRIPTION;   break;
-			case 'L': *test |= PackageTest::LICENSE;       break;
-			case 'H': *test |= PackageTest::HOMEPAGE;      break;
-			case 'P': *test |= PackageTest::PROVIDE;       break;
-			case 'U': *test |= PackageTest::IUSE;          break;
-			case O_SEARCH_SET:
-			          *test |= PackageTest::SET;           break;
-			case O_SEARCH_SLOT:
-			          *test |= PackageTest::SLOT;          break;
-			case O_INSTALLED_WITH_USE:
-			          *test |= PackageTest::USE_ENABLED;   break;
-			case O_INSTALLED_WITHOUT_USE:
-			          *test |= PackageTest::USE_DISABLED;  break;
-			case O_INSTALLED_SLOT:
-			          *test |= PackageTest::INSTALLED_SLOT;break;
+			case 's': USE_TEST;
+				*test |= PackageTest::NAME;
+				break;
+			case 'C': USE_TEST;
+				*test |= PackageTest::CATEGORY;
+				break;
+			case 'A': USE_TEST;
+				*test |= PackageTest::CATEGORY_NAME;
+				break;
+			case 'S': USE_TEST;
+				*test |= PackageTest::DESCRIPTION;
+				break;
+			case 'L': USE_TEST;
+				*test |= PackageTest::LICENSE;
+				break;
+			case 'H': USE_TEST;
+				*test |= PackageTest::HOMEPAGE;
+				break;
+			case 'P': USE_TEST;
+				*test |= PackageTest::PROVIDE;
+				break;
+			case 'U': USE_TEST;
+				*test |= PackageTest::IUSE;
+				break;
+			case O_SEARCH_SET: USE_TEST;
+				*test |= PackageTest::SET;
+				break;
+			case O_SEARCH_SLOT: USE_TEST;
+				*test |= PackageTest::SLOT;
+				break;
+			case O_INSTALLED_WITH_USE: USE_TEST;
+				*test |= PackageTest::USE_ENABLED;
+				break;
+			case O_INSTALLED_WITHOUT_USE: USE_TEST;
+				*test |= PackageTest::USE_DISABLED;
+				break;
+			case O_INSTALLED_SLOT: USE_TEST;
+				*test |= PackageTest::INSTALLED_SLOT;
+				break;
 			// }}}
 
 			// Check for algorithms {{{
-			case 'f': if(unlikely((++arg != end)
+			case 'f': USE_TEST;
+				if(unlikely((++arg != end)
 					&& (arg->type == Parameter::ARGUMENT)
 					&& is_numeric(arg->m_argument))) {
 					test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
-				  }
-				  else {
+				}
+				else {
 					test->setAlgorithm(PackageTest::ALGO_FUZZY);
 					--arg;
-				  }
-				  break;
-			case 'r': test->setAlgorithm(new RegexAlgorithm());
-				  break;
-			case 'e': test->setAlgorithm(new ExactAlgorithm());
-				  break;
-			case 'b': test->setAlgorithm(new BeginAlgorithm());
-				  break;
-			case O_END_ALGO: test->setAlgorithm(new EndAlgorithm());
-				  break;
-			case 'z': test->setAlgorithm(new SubstringAlgorithm());
-				  break;
-			case 'p': test->setAlgorithm(new PatternAlgorithm());
-				  break;
-			// }}}
-
-			// Read from pipe {{{
-			case '|':
-				test->setAlgorithm(new ExactAlgorithm());
-				*test = PackageTest::CATEGORY_NAME;
-				firsttime = true;
-				while(likely(!cin.eof())) {
-					string line;
-					getline(cin, line);
-					trim(&line);
-					vector<string> wordlist;
-					split_string(wordlist, line);
-					for(vector<string>::iterator word(wordlist.begin());
-						likely(word != wordlist.end()); ++word) {
-						string::size_type i(word->find("/"));
-						if((i == string::npos) || (i == 0) || (i == word->size() - 1))
-							continue;
-						if(word->find("/", i + 1) != string::npos)
-							continue;
-						if(unlikely(firsttime))
-							firsttime = false;
-						else {
-							Matchatom *next = current->OR();
-							USE_NEXT;
-							test->setAlgorithm(new ExactAlgorithm());
-							*test = PackageTest::CATEGORY_NAME;
-						}
-						if((*word)[0] == '=') {
-							word->erase(0, 1);
-						}
-						char **name_ver(ExplodeAtom::split(word->c_str()));
-						const char *name, *ver;
-						if(name_ver) {
-							name = name_ver[0];
-							ver  = name_ver[1];
-						}
-						else {
-							name = word->c_str();
-							ver  = NULL;
-						}
-						if(unlikely(*marked_list == NULL)) {
-							*marked_list = new MarkedList();
-						}
-						(*marked_list)->add(name, ver);
-						test->setPattern(name);
-						if(name_ver) {
-							free(name_ver[0]);
-							free(name_ver[1]);
-						}
-					}
 				}
-				need_logical_operator = true;
+				break;
+			case 'r': USE_TEST;
+				test->setAlgorithm(new RegexAlgorithm());
+				break;
+			case 'e': USE_TEST;
+				test->setAlgorithm(new ExactAlgorithm());
+				break;
+			case 'b': USE_TEST;
+				test->setAlgorithm(new BeginAlgorithm());
+				break;
+			case O_END_ALGO: test->setAlgorithm(new EndAlgorithm());
+				break;
+			case 'z': USE_TEST;
+				test->setAlgorithm(new SubstringAlgorithm());
+				break;
+			case 'p': USE_TEST;
+				test->setAlgorithm(new PatternAlgorithm());
 				break;
 			// }}}
 
 			// String arguments .. finally! {{{
-			case -1:  test->setPattern(arg->m_argument);
-				  need_logical_operator = true;
-				  break;
+			case -1: USE_TEST;
+				test->setPattern(arg->m_argument);
+				FINISH_FORCE;
+				break;
 			// }}}
 			default:
 				break;
@@ -406,8 +425,59 @@ parse_cli(EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, c
 
 		++arg;
 	}
-	FINISH_CURRENT;
-	return root;
+	FINISH_TEST;
+	matchtree->end_parse();
+	*marked_list = NULL;
+
+	if(!use_pipe) {
+		return;
+	}
+
+	// If we have a pipe, we must call matchtree->set_pipetest()
+	// and also fill the marked_list;
+	while(likely(!cin.eof())) {
+		string line;
+		getline(cin, line);
+		trim(&line);
+		vector<string> wordlist;
+		split_string(wordlist, line);
+		for(vector<string>::iterator word(wordlist.begin());
+			likely(word != wordlist.end()); ++word) {
+			string::size_type i(word->find("/"));
+			if((i == string::npos) || (i == 0) || (i == word->size() - 1))
+				continue;
+			if(word->find("/", i + 1) != string::npos)
+				continue;
+			if((*word)[0] == '=') {
+				word->erase(0, 1);
+			}
+			char **name_ver(ExplodeAtom::split(word->c_str()));
+			const char *name, *ver;
+			if(name_ver) {
+				name = name_ver[0];
+				ver  = name_ver[1];
+			}
+			else {
+				name = word->c_str();
+				ver  = NULL;
+			}
+			if(unlikely(*marked_list == NULL)) {
+				*marked_list = new MarkedList();
+			}
+			(*marked_list)->add(name, ver);
+
+			NEW_TEST;
+			*test = PackageTest::CATEGORY_NAME;
+			test->setAlgorithm(new ExactAlgorithm());
+			test->setPattern(name);
+			matchtree->set_pipetest(test);
+
+			if(name_ver) {
+				free(name_ver[0]);
+				free(name_ver[1]);
+			}
+		}
+	}
 }
 
 // vim:set foldmethod=marker foldlevel=0:

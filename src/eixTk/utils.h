@@ -47,7 +47,7 @@ bool pushback_files(const std::string &dir_path, std::vector<std::string> &into,
 void join_map(std::map<std::string,std::string> *append_to, std::map<std::string,std::string>::iterator it, std::map<std::string,std::string>::iterator it_end);
 
 /* Print version of eix to stdout. */
-void dump_version(int exit_code = -1);
+void dump_version();
 
 
 

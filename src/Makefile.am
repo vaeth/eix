@@ -169,7 +169,8 @@ search/levenshtein.cc \
 search/levenshtein.h \
 search/algorithms.cc \
 search/algorithms.h \
-search/dbmatchcriteria.h \
+search/matchtree.cc \
+search/matchtree.h \
 search/packagetest.cc \
 search/packagetest.h \
 search/redundancy.h

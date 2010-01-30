@@ -8,10 +8,7 @@
 .\" {{{ SYNOPSIS
 .SH "SYNOPSIS"
 .B eix
-[I<common options>] [I<OPTIONS>] I<EXPRESSION> [[B<-a>|B<-o>|B<--and>|B<--or>] I<EXPRESSION> ...]
-.PP
-An I<EXPRESSION> consists of local options (described below) and a pattern
-(which may be omitted, i.e. empty).
+[I<common options>] [I<OPTIONS>] I<EXPRESSION>
 
 .B eix-update
 [I<common options>] [I<eix-update options>]
@@ -278,52 +275,61 @@ These files (and how to modify their filenames) are described later.
 .BI "--cache-file " FILE
 Use I<FILE> instead of B<@EIX_CACHEFILE@>.
 
-.\" {{{ -------- Options for expressions
-.SS Options for expressions
-Expressions are used to narrow which packages eix prints.
+.\" {{{ -------- Options for EXPRESSION
+.SS Options for EXPRESSION
+A EXPRESSION is used to narrow which packages eix prints.
 
-An expression may contain several of the options below (including the
-options for B<operation selection> and selection of the B<match algorithm>)
-and a pattern (which may be omitted).
-All these options are local to that expression, i.e. everything is "reset"
-when the next expression starts.
+An EXPRESSION can contain Boolean operators and tests according to the following grammar:
 
-The expression finishes with the pattern or with one of the logical
-concatenating options B<--and> or B<--or> (which may be abbreviated by
-B<-a> or B<-o>, respectively) after which the next expression can follow.
-If neither B<--and> nor B<--or> is used between two expressions
-(i.e. if the first expression finishes with the pattern), then
-B<--and> or B<--or> is assumed implicitly, depending on the value of the
-configuration variable B<DEFAULT_IS_OR>.
+EXPRESSION ::= [ B<--not> | B<-!> ] BRACE_OR_TEST |
+               EXPRESSION [ B<--and>| B<-a> ] EXPRESSION |
+               EXPRESSION [ B<--or> | B<-o> ] EXPRESSION
 
-In order for a package to match the expression it must satisfy B<all>
-match criteria selected by the local options B<and> the pattern contained
-in the expression (if such a pattern was given) must match.
-An exception of this rule is of course when the option B<--not> is used
-within the local options of the expressions in which case the complete result
-(of the whole expression) is negated.
+BRACE_OR_TEST ::= B<--open>|B<-(> EXPRESSION B<--close>|B<-)> |
+               TEST_WITH_OPTIONS
 
-The logical operators B<--and> or B<--or> have both the same precedence and
-are evaluated from left to right. It is currently not possible to parenthesize
-the results of logical operators in a different way or to negate a result of
-a logical concatenation.
+TEST_WITH_OPTIONS ::= [TEST_OPTIONS] [PATTERN]
+
+Do not forget that B<!>, B<(>, B<)> have to be quoted in shells so that
+eix actually receives these as parts of arguments!
+
+The meaning of the logical operators should be obvious with perhaps some exceptions:
+
+1. If neither B<--and>|B<-a> nor B<--or>|B<-o> is between two EXPRESSIONs, then one of
+them is implicitly assumed; whether this is B<-a> or B<-o> depends on the setting
+of the configuration variable B<DEFAULT_IS_OR>.
+
+2. The operators B<-a> and B<-o> have equal precedence and are left-associative.
+In particular, B<X -o Y -a Z> fails if B<Z> fails.
+
+3. B<--not>|B<-!> negates only the result of the subsequent BRACE_OR_TEST.
+
+4. Observe that TEST_OPTIONS can consist of several options.
+All of these options are applied simultaneously, i.e. in a sense these options
+are logically braced and combined with B<and> (independent of B<DEFAULT_IS_OR>
+This is somehow ambiguous, since B<PATTERN> can be omitted.
+This ambiguity is resolved by interpreting subsequent TEST_OPTIONS always as a
+part of one TEST_WITH_OPTIONS.
+
+5. The TEST_OPTIONS can specify things like the B<match algorithm> and also B<operation selection>.
+All these specifications refer B<only> to the current TEST_WITH_OPTIONS, in particular, they are only active for the next B<PATTERN>.
 
 Note that besides using this expression syntax a different way of implicit
 (though slow) package selection on various other criteria is possible by
 defining B<FORMATSTRING> (see below) using conditionals such that it outputs
 an empty string for the undesired packages.
+
+Here are the admissible TEST_OPTIONS:
 .TP
 .BR -I ", " --installed
 Only match installed packages.
-Please do not use this as a replacement for qlist -ICv or equery,
-it is not the same:
+Please do not use this as a replacement for qlist -ICv or equery, it is not the same:
 Packages that are installed, but no longer in the portage tree (or overlays) are not listed here.
 However, you should better not have such packages at all
 (better put these packages in overlays in case you need to reinstall them).
 To find such packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
 but be aware that eix -t does not obey the usual B<FORMAT> rules for these packages.
-So you better do not use this in scripts unless you know
-what you are doing.
+So you better do not use this in scripts unless you know what you are doing.
 
 If you really want to use this option as a substitute for equery in scripts,
 you might want to combine it with some of
@@ -580,14 +586,6 @@ I<category>B</>I<package>
 More precisely, in each line the first word in this format is chosen.
 The packages/versions passed this way will in the output be marked.
 For details, see the B<marked> and B<markedversions:*> formatstrings.
-
-This local option is treated as if a sequence of corresponding matching
-expressions, concatenated with B<-o>, were given.
-.TP
-.BR -! ", " --not
-(Recall that an interactive shell will not pass an unquoted B<!> sign, so quote properly).
-
-Invert the expression given.
 .\" }}}
 
 .\" {{{ -------- Match field selection
@@ -2921,6 +2919,13 @@ To see the effect of such an example try e.g.
 .B eix --format '<availableversions:ANAMESLOT:ANAMESLOT>' --pure-packages gcc
 
 See also the comments for the B<-I> option.
+
+Since eix-0.20.0 the logical connectives for EXPRESSIONs have changed dramatically:
+Not only braces are now possible, also chains with B<-a> and B<-o> are now treated
+left-associative as most users would intuitively expect.
+The negation B<--not> is now treated as a logical operation starting a new BRACE_OR_TEST
+and no longer considered as part of TEST_OPTIONS (which was a source of confusion for many users).
+Now B<--pipe> is really handled as part of TEST_OPTIONS and does not implicitly introduce logical connectives.
 .\" }}}
 
 .\" {{{ AUTHORS

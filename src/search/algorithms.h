@@ -33,9 +33,11 @@
 #define FNMATCH_FLAGS 0
 #endif
 
+class matchtree;
+
 /** That's how every Algorithm will look like. */
 class BaseAlgorithm {
-
+		friend class matchtree;
 	protected:
 		std::string search_string;
 

@@ -239,7 +239,7 @@ EixRc::resolve_delayed(string key, set<string> &has_delayed)
 		cerr << eix::format(_(
 			"fatal config error: %s in delayed substitution of %s"))
 			% errtext % errvar << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 }
 

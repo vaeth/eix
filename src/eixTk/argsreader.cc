@@ -133,8 +133,8 @@ ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
 		++opt_table;
 	}
 	fprintf(stderr, _("Unknown option --%s\n"), long_opt);
-	exit(-1);
-	return -1;// never reached, but might avoid compiler warning
+	exit(EXIT_FAILURE);
+	return 0;// never reached, but might avoid compiler warning
 }
 
 /** Check if short_opt is a known option.
@@ -150,8 +150,8 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 		++opt_table;
 	}
 	fprintf(stderr, _("Unknown option -%c\n"), short_opt);
-	exit(-1);
-	return -1;// never reached, but might avoid compiler warning
+	exit(EXIT_FAILURE);
+	return 0;// never reached, but might avoid compiler warning
 }
 
 void
@@ -222,7 +222,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 					if(it == end()) {
 						if(!optional) {
 							fprintf(stderr, _("Missing parameter to --%s\n"), c->longopt);
-							exit(-1);
+							exit(EXIT_FAILURE);
 						}
 					}
 					else {
@@ -247,7 +247,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 					if(it == end()) {
 						if(!optional) {
 							fprintf(stderr, _("Missing second parameter to --%s\n"), c->longopt);
-							exit(-1);
+							exit(EXIT_FAILURE);
 						}
 					}
 					else {

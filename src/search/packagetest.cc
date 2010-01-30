@@ -82,7 +82,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 
 	field    = PackageTest::NONE;
 	need     = PackageReader::NONE;
-	invert = overlay = obsolete = upgrade = binary =
+	overlay = obsolete = upgrade = binary =
 		installed = multi_installed =
 		slotted = multi_slot =
 		world = world_only_selected = world_only_file =
@@ -365,6 +365,9 @@ PackageTest::setAlgorithm(MatchAlgorithm a)
 void
 PackageTest::setPattern(const char *p)
 {
+#ifdef DEBUG_MATCHTREE
+	testname = p;
+#endif
 	if(!algorithm.get())
 		setAlgorithm(get_matchalgorithm(p));
 
@@ -613,15 +616,9 @@ PackageTest::match(PackageReader *pkg) const
 	   Each test must start with "get_p()" to get "p"; remember to modify
 	   "need" in CalculateNeeds() to ensure that you will have all
 	   required data in the (possibly only partly filled) package "p".
-	   If a test fails, "return invert";
+	   If a test fails, "return false";
 	   if a test succeeds, pass to the next test,
-	   i.e. within the same Matchatom, we always have "-a" concatenation
-	   and honor the "invert" flag.
-	   (The latter might have to be modified if someday somebody wants
-	   to introduce "tree-type" expressions for queries, i.e. with braces:
-	   Then "abstract" subexpressions might have to be negated, too,
-	   because you do not want to have "-! -( ... -)" behave like
-	   "-! -a -( ... -)" or "-! -o -( ... -)").
+	   i.e. within the same Matchatom, we always have "-a" concatenation.
 
 	   If a test needs that keywords/mask are set correctly,
 	   recall that they are not set in the database.
@@ -646,22 +643,22 @@ PackageTest::match(PackageReader *pkg) const
 	if(unlikely(algorithm.get() != NULL)) {
 		get_p();
 		if(!stringMatch(p))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(slotted)) { // -1 or -2
 		get_p();
 		if(! (p->have_nontrivial_slots()))
-			return invert;
+			return false;
 		if(multi_slot)
 			if( (p->slotlist()).size() <= 1 )
-				return invert;
+				return false;
 	}
 
 	if(unlikely(overlay)) { // -O
 		get_p();
 		if(!(p->largest_overlay))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(overlay_list != NULL)) { // --in-overlay
@@ -674,14 +671,14 @@ PackageTest::match(PackageReader *pkg) const
 			break;
 		}
 		if(!have)
-			return invert;
+			return false;
 	}
 
 	if(unlikely(overlay_only_list != NULL)) { // --only-in-overlay
 		get_p();
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end()))
-				return invert;
+				return false;
 		}
 	}
 
@@ -689,10 +686,10 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		vector<BasicVersion>::size_type s(vardbpkg->numInstalled(*p));
 		if(s == 0)
-			return invert;
+			return false;
 		if(s == 1)
 			if(multi_installed)
-				return invert;
+				return false;
 	}
 
 	if(unlikely(in_overlay_inst_list != NULL)) {
@@ -716,7 +713,7 @@ PackageTest::match(PackageReader *pkg) const
 			}
 		}
 		if(!have)
-			return invert;
+			return false;
 	}
 
 	if(unlikely((from_overlay_inst_list != NULL) ||
@@ -726,7 +723,7 @@ PackageTest::match(PackageReader *pkg) const
 		bool have(false);
 		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
 		if(installed_versions == NULL)
-			return invert;
+			return false;
 		for(vector<InstVersion>::iterator it(installed_versions->begin());
 			likely(it != installed_versions->end()); ++it) {
 			if(vardbpkg->readOverlay(*p, *it, *header, portdir)) {
@@ -754,7 +751,7 @@ PackageTest::match(PackageReader *pkg) const
 				break;
 		}
 		if(!have)
-			return invert;
+			return false;
 	}
 
 	if(unlikely(dup_packages)) { // -d
@@ -762,10 +759,10 @@ PackageTest::match(PackageReader *pkg) const
 		if(dup_packages_overlay)
 		{
 			if(!(p->at_least_two_overlays()))
-				return invert;
+				return false;
 		}
 		else if(p->have_same_overlay_key())
-			return invert;
+			return false;
 	}
 
 	if(unlikely(dup_versions)) { // -D
@@ -773,7 +770,7 @@ PackageTest::match(PackageReader *pkg) const
 		Package::Duplicates testfor((dup_versions_overlay) ?
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
 		if(((p->have_duplicate_versions) & testfor) != testfor)
-			return invert;
+			return false;
 	}
 
 	if(unlikely((restrictions != ExtendedVersion::RESTRICT_NONE) ||
@@ -790,7 +787,7 @@ PackageTest::match(PackageReader *pkg) const
 		if(!found) {
 			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
 			if(installed_versions == NULL)
-				return invert;
+				return false;
 			for(vector<InstVersion>::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
 				vardbpkg->readRestricted(*p, *it, *header, portdir);
@@ -801,7 +798,7 @@ PackageTest::match(PackageReader *pkg) const
 				}
 			}
 			if(!found)
-				return invert;
+				return false;
 		}
 	}
 
@@ -817,7 +814,7 @@ PackageTest::match(PackageReader *pkg) const
 		if(!found) {
 			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
 			if(installed_versions == NULL)
-				return invert;
+				return false;
 			for(vector<InstVersion>::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
 				if(unlikely(it->have_bin_pkg(portagesettings, p))) {
@@ -826,7 +823,7 @@ PackageTest::match(PackageReader *pkg) const
 				}
 			}
 			if(!found)
-				return invert;
+				return false;
 		}
 	}
 
@@ -834,7 +831,7 @@ PackageTest::match(PackageReader *pkg) const
 		// Can some test succeed at all?
 		if((test_installed == INS_NONE) &&
 			(redundant_flags == Keywords::RED_NOTHING))
-			return invert;
+			return false;
 
 		get_p();
 
@@ -902,13 +899,13 @@ PackageTest::match(PackageReader *pkg) const
 			}
 		}
 		if(test_installed == INS_NONE)
-			return invert;
+			return false;
 		TestInstalled t(test_installed & nowarn_installed(*p));
 		if(t == INS_NONE)
-			return invert;
+			return false;
 		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
 		if(installed_versions == NULL)
-			return invert;
+			return false;
 		if(t & INS_MASKED) {
 			portagesettings->user_config->setMasks(p);
 			portagesettings->user_config->setKeyflags(p);
@@ -939,7 +936,7 @@ PackageTest::match(PackageReader *pkg) const
 		}
 		if(current != installed_versions->end())
 			break;
-		return invert;
+		return false;
 	}
 
 	if(unlikely(upgrade)) { // -u
@@ -951,7 +948,7 @@ PackageTest::match(PackageReader *pkg) const
 		else if(upgrade_local_mode == LOCALMODE_NONLOCAL)
 			StabilityNonlocal(p);
 		if(! (p->recommend(vardbpkg, portagesettings, true, true)))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(test_stability_default != STABLE_NONE))
@@ -959,7 +956,7 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		StabilityDefault(p);
 		if(!stabilitytest(p, test_stability_default))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(test_stability_local != STABLE_NONE))
@@ -967,7 +964,7 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		StabilityLocal(p);
 		if(!stabilitytest(p, test_stability_local))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(test_stability_nonlocal != STABLE_NONE))
@@ -975,7 +972,7 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		StabilityNonlocal(p);
 		if(!stabilitytest(p, test_stability_nonlocal))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(test_instability != STABLE_NONE))
@@ -983,7 +980,7 @@ PackageTest::match(PackageReader *pkg) const
 		get_p();
 		StabilityNonlocal(p);
 		if(!instabilitytest(p, test_instability))
-			return invert;
+			return false;
 	}
 
 	if(unlikely(world || worldset)) {
@@ -994,19 +991,19 @@ PackageTest::match(PackageReader *pkg) const
 		if(world && !p->is_world_package()) {
 			if(world_only_file || !p->is_world_sets_package()) {
 				if(world_only_selected || !p->is_system_package()) {
-					return invert;
+					return false;
 				}
 			}
 		}
 		if(worldset && !p->is_world_sets_package()) {
 			if(worldset_only_selected || !p->is_system_package()) {
-				return invert;
+				return false;
 			}
 		}
 	}
 
 	// all tests succeeded:
-	return (!invert);
+	return true;
 }
 
 static void

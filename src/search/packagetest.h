@@ -29,6 +29,8 @@
 
 #include <cstddef>
 
+// #define DEBUG_MATCHTREE 1
+
 class MatcherAlgorithm;
 class MatcherField;
 class PortageSettings;
@@ -40,6 +42,9 @@ class PackageTest {
 		friend class MatcherAlgorithm;
 
 	public:
+#ifdef DEBUG_MATCHTREE
+		std::string testname;
+#endif
 		typedef uint16_t MatchField;
 		static const MatchField
 			NONE          =0x0000, /**< Search in name */
@@ -224,9 +229,6 @@ class PackageTest {
 			test_installed     = test_ins;
 		}
 
-		void Invert()
-		{ invert = !invert; }
-
 		MatchField operator |= (const MatchField m)
 		{ return field |= m; }
 
@@ -249,8 +251,7 @@ class PackageTest {
 		std::auto_ptr<BaseAlgorithm> algorithm;
 
 		/** Other flags for tests */
-		bool invert,
-			overlay, obsolete, upgrade, binary,
+		bool	overlay, obsolete, upgrade, binary,
 			installed, multi_installed,
 			slotted, multi_slot,
 			world, world_only_file, world_only_selected,

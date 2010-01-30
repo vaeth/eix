@@ -149,7 +149,7 @@ class Permissions {
 						cerr << eix::format(_(
 							"%s must be writable by group portage."))
 							% cachefile << endl;
-						exit(1);
+						exit(EXIT_FAILURE);
 					}
 					if(!am_i_root())
 					{
@@ -158,7 +158,7 @@ class Permissions {
 								"You must be in the portage group to update the database.\n"
 								"Set SKIP_PERMISSION_TESTS=true to skip this test (e.g. if you use NSS/LDAP).")
 								<< endl;
-							exit(1);
+							exit(EXIT_FAILURE);
 						}
 					}
 				}
@@ -174,7 +174,7 @@ class Permissions {
 							"with write permissions for group portage.\n"
 							"Set SKIP_PERMISSION_TESTS=true to skip this test."))
 							% cachefile << endl;
-						exit(1);
+						exit(EXIT_FAILURE);
 					}
 					modify = false;
 				}
@@ -294,7 +294,7 @@ add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 	split_string(v, eixrc[s], true);
 	if(unlikely(v.size() & 1)) {
 		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD")) % s << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		Override o(Pathname(*it, true));
@@ -310,7 +310,7 @@ add_reponames(vector<RepoName> &repo_names, EixRc &eixrc, const char *s)
 	split_string(v, eixrc[s], true);
 	if(unlikely(v.size() & 1)) {
 		cerr << eix::format(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		RepoName r(Pathname(*it, true));
@@ -384,25 +384,25 @@ run_eix_update(int argc, char *argv[])
 	if(unlikely(quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 
 	/* We do not want any arguments except options */
 	if(unlikely(argreader.begin() != argreader.end()))
-		print_help(1);
+		print_help(EXIT_FAILURE);
 	if(unlikely(show_help))
-		print_help(0);
+		print_help(EXIT_SUCCESS);
 	if(unlikely(show_version))
-		dump_version(0);
+		dump_version();
 
 	if(unlikely(var_to_print != NULL)) {
 		eixrc.print_var(var_to_print);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	if(unlikely(dump_eixrc || dump_defaults)) {
 		eixrc.dumpDefaults(stdout, dump_defaults);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	/* set the outputfile */

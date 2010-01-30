@@ -77,9 +77,7 @@ print_help(int ret)
 		"further information.\n"),
 		program_name.c_str());
 
-	if(ret != -1) {
-		exit(ret);
-	}
+	exit(ret);
 }
 
 bool cli_show_help(false),
@@ -133,7 +131,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 			"It uses database format %s (current is %s)."))
 			% file % (header->version) % DBHeader::current
 			<< endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	ps->store_world_sets(&(header->world_sets));
 
@@ -274,25 +272,25 @@ run_eix_diff(int argc, char *argv[])
 	ArgumentReader::iterator current_param = argreader.begin();
 
 	if(unlikely(cli_show_help))
-		print_help(0);
+		print_help(EXIT_SUCCESS);
 
 	if(unlikely(cli_show_version))
-		dump_version(0);
+		dump_version();
 
 	if(unlikely(var_to_print != NULL)) {
 		rc.print_var(var_to_print);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if(unlikely(cli_dump_eixrc || cli_dump_defaults)) {
 		rc.dumpDefaults(stdout, cli_dump_defaults);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if(unlikely(cli_quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 
@@ -302,7 +300,7 @@ run_eix_diff(int argc, char *argv[])
 
 	if(unlikely((current_param == argreader.end()) || (current_param->type != Parameter::ARGUMENT))) {
 		cerr << _("Missing cache-file.");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	old_file = current_param->m_argument;
@@ -328,7 +326,7 @@ run_eix_diff(int argc, char *argv[])
 	catch(const ExBasic &e) {
 		cerr << eix::format(_("Problems while parsing %s: %s\n"))
 			% varname % e << endl;
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	format_for_new.setupResources(rc);

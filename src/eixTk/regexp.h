@@ -57,7 +57,7 @@ class Regex
 				char buf[512];
 				regerror(retval, &m_re, buf, 511);
 				std::cerr << "regcomp(" << regex << "): " << buf << std::endl;
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
 			m_compiled = true;
 		}

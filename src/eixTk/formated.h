@@ -95,13 +95,13 @@ class format
 				case 0:
 					std::cerr << _("format specifier missing")
 						<< std::endl;
-					exit(1);
+					exit(EXIT_FAILURE);
 #endif
 				default:
 #ifndef NDEBUG
 					std::cerr << format(_("unknown format specifier '%%%s'")) % m_spec
 						<< std::endl;
-					exit(1);
+					exit(EXIT_FAILURE);
 #endif
 					break;
 			}

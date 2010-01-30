@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2010-01-29 17:41+0100\n"
+"POT-Creation-Date: 2010-01-30 18:35+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -863,9 +863,12 @@ msgid ""
 "EXPRESSION is true or false. Packages for which the EXPRESSION gives true,\n"
 "are included in the final report.\n"
 "\n"
-"An EXPRESSION can be:\n"
-"    EXPRESSION [-o|-a] EXPRESSION\n"
-"    [local-options] PATTERN\n"
+"EXPRESSION ::= [ --not | -! ] BRACE_OR_TEST |\n"
+"               EXPRESSION [ --and | -a ] EXPRESSION |\n"
+"               EXPRESSION [ --or  | -o ] EXPRESSION |\n"
+"BRACE_OR_TEST ::= --open | -( EXPRESSION --close | -) |\n"
+"               TEST_WITH_OPTIONS\n"
+"TEST_WITH_OPTIONS ::= TEST_OPTIONS [PATTERN]\n"
 "\n"
 "Global:\n"
 "   Exclusive options:\n"
@@ -912,7 +915,7 @@ msgid ""
 "         --format-compact   format string for compact output\n"
 "         --format-verbose   format string for verbose output\n"
 "\n"
-"Local:\n"
+"TEST_OPTIONS:\n"
 "  Miscellaneous:\n"
 "    -I, --installed       Next expression only matches installed packages.\n"
 "    -i, --multi-installed Match packages installed in several versions.\n"
@@ -965,7 +968,6 @@ msgid ""
 "    -T, --test-obsolete   Match packages with obsolete entries in\n"
 "                          /etc/portage/package.* (see man eix).\n"
 "                          Use -t to check non-existing packages.\n"
-"    -!, --not (toggle)    Invert the expression.\n"
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
 "\n"
 "  Search Fields:\n"
@@ -1002,9 +1004,13 @@ msgstr ""
 "Es werden diejenigen Pakete ausgegeben, für die EXPRESSION einen wahren\n"
 "Ausdruck ergibt.\n"
 "\n"
-"EXPRESSION kann eine der folgenden beiden Formen sein:\n"
-"    EXPRESSION [-o|-a] EXPRESSION\n"
-"    [lokale Optionen] PATTERN\n"
+"\n"
+"EXPRESSION ::= [ --not | -! ] BRACE_OR_TEST |\n"
+"               EXPRESSION [ --and | -a ] EXPRESSION |\n"
+"               EXPRESSION [ --or  | -o ] EXPRESSION |\n"
+"BRACE_OR_TEST ::= --open | -( EXPRESSION --close | -) |\n"
+"               TEST_MIT_OPTIONEN\n"
+"TEST_MIT_OPTIONEN ::= [TEST_OPTIONEN] [PATTERN]\n"
 "\n"
 "Globale Optionen:\n"
 "   Ausschließende Optionen:\n"
@@ -1054,7 +1060,7 @@ msgstr ""
 "         --format-compact   Format für kompakte     Ausgabe\n"
 "         --format-verbose   Format für ausführliche Ausgabe\n"
 "\n"
-"Lokale Optionen:\n"
+"TEST_OPTIONEN:\n"
 "  Verschiedene:\n"
 "    -I, --installed       EXPRESSION ist höchstens installierte Pakete "
 "wahr.\n"
@@ -1137,16 +1143,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:459 src/eix-diff.cc:329
+#: src/eix.cc:461 src/eix-diff.cc:327
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:511 src/eix-diff.cc:294 src/eix-update.cc:386
+#: src/eix.cc:513 src/eix-diff.cc:292 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:545 src/eix.cc:817
+#: src/eix.cc:546 src/eix.cc:820
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1155,7 +1161,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:556
+#: src/eix.cc:557
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1166,31 +1172,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:782 src/eix.cc:798
+#: src/eix.cc:788 src/eix.cc:804
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:785
+#: src/eix.cc:791
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:791
+#: src/eix.cc:797
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:898
+#: src/eix.cc:901
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:899
+#: src/eix.cc:902
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:904
+#: src/eix.cc:907
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1199,7 +1205,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:905
+#: src/eix.cc:908
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1208,7 +1214,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:962
+#: src/eix.cc:965
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1216,7 +1222,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:965
+#: src/eix.cc:968
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1262,11 +1268,11 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:126
+#: src/eix-diff.cc:124
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:132
+#: src/eix-diff.cc:130
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1275,11 +1281,11 @@ msgstr ""
 "%s wurde mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-diff.cc:304
+#: src/eix-diff.cc:302
 msgid "Missing cache-file."
 msgstr "Fehlendes Cachefile."
 
-#: src/eix-diff.cc:373
+#: src/eix-diff.cc:371
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
@@ -5025,6 +5031,10 @@ msgstr ""
 #: src/portage/set_stability.cc:97
 msgid "internal error: SetStability calculates wrong index"
 msgstr "Interner Fehler: SetStability calculates wrong index"
+
+#: src/search/matchtree.cc:276
+msgid "warning: ignoring --close without --open"
+msgstr "Warnung: --close ohne --open wird ignoriert"
 
 #: src/search/packagetest.cc:247
 msgid "cannot find match field %r"
