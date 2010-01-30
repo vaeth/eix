@@ -9,6 +9,7 @@
 
 #include "packagetest.h"
 
+#include <config.h>
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>

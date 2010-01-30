@@ -17,7 +17,6 @@
 #include <string>
 
 #include <cstddef>
-#include <unistd.h>
 
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */

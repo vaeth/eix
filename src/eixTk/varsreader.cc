@@ -20,11 +20,12 @@
 #include <string>
 #include <vector>
 
-#include <cstring>
 #include <cstddef>
+#include <cstring>
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /** Current input for FSM */
 #define INPUT (*(x))

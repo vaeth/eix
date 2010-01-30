@@ -6,6 +6,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "matchtree.h"
+#include <config.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/unused.h>
@@ -23,6 +24,7 @@ MatchAtom::match(PackageReader *p ATTRIBUTE_UNUSED)
 	UNUSED(p);
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " '!' " : " '' ");
+	return false;
 #endif
 	return !m_negate;
 }
@@ -294,7 +296,6 @@ MatchTree::end_parse()
 		root->match(NULL);
 		cout << "\n";
 	}
-	exit(0);
 #endif
 }
 

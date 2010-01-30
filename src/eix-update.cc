@@ -562,9 +562,9 @@ run_eix_update(int argc, char *argv[])
 			permissions.will_modify(), repo_names, excluded_overlays);
 	} catch(const ExBasic &e) {
 		cerr << e << endl;
-		return 2;
+		return EXIT_FAILURE;
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 static void

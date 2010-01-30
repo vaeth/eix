@@ -47,10 +47,10 @@ int
 run_versionsort(int argc, char *argv[])
 {
 	if(unlikely(argc <= 1))
-		return 0;
+		return EXIT_SUCCESS;
 	if(likely(argc == 2)) {
 		cout << parse_version(argv[1]);
-		return 0;
+		return EXIT_SUCCESS;
 	}
 	vector<BasicVersion> versions;
 	for(int i(1); likely(i < argc); ++i)
@@ -60,6 +60,6 @@ run_versionsort(int argc, char *argv[])
 		likely(it != versions.end()); ++it) {
 		cout << it->getFull() << "\n";
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 

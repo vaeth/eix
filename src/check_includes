@@ -78,7 +78,7 @@ Check 'cstdlib' -e '[^_a-z]exit[^_]' -e 'free[^a-z]' -e malloc -e getenv -e strt
 Check 'cstring' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strcase -e strerror -e memset -e memcpy
 Check 'ctime' -e time_t
 Check 'fcntl\.h' -e '[^a-z_.]open(' -e '[^a-z_.]close(' -e '[^a-z_.]open (' -e '[^a-z_.]close ('
-Check 'unistd\.h' -e '[^a-z]_exit' -e setuid -e getuid
+Check 'unistd\.h' -e '[^a-z]_exit' -e setuid -e getuid -e chown -e '[^a-z_.]close('
 Check 'sys/types\.h' -e uid_t -e gid_t -e "size_t[^y]" -e off_t
 Check 'sys/stat\.h' -e fchown -e fchmod -e 'stat[^a-z]'
 Check 'sys/mman\.h' -e mmap

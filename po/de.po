@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2010-01-30 21:11+0100\n"
+"POT-Creation-Date: 2010-01-30 22:52+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1595,7 +1595,7 @@ msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/cache/metadata/metadata.cc:213 src/cache/metadata/metadata.cc:251
-#: src/cache/port2_1_2/port2_1_2.cc:113 src/cache/sqlite/sqlite.cc:215
+#: src/cache/port2_1_2/port2_1_2.cc:114 src/cache/sqlite/sqlite.cc:215
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
@@ -1614,16 +1614,16 @@ msgstr "Konnte %s nicht korrekt ausführen"
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Filename des Ebuilds %s/%s kann nicht unterteilt werden"
 
-#: src/cache/port2_1_2/port2_1_2.cc:93
+#: src/cache/port2_1_2/port2_1_2.cc:94
 msgid "%r not of the form package/catstring-version"
 msgstr "%r hat nicht die Gestalt package/catstring-version"
 
-#: src/cache/port2_1_2/port2_1_2.cc:157
+#: src/cache/port2_1_2/port2_1_2.cc:158
 #, c-format
 msgid "Can't read cache file %s"
 msgstr "Cachefile %s nicht lesbar"
 
-#: src/cache/port2_1_2/port2_1_2.cc:169
+#: src/cache/port2_1_2/port2_1_2.cc:170
 #, c-format
 msgid "Problems with %s: %s\n"
 msgstr "Probleme mit %s: %s\n"
@@ -1764,15 +1764,15 @@ msgstr "getgrnam(%r) schlug fehl: %s"
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:83
+#: src/eixTk/varsreader.cc:84
 msgid "failed to source %r"
 msgstr "%r kann nicht ge\"source\"d werden"
 
-#: src/eixTk/varsreader.cc:453
+#: src/eixTk/varsreader.cc:454
 msgid "Can't map file %r"
 msgstr "File %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:498
+#: src/eixTk/varsreader.cc:499
 msgid "Nesting level too deep when reading %r"
 msgstr "Zu tiefe Verschachtelung beim Lesen von %r"
 
@@ -5032,14 +5032,14 @@ msgstr ""
 msgid "internal error: SetStability calculates wrong index"
 msgstr "Interner Fehler: SetStability calculates wrong index"
 
-#: src/search/matchtree.cc:271
+#: src/search/matchtree.cc:273
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:247
+#: src/search/packagetest.cc:248
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:259
+#: src/search/packagetest.cc:260
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"

@@ -381,5 +381,5 @@ run_eix_diff(int argc, char *argv[])
 
 	delete varpkg_db;
 	delete portagesettings;
-	return 0;
+	return EXIT_SUCCESS;
 }

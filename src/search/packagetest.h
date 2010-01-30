@@ -10,6 +10,7 @@
 #ifndef EIX__PACKAGETEST_H__
 #define EIX__PACKAGETEST_H__ 1
 
+#include <config.h>
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/inttypes.h>
