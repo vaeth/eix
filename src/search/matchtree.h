@@ -118,7 +118,7 @@ private:
 	void parse_new_operator(MatchAtomOperator::AtomOperator op);
 
 	/// Internal form of parse_close() which can also clear the
-	/// first (root) element on parser_stack().
+	/// first (root) element on parser_stack() and ignores local_negate.
 	void parse_closeforce();
 public:
 	MatchTree(bool default_is_or);

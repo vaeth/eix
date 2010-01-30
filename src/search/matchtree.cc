@@ -166,7 +166,7 @@ MatchTree::parse_local_negate()
 		&(top.subroot->as_operator()->m_right) :
 		&(top.subroot));
 	if(*r == NULL) {
-		*r = new MatchAtom(false);
+		*r = new MatchAtom(true);
 		return;
 	}
 	(*r)->m_negate = !((*r)->m_negate);
@@ -247,22 +247,17 @@ MatchTree::parse_open()
 }
 
 /// Internal form of parse_close() which can also clear the
-/// first (root) element on parser_stack().
+/// first (root) element on parser_stack() and ignores local_negate.
 void
 MatchTree::parse_closeforce()
 {
-	local_finished = true;
-	if(local_negate) {
-		parse_new_operator(default_operator);
-		parse_local_negate();
-	}
 	MatchParseData &top(parser_stack.top());
 	if(top.negatebrace) {
 		if(top.subroot != NULL) {
 			top.subroot->m_negate = !(top.subroot->m_negate);
 		}
 		else {
-			top.subroot = new MatchAtom(false);
+			top.subroot = new MatchAtom(true);
 		}
 	}
 	*(top.parent) = top.subroot;
@@ -276,12 +271,18 @@ MatchTree::parse_close()
 		cerr << _("warning: ignoring --close without --open") << endl;
 		return;
 	}
+	local_finished = true;
+	if(local_negate) {
+		parse_new_operator(default_operator);
+		parse_local_negate();
+	}
 	parse_closeforce();
 }
 
 void
 MatchTree::end_parse()
 {
+	parse_local_negate();
 	while(!parser_stack.empty()) {
 		parse_closeforce();
 	}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2010-01-30 18:35+0100\n"
+"POT-Creation-Date: 2010-01-30 21:11+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5032,7 +5032,7 @@ msgstr ""
 msgid "internal error: SetStability calculates wrong index"
 msgstr "Interner Fehler: SetStability calculates wrong index"
 
-#: src/search/matchtree.cc:276
+#: src/search/matchtree.cc:271
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
