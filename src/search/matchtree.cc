@@ -13,8 +13,15 @@
 #include <search/packagetest.h>
 
 #include <iostream>
+#include <stack>
 
 #include <cstddef>
+
+// #define DEBUG_MATCHTREE 1
+
+#ifdef DEBUG_MATCHTREE
+#include <cstdlib>
+#endif
 
 using namespace std;
 
@@ -69,6 +76,9 @@ MatchAtomOperator::match(PackageReader *p)
 
 MatchAtomTest::~MatchAtomTest()
 {
+#ifdef DEBUG_MATCHTREE
+	return;
+#endif
 	if(likely(m_test != NULL)) {
 		delete m_test;
 	}
@@ -80,7 +90,7 @@ MatchAtomTest::match(PackageReader *p)
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " [!" : " [");
 	if(m_pipe != NULL) cout << "|";
-	if(m_test == NULL) cout << "NULL"; else cout << m_test->testname;
+	if(m_test == NULL) cout << "NULL"; else cout << *reinterpret_cast<int*>(m_test);
 	cout << "] ";
 	return false;
 #endif
@@ -98,6 +108,13 @@ MatchAtomTest::match(PackageReader *p)
 void
 MatchAtomTest::set_test(PackageTest *gtest)
 {
+#ifdef DEBUG_MATCHTREE
+	static int t_count(0);
+	if(gtest != NULL) { delete gtest; }
+	int *a = new int(++t_count);
+	m_test = reinterpret_cast<PackageTest *>(a);
+	return;
+#endif
 	if(unlikely(m_test != NULL)) {
 		delete m_test;
 	}
@@ -296,6 +313,7 @@ MatchTree::end_parse()
 		root->match(NULL);
 		cout << "\n";
 	}
+	exit(EXIT_SUCCESS);
 #endif
 }
 

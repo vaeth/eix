@@ -9,7 +9,6 @@
 
 #include "packagetest.h"
 
-#include <config.h>
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
@@ -366,9 +365,6 @@ PackageTest::setAlgorithm(MatchAlgorithm a)
 void
 PackageTest::setPattern(const char *p)
 {
-#ifdef DEBUG_MATCHTREE
-	testname = p;
-#endif
 	if(!algorithm.get())
 		setAlgorithm(get_matchalgorithm(p));
 

@@ -10,7 +10,6 @@
 #ifndef EIX__PACKAGETEST_H__
 #define EIX__PACKAGETEST_H__ 1
 
-#include <config.h>
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/inttypes.h>
@@ -30,8 +29,6 @@
 
 #include <cstddef>
 
-// #define DEBUG_MATCHTREE 1
-
 class MatcherAlgorithm;
 class MatcherField;
 class PortageSettings;
@@ -43,9 +40,6 @@ class PackageTest {
 		friend class MatcherAlgorithm;
 
 	public:
-#ifdef DEBUG_MATCHTREE
-		std::string testname;
-#endif
 		typedef uint16_t MatchField;
 		static const MatchField
 			NONE          =0x0000, /**< Search in name */

@@ -576,16 +576,24 @@ These files (and how to modify their filenames) are described later.
 .BR -| ", " --pipe
 (Recall that a shell will not pass an unquoted B<|> sign, so quote properly).
 
-Use input from pipe of an emerge -pv (similar to genlop -p).
-Actually, any input lines are honored which contains a word in the format
+Only match packages from standard input; usually you will want to use this in a pipe,
+redirected e.g. from emerge -pv (similar to genlop -p).
+Actually, any input data is honored which contains words (space or newline separated) in the format
 
 I<category>B</>I<package>B<->I<version> or
 
 I<category>B</>I<package>
 
-More precisely, in each line the first word in this format is chosen.
-The packages/versions passed this way will in the output be marked.
-For details, see the B<marked> and B<markedversions:*> formatstrings.
+In addition, all packages/versions passed this way will in the output be considered marked.
+For details on the latter, see the B<marked> and B<markedversions:*> formatstrings.
+
+Even if B<--pipe> occurs more than once, the standard input is of course only read once,
+but interpreted repeatedly for each occurrence (i.e. if the first --pipe matches, all others will also match).
+
+If you want to use the standard input only for marking but not for selection, you can
+choose an expression like
+
+B<eix something -a "-(" --pipe -o "-)">
 .\" }}}
 
 .\" {{{ -------- Match field selection

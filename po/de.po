@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix 0.16.0\n"
 "Report-Msgid-Bugs-To: http://sourceforge.net/projects/eix/\n"
-"POT-Creation-Date: 2010-01-30 22:52+0100\n"
+"POT-Creation-Date: 2010-01-31 08:34+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5032,14 +5032,14 @@ msgstr ""
 msgid "internal error: SetStability calculates wrong index"
 msgstr "Interner Fehler: SetStability calculates wrong index"
 
-#: src/search/matchtree.cc:273
+#: src/search/matchtree.cc:290
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:248
+#: src/search/packagetest.cc:247
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:260
+#: src/search/packagetest.cc:259
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
