@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.20.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Minor compatibility fixes
+
 *eix-0.20.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce -( ... -) command line parsing.

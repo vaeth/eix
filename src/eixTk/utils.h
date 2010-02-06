@@ -10,6 +10,8 @@
 #ifndef EIX__UTILS_H__
 #define EIX__UTILS_H__ 1
 
+#include <eixTk/unused.h>
+
 #include <map>
 #include <string>
 #include <vector>
@@ -47,7 +49,7 @@ bool pushback_files(const std::string &dir_path, std::vector<std::string> &into,
 void join_map(std::map<std::string,std::string> *append_to, std::map<std::string,std::string>::iterator it, std::map<std::string,std::string>::iterator it_end);
 
 /* Print version of eix to stdout. */
-void dump_version();
+void dump_version() ATTRIBUTE_NORETURN;
 
 
 
