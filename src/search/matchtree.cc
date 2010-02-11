@@ -17,7 +17,7 @@
 
 #include <cstddef>
 
-// #define DEBUG_MATCHTREE 1
+#define DEBUG_MATCHTREE 1
 
 #ifdef DEBUG_MATCHTREE
 #include <cstdlib>
@@ -226,8 +226,8 @@ MatchTree::parse_test(PackageTest *gtest, bool with_pipe)
 {
 	if(local_finished) {
 		parse_new_operator(default_operator);
-		local_finished = true;
 	}
+	local_finished = true;
 	MatchAtomTest *at(parse_new_leaf());
 	at->set_test(gtest);
 	if(with_pipe) {
