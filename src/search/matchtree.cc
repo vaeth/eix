@@ -17,7 +17,7 @@
 
 #include <cstddef>
 
-#define DEBUG_MATCHTREE 1
+// #define DEBUG_MATCHTREE 1
 
 #ifdef DEBUG_MATCHTREE
 #include <cstdlib>
