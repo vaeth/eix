@@ -200,7 +200,7 @@ AddOption(STRING, "PORTAGE_BIN_PATH",
 	"Usually ebuild.sh uses it to calculate the PATH."));
 
 AddOption(INTEGER, "NOFOUND_STATUS",
-	"2", _(
+	EXPAND_STRINGIFY(EXIT_FAILURE), _(
 	"This value is used as exit status if there are 0 matches.\n"
 	"The value of COUNT_ONLY_PRINTED is honoured."));
 
