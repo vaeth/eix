@@ -16,6 +16,14 @@
 
 #include <cassert>
 
+#include <cstdlib>
+#define DO_STRINGIFY(a) #a
+#define EXPAND_STRINGIFY(a) DO_STRINGIFY(a)
+#ifndef EXIT_SUCCESS
+#define EXIT_SUCCESS 0
+#endif
+
+
 #define DEFAULT_PART 1
 
 void fill_defaults_part_1(EixRc &eixrc)

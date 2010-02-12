@@ -1808,6 +1808,16 @@ If nonempty, these variables are passed unchanged to ebuild.sh for cache method 
 Note that ebuild.sh uses these variables to calculate the PATH, so this may be a severe security issue.
 
 .TP
+.BR NOFOUND_STATUS " " (integer)
+This value is used as exit status if there are 0 matches.
+The value of B<COUNT_ONLY_PRINTED> is honoured.
+
+.TP
+.BR MOREFOUND_STATUS " " (integer)
+This value is used as exit status if there are 2 or more matches.
+The value of B<COUNT_ONLY_PRINTED> is honoured.
+
+.TP
 .BR QUICKMODE " " (true / false)
 If true, eix and eix-diff will use B<--quick> by default.
 

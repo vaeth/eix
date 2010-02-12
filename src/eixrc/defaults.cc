@@ -199,6 +199,16 @@ AddOption(STRING, "PORTAGE_BIN_PATH",
 	"This variable is passed unchanged to ebuild.sh\n"
 	"Usually ebuild.sh uses it to calculate the PATH."));
 
+AddOption(INTEGER, "NOFOUND_STATUS",
+	"2", _(
+	"This value is used as exit status if there are 0 matches.\n"
+	"The value of COUNT_ONLY_PRINTED is honoured."));
+
+AddOption(INTEGER, "MOREFOUND_STATUS",
+	EXPAND_STRINGIFY(EXIT_SUCCESS), _(
+	"This value is used as exit status if there are 2 or more matches.\n"
+	"The value of COUNT_ONLY_PRINTED is honoured."));
+
 AddOption(BOOLEAN, "QUICKMODE",
 	"false", _(
 	"Whether --quick is on by default."));

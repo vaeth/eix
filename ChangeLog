@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix magic adding of -a / -o between successive tests
 	  (regression introduced in 0.20.0).
+	- Introduce NOFOUND_STATUS, MOREFOUND_STATUS to make eix -q useful:
+	  http://bugs.gentoo.org/show_bug.cgi?id=304705
 	- varsreader does no longer introduce accessed undefined variables:
 	  There might be an advantage in speed and memory but mainly it is
 	  cleaner, avoiding e.g. http://bugs.gentoo.org/show_bug.cgi?id=299904

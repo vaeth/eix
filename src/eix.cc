@@ -808,6 +808,12 @@ run_eix(int argc, char** argv)
 	// Delete matches
 	matches.delete_and_clear();
 
+	if(unlikely(!count)) {
+		return eixrc.getInteger("NOFOUND_STATUS");
+	}
+	if(count > 1) {
+		return eixrc.getInteger("MOREFOUND_STATUS");
+	}
 	return EXIT_SUCCESS;
 }
 
