@@ -359,6 +359,18 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 	}
 }
 
+static void
+var_append(std::string &value, const map<string,string>& vars, char *begin, size_t ref_key_length)
+{
+	if(unlikely(!ref_key_length)) {
+		return;
+	}
+	map<string,string>::const_iterator it(vars.find(string(begin, ref_key_length)));
+	if(it == vars.end())
+		return;
+	value.append(it->second);
+}
+
 /** Try to resolve references to variables.
  * If we fail we recover from it. However, INPUT_EOF might be true at stop. */
 void VarsReader::resolveReference()
@@ -383,14 +395,13 @@ void VarsReader::resolveReference()
 		if(unlikely(INPUT_EOF))
 			return;
 		if(INPUT == '}') {
-			if(ref_key_length)
-				value.append((*vars)[string(begin, ref_key_length)]);
+			var_append(value, *vars, begin, ref_key_length);
 			NEXT_INPUT;
 		}
 	}
-	else if(likely(ref_key_length != 0))
-		value.append((*vars)[string(begin, ref_key_length)]);
-	return;
+	else {
+		var_append(value, *vars, begin, ref_key_length);
+	}
 }
 
 /*************************** FSM ends here *******************************/
