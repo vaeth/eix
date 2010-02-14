@@ -154,8 +154,11 @@ Note that this will dramatically decrease the speed at the first call.
 slower than without this option.)
 .TP
 .BR -q ", " --quiet "   (toggle)"
-Produce no output on stderr and stdout (fatal errors which occur at the
-beginning of execution are printed to stderr, regardless of this option).
+Produce no output on stdout.
+For eix you can decrease execution time by combining this
+(depending on your needs) with either B<--brief> or B<--brief2>
+and by setting B<COUNT_ONLY_PRINTED=false>.
+See also B<NOFOUND_STATUS> and B<MOREFOUND_STATUS>
 .TP
 .B --dump
 Show the current eixrc-variables, and their defaults as comments.
@@ -246,6 +249,14 @@ This might be useful for some shell scripts parsing the output
 .TP
 .BR --only-names "   (toggle)"
 As "-*", but additionally print only the category and name of the packages found.
+.TP
+.BR -0 ", " --brief "   (toggle)"
+Print at most one package then stop.
+This option is typically faster when used with B<COUNT_ONLY_PRINTED=false>.
+In the latter case, when you use fuzzy search, not necessarily the best match is output.
+.TP
+.BR --brief2 "   (toggle)"
+As B<--brief>, but print up to two packages.
 .\" }}}
 
 .\" {{{ -------- Options for eix

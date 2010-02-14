@@ -687,13 +687,16 @@ EixRc::addDefault(EixRcOption option)
 bool
 EixRc::istrue(const char *s)
 {
+	switch(s[0]) {
+		case 'y':
+		case 'Y':
+		case '1':
+		case ':':
+			return true;
+		default:
+			break;
+	}
 	if(strcasecmp(s, "true") == 0)
-		return true;
-	if(strcasecmp(s, "1") == 0)
-		return true;
-	if(strcasecmp(s, "yes") == 0)
-		return true;
-	if(strcasecmp(s, "y") == 0)
 		return true;
 	if(strcasecmp(s, "on") == 0)
 		return true;

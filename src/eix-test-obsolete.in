@@ -58,7 +58,7 @@ Die () {
 
 Eix () {
 	local i
-	if ! NOFOUND_STATUS=1 MOREFOUND_STATUS=0 eix -Tq --only-names
+	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
 	then	[ -z "${1}" ] || printf '%s\n' "${1}"
 		return
 	fi
