@@ -99,11 +99,14 @@ dump_help(int exit_code)
 			"         --cache-file      use another cache-file instead of %s\n"
 			"\n"
 			"   Output:\n"
-			"     -q, --quiet (toggle)   (no) output\n"
+			"     -q, --quiet (toggle)   no output. Typically combined with -0\n"
 			"     -n, --nocolor          do not use ANSI color codes\n"
 			"     -F, --force-color      force colorful output\n"
 			"     -*, --pure-packages    Omit printing of overlay names and package number\n"
 			"     --only-names           -* with format <category>/<name>\n"
+			"     -0  --brief (toggle)   Print at most one package then stop. See -q\n"
+			"                            Usually faster with COUNT_ONLY_PRINTED=false\n"
+			"         --brief2 (toggle)  Print at most two packages then stop\n"
 			"     --xml (toggle)         output results in XML format\n"
 			"     -c, --compact (toggle) compact search results\n"
 			"     -v, --verbose (toggle) verbose search results\n"
@@ -218,28 +221,31 @@ static PrintFormat format(get_package_property);
 
 /** Local options for argument reading. */
 static struct LocalOptions {
-	bool be_quiet,
-		 quick,
-		 care,
-		 verbose_output,
-		 compact_output,
-		 show_help,
-		 show_version,
-		 pure_packages,
-		 only_names,
-		 dump_eixrc,
-		 dump_defaults,
-		 xml,
-		 test_unused,
-		 do_debug,
-		 ignore_etc_portage,
-		 is_current,
-		 hash_iuse,
-		 hash_keywords,
-		 hash_slot,
-		 hash_provide,
-		 hash_license,
-		 world_sets;
+	bool
+		be_quiet,
+		quick,
+		care,
+		verbose_output,
+		compact_output,
+		show_help,
+		show_version,
+		pure_packages,
+		only_names,
+		brief,
+		brief2,
+		dump_eixrc,
+		dump_defaults,
+		xml,
+		test_unused,
+		do_debug,
+		ignore_etc_portage,
+		is_current,
+		hash_iuse,
+		hash_keywords,
+		hash_slot,
+		hash_provide,
+		hash_license,
+		world_sets;
 } rc_options;
 
 /** Arguments and shortopts. */
@@ -255,6 +261,8 @@ static struct Option long_options[] = {
 	Option("versionsort",  'x',     Option::BOOLEAN,       &format.slot_sorted),
 	Option("pure-packages",'*',     Option::BOOLEAN,       &rc_options.pure_packages),
 	Option("only-names",O_ONLY_NAMES,Option::BOOLEAN,      &rc_options.only_names),
+	Option("brief",        '0',     Option::BOOLEAN,       &rc_options.brief),
+	Option("brief2",       O_BRIEF2,Option::BOOLEAN,       &rc_options.brief2),
 
 	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
 	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
@@ -509,10 +517,21 @@ run_eix(int argc, char** argv)
 
 	// Honour a STFU
 	if(unlikely(rc_options.be_quiet)) {
+		rc_options.pure_packages = true;
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	bool only_printed;
+
+	if(unlikely(rc_options.xml)) {
+		rc_options.pure_packages = true;
+		only_printed = false;
+	}
+	else {
+		only_printed = eixrc.getBool("COUNT_ONLY_PRINTED");
 	}
 
 	if(unlikely(rc_options.only_names)) {
@@ -634,18 +653,35 @@ run_eix(int argc, char** argv)
 			cout << overlay.label;
 		exit(EXIT_SUCCESS);
 	}
+	bool add_rest(false);
 	while(likely(reader.next())) {
-		if(unlikely(matchtree->match(&reader))) {
+		if(unlikely(add_rest)) {
+			all_packages.push_back(reader.release());
+		}
+		else if(unlikely(matchtree->match(&reader))) {
 			Package *release(reader.release());
 			matches.push_back(release);
-			if(rc_options.test_unused)
+			if(unlikely(only_printed &&
+				(rc_options.brief ||
+					(rc_options.brief2 && (matches.size() > 1))))) {
+				if(unlikely(rc_options.test_unused)) {
+					add_rest = true;
+				}
+				else {
+					break;
+				}
+			}
+			if(unlikely(rc_options.test_unused)) {
 				all_packages.push_back(release);
+			}
 		}
 		else {
-			if(unlikely(rc_options.test_unused))
+			if(unlikely(rc_options.test_unused)) {
 				all_packages.push_back(reader.release());
-			else
+			}
+			else {
 				reader.skip();
+			}
 		}
 	}
 	fclose(fp);
@@ -702,17 +738,13 @@ run_eix(int argc, char** argv)
 	bool need_overlay_table(false);
 	vector<bool> overlay_used(header.countOverlays(), false);
 	format.set_overlay_used(&overlay_used, &need_overlay_table);
-	eix::ptr_list<Package>::size_type count;
-	bool only_printed(eixrc.getBool("COUNT_ONLY_PRINTED"));
-	if(only_printed)
-		count = 0;
-	else
-		count = matches.size();
+	eix::ptr_list<Package>::size_type count(0);
 	PrintXml *print_xml(NULL);
-	if(rc_options.xml) {
+	if(rc_options.xml || rc_options.be_quiet) {
 		overlay_mode = mode_list_none;
 		rc_options.pure_packages = true;
-
+	}
+	if(rc_options.xml && !matches.empty()) {
 		print_xml = new PrintXml(&header, &varpkg_db, &stability, &eixrc,
 			portagesettings["PORTDIR"]);
 		print_xml->start();
@@ -733,15 +765,18 @@ run_eix(int argc, char** argv)
 				for(Package::iterator ver(it->begin());
 					likely(ver != it->end()); ++ver) {
 					Version::Overlay key(ver->overlay_key);
-					if(key > 0)
+					if(key > 0) {
 						overlay_used[key - 1] = true;
+					}
 				}
 			}
 		}
 		if(overlay_mode != mode_list_used_renumbered) {
 			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
-				if(only_printed)
-					++count;
+				++count;
+				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
+					break;
+				}
 			}
 		}
 	}
@@ -764,8 +799,10 @@ run_eix(int argc, char** argv)
 		for(eix::ptr_list<Package>::iterator it(matches.begin());
 			likely(it != matches.end()); ++it) {
 			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
-				if(only_printed)
-					++count;
+				++count;
+				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
+					break;
+				}
 			}
 		}
 	}
@@ -780,20 +817,26 @@ run_eix(int argc, char** argv)
 		delete print_xml;
 	}
 
-	short print_count_always(eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
-	if(likely((print_count_always >= 0) && !rc_options.pure_packages))
-	{
+	if(!only_printed) {
+		count = matches.size();
+	}
+	short print_count_always(rc_options.pure_packages ? -1 :
+		eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
+	if(likely(print_count_always >= 0)) {
 		if(unlikely(count == 0)) {
-			if(print_count_always)
+			if(print_count_always) {
 				cout << eix::format(_("Found %s matches.\n"))
 					% eix::ptr_list<Package>::size_type(0);
-			else
+			}
+			else {
 				cout << _("No matches found.\n");
+			}
 		}
 		else if(unlikely(count == 1)) {
 			if(print_count_always) {
-				if(printed_overlay)
+				if(printed_overlay) {
 					cout << "\n";
+				}
 				cout << eix::format(_("Found %s match.\n"))
 					% eix::ptr_list<Package>::size_type(1);
 			}
