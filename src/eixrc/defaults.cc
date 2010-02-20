@@ -217,6 +217,12 @@ AddOption(BOOLEAN, "CAREMODE",
 	"false", _(
 	"Whether --care is on."));
 
+AddOption(BOOLEAN, "USE_BUILD_TIME",
+	"true", _(
+	"If true, use build time from BUILD_TIME entry instead of reading the install\n"
+	"time from the directory timestamp. This is usually preferable but slower.\n"
+	"The BUILD_TIME exists only for packages emerged with >=portage-2.2_rc63"));
+
 AddOption(BOOLEAN, "QUIETMODE",
 	"false", _(
 	"Whether --quiet is on by default."));

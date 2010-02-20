@@ -1837,6 +1837,17 @@ If true, eix and eix-diff will use B<--quick> by default.
 If true, eix and eix-diff will use B<--care>.
 
 .TP
+.BR USE_BUILD_TIME " " (true / false)
+Whether to use the BUILD_TIME entry (if it exists) of the portage database
+instead of the directory timestamp (which usually is the installation time).
+The difference is usually only important for packages installed from .tbz2,
+but in most cases the build time is more relevant (it is also more reliable).
+Unfortunately, the build time is available only for packages built and emerged
+with >=portage-2.2_rc63.
+Reading the build time is always slower than using the directory timestamp
+(it is also slower if the build time is not stored).
+
+.TP
 .BR QUIETMODE " " (true / false)
 If true, eix and eix-diff will use B<--quiet> by default.
 

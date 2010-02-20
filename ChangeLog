@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.20.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support for BUILD_TIME (>=portage-2.2_rc63):
+	  Introduce USE_BUILD_TIME and let it default to "true".
+
 *eix-0.20.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix magic adding of -a / -o between successive tests

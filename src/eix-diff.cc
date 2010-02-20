@@ -337,7 +337,8 @@ run_eix_diff(int argc, char *argv[])
 	portagesettings = new PortageSettings(rc, true, false);
 
 	varpkg_db = new VarDbPkg(rc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care,
-		rc.getBool("RESTRICT_INSTALLED"), rc.getBool("CARE_RESTRICT_INSTALLED"));
+		rc.getBool("RESTRICT_INSTALLED"), rc.getBool("CARE_RESTRICT_INSTALLED"),
+		rc.getBool("USE_BUILD_TIME"));
 	varpkg_db->check_installed_overlays = rc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	bool local_settings(rc.getBool("LOCAL_PORTAGE_CONFIG"));

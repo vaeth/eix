@@ -553,7 +553,8 @@ run_eix(int argc, char** argv)
 	string var_db_pkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG);
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,
 		eixrc.getBool("RESTRICT_INSTALLED"),
-		eixrc.getBool("CARE_RESTRICT_INSTALLED"));
+		eixrc.getBool("CARE_RESTRICT_INSTALLED"),
+		eixrc.getBool("USE_BUILD_TIME"));
 	varpkg_db.check_installed_overlays = eixrc.getBoolText("CHECK_INSTALLED_OVERLAYS", "repository");
 
 	MarkedList *marked_list(NULL);

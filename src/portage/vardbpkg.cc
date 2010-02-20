@@ -399,6 +399,26 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 	return true;
 }
 
+void
+VarDbPkg::readInstDate(const Package &p, InstVersion &v) const
+{
+	if(v.instDate != 0) {
+		return;
+	}
+	string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
+	vector<string> datelines;
+	if(use_build_time &&
+		pushback_lines((dirname + "/BUILD_TIME").c_str(), &datelines)) {
+		for(vector<string>::const_iterator it(datelines.begin());
+			it != datelines.end(); ++it) {
+			if((v.instDate = my_atoi(it->c_str())) != 0) {
+				return;
+			}
+		}
+	}
+	v.instDate = get_mtime(dirname.c_str());
+}
+
 /** Read category from db-directory. */
 void
 VarDbPkg::readCategory(const char *category)
@@ -432,7 +452,6 @@ VarDbPkg::readCategory(const char *category)
 			cerr << e << endl;
 		}
 		if(instver != NULL) {
-			instver->instDate = get_mtime((dir_category_name + package_entry->d_name).c_str());
 			(*category_installed)[aux[0]].push_back(*instver);
 			delete instver;
 		}

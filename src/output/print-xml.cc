@@ -163,8 +163,10 @@ PrintXml::package(const Package *pkg)
 		bool versionInstalled(false);
 		InstVersion *installedVersion(NULL);
 		if(have_inst.find(*ver) != have_inst.end()) {
-			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion))
+			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
 				versionInstalled = true;
+				var_db_pkg->readInstDate(*pkg, *installedVersion);
+			}
 		}
 
 		cout << "\t\t\t<version id=\"" << escape_string(ver->getFull()) << "\"";

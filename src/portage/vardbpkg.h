@@ -30,7 +30,7 @@ class VarDbPkg {
 		std::map<std::string, std::map<std::string, std::vector<InstVersion> >* > installed;
 		std::string m_directory; /**< This is the db-directory. */
 		bool get_slots, care_of_slots;
-		bool get_restrictions, care_of_restrictions;
+		bool get_restrictions, care_of_restrictions, use_build_time;
 
 		/** Find installed versions of packet "name" in category "category".
 		 * @return NULL if not found .. else pointer to vector of versions. */
@@ -43,12 +43,13 @@ class VarDbPkg {
 	public:
 		/** Default constructor. */
 		VarDbPkg(std::string directory, bool read_slots, bool care_about_slots,
-			bool calc_restrictions, bool care_about_restrictions) :
+			bool calc_restrictions, bool care_about_restrictions, bool build_time) :
 			m_directory(directory),
 			get_slots(read_slots || care_about_slots),
 			care_of_slots(care_about_slots),
 			get_restrictions(calc_restrictions),
-			care_of_restrictions(care_about_restrictions)
+			care_of_restrictions(care_about_restrictions),
+			use_build_time(build_time)
 		{ }
 
 		~VarDbPkg() {
@@ -64,6 +65,7 @@ class VarDbPkg {
 		bool readSlot(const Package &p, InstVersion &v) const;
 		bool readUse(const Package &p, InstVersion &v) const;
 		bool readRestricted(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const;
+		void readInstDate(const Package &p, InstVersion &v) const;
 
 		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header, const char *portdir) const;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;

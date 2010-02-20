@@ -535,8 +535,11 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 	switch(prop) {
 		case Scanner::COLON_VER_DATE:
 			if(version_variables->isinst) {
-				return date_conv((*eix_rc)[after_colon].c_str(),
-					version_variables->instver()->instDate);
+				InstVersion *i(version_variables->instver());
+				if(likely(vardb != NULL)) {
+					vardb->readInstDate(*package, *i);
+				}
+				return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
 			}
 			break;
 		case Scanner::COLON_PKG_AVAILABLEVERSIONS:
