@@ -49,7 +49,7 @@ B<EIX_SYNC_CONF>.
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner or to check for packages
 installed with/without repository information.
-To get more help on B<eix-test-obsolete> call <eix-test-obsolete -h>.
+To get more help on B<eix-test-obsolete> call B<eix-test-obsolete -h>.
 
 B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.

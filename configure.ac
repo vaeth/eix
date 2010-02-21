@@ -384,10 +384,10 @@ AC_PROG_LN_S()
 AC_PROG_SED()
 
 # Add the libintl support if needed.
-# It seems that libtool is unneeded for gettext.
-# Please file a bug if you cannot see the German translation on your system.
-dnl AC_LIBTOOL_DLOPEN()
-dnl AC_PROG_LIBTOOL()
+# Unfortunately, this requires libtool on some platforms, like Mac OS X,
+# see http://bugs.gentoo.org/show_bug.cgi?id=305737
+# Only for this reason the libtool bloat must be included in eix...
+LT_INIT()
 AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
 

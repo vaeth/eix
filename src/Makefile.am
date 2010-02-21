@@ -178,7 +178,10 @@ search/redundancy.h
 nodist_search_src =
 
 # Common to all binaries:
-common_ldadd = @BZLIB_LIBS@ $(LIBINTL)
+common_ldadd = \
+@BZLIB_LIBS@ \
+$(LTLIBINTL)
+# The non-libtool variant $(LIBINTL) does not work on Mac OS X
 
 common_src = \
 main/main.h \

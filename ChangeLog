@@ -4,6 +4,9 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support for BUILD_TIME (>=portage-2.2_rc63):
 	  Introduce USE_BUILD_TIME and let it default to "true".
+	- Reintroduce libtool as it is required on Mac OS X, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=305737
+	  Thanks to Stuart Shelton <srcshelton at gmail.com> for testing.
 
 *eix-0.20.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
