@@ -801,30 +801,34 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 				break;
 		}
 		const char *key(defaults[i].key.c_str());
-		const char *value(defaults[i].local_value.c_str());
+		string value(defaults[i].local_value);
+		escape_string(value, doublequotes);
+		string deflt(defaults[i].value);
+		escape_string(deflt, doublequotes);
 		if(unlikely(typestring == NULL)) {
-			fprintf(s, "# %s\n%s='%s'\n\n",
+			fprintf(s, "# %s\n%s=\"%s\"\n\n",
 				_("locally added:"),
-				key, value);
+				key, value.c_str());
 			continue;
 		}
-		const char *deflt(defaults[i].value.c_str());
-		const char *output(use_defaults ? deflt : value);
-		const char *comment(use_defaults ? value : deflt);
+		const string &output(use_defaults ? deflt : value);
+		const string &comment(use_defaults ? value : deflt);
+
 		fprintf(s,
 				"# %s\n"
 				"# %s\n"
-				"%s='%s'\n",
+				"%s=\"%s\"\n",
 				as_comment(typestring).c_str(),
 				as_comment(defaults[i].description.c_str()).c_str(),
 				key,
-				output);
-		if(strcmp(deflt,value) == 0)
+				output.c_str());
+		if(deflt == value) {
 			fprintf(s, "\n");
+		}
 		else {
 			fprintf(s,
 				"# %s\n"
-				"# %s='%s'\n\n",
+				"# %s=\"%s\"\n\n",
 				message.c_str(),
 				key,
 				as_comment(comment).c_str());

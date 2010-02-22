@@ -31,6 +31,7 @@
 using namespace std;
 
 const char *spaces(" \t\r\n");
+const char *doublequotes("\"$\\");
 
 const string emptystring(""), one("1"), space(" ");
 

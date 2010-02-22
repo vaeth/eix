@@ -42,6 +42,9 @@ char *strndup(const char *s, size_t n);
 /** Spaces for split strings */
 extern const char *spaces;
 
+/** Necessary escapes for shell-like strings in "..." */
+extern const char *doublequotes;
+
 extern const std::string emptystring, one, space;
 
 extern std::locale localeC;
