@@ -6,7 +6,10 @@
 	  American Government against the freedom of projects on Sourceforge.
 	- Support for BUILD_TIME (>=portage-2.2_rc63):
 	  Introduce USE_BUILD_TIME and let it default to "true".
-	- Quote in --dump and --dump-defaults guaranteeing rereading.
+	- Quote in --dump and --dump-defaults: It is now guaranteed that the
+	  output can be reread.
+	- Fix segfault of <markedversions:*> without pipe argument, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=307479
 	- Reintroduce libtool as it is required on Mac OS X, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=305737
 	  Thanks to Stuart Shelton <srcshelton at gmail.com> for testing.

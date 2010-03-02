@@ -569,10 +569,12 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 							vector<Version*> *versions(NULL);
 							if(unlikely(!a)) {
 								versions = new vector<Version*>;
-								for(Package::const_iterator it(package->begin());
-									likely(it != package->end()); ++it) {
-									if(unlikely(marked_list->is_marked(*package, &(**it)))) {
-										versions->push_back(*it);
+								if(likely(marked_list != NULL)) {
+									for(Package::const_iterator it(package->begin());
+										likely(it != package->end()); ++it) {
+										if(unlikely(marked_list->is_marked(*package, &(**it)))) {
+											versions->push_back(*it);
+										}
 									}
 								}
 							}
