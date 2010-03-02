@@ -634,7 +634,7 @@ e.g. "app-portage"
 e.g. "app-portage/eix"
 .TP
 .BR -H ", " --homepage
-e.g. "http://sourceforge.net/projects/eix"
+e.g. "@PACKAGE_URL@"
 .TP
 .BR -L ", " --license
 e.g. "GPL-2"

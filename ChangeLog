@@ -2,6 +2,8 @@
 
 *eix-0.20.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Move hosting to BerliOS as a protest on the influence of the
+	  American Government against the freedom of projects on Sourceforge.
 	- Support for BUILD_TIME (>=portage-2.2_rc63):
 	  Introduce USE_BUILD_TIME and let it default to "true".
 	- Quote in --dump and --dump-defaults guaranteeing rereading.
