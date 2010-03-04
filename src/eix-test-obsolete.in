@@ -17,7 +17,8 @@ Usage () {
 	local n p
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options] detail|brief|repo|no-repo
+	eval_gettext 'Usage: ${n} [options] detail|brief
+or:    ${n} repo|no-repo|buildtime|no-buildtime
 This is a wrapper script for eix (${p}).
 
 It calls eix -tTc several times with various variable settings in order to
@@ -46,7 +47,10 @@ portage versions).
 You can check which packages are installed with/without this repository
 information by using the argument "repo"/"no-repo".
 
-The argument can be abbreviated, e.g. instead of "brief" you can just use "b".'
+You can check which packages are installed with/without buildtmie
+information by using the argument "buildtime"/"no-buildtime".
+
+The arguments can be abbreviated, e.g. instead of "brief" you can just use "br".'
 	echo
 	exit ${1:-1}
 }
@@ -121,25 +125,28 @@ NoUninstalled () { export \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
-Repository () {
-	local i j c
-	if ${1}
-	then	i="`gettext \
-'The following package versions are installed with repository information:'`"
-	else	i="`gettext \
-'The following package versions are installed without repository information:'`"
-	fi
+ScanVarDbPkg () {
+	local i j k n f c
 	ReadVar c EPREFIX_INSTALLED
 	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
 			'cannot locate your database of installed packages'`"
-	printf '%s\n\n' "${i}"
+	n="${1}"
+	printf '%s\n\n' "${2}"
+	shift 2
 	c=0
 	for i in *
 	do	for j in "${i}"/*
 		do	test -d "${j}" || continue
-			if test -e "${j}/repository" || test -e "${j}/REPOSITORY"
-			then	${1} || continue
-			else	${1} && continue
+			f=false
+			for k
+			do	if test -e "${j}/${k}"
+				then	f=:
+					break
+				fi
+			done
+			if ${f}
+			then	${n} || continue
+			else	${n} && continue
 			fi
 			printf '%s\n' "${j}"
 			c=`expr "${c}" + 1`
@@ -154,6 +161,28 @@ Repository () {
 		echo
 	fi
 	exit 0
+}
+
+Repository () {
+	if ${1}
+	then	ScanVarDbPkg ${1} "`gettext \
+'The following package versions are installed with repository information:'`" \
+repository REPOSITORY
+	else	ScanVarDbPkg ${1} "`gettext \
+'The following package versions are installed without repository information:'`" \
+repository REPOSITORY
+	fi
+}
+
+BuildTime () {
+	if ${1}
+	then	ScanVarDbPkg ${1} "`gettext \
+'The following package versions are installed with build-time information:'`" \
+BUILD_TIME
+	else	ScanVarDbPkg ${1} "`gettext \
+'The following package versions are installed without build-time information:'`" \
+BUILD_TIME
+	fi
 }
 
 myarg=''
@@ -177,11 +206,20 @@ done
 [ ${#} -gt 1 ] && Usage
 [ ${#} -eq 1 ] && myarg="${1}"
 case "${myarg:--}" in
-	'-') Usage;;
-	b*|B*) nodetails=:;;
-	n*|N*) Repository false;;
-	r*|R*) Repository :;;
-	h*|H*) Usage 0;;
+'-')
+	Usage;;
+[nN]*[bBdDtT]*)
+	BuildTime false;;
+[bB]*[dDtT]*)
+	BuildTime :;;
+[nN]*[rR]*)
+	Repository false;;
+r*|R*)
+	Repository :;;
+[bB]*)
+	nodetails=:;;
+h*|H*)
+	Usage 0;;
 esac
 
 eix '-t*!'
