@@ -66,10 +66,10 @@ AM_MAINTAINER_MODE()
 # It is not nice that we do this, because it is only documented here
 # (not even shown with ./configure --help).
 # However, it seems necessary, because --disable-dependency-tracking
-# is planned to be default in Gentoo's EAPI=3, and to my big regret
+# is planned to be default in Gentoo's EAPI=4(?), and to my big regret
 # this option does no good, because it makes silent rules worthless to
 # some extent. Since I do not know a way to exclude this option completely
-# (or only eliminate its negative effects),this hack ignores this option.
+# (or only eliminate its negative effects), this hack ignores this option.
 # Although this hack uses undocumented behaviour, it is not that hackish:
 # It only sets a variable, so I suppose that the worst thing which can
 # happen is that it is ignored...
@@ -177,8 +177,8 @@ MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
 
 AC_MSG_CHECKING([whether security options should be used])
 dnl AS_IF([${warnings}],
-dnl	[AS_VAR_SET([security], [:])
-dnl	AS_VAR_SET([cmt_security], ["forced by warnings"])])
+dnl 	[AS_VAR_SET([security], [:])
+dnl 	AS_VAR_SET([cmt_security], ["forced by warnings"])])
 MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
 
 AC_MSG_CHECKING([whether options should not be tested individually])
@@ -384,10 +384,7 @@ AC_PROG_LN_S()
 AC_PROG_SED()
 
 # Add the libintl support if needed.
-# Unfortunately, this requires libtool on some platforms, like Mac OS X,
-# see http://bugs.gentoo.org/show_bug.cgi?id=305737
-# Only for this reason the libtool bloat must be included in eix...
-LT_INIT()
+dnl LT_INIT()
 AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
 

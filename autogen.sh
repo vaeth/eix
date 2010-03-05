@@ -10,8 +10,8 @@ run () {
 
 run mkdir -p config
 if command -v glibtoolize >/dev/null 2>&1
-then	run glibtoolize --force --copy --automake
-else	run libtoolize --force --copy --automake
+then	: run glibtoolize --force --copy --automake
+else	: run libtoolize --force --copy --automake
 fi
 run autopoint
 run aclocal -I m4 -I martinm4

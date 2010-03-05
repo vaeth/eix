@@ -11,9 +11,10 @@
 	- Fix segfault of <markedversions:*> without pipe argument, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=307479
 	- Introduce eix-test-obsolete [no-]buildtime
-	- Reintroduce libtool as it is required on Mac OS X, see
+	- Being unable to fix USE=nls on OS X,
 	  http://bugs.gentoo.org/show_bug.cgi?id=305737
 	  Thanks to Stuart Shelton <srcshelton at gmail.com> for testing.
+	  If somebody has an idea, please write to that bug.
 
 *eix-0.20.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
