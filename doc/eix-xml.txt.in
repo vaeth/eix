@@ -33,6 +33,10 @@ the **eixdump** element.
 
          **<homepage>** ... **</homepage>**
 
+         **<licenses>** ... **</licenses>**
+
+         [possibly **<provide>** ... **</provide>**]
+
        .. container:: layout-block version-block
 
          **<version id="** 1st version of 1st package **"** [possibly further `version attributes`_ (see below), separated by spaces] **>**

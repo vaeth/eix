@@ -41,7 +41,7 @@ class PrintXml {
 		void runclear();
 	public:
 		typedef io::UNumber XmlVersion;
-		static const XmlVersion current = 2;
+		static const XmlVersion current = 3;
 
 		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{

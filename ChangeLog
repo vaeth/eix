@@ -10,6 +10,8 @@
 	  output can be reread.
 	- Fix segfault of <markedversions:*> without pipe argument, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=307479
+	- Extend xml output by <licenses> and <provide>
+	  http://sourceforge.net/tracker/?func=detail&aid=2965496&group_id=128101&atid=710611
 	- Introduce eix-test-obsolete [no-]buildtime
 	- Being unable to fix USE=nls on OS X,
 	  http://bugs.gentoo.org/show_bug.cgi?id=305737

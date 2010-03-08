@@ -133,7 +133,11 @@ PrintXml::package(const Package *pkg)
 	// category, name, desc, homepage, licenses, provide;
 	cout << "\t\t<package name=\"" << escape_string(pkg->name) << "\">\n"
 		"\t\t\t<description>" << escape_string(pkg->desc) << "</description>\n"
-		"\t\t\t<homepage>" << escape_string(pkg->homepage) << "</homepage>\n";
+		"\t\t\t<homepage>" << escape_string(pkg->homepage) << "</homepage>\n"
+		"\t\t\t<licenses>" << escape_string(pkg->licenses) << "</licenses>\n";
+	if(!pkg->provide.empty()) {
+		cout << "\t\t\t<provide>" << escape_string(pkg->provide) << "</provide>\n";
+	}
 
 	set<const Version*> have_inst;
 	if((likely(var_db_pkg != NULL)) && var_db_pkg->isInstalled(*pkg)) {
