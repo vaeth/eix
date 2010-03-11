@@ -199,81 +199,83 @@ PrintXml::package(const Package *pkg)
 		KeywordsFlags waskey;
 		stability->calc_version_flags(false, wasmask, waskey, *ver, pkg);
 
-		const char *mask_text(NULL);
-		const char *unmask_text(NULL);
+		vector<string> mask_text, unmask_text;
 		if(wasmask.isHardMasked()) {
 			if(currmask.isProfileMask()) {
-				mask_text = "profile";
+				mask_text.push_back("profile");
 			}
 			else if(currmask.isPackageMask()) {
-				mask_text = "hard";
+				mask_text.push_back("hard");
 			}
 			else if(wasmask.isProfileMask()) {
-				mask_text = "profile";
-				unmask_text = "package_unmask";
+				mask_text.push_back("profile");
+				unmask_text.push_back("package_unmask");
 			}
 			else {
-				mask_text = "hard";
-				unmask_text = "package_unmask";
+				mask_text.push_back("hard");
+				unmask_text.push_back("package_unmask");
 			}
 		}
 		else if(currmask.isHardMasked()) {
-			mask_text = "package_mask";
+			mask_text.push_back("package_mask");
 		}
 
 		if(currkey.isStable()) {
 			if (waskey.isStable()) {
-				//mask_text = NULL;
+				//
 			}
 			else if (waskey.isUnstable()) {
-				mask_text = "keyword";
-				unmask_text = "package_keywords";
+				mask_text.push_back("keyword");
+				unmask_text.push_back("package_keywords");
 			}
 			else if (waskey.isMinusKeyword()) {
-				mask_text = "minus_keyword";
-				unmask_text = "package_keywords";
+				mask_text.push_back("minus_keyword");
+				unmask_text.push_back("package_keywords");
 			}
 			else if (waskey.isAlienStable()) {
-				mask_text = "alien_stable";
-				unmask_text = "package_keywords";
+				mask_text.push_back("alien_stable");
+				unmask_text.push_back("package_keywords");
 			}
 			else if (waskey.isAlienUnstable()) {
-				mask_text = "alien_unstable";
-				unmask_text = "package_keywords";
+				mask_text.push_back("alien_unstable");
+				unmask_text.push_back("package_keywords");
 			}
 			else if (waskey.isMinusAsterisk()) {
-				mask_text = "minus_asterisk";
-				unmask_text = "package_keywords";
+				mask_text.push_back("minus_asterisk");
+				unmask_text.push_back("package_keywords");
 			}
 			else {
-				mask_text = "missing_keyword";
-				unmask_text = "package_keywords";
+				mask_text.push_back("missing_keyword");
+				unmask_text.push_back("package_keywords");
 			}
 		}
 		else if (currkey.isUnstable()) {
-			mask_text = "keyword";
+			mask_text.push_back("keyword");
 		}
 		else if (currkey.isMinusKeyword()) {
-			mask_text = "minus_keyword";
+			mask_text.push_back("minus_keyword");
 		}
 		else if (currkey.isAlienStable()) {
-			mask_text = "alien_stable";
+			mask_text.push_back("alien_stable");
 		}
 		else if (currkey.isAlienUnstable()) {
-			mask_text = "alien_unstable";
+			mask_text.push_back("alien_unstable");
 		}
 		else if (currkey.isMinusAsterisk()) {
-			mask_text = "minus_asterisk";
+			mask_text.push_back("minus_asterisk");
 		}
 		else {
-			mask_text = "missing_keyword";
+			mask_text.push_back("missing_keyword");
 		}
 
-		if (mask_text) {
-			cout << "\t\t\t\t<mask type=\"" << mask_text << "\" />\n";
-			if (unmask_text) {
-				cout << "\t\t\t\t<unmask type=\"" << unmask_text << "\" />\n";
-			}
+		for(vector<string>::const_iterator it(mask_text.begin());
+			unlikely(it != mask_text.end()); ++it) {
+			cout << "\t\t\t\t<mask type=\"" << *it << "\" />\n";
+		}
+
+		for(vector<string>::const_iterator it(unmask_text.begin());
+			unlikely(it != unmask_text.end()); ++it) {
+			cout << "\t\t\t\t<unmask type=\"" << *it << "\" />\n";
 		}
 
 		if (!(ver->iuse.empty())) {
