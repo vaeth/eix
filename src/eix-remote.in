@@ -79,8 +79,8 @@ SanitizeLocalLayman () {
 }
 
 PrintLaymanStorage () {
-	python -c "from layman.config import Config
-print Config()['storage']" "${@}" 2>/dev/null
+	printf '%s\n%s\n' 'from layman.config import Config' \
+	"print(Config()['storage'])" | python -- "${@}" 2>/dev/null
 }
 
 SetLocalLayman () {
@@ -93,12 +93,15 @@ SetLocalLayman () {
 }
 
 InitLocalLayman () {
-	local l
 	[ -n "${LOCAL_LAYMAN}" ] && return
-	l="`PrintLaymanStorage`" || l=''
-	SetLocalLayman "${l}" \
+	LOCAL_LAYMAN="`PrintLaymanStorage`" || LOCAL_LAYMAN=''
+	if [ -z "${LOCAL_LAYMAN}" ]
+	then	LOCAL_LAYMAN="`PrintLaymanStorage`" || LOCAL_LAYMAN=''
+	fi
+	SetLocalLayman "${LOCAL_LAYMAN}" \
 		'/usr/local/portage/layman' \
-		"${local_portdir:-/}local/layman/make.conf"
+		"${local_portdir:-/}local/layman/make.conf" \
+		'/var/lib/layman'
 }
 
 CalcSuprg () {

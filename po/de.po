@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-03-04 23:19+0100\n"
+"POT-Creation-Date: 2010-03-16 22:44+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -291,7 +291,7 @@ msgid "eix-cache does not exist. Running eix-update!"
 msgstr "Eix-Cache existiert nicht. Starten von eix-update."
 
 #: src/eix-sync.sh:404 src/eix-sync.sh:413 src/eix-functions.sh.in:170
-#: src/eix-remote.sh:323
+#: src/eix-remote.sh:326
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -780,16 +780,16 @@ msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:163
+#: src/eix-remote.sh:166
 msgid "Filename argument is mandatory"
 msgstr "Filenamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:201
+#: src/eix-remote.sh:204
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Directory ${a} nicht möglich"
 
-#: src/eix-remote.sh:238
+#: src/eix-remote.sh:241
 #, sh-format
 msgid ""
 "remote address is not properly set.\n"
@@ -800,17 +800,17 @@ msgstr ""
 "Übergeben Sie bitte ein gültiges Remote-File mit der Option -a.\n"
 "Der Default hätte mit ./configure --remote-file gesetzt werden sollen."
 
-#: src/eix-remote.sh:246
+#: src/eix-remote.sh:249
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:247
+#: src/eix-remote.sh:250
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:256
+#: src/eix-remote.sh:259
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -855,22 +855,22 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:279
+#: src/eix-remote.sh:282
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "kann ${a} nicht auspacken"
 
-#: src/eix-remote.sh:299
+#: src/eix-remote.sh:302
 #, sh-format
 msgid "problems arised with cachefile ${i}"
 msgstr "Cachefile ${i} verursachte Probleme"
 
-#: src/eix-remote.sh:317
+#: src/eix-remote.sh:320
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:351
+#: src/eix-remote.sh:354
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"

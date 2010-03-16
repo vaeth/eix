@@ -72,8 +72,8 @@ PushLaymanMake () {
 }
 
 PrintLaymanMake () {
-	python -c "from layman.config import Config
-print Config()['make_conf']" "${@}" 2>/dev/null
+	printf '%s\n%s\n' 'from layman.config import Config' \
+	"print(Config()['make_conf'])" | python -- "${@}" 2>/dev/null
 }
 
 CalcLaymanMake () {
