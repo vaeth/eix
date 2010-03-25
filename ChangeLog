@@ -10,6 +10,7 @@
 	  which misinterprets python -c ... as option -c for layman, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=309685
 	- eix-remote/eix-layman: support >=python-3
+	- manpage: Fix indentation
 
 *eix-0.20.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

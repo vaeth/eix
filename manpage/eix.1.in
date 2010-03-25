@@ -1446,9 +1446,9 @@ If this environment variable is set, its value is used instead of the filename
 
 .SS EIX_SYNC_OPTS, EIX_SYNC_CONF, EIX_REMOTE_OPTS, EIX_LAYMAN_OPTS, EIX_TEST_OBSOLETE_OPTS
 Although these variables are usually set in ~/.eixrc (and are therefore
-described in the corresponding section), these three variables are pointed out
+described in the corresponding section), these variables are pointed out
 here because they are exceptionally security relevant:
-They (or at part of them) are evaluated by the shell if you call the
+They (or at least part of them) are evaluated by the shell if you call the
 scripts with the corresponding name. Thus, be sure that they are not compromised
 when you call these scripts with root permissions.
 .\" }}}
@@ -1476,15 +1476,14 @@ some additional features:
 .\" {{{ -------- Special symbols
 .TP
 .B Special symbols for delayed substitution
+.RS
 
 .TP
-.SS
 .B " %{%"
 This must be used if you need B<%{> in a variable text
 (otherwise delayed substitution would take place).
 
 .TP
-.SS
 .BI * VARIABLE
 If a delayed reference uses a variable name starting with B<*>,
 this B<*> is replaced by B<EIX_> or B<DIFF_>, depending on whether
@@ -1496,7 +1495,6 @@ the expansion of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>, respectively.
 
 The B<\\> and B<*> attributes can be combined (order plays no role).
 .TP
-.SS
 B<\\>I<VARIABLE>
 If a delayed reference uses a variable name starting with B<\\>,
 all \\ or [\\n\\r\\t ] symbols of the (expanded)
@@ -1508,6 +1506,7 @@ ensuring that I<VARIABLE> produces at most one entry "as is", even if it
 should contain spaces or \\ characters.
 
 The B<\\> and B<*> attributes can be combined (order plays no role).
+.RE
 .\" }}}
 
 .\" {{{ -------- Conditional blocks as delayed reference
@@ -1527,44 +1526,38 @@ condition is true, and the if-part if the condition is false.
 The else-part can be also be completely left out.
 The special variable names B<*>I<VARIABLE> (instead of I<VARIABLE>)
 can also be used in these conditionals.
+
+.RS
 .TP
-.SS
 .BI %{? VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to true.
 
 .TP
-.SS
 .BI %{?? VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to a nonempty string.
 
 .TP
-.SS
 .BI %{! VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to false.
 
 .TP
-.SS
 .BI %{!? VARIABLE } TCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to the empty string.
 
 .TP
-.SS
 .BI %{? VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to true, otherwise I<FCODE>.
 
 .TP
-.SS
 .BI %{?? VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to a nonempty string,
 otherwise I<FCODE>.
 
 .TP
-.SS
 .BI %{! VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to false, otherwise I<FCODE>.
 
 .TP
-.SS
 .BI %{!? VARIABLE } TCODE %{else} FCODE %{}
 Expand I<TCODE> if I<VARIABLE> expands to the empty string,
 otherwise I<FCODE>.
@@ -1573,7 +1566,7 @@ A conditional block must occur completely within one variable,
 i.e. it is not possible to e.g. substitute the B<%{}> symbol
 from another variable via delayed reference (but in I<TCODE>/I<FCODE>
 delayed references can be used).
-.SS ""
+.RE
 .\" }}}
 
 Note that any variables you add for delayed substitution are only output
@@ -1637,6 +1630,9 @@ subsequent variables (if their default is not changed);
 see B<eix --dump> to see in detail in which other variables it occurs.
 In the current default, it influences all paths with the following exceptions:
 
+.RS
+.RS
+
 .B @BINDIR@/eix-functions.sh
 
 .B ~/.eixrc
@@ -1648,17 +1644,20 @@ In the current default, it influences all paths with the following exceptions:
 .B PORTDIR
 
 .B Overlay paths
+.RE
 
 The last three items can be modified by B<EPREFIX_TREE>.
 
 The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
-Note that as a prefix-portage user you will want to use option -e in eix-sync.
-.TP
+Note that as a prefix-portage user you will want to use option B<-e> in eix-sync.
+.RS
+
 .BR ROOT " " (prefix-string)
-.TP
+
 .BR EPREFIX_TREE " " (prefix-string)
-.TP
+
 .BR EPREFIX_ROOT " " (prefix-string)
+.RE
 
 These are actually not internal variables of eix but they are just used for
 delayed substitution for the following variables analogously to B<EPREFIX>
@@ -1681,6 +1680,8 @@ e.g. you might want to set
 .B EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
 
 if you feel that the eix cachefile should depend (only) on the profile root.
+.RE
+
 .TP
 .BR PORTAGE_CONFIGROOT " " (prefix-string)
 This path is prepended to the /etc paths.
@@ -1995,31 +1996,29 @@ that this concatenation is -o (or), otherwise -a (and).
 People with many different overlays do not want to see all overlays listed at
 the end but only those which are really used. Here, you can customize the
 behaviour. The value is interpreted as follows:
+
+.RS
 .TP
-.SS
 .BR all-if-used / if-used / if
 Display all overlays, if at least one is used. This was the default behaviour
 before eix-0.6.0.
 .TP
-.SS
 .BR used-renumbered / renumber / renumbered / number
 Display only the overlays actually used, numbering them "correctly"
 (i.e. if only two overlays are needed, number them [1] and [2]).
 The disadvantage is that overlays get different numbers for different queries.
 However, the order of the numbering is consistent.
 .TP
-.SS
 .BR all-used / only-used / used
 Display only the overlays actually used, keeping the numbering consistent
 over all queries (on the same database).
 .TP
-.SS
 .BR no / false
 Never display a list of overlays.
 .TP
-.SS
-.BR "" "anything else"
+anything else
 List all overlays for every query (even if not even one is needed).
+.RE
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
@@ -2080,6 +2079,7 @@ I<overlay> is interpreted as a wildcard pattern which should match the I<path> (
 (it is not possible to refer to repository's name here - you must use the true I<path>).
 Later entries override earlier ones: The last matching entry takes precedence.
 
+.RS
 The difference between B<CACHE_METHOD> and B<OVERRIDE_CACHE_METHOD> is that
 the former applies immediately while the latter can also be used to
 extend/override the changes made implicitly if B<KEEP_VIRTUALS> is used
@@ -2097,25 +2097,25 @@ at the end of the respective modified definitions, so that these variables
 can still be used for local overriding.
 
 The following cache methods are available:
+
 .TP
-.SS
 .BR metadata-flat " or " metadata-flat:I<PATH>
 Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache).
 This is the default method which will always work if the portage tree is readable
 when you run eix-update.
 
+.RS
 If you provide I<PATH>, it overrides the above path; in this case, it must be
 the full path (i.e. no prefix is used). You might want to provide I<PATH> if
 you use some package manager to generate the metadata in the corresponding
 directory.
+.RE
 .TP
-.SS
 .BR metadata-assign " or " metadata-assign:I<PATH>
 This is similar to B<metadata-flat> with the difference that the files within
 the metadata cache are expected to be in an "assignment format"
 (TYPE=value) which is the case in some alt-gentoo trees.
 .TP
-.SS
 .B sqlite
 This is an extremely fast cache method if you are using portage with the
 sqlite backend, see I<http://en.gentoo-wiki.com/wiki/Portage_SQLite_Cache>
@@ -2126,6 +2126,7 @@ I<http://gentoo-wiki.info/TIP_speed_up_portage_with_sqlite>).
 Note that in contrast to the default B<metadata> cache method you must
 use B<emerge --metadata> before you call B<eix-update> with this method.
 
+.RS
 Since the support of this cache method requires B<sqlite> to be installed,
 this method is not necessarily compiled in.
 You must have emerged B<eix> with the appropriate USE flag
@@ -2135,43 +2136,43 @@ before compilation) if you want support for this method.
 As for all other cache methods, only those categories enabled by
 profile/category (in the main tree or some overlay) are read.
 If you do not want this, use B<sqlite*> (see below).
+.RE
 .TP
-.SS
 .B sqlite*
 This is analogous to the cache method B<eix> with the difference that
 all categories found in I<FILE> are added, even those categories which
 were not enabled by some profile/categories file.
 .TP
-.SS
-.B " cdb"
+\fBcdb\fR
 Use this if you are using <portage-2.1 and the cdb-module from
 I<http://forums.gentoo.org/viewtopic-t-261580.html> as
 cache-backend for portage (cdb with cpickle'd dictionaries as values).
 Note that in contrast to the default B<metadata-*> cache methods you must
 use B<emerge --metadata> before you call B<eix-update> with this method.
 .TP
-.SS
 .BR flat " or " flat:I<PATH>
 This is similar to B<metadata-flat> with the difference that the metadata is
 expected in the directory I<PATH>I<${PORTAGE_OR_OVERLAY_DIR}>.
 If I<PATH> is omitted, it defaults to B</var/cache/edb/dep>.
 
+.RS
 You can use this cache method with <portage-2.1 and the default backend.
+.RE
 .TP
-.SS
 .BR assign " or " assign:I<PATH>
 This is analogous to B<flat> with the difference that the files are
 expected to be in an "assignment format" (TYPE=value).
 This is the case if you use portage-2.1 with the default backend.
 
+.RS
 If you are using >=portage-2.1 and the default backend,
 you might want to use this one if you do not have access to the portage
 tree when you run eix-update.
 Note that in contrast to the default B<metadata-*> cache methods you must
 run B<emerge --metadata> before you call B<eix-update> with this method.
 You will probably want to use a corresponding option in eix-sync in this case.
+.RE
 .TP
-.SS
 .BR repo-flat " or " repo-flat:I<PATH> " or " repo-assign " or " repo-assign:I<PATH>
 This is analogous to B<flat>/B<assign> with the difference that the metadata is
 expected in the directory I<PATH>B</>I<${repo_name}>.
@@ -2182,7 +2183,6 @@ If this gives a wrong path for some overlay, you can still manually override
 this with e.g.
 .BI "OVERRIDE_CACHE_METHOD='" bad_overlay " " metadata-assign ":" correct_path "'".
 .TP
-.SS
 .BR parse "[" # metadata-method "]..."
 Get the information from the ebuilds, parsing it using some heuristics.
 Hence, this method has no security risk but possibly some other problems.
@@ -2191,6 +2191,7 @@ Examples of problems with this method is missing SLOT information for
 typical ebuilds from kde-base or stupid version numbers for gcc cross-compilers.
 This is the cache-method B<none> from older eix versions (before 0.11.1).
 
+.RS
 It is optionally possible to append one or several strings of the form
 B<#>I<metadata-method> where I<metadata-method> is any of the above mentioned
 cache methods (excluding B<sqlite> and B<cdb>).
@@ -2217,15 +2218,14 @@ overlay is up-to-date, it is (slightly) faster to use directly to use
 the corresponding metadata method (usually B<metadata-flat>).
 The latter makes sense if you e.g. call B<egencache> from a script which you
 use to sync the overlay (e.g. in eix-sync).
+.RE
 .TP
-.SS
 .BR parse* "[" # "metadata-method]..."
 This is essentially the same as cache method B<parse> with the difference
 that variables are not expanded in variable definitions.
 This is the cache-method B<none*> from older eix versions (before 0.11.1)
 and cache-method B<none> from very old eix versions (before 0.7.1)
 .TP
-.SS
 .BR ebuild "[" # "metadata-method]..."
 If no portage cache is available (e.g. for overlays)
 this is the most compatible but also the slowest method.
@@ -2241,12 +2241,13 @@ However, this can also lead to unexpected behaviour or even a security risk
 since many bash scripts may be tricked with strange environments.
 Use B<env -i eix-update> when this causes problems.
 
+.RS
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
 
 Concerning the optional appendices B<#>I<metadata-method>, see the description of the cache method B<parse>.
 Note that if corresponding metadata is available this will be essentially faster than executing the ebuild.
+.RE
 .TP
-.SS
 .BR ebuild* "[" # "metadata-method]..."
 This is a slightly faster and slightly less compatible version of B<ebuild>:
 The information is obtained via the undocumented "/usr/lib/portage/ebuild.sh".
@@ -2263,9 +2264,10 @@ success may depend more on the portage version.
 However, this method is considerably faster than B<ebuild> and stable
 enough to treat e.g. typical ebuilds from kde-base.
 
+.RS
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
+.RE
 .TP
-.SS
 .BR parse|ebuild ", " parse*|ebuild ", " parse|ebuild* ", " parse*|ebuild*  " [" # "metadata-method]..."
 This is a mixture of B<parse>/B<parse*> and B<ebuild>/B<ebuild*>.
 Each ebuild is first scanned as with method B<parse>/B<parse*>.
@@ -2275,13 +2277,15 @@ As a rule of thumb, this method is much faster than B<ebuild>/B<ebuild*>
 but still much slower than B<parse>/B<parse*>.
 It has the same security risks as B<ebuild>/B<ebuild*>, of course.
 
+.RS
 .B Do not use this method if you do not completely trust all .ebuilds for which the method applies!
+.RE
 .TP
-.SS
 .BR eix "  or   "  eix:I<FILE> "  or  " eix:I<FILE>:I<overlay>
 Use the cachefile I<FILE> previously generated by B<eix-update>.
 If omitted or empty, I<FILE> defaults to @EIX_CACHEFILE@.
 
+.RS
 As for all other cache methods, only those categories enabled by
 profile/category (in the main tree or some overlay) are read.
 If you do not want this, use B<eix*> (see below).
@@ -2303,13 +2307,14 @@ If the current overlay label is empty or does not match, then the current overla
 If I<overlay> has the special value "*", then B<all> overlays in I<FILE> are read.
 Note this is usually not what you want since it means that if I<FILE> originally contained several overlays,
 this overlay structure will appear "flattened".
+.RE
 .TP
-.SS
 .BR eix* "  or   "  eix*:I<FILE> "  or  " eix*:I<FILE>:I<overlay>
 This is analogous to the cache method B<eix> with the difference that
 all categories found in I<FILE> are added, even those categories which
 were not enabled by some profile/categories file.
 
+.RS
 This cache method is useful if I<FILE> contains information for some
 overlay directory for which the corresponding profile/categories on
 the local machine is unknown or not necessarily up-to-date.
@@ -2318,6 +2323,9 @@ This is used for B<eix-remote>.
 
 Note that in particular with B<PORTDIR_CACHE_METHOD="eix*::~">,
 the overlay data is by default just "copied" from the previous eix cachefile.
+.RE
+.RE
+
 .TP
 .BR KEEP_VIRTUALS " " (true / false)
 If true, eix-update will keep all virtual overlays from the previous database
@@ -2505,50 +2513,44 @@ Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 Applies if /etc/portage/package.keywords lists the same keyword twice
 for some/all (un-/installed) versions.
 
+.RS
 B<string> describes which versions should be tested.
 It can have the following values:
 .TP
-.SS
 .BR no " or " false
 Do not test for this type of redundancy.
 .TP
-.SS
 .B some
 It suffices that the redundancy occurs for some version in the database.
 .TP
-.SS
-.B " all"
+\fBall\fR
 The redundancy must occur for all versions in the database.
 .TP
-.SS
 .B some-installed
 It suffices that the redundancy occurs for some installed version.
 Uninstalled versions are ignored for this test.
 .TP
-.SS
 .B all-installed
 The redundancy must occurs at least for all installed versions of the package.
 If no version is installed, it must occur at least once.
 .TP
-.SS
 .B some-uninstalled
 It suffices that the redundancy occurs for some uninstalled version.
 Installed versions are ignored for this test.
 .TP
-.SS
 .B all-uninstalled
 The redundancy must occurs at least for all uninstalled versions.
 If all versions in the database are installed, it must occur at least once.
 .TP
-.SS
 .BR "-" "some of the above  or  " "+" "some of the above"
 The test only applies if in addition no version (in case B<->)
 resp. at least some version (in case B<+>) of the package is installed.
 .TP
-.SS
 .RB "some of the above  " or "  some of the above"
 The result is positive if at least one of the two tests is positive.
 Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
+.RE
+
 .TP
 .BR REDUNDANT_IF_DOUBLE_LINE " " (string)
 Applies if /etc/portage/package.keywords has two lines for identical targets,
@@ -2777,10 +2779,13 @@ If there is more than one argument, each version (including the last one)
 is followed by a newline.
 For example,
 
+.RS
 .B versionsort gcc-4.4 4.4_alpha0 sys-devel/gcc-4.05 4.5
+.RE
 
 will output
 
+.RS
 .B 4.05
 
 .B 4.4_alpha0
@@ -2788,6 +2793,7 @@ will output
 .B 4.4
 
 .B 4.5
+.RE
 
 If you pass only one argument, eix is more sloppy about the version rules;
 even if the version part is not completely correct, it is guaranteed
@@ -2795,9 +2801,11 @@ in this case that the output is string-equal to the version part.
 Thus, you can use versionsort with one argument to split the package name
 from the version part in a shell script by
 
+.RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
 B<version=`versionsort "X${split}"`; name=${split%"-${version}"}>
+.RE
 
 Although currently it makes no difference, it is safer in such a case
 (concerning possible future extensions of the version format)
@@ -2972,7 +2980,7 @@ Now B<--pipe> is really handled as part of TEST_OPTIONS and does not implicitly 
 .SH "AUTHORS"
 .LP
 
-Martin Väth <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+Martin V\(:ath <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 
