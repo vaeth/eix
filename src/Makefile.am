@@ -177,10 +177,14 @@ search/redundancy.h
 
 nodist_search_src =
 
-# Common to all binaries:
-common_ldadd = \
-$(BZLIB_LIBS) \
+# Common to all tools
+common_tools_ldadd = \
 $(LIBINTL)
+
+# Common to all binaries which are not tools
+common_ldadd = \
+$(common_tools_ldadd) \
+$(BZLIB_LIBS) \
 
 common_src = \
 main/main.h \
@@ -348,17 +352,17 @@ use_separate_diff = true
 bin_PROGRAMS = eix-update eix eix-diff $(tool_programs)
 noinst_DATA = $(noinst_tool)
 
-eix_LDADD = $(eix_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
+eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(output_common_only_ldadd)
 eix_SOURCES = $(common_src) $(eix_only_src) $(output_only_src) $(main_eix_src)
 nodist_eix_SOURCES = $(nodist_common_src) $(nodist_eix_only_src) $(nodist_output_only_src) $(nodist_main_eix_src)
 EXTRA_eix_SOURCES = $(extra_eix_only_src) $(extra_output_only_src) $(extra_common_src)
 nodist_EXTRA_eix_SOURCES = $(nodist_extra_eix_only_src) $(nodist_extra_output_only_src) $(nodist_extra_common_src)
-eix_diff_LDADD = $(diff_only_ldadd) $(output_common_only_ldadd) $(common_ldadd)
+eix_diff_LDADD = $(common_ldadd) $(diff_only_ldadd) $(output_common_only_ldadd)
 eix_diff_SOURCES = $(common_src) $(diff_only_src) $(output_only_src) $(main_diff_src)
 nodist_eix_diff_SOURCES = $(nodist_common_src) $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_main_diff_src)
 EXTRA_eix_diff_SOURCES = $(extra_common_src) $(extra_diff_only_src) $(extra_output_only_src)
 nodist_EXTRA_eix_diff_SOURCES = $(nodist_extra_common_src) $(nodist_extra_output_only_src)
-eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
+eix_update_LDADD = $(common_ldadd) $(update_only_ldadd)
 eix_update_SOURCES = $(common_src) $(update_only_src) $(main_update_src)
 nodist_eix_update_SOURCES = $(nodist_update_only_src) $(nodist_output_only_src) $(nodist_main_update_src)
 EXTRA_eix_update_SOURCES = $(extra_common_src) $(extra_update_only_src)
@@ -377,12 +381,12 @@ eix-diff$(EXEEXT): eix$(EXEEXT)
 	$(AM_V_at)test ! -e eix-diff$(EXEEXT) || rm eix-diff$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-diff$(EXEEXT)
 
-eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(diff_only_ldadd) $(output_only_ldadd)
 eix_SOURCES = $(common_src) $(eix_only_src) $(diff_only_src) $(output_only_src) $(main_output_src)
 nodist_eix_SOURCES = $(nodist_common_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_output_only_src) $(nodist_main_output_src)
 EXTRA_eix_SOURCES = $(extra_common_src) $(extra_eix_only_src) $(extra_diff_only_src) $(extra_output_only_src)
 nodist_EXTRA_eix_SOURCES = $(nodist_extra_common_src) $(nodist_extra_eix_only_src) $(nodist_extra_diff_only_src) $(nodist_extra_output_only_src)
-eix_update_LDADD = $(update_only_ldadd) $(common_ldadd)
+eix_update_LDADD = $(common_ldadd) $(update_only_ldadd)
 eix_update_SOURCES = $(common_src) $(update_only_src) $(main_update_src)
 nodist_eix_update_SOURCES = $(nodist_common_src) $(nodist_update_only_src) $(nodist_main_update_src)
 EXTRA_eix_update_SOURCES = $(extra_common_src) $(extra_update_only_src)
@@ -411,7 +415,7 @@ eix-update$(EXEEXT): eix$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) eix$(EXEEXT) eix-update$(EXEEXT)
 
 
-eix_LDADD = $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd) $(common_ldadd)
+eix_LDADD = $(common_ldadd) $(eix_only_ldadd) $(diff_only_ldadd) $(update_only_ldadd) $(output_only_ldadd)
 eix_SOURCES = $(common_src) $(output_only_src) $(eix_only_src) $(diff_only_src) $(update_only_src) $(main_all_src)
 nodist_eix_SOURCES = $(nodist_common_src) $(nodist_output_only_src) $(nodist_eix_only_src) $(nodist_diff_only_src) $(nodist_update_only_src) $(nodist_main_all_src)
 EXTRA_eix_SOURCES = $(extra_common_src) $(extra_output_only_src) $(extra_eix_only_src) $(extra_diff_only_src) $(extra_update_only_src)
@@ -422,6 +426,7 @@ endif
 
 if SEPARATE_TOOLS
 
+versionsort_LDADD = $(common_tools_ldadd)
 versionsort_SOURCES = \
 database/types.h \
 eixTk/inttypes.h \

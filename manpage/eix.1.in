@@ -2980,7 +2980,7 @@ Now B<--pipe> is really handled as part of TEST_OPTIONS and does not implicitly 
 .SH "AUTHORS"
 .LP
 
-Martin V\(:ath <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+Martin Väth <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 

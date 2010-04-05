@@ -1,5 +1,17 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.20.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix linking of standalone versionsort with gettext, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=313267
+	  Thanks a lot to Javier Villavicencio <the_paya at gentoo.org>
+	  for examining the cause. This should also fix
+	  http://bugs.gentoo.org/show_bug.cgi?id=305737
+	- Transfer manpage to utf8 to make it work with heirloom-doctools.
+	  This makes the manpage work only with .utf8 locales. If somebody
+	  knows a better fix for http://bugs.gentoo.org/show_bug.cgi?id=294402
+	  please let me know.
+
 *eix-0.20.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Output in --xml up to two mask_type/unmask_type:
