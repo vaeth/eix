@@ -246,6 +246,16 @@ AS_IF([${optimization}],
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
 		], [${myldfatal}], [${quicktrue}])])
+# If -flto is used during compilation, we can also use -fwhole-program during
+# compilation. However, -Wl,--warn-common will give lots of warnings, so we
+# do not add the latter unless we use strict_warnings.
+AS_VAR_SET([fwhole_program], [])
+AS_VAR_SET([warn_common], [-Wl,--warn-common])
+AS_CASE([${mycxxadd}],
+	[*-flto*], [AS_VAR_SET([fwhole_program], [-fwhole-program])
+		AS_IF([${strong_warnings}],
+			[],
+			[AS_VAR_SET([warn_common], [])])])
 AS_IF([${strong_optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-fweb \
@@ -255,7 +265,7 @@ AS_IF([${strong_optimization}],
 			-floop-strip-mine \
 			-floop-block \
 			-fno-enforce-eh-specs \
-			-fwhole-program \
+			${fwhole_program} \
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
@@ -326,14 +336,6 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
-# -Wl,--warn-common gives lots of warnings for files compile with -flto,
-# so we avoid adding the former if the latter is used.
-# An exception is made if strong_warnings is in effect.
-	AS_VAR_SET([warn_common], [-Wl,--warn-common])
-	AS_IF([${strong_warnings}],
-		[],
-		[AS_CASE([${mycxxadd}],
-			[*-flto*], [AS_VAR_SET([warn_common], [])])])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
