@@ -176,9 +176,6 @@ AS_IF([${strong_warnings}],
 MV_MSG_RESULT_BIN([${warnings}], [${cmt_warnings}])
 
 AC_MSG_CHECKING([whether security options should be used])
-dnl AS_IF([${warnings}],
-dnl 	[AS_VAR_SET([security], [:])
-dnl 	AS_VAR_SET([cmt_security], ["forced by warnings"])])
 MV_MSG_RESULT_BIN([${security}], [${cmt_security}])
 
 AC_MSG_CHECKING([whether options should not be tested individually])
@@ -239,8 +236,10 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
+			-flto \
 		], [${mycxxfatal}], [${quicktrue}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
+			-flto \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--as-needed \
@@ -256,6 +255,7 @@ AS_IF([${strong_optimization}],
 			-floop-strip-mine \
 			-floop-block \
 			-fno-enforce-eh-specs \
+			-fwhole-program \
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
@@ -264,6 +264,7 @@ dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O9 \
+			-fwhole-program \
 		], [${myldfatal}], [${quicktrue}])])
 dnl The following is never tried, since the run can succeed but the result
 dnl may fail for some unknown reason on non-GNU systems, see
@@ -280,7 +281,6 @@ AS_IF([${warnings}],
 			-D_FILE_OFFSET_BITS=64 \
 			-D_LARGEFILE_SOURCE \
 			-D_LARGEFILE64_SOURCE \
-			-D_GLIBCXX_DEBUG \
 			-Wall \
 			-Wextra \
 			-Wformat=2 \
@@ -316,7 +316,8 @@ AS_IF([${warnings}],
 			-Wsign-promo \
 			-Wmissing-declarations \
 			-Wmissing-format-attribute \
-		], [${mycxxfatal}], [${quicktrue}])
+		], [], [${quicktrue}])
+		dnl No [${mycxxfatal}] for warning flags
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
@@ -325,13 +326,22 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
+# -Wl,--warn-common gives lots of warnings for files compile with -flto,
+# so we avoid adding the former if the latter is used.
+# An exception is made if strong_warnings is in effect.
+	AS_VAR_SET([warn_common], [-Wl,--warn-common])
+	AS_IF([${strong_warnings}],
+		[],
+		[AS_CASE([${mycxxadd}],
+			[*-flto*], [AS_VAR_SET([warn_common], [])])])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
-			-Wl,--warn-common \
-		], [${myldfatal}], [${quicktrue}])])
+			${warn_common} \
+		], [], [${quicktrue}])])
+		dnl No [${myldfatal}] for warning flags
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \

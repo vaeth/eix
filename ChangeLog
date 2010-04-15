@@ -11,6 +11,9 @@
 	  This makes the manpage work only with .utf8 locales. If somebody
 	  knows a better fix for http://bugs.gentoo.org/show_bug.cgi?id=294402
 	  please let me know.
+	- Use -flto and -fwhole-program of gcc-4.5
+	- Improve automagic in warning flags (test without -Werror);
+	  this could prevent previously e.g. -Wall from being auto-added.
 
 *eix-0.20.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
