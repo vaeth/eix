@@ -484,7 +484,7 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 	set<string> all_set_names;
 	for(vector<string>::size_type i(0); likely(i != dir_list.size()); ++i) {
 		vector<string> temporary_set_names;
-		pushback_files(dir_list[i], temporary_set_names, sets_exclude, 0, false, false);
+		pushback_files(dir_list[i], temporary_set_names, sets_exclude, 0, true, false);
 		vector<string>::size_type s(set_names.size());
 		// Avoid duplicate sets
 		for(vector<string>::const_iterator it(temporary_set_names.begin());
