@@ -329,6 +329,7 @@ class Scanner {
 			VER_RESTRICTUSERPRIV,
 			VER_RESTRICTINSTALLSOURCES,
 			VER_RESTRICTBINDIST,
+			VER_RESTRICTPARALLEL,
 			VER_PROPERTIES,
 			VER_PROPERTIESINTERACTIVE,
 			VER_PROPERTIESLIVE,
@@ -458,6 +459,7 @@ class Scanner {
 			prop_ver("restrictuserpriv", VER_RESTRICTUSERPRIV);
 			prop_ver("restrictinstallsources", VER_RESTRICTINSTALLSOURCES);
 			prop_ver("restrictbindist", VER_RESTRICTBINDIST);
+			prop_ver("restrictparallel", VER_RESTRICTPARALLEL);
 			prop_ver("properties", VER_PROPERTIES);
 			prop_ver("propertiesinteractive", VER_PROPERTIESINTERACTIVE);
 			prop_ver("propertieslive", VER_PROPERTIESLIVE);
@@ -949,6 +951,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::VER_RESTRICTUSERPRIV:
 		case Scanner::VER_RESTRICTINSTALLSOURCES:
 		case Scanner::VER_RESTRICTBINDIST:
+		case Scanner::VER_RESTRICTPARALLEL:
 			{
 				ExtendedVersion::Restrict restrict;
 				if(version_variables->isinst) {
@@ -998,6 +1001,10 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 						break;
 					case Scanner::VER_RESTRICTBINDIST:
 						if(unlikely(restrict & ExtendedVersion::RESTRICT_BINDIST))
+							return one;
+						break;
+					case Scanner::VER_RESTRICTPARALLEL:
+						if(unlikely(restrict & ExtendedVersion::RESTRICT_PARALLEL))
 							return one;
 						break;
 					default:

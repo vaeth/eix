@@ -30,7 +30,8 @@ const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_FETCH,
 	ExtendedVersion::RESTRICT_MIRROR,
 	ExtendedVersion::RESTRICT_PRIMARYURI,
-	ExtendedVersion::RESTRICT_BINDIST;
+	ExtendedVersion::RESTRICT_BINDIST,
+	ExtendedVersion::RESTRICT_PARALLEL;
 
 const ExtendedVersion::Properties
 	ExtendedVersion::PROPERTIES_NONE,
@@ -60,6 +61,7 @@ static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
 			mapinit("strip",          ExtendedVersion::RESTRICT_STRIP);
 			mapinit("test",           ExtendedVersion::RESTRICT_TEST);
 			mapinit("userpriv",       ExtendedVersion::RESTRICT_USERPRIV);
+			mapinit("parallel",       ExtendedVersion::RESTRICT_PARALLEL);
 		}
 
 		ExtendedVersion::Restrict getRestrict(const string& s) const

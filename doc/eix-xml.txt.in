@@ -178,7 +178,9 @@ depending on the configuration and the version data.
 - **<restrict flag="installsources" />**
 - **<restrict flag="fetch" />**
 - **<restrict flag="mirror" />**
+- **<restrict flag="primaryuri" />**
 - **<restrict flag="bindist" />**
+- **<restrict flag="uri" />**
 - **<properties flag="interactive" />**
 - **<properties flag="live" />**
 - **<properties flag="virtual" />**

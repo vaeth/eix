@@ -543,6 +543,10 @@ If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simul
 Only match packages which have at least one version with RESTRICT=bindist.
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
+.B --restrict-parallel
+Only match packages which have at least one version with RESTRICT=parallel.
+If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+.TP
 .B --properties-interactive
 Only match packages which have at least one version with PROPERTIES=interactive
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
@@ -810,10 +814,10 @@ This is version 3.14p which will be installed into the slot "GNAT-3.14p".
 .B 2.0.0_rc1-r6
 This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
 .TP
-.B 1.0+i+l+v+s!f!m!p!b!s!t!u!i!d{tbz2}
+.B 1.0+i+l+v+s!f!m!p!b!s!t!u!i!d!P{tbz2}
 This is version 1.0 which is subject to
 PROPERTIES="interactive live virtual set" as well as
-RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist"
+RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel"
 Moreover, a *.tbz2 file (binary package) exists for that version in B<PKGDIR>.
 .TP
 .B 5.0-r3(5.0R3)!f
@@ -1082,7 +1086,7 @@ property according to the local or default configuration, respectively.
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether there is a corresponding *.tbz2 file for the version.
 .TP
-.BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist
+.BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist ", " restrictparallel
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<RESTRICT> attribute is set for the version.
 .TP

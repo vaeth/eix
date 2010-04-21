@@ -43,7 +43,8 @@ class ExtendedVersion : public BasicVersion
 			RESTRICT_FETCH          = 0x0020,
 			RESTRICT_MIRROR         = 0x0040,
 			RESTRICT_PRIMARYURI     = 0x0080,
-			RESTRICT_BINDIST        = 0x0100;
+			RESTRICT_BINDIST        = 0x0100,
+			RESTRICT_PARALLEL       = 0x0200;
 
 		typedef io::UChar Properties;
 		static const Properties // order according to frequency...

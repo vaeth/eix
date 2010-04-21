@@ -272,6 +272,9 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			case O_RESTRICT_BINDIST: USE_TEST;
 				test->Restrictions(ExtendedVersion::RESTRICT_BINDIST);
 				break;
+			case O_RESTRICT_PARALLEL: USE_TEST;
+				test->Restrictions(ExtendedVersion::RESTRICT_PARALLEL);
+				break;
 			case O_PROPERTIES_INTERACTIVE: USE_TEST;
 				test->Properties(ExtendedVersion::PROPERTIES_INTERACTIVE);
 				break;

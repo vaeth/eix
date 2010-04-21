@@ -2,6 +2,8 @@
 
 *eix-0.20.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support RESTRICT=parallel.
+	- Support RESTRICT=primaryuri in xml output.
 	- Ignore hidden files/dirs in local set dirs like /etc/portage/sets
 	  See http://bugs.gentoo.org/show_bug.cgi?id=315611
 	- Fix linking of standalone versionsort with gettext, see

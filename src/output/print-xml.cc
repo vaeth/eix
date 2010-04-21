@@ -332,8 +332,14 @@ PrintXml::package(const Package *pkg)
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_MIRROR)) {
 				cout << "\t\t\t\t<restrict flag=\"mirror\" />\n";
 			}
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_PRIMARYURI)) {
+				cout << "\t\t\t\t<restrict flag=\"primaryuri\" />\n";
+			}
 			if(unlikely(restrict & ExtendedVersion::RESTRICT_BINDIST)) {
 				cout << "\t\t\t\t<restrict flag=\"bindist\" />\n";
+			}
+			if(unlikely(restrict & ExtendedVersion::RESTRICT_PARALLEL)) {
+				cout << "\t\t\t\t<restrict flag=\"parallel\" />\n";
 			}
 		}
 		ExtendedVersion::Restrict properties(ver->propertiesFlags);

@@ -664,6 +664,7 @@ AddOption(STRING, "FORMAT_RESTRICT",
 		"{restrictuserpriv}%{TAG_RESTRICT_USERPRIV}{}"
 		"{restrictinstallsources}%{TAG_RESTRICT_INSTALLSOURCES}{}"
 		"{restrictbindist}%{TAG_RESTRICT_BINDIST}{}"
+		"{restrictparallel}%{TAG_RESTRICT_PARALLEL}{}"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It outputs the RESTRICT tag, changing the color appropriately.\n"
@@ -1940,6 +1941,10 @@ AddOption(STRING, "TAG_RESTRICT_INSTALLSOURCES",
 AddOption(STRING, "TAG_RESTRICT_BINDIST",
 	"!d", _(
 	"Tag for RESTRICT=bindist. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_PARALLEL",
+	"!P", _(
+	"Tag for RESTRICT=parallel. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_INTERACTIVE",
 	"+i", _(

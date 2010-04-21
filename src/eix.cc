@@ -160,6 +160,7 @@ dump_help(int exit_code)
 			"    --restrict-userpriv       Match packages with RESTRICT=userpriv.\n"
 			"    --restrict-installsources Match packages with RESTRICT=installsources.\n"
 			"    --restrict-bindist        Match packages with RESTRICT=bindist.\n"
+			"    --restrict-parallel       Match packages with RESTRICT=parallel.\n"
 			"    --properties-interactive  Match packages with PROPERTIES=interactive.\n"
 			"    --properties-live         Match packages with PROPERTIES=live.\n"
 			"    --properties-virtual      Match packages with PROPERTIES=virtual.\n"
@@ -342,6 +343,7 @@ static struct Option long_options[] = {
 	Option("restrict-userpriv",      O_RESTRICT_USERPRIV),
 	Option("restrict-installsources",O_RESTRICT_INSTALLSOURCES),
 	Option("restrict-bindist",       O_RESTRICT_BINDIST),
+	Option("restrict-parallel",      O_RESTRICT_PARALLEL),
 	Option("properties-interactive", O_PROPERTIES_INTERACTIVE),
 	Option("properties-live",        O_PROPERTIES_LIVE),
 	Option("properties-virtual",     O_PROPERTIES_VIRTUAL),

@@ -236,26 +236,33 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
-			-flto \
 		], [${mycxxfatal}], [${quicktrue}])
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
-			-flto \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
 		], [${myldfatal}], [${quicktrue}])])
+AS_IF([${strong_optimization}],
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+			-flto
+		], [${mycxxfatal}], [${quicktrue}])])
 # If -flto is used during compilation, we can also use -fwhole-program during
-# compilation. However, -Wl,--warn-common will give lots of warnings, so we
+# compilation and should specify -flto during linking
+# (unless -fwhopr was desired by the user).
+# However, -Wl,--warn-common will then give lots of warnings, so we
 # do not add the latter unless we use strict_warnings.
 AS_VAR_SET([fwhole_program], [])
+AS_VAR_SET([flto], [])
 AS_VAR_SET([warn_common], [-Wl,--warn-common])
-AS_CASE([${mycxxadd}],
-	[*-flto*], [AS_VAR_SET([fwhole_program], [-fwhole-program])
-		AS_IF([${strong_warnings}],
-			[],
-			[AS_VAR_SET([warn_common], [])])])
+AS_CASE([" ${CXXFLAGS} ${mycxxadd} "],
+	[*" -flto "*],
+		[AS_VAR_SET([fwhole_program], [-fwhole-program])
+		AS_VAR_SET([flto], [-flto])
+		AS_VAR_SET([warn_common], [])])
+AS_CASE([" ${LDFLAGS} "],
+	[*" -fwhopr "*], [AS_VAR_SET([flto], [])])
 AS_IF([${strong_optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-fweb \
@@ -274,6 +281,7 @@ dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
 	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O9 \
+			${flto} \
 			-fwhole-program \
 		], [${myldfatal}], [${quicktrue}])])
 dnl The following is never tried, since the run can succeed but the result
@@ -349,7 +357,10 @@ AS_IF([${strong_warnings}],
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${mycxxfatal}], [${quicktrue}])])
+		], [${mycxxfatal}], [${quicktrue}])
+	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
+			-Wl,--warn-common \
+		], [], [${quicktrue}])])
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wconversion \
 dnl			-Wswitch-enum \

@@ -60,7 +60,9 @@
 		<xsd:enumeration value="installsources" />
 		<xsd:enumeration value="fetch" />
 		<xsd:enumeration value="mirror" />
+		<xsd:enumeration value="primaryuri" />
 		<xsd:enumeration value="bindist" />
+		<xsd:enumeration value="parallel" />
 	</xsd:restriction>
 </xsd:simpleType>
 
