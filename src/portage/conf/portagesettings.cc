@@ -156,7 +156,7 @@ void PortageSettings::override_by_env(const char **vars)
 void PortageSettings::read_config(const string &name, const string &prefix)
 {
 	(*this)["EPREFIX"] = m_eprefix;
-	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE);
+	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES);
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
 	configfile.setPrefix(prefix);
@@ -214,10 +214,12 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 	const string &eprefixsource(eixrc["EPREFIX_SOURCE"]);
 	const string &make_globals(eixrc["MAKE_GLOBALS"]);
-	if(is_file(make_globals.c_str()))
+	if(is_file(make_globals.c_str())) {
 		read_config(make_globals, eprefixsource);
-	else
+	}
+	else {
 		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
+	}
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
 
 	override_by_env(test_in_env_early);

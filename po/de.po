@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-04-21 19:36+0200\n"
+"POT-Creation-Date: 2010-04-24 18:57+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1792,15 +1792,15 @@ msgstr "getgrnam(%r) schlug fehl: %s"
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:84
+#: src/eixTk/varsreader.cc:85
 msgid "failed to source %r"
 msgstr "%r kann nicht ge\"source\"d werden"
 
-#: src/eixTk/varsreader.cc:465
+#: src/eixTk/varsreader.cc:739
 msgid "Can't map file %r"
 msgstr "File %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:510
+#: src/eixTk/varsreader.cc:784
 msgid "Nesting level too deep when reading %r"
 msgstr "Zu tiefe Verschachtelung beim Lesen von %r"
 
@@ -5056,11 +5056,11 @@ msgstr ""
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
-"Rekusrionslevel für cascading Profiles überschritten;\n"
+"Rekursionslevel für cascading Profiles überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1187
-#: src/portage/conf/portagesettings.cc:1203
+#: src/portage/conf/portagesettings.cc:1189
+#: src/portage/conf/portagesettings.cc:1205
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 

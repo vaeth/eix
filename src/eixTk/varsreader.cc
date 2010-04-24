@@ -57,6 +57,7 @@ const VarsReader::Flags
 	VarsReader::APPEND_VALUES,
 	VarsReader::ALLOW_SOURCE,
 	VarsReader::ALLOW_SOURCE_VARNAME,
+	VarsReader::PORTAGE_ESCAPES,
 	VarsReader::HAVE_READ,
 	VarsReader::ONLY_HAVE_READ;
 
@@ -210,12 +211,26 @@ void VarsReader::FIND_ASSIGNMENT()
 /** Looks if the following input is a valid value-part.
  * ['"\^#\n\t ] is allowed.
  * [\n\t ] -> JUMP_NOISE | '#' -> [RV] JUMP_COMMENT
- * '\'' -> [RV] VALUE_SINGLE_QUOTE | '"' -> [RV] VALUE_DOUBLE_QUOTE | '\\' -> [RV] WHITESPACE_ESCAPE | -> VALUE_WHITESPACE
+ * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
+ * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
+ * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE}
  * If we have the begin of a valid value we are reseting the value-buffer. */
 void VarsReader::EVAL_VALUE()
 {
 	NEXT_INPUT;
 	VALUE_CLEAR;
+	if(parse_flags & PORTAGE_ESCAPES) {
+		switch(INPUT) {
+			case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
+			case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
+			case '\t':
+			case '\n':
+			case ' ':   CHSTATE(JUMP_NOISE);
+			case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
+			case '\\':  NEXT_INPUT; CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
+			default:    CHSTATE(VALUE_WHITESPACE_PORTAGE);
+		}
+	}
 	switch(INPUT) {
 		case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE);
 		case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE);
@@ -228,22 +243,66 @@ void VarsReader::EVAL_VALUE()
 	}
 }
 
+/** Backslash escapes supported by portage. */
+static const char ESC_A = 007;
+static const char ESC_B = 010;
+static const char ESC_E = 033;
+static const char ESC_N = 012;
+static const char ESC_R = 015;
+static const char ESC_T = 011;
+static const char ESC_V = 013;
+/* and helper ones. */
+static const char ESC_BS = '\\';
+static const char ESC_SP = ' ';
+
 /** Reads a value enclosed in single quotes (').
- * Copy INPUT into value-buffer while INPUT is not in ['\\]. If the value ends, ASSIGN_KEY_VALUE is
- * called.
+ * Copy INPUT into value-buffer while INPUT is not in ['\\].
+ * If the value ends, ASSIGN_KEY_VALUE is called.
  * '\\' -> [RV] SINGLE_QUOTE_ESCAPE | '\'' -> [RV] JUMP_NOISE */
 void VarsReader::VALUE_SINGLE_QUOTE()
 {
-	while(likely(INPUT != '\'')) {
+	while(likely((INPUT != '\'') && (INPUT != '\\'))) {
 		VALUE_APPEND(INPUT);
 		NEXT_INPUT;
 	}
-	ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
+	switch(INPUT) {
+		case '\'':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
+		default:    NEXT_INPUT; CHSTATE(SINGLE_QUOTE_ESCAPE);
+	}
+}
+
+/** Reads a value enclosed in single quotes (') for PORTAGE_ESCAPES.
+ * Copy INPUT into value-buffer while INPUT is not in ['\\].
+ * If the value ends, ASSIGN_KEY_VALUE is called.
+ * '\\' -> [RV] SINGLE_QUOTE_ESCAPE_PORTAGE | '\'' -> [RV] JUMP_NOISE */
+void VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
+{
+	while(likely((INPUT != '\'') && (INPUT != '\\'))) {
+		if(unlikely((INPUT == '$') && (parse_flags & SUBST_VARS))) {
+			NEXT_INPUT;
+			resolveReference();
+			if(INPUT_EOF) {
+				return;
+			}
+			continue;
+		}
+		if(unlikely(INPUT == '\n')) {
+			VALUE_APPEND(ESC_SP);
+		}
+		else {
+			VALUE_APPEND(INPUT);
+		}
+		NEXT_INPUT;
+	}
+	switch(INPUT) {
+		case '\'':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
+		default:    NEXT_INPUT; CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
+	}
 }
 
 /** Read value enclosed in double-quotes (").
- * Copy INPUT into value-buffer while INPUT is not in ["\\]. If the value ends, ASSIGN_KEY_VALUE is
- * called.
+ * Copy INPUT into value-buffer while INPUT is not in ["\\].
+ * If the value ends, ASSIGN_KEY_VALUE is called.
  * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE | '"' -> [RV] JUMP_NOISE */
 void VarsReader::VALUE_DOUBLE_QUOTE()
 {
@@ -264,6 +323,35 @@ void VarsReader::VALUE_DOUBLE_QUOTE()
 	}
 }
 
+/** Read value enclosed in double-quotes (") for PORTAGE_ESCAPES.
+ * Copy INPUT into value-buffer while INPUT is not in ["\\].
+ * If the value ends, ASSIGN_KEY_VALUE is called.
+ * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE_PORTAGE | '"' -> [RV] JUMP_NOISE */
+void VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
+{
+	while(likely(INPUT != '"' && INPUT != '\\')) {
+		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
+			NEXT_INPUT;
+			resolveReference();
+			if(INPUT_EOF) {
+				return;
+			}
+			continue;
+		}
+		if(unlikely(INPUT == '\n')) {
+			VALUE_APPEND(ESC_SP);
+		}
+		else {
+			VALUE_APPEND(INPUT);
+		}
+		NEXT_INPUT;
+	}
+	switch(INPUT) {
+		case '"':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
+		default:   NEXT_INPUT; CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
+	}
+}
+
 /** Read value not enclosed in any quotes.
  * Thus there are no spaces and tabs allowed. Everything must be escaped.
  * Move INPUT into buffer while it's not in [ \t\n\r\\]. If the value ends we call ASSIGN_KEY_VALUE.
@@ -273,32 +361,117 @@ void VarsReader::VALUE_WHITESPACE()
 	while(likely((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n'))) {
 		if(unlikely(INPUT == '\\')) {
 			NEXT_INPUT_OR_EOF;
-			if(INPUT_EOF)
+			if(INPUT_EOF) {
 				break;
+			}
 			CHSTATE(WHITESPACE_ESCAPE);
 		}
 		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
 			NEXT_INPUT_OR_EOF;
-			if(INPUT_EOF)
+			if(INPUT_EOF) {
 				break;
+			}
 			resolveReference();
-			if(INPUT_EOF)
+			if(INPUT_EOF) {
 				break;
+			}
 			continue;
 		}
 		VALUE_APPEND(INPUT);
 		NEXT_INPUT_OR_EOF;
-		if(INPUT_EOF)
+		if(INPUT_EOF) {
 			break;
+		}
 	}
 	ASSIGN_KEY_VALUE;
-	if(INPUT_EOF)
+	if(INPUT_EOF) {
 		return;
+	}
 	CHSTATE(JUMP_NOISE);
 }
 
-/** Cares about \\ in double-quote values. \n is ignored, everything else is put into buffer without
- * the \\.
+/** Read value not enclosed in any quotes for PORTAGE_ESCAPES.
+ * Thus there are no spaces and tabs allowed. Everything must be escaped.
+ * Move INPUT into buffer while it's not in [ \t\n\r\\]. If the value ends we call ASSIGN_KEY_VALUE.
+ * [ \t\r\n] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE_PORTAGE */
+void VarsReader::VALUE_WHITESPACE_PORTAGE()
+{
+	while(likely((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n'))) {
+		if(unlikely(INPUT == '\\')) {
+			NEXT_INPUT_OR_EOF;
+			if(INPUT_EOF) {
+				break;
+			}
+			CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
+		}
+		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
+			NEXT_INPUT_OR_EOF;
+			if(INPUT_EOF) {
+				break;
+			}
+			resolveReference();
+			if(INPUT_EOF) {
+				break;
+			}
+			continue;
+		}
+		VALUE_APPEND(INPUT);
+		NEXT_INPUT_OR_EOF;
+		if(INPUT_EOF) {
+			break;
+		}
+	}
+	ASSIGN_KEY_VALUE;
+	if(INPUT_EOF) {
+		return;
+	}
+	CHSTATE(JUMP_NOISE);
+}
+
+/** Cares about \\ in single-quote values.
+ * \n is ignored, and everything else is put into buffer without the \\.
+ * -> [RV] VALUE_SINGLE_QUOTE */
+void VarsReader::SINGLE_QUOTE_ESCAPE()
+{
+	switch(INPUT) {
+		case '\n':  break;
+		default:    VALUE_APPEND(INPUT);
+	}
+	NEXT_INPUT;
+	CHSTATE(VALUE_SINGLE_QUOTE);
+}
+
+/** Cares about \\ in single-quote values for PORTAGE_ESCAPES.
+ * \n is ignored, known Portage escapes are handled
+ * and everything else is put into buffer without the \\.
+ * -> [RV] VALUE_SINGLE_QUOTE_PORTAGE */
+void VarsReader::SINGLE_QUOTE_ESCAPE_PORTAGE()
+{
+	bool wasnl(false);
+
+	switch(INPUT) {
+		case 'a':   VALUE_APPEND(ESC_A); break;
+		case 'b':   VALUE_APPEND(ESC_B); break;
+		case 'e':   VALUE_APPEND(ESC_E); break;
+		case 'f':
+		case 'n':   VALUE_APPEND(ESC_N); break;
+		case 'r':   VALUE_APPEND(ESC_R); break;
+		case 't':   VALUE_APPEND(ESC_T); break;
+		case 'v':   VALUE_APPEND(ESC_V); break;
+		case '\n':  wasnl = true; break;
+		default:    VALUE_APPEND(INPUT); break;
+	}
+	NEXT_INPUT;
+	/* any amount of backslashes forbids portage to expand var */
+	if(unlikely((INPUT == '$') && !wasnl)) {
+		VALUE_APPEND(INPUT);
+		NEXT_INPUT;
+	}
+	CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
+}
+
+/** Cares about \\ in double-quote values.
+ * \n is ignored, everything else is put into buffer without the \\.
  * -> [RV] VALUE_DOUBLE_QUOTE */
 void VarsReader::DOUBLE_QUOTE_ESCAPE()
 {
@@ -310,8 +483,61 @@ void VarsReader::DOUBLE_QUOTE_ESCAPE()
 	CHSTATE(VALUE_DOUBLE_QUOTE);
 }
 
-/** Cares about \\ in values without quotes. \n is ignored, everything else is put into buffer without
- * the \\.
+/** Cares about \\ in double-quote values for PORTAGE_ESCAPES.
+ * \n is ignored, known Portage escapes are handled
+ * and everything else is put into buffer without the \\.
+ * -> [RV] VALUE_DOUBLE_QUOTE_PORTAGE */
+void VarsReader::DOUBLE_QUOTE_ESCAPE_PORTAGE()
+{
+	bool wasnl(false);
+
+	switch(INPUT) {
+		case 'a':   VALUE_APPEND(ESC_A); break;
+		case 'b':   VALUE_APPEND(ESC_B); break;
+		case 'e':   VALUE_APPEND(ESC_E); break;
+		case 'f':
+		case 'n':   VALUE_APPEND(ESC_N); break;
+		case 'r':   VALUE_APPEND(ESC_R); break;
+		case 't':   VALUE_APPEND(ESC_T); break;
+		case 'v':   VALUE_APPEND(ESC_V); break;
+		case '\n':  wasnl = true; break;
+		case '\\':
+			NEXT_INPUT;
+			switch(INPUT) {
+				case 'a':   VALUE_APPEND(ESC_A); break;
+				case 'b':   VALUE_APPEND(ESC_B); break;
+				case 'e':   VALUE_APPEND(ESC_E); break;
+				case 'f':
+				case 'n':   VALUE_APPEND(ESC_N); break;
+				case 'r':   VALUE_APPEND(ESC_R); break;
+				case 't':   VALUE_APPEND(ESC_T); break;
+				case 'v':   VALUE_APPEND(ESC_V); break;
+				case '\n':  wasnl = true; break;
+				case '\\':
+					VALUE_APPEND(INPUT);
+					NEXT_INPUT;
+					switch(INPUT) {
+						case '\\':   break;
+						case '\n':   VALUE_APPEND(ESC_SP); wasnl = true; break;
+						default:     VALUE_APPEND(INPUT); break;
+					}
+					break;
+				default:    VALUE_APPEND(INPUT); break;
+			}
+			break;
+		default:    VALUE_APPEND(INPUT); break;
+	}
+	NEXT_INPUT_OR_EOF;
+	/* any amount of backslashes forbids portage to expand var */
+	if(unlikely((INPUT == '$') && !wasnl)) {
+		VALUE_APPEND(INPUT);
+		NEXT_INPUT;
+	}
+	CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
+}
+
+/** Cares about \\ in values without quotes.
+ * \n is ignored, everything else is put into buffer without the \\.
  * -> [RV] VALUE_WHITESPACE */
 void VarsReader::WHITESPACE_ESCAPE()
 {
@@ -321,6 +547,46 @@ void VarsReader::WHITESPACE_ESCAPE()
 	}
 	NEXT_INPUT;
 	CHSTATE(VALUE_WHITESPACE);
+}
+
+/** Cares about \\ in values without quotes for PORTAGE_ESCAPES.
+ * \n is ignored, known Portage escapes are handled
+ * and everything else is put into buffer without the \\.
+ * -> [RV] VALUE_WHITESPACE_PORTAGE */
+void VarsReader::WHITESPACE_ESCAPE_PORTAGE()
+{
+	switch(INPUT) {
+		case '\n':  break;
+		case '\\':
+			NEXT_INPUT;
+			if(INPUT == '\\') {
+				NEXT_INPUT;
+			}
+			else if(INPUT == '\n') {
+				VALUE_APPEND(ESC_BS);
+			}
+			switch(INPUT) {
+				case 'a':   VALUE_APPEND(ESC_A); break;
+				case 'b':   VALUE_APPEND(ESC_B); break;
+				case 'e':   VALUE_APPEND(ESC_E); break;
+				case 'f':
+				case 'n':   VALUE_APPEND(ESC_N); break;
+				case 'r':   VALUE_APPEND(ESC_R); break;
+				case 't':   VALUE_APPEND(ESC_T); break;
+				case 'v':   VALUE_APPEND(ESC_V); break;
+				case '\n':  break;
+				default:    VALUE_APPEND(INPUT);
+			}
+			break;
+		default:    VALUE_APPEND(INPUT);
+	}
+	NEXT_INPUT_OR_EOF;
+	/* any amount of backslashes forbids portage to expand var */
+	if(unlikely(INPUT == '$')) {
+		VALUE_APPEND(INPUT);
+		NEXT_INPUT;
+	}
+	CHSTATE(VALUE_WHITESPACE_PORTAGE);
 }
 
 /** Cares about \\ in the noise. Everything is ignored (there is no buffer .. don't care!).
@@ -419,15 +685,22 @@ void VarsReader::runFsm()
 			case state_JUMP_COMMENT: JUMP_COMMENT(); break;
 			case state_FIND_ASSIGNMENT: FIND_ASSIGNMENT(); break;
 			case state_EVAL_VALUE: EVAL_VALUE(); break;
-			case state_VALUE_DOUBLE_QUOTE: VALUE_DOUBLE_QUOTE(); break;
 			case state_NOISE_DOUBLE_QUOTE: NOISE_DOUBLE_QUOTE(); break;
 			case state_NOISE_ESCAPE: NOISE_ESCAPE(); break;
 			case state_NOISE_SINGLE_QUOTE: NOISE_SINGLE_QUOTE(); break;
 			case state_STOP: return;
-			case state_VALUE_WHITESPACE: VALUE_WHITESPACE(); break;
 			case state_VALUE_SINGLE_QUOTE: VALUE_SINGLE_QUOTE(); break;
+			case state_VALUE_SINGLE_QUOTE_PORTAGE: VALUE_SINGLE_QUOTE_PORTAGE(); break;
+			case state_VALUE_DOUBLE_QUOTE: VALUE_DOUBLE_QUOTE(); break;
+			case state_VALUE_DOUBLE_QUOTE_PORTAGE: VALUE_DOUBLE_QUOTE_PORTAGE(); break;
+			case state_VALUE_WHITESPACE: VALUE_WHITESPACE(); break;
+			case state_VALUE_WHITESPACE_PORTAGE: VALUE_WHITESPACE_PORTAGE(); break;
+			case state_SINGLE_QUOTE_ESCAPE: SINGLE_QUOTE_ESCAPE(); break;
+			case state_SINGLE_QUOTE_ESCAPE_PORTAGE: SINGLE_QUOTE_ESCAPE_PORTAGE(); break;
 			case state_DOUBLE_QUOTE_ESCAPE: DOUBLE_QUOTE_ESCAPE(); break;
+			case state_DOUBLE_QUOTE_ESCAPE_PORTAGE: DOUBLE_QUOTE_ESCAPE_PORTAGE(); break;
 			case state_WHITESPACE_ESCAPE: WHITESPACE_ESCAPE(); break;
+			case state_WHITESPACE_ESCAPE_PORTAGE: WHITESPACE_ESCAPE_PORTAGE(); break;
 			default: break;
 		}
 	}
@@ -449,8 +722,9 @@ void VarsReader::initFsm()
 bool VarsReader::read(const char *filename)
 {
 	int fd(open(filename, O_RDONLY));
-	if(fd == -1)
+	if(fd == -1) {
 		return false;
+	}
 	struct stat st;
 	if(fstat(fd, &st)) {
 		close(fd);

@@ -22,21 +22,22 @@
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
 class VarsReader {
 	public:
-		typedef uint8_t Flags;
+		typedef uint16_t Flags;
 		static const Flags
-			NONE                 = 0x00, /**< Flag: No flags set; normal behavior. */
-			ONLY_KEYWORDS_SLOT   = 0x01, /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
-			KEYWORDS_READ        = 0x02, /**< Flag: Have already read "KEYWORDS" once. */
-			SLOT_READ            = 0x04, /**< Flag: Have already read "SLOT" once. */
-			SUBST_VARS           = 0x08, /**< Flag: Allow references to variable in declarations
+			NONE                 = 0x0000, /**< Flag: No flags set; normal behavior. */
+			ONLY_KEYWORDS_SLOT   = 0x0001, /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
+			KEYWORDS_READ        = 0x0002, /**< Flag: Have already read "KEYWORDS" once. */
+			SLOT_READ            = 0x0004, /**< Flag: Have already read "SLOT" once. */
+			SUBST_VARS           = 0x0008, /**< Flag: Allow references to variable in declarations
 			                                  of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP             = 0x10, /**< Flag: Init but don't parse .. you must first supply
+			INTO_MAP             = 0x0010, /**< Flag: Init but don't parse .. you must first supply
 			                                  a pointer to map<string,string> with useMap(...) */
-			APPEND_VALUES        = 0x20, /**< Flag: Respect IncrementalKeys */
-			ALLOW_SOURCE         = 0x40, /**< Flag: Allow "source"/"." command. */
-			ALLOW_SOURCE_VARNAME = 0xc0, /**< Flag: Allow "source"/"." but
+			APPEND_VALUES        = 0x0020, /**< Flag: Respect IncrementalKeys */
+			ALLOW_SOURCE         = 0x0040, /**< Flag: Allow "source"/"." command. */
+			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE, /**< Flag: Allow "source"/"." but
 			                                  Prefix is only a varname which
 			                                  might be modified during sourcing. */
+			PORTAGE_ESCAPES      = 0x0100, /**< Flag: Treat escapes like portage does. */
 			HAVE_READ            = KEYWORDS_READ|SLOT_READ,     /**< Combination of previous "*_READ" */
 			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
@@ -103,10 +104,17 @@ class VarsReader {
 			state_FIND_ASSIGNMENT,
 			state_EVAL_VALUE,
 			state_VALUE_SINGLE_QUOTE,
+			state_VALUE_SINGLE_QUOTE_PORTAGE,
 			state_VALUE_DOUBLE_QUOTE,
+			state_VALUE_DOUBLE_QUOTE_PORTAGE,
 			state_VALUE_WHITESPACE,
+			state_VALUE_WHITESPACE_PORTAGE,
+			state_SINGLE_QUOTE_ESCAPE,
+			state_SINGLE_QUOTE_ESCAPE_PORTAGE,
 			state_DOUBLE_QUOTE_ESCAPE,
+			state_DOUBLE_QUOTE_ESCAPE_PORTAGE,
 			state_WHITESPACE_ESCAPE,
+			state_WHITESPACE_ESCAPE_PORTAGE,
 			state_NOISE_ESCAPE,
 			state_NOISE_SINGLE_QUOTE,
 			state_NOISE_DOUBLE_QUOTE
@@ -139,21 +147,35 @@ class VarsReader {
 		/** Looks if the following input is a valid value-part.
 		 * ['"\^#\\n\\t ] is allowed.
 		 * [\\n\\t ] -> JUMP_NOISE | '#' -> [RV] JUMP_COMMENT
-		 * '\'' -> [RV] VALUE_SINGLE_QUOTE | '"' -> [RV] VALUE_DOUBLE_QUOTE | '\\' -> [RV] WHITESPACE_ESCAPE | -> VALUE_WHITESPACE
+		 * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
+		 * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
+		 * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE}
 		 * If we have the begin of a valid value we are reseting the value-buffer. */
 		void EVAL_VALUE();
 
 		/** Reads a value enclosed in single quotes (').
-		 * Copy INPUT into value-buffer while INPUT is not in ['\\]. If the value ends, ASSIGN_KEY_VALUE is
-		 * called.
+		 * Copy INPUT into value-buffer while INPUT is not in ['\\].
+		 * If the value ends, ASSIGN_KEY_VALUE is called.
 		 * '\\' -> [RV] SINGLE_QUOTE_ESCAPE | '\'' -> [RV] JUMP_NOISE */
 		void VALUE_SINGLE_QUOTE();
 
+		/** Reads a value enclosed in single quotes (') for PORTAGE_ESCAPES.
+		 * Copy INPUT into value-buffer while INPUT is not in ['\\].
+		 * If the value ends, ASSIGN_KEY_VALUE is called.
+		 * '\\' -> [RV] SINGLE_QUOTE_ESCAPE_PORTAGE | '\'' -> [RV] JUMP_NOISE */
+		void VALUE_SINGLE_QUOTE_PORTAGE();
+
 		/** Read value enclosed in double-quotes (").
-		 * Copy INPUT into value-buffer while INPUT is not in ["\\]. If the value ends, ASSIGN_KEY_VALUE is
-		 * called.
+		 * Copy INPUT into value-buffer while INPUT is not in ["\\].
+		 * If the value ends, ASSIGN_KEY_VALUE is called.
 		 * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE | '"' -> [RV] JUMP_NOISE */
 		void VALUE_DOUBLE_QUOTE();
+
+		/** Read value enclosed in double-quotes (") for PORTAGE_ESCAPES.
+		 * Copy INPUT into value-buffer while INPUT is not in ["\\].
+		 * If the value ends, ASSIGN_KEY_VALUE is called.
+		 * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE_PORTAGE] | '"' -> [RV] JUMP_NOISE */
+		void VALUE_DOUBLE_QUOTE_PORTAGE();
 
 		/** Read value not inclosed in any quotes.
 		 * Thus there are no spaces and tabs allowed. Everything must be escaped.
@@ -161,20 +183,45 @@ class VarsReader {
 		 * [\\n\\t ] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
 		void VALUE_WHITESPACE();
 
-		/** Cares about \\ in single-quote values. \n is ignored, "\\'" transforms to "'" .. for everything
+		/** Read value not inclosed in any quotes for PORTAGE_ESCAPES.
+		 * Thus there are no spaces and tabs allowed. Everything must be escaped.
+		 * Move INPUT into buffer while it's not in [ \\t\\n\\]. If the value ends we call ASSIGN_KEY_VALUE.
+		 * [\\n\\t ] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE_PORTAGE */
+		void VALUE_WHITESPACE_PORTAGE();
+
+		/** Cares about \\ in single-quote values.
+		 * \n is ignored, "\\'" transforms to "'" .. for everything
 		 * else the \\ is just put into buffer.
 		 * -> [RV] VALUE_SINGLE_QUOTE */
 		void SINGLE_QUOTE_ESCAPE();
 
-		/** Cares about \\ in double-quote values. \n is ignored, everything else is put into buffer without
-		 * the \\.
+		/** Cares about \\ in single-quote values for PORTAGE_ESCAPES.
+		 * \n is ignored, "\\'" transforms to "'" .. for everything
+		 * else the \\ is just put into buffer.
+		 * -> [RV] VALUE_SINGLE_QUOTE_PORTAGE */
+		void SINGLE_QUOTE_ESCAPE_PORTAGE();
+
+		/** Cares about \\ in double-quote values.
+		 * \n is ignored, everything else is put into buffer without the \\.
 		 * -> [RV] VALUE_DOUBLE_QUOTE */
 		void DOUBLE_QUOTE_ESCAPE();
 
-		/** Cares about \\ in values without quotes. \n is ignored, everything else is put into buffer without
-		 * the \\.
+		/** Cares about \\ in double-quote values for PORTAGE_ESCAPES.
+		 * \n is ignored, known Portage escapes are handled
+		 * and everything else is put into buffer without the \\.
+		 * -> [RV] VALUE_DOUBLE_QUOTE_PORTAGE */
+		void DOUBLE_QUOTE_ESCAPE_PORTAGE();
+
+		/** Cares about \\ in values without quotes.
+		 * \n is ignored, everything else is put into buffer without the \\.
 		 * -> [RV] VALUE_WHITESPACE */
 		void WHITESPACE_ESCAPE();
+
+		/** Cares about \\ in values without quotes for PORTAGE_ESCAPES.
+		 * \n is ignored, known Portage escapes are handled
+		 * and everything else is put into buffer without the \\.
+		 * -> [RV] VALUE_WHITESPACE_PORTAGE */
+		void WHITESPACE_ESCAPE_PORTAGE();
 
 		/** Cares about \\ in the noise. Everything is ignored (there is no buffer .. don't care!).
 		 * -> [RV] JUMP_NOISE */
