@@ -39,27 +39,26 @@ Die () {
 }
 
 SetCcache () {
-	local i j
-	i='/usr/lib/ccache/bin'
-	test -d "${i}" || return
+	dircc='/usr/lib/ccache/bin'
+	test -d "${dircc}" || return
 	case "${PATH}" in
-		"${i}:"*|*":${i}:"*) return;;
+		"${dircc}:"*|*":${dircc}:"*) return;;
 	esac
 	if [ -n "${PATH}" ]
-	then	Info "PATH=${i}:\${PATH}"
-		PATH="${i}:${PATH}"
+	then	Info "PATH=${dircc}:\${PATH}"
+		PATH="${dircc}:${PATH}"
 		export PATH
 	fi
 	[ -n "${CCACHE_DIR}" ] && return
-	for i in "${HOME}/.ccache" ../ccache ../../ccache
-	do	[ -z "${i}" ] && continue
-		j=`readlink -f -- "${i}"` && [ -n "${j}" ] \
-			&& test -d "${j}" && break
+	for dircc in "${HOME}/.ccache" ../ccache ../../ccache
+	do	[ -z "${dircc}" ] && continue
+		testcc=`readlink -f -- "${dircc}"` && [ -n "${testcc}" ] \
+			&& test -d "${testcc}" && break
 	done
-	[ -z "${j}" ] && return
-	Info "CCACHE_DIR=${j}"
+	[ -z "${testcc}" ] && return
+	Info "CCACHE_DIR=${testcc}"
 	export CCACHE_DIR
-	CCACHE_DIR="${j}"
+	CCACHE_DIR="${testcc}"
 }
 
 quiet=false
@@ -130,10 +129,8 @@ then	march="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
 	CXXFLAGS="${CFLAGS}"
 	${not_full_use} && CXXFLAGS="${CXXFLAGS} -DNOT_FULL_USE"
 	if ${pedantic}
-	then
-		configure_extra="${configure_extra} --enable-strong-warnings"
-	else
-		configure_extra="${configure_extra} --enable-warnings"
+	then	configure_extra="${configure_extra} --enable-strong-warnings"
+	else	configure_extra="${configure_extra} --enable-warnings"
 		#CXXFLAGS="${CXXFLAGS} -Werror"
 	fi
 fi

@@ -14,7 +14,6 @@ ReadGettext
 nodetails=false
 
 Usage () {
-	local n p
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] detail|brief
@@ -61,7 +60,6 @@ Die () {
 }
 
 Eix () {
-	local i
 	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
 	then	[ -z "${1}" ] || printf '%s\n' "${1}"
 		return
@@ -73,13 +71,13 @@ Eix () {
 		return
 	fi
 	shift 2
-	for i
+	for z
 	do	(
 			for j
-			do	[ "${i}" = "${j}" ] && continue
+			do	[ "${z}" = "${j}" ] && continue
 				eval "export ${j}=false"
 			done
-			Eix '' "`eval_gettext '... considered as ${i}'`"
+			Eix '' "`eval_gettext '... considered as ${z}'`"
 		)
 	done
 }
@@ -126,7 +124,6 @@ NoUninstalled () { export \
 }
 
 ScanVarDbPkg () {
-	local i j k n f c
 	ReadVar c EPREFIX_INSTALLED
 	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
 			'cannot locate your database of installed packages'`"

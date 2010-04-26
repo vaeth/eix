@@ -14,7 +14,6 @@
 ReadFunctions
 
 Usage () {
-	local i n p
 	exitcode="${1:-1}"
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
@@ -60,7 +59,6 @@ ClearLaymanMake () {
 }
 
 PushLaymanMake () {
-	local m r
 	r=1
 	for m
 	do	[ -n "${m}" ] || continue
@@ -77,7 +75,6 @@ PrintLaymanMake () {
 }
 
 CalcLaymanMake () {
-	local l
 	l=`PrintLaymanMake "${@}"` || l=''
 	[ -n "${l}" ] && PushLaymanMake "${l}"
 }
@@ -107,7 +104,6 @@ done
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
 
 GetOverlays () {
-	local i
 	eval "set -- ${layman_make}"
 	for i
 	do	[ -n "${i}" ] && test -r "${i}" && Push layman_overlays \

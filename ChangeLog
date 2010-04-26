@@ -1,11 +1,13 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.20.4
+*eix-0.20.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Interpret escapes for portage config files in the way portage does,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=316907
 	  Thanks to Michał Górny <gentoo at mgorny.alt.pl> for the main part
 	  of the patch.
+	- scripts: Avoid race conditions in traps.
+	- scripts: Avoid "local" keyword as it is not POSIX.
 
 *eix-0.20.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

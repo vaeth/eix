@@ -17,7 +17,9 @@ get_avail_gcc() {
 }
 
 reset_gcc() {
-	gcc-config "${original_gcc}" >/dev/null &
+	trap : EXIT INT
+	gcc-config "${original_gcc}" >/dev/null
+	trap - EXIT INT
 	exit
 }
 

@@ -17,7 +17,6 @@ ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
 Usage () {
-	local n p f
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	f="${filearg:-(none)}"
@@ -84,7 +83,6 @@ PrintLaymanStorage () {
 }
 
 SetLocalLayman () {
-	local i
 	for i
 	do	[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN="${i}" \
 			&& return
@@ -105,7 +103,6 @@ InitLocalLayman () {
 }
 
 CalcSuprg () {
-	local i
 	for i
 	do	suprgpath="${i}"
 		suprg="${i##*/}"
@@ -170,7 +167,7 @@ GetFilename () {
 }
 
 CalcSuCmd () {
-	local shexec a
+#	local shexec a
 	if [ -z "${fetchuser}" ]
 	then	[ -n "${UID}" ] || UID="`id -u`"
 		if [ "${UID}" -ne 0 ]
@@ -198,7 +195,6 @@ CalcSuCmd () {
 }
 
 CdDir () {
-	local a
 	cd -- "${1}" >/dev/null && return
 	a="${1}"
 	die "`eval_gettext 'cannot cd to ${a}'`"
@@ -207,6 +203,7 @@ CdDir () {
 tmpdir=''
 exitcode=0
 Cleanup () {
+	trap : EXIT HUP INT TERM
 	cd / >/dev/null
 	if [ -n "${tmpdir}" ]
 	then	test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
@@ -235,7 +232,6 @@ MakeTempSub () {
 
 tmpfile=''
 FetchTemp () {
-	local eixcachesname
 	eixcachesname="${addr##*/}"
 	[ -z "${eixcachesname}" ] && die "`eval_gettext \
 'remote address is not properly set.
@@ -251,7 +247,6 @@ The default should have been set with ./configure --remote-file'`"
 }
 
 BugReport () {
-	local archive
 	archive="${1}"
 	echo
 	printf '\n'
@@ -276,7 +271,6 @@ to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 }
 
 AddArchive () {
-	local a i p l n name virtual overlayarg msg die_on_update_failure
 	a="${1}"
 	RunCommand "Unpacking data" tar xjf "${a}" || {
 		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
@@ -375,11 +369,15 @@ main_command="${1}"
 [ -n "${UID}" ] || UID="`id -u`"
 
 case "${main_command}" in
-	update|both)        Update "${@}";;
-	fetch*|get|wget)    Fetch "${@}";;
-	add*)               Add "${@}";;
-	rem*|del*|rm*|sub*) Remove "${@}";;
-	*)                  Usage;;
+	update|both)
+		Update "${@}";;
+	fetch*|get|wget)
+		Fetch "${@}";;
+	add*)
+		Add "${@}";;
+	rem*|del*|rm*|sub*)
+		Remove "${@}";;
+	*)	Usage;;
 esac
 
 exit 0

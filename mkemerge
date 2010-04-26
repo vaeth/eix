@@ -15,17 +15,15 @@ distdir="`portageq distdir`"
 [ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
 GetEdir () {
-	local o i j
-	o="`portageq portdir_overlay`"
-	for i in ${o}
+	for overlay in `portageq portdir_overlay`
 	do	edir="${i}/app-portage/eix"
-		for j in "${edir}"/eix-*.ebuild
-		do	case "${j##*/}" in
+		for jebuild in "${edir}"/eix-*.ebuild
+		do	case "${jebuild##*/}" in
 				eix-9999*) continue;;
 			esac
-			test -f "${j}" || continue
-			test -r "${i}/profiles/repo_name" && \
-			repo_name=`cat -- "${i}"/profiles/repo_name` || \
+			test -f "${jebuild}" || continue
+			test -r "${overlay}/profiles/repo_name" && \
+			repo_name=`cat -- "${overlay}"/profiles/repo_name` || \
 			repo_name=''
 			return 0
 		done
@@ -36,16 +34,15 @@ GetEdir || Die "cannot find app-portage/eix in overlay"
 
 MoveEbuild () {
 	test -f "${1}" && return
-	local i n
-	n=''
-	for i in "${edir}"/eix-*.ebuild
-	do	case "${i##*/}" in
+	latest=''
+	for find_latest in "${edir}"/eix-*.ebuild
+	do	case "${find_latest##*/}" in
 			eix-9999*) continue;;
 		esac
-		test -f "${i}" && n="${i}"
+		test -f "${find_latest}" && latest="${find_latest}"
 	done
-	printf '%s\n' "Moving ${n} -> ${1##*/}"
-	mv -- "${n}" "${1}" || Die "cannot mv ${n} ${1}"
+	printf '%s\n' "Moving ${latest} -> ${1##*/}"
+	mv -- "${latest}" "${1}" || Die "cannot mv ${latest} ${1}"
 }
 
 RmOpt () {
@@ -75,7 +72,6 @@ InstallEbuildVersion () {
 }
 
 DoFirst () {
-	local i j v
 	for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 	do	for i in "${curr}"/eix-*."${j}"
 		do	test -e "${i}" || continue

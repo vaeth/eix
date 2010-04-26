@@ -21,7 +21,6 @@ ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
 Usage () {
-	local n p
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options]
@@ -93,7 +92,6 @@ DiffOnly () {
 }
 
 DoExecute () {
-	local curr_cmd
 	${emulatemode} && return 0
 	for curr_cmd
 	do	eval "${curr_cmd}" || die "`eval_gettext \
@@ -102,7 +100,6 @@ DoExecute () {
 }
 
 ParseConfigLine () {
-	local j mycmd
 	j="${2}"
 	while :
 	do	case "${j}" in
@@ -145,16 +142,15 @@ ParseConfigLine () {
 test -r "${eixsyncconf}" && haveconf=: || haveconf=false
 ReadVar eix_sync_conf EIX_SYNC_CONF
 ExecuteConfig () {
-	local i
 	after_sync=''
 	after_update=''
 	before_rsync=''
 	config_opts=''
-	${haveconf} && while read i
-	do	ParseConfigLine "${1}" "${i}"
+	${haveconf} && while read confline
+	do	ParseConfigLine "${1}" "${confline}"
 	done <"${eixsyncconf}"
-	while read i
-	do	ParseConfigLine "${1}" "${i}"
+	while read confline
+	do	ParseConfigLine "${1}" "${confline}"
 	done <<END_EIX_SYNC_CONF
 ${eix_sync_conf}
 END_EIX_SYNC_CONF
@@ -233,19 +229,18 @@ case "${time_begin}" in
 esac
 
 MyRun () {
-	local timevar b e r
 	if [ "${1}" = '-t' ]
 	then	if ${measure_time}
 		then	timevar="time_${2}"
 			shift 2
-			b="`date '+%s' 2>/dev/null`" || measure_time=false
+			begt="`date '+%s' 2>/dev/null`" || measure_time=false
 			"${@}"
-			r=${?}
-			${measure_time} && e="`date +%s 2>/dev/null`" \
+			runstat=${?}
+			${measure_time} && endt="`date +%s 2>/dev/null`" \
 				|| measure_time=false
 			${measure_time} && \
-				eval "${timevar}"'=`expr "${e}" - "${b}"`'
-			return ${r}
+				eval "${timevar}"'=`expr "${endt}" - "${begt}"`'
+			return ${runstat}
 		fi
 		shift 2
 	fi
@@ -266,7 +261,6 @@ DoHook () {
 }
 
 RootTest () {
-	local i
 	${emulatemode} || return 0
 	{ echo; gettext \
 'Nothing was executed, because a heuristic shows that root permissions
@@ -292,7 +286,6 @@ PrintingTimes () {
 		printf "`gettext '%6d seconds for %s\n'`" "${1}" "${2}"
 }
 PrintTimes () {
-	local ftime
 	${measure_time} || return 0
 	measure_time=false
 	einfo "`gettext 'Time statistics:'`"
@@ -310,6 +303,7 @@ PrintTimes () {
 tmpfile=''
 exitcode=0
 ExitAll () {
+	trap : EXIT HUP INT TERM
 	[ -z "${tmpfile}" ] || rm -f -- "${tmpfile}"
 	tmpfile=''
 	trap - EXIT HUP INT TERM
@@ -325,7 +319,6 @@ MakeTempFile () {
 
 preprsync=false
 PrepRsync () {
-	local curr_cmd PORTAGE_RSYNC_OPTS PORTAGE_RSYNC_EXTRA_OPTS c
 	GetPortdir
 	hostdir="${1#*:}"
 	if [ -n "${hostdir}" ] && [ "${hostdir}" != "${1}" ]
@@ -334,15 +327,15 @@ PrepRsync () {
 	fi
 	hostdir="${hostdir%/}/"
 	${preprsync} && return
-	PORTAGE_RSYNC_OPTS="`portageq envvar PORTAGE_RSYNC_OPTS`"
-	PORTAGE_RSYNC_EXTRA_OPTS="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
+	portage_rsync_opts="`portageq envvar PORTAGE_RSYNC_OPTS`"
+	portage_rsync_extra_opts="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
 	eval "set -- ${before_rsync}"
 	for curr_cmd
 	do	c=`eval "${curr_cmd}"` || \
 			die "`eval_gettext '${curr_cmd} failed'`"
 		eval "${c}"
 	done
-	rsync_opts="${PORTAGE_RSYNC_OPTS} ${PORTAGE_RSYNC_EXTRA_OPTS}"
+	rsync_opts="${portage_rsync_opts} ${portage_rsync_extra_opts}"
 	preprsync=:
 }
 
@@ -359,7 +352,6 @@ ClearCache () {
 }
 
 CallEmergeSync () {
-	local runarg
 	if [ -n "${server}" ]
 	then	${emulatemode} && return
 		PrepRsync "${server}"
@@ -438,7 +430,6 @@ MovePrevious () {
 }
 
 UpdateDiff () {
-	local d
 	${doupdate} || return 0
 	if ${usetemp}
 	then	${emulatemode} && return

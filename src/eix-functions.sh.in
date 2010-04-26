@@ -12,14 +12,13 @@
 
 # This must happen in a function to enforce an empty argument list.
 ReadFunctions () {
-	local i
 	ReadGettext
 	[ "${local_eprefix_portage_exec-unset}" = 'unset' ] &&
 		ReadVar local_eprefix_portage_exec EPREFIX_PORTAGE_EXEC
-	for i in "${local_eprefix_portage_exec}/etc/init.d/functions.sh" \
+	for eixf_i in "${local_eprefix_portage_exec}/etc/init.d/functions.sh" \
 		"${local_eprefix_portage_exec}/sbin/functions.sh"
-	do	test -r "${i}" || continue
-		. "${i}"
+	do	test -r "${eixf_i}" || continue
+		. "${eixf_i}"
 		return
 	done
 	printf '%s: %s' "${0##*/}" "`gettext 'cannot read functions.sh'`" >&2
@@ -28,9 +27,8 @@ ReadFunctions () {
 
 : ${read_var_prg:=eix-update}
 ReadVar () {
-	local ReadVar_
-	ReadVar_=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"`
-	eval "${1}=\"\${ReadVar_%X}\" && [ \"\${1}\" != \"\${ReadVar_}\" ]"
+	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"`
+	eval "${1}=\"\${eixf_read%X}\" && [ \"\${1}\" != \"\${eixf_read}\" ]"
 }
 
 die () {
@@ -40,10 +38,9 @@ die () {
 }
 
 PerLine () {
-	local i
 	while IFS='
-' read i
-	do	"${@}" "${i}"
+' read eixf_line
+	do	"${@}" "${eixf_line}"
 	done
 }
 
@@ -54,7 +51,6 @@ GetPortdir () {
 verbose=:
 
 RunCommand () {
-	local ret c
 	if ${verbose}
 	then	einfo "${1}"
 		shift
@@ -64,10 +60,10 @@ RunCommand () {
 	ebegin "${1}"
 	shift
 	"${@}" >/dev/null
-	ret=${?}
-	c="${*}"
-	eend ${ret} "`eval_gettext 'Problems running ${c}'`"
-	return ${ret}
+	eixf_ret=${?}
+	eixf_cmd="${*}"
+	eend ${eixf_ret} "`eval_gettext 'Problems running ${eixf_cmd}'`"
+	return ${eixf_ret}
 }
 
 ( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && eval '
@@ -80,23 +76,22 @@ expr () {
 # Exit status is 0 if at least one replacement took place, and
 # $replace_count contains at string of length(number of replacements) x'en.
 Replace () {
-	local ReplaceA_ ReplaceB_ ReplaceC_
-	ReplaceA_=''
-	ReplaceC_='break'
+	eixf_repla=''
+	eixf_replc='break'
 	case "${1}" in
-		-*) ReplaceC_=''; shift;;
+		-*) eixf_replc=''; shift;;
 	esac
 	replace_count=''
 	eval "while {
-		ReplaceB_=\${${1}%%\"\${2}\"*}
-		[ \"\${ReplaceB_}\" != \"\${${1}}\" ]
+		eixf_replb=\${${1}%%\"\${2}\"*}
+		[ \"\${eixf_replb}\" != \"\${${1}}\" ]
 	}
-	do	ReplaceA_=\"\${ReplaceA_}\${ReplaceB_}\${3}\"
+	do	eixf_repla=\"\${eixf_repla}\${eixf_replb}\${3}\"
 		${1}=\${${1}#*\"\${2}\"}
 		replace_count=\"\${replace_count}x\"
-		${ReplaceC_}
+		${eixf_replc}
 	done
-	${1}=\"\${ReplaceA_}\${${1}}\""
+	${1}=\"\${eixf_repla}\${${1}}\""
 	[ -n "${replace_count}" ]
 }
 
@@ -105,17 +100,16 @@ Replace () {
 #    eval "${VAR}" is 'safe' and groups Args correctly.
 # With option -c, VAR is cleaned in advance.
 Push () {
-	local PushA_ PushB_
 	case "${1}" in
 		-*) shift; eval "${1}=''";;
 	esac
-	PushA_="${1}"
+	eixf_pusha="${1}"
 	shift
-	eval "for PushB_
-	do	Replace -g PushB_ \"'\" \"'\\\\''\"
-		if [ -z \"\${${PushA_}}\" ]
-		then	${PushA_}=\"'\${PushB_}'\"
-		else	${PushA_}=\"\${${PushA_}} '\${PushB_}'\"
+	eval "for eixf_pushb
+	do	Replace -g eixf_pushb \"'\" \"'\\\\''\"
+		if [ -z \"\${${eixf_pusha}}\" ]
+		then	${eixf_pusha}=\"'\${eixf_pushb}'\"
+		else	${eixf_pusha}=\"\${${eixf_pusha}} '\${eixf_pushb}'\"
 		fi
 	done"
 }
@@ -125,14 +119,13 @@ AddUpdateArgs () {
 }
 
 AddUpdateQuoting () {
-	local k
-	k="${1}"
+	eixf_aq="${1}"
 	shift
-	Replace -g k '\' '\\'
-	Replace -g k '?' '\?'
-	Replace -g k '*' '\*'
-	Replace -g k '[' '\['
-	AddUpdateArgs "${k}" "${@}"
+	Replace -g eixf_aq '\' '\\'
+	Replace -g eixf_aq '?' '\?'
+	Replace -g eixf_aq '*' '\*'
+	Replace -g eixf_aq '[' '\['
+	AddUpdateArgs "${eixf_aq}" "${@}"
 }
 
 AddMethod () {
@@ -145,17 +138,15 @@ AddRepoName () {
 }
 
 AddOverlays () {
-	local j
-	for j
-	do	AddUpdateArgs '-a' "${j}"
+	for eixf_ao
+	do	AddUpdateArgs '-a' "${eixf_ao}"
 	done
 }
 
 AddExcludes () {
-	local j
-	for j
+	for eixf_ax
 	do	AddUpdateArgs '-x'
-		AddUpdateQuoting "${j}"
+		AddUpdateQuoting "${eixf_ax}"
 	done
 }
 
@@ -171,28 +162,26 @@ CallUpdate () {
 }
 
 AddLocalMethods () {
-	local i l
 	GetPortdir
 	AddMethod "${local_portdir}" "eix"
-	for i in `portageq portdir_overlay` `eix-update --print ADD_OVERLAY`
-	do	l="${i}"
-		Replace -g l '\' '\\'
-		Replace -g l ':' '\:'
-		AddMethod "${i}" "eix::${l}"
+	for eixf_alm in `portageq portdir_overlay` `eix-update --print ADD_OVERLAY`
+	do	eixf_al="${eixf_alm}"
+		Replace -g eixf_al '\' '\\'
+		Replace -g eixf_al ':' '\:'
+		AddMethod "${eixf_alm}" "eix::${eixf_al}"
 	done
 }
 
 # Remove optional trailing newline from all variables (arguments).
 # This is necessary as some shells won't take ${Var%"[newline]"}
 Chomp () {
-	local ChompA_ ChompB_
-	for ChompA_
-	do	eval "ChompB_=\"\${${ChompA_}}\""
-		case "${ChompB_}" in
+	for eixf_chompa
+	do	eval "eixf_chompb=\"\${${eixf_chompa}}\""
+		case "${eixf_chompb}" in
 			*'
 ')
-			ChompB_="${ChompB_%?}"
-			eval "${ChompA_}=\"\${ChompB_}\"";;
+			eixf_chompb="${eixf_chompb%?}"
+			eval "${eixf_chompa}=\"\${eixf_chompb}\"";;
 		esac
 	done
 }
@@ -201,15 +190,14 @@ Chomp () {
 # Dies if a command cannot be found.
 
 Pathify () {
-	local PathifyA_ PathifyB_ PathifyC_
-	for PathifyC_
-	do	eval "PathifyA_=\"\${${PathifyC_}}\""
-		PathifyB_=`command -v "${PathifyA_}"; printf A` && \
-			PathifyB_="${PathifyB_%A}" && Chomp PathifyB_ && \
-			[ -n "${PathifyB_}" ] && test -x "${PathifyB_}" || \
+	for eixf_pathc
+	do	eval "eixf_patha=\"\${${eixf_pathc}}\""
+		eixf_pathb=`command -v "${eixf_patha}"; printf A` && \
+			eixf_pathb="${eixf_pathb%A}" && Chomp eixf_pathb && \
+			[ -n "${eixf_pathb}" ] && test -x "${eixf_pathb}" || \
 			die "`eval_gettext \
-				'${PathifyA_} cannot be found in path'`"
-		eval "${PathifyC_}=\${PathifyB_}"
+				'${eixf_patha} cannot be found in path'`"
+		eval "${eixf_pathc}=\${eixf_pathb}"
 	done
 }
 
@@ -221,38 +209,38 @@ Pathify () {
 # (the first token in relative will be a space if the list is not empty).
 
 NormalizeNames () {
-	local NormA_ NormB_ NormC_ NormD_
 	if [ -z "${have_readlink}" ]
 	then	command -v readlink >/dev/null 2>&1 \
 			&& have_readlink=: || have_readlink=false
 	fi
-	NormD_=0
+	eixf_normd=0
 	relative=''
-	for NormC_
-	do	eval "NormA_=\"\${${NormC_}}\""
-		if [ -z "${NormA_}" ]
-		then	NormD_=1
+	for eixf_normc
+	do	eval "eixf_norma=\"\${${eixf_normc}}\""
+		if [ -z "${eixf_norma}" ]
+		then	eixf_normd=1
 			continue
 		fi
-		case "${NormA_}" in
+		case "${eixf_norma}" in
 			/*) :;;
-			*) relative="${relative} ${NormC_}";;
+			*) relative="${relative} ${eixf_normc}";;
 		esac
 		if ${have_readlink}
 		then	# Append A to avoid loss of trailing space in `...`
-			NormB_=`readlink -f -- "${NormA_}"; printf A` && \
-				NormB_="${NormB_%A}" && Chomp NormB_ && \
-				[ -n "${NormB_}" ] && \
-					NormA_="${NormB_}"
+			eixf_normb=`readlink -f -- "${eixf_norma}"; printf A` \
+				&& eixf_normb="${eixf_normb%A}" \
+				&& Chomp eixf_normb \
+				&& [ -n "${eixf_normb}" ] && \
+					eixf_norma="${eixf_normb}"
 		fi
-		eval "${NormC_}=\"\${NormA_}\""
-		while Replace -g "${NormC_}" '//' '/'
+		eval "${eixf_normc}=\"\${eixf_norma}\""
+		while Replace -g "${eixf_normc}" '//' '/'
 		do :
 		done
-		eval "[ \"\${${NormC_}}\" = '/' ] || \
-			${NormC_}=\"\${${NormC_}%/}\""
+		eval "[ \"\${${eixf_normc}}\" = '/' ] || \
+			${eixf_normc}=\"\${${eixf_normc}%/}\""
 	done
-	return ${NormD_}
+	return ${eixf_normd}
 }
 
 : ${read_gettext_status=}
@@ -273,13 +261,12 @@ ReadGettext () {
 		printf '%s' "${*}"
 	}
 	eval_gettext () {
-		local l
-		l="${*}"
-		Replace -g l '\' '\\'
-		Replace -g l '$(' '\$('
-		Replace -g l '`' '\`'
-		Replace -g l '"' '\"'
-		eval "printf '%s' \"${l}\""
+		eixf_gettext="${*}"
+		Replace -g eixf_gettext '\' '\\'
+		Replace -g eixf_gettext '$(' '\$('
+		Replace -g eixf_gettext '`' '\`'
+		Replace -g eixf_gettext '"' '\"'
+		eval "printf '%s' \"${eixf_gettext}\""
 	}
 	ngettext () {
 		gettext "${@}"
@@ -291,28 +278,26 @@ ReadGettext () {
 }
 
 ReadGettextSub () {
-	local i
 	. gettext.sh && return
-	i="`command -v gettext.sh 2>/dev/null`" && \
-		[ -n "${i}" ] && . "${i}" && return
+	eixf_i="`command -v gettext.sh 2>/dev/null`" && \
+		[ -n "${eixf_i}" ] && . "${eixf_i}" && return
 	. /usr/bin/gettext.sh
 }
 
 AssignTempEmulate () {
-	local AssignTempA_ AssignTempB_ AssignTempC_
-	AssignTempA_=0
-	while [ ${AssignTempA_} -le 9999 ]
-	do	AssignTempB_="`od -An -N2 -x /dev/random 2>/dev/null`" || \
-			AssignTempB_=''
-		AssignTempB_="${AssignTempB_#* }${AssignTempA_}${RANDOM}"
-		AssignTempB_="/tmp/${0##*/}.${$}${RANDOM}${AssignTempB_}"
+	eixf_assa=0
+	while [ ${eixf_assa} -le 9999 ]
+	do	eixf_assb="`od -An -N2 -x /dev/random 2>/dev/null`" || \
+			eixf_assb=''
+		eixf_assb="${eixf_assb#* }${eixf_assa}${RANDOM}"
+		eixf_assb="/tmp/${0##*/}.${$}${RANDOM}${eixf_assb}"
 		# We cannot avoid a race condition:
 		# So at least we minimize it to one line.
 		if [ "${2}" = '-d' ]
-		then	test ! -e "${AssignTempB_}" && mkdir "${AssignTempB_}"
-		else	test ! -e "${AssignTempB_}" && : >"${AssignTempB_}"
-		fi && eval "${1}=\"\${AssignTempB_}\"" && return
-		AssignTempA_="`expr ${AssignTempA_} + 1`"
+		then	test ! -e "${eixf_assb}" && mkdir "${eixf_assb}"
+		else	test ! -e "${eixf_assb}" && : >"${eixf_assb}"
+		fi && eval "${1}=\"\${eixf_assb}\"" && return
+		eixf_assa="`expr ${eixf_assa} + 1`"
 	done
 	die "`gettext 'found no free tempname after 10000 attempts'`"
 }

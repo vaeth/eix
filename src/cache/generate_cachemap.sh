@@ -3,7 +3,6 @@
 export LC_ALL=C
 
 to_classname () {
-	local i j
 	case "$1" in
 		port*2.1*) i=port2_1_2_;;
 		*) i="$1";;

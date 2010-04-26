@@ -18,11 +18,13 @@ installed_output=$(tempfile)
 testing_output=$(tempfile)
 
 cleanup_tempfiles() {
+    trap : INT HUP TERM KILL
     rm -f -- "$installed_output" "$installed_cache" \
              "$testing_output" "$testing_cache"
+    trap - INT HUP TERM KILL
 }
 
-trap cleanup_tempfiles SIGINT SIGHUP SIGTERM SIGKILL
+trap cleanup_tempfiles INT HUP TERM KILL
 
 eix_prefix="${0%/*}/../src"
 
