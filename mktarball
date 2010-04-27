@@ -1,11 +1,23 @@
 #! /usr/bin/env sh
 
+project="eix"
+mkclean="./mksvnclean"
+mkemerge="./mkemerge"
+mkrelease="./mkrelease"
+mkmake="./mkmake"
+mkmakeextra="UPDATEPOFILES="
+make_opts='-0OQEeq'
+
 export LC_ALL XZ_OPT
 LC_ALL=C
 XZ_OPT='--extreme'
 
+Echo () {
+	printf '%s\n'
+}
+
 Usage () {
-	printf '%s\n' "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
+	Echo "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
 options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 	exit ${1:-1}
 }
@@ -16,7 +28,7 @@ Die () {
 }
 
 Run () {
-	printf '%s\n' "${*}"
+	Echo "${*}"
 	"${@}" || Die "${*} failed" ${?}
 }
 
@@ -44,30 +56,32 @@ do	opt="${1#-}"
 done
 [ -z "${dist}" ] && Usage
 
-test -e Makefile || test -e configure || test -e Makefile.in && Run ./mksvnclean
+if [ -n "${mkclean}" ]
+then test -e Makefile || test -e configure || test -e Makefile.in \
+	&& test -e "${mkclean}" && Run "${mkclean}"
+fi
 
 unset LDFLAGS CFLAGS CXXFLAGS
-mkmake_opts='-0OQEeq'
 if [ -n "${fakeroot}" ] && command -v "${fakeroot}" >/dev/null 2>&1
-then	Run ./mkmake ${mkmake_opts}n
-	docmd="${fakeroot} ./mkmake ${mkmake_opts}r"
-else	docmd="./mkmake ${mkmake_opts}"
+then	Run ${mkmake} ${make_opts}n
+	docmd="${fakeroot} ${mkmake} ${make_opts}r"
+else	docmd="${mkmake} ${make_opts}"
 fi
 for i in ${dist}
-do	Run ${docmd} "UPDATEPOFILES=" "${i}"
+do	Run ${docmd} ${mkmakeextra} "${i}"
 done
 
 found=false
 for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
-do	for i in "${PWD}"/eix-*."${j}"
+do	for i in "${PWD}/${project}"-*".${j}"
 	do	test -f "${i}" || continue
-		${found} || printf '%s\n' "Available tarballs:"
+		${found} || Echo "Available tarballs:"
 		found=:
 		printf '\t%s\n' "${i}"
 	done
 done
 ${found} || Die "For some reason no tarball was created"
-printf "%s\n" \
-"The tarballs will be removed with ./mksvnclean
-To install with portage run as root ./mkemerge
-To tag the release in svn you should run ./mkrelease"
+[ -n "${mkclean}" ] && Echo "The tarballs will be removed with ${mkclean}"
+[ -n "${mkemerge}" ] && Echo "To install with portage run as root ${mkemerge}"
+[ -n "${mkrelease}" ] && \
+	Echo "To tag the release in svn you should run ${mkrelease}"

@@ -1,7 +1,14 @@
 #! /usr/bin/env sh
 
+category="app-portage"
+project="eix"
+
 export LC_ALL
 LC_ALL=C
+
+Echo () {
+	printf '%s\n' "${*}"
+}
 
 Die () {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
@@ -16,10 +23,11 @@ distdir="`portageq distdir`"
 
 GetEdir () {
 	for overlay in `portageq portdir_overlay`
-	do	edir="${i}/app-portage/eix"
-		for jebuild in "${edir}"/eix-*.ebuild
+	do	edir="${overlay}/${category}/${project}"
+		test -d "${edir}" || continue
+		for jebuild in "${edir}/${project}-"*.ebuild
 		do	case "${jebuild##*/}" in
-				eix-9999*) continue;;
+				"${project}-9999"*) continue;;
 			esac
 			test -f "${jebuild}" || continue
 			test -r "${overlay}/profiles/repo_name" && \
@@ -30,18 +38,19 @@ GetEdir () {
 	done
 	return 1
 }
-GetEdir || Die "cannot find app-portage/eix in overlay"
+GetEdir || Die "cannot find ${category}/${project} in overlay"
 
 MoveEbuild () {
 	test -f "${1}" && return
 	latest=''
-	for find_latest in "${edir}"/eix-*.ebuild
+	for find_latest in "${edir}/${project}-"*.ebuild
 	do	case "${find_latest##*/}" in
-			eix-9999*) continue;;
+		"${project}-"*9999.ebuild)	continue;;
 		esac
 		test -f "${find_latest}" && latest="${find_latest}"
 	done
-	printf '%s\n' "Moving ${latest} -> ${1##*/}"
+	[ -n "${latest}" ] || return
+	Echo "Moving ${latest} -> ${1##*/}"
 	mv -- "${latest}" "${1}" || Die "cannot mv ${latest} ${1}"
 }
 
@@ -52,36 +61,34 @@ RmOpt () {
 InstallEbuildVersion () {
 	chown portage:portage -- "${1}"
 	chmod 664 -- "${1}"
-	printf '%s\n' "Moving ${1} -> ${distdir}"
+	Echo "Moving ${1} -> ${distdir}"
 	mv -- "${1}" "${distdir}/${1##*/}"
-	MoveEbuild "${edir}/eix-${2}.ebuild"
-	(
-		cd -- "${edir}" || Die "cannot change to ${edir}"
+	MoveEbuild "${edir}/${project}-${2}.ebuild" || \
+		Die "failed to rename ebuild in ${edir}"
+	(	cd -- "${edir}" || Die "cannot change to ${edir}"
 		RmOpt "Manifest" || Die "cannot remove Manifest"
-		printf '%s\n' "ebuild ${edir}/eix-${2}.ebuild manifest"
-		ebuild -- "eix-${2}.ebuild" manifest || Die "ebuild failed"
+		Echo "ebuild ${edir}/${project}-${2}.ebuild manifest"
+		ebuild -- "${project}-${2}.ebuild" manifest \
+			|| Die "ebuild failed"
 	) || exit
 	if [ -n "${repo_name}" ] && command -v egencache >/dev/null 2>&1
-	then	printf '%s\n' "egencache --repo=${repo_name} --update"
+	then	Echo "egencache --repo=${repo_name} --update"
 		egencache --repo="${repo_name}" --update || \
 			Die "egencache failed"
 	fi
-	printf '%s\n' "emerge -1 =app-portage/eix-${2}"
-	exec emerge -1 -- "=app-portage/eix-${2}"
+	Echo "emerge -1 =${category}/${project}-${2}"
+	exec emerge -1 -- "=${category}/${project}-${2}"
 	Die "cannot execute emerge"
 }
 
-DoFirst () {
-	for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
-	do	for i in "${curr}"/eix-*."${j}"
-		do	test -e "${i}" || continue
-			v="${i##*/eix-}"
-			v=${v%".${j}"}
-			InstallEbuildVersion "${i}" "${v}"
-			return
-		done
+for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+do	for i in "${curr}/${project}-"*."${j}"
+	do	test -e "${i}" || continue
+		v="${i##*/}"
+		v=${v#"${project}-"}
+		v=${v%".${j}"}
+		InstallEbuildVersion "${i}" "${v}"
+		exit
 	done
-	Die "No tarball found in ${curr}"
-}
-
-DoFirst || exit
+done
+Die "No tarball found in ${curr}"
