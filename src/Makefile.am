@@ -9,7 +9,10 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 localedir = $(datadir)/locale
-AM_CXXFLAGS = -DSYSCONFDIR=\"$(sysconfdir)\" -DLOCALEDIR=\"$(localedir)\"
+AM_CXXFLAGS = \
+-DSYSCONFDIR=\"$(sysconfdir)\" \
+-DLOCALEDIR=\"$(localedir)\" \
+$(SQLITE_CFLAGS)
 
 nodist_sysconf_DATA = \
 eixrc/eixrc

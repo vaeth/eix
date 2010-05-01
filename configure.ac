@@ -626,31 +626,41 @@ AS_IF([${attribute_noreturn}],
 
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
-AS_VAR_SET([SQLITE_LIBS], [])
+AS_VAR_SET([support_sqlite], [false])
+AS_VAR_SET([manual_sqlite], [false])
+AS_VAR_SET([pkgcfg_check_sqlite], [false])
 AC_ARG_WITH([sqlite],
 	[AS_HELP_STRING([--with-sqlite],
 		[Compile in support for cache method sqlite])],
 	[AS_CASE(["${withval}"],
 		[no], [MV_MSG_RESULT([no], [on request])],
-		[MV_MSG_RESULT([yes], [on request])
-		AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
-			[AS_VAR_SET([SQLITE_LIBS], ["`pkg-config --libs sqlite3`"])])
-		# If pkg-config is not available or failed, we use a default
-		AS_VAR_IF([SQLITE_LIBS], [],
-			[AC_MSG_WARN([ignoring pkg-config and using -lsqlite3])
-			AS_VAR_SET([SQLITE_LIBS], ["-lsqlite3"])])])],
-	[# If autodetection of sqlite is necessary, we rely on pkg-config
-	AS_IF([eval command -v pkg-config >${DEV_NULL} 2>&1],
-		[AS_VAR_SET([SQLITE_LIBS], ["`eval pkg-config --libs sqlite3 2>${DEV_NULL}`"])])
-	AS_VAR_IF([SQLITE_LIBS], [],
-		[MV_MSG_RESULT([no], [autodetected])],
-		[MV_MSG_RESULT([yes], [autodetected])])])
-AS_VAR_IF([SQLITE_LIBS], [],
-	[],
+		[yes], [MV_MSG_RESULT([yes], [on request])
+			AS_VAR_SET([support_sqlite], [:])
+			m4_ifdef([PKG_CHECK_MODULES],
+				[AS_VAR_SET([pkgcfg_check_sqlite], [:])],
+				[AS_VAR_SET([manual_sqlite], [:])])],
+		[m4_ifdef([PKG_CHECK_MODULES],
+			[MV_MSG_RESULT([trying autodetect])
+			AS_VAR_SET([pkgcfg_check_sqlite], [:])],
+			[MV_MSG_RESULT([no], [autodetection needs pkg-config])])])])
+AS_IF([${pkgcfg_check_sqlite}],
+	[PKG_CHECK_MODULES([SQLITE], [sqlite3],
+		[AS_VAR_SET([support_sqlite], [:])],
+		[AS_IF([${support_sqlite}],
+			[MV_MSG_RESULT([yes], [although pkg-config failed])
+			AS_VAR_SET([manual_sqlite], [:])],
+			[MV_MSG_RESULT([no], [autodetected])])])])
+AS_IF([${manual_sqlite}],
+	[AS_VAR_SET([SQLITE_LIBS], ["-lsqlite3"])
+	AS_VAR_SET([SQLITE_CFLAGS], [])])
+AS_IF([${support_sqlite}],
 	[AC_DEFINE([WITH_SQLITE],
 		[1],
-		[Define to 1 if cache method sqlite is wanted])])
+		[Define to 1 if cache method sqlite is wanted])],
+	[AS_VAR_SET([SQLITE_LIBS], [])
+	AS_VAR_SET([SQLITE_CFLAGS], [])])
 AC_SUBST([SQLITE_LIBS])
+AC_SUBST([SQLITE_CFLAGS])
 
 AC_MSG_CHECKING([PORTDIR_CACHE_METHOD default])
 AC_ARG_WITH([portdir-cache-method],

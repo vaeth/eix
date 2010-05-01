@@ -8,6 +8,7 @@
 	  of the patch.
 	- scripts: Avoid race conditions in traps.
 	- scripts: Avoid "local" keyword as it is not POSIX.
+	- configure: Treat sqlite with PKG_CHECK_MODULES if possible.
 
 *eix-0.20.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
