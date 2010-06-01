@@ -8,14 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-04-26 22:38+0200\n"
+"POT-Creation-Date: 2010-06-01 23:20+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
-"Last-Translator:  <vaeth@mathematik.uni-wuerzburg.de>\n"
+"Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: German\n"
 
 #: src/eix-sync.sh:26
 #, sh-format
@@ -92,7 +93,7 @@ msgstr ""
 "gespeichert.\n"
 "Die Datei ${eixsyncconf} und die (Environment) Variable EIX_SYNC_CONF\n"
 "(die wiederum als Default die Delayed Substituion von EIX_SYNC_OPTS ist)\n"
-"bestimen, für welche Overlays layman aufgerufen wird, welche Default-"
+"bestimmen, für welche Overlays layman aufgerufen wird, welche Default-"
 "Optionen\n"
 "benutzt werden, und sie können auch verschiedene Hooks enthalten:\n"
 "\"man eix\" erklärt Genaueres hierzu.\n"
@@ -144,7 +145,7 @@ msgstr ""
 "-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
 "     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
 "     aktiv sind. (Diese Option ist kein Default mehr).\n"
-"-R   Löscht vorherghendes -r (z.B. aus einem ${eixsyncconf}).\n"
+"-R   Löscht vorhergehendes -r (z.B. aus einem ${eixsyncconf}).\n"
 "-e   Vermeidet heuristischen Test, ob Rootrechte benötigt werden.\n"
 "-h   Zeigt diesen Text und beendet das Programm danach."
 
@@ -155,7 +156,7 @@ msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
 
 #: src/eix-sync.sh:91
 msgid "Could not execute eix-diff"
-msgstr "Konnte %s nicht korrekt ausführen"
+msgstr "Konnte eix-diff nicht korrekt ausführen"
 
 #: src/eix-sync.sh:98
 #, sh-format
@@ -307,7 +308,7 @@ msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
 #: src/eix-sync.sh:423
 #, sh-format
 msgid "Copying old ${eixcache} cache to ${eixprevious}"
-msgstr "Kopiere alten ${eixcache} Cache nach${eixprevious}"
+msgstr "Kopiere alten ${eixcache} Cache nach ${eixprevious}"
 
 #: src/eix-sync.sh:426
 #, sh-format
@@ -439,25 +440,25 @@ msgstr "(Gesamtzahl obiger Versionen: ${c})"
 msgid ""
 "The following package versions are installed with repository information:"
 msgstr ""
-"Die folgenden Paketversonen sind mit Repository-Information installiert:"
+"Die folgenden Paketversionen sind mit Repository-Information installiert:"
 
 #: src/eix-test-obsolete.sh:169
 msgid ""
 "The following package versions are installed without repository information:"
 msgstr ""
-"Die folgenden Paketversonen sind ohne Repository-Information installiert:"
+"Die folgenden Paketversionen sind ohne Repository-Information installiert:"
 
 #: src/eix-test-obsolete.sh:177
 msgid ""
 "The following package versions are installed with build-time information:"
 msgstr ""
-"Die folgenden Paketversonen sind mit Buildtime-Information installiert:"
+"Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
 
 #: src/eix-test-obsolete.sh:180
 msgid ""
 "The following package versions are installed without build-time information:"
 msgstr ""
-"Die folgenden Paketversonen sind ohne Buildtime-Information installiert:"
+"Die folgenden Paketversionen sind ohne Buildtime-Information installiert:"
 
 #: src/eix-test-obsolete.sh:231
 #, sh-format
@@ -578,7 +579,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 
 #: src/eix-functions.sh.in:160
 msgid "Calling eix-update"
-msgstr "Starte updat-eix"
+msgstr "Starte eix-update"
 
 #: src/eix-functions.sh.in:199
 #, sh-format
@@ -587,7 +588,7 @@ msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
 #: src/eix-functions.sh.in:302
 msgid "found no free tempname after 10000 attempts"
-msgstr "keinen freien Temporärnamen nach 10000 Versuchen gefunden"
+msgstr "nach 10000 Versuchen keinen freien Temporärnamen gefunden"
 
 #: src/eix-functions.sh.in:316
 msgid "cannot create temporary directory"
@@ -1054,8 +1055,8 @@ msgstr ""
 "     --print-overlay-label Ausgabe des Labels des angegebenen Overlays\n"
 "\n"
 "   Speziell:\n"
-"     -t  --test-non-matching Gib vor anderen Ausgaben nicht-"
-"passendeEinträge\n"
+"     -t  --test-non-matching Gib vor anderen Ausgaben nicht-passende "
+"Einträge\n"
 "                           aus /etc/portage/package.* und nicht-passende "
 "Namen\n"
 "                           installierte Pakete aus; am besten wird diese\n"
@@ -1078,7 +1079,7 @@ msgstr ""
 "                            Dies ist schneller mit COUNT_ONLY_PRINTED=false\n"
 "         --brief2 (toggle)  Stop nach Ausgabe des zweiten Pakets\n"
 "     --xml (toggle)         Ausgabe in XML-Format\n"
-"     -c, --compact (toggle) Kompake Ausgabe\n"
+"     -c, --compact (toggle) Kompakte Ausgabe\n"
 "     -v, --verbose (toggle) Ausführliche Ausgabe\n"
 "     -x, --versionsort  (toggle) Sortiere die Ausgabe nach Versionen/Slots\n"
 "     -l, --versionlines (toggle) Jede Version in eigene Zeile und Ausgabe\n"
@@ -1089,7 +1090,7 @@ msgstr ""
 "\n"
 "TEST_OPTIONEN:\n"
 "  Verschiedene:\n"
-"    -I, --installed       EXPRESSION ist höchstens installierte Pakete "
+"    -I, --installed       EXPRESSION ist höchstens für installierte Pakete "
 "wahr.\n"
 "    -i, --multi-installed Nur für mehrfach installierte Pakete wahr.\n"
 "    -d, --dup-packages    Nur für doppelte Pakete.\n"
@@ -1099,7 +1100,7 @@ msgstr ""
 "    -u, --upgrade[+-]     Nur für Pakete, die nicht die beste Version\n"
 "                          des Slots installiert haben.\n"
 "                          +/-: Konfig. wie LOCAL_PORTAGE_CONFIG=true/false\n"
-"    --stable[+-]          Pakete mit einer stabilen version\n"
+"    --stable[+-]          Pakete mit einer stabilen Version\n"
 "    --testing[+-]         Pakete mit einer instabilen oder stabilen "
 "Version.\n"
 "    --non-masked[+-]      Pakete mit einer nicht-maskierter Version.\n"
@@ -1286,7 +1287,7 @@ msgstr ""
 " -q, --quiet (toggle)    keine Ausgabe\n"
 " -n, --nocolor           keine Farben\n"
 " -F, --force-color       Farben, auch wenn Ausgabe nicht auf Terminal geht\n"
-"     --dump              Ausgabe aller internen Variablen of stdout\n"
+"     --dump              Ausgabe aller internen Variablen auf stdout\n"
 "     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
 "\n"
@@ -1386,7 +1387,7 @@ msgstr ""
 "\n"
 " -h, --help              Ausgabe eines Hilfstexts\n"
 " -V, --version           Ausgabe der Versionsnummer\n"
-"     --dump              Ausgabe aller internen Variablen of stdout\n"
+"     --dump              Ausgabe aller internen Variablen auf stdout\n"
 "     --dump-defaults     Ausgabe der Default-Werte der internen Variables\n"
 "     --print             Ausgabe eines expandierten Variablenwerts\n"
 " -n, --nocolor           Unterdrücken von Effekten (Prozent-Status)\n"
@@ -1395,7 +1396,7 @@ msgstr ""
 " -q, --quiet             keine Ausgabe\n"
 "\n"
 " -o  --output            Ausgabe in eine anderes File als %s\n"
-"                         Außerdemm werden keine Rechte getestet.\n"
+"                         Außerdem werden keine Rechte getestet.\n"
 " -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
 "                         aus. Man kann auch PORTDIR mit dieser\n"
 "                         Option ausschließen.\n"
@@ -1593,7 +1594,7 @@ msgstr "Cachefile %s nicht lesbar: %s"
 #: src/cache/common/flat_reader.cc:46 src/cache/common/flat_reader.cc:68
 #, c-format
 msgid "Can't open %s: %s"
-msgstr "%s kan nicht geöffnet werden: %s"
+msgstr "%s kann nicht geöffnet werden: %s"
 
 #: src/cache/common/unpickle.cc:179
 msgid "wrong cpickle header"
@@ -1819,7 +1820,7 @@ msgid ""
 "You must not use delayed substitution in this variable."
 msgstr ""
 "Dieser Pfad wird bei Source-Kommandos in /etc/eixrc vorne angehängt.\n"
-"Falls er in /etc/eixrc gesetzt wird überschreibt er kurzzeit die "
+"Falls er in /etc/eixrc gesetzt wird, überschreibt er kurzzeitig die "
 "Environment.\n"
 "In dieser Variablen darf keine Delayed Substitution benutzt werden."
 
@@ -1829,7 +1830,8 @@ msgid ""
 "It contains code which is evaluated by eix-sync, so be aware of security!"
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition in EIX_SYNC_CONF benutzt.\n"
-"Sie enthält Code, der von eix-sync evaluiert wird, also Vorsicht!"
+"Sie enthält Code, der von eix-sync evaluiert wird. Also bitte richtig\n"
+"quoten und darauf achten, kein Sicherheitsloch zu öffnen!"
 
 #: src/eixrc/defaults.cc:34
 msgid ""
@@ -1921,9 +1923,10 @@ msgid ""
 "the choice %{EPREFIX}%{ROOT} will apply both; the default applies EPREFIX\n"
 "but not ROOT for these paths in such a case (i.e. if both are nonempty)."
 msgstr ""
-"Dies wirkt auf diejen Pfade, die sowohl von EPREFIX als auch von ROOT\n"
-"beeinflusst werden sollen. Hier wird also festgelegt, was zu tun ist, wenn\n"
-"beide nichtleer sind. Beispielsweise wir %{EPREFIX}%{ROOT} beides anwenden;\n"
+"Dies wirkt sich auf diejenigen Pfade aus, die sowohl von EPREFIX als auch\n"
+"von ROOT beeinflusst werden sollen. Hier wird also festgelegt,\n"
+"was zu tun ist, wenn beide nichtleer sind.\n"
+"Beispielsweise wird %{EPREFIX}%{ROOT} beides anwenden;\n"
 "der Default wendet EPREFIX aber nicht ROOT an, wenn beides nichtleer ist."
 
 #: src/eixrc/defaults.cc:90
@@ -1949,7 +1952,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:104
 msgid "This path is prepended to source commands in /etc/make.{conf,globals}."
 msgstr ""
-"Dieser Pfad wird bei Source-Kommandoe commands in\n"
+"Dieser Pfad wird bei Source-Kommandos in\n"
 "/etc/make.{conf,globals} vorne angehängt."
 
 #: src/eixrc/defaults.cc:108
@@ -2030,14 +2033,14 @@ msgid ""
 "if you use more sophisticated permission setups (e.g. NSS/LDAP)."
 msgstr ""
 "Sollen Tests auf Gruppenzugehörigkeit und Zugriffsrechte vermieden werden?\n"
-"Dies empfielt sich bei komplizierteren Rechtemodellen wie etwa NSS/LDAP."
+"Dies empfiehlt sich bei komplizierteren Rechtemodellen wie etwa NSS/LDAP."
 
 #: src/eixrc/defaults.cc:174
 msgid ""
 "The user which is used for running bash on ebuilds when\n"
 "cache method ebuild or ebuild* is used. See EBUILD_UID."
 msgstr ""
-"Der Benutzer, unter dem die bash fpr ebuilds ausgeführt wird. Dies betrifft\n"
+"Der Benutzer, unter dem die bash für ebuilds ausgeführt wird. Dies betrifft\n"
 "die Cachemethoden ebuild und ebuild*. Siehe auch EBUILD_UID."
 
 #: src/eixrc/defaults.cc:179
@@ -2045,7 +2048,7 @@ msgid ""
 "The group which is used for running bash on ebuilds when\n"
 "cache method ebuild or ebuild* is used. See EBUILD_GID."
 msgstr ""
-"Die Gruppe, unter dem die bash fpr ebuilds ausgeführt wird. Dies betrifft\n"
+"Die Gruppe, unter dem die bash für ebuilds ausgeführt wird. Dies betrifft\n"
 "die Cachemethoden ebuild und ebuild*. Siehe auch EBUILD_GID."
 
 #: src/eixrc/defaults.cc:184
@@ -2406,7 +2409,7 @@ msgid ""
 "It defines the color used for printing the version of installed packages."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe der Versionen installerter Pakete."
+"Sie definiert die Farbe der Versionen installierter Pakete."
 
 #: src/eixrc/defaults.cc:428
 msgid ""
@@ -2687,7 +2690,7 @@ msgid ""
 "It defines the slot format printed for slotsorted versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie legt das Slot-Format for slotsortierte Versionen fest."
+"Sie legt das Slot-Format für slotsortierte Versionen fest."
 
 #: src/eixrc/defaults.cc:699
 msgid ""
@@ -2968,7 +2971,7 @@ msgstr ""
 "benutzt.\n"
 "Sie gibt ein Newline aus, wenn es angemessen erscheint. Falls die letzte\n"
 "Version möglicherweise nicht ausgegeben wird (durch Benutzung von Tests im\n"
-"Formatierer), sollte NEWLINE=false gesetzt sein, denn andernfall wird ein\n"
+"Formatierer), sollte NEWLINE=false gesetzt sein, denn andernfalls wird ein\n"
 "zusätzliches Newline nach der letzten tatsächlich ausgegebenen Version\n"
 "gedruckt."
 
@@ -3045,7 +3048,7 @@ msgid ""
 "It defines the verbose format for printing available versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert das ausführliche Format für availableversions."
+"Sie definiert das ausführliche Format für available Versionen."
 
 #: src/eixrc/defaults.cc:1001
 msgid ""
@@ -3529,7 +3532,7 @@ msgid ""
 "The format used for new packages (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."
 msgstr ""
-"Das format für neue Pakete (eix-diff).\n"
+"Das Format für neue Pakete (eix-diff).\n"
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_NEW."
 
@@ -3538,7 +3541,7 @@ msgid ""
 "The format used for packages that were deleted (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."
 msgstr ""
-"Das format für gelöschte Pakete (eix-diff).\n"
+"Das Format für gelöschte Pakete (eix-diff).\n"
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_DELETE."
 
@@ -3547,7 +3550,7 @@ msgid ""
 "The format used for packages that were changed (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."
 msgstr ""
-"Das format für geänderte Pakete (eix-diff).\n"
+"Das Format für geänderte Pakete (eix-diff).\n"
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_CHANGED."
 
@@ -3581,7 +3584,7 @@ msgid ""
 "If true, print KEYWORDS for each version with --versionlines."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie gibt an, ob mit --versionlines KEYWORDS für alle Versionenen\n"
+"Sie gibt an, ob mit --versionlines KEYWORDS für alle Versionen\n"
 "ausgegeben werden."
 
 #: src/eixrc/defaults.cc:1555
@@ -3798,7 +3801,7 @@ msgstr ""
 msgid ""
 "Color for the restriction tags. This is only used for delayed substitution."
 msgstr ""
-"Farbe für RESTRICTion Tags. Dies wird nur für Delayed Substitution benutzt."
+"Farbe für RESTRICT Tags. Dies wird nur für Delayed Substitution benutzt."
 
 #: src/eixrc/defaults.cc:1695
 msgid ""
@@ -3812,7 +3815,7 @@ msgid ""
 "It defines how installed versions are marked."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie enhält den Marker für installierte Versionen."
+"Sie enthält den Marker für installierte Versionen."
 
 #: src/eixrc/defaults.cc:1704
 msgid ""
@@ -3832,7 +3835,7 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:1714
 msgid "This turns --force-color on for every query."
-msgstr "Aktiviert --force-color."
+msgstr "Aktiviert --force-color für jede Anfrage."
 
 #: src/eixrc/defaults.cc:1718
 msgid "Show the percentage progress even in case of redirection."
@@ -3898,7 +3901,7 @@ msgstr "Sollen Tests auf doppelte Versionen nur unter Overlays erfolgen?"
 msgid ""
 "Which overlays to list (all/all-if-used/all-used/all-used-renumbered/no)"
 msgstr ""
-"Welche Overlays sollen in der Liste am Schluss ausgebgen werden:\n"
+"Welche Overlays sollen in der Liste am Schluss ausgegeben werden:\n"
 "Mögliche Werte sind \"all\" (alle), \"all-if-used\" (alle, falls einer\n"
 "benutzt wurde), \"all-used\" (alle benutzten), \"all-user-renumbered\"\n"
 "(alle benutzten, mit Zählung ab 1), \"no\" (keine)."
@@ -4339,7 +4342,7 @@ msgid ""
 "It is the tag for \"originally unstable but now stable\" versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie ist das Tag für Versionen die urspünglich \"instabil\" waren,\n"
+"Sie ist das Tag für Versionen, die ursprünglich \"instabil\" waren,\n"
 "jetzt aber stabil sind."
 
 #: src/eixrc/defaults.cc:2032
@@ -4348,7 +4351,7 @@ msgid ""
 "It is the tag for \"originally -* but now stable\" versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie ist das Tag für Versionen die urspünglich \"-*\" waren,\n"
+"Sie ist das Tag für Versionen, die ursprünglich \"-*\" waren,\n"
 "jetzt aber stabil sind."
 
 #: src/eixrc/defaults.cc:2037
@@ -4357,7 +4360,7 @@ msgid ""
 "It is the tag for \"originally -ARCH but now stable\" versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie ist das Tag für Versionen die urspünglich \"-ARCH\" waren,\n"
+"Sie ist das Tag für Versionen, die ursprünglich \"-ARCH\" waren,\n"
 "jetzt aber stabil sind."
 
 #: src/eixrc/defaults.cc:2042
@@ -4366,7 +4369,7 @@ msgid ""
 "It is the tag for \"originally ALIENARCH but now stable\" versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie ist das Tag für Versionen die urspünglich \"ALIENARCH\" waren,\n"
+"Sie ist das Tag für Versionen, die ursprünglich \"ALIENARCH\" waren,\n"
 "jetzt aber stabil sind."
 
 #: src/eixrc/defaults.cc:2047
@@ -4375,7 +4378,7 @@ msgid ""
 "It is the tag for \"originally ~ALIENARCH but now stable\" versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie ist das Tag für Versionen die urspünglich \"~ALIENARCH\" waren,\n"
+"Sie ist das Tag für Versionen, die ursprünglich \"~ALIENARCH\" waren,\n"
 "jetzt aber stabil sind."
 
 #: src/eixrc/defaults.cc:2052
@@ -4384,7 +4387,7 @@ msgid ""
 "It is the tag for \"originally no keyword but now stable\" versions."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie ist das Tag für Versionen die urspünglich \"kein Keyword\" waren,\n"
+"Sie ist das Tag für Versionen, die ursprünglich \"kein Keyword\" waren,\n"
 "jetzt aber stabil sind."
 
 #: src/eixrc/defaults.cc:2061
@@ -4570,7 +4573,7 @@ msgid ""
 "if they come from a different overlay than the installed version."
 msgstr ""
 "Legt fest, ob für TEST_FOR_NONEXISTENT diejenigen Versionen als\n"
-"nichtexistent gelten, die von einem anderen Overlay als die installierte\n"
+"nicht existent gelten, die von einem anderen Overlay als die installierte\n"
 "kommen."
 
 #: src/eixrc/defaults.cc:2194
@@ -4578,7 +4581,7 @@ msgid ""
 "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT."
 msgstr ""
 "Legt fest, ob für TEST_FOR_NONEXISTENT maskierte Versionen als\n"
-"nichtexistent gelten."
+"nicht existent gelten."
 
 #: src/eixrc/defaults.cc:2198
 msgid "Defines whether redundant entries are positive for -T."
@@ -4705,7 +4708,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:2274
 msgid "Applies if /etc/portage/package.keywords contains a matching entry."
 msgstr ""
-"Testet, ob /etc/portage/package.keywords auf die fraglichenVersionen\n"
+"Testet, ob /etc/portage/package.keywords auf die fraglichen Versionen\n"
 "zutrifft."
 
 #: src/eixrc/defaults.cc:2278
@@ -4964,7 +4967,7 @@ msgstr "Unbekannte Property %r"
 
 #: src/output/formatstring-print.cc:534
 msgid "Property %r used outside version context"
-msgstr "Property %r wurde außerhalb eines Loops über Versionen benutzt"
+msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 
 #: src/output/formatstring.cc:142
 msgid "Variable %r calls itself for printing"
@@ -5059,8 +5062,8 @@ msgstr ""
 "Rekursionslevel für cascading Profiles überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1189
-#: src/portage/conf/portagesettings.cc:1205
+#: src/portage/conf/portagesettings.cc:1209
+#: src/portage/conf/portagesettings.cc:1225
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 

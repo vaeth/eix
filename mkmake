@@ -57,8 +57,9 @@ SetCcache () {
 	done
 	[ -z "${testcc}" ] && return
 	Info "CCACHE_DIR=${testcc}"
-	export CCACHE_DIR
+	export CCACHE_DIR CCACHE_COMPRESS
 	CCACHE_DIR="${testcc}"
+	CCACHE_COMPRESS="true"
 }
 
 quiet=false

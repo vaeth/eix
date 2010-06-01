@@ -125,7 +125,8 @@ static const char *test_in_env_late[] = {
 	NULL
 };
 
-inline static bool is_accumulating(const char **accumulating, const char *key)
+inline static bool
+is_accumulating(const char **accumulating, const char *key)
 {
 	const char *match;
 	while((match = *(accumulating++)) != NULL) {
@@ -135,7 +136,8 @@ inline static bool is_accumulating(const char **accumulating, const char *key)
 	return false;
 }
 
-void PortageSettings::override_by_env(const char **vars)
+void
+PortageSettings::override_by_env(const char **vars)
 {
 	for(const char *var(*vars); likely(var != NULL); var = *(++vars)) {
 		const char *e(getenv(var));
@@ -153,7 +155,8 @@ void PortageSettings::override_by_env(const char **vars)
 	}
 }
 
-void PortageSettings::read_config(const string &name, const string &prefix)
+void
+PortageSettings::read_config(const string &name, const string &prefix)
 {
 	(*this)["EPREFIX"] = m_eprefix;
 	VarsReader configfile(VarsReader::SUBST_VARS|VarsReader::INTO_MAP|VarsReader::APPEND_VALUES|VarsReader::ALLOW_SOURCE|VarsReader::PORTAGE_ESCAPES);
@@ -163,7 +166,8 @@ void PortageSettings::read_config(const string &name, const string &prefix)
 	configfile.read(name.c_str());
 }
 
-string PortageSettings::resolve_overlay_name(const string &path, bool resolve)
+string
+PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 {
 	if(resolve) {
 		string full(m_eprefixoverlays);
@@ -173,7 +177,8 @@ string PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 	return normalize_path(path.c_str(), false);
 }
 
-void PortageSettings::add_overlay(string &path, bool resolve, bool modify)
+void
+PortageSettings::add_overlay(string &path, bool resolve, bool modify)
 {
 	string name(resolve_overlay_name(path, resolve));
 	if(modify)
@@ -188,7 +193,8 @@ void PortageSettings::add_overlay(string &path, bool resolve, bool modify)
 	overlays.push_back(name);
 }
 
-void PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool modify)
+void
+PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool modify)
 {
 	for(vector<string>::iterator it(v.begin()); likely(it != v.end()); ++it) {
 		add_overlay(*it, resolve, modify);
@@ -576,7 +582,8 @@ PortageSettings::calc_allow_upgrade_slots(const Package *p) const
 
 /** pushback categories from profiles to vec. Categories may be duplicate.
     Result is not cashed, i.e. this should be called only once. */
-void PortageSettings::pushback_categories(vector<string> &vec)
+void
+PortageSettings::pushback_categories(vector<string> &vec)
 {
 	/* Merge categories from /etc/portage/categories and
 	 * portdir/profile/categories */
@@ -687,7 +694,8 @@ bool PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list,
 	return true;
 }
 
-bool PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const
+bool
+PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const
 {
 	if(!(*readfile))
 	{
@@ -702,7 +710,8 @@ typedef struct {
 	bool locally_double;
 } KeywordsData;
 
-bool PortageUserConfig::readKeywords() {
+bool
+PortageUserConfig::readKeywords() {
 	// Prepend a ~ to every token.
 	string fscked_arch;
 	{
@@ -941,12 +950,14 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		vector<string>::size_type kvsize(kv.size());
 		KeywordsFlags kf;
 		bool use_default;
-		if(it->sets_indizes.empty())
+		if(it->sets_indizes.empty()) {
 			use_default = true;
+		}
 		else {
 			pushback_set_accepted_keywords(kv, *it);
-			if(kv.size() == kvsize)
+			if(kv.size() == kvsize) {
 				use_default = true;
+			}
 			else {
 				set<string> s;
 				resolve_plus_minus(s, kv, obsolete_minusasterisk);
@@ -994,17 +1005,21 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			if(check & Keywords::RED_DOUBLE) {
 				set<string> sorted;
 				make_set<string>(sorted, kv);
-				if(kv.size() != sorted.size())
+				if(kv.size() != sorted.size()) {
 					redundant |= Keywords::RED_DOUBLE;
+				}
 				bool minuskeyword(false);
 				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk, &minuskeyword, &(m_settings->m_accepted_keywords_set));
-				if(minuskeyword)
+				if(minuskeyword) {
 					redundant |= Keywords::RED_DOUBLE;
+				}
 			}
-			else
+			else {
 				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk);
-			if(minusasterisk && !obsolete_minusasterisk)
+			}
+			if(minusasterisk && !obsolete_minusasterisk) {
 				redundant |= (check & Keywords::RED_MINUSASTERISK);
+			}
 
 			// First apply the original ACCEPT_KEYWORDS (with package.keywords sets),
 			// removing them from kv_set meanwhile.
@@ -1034,11 +1049,13 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
 					redundant, Keywords::RED_NOTHING, true)
-					!= ARCH_NOTHING)
+					!= ARCH_NOTHING) {
 					stable = true;
+				}
 			}
-			if(kv_set_nofile)
+			if(kv_set_nofile) {
 				delete kv_set_nofile;
+			}
 
 			// Now apply the remaining keywords (i.e. from /etc/portage/package.keywords)
 			ArchUsed arch_used(ARCH_NOTHING);
@@ -1048,12 +1065,15 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					m_settings->m_local_arch_set,
 					obsolete_minusasterisk,
 					redundant, check, shortcut));
-				if(arch_curr == ARCH_NOTHING)
+				if(arch_curr == ARCH_NOTHING) {
 					continue;
-				if(arch_used < arch_curr)
+				}
+				if(arch_used < arch_curr) {
 					arch_used = arch_curr;
-				if(unlikely(stable || ori_is_stable))
+				}
+				if(unlikely(stable || ori_is_stable)) {
 					redundant |= (check & Keywords::RED_MIXED);
+				}
 				stable = true;
 			}
 

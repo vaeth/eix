@@ -6,6 +6,8 @@
 	  see http://bugs.gentoo.org/show_bug.cgi?id=316907
 	  Thanks to Michał Górny <gentoo at mgorny.alt.pl> for the main part
 	  of the patch.
+	- Fix lots of typos in German translation. Thanks to
+	  Boris Petersen <transacid at gmail.com>
 	- scripts: Avoid race conditions in traps.
 	- scripts: Avoid "local" keyword as it is not POSIX.
 	- configure: Treat sqlite with PKG_CHECK_MODULES if possible.
