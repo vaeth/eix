@@ -13,7 +13,7 @@ LC_ALL=C
 XZ_OPT='--extreme'
 
 Echo () {
-	printf '%s\n'
+	printf '%s\n' "${*}"
 }
 
 Usage () {
@@ -85,3 +85,4 @@ ${found} || Die "For some reason no tarball was created"
 [ -n "${mkemerge}" ] && Echo "To install with portage run as root ${mkemerge}"
 [ -n "${mkrelease}" ] && \
 	Echo "To tag the release in svn you should run ${mkrelease}"
+exit 0

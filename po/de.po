@@ -201,7 +201,7 @@ msgstr ""
 "Die Heuristik kann aber falsch sein, beispielsweise mit EPREFIX.\n"
 "Mit der Option -e kann der heuristische Test temporär umgangen werden.\n"
 "Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
-"das File ${eixsyncconf} ein."
+"die Datei ${eixsyncconf} ein."
 
 #: src/eix-sync.sh:286
 msgid "%6d seconds for %s\\n"
@@ -783,7 +783,7 @@ msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
 #: src/eix-remote.sh:163
 msgid "Filename argument is mandatory"
-msgstr "Filenamen-Argument wird benötigt"
+msgstr "Dateinamen-Argument wird benötigt"
 
 #: src/eix-remote.sh:200
 #, sh-format
@@ -798,7 +798,7 @@ msgid ""
 "The default should have been set with ./configure --remote-file"
 msgstr ""
 "Keine gültige Remote-Addresse angegeben.\n"
-"Übergeben Sie bitte ein gültiges Remote-File mit der Option -a.\n"
+"Übergeben Sie bitte eine gültige Remote-Datei mit der Option -a.\n"
 "Der Default hätte mit ./configure --remote-file gesetzt werden sollen."
 
 #: src/eix-remote.sh:245
@@ -835,7 +835,7 @@ msgid ""
 msgstr ""
 "Wahrscheinlich wurde das eix-Cachefile nicht erfolgreich ge-updated.\n"
 "Falls die obigen Meldungen keine andere Ursache nahelegen und falls Sie\n"
-"keinen falschen Filenamen angegeben haben, ist die wahrscheinlichste\n"
+"keinen falschen Dateinamen angegeben haben, ist die wahrscheinlichste\n"
 "Ursache, dass der Server eine andere eix-Version benutzt, oder dass er\n"
 "kaputte Daten produziert hat. Untersuchen Sie bitte, ob\n"
 "\t${archive}\n"
@@ -844,8 +844,8 @@ msgstr ""
 "Falls das nicht der Fall ist (und es neu heruntergeladen wurde), melden Sie\n"
 "bitte den Fehler. Beachten Sie aber, dass das Archiv *nicht* kaputt ist,\n"
 "falls sich nur die Versionsnummern der Cachefile-Formate unterscheiden.\n"
-"Melden Sie in diesem Fall nur dann einen Fehler, wenn diejenigen vom\n"
-"heruntergeladenen File *älter* sind, als die des aktuellen ~x86 eix im\n"
+"Melden Sie in diesem Fall nur dann einen Fehler, wenn diejenigen der\n"
+"heruntergeladenen Datei *älter* sind, als die des aktuellen ~x86 eix im\n"
 "Portage-Baum (aber warten Sie mit der Meldung zunächst, bis sie es nach\n"
 "einigen Tagen erneut probiert haben: Schließlich brauchen die Maintainer\n"
 "des Servers auch einige Zeit, bis sie eix nach einem Versionssprung\n"
@@ -1108,14 +1108,14 @@ msgstr ""
 "    --installed-unstable  Pakete mit nicht-stabiler installierter Version.\n"
 "    --installed-testing   Pakete mit instabiler     installierter Version.\n"
 "    --installed-masked    Pakete mit maskierter     installierter Version.\n"
-"    --world-file          Pakete aus world-File oder @system.\n"
+"    --world-file          Pakete aus world-Datei oder @system.\n"
 "    --world-set           Pakete aus world_sets oder @system.\n"
-"    --world               Pakete aus @world (File, Sets oder @system).\n"
-"    --selected-file       Pakete aus world-File.\n"
+"    --world               Pakete aus @world (World-Datei, Sets oder @system).\n"
+"    --selected-file       Pakete aus world-Datei.\n"
 "    --selected-set        Pakete aus world_sets.\n"
-"    --selected            Pakete aus @selected (world-File oder "
+"    --selected            Pakete aus @selected (world-Datei oder "
 "world_sets).\n"
-"    --binary              Pakete mit *.tbz2-Files.\n"
+"    --binary              Pakete mit *.tbz2-Dateien.\n"
 "    -O, --overlay                        Pakete aus Overlays\n"
 "    --in-overlay OVERLAY                 Pakete aus OVERLAY.\n"
 "    --only-in-overlay OVERLAY            Pakete nur aus OVERLAY.\n"
@@ -1395,7 +1395,7 @@ msgstr ""
 "\n"
 " -q, --quiet             keine Ausgabe\n"
 "\n"
-" -o  --output            Ausgabe in eine anderes File als %s\n"
+" -o  --output            Ausgabe in eine andere Datei als %s\n"
 "                         Außerdem werden keine Rechte getestet.\n"
 " -x  --exclude-overlay   Schließt entsprechende Overlay vom Update-Process\n"
 "                         aus. Man kann auch PORTDIR mit dieser\n"
@@ -1641,7 +1641,7 @@ msgstr "Konnte %s nicht korrekt ausführen"
 #: src/cache/parse/parse.cc:261
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
-msgstr "Filename des Ebuilds %s/%s kann nicht unterteilt werden"
+msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
 
 #: src/cache/port2_1_2/port2_1_2.cc:94
 msgid "%r not of the form package/catstring-version"
@@ -1694,7 +1694,7 @@ msgstr ""
 
 #: src/database/io.cc:55 src/database/io.cc:108 src/database/io.h:41
 msgid "error while reading from database: end of file"
-msgstr "Fehler beim Lesen der Datenbank: Zu frühes Fileende"
+msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 
 #: src/database/io.cc:57 src/database/io.cc:110 src/database/io.h:43
 msgid "error while reading from database"
@@ -1799,7 +1799,7 @@ msgstr "%r kann nicht ge\"source\"d werden"
 
 #: src/eixTk/varsreader.cc:739
 msgid "Can't map file %r"
-msgstr "File %r kann nicht gemapped werden"
+msgstr "Datei %r kann nicht gemapped werden"
 
 #: src/eixTk/varsreader.cc:784
 msgid "Nesting level too deep when reading %r"
@@ -1810,7 +1810,7 @@ msgid ""
 "The file which is used instead of /etc/eixrc and ~/.eixrc.\n"
 "This variable can of course only be set in the environment."
 msgstr ""
-"Das File, das statt /etc/eixrc und ~/.eixrc benutzt wird.\n"
+"Die Datei, die statt /etc/eixrc und ~/.eixrc benutzt wird.\n"
 "Diese Variable kann natürlich nur in der Environment verändert werden."
 
 #: src/eixrc/defaults.cc:23
@@ -1839,8 +1839,8 @@ msgid ""
 "In particular, it can be used to override options set in that file.\n"
 "Parts of this variable are evaluated in eix-sync: Be aware of security!"
 msgstr ""
-"Der Inhalt dieser Variable wird an das File /etc/eix-sync.conf angehängt.\n"
-"Insbesondere kann sie benutzt werden, um in diesem File gesetzte Optionen\n"
+"Der Inhalt dieser Variable wird an die Datei /etc/eix-sync.conf angehängt.\n"
+"Insbesondere kann sie benutzt werden, um in dieser Datei gesetzte Optionen\n"
 "umzuändern. Teile dieser Variablen werden in eix-sync evaluiert: Vorsicht!"
 
 #: src/eixrc/defaults.cc:40
@@ -1938,7 +1938,7 @@ msgid ""
 "This file is used instead of %{PORTAGE_CONFIGROOT}/etc/make.globals\n"
 "if it exists. This is reasonable for >=portage-2.2*"
 msgstr ""
-"Dieses File wird anstelle von %{PORTAGE_CONFIGROOT}/etc/make.globals\n"
+"Diese Datei wird anstelle von %{PORTAGE_CONFIGROOT}/etc/make.globals\n"
 "benutzt (falls es existiert). Dies ist sinnvoll für >=portage-2.2*"
 
 #: src/eixrc/defaults.cc:99
@@ -2006,25 +2006,25 @@ msgstr "Der Pfad zu dem mit \"ebuild depend\" generierten Temporärfile."
 
 #: src/eixrc/defaults.cc:152
 msgid "This file is considered as the world file."
-msgstr "Das World-File."
+msgstr "Die World-Datei."
 
 #: src/eixrc/defaults.cc:156
 msgid "This file is considered as the world_sets file."
-msgstr "Das File für die World-Sets."
+msgstr "Die Datei für die World-Sets."
 
 #: src/eixrc/defaults.cc:160
 msgid ""
 "Store the information of the world file in the cache file.\n"
 "Set this to false if you do not want that everybody can get this information."
 msgstr ""
-"Sollen die Daten des World-Files im Cachefile gespeichert werden?\n"
+"Sollen die Daten der World-Datei im Cachefile gespeichert werden?\n"
 "Nur zustimmen, falls jeder an diese Information gelangen darf!"
 
 #: src/eixrc/defaults.cc:165
 msgid ""
 "Prefer the current world file (if readable) over the data in the cachefile."
 msgstr ""
-"Benutze das aktuelle World-File (falls lesbar) anstelle der Daten im\n"
+"Benutze das aktuelle World-Datei (falls lesbar) anstelle der Daten im\n"
 "Cachefile."
 
 #: src/eixrc/defaults.cc:169
@@ -2151,7 +2151,7 @@ msgid ""
 "If false, tags are output for packages/versions with *.tbz2 files."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie gibt an, ob Tags für Pakete/Versionen mit *.tbz2-Files ausgegeben werden."
+"Sie gibt an, ob Tags für Pakete/Versionen mit *.tbz2-Dateien ausgegeben werden."
 
 #: src/eixrc/defaults.cc:262
 msgid "If true, calculate RESTRICT/PROPERTIES for installed versions."
@@ -2221,7 +2221,7 @@ msgid ""
 "It defines the color used for printing the name of world packages."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe für Paketnamen aus dem World-File."
+"Sie definiert die Farbe für Paketnamen aus der World-Datei."
 
 #: src/eixrc/defaults.cc:311
 msgid ""
@@ -2253,7 +2253,7 @@ msgid ""
 "It defines the color used for printing the category of world packages."
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
-"Sie definiert die Farbe für den Kategorienamen eines Pakets des World-Files."
+"Sie definiert die Farbe für den Kategorienamen eines Pakets der World-Datei."
 
 #: src/eixrc/defaults.cc:331
 msgid ""
@@ -3794,7 +3794,7 @@ msgstr "Farbe für Slots. Dies wird nur für Delayed Substitution benutzt."
 msgid ""
 "Color for versions with *.tbz2. This is only used for delayed substitution."
 msgstr ""
-"Farbe für Versionen mit *.tbz2-Files.\n"
+"Farbe für Versionen mit *.tbz2-Dateien.\n"
 "Dies wird nur für Delayed Substitution benutzt."
 
 #: src/eixrc/defaults.cc:1691
@@ -3988,7 +3988,7 @@ msgid ""
 msgstr ""
 "Dies ist eine Liste von Paaren DIR-PATTERN OVERLAY_LABEL.\n"
 "Beim Erzeugen eines neuen Cachefiles erhält der Overlay zu DIR-PATTERN das\n"
-"Label OVERLAY_LABEL, unabhängig vom Inhalt des Files profiles/repo_name\n"
+"Label OVERLAY_LABEL, unabhängig vom Inhalt des Dateien profiles/repo_name\n"
 "oder des mit KEEP_VIRTUALS übernommenen Labels.\n"
 "Spätere Einträge überschreiben frühere."
 
@@ -4057,7 +4057,7 @@ msgid ""
 msgstr ""
 "Sollen Upgrade-Tests für installierte Pakete positiv sein, falls es einen\n"
 "neuen \"höheren\" Slot gibt?\n"
-"Mit den Files SLOT_UPGRADE_FORBID bzw. SLOT_UPGRADE_ALLOW können Ausnahmen,\n"
+"Mit den Dateien SLOT_UPGRADE_FORBID bzw. SLOT_UPGRADE_ALLOW können Ausnahmen\n"
 "dieses generellen Defaults spezifiziert werden."
 
 #: src/eixrc/defaults.cc:1859
@@ -4113,7 +4113,7 @@ msgstr ""
 "Bei \"false\" geschieht dies nur für Pakete, die in mindestens zwei\n"
 "Overlays vorkommen (PORTDIR wird hier als Overlay gezählt).\n"
 "Bei \"repository\" werden als ein gewisser Kompromiss zumindest stets die\n"
-"REPOSITORY-Files überprüft (die aber erst von jüngeren Portage-Versionen\n"
+"REPOSITORY-Dateien überprüft (die aber erst von jüngeren Portage-Versionen\n"
 "stets erstellt werden.\n"
 "Im Falle einer fehlenden Überprüfung kann der vermutete Overlay falsch\n"
 "falsch sein, wenn die betreffende Version aus einem Overlay installiert\n"
@@ -4148,7 +4148,7 @@ msgstr ""
 msgid ""
 "Tag for versions with *.tbz2. This is only used for delayed substitution."
 msgstr ""
-"Das Tag für Versionen mit *.tbz2-Files.\n"
+"Das Tag für Versionen mit *.tbz2-Dateien.\n"
 "Dies wird nur für Delayed Substitution benutzt."
 
 #: src/eixrc/defaults.cc:1911
@@ -4742,14 +4742,14 @@ msgid ""
 msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie enthält das Directory, in dem eix nach seinen\n"
-"package.*.*/sets.eix-Files sucht."
+"package.*.*/sets.eix-Dateien sucht."
 
 #: src/eixrc/defaults.cc:2299
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=false."
 msgstr ""
-"Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete dieses Files/Directories\n"
+"Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete dieses Dateien/Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=false wäre."
 
 #: src/eixrc/defaults.cc:2304
@@ -4757,79 +4757,79 @@ msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=true."
 msgstr ""
-"Falls UPGRADE_TO_HIGHEST_SLOT=false werden Pakete dieses Files/Directories\n"
+"Falls UPGRADE_TO_HIGHEST_SLOT=false werden Pakete dieses Dateien/Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=true wäre."
 
 #: src/eixrc/defaults.cc:2309
 msgid "Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."
 msgstr ""
-"Einträge diese Files/Directories werden von -t TEST_KEYWORDS\n"
+"Einträge dieser Dateien/Directories werden von -t TEST_KEYWORDS\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:2313
 msgid "Entries listed in these files/dirs are excluded for -t TEST_MASK."
 msgstr ""
-"Einträge diese Files/Directories werden von -t TEST_MASK\n"
+"Einträge dieser Dateien/Directories werden von -t TEST_MASK\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:2317
 msgid "Entries listed in these files/dirs are excluded for -t TEST_UNMASK."
 msgstr ""
-"Einträge diese Files/Directories werden von -t TEST_UNMASK\n"
+"Einträge dieser Dateien/Directories werden von -t TEST_UNMASK\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:2321
 msgid "Entries listed in these files/dire are excluded for -t TEST_USE."
 msgstr ""
-"Einträge diese Files/Directories werden von -t TEST_USE\n"
+"Einträge dieser Dateien/Directories werden von -t TEST_USE\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:2325
 msgid "Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."
 msgstr ""
-"Einträge diese Files/Directories werden von -t TEST_CFLAGS\n"
+"Einträge dieser Dateien/Directories werden von -t TEST_CFLAGS\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:2329
 msgid "Packages listed in these files/dirs are excluded for -t TEST_REMOVED."
 msgstr ""
-"Einträge diese Files/Directories werden von -t TEST_REMOVED\n"
+"Einträge dieser Dateien/Directories werden von -t TEST_REMOVED\n"
 "ausgenommen."
 
 #: src/eixrc/defaults.cc:2333
 msgid "Exceptional packages for -T tests of /etc/portage/package.keywords."
 msgstr ""
-"Einträge diese Files/Directories werden von -T bzgl.\n"
+"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
 "/etc/portage/package.keywords-Tests ausgenommen."
 
 #: src/eixrc/defaults.cc:2337
 msgid "Exceptional packages for -T tests of /etc/portage/package.mask."
 msgstr ""
-"Einträge diese Files/Directories werden von -T bzgl.\n"
+"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
 "/etc/portage/package.mask-Tests ausgenommen."
 
 #: src/eixrc/defaults.cc:2341
 msgid "Exceptional packages for -T tests of /etc/portage/package.unmask."
 msgstr ""
-"Einträge diese Files/Directories werden von -T bzgl.\n"
+"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
 "/etc/portage/package.unmask-Tests ausgenommen."
 
 #: src/eixrc/defaults.cc:2345
 msgid "Exceptional packages for -T tests of /etc/portage/package.use."
 msgstr ""
-"Einträge diese Files/Directories werden von -T bzgl.\n"
+"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
 "/etc/portage/package.use-Tests ausgenommen."
 
 #: src/eixrc/defaults.cc:2349
 msgid "Exceptional packages for -T tests of /etc/portage/package.cflags."
 msgstr ""
-"Einträge diese Files/Directories werden von -T bzgl.\n"
+"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
 "/etc/portage/package.cflags-Tests ausgenommen."
 
 #: src/eixrc/defaults.cc:2353
 msgid "Exceptional packages for -T tests of installed packages."
 msgstr ""
-"Einträge diese Files/Directories werden von -T bzgl.\n"
+"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
 "Tests auf installierte Pakete ausgenommen."
 
 #: src/eixrc/defaults.cc:2357
@@ -5059,7 +5059,7 @@ msgstr ""
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
-"Rekursionslevel für cascading Profiles überschritten;\n"
+"Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
 #: src/portage/conf/portagesettings.cc:1209
@@ -5081,7 +5081,7 @@ msgstr "Ein '*' ist nur am Ende der Version zulässig."
 
 #: src/portage/mask.cc:140
 msgid "A wildcard is only valid with the = operator."
-msgstr "Ein Wildcard ist nur mit dem =-Operator zulässig."
+msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
 
 #: src/portage/mask.cc:144
 msgid ""
@@ -5089,7 +5089,7 @@ msgid ""
 "Portage would also accept something like ~app-shells/bash-3*,\n"
 "but behave just like ~app-shells/bash-3."
 msgstr ""
-"Ein Wildcard ist nur mit dem =-Operator zulässig.\n"
+"Ein Wildcard ist nur mit dem = Operator zulässig.\n"
 "Portage würde auch so etwas wie ~app-shells/bash-3* akzeptieren,\n"
 "es aber als ~app-shells/bash-3 interpretieren."
 
