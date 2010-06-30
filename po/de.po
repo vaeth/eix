@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-06-05 11:55+0200\n"
+"POT-Creation-Date: 2010-06-30 19:31+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -5080,15 +5080,15 @@ msgstr "Category nicht lesbar."
 msgid "You have a operator but we can't find a version-part."
 msgstr "Operator ohne Versionsspezifizierung."
 
-#: src/portage/mask.cc:134
+#: src/portage/mask.cc:135
 msgid "A '*' is only valid at the end of a version-string."
 msgstr "Ein '*' ist nur am Ende der Version zulässig."
 
-#: src/portage/mask.cc:140
+#: src/portage/mask.cc:141
 msgid "A wildcard is only valid with the = operator."
 msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
 
-#: src/portage/mask.cc:144
+#: src/portage/mask.cc:145
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

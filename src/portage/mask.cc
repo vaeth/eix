@@ -130,7 +130,8 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		if(unlikely((unlikely(wildcard != NULL)) &&
 			(likely((end == NULL) || (wildcard <= end))))) {
 			if(unlikely((wildcard[1] != '\0') &&
-				unlikely((end == NULL) || (wildcard + 1 != end)))) {
+				// The following is also valid if end=NULL
+				(wildcard + 1 != end))) {
 				throw ExBasic(_("A '*' is only valid at the end of a version-string."));
 			}
 			// Only the = operator can have a wildcard-version
