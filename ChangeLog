@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.20.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Choose USE and IUSE default colors of portage
+
 *eix-0.20.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix wrong test for masks ...*:SLOT (regression from eix-0.19.0), see

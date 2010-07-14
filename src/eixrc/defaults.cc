@@ -414,7 +414,7 @@ AddOption(STRING, "COLOR_SET_USE",
 	"It defines the color used for printing the set useflags."));
 
 AddOption(STRING, "COLOR_UNSET_USE",
-	"black,1", _(
+	"blue,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the unset useflags."));
 
@@ -1605,7 +1605,7 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
-	" [(blue)", _(
+	" [(black,1)", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
@@ -1617,7 +1617,7 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_IUSE",
-	" \\{(blue)", _(
+	" \\{(black,1)", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is only used when --versionlines is inactive and there are no slots)"));
