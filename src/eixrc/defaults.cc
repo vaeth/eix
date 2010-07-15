@@ -337,7 +337,7 @@ AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"It defines the color used for printing upgrade recommendation texts."));
 
 AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
-	"purple,1", _(
+	"blue,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing downgrade recommendation texts."));
 
@@ -404,7 +404,7 @@ AddOption(STRING, "COLOR_UNINST_TAG",
 	"It defines the color used for tagging uninstalled packages."));
 
 AddOption(STRING, "COLOR_DATE",
-	"purple", _(
+	"purple,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the date."));
 
@@ -1671,11 +1671,11 @@ AddOption(STRING, "FORMAT_COLOR_STABLE",
 	"It defines the format to change the color for stable versions."));
 
 AddOption(STRING, "COLOR_OVERLAYKEY",
-	"cyan,1", _(
+	"cyan", _(
 	"Color for the overlaykey in version listings."));
 
 AddOption(STRING, "COLOR_VIRTUALKEY",
-	"purple,1", _(
+	"purple", _(
 	"Color for the overlaykey for virtual overlays in version listings."));
 
 AddOption(STRING, "COLOR_SLOTS",

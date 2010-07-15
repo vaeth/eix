@@ -4,7 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add new demo script (eix-installed-after) which outputs packages
 	  installed after/before a given package.
-	- Choose USE and IUSE default colors of portage
+	- Choose color defaults more similar to portage
 
 *eix-0.20.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
