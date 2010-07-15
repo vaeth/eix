@@ -13,3 +13,6 @@ $(MYSRC)/eix-layman.sh:
 $(MYSRC)/eix-remote.sh:
 	( cd $(MYSRC) && $(MAKE) eix-remote.sh )
 
+$(MYSRC)/eix-installed-after.sh:
+	( cd $(MYSRC) && $(MAKE) eix-installed-after.sh )
+

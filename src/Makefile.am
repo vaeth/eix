@@ -265,6 +265,7 @@ eix-sync \
 eix-test-obsolete \
 eix-remote \
 eix-layman \
+eix-installed-after \
 eix-functions.sh \
 $(reminder_install)
 
@@ -290,6 +291,7 @@ versionsort$(EXEEXT) \
 eix-sync.sh \
 eix-test-obsolete.sh \
 eix-layman.sh \
+eix-installed-after.sh \
 eix-remote.sh \
 reminder.sh \
 functions-eix.sh
@@ -301,6 +303,7 @@ eix-sync.in \
 eix-test-obsolete.in \
 eix-remote.in \
 eix-layman.in \
+eix-installed-after.in \
 eix-functions.sh.in \
 reminder.sh.in \
 eixrc/eixrc.in \
@@ -506,6 +509,9 @@ eix-test-obsolete.sh:
 
 eix-layman.sh:
 	$(AM_V_GEN)$(LN_S) eix-layman.in "$@"
+
+eix-installed-after.sh:
+	$(AM_V_GEN)$(LN_S) eix-installed-after.in "$@"
 
 eix-remote.sh:
 	$(AM_V_GEN)$(LN_S) eix-remote.in "$@"

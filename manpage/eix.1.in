@@ -24,6 +24,8 @@
 
 .B eix-layman
 
+.B eix-installed-after
+
 .B eix-functions.sh
 
 .B versionsort
@@ -62,6 +64,11 @@ B<eix-layman> can add or remove local layman overlays to the current database.
 You might want to use this if you do not source layman's make.conf in your local I</etc/make.conf>.
 To get more help on B<eix-layman> call B<eix-layman -h>.
 B<eix-layman> is also meant as an example script how to use B<eix-functions.sh>:
+
+B<eix-installed-after> is a simple script demonstrating some possibilities how
+a custom eix output format can be used.
+It outputs packages installed after (or before) the last emerge of a specific package.
+To get more help on this script call B<eix-installed-after -h>.
 
 B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
 You might want to use them for your own similar scripts.
@@ -109,7 +116,7 @@ Similarly to the above but in the format B<=category/name-version> which you
 can pipe directly to portage.
 
 .TP
-.B eix '-I*' --format '<installedversions:DATESORT>' | sort | cut -f2-3
+.B eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f2-3
 
 Print out installed packages (with slots if necessary), sorted by installation date.
 If you want the output in another format, you have to modify B<DATESORT> correspondingly

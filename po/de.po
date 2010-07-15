@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-06-30 19:31+0200\n"
+"POT-Creation-Date: 2010-07-15 14:08+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -18,556 +18,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
-
-#: src/eix-sync.sh:26
-#, sh-format
-msgid ""
-"Usage: ${n} [options]\n"
-"Call layman/emerge --sync/--metadata and/or show updates. (${p})\n"
-"\n"
-"Unless the -t option is used, the old database will be saved to\n"
-"    ${eixprevious}.\n"
-"\n"
-"The file ${eixsyncconf} and the eix (environment) variable EIX_SYNC_CONF\n"
-"(which defaults to delayed substitution of EIX_SYNC_OPTS) determine for\n"
-"which overlays layman is called, which default options are used, and they\n"
-"can contain various hooks - \"man eix\" for details.\n"
-"\n"
-"Be aware that e.g. the default EIX_SYNC_OPTS are evaluated so be sure to\n"
-"quote them correctly and care about security risks.\n"
-"Moreover, \"--\" in the default options will forbid command line options.\n"
-"The following options are available:\n"
-"\n"
-"-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
-"-d   Only show differences to the previously saved database and exit.\n"
-"     Except for executing the !! lines in ${eixsyncconf}\n"
-"     this is the same as eix-diff ${eixprevious}.\n"
-"-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
-"     USER defaults to current user and DIR defaults to PORTDIR\n"
-"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull "
-"syncing;\n"
-"     you should later call eix-sync -u locally on CLIENT.\n"
-"     If you already have synced you might want to combine this option with -"
-"uU.\n"
-"-U   Do not touch the database and omit the hooks after eix-update (@ "
-"entries)\n"
-"     and do not show differences. This option implies -R\n"
-"-u   Update database only and show differences. This is equivalent to -l@s "
-"\"\"\n"
-"-l   Do not call layman (and the !commands in ${eixsyncconf}).\n"
-"     However, the !! lines and postponed hooks (@ and @@ entries)\n"
-"     will be executed anyway.\n"
-"-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
-"-S   Do not execute the hooks after emerge --sync (@ entries).\n"
-"-M   Run emerge --metadata. You might need this when you use e.g.\n"
-"     PORTDIR_CACHE_METHOD=flat and a newer portage version when\n"
-"     FEATURES=metadata-transfer is inactive or disabled.\n"
-"-m   Run emerge --metadata but skip emerge --sync.\n"
-"-N   Skip emerge --metadata if it was activated by -M or -m.\n"
-"-t   Use temporary file to save the current database (-d will not be "
-"possible).\n"
-"-T   Do not measure time\n"
-"-q   Be quiet (close stdout)\n"
-"-w   Run emerge-webrsync instead of emerge --sync.\n"
-"-W   Run emerge-delta-webrsync instead of emerge --sync.\n"
-"-c CMD Run CMD instead of emerge --sync.\n"
-"-C OPT Add OPT to the emerge --sync command (or whatever is used instead).\n"
-"       This option can be used accumulatively.\n"
-"-o OPT Add OPT to each eix-update command.\n"
-"       This option can be used accumulatively.\n"
-"-L OPT Add OPT to each call of layman.\n"
-"       This option can be used accumulatively.\n"
-"-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when "
-"you\n"
-"     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
-"     is active. (This option is not default anymore).\n"
-"-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
-"-e   Skip heuristic tests whether you must be root.\n"
-"-h   Show this text and exit."
-msgstr ""
-"Aufruf: ${n} [Optionen]\n"
-"Dieses Script gehört zu ${p}.\n"
-"Es ruft layman/emerge --sync/--metadata auf und/oder zeigt updates.\n"
-"\n"
-"Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
-"    ${eixprevious}\n"
-"gespeichert.\n"
-"Die Datei ${eixsyncconf} und die (Environment) Variable EIX_SYNC_CONF\n"
-"(die wiederum als Default die Delayed Substituion von EIX_SYNC_OPTS ist)\n"
-"bestimmen, für welche Overlays layman aufgerufen wird, welche Default-"
-"Optionen\n"
-"benutzt werden, und sie können auch verschiedene Hooks enthalten:\n"
-"\"man eix\" erklärt Genaueres hierzu.\n"
-"\n"
-"Die Default-Optionen (z.B. aus EIX_SYNC_OPTS) werden evaluiert, also kann\n"
-"falsches Quoten oder Kompromittierung zu einem Sicherheitsproblem werden.\n"
-"Natürlich wird \"--\" in den Default-Optionen alle Kommandozeilenoptionen\n"
-"verhindern.\n"
-"Die Optionen sind:\n"
-"\n"
-"-i   Ignoriere vorherige Optionen (sinnvoll bei ${eixsyncconf}).\n"
-"-d   Zeige nur die Unterschiede zur gespeicherten Datenbank an.\n"
-"     Außer dass auch die !!-Zeilen in ${eixsyncconf} ausgeführt werden,\n"
-"     ist dies das gleiche wie eix-diff ${eixprevious}.\n"
-"-s [USER@]SERVER[:DIR] Synce via rsync vom SERVER.\n"
-"     USER/DIR sind per Default der augenblickliche User und PORTDIR.\n"
-"-2 [USER@]CLIENT[:DIR] Synce via rsync *auf* den CLIENT, falls das Syncen\n"
-"     zuvor erfolgreich war. Danach sollte auf dem CLIENT eix-sync -u\n"
-"     aufgerufen werden. Falls bereits gesynct wurde, ist es sinnvoll,\n"
-"     diese Option mit mit -uU zu kombinieren.\n"
-"-U   Die Datenbank wird nicht geändert, die Hooks nach eix-update\n"
-"     (@-Zeilen) werden nicht ausgeführt, und natürlich wird eix-diff\n"
-"     nicht aufgerufen. Diese Option impliziert -R\n"
-"-u   Führe nur das Datenbank-Update durch und zeige die Unterschiede.\n"
-"     dies ist gleichbedeutend mit -l@s \"\"\n"
-"-l   Kein Layman (und keine !-Zeilen in ${eixsyncconf});\n"
-"     Aber die !!-Zeilen und nachgestellte Hooks (@- und @@-Zeilen)\n"
-"     werden dennoch ausgeführt.\n"
-"-@   Keine Hooks (@- und @@-Zeilen) aus ${eixsyncconf}.\n"
-"-S   Keine Hooks nach emerge --sync (@-Zeilen).\n"
-"-M   Mit emerge --metadata. Dies ist beispielsweise nötig bei\n"
-"     PORTDIR_CACHE_METHOD=flat und neuere Portage-Versionen, wenn\n"
-"     FEATURES=metadata-transfer inaktiv oder ausgeschaltet ist.\n"
-"-m   Mit emerge --metadata aber ohne emerge --sync.\n"
-"-N   Kein emerge --metadata, selbst wenn -M oder -m benutzt wurde.\n"
-"-t   Speichere die aktuelle Datenbank nur in Temporärfile. Dies schließt\n"
-"     natürlich ein späteres -d aus.\n"
-"-T   Keine Zeitmessungen\n"
-"-q   Keine Ausgabe (schließt stdout)\n"
-"-w   Benutze emerge-webrsync statt emerge --sync.\n"
-"-W   Benutze emerge-delta-webrsync statt emerge --sync.\n"
-"-c CMD Benutze CMD statt emerge --sync.\n"
-"-C OPT Fügt Option OPT dem emerge --sync (oder dem Ersatz dafür) hinzu.\n"
-"       Diese Option kann akkumulativ benutzt werden.\n"
-"-o OPT Fügt Option OPT jedem Aufruf von eix-update hinzu.\n"
-"       Diese Option kann akkumulativ benutzt werden.\n"
-"-L OPT Fügt Option OPT jedem Aufruf von layman hinzu.\n"
-"       Diese Option kann akkumulativ benutzt werden.\n"
-"-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
-"     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
-"     aktiv sind. (Diese Option ist kein Default mehr).\n"
-"-R   Löscht vorhergehendes -r (z.B. aus einem ${eixsyncconf}).\n"
-"-e   Vermeidet heuristischen Test, ob Rootrechte benötigt werden.\n"
-"-h   Zeigt diesen Text und beendet das Programm danach."
-
-#: src/eix-sync.sh:89
-#, sh-format
-msgid "No previous database ${eixprevious} exists"
-msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
-
-#: src/eix-sync.sh:91
-msgid "Could not execute eix-diff"
-msgstr "Konnte eix-diff nicht korrekt ausführen"
-
-#: src/eix-sync.sh:98
-#, sh-format
-msgid "Something went wrong with ${curr_cmd}"
-msgstr "Fehler beim Aufruf von ${curr_cmd}"
-
-#: src/eix-sync.sh:132
-msgid "Syncing all portage overlays"
-msgstr "Synce alle Portage-Overlays"
-
-#: src/eix-sync.sh:134
-#, sh-format
-msgid "${mycmd} -S failed"
-msgstr "${mycmd} -S schlug fehl"
-
-#: src/eix-sync.sh:137
-#, sh-format
-msgid "Syncing portage overlay ${j}"
-msgstr "Synce Portage-Overlay ${j}"
-
-#: src/eix-sync.sh:139
-#, sh-format
-msgid "${mycmd} -s ${j} failed"
-msgstr "${mycmd} -s ${j} schlug fehl"
-
-#: src/eix-sync.sh:266
-msgid ""
-"Nothing was executed, because a heuristic shows that root permissions\n"
-"are required to execute everything successfully."
-msgstr ""
-"Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
-"Root-Recht benötigt werden, um alles erfolgreich auszuführen."
-
-#: src/eix-sync.sh:270
-#, sh-format
-msgid ""
-"However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
-"If you want to skip this test temporarily, use option -e.\n"
-"If you want to skip this test permanently, put option -e\n"
-"into the file ${eixsyncconf}."
-msgstr ""
-"Die Heuristik kann aber falsch sein, beispielsweise mit EPREFIX.\n"
-"Mit der Option -e kann der heuristische Test temporär umgangen werden.\n"
-"Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
-"die Datei ${eixsyncconf} ein."
-
-#: src/eix-sync.sh:286
-msgid "%6d seconds for %s\\n"
-msgstr "%6d Sekunden für %s\\n"
-
-#: src/eix-sync.sh:291
-msgid "Time statistics:"
-msgstr "Benötigte Zeit:"
-
-#: src/eix-sync.sh:292
-msgid "initial eix-update"
-msgstr "Erstes eix-update"
-
-#: src/eix-sync.sh:293
-msgid "syncing"
-msgstr "syncen"
-
-#: src/eix-sync.sh:294
-msgid "client syncing"
-msgstr "Client syncen"
-
-#: src/eix-sync.sh:295
-msgid "metadata update"
-msgstr "Metadata update"
-
-#: src/eix-sync.sh:296
-msgid "eix-update"
-msgstr "eix-update"
-
-#: src/eix-sync.sh:297
-msgid "eix-diff"
-msgstr "eix-diff"
-
-#: src/eix-sync.sh:300
-msgid "%6d seconds total\\n"
-msgstr "%6d Sekunden insgesamt\\n"
-
-#: src/eix-sync.sh:335
-#, sh-format
-msgid "${curr_cmd} failed"
-msgstr "${curr_cmd} schlug fehl"
-
-#: src/eix-sync.sh:348
-#, sh-format
-msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
-msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
-
-#: src/eix-sync.sh:351
-#, sh-format
-msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
-msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
-
-#: src/eix-sync.sh:360
-#, sh-format
-msgid "Could not rsync from ${hostdir}"
-msgstr "Konnte nicht von ${hostdir} rsyncen"
-
-#: src/eix-sync.sh:367
-#, sh-format
-msgid "Running ${runarg}"
-msgstr "Starte ${runarg}"
-
-#: src/eix-sync.sh:368
-#, sh-format
-msgid "${runarg} failed"
-msgstr "${runarg} schlug fehl"
-
-#: src/eix-sync.sh:375
-#, sh-format
-msgid "rsyncing to ${hostdir}"
-msgstr "rsync auf ${hostdir}"
-
-#: src/eix-sync.sh:377
-#, sh-format
-msgid "Could not rsync to ${hostdir}"
-msgstr "Konnte nicht auf ${hostdir} rsyncen"
-
-#: src/eix-sync.sh:384
-msgid "Running emerge --metadata"
-msgstr "Starte emerge --metadata"
-
-#: src/eix-sync.sh:386
-msgid "emerge --metadata failed"
-msgstr "emerge --metadata schlug fehl"
-
-#: src/eix-sync.sh:394
-msgid "eix-cache does not exist. Running eix-update!"
-msgstr "Eix-Cache existiert nicht. Starten von eix-update."
-
-#: src/eix-sync.sh:396 src/eix-sync.sh:405 src/eix-functions.sh.in:161
-#: src/eix-remote.sh:320
-msgid "eix-update failed"
-msgstr "eix-update schlug fehl"
-
-#: src/eix-sync.sh:403
-msgid "eix-cache format has changed. Running eix-update!"
-msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
-
-#: src/eix-sync.sh:415
-#, sh-format
-msgid "Could not copy database to temporary file ${tmpfile}"
-msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
-
-#: src/eix-sync.sh:423
-#, sh-format
-msgid "Copying old ${eixcache} cache to ${eixprevious}"
-msgstr "Kopiere alten ${eixcache} Cache nach ${eixprevious}"
-
-#: src/eix-sync.sh:426
-#, sh-format
-msgid "Could not move ${tmpfile} to ${eixprevious}"
-msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
-
-#: src/eix-sync.sh:444
-msgid "eix-update was apparently already called in a hook"
-msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
-
-#: src/eix-sync.sh:447
-msgid "Running eix-update"
-msgstr "Starte eix-update"
-
-#: src/eix-sync.sh:449
-msgid "Failure while running eix-update"
-msgstr "Problem beim Ausführen von eix-update"
-
-#: src/eix-sync.sh:452
-msgid "Calling eix-diff"
-msgstr "Starte eix-diff"
-
-#: src/eix-sync.sh:454
-msgid "Failed to diff against current cache"
-msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
-
-#: src/eix-test-obsolete.sh:19
-#, sh-format
-msgid ""
-"Usage: ${n} [options] detail|brief\n"
-"or:    ${n} repo|no-repo|buildtime|no-buildtime\n"
-"This is a wrapper script for eix (${p}).\n"
-"\n"
-"It calls eix -tTc several times with various variable settings in order to\n"
-"display missing packages or packages with obsolete entries in\n"
-"/etc/portage/package.* in a more organized manner than eix -tTc would do "
-"alone.\n"
-"The speed and displayed details depend on whether you use the argument\n"
-"\"detail\" or \"brief\". Note that the result depends on your settings of "
-"the\n"
-"REDUNDANT_IF_* and NONEXISTENT_IF_* variables.\n"
-"\n"
-"The following options are available:\n"
-"\t-c  use CHECK_INSTALLED_OVERLAYS=true\n"
-"\t-C  use CHECK_INSTALLED_OVERLAYS=repository\n"
-"\t-d  This can be used instead of the argument \"detail\"\n"
-"\t-b  This can be used instead of the argument \"brief\"\n"
-"\t-h  Show this help text\n"
-"\n"
-"Options -b and -d are meant as to be used in EIX_TEST_OBSOLETE_OPTS to "
-"specify\n"
-"the default behavior.\n"
-"\n"
-"If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not "
-"modified.\n"
-"The (recommended) default for CHECK_INSTALLED_OVERLAYS is \\\"repository\\\" "
-"which\n"
-"is much faster then CHECK_INSTALLED_OVERLAYS=true but works only reliable "
-"for\n"
-"packages installed with repository information (which is done by all recent\n"
-"portage versions).\n"
-"\n"
-"You can check which packages are installed with/without this repository\n"
-"information by using the argument \"repo\"/\"no-repo\".\n"
-"\n"
-"You can check which packages are installed with/without buildtmie\n"
-"information by using the argument \"buildtime\"/\"no-buildtime\".\n"
-"\n"
-"The arguments can be abbreviated, e.g. instead of \"brief\" you can just use "
-"\"br\"."
-msgstr ""
-"Aufruf: ${n} [Optionen] detail|brief\n"
-"oder:   ${n} repo|no-repo|buildtime|no-buildtime\n"
-"Dies ist ein Wrapper-Skript für eix (${p}).\n"
-"\n"
-"Es ruft eix -tTc mehrfach mit verschiedenen Variablen auf, um fehlende\n"
-"Pakete oder Pakete mit obsoleten Einträgen in /etc/portage/package.*\n"
-"etwas organisierter anzuzeigen als nur eix -tTc.\n"
-"Geschwindigkeit und angezeigte Details des Skripts hängen davon ab, ob das\n"
-"Argument \"detail\" oder \"brief\" benutzt wird. Beachte, dass in jedem "
-"Fall\n"
-"das Ergebnis von den Werten der Variablen REDUNDANT_IF_* und "
-"NONEXISTENT_IF_*\n"
-"abhängt.\n"
-"\n"
-"Optionen:\n"
-"\t-c  Benutze CHECK_INSTALLED_OVERLAYS=true\n"
-"\t-C  Benutze CHECK_INSTALLED_OVERLAYS=repository\n"
-"\t-d  Dies ersetzt das Argument \"detail\"\n"
-"\t-b  Dies ersetzt das Argument \"brief\"\n"
-"\t-h  Zeigt diesen Hilfetext an\n"
-"\n"
-"Optionen -b und -d sind dafür gedacht, in EIX_TEST_OBSOLETE_OPTS zum\n"
-"Festlegen des Defaults benutzt zu werden.\n"
-"\n"
-"Ohne -c oder -C wird CHECK_INSTALLED_OVERLAYS nicht modifiziert.\n"
-"Der (empfohlene) Default für CHECK_INSTALLED_OVERLAYS ist \\\"repository\\"
-"\".\n"
-"Dies ist viel schneller als CHECK_INSTALLED_OVERLAYS=true, funktioniert "
-"aber\n"
-"nur für diejenigen Pakete zuverlässig, die mit Repository-Information\n"
-"installiert wurden (alle neueren Portage-Versionen tun dies).\n"
-"\n"
-"Aufruf des Skripts mit dem Argument \"repo\"/\"no-repo\" listet die Pakete,\n"
-"die mit/ohne Repository-Information installiert wurden.\n"
-"\n"
-"Aufruf des Skripts mit dem Argument \"build-time\"/\"no-buildtime\" listet "
-"die\n"
-"Pakete, die mit/ohne Buildtime-Information installiert wurden.\n"
-"\n"
-"Die Argumente können abgekürzt werden; beispielsweise kann \"br\" statt\n"
-"\"brief\" benutzt werden."
-
-#: src/eix-test-obsolete.sh:80
-#, sh-format
-msgid "... considered as ${z}"
-msgstr "... wegen ${z}"
-
-#: src/eix-test-obsolete.sh:129
-msgid "cannot locate your database of installed packages"
-msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
-
-#: src/eix-test-obsolete.sh:157
-#, sh-format
-msgid "(total number of versions listed above: ${c})"
-msgstr "(Gesamtzahl obiger Versionen: ${c})"
-
-#: src/eix-test-obsolete.sh:166
-msgid ""
-"The following package versions are installed with repository information:"
-msgstr ""
-"Die folgenden Paketversionen sind mit Repository-Information installiert:"
-
-#: src/eix-test-obsolete.sh:169
-msgid ""
-"The following package versions are installed without repository information:"
-msgstr ""
-"Die folgenden Paketversionen sind ohne Repository-Information installiert:"
-
-#: src/eix-test-obsolete.sh:177
-msgid ""
-"The following package versions are installed with build-time information:"
-msgstr ""
-"Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
-
-#: src/eix-test-obsolete.sh:180
-msgid ""
-"The following package versions are installed without build-time information:"
-msgstr ""
-"Die folgenden Paketversionen sind ohne Buildtime-Information installiert:"
-
-#: src/eix-test-obsolete.sh:231
-#, sh-format
-msgid "No redundant entries in ${rump}keywords (or test switched off)."
-msgstr "Keine Redundanz in ${rump}keywords (oder Test ausgeschaltet)."
-
-#: src/eix-test-obsolete.sh:232
-#, sh-format
-msgid "Redundant in ${rump}keywords:"
-msgstr "Redundant in ${rump}keywords:"
-
-#: src/eix-test-obsolete.sh:245
-#, sh-format
-msgid "No redundant entries in ${rump}mask (or test switched off)."
-msgstr "Keine Redundanz in ${rump}mask (oder Test ausgeschaltet)."
-
-#: src/eix-test-obsolete.sh:246
-#, sh-format
-msgid "Redundant in ${rump}mask:"
-msgstr "Redundant in ${rump}mask:"
-
-#: src/eix-test-obsolete.sh:254
-#, sh-format
-msgid "No redundant entries in ${rump}unmask (or test switched off)."
-msgstr "Keine Redundanz in ${rump}unmask (oder Test ausgeschaltet)."
-
-#: src/eix-test-obsolete.sh:255
-#, sh-format
-msgid "Redundant in ${rump}unmask:"
-msgstr "Redundant in ${rump}unmask:"
-
-#: src/eix-test-obsolete.sh:263
-#, sh-format
-msgid "No redundant entries in ${rump}use (or test switched off)."
-msgstr "Keine Redundanz in ${rump}use (oder Test ausgeschaltet)."
-
-#: src/eix-test-obsolete.sh:264
-#, sh-format
-msgid "Redundant in ${rump}use:"
-msgstr "Redundant in ${rump}use:"
-
-#: src/eix-test-obsolete.sh:270
-#, sh-format
-msgid "No redundant entries in ${rump}cflags (or test switched off)."
-msgstr "Keine Redundanz in ${rump}cflags (oder Test ausgeschaltet)."
-
-#: src/eix-test-obsolete.sh:271
-#, sh-format
-msgid "Redundant in ${rump}cflags:"
-msgstr "Redundant in ${rump}cflags:"
-
-#: src/eix-test-obsolete.sh:281
-#, sh-format
-msgid "No uninstalled entries in ${rump}keywords (or test switched off)."
-msgstr "Nichts Uninstalliertes in ${rump}keywords (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:282
-#, sh-format
-msgid "Not installed but in ${rump}keywords:"
-msgstr "Uninstalliert, aber in ${rump}keywords:"
-
-#: src/eix-test-obsolete.sh:291
-#, sh-format
-msgid "No uninstalled entries in ${rump}mask (or test switched off)."
-msgstr "Nichts Uninstalliertes in ${rump}mask (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:292
-#, sh-format
-msgid "Not installed but in ${rump}mask:"
-msgstr "Uninstalliert, aber in ${rump}mask:"
-
-#: src/eix-test-obsolete.sh:300
-#, sh-format
-msgid "No uninstalled entries in ${rump}unmask (or test switched off)."
-msgstr "Nichts Uninstalliertes in ${rump}unmask (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:301
-#, sh-format
-msgid "Not installed but in ${rump}unmask:"
-msgstr "Uninstalliert, aber in ${rump}unmask:"
-
-#: src/eix-test-obsolete.sh:308
-#, sh-format
-msgid "No uninstalled entries in ${rump}use (or test switched off)."
-msgstr "Nichts Uninstalliertes in ${rump}use (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:309
-#, sh-format
-msgid "Not installed but in ${rump}use:"
-msgstr "Uninstalliert, aber in ${rump}use:"
-
-#: src/eix-test-obsolete.sh:314
-#, sh-format
-msgid "No uninstalled entries in ${rump}cflags (or test switched off)."
-msgstr "Nichts Uninstalliertes in ${rump}cflags (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:315
-#, sh-format
-msgid "Not installed but in ${rump}cflags:"
-msgstr "Uninstalliert, aber in ${rump}cflags:"
-
-#: src/eix-test-obsolete.sh:320
-msgid "All installed versions of packages are in the database."
-msgstr "Alle installierten Paketversionen sind in der Datenbank."
-
-#: src/eix-test-obsolete.sh:322
-msgid "Installed packages with a version not in the database (or masked):"
-msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
 #: src/eix-functions.sh.in:24
 msgid "cannot read functions.sh"
@@ -581,6 +31,11 @@ msgstr "Probleme mit ${eixf_cmd}"
 #: src/eix-functions.sh.in:160
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
+
+#: src/eix-functions.sh.in:161 src/eix-remote.sh:320 src/eix-sync.sh:396
+#: src/eix-sync.sh:405
+msgid "eix-update failed"
+msgstr "eix-update schlug fehl"
 
 #: src/eix-functions.sh.in:199
 #, sh-format
@@ -598,6 +53,65 @@ msgstr "kann keine temporäres Directory erzeugen"
 #: src/eix-functions.sh.in:317
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
+
+#: src/eix-installed-after.sh:17
+#, sh-format
+msgid ""
+"Usage: ${n} [options] category/package[:slot]\n"
+"This is a demo script for eix (${p}).\n"
+"It lists packages installed after/before the last install of the given "
+"package\n"
+"in an output format which is convenient as an argument for \"emerge -1\".\n"
+"Be aware that only packages in the eix database are considered.\n"
+"\n"
+"The argument can use pattern matching shortcuts (* and ?);\n"
+"the first match is chosen.\n"
+"The :slot part can be omitted if the corresponding package has only one "
+"slot.\n"
+"\n"
+"The following options are available:\n"
+"\n"
+"-b   Output packages installed before (instead of after) the given package\n"
+"-d   Output the installation date after the package\n"
+"-s   Output slot of the package, even if there appears no ambiguity\n"
+"-v   Output category/package-version  instead of category/package[:slot]\n"
+"-=   Output =category/package-version instead of category/package[:slot]\n"
+"-S   When finding the starting package, choose the first matching slot\n"
+"-V   When finding the starting package, look for category/package-version\n"
+"     instead of category/package:slot\n"
+"-i   Include the first package on the command line in the output\n"
+"-t   Use build time (if available) instead of installation time,\n"
+"     independent of the value of USE_BUILD_TIME\n"
+"-T   Never use build time"
+msgstr ""
+"Aufruf: ${n} [Optionen] category/package[:slot]\n"
+"Dies ist ein Demo-Script zu eix (${p}).\n"
+"Es gibt Pakete aus, die nach/vor der letzten Installation des übergebenen\n"
+"Pakets installiert wurden. Das Ausgabeformat eignet sich dabei als Argument\n"
+"für \"emerge -1\".\n"
+"Beachte Sie, dass das Script nur Pakete aus der eix Datenbank "
+"berücksichtigt.\n"
+"\n"
+"Im Argument können Shell-Pattern (* and ?) benutzt werden;\n"
+"der erste Treffer zählt.\n"
+"Der :slot Teil kann weggelassen werden, wenn das betreffende Paket nur "
+"einen\n"
+"Slot besitzt.\n"
+"\n"
+"Optionen:\n"
+"\n"
+"-b   Sucht Pakete, die vor (statt nach) dem Trefferpaket installiert wurden\n"
+"-d   Ausgabe des Installationsdatums nach dem Paket\n"
+"-s   Ausgabe des Slots, selbst dann, wenn er eindeutig sein sollte\n"
+"-v   Ausgabe als category/package-version  statt category/package[:slot]\n"
+"-=   Ausgabe als =category/package-version statt category/package[:slot]\n"
+"-S   Benutze ersten Slot zur Bestimmung des Referenzpakets\n"
+"-V   Benutze String category/package-version statt category/package:slot\n"
+"     zur Bestimmtung des Referenzpakets\n"
+"-i   Das Referenzpaket wird mit ausgegeben\n"
+"-t   Benutze build time (falls verfügbar) statt des Installationsdatums,\n"
+"     unabhängig vom Wert der Variablen USE_BUILD_TIME\n"
+"-T   Benutze niemals die build time, immer nur das Installationsdatum."
 
 #: src/eix-layman.sh:20
 #, sh-format
@@ -876,6 +390,551 @@ msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "kann Datei ${filename} nicht lesen"
+
+#: src/eix-sync.sh:26
+#, sh-format
+msgid ""
+"Usage: ${n} [options]\n"
+"Call layman/emerge --sync/--metadata and/or show updates. (${p})\n"
+"\n"
+"Unless the -t option is used, the old database will be saved to\n"
+"    ${eixprevious}.\n"
+"\n"
+"The file ${eixsyncconf} and the eix (environment) variable EIX_SYNC_CONF\n"
+"(which defaults to delayed substitution of EIX_SYNC_OPTS) determine for\n"
+"which overlays layman is called, which default options are used, and they\n"
+"can contain various hooks - \"man eix\" for details.\n"
+"\n"
+"Be aware that e.g. the default EIX_SYNC_OPTS are evaluated so be sure to\n"
+"quote them correctly and care about security risks.\n"
+"Moreover, \"--\" in the default options will forbid command line options.\n"
+"The following options are available:\n"
+"\n"
+"-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
+"-d   Only show differences to the previously saved database and exit.\n"
+"     Except for executing the !! lines in ${eixsyncconf}\n"
+"     this is the same as eix-diff ${eixprevious}.\n"
+"-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
+"     USER defaults to current user and DIR defaults to PORTDIR\n"
+"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull "
+"syncing;\n"
+"     you should later call eix-sync -u locally on CLIENT.\n"
+"     If you already have synced you might want to combine this option with -"
+"uU.\n"
+"-U   Do not touch the database and omit the hooks after eix-update (@ "
+"entries)\n"
+"     and do not show differences. This option implies -R\n"
+"-u   Update database only and show differences. This is equivalent to -l@s "
+"\"\"\n"
+"-l   Do not call layman (and the !commands in ${eixsyncconf}).\n"
+"     However, the !! lines and postponed hooks (@ and @@ entries)\n"
+"     will be executed anyway.\n"
+"-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
+"-S   Do not execute the hooks after emerge --sync (@ entries).\n"
+"-M   Run emerge --metadata. You might need this when you use e.g.\n"
+"     PORTDIR_CACHE_METHOD=flat and a newer portage version when\n"
+"     FEATURES=metadata-transfer is inactive or disabled.\n"
+"-m   Run emerge --metadata but skip emerge --sync.\n"
+"-N   Skip emerge --metadata if it was activated by -M or -m.\n"
+"-t   Use temporary file to save the current database (-d will not be "
+"possible).\n"
+"-T   Do not measure time\n"
+"-q   Be quiet (close stdout)\n"
+"-w   Run emerge-webrsync instead of emerge --sync.\n"
+"-W   Run emerge-delta-webrsync instead of emerge --sync.\n"
+"-c CMD Run CMD instead of emerge --sync.\n"
+"-C OPT Add OPT to the emerge --sync command (or whatever is used instead).\n"
+"       This option can be used accumulatively.\n"
+"-o OPT Add OPT to each eix-update command.\n"
+"       This option can be used accumulatively.\n"
+"-L OPT Add OPT to each call of layman.\n"
+"       This option can be used accumulatively.\n"
+"-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when "
+"you\n"
+"     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
+"     is active. (This option is not default anymore).\n"
+"-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
+"-e   Skip heuristic tests whether you must be root.\n"
+"-h   Show this text and exit."
+msgstr ""
+"Aufruf: ${n} [Optionen]\n"
+"Dieses Script gehört zu ${p}.\n"
+"Es ruft layman/emerge --sync/--metadata auf und/oder zeigt updates.\n"
+"\n"
+"Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
+"    ${eixprevious}\n"
+"gespeichert.\n"
+"Die Datei ${eixsyncconf} und die (Environment) Variable EIX_SYNC_CONF\n"
+"(die wiederum als Default die Delayed Substituion von EIX_SYNC_OPTS ist)\n"
+"bestimmen, für welche Overlays layman aufgerufen wird, welche Default-"
+"Optionen\n"
+"benutzt werden, und sie können auch verschiedene Hooks enthalten:\n"
+"\"man eix\" erklärt Genaueres hierzu.\n"
+"\n"
+"Die Default-Optionen (z.B. aus EIX_SYNC_OPTS) werden evaluiert, also kann\n"
+"falsches Quoten oder Kompromittierung zu einem Sicherheitsproblem werden.\n"
+"Natürlich wird \"--\" in den Default-Optionen alle Kommandozeilenoptionen\n"
+"verhindern.\n"
+"Die Optionen sind:\n"
+"\n"
+"-i   Ignoriere vorherige Optionen (sinnvoll bei ${eixsyncconf}).\n"
+"-d   Zeige nur die Unterschiede zur gespeicherten Datenbank an.\n"
+"     Außer dass auch die !!-Zeilen in ${eixsyncconf} ausgeführt werden,\n"
+"     ist dies das gleiche wie eix-diff ${eixprevious}.\n"
+"-s [USER@]SERVER[:DIR] Synce via rsync vom SERVER.\n"
+"     USER/DIR sind per Default der augenblickliche User und PORTDIR.\n"
+"-2 [USER@]CLIENT[:DIR] Synce via rsync *auf* den CLIENT, falls das Syncen\n"
+"     zuvor erfolgreich war. Danach sollte auf dem CLIENT eix-sync -u\n"
+"     aufgerufen werden. Falls bereits gesynct wurde, ist es sinnvoll,\n"
+"     diese Option mit mit -uU zu kombinieren.\n"
+"-U   Die Datenbank wird nicht geändert, die Hooks nach eix-update\n"
+"     (@-Zeilen) werden nicht ausgeführt, und natürlich wird eix-diff\n"
+"     nicht aufgerufen. Diese Option impliziert -R\n"
+"-u   Führe nur das Datenbank-Update durch und zeige die Unterschiede.\n"
+"     dies ist gleichbedeutend mit -l@s \"\"\n"
+"-l   Kein Layman (und keine !-Zeilen in ${eixsyncconf});\n"
+"     Aber die !!-Zeilen und nachgestellte Hooks (@- und @@-Zeilen)\n"
+"     werden dennoch ausgeführt.\n"
+"-@   Keine Hooks (@- und @@-Zeilen) aus ${eixsyncconf}.\n"
+"-S   Keine Hooks nach emerge --sync (@-Zeilen).\n"
+"-M   Mit emerge --metadata. Dies ist beispielsweise nötig bei\n"
+"     PORTDIR_CACHE_METHOD=flat und neuere Portage-Versionen, wenn\n"
+"     FEATURES=metadata-transfer inaktiv oder ausgeschaltet ist.\n"
+"-m   Mit emerge --metadata aber ohne emerge --sync.\n"
+"-N   Kein emerge --metadata, selbst wenn -M oder -m benutzt wurde.\n"
+"-t   Speichere die aktuelle Datenbank nur in Temporärfile. Dies schließt\n"
+"     natürlich ein späteres -d aus.\n"
+"-T   Keine Zeitmessungen\n"
+"-q   Keine Ausgabe (schließt stdout)\n"
+"-w   Benutze emerge-webrsync statt emerge --sync.\n"
+"-W   Benutze emerge-delta-webrsync statt emerge --sync.\n"
+"-c CMD Benutze CMD statt emerge --sync.\n"
+"-C OPT Fügt Option OPT dem emerge --sync (oder dem Ersatz dafür) hinzu.\n"
+"       Diese Option kann akkumulativ benutzt werden.\n"
+"-o OPT Fügt Option OPT jedem Aufruf von eix-update hinzu.\n"
+"       Diese Option kann akkumulativ benutzt werden.\n"
+"-L OPT Fügt Option OPT jedem Aufruf von layman hinzu.\n"
+"       Diese Option kann akkumulativ benutzt werden.\n"
+"-r   Löscht /var/cache/edb/dep/* vor dem Syncen. Dies ist nur sinnvoll,\n"
+"     wenn z.B. PORTDIR_CACHE_METHOD=flat und FEATURES=metadata-transfer\n"
+"     aktiv sind. (Diese Option ist kein Default mehr).\n"
+"-R   Löscht vorhergehendes -r (z.B. aus einem ${eixsyncconf}).\n"
+"-e   Vermeidet heuristischen Test, ob Rootrechte benötigt werden.\n"
+"-h   Zeigt diesen Text und beendet das Programm danach."
+
+#: src/eix-sync.sh:89
+#, sh-format
+msgid "No previous database ${eixprevious} exists"
+msgstr "Kein vorheriges Datenkbankfile ${eixprevious} gefunden"
+
+#: src/eix-sync.sh:91
+msgid "Could not execute eix-diff"
+msgstr "Konnte eix-diff nicht korrekt ausführen"
+
+#: src/eix-sync.sh:98
+#, sh-format
+msgid "Something went wrong with ${curr_cmd}"
+msgstr "Fehler beim Aufruf von ${curr_cmd}"
+
+#: src/eix-sync.sh:132
+msgid "Syncing all portage overlays"
+msgstr "Synce alle Portage-Overlays"
+
+#: src/eix-sync.sh:134
+#, sh-format
+msgid "${mycmd} -S failed"
+msgstr "${mycmd} -S schlug fehl"
+
+#: src/eix-sync.sh:137
+#, sh-format
+msgid "Syncing portage overlay ${j}"
+msgstr "Synce Portage-Overlay ${j}"
+
+#: src/eix-sync.sh:139
+#, sh-format
+msgid "${mycmd} -s ${j} failed"
+msgstr "${mycmd} -s ${j} schlug fehl"
+
+#: src/eix-sync.sh:266
+msgid ""
+"Nothing was executed, because a heuristic shows that root permissions\n"
+"are required to execute everything successfully."
+msgstr ""
+"Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
+"Root-Recht benötigt werden, um alles erfolgreich auszuführen."
+
+#: src/eix-sync.sh:270
+#, sh-format
+msgid ""
+"However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
+"If you want to skip this test temporarily, use option -e.\n"
+"If you want to skip this test permanently, put option -e\n"
+"into the file ${eixsyncconf}."
+msgstr ""
+"Die Heuristik kann aber falsch sein, beispielsweise mit EPREFIX.\n"
+"Mit der Option -e kann der heuristische Test temporär umgangen werden.\n"
+"Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
+"die Datei ${eixsyncconf} ein."
+
+#: src/eix-sync.sh:286
+msgid "%6d seconds for %s\\n"
+msgstr "%6d Sekunden für %s\\n"
+
+#: src/eix-sync.sh:291
+msgid "Time statistics:"
+msgstr "Benötigte Zeit:"
+
+#: src/eix-sync.sh:292
+msgid "initial eix-update"
+msgstr "Erstes eix-update"
+
+#: src/eix-sync.sh:293
+msgid "syncing"
+msgstr "syncen"
+
+#: src/eix-sync.sh:294
+msgid "client syncing"
+msgstr "Client syncen"
+
+#: src/eix-sync.sh:295
+msgid "metadata update"
+msgstr "Metadata update"
+
+#: src/eix-sync.sh:296
+msgid "eix-update"
+msgstr "eix-update"
+
+#: src/eix-sync.sh:297
+msgid "eix-diff"
+msgstr "eix-diff"
+
+#: src/eix-sync.sh:300
+msgid "%6d seconds total\\n"
+msgstr "%6d Sekunden insgesamt\\n"
+
+#: src/eix-sync.sh:335
+#, sh-format
+msgid "${curr_cmd} failed"
+msgstr "${curr_cmd} schlug fehl"
+
+#: src/eix-sync.sh:348
+#, sh-format
+msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
+msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
+
+#: src/eix-sync.sh:351
+#, sh-format
+msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
+msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
+
+#: src/eix-sync.sh:360
+#, sh-format
+msgid "Could not rsync from ${hostdir}"
+msgstr "Konnte nicht von ${hostdir} rsyncen"
+
+#: src/eix-sync.sh:367
+#, sh-format
+msgid "Running ${runarg}"
+msgstr "Starte ${runarg}"
+
+#: src/eix-sync.sh:368
+#, sh-format
+msgid "${runarg} failed"
+msgstr "${runarg} schlug fehl"
+
+#: src/eix-sync.sh:375
+#, sh-format
+msgid "rsyncing to ${hostdir}"
+msgstr "rsync auf ${hostdir}"
+
+#: src/eix-sync.sh:377
+#, sh-format
+msgid "Could not rsync to ${hostdir}"
+msgstr "Konnte nicht auf ${hostdir} rsyncen"
+
+#: src/eix-sync.sh:384
+msgid "Running emerge --metadata"
+msgstr "Starte emerge --metadata"
+
+#: src/eix-sync.sh:386
+msgid "emerge --metadata failed"
+msgstr "emerge --metadata schlug fehl"
+
+#: src/eix-sync.sh:394
+msgid "eix-cache does not exist. Running eix-update!"
+msgstr "Eix-Cache existiert nicht. Starten von eix-update."
+
+#: src/eix-sync.sh:403
+msgid "eix-cache format has changed. Running eix-update!"
+msgstr "Eix-Cache-Format hat sich geändert. Starten von eix-update."
+
+#: src/eix-sync.sh:415
+#, sh-format
+msgid "Could not copy database to temporary file ${tmpfile}"
+msgstr "Konnte die Datenbank nicht in temporäre Datei ${tmpfile} kopieren"
+
+#: src/eix-sync.sh:423
+#, sh-format
+msgid "Copying old ${eixcache} cache to ${eixprevious}"
+msgstr "Kopiere alten ${eixcache} Cache nach ${eixprevious}"
+
+#: src/eix-sync.sh:426
+#, sh-format
+msgid "Could not move ${tmpfile} to ${eixprevious}"
+msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
+
+#: src/eix-sync.sh:444
+msgid "eix-update was apparently already called in a hook"
+msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
+
+#: src/eix-sync.sh:447
+msgid "Running eix-update"
+msgstr "Starte eix-update"
+
+#: src/eix-sync.sh:449
+msgid "Failure while running eix-update"
+msgstr "Problem beim Ausführen von eix-update"
+
+#: src/eix-sync.sh:452
+msgid "Calling eix-diff"
+msgstr "Starte eix-diff"
+
+#: src/eix-sync.sh:454
+msgid "Failed to diff against current cache"
+msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
+
+#: src/eix-test-obsolete.sh:19
+#, sh-format
+msgid ""
+"Usage: ${n} [options] detail|brief\n"
+"or:    ${n} repo|no-repo|buildtime|no-buildtime\n"
+"This is a wrapper script for eix (${p}).\n"
+"\n"
+"It calls eix -tTc several times with various variable settings in order to\n"
+"display missing packages or packages with obsolete entries in\n"
+"/etc/portage/package.* in a more organized manner than eix -tTc would do "
+"alone.\n"
+"The speed and displayed details depend on whether you use the argument\n"
+"\"detail\" or \"brief\". Note that the result depends on your settings of "
+"the\n"
+"REDUNDANT_IF_* and NONEXISTENT_IF_* variables.\n"
+"\n"
+"The following options are available:\n"
+"\t-c  use CHECK_INSTALLED_OVERLAYS=true\n"
+"\t-C  use CHECK_INSTALLED_OVERLAYS=repository\n"
+"\t-d  This can be used instead of the argument \"detail\"\n"
+"\t-b  This can be used instead of the argument \"brief\"\n"
+"\t-h  Show this help text\n"
+"\n"
+"Options -b and -d are meant as to be used in EIX_TEST_OBSOLETE_OPTS to "
+"specify\n"
+"the default behavior.\n"
+"\n"
+"If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not "
+"modified.\n"
+"The (recommended) default for CHECK_INSTALLED_OVERLAYS is \\\"repository\\\" "
+"which\n"
+"is much faster then CHECK_INSTALLED_OVERLAYS=true but works only reliable "
+"for\n"
+"packages installed with repository information (which is done by all recent\n"
+"portage versions).\n"
+"\n"
+"You can check which packages are installed with/without this repository\n"
+"information by using the argument \"repo\"/\"no-repo\".\n"
+"\n"
+"You can check which packages are installed with/without buildtmie\n"
+"information by using the argument \"buildtime\"/\"no-buildtime\".\n"
+"\n"
+"The arguments can be abbreviated, e.g. instead of \"brief\" you can just use "
+"\"br\"."
+msgstr ""
+"Aufruf: ${n} [Optionen] detail|brief\n"
+"oder:   ${n} repo|no-repo|buildtime|no-buildtime\n"
+"Dies ist ein Wrapper-Skript für eix (${p}).\n"
+"\n"
+"Es ruft eix -tTc mehrfach mit verschiedenen Variablen auf, um fehlende\n"
+"Pakete oder Pakete mit obsoleten Einträgen in /etc/portage/package.*\n"
+"etwas organisierter anzuzeigen als nur eix -tTc.\n"
+"Geschwindigkeit und angezeigte Details des Skripts hängen davon ab, ob das\n"
+"Argument \"detail\" oder \"brief\" benutzt wird. Beachte, dass in jedem "
+"Fall\n"
+"das Ergebnis von den Werten der Variablen REDUNDANT_IF_* und "
+"NONEXISTENT_IF_*\n"
+"abhängt.\n"
+"\n"
+"Optionen:\n"
+"\t-c  Benutze CHECK_INSTALLED_OVERLAYS=true\n"
+"\t-C  Benutze CHECK_INSTALLED_OVERLAYS=repository\n"
+"\t-d  Dies ersetzt das Argument \"detail\"\n"
+"\t-b  Dies ersetzt das Argument \"brief\"\n"
+"\t-h  Zeigt diesen Hilfetext an\n"
+"\n"
+"Optionen -b und -d sind dafür gedacht, in EIX_TEST_OBSOLETE_OPTS zum\n"
+"Festlegen des Defaults benutzt zu werden.\n"
+"\n"
+"Ohne -c oder -C wird CHECK_INSTALLED_OVERLAYS nicht modifiziert.\n"
+"Der (empfohlene) Default für CHECK_INSTALLED_OVERLAYS ist \\\"repository\\"
+"\".\n"
+"Dies ist viel schneller als CHECK_INSTALLED_OVERLAYS=true, funktioniert "
+"aber\n"
+"nur für diejenigen Pakete zuverlässig, die mit Repository-Information\n"
+"installiert wurden (alle neueren Portage-Versionen tun dies).\n"
+"\n"
+"Aufruf des Skripts mit dem Argument \"repo\"/\"no-repo\" listet die Pakete,\n"
+"die mit/ohne Repository-Information installiert wurden.\n"
+"\n"
+"Aufruf des Skripts mit dem Argument \"build-time\"/\"no-buildtime\" listet "
+"die\n"
+"Pakete, die mit/ohne Buildtime-Information installiert wurden.\n"
+"\n"
+"Die Argumente können abgekürzt werden; beispielsweise kann \"br\" statt\n"
+"\"brief\" benutzt werden."
+
+#: src/eix-test-obsolete.sh:80
+#, sh-format
+msgid "... considered as ${z}"
+msgstr "... wegen ${z}"
+
+#: src/eix-test-obsolete.sh:129
+msgid "cannot locate your database of installed packages"
+msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
+
+#: src/eix-test-obsolete.sh:157
+#, sh-format
+msgid "(total number of versions listed above: ${c})"
+msgstr "(Gesamtzahl obiger Versionen: ${c})"
+
+#: src/eix-test-obsolete.sh:166
+msgid ""
+"The following package versions are installed with repository information:"
+msgstr ""
+"Die folgenden Paketversionen sind mit Repository-Information installiert:"
+
+#: src/eix-test-obsolete.sh:169
+msgid ""
+"The following package versions are installed without repository information:"
+msgstr ""
+"Die folgenden Paketversionen sind ohne Repository-Information installiert:"
+
+#: src/eix-test-obsolete.sh:177
+msgid ""
+"The following package versions are installed with build-time information:"
+msgstr ""
+"Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
+
+#: src/eix-test-obsolete.sh:180
+msgid ""
+"The following package versions are installed without build-time information:"
+msgstr ""
+"Die folgenden Paketversionen sind ohne Buildtime-Information installiert:"
+
+#: src/eix-test-obsolete.sh:231
+#, sh-format
+msgid "No redundant entries in ${rump}keywords (or test switched off)."
+msgstr "Keine Redundanz in ${rump}keywords (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:232
+#, sh-format
+msgid "Redundant in ${rump}keywords:"
+msgstr "Redundant in ${rump}keywords:"
+
+#: src/eix-test-obsolete.sh:245
+#, sh-format
+msgid "No redundant entries in ${rump}mask (or test switched off)."
+msgstr "Keine Redundanz in ${rump}mask (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:246
+#, sh-format
+msgid "Redundant in ${rump}mask:"
+msgstr "Redundant in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:254
+#, sh-format
+msgid "No redundant entries in ${rump}unmask (or test switched off)."
+msgstr "Keine Redundanz in ${rump}unmask (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:255
+#, sh-format
+msgid "Redundant in ${rump}unmask:"
+msgstr "Redundant in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:263
+#, sh-format
+msgid "No redundant entries in ${rump}use (or test switched off)."
+msgstr "Keine Redundanz in ${rump}use (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:264
+#, sh-format
+msgid "Redundant in ${rump}use:"
+msgstr "Redundant in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:270
+#, sh-format
+msgid "No redundant entries in ${rump}cflags (or test switched off)."
+msgstr "Keine Redundanz in ${rump}cflags (oder Test ausgeschaltet)."
+
+#: src/eix-test-obsolete.sh:271
+#, sh-format
+msgid "Redundant in ${rump}cflags:"
+msgstr "Redundant in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:281
+#, sh-format
+msgid "No uninstalled entries in ${rump}keywords (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}keywords (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:282
+#, sh-format
+msgid "Not installed but in ${rump}keywords:"
+msgstr "Uninstalliert, aber in ${rump}keywords:"
+
+#: src/eix-test-obsolete.sh:291
+#, sh-format
+msgid "No uninstalled entries in ${rump}mask (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}mask (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:292
+#, sh-format
+msgid "Not installed but in ${rump}mask:"
+msgstr "Uninstalliert, aber in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:300
+#, sh-format
+msgid "No uninstalled entries in ${rump}unmask (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}unmask (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:301
+#, sh-format
+msgid "Not installed but in ${rump}unmask:"
+msgstr "Uninstalliert, aber in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:308
+#, sh-format
+msgid "No uninstalled entries in ${rump}use (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}use (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:309
+#, sh-format
+msgid "Not installed but in ${rump}use:"
+msgstr "Uninstalliert, aber in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:314
+#, sh-format
+msgid "No uninstalled entries in ${rump}cflags (or test switched off)."
+msgstr "Nichts Uninstalliertes in ${rump}cflags (oder Test ist aus)."
+
+#: src/eix-test-obsolete.sh:315
+#, sh-format
+msgid "Not installed but in ${rump}cflags:"
+msgstr "Uninstalliert, aber in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:320
+msgid "All installed versions of packages are in the database."
+msgstr "Alle installierten Paketversionen sind in der Datenbank."
+
+#: src/eix-test-obsolete.sh:322
+msgid "Installed packages with a version not in the database (or masked):"
+msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
 #: src/eix.cc:63
 #, c-format

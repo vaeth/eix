@@ -1,0 +1,106 @@
+#! /usr/bin/env sh
+# This script is part of the eix project and distributed under the
+# terms of the GNU General Public License v2.
+#
+# Authors and Copyright (c):
+#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de> (complete rewrite)
+#
+# This script lists all packages installed after/before a certain package
+# See the eix manpage for details. (@PACKAGE_STRING@).
+
+. ./eix-functions.sh.in
+ReadFunctions
+
+Usage () {
+	n="${0##*/}"
+	p='@PACKAGE_STRING@'
+	eval_gettext 'Usage: ${n} [options] category/package[:slot]
+This is a demo script for eix (${p}).
+It lists packages installed after/before the last install of the given package
+in an output format which is convenient as an argument for "emerge -1".
+Be aware that only packages in the eix database are considered.
+
+The argument can use pattern matching shortcuts (* and ?);
+the first match is chosen.
+The :slot part can be omitted if the corresponding package has only one slot.
+
+The following options are available:
+
+-b   Output packages installed before (instead of after) the given package
+-d   Output the installation date after the package
+-s   Output slot of the package, even if there appears no ambiguity
+-v   Output category/package-version  instead of category/package[:slot]
+-=   Output =category/package-version instead of category/package[:slot]
+-S   When finding the starting package, choose the first matching slot
+-V   When finding the starting package, look for category/package-version
+     instead of category/package:slot
+-i   Include the first package on the command line in the output
+-t   Use build time (if available) instead of installation time,
+     independent of the value of USE_BUILD_TIME
+-T   Never use build time'
+	echo
+	exitcode=${1:-1}
+	exit ${exitcode}
+}
+
+before=false
+date_output=''
+output='NAMESLOT'
+input='NAMESLOT'
+including=false
+OPTIND=1
+while getopts "bdsv=SVitT?hH" opt
+do	case "${opt}" in
+		b) before=:;;
+		d) date_output='\t<date:DATE_OUTPUT>';;
+		s) output='NAMEASLOT';;
+		v) output='NAMEVERSION';;
+		'=') output='EQNAMEVERSION';;
+		S) input='NAME';;
+		V) input='NAMEVERSION';;
+		i) including=:;;
+		t) USE_BUILD_TIME=true; export USE_BUILD_TIME;;
+		T) USE_BUILD_TIME=false; export USE_BUILD_TIME;;
+		*) Usage 0;;
+	esac
+done
+[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+[ ${#} -eq 1 ] || Usage
+match="${1}"
+
+Check () {
+	[ ${#} -ge 2 ] && case "${2}:" in
+	${match}:*) return 0;;
+	esac
+	return 1
+}
+
+Output () {
+	if [ ${#} -eq 3 ]
+	then	printf '%s\n' "${3}"
+	elif [ ${#} -gt 3 ]
+	then	printf '%-43s %-11s %s\n' "${3}" "${4}" "${5}"
+	fi
+}
+
+found=false
+
+NEWLINE=false \
+VERSION_NEWLINE='' \
+DATE_FORMAT='%s' \
+DATE_OUTPUT='%x %X' \
+NAME="<category>/<package>" \
+LINE="<date:DATE_FORMAT>\\t%{${input}}\\t%{${output}}${date_output}\\n" \
+	eix '-I*' --format "<installedversions:LINE>" \
+| sort -n \
+| while read -r line
+do	if ${found}
+	then	${before} || Output ${line}
+	elif Check ${line}
+	then	found=:
+		${including} && Output ${line}
+	else	${before} && Output ${line}
+	fi
+done
+
+exit 0

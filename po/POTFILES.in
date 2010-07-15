@@ -1,10 +1,11 @@
 # List of source files which contain translatable strings.
 # Shell type source files
-src/eix-sync.sh
-src/eix-test-obsolete.sh
 src/eix-functions.sh.in
+src/eix-installed-after.sh
 src/eix-layman.sh
 src/eix-remote.sh
+src/eix-sync.sh
+src/eix-test-obsolete.sh
 # C type source files
 src/cli.cc
 src/cli.h
