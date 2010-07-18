@@ -8,33 +8,54 @@
 # This script lists all packages installed after/before a certain package
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
+
+# We make use of the functions provided by eix-functions.sh:
+
 . ./eix-functions.sh.in
 ReadFunctions
+
+
+# The following function outputs the usage of the script and then dies.
 
 Usage () {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] category/package[:slot]
-This is a demo script for eix (${p}).
-It lists packages installed after/before the last install of the given package
-in an output format which is convenient as an argument for "emerge -1".
+This is a well-commented demo script for eix (${p}).
+It lists packages installed after (or before) the last (or first) install
+of the given package/version in an output format which is convenient
+as an argument for "emerge -1".
 Be aware that only packages in the eix database are considered.
 
-The argument can use pattern matching shortcuts (* and ?);
-the first match is chosen.
+The argument can use shell pattern matching (* and ?; do not forget to quote
+them if you call this script from a shell); the first match is chosen.
 The :slot part can be omitted if the corresponding package has only one slot.
+(Options -l, -L, and -e have different rules).
 
 The following options are available:
 
 -b   Output packages installed before (instead of after) the given package
+-i   Include the given package (on the command line) in the output
+-l   Use /var/log/emerge.log to use the _first_ (instead of the last) install
+     time of the given package. In this case, the argument must be a
+     regular expression matching category/package-version.
+     Note that the time in the log file and the time recorded in the database
+     usually differ slightly so that usage/non-usage of option -i need not
+     have the expected effect: The package may or may not be included.
+     You can use -a/-A to fix the time. Note also that -t or -T have no
+     effect on the data in the log file.
+-L LOG As -l but use LOG instead of /var/log/emerge.log
+-e   The argument is not category/package[:slot] but a time in the format
+     output by "date +%s" (i.e. the number of seconds since epoch).
+-a SEC When using -l -L or -e, increase the actual match time by SEC seconds.
+-A SEC When using -l -L or -e, decrease the actual match time by SEC seconds.
+-S   When finding the starting package, choose the first matching slot
+-V   When finding the starting package, look for category/package-version
+     instead of category/package:slot
 -d   Output the installation date after the package
 -s   Output slot of the package, even if there appears no ambiguity
 -v   Output category/package-version  instead of category/package[:slot]
 -=   Output =category/package-version instead of category/package[:slot]
--S   When finding the starting package, choose the first matching slot
--V   When finding the starting package, look for category/package-version
-     instead of category/package:slot
--i   Include the first package on the command line in the output
 -t   Use build time (if available) instead of installation time,
      independent of the value of USE_BUILD_TIME
 -T   Never use build time'
@@ -43,15 +64,27 @@ The following options are available:
 	exit ${exitcode}
 }
 
+
+# Parse the command line options:
+
+epoch=false
+logfile=''
 before=false
 date_output=''
 output='NAMESLOT'
 input='NAMESLOT'
 including=false
+addtime=''
+subtime=''
 OPTIND=1
-while getopts "bdsv=SVitT?hH" opt
+while getopts "blL:ea:A:dsv=SVitT?hH" opt
 do	case "${opt}" in
 		b) before=:;;
+		l) logfile="/var/log/emerge.log";;
+		L) logfile="${OPTARG}";;
+		e) epoch=:;;
+		a) addtime="${OPTARG}";;
+		A) subtime="${OPTARG}";;
 		d) date_output='\t<date:DATE_OUTPUT>';;
 		s) output='NAMEASLOT';;
 		v) output='NAMEVERSION';;
@@ -65,8 +98,39 @@ do	case "${opt}" in
 	esac
 done
 [ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+
+
+# After the options there should be exactly one argument: ${match}
+
 [ ${#} -eq 1 ] || Usage
 match="${1}"
+
+
+# With options -l or -L, we also have to parse the logfile:
+
+if [ -n "${logfile}" ]
+then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
+	epoch=`sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
+q}" "${logfile}"` || epoch=''
+	case "${epoch}" in
+	[0-9]*)	match="${epoch}";;
+	*)	die "cannot find merge of ${match} in ${logfile}";;
+	esac
+	epoch=:
+fi
+
+
+# We will let eix output for each installed package (and then sort by time):
+#	date (in the format %s) TAB
+#	package (in the input format) TAB
+#	package (in the output format) [TAB date (in the format "%x %X")]
+#	newline
+# (the [...] part occurs only with option -d).
+# The functions Check resp. Output are called with each ${line} as argument
+# (which thus undergoes the usual splitting at spaces or tabs).
+# Check  returns 0 if the package matches ${match} (or is known to be younger).
+# Output outputs the package (and date).
+# Both functions ignore empty lines.
 
 Check () {
 	[ ${#} -ge 2 ] && case "${2}:" in
@@ -74,6 +138,14 @@ Check () {
 	esac
 	return 1
 }
+if ${epoch}
+then	[ -n "${addtime}" ] && match=`expr "${match}" + "${addtime}"`
+	[ -n "${subtime}" ] && match=`expr "${match}" - "${subtime}"`
+# With option -e (or -l or -L), we need a different Check function:
+Check () {
+	[ ${#} -ne 0 ] && [ "${1}" -ge "${match}" ]
+}
+fi
 
 Output () {
 	if [ ${#} -eq 3 ]
@@ -83,10 +155,39 @@ Output () {
 	fi
 }
 
+# "found" is our flag in the loop whether we already found our package.
 found=false
 
-NEWLINE=false \
+# Now the main loop. The interesting point is of course the call to eix.
+#
+# We could define NAMESLOT, NAMEASLOT, NAMEVERSION, and EQNAMEVERSION
+# instead of using their default definitions (which are built into eix).
+# However, we want to allow that the user overrides these definitions if he
+# wants to and thus is able to change the input/output format of this script
+# implicitly.
+#
+# Since there is no corresponding default variable which outputs _only_
+# the package category/name (and never the slot), we define such a variable
+# for option -S (we have chosen the name NAME for that).
+#
+# As you can see with "eix --dump", the default definitions of
+# NAMESLOT, NAMEASLOT, NAMEVERSION, and EQNAMEVERSION make use of the variable
+# VERSION_NEWLINE to output an optional newline (if NEWLINE=false).
+# We do not want such a newline: In fact, the only newline we want is the one
+# which should be output at the end of the LINE variable.
+# So we set VERSION_NEWLINE='' and (in case the user has changed the default)
+# also NEWLINE=false
+#
+# The name of the variables DATE_FORMAT, DATE_OUTPUT, NAME, and LINE
+# could also be any other unused name; it is only important that in LINE
+# resp. in the --format argument we use the corresponding variable names.
+#
+# We have to quote \ for the shell when we use "..." to set variables.
+#
+# Note that all the following variables are automatically exported, since
+# they immediately preceed the command (the \ at the line-ends is crucial):
 VERSION_NEWLINE='' \
+NEWLINE=false \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
 NAME="<category>/<package>" \

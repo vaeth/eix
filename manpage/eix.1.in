@@ -65,9 +65,9 @@ You might want to use this if you do not source layman's make.conf in your local
 To get more help on B<eix-layman> call B<eix-layman -h>.
 B<eix-layman> is also meant as an example script how to use B<eix-functions.sh>:
 
-B<eix-installed-after> is a simple script demonstrating some possibilities how
-a custom eix output format can be used.
-It outputs packages installed after (or before) the last emerge of a specific package.
+B<eix-installed-after> is a simple script (with many comments) demonstrating some
+possibilities how a custom eix output format can be used.
+It outputs packages installed after (or before) the last (or first) emerge of a specific package/version.
 To get more help on this script call B<eix-installed-after -h>.
 
 B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
@@ -88,6 +88,7 @@ The following examples are some useful but perhaps unusual applications of eix.
 They are listed here to give you an idea what unexpected things you can do with eix.
 Since the examples are meant to be copied from this manpage they are listed early.
 To understand how they work, you should read the full manpage, of course.
+For more examples see e.g. the script B<eix-installed-after> which contains many comments.
 
 .TP
 .IB cmd " | eix '-|*' --format '<markedversions:NAMESLOT>'"
