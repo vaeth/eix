@@ -20,7 +20,7 @@ eixprevious="${eixcache}.previous"
 ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
-Usage () {
+Usage() {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options]
@@ -84,14 +84,14 @@ The following options are available:
 	exit ${exitcode}
 }
 
-DiffOnly () {
+DiffOnly() {
 	test -e "${eixprevious}" || die "`eval_gettext \
 		'No previous database ${eixprevious} exists'`"
 	exec eix-diff -- "${eixprevious}"
 	die "`gettext 'Could not execute eix-diff'`"
 }
 
-DoExecute () {
+DoExecute() {
 	${emulatemode} && return 0
 	for curr_cmd
 	do	eval "${curr_cmd}" || die "`eval_gettext \
@@ -99,7 +99,7 @@ DoExecute () {
 	done
 }
 
-ParseConfigLine () {
+ParseConfigLine() {
 	j="${2}"
 	while :
 	do	case "${j}" in
@@ -141,7 +141,7 @@ ParseConfigLine () {
 
 test -r "${eixsyncconf}" && haveconf=: || haveconf=false
 ReadVar eix_sync_conf EIX_SYNC_CONF
-ExecuteConfig () {
+ExecuteConfig() {
 	after_sync=''
 	after_update=''
 	before_rsync=''
@@ -159,7 +159,7 @@ END_EIX_SYNC_CONF
 
 # Get options from cli
 
-DefaultOpts () {
+DefaultOpts() {
 	Push -c emergecmd 'emerge' '--sync'
 	Push -c updatecmd 'eix-update'
 	Push -c layman_opt
@@ -223,12 +223,12 @@ ${measure_time} || time_begin=''
 measure_time=false
 case "${time_begin}" in
 	*[0-9]*) [ "${time_begin}" -gt 99 ] && (
-			t=`expr "${time_begin}" - 99 2>/dev/null` || t=0
+			t=`Expr "${time_begin}" - 99 2>/dev/null` || t=0
 			[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
 		) >/dev/null 2>&1 && measure_time=:;;
 esac
 
-MyRun () {
+MyRun() {
 	if [ "${1}" = '-t' ]
 	then	if ${measure_time}
 		then	timevar="time_${2}"
@@ -239,7 +239,7 @@ MyRun () {
 			${measure_time} && endt="`date +%s 2>/dev/null`" \
 				|| measure_time=false
 			${measure_time} && \
-				eval "${timevar}"'=`expr "${endt}" - "${begt}"`'
+				eval "${timevar}"'=`Expr "${endt}" - "${begt}"`'
 			return ${runstat}
 		fi
 		shift 2
@@ -247,20 +247,20 @@ MyRun () {
 	"${@}"
 }
 
-MyRunCommand () {
+MyRunCommand() {
 	${emulatemode} && return 0
 	einfo "${1}"
 	shift
 	MyRun "${@}"
 }
 
-DoHook () {
+DoHook() {
 	${nohooks} && return 0
 	eval "set -- ${1}"
 	DoExecute "${@}"
 }
 
-RootTest () {
+RootTest() {
 	${emulatemode} || return 0
 	{ echo; gettext \
 'Nothing was executed, because a heuristic shows that root permissions
@@ -281,11 +281,11 @@ time_client=''
 time_metadata=''
 time_update=''
 time_diff=''
-PrintingTimes () {
+PrintingTimes() {
 	[ -n "${1}" ] && [ "${1}" -gt 0 ] && \
 		printf "`gettext '%6d seconds for %s\n'`" "${1}" "${2}"
 }
-PrintTimes () {
+PrintTimes() {
 	${measure_time} || return 0
 	measure_time=false
 	einfo "`gettext 'Time statistics:'`"
@@ -296,13 +296,13 @@ PrintTimes () {
 	PrintingTimes "${time_update}"   "`gettext 'eix-update'`"
 	PrintingTimes "${time_diff}"     "`gettext 'eix-diff'`"
 	ftime="`date '+%s' 2>/dev/null`" || return
-	ftime=`expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
+	ftime=`Expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
 		printf "`gettext '%6d seconds total\n'`" "${ftime}"
 }
 
 tmpfile=''
 exitcode=0
-ExitAll () {
+ExitAll() {
 	trap : EXIT HUP INT TERM
 	[ -z "${tmpfile}" ] || rm -f -- "${tmpfile}"
 	tmpfile=''
@@ -312,13 +312,13 @@ ExitAll () {
 }
 ${measure_time} && trap ExitAll EXIT HUP INT TERM
 
-MakeTempFile () {
+MakeTempFile() {
 	AssignTemp tmpfile
 	trap ExitAll EXIT HUP INT TERM
 }
 
 preprsync=false
-PrepRsync () {
+PrepRsync() {
 	GetPortdir
 	hostdir="${1#*:}"
 	if [ -n "${hostdir}" ] && [ "${hostdir}" != "${1}" ]
@@ -339,7 +339,7 @@ PrepRsync () {
 	preprsync=:
 }
 
-ClearCache () {
+ClearCache() {
 	${clearcache} || return 0
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
@@ -351,7 +351,7 @@ ClearCache () {
 		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
 }
 
-CallEmergeSync () {
+CallEmergeSync() {
 	if [ -n "${server}" ]
 	then	${emulatemode} && return
 		PrepRsync "${server}"
@@ -368,7 +368,7 @@ CallEmergeSync () {
 		|| die "`eval_gettext '${runarg} failed'`"
 }
 
-CallSyncClient () {
+CallSyncClient() {
 	${emulatemode} && return
 	[ -z "${client}" ] && return
 	PrepRsync "${client}"
@@ -378,7 +378,7 @@ CallSyncClient () {
 }
 
 TESTRESULT=''
-CallEmergeMetadata () {
+CallEmergeMetadata() {
 	${doupdate} && ${metadata} || return 0
 	RootTest
 	MyRunCommand "`gettext 'Running emerge --metadata'`" -t metadata
@@ -386,7 +386,7 @@ CallEmergeMetadata () {
 		die "`gettext 'emerge --metadata failed'`"
 }
 
-CondUpdate () {
+CondUpdate() {
 	if test ! -f "${eixcache}"
 	then	RootTest
 		eval "set -- ${updatecmd}"
@@ -406,7 +406,7 @@ CondUpdate () {
 	}
 }
 
-CopyPrevious () {
+CopyPrevious() {
 	${doupdate} || return 0
 	${emulatemode} && return
 	MakeTempFile
@@ -415,7 +415,7 @@ CopyPrevious () {
 		'Could not copy database to temporary file ${tmpfile}'`"
 }
 
-MovePrevious () {
+MovePrevious() {
 	${usetemp} && return
 	(
 		umask 002
@@ -429,7 +429,7 @@ MovePrevious () {
 	chmod -- 664 "${eixprevious}" >/dev/null 2>&1
 }
 
-UpdateDiff () {
+UpdateDiff() {
 	${doupdate} || return 0
 	if ${usetemp}
 	then	${emulatemode} && return
@@ -455,7 +455,7 @@ UpdateDiff () {
 	PrintTimes
 }
 
-MainSync () {
+MainSync() {
 	CondUpdate
 	ClearCache
 	CopyPrevious

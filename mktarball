@@ -6,28 +6,28 @@ mkemerge="./mkemerge"
 mkrelease="./mkrelease"
 mkmake="./mkmake"
 mkmakeextra="UPDATEPOFILES="
-make_opts='-0OQEeq'
+make_opts='-0QEeq'
 
 export LC_ALL XZ_OPT
 LC_ALL=C
 XZ_OPT='--extreme'
 
-Echo () {
+Echo() {
 	printf '%s\n' "${*}"
 }
 
-Usage () {
+Usage() {
 	Echo "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
 options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 	exit ${1:-1}
 }
 
-Die () {
+Die() {
 	printf '%s: %s\n' "${0##*/}" "${1}"
 	exit ${2:-1}
 }
 
-Run () {
+Run() {
 	Echo "${*}"
 	"${@}" || Die "${*} failed" ${?}
 }

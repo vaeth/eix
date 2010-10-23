@@ -47,11 +47,11 @@ using namespace std;
 SqliteCache *SqliteCache::callback_arg;
 
 inline static const char *
-welldefine(const char *s)
+welldefine(const char *s) ATTRIBUTE_CONST
 {
 	if(s != NULL)
 		return s;
-	return "";
+	return emptystring;
 }
 
 int
@@ -160,7 +160,7 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 		{
 			int t(trueindex[i]);
 			if(t < 0)
-				return "";
+				return emptystring;
 			return welldefine(argv[t]);
 		}
 } handle_trueindex;

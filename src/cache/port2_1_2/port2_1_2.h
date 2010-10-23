@@ -10,6 +10,7 @@
 #ifndef EIX__PORT2_1_2_H__
 #define EIX__PORT2_1_2_H__ 1
 
+#include <config.h>
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
 
@@ -24,7 +25,7 @@ class Port2_1_2_Cache : public BasicCache {
 		bool readEntry(std::map<std::string,std::string> &mapper, PackageTree *packagetree, const char *cat_name, Category *category);
 
 	public:
-		bool can_read_multiple_categories() const
+		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
 		{ return true; }
 
 		bool readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic);

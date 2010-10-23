@@ -21,21 +21,21 @@
 #define UINT32_PACK(out,in)   uint32_pack(out,in)
 #define UINT32_UNPACK(in,out) uint32_unpack(in,out)
 
-inline static void uint32_pack(char *out, uint32_t in);
-inline static void uint32_unpack(const char *in, uint32_t *out);
+inline void uint32_pack(char *out, uint32_t in);
+inline void uint32_unpack(const char *in, uint32_t *out);
 
 #ifdef WORDS_BIGENDIAN
 /* For the big-endian machines */
 
 /* Adopted from python-cdb (which adopted it from libowfat :) */
-inline static void uint32_pack(char *out, uint32_t in) {
+inline void uint32_pack(char *out, uint32_t in) {
 	*out=in&0xff; in>>=8;
 	*++out=in&0xff; in>>=8;
 	*++out=in&0xff; in>>=8;
 	*++out=in&0xff;
 }
 
-inline static void uint32_unpack(const char *in, uint32_t *out) {
+inline void uint32_unpack(const char *in, uint32_t *out) {
 	*out = (((uint32_t(uint8_t(in[3])))<<24) |
 		((uint32_t(uint8_t(in[2])))<<16) |
 		((uint32_t(uint8_t(in[1])))<<8) |
@@ -46,11 +46,11 @@ inline static void uint32_unpack(const char *in, uint32_t *out) {
 /* This is for the little-endian pppl */
 
 /* Adopted from python-cdb (which adopted it from libowfat) */
-inline static void uint32_pack(char *out, uint32_t in) {
+inline void uint32_pack(char *out, uint32_t in) {
 	*(reinterpret_cast<uint32_t*>(out)) = in;
 }
 
-inline static void uint32_unpack(const char *in, uint32_t *out) {
+inline void uint32_unpack(const char *in, uint32_t *out) {
 	*out = *(reinterpret_cast<const uint32_t*>(in));
 }
 

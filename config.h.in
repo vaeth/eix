@@ -3,6 +3,21 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Define to __attribute__ ((__const__)) if it can be used */
+#undef ATTRIBUTE_CONST
+
+/* Define to __attribute__ ((__pure__)) or ((__const__)) or empty */
+#undef ATTRIBUTE_CONST_VIRTUAL
+
+/* Define to __attribute__ ((__noreturn__)) if it can be used */
+#undef ATTRIBUTE_NORETURN
+
+/* Define to __attribute__ ((__pure__)) if it can be used */
+#undef ATTRIBUTE_PURE
+
+/* Define to __attribute__ ((__signal__)) if it can be used */
+#undef ATTRIBUTE_SIGNAL
+
 /* Null device of the system */
 #undef DEV_NULL
 
@@ -27,9 +42,6 @@
 
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
-
-/* Define to 1 if __attribute__ ((__noreturn__)) can be used */
-#undef HAVE_ATTRIBUTE_NORETURN
 
 /* Define to 1 if __attribute__ ((__unused__)) can be used */
 #undef HAVE_ATTRIBUTE_UNUSED
@@ -93,6 +105,9 @@
 
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
+
+/* Define to 1 if you have the `sigaction' function. */
+#undef HAVE_SIGACTION
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H

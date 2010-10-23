@@ -595,11 +595,13 @@ PackageTest::instabilitytest(const Package *p, TestStability what) const
 	return false;
 }
 
-#define get_p() do { \
-	if(unlikely(p == NULL)) \
-		p = pkg->get(); \
-} while(0)
-
+inline void
+get_p(Package *&p, PackageReader *pkg)
+{
+	if(unlikely(p == NULL)) {
+		p = pkg->get();
+	}
+}
 
 bool
 PackageTest::match(PackageReader *pkg) const
@@ -610,7 +612,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	/**
 	   Test the local options.
-	   Each test must start with "get_p()" to get "p"; remember to modify
+	   Each test must start with get_p(p, pkg) to get p; remember to modify
 	   "need" in CalculateNeeds() to ensure that you will have all
 	   required data in the (possibly only partly filled) package "p".
 	   If a test fails, "return false";
@@ -638,13 +640,13 @@ PackageTest::match(PackageReader *pkg) const
 	*/
 
 	if(unlikely(algorithm.get() != NULL)) {
-		get_p();
+		get_p(p, pkg);
 		if(!stringMatch(p))
 			return false;
 	}
 
 	if(unlikely(slotted)) { // -1 or -2
-		get_p();
+		get_p(p, pkg);
 		if(! (p->have_nontrivial_slots()))
 			return false;
 		if(multi_slot)
@@ -653,13 +655,13 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(unlikely(overlay)) { // -O
-		get_p();
+		get_p(p, pkg);
 		if(!(p->largest_overlay))
 			return false;
 	}
 
 	if(unlikely(overlay_list != NULL)) { // --in-overlay
-		get_p();
+		get_p(p, pkg);
 		bool have = false;
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(unlikely(overlay_list->find(it->overlay_key) == overlay_list->end()))
@@ -672,7 +674,7 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(unlikely(overlay_only_list != NULL)) { // --only-in-overlay
-		get_p();
+		get_p(p, pkg);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end()))
 				return false;
@@ -680,7 +682,7 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(unlikely(installed)) { // -i or -I
-		get_p();
+		get_p(p, pkg);
 		vector<BasicVersion>::size_type s(vardbpkg->numInstalled(*p));
 		if(s == 0)
 			return false;
@@ -691,7 +693,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely(in_overlay_inst_list != NULL)) {
 		// --installed-in-[some-]overlay
-		get_p();
+		get_p(p, pkg);
 		bool have(false);
 		bool get_installed(true);
 		vector<InstVersion> *installed_versions(NULL);
@@ -716,7 +718,7 @@ PackageTest::match(PackageReader *pkg) const
 	if(unlikely((from_overlay_inst_list != NULL) ||
 	   (from_foreign_overlay_inst_list != NULL))) {
 	   // -J or --installed-from-overlay
-		get_p();
+		get_p(p, pkg);
 		bool have(false);
 		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
 		if(installed_versions == NULL)
@@ -752,7 +754,7 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(unlikely(dup_packages)) { // -d
-		get_p();
+		get_p(p, pkg);
 		if(dup_packages_overlay)
 		{
 			if(!(p->at_least_two_overlays()))
@@ -763,7 +765,7 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(unlikely(dup_versions)) { // -D
-		get_p();
+		get_p(p, pkg);
 		Package::Duplicates testfor((dup_versions_overlay) ?
 				Package::DUP_OVERLAYS : Package::DUP_SOME);
 		if(((p->have_duplicate_versions) & testfor) != testfor)
@@ -772,7 +774,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely((restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(properties != ExtendedVersion::PROPERTIES_NONE))) {
-		get_p();
+		get_p(p, pkg);
 		bool found(false);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(unlikely((((it->restrictFlags) & restrictions) == restrictions) &&
@@ -800,7 +802,7 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(binary) { // --binary
-		get_p();
+		get_p(p, pkg);
 		bool found(false);
 		for(Package::iterator it(p->begin()); it != p->end(); ++it) {
 			if(unlikely(it->have_bin_pkg(portagesettings, p))) {
@@ -830,7 +832,7 @@ PackageTest::match(PackageReader *pkg) const
 			(redundant_flags == Keywords::RED_NOTHING))
 			return false;
 
-		get_p();
+		get_p(p, pkg);
 
 		Keywords::Redundant r(redundant_flags & Keywords::RED_ALL_MASKSTUFF);
 		if(r != Keywords::RED_NOTHING) {
@@ -882,6 +884,17 @@ PackageTest::match(PackageReader *pkg) const
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_USE))
 					break;
 				if(have_redundant(*p, r & Keywords::RED_IN_USE))
+					break;
+			}
+		}
+		r = redundant_flags & Keywords::RED_ALL_ENV;
+		if(r != Keywords::RED_NOTHING) {
+			r &= nowarn_env(*p);
+			if(r && portagesettings->user_config->CheckEnv(p, r))
+			{
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_ENV))
+					break;
+				if(have_redundant(*p, r & Keywords::RED_IN_ENV))
 					break;
 			}
 		}
@@ -937,7 +950,7 @@ PackageTest::match(PackageReader *pkg) const
 	}
 
 	if(unlikely(upgrade)) { // -u
-		get_p();
+		get_p(p, pkg);
 		if(upgrade_local_mode == LOCALMODE_DEFAULT)
 			StabilityDefault(p);
 		else if(upgrade_local_mode == LOCALMODE_LOCAL)
@@ -950,7 +963,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely(test_stability_default != STABLE_NONE))
 	{ // --stable, --testing, --non-masked, --system
-		get_p();
+		get_p(p, pkg);
 		StabilityDefault(p);
 		if(!stabilitytest(p, test_stability_default))
 			return false;
@@ -958,7 +971,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely(test_stability_local != STABLE_NONE))
 	{ // --stable+, --testing+, --non-masked+, --system+
-		get_p();
+		get_p(p, pkg);
 		StabilityLocal(p);
 		if(!stabilitytest(p, test_stability_local))
 			return false;
@@ -966,7 +979,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely(test_stability_nonlocal != STABLE_NONE))
 	{ // --stable-, --testing-, --non-masked-, --system-
-		get_p();
+		get_p(p, pkg);
 		StabilityNonlocal(p);
 		if(!stabilitytest(p, test_stability_nonlocal))
 			return false;
@@ -974,7 +987,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely(test_instability != STABLE_NONE))
 	{ // --installed-unstable --installed-testing --installed-masked
-		get_p();
+		get_p(p, pkg);
 		StabilityNonlocal(p);
 		if(!instabilitytest(p, test_instability))
 			return false;
@@ -983,7 +996,7 @@ PackageTest::match(PackageReader *pkg) const
 	if(unlikely(world || worldset)) {
 		// --world, --world-all, --world-set
 		// --selected, --selected-all, --selected-set
-		get_p();
+		get_p(p, pkg);
 		StabilityDefault(p);
 		if(world && !p->is_world_package()) {
 			if(world_only_file || !p->is_world_sets_package()) {
@@ -1163,6 +1176,44 @@ PackageTest::nowarn_use(const Package &p)
 	i = m.find(p.category + "/" + p.name);
 	if(i == m.end())
 		return Keywords::RED_ALL_USE;
+	return i->second;
+}
+
+Keywords::Redundant
+PackageTest::nowarn_env(const Package &p)
+{
+	static bool know_file(false);
+	static map<string, Keywords::Redundant> m;
+	map<string, Keywords::Redundant>::const_iterator i;
+	if(unlikely(!know_file)) {
+		know_file=true; m.clear();
+		vector<string> lines;
+		getlines("ENV_NOWARN", lines);
+		for(vector<string>::const_iterator it(lines.begin());
+			likely(it != lines.end()); ++it) {
+			vector<string> s;
+			split_string(s, *it);
+			if(s.empty())
+				continue;
+			vector<string>::const_iterator et(s.begin());
+			Keywords::Redundant r;
+			i = m.find(*et);
+			if(i == m.end())
+				r = Keywords::RED_ALL_ENV;
+			else
+				r = i->second;
+			for(++et; likely(et != s.end()); ++et) {
+				if(strcasecmp(et->c_str(), "in_env") == 0)
+					r &= ~Keywords::RED_IN_ENV;
+				else if(strcasecmp(et->c_str(), "double_env") == 0)
+					r &= ~Keywords::RED_DOUBLE_ENV;
+			}
+			m[s[0]] = r;
+		}
+	}
+	i = m.find(p.category + "/" + p.name);
+	if(i == m.end())
+		return Keywords::RED_ALL_ENV;
 	return i->second;
 }
 

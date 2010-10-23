@@ -12,12 +12,12 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
-#include <eixTk/unused.h>
 
 #include <iostream>
 #include <string>
 
 #include <csignal>  /* signal handlers */
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #ifdef ENABLE_NLS
@@ -80,7 +80,7 @@ using namespace std;
 /** The name under which we have been called. */
 string program_name;
 
-static void sig_handler(int sig) ATTRIBUTE_NORETURN;
+static void sig_handler(int sig) ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN;
 
 /** On segfault: show some instructions to help us find the bug. */
 static void
@@ -165,7 +165,15 @@ main(int argc, char** argv)
 #endif
 
 	/* Install signal handler for segfaults */
+#ifdef HAVE_SIGACTION
+	static struct sigaction my_handler;
+	my_handler.sa_handler = sig_handler;
+	my_handler.sa_flags = 0;
+	sigemptyset(&(my_handler.sa_mask));
+	sigaction(SIGSEGV, &my_handler, NULL);
+#else
 	signal(SIGSEGV, sig_handler);
+#endif
 
 	int ret(0);
 	try {

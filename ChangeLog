@@ -5,6 +5,14 @@
 	- Add new demo script (eix-installed-after) which outputs packages
 	  installed after/before a given package.
 	- Choose color defaults more similar to portage
+	- Redundancy checks for /etc/portage/package.env
+	- scripts: Provide cd -P fallback if there is no readlink command
+	- scripts: Improve emulated mktemp
+	- scripts: Make functions definitions more standard (no space)
+	- Use -fgraphite-identity of gcc-4.5
+	- Improve treatment of __attribute__
+	- Carefully begin to use __const__, __pure__, and __signal__
+	- Use sigaction() where available
 
 *eix-0.20.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

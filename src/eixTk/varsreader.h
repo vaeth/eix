@@ -10,6 +10,7 @@
 #ifndef EIX__VARSREADER_H__
 #define EIX__VARSREADER_H__ 1
 
+#include <config.h>
 #include <eixTk/inttypes.h>
 #include <eixTk/stringutils.h>
 
@@ -52,7 +53,7 @@ class VarsReader {
 		}
 
 		/** Free memory. */
-		virtual ~VarsReader()
+		~VarsReader()
 		{
 			if( !(parse_flags & INTO_MAP) )
 				delete vars;
@@ -286,11 +287,11 @@ class VarsReader {
 		void initFsm();
 
 		/** True if c matches [A-Za-z0-9_] */
-		virtual bool isValidKeyCharacter(char c)
+		static bool isValidKeyCharacter(char c) ATTRIBUTE_PURE
 		{ return (isalnum(c, localeC) || (c == '_')); }
 
 		/** True if c matches [A-Za-z_] */
-		virtual bool isValidKeyCharacterStart(char c)
+		static bool isValidKeyCharacterStart(char c) ATTRIBUTE_PURE
 		{ return (isalpha(c, localeC) || (c == '_')); }
 
 		const char *file_name; /**< Name of parsed file. */

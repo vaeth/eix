@@ -9,6 +9,8 @@
 #ifndef EIX__LEVENSHTEIN_H__
 #define EIX__LEVENSHTEIN_H__ 1
 
+#include <config.h>
+
 typedef unsigned int Levenshtein;
 
 /** Calculates the Levenshtein distance of two strings.
@@ -16,6 +18,6 @@ typedef unsigned int Levenshtein;
  * @param str_a string a
  * @param str_b string b
  * @return unsigned int Levenshtein distance of str_a <> str_b */
-Levenshtein get_levenshtein_distance( const char *str_a, const char *str_b );
+Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) ATTRIBUTE_PURE;
 
 #endif /* EIX__LEVENSHTEIN_H__ */

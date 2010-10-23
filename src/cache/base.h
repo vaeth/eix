@@ -10,6 +10,7 @@
 #ifndef EIX__BASICCACHE_H__
 #define EIX__BASICCACHE_H__ 1
 
+#include <config.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/unused.h>
@@ -39,7 +40,7 @@ class BasicCache {
 		virtual ~BasicCache()
 		{ }
 
-		virtual bool use_prefixport() const
+		virtual bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL
 		{ return false; }
 
 		/// Set scheme for this cache
@@ -79,7 +80,7 @@ class BasicCache {
 		virtual const char *getType() const = 0;
 
 		/// Can the method even read multiple categories at once?
-		virtual bool can_read_multiple_categories() const
+		virtual bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
 		{ return false; }
 
 		/** If available, the function to read multiple categories.

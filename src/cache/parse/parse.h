@@ -10,6 +10,7 @@
 #ifndef EIX__PARSECACHE_H__
 #define EIX__PARSECACHE_H__ 1
 
+#include <config.h>
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
 #include <portage/version.h>
@@ -53,7 +54,7 @@ class ParseCache : public BasicCache {
 		bool readCategory(Category &cat) throw(ExBasic);
 		void readCategoryFinalize();
 
-		bool use_prefixport() const
+		bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL
 		{ return true; }
 
 		const char *getType() const;

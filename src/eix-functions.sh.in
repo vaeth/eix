@@ -11,7 +11,7 @@
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 # This must happen in a function to enforce an empty argument list.
-ReadFunctions () {
+ReadFunctions() {
 	ReadGettext
 	[ "${local_eprefix_portage_exec-unset}" = 'unset' ] &&
 		ReadVar local_eprefix_portage_exec EPREFIX_PORTAGE_EXEC
@@ -26,31 +26,31 @@ ReadFunctions () {
 }
 
 : ${read_var_prg:=eix-update}
-ReadVar () {
+ReadVar() {
 	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"`
 	eval "${1}=\"\${eixf_read%X}\" && [ \"\${1}\" != \"\${eixf_read}\" ]"
 }
 
-die () {
+die() {
 	eerror "${*}"
 	exitcode=2
 	exit "${exitcode}"
 }
 
-PerLine () {
+PerLine() {
 	while IFS='
 ' read eixf_line
 	do	"${@}" "${eixf_line}"
 	done
 }
 
-GetPortdir () {
+GetPortdir() {
 	[ -n "${local_portdir}" ] || ReadVar local_portdir PORTDIR
 }
 
 verbose=:
 
-RunCommand () {
+RunCommand() {
 	if ${verbose}
 	then	einfo "${1}"
 		shift
@@ -66,16 +66,22 @@ RunCommand () {
 	return ${eixf_ret}
 }
 
-( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && eval '
-expr () {
+if ( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1
+then	eval '
+Expr() {
 	echo "$(( ${1} ${2} ${3} ))"
 }'
+else
+Expr() {
+	expr "${@}"
+}
+fi
 
 # Usage: Replace [-g] VAR Search Replace
 # Option -g means: Replace all occurrences
 # Exit status is 0 if at least one replacement took place, and
 # $replace_count contains at string of length(number of replacements) x'en.
-Replace () {
+Replace() {
 	eixf_repla=''
 	eixf_replc='break'
 	case "${1}" in
@@ -99,7 +105,7 @@ Replace () {
 # Append all Args to VAR, quoted such that
 #    eval "${VAR}" is 'safe' and groups Args correctly.
 # With option -c, VAR is cleaned in advance.
-Push () {
+Push() {
 	case "${1}" in
 		-*) shift; eval "${1}=''";;
 	esac
@@ -114,11 +120,11 @@ Push () {
 	done"
 }
 
-AddUpdateArgs () {
+AddUpdateArgs() {
 	Push update_args "${@}"
 }
 
-AddUpdateQuoting () {
+AddUpdateQuoting() {
 	eixf_aq="${1}"
 	shift
 	Replace -g eixf_aq '\' '\\'
@@ -128,40 +134,40 @@ AddUpdateQuoting () {
 	AddUpdateArgs "${eixf_aq}" "${@}"
 }
 
-AddMethod () {
+AddMethod() {
 	AddUpdateArgs '-m'
 	AddUpdateQuoting "${1}" "${2}"
 }
 
-AddRepoName () {
+AddRepoName() {
 	AddUpdateArgs '-r' "${1}" "${2}"
 }
 
-AddOverlays () {
+AddOverlays() {
 	for eixf_ao
 	do	AddUpdateArgs '-a' "${eixf_ao}"
 	done
 }
 
-AddExcludes () {
+AddExcludes() {
 	for eixf_ax
 	do	AddUpdateArgs '-x'
 		AddUpdateQuoting "${eixf_ax}"
 	done
 }
 
-ClearUpdateArgs () {
+ClearUpdateArgs() {
 	update_args=''
 }
 
 : ${die_on_update_failure=:}
-CallUpdate () {
+CallUpdate() {
 	eval "set -- ${update_args}"
 	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" && return
 	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
 }
 
-AddLocalMethods () {
+AddLocalMethods() {
 	GetPortdir
 	AddMethod "${local_portdir}" "eix"
 	for eixf_alm in `portageq portdir_overlay` `eix-update --print ADD_OVERLAY`
@@ -174,7 +180,7 @@ AddLocalMethods () {
 
 # Remove optional trailing newline from all variables (arguments).
 # This is necessary as some shells won't take ${Var%"[newline]"}
-Chomp () {
+Chomp() {
 	for eixf_chompa
 	do	eval "eixf_chompb=\"\${${eixf_chompa}}\""
 		case "${eixf_chompb}" in
@@ -189,7 +195,7 @@ Chomp () {
 # Consider variables (arguments) as commands and expand them to full path.
 # Dies if a command cannot be found.
 
-Pathify () {
+Pathify() {
 	for eixf_pathc
 	do	eval "eixf_patha=\"\${${eixf_pathc}}\""
 		eixf_pathb=`command -v "${eixf_patha}"; printf A` && \
@@ -202,14 +208,15 @@ Pathify () {
 }
 
 # Consider variables (arguments) as paths and normalize them.
-# If have_readlink=: (if possible), use readlink to resolve to ":"
-# pathnames.
+# If normalize_resolve is : (default), use readlink/cd -P
+# to resolve to "true" pathnames.
 # Return with 1 if at least one variable is empty.
 # Set relative to a list of all variables which are relative paths
 # (the first token in relative will be a space if the list is not empty).
 
-NormalizeNames () {
-	if [ -z "${have_readlink}" ]
+normalize_resolve=:
+NormalizeNames() {
+	${normalize_resolve} && if [ -z "${have_readlink}" ]
 	then	command -v readlink >/dev/null 2>&1 \
 			&& have_readlink=: || have_readlink=false
 	fi
@@ -225,14 +232,15 @@ NormalizeNames () {
 			/*) :;;
 			*) relative="${relative} ${eixf_normc}";;
 		esac
-		if ${have_readlink}
+		${normalize_resolve} && if ${have_readlink}
 		then	# Append A to avoid loss of trailing space in `...`
 			eixf_normb=`readlink -f -- "${eixf_norma}"; printf A` \
 				&& eixf_normb="${eixf_normb%A}" \
-				&& Chomp eixf_normb \
-				&& [ -n "${eixf_normb}" ] && \
-					eixf_norma="${eixf_normb}"
-		fi
+				&& Chomp eixf_normb
+		else	eixf_normb=`cd -P -- "${eixf_norma}" >/dev/null 2>&1 \
+				&& printf '%sA' "${PWD}"` \
+				&& eixf_normb="${eixf_normb%A}"
+		fi && [ -n "${eixf_normb}" ] && eixf_norma="${eixf_normb}"
 		eval "${eixf_normc}=\"\${eixf_norma}\""
 		while Replace -g "${eixf_normc}" '//' '/'
 		do :
@@ -243,8 +251,7 @@ NormalizeNames () {
 	return ${eixf_normd}
 }
 
-: ${read_gettext_status=}
-ReadGettext () {
+ReadGettext() {
 	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
 	case "${USE_NLS-@USE_NLS@}" in
 		''|n*|N*|f*|F*|0)
@@ -257,10 +264,10 @@ ReadGettext () {
 		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
 		return
 	fi
-	gettext () {
+	gettext() {
 		printf '%s' "${*}"
 	}
-	eval_gettext () {
+	eval_gettext() {
 		eixf_gettext="${*}"
 		Replace -g eixf_gettext '\' '\\'
 		Replace -g eixf_gettext '$(' '\$('
@@ -268,41 +275,65 @@ ReadGettext () {
 		Replace -g eixf_gettext '"' '\"'
 		eval "printf '%s' \"${eixf_gettext}\""
 	}
-	ngettext () {
+	ngettext() {
 		gettext "${@}"
 	}
-	eval_ngettext () {
+	eval_ngettext() {
 		eval_gettext "${@}"
 	}
 	return 1
 }
 
-ReadGettextSub () {
+ReadGettextSub() {
 	. gettext.sh && return
 	eixf_i="`command -v gettext.sh 2>/dev/null`" && \
 		[ -n "${eixf_i}" ] && . "${eixf_i}" && return
 	. /usr/bin/gettext.sh
 }
 
-AssignTempEmulate () {
+AssignTempEmulate() {
+	if [ -z "${have_random}" ]
+	then	eixf_assb="${RANDOM}"
+		if [ "${eixf_assb}" = "${RANDOM}" ] && \
+			[ "${eixf_assb}" = "${RANDOM}" ]
+		then	have_random=false
+			eixf_assb=`od -d -N2 /dev/random 2>/dev/null` \
+				|| eixf_assb=''
+			eixf_assb=`echo ${eixf_assb}`
+			eixf_assb="${eixf_assb#* }"
+			eixf_assb="${eixf_assb%% *}"
+			if [ -z "${eixf_assb}" ]
+			then	eixf_assb=1
+			else	eixf_assb=`Expr "${eixf_assb} % 32768"`
+				[ "${eixf_assb}" -eq 0 ] && eixf_assb=1
+			fi
+		else	have_random=:
+		fi
+		eixf_assc=''
+	fi
 	eixf_assa=0
 	while [ ${eixf_assa} -le 9999 ]
-	do	eixf_assb="`od -An -N2 -x /dev/random 2>/dev/null`" || \
-			eixf_assb=''
-		eixf_assb="${eixf_assb#* }${eixf_assa}${RANDOM}"
-		eixf_assb="/tmp/${0##*/}.${$}${RANDOM}${eixf_assb}"
-		# We cannot avoid a race condition:
-		# So at least we minimize it to one line.
+	do	if [ -n "${eixf_assc}" ]
+		then	if ${have_random}
+			then	eixf_assb="${RANDOM}"
+			else	eixf_assb=`Expr "${eixf_assb}" '*' '13821'`
+				eixf_assb=`Expr "${eixf_assb}" '%' '32768'`
+			fi
+		fi
+		eixf_assc="/tmp/${0##*/}.${$}${eixf_assa}${eixf_assb}"
 		if [ "${2}" = '-d' ]
-		then	test ! -e "${eixf_assb}" && mkdir "${eixf_assb}"
-		else	test ! -e "${eixf_assb}" && : >"${eixf_assb}"
-		fi && eval "${1}=\"\${eixf_assb}\"" && return
-		eixf_assa="`expr ${eixf_assa} + 1`"
+		then	mkdir "${eixf_assc}"
+		else	(
+			set -o noclobber
+			: >"${eixf_assc}"
+		)
+		fi && eval "${1}=\"\${eixf_assc}\"" && return
+		eixf_assa="`Expr ${eixf_assa} + 1`"
 	done
 	die "`gettext 'found no free tempname after 10000 attempts'`"
 }
 
-AssignTemp () {
+AssignTemp() {
 	eval "${1}=''"
 	if [ -z "${have_mktemp}" ]
 	then	command -v mktemp >/dev/null 2>&1 \

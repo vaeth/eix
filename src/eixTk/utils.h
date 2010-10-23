@@ -10,7 +10,7 @@
 #ifndef EIX__UTILS_H__
 #define EIX__UTILS_H__ 1
 
-#include <eixTk/unused.h>
+#include <config.h>
 
 #include <map>
 #include <string>

@@ -10,6 +10,7 @@
 #ifndef EIX__INSTVERSION_H__
 #define EIX__INSTVERSION_H__ 1
 
+#include <config.h>
 #include <portage/extendedversion.h>
 #include <portage/version.h>
 
@@ -59,9 +60,12 @@ class InstVersion : public ExtendedVersion, public Keywords {
 };
 
 /** The equality operator does not test the additional data */
-inline bool operator == (const InstVersion& left, const InstVersion &right)
+inline bool operator == (const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
+inline bool
+operator == (const InstVersion& left, const InstVersion &right)
 { return BasicVersion::compare(left, right) == 0; }
 
+inline bool operator != (const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
 inline bool operator != (const InstVersion& left, const InstVersion &right)
 { return BasicVersion::compare(left, right) != 0; }
 

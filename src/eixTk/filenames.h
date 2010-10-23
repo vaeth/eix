@@ -21,8 +21,8 @@ std::string normalize_path(const char *path, bool resolve = true, bool want_slas
 bool same_filenames(const char *mask, const char *name, bool glob = false, bool resolve_mask = true);
 
 /** Return first match in a list of filenames/patterns. */
-inline
-std::vector<std::string>::const_iterator find_filenames(const std::vector<std::string>::const_iterator start,
+inline std::vector<std::string>::const_iterator
+find_filenames(const std::vector<std::string>::const_iterator start,
 		const std::vector<std::string>::const_iterator end, const char *search,
 		bool list_of_patterns = false, bool resolve_list = false)
 {
@@ -35,8 +35,8 @@ std::vector<std::string>::const_iterator find_filenames(const std::vector<std::s
 }
 
 /** Test whether filename appears to be a "virtual" overlay */
-inline
-bool is_virtual(const char *name)
+inline bool
+is_virtual(const char *name)
 {
 	if(*name != '/')
 		return true;

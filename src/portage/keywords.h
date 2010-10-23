@@ -190,8 +190,11 @@ class Keywords
 			RED_DOUBLE_USE    = 0x04000, /**< Double entry in package.use     */
 			RED_IN_USE        = 0x08000, /**< Some entry in package.use       */
 			RED_ALL_USE       = RED_DOUBLE_USE|RED_IN_USE,
-			RED_DOUBLE_CFLAGS = 0x10000, /**< Some entry in package.cflags    */
-			RED_IN_CFLAGS     = 0x20000, /**< Double entry in package.cflags  */
+			RED_DOUBLE_ENV    = 0x10000, /**< Double entry in package.env     */
+			RED_IN_ENV        = 0x20000, /**< Some entry in package.env       */
+			RED_ALL_ENV       = RED_DOUBLE_ENV|RED_IN_ENV,
+			RED_DOUBLE_CFLAGS = 0x40000, /**< Some entry in package.cflags    */
+			RED_IN_CFLAGS     = 0x80000, /**< Double entry in package.cflags  */
 			RED_ALL_CFLAGS    = RED_DOUBLE_CFLAGS|RED_IN_CFLAGS;
 
 		KeywordsFlags keyflags;

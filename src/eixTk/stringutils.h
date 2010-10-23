@@ -68,6 +68,7 @@ class ExplodeAtom {
 };
 
 /** Check string if it only contains digits. */
+inline bool is_numeric(const char *str) ATTRIBUTE_PURE;
 inline bool
 is_numeric(const char *str)
 {
@@ -129,7 +130,7 @@ trim(std::string *str, const char *delims = spaces)
 
 /** return the character corresponding to an escaped symbol.
     For instance, n -> \n, \ -> \, \0 -> \ */
-char get_escape(char c);
+char get_escape(char c) ATTRIBUTE_CONST;
 
 /** Resolve all escapes in a string (a safe printf) */
 void unescape_string(std::string &str);

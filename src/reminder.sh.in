@@ -29,12 +29,12 @@ case "${oldname}" in
 	oldname=functions-eix.sh;;
 esac
 
-Remind () {
+Remind() {
 	printf '%s\n' "${1} is a deprecated name since eix-0.17.0.
 Please use ${2} instead." >&2
 }
 
-Sleeper () {
+Sleeper() {
 	printf '%s\n' 'Sleeping for 5 seconds...' >&2
 	sleep 5
 }
@@ -53,14 +53,14 @@ fi
 
 . ./eix-functions.sh.in
 
-ClearUpdateEixArgs () {
+ClearUpdateEixArgs() {
 # REMIND {
 	Remind ClearUpdateEixArgs UpdateEixArgs
 # }
 	ClearUpdateArgs "${@}"
 }
 
-CallUpdateEix () {
+CallUpdateEix() {
 # REMIND {
 	Remind CallUpdateEix CallUpdate
 # }

@@ -13,7 +13,7 @@ ReadGettext
 
 nodetails=false
 
-Usage () {
+Usage() {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] detail|brief
@@ -46,7 +46,7 @@ portage versions).
 You can check which packages are installed with/without this repository
 information by using the argument "repo"/"no-repo".
 
-You can check which packages are installed with/without buildtmie
+You can check which packages are installed with/without buildtime
 information by using the argument "buildtime"/"no-buildtime".
 
 The arguments can be abbreviated, e.g. instead of "brief" you can just use "br".'
@@ -54,12 +54,12 @@ The arguments can be abbreviated, e.g. instead of "brief" you can just use "br".
 	exit ${1:-1}
 }
 
-Die () {
+Die() {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
 }
 
-Eix () {
+Eix() {
 	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
 	then	[ -z "${1}" ] || printf '%s\n' "${1}"
 		return
@@ -82,7 +82,7 @@ Eix () {
 	done
 }
 
-NoKeywords () {
+NoKeywords() {
 	export \
 	REDUNDANT_IF_DOUBLE=false \
 	REDUNDANT_IF_MIXED=false \
@@ -93,37 +93,43 @@ NoKeywords () {
 	REDUNDANT_IF_MINUSASTERISK=false
 }
 
-NoMask () {
+NoMask() {
 	export \
 	REDUNDANT_IF_MASK_NO_CHANGE=false \
 	REDUNDANT_IF_DOUBLE_MASKED=false
 }
 
-NoUnmask () {
+NoUnmask() {
 	export \
 	REDUNDANT_IF_UNMASK_NO_CHANGE=false \
 	REDUNDANT_IF_DOUBLE_UNMASKED=false
 }
 
-NoUse () {
+NoUse() {
 	export \
 	REDUNDANT_IF_DOUBLE_USE=false
 }
 
-NoCflags () {
+NoEnv() {
+	export \
+	REDUNDANT_IF_DOUBLE_ENV=false
+}
+
+NoCflags() {
 	export \
 	REDUNDANT_IF_DOUBLE_CFLAGS=false
 }
 
-NoUninstalled () { export \
+NoUninstalled() { export \
 	REDUNDANT_IF_IN_KEYWORDS=false \
 	REDUNDANT_IF_IN_MASK=false \
 	REDUNDANT_IF_IN_UNMASK=false \
 	REDUNDANT_IF_IN_USE=false \
+	REDUNDANT_IF_IN_ENV=false \
 	REDUNDANT_IF_IN_CFLAGS=false
 }
 
-ScanVarDbPkg () {
+ScanVarDbPkg() {
 	ReadVar c EPREFIX_INSTALLED
 	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
 			'cannot locate your database of installed packages'`"
@@ -146,7 +152,7 @@ ScanVarDbPkg () {
 			else	${n} && continue
 			fi
 			printf '%s\n' "${j}"
-			c=`expr "${c}" + 1`
+			c=`Expr "${c}" + 1`
 		done
 	done
 	if [ ${c} -eq 0 ]
@@ -160,7 +166,7 @@ ScanVarDbPkg () {
 	exit 0
 }
 
-Repository () {
+Repository() {
 	if ${1}
 	then	ScanVarDbPkg ${1} "`gettext \
 'The following package versions are installed with repository information:'`" \
@@ -171,7 +177,7 @@ repository REPOSITORY
 	fi
 }
 
-BuildTime () {
+BuildTime() {
 	if ${1}
 	then	ScanVarDbPkg ${1} "`gettext \
 'The following package versions are installed with build-time information:'`" \
@@ -199,7 +205,7 @@ do	case "${opt}" in
 		*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 [ ${#} -gt 1 ] && Usage
 [ ${#} -eq 1 ] && myarg="${1}"
 case "${myarg:--}" in
@@ -226,7 +232,7 @@ rump="${rump}/etc/portage/package."
 (
 	export TEST_FOR_NONEXISTENT=false
 	(
-		NoMask; NoUnmask; NoUse; NoCflags; NoUninstalled
+		NoMask; NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
 'No redundant entries in ${rump}keywords (or test switched off).'`" \
 			"`eval_gettext 'Redundant in ${rump}keywords:'`" \
@@ -240,7 +246,7 @@ rump="${rump}/etc/portage/package."
 	)
 	NoKeywords
 	(
-		NoUnmask; NoUse; NoCflags; NoUninstalled
+		NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
 'No redundant entries in ${rump}mask (or test switched off).'`" \
 			"`eval_gettext 'Redundant in ${rump}mask:'`" \
@@ -249,7 +255,7 @@ rump="${rump}/etc/portage/package."
 	)
 	NoMask
 	(
-		NoUse; NoCflags; NoUninstalled
+		NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
 'No redundant entries in ${rump}unmask (or test switched off).'`" \
 			"`eval_gettext 'Redundant in ${rump}unmask:'`" \
@@ -258,12 +264,19 @@ rump="${rump}/etc/portage/package."
 	)
 	NoUnmask
 	(
-		NoCflags; NoUninstalled
+		NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
 'No redundant entries in ${rump}use (or test switched off).'`" \
 			"`eval_gettext 'Redundant in ${rump}use:'`" \
 	)
 	NoUse
+	(
+		NoCflags; NoUninstalled
+		Eix "`eval_gettext \
+'No redundant entries in ${rump}env (or test switched off).'`" \
+			"`eval_gettext 'Redundant in ${rump}env:'`" \
+	)
+	NoEnv
 	(
 		NoUninstalled
 		Eix "`eval_gettext \
@@ -276,6 +289,7 @@ rump="${rump}/etc/portage/package."
 		REDUNDANT_IF_IN_MASK=false \
 		REDUNDANT_IF_IN_UNMASK=false \
 		REDUNDANT_IF_IN_USE=false \
+		REDUNDANT_IF_IN_ENV=false \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
 'No uninstalled entries in ${rump}keywords (or test switched off).'`" \
@@ -286,6 +300,7 @@ rump="${rump}/etc/portage/package."
 		export \
 		REDUNDANT_IF_IN_UNMASK=false \
 		REDUNDANT_IF_IN_USE=false \
+		REDUNDANT_IF_IN_ENV=false \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
 'No uninstalled entries in ${rump}mask (or test switched off).'`" \
@@ -295,6 +310,7 @@ rump="${rump}/etc/portage/package."
 	(
 		export \
 		REDUNDANT_IF_IN_USE=false \
+		REDUNDANT_IF_IN_ENV=false \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
 'No uninstalled entries in ${rump}unmask (or test switched off).'`" \
@@ -303,6 +319,7 @@ rump="${rump}/etc/portage/package."
 	export REDUNDANT_IF_IN_UNMASK=false
 	(
 		export \
+		REDUNDANT_IF_IN_ENV=false
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
 'No uninstalled entries in ${rump}use (or test switched off).'`" \
@@ -310,6 +327,15 @@ rump="${rump}/etc/portage/package."
 	)
 	export \
 	REDUNDANT_IF_IN_USE=false
+	(
+		export \
+		REDUNDANT_IF_IN_CFLAGS=false
+		Eix "`eval_gettext \
+'No uninstalled entries in ${rump}env (or test switched off).'`" \
+			"`eval_gettext 'Not installed but in ${rump}env:'`"
+	)
+	export \
+	REDUNDANT_IF_IN_ENV=false
 	Eix "`eval_gettext \
 'No uninstalled entries in ${rump}cflags (or test switched off).'`" \
 		"`eval_gettext 'Not installed but in ${rump}cflags:'`"

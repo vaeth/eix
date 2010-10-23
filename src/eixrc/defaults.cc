@@ -2172,6 +2172,10 @@ AddOption(BOOLEAN, "TEST_USE",
 	"true", _(
 	"Defines whether /etc/portage/package.use is tested with -t."));
 
+AddOption(BOOLEAN, "TEST_ENV",
+	"true", _(
+	"Defines whether /etc/portage/package.env is tested with -t."));
+
 AddOption(BOOLEAN, "TEST_CFLAGS",
 	"true", _(
 	"Defines whether /etc/portage/package.cflags is tested with -t."));
@@ -2264,6 +2268,11 @@ AddOption(STRING, "REDUNDANT_IF_DOUBLE_USE",
 	"Applies if /etc/portage/package.use matches twice\n"
 	"for the versions in question."));
 
+AddOption(STRING, "REDUNDANT_IF_DOUBLE_ENV",
+	"some", _(
+	"Applies if /etc/portage/package.env matches twice\n"
+	"for the versions in question."));
+
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
 	"some", _(
 	"Applies if /etc/portage/package.cflags matches twice\n"
@@ -2284,6 +2293,10 @@ AddOption(STRING, "REDUNDANT_IF_IN_UNMASK",
 AddOption(STRING, "REDUNDANT_IF_IN_USE",
 	"-some", _(
 	"Applies if /etc/portage/package.use matches."));
+
+AddOption(STRING, "REDUNDANT_IF_IN_ENV",
+	"-some", _(
+	"Applies if /etc/portage/package.env matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 	"-some", _(
@@ -2320,6 +2333,10 @@ AddOption(STRING, "USE_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.use.nonexistent", _(
 	"Entries listed in these files/dire are excluded for -t TEST_USE."));
 
+AddOption(STRING, "ENV_NONEXISTENT",
+	"%{\\EIXCFGDIR}/package.env.nonexistent", _(
+	"Entries listed in these files/dire are excluded for -t TEST_ENV."));
+
 AddOption(STRING, "CFLAGS_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.cflags.nonexistent", _(
 	"Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."));
@@ -2343,6 +2360,10 @@ AddOption(STRING, "UNMASK_NOWARN",
 AddOption(STRING, "USE_NOWARN",
 	"%{\\EIXCFGDIR}/package.use.nowarn", _(
 	"Exceptional packages for -T tests of /etc/portage/package.use."));
+
+AddOption(STRING, "ENV_NOWARN",
+	"%{\\EIXCFGDIR}/package.env.nowarn", _(
+	"Exceptional packages for -T tests of /etc/portage/package.env."));
 
 AddOption(STRING, "CFLAGS_NOWARN",
 	"%{\\EIXCFGDIR}/package.cflags.nowarn", _(

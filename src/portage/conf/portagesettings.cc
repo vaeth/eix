@@ -612,7 +612,7 @@ PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfil
 	profile    = local_profile;
 	readKeywords();
 	readMasks();
-	read_use = read_cflags = false;
+	read_use = read_env = read_cflags = false;
 }
 
 PortageUserConfig::~PortageUserConfig()
@@ -801,7 +801,7 @@ static const ArchUsed
 	ARCH_EVERYTHING     = 5,
 	ARCH_MINUSASTERISK  = 6; // -* always matches -T WEAKER because it is higher than arch_needed default
 
-static inline ArchUsed
+inline static ArchUsed
 apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
 	const set<string> *arch_set, bool obsolete_minus,
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut)

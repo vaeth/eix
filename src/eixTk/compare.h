@@ -9,6 +9,7 @@
 #ifndef EIX__COMPARE_H__
 #define EIX__COMPARE_H__ 1
 
+#include <config.h>
 #include <string>
 
 /// eix namespace
@@ -28,7 +29,9 @@ namespace eix
 
 	/// numeric comparison.
 	/// @note empty strings count a "0"
-	static inline short
+	inline short
+	numeric_compare(const std::string& left, const std::string& right) ATTRIBUTE_PURE;
+	inline short
 	numeric_compare(const std::string& left, const std::string& right)
 	{
 		// strip leading 0's

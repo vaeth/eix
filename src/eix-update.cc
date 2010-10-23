@@ -20,7 +20,6 @@
 #include <eixTk/percentage.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
-#include <eixTk/unused.h>
 #include <eixTk/utils.h>
 #include <eixrc/eixrc.h>
 #include <eixrc/global.h>

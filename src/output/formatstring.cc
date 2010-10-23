@@ -8,6 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "formatstring.h"
+#include <config.h>
 #include <eixTk/ansicolor.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
@@ -42,8 +43,7 @@ MarkedList::add(const char *pkg, const char *ver)
 	insert(p);
 }
 
-inline
-MarkedList::CIPair
+inline MarkedList::CIPair
 MarkedList::equal_range_pkg(const Package &pkg) const
 {
 	return equal_range(pkg.category + "/" + pkg.name);
@@ -447,7 +447,8 @@ FormatParser::state_COLOR()
 	return START;
 }
 
-inline const char *
+inline static const char *seek_character(const char *fmt) ATTRIBUTE_PURE;
+inline static const char *
 seek_character(const char *fmt)
 {
 	while(*fmt && isspace(*fmt, localeC)) {

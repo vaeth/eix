@@ -6,11 +6,11 @@ project="eix"
 export LC_ALL
 LC_ALL=C
 
-Echo () {
+Echo() {
 	printf '%s\n' "${*}"
 }
 
-Die () {
+Die() {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
 }
@@ -21,8 +21,12 @@ curr='.'
 distdir="`portageq distdir`"
 [ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
-GetEdir () {
+GetEdir() {
+	reverse=''
 	for overlay in `portageq portdir_overlay`
+	do	reverse="${overlay} ${reverse}"
+	done
+	for overlay in ${reverse}
 	do	edir="${overlay}/${category}/${project}"
 		test -d "${edir}" || continue
 		for jebuild in "${edir}/${project}-"*.ebuild
@@ -40,7 +44,7 @@ GetEdir () {
 }
 GetEdir || Die "cannot find ${category}/${project} in overlay"
 
-MoveEbuild () {
+MoveEbuild() {
 	test -f "${1}" && return
 	latest=''
 	for find_latest in "${edir}/${project}-"*.ebuild
@@ -54,11 +58,11 @@ MoveEbuild () {
 	mv -- "${latest}" "${1}" || Die "cannot mv ${latest} ${1}"
 }
 
-RmOpt () {
+RmOpt() {
 	! test -f "${1}" || rm -- "${1}"
 }
 
-InstallEbuildVersion () {
+InstallEbuildVersion() {
 	chown portage:portage -- "${1}"
 	chmod 664 -- "${1}"
 	Echo "Moving ${1} -> ${distdir}"

@@ -3,7 +3,7 @@
 export LC_ALL
 LC_ALL=C
 
-Usage () {
+Usage() {
 	printf '%s\n' "Usage: ${0##*/} [options] args-for-make
 Available options are
   -q  quiet
@@ -13,32 +13,33 @@ Available options are
   -0  Do not pass --enable-separate-* to ./configure
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
   -4  Enable separate tools
-  -p  Use pedantic warnings (but no error on warnings) when modifying flags
+  -p  Use pedantic warnings when modifying flags
   -u  Define NOT_FULL_USE
   -s  With sqlite
   -S  Without sqlite
   -b  With bzlib
   -B  Without bzlib
   -C  Avoid CCACHE
+  -X  Clear CCACHE
   -jX Use -jX (currently ${jarg})
   -c OPT Add OPT to ./configure
   -Q  Do not --enable-quickcheck
-  -O  Do not --enable-strong-optimization --enable-security
+  -O  Pass --enable-strong-optimization --enable-security
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1:-1}
 }
 
-Info () {
+Info() {
 	${quiet} && return
 	printf '%s\n' "${*}"
 }
 
-Die () {
+Die() {
 	printf '%s: %s\n' "${0##*/}" "${1}"
 	exit ${2:-1}
 }
 
-SetCcache () {
+SetCcache() {
 	dircc='/usr/lib/ccache/bin'
 	test -d "${dircc}" || return
 	case "${PATH}" in
@@ -51,8 +52,10 @@ SetCcache () {
 	fi
 	[ -n "${CCACHE_DIR}" ] && return
 	for dircc in "${HOME}/.ccache" ../ccache ../../ccache
-	do	[ -z "${dircc}" ] && continue
-		testcc=`readlink -f -- "${dircc}"` && [ -n "${testcc}" ] \
+	do	[ -z "${dircc}" ] || ! test -d "${dircc}" && continue
+		testcc=`cd -P -- "${dircc}" >/dev/null 2>&1 && \
+				printf '%sA' "${PWD}"` && \
+			testcc="${testcc%A}" && [ -n "${testcc}" ] \
 			&& test -d "${testcc}" && break
 	done
 	[ -z "${testcc}" ] && return
@@ -60,6 +63,9 @@ SetCcache () {
 	export CCACHE_DIR CCACHE_COMPRESS
 	CCACHE_DIR="${testcc}"
 	CCACHE_COMPRESS="true"
+	${clear_ccache} || return 0
+	Info "Clearing CCACHE"
+	ccache -C
 }
 
 quiet=false
@@ -72,11 +78,12 @@ separate_all=:
 use_chown=false
 jarg='-j3'
 use_ccache=:
-configure_extra='--prefix=/usr'
-optimization=:
+configure_extra='--prefix=/usr --sysconfdir=/etc'
+optimization=false
 quickcheck=:
+clear_ccache=false
 OPTIND=1
-while getopts 'qE01234nepusSbBrOQCc:j:?hH' opt
+while getopts 'qE01234nepusSbBrOQCXc:j:?hH' opt
 do	case "${opt}" in
 	q) quiet=:;;
 	E) extra_cache=false;;
@@ -94,9 +101,10 @@ do	case "${opt}" in
 	b) configure_extra="${configure_extra} --with-bzip2";;
 	B) configure_extra="${configure_extra} --without-bzip2";;
 	r) use_chown=:;;
-	O) optimization=false;;
+	O) optimization=:;;
 	Q) quickcheck=false;;
 	C) use_ccache=false;;
+	X) clear_ccache=:;;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
 	*) Usage 0;;
@@ -123,11 +131,10 @@ fi
 ${use_ccache} && SetCcache
 
 if ! ${keepenv}
-then	march="`sed -n 's/^CFLAGS *= *.*-march=\([^ \"]*\)[ \"].*/\1/p' \
-		/etc/make.conf`"
-	export CXXFLAGS LDFLAGS
-	CFLAGS="-march=${march} -O2 -pipe"
-	CXXFLAGS="${CFLAGS}"
+then	CFLAGS="`portageq envvar CFLAGS`"
+	CXXFLAGS="`portageq envvar CXXFLAGS`"
+	LDFLAGS="`portageq envvar LDFLAGS`"
+	export CFLAGS CXXFLAGS LDFLAGS
 	${not_full_use} && CXXFLAGS="${CXXFLAGS} -DNOT_FULL_USE"
 	if ${pedantic}
 	then	configure_extra="${configure_extra} --enable-strong-warnings"

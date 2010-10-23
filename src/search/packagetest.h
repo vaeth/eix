@@ -300,6 +300,7 @@ class PackageTest {
 		static Keywords::Redundant nowarn_keywords(const Package &p);
 		static Keywords::Redundant nowarn_mask(const Package &p);
 		static Keywords::Redundant nowarn_use(const Package &p);
+		static Keywords::Redundant nowarn_env(const Package &p);
 		static Keywords::Redundant nowarn_cflags(const Package &p);
 		static TestInstalled nowarn_installed(const Package &p);
 };

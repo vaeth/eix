@@ -10,6 +10,7 @@
 #ifndef EIX__VERSION_H__
 #define EIX__VERSION_H__ 1
 
+#include <config.h>
 #include <database/io.h>
 #include <database/types.h>
 #include <portage/extendedversion.h>
@@ -256,9 +257,14 @@ class Version : public ExtendedVersion, public Keywords {
 };
 
 /** The equality operator does *not* test the slots */
-inline bool operator == (const Version& left, const Version &right)
+inline bool operator == (const Version& left, const Version &right) ATTRIBUTE_PURE;
+inline bool
+operator == (const Version& left, const Version &right)
 { return (!BasicVersion::compare(left, right)) && (left.overlay_key == right.overlay_key); }
-inline bool operator != (const Version& left, const Version &right)
+
+inline bool operator != (const Version& left, const Version &right) ATTRIBUTE_PURE;
+inline bool
+operator != (const Version& left, const Version &right)
 { return (!BasicVersion::compare(left, right)) || (left.overlay_key != right.overlay_key); }
 
 #endif /* EIX__VERSION_H__ */

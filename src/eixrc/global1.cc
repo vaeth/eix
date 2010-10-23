@@ -16,7 +16,6 @@
 
 #include <cassert>
 
-#include <cstdlib>
 #define DO_STRINGIFY(a) #a
 #define EXPAND_STRINGIFY(a) DO_STRINGIFY(a)
 #ifndef EXIT_SUCCESS

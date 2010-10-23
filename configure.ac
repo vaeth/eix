@@ -186,8 +186,8 @@ AS_IF([${debugging}],
 	[AS_VAR_SET([CFLAGS], [])
 	AS_VAR_SET([CXXFLAGS], [])
 	AS_VAR_SET([LDFLAGS], [])])
-AS_VAR_COPY([mycxxflagstext], [CXXFLAGS])
-AS_VAR_COPY([myldflagstext], [LDFLAGS])
+AS_VAR_COPY([oricxxflags], [CXXFLAGS])
+AS_VAR_COPY([orildflags], [LDFLAGS])
 
 # Note that the (potential) resetting of the flags was necessary *before*
 # (potentially) modifying flags for system extensions.
@@ -198,19 +198,20 @@ AC_USE_SYSTEM_EXTENSIONS()
 # Only now the flag mangling can continue:
 #
 # At first, we must calculate our [fatal-flags] and [mode] arguments
-AS_VAR_SET([mycxxfatal], [])
-AS_VAR_SET([myldfatal], [])
 AS_IF([${quickcheck}],
 	[AS_VAR_SET([quicktrue], [:])
 	AS_VAR_SET([quickfalse], [false])],
 	[AS_VAR_SET([quicktrue], [])
-	AS_VAR_SET([quickfalse], [])
-	MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
-			-Werror \
-		])
-	MV_ADDFLAGS([myldfatal], [LDFLAGS], [LINK], [ \
-			-Wl,--fatal-warnings \
-		])])
+	AS_VAR_SET([quickfalse], [])])
+
+AS_VAR_SET([mycxxfatal], [])
+AS_VAR_SET([myldfatal], [])
+MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
+		-Werror \
+	], [], [${quicktrue}])
+MV_ADDFLAGS([myldfatal], [LDFLAGS], [LINK], [ \
+		-Wl,--fatal-warnings \
+	], [], [${quicktrue}])
 
 # Now the actual testing:
 AS_VAR_SET([mycxxadd], [])
@@ -268,6 +269,7 @@ AS_IF([${strong_optimization}],
 			-fweb \
 			-ftree-vectorize \
 			-fgraphite \
+			-fgraphite-identity \
 			-floop-interchange \
 			-floop-strip-mine \
 			-floop-block \
@@ -386,10 +388,8 @@ AS_IF([${security}],
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${mycxxadd}])
 MV_PREPEND([LDFLAGS], [${myldadd}])
-MV_APPEND([mycxxflagstext], [${mycxxadd}], [
-CXXFLAGS_PREPEND: ])
-MV_APPEND([myldflagstext], [${myldadd}], [
-LDFLAGS_PREPEND: ])
+AS_VAR_SET([mycxxflags], ["${CXXFLAGS}"])
+AS_VAR_SET([myldflags], ["${LDFLAGS}"])
 
 # For --enable-quickcheck, we do at least one (collected) safety check;
 # otherwise, the error messages may be too confusing for the user:
@@ -487,7 +487,12 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 # We use these optionally:
 # Concerning strndup, we have a home-brewed replacement,
 # for the others some less convenient workarounds.
-AC_CHECK_FUNCS_ONCE([strndup canonicalize_file_name realpath vfork setenv])
+AC_CHECK_FUNCS_ONCE([strndup \
+	sigaction \
+	canonicalize_file_name
+	realpath \
+	vfork \
+	setenv])
 
 # We use getuid() on systems without geteuid():
 AC_CHECK_FUNCS([geteuid getuid],
@@ -585,6 +590,17 @@ AS_IF([${bi_expect_works}],
 		[1],
 		[Define to 1 if __builtin_expect can be used])])
 
+# The __attribute__ tests are special: They should even break on warnings:
+AS_VAR_SET([CXXFLAGS], ["${oricxxflags}"])
+AS_VAR_SET([LDFLAGS], ["${orildflags}"])
+MV_APPEND([CXXFLAGS], ["${mycxxfatal}"])
+MV_APPEND([LDFLAGS], ["${myldfatal}"])
+
+# We even switch on explicitly -Wattribute although this should be default:
+MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [COMPILE], [ \
+		-Wattributes \
+	], [], [${quicktrue}])
+
 # Check if __attribute__ ((__unused__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
@@ -616,13 +632,87 @@ dummy()
 dummy()
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_noreturn], [:])],
+		AS_VAR_SET([attribute_noreturn], ["__attribute__ ((__noreturn__))"])],
 		[MV_MSG_RESULT([no])
-		AS_VAR_SET([attribute_noreturn], [false])])
-AS_IF([${attribute_noreturn}],
-	[AC_DEFINE([HAVE_ATTRIBUTE_NORETURN],
-		[1],
-		[Define to 1 if __attribute__ ((__noreturn__)) can be used])])
+		AS_VAR_SET([attribute_noreturn], [])])
+AC_DEFINE_UNQUOTED([ATTRIBUTE_NORETURN],
+	[${attribute_noreturn}],
+	[Define to __attribute__ ((__noreturn__)) if it can be used])
+
+# Check if __attribute__ ((__signal__)) works
+AC_MSG_CHECKING([whether __attribute__ ((__signal__)) can be used])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <csignal>
+void my_sig_handler(int sig) __attribute__ ((__signal__));
+class my_int {
+friend void my_sig_handler(int sig) __attribute__ ((__signal__));
+private:	static int i;
+		static void set(int s) { i=s; }
+};
+int my_int::i;
+void my_sig_handler(int sig)
+{ my_int::set(sig); }
+		]], [[
+	signal(SIGTERM, my_sig_handler);
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attribute_signal], ["__attribute__ ((__signal__))"])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attribute_signal], [])])
+AC_DEFINE_UNQUOTED([ATTRIBUTE_SIGNAL],
+	[${attribute_signal}],
+	[Define to  __attribute__ ((__signal__)) if it can be used])
+
+# Check if __attribute__ ((__const__)) works
+AC_MSG_CHECKING([whether __attribute__ ((__const__)) can be used])
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+class b {
+public:
+	static int c(int i) __attribute__ ((__const__)) { return i; }
+};
+int a(int i) __attribute__ ((__const__));
+int a(int i) { b x; return x.c(i); }
+		]], [[
+return !((a(4) == 4) && (a(5) == 5));
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attribute_const], ["__attribute__ ((__const__))"])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attribute_const], [])])
+AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST],
+	[${attribute_const}],
+	[Define to  __attribute__ ((__const__)) if it can be used])
+
+# Check if __attribute__ ((__pure__)) works
+AC_MSG_CHECKING([whether __attribute__ ((__pure__)) can be used])
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+class b {
+public:
+	static int c(int *i) __attribute__ ((__pure__)) { return *i; }
+};
+int a(int i) __attribute__ ((__pure__));
+int a(int i) { b x; return x.c(&i); }
+		]], [[
+return !((a(4) == 4) && (a(5) == 5));
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attribute_pure], ["__attribute__ ((__pure__))"])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attribute_pure], [])])
+AC_DEFINE_UNQUOTED([ATTRIBUTE_PURE],
+	[${attribute_pure}],
+	[Define to  __attribute__ ((__pure__)) if it can be used])
+
+# I know no reliable way to check whether __attribute__ ((__const__))
+# can be used for const virtuals. So better use __attribute__ ((__pure__)).
+AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST_VIRTUAL],
+	[${attribute_pure}],
+	[Define to  __attribute__ ((__pure__)) or ((__const__)) or empty])
+
+# reset the CXXFLAGS, LDFLAGS for the normal tests
+AS_VAR_SET([CXXFLAGS], ["${mycxxflags}"])
+AS_VAR_SET([LDFLAGS], ["${myldflags}"])
+
 
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
@@ -681,7 +771,8 @@ AC_ARG_WITH([eprefix-default],
 	[AS_HELP_STRING([--with-eprefix-default=STR],
 		[default EPREFIX])],
 	[AS_VAR_COPY([EPREFIX_DEFAULT], [withval])],
-	[AS_VAR_SET([EPREFIX_DEFAULT], ["`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])])
+	[AS_VAR_SET([EPREFIX_DEFAULT],
+		["`eval portageq envvar EPREFIX 2>${DEV_NULL}`"])])
 MV_PREFIX(EPREFIX_DEFAULT)
 MV_MSG_RESULT_VAR([EPREFIX_DEFAULT])
 AC_DEFINE_UNQUOTED([EPREFIX_DEFAULT],
@@ -725,7 +816,8 @@ AC_ARG_WITH([ebuild-sh-default],
 	AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib"],
 		[],
 		[AS_IF([test -d "${EPREFIX_DEFAULT}/usr/lib64"],
-			[AS_VAR_SET([EBUILD_SH_DEFAULT], ["/usr/lib64/portage/bin/ebuild.sh"])])])
+			[AS_VAR_SET([EBUILD_SH_DEFAULT],
+				["/usr/lib64/portage/bin/ebuild.sh"])])])
 	AS_IF([test -x "${EPREFIX_DEFAULT}${EBUILD_SH_DEFAULT}"],
 		[AS_VAR_SET([description], ["autodetected"])],
 		[AS_VAR_SET([description], ["guessed"])])])
@@ -809,8 +901,12 @@ AS_ECHO(["
 
 ${PACKAGE}-${VERSION} configured successfully.
 
-CXXFLAGS: ${mycxxflagstext}
-
-LDFLAGS:  ${myldflagstext}
-
 "])
+AS_ECHO(["CXXFLAGS: ${oricxxflags}"])
+MV_IF_NONEMPTY([${mycxxadd}],
+	[AS_ECHO(["PREPEND_CXXFLAGS: ${mycxxadd}
+"])])
+AS_ECHO(["LDFLAGS: ${orildflags}"])
+MV_IF_NONEMPTY([${myldadd}],
+	[AS_ECHO(["PREPEND_LDFLAGS: ${myldadd}"])])
+AS_ECHO([])

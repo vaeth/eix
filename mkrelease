@@ -6,14 +6,14 @@ LC_ALL=C
 proj="eix"
 svnroot="https://svn.gentooexperimental.org/${proj}"
 
-Usage () {
+Usage() {
 	printf '%s\n' "Usage: ${0##*/}
 Marks a new release in the svn repository.
 Verify in advance to have AC_INIT set correctly in configure.ac"
 	exit ${1:-1}
 }
 
-Die () {
+Die() {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
 	exit ${2:-1}
 }

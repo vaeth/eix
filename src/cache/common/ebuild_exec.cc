@@ -8,8 +8,8 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "ebuild_exec.h"
-#include <cache/base.h>
 #include <config.h>
+#include <cache/base.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -60,17 +60,35 @@ EbuildExec::add_handler()
 	// Set the signals "empty" to avoid a race condition:
 	// On a signal, we should cleanup only the signals actually set.
 	got_exit_signal = false;
-	handleHUP  = handleINT = handleTERM = ebuild_sig_handler;
+#ifdef HAVE_SIGACTION
+	sigaction(SIGHUP, NULL, &handleHUP);
+	sigaction(SIGHUP, NULL, &handleINT);
+	sigaction(SIGHUP, NULL, &handleTERM);
 	have_set_signals = true;
-	handleHUP  = signal(SIGHUP, ebuild_sig_handler);
-	if(handleHUP == SIG_IGN)
-		signal(SIGHUP, SIG_IGN);
-	handleINT  = signal(SIGINT, ebuild_sig_handler);
-	if(handleINT == SIG_IGN)
-		signal(SIGINT, SIG_IGN);
-	handleTERM = signal(SIGTERM, ebuild_sig_handler);
-	if(handleTERM == SIG_IGN)
-		signal(SIGTERM, SIG_IGN);
+	m_handler.sa_handler = ebuild_sig_handler;
+	m_handler.sa_flags = 0;
+	sigemptyset(&(m_handler.sa_mask));
+	if(((handleHUP.sa_flags & SA_SIGINFO) != 0) ||
+		(handleHUP.sa_handler != SIG_IGN))
+		sigaction(SIGHUP, &m_handler, NULL);
+	if(((handleINT.sa_flags & SA_SIGINFO) != 0) ||
+		(handleINT.sa_handler != SIG_IGN))
+		sigaction(SIGINT, &m_handler, NULL);
+	if(((handleTERM.sa_flags & SA_SIGINFO) != 0) ||
+		(handleTERM.sa_handler != SIG_IGN))
+		sigaction(SIGTERM, &m_handler, NULL);
+#else
+	handleHUP  = signal(SIGHUP, SIG_IGN);
+	handleINT  = signal(SIGINT, SIG_IGN);
+	handleTERM = signal(SIGTERM, SIG_IGN);
+	have_set_signals = true;
+	if(handleHUP != SIG_IGN)
+		signal(SIGHUP, ebuild_sig_handler);
+	if(handleINT != SIG_IGN)
+		signal(SIGINT, ebuild_sig_handler);
+	if(handleTERM != SIG_IGN)
+		signal(SIGTERM, ebuild_sig_handler);
+#endif
 }
 
 void
@@ -78,9 +96,15 @@ EbuildExec::remove_handler()
 {
 	if(!have_set_signals)
 		return;
+#ifdef HAVE_SIGACTION
+	sigaction(SIGHUP,  &handleHUP,  NULL);
+	sigaction(SIGINT,  &handleHUP,  NULL);
+	sigaction(SIGTERM, &handleTERM, NULL);
+#else
 	signal(SIGHUP,  handleHUP);
 	signal(SIGINT,  handleINT);
 	signal(SIGTERM, handleTERM);
+#endif
 	have_set_signals = false;
 }
 

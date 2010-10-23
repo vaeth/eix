@@ -314,6 +314,8 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 						Keywords::RED_DOUBLE_UNMASK, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_USE",
 						Keywords::RED_DOUBLE_USE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_ENV",
+						Keywords::RED_DOUBLE_ENV, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_CFLAGS",
 						Keywords::RED_DOUBLE_CFLAGS, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_MINUSASTERISK",
@@ -326,6 +328,8 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 						Keywords::RED_IN_UNMASK, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_USE",
 						Keywords::RED_IN_USE, red);
+					eixrc.getRedundantFlags("REDUNDANT_IF_IN_ENV",
+						Keywords::RED_IN_ENV, red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
 						Keywords::RED_IN_CFLAGS, red);
 				}

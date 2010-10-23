@@ -13,7 +13,7 @@
 . ./eix-functions.sh.in
 ReadFunctions
 
-Usage () {
+Usage() {
 	exitcode="${1:-1}"
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
@@ -54,11 +54,11 @@ Available options:
 	exit ${exitcode:-1}
 }
 
-ClearLaymanMake () {
+ClearLaymanMake() {
 	Push -c layman_make
 }
 
-PushLaymanMake () {
+PushLaymanMake() {
 	r=1
 	for m
 	do	[ -n "${m}" ] || continue
@@ -69,12 +69,12 @@ PushLaymanMake () {
 	return ${r}
 }
 
-PrintLaymanMake () {
+PrintLaymanMake() {
 	printf '%s\n%s\n' 'from layman.config import Config' \
 	"print(Config()['make_conf'])" | python -- "${@}" 2>/dev/null
 }
 
-CalcLaymanMake () {
+CalcLaymanMake() {
 	l=`PrintLaymanMake "${@}"` || l=''
 	[ -n "${l}" ] && PushLaymanMake "${l}"
 }
@@ -101,9 +101,9 @@ do	case "${opt}" in
 		*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 
-GetOverlays () {
+GetOverlays() {
 	eval "set -- ${layman_make}"
 	for i
 	do	[ -n "${i}" ] && test -r "${i}" && Push layman_overlays \
@@ -112,19 +112,19 @@ GetOverlays () {
 	done
 }
 
-Init () {
+Init() {
 	ClearUpdateArgs
 	GetOverlays
 	AddLocalMethods
 }
 
-Add () {
+Add() {
 	Init
 	eval "AddOverlays ${layman_overlays}"
 	CallUpdate
 }
 
-Remove () {
+Remove() {
 	Init
 	eval "AddExcludes ${layman_overlays}"
 	CallUpdate

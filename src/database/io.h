@@ -32,7 +32,7 @@ class Version;
 #define MAGICNUMCHAR 0xFF
 
 namespace io {
-	inline static UChar
+	inline UChar
 	readUChar(FILE *fp)
 	{
 		int c(fgetc(fp));
@@ -45,7 +45,7 @@ namespace io {
 		return UChar(c);
 	}
 
-	inline static void
+	inline void
 	writeUChar(FILE *fp, UChar c)
 	{
 		if(fp != NULL) {

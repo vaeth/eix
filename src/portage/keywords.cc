@@ -116,6 +116,9 @@ const Keywords::Redundant
 	Keywords::RED_DOUBLE_USE,
 	Keywords::RED_IN_USE,
 	Keywords::RED_ALL_USE,
+	Keywords::RED_DOUBLE_ENV,
+	Keywords::RED_IN_ENV,
+	Keywords::RED_ALL_ENV,
 	Keywords::RED_DOUBLE_CFLAGS,
 	Keywords::RED_IN_CFLAGS,
 	Keywords::RED_ALL_CFLAGS;

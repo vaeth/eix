@@ -10,6 +10,7 @@
 #ifndef EIX__ANSICOLOR_H__
 #define EIX__ANSICOLOR_H__ 1
 
+#include <config.h>
 #include <eixTk/exceptions.h>
 
 #include <ostream>
@@ -48,7 +49,7 @@ class AnsiMarker {
 			}
 		}
 
-		static const char *reset()
+		static const char *reset() ATTRIBUTE_PURE
 		{ return reset_string; }
 
 		const std::string &asString() const

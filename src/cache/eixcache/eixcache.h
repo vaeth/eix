@@ -8,6 +8,7 @@
 #ifndef EIX__EIXCACHE_H__
 #define EIX__EIXCACHE_H__ 1
 
+#include <config.h>
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
@@ -43,7 +44,7 @@ class EixCache : public BasicCache {
 		// @return true if successful
 		bool initialize(const std::string &name);
 
-		bool can_read_multiple_categories() const
+		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
 		{ return true; }
 
 		bool readCategories(PackageTree *packagetree, const char *name, Category *category) throw(ExBasic);

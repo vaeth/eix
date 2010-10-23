@@ -10,6 +10,9 @@
 #ifndef EIX__EBUILD_EXEC_H__
 #define EIX__EBUILD_EXEC_H__ 1
 
+#include <config.h>
+
+#include <csignal>
 #include <string>
 #include <vector>
 
@@ -19,17 +22,23 @@ class BasicCache;
 class Package;
 class Version;
 
+void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
+
 class EbuildExec {
-		friend void ebuild_sig_handler(int sig);
+		friend void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
 	private:
 		const BasicCache *base;
 		static EbuildExec *handler_arg;
 		volatile bool have_set_signals, got_exit_signal, cache_defined;
 		volatile int type_of_exit_signal;
 		std::string cachefile;
+#ifdef HAVE_SIGACTION
+		struct sigaction handleTERM, handleINT, handleHUP, m_handler;
+#else
 		typedef void signal_handler(int sig);
 		// cache/common/ebuild_exec.h|30| error: ignoring 'volatile' qualifiers added to function type 'void ()(int)'
 		/* volatile */ signal_handler *handleTERM, *handleINT, *handleHUP;
+#endif
 		bool use_ebuild_sh;
 		/// local data for make_cachefile which should be saved for vfork:
 		const char *exec_name;

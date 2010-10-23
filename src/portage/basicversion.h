@@ -10,6 +10,7 @@
 #ifndef EIX__BASICVERSION_H__
 #define EIX__BASICVERSION_H__ 1
 
+#include <config.h>
 #include <list>
 #include <string>
 
@@ -55,7 +56,7 @@ public:
 	BasicPart(PartType p, const char *s) : parttype(p), partcontent(s)
 	{ }
 
-	static short compare(const BasicPart& left, const BasicPart& right);
+	static short compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
 };
 
 
@@ -73,10 +74,10 @@ public:
 	void parseVersion(const std::string& str);
 
 	/// Compare all except gentoo revisions
-	static short compareTilde(const BasicVersion& right, const BasicVersion& left);
+	static short compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
 	/// Compare the m_cached_full version.
-	static short compare(const BasicVersion& right, const BasicVersion& left);
+	static short compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
 	const std::string& getFull() const
 	{
@@ -98,17 +99,34 @@ protected:
 
 
 // Short compare-stuff
-inline bool operator <  (const BasicVersion& left, const BasicVersion& right)
+inline bool operator <  (const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline bool
+operator <  (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) < 0; }
-inline bool operator >  (const BasicVersion& left, const BasicVersion& right)
+
+inline bool operator >  (const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline bool
+operator >  (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) > 0; }
-inline bool operator == (const BasicVersion& left, const BasicVersion& right)
+
+inline bool operator == (const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline bool
+operator == (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) == 0; }
-inline bool operator != (const BasicVersion& left, const BasicVersion& right)
+
+inline bool operator != (const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline bool
+operator != (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) != 0; }
-inline bool operator >= (const BasicVersion& left, const BasicVersion& right)
+
+inline bool operator >= (const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline bool
+operator >= (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) >= 0; }
-inline bool operator <= (const BasicVersion& left, const BasicVersion& right)
+
+inline bool operator <= (const BasicVersion& left, const BasicVersion& right) ATTRIBUTE_PURE;
+inline bool
+operator <= (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) <= 0; }
 
 #endif /* EIX__BASICVERSION_H__ */

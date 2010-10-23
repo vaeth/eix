@@ -28,12 +28,4 @@
 #endif /* HAVE_ATTRIBUTE_UNUSED */
 #endif /* ATTRIBUTE_UNUSED */
 
-#ifdef HAVE_ATTRIBUTE_NORETURN
-#ifndef ATTRIBUTE_NORETURN
-#define ATTRIBUTE_NORETURN __attribute__ ((__noreturn__))
-#endif
-#else
-#define ATTRIBUTE_NORETURN
-#endif /* HAVE_ATTRIBUTE_NORETURN */
-
 #endif /* EIX__UNUSED_H__ */

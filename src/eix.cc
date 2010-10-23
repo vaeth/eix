@@ -715,6 +715,11 @@ run_eix(int argc, char** argv)
 				eixrc["USE_NONEXISTENT"],
 				all_packages, empty);
 		}
+		if(likely(eixrc.getBool("TEST_ENV"))) {
+			print_unused(eixrc.m_eprefixconf + USER_ENV_FILE,
+				eixrc["ENV_NONEXISTENT"],
+				all_packages, empty);
+		}
 		if(likely(eixrc.getBool("TEST_CFLAGS"))) {
 			print_unused(eixrc.m_eprefixconf + USER_CFLAGS_FILE,
 				eixrc["CFLAGS_NONEXISTENT"],

@@ -16,6 +16,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>

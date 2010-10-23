@@ -3,7 +3,7 @@
 # terms of the GNU General Public License v2.
 #
 # Authors and Copyright (c):
-#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de> (complete rewrite)
+#   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 #
 # This script lists all packages installed after/before a certain package
 # See the eix manpage for details. (@PACKAGE_STRING@).
@@ -17,7 +17,7 @@ ReadFunctions
 
 # The following function outputs the usage of the script and then dies.
 
-Usage () {
+Usage() {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] category/package[:slot]
@@ -97,7 +97,7 @@ do	case "${opt}" in
 		*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 
 
 # After the options there should be exactly one argument: ${match}
@@ -132,22 +132,22 @@ fi
 # Output outputs the package (and date).
 # Both functions ignore empty lines.
 
-Check () {
+Check() {
 	[ ${#} -ge 2 ] && case "${2}:" in
 	${match}:*) return 0;;
 	esac
 	return 1
 }
 if ${epoch}
-then	[ -n "${addtime}" ] && match=`expr "${match}" + "${addtime}"`
-	[ -n "${subtime}" ] && match=`expr "${match}" - "${subtime}"`
+then	[ -n "${addtime}" ] && match=`Expr "${match}" + "${addtime}"`
+	[ -n "${subtime}" ] && match=`Expr "${match}" - "${subtime}"`
 # With option -e (or -l or -L), we need a different Check function:
-Check () {
+Check() {
 	[ ${#} -ne 0 ] && [ "${1}" -ge "${match}" ]
 }
 fi
 
-Output () {
+Output() {
 	if [ ${#} -eq 3 ]
 	then	printf '%s\n' "${3}"
 	elif [ ${#} -gt 3 ]

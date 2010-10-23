@@ -22,7 +22,7 @@
 
 using namespace std;
 
-static inline
+inline static
 string::size_type revision_index(const string &ver)
 {
 	string::size_type i(ver.rfind("-r"));

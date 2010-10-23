@@ -35,6 +35,7 @@ class Version;
 #define USER_MASK_FILE          "/etc/portage/package.mask"
 #define USER_UNMASK_FILE        "/etc/portage/package.unmask"
 #define USER_USE_FILE           "/etc/portage/package.use"
+#define USER_ENV_FILE           "/etc/portage/package.env"
 #define USER_CFLAGS_FILE        "/etc/portage/package.cflags"
 #define USER_PROFILE_DIR        "/etc/portage/profile"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
@@ -62,8 +63,8 @@ class PortageUserConfig {
 		PortageSettings      *m_settings;
 		MaskList<Mask>        m_localmasks;
 		MaskList<KeywordMask> m_keywords;
-		MaskList<KeywordMask> m_use, m_cflags;
-		bool read_use, read_cflags;
+		MaskList<KeywordMask> m_use, m_env, m_cflags;
+		bool read_use, read_env, read_cflags;
 
 		/** Your cascading profile, including local settings */
 		CascadingProfile     *profile;
@@ -93,6 +94,13 @@ class PortageUserConfig {
 		{
 			if(check & Keywords::RED_ALL_USE)
 				return CheckFile(p, USER_USE_FILE, &m_use, &read_use, check & Keywords::RED_DOUBLE_USE, check & Keywords::RED_IN_USE);
+			return false;
+		}
+		/// @return true if something from /etc/portage/package.env applied
+		bool CheckEnv(Package *p, Keywords::Redundant check)
+		{
+			if(check & Keywords::RED_ALL_ENV)
+				return CheckFile(p, USER_ENV_FILE, &m_env, &read_env, check & Keywords::RED_DOUBLE_ENV, check & Keywords::RED_IN_ENV);
 			return false;
 		}
 		/// @return true if something from /etc/portage/package.cflags applied

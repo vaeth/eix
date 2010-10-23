@@ -16,7 +16,7 @@ addr='@DEFAULT_REMOTE_PATH@'
 ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
-Usage () {
+Usage() {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	f="${filearg:-(none)}"
@@ -70,19 +70,19 @@ The following options are available:
 	exit ${exitcode}
 }
 
-SanitizeLocalLayman () {
-	have_readlink=false NormalizeNames LOCAL_LAYMAN \
+SanitizeLocalLayman() {
+	normalize_resolve=false NormalizeNames LOCAL_LAYMAN \
 		|| die "`gettext '$LOCAL_LAYMAN must not be empty'`"
 	[ -z "${relative}" ] || \
 		die "`gettext '$LOCAL_LAYMAN must start with /'`"
 }
 
-PrintLaymanStorage () {
+PrintLaymanStorage() {
 	printf '%s\n%s\n' 'from layman.config import Config' \
 	"print(Config()['storage'])" | python -- "${@}" 2>/dev/null
 }
 
-SetLocalLayman () {
+SetLocalLayman() {
 	for i
 	do	[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN="${i}" \
 			&& return
@@ -90,7 +90,7 @@ SetLocalLayman () {
 	return 1
 }
 
-InitLocalLayman () {
+InitLocalLayman() {
 	[ -n "${LOCAL_LAYMAN}" ] && return
 	LOCAL_LAYMAN="`PrintLaymanStorage`" || LOCAL_LAYMAN=''
 	if [ -z "${LOCAL_LAYMAN}" ]
@@ -102,7 +102,7 @@ InitLocalLayman () {
 		'/var/lib/layman'
 }
 
-CalcSuprg () {
+CalcSuprg() {
 	for i
 	do	suprgpath="${i}"
 		suprg="${i##*/}"
@@ -114,7 +114,7 @@ CalcSuprg () {
 }
 
 
-DefaultOpts () {
+DefaultOpts() {
 	CalcSuprg /usr/bin/sudo /bin/su sudo su
 	verbose=:
 	fetchuser=''
@@ -146,10 +146,10 @@ do	case "${opt}" in
 	esac
 done
 opt=''
-[ ${OPTIND} -gt 1 ] && shift "`expr ${OPTIND} - 1`"
+[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 
 need_arg=false
-GetFilename () {
+GetFilename() {
 	[ ${#} -gt 1 ] && Usage
 	if [ ${#} -lt 1 ]
 	then	filename="${filearg}"
@@ -166,7 +166,7 @@ GetFilename () {
 	esac
 }
 
-CalcSuCmd () {
+CalcSuCmd() {
 #	local shexec a
 	if [ -z "${fetchuser}" ]
 	then	[ -n "${UID}" ] || UID="`id -u`"
@@ -194,7 +194,7 @@ CalcSuCmd () {
 	Push sucmd '-s' "${shexec}" '-c' "eval exec ${a}" "${fetchuser}"
 }
 
-CdDir () {
+CdDir() {
 	cd -- "${1}" >/dev/null && return
 	a="${1}"
 	die "`eval_gettext 'cannot cd to ${a}'`"
@@ -202,7 +202,7 @@ CdDir () {
 
 tmpdir=''
 exitcode=0
-Cleanup () {
+Cleanup() {
 	trap : EXIT HUP INT TERM
 	cd / >/dev/null
 	if [ -n "${tmpdir}" ]
@@ -212,7 +212,7 @@ Cleanup () {
 	trap - EXIT HUP INT TERM
 	exit "${exitcode}"
 }
-MakeTempDir () {
+MakeTempDir() {
 	[ -n "${tmpdir}" ] && return
 	AssignTemp tmpdir -d
 	trap Cleanup EXIT HUP INT TERM
@@ -221,7 +221,7 @@ MakeTempDir () {
 }
 
 tmpsub=''
-MakeTempSub () {
+MakeTempSub() {
 	if [ -z "${tmpsub}" ]
 	then	MakeTempDir
 		tmpsub="${tmpdir}/1"
@@ -231,7 +231,7 @@ MakeTempSub () {
 }
 
 tmpfile=''
-FetchTemp () {
+FetchTemp() {
 	eixcachesname="${addr##*/}"
 	[ -z "${eixcachesname}" ] && die "`eval_gettext \
 'remote address is not properly set.
@@ -246,7 +246,7 @@ The default should have been set with ./configure --remote-file'`"
 		die "`eval_gettext 'could not fetch ${addr}'`"
 }
 
-BugReport () {
+BugReport() {
 	archive="${1}"
 	echo
 	printf '\n'
@@ -270,7 +270,7 @@ your eix, you will have to upgrade to the most current ~x86 version of eix
 to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 }
 
-AddArchive () {
+AddArchive() {
 	a="${1}"
 	RunCommand "Unpacking data" tar xjf "${a}" || {
 		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
@@ -325,7 +325,7 @@ AddArchive () {
 	die "${msg}"
 }
 
-FetchCopy () {
+FetchCopy() {
 	GetFilename "${@}"
 	FetchTemp
 	[ -z "${filename}" ] && return
@@ -336,12 +336,12 @@ FetchCopy () {
 	[ "${UID}" -eq 0 ] && chown -- portage:portage "${filename}"
 }
 
-Fetch () {
+Fetch() {
 	need_arg=:
 	FetchCopy "${@}"
 }
 
-Add () {
+Add() {
 	need_arg=:
 	GetFilename "${@}"
 	test -r "${filename}" || \
@@ -350,14 +350,14 @@ Add () {
 	AddArchive "${filename}" "${tmpdir}"
 }
 
-Remove () {
+Remove() {
 	ClearUpdateArgs
 	AddLocalMethods
 	export KEEP_VIRTUALS=false
 	CallUpdate
 }
 
-Update () {
+Update() {
 	FetchCopy "${@}"
 	MakeTempSub cd
 	AddArchive "${tmpfile}" "${tmpsub}"

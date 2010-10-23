@@ -77,8 +77,8 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 	return eix::numeric_compare(left.partcontent, right.partcontent);
 }
 
-inline
-ostream& operator<<(ostream& s, const BasicPart& part)
+static ostream&
+operator<<(ostream& s, const BasicPart& part)
 {
 	switch (part.parttype) {
 		case BasicPart::garbage:
