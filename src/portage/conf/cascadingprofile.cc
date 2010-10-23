@@ -22,6 +22,7 @@
 #include <portage/mask_list.h>
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -66,39 +67,52 @@ void CascadingProfile::addProfile(const char *profile, unsigned int depth)
 	pushback_files(s, m_profile_files, profile_exclude, 3);
 }
 
+class ProfileFilenames
+{
+	typedef CascadingProfile::Handler Handler;
+	typedef map<string, Handler> NameMap;
+	NameMap name_map;
+public:
+	void initstring(const std::string &s, Handler h)
+	{ name_map.insert(pair<string, Handler>(s, h)); }
+
+	Handler operator[](const std::string s) const
+	{
+		NameMap::const_iterator it(name_map.find(s));
+		if(it != name_map.end()) {
+			return it->second;
+		}
+		return NULL;
+	}
+
+	ProfileFilenames()
+	{
+		initstring("packages",   &CascadingProfile::readPackages);
+		initstring("packages.d", &CascadingProfile::readPackages);
+		initstring("package.mask",   &CascadingProfile::readPackageMasks);
+		initstring("package.mask.d", &CascadingProfile::readPackageMasks);
+		initstring("package.unmask",   &CascadingProfile::readPackageUnmasks);
+		initstring("package.unmask.d", &CascadingProfile::readPackageUnmasks);
+		initstring("package.keywords",   &CascadingProfile::readPackageKeywords);
+		initstring("package.keywords.d", &CascadingProfile::readPackageKeywords);
+		initstring("package.accept_keywords",   &CascadingProfile::readPackageAcceptKeywords);
+		initstring("package.accept_keywords.d", &CascadingProfile::readPackageAcceptKeywords);
+	}
+};
+static ProfileFilenames profile_filenames;
+
 bool
 CascadingProfile::readremoveFiles()
 {
 	bool ret(false);
 	for(vector<string>::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
-		bool (CascadingProfile::*handler)(const string &line);
-		const char *filename = strrchr(file->c_str(), '/');
+		const char *filename(strrchr(file->c_str(), '/'));
 		if(filename == NULL)
 			continue;
 		++filename;
-		if(unlikely(strcmp(filename, "packages") == 0))
-			handler = &CascadingProfile::readPackages;
-		else if(unlikely(strcmp(filename, "packages.d") == 0))
-			handler = &CascadingProfile::readPackages;
-		else if(unlikely(strcmp(filename, "package.mask") == 0))
-			handler = &CascadingProfile::readPackageMasks;
-		else if(unlikely(strcmp(filename, "package.mask.d") == 0))
-			handler = &CascadingProfile::readPackageMasks;
-		else if(unlikely(strcmp(filename, "package.unmask") == 0))
-			handler = &CascadingProfile::readPackageUnmasks;
-		else if(unlikely(strcmp(filename, "package.unmask.d") == 0))
-			handler = &CascadingProfile::readPackageUnmasks;
-		else if(unlikely(strcmp(filename, "package.keywords") == 0))
-			handler = &CascadingProfile::readPackageKeywords;
-		else if(unlikely(strcmp(filename, "package.keywords.d") == 0))
-			handler = &CascadingProfile::readPackageKeywords;
-		else {
-			if((unlikely(strcmp(filename, "package.accept_keywords") == 0)) ||
-			(unlikely(strcmp(filename, "package.accept_keywords.d") == 0))) {
-				if(m_portagesettings->readKeywordsFile(file->c_str(), m_package_accept_keywords))
-					ret = true;
-			}
+		CascadingProfile::Handler handler(profile_filenames[filename]);
+		if(handler == NULL) {
 			continue;
 		}
 
@@ -123,51 +137,50 @@ CascadingProfile::readremoveFiles()
 	return ret;
 }
 
-void
-CascadingProfile::raise_empty(string &s)
-{
-	m_package_accept_keywords.raise_empty(s);
-}
-
 bool
 CascadingProfile::readPackages(const string &line)
 {
-	/* Cycle through and get rid of comments ..
-	 * lines beginning with '*' are m_system-packages
+	/* lines beginning with '*' are m_system-packages
 	 * all others are masked by profile .. if they don't match :) */
 	const char *p(line.c_str());
 	bool remove(*p == '-');
-
-	if(remove)
-	{
+	if(unlikely(remove)) {
 		++p;
 	}
+	if(*p == '*') {
+		if(unlikely(remove)) {
+			return p_system.remove_line(p);
+		}
+		return p_system.add_line(p);
+	}
+	if(unlikely(remove)) {
+		return p_system_allowed.remove_line(p);
+	}
+	return p_system_allowed.add_line(p);
+}
 
-	Mask *m(NULL);
-	MaskList<Mask> *ml(NULL);
-	switch(*p)
-	{
-		case '*':
-			++p;
-			m = new Mask(p, Mask::maskInSystem) ;
-			ml = &m_system;
-			break;
-		default:
-			m = new Mask(p, Mask::maskAllowedByProfile);
-			ml = &m_system_allowed;
-			break;
-	}
+bool
+CascadingProfile::readPackageMasks(const string &line)
+{
+	return p_package_masks.handle_line(line);
+}
 
-	if(remove)
-	{
-		bool ret(ml->remove(m));
-		delete m;
-		return ret;
-	}
-	else
-	{
-		return (ml->add(m));
-	}
+bool
+CascadingProfile::readPackageUnmasks(const string &line)
+{
+	return p_package_unmasks.handle_line(line);
+}
+
+bool
+CascadingProfile::readPackageKeywords(const string &line)
+{
+	return p_package_keywords.handle_line(line);
+}
+
+bool
+CascadingProfile::readPackageAcceptKeywords(const string &line)
+{
+	return p_package_accept_keywords.add_line(line);
 }
 
 /** Read all "make.defaults" files found in profile. */
@@ -181,62 +194,22 @@ CascadingProfile::readMakeDefaults()
 	}
 }
 
-bool
-CascadingProfile::readPackageMasks(const string &line)
+/** Populate MaskLists from PreLists.
+    All files must have been read and m_raised_arch
+    must be known when this is called. */
+void
+CascadingProfile::finalize()
 {
-	if(line[0] == '-') {
-		Mask *m(new Mask(line.substr(1).c_str(), Mask::maskMask));
-		bool ret(m_package_masks.remove(m));
-		delete m;
-		return ret;
+	if(finalized) {
+		return;
 	}
-	else {
-		return m_package_masks.add(new Mask(line.c_str(), Mask::maskMask));
-	}
-}
-
-bool
-CascadingProfile::readPackageUnmasks(const string &line)
-{
-	if(line[0] == '-') {
-		Mask *m(new Mask(line.substr(1).c_str(), Mask::maskUnmask));
-		bool ret(m_package_unmasks.remove(m));
-		delete m;
-		return ret;
-	}
-	else {
-		return m_package_unmasks.add(new Mask(line.c_str(), Mask::maskUnmask));
-	}
-}
-
-bool
-CascadingProfile::readPackageKeywords(const string &line)
-{
-	string::size_type s(line.find(' '));
-	if(line[0] == '-') {
-		string name;
-		if(s == string::npos) {
-			name = line;
-		}
-		else {
-			if(s == 1)
-				return false;
-			name.assign(line, 1, s);
-		}
-		PKeywordMask *m(new PKeywordMask(name.c_str()));
-		bool ret(m_package_keywords.remove(m));
-		delete m;
-		return ret;
-	}
-	else {
-		if(s == string::npos)
-			return false;
-		if(s + 1 >= line.size())
-			return false;
-		PKeywordMask *m(new PKeywordMask(line.substr(0, s).c_str()));
-		m->keywords.assign(line, s + 1, string::npos);
-		return m_package_keywords.add(m);
-	}
+	finalized = true;
+	p_system.initialize(m_system, Mask::maskInSystem);
+	p_system_allowed.initialize(m_system_allowed, Mask::maskAllowedByProfile);
+	p_package_masks.initialize(m_package_masks, Mask::maskMask);
+	p_package_unmasks.initialize(m_package_unmasks, Mask::maskUnmask);
+	p_package_keywords.initialize(m_package_keywords);
+	p_package_accept_keywords.initialize(m_package_accept_keywords, m_portagesettings->m_raised_arch);
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
@@ -285,7 +258,7 @@ CascadingProfile::applyMasks(Package *p) const
 		}
 		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
-			const string &set_name(m_portagesettings->set_names[*it]);
+			const std::string &set_name(m_portagesettings->set_names[*it]);
 			m_system_allowed.applySetMasks(*v, set_name);
 			m_system.applySetMasks(*v, set_name);
 			m_package_masks.applySetMasks(*v, set_name);
@@ -324,7 +297,7 @@ CascadingProfile::applyKeywords(Package *p) const
 		}
 		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
-			const string &set_name(m_portagesettings->set_names[*it]);
+			const char *set_name(m_portagesettings->set_names[*it].c_str());
 			m_package_keywords.applyListSetItems(*v, set_name);
 			m_package_accept_keywords.applyListSetItems(*v, set_name);
 		}

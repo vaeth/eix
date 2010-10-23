@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-09-05 22:43+0200\n"
+"POT-Creation-Date: 2010-09-09 11:19+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -876,8 +876,8 @@ msgstr "Keine Redundanz in ${rump}accept_keywords (oder Test ist aus)."
 
 #: src/eix-test-obsolete.sh:238
 #, sh-format
-msgid "Redundant in ${rump}keywords:"
-msgstr "Redundant in ${rump}keywords:"
+msgid "Redundant in ${rump}accept_keywords:"
+msgstr "Redundant in ${rump}accept_keywords:"
 
 #: src/eix-test-obsolete.sh:251
 #, sh-format
@@ -936,8 +936,8 @@ msgstr "Nichts Uninstalliertes in ${rump}accept_keywords (oder Test ist aus)."
 
 #: src/eix-test-obsolete.sh:296
 #, sh-format
-msgid "Not installed but in ${rump}keywords:"
-msgstr "Uninstalliert, aber in ${rump}keywords:"
+msgid "Not installed but in ${rump}accept_keywords:"
+msgstr "Uninstalliert, aber in ${rump}accept_keywords:"
 
 #: src/eix-test-obsolete.sh:306
 #, sh-format
@@ -4712,8 +4712,8 @@ msgstr ""
 "Sollen bei -t leere Einträge aus /etc/portage/package.* gemeldet werden?"
 
 #: src/eixrc/defaults.cc:2201
-msgid "Defines whether /etc/portage/package.keywords is tested with -t."
-msgstr "Soll /etc/portage/package.keywords bei -t getestet werden?"
+msgid "Defines whether /etc/portage/package.accept_keywords is tested with -t."
+msgstr "Soll /etc/portage/package.accept_keywords bei -t getestet werden?"
 
 #: src/eixrc/defaults.cc:2205
 msgid "Defines whether /etc/portage/package.mask is tested with -t."
@@ -4824,7 +4824,7 @@ msgid ""
 "Applies if /etc/portage/package.accept_keywords contains some -* entry.\n"
 "This test only applies if OBSOLETE_MINUSASTERISK is false."
 msgstr ""
-"Testet, ob /etc/portage/package.keywords einen -* Eintrag enthält.\n"
+"Testet, ob /etc/portage/package.accept_keywords einen -* Eintrag enthält.\n"
 "Dieser Test kommt nur im Fall eines negativen OBSOLETE_MINUSASTERISK\n"
 "zum Einsatz."
 
@@ -5264,35 +5264,35 @@ msgstr ""
 "Zusatzsymbole (%s) nach Versionsnummer %r\n"
 "Akzeptiere Version dennoch"
 
-#: src/portage/conf/cascadingprofile.cc:45
+#: src/portage/conf/cascadingprofile.cc:46
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1225
-#: src/portage/conf/portagesettings.cc:1242
+#: src/portage/conf/portagesettings.cc:1180
+#: src/portage/conf/portagesettings.cc:1209
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
-#: src/portage/mask.cc:82
+#: src/portage/mask.cc:83
 msgid "Can't read category."
 msgstr "Category nicht lesbar."
 
-#: src/portage/mask.cc:121
+#: src/portage/mask.cc:122
 msgid "You have a operator but we can't find a version-part."
 msgstr "Operator ohne Versionsspezifizierung."
 
-#: src/portage/mask.cc:134
+#: src/portage/mask.cc:135
 msgid "A '*' is only valid at the end of a version-string."
 msgstr "Ein '*' ist nur am Ende der Version zulässig."
 
-#: src/portage/mask.cc:140
+#: src/portage/mask.cc:141
 msgid "A wildcard is only valid with the = operator."
 msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
 
-#: src/portage/mask.cc:144
+#: src/portage/mask.cc:145
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

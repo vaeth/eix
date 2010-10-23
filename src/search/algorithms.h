@@ -65,6 +65,9 @@ class RegexAlgorithm : public BaseAlgorithm {
 		RegexAlgorithm()
 		{ }
 
+		~RegexAlgorithm()
+		{ re.free(); }
+
 		void setString(std::string s)
 		{
 			search_string = s;

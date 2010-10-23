@@ -314,7 +314,7 @@ eix actually receives these as parts of arguments!
 
 If you want that an EXPRESSION starts with B<->, precede it with two further B<--> symbols:
 This way, the EXPRESSION is not read as an option, and two additional B<--> symbols are ignored.
-For example, B<eix ---tools> will output the packages containing B<-tools>.
+For example, B<eix ---tool --or ---util> will output the packages containing B<-tool> or B<-util>.
 
 The meaning of the logical operators should be obvious with perhaps some exceptions:
 

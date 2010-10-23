@@ -1,9 +1,9 @@
-Things to do in near future:
-- important: Support wildcards in masks (e.g. kde-base/* in config-file)
-  Problem 1: Wildcards must be handled separately to keep short lookup-time.
-  Problem 2: Despite Problem 1, we must keep the order...
-  Currently, I see no solution except giving up short lookup-time...
-- less important: Support virtuals in sets
+Things to do perhaps:
+- Support virtuals in sets: This would require to store the sets for virtuals
+  in every Version (and to backup it for the various settings).
+  It is lot of work to implement, costs lot of memory and also lot of
+  execution time.  Hence, this will have to wait until the portage tree or
+  some important overlays make excessive use of it - which is hopefully never.
 
 Ambitious tasks which will probably not be realized:
 - Support for Paludis.
@@ -13,10 +13,10 @@ Ambitious tasks which will probably not be realized:
   still work.  Moreover, overlay handling - especially for /var/db/pkg -
   would have to be completely rewritten and in a way which would probably
   exclude CAREMODE=false and break compatibility with older portage versions
-  which did not store repo_name in /var/db/pkg. On other hand, the current
+  which did not store repo_name in /var/db/pkg. On the other hand, the current
   implementation of these things is a mess anyway, but even users of new
   portage versions might still have entries without repo_name in /var/db/pkg.
-  Moreover, but CAREMODE=false is really important for the speed in typical,
+  Moreover, CAREMODE=false is really important for the speed in typical,
   i.e. occasional, usage of eix.
 - Full support for USE-Flags.
   Although initial implementation is not

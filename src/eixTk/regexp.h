@@ -37,7 +37,7 @@ class Regex
 		{ compile(regex, eflags); }
 
 		/// Free the regular expression.
-		~Regex() {
+		void free() {
 			if(m_compiled)
 				regfree(&m_re);
 		}

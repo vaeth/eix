@@ -21,6 +21,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <fnmatch.h>
 
 using namespace std;
 
@@ -235,23 +236,21 @@ Mask::test(const ExtendedVersion *ev) const
 	return false;
 }
 
-eix::ptr_list<Version>
-Mask::match(Package &pkg) const
+void
+Mask::match(Matches &m, Package &pkg) const
 {
-	eix::ptr_list<Version> ret;
 	for(Package::iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
 		if(test(*it)) {
-			ret.push_back(*it);
+			m.push_back(*it);
 		}
 	}
-	return ret;
 }
 
 /** Sets the stability members of all version in package according to the mask.
  * @param pkg            package you want tested
  * @param check          Redundancy checks which should apply */
 void
-Mask::checkMask(Package& pkg, Keywords::Redundant check)
+Mask::checkMask(Package& pkg, Keywords::Redundant check) const
 {
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		apply(*i, true, false, check);
@@ -260,7 +259,7 @@ Mask::checkMask(Package& pkg, Keywords::Redundant check)
 
 /** Sets the stability member of all versions in virtual package according to the mask. */
 void
-Mask::applyVirtual(Package& pkg)
+Mask::applyVirtual(Package& pkg) const
 {
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		apply(*i, false, true, Keywords::RED_NOTHING);
@@ -300,9 +299,10 @@ SetMask::applyItem(Package& pkg) const
 }
 
 bool
-Mask::ismatch(Package& pkg)
+Mask::ismatch(Package& pkg) const
 {
-	if (pkg.name != m_name || pkg.category != m_category)
+	if (fnmatch(m_name.c_str(), pkg.name.c_str(), 0) ||
+		fnmatch(m_category.c_str(), pkg.category.c_str(), 0))
 		return false;
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(test(*i))
@@ -316,7 +316,7 @@ Mask::ismatch(Package& pkg)
  * @param do_test    set conditionally or unconditionally
  * @param is_virtual the version matches only as a virtual name
  * @param check      check these for changes */
-void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check)
+void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check) const
 {
 	switch(m_type) {
 		case maskUnmask:

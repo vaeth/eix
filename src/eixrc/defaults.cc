@@ -47,7 +47,7 @@ AddOption(STRING, "EIX_LAYMAN_OPTS",
 	"Note that its content is evaluated, so quote correctly."));
 
 AddOption(STRING, "EIX_TEST_OBSOLETE_OPTS",
-	"", _(
+	"-d", _(
 	"This variable contains default options for the eix-test-obsolete script."));
 
 AddOption(PREFIXSTRING, "EIX_PREFIX",
@@ -2198,7 +2198,7 @@ AddOption(BOOLEAN, "TEST_FOR_EMPTY",
 
 AddOption(BOOLEAN, "TEST_KEYWORDS",
 	"true", _(
-	"Defines whether /etc/portage/package.keywords is tested with -t."));
+	"Defines whether /etc/portage/package.accept_keywords is tested with -t."));
 
 AddOption(BOOLEAN, "TEST_MASK",
 	"true", _(
@@ -2305,17 +2305,17 @@ AddOption(STRING, "REDUNDANT_IF_DOUBLE_UNMASKED",
 	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_USE",
-	"some", _(
+	"false", _(
 	"Applies if /etc/portage/package.use matches twice\n"
 	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_ENV",
-	"some", _(
+	"false", _(
 	"Applies if /etc/portage/package.env matches twice\n"
 	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
-	"some", _(
+	"false", _(
 	"Applies if /etc/portage/package.cflags matches twice\n"
 	"for the versions in question."));
 
@@ -2332,15 +2332,15 @@ AddOption(STRING, "REDUNDANT_IF_IN_UNMASK",
 	"Applies if /etc/portage/package.unmask matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_USE",
-	"-some", _(
+	"false", _(
 	"Applies if /etc/portage/package.use matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_ENV",
-	"-some", _(
+	"false", _(
 	"Applies if /etc/portage/package.env matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
-	"-some", _(
+	"false", _(
 	"Applies if /etc/portage/package.cflags matches."));
 
 AddOption(STRING, "EIXCFGDIR",

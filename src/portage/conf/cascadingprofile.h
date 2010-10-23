@@ -19,14 +19,15 @@
 
 #include <cstddef>
 
-class PortageSettings;
 class Package;
+class PortageSettings;
+class ProfileFilenames;
 
 /** Access to the cascading profile pointed to by /etc/make.profile. */
 class CascadingProfile {
-
+		friend class ProfileFilenames;
 	public:
-		bool use_world;
+		bool use_world, finalized;
 		MaskList<Mask> m_world;          /**< Packages in world. This must be set externally */
 
 	protected:
@@ -40,37 +41,52 @@ class CascadingProfile {
 		MaskList<Mask> m_package_unmasks;/**< Masks from package.unmask */
 		MaskList<PKeywordMask> m_package_keywords;/**< Masks from package.keywords */
 		MaskList<KeywordMask> m_package_accept_keywords;/**< Masks from package.accept_keywords */
+		PreList p_system, p_system_allowed, p_package_masks, p_package_unmasks,
+			p_package_keywords, p_package_accept_keywords;
 
 	private:
 
 		/** Add all files from profile ans its parents to m_profile_files. */
 		void addProfile(const char *profile, unsigned int depth = 0);
 
+		/** Handler functions follow for reading a line */
+		typedef bool (CascadingProfile::*Handler)(const std::string &line);
+
 		/** Read all "packages" files found in profile.
-		 * Populate m_system and m_system_allowed.
+		 * Populate p_system and p_system_allowed.
 		 * @return true if data was changed */
 		bool readPackages(const std::string &line);
 
 		/** Read all "package.mask" files found in profile.
-		 * Populate m_package_masks.
+		 * Populate p_package_masks.
 		 * @return true if data was changed */
 		bool readPackageMasks(const std::string &line);
 
 		/** Read all "package.unmask" files found in profile.
-		 * Populate m_package_unmasks.
+		 * Populate p_package_unmasks.
 		 * @return true if data was changed */
 		bool readPackageUnmasks(const std::string &line);
 
 		/** Read all "package.keywords" files found in profile.
-		 * Populate m_package_keywords.
+		 * Populate p_package_keywords.
 		 * @return true if data was changed */
 		bool readPackageKeywords(const std::string &line);
+
+		/** Read all "package.accept_keywords" files found in profile.
+		 * Populate p_package_accept_keywords.
+		 * @return true if data was changed */
+		bool readPackageAcceptKeywords(const std::string &line);
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world) :
-			use_world(false),
+			use_world(false), finalized(false),
 			m_init_world(init_world),
 			m_portagesettings(portagesettings)
 		{ }
+
+		/** Populate MaskLists from PreLists.
+		    All files must have been read and m_raised_arch
+		    must be known when this is called. */
+		void finalize();
 
 		/** Read all "make.defaults" files previously added by listadd... */
 		void readMakeDefaults();
@@ -79,12 +95,6 @@ class CascadingProfile {
 		 * and clear this list of files afterwards.
 		 * @return true if at least one file changed data. */
 		bool readremoveFiles();
-
-		/** When the files are read the ARCH might not be known yet.
-		 *  We must fix this afterwards by calling this function to
-		 *  replace empty entries in package.accept_keywords by the
-		 *  actual ~ARCH keyword: */
-		void raise_empty(std::string &s);
 
 		/** Cycle through profile and put path to files into
 		 * m_profile_files. */

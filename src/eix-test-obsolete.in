@@ -235,7 +235,7 @@ rump="${rump}/etc/portage/package."
 		NoMask; NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
 'No redundant entries in ${rump}accept_keywords (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}keywords:'`" \
+			"`eval_gettext 'Redundant in ${rump}accept_keywords:'`" \
 			REDUNDANT_IF_DOUBLE \
 			REDUNDANT_IF_MIXED \
 			REDUNDANT_IF_WEAKER \
@@ -293,7 +293,7 @@ rump="${rump}/etc/portage/package."
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
 'No uninstalled entries in ${rump}accept_keywords (or test is off).'`" \
-			"`eval_gettext 'Not installed but in ${rump}keywords:'`"
+			"`eval_gettext 'Not installed but in ${rump}accept_keywords:'`"
 	)
 	export REDUNDANT_IF_IN_KEYWORDS=false
 	(

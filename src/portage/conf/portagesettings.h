@@ -21,8 +21,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
-
 class CascadingProfile;
 class EixRc;
 class Version;
@@ -42,38 +40,25 @@ class Version;
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
 #define PORTDIR_MASK_FILE       "profiles/package.mask"
 
-/** Grab Masks from file and add to a category->vector<Mask*> mapping or to a vector<Mask*>. */
-bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, std::vector<Mask*> *mask_vec, bool recursive = false);
-
-/** Grab Mask from file and add to category->vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, std::vector<Mask*> *mask_vec, bool recursive = false) {
-	return grab_masks(file, type, NULL , mask_vec, recursive);
-}
-
-/** Grab Mask from file and add to vector<Mask*>. */
-inline bool grab_masks(const char *file, Mask::Type type, MaskList<Mask> *cat_map, bool recursive = false) {
-	return grab_masks(file, type, cat_map, NULL, recursive);
-}
-
 class PortageSettings;
-
 
 class PortageUserConfig {
 		friend class PortageSettings;
 	private:
 		PortageSettings      *m_settings;
 		MaskList<Mask>        m_localmasks;
-		MaskList<KeywordMask> m_keywords;
+		MaskList<KeywordMask> m_accept_keywords;
 		MaskList<KeywordMask> m_use, m_env, m_cflags;
 		bool read_use, read_env, read_cflags;
 
 		/** Your cascading profile, including local settings */
 		CascadingProfile     *profile;
 
-		bool readKeywords();
+		/** return true if something was added */
 		bool readMasks();
+		bool readKeywords();
 
-		static bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in);
+		bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
 		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
 		static void ReadVersionFile (const char *file, MaskList<KeywordMask> *list);
 

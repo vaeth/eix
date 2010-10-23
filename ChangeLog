@@ -1,5 +1,20 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.0
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support wildcards in config-files.
+	  This required a rewrite of the whole mask handling: Even if no
+	  wildcards are used, a crucial change in the data structure is needed
+	  (one can no longer use only a sorted list of names for lookup)
+	  which has some overhead in memory and time requirements.
+	- Switch off REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} by default:
+	  Usually, double entries are intentional here, and most people will
+	  want to leave some settings after deinstallation for later usage.
+	- Put EIX_TEST_OBSOLETE_OPTS="-d" since most people will want it.
+	- Security-fix: Some auto-destruction in std::vector-elements was
+	  removed (this would also have led to segfaults in bad cases).
+	- Fix: Handle sets in local {un}masks and for -t
+
 *eix-0.21.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support for virtuals in @system and worldfile:

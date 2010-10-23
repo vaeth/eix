@@ -298,7 +298,10 @@ class n \
 	~n() \
 	{ \
 		for(vector<Regex*>::iterator it(m.begin()); likely(it != m.end()); ++it) \
+		{ \
+			(*it)->free(); \
 			delete *it; \
+		} \
 	} \
  \
 	t parse(const char *p) \

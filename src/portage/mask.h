@@ -1,4 +1,4 @@
-// vimnset noet cinoptions= sw=4 ts=4:
+// vim:set noet cinoptions= sw=4 ts=4:
 // This file is part of the eix project and distributed under the
 // terms of the GNU General Public License v2.
 //
@@ -74,17 +74,19 @@ class Mask : public BasicVersion {
 		bool test(const ExtendedVersion *ev) const;
 
 	public:
+		typedef eix::ptr_list<Version> Matches;
+
 		/** Sets the stability & masked members of ve according to the mask
 		 * @param ve         Version instance to be set
 		 * @param do_test    set conditionally or unconditionally
 		 * @param is_virtual the version matches only as a virtual name
 		 * @param check      check these for changes */
-		void apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check);
+		void apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check) const;
 
 		/** Parse mask-string. */
 		Mask(const char *str, Type type);
 
-		eix::ptr_list<Version> match(Package &pkg) const;
+		void match(Matches &m, Package &pkg) const;
 
 		const char *getVersion() const
 		{ return m_cached_full.c_str(); }
@@ -101,12 +103,12 @@ class Mask : public BasicVersion {
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
 		 * @param check          Redundancy checks which should apply */
-		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
+		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 
 		/** Sets the stability member of all versions in virtual package according to the mask. */
-		void applyVirtual(Package& pkg);
+		void applyVirtual(Package& pkg) const;
 
-		bool ismatch(Package& pkg);
+		bool ismatch(Package& pkg) const;
 
 		bool is_set() const
 		{ return (m_operator == maskIsSet); }
@@ -123,12 +125,6 @@ class KeywordMask : public Mask {
 		void applyItem(Package& pkg) const;
 		void applyItem(Version *ver) const
 		{ ver->add_accepted_keywords(keywords); }
-
-		void raise_empty(const std::string &s)
-		{ if(keywords.empty()) keywords = s; }
-#if 0
-		void print() { std::cerr << m_category << "/" << m_name << ":" << keywords << std::endl; }
-#endif
 };
 
 class PKeywordMask : public Mask {

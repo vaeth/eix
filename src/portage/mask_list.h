@@ -12,230 +12,282 @@
 
 #include <eixTk/likely.h>
 #include <eixTk/ptr_list.h>
+#include <eixTk/stringutils.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
 #include <portage/package.h>
 
+#include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <cstddef>
+#include <fnmatch.h>
 
+class Package;
 class Version;
 
 template<typename m_Type>
-class MaskList
-	: public std::map<std::string, std::map<std::string, eix::ptr_list<m_Type> > >
+class Masks : public std::list<m_Type>
 {
-	public:
-		typedef typename eix::ptr_list<m_Type>
-			MskList;
+	std::string full;
+public:
+	using std::list<m_Type>::push_back;
+	using std::list<m_Type>::begin;
+	using std::list<m_Type>::end;
+	typedef typename std::list<m_Type>::iterator iterator;
+	typedef typename std::list<m_Type>::const_iterator const_iterator;
 
-		typedef typename std::map<std::string, MskList>
-			CatList;
+	Masks(const std::string &f, const m_Type &m) :
+	std::list<m_Type>(1, m), full(f)
+	{ }
 
-		typedef typename std::map<std::string, CatList>
-			super;
+	void add(const m_Type &m)
+	{ push_back(m); }
 
-		typedef typename super::iterator
-			iterator;
+	bool match_full(const char *cat_name) const
+	{ return !fnmatch(full.c_str(), cat_name, FNM_PATHNAME); }
+};
 
-		typedef typename super::const_iterator
-			const_iterator;
+template<typename m_Type>
+class MaskList : std::vector<Masks<m_Type> >
+{
+private:
+	typedef typename std::vector<Masks<m_Type> > super;
+	typedef typename super::size_type size_type;
+	typedef typename super::iterator iterator;
+	typedef typename super::const_iterator const_iterator;
+	typedef typename Masks<m_Type>::const_iterator m_const_iterator;
+	using super::begin;
+	using super::end;
+	using super::size;
+	using super::operator[];
+	typedef typename std::map<std::string, Masks<m_Type> > LookupType;
+	typedef typename std::map<std::string, size_type> MapType;
+	typedef typename MapType::const_iterator map_const_iterator;
+	typedef typename LookupType::iterator lookup_iterator;
+	typedef typename LookupType::const_iterator lookup_const_iterator;
+	using super::push_back;
 
-		typedef typename CatList::iterator
-			cat_iterator;
+	// We collect only the patterns in the vector.
+	// The exact ones are in a lookup-table.
+	LookupType exact_name;
+	MapType full_index;
+public:
+	typedef typename eix::ptr_list<const m_Type> Get;
 
-		typedef typename CatList::const_iterator
-			const_cat_iterator;
+	bool empty() const
+	{ return exact_name.empty() && super::empty(); }
 
-		typedef typename MskList::iterator
-			mask_iterator;
+	void clear()
+	{ super::clear(); exact_name.clear(); full_index.clear(); }
 
-		typedef typename MskList::const_iterator
-			const_mask_iterator;
-
-		~MaskList()
-		{
-			for(iterator it(super::begin());
-				likely(it != super::end()); ++it) {
-				for(cat_iterator t(it->second.begin());
-					likely(t != it->second.end()); ++t) {
-					t->second.delete_and_clear();
-				}
-			}
-		}
-
-		MaskList()
-		{ }
-
-		MaskList(const MaskList<m_Type> &ori) : super()
-		{ add(ori); }
-
-		void add(const MaskList<m_Type> &ori)
-		{
-			for(const_iterator it(ori.begin());
-				likely(it != ori.end()); ++it) {
-				CatList &cl((*this)[it->first]);
-				for(const_cat_iterator t(it->second.begin());
-					likely(t != it->second.end()); ++t) {
-					MskList &msk(cl[t->first]);
-					for(const_mask_iterator m(t->second.begin());
-						likely(m != t->second.end()); ++m) {
-						msk.push_back(new m_Type(**m));
-					}
-				}
-			}
-		}
-
-		void raise_empty(const std::string &s)
-		{
-			for(iterator it(super::begin());
-				likely(it != super::end()); ++it) {
-				for(cat_iterator t(it->second.begin());
-					likely(t != it->second.end()); ++t) {
-					for(mask_iterator m(t->second.begin());
-						likely(m != t->second.end()); ++m) {
-						m->raise_empty(s);
-					}
-				}
-			}
-		}
-
-		/** @return true if actually something was added.
-		    For speed reasons, we currently return always true
-		    and add even unnecessarily. Note that this means that
-		    we must remove more carefully. */
-
-		bool add(m_Type *m)
-		{
-			(*this)[m->getCategory()][m->getName()].push_back(m);
+	bool match_full(const std::string &full) const
+	{
+		if(exact_name.find(full) != exact_name.end()) {
 			return true;
 		}
-
-		/** @return true if actually something was removed */
-		bool remove(m_Type *m)
-		{
-			iterator it(super::find(m->getCategory()));
-			if(it == super::end())
-				return false;
-
-			cat_iterator t(it->second.find(m->getName()));
-			if(t == it->second.end())
-				return false;
-
-			bool deleted(false);
-			mask_iterator mi(t->second.begin());
-			while(mi != t->second.end()) {
-				if(**mi == *m)
-				{
-					deleted = true;
-					delete *mi;
-					t->second.erase(mi);
-					// mi is invalidated
-					mi = t->second.begin();
-				}
-				else
-					++mi;
-			}
-			if(t->second.empty())
-			{
-				// Now empty
-				it->second.erase(t);
-			}
-			if(it->second.empty())
-			{
-				// Now empty
-				this->erase(it);
-			}
-			return deleted;
-		}
-
-		void remove(const MaskList<m_Type> &l)
-		{
-			for(const_iterator it(l.begin()); likely(it != l.end()); ++it)
-			{
-				for(const_cat_iterator t(it->second.begin());
-					likely(t != it->second.end()); ++t) {
-					for(const_mask_iterator m(t->second.begin());
-						likely(m != t->second.end()); ++m) {
-							remove(*m);
-					}
-				}
+		for(const_iterator it(begin()); likely(it != end()); ++it) {
+			if(unlikely(it->match_full(full.c_str()))) {
+				return true;
 			}
 		}
+		return false;
+	}
 
-#if 0
-		void print() const
-		{
-			for(const_iterator it(super::begin());
-				likely(it != super::end()); ++it) {
-				for(const_cat_iterator t(it->second.begin());
-					likely(t != it->second.end()); ++t) {
-					std::cerr << it->first << "/" << t->first << std::endl;
-					for(const_mask_iterator m(t->second.begin());
-						likely(m != t->second.end()); ++m) {
-//							m->print();
-					}
-				}
+	bool match_name(const Package *p) const
+	{ return match_full(p->category + "/" + p->name); }
+
+	inline static void push_result(Get *&l, const Masks<m_Type> &r)
+	{
+		if(l == NULL) {
+			l = new Get;
+		}
+		for(m_const_iterator m(r.begin()); likely(m != r.end()); ++m) {
+			l->push_back(&*m);
+		}
+	}
+
+	Get *get_full(const std::string &full) const
+	{
+		Get *l(NULL);
+		for(const_iterator it(begin()); likely(it != end()); ++it) {
+			if(unlikely(it->match_full(full.c_str()))) {
+				push_result(l, *it);
 			}
 		}
-#endif
-		const eix::ptr_list<m_Type> *get(const std::string &name, const std::string &category = SET_CATEGORY) const
-		{
-			const_iterator it(super::find(category));
-			if(it == super::end())
-				return NULL;
-
-			const_cat_iterator t(it->second.find(name));
-			if(t == it->second.end())
-				return NULL;
-
-			return &(t->second);
+		lookup_const_iterator it(exact_name.find(full));
+		if(it != exact_name.end()) {
+			push_result(l, it->second);
 		}
+		return l;
+	}
 
-		const eix::ptr_list<m_Type> *get(const Package *p) const
-		{ return get(p->name, p->category); }
+	Get *get_setname(const std::string &setname) const
+	{ return get_full(std::string(SET_CATEGORY) + "/" + setname); }
 
-		const eix::ptr_list<m_Type> *get_split(const std::string &cat_name) const
-		{
-			std::string::size_type slash(cat_name.find("/"));
-			if(slash == std::string::npos) {
-				return NULL;
-			}
-			return get(cat_name.substr(slash + 1), cat_name.substr(0, slash));
-		}
+	Get *get(const Package *p) const
+	{ return get_full(p->category + "/" + p->name); }
 
-		void applyListItems(Package *p) const
-		{
-			const eix::ptr_list<m_Type> *l(get(p));
-			if(l == NULL) {
+	void add(const m_Type &m)
+	{
+		std::string full(m.getCategory());
+		full.append(1, '/');
+		full.append(m.getName());
+		if(full.find_first_of("*?[") == std::string::npos) {
+			lookup_iterator l(exact_name.find(full));
+			if(l != exact_name.end()) {
+				l->second.add(m);
 				return;
 			}
-			for(const_mask_iterator m(l->begin());
-				likely(m != l->end()); ++m) {
-				m->applyItem(*p);
-			}
+			exact_name.insert(std::pair<std::string, Masks<m_Type> >(full, Masks<m_Type>(emptystring, m)));
+			return;
 		}
-
-		void applyListSetItems(Version *v, const std::string &set_name) const
-		{
-			const eix::ptr_list<m_Type> *l(get(set_name));
-			if(l == NULL) {
-				return;
-			}
-			for(const_mask_iterator m(l->begin());
-				likely(m != l->end()); ++m) {
-				m->applyItem(v);
-			}
+		map_const_iterator f(full_index.find(full));
+		if(f != full_index.end()) {
+			(*this)[f->second].add(m);
+			return;
 		}
+		full_index.insert(std::pair<std::string, size_type>(full, size()));
+		push_back(Masks<m_Type>(full, m));
+	}
 
-		// return true if some masks applied
-		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+	/* return true if something was added */
+	bool add_file(const char *file, Mask::Type mask_type, bool recursive);
 
-		void applySetMasks(Version *v, const std::string &set_name) const;
+	/** This can be optionally called after the last add():
+	 *  It will free memory. */
+	void finalize()
+	{ full_index.clear(); }
 
-		void applyVirtualMasks(Package *p) const;
+	void applyListItems(Package *p) const
+	{
+		Get *masks(get(p));
+		if(masks == NULL) {
+			return;
+		}
+		for(typename Get::const_iterator it(masks->begin());
+			likely(it != masks->end()); ++it) {
+			it->applyItem(*p);
+		}
+		delete masks;
+	}
+
+	void applyListSetItems(Version *v, const std::string &set_name) const
+	{
+		Get *masks(get_setname(set_name));
+		if(masks == NULL) {
+			return;
+		}
+		for(typename Get::const_iterator it(masks->begin());
+			likely(it != masks->end()); ++it) {
+			it->applyItem(v);
+		}
+		delete masks;
+	}
+
+	// return true if some masks applied
+	bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+
+	void applySetMasks(Version *v, const std::string &set_name) const;
+
+	void applyVirtualMasks(Package *p) const;
+};
+
+// This is only needed for PreList
+class PreListEntry
+{
+public:
+	std::string name;
+	std::vector<std::string> args;
+	bool locally_double;
+
+	PreListEntry() : locally_double(false)
+	{ }
+};
+
+// This is only needed for PreList
+class PreListOrderEntry : public std::vector<std::string>
+{
+public:
+	typedef typename std::vector<std::string> super;
+	typedef super::const_iterator const_iterator;
+	using super::begin;
+	using super::end;
+	using super::operator[];
+	bool removed, locally_double;
+
+	PreListOrderEntry(const std::vector<std::string> &line) :
+	std::vector<std::string>(line), removed(false), locally_double(false)
+	{ }
+};
+
+/* The PreList is needed to Prepare a MaskList:
+ *
+ * Until we call finalize() or initialize(), one can insert and delete lines.
+ * (A line is a vector<string>). Duplicate lines are recognized, too.
+ * However, the original order is preserved.
+ * Moreover, after finalize() the entries are collected: For the lines
+ *   foo/bar 1
+ *   foo/bar 2
+ *   =foo/bar-1 3
+ *   =foo/bar-1 4
+ *
+ * the result looks like this
+ *   foo/bar    -> 1 2
+ *   =foo/bar-1 -> 3 4
+ *
+ * This corresponds to portage's sorting.
+ */
+class PreList : public std::vector<PreListEntry>
+{
+public:
+	typedef typename std::vector<PreListEntry> super;
+	typedef typename super::const_iterator const_iterator;
+	using super::begin;
+	using super::end;
+	using super::size;
+	using super::empty;
+	using super::clear;
+private:
+	using super::push_back;
+
+	std::vector<PreListOrderEntry> order;
+	std::map<std::vector<std::string>, std::vector<PreListOrderEntry>::size_type> have;
+	bool finalized;
+public:
+	PreList() : finalized(false)
+	{ }
+
+	PreList(const std::vector<std::string> &lines) : finalized(false)
+	{ add_lines(lines); }
+
+	/// return true if something was changed
+	bool add_lines(const std::vector<std::string> &lines);
+
+	/// return true if something was changed
+	bool add_line(const std::string &line);
+
+	/// return true if something was changed
+	bool remove_line(const std::string &line);
+
+	/// return true if something was changed
+	bool handle_line(const std::string &line);
+
+	/// return true if something was changed
+	bool add_splitted(const std::vector<std::string> &line);
+
+	/// return true if something was changed
+	bool remove_splitted(const std::vector<std::string> &line);
+
+	void finalize();
+
+	void initialize(MaskList<Mask> &l, Mask::Type t);
+
+	void initialize(MaskList<KeywordMask> &l, std::string raised_arch);
+
+	void initialize(MaskList<PKeywordMask> &l);
 };
 
 #endif /* EIX__MASK_LIST_H__ */
