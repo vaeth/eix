@@ -246,6 +246,17 @@ Mask::match(Matches &m, Package &pkg) const
 	}
 }
 
+bool
+Mask::have_match(Package &pkg) const
+{
+	for(Package::iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
+		if(test(*it)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /** Sets the stability members of all version in package according to the mask.
  * @param pkg            package you want tested
  * @param check          Redundancy checks which should apply */

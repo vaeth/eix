@@ -31,6 +31,7 @@
 
 class MatcherAlgorithm;
 class MatcherField;
+class NowarnMaskList;
 class PortageSettings;
 class VarDbPkg;
 
@@ -249,9 +250,10 @@ class PackageTest {
 		MatchField operator = (const MatchField m)
 		{ return field = m; }
 
-	protected:
-
 	private:
+		static NowarnMaskList *nowarn_list;
+		static void get_nowarn_list();
+
 		/* What to match. */
 		MatchField field;
 		/** Lookup stuff about installed packages here. */

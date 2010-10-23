@@ -205,6 +205,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		read_config(m_eprefixconf + MAKE_GLOBALS_FILE, eprefixsource);
 	}
 	read_config(m_eprefixconf + MAKE_CONF_FILE, eprefixsource);
+	read_config(m_eprefixconf + MAKE_CONF_FILE_NEW, eprefixsource);
 
 	override_by_env(test_in_env_early);
 	/* Normalize "PORTDIR": */

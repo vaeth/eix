@@ -73,7 +73,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 /** push_back every line of file or dir into v. */
 bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, bool remove_comments)
 {
-	static const char *files_exclude[] = { "..", "." , NULL };
+	static const char *files_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULL };
 	static int depth(0);
 	vector<string> files;
 	string dir(file);

@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Use /etc/portage/package.nowarn instead of
+	  /etc/portage/package.*.nowarn; the latter is now obsolete.
+	  If you want continue to use it, set OBSOLETE_NOWARN=true
+	- Support wildcards in /etc/portage/package.nowarn
+	- Ignore CVS/RCS/SCCS dirs in recursive dir reading
+	- Support /etc/portage/make.conf
+
 *eix-0.22.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support wildcards in config-files.

@@ -61,7 +61,7 @@ MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
 	}
 	bool had_mask(false);
 	bool had_unmask(false);
-	for(typename Get::const_iterator it(masks->begin());
+	for(Get::const_iterator it(masks->begin());
 		likely(it != masks->end()); ++it) {
 		it->checkMask(*p, check);
 		switch(it->get_type())
@@ -108,7 +108,7 @@ MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const
 	if(masks == NULL) {
 		return;
 	}
-	for(typename Get::const_iterator it(masks->begin());
+	for(Get::const_iterator it(masks->begin());
 		likely(it != masks->end()); ++it) {
 		it->apply(v, false, false, Keywords::RED_NOTHING);
 	}
@@ -129,7 +129,7 @@ MaskList<Mask>::applyVirtualMasks(Package *p) const
 		if(masks == NULL) {
 			continue;
 		}
-		for(typename Get::const_iterator it(masks->begin());
+		for(Get::const_iterator it(masks->begin());
 			likely(it != masks->end()); ++it) {
 			it->applyVirtual(*p);
 		}

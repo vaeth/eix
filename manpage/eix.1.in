@@ -602,9 +602,8 @@ Use B<-t> to find the latter.
 Therefore, this option is best combined with -t to find also other types of obsolete entries.
 
 If you have a reason to exclude certain packages from this test,
-you can write those entries into a file /etc/portage/package.*.nowarn
-where *=keywords,mask,unmask,use,cflags,installed.
-These files (and how to modify their filenames) are described later.
+you can write those entries into a file (or directory) /etc/portage/package.nowarn
+This file (and how to specify alternative/additional files) is described later.
 .TP
 .BR -| ", " --pipe
 (Recall that a shell will not pass an unquoted B<|> sign, so quote properly).
@@ -2708,26 +2707,8 @@ This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.
 .BR INSTALLED_NONEXISTENT " " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
-.BR KEYWORDS_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.accept_keywords.nowarn
-.TP
-.BR MASK_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nowarn
-.TP
-.BR UNMASK_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nowarn
-.TP
-.BR USE_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.use.nowarn
-.TP
-.BR ENV_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.env.nowarn
-.TP
-.BR CFLAGS_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nowarn
-.TP
-.BR INSTALLED_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nowarn
+.BR PACKAGE_NOWARN " " "(string list)"
+This is a list of filenames/dirnames which serves as /etc/portage/package.nowarn
 .\" }}}
 .\" }}}
 
@@ -2769,51 +2750,41 @@ The entries of this file are of the form "category/name", but you can also
 omit the "category/" part (although this is not recommended).
 .\" }}}
 
-.\" {{{ /etc/portage/package.*.nowarn
-.SS /etc/portage/package.accept_keywords.nowarn
-.SS /etc/portage/package.keywords.nowarn
+.\" {{{ /etc/portage/package.nowarn
+.SS /etc/portage/package.nowarn
 Similarly as /etc/portage/package.*, this can be a file or a directory.
 With this file/dir you can switch off test for -T for particular packages.
-The format of the file is as follows:
-Each line should start with the package (in the form "category/name")
-for which you want to switch off some tests; then you can list
-(separated by spaces) the tests which you want to switch off.
-For example, the line
+The format of the file is similarly to /etc/portage/package.use with the
+difference that you can switch on/off tests.
+Exactly those lines apply for which at least one matching version is available.
+For example, the lines
 
-.B sys-kernel/hardened-sources no_change weaker
+.B sys-kernel/*-sources no_change weaker
+
+.B >sys-kernel/hardened-sources-2.6.40 -weaker
 
 in this file will cause that -T does not find the package
-sys-kernel/hardened-sources if the only cause for it would be that
+sys-kernel/*-sources if the only cause for it would be that
 B<REDUNDANT_IF_NO_CHANGE> or B<REDUNDANT_IF_WEAKER> is set.
+An exception to this rule is only made for B<REDUNDANT_IF_WEAKER> and for
+hardened-sources, if the latter is available at least in version 2.6.40.
+The order in the file plays no role: The "-" always takes precedence if it
+occurs somewhere.
 
 You can list a package several times in this file; the listed tests are
 then cumulative for the corresponding package.
-Since all other /etc/portage/package.*.nowarn files have the same policy,
-you can just merge all these into one file if you prefer (you can e.g. set
-the B<*_NOWARN> variables to the same filenames).
 
-Available tests in /etc/portage/package.accept_keywords.nowarn are
-B<in_keywords>, B<no_change>, B<double>, B<mixed>, B<weaker>,
-B<minusasterisk>, B<double_line>, and they correspond to the analogous
-B<REDUNDNANT_IF_*> variable.
-.SS /etc/portage/package.mask.nowarn
-This is analogous to the above with the difference that the available tests are
-B<in_mask>, B<mask_no_change>, B<double_masked>.
-.SS /etc/portage/package.unmask.nowarn
-This is analogous to the above with the difference that the available tests are
-B<in_unmask>, B<unmask_no_change>, B<double_unmasked>.
-.SS /etc/portage/package.use.nowarn
-This is analogous to the above with the difference that the available tests are
-B<in_use>, B<double_use>.
-.SS /etc/portage/package.env.nowarn
-This is analogous to the above with the difference that the available tests are
-B<in_env>, B<double_env>.
-.SS /etc/portage/package.cflags.nowarn
-This is analogous to the above with the difference that the available tests are
-B<in_cflags>, B<double_cflags>.
-.SS /etc/portage/package.installed.nowarn
-This is analogous to the above with the difference that the available tests are
-B<nonexistent>, B<masked>, B<other_overlay> which correspond to the respective variables
+Available tests are
+B<in_keywords>, B<no_change>, B<double>, B<mixed>, B<weaker>, B<minusasterisk>, B<double_line>,
+B<in_mask>, B<mask_no_change>, B<double_masked>,
+B<in_unmask>, B<unmask_no_change>, B<double_unmasked>,
+B<in_use>, B<double_use>,
+B<in_env>, B<double_env>,
+B<in_cflags>, B<double_cflags>,
+the meaning corresponding to the according B<REDUNDNANT_IF_*> variable.
+
+In addition there are the tests B<nonexistent>, B<masked>, B<other_overlay>
+which correspond to the respective variables
 B<TEST_FOR_NONEXISTENT>, B<NONEXISTENT_IF_MASKED>, B<NONEXISTENT_IF_OTHER_OVERLAY>.
 .\" }}}
 
@@ -3033,6 +3004,12 @@ left-associative as most users would intuitively expect.
 The negation B<--not> is now treated as a logical operation starting a new BRACE_OR_TEST
 and no longer considered as part of TEST_OPTIONS (which was a source of confusion for many users).
 Now B<--pipe> is really handled as part of TEST_OPTIONS and does not implicitly introduce logical connectives.
+
+With eix-0.20.1 all the previously used files /etc/portage/package.*.nowarn
+are no longer supported by default: They were replaced by the single file/dir
+/etc/portage/package.nowarn. If you still want to use the previous files, set
+B<OBSOLETE_NOWARN=true> in the environment. See the description of the variable
+B<PACKAGE_NOWARN> (in the output of B<eix --dump>) to understand why this works.
 .\" }}}
 
 .\" {{{ AUTHORS

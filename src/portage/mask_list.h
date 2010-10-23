@@ -211,7 +211,7 @@ public:
 class PreListOrderEntry : public std::vector<std::string>
 {
 public:
-	typedef typename std::vector<std::string> super;
+	typedef std::vector<std::string> super;
 	typedef super::const_iterator const_iterator;
 	using super::begin;
 	using super::end;
@@ -243,8 +243,8 @@ public:
 class PreList : public std::vector<PreListEntry>
 {
 public:
-	typedef typename std::vector<PreListEntry> super;
-	typedef typename super::const_iterator const_iterator;
+	typedef std::vector<PreListEntry> super;
+	typedef super::const_iterator const_iterator;
 	using super::begin;
 	using super::end;
 	using super::size;

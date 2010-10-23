@@ -25,6 +25,7 @@
 #include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/vardbpkg.h>
+#include <search/nowarn.h>
 
 #include <map>
 #include <memory>
@@ -33,7 +34,6 @@
 #include <vector>
 
 #include <cstddef>
-#include <cstring>
 
 class DBHeader;
 class SetStability;
@@ -68,6 +68,8 @@ const PackageTest::TestStability
 		PackageTest::STABLE_TESTING,
 		PackageTest::STABLE_NONMASKED,
 		PackageTest::STABLE_SYSTEM;
+
+NowarnMaskList *PackageTest::nowarn_list = NULL;
 
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
 {
@@ -842,11 +844,16 @@ PackageTest::match(PackageReader *pkg) const
 			(redundant_flags == Keywords::RED_NOTHING))
 			return false;
 
+		if(nowarn_list == NULL) {
+			get_nowarn_list();
+		}
 		get_p(p, pkg);
+		Keywords::Redundant rflags(redundant_flags);
+		TestInstalled test_ins(test_installed);
+		nowarn_list->apply(p, rflags, test_ins, portagesettings);
 
-		Keywords::Redundant r(redundant_flags & Keywords::RED_ALL_MASKSTUFF);
+		Keywords::Redundant r(rflags & Keywords::RED_ALL_MASKSTUFF);
 		if(r != Keywords::RED_NOTHING) {
-			r &= nowarn_mask(*p);
 			if(r && portagesettings->user_config->setMasks(p, r))
 			{
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_MASK))
@@ -863,9 +870,8 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		r = redundant_flags & Keywords::RED_ALL_KEYWORDS;
+		r = rflags & Keywords::RED_ALL_KEYWORDS;
 		if(r != Keywords::RED_NOTHING) {
-			r &= nowarn_keywords(*p);
 			if(r && portagesettings->user_config->setKeyflags(p, r))
 			{
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE))
@@ -886,9 +892,8 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		r = redundant_flags & Keywords::RED_ALL_USE;
+		r = rflags & Keywords::RED_ALL_USE;
 		if(r != Keywords::RED_NOTHING) {
-			r &= nowarn_use(*p);
 			if(r && portagesettings->user_config->CheckUse(p, r))
 			{
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_USE))
@@ -897,9 +902,8 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		r = redundant_flags & Keywords::RED_ALL_ENV;
+		r = rflags & Keywords::RED_ALL_ENV;
 		if(r != Keywords::RED_NOTHING) {
-			r &= nowarn_env(*p);
 			if(r && portagesettings->user_config->CheckEnv(p, r))
 			{
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_ENV))
@@ -908,9 +912,8 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		r = redundant_flags & Keywords::RED_ALL_CFLAGS;
+		r = rflags & Keywords::RED_ALL_CFLAGS;
 		if(r != Keywords::RED_NOTHING) {
-			r &= nowarn_cflags(*p);
 			if(r && portagesettings->user_config->CheckCflags(p, r)) {
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_CFLAGS))
 					break;
@@ -918,15 +921,14 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
-		if(test_installed == INS_NONE)
+		if(test_ins == INS_NONE) {
 			return false;
-		TestInstalled t(test_installed & nowarn_installed(*p));
-		if(t == INS_NONE)
-			return false;
+		}
 		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-		if(installed_versions == NULL)
+		if(installed_versions == NULL) {
 			return false;
-		if(t & INS_MASKED) {
+		}
+		if(test_ins & INS_MASKED) {
 			portagesettings->user_config->setMasks(p);
 			portagesettings->user_config->setKeyflags(p);
 		}
@@ -939,11 +941,11 @@ PackageTest::match(PackageReader *pkg) const
 				Version *version(*version_it);
 				if(*version != *current)
 					continue;
-				if(t & INS_MASKED) {
+				if(test_ins & INS_MASKED) {
 					if(!version->keyflags.isStable())
 						continue;
 				}
-				if(t & INS_OVERLAY) {
+				if(test_ins & INS_OVERLAY) {
 					if(!vardbpkg->readOverlay(*p, *current, *header, portdir))
 						continue;
 					if(current->overlay_key != version_it->overlay_key)
@@ -1047,274 +1049,16 @@ getlines(const char *varname, vector<string> &lines)
 	lines.clear();
 	vector<string> name;
 	split_string(name, rc[varname], true);
-	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it)
+	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
 		pushback_lines(it->c_str(), &lines, false, true);
+	}
 }
 
-Keywords::Redundant
-PackageTest::nowarn_keywords(const Package &p)
+void
+PackageTest::get_nowarn_list()
 {
-	static bool know_file(false);
-	static map<string, Keywords::Redundant> m;
-	map<string, Keywords::Redundant>::const_iterator i;
-	if(unlikely(!know_file)) {
-		know_file=true; m.clear();
-		vector<string> lines;
-		getlines("KEYWORDS_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			Keywords::Redundant r;
-			i = m.find(*et);
-			if(i == m.end())
-				r = Keywords::RED_ALL_KEYWORDS;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "in_keywords") == 0)
-					r &= ~Keywords::RED_IN_KEYWORDS;
-				else if(strcasecmp(et->c_str(), "no_change") == 0)
-					r &= ~Keywords::RED_NO_CHANGE;
-				else if(strcasecmp(et->c_str(), "double") == 0)
-					r &= ~Keywords::RED_DOUBLE;
-				else if(strcasecmp(et->c_str(), "mixed") == 0)
-					r &= ~Keywords::RED_MIXED;
-				else if(strcasecmp(et->c_str(), "weaker") == 0)
-					r &= ~Keywords::RED_WEAKER;
-				else if(strcasecmp(et->c_str(), "strange") == 0)
-					r &= ~Keywords::RED_STRANGE;
-				else if(strcasecmp(et->c_str(), "minusasterisk") == 0)
-					r &= ~Keywords::RED_MINUSASTERISK;
-				else if(strcasecmp(et->c_str(), "double_line") == 0)
-					r &= ~Keywords::RED_DOUBLE_LINE;
-			}
-			m[s[0]] = r;
-		}
-	}
-	i = m.find(p.category + "/" + p.name);
-	if(i == m.end())
-		return Keywords::RED_ALL_KEYWORDS;
-	return i->second;
-}
-
-Keywords::Redundant
-PackageTest::nowarn_mask(const Package &p)
-{
-	static bool know_file(false);
-	static map<string, Keywords::Redundant> m;
-	map<string, Keywords::Redundant>::const_iterator i;
-	if(unlikely(!know_file)) {
-		know_file=true; m.clear();
-		vector<string> lines;
-		getlines("MASK_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			Keywords::Redundant r;
-			i = m.find(*et);
-			if(i == m.end())
-				r = Keywords::RED_ALL_MASKSTUFF;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "in_mask") == 0)
-					r &= ~Keywords::RED_IN_MASK;
-				else if(strcasecmp(et->c_str(), "mask_no_change") == 0)
-					r &= ~Keywords::RED_MASK;
-				else if(strcasecmp(et->c_str(), "double_masked") == 0)
-					r &= ~Keywords::RED_DOUBLE_MASK;
-			}
-			m[s[0]] = r;
-		}
-		getlines("UNMASK_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			i = m.find(*et);
-			Keywords::Redundant r;
-			if(i == m.end())
-				r = Keywords::RED_ALL_MASKSTUFF;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "in_unmask") == 0)
-					r &= ~Keywords::RED_IN_UNMASK;
-				else if(strcasecmp(et->c_str(), "unmask_no_change") == 0)
-					r &= ~Keywords::RED_UNMASK;
-				else if(strcasecmp(et->c_str(), "double_unmasked") == 0)
-					r &= ~Keywords::RED_DOUBLE_UNMASK;
-			}
-			m[s[0]] = r;
-		}
-	}
-	i = m.find(p.category + "/" + p.name);
-	if(i == m.end())
-		return Keywords::RED_ALL_MASKSTUFF;
-	return i->second;
-}
-
-Keywords::Redundant
-PackageTest::nowarn_use(const Package &p)
-{
-	static bool know_file(false);
-	static map<string, Keywords::Redundant> m;
-	map<string, Keywords::Redundant>::const_iterator i;
-	if(unlikely(!know_file)) {
-		know_file=true; m.clear();
-		vector<string> lines;
-		getlines("USE_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			Keywords::Redundant r;
-			i = m.find(*et);
-			if(i == m.end())
-				r = Keywords::RED_ALL_USE;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "in_use") == 0)
-					r &= ~Keywords::RED_IN_USE;
-				else if(strcasecmp(et->c_str(), "double_use") == 0)
-					r &= ~Keywords::RED_DOUBLE_USE;
-			}
-			m[s[0]] = r;
-		}
-	}
-	i = m.find(p.category + "/" + p.name);
-	if(i == m.end())
-		return Keywords::RED_ALL_USE;
-	return i->second;
-}
-
-Keywords::Redundant
-PackageTest::nowarn_env(const Package &p)
-{
-	static bool know_file(false);
-	static map<string, Keywords::Redundant> m;
-	map<string, Keywords::Redundant>::const_iterator i;
-	if(unlikely(!know_file)) {
-		know_file=true; m.clear();
-		vector<string> lines;
-		getlines("ENV_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			Keywords::Redundant r;
-			i = m.find(*et);
-			if(i == m.end())
-				r = Keywords::RED_ALL_ENV;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "in_env") == 0)
-					r &= ~Keywords::RED_IN_ENV;
-				else if(strcasecmp(et->c_str(), "double_env") == 0)
-					r &= ~Keywords::RED_DOUBLE_ENV;
-			}
-			m[s[0]] = r;
-		}
-	}
-	i = m.find(p.category + "/" + p.name);
-	if(i == m.end())
-		return Keywords::RED_ALL_ENV;
-	return i->second;
-}
-
-Keywords::Redundant
-PackageTest::nowarn_cflags(const Package &p)
-{
-	static bool know_file(false);
-	static map<string, Keywords::Redundant> m;
-	map<string, Keywords::Redundant>::const_iterator i;
-	if(unlikely(!know_file)) {
-		know_file=true; m.clear();
-		vector<string> lines;
-		getlines("CFLAGS_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			Keywords::Redundant r;
-			i = m.find(*et);
-			if(i == m.end())
-				r = Keywords::RED_ALL_CFLAGS;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "in_cflags") == 0)
-					r &= ~Keywords::RED_IN_CFLAGS;
-				else if(strcasecmp(et->c_str(), "double_cflags") == 0)
-					r &= ~Keywords::RED_DOUBLE_CFLAGS;
-			}
-			m[s[0]] = r;
-		}
-	}
-	i = m.find(p.category + "/" + p.name);
-	if(i == m.end())
-		return Keywords::RED_ALL_CFLAGS;
-	return i->second;
-}
-
-PackageTest::TestInstalled
-PackageTest::nowarn_installed(const Package &p)
-{
-	static bool know_file(false);
-	static map<string, TestInstalled> m;
-	map<string, TestInstalled>::const_iterator i;
-	if(unlikely(!know_file)) {
-		know_file=true; m.clear();
-		vector<string> lines;
-		getlines("INSTALLED_NOWARN", lines);
-		for(vector<string>::const_iterator it(lines.begin());
-			likely(it != lines.end()); ++it) {
-			vector<string> s;
-			split_string(s, *it);
-			if(s.empty())
-				continue;
-			vector<string>::const_iterator et(s.begin());
-			Keywords::Redundant r;
-			i = m.find(*et);
-			if(i == m.end())
-				r = INS_SOME;
-			else
-				r = i->second;
-			for(++et; likely(et != s.end()); ++et) {
-				if(strcasecmp(et->c_str(), "nonexistent") == 0)
-					r = INS_NONE;
-				else if(strcasecmp(et->c_str(), "masked") == 0)
-					r &= ~INS_OVERLAY;
-				else if(strcasecmp(et->c_str(), "other_overlay") == 0)
-					r &= ~INS_MASKED;
-			}
-			m[s[0]] = r;
-		}
-	}
-	i = m.find(p.category + "/" + p.name);
-	if(i == m.end())
-		return INS_SOME;
-	return i->second;
+	nowarn_list = new NowarnMaskList;
+	vector<string> lines;
+	getlines("PACKAGE_NOWARN", lines);
+	NowarnPreList(lines).initialize(*nowarn_list);
 }

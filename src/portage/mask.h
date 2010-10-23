@@ -16,6 +16,7 @@
 #include <portage/keywords.h>
 #include <portage/packagesets.h>
 #include <portage/version.h>
+#include <search/packagetest.h>
 
 #include <string>
 
@@ -88,6 +89,8 @@ class Mask : public BasicVersion {
 
 		void match(Matches &m, Package &pkg) const;
 
+		bool have_match(Package &pkg) const;
+
 		const char *getVersion() const
 		{ return m_cached_full.c_str(); }
 
@@ -141,14 +144,14 @@ class PKeywordMask : public Mask {
 
 class SetMask : public Mask {
 	public:
+		SetsIndex m_set;
 
 		SetMask(const char *str, SetsIndex set_index) :
 			Mask(str, maskTypeNone), m_set(set_index)
 		{ }
 
 		void applyItem(Package& pkg) const;
-
-		SetsIndex m_set;
 };
+
 
 #endif /* EIX__MASK_H__ */

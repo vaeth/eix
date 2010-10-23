@@ -28,6 +28,7 @@ class Version;
 /* Files for categories the user defined and categories from the official tree */
 #define MAKE_GLOBALS_FILE       "/etc/make.globals"
 #define MAKE_CONF_FILE          "/etc/make.conf"
+#define MAKE_CONF_FILE_NEW      "/etc/portage/make.conf"
 #define USER_CATEGORIES_FILE    "/etc/portage/categories"
 #define USER_KEYWORDS_FILE1     "/etc/portage/package.accept_keywords"
 #define USER_KEYWORDS_FILE2     "/etc/portage/package.keywords"
@@ -115,7 +116,6 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		MaskList<SetMask>        m_package_sets;
 
-		std::vector<std::string> set_names;
 		std::vector<SetsList>    parent_sets;
 		std::vector<SetsList>    children_sets;
 
@@ -160,6 +160,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		PortageUserConfig *user_config;
 
 		std::vector<std::string> overlays; /**< Location of the portage overlays */
+		std::vector<std::string> set_names;
 
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;

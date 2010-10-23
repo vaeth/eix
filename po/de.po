@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-09-09 11:19+0200\n"
+"POT-Creation-Date: 2010-09-11 18:40+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -4998,50 +4998,35 @@ msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_REMOVED\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2393
+#: src/eixrc/defaults.cc:2392
 msgid ""
-"Exceptional packages for -T tests of /etc/portage/package.accept_keywords."
+"This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
+"It is meant to be a local addition to PACKAGE_NOWARN."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"/etc/portage/package.accept_keywords-Tests ausgenommen."
+"Diese Variable wird nur für Delayed Substitution in PACKAGE_NOWARN benutzt.\n"
+"Sie ist für lokale Erweiterungen von PACKAGE_NOWARN gedacht."
 
 #: src/eixrc/defaults.cc:2397
-msgid "Exceptional packages for -T tests of /etc/portage/package.mask."
+msgid ""
+"This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
+"If it is set then the files from OBSOLETE_PACKAGE_NOWARN are used."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"/etc/portage/package.mask-Tests ausgenommen."
-
-#: src/eixrc/defaults.cc:2401
-msgid "Exceptional packages for -T tests of /etc/portage/package.unmask."
-msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"/etc/portage/package.unmask-Tests ausgenommen."
-
-#: src/eixrc/defaults.cc:2405
-msgid "Exceptional packages for -T tests of /etc/portage/package.use."
-msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"/etc/portage/package.use-Tests ausgenommen."
+"Diese Variable wird nur für Delayed Substitution in PACKAGE_NOWARN benutzt.\n"
+"Wenn sie gesetzt ist, werden die Files von OBSOLETE_PACKAGE_NOWARN benutzt."
 
 #: src/eixrc/defaults.cc:2409
-msgid "Exceptional packages for -T tests of /etc/portage/package.env."
+msgid ""
+"This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"
+"variable OBSOLETE_NOWARN is set."
 msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"/etc/portage/package.env-Tests ausgenommen."
+"Diese Variable wird zur Delayed Substituion in PACKAGE_NOWARN benutzt,\n"
+"falls die Variable OBSOLETE_NOWARN gesetzt ist."
 
-#: src/eixrc/defaults.cc:2413
-msgid "Exceptional packages for -T tests of /etc/portage/package.cflags."
-msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"/etc/portage/package.cflags-Tests ausgenommen."
+#: src/eixrc/defaults.cc:2418
+msgid "This file/directory contains exceptions for -T tests."
+msgstr "Diese Datei/Directory enthält Ausnahmen für -T."
 
-#: src/eixrc/defaults.cc:2417
-msgid "Exceptional packages for -T tests of installed packages."
-msgstr ""
-"Einträge dieser Dateien/Directories werden von -T bzgl.\n"
-"Tests auf installierte Pakete ausgenommen."
-
-#: src/eixrc/defaults.cc:2421
+#: src/eixrc/defaults.cc:2422
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It specifies directories for EIX_LOCAL_SETS."
@@ -5049,14 +5034,14 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie gibt die Directories für EIX_LOCAL_SETS an."
 
-#: src/eixrc/defaults.cc:2430
+#: src/eixrc/defaults.cc:2431
 msgid ""
 "This is a space-separated list of directories containing set definitions."
 msgstr ""
 "Dies ist eine Liste von Directories (durch Leerzeichen getrennt) mit\n"
 "Set-Definitionen."
 
-#: src/eixrc/defaults.cc:2434
+#: src/eixrc/defaults.cc:2435
 msgid ""
 "This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
 "You might need to modify it according to the installed portage version.\n"
@@ -5067,7 +5052,7 @@ msgstr ""
 "Portage-Version angepasst werden. Wenn er leer ist, werden alle\n"
 "Ebuilds mit EAPI-Suffixen (s. GLEP 55) ignoriert."
 
-#: src/eixrc/defaults.cc:2440
+#: src/eixrc/defaults.cc:2441
 msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."
@@ -5271,8 +5256,8 @@ msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1180
-#: src/portage/conf/portagesettings.cc:1209
+#: src/portage/conf/portagesettings.cc:1181
+#: src/portage/conf/portagesettings.cc:1210
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
@@ -5310,10 +5295,10 @@ msgstr "Interner Fehler: SetStability calculates wrong index"
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:250
+#: src/search/packagetest.cc:252
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:262
+#: src/search/packagetest.cc:264
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"

@@ -2387,34 +2387,35 @@ AddOption(STRING, "INSTALLED_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.installed.nonexistent", _(
 	"Packages listed in these files/dirs are excluded for -t TEST_REMOVED."));
 
-AddOption(STRING, "KEYWORDS_NOWARN",
+AddOption(STRING, "ADD_PACKAGE_NOWARN",
+	"", _(
+	"This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
+	"It is meant to be a local addition to PACKAGE_NOWARN."));
+
+AddOption(BOOLEAN, "OBSOLETE_NOWARN",
+	"false", _(
+	"This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
+	"If it is set then the files from OBSOLETE_PACKAGE_NOWARN are used."));
+
+AddOption(STRING, "OBSOLETE_PACKAGE_NOWARN",
 	"%{\\EIXCFGDIR}/package.accept_keywords.nowarn "
-	"%{\\EIXCFGDIR}/package.keywords.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.accept_keywords."));
-
-AddOption(STRING, "MASK_NOWARN",
-	"%{\\EIXCFGDIR}/package.mask.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.mask."));
-
-AddOption(STRING, "UNMASK_NOWARN",
-	"%{\\EIXCFGDIR}/package.unmask.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.unmask."));
-
-AddOption(STRING, "USE_NOWARN",
-	"%{\\EIXCFGDIR}/package.use.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.use."));
-
-AddOption(STRING, "ENV_NOWARN",
-	"%{\\EIXCFGDIR}/package.env.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.env."));
-
-AddOption(STRING, "CFLAGS_NOWARN",
-	"%{\\EIXCFGDIR}/package.cflags.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.cflags."));
-
-AddOption(STRING, "INSTALLED_NOWARN",
+	"%{\\EIXCFGDIR}/package.keywords.nowarn "
+	"%{\\EIXCFGDIR}/package.mask.nowarn "
+	"%{\\EIXCFGDIR}/package.unmask.nowarn "
+	"%{\\EIXCFGDIR}/package.use.nowarn "
+	"%{\\EIXCFGDIR}/package.env.nowarn "
+	"%{\\EIXCFGDIR}/package.cflags.nowarn "
 	"%{\\EIXCFGDIR}/package.installed.nowarn", _(
-	"Exceptional packages for -T tests of installed packages."));
+	"This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"
+	"variable OBSOLETE_NOWARN is set."));
+
+AddOption(STRING, "PACKAGE_NOWARN",
+	"%{\\EIXCFGDIR}/package.nowarn "
+	"%{?OBSOLETE_NOWARN}"
+		"%{OBSOLETE_PACKAGE_NOWARN} "
+	"%{}"
+	"%{ADD_PACKAGE_NOWARN}", _(
+	"This file/directory contains exceptions for -T tests."));
 
 AddOption(STRING, "EIX_LOCAL_SETS_ADD",
 	"", _(
