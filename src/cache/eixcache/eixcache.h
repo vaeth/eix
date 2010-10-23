@@ -12,6 +12,7 @@
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
+#include <portage/extendedversion.h>
 
 #include <string>
 #include <vector>
@@ -28,7 +29,7 @@ class EixCache : public BasicCache {
 		std::string err_msg;
 		std::string m_name, m_file, m_overlay, m_full;
 		bool m_only_overlay;
-		Version::Overlay m_get_overlay;
+		ExtendedVersion::Overlay m_get_overlay;
 		bool never_add_categories;
 		Category *dest_cat;
 

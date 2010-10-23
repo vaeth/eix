@@ -18,7 +18,6 @@
 #include <portage/package.h>
 #include <portage/set_stability.h>
 #include <portage/vardbpkg.h>
-#include <portage/version.h>
 
 #include <set>
 #include <string>
@@ -174,7 +173,7 @@ PrintXml::package(const Package *pkg)
 		}
 
 		cout << "\t\t\t<version id=\"" << escape_string(ver->getFull()) << "\"";
-		Version::Overlay overlay_key(ver->overlay_key);
+		ExtendedVersion::Overlay overlay_key(ver->overlay_key);
 		if(unlikely(overlay_key != 0)) {
 			const OverlayIdent &overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {

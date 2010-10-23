@@ -716,7 +716,7 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			break;
 		case Scanner::PKG_OVERLAYKEY:
 			{
-				Version::Overlay ov_key(package->largest_overlay);
+				ExtendedVersion::Overlay ov_key(package->largest_overlay);
 				if(ov_key && package->have_same_overlay_key())
 					return overlay_keytext(ov_key, false);
 			}

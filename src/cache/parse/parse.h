@@ -13,7 +13,7 @@
 #include <config.h>
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
-#include <portage/version.h>
+#include <portage/extendedversion.h>
 
 #include <string>
 #include <vector>
@@ -23,6 +23,7 @@
 class Category;
 class EbuildExec;
 class VarsReader;
+class Version;
 
 class ParseCache : public BasicCache {
 
@@ -46,7 +47,7 @@ class ParseCache : public BasicCache {
 		~ParseCache();
 
 		void setScheme(const char *prefix, const char *prefixport, const std::string &scheme);
-		void setKey(Version::Overlay key);
+		void setKey(ExtendedVersion::Overlay key);
 		void setOverlayName(const std::string &name);
 		void setErrorCallback(ErrorCallback error_callback);
 

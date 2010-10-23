@@ -88,26 +88,48 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	// Skip category-part
 	str = p + 1;
 
-	// If :... is appended, mark the slot part;
-	// if [...] is appended (possibly after :...), remove it
-	const char *end(strrchr(str, ':'));
-	m_test_slot = bool(end);
-	if(m_test_slot) {
-		const char *usestart(strrchr(end + 1, '['));
-		if((usestart != NULL) && strchr(usestart + 1, ']')) {
-			if(usestart > end)
-				m_slotname = string(end + 1, usestart - end - 1);
-			else
-				m_slotname.clear();
+	// If :... is appended, mark the slot part,
+	// and if another : occurs, mark the repository part.
+	// If [...] is appended (possibly after :...), remove it
+	const char *end(strchr(str, ':'));
+	if(end != NULL) {
+		string *dest;
+		const char *usestart, *source;
+		const char *slot_start(end + 1);
+		const char *slot_end(strchr(slot_start, ':'));
+		bool have_reponame(slot_end != NULL);
+		if(have_reponame) {
+			source = slot_end + 1;
+			dest = &m_reponame;
 		}
-		else
-			m_slotname = (end + 1);
+		else {
+			source = slot_start;
+			dest = &m_slotname;
+			m_reponame.clear();
+			m_test_reponame = false;
+		}
+		usestart = strchr(source, '[');
+		if((usestart != NULL) && strchr(usestart + 1, ']')) {
+			dest->assign(source, usestart - source);
+		}
+		else {
+			dest->assign(source);
+		}
+		if(have_reponame) {
+			m_test_reponame = !(m_reponame.empty());
+			m_slotname.assign(slot_start, slot_end - slot_start);
+		}
+		m_test_slot = !(m_slotname.empty());
 		// Interpret Slot "0" as empty slot (as internally always)
-		if(m_slotname == "0")
+		if(m_slotname == "0") {
 			m_slotname.clear();
+		}
 	}
 	else {
-		end = strrchr(str, '[');
+		m_test_slot = m_test_reponame = false;
+		m_slotname.clear();
+		m_reponame.clear();
+		end = strchr(str, '[');
 		if(end && ! strchr(end + 1, ']'))
 			end = NULL;
 	}
@@ -173,8 +195,14 @@ bool
 Mask::test(const ExtendedVersion *ev) const
 {
 	if(m_test_slot) {
-		if(m_slotname != ev->slotname)
+		if(m_slotname != ev->slotname) {
 			return false;
+		}
+	}
+	if(!m_reponame.empty()) {
+		if(m_reponame != ev->reponame) {
+			return false;
+		}
 	}
 	switch(m_operator)
 	{

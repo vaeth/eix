@@ -12,7 +12,7 @@
 
 #include <database/types.h>
 #include <eixTk/stringutils.h>
-#include <portage/version.h>
+#include <portage/extendedversion.h>
 #include <portage/overlay.h>
 
 #include <set>
@@ -58,22 +58,22 @@ class DBHeader {
 		io::Catsize  size; /**< Number of categories. */
 
 		/** Get overlay for key from table. */
-		const OverlayIdent& getOverlay(Version::Overlay key) const;
+		const OverlayIdent& getOverlay(ExtendedVersion::Overlay key) const;
 
 		/** Add overlay to directory-table and return key. */
-		Version::Overlay addOverlay(const OverlayIdent& overlay);
+		ExtendedVersion::Overlay addOverlay(const OverlayIdent& overlay);
 
 		/** Find first overlay-number >=minimal for name.
 		    Name might be either a label, a filename, or a number string.
 		    The special name portdir (if defined) matches 0 (if OVTEST_PATH)
 		    The special name '' matches everything but 0. */
-		bool find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
+		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
 
 		/** Add all overlay-numbers >=minimal for name to vec (name might be a number string). */
-		void get_overlay_vector(std::set<Version::Overlay> *overlays, const char *name, const char *portdir, Version::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
+		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlays, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
 
-		Version::Overlay countOverlays() const
-		{ return Version::Overlay(overlays.size()); }
+		ExtendedVersion::Overlay countOverlays() const
+		{ return ExtendedVersion::Overlay(overlays.size()); }
 
 		bool isCurrent() const
 		{ return version == DBHeader::current; }

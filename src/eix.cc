@@ -27,12 +27,12 @@
 #include <output/formatstring.h>
 #include <output/print-xml.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
 #include <portage/package.h>
 #include <portage/set_stability.h>
 #include <portage/vardbpkg.h>
-#include <portage/version.h>
 #include <search/algorithms.h>
 #include <search/matchtree.h>
 
@@ -445,7 +445,7 @@ static bool
 print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_used)
 {
 	bool printed_overlay(false);
-	for(Version::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
+	for(ExtendedVersion::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
 		likely(i != header.countOverlays()); ++i) {
 		if(i && overlay_used) {
 			if(!((*overlay_used)[i-1]))
@@ -651,7 +651,7 @@ run_eix(int argc, char** argv)
 	PackageReader reader(fp, header, &portagesettings);
 	if(unlikely((overlaypath_to_print != NULL) || (overlaylabel_to_print != NULL))) {
 		fclose(fp);
-		Version::Overlay num;
+		ExtendedVersion::Overlay num;
 		const char *osearch(overlaypath_to_print);
 		bool print_path(osearch != NULL);
 		if(!print_path)
@@ -752,7 +752,7 @@ run_eix(int argc, char** argv)
 		format.set_overlay_translations(NULL);
 	if(header.countOverlays() != 0) {
 		format.clear_virtual(header.countOverlays());
-		for(Version::Overlay i(1); likely(i != header.countOverlays()); ++i)
+		for(ExtendedVersion::Overlay i(1); likely(i != header.countOverlays()); ++i)
 			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
 	}
 	bool need_overlay_table(false);
@@ -784,7 +784,7 @@ run_eix(int argc, char** argv)
 			if(overlay_mode <= mode_list_used) {
 				for(Package::iterator ver(it->begin());
 					likely(ver != it->end()); ++ver) {
-					Version::Overlay key(ver->overlay_key);
+					ExtendedVersion::Overlay key(ver->overlay_key);
 					if(key > 0) {
 						overlay_used[key - 1] = true;
 					}
@@ -805,11 +805,11 @@ run_eix(int argc, char** argv)
 		case mode_list_none: need_overlay_table = false; break;
 		default: break;
 	}
-	vector<Version::Overlay> overlay_num(header.countOverlays(), 0);
+	vector<ExtendedVersion::Overlay> overlay_num(header.countOverlays(), 0);
 	if(overlay_mode == mode_list_used_renumbered) {
-		Version::Overlay i(1);
+		ExtendedVersion::Overlay i(1);
 		vector<bool>::iterator uit(overlay_used.begin());
-		vector<Version::Overlay>::iterator nit(overlay_num.begin());
+		vector<ExtendedVersion::Overlay>::iterator nit(overlay_num.begin());
 		for(; likely(uit != overlay_used.end()); ++uit, ++nit) {
 			if(*uit == true) {
 				*nit = i++;

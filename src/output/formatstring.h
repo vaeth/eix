@@ -12,9 +12,9 @@
 
 #include <eixTk/exceptions.h>
 #include <portage/basicversion.h>
+#include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/set_stability.h>
-#include <portage/version.h>
 
 #include <map>
 #include <set>
@@ -32,6 +32,7 @@ class EixRc;
 class Package;
 class PortageSettings;
 class VarDbPkg;
+class Version;
 
 class Node {
 	public:
@@ -203,7 +204,7 @@ class PrintFormat {
 		FormatParser   m_parser;
 		GetProperty    m_get_property;
 		std::vector<bool> *virtuals;
-		std::vector<Version::Overlay> *overlay_translations;
+		std::vector<ExtendedVersion::Overlay> *overlay_translations;
 		std::vector<bool> *overlay_used;
 		bool          *some_overlay_used;
 		MarkedList    *marked_list;
@@ -266,21 +267,21 @@ class PrintFormat {
 
 		void setupColors();
 
-		void clear_virtual(Version::Overlay count)
+		void clear_virtual(ExtendedVersion::Overlay count)
 		{
 			if(virtuals)
 				delete virtuals;
 			virtuals = new std::vector<bool>(count, false);
 		}
 
-		void set_as_virtual(const Version::Overlay overlay, bool on = true)
+		void set_as_virtual(const ExtendedVersion::Overlay overlay, bool on = true)
 		{
 			if(!overlay)
 				return;
 			(*virtuals)[overlay-1] = on;
 		}
 
-		bool is_virtual(const Version::Overlay overlay) const
+		bool is_virtual(const ExtendedVersion::Overlay overlay) const
 		{
 			if(!virtuals)
 				return false;
@@ -289,7 +290,7 @@ class PrintFormat {
 			return (*virtuals)[overlay - 1];
 		}
 
-		void set_overlay_translations(std::vector<Version::Overlay> *translations)
+		void set_overlay_translations(std::vector<ExtendedVersion::Overlay> *translations)
 		{ overlay_translations = translations; }
 
 		void set_overlay_used(std::vector<bool> *used, bool *some)
@@ -298,7 +299,7 @@ class PrintFormat {
 		void set_marked_list(MarkedList *m_list)
 		{ marked_list = m_list; }
 
-		std::string overlay_keytext(Version::Overlay overlay, bool plain = false) const;
+		std::string overlay_keytext(ExtendedVersion::Overlay overlay, bool plain = false) const;
 
 		/* return true if something was actually printed */
 		bool print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s);

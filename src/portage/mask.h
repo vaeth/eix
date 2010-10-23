@@ -62,7 +62,9 @@ class Mask : public BasicVersion {
 		std::string m_category; /**< category */
 		std::string m_name;     /**< package name */
 		std::string m_slotname;
+		std::string m_reponame;
 		bool m_test_slot;       /**< must we match a slot? */
+		bool m_test_reponame;   /**< must we match a reponame? */
 
 		/** split a "mask string" into its components
 		 * @param str_mask the string to be dissected

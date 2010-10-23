@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-09-12 18:39+0200\n"
+"POT-Creation-Date: 2010-10-08 11:52+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1294,12 +1294,12 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:480 src/eix-diff.cc:327
+#: src/eix.cc:480 src/eix-diff.cc:328
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:533 src/eix-diff.cc:292 src/eix-update.cc:385
+#: src/eix.cc:533 src/eix-diff.cc:293 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
@@ -1381,7 +1381,7 @@ msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
 
-#: src/eix-diff.cc:62
+#: src/eix-diff.cc:63
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
@@ -1419,11 +1419,11 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:124
+#: src/eix-diff.cc:125
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:130
+#: src/eix-diff.cc:131
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1432,21 +1432,21 @@ msgstr ""
 "%s wurde mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-diff.cc:302
+#: src/eix-diff.cc:303
 msgid "Missing cache-file."
 msgstr "Fehlendes Cachefile."
 
-#: src/eix-diff.cc:372
+#: src/eix-diff.cc:373
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
 
-#: src/eix-update.cc:149
+#: src/eix-update.cc:150
 #, c-format
 msgid "%s must be writable by group portage."
 msgstr "%s muss für die Grupper portage beschreibbar sein."
 
-#: src/eix-update.cc:157
+#: src/eix-update.cc:158
 msgid ""
 "You must be in the portage group to update the database.\n"
 "Set SKIP_PERMISSION_TESTS=true to skip this test (e.g. if you use NSS/LDAP)."
@@ -1455,7 +1455,7 @@ msgstr ""
 "Mit SKIP_PERMISSION_TESTS=true kann dieser Test umgangen werden\n"
 "(beispielsweise wenn NSS/LDAP benutzt wird)."
 
-#: src/eix-update.cc:171
+#: src/eix-update.cc:172
 msgid ""
 "User 'root' is needed to initially generate the database.\n"
 "Alternatively, you can generate a dummy cachefile %r\n"
@@ -1467,15 +1467,15 @@ msgstr ""
 "mit Schreibberechtigungen für die Gruppe Portage anlegen.\n"
 "Mit SKIP_PERMISSION_TESTS=true kann dieser Test umgangen werden."
 
-#: src/eix-update.cc:193
+#: src/eix-update.cc:194
 msgid "warning: cannot change ownership of cachefile"
 msgstr "Warnung: Benutzer des Cachefiles kann nicht geändert werden"
 
-#: src/eix-update.cc:196
+#: src/eix-update.cc:197
 msgid "warning: cannot change permissions for cachefile"
 msgstr "Warnung: Rechte des Cachefiles können nicht geändert werden"
 
-#: src/eix-update.cc:206
+#: src/eix-update.cc:207
 #, c-format
 msgid ""
 "Usage: %s [options]\n"
@@ -1532,108 +1532,108 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-update.cc:295
+#: src/eix-update.cc:296
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD"
 msgstr "%s muss eine Liste der Gestalt DIRECTORY METHOD sein"
 
-#: src/eix-update.cc:311
+#: src/eix-update.cc:312
 #, c-format
 msgid "%s must be a list of the form DIR-PATTERN OVERLAY-LABEL"
 msgstr "%s muss eine Liste der Gestalt DIR-PATTERN OVERLAY-LABEL sein"
 
-#: src/eix-update.cc:328
+#: src/eix-update.cc:329
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS ignoriert: Es gibt kein vorheriges %s\n"
 
-#: src/eix-update.cc:333
+#: src/eix-update.cc:334
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 
-#: src/eix-update.cc:338
+#: src/eix-update.cc:339
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:421
+#: src/eix-update.cc:422
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:535
+#: src/eix-update.cc:536
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:550
+#: src/eix-update.cc:551
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:556
+#: src/eix-update.cc:557
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:601
+#: src/eix-update.cc:602
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:620
+#: src/eix-update.cc:621
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:627
+#: src/eix-update.cc:628
 msgid "     Reading Packages .. "
 msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:631 src/eix-update.cc:668
+#: src/eix-update.cc:632 src/eix-update.cc:669
 msgid "Finished"
 msgstr "Fertig"
 
-#: src/eix-update.cc:631 src/eix-update.cc:667
+#: src/eix-update.cc:632 src/eix-update.cc:668
 msgid "ABORTED!"
 msgstr "ABBRUCH!"
 
-#: src/eix-update.cc:636
+#: src/eix-update.cc:637
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Lese Category %s|%s (%s%%)"
 
-#: src/eix-update.cc:641
+#: src/eix-update.cc:642
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
 
-#: src/eix-update.cc:657
+#: src/eix-update.cc:658
 #, c-format
 msgid ": %s .."
 msgstr ": %s ..."
 
-#: src/eix-update.cc:666
+#: src/eix-update.cc:667
 msgid "EMPTY!"
 msgstr "LEER!"
 
-#: src/eix-update.cc:677
+#: src/eix-update.cc:678
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:688
+#: src/eix-update.cc:689
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:692
+#: src/eix-update.cc:693
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:695
+#: src/eix-update.cc:696
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:708
+#: src/eix-update.cc:709
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
@@ -1750,17 +1750,17 @@ msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
-#: src/cache/parse/parse.cc:202
+#: src/cache/parse/parse.cc:203
 #, c-format
 msgid "Could not properly parse %s: %s"
 msgstr "Fehler beim Parsen von %s: %s"
 
-#: src/cache/parse/parse.cc:229
+#: src/cache/parse/parse.cc:230
 #, c-format
 msgid "Could not properly execute %s"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/cache/parse/parse.cc:261
+#: src/cache/parse/parse.cc:262
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
@@ -1822,7 +1822,7 @@ msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:70 src/database/io.cc:162 src/database/io.h:53
+#: src/database/io.cc:70 src/database/io.cc:163 src/database/io.h:53
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
@@ -5265,19 +5265,19 @@ msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 msgid "Can't read category."
 msgstr "Category nicht lesbar."
 
-#: src/portage/mask.cc:122
+#: src/portage/mask.cc:144
 msgid "You have a operator but we can't find a version-part."
 msgstr "Operator ohne Versionsspezifizierung."
 
-#: src/portage/mask.cc:135
+#: src/portage/mask.cc:157
 msgid "A '*' is only valid at the end of a version-string."
 msgstr "Ein '*' ist nur am Ende der Version zulässig."
 
-#: src/portage/mask.cc:141
+#: src/portage/mask.cc:163
 msgid "A wildcard is only valid with the = operator."
 msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
 
-#: src/portage/mask.cc:145
+#: src/portage/mask.cc:167
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

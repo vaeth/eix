@@ -132,8 +132,8 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 		}
 	}
 
-	string label(readOverlayLabel(&p, &v));
-	if(label.empty()) {
+	v.reponame = readOverlayLabel(&p, &v);
+	if(v.reponame.empty()) {
 		if(check_installed_overlays < 0) {
 			if(likely(p.have_same_overlay_key())) {
 				v.overlay_key = p.largest_overlay;
@@ -141,22 +141,22 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 			}
 		}
 	}
-	else if(header.find_overlay(&v.overlay_key, label.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
+	else if(header.find_overlay(&v.overlay_key, v.reponame.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
 		return true;
 
 	string opath(readOverlayPath(&p, &v));
 	if(opath.empty()) {
-		v.overlay_keytext = label;
+		v.overlay_keytext = v.reponame.empty();
 		v.overlay_failed = true;
 		return false;
 	}
 	else if(header.find_overlay(&v.overlay_key, opath.c_str(), portdir, 0, DBHeader::OVTEST_ALLPATH))
 		return true;
 	v.overlay_failed = true;
-	if(label.empty())
+	if(v.reponame.empty())
 		v.overlay_keytext = opath;
 	else
-		v.overlay_keytext = string("\"") + label + "\" "+ opath;
+		v.overlay_keytext = string("\"") + v.reponame + "\" "+ opath;
 	return false;
 }
 

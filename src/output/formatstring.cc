@@ -17,7 +17,7 @@
 #include <eixTk/stringutils.h>
 #include <eixrc/eixrc.h>
 #include <portage/basicversion.h>
-#include <portage/version.h>
+#include <portage/extendedversion.h>
 
 #include <iostream>
 #include <set>
@@ -147,7 +147,7 @@ PrintFormat::parse_variable(const string &varname) const throw(ExBasic)
 }
 
 string
-PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
+PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
 {
 	string start("[");
 	string end("]");
@@ -162,7 +162,7 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
 		end += AnsiColor(AnsiColor::acDefault).asString();
 	}
 	if(overlay) {
-		vector<Version::Overlay>::size_type index(overlay - 1);
+		vector<ExtendedVersion::Overlay>::size_type index(overlay - 1);
 		if(overlay_used)
 			(*overlay_used)[index] = true;
 		if(some_overlay_used)
@@ -170,8 +170,8 @@ PrintFormat::overlay_keytext(Version::Overlay overlay, bool plain) const
 		if(overlay_translations) {
 			overlay = (*overlay_translations)[index];
 			if(!overlay) {
-				Version::Overlay number(0);
-				for(vector<Version::Overlay>::iterator it(overlay_translations->begin());
+				ExtendedVersion::Overlay number(0);
+				for(vector<ExtendedVersion::Overlay>::iterator it(overlay_translations->begin());
 					likely(it != overlay_translations->end()); ++it) {
 					if(number < *it)
 						number = *it;

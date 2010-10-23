@@ -18,7 +18,6 @@
 #include <portage/keywords.h>
 #include <portage/package.h>
 #include <portage/set_stability.h>
-#include <portage/version.h>
 #include <search/algorithms.h>
 #include <search/redundancy.h>
 
@@ -194,31 +193,31 @@ class PackageTest {
 		void StabilityNonlocal(Package *p) const
 		{ stability->set_stability(false, *p); }
 
-		std::set<Version::Overlay> *OverlayList()
+		std::set<ExtendedVersion::Overlay> *OverlayList()
 		{
 			if(likely(overlay_list == NULL))
-				overlay_list = new std::set<Version::Overlay>;
+				overlay_list = new std::set<ExtendedVersion::Overlay>;
 			return overlay_list;
 		}
 
-		std::set<Version::Overlay> *OverlayOnlyList()
+		std::set<ExtendedVersion::Overlay> *OverlayOnlyList()
 		{
 			if(likely(overlay_only_list == NULL))
-				overlay_only_list = new std::set<Version::Overlay>;
+				overlay_only_list = new std::set<ExtendedVersion::Overlay>;
 			return overlay_only_list;
 		}
 
-		std::set<Version::Overlay> *InOverlayInstList()
+		std::set<ExtendedVersion::Overlay> *InOverlayInstList()
 		{
 			if(likely(in_overlay_inst_list == NULL))
-				in_overlay_inst_list = new std::set<Version::Overlay>;
+				in_overlay_inst_list = new std::set<ExtendedVersion::Overlay>;
 			return in_overlay_inst_list;
 		}
 
-		std::set<Version::Overlay> *FromOverlayInstList()
+		std::set<ExtendedVersion::Overlay> *FromOverlayInstList()
 		{
 			if(likely(from_overlay_inst_list == NULL))
-				from_overlay_inst_list = new std::set<Version::Overlay>;
+				from_overlay_inst_list = new std::set<ExtendedVersion::Overlay>;
 			return from_overlay_inst_list;
 		}
 
@@ -280,11 +279,11 @@ class PackageTest {
 		ExtendedVersion::Restrict restrictions;
 		ExtendedVersion::Properties properties;
 
-		std::set<Version::Overlay>
+		std::set<ExtendedVersion::Overlay>
 			*overlay_list, *overlay_only_list,
 			*in_overlay_inst_list;
 
-		std::set<Version::Overlay> *from_overlay_inst_list;
+		std::set<ExtendedVersion::Overlay> *from_overlay_inst_list;
 		std::vector<std::string> *from_foreign_overlay_inst_list;
 		const char *portdir;
 

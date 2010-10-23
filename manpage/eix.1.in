@@ -3016,7 +3016,7 @@ B<PACKAGE_NOWARN> (in the output of B<eix --dump>) to understand why this works.
 .SH "AUTHORS"
 .LP
 
-Martin Väth <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+Martin V\(:ath <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 

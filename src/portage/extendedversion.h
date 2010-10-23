@@ -61,11 +61,19 @@ class ExtendedVersion : public BasicVersion
 		    For saving space, the default "0" is always stored as "" */
 		std::string slotname;
 
+		/** The repository name */
+		std::string reponame;
+
+		typedef io::UNumber Overlay;
+		/** Key for Portagedb.overlays/overlaylist from header. */
+		Overlay overlay_key;
+
 		ExtendedVersion(const char *str = NULL) :
 			BasicVersion(str),
 			have_bin_pkg_m(HAVEBINPKG_UNKNOWN),
 			restrictFlags(RESTRICT_NONE),
-			propertiesFlags(PROPERTIES_NONE)
+			propertiesFlags(PROPERTIES_NONE),
+			overlay_key(0)
 		{ }
 
 		static Restrict calcRestrict(const std::string& str);

@@ -12,6 +12,7 @@
 #include <eixTk/likely.h>
 #include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/extendedversion.h>
 #include <portage/instversion.h>
 #include <portage/keywords.h>
 #include <portage/vardbpkg.h>
@@ -145,7 +146,7 @@ Package::collect_iuse(Version *version)
 void
 Package::addVersionFinalize(Version *version)
 {
-	Version::Overlay key(version->overlay_key);
+	ExtendedVersion::Overlay key(version->overlay_key);
 
 	if(version->slotname == "0")
 		version->slotname.clear();

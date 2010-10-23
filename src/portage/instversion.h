@@ -38,7 +38,6 @@ class InstVersion : public ExtendedVersion, public Keywords {
 
 		/** Similarly for overlay_keys */
 		bool know_overlay, overlay_failed;
-		Version::Overlay overlay_key;
 		/** overlay_keytext is at most set if overlay_failed */
 		std::string overlay_keytext;
 

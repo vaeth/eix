@@ -25,6 +25,7 @@
 #include <eixrc/global.h>
 #include <main/main.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/extendedversion.h>
 #include <portage/overlay.h>
 #include <portage/packagetree.h>
 
@@ -338,7 +339,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<Repo
 		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
 		return;
 	}
-	for(Version::Overlay i(0); likely(i != header.countOverlays()); ++i) {
+	for(ExtendedVersion::Overlay i(0); likely(i != header.countOverlays()); ++i) {
 		const OverlayIdent &ov = header.getOverlay(i);
 		string overlay(eprefix_virtual + ov.path);
 		if(!is_virtual(overlay.c_str()))
@@ -605,7 +606,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			it = cache_table.erase(it);
 			continue;
 		}
-		Version::Overlay key(dbheader.addOverlay(overlay));
+		ExtendedVersion::Overlay key(dbheader.addOverlay(overlay));
 		cache->setKey(key);
 		cache->setOverlayName(overlay.label);
 		//cache->setArch(portage_settings["ARCH"]);

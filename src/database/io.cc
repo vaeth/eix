@@ -142,7 +142,8 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	}
 
 	v->slotname = io::read_hash_string(fp, hdr.slot_hash);
-	v->overlay_key = io::read<Version::Overlay>(fp);
+	v->overlay_key = io::read<ExtendedVersion::Overlay>(fp);
+	v->reponame = hdr.getOverlay(v->overlay_key).label;
 
 	io::read_iuse(fp, hdr.iuse_hash, v->iuse);
 
@@ -187,7 +188,7 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	}
 
 	io::write_hash_string(fp, hdr.slot_hash, v->slotname);
-	io::write<Version::Overlay>(fp, v->overlay_key);
+	io::write<ExtendedVersion::Overlay>(fp, v->overlay_key);
 	io::write_hash_words(fp, hdr.iuse_hash, v->iuse.asVector());
 }
 
@@ -294,8 +295,8 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 	io::write<DBHeader::DBVersion>(fp, DBHeader::current);
 	io::write<io::Catsize>(fp, hdr.size);
 
-	io::write<Version::Overlay>(fp, hdr.countOverlays());
-	for(Version::Overlay i(0); likely(i != hdr.countOverlays()); ++i) {
+	io::write<ExtendedVersion::Overlay>(fp, hdr.countOverlays());
+	for(ExtendedVersion::Overlay i(0); likely(i != hdr.countOverlays()); ++i) {
 		const OverlayIdent& overlay = hdr.getOverlay(i);
 		io::write_string(fp, overlay.path);
 		io::write_string(fp, overlay.label);
@@ -321,7 +322,7 @@ io::read_header(FILE *fp, DBHeader &hdr)
 
 	hdr.size    = io::read<io::Catsize>(fp);
 
-	for(Version::Overlay overlay_sz(io::read<Version::Overlay>(fp));
+	for(ExtendedVersion::Overlay overlay_sz(io::read<ExtendedVersion::Overlay>(fp));
 		likely(overlay_sz != 0); --overlay_sz) {
 		string path(io::read_string(fp));
 		hdr.addOverlay(OverlayIdent(path.c_str(), io::read_string(fp).c_str()));

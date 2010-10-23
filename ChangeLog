@@ -1,12 +1,21 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Convert manpage a-diaresis back to groff format (no utf8)
+	- Support repository names in config files:
+	  https://bugs.gentoo.org/show_bug.cgi?id=340098
+	  The current implementation stores reponames in every version and
+	  thus increases memory usage, but this is perhaps cleaner than to tie
+	  the names to the database headers.
+
 *eix-0.22.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Improve error handling when reading profile masks
 	- Fix sqlite.cc: http://bugs.gentoo.org/show_bug.cgi?id=336896
 	- Fix sqlite automagic
 
-*EIX-0.22.1
+*eix-0.22.1
 	MARTIN VÄTH <VAETH AT MATHEMATIK.UNI-WUERZBURG.DE>:
 	- USE /ETC/PORTAGE/PACKAGE.NOWARN INSTEAD OF
 	  /etc/portage/package.*.nowarn; the latter is now obsolete.

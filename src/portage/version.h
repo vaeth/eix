@@ -12,7 +12,6 @@
 
 #include <config.h>
 #include <database/io.h>
-#include <database/types.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/packagesets.h>
@@ -109,11 +108,6 @@ class Version : public ExtendedVersion, public Keywords {
 		friend void     io::write_version(FILE *fp, const Version *v, const DBHeader &hdr);
 		friend Version *io::read_version(FILE *fp, const DBHeader &hdr);
 
-		typedef io::UNumber Overlay;
-
-		/** Key for Portagedb.overlays/overlaylist from header. */
-		Overlay overlay_key;
-
 		typedef enum {
 			SAVEKEY_USER, SAVEKEY_ACCEPT, SAVEKEY_ARCH, SAVEKEY_SIZE
 		} SavedKeyIndex;
@@ -149,7 +143,7 @@ class Version : public ExtendedVersion, public Keywords {
 		    to save memory. See the comments above NOT_FULL_USE. */
 		IUseSet iuse;
 
-		Version() : overlay_key(0),
+		Version() :
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
@@ -161,7 +155,7 @@ class Version : public ExtendedVersion, public Keywords {
 		{ }
 
 		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : ExtendedVersion(str), overlay_key(0),
+		Version(const char* str) : ExtendedVersion(str),
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),

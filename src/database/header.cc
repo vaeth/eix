@@ -13,7 +13,7 @@
 #include <eixTk/filenames.h>
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
-#include <portage/version.h>
+#include <portage/extendedversion.h>
 
 #include <set>
 
@@ -34,7 +34,7 @@ const DBHeader::DBVersion DBHeader::current;
 
 /** Get overlay for key from table. */
 const OverlayIdent &
-DBHeader::getOverlay(Version::Overlay key) const
+DBHeader::getOverlay(ExtendedVersion::Overlay key) const
 {
 	if(key > countOverlays()) {
 		static const OverlayIdent not_found("", "");
@@ -44,14 +44,14 @@ DBHeader::getOverlay(Version::Overlay key) const
 }
 
 /** Add overlay to directory-table and return key. */
-Version::Overlay
+ExtendedVersion::Overlay
 DBHeader::addOverlay(const OverlayIdent& overlay)
 {
 	overlays.push_back(overlay);
 	return countOverlays() - 1;
 }
 
-bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
+bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const
 {
 	if(unlikely(minimal > countOverlays()))
 		return false;
@@ -62,7 +62,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 		return true;
 	}
 	if(testmode & OVTEST_LABEL) {
-		for(Version::Overlay i(minimal); likely(i != countOverlays()); ++i) {
+		for(ExtendedVersion::Overlay i(minimal); likely(i != countOverlays()); ++i) {
 			if(getOverlay(i).label == name) {
 				*num = i;
 				return true;
@@ -78,7 +78,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 				}
 			}
 		}
-		for(Version::Overlay i(minimal); i != countOverlays(); ++i) {
+		for(ExtendedVersion::Overlay i(minimal); i != countOverlays(); ++i) {
 			if(same_filenames(name, getOverlay(i).path.c_str(), true)) {
 				if((i == 0) && ! (testmode & OVTEST_SAVED_PORTDIR))
 					continue;
@@ -90,7 +90,7 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 	if( ! (testmode & OVTEST_NUMBER))
 		return false;
 	// Is name a number?
-	Version::Overlay number;
+	ExtendedVersion::Overlay number;
 	if(!is_numeric(name))
 		return false;
 	try {
@@ -108,9 +108,9 @@ bool DBHeader::find_overlay(Version::Overlay *num, const char *name, const char 
 }
 
 void
-DBHeader::get_overlay_vector(set<Version::Overlay> *overlayset, const char *name, const char *portdir, Version::Overlay minimal, OverlayTest testmode) const
+DBHeader::get_overlay_vector(set<ExtendedVersion::Overlay> *overlayset, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const
 {
-	for(Version::Overlay curr(minimal);
+	for(ExtendedVersion::Overlay curr(minimal);
 		find_overlay(&curr, name, portdir, curr, testmode); ++curr) {
 		overlayset->insert(curr);
 	}

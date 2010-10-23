@@ -14,7 +14,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/unused.h>
-#include <portage/version.h>
+#include <portage/extendedversion.h>
 
 #include <map>
 #include <string>
@@ -26,6 +26,7 @@ class Category;
 class Package;
 class PackageTree;
 class PortageSettings;
+class Version;
 
 // Parent class of every cache that eix can use. */
 class BasicCache {
@@ -47,7 +48,7 @@ class BasicCache {
 		virtual void setScheme(const char *prefix, const char *prefixport, const std::string &scheme);
 
 		/// Set overlay-key
-		virtual void setKey(Version::Overlay key)
+		virtual void setKey(ExtendedVersion::Overlay key)
 		{ m_overlay_key = key; }
 
 		/// Set overlay-name
@@ -55,7 +56,7 @@ class BasicCache {
 		{ m_overlay_name = name; }
 
 		/// Get overlay-key
-		Version::Overlay getKey() const
+		ExtendedVersion::Overlay getKey() const
 		{ return m_overlay_key; }
 
 		/// Get overlay-name
@@ -128,7 +129,7 @@ class BasicCache {
 		std::string m_scheme, m_prefix, m_catname;
 		std::string m_overlay_name;
 		bool have_prefix;
-		Version::Overlay m_overlay_key;
+		ExtendedVersion::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
 		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
 	public:

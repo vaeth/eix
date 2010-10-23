@@ -26,6 +26,7 @@
 #include <output/formatstring-print.h>
 #include <output/formatstring.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/set_stability.h>
@@ -145,7 +146,7 @@ set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virt
 	if(!header.countOverlays())
 		return;
 	fmt->clear_virtual(header.countOverlays());
-	for(Version::Overlay i(1); i != header.countOverlays(); ++i)
+	for(ExtendedVersion::Overlay i(1); i != header.countOverlays(); ++i)
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 

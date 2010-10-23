@@ -13,9 +13,10 @@
 #include <cache/common/flat_reader.h>
 #include <cache/metadata/metadata.h>
 #include <cache/common/ebuild_exec.h>
+#include <portage/extendedversion.h>
 #include <portage/package.h>
-#include <portage/version.h>
 #include <portage/packagetree.h>
+#include <portage/version.h>
 #include <eixTk/varsreader.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/stringutils.h>
@@ -131,7 +132,7 @@ ParseCache::setScheme(const char *prefix, const char *prefixport, const std::str
 }
 
 void
-ParseCache::setKey(Version::Overlay key)
+ParseCache::setKey(ExtendedVersion::Overlay key)
 {
 	BasicCache::setKey(key);
 	for(std::vector<BasicCache*>::iterator it(further.begin());

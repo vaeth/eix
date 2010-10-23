@@ -14,6 +14,7 @@
 #include <eixTk/inttypes.h>
 #include <eixTk/likely.h>
 #include <eixTk/ptr_list.h>
+#include <portage/extendedversion.h>
 #include <portage/instversion.h>
 #include <portage/keywords.h>
 #include <portage/version.h>
@@ -87,7 +88,7 @@ class Package
 		Duplicates have_duplicate_versions;
 
 		/** The largest overlay from which one of the version comes. */
-		Version::Overlay largest_overlay;
+		ExtendedVersion::Overlay largest_overlay;
 
 		typedef uint8_t Versioncollects;
 		static const Versioncollects

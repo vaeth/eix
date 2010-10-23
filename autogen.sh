@@ -1,6 +1,6 @@
 #! /usr/bin/env sh
 
-run () {
+run() {
 	printf '%s\n' ">>> ${*}" >&2
 	if ! "${@}"
 	then	printf '%s\n' "failure" >&2
