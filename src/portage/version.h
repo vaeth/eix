@@ -138,9 +138,12 @@ class Version : public ExtendedVersion, public Keywords {
 		std::vector<MaskFlags>     saved_masks;
 		std::vector<bool>          have_saved_masks;
 		std::vector<std::string>   saved_effective;
+		std::vector<std::string>   saved_accepted;
 		std::vector<EffectiveState> states_effective;
 
 		std::vector<SetsIndex> sets_indizes;
+
+		std::string m_accepted_keywords;
 
 		/** If NOT_FULL_USE is defined, this might "falsely" be empty
 		    to save memory. See the comments above NOT_FULL_USE. */
@@ -152,6 +155,7 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
 			have_saved_masks(SAVEMASK_SIZE, false),
 			saved_effective(SAVEEFFECTIVE_SIZE, ""),
+			saved_accepted(SAVEEFFECTIVE_SIZE, ""),
 			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
 			effective_state(EFFECTIVE_UNUSED)
 		{ }
@@ -163,6 +167,7 @@ class Version : public ExtendedVersion, public Keywords {
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),
 			have_saved_masks(SAVEMASK_SIZE, false),
 			saved_effective(SAVEEFFECTIVE_SIZE, ""),
+			saved_accepted(SAVEEFFECTIVE_SIZE, ""),
 			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
 			effective_state(EFFECTIVE_UNUSED)
 		{ }
@@ -173,8 +178,9 @@ class Version : public ExtendedVersion, public Keywords {
 		void save_maskflags(SavedMaskIndex i)
 		{ have_saved_masks[i] = true; saved_masks[i] = maskflags; }
 
-		void save_effective(SavedEffectiveIndex i)
+		void save_accepted_effective(SavedEffectiveIndex i)
 		{
+			saved_accepted[i] = m_accepted_keywords;
 			if((states_effective[i] = effective_state) == EFFECTIVE_USED)
 				saved_effective[i] = effective_keywords;
 		}
@@ -200,11 +206,12 @@ class Version : public ExtendedVersion, public Keywords {
 		void set_iuse(const std::string &s)
 		{ iuse.clear(); iuse.insert(s); }
 
-		bool restore_effective(SavedEffectiveIndex i)
+		bool restore_accepted_effective(SavedEffectiveIndex i)
 		{
 			EffectiveState s(states_effective[i]);
 			if(s == EFFECTIVE_UNSAVED)
 				return false;
+			m_accepted_keywords = saved_accepted[i];
 			if((effective_state = s) == EFFECTIVE_USED)
 				effective_keywords = saved_effective[i];
 			else
@@ -227,12 +234,18 @@ class Version : public ExtendedVersion, public Keywords {
 		std::string get_full_keywords() const
 		{ return full_keywords; }
 
-		void reset_effective_keywords()
-		{ effective_state = EFFECTIVE_UNUSED; effective_keywords.clear(); }
+		void reset_accepted_effective_keywords()
+		{
+			effective_state = EFFECTIVE_UNUSED;
+			m_accepted_keywords.clear();
+			effective_keywords.clear();
+		}
 
 		/** Calls must be initialized with reset_effective_keywords().
 		    Call save_effective_keywords only after the last modify command! */
 		void modify_effective_keywords(const std::string &modify_keys);
+
+		void add_accepted_keywords(const std::string &accepted_keywords);
 
 		const std::string get_effective_keywords() const
 		{

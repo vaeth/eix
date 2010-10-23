@@ -22,14 +22,19 @@ class MaskFlags {
 	public:
 		typedef io::UChar MaskType;
 		static const MaskType
-			MASK_NONE       = 0x00,
-			MASK_PACKAGE    = 0x01,
-			MASK_PROFILE    = 0x02,
-			MASK_HARD       = MASK_PACKAGE|MASK_PROFILE,
-			MASK_SYSTEM     = 0x04,
-			MASK_WORLD      = 0x08,
-			MASK_WORLD_SETS = 0x10,
-			MASK_SAVE       = MASK_PACKAGE|MASK_PROFILE|MASK_SYSTEM|MASK_WORLD;
+			MASK_NONE               = 0x00,
+			MASK_PACKAGE            = 0x01,
+			MASK_PROFILE            = 0x02,
+			MASK_HARD               = MASK_PACKAGE|MASK_PROFILE,
+			MASK_SYSTEM             = 0x04,
+			MASK_WORLD              = 0x08,
+			MASK_WORLD_SETS         = 0x10,
+			MASK_VIRTUAL_SYSTEM     = 0x20,
+			MASK_VIRTUAL_WORLD      = 0x40,
+			MASK_VIRTUAL_WORLD_SETS = 0x80,
+			MASK_ANY_SYSTEM         = MASK_SYSTEM|MASK_VIRTUAL_SYSTEM,
+			MASK_ANY_WORLD          = MASK_WORLD|MASK_VIRTUAL_WORLD,
+			MASK_ANY_WORLD_SETS     = MASK_WORLD_SETS|MASK_VIRTUAL_WORLD_SETS;
 
 		MaskFlags(MaskType t = MASK_NONE)
 		{ m_mask = t; }
@@ -69,9 +74,27 @@ class MaskFlags {
 		/** @return true if version is part of world. */
 		bool isWorld() const
 		{ return havesome(MaskFlags::MASK_WORLD); }
-		/** @return true if version is part of world. */
+		/** @return true if version is part of world sets. */
 		bool isWorldSets() const
 		{ return havesome(MaskFlags::MASK_WORLD_SETS); }
+		/** @return true if version provides virtual part of system. */
+		bool isVirtualSystem() const
+		{ return havesome(MaskFlags::MASK_VIRTUAL_SYSTEM); }
+		/** @return true if version provides virtual part of world. */
+		bool isVirtualWorld() const
+		{ return havesome(MaskFlags::MASK_VIRTUAL_WORLD); }
+		/** @return true if version provide virtual of world sets. */
+		bool isVirtualWorldSets() const
+		{ return havesome(MaskFlags::MASK_VIRTUAL_WORLD_SETS); }
+		/** @return true if version or its virtual is part of system. */
+		bool isAnySystem() const
+		{ return havesome(MaskFlags::MASK_ANY_SYSTEM); }
+		/** @return true if version or its virtual is part of world. */
+		bool isAnyWorld() const
+		{ return havesome(MaskFlags::MASK_ANY_WORLD); }
+		/** @return true if version or its virtual is of world sets. */
+		bool isAnyWorldSets() const
+		{ return havesome(MaskFlags::MASK_ANY_WORLD_SETS); }
 
 	protected:
 		MaskType m_mask;

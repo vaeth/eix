@@ -1,5 +1,9 @@
 Things to do in near future:
-- [currently none]
+- important: Support wildcards in masks (e.g. kde-base/* in config-file)
+  Problem 1: Wildcards must be handled separately to keep short lookup-time.
+  Problem 2: Despite Problem 1, we must keep the order...
+  Currently, I see no solution except giving up short lookup-time...
+- less important: Support virtuals in sets
 
 Ambitious tasks which will probably not be realized:
 - Support for Paludis.

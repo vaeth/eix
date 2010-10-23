@@ -1,5 +1,17 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.21.0
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support for virtuals in @system and worldfile:
+	  --world* --selected* --system* include now by default all virtuals.
+	  Use --world-pure etc. to avoid inclusion of virtuals.
+	  Similarly for {world} {world_set} {system} which have now
+	  {worldpure} {world_setpure} {systempure} counterparts.
+	- Support for sets in profile masks/keywords
+	- Support profile/package.accept_keywords
+	- Support /etc/portage/package.accept_keywords
+	- Support escaping of "-" on the commandline by using "---" instead.
+
 *eix-0.20.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add new demo script (eix-installed-after) which outputs packages

@@ -234,7 +234,7 @@ rump="${rump}/etc/portage/package."
 	(
 		NoMask; NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
-'No redundant entries in ${rump}keywords (or test switched off).'`" \
+'No redundant entries in ${rump}accept_keywords (or test is off).'`" \
 			"`eval_gettext 'Redundant in ${rump}keywords:'`" \
 			REDUNDANT_IF_DOUBLE \
 			REDUNDANT_IF_MIXED \
@@ -248,7 +248,7 @@ rump="${rump}/etc/portage/package."
 	(
 		NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
-'No redundant entries in ${rump}mask (or test switched off).'`" \
+'No redundant entries in ${rump}mask (or test is off).'`" \
 			"`eval_gettext 'Redundant in ${rump}mask:'`" \
 			REDUNDANT_IF_MASK_NO_CHANGE \
 			REDUNDANT_IF_DOUBLE_MASKED
@@ -257,7 +257,7 @@ rump="${rump}/etc/portage/package."
 	(
 		NoUse; NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
-'No redundant entries in ${rump}unmask (or test switched off).'`" \
+'No redundant entries in ${rump}unmask (or test is off).'`" \
 			"`eval_gettext 'Redundant in ${rump}unmask:'`" \
 			REDUNDANT_IF_UNMASK_NO_CHANGE \
 			REDUNDANT_IF_DOUBLE_UNMASKED
@@ -266,21 +266,21 @@ rump="${rump}/etc/portage/package."
 	(
 		NoEnv; NoCflags; NoUninstalled
 		Eix "`eval_gettext \
-'No redundant entries in ${rump}use (or test switched off).'`" \
+'No redundant entries in ${rump}use (or test is off).'`" \
 			"`eval_gettext 'Redundant in ${rump}use:'`" \
 	)
 	NoUse
 	(
 		NoCflags; NoUninstalled
 		Eix "`eval_gettext \
-'No redundant entries in ${rump}env (or test switched off).'`" \
+'No redundant entries in ${rump}env (or test is off).'`" \
 			"`eval_gettext 'Redundant in ${rump}env:'`" \
 	)
 	NoEnv
 	(
 		NoUninstalled
 		Eix "`eval_gettext \
-'No redundant entries in ${rump}cflags (or test switched off).'`" \
+'No redundant entries in ${rump}cflags (or test is off).'`" \
 			"`eval_gettext 'Redundant in ${rump}cflags:'`" \
 	)
 	NoCflags
@@ -292,7 +292,7 @@ rump="${rump}/etc/portage/package."
 		REDUNDANT_IF_IN_ENV=false \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}keywords (or test switched off).'`" \
+'No uninstalled entries in ${rump}accept_keywords (or test is off).'`" \
 			"`eval_gettext 'Not installed but in ${rump}keywords:'`"
 	)
 	export REDUNDANT_IF_IN_KEYWORDS=false
@@ -303,7 +303,7 @@ rump="${rump}/etc/portage/package."
 		REDUNDANT_IF_IN_ENV=false \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}mask (or test switched off).'`" \
+'No uninstalled entries in ${rump}mask (or test is off).'`" \
 			"`eval_gettext 'Not installed but in ${rump}mask:'`"
 	)
 	export REDUNDANT_IF_IN_MASK=false
@@ -313,7 +313,7 @@ rump="${rump}/etc/portage/package."
 		REDUNDANT_IF_IN_ENV=false \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}unmask (or test switched off).'`" \
+'No uninstalled entries in ${rump}unmask (or test is off).'`" \
 			"`eval_gettext 'Not installed but in ${rump}unmask:'`"
 	)
 	export REDUNDANT_IF_IN_UNMASK=false
@@ -322,7 +322,7 @@ rump="${rump}/etc/portage/package."
 		REDUNDANT_IF_IN_ENV=false
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}use (or test switched off).'`" \
+'No uninstalled entries in ${rump}use (or test is off).'`" \
 			"`eval_gettext 'Not installed but in ${rump}use:'`"
 	)
 	export \
@@ -331,13 +331,13 @@ rump="${rump}/etc/portage/package."
 		export \
 		REDUNDANT_IF_IN_CFLAGS=false
 		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}env (or test switched off).'`" \
+'No uninstalled entries in ${rump}env (or test is off).'`" \
 			"`eval_gettext 'Not installed but in ${rump}env:'`"
 	)
 	export \
 	REDUNDANT_IF_IN_ENV=false
 	Eix "`eval_gettext \
-'No uninstalled entries in ${rump}cflags (or test switched off).'`" \
+'No uninstalled entries in ${rump}cflags (or test is off).'`" \
 		"`eval_gettext 'Not installed but in ${rump}cflags:'`"
 )
 export \

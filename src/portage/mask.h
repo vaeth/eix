@@ -15,12 +15,12 @@
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
 #include <portage/packagesets.h>
+#include <portage/version.h>
 
 #include <string>
 
 class ExtendedVersion;
 class Package;
-class Version;
 
 // A category which may not occur (i.e. which is reserved for maskIsSet)
 #define SET_CATEGORY "@/"
@@ -33,7 +33,6 @@ class Version;
 /** A class for parsing masking definitions
  * like those in the profile and /etc/portage/package.(un)mask */
 class Mask : public BasicVersion {
-
 	public:
 
 		/** Describes the type of a mask.
@@ -69,16 +68,19 @@ class Mask : public BasicVersion {
 		 * @throw ExBasic on errors */
 		void parseMask(const char *str) throw(ExBasic);
 
-		/** Sets the stability & masked members of ve according to the mask
-		 * @param ve Version instance to be set */
-		void apply(Version *ve, Keywords::Redundant check = Keywords::RED_NOTHING);
-
 		/** Tests if the mask applies to a Version.
 		 * @param ev test this version
 		 * @return true if applies. */
 		bool test(const ExtendedVersion *ev) const;
 
 	public:
+		/** Sets the stability & masked members of ve according to the mask
+		 * @param ve         Version instance to be set
+		 * @param do_test    set conditionally or unconditionally
+		 * @param is_virtual the version matches only as a virtual name
+		 * @param check      check these for changes */
+		void apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check);
+
 		/** Parse mask-string. */
 		Mask(const char *str, Type type);
 
@@ -101,6 +103,9 @@ class Mask : public BasicVersion {
 		 * @param check          Redundancy checks which should apply */
 		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
 
+		/** Sets the stability member of all versions in virtual package according to the mask. */
+		void applyVirtual(Package& pkg);
+
 		bool ismatch(Package& pkg);
 
 		bool is_set() const
@@ -109,22 +114,33 @@ class Mask : public BasicVersion {
 
 class KeywordMask : public Mask {
 	public:
+		std::string keywords;
+		bool locally_double;
 
 		KeywordMask(const char *str) : Mask(str, maskTypeNone)
 		{ }
 
-		std::string keywords;
-		bool locally_double;
+		void applyItem(Package& pkg) const;
+		void applyItem(Version *ver) const
+		{ ver->add_accepted_keywords(keywords); }
+
+		void raise_empty(const std::string &s)
+		{ if(keywords.empty()) keywords = s; }
+#if 0
+		void print() { std::cerr << m_category << "/" << m_name << ":" << keywords << std::endl; }
+#endif
 };
 
 class PKeywordMask : public Mask {
 	public:
+		std::string keywords;
 
 		PKeywordMask(const char *str) : Mask(str, maskTypeNone)
 		{ }
 
-		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
-		std::string keywords;
+		void applyItem(Package& pkg) const;
+		void applyItem(Version *ver) const
+		{ ver->modify_effective_keywords(keywords); }
 };
 
 class SetMask : public Mask {
@@ -134,7 +150,7 @@ class SetMask : public Mask {
 			Mask(str, maskTypeNone), m_set(set_index)
 		{ }
 
-		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING);
+		void applyItem(Package& pkg) const;
 
 		SetsIndex m_set;
 };

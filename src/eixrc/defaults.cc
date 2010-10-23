@@ -299,37 +299,67 @@ AddOption(STRING, "COLOR_TITLE",
 AddOption(STRING, "COLOR_NAME",
 	"default,1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the name of packages."));
+	"It defines the color used for the name of packages."));
 
 AddOption(STRING, "COLOR_WORLD",
 	"green,1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the name of world packages."));
+	"It defines the color used for the name of world packages."));
+
+AddOption(STRING, "COLOR_VIRTUAL_WORLD",
+	"%{COLOR_WORLD};underline", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the name of packages providing\n"
+	"a world package but which are not a world package."));
 
 AddOption(STRING, "COLOR_WORLD_SETS",
 	"yellow,1", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the name of world sets packages."));
+	"It defines the color used for the name of world sets packages."));
+
+AddOption(STRING, "COLOR_VIRTUAL_WORLD_SETS",
+	"%{COLOR_WORLD_SETS};underline", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the name of packages providing\n"
+	"a world sets package but which are not part of world sets."));
 
 AddOption(STRING, "COLOR_CATEGORY",
 	"", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the category of packages."));
+	"It defines the color used for the category of packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
 	"yellow", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the category of system packages."));
+	"It defines the color used for the category of system packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_VIRTUAL_SYSTEM",
+	"%{COLOR_CATEGORY_SYSTEM};underline", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category of packages which\n"
+	"provide system packages but are not part of system."));
 
 AddOption(STRING, "COLOR_CATEGORY_WORLD",
 	"%{COLOR_WORLD}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the category of world packages."));
+	"It defines the color used for the category of world packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_VIRTUAL_WORLD",
+	"%{COLOR_VIRTUAL_WORLD}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category name of packages providing\n"
+	"a world package but which are not a world package."));
 
 AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
 	"%{COLOR_WORLD_SETS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the category of world sets packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_VIRTUAL_WORLD_SETS",
+	"%{COLOR_VIRTUAL_WORLD_SETS}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category name of packages\n"
+	"a world sets package but which are not part of world sets."));
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"cyan,1", _(
@@ -1055,19 +1085,29 @@ AddOption(STRING, "FORMAT_FINISH",
 	"It is used at the end of a package to output a newline unless NEWLINE=true."));
 
 AddOption(STRING, "FORMAT_NAME",
-	"{system}(%{COLOR_CATEGORY_SYSTEM})"
+	"{system}"
+		"{systempure}(%{COLOR_CATEGORY_SYSTEM})"
+		"{else}(%{COLOR_CATEGORY_VIRTUAL_SYSTEM}){}"
 	"{else}"
-		"{world}(%{COLOR_CATEGORY_WORLD})"
+		"{world}"
+			"{worldpure}(%{COLOR_CATEGORY_WORLD})"
+			"{else}(%{COLOR_CATEGORY_VIRTUAL_WORLD}){}"
 		"{else}"
-			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
+			"{world_sets}"
+				"{world_setspure}(%{COLOR_CATEGORY_WORLD_SETS})"
+				"{else}(%{COLOR_CATEGORY_VIRTUAL_WORLD_SETS}){}"
 			"{else}(%{COLOR_CATEGORY}){}"
 		"{}"
 	"{}<category>()/"
 	"{marked}(%{COLOR_MARKED_NAME})"
 	"{else}"
-		"{world}(%{COLOR_WORLD})"
+		"{world}"
+			"{worldpure}(%{COLOR_WORLD})"
+			"{else}(%{COLOR_VIRTUAL_WORLD}){}"
 		"{else}"
-			"{world_sets}(%{COLOR_WORLD_SETS})"
+			"{world_sets}"
+				"{world_setspure}(%{COLOR_WORLD_SETS})"
+				"{else}(%{COLOR_VIRTUAL_WORLD_SETS}){}"
 			"{else}(%{COLOR_NAME}){}"
 		"{}"
 	"{}<name>()", _(
@@ -2208,40 +2248,41 @@ AddOption(BOOLEAN, "ACCEPT_KEYWORDS_AS_ARCH",
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE",
 	"some", _(
-	"Applies if /etc/portage/package.keywords lists the same keyword twice\n"
-	"for the versions in question."));
+	"Applies if /etc/portage/package.accept_keywords lists the same keyword\n"
+	"twice for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_LINE",
 	"some", _(
-	"Applies if /etc/portage/package.keywords has two lines for identical target."));
+	"Applies if /etc/portage/package.accept_keywords has two lines for\n"
+	"identical target."));
 
 AddOption(STRING, "REDUNDANT_IF_MIXED",
 	"false", _(
-	"Applies if /etc/portage/package.keywords lists two different keywords,\n"
-	"e.g. ~ARCH and -*, for the versions in question."));
+	"Applies if /etc/portage/package.accept_keywords lists two different\n"
+	"keywords, e.g. ~ARCH and -*, for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_WEAKER",
 	"all-installed", _(
-	"Applies if /etc/portage/package.keywords lists a keywords which can\n"
+	"Applies if /etc/portage/package.accept_keywords lists a keywords which can\n"
 	"be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
 	"in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,\n"
 	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_STRANGE",
 	"some", _(
-	"Applies if /etc/portage/package.keywords lists a strange keyword\n"
+	"Applies if /etc/portage/package.accept_keywords lists a strange keyword\n"
 	"e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
 	"for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_MINUSASTERISK",
 	"some", _(
-	"Applies if /etc/portage/package.keywords contains some -* entry.\n"
+	"Applies if /etc/portage/package.accept_keywords contains some -* entry.\n"
 	"This test only applies if OBSOLETE_MINUSASTERISK is false."));
 
 AddOption(STRING, "REDUNDANT_IF_NO_CHANGE",
 	"all-installed", _(
-	"Applies if /etc/portage/package.keywords provides keywords which do not\n"
-	"change the availability keywords status for the versions in question."));
+	"Applies if /etc/portage/package.accept_keywords provides keywords which do\n"
+	"not change the availability keywords status for the versions in question."));
 
 AddOption(STRING, "REDUNDANT_IF_MASK_NO_CHANGE",
 	"all-uninstalled", _(
@@ -2280,7 +2321,7 @@ AddOption(STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
 
 AddOption(STRING, "REDUNDANT_IF_IN_KEYWORDS",
 	"-some", _(
-	"Applies if /etc/portage/package.keywords contains a matching entry."));
+	"Applies if /etc/portage/package.accept_keywords contains a matching entry."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_MASK",
 	"-some", _(
@@ -2318,6 +2359,7 @@ AddOption(BOOLEAN, "SLOT_UPGRADE_ALLOW",
 	"are treated as if UPGRADE_TO_HIGHEST_SLOT=true."));
 
 AddOption(STRING, "KEYWORDS_NONEXISTENT",
+	"%{\\EIXCFGDIR}/package.accept_keywords.nonexistent "
 	"%{\\EIXCFGDIR}/package.keywords.nonexistent", _(
 	"Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."));
 
@@ -2346,8 +2388,9 @@ AddOption(STRING, "INSTALLED_NONEXISTENT",
 	"Packages listed in these files/dirs are excluded for -t TEST_REMOVED."));
 
 AddOption(STRING, "KEYWORDS_NOWARN",
+	"%{\\EIXCFGDIR}/package.accept_keywords.nowarn "
 	"%{\\EIXCFGDIR}/package.keywords.nowarn", _(
-	"Exceptional packages for -T tests of /etc/portage/package.keywords."));
+	"Exceptional packages for -T tests of /etc/portage/package.accept_keywords."));
 
 AddOption(STRING, "MASK_NOWARN",
 	"%{\\EIXCFGDIR}/package.mask.nowarn", _(

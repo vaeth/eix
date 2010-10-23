@@ -87,6 +87,8 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 		slotted = multi_slot =
 		world = world_only_selected = world_only_file =
 		worldset = worldset_only_selected =
+		world_plain = world_only_selected_plain = world_only_file_plain =
+		worldset_plain = worldset_only_selected_plain =
 		dup_versions = dup_packages = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
@@ -142,7 +144,8 @@ PackageTest::calculateNeeds() {
 	if(installed)
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
-		upgrade || overlay || obsolete || binary || world || worldset ||
+		upgrade || overlay || obsolete || binary ||
+		world || worldset || world_plain || worldset_plain ||
 		(from_overlay_inst_list != NULL) ||
 		(from_foreign_overlay_inst_list != NULL) ||
 		(overlay_list != NULL) || (overlay_only_list != NULL) ||
@@ -551,10 +554,14 @@ stabilitytest(const Package *p, PackageTest::TestStability what)
 	if(likely(what == PackageTest::STABLE_NONE))
 		return true;
 	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
-		if(what & PackageTest::STABLE_SYSTEM) {
-			if(!it->maskflags.isSystem())
-				continue;
-			if(what == PackageTest::STABLE_SYSTEM)
+		if(what & (PackageTest::STABLE_SYSTEM|PackageTest::STABLE_SYSTEM_PLAIN)) {
+			if(!it->maskflags.isSystem()) {
+				if(!(what & PackageTest::STABLE_SYSTEM))
+					continue;
+				if(!it->maskflags.isAnySystem())
+					continue;
+			}
+			if(!(what & ~(PackageTest::STABLE_SYSTEM|PackageTest::STABLE_SYSTEM_PLAIN)))
 				return true;
 		}
 		if(it->maskflags.isHardMasked())
@@ -993,20 +1000,34 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 	}
 
-	if(unlikely(world || worldset)) {
+	if(unlikely(world || worldset || world_plain || worldset_plain )) {
 		// --world, --world-all, --world-set
 		// --selected, --selected-all, --selected-set
+		// --world-plain, --world-all-plain, --world-set-plain
+		// --selected-plain, --selected-all-plain, --selected-set-plain
 		get_p(p, pkg);
 		StabilityDefault(p);
-		if(world && !p->is_world_package()) {
-			if(world_only_file || !p->is_world_sets_package()) {
-				if(world_only_selected || !p->is_system_package()) {
+		if(world && !p->is_any_world_package()) {
+			if(world_only_file || !p->is_any_world_sets_package()) {
+				if(world_only_selected || !p->is_any_system_package()) {
+					return false;
+				}
+			}
+		}
+		if(world_plain && !p->is_world_package()) {
+			if(world_only_file_plain || !p->is_world_sets_package()) {
+				if(world_only_selected_plain || !p->is_system_package()) {
 					return false;
 				}
 			}
 		}
 		if(worldset && !p->is_world_sets_package()) {
-			if(worldset_only_selected || !p->is_system_package()) {
+			if(worldset_only_selected || !p->is_any_system_package()) {
+				return false;
+			}
+		}
+		if(worldset_plain && !p->is_world_sets_package()) {
+			if(worldset_only_selected_plain || !p->is_system_package()) {
 				return false;
 			}
 		}

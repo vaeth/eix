@@ -51,7 +51,7 @@ class SetsList : public std::vector<SetsIndex>
 		/// @return true if something has changed
 		bool add(const SetsList &l)
 		{
-			bool r = false;
+			bool r(false);
 			if(l.has_system()) {
 				if(add_system())
 					r = true;

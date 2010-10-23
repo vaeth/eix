@@ -275,6 +275,9 @@ class Scanner {
 			PKG_PROVIDE,
 			PKG_OVERLAYKEY,
 			PKG_BINARY,
+			PKG_SYSTEM_PURE,
+			PKG_WORLD_PURE,
+			PKG_WORLD_SETS_PURE,
 			PKG_SYSTEM,
 			PKG_WORLD,
 			PKG_WORLD_SETS,
@@ -410,6 +413,9 @@ class Scanner {
 			prop_pkg("system", PKG_SYSTEM);
 			prop_pkg("world", PKG_WORLD);
 			prop_pkg("world_sets", PKG_WORLD_SETS);
+			prop_pkg("systempure", PKG_SYSTEM_PURE);
+			prop_pkg("worldpure", PKG_WORLD_PURE);
+			prop_pkg("world_setspure", PKG_WORLD_SETS_PURE);
 			prop_pkg("setnames", PKG_SETNAMES);
 			prop_pkg("allsetnames", PKG_ALLSETNAMES);
 			prop_pkg("upgrade", PKG_UPGRADE);
@@ -715,16 +721,28 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 					return overlay_keytext(ov_key, false);
 			}
 			break;
-		case Scanner::PKG_SYSTEM:
+		case Scanner::PKG_SYSTEM_PURE:
 			if(package->is_system_package())
 				return one;
 			break;
-		case Scanner::PKG_WORLD:
+		case Scanner::PKG_WORLD_PURE:
 			if(package->is_world_package())
 				return one;
 			break;
-		case Scanner::PKG_WORLD_SETS:
+		case Scanner::PKG_WORLD_SETS_PURE:
 			if(package->is_world_sets_package())
+				return one;
+			break;
+		case Scanner::PKG_SYSTEM:
+			if(package->is_any_system_package())
+				return one;
+			break;
+		case Scanner::PKG_WORLD:
+			if(package->is_any_world_package())
+				return one;
+			break;
+		case Scanner::PKG_WORLD_SETS:
+			if(package->is_any_world_sets_package())
 				return one;
 			break;
 		case Scanner::PKG_SETNAMES:

@@ -39,6 +39,7 @@ class CascadingProfile {
 		MaskList<Mask> m_package_masks;  /**< Masks from package.mask */
 		MaskList<Mask> m_package_unmasks;/**< Masks from package.unmask */
 		MaskList<PKeywordMask> m_package_keywords;/**< Masks from package.keywords */
+		MaskList<KeywordMask> m_package_accept_keywords;/**< Masks from package.accept_keywords */
 
 	private:
 
@@ -79,6 +80,12 @@ class CascadingProfile {
 		 * @return true if at least one file changed data. */
 		bool readremoveFiles();
 
+		/** When the files are read the ARCH might not be known yet.
+		 *  We must fix this afterwards by calling this function to
+		 *  replace empty entries in package.accept_keywords by the
+		 *  actual ~ARCH keyword: */
+		void raise_empty(std::string &s);
+
 		/** Cycle through profile and put path to files into
 		 * m_profile_files. */
 		void listaddProfile(const char *profile_dir = NULL) throw(ExBasic);
@@ -93,33 +100,6 @@ class CascadingProfile {
 
 		void applyMasks(Package *p) const;
 		void applyKeywords(Package *p) const;
-
-		/** Get all m_system packages. */
-		const MaskList<Mask> *getSystemPackages() const {
-			return &m_system;
-		}
-
-		/** Get all m_system packages. */
-		const MaskList<Mask> *getWorldPackages() const {
-			return &m_world;
-		}
-
-		/** Get packages that are not in m_system profile but only allowed to have specific versions .*/
-		const MaskList<Mask> *getAllowedPackages() const {
-			return &m_system_allowed;
-		}
-
-		const MaskList<Mask> *getPackageMasks() const {
-			return &m_package_masks;
-		}
-
-		const MaskList<Mask> *getPackageUnmasks() const {
-			return &m_package_unmasks;
-		}
-
-		const MaskList<PKeywordMask> *getPackageKeywords() const {
-			return &m_package_keywords;
-		}
 };
 
 

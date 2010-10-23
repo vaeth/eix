@@ -179,3 +179,12 @@ Version::modify_effective_keywords(const string &modify_keys)
 	else
 		effective_state = EFFECTIVE_USED;
 }
+
+void
+Version::add_accepted_keywords(const std::string &accepted_keywords)
+{
+	if(!m_accepted_keywords.empty()) {
+		m_accepted_keywords.append(" ");
+	}
+	m_accepted_keywords.append(accepted_keywords);
+}

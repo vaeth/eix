@@ -12,7 +12,6 @@
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
-#include <eixTk/unused.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/package.h>
@@ -255,25 +254,42 @@ void
 Mask::checkMask(Package& pkg, Keywords::Redundant check)
 {
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
-		apply(*i, check);
+		apply(*i, true, false, check);
+	}
+}
+
+/** Sets the stability member of all versions in virtual package according to the mask. */
+void
+Mask::applyVirtual(Package& pkg)
+{
+	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
+		apply(*i, false, true, Keywords::RED_NOTHING);
 	}
 }
 
 void
-PKeywordMask::checkMask(Package &pkg, Keywords::Redundant check ATTRIBUTE_UNUSED)
+KeywordMask::applyItem(Package &pkg) const
 {
-	UNUSED(check);
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(test(*i)) {
-			i->modify_effective_keywords(keywords);
+			applyItem(*i);
 		}
 	}
 }
 
 void
-SetMask::checkMask(Package& pkg, Keywords::Redundant check ATTRIBUTE_UNUSED)
+PKeywordMask::applyItem(Package &pkg) const
 {
-	UNUSED(check);
+	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
+		if(test(*i)) {
+			applyItem(*i);
+		}
+	}
+}
+
+void
+SetMask::applyItem(Package& pkg) const
+{
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(i->is_in_set(m_set)) // No need to check: Already in set
 			continue;
@@ -296,12 +312,15 @@ Mask::ismatch(Package& pkg)
 }
 
 /** Sets the stability & masked members of ve according to the mask
- * @param ve Version instance to be set */
-void Mask::apply(Version *ve, Keywords::Redundant check)
+ * @param ve         Version instance to be set
+ * @param do_test    set conditionally or unconditionally
+ * @param is_virtual the version matches only as a virtual name
+ * @param check      check these for changes */
+void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check)
 {
 	switch(m_type) {
 		case maskUnmask:
-			if(!test(ve))
+			if(is_virtual || (do_test && (!test(ve))))
 				break;
 			if(check & Keywords::RED_IN_UNMASK)
 				ve->set_redundant(Keywords::RED_IN_UNMASK);
@@ -319,7 +338,7 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 			}
 			break;
 		case maskMask:
-			if(!test(ve))
+			if(is_virtual || (do_test && (!test(ve))))
 				break;
 			if(check & Keywords::RED_IN_MASK)
 				ve->set_redundant(Keywords::RED_IN_MASK);
@@ -337,27 +356,47 @@ void Mask::apply(Version *ve, Keywords::Redundant check)
 			}
 			break;
 		case maskInSystem:
-			if( ve->maskflags.isSystem() && ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
+			if(is_virtual) {
+				if(ve->maskflags.isVirtualSystem()) {
+					break;
+				}
+				if((!do_test) || test(ve)) {
+					ve->maskflags.setbits(MaskFlags::MASK_VIRTUAL_SYSTEM);
+				}
 				break;
-			if( test(ve) )
+			}
+			if(ve->maskflags.isSystem() && ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
+				break;
+			if((!do_test) || test(ve)) {
 				ve->maskflags.setbits(MaskFlags::MASK_SYSTEM);
-			else
+			}
+			else {
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
+			}
 			break;
 		case maskInWorld:
-			if( ve->maskflags.isWorld() )
+			if(is_virtual) {
+				if(ve->maskflags.isVirtualWorld()) {
+					break;
+				}
+				if((!do_test) && test(ve))
+					ve->maskflags.setbits(MaskFlags::MASK_VIRTUAL_WORLD);
 				break;
-			if( test(ve) )
+			}
+			if(ve->maskflags.isWorld()) {
+				break;
+			}
+			if((!do_test) || test(ve)) {
 				ve->maskflags.setbits(MaskFlags::MASK_WORLD);
+			}
 			break;
 		case maskAllowedByProfile:
-			if( ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
+			if(is_virtual || ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
 				break;
-			if(!test(ve))
+			if(do_test && (!test(ve)))
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
-			break;
-		case maskTypeNone:
-			break;
+		//	break;
+		// case maskTypeNone:
 		default:
 			break;
 	}

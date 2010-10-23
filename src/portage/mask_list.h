@@ -13,13 +13,15 @@
 #include <eixTk/likely.h>
 #include <eixTk/ptr_list.h>
 #include <portage/keywords.h>
-#include <portage/package.h>
 #include <portage/mask.h>
+#include <portage/package.h>
 
 #include <map>
 #include <string>
 
 #include <cstddef>
+
+class Version;
 
 template<typename m_Type>
 class MaskList
@@ -81,6 +83,20 @@ class MaskList
 					for(const_mask_iterator m(t->second.begin());
 						likely(m != t->second.end()); ++m) {
 						msk.push_back(new m_Type(**m));
+					}
+				}
+			}
+		}
+
+		void raise_empty(const std::string &s)
+		{
+			for(iterator it(super::begin());
+				likely(it != super::end()); ++it) {
+				for(cat_iterator t(it->second.begin());
+					likely(t != it->second.end()); ++t) {
+					for(mask_iterator m(t->second.begin());
+						likely(m != t->second.end()); ++m) {
+						m->raise_empty(s);
 					}
 				}
 			}
@@ -156,15 +172,15 @@ class MaskList
 				likely(it != super::end()); ++it) {
 				for(const_cat_iterator t(it->second.begin());
 					likely(t != it->second.end()); ++t) {
+					std::cerr << it->first << "/" << t->first << std::endl;
 					for(const_mask_iterator m(t->second.begin());
 						likely(m != t->second.end()); ++m) {
-							m->print();
+//							m->print();
 					}
 				}
 			}
 		}
 #endif
-
 		const eix::ptr_list<m_Type> *get(const std::string &name, const std::string &category = SET_CATEGORY) const
 		{
 			const_iterator it(super::find(category));
@@ -181,54 +197,45 @@ class MaskList
 		const eix::ptr_list<m_Type> *get(const Package *p) const
 		{ return get(p->name, p->category); }
 
-		// return true if some masks applied
-		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const
+		const eix::ptr_list<m_Type> *get_split(const std::string &cat_name) const
 		{
-			const eix::ptr_list<m_Type> *l = get(p);
-			if(l == NULL)
-				return false;
+			std::string::size_type slash(cat_name.find("/"));
+			if(slash == std::string::npos) {
+				return NULL;
+			}
+			return get(cat_name.substr(slash + 1), cat_name.substr(0, slash));
+		}
 
-			bool rvalue(false);
-			bool had_mask(false);
-			bool had_unmask(false);
+		void applyListItems(Package *p) const
+		{
+			const eix::ptr_list<m_Type> *l(get(p));
+			if(l == NULL) {
+				return;
+			}
 			for(const_mask_iterator m(l->begin());
 				likely(m != l->end()); ++m) {
-				rvalue = 1;
-				m->checkMask(*p, check);
-				switch(m->get_type())
-				{
-					case Mask::maskMask:
-						had_mask = true;
-						break;
-					case Mask::maskUnmask:
-						had_unmask = true;
-						break;
-					default:
-						break;
-				}
+				m->applyItem(*p);
 			}
-			if(!(check & Keywords::RED_MASK))
-				had_mask = false;
-			if(!(check & Keywords::RED_UNMASK))
-				had_unmask = false;
-			if(had_mask || had_unmask)
-			{
-				for(Package::iterator i(p->begin());
-					likely(i != p->end()); ++i) {
-					if(had_mask)
-					{
-						if(!i->was_masked())
-							i->set_redundant(Keywords::RED_MASK);
-					}
-					if(had_unmask)
-					{
-						if(!i->was_unmasked())
-							i->set_redundant(Keywords::RED_UNMASK);
-					}
-				}
-			}
-			return rvalue;
 		}
+
+		void applyListSetItems(Version *v, const std::string &set_name) const
+		{
+			const eix::ptr_list<m_Type> *l(get(set_name));
+			if(l == NULL) {
+				return;
+			}
+			for(const_mask_iterator m(l->begin());
+				likely(m != l->end()); ++m) {
+				m->applyItem(v);
+			}
+		}
+
+		// return true if some masks applied
+		bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+
+		void applySetMasks(Version *v, const std::string &set_name) const;
+
+		void applyVirtualMasks(Package *p) const;
 };
 
 #endif /* EIX__MASK_LIST_H__ */

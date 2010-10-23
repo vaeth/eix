@@ -90,6 +90,7 @@ portage/packagetree.cc \
 portage/packagetree.h \
 portage/keywords.cc \
 portage/keywords.h \
+portage/mask_list.cc \
 portage/mask_list.h \
 portage/overlay.cc \
 portage/overlay.h \

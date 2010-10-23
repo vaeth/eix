@@ -31,7 +31,8 @@ class Version;
 #define MAKE_GLOBALS_FILE       "/etc/make.globals"
 #define MAKE_CONF_FILE          "/etc/make.conf"
 #define USER_CATEGORIES_FILE    "/etc/portage/categories"
-#define USER_KEYWORDS_FILE      "/etc/portage/package.keywords"
+#define USER_KEYWORDS_FILE1     "/etc/portage/package.accept_keywords"
+#define USER_KEYWORDS_FILE2     "/etc/portage/package.keywords"
 #define USER_MASK_FILE          "/etc/portage/package.mask"
 #define USER_UNMASK_FILE        "/etc/portage/package.unmask"
 #define USER_USE_FILE           "/etc/portage/package.use"
@@ -125,6 +126,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 		std::vector<std::string> m_accepted_keywords;
 		std::set<std::string>    m_accepted_keywords_set, m_arch_set,
 		                        *m_local_arch_set;
+		std::string              m_raised_arch;
 
 		MaskList<SetMask>        m_package_sets;
 
@@ -197,6 +199,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		const std::vector<std::string> *get_world_sets() const
 		{ return &world_sets; }
 
+		bool readKeywordsFile(const char *filename, MaskList<KeywordMask> &keywords) const;
+
 		/** pushback categories from profiles to vec. Categories may be duplicate.
 		    Result is not cashed, i.e. this should be called only once. */
 		void pushback_categories(std::vector<std::string> &vec);
@@ -210,12 +214,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		bool calc_allow_upgrade_slots(const Package *p) const;
 
-		void calc_local_sets(Package *p) const
-		{
-			m_package_sets.applyMasks(p);
-			if(m_recurse_sets)
-				calc_recursive_sets(p);
-		}
+		void calc_local_sets(Package *p) const;
 
 		void finalize(Package *p)
 		{ calc_world_sets(p); p->finalize_masks(); }

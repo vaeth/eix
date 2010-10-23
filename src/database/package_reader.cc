@@ -21,6 +21,8 @@
 #include <cstdio>
 #include <sys/types.h>
 
+using namespace std;
+
 void
 PackageReader::read(Attributes need)
 {
@@ -62,8 +64,9 @@ PackageReader::read(Attributes need)
 				m_portagesettings->calc_local_sets(&(*m_pkg));
 				m_portagesettings->finalize(&(*m_pkg));
 			}
-			else
+			else {
 				m_pkg->finalize_masks();
+			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
 		default:
 		//case COLL_IUSE:

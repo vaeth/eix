@@ -42,13 +42,6 @@ const Package::Versioncollects
 	Package::COLLECT_AT_LEAST_TWO_OVERLAYS,
 	Package::COLLECT_DEFAULT;
 
-const Package::Localcollects
-	Package::LCOLLECT_NONE,
-	Package::LCOLLECT_SYSTEM,
-	Package::LCOLLECT_WORLD,
-	Package::LCOLLECT_WORLD_SETS,
-	Package::LCOLLECT_DEFAULT;
-
 Version *
 VersionList::best(bool allow_unstable) const
 {
@@ -167,29 +160,12 @@ Package::addVersionFinalize(Version *version)
 			if(largest_overlay < key)
 				largest_overlay = key;
 		}
-		if(!is_system_package()) {
-			if(version->maskflags.isSystem())
-				local_collects |= LCOLLECT_SYSTEM;
-		}
-		if(!is_world_package()) {
-			if(version->maskflags.isWorld())
-				local_collects |= LCOLLECT_WORLD;
-		}
-		if(!is_world_sets_package()) {
-			if(version->maskflags.isWorldSets())
-				local_collects |= LCOLLECT_WORLD_SETS;
-		}
+		local_collects.setbits(version->maskflags.get());
 	}
 	else {
 		largest_overlay       = key;
 		version_collects      = COLLECT_DEFAULT;
-		local_collects        = LCOLLECT_DEFAULT;
-		if(unlikely(version->maskflags.isSystem()))
-			local_collects |= LCOLLECT_SYSTEM;
-		if(version->maskflags.isWorld())
-			local_collects |= LCOLLECT_WORLD;
-		if(version->maskflags.isWorldSets())
-			local_collects |= LCOLLECT_WORLD_SETS;
+		local_collects        = version->maskflags;
 	}
 	if(! (version->slotname).empty())
 		version_collects |= COLLECT_HAVE_NONTRIVIAL_SLOTS;
@@ -208,27 +184,10 @@ Package::addVersionFinalize(Version *version)
 void
 Package::finalize_masks()
 {
-	bool system(false), world(false), world_sets(false);
+	local_collects.set(MaskFlags::MASK_NONE);
 	for(iterator i(begin()); likely(i != end()); ++i) {
-		if(unlikely(i->maskflags.isSystem()))
-			system = true;
-		if(i->maskflags.isWorld())
-			world = true;
-		if(i->maskflags.isWorldSets())
-			world_sets  = true;
+		local_collects.setbits(i->maskflags.get());
 	}
-	if(unlikely(system))
-		local_collects |= LCOLLECT_SYSTEM;
-	else
-		local_collects &= ~LCOLLECT_SYSTEM;
-	if(world)
-		local_collects |= LCOLLECT_WORLD;
-	else
-		local_collects &= ~LCOLLECT_WORLD;
-	if(world_sets)
-		local_collects |= LCOLLECT_WORLD_SETS;
-	else
-		local_collects &= ~LCOLLECT_WORLD_SETS;
 }
 
 Version *

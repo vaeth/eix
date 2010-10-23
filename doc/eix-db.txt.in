@@ -217,6 +217,10 @@ char         Mask bitset for the current $ARCH:
                :0x02: masked by profile
                :0x04: version is in @system
                :0x08: version is in @world (if SAVE_WORLD=true)
+               :0x10: version is in @world sets (if SAVE_WORLD=true)
+               :0x20: version provides virtual in @system
+               :0x40: version provides virtual in @world (if SAVE_WORLD=true)
+               :0x80: version provides virtual in @world sets (if SAVE_WORLD=true)
 
 char         Mask bitset for the PROPERTIES variable:
                :0x01: PROPERTIES=interactive

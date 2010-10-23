@@ -312,6 +312,10 @@ TEST_WITH_OPTIONS ::= [TEST_OPTIONS] [PATTERN]
 Do not forget that B<!>, B<(>, B<)> have to be quoted in shells so that
 eix actually receives these as parts of arguments!
 
+If you want that an EXPRESSION starts with B<->, precede it with two further B<--> symbols:
+This way, the EXPRESSION is not read as an option, and two additional B<--> symbols are ignored.
+For example, B<eix ---tools> will output the packages containing B<-tools>.
+
 The meaning of the logical operators should be obvious with perhaps some exceptions:
 
 1. If neither B<--and>|B<-a> nor B<--or>|B<-o> is between two EXPRESSIONs, then one of
@@ -399,16 +403,17 @@ Otherwise, this decision is based upon B<UPGRADE_LOCAL_MODE>.
 If you want to see only packages with downgrade recommendations, you might make
 use of the B<FORMATSTRING> features described below.
 .TP
-.BR --stable ", " --testing ", " --non-masked ", " --system
+.BR --stable ", " --testing ", " --non-masked ", " --system ", " --system-plain+
 Only match packages which have at least one version which is stable (and non-masked),
-testing or stable (and non-masked), non-masked, or in system, respectively.
+testing or stable (and non-masked), non-masked, in system or provides a system virtual,
+or in system, respectively.
 If several of these options are combined in one test, it is the same version
 which must satisfy all.
 .TP
-.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+
+.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+ ", " --system-plain+
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=true>.
 .TP
-.BR --stable- ", " --testing- ", " --non-masked- ", " --system-
+.BR --stable- ", " --testing- ", " --non-masked- ", " --system- ", " --system-plain-
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=false>.
 .TP
 .BR --installed-unstable ", " --installed-testing ", " --installed-masked
@@ -418,31 +423,36 @@ at least one non-stable, testing, or masked version installed
 If several of these options are combined in one test, it is the same version
 which must satisfy all.
 .TP
-.BR --world
-Only match @world packages.
+.BR --world ", " --world-plain
+Only match @world packages (and in case B<--world> also those providing virtuals for @world).
 This is analogous to "emerge @world", i.e. it includes not only packages in
 the world file but also in world sets and the @system set.
 If you do not want to have all included, choose the appropriate alternative
 option.
 .TP
-.BR --world-file
+.BR --world-file ", " --world-plain
 This only matches packages from the world file or from the @system set.
+In case B<--world-file> also those providing corresponding virtuals are accepted.
 .TP
-.BR --world-set
+.BR --world-set ", " --world-set-plain
 This only matches packages from world_set or from the @system set.
+In case B<--world-set> also those providing corresponding virtuals are accepted.
 .TP
-.BR --selected
+.BR --selected ", " --selected-plain
 Only match @selected packages.
 This is analogous to "emerge @selected", i.e. it includes not only packages in
 the world file but also in world_sets (if you have @system contained in the
 world_sets file, then the behaviour is of course identical to B<--world>).
+The B<--selected> variant also includes packages providing corresponding virtuals.
 If you do not want to have both included, choose the appropriate alternative option.
 .TP
-.BR --selected-file
+.BR --selected-file ", " --selected-file-plain
 This only matches packages from the world file.
+The B<--selected-file> variant also includes packages providing corresponding virtuals.
 .TP
-.BR --selected-set
+.BR --selected-set ", " --selected-set-plain
 This only matches packages from world_set.
+The B<--selected-set> variant also includes packages providing corresponding virtuals.
 .TP
 .BR --binary
 Only match packages with a binary file (*.tbz2) in PKGDIR.
@@ -1149,12 +1159,21 @@ See the remarks for B<--binary>.
 If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
 .TP
 .B system
-expands to 1 if this package is in the system profile
+expands to 1 if the package is in the system profile or provides such a virtual
 .TP
 .B world
-expands to 1 if this package is in the world file
+expands to 1 if the package is in the world file or provides such a virtual
 .TP
 .B world_sets
+expands to 1 if the package is in the world sets or provides such a virtual
+.TP
+.B systempure
+expands to 1 if this package is in the system profile
+.TP
+.B worldpure
+expands to 1 if this package is in the world file
+.TP
+.B world_setspure
 expands to 1 if this package is in world sets
 .TP
 .B provide
@@ -2669,7 +2688,7 @@ This is a list of filenames/dirnames which serve as /etc/portage/package.slot_up
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
 .BR KEYWORDS_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nonexistent
+This is a list of filenames/dirnames which serve as /etc/portage/package.accept_keywords.nonexistent
 .TP
 .BR MASK_NONEXISTENT " " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nonexistent
@@ -2690,7 +2709,7 @@ This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.
 This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
 .BR KEYWORDS_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.keywords.nowarn
+This is a list of filenames/dirnames which serve as /etc/portage/package.accept_keywords.nowarn
 .TP
 .BR MASK_NOWARN " " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nowarn
@@ -2729,6 +2748,7 @@ The corresponding packages are treated as exceptions for B<UPGRADE_TO_HIGHEST_SL
 .\" }}}
 
 .\" {{{ /etc/portage/package.*.nonexistent
+.SS /etc/portage/package.accept_keywords.nonexistent
 .SS /etc/portage/package.keywords.nonexistent
 .SS /etc/portage/package.mask.nonexistent
 .SS /etc/portage/package.unmask.nonexistent
@@ -2750,6 +2770,7 @@ omit the "category/" part (although this is not recommended).
 .\" }}}
 
 .\" {{{ /etc/portage/package.*.nowarn
+.SS /etc/portage/package.accept_keywords.nowarn
 .SS /etc/portage/package.keywords.nowarn
 Similarly as /etc/portage/package.*, this can be a file or a directory.
 With this file/dir you can switch off test for -T for particular packages.
@@ -2771,7 +2792,7 @@ Since all other /etc/portage/package.*.nowarn files have the same policy,
 you can just merge all these into one file if you prefer (you can e.g. set
 the B<*_NOWARN> variables to the same filenames).
 
-Available tests in /etc/portage/package.keywords.nowarn are
+Available tests in /etc/portage/package.accept_keywords.nowarn are
 B<in_keywords>, B<no_change>, B<double>, B<mixed>, B<weaker>,
 B<minusasterisk>, B<double_line>, and they correspond to the analogous
 B<REDUNDNANT_IF_*> variable.

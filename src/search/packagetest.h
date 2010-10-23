@@ -77,11 +77,12 @@ class PackageTest {
 
 		typedef uint8_t TestStability;
 		static const TestStability
-			STABLE_NONE      = 0x00,
-			STABLE_FULL      = 0x01, /**< Test for stable keyword */
-			STABLE_TESTING   = 0x02, /**< Test for testing keyword */
-			STABLE_NONMASKED = 0x04, /**< Test for non-masked packages */
-			STABLE_SYSTEM    = 0x08; /**< Test for system packages */
+			STABLE_NONE         = 0x00,
+			STABLE_FULL         = 0x01, /**< Test for stable keyword */
+			STABLE_TESTING      = 0x02, /**< Test for testing keyword */
+			STABLE_NONMASKED    = 0x04, /**< Test for non-masked packages */
+			STABLE_SYSTEM       = 0x08, /**< Test for system packages */
+			STABLE_SYSTEM_PLAIN = 0x10; /**< Test for system-plain packages */
 
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);
@@ -164,6 +165,24 @@ class PackageTest {
 
 		void SelectedSet()
 		{ worldset = worldset_only_selected = true; }
+
+		void WorldAllPlain()
+		{ world_plain = true; }
+
+		void WorldFilePlain()
+		{ world_plain = world_only_file_plain = true; }
+
+		void SelectedAllPlain()
+		{ world_plain = world_only_selected_plain = true; }
+
+		void SelectedFilePlain()
+		{ world_plain = world_only_selected_plain = world_only_file_plain = true; }
+
+		void WorldSetPlain()
+		{ worldset_plain = true; }
+
+		void SelectedSetPlain()
+		{ worldset_plain = worldset_only_selected_plain = true; }
 
 		void StabilityDefault(Package *p) const
 		{ stability->set_stability(*p); }
@@ -250,7 +269,9 @@ class PackageTest {
 			installed, multi_installed,
 			slotted, multi_slot,
 			world, world_only_file, world_only_selected,
-			worldset, worldset_only_selected;
+			worldset, worldset_only_selected,
+			world_plain, world_only_file_plain, world_only_selected_plain,
+			worldset_plain, worldset_only_selected_plain;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;

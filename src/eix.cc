@@ -310,20 +310,29 @@ static struct Option long_options[] = {
 	Option("non-masked",    O_NONMASKED_DEFAULT),
 	Option("binary",        O_BINARY),
 	Option("world-file",    O_WORLD_FILE),
+	Option("world-file-plain", O_WORLD_FILE_PLAIN),
 	Option("world-set",     O_WORLD_SET),
+	Option("world-set-plain", O_WORLD_SET_PLAIN),
 	Option("world",         O_WORLD_ALL),
+	Option("world-plain",   O_WORLD_ALL_PLAIN),
 	Option("selected-file", O_SELECTED_FILE),
+	Option("selected-file-plain", O_SELECTED_FILE_PLAIN),
 	Option("selected-set",  O_SELECTED_SET),
+	Option("selected-set-plain", O_SELECTED_SET_PLAIN),
 	Option("selected",      O_SELECTED_ALL),
+	Option("selected-plain",O_SELECTED_ALL_PLAIN),
 	Option("system",        O_SYSTEM_DEFAULT),
+	Option("system-plain",  O_SYSTEM_PLAIN_DEFAULT),
 	Option("stable+",       O_STABLE_LOCAL),
 	Option("testing+",      O_TESTING_LOCAL),
 	Option("non-masked+",   O_NONMASKED_LOCAL),
 	Option("system+",       O_SYSTEM_LOCAL),
+	Option("system-plain+", O_SYSTEM_PLAIN_LOCAL),
 	Option("stable-",       O_STABLE_NONLOCAL),
 	Option("testing-",      O_TESTING_NONLOCAL),
 	Option("non-masked-",   O_NONMASKED_NONLOCAL),
 	Option("system-",       O_SYSTEM_NONLOCAL),
+	Option("system-plain-", O_SYSTEM_PLAIN_NONLOCAL),
 	Option("installed-unstable", O_INSTALLED_UNSTABLE),
 	Option("installed-testing",  O_INSTALLED_TESTING),
 	Option("installed-masked",   O_INSTALLED_MASKED),
@@ -696,7 +705,10 @@ run_eix(int argc, char** argv)
 		bool empty(eixrc.getBool("TEST_FOR_EMPTY"));
 		cout << "\n";
 		if(likely(eixrc.getBool("TEST_KEYWORDS"))) {
-			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE,
+			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE1,
+				eixrc["KEYWORDS_NONEXISTENT"],
+				all_packages);
+			print_unused(eixrc.m_eprefixconf + USER_KEYWORDS_FILE2,
 				eixrc["KEYWORDS_NONEXISTENT"],
 				all_packages);
 		}

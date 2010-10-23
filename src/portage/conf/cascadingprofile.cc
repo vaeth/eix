@@ -93,8 +93,14 @@ CascadingProfile::readremoveFiles()
 			handler = &CascadingProfile::readPackageKeywords;
 		else if(unlikely(strcmp(filename, "package.keywords.d") == 0))
 			handler = &CascadingProfile::readPackageKeywords;
-		else
+		else {
+			if((unlikely(strcmp(filename, "package.accept_keywords") == 0)) ||
+			(unlikely(strcmp(filename, "package.accept_keywords.d") == 0))) {
+				if(m_portagesettings->readKeywordsFile(file->c_str(), m_package_accept_keywords))
+					ret = true;
+			}
 			continue;
+		}
 
 		vector<string> lines;
 		pushback_lines(file->c_str(), &lines, true, true, true);
@@ -115,6 +121,12 @@ CascadingProfile::readremoveFiles()
 	}
 	m_profile_files.clear();
 	return ret;
+}
+
+void
+CascadingProfile::raise_empty(string &s)
+{
+	m_package_accept_keywords.raise_empty(s);
 }
 
 bool
@@ -252,21 +264,37 @@ CascadingProfile::applyMasks(Package *p) const
 		}
 	}
 	else {
-		for(Package::iterator it = p->begin(); likely(it != p->end()); ++it) {
-			if((*it)->maskflags.isWorld()) {
-				(*it)->maskflags.set(MaskFlags::MASK_WORLD);
-			}
-			else {
-				(*it)->maskflags.set(MaskFlags::MASK_NONE);
+		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
+			(*it)->maskflags.clearbits(~MaskFlags::MASK_ANY_WORLD);
+		}
+	}
+	m_system_allowed.applyMasks(p);
+	m_system.applyMasks(p);
+	m_system.applyVirtualMasks(p);
+	m_package_masks.applyMasks(p);
+	m_package_unmasks.applyMasks(p);
+	if(use_world) {
+		m_world.applyMasks(p);
+		m_world.applyVirtualMasks(p);
+	}
+	// Now we must also apply the set-items of the above lists:
+	for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
+		if(v->sets_indizes.empty()) {
+			// Shortcut for the most frequent case
+			continue;
+		}
+		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
+			unlikely(it != v->sets_indizes.end()); ++it) {
+			const string &set_name(m_portagesettings->set_names[*it]);
+			m_system_allowed.applySetMasks(*v, set_name);
+			m_system.applySetMasks(*v, set_name);
+			m_package_masks.applySetMasks(*v, set_name);
+			m_package_unmasks.applySetMasks(*v, set_name);
+			if(use_world) {
+				m_world.applySetMasks(*v, set_name);
 			}
 		}
 	}
-	getAllowedPackages()->applyMasks(p);
-	getSystemPackages()->applyMasks(p);
-	getPackageMasks()->applyMasks(p);
-	getPackageUnmasks()->applyMasks(p);
-	if(use_world)
-		getWorldPackages()->applyMasks(p);
 	m_portagesettings->finalize(p);
 }
 
@@ -274,7 +302,31 @@ void
 CascadingProfile::applyKeywords(Package *p) const
 {
 	for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-		it->reset_effective_keywords();
+		it->reset_accepted_effective_keywords();
 	}
-	getPackageKeywords()->applyMasks(p);
+	bool keywords_empty(m_package_keywords.empty());
+	bool accept_empty(m_package_accept_keywords.empty());
+	if(likely(keywords_empty && accept_empty)) {
+		// For most profiles, we can take this shortcut:
+		return;
+	}
+	if(!keywords_empty) {
+		m_package_keywords.applyListItems(p);
+	}
+	if(!accept_empty) {
+		m_package_accept_keywords.applyListItems(p);
+	}
+	// Now we must also apply the set-items of the lists:
+	for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
+		if(v->sets_indizes.empty()) {
+			// Shortcut for the most frequent case
+			continue;
+		}
+		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
+			unlikely(it != v->sets_indizes.end()); ++it) {
+			const string &set_name(m_portagesettings->set_names[*it]);
+			m_package_keywords.applyListSetItems(*v, set_name);
+			m_package_accept_keywords.applyListSetItems(*v, set_name);
+		}
+	}
 }

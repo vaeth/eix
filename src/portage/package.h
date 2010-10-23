@@ -98,16 +98,9 @@ class Package
 			COLLECT_DEFAULT               = COLLECT_HAVE_SAME_OVERLAY_KEY;
 		Versioncollects version_collects;
 
-		typedef uint8_t Localcollects;
-		static const Localcollects
-			LCOLLECT_NONE       = 0x00,
-			LCOLLECT_SYSTEM     = 0x01,
-			LCOLLECT_WORLD      = 0x02,
-			LCOLLECT_WORLD_SETS = 0x04,
-			LCOLLECT_DEFAULT    = LCOLLECT_NONE;
-		Localcollects local_collects;
+		MaskFlags local_collects;
 
-		std::vector<Localcollects> saved_collects;
+		std::vector<MaskFlags> saved_collects;
 
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses, provide;
@@ -142,15 +135,27 @@ class Package
 
 		/** True if any version is in the system profile. */
 		bool is_system_package() const
-		{ return (local_collects & LCOLLECT_SYSTEM); }
+		{ return local_collects.isSystem(); }
 
 		/** True if any version is in the world file. */
 		bool is_world_package() const
-		{ return (local_collects & LCOLLECT_WORLD); }
+		{ return local_collects.isWorld(); }
 
-		/** True if any version is in the world file. */
+		/** True if any version is in the world sets. */
 		bool is_world_sets_package() const
-		{ return (local_collects & LCOLLECT_WORLD_SETS); }
+		{ return local_collects.isWorldSets(); }
+
+		/** True if any (possibly virtual) version is in the system profile. */
+		bool is_any_system_package() const
+		{ return local_collects.isAnySystem(); }
+
+		/** True if any (possibly virtual) version is in the world file. */
+		bool is_any_world_package() const
+		{ return local_collects.isAnyWorld(); }
+
+		/** True if any (possibly virtual) version is in the world sets. */
+		bool is_any_world_sets_package() const
+		{ return local_collects.isAnyWorldSets(); }
 
 #ifndef NOT_FULL_USE
 		/** Does at least one version have individual iuse data? */
@@ -159,12 +164,12 @@ class Package
 
 		/// Preset with defaults
 		Package() :
-			saved_collects(Version::SAVEMASK_SIZE, LCOLLECT_DEFAULT)
+			saved_collects(Version::SAVEMASK_SIZE, MaskFlags::MASK_NONE)
 		{ defaults(); }
 
 		/// Fill in name and category and preset with defaults
 		Package(const std::string& c, const std::string& n) :
-			saved_collects(Version::SAVEMASK_SIZE, LCOLLECT_DEFAULT),
+			saved_collects(Version::SAVEMASK_SIZE, MaskFlags::MASK_NONE),
 			category(c), name(n)
 		{ defaults(); }
 
@@ -204,10 +209,10 @@ class Package
 			}
 		}
 
-		void save_effective(Version::SavedEffectiveIndex i)
+		void save_accepted_effective(Version::SavedEffectiveIndex i)
 		{
 			for(iterator it(begin()); likely(it != end()); ++it) {
-				it->save_effective(i);
+				it->save_accepted_effective(i);
 			}
 		}
 
@@ -232,10 +237,10 @@ class Package
 			return true;
 		}
 
-		bool restore_effective(Version::SavedEffectiveIndex i)
+		bool restore_accepted_effective(Version::SavedEffectiveIndex i)
 		{
 			for(iterator it(begin()); likely(it != end()); ++it) {
-				if(unlikely(!(it->restore_effective(i)))) {
+				if(unlikely(!(it->restore_accepted_effective(i)))) {
 					return false;
 				}
 			}
@@ -402,7 +407,7 @@ class Package
 			know_upgrade_slots = m_has_cached_slotlist = false;
 			have_duplicate_versions = DUP_NONE;
 			version_collects = COLLECT_DEFAULT;
-			local_collects = LCOLLECT_DEFAULT;
+			local_collects.set(MaskFlags::MASK_NONE);
 #ifndef NOT_FULL_USE
 			versions_have_full_use = false;
 #endif

@@ -53,6 +53,10 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 						/* a lonely -- */
 						seen_escape = true;
 						continue;
+					case '-':
+						/* something ---escaped */
+						push_back(Parameter(ptr));
+						continue;
 					default:
 						/* some longopt */
 						opt = lookup_longopt(ptr, opt_table);
