@@ -138,24 +138,40 @@ MaskList<Mask>::applyVirtualMasks(Package *p) const
 }
 
 bool
-PreList::add_lines(const vector<string> &lines)
+PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num)
 {
 	bool changed(false);
+	LineNumber number((num == NULL) ? 1 : (*num));
 	for(vector<string>::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++it) {
-		if(add_line(*it)) {
+		if(handle_line(*it, file, number++, only_add)) {
 			changed = true;
 		}
+	}
+	if(num != NULL) {
+		*num = number;
 	}
 	return changed;
 }
 
 bool
-PreList::add_line(const std::string &line)
+PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add)
+{
+	if(line.empty()) {
+		return false;
+	}
+	if(only_add || (line[0] != '-')) {
+		return add_line(line,file, number);
+	}
+	return remove_line(line.c_str() + 1);
+}
+
+bool
+PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number)
 {
 	vector<string> l;
 	split_string(l, line);
-	return add_splitted(l);
+	return add_splitted(l, file, number);
 }
 
 bool
@@ -167,16 +183,7 @@ PreList::remove_line(const std::string &line)
 }
 
 bool
-PreList::handle_line(const std::string &line)
-{
-	if(line[0] == '-') {
-		return remove_line(line.c_str() + 1);
-	}
-	return add_line(line);
-}
-
-bool
-PreList::add_splitted(const std::vector<std::string> &line)
+PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex file, LineNumber number)
 {
 	if(line.empty()) {
 		return false;
@@ -184,10 +191,12 @@ PreList::add_splitted(const std::vector<std::string> &line)
 	map<vector<string>, vector<PreListOrderEntry>::size_type>::iterator it(have.find(line));
 	if(it == have.end()) {
 		have[line] = order.size();
-		order.push_back(PreListOrderEntry(line));
+		order.push_back(PreListOrderEntry(line, file, number));
 		return true;
 	}
 	PreListOrderEntry &e(order[it->second]);
+	e.filename_index = file;
+	e.linenumber = number;
 	if(e.removed) {
 		e.removed = false;
 		return true;
@@ -240,9 +249,9 @@ PreList::finalize()
 		else {
 			e = &(r->second);
 		}
-		if(it->locally_double) {
-			e->locally_double = true;
-		}
+		e->filename_index = it->filename_index;
+		e->linenumber     = it->linenumber;
+		e->locally_double = it->locally_double;
 		e->name = *curr;
 		for(++curr; curr != it->end(); ++curr) {
 			e->args.push_back(*curr);
@@ -270,7 +279,8 @@ PreList::initialize(MaskList<Mask> &l, Mask::Type t)
 			l.add(Mask(it->name.c_str(), t));
 		}
 		catch(const ExBasic &e) {
-			cerr << e;
+			portage_parse_error(file_name(it->filename_index),
+				it->linenumber, it->name + " ...", e);
 		}
 	}
 	l.finalize();
@@ -294,7 +304,8 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 			l.add(m);
 		}
 		catch(const ExBasic &e) {
-			cerr << e;
+			portage_parse_error(file_name(it->filename_index),
+				it->linenumber, it->name + " ...", e);
 		}
 	}
 	l.finalize();
@@ -312,7 +323,8 @@ PreList::initialize(MaskList<PKeywordMask> &l)
 			l.add(m);
 		}
 		catch(const ExBasic &e) {
-			cerr << e;
+			portage_parse_error(file_name(it->filename_index),
+				it->linenumber, it->name + " ...", e);
 		}
 	}
 	l.finalize();

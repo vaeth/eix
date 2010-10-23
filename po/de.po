@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-09-11 18:40+0200\n"
+"POT-Creation-Date: 2010-09-12 18:39+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1746,7 +1746,7 @@ msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/cache/metadata/metadata.cc:213 src/cache/metadata/metadata.cc:251
-#: src/cache/port2_1_2/port2_1_2.cc:114 src/cache/sqlite/sqlite.cc:215
+#: src/cache/port2_1_2/port2_1_2.cc:114 src/cache/sqlite/sqlite.cc:216
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
@@ -1779,34 +1779,34 @@ msgstr "Cachefile %s nicht lesbar"
 msgid "Problems with %s: %s\n"
 msgstr "Probleme mit %s: %s\n"
 
-#: src/cache/sqlite/sqlite.cc:180
+#: src/cache/sqlite/sqlite.cc:181
 msgid "sqlite dataset does not contain a package name"
 msgstr "sqlite Datensatz enthält keinen Paketnamen"
 
-#: src/cache/sqlite/sqlite.cc:186
+#: src/cache/sqlite/sqlite.cc:187
 #, c-format
 msgid "sqlite dataset for %s is too small"
 msgstr "sqlite Datensatz für %s ist zu klein"
 
-#: src/cache/sqlite/sqlite.cc:192
+#: src/cache/sqlite/sqlite.cc:193
 msgid "%r not of the form package/category-version"
 msgstr "%r hat nicht die Gestalt package/category-version"
 
-#: src/cache/sqlite/sqlite.cc:256
+#: src/cache/sqlite/sqlite.cc:257
 msgid "Database path incorrect"
 msgstr "Falscher Datenbank-Pfad"
 
-#: src/cache/sqlite/sqlite.cc:267
+#: src/cache/sqlite/sqlite.cc:268
 #, c-format
 msgid "Can't open cache file %s"
 msgstr "Cachefile %s kann nicht geöffnet werden"
 
-#: src/cache/sqlite/sqlite.cc:281
+#: src/cache/sqlite/sqlite.cc:282
 #, c-format
 msgid "sqlite error: %s"
 msgstr "sqlite Fehler: %s"
 
-#: src/cache/sqlite/sqlite.cc:299
+#: src/cache/sqlite/sqlite.cc:300
 msgid ""
 "Cache method sqlite is not compiled in.\n"
 "Recompile eix, using configure option --with-sqlite to add sqlite support"
@@ -5256,8 +5256,8 @@ msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1181
-#: src/portage/conf/portagesettings.cc:1210
+#: src/portage/conf/portagesettings.cc:1189
+#: src/portage/conf/portagesettings.cc:1218
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 

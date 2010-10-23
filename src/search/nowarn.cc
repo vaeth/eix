@@ -155,7 +155,8 @@ NowarnPreList::initialize(NowarnMaskList &l)
 			l.add(m);
 		}
 		catch(const ExBasic &e) {
-			cerr << e;
+			portage_parse_error(file_name(it->filename_index),
+				it->linenumber, it->name + " ...", e);
 		}
 	}
 	l.finalize();

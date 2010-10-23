@@ -1042,23 +1042,18 @@ PackageTest::match(PackageReader *pkg) const
 	return true;
 }
 
-static void
-getlines(const char *varname, vector<string> &lines)
-{
-	EixRc &rc(get_eixrc(NULL));
-	lines.clear();
-	vector<string> name;
-	split_string(name, rc[varname], true);
-	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
-		pushback_lines(it->c_str(), &lines, false, true);
-	}
-}
-
 void
 PackageTest::get_nowarn_list()
 {
+	NowarnPreList prelist;
+	vector<string> name;
+	EixRc &rc(get_eixrc(NULL));
+	split_string(name, rc["PACKAGE_NOWARN"], true);
+	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
+		vector<string> lines;
+		pushback_lines(it->c_str(), &lines, false, true);
+		prelist.handle_file(lines, *it, true);
+	}
 	nowarn_list = new NowarnMaskList;
-	vector<string> lines;
-	getlines("PACKAGE_NOWARN", lines);
-	NowarnPreList(lines).initialize(*nowarn_list);
+	prelist.initialize(*nowarn_list);
 }

@@ -199,27 +199,33 @@ public:
 class PreListEntry
 {
 public:
+	typedef std::vector<std::string>::size_type FilenameIndex;
+	typedef std::vector<std::string>::size_type LineNumber;
 	std::string name;
 	std::vector<std::string> args;
+	FilenameIndex filename_index;
+	LineNumber linenumber;
 	bool locally_double;
-
-	PreListEntry() : locally_double(false)
-	{ }
 };
 
 // This is only needed for PreList
 class PreListOrderEntry : public std::vector<std::string>
 {
 public:
+	typedef PreListEntry::FilenameIndex FilenameIndex;
+	typedef PreListEntry::LineNumber LineNumber;
 	typedef std::vector<std::string> super;
 	typedef super::const_iterator const_iterator;
 	using super::begin;
 	using super::end;
 	using super::operator[];
+	FilenameIndex filename_index;
+	LineNumber linenumber;
 	bool removed, locally_double;
 
-	PreListOrderEntry(const std::vector<std::string> &line) :
-	std::vector<std::string>(line), removed(false), locally_double(false)
+	PreListOrderEntry(const super &line, FilenameIndex file, LineNumber number) :
+	super(line), filename_index(file), linenumber(number),
+	removed(false), locally_double(false)
 	{ }
 };
 
@@ -243,6 +249,8 @@ public:
 class PreList : public std::vector<PreListEntry>
 {
 public:
+	typedef PreListEntry::FilenameIndex FilenameIndex;
+	typedef PreListEntry::LineNumber LineNumber;
 	typedef std::vector<PreListEntry> super;
 	typedef super::const_iterator const_iterator;
 	using super::begin;
@@ -254,29 +262,47 @@ private:
 	using super::push_back;
 
 	std::vector<PreListOrderEntry> order;
+	std::vector<std::string> filenames;
 	std::map<std::vector<std::string>, std::vector<PreListOrderEntry>::size_type> have;
 	bool finalized;
 public:
+	void clear()
+	{ finalize(); filenames.clear(); super::clear(); }
+
+	const std::string &file_name(FilenameIndex file)
+	{ return filenames[file]; }
+
+	FilenameIndex push_name(const std::string &filename)
+	{
+		FilenameIndex i(filenames.size());
+		filenames.push_back(filename);
+		return i;
+	}
+
 	PreList() : finalized(false)
 	{ }
 
-	PreList(const std::vector<std::string> &lines) : finalized(false)
-	{ add_lines(lines); }
+	PreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : finalized(false)
+	{ handle_file(lines, filename, only_add); }
 
 	/// return true if something was changed
-	bool add_lines(const std::vector<std::string> &lines);
+	bool handle_file(const std::vector<std::string> &lines, const std::string &filename, bool only_add)
+	{ return handle_lines(lines, push_name(filename), only_add, NULL); }
 
 	/// return true if something was changed
-	bool add_line(const std::string &line);
+	bool handle_lines(const std::vector<std::string> &lines, FilenameIndex file, bool only_add, LineNumber *num);
+
+	/// return true if something was changed
+	bool handle_line(const std::string &line, FilenameIndex file, LineNumber number, bool only_add);
+
+	/// return true if something was changed
+	bool add_line(const std::string &line, FilenameIndex file, LineNumber number);
 
 	/// return true if something was changed
 	bool remove_line(const std::string &line);
 
 	/// return true if something was changed
-	bool handle_line(const std::string &line);
-
-	/// return true if something was changed
-	bool add_splitted(const std::vector<std::string> &line);
+	bool add_splitted(const std::vector<std::string> &line, FilenameIndex file, LineNumber number);
 
 	/// return true if something was changed
 	bool remove_splitted(const std::vector<std::string> &line);

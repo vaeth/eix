@@ -640,14 +640,22 @@ PortageUserConfig::readMasks()
 
 bool
 PortageUserConfig::readKeywords() {
+	PreList pre_list;
+	bool added(false);
 	vector<string> lines;
-	bool added(pushback_lines(((m_settings->m_eprefixconf) + USER_KEYWORDS_FILE1).c_str(),
-		&lines, false, true));
-	if((!pushback_lines(((m_settings->m_eprefixconf) + USER_KEYWORDS_FILE2).c_str(),
-		&lines, false, true)) && !added) {
+	string file((m_settings->m_eprefixconf) + USER_KEYWORDS_FILE1);
+	if(pushback_lines(file.c_str(), &lines, false, true)) {
+		added = pre_list.handle_file(lines, file, true);
+		lines.clear();
+	}
+	file = (m_settings->m_eprefixconf) + USER_KEYWORDS_FILE2;
+	if(pushback_lines(file.c_str(), &lines, false, true)) {
+		added |= pre_list.handle_file(lines, file, true);
+	}
+	if(!added) {
 		return false;
 	}
-	PreList(lines).initialize(m_accept_keywords, m_settings->m_raised_arch);
+	pre_list.initialize(m_accept_keywords, m_settings->m_raised_arch);
 	return true;
 }
 

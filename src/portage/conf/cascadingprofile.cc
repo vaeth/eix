@@ -117,70 +117,72 @@ CascadingProfile::readremoveFiles()
 		}
 
 		vector<string> lines;
-		pushback_lines(file->c_str(), &lines, true, true, true);
-
-		for(vector<string>::iterator i(lines.begin()), i_end(lines.end());
-			likely(i != i_end);
-			++i)
-		{
-			try {
-				if((this->*handler) (*i))
-					ret = true;
-			}
-			catch(const ExBasic &e)
-			{
-				portage_parse_error(*file, lines.begin(), i, e);
-			}
-		}
+		pushback_lines(file->c_str(), &lines, false, true, true);
+		ret |= (this->*handler)(lines, *file);
 	}
 	m_profile_files.clear();
 	return ret;
 }
 
 bool
-CascadingProfile::readPackages(const string &line)
+CascadingProfile::readPackages(const vector<string> &lines, const string &file)
 {
-	/* lines beginning with '*' are m_system-packages
-	 * all others are masked by profile .. if they don't match :) */
-	const char *p(line.c_str());
-	bool remove(*p == '-');
-	if(unlikely(remove)) {
-		++p;
-	}
-	if(*p == '*') {
-		if(unlikely(remove)) {
-			return p_system.remove_line(p);
+	bool ret(false);
+	PreList::FilenameIndex file_system(p_system.push_name(file));
+	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(file));
+	PreList::LineNumber number(1);
+	for(vector<string>::const_iterator it(lines.begin());
+		likely(it != lines.end()); ++number, ++it) {
+		/* lines beginning with '*' are m_system-packages
+		 * all others are masked by profile .. if they don't match :) */
+		const char *p(it->c_str());
+		if(p == 0) {
+			continue;
 		}
-		return p_system.add_line(p);
+		bool remove(*p == '-');
+		if(unlikely(remove)) {
+			++p;
+		}
+		if(*p == '*') {
+			if(unlikely(remove)) {
+				ret |= p_system.remove_line(p);
+			}
+			else {
+				ret |= p_system.add_line(p, file_system, number);
+			}
+		}
+		else if(unlikely(remove)) {
+			ret |= p_system_allowed.remove_line(p);
+		}
+		else {
+			ret |= p_system_allowed.add_line(p, file_system_allowed, number);
+		}
 	}
-	if(unlikely(remove)) {
-		return p_system_allowed.remove_line(p);
-	}
-	return p_system_allowed.add_line(p);
+	return ret;
 }
 
 bool
-CascadingProfile::readPackageMasks(const string &line)
+CascadingProfile::readPackageMasks(const vector<string> &lines, const string &file)
 {
-	return p_package_masks.handle_line(line);
+	return p_package_masks.handle_file(lines, file, false);
 }
 
 bool
-CascadingProfile::readPackageUnmasks(const string &line)
+CascadingProfile::readPackageUnmasks(const vector<string> &lines, const string &file)
 {
-	return p_package_unmasks.handle_line(line);
+	return p_package_unmasks.handle_file(lines, file, false);
 }
 
 bool
-CascadingProfile::readPackageKeywords(const string &line)
+CascadingProfile::readPackageKeywords(const vector<string> &lines, const string &file)
 {
-	return p_package_keywords.handle_line(line);
+	return p_package_keywords.handle_file(lines, file, false);
 }
 
 bool
-CascadingProfile::readPackageAcceptKeywords(const string &line)
+CascadingProfile::readPackageAcceptKeywords(const vector<string> &lines, const string &file)
 {
-	return p_package_accept_keywords.add_line(line);
+	return p_package_accept_keywords.handle_file(lines, file, true);
 }
 
 /** Read all "make.defaults" files found in profile. */

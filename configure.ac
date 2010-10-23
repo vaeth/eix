@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.22.1], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.22.2], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -728,11 +728,11 @@ AC_ARG_WITH([sqlite],
 			AS_VAR_SET([support_sqlite], [:])
 			m4_ifdef([PKG_CHECK_MODULES],
 				[AS_VAR_SET([pkgcfg_check_sqlite], [:])],
-				[AS_VAR_SET([manual_sqlite], [:])])],
-		[m4_ifdef([PKG_CHECK_MODULES],
-			[MV_MSG_RESULT([trying autodetect])
-			AS_VAR_SET([pkgcfg_check_sqlite], [:])],
-			[MV_MSG_RESULT([no], [autodetection needs pkg-config])])])])
+				[AS_VAR_SET([manual_sqlite], [:])])])],
+	[m4_ifdef([PKG_CHECK_MODULES],
+		[MV_MSG_RESULT([trying autodetect])
+		AS_VAR_SET([pkgcfg_check_sqlite], [:])],
+		[MV_MSG_RESULT([no], [autodetection needs pkg-config])])])
 AS_IF([${pkgcfg_check_sqlite}],
 	[PKG_CHECK_MODULES([SQLITE], [sqlite3],
 		[AS_VAR_SET([support_sqlite], [:])],

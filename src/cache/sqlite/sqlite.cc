@@ -16,7 +16,6 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
 #include <eixTk/unused.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -47,11 +46,13 @@ using namespace std;
 SqliteCache *SqliteCache::callback_arg;
 
 inline static const char *
-welldefine(const char *s) ATTRIBUTE_CONST
+welldefine(const char *s) ATTRIBUTE_CONST;
+inline static const char *
+welldefine(const char *s)
 {
 	if(s != NULL)
 		return s;
-	return emptystring;
+	return "";
 }
 
 int
@@ -160,7 +161,7 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 		{
 			int t(trueindex[i]);
 			if(t < 0)
-				return emptystring;
+				return "";
 			return welldefine(argv[t]);
 		}
 } handle_trueindex;

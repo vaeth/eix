@@ -35,7 +35,7 @@ SysError::getMessage() const throw()
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
 void
-portage_parse_error(const string &file, const int line_nr, const string& line, const exception &e)
+portage_parse_error(const string &file, const vector<string>::size_type line_nr, const string& line, const exception &e)
 {
 	cerr << eix::format(_("-- Invalid line %s in %s: %r"))
 		% line_nr % file % line << endl;

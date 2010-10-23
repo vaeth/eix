@@ -67,13 +67,10 @@ class NowarnPreList : public PreList
 {
 		typedef PreList super;
 	public:
-		using super::add_lines;
-		using super::finalize;
-
 		NowarnPreList() : super()
 		{ }
 
-		NowarnPreList(const std::vector<std::string> &lines) : super(lines)
+		NowarnPreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : super(lines, filename, only_add)
 		{ }
 
 		void initialize(NowarnMaskList &l);

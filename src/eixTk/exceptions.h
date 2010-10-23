@@ -15,6 +15,7 @@
 #include <exception>
 #include <ostream>
 #include <string>
+#include <vector>
 
 #include <cerrno>
 #include <cstring>
@@ -98,7 +99,7 @@ inline std::ostream& operator<< (std::ostream& os, const ExBasic& e)
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
-void portage_parse_error(const std::string &file, const int line_nr, const std::string& line, const std::exception &e);
+void portage_parse_error(const std::string &file, std::vector<std::string>::size_type line_nr, const std::string& line, const std::exception &e);
 
 template<class Iterator>
 inline void
