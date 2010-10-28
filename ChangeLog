@@ -1,10 +1,15 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Do not require SA_SIGINFO (thanks Markus Duft <mduft at gentoo.org>)
+	  http://bugs.gentoo.org/show_bug.cgi?id=343071
+
 *eix-0.22.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Convert manpage a-diaresis back to groff format (no utf8)
 	- Support repository names in config files:
-	  https://bugs.gentoo.org/show_bug.cgi?id=340098
+	  http://bugs.gentoo.org/show_bug.cgi?id=340098
 	  The current implementation stores reponames in every version and
 	  thus increases memory usage, but this is perhaps cleaner than to tie
 	  the names to the database headers.
@@ -669,7 +674,7 @@
 	- Let eix-sync be tacit on hooks and evaluate them in current shell.
 	  This makes hooks more powerful and gives the user the ability to
 	  treat redirection manually to some extent, see
-	  https://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
+	  http://sourceforge.net/tracker/index.php?func=detail&aid=2042001&
 	  group_id=128101&atid=710611
 	- Improve calculation of times in eix-sync; avoid time command, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=235269

@@ -68,16 +68,26 @@ EbuildExec::add_handler()
 	m_handler.sa_handler = ebuild_sig_handler;
 	m_handler.sa_flags = 0;
 	sigemptyset(&(m_handler.sa_mask));
-	if(((handleHUP.sa_flags & SA_SIGINFO) != 0) ||
-		(handleHUP.sa_handler != SIG_IGN))
+	if((handleHUP.sa_handler != SIG_IGN)
+#ifdef SA_SIGINFO
+		|| ((handleHUP.sa_flags & SA_SIGINFO) != 0)
+#endif
+	)
 		sigaction(SIGHUP, &m_handler, NULL);
-	if(((handleINT.sa_flags & SA_SIGINFO) != 0) ||
-		(handleINT.sa_handler != SIG_IGN))
+	if((handleINT.sa_handler != SIG_IGN)
+#ifdef SA_SIGINFO
+		|| ((handleINT.sa_flags & SA_SIGINFO) != 0)
+#endif
+	)
 		sigaction(SIGINT, &m_handler, NULL);
-	if(((handleTERM.sa_flags & SA_SIGINFO) != 0) ||
-		(handleTERM.sa_handler != SIG_IGN))
+	if((handleTERM.sa_handler != SIG_IGN)
+#ifdef SA_SIGINFO
+		|| ((handleTERM.sa_flags & SA_SIGINFO) != 0)
+#endif
+	)
 		sigaction(SIGTERM, &m_handler, NULL);
 #else
+	// ifndef HAVE_SIGACTION
 	handleHUP  = signal(SIGHUP, SIG_IGN);
 	handleINT  = signal(SIGINT, SIG_IGN);
 	handleTERM = signal(SIGTERM, SIG_IGN);
