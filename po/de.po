@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-10-08 11:52+0200\n"
+"POT-Creation-Date: 2010-11-02 19:08+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -153,6 +153,11 @@ msgstr ""
 #, sh-format
 msgid "cannot read ${logfile}"
 msgstr "kann Datei ${logfile} nicht lesen"
+
+#: src/eix-installed-after.sh:118
+#, sh-format
+msgid "cannot find merge of ${match} in ${logfile}"
+msgstr "Kein Merge-Vorgang von ${match} in ${logfile} gefunden"
 
 #: src/eix-layman.sh:20
 #, sh-format
@@ -831,169 +836,169 @@ msgstr ""
 "Die Argumente können abgekürzt werden; beispielsweise kann \"br\" statt\n"
 "\"brief\" benutzt werden."
 
-#: src/eix-test-obsolete.sh:80
-#, sh-format
-msgid "... considered as ${z}"
-msgstr "... wegen ${z}"
-
-#: src/eix-test-obsolete.sh:135
+#: src/eix-test-obsolete.sh:65
 msgid "cannot locate your database of installed packages"
 msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
 
-#: src/eix-test-obsolete.sh:163
+#: src/eix-test-obsolete.sh:93
 #, sh-format
 msgid "(total number of versions listed above: ${c})"
 msgstr "(Gesamtzahl obiger Versionen: ${c})"
 
-#: src/eix-test-obsolete.sh:172
+#: src/eix-test-obsolete.sh:102
 msgid ""
 "The following package versions are installed with repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Repository-Information installiert:"
 
-#: src/eix-test-obsolete.sh:175
+#: src/eix-test-obsolete.sh:105
 msgid ""
 "The following package versions are installed without repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Repository-Information installiert:"
 
-#: src/eix-test-obsolete.sh:183
+#: src/eix-test-obsolete.sh:113
 msgid ""
 "The following package versions are installed with build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
 
-#: src/eix-test-obsolete.sh:186
+#: src/eix-test-obsolete.sh:116
 msgid ""
 "The following package versions are installed without build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Buildtime-Information installiert:"
 
-#: src/eix-test-obsolete.sh:237
+#: src/eix-test-obsolete.sh:195
 #, sh-format
-msgid "No redundant entries in ${rump}accept_keywords (or test is off)."
-msgstr "Keine Redundanz in ${rump}accept_keywords (oder Test ist aus)."
+msgid "... considered as ${z}"
+msgstr "... wegen ${z}"
 
-#: src/eix-test-obsolete.sh:238
+#: src/eix-test-obsolete.sh:247
+#, sh-format
+msgid "No  redundant  entries in ${rump}accept_keywords"
+msgstr "Keine   Redundanz   in    ${rump}accept_keywords"
+
+#: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "Redundant in ${rump}accept_keywords:"
 msgstr "Redundant in ${rump}accept_keywords:"
 
+#: src/eix-test-obsolete.sh:250
+#, sh-format
+msgid "No uninstalled entries in ${rump}accept_keywords"
+msgstr "Nichts Uninstalliertes in ${rump}accept_keywords"
+
 #: src/eix-test-obsolete.sh:251
-#, sh-format
-msgid "No redundant entries in ${rump}mask (or test is off)."
-msgstr "Keine Redundanz in ${rump}mask (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:252
-#, sh-format
-msgid "Redundant in ${rump}mask:"
-msgstr "Redundant in ${rump}mask:"
-
-#: src/eix-test-obsolete.sh:260
-#, sh-format
-msgid "No redundant entries in ${rump}unmask (or test is off)."
-msgstr "Keine Redundanz in ${rump}unmask (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:261
-#, sh-format
-msgid "Redundant in ${rump}unmask:"
-msgstr "Redundant in ${rump}unmask:"
-
-#: src/eix-test-obsolete.sh:269
-#, sh-format
-msgid "No redundant entries in ${rump}use (or test is off)."
-msgstr "Keine Redundanz in ${rump}use (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:270
-#, sh-format
-msgid "Redundant in ${rump}use:"
-msgstr "Redundant in ${rump}use:"
-
-#: src/eix-test-obsolete.sh:276
-#, sh-format
-msgid "No redundant entries in ${rump}env (or test is off)."
-msgstr "Keine Redundanz in ${rump}env (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:277
-#, sh-format
-msgid "Redundant in ${rump}env:"
-msgstr "Redundant in ${rump}env:"
-
-#: src/eix-test-obsolete.sh:283
-#, sh-format
-msgid "No redundant entries in ${rump}cflags (or test is off)."
-msgstr "Keine Redundanz in ${rump}cflags (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:284
-#, sh-format
-msgid "Redundant in ${rump}cflags:"
-msgstr "Redundant in ${rump}cflags:"
-
-#: src/eix-test-obsolete.sh:295
-#, sh-format
-msgid "No uninstalled entries in ${rump}accept_keywords (or test is off)."
-msgstr "Nichts Uninstalliertes in ${rump}accept_keywords (oder Test ist aus)."
-
-#: src/eix-test-obsolete.sh:296
 #, sh-format
 msgid "Not installed but in ${rump}accept_keywords:"
 msgstr "Uninstalliert, aber in ${rump}accept_keywords:"
 
-#: src/eix-test-obsolete.sh:306
+#: src/eix-test-obsolete.sh:253
 #, sh-format
-msgid "No uninstalled entries in ${rump}mask (or test is off)."
-msgstr "Nichts Uninstalliertes in ${rump}mask (oder Test ist aus)."
+msgid "No  redundant  entries in ${rump}mask"
+msgstr "Keine   Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:307
+#: src/eix-test-obsolete.sh:254
+#, sh-format
+msgid "Redundant in ${rump}mask:"
+msgstr "Redundant in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:256
+#, sh-format
+msgid "No uninstalled entries in ${rump}mask"
+msgstr "Nichts Uninstalliertes in ${rump}mask"
+
+#: src/eix-test-obsolete.sh:257
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Uninstalliert, aber in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:316
+#: src/eix-test-obsolete.sh:259
 #, sh-format
-msgid "No uninstalled entries in ${rump}unmask (or test is off)."
-msgstr "Nichts Uninstalliertes in ${rump}unmask (oder Test ist aus)."
+msgid "No  redundant  entries in ${rump}unmask"
+msgstr "Keine   Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:317
+#: src/eix-test-obsolete.sh:260
+#, sh-format
+msgid "Redundant in ${rump}unmask:"
+msgstr "Redundant in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:262
+#, sh-format
+msgid "No uninstalled entries in ${rump}unmask"
+msgstr "Nichts Uninstalliertes in ${rump}unmask"
+
+#: src/eix-test-obsolete.sh:263
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Uninstalliert, aber in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:325
+#: src/eix-test-obsolete.sh:265
 #, sh-format
-msgid "No uninstalled entries in ${rump}use (or test is off)."
-msgstr "Nichts Uninstalliertes in ${rump}use (oder Test ist aus)."
+msgid "No  redundant  entries in ${rump}use"
+msgstr "Keine   Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:326
+#: src/eix-test-obsolete.sh:266
+#, sh-format
+msgid "Redundant in ${rump}use:"
+msgstr "Redundant in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:268
+#, sh-format
+msgid "No uninstalled entries in ${rump}use"
+msgstr "Nichts Uninstalliertes in ${rump}use"
+
+#: src/eix-test-obsolete.sh:269
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Uninstalliert, aber in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:334
+#: src/eix-test-obsolete.sh:271
 #, sh-format
-msgid "No uninstalled entries in ${rump}env (or test is off)."
-msgstr "Nichts Uninstalliertes in ${rump}env (oder Test ist aus)."
+msgid "No  redundant  entries in ${rump}env"
+msgstr "Keine   Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:335
+#: src/eix-test-obsolete.sh:272
+#, sh-format
+msgid "Redundant in ${rump}env:"
+msgstr "Redundant in ${rump}env:"
+
+#: src/eix-test-obsolete.sh:274
+#, sh-format
+msgid "No uninstalled entries in ${rump}env"
+msgstr "Nichts Uninstalliertes in ${rump}env"
+
+#: src/eix-test-obsolete.sh:275
 #, sh-format
 msgid "Not installed but in ${rump}env:"
 msgstr "Uninstalliert, aber in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:340
+#: src/eix-test-obsolete.sh:277
 #, sh-format
-msgid "No uninstalled entries in ${rump}cflags (or test is off)."
-msgstr "Nichts Uninstalliertes in ${rump}cflags (oder Test ist aus)."
+msgid "No  redundant  entries in ${rump}cflags"
+msgstr "Keine   Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:341
+#: src/eix-test-obsolete.sh:278
+#, sh-format
+msgid "Redundant in ${rump}cflags:"
+msgstr "Redundant in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:280
+#, sh-format
+msgid "No uninstalled entries in ${rump}cflags"
+msgstr "Nichts Uninstalliertes in ${rump}cflags"
+
+#: src/eix-test-obsolete.sh:281
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Uninstalliert, aber in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:346
+#: src/eix-test-obsolete.sh:283
 msgid "All installed versions of packages are in the database."
 msgstr "Alle installierten Paketversionen sind in der Datenbank."
 
-#: src/eix-test-obsolete.sh:348
+#: src/eix-test-obsolete.sh:285
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
@@ -1661,50 +1666,50 @@ msgstr "%r lässt sich nicht in Paket und Version aufteilen"
 msgid "Can't read cache file %s: "
 msgstr "Cachefile %s nicht lesbar: "
 
-#: src/cache/common/ebuild_exec.cc:143
+#: src/cache/common/ebuild_exec.cc:153
 #, c-format
 msgid "Can't unlink tempfile %s"
 msgstr "Temporärfile %s kann nicht gelöscht werden"
 
-#: src/cache/common/ebuild_exec.cc:145
+#: src/cache/common/ebuild_exec.cc:155
 #, c-format
 msgid "Tempfile %s still there after unlink"
 msgstr "Temporärfile %s trotz Löschens vorhanden"
 
-#: src/cache/common/ebuild_exec.cc:148
+#: src/cache/common/ebuild_exec.cc:158
 #, c-format
 msgid "Tempfile %s is not a file"
 msgstr "Temporärfile %s ist keine Datei"
 
-#: src/cache/common/ebuild_exec.cc:215
+#: src/cache/common/ebuild_exec.cc:225
 msgid "Creation of tempfile failed"
 msgstr "Temporärfile konnte nicht erzeugt werden"
 
-#: src/cache/common/ebuild_exec.cc:233
+#: src/cache/common/ebuild_exec.cc:243
 msgid "Forking failed"
 msgstr "Forken schlug fehl"
 
-#: src/cache/common/ebuild_exec.cc:264
+#: src/cache/common/ebuild_exec.cc:274
 #, c-format
 msgid "Got signal %s"
 msgstr "Erhielt Signal %s"
 
-#: src/cache/common/ebuild_exec.cc:268
+#: src/cache/common/ebuild_exec.cc:278
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ebuild erhielt Signal %s"
 
-#: src/cache/common/ebuild_exec.cc:279
+#: src/cache/common/ebuild_exec.cc:289
 #, c-format
 msgid "Could not start %s"
 msgstr "Konnte mit %s nicht beginnen"
 
-#: src/cache/common/ebuild_exec.cc:281
+#: src/cache/common/ebuild_exec.cc:291
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ebuild schlug fehl mit Status %s"
 
-#: src/cache/common/ebuild_exec.cc:284
+#: src/cache/common/ebuild_exec.cc:294
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 

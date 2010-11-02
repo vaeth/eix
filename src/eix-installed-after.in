@@ -114,7 +114,8 @@ then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
 q}" "${logfile}"` || epoch=''
 	case "${epoch}" in
 	[0-9]*)	match="${epoch}";;
-	*)	die "cannot find merge of ${match} in ${logfile}";;
+	*)	die "`eval_gettext \
+		'cannot find merge of ${match} in ${logfile}'`";;
 	esac
 	epoch=:
 fi

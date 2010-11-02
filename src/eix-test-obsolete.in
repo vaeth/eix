@@ -59,76 +59,6 @@ Die() {
 	exit ${2:-1}
 }
 
-Eix() {
-	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
-	then	[ -z "${1}" ] || printf '%s\n' "${1}"
-		return
-	fi
-	printf '\n%s\n' "${2}"
-	if [ ${#} -le 2 ] || ${nodetails}
-	then	eix -Tc
-		echo
-		return
-	fi
-	shift 2
-	for z
-	do	(
-			for j
-			do	[ "${z}" = "${j}" ] && continue
-				eval "export ${j}=false"
-			done
-			Eix '' "`eval_gettext '... considered as ${z}'`"
-		)
-	done
-}
-
-NoKeywords() {
-	export \
-	REDUNDANT_IF_DOUBLE=false \
-	REDUNDANT_IF_MIXED=false \
-	REDUNDANT_IF_WEAKER=false \
-	REDUNDANT_IF_STRANGE=false \
-	REDUNDANT_IF_NO_CHANGE=false \
-	REDUNDANT_IF_DOUBLE_LINE=false \
-	REDUNDANT_IF_MINUSASTERISK=false
-}
-
-NoMask() {
-	export \
-	REDUNDANT_IF_MASK_NO_CHANGE=false \
-	REDUNDANT_IF_DOUBLE_MASKED=false
-}
-
-NoUnmask() {
-	export \
-	REDUNDANT_IF_UNMASK_NO_CHANGE=false \
-	REDUNDANT_IF_DOUBLE_UNMASKED=false
-}
-
-NoUse() {
-	export \
-	REDUNDANT_IF_DOUBLE_USE=false
-}
-
-NoEnv() {
-	export \
-	REDUNDANT_IF_DOUBLE_ENV=false
-}
-
-NoCflags() {
-	export \
-	REDUNDANT_IF_DOUBLE_CFLAGS=false
-}
-
-NoUninstalled() { export \
-	REDUNDANT_IF_IN_KEYWORDS=false \
-	REDUNDANT_IF_IN_MASK=false \
-	REDUNDANT_IF_IN_UNMASK=false \
-	REDUNDANT_IF_IN_USE=false \
-	REDUNDANT_IF_IN_ENV=false \
-	REDUNDANT_IF_IN_CFLAGS=false
-}
-
 ScanVarDbPkg() {
 	ReadVar c EPREFIX_INSTALLED
 	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
@@ -198,8 +128,10 @@ eval "set -- ${opt}"
 OPTIND=1
 while getopts "cCdb?hH" opt
 do	case "${opt}" in
-		c) export CHECK_INSTALLED_OVERLAYS=:;;
-		C) export CHECK_INSTALLED_OVERLAYS=repository;;
+		c) CHECK_INSTALLED_OVERLAYS=:
+			export CHECK_INSTALLED_OVERLAYS;;
+		C) CHECK_INSTALLED_OVERLAYS=repository
+			export CHECK_INSTALLED_OVERLAYS;;
 		d) myarg='detail';;
 		b) myarg='brief';;
 		*) Usage 0;;
@@ -225,124 +157,129 @@ h*|H*)
 	Usage 0;;
 esac
 
+sets=''
+DefineSet() {
+	sets="${sets} ${1}"
+	eval "shift
+	set_${1}=\"\${*}\""
+}
+
+# Set all variables listed in set_* to false except for those in set_${1}
+FalseExcept() {
+	for s in ${sets}
+	do	[ "${s}" = "${1}" ] || eval "for c in \${set_${s}}
+		do	eval \"\${c}=false
+			export \${c}\"
+		done"
+	done
+}
+
+Output() {
+	if ! NOFOUND_STATUS=1 COUNT_ONLY_PRINTED=false eix -Tq0
+	then	[ -z "${1}" ] || printf '%s\n' "${1}"
+		return
+	fi
+	printf '\n%s\n' "${2}"
+	if [ ${#} -le 3 ] || ${nodetails}
+	then	eix -Tc
+		echo
+		return
+	fi
+	shift 2
+	for z
+	do	(
+			for j
+			do	[ "${z}" = "${j}" ] || eval "${j}=false
+				export ${j}"
+			done
+			Output '' "`eval_gettext '... considered as ${z}'`"
+		)
+	done
+}
+
+Check() (
+	FalseExcept ${1}
+	eval "shift
+	Output \"\${1}\" \"\${2}\" \${set_${1}}"
+)
+
 eix '-t*!'
 
 ReadVar rump PORTAGE_CONFIGROOT
 rump="${rump}/etc/portage/package."
-(
-	export TEST_FOR_NONEXISTENT=false
-	(
-		NoMask; NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
-		Eix "`eval_gettext \
-'No redundant entries in ${rump}accept_keywords (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}accept_keywords:'`" \
-			REDUNDANT_IF_DOUBLE \
-			REDUNDANT_IF_MIXED \
-			REDUNDANT_IF_WEAKER \
-			REDUNDANT_IF_STRANGE \
-			REDUNDANT_IF_NO_CHANGE \
-			REDUNDANT_IF_DOUBLE_LINE \
-			REDUNDANT_IF_MINUSASTERISK
-	)
-	NoKeywords
-	(
-		NoUnmask; NoUse; NoEnv; NoCflags; NoUninstalled
-		Eix "`eval_gettext \
-'No redundant entries in ${rump}mask (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}mask:'`" \
-			REDUNDANT_IF_MASK_NO_CHANGE \
-			REDUNDANT_IF_DOUBLE_MASKED
-	)
-	NoMask
-	(
-		NoUse; NoEnv; NoCflags; NoUninstalled
-		Eix "`eval_gettext \
-'No redundant entries in ${rump}unmask (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}unmask:'`" \
-			REDUNDANT_IF_UNMASK_NO_CHANGE \
-			REDUNDANT_IF_DOUBLE_UNMASKED
-	)
-	NoUnmask
-	(
-		NoEnv; NoCflags; NoUninstalled
-		Eix "`eval_gettext \
-'No redundant entries in ${rump}use (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}use:'`" \
-	)
-	NoUse
-	(
-		NoCflags; NoUninstalled
-		Eix "`eval_gettext \
-'No redundant entries in ${rump}env (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}env:'`" \
-	)
-	NoEnv
-	(
-		NoUninstalled
-		Eix "`eval_gettext \
-'No redundant entries in ${rump}cflags (or test is off).'`" \
-			"`eval_gettext 'Redundant in ${rump}cflags:'`" \
-	)
-	NoCflags
-	(
-		export \
-		REDUNDANT_IF_IN_MASK=false \
-		REDUNDANT_IF_IN_UNMASK=false \
-		REDUNDANT_IF_IN_USE=false \
-		REDUNDANT_IF_IN_ENV=false \
-		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}accept_keywords (or test is off).'`" \
-			"`eval_gettext 'Not installed but in ${rump}accept_keywords:'`"
-	)
-	export REDUNDANT_IF_IN_KEYWORDS=false
-	(
-		export \
-		REDUNDANT_IF_IN_UNMASK=false \
-		REDUNDANT_IF_IN_USE=false \
-		REDUNDANT_IF_IN_ENV=false \
-		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}mask (or test is off).'`" \
-			"`eval_gettext 'Not installed but in ${rump}mask:'`"
-	)
-	export REDUNDANT_IF_IN_MASK=false
-	(
-		export \
-		REDUNDANT_IF_IN_USE=false \
-		REDUNDANT_IF_IN_ENV=false \
-		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}unmask (or test is off).'`" \
-			"`eval_gettext 'Not installed but in ${rump}unmask:'`"
-	)
-	export REDUNDANT_IF_IN_UNMASK=false
-	(
-		export \
-		REDUNDANT_IF_IN_ENV=false
-		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}use (or test is off).'`" \
-			"`eval_gettext 'Not installed but in ${rump}use:'`"
-	)
-	export \
-	REDUNDANT_IF_IN_USE=false
-	(
-		export \
-		REDUNDANT_IF_IN_CFLAGS=false
-		Eix "`eval_gettext \
-'No uninstalled entries in ${rump}env (or test is off).'`" \
-			"`eval_gettext 'Not installed but in ${rump}env:'`"
-	)
-	export \
-	REDUNDANT_IF_IN_ENV=false
-	Eix "`eval_gettext \
-'No uninstalled entries in ${rump}cflags (or test is off).'`" \
-		"`eval_gettext 'Not installed but in ${rump}cflags:'`"
-)
-export \
-TEST_FOR_REDUNDANCY=false
-Eix "`gettext \
+
+DefineSet nonexistent \
+	TEST_FOR_NONEXISTENT
+DefineSet keywords \
+	REDUNDANT_IF_DOUBLE \
+	REDUNDANT_IF_MIXED \
+	REDUNDANT_IF_WEAKER \
+	REDUNDANT_IF_STRANGE \
+	REDUNDANT_IF_NO_CHANGE \
+	REDUNDANT_IF_DOUBLE_LINE \
+	REDUNDANT_IF_MINUSASTERISK
+DefineSet mask \
+	REDUNDANT_IF_MASK_NO_CHANGE \
+	REDUNDANT_IF_DOUBLE_MASKED
+DefineSet unmask \
+	REDUNDANT_IF_UNMASK_NO_CHANGE \
+	REDUNDANT_IF_DOUBLE_UNMASKED
+DefineSet use \
+	REDUNDANT_IF_DOUBLE_USE
+DefineSet env \
+	REDUNDANT_IF_DOUBLE_ENV
+DefineSet cflags \
+	REDUNDANT_IF_DOUBLE_CFLAGS
+DefineSet in_keywords \
+	REDUNDANT_IF_IN_KEYWORDS
+DefineSet in_mask \
+	REDUNDANT_IF_IN_MASK
+DefineSet in_unmask \
+	REDUNDANT_IF_IN_UNMASK
+DefineSet in_use \
+	REDUNDANT_IF_IN_USE
+DefineSet in_env \
+	REDUNDANT_IF_IN_ENV
+DefineSet in_cflags \
+	REDUNDANT_IF_IN_CFLAGS
+
+Check keywords "`eval_gettext \
+	'No  redundant  entries in ${rump}accept_keywords'`" \
+	"`eval_gettext 'Redundant in ${rump}accept_keywords:'`"
+Check in_keywords "`eval_gettext \
+	'No uninstalled entries in ${rump}accept_keywords'`" \
+	"`eval_gettext 'Not installed but in ${rump}accept_keywords:'`"
+Check mask "`eval_gettext \
+	'No  redundant  entries in ${rump}mask'`" \
+	"`eval_gettext 'Redundant in ${rump}mask:'`"
+Check in_mask "`eval_gettext \
+	'No uninstalled entries in ${rump}mask'`" \
+	"`eval_gettext 'Not installed but in ${rump}mask:'`"
+Check unmask "`eval_gettext \
+	'No  redundant  entries in ${rump}unmask'`" \
+	"`eval_gettext 'Redundant in ${rump}unmask:'`"
+Check in_unmask "`eval_gettext \
+	'No uninstalled entries in ${rump}unmask'`" \
+	"`eval_gettext 'Not installed but in ${rump}unmask:'`"
+Check use "`eval_gettext \
+	'No  redundant  entries in ${rump}use'`" \
+	"`eval_gettext 'Redundant in ${rump}use:'`"
+Check in_use "`eval_gettext \
+	'No uninstalled entries in ${rump}use'`" \
+	"`eval_gettext 'Not installed but in ${rump}use:'`"
+Check env "`eval_gettext \
+	'No  redundant  entries in ${rump}env'`" \
+	"`eval_gettext 'Redundant in ${rump}env:'`"
+Check in_env "`eval_gettext \
+	'No uninstalled entries in ${rump}env'`" \
+	"`eval_gettext 'Not installed but in ${rump}env:'`"
+Check cflags "`eval_gettext \
+	'No  redundant  entries in ${rump}cflags'`" \
+	"`eval_gettext 'Redundant in ${rump}cflags:'`"
+Check in_flags "`eval_gettext \
+	'No uninstalled entries in ${rump}cflags'`" \
+	"`eval_gettext 'Not installed but in ${rump}cflags:'`"
+Check nonexistent "`gettext \
 	'All installed versions of packages are in the database.'`" \
 	"`gettext \
 	'Installed packages with a version not in the database (or masked):'`"

@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Do not require SA_SIGINFO (thanks Markus Duft <mduft at gentoo.org>)
 	  http://bugs.gentoo.org/show_bug.cgi?id=343071
+	- Restructure eix-test-obsolete
+	- Add a forgotten translation to eix-installed-after
 
 *eix-0.22.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
