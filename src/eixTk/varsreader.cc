@@ -145,7 +145,7 @@ void VarsReader::JUMP_COMMENT()
 /** Jump whitespaces and tabs at begining of line.
  * Read while ' ' || '\t'
  * '#' -> [RV] JUMP_COMMENT | [A-Z_] -> (reset key) FIND_ASSIGNMENT |
- # source or . -> EVAL_VALUE with sourcecmd=true | -> JUMP_NOISE
+ * source or . -> EVAL_VALUE with sourcecmd=true | -> JUMP_NOISE
  * @see isValidKeyCharacter */
 void VarsReader::JUMP_WHITESPACE()
 {

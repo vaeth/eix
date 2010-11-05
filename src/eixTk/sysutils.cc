@@ -64,7 +64,7 @@ bool
 user_in_group(const char *group_name) throw(ExBasic)
 {
 	errno = 0;
-	struct group *grp = getgrnam(group_name);
+	struct group *grp(getgrnam(group_name));
 	if(grp == NULL)
 		throw ExBasic(_("getgrnam(%r) failed: %s")) % group_name % strerror(errno);
 	return check_user_in_grp_struct(grp);

@@ -230,7 +230,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 	profile = new CascadingProfile(this, init_world);
 	store_world_sets(NULL);
-	bool read_world = false;
+	bool read_world(false);
 	if(init_world) {
 		if(eixrc.getBool("SAVE_WORLD"))
 			read_world = true;

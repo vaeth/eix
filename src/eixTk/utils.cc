@@ -33,7 +33,7 @@ bool
 scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bool sorted)
 {
 	namelist.clear();
-	DIR *dirhandle = opendir(dir.c_str());
+	DIR *dirhandle(opendir(dir.c_str()));
 	if(!dirhandle)
 		return false;
 	const struct dirent *d;

@@ -49,11 +49,10 @@ locale localeC("C");
 char *
 strndup(const char *s, size_t n)
 {
-	char *r(NULL);
 	const char *p(s);
 	while(likely(*p++ && n--));
 	n = p - s - 1;
-	r = static_cast<char *>(malloc(n + 1));
+	char *r(static_cast<char *>(malloc(n + 1)));
 	if(r) {
 		memcpy(r, s, n);
 		r[n] = 0;
@@ -63,12 +62,12 @@ strndup(const char *s, size_t n)
 #endif /* HAVE_STRNDUP */
 
 const char *
-ExplodeAtom::get_start_of_version(const char* str)
+ExplodeAtom::get_start_of_version(const char *str)
 {
-	const char *x(NULL);
 	// There must be at least one symbol before the version:
 	if(unlikely(*(str++) == '\0'))
 		return NULL;
+	const char *x(NULL);
 	while(likely((*str != '\0') && (*str != ':'))) {
 		if(unlikely((*str++ == '-') && (isdigit(*str, localeC))))
 			x = str;
@@ -77,7 +76,7 @@ ExplodeAtom::get_start_of_version(const char* str)
 }
 
 char *
-ExplodeAtom::split_version(const char* str)
+ExplodeAtom::split_version(const char *str)
 {
 	const char *x(get_start_of_version(str));
 	if(likely(x != NULL))
@@ -86,7 +85,7 @@ ExplodeAtom::split_version(const char* str)
 }
 
 char *
-ExplodeAtom::split_name(const char* str)
+ExplodeAtom::split_name(const char *str)
 {
 	const char *x(get_start_of_version(str));
 	if(likely(x != NULL))
@@ -95,7 +94,7 @@ ExplodeAtom::split_name(const char* str)
 }
 
 char **
-ExplodeAtom::split(const char* str)
+ExplodeAtom::split(const char *str)
 {
 	static char* out[2] = { NULL, NULL };
 	const char *x(get_start_of_version(str));

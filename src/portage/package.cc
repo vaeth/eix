@@ -467,7 +467,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 		if(!guess_slotname(*it, v)) {
 			// Perhaps the slot was removed:
 			downgrade = true;
-			Version *t_best = best();
+			Version *t_best(best());
 			if(t_best) {
 				if(*t_best > *it)
 					upgrade = true;

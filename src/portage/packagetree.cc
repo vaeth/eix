@@ -23,7 +23,7 @@ using namespace std;
 Category::iterator
 Category::find(const std::string &pkg_name)
 {
-	for(iterator i = begin(); likely(i != end()); ++i) {
+	for(iterator i(begin()); likely(i != end()); ++i) {
 		if(unlikely(i->name == pkg_name))
 			return i;
 	}
@@ -33,7 +33,7 @@ Category::find(const std::string &pkg_name)
 Category::const_iterator
 Category::find(const std::string &pkg_name) const
 {
-	for(const_iterator i = begin(); likely(i != end()); ++i) {
+	for(const_iterator i(begin()); likely(i != end()); ++i) {
 		if(unlikely(i->name == pkg_name))
 			return i;
 	}
@@ -64,7 +64,7 @@ Category::addPackage(const string cat_name, const string &pkg_name)
 Category *
 PackageTree::find(const string &cat_name) const
 {
-	const_iterator f = Categories::find(cat_name);
+	const_iterator f(Categories::find(cat_name));
 	if(unlikely(f == end())) {
 		return NULL;
 	}
@@ -94,7 +94,7 @@ PackageTree::insert(const vector<string> &cat_vec)
 Package *
 PackageTree::findPackage(const string &cat_name, const string &pkg_name) const
 {
-	const_iterator f = Categories::find(cat_name);
+	const_iterator f(Categories::find(cat_name));
 	if(unlikely(f == end()))
 		return NULL;
 	return f->second->findPackage(pkg_name);
@@ -104,7 +104,7 @@ PackageTree::findPackage(const string &cat_name, const string &pkg_name) const
 bool
 PackageTree::deletePackage(const string &cat_name, const string &pkg_name)
 {
-	iterator i = Categories::find(cat_name);
+	iterator i(Categories::find(cat_name));
 	if(i == end());
 		return false;
 
