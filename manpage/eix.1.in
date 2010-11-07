@@ -26,6 +26,8 @@
 
 .B eix-installed-after
 
+.B eix-vardb-check
+
 .B eix-functions.sh
 
 .B versionsort
@@ -49,9 +51,7 @@ Note that the content of the latter can also be stored in the variable
 B<EIX_SYNC_CONF>.
 
 B<eix-test-obsolete> is a script which calls B<eix> several times to display
-the output of B<eix -tTc> in a more organized manner or to check for packages
-installed with/without repository or buildtime information.
-To get more help on B<eix-test-obsolete> call B<eix-test-obsolete -h>.
+the output of B<eix -tTc> in a more organized manner.
 
 B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
@@ -75,6 +75,11 @@ You might want to use them for your own similar scripts.
 Note that immediately after sourcing B<eix-functions.sh> you will probably
 want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
 with the corresponding I<ARGS>.
+
+B<eix-vardb-check> is a small helper script which checks for packages
+installed with/without repository or buildtime information
+(cf. the description of B<CHECK_INSTALLED_OVERLAYS> and B<USE_BUILD_TIME>).
+To get more help on B<eix-vardb-check> call B<eix-vardb-check -h>.
 
 B<versionsort> is a helper tool for scripts which cuts the version strings from its arguments
 and outputs them sorted according to the portage rules of version sorting.
@@ -1874,9 +1879,12 @@ instead of the directory timestamp (which usually is the installation time).
 The difference is usually only important for packages installed from .tbz2,
 but in most cases the build time is more relevant (it is also more reliable).
 Unfortunately, the build time is available only for packages built and emerged
-with >=portage-2.2_rc63.
+with >=portage-2.2_rc63; you can use B<eix-vardb-check [no-]buildtime> to check
+for which versions this is (not) the case.
 Reading the build time is always slower than using the directory timestamp
-(it is also slower if the build time is not stored).
+(even if the build time is not available).
+Thus, you might want to set this variable to B<false> if speed of eix is
+more important to you than the buildtime information.
 
 .TP
 .BR QUIETMODE " " (true / false)
@@ -2437,7 +2445,7 @@ from an overlay or if a whole overlay is not in the database anymore.
 
 The special value B<repository> is a reasonable compromise:
 If repository data was stored during emerge (this is the case only with current
-portage versions; you can use B<eix-test-obsolete [no-]repository> to check
+portage versions; you can use B<eix-vardb-check [no-]repository> to check
 for which versions this is (not) the case) then this repository data is always used.
 Only if it is unreadable or does not match, the behaviour for that version
 is the same as in case B<CHECK_INSTALLED_OVERLAYS=false>.
@@ -3010,6 +3018,9 @@ are no longer supported by default: They were replaced by the single file/dir
 /etc/portage/package.nowarn. If you still want to use the previous files, set
 B<OBSOLETE_NOWARN=true> in the environment. See the description of the variable
 B<PACKAGE_NOWARN> (in the output of B<eix --dump>) to understand why this works.
+
+B<eix-vardb-check> was part of B<eix-test-obsolete> before eix-0.22.4 which was
+rather confusing for users and for maintaining, since their task has nothing in common.
 .\" }}}
 
 .\" {{{ AUTHORS

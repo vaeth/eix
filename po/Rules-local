@@ -7,6 +7,9 @@ $(MYSRC)/eix-sync.sh:
 $(MYSRC)/eix-test-obsolete.sh:
 	( cd $(MYSRC) && $(MAKE) eix-test-obsolete.sh )
 
+$(MYSRC)/eix-vardb-check.sh:
+	( cd $(MYSRC) && $(MAKE) eix-vardb-check.sh )
+
 $(MYSRC)/eix-layman.sh:
 	( cd $(MYSRC) && $(MAKE) eix-layman.sh )
 

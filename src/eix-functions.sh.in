@@ -85,7 +85,7 @@ Replace() {
 	eixf_repla=''
 	eixf_replc='break'
 	case "${1}" in
-		-*) eixf_replc=''; shift;;
+	-*)	eixf_replc=''; shift;;
 	esac
 	replace_count=''
 	eval "while {
@@ -107,7 +107,7 @@ Replace() {
 # With option -c, VAR is cleaned in advance.
 Push() {
 	case "${1}" in
-		-*) shift; eval "${1}=''";;
+	-*)	shift; eval "${1}=''";;
 	esac
 	eixf_pusha="${1}"
 	shift
@@ -254,14 +254,15 @@ NormalizeNames() {
 ReadGettext() {
 	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
 	case "${USE_NLS-@USE_NLS@}" in
-		''|n*|N*|f*|F*|0)
-			read_gettext_status=1;;
-		*)	ReadGettextSub >/dev/null 2>&1
-			read_gettext_status=${?};;
+	''|n*|N*|f*|F*|0)
+		read_gettext_status=1;;
+	*)	ReadGettextSub >/dev/null 2>&1
+		read_gettext_status=${?};;
 	esac
 	if [ ${read_gettext_status} -eq 0 ]
-	then	export TEXTDOMAIN='@TEXTDOMAIN@'
-		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
+	then	TEXTDOMAIN='@TEXTDOMAIN@'
+		TEXTDOMAINDIR='@TEXTDOMAINDIR@'
+		export TEXTDOMAIN TEXTDOMAINDIR
 		return
 	fi
 	gettext() {

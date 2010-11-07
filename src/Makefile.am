@@ -264,12 +264,13 @@ endif
 
 # Additional binaries (scripts) we will install
 nodist_bin_SCRIPTS  = \
+eix-functions.sh \
+eix-installed-after \
+eix-layman \
+eix-remote \
 eix-sync \
 eix-test-obsolete \
-eix-remote \
-eix-layman \
-eix-installed-after \
-eix-functions.sh \
+eix-vardb-check \
 $(reminder_install)
 
 # Remove files we don't want ..
@@ -291,23 +292,26 @@ $(nodist_extra_common_src) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
 versionsort$(EXEEXT) \
+eix-functions.sh \
+eix-installed-after.sh \
+eix-layman.sh \
+eix-remote.sh \
 eix-sync.sh \
 eix-test-obsolete.sh \
-eix-layman.sh \
-eix-installed-after.sh \
-eix-remote.sh \
-reminder.sh \
-functions-eix.sh
+eix-vardb-check.sh \
+functions-eix.sh \
+reminder.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
 check_includes \
+eix-functions.sh.in \
+eix-installed-after.in \
+eix-layman.in \
+eix-remote.in \
 eix-sync.in \
 eix-test-obsolete.in \
-eix-remote.in \
-eix-layman.in \
-eix-installed-after.in \
-eix-functions.sh.in \
+eix-vardb-check.in \
 reminder.sh.in \
 eixrc/eixrc.in \
 cache/generate_cachemap.sh
@@ -509,6 +513,9 @@ eix-sync.sh:
 
 eix-test-obsolete.sh:
 	$(AM_V_GEN)$(LN_S) eix-test-obsolete.in "$@"
+
+eix-vardb-check.sh:
+	$(AM_V_GEN)$(LN_S) eix-vardb-check.in "$@"
 
 eix-layman.sh:
 	$(AM_V_GEN)$(LN_S) eix-layman.in "$@"

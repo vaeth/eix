@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-11-05 15:52+0100\n"
+"POT-Creation-Date: 2010-11-07 14:27+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -42,15 +42,15 @@ msgstr "eix-update schlug fehl"
 msgid "${eixf_patha} cannot be found in path"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:333
+#: src/eix-functions.sh.in:334
 msgid "found no free tempname after 10000 attempts"
 msgstr "nach 10000 Versuchen keinen freien Temporärnamen gefunden"
 
-#: src/eix-functions.sh.in:347
+#: src/eix-functions.sh.in:348
 msgid "cannot create temporary directory"
 msgstr "kann keine temporäres Directory erzeugen"
 
-#: src/eix-functions.sh.in:348
+#: src/eix-functions.sh.in:349
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
@@ -104,15 +104,15 @@ msgid ""
 "-T   Never use build time"
 msgstr ""
 "Aufruf: ${n} [Optionen] category/package[:slot]\n"
-"Dies ist ein gut kommentiertes Demo-Script zu eix (${p}).\n"
+"Dies ist ein gut kommentiertes Demo-Skript zu eix (${p}).\n"
 "Es gibt Pakete aus, die nach (oder vor) der letzten (oder ersten)\n"
 "Installation des übergebenen Pakets/Version installiert wurden.\n"
 "Das Ausgabeformat eignet sich dabei als Argument für \"emerge -1\".\n"
-"Beachte Sie, dass das Script nur Pakete aus der eix Datenbank "
+"Beachte Sie, dass das Skript nur Pakete aus der eix Datenbank "
 "berücksichtigt.\n"
 "\n"
 "Im Argument können Shell-Patterns benutzt werden (* und ?; bitte quoten\n"
-"nicht vergessen, falls das Script von einer Shell aus aufgerufen wird);\n"
+"nicht vergessen, falls das Skript von einer Shell aus aufgerufen wird);\n"
 "der erste Treffer zählt.\n"
 "Der :slot Teil kann weggelassen werden, wenn das betreffende Paket nur "
 "einen\n"
@@ -185,7 +185,7 @@ msgid ""
 "              the layman overlays. Current value:"
 msgstr ""
 "Aufruf: ${n} [Optionen] Kommando\n"
-"Dieses Script gehört zu ${p}.\n"
+"Dieses Skript gehört zu ${p}.\n"
 "Es fügt lokale Layman-Overlays zur eix-Datenbank hinzu oder entfernt sie.\n"
 "\n"
 "Falls Laymans make.conf nicht in /etc/make.conf gesourced wird, werden die\n"
@@ -504,7 +504,7 @@ msgid ""
 "-h   Show this text and exit."
 msgstr ""
 "Aufruf: ${n} [Optionen]\n"
-"Dieses Script gehört zu ${p}.\n"
+"Dieses Skript gehört zu ${p}.\n"
 "Es ruft layman/emerge --sync/--metadata auf und/oder zeigt updates.\n"
 "\n"
 "Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
@@ -749,11 +749,10 @@ msgstr "Starte eix-diff"
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
-#: src/eix-test-obsolete.sh:19
+#: src/eix-test-obsolete.sh:17
 #, sh-format
 msgid ""
 "Usage: ${n} [options] detail|brief\n"
-"or:    ${n} repo|no-repo|buildtime|no-buildtime\n"
 "This is a wrapper script for eix (${p}).\n"
 "\n"
 "It calls eix -tTc several times with various variable settings in order to\n"
@@ -780,19 +779,13 @@ msgid ""
 "modified.\n"
 "The (recommended) default for CHECK_INSTALLED_OVERLAYS is \\\"repository\\\" "
 "which\n"
-"is much faster then CHECK_INSTALLED_OVERLAYS=true but works only reliable "
+"is much faster than CHECK_INSTALLED_OVERLAYS=true but works only reliable "
 "for\n"
 "packages installed with repository information (which is done by all recent\n"
 "portage versions).\n"
 "\n"
-"You can check which packages are installed with/without this repository\n"
-"information by using the argument \"repo\"/\"no-repo\".\n"
-"\n"
-"You can check which packages are installed with/without buildtime\n"
-"information by using the argument \"buildtime\"/\"no-buildtime\".\n"
-"\n"
-"The arguments can be abbreviated, e.g. instead of \"brief\" you can just use "
-"\"br\"."
+"The argument can be abbreviated, e.g. instead of \"brief\" you can just use "
+"\"b\"."
 msgstr ""
 "Aufruf: ${n} [Optionen] detail|brief\n"
 "oder:   ${n} repo|no-repo|buildtime|no-buildtime\n"
@@ -826,181 +819,215 @@ msgstr ""
 "nur für diejenigen Pakete zuverlässig, die mit Repository-Information\n"
 "installiert wurden (alle neueren Portage-Versionen tun dies).\n"
 "\n"
-"Aufruf des Skripts mit dem Argument \"repo\"/\"no-repo\" listet die Pakete,\n"
-"die mit/ohne Repository-Information installiert wurden.\n"
-"\n"
-"Aufruf des Skripts mit dem Argument \"build-time\"/\"no-buildtime\" listet "
-"die\n"
-"Pakete, die mit/ohne Buildtime-Information installiert wurden.\n"
-"\n"
-"Die Argumente können abgekürzt werden; beispielsweise kann \"br\" statt\n"
+"Die Argumente können abgekürzt werden; beispielsweise kann \"b\" statt\n"
 "\"brief\" benutzt werden."
 
-#: src/eix-test-obsolete.sh:65
+#: src/eix-test-obsolete.sh:120
+#, sh-format
+msgid "... considered as ${z}"
+msgstr "... wegen ${z}"
+
+#: src/eix-test-obsolete.sh:172
+#, sh-format
+msgid "No  redundant  entries in ${rump}accept_keywords"
+msgstr "Keine   Redundanz   in    ${rump}accept_keywords"
+
+#: src/eix-test-obsolete.sh:173
+#, sh-format
+msgid "Redundant in ${rump}accept_keywords:"
+msgstr "Redundant in ${rump}accept_keywords:"
+
+#: src/eix-test-obsolete.sh:175
+#, sh-format
+msgid "No uninstalled entries in ${rump}accept_keywords"
+msgstr "Nichts Uninstalliertes in ${rump}accept_keywords"
+
+#: src/eix-test-obsolete.sh:176
+#, sh-format
+msgid "Not installed but in ${rump}accept_keywords:"
+msgstr "Uninstalliert, aber in ${rump}accept_keywords:"
+
+#: src/eix-test-obsolete.sh:178
+#, sh-format
+msgid "No  redundant  entries in ${rump}mask"
+msgstr "Keine   Redundanz   in    ${rump}mask"
+
+#: src/eix-test-obsolete.sh:179
+#, sh-format
+msgid "Redundant in ${rump}mask:"
+msgstr "Redundant in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:181
+#, sh-format
+msgid "No uninstalled entries in ${rump}mask"
+msgstr "Nichts Uninstalliertes in ${rump}mask"
+
+#: src/eix-test-obsolete.sh:182
+#, sh-format
+msgid "Not installed but in ${rump}mask:"
+msgstr "Uninstalliert, aber in ${rump}mask:"
+
+#: src/eix-test-obsolete.sh:184
+#, sh-format
+msgid "No  redundant  entries in ${rump}unmask"
+msgstr "Keine   Redundanz   in    ${rump}unmask"
+
+#: src/eix-test-obsolete.sh:185
+#, sh-format
+msgid "Redundant in ${rump}unmask:"
+msgstr "Redundant in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:187
+#, sh-format
+msgid "No uninstalled entries in ${rump}unmask"
+msgstr "Nichts Uninstalliertes in ${rump}unmask"
+
+#: src/eix-test-obsolete.sh:188
+#, sh-format
+msgid "Not installed but in ${rump}unmask:"
+msgstr "Uninstalliert, aber in ${rump}unmask:"
+
+#: src/eix-test-obsolete.sh:190
+#, sh-format
+msgid "No  redundant  entries in ${rump}use"
+msgstr "Keine   Redundanz   in    ${rump}use"
+
+#: src/eix-test-obsolete.sh:191
+#, sh-format
+msgid "Redundant in ${rump}use:"
+msgstr "Redundant in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:193
+#, sh-format
+msgid "No uninstalled entries in ${rump}use"
+msgstr "Nichts Uninstalliertes in ${rump}use"
+
+#: src/eix-test-obsolete.sh:194
+#, sh-format
+msgid "Not installed but in ${rump}use:"
+msgstr "Uninstalliert, aber in ${rump}use:"
+
+#: src/eix-test-obsolete.sh:196
+#, sh-format
+msgid "No  redundant  entries in ${rump}env"
+msgstr "Keine   Redundanz   in    ${rump}env"
+
+#: src/eix-test-obsolete.sh:197
+#, sh-format
+msgid "Redundant in ${rump}env:"
+msgstr "Redundant in ${rump}env:"
+
+#: src/eix-test-obsolete.sh:199
+#, sh-format
+msgid "No uninstalled entries in ${rump}env"
+msgstr "Nichts Uninstalliertes in ${rump}env"
+
+#: src/eix-test-obsolete.sh:200
+#, sh-format
+msgid "Not installed but in ${rump}env:"
+msgstr "Uninstalliert, aber in ${rump}env:"
+
+#: src/eix-test-obsolete.sh:202
+#, sh-format
+msgid "No  redundant  entries in ${rump}cflags"
+msgstr "Keine   Redundanz   in    ${rump}cflags"
+
+#: src/eix-test-obsolete.sh:203
+#, sh-format
+msgid "Redundant in ${rump}cflags:"
+msgstr "Redundant in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:205
+#, sh-format
+msgid "No uninstalled entries in ${rump}cflags"
+msgstr "Nichts Uninstalliertes in ${rump}cflags"
+
+#: src/eix-test-obsolete.sh:206
+#, sh-format
+msgid "Not installed but in ${rump}cflags:"
+msgstr "Uninstalliert, aber in ${rump}cflags:"
+
+#: src/eix-test-obsolete.sh:208
+msgid "All installed versions of packages are in the database."
+msgstr "Alle installierten Paketversionen sind in der Datenbank."
+
+#: src/eix-test-obsolete.sh:210
+msgid "Installed packages with a version not in the database (or masked):"
+msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
+
+#: src/eix-vardb-check.sh:15
+#, sh-format
+msgid ""
+"Usage: ${n} ARG [ARG ARG ...]\n"
+"This is a small script published as part of ${p}.\n"
+"\n"
+"Packages emerged with new version of portage have repository and buildtime\n"
+"information stored in the /var/db/pkg database.\n"
+"It is advantageous but not mandatory for eix to have this information\n"
+"(see CHECK_INSTALLED_OVERLAYS and USE_BUILD_TIME in the eix manpage),\n"
+"so you might want to reemerge packages which do not have this information "
+"yet.\n"
+"The purpose of this script is to output the corresponding packages,\n"
+"depending on the argument(s) ARG:\n"
+"\n"
+"repo         outputs packages installed with    repository information.\n"
+"no-repo      outputs packages installed without repository information.\n"
+"buildtime    outputs packages installed with    buildtime  information.\n"
+"no-buildtime outputs packages installed without buildtime  information.\n"
+"\n"
+"ARG can be abbreviated, e.g. instead of \"no-repo\" you can use \"nr\"."
+msgstr ""
+"Aufruf: ${n} ARG [ARG ARG ...]\n"
+"Dieses kleine Skript ist Teil von ${p}.\n"
+"\n"
+"Pakete, die mit einer neuen Version von Portage emerged wurden, haben\n"
+"in ihrer /var/db/pkg Datenbank Informationen zu Repository und Buildtime.\n"
+"Es ist vorteilhaft (wenngleich nicht notwendig) wenn eix diese\n"
+"Informationen benutzen kann; näheres dazu findet sich auf der eix manpage\n"
+"unter CHECK_INSTALLED_OVERLAYS und USE_BUILD_TIME.\n"
+"Daher kann es sinnvoll sein, Pakete ohne diese Informationen neu zu "
+"emergen.\n"
+"Dieses Skript dient dazu, die entsprechenden Pakete je nach ARG auszugeben:\n"
+"\n"
+"repo         gibt die Pakete mit  Repository-Informationen aus\n"
+"no-repo      gibt die Pakete ohne Repository-Informationen aus\n"
+"buildtime    gibt die Pakete mit  Buildtime-Informationen aus\n"
+"no-buildtime gibt die Pakete ohne Buildtime-Informationen aus\n"
+"\n"
+"ARG kann abgekürzt werden, etwa \"no-repo\" durch \"nr\"."
+
+#: src/eix-vardb-check.sh:44
 msgid "cannot locate your database of installed packages"
 msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
 
-#: src/eix-test-obsolete.sh:93
+#: src/eix-vardb-check.sh:72
 #, sh-format
 msgid "(total number of versions listed above: ${c})"
 msgstr "(Gesamtzahl obiger Versionen: ${c})"
 
-#: src/eix-test-obsolete.sh:102
+#: src/eix-vardb-check.sh:81
 msgid ""
 "The following package versions are installed with repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Repository-Information installiert:"
 
-#: src/eix-test-obsolete.sh:105
+#: src/eix-vardb-check.sh:84
 msgid ""
 "The following package versions are installed without repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Repository-Information installiert:"
 
-#: src/eix-test-obsolete.sh:113
+#: src/eix-vardb-check.sh:92
 msgid ""
 "The following package versions are installed with build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
 
-#: src/eix-test-obsolete.sh:116
+#: src/eix-vardb-check.sh:95
 msgid ""
 "The following package versions are installed without build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Buildtime-Information installiert:"
-
-#: src/eix-test-obsolete.sh:195
-#, sh-format
-msgid "... considered as ${z}"
-msgstr "... wegen ${z}"
-
-#: src/eix-test-obsolete.sh:247
-#, sh-format
-msgid "No  redundant  entries in ${rump}accept_keywords"
-msgstr "Keine   Redundanz   in    ${rump}accept_keywords"
-
-#: src/eix-test-obsolete.sh:248
-#, sh-format
-msgid "Redundant in ${rump}accept_keywords:"
-msgstr "Redundant in ${rump}accept_keywords:"
-
-#: src/eix-test-obsolete.sh:250
-#, sh-format
-msgid "No uninstalled entries in ${rump}accept_keywords"
-msgstr "Nichts Uninstalliertes in ${rump}accept_keywords"
-
-#: src/eix-test-obsolete.sh:251
-#, sh-format
-msgid "Not installed but in ${rump}accept_keywords:"
-msgstr "Uninstalliert, aber in ${rump}accept_keywords:"
-
-#: src/eix-test-obsolete.sh:253
-#, sh-format
-msgid "No  redundant  entries in ${rump}mask"
-msgstr "Keine   Redundanz   in    ${rump}mask"
-
-#: src/eix-test-obsolete.sh:254
-#, sh-format
-msgid "Redundant in ${rump}mask:"
-msgstr "Redundant in ${rump}mask:"
-
-#: src/eix-test-obsolete.sh:256
-#, sh-format
-msgid "No uninstalled entries in ${rump}mask"
-msgstr "Nichts Uninstalliertes in ${rump}mask"
-
-#: src/eix-test-obsolete.sh:257
-#, sh-format
-msgid "Not installed but in ${rump}mask:"
-msgstr "Uninstalliert, aber in ${rump}mask:"
-
-#: src/eix-test-obsolete.sh:259
-#, sh-format
-msgid "No  redundant  entries in ${rump}unmask"
-msgstr "Keine   Redundanz   in    ${rump}unmask"
-
-#: src/eix-test-obsolete.sh:260
-#, sh-format
-msgid "Redundant in ${rump}unmask:"
-msgstr "Redundant in ${rump}unmask:"
-
-#: src/eix-test-obsolete.sh:262
-#, sh-format
-msgid "No uninstalled entries in ${rump}unmask"
-msgstr "Nichts Uninstalliertes in ${rump}unmask"
-
-#: src/eix-test-obsolete.sh:263
-#, sh-format
-msgid "Not installed but in ${rump}unmask:"
-msgstr "Uninstalliert, aber in ${rump}unmask:"
-
-#: src/eix-test-obsolete.sh:265
-#, sh-format
-msgid "No  redundant  entries in ${rump}use"
-msgstr "Keine   Redundanz   in    ${rump}use"
-
-#: src/eix-test-obsolete.sh:266
-#, sh-format
-msgid "Redundant in ${rump}use:"
-msgstr "Redundant in ${rump}use:"
-
-#: src/eix-test-obsolete.sh:268
-#, sh-format
-msgid "No uninstalled entries in ${rump}use"
-msgstr "Nichts Uninstalliertes in ${rump}use"
-
-#: src/eix-test-obsolete.sh:269
-#, sh-format
-msgid "Not installed but in ${rump}use:"
-msgstr "Uninstalliert, aber in ${rump}use:"
-
-#: src/eix-test-obsolete.sh:271
-#, sh-format
-msgid "No  redundant  entries in ${rump}env"
-msgstr "Keine   Redundanz   in    ${rump}env"
-
-#: src/eix-test-obsolete.sh:272
-#, sh-format
-msgid "Redundant in ${rump}env:"
-msgstr "Redundant in ${rump}env:"
-
-#: src/eix-test-obsolete.sh:274
-#, sh-format
-msgid "No uninstalled entries in ${rump}env"
-msgstr "Nichts Uninstalliertes in ${rump}env"
-
-#: src/eix-test-obsolete.sh:275
-#, sh-format
-msgid "Not installed but in ${rump}env:"
-msgstr "Uninstalliert, aber in ${rump}env:"
-
-#: src/eix-test-obsolete.sh:277
-#, sh-format
-msgid "No  redundant  entries in ${rump}cflags"
-msgstr "Keine   Redundanz   in    ${rump}cflags"
-
-#: src/eix-test-obsolete.sh:278
-#, sh-format
-msgid "Redundant in ${rump}cflags:"
-msgstr "Redundant in ${rump}cflags:"
-
-#: src/eix-test-obsolete.sh:280
-#, sh-format
-msgid "No uninstalled entries in ${rump}cflags"
-msgstr "Nichts Uninstalliertes in ${rump}cflags"
-
-#: src/eix-test-obsolete.sh:281
-#, sh-format
-msgid "Not installed but in ${rump}cflags:"
-msgstr "Uninstalliert, aber in ${rump}cflags:"
-
-#: src/eix-test-obsolete.sh:283
-msgid "All installed versions of packages are in the database."
-msgstr "Alle installierten Paketversionen sind in der Datenbank."
-
-#: src/eix-test-obsolete.sh:285
-msgid "Installed packages with a version not in the database (or masked):"
-msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
 #: src/eix.cc:63
 #, c-format

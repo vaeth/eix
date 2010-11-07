@@ -11,13 +11,10 @@ read_var_prg=eix
 . ./eix-functions.sh.in
 ReadGettext
 
-nodetails=false
-
 Usage() {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] detail|brief
-or:    ${n} repo|no-repo|buildtime|no-buildtime
 This is a wrapper script for eix (${p}).
 
 It calls eix -tTc several times with various variable settings in order to
@@ -39,85 +36,16 @@ the default behavior.
 
 If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not modified.
 The (recommended) default for CHECK_INSTALLED_OVERLAYS is \"repository\" which
-is much faster then CHECK_INSTALLED_OVERLAYS=true but works only reliable for
+is much faster than CHECK_INSTALLED_OVERLAYS=true but works only reliable for
 packages installed with repository information (which is done by all recent
 portage versions).
 
-You can check which packages are installed with/without this repository
-information by using the argument "repo"/"no-repo".
-
-You can check which packages are installed with/without buildtime
-information by using the argument "buildtime"/"no-buildtime".
-
-The arguments can be abbreviated, e.g. instead of "brief" you can just use "br".'
+The argument can be abbreviated, e.g. instead of "brief" you can just use "b".'
 	echo
 	exit ${1:-1}
 }
 
-Die() {
-	printf '%s: %s\n' "${0##*/}" "${1}" >&2
-	exit ${2:-1}
-}
-
-ScanVarDbPkg() {
-	ReadVar c EPREFIX_INSTALLED
-	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
-			'cannot locate your database of installed packages'`"
-	n="${1}"
-	printf '%s\n\n' "${2}"
-	shift 2
-	c=0
-	for i in *
-	do	for j in "${i}"/*
-		do	test -d "${j}" || continue
-			f=false
-			for k
-			do	if test -e "${j}/${k}"
-				then	f=:
-					break
-				fi
-			done
-			if ${f}
-			then	${n} || continue
-			else	${n} && continue
-			fi
-			printf '%s\n' "${j}"
-			c=`Expr "${c}" + 1`
-		done
-	done
-	if [ ${c} -eq 0 ]
-	then	gettext 'none'
-		echo
-	elif [ ${c} -ne 1 ]
-	then	echo
-		eval_gettext '(total number of versions listed above: ${c})'
-		echo
-	fi
-	exit 0
-}
-
-Repository() {
-	if ${1}
-	then	ScanVarDbPkg ${1} "`gettext \
-'The following package versions are installed with repository information:'`" \
-repository REPOSITORY
-	else	ScanVarDbPkg ${1} "`gettext \
-'The following package versions are installed without repository information:'`" \
-repository REPOSITORY
-	fi
-}
-
-BuildTime() {
-	if ${1}
-	then	ScanVarDbPkg ${1} "`gettext \
-'The following package versions are installed with build-time information:'`" \
-BUILD_TIME
-	else	ScanVarDbPkg ${1} "`gettext \
-'The following package versions are installed without build-time information:'`" \
-BUILD_TIME
-	fi
-}
-
+nodetails=false
 myarg=''
 # Once an option with paths as arguments is introduced, it is probably
 # necessary to turn the next command into eval "Push -c ..."
@@ -128,43 +56,40 @@ eval "set -- ${opt}"
 OPTIND=1
 while getopts "cCdb?hH" opt
 do	case "${opt}" in
-		c) CHECK_INSTALLED_OVERLAYS=:
-			export CHECK_INSTALLED_OVERLAYS;;
-		C) CHECK_INSTALLED_OVERLAYS=repository
-			export CHECK_INSTALLED_OVERLAYS;;
-		d) myarg='detail';;
-		b) myarg='brief';;
-		*) Usage 0;;
+	c) CHECK_INSTALLED_OVERLAYS=:
+		export CHECK_INSTALLED_OVERLAYS;;
+	C) CHECK_INSTALLED_OVERLAYS=repository
+		export CHECK_INSTALLED_OVERLAYS;;
+	d) myarg='detail';;
+	b) myarg='brief';;
+	*) Usage 0;;
 	esac
 done
 [ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 [ ${#} -gt 1 ] && Usage
 [ ${#} -eq 1 ] && myarg="${1}"
 case "${myarg:--}" in
-'-')
-	Usage;;
-[nN]*[bBdDtT]*)
-	BuildTime false;;
-[bB]*[dDtT]*)
-	BuildTime :;;
-[nN]*[rR]*)
-	Repository false;;
-r*|R*)
-	Repository :;;
+[dD]*)
+	nodetails=false;;
 [bB]*)
 	nodetails=:;;
-h*|H*)
+[hH]*)
 	Usage 0;;
+*)
+	Usage;;
 esac
 
+# sets is the list of all "*" for which there are set_* variables
 sets=''
+
+# Defines a new set_* variable
 DefineSet() {
 	sets="${sets} ${1}"
 	eval "shift
 	set_${1}=\"\${*}\""
 }
 
-# Set all variables listed in set_* to false except for those in set_${1}
+# Set all variables listed in set_* to "false" except for those in set_${1}
 FalseExcept() {
 	for s in ${sets}
 	do	[ "${s}" = "${1}" ] || eval "for c in \${set_${s}}
