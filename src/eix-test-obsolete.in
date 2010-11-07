@@ -69,15 +69,13 @@ done
 [ ${#} -gt 1 ] && Usage
 [ ${#} -eq 1 ] && myarg="${1#-}"
 case "${myarg#-}" in
-[dD]*)
-	nodetails=false;;
-[bB]*)
-	nodetails=:;;
-[hH]*)
-	Usage 0;;
-*)
-	Usage;;
+[dD]*)	nodetails=false;;
+[bB]*)	nodetails=:;;
+[hH]*)	Usage 0;;
+*)	Usage;;
 esac
+
+eix '-t*!'
 
 # sets is the list of all "*" for which there are set_* variables
 sets=''
@@ -127,8 +125,6 @@ Check() (
 	eval "shift
 	Output \"\${1}\" \"\${2}\" \${set_${1}}"
 )
-
-eix '-t*!'
 
 ReadVar rump PORTAGE_CONFIGROOT
 rump="${rump}/etc/portage/package."
