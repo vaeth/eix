@@ -40,4 +40,4 @@ printf '%s\n' "Creating release tag... "
 
 svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}" \
 	-m "Tagging the ${ver} release of the ${proj} project" >/dev/null || \
-		die "svn copy failed"
+		Die "svn copy failed"
