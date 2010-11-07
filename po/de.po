@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-11-07 14:27+0100\n"
+"POT-Creation-Date: 2010-11-07 15:01+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -958,7 +958,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 #: src/eix-vardb-check.sh:15
 #, sh-format
 msgid ""
-"Usage: ${n} ARG [ARG ARG ...]\n"
+"Usage: ${n} [options] ARG [ARG ARG ...]\n"
 "This is a small script published as part of ${p}.\n"
 "\n"
 "Packages emerged with new version of portage have repository and buildtime\n"
@@ -975,9 +975,13 @@ msgid ""
 "buildtime    outputs packages installed with    buildtime  information.\n"
 "no-buildtime outputs packages installed without buildtime  information.\n"
 "\n"
+"options:\n"
+"-q  Only output plain packages\n"
+"-=  Output packages preceded with \"=\"\n"
+"\n"
 "ARG can be abbreviated, e.g. instead of \"no-repo\" you can use \"nr\"."
 msgstr ""
-"Aufruf: ${n} ARG [ARG ARG ...]\n"
+"Aufruf: ${n} [Optionen] ARG [ARG ARG ...]\n"
 "Dieses kleine Skript ist Teil von ${p}.\n"
 "\n"
 "Pakete, die mit einer neuen Version von Portage emerged wurden, haben\n"
@@ -994,36 +998,40 @@ msgstr ""
 "buildtime    gibt die Pakete mit  Buildtime-Informationen aus\n"
 "no-buildtime gibt die Pakete ohne Buildtime-Informationen aus\n"
 "\n"
+"Optionen:\n"
+"-q  Nur Ausgabe der Pakete\n"
+"-=  Stellt den Paketen ein \"=\" voran\n"
+"\n"
 "ARG kann abgekürzt werden, etwa \"no-repo\" durch \"nr\"."
 
-#: src/eix-vardb-check.sh:44
+#: src/eix-vardb-check.sh:60
 msgid "cannot locate your database of installed packages"
 msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
 
-#: src/eix-vardb-check.sh:72
+#: src/eix-vardb-check.sh:88
 #, sh-format
 msgid "(total number of versions listed above: ${c})"
 msgstr "(Gesamtzahl obiger Versionen: ${c})"
 
-#: src/eix-vardb-check.sh:81
+#: src/eix-vardb-check.sh:96
 msgid ""
 "The following package versions are installed with repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Repository-Information installiert:"
 
-#: src/eix-vardb-check.sh:84
+#: src/eix-vardb-check.sh:99
 msgid ""
 "The following package versions are installed without repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Repository-Information installiert:"
 
-#: src/eix-vardb-check.sh:92
+#: src/eix-vardb-check.sh:107
 msgid ""
 "The following package versions are installed with build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
 
-#: src/eix-vardb-check.sh:95
+#: src/eix-vardb-check.sh:110
 msgid ""
 "The following package versions are installed without build-time information:"
 msgstr ""
