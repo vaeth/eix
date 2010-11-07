@@ -265,12 +265,12 @@ endif
 # Additional binaries (scripts) we will install
 nodist_bin_SCRIPTS  = \
 eix-functions.sh \
+eix-installed \
 eix-installed-after \
 eix-layman \
 eix-remote \
 eix-sync \
 eix-test-obsolete \
-eix-vardb-check \
 $(reminder_install)
 
 # Remove files we don't want ..
@@ -293,12 +293,12 @@ eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
 versionsort$(EXEEXT) \
 eix-functions.sh \
+eix-installed.sh \
 eix-installed-after.sh \
 eix-layman.sh \
 eix-remote.sh \
 eix-sync.sh \
 eix-test-obsolete.sh \
-eix-vardb-check.sh \
 functions-eix.sh \
 reminder.sh
 
@@ -306,12 +306,12 @@ reminder.sh
 EXTRA_DIST = \
 check_includes \
 eix-functions.sh.in \
+eix-installed.in \
 eix-installed-after.in \
 eix-layman.in \
 eix-remote.in \
 eix-sync.in \
 eix-test-obsolete.in \
-eix-vardb-check.in \
 reminder.sh.in \
 eixrc/eixrc.in \
 cache/generate_cachemap.sh
@@ -514,11 +514,11 @@ eix-sync.sh:
 eix-test-obsolete.sh:
 	$(AM_V_GEN)$(LN_S) eix-test-obsolete.in "$@"
 
-eix-vardb-check.sh:
-	$(AM_V_GEN)$(LN_S) eix-vardb-check.in "$@"
-
 eix-layman.sh:
 	$(AM_V_GEN)$(LN_S) eix-layman.in "$@"
+
+eix-installed.sh:
+	$(AM_V_GEN)$(LN_S) eix-installed.in "$@"
 
 eix-installed-after.sh:
 	$(AM_V_GEN)$(LN_S) eix-installed-after.in "$@"

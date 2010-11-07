@@ -13,41 +13,45 @@ Usage() {
 	n="${0##*/}"
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] ARG [ARG ARG ...]
-This is a small script published as part of ${p}.
+This script is part of ${p}.
+It outputs all installed packages, or packages installed with/without
+repository or buildtime information.
+Packages emerged with new version of portage contain repository and buildtime
+information. It is advantageous but not mandatory for eix to have this
+(see CHECK_INSTALLED_OVERLAYS and USE_BUILD_TIME in the eix manpage).
 
-Packages emerged with new version of portage have repository and buildtime
-information stored in the /var/db/pkg database.
-It is advantageous but not mandatory for eix to have this information
-(see CHECK_INSTALLED_OVERLAYS and USE_BUILD_TIME in the eix manpage),
-so you might want to reemerge packages which do not have this information yet.
-The purpose of this script is to output the corresponding packages,
-depending on the argument(s) ARG:
+ARG determines which packages are output:
 
-repo         outputs packages installed with    repository information.
-no-repo      outputs packages installed without repository information.
-buildtime    outputs packages installed with    buildtime  information.
-no-buildtime outputs packages installed without buildtime  information.
+all          - output all installed packages
+repo         - output packages installed with    repository information.
+no-repo      - output packages installed without repository information.
+buildtime    - output packages installed with    buildtime  information.
+no-buildtime - output packages installed without buildtime  information.
 
-options:
--q  Only output plain packages
--=  Output packages preceded with "="
+The following options are available:
+-=  Output packages prefixed with "="
+-q  Output only packages, no explaining text
+-a  Substitute for "-q all" (ARG is ignored)
 
 ARG can be abbreviated, e.g. instead of "no-repo" you can use "nr".'
 	echo
 	exit ${1:-1}
 }
 
-OPTIND=1
-quiet=false
+forced=false
 equal=''
-while getopts "q=?hH" opt
+quiet=false
+OPTIND=1
+while getopts "aq=?hH" opt
 do	case "${opt}" in
+	a) quiet=:; forced=:;;
 	q) quiet=:;;
 	'=') equal='=';;
 	*) Usage 0;;
 	esac
 done
 [ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
+${forced} && set -- all
 
 Die() {
 	printf '%s: %s\n' "${0##*/}" "${1}" >&2
@@ -55,9 +59,6 @@ Die() {
 }
 
 ScanVarDbPkg() {
-	ReadVar c EPREFIX_INSTALLED
-	cd -- "${c}"/var/db/pkg >/dev/null 2>&1 || Die "`gettext \
-			'cannot locate your database of installed packages'`"
 	n="${1}"
 	${quiet} || printf '%s\n\n' "${2}"
 	shift 2
@@ -90,6 +91,11 @@ ScanVarDbPkg() {
 	echo
 }
 
+All() {
+	ScanVarDbPkg false "`gettext \
+'The following package versions are installed:'`"
+}
+
 Repository() {
 	if ${1}
 	then	ScanVarDbPkg ${1} "`gettext \
@@ -116,6 +122,8 @@ ParseArgs() {
 	while myarg="${1#-}"
 	do	myarg="${myarg#-}"
 		case "${myarg}" in
+		[aA]*)
+			${emulatemode} || All :;;
 		[nN]*[bBdDtT]*)
 			${emulatemode} || BuildTime false;;
 		[bBdDtT]*)
@@ -131,12 +139,17 @@ ParseArgs() {
 		esac
 		[ ${#} -eq 1 ] && break
 		shift
-		${emulatemode} || echo
+		${emulatemode} || printf '\n%s\n' '--'
 	done
 }
 
 [ ${#} -ge 1 ] || Usage
 emulatemode=:
 ParseArgs "${@}"
+
+ReadVar vardb EPREFIX_INSTALLED
+vardb="${vardb%/}/var/db/pkg"
+cd -- "${vardb}" >/dev/null 2>&1 \
+	|| Die "`gettext 'cannot locate your database of installed packages'`"
 emulatemode=false
 ParseArgs "${@}"

@@ -26,7 +26,7 @@
 
 .B eix-installed-after
 
-.B eix-vardb-check
+.B eix-installed
 
 .B eix-functions.sh
 
@@ -76,10 +76,11 @@ Note that immediately after sourcing B<eix-functions.sh> you will probably
 want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
 with the corresponding I<ARGS>.
 
-B<eix-vardb-check> is a small helper script which checks for packages
-installed with/without repository or buildtime information
+B<eix-installed> is a simple script which outputs all installed packages
+(in their exact version) and can check for packages installed with/without
+repository or buildtime information
 (cf. the description of B<CHECK_INSTALLED_OVERLAYS> and B<USE_BUILD_TIME>).
-To get more help on B<eix-vardb-check> call B<eix-vardb-check -h>.
+To get more help on B<eix-installed> call B<eix-installed -h>.
 
 B<versionsort> is a helper tool for scripts which cuts the version strings from its arguments
 and outputs them sorted according to the portage rules of version sorting.
@@ -351,8 +352,9 @@ Here are the admissible TEST_OPTIONS:
 .TP
 .BR -I ", " --installed
 Only match installed packages.
-Please do not use this as a replacement for qlist -ICv or equery, it is not the same:
-Packages that are installed, but no longer in the portage tree (or overlays) are not listed here.
+Please do not use this as a replacement for B<eix-installed -a>
+(or B<qlist -ICv> or B<equery>), it is not the same:
+Packages that are installed, but no longer in the portage tree (or an overlays) are not listed here.
 However, you should better not have such packages at all
 (better put these packages in overlays in case you need to reinstall them).
 To find such packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
@@ -1879,7 +1881,7 @@ instead of the directory timestamp (which usually is the installation time).
 The difference is usually only important for packages installed from .tbz2,
 but in most cases the build time is more relevant (it is also more reliable).
 Unfortunately, the build time is available only for packages built and emerged
-with >=portage-2.2_rc63; you can use B<eix-vardb-check [no-]buildtime> to check
+with >=portage-2.2_rc63; you can use B<eix-installed [no-]buildtime> to check
 for which versions this is (not) the case.
 Reading the build time is always slower than using the directory timestamp
 (even if the build time is not available).
@@ -2445,7 +2447,7 @@ from an overlay or if a whole overlay is not in the database anymore.
 
 The special value B<repository> is a reasonable compromise:
 If repository data was stored during emerge (this is the case only with current
-portage versions; you can use B<eix-vardb-check [no-]repository> to check
+portage versions; you can use B<eix-installed [no-]repository> to check
 for which versions this is (not) the case) then this repository data is always used.
 Only if it is unreadable or does not match, the behaviour for that version
 is the same as in case B<CHECK_INSTALLED_OVERLAYS=false>.
@@ -3019,7 +3021,7 @@ are no longer supported by default: They were replaced by the single file/dir
 B<OBSOLETE_NOWARN=true> in the environment. See the description of the variable
 B<PACKAGE_NOWARN> (in the output of B<eix --dump>) to understand why this works.
 
-B<eix-vardb-check> was part of B<eix-test-obsolete> before eix-0.22.4 which was
+B<eix-installed> was part of B<eix-test-obsolete> before eix-0.22.4 which was
 rather confusing for users and for maintaining, since their task has nothing in common.
 .\" }}}
 

@@ -7,14 +7,14 @@ $(MYSRC)/eix-sync.sh:
 $(MYSRC)/eix-test-obsolete.sh:
 	( cd $(MYSRC) && $(MAKE) eix-test-obsolete.sh )
 
-$(MYSRC)/eix-vardb-check.sh:
-	( cd $(MYSRC) && $(MAKE) eix-vardb-check.sh )
-
 $(MYSRC)/eix-layman.sh:
 	( cd $(MYSRC) && $(MAKE) eix-layman.sh )
 
 $(MYSRC)/eix-remote.sh:
 	( cd $(MYSRC) && $(MAKE) eix-remote.sh )
+
+$(MYSRC)/eix-installed.sh:
+	( cd $(MYSRC) && $(MAKE) eix-installed.sh )
 
 $(MYSRC)/eix-installed-after.sh:
 	( cd $(MYSRC) && $(MAKE) eix-installed-after.sh )
