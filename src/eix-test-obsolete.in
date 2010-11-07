@@ -49,7 +49,7 @@ nodetails=false
 myarg=''
 # Once an option with paths as arguments is introduced, it is probably
 # necessary to turn the next command into eval "Push -c ..."
-# In the moment this seems not necessary, so we avoid that security ris:
+# In the moment this seems not necessary, so we avoid that security risk:
 Push -c opt `eix --print EIX_TEST_OBSOLETE_OPTS`
 Push opt "${@}"
 eval "set -- ${opt}"
