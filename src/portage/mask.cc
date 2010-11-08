@@ -89,37 +89,42 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	str = p + 1;
 
 	// If :... is appended, mark the slot part,
-	// and if another : occurs, mark the repository part.
-	// If [...] is appended (possibly after :...), remove it
+	// and if :: occurs, mark the repository part.
+	// If [...] is appended (possibly after : or ::), remove it
 	const char *end(strchr(str, ':'));
 	if(end != NULL) {
 		string *dest;
-		const char *usestart, *source;
-		const char *slot_start(end + 1);
-		const char *slot_end(strchr(slot_start, ':'));
-		bool have_reponame(slot_end != NULL);
-		if(have_reponame) {
-			source = slot_end + 1;
-			dest = &m_reponame;
+		const char *source(end + 1);
+		if((*source) != ':') {
+			m_test_slot = true;
+			const char *slot_end(strchr(source, ':'));
+			if(unlikely(slot_end != NULL)) {
+				m_slotname.assign(source, slot_end - source);
+				if(unlikely(slot_end[1] != ':')) {
+					throw ExBasic(_("Repository name must be separated with :: (one : is missing)"));
+				}
+				source = slot_end + 2;
+				dest = &m_reponame;
+			}
+			else {
+				m_reponame.clear();
+				dest = &m_slotname;
+			}
 		}
 		else {
-			source = slot_start;
-			dest = &m_slotname;
-			m_reponame.clear();
-			m_test_reponame = false;
+			++source;
+			m_test_slot = false;
+			m_slotname.clear();
+			dest = &m_reponame;
 		}
-		usestart = strchr(source, '[');
-		if((usestart != NULL) && strchr(usestart + 1, ']')) {
+		const char *usestart(strchr(source, '['));
+		if((usestart != NULL) && ! strchr(usestart + 1, ']')) {
 			dest->assign(source, usestart - source);
 		}
 		else {
 			dest->assign(source);
 		}
-		if(have_reponame) {
-			m_test_reponame = !(m_reponame.empty());
-			m_slotname.assign(slot_start, slot_end - slot_start);
-		}
-		m_test_slot = !(m_slotname.empty());
+		m_test_reponame = !(m_reponame.empty());
 		// Interpret Slot "0" as empty slot (as internally always)
 		if(m_slotname == "0") {
 			m_slotname.clear();
@@ -130,7 +135,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		m_slotname.clear();
 		m_reponame.clear();
 		end = strchr(str, '[');
-		if(end && ! strchr(end + 1, ']'))
+		if((end != NULL) && ! strchr(end + 1, ']'))
 			end = NULL;
 	}
 
