@@ -290,7 +290,6 @@ AddOption(BOOLEAN, "DIFF_PRINT_INSTALLED",
 	"true", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines whether eix-diff will output installed versions."));
-
 AddOption(STRING, "COLOR_TITLE",
 	"green",
 	"This variable is only used for delayed substitution.\n"
@@ -504,6 +503,9 @@ AddOption(STRING, "DIFF_CHAR_INST_STABILIZE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the character printed for installed packages which have gained\n"
 	"a stable version."));
+#endif
+
+#if (DEFAULT_PART == 2)
 
 AddOption(STRING, "DIFF_CHAR_NEW",
 	"N", _(
@@ -588,9 +590,6 @@ AddOption(STRING, "DIFF_STRING_CHANGED",
 	"==", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the string used for \"changed package\" separators (eix-diff)."));
-#endif
-
-#if (DEFAULT_PART == 2)
 
 AddOption(STRING, "FORMAT_MASK_TAG",
 	"{!*m}"
@@ -1345,6 +1344,9 @@ AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
 	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with installed versions."));
+#endif
+
+#if (DEFAULT_PART == 3)
 
 AddOption(STRING, "DIFF_FORMATLINE_BEST",
 	"\\(%{DIFF_FORMAT_BEST}())", _(
@@ -1365,9 +1367,6 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with marked versions."));
-#endif
-
-#if (DEFAULT_PART == 3)
 
 AddOption(BOOLEAN, "ALL_SETNAMES",
 	"true", _(
@@ -1748,7 +1747,6 @@ AddOption(STRING, "MARK_VERSIONS",
 	"underline", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines how the package versions passed with --pipe are marked."));
-
 AddOption(BOOLEAN, "FORCE_USECOLORS",
 	"false", _(
 	"This turns --force-color on for every query."));
@@ -1932,6 +1930,9 @@ AddOption(BOOLEAN, "OBSOLETE_MINUSASTERISK",
 	"If true, treat -* in /etc/portage/package.keywords as <=portage-2.1.2\n"
 	"Since >=portage-2.1.2-r4, -* is practically obsolete and replaced\n"
 	"by ** which accepts anything (note that there are also * and ~*)."));
+#endif
+
+#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "PRINT_COUNT_ALWAYS",
 	"false", _(
@@ -2091,10 +2092,6 @@ AddOption(STRING, "TAG_FOR_EX_MISSING_KEYWORD",
 	"(**)", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the tag for \"originally no keyword but now stable\" versions."));
-
-#endif
-
-#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "MATCH_FIELD_DESCRIPTION",
 	"[ ]", _(

@@ -4,6 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix mask syntax if slots and repositories are used in the same mask,
 	  see http://forums.gentoo.org/viewtopic-p-6479886.html
+	- Divide memory usage of global*.cc during compiling more even.
 
 *eix-0.22.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
