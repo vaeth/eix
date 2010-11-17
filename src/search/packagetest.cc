@@ -942,7 +942,7 @@ PackageTest::match(PackageReader *pkg) const
 				if(*version != *current)
 					continue;
 				if(test_ins & INS_MASKED) {
-					if(!version->keyflags.isStable())
+					if(version->maskflags.isHardMasked() || !version->keyflags.isStable())
 						continue;
 				}
 				if(test_ins & INS_OVERLAY) {
