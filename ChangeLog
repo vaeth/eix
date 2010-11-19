@@ -17,12 +17,12 @@
 
 *eix-0.22.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Convert manpage a-diaresis back to groff format (no utf8)
 	- Support repository names in config files:
 	  http://bugs.gentoo.org/show_bug.cgi?id=340098
 	  The current implementation stores reponames in every version and
 	  thus increases memory usage, but this is perhaps cleaner than to tie
 	  the names to the database headers.
+	- Convert manpage a-diaresis back to groff format (no utf8)
 
 *eix-0.22.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
@@ -31,8 +31,8 @@
 	- Fix sqlite automagic
 
 *eix-0.22.1
-	MARTIN VÄTH <VAETH AT MATHEMATIK.UNI-WUERZBURG.DE>:
-	- USE /ETC/PORTAGE/PACKAGE.NOWARN INSTEAD OF
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- use /etc/portage/package.nowarn instead of
 	  /etc/portage/package.*.nowarn; the latter is now obsolete.
 	  If you want continue to use it, set OBSOLETE_NOWARN=true
 	- Support wildcards in /etc/portage/package.nowarn
