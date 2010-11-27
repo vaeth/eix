@@ -5,6 +5,7 @@
 	- Fix mask syntax if slots and repositories are used in the same mask,
 	  see http://forums.gentoo.org/viewtopic-p-6479886.html
 	- Fix NONEXISTENT_IF_MASKED (check not only keywords but also mask)
+	- manpage: Explain logic of EXPRESSION more verbosely.
 	- Divide memory usage of global*.cc during compiling more even.
 
 *eix-0.22.4

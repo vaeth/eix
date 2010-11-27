@@ -36,7 +36,8 @@
 .\" {{{ DESCRIPTION
 .SH "DESCRIPTION"
 B<eix-update> generates a binary cache from your local portage-tree and overlays.
-B<eix> searches this cache for packages that match the criteria you specified.
+B<eix> searches this cache for packages that match the restricting criteria you specify in I<EXPRESSION>;
+if you specify no such restriction, all packages are output, of course.
 B<eix-diff> compares two binary caches and finds packages that were added, removed or for
 which the highest stable versions has changed.
 
@@ -333,14 +334,33 @@ In particular, B<X -o Y -a Z> fails if B<Z> fails.
 
 3. B<--not>|B<-!> negates only the result of the subsequent BRACE_OR_TEST.
 
-4. Observe that TEST_OPTIONS can consist of several options.
-All of these options are applied simultaneously, i.e. in a sense these options
-are logically braced and combined with B<and> (independent of B<DEFAULT_IS_OR>
-This is somehow ambiguous, since B<PATTERN> can be omitted.
-This ambiguity is resolved by interpreting subsequent TEST_OPTIONS always as a
-part of one TEST_WITH_OPTIONS.
+4. If PATTERN is omitted, it defaults to the empty PATTERN.
+For instance, with the default settings, B<eix> without arguments will match
+all packages, since the empty string is contained in every name.
+On the other hand, B<eix -e> should (usually) output nothing,
+because no package name should I<exactly be> the empty string.
 
-5. The TEST_OPTIONS can specify things like the B<match algorithm> and also B<operation selection>.
+5. Note that the syntax implies that PATTERN always ends an expression.
+TEST_OPTIONS after PATTERN always start a new expression
+(i.e. an implicit B<--and> or B<--or> is inserted, depending on B<DEFAULT_IS_OR>).
+In particular B<eix -e foo> has a different meaning than B<eix foo -e>.
+The latter means the same as B<eix foo --and -e> or B<eix foo --or -e>,
+depending on B<DEFAULT_IS_OR>.
+
+6. Observe that TEST_OPTIONS can consist of several options.
+All of these options are applied simultaneously, i.e. in a sense these options
+are logically braced and combined with B<and> (independently of B<DEFAULT_IS_OR>)
+This is somehow ambiguous, since PATTERN can be omitted.
+This ambiguity is resolved by interpreting successive TEST_OPTIONS always as a
+part of one TEST_WITH_OPTIONS.
+For instance, in B<eix -I -O -e foo> all options are considered as part of a common I<EXPRESSION>
+(not as four B<EXPRESSION> as would be the case for B<eix -I '' -O '' -e '' foo>).
+On the other hand, in B<eix -I --not -e> the B<--not> will cause the subsequent TEST_OPTION B<-e> to be considered as part of a new I<EXPRESSION>.
+Options other than TEST_OPTIONS or a logical option (like B<-!>, B<-(>, B<-)>, B<-a>, B<-o>) are ignored in this respect.
+For instance, B<eix -I -c -e> generates only one I<EXPRESSION>, since B<-c> is neither a TEST_OPTION nor a logical option
+and therefore plays no role for the interpretation of I<EXPRESSION>.
+
+7. The TEST_OPTIONS can specify things like the B<match algorithm> and also B<operation selection>.
 All these specifications refer B<only> to the current TEST_WITH_OPTIONS, in particular, they are only active for the next B<PATTERN>.
 
 Note that besides using this expression syntax a different way of implicit
