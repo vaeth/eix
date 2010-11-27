@@ -1,10 +1,10 @@
 #! /usr/bin/env sh
 
 project="eix"
-mkclean="./mksvnclean"
-mkemerge="./mkemerge"
-mkrelease="./mkrelease"
-mkmake="./mkmake"
+mkclean="./mk/clean"
+mkemerge="./mk/emerge"
+mkrelease="./mk/release"
+mkmake="./mk/make"
 mkmakeextra="UPDATEPOFILES="
 make_opts='-0QEeq'
 
