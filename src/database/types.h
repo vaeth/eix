@@ -10,6 +10,8 @@
 #ifndef EIX__DATABASE_TYPES_H__
 #define EIX__DATABASE_TYPES_H__ 1
 
+#include <config.h>
+
 #include <sys/types.h>
 
 class DBHeader;

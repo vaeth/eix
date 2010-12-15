@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "eixcache.h"
 #include <config.h>
+#include "eixcache.h"
 #include <database/header.h>
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>

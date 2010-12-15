@@ -11,7 +11,6 @@
 #define EIX__SETSTABILITY_H__ 1
 
 #include <config.h>
-
 #include <portage/version.h>
 
 class Category;

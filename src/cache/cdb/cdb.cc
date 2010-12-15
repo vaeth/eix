@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
 #include "cdb.h"
 #include <cache/common/unpickle.h>
 #include <eixTk/exceptions.h>

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "vardbpkg.h"
 #include <config.h>
+#include "vardbpkg.h"
 #include <database/header.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/likely.h>

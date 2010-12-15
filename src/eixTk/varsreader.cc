@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
 #include "varsreader.h"
-
 #include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>

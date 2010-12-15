@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
 #include "filenames.h"
-
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 
@@ -17,7 +17,6 @@
 #include <cstring>
 #include <fnmatch.h>
 
-#include <config.h>
 #ifdef DEBUG_NORMALIZE_PATH
 #include <iostream>
 #endif

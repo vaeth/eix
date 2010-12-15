@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "sqlite.h"
 #include <config.h>
+#include "sqlite.h"
 
 #ifdef WITH_SQLITE
 

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "ebuild_exec.h"
 #include <config.h>
+#include "ebuild_exec.h"
 #include <cache/base.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>

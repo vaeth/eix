@@ -7,15 +7,13 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "eixrc.h"
 #include <config.h>
-
+#include "eixrc.h"
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/varsreader.h>
-
 #include <portage/conf/portagesettings.h>
 
 #include <iostream>

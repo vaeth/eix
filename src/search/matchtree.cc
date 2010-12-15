@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "matchtree.h"
 #include <config.h>
+#include "matchtree.h"
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/unused.h>

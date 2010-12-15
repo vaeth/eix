@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
 #include "levenshtein.h"
-
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 

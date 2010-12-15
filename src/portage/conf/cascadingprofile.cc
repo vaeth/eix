@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "cascadingprofile.h"
 #include <config.h>
+#include "cascadingprofile.h"
 #ifdef DEBUG_PROFILE_PATHS
 #include <eixTk/formated.h>
 #endif

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "unpickle.h"
 #include <config.h>
+#include "unpickle.h"
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/inttypes.h>

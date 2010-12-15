@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.22.5], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.22.6], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -298,9 +298,6 @@ AS_IF([${warnings}],
 			-fPIC \
 			-ftracer \
 			-pedantic \
-			-D_FILE_OFFSET_BITS=64 \
-			-D_LARGEFILE_SOURCE \
-			-D_LARGEFILE64_SOURCE \
 			-Wall \
 			-Wextra \
 			-Wformat=2 \
@@ -474,6 +471,7 @@ AM_CONDITIONAL([OBSOLETE_REMINDER],
 	[${obsolete_reminder}])
 
 # Look for basic functions:
+AC_SYS_LARGEFILE()
 AC_FUNC_FSEEKO()
 AC_CHECK_FUNCS([regcomp strchr strdup strerror strrchr fnmatch memset],
 	[],

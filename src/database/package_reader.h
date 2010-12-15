@@ -10,6 +10,7 @@
 #ifndef EIX__PACKAGE_READER_H__
 #define EIX__PACKAGE_READER_H__ 1
 
+#include <config.h>
 #include <database/types.h>
 #include <database/header.h>
 #include <portage/package.h>

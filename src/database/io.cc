@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "io.h"
 #include <config.h>
+#include "io.h"
 #include <database/header.h>
 #include <database/package_reader.h>
 #include <database/types.h>

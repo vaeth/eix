@@ -10,6 +10,7 @@
 #define EIX__COMPARE_H__ 1
 
 #include <config.h>
+
 #include <string>
 
 /// eix namespace

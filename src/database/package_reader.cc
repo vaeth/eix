@@ -7,9 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "package_reader.h"
-
 #include <config.h>
+#include "package_reader.h"
 #include <database/io.h>
 #include <database/types.h>
 #include <eixTk/likely.h>

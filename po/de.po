@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-11-12 17:42+0100\n"
+"POT-Creation-Date: 2010-12-16 00:50+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1338,12 +1338,12 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:480 src/eix-diff.cc:328
+#: src/eix.cc:480 src/eix-diff.cc:329
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:533 src/eix-diff.cc:293 src/eix-update.cc:386
+#: src/eix.cc:533 src/eix-diff.cc:294 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
@@ -1425,7 +1425,7 @@ msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
 
-#: src/eix-diff.cc:63
+#: src/eix-diff.cc:64
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
@@ -1463,11 +1463,11 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:125
+#: src/eix-diff.cc:126
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:131
+#: src/eix-diff.cc:132
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1476,11 +1476,11 @@ msgstr ""
 "%s wurde mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-diff.cc:303
+#: src/eix-diff.cc:304
 msgid "Missing cache-file."
 msgstr "Fehlendes Cachefile."
 
-#: src/eix-diff.cc:373
+#: src/eix-diff.cc:374
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
@@ -1691,12 +1691,12 @@ msgstr "kann Version von '%s' nicht bestimmen"
 msgid "Unknown cache %r for directory %r"
 msgstr "Unbekannter Cache %r für Ordner %r"
 
-#: src/cache/cdb/cdb.cc:144
+#: src/cache/cdb/cdb.cc:145
 #, c-format
 msgid "Problems with %s.. skipping"
 msgstr "Probleme mit %s. Übergehe dieses."
 
-#: src/cache/cdb/cdb.cc:151
+#: src/cache/cdb/cdb.cc:152
 msgid "Cannot split %r into package and version"
 msgstr "%r lässt sich nicht in Paket und Version aufteilen"
 
@@ -1790,7 +1790,7 @@ msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/cache/metadata/metadata.cc:213 src/cache/metadata/metadata.cc:251
-#: src/cache/port2_1_2/port2_1_2.cc:114 src/cache/sqlite/sqlite.cc:216
+#: src/cache/port2_1_2/port2_1_2.cc:115 src/cache/sqlite/sqlite.cc:216
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
@@ -1809,16 +1809,16 @@ msgstr "Konnte %s nicht korrekt ausführen"
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
 
-#: src/cache/port2_1_2/port2_1_2.cc:94
+#: src/cache/port2_1_2/port2_1_2.cc:95
 msgid "%r not of the form package/catstring-version"
 msgstr "%r hat nicht die Gestalt package/catstring-version"
 
-#: src/cache/port2_1_2/port2_1_2.cc:158
+#: src/cache/port2_1_2/port2_1_2.cc:159
 #, c-format
 msgid "Can't read cache file %s"
 msgstr "Cachefile %s nicht lesbar"
 
-#: src/cache/port2_1_2/port2_1_2.cc:170
+#: src/cache/port2_1_2/port2_1_2.cc:171
 #, c-format
 msgid "Problems with %s: %s\n"
 msgstr "Probleme mit %s: %s\n"
@@ -1915,35 +1915,35 @@ msgstr "Format-Zeichen fehlt"
 msgid "unknown format specifier '%%%s'"
 msgstr "Unbekannte Formatangabe '%%%s'"
 
-#: src/eixTk/stringutils.cc:240
+#: src/eixTk/stringutils.cc:239
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "Flags sollten nicht mit einem '+' beginnen: %s"
 
-#: src/eixTk/stringutils.cc:274
+#: src/eixTk/stringutils.cc:273
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Interner Fehler: Storing required after finalizing"
 
-#: src/eixTk/stringutils.cc:284
+#: src/eixTk/stringutils.cc:283
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Interner Fehler: Hashing required after finalizing"
 
-#: src/eixTk/stringutils.cc:288
+#: src/eixTk/stringutils.cc:287
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Interner Fehler: Hashing required in non-hash mode"
 
-#: src/eixTk/stringutils.cc:318
+#: src/eixTk/stringutils.cc:317
 msgid "Internal error: Index required before sorting."
 msgstr "Interner Fehler: Index required before sorting."
 
-#: src/eixTk/stringutils.cc:323
+#: src/eixTk/stringutils.cc:322
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 
-#: src/eixTk/stringutils.cc:333
+#: src/eixTk/stringutils.cc:332
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 
@@ -5105,52 +5105,52 @@ msgstr ""
 "um Delayed Referenzen auf lokal hinzugefügte (unbenutzte) Variablen\n"
 "hinzuzufügen, so dass diese per --dump ausgegeben werden können."
 
-#: src/eixrc/eixrc.cc:240
+#: src/eixrc/eixrc.cc:238
 #, c-format
 msgid "fatal config error: %s in delayed substitution of %s"
 msgstr "Fataler Konfigurationsfehler: %s in Delayed Substitution von %s"
 
-#: src/eixrc/eixrc.cc:267
+#: src/eixrc/eixrc.cc:265
 msgid "FI without IF"
 msgstr "FI ohne IF"
 
-#: src/eixrc/eixrc.cc:271
+#: src/eixrc/eixrc.cc:269
 msgid "ELSE without IF"
 msgstr "ELSE ohne IF"
 
-#: src/eixrc/eixrc.cc:294
+#: src/eixrc/eixrc.cc:292
 msgid "self-reference"
 msgstr "Selbstreferenzierung"
 
-#: src/eixrc/eixrc.cc:379
+#: src/eixrc/eixrc.cc:377
 msgid "double ELSE"
 msgstr "doppeltes ELSE"
 
-#: src/eixrc/eixrc.cc:401
+#: src/eixrc/eixrc.cc:399
 msgid "IF without FI"
 msgstr "IF ohne FI"
 
-#: src/eixrc/eixrc.cc:452
+#: src/eixrc/eixrc.cc:450
 msgid "No $HOME found in environment."
 msgstr "Kein $HOME in der Environment."
 
-#: src/eixrc/eixrc.cc:703
+#: src/eixrc/eixrc.cc:701
 msgid "true"
 msgstr "wahr"
 
-#: src/eixrc/eixrc.cc:705
+#: src/eixrc/eixrc.cc:703
 msgid "yes"
 msgstr "ja"
 
-#: src/eixrc/eixrc.cc:707
+#: src/eixrc/eixrc.cc:705
 msgid "on"
 msgstr "an"
 
-#: src/eixrc/eixrc.cc:734
+#: src/eixrc/eixrc.cc:732
 msgid "or"
 msgstr "oder"
 
-#: src/eixrc/eixrc.cc:750
+#: src/eixrc/eixrc.cc:748
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
@@ -5158,15 +5158,15 @@ msgstr ""
 "%s hat unbekannten Wert %r\n"
 "\tAls Ersatz wird 'all-installed' benutzt."
 
-#: src/eixrc/eixrc.cc:780
+#: src/eixrc/eixrc.cc:778
 msgid "was locally changed to:"
 msgstr "lokal geändert auf:"
 
-#: src/eixrc/eixrc.cc:781
+#: src/eixrc/eixrc.cc:779
 msgid "changed locally, default was:"
 msgstr "lokal geändert. Default war:"
 
-#: src/eixrc/eixrc.cc:810
+#: src/eixrc/eixrc.cc:808
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 
@@ -5199,11 +5199,11 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:535
+#: src/output/formatstring-print.cc:534
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 
-#: src/output/formatstring-print.cc:540
+#: src/output/formatstring-print.cc:539
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 

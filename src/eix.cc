@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "cli.h"
 #include <config.h>
+#include "cli.h"
 #include <database/header.h>
 #include <database/package_reader.h>
 #include <eixTk/argsreader.h>

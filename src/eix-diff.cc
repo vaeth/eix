@@ -11,6 +11,7 @@
  * Everyone wanted something like esync from esearch .. so here it is!
  */
 
+#include <config.h>
 #include <database/header.h>
 #include <database/io.h>
 #include <eixTk/argsreader.h>

@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Use largefile support if available
+
 *eix-0.22.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix mask syntax if slots and repositories are used in the same mask,

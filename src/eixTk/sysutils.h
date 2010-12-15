@@ -10,6 +10,7 @@
 #ifndef EIX__SYSUTILS_H__
 #define EIX__SYSUTILS_H__ 1
 
+#include <config.h>
 #include <eixTk/exceptions.h>
 
 #include <ctime>

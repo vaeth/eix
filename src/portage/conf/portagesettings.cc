@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "portagesettings.h"
 #include <config.h>
+#include "portagesettings.h"
 #include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>

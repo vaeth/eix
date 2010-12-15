@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "global.h"
 #include <config.h>
+#include "global.h"
 #include <eixrc/eixrc.h>
 #include <eixTk/i18n.h>
 

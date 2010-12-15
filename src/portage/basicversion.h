@@ -11,6 +11,7 @@
 #define EIX__BASICVERSION_H__ 1
 
 #include <config.h>
+
 #include <list>
 #include <string>
 

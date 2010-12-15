@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <cache/cachetable.h>
 #include <config.h>
+#include <cache/cachetable.h>
 #include <database/header.h>
 #include <database/io.h>
 #include <eixTk/argsreader.h>

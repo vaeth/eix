@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "set_stability.h"
 #include <config.h>
+#include "set_stability.h"
 #include <eixTk/likely.h>
 #include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>

@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "formatstring.h"
 #include <config.h>
+#include "formatstring.h"
 #include <eixTk/ansicolor.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
