@@ -44,13 +44,15 @@ The following options are available:
      Except for executing the !! lines in ${eixsyncconf}
      this is the same as eix-diff ${eixprevious}.
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
-     USER defaults to current user and DIR defaults to PORTDIR
+     USER defaults to current user and DIR defaults to PORTDIR.
+     An empty SERVER cancels this option. This option implies -0
+-0   No eix --sync
 -2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after eix-update (@ entries)
      and do not show differences. This option implies -R
--u   Update database only and show differences. This is equivalent to -l@s ""
+-u   Update database only and show differences. This is equivalent to -0l@s ""
 -l   Do not call layman (and the !commands in ${eixsyncconf}).
      However, the !! lines and postponed hooks (@ and @@ entries)
      will be executed anyway.
@@ -59,8 +61,7 @@ The following options are available:
 -M   Run emerge --metadata. You might need this when you use e.g.
      PORTDIR_CACHE_METHOD=flat and a newer portage version when
      FEATURES=metadata-transfer is inactive or disabled.
--m   Run emerge --metadata but skip emerge --sync.
--N   Skip emerge --metadata if it was activated by -M or -m.
+-N   Cancel a previous -M.
 -t   Use temporary file to save the current database (-d will not be possible).
 -T   Do not measure time
 -q   Be quiet (close stdout)
@@ -186,18 +187,18 @@ eval "Push -c opt ${config_opts}"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts "ids:2:Uul@SmMNtTqwWL:c:C:o:rRe?hH" opt
+while getopts "ids:02:Uul@SMNtTqwWL:c:C:o:rRem?hH" opt
 do	case "${opt}" in
 		i) DefaultOpts;;
 		d) diffonly=:;;
 		s) server="${OPTARG}";;
+		0) skip_sync=:;;
 		2) client="${OPTARG}";;
 		U) doupdate=false;;
 		u) nolayman=:; nohooks=:; skip_sync=:; server='';;
 		l) nolayman=:;;
 		@) nohooks=:;;
 		S) synchooks=false;;
-		m) skip_sync=:; metadata=:;;
 		M) metadata=:;;
 		N) metadata=false;;
 		t) usetemp=:;;
@@ -212,6 +213,7 @@ do	case "${opt}" in
 		r) clearcache=:;;
 		R) clearcache=false;;
 		e) test_for_root=false;;
+		m) die "`gettext 'eix-sync -m is obsolete; use -M0 instead'`";;
 		*) Usage 0;;
 	esac
 done

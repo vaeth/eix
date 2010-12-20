@@ -1,0 +1,19 @@
+#compdef eix-installed-after
+_arguments -s -S -A '-*' : \
+'(-h -H -\?)'{-h,-H,'-\?'}'[help]' \
+'-b[output packages installed before (not after) the package]' \
+'-i[include the given package in the output]' \
+'-l[use /var/log/emerge.log to determine first install time]' \
+'-L[use LOG to determine first install time]:logfile:_files' \
+'-e[use date as argument, not a package name]' \
+'-a[increase match for -l or -L or -e by SEC seconds]:increase_seconds:( )' \
+'-A[decrease match for -l or -L or -e by SEC seconds]:decrease_seconds:( )' \
+'-S[choose first matching slot]' \
+'-V[look for category/package-version, not category/package:slot]' \
+'-d[output installation date after package]' \
+'-s[output slot also in case of no ambiguity]' \
+'-v[output category/package-version, not category/package:slot]' \
+'-\=[output \=category/package-version, not category/package:slot]' \
+'-t[use build time independent of USE_BUILD_TIME]' \
+'-T[never use build time independent of USE_BUILD_TIME]' \
+'1:package:_gentoo_packages installed'

@@ -53,6 +53,7 @@ AC_CONFIG_FILES([
 		src/Makefile
 		doc/Makefile
 		po/Makefile.in
+		zsh/Makefile
 	])
 AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_TARGET()
@@ -859,6 +860,17 @@ AC_ARG_WITH([remote-file],
 		["http://dev.gentooexperimental.org/eix_cache/eix-caches.tbz2"])])
 MV_MSG_RESULT_VAR([DEFAULT_REMOTE_PATH])
 AC_SUBST([DEFAULT_REMOTE_PATH])
+
+AC_MSG_CHECKING([zsh completion])
+AS_VAR_SET([ZSH_COMPLETION], ["${datadir}/zsh/site-functions"])
+AC_ARG_WITH([zsh-completion],
+	[AS_HELP_STRING([--with-zsh-completion=STR],
+		[install zsh-completion file in directory STR])],
+	[AS_CASE([${withval}],
+		['/'*], [AS_VAR_SET([ZSH_COMPLETION], ["${withval}"])],
+		[no], [AS_VAR_SET([ZSH_COMPLETION], [])])])
+AC_SUBST([ZSH_COMPLETION])
+MV_MSG_RESULT_VAR([ZSH_COMPLETION])
 
 # Check endianess
 AC_C_BIGENDIAN()

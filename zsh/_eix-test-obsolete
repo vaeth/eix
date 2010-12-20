@@ -1,0 +1,8 @@
+#compdef eix-test-obsolete
+_arguments -s -S -A '-*' : \
+'(-h -H -\?)'{-h,-H,'-\?'}'[help]' \
+'-c[use CHECK_INSTALLED_OVERLAYS=true]' \
+'-C[use CHECK_INSTALLED_OVERLAYS=false]' \
+'(1 -b)-d[instead of argument "detail"]' \
+'(1 -d)-b[instead of argument "brief"]' \
+'1:mode:(detail brief)'

@@ -17,7 +17,7 @@
 #AUTOMAKE_OPTIONS = foreign 1.4
 AUTOMAKE_OPTIONS = foreign 1.11 no-dist-gzip dist-xz
 
-SUBDIRS = po src manpage doc
+SUBDIRS = po src manpage doc zsh
 
 CLEANFILES = doxygen.cfg cppcomplete.tags tags
 

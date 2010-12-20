@@ -1,0 +1,27 @@
+#compdef eix-sync
+_arguments -s -S -A '-*' : \
+'(-h -H -\?)'{-h,-H,'-\?'}'[help]' \
+'-i[ignore all previous options]' \
+'-d[only show differences and then exit]' \
+'-s+[rsync from SERVER; this implies -0]:hosts: _hosts' \
+'-2+[rsync to SERVER]:hosts: _hosts' \
+'-0[no eix -sync]' \
+'-U[do not touch database and omit @ hooks after eix-update]' \
+'-u[update database only and show differences. Equivalent to -0l@s ""]' \
+'-l[do not call layman or ! hooks]' \
+'-@[do not execute @ or @@ hooks]' \
+'-S[do not execute @ hooks after emerge --sync]' \
+'-M[run emerge -metadata]' \
+'-N[cancel previous -M]' \
+'-t[use temporary file to save current database]' \
+'-T[do not measure time]' \
+'-q[be quiet (close stdout)]' \
+'-w[run emerge-webrsync instead of emerge --sync]' \
+'-W[run emerge-delta-webrsync instead of emerge --sync]' \
+'-c[run CMD instead of emerge --sync]:cmd:_files' \
+'-C[add OPT to emerge --sync]:eix_sync_opt:( )' \
+'-o[add OPT to eix-update]:eix_update_opt:( )' \
+'-L[add OPT to layman]:layman_opt:( )' \
+'-r[clear /var/cache/edb/dep/* before syncing]' \
+'-R[cancel previous -r]' \
+'-e[do not test whether we must be root]'
