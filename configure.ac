@@ -869,8 +869,8 @@ AC_ARG_WITH([zsh-completion],
 	[AS_CASE([${withval}],
 		['/'*], [AS_VAR_SET([ZSH_COMPLETION], ["${withval}"])],
 		[no], [AS_VAR_SET([ZSH_COMPLETION], [])])])
-AC_SUBST([ZSH_COMPLETION])
 MV_MSG_RESULT_VAR([ZSH_COMPLETION])
+AC_SUBST([ZSH_COMPLETION])
 
 # Check endianess
 AC_C_BIGENDIAN()

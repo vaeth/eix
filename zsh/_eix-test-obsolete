@@ -1,6 +1,6 @@
 #compdef eix-test-obsolete
 _arguments -s -S -A '-*' : \
-'(-h -H -\?)'{-h,-H,'-\?'}'[help]' \
+'(1 -)'{-h,-H,'-\?'}'[help]' \
 '-c[use CHECK_INSTALLED_OVERLAYS=true]' \
 '-C[use CHECK_INSTALLED_OVERLAYS=false]' \
 '(1 -b)-d[instead of argument "detail"]' \

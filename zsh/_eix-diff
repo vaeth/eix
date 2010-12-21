@@ -1,11 +1,11 @@
 #compdef eix-diff eix-update
 local -a args
-local print_arg='--print[print expanded variable value]'
+local excl_opt='(-)'
+[[ $service = eix-diff ]] && excl_opt='(1 2 -)'
 args=(-s -S :
-'(--help -h)'{--help,-h}'[help]'
-'(--version -V)'{--version,-v}'[version]'
-'(--quick -Q)'{--quick,-Q}'[do not try to read unguessable slots]'
-'--care[always read slots of installed packages]'
+"$excl_opt"{--help,-h}'[help]'
+"$excl_opt"{--version,-v}'[version]'
+"$excl_opt"'--print[print expanded variable value]'
 '(--quiet -q)'{--quiet,-q}'[no output]'
 '(--forcecolor --nocolor -F -n)'{--nocolor,-n}'[do not use colors in output]'
 '(--forcecolor --nocolor -F -n)'{--forcecolor,-F}'[force color on non-terminal]'
@@ -13,15 +13,15 @@ args=(-s -S :
 '(--dump --dump-defaults)--dump-defaults[dump default values of variables]'
 )
 if [[ $service = eix-diff ]]
-then	_arguments $args "(1 2)${print_arg}" \
+then	_arguments $args \
 '(--quick -Q)'{--quick,-Q}'[do not try to read unguessable slots]' \
 '--care[always read slots of installed packages]' \
 '1:old_cache:_files' \
 '2::new_cache:_files'
-else	_arguments $args "${print_arg}" \
+else	_arguments $args \
 '(--output -o)'{--output,-o}'+[output to FILE]:output_file:_files' \
-'(--exclude-overlay -x)'{--exclude-overlay,-x}'+[exclude OVERLAY]:exclude_overlay:( )' \
-'(--add-overlay -a)'{--add-overlay,-a}'+[add OVERLAY]:add_overlay:( )' \
-'(--override-method -m)'{--override-method,-m}'+[override cache method]:override_method:( )' \
-'(--repo-name -r)'{--repo-name,-r}'+[set label for matching overlay]:add-overlay:( )'
+'(--exclude-overlay -x)'{--exclude-overlay,-x}'+[exclude OVERLAY]:exclude overlay: ' \
+'(--add-overlay -a)'{--add-overlay,-a}'+[add OVERLAY]:add overlay: ' \
+'(--override-method -m)'{--override-method,-m}'+[override cache method]:overlay to change method: :cache method: ' \
+'(--repo-name -r)'{--repo-name,-r}'+[set label for matching overlay]:overlay to change name: :repo-name: '
 fi

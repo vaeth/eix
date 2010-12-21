@@ -1,7 +1,7 @@
 #compdef eix-installed
 _arguments -s -S -A '-*' : \
-'(-h -H -\?)'{-h,-H,'-\?'}'[help]' \
-'-a[same as -q all]' \
-'-q[quiet: output only packages, no text]' \
+'(* -)'{-h,-H,'-\?'}'[help]' \
+'(* -q)-a[same as -q all]' \
+'-q[quiet\: output only packages, no text]' \
 '-\=[output packages prefixed with "="]' \
 '*:packages:(all repo no-repo buildtime no-buildtime)'
