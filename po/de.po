@@ -920,19 +920,19 @@ msgid "... considered as ${z}"
 msgstr "... wegen ${z}"
 
 #: src/eix-test-obsolete.sh:168
-#, fuzzy, sh-format
+#, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
-msgstr "Keine   Redundanz   in    ${rump}accept_keywords"
+msgstr "Keine   Redundanz   in    ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:169
 #, sh-format
 msgid "Redundant in ${rump}{,accept_}keywords:"
-msgstr "Redundant in ${rump}{,accept_}accept_keywords:"
+msgstr "Redundant in ${rump}{,accept_}keywords:"
 
 #: src/eix-test-obsolete.sh:171
-#, fuzzy, sh-format
+#, sh-format
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
-msgstr "Nichts Uninstalliertes in ${rump}{,accept_}accept_keywords"
+msgstr "Nichts Uninstalliertes in ${rump}{,accept_}keywords"
 
 #: src/eix-test-obsolete.sh:172
 #, sh-format
