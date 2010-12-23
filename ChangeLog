@@ -2,9 +2,12 @@
 
 *eix-0.22.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Use largefile support if available
 	- Add some experimental zsh-completion
 	- eix-sync: New option -V, cancel -m, fix description of -u
+	- eix-test-obsolete: Output {,accept_}keywords instead of keywords:
+	  http://bugs.gentoo.org/show_bug.cgi?id=349352
+	- Honour order of {,accept_}keywords
+	- Use largefile support if available
 
 *eix-0.22.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

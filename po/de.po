@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-12-20 16:32+0100\n"
+"POT-Creation-Date: 2010-12-23 15:17+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -920,24 +920,24 @@ msgid "... considered as ${z}"
 msgstr "... wegen ${z}"
 
 #: src/eix-test-obsolete.sh:168
-#, sh-format
-msgid "No  redundant  entries in ${rump}accept_keywords"
+#, fuzzy, sh-format
+msgid "No  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Keine   Redundanz   in    ${rump}accept_keywords"
 
 #: src/eix-test-obsolete.sh:169
 #, sh-format
-msgid "Redundant in ${rump}accept_keywords:"
-msgstr "Redundant in ${rump}accept_keywords:"
+msgid "Redundant in ${rump}{,accept_}keywords:"
+msgstr "Redundant in ${rump}{,accept_}accept_keywords:"
 
 #: src/eix-test-obsolete.sh:171
-#, sh-format
-msgid "No uninstalled entries in ${rump}accept_keywords"
-msgstr "Nichts Uninstalliertes in ${rump}accept_keywords"
+#, fuzzy, sh-format
+msgid "No uninstalled entries in ${rump}{,accept_}keywords"
+msgstr "Nichts Uninstalliertes in ${rump}{,accept_}accept_keywords"
 
 #: src/eix-test-obsolete.sh:172
 #, sh-format
-msgid "Not installed but in ${rump}accept_keywords:"
-msgstr "Uninstalliert, aber in ${rump}accept_keywords:"
+msgid "Not installed but in ${rump}{,accept_}keywords:"
+msgstr "Uninstalliert, aber in ${rump}{,accept_}keywords:"
 
 #: src/eix-test-obsolete.sh:174
 #, sh-format

@@ -165,11 +165,11 @@ DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
 Check keywords "`eval_gettext \
-	'No  redundant  entries in ${rump}accept_keywords'`" \
-	"`eval_gettext 'Redundant in ${rump}accept_keywords:'`"
+	'No  redundant  entries in ${rump}{,accept_}keywords'`" \
+	"`eval_gettext 'Redundant in ${rump}{,accept_}keywords:'`"
 Check in_keywords "`eval_gettext \
-	'No uninstalled entries in ${rump}accept_keywords'`" \
-	"`eval_gettext 'Not installed but in ${rump}accept_keywords:'`"
+	'No uninstalled entries in ${rump}{,accept_}keywords'`" \
+	"`eval_gettext 'Not installed but in ${rump}{,accept_}keywords:'`"
 Check mask "`eval_gettext \
 	'No  redundant  entries in ${rump}mask'`" \
 	"`eval_gettext 'Redundant in ${rump}mask:'`"
