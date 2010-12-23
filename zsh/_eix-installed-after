@@ -9,11 +9,14 @@ _arguments -s -S -A '-*' : \
 '-a+[increase match for -l or -L or -e by SEC seconds]:increase seconds: ' \
 '-A+[decrease match for -l or -L or -e by SEC seconds]:decrease seconds: ' \
 '-S[choose first matching slot]' \
-'-V[look for category/package-version, not category/package\:slot]' \
 '-d[output installation date after package]' \
 '-s[output slot also in case of no ambiguity]' \
 '-v[output category/package-version, not category/package\:slot]' \
 '-\=[output \=category/package-version, not category/package\:slot]' \
 '-t[use build time independent of USE_BUILD_TIME]' \
 '-T[never use build time independent of USE_BUILD_TIME]' \
-'1:package:_gentoo_packages installed'
+'-' 'with-slot' \
+'1:package:_gentoo_packages installed' \
+'-' 'with-version' \
+'-V[look for category/package-version, not category/package\:slot]' \
+'1:package:_gentoo_packages installed_versions'

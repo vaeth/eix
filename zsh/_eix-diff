@@ -1,8 +1,8 @@
 #compdef eix-diff eix-update
-local -a args
+local -a common
 local excl_opt='(-)'
 [[ $service = eix-diff ]] && excl_opt='(1 2 -)'
-args=(-s -S :
+common=(-s -S :
 "$excl_opt"{--help,-h}'[help]'
 "$excl_opt"{--version,-v}'[version]'
 "$excl_opt"'--print[print expanded variable value]'
@@ -13,15 +13,25 @@ args=(-s -S :
 '(--dump --dump-defaults)--dump-defaults[dump default values of variables]'
 )
 if [[ $service = eix-diff ]]
-then	_arguments $args \
+then	_arguments $common \
 '(--quick -Q)'{--quick,-Q}'[do not try to read unguessable slots]' \
 '--care[always read slots of installed packages]' \
 '1:old_cache:_files' \
 '2::new_cache:_files'
-else	_arguments $args \
+else	local stat
+_eix__overlay() {
+	local -a o
+	o=(`eix --print PORTDIR_OVERLAY`)
+	o+=("`eix --print PORTDIR`")
+	_values $@ $o
+}
+_arguments $common \
 '(--output -o)'{--output,-o}'+[output to FILE]:output_file:_files' \
-'(--exclude-overlay -x)'{--exclude-overlay,-x}'+[exclude OVERLAY]:exclude overlay: ' \
-'(--add-overlay -a)'{--add-overlay,-a}'+[add OVERLAY]:add overlay: ' \
-'(--override-method -m)'{--override-method,-m}'+[override cache method]:overlay to change method: :cache method: ' \
-'(--repo-name -r)'{--repo-name,-r}'+[set label for matching overlay]:overlay to change name: :repo-name: '
+'(--exclude-overlay -x)'{--exclude-overlay,-x}'+[exclude OVERLAY]:exclude overlay: _eix__overlay "exclude overlay"' \
+'(--add-overlay -a)'{--add-overlay,-a}'+[add OVERLAY]:add overlay:_files -/' \
+'(--override-method -m)'{--override-method,-m}'+[override cache method]:overlay mask to change method: _eix__overlay "overlay mask to change method":cache method: ' \
+'(--repo-name -r)'{--repo-name,-r}'+[set label for matching overlay]:overlay to change name: _eix__overlay "overlay to change name":repo-name: '
+stat=$?
+unset -f _eix__overlay
+return stat
 fi
