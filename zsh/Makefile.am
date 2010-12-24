@@ -1,6 +1,6 @@
 
 completionfiles = \
-_eix-diff \
+_0eix \
 _eix-installed \
 _eix-installed-after \
 _eix-layman \

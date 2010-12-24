@@ -1,0 +1,208 @@
+#compdef eix-diff eix-update eix
+local -a service_opts local_functions
+local excl_opt stat
+local_functions=(_eix__vars)
+_eix__vars() {
+	local i
+	local -a files
+	local -U vars
+	vars=(${${(M)${(f)"$(eix --dump)"}##[A-Z]*}%%\=*})
+	files=()
+	for i in /etc/portage/make.conf \
+		/etc/make.conf \
+		/etc/make.globals \
+		/usr/share/portage/config/make.globals
+	do	[[ -e $i ]] && files+=($i)
+	done
+	(( $#files )) && \
+		vars+=(${(f)"$(sed -n -e 's/^\([A-Z]*\)=.*/\1/p' $files)"})
+	_values 'variable' $vars
+}
+
+case $service in
+(*diff*)
+	:
+;;
+(*)
+	local_functions+=(_eix__overlay)
+_eix__overlay() {
+	local -U o
+	o=(`PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null`)
+	o+=("`PRINT_APPEND='' eix --print PORTDIR 2>/dev/null`")
+	o+=({1..$#o})
+	_values "$1" $o
+}
+;;
+esac
+
+service_opts=(
+{'(--quick)-Q','(-Q)--quick'}'[do not try to read unguessable slots]'
+'--care[always read slots of installed packages]'
+)
+
+case $service in
+(*update*)
+	excl_opt='(-)'
+	service_opts=(
+{'(--output)-o','(-o)--output'}'+[output to FILE]:output_file:_files'
+{'(--exclude-overlay)-x+','(-x)--exclude-overlay'}'[OVERLAY (exclude)]:exclude overlay: _eix__overlay "exclude overlay"'
+{'(--add-overlay)-a','(-a)--add-overlay'}'+[OVERLAY (add)]:add overlay:_files -/'
+{'(--override-method)-m+','(-m)--override-method'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method: _eix__overlay "overlay mask to change method":cache method: '
+{'(--repo-name)-r+','(-r)--repo-name'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name: _eix__overlay "overlay to change name":repo-name: '
+)
+;;
+(*diff*)
+	excl_opt='(1 2 -)'
+	service_opts+=(
+'1:old_cache:_files'
+'2::new_cache:_files'
+)
+;;
+(*)
+	excl_opt='(* -)'
+	service_opts+=(
+"$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path: _eix__overlay "overlay for printing path"'
+"$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label: _eix__overlay "overlay for printing label"'
+"$excl_opt"'--print-all-useflags[print all IUSE words]'
+"$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
+"$excl_opt"'--print-all-slots[print all SLOT strings]'
+"$excl_opt"'--print-all-provides[print all PROVIDE words]'
+"$excl_opt"'--print-all-licenses[print all LICENSE strings]'
+"$excl_opt"'--print-all-print-world-sets[print the world sets]'
+"$excl_opt"'--print-all-print-world-sets[print the world sets]'
+{'(--versionsort)-x','(-x)--versionsort'}'[sort output by slots/versions]'
+{'(--versionlines)-l','(-l)--versionlines'}'[output versions line by line]'
+{'(--compact)-c','(-c)--compact'}'[use \$FORMAT_COMPACT]'
+{'(--verbose)-v','(-v)--verbose'}'[use \$FORMAT_VERBOSE]'
+'--xml[output in xml format]'
+{'(--pure-packages)-\\*','(-\\*)--pure-packages'}'[omit printing of overlay names and package number]'
+'--only-names[print with format <category>/<name>]'
+{'(--brief)-0','(-0)--brief'}'[print at most one package]'
+'--brief2[print at most two packages]'
+{'(--test-non-matching)-t','(-t)--test-non-matching'}'[check /etc/portage/package.* and installed packages]'
+'--cache-file[CACHE_FILE (use instead of /var/cache/eix)]:cache-file:_files'
+'--format[FORMAT]:format: '
+'--format-compact[FORMAT_COMPACT]:format_compact: '
+'--format-verbose[FORMAT_COMPACT]:format_verbose: '
+{'*--not','*-\!'}'[logical negation]'
+{'*--and','*-a'}'[logical disjunction]'
+{'*--or','*-o'}'[logical conjunction]'
+{'*--open','*-\('}'[logical opening brace]'
+{'*--close','*-\)'}'[logical closing brace]'
+{'*--installed','*-I'}'[test for installed packages]'
+{'*--multi-installed','*-i'}'[test for multiple installed packages]'
+{'*--dup-packages','*-d'}'[test for duplicate packages]'
+{'*--dup-versions','*-D'}'[test for duplicated versions]'
+{'*--slotted','*-1'}'[test for nontrivial slots]'
+{'*--slots','*-2'}'[test for multiple slots]'
+{'*--upgrade','*-u'}'[test for upgradable packages]'
+'*--upgrade\+[test for upgradable packages, local]'
+'*--upgrade\-[test for upgradable packages, non-local]'
+'*--stable[test for stable packages]'
+'*--stable+[test for stable packages, local]'
+'*--stable-[test for stable packages, non-local]'
+'*--testing[test for testing packages]'
+'*--testing+[test for testing packages, local]'
+'*--testing-[test for testing packages, non-local]'
+'*--non-masked[test for non-masked packages]'
+'*--non-masked+[test for non-masked packages, local]'
+'*--non-masked-[test for non-masked packages, non-local]'
+'*--system[test for @system/virtual @system packages]'
+'*--system+[test for @system/virtual @system packages, local]'
+'*--system-[test for @system/virtual @system packages, non-local]'
+'*--system-plain[test for non-virtual @system packages]'
+'*--system-plain+[test for non-virtual @system packages, local]'
+'*--system-plain-[test for non-virtual @system packages, non-local]'
+'*--installed-unstable[test for installed unstable packages]'
+'*--installed-testing[test for installed testing packages]'
+'*--installed-masked[test for installed masked packages]'
+'*--world[test for @world/virtuals for @world packages]'
+'*--world-plain[test for non-virtual @world packages]'
+'*--world-file[test for @world-file/virtuals for @world-file packages]'
+'*--world-file-plain[test for non-virtual @world-file packages]'
+'*--world-set[test for @world-set/virtuals for @world-set packages]'
+'*--world-set-plain[test for non-virtual @world-set packages]'
+'*--selected[test for @selected/virtuals for @selected packages]'
+'*--selected-plain[test for non-virtual @selected packages]'
+'*--selected-file[test for @selected-file/virtuals for @selected-file packages]'
+'*--selected-file-plain[test for non-virtual @selected-file packages]'
+'*--selected-set[test for @selected-set/virtuals for @selected-set packages]'
+'*--selected-set-plain[test for non-virtual @selected-set packages]'
+'*--binary[test for packages with .tbz2 file]'
+{'*--overlay','*-O'}'[test if package is in an overlay]'
+'*--in-overlay[OVERLAY (test for packages in OVERLAY)]:overlay for testing: _eix__overlay "overlay for testing"'
+'*--only-in-overlay[OVERLAY (test for packages only in OVERLAY)]:overlay (only) for testing: _eix__overlay "overlay (only) for testing"'
+{'*--installed-overlay','*-J'}'[test if package is installed from an overlay]'
+'*--installed-from-overlay[OVERLAY (test for package installed from OVERLAY)]:overlay (installed) for testing: _eix__overlay "overlay (installed from) for testing"'
+'*--installed-in-overlay[OVERLAY (test for package installed and in OVERLAY)]:overlay (installed) for testing: _eix__overlay "overlay (installed and in) for testing"'
+'*--installed-in-some-overlay[test for package installed and in some overlay]'
+'*--restrict-fetch[test for RESTRICT=fetch packages]'
+'*--restrict-mirror[test for RESTRICT=mirror packages]'
+'*--restrict-primaryuri[test for RESTRICT=primaryuri packages]'
+'*--restrict-binchecks[test for RESTRICT=binchecks packages]'
+'*--restrict-strip[test for RESTRICT=strip packages]'
+'*--restrict-test[test for RESTRICT=test packages]'
+'*--restrict-userpriv[test for RESTRICT=userpriv packages]'
+'*--restrict-installsources[test for RESTRICT=installsources packages]'
+'*--restrict-bindist[test for RESTRICT=bindist packages]'
+'*--restrict-parallel[test for RESTRICT=parallel packages]'
+'*--properties-interactive[test for PROPERTIES=interactive packages]'
+'*--properties-live[test for PROPERTIES=live packages]'
+'*--properties-virtual[test for PROPERTIES=virtual packages]'
+'*--properties-set[test for PROPERTIES=set packages]'
+{'*--test-obsolete','*-T'}'[test for packages with obsolete /etc/portage/package.*]'
+{'*--pipe','*-\|'}'[test for packages matching stdin]'
+{'*--name','*-s'}'[match name]'
+{'*--description','*-S'}'[match description]'
+{'*--category','*-C'}'[match category]'
+{'*--category-name','*-A'}'[match "category/name"]'
+{'*--homepage','*-H'}'[match homepage]'
+{'*--license','*-L'}'[match license]'
+{'*--provide','*-P'}'[match provide]'
+{'*--use','*-U'}'[match IUSE]'
+'*--set[match setname]'
+'*--slot[match slotname]'
+'*--installed-slot[match installed slotname]'
+'*--installed-with-use[match installed enabled USE]'
+'*--installed-without-use[match installed disabled USE]'
+{'*--exact','*-e'}'[pattern is exact string]'
+{'*--begin','*-b'}'[pattern is beginning of string]'
+'*--end[pattern is end of string]'
+{'*--substring','*-z'}'[pattern is substring]'
+{'*--fuzzy','*-f+'}'[N (pattern is fuzzy, Levenshtein N)]::number (Levenshtein distance):(1 2 3 4 5 6 7 8 9)'
+{'*--pattern','*-p'}'[pattern is wildcard pattern]'
+{'*--regex','*-r'}'[pattern is regular expression]'
+)
+	case $words[CURRENT-1] in
+	(-[^-]#U*|--use|--installed-with(out|)-use)
+		service_opts+=('*:useflag:_gentoo_packages useflag')
+	;;
+	(-[^-]#C*|--category)
+		service_opts+=('*:category:_gentoo_packages category')
+	;;
+	(-[^-]#[iIt]*|--(multi-|)installed|--test-obsolete)
+		service_opts+=('*:installed package:_gentoo_packages installed')
+	;;
+	(-[^-]#s*|--name)
+		service_opts+=('*:package name:_gentoo_packages available_pkgnames_only')
+	;;
+	(*)
+		service_opts+=('*:package:_gentoo_packages available')
+	;;
+	esac
+;;
+esac
+
+_arguments -s -S : \
+"$excl_opt"{'--help','-h'}'[help]' \
+"$excl_opt"{'--version','-v'}'[version]' \
+"$excl_opt"'--print[print expanded variable value]:variable: _eix__vars' \
+"$excl_opt"'--dump[dump variables]' \
+"$excl_opt"'--dump-defaults[dump default values of variables]' \
+{'(--quiet)-q','(-q)--quiet'}'[no output]' \
+'(--forcecolor -F '{'--nocolor)-n','-n)--nocolor'}'[do not use colors in output]' \
+'(--nocolor -n '{'--forcecolor)-F','-F)--forcecolor'}'[force color on non-terminal]' \
+$service_opts
+stat=$?
+unset -f $local_functions
+return stat

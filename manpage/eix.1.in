@@ -176,17 +176,33 @@ and by setting B<COUNT_ONLY_PRINTED=false>.
 See also B<NOFOUND_STATUS> and B<MOREFOUND_STATUS>
 .TP
 .B --dump
-Show the current eixrc-variables, and their defaults as comments.
+Show the current eixrc-variables, and their defaults as comments; then exit.
 .TP
 .B --dump-defaults
-Show the defaults of the eixrc-variables, and their current values as comments.
+Show the defaults of the eixrc-variables, and their current values as comments; then exit.
 .TP
 .BI "--print " VAR
 Print the specified variable I<VAR> of eixrc or of portage settings,
-completely expanded as it would be used internally by eix.
+completely expanded as it would be used internally by eix; then exit.
 This is mainly intended for usage in scripts or for debugging purposes.
 If you use it in scripts you might want to specify B<PRINT_APPEND> to
 get trailing spaces (see description of B<PRINT_APPEND>).
+.TP
+.BR -V ", " --version
+Print version and exit.
+.TP
+.BR -n ", " --nocolor
+Disables the use of ANSI color codes. This is useful for terminals that do not support ANSI colors.
+(This is automatically turned on if stdout is no tty, but can be overridden by using --force-color)
+.TP
+.BR -F ", " --force-color
+The opposite of --nocolor.
+.\" }}}
+
+.\" {{{ -------- eix exclusive
+.SS Special information options
+The following special information options are only provided by the B<eix> binary.
+They are one-shot exclusive options, i.e. eix outputs only the required data and then exits.
 .TP
 .BI "--print-overlay-path " OVERLAY
 Print the path of the first overlay matching I<OVERLAY>.
@@ -213,16 +229,6 @@ print all LICENSE strings used in some package.
 .TP
 .B --print-world-sets
 print the world sets.
-.TP
-.BR -V ", " --version
-Print version and exit.
-.TP
-.BR -n ", " --nocolor
-Disables the use of ANSI color codes. This is useful for terminals that do not support ANSI colors.
-(This is automatically turned on if stdout is no tty, but can be overridden by using --force-color)
-.TP
-.BR -F ", " --force-color
-The opposite of --nocolor.
 .\" }}}
 
 .\" {{{ -------- Output options
@@ -593,19 +599,19 @@ Only match packages which have at least one version with RESTRICT=parallel.
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-interactive
-Only match packages which have at least one version with PROPERTIES=interactive
+Only match packages which have at least one version with PROPERTIES=interactive.
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-live
-Only match packages which have at least one version with PROPERTIES=live
+Only match packages which have at least one version with PROPERTIES=live.
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-virtual
-Only match packages which have at least one version with PROPERTIES=virtual
+Only match packages which have at least one version with PROPERTIES=virtual.
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .B --properties-set
-Only match packages which have at least one version with PROPERTIES=set
+Only match packages which have at least one version with PROPERTIES=set.
 If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
 .TP
 .BR -T ", " --test-obsolete
@@ -712,13 +718,13 @@ You will usually want to combine this option with -e
 .B --installed-with-use
 A useflag enabled during installation of the package.
 Of course, this flag can only match if the package is installed.
-Note that the same restrictions hold as for -I, i.e. only packages will be matched
+Note that the same restrictions hold as for B<-I>, i.e. only packages will be matched
 which are still in the database.
 .TP
 .B --installed-without-use
 A useflag disabled during installation of the package.
 Of course, this flag can only match if the package is installed.
-Note that the same restrictions hold as for -I, i.e. only packages will be matched
+Note that the same restrictions hold as for B<-I>, i.e. only packages will be matched
 which are still in the database.
 .\" }}}
 
