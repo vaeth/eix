@@ -1,6 +1,6 @@
 #compdef eix-sync
 _arguments -s -S -A '-*' : \
-'(-)'{-h,-H,'-\?'}'[help]' \
+'(-)'{'-h','-H','-\\?'}'[help]' \
 '-i[ignore all previous options]' \
 '-d[only show differences and then exit]' \
 '-s+[rsync from SERVER; this implies -0]:host: _hosts' \
@@ -16,9 +16,9 @@ _arguments -s -S -A '-*' : \
 '-t[use temporary file to save current database]' \
 '-T[do not measure time]' \
 '-q[be quiet (close stdout)]' \
-'(-c -w -W)-w[run emerge-webrsync instead of emerge --sync]' \
-'(-c -w -W)-W[run emerge-delta-webrsync instead of emerge --sync]' \
-'(-c -w -W)-c+[run CMD instead of emerge --sync]:command replacing emerge --sync:_files' \
+'(-c -W)-w[run emerge-webrsync instead of emerge --sync]' \
+'(-c -w)-W[run emerge-delta-webrsync instead of emerge --sync]' \
+'(-w -W)-c+[run CMD instead of emerge --sync]:command replacing emerge --sync:_files' \
 '*-C+[add OPT to emerge --sync]:emerge --sync option: ' \
 '*-o+[add OPT to eix-update]:eix-update option: ' \
 '*-L+[add OPT to layman]:layman option: ' \

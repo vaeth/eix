@@ -264,7 +264,7 @@ AddOption(BOOLEAN, "RESTRICT_INSTALLED",
 AddOption(BOOLEAN, "CARE_RESTRICT_INSTALLED",
 	"true", _(
 	"If true, read RESTRICT for installed versions always from disk.\n"
-	"This is ignored if PROPERTIES_INSTALLED=false."));
+	"This is ignored if RESTRICT_INSTALLED=false."));
 
 AddOption(STRING, "PRINT_APPEND",
 	"\\n", _(
@@ -290,6 +290,7 @@ AddOption(BOOLEAN, "DIFF_PRINT_INSTALLED",
 	"true", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines whether eix-diff will output installed versions."));
+
 AddOption(STRING, "COLOR_TITLE",
 	"green",
 	"This variable is only used for delayed substitution.\n"

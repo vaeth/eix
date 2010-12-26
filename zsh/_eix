@@ -1,12 +1,11 @@
-#compdef eix-diff eix-update eix
+#compdef eix eix-diff eix-update
 local -a service_opts local_functions
 local excl_opt stat
 local_functions=(_eix__vars)
 _eix__vars() {
 	local i
-	local -a files
-	local -U vars
-	vars=(${${(M)${(f)"$(eix --dump)"}##[A-Z]*}%%\=*})
+	local -a files vars
+	vars=(${${(M)${(f)"$(eix --dump 2>/dev/null)"}##[A-Z]*}%%\=*})
 	files=()
 	for i in /etc/portage/make.conf \
 		/etc/make.conf \
@@ -16,7 +15,7 @@ _eix__vars() {
 	done
 	(( $#files )) && \
 		vars+=(${(f)"$(sed -n -e 's/^\([A-Z]*\)=.*/\1/p' $files)"})
-	_values 'variable' $vars
+	compadd "${@}" -- $vars
 }
 
 case $service in
@@ -26,11 +25,11 @@ case $service in
 (*)
 	local_functions+=(_eix__overlay)
 _eix__overlay() {
-	local -U o
+	local -aU o
 	o=(`PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null`)
 	o+=("`PRINT_APPEND='' eix --print PORTDIR 2>/dev/null`")
-	o+=({1..$#o})
-	_values "$1" $o
+	o+=({0..$#o})
+	compadd "${@}" -- $o
 }
 ;;
 esac
@@ -45,10 +44,10 @@ case $service in
 	excl_opt='(-)'
 	service_opts=(
 {'(--output)-o','(-o)--output'}'+[output to FILE]:output_file:_files'
-{'(--exclude-overlay)-x+','(-x)--exclude-overlay'}'[OVERLAY (exclude)]:exclude overlay: _eix__overlay "exclude overlay"'
+{'(--exclude-overlay)-x+','(-x)--exclude-overlay'}'[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
 {'(--add-overlay)-a','(-a)--add-overlay'}'+[OVERLAY (add)]:add overlay:_files -/'
-{'(--override-method)-m+','(-m)--override-method'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method: _eix__overlay "overlay mask to change method":cache method: '
-{'(--repo-name)-r+','(-r)--repo-name'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name: _eix__overlay "overlay to change name":repo-name: '
+{'(--override-method)-m+','(-m)--override-method'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:_eix__overlay:cache method: '
+{'(--repo-name)-r+','(-r)--repo-name'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:_eix__overlay:repo-name: '
 )
 ;;
 (*diff*)
@@ -61,8 +60,8 @@ case $service in
 (*)
 	excl_opt='(* -)'
 	service_opts+=(
-"$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path: _eix__overlay "overlay for printing path"'
-"$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label: _eix__overlay "overlay for printing label"'
+"$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path:_eix__overlay'
+"$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label:_eix__overlay'
 "$excl_opt"'--print-all-useflags[print all IUSE words]'
 "$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
 "$excl_opt"'--print-all-slots[print all SLOT strings]'
@@ -130,11 +129,11 @@ case $service in
 '*--selected-set-plain[test for non-virtual @selected-set packages]'
 '*--binary[test for packages with .tbz2 file]'
 {'*--overlay','*-O'}'[test if package is in an overlay]'
-'*--in-overlay[OVERLAY (test for packages in OVERLAY)]:overlay for testing: _eix__overlay "overlay for testing"'
-'*--only-in-overlay[OVERLAY (test for packages only in OVERLAY)]:overlay (only) for testing: _eix__overlay "overlay (only) for testing"'
+'*--in-overlay[OVERLAY (test for packages in OVERLAY)]:overlay for testing:_eix__overlay'
+'*--only-in-overlay[OVERLAY (test for packages only in OVERLAY)]:overlay (only) for testing:_eix__overlay'
 {'*--installed-overlay','*-J'}'[test if package is installed from an overlay]'
-'*--installed-from-overlay[OVERLAY (test for package installed from OVERLAY)]:overlay (installed) for testing: _eix__overlay "overlay (installed from) for testing"'
-'*--installed-in-overlay[OVERLAY (test for package installed and in OVERLAY)]:overlay (installed) for testing: _eix__overlay "overlay (installed and in) for testing"'
+'*--installed-from-overlay[OVERLAY (test for package installed from OVERLAY)]:overlay (installed) for testing:_eix__overlay'
+'*--installed-in-overlay[OVERLAY (test for package installed and in OVERLAY)]:overlay (installed and in) for testing:_eix__overlay'
 '*--installed-in-some-overlay[test for package installed and in some overlay]'
 '*--restrict-fetch[test for RESTRICT=fetch packages]'
 '*--restrict-mirror[test for RESTRICT=mirror packages]'
@@ -173,30 +172,90 @@ case $service in
 {'*--pattern','*-p'}'[pattern is wildcard pattern]'
 {'*--regex','*-r'}'[pattern is regular expression]'
 )
-	case $words[CURRENT-1] in
-	(-[^-]#U*|--use|--installed-with(out|)-use)
-		service_opts+=('*:useflag:_gentoo_packages useflag')
+	local -a modes
+	modes=()
+	local i mode='' will_break=false
+	for (( i=CURRENT-1 ; i ; --i ))
+	do	case $words[$i] in
+		(-[^-]#[o!]*|--or|--not)
+			will_break=:
+		;;
+		(-[^-]#[iI][^o!]#|--(multi-|)installed)
+			modes=('installed')
+		;|
+		(-[^-]#C[^o!sAU]#|--category)
+			: ${mode:='category'}
+		;;
+		(-[^-]#s[^o!CAU]#|--name)
+			: ${mode:='name'}
+		;;
+		(-[^-]#A[^o!CsU]#|--category-name)
+			: ${mode:='category/name'}
+		;;
+		(-[^-]#U[^o!CsA]#|--use|--installed-with(out|)-use)
+			if [[ -z $mode ]]
+			then	modes=()
+				mode='useflag'
+				will_break=:
+			fi
+		;;
+		esac
+		$will_break && break
+	done
+	modes+=(${mode:-package})
+	service_opts+=(
+'*:'"$modes"':_eix__arg -- '"$modes"
+)
+	local_functions+=(_eix__arg)
+_eix__arg() {
+	local -a addarg
+	addarg=($@[0,(R)(--)])
+	shift $#addarg
+	if [[ $1 == useflag ]]
+	then	compadd $addarg ${${(f)"$(eix --print-all-useflags)"}##[()+-]#}
+		return
+	fi
+	local -a eixopt
+	eixopt=('-*')
+	if [[ $1 == installed ]]
+	then	shift
+		eixopt+=('-I')
+	fi
+	local -x NEWLINE=false CAREMODE=false QUICKMODE=true \
+		RESTRICT_INSTALLED=false USE_BUILD_TIME=false
+	case $1 in
+	(category)
+		compadd $addarg ${(f)"$(eix $eixopt --format '<category>\n')"}
 	;;
-	(-[^-]#C*|--category)
-		service_opts+=('*:category:_gentoo_packages category')
+	(name)
+		compadd $addarg ${(f)"$(eix $eixopt --format '<name>\n')"}
 	;;
-	(-[^-]#[iIt]*|--(multi-|)installed|--test-obsolete)
-		service_opts+=('*:installed package:_gentoo_packages installed')
+	(category/name)
+		compadd $addarg ${(f)"$(eix $eixopt --only-names)"}
 	;;
-	(-[^-]#s*|--name)
-		service_opts+=('*:package name:_gentoo_packages available_pkgnames_only')
-	;;
-	(*)
-		service_opts+=('*:package:_gentoo_packages available')
+	(package)
+		case $PREFIX in
+		(*/*)
+			compset -P '*/'
+			compadd $addarg ${(f)"$(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n')"}
+		;;
+		(*)
+			local -a cat_name
+			cat_name=(${(f)"$(eix $eixopt --only-names)"})
+			compadd $addarg ${cat_name:t}
+			compadd $addarg[0,-2] -S '/' -- ${cat_name%%/*}
+		;;
+		esac
 	;;
 	esac
+}
 ;;
 esac
 
 _arguments -s -S : \
 "$excl_opt"{'--help','-h'}'[help]' \
 "$excl_opt"{'--version','-v'}'[version]' \
-"$excl_opt"'--print[print expanded variable value]:variable: _eix__vars' \
+"$excl_opt"'--print[print expanded variable value]:variable:_eix__vars' \
 "$excl_opt"'--dump[dump variables]' \
 "$excl_opt"'--dump-defaults[dump default values of variables]' \
 {'(--quiet)-q','(-q)--quiet'}'[no output]' \

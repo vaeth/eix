@@ -1,6 +1,6 @@
 #compdef eix-remote
 _arguments -s -S -A '-*' : \
-'(1 2 -)'{-h,-H,'-\?'}'[help]' \
+'(1 2 -)'{'-h','-H','-\\?'}'[help]' \
 '(2)-f+[use FILE as last arg]:file:_files' \
 '-u+[call wget as USER if you are not root]:wget-user if non-root:(nobody portage)' \
 '-U+[call wget as USER if you are root]:wget-user if root:(nobody portage)' \

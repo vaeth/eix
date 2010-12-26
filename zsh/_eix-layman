@@ -1,6 +1,6 @@
 #compdef eix-layman
 _arguments -s -S -A '-*' : \
-'(1 -)'{-h,-H,'-\?'}'[help]' \
+'(1 -)'{'-h','-H','-\\?'}'[help]' \
 '*-a+[add OVERLAY to list of layman overlays]:add overlay:_files' \
 '*-A+[add PATH to list of sourced make.conf files]:add make.conf:_files' \
 '-C[clear list of PATH of sourced make.conf files]' \

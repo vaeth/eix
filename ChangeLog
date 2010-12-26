@@ -8,6 +8,7 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=349352
 	- Honour order of {,accept_}keywords
 	- Use largefile support if available
+	- Fix minor variable and manpage description issues
 
 *eix-0.22.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
