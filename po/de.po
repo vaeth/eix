@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-12-26 09:19+0100\n"
+"POT-Creation-Date: 2010-12-27 15:49+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -5140,23 +5140,11 @@ msgstr "IF ohne FI"
 msgid "No $HOME found in environment."
 msgstr "Kein $HOME in der Environment."
 
-#: src/eixrc/eixrc.cc:701
-msgid "true"
-msgstr "wahr"
-
-#: src/eixrc/eixrc.cc:703
-msgid "yes"
-msgstr "ja"
-
-#: src/eixrc/eixrc.cc:705
-msgid "on"
-msgstr "an"
-
-#: src/eixrc/eixrc.cc:732
+#: src/eixrc/eixrc.cc:733
 msgid "or"
 msgstr "oder"
 
-#: src/eixrc/eixrc.cc:748
+#: src/eixrc/eixrc.cc:749
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
@@ -5164,15 +5152,15 @@ msgstr ""
 "%s hat unbekannten Wert %r\n"
 "\tAls Ersatz wird 'all-installed' benutzt."
 
-#: src/eixrc/eixrc.cc:778
+#: src/eixrc/eixrc.cc:779
 msgid "was locally changed to:"
 msgstr "lokal geändert auf:"
 
-#: src/eixrc/eixrc.cc:779
+#: src/eixrc/eixrc.cc:780
 msgid "changed locally, default was:"
 msgstr "lokal geändert. Default war:"
 
-#: src/eixrc/eixrc.cc:808
+#: src/eixrc/eixrc.cc:809
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 

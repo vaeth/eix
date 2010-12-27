@@ -9,6 +9,7 @@
 	- Honour order of {,accept_}keywords
 	- Use largefile support if available
 	- Fix minor variable and manpage description issues
+	- No longer support translations for true/yes/on in variable names
 
 *eix-0.22.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
