@@ -689,21 +689,22 @@ EixRc::istrue(const char *s)
 		case 'y':
 		case 'Y':
 		case '1':
+		case 't':
+		case 'T':
 		case ':':
 			return true;
+		case 'o':
+		case 'O':
+			switch(s[1]) {
+				case 'n':
+				case 'N':
+					return true;
+				default:
+					break;
+			}
 		default:
 			break;
 	}
-	if(strcasecmp(s, "true") == 0)
-		return true;
-	if(strcasecmp(s, "on") == 0)
-		return true;
-	if(strcasecmp(s, _("true")) == 0)
-		return true;
-	if(strcasecmp(s, _("yes")) == 0)
-		return true;
-	if(strcasecmp(s, _("on")) == 0)
-		return true;
 	return false;
 }
 

@@ -14,7 +14,7 @@ _eix__vars() {
 	do	[[ -e $i ]] && files+=($i)
 	done
 	(( $#files )) && \
-		vars+=(${(f)"$(sed -n -e 's/^\([A-Z]*\)=.*/\1/p' $files)"})
+		vars+=($(sed -n -e 's/^\([A-Z]*\)=.*/\1/p' $files))
 	compadd "${@}" -- $vars
 }
 
@@ -26,8 +26,8 @@ case $service in
 	local_functions+=(_eix__overlay)
 _eix__overlay() {
 	local -aU o
-	o=(`PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null`)
-	o+=("`PRINT_APPEND='' eix --print PORTDIR 2>/dev/null`")
+	o=($(PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null))
+	o+=("$(PRINT_APPEND='' eix --print PORTDIR 2>/dev/null)")
 	o+=({0..$#o})
 	compadd "${@}" -- $o
 }
@@ -172,37 +172,99 @@ case $service in
 {'*--pattern','*-p'}'[pattern is wildcard pattern]'
 {'*--regex','*-r'}'[pattern is regular expression]'
 )
-	local -a modes
-	modes=()
-	local i mode='' will_break=false
-	for (( i=CURRENT-1 ; i ; --i ))
-	do	case $words[$i] in
-		(-[^-]#[o!]*|--or|--not)
-			will_break=:
-		;;
-		(-[^-]#[iI][^o!]#|--(multi-|)installed)
-			modes=('installed')
-		;|
-		(-[^-]#C[^o!sAU]#|--category)
-			: ${mode:='category'}
-		;;
-		(-[^-]#s[^o!CAU]#|--name)
-			: ${mode:='name'}
-		;;
-		(-[^-]#A[^o!CsU]#|--category-name)
-			: ${mode:='category/name'}
-		;;
-		(-[^-]#U[^o!CsA]#|--use|--installed-with(out|)-use)
-			if [[ -z $mode ]]
-			then	modes=()
-				mode='useflag'
-				will_break=:
-			fi
+# find out search field and whether to check only installed packages
+	local field='' installed=''
+	if (( CURRENT>2 ))
+	then	local i c w is_or=false
+		case $(PRINT_APPEND='' eix --print DEFAULT_IS_OR 2>/dev/null) in
+		([yY1:tT]*|[oO][nN]*)
+			is_or=:
 		;;
 		esac
-		$will_break && break
-	done
-	modes+=(${mode:-package})
+		for (( i=2 ; i<CURRENT ; ++i))
+		do	case $words[$i] in
+			(--)
+				i=$CURRENT
+			;;
+			(--print-overlay-(path|label)|--cache-file|--format(-compact|-verbose|)|--(only-|)in-overlay|--installed-(from|in)-overlay|--fuzzy|--print)
+				((++i))
+			;;
+			(--not|--open|--close|---*|[!-])
+				if $is_or
+				then	field=''
+					installed=''
+				fi
+			;;
+			(--(multi-|)installed)
+				installed='installed'
+			;;
+			(--category|--name|--description|--homepage|--license|--provide)
+				field="${words[$i]#--}"
+			;;
+			(--category-name)
+				field='category/name'
+			;;
+			(--use|--installed-with(out|)-use)
+				field='useflag'
+			;;
+			(--set)
+				field='set'
+			;;
+			(--slot)
+				field='slot'
+			;;
+			(--installed-slot)
+				installed='installed'
+				field='slot'
+			;;
+			(-[!-]*)
+				w=$words[$i]
+				for (( c=2 ; c<=$#w ; ++c ))
+				do	case $w[$c] in
+					([f])
+						if [[ $c = $#w ]]
+						then	((++i))
+						else	c=$#w
+						fi
+					;;
+					([\(\)!])
+						if $is_or
+						then	field=''
+							installed=''
+						fi
+					;;
+					([iI])
+						installed='installed'
+					;;
+					(C)
+						field='category'
+					;;
+					(s)
+						field='name'
+					;;
+					(S)
+						field='description'
+					;;
+					(A)
+						field='category/name'
+					;;
+					(H)
+						field='homepage'
+					;;
+					(L)
+						field='license'
+					;;
+					(P)
+						field='provide'
+					;;
+					esac
+				done
+			;;
+			esac
+		done
+	fi
+	local -a modes
+	modes=(${installed} ${field:-'package'})
 	service_opts+=(
 '*:'"$modes"':_eix__arg -- '"$modes"
 )
@@ -211,10 +273,6 @@ _eix__arg() {
 	local -a addarg
 	addarg=($@[0,(R)(--)])
 	shift $#addarg
-	if [[ $1 == useflag ]]
-	then	compadd $addarg ${${(f)"$(eix --print-all-useflags)"}##[()+-]#}
-		return
-	fi
 	local -a eixopt
 	eixopt=('-*')
 	if [[ $1 == installed ]]
@@ -225,27 +283,65 @@ _eix__arg() {
 		RESTRICT_INSTALLED=false USE_BUILD_TIME=false
 	case $1 in
 	(category)
-		compadd $addarg ${(f)"$(eix $eixopt --format '<category>\n')"}
+		compadd $addarg $(eix $eixopt --format '<category>\n' 2>/dev/null)
 	;;
 	(name)
-		compadd $addarg ${(f)"$(eix $eixopt --format '<name>\n')"}
+		compadd $addarg $(eix $eixopt --format '<name>\n' 2>/dev/null)
 	;;
 	(category/name)
-		compadd $addarg ${(f)"$(eix $eixopt --only-names)"}
+		compadd $addarg $(eix $eixopt --only-names 2>/dev/null)
 	;;
 	(package)
 		case $PREFIX in
 		(*/*)
 			compset -P '*/'
-			compadd $addarg ${(f)"$(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n')"}
+			compadd $addarg $(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n' 2>/dev/null)
 		;;
 		(*)
 			local -a cat_name
-			cat_name=(${(f)"$(eix $eixopt --only-names)"})
+			cat_name=($(eix $eixopt --only-names 2>/dev/null))
 			compadd $addarg ${cat_name:t}
-			compadd $addarg[0,-2] -S '/' -- ${cat_name%%/*}
+			compadd $addarg[1,-2] -S '/' -- ${cat_name%%/*}
 		;;
 		esac
+	;;
+	(useflag)
+		compadd $addarg ${$(eix --print-all-useflags 2>/dev/null)##[()+-]#}
+	;;
+	(license)
+		compadd $addarg ${$(eix --print-all-licenses 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/}
+	;;
+	(slot)
+		compadd $addarg $(eix --print-all-slots 2>/dev/null)
+	;;
+	(provide)
+		compadd $addarg ${$(eix --print-all-provides 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/}
+	;;
+	(homepage)
+		compadd $addarg $(eix $eixopt --format '<homepage>\n' 2>/dev/null)
+	;;
+	(set)
+		local -aU o
+		o=($(PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null))
+		local i j k portdir="$(PRINT_APPEND='' eix --print PORTDIR 2>/dev/null)"
+		local -a sets
+		sets=()
+		for i in ${="$(PRINT_APPEND='' eix --print EIX_LOCAL_SETS 2>/dev/null)"}
+		do	case $i in
+			(/*)
+				[[ -d $i ]] && sets+=($i)
+			;;
+			('*'*)
+				k=${i#'*'}
+				for j in $o
+				do	[[ -d "$j$k" ]] && sets+=("$j$k")
+				done
+			;;
+			(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i")
+			;;
+			esac
+		done
+		compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
 	;;
 	esac
 }
