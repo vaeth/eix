@@ -1,13 +1,13 @@
 #compdef eix-remote
 _arguments -s -S -A '-*' : \
 '(1 2 -)'{'-h','-H','-\\?'}'[help]' \
-'(2)-f+[use FILE as last arg]:file:_files' \
-'-u+[call wget as USER if you are not root]:wget-user if non-root:(nobody portage)' \
-'-U+[call wget as USER if you are root]:wget-user if root:(nobody portage)' \
+'(2)-f+[FILE (use FILE as last arg)]:file:_files' \
+'-u+[USER (call wget as USER if not root)]:wget-user if non-root:(nobody portage)' \
+'-U+[USER (call wget as USER if root)]:wget-user if root:(nobody portage)' \
 '-s[call sudo to change user permission]' \
 '-S[call su to change user permission]' \
-'-l+[use PATH as LOCAL_LAYMAN]:LOCAL_LAYMAN:_files -/' \
-'-a+[use ADDR as remote database address]:remote address: ' \
+'-l+[PATH (use PATH as LOCAL_LAYMAN)]:LOCAL_LAYMAN:_files -/' \
+'-a+[ADDR (use ADDR as remote database)]:remote address: ' \
 '-i[ignore all previous options]' \
 '-v[verbose (default)]' \
 '-q[quiet]' \

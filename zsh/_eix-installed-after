@@ -19,10 +19,10 @@ _arguments -s -S -A '-*' : \
 '-b[output packages installed before (not after) the package]' \
 '-i[include the given package in the output]' \
 '(-L)-l[use /var/log/emerge.log to determine first install time]' \
-'(-l)-L+[use LOG to determine first install time]:scan logfile:_files' \
+'(-l)-L+[LOG (use LOG to determine first install time)]:scan logfile:_files' \
 '-e[use date as argument, not a package name]' \
-'-a+[increase match for -l or -L or -e by SEC seconds]:increase seconds: ' \
-'-A+[decrease match for -l or -L or -e by SEC seconds]:decrease seconds: ' \
+'-a+[SEC (increase match for -l or -L or -e by SEC seconds)]:increase seconds: ' \
+'-A+[SEC (decrease match for -l or -L or -e by SEC seconds)]:decrease seconds: ' \
 '-S[choose first matching slot]' \
 '-V[look for category/package-version, not category/package\:slot]' \
 '-d[output installation date after package]' \

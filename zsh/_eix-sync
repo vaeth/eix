@@ -3,8 +3,8 @@ _arguments -s -S -A '-*' : \
 '(-)'{'-h','-H','-\\?'}'[help]' \
 '-i[ignore all previous options]' \
 '-d[only show differences and then exit]' \
-'-s+[rsync from SERVER; this implies -0]:host: _hosts' \
-'-2+[rsync to SERVER]:host: _hosts' \
+'-s+[SERVER (rsync from SERVER; this implies -0)]:server to sync from: _hosts' \
+'-2+[SERVER (rsync to SERVER)]:server to sync to: _hosts' \
 '-0[no eix -sync]' \
 '-U[do not touch database and omit @ hooks after eix-update]' \
 '-u[update database only and show differences. Equivalent to -0l@s ""]' \
@@ -18,10 +18,10 @@ _arguments -s -S -A '-*' : \
 '-q[be quiet (close stdout)]' \
 '(-c -W)-w[run emerge-webrsync instead of emerge --sync]' \
 '(-c -w)-W[run emerge-delta-webrsync instead of emerge --sync]' \
-'(-w -W)-c+[run CMD instead of emerge --sync]:command replacing emerge --sync:_files' \
-'*-C+[add OPT to emerge --sync]:emerge --sync option: ' \
-'*-o+[add OPT to eix-update]:eix-update option: ' \
-'*-L+[add OPT to layman]:layman option: ' \
+'(-w -W)-c+[CMD (run CMD instead of emerge --sync)]:command replacing emerge --sync:_files' \
+'*-C+[OPT (add OPT to emerge --sync)]:emerge --sync option: ' \
+'*-o+[OPT (add OPT to eix-update)]:eix-update option: ' \
+'*-L+[OPT (add OPT to layman)]:layman option: ' \
 '-r[clear /var/cache/edb/dep/* before syncing]' \
 '-R[cancel previous -r]' \
 '-e[do not test whether we must be root]'

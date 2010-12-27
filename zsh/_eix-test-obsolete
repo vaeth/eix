@@ -2,7 +2,7 @@
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-H','-\\?'}'[help]' \
 '-c[use CHECK_INSTALLED_OVERLAYS=true]' \
-'-C[use CHECK_INSTALLED_OVERLAYS=false]' \
+'-C[use CHECK_INSTALLED_OVERLAYS=repository]' \
 '(1 -b)-d[instead of argument "detail"]' \
 '(1 -d)-b[instead of argument "brief"]' \
 '1:mode:(detail brief)'

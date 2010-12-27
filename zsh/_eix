@@ -82,7 +82,7 @@ case $service in
 '--cache-file[CACHE_FILE (use instead of /var/cache/eix)]:cache-file:_files'
 '--format[FORMAT]:format: '
 '--format-compact[FORMAT_COMPACT]:format_compact: '
-'--format-verbose[FORMAT_COMPACT]:format_verbose: '
+'--format-verbose[FORMAT_VERBOSE]:format_verbose: '
 {'*--not','*-\!'}'[logical negation]'
 {'*--and','*-a'}'[logical disjunction]'
 {'*--or','*-o'}'[logical conjunction]'
@@ -341,7 +341,8 @@ _eix__arg() {
 			;;
 			esac
 		done
-		compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
+		(( $#sets )) && \
+			compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
 	;;
 	esac
 }
