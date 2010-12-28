@@ -229,6 +229,11 @@ print all LICENSE strings used in some package.
 .TP
 .B --print-world-sets
 print the world sets.
+.TP
+.B --is-current
+This checks only whether B<@EIX_CACHEFILE@> is available and readable
+(i.e. in a version supported by the B<eix> binary).
+If this is the case, eix returns successful without printing anything.
 .\" }}}
 
 .\" {{{ -------- Output options

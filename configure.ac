@@ -871,6 +871,11 @@ AC_ARG_WITH([zsh-completion],
 		[no], [AS_VAR_SET([ZSH_COMPLETION], [])])])
 MV_MSG_RESULT_VAR([ZSH_COMPLETION])
 AC_SUBST([ZSH_COMPLETION])
+MV_IF_EMPTY([${ZSH_COMPLETION}],
+	[AS_VAR_SET([install_zsh_completion], [false])],
+	[AS_VAR_SET([install_zsh_completion], [:])])
+AM_CONDITIONAL([INSTALL_ZSH_COMPLETION],
+	[${install_zsh_completion}])
 
 # Check endianess
 AC_C_BIGENDIAN()
