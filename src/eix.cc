@@ -88,6 +88,7 @@ dump_help(int exit_code)
 			"     --print-world-sets    print the world sets\n"
 			"     --print-overlay-path  print the path of specified overlay\n"
 			"     --print-overlay-label print label of specified overlay\n"
+			"     --is-current          check for valid cache-file\n"
 			"\n"
 			"   Special:\n"
 			"     -t  --test-non-matching Before other output, print non-matching entries\n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-12-27 15:49+0100\n"
+"POT-Creation-Date: 2010-12-28 12:41+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1078,6 +1078,7 @@ msgid ""
 "     --print-world-sets    print the world sets\n"
 "     --print-overlay-path  print the path of specified overlay\n"
 "     --print-overlay-label print label of specified overlay\n"
+"     --is-current          check for valid cache-file\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching "
@@ -1224,6 +1225,7 @@ msgstr ""
 "     --print-world-sets    Ausgabe aller Sets in world\n"
 "     --print-overlay-path  Ausgabe des Pfads des angegebenen Overlays\n"
 "     --print-overlay-label Ausgabe des Labels des angegebenen Overlays\n"
+"     --is-current          Test auf gültiges cache-file\n"
 "\n"
 "   Speziell:\n"
 "     -t  --test-non-matching Gib vor anderen Ausgaben nicht-passende "
@@ -1344,16 +1346,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:480 src/eix-diff.cc:329
+#: src/eix.cc:481 src/eix-diff.cc:329
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:533 src/eix-diff.cc:294 src/eix-update.cc:386
+#: src/eix.cc:534 src/eix-diff.cc:294 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:577 src/eix.cc:889
+#: src/eix.cc:578 src/eix.cc:890
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1362,7 +1364,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:588
+#: src/eix.cc:589
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1373,31 +1375,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:848 src/eix.cc:867
+#: src/eix.cc:849 src/eix.cc:868
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:852
+#: src/eix.cc:853
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:860
+#: src/eix.cc:861
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:970
+#: src/eix.cc:971
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:971
+#: src/eix.cc:972
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:976
+#: src/eix.cc:977
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1406,7 +1408,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:977
+#: src/eix.cc:978
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1415,7 +1417,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1034
+#: src/eix.cc:1035
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1423,7 +1425,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1037
+#: src/eix.cc:1038
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
