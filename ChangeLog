@@ -10,6 +10,7 @@
 	- Use largefile support if available
 	- Fix minor variable and manpage description issues
 	- No longer support translations for true/yes/on in variable names
+	- Make code c++0x clean
 
 *eix-0.22.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

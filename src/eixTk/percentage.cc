@@ -21,7 +21,7 @@
 using namespace std;
 
 inline static string
-to_string(PercentStatus::Percentage i)
+percent_to_string(PercentStatus::Percentage i)
 {
 	ostringstream o;
 	o << i;
@@ -36,9 +36,9 @@ flush_total()
 }
 
 static string
-to_string(PercentStatus::Percentage i, string::size_type wanted)
+percent_to_string(PercentStatus::Percentage i, string::size_type wanted)
 {
-	string s(to_string(i));
+	string s(percent_to_string(i));
 	if(s.size() < wanted) {
 		return string(wanted - s.size(), ' ') + s;
 	}
@@ -70,7 +70,7 @@ PercentStatus::init(const string &format, Percentage total)
 	m_verbose = true;
 	m_format = format;
 	m_total = total;
-	m_total_s = to_string(total);
+	m_total_s = percent_to_string(total);
 	reprint();
 }
 
@@ -124,9 +124,9 @@ PercentStatus::reprint()
 				p = (m_current * 100) / m_total;
 			}
 			out = eix::format(m_format)
-				% to_string(m_current, m_total_s.size())
+				% percent_to_string(m_current, m_total_s.size())
 				% m_total_s
-				% to_string(p, 3);
+				% percent_to_string(p, 3);
 		}
 	}
 	else {

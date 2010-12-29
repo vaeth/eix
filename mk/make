@@ -21,6 +21,8 @@ Available options are
   -B  Without bzlib
   -C  Avoid CCACHE
   -X  Clear CCACHE
+  -y  Use -std=c++0x
+  -Y  Use -std=gnu++0x
   -jX Use -jX (currently ${jarg})
   -c OPT Add OPT to ./configure
   -Q  Do not --enable-quickcheck
@@ -82,8 +84,9 @@ configure_extra='--prefix=/usr --sysconfdir=/etc'
 optimization=false
 quickcheck=:
 clear_ccache=false
+stdcxx=''
 OPTIND=1
-while getopts 'qE01234nepusSbBrOQCXc:j:?hH' opt
+while getopts 'qE01234nepusSbBrOQCXyYc:j:?hH' opt
 do	case "${opt}" in
 	q) quiet=:;;
 	E) extra_cache=false;;
@@ -105,6 +108,8 @@ do	case "${opt}" in
 	Q) quickcheck=false;;
 	C) use_ccache=false;;
 	X) clear_ccache=:;;
+	y) stdcxx='-std=c++0x';;
+	Y) stdcxx='-std=gnu++0x';;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
 	*) Usage 0;;
@@ -136,6 +141,7 @@ then	CFLAGS="`portageq envvar CFLAGS`"
 	LDFLAGS="`portageq envvar LDFLAGS`"
 	export CFLAGS CXXFLAGS LDFLAGS
 	${not_full_use} && CXXFLAGS="${CXXFLAGS} -DNOT_FULL_USE"
+	[ -n "${stdcxx}" ] && CXXFLAGS="${CXXFLAGS} ${stdcxx}"
 	if ${pedantic}
 	then	configure_extra="${configure_extra} --enable-strong-warnings"
 	else	configure_extra="${configure_extra} --enable-warnings"
