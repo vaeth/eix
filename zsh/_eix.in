@@ -43,11 +43,11 @@ case $service in
 (*update*)
 	excl_opt='(-)'
 	service_opts=(
-{'(--output)-o','(-o)--output'}'+[output to FILE]:output_file:_files'
-{'(--exclude-overlay)-x+','(-x)--exclude-overlay'}'[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
-{'(--add-overlay)-a','(-a)--add-overlay'}'+[OVERLAY (add)]:add overlay:_files -/'
-{'(--override-method)-m+','(-m)--override-method'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:_eix__overlay:cache method: '
-{'(--repo-name)-r+','(-r)--repo-name'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:_eix__overlay:repo-name: '
+{'(--output)-o+','(-o)--output'}'[output to FILE]:output_file:_files'
+{'*--exclude-overlay','*-x+'}[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
+{'*--add-overlay','*-a+'}'[OVERLAY (add)]:add overlay:_files -/'
+{'*--override-method','*-m+'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:_eix__overlay:cache method: '
+{'*--repo-name','*-r+'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:_eix__overlay:repo-name: '
 )
 ;;
 (*diff*)

@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Minor fixes in zsh-completion
+
 *eix-0.22.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add some experimental zsh-completion
