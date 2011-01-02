@@ -437,7 +437,8 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			case 'b': USE_TEST;
 				test->setAlgorithm(new BeginAlgorithm());
 				break;
-			case O_END_ALGO: test->setAlgorithm(new EndAlgorithm());
+			case O_END_ALGO: USE_TEST;
+				test->setAlgorithm(new EndAlgorithm());
 				break;
 			case 'z': USE_TEST;
 				test->setAlgorithm(new SubstringAlgorithm());

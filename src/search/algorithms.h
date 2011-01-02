@@ -122,7 +122,7 @@ class EndAlgorithm : public BaseAlgorithm {
 		{
 			UNUSED(p);
 			std::string::size_type l(strlen(s));
-			std::string::size_type sl = search_string.size();
+			std::string::size_type sl(search_string.size());
 			if(l < sl)
 				return false;
 			return !strcmp(search_string.c_str(), s + (l - sl));

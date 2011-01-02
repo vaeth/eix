@@ -28,7 +28,6 @@
 #include <search/nowarn.h>
 
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -78,6 +77,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	stability= &set_stability;
 	header   = &dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
+	algorithm = NULL;
 	from_overlay_inst_list = NULL;
 	from_foreign_overlay_inst_list = NULL;
 	portdir = (*portagesettings)["PORTDIR"].c_str();
@@ -100,6 +100,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 }
 
 PackageTest::~PackageTest() {
+	setAlgorithm(NULL);
 	if(overlay_list != NULL) {
 		delete overlay_list;
 		overlay_list = NULL;
@@ -373,11 +374,13 @@ PackageTest::setAlgorithm(MatchAlgorithm a)
 void
 PackageTest::setPattern(const char *p)
 {
-	if(!algorithm.get())
+	if(algorithm == NULL) {
 		setAlgorithm(get_matchalgorithm(p));
+	}
 
-	if(field == NONE)
+	if(field == NONE) {
 		field = get_matchfield(p);
+	}
 
 	algorithm->setString(p);
 }
@@ -651,7 +654,7 @@ PackageTest::match(PackageReader *pkg) const
 	      ensure the versions really have been read for the package.
 	*/
 
-	if(unlikely(algorithm.get() != NULL)) {
+	if(unlikely(algorithm != NULL)) {
 		get_p(p, pkg);
 		if(!stringMatch(p))
 			return false;
@@ -674,7 +677,7 @@ PackageTest::match(PackageReader *pkg) const
 
 	if(unlikely(overlay_list != NULL)) { // --in-overlay
 		get_p(p, pkg);
-		bool have = false;
+		bool have(false);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(unlikely(overlay_list->find(it->overlay_key) == overlay_list->end()))
 				continue;
@@ -698,9 +701,10 @@ PackageTest::match(PackageReader *pkg) const
 		vector<BasicVersion>::size_type s(vardbpkg->numInstalled(*p));
 		if(s == 0)
 			return false;
-		if(s == 1)
+		if(s == 1) {
 			if(multi_installed)
 				return false;
+		}
 	}
 
 	if(unlikely(in_overlay_inst_list != NULL)) {

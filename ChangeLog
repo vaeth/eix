@@ -2,6 +2,8 @@
 
 *eix-0.22.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix segfault for tests beginning with --end, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=350321
 	- Minor fixes in zsh-completion
 
 *eix-0.22.6

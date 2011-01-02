@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2010-12-28 12:41+0100\n"
+"POT-Creation-Date: 2011-01-02 19:20+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -5339,10 +5339,10 @@ msgstr "Interner Fehler: SetStability calculates wrong index"
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:252
+#: src/search/packagetest.cc:253
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:264
+#: src/search/packagetest.cc:265
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"

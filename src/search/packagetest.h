@@ -21,7 +21,6 @@
 #include <search/algorithms.h>
 #include <search/redundancy.h>
 
-#include <memory>
 #include <set>
 #include <string>
 #include <vector>
@@ -90,7 +89,12 @@ class PackageTest {
 		~PackageTest();
 
 		void setAlgorithm(BaseAlgorithm *p)
-		{ algorithm = std::auto_ptr<BaseAlgorithm>(p); }
+		{
+			if(algorithm != NULL) {
+				delete algorithm;
+			}
+			algorithm = p;
+		}
 
 		void setAlgorithm(MatchAlgorithm a);
 
@@ -263,7 +267,7 @@ class PackageTest {
 		/** What we need to read so we can do our testing. */
 		PackageReader::Attributes need;
 		/** Our string matching algorithm. */
-		std::auto_ptr<BaseAlgorithm> algorithm;
+		BaseAlgorithm *algorithm;
 
 		/** Other flags for tests */
 		bool	overlay, obsolete, upgrade, binary,

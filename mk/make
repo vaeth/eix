@@ -26,6 +26,7 @@ Available options are
   -jX Use -jX (currently ${jarg})
   -c OPT Add OPT to ./configure
   -Q  Do not --enable-quickcheck
+  -d  With --enable-debugging
   -O  Pass --enable-strong-optimization --enable-security
   -r  Change also directory permissions to root (for fakeroot-ng)"
 	exit ${1:-1}
@@ -85,8 +86,9 @@ optimization=false
 quickcheck=:
 clear_ccache=false
 stdcxx=''
+debugging=false
 OPTIND=1
-while getopts 'qE01234nepusSbBrOQCXyYc:j:?hH' opt
+while getopts 'qE01234nepusSbBrOQCXyYdc:j:?hH' opt
 do	case "${opt}" in
 	q) quiet=:;;
 	E) extra_cache=false;;
@@ -110,6 +112,7 @@ do	case "${opt}" in
 	X) clear_ccache=:;;
 	y) stdcxx='-std=c++0x';;
 	Y) stdcxx='-std=gnu++0x';;
+	d) debugging=:;;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
 	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
 	*) Usage 0;;
@@ -124,6 +127,7 @@ ${extra_cache} && configure_extra="${configure_extra} --enable-extra-cache"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
 ${optimization} && configure_extra="${configure_extra} --enable-strong-optimization --enable-security"
+${debugging} && configure_extra="${configure_extra} --enable-debugging"
 
 ${quiet} && quietredirect='>/dev/null 2>&1' || quietredirect=''
 

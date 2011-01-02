@@ -363,7 +363,7 @@ static struct Option long_options[] = {
 	Option("test-obsolete", 'T'),
 	Option("pipe",          '|'),
 
-	// Algorithms for a criteria
+	// Algorithms for a criterion
 	Option("fuzzy",         'f'),
 	Option("regex",         'r'),
 	Option("exact",         'e'),
@@ -372,7 +372,7 @@ static struct Option long_options[] = {
 	Option("substring",     'z'),
 	Option("end",           O_END_ALGO),
 
-	// What to match in this criteria
+	// What to match in this criterion
 	Option("name",          's'),
 	Option("slot",          O_SEARCH_SLOT),
 	Option("installed-slot", O_INSTALLED_SLOT),
