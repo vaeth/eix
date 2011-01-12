@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-01-02 19:20+0100\n"
+"POT-Creation-Date: 2011-01-12 17:27+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -159,6 +159,7 @@ msgid ""
 "\n"
 "The following options are available:\n"
 "\n"
+"-f   Output full list of all packages (no further argument required)\n"
 "-b   Output packages installed before (instead of after) the given package\n"
 "-i   Include the given package (on the command line) in the output\n"
 "-l   Use /var/log/emerge.log to use the _first_ (instead of the last) "
@@ -206,6 +207,7 @@ msgstr ""
 "\n"
 "Optionen:\n"
 "\n"
+"-f   Gibt Liste aller Pakete aus (weiteres Argument wird nicht benötigt)\n"
 "-b   Sucht Pakete, die vor (statt nach) dem Trefferpaket installiert wurden\n"
 "-i   Das Referenzpaket wird mit ausgegeben\n"
 "-l   Benutze /var/log/emerge.log um die _erste (statt der letzten)\n"
@@ -235,12 +237,12 @@ msgstr ""
 "     unabhängig vom Wert der Variablen USE_BUILD_TIME\n"
 "-T   Benutzt niemals die build time, immer nur das Installationsdatum."
 
-#: src/eix-installed-after.sh:112
+#: src/eix-installed-after.sh:122
 #, sh-format
 msgid "cannot read ${logfile}"
 msgstr "kann Datei ${logfile} nicht lesen"
 
-#: src/eix-installed-after.sh:118
+#: src/eix-installed-after.sh:128
 #, sh-format
 msgid "cannot find merge of ${match} in ${logfile}"
 msgstr "Kein Merge-Vorgang von ${match} in ${logfile} gefunden"

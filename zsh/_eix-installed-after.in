@@ -16,6 +16,7 @@ _eix_installed_after_arg() {
 }
 _arguments -s -S -A '-*' : \
 '(1 -)'{'-h','-H','-\\?'}'[help]' \
+'(1 -b -L -l -a -A -i -e -S -V)-f[output full list of packages]' \
 '-b[output packages installed before (not after) the package]' \
 '-i[include the given package in the output]' \
 '(-L)-l[use /var/log/emerge.log to determine first install time]' \

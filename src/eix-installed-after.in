@@ -34,6 +34,7 @@ The :slot part can be omitted if the corresponding package has only one slot.
 
 The following options are available:
 
+-f   Output full list of all packages (no further argument required)
 -b   Output packages installed before (instead of after) the given package
 -i   Include the given package (on the command line) in the output
 -l   Use /var/log/emerge.log to use the _first_ (instead of the last) install
@@ -67,6 +68,7 @@ The following options are available:
 
 # Parse the command line options:
 
+full=false
 epoch=false
 logfile=''
 before=false
@@ -77,8 +79,9 @@ including=false
 addtime=''
 subtime=''
 OPTIND=1
-while getopts "blL:ea:A:dsv=SVitT?hH" opt
+while getopts "fblL:ea:A:dsv=SVitT?hH" opt
 do	case "${opt}" in
+		f) full=:;;
 		b) before=:;;
 		l) logfile="/var/log/emerge.log";;
 		L) logfile="${OPTARG}";;
@@ -99,11 +102,18 @@ do	case "${opt}" in
 done
 [ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 
-
 # After the options there should be exactly one argument: ${match}
 
-[ ${#} -eq 1 ] || Usage
-match="${1}"
+if ${full}
+then	logfile=''
+	before=false
+	epoch=false
+# "found" is our flag in the loop whether we already found our package.
+	found=:
+else	[ ${#} -eq 1 ] || Usage
+	match="${1}"
+	found=false
+fi
 
 
 # With options -l or -L, we also have to parse the logfile:
@@ -155,9 +165,6 @@ Output() {
 	then	printf '%-43s %-11s %s\n' "${3}" "${4}" "${5}"
 	fi
 }
-
-# "found" is our flag in the loop whether we already found our package.
-found=false
 
 # Now the main loop. The interesting point is of course the call to eix.
 #
