@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-01-12 17:27+0100\n"
+"POT-Creation-Date: 2011-01-15 18:44+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1876,7 +1876,7 @@ msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:70 src/database/io.cc:163 src/database/io.h:53
+#: src/database/io.cc:70 src/database/io.cc:164 src/database/io.h:53
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
@@ -5197,11 +5197,11 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:534
+#: src/output/formatstring-print.cc:535
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 
-#: src/output/formatstring-print.cc:539
+#: src/output/formatstring-print.cc:540
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 

@@ -102,10 +102,11 @@ PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 }
 
 string
-PrintFormat::get_version_keywords(const Package *package, const Version *version) const
+PrintFormat::get_version_keywords(Package *package, const Version *version) const
 {
-	if(print_effective)
-		portagesettings->get_effective_keywords_userprofile(const_cast<Package *>(package));
+	if(print_effective) {
+		portagesettings->get_effective_keywords_userprofile(package);
+	}
 	string keywords(version->get_full_keywords());
 	string effective(version->get_effective_keywords());
 	if(keywords.empty()) {
@@ -124,7 +125,7 @@ PrintFormat::get_version_keywords(const Package *package, const Version *version
 }
 
 void
-PrintFormat::get_installed(const Package *package, Node *root, bool only_marked) const
+PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 {
 	if(unlikely(vardb == NULL))
 		return;
@@ -155,7 +156,7 @@ PrintFormat::get_installed(const Package *package, Node *root, bool only_marked)
 }
 
 void
-PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<Version*> *versions) const
+PrintFormat::get_versions_versorted(Package *package, Node *root, vector<Version*> *versions) const
 {
 	bool have_prevversion(false);
 	for(Package::const_iterator vit(package->begin());
@@ -179,7 +180,7 @@ PrintFormat::get_versions_versorted(const Package *package, Node *root, vector<V
 }
 
 void
-PrintFormat::get_versions_slotsorted(const Package *package, Node *root, vector<Version*> *versions) const
+PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Version*> *versions) const
 {
 	const SlotList *sl(&(package->slotlist()));
 	SlotList::size_type slotnum(0);
@@ -521,7 +522,7 @@ class Scanner {
 static Scanner scanner;
 
 string
-PrintFormat::get_pkg_property(const Package *package, const string &name) const throw(ExBasic)
+PrintFormat::get_pkg_property(Package *package, const string &name) const throw(ExBasic)
 {
 	Scanner::PropType t(Scanner::PKG);
 	Scanner::Prop prop(scanner.get_prop(name, &t));
@@ -754,12 +755,12 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::PKG_BESTUPGRADE:
 		case Scanner::PKG_BESTUPGRADEORINSTALL:
 			{
-				LocalCopy copy(this, const_cast<Package*>(package));
+				LocalCopy copy(this, package);
 				bool result(package->can_upgrade(vardb, portagesettings,
 					((prop == Scanner::PKG_UPGRADE) ||
 					 (prop == Scanner::PKG_BESTUPGRADE)),
 					a));
-				copy.restore(const_cast<Package*>(package));
+				copy.restore(package);
 				if(result)
 					return one;
 			}
@@ -768,9 +769,9 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 			a = true;
 		case Scanner::PKG_BESTDOWNGRADE:
 			{
-				LocalCopy copy(this, const_cast<Package*>(package));
+				LocalCopy copy(this, package);
 				bool result(package->must_downgrade(vardb, a));
-				copy.restore(const_cast<Package*>(package));
+				copy.restore(package);
 				if(result)
 					return one;
 			}
@@ -781,12 +782,12 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 		case Scanner::PKG_BESTRECOMMEND:
 		case Scanner::PKG_BESTRECOMMENDORINSTALL:
 			{
-				LocalCopy copy(this, const_cast<Package*>(package));
+				LocalCopy copy(this, package);
 				bool result(package->recommend(vardb, portagesettings,
 					((prop == Scanner::PKG_RECOMMEND) ||
 					 (prop == Scanner::PKG_BESTRECOMMEND)),
 					a));
-				copy.restore(const_cast<Package*>(package));
+				copy.restore(package);
 				if(result)
 					return one;
 			}
@@ -1154,8 +1155,8 @@ PrintFormat::get_pkg_property(const Package *package, const string &name) const 
 	return emptystring;
 }
 
-static const Package *
-old_or_new(string *new_name, const Package *older, const Package *newer, const string &name)
+static Package *
+old_or_new(string *new_name, Package *older, Package *newer, const string &name)
 {
 	const char *s(name.c_str());
 	if(strncmp(s, "old", 3) == 0) {
@@ -1171,20 +1172,20 @@ old_or_new(string *new_name, const Package *older, const Package *newer, const s
 }
 
 string
-get_package_property(const PrintFormat *fmt, const void *entity, const string &name)
+get_package_property(const PrintFormat *fmt, void *entity, const string &name)
 {
-	return fmt->get_pkg_property(static_cast<const Package *>(entity), name);
+	return fmt->get_pkg_property(static_cast<Package *>(entity), name);
 }
 
 string
-get_diff_package_property(const PrintFormat *fmt, const void *entity, const string &name)
+get_diff_package_property(const PrintFormat *fmt, void *entity, const string &name)
 {
-	const Package *older((static_cast<const Package* const*>(entity))[0]);
-	const Package *newer((static_cast<const Package* const*>(entity))[1]);
+	Package *older((static_cast<Package**>(entity))[0]);
+	Package *newer((static_cast<Package**>(entity))[1]);
 	Scanner::Prop diff(scanner.get_diff(name));
 	if(unlikely(diff != Scanner::PROP_NONE)) {
-		LocalCopy copynewer(fmt, const_cast<Package*>(newer));
-		LocalCopy copyolder(fmt, const_cast<Package*>(older));
+		LocalCopy copynewer(fmt, newer);
+		LocalCopy copyolder(fmt, older);
 		bool result;
 		switch(diff) {
 			case Scanner::DIFF_BETTER:
@@ -1207,13 +1208,13 @@ get_diff_package_property(const PrintFormat *fmt, const void *entity, const stri
 				result = newer->differ(*older, false);
 				break;
 		}
-		copyolder.restore(const_cast<Package*>(older));
-		copynewer.restore(const_cast<Package*>(newer));
+		copyolder.restore(older);
+		copynewer.restore(newer);
 		if(result)
 			return one;
 		return emptystring;
 	}
 	string new_name;
-	const Package *package(old_or_new(&new_name, older, newer, name));
+	Package *package(old_or_new(&new_name, older, newer, name));
 	return fmt->get_pkg_property(package, new_name);
 }

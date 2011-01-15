@@ -65,7 +65,7 @@ SetStability::set_stability(bool get_local, Package &package) const
 }
 
 void
-SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsFlags &keyflags, const Version *v, const Package *p) const
+SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsFlags &keyflags, const Version *v, Package *p) const
 {
 #ifndef ALWAYS_RECALCULATE_STABILITY
 	// Can we avoid the calculation by getting the saved flags?
@@ -79,10 +79,10 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 	// No, the flags are not saved yet, we must calculate them:
 #endif
 	PackageSave saved(p);
-	set_stability(get_local, *(const_cast<Package *>(p)));
+	set_stability(get_local, *p);
 	maskflags = v->maskflags;
 	keyflags  = v->keyflags;
-	saved.restore(const_cast<Package *>(p));
+	saved.restore(p);
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
 	/* The next test should actually be unnecessary.

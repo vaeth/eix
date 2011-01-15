@@ -59,7 +59,7 @@ class PrintXml {
 		{ clear(NULL); }
 
 		void start();
-		void package(const Package *pkg);
+		void package(Package *pkg);
 		void finish();
 		static std::string escape_string(const std::string &s);
 

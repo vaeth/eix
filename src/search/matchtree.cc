@@ -111,7 +111,7 @@ MatchAtomTest::set_test(PackageTest *gtest)
 #ifdef DEBUG_MATCHTREE
 	static int t_count(0);
 	if(gtest != NULL) { delete gtest; }
-	int *a = new int(++t_count);
+	int *a(new int(++t_count);
 	m_test = reinterpret_cast<PackageTest *>(a);
 	return;
 #endif

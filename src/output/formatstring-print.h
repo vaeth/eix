@@ -14,7 +14,7 @@
 
 class PrintFormat;
 
-std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name);
-std::string get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name);
+std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name);
+std::string get_diff_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name);
 
 #endif /* EIX__FORMATSTRING-PRINT_H__ */

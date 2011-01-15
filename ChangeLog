@@ -6,6 +6,8 @@
 	- Fix segfault for tests beginning with --end, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=350321
 	- Minor fixes in zsh-completion
+	- Avoid casting away const to be compatible with future C++ standard;
+	  this goes at the cost of making many arguments non-const Package *
 
 *eix-0.22.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

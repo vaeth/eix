@@ -187,11 +187,11 @@ class VersionVariables;
 
 class PrintFormat {
 	friend class LocalCopy;
-	friend std::string get_package_property(const PrintFormat *fmt, const void *entity, const std::string &name);
-	friend std::string get_diff_package_property(const PrintFormat *fmt, const void *void_entity, const std::string &name);
+	friend std::string get_package_property(const PrintFormat *fmt, void *entity, const std::string &name);
+	friend std::string get_diff_package_property(const PrintFormat *fmt, void *void_entity, const std::string &name);
 
 	public:
-		typedef std::string (*GetProperty)(const PrintFormat *fmt, const void *entity, const std::string &property);
+		typedef std::string (*GetProperty)(const PrintFormat *fmt, void *entity, const std::string &property);
 
 	protected:
 		mutable std::map<std::string,std::string> user_variables;
@@ -220,16 +220,16 @@ class PrintFormat {
 		const SetStability *stability;
 
 		/* return true if something was actually printed */
-		bool recPrint(std::string *result, const void *entity, GetProperty get_property, Node *root) const;
+		bool recPrint(std::string *result, void *entity, GetProperty get_property, Node *root) const;
 
 		Node *parse_variable(const std::string &varname) const throw(ExBasic);
 
 		std::string get_inst_use(const Package &package, InstVersion &i) const;
-		std::string get_version_keywords(const Package *package, const Version *version) const;
-		void get_installed(const Package *package, Node *root, bool mark) const;
-		void get_versions_versorted(const Package *package, Node *root, std::vector<Version*> *versions) const;
-		void get_versions_slotsorted(const Package *package, Node *root, std::vector<Version*> *versions) const;
-		std::string get_pkg_property(const Package *package, const std::string &name) const throw(ExBasic);
+		std::string get_version_keywords(Package *package, const Version *version) const;
+		void get_installed(Package *package, Node *root, bool mark) const;
+		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const;
+		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const;
+		std::string get_pkg_property(Package *package, const std::string &name) const throw(ExBasic);
 	public:
 		bool	no_color,            /**< Shall we use colors? */
 			style_version_lines, /**< Shall we show versions linewise? */

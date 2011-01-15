@@ -226,7 +226,7 @@ PrintFormat::setupColors()
 }
 
 bool
-PrintFormat::recPrint(string *result, const void *entity, GetProperty get_property, Node *root) const
+PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, Node *root) const
 {
 	bool printed(false);
 	for(; likely(root != NULL); root = root->next) {
@@ -274,7 +274,7 @@ PrintFormat::recPrint(string *result, const void *entity, GetProperty get_proper
 			//case Node::IF:
 			//case Node::SET:
 				{
-					ConditionBlock *ief = static_cast<ConditionBlock*>(root);
+					ConditionBlock *ief(static_cast<ConditionBlock*>(root));
 					string rhs;
 					switch(ief->rhs) {
 						case ConditionBlock::RHS_VAR:

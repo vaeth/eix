@@ -118,7 +118,7 @@ print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
 }
 
 void
-PrintXml::package(const Package *pkg)
+PrintXml::package(Package *pkg)
 {
 	if(unlikely(!started))
 		start();

@@ -119,8 +119,9 @@ void
 io::read_iuse(FILE *fp, const StringHash& hash, IUseSet &iuse)
 {
 	iuse.clear();
-	for(io::UNumber e = io::read<io::UNumber>(fp); e; --e)
+	for(io::UNumber e(io::read<io::UNumber>(fp)); e != 0; --e) {
 		iuse.insert_fast(io::read_hash_string(fp, hash));
+	}
 }
 
 Version *
