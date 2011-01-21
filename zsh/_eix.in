@@ -44,7 +44,7 @@ case $service in
 	excl_opt='(-)'
 	service_opts=(
 {'(--output)-o+','(-o)--output'}'[output to FILE]:output_file:_files'
-{'*--exclude-overlay','*-x+'}[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
+{'*--exclude-overlay','*-x+'}'[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
 {'*--add-overlay','*-a+'}'[OVERLAY (add)]:add overlay:_files -/'
 {'*--override-method','*-m+'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:_eix__overlay:cache method: '
 {'*--repo-name','*-r+'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:_eix__overlay:repo-name: '
@@ -76,7 +76,7 @@ case $service in
 {'(--verbose)-v','(-v)--verbose'}'[use \$FORMAT_VERBOSE]'
 '--xml[output in xml format]'
 {'(--pure-packages)-\\*','(-\\*)--pure-packages'}'[omit printing of overlay names and package number]'
-'--only-names[print with format <category>/<name>]'
+'--only-names[print with format \<category\>/\<name\>]'
 {'(--brief)-0','(-0)--brief'}'[print at most one package]'
 '--brief2[print at most two packages]'
 {'(--test-non-matching)-t','(-t)--test-non-matching'}'[check /etc/portage/package.* and installed packages]'
