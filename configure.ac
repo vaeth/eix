@@ -546,15 +546,15 @@ AS_IF([${use_bzlib}],
 		[Define to 1 if bzlib can be used])])
 AC_SUBST(BZLIB_LIBS)
 
-# Use rst?
-AC_ARG_WITH([rst],
-	[AS_HELP_STRING([--with-rst],
-		[Use rst2html.py to document cache file format in html])],
+# Use extra-doc?
+AC_ARG_WITH([extra-doc],
+	[AS_HELP_STRING([--with-extra-doc],
+		[install developer documentation. Might need rst2html.py from docutils])],
 	[AS_CASE(["${withval}"],
-		[no], [AS_VAR_SET([rst], [false])],
-		[AS_VAR_SET([rst], [:])])],
-	[AS_VAR_SET([rst], [false])])
-AM_CONDITIONAL([USE_RST], [${rst}])
+		[no], [AS_VAR_SET([extra_doc], [false])],
+		[AS_VAR_SET([extra_doc], [:])])],
+	[AS_VAR_SET([extra_doc], [false])])
+AM_CONDITIONAL([EXTRA_DOC], [${extra_doc}])
 
 # Use obsoleted cache method?
 AC_ARG_ENABLE([extra_cache],

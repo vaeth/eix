@@ -15,15 +15,12 @@ $(textfiles) \
 $(htmlfiles) \
 $(xmldocfiles)
 
-if USE_RST
-rsthtmlfiles = $(htmlfiles)
-else
-rsthtmlfiles =
-endif
+dist_html_DATA = \
+$(htmlfiles)
 
-nodist_html_DATA = $(xmldocfiles) $(rsthtmlfiles)
-
-nodist_doc_DATA = $(textfiles)
+nodist_doc_DATA = \
+$(textfiles) \
+$(xmldocfiles)
 
 css_data = \
 stylesheet.css \
@@ -33,7 +30,8 @@ EXTRA_DIST = \
 $(css_data) \
 eix-db.txt.in \
 eix-xml.txt.in \
-eix-xml.xsd.in
+eix-xml.xsd.in \
+call_rst2html.sh
 
 SUFFIXES = .in
 .in:
@@ -46,9 +44,7 @@ SUFFIXES = .in
 	"$<" > "$@"
 
 eix-db.html: eix-db.txt $(css_data)
-	$(AM_V_GEN)rst2html.py eix-db.txt --embed-stylesheet \
-		--stylesheet-path=stylesheet.css > "$@"
+	$(AM_V_GEN)$(SHELL) ./call_rst2html.sh eix-db.txt "$@"
 
 eix-xml.html: eix-xml.txt $(css_data)
-	$(AM_V_GEN)rst2html.py eix-xml.txt --embed-stylesheet \
-		--stylesheet-path=stylesheet.css > "$@"
+	$(AM_V_GEN)$(SHELL) ./call_rst2html.sh eix-xml.txt "$@"

@@ -132,7 +132,7 @@ ${separate_all} && configure_extra="${configure_extra} --enable-separate-binarie
 ${optimization} && configure_extra="${configure_extra} --enable-strong-optimization --enable-security"
 ${debugging} && configure_extra="${configure_extra} --enable-debugging"
 
-${quiet} && quietredirect='>/dev/null 2>&1' || quietredirect=''
+${quiet} && quietredirect='>/dev/null' || quietredirect=''
 
 if ${use_chown}
 then	ls /root >/dev/null 2>&1 && \
@@ -174,6 +174,6 @@ ${earlystop} && {
 Info "Making ${*}..."
 command -v make >/dev/null 2>&1 || Die "cannot find make"
 if ${quiet}
-then	exec make ${jarg} "${@}" >/dev/null 2>&1
+then	exec make ${jarg} "${@}" >/dev/null
 else	exec make ${jarg} "${@}"
 fi
