@@ -281,13 +281,32 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	m_arch_set.clear();
 	resolve_plus_minus(m_arch_set, m_accepted_keywords, m_obsolete_minusasterisk);
 	split_string(m_accepted_keywords, (*this)["ACCEPT_KEYWORDS"]);
-	m_accepted_keywords_set.clear();
+	m_accepted_keywords_set = m_arch_set;
 	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords, m_obsolete_minusasterisk);
 	make_vector<string>(m_accepted_keywords, m_accepted_keywords_set);
-	if(eixrc.getBool("ACCEPT_KEYWORDS_AS_ARCH"))
-		m_local_arch_set = &m_accepted_keywords_set;
-	else
-		m_local_arch_set = &m_arch_set;
+	short as_arch(eixrc.getBoolText("ACCEPT_KEYWORDS_AS_ARCH", "full"));
+	if(as_arch) {
+		m_plain_accepted_keywords_set.clear();
+		for(set<string>::const_iterator it(m_accepted_keywords_set.begin());
+			unlikely(it != m_accepted_keywords_set.end()); ++it) {
+			if(strchr("-~", (*it)[0]) == NULL) {
+				m_plain_accepted_keywords_set.insert(*it);
+			}
+			else {
+				m_plain_accepted_keywords_set.insert(it->substr(1));
+			}
+		}
+		m_local_arch_set = &m_plain_accepted_keywords_set;
+		if(as_arch < 0) {
+			m_auto_arch_set = &m_plain_accepted_keywords_set;
+		}
+		else {
+			m_auto_arch_set = &m_arch_set;
+		}
+	}
+	else {
+		m_local_arch_set = m_auto_arch_set = &m_arch_set;
+	}
 
 	{	// Calculate m_raised_arch by prepending ~ to every token
 		set<string> archset;
@@ -1121,7 +1140,7 @@ PortageSettings::setKeyflags(Package *p, bool use_accepted_keywords) const
 	}
 	else {
 		ind = Version::SAVEKEY_ARCH;
-		accept_set = &m_arch_set;
+		accept_set = m_auto_arch_set;
 	}
 	if(p->restore_keyflags(ind))
 		return;

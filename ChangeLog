@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.8
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce ACCEPT_KEYWORDS_AS_ARCH=full and make it default
+	  http://bugs.gentoo.org/show_bug.cgi?id=353562
+	- Also add ./configure --with-always-accept-keywords
+
 *eix-0.22.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add option -f to eix-installed-after

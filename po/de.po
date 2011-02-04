@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-01-15 18:44+0100\n"
+"POT-Creation-Date: 2011-02-04 01:48+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -4821,13 +4821,15 @@ msgstr "Legt fest, ob redundante Einträge für -T einen Treffer ergeben."
 
 #: src/eixrc/defaults.cc:2244
 msgid ""
-"If true modify ARCH by ACCEPT_KEYWORDS.\n"
-"This determines which keywords are considered as ARCH or OTHERARCH."
+"If full or true modify ARCH by ACCEPT_KEYWORDS.\n"
+"This determines which keywords are considered as ARCH or OTHERARCH.\n"
+"The value full also influences the original ARCH keywording."
 msgstr ""
-"Soll ARCH durch ACCEPT_KEYWORDS modifiziert werden?\n"
-"Dies legt fest, welche Keywords als ARCH oder OTHERARCH aufgefasst weden."
+"Bei full oder true wird ARCH durch ACCEPT_KEYWORDS modifiziert.\n"
+"Dies legt fest, welche Keywords als ARCH oder OTHERARCH aufgefasst werden.\n"
+"Der Wert full beeinflusst auch das ursprüngliche Keywording durch ARCH."
 
-#: src/eixrc/defaults.cc:2249
+#: src/eixrc/defaults.cc:2250
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists the same keyword\n"
 "twice for the versions in question."
@@ -4835,7 +4837,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen ein Keyword doppelt enthält."
 
-#: src/eixrc/defaults.cc:2254
+#: src/eixrc/defaults.cc:2255
 msgid ""
 "Applies if /etc/portage/package.accept_keywords has two lines for\n"
 "identical target."
@@ -4843,7 +4845,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen zwei Zeilen enthält."
 
-#: src/eixrc/defaults.cc:2259
+#: src/eixrc/defaults.cc:2260
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists two different\n"
 "keywords, e.g. ~ARCH and -*, for the versions in question."
@@ -4851,7 +4853,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen zwei verschieden Keywords angibt, wie etwa ~ARCH und -*."
 
-#: src/eixrc/defaults.cc:2264
+#: src/eixrc/defaults.cc:2265
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists a keywords which can\n"
 "be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
@@ -4863,7 +4865,7 @@ msgstr ""
 "könnte, etwa -*, ~OTHERARCH oder ~OTHERARCH anstatt ~ARCH, oder ~OTHERARCH\n"
 "anstatt OTHERARCH."
 
-#: src/eixrc/defaults.cc:2271
+#: src/eixrc/defaults.cc:2272
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists a strange keyword\n"
 "e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
@@ -4873,7 +4875,7 @@ msgstr ""
 "Versionen ein seltsames Keyword enthält, etwas UNKNOWNARCH (unbekannt für\n"
 "das ebuild und ARCH) oder -OTHERARCH."
 
-#: src/eixrc/defaults.cc:2277
+#: src/eixrc/defaults.cc:2278
 msgid ""
 "Applies if /etc/portage/package.accept_keywords contains some -* entry.\n"
 "This test only applies if OBSOLETE_MINUSASTERISK is false."
@@ -4882,7 +4884,7 @@ msgstr ""
 "Dieser Test kommt nur im Fall eines negativen OBSOLETE_MINUSASTERISK\n"
 "zum Einsatz."
 
-#: src/eixrc/defaults.cc:2282
+#: src/eixrc/defaults.cc:2283
 msgid ""
 "Applies if /etc/portage/package.accept_keywords provides keywords which do\n"
 "not change the availability keywords status for the versions in question."
@@ -4891,7 +4893,7 @@ msgstr ""
 "Versionen ein Keyword enthält, das den Status der Version nicht\n"
 "beeinflussen."
 
-#: src/eixrc/defaults.cc:2287
+#: src/eixrc/defaults.cc:2288
 msgid ""
 "Applies if /etc/portage/package.mask contains entries\n"
 "which do not change the mask status for the versions in question."
@@ -4899,7 +4901,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.mask für die fraglichen Versionen\n"
 "Einträge enthält, die den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:2292
+#: src/eixrc/defaults.cc:2293
 msgid ""
 "Applies if /etc/portage/package.unmask contains entries\n"
 "which do not change the mask status for the versions in question."
@@ -4907,7 +4909,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.unmask für die fraglichen Versionen\n"
 "Einträge enthält, die den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:2297
+#: src/eixrc/defaults.cc:2298
 msgid ""
 "Applies if /etc/portage/package.mask matches twice\n"
 "for the versions in question."
@@ -4915,7 +4917,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.mask für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2302
+#: src/eixrc/defaults.cc:2303
 msgid ""
 "Applies if /etc/portage/package.unmask matches twice\n"
 "for the versions in question."
@@ -4923,7 +4925,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.unmask für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2307
+#: src/eixrc/defaults.cc:2308
 msgid ""
 "Applies if /etc/portage/package.use matches twice\n"
 "for the versions in question."
@@ -4931,7 +4933,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.use für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2312
+#: src/eixrc/defaults.cc:2313
 msgid ""
 "Applies if /etc/portage/package.env matches twice\n"
 "for the versions in question."
@@ -4939,7 +4941,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.env für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2317
+#: src/eixrc/defaults.cc:2318
 msgid ""
 "Applies if /etc/portage/package.cflags matches twice\n"
 "for the versions in question."
@@ -4947,44 +4949,44 @@ msgstr ""
 "Testet, ob /etc/portage/package.cflags für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2322
+#: src/eixrc/defaults.cc:2323
 msgid ""
 "Applies if /etc/portage/package.accept_keywords contains a matching entry."
 msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords auf die fraglichen\n"
 "Versionen zutrifft."
 
-#: src/eixrc/defaults.cc:2326
+#: src/eixrc/defaults.cc:2327
 msgid "Applies if /etc/portage/package.mask matches."
 msgstr ""
 "Testet, ob /etc/portage/package.mask auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2330
+#: src/eixrc/defaults.cc:2331
 msgid "Applies if /etc/portage/package.unmask matches."
 msgstr ""
 "Testet, ob /etc/portage/package.unmask auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2334
+#: src/eixrc/defaults.cc:2335
 msgid "Applies if /etc/portage/package.use matches."
 msgstr ""
 "Testet, ob /etc/portage/package.use auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2338
+#: src/eixrc/defaults.cc:2339
 msgid "Applies if /etc/portage/package.env matches."
 msgstr ""
 "Testet, ob /etc/portage/package.env auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2342
+#: src/eixrc/defaults.cc:2343
 msgid "Applies if /etc/portage/package.cflags matches."
 msgstr ""
 "Testet, ob /etc/portage/package.cflags auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2346
+#: src/eixrc/defaults.cc:2347
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the directory where eix searches for its package.*.*/sets.eix files."
@@ -4993,7 +4995,7 @@ msgstr ""
 "Sie enthält das Directory, in dem eix nach seinen\n"
 "package.*.*/sets.eix-Dateien sucht."
 
-#: src/eixrc/defaults.cc:2351
+#: src/eixrc/defaults.cc:2352
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=false."
@@ -5001,7 +5003,7 @@ msgstr ""
 "Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete dieses Dateien/Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=false wäre."
 
-#: src/eixrc/defaults.cc:2356
+#: src/eixrc/defaults.cc:2357
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=true."
@@ -5010,49 +5012,49 @@ msgstr ""
 "Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=true wäre."
 
-#: src/eixrc/defaults.cc:2362
+#: src/eixrc/defaults.cc:2363
 msgid "Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_KEYWORDS\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2366
+#: src/eixrc/defaults.cc:2367
 msgid "Entries listed in these files/dirs are excluded for -t TEST_MASK."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_MASK\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2370
+#: src/eixrc/defaults.cc:2371
 msgid "Entries listed in these files/dirs are excluded for -t TEST_UNMASK."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_UNMASK\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2374
+#: src/eixrc/defaults.cc:2375
 msgid "Entries listed in these files/dire are excluded for -t TEST_USE."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_USE\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2378
+#: src/eixrc/defaults.cc:2379
 msgid "Entries listed in these files/dire are excluded for -t TEST_ENV."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_ENV\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2382
+#: src/eixrc/defaults.cc:2383
 msgid "Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_CFLAGS\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2386
+#: src/eixrc/defaults.cc:2387
 msgid "Packages listed in these files/dirs are excluded for -t TEST_REMOVED."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_REMOVED\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2390
+#: src/eixrc/defaults.cc:2391
 msgid ""
 "This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
 "It is meant to be a local addition to PACKAGE_NOWARN."
@@ -5060,7 +5062,7 @@ msgstr ""
 "Diese Variable wird nur für Delayed Substitution in PACKAGE_NOWARN benutzt.\n"
 "Sie ist für lokale Erweiterungen von PACKAGE_NOWARN gedacht."
 
-#: src/eixrc/defaults.cc:2395
+#: src/eixrc/defaults.cc:2396
 msgid ""
 "This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
 "If it is set then the files from OBSOLETE_PACKAGE_NOWARN are used."
@@ -5068,7 +5070,7 @@ msgstr ""
 "Diese Variable wird nur für Delayed Substitution in PACKAGE_NOWARN benutzt.\n"
 "Wenn sie gesetzt ist, werden die Files von OBSOLETE_PACKAGE_NOWARN benutzt."
 
-#: src/eixrc/defaults.cc:2407
+#: src/eixrc/defaults.cc:2408
 msgid ""
 "This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"
 "variable OBSOLETE_NOWARN is set."
@@ -5076,11 +5078,11 @@ msgstr ""
 "Diese Variable wird zur Delayed Substituion in PACKAGE_NOWARN benutzt,\n"
 "falls die Variable OBSOLETE_NOWARN gesetzt ist."
 
-#: src/eixrc/defaults.cc:2416
+#: src/eixrc/defaults.cc:2417
 msgid "This file/directory contains exceptions for -T tests."
 msgstr "Diese Datei/Directory enthält Ausnahmen für -T."
 
-#: src/eixrc/defaults.cc:2420
+#: src/eixrc/defaults.cc:2421
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It specifies directories for EIX_LOCAL_SETS."
@@ -5088,14 +5090,14 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie gibt die Directories für EIX_LOCAL_SETS an."
 
-#: src/eixrc/defaults.cc:2429
+#: src/eixrc/defaults.cc:2430
 msgid ""
 "This is a space-separated list of directories containing set definitions."
 msgstr ""
 "Dies ist eine Liste von Directories (durch Leerzeichen getrennt) mit\n"
 "Set-Definitionen."
 
-#: src/eixrc/defaults.cc:2433
+#: src/eixrc/defaults.cc:2434
 msgid ""
 "This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
 "You might need to modify it according to the installed portage version.\n"
@@ -5106,7 +5108,7 @@ msgstr ""
 "Portage-Version angepasst werden. Wenn er leer ist, werden alle\n"
 "Ebuilds mit EAPI-Suffixen (s. GLEP 55) ignoriert."
 
-#: src/eixrc/defaults.cc:2439
+#: src/eixrc/defaults.cc:2440
 msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."
@@ -5298,8 +5300,8 @@ msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1189
-#: src/portage/conf/portagesettings.cc:1218
+#: src/portage/conf/portagesettings.cc:1208
+#: src/portage/conf/portagesettings.cc:1237
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 

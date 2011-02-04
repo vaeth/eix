@@ -1870,7 +1870,7 @@ AddOption(BOOLEAN, "LOCAL_PORTAGE_CONFIG",
 	"If false, /etc/portage and ACCEPT_KEYWORDS are ignored."));
 
 AddOption(BOOLEAN, "ALWAYS_ACCEPT_KEYWORDS",
-	"false", _(
+	ALWAYS_ACCEPT_KEYWORDS_DEFAULT, _(
 	"If true, ACCEPT_KEYWORDS is used even without LOCAL_PORTAGE_CONFIG,\n"
 	"e.g. to determine the \"default\" stability."));
 
@@ -2239,10 +2239,11 @@ AddOption(BOOLEAN, "TEST_FOR_REDUNDANCY",
 	"true", _(
 	"Defines whether redundant entries are positive for -T."));
 
-AddOption(BOOLEAN, "ACCEPT_KEYWORDS_AS_ARCH",
-	"true", _(
-	"If true modify ARCH by ACCEPT_KEYWORDS.\n"
-	"This determines which keywords are considered as ARCH or OTHERARCH."));
+AddOption(STRING, "ACCEPT_KEYWORDS_AS_ARCH",
+	"full", _(
+	"If full or true modify ARCH by ACCEPT_KEYWORDS.\n"
+	"This determines which keywords are considered as ARCH or OTHERARCH.\n"
+	"The value full also influences the original ARCH keywording."));
 
 AddOption(STRING, "REDUNDANT_IF_DOUBLE",
 	"some", _(

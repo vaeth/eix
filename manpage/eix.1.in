@@ -2572,9 +2572,10 @@ What is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables
 Defines whether redundant entries in /etc/portage/package.* are positive for -T.
 What is considered as redundant is defined by the B<REDUNDANT_IF>-variables.
 .TP
-.BR ACCEPT_KEYWORDS_AS_ARCH " " (true / false)
-If true modify ARCH by ACCEPT_KEYWORDS.
+.BR ACCEPT_KEYWORDS_AS_ARCH " " (full / true / false)
+If full or true modify ARCH by ACCEPT_KEYWORDS.
 This determines which keywords are considered as ARCH or OTHERARCH.
+The value full also influences the original ARCH keywording.
 .TP
 .BR NONEXISTENT_IF_OTHER_OVERLAY " " (true / false)
 Defines whether versions are non-existent for TEST_FOR_NONEXISTENT
