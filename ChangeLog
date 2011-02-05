@@ -8,7 +8,6 @@
 	- Remove --with-rst and ship *.html in tarball, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=353705
 	- Add --with-extra-doc and install by default nothing from doc
-	- Treat eix-xml.xsd as doc (not as html).
 
 *eix-0.22.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

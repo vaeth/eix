@@ -16,11 +16,11 @@ $(htmlfiles) \
 $(xmldocfiles)
 
 dist_html_DATA = \
-$(htmlfiles)
+$(htmlfiles) \
+$(xmldocfiles)
 
 nodist_doc_DATA = \
-$(textfiles) \
-$(xmldocfiles)
+$(textfiles)
 
 css_data = \
 stylesheet.css \
