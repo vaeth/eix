@@ -153,7 +153,10 @@ PrintXml::package(Package *pkg)
 			}
 		}
 		// From the remaining ones we choose the last.
-		for(Package::const_reverse_iterator ver(pkg->rbegin());
+		// The following should actually be const_reverse_iterator,
+		// but some compilers would then need a cast of rend(),
+		// see http://bugs.gentoo.org/show_bug.cgi?id=354071
+		for(Package::reverse_iterator ver(pkg->rbegin());
 			likely(ver != pkg->rend()); ++ver) {
 			if(know_inst.find(**ver) == know_inst.end()) {
 				know_inst.insert(**ver);
