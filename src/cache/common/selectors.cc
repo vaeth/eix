@@ -44,13 +44,13 @@ string::size_type ebuild_pos(const std::string &str)
 	if(unlikely(str.compare(pos, append_size, ".ebuild") == 0))
 		return pos;
 	static Regex r;
-	static bool is_empty = false;
+	static bool is_empty(false);
 	if(unlikely(is_empty))
 		return false;
 	if(unlikely(!r.compiled())) {
 		string m("\\.ebuild-(");
 		EixRc eixrc(get_eixrc(NULL));
-		const string &s = eixrc["EAPI_REGEX"];
+		const string &s(eixrc["EAPI_REGEX"]);
 		if(s.empty()) {
 			is_empty = true;
 			return false;

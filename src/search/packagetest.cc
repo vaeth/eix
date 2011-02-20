@@ -82,7 +82,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	from_foreign_overlay_inst_list = NULL;
 	portdir = (*portagesettings)["PORTDIR"].c_str();
 
-	field    = PackageTest::NONE;
+	field    = NONE;
 	need     = PackageReader::NONE;
 	overlay = obsolete = upgrade = binary =
 		installed = multi_installed =
@@ -91,7 +91,8 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 		worldset = worldset_only_selected =
 		world_plain = world_only_selected_plain = world_only_file_plain =
 		worldset_plain = worldset_only_selected_plain =
-		dup_versions = dup_packages = false;
+		dup_versions = dup_packages =
+		know_pattern = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
 	test_installed = INS_NONE;
@@ -374,15 +375,26 @@ PackageTest::setAlgorithm(MatchAlgorithm a)
 void
 PackageTest::setPattern(const char *p)
 {
-	if(algorithm == NULL) {
-		setAlgorithm(get_matchalgorithm(p));
-	}
+	if(!know_pattern) {
+		if(algorithm == NULL) {
+			setAlgorithm(get_matchalgorithm(p));
+		}
 
-	if(field == NONE) {
-		field = get_matchfield(p);
+		if(field == NONE) {
+			field = get_matchfield(p);
+		}
+		know_pattern = true;
 	}
-
 	algorithm->setString(p);
+}
+
+void
+PackageTest::finalize()
+{
+	if(!know_pattern) {
+		setPattern("");
+	}
+	calculateNeeds();
 }
 
 /** Return true if pkg matches test. */

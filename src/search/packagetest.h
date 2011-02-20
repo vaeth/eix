@@ -102,9 +102,9 @@ class PackageTest {
 
 		bool match(PackageReader *pkg) const;
 
-		/** Compile regex and/or calculate needs. */
-		void finalize()
-		{ calculateNeeds(); }
+		/** Set defaults (e.g. matchfield if unspecified),
+		    calculate needs. */
+		void finalize();
 
 		// The constructor of the class *must* set the least restrictive choice.
 		// Since --selected --world must act like --selected, the less restrictive
@@ -276,7 +276,8 @@ class PackageTest {
 			world, world_only_file, world_only_selected,
 			worldset, worldset_only_selected,
 			world_plain, world_only_file_plain, world_only_selected_plain,
-			worldset_plain, worldset_only_selected_plain;
+			worldset_plain, worldset_only_selected_plain,
+			know_pattern;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;
 		bool dup_packages, dup_packages_overlay;

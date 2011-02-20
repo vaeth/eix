@@ -49,7 +49,7 @@ class Regex
 				regfree(&m_re);
 				m_compiled = false;
 			}
-			if(! regex ||! regex[0])
+			if((regex == NULL) || !(regex[0]))
 				return;
 
 			int retval(regcomp(&m_re, regex, eflags|REG_EXTENDED));
@@ -64,30 +64,36 @@ class Regex
 
 		/// Does the regular expression match s?
 		bool match(const char *s) const
-		{ return ! m_compiled || ! regexec(get(), s, 0, NULL, 0); }
+		{ return (!m_compiled) || (!regexec(get(), s, 0, NULL, 0)); }
 
 		/// Does the regular expression match s? Get beginning/end
 		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const
 		{
 			regmatch_t pmatch[1];
 			if(!m_compiled) {
-				if(b)
+				if(likely(b != NULL)) {
 					*b = 0;
-				if(e)
+				}
+				if(likely(e != NULL)) {
 					*e = std::string::npos;
+				}
 				return true;
 			}
 			if(regexec(get(), s, 1, pmatch, 0)) {
-				if(b)
+				if(likely(b != NULL)) {
 					*b = std::string::npos;
-				if(e)
+				}
+				if(likely(e != NULL)) {
 					*e = std::string::npos;
+				}
 				return false;
 			}
-			if(b)
+			if(likely(b != NULL)) {
 				*b = pmatch[0].rm_so;
-			if(e)
+			}
+			if(likely(e != NULL)) {
 				*e = pmatch[0].rm_eo;
+			}
 			return true;
 		}
 
