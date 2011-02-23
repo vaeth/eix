@@ -4,6 +4,10 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix non-casting of rend() -> reverse_const_iterator on some systems,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=354071
+	- Do not rely on argreader.end() not to change, even if argreader is
+	  not accessed in a writable way. Thanks for
+	  Tom Lloyd <napalmllama at gmail.com> for letting me debug on his
+	  machine, see http://bugs.gentoo.org/show_bug.cgi?id=355623
 	- Set always default search field, even if string is unspecified
 	- Introduce ACCEPT_KEYWORDS_AS_ARCH=full and make it default, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=353562

@@ -53,24 +53,25 @@ using namespace std;
 } while(0)
 
 inline bool
-optional_increase(ArgumentReader::iterator &arg, ArgumentReader::iterator end)
+optional_increase(ArgumentReader::const_iterator &arg, const ArgumentReader &ar)
 {
-	ArgumentReader::iterator next(arg);
-	if(unlikely(++next == end))
+	ArgumentReader::const_iterator next(arg);
+	if(unlikely(++next == ar.end()))
 		return false;
 	arg = next;
 	return true;
 }
 
 void
-parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end)
+parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, const ArgumentReader& ar)
 {
 	bool	use_pipe(false),   // A pipe is used somewhere
 		force_test(false), // There is a current test or a pipe
 		curr_pipe(false);  // There is a current pipe
 	PackageTest *test(NULL);   // The current test
 
-	while(likely(arg != end)) {
+	for(ArgumentReader::const_iterator arg(ar.begin());
+		likely(arg != ar.end()); ++arg) {
 		switch(**arg) {
 			// Check for logical operator {{{
 			case 'a': FINISH_TEST;
@@ -210,7 +211,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				test->SetInstability(PackageTest::STABLE_NONMASKED);
 				break;
 			case O_OVERLAY: USE_TEST;
-				if(optional_increase(arg, end)) {
+				if(optional_increase(arg, ar)) {
 					header.get_overlay_vector(
 						test->OverlayList(),
 						arg->m_argument,
@@ -222,7 +223,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				test->Overlay();
 				break;
 			case O_ONLY_OVERLAY: USE_TEST;
-				if(optional_increase(arg, end)) {
+				if(optional_increase(arg, ar)) {
 					header.get_overlay_vector(
 						test->OverlayOnlyList(),
 						arg->m_argument,
@@ -235,7 +236,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 					portagesettings["PORTDIR"].c_str());
 				break;
 			case O_INSTALLED_OVERLAY: USE_TEST;
-				if(optional_increase(arg, end)) {
+				if(optional_increase(arg, ar)) {
 					header.get_overlay_vector(
 						test->InOverlayInstList(),
 						arg->m_argument,
@@ -250,7 +251,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 					portagesettings["PORTDIR"].c_str());
 				break;
 			case O_FROM_OVERLAY: USE_TEST;
-				if(optional_increase(arg, end)) {
+				if(optional_increase(arg, ar)) {
 					header.get_overlay_vector(
 						test->FromOverlayInstList(),
 						arg->m_argument,
@@ -418,7 +419,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 
 			// Check for algorithms {{{
 			case 'f': USE_TEST;
-				if(unlikely((++arg != end)
+				if(unlikely((++arg != ar.end())
 					&& (arg->type == Parameter::ARGUMENT)
 					&& is_numeric(arg->m_argument))) {
 					test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
@@ -457,8 +458,6 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			default:
 				break;
 		}
-
-		++arg;
 	}
 	FINISH_TEST;
 	matchtree->end_parse();

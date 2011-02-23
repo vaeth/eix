@@ -103,8 +103,8 @@ class Parameter
 			: type(Parameter::ARGUMENT), m_argument(argument)
 		{ }
 
-		int operator * ()
-		{ return type == OPTION ? m_option : -1; }
+		int operator * () const
+		{ return (type == OPTION) ? m_option : -1; }
 };
 
 /// Main class for argument parsing.

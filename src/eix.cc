@@ -644,7 +644,7 @@ run_eix(int argc, char** argv)
 	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
 	MatchTree *matchtree = new MatchTree(eixrc.getBool("DEFAULT_IS_OR"));
-	parse_cli(matchtree, eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader.begin(), argreader.end());
+	parse_cli(matchtree, eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader);
 
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages;

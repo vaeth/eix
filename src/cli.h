@@ -19,7 +19,7 @@ class MatchTree;
 class PortageSettings;
 class SetStability;
 class VarDbPkg;
-void parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, ArgumentReader::iterator arg, ArgumentReader::iterator end);
+void parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, const ArgumentReader &ar);
 
 /*	If you want to add a new parameter to eix just insert a line into
  *	long_options. If you only want a longopt, add a new define.
