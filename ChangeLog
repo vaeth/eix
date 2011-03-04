@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.9
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Use -fno-common
+
 *eix-0.22.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Fix non-casting of rend() -> reverse_const_iterator on some systems,
