@@ -2,6 +2,8 @@
 
 *eix-0.22.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support alternative /etc/portage/make.profile location, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=358647
 	- Use -fno-common
 
 *eix-0.22.8

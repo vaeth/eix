@@ -30,28 +30,30 @@
 #include <cstring>
 
 /* Path to symlink to profile */
-#define PROFILE_LINK "/etc/make.profile"
+#define PROFILE_LINK1 "/etc/make.profile"
+#define PROFILE_LINK2 "/etc/portage/make.profile"
 
 using namespace std;
 
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 
-/** Add all files from profile ans its parents to m_profile_files. */
-void CascadingProfile::addProfile(const char *profile, unsigned int depth)
+/** Add all files from profile and its parents to m_profile_files. */
+bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 {
 	// Use pushback_lines to avoid keeping file descriptor open:
 	// Who know what's our limit of open file descriptors.
 	if(unlikely(depth >= 255)) {
 		cerr << _("Recursion level for cascading profiles exceeded; stopping reading parents") << endl;
-		return;
+		return false;
 	}
 	string s(normalize_path(profile, true, true));
 #ifdef DEBUG_PROFILE_PATHS
 	cout << eix::format("Adding to Profile:\n\t(%s) -> %r\n") % profile % s;
 #endif
-	if(s.empty())
-		return;
+	if(s.empty()) {
+		return false;
+	}
 	vector<string> parents;
 	if(pushback_lines((s + "parent").c_str(), &parents)) {
 		for(vector<string>::const_iterator it(parents.begin());
@@ -64,7 +66,7 @@ void CascadingProfile::addProfile(const char *profile, unsigned int depth)
 				addProfile((s + (*it)).c_str(), depth + 1);
 		}
 	}
-	pushback_files(s, m_profile_files, profile_exclude, 3);
+	return pushback_files(s, m_profile_files, profile_exclude, 3);
 }
 
 class ProfileFilenames
@@ -223,11 +225,15 @@ CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
 		return;
 	}
 	const string &s((*m_portagesettings)["PORTAGE_PROFILE"]);
-	if(!s.empty()) {
-		addProfile(s.c_str());
+	if(unlikely(!s.empty())) {
+		if(addProfile(s.c_str())) {
+			return;
+		}
+	}
+	if(addProfile(((m_portagesettings->m_eprefixconf) + PROFILE_LINK1).c_str())) {
 		return;
 	}
-	addProfile(((m_portagesettings->m_eprefixconf) + PROFILE_LINK).c_str());
+	addProfile(((m_portagesettings->m_eprefixconf) + PROFILE_LINK2).c_str());
 }
 
 void

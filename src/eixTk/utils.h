@@ -32,7 +32,7 @@ bool scandir_cc(const std::string &dir, std::vector<std::string> &namelist, sele
 bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_empty = true, bool recursive = false, bool remove_comments = true);
 
 /** List of files in directory.
- * Pushed names of file in directory into string-vector if the don't match any
+ * Pushed names of file in directory into string-vector if they don't match any
  * char * in given exlude list.
  * @param dir_path Path to directory
  * @param into pointer to vector of strings .. files get append here (with full path)
@@ -40,7 +40,7 @@ bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_e
  * @param only_type: if 1: consider only ordinary files, if 2: consider only dirs, if 3: consider only files or dirs
  * @param no_hidden ignore hidden files
  * @param full_path return full pathnames
- * @return true if everything is ok */
+ * @return true if everything is ok. Nonexisting directory is not ok. */
 bool pushback_files(const std::string &dir_path, std::vector<std::string> &into, const char *exclude[] = NULL, short only_files = 1, bool no_hidden = true, bool full_path = true);
 
 

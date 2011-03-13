@@ -46,8 +46,8 @@ class CascadingProfile {
 
 	private:
 
-		/** Add all files from profile ans its parents to m_profile_files. */
-		void addProfile(const char *profile, unsigned int depth = 0);
+		/** Add all files from profile and its parents to m_profile_files. */
+		bool addProfile(const char *profile, unsigned int depth = 0);
 
 		/** Handler functions follow for reading a file */
 		typedef bool (CascadingProfile::*Handler)(const std::vector<std::string> &lines, const std::string &file);
