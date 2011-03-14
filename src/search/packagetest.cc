@@ -419,8 +419,13 @@ PackageTest::stringMatch(Package *pkg) const
 	if((field & HOMEPAGE) && (*algorithm)(pkg->homepage.c_str(), pkg))
 		return true;
 
-	if((field & PROVIDE) && (*algorithm)(pkg->provide.c_str(), pkg))
-		return true;
+	if(field & PROVIDE) {
+		for(vector<string>::const_iterator it(pkg->provide.begin());
+			likely(it != pkg->provide.end()); ++it) {
+			if((*algorithm)(it->c_str(), pkg))
+				return true;
+		}
+	}
 
 	if(field & SLOT) {
 		for(Package::iterator it(pkg->begin());
@@ -432,7 +437,7 @@ PackageTest::stringMatch(Package *pkg) const
 
 	if(field & IUSE) {
 		const set<IUse> &s(pkg->iuse.asSet());
-		for(set<IUse>::const_iterator it = s.begin();
+		for(set<IUse>::const_iterator it(s.begin());
 			it != s.end(); ++it) {
 			if((*algorithm)(it->name().c_str(), NULL))
 				return true;

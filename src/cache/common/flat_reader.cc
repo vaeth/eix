@@ -12,6 +12,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <portage/package.h>
 
 #include <fstream>
@@ -77,8 +78,8 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 			case 5:  pkg->homepage = linebuf; break;
 			case 6:  pkg->licenses = linebuf; break;
 			case 7:  pkg->desc     = linebuf; break;
-			case 13: pkg->provide  = linebuf; is.close();
-					 return;
+			case 13: pkg->set_provide(linebuf); is.close();
+				 return;
 			default:
 				break;
 		}

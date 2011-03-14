@@ -127,7 +127,12 @@ namespace io {
 	inline void write_hash_words(FILE *fp, const StringHash& hash, const std::string& words)
 	{ write_hash_words(fp, hash, split_string(words)); }
 
+	void read_hash_words(std::vector<std::string> &s, FILE *fp, const StringHash& hash);
+	void read_hash_words(std::string &s, FILE *fp, const StringHash& hash);
 	std::string read_hash_words(FILE *fp, const StringHash& hash);
+	inline std::string read_hash_words(FILE *fp, const StringHash& hash)
+	{ std::string s; read_hash_words(s, fp, hash); return s;}
+
 
 	void read_iuse(FILE *fp, const StringHash& hash, IUseSet &iuse);
 

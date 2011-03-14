@@ -695,7 +695,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::PKG_LICENSES:
 			return package->licenses;
 		case Scanner::PKG_PROVIDE:
-			return package->provide;
+			return package->get_provide();
 		case Scanner::PKG_BINARY:
 			{
 				for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {

@@ -7,9 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <config.h>
 #include "package.h"
+#include <config.h>
 #include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/extendedversion.h>
@@ -544,6 +545,21 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 }
 
 void
+Package::set_provide(const std::string &s)
+{
+	provide.clear();
+	split_string(provide, s);
+}
+
+std::string
+Package::get_provide() const
+{
+	std::string s;
+	join_to_string(s, provide);
+	return s;
+}
+
+void
 PackageSave::store(const Package *p)
 {
 	data.clear();
@@ -567,3 +583,4 @@ PackageSave::restore(Package *p) const
 		d->second.restore(*it);
 	}
 }
+

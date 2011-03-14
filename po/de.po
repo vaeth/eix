@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-03-13 11:44+0100\n"
+"POT-Creation-Date: 2011-03-14 19:28+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1762,12 +1762,12 @@ msgstr "Ebuild schlug fehl mit Status %s"
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
-#: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:245
+#: src/cache/common/flat_reader.cc:33 src/cache/eixcache/eixcache.cc:245
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Cachefile %s nicht lesbar: %s"
 
-#: src/cache/common/flat_reader.cc:46 src/cache/common/flat_reader.cc:68
+#: src/cache/common/flat_reader.cc:47 src/cache/common/flat_reader.cc:69
 #, c-format
 msgid "Can't open %s: %s"
 msgstr "%s kann nicht geöffnet werden: %s"
@@ -1809,12 +1809,12 @@ msgstr "%r kann nicht in Paket und Version unterteilt werden"
 msgid "Could not properly parse %s: %s"
 msgstr "Fehler beim Parsen von %s: %s"
 
-#: src/cache/parse/parse.cc:230
+#: src/cache/parse/parse.cc:232
 #, c-format
 msgid "Could not properly execute %s"
 msgstr "Konnte %s nicht korrekt ausführen"
 
-#: src/cache/parse/parse.cc:262
+#: src/cache/parse/parse.cc:264
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
@@ -1868,15 +1868,15 @@ msgstr ""
 "Cache-Methode sqlite ist nicht einkompiliert.\n"
 "Rekompilieren Sie eix mit ./configure-Option --with-sqlite"
 
-#: src/database/io.cc:56 src/database/io.cc:109 src/database/io.h:41
+#: src/database/io.cc:56 src/database/io.cc:118 src/database/io.h:41
 msgid "error while reading from database: end of file"
 msgstr "Fehler beim Lesen der Datenbank: Zu frühes Dateiende"
 
-#: src/database/io.cc:58 src/database/io.cc:111 src/database/io.h:43
+#: src/database/io.cc:58 src/database/io.cc:120 src/database/io.h:43
 msgid "error while reading from database"
 msgstr "Fehler beim Lesen der Datenbank"
 
-#: src/database/io.cc:70 src/database/io.cc:164 src/database/io.h:53
+#: src/database/io.cc:70 src/database/io.cc:173 src/database/io.h:53
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 

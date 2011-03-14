@@ -138,7 +138,7 @@ Port2_1_2_Cache::readEntry(map<string,string> &mapper, PackageTree *packagetree,
 		pkg->homepage = mapper["HOMEPAGE"];
 		pkg->licenses = mapper["LICENSES"];
 		pkg->desc     = mapper["DESCRIPTION"];
-		pkg->provide  = mapper["PROVIDE"];
+		pkg->set_provide(mapper["PROVIDE"]);
 	}
 	/* Free old split */
 	free(aux[0]);

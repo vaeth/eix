@@ -215,7 +215,9 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 			set_checking(pkg->homepage, "HOMEPAGE",    ebuild, &ok);
 			set_checking(pkg->licenses, "LICENSE",     ebuild, &ok);
 			set_checking(pkg->desc,     "DESCRIPTION", ebuild, &ok);
-			set_checking(pkg->provide,  "PROVIDE",     ebuild);
+			string s;
+			set_checking(s,  "PROVIDE",     ebuild);
+			pkg->set_provide(s);
 			have_onetime_info = true;
 		}
 	}

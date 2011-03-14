@@ -104,7 +104,8 @@ class Package
 		std::vector<MaskFlags> saved_collects;
 
 		/** Package properties (stored in db) */
-		std::string category, name, desc, homepage, licenses, provide;
+		std::string category, name, desc, homepage, licenses;
+		std::vector<std::string> provide;
 
 		IUseSet iuse;
 
@@ -381,6 +382,10 @@ class Package
 
 		Version *latest() const
 		{ return *rbegin(); }
+
+		void set_provide(const std::string &s);
+
+		std::string get_provide() const;
 
 	protected:
 		/** \c slotlist is always sorted with respect to the

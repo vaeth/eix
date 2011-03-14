@@ -82,17 +82,26 @@ io::write_hash_words(FILE *fp, const StringHash& hash, const vector<string>& wor
 		io::write_hash_string(fp, hash, *i);
 }
 
-string
-io::read_hash_words(FILE *fp, const StringHash& hash)
+void
+io::read_hash_words(vector<string> &s, FILE *fp, const StringHash& hash)
 {
-	string r;
+	vector<string>::size_type e(io::read<vector<string>::size_type>(fp));
+	s.resize(e);
+	for(vector<string>::size_type i(0); likely(i != e); ++i) {
+		s[i] = io::read_hash_string(fp, hash);
+	}
+}
+
+void
+io::read_hash_words(string &s, FILE *fp, const StringHash& hash)
+{
+	s.clear();
 	for(vector<string>::size_type e(io::read<vector<string>::size_type>(fp));
 		likely(e != 0); --e) {
-		if(!r.empty())
-			r.append(1, ' ');
-		r.append(io::read_hash_string(fp, hash));
+		if(!s.empty())
+			s.append(1, ' ');
+		s.append(io::read_hash_string(fp, hash));
 	}
-	return r;
 }
 
 static BasicPart
@@ -134,7 +143,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 	v->maskflags.set(mask);
 	v->propertiesFlags = io::readUChar(fp);
 	v->restrictFlags   = io::read<ExtendedVersion::Restrict>(fp);
-	v->full_keywords   = io::read_hash_words(fp, hdr.keywords_hash);
+	io::read_hash_words(v->full_keywords, fp, hdr.keywords_hash);
 
 	// read primary version part
 	for(list<BasicPart>::size_type i(io::read<list<BasicPart>::size_type>(fp));

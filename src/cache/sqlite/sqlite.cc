@@ -239,7 +239,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		pkg->homepage = TrueIndex::c_str(argv, trueindex, TrueIndex::HOMEPAGE);
 		pkg->licenses = TrueIndex::c_str(argv, trueindex, TrueIndex::LICENSE);
 		pkg->desc     = TrueIndex::c_str(argv, trueindex, TrueIndex::DESCRIPTION);
-		pkg->provide  = TrueIndex::c_str(argv, trueindex, TrueIndex::PROVIDE);
+		pkg->set_provide(TrueIndex::c_str(argv, trueindex, TrueIndex::PROVIDE));
 	}
 	/* Free old split */
 	free(aux[0]);

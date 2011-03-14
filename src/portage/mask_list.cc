@@ -121,10 +121,8 @@ MaskList<Mask>::applyVirtualMasks(Package *p) const
 {
 	if(p->provide.empty())
 		return;
-	vector<string> provide;
-	split_string(provide, p->provide);
-	for(vector<string>::const_iterator v(provide.begin());
-		likely(v != provide.end()); ++v) {
+	for(vector<string>::const_iterator v(p->provide.begin());
+		likely(v != p->provide.end()); ++v) {
 		Get *masks(get(p));
 		if(masks == NULL) {
 			continue;

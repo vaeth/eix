@@ -39,7 +39,7 @@ PackageReader::read(Attributes need)
 			if(unlikely(need == DESCRIPTION))
 				break;
 		case DESCRIPTION:
-			m_pkg->provide = io::read_hash_words(m_fp, header->provide_hash);
+			io::read_hash_words(m_pkg->provide, m_fp, header->provide_hash);
 			if(unlikely(need == PROVIDE))
 				break;
 		case PROVIDE:

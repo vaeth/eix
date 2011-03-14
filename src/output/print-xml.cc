@@ -135,7 +135,7 @@ PrintXml::package(Package *pkg)
 		"\t\t\t<homepage>" << escape_string(pkg->homepage) << "</homepage>\n"
 		"\t\t\t<licenses>" << escape_string(pkg->licenses) << "</licenses>\n";
 	if(!pkg->provide.empty()) {
-		cout << "\t\t\t<provide>" << escape_string(pkg->provide) << "</provide>\n";
+		cout << "\t\t\t<provide>" << escape_string(pkg->get_provide()) << "</provide>\n";
 	}
 
 	set<const Version*> have_inst;
