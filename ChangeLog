@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support alternative /etc/portage/make.profile location, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358647
+	- Make eix-test-obsolete more intelligent concerning skipping of
+	  checks, see http://bugs.gentoo.org/show_bug.cgi?id=358861
 	- Treat provide as a list of strings, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358729
 	- Use -fno-common
