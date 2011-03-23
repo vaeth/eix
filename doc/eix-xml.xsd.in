@@ -25,6 +25,7 @@
 		<xsd:enumeration value="missing_keyword" />
 		<xsd:enumeration value="alien_stable" />
 		<xsd:enumeration value="alien_unstable" />
+		<xsd:enumeration value="minus_unstable" />
 		<xsd:enumeration value="minus_asterisk" />
 		<xsd:enumeration value="minus_keyword" />
 	</xsd:restriction>

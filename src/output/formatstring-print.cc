@@ -347,6 +347,7 @@ class Scanner {
 			VER_ISALIENUNSTABLE,
 			VER_ISMISSINGKEYWORD,
 			VER_ISMINUSKEYWORD,
+			VER_ISMINUSUNSTABLE,
 			VER_ISMINUSASTERISK,
 			VER_WASHARDMASKED,
 			VER_WASPROFILEMASKED,
@@ -357,6 +358,7 @@ class Scanner {
 			VER_WASALIENUNSTABLE,
 			VER_WASMISSINGKEYWORD,
 			VER_WASMINUSKEYWORD,
+			VER_WASMINUSUNSTABLE,
 			VER_WASMINUSASTERISK
 		};
 		enum PropType { PKG, VER };
@@ -480,6 +482,7 @@ class Scanner {
 			prop_ver("isalienunstable", VER_ISALIENUNSTABLE);
 			prop_ver("ismissingkeyword", VER_ISMISSINGKEYWORD);
 			prop_ver("isminuskeyword", VER_ISMINUSKEYWORD);
+			prop_ver("isminusunstable", VER_ISMINUSUNSTABLE);
 			prop_ver("isminusasterisk", VER_ISMINUSASTERISK);
 			prop_ver("washardmasked", VER_WASHARDMASKED);
 			prop_ver("wasprofilemasked", VER_WASPROFILEMASKED);
@@ -490,6 +493,7 @@ class Scanner {
 			prop_ver("wasalienunstable", VER_WASALIENUNSTABLE);
 			prop_ver("wasmissingkeyword", VER_WASMISSINGKEYWORD);
 			prop_ver("wasminuskeyword", VER_WASMINUSKEYWORD);
+			prop_ver("wasminusunstable", VER_WASMINUSUNSTABLE);
 			prop_ver("wasminusasterisK", VER_WASMINUSASTERISK);
 		}
 
@@ -1086,6 +1090,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::VER_ISALIENUNSTABLE:
 		case Scanner::VER_ISMISSINGKEYWORD:
 		case Scanner::VER_ISMINUSKEYWORD:
+		case Scanner::VER_ISMINUSUNSTABLE:
 		case Scanner::VER_ISMINUSASTERISK:
 			a = true;
 		default:
@@ -1140,6 +1145,11 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 					case Scanner::VER_ISMINUSKEYWORD:
 					case Scanner::VER_WASMINUSKEYWORD:
 						if(mykey.isMinusKeyword())
+							return one;
+						break;
+					case Scanner::VER_ISMINUSUNSTABLE:
+					case Scanner::VER_WASMINUSUNSTABLE:
+						if(mykey.isMinusUnstable())
 							return one;
 						break;
 					default:

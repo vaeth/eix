@@ -42,6 +42,7 @@ const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_ALIENSTABLE,
 	KeywordsFlags::KEY_ALIENUNSTABLE,
 	KeywordsFlags::KEY_MINUSKEYWORD,
+	KeywordsFlags::KEY_MINUSUNSTABLE,
 	KeywordsFlags::KEY_MINUSASTERISK,
 	KeywordsFlags::KEY_SOMESTABLE,
 	KeywordsFlags::KEY_SOMEUNSTABLE,
@@ -59,6 +60,8 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 		if((*it)[0] == '-') {
 			if(*it == "-*")
 				m |= KEY_MINUSASTERISK;
+			else if(*it == "-~*")
+				m |= KEY_MINUSUNSTABLE;
 			else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end())
 				m |= KEY_MINUSKEYWORD;
 			if(!obsolete_minus)

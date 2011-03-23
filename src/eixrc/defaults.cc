@@ -639,10 +639,13 @@ AddOption(STRING, "FORMAT_STABILITY_TAG",
 		"{else}{wasminuskeyword}"
 			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
 			"{*s=\"%{TAG_FOR_EX_MINUS_KEYWORD}\"}"
+		"{else}{wasminusunstable}"
+			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+			"{*s=\"%{TAG_FOR_EX_MINUS_UNSTABLE}\"}"
 		"{else}"//{wasminusasterisk}
 			"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
 			"{*s=\"%{TAG_FOR_EX_MINUS_ASTERISK}\"}"
-		"{}{}{}{}{}{}"
+		"{}{}{}{}{}{}{}"
 	"{else}{isunstable}"
 		"{!$c}{*c}%{FORMAT_COLOR_UNSTABLE}{}"
 		"{*s=\"%{TAG_FOR_UNSTABLE}\"}"
@@ -658,10 +661,13 @@ AddOption(STRING, "FORMAT_STABILITY_TAG",
 	"{else}{isminuskeyword}"
 		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
 		"{*s=\"%{TAG_FOR_MINUS_KEYWORD}\"}"
+	"{else}{isminusunstable}"
+		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
+		"{*s=\"%{TAG_FOR_MINUS_UNSTABLE}\"}"
 	"{else}"//{isminusasterisk}
 		"{!$c}{*c}%{FORMAT_COLOR_MASKED}{}"
 		"{*s=\"%{TAG_FOR_MINUS_ASTERISK}\"}"
-	"{}{}{}{}{}{}", _(
+	"{}{}{}{}{}{}{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the runtime variable s to the stability tag, and unless the\n"
 	"runtime variable c is set, it outputs the color and sets c."));
@@ -2044,6 +2050,11 @@ AddOption(STRING, "TAG_FOR_MINUS_ASTERISK",
 	"This variable is only used for delayed substitution.\n"
 	"It is the tag for \"-*\" versions."));
 
+AddOption(STRING, "TAG_FOR_MINUS_UNSTABLE",
+	"-~*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"-~*\" versions."));
+
 AddOption(STRING, "TAG_FOR_MINUS_KEYWORD",
 	"-", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2073,6 +2084,11 @@ AddOption(STRING, "TAG_FOR_EX_MINUS_ASTERISK",
 	"(-*)", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the tag for \"originally -* but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_MINUS_UNSTABLE",
+	"(-~*)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally -~* but now stable\" versions."));
 
 AddOption(STRING, "TAG_FOR_EX_MINUS_KEYWORD",
 	"(-)", _(

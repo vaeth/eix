@@ -136,6 +136,7 @@ depending on the configuration and the version data.
   - **missing_keyword**
   - **alien_stable**
   - **alien_unstable**
+  - **minus_unstable**
   - **minus_asterisk**
   - **minus_keyword**
 

@@ -117,7 +117,8 @@ class KeywordsFlags {
 			KEY_ALIENSTABLE    = 0x08, /**<  ALIEN */
 			KEY_ALIENUNSTABLE  = 0x10, /**< ~ALIEN */
 			KEY_MINUSKEYWORD   = 0x20, /**< -ARCH  */
-			KEY_MINUSASTERISK  = 0x40, /**<  -*    */
+			KEY_MINUSUNSTABLE  = 0x40, /**< -~*    */
+			KEY_MINUSASTERISK  = 0x80, /**<  -*    */
 			KEY_SOMESTABLE     = KEY_ARCHSTABLE|KEY_ALIENSTABLE,
 			KEY_SOMEUNSTABLE   = KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE,
 			KEY_TILDESTARMATCH = KEY_SOMESTABLE|KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE;
@@ -159,6 +160,10 @@ class KeywordsFlags {
 		/** @return true if version is masked by -* keyword. */
 		bool isMinusAsterisk() const
 		{ return havesome(KEY_MINUSASTERISK); }
+
+		/** @return true if version is masked by -~* keyword. */
+		bool isMinusUnstable() const
+		{ return havesome(KEY_MINUSUNSTABLE); }
 
 		/** @return true if version is masked by -keyword. */
 		bool isMinusKeyword() const

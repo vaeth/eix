@@ -249,6 +249,16 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 					continue;
 				}
 			}
+			if(*it == "-~*") {
+				vector<string> v;
+				make_vector(v, s);
+				for(vector<string>::iterator i(v.begin());
+					unlikely(i != v.end()); ++i) {
+					if((i->size() >=2) && ((*i)[0] == '~')) {
+						s.erase(*i);
+					}
+				}
+			}
 			string key(*it, 1);
 			if(s.erase(key))
 				continue;

@@ -1132,7 +1132,7 @@ This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or the empty string depending on whether the current version is
 installed or marked, respectively.
 .TP
-.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusasterisk ", " wasminusasterisk
+.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
 This must occur only in I<VARIABLE> in the context of version printing.
 This returns 1 or empty depending whether the version has the current stability
 property according to the local or default configuration, respectively.

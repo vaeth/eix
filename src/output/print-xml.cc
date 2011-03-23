@@ -242,6 +242,10 @@ PrintXml::package(Package *pkg)
 				mask_text.push_back("alien_unstable");
 				unmask_text.push_back("package_keywords");
 			}
+			else if (waskey.isMinusUnstable()) {
+				mask_text.push_back("minus_unstable");
+				unmask_text.push_back("package_keywords");
+			}
 			else if (waskey.isMinusAsterisk()) {
 				mask_text.push_back("minus_asterisk");
 				unmask_text.push_back("package_keywords");
@@ -262,6 +266,9 @@ PrintXml::package(Package *pkg)
 		}
 		else if (currkey.isAlienUnstable()) {
 			mask_text.push_back("alien_unstable");
+		}
+		else if (currkey.isMinusUnstable()) {
+			mask_text.push_back("minus_unstable");
 		}
 		else if (currkey.isMinusAsterisk()) {
 			mask_text.push_back("minus_asterisk");
