@@ -38,6 +38,8 @@ my_geteuid()
 }
 
 static bool
+is_on_list (char *const *list, const char *member) ATTRIBUTE_PURE;
+static bool
 is_on_list (char *const *list, const char *member)
 {
 	while(likely(*list != NULL)) {

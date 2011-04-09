@@ -10,6 +10,7 @@
 #ifndef EIX__PACKAGETREE_H__
 #define EIX__PACKAGETREE_H__ 1
 
+#include <config.h>
 #include <database/types.h>
 #include <eixTk/ptr_list.h>
 
@@ -59,7 +60,7 @@ class PackageTree : public std::map<std::string, Category*> {
 
 		~PackageTree();
 
-		Category *find(const std::string &cat_name) const;
+		Category *find(const std::string &cat_name) const ATTRIBUTE_PURE;
 		Category &insert(const std::string &cat_name);
 		void insert(const std::vector<std::string> &cat_vec);
 
@@ -68,7 +69,7 @@ class PackageTree : public std::map<std::string, Category*> {
 
 		Package *findPackage(const std::string &cat_name, const std::string &pkg_name) const;
 
-		io::Treesize countPackages() const;
+		io::Treesize countPackages() const ATTRIBUTE_PURE;
 		io::Catsize countCategories() const
 		{ return size(); }
 };

@@ -64,7 +64,7 @@ static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
 			mapinit("parallel",       ExtendedVersion::RESTRICT_PARALLEL);
 		}
 
-		ExtendedVersion::Restrict getRestrict(const string& s) const
+		ExtendedVersion::Restrict getRestrict(const string& s) const ATTRIBUTE_PURE
 		{
 			RestrictMap::const_iterator i(find(s));
 			if(i != end())
@@ -86,7 +86,7 @@ static class PropertiesMap : public map<string,ExtendedVersion::Properties> {
 			mapinit("set",         ExtendedVersion::PROPERTIES_SET);
 		}
 
-		ExtendedVersion::Properties getProperties(const string& s) const
+		ExtendedVersion::Properties getProperties(const string& s) const ATTRIBUTE_PURE
 		{
 			PropertiesMap::const_iterator i(find(s));
 			if(i != end())

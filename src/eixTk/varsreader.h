@@ -87,7 +87,7 @@ class VarsReader {
 			return (*vars)[key];
 		}
 
-		const std::string *find(std::string key) const
+		const std::string *find(std::string key) const ATTRIBUTE_PURE
 		{
 			std::map<std::string,std::string>::const_iterator i(vars->find(key));
 			if(i == vars->end())

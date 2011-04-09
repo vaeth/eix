@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
 #include "packagetest.h"
-
 #include <database/package_reader.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
@@ -573,6 +573,8 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	return false;
 }
 
+static bool
+stabilitytest(const Package *p, PackageTest::TestStability what) ATTRIBUTE_PURE;
 static bool
 stabilitytest(const Package *p, PackageTest::TestStability what)
 {

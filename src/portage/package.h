@@ -37,7 +37,7 @@ class VersionList : public std::list<Version*>
 		VersionList(Version *v) : std::list<Version*>(1, v)
 		{ }
 
-		Version* best(bool allow_unstable = false) const;
+		Version* best(bool allow_unstable = false) const ATTRIBUTE_PURE;
 };
 
 class SlotVersions
@@ -66,7 +66,7 @@ class SlotList : public std::vector<SlotVersions>
 {
 	public:
 		void push_back_largest(Version *version);
-		const VersionList *operator [] (const char *s) const;
+		const VersionList *operator [] (const char *s) const ATTRIBUTE_PURE;
 };
 
 /** A class to represent a package in portage It contains various information
@@ -249,7 +249,7 @@ class Package
 			return true;
 		}
 
-		Version *best(bool allow_unstable = false) const;
+		Version *best(bool allow_unstable = false) const ATTRIBUTE_PURE;
 
 		Version *best_slot(const char *slot_name, bool allow_unstable = false) const;
 
@@ -285,7 +285,7 @@ class Package
 			- -1: p is larger
 			-  3: same, but overlays (or slots if test_slot)
 			      are different */
-		int compare_best(const Package &p, bool test_slot) const;
+		int compare_best(const Package &p, bool test_slot) const ATTRIBUTE_PURE;
 
 		/** has p a worse/missing best/best_slot/different overlay? */
 		bool have_worse(const Package &p, bool test_slots) const
@@ -372,7 +372,7 @@ class Package
 
 		/** Get the name of a slot of a version.
 		    returns NULL if not found. */
-		const char *slotname(const ExtendedVersion &v) const;
+		const char *slotname(const ExtendedVersion &v) const ATTRIBUTE_PURE;
 
 		/** Get the name of a slot of an installed version,
 		    possibly reading it from disk.

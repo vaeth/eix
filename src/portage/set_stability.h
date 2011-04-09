@@ -37,12 +37,12 @@ class SetStability {
 		 * the "saved" data is stored in Version, and we must make sure
 		 * that our calculated index really is correct in all cases... */
 
-		Version::SavedKeyIndex keyword_index(bool get_local) const;
-		Version::SavedKeyIndex keyword_index() const
+		Version::SavedKeyIndex keyword_index(bool get_local) const ATTRIBUTE_PURE;
+		Version::SavedKeyIndex keyword_index() const ATTRIBUTE_PURE
 		{ return keyword_index(m_local); }
 
-		Version::SavedMaskIndex mask_index(bool get_local) const;
-		Version::SavedMaskIndex mask_index() const
+		Version::SavedMaskIndex mask_index(bool get_local) const ATTRIBUTE_PURE;
+		Version::SavedMaskIndex mask_index() const ATTRIBUTE_PURE
 		{ return mask_index(m_local); }
 #endif
 

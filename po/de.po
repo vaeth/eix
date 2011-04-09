@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-03-23 23:49+0100\n"
+"POT-Creation-Date: 2011-04-10 00:27+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -1964,22 +1964,22 @@ msgstr "Unbekannter Helligkeitswert %r"
 msgid "Illegal color name %r"
 msgstr "Unbekannter Farbname %r"
 
-#: src/eixTk/argsreader.cc:139
+#: src/eixTk/argsreader.cc:138
 #, c-format
 msgid "Unknown option --%s\n"
 msgstr "Unbekannte Option --%s\n"
 
-#: src/eixTk/argsreader.cc:156
+#: src/eixTk/argsreader.cc:155
 #, c-format
 msgid "Unknown option -%c\n"
 msgstr "Unbekannte Option -%c\n"
 
-#: src/eixTk/argsreader.cc:228
+#: src/eixTk/argsreader.cc:227
 #, c-format
 msgid "Missing parameter to --%s\n"
 msgstr "Parameter zu --%s fehlt\n"
 
-#: src/eixTk/argsreader.cc:253
+#: src/eixTk/argsreader.cc:252
 #, c-format
 msgid "Missing second parameter to --%s\n"
 msgstr "Zweiter Parameter zu --%s fehlt\n"
@@ -2029,11 +2029,11 @@ msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 
-#: src/eixTk/sysutils.cc:57
+#: src/eixTk/sysutils.cc:59
 msgid "getpwuid() tells me that my effective uid is not known to this system."
 msgstr "getpwuid() liefert, dass die EUID dem System unbekannt sei."
 
-#: src/eixTk/sysutils.cc:69
+#: src/eixTk/sysutils.cc:71
 msgid "getgrnam(%r) failed: %s"
 msgstr "getgrnam(%r) schlug fehl: %s"
 

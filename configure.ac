@@ -224,8 +224,10 @@ AS_IF([${debugging}],
 		], [${mycxxfatal}], [${quicktrue}])])
 AS_IF([${optimization}],
 	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+			-O2 \
 			-fomit-frame-pointer \
 			-fno-common \
+			-fnothrow-opt \
 			-frename-registers \
 			-fstrict-aliasing \
 			-fmerge-all-constants \
@@ -262,7 +264,7 @@ AS_VAR_SET([warn_common], [-Wl,--warn-common])
 AS_CASE([" ${CXXFLAGS} ${mycxxadd} "],
 	[*" -flto "*],
 		[AS_VAR_SET([fwhole_program], [-fwhole-program])
-		AS_VAR_SET([flto], [-flto])
+		AS_VAR_SET([flto], [-flto -flto-partition=none])
 		AS_VAR_SET([warn_common], [])])
 AS_CASE([" ${LDFLAGS} "],
 	[*" -fwhopr "*], [AS_VAR_SET([flto], [])])
@@ -334,8 +336,14 @@ AS_IF([${warnings}],
 			-Wstrict-null-sentinel \
 			-Woverloaded-virtual \
 			-Wsign-promo \
+			-Wnoexcept \
 			-Wmissing-declarations \
 			-Wmissing-format-attribute \
+			-Wunused-but-set-variable \
+			-Wunused-but-set-parameter \
+			-Wsuggest-attribute=pure \
+			-Wsuggest-attribute=const \
+			-Wsuggest-attribute=noreturn \
 		], [], [${quicktrue}])
 		dnl No [${mycxxfatal}] for warning flags
 dnl We do not use (since it gives too many useless warnings or is only for C):

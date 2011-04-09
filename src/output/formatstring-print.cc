@@ -497,7 +497,7 @@ class Scanner {
 			prop_ver("wasminusasterisK", VER_WASMINUSASTERISK);
 		}
 
-		Prop get_diff(const string& s) const
+		Prop get_diff(const string& s) const ATTRIBUTE_PURE
 		{
 			map<string, Prop>::const_iterator it(diff.find(s));
 			if(it == diff.end())

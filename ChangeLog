@@ -7,9 +7,10 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=358647
 	- Make eix-test-obsolete more intelligent concerning skipping of
 	  checks, see http://bugs.gentoo.org/show_bug.cgi?id=358861
+	- Add several ATTRIBUTE_PURE
 	- Treat provide as a list of strings, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358729
-	- Use -fno-common
+	- Use -fno-common -fnothrow-opt -flto-partition=none and new -W...
 
 *eix-0.22.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

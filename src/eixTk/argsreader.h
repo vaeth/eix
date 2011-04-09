@@ -10,6 +10,7 @@
 #ifndef EIX__ARGSREADER_H__
 #define EIX__ARGSREADER_H__ 1
 
+#include <config.h>
 #include <list>
 
 typedef std::pair<const char *,const char *> ArgPair;
@@ -127,10 +128,10 @@ class ArgumentReader
 		static int lookup_shortopt(const char short_opt, struct Option *opt_table);
 
 		/// Return Option from internal table.
-		static Option *lookup_option(const int opt, struct Option *opt_table);
+		static Option *lookup_option(const int opt, struct Option *opt_table) ATTRIBUTE_PURE;
 
 		/// Return number of args for opt
-		static unsigned int numargs(const int opt, struct Option *opt_table);
+		static unsigned int numargs(const int opt, struct Option *opt_table) ATTRIBUTE_PURE;
 
 		/// Fold parameter-list so that a option with an arguments has its argument set
 		// internal rather than lying around after it in the list.

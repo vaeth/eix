@@ -8,7 +8,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "argsreader.h"
-
 #include <eixTk/likely.h>
 #include <eixTk/i18n.h>
 

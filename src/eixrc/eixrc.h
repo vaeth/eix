@@ -10,8 +10,8 @@
 #ifndef EIX__EIXRC_H__
 #define EIX__EIXRC_H__ 1
 
+#include <config.h>
 #include <portage/keywords.h>
-
 #include <search/redundancy.h>
 
 #include <map>
@@ -64,9 +64,9 @@ class EixRc {
 
 		void dumpDefaults(FILE *s, bool use_defaults);
 
-		const char *cstr(const std::string &key) const;
+		const char *cstr(const std::string &key) const ATTRIBUTE_PURE;
 
-		const char *prefix_cstr(const std::string &key) const;
+		const char *prefix_cstr(const std::string &key) const ATTRIBUTE_PURE;
 
 		void print_var(const std::string &key);
 
@@ -79,7 +79,7 @@ class EixRc {
 
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
 
-		static bool istrue(const char *s);
+		static bool istrue(const char *s) ATTRIBUTE_PURE;
 		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r);
 
 		void modify_value(std::string &value, const std::string &key);

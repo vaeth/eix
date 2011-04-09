@@ -8,6 +8,8 @@
 #ifndef EIX__MATCHTREE_H__
 #define EIX__MATCHTREE_H__ 1
 
+#include <config.h>
+
 #include <stack>
 
 #include <cstddef>
@@ -33,7 +35,7 @@ public:
 	/** Check (recursively if necessary) whether the atom matches.
 	 * @param p Package to match
 	 * @return true if match; else false */
-	virtual bool match(PackageReader *p);
+	virtual bool match(PackageReader *p) ATTRIBUTE_PURE;
 
 	virtual MatchAtomOperator *as_operator()
 	{ return NULL; }

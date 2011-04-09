@@ -78,7 +78,7 @@ public:
 	void initstring(const std::string &s, Handler h)
 	{ name_map.insert(pair<string, Handler>(s, h)); }
 
-	Handler operator[](const std::string s) const
+	Handler operator[](const std::string s) const ATTRIBUTE_PURE
 	{
 		NameMap::const_iterator it(name_map.find(s));
 		if(it != name_map.end()) {
