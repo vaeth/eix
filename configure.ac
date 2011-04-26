@@ -250,8 +250,10 @@ AS_IF([${optimization}],
 			-Wl,-z,combreloc \
 		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_optimization}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
-			-flto
+	[export LDFLAGS="${LDFLAGS} -flto -flto-partition=none"
+	MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+			-flto \
+			-flto-partition=none \
 		], [${mycxxfatal}], [${quicktrue}])])
 # If -flto is used during compilation, we can also use -fwhole-program during
 # compilation and should specify -flto during linking
@@ -264,7 +266,7 @@ AS_VAR_SET([warn_common], [-Wl,--warn-common])
 AS_CASE([" ${CXXFLAGS} ${mycxxadd} "],
 	[*" -flto "*],
 		[AS_VAR_SET([fwhole_program], [-fwhole-program])
-		AS_VAR_SET([flto], [-flto -flto-partition=none])
+		AS_VAR_SET([flto], ["-flto -flto-partition=none"])
 		AS_VAR_SET([warn_common], [])])
 AS_CASE([" ${LDFLAGS} "],
 	[*" -fwhopr "*], [AS_VAR_SET([flto], [])])

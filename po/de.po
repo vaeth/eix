@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-04-26 17:40+0200\n"
+"POT-Creation-Date: 2011-04-26 19:54+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -2282,7 +2282,8 @@ msgstr ""
 
 #: src/eixrc/defaults.cc:169
 msgid "The root user id number which is used for ad hoc sanity checks."
-msgstr "Die root User-Id-Nummer; die für ad hoc-Plausibilitätstests benutzt wird."
+msgstr ""
+"Die root User-Id-Nummer, die für ad hoc-Plausibilitätstests benutzt wird."
 
 #: src/eixrc/defaults.cc:173
 msgid ""

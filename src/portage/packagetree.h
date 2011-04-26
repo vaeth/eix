@@ -67,7 +67,7 @@ class PackageTree : public std::map<std::string, Category*> {
 		Category &operator[](const std::string &cat_name)
 		{ return insert(cat_name); }
 
-		Package *findPackage(const std::string &cat_name, const std::string &pkg_name) const;
+		Package *findPackage(const std::string &cat_name, const std::string &pkg_name) const ATTRIBUTE_PURE;
 
 		io::Treesize countPackages() const ATTRIBUTE_PURE;
 		io::Catsize countCategories() const
