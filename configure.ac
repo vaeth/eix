@@ -250,8 +250,7 @@ AS_IF([${optimization}],
 			-Wl,-z,combreloc \
 		], [${myldfatal}], [${quicktrue}])])
 AS_IF([${strong_optimization}],
-	[export LDFLAGS="${LDFLAGS} -flto -flto-partition=none"
-	MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
 			-flto \
 			-flto-partition=none \
 		], [${mycxxfatal}], [${quicktrue}])])
