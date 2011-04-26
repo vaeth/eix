@@ -164,6 +164,10 @@ AddOption(BOOLEAN, "CURRENT_WORLD",
 	"true", _(
 	"Prefer the current world file (if readable) over the data in the cachefile."));
 
+AddOption(INTEGER, "ROOT_UID",
+	ROOT_UID_DEFAULT, _(
+	"The root user id number which is used for ad hoc sanity checks."));
+
 AddOption(BOOLEAN, "SKIP_PERMISSION_TESTS",
 	"false", _(
 	"Whether to test for group and permissions.  You must set this to true\n"
@@ -179,12 +183,12 @@ AddOption(STRING, "EBUILD_GROUP",
 	"The group which is used for running bash on ebuilds when\n"
 	"cache method ebuild or ebuild* is used. See EBUILD_GID."));
 
-AddOption(STRING, "EBUILD_UID",
+AddOption(INTEGER, "EBUILD_UID",
 	"250", _(
 	"If EBUILD_USER is empty or nonexistent, use this user id.\n"
 	"In this case and if ${EBUILD_UID} <= 0, the user id is not changed."));
 
-AddOption(STRING, "EBUILD_GID",
+AddOption(INTEGER, "EBUILD_GID",
 	"%{EBUILD_UID}", _(
 	"If EBUILD_GROUP is empty or nonexistent, use this group id.\n"
 	"In this case and if ${EBUILD_GID} <= 0, the group id is not changed."));

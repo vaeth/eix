@@ -99,13 +99,14 @@ static void print_help(int ret) ATTRIBUTE_NORETURN;
 class Permissions {
 	private:
 		string cachefile;
+		EixRc &eixrc;
 		bool modify;
 		bool testing;
 		static bool know_root, am_root;
 	public:
-		Permissions(const string &eix_cachefile, bool never_test)
+		Permissions(const string &eix_cachefile, bool never_test, EixRc &rc) :
+			cachefile(eix_cachefile), eixrc(rc)
 		{
-			cachefile = eix_cachefile;
 			if(never_test)
 				testing = false;
 			else
@@ -118,7 +119,7 @@ class Permissions {
 			if(likely(know_root))
 				return am_root;
 			know_root = true;
-			am_root = (my_geteuid() == 0);
+			am_root = (my_geteuid() == eixrc.getInteger("ROOT_UID"));
 			return am_root;
 		}
 
@@ -416,7 +417,7 @@ run_eix_update(int argc, char *argv[])
 	}
 
 	/* Check for correct permissions. */
-	Permissions permissions(outputfile, skip_permission_tests);
+	Permissions permissions(outputfile, skip_permission_tests, eixrc);
 	permissions.check_db();
 
 	INFO(_("Reading Portage settings ..\n"));

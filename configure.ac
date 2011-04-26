@@ -815,6 +815,18 @@ AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	[Default ROOT])
 AC_SUBST([ROOT_DEFAULT])
 
+AC_MSG_CHECKING([ROOT_UID default])
+AC_ARG_WITH([root-uid-default],
+	[AS_HELP_STRING([--with-root-uid-default=STR],
+		[default ROOT_UID])],
+	[AS_VAR_COPY([ROOT_UID_DEFAULT], [withval])],
+	[AS_VAR_SET([ROOT_UID_DEFAULT], ["0"])])
+MV_MSG_RESULT_VAR([ROOT_UID_DEFAULT])
+AC_DEFINE_UNQUOTED([ROOT_UID_DEFAULT],
+	["${ROOT_UID_DEFAULT}"],
+	[Default ROOT_UID])
+AC_SUBST([ROOT_UID_DEFAULT])
+
 AC_MSG_CHECKING([EXEC_EBUILD_SH default])
 AC_ARG_WITH([ebuild-sh-default],
 	[AS_HELP_STRING([--with-ebuild-sh-default=STR],

@@ -7,6 +7,9 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=358647
 	- Make eix-test-obsolete more intelligent concerning skipping of
 	  checks, see http://bugs.gentoo.org/show_bug.cgi?id=358861
+	- Introduce ROOT_UID for usage with prefix, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=364351
+	  Thanks to Jacob Godserv at <jacobgodserv at gmail.com> for the patch.
 	- Add several ATTRIBUTE_PURE
 	- Treat provide as a list of strings, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358729
@@ -17,7 +20,7 @@
 	- Fix non-casting of rend() -> reverse_const_iterator on some systems,
 	  see http://bugs.gentoo.org/show_bug.cgi?id=354071
 	- Do not rely on argreader.end() not to change, even if argreader is
-	  not accessed in a writable way. Thanks for
+	  not accessed in a writable way. Thanks to
 	  Tom Lloyd <napalmllama at gmail.com> for letting me debug on his
 	  machine, see http://bugs.gentoo.org/show_bug.cgi?id=355623
 	- Set always default search field, even if string is unspecified

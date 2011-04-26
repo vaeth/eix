@@ -469,8 +469,19 @@ MainSync() {
 	UpdateDiff
 }
 
+root_uid=''
+ReadRootUID() {
+	[ -n "${root_uid}" ] && return
+	ReadVar root_uid ROOT_UID || root_uid=''
+	: ${root_uid:=0}
+	case "${root_uid}" in
+		*[!0-9]*)	die "`eval_gettext \
+			'ROOT_UID [${root_uid}] is not a number'`";;
+	esac
+}
+
 [ -n "${UID}" ] || UID="`id -u`"
-if ${test_for_root} && [ "${UID}" -ne 0 ]
+if ${test_for_root} && ReadRootUID && [ "${UID}" -ne "${root_uid}" ]
 then	# Emulate everything to check whether we have to be root:
 	emulatemode=:
 	MainSync

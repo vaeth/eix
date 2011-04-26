@@ -202,6 +202,9 @@
 /* Default ROOT */
 #undef ROOT_DEFAULT
 
+/* Default ROOT_UID */
+#undef ROOT_UID_DEFAULT
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
