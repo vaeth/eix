@@ -37,7 +37,6 @@ dnl It should also use a larger local array to test the stack.
 						[AC_LANG_PROGRAM([[
 #include <vector>
 #include <cstring>
-};
 						]], [[
 std::vector<const char*> a(1, "a");
 int my_a[1000]; for (int j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;
