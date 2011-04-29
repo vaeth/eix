@@ -88,6 +88,21 @@ AM_SILENT_RULES([yes])
 AC_LANG([C++])
 AC_PROG_CXX()
 
+AC_DEFINE_UNQUOTED([TARGET],
+	["${target}"],
+	[Target system])
+
+AS_VAR_SET([my_gcc_v], [])
+AS_VAR_IF([GXX], [yes],
+	[AC_MSG_CHECKING([gcc version])
+	AS_VAR_SET([my_gcc_v], [`"${CXX}" -dumpversion`])
+	MV_IF_EMPTY([my_gcc_v],
+		[AS_VAR_SET([my_gcc_v], ["unknown"])])
+	MV_MSG_RESULT_VAR([my_gcc_v])
+	AC_DEFINE_UNQUOTED([GCC_VERSION],
+		["${my_gcc_v}"],
+		[Version of gcc])])
+
 # Now our flag mangling options:
 
 AC_ARG_ENABLE([debugging],
@@ -205,25 +220,25 @@ AS_IF([${quickcheck}],
 	[AS_VAR_SET([quicktrue], [])
 	AS_VAR_SET([quickfalse], [])])
 
-AS_VAR_SET([mycxxfatal], [])
-AS_VAR_SET([myldfatal], [])
-MV_ADDFLAGS([mycxxfatal], [CXXFLAGS], [COMPILE], [ \
+AS_VAR_SET([my_cxxfatal], [])
+AS_VAR_SET([my_ldfatal], [])
+MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [COMPILE], [ \
 		-Werror \
 	], [], [${quicktrue}])
-MV_ADDFLAGS([myldfatal], [LDFLAGS], [LINK], [ \
+MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [LINK], [ \
 		-Wl,--fatal-warnings \
 	], [], [${quicktrue}])
 
 # Now the actual testing:
-AS_VAR_SET([mycxxadd], [])
-AS_VAR_SET([myldadd], [])
+AS_VAR_SET([my_cxxadd], [])
+AS_VAR_SET([my_ldadd], [])
 AS_IF([${debugging}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-g \
 			-ggdb3 \
-		], [${mycxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [${quicktrue}])])
 AS_IF([${optimization}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-O2 \
 			-fomit-frame-pointer \
 			-fno-common \
@@ -241,36 +256,50 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
-		], [${mycxxfatal}], [${quicktrue}])
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
+		], [${my_cxxfatal}], [${quicktrue}])
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
-		], [${myldfatal}], [${quicktrue}])])
+		], [${my_ldfatal}], [${quicktrue}])])
 AS_IF([${strong_optimization}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
-			-flto \
-			-flto-partition=none \
-		], [${mycxxfatal}], [${quicktrue}])])
+	AS_VAR_SET([flto], ["-flto -flto-partition=none"])
+	AS_CASE(["${my_gcc_v}"],
+		["4.6.0"],
+			[AC_MSG_WARN([Not forcing -flto: It seems broken in gcc-${my_gcc_v}])
+			AS_VAR_SET([flto], [])])
+# We first modify the LDFLAGS: This is important because of -flto:
+# Without -flto in LDFLAGS, -flto in CXXFLAGS might not fail even if it
+# should produce broken code.
+	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
+			-Wl,-O9 \
+			${flto} \
+			-fwhole-program \
+		], [${my_ldfatal}], [${quicktrue}])
+dnl The following is never tried, since the run can succeed but the result
+dnl may fail for some unknown reason on non-GNU systems, see
+dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
+dnl			-Wl,--hash-style=gnu \
+dnl			-Wl,--enable-new-dtags \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+			${flto} \
+		], [${my_cxxfatal}], [${quicktrue}])])
 # If -flto is used during compilation, we can also use -fwhole-program during
-# compilation and should specify -flto during linking
-# (unless -fwhopr was desired by the user).
+# compilation and should specify -flto during linking.
 # However, -Wl,--warn-common will then give lots of warnings, so we
-# do not add the latter unless we use strict_warnings.
+# do not add the latter unless we use strong_warnings.
 AS_VAR_SET([fwhole_program], [])
-AS_VAR_SET([flto], [])
 AS_VAR_SET([warn_common], [-Wl,--warn-common])
-AS_CASE([" ${CXXFLAGS} ${mycxxadd} "],
+AS_CASE([" ${CXXFLAGS} ${my_cxxadd} "],
 	[*" -flto "*],
 		[AS_VAR_SET([fwhole_program], [-fwhole-program])
-		AS_VAR_SET([flto], ["-flto -flto-partition=none"])
-		AS_VAR_SET([warn_common], [])])
-AS_CASE([" ${LDFLAGS} "],
-	[*" -fwhopr "*], [AS_VAR_SET([flto], [])])
+		AS_IF([${strong_warnings}],
+			[],
+			[AS_VAR_SET([warn_common], [])])])
 AS_IF([${strong_optimization}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-fweb \
 			-ftree-vectorize \
 			-fgraphite \
@@ -283,21 +312,11 @@ AS_IF([${strong_optimization}],
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${mycxxfatal}], [${quicktrue}])
+		], [${my_cxxfatal}], [${quicktrue}])])
 dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
-			-Wl,-O9 \
-			${flto} \
-			-fwhole-program \
-		], [${myldfatal}], [${quicktrue}])])
-dnl The following is never tried, since the run can succeed but the result
-dnl may fail for some unknown reason on non-GNU systems, see
-dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
-dnl			-Wl,--hash-style=gnu \
-dnl			-Wl,--enable-new-dtags \
 AS_IF([${warnings}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fno-common \
 			-fdirectives-only \
 			-funsigned-char \
@@ -346,7 +365,7 @@ AS_IF([${warnings}],
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
 		], [], [${quicktrue}])
-		dnl No [${mycxxfatal}] for warning flags
+		dnl No [${my_cxxfatal}] for warning flags
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
@@ -355,23 +374,20 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
 			${warn_common} \
 		], [], [${quicktrue}])])
-		dnl No [${myldfatal}] for warning flags
+		dnl No [${my_ldfatal}] for warning flags
 AS_IF([${strong_warnings}],
-	[MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${mycxxfatal}], [${quicktrue}])
-	MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
-			-Wl,--warn-common \
-		], [], [${quicktrue}])])
+		], [${my_cxxfatal}], [${quicktrue}])])
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
@@ -384,21 +400,29 @@ dnl			-Weffc++ \
 AS_IF([${security}],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
-	[MV_ADDFLAGS([myldadd], [LDFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-fstack-protector \
 			-Wl,-z,now \
 			-Wl,-z,relro \
-		], [${myldfatal}], [${quicktrue}])
-	MV_ADDFLAGS([mycxxadd], [CXXFLAGS], [RUN], [ \
+		], [${my_ldfatal}], [${quicktrue}])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
-		], [${mycxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:
-MV_PREPEND([CXXFLAGS], [${mycxxadd}])
-MV_PREPEND([LDFLAGS], [${myldadd}])
-AS_VAR_SET([mycxxflags], ["${CXXFLAGS}"])
-AS_VAR_SET([myldflags], ["${LDFLAGS}"])
+MV_PREPEND([CXXFLAGS], [${my_cxxadd}])
+AS_CASE([" ${LDFLAGS} ${my_ldadd} "],
+	[*" -flto "*], [for my_currflag in ${CXXFLAGS}
+		do
+			AS_CASE([" ${LDFLAGS} ${my_ldadd} "],
+			[*" ${my_currflag} "*], [],
+			[MV_APPEND([my_ldadd], [${my_currflag}])])
+		done])
+MV_PREPEND([LDFLAGS], [${my_ldadd}])
+
+AS_VAR_COPY([my_cxxflags], [CXXFLAGS])
+AS_VAR_COPY([my_ldflags], [LDFLAGS])
 
 # For --enable-quickcheck, we do at least one (collected) safety check;
 # otherwise, the error messages may be too confusing for the user:
@@ -425,7 +449,7 @@ AC_MSG_CHECKING([for null-device])
 AC_ARG_WITH([dev-null],
 	[AS_HELP_STRING([--with-null-device=STR],
 		[null device of the system, usually /dev/null])],
-	[AS_VAR_SET([DEV_NULL], ["${withval}"])],
+	[AS_VAR_COPY([DEV_NULL], [withval])],
 	[AS_VAR_SET([DEV_NULL], [])])
 AS_VAR_IF([DEV_NULL], [],
 	[AS_VAR_SET([DEV_NULL], ["/dev/null"])])
@@ -533,7 +557,7 @@ AC_ARG_WITH([bzip2],
 AS_VAR_IF([use_bzlib], [false],
 	[],
 	[AS_VAR_SET([BZLIB_LIBS], ["-lbz2"])
-	AS_VAR_COPY([myoldlibs], [LIBS])
+	AS_VAR_COPY([my_oldlibs], [LIBS])
 	MV_APPEND([LIBS], [${BZLIB_LIBS}])
 	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <bzlib.h>
@@ -550,7 +574,7 @@ BZ2_bzopen("dummy", "rb");
 			[AC_MSG_ERROR([bzip2 requested but libbz2 is unusable])])
 		AS_VAR_SET([use_bzlib], [false])
 		AS_VAR_SET([BZLIB_LIBS], [])])
-	AS_VAR_COPY([LIBS], [myoldlibs])])
+	AS_VAR_COPY([LIBS], [my_oldlibs])])
 AS_IF([${use_bzlib}],
 	[AC_DEFINE([USE_BZLIB],
 		[1],
@@ -601,10 +625,10 @@ AS_IF([${bi_expect_works}],
 		[Define to 1 if __builtin_expect can be used])])
 
 # The __attribute__ tests are special: They should even break on warnings:
-AS_VAR_SET([CXXFLAGS], ["${oricxxflags}"])
-AS_VAR_SET([LDFLAGS], ["${orildflags}"])
-MV_APPEND([CXXFLAGS], ["${mycxxfatal}"])
-MV_APPEND([LDFLAGS], ["${myldfatal}"])
+AS_VAR_COPY([CXXFLAGS], [oricxxflags])
+AS_VAR_COPY([LDFLAGS], [orildflags])
+MV_APPEND([CXXFLAGS], ["${my_cxxfatal}"])
+MV_APPEND([LDFLAGS], ["${my_ldfatal}"])
 
 # We even switch on explicitly -Wattribute although this should be default:
 MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [COMPILE], [ \
@@ -720,8 +744,8 @@ AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST_VIRTUAL],
 	[Define to  __attribute__ ((__pure__)) or ((__const__)) or empty])
 
 # reset the CXXFLAGS, LDFLAGS for the normal tests
-AS_VAR_SET([CXXFLAGS], ["${mycxxflags}"])
-AS_VAR_SET([LDFLAGS], ["${myldflags}"])
+AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
+AS_VAR_COPY([LDFLAGS], [my_ldflags])
 
 
 # What about sqlite?
@@ -904,7 +928,7 @@ AC_ARG_WITH([zsh-completion],
 	[AS_HELP_STRING([--with-zsh-completion=STR],
 		[install zsh-completion file in directory STR])],
 	[AS_CASE([${withval}],
-		['/'*], [AS_VAR_SET([ZSH_COMPLETION], ["${withval}"])],
+		['/'*], [AS_VAR_COPY([ZSH_COMPLETION], [withval])],
 		[no], [AS_VAR_SET([ZSH_COMPLETION], [])])])
 MV_MSG_RESULT_VAR([ZSH_COMPLETION])
 AC_SUBST([ZSH_COMPLETION])
@@ -933,19 +957,6 @@ AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	[Default Levenshtein distance for matches (as string)])
 AC_SUBST([LEVENSHTEIN_DISTANCE])
 
-AC_DEFINE_UNQUOTED([TARGET],
-	["${target}"],
-	[Target system])
-
-AS_VAR_IF([GCC], [],
-	[],
-	[AC_MSG_CHECKING([gcc version])
-	gcc_v=`${CC} -dumpversion`
-	MV_MSG_RESULT_VAR([gcc_v])
-	AC_DEFINE_UNQUOTED([GCC_VERSION],
-		["${gcc_v}"],
-		[Version of gcc])])
-
 # Done!
 AC_OUTPUT()
 
@@ -955,10 +966,10 @@ ${PACKAGE}-${VERSION} configured successfully.
 
 "])
 AS_ECHO(["CXXFLAGS: ${oricxxflags}"])
-MV_IF_NONEMPTY([${mycxxadd}],
-	[AS_ECHO(["PREPEND_CXXFLAGS: ${mycxxadd}
+MV_IF_NONEMPTY([${my_cxxadd}],
+	[AS_ECHO(["PREPEND_CXXFLAGS: ${my_cxxadd}
 "])])
 AS_ECHO(["LDFLAGS: ${orildflags}"])
-MV_IF_NONEMPTY([${myldadd}],
-	[AS_ECHO(["PREPEND_LDFLAGS: ${myldadd}"])])
+MV_IF_NONEMPTY([${my_ldadd}],
+	[AS_ECHO(["PREPEND_LDFLAGS: ${my_ldadd}"])])
 AS_ECHO([])
