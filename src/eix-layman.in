@@ -70,8 +70,17 @@ PushLaymanMake() {
 }
 
 PrintLaymanMake() {
-	printf '%s\n%s\n' 'from layman.config import Config' \
-	"print(Config()['make_conf'])" | python -- "${@}" 2>/dev/null
+	if python - "${@}" -l 2>/dev/null <<ENDLAYTWO
+from layman.argsparser import ArgsParser
+from layman.config import BareConfig
+print(BareConfig(config=ArgsParser()['config'], read_configfile=True)['make_conf'])
+ENDLAYTWO
+	then	return
+	fi
+	python - "${@}" -l 2>/dev/null <<ENDLAYONE
+from layman.config import Config
+print(Config()['make_conf'])
+ENDLAYONE
 }
 
 CalcLaymanMake() {

@@ -5,6 +5,7 @@
 	- Support -~* keywords: Introduce {isminusunstable}, {wasminusunstable}
 	- Support alternative /etc/portage/make.profile location, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358647
+	- Support layman-2
 	- Make eix-test-obsolete more intelligent concerning skipping of
 	  checks, see http://bugs.gentoo.org/show_bug.cgi?id=358861
 	- Introduce ROOT_UID for usage with prefix, see
