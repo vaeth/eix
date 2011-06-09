@@ -970,9 +970,11 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 		bool ori_is_stable(kf.havesome(KeywordsFlags::KEY_STABLE));
 
+		// Were keywords added from /etc/portage/package.accept_keywords?
+		// In this case, the "default" accept_keywords are taken from kv_set_nofile.
+		// Otherwise, kv_set_nofile remains NULL.
 		set<string> *kv_set_nofile(NULL);
 
-		// Were keywords added from /etc/portage/package.accept_keywords?
 		vector<string> &kvfile(sorted_by_versions[*it]);
 		bool calc_lkw(rvalue);
 		if(calc_lkw) {
@@ -1022,17 +1024,33 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			// The point is that we temporarily disable "check" so that
 			// ACCEPT_KEYWORDS does not trigger any -T alarm.
 			bool stable(false);
-			set<string>::const_iterator sit, sit_end;
-			if(kv_set_nofile) {
-				sit = kv_set_nofile->begin();
-				sit_end = kv_set_nofile->end();
+			if(kv_set_nofile == NULL) {
+				// The case that nothing was added from /etc/portage/package.accept_keywords?
+				for(set<string>::const_iterator sit(kv_set.begin());
+					sit != kv_set.end(); ++sit) {
+					if(apply_keyword(*sit, keywords_set, kf,
+						m_settings->m_local_arch_set,
+						obsolete_minusasterisk,
+						redundant, Keywords::RED_NOTHING, true)
+						!= ARCH_NOTHING) {
+						stable = true;
+					}
+				}
+				kv_set.clear();
 			}
 			else {
-				sit = kv_set.begin();
-				sit_end = kv_set.end();
-			}
-			for( ; likely(sit != sit_end); ++sit) {
-				if(kv_set_nofile) {
+				// The case that we have some data from /etc/portage/package.accept_keywords in kv_set:
+				// In this case, we use kv_set_nofile instead of kv_set for demasking.
+				// Moreover, we must remove the demasked data from kv_set...
+				for(set<string>::const_iterator sit(kv_set_nofile->begin());
+				sit != kv_set_nofile->end(); ++sit) {
+					if(apply_keyword(*sit, keywords_set, kf,
+						m_settings->m_local_arch_set,
+						obsolete_minusasterisk,
+						redundant, Keywords::RED_NOTHING, true)
+						!= ARCH_NOTHING) {
+						stable = true;
+					}
 					// Tests whether keyword is admissible and remove it from kv_set:
 					set<string>::iterator where(kv_set.find(*sit));
 					if(where == kv_set.end()) {
@@ -1041,15 +1059,6 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					}
 					kv_set.erase(where);
 				}
-				if(apply_keyword(*sit, keywords_set, kf,
-					m_settings->m_local_arch_set,
-					obsolete_minusasterisk,
-					redundant, Keywords::RED_NOTHING, true)
-					!= ARCH_NOTHING) {
-					stable = true;
-				}
-			}
-			if(kv_set_nofile) {
 				delete kv_set_nofile;
 			}
 
