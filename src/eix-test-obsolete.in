@@ -228,7 +228,7 @@ Check cflags "`eval_gettext \
 	'No  redundant  entries in ${rump}cflags'`" \
 	"`eval_gettext 'Redundant in ${rump}cflags:'`" \
 	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}cflags'`"
-Check in_flags "`eval_gettext \
+Check in_cflags "`eval_gettext \
 	'No uninstalled entries in ${rump}cflags'`" \
 	"`eval_gettext 'Not installed but in ${rump}cflags:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}cflags'`"

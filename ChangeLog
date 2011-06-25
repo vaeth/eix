@@ -10,6 +10,9 @@
 	  http://bugs.gentoo.org/show_bug.cgi?id=370799
 	- Make eix-test-obsolete more intelligent concerning skipping of
 	  checks, see http://bugs.gentoo.org/show_bug.cgi?id=358861
+	- Fix eix-test-obsolete's support for REDUNDANT_IF_IN_CFLAGS.
+	  Thanks to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=372921
 	- Introduce ROOT_UID for usage with prefix, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=364351
 	  Thanks to Jacob Godserv at <jacobgodserv at gmail.com> for the patch.
