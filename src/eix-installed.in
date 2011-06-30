@@ -68,7 +68,7 @@ ScanVarDbPkg() {
 		do	test -d "${j}" || continue
 			f=false
 			for k
-			do	if test -e "${j}/${k}"
+			do	if test -r "${j}/${k}"
 				then	f=:
 					break
 				fi

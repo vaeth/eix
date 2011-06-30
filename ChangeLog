@@ -21,6 +21,7 @@
 	- Add several ATTRIBUTE_PURE
 	- Treat provide as a list of strings, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=358729
+	- Scripts: Avoid test -e for compatibility reasons
 	- Do not add -flto on gcc-4.6.0 as it seems broken there, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=364317
 	- Make -flto tests more reliable

@@ -86,7 +86,7 @@ The following options are available:
 }
 
 DiffOnly() {
-	test -e "${eixprevious}" || die "`eval_gettext \
+	test -r "${eixprevious}" || die "`eval_gettext \
 		'No previous database ${eixprevious} exists'`"
 	exec eix-diff -- "${eixprevious}"
 	die "`gettext 'Could not execute eix-diff'`"
@@ -437,7 +437,7 @@ UpdateDiff() {
 	then	${emulatemode} && return
 		d="${tmpfile}"
 	else	d="${eixprevious}"
-		test -e "${d}" || RootTest
+		test -r "${d}" || RootTest
 		${emulatemode} && return
 	fi
 	if test "${eixcache}" -nt "${tmpfile}"
