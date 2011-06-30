@@ -13,22 +13,61 @@
 # This must happen in a function to enforce an empty argument list.
 ReadFunctions() {
 	ReadGettext
-	[ "${local_eprefix_portage_exec-unset}" = 'unset' ] &&
-		ReadVar local_eprefix_portage_exec EPREFIX_PORTAGE_EXEC
-	for eixf_i in "${local_eprefix_portage_exec}/etc/init.d/functions.sh" \
-		"${local_eprefix_portage_exec}/sbin/functions.sh"
-	do	test -r "${eixf_i}" || continue
-		. "${eixf_i}"
-		return
-	done
-	printf '%s: %s' "${0##*/}" "`gettext 'cannot read functions.sh'`" >&2
-	exit 2
 }
 
 : ${read_var_prg:=eix-update}
 ReadVar() {
 	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"`
 	eval "${1}=\"\${eixf_read%X}\" && [ \"\${1}\" != \"\${eixf_read}\" ]"
+}
+
+ReadBoolean() {
+	case `PRINT_APPEND='' "${2:-${read_var_prg}}" --print "${1}"` in
+	[yYtTsSaA1:+-]*|[oO][nN]) return;;
+	esac
+	return 1
+}
+
+eixf_know_colors=false
+SetColors() {
+	${eixf_know_colors} && return
+	eixf_know_colors=:
+	! test -t 1 && ! ReadBoolean FORCE_USECOLORS && return
+	eixf_good='\033[32;01m'
+	eixf_warn='\033[33;01m'
+	eixf_bad='\033[31;01m'
+	eixf_normal='\033[0m'
+}
+
+eerror() {
+	eixf_eerror=${?}
+	SetColors
+	printf " ${eixf_bad}%s${eixf_normal} %s\n" '*' "${*}" >&2
+	return ${eixf_eerror}
+}
+
+einfo() {
+	SetColors
+	printf " ${eixf_good}%s${eixf_normal} %s\n" '*' "${*}"
+}
+
+ewarn() {
+	SetColors
+	printf " ${eixf_warn}%s${eixf_normal} %s\n" '*' "${*}" >&2
+}
+
+ebegin() {
+	SetColors
+	printf " ${eixf_good}%s${eixf_normal} %s%s\n" '*' "${*}" '...'
+}
+
+eend() {
+	[ ${1} -eq 0 ] && return
+	eixf_eerror=${1}
+	shift
+	SetColors
+	printf " ${eixf_bad}%s${eixf_normal} %s\n" '*' "${*}" >&2
+	return ${eixf_eerror}
 }
 
 die() {

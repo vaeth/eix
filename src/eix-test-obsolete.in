@@ -94,10 +94,9 @@ DefineSet() {
 # Return true if all variables in arg are "false" according to eix.
 AllFalse() {
 	for s
-	do	case `PRINT_APPEND='' eix --print "${s}"` in
-		[yYtTsSaA1:+-]*|[oO][nN]) return 1;;
-		esac
+	do	ReadBoolean "${s}" eix && return 1
 	done
+	return 0
 }
 
 
