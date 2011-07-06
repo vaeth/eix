@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.10
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- In case of -flto add CXXFLAGS to LDFLAGS unconditionally, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=374217
+
 *eix-0.22.9
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support -~* keywords: Introduce {isminusunstable}, {wasminusunstable}
@@ -25,7 +30,7 @@
 	- Do not add -flto on gcc-4.6.0 as it seems broken there, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=364317
 	- Make -flto tests more reliable
-	- Add CFLAGS to LDFLAGS in case of -flto
+	- Add CXXFLAGS to LDFLAGS in case of -flto
 	- Use AS_VAR_COPY instead of AS_VAR_SET if possible
 	- Use -fno-common -fnothrow-opt -flto-partition=none and new -W...
 

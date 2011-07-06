@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.22.9], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.22.10], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -413,12 +413,7 @@ AS_IF([${security}],
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${my_cxxadd}])
 AS_CASE([" ${LDFLAGS} ${my_ldadd} "],
-	[*" -flto "*], [for my_currflag in ${CXXFLAGS}
-		do
-			AS_CASE([" ${LDFLAGS} ${my_ldadd} "],
-			[*" ${my_currflag} "*], [],
-			[MV_APPEND([my_ldadd], [${my_currflag}])])
-		done])
+	[*" -flto "*], [MV_APPEND([my_ldadd], [${CXXFLAGS}])])
 MV_PREPEND([LDFLAGS], [${my_ldadd}])
 
 AS_VAR_COPY([my_cxxflags], [CXXFLAGS])
