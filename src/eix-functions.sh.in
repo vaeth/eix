@@ -246,6 +246,13 @@ Pathify() {
 	done
 }
 
+CheckReadlink() {
+	[ -n "${readlink_stat}" ] && return ${readlink_stat}
+	readlink -f / >/dev/null 2>&1
+	readlink_stat=${?}
+	return ${readlink_stat}
+}
+
 # Consider variables (arguments) as paths and normalize them.
 # If normalize_resolve is : (default), use readlink/cd -P
 # to resolve to "true" pathnames.
@@ -255,10 +262,6 @@ Pathify() {
 
 normalize_resolve=:
 NormalizeNames() {
-	${normalize_resolve} && if [ -z "${have_readlink}" ]
-	then	command -v readlink >/dev/null 2>&1 \
-			&& have_readlink=: || have_readlink=false
-	fi
 	eixf_normd=0
 	relative=''
 	for eixf_normc
@@ -271,7 +274,7 @@ NormalizeNames() {
 			/*) :;;
 			*) relative="${relative} ${eixf_normc}";;
 		esac
-		${normalize_resolve} && if ${have_readlink}
+		${normalize_resolve} && if CheckReadlink
 		then	# Append A to avoid loss of trailing space in `...`
 			eixf_normb=`readlink -f -- "${eixf_norma}"; printf A` \
 				&& eixf_normb="${eixf_normb%A}" \

@@ -2,6 +2,7 @@
 
 *eix-0.22.10
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- scripts: Use readlink only if it supports -f
 	- In case of -flto add CXXFLAGS to LDFLAGS unconditionally, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=374217
 
