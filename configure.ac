@@ -277,6 +277,7 @@ AS_IF([${strong_optimization}],
 			-Wl,-O9 \
 			${flto} \
 			-fwhole-program \
+			-Wl,-z,noexecstack \
 		], [${my_ldfatal}], [${quicktrue}])
 dnl The following is never tried, since the run can succeed but the result
 dnl may fail for some unknown reason on non-GNU systems, see
@@ -404,6 +405,7 @@ AS_IF([${security}],
 			-fstack-protector \
 			-Wl,-z,now \
 			-Wl,-z,relro \
+			-Wl,-z,noexecstack \
 		], [${my_ldfatal}], [${quicktrue}])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-D_FORTIFY_SOURCE=2 \

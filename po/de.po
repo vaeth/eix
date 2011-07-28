@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-06-30 21:45+0200\n"
+"POT-Creation-Date: 2011-07-28 20:38+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -38,15 +38,15 @@ msgstr "eix-update schlug fehl"
 msgid "${eixf_patha} cannot be found in path"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:373
+#: src/eix-functions.sh.in:376
 msgid "found no free tempname after 10000 attempts"
 msgstr "nach 10000 Versuchen keinen freien Temporärnamen gefunden"
 
-#: src/eix-functions.sh.in:387
+#: src/eix-functions.sh.in:390
 msgid "cannot create temporary directory"
 msgstr "kann keine temporäres Directory erzeugen"
 
-#: src/eix-functions.sh.in:388
+#: src/eix-functions.sh.in:391
 msgid "cannot create temporary file"
 msgstr "kann keine Temporärdatei erzeugen"
 
