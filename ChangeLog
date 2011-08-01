@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.22.11
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- eix-test-obsolete: Set DEFAULT_FORMAT=compact instead using -c
+	  (chooses compact format absolutely, not toggling...), see http://
+	  developer.berlios.de/bugs/?func=detailbug&bug_id=18284&group_id=11597
+
 *eix-0.22.10
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add -Wl,-z,noexecstack with strong-optimization and security:

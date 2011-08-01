@@ -79,6 +79,9 @@ case "${myarg#-}" in
 *)	Usage;;
 esac
 
+DEFAULT_FORMAT=compact
+export DEFAULT_FORMAT
+
 eix '-t*!'
 
 # sets is the list of all "*" for which there are set_* variables
@@ -117,7 +120,7 @@ Output() {
 	fi
 	printf '\n%s\n' "${2}"
 	if [ ${#} -le 3 ] || ${nodetails}
-	then	eix -Tc
+	then	eix -T
 		echo
 		return
 	fi
