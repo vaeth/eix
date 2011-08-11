@@ -2,6 +2,8 @@
 
 *eix-0.22.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Bugfix: Let -... in /etc/portage/package.accept_keywords remove
+	  ACCEPT_KEYWORDS, see http://bugs.gentoo.org/show_bug.cgi?id=378767
 	- eix-test-obsolete: Set DEFAULT_FORMAT=compact instead using -c
 	  (chooses compact format absolutely, not toggling...), see http://
 	  developer.berlios.de/bugs/?func=detailbug&bug_id=18284&group_id=11597
