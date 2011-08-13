@@ -981,25 +981,19 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			if(!kvfile.empty()) {
 				redundant |= Keywords::RED_IN_KEYWORDS;
 				kv_set_nofile = new set<string>;
-				bool have_removed(false);
 				resolve_plus_minus(*kv_set_nofile, kv, obsolete_minusasterisk);
 				// Add items from /etc/portage/package.accept_keywords to kv
-				// Exception: Matching -... items are not added and remove from kv_set_nofile and from kv
+				// but remove matching -... items from kv_set_nofile
 				for(vector<string>::const_iterator fit(kvfile.begin());
 					fit != kvfile.end(); ++fit) {
 					if((*fit)[0] == '-') {
 						set<string>::iterator where(kv_set_nofile->find(fit->substr(1)));
 						if(where != kv_set_nofile->end()) {
 							kv_set_nofile->erase(where);
-							have_removed = true;
-							continue;
 						}
 					}
-					push_back(kv, *fit);
 				}
-				if(have_removed) {
-					make_vector(kv, *kv_set_nofile);
-				}
+				push_backs(kv, kvfile);
 			}
 			else if((check & (Keywords::RED_ALL_KEYWORDS &
 				~(Keywords::RED_DOUBLE_LINE | Keywords::RED_IN_KEYWORDS)))
