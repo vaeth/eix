@@ -4,6 +4,9 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Bugfix: Let -... in /etc/portage/package.accept_keywords remove
 	  previous keywords of /etc/portage/package.accept_keywords
+	- Use a function-call for testing *FLAGS (e.g. -fstack-protector), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=379717
+	  Thanks to Dustin Polke for helping with debugging this issue.
 
 *eix-0.22.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

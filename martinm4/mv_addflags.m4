@@ -37,10 +37,12 @@ dnl It should also use a larger local array to test the stack.
 						[AC_LANG_PROGRAM([[
 #include <vector>
 #include <cstring>
+int my_func();
+int my_func() { std::vector<const char*> a(1, "a"); int my_a[1000];
+for (int j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;
+return (strchr(a[0], *a[0]) == *(a.begin())) ? my_a[999] : 1; }
 						]], [[
-std::vector<const char*> a(1, "a");
-int my_a[1000]; for (int j = 999; j < 999 + a.size(); ++j) my_a[j] = 0;
-return (strchr(a[0], *a[0]) == *(a.begin())) ? my_a[999] : 1;
+return my_func();
 						]])],
 						[AC_MSG_RESULT([yes])
 						AS_VAR_SET([mv_result], [:])],
