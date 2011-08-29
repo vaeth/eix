@@ -248,7 +248,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	}
 
 	string &my_path((*this)["PORTDIR"]);
-	profile->listaddFile(my_path + PORTDIR_MASK_FILE, my_path.c_str());
+	profile->listaddFile(my_path + PORTDIR_MASK_FILE, NULL);
 	profile->listaddProfile();
 	profile->readMakeDefaults();
 	profile->readremoveFiles();
