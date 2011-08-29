@@ -13,6 +13,7 @@
 #include <eixTk/exceptions.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
+#include <portage/overlay.h>
 
 #include <string>
 #include <vector>
@@ -23,6 +24,29 @@ class Package;
 class PortageSettings;
 class ProfileFilenames;
 
+class ProfileFile {
+		std::string filename;
+	public:
+		OverlayIdent overlay;
+
+		ProfileFile(const std::string &s, const char *path = NULL) :
+			filename(s), overlay(path)
+		{ }
+
+		const std::string &name() const
+		{ return filename; }
+
+		const char *c_str() const
+		{ return filename.c_str(); }
+
+		/// This has a side effect of reading the repository
+		bool have_repo();
+
+		/// Must call have_repo() (with return true) before
+		const std::string &get_repo() const
+		{ return overlay.label; }
+};
+
 /** Access to the cascading profile pointed to by /etc/make.profile. */
 class CascadingProfile {
 		friend class ProfileFilenames;
@@ -32,7 +56,7 @@ class CascadingProfile {
 
 	protected:
 		bool m_init_world;
-		std::vector<std::string>      m_profile_files; /**< List of files in profile. */
+		std::vector<ProfileFile> m_profile_files; /**< List of files in profile. */
 		PortageSettings *m_portagesettings; /**< Profilesettings to which this instance "belongs" */
 
 		MaskList<Mask> m_system;         /**< Packages in system profile. */
@@ -50,32 +74,32 @@ class CascadingProfile {
 		bool addProfile(const char *profile, unsigned int depth = 0);
 
 		/** Handler functions follow for reading a file */
-		typedef bool (CascadingProfile::*Handler)(const std::vector<std::string> &lines, const std::string &file);
+		typedef bool (CascadingProfile::*Handler)(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
 
 		/** Read all "packages" files found in profile.
 		 * Populate p_system and p_system_allowed.
 		 * @return true if data was changed */
-		bool readPackages(const std::vector<std::string> &lines, const std::string &file);
+		bool readPackages(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
 
 		/** Read all "package.mask" files found in profile.
 		 * Populate p_package_masks.
 		 * @return true if data was changed */
-		bool readPackageMasks(const std::vector<std::string> &lines, const std::string &file);
+		bool readPackageMasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
 
 		/** Read all "package.unmask" files found in profile.
 		 * Populate p_package_unmasks.
 		 * @return true if data was changed */
-		bool readPackageUnmasks(const std::vector<std::string> &lines, const std::string &file);
+		bool readPackageUnmasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
 
 		/** Read all "package.keywords" files found in profile.
 		 * Populate p_package_keywords.
 		 * @return true if data was changed */
-		bool readPackageKeywords(const std::vector<std::string> &lines, const std::string &file);
+		bool readPackageKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
 
 		/** Read all "package.accept_keywords" files found in profile.
 		 * Populate p_package_accept_keywords.
 		 * @return true if data was changed */
-		bool readPackageAcceptKeywords(const std::vector<std::string> &lines, const std::string &file);
+		bool readPackageAcceptKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world) :
 			use_world(false), finalized(false),
@@ -101,8 +125,8 @@ class CascadingProfile {
 		void listaddProfile(const char *profile_dir = NULL) throw(ExBasic);
 
 		/** Put file into m_profile_files */
-		void listaddFile(const char *file)
-		{ m_profile_files.push_back(file); }
+		void listaddFile(const std::string &file, const char *path)
+		{ m_profile_files.push_back(ProfileFile(file, path)); }
 
 		/** Clear m_profile_files */
 		void listclear()

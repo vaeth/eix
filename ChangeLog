@@ -1,12 +1,16 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.22.12
+*eix-0.23.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Make profiles/* files default only on their repositories, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=380979
+	  This required a major code reorganization
 	- Bugfix: Let -... in /etc/portage/package.accept_keywords remove
 	  previous keywords of /etc/portage/package.accept_keywords
 	- Use a function-call for testing *FLAGS (e.g. -fstack-protector), see
 	  http://bugs.gentoo.org/show_bug.cgi?id=379717
-	  Thanks to Dustin Polke for helping with debugging this issue.
+	  Thanks to Dustin Polke for helping with debugging this issue
+	- Cosmetic code changes
 
 *eix-0.22.11
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

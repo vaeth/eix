@@ -44,10 +44,14 @@ static const struct OperatorTable {
 };
 
 /** Constructor. */
-Mask::Mask(const char *str, Type type)
+Mask::Mask(const char *str, Type type, const char *repo)
 {
 	m_type = type;
 	parseMask(str);
+	if((!m_test_reponame) && (repo != NULL)) {
+		m_test_reponame = true;
+		m_reponame = repo;
+	}
 }
 
 /** split a "mask string" into its components */

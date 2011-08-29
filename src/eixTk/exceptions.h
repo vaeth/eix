@@ -10,6 +10,8 @@
 #ifndef EIX__EXCEPTIONS_H__
 #define EIX__EXCEPTIONS_H__ 1
 
+// include <eixTk/exceptions.h> This comment satisfies check_include script
+
 #include <eixTk/formated.h>
 
 #include <exception>

@@ -8,6 +8,8 @@
 #ifndef EIX__LIKELY_H__
 #define EIX__LIKELY_H__ 1
 
+// include <eixTk/likely.h> This comment satisfies check_include script
+
 #include <config.h>
 
 #ifdef HAVE___BUILTIN_EXPECT

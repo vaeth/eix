@@ -18,6 +18,7 @@
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/percentage.h>
+#include <eixTk/ptr_list.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/utils.h>
@@ -353,18 +354,15 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<Repo
 	}
 }
 
-static bool
+static void
 override_label(OverlayIdent &overlay, const vector<RepoName> &repo_names)
 {
-	bool have_set(false);
-	for(vector<RepoName>::const_iterator it = repo_names.begin();
+	for(vector<RepoName>::const_iterator it(repo_names.begin());
 		it != repo_names.end(); ++it) {
 		if(it->name.is_a_match(overlay.path)) {
-			overlay.label = it->repo_name;
-			have_set = true;
+			overlay.setLabel(it->repo_name);
 		}
 	}
-	return have_set;
 }
 
 int
@@ -595,10 +593,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->portagesettings = &portage_settings;
 
 		/* Build database from scratch. */
-		OverlayIdent overlay(cache->getPath().c_str(), "");
-		if(!override_label(overlay, repo_names)) {
-			overlay.readLabel(cache->getPrefixedPath().c_str());
-		}
+		OverlayIdent overlay(cache->getPath().c_str());
+		override_label(overlay, repo_names);
+		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(unlikely(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end())) {
 			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
 				% overlay.label

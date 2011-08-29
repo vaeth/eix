@@ -8,6 +8,8 @@
 #ifndef EIX__UNUSED_H__
 #define EIX__UNUSED_H__ 1
 
+// include <eixTk/unused.h> This comment satisfies check_include script
+
 #include <config.h>
 
 #ifdef ATTRIBUTE_UNUSED

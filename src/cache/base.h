@@ -108,7 +108,7 @@ class BasicCache {
 		virtual bool readCategory(Category &cat) throw(ExBasic)
 		{ return readCategories(NULL, m_catname.c_str(), &cat); }
 
-		/** This must be called to free the data stored with readCategoryPrepare().
+		/** This must be called to release the data stored with readCategoryPrepare().
 		    After calling this, readCategory() must not be called without a new readCategoryPrepare(). */
 		virtual void readCategoryFinalize()
 		{ m_catname.clear(); }

@@ -8,6 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "extendedversion.h"
+#include <config.h>
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>

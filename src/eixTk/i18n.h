@@ -8,6 +8,8 @@
 #ifndef EIX__I18B_H__
 #define EIX__I18N_H__ 1
 
+// include <eixTk/i18n.h> This comment satisfies check_include script
+
 #include <config.h>
 
 #ifdef ENABLE_NLS

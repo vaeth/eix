@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include <cstddef>
+
 class Package;
 class PortageSettings;
 
@@ -70,7 +72,7 @@ class NowarnPreList : public PreList
 		NowarnPreList() : super()
 		{ }
 
-		NowarnPreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : super(lines, filename, only_add)
+		NowarnPreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : super(lines, filename, NULL, only_add)
 		{ }
 
 		void initialize(NowarnMaskList &l);

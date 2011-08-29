@@ -9,6 +9,8 @@
 #ifndef EIX__FORMATED_H__
 #define EIX__FORMATED_H__ 1
 
+// include <eixTk/formated.h> This comment satisfies check_include script
+
 #include <config.h>
 
 #include <ostream>

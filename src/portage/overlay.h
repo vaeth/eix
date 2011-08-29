@@ -12,15 +12,19 @@
 
 #include <string>
 
+#include <cstddef>
+
 class OverlayIdent {
 	public:
+		bool know_path, know_label;
 		std::string path, label;
 
-		OverlayIdent(const char *Path, const char *Label) :
-			path(Path), label(Label)
-		{ }
+		OverlayIdent(const char *Path, const char *Label = NULL);
 
-		void readLabel(const char *Path);
+		void readLabel(const char *Path = NULL);
+
+		void setLabel(const std::string &Label)
+		{ label = Label; know_label = true; }
 
 		std::string human_readable() const;
 };

@@ -7,6 +7,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "formated.h"
+// ::format This comment satisfies check_include script
 
 #include <string>
 

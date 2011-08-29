@@ -10,6 +10,7 @@
 #ifndef EIX__MASK_LIST_H__
 #define EIX__MASK_LIST_H__ 1
 
+#include <config.h>
 #include <eixTk/likely.h>
 #include <eixTk/ptr_list.h>
 #include <eixTk/stringutils.h>
@@ -157,7 +158,7 @@ public:
 	bool add_file(const char *file, Mask::Type mask_type, bool recursive);
 
 	/** This can be optionally called after the last add():
-	 *  It will free memory. */
+	 *  It will release memory. */
 	void finalize()
 	{ full_index.clear(); }
 
@@ -229,6 +230,20 @@ public:
 	{ }
 };
 
+class PreListFilename
+{
+private:
+	std::string filename, m_repo;
+	bool know_repo;
+public:
+	PreListFilename(const std::string &n, const char *label);
+
+	const std::string &name() const
+	{ return filename; }
+
+	const char *repo() const ATTRIBUTE_PURE;
+};
+
 /* The PreList is needed to Prepare a MaskList:
  *
  * Until we call finalize() or initialize(), one can insert and delete lines.
@@ -262,32 +277,35 @@ private:
 	using super::push_back;
 
 	std::vector<PreListOrderEntry> order;
-	std::vector<std::string> filenames;
+	std::vector<PreListFilename> filenames;
 	std::map<std::vector<std::string>, std::vector<PreListOrderEntry>::size_type> have;
 	bool finalized;
 public:
 	void clear()
 	{ finalize(); filenames.clear(); super::clear(); }
 
-	const std::string &file_name(FilenameIndex file)
-	{ return filenames[file]; }
+	const std::string &file_name(FilenameIndex file) const
+	{ return filenames[file].name(); }
 
-	FilenameIndex push_name(const std::string &filename)
+	const char *repo(FilenameIndex file) const
+	{ return filenames[file].repo(); }
+
+	FilenameIndex push_name(const std::string &filename, const char *reponame)
 	{
 		FilenameIndex i(filenames.size());
-		filenames.push_back(filename);
+		filenames.push_back(PreListFilename(filename, reponame));
 		return i;
 	}
 
 	PreList() : finalized(false)
 	{ }
 
-	PreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : finalized(false)
-	{ handle_file(lines, filename, only_add); }
+	PreList(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add) : finalized(false)
+	{ handle_file(lines, filename, reponame, only_add); }
 
 	/// return true if something was changed
-	bool handle_file(const std::vector<std::string> &lines, const std::string &filename, bool only_add)
-	{ return handle_lines(lines, push_name(filename), only_add, NULL); }
+	bool handle_file(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add)
+	{ return handle_lines(lines, push_name(filename, reponame), only_add, NULL); }
 
 	/// return true if something was changed
 	bool handle_lines(const std::vector<std::string> &lines, FilenameIndex file, bool only_add, LineNumber *num);

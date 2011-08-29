@@ -17,4 +17,5 @@
 void fill_defaults_part_3(EixRc &eixrc)
 {
 #include <eixrc/defaults.cc>
+// _( SYSCONFDIR This comment  satisfies check_includes script
 }

@@ -20,6 +20,8 @@
 
 #include <string>
 
+#include <cstddef>
+
 class ExtendedVersion;
 class Package;
 
@@ -87,7 +89,7 @@ class Mask : public BasicVersion {
 		void apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check) const;
 
 		/** Parse mask-string. */
-		Mask(const char *str, Type type);
+		Mask(const char *str, Type type, const char *repo = NULL);
 
 		void match(Matches &m, Package &pkg) const;
 
@@ -124,7 +126,7 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		KeywordMask(const char *str) : Mask(str, maskTypeNone)
+		KeywordMask(const char *str, const char *repo = NULL) : Mask(str, maskTypeNone, repo)
 		{ }
 
 		void applyItem(Package& pkg) const;
@@ -136,7 +138,7 @@ class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		PKeywordMask(const char *str) : Mask(str, maskTypeNone)
+		PKeywordMask(const char *str, const char *repo = NULL) : Mask(str, maskTypeNone, repo)
 		{ }
 
 		void applyItem(Package& pkg) const;
@@ -148,8 +150,8 @@ class SetMask : public Mask {
 	public:
 		SetsIndex m_set;
 
-		SetMask(const char *str, SetsIndex set_index) :
-			Mask(str, maskTypeNone), m_set(set_index)
+		SetMask(const char *str, SetsIndex set_index, const char *repo = NULL) :
+			Mask(str, maskTypeNone, repo), m_set(set_index)
 		{ }
 
 		void applyItem(Package& pkg) const;

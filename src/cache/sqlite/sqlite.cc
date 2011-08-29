@@ -16,6 +16,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/stringutils.h>
 #include <eixTk/unused.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>

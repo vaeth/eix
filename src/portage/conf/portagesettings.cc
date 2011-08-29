@@ -247,13 +247,15 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		read_world_sets(eixrc["EIX_WORLD_SETS"].c_str());
 	}
 
-	profile->listaddFile(((*this)["PORTDIR"] + PORTDIR_MASK_FILE).c_str());
+	string &my_path((*this)["PORTDIR"]);
+	profile->listaddFile(my_path + PORTDIR_MASK_FILE, my_path.c_str());
 	profile->listaddProfile();
 	profile->readMakeDefaults();
 	profile->readremoveFiles();
 	CascadingProfile *local_profile(NULL);
-	if(getlocal)
+	if(getlocal) {
 		local_profile = new CascadingProfile(*profile);
+	}
 	addOverlayProfiles(profile);
 	if(getlocal) {
 		local_profile->listaddProfile((m_eprefixconf + USER_PROFILE_DIR).c_str());
@@ -625,7 +627,8 @@ PortageSettings::addOverlayProfiles(CascadingProfile *p) const
 {
 	for(vector<string>::const_iterator i(overlays.begin());
 		likely(i != overlays.end()); ++i) {
-		p->listaddFile((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_MASK_FILE).c_str());
+		string my_path(m_eprefixaccessoverlays + (*i));
+		p->listaddFile(my_path + "/" + PORTDIR_MASK_FILE, my_path.c_str());
 	}
 }
 
@@ -662,14 +665,15 @@ PortageUserConfig::readKeywords() {
 	PreList pre_list;
 	bool added(false);
 	vector<string> lines;
-	string file((m_settings->m_eprefixconf) + USER_KEYWORDS_FILE1);
+	const string &path(m_settings->m_eprefixconf);
+	string file(path + USER_KEYWORDS_FILE1);
 	if(pushback_lines(file.c_str(), &lines, false, true)) {
-		added = pre_list.handle_file(lines, file, true);
+		added = pre_list.handle_file(lines, file, NULL, true);
 		lines.clear();
 	}
-	file = (m_settings->m_eprefixconf) + USER_KEYWORDS_FILE2;
+	file = (path + USER_KEYWORDS_FILE2);
 	if(pushback_lines(file.c_str(), &lines, false, true)) {
-		added |= pre_list.handle_file(lines, file, true);
+		added |= pre_list.handle_file(lines, file, NULL,  true);
 	}
 	if(!added) {
 		return false;

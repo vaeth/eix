@@ -10,6 +10,8 @@
 #ifndef EIX__STRINGUTILS_H__
 #define EIX__STRINGUTILS_H__ 1
 
+// include <eixTk/stringutils.h> This comment satisfies check_include script
+
 #include <config.h>
 #include <eixTk/likely.h>
 

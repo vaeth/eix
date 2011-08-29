@@ -1075,7 +1075,7 @@ PackageTest::get_nowarn_list()
 	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
 		vector<string> lines;
 		pushback_lines(it->c_str(), &lines, false, true);
-		prelist.handle_file(lines, *it, true);
+		prelist.handle_file(lines, *it, NULL, true);
 	}
 	nowarn_list = new NowarnMaskList;
 	prelist.initialize(*nowarn_list);

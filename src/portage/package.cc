@@ -19,8 +19,9 @@
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
 
-#include <vector>
 #include <set>
+#include <string>
+#include <vector>
 
 #include <cstddef>
 #include <cstring>
@@ -545,7 +546,7 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 }
 
 void
-Package::set_provide(const std::string &s)
+Package::set_provide(const string &s)
 {
 	provide.clear();
 	split_string(provide, s);
@@ -554,7 +555,7 @@ Package::set_provide(const std::string &s)
 std::string
 Package::get_provide() const
 {
-	std::string s;
+	string s;
 	join_to_string(s, provide);
 	return s;
 }

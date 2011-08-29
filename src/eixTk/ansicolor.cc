@@ -42,8 +42,8 @@ static_marker_map()
 inline static AnsiMarker::Marker
 name_to_marker(const string &name)
 {
-	static const map<string,AnsiMarker::Marker> &marker_map = static_marker_map();
-	map<string,AnsiMarker::Marker>::const_iterator f = marker_map.find(name);
+	static const map<string,AnsiMarker::Marker> &marker_map(static_marker_map());
+	map<string,AnsiMarker::Marker>::const_iterator f(marker_map.find(name));
 	if(f != marker_map.end())
 		return f->second;
 	return AnsiMarker::amIllegal;
@@ -70,10 +70,11 @@ static_color_map()
 inline static AnsiColor::Color
 name_to_color(const string &name)
 {
-	static const map<string,AnsiColor::Color> &color_map = static_color_map();
-	map<string,AnsiColor::Color>::const_iterator f = color_map.find(name);
-	if(f != color_map.end())
+	static const map<string,AnsiColor::Color> &color_map(static_color_map());
+	map<string,AnsiColor::Color>::const_iterator f(color_map.find(name));
+	if(f != color_map.end()) {
 		return f->second;
+	}
 	return AnsiColor::acIllegal;
 }
 
@@ -85,7 +86,7 @@ AnsiMarker::initmarker(const string &markers_string) throw (ExBasic)
 	split_string(v, markers_string, false, ",;:- \t\r\n");
 	markers.assign(v.size(), amNone);
 	vector<Marker>::size_type i(0);
-	for(vector<string>::const_iterator it = v.begin();
+	for(vector<string>::const_iterator it(v.begin());
 		likely(it != v.end()); ++it) {
 		Marker mk(name_to_marker(*it));
 		if(mk == amIllegal) {
@@ -103,8 +104,9 @@ AnsiMarker::calc_string()
 	string_begin.clear();
 	for(vector<Marker>::const_iterator it(markers.begin());
 		unlikely(it != markers.end()); ++it) {
-		if(*it == amNone)
+		if(*it == amNone) {
 			continue;
+		}
 		static const int len(20);
 		char buf[len];
 		snprintf(buf, len, "\x1B[%dm", int(*it));
@@ -137,8 +139,7 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 	// look for brightness attribute
 	string::size_type curr(color_name.find_first_of(",;"));
 	string::size_type resize(curr);
-	if((curr != string::npos) && (color_name[curr] == ','))
-	{
+	if((curr != string::npos) && (color_name[curr] == ',')) {
 		++curr;
 		if(color_name[curr] == '1')
 			light = true;
@@ -149,8 +150,9 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 		}
 		curr = color_name.find(';', curr);
 	}
-	else
+	else {
 		light = false;
+	}
 	if(curr != string::npos)
 		mk.initmarker(color_name.substr(curr + 1));
 	const string *pure_color;
@@ -159,8 +161,9 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 		pure_color_save.assign(color_name, 0, resize);
 		pure_color = &pure_color_save;
 	}
-	else
+	else {
 		pure_color = &color_name;
+	}
 	fg = name_to_color(*pure_color);
 	if(fg == acIllegal) {
 		fg = acNone;

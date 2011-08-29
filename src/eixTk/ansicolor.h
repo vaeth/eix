@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 
+// include <iostream> this comment satisfies check_include script
+
 class AnsiColor;
 
 /** A class for using ANSI markers

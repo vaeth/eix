@@ -35,6 +35,16 @@
 
 using namespace std;
 
+bool
+ProfileFile::have_repo()
+{
+	if(!overlay.know_path)
+		return false;
+	overlay.readLabel();
+	return !overlay.label.empty();
+}
+
+
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULL };
 
@@ -66,7 +76,13 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 				addProfile((s + (*it)).c_str(), depth + 1);
 		}
 	}
-	return pushback_files(s, m_profile_files, profile_exclude, 3);
+	vector<string> filenames;
+	bool r(pushback_files(s, filenames, profile_exclude, 3));
+	for(vector<string>::const_iterator it(filenames.begin());
+		likely(it != filenames.end()); ++it) {
+		listaddFile(*it, NULL);
+	}
+	return r;
 }
 
 class ProfileFilenames
@@ -107,7 +123,7 @@ bool
 CascadingProfile::readremoveFiles()
 {
 	bool ret(false);
-	for(vector<string>::iterator file(m_profile_files.begin());
+	for(vector<ProfileFile>::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
 		const char *filename(strrchr(file->c_str(), '/'));
 		if(filename == NULL)
@@ -120,18 +136,25 @@ CascadingProfile::readremoveFiles()
 
 		vector<string> lines;
 		pushback_lines(file->c_str(), &lines, false, true, true);
-		ret |= (this->*handler)(lines, *file);
+		const char *repo;
+		if(file->have_repo()) {
+			repo = file->get_repo().c_str();
+		}
+		else {
+			repo = NULL;
+		}
+		ret |= (this->*handler)(lines, file->name(), repo);
 	}
 	m_profile_files.clear();
 	return ret;
 }
 
 bool
-CascadingProfile::readPackages(const vector<string> &lines, const string &file)
+CascadingProfile::readPackages(const vector<string> &lines, const string &filename, const char *repo)
 {
 	bool ret(false);
-	PreList::FilenameIndex file_system(p_system.push_name(file));
-	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(file));
+	PreList::FilenameIndex file_system(p_system.push_name(filename, repo));
+	PreList::FilenameIndex file_system_allowed(p_system_allowed.push_name(filename, repo));
 	PreList::LineNumber number(1);
 	for(vector<string>::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++number, ++it) {
@@ -164,27 +187,27 @@ CascadingProfile::readPackages(const vector<string> &lines, const string &file)
 }
 
 bool
-CascadingProfile::readPackageMasks(const vector<string> &lines, const string &file)
+CascadingProfile::readPackageMasks(const vector<string> &lines, const string &filename, const char *repo)
 {
-	return p_package_masks.handle_file(lines, file, false);
+	return p_package_masks.handle_file(lines, filename, repo, false);
 }
 
 bool
-CascadingProfile::readPackageUnmasks(const vector<string> &lines, const string &file)
+CascadingProfile::readPackageUnmasks(const vector<string> &lines, const string &filename, const char *repo)
 {
-	return p_package_unmasks.handle_file(lines, file, false);
+	return p_package_unmasks.handle_file(lines, filename, repo, false);
 }
 
 bool
-CascadingProfile::readPackageKeywords(const vector<string> &lines, const string &file)
+CascadingProfile::readPackageKeywords(const vector<string> &lines, const string &filename, const char *repo)
 {
-	return p_package_keywords.handle_file(lines, file, false);
+	return p_package_keywords.handle_file(lines, filename, repo, false);
 }
 
 bool
-CascadingProfile::readPackageAcceptKeywords(const vector<string> &lines, const string &file)
+CascadingProfile::readPackageAcceptKeywords(const vector<string> &lines, const string &filename, const char *repo)
 {
-	return p_package_accept_keywords.handle_file(lines, file, true);
+	return p_package_accept_keywords.handle_file(lines, filename, repo, true);
 }
 
 /** Read all "make.defaults" files found in profile. */
@@ -193,7 +216,7 @@ CascadingProfile::readMakeDefaults()
 {
 	for(vector<string>::size_type i(0); likely(i < m_profile_files.size()); ++i) {
 		if(unlikely(strcmp(strrchr(m_profile_files[i].c_str(), '/'), "/make.defaults") == 0)) {
-			m_portagesettings->read_config(m_profile_files[i], "");
+			m_portagesettings->read_config(m_profile_files[i].name(), "");
 		}
 	}
 }

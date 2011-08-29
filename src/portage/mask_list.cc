@@ -19,7 +19,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include <cstddef>
 
@@ -133,6 +132,26 @@ MaskList<Mask>::applyVirtualMasks(Package *p) const
 		}
 		delete masks;
 	}
+}
+
+PreListFilename::PreListFilename(const string &n, const char *label)
+{
+	filename = n;
+	if(label == NULL) {
+		know_repo = false;
+		return;
+	}
+	know_repo = true;
+	m_repo = label;
+}
+
+const char *
+PreListFilename::repo() const
+{
+	if(know_repo) {
+		return m_repo.c_str();
+	}
+	return NULL;
 }
 
 bool
@@ -274,7 +293,7 @@ PreList::initialize(MaskList<Mask> &l, Mask::Type t)
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		try {
-			l.add(Mask(it->name.c_str(), t));
+			l.add(Mask(it->name.c_str(), t, repo(it->filename_index)));
 		}
 		catch(const ExBasic &e) {
 			portage_parse_error(file_name(it->filename_index),
@@ -291,7 +310,7 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		try {
-			KeywordMask m(it->name.c_str());
+			KeywordMask m(it->name.c_str(), repo(it->filename_index));
 			if(it->args.empty()) {
 				m.keywords = raised_arch;
 			}
@@ -316,7 +335,7 @@ PreList::initialize(MaskList<PKeywordMask> &l)
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		try {
-			PKeywordMask m(it->name.c_str());
+			PKeywordMask m(it->name.c_str(), repo(it->filename_index));
 			join_to_string(m.keywords, it->args);
 			l.add(m);
 		}
