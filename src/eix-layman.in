@@ -21,7 +21,7 @@ Usage() {
 Add or remove local layman overlays to the eix database (${p}).
 
 Explanation: If your /etc/make.conf does not source layman/make.conf,
-then the layman overlays are not considered as part of you PORTDIR_OVERLAY;
+then the layman overlays are not considered as part of your PORTDIR_OVERLAY;
 in this case, they are are usually not added to your eix database and thus
 cannot be found with eix.
 However, you might want to add/remove them temporarily to your eix database
@@ -115,9 +115,9 @@ done
 GetOverlays() {
 	eval "set -- ${layman_make}"
 	for i
-	do	[ -n "${i}" ] && test -r "${i}" && Push layman_overlays \
-			`PORTDIR_OVERLAY=''; . "${i}"; \
-				printf '%s' "${PORTDIR_OVERLAY}"`
+	do	[ -n "${i}" ] && test -r "${i}" || continue
+		j=`PORTDIR_OVERLAY=''; . "${i}"; printf '%s' "${PORTDIR_OVERLAY}x"`
+		PushEscaped layman_overlays "${j%x}"
 	done
 }
 

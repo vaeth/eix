@@ -23,55 +23,75 @@
 
 using namespace std;
 
-static int
-get_map_from_cache(const char *file, map<string,string> &x)
+static map<string,string> *
+get_map_from_cache(const char *file)
 {
-	string lbuf;
+	static string oldfile;
+	static map<string,string> cf;
+	if(oldfile == file) {
+		return &cf;
+	}
+	oldfile = file;
+	cf.clear();
+
 	ifstream is(file);
 	if(!is.is_open())
-		return -1;
+		return NULL;
 
+	string lbuf;
 	while(likely(getline(is, lbuf) != 0)) {
 		string::size_type p(lbuf.find('='));
 		if(p == string::npos)
 			continue;
-		x[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
+		cf[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
 	}
 	is.close();
-	return x.size();
+	return &cf;
+}
+
+const char *
+assign_get_md5sum(const string &filename)
+{
+	map<string,string> *cf(get_map_from_cache(filename.c_str()));
+	if(unlikely(cf == NULL)) {
+		return NULL;
+	}
+	map<string,string>::const_iterator md5(cf->find("_md5_"));
+	if(md5 == cf->end()) {
+		return NULL;
+	}
+	return md5->second.c_str();
 }
 
 /** Read stability and other data from an "assign type" cache file. */
 void
 assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, BasicCache::ErrorCallback error_callback)
 {
-	map<string,string> cf;
-
-	if(unlikely(get_map_from_cache(filename.c_str(), cf) < 0)) {
-		error_callback(eix::format(_("Can't read cache file %s: "))
+	map<string,string> *cf(get_map_from_cache(filename.c_str()));
+	if(unlikely(cf == NULL)) {
+		error_callback(eix::format(_("Can't read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
 	}
-	keywords = cf["KEYWORDS"];
-	slotname = cf["SLOT"];
-	iuse     = cf["IUSE"];
-	restr    = cf["RESTRICT"];
-	props    = cf["PROPERTIES"];
+	keywords = (*cf)["KEYWORDS"];
+	slotname = (*cf)["SLOT"];
+	iuse     = (*cf)["IUSE"];
+	restr    = (*cf)["RESTRICT"];
+	props    = (*cf)["PROPERTIES"];
 }
 
 /** Read an "assign type" cache file. */
 void
 assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
 {
-	map<string,string> cf;
-
-	if(unlikely(get_map_from_cache(filename, cf) < 0)) {
-		error_callback(eix::format(_("Can't read cache file %s: "))
+	map<string,string> *cf(get_map_from_cache(filename));
+	if(unlikely(cf == NULL)) {
+		error_callback(eix::format(_("Can't read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
 	}
-	pkg->homepage = cf["HOMEPAGE"];
-	pkg->licenses = cf["LICENSE"];
-	pkg->desc     = cf["DESCRIPTION"];
-	pkg->set_provide(cf["PROVIDE"]);
+	pkg->homepage = (*cf)["HOMEPAGE"];
+	pkg->licenses = (*cf)["LICENSE"];
+	pkg->desc     = (*cf)["DESCRIPTION"];
+	pkg->set_provide((*cf)["PROVIDE"]);
 }

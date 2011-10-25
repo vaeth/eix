@@ -55,6 +55,10 @@ class BasicCache {
 		virtual void setOverlayName(const std::string &name)
 		{ m_overlay_name = name; }
 
+		/// Set verbose mode
+		virtual void setVerbose()
+		{ }
+
 		/// Get overlay-key
 		ExtendedVersion::Overlay getKey() const
 		{ return m_overlay_key; }
@@ -115,6 +119,9 @@ class BasicCache {
 
 		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); return 0; }
+
+		virtual const char *get_md5sum(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
+		{ UNUSED(pkg_name); UNUSED(ver_name); return NULL; }
 
 		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(version); }

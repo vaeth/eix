@@ -26,8 +26,8 @@ class VarsReader;
 class Version;
 
 class ParseCache : public BasicCache {
-
 	private:
+		bool verbose;
 		std::vector<BasicCache*> further;
 		std::vector<bool> further_works;
 		bool try_parse, nosubst;
@@ -39,7 +39,7 @@ class ParseCache : public BasicCache {
 		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version);
 		void readPackage(Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
 	public:
-		ParseCache() : BasicCache(), ebuild_exec(NULL)
+		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULL)
 		{ }
 
 		bool initialize(const std::string &name);
@@ -50,6 +50,8 @@ class ParseCache : public BasicCache {
 		void setKey(ExtendedVersion::Overlay key);
 		void setOverlayName(const std::string &name);
 		void setErrorCallback(ErrorCallback error_callback);
+		void setVerbose()
+		{ verbose = true; }
 
 		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
 		bool readCategory(Category &cat) throw(ExBasic);

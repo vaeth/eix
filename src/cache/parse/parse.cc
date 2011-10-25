@@ -17,13 +17,14 @@
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/version.h>
-#include <eixTk/varsreader.h>
-#include <eixTk/sysutils.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/likely.h>
-#include <eixTk/formated.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
 #include <eixTk/i18n.h>
+#include <eixTk/likely.h>
+#include <eixTk/md5.h>
+#include <eixTk/stringutils.h>
+#include <eixTk/sysutils.h>
+#include <eixTk/varsreader.h>
 
 #include <map>
 #include <vector>
@@ -65,8 +66,9 @@ ParseCache::initialize(const string &name)
 		else
 			return false;
 	}
-	if(try_ebuild)
+	if(try_ebuild) {
 		ebuild_exec = new EbuildExec(use_sh, this);
+	}
 	while(++it_name != names.end()) {
 		MetadataCache *p(new MetadataCache);
 		if(p->initialize(*it_name)) {
@@ -84,19 +86,24 @@ ParseCache::getType() const
 {
 	static string s;
 	if(try_parse) {
-		if(nosubst)
+		if(nosubst) {
 			s = "parse*";
-		else
+		}
+		else {
 			s = "parse";
+		}
 	}
 	if(ebuild_exec != NULL) {
 		const char *t;
-		if(ebuild_exec->use_sh())
+		if(ebuild_exec->use_sh()) {
 			t = "ebuild*";
-		else
+		}
+		else {
 			t = "ebuild";
-		if(s.empty())
+		}
+		if(s.empty()) {
 			s = t;
+		}
 		else {
 			s.append(1, '|');
 			s.append(t);
@@ -113,8 +120,9 @@ ParseCache::getType() const
 ParseCache::~ParseCache()
 {
 	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+		likely(it != further.end()); ++it) {
 		delete *it;
+	}
 	if(ebuild_exec != NULL) {
 		ebuild_exec->delete_cachefile();
 		delete ebuild_exec;
@@ -127,8 +135,9 @@ ParseCache::setScheme(const char *prefix, const char *prefixport, const std::str
 {
 	BasicCache::setScheme(prefix, prefixport, scheme);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+		likely(it != further.end()); ++it) {
 		(*it)->setScheme(prefix, prefixport, scheme);
+	}
 }
 
 void
@@ -136,8 +145,9 @@ ParseCache::setKey(ExtendedVersion::Overlay key)
 {
 	BasicCache::setKey(key);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+		likely(it != further.end()); ++it) {
 		(*it)->setKey(key);
+	}
 }
 
 void
@@ -145,8 +155,9 @@ ParseCache::setOverlayName(const std::string &name)
 {
 	BasicCache::setOverlayName(name);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+		likely(it != further.end()); ++it) {
 		(*it)->setOverlayName(name);
+	}
 }
 
 void
@@ -154,8 +165,9 @@ ParseCache::setErrorCallback(ErrorCallback error_callback)
 {
 	BasicCache::setErrorCallback(error_callback);
 	for(std::vector<BasicCache*>::iterator it(further.begin());
-		likely(it != further.end()); ++it)
+		likely(it != further.end()); ++it) {
 		(*it)->setErrorCallback(error_callback);
+	}
 }
 
 void
@@ -165,17 +177,20 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 	const string *s(ebuild.find(item));
 	if(s == NULL) {
 		str.clear();
-		if(check)
+		if(check) {
 			*ok = false;
+		}
 		return;
 	}
 	str.clear();
 	split_and_join(str, *s);
-	if(!check)
+	if(!check) {
 		return;
+	}
 	if(unlikely((str.find('`') != string::npos) ||
-		(str.find("$(") != string::npos)))
+		(str.find("$(") != string::npos))) {
 		*ok = false;
+	}
 }
 
 void
@@ -186,16 +201,18 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 	bool ok(try_parse);
 	if(ok) {
 		VarsReader::Flags flags(VarsReader::NONE);
-		if(!read_onetime_info)
+		if(!read_onetime_info) {
 			flags |= VarsReader::ONLY_KEYWORDS_SLOT;
+		}
 		map<string, string> env;
 		if(!nosubst) {
 			flags |= VarsReader::INTO_MAP | VarsReader::SUBST_VARS;
 			env_add_package(env, *pkg, *version, dirpath, fullpath);
 		}
 		VarsReader ebuild(flags);
-		if(flags & VarsReader::INTO_MAP)
+		if(flags & VarsReader::INTO_MAP) {
 			ebuild.useMap(&env);
+		}
 		try {
 			ebuild.read(fullpath);
 		}
@@ -221,6 +238,18 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 			have_onetime_info = true;
 		}
 	}
+	if(verbose) {
+		const char *used_type;
+		if(ok) {
+			used_type = ( nosubst ? "parse*" : "parse" );
+		}
+		else {
+			used_type = ((ebuild_exec->use_sh()) ? "ebuild*" : "ebuild");
+		}
+		m_error_callback(eix::format("%s/%s-%s: %s") %
+			m_catname % pkg->name % version->getFull() %
+			used_type);
+	}
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version));
 		if(likely(cachefile != NULL)) {
@@ -228,8 +257,9 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
 		}
-		else
+		else {
 			m_error_callback(eix::format(_("Could not properly execute %s")) % fullpath);
+		}
 	}
 	version->set_full_keywords(keywords);
 	version->set_restrict(restr);
@@ -282,18 +312,32 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 		time_t ebuild_time(0);
 		vector<BasicCache*>::const_iterator it(further.begin());
 		for(; likely(it != further.end()); ++it) {
-			time_t t = (*it)->get_time(pkg_name.c_str(), ver);
-			if(!t)
+			const char *s((*it)->get_md5sum(pkg_name.c_str(), ver));
+			if(s != NULL) {
+				if(verify_md5sum(full_path.c_str(), s)) {
+					break;
+				}
 				continue;
-			if(!ebuild_time)
-				ebuild_time = get_mtime(full_path.c_str());
-			if(t >= ebuild_time)
-				break;
+			}
+			time_t t((*it)->get_time(pkg_name.c_str(), ver));
+			if(t != 0) {
+				if(!ebuild_time) {
+					ebuild_time = get_mtime(full_path.c_str());
+				}
+				if(t >= ebuild_time) {
+					break;
+				}
+			}
 		}
 		if(it == further.end()) {
 			parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
 		}
 		else {
+			if(verbose) {
+				m_error_callback(eix::format("%s/%s-%s: %s") %
+					m_catname % pkg_name % version->getFull() %
+					(*it)->getType());
+			}
 			(*it)->get_version_info(pkg_name.c_str(), ver, version);
 			if(read_onetime_info) {
 				(*it)->get_common_info(pkg_name.c_str(), ver, pkg);

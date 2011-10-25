@@ -126,7 +126,9 @@ cache/metadata/metadata.h \
 cache/parse/parse.cc \
 cache/parse/parse.h \
 cache/sqlite/sqlite.cc \
-cache/sqlite/sqlite.h
+cache/sqlite/sqlite.h \
+eixTk/md5.cc \
+eixTk/md5.h
 
 nodist_cache_src = \
 cache/cache_map.cc

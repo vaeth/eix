@@ -215,6 +215,7 @@ print_help(int ret)
 			"     --print             print the expanded value of a variable\n"
 			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
 			" -F, --force-color       force \"color\" on things that are not a terminal\n"
+			" -v, --verbose           output used cache method for each ebuild\n"
 			"\n"
 			" -q, --quiet             produce no output\n"
 			"\n"
@@ -250,7 +251,7 @@ static bool
 	dump_eixrc(false),
 	dump_defaults(false);
 
-static bool use_percentage;
+static bool use_percentage, verbose;
 
 static list<const char *> exclude_args, add_args;
 static list<ArgPair> method_args, repo_args;
@@ -268,6 +269,7 @@ static struct Option long_options[] = {
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 	 Option("nocolor",        'n',     Option::BOOLEAN_F, &use_percentage),
 	 Option("force-color",    'F',     Option::BOOLEAN_T, &use_percentage),
+	 Option("verbose",        'v',     Option::BOOLEAN_T, &verbose),
 
 	 Option("exclude-overlay",'x',     Option::STRINGLIST,&exclude_args),
 	 Option("add-overlay",    'a',     Option::STRINGLIST,&add_args),
@@ -375,6 +377,7 @@ run_eix_update(int argc, char *argv[])
 	string outputfile;
 
 	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
+	verbose = eixrc.getBool("UPDATE_VERBOSE");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -609,6 +612,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		cache->setOverlayName(overlay.label);
 		//cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
+		if(verbose) {
+			cache->setVerbose();
+		}
 		++it;
 	}
 
@@ -665,8 +671,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			string msg(unlikely(is_empty) ? _("EMPTY!") :
 				(unlikely(aborted) ? _("ABORTED!") :
 					_("Finished")));
-			if(use_percentage)
+			if(use_percentage) {
 				msg.insert(string::size_type(0), 1, ' ');
+			}
 			reading_percent_status->finish(msg);
 		}
 		delete reading_percent_status;

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2011-03-23 23:57:31 +0100 (Wed, 23 Mar 2011) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2011-10-21 21:18:00 +0100 (Fri, 21 Oct 2011) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -841,6 +841,11 @@ In particular, the option overrides the content of B<OVERRIDE_CACHE_METHOD>.
 The overlay I<overlay-path> obtains the label I<overlay-label>, independent of any other settings.
 This may be overridden by B<REPO_NAMES>.
 In contrast to B<REPO_NAMES>, I<overlay-path> is not a pattern but the exact path.
+.TP
+.BR -v " " --verbose
+Output the effectively used cache method for each ebuild.
+This produces a lot of output and is mainly useful for debugging
+if you are wondering why eix-update is faster/slower than expected.
 .\" }}}
 
 .\" {{{ OUTPUT
@@ -2096,6 +2101,10 @@ List all overlays for every query (even if not even one is needed).
 Set default levenshtein-distance.
 
 .TP
+.BR UPDATE_VERBOSE " " (bool)
+Whether eix-update -v is on by default (output of cache method per version).
+
+.TP
 .BR EXCLUDE_OVERLAY " " "(string list)"
 Set a list of wildcard patterns for overlay paths that are excluded from the index.
 See the B<eix-update> option B<--exclude-overlay>.
@@ -2115,12 +2124,14 @@ are excluded/added for cache methods eix and eix*.
 .TP
 .BR CACHE_METHOD_PARSE " " (string)
 This string is appended to all cache methods using parse/parse*/ebuild/ebuild*.
-Its default contains B<#metadata-flat>.
+Its default contains B<#metadata-md5#metadata-flat>.
 Unless you have a very special setup this is always what you want:
-It means that if current metadata is available for the ebuild, this is used instead of
-parsing/executing the ebuild.
-The latter is in principle not completely reliable (parsing) or rather slow (executing),
-i.e. the metadata (if available and up-to-date) is always preferable.
+It means that if a current metadata (in a metadata/*cache subdirectory)
+is available for the ebuild,
+this is used instead of parsing/executing the ebuild.
+The latter is in principle not completely reliable (parsing) or
+rather slow (executing), i.e. the metadata
+(if available and up-to-date) is always preferable.
 
 .TP
 .BR PORTDIR_CACHE_METHOD ", " OVERLAY_CACHE_METHOD " " (string)
@@ -2181,6 +2192,15 @@ the full path (i.e. no prefix is used). You might want to provide I<PATH> if
 you use some package manager to generate the metadata in the corresponding
 directory.
 .RE
+.TP
+.BR metadata-md5 " or " metadata-md5:I<PATH>
+This is similar to B<metadata-flat> with the difference that the files within
+($PORTDIR/metadata/md5-cache) are used where an md5sum is used instead of the
+timestamp to check whether the metadata is up-to-date.
+This should be the preferred method for overlays if the overlay supports it,
+that is, if its B<metadata/layout.conf> file contains the line
+B<cache-format=md5-dict>.
+(Note that only portage reads B<metadata/layout.conf>; eix does not.)
 .TP
 .BR metadata-assign " or " metadata-assign:I<PATH>
 This is similar to B<metadata-flat> with the difference that the files within

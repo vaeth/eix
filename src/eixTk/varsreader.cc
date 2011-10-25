@@ -736,11 +736,11 @@ bool VarsReader::read(const char *filename)
 		return true;
 	}
 	filebuffer = static_cast<char *>(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+	close(fd);
 	if (filebuffer == MAP_FAILED) {
 		throw ExBasic(_("Can't map file %r")) % filename;
 	}
 	filebuffer_end = filebuffer + st.st_size;
-	close(fd);
 
 	initFsm();
 	if(parse_flags & APPEND_VALUES) {

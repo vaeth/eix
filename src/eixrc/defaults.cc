@@ -1819,8 +1819,12 @@ AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	"The default maximal levensthein distance for which a string is considered a match\n"
 	"for the fuzzy match algorithm."));
 
+AddOption(BOOLEAN, "UPDATE_VERBOSE",
+	"false", _(
+	"Whether eix-update -v is on by default (output cache method per ebuild)"));
+
 AddOption(STRING, "CACHE_METHOD_PARSE",
-	"#metadata-flat#assign", _(
+	"#metadata-md5#metadata-flat#assign", _(
 	"This string is appended to all cache methods using parse[*] or ebuild[*]."));
 
 AddOption(STRING, "PORTDIR_CACHE_METHOD",

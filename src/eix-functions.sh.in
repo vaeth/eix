@@ -120,6 +120,7 @@ fi
 # Option -g means: Replace all occurrences
 # Exit status is 0 if at least one replacement took place, and
 # $replace_count contains at string of length(number of replacements) x'en.
+# $replace_tail is the string after the last replacement (or the whole string)
 Replace() {
 	eixf_repla=''
 	eixf_replc='break'
@@ -127,16 +128,17 @@ Replace() {
 	-*)	eixf_replc=''; shift;;
 	esac
 	replace_count=''
-	eval "while {
-		eixf_replb=\${${1}%%\"\${2}\"*}
-		[ \"\${eixf_replb}\" != \"\${${1}}\" ]
+	eval "replace_tail=\"\${${1}}\""
+	while {
+		eixf_replb=${replace_tail%%"${2}"*}
+		[ "${eixf_replb}" != "${replace_tail}" ]
 	}
-	do	eixf_repla=\"\${eixf_repla}\${eixf_replb}\${3}\"
-		${1}=\${${1}#*\"\${2}\"}
-		replace_count=\"\${replace_count}x\"
+	do	eixf_repla="${eixf_repla}${eixf_replb}${3}"
+		replace_tail=${replace_tail#*"${2}"}
+		replace_count="${replace_count}x"
 		${eixf_replc}
 	done
-	${1}=\"\${eixf_repla}\${${1}}\""
+	eval "${1}=\"\${eixf_repla}\${replace_tail}\""
 	[ -n "${replace_count}" ]
 }
 
@@ -157,6 +159,45 @@ Push() {
 		else	${eixf_pusha}=\"\${${eixf_pusha}} '\${eixf_pushb}'\"
 		fi
 	done"
+}
+
+# PushEscaped [-c] VAR Arg [symbolclass]
+# Similarly as Push, but allow escaping of symbols from symbolclass.
+# If symbolclass is not given, it defaults to [ \t\r\n].
+# The empty symbolclass means the same as [ \t\r\n\"].
+# The latter are considered as word separators if unescaped.
+PushEscaped() {
+	case "${1}" in
+	-*)	shift; eval "${1}=''";;
+	esac
+	eixf_pes='[ \t\r\n]'
+	if [ ${#} -lt 3 ]
+	then	eixf_pes='[ \t\r\n]'
+	elif [ -z "${3}" ]
+	then	eixf_pes='[ \t\r\n\"]'
+	else	eixf_pes="${3}"
+	fi
+	eixf_pea="${2}"
+	eixf_pew=''
+	while [ -n "${eixf_pea}" ]
+	do	eval "eixf_pex=\${eixf_pea%%${eixf_pes}*}"
+		if [ "${eixf_pex}" != "${eixf_pea}" ]
+		then	eixf_pec=${eixf_pea#"${eixf_pex}"}
+			eixf_pea="${eixf_pec#?}"
+			eixf_pec=${eixf_pec%"${eixf_pea}"}
+		else	eixf_pea=''
+			eixf_pec='\'
+		fi
+		Replace -g eixf_pex '\\' '\'
+		[ -n "${replace_tail}" ] && case "${eixf_pex}" in
+		*'\')	eixf_pew="${eixf_pew}${eixf_pex%?}${eixf_pec}"
+			continue;;
+		esac
+		eixf_pew="${eixf_pew}${eixf_pex}"
+		[ -n "${eixf_pew}" ] && Push ${1} "${eixf_pew}"
+		eixf_pew=''
+	done
+	[ -n "${eixf_pew}" ] && Push ${1} "${eixf_pew}"
 }
 
 AddUpdateArgs() {
@@ -206,10 +247,22 @@ CallUpdate() {
 	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
 }
 
+InitPortdirOverlay() {
+	[ "${PORTDIR_OVERLAY+set}" = 'set' ] && return
+	if command -v portageq >/dev/null 2>&1
+	then	PORTDIR_OVERLAY=`portageq portdir_overlay` || PORTDIR_OVERLAY=''
+	fi
+}
+
 AddLocalMethods() {
 	GetPortdir
 	AddMethod "${local_portdir}" "eix"
-	for eixf_alm in `portageq portdir_overlay` `eix-update --print ADD_OVERLAY`
+	InitPortdirOverlay
+	PushEscaped -c eixf_alm "${PORTDIR_OVERLAY}"
+	ReadVar eixf_al ADD_OVERLAY
+	PushEscaped eixf_alm "${eixf_al}"
+	eval "set -- ${eixf_alm}"
+	for eixf_alm
 	do	eixf_al="${eixf_alm}"
 		Replace -g eixf_al '\' '\\'
 		Replace -g eixf_al ':' '\:'

@@ -30,9 +30,10 @@
 using namespace std;
 
 /* Subpath to metadata cache */
-#define METADATA_PATH "metadata/cache"
+#define METADATA_PATH		"metadata/cache"
+#define METADATAMD5_PATH	"metadata/md5-cache"
 /* Path to portage-2.0 cache */
-#define PORTAGE_CACHE_PATH "var/cache/edb/dep"
+#define PORTAGE_CACHE_PATH	"var/cache/edb/dep"
 
 bool
 MetadataCache::initialize(const string &name)
@@ -44,8 +45,15 @@ MetadataCache::initialize(const string &name)
 		have_override_path = true;
 		override_path.assign(name, i + 1, string::npos);
 	}
-	else
+	else {
 		have_override_path = false;
+	}
+	if(strcasecmp(pure_name.c_str(), "metadata-md5") == 0) {
+		checkmd5 = true;
+		setType(PATH_METADATAMD5, false);
+		return true;
+	}
+	checkmd5 = false;
 	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
 		(strcasecmp(pure_name.c_str(), "metadata-flat") == 0)) {
 		setType(PATH_METADATA, true);
@@ -84,9 +92,14 @@ void
 MetadataCache::setType(PathType set_path_type, bool set_flat)
 {
 	path_type = set_path_type;
+	bool append_flattype(true);
 	switch(set_path_type) {
 		case PATH_METADATA:
 			m_type = "metadata-";
+			break;
+		case PATH_METADATAMD5:
+			m_type = "metadata-md5";
+			append_flattype = false;
 			break;
 		case PATH_REPOSITORY:
 			m_type = "repo-";
@@ -96,10 +109,9 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 			m_type.clear();
 	}
 	flat = set_flat;
-	if(set_flat)
-		m_type.append("flat");
-	else
-		m_type.append("assign");
+	if(append_flattype) {
+		m_type.append(set_flat ? "flat" : "assign");
+	}
 	if(have_override_path) {
 		m_type.append(1, ':');
 		m_type.append(override_path);
@@ -130,11 +142,11 @@ MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 	}
 	else {
 		m_catpath = m_prefix;
-		if(path_type == PATH_METADATA) {
+		if((path_type == PATH_METADATA) || (path_type == PATH_METADATAMD5)) {
 			// m_scheme is actually the portdir
 			m_catpath.append(m_scheme);
 			optional_append(m_catpath, '/');
-			m_catpath.append(METADATA_PATH);
+			m_catpath.append((path_type == PATH_METADATA) ? METADATA_PATH : METADATAMD5_PATH);
 		}
 		else {
 		// path_type == PATH_REPOSITORY || path_type == PATH_FULL
@@ -168,7 +180,10 @@ MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 				m_catpath.append(m_overlay_name);
 			}
 			break;
+/*
 		case PATH_METADATA:
+		case PATH_METADATAMD5:
+*/
 		default:
 			break;
 	}
@@ -196,6 +211,15 @@ MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Vers
 	version->set_restrict(restr);
 	version->set_properties(props);
 	version->overlay_key = m_overlay_key;
+}
+
+const char *
+MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const
+{
+	if(!checkmd5) {
+		return NULL;
+	}
+	return assign_get_md5sum(m_catpath + "/" + pkg_name + "-" + ver_name);
 }
 
 bool

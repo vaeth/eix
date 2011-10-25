@@ -28,11 +28,12 @@ class MetadataCache : public BasicCache {
 	private:
 		typedef enum {
 			PATH_METADATA,
+			PATH_METADATAMD5,
 			PATH_FULL,
 			PATH_REPOSITORY
 		} PathType;
 		PathType path_type;
-		bool flat, have_override_path;
+		bool flat, have_override_path, checkmd5;
 		std::string override_path;
 		std::string m_type;
 		std::string m_catpath;
@@ -51,8 +52,10 @@ class MetadataCache : public BasicCache {
 		bool readCategory(Category &cat) throw(ExBasic);
 		void readCategoryFinalize();
 
+		const char *get_md5sum(const char *pkg_name, const char *ver_name) const;
 		time_t get_time(const char *pkg_name, const char *ver_name) const
 		{ return get_mtime((m_catpath + "/" + pkg_name + "-" + ver_name).c_str()); }
+
 		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const;
 		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
 		{ (*x_read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }

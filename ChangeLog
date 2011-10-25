@@ -1,5 +1,15 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- New cache method metadata-md5 to support metadata/md5-cache
+	  in overlays
+	- eix-update: Add option -v (and UPDATE_VERBOSE) for printing
+	  effective cache method for every ebuild
+	- scripts: Handle quoting of spaces in PORTDIR_OVERLAY properly
+	- scripts: Do not rely on portageq being available
+	- eix-functions.sh: Add PushEscaped, InitPortdirOverlay
+
 *eix-0.23.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support basic /etc/portage/package.license checking

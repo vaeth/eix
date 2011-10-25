@@ -147,6 +147,7 @@ ExecuteConfig() {
 	after_update=''
 	before_rsync=''
 	config_opts=''
+	rsync_opts=''
 	${haveconf} && while read confline
 	do	ParseConfigLine "${1}" "${confline}"
 	done <"${eixsyncconf}"
@@ -328,16 +329,22 @@ PrepRsync() {
 	else	hostdir="${1%%:*}:${local_portdir}"
 	fi
 	hostdir="${hostdir%/}/"
-	${preprsync} && return
-	portage_rsync_opts="`portageq envvar PORTAGE_RSYNC_OPTS`"
-	portage_rsync_extra_opts="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
+	${preprsync} || [ -n "${rsync_opts}" ] && return
+	portage_rsync_opts=''
+	portage_rsync_extra_opts=''
+	if command -v portageq >/dev/null 2>&1
+	then	portage_rsync_opts="`portageq envvar PORTAGE_RSYNC_OPTS`"
+		portage_rsync_extra_opts="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
+	fi
+	[ -n "${portage_rsync_opts}" ] || \
+		portage_rsync_opts="--recursive --links --safe-links --perms --times --compress --force --whole-file --delete --stats --timeout=180 --exclude=/distfiles --exclude=/local --exclude=/packages"
 	eval "set -- ${before_rsync}"
 	for curr_cmd
 	do	c=`eval "${curr_cmd}"` || \
 			die "`eval_gettext '${curr_cmd} failed'`"
 		eval "${c}"
 	done
-	rsync_opts="${portage_rsync_opts} ${portage_rsync_extra_opts}"
+	rsync_opts="${portage_rsync_opts} ${portage_rsync_extra_opts} --exclude=/.unionfs"
 	preprsync=:
 }
 
@@ -358,7 +365,7 @@ CallEmergeSync() {
 	then	${emulatemode} && return
 		PrepRsync "${server}"
 		MyRunCommand "rsyncing from ${hostdir}" -t sync \
-		rsync ${rsync_opts} "${hostdir}" "${local_portdir}" || \
+		rsync ${rsync_opts} -- "${hostdir}" "${local_portdir}" || \
 			die "`eval_gettext 'Could not rsync from ${hostdir}'`"
 		return
 	fi
@@ -375,11 +382,10 @@ CallSyncClient() {
 	[ -z "${client}" ] && return
 	PrepRsync "${client}"
 	MyRunCommand "`eval_gettext 'rsyncing to ${hostdir}'`" -t client \
-		rsync ${rsync_opts} "${local_portdir}" "${hostdir}" || \
+		rsync ${rsync_opts} -- "${local_portdir}" "${hostdir}" || \
 			die "`eval_gettext 'Could not rsync to ${hostdir}'`"
 }
 
-TESTRESULT=''
 CallEmergeMetadata() {
 	${doupdate} && ${metadata} || return 0
 	RootTest
