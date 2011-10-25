@@ -32,7 +32,7 @@ CLEANFILES = doxygen.cfg cppcomplete.tags tags
 dist_doc_DATA = AUTHORS ChangeLog
 
 # Stuff from our distribution
-EXTRA_DIST = config/config.rpath doxygen.cfg.in
+EXTRA_DIST = config/config.rpath doxygen.cfg.in bash/eix
 
 ACLOCAL_AMFLAGS = -I m4 -I martinm4
 

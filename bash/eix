@@ -1,0 +1,13 @@
+# quick and dirty eix bash completion
+_eix () {
+	local cur
+	COMPREPLY=()
+	_get_comp_words_by_ref cur
+
+	COMPREPLY=( $( compgen -W "$(
+	for w in $(command eix --help)
+	do	[[ $w =~ ^-- ]] && printf '%s\n' "$w"
+	done
+	)" -- "$cur" ) )
+}
+complete -F _eix eix

@@ -639,7 +639,7 @@ PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfil
 	profile    = local_profile;
 	readKeywords();
 	readMasks();
-	read_use = read_env = read_cflags = false;
+	read_use = read_env = read_license = read_cflags = false;
 }
 
 PortageUserConfig::~PortageUserConfig()

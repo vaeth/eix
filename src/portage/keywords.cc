@@ -127,6 +127,9 @@ const Keywords::Redundant
 	Keywords::RED_DOUBLE_ENV,
 	Keywords::RED_IN_ENV,
 	Keywords::RED_ALL_ENV,
+	Keywords::RED_DOUBLE_LICENSE,
+	Keywords::RED_IN_LICENSE,
+	Keywords::RED_ALL_LICENSE,
 	Keywords::RED_DOUBLE_CFLAGS,
 	Keywords::RED_IN_CFLAGS,
 	Keywords::RED_ALL_CFLAGS;

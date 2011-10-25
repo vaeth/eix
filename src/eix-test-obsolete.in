@@ -23,8 +23,8 @@ display missing packages or packages with obsolete entries in
 The speed and displayed details depend on whether you use the argument
 "detail" or "brief". Note that the result depends on your settings of the
 REDUNDANT_IF_* and NONEXISTENT_IF_* variables. In particular, the variables
-REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are false
-by default. Thus, e.g. to activate the two possible tests for
+REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are
+false by default. Thus, e.g. to activate the two possible tests for
 /etc/portage/package.use you should set something like
 REDUNDANT_IF_IN_USE="-some" REDUNDANT_IF_DOUBLE_USE="some".
 
@@ -169,6 +169,8 @@ DefineSet use \
 	REDUNDANT_IF_DOUBLE_USE
 DefineSet env \
 	REDUNDANT_IF_DOUBLE_ENV
+DefineSet license \
+	REDUNDANT_IF_DOUBLE_LICENSE
 DefineSet cflags \
 	REDUNDANT_IF_DOUBLE_CFLAGS
 DefineSet in_keywords \
@@ -181,6 +183,8 @@ DefineSet in_use \
 	REDUNDANT_IF_IN_USE
 DefineSet in_env \
 	REDUNDANT_IF_IN_ENV
+DefineSet in_license \
+	REDUNDANT_IF_IN_LICENSE
 DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
@@ -226,6 +230,14 @@ Check in_env "`eval_gettext \
 	'No uninstalled entries in ${rump}env'`" \
 	"`eval_gettext 'Not installed but in ${rump}env:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}env'`"
+Check license "`eval_gettext \
+	'No  redundant  entries in ${rump}license'`" \
+	"`eval_gettext 'Redundant in ${rump}license:'`" \
+	"`eval_gettext 'Skipping check:  redundant  entries in ${rump}license'`"
+Check in_license "`eval_gettext \
+	'No uninstalled entries in ${rump}license'`" \
+	"`eval_gettext 'Not installed but in ${rump}license:'`" \
+	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}license'`"
 Check cflags "`eval_gettext \
 	'No  redundant  entries in ${rump}cflags'`" \
 	"`eval_gettext 'Redundant in ${rump}cflags:'`" \

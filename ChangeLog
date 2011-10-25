@@ -1,5 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support basic /etc/portage/package.license checking
+	- Add rudimentary bash-completion of
+	  Marcel Philipp Partap <marcel.partap at rwth-aachen.de>, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=304819
+	- Avoid install -D (does not work on BSD), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=382539
+
 *eix-0.23.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Make profiles/* files default only on their repositories, see

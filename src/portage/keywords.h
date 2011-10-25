@@ -196,33 +196,36 @@ class Keywords
 	public:
 		typedef uint32_t Redundant;
 		static const Redundant
-			RED_NOTHING       = 0x00000, /**< None of the following           */
-			RED_DOUBLE        = 0x00001, /**< Same keyword twice              */
-			RED_DOUBLE_LINE   = 0x00002, /**< Same keyword line twice         */
-			RED_MIXED         = 0x00004, /**< Weaker and stronger keyword     */
-			RED_WEAKER        = 0x00008, /**< Unnecessarily strong keyword    */
-			RED_STRANGE       = 0x00010, /**< Unrecognized OTHERARCH or -OTHERARCH */
-			RED_NO_CHANGE     = 0x00020, /**< No change in keyword status     */
-			RED_MINUSASTERISK = 0x00040, /**< Usage of -* in package.keywords */
-			RED_IN_KEYWORDS   = 0x00080, /**< Some entry in package.keywords  */
+			RED_NOTHING       = 0x000000, /**< None of the following           */
+			RED_DOUBLE        = 0x000001, /**< Same keyword twice              */
+			RED_DOUBLE_LINE   = 0x000002, /**< Same keyword line twice         */
+			RED_MIXED         = 0x000004, /**< Weaker and stronger keyword     */
+			RED_WEAKER        = 0x000008, /**< Unnecessarily strong keyword    */
+			RED_STRANGE       = 0x000010, /**< Unrecognized OTHERARCH or -OTHERARCH */
+			RED_NO_CHANGE     = 0x000020, /**< No change in keyword status     */
+			RED_MINUSASTERISK = 0x000040, /**< Usage of -* in package.keywords */
+			RED_IN_KEYWORDS   = 0x000080, /**< Some entry in package.keywords  */
 			RED_ALL_KEYWORDS  = RED_DOUBLE|RED_DOUBLE_LINE|RED_MIXED|RED_WEAKER|RED_STRANGE|RED_NO_CHANGE|RED_MINUSASTERISK|RED_IN_KEYWORDS,
-			RED_MASK          = 0x00100, /**< No change in mask status        */
-			RED_DOUBLE_MASK   = 0x00200, /**< Double mask entry               */
-			RED_IN_MASK       = 0x00400, /**< Some entry in package.mask      */
-			RED_UNMASK        = 0x00800, /**< No change in unmask status      */
-			RED_DOUBLE_UNMASK = 0x01000, /**< Double unmask entry             */
-			RED_IN_UNMASK     = 0x02000, /**< Some entry in package.umask     */
+			RED_MASK          = 0x000100, /**< No change in mask status        */
+			RED_DOUBLE_MASK   = 0x000200, /**< Double mask entry               */
+			RED_IN_MASK       = 0x000400, /**< Some entry in package.mask      */
+			RED_UNMASK        = 0x000800, /**< No change in unmask status      */
+			RED_DOUBLE_UNMASK = 0x001000, /**< Double unmask entry             */
+			RED_IN_UNMASK     = 0x002000, /**< Some entry in package.umask     */
 			RED_ALL_MASK      = RED_MASK|RED_DOUBLE_MASK|RED_IN_MASK,
 			RED_ALL_UNMASK    = RED_UNMASK|RED_DOUBLE_UNMASK|RED_IN_UNMASK,
 			RED_ALL_MASKSTUFF = RED_ALL_MASK|RED_ALL_UNMASK,
-			RED_DOUBLE_USE    = 0x04000, /**< Double entry in package.use     */
-			RED_IN_USE        = 0x08000, /**< Some entry in package.use       */
+			RED_DOUBLE_USE    = 0x004000, /**< Double entry in package.use     */
+			RED_IN_USE        = 0x008000, /**< Some entry in package.use       */
 			RED_ALL_USE       = RED_DOUBLE_USE|RED_IN_USE,
-			RED_DOUBLE_ENV    = 0x10000, /**< Double entry in package.env     */
-			RED_IN_ENV        = 0x20000, /**< Some entry in package.env       */
+			RED_DOUBLE_ENV    = 0x010000, /**< Double entry in package.env     */
+			RED_IN_ENV        = 0x020000, /**< Some entry in package.env       */
 			RED_ALL_ENV       = RED_DOUBLE_ENV|RED_IN_ENV,
-			RED_DOUBLE_CFLAGS = 0x40000, /**< Some entry in package.cflags    */
-			RED_IN_CFLAGS     = 0x80000, /**< Double entry in package.cflags  */
+			RED_DOUBLE_LICENSE= 0x040000, /**< Some entry in package.license   */
+			RED_IN_LICENSE    = 0x080000, /**< Double entry in package.license */
+			RED_ALL_LICENSE   = RED_DOUBLE_LICENSE|RED_IN_LICENSE,
+			RED_DOUBLE_CFLAGS = 0x100000, /**< Some entry in package.cflags    */
+			RED_IN_CFLAGS     = 0x200000, /**< Double entry in package.cflags  */
 			RED_ALL_CFLAGS    = RED_DOUBLE_CFLAGS|RED_IN_CFLAGS;
 
 		KeywordsFlags keyflags;

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2011-03-23 23:57:31 +0100 (Wed, 23 Mar 2011) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -306,7 +306,7 @@ Or you can combine it with B<-e> to have no other output.
 
 If you have a reason to exclude certain entries/packages from this test,
 you can write those entries into a file /etc/portage/package.*.nonexistent
-where *=keywords,mask,unmask,use,env,cflags,installed.
+where *=keywords,mask,unmask,use,env,license,cflags,installed.
 These files (and how to modify their filenames) are described later.
 .TP
 .BI "--cache-file " FILE
@@ -2558,6 +2558,9 @@ Defines whether /etc/portage/package.use is tested with -t.
 .BR TEST_ENV " " (true / false)
 Defines whether /etc/portage/package.env is tested with -t.
 .TP
+.BR TEST_LICENSE " " (true / false)
+Defines whether /etc/portage/package.license is tested with -t.
+.TP
 .BR TEST_CFLAGS " " (true / false)
 Defines whether /etc/portage/package.cflags is tested with -t.
 .TP
@@ -2683,6 +2686,10 @@ for the versions in question.
 Applies if /etc/portage/package.env matches twice
 for the versions in question.
 .TP
+.BR REDUNDANT_IF_DOUBLE_LICENSE " " (string ", see above")
+Applies if /etc/portage/package.license matches twice
+for the versions in question.
+.TP
 .BR REDUNDANT_IF_DOUBLE_CFLAGS " " (string ", see above")
 Applies if /etc/portage/package.cflags matches twice
 for the versions in question.
@@ -2716,6 +2723,10 @@ This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.u
 .BR REDUNDANT_IF_IN_ENV " " (string ", see above")
 This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.env.
 .TP
+.BR REDUNDANT_IF_IN_LICENSE " " (string ", see above")
+This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.license.
+See the above comments about this file.
+.TP
 .BR REDUNDANT_IF_IN_CFLAGS " " (string ", see above")
 This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.cflags.
 See the above comments about this file.
@@ -2742,6 +2753,9 @@ This is a list of filenames/dirnames which serve as /etc/portage/package.use.non
 .TP
 .BR ENV_NONEXISTENT " " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.env.nonexistent
+.TP
+.BR LICENSE_NONEXISTENT " " "(string list)"
+This is a list of filenames/dirnames which serve as /etc/portage/package.license.nonexistent
 .TP
 .BR CFLAGS_NONEXISTENT " " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nonexistent
@@ -2777,11 +2791,12 @@ The corresponding packages are treated as exceptions for B<UPGRADE_TO_HIGHEST_SL
 .SS /etc/portage/package.unmask.nonexistent
 .SS /etc/portage/package.use.nonexistent
 .SS /etc/portage/package.env.nonexistent
+.SS /etc/portage/package.license.nonexistent
 .SS /etc/portage/package.cflags.nonexistent
 Similarly as /etc/portage/package.*, this can be a file or a directory.
 If an entry (separated by space or newline) matches the first word of a line
-in the corresponding /etc/portage/package.{keywords,mask,unmask,use,cflags}
-file, this line is excluded from the -t tests (for names not in the database).
+in the corresponding /etc/portage/package.* file,
+this line is excluded from the -t tests (for names not in the database).
 You can use this to eliminate certain warning from -t.
 
 .SS /etc/portage/package.installed.nonexistent
@@ -2822,6 +2837,7 @@ B<in_mask>, B<mask_no_change>, B<double_masked>,
 B<in_unmask>, B<unmask_no_change>, B<double_unmasked>,
 B<in_use>, B<double_use>,
 B<in_env>, B<double_env>,
+B<in_license>, B<double_license>,
 B<in_cflags>, B<double_cflags>,
 the meaning corresponding to the according B<REDUNDNANT_IF_*> variable.
 

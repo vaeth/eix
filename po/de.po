@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-08-29 19:32+0200\n"
+"POT-Creation-Date: 2011-09-11 14:05+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Boris Petersen <transacid@gmail.com>\n"
 "Language-Team: German\n"
@@ -858,8 +858,8 @@ msgid ""
 "\"detail\" or \"brief\". Note that the result depends on your settings of "
 "the\n"
 "REDUNDANT_IF_* and NONEXISTENT_IF_* variables. In particular, the variables\n"
-"REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are false\n"
-"by default. Thus, e.g. to activate the two possible tests for\n"
+"REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are\n"
+"false by default. Thus, e.g. to activate the two possible tests for\n"
 "/etc/portage/package.use you should set something like\n"
 "REDUNDANT_IF_IN_USE=\"-some\" REDUNDANT_IF_DOUBLE_USE=\"some\".\n"
 "\n"
@@ -899,7 +899,8 @@ msgstr ""
 "das Ergebnis von den Werten der Variablen REDUNDANT_IF_* und "
 "NONEXISTENT_IF_*\n"
 "abhängt. Insbesondere sind per Default die Variablen\n"
-"REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} und REDUNDANT_IF_MIXED \"false\".\n"
+"REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} und REDUNDANT_IF_MIXED\n"
+"auf \"false\" gesetzt.\n"
 "Um also beispielsweise die beiden Tests für /etc/portage/package.use zu\n"
 "aktivieren, sollte so etwas wie REDUNDANT_IF_IN_USE=\"-some\" und\n"
 "REDUNDANT_IF_DOUBLE_USE=\"some\" gesetzt werden.\n"
@@ -930,195 +931,225 @@ msgstr ""
 msgid "... considered as ${z}"
 msgstr "... wegen ${z}"
 
-#: src/eix-test-obsolete.sh:188
+#: src/eix-test-obsolete.sh:192
 #, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Keine   Redundanz   in    ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:189
+#: src/eix-test-obsolete.sh:193
 #, sh-format
 msgid "Redundant in ${rump}{,accept_}keywords:"
 msgstr "Redundant in ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:191
+#: src/eix-test-obsolete.sh:195
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:193
+#: src/eix-test-obsolete.sh:197
 #, sh-format
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Nichts Uninstalliertes in ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:194
+#: src/eix-test-obsolete.sh:198
 #, sh-format
 msgid "Not installed but in ${rump}{,accept_}keywords:"
 msgstr "Uninstalliert, aber in ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:196
+#: src/eix-test-obsolete.sh:200
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:198
+#: src/eix-test-obsolete.sh:202
 #, sh-format
 msgid "No  redundant  entries in ${rump}mask"
 msgstr "Keine   Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:199
+#: src/eix-test-obsolete.sh:203
 #, sh-format
 msgid "Redundant in ${rump}mask:"
 msgstr "Redundant in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:200
+#: src/eix-test-obsolete.sh:204
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}mask"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:202
+#: src/eix-test-obsolete.sh:206
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask"
 msgstr "Nichts Uninstalliertes in ${rump}mask"
 
-#: src/eix-test-obsolete.sh:203
+#: src/eix-test-obsolete.sh:207
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Uninstalliert, aber in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:204
+#: src/eix-test-obsolete.sh:208
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}mask"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}mask"
 
-#: src/eix-test-obsolete.sh:206
+#: src/eix-test-obsolete.sh:210
 #, sh-format
 msgid "No  redundant  entries in ${rump}unmask"
 msgstr "Keine   Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:207
+#: src/eix-test-obsolete.sh:211
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
 msgstr "Redundant in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:208
+#: src/eix-test-obsolete.sh:212
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:210
+#: src/eix-test-obsolete.sh:214
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask"
 msgstr "Nichts Uninstalliertes in ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:211
+#: src/eix-test-obsolete.sh:215
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Uninstalliert, aber in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:212
+#: src/eix-test-obsolete.sh:216
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:214
+#: src/eix-test-obsolete.sh:218
 #, sh-format
 msgid "No  redundant  entries in ${rump}use"
 msgstr "Keine   Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:215
+#: src/eix-test-obsolete.sh:219
 #, sh-format
 msgid "Redundant in ${rump}use:"
 msgstr "Redundant in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:216
+#: src/eix-test-obsolete.sh:220
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}use"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:218
+#: src/eix-test-obsolete.sh:222
 #, sh-format
 msgid "No uninstalled entries in ${rump}use"
 msgstr "Nichts Uninstalliertes in ${rump}use"
 
-#: src/eix-test-obsolete.sh:219
+#: src/eix-test-obsolete.sh:223
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Uninstalliert, aber in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:220
+#: src/eix-test-obsolete.sh:224
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}use"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}use"
 
-#: src/eix-test-obsolete.sh:222
+#: src/eix-test-obsolete.sh:226
 #, sh-format
 msgid "No  redundant  entries in ${rump}env"
 msgstr "Keine   Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:223
+#: src/eix-test-obsolete.sh:227
 #, sh-format
 msgid "Redundant in ${rump}env:"
 msgstr "Redundant in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:224
+#: src/eix-test-obsolete.sh:228
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}env"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:226
+#: src/eix-test-obsolete.sh:230
 #, sh-format
 msgid "No uninstalled entries in ${rump}env"
 msgstr "Nichts Uninstalliertes in ${rump}env"
 
-#: src/eix-test-obsolete.sh:227
+#: src/eix-test-obsolete.sh:231
 #, sh-format
 msgid "Not installed but in ${rump}env:"
 msgstr "Uninstalliert, aber in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:228
+#: src/eix-test-obsolete.sh:232
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}env"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}env"
 
-#: src/eix-test-obsolete.sh:230
+#: src/eix-test-obsolete.sh:234
+#, sh-format
+msgid "No  redundant  entries in ${rump}license"
+msgstr "Keine   Redundanz   in    ${rump}license"
+
+#: src/eix-test-obsolete.sh:235
+#, sh-format
+msgid "Redundant in ${rump}license:"
+msgstr "Redundant in ${rump}license:"
+
+#: src/eix-test-obsolete.sh:236
+#, sh-format
+msgid "Skipping check:  redundant  entries in ${rump}license"
+msgstr "Übergehe Check:  Redundanz   in    ${rump}license"
+
+#: src/eix-test-obsolete.sh:238
+#, sh-format
+msgid "No uninstalled entries in ${rump}license"
+msgstr "Nichts Uninstalliertes in ${rump}license"
+
+#: src/eix-test-obsolete.sh:239
+#, sh-format
+msgid "Not installed but in ${rump}license:"
+msgstr "Uninstalliert, aber in ${rump}license:"
+
+#: src/eix-test-obsolete.sh:240
+#, sh-format
+msgid "Skipping check: uninstalled entries in ${rump}license"
+msgstr "Übergehe Check: Uninstalliertes in ${rump}license"
+
+#: src/eix-test-obsolete.sh:242
 #, sh-format
 msgid "No  redundant  entries in ${rump}cflags"
 msgstr "Keine   Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:231
+#: src/eix-test-obsolete.sh:243
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
 msgstr "Redundant in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:232
+#: src/eix-test-obsolete.sh:244
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:234
+#: src/eix-test-obsolete.sh:246
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags"
 msgstr "Nichts Uninstalliertes in ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:235
+#: src/eix-test-obsolete.sh:247
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Uninstalliert, aber in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:236
+#: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:238
+#: src/eix-test-obsolete.sh:250
 msgid "All installed versions of packages are in the database."
 msgstr "Alle installierten Paketversionen sind in der Datenbank."
 
-#: src/eix-test-obsolete.sh:240
+#: src/eix-test-obsolete.sh:252
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
-#: src/eix-test-obsolete.sh:241
+#: src/eix-test-obsolete.sh:253
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
@@ -1430,7 +1461,7 @@ msgstr "Probleme beim Parsen von %s: %s\n"
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:578 src/eix.cc:890
+#: src/eix.cc:578 src/eix.cc:895
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1450,31 +1481,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:849 src/eix.cc:868
+#: src/eix.cc:854 src/eix.cc:873
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:853
+#: src/eix.cc:858
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:861
+#: src/eix.cc:866
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:971
+#: src/eix.cc:976
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:972
+#: src/eix.cc:977
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:977
+#: src/eix.cc:982
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1483,7 +1514,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:978
+#: src/eix.cc:983
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1492,7 +1523,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1035
+#: src/eix.cc:1040
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1500,7 +1531,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1038
+#: src/eix.cc:1043
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -4881,20 +4912,24 @@ msgid "Defines whether /etc/portage/package.env is tested with -t."
 msgstr "Soll /etc/portage/package.env bei -t getestet werden?"
 
 #: src/eixrc/defaults.cc:2242
+msgid "Defines whether /etc/portage/package.license is tested with -t."
+msgstr "Soll /etc/portage/package.license bei -t getestet werden?"
+
+#: src/eixrc/defaults.cc:2246
 msgid "Defines whether /etc/portage/package.cflags is tested with -t."
 msgstr "Soll /etc/portage/package.cflags bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:2246
+#: src/eixrc/defaults.cc:2250
 msgid "Defines whether removed packages are tested with -t."
 msgstr "Sollen gelöschte Pakete bei -t getestet werden?"
 
-#: src/eixrc/defaults.cc:2250
+#: src/eixrc/defaults.cc:2254
 msgid "Defines whether non-existing installed versions are positive for -T."
 msgstr ""
 "Sollen nicht-existente installierte Versionen bei -T einen Treffer\n"
 "ergeben?"
 
-#: src/eixrc/defaults.cc:2254
+#: src/eixrc/defaults.cc:2258
 msgid ""
 "Defines whether versions are non-existent for TEST_FOR_NONEXISTENT\n"
 "if they come from a different overlay than the installed version."
@@ -4903,18 +4938,18 @@ msgstr ""
 "nicht existent gelten, die von einem anderen Overlay als die installierte\n"
 "kommen."
 
-#: src/eixrc/defaults.cc:2259
+#: src/eixrc/defaults.cc:2263
 msgid ""
 "Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT."
 msgstr ""
 "Legt fest, ob für TEST_FOR_NONEXISTENT maskierte Versionen als\n"
 "nicht existent gelten."
 
-#: src/eixrc/defaults.cc:2263
+#: src/eixrc/defaults.cc:2267
 msgid "Defines whether redundant entries are positive for -T."
 msgstr "Legt fest, ob redundante Einträge für -T einen Treffer ergeben."
 
-#: src/eixrc/defaults.cc:2267
+#: src/eixrc/defaults.cc:2271
 msgid ""
 "If full or true modify ARCH by ACCEPT_KEYWORDS.\n"
 "This determines which keywords are considered as ARCH or OTHERARCH.\n"
@@ -4924,7 +4959,7 @@ msgstr ""
 "Dies legt fest, welche Keywords als ARCH oder OTHERARCH aufgefasst werden.\n"
 "Der Wert full beeinflusst auch das ursprüngliche Keywording durch ARCH."
 
-#: src/eixrc/defaults.cc:2273
+#: src/eixrc/defaults.cc:2277
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists the same keyword\n"
 "twice for the versions in question."
@@ -4932,7 +4967,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen ein Keyword doppelt enthält."
 
-#: src/eixrc/defaults.cc:2278
+#: src/eixrc/defaults.cc:2282
 msgid ""
 "Applies if /etc/portage/package.accept_keywords has two lines for\n"
 "identical target."
@@ -4940,7 +4975,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen zwei Zeilen enthält."
 
-#: src/eixrc/defaults.cc:2283
+#: src/eixrc/defaults.cc:2287
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists two different\n"
 "keywords, e.g. ~ARCH and -*, for the versions in question."
@@ -4948,7 +4983,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords für die fraglichen\n"
 "Versionen zwei verschieden Keywords angibt, wie etwa ~ARCH und -*."
 
-#: src/eixrc/defaults.cc:2288
+#: src/eixrc/defaults.cc:2292
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists a keywords which can\n"
 "be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH\n"
@@ -4960,7 +4995,7 @@ msgstr ""
 "könnte, etwa -*, ~OTHERARCH oder ~OTHERARCH anstatt ~ARCH, oder ~OTHERARCH\n"
 "anstatt OTHERARCH."
 
-#: src/eixrc/defaults.cc:2295
+#: src/eixrc/defaults.cc:2299
 msgid ""
 "Applies if /etc/portage/package.accept_keywords lists a strange keyword\n"
 "e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
@@ -4970,7 +5005,7 @@ msgstr ""
 "Versionen ein seltsames Keyword enthält, etwas UNKNOWNARCH (unbekannt für\n"
 "das ebuild und ARCH) oder -OTHERARCH."
 
-#: src/eixrc/defaults.cc:2301
+#: src/eixrc/defaults.cc:2305
 msgid ""
 "Applies if /etc/portage/package.accept_keywords contains some -* entry.\n"
 "This test only applies if OBSOLETE_MINUSASTERISK is false."
@@ -4979,7 +5014,7 @@ msgstr ""
 "Dieser Test kommt nur im Fall eines negativen OBSOLETE_MINUSASTERISK\n"
 "zum Einsatz."
 
-#: src/eixrc/defaults.cc:2306
+#: src/eixrc/defaults.cc:2310
 msgid ""
 "Applies if /etc/portage/package.accept_keywords provides keywords which do\n"
 "not change the availability keywords status for the versions in question."
@@ -4988,7 +5023,7 @@ msgstr ""
 "Versionen ein Keyword enthält, das den Status der Version nicht\n"
 "beeinflussen."
 
-#: src/eixrc/defaults.cc:2311
+#: src/eixrc/defaults.cc:2315
 msgid ""
 "Applies if /etc/portage/package.mask contains entries\n"
 "which do not change the mask status for the versions in question."
@@ -4996,7 +5031,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.mask für die fraglichen Versionen\n"
 "Einträge enthält, die den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:2316
+#: src/eixrc/defaults.cc:2320
 msgid ""
 "Applies if /etc/portage/package.unmask contains entries\n"
 "which do not change the mask status for the versions in question."
@@ -5004,7 +5039,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.unmask für die fraglichen Versionen\n"
 "Einträge enthält, die den Status der Version nicht beeinflussen."
 
-#: src/eixrc/defaults.cc:2321
+#: src/eixrc/defaults.cc:2325
 msgid ""
 "Applies if /etc/portage/package.mask matches twice\n"
 "for the versions in question."
@@ -5012,7 +5047,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.mask für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2326
+#: src/eixrc/defaults.cc:2330
 msgid ""
 "Applies if /etc/portage/package.unmask matches twice\n"
 "for the versions in question."
@@ -5020,7 +5055,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.unmask für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2331
+#: src/eixrc/defaults.cc:2335
 msgid ""
 "Applies if /etc/portage/package.use matches twice\n"
 "for the versions in question."
@@ -5028,7 +5063,7 @@ msgstr ""
 "Testet, ob /etc/portage/package.use für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2336
+#: src/eixrc/defaults.cc:2340
 msgid ""
 "Applies if /etc/portage/package.env matches twice\n"
 "for the versions in question."
@@ -5036,7 +5071,15 @@ msgstr ""
 "Testet, ob /etc/portage/package.env für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2341
+#: src/eixrc/defaults.cc:2345
+msgid ""
+"Applies if /etc/portage/package.license matches twice\n"
+"for the versions in question."
+msgstr ""
+"Testet, ob /etc/portage/package.license für die fraglichen Versionen\n"
+"doppelt zutrifft."
+
+#: src/eixrc/defaults.cc:2350
 msgid ""
 "Applies if /etc/portage/package.cflags matches twice\n"
 "for the versions in question."
@@ -5044,44 +5087,50 @@ msgstr ""
 "Testet, ob /etc/portage/package.cflags für die fraglichen Versionen\n"
 "doppelt zutrifft."
 
-#: src/eixrc/defaults.cc:2346
+#: src/eixrc/defaults.cc:2355
 msgid ""
 "Applies if /etc/portage/package.accept_keywords contains a matching entry."
 msgstr ""
 "Testet, ob /etc/portage/package.accept_keywords auf die fraglichen\n"
 "Versionen zutrifft."
 
-#: src/eixrc/defaults.cc:2350
+#: src/eixrc/defaults.cc:2359
 msgid "Applies if /etc/portage/package.mask matches."
 msgstr ""
 "Testet, ob /etc/portage/package.mask auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2354
+#: src/eixrc/defaults.cc:2363
 msgid "Applies if /etc/portage/package.unmask matches."
 msgstr ""
 "Testet, ob /etc/portage/package.unmask auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2358
+#: src/eixrc/defaults.cc:2367
 msgid "Applies if /etc/portage/package.use matches."
 msgstr ""
 "Testet, ob /etc/portage/package.use auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2362
+#: src/eixrc/defaults.cc:2371
 msgid "Applies if /etc/portage/package.env matches."
 msgstr ""
 "Testet, ob /etc/portage/package.env auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2366
+#: src/eixrc/defaults.cc:2375
+msgid "Applies if /etc/portage/package.license matches."
+msgstr ""
+"Testet, ob /etc/portage/package.license auf die fraglichen Versionen\n"
+"zutrifft."
+
+#: src/eixrc/defaults.cc:2379
 msgid "Applies if /etc/portage/package.cflags matches."
 msgstr ""
 "Testet, ob /etc/portage/package.cflags auf die fraglichen Versionen\n"
 "zutrifft."
 
-#: src/eixrc/defaults.cc:2370
+#: src/eixrc/defaults.cc:2383
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It is the directory where eix searches for its package.*.*/sets.eix files."
@@ -5090,7 +5139,7 @@ msgstr ""
 "Sie enthält das Directory, in dem eix nach seinen\n"
 "package.*.*/sets.eix-Dateien sucht."
 
-#: src/eixrc/defaults.cc:2375
+#: src/eixrc/defaults.cc:2388
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=false."
@@ -5098,7 +5147,7 @@ msgstr ""
 "Falls UPGRADE_TO_HIGHEST_SLOT=true werden Pakete dieses Dateien/Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=false wäre."
 
-#: src/eixrc/defaults.cc:2380
+#: src/eixrc/defaults.cc:2393
 msgid ""
 "If UPGRADE_TO_HIGHEST_SLOT=false, then packages listed in these files/dirs\n"
 "are treated as if UPGRADE_TO_HIGHEST_SLOT=true."
@@ -5107,49 +5156,55 @@ msgstr ""
 "Directories\n"
 "behandelt, als wenn UPGRADE_TO_HIGHEST_SLOT=true wäre."
 
-#: src/eixrc/defaults.cc:2386
+#: src/eixrc/defaults.cc:2399
 msgid "Entries listed in these files/dirs are excluded for -t TEST_KEYWORDS."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_KEYWORDS\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2390
+#: src/eixrc/defaults.cc:2403
 msgid "Entries listed in these files/dirs are excluded for -t TEST_MASK."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_MASK\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2394
+#: src/eixrc/defaults.cc:2407
 msgid "Entries listed in these files/dirs are excluded for -t TEST_UNMASK."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_UNMASK\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2398
+#: src/eixrc/defaults.cc:2411
 msgid "Entries listed in these files/dire are excluded for -t TEST_USE."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_USE\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2402
+#: src/eixrc/defaults.cc:2415
 msgid "Entries listed in these files/dire are excluded for -t TEST_ENV."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_ENV\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2406
+#: src/eixrc/defaults.cc:2419
+msgid "Entries listed in these files/dirs are excluded for -t TEST_LICENSE."
+msgstr ""
+"Einträge dieser Dateien/Directories werden von -t TEST_LICENSE\n"
+"ausgenommen."
+
+#: src/eixrc/defaults.cc:2423
 msgid "Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_CFLAGS\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2410
+#: src/eixrc/defaults.cc:2427
 msgid "Packages listed in these files/dirs are excluded for -t TEST_REMOVED."
 msgstr ""
 "Einträge dieser Dateien/Directories werden von -t TEST_REMOVED\n"
 "ausgenommen."
 
-#: src/eixrc/defaults.cc:2414
+#: src/eixrc/defaults.cc:2431
 msgid ""
 "This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
 "It is meant to be a local addition to PACKAGE_NOWARN."
@@ -5157,7 +5212,7 @@ msgstr ""
 "Diese Variable wird nur für Delayed Substitution in PACKAGE_NOWARN benutzt.\n"
 "Sie ist für lokale Erweiterungen von PACKAGE_NOWARN gedacht."
 
-#: src/eixrc/defaults.cc:2419
+#: src/eixrc/defaults.cc:2436
 msgid ""
 "This variable is only used for delayed substitution in PACKAGE_NOWARN.\n"
 "If it is set then the files from OBSOLETE_PACKAGE_NOWARN are used."
@@ -5165,7 +5220,7 @@ msgstr ""
 "Diese Variable wird nur für Delayed Substitution in PACKAGE_NOWARN benutzt.\n"
 "Wenn sie gesetzt ist, werden die Files von OBSOLETE_PACKAGE_NOWARN benutzt."
 
-#: src/eixrc/defaults.cc:2431
+#: src/eixrc/defaults.cc:2449
 msgid ""
 "This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"
 "variable OBSOLETE_NOWARN is set."
@@ -5173,11 +5228,11 @@ msgstr ""
 "Diese Variable wird zur Delayed Substituion in PACKAGE_NOWARN benutzt,\n"
 "falls die Variable OBSOLETE_NOWARN gesetzt ist."
 
-#: src/eixrc/defaults.cc:2440
+#: src/eixrc/defaults.cc:2458
 msgid "This file/directory contains exceptions for -T tests."
 msgstr "Diese Datei/Directory enthält Ausnahmen für -T."
 
-#: src/eixrc/defaults.cc:2444
+#: src/eixrc/defaults.cc:2462
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It specifies directories for EIX_LOCAL_SETS."
@@ -5185,14 +5240,14 @@ msgstr ""
 "Diese Variable wird nur zur Delayed Substition benutzt.\n"
 "Sie gibt die Directories für EIX_LOCAL_SETS an."
 
-#: src/eixrc/defaults.cc:2453
+#: src/eixrc/defaults.cc:2471
 msgid ""
 "This is a space-separated list of directories containing set definitions."
 msgstr ""
 "Dies ist eine Liste von Directories (durch Leerzeichen getrennt) mit\n"
 "Set-Definitionen."
 
-#: src/eixrc/defaults.cc:2457
+#: src/eixrc/defaults.cc:2475
 msgid ""
 "This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
 "You might need to modify it according to the installed portage version.\n"
@@ -5203,7 +5258,7 @@ msgstr ""
 "Portage-Version angepasst werden. Wenn er leer ist, werden alle\n"
 "Ebuilds mit EAPI-Suffixen (s. GLEP 55) ignoriert."
 
-#: src/eixrc/defaults.cc:2463
+#: src/eixrc/defaults.cc:2481
 msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."

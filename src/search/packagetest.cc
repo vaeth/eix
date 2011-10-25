@@ -935,6 +935,15 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 			}
 		}
+		r = rflags & Keywords::RED_ALL_LICENSE;
+		if(r != Keywords::RED_NOTHING) {
+			if(r && portagesettings->user_config->CheckLicense(p, r)) {
+				if(have_redundant(*p, r & Keywords::RED_DOUBLE_LICENSE))
+					break;
+				if(have_redundant(*p, r & Keywords::RED_IN_LICENSE))
+					break;
+			}
+		}
 		r = rflags & Keywords::RED_ALL_CFLAGS;
 		if(r != Keywords::RED_NOTHING) {
 			if(r && portagesettings->user_config->CheckCflags(p, r)) {

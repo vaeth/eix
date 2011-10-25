@@ -2237,6 +2237,10 @@ AddOption(BOOLEAN, "TEST_ENV",
 	"true", _(
 	"Defines whether /etc/portage/package.env is tested with -t."));
 
+AddOption(BOOLEAN, "TEST_LICENSE",
+	"true", _(
+	"Defines whether /etc/portage/package.license is tested with -t."));
+
 AddOption(BOOLEAN, "TEST_CFLAGS",
 	"true", _(
 	"Defines whether /etc/portage/package.cflags is tested with -t."));
@@ -2336,6 +2340,11 @@ AddOption(STRING, "REDUNDANT_IF_DOUBLE_ENV",
 	"Applies if /etc/portage/package.env matches twice\n"
 	"for the versions in question."));
 
+AddOption(STRING, "REDUNDANT_IF_DOUBLE_LICENSE",
+	"some", _(
+	"Applies if /etc/portage/package.license matches twice\n"
+	"for the versions in question."));
+
 AddOption(STRING, "REDUNDANT_IF_DOUBLE_CFLAGS",
 	"false", _(
 	"Applies if /etc/portage/package.cflags matches twice\n"
@@ -2360,6 +2369,10 @@ AddOption(STRING, "REDUNDANT_IF_IN_USE",
 AddOption(STRING, "REDUNDANT_IF_IN_ENV",
 	"false", _(
 	"Applies if /etc/portage/package.env matches."));
+
+AddOption(STRING, "REDUNDANT_IF_IN_LICENSE",
+	"-some", _(
+	"Applies if /etc/portage/package.license matches."));
 
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 	"false", _(
@@ -2401,6 +2414,10 @@ AddOption(STRING, "ENV_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.env.nonexistent", _(
 	"Entries listed in these files/dire are excluded for -t TEST_ENV."));
 
+AddOption(STRING, "LICENSE_NONEXISTENT",
+	"%{\\EIXCFGDIR}/package.license.nonexistent", _(
+	"Entries listed in these files/dirs are excluded for -t TEST_LICENSE."));
+
 AddOption(STRING, "CFLAGS_NONEXISTENT",
 	"%{\\EIXCFGDIR}/package.cflags.nonexistent", _(
 	"Entries listed in these files/dirs are excluded for -t TEST_CFLAGS."));
@@ -2426,6 +2443,7 @@ AddOption(STRING, "OBSOLETE_PACKAGE_NOWARN",
 	"%{\\EIXCFGDIR}/package.unmask.nowarn "
 	"%{\\EIXCFGDIR}/package.use.nowarn "
 	"%{\\EIXCFGDIR}/package.env.nowarn "
+	"%{\\EIXCFGDIR}/package.license.nowarn "
 	"%{\\EIXCFGDIR}/package.cflags.nowarn "
 	"%{\\EIXCFGDIR}/package.installed.nowarn", _(
 	"This variable is used for delayed substitution in PACKAGE_NOWARN if the\n"

@@ -25,7 +25,8 @@ if INSTALL_ZSH_COMPLETION
 noinst_DATA = $(completionoutput)
 
 install-data-local:
-	$(AM_V_at)for i in $(completionoutput); do $(INSTALL_DATA) -D "$${i}" "$(DESTDIR)$(ZSH_COMPLETION)/$${i}"; done
+	$(AM_V_at)test -d "$(DESTDIR)$(ZSH_COMPLETION)" || $(MKDIR_P) "$(DESTDIR)$(ZSH_COMPLETION)" && \
+		for i in $(completionoutput); do $(INSTALL_DATA) "$${i}" "$(DESTDIR)$(ZSH_COMPLETION)"; done
 
 uninstall-local:
 	$(AM_V_at)for i in $(completionoutput); do $(RM) "$(DESTDIR)$(ZSH_COMPLETION)/$${i}"; done
