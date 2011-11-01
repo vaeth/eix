@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Major rewrite of varsreader.cc: Allow concatenation of strings
+
 *eix-0.23.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- New cache method metadata-md5 to support metadata/md5-cache

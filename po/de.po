@@ -1,16 +1,16 @@
 # German translations for eix package
 # German messages for eix.
-# Copyright (C) 2009 Martin Vaeth
+# Copyright (C) 2009-2011 Martin Vaeth
 # This file is distributed under the same license as the eix package.
-#  <vaeth@mathematik.uni-wuerzburg.de>, 2009.
+#  <vaeth@mathematik.uni-wuerzburg.de>, 2009-2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
-"Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-10-21 20:55+0200\n"
+"Report-Msgid-Bugs-To: http://bugs.gentoo.org/\n"
+"POT-Creation-Date: 2011-10-29 23:47+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
-"Last-Translator: Boris Petersen <transacid@gmail.com>\n"
+"Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
 "Language: German\n"
 "MIME-Version: 1.0\n"
@@ -2072,15 +2072,15 @@ msgstr "getgrnam(%r) schlug fehl: %s"
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:86
+#: src/eixTk/varsreader.cc:111
 msgid "failed to source %r"
 msgstr "%r kann nicht ge\"source\"d werden"
 
-#: src/eixTk/varsreader.cc:741
+#: src/eixTk/varsreader.cc:819
 msgid "Can't map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:785
+#: src/eixTk/varsreader.cc:863
 msgid "Nesting level too deep when reading %r"
 msgstr "Zu tiefe Verschachtelung beim Lesen von %r"
 
@@ -4251,8 +4251,7 @@ msgstr ""
 "Match-Algorithmus."
 
 #: src/eixrc/defaults.cc:1824
-msgid ""
-"Whether eix-update -v is on by default (output cache method per ebuild)"
+msgid "Whether eix-update -v is on by default (output cache method per ebuild)"
 msgstr ""
 "Legt fest, ob eix-update -v per Default an ist.\n"
 "Dies führt zur Ausgabe der Cache-Methode pro Ebuild."

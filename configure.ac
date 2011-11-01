@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.23.2], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.23.3], [http://bugs.gentoo.org/], [eix], [http://forums.gentoo.org/viewtopic-t-278819.html])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])

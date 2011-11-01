@@ -104,6 +104,8 @@ class VarsReader {
 			state_JUMP_WHITESPACE,
 			state_FIND_ASSIGNMENT,
 			state_EVAL_VALUE,
+			state_EVAL_READ,
+			state_ASSIGN_KEY_VALUE,
 			state_VALUE_SINGLE_QUOTE,
 			state_VALUE_SINGLE_QUOTE_PORTAGE,
 			state_VALUE_DOUBLE_QUOTE,
@@ -126,6 +128,11 @@ class VarsReader {
 		 * '\\' -> [RV] NOISE_ESCAPE | '\'' -> [RV] NOISE_SINGLE_QUOTE | '"' -> [RV] NOISE_DOUBLE_QUOTE | '#' -> [RV] JUMP_COMMENT
 		 * '\n' -> [RV] (and check if we are at EOF, EOF's only occur after a newline) -> JUMP_WHITESPACE */
 		void JUMP_NOISE();
+
+		/** Assign key=value or source file and change state to JUMP_NOISE (or STOP
+		 *  if an early stop is required due to ONLY_KEYWORDS_SLOT or ONLY_HAVE_READ)
+		 * -> [RV] JUMP_NOISE */
+		void ASSIGN_KEY_VALUE();
 
 		/** Jumps comments.
 		 * Read until the next '\n' comes in. Then move to JUMP_NOISE. */
@@ -151,8 +158,16 @@ class VarsReader {
 		 * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
 		 * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
 		 * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE}
-		 * If we have the begin of a valid value we are reseting the value-buffer. */
+		 * We are resetting the value-buffer. */
 		void EVAL_VALUE();
+
+		/** Looks if the following input is a valid secondary value-part.
+		 * ['"\^#\n\t ] is allowed.
+		 * [\n\t# ] -> ASSIGN_KEY_VALUE
+		 * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
+		 * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
+		 * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE} */
+		void EVAL_READ();
 
 		/** Reads a value enclosed in single quotes (').
 		 * Copy INPUT into value-buffer while INPUT is not in ['\\].
@@ -178,16 +193,22 @@ class VarsReader {
 		 * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE_PORTAGE] | '"' -> [RV] JUMP_NOISE */
 		void VALUE_DOUBLE_QUOTE_PORTAGE();
 
-		/** Read value not inclosed in any quotes.
+		/** Read value not enclosed in any quotes.
 		 * Thus there are no spaces and tabs allowed. Everything must be escaped.
-		 * Move INPUT into buffer while it's not in [ \\t\\n\\]. If the value ends we call ASSIGN_KEY_VALUE.
-		 * [\\n\\t ] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
+		 * Move INPUT into buffer while it's not in [ \t\n\r\\'"#].
+		 * If the value ends we call EVAL_READ.
+		 * [# \t\r\n] -> EVAL_READ |
+		 * '\\' -> WHITESCAPE_ESCAPE | \' -> VALUE_SINGLE_QUOTE |
+		 * '"' -> VALUE_DOUBLE_QUOTE */
 		void VALUE_WHITESPACE();
 
-		/** Read value not inclosed in any quotes for PORTAGE_ESCAPES.
+		/** Read value not enclosed in any quotes for PORTAGE_ESCAPES.
 		 * Thus there are no spaces and tabs allowed. Everything must be escaped.
-		 * Move INPUT into buffer while it's not in [ \\t\\n\\]. If the value ends we call ASSIGN_KEY_VALUE.
-		 * [\\n\\t ] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE_PORTAGE */
+		 * Move INPUT into buffer while it's not in [ \t\n\r\\'"#].
+		 * If the value ends we call EVAL_READ.
+		 * [# \t\r\n] -> EVAL_READ |
+		 * '\\' -> WHITESCAPE_ESCAPE_PORTAGE | \' -> VALUE_SINGLE_QUOTE_PORTAGE |
+		 * '"' -> VALUE_DOUBLE_QUOTE_PORTAGE */
 		void VALUE_WHITESPACE_PORTAGE();
 
 		/** Cares about \\ in single-quote values.
@@ -247,10 +268,6 @@ class VarsReader {
 		 * It just sits on the couch making faces at me! Stupid thing ..
 		 * [RV] -> NOISE_DOUBLE_QUOTE */
 		void NOISE_DOUBLE_QUOTE_ESCAPE();
-
-		/** Assign key=value or source file.
-		    Return true if a stop is required due to ONLY_KEYWORDS_SLOT */
-		bool assign_key_value();
 
 		/** Resolve references to a variable in declaration of a variable. */
 		void resolveReference();

@@ -32,9 +32,9 @@
 #define INPUT (*(x))
 /** Move to next input and check for end of buffer. */
 #define NEXT_INPUT do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(STOP); } while(0)
+#define NEXT_INPUT_EVAL do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(EVAL_READ); } while(0)
 #define INPUT_EOF (unlikely((x) == filebuffer_end))
-#define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) \
-	if(++(x) == filebuffer_end) STATE = state_STOP; } while(0)
+#define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) ++(x); } while(0)
 #define PREV_INPUT (--(x))
 /** Switch to different state */
 #define CHSTATE(z) do { \
@@ -63,7 +63,8 @@ const VarsReader::Flags
 	VarsReader::ONLY_HAVE_READ;
 
 
-bool VarsReader::isIncremental(const char *key)
+bool
+VarsReader::isIncremental(const char *key)
 {
 	if(incremental_keys == NULL)
 		return false;
@@ -76,43 +77,6 @@ bool VarsReader::isIncremental(const char *key)
 	return false;
 }
 
-/** Assign key=value or source file.
-    Return true if a stop is required due to ONLY_KEYWORDS_SLOT or ONLY_HAVE_READ */
-bool VarsReader::assign_key_value()
-{
-	if(unlikely(sourcecmd)) {
-		sourcecmd=false;
-		if(unlikely(!source(value))) {
-			cerr << eix::format(_("failed to source %r")) % value
-				<< endl;
-		}
-		return ((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ);
-	}
-	if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
-		if(unlikely(strncmp("KEYWORDS=", key_begin, 9) == 0))
-		{
-			(*vars)[string(key_begin, key_len)] = value;
-			parse_flags |= KEYWORDS_READ;
-			return (parse_flags & SLOT_READ);
-		}
-		else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0))
-		{
-			(*vars)[string(key_begin, key_len)] = value;
-			parse_flags |= SLOT_READ;
-			return (parse_flags & KEYWORDS_READ);
-		}
-		return false;
-	}
-	(*vars)[string(key_begin, key_len)] = value;
-	return false;
-}
-
-#define ASSIGN_KEY_VALUE  do { \
-	if (assign_key_value()) { \
-		CHSTATE(STOP); \
-	} \
-} while(0)
-
 /*************************************************************************/
 /********************** FSM states begin here ****************************/
 
@@ -120,7 +84,8 @@ bool VarsReader::assign_key_value()
  * Read until '\n' '#' '\\' '\'' '"'
  * '\\' -> [RV] NOISE_ESCAPE | '\'' -> [RV] NOISE_SINGLE_QUOTE | '"' -> [RV] NOISE_DOUBLE_QUOTE | '#' -> [RV] JUMP_COMMENT
  * '\n' -> [RV] (and check if we are at EOF, EOF's only occur after a newline) -> JUMP_WHITESPACE */
-void VarsReader::JUMP_NOISE()
+void
+VarsReader::JUMP_NOISE()
 {
 	while(likely(INPUT != '#' && INPUT != '\n' && INPUT != '\'' && INPUT != '"' && INPUT != '\\')) NEXT_INPUT;
 	switch(INPUT) {
@@ -134,11 +99,57 @@ void VarsReader::JUMP_NOISE()
 	CHSTATE(JUMP_WHITESPACE);
 }
 
+/** Assign key=value or source file and change state to JUMP_NOISE (or STOP
+ *  if an early stop is required due to ONLY_KEYWORDS_SLOT or ONLY_HAVE_READ)
+ * -> [RV] JUMP_NOISE */
+void
+VarsReader::ASSIGN_KEY_VALUE()
+{
+	if(unlikely(sourcecmd)) {
+		sourcecmd=false;
+		if(unlikely(!source(value))) {
+			cerr << eix::format(_("failed to source %r")) % value
+				<< endl;
+		}
+		if((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ) {
+			CHSTATE(STOP);
+		}
+	}
+	else if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
+		if(unlikely(strncmp("KEYWORDS=", key_begin, 9) == 0))
+		{
+			(*vars)[string(key_begin, key_len)] = value;
+			parse_flags |= KEYWORDS_READ;
+			if(parse_flags & SLOT_READ) {
+				CHSTATE(STOP);
+			}
+		}
+		else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0))
+		{
+			(*vars)[string(key_begin, key_len)] = value;
+			parse_flags |= SLOT_READ;
+			if(parse_flags & KEYWORDS_READ) {
+				CHSTATE(STOP);
+			}
+		}
+	}
+	else {
+		(*vars)[string(key_begin, key_len)] = value;
+	}
+	if(INPUT_EOF) {
+		CHSTATE(STOP);
+	}
+	CHSTATE(JUMP_NOISE);
+}
+
 /** Jumps comments.
  * Read until the next '\n' comes in. Then move to JUMP_NOISE. */
-void VarsReader::JUMP_COMMENT()
+void
+VarsReader::JUMP_COMMENT()
 {
-	while(likely(INPUT != '\n')) NEXT_INPUT;
+	while(likely(INPUT != '\n')) {
+		NEXT_INPUT;
+	}
 	CHSTATE(JUMP_NOISE);
 }
 
@@ -147,10 +158,13 @@ void VarsReader::JUMP_COMMENT()
  * '#' -> [RV] JUMP_COMMENT | [A-Z_] -> (reset key) FIND_ASSIGNMENT |
  * source or . -> EVAL_VALUE with sourcecmd=true | -> JUMP_NOISE
  * @see isValidKeyCharacter */
-void VarsReader::JUMP_WHITESPACE()
+void
+VarsReader::JUMP_WHITESPACE()
 {
 	sourcecmd=false;
-	while(INPUT == '\t' || INPUT == ' ') NEXT_INPUT;
+	while(INPUT == '\t' || INPUT == ' ') {
+		NEXT_INPUT;
+	}
 	switch(INPUT) {
 		case '#':
 			NEXT_INPUT;
@@ -198,7 +212,8 @@ void VarsReader::JUMP_WHITESPACE()
  * is always >= 1.
  * Read while not ('=' || '#') and [A-Z_0-9]
  * '=' -> EVAL_VALUE | '#' -> [RV] JUMP_COMMENT | -> JUMP_NOISE */
-void VarsReader::FIND_ASSIGNMENT()
+void
+VarsReader::FIND_ASSIGNMENT()
 {
 	key_len = 0;
 	while(likely(isValidKeyCharacter(INPUT))) { NEXT_INPUT; ++key_len;}
@@ -215,8 +230,9 @@ void VarsReader::FIND_ASSIGNMENT()
  * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
  * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
  * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE}
- * If we have the begin of a valid value we are reseting the value-buffer. */
-void VarsReader::EVAL_VALUE()
+ * We are resetting the value-buffer. */
+void
+VarsReader::EVAL_VALUE()
 {
 	NEXT_INPUT;
 	VALUE_CLEAR;
@@ -244,6 +260,42 @@ void VarsReader::EVAL_VALUE()
 	}
 }
 
+/** Looks if the following input is a valid secondary value-part.
+ * ['"\^#\n\t ] is allowed.
+ * [\n\t# ] -> ASSIGN_KEY_VALUE
+ * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
+ * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
+ * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE} */
+void
+VarsReader::EVAL_READ()
+{
+	if(INPUT_EOF) {
+		CHSTATE(ASSIGN_KEY_VALUE);
+	}
+	if(parse_flags & PORTAGE_ESCAPES) {
+		switch(INPUT) {
+			case '"':   NEXT_INPUT_EVAL; CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
+			case '\'':  NEXT_INPUT_EVAL; CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
+			case '\t':
+			case '\n':
+			case ' ':
+			case '#':   CHSTATE(ASSIGN_KEY_VALUE);
+			case '\\':  NEXT_INPUT_EVAL; CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
+			default:    CHSTATE(VALUE_WHITESPACE_PORTAGE);
+		}
+	}
+	switch(INPUT) {
+		case '"':   NEXT_INPUT_EVAL; CHSTATE(VALUE_DOUBLE_QUOTE);
+		case '\'':  NEXT_INPUT_EVAL; CHSTATE(VALUE_SINGLE_QUOTE);
+		case '\t':
+		case '\n':
+		case ' ':
+		case '#':   CHSTATE(ASSIGN_KEY_VALUE);
+		case '\\':  NEXT_INPUT_EVAL; CHSTATE(WHITESPACE_ESCAPE);
+		default:    CHSTATE(VALUE_WHITESPACE);
+	}
+}
+
 /** Backslash escapes supported by portage. */
 static const char ESC_A = 007;
 static const char ESC_B = 010;
@@ -258,32 +310,34 @@ static const char ESC_SP = ' ';
 
 /** Reads a value enclosed in single quotes (').
  * Copy INPUT into value-buffer while INPUT is not in ['\\].
- * If the value ends, ASSIGN_KEY_VALUE is called.
- * '\\' -> [RV] SINGLE_QUOTE_ESCAPE | '\'' -> [RV] JUMP_NOISE */
-void VarsReader::VALUE_SINGLE_QUOTE()
+ * If the value ends, EVAL_READ is called.
+ * '\\' -> [RV] SINGLE_QUOTE_ESCAPE | '\'' -> [RV] EVAL_READ */
+void
+VarsReader::VALUE_SINGLE_QUOTE()
 {
 	while(likely((INPUT != '\'') && (INPUT != '\\'))) {
 		VALUE_APPEND(INPUT);
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '\'':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:    NEXT_INPUT; CHSTATE(SINGLE_QUOTE_ESCAPE);
+		case '\'':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
+		default:    NEXT_INPUT_EVAL; CHSTATE(SINGLE_QUOTE_ESCAPE);
 	}
 }
 
 /** Reads a value enclosed in single quotes (') for PORTAGE_ESCAPES.
  * Copy INPUT into value-buffer while INPUT is not in ['\\].
- * If the value ends, ASSIGN_KEY_VALUE is called.
- * '\\' -> [RV] SINGLE_QUOTE_ESCAPE_PORTAGE | '\'' -> [RV] JUMP_NOISE */
-void VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
+ * If the value ends, EVAL_READ is called.
+ * '\\' -> [RV] SINGLE_QUOTE_ESCAPE_PORTAGE | '\'' -> [RV] EVAL_READ */
+void
+VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 {
 	while(likely((INPUT != '\'') && (INPUT != '\\'))) {
 		if(unlikely((INPUT == '$') && (parse_flags & SUBST_VARS))) {
-			NEXT_INPUT;
+			NEXT_INPUT_EVAL;
 			resolveReference();
 			if(INPUT_EOF) {
-				return;
+				CHSTATE(EVAL_READ);
 			}
 			continue;
 		}
@@ -293,49 +347,52 @@ void VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 		else {
 			VALUE_APPEND(INPUT);
 		}
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '\'':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:    NEXT_INPUT; CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
+		case '\'':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
+		default:    NEXT_INPUT_EVAL; CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
 	}
 }
 
 /** Read value enclosed in double-quotes (").
  * Copy INPUT into value-buffer while INPUT is not in ["\\].
- * If the value ends, ASSIGN_KEY_VALUE is called.
- * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE | '"' -> [RV] JUMP_NOISE */
-void VarsReader::VALUE_DOUBLE_QUOTE()
+ * If the value ends, EVAL_READ is called.
+ * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE | '"' -> [RV] EVAL_READ */
+void
+VarsReader::VALUE_DOUBLE_QUOTE()
 {
 	while(likely(INPUT != '"' && INPUT != '\\')) {
 		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
-			NEXT_INPUT;
+			NEXT_INPUT_EVAL;
 			resolveReference();
-			if(INPUT_EOF)
-				return;
+			if(INPUT_EOF) {
+				CHSTATE(EVAL_READ);
+			}
 			continue;
 		}
 		VALUE_APPEND(INPUT);
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '"':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:   NEXT_INPUT; CHSTATE(DOUBLE_QUOTE_ESCAPE);
+		case '"':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
+		default:   NEXT_INPUT_EVAL; CHSTATE(DOUBLE_QUOTE_ESCAPE);
 	}
 }
 
 /** Read value enclosed in double-quotes (") for PORTAGE_ESCAPES.
  * Copy INPUT into value-buffer while INPUT is not in ["\\].
- * If the value ends, ASSIGN_KEY_VALUE is called.
- * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE_PORTAGE | '"' -> [RV] JUMP_NOISE */
-void VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
+ * If the value ends, EVAL_READ is called.
+ * '\\' -> [RV] DOUBLE_QUOTE_ESCAPE_PORTAGE | '"' -> [RV] EVAL_READ */
+void
+VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 {
 	while(likely(INPUT != '"' && INPUT != '\\')) {
 		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
-			NEXT_INPUT;
+			NEXT_INPUT_EVAL;
 			resolveReference();
 			if(INPUT_EOF) {
-				return;
+				CHSTATE(EVAL_READ);
 			}
 			continue;
 		}
@@ -345,100 +402,110 @@ void VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 		else {
 			VALUE_APPEND(INPUT);
 		}
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '"':  ASSIGN_KEY_VALUE; NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:   NEXT_INPUT; CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
+		case '"':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
+		default:   NEXT_INPUT_EVAL; CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
 	}
 }
 
 /** Read value not enclosed in any quotes.
  * Thus there are no spaces and tabs allowed. Everything must be escaped.
- * Move INPUT into buffer while it's not in [ \t\n\r\\]. If the value ends we call ASSIGN_KEY_VALUE.
- * [ \t\r\n] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE */
+ * Move INPUT into buffer while it's not in [ \t\n\r\\'"#].
+ * If the value ends we call EVAL_READ.
+ * [# \t\r\n] -> EVAL_READ |
+ * '\\' -> WHITESCAPE_ESCAPE | \' -> VALUE_SINGLE_QUOTE |
+ * '"' -> VALUE_DOUBLE_QUOTE */
 void VarsReader::VALUE_WHITESPACE()
 {
-	while(likely((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n'))) {
-		if(unlikely(INPUT == '\\')) {
-			NEXT_INPUT_OR_EOF;
-			if(INPUT_EOF) {
-				break;
-			}
-			CHSTATE(WHITESPACE_ESCAPE);
-		}
-		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
-			NEXT_INPUT_OR_EOF;
-			if(INPUT_EOF) {
-				break;
-			}
-			resolveReference();
-			if(INPUT_EOF) {
-				break;
-			}
-			continue;
-		}
-		VALUE_APPEND(INPUT);
-		NEXT_INPUT_OR_EOF;
-		if(INPUT_EOF) {
-			break;
+	while(true) {
+		switch(INPUT) {
+			case '#':
+			case ' ':
+			case '\t':
+			case '\r':
+			case '\n':
+				CHSTATE(EVAL_READ);
+			case '\\':
+				NEXT_INPUT_EVAL;
+				CHSTATE(WHITESPACE_ESCAPE);
+			case '\'':
+				NEXT_INPUT_EVAL;
+				CHSTATE(VALUE_SINGLE_QUOTE);
+			case '"':
+				NEXT_INPUT_EVAL;
+				CHSTATE(VALUE_DOUBLE_QUOTE);
+			case '$':
+				if(parse_flags & SUBST_VARS) {
+					NEXT_INPUT_EVAL;
+					resolveReference();
+					if(INPUT_EOF) {
+						CHSTATE(EVAL_READ);
+					}
+					continue;
+				}
+			default:
+				VALUE_APPEND(INPUT);
+				NEXT_INPUT_EVAL;
 		}
 	}
-	ASSIGN_KEY_VALUE;
-	if(INPUT_EOF) {
-		return;
-	}
-	CHSTATE(JUMP_NOISE);
 }
 
 /** Read value not enclosed in any quotes for PORTAGE_ESCAPES.
  * Thus there are no spaces and tabs allowed. Everything must be escaped.
- * Move INPUT into buffer while it's not in [ \t\n\r\\]. If the value ends we call ASSIGN_KEY_VALUE.
- * [ \t\r\n] -> (ASSIGN_KEY_VALUE) JUMP_NOISE | '\\' -> WHITESPACE_ESCAPE_PORTAGE */
-void VarsReader::VALUE_WHITESPACE_PORTAGE()
+ * Move INPUT into buffer while it's not in [ \t\n\r\\'"#].
+ * If the value ends we call EVAL_READ.
+ * [# \t\r\n] -> EVAL_READ |
+ * '\\' -> WHITESCAPE_ESCAPE_PORTAGE | \' -> VALUE_SINGLE_QUOTE_PORTAGE |
+ * '"' -> VALUE_DOUBLE_QUOTE_PORTAGE */
+void
+VarsReader::VALUE_WHITESPACE_PORTAGE()
 {
-	while(likely((INPUT != ' ') && (INPUT != '\t') && (INPUT != '\r') && (INPUT != '\n'))) {
-		if(unlikely(INPUT == '\\')) {
-			NEXT_INPUT_OR_EOF;
-			if(INPUT_EOF) {
-				break;
-			}
-			CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
-		}
-		if(unlikely(INPUT == '$' && (parse_flags & SUBST_VARS))) {
-			NEXT_INPUT_OR_EOF;
-			if(INPUT_EOF) {
-				break;
-			}
-			resolveReference();
-			if(INPUT_EOF) {
-				break;
-			}
-			continue;
-		}
-		VALUE_APPEND(INPUT);
-		NEXT_INPUT_OR_EOF;
-		if(INPUT_EOF) {
-			break;
+	while(true) {
+		switch(INPUT) {
+			case '#':
+			case ' ':
+			case '\t':
+			case '\r':
+			case '\n':
+				CHSTATE(EVAL_READ);
+			case '\\':
+				NEXT_INPUT_EVAL;
+				CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
+			case '\'':
+				NEXT_INPUT_EVAL;
+				CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
+			case '"':
+				NEXT_INPUT_EVAL;
+				CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
+			case '$':
+				if(parse_flags & SUBST_VARS) {
+					NEXT_INPUT_EVAL;
+					resolveReference();
+					if(INPUT_EOF) {
+						CHSTATE(EVAL_READ);
+					}
+					continue;
+				}
+			default:
+				VALUE_APPEND(INPUT);
+				NEXT_INPUT_EVAL;
 		}
 	}
-	ASSIGN_KEY_VALUE;
-	if(INPUT_EOF) {
-		return;
-	}
-	CHSTATE(JUMP_NOISE);
 }
 
 /** Cares about \\ in single-quote values.
  * \n is ignored, and everything else is put into buffer without the \\.
  * -> [RV] VALUE_SINGLE_QUOTE */
-void VarsReader::SINGLE_QUOTE_ESCAPE()
+void
+VarsReader::SINGLE_QUOTE_ESCAPE()
 {
 	switch(INPUT) {
 		case '\n':  break;
 		default:    VALUE_APPEND(INPUT);
 	}
-	NEXT_INPUT;
+	NEXT_INPUT_EVAL;
 	CHSTATE(VALUE_SINGLE_QUOTE);
 }
 
@@ -446,7 +513,8 @@ void VarsReader::SINGLE_QUOTE_ESCAPE()
  * \n is ignored, known Portage escapes are handled
  * and everything else is put into buffer without the \\.
  * -> [RV] VALUE_SINGLE_QUOTE_PORTAGE */
-void VarsReader::SINGLE_QUOTE_ESCAPE_PORTAGE()
+void
+VarsReader::SINGLE_QUOTE_ESCAPE_PORTAGE()
 {
 	bool wasnl(false);
 
@@ -462,11 +530,11 @@ void VarsReader::SINGLE_QUOTE_ESCAPE_PORTAGE()
 		case '\n':  wasnl = true; break;
 		default:    VALUE_APPEND(INPUT); break;
 	}
-	NEXT_INPUT;
+	NEXT_INPUT_EVAL;
 	/* any amount of backslashes forbids portage to expand var */
 	if(unlikely((INPUT == '$') && !wasnl)) {
 		VALUE_APPEND(INPUT);
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
 }
@@ -474,13 +542,14 @@ void VarsReader::SINGLE_QUOTE_ESCAPE_PORTAGE()
 /** Cares about \\ in double-quote values.
  * \n is ignored, everything else is put into buffer without the \\.
  * -> [RV] VALUE_DOUBLE_QUOTE */
-void VarsReader::DOUBLE_QUOTE_ESCAPE()
+void
+VarsReader::DOUBLE_QUOTE_ESCAPE()
 {
 	switch(INPUT) {
 		case '\n':  break;
 		default:    VALUE_APPEND(INPUT);
 	}
-	NEXT_INPUT;
+	NEXT_INPUT_EVAL;
 	CHSTATE(VALUE_DOUBLE_QUOTE);
 }
 
@@ -503,7 +572,7 @@ void VarsReader::DOUBLE_QUOTE_ESCAPE_PORTAGE()
 		case 'v':   VALUE_APPEND(ESC_V); break;
 		case '\n':  wasnl = true; break;
 		case '\\':
-			NEXT_INPUT;
+			NEXT_INPUT_EVAL;
 			switch(INPUT) {
 				case 'a':   VALUE_APPEND(ESC_A); break;
 				case 'b':   VALUE_APPEND(ESC_B); break;
@@ -516,7 +585,7 @@ void VarsReader::DOUBLE_QUOTE_ESCAPE_PORTAGE()
 				case '\n':  wasnl = true; break;
 				case '\\':
 					VALUE_APPEND(INPUT);
-					NEXT_INPUT;
+					NEXT_INPUT_EVAL;
 					switch(INPUT) {
 						case '\\':   break;
 						case '\n':   VALUE_APPEND(ESC_SP); wasnl = true; break;
@@ -528,11 +597,11 @@ void VarsReader::DOUBLE_QUOTE_ESCAPE_PORTAGE()
 			break;
 		default:    VALUE_APPEND(INPUT); break;
 	}
-	NEXT_INPUT_OR_EOF;
+	NEXT_INPUT_EVAL;
 	/* any amount of backslashes forbids portage to expand var */
 	if(unlikely((INPUT == '$') && !wasnl)) {
 		VALUE_APPEND(INPUT);
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
 }
@@ -540,13 +609,14 @@ void VarsReader::DOUBLE_QUOTE_ESCAPE_PORTAGE()
 /** Cares about \\ in values without quotes.
  * \n is ignored, everything else is put into buffer without the \\.
  * -> [RV] VALUE_WHITESPACE */
-void VarsReader::WHITESPACE_ESCAPE()
+void
+VarsReader::WHITESPACE_ESCAPE()
 {
 	switch(INPUT) {
 		case '\n':  break;
 		default:    VALUE_APPEND(INPUT);
 	}
-	NEXT_INPUT;
+	NEXT_INPUT_EVAL;
 	CHSTATE(VALUE_WHITESPACE);
 }
 
@@ -554,14 +624,15 @@ void VarsReader::WHITESPACE_ESCAPE()
  * \n is ignored, known Portage escapes are handled
  * and everything else is put into buffer without the \\.
  * -> [RV] VALUE_WHITESPACE_PORTAGE */
-void VarsReader::WHITESPACE_ESCAPE_PORTAGE()
+void
+VarsReader::WHITESPACE_ESCAPE_PORTAGE()
 {
 	switch(INPUT) {
 		case '\n':  break;
 		case '\\':
-			NEXT_INPUT;
+			NEXT_INPUT_EVAL;
 			if(INPUT == '\\') {
-				NEXT_INPUT;
+				NEXT_INPUT_EVAL;
 			}
 			else if(INPUT == '\n') {
 				VALUE_APPEND(ESC_BS);
@@ -581,11 +652,11 @@ void VarsReader::WHITESPACE_ESCAPE_PORTAGE()
 			break;
 		default:    VALUE_APPEND(INPUT);
 	}
-	NEXT_INPUT_OR_EOF;
+	NEXT_INPUT_EVAL;
 	/* any amount of backslashes forbids portage to expand var */
 	if(unlikely(INPUT == '$')) {
 		VALUE_APPEND(INPUT);
-		NEXT_INPUT;
+		NEXT_INPUT_EVAL;
 	}
 	CHSTATE(VALUE_WHITESPACE_PORTAGE);
 }
@@ -646,7 +717,10 @@ void VarsReader::resolveReference()
 	char *begin(x);
 	if(INPUT == '{') {
 		brace = true;
-		NEXT_INPUT;
+		NEXT_INPUT_OR_EOF;
+		if(INPUT_EOF) {
+			return;
+		}
 		begin = x;
 	}
 	unsigned int ref_key_length(0);
@@ -654,16 +728,18 @@ void VarsReader::resolveReference()
 	while(isValidKeyCharacter(INPUT)) {
 		++ref_key_length;
 		NEXT_INPUT_OR_EOF;
-		if(INPUT_EOF)
+		if(INPUT_EOF) {
 			break;
+		}
 	}
 
 	if(brace) {
-		if(unlikely(INPUT_EOF))
+		if(unlikely(INPUT_EOF)) {
 			return;
+		}
 		if(INPUT == '}') {
 			var_append(value, *vars, begin, ref_key_length);
-			NEXT_INPUT;
+			NEXT_INPUT_OR_EOF;
 		}
 	}
 	else {
@@ -686,6 +762,8 @@ void VarsReader::runFsm()
 			case state_JUMP_COMMENT: JUMP_COMMENT(); break;
 			case state_FIND_ASSIGNMENT: FIND_ASSIGNMENT(); break;
 			case state_EVAL_VALUE: EVAL_VALUE(); break;
+			case state_EVAL_READ: EVAL_READ(); break;
+			case state_ASSIGN_KEY_VALUE: ASSIGN_KEY_VALUE(); break;
 			case state_NOISE_DOUBLE_QUOTE: NOISE_DOUBLE_QUOTE(); break;
 			case state_NOISE_ESCAPE: NOISE_ESCAPE(); break;
 			case state_NOISE_SINGLE_QUOTE: NOISE_SINGLE_QUOTE(); break;
