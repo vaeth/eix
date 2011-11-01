@@ -30,4 +30,4 @@ find . '(' -type f '(' \
 		-name 'tmpcvs[0-9][0-9]*' -o \
 		-name 'tmpwrk[0-9][0-9]*' \
 		')' -exec rm -rf -- '{}' '+' ')'
-svn cleanup
+

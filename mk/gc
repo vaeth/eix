@@ -1,0 +1,15 @@
+#! /usr/bin/env sh
+
+export LC_ALL
+LC_ALL=C
+umask 022
+
+ExecWarn() {
+	printf '# %s\n' "${*}"
+	"${@}" || printf '%s\n' "warning: ${*} returned: ${?}"
+}
+
+ExecWarn git repack -a -d
+ExecWarn git prune
+ExecWarn git repack -a -d
+ExecWarn git gc --aggressive

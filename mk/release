@@ -2,14 +2,28 @@
 
 export LC_ALL
 LC_ALL=C
+umask 022
 
 proj="eix"
-svnroot="https://svn.gentooexperimental.org/${proj}"
+
+Echo() {
+	printf '%s\n' "${*}"
+}
+
+Eecho() {
+	Echo "# ${*}"
+}
+
+Exec() {
+	Eecho "${*}"
+	"${@}"
+}
 
 Usage() {
-	printf '%s\n' "Usage: ${0##*/}
-Marks a new release in the svn repository.
-Verify in advance to have AC_INIT set correctly in configure.ac"
+	Echo "Usage: ${0##*/}
+Marks a new release in the git repository.
+Verify in advance to have AC_INIT set correctly in configure.ac
+and that you have committed your last changes."
 	exit ${1:-1}
 }
 
@@ -18,26 +32,97 @@ Die() {
 	exit ${2:-1}
 }
 
+Warn() {
+	wret="${?}"
+	printf '%s: warning: %s\n' "${0##*/}" "${1}" >&2
+	return ${wret}
+}
+
+ExecWarn() {
+	Exec "${@}" || Warn "${*} failed: ${?}"
+}
+
+ExecDie() {
+	Exec "${@}" || Die "${*} failed" ${?}
+}
+
 [ ${#} -eq 0 ] || Usage
 
+test -f mk/release || Die "You must be in the parent directory of ./mk"
 ver="`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`"
-printf '%s' "Are you sure you want to release ${proj}-${ver}? (y/n) "
-while :
-do	t="`stty -g`"
-	stty -icanon -echo
-	a="`dd count=1 bs=1 2>/dev/null`" || a=''
-	stty ${t}
-	case "${a}" in
-	n*|N*)	printf '%s\n' "No"
-		exit 1
-		;;
-	y*|Y*)	printf '%s\n' "Yes"
-		break
-		;;
-	esac
-done
-printf '%s\n' "Creating release tag... "
 
-svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}" \
-	-m "Tagging the ${ver} release of the ${proj} project" >/dev/null || \
-		Die "svn copy failed"
+keycheck() {
+	printf '%s' "${*}? (y/n) "
+	while :
+	do	t="`stty -g`"
+		stty -icanon -echo
+		a="`dd count=1 bs=1 2>/dev/null`" || a=''
+		stty ${t}
+		case "${a}" in
+		n*|N*)	printf '%s\n' "No"
+			return 1
+			;;
+		y*|Y*)	printf '%s\n' "Yes"
+			return
+			;;
+		esac
+	done
+}
+
+Echo "Usage of this script requires that you committed the latest changes"
+if keycheck "Are you sure you want to tag release-${ver} of ${proj}"
+then	Eecho "git tag -a release-${ver} -m ..."
+#svnroot="https://svn.gentooexperimental.org/${proj}"
+#svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}"
+git tag -a "release-${ver}" \
+	-m "Tagging the ${ver} release of the ${proj} project" || \
+		keycheck "git tagging failed. Continue anyway" || exit 2
+fi
+
+keycheck '
+Optionally, you can keep a tarball branch with the current tarball content.
+This is only reasonable if the only reasonable way to publish the tarball is
+its automatic generation directly from the git repository.
+Otherwise, this would be just a waste of space.
+
+To use this option, you must have created the tarball first.
+
+Have you done this, and do you want to update the tarball branch' || exit 0
+for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+do	tarball="${proj}-${ver}.${j}"
+	test -f "${tarball}" && break
+done
+test -f "${tarball}" || \
+	Die "You must first create the tarball with ./mk/tarball"
+
+# The rest must be a function, since the original file
+# will be removed during execution, and so parsing of this file might fail
+
+tag_tarball() {
+	ExecDie git checkout -B tarball
+	ExecDie tar xaf "${tarball}"
+
+	Echo "Replacing content by unpacked tarball"
+	for i in *
+	do	[ "${i}" = "${proj}-${ver}" ] || rm -rf "./${i}"
+	done
+	Eecho "mv ${proj}-ver/* ."
+	mv "${proj}-${ver}"/* . || Die "mv ${proj}-${ver}/* . failed"
+	ExecDie rmdir "${proj}-${ver}"
+
+	ExecWarn git merge master
+	ExecWarn git add .
+	Eecho "git commit -a -m ..."
+	git commit -a -m "tarball ${proj}-${ver} preparation" || \
+		keycheck "This is only ok if there is nothing to commit.
+Otherwise you should better stop now and call git checkout master.
+Are you sure you want to tag tarball ${proj}-${ver} anyway" || exit 1
+	Eecho "git tag -a tarball-${ver} -m ..."
+	git tag -a "tarball-${ver}" \
+		-m "Tagging the ${ver} tarball of the ${proj} project" || \
+		Warn "git tagging failed"
+	ExecWarn git checkout master
+	exit
+}
+
+tag_tarball

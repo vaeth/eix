@@ -41,16 +41,26 @@ while [ ${#} -gt 0 ]
 do	opt="${1#-}"
 	opt="${opt#-}"
 	case "${opt#dist-}" in
-		x*|X*) dist='dist-xz';;
-		l*|L*) dist='dist-lzma';;
-		b*|B*) dist='dist-bzip2';;
-		g*|G*) dist='dist-gzip';;
-		d*|D*) dist='dist';;
-		f*ng) fakeroot='fakeroot-ng';;
-		f*) fakeroot='fakeroot';;
-		F*|n*f*) fakeroot='';;
-		help|h|H|'?') Usage 0;;
-		*) Usage;;
+	x*|X*)
+		dist='dist-xz';;
+	l*|L*)
+		dist='dist-lzma';;
+	b*|B*)
+		dist='dist-bzip2';;
+	g*|G*)
+		dist='dist-gzip';;
+	d*|D*)
+		dist='dist';;
+	f*ng)
+		fakeroot='fakeroot-ng';;
+	f*)
+		fakeroot='fakeroot';;
+	F*|n*f*)
+		fakeroot='';;
+	h*|H*|'?')
+		Usage 0;;
+	*)
+		Usage;;
 	esac
 	shift
 done
@@ -84,5 +94,5 @@ ${found} || Die "For some reason no tarball was created"
 [ -n "${mkclean}" ] && Echo "The tarballs will be removed with ${mkclean}"
 [ -n "${mkemerge}" ] && Echo "To install with portage run as root ${mkemerge}"
 [ -n "${mkrelease}" ] && \
-	Echo "To tag the release in svn you should run ${mkrelease}"
+	Echo "To tag the release in git you should run ${mkrelease}"
 exit 0
