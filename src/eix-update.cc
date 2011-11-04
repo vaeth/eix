@@ -399,8 +399,10 @@ run_eix_update(int argc, char *argv[])
 		dump_version();
 
 	if(unlikely(var_to_print != NULL)) {
-		eixrc.print_var(var_to_print);
-		exit(EXIT_SUCCESS);
+		if(eixrc.print_var(var_to_print)) {
+			exit(EXIT_SUCCESS);
+		}
+		exit(EXIT_FAILURE);
 	}
 	if(unlikely(dump_eixrc || dump_defaults)) {
 		eixrc.dumpDefaults(stdout, dump_defaults);

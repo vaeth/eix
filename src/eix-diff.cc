@@ -280,8 +280,10 @@ run_eix_diff(int argc, char *argv[])
 		dump_version();
 
 	if(unlikely(var_to_print != NULL)) {
-		rc.print_var(var_to_print);
-		exit(EXIT_SUCCESS);
+		if(rc.print_var(var_to_print)) {
+			exit(EXIT_SUCCESS);
+		}
+		exit(EXIT_FAILURE);
 	}
 
 	if(unlikely(cli_dump_eixrc || cli_dump_defaults)) {

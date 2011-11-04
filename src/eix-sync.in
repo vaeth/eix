@@ -330,14 +330,9 @@ PrepRsync() {
 	fi
 	hostdir="${hostdir%/}/"
 	${preprsync} || [ -n "${rsync_opts}" ] && return
-	portage_rsync_opts=''
-	portage_rsync_extra_opts=''
-	if command -v portageq >/dev/null 2>&1
-	then	portage_rsync_opts="`portageq envvar PORTAGE_RSYNC_OPTS`"
-		portage_rsync_extra_opts="`portageq envvar PORTAGE_RSYNC_EXTRA_OPTS`"
-	fi
-	[ -n "${portage_rsync_opts}" ] || \
+	ReadVar portage_rsync_opts PORTAGE_RSYNC_OPTS || \
 		portage_rsync_opts="--recursive --links --safe-links --perms --times --compress --force --whole-file --delete --stats --timeout=180 --exclude=/distfiles --exclude=/local --exclude=/packages"
+	ReadVar portage_rsync_extra_opts PORTAGE_RSYNC_EXTRA_OPTS
 	eval "set -- ${before_rsync}"
 	for curr_cmd
 	do	c=`eval "${curr_cmd}"` || \

@@ -48,6 +48,15 @@ PortageSettings::operator[](const std::string &var) const
 	return it->second;
 }
 
+const char *
+PortageSettings::cstr(const std::string &var) const
+{
+	map<string,string>::const_iterator it(map<string,string>::find(var));
+	if(it == map<string,string>::end())
+		return NULL;
+	return it->second.c_str();
+}
+
 static bool
 grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector<string> &contains_set, bool recursive = false)
 {

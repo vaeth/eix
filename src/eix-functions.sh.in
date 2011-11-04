@@ -17,8 +17,14 @@ ReadFunctions() {
 
 : ${read_var_prg:=eix-update}
 ReadVar() {
-	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"`
-	eval "${1}=\"\${eixf_read%X}\" && [ \"\${1}\" != \"\${eixf_read}\" ]"
+	eval "if [ \"\${${2}+set}\" = set ]
+	then ${1}=\"\${${2}}\"
+		return 0
+	fi"
+	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"` || \
+		return 1
+	eval "${1}=\"\${eixf_read%X}\""
+	return 0
 }
 
 ReadBoolean() {
@@ -248,10 +254,7 @@ CallUpdate() {
 }
 
 InitPortdirOverlay() {
-	[ "${PORTDIR_OVERLAY+set}" = 'set' ] && return
-	if command -v portageq >/dev/null 2>&1
-	then	PORTDIR_OVERLAY=`portageq portdir_overlay` || PORTDIR_OVERLAY=''
-	fi
+	ReadVar PORTDIR_OVERLAY PORTDIR_OVERLAY
 }
 
 AddLocalMethods() {

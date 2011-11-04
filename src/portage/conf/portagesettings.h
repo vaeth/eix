@@ -174,8 +174,9 @@ class PortageSettings : public std::map<std::string,std::string> {
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
-		const std::string &operator[](const std::string &var) const ATTRIBUTE_PURE;
 		using std::map<std::string,std::string>::operator[];
+		const std::string &operator[](const std::string &var) const ATTRIBUTE_PURE;
+		const char *cstr(const std::string &var) const ATTRIBUTE_PURE;
 
 		/** Read make.globals and make.conf. */
 		PortageSettings(EixRc &eixrc, bool getlocal, bool init_world);

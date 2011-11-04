@@ -496,8 +496,10 @@ run_eix(int argc, char** argv)
 	ArgumentReader argreader(argc, argv, long_options);
 
 	if(unlikely(var_to_print != NULL)) {
-		eixrc.print_var(var_to_print);
-		exit(EXIT_SUCCESS);
+		if(eixrc.print_var(var_to_print)) {
+			exit(EXIT_SUCCESS);
+		}
+		exit(EXIT_FAILURE);
 	}
 
 	string cachefile;

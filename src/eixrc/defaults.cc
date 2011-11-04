@@ -42,7 +42,7 @@ AddOption(STRING, "EIX_REMOTE_OPTS",
 	"", _(
 	"This variable contains default options for the eix-remote script.\n"
 	"Note that its content is evaluated, so quote correctly. Typical example:\n"
-	"EIX_REMOTE_OPTS='-f \"`portageq portdir`/local/layman/eix-caches.tar.bz2\"'"));
+	"EIX_REMOTE_OPTS='-f /var/lib/layman/eix-caches.tar.bz2'"));
 
 AddOption(STRING, "EIX_LAYMAN_OPTS",
 	"", _(
