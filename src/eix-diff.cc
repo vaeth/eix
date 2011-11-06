@@ -58,7 +58,7 @@ static DBHeader        old_header, new_header;
 static Node           *format_new, *format_delete, *format_changed;
 
 static void
-print_help(int ret)
+print_help()
 {
 	printf(_(
 		"Usage: %s [options] old-cache [new-cache]\n"
@@ -71,6 +71,7 @@ print_help(int ret)
 		"     --dump              dump variables to stdout\n"
 		"     --dump-defaults     dump default values of variables\n"
 		"     --print             print the expanded value of a variable\n"
+		"     --known-vars        print all variable names known to --print\n"
 		"\n"
 		" -h, --help              show a short help screen\n"
 		" -V, --version           show version-string\n"
@@ -78,14 +79,13 @@ print_help(int ret)
 		"This program is covered by the GNU General Public License. See COPYING for\n"
 		"further information.\n"),
 		program_name.c_str());
-
-	exit(ret);
 }
 
 bool cli_show_help(false),
 	cli_show_version(false),
 	cli_dump_eixrc(false),
 	cli_dump_defaults(false),
+	cli_known_vars(false),
 	cli_quick,
 	cli_care,
 	cli_quiet;
@@ -95,6 +95,7 @@ const char *var_to_print(NULL);
 enum cli_options {
 	O_DUMP = 300,
 	O_DUMP_DEFAULTS,
+	O_KNOWN_VARS,
 	O_PRINT_VAR,
 	O_CARE,
 	O_FORCE_COLOR
@@ -108,6 +109,7 @@ static struct Option long_options[] = {
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
 	Option("dump-deafults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults),
 	Option("print",        O_PRINT_VAR, Option::STRING,&var_to_print),
+	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &cli_known_vars),
 	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
 	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
 	Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick),
@@ -273,22 +275,30 @@ run_eix_diff(int argc, char *argv[])
 	ArgumentReader argreader(argc, argv, long_options);
 	ArgumentReader::iterator current_param = argreader.begin();
 
-	if(unlikely(cli_show_help))
-		print_help(EXIT_SUCCESS);
-
-	if(unlikely(cli_show_version))
-		dump_version();
-
 	if(unlikely(var_to_print != NULL)) {
 		if(rc.print_var(var_to_print)) {
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		}
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
+	}
+
+	if(unlikely(cli_show_help)) {
+		print_help();
+		return EXIT_SUCCESS;
+	}
+
+	if(unlikely(cli_show_version)) {
+		dump_version();
+	}
+
+	if(unlikely(cli_known_vars)) {
+		rc.known_vars();
+		return EXIT_SUCCESS;
 	}
 
 	if(unlikely(cli_dump_eixrc || cli_dump_defaults)) {
 		rc.dumpDefaults(stdout, cli_dump_defaults);
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 
 	if(unlikely(cli_quiet)) {

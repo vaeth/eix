@@ -58,7 +58,7 @@ static void print_removed(const string &dirname, const string &excludefiles, con
 
 /** Show a short help screen with options and commands. */
 static void
-dump_help(int exit_code)
+dump_help()
 {
 	printf(_("Usage: %s [options] EXPRESSION\n"
 			"\n"
@@ -80,6 +80,7 @@ dump_help(int exit_code)
 			"     --dump                dump variables to stdout\n"
 			"     --dump-defaults       dump default values of variables\n"
 			"     --print               print the expanded value of a variable\n"
+			"     --known-vars          print all variable names known to --print\n"
 			"     --print-all-useflags  print all IUSE words used in some version\n"
 			"     --print-all-keywords  print all KEYWORDS used in some version\n"
 			"     --print-all-slots     print all SLOT strings used in some version\n"
@@ -198,8 +199,6 @@ dump_help(int exit_code)
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n"),
 		program_name.c_str(), EIX_CACHEFILE);
-
-	exit(exit_code);
 }
 
 static const char *format_normal, *format_verbose, *format_compact;
@@ -237,6 +236,7 @@ static struct LocalOptions {
 		brief2,
 		dump_eixrc,
 		dump_defaults,
+		known_vars,
 		xml,
 		test_unused,
 		do_debug,
@@ -273,6 +273,7 @@ static struct Option long_options[] = {
 	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
 	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
 	Option("dump-defaults",O_DUMP_DEFAULTS,Option::BOOLEAN_T,&rc_options.dump_defaults),
+	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T,&rc_options.known_vars),
 	Option("test-non-matching",'t', Option::BOOLEAN_T,     &rc_options.test_unused),
 	Option("debug",        O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
 
@@ -287,7 +288,7 @@ static struct Option long_options[] = {
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
 
-	Option("print",        O_PRINT_VAR,     Option::STRING,   &var_to_print),
+	Option("print",        O_PRINT_VAR,     Option::STRING,    &var_to_print),
 
 	Option("print-overlay-path",   O_PRINT_OPATH, Option::STRING, &overlaypath_to_print),
 	Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING, &overlaylabel_to_print),
@@ -497,31 +498,39 @@ run_eix(int argc, char** argv)
 
 	if(unlikely(var_to_print != NULL)) {
 		if(eixrc.print_var(var_to_print)) {
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		}
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
-	string cachefile;
-	if(unlikely(eix_cachefile != NULL))
-		cachefile = eix_cachefile;
-	else
-		cachefile = eixrc["EIX_CACHEFILE"];
-
-	// Only check if the versions uses the current layout
-	if(unlikely(rc_options.is_current)) {
-		return is_current_dbversion(cachefile.c_str());
+	if(unlikely(rc_options.known_vars)) {
+		eixrc.known_vars();
+		return EXIT_SUCCESS;
 	}
 
 	// Dump eixrc-stuff
 	if(unlikely(rc_options.dump_eixrc || rc_options.dump_defaults)) {
 		eixrc.dumpDefaults(stdout, rc_options.dump_defaults);
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 
 	// Show help screen
 	if(unlikely(rc_options.show_help)) {
-		dump_help(EXIT_SUCCESS);
+		dump_help();
+		return EXIT_SUCCESS;
+	}
+
+	string cachefile;
+	if(unlikely(eix_cachefile != NULL)) {
+		cachefile = eix_cachefile;
+	}
+	else {
+		cachefile = eixrc["EIX_CACHEFILE"];
+	}
+
+	// Only check if the versions uses the current layout
+	if(unlikely(rc_options.is_current)) {
+		return is_current_dbversion(cachefile.c_str());
 	}
 
 	// Show version
@@ -600,27 +609,27 @@ run_eix(int argc, char** argv)
 	if(unlikely(rc_options.hash_iuse)) {
 		fclose(fp);
 		header.iuse_hash.output();
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_keywords)) {
 		fclose(fp);
 		header.keywords_hash.output();
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_slot)) {
 		fclose(fp);
 		header.slot_hash.output();
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_provide)) {
 		fclose(fp);
 		header.provide_hash.output();
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_license)) {
 		fclose(fp);
 		header.license_hash.output();
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.world_sets)) {
 		fclose(fp);
@@ -628,7 +637,7 @@ run_eix(int argc, char** argv)
 		for(vector<string>::const_iterator it(p->begin());
 			likely(it != p->end()); ++it)
 			cout << *it << "\n";
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 
 	LocalMode local_mode(LOCALMODE_DEFAULT);
@@ -659,14 +668,17 @@ run_eix(int argc, char** argv)
 		bool print_path(osearch != NULL);
 		if(!print_path)
 			osearch = overlaylabel_to_print;
-		if(unlikely(!header.find_overlay(&num, osearch, NULL, 0, DBHeader::OVTEST_ALL)))
-			exit(EXIT_FAILURE);
+		if(unlikely(!header.find_overlay(&num, osearch, NULL, 0, DBHeader::OVTEST_ALL))) {
+			return EXIT_FAILURE;
+		}
 		const OverlayIdent& overlay(header.getOverlay(num));
-		if(print_path)
+		if(print_path) {
 			cout << overlay.path;
-		else
+		}
+		else {
 			cout << overlay.label;
-		exit(EXIT_SUCCESS);
+		}
+		return EXIT_SUCCESS;
 	}
 	bool add_rest(false);
 	while(likely(reader.next())) {

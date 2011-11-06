@@ -3,19 +3,7 @@ local -a service_opts local_functions
 local excl_opt stat
 local_functions=(_eix__vars)
 _eix__vars() {
-	local i
-	local -a files vars
-	vars=(${${(M)${(f)"$(eix --dump 2>/dev/null)"}##[A-Z]*}%%\=*})
-	files=()
-	for i in /etc/portage/make.conf \
-		/etc/make.conf \
-		/etc/make.globals \
-		/usr/share/portage/config/make.globals
-	do	[[ -e $i ]] && files+=($i)
-	done
-	(( $#files )) && \
-		vars+=($(sed -n -e 's/^\([A-Z]*\)=.*/\1/p' $files))
-	compadd "${@}" -- $vars
+	compadd "${@}" -- ${(f)"$(eix --known-vars)"}
 }
 
 case $service in

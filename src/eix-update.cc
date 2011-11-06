@@ -204,7 +204,7 @@ class Permissions {
 bool Permissions::know_root, Permissions::am_root;
 
 static void
-print_help(int ret)
+print_help()
 {
 	printf(_("Usage: %s [options]\n"
 			"\n"
@@ -213,6 +213,7 @@ print_help(int ret)
 			"     --dump              show eixrc-variables\n"
 			"     --dump-defaults     show default eixrc-variables\n"
 			"     --print             print the expanded value of a variable\n"
+			"     --known-vars        print all variable names known to --print\n"
 			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
 			" -F, --force-color       force \"color\" on things that are not a terminal\n"
 			" -v, --verbose           output used cache method for each ebuild\n"
@@ -234,13 +235,12 @@ print_help(int ret)
 			"This program is covered by the GNU General Public License. See COPYING for\n"
 			"further information.\n"),
 		program_name.c_str(), EIX_CACHEFILE);
-
-	exit(ret);
 }
 
 enum cli_options {
 	O_DUMP = 260,
 	O_DUMP_DEFAULTS,
+	O_KNOWN_VARS,
 	O_PRINT_VAR
 };
 
@@ -248,6 +248,7 @@ static bool
 	quiet(false),
 	show_help(false),
 	show_version(false),
+	known_vars(false),
 	dump_eixrc(false),
 	dump_defaults(false);
 
@@ -265,6 +266,7 @@ static struct Option long_options[] = {
 	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
 	 Option("dump-defaults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
 	 Option("print",        O_PRINT_VAR, Option::STRING,  &var_to_print),
+	 Option("known-vars",   O_KNOWN_VARS,Option::BOOLEAN_T,&known_vars),
 	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
 	 Option("nocolor",        'n',     Option::BOOLEAN_F, &use_percentage),
@@ -391,22 +393,32 @@ run_eix_update(int argc, char *argv[])
 	}
 
 	/* We do not want any arguments except options */
-	if(unlikely(argreader.begin() != argreader.end()))
-		print_help(EXIT_FAILURE);
-	if(unlikely(show_help))
-		print_help(EXIT_SUCCESS);
-	if(unlikely(show_version))
-		dump_version();
+	if(unlikely(argreader.begin() != argreader.end())) {
+		print_help();
+		return EXIT_FAILURE;
+	}
 
 	if(unlikely(var_to_print != NULL)) {
 		if(eixrc.print_var(var_to_print)) {
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		}
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
+	if(unlikely(known_vars)) {
+		eixrc.known_vars();
+		return EXIT_SUCCESS;
+	}
+	if(unlikely(show_help)) {
+		print_help();
+		return EXIT_SUCCESS;
+	}
+	if(unlikely(show_version)) {
+		dump_version();
+	}
+
 	if(unlikely(dump_eixrc || dump_defaults)) {
 		eixrc.dumpDefaults(stdout, dump_defaults);
-		exit(EXIT_SUCCESS);
+		return EXIT_SUCCESS;
 	}
 
 	/* set the outputfile */

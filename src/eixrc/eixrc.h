@@ -68,6 +68,7 @@ class EixRc {
 
 		const char *prefix_cstr(const std::string &key) const ATTRIBUTE_PURE;
 
+		void known_vars();
 		bool print_var(const std::string &key);
 
 		const std::string &operator[](const std::string &key);

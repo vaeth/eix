@@ -2,8 +2,9 @@
 
 *eix-0.23.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Now --print exits with 1 if variable is not known
+	- Introduce --known-vars and use it with zsh-completion
 	- Major rewrite of varsreader.cc: Allow concatenation of strings
-	- Now --print exits with 1 if variable is not defined
 	- scripts: Remove portageq usage completely (for runtime)
 
 *eix-0.23.2

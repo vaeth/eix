@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2011-10-21 21:18:00 +0100 (Fri, 21 Oct 2011) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2011-11-06 20:05:00 +0100 (Sun, 06 Mov 2011) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -184,9 +184,14 @@ Show the defaults of the eixrc-variables, and their current values as comments; 
 .BI "--print " VAR
 Print the specified variable I<VAR> of eixrc or of portage settings,
 completely expanded as it would be used internally by eix; then exit.
+The exit status is nonzero if I<VAR> is not known to eix (see B<--known-vars>)
 This is mainly intended for usage in scripts or for debugging purposes.
 If you use it in scripts you might want to specify B<PRINT_APPEND> to
 get trailing spaces (see description of B<PRINT_APPEND>).
+.TP
+.B --know-vars
+Print an alphabetical list of variables known to eix with B<--print>.
+After each variable name a newline is output.
 .TP
 .BR -V ", " --version
 Print version and exit.

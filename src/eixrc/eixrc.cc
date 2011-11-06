@@ -53,10 +53,12 @@ short
 EixRc::getBoolText(const string &key, const char *text)
 {
 	const char *s((*this)[key].c_str());
-	if(!strcasecmp(s, text))
+	if(!strcasecmp(s, text)) {
 		return -1;
-	if(istrue(s))
+	}
+	if(istrue(s)) {
 		return 1;
+	}
 	return 0;
 }
 
@@ -65,11 +67,13 @@ EixRc::getBoolTextlist(const string &key, const char **text)
 {
 	const char *s((*this)[key].c_str());
 	for(int i(-1); likely(*text != NULL); ++text, --i) {
-		if(!strcasecmp(s, *text))
+		if(!strcasecmp(s, *text)) {
 			return i;
+		}
 	}
-	if(istrue(s))
+	if(istrue(s)) {
 		return 1;
+	}
 	return 0;
 }
 
@@ -138,13 +142,15 @@ LocalMode
 EixRc::getLocalMode(const string &key)
 {
 	const char *s((*this)[key].c_str());
-	if((*s == '+') || (strcasecmp(s, "local") == 0))
+	if((*s == '+') || (strcasecmp(s, "local") == 0)) {
 		return LOCALMODE_LOCAL;
+	}
 	if((*s == '-') || (strcasecmp(s, "non-local") == 0) ||
 		(strcasecmp(s, "nonlocal") == 0) ||
 		(strcasecmp(s, "global") == 0) ||
-		(strcasecmp(s, "original") == 0))
+		(strcasecmp(s, "original") == 0)) {
 		return LOCALMODE_NONLOCAL;
+	}
 	return LOCALMODE_DEFAULT;
 }
 
@@ -152,8 +158,9 @@ const char *
 EixRc::cstr(const string &key) const
 {
 	map<string,string>::const_iterator s(main_map.find(key));
-	if(s == main_map.end())
+	if(s == main_map.end()) {
 		return NULL;
+	}
 	return (s->second).c_str();
 }
 
@@ -161,10 +168,12 @@ const char *
 EixRc::prefix_cstr(const string &key) const
 {
 	const char *s(cstr(key));
-	if(unlikely(s == NULL))
+	if(unlikely(s == NULL)) {
 		return NULL;
-	if(s[0])
+	}
+	if(s[0]) {
 		return s;
+	}
 	// Maybe later: Test whether some eprefix-variable is set,
 	// and return "" instead of NULL in this case.
 	return NULL;
@@ -832,6 +841,25 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 				key,
 				as_comment(comment).c_str());
 		}
+	}
+}
+
+void
+EixRc::known_vars()
+{
+	set<string> vars;
+	for(map<string,string>::const_iterator it(main_map.begin());
+		it != main_map.end(); ++it) {
+		vars.insert(it->first);
+	}
+	PortageSettings ps(*this, false, true);
+	for(map<string,string>::const_iterator it(ps.begin());
+		it != ps.end(); ++it) {
+		vars.insert(it->first);
+	}
+	for(set<string>::const_iterator it(vars.begin());
+		it != vars.end(); ++it) {
+		cout << *it << "\n";
 	}
 }
 
