@@ -3,7 +3,7 @@ local -a service_opts local_functions
 local excl_opt stat
 local_functions=(_eix__vars)
 _eix__vars() {
-	compadd "${@}" -- ${(f)"$(eix --known-vars)"}
+	compadd "${@}" -- ${(f)"$($service --known-vars)"}
 }
 
 case $service in
