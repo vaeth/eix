@@ -7,6 +7,7 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
+set -f
 read_var_prg=eix
 . ./eix-functions.sh.in
 ReadGettext

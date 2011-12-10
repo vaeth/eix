@@ -8,6 +8,7 @@
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).
 
+set -f
 . ./eix-functions.sh.in
 ReadFunctions
 

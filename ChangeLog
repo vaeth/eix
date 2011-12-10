@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- scripts: Fix possible globbing problems
+
 *eix-0.23.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Now --print exits with 1 if variable is not known

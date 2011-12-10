@@ -11,9 +11,9 @@
 
 # We make use of the functions provided by eix-functions.sh:
 
+set -f
 . ./eix-functions.sh.in
 ReadFunctions
-
 
 # The following function outputs the usage of the script and then dies.
 

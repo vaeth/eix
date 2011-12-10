@@ -125,7 +125,7 @@ fi
 # Usage: Replace [-g] VAR Search Replace
 # Option -g means: Replace all occurrences
 # Exit status is 0 if at least one replacement took place, and
-# $replace_count contains at string of length(number of replacements) x'en.
+# $replace_count contains a string of length(number of replacements) x'en.
 # $replace_tail is the string after the last replacement (or the whole string)
 Replace() {
 	eixf_repla=''
@@ -248,7 +248,10 @@ ClearUpdateArgs() {
 
 : ${die_on_update_failure=:}
 CallUpdate() {
+	eixf_cu="`set +o`"
+	set -f
 	eval "set -- ${update_args}"
+	eval "${eixf_cu}"
 	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" && return
 	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
 }
@@ -264,7 +267,10 @@ AddLocalMethods() {
 	PushEscaped -c eixf_alm "${PORTDIR_OVERLAY}"
 	ReadVar eixf_al ADD_OVERLAY
 	PushEscaped eixf_alm "${eixf_al}"
+	eixf_al="`set +o`"
+	set -f
 	eval "set -- ${eixf_alm}"
+	eval "${eixf_al}"
 	for eixf_alm
 	do	eixf_al="${eixf_alm}"
 		Replace -g eixf_al '\' '\\'
@@ -327,8 +333,8 @@ NormalizeNames() {
 			continue
 		fi
 		case "${eixf_norma}" in
-			/*) :;;
-			*) relative="${relative} ${eixf_normc}";;
+		/*)	:;;
+		*)	relative="${relative} ${eixf_normc}";;
 		esac
 		${normalize_resolve} && if CheckReadlink
 		then	# Append A to avoid loss of trailing space in `...`

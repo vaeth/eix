@@ -9,6 +9,7 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
+set -f
 time_begin="`date +%s 2>/dev/null`" || time_begin=''
 
 . ./eix-functions.sh.in

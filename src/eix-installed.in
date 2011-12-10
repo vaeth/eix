@@ -5,6 +5,7 @@
 # Author and Copyright (c):
 #   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
+set -f
 read_var_prg=eix
 . ./eix-functions.sh.in
 ReadGettext
