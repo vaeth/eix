@@ -248,10 +248,10 @@ ClearUpdateArgs() {
 
 : ${die_on_update_failure=:}
 CallUpdate() {
-	eixf_cu="`set +o`"
-	set -f
-	eval "set -- ${update_args}"
-	eval "${eixf_cu}"
+	case "${-}" in
+	*f*)	eval "set -- ${update_args}";;
+	*)	set -f; eval "set -- ${update_args}"; set +f;;
+	esac
 	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" && return
 	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
 }
@@ -267,10 +267,10 @@ AddLocalMethods() {
 	PushEscaped -c eixf_alm "${PORTDIR_OVERLAY}"
 	ReadVar eixf_al ADD_OVERLAY
 	PushEscaped eixf_alm "${eixf_al}"
-	eixf_al="`set +o`"
-	set -f
-	eval "set -- ${eixf_alm}"
-	eval "${eixf_al}"
+	case "${-}" in
+	*f*)	eval "set -- ${eixf_alm}";;
+	*)	set -f; eval "set -- ${eixf_alm}"; set +f;;
+	esac
 	for eixf_alm
 	do	eixf_al="${eixf_alm}"
 		Replace -g eixf_al '\' '\\'
@@ -429,7 +429,7 @@ AssignTempEmulate() {
 		if [ "${2}" = '-d' ]
 		then	mkdir "${eixf_assc}"
 		else	(
-			set -o noclobber
+			set -C
 			: >"${eixf_assc}"
 		)
 		fi && eval "${1}=\"\${eixf_assc}\"" && return
