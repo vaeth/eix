@@ -108,7 +108,7 @@ VarsReader::ASSIGN_KEY_VALUE()
 	if(unlikely(sourcecmd)) {
 		sourcecmd=false;
 		if(unlikely(!source(value))) {
-			cerr << eix::format(_("failed to source %r")) % value
+			cerr << eix::format(_("%r: failed to source %r")) % file_name % value
 				<< endl;
 		}
 		if((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ) {
@@ -818,6 +818,7 @@ bool VarsReader::read(const char *filename)
 	if (filebuffer == MAP_FAILED) {
 		throw ExBasic(_("Can't map file %r")) % filename;
 	}
+	file_name = filename;
 	filebuffer_end = filebuffer + st.st_size;
 
 	initFsm();

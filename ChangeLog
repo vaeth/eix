@@ -3,6 +3,8 @@
 *eix-0.23.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- scripts: Fix possible globbing problems
+	- varsreader.cc: Improve error output for failed "source".
+	  Thanks to Sergei Trofimovich <slyfox at gentoo.org> for the patch
 
 *eix-0.23.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
