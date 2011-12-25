@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2011-12-22 22:06+0100\n"
+"POT-Creation-Date: 2011-12-25 15:36+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1823,7 +1823,7 @@ msgstr "Probleme mit %s. Übergehe dieses."
 msgid "Cannot split %r into package and version"
 msgstr "%r lässt sich nicht in Paket und Version aufteilen"
 
-#: src/cache/common/assign_reader.cc:72 src/cache/common/assign_reader.cc:89
+#: src/cache/common/assign_reader.cc:73 src/cache/common/assign_reader.cc:90
 #: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:245
 #, c-format
 msgid "Can't read cache file %s: %s"
