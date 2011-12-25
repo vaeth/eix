@@ -5,6 +5,10 @@
 	- scripts: Fix possible globbing problems
 	- varsreader.cc: Improve error output for failed "source".
 	  Thanks to Sergei Trofimovich <slyfox at gentoo.org> for the patch
+	- autotools: Require automake-1.11.2 and disable dependency tracking
+	  by default.
+	- No unmap for empty md5 files
+	- Fix minor include issues
 
 *eix-0.23.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

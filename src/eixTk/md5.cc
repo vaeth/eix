@@ -5,15 +5,18 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
 #include "md5.h"
 #include <eixTk/inttypes.h>
 
 #include <string>
 
+#include <cstddef>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -211,6 +214,8 @@ calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr)
 }
 
 #ifdef DEBUG_MD5
+#include <eixTk/unused.h>
+#include <iostream>
 static void
 debug_md5(const uint32_t *resarr)
 {
@@ -278,7 +283,9 @@ verify_md5sum(const char *file, const string &md5sum)
 	}
 	uint32_t resarr[4];
 	calc_md5sum(filebuffer, st.st_size, resarr);
-	munmap(filebuffer, st.st_size);
+	if(filebuffer != NULL) {
+		munmap(filebuffer, st.st_size);
+	}
 	string::size_type curr(0);
 	for(int i(0); i < 4; ++i) {
 		uint32_t res(resarr[i]);

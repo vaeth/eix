@@ -59,30 +59,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CANONICAL_TARGET()
 
 AM_MAINTAINER_MODE()
-
-# The following must appear after option parsing and before automake's
-# initialization.
-# Its purpose is to ignore user-specified --disable-dependency-tracking
-# unless the user also explicitly specified --disable-silent-rules.
-# It is not nice that we do this, because it is only documented here
-# (not even shown with ./configure --help).
-# However, it seems necessary, because --disable-dependency-tracking
-# is planned to be default in Gentoo's EAPI=4(?), and to my big regret
-# this option does no good, because it makes silent rules worthless to
-# some extent. Since I do not know a way to exclude this option completely
-# (or only eliminate its negative effects), this hack ignores this option.
-# Although this hack uses undocumented behaviour, it is not that hackish:
-# It only sets a variable, so I suppose that the worst thing which can
-# happen is that it is ignored...
-AS_VAR_IF([enable_silent_rules], [no],
-	[],
-	[AS_CASE(["${enable_dependency_tracking}"],
-		[yes], [],
-		[no], [AC_MSG_WARN([Ignoring --disable-dependency-tracking as it interferes with silent rules])],
-		[AC_MSG_NOTICE([Trying to enable dependency tracking for consistency with silent rules])])
-	AS_VAR_SET([enable_dependency_tracking], [yes])])
-
-AM_INIT_AUTOMAKE()
+AM_INIT_AUTOMAKE([no-dependencies])
 AM_SILENT_RULES([yes])
 
 AC_LANG([C++])

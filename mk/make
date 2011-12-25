@@ -14,7 +14,7 @@ Available options are
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
   -4  Enable separate tools
   -p  Use pedantic warnings when modifying flags
-  -P  Use pedantic warnings and -Wno-sign-conversion
+  -P  Use pedantic warnings except -Wno-sign-conversion
   -u  Define NOT_FULL_USE
   -s  With sqlite
   -S  Without sqlite

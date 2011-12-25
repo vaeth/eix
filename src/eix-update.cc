@@ -95,7 +95,7 @@ class RepoName {
 };
 
 static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels) throw(ExBasic);
-static void print_help(int ret) ATTRIBUTE_NORETURN;
+static void print_help();
 
 class Permissions {
 	private:
