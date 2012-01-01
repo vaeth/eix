@@ -10,7 +10,6 @@
 # It can add or remove local layman overlays to the current eix
 # database. (@PACKAGE_STRING@).
 
-set -f
 . ./eix-functions.sh.in
 ReadFunctions
 
@@ -39,6 +38,7 @@ Available options:
 -a OVERLAY    Add overlay to the list of layman overlays.
 -A PATH       Add PATH to the sourced make.confs used to determine
               the layman overlays. Current value:'
+	set -f
 	eval "set -- ${layman_make}"
 	[ ${#} -eq 0 ] && set -- "`gettext \
 		'none (i.e. no readable layman make.conf specified)'`"
@@ -96,6 +96,7 @@ CalcLaymanMake || \
 	PushLaymanMake "${local_portdir:-/}local/layman/make.conf"
 layman_overlays=''
 
+set -f
 eval "Push -c opt `eix-update --print EIX_LAYMAN_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
@@ -114,6 +115,7 @@ done
 [ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
 
 GetOverlays() {
+	set -f
 	eval "set -- ${layman_make}"
 	for i
 	do	[ -n "${i}" ] && test -r "${i}" || continue
@@ -130,12 +132,14 @@ Init() {
 
 Add() {
 	Init
+	set -f
 	eval "AddOverlays ${layman_overlays}"
 	CallUpdate
 }
 
 Remove() {
 	Init
+	set -f
 	eval "AddExcludes ${layman_overlays}"
 	CallUpdate
 }

@@ -8,7 +8,6 @@
 # It can be used to fetch the "standard" overlay data and add it to the
 # eix database. (@PACKAGE_STRING@).
 
-set -f
 . ./eix-functions.sh.in
 ReadFunctions
 
@@ -127,6 +126,7 @@ InitLocalLayman
 SanitizeLocalLayman
 DefaultOpts
 
+set -f
 eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
@@ -242,6 +242,7 @@ The default should have been set with ./configure --remote-file'`"
 	tmpfile="${tmpdir}/${eixcachesname}"
 	( umask 000; : >"${tmpfile}" )
 	CalcSuCmd wget -c -- "${addr}"
+	set -f
 	eval "set -- ${sucmd}"
 	RunCommand "`eval_gettext 'Fetching ${eixcachesname}'`" "${@}" || \
 		die "`eval_gettext 'could not fetch ${addr}'`"
@@ -279,6 +280,7 @@ AddArchive() {
 	}
 	ClearUpdateArgs
 	AddLocalMethods
+	set +f
 	for i in *
 	do	n="${i%.eix}"
 		while :

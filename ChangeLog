@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- scripts: Be less rigorous with set -f
+	  This fixes some regressions of eix-0.23.4 (e.g. eix-remote).
+
 *eix-0.23.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- scripts: Fix possible globbing problems

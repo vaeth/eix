@@ -131,7 +131,8 @@ Replace() {
 	eixf_repla=''
 	eixf_replc='break'
 	case "${1}" in
-	-*)	eixf_replc=''; shift;;
+	-*)	eixf_replc=''
+		shift;;
 	esac
 	replace_count=''
 	eval "replace_tail=\"\${${1}}\""
@@ -150,11 +151,12 @@ Replace() {
 
 # Usage: Push [-c] VAR Args
 # Append all Args to VAR, quoted such that
-#    eval "${VAR}" is 'safe' and groups Args correctly.
+#    eval "${VAR}" is 'safe' (with set -f) and groups Args correctly.
 # With option -c, VAR is cleaned in advance.
 Push() {
 	case "${1}" in
-	-*)	shift; eval "${1}=''";;
+	-*)	shift
+		eval "${1}=''";;
 	esac
 	eixf_pusha="${1}"
 	shift
@@ -174,7 +176,8 @@ Push() {
 # The latter are considered as word separators if unescaped.
 PushEscaped() {
 	case "${1}" in
-	-*)	shift; eval "${1}=''";;
+	-*)	shift
+		eval "${1}=''";;
 	esac
 	eixf_pes='[ \t\r\n]'
 	if [ ${#} -lt 3 ]
@@ -250,7 +253,9 @@ ClearUpdateArgs() {
 CallUpdate() {
 	case "${-}" in
 	*f*)	eval "set -- ${update_args}";;
-	*)	set -f; eval "set -- ${update_args}"; set +f;;
+	*)	set -f
+		eval "set -- ${update_args}"
+		set +f;;
 	esac
 	RunCommand "`gettext 'Calling eix-update'`" eix-update "${@}" && return
 	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
@@ -269,7 +274,9 @@ AddLocalMethods() {
 	PushEscaped eixf_alm "${eixf_al}"
 	case "${-}" in
 	*f*)	eval "set -- ${eixf_alm}";;
-	*)	set -f; eval "set -- ${eixf_alm}"; set +f;;
+	*)	set -f
+		eval "set -- ${eixf_alm}"
+		set +f;;
 	esac
 	for eixf_alm
 	do	eixf_al="${eixf_alm}"

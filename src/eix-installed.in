@@ -5,7 +5,6 @@
 # Author and Copyright (c):
 #   Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
-set -f
 read_var_prg=eix
 . ./eix-functions.sh.in
 ReadGettext
@@ -64,6 +63,7 @@ ScanVarDbPkg() {
 	${quiet} || printf '%s\n\n' "${2}"
 	shift 2
 	c=0
+	set +f
 	for i in *
 	do	for j in "${i}"/*
 		do	test -d "${j}" || continue

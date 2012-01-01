@@ -7,7 +7,6 @@
 #
 # This script gives a structured output of eix -tTc (@PACKAGE_STRING@).
 
-set -f
 read_var_prg=eix
 . ./eix-functions.sh.in
 ReadGettext
@@ -57,6 +56,7 @@ myarg=''
 # In the moment this seems not necessary, so we avoid that security risk:
 Push -c opt `eix --print EIX_TEST_OBSOLETE_OPTS`
 Push opt "${@}"
+set -f
 eval "set -- ${opt}"
 OPTIND=1
 while getopts "cCdb?hH" opt

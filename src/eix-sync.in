@@ -9,7 +9,6 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-set -f
 time_begin="`date +%s 2>/dev/null`" || time_begin=''
 
 . ./eix-functions.sh.in
@@ -96,7 +95,8 @@ DiffOnly() {
 DoExecute() {
 	${emulatemode} && return 0
 	for curr_cmd
-	do	eval "${curr_cmd}" || die "`eval_gettext \
+	do	set +f
+		eval "${curr_cmd}" || die "`eval_gettext \
 			'Something went wrong with ${curr_cmd}'`"
 	done
 }
@@ -129,7 +129,12 @@ ParseConfigLine() {
 	esac
 	${nolayman} && return
 	RootTest
-	eval "set -- ${layman_opt}"
+	case "${-}" in
+	*f*)	eval "set -- ${layman_opt}";;
+	*)	set -f
+		eval "set -- ${layman_opt}"
+		set +f;;
+	esac
 	if [ "${j}" = '*' ]
 	then	MyRunCommand "`gettext 'Syncing all portage overlays'`" \
 			"${mycmd}" -S "${@}" \
@@ -185,9 +190,11 @@ DefaultOpts() {
 DefaultOpts
 ExecuteConfig 'opts'
 
+set -f
 eval "Push -c opt ${config_opts}"
 Push opt "${@}"
 eval "set -- ${opt}"
+set +f
 OPTIND=1
 while getopts "ids:02:Uul@SMNtTqwWL:c:C:o:rRem?hH" opt
 do	case "${opt}" in
@@ -252,16 +259,37 @@ MyRun() {
 }
 
 MyRunCommand() {
-	${emulatemode} && return 0
+	${emulatemode} && return
 	einfo "${1}"
 	shift
 	MyRun "${@}"
 }
 
 DoHook() {
-	${nohooks} && return 0
-	eval "set -- ${1}"
+	${nohooks} && return
+	case "${-}" in
+	*f*)	eval "set -- ${1}";;
+	*)	set -f
+		eval "set -- ${1}"
+		set +f;;
+	esac
 	DoExecute "${@}"
+}
+
+MyVarCommand() {
+	myvarcmdvar="${1}"
+	shift
+	myvarcmdargs="${*}"
+	case "${-}" in
+	*f*)	eval "set -- ${myvarcmdvar}";;
+	*)	set -f
+		eval "set -- ${myvarcmdvar}"
+		set +f;;
+	esac
+	myvarcmd="${*}"
+	MyRunCommand "`eval_gettext 'Running ${myvarcmd}'`" \
+		${myvarcmdargs} "${@}" \
+		|| die "`eval_gettext '${myvarcmd} failed'`"
 }
 
 RootTest() {
@@ -334,7 +362,12 @@ PrepRsync() {
 	ReadVar portage_rsync_opts PORTAGE_RSYNC_OPTS || \
 		portage_rsync_opts="--recursive --links --safe-links --perms --times --compress --force --whole-file --delete --stats --timeout=180 --exclude=/distfiles --exclude=/local --exclude=/packages"
 	ReadVar portage_rsync_extra_opts PORTAGE_RSYNC_EXTRA_OPTS
-	eval "set -- ${before_rsync}"
+	case "${-}" in
+	*f*)	eval "set -- ${before_rsync}";;
+	*)	set -f
+		eval "set -- ${before_rsync}"
+		set +f;;
+	esac
 	for curr_cmd
 	do	c=`eval "${curr_cmd}"` || \
 			die "`eval_gettext '${curr_cmd} failed'`"
@@ -349,9 +382,10 @@ ClearCache() {
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
 	RootTest
+	( set +f
 	MyRunCommand "`eval_gettext \
 	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
-		rm -rf -- "${local_varcache}"/var/cache/edb/dep/* || \
+		rm -rf -- "${local_varcache}"/var/cache/edb/dep/* ) || \
 		die "`eval_gettext \
 		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
 }
@@ -367,10 +401,7 @@ CallEmergeSync() {
 	fi
 	${skip_sync} && return
 	RootTest
-	eval "set -- ${emergecmd}"
-	runarg="${*}"
-	MyRunCommand "`eval_gettext 'Running ${runarg}'`" -t sync "${@}" \
-		|| die "`eval_gettext '${runarg} failed'`"
+	MyVarCommand "${emergecmd}" -t sync
 }
 
 CallSyncClient() {
@@ -385,28 +416,20 @@ CallSyncClient() {
 CallEmergeMetadata() {
 	${doupdate} && ${metadata} || return 0
 	RootTest
-	MyRunCommand "`gettext 'Running emerge --metadata'`" -t metadata
-		emerge --metadata || \
-		die "`gettext 'emerge --metadata failed'`"
+	MyVarCommand 'emerge --metadata' -t metadata
 }
 
 CondUpdate() {
 	if test ! -f "${eixcache}"
 	then	RootTest
-		eval "set -- ${updatecmd}"
-		MyRunCommand "`gettext \
-			'eix-cache does not exist. Running eix-update!'`" \
-			-t iupdate "${@}" || \
-				die "`gettext 'eix-update failed'`"
+		einfo "`gettext 'eix-cache does not exist.'`"
+		MyVarCommand "${updatecmd}" -t iupdate
 		return
 	fi
 	${emulatemode} && return
 	eix --is-current || {
-		eval "set -- ${updatecmd}"
-		MyRunCommand "`gettext \
-			'eix-cache format has changed. Running eix-update!'`" \
-			-t iupdate "${@}" || \
-				die "`gettext 'eix-update failed'`"
+		einfo "`gettext 'eix-cache format has changed.'`"
+		MyVarCommand "${updatecmd}" -t iupdate
 	}
 }
 
@@ -414,7 +437,8 @@ CopyPrevious() {
 	${doupdate} || return 0
 	${emulatemode} && return
 	MakeTempFile
-	( umask 002 ; cp -- "${eixcache}" "${tmpfile}" ) || \
+	( umask 002
+	cp -- "${eixcache}" "${tmpfile}" ) || \
 		die "`eval_gettext \
 		'Could not copy database to temporary file ${tmpfile}'`"
 }
@@ -426,8 +450,7 @@ MovePrevious() {
 		MyRunCommand "`eval_gettext \
 			'Copying old ${eixcache} cache to ${eixprevious}'`" \
 		mv -f -- "${tmpfile}" "${eixprevious}"
-	) || \
-	die "`eval_gettext 'Could not move ${tmpfile} to ${eixprevious}'`"
+	) || die "`eval_gettext 'Could not move ${tmpfile} to ${eixprevious}'`"
 	[ "${UID}" -eq 0 ] && \
 		chown -- portage:portage "${eixprevious}" >/dev/null 2>&1
 	chmod -- 664 "${eixprevious}" >/dev/null 2>&1
@@ -447,10 +470,7 @@ UpdateDiff() {
 		einfo "`gettext \
 			'eix-update was apparently already called in a hook'`"
 	else	MovePrevious
-		eval "set -- ${updatecmd}"
-		MyRunCommand "`gettext 'Running eix-update'`" \
-			-t update "${@}" || \
-			die "`gettext 'Failure while running eix-update'`"
+		MyVarCommand "${updatecmd}" -t update
 	fi
 	DoHook "${after_update}"
 	MyRunCommand "`gettext 'Calling eix-diff'`" \
@@ -477,7 +497,7 @@ ReadRootUID() {
 	ReadVar root_uid ROOT_UID || root_uid=''
 	: ${root_uid:=0}
 	case "${root_uid}" in
-		*[!0-9]*)	die "`eval_gettext \
+	*[!0-9]*)	die "`eval_gettext \
 			'ROOT_UID [${root_uid}] is not a number'`";;
 	esac
 }
