@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-01-01 21:13+0100\n"
+"POT-Creation-Date: 2012-01-04 18:31+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1137,7 +1137,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
-#: src/eix.cc:63
+#: src/eix.cc:64
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1438,16 +1438,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:482 src/eix-diff.cc:341
+#: src/eix.cc:483 src/eix-diff.cc:342
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:545 src/eix-diff.cc:306 src/eix-update.cc:390
+#: src/eix.cc:546 src/eix-diff.cc:307 src/eix-update.cc:390
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:589 src/eix.cc:909
+#: src/eix.cc:590 src/eix.cc:910
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1456,7 +1456,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:600
+#: src/eix.cc:601
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1467,31 +1467,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:868 src/eix.cc:887
+#: src/eix.cc:869 src/eix.cc:888
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:872
+#: src/eix.cc:873
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:880
+#: src/eix.cc:881
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:990
+#: src/eix.cc:991
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:991
+#: src/eix.cc:992
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:996
+#: src/eix.cc:997
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1500,7 +1500,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:997
+#: src/eix.cc:998
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1509,7 +1509,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1054
+#: src/eix.cc:1055
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1517,7 +1517,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1057
+#: src/eix.cc:1058
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1525,7 +1525,7 @@ msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
 
-#: src/eix-diff.cc:64
+#: src/eix-diff.cc:65
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
@@ -1565,11 +1565,11 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:128
+#: src/eix-diff.cc:129
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:134
+#: src/eix-diff.cc:135
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1578,11 +1578,11 @@ msgstr ""
 "%s wurde mit inkompatiblem eix-update erzeugt:\n"
 "Es benutzt Datenbank-Format %s (aktuell ist %s)."
 
-#: src/eix-diff.cc:316
+#: src/eix-diff.cc:317
 msgid "Missing cache-file."
 msgstr "Fehlendes Cachefile."
 
-#: src/eix-diff.cc:386
+#: src/eix-diff.cc:387
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"

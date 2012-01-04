@@ -80,7 +80,7 @@ Check 'cstring' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -
 Check 'csignal' -e signal -e sigaction
 Check 'ctime' -e time_t
 Check 'fcntl\.h' -e '[^a-z_.]open(' -e '[^a-z_.]close(' -e '[^a-z_.]open (' -e '[^a-z_.]close ('
-Check 'unistd\.h' -e '[^a-z]_exit' -e setuid -e getuid -e chown -e '[^a-z_.]close('
+Check 'unistd\.h' -e '[^a-z]_exit' -e setuid -e getuid -e chown -e '[^a-z_.]close(' -e isatty
 Check 'sys/types\.h' -e uid_t -e gid_t -e "size_t[^y]" -e off_t
 Check 'sys/stat\.h' -e fchown -e fchmod -e 'stat[^a-z]'
 Check 'sys/mman\.h' -e mmap

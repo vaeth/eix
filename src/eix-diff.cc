@@ -40,6 +40,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <unistd.h>
 
 #define VAR_DB_PKG "/var/db/pkg/"
 

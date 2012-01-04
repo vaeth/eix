@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.6
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Include unistd.h for isatty(). Thanks to <gokturk at binghamton.edu>,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=397589
+
 *eix-0.23.5
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- scripts: Be less rigorous with set -f
