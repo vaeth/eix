@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2011-11-06 20:05:00 +0100 (Sun, 06 Mov 2011) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-01-11 21:08:00 +0100 (Wed, 11 Jan 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2188,9 +2188,6 @@ The following cache methods are available:
 .TP
 .BR metadata-flat " or " metadata-flat:I<PATH>
 Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache).
-This is the default method which will always work if the portage tree is readable
-when you run eix-update.
-
 .RS
 If you provide I<PATH>, it overrides the above path; in this case, it must be
 the full path (i.e. no prefix is used). You might want to provide I<PATH> if
@@ -2211,6 +2208,14 @@ B<cache-format=md5-dict>.
 This is similar to B<metadata-flat> with the difference that the files within
 the metadata cache are expected to be in an "assignment format"
 (TYPE=value) which is the case in some alt-gentoo trees.
+.TP
+.BR metadata-md5-or-flat ", " metadata-md5-or-flat:I<PATH>
+This is similar to B<metadata-flat> with the difference that if the category
+is found in $PORTDIR/metadata/md5-cache, that information is used instead.
+.TP
+.BR metadata-md5-or-assign ", " metadata-md5-or-assign:I<PATH>
+This is similar to B<metadata-assign> with the difference that if the category
+is found in $PORTDIR/metadata/md5-cache, that information is used instead.
 .TP
 .B sqlite
 This is an extremely fast cache method if you are using portage with the

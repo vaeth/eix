@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-01-04 18:31+0100\n"
+"POT-Creation-Date: 2012-01-11 21:07+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1891,7 +1891,7 @@ msgstr "Cachefile %s benutzt neueres Format %s (aktuell ist %s)"
 msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
-#: src/cache/metadata/metadata.cc:237 src/cache/metadata/metadata.cc:275
+#: src/cache/metadata/metadata.cc:291 src/cache/metadata/metadata.cc:329
 #: src/cache/port2_1_2/port2_1_2.cc:115 src/cache/sqlite/sqlite.cc:217
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"

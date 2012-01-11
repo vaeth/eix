@@ -54,6 +54,14 @@ MetadataCache::initialize(const string &name)
 		return true;
 	}
 	checkmd5 = false;
+	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-flat") == 0) {
+		setType(PATH_METADATAMD5OR, true);
+		return true;
+	}
+	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-assign") == 0) {
+		setType(PATH_METADATAMD5OR, false);
+		return true;
+	}
 	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
 		(strcasecmp(pure_name.c_str(), "metadata-flat") == 0)) {
 		setType(PATH_METADATA, true);
@@ -101,6 +109,9 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 			m_type = "metadata-md5";
 			append_flattype = false;
 			break;
+		case PATH_METADATAMD5OR:
+			m_type = "metadata-md5-or-";
+			break;
 		case PATH_REPOSITORY:
 			m_type = "repo-";
 			break;
@@ -116,6 +127,12 @@ MetadataCache::setType(PathType set_path_type, bool set_flat)
 		m_type.append(1, ':');
 		m_type.append(override_path);
 	}
+	setFlat(set_flat);
+}
+
+void
+MetadataCache::setFlat(bool set_flat)
+{
 	if(set_flat) {
 		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
 		x_read_file = flat_read_file;
@@ -136,22 +153,40 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 bool
 MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 {
+	string alt;
 	m_catname = cat_name;
 	if(have_override_path) {
 		m_catpath = override_path;
 	}
 	else {
 		m_catpath = m_prefix;
-		if((path_type == PATH_METADATA) || (path_type == PATH_METADATAMD5)) {
-			// m_scheme is actually the portdir
-			m_catpath.append(m_scheme);
-			optional_append(m_catpath, '/');
-			m_catpath.append((path_type == PATH_METADATA) ? METADATA_PATH : METADATAMD5_PATH);
-		}
-		else {
-		// path_type == PATH_REPOSITORY || path_type == PATH_FULL
-			optional_append(m_catpath, '/');
-			m_catpath.append(PORTAGE_CACHE_PATH);
+		switch(path_type) {
+			case PATH_METADATA:
+			case PATH_METADATAMD5:
+			case PATH_METADATAMD5OR:
+				// m_scheme is actually the portdir
+				m_catpath.append(m_scheme);
+				optional_append(m_catpath, '/');
+				if(path_type == PATH_METADATA) {
+					m_catpath.append(METADATA_PATH);
+				}
+				else if(path_type == PATH_METADATAMD5) {
+					m_catpath.append(METADATAMD5_PATH);
+				}
+				else {
+					alt = m_catpath;
+					m_catpath.append(METADATAMD5_PATH);
+					alt.append(METADATA_PATH);
+				}
+				break;
+/*
+			case PATH_REPOSITORY:
+			case PATH_FULL:
+*/
+			default:
+				optional_append(m_catpath, '/');
+				m_catpath.append(PORTAGE_CACHE_PATH);
+				break;
 		}
 	}
 	switch(path_type) {
@@ -183,6 +218,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 /*
 		case PATH_METADATA:
 		case PATH_METADATAMD5:
+		case PATH_METADATAMD5OR:
 */
 		default:
 			break;
@@ -190,6 +226,24 @@ MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 	optional_append(m_catpath, '/');
 	m_catpath.append(cat_name);
 
+	bool r(scandir_cc(m_catpath, names, cachefiles_selector));
+	if(path_type != PATH_METADATAMD5OR) {
+		return r;
+	}
+	// PATH_METADATAMD5OR:
+	if(r) { // We had found category in METADATAMD5_PATH
+		if(flat) { // We "jump" to non-flat PATH_METADATAMD5 mode:
+			setFlat(false);
+		}
+		return true;
+	}
+	// We choose metadata-flat or metadata-assign:
+	m_catpath = alt;
+	optional_append(m_catpath, '/');
+	m_catpath.append(cat_name);
+	if(flat) { // We "jump" to flat PATH_METADATA mode:
+		setFlat(true);
+	}
 	return scandir_cc(m_catpath, names, cachefiles_selector);
 }
 

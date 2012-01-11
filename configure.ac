@@ -767,7 +767,7 @@ AC_ARG_WITH([portdir-cache-method],
 		[default PORTDIR_CACHE_METHOD])],
 	[AS_VAR_COPY([PORTDIR_CACHE_METHOD], [withval])
 	AS_VAR_SET([description], ["on request"])],
-	[AS_VAR_SET([PORTDIR_CACHE_METHOD], ["metadata-flat"])
+	[AS_VAR_SET([PORTDIR_CACHE_METHOD], ["metadata-md5-or-flat"])
 	AS_VAR_SET([description], ["default"])])
 MV_MSG_RESULT_VAR([PORTDIR_CACHE_METHOD], [${description}])
 AC_DEFINE_UNQUOTED([PORTDIR_CACHE_METHOD],

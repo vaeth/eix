@@ -29,6 +29,7 @@ class MetadataCache : public BasicCache {
 		typedef enum {
 			PATH_METADATA,
 			PATH_METADATAMD5,
+			PATH_METADATAMD5OR,
 			PATH_FULL,
 			PATH_REPOSITORY
 		} PathType;
@@ -45,6 +46,7 @@ class MetadataCache : public BasicCache {
 		x_read_file_t x_read_file;
 
 		void setType(PathType set_path_type, bool set_flat);
+		void setFlat(bool set_flat);
 	public:
 		bool initialize(const std::string &name);
 
