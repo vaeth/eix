@@ -79,10 +79,11 @@ The following options are available:
      is active. (This option is not default anymore).
 -R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
 -e   Skip heuristic tests whether you must be root.
+-H   Suppress status line update.
 -h   Show this text and exit.'
 	echo
 	exitcode=${1:-1}
-	exit ${exitcode}
+	Exit ${exitcode}
 }
 
 DiffOnly() {
@@ -196,34 +197,35 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts "ids:02:Uul@SMNtTqwWL:c:C:o:rRem?hH" opt
+while getopts 'ids:02:Uul@SMNtTqwWL:c:C:o:rRemHh?' opt
 do	case "${opt}" in
-		i) DefaultOpts;;
-		d) diffonly=:;;
-		s) server="${OPTARG}";;
-		0) skip_sync=:;;
-		2) client="${OPTARG}";;
-		U) doupdate=false;;
-		u) nolayman=:; nohooks=:; skip_sync=:; server='';;
-		l) nolayman=:;;
-		@) nohooks=:;;
-		S) synchooks=false;;
-		M) metadata=:;;
-		N) metadata=false;;
-		t) usetemp=:;;
-		T) measure_time=false;;
-		q) quiet=:;;
-		L) Push layman_opt "${OPTARG}";;
-		w) Push -c emergecmd 'emerge-webrsync';;
-		W) Push -c emergecmd 'emerge-delta-webrsync';;
-		c) Push -c emergecmd "${OPTARG}";;
-		C) Push emergecmd "${OPTARG}";;
-		o) Push updatecmd "${OPTARG}";;
-		r) clearcache=:;;
-		R) clearcache=false;;
-		e) test_for_root=false;;
-		m) die "`gettext 'eix-sync -m is obsolete; use -M0 instead'`";;
-		*) Usage 0;;
+	i) DefaultOpts;;
+	d) diffonly=:;;
+	s) server="${OPTARG}";;
+	0) skip_sync=:;;
+	2) client="${OPTARG}";;
+	U) doupdate=false;;
+	u) nolayman=:; nohooks=:; skip_sync=:; server='';;
+	l) nolayman=:;;
+	@) nohooks=:;;
+	S) synchooks=false;;
+	M) metadata=:;;
+	N) metadata=false;;
+	t) usetemp=:;;
+	T) measure_time=false;;
+	q) quiet=:;;
+	L) Push layman_opt "${OPTARG}";;
+	w) Push -c emergecmd 'emerge-webrsync';;
+	W) Push -c emergecmd 'emerge-delta-webrsync';;
+	c) Push -c emergecmd "${OPTARG}";;
+	C) Push emergecmd "${OPTARG}";;
+	o) Push updatecmd "${OPTARG}";;
+	r) clearcache=:;;
+	R) clearcache=false;;
+	e) test_for_root=false;;
+	m) die "`gettext 'eix-sync -m is obsolete; use -M0 instead'`";;
+	H) statusline=false;;
+	*) Usage 0;;
 	esac
 done
 opt=''
@@ -260,7 +262,7 @@ MyRun() {
 
 MyRunCommand() {
 	${emulatemode} && return
-	einfo "${1}"
+	StatusInfo "${1}"
 	shift
 	MyRun "${@}"
 }
@@ -340,7 +342,7 @@ ExitAll() {
 	tmpfile=''
 	trap - EXIT HUP INT TERM
 	PrintTimes
-	exit ${exitcode}
+	Exit ${exitcode}
 }
 ${measure_time} && trap ExitAll EXIT HUP INT TERM
 
@@ -382,11 +384,15 @@ ClearCache() {
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
 	RootTest
-	( set +f
+	case "${-}" in
+	*f*)	set +f
+		set -- "${local_varcache}"/var/cache/edb/dep/*
+		set -f;;
+	*)	set -- "${local_varcache}"/var/cache/edb/dep/*;;
+	esac
 	MyRunCommand "`eval_gettext \
 	'Removing old portage-cache in ${local_varcache}/var/cache/edb/dep'`" \
-		rm -rf -- "${local_varcache}"/var/cache/edb/dep/* ) || \
-		die "`eval_gettext \
+		rm -rf -- "${@}" || die "`eval_gettext \
 		'rm -rf ${local_varcache}/var/cache/edb/dep/* failed'`"
 }
 
@@ -436,24 +442,23 @@ CondUpdate() {
 CopyPrevious() {
 	${doupdate} || return 0
 	${emulatemode} && return
+	StatusInfo "`eval_gettext \
+		'Copying old ${eixcache} cache to temporary file'`"
+	previous_umask="`umask`"
+	umask 002
 	MakeTempFile
-	( umask 002
-	cp -- "${eixcache}" "${tmpfile}" ) || \
-		die "`eval_gettext \
+	cp -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
 		'Could not copy database to temporary file ${tmpfile}'`"
+	umask "${previouus_umask}"
 }
 
 MovePrevious() {
 	${usetemp} && return
-	(
-		umask 002
-		MyRunCommand "`eval_gettext \
-			'Copying old ${eixcache} cache to ${eixprevious}'`" \
-		mv -f -- "${tmpfile}" "${eixprevious}"
-	) || die "`eval_gettext 'Could not move ${tmpfile} to ${eixprevious}'`"
-	[ "${UID}" -eq 0 ] && \
-		chown -- portage:portage "${eixprevious}" >/dev/null 2>&1
-	chmod -- 664 "${eixprevious}" >/dev/null 2>&1
+	MyRunCommand "`eval_gettext \
+		'Moving old ${eixcache} cache to ${eixprevious}'`" \
+		mv -f -- "${tmpfile}" "${eixprevious}" || \
+		die "`eval_gettext \
+			'Could not move ${tmpfile} to ${eixprevious}'`"
 }
 
 UpdateDiff() {
@@ -493,6 +498,7 @@ MainSync() {
 
 root_uid=''
 ReadRootUID() {
+	[ -n "${UID}" ] || UID="`id -u`"
 	[ -n "${root_uid}" ] && return
 	ReadVar root_uid ROOT_UID || root_uid=''
 	: ${root_uid:=0}
@@ -502,7 +508,6 @@ ReadRootUID() {
 	esac
 }
 
-[ -n "${UID}" ] || UID="`id -u`"
 if ${test_for_root} && ReadRootUID && [ "${UID}" -ne "${root_uid}" ]
 then	# Emulate everything to check whether we have to be root:
 	emulatemode=:
@@ -514,4 +519,4 @@ ${quiet} && exec >/dev/null
 
 MainSync
 
-exit 0
+Exit 0

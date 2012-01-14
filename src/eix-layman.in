@@ -50,9 +50,10 @@ Available options:
 -C            Clear the above list
 -c LAYMAN_CFG Use layman.cfg file to determine entry for above list
 -v            Verbose (default)
+-H            Suppress status line update
 -q            Quiet'
 	echo
-	exit ${exitcode:-1}
+	Exit ${exitcode:-1}
 }
 
 ClearLaymanMake() {
@@ -101,18 +102,19 @@ eval "Push -c opt `eix-update --print EIX_LAYMAN_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts 'vqa:A:c:C?hH' opt
+while getopts 'vqa:A:c:CHh?' opt
 do	case "${opt}" in
-		v) verbose=:;;
-		q) verbose=false;;
-		a) Push layman_overlays "${OPTARG}";;
-		c) CalcLaymanMake -c "${OPTARG}";;
-		A) PushLaymanMake "${OPTARG}";;
-		C) ClearLaymanMake;;
-		*) Usage 0;;
+	v) verbose=:;;
+	q) verbose=false;;
+	a) Push layman_overlays "${OPTARG}";;
+	c) CalcLaymanMake -c "${OPTARG}";;
+	A) PushLaymanMake "${OPTARG}";;
+	C) ClearLaymanMake;;
+	H) statusline=false;;
+	*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
+[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 
 GetOverlays() {
 	set -f
@@ -125,6 +127,7 @@ GetOverlays() {
 }
 
 Init() {
+	Statusline "`gettext 'Analyzing'`"
 	ClearUpdateArgs
 	GetOverlays
 	AddLocalMethods
@@ -155,4 +158,4 @@ rem*|del*|rm*|sub*)
 *)	Usage;;
 esac
 
-exit 0
+Exit 0

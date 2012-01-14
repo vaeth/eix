@@ -64,10 +64,11 @@ The following options are available:
         ${addr}
 -i      Ignore all previous options (e.g. of local defaults).
 -v      Verbose (default)
+-H      Suppress status line update
 -q      Quiet'
 	echo
 	exitcode=${1:-1}
-	exit ${exitcode}
+	Exit ${exitcode}
 }
 
 SanitizeLocalLayman() {
@@ -117,6 +118,7 @@ CalcSuprg() {
 DefaultOpts() {
 	CalcSuprg /usr/bin/sudo /bin/su sudo su
 	verbose=:
+	statusline=:
 	fetchuser=''
 	fetchroot='nobody'
 	filearg=''
@@ -131,23 +133,24 @@ eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
-while getopts 'f:vqu:U:l:a:sSi?hH' opt
+while getopts 'f:vqu:U:l:a:sSiHh?' opt
 do	case "${opt}" in
-		f) filearg="${OPTARG}";;
-		v) verbose=:;;
-		q) verbose=false;;
-		u) fetchuser="${OPTARG}";;
-		U) fetchroot="${OPTARG}";;
-		l) LOCAL_LAYMAN="${OPTARG}"; SanitizeLocalLayman;;
-		a) addr="${OPTARG}";;
-		s) CalcSuprg /usr/bin/sudo sudo;;
-		S) CalcSuprg /bin/su su;;
-		i) DefaultOpts;;
-		*) Usage 0;;
+	f) filearg="${OPTARG}";;
+	v) verbose=:;;
+	q) verbose=false;;
+	u) fetchuser="${OPTARG}";;
+	U) fetchroot="${OPTARG}";;
+	l) LOCAL_LAYMAN="${OPTARG}"; SanitizeLocalLayman;;
+	a) addr="${OPTARG}";;
+	s) CalcSuprg /usr/bin/sudo sudo;;
+	S) CalcSuprg /bin/su su;;
+	i) DefaultOpts;;
+	H) statusline=false;;
+	*) Usage 0;;
 	esac
 done
 opt=''
-[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
+[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 
 need_arg=false
 GetFilename() {
@@ -170,8 +173,7 @@ GetFilename() {
 CalcSuCmd() {
 #	local shexec a
 	if [ -z "${fetchuser}" ]
-	then	[ -n "${UID}" ] || UID="`id -u`"
-		if [ "${UID}" -ne 0 ]
+	then	if [ "${UID}" -ne 0 ]
 		then	Push -c sucmd "${@}"
 			return
 		fi
@@ -211,7 +213,7 @@ Cleanup() {
 	fi
 	tmpdir=''
 	trap - EXIT HUP INT TERM
-	exit "${exitcode}"
+	Exit ${exitcode}
 }
 MakeTempDir() {
 	[ -n "${tmpdir}" ] && return
@@ -226,7 +228,7 @@ MakeTempSub() {
 	if [ -z "${tmpsub}" ]
 	then	MakeTempDir
 		tmpsub="${tmpdir}/1"
-		( umask 000; mkdir -- "${tmpsub}" )
+		( umask 002; mkdir -- "${tmpsub}" )
 	fi
 	[ -z "${1}" ] || CdDir "${tmpsub}"
 }
@@ -240,7 +242,7 @@ Please specify a valid remote file with option -a.
 The default should have been set with ./configure --remote-file'`"
 	MakeTempDir cd
 	tmpfile="${tmpdir}/${eixcachesname}"
-	( umask 000; : >"${tmpfile}" )
+	( umask 002; : >"${tmpfile}" )
 	CalcSuCmd wget -c -- "${addr}"
 	set -f
 	eval "set -- ${sucmd}"
@@ -274,12 +276,13 @@ to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 
 AddArchive() {
 	a="${1}"
-	RunCommand "Unpacking data" tar xjf "${a}" || {
+	RunCommand "`gettext 'Unpacking data'`" tar xjf "${a}" || {
 		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
 		die "${msg}"
 	}
 	ClearUpdateArgs
 	AddLocalMethods
+	Statusline "`gettext 'Analyzing'`"
 	set +f
 	for i in *
 	do	n="${i%.eix}"
@@ -329,14 +332,19 @@ AddArchive() {
 }
 
 FetchCopy() {
+	[ -n "${UID}" ] || UID="`id -u`"
 	GetFilename "${@}"
 	FetchTemp
 	[ -z "${filename}" ] && return
 	(
-		[ "${UID}" -eq 0 ] && umask 002
-		cp --preserve=timestamps -- "${tmpfile}" "${filename}"
-	)
-	[ "${UID}" -eq 0 ] && chown -- portage:portage "${filename}"
+		umask 002
+		cp --preserve=timestamps -- "${tmpfile}" "${filename}" || \
+			cp -- "${tmpfile}" "${filename}" && {
+			[ "${UID}" -ne 0 ] || \
+				chown -- portage:portage "${filename}"
+		}
+	) >/dev/null 2>&1 \
+	|| die "`eval_gettext 'cannot copy temporary file to ${filename}'`"
 }
 
 Fetch() {
@@ -383,4 +391,4 @@ case "${main_command}" in
 	*)	Usage;;
 esac
 
-exit 0
+Exit 0

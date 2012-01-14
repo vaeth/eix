@@ -1,6 +1,6 @@
 #compdef eix-installed
 _arguments -s -S -A '-*' : \
-'(* -)'{'-h','-H','-\\?'}'[help]' \
+'(* -)'{'-h','-\\?'}'[help]' \
 '(* -q)-a[same as -q all]' \
 '-q[quiet\: output only packages, no text]' \
 '-\=[output packages prefixed with "="]' \

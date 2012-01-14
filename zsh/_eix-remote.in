@@ -1,6 +1,6 @@
 #compdef eix-remote
 _arguments -s -S -A '-*' : \
-'(1 2 -)'{'-h','-H','-\\?'}'[help]' \
+'(1 2 -)'{'-h','-\\?'}'[help]' \
 '(2)-f+[FILE (use FILE as last arg)]:file:_files' \
 '-u+[USER (call wget as USER if not root)]:wget-user if non-root:(nobody portage)' \
 '-U+[USER (call wget as USER if root)]:wget-user if root:(nobody portage)' \
@@ -10,6 +10,7 @@ _arguments -s -S -A '-*' : \
 '-a+[ADDR (use ADDR as remote database)]:remote address: ' \
 '-i[ignore all previous options]' \
 '-v[verbose (default)]' \
+'-H[no status line update]' \
 '-q[quiet]' \
 '1:command:(update fetch add remove)' \
 '2::file:_files'

@@ -1,6 +1,6 @@
 #compdef eix-sync
 _arguments -s -S -A '-*' : \
-'(-)'{'-h','-H','-\\?'}'[help]' \
+'(-)'{'-h','-\\?'}'[help]' \
 '-i[ignore all previous options]' \
 '-d[only show differences and then exit]' \
 '-s+[SERVER (rsync from SERVER; this implies -0)]:server to sync from: _hosts' \
@@ -24,4 +24,5 @@ _arguments -s -S -A '-*' : \
 '*-L+[OPT (add OPT to layman)]:layman option: ' \
 '-r[clear /var/cache/edb/dep/* before syncing]' \
 '-R[cancel previous -r]' \
+'-H[no status line update]' \
 '-e[do not test whether we must be root]'

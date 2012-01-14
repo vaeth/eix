@@ -1,10 +1,11 @@
 #compdef eix-layman
 _arguments -s -S -A '-*' : \
-'(1 -)'{'-h','-H','-\\?'}'[help]' \
+'(1 -)'{'-h','-\\?'}'[help]' \
 '*-a+[OVERLAY (add to list of layman overlays)]:add overlay:_files' \
 '*-A+[PATH (add to list of sourced make.conf)]:add make.conf:_files' \
 '-C[clear list of PATH of sourced make.conf files]' \
 '-c+[LAYMAN_CFG (use as layman.cfg to define make.conf)]:layman.cfg-file:_files' \
 '-v[verbose (default)]' \
+'-H[no status line update]' \
 '-q[quiet]' \
 '1:command:(add remove)'

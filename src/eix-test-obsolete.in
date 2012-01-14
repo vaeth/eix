@@ -33,6 +33,7 @@ The following options are available:
 	-C  use CHECK_INSTALLED_OVERLAYS=repository
 	-d  This can be used instead of the argument "detail"
 	-b  This can be used instead of the argument "brief"
+	-H  Suppress status line update
 	-h  Show this help text
 
 Options -b and -d are meant as to be used in EIX_TEST_OBSOLETE_OPTS to specify
@@ -46,7 +47,7 @@ portage versions).
 
 The argument can be abbreviated, e.g. instead of "brief" you can just use "b".'
 	echo
-	exit ${1:-1}
+	Exit ${1:-1}
 }
 
 nodetails=false
@@ -59,7 +60,7 @@ Push opt "${@}"
 set -f
 eval "set -- ${opt}"
 OPTIND=1
-while getopts "cCdb?hH" opt
+while getopts 'cCdbHh?' opt
 do	case "${opt}" in
 	c) CHECK_INSTALLED_OVERLAYS=:
 		export CHECK_INSTALLED_OVERLAYS;;
@@ -67,10 +68,11 @@ do	case "${opt}" in
 		export CHECK_INSTALLED_OVERLAYS;;
 	d) myarg='detail';;
 	b) myarg='brief';;
+	H) statusline=false;;
 	*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
+[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 [ ${#} -gt 1 ] && Usage
 [ ${#} -eq 1 ] && myarg="${1#-}"
 case "${myarg#-}" in
@@ -83,6 +85,7 @@ esac
 DEFAULT_FORMAT=compact
 export DEFAULT_FORMAT
 
+Statusline 'eix -t'
 eix '-t*!'
 
 # sets is the list of all "*" for which there are set_* variables
@@ -189,6 +192,7 @@ DefineSet in_license \
 DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
+Statusline 'accept_keywords'
 Check keywords "`eval_gettext \
 	'No  redundant  entries in ${rump}{,accept_}keywords'`" \
 	"`eval_gettext 'Redundant in ${rump}{,accept_}keywords:'`" \
@@ -199,6 +203,7 @@ Check in_keywords "`eval_gettext \
 	"`eval_gettext 'Not installed but in ${rump}{,accept_}keywords:'`" \
 	"`eval_gettext \
 	'Skipping check: uninstalled entries in ${rump}{,accept_}keywords'`"
+Statusline 'mask'
 Check mask "`eval_gettext \
 	'No  redundant  entries in ${rump}mask'`" \
 	"`eval_gettext 'Redundant in ${rump}mask:'`" \
@@ -207,6 +212,7 @@ Check in_mask "`eval_gettext \
 	'No uninstalled entries in ${rump}mask'`" \
 	"`eval_gettext 'Not installed but in ${rump}mask:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}mask'`"
+Statusline 'unmask'
 Check unmask "`eval_gettext \
 	'No  redundant  entries in ${rump}unmask'`" \
 	"`eval_gettext 'Redundant in ${rump}unmask:'`" \
@@ -215,6 +221,7 @@ Check in_unmask "`eval_gettext \
 	'No uninstalled entries in ${rump}unmask'`" \
 	"`eval_gettext 'Not installed but in ${rump}unmask:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}unmask'`"
+Statusline 'use'
 Check use "`eval_gettext \
 	'No  redundant  entries in ${rump}use'`" \
 	"`eval_gettext 'Redundant in ${rump}use:'`" \
@@ -223,6 +230,7 @@ Check in_use "`eval_gettext \
 	'No uninstalled entries in ${rump}use'`" \
 	"`eval_gettext 'Not installed but in ${rump}use:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}use'`"
+Statusline 'env'
 Check env "`eval_gettext \
 	'No  redundant  entries in ${rump}env'`" \
 	"`eval_gettext 'Redundant in ${rump}env:'`" \
@@ -231,6 +239,7 @@ Check in_env "`eval_gettext \
 	'No uninstalled entries in ${rump}env'`" \
 	"`eval_gettext 'Not installed but in ${rump}env:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}env'`"
+Statusline 'license'
 Check license "`eval_gettext \
 	'No  redundant  entries in ${rump}license'`" \
 	"`eval_gettext 'Redundant in ${rump}license:'`" \
@@ -239,6 +248,7 @@ Check in_license "`eval_gettext \
 	'No uninstalled entries in ${rump}license'`" \
 	"`eval_gettext 'Not installed but in ${rump}license:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}license'`"
+Statusline 'cflags'
 Check cflags "`eval_gettext \
 	'No  redundant  entries in ${rump}cflags'`" \
 	"`eval_gettext 'Redundant in ${rump}cflags:'`" \
@@ -247,8 +257,10 @@ Check in_cflags "`eval_gettext \
 	'No uninstalled entries in ${rump}cflags'`" \
 	"`eval_gettext 'Not installed but in ${rump}cflags:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}cflags'`"
+Statusline 'installed'
 Check nonexistent "`gettext \
 	'All installed versions of packages are in the database.'`" \
 	"`gettext \
 	'Installed packages with a version not in the database (or masked):'`" \
 	"`gettext 'Skipping check: installed but not in the database'`"
+Exit 0

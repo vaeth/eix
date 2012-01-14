@@ -45,6 +45,29 @@ SetColors() {
 	eixf_normal='\033[0m'
 }
 
+statusline=:
+eixf_statusline=false
+Statusline() {
+	${statusline} || return 0
+	printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
+	eixf_statusline=:
+}
+
+verbose=:
+StatusInfo() {
+	Statusline "${*}"
+	! ${verbose} || einfo "${*}"
+}
+
+Exit() {
+	eixf_exit=${1:-${?}}
+	${eixf_statusline} && if [ ${eixf_exit} -eq 0 ]
+	then Statusline "`gettext 'Finished'`"
+	else Statusline "`gettext 'Failure'`"
+	fi
+	exit ${eixf_exit}
+}
+
 eerror() {
 	eixf_eerror=${?}
 	SetColors
@@ -79,7 +102,7 @@ eend() {
 die() {
 	eerror "${*}"
 	exitcode=2
-	exit "${exitcode}"
+	Exit ${exitcode}
 }
 
 PerLine() {
@@ -94,8 +117,8 @@ GetPortdir() {
 }
 
 verbose=:
-
 RunCommand() {
+	Statusline "${1}"
 	if ${verbose}
 	then	einfo "${1}"
 		shift
@@ -310,7 +333,7 @@ Pathify() {
 			eixf_pathb="${eixf_pathb%A}" && Chomp eixf_pathb && \
 			[ -n "${eixf_pathb}" ] && test -x "${eixf_pathb}" || \
 			die "`eval_gettext \
-				'${eixf_patha} cannot be found in path'`"
+				'${eixf_patha} cannot be found in PATH'`"
 		eval "${eixf_pathc}=\${eixf_pathb}"
 	done
 }
@@ -434,15 +457,15 @@ AssignTempEmulate() {
 		fi
 		eixf_assc="/tmp/${0##*/}.${$}${eixf_assa}${eixf_assb}"
 		if [ "${2}" = '-d' ]
-		then	mkdir "${eixf_assc}"
+		then	mkdir -- "${eixf_assc}"
 		else	(
 			set -C
 			: >"${eixf_assc}"
 		)
 		fi && eval "${1}=\"\${eixf_assc}\"" && return
-		eixf_assa="`Expr ${eixf_assa} + 1`"
+		eixf_assa=`Expr "${eixf_assa}" + 1`
 	done
-	die "`gettext 'found no free tempname after 10000 attempts'`"
+	die "`gettext 'found no free temporary name after 10000 attempts'`"
 }
 
 AssignTemp() {

@@ -61,7 +61,7 @@ The following options are available:
 -T   Never use build time'
 	echo
 	exitcode=${1:-1}
-	exit ${exitcode}
+	Exit ${exitcode}
 }
 
 
@@ -78,28 +78,28 @@ including=false
 addtime=''
 subtime=''
 OPTIND=1
-while getopts "fblL:ea:A:dsv=SVitT?hH" opt
+while getopts 'fblL:ea:A:dsv=SVitTh?' opt
 do	case "${opt}" in
-		f) full=:;;
-		b) before=:;;
-		l) logfile="/var/log/emerge.log";;
-		L) logfile="${OPTARG}";;
-		e) epoch=:;;
-		a) addtime="${OPTARG}";;
-		A) subtime="${OPTARG}";;
-		d) date_output='\t<date:DATE_OUTPUT>';;
-		s) output='NAMEASLOT';;
-		v) output='NAMEVERSION';;
-		'=') output='EQNAMEVERSION';;
-		S) input='NAME';;
-		V) input='NAMEVERSION';;
-		i) including=:;;
-		t) USE_BUILD_TIME=true; export USE_BUILD_TIME;;
-		T) USE_BUILD_TIME=false; export USE_BUILD_TIME;;
-		*) Usage 0;;
+	f) full=:;;
+	b) before=:;;
+	l) logfile="/var/log/emerge.log";;
+	L) logfile="${OPTARG}";;
+	e) epoch=:;;
+	a) addtime="${OPTARG}";;
+	A) subtime="${OPTARG}";;
+	d) date_output='\t<date:DATE_OUTPUT>';;
+	s) output='NAMEASLOT';;
+	v) output='NAMEVERSION';;
+	'=') output='EQNAMEVERSION';;
+	S) input='NAME';;
+	V) input='NAMEVERSION';;
+	i) including=:;;
+	t) USE_BUILD_TIME=true; export USE_BUILD_TIME;;
+	T) USE_BUILD_TIME=false; export USE_BUILD_TIME;;
+	*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
+[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 
 # After the options there should be exactly one argument: ${match}
 
@@ -201,14 +201,16 @@ NAME="<category>/<package>" \
 LINE="<date:DATE_FORMAT>\\t%{${input}}\\t%{${output}}${date_output}\\n" \
 	eix '-I*' --format "<installedversions:LINE>" \
 | sort -n \
-| while read -r line
-do	if ${found}
-	then	${before} || Output ${line}
-	elif Check ${line}
-	then	found=:
-		${including} && Output ${line}
-	else	${before} && Output ${line}
-	fi
-done
-
-exit 0
+| {
+	while read -r line
+	do	if ${found}
+		then	${before} || Output ${line}
+		elif Check ${line}
+		then	found=:
+			${including} && Output ${line}
+		else	${before} && Output ${line}
+		fi
+	done
+	${found}
+}
+Exit

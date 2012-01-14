@@ -35,14 +35,14 @@ The following options are available:
 
 ARG can be abbreviated, e.g. instead of "no-repo" you can use "nr".'
 	echo
-	exit ${1:-1}
+	Exit ${1:-1}
 }
 
 forced=false
 equal=''
 quiet=false
 OPTIND=1
-while getopts "aq=?hH" opt
+while getopts 'aq=h?' opt
 do	case "${opt}" in
 	a) quiet=:; forced=:;;
 	q) quiet=:;;
@@ -50,13 +50,8 @@ do	case "${opt}" in
 	*) Usage 0;;
 	esac
 done
-[ ${OPTIND} -gt 1 ] && shift "`Expr ${OPTIND} - 1`"
+[ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 ${forced} && set -- all
-
-Die() {
-	printf '%s: %s\n' "${0##*/}" "${1}" >&2
-	exit ${2:-1}
-}
 
 ScanVarDbPkg() {
 	n="${1}"
@@ -151,6 +146,7 @@ ParseArgs "${@}"
 ReadVar vardb EPREFIX_INSTALLED
 vardb="${vardb%/}/var/db/pkg"
 cd -- "${vardb}" >/dev/null 2>&1 \
-	|| Die "`gettext 'cannot locate your database of installed packages'`"
+	|| die "`gettext 'cannot locate your database of installed packages'`"
 emulatemode=false
 ParseArgs "${@}"
+Exit 0

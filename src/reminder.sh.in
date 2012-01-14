@@ -21,12 +21,12 @@
 
 oldname="${0##*/}"
 case "${oldname}" in
-	diff-eix) newname=eix-diff;;
-	update-eix) newname=eix-update;;
-	update-eix-remote) newname=eix-remote;;
-	update-eix-layman) newname=eix-layman;;
-	*) newname=eix-functions.sh
-	oldname=functions-eix.sh;;
+diff-eix) newname=eix-diff;;
+update-eix) newname=eix-update;;
+update-eix-remote) newname=eix-remote;;
+update-eix-layman) newname=eix-layman;;
+*) newname=eix-functions.sh
+oldname=functions-eix.sh;;
 esac
 
 Remind() {

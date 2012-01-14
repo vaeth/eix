@@ -2,6 +2,7 @@
 
 *eix-0.23.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Scripts: Support for status line update; minor output improvements
 	- Introduce new cache method metadata-md5-or-flat and make it default
 	  for PORTDIR_CACHE_METHOD:
 	  http://developer.berlios.de/feature/?func=detailfeature&
