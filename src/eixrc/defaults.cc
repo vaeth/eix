@@ -833,27 +833,27 @@ AddOption(STRING, "AVERSION_VERBOSE",
 	"It defines the format for an available version with most data, no slot."));
 
 AddOption(STRING, "PVERSIONS_COMPACT",
-	"%{PVERSIONS}<overlayver>", _(
+	"%{PVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with important data and slot."));
 
 AddOption(STRING, "AVERSIONS_COMPACT",
-	"%{AVERSIONS}<overlayver>", _(
+	"%{AVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with important data and slot."));
 
 AddOption(STRING, "IVERSIONS_COMPACT",
-	"%{IVERSIONS}<overlayver>", _(
+	"%{IVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with important data and slot."));
 
 AddOption(STRING, "PVERSION_COMPACT",
-	"%{PVERSION}<overlayver>", _(
+	"%{PVERSION}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with important data, no slot."));
 
 AddOption(STRING, "AVERSION_COMPACT",
-	"%{AVERSION}<overlayver>", _(
+	"%{AVERSION}%{FORMAT_BINARY}<overlayver>", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with important data, no slot."));
 

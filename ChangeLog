@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.7
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add {tbz2} also for default compact output
+
 *eix-0.23.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Scripts: Support for status line update; minor output improvements
