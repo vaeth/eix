@@ -449,7 +449,7 @@ CopyPrevious() {
 	MakeTempFile
 	cp -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
 		'Could not copy database to temporary file ${tmpfile}'`"
-	umask "${previouus_umask}"
+	umask "${previous_umask}"
 }
 
 MovePrevious() {
