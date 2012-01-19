@@ -10,6 +10,8 @@
 #ifndef EIX__METADATA_H__
 #define EIX__METADATA_H__ 1
 
+#include <config.h>
+
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
@@ -62,8 +64,7 @@ class MetadataCache : public BasicCache {
 		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
 		{ (*x_read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }
 
-		bool use_prefixport() const
-		{ return (path_type == PATH_METADATA); }
+		bool use_prefixport() const ATTRIBUTE_PURE;
 
 		const char *getType() const
 		{ return m_type.c_str(); }

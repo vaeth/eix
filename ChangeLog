@@ -2,8 +2,11 @@
 
 *eix-0.23.7
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Fix MetadataCache::use_prefixport(), see:
+	  http://bugs.gentoo.org/show_bug.cgi?id=399233
 	- Add {tbz2} also for default compact output
 	- Fix typo in eix-sync: http://bugs.gentoo.org/show_bug.cgi?id=399117
+	- Fix and document behavior if path is specified for cache md5-or-*
 
 *eix-0.23.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-01-11 21:08:00 +0100 (Wed, 11 Jan 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-01-18 23:15:00 +0100 (Wed, 18 Jan 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2210,12 +2210,14 @@ the metadata cache are expected to be in an "assignment format"
 (TYPE=value) which is the case in some alt-gentoo trees.
 .TP
 .BR metadata-md5-or-flat ", " metadata-md5-or-flat:I<PATH>
-This is similar to B<metadata-flat> with the difference that if the category
-is found in $PORTDIR/metadata/md5-cache, that information is used instead.
+This is similar to B<metadata-flat> with the difference that it is first
+attempted to find each category in $PORTDIR/metadata/md5-cache.
+If I<PATH> is specified, this method is equivalent to B<metadata-md5>:I<PATH>.
 .TP
 .BR metadata-md5-or-assign ", " metadata-md5-or-assign:I<PATH>
-This is similar to B<metadata-assign> with the difference that if the category
-is found in $PORTDIR/metadata/md5-cache, that information is used instead.
+This is similar to B<metadata-assign> with the difference that it is first
+attempted to find each category in $PORTDIR/metadata/md5-cache.
+If I<PATH> is specified, this method is equivalent to B<metadata-md5>:I<PATH>.
 .TP
 .B sqlite
 This is an extremely fast cache method if you are using portage with the

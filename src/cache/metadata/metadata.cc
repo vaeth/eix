@@ -36,6 +36,23 @@ using namespace std;
 #define PORTAGE_CACHE_PATH	"var/cache/edb/dep"
 
 bool
+MetadataCache::use_prefixport() const
+{
+	switch(path_type) {
+		case PATH_REPOSITORY:
+		case PATH_FULL:
+			return false;
+/*
+		case PATH_METADATA:
+		case PATH_METADATAMD5:
+		case PATH_METADATAMD5OR:
+*/
+		default:
+			return true;
+	}
+}
+
+bool
 MetadataCache::initialize(const string &name)
 {
 	string pure_name(name);
@@ -55,11 +72,21 @@ MetadataCache::initialize(const string &name)
 	}
 	checkmd5 = false;
 	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-flat") == 0) {
-		setType(PATH_METADATAMD5OR, true);
+		if(have_override_path) {
+			setType(PATH_METADATAMD5, false);
+		}
+		else {
+			setType(PATH_METADATAMD5OR, true);
+		}
 		return true;
 	}
 	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-assign") == 0) {
-		setType(PATH_METADATAMD5OR, false);
+		if(have_override_path) {
+			setType(PATH_METADATAMD5, false);
+		}
+		else {
+			setType(PATH_METADATAMD5OR, false);
+		}
 		return true;
 	}
 	if((strcasecmp(pure_name.c_str(), "metadata") == 0) ||
@@ -184,6 +211,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
 			case PATH_FULL:
 */
 			default:
+				m_catpath = m_prefix;
 				optional_append(m_catpath, '/');
 				m_catpath.append(PORTAGE_CACHE_PATH);
 				break;
