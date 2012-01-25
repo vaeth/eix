@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-01-25 23:04+0100\n"
+"POT-Creation-Date: 2012-01-25 23:54+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -36,7 +36,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:293 src/eix-remote.sh:326
+#: src/eix-functions.sh.in:293 src/eix-remote.sh:327
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -321,7 +321,7 @@ msgstr ""
 "-H            Keine Änderung der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:130 src/eix-remote.sh:285
+#: src/eix-layman.sh:130 src/eix-remote.sh:286
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -446,12 +446,12 @@ msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 msgid "Filename argument is mandatory"
 msgstr "Dateinamen-Argument wird benötigt"
 
-#: src/eix-remote.sh:203
+#: src/eix-remote.sh:202
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Directory ${a} nicht möglich"
 
-#: src/eix-remote.sh:240
+#: src/eix-remote.sh:239
 #, sh-format
 msgid ""
 "remote address is not properly set.\n"
@@ -462,17 +462,17 @@ msgstr ""
 "Übergeben Sie bitte eine gültige Remote-Datei mit der Option -a.\n"
 "Der Default hätte mit ./configure --remote-file gesetzt werden sollen."
 
-#: src/eix-remote.sh:249
+#: src/eix-remote.sh:250
 #, sh-format
 msgid "Fetching ${eixcachesname}"
 msgstr "Download von ${eixcachesname}"
 
-#: src/eix-remote.sh:250
+#: src/eix-remote.sh:251
 #, sh-format
 msgid "could not fetch ${addr}"
 msgstr "konnte ${addr} nicht downloaden"
 
-#: src/eix-remote.sh:258
+#: src/eix-remote.sh:259
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -517,31 +517,31 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:279
+#: src/eix-remote.sh:280
 msgid "Unpacking data"
 msgstr "Entpacken der Daten"
 
-#: src/eix-remote.sh:280
+#: src/eix-remote.sh:281
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:302
+#: src/eix-remote.sh:303
 #, sh-format
 msgid "problems arised with cachefile ${i}"
 msgstr "Cachefile ${i} verursachte Probleme"
 
-#: src/eix-remote.sh:320
+#: src/eix-remote.sh:321
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:347
+#: src/eix-remote.sh:348
 #, sh-format
 msgid "cannot copy temporary file to ${filename}"
 msgstr "Temporary Datei kann nicht nach ${filename} kopiert werden"
 
-#: src/eix-remote.sh:359
+#: src/eix-remote.sh:360
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "Datei ${filename} nicht lesbar"

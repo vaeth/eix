@@ -171,7 +171,6 @@ GetFilename() {
 }
 
 CalcSuCmd() {
-#	local shexec a
 	if [ -z "${fetchuser}" ]
 	then	if [ "${UID}" -ne 0 ]
 		then	Push -c sucmd "${@}"
@@ -228,7 +227,7 @@ MakeTempSub() {
 	if [ -z "${tmpsub}" ]
 	then	MakeTempDir
 		tmpsub="${tmpdir}/1"
-		( umask 002; mkdir -- "${tmpsub}" )
+		( umask 077 && mkdir -- "${tmpsub}" )
 	fi
 	[ -z "${1}" ] || CdDir "${tmpsub}"
 }
@@ -241,9 +240,11 @@ FetchTemp() {
 Please specify a valid remote file with option -a.
 The default should have been set with ./configure --remote-file'`"
 	MakeTempDir cd
-	tmpfile="${tmpdir}/${eixcachesname}"
-	( umask 002; : >"${tmpfile}" )
 	CalcSuCmd wget -c -- "${addr}"
+	tmpfile="${tmpdir}/${eixcachesname}"
+	( umask 022 && : >"${tmpfile}" )
+	[ -n "${fetchuser}" ] && [ "${UID}" -eq 0 ] && \
+		chown -- "${fetchuser}" "${tmpfile}"
 	set -f
 	eval "set -- ${sucmd}"
 	RunCommand "`eval_gettext 'Fetching ${eixcachesname}'`" "${@}" || \
