@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-01-19 22:00+0100\n"
+"POT-Creation-Date: 2012-01-25 23:04+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -19,41 +19,41 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
 
-#: src/eix-functions.sh.in:65 src/eix-update.cc:650 src/eix-update.cc:687
+#: src/eix-functions.sh.in:74 src/eix-update.cc:650 src/eix-update.cc:687
 msgid "Finished"
 msgstr "Fertig"
 
-#: src/eix-functions.sh.in:66
+#: src/eix-functions.sh.in:75
 msgid "Failure"
 msgstr "Fehlschlag"
 
-#: src/eix-functions.sh.in:133
+#: src/eix-functions.sh.in:142
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Probleme mit ${eixf_cmd}"
 
-#: src/eix-functions.sh.in:283
+#: src/eix-functions.sh.in:292
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:284 src/eix-remote.sh:326
+#: src/eix-functions.sh.in:293 src/eix-remote.sh:326
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-functions.sh.in:336
+#: src/eix-functions.sh.in:345
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:468
+#: src/eix-functions.sh.in:477
 msgid "found no free temporary name after 10000 attempts"
 msgstr "Kein möglicher Temporärname nach 10000 Versuchen"
 
-#: src/eix-functions.sh.in:482
+#: src/eix-functions.sh.in:491
 msgid "cannot create temporary directory"
 msgstr "Temporärdirectory nicht erzeugbar"
 
-#: src/eix-functions.sh.in:483
+#: src/eix-functions.sh.in:492
 msgid "cannot create temporary file"
 msgstr "Temporärdatei nicht erzeugbar"
 

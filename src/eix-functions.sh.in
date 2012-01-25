@@ -45,12 +45,21 @@ SetColors() {
 	eixf_normal='\033[0m'
 }
 
-statusline=:
+statusline='test -t 1'
 eixf_statusline=false
-Statusline() {
-	${statusline} || return 0
-	printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
+Eixf_Statusline() {
+	if ! ${statusline}
+	then	eixf_statusquit=:
+		return 0
+	fi
 	eixf_statusline=:
+	eixf_statusquit=false
+	return 1
+}
+
+eixf_statusquit='Eixf_Statusline'
+Statusline() {
+	${eixf_statusquit} || printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
 }
 
 verbose=:
