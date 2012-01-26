@@ -1761,9 +1761,14 @@ AddOption(STRING, "MARK_VERSIONS",
 	"underline", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines how the package versions passed with --pipe are marked."));
+
 AddOption(BOOLEAN, "FORCE_USECOLORS",
 	"false", _(
 	"This turns --force-color on for every query."));
+
+AddOption(BOOLEAN, "FORCE_STATUSLINE",
+	"false", _(
+	"Update status line even in case of redirection."));
 
 AddOption(BOOLEAN, "FORCE_PERCENTAGE",
 	"false", _(

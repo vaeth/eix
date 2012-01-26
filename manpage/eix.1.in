@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-01-18 23:15:00 +0100 (Wed, 18 Jan 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-01-26 21:37:00 +0100 (Wed, 26 Jan 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -803,6 +803,9 @@ Define the verbose layout for results as I<FORMAT>
 .\" }}}
 .\" {{{ -------- Options for eix-update
 .SS Special options for B<eix-update>
+.TP
+.BR -H ", " --nostatus
+Do not update the status line.
 .TP
 .BR  -o " " I<outputfile> ", " --output " " I<outputfile>
 With this option, B<eix-update> will write the eix database to I<outputfile>
@@ -2041,6 +2044,10 @@ These strings are printed before/after the set/unset USE flags of installed vers
 .TP
 .BR FORCE_USECOLORS " " (true / false)
 Use colors even when stdout is not a terminal.
+
+.TP
+.BR FORCE_STATUSLINE " " (true / false)
+Update the status line even when stdout is not a terminal.
 
 .TP
 .BR FORCE_PERCENTAGE " " (true / false)

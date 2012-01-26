@@ -45,21 +45,21 @@ SetColors() {
 	eixf_normal='\033[0m'
 }
 
-statusline='test -t 1'
+# Admissible statusline values are '' (check at first call), false or : (true)
+statusline=''
 eixf_statusline=false
-Eixf_Statusline() {
-	if ! ${statusline}
-	then	eixf_statusquit=:
-		return 0
-	fi
-	eixf_statusline=:
-	eixf_statusquit=false
-	return 1
+eixf_statusmode=EixfStatusmode
+EixfStatusmode() {
+	if [ -z "${statusline}" ]
+	then	test -t 1 || ReadBoolean FORCE_STATUSLINE
+	else	${statusline}
+	fi && eixf_statusline=:
+	eixf_statusmode=${eixf_statusline}
+	${eixf_statusmode}
 }
 
-eixf_statusquit='Eixf_Statusline'
 Statusline() {
-	${eixf_statusquit} || printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
+	! ${eixf_statusmode} || printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
 }
 
 verbose=:

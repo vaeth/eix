@@ -2,7 +2,8 @@
 
 *eix-0.23.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- scripts: Do not update status line if output is not a terminal
+	- Provide status line also for eix-update
+	- Do not update status line if output is not a terminal
 	- eix-remote: Change ownership before calling wget, see
 	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18493&
 	  group_id=11597

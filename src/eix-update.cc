@@ -94,7 +94,45 @@ class RepoName {
 		{ }
 };
 
-static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels) throw(ExBasic);
+class Statusline {
+	private:
+		bool was_used, use;
+		void print_force(const string &str);
+	public:
+		Statusline(bool active) : was_used(false), use(active)
+		{ }
+
+		void print(const string &str)
+		{
+			if(use) {
+				print_force(str);
+			}
+		}
+
+		void success()
+		{
+			if(was_used) {
+				print_force(_("Finished"));
+			}
+		}
+
+		void failure()
+		{
+			if(was_used) {
+				print_force(_("Failure"));
+			}
+		}
+};
+
+void
+Statusline::print_force(const string &str)
+{
+	was_used = true;
+	cout << "\033]0;" << program_name << ": " << str << '\007';
+	flush(cout);
+}
+
+static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic);
 static void print_help();
 
 class Permissions {
@@ -214,6 +252,7 @@ print_help()
 			"     --dump-defaults     show default eixrc-variables\n"
 			"     --print             print the expanded value of a variable\n"
 			"     --known-vars        print all variable names known to --print\n"
+			" -H, --nostatus          don't update status line\n"
 			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
 			" -F, --force-color       force \"color\" on things that are not a terminal\n"
 			" -v, --verbose           output used cache method for each ebuild\n"
@@ -252,7 +291,7 @@ static bool
 	dump_eixrc(false),
 	dump_defaults(false);
 
-static bool use_percentage, verbose;
+static bool use_percentage, use_status, verbose;
 
 static list<const char *> exclude_args, add_args;
 static list<ArgPair> method_args, repo_args;
@@ -269,6 +308,7 @@ static struct Option long_options[] = {
 	 Option("known-vars",   O_KNOWN_VARS,Option::BOOLEAN_T,&known_vars),
 	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
 	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
+	 Option("nostatus",       'H',     Option::BOOLEAN_F, &use_status),
 	 Option("nocolor",        'n',     Option::BOOLEAN_F, &use_percentage),
 	 Option("force-color",    'F',     Option::BOOLEAN_T, &use_percentage),
 	 Option("verbose",        'v',     Option::BOOLEAN_T, &verbose),
@@ -378,7 +418,13 @@ run_eix_update(int argc, char *argv[])
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
 	string outputfile;
 
-	use_percentage = (eixrc.getBool("FORCE_PERCENTAGE") || isatty(1));
+	use_percentage = eixrc.getBool("FORCE_PERCENTAGE");
+	use_status = eixrc.getBool("FORCE_STATUSLINE");
+	if(!(use_percentage && use_status)) {
+		if(isatty(1)) {
+			use_percentage = use_status = true;
+		}
+	}
 	verbose = eixrc.getBool("UPDATE_VERBOSE");
 
 	/* Setup ArgumentReader. */
@@ -430,6 +476,8 @@ run_eix_update(int argc, char *argv[])
 		skip_permission_tests = eixrc.getBool("SKIP_PERMISSION_TESTS");
 		outputfile = eix_cachefile;
 	}
+
+	Statusline statusline(use_status);
 
 	/* Check for correct permissions. */
 	Permissions permissions(outputfile, skip_permission_tests, eixrc);
@@ -575,11 +623,14 @@ run_eix_update(int argc, char *argv[])
 	/* Update the database from scratch */
 	try {
 		update(outputfile.c_str(), table, portage_settings,
-			permissions.will_modify(), repo_names, excluded_overlays);
+			permissions.will_modify(), repo_names,
+			excluded_overlays, statusline);
 	} catch(const ExBasic &e) {
 		cerr << e << endl;
+		statusline.failure();
 		return EXIT_FAILURE;
 	}
+	statusline.success();
 	return EXIT_SUCCESS;
 }
 
@@ -592,7 +643,7 @@ error_callback(const string &str)
 }
 
 static void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels) throw(ExBasic)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic)
 {
 	DBHeader dbheader;
 	vector<string> categories;
@@ -641,6 +692,9 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			% cache->getOverlayName()
 			% cache->getPathHumanReadable()
 			% cache->getType());
+		statusline.print(eix::format(_("[%s] %s"))
+				% cache->getKey()
+				% cache->getOverlayName());
 		reading_percent_status = new PercentStatus;
 		if(cache->can_read_multiple_categories()) {
 			reading_percent_status->init(_("     Reading Packages .. "));
@@ -692,6 +746,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		}
 		delete reading_percent_status;
 	}
+	statusline.print(eix::format(_("Analyzing")));
 
 	/* Now apply all masks .. */
 	INFO(_("Applying masks ..\n"));
@@ -709,6 +764,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	io::prep_header_hashs(dbheader, package_tree);
 
 	/* And write database back to disk .. */
+	statusline.print(eix::format("Creating %s") % outputfile);
 	INFO(eix::format(_("Writing database file %s ..\n")) % outputfile);
 	FILE *database_stream(fopen(outputfile, "wb"));
 	if(unlikely(database_stream == NULL)) {
