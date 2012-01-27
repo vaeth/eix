@@ -31,6 +31,8 @@ case $service in
 (*update*)
 	excl_opt='(-)'
 	service_opts=(
+'(--forcestatus '{'--nostatus)-H','-H)--nostatus'}'[do not update status line]'
+'(--nostatus -H)--forcestatus[force status line on non-terminal]'
 {'(--output)-o+','(-o)--output'}'[output to FILE]:output_file:_files'
 {'*--exclude-overlay','*-x+'}'[OVERLAY (exclude)]:exclude overlay:_eix__overlay'
 {'*--add-overlay','*-a+'}'[OVERLAY (add)]:add overlay:_files -/'
