@@ -254,7 +254,8 @@ print_help()
 			"     --known-vars        print all variable names known to --print\n"
 			" -H, --nostatus          don't update status line\n"
 			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
-			" -F, --force-color       force \"color\" on things that are not a terminal\n"
+			"     --force-status      force status line even if output is no terminal\n"
+			" -F, --force-color       force \"color\" even if output is no terminal\n"
 			" -v, --verbose           output used cache method for each ebuild\n"
 			"\n"
 			" -q, --quiet             produce no output\n"
@@ -280,7 +281,8 @@ enum cli_options {
 	O_DUMP = 260,
 	O_DUMP_DEFAULTS,
 	O_KNOWN_VARS,
-	O_PRINT_VAR
+	O_PRINT_VAR,
+	O_FORCE_STATUS
 };
 
 static bool
@@ -311,6 +313,7 @@ static struct Option long_options[] = {
 	 Option("nostatus",       'H',     Option::BOOLEAN_F, &use_status),
 	 Option("nocolor",        'n',     Option::BOOLEAN_F, &use_percentage),
 	 Option("force-color",    'F',     Option::BOOLEAN_T, &use_percentage),
+	 Option("force-status", O_FORCE_STATUS, Option::BOOLEAN_T, &use_status),
 	 Option("verbose",        'v',     Option::BOOLEAN_T, &verbose),
 
 	 Option("exclude-overlay",'x',     Option::STRINGLIST,&exclude_args),
@@ -418,13 +421,38 @@ run_eix_update(int argc, char *argv[])
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
 	string outputfile;
 
-	use_percentage = eixrc.getBool("FORCE_PERCENTAGE");
-	use_status = eixrc.getBool("FORCE_STATUSLINE");
-	if(!(use_percentage && use_status)) {
-		if(isatty(1)) {
-			use_percentage = use_status = true;
+	{ /* calculate defaults for use_{percentage,status} */
+		bool percentage_tty = false;
+		if(eixrc.getBool("NOPERCENTAGE")) {
+			use_percentage = false;
+		}
+		else if(eixrc.getBool("FORCE_PERCENTAGE")) {
+			use_percentage = true;
+		}
+		else {
+			percentage_tty = true;
+		}
+		bool status_tty = false;
+		if(eixrc.getBool("NOSTATUSLINE")) {
+			use_status = false;
+		}
+		else if(eixrc.getBool("FORCE_STATUSLINE")) {
+			use_status = true;
+		}
+		else {
+			status_tty = true;
+		}
+		if(percentage_tty || status_tty) {
+			bool is_tty = (isatty(1) != 0);
+			if(percentage_tty) {
+				use_percentage = is_tty;
+			}
+			if(status_tty) {
+				use_status = is_tty;
+			}
 		}
 	}
+	/* other defaults */
 	verbose = eixrc.getBool("UPDATE_VERBOSE");
 
 	/* Setup ArgumentReader. */

@@ -38,6 +38,7 @@ eixf_know_colors=false
 SetColors() {
 	${eixf_know_colors} && return
 	eixf_know_colors=:
+	ReadBoolean NOCOLORS && return
 	! test -t 1 && ! ReadBoolean FORCE_USECOLORS && return
 	eixf_good='\033[32;01m'
 	eixf_warn='\033[33;01m'
@@ -51,7 +52,9 @@ eixf_statusline=false
 eixf_statusmode=EixfStatusmode
 EixfStatusmode() {
 	if [ -z "${statusline}" ]
-	then	test -t 1 || ReadBoolean FORCE_STATUSLINE
+	then	! ReadBoolean NOSTATUSLINE && {
+			test -t 1 || ReadBoolean FORCE_STATUSLINE
+		}
 	else	${statusline}
 	fi && eixf_statusline=:
 	eixf_statusmode=${eixf_statusline}
@@ -146,7 +149,7 @@ RunCommand() {
 if ( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1
 then	eval '
 Expr() {
-	echo "$(( ${1} ${2} ${3} ))"
+	printf "%s" "$(( ${1} ${2} ${3} ))"
 }'
 else
 Expr() {

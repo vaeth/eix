@@ -6,6 +6,7 @@ EXTRA_DIST = eix.1.in
 
 SUFFIXES = .in
 .in:
+	A=`sed -n -e '1{s/^.*Date: \([^\(]*\).*/\1/p;q}' "$<"` || A='' ; \
 	$(AM_V_GEN)$(SED) -e 's/$$Date:[^,]*, *\([^)]*\)[^\$$]*\$$/\1/' \
 		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
@@ -16,7 +17,8 @@ SUFFIXES = .in
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
 		-e 's,\([BI]\)<\([^>]\+\)>,\\f\1\2\\fR,g' \
-		"$<" > "$@"
+		"$<" > "$@" ; \
+	[ -n "$$A" ] && touch --date="$$A" "$<" "$@"
 #		-e 's,\<_\([^[:space:],.;:]\+\)_\>,\\fI\1\\fR,g'
 #		-e 's,\*\([^[:space:],.;:]\+\)\*,\\fB\1\\fR,g'
 

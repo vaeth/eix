@@ -264,13 +264,14 @@ run_eix_diff(int argc, char *argv[])
 {
 	string old_file, new_file;
 
-	format_for_new.no_color = (isatty(1) != 1);
-
 	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
 
 	cli_quick = rc.getBool("QUICKMODE");
 	cli_care  = rc.getBool("CAREMODE");
 	cli_quiet = rc.getBool("QUIETMODE");
+
+	format_for_new.no_color = (rc.getBool("NOCOLORS") ? true :
+		(rc.getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
@@ -307,10 +308,6 @@ run_eix_diff(int argc, char *argv[])
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			exit(EXIT_FAILURE);
 		}
-	}
-
-	if(rc.getBool("FORCE_USECOLORS")) {
-		format_for_new.no_color = false;
 	}
 
 	if(unlikely((current_param == argreader.end()) || (current_param->type != Parameter::ARGUMENT))) {

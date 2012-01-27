@@ -425,7 +425,8 @@ setup_defaults()
 		rc_options.compact_output = true;
 	}
 	format.setupResources(rc);
-	format.no_color            = !isatty(1) && !rc.getBool("FORCE_USECOLORS");
+	format.no_color            = (rc.getBool("NOCOLORS") ? true :
+		(rc.getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
 	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
 	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
 	format.recommend_mode      = rc.getLocalMode("RECOMMEND_LOCAL_MODE");

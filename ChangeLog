@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Provide status line also for eix-update
 	- Do not update status line if output is not a terminal
+	- Introduce {NO,FORCE_}{COLORS,STATUSLINE,PERCENTAGE}.
+	  The previous FORCE_USECOLORS and new NOCOLOR default them all.
 	- eix-remote: Change ownership before calling wget, see
 	  http://developer.berlios.de/bugs/?func=detailbug&bug_id=18493&
 	  group_id=11597

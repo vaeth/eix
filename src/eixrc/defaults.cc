@@ -1762,17 +1762,39 @@ AddOption(STRING, "MARK_VERSIONS",
 	"This variable is only used for delayed substitution.\n"
 	"It defines how the package versions passed with --pipe are marked."));
 
+AddOption(BOOLEAN, "NOCOLOR",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the default for NO{COLORS,STATUSLINE,PERCENTAGE}."));
+
+AddOption(BOOLEAN, "NOCOLORS",
+	"%{NOCOLOR}", _(
+	"Do not output colors."));
+
+AddOption(BOOLEAN, "NOSTATUSLINE",
+	"%{NOCOLOR}", _(
+	"Do not output status line."));
+
+AddOption(BOOLEAN, "NOPERCENTAGE",
+	"%{NOCOLOR}", _(
+	"Do not output percentage progress."));
+
 AddOption(BOOLEAN, "FORCE_USECOLORS",
 	"false", _(
-	"This turns --force-color on for every query."));
+	"This variable is only used for delayed substitution.\n"
+	"It is the default for FORCE_{COLORS,STATUSLINE,PERCENTAGE}."));
+
+AddOption(BOOLEAN, "FORCE_COLORS",
+	"%{FORCE_USECOLORS}", _(
+	"Output colors even if not printing to a terminal."));
 
 AddOption(BOOLEAN, "FORCE_STATUSLINE",
-	"false", _(
-	"Update status line even in case of redirection."));
+	"%{FORCE_USECOLORS}", _(
+	"Output status line even if not printing to a terminal."));
 
 AddOption(BOOLEAN, "FORCE_PERCENTAGE",
-	"false", _(
-	"Show the percentage progress even in case of redirection."));
+	"%{FORCE_USECOLORS}", _(
+	"Output percentage progress even if not printing to a terminal."));
 
 AddOption(BOOLEAN, "COLOR_ORIGINAL",
 	"true", _(

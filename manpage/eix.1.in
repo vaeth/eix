@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-01-26 21:37:00 +0100 (Wed, 26 Jan 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-01-27 17:30:00 +0100 (Wed, 27 Jan 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -806,6 +806,9 @@ Define the verbose layout for results as I<FORMAT>
 .TP
 .BR -H ", " --nostatus
 Do not update the status line.
+.TP
+.BR --force-status
+Update the status line even if output is not a terminal.
 .TP
 .BR  -o " " I<outputfile> ", " --output " " I<outputfile>
 With this option, B<eix-update> will write the eix database to I<outputfile>
@@ -2042,7 +2045,19 @@ These strings are printed before/after the (effective) KEYWORDS string for a ver
 These strings are printed before/after the set/unset USE flags of installed versions are printed.
 
 .TP
-.BR FORCE_USECOLORS " " (true / false)
+.BR NOCOLORS " " (true / false)
+Do not use colors.
+
+.TP
+.BR NOSTATUSLINE " " (true / false)
+Do not update status line.
+
+.TP
+.BR NOPERCENTAGE " " (true / false)
+Do not show percentage progress.
+
+.TP
+.BR FORCE_COLORS " " (true / false)
 Use colors even when stdout is not a terminal.
 
 .TP
