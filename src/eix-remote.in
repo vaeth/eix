@@ -145,7 +145,7 @@ do	case "${opt}" in
 	s) CalcSuprg /usr/bin/sudo sudo;;
 	S) CalcSuprg /bin/su su;;
 	i) DefaultOpts;;
-	H) statusline=false;;
+	H) statusline=false; export NOSTATUSLINE=true;;
 	*) Usage 0;;
 	esac
 done
@@ -320,8 +320,7 @@ AddArchive() {
 	[ ${exitcode} -ne 0 ] && \
 		msg="`eval_gettext 'could not read all eix cachefiles of ${a}'`"
 	die_on_update_failure=false
-	export KEEP_VIRTUALS
-	KEEP_VIRTUALS=:
+	export KEEP_VIRTUALS=true
 	CallUpdate || {
 		exitcode=${?}
 		msg=`gettext 'eix-update failed'; \

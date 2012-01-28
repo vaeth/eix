@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-01-27 09:48+0100\n"
+"POT-Creation-Date: 2012-01-28 07:07+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -37,7 +37,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:296 src/eix-remote.sh:327
+#: src/eix-functions.sh.in:296 src/eix-remote.sh:326
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -46,15 +46,15 @@ msgstr "eix-update schlug fehl"
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:480
+#: src/eix-functions.sh.in:479
 msgid "found no free temporary name after 10000 attempts"
 msgstr "Kein möglicher Temporärname nach 10000 Versuchen"
 
-#: src/eix-functions.sh.in:494
+#: src/eix-functions.sh.in:493
 msgid "cannot create temporary directory"
 msgstr "Temporärdirectory nicht erzeugbar"
 
-#: src/eix-functions.sh.in:495
+#: src/eix-functions.sh.in:494
 msgid "cannot create temporary file"
 msgstr "Temporärdatei nicht erzeugbar"
 
@@ -537,12 +537,12 @@ msgstr "Cachefile ${i} verursachte Probleme"
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:348
+#: src/eix-remote.sh:347
 #, sh-format
 msgid "cannot copy temporary file to ${filename}"
 msgstr "Temporary Datei kann nicht nach ${filename} kopiert werden"
 
-#: src/eix-remote.sh:360
+#: src/eix-remote.sh:359
 #, sh-format
 msgid "cannot read ${filename}"
 msgstr "Datei ${filename} nicht lesbar"
@@ -945,230 +945,230 @@ msgstr ""
 "Die Argumente können abgekürzt werden; beispielsweise kann \"b\" statt\n"
 "\"brief\" benutzt werden."
 
-#: src/eix-test-obsolete.sh:138
+#: src/eix-test-obsolete.sh:133
 #, sh-format
 msgid "... considered as ${z}"
 msgstr "... wegen ${z}"
 
-#: src/eix-test-obsolete.sh:197
+#: src/eix-test-obsolete.sh:192
 #, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Keine   Redundanz   in    ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:198
+#: src/eix-test-obsolete.sh:193
 #, sh-format
 msgid "Redundant in ${rump}{,accept_}keywords:"
 msgstr "Redundant in ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:200
+#: src/eix-test-obsolete.sh:195
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:202
+#: src/eix-test-obsolete.sh:197
 #, sh-format
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Nichts Uninstalliertes in ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:203
+#: src/eix-test-obsolete.sh:198
 #, sh-format
 msgid "Not installed but in ${rump}{,accept_}keywords:"
 msgstr "Uninstalliert, aber in ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:205
+#: src/eix-test-obsolete.sh:200
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:208
+#: src/eix-test-obsolete.sh:203
 #, sh-format
 msgid "No  redundant  entries in ${rump}mask"
 msgstr "Keine   Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:209
+#: src/eix-test-obsolete.sh:204
 #, sh-format
 msgid "Redundant in ${rump}mask:"
 msgstr "Redundant in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:210
+#: src/eix-test-obsolete.sh:205
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}mask"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:212
+#: src/eix-test-obsolete.sh:207
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask"
 msgstr "Nichts Uninstalliertes in ${rump}mask"
 
-#: src/eix-test-obsolete.sh:213
+#: src/eix-test-obsolete.sh:208
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Uninstalliert, aber in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:214
+#: src/eix-test-obsolete.sh:209
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}mask"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}mask"
 
-#: src/eix-test-obsolete.sh:217
+#: src/eix-test-obsolete.sh:212
 #, sh-format
 msgid "No  redundant  entries in ${rump}unmask"
 msgstr "Keine   Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:218
+#: src/eix-test-obsolete.sh:213
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
 msgstr "Redundant in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:219
+#: src/eix-test-obsolete.sh:214
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:221
+#: src/eix-test-obsolete.sh:216
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask"
 msgstr "Nichts Uninstalliertes in ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:222
+#: src/eix-test-obsolete.sh:217
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Uninstalliert, aber in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:223
+#: src/eix-test-obsolete.sh:218
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:226
+#: src/eix-test-obsolete.sh:221
 #, sh-format
 msgid "No  redundant  entries in ${rump}use"
 msgstr "Keine   Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:227
+#: src/eix-test-obsolete.sh:222
 #, sh-format
 msgid "Redundant in ${rump}use:"
 msgstr "Redundant in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:228
+#: src/eix-test-obsolete.sh:223
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}use"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:230
+#: src/eix-test-obsolete.sh:225
 #, sh-format
 msgid "No uninstalled entries in ${rump}use"
 msgstr "Nichts Uninstalliertes in ${rump}use"
 
-#: src/eix-test-obsolete.sh:231
+#: src/eix-test-obsolete.sh:226
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Uninstalliert, aber in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:232
+#: src/eix-test-obsolete.sh:227
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}use"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}use"
 
-#: src/eix-test-obsolete.sh:235
+#: src/eix-test-obsolete.sh:230
 #, sh-format
 msgid "No  redundant  entries in ${rump}env"
 msgstr "Keine   Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:236
+#: src/eix-test-obsolete.sh:231
 #, sh-format
 msgid "Redundant in ${rump}env:"
 msgstr "Redundant in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:237
+#: src/eix-test-obsolete.sh:232
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}env"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:239
+#: src/eix-test-obsolete.sh:234
 #, sh-format
 msgid "No uninstalled entries in ${rump}env"
 msgstr "Nichts Uninstalliertes in ${rump}env"
 
-#: src/eix-test-obsolete.sh:240
+#: src/eix-test-obsolete.sh:235
 #, sh-format
 msgid "Not installed but in ${rump}env:"
 msgstr "Uninstalliert, aber in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:241
+#: src/eix-test-obsolete.sh:236
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}env"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}env"
 
-#: src/eix-test-obsolete.sh:244
+#: src/eix-test-obsolete.sh:239
 #, sh-format
 msgid "No  redundant  entries in ${rump}license"
 msgstr "Keine   Redundanz   in    ${rump}license"
 
-#: src/eix-test-obsolete.sh:245
+#: src/eix-test-obsolete.sh:240
 #, sh-format
 msgid "Redundant in ${rump}license:"
 msgstr "Redundant in ${rump}license:"
 
-#: src/eix-test-obsolete.sh:246
+#: src/eix-test-obsolete.sh:241
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}license"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}license"
 
-#: src/eix-test-obsolete.sh:248
+#: src/eix-test-obsolete.sh:243
 #, sh-format
 msgid "No uninstalled entries in ${rump}license"
 msgstr "Nichts Uninstalliertes in ${rump}license"
 
-#: src/eix-test-obsolete.sh:249
+#: src/eix-test-obsolete.sh:244
 #, sh-format
 msgid "Not installed but in ${rump}license:"
 msgstr "Uninstalliert, aber in ${rump}license:"
 
-#: src/eix-test-obsolete.sh:250
+#: src/eix-test-obsolete.sh:245
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}license"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}license"
 
-#: src/eix-test-obsolete.sh:253
+#: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "No  redundant  entries in ${rump}cflags"
 msgstr "Keine   Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:254
+#: src/eix-test-obsolete.sh:249
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
 msgstr "Redundant in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:255
+#: src/eix-test-obsolete.sh:250
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:257
+#: src/eix-test-obsolete.sh:252
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags"
 msgstr "Nichts Uninstalliertes in ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:258
+#: src/eix-test-obsolete.sh:253
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Uninstalliert, aber in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:259
+#: src/eix-test-obsolete.sh:254
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:262
+#: src/eix-test-obsolete.sh:257
 msgid "All installed versions of packages are in the database."
 msgstr "Alle installierten Paketversionen sind in der Datenbank."
 
-#: src/eix-test-obsolete.sh:264
+#: src/eix-test-obsolete.sh:259
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
-#: src/eix-test-obsolete.sh:265
+#: src/eix-test-obsolete.sh:260
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 

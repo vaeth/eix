@@ -406,9 +406,8 @@ ReadGettext() {
 		read_gettext_status=${?};;
 	esac
 	if [ ${read_gettext_status} -eq 0 ]
-	then	TEXTDOMAIN='@TEXTDOMAIN@'
-		TEXTDOMAINDIR='@TEXTDOMAINDIR@'
-		export TEXTDOMAIN TEXTDOMAINDIR
+	then	export TEXTDOMAIN='@TEXTDOMAIN@'
+		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
 		return
 	fi
 	gettext() {

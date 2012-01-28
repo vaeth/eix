@@ -62,10 +62,8 @@ eval "set -- ${opt}"
 OPTIND=1
 while getopts 'cCdbHh?' opt
 do	case "${opt}" in
-	c) CHECK_INSTALLED_OVERLAYS=:
-		export CHECK_INSTALLED_OVERLAYS;;
-	C) CHECK_INSTALLED_OVERLAYS=repository
-		export CHECK_INSTALLED_OVERLAYS;;
+	c) export CHECK_INSTALLED_OVERLAYS=true;;
+	C) export CHECK_INSTALLED_OVERLAYS=repository;;
 	d) myarg='detail';;
 	b) myarg='brief';;
 	H) statusline=false;;
@@ -82,8 +80,7 @@ case "${myarg#-}" in
 *)	Usage;;
 esac
 
-DEFAULT_FORMAT=compact
-export DEFAULT_FORMAT
+export DEFAULT_FORMAT=compact
 
 Statusline 'eix -t'
 eix '-t*!'
@@ -111,8 +108,7 @@ AllFalse() {
 FalseExcept() {
 	for s in ${sets}
 	do	[ "${s}" = "${1}" ] || eval "for c in \${set_${s}}
-		do	eval \"\${c}=false
-			export \${c}\"
+		do	eval \"export \${c}=false\"
 		done"
 	done
 }
@@ -132,8 +128,7 @@ Output() {
 	for z
 	do	(
 			for j
-			do	[ "${z}" = "${j}" ] || eval "${j}=false
-				export ${j}"
+			do	[ "${z}" = "${j}" ] || eval "export ${j}=false"
 			done
 			Output '' "`eval_gettext '... considered as ${z}'`"
 		)

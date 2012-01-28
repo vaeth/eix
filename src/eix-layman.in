@@ -110,7 +110,7 @@ do	case "${opt}" in
 	c) CalcLaymanMake -c "${OPTARG}";;
 	A) PushLaymanMake "${OPTARG}";;
 	C) ClearLaymanMake;;
-	H) statusline=false;;
+	H) statusline=false; export NOSTATUSLINE=true;;
 	*) Usage 0;;
 	esac
 done

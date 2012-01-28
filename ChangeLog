@@ -1,5 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.23.9
 *eix-0.23.8
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Provide status line also for eix-update

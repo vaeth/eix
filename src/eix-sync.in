@@ -224,7 +224,7 @@ do	case "${opt}" in
 	R) clearcache=false;;
 	e) test_for_root=false;;
 	m) die "`gettext 'eix-sync -m is obsolete; use -M0 instead'`";;
-	H) statusline=false;;
+	H) statusline=false; export NOSTATUSLINE=true;;
 	*) Usage 0;;
 	esac
 done
