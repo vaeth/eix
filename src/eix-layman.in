@@ -104,14 +104,15 @@ eval "set -- ${opt}"
 OPTIND=1
 while getopts 'vqa:A:c:CHh?' opt
 do	case "${opt}" in
-	v) verbose=:;;
-	q) verbose=false;;
-	a) Push layman_overlays "${OPTARG}";;
-	c) CalcLaymanMake -c "${OPTARG}";;
-	A) PushLaymanMake "${OPTARG}";;
-	C) ClearLaymanMake;;
-	H) statusline=false; export NOSTATUSLINE=true;;
-	*) Usage 0;;
+	v)	verbose=:;;
+	q)	verbose=false;;
+	a)	Push layman_overlays "${OPTARG}";;
+	c)	CalcLaymanMake -c "${OPTARG}";;
+	A)	PushLaymanMake "${OPTARG}";;
+	C)	ClearLaymanMake;;
+	H)	statusline=false
+		export NOSTATUSLINE=true;;
+	*)	Usage 0;;
 	esac
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`

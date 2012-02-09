@@ -287,8 +287,10 @@ ClearUpdateArgs() {
 : ${die_on_update_failure=:}
 CallUpdate() {
 	case "${-}" in
-	*f*)	eval "set -- ${update_args}";;
-	*)	set -f
+	*f*)
+		eval "set -- ${update_args}";;
+	*)
+		set -f
 		eval "set -- ${update_args}"
 		set +f;;
 	esac
@@ -327,7 +329,7 @@ Chomp() {
 	for eixf_chompa
 	do	eval "eixf_chompb=\"\${${eixf_chompa}}\""
 		case "${eixf_chompb}" in
-			*'
+		*'
 ')
 			eixf_chompb="${eixf_chompb%?}"
 			eval "${eixf_chompa}=\"\${eixf_chompb}\"";;
@@ -402,7 +404,8 @@ ReadGettext() {
 	case "${USE_NLS-@USE_NLS@}" in
 	''|n*|N*|f*|F*|0)
 		read_gettext_status=1;;
-	*)	ReadGettextSub >/dev/null 2>&1
+	*)
+		ReadGettextSub >/dev/null 2>&1
 		read_gettext_status=${?};;
 	esac
 	if [ ${read_gettext_status} -eq 0 ]

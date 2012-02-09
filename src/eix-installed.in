@@ -44,10 +44,11 @@ quiet=false
 OPTIND=1
 while getopts 'aq=h?' opt
 do	case "${opt}" in
-	a) quiet=:; forced=:;;
-	q) quiet=:;;
-	'=') equal='=';;
-	*) Usage 0;;
+	a)	quiet=:
+		forced=:;;
+	q)	quiet=:;;
+	'=')	equal='=';;
+	*)	Usage 0;;
 	esac
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`

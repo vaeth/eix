@@ -108,8 +108,8 @@ CalcSuprg() {
 	do	suprgpath="${i}"
 		suprg="${i##*/}"
 		case "${i}" in
-			/*) test -x "${i}" && break;;
-			*) command -v "${i}" >/dev/null 2>&1 && break;;
+		/*) test -x "${i}" && break;;
+		*) command -v "${i}" >/dev/null 2>&1 && break;;
 		esac
 	done
 }
@@ -135,18 +135,20 @@ eval "set -- ${opt}"
 OPTIND=1
 while getopts 'f:vqu:U:l:a:sSiHh?' opt
 do	case "${opt}" in
-	f) filearg="${OPTARG}";;
-	v) verbose=:;;
-	q) verbose=false;;
-	u) fetchuser="${OPTARG}";;
-	U) fetchroot="${OPTARG}";;
-	l) LOCAL_LAYMAN="${OPTARG}"; SanitizeLocalLayman;;
-	a) addr="${OPTARG}";;
-	s) CalcSuprg /usr/bin/sudo sudo;;
-	S) CalcSuprg /bin/su su;;
-	i) DefaultOpts;;
-	H) statusline=false; export NOSTATUSLINE=true;;
-	*) Usage 0;;
+	f)	filearg="${OPTARG}";;
+	v)	verbose=:;;
+	q)	verbose=false;;
+	u)	fetchuser="${OPTARG}";;
+	U)	fetchroot="${OPTARG}";;
+	l)	LOCAL_LAYMAN="${OPTARG}"
+		SanitizeLocalLayman;;
+	a)	addr="${OPTARG}";;
+	s)	CalcSuprg /usr/bin/sudo sudo;;
+	S)	CalcSuprg /bin/su su;;
+	i)	DefaultOpts;;
+	H)	statusline=false
+		export NOSTATUSLINE=true;;
+	*)	Usage 0;;
 	esac
 done
 opt=''
@@ -163,10 +165,13 @@ GetFilename() {
 	then	return
 	fi
 	case "${filename}" in
-		'') ${need_arg} &&
+	'')
+		${need_arg} && \
 			die "`gettext 'Filename argument is mandatory'`";;
-		/*|'~'*) :;;
-		*) filename="`pwd`/${filename}";;
+	/*|'~'*)
+		:;;
+	*)
+		filename="`pwd`/${filename}";;
 	esac
 }
 
@@ -289,9 +294,12 @@ AddArchive() {
 	do	n="${i%.eix}"
 		while :
 		do	case "${n}" in
-				_*) n="${n#_}";;
-				*_*_*_*) n="${n#*_}";;
-				*) break;;
+			_*)
+				n="${n#_}";;
+			*_*_*_*)
+				n="${n#*_}";;
+			*)
+				break;;
 			esac
 		done
 		Replace -g n '_' '?'
@@ -380,15 +388,16 @@ main_command="${1}"
 [ -n "${UID}" ] || UID="`id -u`"
 
 case "${main_command}" in
-	update|both)
-		Update "${@}";;
-	fetch*|get|wget)
-		Fetch "${@}";;
-	add*)
-		Add "${@}";;
-	rem*|del*|rm*|sub*)
-		Remove "${@}";;
-	*)	Usage;;
+update|both)
+	Update "${@}";;
+fetch*|get|wget)
+	Fetch "${@}";;
+add*)
+	Add "${@}";;
+rem*|del*|rm*|sub*)
+	Remove "${@}";;
+*)
+	Usage;;
 esac
 
 Exit 0

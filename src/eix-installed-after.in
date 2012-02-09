@@ -80,23 +80,23 @@ subtime=''
 OPTIND=1
 while getopts 'fblL:ea:A:dsv=SVitTh?' opt
 do	case "${opt}" in
-	f) full=:;;
-	b) before=:;;
-	l) logfile="/var/log/emerge.log";;
-	L) logfile="${OPTARG}";;
-	e) epoch=:;;
-	a) addtime="${OPTARG}";;
-	A) subtime="${OPTARG}";;
-	d) date_output='\t<date:DATE_OUTPUT>';;
-	s) output='NAMEASLOT';;
-	v) output='NAMEVERSION';;
-	'=') output='EQNAMEVERSION';;
-	S) input='NAME';;
-	V) input='NAMEVERSION';;
-	i) including=:;;
-	t) USE_BUILD_TIME=true; export USE_BUILD_TIME;;
-	T) USE_BUILD_TIME=false; export USE_BUILD_TIME;;
-	*) Usage 0;;
+	f)	full=:;;
+	b)	before=:;;
+	l)	logfile="/var/log/emerge.log";;
+	L)	logfile="${OPTARG}";;
+	e)	epoch=:;;
+	a)	addtime="${OPTARG}";;
+	A)	subtime="${OPTARG}";;
+	d)	date_output='\t<date:DATE_OUTPUT>';;
+	s)	output='NAMEASLOT';;
+	v)	output='NAMEVERSION';;
+	'=')	output='EQNAMEVERSION';;
+	S)	input='NAME';;
+	V)	input='NAMEVERSION';;
+	i)	including=:;;
+	t)	export USE_BUILD_TIME=true;;
+	T)	export USE_BUILD_TIME=false;;
+	*)	Usage 0;;
 	esac
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
@@ -122,8 +122,10 @@ then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
 	epoch=`sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
 q}" "${logfile}"` || epoch=''
 	case "${epoch}" in
-	[0-9]*)	match="${epoch}";;
-	*)	die "`eval_gettext \
+	[0-9]*)
+		match="${epoch}";;
+	*)
+		die "`eval_gettext \
 		'cannot find merge of ${match} in ${logfile}'`";;
 	esac
 	epoch=:
