@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-01-27 17:30:00 +0100 (Wed, 27 Jan 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-02-10 09:25:00 +0100 (Wed, 27 Jan 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1391,10 +1391,13 @@ Call B<layman -S> (i.e. overlays are synced with layman).
 .TP
 .BI ! command
 Evaluate I<command> within the B<eix-sync> shell script (in the same shell).
-I<command> must exit successfully or B<eix-sync> will stop with an error.
+I<command> must exit successfully or B<eix-sync> will print a warning.
 (Thus, B<!layman> I<Name> is more or less equivalent to I<Name>.)
 Close e.g. the command with "; true" if you want that the exit status
-is ignored.
+is ignored. The warning becomes even a fatal error with the option B<-F>.
+You can set B<FATAL_HOOKS> to a nonempty/empty value to force/cancel B<-F>
+for the currently and subsequently executed hooks. If you want only the
+current hook to exit with an error, you can call B<die> explicitly.
 
 You can use this feature to unpack e.g. an overlay before calling B<layman>
 or to apply local fixes after B<layman> was called.
@@ -1418,7 +1421,8 @@ This is only important if eix-sync options B<-s> or B<-2> are used.
 In this case, I<command> will be executed before the first call of B<rsync>;
 the output of I<command> is evaluated within the B<eix-sync> shell.
 If I<command> or the evaluation of its output are not successful,
-B<eix-sync> will stop with an error.
+B<eix-sync> will print a warning (or error out if B<-F> is active,
+i.e. if B<FATAL_HOOKS> is nonempty).
 This can be used to execute e.g. B<keychain> and to return the content of
 the appropriate I<~/.keychain/*-sh> file or to return export-commands for
 the current B<SSH_AUTH_SOCK> and B<SSH_AGENT_PID>.
@@ -1460,6 +1464,10 @@ layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
 .TP
 Some examples of useful lines in B<@SYSCONFDIR@/eix-sync.conf>:
 .TP
+.B -F
+Always error out on layman/hook errors.
+This was always the case in earlier eix versions.
+.TP
 .B -C --ignore-default-opts
 Use this line if you have --ask in EMERGE_DEFAULT_OPTS in /etc/make.conf
 but do not want to get asked for eix-sync.
@@ -1469,7 +1477,7 @@ Use this if you use e.g. B<PORTDIR_CACHE_METHOD=assign>, and
 B<FEATURES=metadata-transfer> is inactive or disabled
 (the latter is the default in newer portage versions).
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
-replace B<-M> by the line
+replace B<-M> by the line.
 .TP
 .B @emerge --regen
 to use B<emerge --regen> instead of B<emerge --metadata>.
@@ -3125,6 +3133,9 @@ B<PACKAGE_NOWARN> (in the output of B<eix --dump>) to understand why this works.
 
 B<eix-installed> was part of B<eix-test-obsolete> before eix-0.22.4 which was
 rather confusing for users and for maintaining, since their task has nothing in common.
+
+The default error-behavior of B<eix-sync> has changed in eix-0.23.10:
+Previously, the B<-F> option was automatic and could not be disabled.
 .\" }}}
 
 .\" {{{ AUTHORS

@@ -112,7 +112,7 @@ eend() {
 }
 
 die() {
-	eerror "${*}"
+	[ ${#} -eq 0 ] || eerror "${*}"
 	exitcode=2
 	Exit ${exitcode}
 }
