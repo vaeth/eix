@@ -1841,6 +1841,15 @@ AddOption(STRING, "OVERLAYS_LIST",
 	"all-used-renumbered", _(
 	"Which overlays to list (all/all-if-used/all-used/all-used-renumbered/no)"));
 
+AddOption(STRING, "TERM",
+	"xterm", _(
+	"The current terminal. Usually this is set by the environment variable."));
+
+AddOption(STRING, "TERM_STATUSLINE",
+	"xterm screen rxvt aterm konsole gnome Eterm kterm interix", _(
+	"If the beginning of TERM matches a word of this space-separated list,\n"
+	"it is assumed that the terminal supports a status line."));
+
 AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	LEVENSHTEIN_DISTANCE_DEFAULT, _(
 	"The default maximal levensthein distance for which a string is considered a match\n"

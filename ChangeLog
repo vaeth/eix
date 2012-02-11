@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-sync: Make layman and hook errors non-fatal, by default.
 	  Use -F, FATAL_HOOKS, or the die function to revert old behavior.
+	- Suppress status line if TERM does not begin with TERM_STATUSLINE,
+	  see the discussion in http://bugs.gentoo.org/show_bug.cgi?id=402993
 
 *eix-0.23.9
 *eix-0.23.8

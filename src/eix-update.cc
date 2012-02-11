@@ -254,7 +254,7 @@ print_help()
 			"     --known-vars        print all variable names known to --print\n"
 			" -H, --nostatus          don't update status line\n"
 			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
-			"     --force-status      force status line even if output is no terminal\n"
+			"     --force-status      always output status line\n"
 			" -F, --force-color       force \"color\" even if output is no terminal\n"
 			" -v, --verbose           output used cache method for each ebuild\n"
 			"\n"
@@ -412,6 +412,18 @@ override_label(OverlayIdent &overlay, const vector<RepoName> &repo_names)
 	}
 }
 
+inline static bool
+stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist)
+{
+	for(vector<string>::const_iterator it(wordlist.begin());
+		it != wordlist.end(); ++it) {
+		if(to_check.compare(0, it->size(), *it) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 int
 run_eix_update(int argc, char *argv[])
 {
@@ -448,7 +460,9 @@ run_eix_update(int argc, char *argv[])
 				use_percentage = is_tty;
 			}
 			if(status_tty) {
-				use_status = is_tty;
+				use_status = (is_tty &&
+					stringstart_in_wordlist(eixrc["TERM"],
+						split_string(eixrc["TERM_STATUSLINE"])));
 			}
 		}
 	}

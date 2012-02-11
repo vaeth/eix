@@ -53,7 +53,16 @@ eixf_statusmode=EixfStatusmode
 EixfStatusmode() {
 	if [ -z "${statusline}" ]
 	then	! ReadBoolean NOSTATUSLINE && {
-			test -t 1 || ReadBoolean FORCE_STATUSLINE
+			test -t 1 && (
+				ReadVar term TERM && \
+				ReadVar termlist TERM_STATUSLINE || exit
+				for i in ${termlist}
+				do	case "${term}" in
+					"${i}"*)	exit 0;;
+					esac
+				done
+				exit 1
+			) || ReadBoolean FORCE_STATUSLINE
 		}
 	else	${statusline}
 	fi && eixf_statusline=:
