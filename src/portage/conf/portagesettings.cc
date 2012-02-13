@@ -468,10 +468,6 @@ PortageSettings::calc_world_sets(Package *p)
 				it->maskflags.setbits(MaskFlags::MASK_WORLD_SETS);
 				continue;
 			}
-			if(it->maskflags.isVirtualSystem()) {
-				it->maskflags.setbits(MaskFlags::MASK_VIRTUAL_WORLD_SETS);
-				continue;
-			}
 		}
 		bool world(false);
 		for(std::vector<SetsIndex>::const_iterator sit(it->sets_indizes.begin());
@@ -481,9 +477,9 @@ PortageSettings::calc_world_sets(Package *p)
 				break;
 			}
 		}
-		if(world)
+		if(world) {
 			it->maskflags.setbits(MaskFlags::MASK_WORLD_SETS);
-// TODO: Once virtuals in sets are supported, we must add MASK_VIRTUAL_WORLD_SETS here
+		}
 	}
 }
 

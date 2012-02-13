@@ -157,7 +157,6 @@ Type   Content
 Number File format version
 Number Number of Category_ blocks
 Vector Overlay_\s
-Hash   Hash for "Provide"
 Hash   Hash for "Licenses"
 Hash   Hash for "Keywords"
 Hash   Hash for "Useflags"
@@ -197,7 +196,6 @@ Type         Content
 Number       Offset to the next package in the eix cache file (in bytes; counting starts after the number)
 String       Package name
 String       Description
-HashedWords  Provide
 String       Homepage
 HashedString Licenses, e.g. MPL-1.1 NPL-1.1
 HashedWords  Useflags (all useflags of all versions of the package are added). This might "falsely" be the empty string if per-version IUSE flags are stored.
@@ -218,9 +216,6 @@ char         Mask bitset for the current $ARCH:
                :0x04: version is in @system
                :0x08: version is in @world (if SAVE_WORLD=true)
                :0x10: version is in @world sets (if SAVE_WORLD=true)
-               :0x20: version provides virtual in @system
-               :0x40: version provides virtual in @world (if SAVE_WORLD=true)
-               :0x80: version provides virtual in @world sets (if SAVE_WORLD=true)
 
 char         Mask bitset for the PROPERTIES variable:
                :0x01: PROPERTIES=interactive

@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.24.0
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Remove support for obsolete old-style virtuals.
+	  This is a major change: Remove many search options, print-commands,
+	  many default variables, and changes the database format (even xml).
+
 *eix-0.23.10
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-sync: Make layman and hook errors non-fatal, by default.

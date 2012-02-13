@@ -44,17 +44,16 @@ class PackageTest {
 			NONE          =0x0000, /**< Search in name */
 			NAME          =0x0001, /**< Search in name */
 			DESCRIPTION   =0x0002, /**< Search in description */
-			PROVIDE       =0x0004, /**< Search in provides */
-			LICENSE       =0x0008, /**< Search in license */
-			CATEGORY      =0x0010, /**< Search in category */
-			CATEGORY_NAME =0x0020, /**< Search in category/name */
-			HOMEPAGE      =0x0040, /**< Search in homepage */
-			IUSE          =0x0080, /**< Search in iuse */
-			USE_ENABLED   =0x0100, /**< Search in enabled  useflags of installed packages */
-			USE_DISABLED  =0x0200, /**< Search in disabled useflags of installed packages */
-			SLOT          =0x0400, /**< Search in slots */
-			INSTALLED_SLOT=0x0800, /**< Search in installed slots */
-			SET           =0x1000; /**< Search in sets */
+			LICENSE       =0x0004, /**< Search in license */
+			CATEGORY      =0x0008, /**< Search in category */
+			CATEGORY_NAME =0x0010, /**< Search in category/name */
+			HOMEPAGE      =0x0020, /**< Search in homepage */
+			IUSE          =0x0040, /**< Search in iuse */
+			USE_ENABLED   =0x0080, /**< Search in enabled  useflags of installed packages */
+			USE_DISABLED  =0x0100, /**< Search in disabled useflags of installed packages */
+			SLOT          =0x0200, /**< Search in slots */
+			INSTALLED_SLOT=0x0400, /**< Search in installed slots */
+			SET           =0x0800; /**< Search in sets */
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,
@@ -80,8 +79,7 @@ class PackageTest {
 			STABLE_FULL         = 0x01, /**< Test for stable keyword */
 			STABLE_TESTING      = 0x02, /**< Test for testing keyword */
 			STABLE_NONMASKED    = 0x04, /**< Test for non-masked packages */
-			STABLE_SYSTEM       = 0x08, /**< Test for system packages */
-			STABLE_SYSTEM_PLAIN = 0x10; /**< Test for system-plain packages */
+			STABLE_SYSTEM       = 0x08; /**< Test for system packages */
 
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);
@@ -170,24 +168,6 @@ class PackageTest {
 		void SelectedSet()
 		{ worldset = worldset_only_selected = true; }
 
-		void WorldAllPlain()
-		{ world_plain = true; }
-
-		void WorldFilePlain()
-		{ world_plain = world_only_file_plain = true; }
-
-		void SelectedAllPlain()
-		{ world_plain = world_only_selected_plain = true; }
-
-		void SelectedFilePlain()
-		{ world_plain = world_only_selected_plain = world_only_file_plain = true; }
-
-		void WorldSetPlain()
-		{ worldset_plain = true; }
-
-		void SelectedSetPlain()
-		{ worldset_plain = worldset_only_selected_plain = true; }
-
 		void StabilityDefault(Package *p) const
 		{ stability->set_stability(*p); }
 
@@ -275,8 +255,6 @@ class PackageTest {
 			slotted, multi_slot,
 			world, world_only_file, world_only_selected,
 			worldset, worldset_only_selected,
-			world_plain, world_only_file_plain, world_only_selected_plain,
-			worldset_plain, worldset_only_selected_plain,
 			know_pattern;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;

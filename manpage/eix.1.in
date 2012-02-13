@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-02-11 19:45:00 +0100 (Wed, 27 Jan 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-02-13 23:12:00 +0100 (Mon, 13 Feb 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -226,9 +226,6 @@ print all KEYWORDS used in some version.
 .B --print-all-slots
 print all SLOT strings used in some version.
 .TP
-.B --print-all-provides
-print all PROVIDE words used in some package.
-.TP
 .B --print-all-licenses
 print all LICENSE strings used in some package.
 .TP
@@ -446,17 +443,16 @@ Otherwise, this decision is based upon B<UPGRADE_LOCAL_MODE>.
 If you want to see only packages with downgrade recommendations, you might make
 use of the B<FORMATSTRING> features described below.
 .TP
-.BR --stable ", " --testing ", " --non-masked ", " --system ", " --system-plain+
+.BR --stable ", " --testing ", " --non-masked ", " --system
 Only match packages which have at least one version which is stable (and non-masked),
-testing or stable (and non-masked), non-masked, in system or provides a system virtual,
-or in system, respectively.
+testing or stable (and non-masked), non-masked, or in system, respectively.
 If several of these options are combined in one test, it is the same version
 which must satisfy all.
 .TP
-.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+ ", " --system-plain+
+.BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=true>.
 .TP
-.BR --stable- ", " --testing- ", " --non-masked- ", " --system- ", " --system-plain-
+.BR --stable- ", " --testing- ", " --non-masked- ", " --system-
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=false>.
 .TP
 .BR --installed-unstable ", " --installed-testing ", " --installed-masked
@@ -466,36 +462,31 @@ at least one non-stable, testing, or masked version installed
 If several of these options are combined in one test, it is the same version
 which must satisfy all.
 .TP
-.BR --world ", " --world-plain
-Only match @world packages (and in case B<--world> also those providing virtuals for @world).
+.BR --world
+Only match @world packages.
 This is analogous to "emerge @world", i.e. it includes not only packages in
 the world file but also in world sets and the @system set.
 If you do not want to have all included, choose the appropriate alternative
 option.
 .TP
-.BR --world-file ", " --world-plain
+.BR --world-file
 This only matches packages from the world file or from the @system set.
-In case B<--world-file> also those providing corresponding virtuals are accepted.
 .TP
-.BR --world-set ", " --world-set-plain
+.BR --world-set
 This only matches packages from world_set or from the @system set.
-In case B<--world-set> also those providing corresponding virtuals are accepted.
 .TP
-.BR --selected ", " --selected-plain
+.BR --selected
 Only match @selected packages.
 This is analogous to "emerge @selected", i.e. it includes not only packages in
 the world file but also in world_sets (if you have @system contained in the
 world_sets file, then the behaviour is of course identical to B<--world>).
-The B<--selected> variant also includes packages providing corresponding virtuals.
 If you do not want to have both included, choose the appropriate alternative option.
 .TP
-.BR --selected-file ", " --selected-file-plain
+.BR --selected-file
 This only matches packages from the world file.
-The B<--selected-file> variant also includes packages providing corresponding virtuals.
 .TP
-.BR --selected-set ", " --selected-set-plain
+.BR --selected-set
 This only matches packages from world_set.
-The B<--selected-set> variant also includes packages providing corresponding virtuals.
 .TP
 .BR --binary
 Only match packages with a binary file (*.tbz2) in PKGDIR.
@@ -681,7 +672,7 @@ If you do not specify some of these options, the default is chosen according
 to some heuristic depending on the form of your pattern.
 In most cases, the default match field will be B<--name>, but if your pattern
 looks "special" like e.g. "cat/n" or "@set", the default match field will change to
-B<--category-name>, B<--set>, B<--description>, B<--homepage>, B<--virtual>, or B<--license>.
+B<--category-name>, B<--set>, B<--description>, B<--homepage>, or B<--license>.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
 configuration variable explained later.
 .TP
@@ -702,9 +693,6 @@ e.g. "@PACKAGE_URL@"
 .TP
 .BR -L ", " --license
 e.g. "GPL-2"
-.TP
-.BR -P ", " --provide
-e.g. "virtual/blackbox"
 .TP
 .BR --set
 Name of a local package set of a version in the database
@@ -1213,25 +1201,13 @@ See the remarks for B<--binary>.
 If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
 .TP
 .B system
-expands to 1 if the package is in the system profile or provides such a virtual
+expands to 1 if the package is in the system profile
 .TP
 .B world
-expands to 1 if the package is in the world file or provides such a virtual
+expands to 1 if the package is in the world file
 .TP
 .B world_sets
-expands to 1 if the package is in the world sets or provides such a virtual
-.TP
-.B systempure
-expands to 1 if this package is in the system profile
-.TP
-.B worldpure
-expands to 1 if this package is in the world file
-.TP
-.B world_setspure
-expands to 1 if this package is in world sets
-.TP
-.B provide
-the package PROVIDE string
+expands to 1 if the package is in the world sets
 .TP
 .B marked
 expands to 1 if the package was passed with the B<--pipe> option.
@@ -2595,11 +2571,10 @@ It may be convenient to use delayed substitution ${\\VAR} for I<regular_expressi
 to avoid manually inserting additional escapes.
 
 The possible values for I<match_field> are B<name>, B<category>, B<category/name>
-(or B<category-name>), B<description>, B<license>, B<homepage>, B<provide>, B<virtual>, B<set>,
+(or B<category-name>), B<description>, B<license>, B<homepage>, B<set>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
 corresponding to the analogous command line option for the match field.
-The special value B<virtual> selects simultaneously the two command line options B<-A> and B<-P>.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(string list)"
 This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_algorithm>

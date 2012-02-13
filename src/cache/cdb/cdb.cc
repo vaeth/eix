@@ -168,7 +168,6 @@ CdbCache::readCategory(Category &cat) throw(ExBasic)
 			pkg->desc     = mapping["DESCRIPTION"];
 			pkg->homepage = mapping["HOMEPAGE"];
 			pkg->licenses = mapping["LICENSE"];
-			pkg->set_provide(mapping["PROVIDE"]);
 		}
 
 		/* Read stability */

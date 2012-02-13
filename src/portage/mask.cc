@@ -301,16 +301,7 @@ void
 Mask::checkMask(Package& pkg, Keywords::Redundant check) const
 {
 	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
-		apply(*i, true, false, check);
-	}
-}
-
-/** Sets the stability member of all versions in virtual package according to the mask. */
-void
-Mask::applyVirtual(Package& pkg) const
-{
-	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
-		apply(*i, false, true, Keywords::RED_NOTHING);
+		apply(*i, true, check);
 	}
 }
 
@@ -362,13 +353,12 @@ Mask::ismatch(Package& pkg) const
 /** Sets the stability & masked members of ve according to the mask
  * @param ve         Version instance to be set
  * @param do_test    set conditionally or unconditionally
- * @param is_virtual the version matches only as a virtual name
  * @param check      check these for changes */
-void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check) const
+void Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 {
 	switch(m_type) {
 		case maskUnmask:
-			if(is_virtual || (do_test && (!test(ve))))
+			if(do_test && (!test(ve)))
 				break;
 			if(check & Keywords::RED_IN_UNMASK)
 				ve->set_redundant(Keywords::RED_IN_UNMASK);
@@ -386,7 +376,7 @@ void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant
 			}
 			break;
 		case maskMask:
-			if(is_virtual || (do_test && (!test(ve))))
+			if(do_test && (!test(ve)))
 				break;
 			if(check & Keywords::RED_IN_MASK)
 				ve->set_redundant(Keywords::RED_IN_MASK);
@@ -404,15 +394,6 @@ void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant
 			}
 			break;
 		case maskInSystem:
-			if(is_virtual) {
-				if(ve->maskflags.isVirtualSystem()) {
-					break;
-				}
-				if((!do_test) || test(ve)) {
-					ve->maskflags.setbits(MaskFlags::MASK_VIRTUAL_SYSTEM);
-				}
-				break;
-			}
 			if(ve->maskflags.isSystem() && ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
 				break;
 			if((!do_test) || test(ve)) {
@@ -423,14 +404,6 @@ void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant
 			}
 			break;
 		case maskInWorld:
-			if(is_virtual) {
-				if(ve->maskflags.isVirtualWorld()) {
-					break;
-				}
-				if((!do_test) && test(ve))
-					ve->maskflags.setbits(MaskFlags::MASK_VIRTUAL_WORLD);
-				break;
-			}
 			if(ve->maskflags.isWorld()) {
 				break;
 			}
@@ -439,7 +412,7 @@ void Mask::apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant
 			}
 			break;
 		case maskAllowedByProfile:
-			if(is_virtual || ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
+			if(ve->maskflags.isProfileMask())	/* Won't change anything cause already masked by profile */
 				break;
 			if(do_test && (!test(ve)))
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);

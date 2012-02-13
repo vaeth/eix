@@ -546,21 +546,6 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 }
 
 void
-Package::set_provide(const string &s)
-{
-	provide.clear();
-	split_string(provide, s);
-}
-
-std::string
-Package::get_provide() const
-{
-	string s;
-	join_to_string(s, provide);
-	return s;
-}
-
-void
 PackageSave::store(const Package *p)
 {
 	data.clear();

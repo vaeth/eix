@@ -204,7 +204,6 @@ EixCache::get_package(Package *p)
 			pkg->homepage = p->homepage;
 			pkg->licenses = p->licenses;
 			pkg->desc     = p->desc;
-			pkg->provide  = p->provide;
 			have_onetime_info = true;
 		}
 	}

@@ -313,22 +313,10 @@ AddOption(STRING, "COLOR_WORLD",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world packages."));
 
-AddOption(STRING, "COLOR_VIRTUAL_WORLD",
-	"%{COLOR_WORLD};underline", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the name of packages providing\n"
-	"a world package but which are not a world package."));
-
 AddOption(STRING, "COLOR_WORLD_SETS",
 	"yellow,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world sets packages."));
-
-AddOption(STRING, "COLOR_VIRTUAL_WORLD_SETS",
-	"%{COLOR_WORLD_SETS};underline", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the name of packages providing\n"
-	"a world sets package but which are not part of world sets."));
 
 AddOption(STRING, "COLOR_CATEGORY",
 	"", _(
@@ -340,33 +328,15 @@ AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of system packages."));
 
-AddOption(STRING, "COLOR_CATEGORY_VIRTUAL_SYSTEM",
-	"%{COLOR_CATEGORY_SYSTEM};underline", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the category of packages which\n"
-	"provide system packages but are not part of system."));
-
 AddOption(STRING, "COLOR_CATEGORY_WORLD",
 	"%{COLOR_WORLD}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of world packages."));
 
-AddOption(STRING, "COLOR_CATEGORY_VIRTUAL_WORLD",
-	"%{COLOR_VIRTUAL_WORLD}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the category name of packages providing\n"
-	"a world package but which are not a world package."));
-
 AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
 	"%{COLOR_WORLD_SETS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the category of world sets packages."));
-
-AddOption(STRING, "COLOR_CATEGORY_VIRTUAL_WORLD_SETS",
-	"%{COLOR_VIRTUAL_WORLD_SETS}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the category name of packages\n"
-	"a world sets package but which are not part of world sets."));
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"cyan,1", _(
@@ -689,7 +659,6 @@ AddOption(STRING, "FORMAT_PROPERTIES",
 	"{properties}{*c}(%{COLOR_PROPERTIES})"
 		"{propertiesinteractive}%{TAG_PROPERTIES_INTERACTIVE}{}"
 		"{propertieslive}%{TAG_PROPERTIES_LIVE}{}"
-		"{propertiesvirtual}%{TAG_PROPERTIES_VIRTUAL}{}"
 		"{propertiesset}%{TAG_PROPERTIES_SET}{}"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1098,29 +1067,19 @@ AddOption(STRING, "FORMAT_FINISH",
 	"It is used at the end of a package to output a newline unless NEWLINE=true."));
 
 AddOption(STRING, "FORMAT_NAME",
-	"{system}"
-		"{systempure}(%{COLOR_CATEGORY_SYSTEM})"
-		"{else}(%{COLOR_CATEGORY_VIRTUAL_SYSTEM}){}"
+	"{system}(%{COLOR_CATEGORY_SYSTEM})"
 	"{else}"
-		"{world}"
-			"{worldpure}(%{COLOR_CATEGORY_WORLD})"
-			"{else}(%{COLOR_CATEGORY_VIRTUAL_WORLD}){}"
+		"{world}(%{COLOR_CATEGORY_WORLD})"
 		"{else}"
-			"{world_sets}"
-				"{world_setspure}(%{COLOR_CATEGORY_WORLD_SETS})"
-				"{else}(%{COLOR_CATEGORY_VIRTUAL_WORLD_SETS}){}"
+			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
 			"{else}(%{COLOR_CATEGORY}){}"
 		"{}"
 	"{}<category>()/"
 	"{marked}(%{COLOR_MARKED_NAME})"
 	"{else}"
-		"{world}"
-			"{worldpure}(%{COLOR_WORLD})"
-			"{else}(%{COLOR_VIRTUAL_WORLD}){}"
+		"{world}(%{COLOR_WORLD})"
 		"{else}"
-			"{world_sets}"
-				"{world_setspure}(%{COLOR_WORLD_SETS})"
-				"{else}(%{COLOR_VIRTUAL_WORLD_SETS}){}"
+			"{world_sets}(%{COLOR_WORLD_SETS})"
 			"{else}(%{COLOR_NAME}){}"
 		"{}"
 	"{}<name>()", _(
@@ -1460,16 +1419,6 @@ AddOption(STRING, "FORMATLINE_RECOMMEND",
 	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
 	"It defines the format for a line with the up-/downgrade recommendations."));
 
-AddOption(STRING, "FORMATLINE_PROVIDE",
-	"%{!PRINT_ALWAYS}{provide}%{}"
-	"     (%{COLOR_TITLE})Provides:()"
-	"%{?PRINT_ALWAYS}{provide}%{}"
-	"            "
-	"<provide>"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the package provides."));
-
 AddOption(STRING, "FORMATLINE_LICENSES",
 	"%{!PRINT_ALWAYS}{licenses}%{}"
 	"     (%{COLOR_TITLE})License:()"
@@ -1523,7 +1472,6 @@ AddOption(STRING, "FORMAT_ALL_VERBOSE",
 	"%{FORMATLINE_HOMEPAGE}"
 	"%{?PRINT_BUGS}%{FORMATLINE_BUGS}%{}"
 	"%{FORMATLINE_DESCRIPTION}"
-	"%{FORMATLINE_PROVIDE}"
 	"%{FORMATLINE_LICENSES}"
 	"%{FORMAT_FINISH}", _(
 	"This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
@@ -2172,17 +2120,6 @@ AddOption(STRING, "MATCH_FIELD_HOMEPAGE",
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for homepage."));
 
-AddOption(STRING, "MATCH_FIELD_VIRTUAL",
-	"vir.*/", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_FIELD for virtuals,\n"
-	"that is for provide or category/name."));
-
-AddOption(STRING, "MATCH_FIELD_PROVIDE",
-	"virtual/", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is a regular expression used in DEFAULT_MATCH_FIELD for provide."));
-
 AddOption(STRING, "MATCH_FIELD_CATEGORY_NAME",
 	"/", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2197,8 +2134,6 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"%{\\MATCH_FIELD_DESCRIPTION} description "
 	"%{\\MATCH_FIELD_SET} set "
 	"%{\\MATCH_FIELD_HOMEPAGE} homepage "
-	"%{\\MATCH_FIELD_PROVIDE} virtual "
-	"%{\\MATCH_FIELD_PROVIDE} provide "
 	"%{\\MATCH_FIELD_CATEGORY_NAME} category/name "
 	"%{\\MATCH_FIELD_LICENSE} license "
 	"name", _(
@@ -2206,7 +2141,7 @@ AddOption(STRING, "DEFAULT_MATCH_FIELD",
 	"If regexp matches the search pattern, use match_field as the default.\n"
 	"A fallback match_field may be specified as the last entry in the list.\n"
 	"Admissible values for match_field are: name, category, category/name,\n"
-	"description, license, homepage, provide, set, slot, installed-slot, use\n"
+	"description, license, homepage, set, slot, installed-slot, use\n"
 	"with-use, without-use."));
 
 AddOption(STRING, "MATCH_ALGORITHM_REGEX",

@@ -55,7 +55,6 @@ case $service in
 "$excl_opt"'--print-all-useflags[print all IUSE words]'
 "$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
 "$excl_opt"'--print-all-slots[print all SLOT strings]'
-"$excl_opt"'--print-all-provides[print all PROVIDE words]'
 "$excl_opt"'--print-all-licenses[print all LICENSE strings]'
 "$excl_opt"'--print-all-print-world-sets[print the world sets]'
 "$excl_opt"'--print-all-print-world-sets[print the world sets]'
@@ -97,27 +96,18 @@ case $service in
 '*--non-masked[test for non-masked packages]'
 '*--non-masked+[test for non-masked packages, local]'
 '*--non-masked-[test for non-masked packages, non-local]'
-'*--system[test for @system/virtual @system packages]'
-'*--system+[test for @system/virtual @system packages, local]'
-'*--system-[test for @system/virtual @system packages, non-local]'
-'*--system-plain[test for non-virtual @system packages]'
-'*--system-plain+[test for non-virtual @system packages, local]'
-'*--system-plain-[test for non-virtual @system packages, non-local]'
+'*--system[test for @system packages]'
+'*--system+[test for @system packages, local]'
+'*--system-[test for @system packages, non-local]'
 '*--installed-unstable[test for installed unstable packages]'
 '*--installed-testing[test for installed testing packages]'
 '*--installed-masked[test for installed masked packages]'
-'*--world[test for @world/virtuals for @world packages]'
-'*--world-plain[test for non-virtual @world packages]'
-'*--world-file[test for @world-file/virtuals for @world-file packages]'
-'*--world-file-plain[test for non-virtual @world-file packages]'
-'*--world-set[test for @world-set/virtuals for @world-set packages]'
-'*--world-set-plain[test for non-virtual @world-set packages]'
-'*--selected[test for @selected/virtuals for @selected packages]'
-'*--selected-plain[test for non-virtual @selected packages]'
-'*--selected-file[test for @selected-file/virtuals for @selected-file packages]'
-'*--selected-file-plain[test for non-virtual @selected-file packages]'
-'*--selected-set[test for @selected-set/virtuals for @selected-set packages]'
-'*--selected-set-plain[test for non-virtual @selected-set packages]'
+'*--world[test for @world packages]'
+'*--world-file[test for @world-file packages]'
+'*--world-set[test for @world-set packages]'
+'*--selected[test for @selected packages]'
+'*--selected-file[test for @selected-file packages]'
+'*--selected-set[test for @selected-set packages]'
 '*--binary[test for packages with .tbz2 file]'
 {'*--overlay','*-O'}'[test if package is in an overlay]'
 '*--in-overlay[OVERLAY (test for packages in OVERLAY)]:overlay for testing:_eix__overlay'
@@ -148,7 +138,6 @@ case $service in
 {'*--category-name','*-A'}'[match "category/name"]'
 {'*--homepage','*-H'}'[match homepage]'
 {'*--license','*-L'}'[match license]'
-{'*--provide','*-P'}'[match provide]'
 {'*--use','*-U'}'[match IUSE]'
 '*--set[match setname]'
 '*--slot[match slotname]'
@@ -189,7 +178,7 @@ case $service in
 			(--(multi-|)installed)
 				installed='installed'
 			;;
-			(--category|--name|--description|--homepage|--license|--provide)
+			(--category|--name|--description|--homepage|--license)
 				field="${words[$i]#--}"
 			;;
 			(--category-name)
@@ -244,9 +233,6 @@ case $service in
 					;;
 					(L)
 						field='license'
-					;;
-					(P)
-						field='provide'
 					;;
 					esac
 				done
@@ -304,9 +290,6 @@ _eix__arg() {
 	;;
 	(slot)
 		compadd $addarg $(eix --print-all-slots 2>/dev/null)
-	;;
-	(provide)
-		compadd $addarg ${$(eix --print-all-provides 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/}
 	;;
 	(homepage)
 		compadd $addarg $(eix $eixopt --format '<homepage>\n' 2>/dev/null)

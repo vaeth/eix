@@ -105,7 +105,6 @@ class Package
 
 		/** Package properties (stored in db) */
 		std::string category, name, desc, homepage, licenses;
-		std::vector<std::string> provide;
 
 		IUseSet iuse;
 
@@ -146,18 +145,6 @@ class Package
 		/** True if any version is in the world sets. */
 		bool is_world_sets_package() const
 		{ return local_collects.isWorldSets(); }
-
-		/** True if any (possibly virtual) version is in the system profile. */
-		bool is_any_system_package() const
-		{ return local_collects.isAnySystem(); }
-
-		/** True if any (possibly virtual) version is in the world file. */
-		bool is_any_world_package() const
-		{ return local_collects.isAnyWorld(); }
-
-		/** True if any (possibly virtual) version is in the world sets. */
-		bool is_any_world_sets_package() const
-		{ return local_collects.isAnyWorldSets(); }
 
 #ifndef NOT_FULL_USE
 		/** Does at least one version have individual iuse data? */
@@ -382,10 +369,6 @@ class Package
 
 		Version *latest() const
 		{ return *rbegin(); }
-
-		void set_provide(const std::string &s);
-
-		std::string get_provide() const;
 
 	protected:
 		/** \c slotlist is always sorted with respect to the

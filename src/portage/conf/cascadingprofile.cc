@@ -269,17 +269,15 @@ CascadingProfile::applyMasks(Package *p) const
 	}
 	else {
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-			(*it)->maskflags.clearbits(~MaskFlags::MASK_ANY_WORLD);
+			(*it)->maskflags.clearbits(~MaskFlags::MASK_WORLD);
 		}
 	}
 	m_system_allowed.applyMasks(p);
 	m_system.applyMasks(p);
-	m_system.applyVirtualMasks(p);
 	m_package_masks.applyMasks(p);
 	m_package_unmasks.applyMasks(p);
 	if(use_world) {
 		m_world.applyMasks(p);
-		m_world.applyVirtualMasks(p);
 	}
 	// Now we must also apply the set-items of the above lists:
 	for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {

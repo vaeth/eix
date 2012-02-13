@@ -109,29 +109,9 @@ MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const
 	}
 	for(Get::const_iterator it(masks->begin());
 		likely(it != masks->end()); ++it) {
-		it->apply(v, false, false, Keywords::RED_NOTHING);
+		it->apply(v, false, Keywords::RED_NOTHING);
 	}
 	delete masks;
-}
-
-template<>
-void
-MaskList<Mask>::applyVirtualMasks(Package *p) const
-{
-	if(p->provide.empty())
-		return;
-	for(vector<string>::const_iterator v(p->provide.begin());
-		likely(v != p->provide.end()); ++v) {
-		Get *masks(get(p));
-		if(masks == NULL) {
-			continue;
-		}
-		for(Get::const_iterator it(masks->begin());
-			likely(it != masks->end()); ++it) {
-			it->applyVirtual(*p);
-		}
-		delete masks;
-	}
 }
 
 PreListFilename::PreListFilename(const string &n, const char *label)

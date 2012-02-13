@@ -85,7 +85,6 @@ dump_help()
 			"     --print-all-useflags  print all IUSE words used in some version\n"
 			"     --print-all-keywords  print all KEYWORDS used in some version\n"
 			"     --print-all-slots     print all SLOT strings used in some version\n"
-			"     --print-all-provides  print all PROVIDE strings used in some package\n"
 			"     --print-all-licenses  print all LICENSE strings used in some package\n"
 			"     --print-world-sets    print the world sets\n"
 			"     --print-overlay-path  print the path of specified overlay\n"
@@ -180,7 +179,6 @@ dump_help()
 			"    -s, --name              name (default)\n"
 			"    -H, --homepage          homepage\n"
 			"    -L, --license           license\n"
-			"    -P, --provide           provides\n"
 			"    --set                   local package set name\n"
 			"    --slot                  slot\n"
 			"    --installed-slot        slot of installed version\n"
@@ -246,7 +244,6 @@ static struct LocalOptions {
 		hash_iuse,
 		hash_keywords,
 		hash_slot,
-		hash_provide,
 		hash_license,
 		world_sets;
 } rc_options;
@@ -283,7 +280,6 @@ static struct Option long_options[] = {
 	Option("print-all-useflags", O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse),
 	Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords),
 	Option("print-all-slots",    O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot),
-	Option("print-all-provides", O_HASH_PROVIDE,  Option::BOOLEAN_T, &rc_options.hash_provide),
 	Option("print-all-licenses", O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license),
 	Option("print-world-sets",   O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets),
 
@@ -313,29 +309,20 @@ static struct Option long_options[] = {
 	Option("non-masked",    O_NONMASKED_DEFAULT),
 	Option("binary",        O_BINARY),
 	Option("world-file",    O_WORLD_FILE),
-	Option("world-file-plain", O_WORLD_FILE_PLAIN),
 	Option("world-set",     O_WORLD_SET),
-	Option("world-set-plain", O_WORLD_SET_PLAIN),
 	Option("world",         O_WORLD_ALL),
-	Option("world-plain",   O_WORLD_ALL_PLAIN),
 	Option("selected-file", O_SELECTED_FILE),
-	Option("selected-file-plain", O_SELECTED_FILE_PLAIN),
 	Option("selected-set",  O_SELECTED_SET),
-	Option("selected-set-plain", O_SELECTED_SET_PLAIN),
 	Option("selected",      O_SELECTED_ALL),
-	Option("selected-plain",O_SELECTED_ALL_PLAIN),
 	Option("system",        O_SYSTEM_DEFAULT),
-	Option("system-plain",  O_SYSTEM_PLAIN_DEFAULT),
 	Option("stable+",       O_STABLE_LOCAL),
 	Option("testing+",      O_TESTING_LOCAL),
 	Option("non-masked+",   O_NONMASKED_LOCAL),
 	Option("system+",       O_SYSTEM_LOCAL),
-	Option("system-plain+", O_SYSTEM_PLAIN_LOCAL),
 	Option("stable-",       O_STABLE_NONLOCAL),
 	Option("testing-",      O_TESTING_NONLOCAL),
 	Option("non-masked-",   O_NONMASKED_NONLOCAL),
 	Option("system-",       O_SYSTEM_NONLOCAL),
-	Option("system-plain-", O_SYSTEM_PLAIN_NONLOCAL),
 	Option("installed-unstable", O_INSTALLED_UNSTABLE),
 	Option("installed-testing",  O_INSTALLED_TESTING),
 	Option("installed-masked",   O_INSTALLED_MASKED),
@@ -383,7 +370,6 @@ static struct Option long_options[] = {
 	Option("description",   'S'),
 	Option("license",       'L'),
 	Option("homepage",      'H'),
-	Option("provide",       'P'),
 	Option("set",           O_SEARCH_SET),
 	Option("use",           'U'),
 	Option("installed-with-use",    O_INSTALLED_WITH_USE),
@@ -621,11 +607,6 @@ run_eix(int argc, char** argv)
 	if(unlikely(rc_options.hash_slot)) {
 		fclose(fp);
 		header.slot_hash.output();
-		return EXIT_SUCCESS;
-	}
-	if(unlikely(rc_options.hash_provide)) {
-		fclose(fp);
-		header.provide_hash.output();
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.hash_license)) {

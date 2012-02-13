@@ -26,13 +26,7 @@ const MaskFlags::MaskType
 	MaskFlags::MASK_HARD,
 	MaskFlags::MASK_SYSTEM,
 	MaskFlags::MASK_WORLD,
-	MaskFlags::MASK_WORLD_SETS,
-	MaskFlags::MASK_VIRTUAL_SYSTEM,
-	MaskFlags::MASK_VIRTUAL_WORLD,
-	MaskFlags::MASK_VIRTUAL_WORLD_SETS,
-	MaskFlags::MASK_ANY_SYSTEM,
-	MaskFlags::MASK_ANY_WORLD,
-	MaskFlags::MASK_ANY_WORLD_SETS;
+	MaskFlags::MASK_WORLD_SETS;
 
 const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_EMPTY,

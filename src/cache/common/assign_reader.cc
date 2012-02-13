@@ -94,5 +94,4 @@ assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback e
 	pkg->homepage = (*cf)["HOMEPAGE"];
 	pkg->licenses = (*cf)["LICENSE"];
 	pkg->desc     = (*cf)["DESCRIPTION"];
-	pkg->set_provide((*cf)["PROVIDE"]);
 }

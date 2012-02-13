@@ -272,12 +272,8 @@ class Scanner {
 			PKG_DESCRIPTION,
 			PKG_HOMEPAGE,
 			PKG_LICENSES,
-			PKG_PROVIDE,
 			PKG_OVERLAYKEY,
 			PKG_BINARY,
-			PKG_SYSTEM_PURE,
-			PKG_WORLD_PURE,
-			PKG_WORLD_SETS_PURE,
 			PKG_SYSTEM,
 			PKG_WORLD,
 			PKG_WORLD_SETS,
@@ -409,15 +405,11 @@ class Scanner {
 			prop_pkg("description", PKG_DESCRIPTION);
 			prop_pkg("homepage", PKG_HOMEPAGE);
 			prop_pkg("licenses", PKG_LICENSES);
-			prop_pkg("provide", PKG_PROVIDE);
 			prop_pkg("overlaykey", PKG_OVERLAYKEY);
 			prop_pkg("binary", PKG_BINARY);
 			prop_pkg("system", PKG_SYSTEM);
 			prop_pkg("world", PKG_WORLD);
 			prop_pkg("world_sets", PKG_WORLD_SETS);
-			prop_pkg("systempure", PKG_SYSTEM_PURE);
-			prop_pkg("worldpure", PKG_WORLD_PURE);
-			prop_pkg("world_setspure", PKG_WORLD_SETS_PURE);
 			prop_pkg("setnames", PKG_SETNAMES);
 			prop_pkg("allsetnames", PKG_ALLSETNAMES);
 			prop_pkg("upgrade", PKG_UPGRADE);
@@ -698,8 +690,6 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 			return package->homepage;
 		case Scanner::PKG_LICENSES:
 			return package->licenses;
-		case Scanner::PKG_PROVIDE:
-			return package->get_provide();
 		case Scanner::PKG_BINARY:
 			{
 				for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
@@ -725,28 +715,16 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 					return overlay_keytext(ov_key, false);
 			}
 			break;
-		case Scanner::PKG_SYSTEM_PURE:
+		case Scanner::PKG_SYSTEM:
 			if(package->is_system_package())
 				return one;
 			break;
-		case Scanner::PKG_WORLD_PURE:
+		case Scanner::PKG_WORLD:
 			if(package->is_world_package())
 				return one;
 			break;
-		case Scanner::PKG_WORLD_SETS_PURE:
-			if(package->is_world_sets_package())
-				return one;
-			break;
-		case Scanner::PKG_SYSTEM:
-			if(package->is_any_system_package())
-				return one;
-			break;
-		case Scanner::PKG_WORLD:
-			if(package->is_any_world_package())
-				return one;
-			break;
 		case Scanner::PKG_WORLD_SETS:
-			if(package->is_any_world_sets_package())
+			if(package->is_world_sets_package())
 				return one;
 			break;
 		case Scanner::PKG_SETNAMES:

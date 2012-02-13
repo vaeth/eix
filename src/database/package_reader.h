@@ -31,7 +31,7 @@ class PackageReader {
 	public:
 		enum Attributes {
 			NONE = 0,
-			NAME, DESCRIPTION, PROVIDE, HOMEPAGE, LICENSE, COLL_IUSE, VERSIONS,
+			NAME, DESCRIPTION, HOMEPAGE, LICENSE, COLL_IUSE, VERSIONS,
 			ALL = 7
 		};
 

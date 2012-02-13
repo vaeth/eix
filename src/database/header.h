@@ -30,7 +30,6 @@ class DBHeader {
 
 	public:
 		StringHash
-			provide_hash,
 			license_hash,
 			keywords_hash,
 			iuse_hash,
@@ -52,7 +51,7 @@ class DBHeader {
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 
 		/** Current version of database-format. */
-		static const DBVersion current = 28;
+		static const DBVersion current = 29;
 
 		DBVersion version; /**< Version of the db. */
 		io::Catsize  size; /**< Number of categories. */

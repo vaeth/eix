@@ -84,9 +84,8 @@ class Mask : public BasicVersion {
 		/** Sets the stability & masked members of ve according to the mask
 		 * @param ve         Version instance to be set
 		 * @param do_test    set conditionally or unconditionally
-		 * @param is_virtual the version matches only as a virtual name
 		 * @param check      check these for changes */
-		void apply(Version *ve, bool do_test, bool is_virtual, Keywords::Redundant check) const;
+		void apply(Version *ve, bool do_test, Keywords::Redundant check) const;
 
 		/** Parse mask-string. */
 		Mask(const char *str, Type type, const char *repo = NULL);
@@ -111,9 +110,6 @@ class Mask : public BasicVersion {
 		 * @param pkg            package you want tested
 		 * @param check          Redundancy checks which should apply */
 		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const;
-
-		/** Sets the stability member of all versions in virtual package according to the mask. */
-		void applyVirtual(Package& pkg) const;
 
 		bool ismatch(Package& pkg) const;
 

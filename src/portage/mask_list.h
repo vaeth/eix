@@ -192,8 +192,6 @@ public:
 	bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 
 	void applySetMasks(Version *v, const std::string &set_name) const;
-
-	void applyVirtualMasks(Package *p) const;
 };
 
 // This is only needed for PreList

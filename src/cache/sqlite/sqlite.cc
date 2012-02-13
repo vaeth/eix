@@ -104,7 +104,6 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 			DESCRIPTION,
 			KEYWORDS,
 			IUSE,
-			PROVIDE,
 			PROPERTIES,
 			LAST
 		} Names;
@@ -128,7 +127,6 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 			mapinit(11, DESCRIPTION, "DESCRIPTION");
 			mapinit(12, KEYWORDS,    "KEYWORDS");
 			mapinit(14, IUSE,        "IUSE");
-			mapinit(17, PROVIDE,     "PROVIDE");
 			mapinit(19, PROPERTIES,  "PROPERTIES");
 		}
 
@@ -240,7 +238,6 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		pkg->homepage = TrueIndex::c_str(argv, trueindex, TrueIndex::HOMEPAGE);
 		pkg->licenses = TrueIndex::c_str(argv, trueindex, TrueIndex::LICENSE);
 		pkg->desc     = TrueIndex::c_str(argv, trueindex, TrueIndex::DESCRIPTION);
-		pkg->set_provide(TrueIndex::c_str(argv, trueindex, TrueIndex::PROVIDE));
 	}
 	/* Free old split */
 	free(aux[0]);

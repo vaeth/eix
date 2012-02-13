@@ -74,11 +74,12 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 	for(int linenr(5); likely(getline(is, linebuf) != 0); ++linenr) {
 		switch(linenr)
 		{
-			case 5:  pkg->homepage = linebuf; break;
-			case 6:  pkg->licenses = linebuf; break;
-			case 7:  pkg->desc     = linebuf; break;
-			case 13: pkg->set_provide(linebuf); is.close();
-				 return;
+			case 5:  pkg->homepage = linebuf;
+			         break;
+			case 6:  pkg->licenses = linebuf;
+			         break;
+			case 7:  pkg->desc     = linebuf;
+			         is.close(); return;
 			default:
 				break;
 		}

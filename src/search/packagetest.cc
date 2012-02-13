@@ -43,7 +43,6 @@ const PackageTest::MatchField
 		PackageTest::NONE,
 		PackageTest::NAME,
 		PackageTest::DESCRIPTION,
-		PackageTest::PROVIDE,
 		PackageTest::LICENSE,
 		PackageTest::CATEGORY,
 		PackageTest::CATEGORY_NAME,
@@ -89,8 +88,6 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 		slotted = multi_slot =
 		world = world_only_selected = world_only_file =
 		worldset = worldset_only_selected =
-		world_plain = world_only_selected_plain = world_only_file_plain =
-		worldset_plain = worldset_only_selected_plain =
 		dup_versions = dup_packages =
 		know_pattern = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
@@ -131,8 +128,6 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::VERSIONS);
 	if(field & HOMEPAGE)
 		setNeeds(PackageReader::HOMEPAGE);
-	if(field & PROVIDE)
-		setNeeds(PackageReader::PROVIDE);
 	if(field & LICENSE)
 		setNeeds(PackageReader::LICENSE);
 	if(field & DESCRIPTION)
@@ -149,7 +144,7 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete || binary ||
-		world || worldset || world_plain || worldset_plain ||
+		world || worldset ||
 		(from_overlay_inst_list != NULL) ||
 		(from_foreign_overlay_inst_list != NULL) ||
 		(overlay_list != NULL) || (overlay_only_list != NULL) ||
@@ -183,12 +178,6 @@ static_match_field_map()
 	match_field_map["category/name"]  = PackageTest::CATEGORY_NAME;
 	match_field_map["HOMEPAGE"]       = PackageTest::HOMEPAGE;
 	match_field_map["homepage"]       = PackageTest::HOMEPAGE;
-	match_field_map["PROVIDE"]        = PackageTest::PROVIDE;
-	match_field_map["PROVIDES"]       = PackageTest::PROVIDE;
-	match_field_map["provide"]        = PackageTest::PROVIDE;
-	match_field_map["provides"]       = PackageTest::PROVIDE;
-	match_field_map["VIRTUAL"]        = PackageTest::PROVIDE|PackageTest::CATEGORY_NAME;
-	match_field_map["virtual"]        = PackageTest::PROVIDE|PackageTest::CATEGORY_NAME;
 	match_field_map["IUSE"]           = PackageTest::IUSE;
 	match_field_map["USE"]            = PackageTest::IUSE;
 	match_field_map["iuse"]           = PackageTest::IUSE;
@@ -419,14 +408,6 @@ PackageTest::stringMatch(Package *pkg) const
 	if((field & HOMEPAGE) && (*algorithm)(pkg->homepage.c_str(), pkg))
 		return true;
 
-	if(field & PROVIDE) {
-		for(vector<string>::const_iterator it(pkg->provide.begin());
-			likely(it != pkg->provide.end()); ++it) {
-			if((*algorithm)(it->c_str(), pkg))
-				return true;
-		}
-	}
-
 	if(field & SLOT) {
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
@@ -581,15 +562,13 @@ stabilitytest(const Package *p, PackageTest::TestStability what)
 	if(likely(what == PackageTest::STABLE_NONE))
 		return true;
 	for(Package::const_iterator it(p->begin()); likely(it != p->end()); ++it) {
-		if(what & (PackageTest::STABLE_SYSTEM|PackageTest::STABLE_SYSTEM_PLAIN)) {
+		if(what & PackageTest::STABLE_SYSTEM) {
 			if(!it->maskflags.isSystem()) {
-				if(!(what & PackageTest::STABLE_SYSTEM))
-					continue;
-				if(!it->maskflags.isAnySystem())
-					continue;
+				continue;
 			}
-			if(!(what & ~(PackageTest::STABLE_SYSTEM|PackageTest::STABLE_SYSTEM_PLAIN)))
+			if(!(what & ~PackageTest::STABLE_SYSTEM)) {
 				return true;
+			}
 		}
 		if(it->maskflags.isHardMasked())
 			continue;
@@ -1037,34 +1016,20 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 	}
 
-	if(unlikely(world || worldset || world_plain || worldset_plain )) {
+	if(unlikely(world || worldset)) {
 		// --world, --world-all, --world-set
 		// --selected, --selected-all, --selected-set
-		// --world-plain, --world-all-plain, --world-set-plain
-		// --selected-plain, --selected-all-plain, --selected-set-plain
 		get_p(p, pkg);
 		StabilityDefault(p);
-		if(world && !p->is_any_world_package()) {
-			if(world_only_file || !p->is_any_world_sets_package()) {
-				if(world_only_selected || !p->is_any_system_package()) {
-					return false;
-				}
-			}
-		}
-		if(world_plain && !p->is_world_package()) {
-			if(world_only_file_plain || !p->is_world_sets_package()) {
-				if(world_only_selected_plain || !p->is_system_package()) {
+		if(world && !p->is_world_package()) {
+			if(world_only_file || !p->is_world_sets_package()) {
+				if(world_only_selected || !p->is_system_package()) {
 					return false;
 				}
 			}
 		}
 		if(worldset && !p->is_world_sets_package()) {
-			if(worldset_only_selected || !p->is_any_system_package()) {
-				return false;
-			}
-		}
-		if(worldset_plain && !p->is_world_sets_package()) {
-			if(worldset_only_selected_plain || !p->is_system_package()) {
+			if(worldset_only_selected || !p->is_system_package()) {
 				return false;
 			}
 		}
