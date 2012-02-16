@@ -96,10 +96,11 @@ class RepoName {
 
 class Statusline {
 	private:
-		bool was_used, use;
+		string header;
+		bool use, soft;
 		void print_force(const string &str);
 	public:
-		Statusline(bool active) : was_used(false), use(active)
+		Statusline(bool active, bool softstat) : use(active), soft(softstat)
 		{ }
 
 		void print(const string &str)
@@ -111,14 +112,14 @@ class Statusline {
 
 		void success()
 		{
-			if(was_used) {
+			if(!header.empty()) {
 				print_force(_("Finished"));
 			}
 		}
 
 		void failure()
 		{
-			if(was_used) {
+			if(!header.empty()) {
 				print_force(_("Failure"));
 			}
 		}
@@ -127,8 +128,13 @@ class Statusline {
 void
 Statusline::print_force(const string &str)
 {
-	was_used = true;
-	cout << "\033]0;" << program_name << ": " << str << '\007';
+	if(header.empty()) {
+		header = program_name + ": ";
+	}
+	if(soft) {
+		cout << "\033k" << header << str << "\033\\";
+	}
+	cout << "\033]0;" << header << str << '\007';
 	flush(cout);
 }
 
@@ -466,11 +472,13 @@ run_eix_update(int argc, char *argv[])
 			}
 		}
 	}
+
 	/* other defaults */
 	verbose = eixrc.getBool("UPDATE_VERBOSE");
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
+
 
 	/* Honour a wish for silence */
 	if(unlikely(quiet)) {
@@ -519,7 +527,9 @@ run_eix_update(int argc, char *argv[])
 		outputfile = eix_cachefile;
 	}
 
-	Statusline statusline(use_status);
+	Statusline statusline(use_status, (use_status &&
+		stringstart_in_wordlist(eixrc["TERM"],
+			split_string(eixrc["TERM_SOFTSTATUSLINE"]))));
 
 	/* Check for correct permissions. */
 	Permissions permissions(outputfile, skip_permission_tests, eixrc);

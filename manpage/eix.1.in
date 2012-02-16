@@ -2115,7 +2115,13 @@ The current terminal. Usually this is set by the environment variable.
 .TP
 .BR TERM_STATUSLINE " " (string)
 This is a list of (space-separated) words; if one of these words matches
-the beginning of TERM, it is assume that the terminal supports a status line.
+the beginning of TERM, it is assumed that the terminal supports a status line.
+
+.TP
+.BR TERM_SOFTSTATUSLINE " " (string)
+This is a list of (space-separated) words; if one of these words matches
+the beginning of TERM, and if the statusline is active, also a soft status line
+(used e.g. by screen but not by tmux) will be output.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)

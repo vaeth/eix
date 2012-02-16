@@ -46,6 +46,16 @@ SetColors() {
 	eixf_normal='\033[0m'
 }
 
+StartInList() (
+	ReadVar startlist ${2} || return
+	for start in ${startlist}
+	do	case "${1}" in
+		"${start}"*)	return 0;;
+		esac
+	done
+	return 1
+)
+
 # Admissible statusline values are '' (check at first call), false or : (true)
 statusline=''
 eixf_statusline=false
@@ -53,25 +63,25 @@ eixf_statusmode=EixfStatusmode
 EixfStatusmode() {
 	if [ -z "${statusline}" ]
 	then	! ReadBoolean NOSTATUSLINE && {
-			test -t 1 && (
-				ReadVar term TERM && \
-				ReadVar termlist TERM_STATUSLINE || exit
-				for i in ${termlist}
-				do	case "${term}" in
-					"${i}"*)	exit 0;;
-					esac
-				done
-				exit 1
-			) || ReadBoolean FORCE_STATUSLINE
+			test -t 1 && ReadVar TERM TERM && \
+				StartInList "${TERM}" TERM_STATUSLINE \
+			|| ReadBoolean FORCE_STATUSLINE
 		}
 	else	${statusline}
-	fi && eixf_statusline=:
+	fi && eixf_statusline=: \
+	&& if ReadVar TERM TERM && \
+		StartInList "${TERM}" TERM_SOFTSTATUSLINE
+	then	eixf_softstatus=:
+	else	eixf_softstatus=false
+	fi
 	eixf_statusmode=${eixf_statusline}
 	${eixf_statusmode}
 }
 
 Statusline() {
-	! ${eixf_statusmode} || printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
+	${eixf_statusmode} || return
+	! ${eixf_softstatus} || printf '\033k%s: %s\033\\' "${0##*/}" "${*}"
+	printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
 }
 
 verbose=:

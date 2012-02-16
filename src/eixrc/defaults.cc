@@ -1798,6 +1798,11 @@ AddOption(STRING, "TERM_STATUSLINE",
 	"If the beginning of TERM matches a word of this space-separated list,\n"
 	"it is assumed that the terminal supports a status line."));
 
+AddOption(STRING, "TERM_SOFTSTATUSLINE",
+	"screen", _(
+	"If the beginning of TERM matches a word of this space-separated list, and\n"
+	"if a status line is active, also a soft status line will be output."));
+
 AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	LEVENSHTEIN_DISTANCE_DEFAULT, _(
 	"The default maximal levensthein distance for which a string is considered a match\n"
