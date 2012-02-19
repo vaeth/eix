@@ -4,7 +4,7 @@
 # Copyright (c)
 #  Wolfgang Frisch <xororand@users.sourceforge.net>
 #  Emil Beinroth <emilbeinroth@gmx.net>
-#  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#  Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
 dnl The formatting convention used in this file is the following:
 dnl
@@ -201,10 +201,10 @@ AS_VAR_SET([my_cxxfatal], [])
 AS_VAR_SET([my_ldfatal], [])
 MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [COMPILE], [ \
 		-Werror \
-	], [], [${quicktrue}])
+	], [], [], [${quicktrue}])
 MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [LINK], [ \
 		-Wl,--fatal-warnings \
-	], [], [${quicktrue}])
+	], [], [], [${quicktrue}])
 
 # Now the actual testing:
 AS_VAR_SET([my_cxxadd], [])
@@ -213,7 +213,7 @@ AS_IF([${debugging}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-g \
 			-ggdb3 \
-		], [${my_cxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [], [${quicktrue}])])
 AS_IF([${optimization}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-O2 \
@@ -233,14 +233,14 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
-		], [${my_cxxfatal}], [${quicktrue}])
+		], [${my_cxxfatal}], [], [${quicktrue}])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
-		], [${my_ldfatal}], [${quicktrue}])])
+		], [${my_ldfatal}], [], [${quicktrue}])])
 AS_IF([${strong_optimization}],
 	AS_VAR_SET([flto], ["-flto -flto-partition=none"])
 	AS_CASE(["${my_gcc_v}"],
@@ -255,7 +255,7 @@ AS_IF([${strong_optimization}],
 			${flto} \
 			-fwhole-program \
 			-Wl,-z,noexecstack \
-		], [${my_ldfatal}], [${quicktrue}])
+		], [${my_ldfatal}], [], [${quicktrue}])
 dnl The following is never tried, since the run can succeed but the result
 dnl may fail for some unknown reason on non-GNU systems, see
 dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
@@ -263,7 +263,7 @@ dnl			-Wl,--hash-style=gnu \
 dnl			-Wl,--enable-new-dtags \
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			${flto} \
-		], [${my_cxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [], [${quicktrue}])])
 # If -flto is used during compilation, we can also use -fwhole-program during
 # compilation and should specify -flto during linking.
 # However, -Wl,--warn-common will then give lots of warnings, so we
@@ -290,7 +290,7 @@ AS_IF([${strong_optimization}],
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${my_cxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [${CPPFLAGS}], [${quicktrue}])])
 dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
 AS_IF([${warnings}],
@@ -342,7 +342,7 @@ AS_IF([${warnings}],
 			-Wsuggest-attribute=pure \
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
-		], [], [${quicktrue}])
+		], [], [], [${quicktrue}])
 		dnl No [${my_cxxfatal}] for warning flags
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
@@ -358,14 +358,14 @@ dnl			-Wpointer-sign \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
 			${warn_common} \
-		], [], [${quicktrue}])])
+		], [], [], [${quicktrue}])])
 		dnl No [${my_ldfatal}] for warning flags
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${my_cxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [], [${quicktrue}])])
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
@@ -383,11 +383,11 @@ AS_IF([${security}],
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
-		], [${my_ldfatal}], [${quicktrue}])
+		], [${my_ldfatal}], [], [${quicktrue}])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
-		], [${my_cxxfatal}], [${quicktrue}])])
+		], [${my_cxxfatal}], [${CPPFLAGS}], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${my_cxxadd}])
@@ -608,7 +608,7 @@ MV_APPEND([LDFLAGS], ["${my_ldfatal}"])
 # We even switch on explicitly -Wattribute although this should be default:
 MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [COMPILE], [ \
 		-Wattributes \
-	], [], [${quicktrue}])
+	], [], [], [${quicktrue}])
 
 # Check if __attribute__ ((__unused__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])

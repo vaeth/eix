@@ -6,6 +6,7 @@
 	  This is a major change: Remove many search options, print-commands,
 	  many default variables, and changes the database format (even xml).
 	- Support TERM_SOFTSTATUSLINE for screen.
+	- Do not add -D* flags already contained in CPPFLAGS.
 
 *eix-0.23.10
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

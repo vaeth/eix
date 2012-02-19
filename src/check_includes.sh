@@ -8,7 +8,7 @@
 # terms of the GNU General Public License v2.
 #
 # Copyright (c)
-#	Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#	Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
 export LC_ALL="C"
 unset GREP_OPTIONS GREP_COLORS GREP_COLOR

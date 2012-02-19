@@ -2,14 +2,17 @@ dnl This file is part of the eix project and distributed under the
 dnl terms of the GNU General Public License v2.
 dnl
 dnl Copyright (c)
-dnl  Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+dnl  Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 dnl
 dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [COMPILE|LINK|RUN],
-dnl     [sh-list of flags], [sh-list of fatal-flags], [mode])
+dnl     [sh-list of flags], [sh-list of fatal-flags],
+dnl     [sh-list of skip-flags, e.g. ${CPPFLAGS}], [mode])
 dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [COMPILE|LINK|RUN]
 dnl succeeds with the corresponding [CFLAGS]. The flag is skipped if it is
-dnl already contained in [ADDCFLAGS] or in [CFLAGS] or if it was already
-dnl tested earlier (in case of positive earlier test, it is added, of course).
+dnl already contained in [ADDCFLAGS] or in [CFLAGS] or in
+dnl [sh-list of skip-flags] or if it was already tested earlier
+dnl (in case of positive earlier test, it is added, of course).
+dnl [sh-list of skip-flags] must be *space* separated (not by newlines, tabs).
 dnl It is admissible that [ADDCFLAGS] is the same as [CFLAGS].
 dnl If [mode] is given and :/false, no COMPILE|LINK is done but just the
 dnl result of [mode] is used.
@@ -21,12 +24,12 @@ AC_DEFUN([MV_ADDFLAGS],
 	[export $2
 	for mv_currflag in $4
 	do
-		AS_CASE([" ${$1} ${$2} ${mv_f$2_cache} "],
+		AS_CASE([" ${$1} ${$2} $6 ${mv_f$2_cache} "],
 			[*" ${mv_currflag} "*], [],
 			[AS_CASE([" ${mv_s$2_cache} "],
 				[*" ${mv_currflag} "*], [mv_result=:],
 				[AC_MSG_CHECKING([whether $2=${mv_currflag} is known])
-				MV_IF_EMPTY([$6],
+				MV_IF_EMPTY([$7],
 					[AS_VAR_COPY([mv_saveflags], [$2])
 					MV_APPEND([$2], [$5])
 					MV_APPEND([$2], [${mv_currflag}])
@@ -49,7 +52,7 @@ return my_func();
 						[AC_MSG_RESULT([no])
 						AS_VAR_SET([mv_result], [false])])
 					AS_VAR_COPY([$2], [mv_saveflags])],
-					[AS_IF([$6],
+					[AS_IF([$7],
 						[MV_MSG_RESULT([yes], [on request])
 						AS_VAR_SET([mv_result], [:])],
 						[MV_MSG_RESULT([no], [on request])

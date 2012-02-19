@@ -4,7 +4,7 @@
 #   Copyright (c)
 #     Wolfgang Frisch <xororand@users.sourceforge.net>
 #     Emil Beinroth <emilbeinroth@gmx.net>
-#     Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
+#     Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 
 # If you do not have access to automake-1.11 but want to compile the
 # eix repository anyway, you can also use the commented AUTOMAKE_OPTIONS:
