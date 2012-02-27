@@ -9,7 +9,7 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-time_begin=`date +%s 2>/dev/null` || time_begin=''
+time_begin=`date '+%s' 2>/dev/null` || time_begin=''
 
 . ./eix-functions.sh.in
 ReadFunctions
@@ -274,14 +274,19 @@ ${diffonly} && DiffOnly
 
 ${measure_time} || time_begin=''
 measure_time=false
-case ${time_begin} in
-*[0-9]*)
-	[ "${time_begin}" -gt 99 ] && (
-		t=`Expr "${time_begin}" - 99 2>/dev/null` || t=0
-		[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
-	) >/dev/null 2>&1 && measure_time=:
-;;
-esac
+
+IsNumber() (
+	unset LC_ALL
+	LC_COLLATE=C
+	case ${1} in
+	*[!0-9]*)	false;;
+	esac
+)
+
+IsNumber "${time_begin:-x}" && [ "${time_begin}" -gt 99 ] && {
+	t=`Expr "${time_begin}" - 99 2>/dev/null` || t=0
+	[ "${t}" -gt 0 ] && [ "${time_begin}" -gt "${t}" ]
+} >/dev/null 2>&1 && measure_time=:
 
 MyRun() {
 	if [ "${1}" = '-t' ]
@@ -551,13 +556,10 @@ MainSync() {
 root_uid=''
 ReadRootUID() {
 	[ -n "${UID}" ] || UID=`id -u`
-	[ -n "${root_uid}" ] && return
 	ReadVar root_uid ROOT_UID || root_uid=''
 	: ${root_uid:=0}
-	case ${root_uid} in
-	*[!0-9]*)
+	IsNumber ${root_uid} || \
 		die "`eval_gettext 'ROOT_UID [${root_uid}] is not a number'`";;
-	esac
 }
 
 if ${test_for_root} && ReadRootUID && [ "${UID}" -ne "${root_uid}" ]

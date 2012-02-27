@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-02-27 12:48+0100\n"
+"POT-Creation-Date: 2012-02-27 17:34+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -246,7 +246,7 @@ msgstr ""
 msgid "cannot read ${logfile}"
 msgstr "kann Datei ${logfile} nicht lesen"
 
-#: src/eix-installed-after.sh:129
+#: src/eix-installed-after.sh:127
 #, sh-format
 msgid "cannot find merge of ${match} in ${logfile}"
 msgstr "Kein Merge-Vorgang von ${match} in ${logfile} gefunden"
@@ -727,17 +727,17 @@ msgstr "${mycmd} -s ${j} schlug fehl"
 msgid "eix-sync -m is obsolete; use -M0 instead"
 msgstr "eix-sync -m ist obsolet; benutzen Sie -M0"
 
-#: src/eix-sync.sh:338
+#: src/eix-sync.sh:343
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Starte ${myvarcmd}"
 
-#: src/eix-sync.sh:340
+#: src/eix-sync.sh:345
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "${myvarcmd} schlug fehl"
 
-#: src/eix-sync.sh:346
+#: src/eix-sync.sh:351
 msgid ""
 "Nothing was executed, because a heuristic shows that root permissions\n"
 "are required to execute everything successfully."
@@ -745,7 +745,7 @@ msgstr ""
 "Es wurde nichts ausgeführt, weil eine Heuristik zeigte, dass\n"
 "Root-Recht benötigt werden, um alles erfolgreich auszuführen."
 
-#: src/eix-sync.sh:350
+#: src/eix-sync.sh:355
 #, sh-format
 msgid ""
 "However, the heuristic might be wrong, e.g. if you use EPREFIX.\n"
@@ -758,118 +758,118 @@ msgstr ""
 "Um ihn permanent zu umgehen, fügen Sie die Option -e beispielsweise in\n"
 "die Datei ${eixsyncconf} ein."
 
-#: src/eix-sync.sh:366
+#: src/eix-sync.sh:371
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:371
+#: src/eix-sync.sh:376
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:372
+#: src/eix-sync.sh:377
 msgid "initial eix-update"
 msgstr "Erstes eix-update"
 
-#: src/eix-sync.sh:373
+#: src/eix-sync.sh:378
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:374
+#: src/eix-sync.sh:379
 msgid "client syncing"
 msgstr "Client syncen"
 
-#: src/eix-sync.sh:375
+#: src/eix-sync.sh:380
 msgid "metadata update"
 msgstr "Metadata update"
 
-#: src/eix-sync.sh:376
+#: src/eix-sync.sh:381
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:377
+#: src/eix-sync.sh:382
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:380
+#: src/eix-sync.sh:385
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:424
+#: src/eix-sync.sh:429
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (Ausgabe von ${curr_cmd}) schlug fehl"
 
-#: src/eix-sync.sh:425
+#: src/eix-sync.sh:430
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:446
+#: src/eix-sync.sh:451
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:448
+#: src/eix-sync.sh:453
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:457
+#: src/eix-sync.sh:462
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:469
+#: src/eix-sync.sh:474
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:471
+#: src/eix-sync.sh:476
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:483
+#: src/eix-sync.sh:488
 msgid "eix-cache does not exist."
 msgstr "Eix-Cache existiert nicht."
 
-#: src/eix-sync.sh:489
+#: src/eix-sync.sh:494
 msgid "eix-cache format has changed."
 msgstr "Eix-Cache-Format hat sich geändert."
 
-#: src/eix-sync.sh:498
+#: src/eix-sync.sh:503
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Kopiere alten ${eixcache} Cache in Temporärdatei"
 
-#: src/eix-sync.sh:503
+#: src/eix-sync.sh:508
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in Temporärdatei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:510
+#: src/eix-sync.sh:515
 #, sh-format
 msgid "Moving old ${eixcache} cache to ${eixprevious}"
 msgstr "Verschiebe alten ${eixcache} Cache nach ${eixprevious}"
 
-#: src/eix-sync.sh:513
+#: src/eix-sync.sh:518
 #, sh-format
 msgid "Could not move ${tmpfile} to ${eixprevious}"
 msgstr "Konnte ${tmpfile} nicht nach ${eixprevious} verschieben"
 
-#: src/eix-sync.sh:528
+#: src/eix-sync.sh:533
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:533
+#: src/eix-sync.sh:538
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:535
+#: src/eix-sync.sh:540
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
-#: src/eix-sync.sh:559
+#: src/eix-sync.sh:562
 #, sh-format
 msgid "ROOT_UID [${root_uid}] is not a number"
 msgstr "ROOT_UID [${root_uid}] ist keine Zahl"

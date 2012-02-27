@@ -12,9 +12,7 @@ export LC_ALL XZ_OPT
 LC_ALL=C
 XZ_OPT='--extreme'
 
-Echo() {
-	printf '%s\n' "${*}"
-}
+Echo() printf '%s\n' "${*}"
 
 Usage() {
 	Echo "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
@@ -38,18 +36,18 @@ fakeroot=''
 [ -z "${fakeroot}" ] && command -v fakeroot-ng >/dev/null 2>&1 && fakeroot='fakeroot-ng'
 
 while [ ${#} -gt 0 ]
-do	opt="${1#-}"
-	opt="${opt#-}"
-	case "${opt#dist-}" in
-	x*|X*)
+do	opt=${1#-}
+	opt=${opt#-}
+	case ${opt#dist-} in
+	[xX]*)
 		dist='dist-xz';;
-	l*|L*)
+	[lL]*)
 		dist='dist-lzma';;
-	b*|B*)
+	[bB]*)
 		dist='dist-bzip2';;
-	g*|G*)
+	[gG]*)
 		dist='dist-gzip';;
-	d*|D*)
+	[dD]*)
 		dist='dist';;
 	f*ng)
 		fakeroot='fakeroot-ng';;
@@ -57,7 +55,7 @@ do	opt="${1#-}"
 		fakeroot='fakeroot';;
 	F*|n*f*)
 		fakeroot='';;
-	h*|H*|'?')
+	[hH?]*)
 		Usage 0;;
 	*)
 		Usage;;
@@ -71,7 +69,7 @@ then test -e Makefile || test -e configure || test -e Makefile.in \
 	&& test -e "${mkclean}" && Run "${mkclean}"
 fi
 
-unset LDFLAGS CFLAGS CXXFLAGS
+unset LDFLAGS CFLAGS CXXFLAGS CPPFLAGS
 if [ -n "${fakeroot}" ] && command -v "${fakeroot}" >/dev/null 2>&1
 then	Run ${mkmake} ${make_opts}n
 	docmd="${fakeroot} ${mkmake} ${make_opts}r"

@@ -3,8 +3,10 @@
 export LC_ALL
 LC_ALL=C
 
+Echo() printf '%s\n' "${*}"
+
 Usage() {
-	printf '%s\n' "Usage: ${0##*/} [options] args-for-make
+	Echo "Usage: ${0##*/} [options] args-for-make
 Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
@@ -34,19 +36,19 @@ Available options are
 
 Info() {
 	${quiet} && return
-	printf '%s\n' "${*}"
+	Echo "${*}"
 }
 
 Die() {
-	printf '%s: %s\n' "${0##*/}" "${1}"
+	Echo "${0##*/}: ${1}"
 	exit ${2:-1}
 }
 
 SetCcache() {
 	dircc='/usr/lib/ccache/bin'
 	test -d "${dircc}" || return
-	case "${PATH}" in
-		"${dircc}:"*|*":${dircc}:"*) return;;
+	case ":${PATH}:" in
+	*":${dircc}:"*) return;;
 	esac
 	if [ -n "${PATH}" ]
 	then	Info "PATH=${dircc}:\${PATH}"
@@ -58,14 +60,14 @@ SetCcache() {
 	do	[ -z "${dircc}" ] || ! test -d "${dircc}" && continue
 		testcc=`cd -P -- "${dircc}" >/dev/null 2>&1 && \
 				printf '%sA' "${PWD}"` && \
-			testcc="${testcc%A}" && [ -n "${testcc}" ] \
+			testcc=${testcc%A} && [ -n "${testcc}" ] \
 			&& test -d "${testcc}" && break
 	done
 	[ -z "${testcc}" ] && return
 	Info "CCACHE_DIR=${testcc}"
 	export CCACHE_DIR CCACHE_COMPRESS
-	CCACHE_DIR="${testcc}"
-	CCACHE_COMPRESS="true"
+	CCACHE_DIR=${testcc}
+	CCACHE_COMPRESS='true'
 	${clear_ccache} || return 0
 	Info "Clearing CCACHE"
 	ccache -C
@@ -88,8 +90,8 @@ stdcxx=''
 debugging=false
 wnosign=false
 OPTIND=1
-while getopts 'q01234nepPusSbBrOQCXyYdc:j:?hH' opt
-do	case "${opt}" in
+while getopts 'q01234nepPusSbBrOQCXyYdc:j:hH?' opt
+do	case ${opt} in
 	q) quiet=:;;
 	0) separate_all=false;;
 	1) configure_extra="${configure_extra} --disable-separate-binaries";;
@@ -139,10 +141,11 @@ fi
 ${use_ccache} && SetCcache
 
 if ! ${keepenv}
-then	CFLAGS="`portageq envvar CFLAGS`"
-	CXXFLAGS="`portageq envvar CXXFLAGS`"
-	LDFLAGS="`portageq envvar LDFLAGS`"
-	export CFLAGS CXXFLAGS LDFLAGS
+then	CFLAGS=`portageq envvar CFLAGS`
+	CXXFLAGS=`portageq envvar CXXFLAGS`
+	LDFLAGS=`portageq envvar LDFLAGS`
+	CPPFLAGS=`portageq envvar CPPFLAGS`
+	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
 	${not_full_use} && CXXFLAGS="${CXXFLAGS} -DNOT_FULL_USE"
 	[ -n "${stdcxx}" ] && CXXFLAGS="${CXXFLAGS} ${stdcxx}"
 	if ${pedantic} || ${wnosign}
@@ -153,7 +156,8 @@ then	CFLAGS="`portageq envvar CFLAGS`"
 	fi
 fi
 Info "CXXFLAGS=${CXXFLAGS}
-LDFLAGS=${LDFLAGS}"
+LDFLAGS=${LDFLAGS}
+CPPFLAGS=${CPPFLAGS}"
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
 	then	Info "Running autotools..."

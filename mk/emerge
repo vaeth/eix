@@ -6,19 +6,17 @@ project="eix"
 export LC_ALL
 LC_ALL=C
 
-Echo() {
-	printf '%s\n' "${*}"
-}
+Echo() printf '%s\n' "${*}"
 
 Die() {
-	printf '%s: %s\n' "${0##*/}" "${1}" >&2
+	Echo "${0##*/}: ${1}" >&2
 	exit ${2:-1}
 }
 
 [ "`id -u`" -eq 0 ] || Die "only root may execute this script"
 curr='.'
 
-distdir="`portageq distdir`"
+distdir=`portageq distdir`
 [ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
 GetEdir() {
@@ -30,7 +28,7 @@ GetEdir() {
 	do	edir="${overlay}/${category}/${project}"
 		test -d "${edir}" || continue
 		for jebuild in "${edir}/${project}-"*.ebuild
-		do	case "${jebuild##*/}" in
+		do	case ${jebuild##*/} in
 				"${project}-9999"*) continue;;
 			esac
 			test -f "${jebuild}" || continue
@@ -48,10 +46,10 @@ MoveEbuild() {
 	test -f "${1}" && return
 	latest=''
 	for find_latest in "${edir}/${project}-"*.ebuild
-	do	case "${find_latest##*/}" in
+	do	case ${find_latest##*/} in
 		"${project}-"*9999.ebuild)	continue;;
 		esac
-		test -f "${find_latest}" && latest="${find_latest}"
+		test -f "${find_latest}" && latest=${find_latest}
 	done
 	[ -n "${latest}" ] || return
 	Echo "Moving ${latest} -> ${1##*/}"
@@ -88,7 +86,7 @@ InstallEbuildVersion() {
 for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 do	for i in "${curr}/${project}-"*."${j}"
 	do	test -e "${i}" || continue
-		v="${i##*/}"
+		v=${i##*/}
 		v=${v#"${project}-"}
 		v=${v%".${j}"}
 		InstallEbuildVersion "${i}" "${v}"

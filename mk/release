@@ -6,13 +6,11 @@ umask 022
 
 proj="eix"
 
-Echo() {
-	printf '%s\n' "${*}"
-}
+Echo() printf '%s\n' "${*}"
 
-Eecho() {
-	Echo "# ${*}"
-}
+Echon() printf '%s' "${*}"
+
+Eecho() Echo "# ${*}"
 
 Exec() {
 	Eecho "${*}"
@@ -28,13 +26,13 @@ and that you have committed your last changes."
 }
 
 Die() {
-	printf '%s: %s\n' "${0##*/}" "${1}" >&2
+	Echo "${0##*/}: ${1}" >&2
 	exit ${2:-1}
 }
 
 Warn() {
-	wret="${?}"
-	printf '%s: warning: %s\n' "${0##*/}" "${1}" >&2
+	wret=${?}
+	Echo "${0##*/}: warning: ${1}" >&2
 	return ${wret}
 }
 
@@ -48,38 +46,38 @@ ExecDie() {
 
 [ ${#} -eq 0 ] || Usage
 
-test -f mk/release || Die "You must be in the parent directory of ./mk"
-ver="`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`"
+test -f mk/release || Die 'You must be in the parent directory of ./mk'
+ver=`sed -ne 's/^[[:space:]]*AC_INIT[[:space:]]*([^,]*,[[:space:][]*\([^],[:space:]]*\).*$/\1/p' configure.ac`
 
-keycheck() {
-	printf '%s' "${*}? (y/n) "
+KeyCheck() {
+	Echon "${*}? (y/n) "
 	while :
-	do	t="`stty -g`"
+	do	t=`stty -g`
 		stty -icanon -echo
-		a="`dd count=1 bs=1 2>/dev/null`" || a=''
+		a=`dd count=1 bs=1 2>/dev/null` || a=''
 		stty ${t}
-		case "${a}" in
-		n*|N*)	printf '%s\n' "No"
+		case ${a} in
+		[nN]*)	Echo 'No'
 			return 1
 			;;
-		y*|Y*)	printf '%s\n' "Yes"
+		[yY]*)	Echo 'Yes'
 			return
 			;;
 		esac
 	done
 }
 
-Echo "Usage of this script requires that you committed the latest changes"
-if keycheck "Are you sure you want to tag release-${ver} of ${proj}"
+Echo 'Usage of this script requires that you committed the latest changes'
+if KeyCheck "Are you sure you want to tag release-${ver} of ${proj}"
 then	Eecho "git tag -a release-${ver} -m ..."
 #svnroot="https://svn.gentooexperimental.org/${proj}"
 #svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}"
-git tag -a "release-${ver}" \
-	-m "Tagging the ${ver} release of the ${proj} project" || \
-		keycheck "git tagging failed. Continue anyway" || exit 2
+	git tag -a "release-${ver}" \
+		-m "Tagging the ${ver} release of the ${proj} project" || \
+		KeyCheck "git tagging failed. Continue anyway" || exit 2
 fi
 
-keycheck '
+KeyCheck '
 Optionally, you can keep a tarball branch with the current tarball content.
 This is only reasonable if the only reasonable way to publish the tarball is
 its automatic generation directly from the git repository.
@@ -98,7 +96,7 @@ test -f "${tarball}" || \
 # The rest must be a function, since the original file
 # will be removed during execution, and so parsing of this file might fail
 
-tag_tarball() {
+TagTarball() {
 	ExecDie git checkout -B tarball
 	ExecDie tar xaf "${tarball}"
 
@@ -114,7 +112,7 @@ tag_tarball() {
 	ExecWarn git add .
 	Eecho "git commit -a -m ..."
 	git commit -a -m "tarball ${proj}-${ver} preparation" || \
-		keycheck "This is only ok if there is nothing to commit.
+		KeyCheck "This is only ok if there is nothing to commit.
 Otherwise you should better stop now and call git checkout master.
 Are you sure you want to tag tarball ${proj}-${ver} anyway" || exit 1
 	Eecho "git tag -a tarball-${ver} -m ..."
@@ -125,4 +123,4 @@ Are you sure you want to tag tarball ${proj}-${ver} anyway" || exit 1
 	exit
 }
 
-tag_tarball
+TagTarball

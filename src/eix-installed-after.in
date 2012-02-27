@@ -119,15 +119,13 @@ fi
 
 if [ -n "${logfile}" ]
 then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
-	epoch=`sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
+	epoch=`unset LC_ALL
+LC_COLLATE=C
+sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
 q}" "${logfile}"` || epoch=''
-	case ${epoch} in
-	[0-9]*)
-		match=${epoch};;
-	*)
-		die "`eval_gettext \
+	[ -n "${epoch}" ] || die "`eval_gettext \
 		'cannot find merge of ${match} in ${logfile}'`";;
-	esac
+	match=${epoch};;
 	epoch=:
 fi
 
