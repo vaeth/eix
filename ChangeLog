@@ -11,7 +11,6 @@
 	- Remove --enable-extra-cache
 	- Support TERM_SOFTSTATUSLINE for screen.
 	- Do not add -D* flags already contained in CPPFLAGS.
-	- scripts: Simplify one-line functions
 	- scripts: Simplify some quoting in assignment and case
 
 *eix-0.23.10

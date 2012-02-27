@@ -3,7 +3,9 @@
 export LC_ALL
 LC_ALL=C
 
-Echo() printf '%s\n' "${*}"
+Echo() {
+	printf '%s\n' "${*}"
+}
 
 Usage() {
 	Echo "Usage: ${0##*/} [options] args-for-make

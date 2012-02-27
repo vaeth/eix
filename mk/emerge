@@ -6,7 +6,9 @@ project="eix"
 export LC_ALL
 LC_ALL=C
 
-Echo() printf '%s\n' "${*}"
+Echo() {
+	printf '%s\n' "${*}"
+}
 
 Die() {
 	Echo "${0##*/}: ${1}" >&2

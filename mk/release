@@ -6,11 +6,17 @@ umask 022
 
 proj="eix"
 
-Echo() printf '%s\n' "${*}"
+Echo() {
+	printf '%s\n' "${*}"
+}
 
-Echon() printf '%s' "${*}"
+Echon() {
+	printf '%s' "${*}"
+}
 
-Eecho() Echo "# ${*}"
+Eecho() {
+	Echo "# ${*}"
+}
 
 Exec() {
 	Eecho "${*}"

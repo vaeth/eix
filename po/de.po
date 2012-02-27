@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-02-27 17:34+0100\n"
+"POT-Creation-Date: 2012-02-27 21:21+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -19,42 +19,42 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
 
-#: src/eix-functions.sh.in:94 src/eix-update.cc:116 src/eix-update.cc:756
+#: src/eix-functions.sh.in:96 src/eix-update.cc:116 src/eix-update.cc:756
 #: src/eix-update.cc:793
 msgid "Finished"
 msgstr "Fertig"
 
-#: src/eix-functions.sh.in:95 src/eix-update.cc:123
+#: src/eix-functions.sh.in:97 src/eix-update.cc:123
 msgid "Failure"
 msgstr "Fehlschlag"
 
-#: src/eix-functions.sh.in:162
+#: src/eix-functions.sh.in:164
 #, sh-format
 msgid "Problems running ${eixf_cmd}"
 msgstr "Probleme mit ${eixf_cmd}"
 
-#: src/eix-functions.sh.in:302
+#: src/eix-functions.sh.in:314
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:303 src/eix-remote.sh:336
+#: src/eix-functions.sh.in:315 src/eix-remote.sh:336
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-functions.sh.in:353
+#: src/eix-functions.sh.in:367
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:483
+#: src/eix-functions.sh.in:497
 msgid "found no free temporary name after 10000 attempts"
 msgstr "Kein möglicher Temporärname nach 10000 Versuchen"
 
-#: src/eix-functions.sh.in:497
+#: src/eix-functions.sh.in:511
 msgid "cannot create temporary directory"
 msgstr "Temporärdirectory nicht erzeugbar"
 
-#: src/eix-functions.sh.in:498
+#: src/eix-functions.sh.in:512
 msgid "cannot create temporary file"
 msgstr "Temporärdatei nicht erzeugbar"
 
@@ -112,35 +112,35 @@ msgstr ""
 msgid "(total number of versions listed above: ${c})"
 msgstr "(Gesamtzahl obiger Versionen: ${c})"
 
-#: src/eix-installed.sh:92
+#: src/eix-installed.sh:93
 msgid "The following package versions are installed:"
 msgstr "Die folgenden Paketversionen sind installiert:"
 
-#: src/eix-installed.sh:97
+#: src/eix-installed.sh:99
 msgid ""
 "The following package versions are installed with repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Repository-Information installiert:"
 
-#: src/eix-installed.sh:100
+#: src/eix-installed.sh:102
 msgid ""
 "The following package versions are installed without repository information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Repository-Information installiert:"
 
-#: src/eix-installed.sh:108
+#: src/eix-installed.sh:110
 msgid ""
 "The following package versions are installed with build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind mit Buildtime-Information installiert:"
 
-#: src/eix-installed.sh:111
+#: src/eix-installed.sh:113
 msgid ""
 "The following package versions are installed without build-time information:"
 msgstr ""
 "Die folgenden Paketversionen sind ohne Buildtime-Information installiert:"
 
-#: src/eix-installed.sh:148
+#: src/eix-installed.sh:150
 msgid "cannot locate your database of installed packages"
 msgstr "kann die Datenbank der installierten Pakete nicht lokalisieren"
 
@@ -322,7 +322,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:129 src/eix-remote.sh:293 src/eix-update.cc:801
+#: src/eix-layman.sh:131 src/eix-remote.sh:293 src/eix-update.cc:801
 msgid "Analyzing"
 msgstr "Analyse"
 
