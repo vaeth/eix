@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-02-13 23:12:00 +0100 (Mon, 13 Feb 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-02-27 09:00:00 +0100 (Mon, 27 Feb 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -3034,20 +3034,14 @@ B<eix-functions.sh> was previously called B<functions-eix.sh> (and much earlier 
 The reason for all these renamings is to have a more consistent naming scheme:
 All programs belonging to eix now start with eix-* (with the exception of
 B<versionsort> which is more or less just an independent tool).
+
 If you cannot get accustomed to this new naming scheme or have scripts depending
 on the old names, you can use symbolic links for the original names;
 this is explicitly supported and is not intended to be deprecated.
-Moreover, if you call eix' B<./configure> with B<--enable-obsolete-symlinks> or
-B<--enable-obsolete-reminder> then such symlinks (or wrappers which also
-print a reminder about the obsolete names, respectively) are installed automatically.
-However, such symlinks are not installed by default, because new users will not need them.
-So it is advisable to update your scripts to the new names if they should ever run on newer systems.
-Moreover, also in B<eix-functions.sh> two functions have been renamed for consistency reasons
-(B<CallUpdateEix> -> B<CallUpdate> and B<ClearUpdateEixArgs> -> B<ClearUpdateArgs>),
-and also the internal variable they use has been renamed (but the latter was never intended to be used by scripts).
-If you use one of the above mentioned B<./configure> options, then also a wrapper for
-B<functions-eix.sh> will be installed which supports the obsolete function names
-(and prints a warning when they are used in case of B<--enable-obsolete-reminder>).
+
+Previously, there was a B<./configure> option to install such symlinks
+or a reminder about their removal automatically, but this support has been
+removed as of eix-0.24.0.
 
 Since the introduction of the %{*VARIABLE} syntax in eix-0.8.0, it is not
 reasonable anymore to use different variable names for eix and eix-diff.

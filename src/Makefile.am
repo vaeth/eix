@@ -249,21 +249,6 @@ nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src) $(nodist_a
 extra_update_only_src = $(extra_cache_src)
 nodist_extra_update_only_src =
 
-if OBSOLETE_REMINDER
-reminder_install=functions-eix.sh
-install_obsolete_reminder=true
-install_obsolete_symlinks=false
-else
-install_obsolete_reminder=false
-if OBSOLETE_SYMLINKS
-reminder_install=functions-eix.sh
-install_obsolete_symlinks=true
-else
-reminder_install=
-install_obsolete_symlinks=false
-endif
-endif
-
 # Additional binaries (scripts) we will install
 nodist_bin_SCRIPTS  = \
 eix-functions.sh \
@@ -272,8 +257,7 @@ eix-installed-after \
 eix-layman \
 eix-remote \
 eix-sync \
-eix-test-obsolete \
-$(reminder_install)
+eix-test-obsolete
 
 # Remove files we don't want ..
 CLEANFILES = \
@@ -301,8 +285,7 @@ eix-layman.sh \
 eix-remote.sh \
 eix-sync.sh \
 eix-test-obsolete.sh \
-functions-eix.sh \
-reminder.sh
+functions-eix.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
@@ -314,7 +297,6 @@ eix-layman.in \
 eix-remote.in \
 eix-sync.in \
 eix-test-obsolete.in \
-reminder.sh.in \
 eixrc/eixrc.in \
 cache/generate_cachemap.sh
 
@@ -495,17 +477,6 @@ install-exec-hook:
 		rm -- "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 	$(AM_V_at)$(use_separate_diff) || \
 		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
-	$(AM_V_at)if $(install_obsolete_symlinks); then \
-		$(LN_S) "eix-update$(EXEEXT)" "$(DESTDIR)$(bindir)/update-eix$(EXEEXT)" && \
-		$(LN_S) "eix-diff$(EXEEXT)" "$(DESTDIR)$(bindir)/diff-eix$(EXEEXT)" && \
-		$(LN_S) 'eix-remote' "$(DESTDIR)$(bindir)/update-eix-remote" && \
-		$(LN_S) 'eix-layman' "$(DESTDIR)$(bindir)/update-eix-layman"; \
-	elif $(install_obsolete_reminder); then \
-		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/update-eix$(EXEEXT)" && \
-		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/diff-eix$(EXEEXT)" && \
-		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/update-eix-remote" && \
-		$(LN_S) 'functions-eix.sh' "$(DESTDIR)$(bindir)/update-eix-layman"; \
-	fi
 
 cache/cache_map.cc: cache/generate_cachemap.sh
 	$(AM_V_GEN)"cache/generate_cachemap.sh" $(extra_cache) > "$@"
@@ -527,18 +498,6 @@ eix-installed-after.sh:
 
 eix-remote.sh:
 	$(AM_V_GEN)$(LN_S) eix-remote.in "$@"
-
-if OBSOLETE_REMINDER
-functions-eix.sh: reminder.sh
-	$(AM_V_GEN)$(SED) -e '/^#[ \t]*![ \]*REMIND.*{/,/^#[ \t]*}/d' \
-		-e '/^#[ \t]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
-		reminder.sh >"$@"
-else
-functions-eix.sh: reminder.sh
-	$(AM_V_GEN)$(SED) -e '/^#[ \t]*REMIND.*{/,/^#[ \t]*}/d' \
-		-e '/^#[ \t]*![ \]*REMIND.*{/d' -e '/^#[ \t]*}/d' \
-		reminder.sh >"$@"
-endif
 
 SUFFIXES = .in
 .in:

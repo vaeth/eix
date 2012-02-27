@@ -463,24 +463,6 @@ AC_ARG_ENABLE([separate_tools],
 AM_CONDITIONAL([SEPARATE_TOOLS],
 	[${separate_tools}])
 
-# Symlinks for obsolete names?
-AC_ARG_ENABLE([obsolete_symlinks],
-	[AS_HELP_STRING([--enable-obsolete-symlinks],
-		[create a separate binary for each program])],
-	[MV_ENABLE([obsolete-symlinks])],
-	[AS_VAR_SET([obsolete_symlinks], [false])])
-AM_CONDITIONAL(OBSOLETE_SYMLINKS,
-	[${obsolete_symlinks}])
-
-# Wrappers for obsolete names?
-AC_ARG_ENABLE([obsolete_reminder],
-	[AS_HELP_STRING([--enable-obsolete-reminder],
-		[create a separate binary for each program])],
-	[MV_ENABLE([obsolete-reminder])],
-	[AS_VAR_SET([obsolete_reminder], [false])])
-AM_CONDITIONAL([OBSOLETE_REMINDER],
-	[${obsolete_reminder}])
-
 # Look for basic functions:
 AC_SYS_LARGEFILE()
 AC_FUNC_FSEEKO()
