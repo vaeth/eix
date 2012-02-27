@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-02-27 09:00:00 +0100 (Mon, 27 Feb 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-02-27 10:00:00 +0100 (Mon, 27 Feb 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2268,13 +2268,6 @@ This is analogous to the cache method B<eix> with the difference that
 all categories found in I<FILE> are added, even those categories which
 were not enabled by some profile/categories file.
 .TP
-\fBcdb\fR
-Use this if you are using <portage-2.1 and the cdb-module from
-I<http://forums.gentoo.org/viewtopic-t-261580.html> as
-cache-backend for portage (cdb with cpickle'd dictionaries as values).
-Note that in contrast to the default B<metadata-*> cache methods you must
-use B<emerge --metadata> before you call B<eix-update> with this method.
-.TP
 .BR flat " or " flat:I<PATH>
 This is similar to B<metadata-flat> with the difference that the metadata is
 expected in the directory I<PATH>I<${PORTAGE_OR_OVERLAY_DIR}>.
@@ -2319,7 +2312,7 @@ This is the cache-method B<none> from older eix versions (before 0.11.1).
 .RS
 It is optionally possible to append one or several strings of the form
 B<#>I<metadata-method> where I<metadata-method> is any of the above mentioned
-cache methods (excluding B<sqlite> and B<cdb>).
+cache methods (excluding B<sqlite>).
 In this case, the metadata-methods are used to check whether they contain
 newer information than the ebuild.
 If this is the case, the metadata is used instead of the ebuild

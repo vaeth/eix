@@ -1819,12 +1819,12 @@ AddOption(STRING, "CACHE_METHOD_PARSE",
 AddOption(STRING, "PORTDIR_CACHE_METHOD",
 	PORTDIR_CACHE_METHOD, _(
 	"Portage cache-backend that should be used for PORTDIR\n"
-	"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])"));
+	"(metadata[:*]/sqlite/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])"));
 
 AddOption(STRING, "OVERLAY_CACHE_METHOD",
 	"parse|ebuild*", _(
 	"Portage cache-backend that should be used for the overlays.\n"
-	"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])"));
+	"(metadata[:*]/sqlite/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])"));
 
 AddOption(STRING, "ADD_CACHE_METHOD",
 	"", _(

@@ -19,8 +19,6 @@ src/cache/base.h
 src/cache/cache_map.h
 src/cache/cachetable.cc
 src/cache/cachetable.h
-src/cache/cdb/cdb.cc
-src/cache/cdb/cdb.h
 src/cache/common/assign_reader.cc
 src/cache/common/assign_reader.h
 src/cache/common/ebuild_exec.cc
@@ -29,8 +27,6 @@ src/cache/common/flat_reader.cc
 src/cache/common/flat_reader.h
 src/cache/common/selectors.cc
 src/cache/common/selectors.h
-src/cache/common/unpickle.cc
-src/cache/common/unpickle.h
 src/cache/eixcache/eixcache.cc
 src/cache/eixcache/eixcache.h
 src/cache/metadata/metadata.cc

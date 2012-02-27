@@ -8,8 +8,8 @@ to_classname() {
 	echo "${j}Cache"
 }
 
-cache_stars="sqlite"
-cache_plain="sqlite cdb"
+cache_plain="sqlite"
+cache_stars="${cache_plain}"
 cache_vary="eix metadata"
 cache_includes="parse eixcache metadata $cache_plain"
 

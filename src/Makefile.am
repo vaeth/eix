@@ -112,13 +112,9 @@ cache/common/ebuild_exec.cc \
 cache/common/ebuild_exec.h \
 cache/common/selectors.cc \
 cache/common/selectors.h \
-cache/common/unpickle.cc \
-cache/common/unpickle.h \
 cache/base.cc \
 cache/base.h \
 cache/cache_map.h \
-cache/cdb/cdb.cc \
-cache/cdb/cdb.h \
 cache/eixcache/eixcache.cc \
 cache/eixcache/eixcache.h \
 cache/metadata/metadata.cc \

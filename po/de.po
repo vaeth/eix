@@ -1847,15 +1847,6 @@ msgstr "kann Version von '%s' nicht bestimmen"
 msgid "Unknown cache %r for directory %r"
 msgstr "Unbekannter Cache %r für Ordner %r"
 
-#: src/cache/cdb/cdb.cc:145
-#, c-format
-msgid "Problems with %s.. skipping"
-msgstr "Probleme mit %s. Übergehe dieses."
-
-#: src/cache/cdb/cdb.cc:152
-msgid "Cannot split %r into package and version"
-msgstr "%r lässt sich nicht in Paket und Version aufteilen"
-
 #: src/cache/common/assign_reader.cc:73 src/cache/common/assign_reader.cc:90
 #: src/cache/common/flat_reader.cc:32 src/cache/eixcache/eixcache.cc:244
 #, c-format
@@ -1913,14 +1904,6 @@ msgstr "Kindprozess wurde auf seltsame Art beendet"
 #, c-format
 msgid "Can't open %s: %s"
 msgstr "%s kann nicht geöffnet werden: %s"
-
-#: src/cache/common/unpickle.cc:179
-msgid "wrong cpickle header"
-msgstr "Falscher Cpickle-Header"
-
-#: src/cache/common/unpickle.cc:306
-msgid "Unsupported pickle value %r"
-msgstr "Nicht unterstützter Pickle-Wert %r"
 
 #: src/cache/eixcache/eixcache.cc:138
 msgid "Cache file %s does not contain overlay %r [%s]"
@@ -4286,22 +4269,20 @@ msgstr ""
 #: src/eixrc/defaults.cc:1821
 msgid ""
 "Portage cache-backend that should be used for PORTDIR\n"
-"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
+"(metadata[:*]/sqlite/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
 "*])"
 msgstr ""
 "Das für PORTDIR benutzte Cache-Backend von Portage. Möglich sind\n"
-"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
+"(metadata[:*]/sqlite/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
 "*])"
 
 #: src/eixrc/defaults.cc:1826
 msgid ""
 "Portage cache-backend that should be used for the overlays.\n"
-"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
-"*])"
+"(metadata[:*]/sqlite/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])"
 msgstr ""
 "Das für Overlays benutzte Cache-Backend von Portage. Möglich sind\n"
-"(metadata[:*]/sqlite/cdb/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:"
-"*])"
+"(metadata[:*]/sqlite/flat[:*]/portage-2.1/parse[*][|]ebuild[*]/eix[*][:*])"
 
 #: src/eixrc/defaults.cc:1831
 msgid ""
