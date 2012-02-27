@@ -12,7 +12,7 @@ read_var_prg=eix
 ReadGettext
 
 Usage() {
-	n="${0##*/}"
+	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] detail|brief
 This is a wrapper script for eix (${p}).
@@ -61,7 +61,7 @@ set -f
 eval "set -- ${opt}"
 OPTIND=1
 while getopts 'cCdbHh?' opt
-do	case "${opt}" in
+do	case ${opt} in
 	c) export CHECK_INSTALLED_OVERLAYS=true;;
 	C) export CHECK_INSTALLED_OVERLAYS=repository;;
 	d) myarg='detail';;
@@ -72,8 +72,8 @@ do	case "${opt}" in
 done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 [ ${#} -gt 1 ] && Usage
-[ ${#} -eq 1 ] && myarg="${1#-}"
-case "${myarg#-}" in
+[ ${#} -eq 1 ] && myarg=${1#-}
+case ${myarg#-} in
 [dD]*)	nodetails=false;;
 [bB]*)	nodetails=:;;
 [hH]*)	Usage 0;;
@@ -92,7 +92,7 @@ sets=''
 DefineSet() {
 	sets="${sets} ${1}"
 	eval "shift
-	set_${1}=\"\${*}\""
+	set_${1}=\${*}"
 }
 
 # Return true if all variables in arg are "false" according to eix.

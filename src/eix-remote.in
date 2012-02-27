@@ -17,9 +17,9 @@ ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
 Usage() {
-	n="${0##*/}"
+	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	f="${filearg:-(none)}"
+	f=${filearg:-(none)}
 	eval_gettext 'Usage: ${n} [options] command [FILE]
 Get data from a remote datebase for ${p}.
 The following commands are provided:
@@ -85,7 +85,7 @@ PrintLaymanStorage() {
 
 SetLocalLayman() {
 	for i
-	do	[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN="${i}" \
+	do	[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN=${i} \
 			&& return
 	done
 	return 1
@@ -93,9 +93,9 @@ SetLocalLayman() {
 
 InitLocalLayman() {
 	[ -n "${LOCAL_LAYMAN}" ] && return
-	LOCAL_LAYMAN="`PrintLaymanStorage`" || LOCAL_LAYMAN=''
+	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=''
 	if [ -z "${LOCAL_LAYMAN}" ]
-	then	LOCAL_LAYMAN="`PrintLaymanStorage`" || LOCAL_LAYMAN=''
+	then	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=''
 	fi
 	SetLocalLayman "${LOCAL_LAYMAN}" \
 		'/usr/local/portage/layman' \
@@ -105,11 +105,13 @@ InitLocalLayman() {
 
 CalcSuprg() {
 	for i
-	do	suprgpath="${i}"
-		suprg="${i##*/}"
-		case "${i}" in
-		/*) test -x "${i}" && break;;
-		*) command -v "${i}" >/dev/null 2>&1 && break;;
+	do	suprgpath=${i}
+		suprg=${i##*/}
+		case ${i} in
+		/*)
+			test -x "${i}" && break;;
+		*)
+			command -v "${i}" >/dev/null 2>&1 && break;;
 		esac
 	done
 }
@@ -134,15 +136,15 @@ Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
 while getopts 'f:vqu:U:l:a:sSiHh?' opt
-do	case "${opt}" in
-	f)	filearg="${OPTARG}";;
+do	case ${opt} in
+	f)	filearg=${OPTARG};;
 	v)	verbose=:;;
 	q)	verbose=false;;
-	u)	fetchuser="${OPTARG}";;
-	U)	fetchroot="${OPTARG}";;
-	l)	LOCAL_LAYMAN="${OPTARG}"
+	u)	fetchuser=${OPTARG};;
+	U)	fetchroot=${OPTARG};;
+	l)	LOCAL_LAYMAN=${OPTARG}
 		SanitizeLocalLayman;;
-	a)	addr="${OPTARG}";;
+	a)	addr=${OPTARG};;
 	s)	CalcSuprg /usr/bin/sudo sudo;;
 	S)	CalcSuprg /bin/su su;;
 	i)	DefaultOpts;;
@@ -158,13 +160,13 @@ need_arg=false
 GetFilename() {
 	[ ${#} -gt 1 ] && Usage
 	if [ ${#} -lt 1 ]
-	then	filename="${filearg}"
-	else	filename="${1}"
+	then	filename=${filearg}
+	else	filename=${1}
 	fi
 	if [ -z "${filename}" ]
 	then	return
 	fi
-	case "${filename}" in
+	case ${filename} in
 	'')
 		${need_arg} && \
 			die "`gettext 'Filename argument is mandatory'`";;
@@ -183,8 +185,8 @@ CalcSuCmd() {
 		fi
 		fetchuser=${fetchroot}
 	fi
-	sucmd="${suprgpath}"
-	a="${1}"
+	sucmd=${suprgpath}
+	a=${1}
 	shift
 	Pathify sucmd a
 	Push -c sucmd "${sucmd}"
@@ -192,7 +194,7 @@ CalcSuCmd() {
 	then	Push sucmd -u "${fetchuser}" -- "${a}" "${@}"
 		return
 	fi
-	shexec="${SHELL}"
+	shexec=${SHELL}
 	if [ -z "${shexec}" ] || test ! -x "${SHELL}"
 	then	shexec='sh'
 	fi
@@ -203,7 +205,7 @@ CalcSuCmd() {
 
 CdDir() {
 	cd -- "${1}" >/dev/null && return
-	a="${1}"
+	a=${1}
 	die "`eval_gettext 'cannot cd to ${a}'`"
 }
 
@@ -239,7 +241,7 @@ MakeTempSub() {
 
 tmpfile=''
 FetchTemp() {
-	eixcachesname="${addr##*/}"
+	eixcachesname=${addr##*/}
 	[ -z "${eixcachesname}" ] && die "`eval_gettext \
 'remote address is not properly set.
 Please specify a valid remote file with option -a.
@@ -257,7 +259,7 @@ The default should have been set with ./configure --remote-file'`"
 }
 
 BugReport() {
-	archive="${1}"
+	archive=${1}
 	echo
 	printf '\n'
 	eval_gettext \
@@ -281,7 +283,7 @@ to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 }
 
 AddArchive() {
-	a="${1}"
+	a=${1}
 	RunCommand "`gettext 'Unpacking data'`" tar xjf "${a}" || {
 		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
 		die "${msg}"
@@ -291,13 +293,13 @@ AddArchive() {
 	Statusline "`gettext 'Analyzing'`"
 	set +f
 	for i in *
-	do	n="${i%.eix}"
+	do	n=${i%.eix}
 		while :
-		do	case "${n}" in
+		do	case ${n} in
 			_*)
-				n="${n#_}";;
+				n=${n#_};;
 			*_*_*_*)
-				n="${n#*_}";;
+				n=${n#*_};;
 			*)
 				break;;
 			esac
@@ -305,16 +307,16 @@ AddArchive() {
 		Replace -g n '_' '?'
 		n="*/${n}"
 		p="${2}/${i}"
-		name=`EIX_CACHEFILE="${p}" eix --print-overlay-path "${n}"` \
+		name=`EIX_CACHEFILE=${p} eix --print-overlay-path "${n}"` \
 			&& [ -n "${name}" ] || {
 			printf '%s\n' "`eval_gettext \
 				'problems arised with cachefile ${i}'`" >&2
 			exitcode=1
 			continue
 		}
-		l=`EIX_CACHEFILE="${p}" eix --print-overlay-label "${n}"` || \
+		l=`EIX_CACHEFILE=${p} eix --print-overlay-label "${n}"` || \
 			l=''
-		name="${name##*/}"
+		name=${name##*/}
 		virtual="layman/${name}"
 		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
 		Replace -g p '\' '\\'
@@ -326,7 +328,7 @@ AddArchive() {
 	done
 	msg=''
 	[ ${exitcode} -ne 0 ] && \
-		msg="`eval_gettext 'could not read all eix cachefiles of ${a}'`"
+		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
 	die_on_update_failure=false
 	export KEEP_VIRTUALS=true
 	CallUpdate || {
@@ -340,7 +342,7 @@ AddArchive() {
 }
 
 FetchCopy() {
-	[ -n "${UID}" ] || UID="`id -u`"
+	[ -n "${UID}" ] || UID=`id -u`
 	GetFilename "${@}"
 	FetchTemp
 	[ -z "${filename}" ] && return
@@ -382,12 +384,12 @@ Update() {
 	AddArchive "${tmpfile}" "${tmpsub}"
 }
 
-main_command="${1}"
+main_command=${1}
 [ ${#} -gt 0 ] && shift
 
-[ -n "${UID}" ] || UID="`id -u`"
+[ -n "${UID}" ] || UID=`id -u`
 
-case "${main_command}" in
+case ${main_command} in
 update|both)
 	Update "${@}";;
 fetch*|get|wget)

@@ -16,12 +16,12 @@ ReadFunctions() ReadGettext
 : ${read_var_prg:=eix-update}
 ReadVar() {
 	eval "if [ \"\${${2}+set}\" = set ]
-	then ${1}=\"\${${2}}\"
+	then ${1}=\${${2}}
 		return 0
 	fi"
 	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"` || \
 		return 1
-	eval "${1}=\"\${eixf_read%X}\""
+	eval "${1}=\${eixf_read%X}"
 	return 0
 }
 
@@ -47,7 +47,7 @@ SetColors() {
 StartInList() (
 	ReadVar startlist ${2} || return
 	for start in ${startlist}
-	do	case "${1}" in
+	do	case ${1} in
 		"${start}"*)	return 0;;
 		esac
 	done
@@ -158,7 +158,7 @@ RunCommand() {
 	shift
 	"${@}" >/dev/null
 	eixf_ret=${?}
-	eixf_cmd="${*}"
+	eixf_cmd=${*}
 	eend ${eixf_ret} "`eval_gettext 'Problems running ${eixf_cmd}'`"
 	return ${eixf_ret}
 }
@@ -176,22 +176,22 @@ fi
 Replace() {
 	eixf_repla=''
 	eixf_replc='break'
-	case "${1}" in
+	case ${1} in
 	-*)	eixf_replc=''
 		shift;;
 	esac
 	replace_count=''
-	eval "replace_tail=\"\${${1}}\""
+	eval "replace_tail=\${${1}}"
 	while {
 		eixf_replb=${replace_tail%%"${2}"*}
 		[ "${eixf_replb}" != "${replace_tail}" ]
 	}
-	do	eixf_repla="${eixf_repla}${eixf_replb}${3}"
+	do	eixf_repla=${eixf_repla}${eixf_replb}${3}
 		replace_tail=${replace_tail#*"${2}"}
-		replace_count="${replace_count}x"
+		replace_count=${replace_count}x
 		${eixf_replc}
 	done
-	eval "${1}=\"\${eixf_repla}\${replace_tail}\""
+	eval "${1}=\${eixf_repla}\${replace_tail}"
 	[ -n "${replace_count}" ]
 }
 
@@ -200,11 +200,11 @@ Replace() {
 #    eval "${VAR}" is 'safe' (with set -f) and groups Args correctly.
 # With option -c, VAR is cleaned in advance.
 Push() {
-	case "${1}" in
+	case ${1} in
 	-*)	shift
 		eval "${1}=''";;
 	esac
-	eixf_pusha="${1}"
+	eixf_pusha=${1}
 	shift
 	eval "for eixf_pushb
 	do	Replace -g eixf_pushb \"'\" \"'\\\\''\"
@@ -221,7 +221,7 @@ Push() {
 # The empty symbolclass means the same as [ \t\r\n\"].
 # The latter are considered as word separators if unescaped.
 PushEscaped() {
-	case "${1}" in
+	case ${1} in
 	-*)	shift
 		eval "${1}=''";;
 	esac
@@ -230,25 +230,25 @@ PushEscaped() {
 	then	eixf_pes='[ \t\r\n]'
 	elif [ -z "${3}" ]
 	then	eixf_pes='[ \t\r\n\"]'
-	else	eixf_pes="${3}"
+	else	eixf_pes=${3}
 	fi
-	eixf_pea="${2}"
+	eixf_pea=${2}
 	eixf_pew=''
 	while [ -n "${eixf_pea}" ]
 	do	eval "eixf_pex=\${eixf_pea%%${eixf_pes}*}"
 		if [ "${eixf_pex}" != "${eixf_pea}" ]
 		then	eixf_pec=${eixf_pea#"${eixf_pex}"}
-			eixf_pea="${eixf_pec#?}"
+			eixf_pea=${eixf_pec#?}
 			eixf_pec=${eixf_pec%"${eixf_pea}"}
 		else	eixf_pea=''
 			eixf_pec='\'
 		fi
 		Replace -g eixf_pex '\\' '\'
-		[ -n "${replace_tail}" ] && case "${eixf_pex}" in
-		*'\')	eixf_pew="${eixf_pew}${eixf_pex%?}${eixf_pec}"
+		[ -n "${replace_tail}" ] && case ${eixf_pex} in
+		*'\')	eixf_pew=${eixf_pew}${eixf_pex%?}${eixf_pec}
 			continue;;
 		esac
-		eixf_pew="${eixf_pew}${eixf_pex}"
+		eixf_pew=${eixf_pew}${eixf_pex}
 		[ -n "${eixf_pew}" ] && Push ${1} "${eixf_pew}"
 		eixf_pew=''
 	done
@@ -258,7 +258,7 @@ PushEscaped() {
 AddUpdateArgs() Push update_args "${@}"
 
 AddUpdateQuoting() {
-	eixf_aq="${1}"
+	eixf_aq=${1}
 	shift
 	Replace -g eixf_aq '\' '\\'
 	Replace -g eixf_aq '?' '\?'
@@ -291,7 +291,7 @@ ClearUpdateArgs() update_args=''
 
 : ${die_on_update_failure=:}
 CallUpdate() {
-	case "${-}" in
+	case ${-} in
 	*f*)
 		eval "set -- ${update_args}";;
 	*)
@@ -312,14 +312,14 @@ AddLocalMethods() {
 	PushEscaped -c eixf_alm "${PORTDIR_OVERLAY}"
 	ReadVar eixf_al ADD_OVERLAY
 	PushEscaped eixf_alm "${eixf_al}"
-	case "${-}" in
+	case ${-} in
 	*f*)	eval "set -- ${eixf_alm}";;
 	*)	set -f
 		eval "set -- ${eixf_alm}"
 		set +f;;
 	esac
 	for eixf_alm
-	do	eixf_al="${eixf_alm}"
+	do	eixf_al=${eixf_alm}
 		Replace -g eixf_al '\' '\\'
 		Replace -g eixf_al ':' '\:'
 		AddMethod "${eixf_alm}" "eix::${eixf_al}"
@@ -330,12 +330,12 @@ AddLocalMethods() {
 # This is necessary as some shells won't take ${Var%"[newline]"}
 Chomp() {
 	for eixf_chompa
-	do	eval "eixf_chompb=\"\${${eixf_chompa}}\""
-		case "${eixf_chompb}" in
+	do	eval "eixf_chompb=\${${eixf_chompa}}"
+		case ${eixf_chompb} in
 		*'
 ')
-			eixf_chompb="${eixf_chompb%?}"
-			eval "${eixf_chompa}=\"\${eixf_chompb}\"";;
+			eixf_chompb=${eixf_chompb%?}
+			eval "${eixf_chompa}=\${eixf_chompb}";;
 		esac
 	done
 }
@@ -345,9 +345,9 @@ Chomp() {
 
 Pathify() {
 	for eixf_pathc
-	do	eval "eixf_patha=\"\${${eixf_pathc}}\""
+	do	eval "eixf_patha=\${${eixf_pathc}}"
 		eixf_pathb=`command -v "${eixf_patha}"; printf A` && \
-			eixf_pathb="${eixf_pathb%A}" && Chomp eixf_pathb && \
+			eixf_pathb=${eixf_pathb%A} && Chomp eixf_pathb && \
 			[ -n "${eixf_pathb}" ] && test -x "${eixf_pathb}" || \
 			die "`eval_gettext \
 				'${eixf_patha} cannot be found in PATH'`"
@@ -374,37 +374,37 @@ NormalizeNames() {
 	eixf_normd=0
 	relative=''
 	for eixf_normc
-	do	eval "eixf_norma=\"\${${eixf_normc}}\""
+	do	eval "eixf_norma=\${${eixf_normc}}"
 		if [ -z "${eixf_norma}" ]
 		then	eixf_normd=1
 			continue
 		fi
-		case "${eixf_norma}" in
+		case ${eixf_norma} in
 		/*)	:;;
 		*)	relative="${relative} ${eixf_normc}";;
 		esac
 		${normalize_resolve} && if CheckReadlink
 		then	# Append A to avoid loss of trailing space in `...`
 			eixf_normb=`readlink -f -- "${eixf_norma}"; printf A` \
-				&& eixf_normb="${eixf_normb%A}" \
+				&& eixf_normb=${eixf_normb%A} \
 				&& Chomp eixf_normb
 		else	eixf_normb=`cd -P -- "${eixf_norma}" >/dev/null 2>&1 \
 				&& printf '%sA' "${PWD}"` \
-				&& eixf_normb="${eixf_normb%A}"
-		fi && [ -n "${eixf_normb}" ] && eixf_norma="${eixf_normb}"
-		eval "${eixf_normc}=\"\${eixf_norma}\""
+				&& eixf_normb=${eixf_normb%A}
+		fi && [ -n "${eixf_normb}" ] && eixf_norma=${eixf_normb}
+		eval "${eixf_normc}=\${eixf_norma}"
 		while Replace -g "${eixf_normc}" '//' '/'
 		do :
 		done
 		eval "[ \"\${${eixf_normc}}\" = '/' ] || \
-			${eixf_normc}=\"\${${eixf_normc}%/}\""
+			${eixf_normc}=\${${eixf_normc}%/}"
 	done
 	return ${eixf_normd}
 }
 
 ReadGettext() {
 	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
-	case "${USE_NLS-@USE_NLS@}" in
+	case ${USE_NLS-@USE_NLS@} in
 	''|n*|N*|f*|F*|0)
 		read_gettext_status=1;;
 	*)
@@ -420,7 +420,7 @@ ReadGettext() {
 		printf '%s' "${*}"
 	}
 	eval_gettext() {
-		eixf_gettext="${*}"
+		eixf_gettext=${*}
 		Replace -g eixf_gettext '\' '\\'
 		Replace -g eixf_gettext '$(' '\$('
 		Replace -g eixf_gettext '`' '\`'
@@ -438,22 +438,20 @@ ReadGettext() {
 
 ReadGettextSub() {
 	. gettext.sh && return
-	eixf_i="`command -v gettext.sh 2>/dev/null`" && \
+	eixf_i=`command -v gettext.sh 2>/dev/null` && \
 		[ -n "${eixf_i}" ] && . "${eixf_i}" && return
 	. /usr/bin/gettext.sh
 }
 
 AssignTempEmulate() {
 	if [ -z "${have_random}" ]
-	then	eixf_assb="${RANDOM}"
+	then	eixf_assb=${RANDOM}
 		if [ "${eixf_assb}" = "${RANDOM}" ] && \
 			[ "${eixf_assb}" = "${RANDOM}" ]
 		then	have_random=false
 			eixf_assb=`od -d -N2 /dev/random 2>/dev/null` \
 				|| eixf_assb=''
-			eixf_assb=`echo ${eixf_assb}`
-			eixf_assb="${eixf_assb#* }"
-			eixf_assb="${eixf_assb%% *}"
+			eixf_assb=`printf '%s' ${eixf_assb}`
 			if [ -z "${eixf_assb}" ]
 			then	eixf_assb=1
 			else	eixf_assb=`Expr "${eixf_assb} % 32768"`
@@ -467,7 +465,7 @@ AssignTempEmulate() {
 	while [ ${eixf_assa} -le 9999 ]
 	do	if [ -n "${eixf_assc}" ]
 		then	if ${have_random}
-			then	eixf_assb="${RANDOM}"
+			then	eixf_assb=${RANDOM}
 			else	eixf_assb=`Expr "${eixf_assb}" '*' '13821'`
 				eixf_assb=`Expr "${eixf_assb}" '%' '32768'`
 			fi
@@ -479,7 +477,7 @@ AssignTempEmulate() {
 			set -C
 			: >"${eixf_assc}"
 		)
-		fi && eval "${1}=\"\${eixf_assc}\"" && return
+		fi && eval "${1}=\${eixf_assc}" && return
 		eixf_assa=`Expr "${eixf_assa}" + 1`
 	done
 	die "`gettext 'found no free temporary name after 10000 attempts'`"

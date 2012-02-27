@@ -10,7 +10,7 @@ read_var_prg=eix
 ReadGettext
 
 Usage() {
-	n="${0##*/}"
+	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] ARG [ARG ARG ...]
 This script is part of ${p}.
@@ -43,7 +43,7 @@ equal=''
 quiet=false
 OPTIND=1
 while getopts 'aq=h?' opt
-do	case "${opt}" in
+do	case ${opt} in
 	a)	quiet=:
 		forced=:;;
 	q)	quiet=:;;
@@ -55,7 +55,7 @@ done
 ${forced} && set -- all
 
 ScanVarDbPkg() {
-	n="${1}"
+	n=${1}
 	${quiet} || printf '%s\n\n' "${2}"
 	shift 2
 	c=0
@@ -114,9 +114,9 @@ BUILD_TIME
 }
 
 ParseArgs() {
-	while myarg="${1#-}"
-	do	myarg="${myarg#-}"
-		case "${myarg}" in
+	while myarg=${1#-}
+	do	myarg=${myarg#-}
+		case ${myarg} in
 		[aA]*)
 			${emulatemode} || All :;;
 		[nN]*[bBdDtT]*)

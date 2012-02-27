@@ -17,7 +17,7 @@ ReadFunctions
 # The following function outputs the usage of the script and then dies.
 
 Usage() {
-	n="${0##*/}"
+	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] category/package[:slot]
 This is a well-commented demo script for eix (${p}).
@@ -79,14 +79,14 @@ addtime=''
 subtime=''
 OPTIND=1
 while getopts 'fblL:ea:A:dsv=SVitTh?' opt
-do	case "${opt}" in
+do	case ${opt} in
 	f)	full=:;;
 	b)	before=:;;
-	l)	logfile="/var/log/emerge.log";;
-	L)	logfile="${OPTARG}";;
+	l)	logfile='/var/log/emerge.log';;
+	L)	logfile=${OPTARG};;
 	e)	epoch=:;;
-	a)	addtime="${OPTARG}";;
-	A)	subtime="${OPTARG}";;
+	a)	addtime=${OPTARG};;
+	A)	subtime=${OPTARG};;
 	d)	date_output='\t<date:DATE_OUTPUT>';;
 	s)	output='NAMEASLOT';;
 	v)	output='NAMEVERSION';;
@@ -110,7 +110,7 @@ then	logfile=''
 # "found" is our flag in the loop whether we already found our package.
 	found=:
 else	[ ${#} -eq 1 ] || Usage
-	match="${1}"
+	match=${1}
 	found=false
 fi
 
@@ -121,9 +121,9 @@ if [ -n "${logfile}" ]
 then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
 	epoch=`sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
 q}" "${logfile}"` || epoch=''
-	case "${epoch}" in
+	case ${epoch} in
 	[0-9]*)
-		match="${epoch}";;
+		match=${epoch};;
 	*)
 		die "`eval_gettext \
 		'cannot find merge of ${match} in ${logfile}'`";;
@@ -199,9 +199,9 @@ VERSION_NEWLINE='' \
 NEWLINE=false \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
-NAME="<category>/<package>" \
-LINE="<date:DATE_FORMAT>\\t%{${input}}\\t%{${output}}${date_output}\\n" \
-	eix '-I*' --format "<installedversions:LINE>" \
+NAME='<category>/<package>' \
+LINE='<date:DATE_FORMAT>\t%{'${input}'}\t%{'${output}'}'${date_output}'\n' \
+	eix '-I*' --format '<installedversions:LINE>' \
 | sort -n \
 | {
 	while read -r line

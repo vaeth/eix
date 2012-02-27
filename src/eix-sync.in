@@ -9,7 +9,7 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-time_begin="`date +%s 2>/dev/null`" || time_begin=''
+time_begin=`date +%s 2>/dev/null` || time_begin=''
 
 . ./eix-functions.sh.in
 ReadFunctions
@@ -21,7 +21,7 @@ ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
 Usage() {
-	n="${0##*/}"
+	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options]
 Call layman/emerge --sync/--metadata and/or show updates. (${p})
@@ -110,43 +110,43 @@ DoExecute() {
 }
 
 ParseConfigLine() {
-	j="${2}"
+	j=${2}
 	while :
-	do	case "${j}" in
+	do	case ${j} in
 		' '*|'	'*)
-			j="${j#?}";;
+			j=${j#?};;
 		*' '|*'	')
-			j="${j%?}";;
+			j=${j%?};;
 		''|'#'*)
 			return;;
 		*)
 			break;;
 		esac
 	done
-	case "${j}" in
+	case ${j} in
 	'!!'*)
 		[ "${1}" = 'opts' ] && DoExecute "${j#??}"
 		return;;
 	'!'*)
-		j="${j#?}"
+		j=${j#?}
 		mycmd='!';;
 	'@@'*)
-		j="${j#??}"
+		j=${j#??}
 		mycmd='@@';;
 	'@'*)
-		j="${j#?}"
+		j=${j#?}
 		mycmd='@';;
 	'~'*)
-		j="${j#?}"
+		j=${j#?}
 		mycmd='~';;
 	'-'*)
 		config_opts="${config_opts} ${j}"
 		return;;
 	*)
-		mycmd="layman";;
+		mycmd='layman';;
 	esac
 	[ "${1}" = 'opts' ] && return
-	case "${mycmd}" in
+	case ${mycmd} in
 	'@@')
 		Push after_update "${j}"
 		return;;
@@ -162,7 +162,7 @@ ParseConfigLine() {
 	esac
 	${nolayman} && return
 	RootTest
-	case "${-}" in
+	case ${-} in
 	*f*)
 		eval "set -- ${layman_opt}";;
 	*)
@@ -233,12 +233,12 @@ eval "set -- ${opt}"
 set +f
 OPTIND=1
 while getopts 'ids:02:UuFl@SMNtTqwWL:c:C:o:rRemHh?' opt
-do	case "${opt}" in
+do	case ${opt} in
 	i)	DefaultOpts;;
 	d)	diffonly=:;;
-	s)	server="${OPTARG}";;
+	s)	server=${OPTARG};;
 	0)	skip_sync=:;;
-	2)	client="${OPTARG}";;
+	2)	client=${OPTARG};;
 	U)	doupdate=false;;
 	u)	nolayman=:
 		nohooks=:
@@ -274,7 +274,7 @@ ${diffonly} && DiffOnly
 
 ${measure_time} || time_begin=''
 measure_time=false
-case "${time_begin}" in
+case ${time_begin} in
 *[0-9]*)
 	[ "${time_begin}" -gt 99 ] && (
 		t=`Expr "${time_begin}" - 99 2>/dev/null` || t=0
@@ -288,10 +288,10 @@ MyRun() {
 	then	if ${measure_time}
 		then	timevar="time_${2}"
 			shift 2
-			begt="`date '+%s' 2>/dev/null`" || measure_time=false
+			begt=`date '+%s' 2>/dev/null` || measure_time=false
 			"${@}"
 			runstat=${?}
-			${measure_time} && endt="`date +%s 2>/dev/null`" \
+			${measure_time} && endt=`date +%s 2>/dev/null` \
 				|| measure_time=false
 			${measure_time} && \
 				eval "${timevar}"'=`Expr "${endt}" - "${begt}"`'
@@ -311,7 +311,7 @@ MyRunCommand() {
 
 DoHook() {
 	${nohooks} && return
-	case "${-}" in
+	case ${-} in
 	*f*)
 		eval "set -- ${1}";;
 	*)
@@ -323,10 +323,10 @@ DoHook() {
 }
 
 MyVarCommand() {
-	myvarcmdvar="${1}"
+	myvarcmdvar=${1}
 	shift
-	myvarcmdargs="${*}"
-	case "${-}" in
+	myvarcmdargs=${*}
+	case ${-} in
 	*f*)
 		eval "set -- ${myvarcmdvar}";;
 	*)
@@ -334,7 +334,7 @@ MyVarCommand() {
 		eval "set -- ${myvarcmdvar}"
 		set +f;;
 	esac
-	myvarcmd="${*}"
+	myvarcmd=${*}
 	MyRunCommand "`eval_gettext 'Running ${myvarcmd}'`" \
 		${myvarcmdargs} "${@}" \
 		|| die "`eval_gettext '${myvarcmd} failed'`"
@@ -375,7 +375,7 @@ PrintTimes() {
 	PrintingTimes "${time_metadata}" "`gettext 'metadata update'`"
 	PrintingTimes "${time_update}"   "`gettext 'eix-update'`"
 	PrintingTimes "${time_diff}"     "`gettext 'eix-diff'`"
-	ftime="`date '+%s' 2>/dev/null`" || return
+	ftime=`date '+%s' 2>/dev/null` || return
 	ftime=`Expr "${ftime}" - "${time_begin}" 2>/dev/null` && \
 		printf "`gettext '%6d seconds total\n'`" "${ftime}"
 }
@@ -400,17 +400,17 @@ MakeTempFile() {
 preprsync=false
 PrepRsync() {
 	GetPortdir
-	hostdir="${1#*:}"
+	hostdir=${1#*:}
 	if [ -n "${hostdir}" ] && [ "${hostdir}" != "${1}" ]
-	then	hostdir="${1}"
+	then	hostdir=${1}
 	else	hostdir="${1%%:*}:${local_portdir}"
 	fi
 	hostdir="${hostdir%/}/"
 	${preprsync} || [ -n "${rsync_opts}" ] && return
 	ReadVar portage_rsync_opts PORTAGE_RSYNC_OPTS || \
-		portage_rsync_opts="--recursive --links --safe-links --perms --times --compress --force --whole-file --delete --stats --timeout=180 --exclude=/distfiles --exclude=/local --exclude=/packages"
+		portage_rsync_opts='--recursive --links --safe-links --perms --times --compress --force --whole-file --delete --stats --timeout=180 --exclude=/distfiles --exclude=/local --exclude=/packages'
 	ReadVar portage_rsync_extra_opts PORTAGE_RSYNC_EXTRA_OPTS
-	case "${-}" in
+	case ${-} in
 	*f*)
 		eval "set -- ${before_rsync}";;
 	*)
@@ -434,7 +434,7 @@ ClearCache() {
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
 	RootTest
-	case "${-}" in
+	case ${-} in
 	*f*)
 		set +f
 		set -- "${local_varcache}"/var/cache/edb/dep/*
@@ -496,7 +496,7 @@ CopyPrevious() {
 	${emulatemode} && return
 	StatusInfo "`eval_gettext \
 		'Copying old ${eixcache} cache to temporary file'`"
-	previous_umask="`umask`"
+	previous_umask=`umask`
 	umask 002
 	MakeTempFile
 	cp -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
@@ -517,8 +517,8 @@ UpdateDiff() {
 	${doupdate} || return 0
 	if ${usetemp}
 	then	${emulatemode} && return
-		d="${tmpfile}"
-	else	d="${eixprevious}"
+		d=${tmpfile}
+	else	d=${eixprevious}
 		test -r "${d}" || RootTest
 		${emulatemode} && return
 	fi
@@ -550,11 +550,11 @@ MainSync() {
 
 root_uid=''
 ReadRootUID() {
-	[ -n "${UID}" ] || UID="`id -u`"
+	[ -n "${UID}" ] || UID=`id -u`
 	[ -n "${root_uid}" ] && return
 	ReadVar root_uid ROOT_UID || root_uid=''
 	: ${root_uid:=0}
-	case "${root_uid}" in
+	case ${root_uid} in
 	*[!0-9]*)
 		die "`eval_gettext 'ROOT_UID [${root_uid}] is not a number'`";;
 	esac

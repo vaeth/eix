@@ -14,8 +14,8 @@
 ReadFunctions
 
 Usage() {
-	exitcode="${1:-1}"
-	n="${0##*/}"
+	exitcode=${1:-1}
+	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options] command
 Add or remove local layman overlays to the eix database (${p}).
@@ -101,7 +101,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 OPTIND=1
 while getopts 'vqa:A:c:CHh?' opt
-do	case "${opt}" in
+do	case ${opt} in
 	v)	verbose=:;;
 	q)	verbose=false;;
 	a)	Push layman_overlays "${OPTARG}";;
@@ -146,10 +146,10 @@ Remove() {
 	CallUpdate
 }
 
-main_command="${1}"
+main_command=${1}
 [ ${#} -gt 0 ] && shift
 
-case "${main_command}" in
+case ${main_command} in
 add*)
 	Add "${@}";;
 rem*|del*|rm*|sub*)
