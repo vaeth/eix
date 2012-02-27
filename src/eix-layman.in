@@ -56,9 +56,7 @@ Available options:
 	Exit ${exitcode:-1}
 }
 
-ClearLaymanMake() {
-	Push -c layman_make
-}
+ClearLaymanMake() Push -c layman_make
 
 PushLaymanMake() {
 	r=1

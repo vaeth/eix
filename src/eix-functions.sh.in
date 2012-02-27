@@ -11,9 +11,7 @@
 # and perhaps similar local scripts. (@PACKAGE_STRING@).
 
 # This must happen in a function to enforce an empty argument list.
-ReadFunctions() {
-	ReadGettext
-}
+ReadFunctions() ReadGettext
 
 : ${read_var_prg:=eix-update}
 ReadVar() {
@@ -166,14 +164,8 @@ RunCommand() {
 }
 
 if ( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1
-then	eval '
-Expr() {
-	printf "%s" "$(( ${1} ${2} ${3} ))"
-}'
-else
-Expr() {
-	expr "${@}"
-}
+then	eval 'Expr() printf "%s" "$(( ${1} ${2} ${3} ))"'
+else	Expr() expr "${@}"
 fi
 
 # Usage: Replace [-g] VAR Search Replace
@@ -263,9 +255,7 @@ PushEscaped() {
 	[ -n "${eixf_pew}" ] && Push ${1} "${eixf_pew}"
 }
 
-AddUpdateArgs() {
-	Push update_args "${@}"
-}
+AddUpdateArgs() Push update_args "${@}"
 
 AddUpdateQuoting() {
 	eixf_aq="${1}"
@@ -282,9 +272,7 @@ AddMethod() {
 	AddUpdateQuoting "${1}" "${2}"
 }
 
-AddRepoName() {
-	AddUpdateArgs '-r' "${1}" "${2}"
-}
+AddRepoName() AddUpdateArgs '-r' "${1}" "${2}"
 
 AddOverlays() {
 	for eixf_ao
@@ -299,9 +287,7 @@ AddExcludes() {
 	done
 }
 
-ClearUpdateArgs() {
-	update_args=''
-}
+ClearUpdateArgs() update_args=''
 
 : ${die_on_update_failure=:}
 CallUpdate() {
@@ -317,9 +303,7 @@ CallUpdate() {
 	${die_on_update_failure} && die "`gettext 'eix-update failed'`"
 }
 
-InitPortdirOverlay() {
-	ReadVar PORTDIR_OVERLAY PORTDIR_OVERLAY
-}
+InitPortdirOverlay() ReadVar PORTDIR_OVERLAY PORTDIR_OVERLAY
 
 AddLocalMethods() {
 	GetPortdir

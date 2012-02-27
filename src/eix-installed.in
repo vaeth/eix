@@ -88,10 +88,8 @@ ScanVarDbPkg() {
 	echo
 }
 
-All() {
-	ScanVarDbPkg false "`gettext \
+All() ScanVarDbPkg false "`gettext \
 'The following package versions are installed:'`"
-}
 
 Repository() {
 	if ${1}
