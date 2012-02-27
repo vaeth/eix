@@ -196,7 +196,6 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	export_portdir_overlay = false;
 #endif
 	know_upgrade_policy = false;
-	m_obsolete_minusasterisk = eixrc.getBool("OBSOLETE_MINUSASTERISK");
 	m_recurse_sets    = eixrc.getBool("RECURSIVE_SETS");
 	m_eprefixconf     = eixrc.m_eprefixconf;
 	m_eprefix         = eixrc["EPREFIX"];
@@ -290,10 +289,10 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	m_accepted_keywords.clear();
 	split_string(m_accepted_keywords, (*this)["ARCH"]);
 	m_arch_set.clear();
-	resolve_plus_minus(m_arch_set, m_accepted_keywords, m_obsolete_minusasterisk);
+	resolve_plus_minus(m_arch_set, m_accepted_keywords);
 	split_string(m_accepted_keywords, (*this)["ACCEPT_KEYWORDS"]);
 	m_accepted_keywords_set = m_arch_set;
-	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords, m_obsolete_minusasterisk);
+	resolve_plus_minus(m_accepted_keywords_set, m_accepted_keywords);
 	make_vector<string>(m_accepted_keywords, m_accepted_keywords_set);
 	short as_arch(eixrc.getBoolText("ACCEPT_KEYWORDS_AS_ARCH", "full"));
 	if(as_arch) {
@@ -807,15 +806,13 @@ static const ArchUsed
 
 inline static ArchUsed
 apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
-	const set<string> *arch_set, bool obsolete_minus,
+	const set<string> *arch_set,
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut)
 {
 	static string tilde("~"), minus("-");
-	if(!obsolete_minus) {
-		if(key[0] == '-') {
-			redundant |= (check & Keywords::RED_STRANGE);
-			return ARCH_NOTHING;
-		}
+	if(key[0] == '-') {
+		redundant |= (check & Keywords::RED_STRANGE);
+		return ARCH_NOTHING;
 	}
 	if(keywords_set.find(key) == keywords_set.end()) {
 		// Not found:
@@ -923,8 +920,6 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 
 	map<Version*, vector<string> > sorted_by_versions;
 
-	bool obsolete_minusasterisk(m_settings->m_obsolete_minusasterisk);
-
 	const MaskList<KeywordMask>::Get *keyword_masks(m_accept_keywords.get(p));
 	if(keyword_masks != NULL) {
 		for(MaskList<KeywordMask>::Get::const_iterator it(keyword_masks->begin());
@@ -965,16 +960,16 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 		if(kv.size() == kvsize) {
 			// Nothing has changed. In this case, we take defaults:
-			kf.set(it->get_keyflags(m_settings->m_accepted_keywords_set, obsolete_minusasterisk));
+			kf.set(it->get_keyflags(m_settings->m_accepted_keywords_set));
 			it->keyflags = kf;
 			it->save_keyflags(Version::SAVEKEY_ACCEPT);
 		}
 		else {
 			// We must recalculate:
 			set<string> s;
-			resolve_plus_minus(s, kv, obsolete_minusasterisk);
+			resolve_plus_minus(s, kv);
 			make_vector(kv, s);
-			kf.set(it->get_keyflags(s, obsolete_minusasterisk));
+			kf.set(it->get_keyflags(s));
 			kvsize = kv.size();
 		}
 		bool ori_is_stable(kf.havesome(KeywordsFlags::KEY_STABLE));
@@ -990,7 +985,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			if(!kvfile.empty()) {
 				redundant |= Keywords::RED_IN_KEYWORDS;
 				kv_set_nofile = new set<string>;
-				resolve_plus_minus(*kv_set_nofile, kv, obsolete_minusasterisk);
+				resolve_plus_minus(*kv_set_nofile, kv);
 				// Add items from /etc/portage/package.accept_keywords to kv
 				// but remove matching -... items from kv_set_nofile
 				for(vector<string>::const_iterator fit(kvfile.begin());
@@ -1019,24 +1014,18 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 
 			// Create kv_set (of now active keywords), possibly testing for double keywords and -*
 			set<string> kv_set;
-			bool minusasterisk;
 			if(check & Keywords::RED_DOUBLE) {
 				set<string> sorted;
 				make_set<string>(sorted, kv);
 				if(kv.size() != sorted.size()) {
 					redundant |= Keywords::RED_DOUBLE;
 				}
-				bool minuskeyword(false);
-				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk, &minuskeyword, &(m_settings->m_accepted_keywords_set));
-				if(minuskeyword) {
+				if(resolve_plus_minus(kv_set, kv, &(m_settings->m_accepted_keywords_set))) {
 					redundant |= Keywords::RED_DOUBLE;
 				}
 			}
 			else {
-				minusasterisk = resolve_plus_minus(kv_set, kv, obsolete_minusasterisk);
-			}
-			if(minusasterisk && !obsolete_minusasterisk) {
-				redundant |= (check & Keywords::RED_MINUSASTERISK);
+				resolve_plus_minus(kv_set, kv);
 			}
 
 			// First apply the original ACCEPT_KEYWORDS (with package.accept_keywords sets).
@@ -1049,7 +1038,6 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 					sit != kv_set.end(); ++sit) {
 					if(apply_keyword(*sit, keywords_set, kf,
 						m_settings->m_local_arch_set,
-						obsolete_minusasterisk,
 						redundant, Keywords::RED_NOTHING, true)
 						!= ARCH_NOTHING) {
 						stable = true;
@@ -1065,7 +1053,6 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 				sit != kv_set_nofile->end(); ++sit) {
 					if(apply_keyword(*sit, keywords_set, kf,
 						m_settings->m_local_arch_set,
-						obsolete_minusasterisk,
 						redundant, Keywords::RED_NOTHING, true)
 						!= ARCH_NOTHING) {
 						stable = true;
@@ -1087,7 +1074,6 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 				likely(kvi != kv_set.end()); ++kvi) {
 				ArchUsed arch_curr(apply_keyword(*kvi, keywords_set, kf,
 					m_settings->m_local_arch_set,
-					obsolete_minusasterisk,
 					redundant, check, shortcut));
 				if(arch_curr == ARCH_NOTHING) {
 					continue;
@@ -1174,7 +1160,7 @@ PortageSettings::setKeyflags(Package *p, bool use_accepted_keywords) const
 		return;
 	get_effective_keywords_profile(p);
 	for(Package::iterator t(p->begin()); likely(t != p->end()); ++t) {
-		t->set_keyflags(*accept_set, m_obsolete_minusasterisk);
+		t->set_keyflags(*accept_set);
 		t->save_keyflags(ind);
 	}
 }

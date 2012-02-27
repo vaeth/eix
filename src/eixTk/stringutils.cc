@@ -228,13 +228,13 @@ join_to_string(string &s, const set<string> &vec, const string &glue)
 { join_to_string_template< set<string> >(s, vec, glue); }
 
 bool
-resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus, bool *warnminus, const set<string> *warnignore)
+resolve_plus_minus(set<string> &s, const vector<string> &l, const set<string> *warnignore)
 {
-	bool minusasterisk(false);
 	bool minuskeyword(false);
 	for(vector<string>::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
-		if(unlikely(it->empty()))
+		if(unlikely(it->empty())) {
 			continue;
+		}
 		if(unlikely((*it)[0] == '+')) {
 			cerr << eix::format(_("flags should not start with a '+': %s")) % *it
 				<< endl;
@@ -243,11 +243,8 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 		}
 		if(unlikely((*it)[0] == '-')) {
 			if(*it == "-*") {
-				minusasterisk = true;
-				if(!obsolete_minus) {
-					s.clear();
-					continue;
-				}
+				s.clear();
+				continue;
 			}
 			if(*it == "-~*") {
 				vector<string> v;
@@ -260,20 +257,21 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, bool obsolete_minus,
 				}
 			}
 			string key(*it, 1);
-			if(s.erase(key))
+			if(s.erase(key)) {
 				continue;
-			if(warnignore) {
-				if(warnignore->find(key) == warnignore->end())
-					minuskeyword = true;
 			}
-			else
+			if(warnignore != NULL) {
+				if(warnignore->find(key) == warnignore->end()) {
+					minuskeyword = true;
+				}
+			}
+			else {
 				minuskeyword = true;
+			}
 		}
 		s.insert(*it);
 	}
-	if(warnminus)
-		*warnminus = minuskeyword;
-	return minusasterisk;
+	return minuskeyword;
 }
 
 void

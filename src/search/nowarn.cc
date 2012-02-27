@@ -51,7 +51,6 @@ public:
 		init_red("mixed",            Keywords::RED_MIXED);
 		init_red("weaker",           Keywords::RED_WEAKER);
 		init_red("strange",          Keywords::RED_STRANGE);
-		init_red("minusasterisk",    Keywords::RED_MINUSASTERISK);
 		init_red("double_line",      Keywords::RED_DOUBLE_LINE);
 		init_red("in_mask",          Keywords::RED_IN_MASK);
 		init_red("mask_no_change",   Keywords::RED_MASK);

@@ -228,11 +228,10 @@ join_and_split(Td &vec, const Ts &s, const std::string &glue = space, const bool
 
 /** Resolve a vector of -/+ keywords to a set of actually set keywords.
  * @param s will get influenced by the string; it is not cleared in advance!
- * @param obsolete_minus   If true do not treat -* special and keep -keyword.
- * @param warnminus        Set if there was -keyword which did not apply for
- * @param warnignore
- * @return true            if -* is contained */
-bool resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, bool obsolete_minus, bool *warnminus = NULL, const std::set<std::string> *warnignore = NULL);
+ * @param warnignore       List of keywords for which -keywords might apply
+ * @return true            if there was -keyword which did not apply for */
+bool
+resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULL);
 
 /// Add items from s to the end of d.
 template<typename T>

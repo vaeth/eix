@@ -5,6 +5,7 @@
 	- Remove support for obsolete old-style virtuals.
 	  This is a major change: Remove many search options, print-commands,
 	  many default variables, and changes the database format (even xml).
+	- Remove OBSOLETE_MINUSASTERISK and RED_MINUSASTERISK
 	- Remove cache method cdb
 	- Remove --enable-obsolete-symlinks --enable-obsolete-reminder
 	- Remove --enable-extra-cache

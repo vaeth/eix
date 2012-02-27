@@ -890,8 +890,6 @@ PackageTest::match(PackageReader *pkg) const
 					break;
 				if(have_redundant(*p, r & Keywords::RED_DOUBLE_LINE))
 					break;
-				if(have_redundant(*p, r & Keywords::RED_MINUSASTERISK))
-					break;
 			}
 		}
 		r = rflags & Keywords::RED_ALL_USE;

@@ -1931,12 +1931,6 @@ AddOption(STRING, "CHECK_INSTALLED_OVERLAYS",
 	"The compromise - repository - checks at least always the repository files.\n"
 	"Without a check, the assumed overlay may be wrong if the version was\n"
 	"actually installed from a place not in the database anymore."));
-
-AddOption(BOOLEAN, "OBSOLETE_MINUSASTERISK",
-	"false", _(
-	"If true, treat -* in /etc/portage/package.keywords as <=portage-2.1.2\n"
-	"Since >=portage-2.1.2-r4, -* is practically obsolete and replaced\n"
-	"by ** which accepts anything (note that there are also * and ~*)."));
 #endif
 
 #if (DEFAULT_PART == 4)
@@ -2279,11 +2273,6 @@ AddOption(STRING, "REDUNDANT_IF_STRANGE",
 	"Applies if /etc/portage/package.accept_keywords lists a strange keyword\n"
 	"e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,\n"
 	"for the versions in question."));
-
-AddOption(STRING, "REDUNDANT_IF_MINUSASTERISK",
-	"some", _(
-	"Applies if /etc/portage/package.accept_keywords contains some -* entry.\n"
-	"This test only applies if OBSOLETE_MINUSASTERISK is false."));
 
 AddOption(STRING, "REDUNDANT_IF_NO_CHANGE",
 	"all-installed", _(

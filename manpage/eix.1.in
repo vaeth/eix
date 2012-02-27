@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-02-27 10:00:00 +0100 (Mon, 27 Feb 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-02-27 11:00:00 +0100 (Mon, 27 Feb 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2539,11 +2539,6 @@ In particular, the option -T will not detect if an installed version of
 a package actually stems from a redundant overlay if in the current database
 all versions of this package stem from one (other) location.
 .TP
-.BR OBSOLETE_MINUSASTERISK " " (true / false)
-If true, treat B<-*> in /etc/portage/package.keywords as portage-2.1.2 and earlier versions do.
-Since portage-2.1.2, the B<-*> keyword is practically obsolete and was replaced by B<**> which accepts anything (even an ebuild with empty B<KEYWORDS>).
-Note that there are also the related keywords B<*> and B<~*> which accept stable or unstable versions of any arch listed in B<KEYWORDS>.
-.TP
 .BR PRINT_COUNT_ALWAYS " " (true / false / never)
 If true, always print the number of matches in the last line, even if this
 number is 0 or 1.
@@ -2699,10 +2694,6 @@ for the versions in question.
 Applies if /etc/portage/package.keywords lists a strange keyword,
 e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,
 for the versions in question.
-.TP
-.BR REDUNDANT_IF_MINUSASTERISK " " (string ", see above")
-Applies if /etc/portage/package.keywords contains some -* entry.
-This test only applies if B<OBSOLETE_MINUSASTERISK> is false.
 .TP
 .BR REDUNDANT_IF_NO_CHANGE " " (string ", see above")
 Applies if /etc/portage/package.keywords provides keywords which do not
@@ -2878,7 +2869,7 @@ You can list a package several times in this file; the listed tests are
 then cumulative for the corresponding package.
 
 Available tests are
-B<in_keywords>, B<no_change>, B<double>, B<mixed>, B<weaker>, B<minusasterisk>, B<double_line>,
+B<in_keywords>, B<no_change>, B<double>, B<mixed>, B<weaker>, B<double_line>,
 B<in_mask>, B<mask_no_change>, B<double_masked>,
 B<in_unmask>, B<unmask_no_change>, B<double_unmasked>,
 B<in_use>, B<double_use>,
@@ -3000,9 +2991,6 @@ eix will always be vulnerable to local attacks if it is called with a possibly u
 The previous default B<KEEP_VIRTUALS=true> used to confuse people.
 However, with the new default, nobody will find out that this feature exists.
 :(
-
-There is no default setting of B<OBSOLETE_MINUSASTERISK> which satisfies both,
-people using old portage and people using new portage.
 
 There are too many features: The documentation and configuration has become too complicated.
 On the other hand, there are still many things which cannot be configured...

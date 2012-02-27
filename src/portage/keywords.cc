@@ -43,7 +43,7 @@ const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_TILDESTARMATCH;
 
 KeywordsFlags::KeyType
-KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const string &keywords, bool obsolete_minus)
+KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const string &keywords)
 {
 	KeyType m(KEY_EMPTY);
 	std::set<string> keywords_set;
@@ -58,8 +58,7 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 				m |= KEY_MINUSUNSTABLE;
 			else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end())
 				m |= KEY_MINUSKEYWORD;
-			if(!obsolete_minus)
-				continue;
+			continue;
 		}
 		if(accepted_keywords.find(*it) != accepted_keywords.end()) {
 			found = true;
@@ -103,7 +102,6 @@ const Keywords::Redundant
 	Keywords::RED_WEAKER,
 	Keywords::RED_STRANGE,
 	Keywords::RED_NO_CHANGE,
-	Keywords::RED_MINUSASTERISK,
 	Keywords::RED_IN_KEYWORDS,
 	Keywords::RED_ALL_KEYWORDS,
 	Keywords::RED_MASK,

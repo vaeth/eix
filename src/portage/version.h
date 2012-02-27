@@ -248,15 +248,15 @@ class Version : public ExtendedVersion, public Keywords {
 			return full_keywords;
 		}
 
-		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus) const
+		KeywordsFlags::KeyType get_keyflags(const std::set<std::string> &accepted_keywords) const
 		{
 			if(effective_state == EFFECTIVE_USED)
-				return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords, obsolete_minus);
-			return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords, obsolete_minus);
+				return KeywordsFlags::get_keyflags(accepted_keywords, effective_keywords);
+			return KeywordsFlags::get_keyflags(accepted_keywords, full_keywords);
 		}
 
-		void set_keyflags(const std::set<std::string> &accepted_keywords, bool obsolete_minus)
-		{ keyflags.set(get_keyflags(accepted_keywords, obsolete_minus)); }
+		void set_keyflags(const std::set<std::string> &accepted_keywords)
+		{ keyflags.set(get_keyflags(accepted_keywords)); }
 
 	protected:
 		std::string full_keywords, effective_keywords;
