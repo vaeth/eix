@@ -133,12 +133,6 @@ eixTk/md5.h
 nodist_cache_src = \
 cache/cache_map.cc
 
-extra_cache_src = \
-cache/port2_1_2/port2_1_2.cc \
-cache/port2_1_2/port2_1_2.h
-
-nodist_extra_cache_src=
-
 percentage_src = \
 eixTk/percentage.cc \
 eixTk/percentage.h
@@ -150,17 +144,6 @@ output/print-xml.cc \
 output/print-xml.h
 
 nodist_printxml_src =
-
-
-if EXTRA_CACHE
-extra_cache = portage-2.1.2
-add_cache_src = $(extra_cache_src)
-nodist_add_cache_src = $(nodist_extra_cache_src)
-else
-extra_cache =
-add_cache_src =
-nodist_add_cache_src =
-endif
 
 output_src = \
 output/formatstring.cc \
@@ -244,9 +227,9 @@ nodist_extra_output_only_src =
 
 # The update-tool for our database
 update_only_ldadd = $(SQLITE_LIBS)
-update_only_src = eix-update.cc $(percentage_src) $(cache_src) $(add_cache_src)
-nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src) $(nodist_add_cache_src)
-extra_update_only_src = $(extra_cache_src)
+update_only_src = eix-update.cc $(percentage_src) $(cache_src)
+nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src)
+extra_update_only_src =
 nodist_extra_update_only_src =
 
 # Additional binaries (scripts) we will install
@@ -479,7 +462,7 @@ install-exec-hook:
 		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 
 cache/cache_map.cc: cache/generate_cachemap.sh
-	$(AM_V_GEN)"cache/generate_cachemap.sh" $(extra_cache) > "$@"
+	$(AM_V_GEN)"cache/generate_cachemap.sh" > "$@"
 
 eix-sync.sh:
 	$(AM_V_GEN)$(LN_S) eix-sync.in "$@"

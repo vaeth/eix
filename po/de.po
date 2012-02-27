@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-02-16 23:53+0100\n"
+"POT-Creation-Date: 2012-02-27 09:50+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1942,7 +1942,7 @@ msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/cache/metadata/metadata.cc:319 src/cache/metadata/metadata.cc:357
-#: src/cache/port2_1_2/port2_1_2.cc:115 src/cache/sqlite/sqlite.cc:215
+#: src/cache/sqlite/sqlite.cc:215
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
@@ -1960,20 +1960,6 @@ msgstr "Konnte %s nicht korrekt ausführen"
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
-
-#: src/cache/port2_1_2/port2_1_2.cc:95
-msgid "%r not of the form package/catstring-version"
-msgstr "%r hat nicht die Gestalt package/catstring-version"
-
-#: src/cache/port2_1_2/port2_1_2.cc:158
-#, c-format
-msgid "Can't read cache file %s"
-msgstr "Cachefile %s nicht lesbar"
-
-#: src/cache/port2_1_2/port2_1_2.cc:170
-#, c-format
-msgid "Problems with %s: %s\n"
-msgstr "Probleme mit %s: %s\n"
 
 #: src/cache/sqlite/sqlite.cc:180
 msgid "sqlite dataset does not contain a package name"
@@ -5520,3 +5506,12 @@ msgstr "unbekanntes Suchfeld %r"
 #: src/search/packagetest.cc:255
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
+
+#~ msgid "%r not of the form package/catstring-version"
+#~ msgstr "%r hat nicht die Gestalt package/catstring-version"
+
+#~ msgid "Can't read cache file %s"
+#~ msgstr "Cachefile %s nicht lesbar"
+
+#~ msgid "Problems with %s: %s\n"
+#~ msgstr "Probleme mit %s: %s\n"

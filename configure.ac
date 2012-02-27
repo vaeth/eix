@@ -548,17 +548,6 @@ AC_ARG_WITH([extra-doc],
 	[AS_VAR_SET([extra_doc], [false])])
 AM_CONDITIONAL([EXTRA_DOC], [${extra_doc}])
 
-# Use obsoleted cache method?
-AC_ARG_ENABLE([extra_cache],
-	[AS_HELP_STRING([--enable-extra-cache],
-		[enable unsupported cache method portage-2.1])],
-	[MV_ENABLE([extra_cache])],
-	[AS_VAR_SET([extra_cache], [false])])
-AS_IF([${extra_cache}],
-	[AC_MSG_WARN([Unsupported cache method portage-2.1 enabled on request])])
-AM_CONDITIONAL([EXTRA_CACHE],
-	[${extra_cache}])
-
 # Check if __builtin_expect works
 AC_MSG_CHECKING([whether __builtin_expect can be used])
 AC_DEFUN([BUILTIN_EXPECT_PROGRAM], [AC_LANG_PROGRAM([[]], [[

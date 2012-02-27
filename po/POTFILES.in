@@ -37,8 +37,6 @@ src/cache/metadata/metadata.cc
 src/cache/metadata/metadata.h
 src/cache/parse/parse.cc
 src/cache/parse/parse.h
-src/cache/port2_1_2/port2_1_2.cc
-src/cache/port2_1_2/port2_1_2.h
 src/cache/sqlite/sqlite.cc
 src/cache/sqlite/sqlite.h
 src/database/header.cc

@@ -5,6 +5,8 @@
 	- Remove support for obsolete old-style virtuals.
 	  This is a major change: Remove many search options, print-commands,
 	  many default variables, and changes the database format (even xml).
+	- Remove --enable-obsolete-symlinks --enable-obsolete-reminder
+	- Remove --enable-extra-cache
 	- Support TERM_SOFTSTATUSLINE for screen.
 	- Do not add -D* flags already contained in CPPFLAGS.
 

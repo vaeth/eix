@@ -6,7 +6,7 @@ mkemerge="./mk/emerge"
 mkrelease="./mk/release"
 mkmake="./mk/make"
 mkmakeextra="UPDATEPOFILES="
-make_opts='-0QEeq'
+make_opts='-0Qeq'
 
 export LC_ALL XZ_OPT
 LC_ALL=C

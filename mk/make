@@ -9,7 +9,6 @@ Available options are
   -q  quiet
   -n  Stop after ./configure, i.e. do not run make
   -e  Keep environment - do not modify LDFLAGS, CXXFLAGS, CFLAGS
-  -E  Do not pass --enable-extra-cache to ./configure
   -0  Do not pass --enable-separate-* to ./configure
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
   -4  Enable separate tools
@@ -77,7 +76,6 @@ earlystop=false
 keepenv=false
 not_full_use=false
 pedantic=false
-extra_cache=:
 separate_all=:
 use_chown=false
 jarg='-j3'
@@ -90,10 +88,9 @@ stdcxx=''
 debugging=false
 wnosign=false
 OPTIND=1
-while getopts 'qE01234nepPusSbBrOQCXyYdc:j:?hH' opt
+while getopts 'q01234nepPusSbBrOQCXyYdc:j:?hH' opt
 do	case "${opt}" in
 	q) quiet=:;;
-	E) extra_cache=false;;
 	0) separate_all=false;;
 	1) configure_extra="${configure_extra} --disable-separate-binaries";;
 	2) configure_extra="${configure_extra} --enable-separate-update";;
@@ -126,7 +123,6 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
-${extra_cache} && configure_extra="${configure_extra} --enable-extra-cache"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
 ${optimization} && configure_extra="${configure_extra} --enable-strong-optimization --enable-security"
