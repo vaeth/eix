@@ -559,7 +559,7 @@ ReadRootUID() {
 	ReadVar root_uid ROOT_UID || root_uid=''
 	: ${root_uid:=0}
 	IsNumber ${root_uid} || \
-		die "`eval_gettext 'ROOT_UID [${root_uid}] is not a number'`";;
+		die "`eval_gettext 'ROOT_UID [${root_uid}] is not a number'`"
 }
 
 if ${test_for_root} && ReadRootUID && [ "${UID}" -ne "${root_uid}" ]
