@@ -221,27 +221,22 @@ Push() {
 	done"
 }
 
-# PushEscaped [-c] VAR Arg [symbolclass]
-# Similarly as Push, but allow escaping of symbols from symbolclass.
-# If symbolclass is not given, it defaults to [ \t\r\n].
-# The empty symbolclass means the same as [ \t\r\n\"].
-# The latter are considered as word separators if unescaped.
+# PushEscaped [-c] VAR Arg [name of IFS type variable]
+# Similarly as Push, but splits Arg before at *unescaped* symbols of $IFS.
+# The name IFS can be changed if a third (resp. fourth) argument is given.
 PushEscaped() {
 	case ${1} in
 	-*)	shift
 		eval "${1}=''";;
 	esac
-	eixf_pes='[ \t\r\n]'
-	if [ ${#} -lt 3 ]
-	then	eixf_pes='[ \t\r\n]'
-	elif [ -z "${3}" ]
-	then	eixf_pes='[ \t\r\n\"]'
+	if [ ${#} -lt 3 ] || [ -z "${3}" ]
+	then	eixf_pes='IFS'
 	else	eixf_pes=${3}
 	fi
 	eixf_pea=${2}
 	eixf_pew=''
 	while [ -n "${eixf_pea}" ]
-	do	eval "eixf_pex=\${eixf_pea%%${eixf_pes}*}"
+	do	eval "eixf_pex=\${eixf_pea%%[\${${eixf_pes}}]*}"
 		if [ "${eixf_pex}" != "${eixf_pea}" ]
 		then	eixf_pec=${eixf_pea#"${eixf_pex}"}
 			eixf_pea=${eixf_pec#?}

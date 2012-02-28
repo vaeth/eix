@@ -5,6 +5,8 @@
 	- Remove support for obsolete old-style virtuals.
 	  This is a major change: Remove many search options, print-commands,
 	  many default variables, and changes the database format (even xml).
+	- scripts: Make PushEscaped work with more shells (fixes eix-layman).
+	  Note that this causes a change in the optional last argument.
 	- Remove OBSOLETE_MINUSASTERISK and RED_MINUSASTERISK
 	- Remove cache method cdb
 	- Remove --enable-obsolete-symlinks --enable-obsolete-reminder
