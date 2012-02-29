@@ -79,7 +79,7 @@ EixfStatusmode() {
 }
 
 Statusline() {
-	${eixf_statusmode} || return
+	${eixf_statusmode} || return 0
 	! ${eixf_softstatus} || printf '\033k%s: %s\033\\' "${0##*/}" "${*}"
 	printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
 }

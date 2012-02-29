@@ -79,7 +79,7 @@ then	Eecho "git tag -a release-${ver} -m ..."
 #svnroot="https://svn.gentooexperimental.org/${proj}"
 #svn copy "${svnroot}/trunk" "${svnroot}/tags/release-${ver}"
 	git tag -a "release-${ver}" \
-		-m "Tagging the ${ver} release of the ${proj} project" || \
+		-m "Tagging the ${ver} release" || \
 		KeyCheck "git tagging failed. Continue anyway" || exit 2
 fi
 
