@@ -295,7 +295,6 @@ class Scanner {
 			PKG_SLOTTED,
 			PKG_HAVECOLLIUSE,
 			PKG_COLLIUSE,
-			PKG_HAVEVERSIONUSE,
 
 			// Used only in version context:
 			VER_FIRST,
@@ -428,7 +427,6 @@ class Scanner {
 			prop_pkg("slotted", PKG_SLOTTED);
 			prop_pkg("havecolliuse", PKG_HAVECOLLIUSE);
 			prop_pkg("colliuse", PKG_COLLIUSE);
-			prop_pkg("haveversionuse", PKG_HAVEVERSIONUSE);
 			prop_ver("first", VER_FIRST);
 			prop_ver("last", VER_LAST);
 			prop_ver("slotfirst", VER_SLOTFIRST);
@@ -803,12 +801,6 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 			return one;
 		case Scanner::PKG_COLLIUSE:
 			return package->iuse.asString();
-		case Scanner::PKG_HAVEVERSIONUSE:
-#ifndef NOT_FULL_USE
-			if(package->versions_have_full_use)
-				return one;
-#endif
-			break;
 		case Scanner::VER_FIRST:
 			if(version_variables->first)
 				return one;

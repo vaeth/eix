@@ -198,7 +198,6 @@ String       Package name
 String       Description
 String       Homepage
 HashedString Licenses, e.g. MPL-1.1 NPL-1.1
-HashedWords  Useflags (all useflags of all versions of the package are added). This might "falsely" be the empty string if per-version IUSE flags are stored.
 Vector       Version_\s
 ============ =======
 
@@ -238,7 +237,7 @@ HashedWords  Full keywords string of the ebuild.
 Vector       VersionPart_\s
 HashedString Slot name. The slot name "0" is stored as "".
 Number       Index of the portage overlay (in the overlays block)
-HashedWords  Useflags of this version. This might "falsely" be empty if only per-package IUSE flags are stored.
+HashedWords  Useflags of this version.
 ============ ============================
 
 

@@ -5,6 +5,8 @@
 	- Remove --with-bzip2 (enabling /var/db/pkg/CAT/NAME/environment.bz2 if
 	  /var/db/pkg/CAT/NAME/repository is unavailable). This was not used in
 	  the ebuild from the portage tree anyway and simplifies internal logic
+	- Remove haveversionuse, NOT_FULL_USE, and simplify database
+	  format correspondingly.
 
 *eix-0.24.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

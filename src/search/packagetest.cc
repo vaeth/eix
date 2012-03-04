@@ -135,13 +135,12 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NONE);
 	if(field & (NAME | CATEGORY_NAME))
 		setNeeds(PackageReader::NAME);
-	if(field & IUSE)
-		setNeeds(PackageReader::COLL_IUSE);
 	if(field & (USE_ENABLED | USE_DISABLED | INSTALLED_SLOT))
 		setNeeds(PackageReader::NAME);
 	if(installed)
 		setNeeds(PackageReader::NAME);
-	if(dup_packages || dup_versions || slotted ||
+	if((field & IUSE) ||
+		dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete || binary ||
 		world || worldset ||
 		(from_overlay_inst_list != NULL) ||

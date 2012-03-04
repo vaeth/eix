@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-02-27 11:00:00 +0100 (Mon, 27 Feb 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-03-04 10:20:00 +0100 (Sun, 04 Mar 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1224,14 +1224,6 @@ expands to 1 if there are at least two slots resp. at least one nontrivial slot.
 The collected IUSE flags (i.e. their union) of all available versions
 of the package, separated by spaces.
 havecolliuse expands to 1 if colliuse is nonempty; this is faster than colliuse.
-.TP
-.B haveversionuse
-In order to save memory and/or disk space, eix can be compiled to not store
-B<IUSE> flags for every single version.
-If the current package is read from such a database or eix is compiled to not
-use this information, this test expands to the empty string, otherwise to 1.
-Even if this test is negative, you can use B<use:...> in the way described earlier;
-however, the result will be empty in this case.
 .TP
 .BR havebest ", " havebest*
 Expands to 1 if the package has a best stable/unstable version.

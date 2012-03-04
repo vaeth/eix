@@ -134,13 +134,6 @@ Package::collect_iuse(Version *version)
 
 	/// collect iuse
 	iuse.insert(version->iuse);
-
-#ifdef NOT_FULL_USE
-	// Clear iuse to save memory:
-	version->iuse.clear();
-#else
-	versions_have_full_use = true;
-#endif
 }
 
 /** Finishes addVersionStart() after the remaining data

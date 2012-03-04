@@ -146,11 +146,6 @@ class Package
 		bool is_world_sets_package() const
 		{ return local_collects.isWorldSets(); }
 
-#ifndef NOT_FULL_USE
-		/** Does at least one version have individual iuse data? */
-		bool versions_have_full_use;
-#endif
-
 		/// Preset with defaults
 		Package() :
 			saved_collects(Version::SAVEMASK_SIZE, MaskFlags::MASK_NONE)
@@ -397,9 +392,6 @@ class Package
 			have_duplicate_versions = DUP_NONE;
 			version_collects = COLLECT_DEFAULT;
 			local_collects.set(MaskFlags::MASK_NONE);
-#ifndef NOT_FULL_USE
-			versions_have_full_use = false;
-#endif
 		}
 };
 

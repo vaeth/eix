@@ -18,7 +18,6 @@ Available options are
   -4  Enable separate tools
   -p  Use pedantic warnings when modifying flags
   -P  Use pedantic warnings except -Wno-sign-conversion
-  -u  Define NOT_FULL_USE
   -s  With sqlite
   -S  Without sqlite
   -C  Avoid CCACHE
@@ -76,7 +75,6 @@ SetCcache() {
 quiet=false
 earlystop=false
 keepenv=false
-not_full_use=false
 pedantic=false
 separate_all=:
 use_chown=false
@@ -90,7 +88,7 @@ stdcxx=''
 debugging=false
 wnosign=false
 OPTIND=1
-while getopts 'q01234nepPusSbBrOQCXyYdc:j:hH?' opt
+while getopts 'q01234nepPsSrOQCXyYdc:j:hH?' opt
 do	case ${opt} in
 	q) quiet=:;;
 	0) separate_all=false;;
@@ -102,7 +100,6 @@ do	case ${opt} in
 	e) keepenv=:;;
 	p) pedantic=:;;
 	P) wnosign=:;;
-	u) not_full_use=:;;
 	s) configure_extra="${configure_extra} --with-sqlite";;
 	S) configure_extra="${configure_extra} --without-sqlite";;
 	r) use_chown=:;;
@@ -144,7 +141,6 @@ then	CFLAGS=`portageq envvar CFLAGS`
 	LDFLAGS=`portageq envvar LDFLAGS`
 	CPPFLAGS=`portageq envvar CPPFLAGS`
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
-	${not_full_use} && CXXFLAGS="${CXXFLAGS} -DNOT_FULL_USE"
 	[ -n "${stdcxx}" ] && CXXFLAGS="${CXXFLAGS} ${stdcxx}"
 	if ${pedantic} || ${wnosign}
 	then	configure_extra="${configure_extra} --enable-strong-warnings"

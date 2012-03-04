@@ -25,21 +25,6 @@
 
 class DBHeader;
 
-/* If NOT_FULL_USE is defined, then the iuse data will be handled per package
-   and not per version to save memory and disk space.
-   More precisely, if NOT_FULL_USE is defined then the version::iuse
-   entry will be empty most of the time:
-   The entry is cleared in Package::collect_iuse() which is called by
-   Package::addVersionFinalize() / Package::addVersion()
-   whenever a version is added to the package: Before clearing,
-   collect_iuse() adds the corresponding data to the package-wide data.
-   If on the other hand, NOT_FULL_USE is undefined, collect_iuse() will not
-   delete this data, and the database-output function will write an empty
-   string for the package-wide IUSE data, and the database-reading function
-   will get forced to read all package versions (using Package::addVersion()
-   and thus calculating the package-wide IUSE) before the package-wide
-   IUSE data is assumed to be known. */
-
 class IUse : public std::string {
 	public:
 		typedef unsigned char Flags;
@@ -139,8 +124,6 @@ class Version : public ExtendedVersion, public Keywords {
 
 		std::string m_accepted_keywords;
 
-		/** If NOT_FULL_USE is defined, this might "falsely" be empty
-		    to save memory. See the comments above NOT_FULL_USE. */
 		IUseSet iuse;
 
 		Version() :

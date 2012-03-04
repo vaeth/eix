@@ -224,11 +224,6 @@ io::write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr)
 	io::write_string(fp, pkg.desc);
 	io::write_string(fp, pkg.homepage);
 	io::write_hash_string(fp, hdr.license_hash, pkg.licenses);
-#ifdef NOT_FULL_USE
-	io::write_hash_words(fp, hdr.iuse_hash, pkg.coll_iuse);
-#else
-	io::write_hash_words(fp, hdr.iuse_hash, std::vector<std::string>());
-#endif
 
 	// write all version entries
 	io::write<io::Versize>(fp, pkg.size());
@@ -279,9 +274,6 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 		Category *ci(c->second);
 		for(Category::iterator p(ci->begin()); likely(p != ci->end()); ++p) {
 			hdr.license_hash.hash_string(p->licenses);
-#ifdef NOT_FULL_USE
-			hdr.iuse_hash.hash_words(p->coll_iuse);
-#endif
 			for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
 				hdr.iuse_hash.hash_words(v->iuse.asVector());

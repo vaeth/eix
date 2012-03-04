@@ -47,12 +47,7 @@ PackageReader::read(Attributes need)
 			if(unlikely(need == LICENSE))
 				break;
 		case LICENSE:
-			io::read_iuse(m_fp, header->iuse_hash, m_pkg->iuse);
-#ifdef NOT_FULL_USE
-			if(unlikely(need == COLL_IUSE))
-				break;
-		case COLL_IUSE:
-#endif
+			m_pkg->iuse.clear();
 			for(io::Versize i(io::read<io::Versize>(m_fp)); likely(i); --i)
 				m_pkg->addVersion(io::read_version(m_fp, *header));
 			if(likely(m_portagesettings != NULL)) {
@@ -64,7 +59,6 @@ PackageReader::read(Attributes need)
 			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
 		default:
-		//case COLL_IUSE:
 		//case ALL:
 			break;
 	}

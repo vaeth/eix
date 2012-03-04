@@ -996,7 +996,6 @@ AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 	"{versionlines}"
 		"{slotsorted}<availableversions:VSORTL:SSORTL>"
 		"{else}<availableversions:VSORTL>{}"
-		"{!haveversionuse}%{FORMAT_COLL_IUSE}{}"
 	"{else}"
 		"{slotsorted}<availableversions:VSORT:SSORT>"
 		"{else}<availableversions:VSORT>{}"
