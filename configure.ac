@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.24.0], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.24.1], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -500,43 +500,6 @@ AC_CHECK_HEADERS([climits limits.h],
 # If tr1/cstdint exists we need not check for stdint.h.
 AC_CHECK_HEADERS([tr1/cstdint cstdint stdint.h],
 	[break])
-
-# Use bzip2?
-AC_MSG_CHECKING([whether libbz2 should be used])
-AC_ARG_WITH([bzip2],
-	[AS_HELP_STRING([--with-bzip2],
-		[Use libbz2 (required for detecting installed overlays)])],
-	[AS_CASE(["${withval}"],
-		[no], [AS_VAR_SET([use_bzlib], [false])
-			MV_MSG_RESULT([no], [on request])],
-		[AS_VAR_SET([use_bzlib], [:])])],
-	[AS_VAR_SET([use_bzlib], [])])
-AS_VAR_IF([use_bzlib], [false],
-	[],
-	[AS_VAR_SET([BZLIB_LIBS], ["-lbz2"])
-	AS_VAR_COPY([my_oldlibs], [LIBS])
-	MV_APPEND([LIBS], [${BZLIB_LIBS}])
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <bzlib.h>
-		]], [[
-BZ2_bzopen("dummy", "rb");
-		]])],
-		[AS_VAR_IF([use_bzlib], [],
-			[MV_MSG_RESULT([yes], [autodetected])],
-			[MV_MSG_RESULT([yes], [on request])])
-		AS_VAR_SET([use_bzlib], [:])],
-		[MV_MSG_RESULT([no], [autodetected])
-		AS_VAR_IF([use_bzlib], [],
-			[],
-			[AC_MSG_ERROR([bzip2 requested but libbz2 is unusable])])
-		AS_VAR_SET([use_bzlib], [false])
-		AS_VAR_SET([BZLIB_LIBS], [])])
-	AS_VAR_COPY([LIBS], [my_oldlibs])])
-AS_IF([${use_bzlib}],
-	[AC_DEFINE([USE_BZLIB],
-		[1],
-		[Define to 1 if bzlib can be used])])
-AC_SUBST(BZLIB_LIBS)
 
 # Use extra-doc?
 AC_ARG_WITH([extra-doc],

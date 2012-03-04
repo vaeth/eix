@@ -14,7 +14,6 @@
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
-#include <eixTk/unused.h>
 #include <eixTk/utils.h>
 #include <portage/basicversion.h>
 #include <portage/extendedversion.h>
@@ -31,10 +30,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
-
-#ifdef USE_BZLIB
-#include <bzlib.h>
-#endif
 
 using namespace std;
 
@@ -91,12 +86,12 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 }
 
 short
-VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header, const char *portdir)
+VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header)
 {
 	InstVersion *inst(NULL);
 	if(!isInstalled(p, v, &inst))
 		return 0;
-	if(!readOverlay(p, *inst, header, portdir))
+	if(!readOverlay(p, *inst, header))
 		return -1;
 	if((inst->overlay_key) != (v->overlay_key))
 		return 0;
@@ -115,14 +110,13 @@ VarDbPkg::numInstalled(const Package &p)
 }
 
 bool
-VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
+VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header) const
 {
 	if(likely(v.know_overlay))
 		return !v.overlay_failed;
 
 	v.know_overlay = true;
 	v.overlay_failed = false;
-	v.overlay_keytext.clear();
 
 	// Do not really check if the package is only at one overlay.
 	if(check_installed_overlays == 0) {
@@ -143,20 +137,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header, 
 	}
 	else if(header.find_overlay(&v.overlay_key, v.reponame.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
 		return true;
-
-	string opath(readOverlayPath(&p, &v));
-	if(opath.empty()) {
-		v.overlay_keytext = v.reponame.empty();
-		v.overlay_failed = true;
-		return false;
-	}
-	else if(header.find_overlay(&v.overlay_key, opath.c_str(), portdir, 0, DBHeader::OVTEST_ALLPATH))
-		return true;
 	v.overlay_failed = true;
-	if(v.reponame.empty())
-		v.overlay_keytext = opath;
-	else
-		v.overlay_keytext = string("\"") + v.reponame + "\" "+ opath;
 	return false;
 }
 
@@ -173,100 +154,6 @@ VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 		return emptystring;
 	return lines[0];
 }
-
-#ifdef USE_BZLIB
-string
-VarDbPkg::readOverlayPath(const Package *p, const BasicVersion *v) const
-{
-	BZFILE *fh(BZ2_bzopen(
-		(m_directory + p->category + "/" + p->name + "-" + v->getFull() + "/environment.bz2").c_str(),
-		"rb"));
-	if(fh == NULL)
-		return emptystring;
-	typedef int BufInd;
-	const BufInd bufsize(256);
-	const BufInd strsize(7);
-	char buffer[bufsize + 1];
-	BufInd bufend(BZ2_bzread(fh, buffer, bufsize));
-	if(bufend < strsize) {
-		BZ2_bzclose(fh);
-		return emptystring;
-	}
-
-	// find EBUILD=... (cycling buffer if necessary)
-	BufInd i(0);
-	bool in_newline(true);
-	for(;;) {
-		if(likely(i + strsize < bufend)) {
-			if(in_newline &&
-				(strncmp(buffer + i, "EBUILD=", strsize) == 0))
-				break;
-		}
-		else {
-			BufInd j(bufend - i);
-			if(j)
-				strncpy(buffer, buffer + i, j);
-			bufend = BZ2_bzread(fh, buffer + j, bufsize - j);
-			if(bufend > 0)
-				bufend += j;
-			if(bufend < strsize) {
-				BZ2_bzclose(fh);
-				return emptystring;
-			}
-			i = 0;
-			continue;
-		}
-		in_newline = false;
-		while(likely(i < bufend)) {
-			if(unlikely(buffer[i++] == '\n')) {
-				in_newline = true;
-				break;
-			}
-		}
-	}
-	i += strsize;
-
-	// Store EBUILD=  content in path (cycling buffer if necessary)
-	string path;
-	bool done(false);
-	for(;;) {
-		char *ptr(buffer + i);
-		for(; i < bufend; ++i) {
-			if(buffer[i] == '\n') {
-				done = true;
-				break;
-			}
-		}
-		buffer[i] = '\0';
-		path.append(ptr);
-		if(done)
-			break;
-		i = 0;
-		bufend = BZ2_bzread(fh, buffer, bufsize);
-		if(bufend <=0)
-			break;
-	}
-	// Reading has finished successfully
-	BZ2_bzclose(fh);
-
-	// Chop /*/*/*
-	string::size_type l(path.size() + 1);
-	for(int c(0); likely(c < 3); c++) {
-		l = path.rfind('/', l - 1);
-		if(l == string::npos)
-			return emptystring;
-	}
-	path.erase(l);
-	return path;
-}
-#else
-string
-VarDbPkg::readOverlayPath(const Package *p ATTRIBUTE_UNUSED, const BasicVersion *v ATTRIBUTE_UNUSED) const
-{
-	UNUSED(p); UNUSED(v);
-	return emptystring;
-}
-#endif
 
 bool
 VarDbPkg::readSlot(const Package &p, InstVersion &v) const
@@ -353,7 +240,7 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 }
 
 bool
-VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const
+VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& header) const
 {
 	if(likely(v.know_restricted))
 		return true;
@@ -367,7 +254,7 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 			if(unlikely(it->slotname != v.slotname))
 				continue;
 		}
-		if(readOverlay(p, v, header, portdir)) {
+		if(readOverlay(p, v, header)) {
 			if(unlikely(it->overlay_key != v.overlay_key))
 				continue;
 		}

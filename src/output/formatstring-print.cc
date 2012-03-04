@@ -862,7 +862,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				InstVersion *i(version_variables->instver());
 				if(unlikely((unlikely(vardb == NULL)) ||
 					(unlikely(header == NULL)) ||
-					(unlikely(!(vardb->readOverlay(*package, *i, *header, (*portagesettings)["PORTDIR"].c_str())))))) {
+					(unlikely(!(vardb->readOverlay(*package, *i, *header)))))) {
 					if(a || no_color)
 						return "[?]";
 					return color_overlaykey + "[?]" +
@@ -910,8 +910,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				return one;
 			if(unlikely((likely(vardb != NULL)) && (likely(header != NULL)) &&
 				(unlikely(vardb->isInstalledVersion(*package,
-					version_variables->version(),
-					*header, (*portagesettings)["PORTDIR"].c_str()))))) {
+					version_variables->version(), *header))))) {
 				return one;
 			}
 			break;
@@ -957,7 +956,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				if(version_variables->isinst) {
 					if(!version_variables->know_restrict) {
 						if(vardb && header &&
-							(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
+							(vardb->readRestricted(*package, *(version_variables->instver()), *header)))
 							version_variables->know_restrict = true;
 						else
 							break;
@@ -1025,7 +1024,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				if(version_variables->isinst) {
 					if(!version_variables->know_restrict) {
 						if(vardb && header &&
-							(vardb->readRestricted(*package, *(version_variables->instver()), *header, (*portagesettings)["PORTDIR"].c_str())))
+							(vardb->readRestricted(*package, *(version_variables->instver()), *header)))
 							version_variables->know_restrict = true;
 						else
 							break;

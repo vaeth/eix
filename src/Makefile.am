@@ -170,8 +170,7 @@ $(LIBINTL)
 
 # Common to all binaries which are not tools
 common_ldadd = \
-$(common_tools_ldadd) \
-$(BZLIB_LIBS)
+$(common_tools_ldadd)
 
 common_src = \
 main/main.h \

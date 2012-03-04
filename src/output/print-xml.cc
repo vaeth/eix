@@ -143,7 +143,7 @@ PrintXml::package(Package *pkg)
 			// Package is a 'list' of Versions with added members ^^
 			for(Package::const_iterator ver(pkg->begin());
 				likely(ver != pkg->end()); ++ver) {
-				if(var_db_pkg->isInstalledVersion(*pkg, *ver, *hdr, portdir.c_str()) > 0) {
+				if(var_db_pkg->isInstalledVersion(*pkg, *ver, *hdr) > 0) {
 					know_inst.insert(**ver);
 					have_inst.insert(*ver);
 				}

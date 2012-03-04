@@ -21,8 +21,6 @@ Available options are
   -u  Define NOT_FULL_USE
   -s  With sqlite
   -S  Without sqlite
-  -b  With bzlib
-  -B  Without bzlib
   -C  Avoid CCACHE
   -X  Clear CCACHE
   -y  Use -std=c++0x
@@ -107,8 +105,6 @@ do	case ${opt} in
 	u) not_full_use=:;;
 	s) configure_extra="${configure_extra} --with-sqlite";;
 	S) configure_extra="${configure_extra} --without-sqlite";;
-	b) configure_extra="${configure_extra} --with-bzip2";;
-	B) configure_extra="${configure_extra} --without-bzip2";;
 	r) use_chown=:;;
 	O) optimization=:;;
 	Q) quickcheck=false;;

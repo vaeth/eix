@@ -211,9 +211,6 @@
 /* Target system */
 #undef TARGET
 
-/* Define to 1 if bzlib can be used */
-#undef USE_BZLIB
-
 /* Enable extensions on AIX 3, Interix.  */
 #ifndef _ALL_SOURCE
 # undef _ALL_SOURCE

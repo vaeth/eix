@@ -79,7 +79,6 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	algorithm = NULL;
 	from_overlay_inst_list = NULL;
 	from_foreign_overlay_inst_list = NULL;
-	portdir = (*portagesettings)["PORTDIR"].c_str();
 
 	field    = NONE;
 	need     = PackageReader::NONE;
@@ -509,7 +508,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 			{
 				if(test_unrestricted)
 					return false;
-				short is_installed(vardbpkg->isInstalledVersion(p, *pi, *header, portdir));
+				short is_installed(vardbpkg->isInstalledVersion(p, *pi, *header));
 				// If in doubt about the overlay only consider as installed
 				// if the current version was not treated yet, i.e. (since we use reverse_iterator)
 				// if it is the highest version (and so usually from the last overlay)
@@ -534,7 +533,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 				// in contrast to the above loop, we now in doubt
 				// do not distinguish overlays.
 				if(test_uninstalled ==
-					!(vardbpkg->isInstalledVersion(p, *pi, *header, portdir)))
+					!(vardbpkg->isInstalledVersion(p, *pi, *header)))
 					return true;
 			}
 		}
@@ -602,7 +601,7 @@ PackageTest::instabilitytest(const Package *p, TestStability what) const
 			have |= (STABLE_FULL | STABLE_TESTING);
 		if((what & have) != what)
 			continue;
-		if(vardbpkg->isInstalledVersion(*p, *it, *header, portdir))
+		if(vardbpkg->isInstalledVersion(*p, *it, *header))
 			return true;
 	}
 	return false;
@@ -739,7 +738,7 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 		for(vector<InstVersion>::iterator it(installed_versions->begin());
 			likely(it != installed_versions->end()); ++it) {
-			if(vardbpkg->readOverlay(*p, *it, *header, portdir)) {
+			if(vardbpkg->readOverlay(*p, *it, *header)) {
 				if(from_overlay_inst_list == NULL)
 					continue;
 				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end())
@@ -747,21 +746,6 @@ PackageTest::match(PackageReader *pkg) const
 				have = true;
 				break;
 			}
-			if((it->overlay_keytext).empty())
-				continue;
-			if(from_foreign_overlay_inst_list == NULL)
-				continue;
-			for(vector<string>::iterator foreign(from_foreign_overlay_inst_list->begin());
-				foreign != from_foreign_overlay_inst_list->end(); ++foreign) {
-				if(unlikely(foreign->empty() ||
-					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, false) ||
-					same_filenames(foreign->c_str(), (it->overlay_keytext).c_str(), true, true))) {
-					have = true;
-					break;
-				}
-			}
-			if(have)
-				break;
 		}
 		if(!have)
 			return false;
@@ -803,7 +787,7 @@ PackageTest::match(PackageReader *pkg) const
 				return false;
 			for(vector<InstVersion>::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
-				vardbpkg->readRestricted(*p, *it, *header, portdir);
+				vardbpkg->readRestricted(*p, *it, *header);
 				if(unlikely((((it->restrictFlags) & restrictions) == restrictions) &&
 					(((it->propertiesFlags) & properties) == properties))) {
 					found = true;
@@ -955,7 +939,7 @@ PackageTest::match(PackageReader *pkg) const
 						continue;
 				}
 				if(test_ins & INS_OVERLAY) {
-					if(!vardbpkg->readOverlay(*p, *current, *header, portdir))
+					if(!vardbpkg->readOverlay(*p, *current, *header))
 						continue;
 					if(current->overlay_key != version_it->overlay_key)
 						continue;

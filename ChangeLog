@@ -1,5 +1,11 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.24.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Remove --with-bzip2 (enabling /var/db/pkg/CAT/NAME/environment.bz2 if
+	  /var/db/pkg/CAT/NAME/repository is unavailable). This was not used in
+	  the ebuild from the portage tree anyway and simplifies internal logic
+
 *eix-0.24.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Remove support for obsolete old-style virtuals.

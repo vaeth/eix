@@ -268,7 +268,6 @@ class PackageTest {
 
 		std::set<ExtendedVersion::Overlay> *from_overlay_inst_list;
 		std::vector<std::string> *from_foreign_overlay_inst_list;
-		const char *portdir;
 
 		PortageSettings *portagesettings;
 		/** Lookup stuff about user flags here. */

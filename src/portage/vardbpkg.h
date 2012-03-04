@@ -64,10 +64,10 @@ class VarDbPkg {
 
 		bool readSlot(const Package &p, InstVersion &v) const;
 		bool readUse(const Package &p, InstVersion &v) const;
-		bool readRestricted(const Package &p, InstVersion &v, const DBHeader& header, const char *portdir) const;
+		bool readRestricted(const Package &p, InstVersion &v, const DBHeader& header) const;
 		void readInstDate(const Package &p, InstVersion &v) const;
 
-		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header, const char *portdir) const;
+		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header) const;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;
 		std::string readOverlayPath(const Package *p, const BasicVersion *v) const;
 		short check_installed_overlays;
@@ -91,7 +91,7 @@ class VarDbPkg {
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		short isInstalledVersion(const Package &p, const Version *v, const DBHeader& header, const char *portdir);
+		short isInstalledVersion(const Package &p, const Version *v, const DBHeader& header);
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */
