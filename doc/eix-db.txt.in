@@ -162,6 +162,10 @@ Hash   Hash for "Keywords"
 Hash   Hash for "Useflags"
 Hash   Hash for "Slot"
 Vector names of world sets
+Number 0 or 1; 1 if dependencies are stored.
+       The rest occurs only if dependencies are stored
+Number Length of the subsequent hash in bytes
+Hash   Hash for "Depend"
 ====== =======
 
 The names of world sets are the names (without leading @) of the world sets
@@ -238,6 +242,13 @@ Vector       VersionPart_\s
 HashedString Slot name. The slot name "0" is stored as "".
 Number       Index of the portage overlay (in the overlays block)
 HashedWords  Useflags of this version.
+
+             The rest occurs only if dependencies are stored
+Number       Length of the next three entries in byes.
+HashedWords  DEPEND of this version.
+HashedWords  RDEPEND of this version; the quotation symbol means
+             that RDEPEND is the same as DEPEND (and nonempty).
+HashedWords  PDEPEND of this version.
 ============ ============================
 
 

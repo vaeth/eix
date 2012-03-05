@@ -18,6 +18,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 #include <portage/basicversion.h>
+#include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/overlay.h>
@@ -157,6 +158,10 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 
 	io::read_iuse(fp, hdr.iuse_hash, v->iuse);
 
+	if(hdr.use_depend) {
+		read_depend(fp, v->depend, hdr);
+	}
+
 	//v->save_maskflags(Version::SAVEMASK_FILE);// This is done in package_reader
 	return v;
 }
@@ -164,7 +169,7 @@ io::read_version(FILE *fp, const DBHeader &hdr)
 static void
 io::write_Part(FILE *fp, const BasicPart &n)
 {
-	const string &content = n.partcontent;
+	const string &content(n.partcontent);
 	io::write<string::size_type>(fp, content.size()*BasicPart::max_type + string::size_type(n.parttype));
 	if(!content.empty()) {
 		if(fp != NULL) {
@@ -173,8 +178,9 @@ io::write_Part(FILE *fp, const BasicPart &n)
 				throw SysError(_("error while writing to database"));
 			}
 		}
-		else
+		else {
 			counter += content.size();
+		}
 	}
 }
 
@@ -200,6 +206,42 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	io::write_hash_string(fp, hdr.slot_hash, v->slotname);
 	io::write<ExtendedVersion::Overlay>(fp, v->overlay_key);
 	io::write_hash_words(fp, hdr.iuse_hash, v->iuse.asVector());
+	if(hdr.use_depend) {
+		io::OffsetType counter_save(counter);
+		counter = 0;
+		io::write_depend(NULL, v->depend, hdr);
+		io::OffsetType counter_diff(counter);
+		counter = counter_save;
+		io::write<io::OffsetType>(fp, counter_diff);
+		io::write_depend(fp, v->depend, hdr);
+	}
+}
+
+void
+io::read_depend(FILE *fp, Depend &dep, const DBHeader &hdr)
+{
+	string::size_type len(io::read<string::size_type>(fp));
+	if(Depend::use_depend) {
+		io::read_hash_words(dep.m_depend, fp, hdr.depend_hash);
+		io::read_hash_words(dep.m_rdepend, fp, hdr.depend_hash);
+		io::read_hash_words(dep.m_pdepend, fp, hdr.depend_hash);
+	}
+	else {
+		dep.clear();
+#ifdef HAVE_FSEEKO
+		fseeko(fp, len, SEEK_CUR);
+#else
+		fseek(fp, len, SEEK_CUR);
+#endif
+	}
+}
+
+void
+io::write_depend(FILE *fp, const Depend &dep, const DBHeader &hdr)
+{
+	io::write_hash_words(fp, hdr.depend_hash, dep.m_depend);
+	io::write_hash_words(fp, hdr.depend_hash, dep.m_rdepend);
+	io::write_hash_words(fp, hdr.depend_hash, dep.m_pdepend);
 }
 
 io::Treesize
@@ -236,9 +278,12 @@ io::write_package_pure(FILE *fp, const Package &pkg, const DBHeader &hdr)
 void
 io::write_package(FILE *fp, const Package &pkg, const DBHeader &hdr)
 {
+	io::OffsetType counter_save(counter);
 	counter = 0;
 	write_package_pure(NULL, pkg, hdr);
-	io::write<io::OffsetType>(fp, counter);
+	io::OffsetType counter_diff(counter);
+	counter = counter_save;
+	io::write<io::OffsetType>(fp, counter_diff);
 	write_package_pure(fp, pkg, hdr);
 }
 
@@ -270,6 +315,11 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 	hdr.keywords_hash.init(true);
 	hdr.slot_hash.init(true);
 	hdr.iuse_hash.init(true);
+	bool use_dep(Depend::use_depend);
+	hdr.use_depend = use_dep;
+	if(use_dep) {
+		hdr.depend_hash.init(true);
+	}
 	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
 		Category *ci(c->second);
 		for(Category::iterator p(ci->begin()); likely(p != ci->end()); ++p) {
@@ -278,6 +328,12 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
 				hdr.iuse_hash.hash_words(v->iuse.asVector());
 				hdr.slot_hash.hash_string(v->slotname);
+				if(use_dep) {
+					const Depend &dep(v->depend);
+					hdr.depend_hash.hash_words(dep.m_depend);
+					hdr.depend_hash.hash_words(dep.m_rdepend);
+					hdr.depend_hash.hash_words(dep.m_pdepend);
+				}
 			}
 		}
 	}
@@ -285,6 +341,9 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 	hdr.keywords_hash.finalize();
 	hdr.slot_hash.finalize();
 	hdr.iuse_hash.finalize();
+	if(use_dep) {
+		hdr.depend_hash.finalize();
+	}
 }
 
 void
@@ -295,7 +354,7 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 
 	io::write<ExtendedVersion::Overlay>(fp, hdr.countOverlays());
 	for(ExtendedVersion::Overlay i(0); likely(i != hdr.countOverlays()); ++i) {
-		const OverlayIdent& overlay = hdr.getOverlay(i);
+		const OverlayIdent& overlay(hdr.getOverlay(i));
 		io::write_string(fp, overlay.path);
 		io::write_string(fp, overlay.label);
 	}
@@ -306,8 +365,23 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 
 	io::write<vector<string>::size_type>(fp, hdr.world_sets.size());
 	for(vector<string>::const_iterator it(hdr.world_sets.begin());
-		likely(it != hdr.world_sets.end()); ++it)
+		likely(it != hdr.world_sets.end()); ++it) {
 		io::write_string(fp, *it);
+	}
+
+	if(hdr.use_depend) {
+		io::write<io::UNumber>(fp, 1);
+		io::OffsetType counter_save(counter);
+		counter = 0;
+		io::write_hash(NULL, hdr.depend_hash);
+		io::OffsetType counter_diff(counter);
+		counter = counter_save;
+		io::write<io::OffsetType>(fp, counter_diff);
+		io::write_hash(fp, hdr.depend_hash);
+	}
+	else {
+		io::write<io::UNumber>(fp, 0);
+	}
 }
 
 bool
@@ -333,6 +407,22 @@ io::read_header(FILE *fp, DBHeader &hdr)
 	for(vector<string>::size_type sets_sz(io::read<vector<string>::size_type>(fp));
 		likely(sets_sz != 0); --sets_sz)
 		hdr.world_sets.push_back(io::read_string(fp));
+
+	bool use_dep(io::read<io::UNumber>(fp) != 0);
+	hdr.use_depend = use_dep;
+	if(use_dep) {
+		io::OffsetType len(io::read<io::OffsetType>(fp));
+		if(Depend::use_depend) {
+			io::read_hash(fp, hdr.depend_hash);
+		}
+		else if(len != 0) {
+#ifdef HAVE_FSEEKO
+			fseeko(fp, len, SEEK_CUR);
+#else
+			fseek(fp, len, SEEK_CUR);
+#endif
+		}
+	}
 	return true;
 }
 

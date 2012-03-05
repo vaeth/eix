@@ -16,6 +16,7 @@ Available options are
   -0  Do not pass --enable-separate-* to ./configure
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
   -4  Enable separate tools
+  -d  Do not use dep-default
   -p  Use pedantic warnings when modifying flags
   -P  Use pedantic warnings except -Wno-sign-conversion
   -s  With sqlite
@@ -73,6 +74,7 @@ SetCcache() {
 }
 
 quiet=false
+dep_default=:
 earlystop=false
 keepenv=false
 pedantic=false
@@ -88,7 +90,7 @@ stdcxx=''
 debugging=false
 wnosign=false
 OPTIND=1
-while getopts 'q01234nepPsSrOQCXyYdc:j:hH?' opt
+while getopts 'q01234dnepPsSrOQCXyYdc:j:hH?' opt
 do	case ${opt} in
 	q) quiet=:;;
 	0) separate_all=false;;
@@ -96,6 +98,7 @@ do	case ${opt} in
 	2) configure_extra="${configure_extra} --enable-separate-update";;
 	3) configure_extra="${configure_extra} --enable-separate-binaries";;
 	4) configure_extra="${configure_extra} --enable-separate-tools";;
+	d) dep_default=false;;
 	n) earlystop=:;;
 	e) keepenv=:;;
 	p) pedantic=:;;
@@ -121,6 +124,7 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 fi
 
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
+${dep_default} && configure_extra="${configure_extra} --with-dep-default"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
 ${optimization} && configure_extra="${configure_extra} --enable-strong-optimization --enable-security"
 ${debugging} && configure_extra="${configure_extra} --enable-debugging"

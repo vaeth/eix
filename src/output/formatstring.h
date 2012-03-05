@@ -225,7 +225,6 @@ class PrintFormat {
 		Node *parse_variable(const std::string &varname) const throw(ExBasic);
 
 		std::string get_inst_use(const Package &package, InstVersion &i) const;
-		std::string get_version_keywords(Package *package, const Version *version) const;
 		void get_installed(Package *package, Node *root, bool mark) const;
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const;
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const;
@@ -235,16 +234,13 @@ class PrintFormat {
 			style_version_lines, /**< Shall we show versions linewise? */
 			slot_sorted,         /**< Print sorted by slots */
 			alpha_use,           /**< Print use in alphabetical order (not by set/unset) */
-			magic_newline,       /**< Print newline automatically if output was nonempty */
-			print_effective;     /**< Print effective keywords */
+			magic_newline;       /**< Print newline automatically if output was nonempty */
 
 		LocalMode recommend_mode;
 
 		std::string
 			color_overlaykey,  /**< Color for the overlay key */
 			color_virtualkey,  /**< Color for the virtual key */
-			before_keywords, after_keywords,
-			before_ekeywords, after_ekeywords,
 			before_set_use, after_set_use,
 			before_unset_use, after_unset_use;
 

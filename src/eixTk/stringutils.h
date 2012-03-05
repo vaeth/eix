@@ -91,44 +91,45 @@ optional_append(std::string &s, char symbol)
 
 /** Trim characters on left side of string.
  * @param str String that should be trimmed
- * @param delims characters that should me removed
- * @return trimmed string */
+ * @param delims characters that should me removed */
 inline void
-ltrim(std::string *str, const char *delims = spaces)
+ltrim(std::string &str, const char *delims = spaces)
 {
 	// trim leading whitespace
-	std::string::size_type notwhite(str->find_first_not_of(delims));
+	std::string::size_type notwhite(str.find_first_not_of(delims));
 	if(notwhite != std::string::npos)
-		str->erase(0, notwhite);
+		str.erase(0, notwhite);
 	else
-		str->clear();
+		str.clear();
 }
 
 /** Trim characters on right side of string.
  * @param str String that should be trimmed
- * @param delims characters that should me removed
- * @return trimmed string */
+ * @param delims characters that should me removed */
 inline void
-rtrim(std::string *str, const char *delims = spaces)
+rtrim(std::string &str, const char *delims = spaces)
 {
 	// trim trailing whitespace
-	std::string::size_type notwhite(str->find_last_not_of(delims));
+	std::string::size_type notwhite(str.find_last_not_of(delims));
 	if(notwhite != std::string::npos)
-		str->erase(notwhite+1);
+		str.erase(notwhite+1);
 	else
-		str->clear();
+		str.clear();
 }
 
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
+ * @param delims characters that should me removed */
+void
+trim(std::string &str, const char *delims = spaces);
+
+/** Replaces all characters of delims by c (counting several delims as one).
+ * delims on the beginning of end of the strig are removed.
+ * @param str String that should be trimmed
  * @param delims characters that should me removed
- * @return trimmed string */
-inline void
-trim(std::string *str, const char *delims = spaces)
-{
-	ltrim(str, delims);
-	rtrim(str, delims);
-}
+ * @param c character that should be inserted */
+void
+trimall(std::string &str, const char *delims = spaces, char c = ' ');
 
 /** return the character corresponding to an escaped symbol.
     For instance, n -> \n, \ -> \, \0 -> \ */

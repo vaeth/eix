@@ -12,6 +12,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <portage/depend.h>
 #include <portage/package.h>
 
 #include <fstream>
@@ -39,14 +40,22 @@ skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::Error
 
 /** Read the keywords and slot from a flat cache file. */
 void
-flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, BasicCache::ErrorCallback error_callback)
+flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, Depend &dep, BasicCache::ErrorCallback error_callback)
 {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
 		error_callback(eix::format(_("Can't open %s: %s"))
 			% filename % strerror(errno));
 	}
-	skip_lines(2, is, filename, error_callback);
+	string depend, rdepend, pdepend;
+	bool use_dep(Depend::use_depend);
+	if(use_dep) {
+		getline(is, depend);
+		getline(is, rdepend);
+	}
+	else {
+		skip_lines(2, is, filename, error_callback);
+	}
 	getline(is, slotname);
 	skip_lines(1, is, filename, error_callback);
 	getline(is, restr);
@@ -54,7 +63,15 @@ flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, s
 	getline(is, keywords);
 	skip_lines(1, is, filename, error_callback);
 	getline(is, iuse);
-	skip_lines(4, is, filename, error_callback);
+	if(use_dep) {
+		skip_lines(1, is, filename, error_callback);
+		getline(is, pdepend);
+		dep.set(depend, rdepend, pdepend, false);
+		skip_lines(2, is, filename, error_callback);
+	}
+	else {
+		skip_lines(4, is, filename, error_callback);
+	}
 	getline(is, props);
 	is.close();
 }

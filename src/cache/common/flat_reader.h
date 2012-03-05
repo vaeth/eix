@@ -14,9 +14,10 @@
 
 #include <string>
 
+class Depend;
 class Package;
 
-void flat_get_keywords_slot_iuse_restrict(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, BasicCache::ErrorCallback error_callback);
+void flat_get_keywords_slot_iuse_restrict(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, Depend &dep, BasicCache::ErrorCallback error_callback);
 void flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
 #endif /* EIX__FLATREADER_H__ */

@@ -11,6 +11,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
+#include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/instversion.h>
 #include <portage/keywords.h>
@@ -384,6 +385,18 @@ PrintXml::package(Package *pkg)
 				cout << "\t\t\t\t<keywords>" << escape_string(full_kw) << "</keywords>\n";
 			if(print_effective)
 				cout << "\t\t\t\t<effective_keywords>" << escape_string(eff_kw) << "</effective_keywords>\n";
+		}
+
+		if(Depend::use_depend) {
+			string s(ver->depend.get_depend());
+			if(!s.empty())
+				cout << "\t\t\t\t<depend>" << escape_string(s) << "</depend>\n";
+			s = ver->depend.get_rdepend();
+			if(!s.empty())
+				cout << "\t\t\t\t<rdepend>" << escape_string(s) << "</rdepend>\n";
+			s = ver->depend.get_pdepend();
+			if(!s.empty())
+				cout << "\t\t\t\t<pdepend>" << escape_string(s) << "</pdepend>\n";
 		}
 		cout << "\t\t\t</version>\n";
 	}

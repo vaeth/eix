@@ -60,6 +60,39 @@ strndup(const char *s, size_t n)
 }
 #endif /* HAVE_STRNDUP */
 
+/** Trim characters on left and right side of string.
+ * @param str String that should be trimmed
+ * @param delims characters that should me removed */
+void
+trim(std::string &str, const char *delims)
+{
+	ltrim(str, delims);
+	rtrim(str, delims);
+}
+
+/** Trim characters on left and right side of string.
+ * @param str String that should be trimmed
+ * @param delims characters that should me removed */
+void
+trimall(std::string &str, const char *delims, char c)
+{
+	string::size_type pos(0);
+	while(unlikely((pos = str.find_first_of(delims, pos)) != string::npos)) {
+		string::size_type end(str.find_first_not_of(spaces, pos + 1));
+		if(end == string::npos) {
+			str.erase(pos);
+			return;
+		}
+		if(pos != 0) {
+			str[pos] = c;
+			if(++pos == end) {
+				continue;
+			}
+		}
+		str.erase(pos, end - pos);
+	}
+}
+
 const char *
 ExplodeAtom::get_start_of_version(const char *str)
 {

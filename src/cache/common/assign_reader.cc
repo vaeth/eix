@@ -13,6 +13,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <portage/depend.h>
 #include <portage/package.h>
 
 #include <fstream>
@@ -66,7 +67,8 @@ assign_get_md5sum(const string &filename)
 
 /** Read stability and other data from an "assign type" cache file. */
 void
-assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, BasicCache::ErrorCallback error_callback)
+assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props,
+	Depend &dep, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULL)) {
@@ -79,6 +81,9 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 	iuse     = (*cf)["IUSE"];
 	restr    = (*cf)["RESTRICT"];
 	props    = (*cf)["PROPERTIES"];
+	if(Depend::use_depend) {
+		dep.set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], false);
+	}
 }
 
 /** Read an "assign type" cache file. */

@@ -193,11 +193,6 @@ PrintFormat::setupResources(EixRc &rc)
 	color_overlaykey = rc["COLOR_OVERLAYKEY"];
 	color_virtualkey = rc["COLOR_VIRTUALKEY"];
 
-	before_keywords  = rc["FORMAT_BEFORE_KEYWORDS"];
-	after_keywords   = rc["FORMAT_AFTER_KEYWORDS"];
-	print_effective  = rc.getBool("PRINT_EFFECTIVE_KEYWORDS");
-	before_ekeywords = rc["FORMAT_BEFORE_EFFECTIVE_KEYWORDS"];
-	after_ekeywords  = rc["FORMAT_AFTER_EFFECTIVE_KEYWORDS"];
 	alpha_use        = rc.getBool("SORT_INST_USE_ALPHA");
 	before_set_use   = rc["FORMAT_BEFORE_SET_USE"];
 	after_set_use    = rc["FORMAT_AFTER_SET_USE"];
@@ -215,10 +210,6 @@ PrintFormat::setupColors()
 		color_overlaykey = AnsiColor(color_overlaykey).asString();
 		color_virtualkey = AnsiColor(color_virtualkey).asString();
 	}
-	before_keywords    = parse_colors(before_keywords, use_color);
-	after_keywords     = parse_colors(after_keywords, use_color);
-	before_ekeywords   = parse_colors(before_ekeywords, use_color);
-	after_ekeywords    = parse_colors(after_ekeywords, use_color);
 	before_set_use     = parse_colors(before_set_use, use_color);
 	after_set_use      = parse_colors(after_set_use, use_color);
 	before_unset_use   = parse_colors(before_unset_use, use_color);

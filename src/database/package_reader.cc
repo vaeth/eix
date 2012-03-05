@@ -47,7 +47,6 @@ PackageReader::read(Attributes need)
 			if(unlikely(need == LICENSE))
 				break;
 		case LICENSE:
-			m_pkg->iuse.clear();
 			for(io::Versize i(io::read<io::Versize>(m_fp)); likely(i); --i)
 				m_pkg->addVersion(io::read_version(m_fp, *header));
 			if(likely(m_portagesettings != NULL)) {

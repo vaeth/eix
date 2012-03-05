@@ -53,7 +53,11 @@ class PackageTest {
 			USE_DISABLED  =0x0100, /**< Search in disabled useflags of installed packages */
 			SLOT          =0x0200, /**< Search in slots */
 			INSTALLED_SLOT=0x0400, /**< Search in installed slots */
-			SET           =0x0800; /**< Search in sets */
+			SET           =0x0800, /**< Search in sets */
+			DEPEND        =0x1000, /**< Search in DEPEND */
+			RDEPEND       =0x2000, /**< Search in RDEPEND */
+			PDEPEND       =0x4000, /**< Search in PDEPEND */
+			DEPS          =(DEPEND|RDEPEND|PDEPEND);
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,

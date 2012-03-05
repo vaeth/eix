@@ -119,12 +119,12 @@
 		</xsd:documentation>
 	</xsd:annotation>
 	<xsd:sequence>
-		<xsd:element name="mask" minOccurs="0" maxOccurs="1">
+		<xsd:element name="mask" minOccurs="0" maxOccurs="unbounded">
 			<xsd:complexType>
 				<xsd:attribute name="type" type="MaskType" use="required" />
 			</xsd:complexType>
 		</xsd:element>
-		<xsd:element name="unmask" minOccurs="0" maxOccurs="1">
+		<xsd:element name="unmask" minOccurs="0" maxOccurs="unbounded">
 			<xsd:annotation>
 				<xsd:documentation xml:lang="en">
 					This can occur only if the mask tag has occurred and
@@ -169,11 +169,32 @@
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:element>
-		<xsd:element name="normalized_keywords" type="StringList" minOccurs="0" maxOccurs="unbounded">
+		<xsd:element name="effective_keywords" type="StringList" minOccurs="0" maxOccurs="unbounded">
 			<xsd:annotation>
 				<xsd:documentation xml:lang="en">
 					This is the KEYWORDS data of the ebuild, modified by the profile.
 					Whether this is output depends on the XML_KEYWORDS variable.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:element>
+		<xsd:element name="depend" type="StringList" minOccurs="0" maxOccurs="1">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">
+					The DEPEND data of the ebuild.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:element>
+		<xsd:element name="rdepend" type="StringList" minOccurs="0" maxOccurs="1">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">
+					The RDEPEND data of the ebuild.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:element>
+		<xsd:element name="pdepend" type="StringList" minOccurs="0" maxOccurs="1">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="en">
+					The PDEPEND data of the ebuild.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:element>

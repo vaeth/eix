@@ -13,6 +13,7 @@
 #include <cache/common/flat_reader.h>
 #include <cache/metadata/metadata.h>
 #include <cache/common/ebuild_exec.h>
+#include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -228,6 +229,13 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		set_checking(restr, "RESTRICT", ebuild);
 		set_checking(props, "PROPERTIES", ebuild);
 		set_checking(iuse, "IUSE", ebuild, &ok);
+		if(Depend::use_depend) {
+			string depend, rdepend, pdepend;
+			set_checking(depend, "DEPEND", ebuild);
+			set_checking(rdepend, "RDEPEND", ebuild);
+			set_checking(pdepend, "PDEPEND", ebuild);
+			version->depend.set(depend, rdepend, pdepend, true);
+		}
 		if(read_onetime_info) {
 			set_checking(pkg->homepage, "HOMEPAGE",    ebuild, &ok);
 			set_checking(pkg->licenses, "LICENSE",     ebuild, &ok);
@@ -250,7 +258,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version));
 		if(likely(cachefile != NULL)) {
-			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, version->depend, m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
 		}

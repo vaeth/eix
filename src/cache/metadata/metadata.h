@@ -22,6 +22,7 @@
 #include <ctime>
 
 class Category;
+class Depend;
 class Package;
 class Version;
 
@@ -42,7 +43,7 @@ class MetadataCache : public BasicCache {
 		std::string m_catpath;
 		std::vector<std::string> names;
 
-		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, BasicCache::ErrorCallback error_callback);
+		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, Depend &dep, BasicCache::ErrorCallback error_callback);
 		typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 		x_get_keywords_slot_iuse_restrict_t x_get_keywords_slot_iuse_restrict;
 		x_read_file_t x_read_file;

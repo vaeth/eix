@@ -16,6 +16,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
+#include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 
@@ -287,7 +288,7 @@ void
 MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
 {
 	string keywords, iuse, restr, props;
-	(*x_get_keywords_slot_iuse_restrict)(m_catpath + "/" + pkg_name + "-" + ver_name, keywords, version->slotname, iuse, restr, props, m_error_callback);
+	(*x_get_keywords_slot_iuse_restrict)(m_catpath + "/" + pkg_name + "-" + ver_name, keywords, version->slotname, iuse, restr, props, version->depend, m_error_callback);
 	version->set_full_keywords(keywords);
 	version->set_iuse(iuse);
 	version->set_restrict(restr);

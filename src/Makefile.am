@@ -76,6 +76,8 @@ portage/conf/cascadingprofile.cc \
 portage/conf/cascadingprofile.h \
 portage/basicversion.cc \
 portage/basicversion.h \
+portage/depend.cc \
+portage/depend.h \
 portage/extendedversion.cc \
 portage/extendedversion.h \
 portage/instversion.h \

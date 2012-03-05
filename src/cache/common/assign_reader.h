@@ -15,9 +15,10 @@
 #include <string>
 
 class Package;
+class Depend;
 
 const char *assign_get_md5sum(const std::string &filename);
-void assign_get_keywords_slot_iuse_restrict(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, BasicCache::ErrorCallback error_callback);
+void assign_get_keywords_slot_iuse_restrict(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, Depend &dep, BasicCache::ErrorCallback error_callback);
 void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
 #endif /* EIX__ASSIGNREADER_H__ */

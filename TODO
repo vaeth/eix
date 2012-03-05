@@ -1,9 +1,11 @@
+
 Things to do perhaps:
-- Support virtuals in sets: This would require to store the sets for virtuals
-  in every Version (and to backup it for the various settings).
-  It is lot of work to implement, costs lot of memory and also lot of
-  execution time.  Hence, this will have to wait until the portage tree or
-  some important overlays make excessive use of it - which is hopefully never.
+- Support searching in DEPEND, RDEPEND, PDEPEND.
+- Support DEPEND, RDEPEND, PDEPEND for installed packages.
+  (See the comments to the depend, rdepend, pdepend properties in the manpage.)
+  Once this is implemented:
+- Support searching for differences of DEPEND, RDEPEND, PDEPEND with
+  values in installed packages.
 
 Ambitious tasks which will probably not be realized:
 - Support for Paludis.

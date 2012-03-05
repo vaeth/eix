@@ -101,29 +101,6 @@ PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 	return ret;
 }
 
-string
-PrintFormat::get_version_keywords(Package *package, const Version *version) const
-{
-	if(print_effective) {
-		portagesettings->get_effective_keywords_userprofile(package);
-	}
-	string keywords(version->get_full_keywords());
-	string effective(version->get_effective_keywords());
-	if(keywords.empty()) {
-		if(effective.empty() || !print_effective)
-			return emptystring;
-	}
-	string result(before_keywords);
-	result.append(keywords);
-	result.append(after_keywords);
-	if(print_effective && (keywords != effective)) {
-		result.append(before_ekeywords);
-		result.append(effective);
-		result.append(after_ekeywords);
-	}
-	return result;
-}
-
 void
 PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 {
@@ -308,6 +285,8 @@ class Scanner {
 			VER_OVERLAYNUM,
 			VER_OVERLAYVER,
 			VER_VERSIONKEYWORDS,
+			VER_VERSIONKEYWORDSS,
+			VER_VERSIONEKEYWORDS,
 			VER_ISBESTUPGRADESLOTS,
 			VER_ISBESTUPGRADESLOT,
 			VER_ISBESTUPGRADES,
@@ -333,6 +312,9 @@ class Scanner {
 			VER_PROPERTIESLIVE,
 			VER_PROPERTIESVIRTUAL,
 			VER_PROPERTIESSET,
+			VER_DEPEND,
+			VER_RDEPEND,
+			VER_PDEPEND,
 			VER_ISHARDMASKED,
 			VER_ISPROFILEMASKED,
 			VER_ISMASKED,
@@ -438,6 +420,8 @@ class Scanner {
 			prop_ver("overlaynum", VER_OVERLAYNUM);
 			prop_ver("overlayver", VER_OVERLAYVER);
 			prop_ver("versionkeywords", VER_VERSIONKEYWORDS);
+			prop_ver("versionekeywords*", VER_VERSIONKEYWORDSS);
+			prop_ver("versionekeywords", VER_VERSIONEKEYWORDS);
 			prop_ver("isbestupgradeslot*", VER_ISBESTUPGRADESLOTS);
 			prop_ver("isbestupgradeslot", VER_ISBESTUPGRADESLOT);
 			prop_ver("isbestupgrade*", VER_ISBESTUPGRADES);
@@ -463,6 +447,9 @@ class Scanner {
 			prop_ver("propertieslive", VER_PROPERTIESLIVE);
 			prop_ver("propertiesvirtual", VER_PROPERTIESVIRTUAL);
 			prop_ver("propertiesset", VER_PROPERTIESSET);
+			prop_ver("depend", VER_DEPEND);
+			prop_ver("rdepend", VER_RDEPEND);
+			prop_ver("pdepend", VER_PDEPEND);
 			prop_ver("ishardmasked", VER_ISHARDMASKED);
 			prop_ver("isprofilemasked", VER_ISPROFILEMASKED);
 			prop_ver("ismasked", VER_ISMASKED);
@@ -872,7 +859,23 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 			break;
 		case Scanner::VER_VERSIONKEYWORDS:
 			if(likely(!version_variables->isinst))
-				return get_version_keywords(package, version_variables->version());
+				return version_variables->version()->get_full_keywords();
+			break;
+		case Scanner::VER_VERSIONKEYWORDSS:
+			if(likely(!version_variables->isinst)) {
+				portagesettings->get_effective_keywords_userprofile(package);
+				return version_variables->version()->get_effective_keywords();
+			}
+			break;
+		case Scanner::VER_VERSIONEKEYWORDS:
+			if(likely(!version_variables->isinst)) {
+				portagesettings->get_effective_keywords_userprofile(package);
+				const Version *v(version_variables->version());
+				string s(v->get_effective_keywords());
+				if(s != v->get_full_keywords()) {
+					return s;
+				}
+			}
 			break;
 		case Scanner::VER_ISBESTUPGRADESLOT:
 		case Scanner::VER_ISBESTUPGRADESLOTS:
@@ -1048,6 +1051,21 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 							return one;
 						break;
 				}
+			}
+			break;
+		case Scanner::VER_DEPEND:
+			if(likely(!version_variables->isinst)) {
+				return version_variables->version()->depend.get_depend();
+			}
+			break;
+		case Scanner::VER_RDEPEND:
+			if(likely(!version_variables->isinst)) {
+				return version_variables->version()->depend.get_rdepend();
+			}
+			break;
+		case Scanner::VER_PDEPEND:
+			if(likely(!version_variables->isinst)) {
+				return version_variables->version()->depend.get_pdepend();
 			}
 			break;
 		case Scanner::VER_ISHARDMASKED:

@@ -27,6 +27,7 @@ class IUseSet;
 class Package;
 class PackageTree;
 class PortageSettings;
+class Depend;
 class Version;
 
 #define MAGICNUMCHAR 0xFF
@@ -141,6 +142,12 @@ namespace io {
 
 	// Write a version to fp
 	void write_version(FILE *fp, const Version *v, const DBHeader &hdr);
+
+	// Write dependency information to fp
+	void read_depend(FILE *fp, Depend &dep, const DBHeader &hdr);
+
+	// Write dependency information to fp
+	void write_depend(FILE *fp, const Depend &dep, const DBHeader &hdr);
 
 	// Read a category-header from fp
 	io::Treesize read_category_header(FILE *fp, std::string &name);

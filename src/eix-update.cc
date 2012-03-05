@@ -26,6 +26,7 @@
 #include <eixrc/global.h>
 #include <main/main.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/overlay.h>
 #include <portage/packagetree.h>
@@ -251,36 +252,35 @@ static void
 print_help()
 {
 	printf(_("Usage: %s [options]\n"
-			"\n"
-			" -h, --help              show a short help screen\n"
-			" -V, --version           show version-string\n"
-			"     --dump              show eixrc-variables\n"
-			"     --dump-defaults     show default eixrc-variables\n"
-			"     --print             print the expanded value of a variable\n"
-			"     --known-vars        print all variable names known to --print\n"
-			" -H, --nostatus          don't update status line\n"
-			" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
-			"     --force-status      always output status line\n"
-			" -F, --force-color       force \"color\" even if output is no terminal\n"
-			" -v, --verbose           output used cache method for each ebuild\n"
-			"\n"
-			" -q, --quiet             produce no output\n"
-			"\n"
-			" -o  --output            output to another file than %s\n"
-			"                         In addition, all permission checks are omitted.\n"
-			" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
-			"                         Note that you can also exclude PORTDIR\n"
-			"                         using this option.\n"
-			"\n"
-			" -a  --add-overlay       add an overlay to the update-process.\n"
-			"\n"
-			" -m  --override-method   override cache method for matching overlays.\n"
-			"\n"
-			" -r  --repo-name         set label for matching overlay.\n"
-			"\n"
-			"This program is covered by the GNU General Public License. See COPYING for\n"
-			"further information.\n"),
-		program_name.c_str(), EIX_CACHEFILE);
+"\n"
+" -h, --help              show a short help screen\n"
+" -V, --version           show version-string\n"
+"     --dump              show eixrc-variables\n"
+"     --dump-defaults     show default eixrc-variables\n"
+"     --print             print the expanded value of a variable\n"
+"     --known-vars        print all variable names known to --print\n"
+" -H, --nostatus          don't update status line\n"
+" -n, --nocolor           don't use \"colors\" (percentage) in output\n"
+"     --force-status      always output status line\n"
+" -F, --force-color       force \"color\" even if output is no terminal\n"
+" -v, --verbose           output used cache method for each ebuild\n"
+"\n"
+" -q, --quiet             produce no output\n"
+"\n"
+" -o  --output            output to another file than %s\n"
+"                         In addition, all permission checks are omitted.\n"
+" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
+"                         Note that you can also exclude PORTDIR\n"
+"                         using this option.\n"
+"\n"
+" -a  --add-overlay       add an overlay to the update-process.\n"
+"\n"
+" -m  --override-method   override cache method for matching overlays.\n"
+"\n"
+" -r  --repo-name         set label for matching overlay.\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"), program_name.c_str(), EIX_CACHEFILE);
 }
 
 enum cli_options {
@@ -435,6 +435,7 @@ run_eix_update(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
+	Depend::use_depend = eixrc.getBool("DEP");
 	bool skip_permission_tests;
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
 	string outputfile;

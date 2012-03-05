@@ -191,3 +191,16 @@ depending on the configuration and the version data.
 - **<effective_keywords>** [..] **</effective_keywords>**
 
   This is the KEYWORDS data of the ebuild, modified by the profile.
+
+- **<depend>** [..] **</depend>**
+
+  The DEPEND string
+
+- **<rdepend>** [..] **</rdepend>**
+
+  The RDEPEND string
+
+- **<pdepend>** [..] **</pdepend>**
+
+  The PDEPEND string
+

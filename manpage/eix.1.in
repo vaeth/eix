@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-03-04 10:20:00 +0100 (Sun, 04 Mar 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-03-05 19:30:00 +0100 (Mon, 05 Mar 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -694,6 +694,22 @@ e.g. "@PACKAGE_URL@"
 .BR -L ", " --license
 e.g. "GPL-2"
 .TP
+.BR --deps ", " --depend ", " --rdepend ", " --pdepend
+This test can only be successful if B<DEP=true> is used
+(and if B<DEP=true> was used when the cachefile was created).
+It matches against B<DEPEND>, B<RDEPEND>, or B<DEPEND>
+(or with B<--deps> any of those) of some version of the package.
+B<--deps> is the same as specifying all of
+B<--depend> B<--rdepend> B<--pdepend>.
+Note that it is matched against the string without any interpretation or
+modification of the latter; only word separators become single spaces.
+In particular, the string to match against can look like
+
+app-admin/fam nls? ( sys-devel/gettext ) =dev-libs/apr-1* !!dev-db/libpq
+
+Therefore, the match is not only against dependent packages but also against
+blockers and/or conditionals and various ways of specifying versions.
+.TP
 .BR --set
 Name of a local package set of a version in the database
 (i.e. corresponding to a file in B</etc/portage/sets>, B</etc/portage/sets.eix>,
@@ -1113,19 +1129,22 @@ All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
-.BR slot ", " isslot ", " overlayver ", " overlaynum ", " versionkeywords
+.BR slot ", " isslot ", " overlayver ", " overlaynum
 This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the current slot, the overlay,
-or the full keywords of the current version.
+It outputs the current slot or the overlay of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
 B<overlaynum>, in contrast, contains the number of the overlay
 without colors unconditionally (or is empty if the package is not from an overlay).
-The output format for B<versionkeywords> depends on B<FORMAT_BEFORE_KEYWORDS>,
-B<FORMAT_AFTER_KEYWORDS, B<PRINT_EFFECTIVE_KEYWORDS>,
-B<FORMAT_BEFORE_EFFECTIVE_KEYWORDS>, B<FORMAT_AFTER_EFFECTIVE_KEYWORDS>.
 B<isslot> just tests whether the slot is trivial and outputs 1 in this case,
 otherwise nothing.
+.TP
+.BR versionkeywords ", " versionkeywords* ", " versionekeywords
+This must occur only in I<VARIABLE> in the context of version printing.
+It outputs the full keywords of the current version.
+If the data is modified by the profile, the modified data is printed with
+B<versionkeywords*>. The special form B<versionekeywords> prints the latter
+if it differs from B<versionkeywords>; otherwise, it is empty.
 .TP
 .BR isbestupgrade ", " isbestupgrade* ", " isbestupgradeslot ", " isbestupgradeslot*
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1153,6 +1172,14 @@ It returns 1 or empty depending on whether some or the corresponding B<RESTRICT>
 .BR properties ", " propertiesinteractive ", " propertieslive ", " propertiesvirtual ", " propertiesset
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
+.TP
+.BR depend ", " rdepend ", " depend
+This must occur only in I<VARIABLE> in the context of version printing.
+It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND> string of an available package.
+This is empty unless  B<DEP=true> is set (now and if the cachefile was created).
+When printing installed versions (in contrast to available versions),
+these properties are not available (i.e. they are empty).
+The latter might change in a future release of eix.
 .TP
 .BR haveuse ", " use
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1986,6 +2013,11 @@ always fetched from disk, even if it could be read from a corresponding version.
 This is slower but more reliable, i.e. it will also find out whether restrictions were changed.
 
 .TP
+.BR DEP " " (true / false)
+If true, store/use B<DEPEND>, B<RDEPEND>, B<PDEPEND> (e.g. shown with eix -lv).
+Usage of B<DEP> roughly doubles disk resp. memory requirements.
+
+.TP
 .BR FORMAT ", " FORMAT_COMPACT ", " FORMAT_VERBOSE " " (string)
 Define the normal, compact and verbose layout for results printed by B<eix>.
 See B<FORMATSTRING>.
@@ -2012,10 +2044,6 @@ Define the strftime() format used to print the installation date (in normal resp
 .BR FORMAT_INSTALLED_USE
 Define the printf-like format used to print useflags of installed packages.
 If this string is empty, the processing is slightly faster since then these data are not read.
-
-.TP
-.BR FORMAT_BEFORE_KEYWORDS ", " FORMAT_AFTER_KEYWORDS ", " FORMAT_BEFORE_EFFECTIVE_KEYWORDS ", " FORMAT_AFTER_EFFECTIVE_KEYWORDS
-These strings are printed before/after the (effective) KEYWORDS string for a version is printed.
 
 .TP
 .BR FORMAT_BEFORE_SET_USE ", " FORMAT_AFTER_SET_USE ", " FORMAT_BEFORE_UNSET_USE ", " FORMAT_AFTER_UNSET_USE
@@ -2484,12 +2512,6 @@ B</etc/portage/package.slot_upgrade_allow>, respectively.
 If true, then sets and packages which are contained in an included set
 are considered as part of the parent set.
 .TP
-.BR PRINT_EFFECTIVE_KEYWORDS " " (true / false)
-If B<PRINT_KEYWORDS> is in effect and this variable is true
-and the KEYWORD of a version is modified by the profile,
-then the effective keywords (according to the profile) is printed
-after the KEYWORDS stored in the ebuild.
-.TP
 .BR XML_KEYWORDS (full / effective / both / true / full* / effective* / none / false)
 With --xml, this variable decides whether full/effective (or both) types of B<KEYWORDS> are printed for each versions.
 Here, "full" is the B<KEYWORDS> string as specified in the ebuild and "effective" means its modification by the profile.
@@ -2560,6 +2582,7 @@ The possible values for I<match_field> are B<name>, B<category>, B<category/name
 (or B<category-name>), B<description>, B<license>, B<homepage>, B<set>,
 B<slot>, B<installed-slot>, B<use> (or B<iuse>), B<with-use> (or B<installed-with-use>),
 B<without-use> (or B<installed-without-use>),
+B<deps>, B<depend>, B<rdepend>, B<pdepend>,
 corresponding to the analogous command line option for the match field.
 .TP
 .BR DEFAULT_MATCH_ALGORITHM " " "(string list)"

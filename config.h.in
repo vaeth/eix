@@ -21,6 +21,9 @@
 /* Define to __attribute__ ((__signal__)) if it can be used */
 #undef ATTRIBUTE_SIGNAL
 
+/* Default DEP */
+#undef DEP_DEFAULT
+
 /* Null device of the system */
 #undef DEV_NULL
 

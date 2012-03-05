@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.24.1], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.25.0], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -830,6 +830,20 @@ AC_DEFINE_UNQUOTED([ALWAYS_ACCEPT_KEYWORDS_DEFAULT],
 	["${ALWAYS_ACCEPT_KEYWORDS_DEFAULT}"],
 	[Default ALWAYS_ACCEPT_KEYWORDS])
 AC_SUBST([ALWAYS_ACCEPT_KEYWORDS_DEFAULT])
+
+AC_MSG_CHECKING([DEP default])
+AC_ARG_WITH([dep-default],
+	[AS_HELP_STRING([--with-dep-default],
+		[default to DEP=true])],
+	[AS_CASE(["${withval}"],
+		[no], [AS_VAR_SET([DEP_DEFAULT], ["false"])],
+		[AS_VAR_SET([DEP_DEFAULT], ["true"])])],
+	[AS_VAR_SET([DEP_DEFAULT], ["false"])])
+MV_MSG_RESULT_VAR([DEP_DEFAULT])
+AC_DEFINE_UNQUOTED([DEP_DEFAULT],
+	["${DEP_DEFAULT}"],
+	[Default DEP])
+AC_SUBST([DEP_DEFAULT])
 
 AC_MSG_CHECKING([zsh completion])
 AS_VAR_SET([ZSH_COMPLETION], ["${datadir}/zsh/site-functions"])

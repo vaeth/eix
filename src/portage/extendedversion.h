@@ -11,6 +11,7 @@
 #define EIX__EXTENDEDVERSION_H__ 1
 
 #include <portage/basicversion.h>
+#include <portage/depend.h>
 #include <database/types.h>
 #include <eixTk/inttypes.h>
 
@@ -63,6 +64,9 @@ class ExtendedVersion : public BasicVersion
 
 		/** The repository name */
 		std::string reponame;
+
+		/** The dependencies */
+		Depend depend;
 
 		typedef io::UNumber Overlay;
 		/** Key for Portagedb.overlays/overlaylist from header. */

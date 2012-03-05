@@ -33,7 +33,10 @@ class DBHeader {
 			license_hash,
 			keywords_hash,
 			iuse_hash,
-			slot_hash;
+			slot_hash,
+			depend_hash;
+
+		bool use_depend;
 
 		std::vector<std::string> world_sets;
 

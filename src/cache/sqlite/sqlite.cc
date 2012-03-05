@@ -105,6 +105,9 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 			KEYWORDS,
 			IUSE,
 			PROPERTIES,
+			DEPEND,
+			RDEPEND,
+			PDEPEND,
 			LAST
 		} Names;
 		vector<int> default_trueindex;
@@ -120,14 +123,17 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 		TrueIndex() : default_trueindex(LAST, -1)
 		{
 			mapinit( 1, NAME,        "portage_package_key");
-			mapinit( 6, SLOT,        "SLOT");
-			mapinit( 8, RESTRICT,    "RESTRICT");
-			mapinit( 9, HOMEPAGE,    "HOMEPAGE");
+			mapinit( 3, DEPEND,      "DEPEND");
+			mapinit( 4, DESCRIPTION, "DESCRIPTION");
+			mapinit( 6, HOMEPAGE,    "HOMEPAGE");
+			mapinit( 8, IUSE,        "IUSE");
+			mapinit( 9, KEYWORDS,    "KEYWORDS");
 			mapinit(10, LICENSE,     "LICENSE");
-			mapinit(11, DESCRIPTION, "DESCRIPTION");
-			mapinit(12, KEYWORDS,    "KEYWORDS");
-			mapinit(14, IUSE,        "IUSE");
-			mapinit(19, PROPERTIES,  "PROPERTIES");
+			mapinit(11, PDEPEND,     "PDEPEND");
+			mapinit(12, PROPERTIES,  "PROPERTIES");
+			mapinit(14, RDEPEND,     "RDEPEND");
+			mapinit(16, RESTRICT,    "RESTRICT");
+			mapinit(17, SLOT,        "SLOT");
 		}
 
 		int calc(int argc, const char **azColName, vector<int> &trueindex) const

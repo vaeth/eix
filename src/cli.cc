@@ -372,6 +372,18 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			case 'U': USE_TEST;
 				*test |= PackageTest::IUSE;
 				break;
+			case O_DEPEND: USE_TEST;
+				*test |= PackageTest::DEPEND;
+				break;
+			case O_PDEPEND: USE_TEST;
+				*test |= PackageTest::PDEPEND;
+				break;
+			case O_RDEPEND: USE_TEST;
+				*test |= PackageTest::RDEPEND;
+				break;
+			case O_DEPS: USE_TEST;
+				*test |= PackageTest::DEPS;
+				break;
 			case O_SEARCH_SET: USE_TEST;
 				*test |= PackageTest::SET;
 				break;
@@ -444,7 +456,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 	while(likely(!cin.eof())) {
 		string line;
 		getline(cin, line);
-		trim(&line);
+		trim(line);
 		vector<string> wordlist;
 		split_string(wordlist, line);
 		for(vector<string>::iterator word(wordlist.begin());

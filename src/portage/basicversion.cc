@@ -53,8 +53,8 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 			string l1(left.partcontent);
 			string l2(right.partcontent);
 
-			rtrim(&l1, "0");
-			rtrim(&l2, "0");
+			rtrim(l1, "0");
+			rtrim(l2, "0");
 
 			/* No need to check if stripping zeros makes the component empty,
 			 * since that only happens for components that _only_ contain zeros

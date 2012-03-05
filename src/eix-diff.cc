@@ -27,6 +27,7 @@
 #include <output/formatstring-print.h>
 #include <output/formatstring.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -61,25 +62,23 @@ static Node           *format_new, *format_delete, *format_changed;
 static void
 print_help()
 {
-	printf(_(
-		"Usage: %s [options] old-cache [new-cache]\n"
-		"\n"
-		" -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
-		"     --care              always read slots of installed packages\n"
-		" -q, --quiet (toggle)    (no) output\n"
-		" -n, --nocolor           don't use colors in output\n"
-		" -F, --force-color       force colors on things that are not a terminal\n"
-		"     --dump              dump variables to stdout\n"
-		"     --dump-defaults     dump default values of variables\n"
-		"     --print             print the expanded value of a variable\n"
-		"     --known-vars        print all variable names known to --print\n"
-		"\n"
-		" -h, --help              show a short help screen\n"
-		" -V, --version           show version-string\n"
-		"\n"
-		"This program is covered by the GNU General Public License. See COPYING for\n"
-		"further information.\n"),
-		program_name.c_str());
+	printf(_("Usage: %s [options] old-cache [new-cache]\n"
+"\n"
+" -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
+"     --care              always read slots of installed packages\n"
+" -q, --quiet (toggle)    (no) output\n"
+" -n, --nocolor           don't use colors in output\n"
+" -F, --force-color       force colors on things that are not a terminal\n"
+"     --dump              dump variables to stdout\n"
+"     --dump-defaults     dump default values of variables\n"
+"     --print             print the expanded value of a variable\n"
+"     --known-vars        print all variable names known to --print\n"
+"\n"
+" -h, --help              show a short help screen\n"
+" -V, --version           show version-string\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"), program_name.c_str());
 }
 
 bool cli_show_help(false),
@@ -265,6 +264,8 @@ run_eix_diff(int argc, char *argv[])
 	string old_file, new_file;
 
 	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
+
+	Depend::use_depend = rc.getBool("DEP");
 
 	cli_quick = rc.getBool("QUICKMODE");
 	cli_care  = rc.getBool("CAREMODE");

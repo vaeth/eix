@@ -22,6 +22,7 @@
 #include <portage/basicversion.h>
 #include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/vardbpkg.h>
@@ -52,6 +53,10 @@ const PackageTest::MatchField
 		PackageTest::USE_DISABLED,
 		PackageTest::SLOT,
 		PackageTest::SET,
+		PackageTest::DEPEND,
+		PackageTest::RDEPEND,
+		PackageTest::PDEPEND,
+		PackageTest::DEPS,
 		PackageTest::INSTALLED_SLOT;
 
 const PackageTest::TestInstalled
@@ -139,7 +144,10 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NAME);
 	if(installed)
 		setNeeds(PackageReader::NAME);
-	if((field & IUSE) ||
+	if(!Depend::use_depend) {
+		field &= ~DEPS;
+	}
+	if((field & (IUSE | DEPS)) ||
 		dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete || binary ||
 		world || worldset ||
@@ -206,6 +214,18 @@ static_match_field_map()
 	match_field_map["installed_slot"] = PackageTest::INSTALLED_SLOT;
 	match_field_map["installed-slot"] = PackageTest::INSTALLED_SLOT;
 	match_field_map["installedslot"]  = PackageTest::INSTALLED_SLOT;
+	match_field_map["DEP"]            = PackageTest::DEPS;
+	match_field_map["DEPS"]           = PackageTest::DEPS;
+	match_field_map["DEPENDENCIES"]   = PackageTest::DEPS;
+	match_field_map["dep"]            = PackageTest::DEPS;
+	match_field_map["deps"]           = PackageTest::DEPS;
+	match_field_map["dependencies"]   = PackageTest::DEPS;
+	match_field_map["DEPEND"]         = PackageTest::DEPEND;
+	match_field_map["depend"]         = PackageTest::DEPEND;
+	match_field_map["RDEPEND"]        = PackageTest::RDEPEND;
+	match_field_map["rdepend"]        = PackageTest::RDEPEND;
+	match_field_map["PDEPEND"]        = PackageTest::PDEPEND;
+	match_field_map["pdepend"]        = PackageTest::PDEPEND;
 	return match_field_map;
 }
 
@@ -420,6 +440,28 @@ PackageTest::stringMatch(Package *pkg) const
 			it != s.end(); ++it) {
 			if((*algorithm)(it->name().c_str(), NULL))
 				return true;
+		}
+	}
+
+	if(field & DEPS) {
+		bool depend(field & DEPEND);
+		bool rdepend(field & RDEPEND);
+		bool pdepend(field & PDEPEND);
+		for(Package::iterator it(pkg->begin());
+			likely(it != pkg->end()); ++it) {
+			const Depend &dep(it->depend);
+			if(depend) {
+				if((*algorithm)(dep.get_depend().c_str(), pkg))
+				return true;
+			}
+			if(rdepend) {
+				if((*algorithm)(dep.get_rdepend().c_str(), pkg))
+				return true;
+			}
+			if(pdepend) {
+				if((*algorithm)(dep.get_pdepend().c_str(), pkg))
+				return true;
+			}
 		}
 	}
 

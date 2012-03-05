@@ -62,7 +62,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 				line.erase(x);
 		}
 
-		trim(&line);
+		trim(line);
 
 		if((!remove_empty) || (!line.empty()))
 			v->push_back(line);

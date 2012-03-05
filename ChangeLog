@@ -1,12 +1,28 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.24.1
+*eix-0.25.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add DEP (and ./configure option --with-dep-default for the default)
+	  to support DEPEND, RDEPEND, PDEPEND ({r,p,}depend properties).
+	  By new default, the output happens with "eix -lv" or "eix -lvx"
+	  (if DEP=true and the cachefile was generated with DEP=true).
+	  Usage of DEP roughly doubles disk resp. memory requirements.
+	- New match-fields --depend --rdepend --pdepend (and --deps for
+	  all three). This requires DEP=true (also for cachefile generation).
+	- Output dependencies also to xml (if DEP=true).
+	  Bump xml version. Fix xml scheme.
+	- Put keywords/effective keywords handling to configure level:
+	  New properties versionkeywords*, versionekeywords;
+	  remove internal PRINT_{BEFORE,AFTER}{,_EFFECTIVE}_KEYWORDS.
+	- Rework default FORMAT: Split into more variables and handle case
+	  distinction compact/verbose/normal by runtime variable "$modus".
+	  Give runtime variables saner names. Improve naming of some
+	  configuration variables and descriptions.
+	- Several bugfixes/improvements in German translation.
 	- Remove --with-bzip2 (enabling /var/db/pkg/CAT/NAME/environment.bz2 if
 	  /var/db/pkg/CAT/NAME/repository is unavailable). This was not used in
 	  the ebuild from the portage tree anyway and simplifies internal logic
-	- Remove haveversionuse, NOT_FULL_USE, and simplify database
-	  format correspondingly.
+	- Remove haveversionuse and NOT_FULL_USE to shorten database format.
 
 *eix-0.24.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

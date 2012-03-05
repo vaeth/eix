@@ -190,6 +190,7 @@ EixCache::get_package(Package *p)
 		version->restrictFlags = it->restrictFlags;
 		version->propertiesFlags = it->propertiesFlags;
 		version->iuse = it->iuse;
+		version->depend = it->depend;
 		if(pkg == NULL) {
 			pkg = dest_cat->findPackage(p->name);
 			if(pkg != NULL) {
