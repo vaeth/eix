@@ -31,7 +31,7 @@ class Depend
 	public:
 		static bool use_depend;
 
-		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, bool trimspace);
+		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, bool normpace);
 
 		std::string get_depend() const
 		{ return m_depend; }

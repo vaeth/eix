@@ -8,9 +8,7 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "package.h"
-#include <config.h>
 #include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
 #include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/extendedversion.h>
@@ -20,7 +18,6 @@
 #include <portage/version.h>
 
 #include <set>
-#include <string>
 #include <vector>
 
 #include <cstddef>

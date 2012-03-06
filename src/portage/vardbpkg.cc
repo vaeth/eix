@@ -7,7 +7,6 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <config.h>
 #include "vardbpkg.h"
 #include <database/header.h>
 #include <eixTk/exceptions.h>
@@ -28,7 +27,6 @@
 
 #include <cstddef>
 #include <cstdlib>
-#include <cstring>
 #include <dirent.h>
 
 using namespace std;

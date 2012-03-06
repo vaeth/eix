@@ -17,7 +17,7 @@ bool Depend::use_depend;
 const std::string Depend::the_same("\"");
 
 void
-Depend::set(const string &depend, const string &rdepend, const string &pdepend, bool trimspace)
+Depend::set(const string &depend, const string &rdepend, const string &pdepend, bool normspace)
 {
 	if(!use_depend) {
 		return;
@@ -25,7 +25,7 @@ Depend::set(const string &depend, const string &rdepend, const string &pdepend, 
 	m_depend = depend;
 	m_rdepend = rdepend;
 	m_pdepend = pdepend;
-	if(trimspace) {
+	if(normspace) {
 		trimall(m_depend);
 		trimall(m_rdepend);
 		trimall(m_pdepend);
