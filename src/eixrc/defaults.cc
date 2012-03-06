@@ -234,6 +234,12 @@ AddOption(BOOLEAN, "QUIETMODE",
 	"false", _(
 	"Whether --quiet is on by default."));
 
+AddOption(STRING, "PRINT_APPEND",
+	"\\n", _(
+	"This string is appended to the output of --print.\n"
+	"To read variables in a shell without omitting trailing spaces, use e.g.\n"
+	"VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}"));
+
 AddOption(BOOLEAN, "NEWLINE",
 	"false", _(
 	"Whether a newline is added magically at the end of a package."));
@@ -278,1547 +284,14 @@ AddOption(BOOLEAN, "DEP",
 	"If true, store/use DEPEND, RDEPEND, PDEPEND (e.g. shown with eix -lv).\n"
 	"Usage of DEP roughly doubles disk resp. memory requirements."));
 
-AddOption(STRING, "PRINT_APPEND",
-	"\\n", _(
-	"This string is appended to the output of --print.\n"
-	"To read variables in a shell without omitting trailing spaces, use e.g.\n"
-	"VAR=\"`PRINT_APPEND=x eix --print VAR`\" ; VAR=\"${VAR%x}\""));
-
 AddOption(STRING, "DEFAULT_FORMAT",
 	"normal", _(
 	"Defines whether --compact or --verbose is on by default."));
 
-AddOption(BOOLEAN, "PRINT_ALWAYS",
+AddOption(STRING, "PRINT_COUNT_ALWAYS",
 	"false", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines whether all information lines are printed (even if empty)."));
-
-AddOption(BOOLEAN, "PRINT_BUGS",
-	"false", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines whether a bug reference is printed in verbose format."));
-
-AddOption(BOOLEAN, "DIFF_PRINT_INSTALLED",
-	"true", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines whether eix-diff will output installed versions."));
-
-AddOption(STRING, "COLOR_TITLE",
-	"green",
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the title texts.");
-
-AddOption(STRING, "COLOR_NAME",
-	"default,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the name of packages."));
-
-AddOption(STRING, "COLOR_WORLD",
-	"green,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the name of world packages."));
-
-AddOption(STRING, "COLOR_WORLD_SETS",
-	"yellow,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the name of world sets packages."));
-
-AddOption(STRING, "COLOR_CATEGORY",
-	"", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the category of packages."));
-
-AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
-	"yellow", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the category of system packages."));
-
-AddOption(STRING, "COLOR_CATEGORY_WORLD",
-	"%{COLOR_WORLD}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the category of world packages."));
-
-AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
-	"%{COLOR_WORLD_SETS}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the category of world sets packages."));
-
-AddOption(STRING, "COLOR_UPGRADE_TEXT",
-	"cyan,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing upgrade recommendation texts."));
-
-AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
-	"blue,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing downgrade recommendation texts."));
-
-AddOption(STRING, "COLOR_UPGRADE",
-	"%{COLOR_UPGRADE_TEXT};inverse", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing upgrade recommendation tags."));
-
-AddOption(STRING, "COLOR_DOWNGRADE",
-	"%{COLOR_DOWNGRADE_TEXT};inverse", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing downgrade recommendation tags."));
-
-AddOption(STRING, "DIFF_COLOR_UNINST_STABILIZE",
-	"%{COLOR_STABLE},1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing tags for uninstalled packages\n"
-	"which have gained a stable version."));
-
-AddOption(STRING, "DIFF_COLOR_INST_STABILIZE",
-	"%{DIFF_COLOR_UNINST_STABILIZE},1;inverse", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing tags for installed packages\n"
-	"which have gained a stable version."));
-
-AddOption(STRING, "DIFF_COLOR_BETTER",
-	"yellow,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"better version\" tags (eix-diff)."));
-
-AddOption(STRING, "DIFF_COLOR_WORSE",
-	"red,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"worse version\" tags (eix-diff)."));
-
-AddOption(STRING, "DIFF_COLOR_NEW_TAG",
-	"%{DIFF_COLOR_NEW}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"new package\" tags (eix-diff)."));
-
-AddOption(STRING, "DIFF_COLOR_NEW",
-	"%{COLOR_TITLE},1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"new package\" separators (eix-diff)."));
-
-AddOption(STRING, "DIFF_COLOR_DELETE",
-	"red,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"deleted package\" separators (eix-diff)."));
-
-AddOption(STRING, "DIFF_COLOR_CHANGED",
-	"yellow", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for \"changed package\" separators (eix-diff)."));
-
-AddOption(STRING, "COLOR_INST_TAG",
-	"%{COLOR_TITLE},1;inverse", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for tagging installed packages."));
-
-AddOption(STRING, "COLOR_UNINST_TAG",
-	"%{COLOR_TITLE}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for tagging uninstalled packages."));
-
-AddOption(STRING, "COLOR_DATE",
-	"purple,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the date."));
-
-AddOption(STRING, "COLOR_SET_USE",
-	"red,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the set useflags."));
-
-AddOption(STRING, "COLOR_UNSET_USE",
-	"blue,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the unset useflags."));
-
-AddOption(STRING, "COLOR_VERSION_IUSE",
-	"black,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing IUSE for available versions."));
-
-AddOption(STRING, "COLOR_COLL_IUSE",
-	"%{COLOR_VERSION_IUSE}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing IUSE for available packages."));
-
-AddOption(STRING, "COLOR_INST_VERSION",
-	"blue,1;%{MARK_INSTALLED}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the version of installed packages."));
-
-AddOption(STRING, "COLOR_INST_TITLE",
-	"blue", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the title texts for installed versions."));
-
-AddOption(STRING, "COLOR_AVAILABLE_TITLE",
-	"yellow", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the title texts for available versions."));
-
-AddOption(STRING, "COLOR_MARKED_VERSION",
-	"%{COLOR_MARKED_NAME}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing a marked version of a packages."));
-
-AddOption(STRING, "COLOR_PACKAGESETS",
-	"yellow,1", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing the package sets."));
-
-AddOption(STRING, "COLOR_MARKED_NAME",
-	"red,1;%{MARK_VERSIONS}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for printing a marked package name."));
-
-AddOption(STRING, "CHAR_UPGRADE",
-	"U", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for upgrade recommendations."));
-
-AddOption(STRING, "CHAR_DOWNGRADE",
-	"D", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for downgrade recommendations."));
-
-AddOption(STRING, "CHAR_INSTALLED",
-	"I", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for installed packages."));
-
-AddOption(STRING, "CHAR_UNINSTALLED",
-	"%{DIFF_CHAR_NEW}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for uninstalled packages."));
-
-AddOption(STRING, "DIFF_CHAR_UNINST_STABILIZE",
-	"%{DIFF_CHAR_INST_STABILIZE}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for uninstalled packages which have gained\n"
-	"a stable version."));
-
-AddOption(STRING, "DIFF_CHAR_INST_STABILIZE",
-	"*", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for installed packages which have gained\n"
-	"a stable version."));
-
-AddOption(STRING, "DIFF_CHAR_NEW",
-	"N", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character printed for new packages (eix-diff)."));
-
-AddOption(STRING, "DIFF_CHAR_BETTER",
-	">", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character used for \"better version\" tags (eix-diff)."));
-
-AddOption(STRING, "DIFF_CHAR_WORSE",
-	"\\<", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the character used for \"worse version\" tags (eix-diff)."));
-
-AddOption(STRING, "TAG_UPGRADE",
-	"(%{COLOR_UPGRADE})%{CHAR_UPGRADE}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for upgrade recommendations."));
-
-AddOption(STRING, "TAG_DOWNGRADE",
-	"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for downgrade recommendations."));
-#endif
-
-#if (DEFAULT_PART == 2)
-
-AddOption(STRING, "TAG_INSTALLED",
-	"(%{COLOR_INST_TAG})%{CHAR_INSTALLED}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for installed packages."));
-
-AddOption(STRING, "TAG_UNINSTALLED",
-	"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for uninstalled packages."));
-
-AddOption(STRING, "TAG_STABILIZE",
-	"{installed}"
-		"(%{DIFF_COLOR_INST_STABILIZE})%{DIFF_CHAR_INST_STABILIZE}"
-	"{else}"
-		"(%{DIFF_COLOR_UNINST_STABILIZE})%{DIFF_CHAR_UNINST_STABILIZE}"
-	"{}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag for packages which have gained a stable version."));
-
-AddOption(STRING, "TAG_NEW",
-	"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag printed for new packages (eix-diff)."));
-
-AddOption(STRING, "TAG_BETTER",
-	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag used for \"better version\" (eix-diff)."));
-
-AddOption(STRING, "TAG_WORSE",
-	"(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the tag used for \"worse version\" (eix-diff)."));
-
-AddOption(STRING, "STRING_PLAIN_INSTALLED",
-	"%{STRING_PLAIN_UNINSTALLED}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"plain\" tagging installed packages."));
-
-AddOption(STRING, "STRING_PLAIN_UNINSTALLED",
-	"*", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"plain\" tagging uninstalled packages."));
-
-AddOption(STRING, "DIFF_STRING_NEW",
-	">>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"new package\" separators (eix-diff)."));
-
-AddOption(STRING, "DIFF_STRING_DELETE",
-	"\\<\\<", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"deleted package\" separators (eix-diff)."));
-
-AddOption(STRING, "DIFF_STRING_CHANGED",
-	"==", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the string used for \"changed package\" separators (eix-diff)."));
-
-AddOption(STRING, "FORMAT_MASK_TAG",
-	"{!*mask}"
-	"{washardmasked}"
-		"%{?COLOR_ORIGINAL}{!$color}{*color}%{FORMAT_COLOR_MASKED}{}%{}"
-		"{isprofilemasked}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*mask=\"%{TAG_FOR_PROFILE}\"}"
-		"{else}{ismasked}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*mask=\"%{TAG_FOR_MASKED}\"}"
-		"{else}"
-			"{wasprofilemasked}{*mask=\"%{TAG_FOR_EX_PROFILE}\"}"
-			"{else}{*mask=\"%{TAG_FOR_EX_MASKED}\"}{}"
-		"{}{}"
-	"{else}"
-		"{ishardmasked}"
-			"%{?COLOR_LOCAL_MASK}{!$color}{*color}%{FORMAT_COLOR_MASKED}{}%{}"
-			"{*mask=\"%{TAG_FOR_LOCALLY_MASKED}\"}"
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It sets the runtime variable m to the masking tag, and unless the\n"
-	"runtime variable c is set, it outputs the color and sets c."));
-
-AddOption(STRING, "FORMAT_STABILITY_TAG",
-	"{isstable}"
-		"%{!COLOR_ORIGINAL}"
-			"{!$color}{*color}%{FORMAT_COLOR_STABLE}{}"
-		"%{}"
-		"{wasstable}"
-			"{!$color}{*color}%{FORMAT_COLOR_STABLE}{}"
-			"{*stable=\"%{TAG_FOR_STABLE}\"}"
-		"{else}{wasunstable}"
-			"{!$color}{*color}%{FORMAT_COLOR_UNSTABLE}{}"
-			"{*stable=\"%{TAG_FOR_EX_UNSTABLE}\"}"
-		"{else}{wasmissingkeyword}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*stable=\"%{TAG_FOR_EX_MISSING_KEYWORD}\"}"
-		"{else}{wasalienstable}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*stable=\"%{TAG_FOR_EX_ALIEN_STABLE}\"}"
-		"{else}{wasalienunstable}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*stable=\"%{TAG_FOR_EX_ALIEN_UNSTABLE}\"}"
-		"{else}{wasminuskeyword}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*stable=\"%{TAG_FOR_EX_MINUS_KEYWORD}\"}"
-		"{else}{wasminusunstable}"
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*stable=\"%{TAG_FOR_EX_MINUS_UNSTABLE}\"}"
-		"{else}"//{wasminusasterisk}
-			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-			"{*stable=\"%{TAG_FOR_EX_MINUS_ASTERISK}\"}"
-		"{}{}{}{}{}{}{}"
-	"{else}{isunstable}"
-		"{!$color}{*color}%{FORMAT_COLOR_UNSTABLE}{}"
-		"{*stable=\"%{TAG_FOR_UNSTABLE}\"}"
-	"{else}{ismissingkeyword}"
-		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-		"{*stable=\"%{TAG_FOR_MISSING_KEYWORD}\"}"
-	"{else}{isalienstable}"
-		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-		"{*stable=\"%{TAG_FOR_ALIEN_STABLE}\"}"
-	"{else}{isalienunstable}"
-		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-		"{*stable=\"%{TAG_FOR_ALIEN_UNSTABLE}\"}"
-	"{else}{isminuskeyword}"
-		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-		"{*stable=\"%{TAG_FOR_MINUS_KEYWORD}\"}"
-	"{else}{isminusunstable}"
-		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-		"{*stable=\"%{TAG_FOR_MINUS_UNSTABLE}\"}"
-	"{else}"//{isminusasterisk}
-		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
-		"{*stable=\"%{TAG_FOR_MINUS_ASTERISK}\"}"
-	"{}{}{}{}{}{}{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It sets the runtime variable s to the stability tag, and unless the\n"
-	"runtime variable c is set, it outputs the color and sets c."));
-
-AddOption(STRING, "FORMAT_STABILITY",
-	"{!*color}%{FORMAT_MASK_TAG}%{FORMAT_STABILITY_TAG}<$mask><$stable>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It outputs the stability tag, changing the color appropriately.\n"
-	"It sets the runtime variable c depending on whether color was changed."));
-
-AddOption(STRING, "FORMAT_PROPERTIES",
-	"{properties}{*color}(%{COLOR_PROPERTIES})"
-		"{propertiesinteractive}%{TAG_PROPERTIES_INTERACTIVE}{}"
-		"{propertieslive}%{TAG_PROPERTIES_LIVE}{}"
-		"{propertiesset}%{TAG_PROPERTIES_SET}{}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It outputs the PROPERTIES tag, changing the color appropriately.\n"
-	"It sets the runtime variable c if color was changed."));
-
-AddOption(STRING, "FORMAT_RESTRICT",
-	"{restrict}{*color}(%{COLOR_RESTRICT})"
-		"{restrictfetch}%{TAG_RESTRICT_FETCH}{}"
-		"{restrictmirror}%{TAG_RESTRICT_MIRROR}{}"
-		"{restrictprimaryuri}%{TAG_RESTRICT_PRIMARYURI}{}"
-		"{restrictbinchecks}%{TAG_RESTRICT_BINCHECKS}{}"
-		"{restrictstrip}%{TAG_RESTRICT_STRIP}{}"
-		"{restricttest}%{TAG_RESTRICT_TEST}{}"
-		"{restrictuserpriv}%{TAG_RESTRICT_USERPRIV}{}"
-		"{restrictinstallsources}%{TAG_RESTRICT_INSTALLSOURCES}{}"
-		"{restrictbindist}%{TAG_RESTRICT_BINDIST}{}"
-		"{restrictparallel}%{TAG_RESTRICT_PARALLEL}{}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It outputs the RESTRICT tag, changing the color appropriately.\n"
-	"It sets the runtime variable c if color was changed."));
-
-AddOption(STRING, "FORMAT_PROPRESTRICT",
-	"%{!NO_RESTRICTIONS}"
-		"{!*color}%{FORMAT_PROPERTIES}%{FORMAT_RESTRICT}"
-		"{$color}(){}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
-	"and resets the color."));
-
-AddOption(STRING, "FORMAT_BINARY",
-	"%{!NO_BINARY}"
-		"{isbinary}"
-			"(%{COLOR_BINARY})%{TAG_BINARY}()"
-		"{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
-	"and resets the color."));
-
-AddOption(STRING, "FORMAT_SLOT",
-	"(%{COLOR_SLOTS})\\(<slot>\\)()", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the slot format printed for slotsorted versions."));
-
-AddOption(STRING, "VERSION",
-	"<version>{!last} {}", _(
-	"This variable is used for <markedversions:VERSION>.\n"
-	"It just gives the plain version name without anything else.\n"
-	"You can use it similarly for e.g. <availableversions:VERSION>."));
-
-AddOption(STRING, "FORMAT_PVERSION",
-	"{color}"
-		"{installedversion}"
-			"{*color}(none;%{MARK_INSTALLED})"
-		"{else}"
-			"{isbestupgradeslot}{*color}(none;%{MARK_UPGRADE}){}"
-		"{}"
-		"{markedversion}{*color}(none;%{MARK_VERSIONS}){}"
-	"{}"
-	"<version>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It outputs an available version with various marks and sets the runtime\n"
-	"variable c if a mark was printed.\n"
-	"It should be follows by FORMAT_VERSION_END or FORMAT_VERSIONS_END."));
-
-AddOption(STRING, "FORMAT_VERSION_END",
-	"{$color}(){}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It resets all colors/markers if the runtime variable c was set."));
-
-AddOption(STRING, "FORMAT_VERSIONS_END",
-	"%{?PRINT_SLOTS}"
-		"{isslot}"
-			"%{?COLORED_SLOTS}"
-				"{$color}(){}"
-				"{*color}"
-				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
-				"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
-			"%{else}"
-				"%{?COLON_SLOTS}:<slot>"
-				"%{else}\\(<slot>\\)%{}"
-			"%{}"
-		"{}"
-	"%{}"
-	"%{FORMAT_VERSION_END}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It outputs an optional slot, caring about the runtime variable c,\n"
-	"and then invokes FORMAT_VERSION_END."));
-
-AddOption(STRING, "PVERSION",
-	"%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version without slot."));
-
-AddOption(STRING, "PVERSIONS",
-	"%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for printing a plain version with its slot."));
-
-AddOption(STRING, "AVERSION",
-	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version without slot."));
-
-AddOption(STRING, "AVERSIONS",
-	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for printing an available version with its slot."));
-
-AddOption(STRING, "IVERSIONS",
-	"(%{COLOR_INST_VERSION}){*color}<version>%{FORMAT_VERSIONS_END}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for printing an installed version with its slot."));
-
-AddOption(STRING, "PVERSIONS_VERBOSE",
-	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version with most data and slot."));
-
-AddOption(STRING, "AVERSIONS_VERBOSE",
-	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version with most data and slot."));
-
-AddOption(STRING, "IVERSIONS_VERBOSE",
-	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an installed version with most data and slot."));
-
-AddOption(STRING, "PVERSION_VERBOSE",
-	"%{PVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version with most data, no slot."));
-
-AddOption(STRING, "AVERSION_VERBOSE",
-	"%{AVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version with most data, no slot."));
-
-AddOption(STRING, "PVERSIONS_COMPACT",
-	"%{PVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version with important data and slot."));
-
-AddOption(STRING, "AVERSIONS_COMPACT",
-	"%{AVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version with important data and slot."));
-
-AddOption(STRING, "IVERSIONS_COMPACT",
-	"%{IVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an installed version with important data and slot."));
-
-AddOption(STRING, "PVERSION_COMPACT",
-	"%{PVERSION}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version with important data, no slot."));
-
-AddOption(STRING, "AVERSION_COMPACT",
-	"%{AVERSION}%{FORMAT_BINARY}<overlayver>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version with important data, no slot."));
-
-AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
-	" \"(cyan)", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed before KEYWORDS string for a version is output\n"
-	"(with --versionlines and nonverbose)"));
-
-AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
-	"()\"", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed after KEYWORDS string for a version is output.\n"
-	"(with --versionlines and nonverbose)"));
-
-AddOption(STRING, "PRINT_KEYWORDS",
-	"true", _(
-	"This variable is only used for delayed substitution.\n"
-	"If true, print KEYWORDS for each version with --versionlines."));
-
-AddOption(STRING, "USE_EFFECTIVE_KEYWORDS",
-	"false", _(
-	"This variable is only used for delayed substitution.\n"
-	"Print effective keywords (modified by profile) instead of KEYWORDS.\n"
-	"This is only used if PRINT_KEYWORDS gets active."));
-
-AddOption(STRING, "VERSION_KEYWORDS_NORMAL",
-	"%{?PRINT_KEYWORDS}"
-		"%{FORMAT_BEFORE_KEYWORDS}"
-		"%{?USE_EFFECTIVE_KEYWORDS}"
-			"<versionkeywords*>"
-		"%{else}"
-			"<versionkeywords>"
-		"%{}"
-		"%{FORMAT_AFTER_KEYWORDS}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the normal format for KEYWORDS for an available version."));
-
-AddOption(STRING, "VERSION_IUSE_NORMAL",
-	"%{?PRINT_IUSE_VERSION}"
-		"%{?PRINT_IUSE}"
-			"{haveuse}%{FORMAT_BEFORE_IUSE}<use>%{FORMAT_AFTER_IUSE}{}"
-		"%{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the normal format for IUSE for an available version"));
-
-AddOption(STRING, "VERSION_LINESKIP",
-	"\\n\\t\\t\\t", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip used for the verbose versionline appendix."));
-
-AddOption(STRING, "VERSION_KEYWORDS_VERBOSE",
-	"%{?PRINT_KEYWORDS}"
-		"{versionkeywords}"
-			"%{VERSION_LINESKIP}"
-			"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:()  <versionkeywords>"
-		"{}"
-		"{versionekeywords}"
-			"%{VERSION_LINESKIP}"
-			"(%{COLOR_AVAILABLE_TITLE})effective:() <versionkeywords*>"
-		"{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the verbose format for KEYWORDS for an available version."));
-
-AddOption(STRING, "VERSION_IUSE_VERBOSE",
-	"%{?PRINT_IUSE}"
-		"{haveuse}"
-			"%{VERSION_LINESKIP}"
-			"(%{COLOR_AVAILABLE_TITLE})IUSE:()      <use>"
-		"{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the verbose format for IUSE for an available version."));
-
-AddOption(STRING, "VERSION_DEP_VERBOSE",
-	"%{?DEP}"
-		"{depend}"
-			"%{VERSION_LINESKIP}"
-			"(%{COLOR_AVAILABLE_TITLE})DEPEND:()    <depend>"
-		"{}"
-		"{rdepend}"
-			"%{VERSION_LINESKIP}"
-			"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()   <rdepend>"
-		"{}"
-		"{pdepend}"
-			"%{VERSION_LINESKIP}"
-			"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()   <pdepend>"
-		"{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the verbose format for DEPs for an available version."));
-
-AddOption(STRING, "VERSION_APPENDIX_NORMAL",
-	"%{VERSION_KEYWORDS_NORMAL}"
-	"%{VERSION_IUSE_NORMAL}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines normal data appended to available versions with --versionlines"));
-
-AddOption(STRING, "VERSION_APPENDIX_VERBOSE",
-	"%{VERSION_KEYWORDS_VERBOSE}"
-	"%{VERSION_IUSE_VERBOSE}"
-	"%{VERSION_DEP_VERBOSE}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines verbose data appended to available versions with --versionlines"));
-
-AddOption(STRING, "VERSION_APPENDIX",
-	"{$modus=verbose}"
-		"%{VERSION_APPENDIX_VERBOSE}"
-	"{else}"
-		"%{VERSION_APPENDIX_NORMAL}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the data appended to available versions with --versionlines"));
-
-AddOption(STRING, "FORMAT_SLOTLINESKIP",
-	"\\n\\t%{FORMAT_SLOT}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip + slot with lineskip."));
-
-AddOption(STRING, "FORMAT_VERSLINESKIP",
-	"\\n\\t%{FORMAT_STABILITY}\\t", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip + stability for available versions with lineskip."));
-
-AddOption(STRING, "FORMAT_INSTLINESKIP",
-	"\\n                          ", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip for installed versions."));
-
-AddOption(STRING, "VSORTL",
-	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
-	"%{VERSION_APPENDIX}{last}{*sorted=version}{}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the format for a version; versionsorted with versionlines."));
-
-AddOption(STRING, "VSORT",
-	"%{AVERSIONS_VERBOSE}{last}{*sorted=version}{else} {}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the format for a version; versionsorted without versionlines."));
-
-AddOption(STRING, "SSORTL",
-	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
-	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
-	"%{VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the format for a version; slotsorted with versionlines."));
-
-AddOption(STRING, "SSORT",
-	"{slotfirst}"
-		"{oneslot}%{FORMAT_SLOT} "
-		"{else}\\n\\t%{FORMAT_SLOT}\\t{}"
-	"{else} {}"
-	"%{AVERSION_VERBOSE}{last}{*sorted=slot}{}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the format for a version; slotsorted without versionlines."));
-
-AddOption(STRING, "FORMAT_COLL",
-	"%{FORMAT_BEFORE_COLL}<colliuse>%{FORMAT_AFTER_COLL}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for collected IUSE data in one line."));
-
-AddOption(STRING, "FORMAT_COLL_SEP",
-	"%{FORMAT_BEFORE_COLL_SEP}<colliuse>%{FORMAT_AFTER_COLL_SEP}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for collected IUSE data in a separate line."));
-
-AddOption(STRING, "FORMAT_COLL_IUSE",
-	"%{?PRINT_IUSE}"
-		"{havecolliuse}"
-			"{$sorted=version}%{FORMAT_COLL}"
-			"{else}%{FORMAT_COLL_SEP}{}"
-		"{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for collected IUSE data."));
-
-AddOption(STRING, "FORMAT_COLL_IUSE_LIST",
-	"%{?PRINT_IUSE}"
-		"%{!PRINT_IUSE_VERSION}"
-			"{havecolliuse}"
-				"{$modus=normal}%{FORMAT_COLL_SEP}{}"
-			"{}"
-		"%{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for collected IUSE data with --versionlines."));
-
-AddOption(STRING, "FORMAT_DEPENDENCIES",
-	"%{?DEP}"
-		"{havecolliuse}"
-			"%{FORMAT_BEFORE_SLOT_IUSE}"
-			"<colliuse>"
-			"%{FORMAT_AFTER_SLOT_IUSE}"
-		"{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for DEP-related data."));
-
-AddOption(STRING, "INORMAL",
-	"%{IVERSIONS_VERBOSE}"
-	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)()"
-	"%{FORMAT_INST_USEFLAGS}"
-	"{!last}"
-		"{versionlines}%{FORMAT_INSTLINESKIP}"
-		"{else} {}"
-	"{}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the normal format of installed versions."));
-
-AddOption(STRING, "ICOMPACT",
-	"%{IVERSIONS_COMPACT}"
-	"@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
-	"{!last} {}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the compact format of installed versions."));
-
-AddOption(STRING, "IVERBOSE",
-	"(%{COLOR_INST_TITLE})Version:() "
-	"%{IVERSIONS_VERBOSE}()"
-	"%{FORMAT_INSTLINESKIP}"
-	"(%{COLOR_INST_TITLE})Date:()    "
-	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>()"
-	"{haveuse}"
-		"%{FORMAT_INSTLINESKIP}"
-		"(%{COLOR_INST_TITLE})USE:()     "
-		"<use>"
-	"{}"
-	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
-	"This variable is used as a version formatter.\n"
-	"It defines the verbose format of installed versions."));
-
-AddOption(STRING, "VERSION_NEWLINE",
-	"%{!NEWLINE}"
-		"\\n"
-	"%{else}"
-		"{!last}\\n{}"
-	"%{}", _(
-	"This variable is used by delayed substitution in version formatters.\n"
-	"It prints a newline if it appears appropriate. If the last version might\n"
-	"be skipped (by using conditionals in your version formatter) you should\n"
-	"set NEWLINE=false since you otherwise get an additional newline\n"
-	"after the last actually printed version."));
-
-AddOption(STRING, "NAMEVERSION",
-	"<category>/<name>-<version>"
-	"%{VERSION_NEWLINE}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage with <bestslotupgradeversions:NAMEVERSION>\n"
-	"or <installedversions:NAMEVERION> or <availableversions:NAMEVERSION>."));
-
-AddOption(STRING, "EQNAMEVERSION",
-	"=<category>/<name>-<version>"
-	"%{VERSION_NEWLINE}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
-	"or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>\n."));
-
-AddOption(STRING, "ANAMESLOT",
-	"{slotlast}<category>/<name>{slots}:<slot>{}"
-	"%{VERSION_NEWLINE}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
-
-AddOption(STRING, "ANAMEASLOT",
-	"{slotlast}<category>/<name>:<slot>{!last}\\n{}{}"
-	"%{VERSION_NEWLINE}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."));
-
-AddOption(STRING, "NAMESLOT",
-	"<category>/<name>{slots}:<slot>{}%{VERSION_NEWLINE}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage with <installedversions:NAMESLOT>."));
-
-AddOption(STRING, "NAMEASLOT",
-	"<category>/<name>:<slot>"
-	"%{VERSION_NEWLINE}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage with <installedversions:NAMEASLOT>."));
-
-AddOption(STRING, "DATESORT_DATE",
-	"%s	%x %X", _(
-	"strftime() format for printing the installation date in DATESORT"));
-
-AddOption(STRING, "DATESORT",
-	"<date:DATESORT_DATE>\\t%{NAMESLOT}", _(
-	"This variable is used as a version formatter.\n"
-	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
-	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
-
-AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
-	"{versionlines}"
-		"{slotsorted}<availableversions:VSORTL:SSORTL>"
-		"{else}<availableversions:VSORTL>{}"
-		"%{FORMAT_COLL_IUSE_LIST}"
-	"{else}"
-		"{slotsorted}<availableversions:VSORT:SSORT>"
-		"{else}<availableversions:VSORT>{}"
-		"%{FORMAT_COLL_IUSE}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the verbose format for printing available versions."));
-
-AddOption(STRING, "FORMAT_INST_USEFLAGS",
-	"{haveuse}"
-		"\\(<use>\\)"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for useflags in installed versions."));
-
-AddOption(STRING, "INSTALLEDVERSIONS_NORMAL",
-	"<installedversions:INORMAL>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format used for printing installed versions normally."));
-
-AddOption(STRING, "INSTALLEDVERSIONS_COMPACT",
-	"<installedversions:ICOMPACT>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format used for printing installed versions compactly."));
-
-AddOption(STRING, "INSTALLEDVERSIONS_VERBOSE",
-	"<installedversions:IVERBOSE>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format used for printing installed versions verbosely."));
-
-AddOption(STRING, "INSTALLEDVERSIONS",
-	"{$modus=verbose}"
-		"%{INSTALLEDVERSIONS_VERBOSE}"
-	"{else}"
-		"%{INSTALLEDVERSIONS_NORMAL}"
-	"{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format used for printing installed versions."));
-
-AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
-	"%{!PRINT_ALWAYS}{installed}%{}"
-	"     (%{COLOR_TITLE})Installed versions:()"
-	"  "
-	"%{?PRINT_ALWAYS}{installed}%{}"
-	"%{INSTALLEDVERSIONS}"
-	"%{?PRINT_ALWAYS}"
-		"{else}None{}\\n"
-	"%{else}"
-		"\\n{}"
-	"%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with installed versions."));
-
-AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
-	"{installed}%{INSTALLEDVERSIONS_COMPACT}; {}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for eix-diff for installed versions."));
-
-AddOption(STRING, "FORMAT_FINISH",
-	"%{!NEWLINE}\\n%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It is used at the end of a package to output a newline unless NEWLINE=true."));
-
-AddOption(STRING, "FORMAT_NAME",
-	"{system}(%{COLOR_CATEGORY_SYSTEM})"
-	"{else}"
-		"{world}(%{COLOR_CATEGORY_WORLD})"
-		"{else}"
-			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
-			"{else}(%{COLOR_CATEGORY}){}"
-		"{}"
-	"{}<category>()/"
-	"{marked}(%{COLOR_MARKED_NAME})"
-	"{else}"
-		"{world}(%{COLOR_WORLD})"
-		"{else}"
-			"{world_sets}(%{COLOR_WORLD_SETS})"
-			"{else}(%{COLOR_NAME}){}"
-		"{}"
-	"{}<name>()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the printing the package name."));
-
-AddOption(STRING, "FORMAT_HEADER",
-	"{installed}"
-		"[{!*rest}"
-		"{upgrade}{*rest}%{TAG_UPGRADE}{}"
-		"{downgrade}{*rest}%{TAG_DOWNGRADE}{}"
-		"{!$rest}%{TAG_INSTALLED}{}"
-		"]"
-	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the normal header symbols."));
-
-AddOption(STRING, "FORMAT_HEADER_VERBOSE",
-	"{installed}(%{COLOR_INST_TAG})%{STRING_PLAIN_INSTALLED}"
-	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}"
-	"()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the verbose header symbols."));
-
-AddOption(STRING, "FORMAT_HEADER_COMPACT",
-	"["
-	"{installed}"
-		"{!*rest}"
-		"{upgrade}{*rest}%{TAG_UPGRADE}{}"
-		"{downgrade}{*rest}%{TAG_DOWNGRADE}{}"
-		"{!$rest}%{TAG_INSTALLED}{}"
-	"{else}%{TAG_UNINSTALLED}{}"
-	"]", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the compact header symbols."));
-
-AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
-	"[{*better=\\ }{*stable=\\ }{!*rest}"
-	"{havebest}%{TAG_STABILIZE}{!*better}{}"
-	"{upgrade}{*rest}%{TAG_UPGRADE}{}"
-	"{downgrade}{$rest}{!*stable}{}{*rest}%{TAG_DOWNGRADE}{}"
-	"{!$rest}%{TAG_NEW}{}"
-	"]<$better><$stable>"
-	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-new header symbols."));
-
-AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
-	"{installed}"
-		"[(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()]"
-	"{else}"
-		"   "
-	"{}"
-	"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-delete header symbols."));
-
-AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
-	"[{*better=\\ }{*up=\\ }{*down=\\ }"
-	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{!*better}{}{}"
-	"{upgrade}{!*up}%{TAG_UPGRADE}{}"
-	"{downgrade}{!*down}%{TAG_DOWNGRADE}{}"
-	"{$up}{better}{!*up}%{TAG_BETTER}{}{}"
-	"{$down}{worse}{!*down}%{TAG_WORSE}{}{}"
-	"]<$better><$up><$down>"
-	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-changed header symbols."));
-
-AddOption(BOOLEAN, "NOBEST_COMPACT",
-	"true", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"If true, compact format prints no version if none is installable."));
-
-AddOption(BOOLEAN, "NOBEST_CHANGE",
-	"true", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"If true, compact format prints no versions if all installable vanished."));
-
-AddOption(BOOLEAN, "DIFF_NOBEST",
-	"false", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"If true, eix-diff prints no version if none is installable."));
-
-AddOption(BOOLEAN, "DIFF_NOBEST_CHANGE",
-	"false", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"If true, eix-diff prints no versions if all installable vanished."));
-
-AddOption(STRING, "FORMAT_NOBEST",
-	"%{FORMAT_COLOR_MASKED}"
-	"--"
-	"()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines what to print if no version number is printed."));
-
-AddOption(STRING, "FORMAT_NOBEST_CHANGE",
-	"%{FORMAT_COLOR_MASKED}"
-	"??"
-	"()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines what to print after \"->\" if there is no installable."));
-
-AddOption(STRING, "FORMAT_BEST_COMPACT",
-	"{havebest}"
-		"<bestversion:AVERSIONS_COMPACT>"
-	"{else}"
-		"{havebest*}"
-			"<bestversion*:AVERSIONS_COMPACT>"
-		"{else}"
-			"%{?NOBEST_COMPACT}"
-				"%{FORMAT_NOBEST}"
-			"%{else}"
-				"<availableversions:VSORT>"
-			"%{}"
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the compact format for the best version(s)."));
-
-AddOption(STRING, "FORMAT_BEST_CHANGE",
-	"{havebest}"
-		"<bestslotversions:VSORT>"
-	"{else}"
-		"{havebest*}"
-			"<bestslotversions*:VSORT>"
-		"{else}"
-			"%{?NOBEST_CHANGE}"
-				"%{FORMAT_NOBEST_CHANGE}"
-			"%{else}"
-				"<availableversions:VSORT>"
-			"%{}"
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the compact format for the best version(s) in case of changes."));
-
-AddOption(STRING, "DIFF_FORMAT_BEST",
-	"{havebest}"
-		"<bestversion:AVERSIONS_COMPACT>"
-	"{else}"
-		"{havebest*}"
-			"<bestversion*:AVERSIONS_COMPACT>"
-		"{else}"
-			"%{?DIFF_NOBEST}"
-				"%{FORMAT_NOBEST}"
-			"%{else}"
-				"<availableversions:VSORT>"
-			"%{}"
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the eix-diff format for the best version(s)."));
-
-AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
-	"{havebest}"
-		"<bestslotversions:VSORT>"
-	"{else}"
-		"{havebest*}"
-			"<bestslotversions*:VSORT>"
-		"{else}"
-			"%{?DIFF_NOBEST_CHANGE}"
-				"%{FORMAT_NOBEST_CHANGE}"
-			"%{else}"
-				"<availableversions:VSORT>"
-			"%{}"
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the eix-diff format for the best version(s) in case of changes."));
-
-AddOption(STRING, "DIFF_FORMAT_OLDBEST_CHANGE",
-	"{oldhavebest}"
-		"<oldbestslotversions:VSORT>"
-	"{else}"
-		"{oldhavebest*}"
-			"<oldbestslotversions*:VSORT>"
-		"{else}"
-			"%{?DIFF_NOBEST_CHANGE}"
-				"%{FORMAT_NOBEST_CHANGE}"
-			"%{else}"
-				"<oldavailableversions:VSORT>"
-			"%{}"
-		"{}"
-	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the eix-diff format for the old best versions in case of changes."));
-
-AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
-	"%{?DIFF_PRINT_INSTALLED}"
-		"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
-	"%{}"
-	"%{DIFF_FORMAT_OLDBEST_CHANGE}"
-	" -> "
-	"%{DIFF_FORMAT_BEST_CHANGE}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the eix-diff format for changed versions."));
-
-AddOption(STRING, "FORMAT_OVERLAYKEY",
-	"{overlaykey} <overlaykey>{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the printing the optional overlay key."));
-
-AddOption(STRING, "FORMATLINE_NAME",
-	"%{FORMAT_HEADER} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the normal header line."));
-
-AddOption(STRING, "FORMATLINE_NAME_VERBOSE",
-	"%{FORMAT_HEADER_VERBOSE} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the verbose header line."));
-
-AddOption(STRING, "FORMATLINE_NAME_COMPACT",
-	"%{FORMAT_HEADER_COMPACT} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the compact header line."));
-#endif
-
-#if (DEFAULT_PART == 3)
-
-AddOption(STRING, "DIFF_FORMATLINE_NAME_NEW",
-	"%{DIFF_FORMAT_HEADER_NEW} %{FORMAT_NAME} ", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-new header."));
-
-AddOption(STRING, "DIFF_FORMATLINE_NAME_DELETE",
-	"%{DIFF_FORMAT_HEADER_DELETE} %{FORMAT_NAME} ", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-delete header."));
-
-AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
-	"%{DIFF_FORMAT_HEADER_CHANGED} %{FORMAT_NAME} ", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for the diff-changed header."));
-
-AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
-	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with installed versions."));
-
-AddOption(STRING, "DIFF_FORMATLINE_BEST",
-	"\\(%{DIFF_FORMAT_BEST}())", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the eix-diff line for the best versions/slots."));
-
-AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
-	"\\(%{DIFF_FORMAT_CHANGED_VERSIONS})", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the eix-diff line for changed versions."));
-
-AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
-	"%{!PRINT_ALWAYS}{havemarkedversion}%{}"
-	"     (%{COLOR_TITLE})Marked:()"
-	"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
-	"              "
-	"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>()"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with marked versions."));
-
-AddOption(BOOLEAN, "ALL_SETNAMES",
-	"true", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines whether to include \"system\" in package sets output."));
-
-AddOption(STRING, "PRINT_SETNAMES",
-	"%{?ALL_SETNAMES}all%{}setnames", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It is the command used to print the package set names."));
-
-AddOption(STRING, "FORMATLINE_PACKAGESETS",
-	"%{!PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-	"     (%{COLOR_TITLE})Package sets:()"
-	"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
-	"        "
-	"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>()"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with package sets."));
-
-AddOption(STRING, "FORMATLINE_HOMEPAGE",
-	"%{!PRINT_ALWAYS}{homepage}%{}"
-	"     (%{COLOR_TITLE})Homepage:()"
-	"%{?PRINT_ALWAYS}{homepage}%{}"
-	"            "
-	"<homepage>"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the package homepage."));
-
-AddOption(STRING, "FORMATLINE_BUGS",
-	"     (%{COLOR_TITLE})Find open bugs:()"
-	"      "
-	"http://bugs.gentoo.org/buglist.cgi?quicksearch="
-	"<category>%2F<name>"
-	"\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the package bug-reference."));
-
-AddOption(STRING, "FORMATLINE_DESCRIPTION",
-	"%{!PRINT_ALWAYS}{description}%{}"
-	"     (%{COLOR_TITLE})Description:()"
-	"%{?PRINT_ALWAYS}{description}%{}"
-	"         "
-	"<description>"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the package description."));
-
-AddOption(STRING, "FORMATLINE_BEST",
-	"%{!PRINT_ALWAYS}{havebest}%{}"
-	"     (%{COLOR_TITLE})Best versions/slot:()"
-	"%{?PRINT_ALWAYS}{havebest}%{}"
-	"  <bestslotversions:VSORT>"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the best versions/slots."));
-
-AddOption(STRING, "FORMATLINE_RECOMMEND",
-	"%{!PRINT_ALWAYS}{recommend}%{}"
-	"     (%{COLOR_TITLE})Recommendation:()"
-	"%{?PRINT_ALWAYS}{recommend}%{}"
-	"      "
-	"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade()"
-		"{downgrade}"
-			" and "
-		"{}"
-	"{}"
-	"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(){}"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the up-/downgrade recommendations."));
-
-AddOption(STRING, "FORMATLINE_LICENSES",
-	"%{!PRINT_ALWAYS}{licenses}%{}"
-	"     (%{COLOR_TITLE})License:()"
-	"%{?PRINT_ALWAYS}{licenses}%{}"
-	"             "
-	"<licenses>"
-	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for a line with the package licenses."));
-
-AddOption(STRING, "DIFF_FORMATLINE",
-	"%{FORMAT_OVERLAYKEY}: <description>"
-	"%{FORMAT_FINISH}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
-	"It defines the format for eix-diff after the versions."));
-
-AddOption(STRING, "FORMAT_ALL",
-	"{*modus=normal}"
-	"%{FORMATLINE_NAME}"
-	"%{FORMATLINE_AVAILABLEVERSIONS}"
-	"%{FORMATLINE_INSTALLEDVERSIONS}"
-	"%{FORMATLINE_MARKEDVERSIONS}"
-	"%{FORMATLINE_HOMEPAGE}"
-	"%{FORMATLINE_DESCRIPTION}"
-	"%{FORMAT_FINISH}", _(
-	"This format is only used for delayed substitution in FORMAT.\n"
-	"It defines the format of the normal output of eix."));
-
-AddOption(STRING, "FORMAT_ALL_COMPACT",
-	"{*modus=compact}"
-	"%{FORMATLINE_NAME_COMPACT}"
-	" \\("
-	"{havemarkedversion}(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(); {}"
-	"{installed}"
-		"%{INSTALLEDVERSIONS_COMPACT}"
-		"{recommend} -> %{FORMAT_BEST_CHANGE}{}"
-	"{else}"
-		"%{FORMAT_BEST_COMPACT}"
-	"{}"
-	"()\\): <description>"
-	"%{FORMAT_FINISH}", _(
-	"This format is only used for delayed substitution in FORMAT_COMPACT.\n"
-	"It defines the format of the compact output of eix (option -c)."));
-
-AddOption(STRING, "FORMAT_ALL_VERBOSE",
-	"{*modus=verbose}"
-	"%{FORMATLINE_NAME_VERBOSE}"
-	"%{FORMATLINE_AVAILABLEVERSIONS}"
-	"%{FORMATLINE_INSTALLEDVERSIONS_VERBOSE}"
-	"%{FORMATLINE_BEST}"
-	"%{FORMATLINE_RECOMMEND}"
-	"%{FORMATLINE_MARKEDVERSIONS}"
-	"%{FORMATLINE_PACKAGESETS}"
-	"%{FORMATLINE_HOMEPAGE}"
-	"%{?PRINT_BUGS}%{FORMATLINE_BUGS}%{}"
-	"%{FORMATLINE_DESCRIPTION}"
-	"%{FORMATLINE_LICENSES}"
-	"%{FORMAT_FINISH}", _(
-	"This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
-	"It defines the format of the verbose output of eix (option -v)."));
-
-AddOption(STRING, "FORMAT",
-	"%{FORMAT_ALL}", _(
-	"The format of the normal output of eix.\n"
-	"Do not modify it in a config file; modify FORMAT_ALL instead."));
-
-AddOption(STRING, "FORMAT_COMPACT",
-	"%{FORMAT_ALL_COMPACT}", _(
-	"The format of the compact output of eix (option -c).\n"
-	"Do not modify it in a config file; modify FORMAT_ALL_COMPACT instead."));
-
-AddOption(STRING, "FORMAT_VERBOSE",
-	"%{FORMAT_ALL_VERBOSE}", _(
-	"The format of the verbose output of eix (option -v).\n"
-	"Do not modify it in a config file; modify FORMAT_ALL_VERBOSE instead."));
-
-AddOption(STRING, "DIFF_FORMAT_ALL_NEW",
-	"%{DIFF_FORMATLINE_NAME_NEW}"
-	"%{DIFF_FORMATLINE_BEST}"
-	"%{DIFF_FORMATLINE}", _(
-	"This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
-	"It defines the format used for new packages (eix-diff)."));
-
-AddOption(STRING, "DIFF_FORMAT_ALL_DELETE",
-	"%{DIFF_FORMATLINE_NAME_DELETE}"
-	"%{DIFF_FORMATLINE_BEST}"
-	"%{DIFF_FORMATLINE}", _(
-	"This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
-	"It defines the format used for packages that were deleted (eix-diff)."));
-
-AddOption(STRING, "DIFF_FORMAT_ALL_CHANGED",
-	"%{DIFF_FORMATLINE_NAME_CHANGED}"
-	"%{DIFF_FORMATLINE_CHANGED_VERSIONS}"
-	"%{DIFF_FORMATLINE}", _(
-	"This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
-	"It defines the format used for packages that were changed (eix-diff)."));
-
-AddOption(STRING, "DIFF_FORMAT_NEW",
-	"%{DIFF_FORMAT_ALL_NEW}", _(
-	"The format used for new packages (eix-diff).\n"
-	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."));
-
-AddOption(STRING, "DIFF_FORMAT_DELETE",
-	"%{DIFF_FORMAT_ALL_DELETE}", _(
-	"The format used for packages that were deleted (eix-diff).\n"
-	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."));
-
-AddOption(STRING, "DIFF_FORMAT_CHANGED",
-	"%{DIFF_FORMAT_ALL_CHANGED}", _(
-	"The format used for packages that were changed (eix-diff).\n"
-	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."));
-
-AddOption(STRING, "FORMAT_INSTALLATION_DATE",
-	"%X %x", _(
-	"strftime() format for printing the installation date in long form"));
-
-AddOption(STRING, "FORMAT_SHORT_INSTALLATION_DATE",
-	"%x", _(
-	"strftime() format for printing the installation date in short form"));
-
-AddOption(STRING, "XML_KEYWORDS",
-	"none", _(
-	"Can be full/effective/both/full*/effective*/none.\n"
-	"Depending on the value, with --xml the full/effective (or both types)\n"
-	"KEYWORDS string is output for each version.\n"
-	"With full*/effective* also both types are output if they differ."));
-
-AddOption(STRING, "XML_OVERLAY",
-	"false", _(
-	"If false, the overlay is not output with --xml.\n"
-	"For overlays without label (repository name) the overlay is output anyway."));
-
-AddOption(STRING, "XML_DATE",
-	"%s", _(
-	"strftime() format for printing the installation date with --xml."));
-
-AddOption(STRING, "FORMAT_BEFORE_SET_USE",
-	"(%{COLOR_SET_USE})", _(
-	"This string is printed before each set USE flag of an installed version."));
-
-AddOption(STRING, "FORMAT_AFTER_SET_USE",
-	"()", _(
-	"This string is printed after each set USE flag of an installed version."));
-
-AddOption(STRING, "FORMAT_BEFORE_UNSET_USE",
-	"(%{COLOR_UNSET_USE})-", _(
-	"This string is printed before each unset USE flag of an installed version."));
-
-AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
-	"()", _(
-	"This string is printed after each unset USE flag of an installed version."));
-
-AddOption(STRING, "FORMAT_AFTER_IUSE",
-	"()]", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed after IUSE data for a version is output.\n"
-	"(Normally, this is only used when --versionlines is active)"));
-
-AddOption(STRING, "FORMAT_BEFORE_IUSE",
-	" [(%{COLOR_VERSION_IUSE})", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed before IUSE data for a version is output.\n"
-	"(Normally, this is only used when --versionlines is active)"));
-
-AddOption(STRING, "FORMAT_AFTER_IUSE",
-	"()]", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed after IUSE data for a version is output.\n"
-	"(Normally, this is only used when --versionlines is active)"));
-
-AddOption(STRING, "FORMAT_BEFORE_COLL",
-	" (yellow,1)\\{(%{COLOR_COLL_IUSE})", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed before IUSE data for all versions is output.\n"
-	"(This is meant for printing after all versions in a line)"));
-
-AddOption(STRING, "FORMAT_AFTER_COLL",
-	"(yellow,1)\\}()", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed after IUSE data for all versions is output.\n"
-	"(This is meant for printing after all versions in a line)"));
-
-AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
-	"\\n\\t(yellow,1)\\{(%{COLOR_COLL_IUSE})", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed before IUSE data for all versions is output.\n"
-	"(This is meant for printing in a separate line)"));
-
-AddOption(STRING, "FORMAT_AFTER_COLL_SEP",
-	"%{FORMAT_AFTER_COLL}", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed after IUSE data for all versions is output.\n"
-	"(This is meant for printing in a separate line)"));
-
-AddOption(STRING, "COLOR_MASKED",
-	"red", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color for masked versions."));
-
-AddOption(STRING, "COLOR_UNSTABLE",
-	"yellow", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color for unstable versions."));
-
-AddOption(STRING, "COLOR_STABLE",
-	"green", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color for stable versions."));
-
-AddOption(STRING, "FORMAT_COLOR_MASKED",
-	"(%{COLOR_MASKED})", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format to change the color for masked versions."));
-
-AddOption(STRING, "FORMAT_COLOR_UNSTABLE",
-	"(%{COLOR_UNSTABLE})", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format to change the color for unstable versions."));
-
-AddOption(STRING, "FORMAT_COLOR_STABLE",
-	"(%{COLOR_STABLE})", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format to change the color for stable versions."));
-
-AddOption(STRING, "COLOR_OVERLAYKEY",
-	"cyan", _(
-	"Color for the overlaykey in version listings."));
-
-AddOption(STRING, "COLOR_VIRTUALKEY",
-	"purple", _(
-	"Color for the overlaykey for virtual overlays in version listings."));
-
-AddOption(STRING, "COLOR_SLOTS",
-	"red,1", _(
-	"Color for slots. This is only used for delayed substitution."));
-
-AddOption(STRING, "COLOR_BINARY",
-	"blue,1", _(
-	"Color for versions with *.tbz2. This is only used for delayed substitution."));
-
-AddOption(STRING, "COLOR_RESTRICT",
-	"red", _(
-	"Color for the restriction tags. This is only used for delayed substitution."));
-
-AddOption(STRING, "COLOR_PROPERTIES",
-	"cyan", _(
-	"Color for the properties tags. This is only used for delayed substitution."));
-
-AddOption(STRING, "MARK_INSTALLED",
-	"inverse", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines how installed versions are marked."));
-
-AddOption(STRING, "MARK_UPGRADE",
-	"bold", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines how upgrade candidate versions are marked."));
-
-AddOption(STRING, "MARK_VERSIONS",
-	"underline", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines how the package versions passed with --pipe are marked."));
-
-AddOption(BOOLEAN, "NOCOLOR",
-	"false", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the default for NO{COLORS,STATUSLINE,PERCENTAGE}."));
+	"Allowed values are true/false/never.\n"
+	"If true, always print the number of matches (even 0 or 1) in the last line."));
 
 AddOption(BOOLEAN, "NOCOLORS",
 	"%{NOCOLOR}", _(
@@ -1894,20 +367,6 @@ AddOption(STRING, "OVERLAYS_LIST",
 	"all-used-renumbered", _(
 	"Which overlays to list (all/all-if-used/all-used/all-used-renumbered/no)"));
 
-AddOption(STRING, "TERM",
-	"xterm", _(
-	"The current terminal. Usually this is set by the environment variable."));
-
-AddOption(STRING, "TERM_STATUSLINE",
-	"xterm screen rxvt aterm konsole gnome Eterm kterm interix", _(
-	"If the beginning of TERM matches a word of this space-separated list,\n"
-	"it is assumed that the terminal supports a status line."));
-
-AddOption(STRING, "TERM_SOFTSTATUSLINE",
-	"screen", _(
-	"If the beginning of TERM matches a word of this space-separated list, and\n"
-	"if a status line is active, also a soft status line will be output."));
-
 AddOption(INTEGER, "LEVENSHTEIN_DISTANCE",
 	LEVENSHTEIN_DISTANCE_DEFAULT, _(
 	"The default maximal levensthein distance for which a string is considered a match\n"
@@ -1958,6 +417,9 @@ AddOption(STRING, "REPO_NAMES",
 	"the label OVERLAY_LABEL, independent of the content of profiles/repo_name\n"
 	"or the label associated by KEEP_VIRTUALS.\n"
 	"The last matching DIR_PATTERN takes precedence."));
+#endif
+
+#if (DEFAULT_PART == 2)
 
 AddOption(STRING, "EXCLUDE_OVERLAY",
 	"", _(
@@ -2004,6 +466,30 @@ AddOption(BOOLEAN, "UPGRADE_TO_HIGHEST_SLOT",
 	"Use the files SLOT_UPGRADE_FORBID or SLOT_UPGRADE_ALLOW, respectively,\n"
 	"to specify exceptions."));
 
+AddOption(BOOLEAN, "PRINT_ALWAYS",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines whether all information lines are printed (even if empty)."));
+
+AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
+	"true", _(
+	"If false, count independently of whether the matches are printed."));
+
+AddOption(BOOLEAN, "PRINT_BUGS",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines whether a bug reference is printed in verbose format."));
+
+AddOption(BOOLEAN, "DIFF_PRINT_INSTALLED",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines whether eix-diff will output installed versions."));
+
+AddOption(STRING, "PRINT_SETNAMES",
+	"%{?ALL_SETNAMES}all%{}setnames", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It is the command used to print the package set names."));
+
 AddOption(BOOLEAN, "PRINT_SLOTS",
 	"true", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2012,12 +498,7 @@ AddOption(BOOLEAN, "PRINT_SLOTS",
 AddOption(BOOLEAN, "EIX_PRINT_IUSE",
 	"true", _(
 	"This variable is only used for delayed substitution.\n"
-	"If false, no IUSE data is printed for eix."));
-
-AddOption(BOOLEAN, "PRINT_IUSE_VERSION",
-	"false", _(
-	"This variable is only used for delayed substitution.\n"
-	"If false, eix outputs collected iuse even with --versionlines (nonverbose)."));
+	"If false, no IUSE data is printed for eix. See also VERSION_IUSE_*"));
 
 AddOption(BOOLEAN, "DIFF_PRINT_IUSE",
 	"false", _(
@@ -2028,9 +509,85 @@ AddOption(BOOLEAN, "PRINT_IUSE",
 	"%{*PRINT_IUSE}", _(
 	"This variable is only used for delayed substitution.\n"
 	"If false, no IUSE data is printed."));
-#endif
 
-#if (DEFAULT_PART == 4)
+AddOption(BOOLEAN, "VERSION_IUSE_NORMAL",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines (nonverbose) outputs IUSE for each version."));
+
+AddOption(BOOLEAN, "VERSION_IUSE_VERBOSE",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines --verbose outputs IUSE for each version."));
+
+AddOption(BOOLEAN, "PRINT_KEYWORDS",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If false, KEYWORDS are never output."));
+
+AddOption(BOOLEAN, "VERSION_KEYWORDS_NORMAL",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines (nonverbose) outputs KEYWORDS."));
+
+AddOption(BOOLEAN, "VERSION_KEYWORDS_VERBOSE",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines --verbose outputs KEYWORDS."));
+
+AddOption(BOOLEAN, "VERSION_DEPS_NORMAL",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines (nonverbose) outputs {,R,P}DEPEND."));
+
+AddOption(BOOLEAN, "VERSION_DEPS_VERBOSE",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix --versionlines --verbose outputs {,R,P}DEPEND."));
+
+AddOption(BOOLEAN, "USE_EFFECTIVE_KEYWORDS",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"Print effective keywords (modified by profile) instead of KEYWORDS."));
+
+AddOption(BOOLEAN, "ALL_SETNAMES",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines whether to include \"system\" in package sets output."));
+
+AddOption(BOOLEAN, "NOBEST_COMPACT",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, compact format prints no version if none is installable."));
+
+AddOption(BOOLEAN, "NOBEST_CHANGE",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, compact format prints no versions if all installable vanished."));
+
+AddOption(BOOLEAN, "DIFF_NOBEST",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix-diff prints no version if none is installable."));
+
+AddOption(BOOLEAN, "DIFF_NOBEST_CHANGE",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, eix-diff prints no versions if all installable vanished."));
+
+AddOption(STRING, "TERM",
+	"xterm", _(
+	"The current terminal. Usually this is set by the environment variable."));
+
+AddOption(STRING, "TERM_STATUSLINE",
+	"xterm screen rxvt aterm konsole gnome Eterm kterm interix", _(
+	"If the beginning of TERM matches a word of this space-separated list,\n"
+	"it is assumed that the terminal supports a status line."));
+
+AddOption(STRING, "TERM_SOFTSTATUSLINE",
+	"screen", _(
+	"If the beginning of TERM matches a word of this space-separated list, and\n"
+	"if a status line is active, also a soft status line will be output."));
 
 AddOption(BOOLEAN, "SORT_INST_USE_ALPHA",
 	"false", _(
@@ -2044,175 +601,6 @@ AddOption(STRING, "CHECK_INSTALLED_OVERLAYS",
 	"The compromise - repository - checks at least always the repository files.\n"
 	"Without a check, the assumed overlay may be wrong if the version was\n"
 	"actually installed from a place not in the database anymore."));
-
-AddOption(STRING, "PRINT_COUNT_ALWAYS",
-	"false", _(
-	"Allowed values are true/false/never.\n"
-	"If true, always print the number of matches (even 0 or 1) in the last line."));
-
-AddOption(BOOLEAN, "COUNT_ONLY_PRINTED",
-	"true", _(
-	"If false, count independently of whether the matches are printed."));
-
-AddOption(STRING, "TAG_BINARY",
-	"\\{tbz2}", _(
-	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_FETCH",
-	"!f", _(
-	"Tag for RESTRICT=fetch. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_MIRROR",
-	"!m", _(
-	"Tag for RESTRICT=mirror. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
-	"!p", _(
-	"Tag for RESTRICT=primaryuri. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
-	"!b", _(
-	"Tag for RESTRICT=binchecks. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_STRIP",
-	"!s", _(
-	"Tag for RESTRICT=strip. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_TEST",
-	"!t", _(
-	"Tag for RESTRICT=test. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_USERPRIV",
-	"!u", _(
-	"Tag for RESTRICT=userpriv. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_INSTALLSOURCES",
-	"!i", _(
-	"Tag for RESTRICT=installsources. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_BINDIST",
-	"!d", _(
-	"Tag for RESTRICT=bindist. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_RESTRICT_PARALLEL",
-	"!P", _(
-	"Tag for RESTRICT=parallel. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_PROPERTIES_INTERACTIVE",
-	"+i", _(
-	"Tag for PROPERTIES=interactive. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_PROPERTIES_LIVE",
-	"+l", _(
-	"Tag for PROPERTIES=live. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_PROPERTIES_VIRTUAL",
-	"+v", _(
-	"Tag for PROPERTIES=virtual. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_PROPERTIES_SET",
-	"+s", _(
-	"Tag for PROPERTIES=set. This is only used for delayed substitution."));
-
-AddOption(STRING, "TAG_FOR_PROFILE",
-	"[P]", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"profile masked\" versions."));
-
-AddOption(STRING, "TAG_FOR_MASKED",
-	"[M]", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"package.masked\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_PROFILE",
-	"{P}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally profile masked but unmasked\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_MASKED",
-	"{M}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally package.masked but unmasked\" versions."));
-
-AddOption(STRING, "TAG_FOR_LOCALLY_MASKED",
-	"[m]", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"only locally masked\" versions."));
-
-AddOption(STRING, "TAG_FOR_STABLE",
-	"", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_UNSTABLE",
-	"~", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"unstable\" versions."));
-
-AddOption(STRING, "TAG_FOR_MINUS_ASTERISK",
-	"-*", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"-*\" versions."));
-
-AddOption(STRING, "TAG_FOR_MINUS_UNSTABLE",
-	"-~*", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"-~*\" versions."));
-
-AddOption(STRING, "TAG_FOR_MINUS_KEYWORD",
-	"-", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"-ARCH\" versions."));
-
-AddOption(STRING, "TAG_FOR_ALIEN_STABLE",
-	"*", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"ALIENARCH\" versions."));
-
-AddOption(STRING, "TAG_FOR_ALIEN_UNSTABLE",
-	"~*", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"~ALIENARCH\" versions."));
-
-AddOption(STRING, "TAG_FOR_MISSING_KEYWORD",
-	"**", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"no keyword\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_UNSTABLE",
-	"(~)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally unstable but now stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_MINUS_ASTERISK",
-	"(-*)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally -* but now stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_MINUS_UNSTABLE",
-	"(-~*)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally -~* but now stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_MINUS_KEYWORD",
-	"(-)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally -ARCH but now stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_ALIEN_STABLE",
-	"(*)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally ALIENARCH but now stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_ALIEN_UNSTABLE",
-	"(~*)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally ~ALIENARCH but now stable\" versions."));
-
-AddOption(STRING, "TAG_FOR_EX_MISSING_KEYWORD",
-	"(**)", _(
-	"This variable is only used for delayed substitution.\n"
-	"It is the tag for \"originally no keyword but now stable\" versions."));
 
 AddOption(STRING, "MATCH_FIELD_DESCRIPTION",
 	"[ ]", _(
@@ -2462,6 +850,9 @@ AddOption(STRING, "REDUNDANT_IF_IN_LICENSE",
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 	"false", _(
 	"Applies if /etc/portage/package.cflags matches."));
+#endif
+
+#if (DEFAULT_PART == 3)
 
 AddOption(STRING, "EIXCFGDIR",
 	"%{PORTAGE_CONFIGROOT}/etc/portage", _(
@@ -2560,6 +951,1709 @@ AddOption(STRING, "EAPI_REGEX",
 	"This regular expression describes the recognized EAPIs in .ebuild suffixes.\n"
 	"You might need to modify it according to the installed portage version.\n"
 	"Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."));
+
+AddOption(STRING, "COLOR_NAME",
+	"default,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the name of packages."));
+
+AddOption(STRING, "COLOR_WORLD",
+	"green,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the name of world packages."));
+
+AddOption(STRING, "COLOR_WORLD_SETS",
+	"yellow,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the name of world sets packages."));
+
+AddOption(STRING, "COLOR_CATEGORY",
+	"", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category of packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
+	"yellow", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category of system packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_WORLD",
+	"%{COLOR_WORLD}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the category of world packages."));
+
+AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
+	"%{COLOR_WORLD_SETS}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the category of world sets packages."));
+
+AddOption(STRING, "COLOR_UPGRADE_TEXT",
+	"cyan,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing upgrade recommendation texts."));
+
+AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
+	"blue,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing downgrade recommendation texts."));
+
+AddOption(STRING, "COLOR_UPGRADE",
+	"%{COLOR_UPGRADE_TEXT};inverse", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing upgrade recommendation tags."));
+
+AddOption(STRING, "COLOR_DOWNGRADE",
+	"%{COLOR_DOWNGRADE_TEXT};inverse", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing downgrade recommendation tags."));
+
+AddOption(STRING, "DIFF_COLOR_UNINST_STABILIZE",
+	"%{COLOR_STABLE},1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing tags for uninstalled packages\n"
+	"which have gained a stable version."));
+
+AddOption(STRING, "DIFF_COLOR_INST_STABILIZE",
+	"%{DIFF_COLOR_UNINST_STABILIZE},1;inverse", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing tags for installed packages\n"
+	"which have gained a stable version."));
+
+AddOption(STRING, "DIFF_COLOR_BETTER",
+	"yellow,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for \"better version\" tags (eix-diff)."));
+
+AddOption(STRING, "DIFF_COLOR_WORSE",
+	"red,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for \"worse version\" tags (eix-diff)."));
+
+AddOption(STRING, "DIFF_COLOR_NEW_TAG",
+	"%{DIFF_COLOR_NEW}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for \"new package\" tags (eix-diff)."));
+
+AddOption(STRING, "DIFF_COLOR_NEW",
+	"%{COLOR_TITLE},1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for \"new package\" separators (eix-diff)."));
+
+AddOption(STRING, "DIFF_COLOR_DELETE",
+	"red,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for \"deleted package\" separators (eix-diff)."));
+
+AddOption(STRING, "DIFF_COLOR_CHANGED",
+	"yellow", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for \"changed package\" separators (eix-diff)."));
+
+AddOption(STRING, "COLOR_INST_TAG",
+	"%{COLOR_TITLE},1;inverse", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for tagging installed packages."));
+
+AddOption(STRING, "COLOR_UNINST_TAG",
+	"%{COLOR_TITLE}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for tagging uninstalled packages."));
+
+AddOption(STRING, "COLOR_DATE",
+	"purple,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the date."));
+
+AddOption(STRING, "COLOR_SET_USE",
+	"red,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the set useflags."));
+
+AddOption(STRING, "COLOR_UNSET_USE",
+	"blue,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the unset useflags."));
+
+AddOption(STRING, "COLOR_VERSION_IUSE",
+	"black,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing IUSE for available versions."));
+
+AddOption(STRING, "COLOR_COLL_IUSE",
+	"%{COLOR_VERSION_IUSE}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing IUSE for available packages."));
+
+AddOption(STRING, "COLOR_INST_VERSION",
+	"blue,1;%{MARK_INSTALLED}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the version of installed packages."));
+
+AddOption(STRING, "COLOR_TITLE",
+	"green", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the title texts for packages."));
+
+AddOption(STRING, "COLOR_INST_TITLE",
+	"blue", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the title texts for installed versions."));
+
+AddOption(STRING, "COLOR_AVAILABLE_TITLE",
+	"purple", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the title texts for available versions."));
+
+AddOption(STRING, "COLOR_MARKED_VERSION",
+	"%{COLOR_MARKED_NAME}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing a marked version of a packages."));
+
+AddOption(STRING, "COLOR_PACKAGESETS",
+	"yellow,1", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing the package sets."));
+
+AddOption(STRING, "COLOR_MARKED_NAME",
+	"red,1;%{MARK_VERSIONS}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing a marked package name."));
+
+AddOption(STRING, "COLOR_OVERLAYKEY",
+	"cyan", _(
+	"Color for the overlaykey in version listings."));
+
+AddOption(STRING, "COLOR_VIRTUALKEY",
+	"purple", _(
+	"Color for the overlaykey for virtual overlays in version listings."));
+
+AddOption(STRING, "COLOR_SLOTS",
+	"red,1", _(
+	"Color for slots. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_BINARY",
+	"blue,1", _(
+	"Color for versions with *.tbz2. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_RESTRICT",
+	"red", _(
+	"Color for the restriction tags. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_PROPERTIES",
+	"cyan", _(
+	"Color for the properties tags. This is only used for delayed substitution."));
+
+AddOption(STRING, "MARK_INSTALLED",
+	"inverse", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines how installed versions are marked."));
+
+AddOption(STRING, "MARK_UPGRADE",
+	"bold", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines how upgrade candidate versions are marked."));
+
+AddOption(STRING, "MARK_VERSIONS",
+	"underline", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines how the package versions passed with --pipe are marked."));
+
+AddOption(BOOLEAN, "NOCOLOR",
+	"false", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the default for NO{COLORS,STATUSLINE,PERCENTAGE}."));
+
+AddOption(STRING, "CHAR_UPGRADE",
+	"U", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for upgrade recommendations."));
+
+AddOption(STRING, "CHAR_DOWNGRADE",
+	"D", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for downgrade recommendations."));
+
+AddOption(STRING, "CHAR_INSTALLED",
+	"I", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for installed packages."));
+
+AddOption(STRING, "CHAR_UNINSTALLED",
+	"%{DIFF_CHAR_NEW}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for uninstalled packages."));
+
+AddOption(STRING, "DIFF_CHAR_UNINST_STABILIZE",
+	"%{DIFF_CHAR_INST_STABILIZE}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for uninstalled packages which have gained\n"
+	"a stable version."));
+
+AddOption(STRING, "DIFF_CHAR_INST_STABILIZE",
+	"*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for installed packages which have gained\n"
+	"a stable version."));
+
+AddOption(STRING, "DIFF_CHAR_NEW",
+	"N", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character printed for new packages (eix-diff)."));
+
+AddOption(STRING, "DIFF_CHAR_BETTER",
+	">", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character used for \"better version\" tags (eix-diff)."));
+
+AddOption(STRING, "DIFF_CHAR_WORSE",
+	"\\<", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the character used for \"worse version\" tags (eix-diff)."));
+
+AddOption(STRING, "TAG_UPGRADE",
+	"(%{COLOR_UPGRADE})%{CHAR_UPGRADE}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag printed for upgrade recommendations."));
+
+AddOption(STRING, "TAG_DOWNGRADE",
+	"(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag printed for downgrade recommendations."));
+
+AddOption(STRING, "TAG_INSTALLED",
+	"(%{COLOR_INST_TAG})%{CHAR_INSTALLED}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag printed for installed packages."));
+
+AddOption(STRING, "TAG_UNINSTALLED",
+	"(%{COLOR_UNINST_TAG})%{CHAR_UNINSTALLED}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag printed for uninstalled packages."));
+
+AddOption(STRING, "TAG_STABILIZE",
+	"{installed}"
+		"(%{DIFF_COLOR_INST_STABILIZE})%{DIFF_CHAR_INST_STABILIZE}"
+	"{else}"
+		"(%{DIFF_COLOR_UNINST_STABILIZE})%{DIFF_CHAR_UNINST_STABILIZE}"
+	"{}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag for packages which have gained a stable version."));
+
+AddOption(STRING, "TAG_NEW",
+	"(%{DIFF_COLOR_NEW_TAG})%{DIFF_CHAR_NEW}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag printed for new packages (eix-diff)."));
+
+AddOption(STRING, "TAG_BETTER",
+	"(%{DIFF_COLOR_BETTER})%{DIFF_CHAR_BETTER}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag used for \"better version\" (eix-diff)."));
+
+AddOption(STRING, "TAG_WORSE",
+	"(%{DIFF_COLOR_WORSE})%{DIFF_CHAR_WORSE}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the tag used for \"worse version\" (eix-diff)."));
+
+AddOption(STRING, "STRING_PLAIN_INSTALLED",
+	"%{STRING_PLAIN_UNINSTALLED}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the string used for \"plain\" tagging installed packages."));
+
+AddOption(STRING, "STRING_PLAIN_UNINSTALLED",
+	"*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the string used for \"plain\" tagging uninstalled packages."));
+
+AddOption(STRING, "DIFF_STRING_NEW",
+	">>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the string used for \"new package\" separators (eix-diff)."));
+
+AddOption(STRING, "DIFF_STRING_DELETE",
+	"\\<\\<", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the string used for \"deleted package\" separators (eix-diff)."));
+
+AddOption(STRING, "DIFF_STRING_CHANGED",
+	"==", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the string used for \"changed package\" separators (eix-diff)."));
+
+AddOption(STRING, "FORMAT_NOBEST",
+	"%{FORMAT_COLOR_MASKED}"
+	"--"
+	"()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines what to print if no version number is printed."));
+
+AddOption(STRING, "FORMAT_NOBEST_CHANGE",
+	"%{FORMAT_COLOR_MASKED}"
+	"??"
+	"()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines what to print after \"->\" if there is no installable."));
+
+AddOption(STRING, "TAG_BINARY",
+	"\\{tbz2}", _(
+	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_FETCH",
+	"!f", _(
+	"Tag for RESTRICT=fetch. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_MIRROR",
+	"!m", _(
+	"Tag for RESTRICT=mirror. This is only used for delayed substitution."));
+#endif
+
+#if (DEFAULT_PART == 4)
+
+AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
+	"!p", _(
+	"Tag for RESTRICT=primaryuri. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
+	"!b", _(
+	"Tag for RESTRICT=binchecks. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_STRIP",
+	"!s", _(
+	"Tag for RESTRICT=strip. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_TEST",
+	"!t", _(
+	"Tag for RESTRICT=test. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_USERPRIV",
+	"!u", _(
+	"Tag for RESTRICT=userpriv. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_INSTALLSOURCES",
+	"!i", _(
+	"Tag for RESTRICT=installsources. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_BINDIST",
+	"!d", _(
+	"Tag for RESTRICT=bindist. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_RESTRICT_PARALLEL",
+	"!P", _(
+	"Tag for RESTRICT=parallel. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_PROPERTIES_INTERACTIVE",
+	"+i", _(
+	"Tag for PROPERTIES=interactive. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_PROPERTIES_LIVE",
+	"+l", _(
+	"Tag for PROPERTIES=live. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_PROPERTIES_VIRTUAL",
+	"+v", _(
+	"Tag for PROPERTIES=virtual. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_PROPERTIES_SET",
+	"+s", _(
+	"Tag for PROPERTIES=set. This is only used for delayed substitution."));
+
+AddOption(STRING, "TAG_FOR_PROFILE",
+	"[P]", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"profile masked\" versions."));
+
+AddOption(STRING, "TAG_FOR_MASKED",
+	"[M]", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"package.masked\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_PROFILE",
+	"{P}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally profile masked but unmasked\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_MASKED",
+	"{M}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally package.masked but unmasked\" versions."));
+
+AddOption(STRING, "TAG_FOR_LOCALLY_MASKED",
+	"[m]", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"only locally masked\" versions."));
+
+AddOption(STRING, "TAG_FOR_STABLE",
+	"", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_UNSTABLE",
+	"~", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"unstable\" versions."));
+
+AddOption(STRING, "TAG_FOR_MINUS_ASTERISK",
+	"-*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"-*\" versions."));
+
+AddOption(STRING, "TAG_FOR_MINUS_UNSTABLE",
+	"-~*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"-~*\" versions."));
+
+AddOption(STRING, "TAG_FOR_MINUS_KEYWORD",
+	"-", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"-ARCH\" versions."));
+
+AddOption(STRING, "TAG_FOR_ALIEN_STABLE",
+	"*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"ALIENARCH\" versions."));
+
+AddOption(STRING, "TAG_FOR_ALIEN_UNSTABLE",
+	"~*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"~ALIENARCH\" versions."));
+
+AddOption(STRING, "TAG_FOR_MISSING_KEYWORD",
+	"**", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"no keyword\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_UNSTABLE",
+	"(~)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally unstable but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_MINUS_ASTERISK",
+	"(-*)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally -* but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_MINUS_UNSTABLE",
+	"(-~*)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally -~* but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_MINUS_KEYWORD",
+	"(-)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally -ARCH but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_ALIEN_STABLE",
+	"(*)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally ALIENARCH but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_ALIEN_UNSTABLE",
+	"(~*)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally ~ALIENARCH but now stable\" versions."));
+
+AddOption(STRING, "TAG_FOR_EX_MISSING_KEYWORD",
+	"(**)", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the tag for \"originally no keyword but now stable\" versions."));
+
+AddOption(STRING, "VERSION_NEWLINE",
+	"%{!NEWLINE}"
+		"\\n"
+	"%{else}"
+		"{!last}\\n{}"
+	"%{}", _(
+	"This variable is used by delayed substitution in version formatters.\n"
+	"It prints a newline if it appears appropriate. If the last version might\n"
+	"be skipped (by using conditionals in your version formatter) you should\n"
+	"set NEWLINE=false since you otherwise get an additional newline\n"
+	"after the last actually printed version."));
+
+AddOption(STRING, "NAMEVERSION",
+	"<category>/<name>-<version>"
+	"%{VERSION_NEWLINE}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <bestslotupgradeversions:NAMEVERSION>\n"
+	"or <installedversions:NAMEVERION> or <availableversions:NAMEVERSION>."));
+
+AddOption(STRING, "EQNAMEVERSION",
+	"=<category>/<name>-<version>"
+	"%{VERSION_NEWLINE}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <bestslotupgradeversions:EQNAMEVERSION>\n"
+	"or <installedversions:EQNAMEVERION> or <availableversions:EQNAMEVERSION>."));
+
+AddOption(STRING, "ANAMESLOT",
+	"{slotlast}<category>/<name>{slots}:<slot>{}"
+	"%{VERSION_NEWLINE}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage as <availableversion:ANAMESLOT:ANAMESLOT>."));
+
+AddOption(STRING, "ANAMEASLOT",
+	"{slotlast}<category>/<name>:<slot>{!last}\\n{}{}"
+	"%{VERSION_NEWLINE}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <availableversion:ANAMEASLOT:ANAMEASLOT>."));
+
+AddOption(STRING, "NAMESLOT",
+	"<category>/<name>{slots}:<slot>{}%{VERSION_NEWLINE}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <installedversions:NAMESLOT>."));
+
+AddOption(STRING, "NAMEASLOT",
+	"<category>/<name>:<slot>"
+	"%{VERSION_NEWLINE}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage with <installedversions:NAMEASLOT>."));
+
+AddOption(STRING, "DATESORT_DATE",
+	"%s\\t%x %X", _(
+	"strftime() format for printing the installation date in DATESORT"));
+
+AddOption(STRING, "DATESORT",
+	"<date:DATESORT_DATE>\\t%{NAMESLOT}", _(
+	"This variable is used as a version formatter.\n"
+	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
+	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
+
+AddOption(STRING, "FORMAT_MASK_TAG",
+	"{!*mask}"
+	"{washardmasked}"
+		"%{?COLOR_ORIGINAL}{!$color}{*color}%{FORMAT_COLOR_MASKED}{}%{}"
+		"{isprofilemasked}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*mask=\"%{TAG_FOR_PROFILE}\"}"
+		"{else}{ismasked}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*mask=\"%{TAG_FOR_MASKED}\"}"
+		"{else}"
+			"{wasprofilemasked}{*mask=\"%{TAG_FOR_EX_PROFILE}\"}"
+			"{else}{*mask=\"%{TAG_FOR_EX_MASKED}\"}{}"
+		"{}{}"
+	"{else}"
+		"{ishardmasked}"
+			"%{?COLOR_LOCAL_MASK}{!$color}{*color}%{FORMAT_COLOR_MASKED}{}%{}"
+			"{*mask=\"%{TAG_FOR_LOCALLY_MASKED}\"}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It sets the runtime variable $mask to the masking tag, and unless the\n"
+	"runtime variable $color is set, it outputs the color and sets $color."));
+
+AddOption(STRING, "FORMAT_STABILITY_TAG",
+	"{isstable}"
+		"%{!COLOR_ORIGINAL}"
+			"{!$color}{*color}%{FORMAT_COLOR_STABLE}{}"
+		"%{}"
+		"{wasstable}"
+			"{!$color}{*color}%{FORMAT_COLOR_STABLE}{}"
+			"{*stable=\"%{TAG_FOR_STABLE}\"}"
+		"{else}{wasunstable}"
+			"{!$color}{*color}%{FORMAT_COLOR_UNSTABLE}{}"
+			"{*stable=\"%{TAG_FOR_EX_UNSTABLE}\"}"
+		"{else}{wasmissingkeyword}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*stable=\"%{TAG_FOR_EX_MISSING_KEYWORD}\"}"
+		"{else}{wasalienstable}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*stable=\"%{TAG_FOR_EX_ALIEN_STABLE}\"}"
+		"{else}{wasalienunstable}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*stable=\"%{TAG_FOR_EX_ALIEN_UNSTABLE}\"}"
+		"{else}{wasminuskeyword}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*stable=\"%{TAG_FOR_EX_MINUS_KEYWORD}\"}"
+		"{else}{wasminusunstable}"
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*stable=\"%{TAG_FOR_EX_MINUS_UNSTABLE}\"}"
+		"{else}"//{wasminusasterisk}
+			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+			"{*stable=\"%{TAG_FOR_EX_MINUS_ASTERISK}\"}"
+		"{}{}{}{}{}{}{}"
+	"{else}{isunstable}"
+		"{!$color}{*color}%{FORMAT_COLOR_UNSTABLE}{}"
+		"{*stable=\"%{TAG_FOR_UNSTABLE}\"}"
+	"{else}{ismissingkeyword}"
+		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+		"{*stable=\"%{TAG_FOR_MISSING_KEYWORD}\"}"
+	"{else}{isalienstable}"
+		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+		"{*stable=\"%{TAG_FOR_ALIEN_STABLE}\"}"
+	"{else}{isalienunstable}"
+		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+		"{*stable=\"%{TAG_FOR_ALIEN_UNSTABLE}\"}"
+	"{else}{isminuskeyword}"
+		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+		"{*stable=\"%{TAG_FOR_MINUS_KEYWORD}\"}"
+	"{else}{isminusunstable}"
+		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+		"{*stable=\"%{TAG_FOR_MINUS_UNSTABLE}\"}"
+	"{else}"//{isminusasterisk}
+		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
+		"{*stable=\"%{TAG_FOR_MINUS_ASTERISK}\"}"
+	"{}{}{}{}{}{}{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It sets the runtime variable $stable to the stability tag, and unless the\n"
+	"runtime variable $color is set, it outputs the color and sets $color."));
+
+AddOption(STRING, "FORMAT_STABILITY",
+	"{!*color}%{FORMAT_MASK_TAG}%{FORMAT_STABILITY_TAG}<$mask><$stable>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs the stability tag, changing the color appropriately.\n"
+	"It sets the runtime variable $color depending on whether color was changed."));
+
+AddOption(STRING, "FORMAT_PROPERTIES",
+	"{properties}{*color}(%{COLOR_PROPERTIES})"
+		"{propertiesinteractive}%{TAG_PROPERTIES_INTERACTIVE}{}"
+		"{propertieslive}%{TAG_PROPERTIES_LIVE}{}"
+		"{propertiesset}%{TAG_PROPERTIES_SET}{}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs the PROPERTIES tag, changing the color appropriately.\n"
+	"It sets the runtime variable $color if color was changed."));
+
+AddOption(STRING, "FORMAT_RESTRICT",
+	"{restrict}{*color}(%{COLOR_RESTRICT})"
+		"{restrictfetch}%{TAG_RESTRICT_FETCH}{}"
+		"{restrictmirror}%{TAG_RESTRICT_MIRROR}{}"
+		"{restrictprimaryuri}%{TAG_RESTRICT_PRIMARYURI}{}"
+		"{restrictbinchecks}%{TAG_RESTRICT_BINCHECKS}{}"
+		"{restrictstrip}%{TAG_RESTRICT_STRIP}{}"
+		"{restricttest}%{TAG_RESTRICT_TEST}{}"
+		"{restrictuserpriv}%{TAG_RESTRICT_USERPRIV}{}"
+		"{restrictinstallsources}%{TAG_RESTRICT_INSTALLSOURCES}{}"
+		"{restrictbindist}%{TAG_RESTRICT_BINDIST}{}"
+		"{restrictparallel}%{TAG_RESTRICT_PARALLEL}{}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs the RESTRICT tag, changing the color appropriately.\n"
+	"It sets the runtime variable $color if color was changed."));
+
+AddOption(STRING, "FORMAT_PROPRESTRICT",
+	"%{!NO_RESTRICTIONS}"
+		"{!*color}%{FORMAT_PROPERTIES}%{FORMAT_RESTRICT}"
+		"{$color}(){}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
+	"and resets the color."));
+
+AddOption(STRING, "FORMAT_BINARY",
+	"%{!NO_BINARY}"
+		"{isbinary}"
+			"(%{COLOR_BINARY})%{TAG_BINARY}()"
+		"{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the PROPERTIES and RESTRICT of a version\n"
+	"and resets the color."));
+
+AddOption(STRING, "FORMAT_SLOT",
+	"(%{COLOR_SLOTS})\\(<slot>\\)()", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the slot format printed for slotsorted versions."));
+
+AddOption(STRING, "VERSION",
+	"<version>{!last} {}", _(
+	"This variable is used for <markedversions:VERSION>.\n"
+	"It just gives the plain version name without anything else.\n"
+	"You can use it similarly for e.g. <availableversions:VERSION>."));
+
+AddOption(STRING, "FORMAT_PVERSION",
+	"{color}"
+		"{installedversion}"
+			"{*color}(none;%{MARK_INSTALLED})"
+		"{else}"
+			"{isbestupgradeslot}{*color}(none;%{MARK_UPGRADE}){}"
+		"{}"
+		"{markedversion}{*color}(none;%{MARK_VERSIONS}){}"
+	"{}"
+	"<version>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs an available version with various marks and sets the runtime\n"
+	"variable $color if a mark was printed.\n"
+	"It should be follows by FORMAT_VERSION_END or FORMAT_VERSIONS_END."));
+
+AddOption(STRING, "FORMAT_VERSION_END",
+	"{$color}(){}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It resets all colors/markers if the runtime variable $color was set."));
+
+AddOption(STRING, "FORMAT_VERSIONS_END",
+	"%{?PRINT_SLOTS}"
+		"{isslot}"
+			"%{?COLORED_SLOTS}"
+				"{$color}(){}"
+				"{*color}"
+				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
+				"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
+			"%{else}"
+				"%{?COLON_SLOTS}:<slot>"
+				"%{else}\\(<slot>\\)%{}"
+			"%{}"
+		"{}"
+	"%{}"
+	"%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs an optional slot, caring about the runtime variable $color,\n"
+	"and then invokes FORMAT_VERSION_END."));
+
+AddOption(STRING, "PVERSION",
+	"%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version without slot."));
+
+AddOption(STRING, "PVERSIONS",
+	"%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing a plain version with its slot."));
+
+AddOption(STRING, "AVERSION",
+	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version without slot."));
+
+AddOption(STRING, "AVERSIONS",
+	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing an available version with its slot."));
+
+AddOption(STRING, "IVERSIONS",
+	"(%{COLOR_INST_VERSION}){*color}<version>%{FORMAT_VERSIONS_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing an installed version with its slot."));
+
+AddOption(STRING, "PVERSIONS_VERBOSE",
+	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version with most data and slot."));
+
+AddOption(STRING, "AVERSIONS_VERBOSE",
+	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version with most data and slot."));
+
+AddOption(STRING, "IVERSIONS_VERBOSE",
+	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an installed version with most data and slot."));
+
+AddOption(STRING, "PVERSION_VERBOSE",
+	"%{PVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version with most data, no slot."));
+
+AddOption(STRING, "AVERSION_VERBOSE",
+	"%{AVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version with most data, no slot."));
+
+AddOption(STRING, "PVERSIONS_COMPACT",
+	"%{PVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version with important data and slot."));
+
+AddOption(STRING, "AVERSIONS_COMPACT",
+	"%{AVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version with important data and slot."));
+
+AddOption(STRING, "IVERSIONS_COMPACT",
+	"%{IVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an installed version with important data and slot."));
+
+AddOption(STRING, "PVERSION_COMPACT",
+	"%{PVERSION}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version with important data, no slot."));
+
+AddOption(STRING, "AVERSION_COMPACT",
+	"%{AVERSION}%{FORMAT_BINARY}<overlayver>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version with important data, no slot."));
+
+AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
+	"\\t\"(cyan)", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed before KEYWORDS string for a version is output\n"
+	"(with --versionlines and nonverbose)"));
+
+AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
+	"()\"", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after KEYWORDS string for a version is output.\n"
+	"(with --versionlines and nonverbose)"));
+
+AddOption(STRING, "FORMAT_VERSION_LINESKIP",
+	"\\n\\t\\t\\t", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip used for the versionline appendix."));
+
+AddOption(STRING, "FORMAT_VERSION_KEYWORDS_NORMAL",
+	"%{?PRINT_KEYWORDS}"
+		"%{?VERSION_KEYWORDS_NORMAL}"
+			"%{FORMAT_BEFORE_KEYWORDS}"
+			"%{?USE_EFFECTIVE_KEYWORDS}"
+				"<versionkeywords*>"
+			"%{else}"
+				"<versionkeywords>"
+			"%{}"
+			"%{FORMAT_AFTER_KEYWORDS}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the normal format for KEYWORDS for an available version."));
+
+AddOption(STRING, "FORMAT_IUSE_NORMAL",
+	"%{?PRINT_IUSE}"
+		"%{?VERSION_IUSE_NORMAL}"
+			"{haveuse}%{FORMAT_BEFORE_IUSE}<use>%{FORMAT_AFTER_IUSE}{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the normal format for IUSE for an available version."));
+
+AddOption(STRING, "FORMAT_DEPEND",
+	//"{dependrdepend}$\\{RDEPEND\\}{else}<depend>{}"
+	"<depend>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the DEPEND output."));
+
+AddOption(STRING, "FORMAT_RDEPEND",
+	//"<rdepend>"
+	"{dependrdepend}$\\{DEPEND\\}{else}<rdepend>{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the RDEPEND output."));
+
+AddOption(STRING, "FORMAT_DEPS_NORMAL",
+	"%{?DEP}"
+		"%{?VERSION_DEPS_NORMAL}"
+			"{depend}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()    <depend>"
+			"{}"
+			"{rdepend}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()   %{FORMAT_RDEPEND}"
+			"{}"
+			"{pdepend}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()   <pdepend>"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for DEPs for an available version."));
+
+AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
+	"%{?PRINT_KEYWORDS}"
+		"%{?VERSION_KEYWORDS_VERBOSE}"
+			"%{!PRINT_ALWAYS}{versionkeywords}%{}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:()"
+				"%{?PRINT_ALWAYS}{versionkeywords}%{}"
+				"  <versionkeywords>"
+			"{}"
+			"%{!PRINT_ALWAYS}{versionekeywords}%{}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})\\(Profile\\):()"
+				"%{?PRINT_ALWAYS}{versionekeywords}%{}"
+				" <versionkeywords>"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for KEYWORDS for an available version."));
+
+AddOption(STRING, "FORMAT_IUSE_VERBOSE",
+	"%{?PRINT_IUSE}"
+		"%{?VERSION_IUSE_VERBOSE}"
+			"%{!PRINT_ALWAYS}{haveuse}%{}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})IUSE:()"
+				"%{?PRINT_ALWAYS}{haveuse}%{}"
+				"      <use>"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for IUSE for an available version."));
+
+AddOption(STRING, "FORMAT_DEPS_VERBOSE",
+	"%{?DEP}"
+		"%{?VERSION_DEPS_VERBOSE}"
+			"%{!PRINT_ALWAYS}{depend}%{}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()"
+				"%{?PRINT_ALWAYS}{depend}%{}"
+				"    <depend>"
+			"{}"
+			"%{!PRINT_ALWAYS}{rdepend}%{}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()"
+				"%{?PRINT_ALWAYS}{rdepend}%{}"
+				"   %{FORMAT_RDEPEND}"
+			"{}"
+			"%{!PRINT_ALWAYS}{pdepend}%{}"
+				"%{FORMAT_VERSION_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()"
+				"%{?PRINT_ALWAYS}{pdepend}%{}"
+				"   <pdepend>"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for DEPs for an available version."));
+
+AddOption(STRING, "FORMAT_VERSION_APPENDIX_NORMAL",
+	"%{FORMAT_VERSION_KEYWORDS_NORMAL}"
+	"%{FORMAT_IUSE_NORMAL}"
+	"%{FORMAT_DEPS_NORMAL}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines normal data appended to available versions with --versionlines"));
+
+AddOption(STRING, "FORMAT_VERSION_APPENDIX_VERBOSE",
+	"%{FORMAT_VERSION_KEYWORDS_VERBOSE}"
+	"%{FORMAT_IUSE_VERBOSE}"
+	"%{FORMAT_DEPS_VERBOSE}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines verbose data appended to available versions with --versionlines"));
+
+AddOption(STRING, "FORMAT_VERSION_APPENDIX",
+	"{$modus=verbose}"
+		"%{FORMAT_VERSION_APPENDIX_VERBOSE}"
+	"{else}"
+		"%{FORMAT_VERSION_APPENDIX_NORMAL}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the data appended to available versions with --versionlines"));
+
+AddOption(STRING, "FORMAT_SLOTLINESKIP",
+	"\\n\\t%{FORMAT_SLOT}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip + slot with lineskip."));
+
+AddOption(STRING, "FORMAT_VERSLINESKIP",
+	"\\n\\t%{FORMAT_STABILITY}\\t", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip + stability for available versions with lineskip."));
+
+AddOption(STRING, "FORMAT_INSTLINESKIP",
+	"\\n                          ", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the lineskip for installed versions."));
+
+AddOption(STRING, "VSORTL",
+	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
+	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=version}{}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the format for a version; versionsorted with versionlines."));
+
+AddOption(STRING, "VSORT",
+	"%{AVERSIONS_VERBOSE}{last}{*sorted=version}{else} {}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the format for a version; versionsorted without versionlines."));
+#endif
+
+#if (DEFAULT_PART == 5)
+
+AddOption(STRING, "SSORTL",
+	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
+	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
+	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the format for a version; slotsorted with versionlines."));
+
+AddOption(STRING, "SSORT",
+	"{slotfirst}"
+		"{oneslot}%{FORMAT_SLOT} "
+		"{else}\\n\\t%{FORMAT_SLOT}\\t{}"
+	"{else} {}"
+	"%{AVERSION_VERBOSE}{last}{*sorted=slot}{}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the format for a version; slotsorted without versionlines."));
+
+AddOption(STRING, "FORMAT_COLL",
+	"%{FORMAT_BEFORE_COLL}<colliuse>%{FORMAT_AFTER_COLL}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for collected IUSE data in one line."));
+
+AddOption(STRING, "FORMAT_COLL_SEP",
+	"%{FORMAT_BEFORE_COLL_SEP}<colliuse>%{FORMAT_AFTER_COLL_SEP}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for collected IUSE data in a separate line."));
+
+AddOption(STRING, "FORMAT_COLL_VERBOSE",
+	"%{!PRINT_ALWAYS}{havecolliuse}%{}"
+		"\\n     (%{COLOR_TITLE})IUSE \\(all versions\\):()"
+		"%{?PRINT_ALWAYS}{havecolliuse}%{}"
+		" <colliuse>"
+	"{}",  _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the format for package IUSE in single-line verbose mode."));
+
+AddOption(STRING, "FORMAT_COLL_VERBOSE_SEP",
+	"%{FORMAT_COLL_VERBOSE}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is the format for package IUSE in multiline verbose mode."));
+
+AddOption(STRING, "FORMAT_COLL_IUSE",
+	"%{?PRINT_IUSE}"
+		"{$modus=verbose}"
+			"{$sorted=version}%{FORMAT_COLL_VERBOSE}"
+			"{else}%{FORMAT_COLL_VERBOSE_SEP}{}"
+		"{else}"
+			"{havecolliuse}"
+				"{$sorted=version}%{FORMAT_COLL}"
+				"{else}%{FORMAT_COLL_SEP}{}"
+			"{}"
+		"{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for collected IUSE data."));
+
+AddOption(STRING, "FORMAT_COLL_IUSE_LIST",
+	"%{?PRINT_IUSE}"
+		"%{!VERSION_IUSE_NORMAL}"
+			"{$modus=normal}"
+				"{havecolliuse}%{FORMAT_COLL_SEP}{}"
+			"%{?VERSION_IUSE_VERBOSE}{}%{else}{else}%{}"
+		"%{else}"
+			"%{!VERSION_IUSE_VERBOSE}{$modus=verbose}%{}"
+		"%{}"
+		"%{!VERSION_IUSE_VERBOSE}"
+				"%{FORMAT_COLL_VERBOSE_SEP}"
+			"{}"
+		"%{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for collected IUSE data with --versionlines."));
+
+AddOption(STRING, "INORMAL",
+	"%{IVERSIONS_VERBOSE}"
+	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)()"
+	"%{FORMAT_INST_USEFLAGS}"
+	"{!last}"
+		"{versionlines}%{FORMAT_INSTLINESKIP}"
+		"{else} {}"
+	"{}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the normal format of installed versions."));
+
+AddOption(STRING, "ICOMPACT",
+	"%{IVERSIONS_COMPACT}"
+	"@(%{COLOR_DATE})<date:FORMAT_SHORT_INSTALLATION_DATE>()"
+	"{!last} {}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the compact format of installed versions."));
+
+AddOption(STRING, "IVERBOSE",
+	"(%{COLOR_INST_TITLE})Version:() "
+	"%{IVERSIONS_VERBOSE}()"
+	"%{FORMAT_INSTLINESKIP}"
+	"(%{COLOR_INST_TITLE})Date:()    "
+	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>()"
+	"{haveuse}"
+		"%{FORMAT_INSTLINESKIP}"
+		"(%{COLOR_INST_TITLE})USE:()     "
+		"<use>"
+	"{}"
+	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
+	"This variable is used as a version formatter.\n"
+	"It defines the verbose format of installed versions."));
+
+AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
+	"{versionlines}"
+		"{slotsorted}<availableversions:VSORTL:SSORTL>"
+		"{else}<availableversions:VSORTL>{}"
+		"%{FORMAT_COLL_IUSE_LIST}"
+	"{else}"
+		"{slotsorted}<availableversions:VSORT:SSORT>"
+		"{else}<availableversions:VSORT>{}"
+		"%{FORMAT_COLL_IUSE}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the verbose format for printing available versions."));
+
+AddOption(STRING, "FORMAT_INST_USEFLAGS",
+	"{haveuse}"
+		"\\(<use>\\)"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for useflags in installed versions."));
+
+AddOption(STRING, "INSTALLEDVERSIONS_NORMAL",
+	"<installedversions:INORMAL>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format used for printing installed versions normally."));
+
+AddOption(STRING, "INSTALLEDVERSIONS_COMPACT",
+	"<installedversions:ICOMPACT>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format used for printing installed versions compactly."));
+
+AddOption(STRING, "INSTALLEDVERSIONS_VERBOSE",
+	"<installedversions:IVERBOSE>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format used for printing installed versions verbosely."));
+
+AddOption(STRING, "INSTALLEDVERSIONS",
+	"{$modus=verbose}"
+		"%{INSTALLEDVERSIONS_VERBOSE}"
+	"{else}"
+		"%{INSTALLEDVERSIONS_NORMAL}"
+	"{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format used for printing installed versions."));
+
+AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
+	"%{!PRINT_ALWAYS}{installed}%{}"
+		"     (%{COLOR_TITLE})Installed versions:()"
+		"  "
+		"%{?PRINT_ALWAYS}{installed}%{}"
+			"%{INSTALLEDVERSIONS}"
+		"%{?PRINT_ALWAYS}{else}"
+			"None{}\\n"
+		"%{else}\\n{}"
+	"%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with installed versions."));
+
+AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
+	"{installed}%{INSTALLEDVERSIONS_COMPACT}; {}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for eix-diff for installed versions."));
+
+AddOption(STRING, "FORMAT_FINISH",
+	"%{!NEWLINE}\\n%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It is used at the end of a package to output a newline unless NEWLINE=true."));
+
+AddOption(STRING, "FORMAT_NAME",
+	"{system}(%{COLOR_CATEGORY_SYSTEM})"
+	"{else}"
+		"{world}(%{COLOR_CATEGORY_WORLD})"
+		"{else}"
+			"{world_sets}(%{COLOR_CATEGORY_WORLD_SETS})"
+			"{else}(%{COLOR_CATEGORY}){}"
+		"{}"
+	"{}<category>()/"
+	"{marked}(%{COLOR_MARKED_NAME})"
+	"{else}"
+		"{world}(%{COLOR_WORLD})"
+		"{else}"
+			"{world_sets}(%{COLOR_WORLD_SETS})"
+			"{else}(%{COLOR_NAME}){}"
+		"{}"
+	"{}<name>()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the printing the package name."));
+
+AddOption(STRING, "FORMAT_HEADER",
+	"{installed}"
+		"[{!*updn}"
+		"{upgrade}{*updn}%{TAG_UPGRADE}{}"
+		"{downgrade}{*updn}%{TAG_DOWNGRADE}{}"
+		"{!$updn}%{TAG_INSTALLED}{}"
+		"]"
+	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the normal header symbols."));
+
+AddOption(STRING, "FORMAT_HEADER_VERBOSE",
+	"{installed}(%{COLOR_INST_TAG})%{STRING_PLAIN_INSTALLED}"
+	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}"
+	"()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the verbose header symbols."));
+
+AddOption(STRING, "FORMAT_HEADER_COMPACT",
+	"["
+	"{installed}"
+		"{!*updn}"
+		"{upgrade}{*updn}%{TAG_UPGRADE}{}"
+		"{downgrade}{*updn}%{TAG_DOWNGRADE}{}"
+		"{!$updn}%{TAG_INSTALLED}{}"
+	"{else}%{TAG_UNINSTALLED}{}"
+	"]", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the compact header symbols."));
+
+AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
+	"[{*better=\\ }{*stable=\\ }{!*updn}"
+	"{havebest}%{TAG_STABILIZE}{!*better}{}"
+	"{upgrade}{*updn}%{TAG_UPGRADE}{}"
+	"{downgrade}{$updn}{!*stable}{}{*updn}%{TAG_DOWNGRADE}{}"
+	"{!$updn}%{TAG_NEW}{}"
+	"]<$better><$stable>"
+	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the diff-new header symbols."));
+
+AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
+	"{installed}"
+		"[(%{COLOR_DOWNGRADE})%{CHAR_DOWNGRADE}()]"
+	"{else}"
+		"   "
+	"{}"
+	"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the diff-delete header symbols."));
+
+AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
+	"[{*better=\\ }{*up=\\ }{*down=\\ }"
+	"{havebest}{!oldhavebest}%{TAG_STABILIZE}{!*better}{}{}"
+	"{upgrade}{!*up}%{TAG_UPGRADE}{}"
+	"{downgrade}{!*down}%{TAG_DOWNGRADE}{}"
+	"{$up}{better}{!*up}%{TAG_BETTER}{}{}"
+	"{$down}{worse}{!*down}%{TAG_WORSE}{}{}"
+	"]<$better><$up><$down>"
+	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the diff-changed header symbols."));
+
+AddOption(STRING, "FORMAT_BEST_COMPACT",
+	"{havebest}"
+		"<bestversion:AVERSIONS_COMPACT>"
+	"{else}"
+		"{havebest*}"
+			"<bestversion*:AVERSIONS_COMPACT>"
+		"{else}"
+			"%{?NOBEST_COMPACT}"
+				"%{FORMAT_NOBEST}"
+			"%{else}"
+				"<availableversions:VSORT>"
+			"%{}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the compact format for the best version(s)."));
+
+AddOption(STRING, "FORMAT_BEST_CHANGE",
+	"{havebest}"
+		"<bestslotversions:VSORT>"
+	"{else}"
+		"{havebest*}"
+			"<bestslotversions*:VSORT>"
+		"{else}"
+			"%{?NOBEST_CHANGE}"
+				"%{FORMAT_NOBEST_CHANGE}"
+			"%{else}"
+				"<availableversions:VSORT>"
+			"%{}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the compact format for the best version(s) in case of changes."));
+
+AddOption(STRING, "DIFF_FORMAT_BEST",
+	"{havebest}"
+		"<bestversion:AVERSIONS_COMPACT>"
+	"{else}"
+		"{havebest*}"
+			"<bestversion*:AVERSIONS_COMPACT>"
+		"{else}"
+			"%{?DIFF_NOBEST}"
+				"%{FORMAT_NOBEST}"
+			"%{else}"
+				"<availableversions:VSORT>"
+			"%{}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff format for the best version(s)."));
+
+AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
+	"{havebest}"
+		"<bestslotversions:VSORT>"
+	"{else}"
+		"{havebest*}"
+			"<bestslotversions*:VSORT>"
+		"{else}"
+			"%{?DIFF_NOBEST_CHANGE}"
+				"%{FORMAT_NOBEST_CHANGE}"
+			"%{else}"
+				"<availableversions:VSORT>"
+			"%{}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff format for the best version(s) in case of changes."));
+
+AddOption(STRING, "DIFF_FORMAT_OLDBEST_CHANGE",
+	"{oldhavebest}"
+		"<oldbestslotversions:VSORT>"
+	"{else}"
+		"{oldhavebest*}"
+			"<oldbestslotversions*:VSORT>"
+		"{else}"
+			"%{?DIFF_NOBEST_CHANGE}"
+				"%{FORMAT_NOBEST_CHANGE}"
+			"%{else}"
+				"<oldavailableversions:VSORT>"
+			"%{}"
+		"{}"
+	"{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff format for the old best versions in case of changes."));
+
+AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
+	"%{?DIFF_PRINT_INSTALLED}"
+		"%{DIFF_FORMATLINE_INSTALLEDVERSIONS}"
+	"%{}"
+	"%{DIFF_FORMAT_OLDBEST_CHANGE}"
+	" -> "
+	"%{DIFF_FORMAT_BEST_CHANGE}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff format for changed versions."));
+
+AddOption(STRING, "FORMAT_OVERLAYKEY",
+	"{overlaykey} <overlaykey>{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the printing the optional overlay key."));
+
+AddOption(STRING, "FORMATLINE_NAME",
+	"%{FORMAT_HEADER} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the normal header line."));
+
+AddOption(STRING, "FORMATLINE_NAME_VERBOSE",
+	"%{FORMAT_HEADER_VERBOSE} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the verbose header line."));
+
+AddOption(STRING, "FORMATLINE_NAME_COMPACT",
+	"%{FORMAT_HEADER_COMPACT} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the compact header line."));
+
+AddOption(STRING, "DIFF_FORMATLINE_NAME_NEW",
+	"%{DIFF_FORMAT_HEADER_NEW} %{FORMAT_NAME} ", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the diff-new header."));
+
+AddOption(STRING, "DIFF_FORMATLINE_NAME_DELETE",
+	"%{DIFF_FORMAT_HEADER_DELETE} %{FORMAT_NAME} ", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the diff-delete header."));
+
+AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
+	"%{DIFF_FORMAT_HEADER_CHANGED} %{FORMAT_NAME} ", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for the diff-changed header."));
+
+AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
+	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with installed versions."));
+
+AddOption(STRING, "DIFF_FORMATLINE_BEST",
+	"\\(%{DIFF_FORMAT_BEST}())", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff line for the best versions/slots."));
+
+AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
+	"\\(%{DIFF_FORMAT_CHANGED_VERSIONS})", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the eix-diff line for changed versions."));
+
+AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
+	"%{!PRINT_ALWAYS}{havemarkedversion}%{}"
+		"     (%{COLOR_TITLE})Marked:()"
+		"%{?PRINT_ALWAYS}{havemarkedversion}%{}"
+		"              "
+		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>()"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with marked versions."));
+
+AddOption(STRING, "FORMATLINE_PACKAGESETS",
+	"%{!PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
+		"     (%{COLOR_TITLE})Package sets:()"
+		"%{?PRINT_ALWAYS}{%{PRINT_SETNAMES}}%{}"
+		"        "
+		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>()"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with package sets."));
+
+AddOption(STRING, "FORMATLINE_HOMEPAGE",
+	"%{!PRINT_ALWAYS}{homepage}%{}"
+		"     (%{COLOR_TITLE})Homepage:()"
+		"%{?PRINT_ALWAYS}{homepage}%{}"
+		"            "
+		"<homepage>"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with the package homepage."));
+
+AddOption(STRING, "FORMATLINE_BUGS",
+	"%{?PRINT_BUGS}"
+		"     (%{COLOR_TITLE})Find open bugs:()"
+		"      "
+		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
+		"<category>%2F<name>\\n"
+	"%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with the package bug-reference."));
+
+AddOption(STRING, "FORMATLINE_DESCRIPTION",
+	"%{!PRINT_ALWAYS}{description}%{}"
+		"     (%{COLOR_TITLE})Description:()"
+		"%{?PRINT_ALWAYS}{description}%{}"
+		"         "
+		"<description>"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with the package description."));
+
+AddOption(STRING, "FORMATLINE_BEST",
+	"%{!PRINT_ALWAYS}{havebest}%{}"
+		"     (%{COLOR_TITLE})Best versions/slot:()"
+		"%{?PRINT_ALWAYS}{havebest}%{}"
+		"  <bestslotversions:VSORT>"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with the best versions/slots."));
+
+AddOption(STRING, "FORMATLINE_RECOMMEND",
+	"%{!PRINT_ALWAYS}{recommend}%{}"
+		"     (%{COLOR_TITLE})Recommendation:()"
+		"%{?PRINT_ALWAYS}{recommend}%{}"
+		"      "
+		"{upgrade}(%{COLOR_UPGRADE_TEXT})Upgrade()"
+			"{downgrade}"
+				" and "
+			"{}"
+		"{}"
+		"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(){}"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with the up-/downgrade recommendations."));
+
+AddOption(STRING, "FORMATLINE_LICENSES",
+	"%{!PRINT_ALWAYS}{licenses}%{}"
+		"     (%{COLOR_TITLE})License:()"
+		"%{?PRINT_ALWAYS}{licenses}%{}"
+		"             "
+		"<licenses>"
+	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for a line with the package licenses."));
+
+AddOption(STRING, "DIFF_FORMATLINE",
+	"%{FORMAT_OVERLAYKEY}: <description>"
+	"%{FORMAT_FINISH}", _(
+	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"It defines the format for eix-diff after the versions."));
+
+AddOption(STRING, "FORMAT_ALL",
+	"{*modus=normal}"
+	"%{FORMATLINE_NAME}"
+	"%{FORMATLINE_AVAILABLEVERSIONS}"
+	"%{FORMATLINE_INSTALLEDVERSIONS}"
+	"%{FORMATLINE_MARKEDVERSIONS}"
+	"%{FORMATLINE_HOMEPAGE}"
+	"%{FORMATLINE_DESCRIPTION}"
+	"%{FORMAT_FINISH}", _(
+	"This format is only used for delayed substitution in FORMAT.\n"
+	"It defines the format of the normal output of eix."));
+
+AddOption(STRING, "FORMAT_ALL_COMPACT",
+	"{*modus=compact}"
+	"%{FORMATLINE_NAME_COMPACT}"
+	" \\("
+	"{havemarkedversion}(%{COLOR_MARKED_VERSION})<markedversions:VERSION>(); {}"
+	"{installed}"
+		"%{INSTALLEDVERSIONS_COMPACT}"
+		"{recommend} -> %{FORMAT_BEST_CHANGE}{}"
+	"{else}"
+		"%{FORMAT_BEST_COMPACT}"
+	"{}"
+	"()\\): <description>"
+	"%{FORMAT_FINISH}", _(
+	"This format is only used for delayed substitution in FORMAT_COMPACT.\n"
+	"It defines the format of the compact output of eix (option -c)."));
+
+AddOption(STRING, "FORMAT_ALL_VERBOSE",
+	"{*modus=verbose}"
+	"%{FORMATLINE_NAME_VERBOSE}"
+	"%{FORMATLINE_AVAILABLEVERSIONS}"
+	"%{FORMATLINE_INSTALLEDVERSIONS}"
+	"%{FORMATLINE_BEST}"
+	"%{FORMATLINE_RECOMMEND}"
+	"%{FORMATLINE_MARKEDVERSIONS}"
+	"%{FORMATLINE_PACKAGESETS}"
+	"%{FORMATLINE_HOMEPAGE}"
+	"%{FORMATLINE_BUGS}"
+	"%{FORMATLINE_DESCRIPTION}"
+	"%{FORMATLINE_LICENSES}"
+	"%{FORMAT_FINISH}", _(
+	"This format is only used for delayed substitution in FORMAT_VERBOSE.\n"
+	"It defines the format of the verbose output of eix (option -v)."));
+
+AddOption(STRING, "FORMAT",
+	"%{FORMAT_ALL}", _(
+	"The format of the normal output of eix.\n"
+	"Do not modify it in a config file; modify FORMAT_ALL instead."));
+
+AddOption(STRING, "FORMAT_COMPACT",
+	"%{FORMAT_ALL_COMPACT}", _(
+	"The format of the compact output of eix (option -c).\n"
+	"Do not modify it in a config file; modify FORMAT_ALL_COMPACT instead."));
+
+AddOption(STRING, "FORMAT_VERBOSE",
+	"%{FORMAT_ALL_VERBOSE}", _(
+	"The format of the verbose output of eix (option -v).\n"
+	"Do not modify it in a config file; modify FORMAT_ALL_VERBOSE instead."));
+
+AddOption(STRING, "DIFF_FORMAT_ALL_NEW",
+	"%{DIFF_FORMATLINE_NAME_NEW}"
+	"%{DIFF_FORMATLINE_BEST}"
+	"%{DIFF_FORMATLINE}", _(
+	"This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
+	"It defines the format used for new packages (eix-diff)."));
+
+AddOption(STRING, "DIFF_FORMAT_ALL_DELETE",
+	"%{DIFF_FORMATLINE_NAME_DELETE}"
+	"%{DIFF_FORMATLINE_BEST}"
+	"%{DIFF_FORMATLINE}", _(
+	"This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
+	"It defines the format used for packages that were deleted (eix-diff)."));
+
+AddOption(STRING, "DIFF_FORMAT_ALL_CHANGED",
+	"%{DIFF_FORMATLINE_NAME_CHANGED}"
+	"%{DIFF_FORMATLINE_CHANGED_VERSIONS}"
+	"%{DIFF_FORMATLINE}", _(
+	"This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
+	"It defines the format used for packages that were changed (eix-diff)."));
+
+AddOption(STRING, "DIFF_FORMAT_NEW",
+	"%{DIFF_FORMAT_ALL_NEW}", _(
+	"The format used for new packages (eix-diff).\n"
+	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."));
+
+AddOption(STRING, "DIFF_FORMAT_DELETE",
+	"%{DIFF_FORMAT_ALL_DELETE}", _(
+	"The format used for packages that were deleted (eix-diff).\n"
+	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."));
+
+AddOption(STRING, "DIFF_FORMAT_CHANGED",
+	"%{DIFF_FORMAT_ALL_CHANGED}", _(
+	"The format used for packages that were changed (eix-diff).\n"
+	"Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."));
+
+AddOption(STRING, "FORMAT_INSTALLATION_DATE",
+	"%X %x", _(
+	"strftime() format for printing the installation date in long form"));
+
+AddOption(STRING, "FORMAT_SHORT_INSTALLATION_DATE",
+	"%x", _(
+	"strftime() format for printing the installation date in short form"));
+
+AddOption(STRING, "XML_KEYWORDS",
+	"none", _(
+	"Can be full/effective/both/full*/effective*/none.\n"
+	"Depending on the value, with --xml the full/effective (or both types)\n"
+	"KEYWORDS string is output for each version.\n"
+	"With full*/effective* also both types are output if they differ."));
+
+AddOption(STRING, "XML_OVERLAY",
+	"false", _(
+	"If false, the overlay is not output with --xml.\n"
+	"For overlays without label (repository name) the overlay is output anyway."));
+
+AddOption(STRING, "XML_DATE",
+	"%s", _(
+	"strftime() format for printing the installation date with --xml."));
+
+AddOption(STRING, "FORMAT_BEFORE_SET_USE",
+	"(%{COLOR_SET_USE})", _(
+	"This string is printed before each set USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_AFTER_SET_USE",
+	"()", _(
+	"This string is printed after each set USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_BEFORE_UNSET_USE",
+	"(%{COLOR_UNSET_USE})-", _(
+	"This string is printed before each unset USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
+	"()", _(
+	"This string is printed after each unset USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_AFTER_IUSE",
+	"()]", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after IUSE data for a version is output.\n"
+	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "FORMAT_BEFORE_IUSE",
+	"\\t[(%{COLOR_VERSION_IUSE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed before IUSE data for a version is output.\n"
+	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "FORMAT_AFTER_IUSE",
+	"()]", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after IUSE data for a version is output.\n"
+	"(Normally, this is only used when --versionlines is active)"));
+
+AddOption(STRING, "FORMAT_BEFORE_COLL",
+	" (yellow,1)\\{\\{(%{COLOR_COLL_IUSE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed before IUSE data for all versions is output.\n"
+	"(This is meant for printing after all versions in a line)"));
+
+AddOption(STRING, "FORMAT_AFTER_COLL",
+	"(yellow,1)\\}\\}()", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after IUSE data for all versions is output.\n"
+	"(This is meant for printing after all versions in a line)"));
+
+AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
+	"\\n\\t(yellow,1)\\{\\{(%{COLOR_COLL_IUSE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed before IUSE data for all versions is output.\n"
+	"(This is meant for printing in a separate line)"));
+
+AddOption(STRING, "FORMAT_AFTER_COLL_SEP",
+	"%{FORMAT_AFTER_COLL}", _(
+	"This variable is only used for delayed substitution.\n"
+	"This string is printed after IUSE data for all versions is output.\n"
+	"(This is meant for printing in a separate line)"));
+
+AddOption(STRING, "COLOR_MASKED",
+	"red", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color for masked versions."));
+
+AddOption(STRING, "COLOR_UNSTABLE",
+	"yellow", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color for unstable versions."));
+
+AddOption(STRING, "COLOR_STABLE",
+	"green", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color for stable versions."));
+
+AddOption(STRING, "FORMAT_COLOR_MASKED",
+	"(%{COLOR_MASKED})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format to change the color for masked versions."));
+
+AddOption(STRING, "FORMAT_COLOR_UNSTABLE",
+	"(%{COLOR_UNSTABLE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format to change the color for unstable versions."));
+
+AddOption(STRING, "FORMAT_COLOR_STABLE",
+	"(%{COLOR_STABLE})", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format to change the color for stable versions."));
 
 AddOption(STRING, "DUMMY",
 	"", _(

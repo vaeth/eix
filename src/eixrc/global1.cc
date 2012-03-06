@@ -50,6 +50,7 @@ get_eixrc_once(const char *varprefix)
 	fill_defaults_part_2(eixrc);
 	fill_defaults_part_3(eixrc);
 	fill_defaults_part_4(eixrc);
+	fill_defaults_part_5(eixrc);
 
 	eixrc.read();
 	return eixrc;

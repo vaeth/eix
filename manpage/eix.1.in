@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-03-05 19:30:00 +0100 (Mon, 05 Mar 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-03-06 18:00:00 +0100 (Mon, 06 Mar 2012) $" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -229,6 +229,10 @@ print all SLOT strings used in some version.
 .B --print-all-licenses
 print all LICENSE strings used in some package.
 .TP
+.B --print-all-depends
+print all words occurring in some B<{,R,P}DEPEND>.
+This only works if B<DEP=true> is active (and was so when the cachefile was created).
+.TP
 .B --print-world-sets
 print the world sets.
 .TP
@@ -244,11 +248,19 @@ If this is the case, eix returns successful without printing anything.
 .BR -x ", " --versionsort "    (toggle)"
 Prints available versions sorted by slots/versions.
 If sorted by slots, each new slot starts in a new line.
+This mode can be combined with B<--versionlines> (B<-l>)
+to start a new line even for every version.
 .TP
 .BR -l ", " --versionlines "   (toggle)"
 Prints available versions in a (vertical) list.
-Moreover, the IUSE data is printed for each version
-(and not collected for the whole package).
+Only in this mode some additional information for each version is output.
+More precisely, depending on whether you have chosen B<--verbose> and
+depending on the state of the configuration variables
+B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>,
+this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND> data.
+Note that if B<IUSE> is not printed per version then it is only collected
+for the whole package which can give the wrong impression, since often
+B<IUSE> changes dramatically with versions.
 .TP
 .BR -c ", " --compact "   (toggle)"
 Causes eix to use a compact layout for search results. Useful for obtaining a better
@@ -1173,10 +1185,11 @@ It returns 1 or empty depending on whether some or the corresponding B<RESTRICT>
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
 .TP
-.BR depend ", " rdepend ", " depend
+.BR depend ", " rdepend ", " pdepend, ", " dependrdepend
 This must occur only in I<VARIABLE> in the context of version printing.
 It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND> string of an available package.
 This is empty unless  B<DEP=true> is set (now and if the cachefile was created).
+The special value B<dependrdepend> returns 1 if B<depend>=B<rdepend>.
 When printing installed versions (in contrast to available versions),
 these properties are not available (i.e. they are empty).
 The latter might change in a future release of eix.
@@ -1186,7 +1199,7 @@ This must occur only in I<VARIABLE> in the context of version printing.
 It outputs information corresponding to the B<IUSE> (for available versions)
 or B<USE> (for installed versions) variables, respectively.
 B<haveuse> can be used to test whether an output would be nonempty
-(in this case it is 1 otherwise empty).
+(in this case it is 1, otherwise empty).
 For available versions, B<use> outputs the B<IUSE> variable.
 For installed versions, B<use> outputs the B<USE> flags and whether they are installed or not
 (in the later case, the content of B<FORMAT_BEFORE_SET_USE>, B<FORMAT_AFTER_SET_USE>, B<FORMAT_BEFORE_UNSET_USE>, B<FORMAT_AFTER_UNSET_USE>

@@ -19,5 +19,6 @@ void fill_defaults_part_1(EixRc &eixrc);
 void fill_defaults_part_2(EixRc &eixrc);
 void fill_defaults_part_3(EixRc &eixrc);
 void fill_defaults_part_4(EixRc &eixrc);
+void fill_defaults_part_5(EixRc &eixrc);
 
 #endif /* EIX__EIXRC_GLOBALS_H__ */

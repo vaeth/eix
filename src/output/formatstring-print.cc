@@ -284,8 +284,8 @@ class Scanner {
 			VER_VERSION,
 			VER_OVERLAYNUM,
 			VER_OVERLAYVER,
-			VER_VERSIONKEYWORDS,
 			VER_VERSIONKEYWORDSS,
+			VER_VERSIONKEYWORDS,
 			VER_VERSIONEKEYWORDS,
 			VER_ISBESTUPGRADESLOTS,
 			VER_ISBESTUPGRADESLOT,
@@ -312,6 +312,7 @@ class Scanner {
 			VER_PROPERTIESLIVE,
 			VER_PROPERTIESVIRTUAL,
 			VER_PROPERTIESSET,
+			VER_DEPENDRDEPEND,
 			VER_DEPEND,
 			VER_RDEPEND,
 			VER_PDEPEND,
@@ -419,8 +420,8 @@ class Scanner {
 			prop_ver("version", VER_VERSION);
 			prop_ver("overlaynum", VER_OVERLAYNUM);
 			prop_ver("overlayver", VER_OVERLAYVER);
+			prop_ver("versionkeywords*", VER_VERSIONKEYWORDSS);
 			prop_ver("versionkeywords", VER_VERSIONKEYWORDS);
-			prop_ver("versionekeywords*", VER_VERSIONKEYWORDSS);
 			prop_ver("versionekeywords", VER_VERSIONEKEYWORDS);
 			prop_ver("isbestupgradeslot*", VER_ISBESTUPGRADESLOTS);
 			prop_ver("isbestupgradeslot", VER_ISBESTUPGRADESLOT);
@@ -447,6 +448,7 @@ class Scanner {
 			prop_ver("propertieslive", VER_PROPERTIESLIVE);
 			prop_ver("propertiesvirtual", VER_PROPERTIESVIRTUAL);
 			prop_ver("propertiesset", VER_PROPERTIESSET);
+			prop_ver("dependrdepend", VER_DEPENDRDEPEND);
 			prop_ver("depend", VER_DEPEND);
 			prop_ver("rdepend", VER_RDEPEND);
 			prop_ver("pdepend", VER_PDEPEND);
@@ -857,15 +859,15 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 					return overlay_keytext(version_variables->version()->overlay_key, a);
 			}
 			break;
-		case Scanner::VER_VERSIONKEYWORDS:
-			if(likely(!version_variables->isinst))
-				return version_variables->version()->get_full_keywords();
-			break;
 		case Scanner::VER_VERSIONKEYWORDSS:
 			if(likely(!version_variables->isinst)) {
 				portagesettings->get_effective_keywords_userprofile(package);
 				return version_variables->version()->get_effective_keywords();
 			}
+			break;
+		case Scanner::VER_VERSIONKEYWORDS:
+			if(likely(!version_variables->isinst))
+				return version_variables->version()->get_full_keywords();
 			break;
 		case Scanner::VER_VERSIONEKEYWORDS:
 			if(likely(!version_variables->isinst)) {
@@ -1050,6 +1052,13 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 						if(unlikely(properties != ExtendedVersion::PROPERTIES_NONE))
 							return one;
 						break;
+				}
+			}
+			break;
+		case Scanner::VER_DEPENDRDEPEND:
+			if(likely(!version_variables->isinst)) {
+				if(version_variables->version()->depend.dependrdepend()) {
+					return one;
 				}
 			}
 			break;

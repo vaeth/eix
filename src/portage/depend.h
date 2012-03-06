@@ -42,6 +42,14 @@ class Depend
 		std::string get_pdepend() const
 		{ return m_pdepend; }
 
+		bool dependrdepend() const
+		{
+			if(m_rdepend.empty()) {
+				return m_depend.empty();
+			}
+			return (m_rdepend == the_same);
+		}
+
 		void clear()
 		{ m_depend.clear(); m_rdepend.clear(); m_pdepend.clear(); }
 };

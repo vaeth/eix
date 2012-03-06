@@ -86,6 +86,8 @@ dump_help()
 "     --print-all-keywords  print all KEYWORDS used in some version\n"
 "     --print-all-slots     print all SLOT strings used in some version\n"
 "     --print-all-licenses  print all LICENSE strings used in some package\n"
+"     --print-all-depends   print all words occurring in some {,R,P}DEPEND\n"
+"                           (needs DEP=true)\n"
 "     --print-world-sets    print the world sets\n"
 "     --print-overlay-path  print the path of specified overlay\n"
 "     --print-overlay-label print label of specified overlay\n"
@@ -114,7 +116,7 @@ dump_help()
 "     -v, --verbose (toggle) verbose search results\n"
 "     -x, --versionsort  (toggle) sort output by slots/versions\n"
 "     -l, --versionlines (toggle) print available versions line-by-line\n"
-"                            and print IUSE on a per-version base.\n"
+"                            (and print additional data for each version)\n"
 "         --format           format string for normal output\n"
 "         --format-compact   format string for compact output\n"
 "         --format-verbose   format string for verbose output\n"
@@ -248,6 +250,7 @@ static struct LocalOptions {
 		hash_keywords,
 		hash_slot,
 		hash_license,
+		hash_depend,
 		world_sets;
 } rc_options;
 
@@ -284,6 +287,7 @@ static struct Option long_options[] = {
 	Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords),
 	Option("print-all-slots",    O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot),
 	Option("print-all-licenses", O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license),
+	Option("print-all-depends",  O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend),
 	Option("print-world-sets",   O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets),
 
 	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
@@ -621,6 +625,11 @@ run_eix(int argc, char** argv)
 	if(unlikely(rc_options.hash_license)) {
 		fclose(fp);
 		header.license_hash.output();
+		return EXIT_SUCCESS;
+	}
+	if(unlikely(rc_options.hash_depend)) {
+		fclose(fp);
+		header.depend_hash.output();
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.world_sets)) {

@@ -65,6 +65,7 @@ eixrc/global1.cc \
 eixrc/global2.cc \
 eixrc/global3.cc \
 eixrc/global4.cc \
+eixrc/global5.cc \
 eixrc/global.h
 
 nodist_eixrc_src =

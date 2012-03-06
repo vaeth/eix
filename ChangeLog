@@ -11,6 +11,7 @@
 	  all three). This requires DEP=true (also for cachefile generation).
 	- Output dependencies also to xml (if DEP=true).
 	  Bump xml version. Fix xml scheme.
+	- Change defaults (VERSION_KEYWORDS_NORMAL=false, PRINT_BUGS=true).
 	- Put keywords/effective keywords handling to configure level:
 	  New properties versionkeywords*, versionekeywords;
 	  remove internal PRINT_{BEFORE,AFTER}{,_EFFECTIVE}_KEYWORDS.
@@ -18,6 +19,7 @@
 	  distinction compact/verbose/normal by runtime variable "$modus".
 	  Give runtime variables saner names. Improve naming of some
 	  configuration variables and descriptions.
+	- Deal with version output differently in verbose mode.
 	- Several bugfixes/improvements in German translation.
 	- Remove --with-bzip2 (enabling /var/db/pkg/CAT/NAME/environment.bz2 if
 	  /var/db/pkg/CAT/NAME/repository is unavailable). This was not used in
