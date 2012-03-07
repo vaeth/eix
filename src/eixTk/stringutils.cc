@@ -159,7 +159,7 @@ void
 unescape_string(string &str)
 {
 	string::size_type pos(0);
-	while(unlikely((pos = str.find_first_of('\\', pos)) != string::npos)) {
+	while(unlikely((pos = str.find('\\', pos)) != string::npos)) {
 		string::size_type p(pos + 1);
 		if(p == str.size())
 			return;
@@ -377,11 +377,14 @@ StringHash::operator[](StringHash::size_type i) const
 }
 
 void
-StringHash::output(const char *s) const
+StringHash::output(const set<string> *skip) const
 {
-	if(unlikely(s != NULL))
-		cout << s << ":\n";
 	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
+		if(skip != NULL) {
+			if(skip->find(*i) != skip->end()) {
+				continue;
+			}
+		}
 		cout << *i << "\n";
 	}
 }

@@ -487,7 +487,7 @@ AddOption(BOOLEAN, "DIFF_PRINT_INSTALLED",
 
 AddOption(STRING, "PRINT_SETNAMES",
 	"%{?ALL_SETNAMES}all%{}setnames", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It is the command used to print the package set names."));
 
 AddOption(BOOLEAN, "PRINT_SLOTS",
@@ -1095,7 +1095,7 @@ AddOption(STRING, "COLOR_TITLE",
 	"It defines the color used for the title texts for packages."));
 
 AddOption(STRING, "COLOR_INST_TITLE",
-	"blue", _(
+	"cyan", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for installed versions."));
 
@@ -1283,14 +1283,14 @@ AddOption(STRING, "FORMAT_NOBEST",
 	"%{FORMAT_COLOR_MASKED}"
 	"--"
 	"()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines what to print if no version number is printed."));
 
 AddOption(STRING, "FORMAT_NOBEST_CHANGE",
 	"%{FORMAT_COLOR_MASKED}"
 	"??"
 	"()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines what to print after \"->\" if there is no installable."));
 
 AddOption(STRING, "TAG_BINARY",
@@ -1506,7 +1506,7 @@ AddOption(STRING, "NAMEASLOT",
 	"It is an example for usage with <installedversions:NAMEASLOT>."));
 
 AddOption(STRING, "DATESORT_DATE",
-	"%s\\t%x %X", _(
+	"%s	%x %X", _(
 	"strftime() format for printing the installation date in DATESORT"));
 
 AddOption(STRING, "DATESORT",
@@ -1514,6 +1514,41 @@ AddOption(STRING, "DATESORT",
 	"This variable is used as a version formatter.\n"
 	"It is an example for usage as <installedversions:DATESORT>. Typical usage:\n"
 	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
+
+AddOption(STRING, "FORMAT_DEPEND",
+	"<depend*>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the DEPEND output."));
+
+AddOption(STRING, "FORMAT_RDEPEND",
+	"<rdepend*>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the RDEPEND output."));
+
+AddOption(STRING, "FORMAT_PDEPEND",
+	"<pdepend*>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the PDEPEND output."));
+
+AddOption(STRING, "FORMAT_DEPEND_VERBOSE",
+	"%{FORMAT_DEPEND}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the DEPEND output with --verbose."));
+
+AddOption(STRING, "FORMAT_RDEPEND_VERBOSE",
+	"%{FORMAT_RDEPEND}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the RDEPEND output with --verbose."));
+
+AddOption(STRING, "FORMAT_PDEPEND_VERBOSE",
+	"%{FORMAT_PDEPEND}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format of the PDEPEND output with --verbose."));
+
+AddOption(STRING, "FORMAT_KEYWORDS_EQUAL",
+	"{versionkeywords} $\\{KEYWORDS\\}{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines what to output for KEYWORDS* if they equal KEYWORDS."));
 
 AddOption(STRING, "FORMAT_MASK_TAG",
 	"{!*mask}"
@@ -1784,8 +1819,8 @@ AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
 	"This string is printed after KEYWORDS string for a version is output.\n"
 	"(with --versionlines and nonverbose)"));
 
-AddOption(STRING, "FORMAT_VERSION_LINESKIP",
-	"\\n\\t\\t\\t", _(
+AddOption(STRING, "FORMAT_VER_LINESKIP",
+	"\\n                          ", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip used for the versionline appendix."));
 
@@ -1813,32 +1848,20 @@ AddOption(STRING, "FORMAT_IUSE_NORMAL",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the normal format for IUSE for an available version."));
 
-AddOption(STRING, "FORMAT_DEPEND",
-	//"{dependrdepend}$\\{RDEPEND\\}{else}<depend>{}"
-	"<depend>", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the DEPEND output."));
-
-AddOption(STRING, "FORMAT_RDEPEND",
-	//"<rdepend>"
-	"{dependrdepend}$\\{DEPEND\\}{else}<rdepend>{}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format of the RDEPEND output."));
-
 AddOption(STRING, "FORMAT_DEPS_NORMAL",
 	"%{?DEP}"
 		"%{?VERSION_DEPS_NORMAL}"
-			"{depend}"
-				"%{FORMAT_VERSION_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()    <depend>"
+			"{havedepend}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()    %{FORMAT_DEPEND}"
 			"{}"
-			"{rdepend}"
-				"%{FORMAT_VERSION_LINESKIP}"
+			"{haverdepend}"
+				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()   %{FORMAT_RDEPEND}"
 			"{}"
-			"{pdepend}"
-				"%{FORMAT_VERSION_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()   <pdepend>"
+			"{havepdepend}"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()   %{FORMAT_PDEPEND}"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -1849,16 +1872,20 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 	"%{?PRINT_KEYWORDS}"
 		"%{?VERSION_KEYWORDS_VERBOSE}"
 			"%{!PRINT_ALWAYS}{versionkeywords}%{}"
-				"%{FORMAT_VERSION_LINESKIP}"
+				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:()"
 				"%{?PRINT_ALWAYS}{versionkeywords}%{}"
 				"  <versionkeywords>"
 			"{}"
 			"%{!PRINT_ALWAYS}{versionekeywords}%{}"
-				"%{FORMAT_VERSION_LINESKIP}"
-				"(%{COLOR_AVAILABLE_TITLE})\\(Profile\\):()"
-				"%{?PRINT_ALWAYS}{versionekeywords}%{}"
-				" <versionkeywords>"
+				"%{FORMAT_VER_LINESKIP}"
+				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS*:()"
+				"%{?PRINT_ALWAYS}"
+					"{!versionekeywords}"
+						"%{FORMAT_KEYWORDS_EQUAL}"
+					"{else}"
+				"%{}"
+				" <versionkeywords*>"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -1869,7 +1896,7 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 	"%{?PRINT_IUSE}"
 		"%{?VERSION_IUSE_VERBOSE}"
 			"%{!PRINT_ALWAYS}{haveuse}%{}"
-				"%{FORMAT_VERSION_LINESKIP}"
+				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})IUSE:()"
 				"%{?PRINT_ALWAYS}{haveuse}%{}"
 				"      <use>"
@@ -1882,23 +1909,23 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 AddOption(STRING, "FORMAT_DEPS_VERBOSE",
 	"%{?DEP}"
 		"%{?VERSION_DEPS_VERBOSE}"
-			"%{!PRINT_ALWAYS}{depend}%{}"
-				"%{FORMAT_VERSION_LINESKIP}"
+			"%{!PRINT_ALWAYS}{havedepend}%{}"
+				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})DEPEND:()"
 				"%{?PRINT_ALWAYS}{depend}%{}"
-				"    <depend>"
+				"    %{FORMAT_DEPEND_VERBOSE}"
 			"{}"
-			"%{!PRINT_ALWAYS}{rdepend}%{}"
-				"%{FORMAT_VERSION_LINESKIP}"
+			"%{!PRINT_ALWAYS}{haverdepend}%{}"
+				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})RDEPEND:()"
-				"%{?PRINT_ALWAYS}{rdepend}%{}"
-				"   %{FORMAT_RDEPEND}"
+				"%{?PRINT_ALWAYS}{haverdepend}%{}"
+				"   %{FORMAT_RDEPEND_VERBOSE}"
 			"{}"
-			"%{!PRINT_ALWAYS}{pdepend}%{}"
-				"%{FORMAT_VERSION_LINESKIP}"
+			"%{!PRINT_ALWAYS}{havepdepend}%{}"
+				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})PDEPEND:()"
-				"%{?PRINT_ALWAYS}{pdepend}%{}"
-				"   <pdepend>"
+				"%{?PRINT_ALWAYS}{havepdepend}%{}"
+				"   %{FORMAT_PDEPEND_VERBOSE}"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -1931,15 +1958,15 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX",
 AddOption(STRING, "FORMAT_SLOTLINESKIP",
 	"\\n\\t%{FORMAT_SLOT}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip + slot with lineskip."));
+	"It defines lineskip + slot if lineskip is used."));
 
 AddOption(STRING, "FORMAT_VERSLINESKIP",
 	"\\n\\t%{FORMAT_STABILITY}\\t", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the lineskip + stability for available versions with lineskip."));
+	"It defines lineskip + stability if lineskip is used."));
 
-AddOption(STRING, "FORMAT_INSTLINESKIP",
-	"\\n                          ", _(
+AddOption(STRING, "FORMAT_INST_LINESKIP",
+	"%{FORMAT_VER_LINESKIP}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip for installed versions."));
 
@@ -2034,7 +2061,7 @@ AddOption(STRING, "INORMAL",
 	"(%{COLOR_DATE})\\(<date:FORMAT_INSTALLATION_DATE>\\)()"
 	"%{FORMAT_INST_USEFLAGS}"
 	"{!last}"
-		"{versionlines}%{FORMAT_INSTLINESKIP}"
+		"{versionlines}%{FORMAT_INST_LINESKIP}"
 		"{else} {}"
 	"{}", _(
 	"This variable is used as a version formatter.\n"
@@ -2048,17 +2075,17 @@ AddOption(STRING, "ICOMPACT",
 	"It defines the compact format of installed versions."));
 
 AddOption(STRING, "IVERBOSE",
-	"(%{COLOR_INST_TITLE})Version:() "
+	"(%{COLOR_INST_TITLE})Version:()   "
 	"%{IVERSIONS_VERBOSE}()"
-	"%{FORMAT_INSTLINESKIP}"
-	"(%{COLOR_INST_TITLE})Date:()    "
+	"%{FORMAT_INST_LINESKIP}"
+	"(%{COLOR_INST_TITLE})Date:()      "
 	"(%{COLOR_DATE})<date:FORMAT_INSTALLATION_DATE>()"
 	"{haveuse}"
-		"%{FORMAT_INSTLINESKIP}"
-		"(%{COLOR_INST_TITLE})USE:()     "
+		"%{FORMAT_INST_LINESKIP}"
+		"(%{COLOR_INST_TITLE})USE:()       "
 		"<use>"
 	"{}"
-	"{!last}%{FORMAT_INSTLINESKIP}{}", _(
+	"{!last}%{FORMAT_INST_LINESKIP}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the verbose format of installed versions."));
 
@@ -2116,17 +2143,17 @@ AddOption(STRING, "FORMATLINE_INSTALLEDVERSIONS",
 			"None{}\\n"
 		"%{else}\\n{}"
 	"%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
 
 AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
 	"{installed}%{INSTALLEDVERSIONS_COMPACT}; {}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for eix-diff for installed versions."));
 
 AddOption(STRING, "FORMAT_FINISH",
 	"%{!NEWLINE}\\n%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It is used at the end of a package to output a newline unless NEWLINE=true."));
 
 AddOption(STRING, "FORMAT_NAME",
@@ -2146,7 +2173,7 @@ AddOption(STRING, "FORMAT_NAME",
 			"{else}(%{COLOR_NAME}){}"
 		"{}"
 	"{}<name>()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the printing the package name."));
 
 AddOption(STRING, "FORMAT_HEADER",
@@ -2157,14 +2184,14 @@ AddOption(STRING, "FORMAT_HEADER",
 		"{!$updn}%{TAG_INSTALLED}{}"
 		"]"
 	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the normal header symbols."));
 
 AddOption(STRING, "FORMAT_HEADER_VERBOSE",
 	"{installed}(%{COLOR_INST_TAG})%{STRING_PLAIN_INSTALLED}"
 	"{else}(%{COLOR_UNINST_TAG})%{STRING_PLAIN_UNINSTALLED}{}"
 	"()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the verbose header symbols."));
 
 AddOption(STRING, "FORMAT_HEADER_COMPACT",
@@ -2176,7 +2203,7 @@ AddOption(STRING, "FORMAT_HEADER_COMPACT",
 		"{!$updn}%{TAG_INSTALLED}{}"
 	"{else}%{TAG_UNINSTALLED}{}"
 	"]", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the compact header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
@@ -2187,7 +2214,7 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_NEW",
 	"{!$updn}%{TAG_NEW}{}"
 	"]<$better><$stable>"
 	" (%{DIFF_COLOR_NEW})%{DIFF_STRING_NEW}()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-new header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
@@ -2197,7 +2224,7 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_DELETE",
 		"   "
 	"{}"
 	"   (%{DIFF_COLOR_DELETE})%{DIFF_STRING_DELETE}()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-delete header symbols."));
 
 AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
@@ -2209,7 +2236,7 @@ AddOption(STRING, "DIFF_FORMAT_HEADER_CHANGED",
 	"{$down}{worse}{!*down}%{TAG_WORSE}{}{}"
 	"]<$better><$up><$down>"
 	" (%{DIFF_COLOR_CHANGED})%{DIFF_STRING_CHANGED}()", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-changed header symbols."));
 
 AddOption(STRING, "FORMAT_BEST_COMPACT",
@@ -2226,7 +2253,7 @@ AddOption(STRING, "FORMAT_BEST_COMPACT",
 			"%{}"
 		"{}"
 	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the compact format for the best version(s)."));
 
 AddOption(STRING, "FORMAT_BEST_CHANGE",
@@ -2243,7 +2270,7 @@ AddOption(STRING, "FORMAT_BEST_CHANGE",
 			"%{}"
 		"{}"
 	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the compact format for the best version(s) in case of changes."));
 
 AddOption(STRING, "DIFF_FORMAT_BEST",
@@ -2260,7 +2287,7 @@ AddOption(STRING, "DIFF_FORMAT_BEST",
 			"%{}"
 		"{}"
 	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff format for the best version(s)."));
 
 AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
@@ -2277,7 +2304,7 @@ AddOption(STRING, "DIFF_FORMAT_BEST_CHANGE",
 			"%{}"
 		"{}"
 	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff format for the best version(s) in case of changes."));
 
 AddOption(STRING, "DIFF_FORMAT_OLDBEST_CHANGE",
@@ -2294,7 +2321,7 @@ AddOption(STRING, "DIFF_FORMAT_OLDBEST_CHANGE",
 			"%{}"
 		"{}"
 	"{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff format for the old best versions in case of changes."));
 
 AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
@@ -2304,57 +2331,57 @@ AddOption(STRING, "DIFF_FORMAT_CHANGED_VERSIONS",
 	"%{DIFF_FORMAT_OLDBEST_CHANGE}"
 	" -> "
 	"%{DIFF_FORMAT_BEST_CHANGE}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff format for changed versions."));
 
 AddOption(STRING, "FORMAT_OVERLAYKEY",
 	"{overlaykey} <overlaykey>{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the printing the optional overlay key."));
 
 AddOption(STRING, "FORMATLINE_NAME",
 	"%{FORMAT_HEADER} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the normal header line."));
 
 AddOption(STRING, "FORMATLINE_NAME_VERBOSE",
 	"%{FORMAT_HEADER_VERBOSE} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the verbose header line."));
 
 AddOption(STRING, "FORMATLINE_NAME_COMPACT",
 	"%{FORMAT_HEADER_COMPACT} %{FORMAT_NAME}%{FORMAT_OVERLAYKEY}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the compact header line."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_NEW",
 	"%{DIFF_FORMAT_HEADER_NEW} %{FORMAT_NAME} ", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-new header."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_DELETE",
 	"%{DIFF_FORMAT_HEADER_DELETE} %{FORMAT_NAME} ", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-delete header."));
 
 AddOption(STRING, "DIFF_FORMATLINE_NAME_CHANGED",
 	"%{DIFF_FORMAT_HEADER_CHANGED} %{FORMAT_NAME} ", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for the diff-changed header."));
 
 AddOption(STRING, "FORMATLINE_AVAILABLEVERSIONS",
 	"     (%{COLOR_TITLE})Available versions:()  %{FORMAT_AVAILABLEVERSIONS}\\n", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with installed versions."));
 
 AddOption(STRING, "DIFF_FORMATLINE_BEST",
 	"\\(%{DIFF_FORMAT_BEST}())", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff line for the best versions/slots."));
 
 AddOption(STRING, "DIFF_FORMATLINE_CHANGED_VERSIONS",
 	"\\(%{DIFF_FORMAT_CHANGED_VERSIONS})", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the eix-diff line for changed versions."));
 
 AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
@@ -2364,7 +2391,7 @@ AddOption(STRING, "FORMATLINE_MARKEDVERSIONS",
 		"              "
 		"(%{COLOR_MARKED_VERSION})<markedversions:VERSION>()"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with marked versions."));
 
 AddOption(STRING, "FORMATLINE_PACKAGESETS",
@@ -2374,7 +2401,7 @@ AddOption(STRING, "FORMATLINE_PACKAGESETS",
 		"        "
 		"(%{COLOR_PACKAGESETS})<%{PRINT_SETNAMES}>()"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with package sets."));
 
 AddOption(STRING, "FORMATLINE_HOMEPAGE",
@@ -2384,7 +2411,7 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 		"            "
 		"<homepage>"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package homepage."));
 
 AddOption(STRING, "FORMATLINE_BUGS",
@@ -2394,7 +2421,7 @@ AddOption(STRING, "FORMATLINE_BUGS",
 		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
 		"<category>%2F<name>\\n"
 	"%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package bug-reference."));
 
 AddOption(STRING, "FORMATLINE_DESCRIPTION",
@@ -2404,7 +2431,7 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 		"         "
 		"<description>"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package description."));
 
 AddOption(STRING, "FORMATLINE_BEST",
@@ -2413,7 +2440,7 @@ AddOption(STRING, "FORMATLINE_BEST",
 		"%{?PRINT_ALWAYS}{havebest}%{}"
 		"  <bestslotversions:VSORT>"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the best versions/slots."));
 
 AddOption(STRING, "FORMATLINE_RECOMMEND",
@@ -2428,7 +2455,7 @@ AddOption(STRING, "FORMATLINE_RECOMMEND",
 		"{}"
 		"{downgrade}(%{COLOR_DOWNGRADE_TEXT})Downgrade(){}"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the up-/downgrade recommendations."));
 
 AddOption(STRING, "FORMATLINE_LICENSES",
@@ -2438,13 +2465,13 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 		"             "
 		"<licenses>"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package licenses."));
 
 AddOption(STRING, "DIFF_FORMATLINE",
 	"%{FORMAT_OVERLAYKEY}: <description>"
 	"%{FORMAT_FINISH}", _(
-	"This variable is only used for delayed substitution in *FORMAT_* strings.\n"
+	"This variable is only used for delayed substitution.\n"
 	"It defines the format for eix-diff after the versions."));
 
 AddOption(STRING, "FORMAT_ALL",

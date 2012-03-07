@@ -312,9 +312,15 @@ class Scanner {
 			VER_PROPERTIESLIVE,
 			VER_PROPERTIESVIRTUAL,
 			VER_PROPERTIESSET,
-			VER_DEPENDRDEPEND,
+			VER_HAVEDEPEND,
+			VER_HAVERDEPEND,
+			VER_HAVEPDEPEND,
+			VER_HAVEDEPS,
+			VER_DEPENDS,
 			VER_DEPEND,
+			VER_RDEPENDS,
 			VER_RDEPEND,
+			VER_PDEPENDS,
 			VER_PDEPEND,
 			VER_ISHARDMASKED,
 			VER_ISPROFILEMASKED,
@@ -448,9 +454,15 @@ class Scanner {
 			prop_ver("propertieslive", VER_PROPERTIESLIVE);
 			prop_ver("propertiesvirtual", VER_PROPERTIESVIRTUAL);
 			prop_ver("propertiesset", VER_PROPERTIESSET);
-			prop_ver("dependrdepend", VER_DEPENDRDEPEND);
+			prop_ver("havedepend", VER_HAVEDEPEND);
+			prop_ver("haverdepend", VER_HAVERDEPEND);
+			prop_ver("havepdepend", VER_HAVEPDEPEND);
+			prop_ver("havedeps", VER_HAVEDEPS);
+			prop_ver("depend*", VER_DEPENDS);
 			prop_ver("depend", VER_DEPEND);
+			prop_ver("rdepend*", VER_RDEPENDS);
 			prop_ver("rdepend", VER_RDEPEND);
+			prop_ver("pdepend*", VER_PDEPENDS);
 			prop_ver("pdepend", VER_PDEPEND);
 			prop_ver("ishardmasked", VER_ISHARDMASKED);
 			prop_ver("isprofilemasked", VER_ISPROFILEMASKED);
@@ -1055,11 +1067,37 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				}
 			}
 			break;
-		case Scanner::VER_DEPENDRDEPEND:
+		case Scanner::VER_HAVEDEPEND:
 			if(likely(!version_variables->isinst)) {
-				if(version_variables->version()->depend.dependrdepend()) {
+				if(!version_variables->version()->depend.depend_empty()) {
 					return one;
 				}
+			}
+			break;
+		case Scanner::VER_HAVERDEPEND:
+			if(likely(!version_variables->isinst)) {
+				if(!version_variables->version()->depend.rdepend_empty()) {
+					return one;
+				}
+			}
+			break;
+		case Scanner::VER_HAVEPDEPEND:
+			if(likely(!version_variables->isinst)) {
+				if(!version_variables->version()->depend.pdepend_empty()) {
+					return one;
+				}
+			}
+			break;
+		case Scanner::VER_HAVEDEPS:
+			if(likely(!version_variables->isinst)) {
+				if(!version_variables->version()->depend.empty()) {
+					return one;
+				}
+			}
+			break;
+		case Scanner::VER_DEPENDS:
+			if(likely(!version_variables->isinst)) {
+				return version_variables->version()->depend.get_depend_brief();
 			}
 			break;
 		case Scanner::VER_DEPEND:
@@ -1067,9 +1105,19 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				return version_variables->version()->depend.get_depend();
 			}
 			break;
+		case Scanner::VER_RDEPENDS:
+			if(likely(!version_variables->isinst)) {
+				return version_variables->version()->depend.get_rdepend_brief();
+			}
+			break;
 		case Scanner::VER_RDEPEND:
 			if(likely(!version_variables->isinst)) {
 				return version_variables->version()->depend.get_rdepend();
+			}
+			break;
+		case Scanner::VER_PDEPENDS:
+			if(likely(!version_variables->isinst)) {
+				return version_variables->version()->depend.get_pdepend_brief();
 			}
 			break;
 		case Scanner::VER_PDEPEND:

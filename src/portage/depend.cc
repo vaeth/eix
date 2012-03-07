@@ -14,7 +14,41 @@ using namespace std;
 
 bool Depend::use_depend;
 
-const std::string Depend::the_same("\"");
+const string
+	Depend::c_depend("${DEPEND}"),
+	Depend::c_rdepend("${RDEPEND}");
+
+static const char the_same = '"';
+
+
+static bool
+subst_the_same(std::string &in, const std::string &from) {
+	if(from.empty()) {
+		return false;
+	}
+	string::size_type pos(in.find(from));
+	if(pos == string::npos) {
+		return false;
+	}
+	string::size_type len(from.size());
+	string::size_type next(pos + len);
+	if(next < in.size()) {
+		if(in[next] != ' ') {
+			return false;
+		}
+		++len;
+	}
+	if(pos > 0) {
+		if(in[pos - 1] != ' ') {
+			return false;
+		}
+		--pos;
+		++len;
+	}
+	in.erase(pos, len - 1);
+	in[pos] = the_same;
+	return true;
+}
 
 void
 Depend::set(const string &depend, const string &rdepend, const string &pdepend, bool normspace)
@@ -30,7 +64,30 @@ Depend::set(const string &depend, const string &rdepend, const string &pdepend, 
 		trimall(m_rdepend);
 		trimall(m_pdepend);
 	}
-	if((!m_depend.empty()) && (m_depend == m_rdepend)) {
-		m_rdepend = the_same;
+	subst_the_same(m_depend, m_rdepend) || \
+		subst_the_same(m_rdepend, m_depend);
+}
+
+string
+Depend::subst(const string &in, const string &text)
+{
+	string::size_type pos(in.find(the_same));
+	if(pos == string::npos) {
+		return in;
 	}
+	string ret(in);
+	if((pos + 1) != ret.size()) {
+		ret[pos] = ' ';
+		if(pos > 0) {
+			ret.insert(++pos, 1, ' ');
+		}
+	}
+	else if(pos > 0) {
+		ret[pos++] = ' ';
+	}
+	else {
+		ret.erase(pos);
+	}
+	ret.insert(pos, text);
+	return ret;
 }

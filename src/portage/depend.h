@@ -25,30 +25,46 @@ class Depend
 	friend void io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree);
 
 	private:
-		static const std::string the_same;
 		std::string m_depend, m_rdepend, m_pdepend;
+
+		static const std::string c_depend, c_rdepend;
+
+		static std::string subst(const std::string &in, const std::string &text);
 
 	public:
 		static bool use_depend;
 
-		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, bool normpace);
+		void set(const std::string &depend, const std::string &rdepend, const std::string &pdepend, bool normspace);
 
 		std::string get_depend() const
-		{ return m_depend; }
+		{ return subst(m_depend, m_rdepend); }
+
+		std::string get_depend_brief() const
+		{ return subst(m_depend, c_rdepend); }
 
 		std::string get_rdepend() const
-		{ return ((m_rdepend == the_same) ? m_depend : m_rdepend); }
+		{ return subst(m_rdepend, m_depend); }
+
+		std::string get_rdepend_brief() const
+		{ return subst(m_rdepend, c_depend); }
 
 		std::string get_pdepend() const
 		{ return m_pdepend; }
 
-		bool dependrdepend() const
-		{
-			if(m_rdepend.empty()) {
-				return m_depend.empty();
-			}
-			return (m_rdepend == the_same);
-		}
+		std::string get_pdepend_brief() const
+		{ return m_pdepend; }
+
+		bool depend_empty() const
+		{ return m_depend.empty(); }
+
+		bool rdepend_empty() const
+		{ return m_rdepend.empty(); }
+
+		bool pdepend_empty() const
+		{ return m_pdepend.empty(); }
+
+		bool empty() const
+		{ return (m_depend.empty() && m_rdepend.empty() && m_pdepend.empty()); }
 
 		void clear()
 		{ m_depend.clear(); m_rdepend.clear(); m_pdepend.clear(); }

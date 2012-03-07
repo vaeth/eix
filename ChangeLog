@@ -3,16 +3,17 @@
 *eix-0.25.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add DEP (and ./configure option --with-dep-default for the default)
-	  to support DEPEND, RDEPEND, PDEPEND ({r,p,}depend properties).
-	  By new default, the output happens with "eix -lv" or "eix -lvx"
-	  (if DEP=true and the cachefile was generated with DEP=true).
-	  Usage of DEP roughly doubles disk resp. memory requirements.
+	  to support DEPEND, RDEPEND, PDEPEND ({r,p,}depend{,*} properties).
+	  By new default, the output happens with "eix -lv" (or "eix -lvx")
+	  if DEP=true and the cachefile was generated with DEP=true.
+	  Set VERSION_DEPS_NORMAL=true if you want output also with "eix -l".
+	  Usage of DEP=true roughly doubles disk resp. memory requirements.
 	- New match-fields --depend --rdepend --pdepend (and --deps for
 	  all three). This requires DEP=true (also for cachefile generation).
-	- Output dependencies also to xml (if DEP=true).
-	  Bump xml version. Fix xml scheme.
+	- Output dependencies also to xml (if DEP=true), bump xml version.
+	- Fix xml-schema (e.g. mask can be repeated).
 	- Change defaults (VERSION_KEYWORDS_NORMAL=false, PRINT_BUGS=true).
-	- Put keywords/effective keywords handling to configure level:
+	- Put keywords/effective keywords handling to formatstring level:
 	  New properties versionkeywords*, versionekeywords;
 	  remove internal PRINT_{BEFORE,AFTER}{,_EFFECTIVE}_KEYWORDS.
 	- Rework default FORMAT: Split into more variables and handle case

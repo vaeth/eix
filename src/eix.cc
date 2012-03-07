@@ -629,7 +629,9 @@ run_eix(int argc, char** argv)
 	}
 	if(unlikely(rc_options.hash_depend)) {
 		fclose(fp);
-		header.depend_hash.output();
+		set<string> skip;
+		skip.insert("\"");
+		header.depend_hash.output(&skip);
 		return EXIT_SUCCESS;
 	}
 	if(unlikely(rc_options.world_sets)) {

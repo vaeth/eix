@@ -295,7 +295,7 @@ class StringHash : public std::vector<std::string>
 
 		StringHash::size_type get_index(const std::string &s) const;
 
-		void output(const char *s = NULL) const;
+		void output(const std::set<std::string> *s = NULL) const;
 
 		const std::string& operator[](StringHash::size_type i) const;
 	private:
