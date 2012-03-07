@@ -850,9 +850,6 @@ AddOption(STRING, "REDUNDANT_IF_IN_LICENSE",
 AddOption(STRING, "REDUNDANT_IF_IN_CFLAGS",
 	"false", _(
 	"Applies if /etc/portage/package.cflags matches."));
-#endif
-
-#if (DEFAULT_PART == 3)
 
 AddOption(STRING, "EIXCFGDIR",
 	"%{PORTAGE_CONFIGROOT}/etc/portage", _(
@@ -863,6 +860,9 @@ AddOption(BOOLEAN, "SLOT_UPGRADE_FORBID",
 	"%{\\EIXCFGDIR}/package.slot_upgrade_forbid", _(
 	"If UPGRADE_TO_HIGHEST_SLOT=true, then packages listed in these files/dirs\n"
 	"are treated as if UPGRADE_TO_HIGHEST_SLOT=false."));
+#endif
+
+#if (DEFAULT_PART == 3)
 
 AddOption(BOOLEAN, "SLOT_UPGRADE_ALLOW",
 	"%{\\EIXCFGDIR}/package.slot_upgrade_allow", _(
@@ -1304,9 +1304,6 @@ AddOption(STRING, "TAG_RESTRICT_FETCH",
 AddOption(STRING, "TAG_RESTRICT_MIRROR",
 	"!m", _(
 	"Tag for RESTRICT=mirror. This is only used for delayed substitution."));
-#endif
-
-#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
 	"!p", _(
@@ -1315,6 +1312,9 @@ AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
 AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
 	"!b", _(
 	"Tag for RESTRICT=binchecks. This is only used for delayed substitution."));
+#endif
+
+#if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_RESTRICT_STRIP",
 	"!s", _(
@@ -1955,10 +1955,15 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the data appended to available versions with --versionlines"));
 
-AddOption(STRING, "FORMAT_SLOTLINESKIP",
-	"\\n\\t%{FORMAT_SLOT}", _(
+AddOption(STRING, "FORMAT_SLOTLINESKIP_VERSIONLINES",
+	"\\n      %{FORMAT_SLOT}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines lineskip + slot if lineskip is used."));
+	"It defines lineskip + slot if slotsorted versionlines used."));
+
+AddOption(STRING, "FORMAT_SLOTLINESKIP",
+	"\\n\\t%{FORMAT_SLOT}\\t", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines lineskip + slot if slotsort but no versionlines are used."));
 
 AddOption(STRING, "FORMAT_VERSLINESKIP",
 	"\\n\\t%{FORMAT_STABILITY}\\t", _(
@@ -1969,6 +1974,9 @@ AddOption(STRING, "FORMAT_INST_LINESKIP",
 	"%{FORMAT_VER_LINESKIP}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the lineskip for installed versions."));
+#endif
+
+#if (DEFAULT_PART == 5)
 
 AddOption(STRING, "VSORTL",
 	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
@@ -1980,12 +1988,9 @@ AddOption(STRING, "VSORT",
 	"%{AVERSIONS_VERBOSE}{last}{*sorted=version}{else} {}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted without versionlines."));
-#endif
-
-#if (DEFAULT_PART == 5)
 
 AddOption(STRING, "SSORTL",
-	"{slotfirst}%{FORMAT_SLOTLINESKIP}{}"
+	"{slotfirst}%{FORMAT_SLOTLINESKIP_VERSIONLINES}{}"
 	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
@@ -1994,7 +1999,7 @@ AddOption(STRING, "SSORTL",
 AddOption(STRING, "SSORT",
 	"{slotfirst}"
 		"{oneslot}%{FORMAT_SLOT} "
-		"{else}\\n\\t%{FORMAT_SLOT}\\t{}"
+		"{else}%{FORMAT_SLOTLINESKIP}{}"
 	"{else} {}"
 	"%{AVERSION_VERBOSE}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
