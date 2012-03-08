@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-03-07 21:47+0100\n"
+"POT-Creation-Date: 2012-03-08 23:16+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1937,7 +1937,7 @@ msgid "Cache file %s uses obsolete format %s (current is %s)"
 msgstr "Cachefile %s benutzt veraltetes Format %s (aktuell ist %s)"
 
 #: src/cache/metadata/metadata.cc:320 src/cache/metadata/metadata.cc:358
-#: src/cache/sqlite/sqlite.cc:221
+#: src/cache/sqlite/sqlite.cc:222
 msgid "Can't split %r into package and version"
 msgstr "%r kann nicht in Paket und Version unterteilt werden"
 
@@ -1956,34 +1956,34 @@ msgstr "Konnte %s nicht korrekt ausführen"
 msgid "Can't split filename of ebuild %s/%s"
 msgstr "Dateiname des Ebuilds %s/%s kann nicht unterteilt werden"
 
-#: src/cache/sqlite/sqlite.cc:186
+#: src/cache/sqlite/sqlite.cc:187
 msgid "sqlite dataset does not contain a package name"
 msgstr "sqlite Datensatz enthält keinen Paketnamen"
 
-#: src/cache/sqlite/sqlite.cc:192
+#: src/cache/sqlite/sqlite.cc:193
 #, c-format
 msgid "sqlite dataset for %s is too small"
 msgstr "sqlite Datensatz für %s ist zu klein"
 
-#: src/cache/sqlite/sqlite.cc:198
+#: src/cache/sqlite/sqlite.cc:199
 msgid "%r not of the form package/category-version"
 msgstr "%r hat nicht die Gestalt package/category-version"
 
-#: src/cache/sqlite/sqlite.cc:261
+#: src/cache/sqlite/sqlite.cc:266
 msgid "Database path incorrect"
 msgstr "Falscher Datenbank-Pfad"
 
-#: src/cache/sqlite/sqlite.cc:272
+#: src/cache/sqlite/sqlite.cc:277
 #, c-format
 msgid "Can't open cache file %s"
 msgstr "Cachefile %s kann nicht geöffnet werden"
 
-#: src/cache/sqlite/sqlite.cc:286
+#: src/cache/sqlite/sqlite.cc:291
 #, c-format
 msgid "sqlite error: %s"
 msgstr "sqlite Fehler: %s"
 
-#: src/cache/sqlite/sqlite.cc:304
+#: src/cache/sqlite/sqlite.cc:309
 msgid ""
 "Cache method sqlite is not compiled in.\n"
 "Recompile eix, using configure option --with-sqlite to add sqlite support"

@@ -18,6 +18,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/unused.h>
+#include <portage/depend.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/version.h>
@@ -236,6 +237,10 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	version->set_properties(TrueIndex::c_str(argv, trueindex, TrueIndex::PROPERTIES));
 	version->set_full_keywords(TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS));
 	version->set_iuse(TrueIndex::c_str(argv, trueindex, TrueIndex::IUSE));
+	version->depend.set(TrueIndex::c_str(argv, trueindex, TrueIndex::DEPEND),
+		TrueIndex::c_str(argv, trueindex, TrueIndex::RDEPEND),
+		TrueIndex::c_str(argv, trueindex, TrueIndex::PDEPEND),
+		false);
 	pkg->addVersion(version);
 
 	/* For the newest version, add all remaining data */

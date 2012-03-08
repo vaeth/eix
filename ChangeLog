@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.25.1
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Let cache method sqlite honour DEP.
+
 *eix-0.25.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add DEP (and ./configure option --with-dep-default for the default)
