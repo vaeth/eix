@@ -3,6 +3,11 @@
 *eix-0.25.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Let cache method sqlite honour DEP.
+	- Drop all permission stuff: Only become EIX_{USER,GROUP,UID,GID} ASAP.
+	- Move all cache files into /var/cache/eix/
+	- Start cachefile with magic string "eix\n"
+	- Introduce EXIT_STATUSLINE, see the discussion in
+	  http://bugs.gentoo.org/show_bug.cgi?id=407473
 
 *eix-0.25.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

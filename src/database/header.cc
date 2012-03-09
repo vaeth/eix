@@ -32,6 +32,8 @@ const DBHeader::OverlayTest
 	DBHeader::OVTEST_ALL;
 const DBHeader::DBVersion DBHeader::current;
 
+const string DBHeader::magic("eix\n");
+
 /** Get overlay for key from table. */
 const OverlayIdent &
 DBHeader::getOverlay(ExtendedVersion::Overlay key) const

@@ -79,17 +79,17 @@
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 
-/* Define to 1 if you have the `geteuid' function. */
-#undef HAVE_GETEUID
-
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
 
-/* Define to 1 if you have the `getuid' function. */
-#undef HAVE_GETUID
+/* Define to 1 if you have the <grp.h> header file. */
+#undef HAVE_GRP_H
 
 /* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
+
+/* Define to 1 if you have the `initgroups' function. */
+#undef HAVE_INITGROUPS
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -109,8 +109,23 @@
 /* Define to 1 if you have the `regcomp' function. */
 #undef HAVE_REGCOMP
 
+/* Define to 1 if you have the `setegid' function. */
+#undef HAVE_SETEGID
+
 /* Define to 1 if you have the `setenv' function. */
 #undef HAVE_SETENV
+
+/* Define to 1 if you have the `seteuid' function. */
+#undef HAVE_SETEUID
+
+/* Define to 1 if you have the `setgid' function. */
+#undef HAVE_SETGID
+
+/* Define to 1 if you have the `setgroups' function. */
+#undef HAVE_SETGROUPS
+
+/* Define to 1 if you have the `setuid' function. */
+#undef HAVE_SETUID
 
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
@@ -204,9 +219,6 @@
 
 /* Default ROOT */
 #undef ROOT_DEFAULT
-
-/* Default ROOT_UID */
-#undef ROOT_UID_DEFAULT
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

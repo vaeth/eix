@@ -78,10 +78,14 @@ EixfStatusmode() {
 	${eixf_statusmode}
 }
 
-Statusline() {
+StatuslinePlain() {
 	${eixf_statusmode} || return 0
-	! ${eixf_softstatus} || printf '\033k%s: %s\033\\' "${0##*/}" "${*}"
-	printf '\033]0;%s: %s\007' "${0##*/}" "${*}"
+	! ${eixf_softstatus} || printf '\033k%s\033\\' "${*}"
+	printf '\033]0;%s\007' "${*}"
+}
+
+Statusline() {
+	StatuslinePlain "${0##*/}: ${*}"
 }
 
 verbose=:
@@ -90,11 +94,21 @@ StatusInfo() {
 	! ${verbose} || einfo "${*}"
 }
 
+unset exit_statusline
+ReadExitStatusline() {
+	[ "${exit_statusline+set}" = set ] || \
+		ReadVar exit_statusline EXIT_STATUSLINE
+}
+
 Exit() {
 	eixf_exit=${1:-${?}}
-	${eixf_statusline} && if [ ${eixf_exit} -eq 0 ]
-	then Statusline "`gettext 'Finished'`"
-	else Statusline "`gettext 'Failure'`"
+	${eixf_statusline} || exit ${eixf_exit}
+	ReadExitStatusline
+	if [ -n "${exit_statusline}" ]
+	then	StatuslinePlain "${exit_statusline# }"
+	elif [ ${eixf_exit} -eq 0 ]
+	then	Statusline "`gettext 'Finished'`"
+	else	Statusline "`gettext 'Failure'`"
 	fi
 	exit ${eixf_exit}
 }

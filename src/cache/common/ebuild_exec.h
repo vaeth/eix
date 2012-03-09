@@ -16,8 +16,6 @@
 #include <string>
 #include <vector>
 
-#include <sys/types.h>
-
 class BasicCache;
 class Package;
 class Version;
@@ -49,9 +47,7 @@ class EbuildExec {
 
 		static std::string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
 		static std::string portage_rootpath, portage_bin_path;
-		static bool know_settings, set_uid, set_gid;
-		static uid_t uid;
-		static gid_t gid;
+		static bool know_settings;
 
 		void add_handler();
 		void remove_handler();

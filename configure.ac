@@ -475,6 +475,9 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 	[break],
 	[AC_MSG_ERROR([At least one of strtoul/strtoll/atoi is needed ..])])
 
+# Optional header files:
+AC_CHECK_HEADERS_ONCE([sys/param.h grp.h])
+
 # We use these optionally:
 # Concerning strndup, we have a home-brewed replacement,
 # for the others some less convenient workarounds.
@@ -483,15 +486,14 @@ AC_CHECK_FUNCS_ONCE([strndup \
 	canonicalize_file_name
 	realpath \
 	vfork \
-	setenv])
-
-# We use getuid() on systems without geteuid():
-AC_CHECK_FUNCS([geteuid getuid],
-	[break],
-	[AC_MSG_ERROR([At least one of geteuid/getuid is needed ..])])
-
-# Optional header files:
-AC_CHECK_HEADERS_ONCE([sys/param.h])
+	setenv \
+	setuid \
+	setgid \
+	seteuid \
+	setegid \
+	setgroups \
+	initgroups \
+	])
 
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],
@@ -749,18 +751,6 @@ AC_DEFINE_UNQUOTED([ROOT_DEFAULT],
 	[Default ROOT])
 AC_SUBST([ROOT_DEFAULT])
 
-AC_MSG_CHECKING([ROOT_UID default])
-AC_ARG_WITH([root-uid-default],
-	[AS_HELP_STRING([--with-root-uid-default=STR],
-		[default ROOT_UID])],
-	[AS_VAR_COPY([ROOT_UID_DEFAULT], [withval])],
-	[AS_VAR_SET([ROOT_UID_DEFAULT], ["0"])])
-MV_MSG_RESULT_VAR([ROOT_UID_DEFAULT])
-AC_DEFINE_UNQUOTED([ROOT_UID_DEFAULT],
-	["${ROOT_UID_DEFAULT}"],
-	[Default ROOT_UID])
-AC_SUBST([ROOT_UID_DEFAULT])
-
 AC_MSG_CHECKING([EXEC_EBUILD_SH default])
 AC_ARG_WITH([ebuild-sh-default],
 	[AS_HELP_STRING([--with-ebuild-sh-default=STR],
@@ -869,7 +859,7 @@ AC_TYPE_UINT8_T()
 AC_TYPE_UINT16_T()
 AC_TYPE_UINT32_T()
 
-EIX_CACHEFILE="/var/cache/eix"
+EIX_CACHEFILE="/var/cache/eix/portage.eix"
 AC_DEFINE_UNQUOTED([EIX_CACHEFILE],
 	["${EIX_CACHEFILE}"],
 	[Location of the cachefile])

@@ -33,6 +33,7 @@
 #include <portage/packagetree.h>
 #include <portage/set_stability.h>
 #include <portage/vardbpkg.h>
+#include <various/drop_permissions.h>
 
 #include <algorithm>
 #include <iostream>
@@ -264,6 +265,7 @@ run_eix_diff(int argc, char *argv[])
 	string old_file, new_file;
 
 	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
+	drop_permissions(rc);
 
 	Depend::use_depend = rc.getBool("DEP");
 

@@ -167,34 +167,23 @@ AddOption(BOOLEAN, "CURRENT_WORLD",
 	"true", _(
 	"Prefer the current world file (if readable) over the data in the cachefile."));
 
-AddOption(INTEGER, "ROOT_UID",
-	ROOT_UID_DEFAULT, _(
-	"The root user id number which is used for ad hoc sanity checks."));
-
-AddOption(BOOLEAN, "SKIP_PERMISSION_TESTS",
-	"false", _(
-	"Whether to test for group and permissions.  You must set this to true\n"
-	"if you use more sophisticated permission setups (e.g. NSS/LDAP)."));
-
-AddOption(STRING, "EBUILD_USER",
+AddOption(STRING, "EIX_USER",
 	"portage", _(
-	"The user which is used for running bash on ebuilds when\n"
-	"cache method ebuild or ebuild* is used. See EBUILD_UID."));
+	"Attempt to change to this user if possible. See EIX_UID."));
 
-AddOption(STRING, "EBUILD_GROUP",
-	"%{EBUILD_USER}", _(
-	"The group which is used for running bash on ebuilds when\n"
-	"cache method ebuild or ebuild* is used. See EBUILD_GID."));
+AddOption(STRING, "EIX_GROUP",
+	"%{EIX_USER}", _(
+	"Attempt to change to this group if possible. See EIX_GID."));
 
-AddOption(INTEGER, "EBUILD_UID",
+AddOption(INTEGER, "EIX_UID",
 	"250", _(
-	"If EBUILD_USER is empty or nonexistent, use this user id.\n"
-	"In this case and if ${EBUILD_UID} <= 0, the user id is not changed."));
+	"If EIX_USER is empty or nonexistent, use this user id.\n"
+	"In this case and if ${EIX_UID} <= 0, the user id is not changed."));
 
-AddOption(INTEGER, "EBUILD_GID",
-	"%{EBUILD_UID}", _(
-	"If EBUILD_GROUP is empty or nonexistent, use this group id.\n"
-	"In this case and if ${EBUILD_GID} <= 0, the group id is not changed."));
+AddOption(INTEGER, "EIX_GID",
+	"%{EIX_UID}", _(
+	"If EIX_GROUP is empty or nonexistent, use this group id.\n"
+	"In this case and if ${EIX_GID} <= 0, the group id is not changed."));
 
 AddOption(STRING, "PORTAGE_ROOTPATH",
 	PORTAGE_ROOTPATH_DEFAULT, _(
@@ -588,6 +577,11 @@ AddOption(STRING, "TERM_SOFTSTATUSLINE",
 	"screen", _(
 	"If the beginning of TERM matches a word of this space-separated list, and\n"
 	"if a status line is active, also a soft status line will be output."));
+
+AddOption(STRING, "EXIT_STATUSLINE",
+	"", _(
+	"If this is nonempty, it is used as the exit statusline.\n"
+	"An optional leading space in this string is ignored."));
 
 AddOption(BOOLEAN, "SORT_INST_USE_ALPHA",
 	"false", _(

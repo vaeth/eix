@@ -8,7 +8,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "cli.h"
 #include <database/header.h>
 #include <database/package_reader.h>
 #include <eixTk/argsreader.h>
@@ -35,6 +34,8 @@
 #include <portage/vardbpkg.h>
 #include <search/algorithms.h>
 #include <search/matchtree.h>
+#include <various/drop_permissions.h>
+#include <various/cli.h>
 
 #include <iostream>
 #include <map>
@@ -398,10 +399,8 @@ static struct Option long_options[] = {
 
 /** Setup default values for all global variables. */
 static void
-setup_defaults()
+setup_defaults(EixRc &rc)
 {
-	EixRc &rc(get_eixrc(NULL));
-
 	// Setup defaults
 	memset(&rc_options, 0, sizeof(rc_options));
 
@@ -490,9 +489,10 @@ int
 run_eix(int argc, char** argv)
 {
 	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
+	drop_permissions(eixrc);
 
 	// Setup defaults for all global variables like rc_options
-	setup_defaults();
+	setup_defaults(eixrc);
 
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, long_options);

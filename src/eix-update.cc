@@ -19,6 +19,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/percentage.h>
 #include <eixTk/ptr_list.h>
+#include <eixTk/statusline.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/utils.h>
@@ -30,6 +31,7 @@
 #include <portage/extendedversion.h>
 #include <portage/overlay.h>
 #include <portage/packagetree.h>
+#include <various/drop_permissions.h>
 
 #include <iostream>
 #include <list>
@@ -42,7 +44,6 @@
 #include <cstdlib>
 #include <fnmatch.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 using namespace std;
@@ -95,158 +96,8 @@ class RepoName {
 		{ }
 };
 
-class Statusline {
-	private:
-		string header;
-		bool use, soft;
-		void print_force(const string &str);
-	public:
-		Statusline(bool active, bool softstat) : use(active), soft(softstat)
-		{ }
-
-		void print(const string &str)
-		{
-			if(use) {
-				print_force(str);
-			}
-		}
-
-		void success()
-		{
-			if(!header.empty()) {
-				print_force(_("Finished"));
-			}
-		}
-
-		void failure()
-		{
-			if(!header.empty()) {
-				print_force(_("Failure"));
-			}
-		}
-};
-
-void
-Statusline::print_force(const string &str)
-{
-	if(header.empty()) {
-		header = program_name + ": ";
-	}
-	if(soft) {
-		cout << "\033k" << header << str << "\033\\";
-	}
-	cout << "\033]0;" << header << str << '\007';
-	flush(cout);
-}
-
-static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic);
+static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic);
 static void print_help();
-
-class Permissions {
-	private:
-		string cachefile;
-		EixRc &eixrc;
-		bool modify;
-		bool testing;
-		static bool know_root, am_root;
-	public:
-		Permissions(const string &eix_cachefile, bool never_test, EixRc &rc) :
-			cachefile(eix_cachefile), eixrc(rc)
-		{
-			if(never_test)
-				testing = false;
-			else
-				testing = (cachefile == EIX_CACHEFILE);
-			know_root = false;
-		}
-
-		bool am_i_root()
-		{
-			if(likely(know_root))
-				return am_root;
-			know_root = true;
-			am_root = (my_geteuid() == eixrc.getInteger("ROOT_UID"));
-			return am_root;
-		}
-
-		bool test_writable()
-		{
-			if(am_i_root())
-				return true;
-			else
-				return is_writable(cachefile.c_str());
-		}
-
-		void check_db()
-		{
-			bool must_modify;
-			if(get_mtime(cachefile.c_str()) == 0)
-			{
-				modify = true;
-				must_modify = testing;
-			}
-			else
-			{
-				modify = testing;
-				must_modify = false;
-				if(testing)
-				{
-					if(!test_writable())
-					{
-						cerr << eix::format(_(
-							"%s must be writable by group portage."))
-							% cachefile << endl;
-						exit(EXIT_FAILURE);
-					}
-					if(!am_i_root())
-					{
-						if(!user_in_group("portage")) {
-							cerr << _(
-								"You must be in the portage group to update the database.\n"
-								"Set SKIP_PERMISSION_TESTS=true to skip this test (e.g. if you use NSS/LDAP).")
-								<< endl;
-							exit(EXIT_FAILURE);
-						}
-					}
-				}
-			}
-			if(modify)
-			{
-				if(!am_i_root())
-				{
-					if(must_modify) {
-						cerr << eix::format(_(
-							"User 'root' is needed to initially generate the database.\n"
-							"Alternatively, you can generate a dummy cachefile %r\n"
-							"with write permissions for group portage.\n"
-							"Set SKIP_PERMISSION_TESTS=true to skip this test."))
-							% cachefile << endl;
-						exit(EXIT_FAILURE);
-					}
-					modify = false;
-				}
-				return;
-			}
-		}
-
-		bool will_modify()
-		{ return modify; }
-
-		static void set_db(FILE *database)
-		{
-			gid_t g;
-			uid_t u;
-			if(get_gid_of("portage", &g) && get_uid_of("portage", &u)) {
-				if(fchown(fileno(database), u, g)) {
-					cerr << _("warning: cannot change ownership of cachefile") << endl;
-				}
-				if(fchmod(fileno(database), 00664)) {
-					cerr << _("warning: cannot change permissions for cachefile") << endl;
-				}
-			}
-		}
-};
-bool Permissions::know_root, Permissions::am_root;
 
 static void
 print_help()
@@ -435,8 +286,8 @@ run_eix_update(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
+	drop_permissions(eixrc);
 	Depend::use_depend = eixrc.getBool("DEP");
-	bool skip_permission_tests;
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
 	string outputfile;
 
@@ -520,21 +371,16 @@ run_eix_update(int argc, char *argv[])
 
 	/* set the outputfile */
 	if(unlikely(outputname != NULL)) {
-		skip_permission_tests = true;
 		outputfile = outputname;
 	}
 	else {
-		skip_permission_tests = eixrc.getBool("SKIP_PERMISSION_TESTS");
 		outputfile = eix_cachefile;
 	}
 
 	Statusline statusline(use_status, (use_status &&
 		stringstart_in_wordlist(eixrc["TERM"],
-			split_string(eixrc["TERM_SOFTSTATUSLINE"]))));
-
-	/* Check for correct permissions. */
-	Permissions permissions(outputfile, skip_permission_tests, eixrc);
-	permissions.check_db();
+			split_string(eixrc["TERM_SOFTSTATUSLINE"]))),
+		program_name, eixrc["EXIT_STATUSLINE"]);
 
 	INFO(_("Reading Portage settings ..\n"));
 	PortageSettings portage_settings(eixrc, false, true);
@@ -676,8 +522,7 @@ run_eix_update(int argc, char *argv[])
 	/* Update the database from scratch */
 	try {
 		update(outputfile.c_str(), table, portage_settings,
-			permissions.will_modify(), repo_names,
-			excluded_overlays, statusline);
+			repo_names, excluded_overlays, statusline);
 	} catch(const ExBasic &e) {
 		cerr << e << endl;
 		statusline.failure();
@@ -696,7 +541,7 @@ error_callback(const string &str)
 }
 
 static void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool will_modify, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic)
 {
 	DBHeader dbheader;
 	vector<string> categories;
@@ -824,8 +669,6 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		throw ExBasic(_("Can't open the database file %r for writing (mode = 'wb')"))
 			% outputfile;
 	}
-	if(unlikely(will_modify))
-		Permissions::set_db(database_stream);
 
 	dbheader.size = package_tree.countCategories();
 

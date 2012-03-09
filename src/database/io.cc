@@ -41,6 +41,32 @@ namespace io {
 /// Read a number with leading zero's
 static BasicPart read_Part(FILE *fp);
 
+inline static void
+read_string_plain(FILE *fp, char *s, string::size_type len)
+{
+	if(unlikely(fread(s, sizeof(char), len, fp) != len)) {
+		if (feof(fp)) {
+			throw ExBasic(_("error while reading from database: end of file"));
+		}
+		else {
+			throw SysError(_("error while reading from database"));
+		}
+	}
+}
+
+inline static void
+write_string_plain(FILE *fp, const string &str)
+{
+	if(fp != NULL) {
+		if(unlikely(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size())) {
+			throw SysError(_("error while writing to database"));
+		}
+	}
+	else {
+		counter += str.size();
+	}
+}
+
 /// Write a number with leading zero's
 static void write_Part(FILE *fp, const BasicPart &n);
 }
@@ -52,12 +78,7 @@ io::read_string(FILE *fp)
 	string::size_type len(io::read<string::size_type>(fp));
 	eix::auto_list<char> buf(new char[len + 1]);
 	buf.get()[len] = 0;
-	if(unlikely(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)) {
-		if (feof(fp))
-			throw ExBasic(_("error while reading from database: end of file"));
-		else
-			throw SysError(_("error while reading from database"));
-	}
+	io::read_string_plain(fp, buf.get(), len);
 	return string(buf.get());
 }
 
@@ -66,13 +87,7 @@ void
 io::write_string(FILE *fp, const string &str)
 {
 	io::write<string::size_type>(fp, str.size());
-	if(fp != NULL) {
-		if(unlikely(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size())) {
-			throw SysError(_("error while writing to database"));
-		}
-	}
-	else
-		counter += str.size();
+	io::write_string_plain(fp, str);
 }
 
 void
@@ -114,12 +129,7 @@ io::read_Part(FILE *fp)
 	if(len != 0) {
 		eix::auto_list<char> buf(new char[len + 1]);
 		buf.get()[len] = 0;
-		if(unlikely(fread(static_cast<void *>(buf.get()), sizeof(char), len, fp) != len)) {
-			if (feof(fp))
-				throw ExBasic(_("error while reading from database: end of file"));
-			else
-				throw SysError(_("error while reading from database"));
-		}
+		io::read_string_plain(fp, buf.get(), len);
 		return BasicPart(type, string(buf.get()));
 	}
 	return BasicPart(type);
@@ -172,15 +182,7 @@ io::write_Part(FILE *fp, const BasicPart &n)
 	const string &content(n.partcontent);
 	io::write<string::size_type>(fp, content.size()*BasicPart::max_type + string::size_type(n.parttype));
 	if(!content.empty()) {
-		if(fp != NULL) {
-			if(unlikely(fwrite(static_cast<const void *>(content.c_str()),
-						sizeof(char), content.size(), fp) != content.size())) {
-				throw SysError(_("error while writing to database"));
-			}
-		}
-		else {
-			counter += content.size();
-		}
+		write_string_plain(fp, content);
 	}
 }
 
@@ -349,6 +351,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 void
 io::write_header(FILE *fp, const DBHeader &hdr)
 {
+	io::write_string_plain(fp, DBHeader::magic);
 	io::write<DBHeader::DBVersion>(fp, DBHeader::current);
 	io::write<io::Catsize>(fp, hdr.size);
 
@@ -387,6 +390,17 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 bool
 io::read_header(FILE *fp, DBHeader &hdr)
 {
+	string::size_type magic_len(DBHeader::magic.size());
+	eix::auto_list<char> buf(new char[magic_len + 1]);
+	buf.get()[magic_len] = 0;
+	io::read_string_plain(fp, buf.get(), magic_len);
+	if(DBHeader::magic != buf.get()) {
+		char c(buf.get()[0]);
+		// Until version 30 the first char is the version:
+		hdr.version = ((c > 0) && (c <= 30) ? c : 0);
+		return false;
+	}
+
 	hdr.version = io::read<DBHeader::DBVersion>(fp);
 	if(unlikely(!hdr.isCurrent()))
 		return false;

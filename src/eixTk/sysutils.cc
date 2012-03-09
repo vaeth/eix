@@ -9,69 +9,24 @@
 
 #include <config.h>
 #include "sysutils.h"
-#include <eixTk/exceptions.h>
-#include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 
 #include <string>
 
 #include <clocale>
 #include <cstddef>
-#include <cstring>
 #include <ctime>
 #include <grp.h>
 #include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 using namespace std;
 
-uid_t
-my_geteuid()
-{
-#ifdef HAVE_GETEUID
-	return geteuid();
-#else
-	return getuid();
-#endif
-}
-
-static bool
-is_on_list (char *const *list, const char *member) ATTRIBUTE_PURE;
-static bool
-is_on_list (char *const *list, const char *member)
-{
-	while(likely(*list != NULL)) {
-		if(unlikely(strcmp(*list, member) == 0)) {
-			return true;
-		}
-		++list;
-	}
-	return false;
-}
-
-static bool
-check_user_in_grp_struct(struct group *grp) throw(ExBasic)
-{
-	struct passwd *pwd;
-	if((pwd = getpwuid(my_geteuid())) == 0)
-		throw ExBasic(_("getpwuid() tells me that my effective uid is not known to this system."));
-	if(is_on_list(grp->gr_mem, pwd->pw_name))
-		return true;
-	return false;
-}
-
-bool
-user_in_group(const char *group_name) throw(ExBasic)
-{
-	errno = 0;
-	struct group *grp(getgrnam(group_name));
-	if(grp == NULL)
-		throw ExBasic(_("getgrnam(%r) failed: %s")) % group_name % strerror(errno);
-	return check_user_in_grp_struct(grp);
-}
-
+/** Get uid of a user.
+ * @param u pointer to uid_t .. uid is stored there.
+ * @param name name of user
+ * @return true if user exists */
 bool
 get_uid_of(const char *name, uid_t *u)
 {
@@ -82,6 +37,10 @@ get_uid_of(const char *name, uid_t *u)
 	return true;
 }
 
+/** Get gid of a group.
+ * @param g pointer to gid_t .. gid is stored there.
+ * @param name name of group
+ * @return true if group exists */
 bool
 get_gid_of(const char *name, gid_t *g)
 {
@@ -92,20 +51,7 @@ get_gid_of(const char *name, gid_t *g)
 	return true;
 }
 
-bool
-is_writable(const char *file) //throw(ExBasic)
-{
-	struct stat stat_buf;
-	if(unlikely(stat(file, &stat_buf) != 0)) {
-		//throw ExBasic(_("file %s not found.")) % file;
-		return false;
-	}
-	gid_t g;
-	return (get_gid_of("portage", &g)
-			&& (stat_buf.st_mode & (S_IWGRP|S_IRGRP)) == (S_IWGRP|S_IRGRP)
-			&& stat_buf.st_gid == g );
-}
-
+/** @return true if file is a directory or a symlink to some. */
 bool
 is_dir(const char *file)
 {
@@ -115,6 +61,7 @@ is_dir(const char *file)
 	return S_ISDIR(stat_buf.st_mode);
 }
 
+/** @return true if file is a plain file or a symlink to some. */
 bool
 is_file(const char *file)
 {
@@ -124,6 +71,7 @@ is_file(const char *file)
 	return S_ISREG(stat_buf.st_mode);
 }
 
+/** @return true if file is a plain file (and not a symlink). */
 bool
 is_pure_file(const char *file)
 {
@@ -133,7 +81,7 @@ is_pure_file(const char *file)
 	return S_ISREG(stat_buf.st_mode);
 }
 
-/** Return mtime of file. */
+/** @return mtime of file. */
 time_t
 get_mtime(const char *file)
 {

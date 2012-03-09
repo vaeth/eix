@@ -16,7 +16,7 @@ ReadFunctions
 
 ReadVar local_varcache EPREFIX_PORTAGE_CACHE
 ReadVar eixcache EIX_CACHEFILE
-eixprevious="${eixcache}.previous"
+eixprevious="${eixcache%/*}/previous.eix"
 ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
@@ -80,7 +80,6 @@ The following options are available:
      use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer
      is active. (This option is not default anymore).
 -R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).
--e   Skip heuristic tests whether you must be root.
 -H   Suppress status line update.
 -h   Show this text and exit.'
 	echo
@@ -101,7 +100,6 @@ DiffOnly() {
 }
 
 DoExecute() {
-	${emulatemode} && return 0
 	for curr_cmd
 	do	set +f
 		eval "${curr_cmd}" || WarnOrDie "`eval_gettext \
@@ -161,7 +159,6 @@ ParseConfigLine() {
 		return;;
 	esac
 	${nolayman} && return
-	RootTest
 	case ${-} in
 	*f*)
 		eval "set -- ${layman_opt}";;
@@ -219,7 +216,6 @@ DefaultOpts() {
 	client=''
 	doupdate=:
 	synchooks=:
-	test_for_root=:
 	FATAL_HOOKS=''
 }
 
@@ -232,7 +228,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts 'ids:02:UuFl@SMNtTqwWL:c:C:o:rRemHh?' opt
+while getopts 'ids:02:UuFl@SMNtTqwWL:c:C:o:rRmHh?' opt
 do	case ${opt} in
 	i)	DefaultOpts;;
 	d)	diffonly=:;;
@@ -261,7 +257,6 @@ do	case ${opt} in
 	o)	Push updatecmd "${OPTARG}";;
 	r)	clearcache=:;;
 	R)	clearcache=false;;
-	e)	test_for_root=false;;
 	m)	die "`gettext 'eix-sync -m is obsolete; use -M0 instead'`";;
 	H)	statusline=false
 		export NOSTATUSLINE=true;;
@@ -308,7 +303,6 @@ MyRun() {
 }
 
 MyRunCommand() {
-	${emulatemode} && return
 	StatusInfo "${1}"
 	shift
 	MyRun "${@}"
@@ -343,21 +337,6 @@ MyVarCommand() {
 	MyRunCommand "`eval_gettext 'Running ${myvarcmd}'`" \
 		${myvarcmdargs} "${@}" \
 		|| die "`eval_gettext '${myvarcmd} failed'`"
-}
-
-RootTest() {
-	${emulatemode} || return 0
-	{ echo; gettext \
-'Nothing was executed, because a heuristic shows that root permissions
-are required to execute everything successfully.'
-		echo; } | PerLine eerror
-	{ echo; eval_gettext \
-'However, the heuristic might be wrong, e.g. if you use EPREFIX.
-If you want to skip this test temporarily, use option -e.
-If you want to skip this test permanently, put option -e
-into the file ${eixsyncconf}.'
-		echo; } | PerLine einfo
-	die ''
 }
 
 time_iupdate=''
@@ -438,7 +417,6 @@ ClearCache() {
 	${clearcache} || return 0
 	# Cleaning old cache
 	# portage 2.1_pre1 doesn't do this anymore, so *we* need to do it.
-	RootTest
 	case ${-} in
 	*f*)
 		set +f
@@ -455,20 +433,17 @@ ClearCache() {
 
 CallEmergeSync() {
 	if [ -n "${server}" ]
-	then	${emulatemode} && return
-		PrepRsync "${server}"
+	then	PrepRsync "${server}"
 		MyRunCommand "rsyncing from ${hostdir}" -t sync \
 		rsync ${rsync_opts} -- "${hostdir}" "${local_portdir}" || \
 			die "`eval_gettext 'Could not rsync from ${hostdir}'`"
 		return
 	fi
 	${skip_sync} && return
-	RootTest
 	MyVarCommand "${emergecmd}" -t sync
 }
 
 CallSyncClient() {
-	${emulatemode} && return
 	[ -z "${client}" ] && return
 	PrepRsync "${client}"
 	MyRunCommand "`eval_gettext 'rsyncing to ${hostdir}'`" -t client \
@@ -478,61 +453,54 @@ CallSyncClient() {
 
 CallEmergeMetadata() {
 	${doupdate} && ${metadata} || return 0
-	RootTest
 	MyVarCommand 'emerge --metadata' -t metadata
 }
 
 CondUpdate() {
 	if test ! -f "${eixcache}"
-	then	RootTest
-		einfo "`gettext 'eix-cache does not exist.'`"
+	then	einfo "`gettext 'eix-cache does not exist.'`"
 		MyVarCommand "${updatecmd}" -t iupdate
 		return
 	fi
-	${emulatemode} && return
 	eix --is-current || {
 		einfo "`gettext 'eix-cache format has changed.'`"
 		MyVarCommand "${updatecmd}" -t iupdate
 	}
 }
 
-CopyPrevious() {
-	${doupdate} || return 0
-	${emulatemode} && return
+CopyToTemp() {
 	StatusInfo "`eval_gettext \
 		'Copying old ${eixcache} cache to temporary file'`"
-	previous_umask=`umask`
-	umask 002
 	MakeTempFile
-	cp -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
+	chmod a+r -- "${tmpfile}"
+	cp -p -- "${eixcache}" "${tmpfile}" || die "`eval_gettext \
 		'Could not copy database to temporary file ${tmpfile}'`"
-	umask "${previous_umask}"
 }
 
-MovePrevious() {
-	${usetemp} && return
-	MyRunCommand "`eval_gettext \
-		'Moving old ${eixcache} cache to ${eixprevious}'`" \
-		mv -f -- "${tmpfile}" "${eixprevious}" || \
-		die "`eval_gettext \
-			'Could not move ${tmpfile} to ${eixprevious}'`"
+CopyToPrevious() {
+	StatusInfo "`eval_gettext 'Copying old database to ${eixprevious}'`"
+	cp -p -- "${eixcache}" "${eixprevious}" || die "`eval_gettext \
+		'Could not copy database to ${eixprevious}'`"
+}
+
+CopyPrevious() {
+	${doupdate} || return 0
+	if ${usetemp}
+	then	CopyToTemp
+	else	CopyToPrevious
+	fi
 }
 
 UpdateDiff() {
 	${doupdate} || return 0
 	if ${usetemp}
-	then	${emulatemode} && return
-		d=${tmpfile}
+	then	d=${tmpfile}
 	else	d=${eixprevious}
-		test -r "${d}" || RootTest
-		${emulatemode} && return
 	fi
-	if test "${eixcache}" -nt "${tmpfile}"
-	then	MovePrevious
-		einfo "`gettext \
+	if test "${eixcache}" -nt "${d}" >/dev/null 2>&1
+	then	einfo "`gettext \
 			'eix-update was apparently already called in a hook'`"
-	else	MovePrevious
-		MyVarCommand "${updatecmd}" -t update
+	else	MyVarCommand "${updatecmd}" -t update
 	fi
 	DoHook "${after_update}"
 	MyRunCommand "`gettext 'Calling eix-diff'`" \
@@ -552,22 +520,6 @@ MainSync() {
 	CallEmergeMetadata
 	UpdateDiff
 }
-
-root_uid=''
-ReadRootUID() {
-	[ -n "${UID}" ] || UID=`id -u`
-	ReadVar root_uid ROOT_UID || root_uid=''
-	: ${root_uid:=0}
-	IsNumber ${root_uid} || \
-		die "`eval_gettext 'ROOT_UID [${root_uid}] is not a number'`"
-}
-
-if ${test_for_root} && ReadRootUID && [ "${UID}" -ne "${root_uid}" ]
-then	# Emulate everything to check whether we have to be root:
-	emulatemode=:
-	MainSync
-fi
-emulatemode=false
 
 ${quiet} && exec >/dev/null
 

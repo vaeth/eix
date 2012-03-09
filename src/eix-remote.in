@@ -9,23 +9,81 @@
 # eix database. (@PACKAGE_STRING@).
 
 . ./eix-functions.sh.in
+
+CalcSuprg() {
+	for i
+	do	case ${i} in
+		/*)
+			test -x "${i}" && sucmd=${i} && break;;
+		*)
+			command -v "${i}" >/dev/null 2>&1 \
+				&& sucmd=${i} && break;;
+		esac
+	done
+	suprg=${sucmd##*/}
+}
+
+my_getopts='f:vq:l:a:ku:sSiX:Hh?'
+
+DefaultOpts() {
+	keep=false
+	CalcSuprg /usr/bin/sudo /bin/su sudo su
+	unset user
+}
+
+set -f
+eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
+Push opt "${@}"
+eval "set -- ${opt}"
+DefaultOpts
+OPTIND=1
+while getopts "${my_getopts}" opt
+do	case ${opt} in
+	i)	DefaultOpts;;
+	k)	keep=:;;
+	u)	user=${OPTARG};;
+	s)	CalcSuprg /usr/bin/sudo sudo;;
+	S)	CalcSuprg /bin/su su;;
+	X)	exit_statusline=${OPTARG};;
+	*)	:;;
+	esac
+done
+ReadExitStatusline
+
+if ! ${keep}
+then	Sudo() {
+	[ -z "${user}" ] && return
+	case ${suprg} in
+	sudo)	exec "${sucmd}" -u "${user}" -- "${@}";;
+	su)	Push -c a "${@}"
+		exec "${sucmd}" -c "eval exec ${a}" "${user}";;
+	esac
+	exit 2
+}
+	[ "${user+set}" = set ] || ReadVar user EIX_USER \
+		&& Sudo "${0}" "-kX${exit_statusline}" "${@}"
+fi
+
 ReadFunctions
 
 addr='@DEFAULT_REMOTE_PATH@'
+filedefault='@EIX_CACHEFILE@'
+filedefault="${filedefault%/*}/remote.tar.bz2"
 
 ReadVar local_portage_configroot PORTAGE_CONFIGROOT
-eixremoteconf="${local_portage_configroot}/etc/eix-remote.conf"
 
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	f=${filearg:-(none)}
+	f=${file:-(none)}
 	eval_gettext 'Usage: ${n} [options] command [FILE]
-Get data from a remote datebase for ${p}.
+Get data from a remote database for ${p}.
+FILE defaults to ${f}
+An empty filename means that a temporary file is used if command=update
 The following commands are provided:
 
-update: Fetch the eix-caches of some layman overlays into a temporary file
-        resp. into FILE and add them to the eix database.
+update: Fetch the eix-caches of some layman overlays into FILE
+        and add them to the eix database.
         To keep this data across eix-update calls, you might want to set
         KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)
 fetch:  Only fetch the overlays into FILE.
@@ -33,11 +91,11 @@ add:    Only add the overlays from FILE to the eix database.
 remove: Remove all temporarily added virtual overlays from the eix database;
         this is similar to
         	KEEP_VIRTUALS=false eix-update
-        but faster (without actual updating where possible).
+        but faster (using previous cachefile where possible).
 
-It is strongly recommended to use the update/fetch commands with very limited
-permissions. Permissions are dropped when run as root (cf. default in -U)
-or when the -u option is specified. Do not use "-u root"!
+The script will try to change its permissions to that of user EIX_USER
+before doing anything else (unless option -k or an empty user is specified),
+using sudo or su (see options -s and -S).
 
 For "update" and "add" all corresponding local layman overlay paths are
 excluded from the update of the current database to avoid confusion.
@@ -53,11 +111,9 @@ This data is evalued, so be aware of security risks.
 Moreover, "--" in this variable will exclude further command line options.
 The following options are available:
 
--f FILE This is the same as giving FILE as the last argument.
-        This is mainly useful for default options. Current value:
-        ${f}
--u USER Call wget as USER. Ignored if not set unless you are root.
--U USER Call wget as USER if called as root. Currently "${fetchroot}"
+-f FILE Change the default for FILE. This is mainly useful for default options.
+-k      Keep permissions (use this if you cannot use sudo/su).
+-u USER Use USER instead of EIX_USER.
 -s/-S   Use sudo/su to change user permission. Currently: ${suprg}
 -l PATH Use PATH as LOCAL_LAYMAN
 -a ADDR Use ADDR as remote database address. Current value:
@@ -103,51 +159,27 @@ InitLocalLayman() {
 		'/var/lib/layman'
 }
 
-CalcSuprg() {
-	for i
-	do	suprgpath=${i}
-		suprg=${i##*/}
-		case ${i} in
-		/*)
-			test -x "${i}" && break;;
-		*)
-			command -v "${i}" >/dev/null 2>&1 && break;;
-		esac
-	done
-}
-
-
 DefaultOpts() {
-	CalcSuprg /usr/bin/sudo /bin/su sudo su
 	verbose=:
 	statusline=:
-	fetchuser=''
-	fetchroot='nobody'
-	filearg=''
+	file=${filedefault}
+	keep=false
 }
 
 InitLocalLayman
 SanitizeLocalLayman
-DefaultOpts
-
-set -f
-eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
-Push opt "${@}"
-eval "set -- ${opt}"
 OPTIND=1
-while getopts 'f:vqu:U:l:a:sSiHh?' opt
+DefaultOpts
+while getopts "${my_getopts}" opt
 do	case ${opt} in
-	f)	filearg=${OPTARG};;
+	i)	DefaultOpts;;
+	[kusSX])	:;;
+	f)	file=${OPTARG};;
 	v)	verbose=:;;
 	q)	verbose=false;;
-	u)	fetchuser=${OPTARG};;
-	U)	fetchroot=${OPTARG};;
 	l)	LOCAL_LAYMAN=${OPTARG}
 		SanitizeLocalLayman;;
 	a)	addr=${OPTARG};;
-	s)	CalcSuprg /usr/bin/sudo sudo;;
-	S)	CalcSuprg /bin/su su;;
-	i)	DefaultOpts;;
 	H)	statusline=false
 		export NOSTATUSLINE=true;;
 	*)	Usage 0;;
@@ -155,53 +187,6 @@ do	case ${opt} in
 done
 opt=''
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
-
-need_arg=false
-GetFilename() {
-	[ ${#} -gt 1 ] && Usage
-	if [ ${#} -lt 1 ]
-	then	filename=${filearg}
-	else	filename=${1}
-	fi
-	if [ -z "${filename}" ]
-	then	return
-	fi
-	case ${filename} in
-	'')
-		${need_arg} && \
-			die "`gettext 'Filename argument is mandatory'`";;
-	/*|'~'*)
-		:;;
-	*)
-		filename="`pwd`/${filename}";;
-	esac
-}
-
-CalcSuCmd() {
-	if [ -z "${fetchuser}" ]
-	then	if [ "${UID}" -ne 0 ]
-		then	Push -c sucmd "${@}"
-			return
-		fi
-		fetchuser=${fetchroot}
-	fi
-	sucmd=${suprgpath}
-	a=${1}
-	shift
-	Pathify sucmd a
-	Push -c sucmd "${sucmd}"
-	if [ "${suprg}" = 'sudo' ]
-	then	Push sucmd -u "${fetchuser}" -- "${a}" "${@}"
-		return
-	fi
-	shexec=${SHELL}
-	if [ -z "${shexec}" ] || test ! -x "${SHELL}"
-	then	shexec='sh'
-	fi
-	Pathify shexec
-	Push -c a "${a}" "${@}"
-	Push sucmd '-s' "${shexec}" '-c' "eval exec ${a}" "${fetchuser}"
-}
 
 CdDir() {
 	cd -- "${1}" >/dev/null && return
@@ -213,7 +198,6 @@ tmpdir=''
 exitcode=0
 Cleanup() {
 	trap : EXIT HUP INT TERM
-	cd / >/dev/null
 	if [ -n "${tmpdir}" ]
 	then	test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
 	fi
@@ -222,40 +206,27 @@ Cleanup() {
 	Exit ${exitcode}
 }
 MakeTempDir() {
-	[ -n "${tmpdir}" ] && return
-	AssignTemp tmpdir -d
 	trap Cleanup EXIT HUP INT TERM
-	chmod -- 755 "${tmpdir}"
-	[ -z "${1}" ] || CdDir "${tmpdir}"
-}
-
-tmpsub=''
-MakeTempSub() {
-	if [ -z "${tmpsub}" ]
-	then	MakeTempDir
-		tmpsub="${tmpdir}/1"
-		( umask 077 && mkdir -- "${tmpsub}" )
-	fi
-	[ -z "${1}" ] || CdDir "${tmpsub}"
+	AssignTemp tmpdir -d
+	chmod -- a+rx "${tmpdir}"
 }
 
 tmpfile=''
 FetchTemp() {
 	eixcachesname=${addr##*/}
-	[ -z "${eixcachesname}" ] && die "`eval_gettext \
+	[ -z "${eixcachesname}" ] && die "`gettext
 'remote address is not properly set.
 Please specify a valid remote file with option -a.
 The default should have been set with ./configure --remote-file'`"
-	MakeTempDir cd
-	CalcSuCmd wget -c -- "${addr}"
+	MakeTempDir
+	(
+		CdDir "${tmpdir}" && wget -c -- "${addr}" \
+			|| die "`eval_gettext 'failed: wget -c -- ${addr}'`"
+	) || {
+		exitcode=${?}
+		exit
+	}
 	tmpfile="${tmpdir}/${eixcachesname}"
-	( umask 022 && : >"${tmpfile}" )
-	[ -n "${fetchuser}" ] && [ "${UID}" -eq 0 ] && \
-		chown -- "${fetchuser}" "${tmpfile}"
-	set -f
-	eval "set -- ${sucmd}"
-	RunCommand "`eval_gettext 'Fetching ${eixcachesname}'`" "${@}" || \
-		die "`eval_gettext 'could not fetch ${addr}'`"
 }
 
 BugReport() {
@@ -284,6 +255,7 @@ to use eix-remote: This inconvenience cannot be avoided and is not a bug!'
 
 AddArchive() {
 	a=${1}
+	CdDir "${2}"
 	RunCommand "`gettext 'Unpacking data'`" tar xjf "${a}" || {
 		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
 		die "${msg}"
@@ -292,6 +264,7 @@ AddArchive() {
 	AddLocalMethods
 	Statusline "`gettext 'Analyzing'`"
 	set +f
+	chmod a+r *
 	for i in *
 	do	n=${i%.eix}
 		while :
@@ -310,7 +283,7 @@ AddArchive() {
 		name=`EIX_CACHEFILE=${p} eix --print-overlay-path "${n}"` \
 			&& [ -n "${name}" ] || {
 			printf '%s\n' "`eval_gettext \
-				'problems arised with cachefile ${i}'`" >&2
+				'problems arose with cachefile ${i}'`" >&2
 			exitcode=1
 			continue
 		}
@@ -341,34 +314,30 @@ AddArchive() {
 	die "${msg}"
 }
 
-FetchCopy() {
-	[ -n "${UID}" ] || UID=`id -u`
-	GetFilename "${@}"
-	FetchTemp
-	[ -z "${filename}" ] && return
-	(
-		umask 002
-		cp --preserve=timestamps -- "${tmpfile}" "${filename}" || \
-			cp -- "${tmpfile}" "${filename}" && {
-			[ "${UID}" -ne 0 ] || \
-				chown -- portage:portage "${filename}"
-		}
-	) >/dev/null 2>&1 \
-	|| die "`eval_gettext 'cannot copy temporary file to ${filename}'`"
+temp_is_ok=false
+GetFile() {
+	[ ${#} -eq 0 ] || file=${1}
+	${temp_is_ok} || [ -n "${file}" ] || die "`gettext \
+			'A temporary file makes only sense for update mode'`"
 }
 
 Fetch() {
-	need_arg=:
-	FetchCopy "${@}"
+	GetFile "${@}"
+	FetchTemp
+	if [ -z "${file}" ]
+	then	file=${tmpfile}
+		return
+	fi
+	cp -- "${tmpfile}" "${file}" || die "`eval_gettext \
+		'cannot copy temporary file to ${file}'`"
 }
 
 Add() {
-	need_arg=:
-	GetFilename "${@}"
-	test -r "${filename}" || \
-		die "`eval_gettext 'cannot read ${filename}'`"
-	MakeTempDir cd
-	AddArchive "${filename}" "${tmpdir}"
+	GetFile "${@}"
+	test -r "${file}" || \
+		die "`eval_gettext 'cannot read ${file}'`"
+	MakeTempDir
+	AddArchive "${file}" "${tmpdir}"
 }
 
 Remove() {
@@ -379,15 +348,23 @@ Remove() {
 }
 
 Update() {
-	FetchCopy "${@}"
-	MakeTempSub cd
-	AddArchive "${tmpfile}" "${tmpsub}"
+	temp_is_ok=:
+	Fetch "${@}"
+	if [ -z "${tmpdir}" ]
+	then	MakeTempDir
+		tmpsup=${tmpdir}
+	else	tmpsub="${tmpdir}/1"
+		(
+			umask 022
+			mkdir -- "${tmpsub}"
+		) || die "`eval_gettext 'mkdir ${tmpsub} failed'`"
+		chmod -- a+rx "${tmpsub}"
+	fi
+	AddArchive "${file}" "${tmpsub}"
 }
 
 main_command=${1}
 [ ${#} -gt 0 ] && shift
-
-[ -n "${UID}" ] || UID=`id -u`
 
 case ${main_command} in
 update|both)

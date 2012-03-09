@@ -132,9 +132,23 @@ eixTk/md5.h
 nodist_cache_src = \
 cache/cache_map.cc
 
+cli_src = \
+various/cli.cc \
+various/cli.h
+
+nodist_cli_src =
+
+drop_permissions_src = \
+various/drop_permissions.cc \
+various/drop_permissions.h
+
+nodist_drop_permissions_src =
+
 percentage_src = \
 eixTk/percentage.cc \
-eixTk/percentage.h
+eixTk/percentage.h \
+eixTk/statusline.cc \
+eixTk/statusline.h
 
 nodist_percentage_src =
 
@@ -177,12 +191,14 @@ $(common_tools_ldadd)
 
 common_src = \
 main/main.h \
+$(drop_permissions_src) \
 $(eixtk_src) \
 $(database_src) \
 $(portage_src) \
 $(eixrc_src)
 
 nodist_common_src = \
+$(nodist_drop_permissions_src) \
 $(nodist_eixtk_src) \
 $(nodist_database_src) \
 $(nodist_portage_src) \
@@ -204,8 +220,8 @@ nodist_extra_common_src =
 
 # The search-tool for our database
 eix_only_ldadd =
-eix_only_src = eix.cc cli.cc cli.h $(printxml_src) $(search_src)
-nodist_eix_only_src = $(nodist_printxml_src) $(nodist_search_src)
+eix_only_src = eix.cc ${cli_src} $(printxml_src) $(search_src)
+nodist_eix_only_src = ${nodist_cli_src} $(nodist_printxml_src) $(nodist_search_src)
 extra_eix_only_src =
 nodist_extra_eix_only_src =
 

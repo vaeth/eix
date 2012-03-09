@@ -8,8 +8,6 @@ src/eix-remote.sh
 src/eix-sync.sh
 src/eix-test-obsolete.sh
 # C type source files
-src/cli.cc
-src/cli.h
 src/eix.cc
 src/eix-diff.cc
 src/eix-update.cc
@@ -61,6 +59,8 @@ src/eixTk/percentage.cc
 src/eixTk/percentage.h
 src/eixTk/ptr_list.h
 src/eixTk/regexp.h
+src/eixTk/statusline.cc
+src/eixTk/statusline.h
 src/eixTk/stringutils.cc
 src/eixTk/stringutils.h
 src/eixTk/sysutils.cc
@@ -132,3 +132,7 @@ src/search/matchtree.h
 src/search/packagetest.cc
 src/search/packagetest.h
 src/search/redundancy.h
+src/various/cli.cc
+src/various/cli.h
+src/various/drop_permissions.cc
+src/various/drop_permissions.h

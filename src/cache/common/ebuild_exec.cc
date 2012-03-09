@@ -28,7 +28,6 @@
 #include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 
@@ -130,11 +129,6 @@ EbuildExec::make_tempfile()
 	if(fd == -1)
 		return false;
 	calc_settings();
-	if((set_uid != 0) || (set_gid != 0)) {
-		if(fchown(fd, (set_uid ? uid : uid_t(-1)) , (set_gid ? gid : gid_t(-1)))) {
-//			base->m_error_callback(eix::format(_("Can't change ownership of tempfile %s")) % temp);
-		}
-	}
 	cachefile = temp;
 	cache_defined = true;
 	free(temp);
@@ -245,10 +239,6 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	}
 	if(child == 0)
 	{
-		if(set_gid)
-			setgid(gid);
-		if(set_uid)
-			setuid(uid);
 		if(use_ebuild_sh)
 			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULL), c_env);
 		else {
@@ -297,9 +287,6 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 }
 
 bool EbuildExec::know_settings = false;
-bool EbuildExec::set_uid, EbuildExec::set_gid;
-uid_t EbuildExec::uid;
-gid_t EbuildExec::gid;
 string EbuildExec::exec_ebuild, EbuildExec::exec_ebuild_sh, EbuildExec::ebuild_depend_temp;
 string EbuildExec::portage_rootpath, EbuildExec::portage_bin_path;
 
@@ -308,24 +295,8 @@ EbuildExec::calc_settings()
 {
 	if(likely(know_settings))
 		return;
-	know_settings = set_uid = set_gid = true;
+	know_settings = true;
 	EixRc &eix(get_eixrc(NULL));
-	const string &user(eix["EBUILD_USER"]);
-	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
-		uid_t i(eix.getInteger("EBUILD_UID"));
-		if(i > 0)
-			uid = i;
-		else
-			set_uid = false;
-	}
-	const string &group(eix["EBUILD_GROUP"]);
-	if(group.empty() || (get_uid_of(group.c_str(), &gid) == 0)) {
-		gid_t i(eix.getInteger("EBUILD_GID"));
-		if(i > 0)
-			gid = i;
-		else
-			set_gid = false;
-	}
 	exec_ebuild = eix["EXEC_EBUILD"];
 	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-03-07 18:00:00 +0100 (Wen, 07 Mar 2012) $" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-03-09 21:00:00 +0100 (Fri, 09 Mar 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -58,8 +58,7 @@ B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
 Note that to keep such remote data across eix-update calls
 you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
-To get more help on B<eix-remote> call B<eix-remote -h>
-and see the documentation of I<@SYSCONFDIR@/eix-remote.conf> below.
+To get more help on B<eix-remote> call B<eix-remote -h>.
 
 B<eix-layman> can add or remove local layman overlays to the current database.
 You might want to use this if you do not source layman's make.conf in your local I</etc/make.conf>.
@@ -1905,19 +1904,13 @@ even if your current world file is readable.
 Otherwise, your current world file (if it is readable) overrides that information.
 
 .TP
-.BR SKIP_PERMISSION_TESTS " " (true / false)
-If B<true>, eix-update will not check for groups and permissions.
-You will probably want to set this to B<true> if you have a more sophisticated
-permission setup on your system (NSS/LDAP, acl, pam-related stuff, ...)
-in which case eix might guess wrong permissions.
-The only negative side effect is that eix-update does not break with an error
-at the beginning but will stop with a (perhaps misleading) error message when
-trying to access the cache file without proper permissions.
-
-.TP
-.BR EBUILD_USER ", " EBUILD_GROUP ", " EBUILD_UID ", " EBUILD_GID
-These variables determine the permissions for cache methods B<ebuild>/B<ebuild*>.
-See these cache methods for more details
+.BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
+B<eix>, B<eix-diff>, and B<eix-update> change to the permissions of
+B<EIX_USER>/B<EIX_GROUP> (using B<EIX_UID>/B<EIX_GID> if the former have no
+valid name) as soon as possible.
+If B<EIX_USER> is a valid name and groups are changed, also the grouplist
+of B<EIX_USER> is used.
+(Use an empty B<EIX_USER> with correct B<EIX_UID> if you do not want the latter.)
 
 .TP
 .BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
@@ -2161,6 +2154,11 @@ the beginning of TERM, and if the statusline is active, also a soft status line
 (used e.g. by screen but not by tmux) will be output.
 
 .TP
+.BR EXIT_STATUSLINE " " (string)
+If this is nonempty, it is used as the exit statusline.
+An optional leading space in this string is ignored.
+
+.TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
 Set default levenshtein-distance.
 
@@ -2387,9 +2385,6 @@ this is the most compatible but also the slowest method.
 The information is obtained via "/usr/bin/ebuild ... depend" from the ebuild.
 Since all ebuilds will get executed by bash, this may be a security risk
 if you do not trust all ".ebuild" scripts or your environment variables.
-B<eix-update> will attempt to change the user/group to
-B<EBUILD_USER>/B<EBUILD_GROUP> (using B<EBUILD_UID>/B<EBUILD_GID> if the former
-makes no sense) before executing the ebuild.
 Intentionally, the environment is not cleared before the actual execution
 so that you can pass further variables to the ebuild.
 However, this can also lead to unexpected behaviour or even a security risk
