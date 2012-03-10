@@ -2,8 +2,10 @@
 
 *eix-0.25.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Let cache method sqlite honour DEP.
 	- Drop all permission stuff: Only become EIX_{USER,GROUP,UID,GID} ASAP.
+	  This fixes several security issues and simplifies code enormously.
+	- Let DEP work with sqlite cache method (bug in eix-0.25.0).
+	- Update zsh completion (including missing changes from eix-0.25.0).
 	- Move all cache files into /var/cache/eix/
 	- Start cachefile with magic string "eix\n"
 	- Introduce EXIT_STATUSLINE, see the discussion in

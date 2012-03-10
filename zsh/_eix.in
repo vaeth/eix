@@ -56,6 +56,7 @@ case $service in
 "$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
 "$excl_opt"'--print-all-slots[print all SLOT strings]'
 "$excl_opt"'--print-all-licenses[print all LICENSE strings]'
+"$excl_opt"'--print-all-depends[print all *DEPEND words]'
 "$excl_opt"'--print-all-print-world-sets[print the world sets]'
 "$excl_opt"'--print-all-print-world-sets[print the world sets]'
 "$excl_opt"'--is-current[is @EIX_CACHEFILE@ readable?]'
@@ -139,6 +140,10 @@ case $service in
 {'*--homepage','*-H'}'[match homepage]'
 {'*--license','*-L'}'[match license]'
 {'*--use','*-U'}'[match IUSE]'
+'*--deps[match *DEPEND]'
+'*--depent[match DEPEND]'
+'*--rdepent[match RDEPEND]'
+'*--pdepent[match PDEPEND]'
 '*--set[match setname]'
 '*--slot[match slotname]'
 '*--installed-slot[match installed slotname]'
@@ -186,6 +191,18 @@ case $service in
 			;;
 			(--use|--installed-with(out|)-use)
 				field='useflag'
+			;;
+			(--depend)
+				field='depend'
+			;;
+			(--rdepend)
+				field='rdepend'
+			;;
+			(--pdepend)
+				field='pdepend'
+			;;
+			(--deps)
+				field='deps'
 			;;
 			(--set)
 				field='set'

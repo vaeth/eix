@@ -24,5 +24,4 @@ _arguments -s -S -A '-*' : \
 '*-L+[OPT (add OPT to layman)]:layman option: ' \
 '-r[clear /var/cache/edb/dep/* before syncing]' \
 '-R[cancel previous -r]' \
-'-H[no status line update]' \
-'-e[do not test whether we must be root]'
+'-H[no status line update]'
