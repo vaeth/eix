@@ -278,7 +278,7 @@ run_eix_diff(int argc, char *argv[])
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
-	ArgumentReader::iterator current_param = argreader.begin();
+	ArgumentReader::iterator current_param(argreader.begin());
 
 	if(unlikely(var_to_print != NULL)) {
 		if(rc.print_var(var_to_print)) {
@@ -313,18 +313,20 @@ run_eix_diff(int argc, char *argv[])
 		}
 	}
 
-	if(unlikely((current_param == argreader.end()) || (current_param->type != Parameter::ARGUMENT))) {
-		cerr << _("Missing cache-file.");
-		exit(EXIT_FAILURE);
-	}
-
-	old_file = current_param->m_argument;
-	++current_param;
-	if((current_param == argreader.end()) || (current_param->type != Parameter::ARGUMENT)) {
-		new_file = rc["EIX_CACHEFILE"];
+	bool have_new(false);
+	if(unlikely((current_param != argreader.end()) && (current_param->type == Parameter::ARGUMENT))) {
+		old_file = current_param->m_argument;
+		++current_param;
+		if(unlikely((current_param != argreader.end()) && (current_param->type == Parameter::ARGUMENT))) {
+			new_file = current_param->m_argument;
+			have_new = true;
+		}
 	}
 	else {
-		new_file = current_param->m_argument;
+		old_file = rc["EIX_PREVIOUS"];
+	}
+	if(!have_new) {
+		new_file = rc["EIX_CACHEFILE"];
 	}
 
 	const char *varname;

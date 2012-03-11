@@ -14,7 +14,7 @@
 [I<common options>] [I<eix-update options>]
 
 .B eix-diff
-[I<common options>] I<OLD-CACHE> [I<NEW-CACHE>]
+[I<common options>] [I<OLD-CACHE>] [I<NEW-CACHE>]
 
 .B eix-sync
 
@@ -1457,7 +1457,7 @@ Here is a B<schematic> overview of the order of hooks/commands:
 
 .BR !! " hooks"
 
-.BR "cp @EIX_CACHEFILE@ /var/cache/eix.previous"
+.BR "cp @EIX_CACHEFILE@ @EIX_PREVIOUS@
 
 layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
 
@@ -1471,7 +1471,7 @@ layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
 
 .BR @@ " hooks"
 
-.BR "eix-diff /var/cache/eix.previous"
+.BR eix-diff
 
 .TP
 Some examples of useful lines in B<@SYSCONFDIR@/eix-sync.conf>:
@@ -1835,7 +1835,17 @@ This is prepended to overlays in the eix database to test whether they exist.
 
 .TP
 .BR EIX_CACHEFILE " " (string)
-The eix cachefile (usually B<%{EPREFIX}@EIX_CACHEFILE@>).
+The eix cachefile, usually B<%{EPREFIX}@EIX_CACHEFILE@>
+
+.TP
+.BR EIX_PREVIOUS " " (string)
+The previous eix cachefile for eix-diff and eix-sync,
+usually B<%{EPREFIX}@EIX_PREVIOUS@>
+
+.TP
+.BR EIX_REMOTEARCHIVE " " (string)
+This is a local copy of the remote archive used by eix-remote.
+If it is empty, only temporary files are used.
 
 .TP
 .BR EIX_WORLD " " (string)
@@ -2915,8 +2925,20 @@ B<TEST_FOR_NONEXISTENT>, B<NONEXISTENT_IF_MASKED>, B<NONEXISTENT_IF_OTHER_OVERLA
 This is the binary database for eix.
 The path can be changed with the B<EIX_CACHEFILE> variable
 (which by default honours B<EPREFIX> via delayed reference).
-But only when the unmodified path @EIX_CACHEFILE@ is used, B<eix-update>
-will perform certain permission tests in advance.
+.\" }}}
+
+.\" {{{ -------- @EIX_PREVIOUS@
+.SS @EIX_PREVIOUS@
+This is the previous version of @EIX_CACHEFILE@, used by eix-diff and eix-sync.
+The path can be changed with the B<EIX_PREVIOUS> variable
+(which by default honours B<EPREFIX> via delayed reference).
+.\" }}}
+
+.\" {{{ -------- @EIX_REMOTEARCHIVE@
+.SS @EIX_REMOTEARCHIVE@
+This is a local copy of the remote archive, used by eix-remote.
+The path can be changed with the B<EIX_REMOTEARCHIVE> variable
+(which by default honours B<EPREFIX> via delayed reference).
 .\" }}}
 .\" }}}
 

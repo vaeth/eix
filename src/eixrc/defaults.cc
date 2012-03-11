@@ -138,6 +138,15 @@ AddOption(STRING, "EIX_CACHEFILE",
 	"%{EPREFIX}" EIX_CACHEFILE, _(
 	"This file is the default eix cache."));
 
+AddOption(STRING, "EIX_PREVIOUS",
+	"%{EPREFIX}" EIX_PREVIOUS, _(
+	"This file is the previous eix cache (used by eix-diff and eix-sync)."));
+
+AddOption(STRING, "EIX_REMOTEARCHIVE",
+	"%{EPREFIX}" EIX_REMOTEARCHIVE, _(
+	"This is a local copy of the remote archive used by eix-remote.\n"
+	"If the name is empty, only a temporary file is used."));
+
 AddOption(STRING, "EXEC_EBUILD",
 	"%{EPREFIX_PORTAGE_EXEC}/usr/bin/ebuild", _(
 	"The path to the ebuild executable."));

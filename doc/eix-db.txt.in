@@ -7,8 +7,11 @@ eix - index file format
 :Copyright: This file is part of the eix project and distributed under the
             terms of the GNU General Public License v2.
 
-This article describes the format of the eix index file, usually located at /var/cache/eix. The
-format includes a version field in the header_ block. The current version is **@CURRENT@** (@PACKAGE_STRING@).
+This article describes the format of the eix index file,
+usually located at @EIX_CACHEFILE@
+
+The format includes a version field in the header_ block.
+The current version is **@CURRENT@** (@PACKAGE_STRING@).
 
 .. contents:: **Table of Contents**:
     :backlinks: none
@@ -154,6 +157,7 @@ Header
 ====== =======
 Type   Content
 ====== =======
+Magic  The first four bytes are 0x65 0x69 0x78 0x0A ("eix" + newline)
 Number File format version
 Number Number of Category_ blocks
 Vector Overlay_\s

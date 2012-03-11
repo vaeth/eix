@@ -1,17 +1,14 @@
 #compdef eix-remote
 _arguments -s -S -A '-*' : \
-'(1 2 -)'{'-h','-\\?'}'[help]' \
-'(2)-f+[FILE (use FILE as last arg)]:file:_files' \
+'(1 -)'{'-h','-\\?'}'[help]' \
 '-u+[USER (change to USER)]:user to change to:(nobody portage root)' \
 '-k[keep permissions]' \
 '-s[call sudo to change user permission]' \
 '-S[call su to change user permission]' \
-'-f+[FILE (change default to FILE)]:default FILE:_files' \
 '-l+[PATH (use PATH as LOCAL_LAYMAN)]:LOCAL_LAYMAN:_files -/' \
 '-a+[ADDR (use ADDR as remote database)]:remote address: ' \
 '-i[ignore all previous options]' \
 '-v[verbose (default)]' \
 '-H[no status line update]' \
 '-q[quiet]' \
-'1:command:(update fetch add remove)' \
-'2::file:_files'
+'1:command:(update fetch add remove)'

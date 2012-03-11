@@ -16,7 +16,7 @@ ReadFunctions
 
 ReadVar local_varcache EPREFIX_PORTAGE_CACHE
 ReadVar eixcache EIX_CACHEFILE
-eixprevious="${eixcache%/*}/previous.eix"
+ReadVar eixprevious EIX_PREVIOUS
 ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 eixsyncconf="${local_portage_configroot}/etc/eix-sync.conf"
 
@@ -40,9 +40,6 @@ Moreover, "--" in the default options will forbid command line options.
 The following options are available:
 
 -i   Ignore all previous options (useful to ignore ${eixsyncconf} options).
--d   Only show differences to the previously saved database and exit.
-     Except for executing the !! lines in ${eixsyncconf}
-     this is the same as eix-diff ${eixprevious}.
 -s [USER@]SERVER[:DIR] Sync via rsync from SERVER.
      USER defaults to current user and DIR defaults to PORTDIR.
      An empty SERVER cancels this option. This option implies -0
@@ -90,13 +87,6 @@ The following options are available:
 WarnOrDie() {
 	[ -z "${FATAL_HOOKS}" ] || die "${@}"
 	ewarn "${@}"
-}
-
-DiffOnly() {
-	test -r "${eixprevious}" || die "`eval_gettext \
-		'No previous database ${eixprevious} exists'`"
-	exec eix-diff -- "${eixprevious}"
-	die "`gettext 'Could not execute eix-diff'`"
 }
 
 DoExecute() {
@@ -203,7 +193,6 @@ DefaultOpts() {
 	Push -c emergecmd 'emerge' '--sync'
 	Push -c updatecmd 'eix-update'
 	Push -c layman_opt
-	diffonly=false
 	clearcache=false
 	nolayman=false
 	nohooks=false
@@ -228,10 +217,9 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts 'ids:02:UuFl@SMNtTqwWL:c:C:o:rRmHh?' opt
+while getopts 'is:02:UuFl@SMNtTqwWL:c:C:o:rRmHh?' opt
 do	case ${opt} in
 	i)	DefaultOpts;;
-	d)	diffonly=:;;
 	s)	server=${OPTARG};;
 	0)	skip_sync=:;;
 	2)	client=${OPTARG};;
@@ -264,7 +252,6 @@ do	case ${opt} in
 	esac
 done
 opt=''
-${diffonly} && DiffOnly
 [ -z "${server}" ] || skip_sync=:
 
 ${measure_time} || time_begin=''

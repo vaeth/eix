@@ -23,10 +23,27 @@ CalcSuprg() {
 	suprg=${sucmd##*/}
 }
 
-my_getopts='f:vq:l:a:ku:sSiX:Hh?'
+if [ "${1}" = 'sucall' ]
+then	shift
+	keep_default=:
+	for var in archive USE_NLS
+	do	eval "${var}=\${1}"
+		shift
+	done
+	for var in EIX_CACHEFILE PORTDIR PORTDIR_OVERLAY \
+		EXCLUDE_OVERLAY ADD_OVERLAY TERM EXIT_STATUSLINE
+	do	eval "${var}=\${1}
+		export ${var}"
+		shift
+	done
+else	keep_default=false
+	ReadVar archive EIX_REMOTEARCHIVE
+fi
+
+my_getopts='vq:l:a:ku:sSiHh?'
 
 DefaultOpts() {
-	keep=false
+	keep=${keep_default}
 	CalcSuprg /usr/bin/sudo /bin/su sudo su
 	unset user
 }
@@ -44,11 +61,9 @@ do	case ${opt} in
 	u)	user=${OPTARG};;
 	s)	CalcSuprg /usr/bin/sudo sudo;;
 	S)	CalcSuprg /bin/su su;;
-	X)	exit_statusline=${OPTARG};;
 	*)	:;;
 	esac
 done
-ReadExitStatusline
 
 if ! ${keep}
 then	Sudo() {
@@ -60,34 +75,39 @@ then	Sudo() {
 	esac
 	exit 2
 }
-	[ "${user+set}" = set ] || ReadVar user EIX_USER \
-		&& Sudo "${0}" "-kX${exit_statusline}" "${@}"
+	ReadVar EIX_CACHEFILE EIX_CACHEFILE
+	ReadVar PORTDIR PORTDIR
+	ReadVar PORTDIR_OVERLAY PORTDIR_OVERLAY
+	ReadVar EXCLUDE_OVERLAY EXCLUDE_OVERLAY
+	ReadVar ADD_OVERLAY ADD_OVERLAY
+	ReadVar TERM TERM
+	ReadVar EXIT_STATUSLINE EXIT_STATUSLINE
+	[ "${user+set}" = set ] || {
+		ReadVar user EIX_USER && [ -n "${EIX_USER}" ]
+	} && Sudo "${0}" 'sucall' "${archive}" "${USE_NLS-@USE_NLS@}" \
+	"${EIX_CACHEFILE}" "${PORTDIR}" "${PORTDIR_OVERLAY}" \
+	"${EXCLUDE_OVERLAY}" "${ADD_OVERLAY}" "${TERM}" "${EXIT_STATUSLINE}" \
+	"${@}"
 fi
 
-ReadFunctions
-
 addr='@DEFAULT_REMOTE_PATH@'
-filedefault='@EIX_CACHEFILE@'
-filedefault="${filedefault%/*}/remote.tar.bz2"
-
-ReadVar local_portage_configroot PORTAGE_CONFIGROOT
 
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	f=${file:-(none)}
-	eval_gettext 'Usage: ${n} [options] command [FILE]
+	f=${archive}
+	[ -n "${f}" ] || f=`gettext 'temporary file'`
+	eval_gettext 'Usage: ${n} [options] command
 Get data from a remote database for ${p}.
-FILE defaults to ${f}
-An empty filename means that a temporary file is used if command=update
 The following commands are provided:
 
-update: Fetch the eix-caches of some layman overlays into FILE
+update: Fetch the eix-caches of some layman overlays, store them locally in
+        EIX_REMOTEARCHIVE (${f})
         and add them to the eix database.
         To keep this data across eix-update calls, you might want to set
         KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)
-fetch:  Only fetch the overlays into FILE.
-add:    Only add the overlays from FILE to the eix database.
+fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
+add:    Only do the second task (add EIX_REMOTEARCHIVE without fetching).
 remove: Remove all temporarily added virtual overlays from the eix database;
         this is similar to
         	KEEP_VIRTUALS=false eix-update
@@ -111,7 +131,6 @@ This data is evalued, so be aware of security risks.
 Moreover, "--" in this variable will exclude further command line options.
 The following options are available:
 
--f FILE Change the default for FILE. This is mainly useful for default options.
 -k      Keep permissions (use this if you cannot use sudo/su).
 -u USER Use USER instead of EIX_USER.
 -s/-S   Use sudo/su to change user permission. Currently: ${suprg}
@@ -162,10 +181,10 @@ InitLocalLayman() {
 DefaultOpts() {
 	verbose=:
 	statusline=:
-	file=${filedefault}
 	keep=false
 }
 
+ReadFunctions
 InitLocalLayman
 SanitizeLocalLayman
 OPTIND=1
@@ -174,7 +193,6 @@ while getopts "${my_getopts}" opt
 do	case ${opt} in
 	i)	DefaultOpts;;
 	[kusSX])	:;;
-	f)	file=${OPTARG};;
 	v)	verbose=:;;
 	q)	verbose=false;;
 	l)	LOCAL_LAYMAN=${OPTARG}
@@ -219,28 +237,28 @@ FetchTemp() {
 Please specify a valid remote file with option -a.
 The default should have been set with ./configure --remote-file'`"
 	MakeTempDir
+	tmpfile="${tmpdir}/${eixcachesname}"
+	[ -n "${archive}" ] && test -e "${archive}" \
+		&& cp -p -- "${archive}" "${tmpfile}" >/dev/null 2>&1
 	(
-		CdDir "${tmpdir}" && wget -c -- "${addr}" \
-			|| die "`eval_gettext 'failed: wget -c -- ${addr}'`"
+		CdDir "${tmpdir}" && wget -N -- "${addr}" \
+			|| die "`eval_gettext 'failed: wget -N -- ${addr}'`"
 	) || {
 		exitcode=${?}
 		exit
 	}
-	tmpfile="${tmpdir}/${eixcachesname}"
 }
 
 BugReport() {
-	archive=${1}
 	echo
 	printf '\n'
 	eval_gettext \
 'Probably your eix cachefile was *not* updated successfully.
 Unless the above messages suggest another cause or you specified a
 wrong filename, the most likely cause of this is that the server uses
-another eix version than you or produced broken data. Please inspect
-	${archive}
-whether this is a valid *.tar.bz2 archive containing eix cachefiles
-(if it has already been deleted, download it using fetch).
+another eix version than you or produced broken data. Please check whether
+EIX_REMOTEARCHIVE is a valid *.tar.bz2 archive containing eix cachefiles
+(you can download it using fetch).
 If this is not the case (but was freshly downloaded), please report a bug.
 Note that the archive is *not* broken if only the cachefile format versions
 differ: In that case only report a bug if the eix cachefile format versions
@@ -257,7 +275,8 @@ AddArchive() {
 	a=${1}
 	CdDir "${2}"
 	RunCommand "`gettext 'Unpacking data'`" tar xjf "${a}" || {
-		msg=`eval_gettext 'cannot unpack ${a}'; BugReport "${a}"`
+		msg=`eval_gettext 'cannot unpack ${a}'`
+		msg=${msg}`BugReport`
 		die "${msg}"
 	}
 	ClearUpdateArgs
@@ -310,30 +329,28 @@ AddArchive() {
 			[ -n "${msg}" ] && printf '\n%s' "${msg}"`
 	}
 	[ -z "${msg}" ] && return
-	msg=`printf '%s' "${msg}"; BugReport "${a}"`
+	msg=${msg}`BugReport`
 	die "${msg}"
 }
 
-temp_is_ok=false
-GetFile() {
-	[ ${#} -eq 0 ] || file=${1}
-	${temp_is_ok} || [ -n "${file}" ] || die "`gettext \
+CheckFile() {
+	[ -n "${archive}" ] || die "`gettext \
 			'A temporary file makes only sense for update mode'`"
 }
 
 Fetch() {
-	GetFile "${@}"
+	CheckFile
 	FetchTemp
 	if [ -z "${file}" ]
 	then	file=${tmpfile}
 		return
 	fi
-	cp -- "${tmpfile}" "${file}" || die "`eval_gettext \
+	cp -p -- "${tmpfile}" "${file}" || die "`eval_gettext \
 		'cannot copy temporary file to ${file}'`"
 }
 
 Add() {
-	GetFile "${@}"
+	CheckFile
 	test -r "${file}" || \
 		die "`eval_gettext 'cannot read ${file}'`"
 	MakeTempDir
@@ -348,8 +365,7 @@ Remove() {
 }
 
 Update() {
-	temp_is_ok=:
-	Fetch "${@}"
+	Fetch
 	if [ -z "${tmpdir}" ]
 	then	MakeTempDir
 		tmpsup=${tmpdir}
@@ -358,23 +374,19 @@ Update() {
 			umask 022
 			mkdir -- "${tmpsub}"
 		) || die "`eval_gettext 'mkdir ${tmpsub} failed'`"
-		chmod -- a+rx "${tmpsub}"
 	fi
 	AddArchive "${file}" "${tmpsub}"
 }
 
-main_command=${1}
-[ ${#} -gt 0 ] && shift
-
-case ${main_command} in
-update|both)
-	Update "${@}";;
-fetch*|get|wget)
-	Fetch "${@}";;
-add*)
-	Add "${@}";;
-rem*|del*|rm*|sub*)
-	Remove "${@}";;
+case ${1-} in
+update)
+	Update;;
+fetch)
+	Fetch;;
+add)
+	Add;;
+remove)
+	Remove;;
 *)
 	Usage;;
 esac

@@ -2,7 +2,6 @@
 _arguments -s -S -A '-*' : \
 '(-)'{'-h','-\\?'}'[help]' \
 '-i[ignore all previous options]' \
-'-d[only show differences and then exit]' \
 '-s+[SERVER (rsync from SERVER; this implies -0)]:server to sync from: _hosts' \
 '-2+[SERVER (rsync to SERVER)]:server to sync to: _hosts' \
 '-0[no eix -sync]' \

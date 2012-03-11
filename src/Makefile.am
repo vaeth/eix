@@ -498,15 +498,23 @@ eix-remote.sh:
 
 SUFFIXES = .in
 .in:
-	$(AM_V_GEN)$(SED) -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
-		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
+	$(AM_V_GEN)$(SED) \
+		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
 		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
+		-e "s,\@EIX_PREVIOUS\@,$(EIX_PREVIOUS),g" \
+		-e "s,\@EIX_REMOTEARCHIVE\@,$(EIX_REMOTEARCHIVE),g" \
+		-e "s,\@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g" \
+		-e "s,\@PACKAGE_URL\@,$(PACKAGE_URL),g" \
+		-e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE),g" \
+		-e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD),g" \
 		-e "s,\@BINDIR\@,$(bindir),g" \
 		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
+		-e "s,\@DEFAULT_REMOTE_PATH\@,$(DEFAULT_REMOTE_PATH),g" \
+		-e "s,/dev/null,$(DEV_NULL),g" \
+		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
 		-e "s,\@USE_NLS\@,$(USE_NLS),g" \
-		-e "s,\@DEFAULT_REMOTE_PATH\@,$(DEFAULT_REMOTE_PATH),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		"$<" > "$@"
 

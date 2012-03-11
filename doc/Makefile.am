@@ -38,7 +38,19 @@ SUFFIXES = .in
 	$(AM_V_GEN)A='s/^.*static * const *.* current *= *\([0-9]*\) *;.*$$/\1/p' ; \
 	H=`$(SED) -n -e "$${A}" ../src/database/header.h` ; \
 	X=`$(SED) -n -e "$${A}" ../src/output/print-xml.h` ; \
-	$(SED) -e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
+	$(SED) \
+		-e "s,\@PACKAGE_STRING\@,$(PACKAGE_STRING),g" \
+		-e "s,\@EIX_CACHEFILE\@,$(EIX_CACHEFILE),g" \
+		-e "s,\@EIX_PREVIOUS\@,$(EIX_PREVIOUS),g" \
+		-e "s,\@EIX_REMOTEARCHIVE\@,$(EIX_REMOTEARCHIVE),g" \
+		-e "s,\@PACKAGE_BUGREPORT\@,$(PACKAGE_BUGREPORT),g" \
+		-e "s,\@PACKAGE_URL\@,$(PACKAGE_URL),g" \
+		-e "s,\@LEVENSHTEIN_DISTANCE\@,$(LEVENSHTEIN_DISTANCE),g" \
+		-e "s,\@PORTDIR_CACHE_METHOD\@,$(PORTDIR_CACHE_METHOD),g" \
+		-e "s,\@BINDIR\@,$(bindir),g" \
+		-e "s,\@SYSCONFDIR\@,$(sysconfdir),g" \
+		-e "s,\@DEFAULT_REMOTE_PATH\@,$(DEFAULT_REMOTE_PATH),g" \
+		-e "s,/dev/null,$(DEV_NULL),g" \
 		-e "s,\@CURRENT\@,$${H},g" \
 		-e "s,\@CURRENTXML\@,$${X},g" \
 	"$<" > "$@"

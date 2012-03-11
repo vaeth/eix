@@ -94,18 +94,12 @@ StatusInfo() {
 	! ${verbose} || einfo "${*}"
 }
 
-unset exit_statusline
-ReadExitStatusline() {
-	[ "${exit_statusline+set}" = set ] || \
-		ReadVar exit_statusline EXIT_STATUSLINE
-}
-
 Exit() {
 	eixf_exit=${1:-${?}}
 	${eixf_statusline} || exit ${eixf_exit}
-	ReadExitStatusline
-	if [ -n "${exit_statusline}" ]
-	then	StatuslinePlain "${exit_statusline# }"
+	ReadVar EXIT_STATUSLINE EXIT_STATUSLINE
+	if [ -n "${EXIT_STATUSLINE}" ]
+	then	StatuslinePlain "${EXIT_STATUSLINE# }"
 	elif [ ${eixf_exit} -eq 0 ]
 	then	Statusline "`gettext 'Finished'`"
 	else	Statusline "`gettext 'Failure'`"
@@ -428,7 +422,7 @@ NormalizeNames() {
 ReadGettext() {
 	[ -n "${read_gettext_status}" ] && return ${read_gettext_status}
 	case ${USE_NLS-@USE_NLS@} in
-	''|n*|N*|f*|F*|0)
+	''|[nNfF0]*)
 		read_gettext_status=1;;
 	*)
 		ReadGettextSub >/dev/null 2>&1

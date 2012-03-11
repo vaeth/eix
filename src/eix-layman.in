@@ -22,7 +22,7 @@ Add or remove local layman overlays to the eix database (${p}).
 
 Explanation: If your /etc/make.conf does not source layman/make.conf,
 then the layman overlays are not considered as part of your PORTDIR_OVERLAY;
-in this case, they are are usually not added to your eix database and thus
+in this case, they are usually not added to your eix database and thus
 cannot be found with eix.
 However, you might want to add/remove them temporarily to your eix database
 without changing your /etc/make.conf. This is the purpose of this script.

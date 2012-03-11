@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.25.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce EIX_PREVIOUS as default for eix-diff; remove eix-sync -d.
+	- Introduce EIX_REMOTEARCHIVE; remove filename handling of eix-remote.
+	- eix-remote: Pass more variables to new user.
+	- Update docu to new paths and magic string (forgotten in eix-0.25.1)
+
 *eix-0.25.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Drop all permission stuff: Only become EIX_{USER,GROUP,UID,GID} ASAP.

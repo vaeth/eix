@@ -865,6 +865,18 @@ AC_DEFINE_UNQUOTED([EIX_CACHEFILE],
 	[Location of the cachefile])
 AC_SUBST([EIX_CACHEFILE])
 
+EIX_PREVIOUS="/var/cache/eix/previous.eix"
+AC_DEFINE_UNQUOTED([EIX_PREVIOUS],
+	["${EIX_PREVIOUS}"],
+	[Location of the previous cachefile])
+AC_SUBST([EIX_PREVIOUS])
+
+EIX_REMOTEARCHIVE="/var/cache/eix/remote.tar.bz2"
+AC_DEFINE_UNQUOTED([EIX_REMOTEARCHIVE],
+	["${EIX_REMOTEARCHIVE}"],
+	[Location of the local remote cache archive])
+AC_SUBST([EIX_REMOTEARCHIVE])
+
 AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	["2"],
 	[Default Levenshtein distance for matches (as string)])

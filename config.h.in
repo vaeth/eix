@@ -36,6 +36,12 @@
 /* Default EIX_PREFIX */
 #undef EIX_PREFIX_DEFAULT
 
+/* Location of the previous cachefile */
+#undef EIX_PREVIOUS
+
+/* Location of the local remote cache archive */
+#undef EIX_REMOTEARCHIVE
+
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
 #undef ENABLE_NLS
