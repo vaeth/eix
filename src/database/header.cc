@@ -16,6 +16,7 @@
 #include <portage/extendedversion.h>
 
 #include <set>
+#include <string>
 
 #include <cstddef>
 
