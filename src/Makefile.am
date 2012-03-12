@@ -241,7 +241,7 @@ nodist_extra_output_only_src =
 
 # The update-tool for our database
 update_only_ldadd = $(SQLITE_LIBS)
-update_only_src = eix-update.cc $(percentage_src) $(cache_src)
+update_only_src = eix-update.cc eix-drop-permissions.cc $(percentage_src) $(cache_src)
 nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src)
 extra_update_only_src =
 nodist_extra_update_only_src =
@@ -274,6 +274,7 @@ $(nodist_common_src) \
 $(nodist_extra_common_src) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
+eix-drop-permissions$(EXEEXT) \
 versionsort$(EXEEXT) \
 eix-functions.sh \
 eix-installed.sh \
@@ -337,6 +338,7 @@ if SEPARATE_UPDATE
 # We have a separate eix-update, so we link versionsort to it
 use_separate_update = true
 versionsort_link = eix-update$(EXEEXT)
+drop_permissions_link = eix-update$(EXEEXT)
 
 if SEPARATE_BINARIES
 
@@ -394,6 +396,7 @@ else
 # We do not have a separate eix-update, so we link versionsort to eix
 use_separate_update = false
 versionsort_link = eix$(EXEEXT)
+drop_permissions_link = eix$(EXEEXT)
 
 # Generate neither eix-diff nor eix-update separately:
 use_separate_diff = false
@@ -447,10 +450,16 @@ versionsort$(EXEEXT): $(versionsort_link)
 
 endif
 
+eix-drop-permissions$(EXEEXT): $(drop_permissions_link)
+	$(AM_V_at)test ! -e eix-drop-permissions$(EXEEXT) || rm eix-drop-permissions$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) $(drop_permissions_link) eix-drop-permissions$(EXEEXT)
+
 uninstall-local:
 	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
+	$(AM_V_at)test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
 	$(AM_V_at)$(use_separate_update) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
@@ -464,6 +473,9 @@ install-exec-hook:
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		$(LN_S) "$(versionsort_link)" "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
+	$(AM_V_at)test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
+	$(AM_V_at)$(LN_S) "$(drop_permissions_link)" "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
 	$(AM_V_at)$(use_separate_update) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"
@@ -512,6 +524,8 @@ SUFFIXES = .in
 		-e "s,\@DEFAULT_REMOTE_PATH\@,$(DEFAULT_REMOTE_PATH),g" \
 		-e "s,/dev/null,$(DEV_NULL),g" \
 		-e "s,\./eix-functions\.sh\.in,'$(bindir)/eix-functions.sh',g" \
+		-e "s,\./eix-drop-permissions,'$(bindir)/eix-drop-permissions',g" \
+		-e "s,\./eix-remote.in,'$(bindir)/eix-remote',g" \
 		-e "s,\@TEXTDOMAIN\@,$(PACKAGE),g" \
 		-e "s,\@TEXTDOMAINDIR\@,$(localedir),g" \
 		-e "s,\@USE_NLS\@,$(USE_NLS),g" \

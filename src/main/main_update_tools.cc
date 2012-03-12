@@ -8,5 +8,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #define UPDATE_BINARY 1
+#define DROP_PERMISSIONS_BINARY 1
 #define VERSIONSORT_BINARY 1
 #include "main.cc"

@@ -22,8 +22,8 @@
 
 using namespace std;
 
-inline static
-string::size_type revision_index(const string &ver)
+inline static string::size_type
+revision_index(const string &ver)
 {
 	string::size_type i(ver.rfind("-r"));
 	if(i == string::npos)
@@ -33,7 +33,8 @@ string::size_type revision_index(const string &ver)
 	return string::npos;
 }
 
-void BasicCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme)
+void
+BasicCache::setScheme(const char *prefix, const char *prefixport, const std::string &scheme)
 {
 	m_scheme = scheme;
 	if(use_prefixport())
@@ -49,7 +50,8 @@ void BasicCache::setScheme(const char *prefix, const char *prefixport, const std
 	setSchemeFinish();
 }
 
-string BasicCache::getPrefixedPath() const
+string
+BasicCache::getPrefixedPath() const
 {
 	if(have_prefix) {
 		return m_prefix + m_scheme;
@@ -57,7 +59,8 @@ string BasicCache::getPrefixedPath() const
 	return m_scheme;
 }
 
-string BasicCache::getPathHumanReadable() const
+string
+BasicCache::getPathHumanReadable() const
 {
 	string ret(m_scheme);
 	if(have_prefix) {
@@ -67,7 +70,8 @@ string BasicCache::getPathHumanReadable() const
 	return ret;
 }
 
-void BasicCache::env_add_package(map<string,string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const
+void
+BasicCache::env_add_package(map<string,string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const
 {
 	string full(version.getFull());
 	string eroot;

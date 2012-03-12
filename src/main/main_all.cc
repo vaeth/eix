@@ -10,4 +10,5 @@
 #define EIX_BINARY 1
 #define DIFF_BINARY 1
 #define UPDATE_BINARY 1
+#define DROP_PERMISSIONS_BINARY 1
 #include "main.cc"

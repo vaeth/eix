@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.25.3
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce eix-drop-permissions and use it for eix-remote
+	  instead of su/sudo hacks.
+	- Fix regressions: eix-remote add|fetch without temporary file,
+	  and eix-remote update with temporary file.
+
 *eix-0.25.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce EIX_PREVIOUS as default for eix-diff; remove eix-sync -d.

@@ -23,6 +23,8 @@
 
 #define EIX_VARS_PREFIX "EIX_"
 #define DIFF_VARS_PREFIX "DIFF_"
+#define UPDATE_VARS_PREFIX "UPDATE_"
+#define DROP_VARS_PREFIX "DROP_"
 
 class EixRcOption {
 	public:

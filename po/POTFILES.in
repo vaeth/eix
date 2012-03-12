@@ -10,6 +10,7 @@ src/eix-test-obsolete.sh
 # C type source files
 src/eix.cc
 src/eix-diff.cc
+src/eix-drop-permissions.cc
 src/eix-update.cc
 src/versionsort.cc
 src/cache/base.cc

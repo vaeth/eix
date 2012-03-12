@@ -9,88 +9,34 @@
 # eix database. (@PACKAGE_STRING@).
 
 . ./eix-functions.sh.in
-
-CalcSuprg() {
-	for i
-	do	case ${i} in
-		/*)
-			test -x "${i}" && sucmd=${i} && break;;
-		*)
-			command -v "${i}" >/dev/null 2>&1 \
-				&& sucmd=${i} && break;;
-		esac
-	done
-	suprg=${sucmd##*/}
-}
-
-if [ "${1}" = 'sucall' ]
-then	shift
-	keep_default=:
-	for var in archive USE_NLS
-	do	eval "${var}=\${1}"
-		shift
-	done
-	for var in EIX_CACHEFILE PORTDIR PORTDIR_OVERLAY \
-		EXCLUDE_OVERLAY ADD_OVERLAY TERM EXIT_STATUSLINE
-	do	eval "${var}=\${1}
-		export ${var}"
-		shift
-	done
-else	keep_default=false
-	ReadVar archive EIX_REMOTEARCHIVE
-fi
-
-my_getopts='vq:l:a:ku:sSiHh?'
-
-DefaultOpts() {
-	keep=${keep_default}
-	CalcSuprg /usr/bin/sudo /bin/su sudo su
-	unset user
-}
+ReadFunctions
+my_getopts='Kvql:a:kiHh?'
 
 set -f
 eval "Push -c opt `eix-update --print EIX_REMOTE_OPTS`"
 Push opt "${@}"
 eval "set -- ${opt}"
-DefaultOpts
+
+drop_permissions=:
 OPTIND=1
 while getopts "${my_getopts}" opt
 do	case ${opt} in
-	i)	DefaultOpts;;
-	k)	keep=:;;
-	u)	user=${OPTARG};;
-	s)	CalcSuprg /usr/bin/sudo sudo;;
-	S)	CalcSuprg /bin/su su;;
+	K)	drop_permissions=false
+		break;;
+	k)	drop_permissions=false;;
+	i)	drop_permissions=:;;
 	*)	:;;
 	esac
 done
-
-if ! ${keep}
-then	Sudo() {
-	[ -z "${user}" ] && return
-	case ${suprg} in
-	sudo)	exec "${sucmd}" -u "${user}" -- "${@}";;
-	su)	Push -c a "${@}"
-		exec "${sucmd}" -c "eval exec ${a}" "${user}";;
-	esac
-	exit 2
-}
-	ReadVar EIX_CACHEFILE EIX_CACHEFILE
-	ReadVar PORTDIR PORTDIR
-	ReadVar PORTDIR_OVERLAY PORTDIR_OVERLAY
-	ReadVar EXCLUDE_OVERLAY EXCLUDE_OVERLAY
-	ReadVar ADD_OVERLAY ADD_OVERLAY
-	ReadVar TERM TERM
-	ReadVar EXIT_STATUSLINE EXIT_STATUSLINE
-	[ "${user+set}" = set ] || {
-		ReadVar user EIX_USER && [ -n "${EIX_USER}" ]
-	} && Sudo "${0}" 'sucall' "${archive}" "${USE_NLS-@USE_NLS@}" \
-	"${EIX_CACHEFILE}" "${PORTDIR}" "${PORTDIR_OVERLAY}" \
-	"${EXCLUDE_OVERLAY}" "${ADD_OVERLAY}" "${TERM}" "${EXIT_STATUSLINE}" \
-	"${@}"
+if ${drop_permissions}
+then	prg=./eix-drop-permissions
+	me=./eix-remote.in
+	exec "${prg}" -- "${me}" -K "${@}"
+	die "`eval_gettext 'failed to execute ${prg}'`"
 fi
 
 addr='@DEFAULT_REMOTE_PATH@'
+ReadVar archive EIX_REMOTEARCHIVE
 
 Usage() {
 	n=${0##*/}
@@ -131,13 +77,12 @@ This data is evalued, so be aware of security risks.
 Moreover, "--" in this variable will exclude further command line options.
 The following options are available:
 
--k      Keep permissions (use this if you cannot use sudo/su).
--u USER Use USER instead of EIX_USER.
--s/-S   Use sudo/su to change user permission. Currently: ${suprg}
+-k      Keep permissions: Without this option, eix-drop-permissions is used.
+-K      As -k, but cannot be reset with -i
 -l PATH Use PATH as LOCAL_LAYMAN
 -a ADDR Use ADDR as remote database address. Current value:
         ${addr}
--i      Ignore all previous options (e.g. of local defaults).
+-i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).
 -v      Verbose (default)
 -H      Suppress status line update
 -q      Quiet'
@@ -184,15 +129,14 @@ DefaultOpts() {
 	keep=false
 }
 
-ReadFunctions
 InitLocalLayman
 SanitizeLocalLayman
-OPTIND=1
 DefaultOpts
+OPTIND=1
 while getopts "${my_getopts}" opt
 do	case ${opt} in
 	i)	DefaultOpts;;
-	[kusSX])	:;;
+	[kK])	:;;
 	v)	verbose=:;;
 	q)	verbose=false;;
 	l)	LOCAL_LAYMAN=${OPTARG}
@@ -203,7 +147,6 @@ do	case ${opt} in
 	*)	Usage 0;;
 	esac
 done
-opt=''
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 
 CdDir() {
@@ -333,14 +276,14 @@ AddArchive() {
 	die "${msg}"
 }
 
-CheckFile() {
+CheckTemp() {
 	[ -n "${archive}" ] || die "`gettext \
 			'A temporary file makes only sense for update mode'`"
 }
 
-Fetch() {
-	CheckFile
+FetchFile() {
 	FetchTemp
+	file=${archive}
 	if [ -z "${file}" ]
 	then	file=${tmpfile}
 		return
@@ -349,12 +292,18 @@ Fetch() {
 		'cannot copy temporary file to ${file}'`"
 }
 
+
+Fetch() {
+	CheckTemp
+	FetchFile
+}
+
 Add() {
-	CheckFile
-	test -r "${file}" || \
-		die "`eval_gettext 'cannot read ${file}'`"
+	CheckTemp
+	test -r "${archive}" || \
+		die "`eval_gettext 'cannot read ${archive}'`"
 	MakeTempDir
-	AddArchive "${file}" "${tmpdir}"
+	AddArchive "${archive}" "${tmpdir}"
 }
 
 Remove() {
@@ -365,7 +314,7 @@ Remove() {
 }
 
 Update() {
-	Fetch
+	FetchFile
 	if [ -z "${tmpdir}" ]
 	then	MakeTempDir
 		tmpsup=${tmpdir}

@@ -16,6 +16,7 @@ extern std::string program_name;
 int run_eix(int argc, char *argv[]);
 int run_eix_update(int argc, char *argv[]);
 int run_eix_diff(int argc, char *argv[]);
+int run_eix_drop_permissions(int argc, char *argv[]);
 int run_versionsort(int argc, char *argv[]);
 
 #endif /* EIX__MAIN_H__ */

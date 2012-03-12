@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-03-09 21:00:00 +0100 (Fri, 09 Mar 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-03-12 18:00:00 +0100 (Mon, 12 Mar 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -30,6 +30,9 @@
 
 .B eix-functions.sh
 
+.B eix-drop-permissions
+[B<-->] [I<command to execute>]
+
 .B versionsort
 .\" }}}
 
@@ -58,6 +61,7 @@ B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database.
 Note that to keep such remote data across eix-update calls
 you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
+By default, this script drops its permissions using B<eix-drop-permissions>.
 To get more help on B<eix-remote> call B<eix-remote -h>.
 
 B<eix-layman> can add or remove local layman overlays to the current database.
@@ -75,6 +79,10 @@ You might want to use them for your own similar scripts.
 Note that immediately after sourcing B<eix-functions.sh> you will probably
 want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
 with the corresponding I<ARGS>.
+
+B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
+It executes the command given as argument with permissions according to
+B<EIX_USER>, B<EIX_GROUP>, B<EIX_UID>, B<EIX_GID> (see later).
 
 B<eix-installed> is a simple script which outputs all installed packages
 (in their exact version) and can check for packages installed with/without
@@ -1590,14 +1598,31 @@ This must be used if you need B<%{> in a variable text
 .TP
 .BI * VARIABLE
 If a delayed reference uses a variable name starting with B<*>,
-this B<*> is replaced by B<EIX_> or B<DIFF_>, depending on whether
-it is used from B<eix>/B<eix-update> or from B<eix-diff>.
+this B<*> is replaced by B<EIX_>, B<DIFF_>, B<UPDATE_>, or B<DROP_>,
+depending on whether it is used from B<eix>/B<eix-diff>/B<eix-diff>,
+or B<eix-drop-permissions>, respectively.
 This way you can have different defaults for these programs.
 
 For example, the delayed reference B<%{*>I<VARIABLE>B<}> will insert
-the expansion of B<EIX_>I<VARIABLE> or B<DIFF_>I<VARIABLE>, respectively.
+the expansion of B<EIX_>I<VARIABLE>, B<DIFF_>I<VARIABLE>, B<UPDATE_>I<VARIABLE>,
+or B<DROP_VARIABLE>, respectively.
 
 The B<\\> and B<*> attributes can be combined (order plays no role).
+
+As a practical example, if you want that B<EIX_USER> has the value "nobody"
+when called from B<eix-drop-permissions> (e.g. from B<eix-remote>)
+but the default value "portage" otherwise, you can set:
+
+.B EIX_USER="%{*EIX_USER}"
+
+.B EIX_EIX_USER="portage"
+
+.B DIFF_EIX_USER="portage"
+
+.B UPDATE_EIX_USER="portage"
+
+.B DROP_EIX_USER="nobody"
+
 .TP
 B<\\>I<VARIABLE>
 If a delayed reference uses a variable name starting with B<\\>,
@@ -1915,9 +1940,10 @@ Otherwise, your current world file (if it is readable) overrides that informatio
 
 .TP
 .BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
-B<eix>, B<eix-diff>, and B<eix-update> change to the permissions of
-B<EIX_USER>/B<EIX_GROUP> (using B<EIX_UID>/B<EIX_GID> if the former have no
-valid name) as soon as possible.
+B<eix>, B<eix-diff>, B<eix-update>, B<eix-drop-permissions>, and B<eix-remote>
+change to the permissions of B<EIX_USER>/B<EIX_GROUP>
+(using B<EIX_UID>/B<EIX_GID> if the former have no valid name)
+as soon as possible.
 If B<EIX_USER> is a valid name and groups are changed, also the grouplist
 of B<EIX_USER> is used.
 (Use an empty B<EIX_USER> with correct B<EIX_UID> if you do not want the latter.)

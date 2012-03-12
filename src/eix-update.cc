@@ -285,7 +285,7 @@ int
 run_eix_update(int argc, char *argv[])
 {
 	/* Setup eixrc. */
-	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
+	EixRc &eixrc(get_eixrc(UPDATE_VARS_PREFIX));
 	drop_permissions(eixrc);
 	Depend::use_depend = eixrc.getBool("DEP");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);

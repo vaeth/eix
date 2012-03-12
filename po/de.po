@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-03-11 13:24+0100\n"
+"POT-Creation-Date: 2012-03-12 20:27+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -37,7 +37,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:318 src/eix-remote.sh:328
+#: src/eix-functions.sh.in:318 src/eix-remote.sh:271
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -322,15 +322,20 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:131 src/eix-remote.sh:284 src/eix-update.cc:647
+#: src/eix-layman.sh:131 src/eix-remote.sh:227 src/eix-update.cc:647
 msgid "Analyzing"
 msgstr "Analyse"
 
-#: src/eix-remote.sh:99
+#: src/eix-remote.sh:35
+#, sh-format
+msgid "failed to execute ${prg}"
+msgstr "Konnte ${prg} nicht ausführen"
+
+#: src/eix-remote.sh:45
 msgid "temporary file"
 msgstr "Temporärdatei"
 
-#: src/eix-remote.sh:100
+#: src/eix-remote.sh:46
 #, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
@@ -371,13 +376,13 @@ msgid ""
 "options.\n"
 "The following options are available:\n"
 "\n"
-"-k      Keep permissions (use this if you cannot use sudo/su).\n"
-"-u USER Use USER instead of EIX_USER.\n"
-"-s/-S   Use sudo/su to change user permission. Currently: ${suprg}\n"
+"-k      Keep permissions: Without this option, eix-drop-permissions is "
+"used.\n"
+"-K      As -k, but cannot be reset with -i\n"
 "-l PATH Use PATH as LOCAL_LAYMAN\n"
 "-a ADDR Use ADDR as remote database address. Current value:\n"
 "        ${addr}\n"
-"-i      Ignore all previous options (e.g. of local defaults).\n"
+"-i      Ignore all previous options (e.g. ignore EIX_REMOTE_OPTS).\n"
 "-v      Verbose (default)\n"
 "-H      Suppress status line update\n"
 "-q      Quiet"
@@ -399,11 +404,6 @@ msgstr ""
 "        \tKEEP_VIRTUALS=false eix-update\n"
 "        aber schneller (da möglichst das alte Cachefile benutzt wird).\n"
 "\n"
-"Das Script versucht, mit sudo bzw. su (siehe Optionen -s und -S), seine\n"
-"Rechte auf die von EIX_USER zu setzen, bevor es irgendetwas anderes tut.\n"
-"Dies kann mit der Option -k oder einem leeren Benutzernamen verhindert\n"
-"werden.\n"
-"\n"
 "Für \"update\" und \"add\" werden zur Vermeidung von Verwechslungen alle\n"
 "lokalen Layman-Overlay-Pfade beim Update der aktuellen Datenbank.\n"
 "ausgeschlossen. Diese lokalen Pfade werden durch Voranstellen des Pfades\n"
@@ -420,39 +420,38 @@ msgstr ""
 "Ein \"--\" hier wird natürlich alle Kommandozeilen-Optionen verhindern.\n"
 "Die folgenden Optionen gibt es:\n"
 "\n"
-"-k      Behält Rechte bei. Benutzen Sie dies, wenn Sie sudo/su nicht\n"
-"        aufrufen können!\n"
-"-u USER Benutzt USER statt EIX_USER.\n"
-"-s/-S   Nutzt sudo/su zum Ändern der Rechte. Aktueller Wert: ${suprg}\n"
+"-k      Behält Rechte bei.\n"
+"        Ohne diese Option wird eix-drop-permissions benutzt.\n"
+"-K      Wie -k, aber kann nicht mit -i überschrieben werden.\n"
 "-l PATH Benutzt PATH als LOCAL_LAYMAN\n"
 "-a ADDR Benutze ADDR zum Abholen der Daten. Aktueller Wert:\n"
 "        ${addr}\n"
-"-i      Ignoriere all vorherigen Optionen (etwa von lokalen Defaults).\n"
+"-i      Ignoriere all vorherigen Optionen (etwa von EIX_REMOTE_OPTS).\n"
 "-v      Ausführliche Ausgabe (Default)\n"
 "-H      Keine Ausgabe der Statuszeile\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:151
+#: src/eix-remote.sh:96
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:153
+#: src/eix-remote.sh:98
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:212
+#: src/eix-remote.sh:155
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Directory ${a} nicht möglich"
 
-#: src/eix-remote.sh:245
+#: src/eix-remote.sh:188
 #, sh-format
 msgid "failed: wget -N -- ${addr}"
 msgstr "Fehler bei: wget -N -- ${addr}"
 
-#: src/eix-remote.sh:256
+#: src/eix-remote.sh:199
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -495,40 +494,40 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:277
+#: src/eix-remote.sh:220
 msgid "Unpacking data"
 msgstr "Entpacken der Daten"
 
-#: src/eix-remote.sh:278
+#: src/eix-remote.sh:221
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:305
+#: src/eix-remote.sh:248
 #, sh-format
 msgid "problems arose with cachefile ${i}"
 msgstr "Probleme mit Cachefile ${i}"
 
-#: src/eix-remote.sh:323
+#: src/eix-remote.sh:266
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:338
+#: src/eix-remote.sh:281
 msgid "A temporary file makes only sense for update mode"
-msgstr "Ein Temporärfile ergibt nur im Update-Modus Sinn"
+msgstr "Eine Temporärdate ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:349
+#: src/eix-remote.sh:292
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
-msgstr "Temporary Datei kann nicht nach ${file} kopiert werden"
+msgstr "Temporärdatei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:355
+#: src/eix-remote.sh:304
 #, sh-format
-msgid "cannot read ${file}"
-msgstr "kann Datei ${file} nicht lesen"
+msgid "cannot read ${archive}"
+msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:376
+#: src/eix-remote.sh:325
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"
@@ -651,7 +650,7 @@ msgstr ""
 "     PORTDIR_CACHE_METHOD=flat und neuere Portage-Versionen, wenn\n"
 "     FEATURES=metadata-transfer inaktiv oder ausgeschaltet ist.\n"
 "-N   Nimmt vorhergehendes -M zurück.\n"
-"-t   Speichere die aktuelle Datenbank nur in Temporärfile. Dies schließt\n"
+"-t   Speichere die aktuelle Datenbank nur in Temporärdatei. Dies schließt\n"
 "     natürlich ein späteres -d aus.\n"
 "-T   Keine Zeitmessungen\n"
 "-q   Keine Ausgabe (schließt stdout)\n"
@@ -695,128 +694,124 @@ msgstr "Synce Portage-Overlay ${j}"
 msgid "${mycmd} -s ${j} failed"
 msgstr "${mycmd} -s ${j} schlug fehl"
 
-#: src/eix-sync.sh:248
-msgid "eix-sync -m is obsolete; use -M0 instead"
-msgstr "eix-sync -m ist obsolet; benutzen Sie -M0"
-
-#: src/eix-sync.sh:324
+#: src/eix-sync.sh:323
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Starte ${myvarcmd}"
 
-#: src/eix-sync.sh:326
+#: src/eix-sync.sh:325
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "${myvarcmd} schlug fehl"
 
-#: src/eix-sync.sh:337
+#: src/eix-sync.sh:336
 msgid "%6d seconds for %s\\n"
 msgstr "%6d Sekunden für %s\\n"
 
-#: src/eix-sync.sh:342
+#: src/eix-sync.sh:341
 msgid "Time statistics:"
 msgstr "Benötigte Zeit:"
 
-#: src/eix-sync.sh:343
+#: src/eix-sync.sh:342
 msgid "initial eix-update"
 msgstr "Erstes eix-update"
 
-#: src/eix-sync.sh:344
+#: src/eix-sync.sh:343
 msgid "syncing"
 msgstr "syncen"
 
-#: src/eix-sync.sh:345
+#: src/eix-sync.sh:344
 msgid "client syncing"
 msgstr "Client syncen"
 
-#: src/eix-sync.sh:346
+#: src/eix-sync.sh:345
 msgid "metadata update"
 msgstr "Metadata update"
 
-#: src/eix-sync.sh:347
+#: src/eix-sync.sh:346
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:348
+#: src/eix-sync.sh:347
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:351
+#: src/eix-sync.sh:350
 msgid "%6d seconds total\\n"
 msgstr "%6d Sekunden insgesamt\\n"
 
-#: src/eix-sync.sh:395
+#: src/eix-sync.sh:394
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (Ausgabe von ${curr_cmd}) schlug fehl"
 
-#: src/eix-sync.sh:396
+#: src/eix-sync.sh:395
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "${curr_cmd} schlug fehl"
 
-#: src/eix-sync.sh:416
+#: src/eix-sync.sh:415
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Lösche alten Portage-Cache aus ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:418
+#: src/eix-sync.sh:417
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "rm -rf ${local_varcache}/var/cache/edb/dep/* schlug fehl"
 
-#: src/eix-sync.sh:426
+#: src/eix-sync.sh:425
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Konnte nicht von ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:436
+#: src/eix-sync.sh:435
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "rsync auf ${hostdir}"
 
-#: src/eix-sync.sh:438
+#: src/eix-sync.sh:437
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Konnte nicht auf ${hostdir} rsyncen"
 
-#: src/eix-sync.sh:448
+#: src/eix-sync.sh:447
 msgid "eix-cache does not exist."
 msgstr "Eix-Cache existiert nicht."
 
-#: src/eix-sync.sh:453
+#: src/eix-sync.sh:452
 msgid "eix-cache format has changed."
 msgstr "Eix-Cache-Format hat sich geändert."
 
-#: src/eix-sync.sh:460
+#: src/eix-sync.sh:459
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Kopiere alten ${eixcache} Cache in Temporärdatei"
 
-#: src/eix-sync.sh:464
+#: src/eix-sync.sh:463
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Konnte die Datenbank nicht in Temporärdatei ${tmpfile} kopieren"
 
-#: src/eix-sync.sh:468
+#: src/eix-sync.sh:467
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Kopiere alte Datenbank nach ${eixprevious}"
 
-#: src/eix-sync.sh:470
+#: src/eix-sync.sh:469
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Konnte die Datenbank nicht nach ${eixprevious} kopieren"
 
-#: src/eix-sync.sh:489
+#: src/eix-sync.sh:488
 msgid "eix-update was apparently already called in a hook"
 msgstr "eix-update wurde anscheinend bereits in einem Hook aufgerufen"
 
-#: src/eix-sync.sh:493
+#: src/eix-sync.sh:492
 msgid "Calling eix-diff"
 msgstr "Starte eix-diff"
 
-#: src/eix-sync.sh:495
+#: src/eix-sync.sh:494
 msgid "Failed to diff against current cache"
 msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 
@@ -1586,6 +1581,29 @@ msgstr ""
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
 
+#: src/eix-drop-permissions.cc:24
+#, c-format
+msgid ""
+"Usage: %s [--] command [options]\n"
+"Executes command [options] with the permissions according to the eix "
+"variables\n"
+"EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"
+msgstr ""
+"Aufruf: %s [--] Kommando [Optionen]\n"
+"Führt Kommando [Optionen] mit Rechten entsprechend den eix-Variablen\n"
+"EIX_USER, EIX_GROUP, EIX_UID, und EIX_GID aus.\n"
+"\n"
+"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
+"weitere Informationen.\n"
+
+#: src/eix-drop-permissions.cc:51
+#, c-format
+msgid "failed to execute %s\n"
+msgstr "Konnte %s nicht ausführen\n"
+
 #: src/eix-update.cc:105
 #, c-format
 msgid ""
@@ -1776,21 +1794,21 @@ msgstr "Cachefile %s nicht lesbar: %s"
 #: src/cache/common/ebuild_exec.cc:147
 #, c-format
 msgid "Can't unlink tempfile %s"
-msgstr "Temporärfile %s kann nicht gelöscht werden"
+msgstr "Temporärdatei %s kann nicht gelöscht werden"
 
 #: src/cache/common/ebuild_exec.cc:149
 #, c-format
 msgid "Tempfile %s still there after unlink"
-msgstr "Temporärfile %s trotz Löschens vorhanden"
+msgstr "Temporärdatei %s trotz Löschens vorhanden"
 
 #: src/cache/common/ebuild_exec.cc:152
 #, c-format
 msgid "Tempfile %s is not a file"
-msgstr "Temporärfile %s ist keine Datei"
+msgstr "Temporärdatei %s ist keine Datei"
 
 #: src/cache/common/ebuild_exec.cc:219
 msgid "Creation of tempfile failed"
-msgstr "Temporärfile konnte nicht erzeugt werden"
+msgstr "Temporärdatei konnte nicht erzeugt werden"
 
 #: src/cache/common/ebuild_exec.cc:237
 msgid "Forking failed"
@@ -2201,7 +2219,7 @@ msgid ""
 "If the name is empty, only a temporary file is used."
 msgstr ""
 "Dies ist eine lokale Kopie des Archivs, das von eix-remote geholt wird.\n"
-"Falls der Name leer ist, wird nur ein Temporärfile benutzt."
+"Falls der Name leer ist, wird nur eine Temporärdatei benutzt."
 
 #: src/eixrc/defaults.cc:152
 msgid "The path to the ebuild executable."
@@ -2213,7 +2231,7 @@ msgstr "Der Pfad zum ebuild.sh-Skript."
 
 #: src/eixrc/defaults.cc:160
 msgid "The path to the tempfile generated by \"ebuild depend\"."
-msgstr "Der Pfad zu dem mit \"ebuild depend\" generierten Temporärfile."
+msgstr "Der Pfad zu der mit \"ebuild depend\" generierten Temporärdatei."
 
 #: src/eixrc/defaults.cc:164
 msgid "This file is considered as the world file."
@@ -5427,7 +5445,7 @@ msgstr "lokal geändert. Default war:"
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 
-#: src/main/main.cc:91
+#: src/main/main.cc:101
 #, c-format
 msgid ""
 "Received SIGSEGV - you probably found a bug in eix.\n"

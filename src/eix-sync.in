@@ -217,7 +217,7 @@ Push opt "${@}"
 eval "set -- ${opt}"
 set +f
 OPTIND=1
-while getopts 'is:02:UuFl@SMNtTqwWL:c:C:o:rRmHh?' opt
+while getopts 'is:02:UuFl@SMNtTqwWL:c:C:o:rRHh?' opt
 do	case ${opt} in
 	i)	DefaultOpts;;
 	s)	server=${OPTARG};;
@@ -245,7 +245,6 @@ do	case ${opt} in
 	o)	Push updatecmd "${OPTARG}";;
 	r)	clearcache=:;;
 	R)	clearcache=false;;
-	m)	die "`gettext 'eix-sync -m is obsolete; use -M0 instead'`";;
 	H)	statusline=false
 		export NOSTATUSLINE=true;;
 	*)	Usage 0;;

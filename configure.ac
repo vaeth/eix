@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.25.2], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.25.3], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -342,6 +342,8 @@ AS_IF([${warnings}],
 			-Wsuggest-attribute=pure \
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
+			-Wdelete-non-virtual-dtor \
+			-Wzero-as-null-pointer-constant \
 		], [], [], [${quicktrue}])
 		dnl No [${my_cxxfatal}] for warning flags
 dnl We do not use (since it gives too many useless warnings or is only for C):
