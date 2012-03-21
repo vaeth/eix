@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-03-12 20:27+0100\n"
+"POT-Creation-Date: 2012-03-21 19:00+0100\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: German\n"
 
-#: src/eix-functions.sh.in:104 src/eix-update.cc:602 src/eix-update.cc:639
+#: src/eix-functions.sh.in:104 src/eix-update.cc:600 src/eix-update.cc:637
 #: src/eixTk/statusline.cc:57
 msgid "Finished"
 msgstr "Fertig"
@@ -322,7 +322,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:131 src/eix-remote.sh:227 src/eix-update.cc:647
+#: src/eix-layman.sh:131 src/eix-remote.sh:227 src/eix-update.cc:645
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -1441,7 +1441,7 @@ msgstr ""
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:546 src/eix-diff.cc:311 src/eix-update.cc:338
+#: src/eix.cc:546 src/eix-diff.cc:311 src/eix-update.cc:336
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
@@ -1693,85 +1693,85 @@ msgstr "Füge virtuellen Overlay aus %s hinzu...\n"
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Warnung: KEEP_VIRTUALS wegen Änderung des Datenbank-Formats ignoriert"
 
-#: src/eix-update.cc:385
+#: src/eix-update.cc:383
 msgid "Reading Portage settings ..\n"
 msgstr "Lese Portage-Konfiguration...\n"
 
-#: src/eix-update.cc:499
+#: src/eix-update.cc:497
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Ausschluss von PORTDIR: %s\n"
 
-#: src/eix-update.cc:514
+#: src/eix-update.cc:512
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Ausschluss von Overlay: %s\n"
 
-#: src/eix-update.cc:520
+#: src/eix-update.cc:518
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Erzeuge Datenkbank (%s) ...\n"
 
-#: src/eix-update.cc:566
+#: src/eix-update.cc:564
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Ausschluss von \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:588
+#: src/eix-update.cc:586
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (Cache: %s)\n"
 
-#: src/eix-update.cc:593
+#: src/eix-update.cc:591
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
-#: src/eix-update.cc:598
+#: src/eix-update.cc:596
 msgid "     Reading Packages .. "
 msgstr "     Paket-Daten werden gelesen... "
 
-#: src/eix-update.cc:602 src/eix-update.cc:638
+#: src/eix-update.cc:600 src/eix-update.cc:636
 msgid "ABORTED!"
 msgstr "ABBRUCH!"
 
-#: src/eix-update.cc:607
+#: src/eix-update.cc:605
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Lese Category %s|%s (%s%%)"
 
-#: src/eix-update.cc:612
+#: src/eix-update.cc:610
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Paketdaten aus bis zu %s Categorien werden gelesen... "
 
-#: src/eix-update.cc:628
+#: src/eix-update.cc:626
 #, c-format
 msgid ": %s .."
 msgstr ": %s ..."
 
-#: src/eix-update.cc:637
+#: src/eix-update.cc:635
 msgid "EMPTY!"
 msgstr "LEER!"
 
-#: src/eix-update.cc:650
+#: src/eix-update.cc:648
 msgid "Applying masks ..\n"
 msgstr "Maskiere Pakete...\n"
 
-#: src/eix-update.cc:661
+#: src/eix-update.cc:659
 msgid "Calculating hash tables ..\n"
 msgstr "Berechne Hash-Tabellen...\n"
 
-#: src/eix-update.cc:666
+#: src/eix-update.cc:664
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Schreibe Datenbankfile %s...\n"
 
-#: src/eix-update.cc:669
+#: src/eix-update.cc:674
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 
-#: src/eix-update.cc:680
+#: src/eix-update.cc:685
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"

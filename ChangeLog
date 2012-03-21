@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.25.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Set umask 002 in eix-update unless option -o is used, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=408509
+
 *eix-0.25.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce eix-drop-permissions and use it for eix-remote

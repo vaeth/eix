@@ -1,6 +1,5 @@
 
 Things to do perhaps:
-- Support searching in DEPEND, RDEPEND, PDEPEND.
 - Support DEPEND, RDEPEND, PDEPEND for installed packages.
   (See the comments to the depend, rdepend, pdepend properties in the manpage.)
   Once this is implemented:

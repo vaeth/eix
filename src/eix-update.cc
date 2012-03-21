@@ -96,7 +96,7 @@ class RepoName {
 		{ }
 };
 
-static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic);
+static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic);
 static void print_help();
 
 static void
@@ -289,10 +289,9 @@ run_eix_update(int argc, char *argv[])
 	drop_permissions(eixrc);
 	Depend::use_depend = eixrc.getBool("DEP");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
-	string outputfile;
 
 	{ /* calculate defaults for use_{percentage,status} */
-		bool percentage_tty = false;
+		bool percentage_tty(false);
 		if(eixrc.getBool("NOPERCENTAGE")) {
 			use_percentage = false;
 		}
@@ -302,7 +301,7 @@ run_eix_update(int argc, char *argv[])
 		else {
 			percentage_tty = true;
 		}
-		bool status_tty = false;
+		bool status_tty(false);
 		if(eixrc.getBool("NOSTATUSLINE")) {
 			use_status = false;
 		}
@@ -313,7 +312,7 @@ run_eix_update(int argc, char *argv[])
 			status_tty = true;
 		}
 		if(percentage_tty || status_tty) {
-			bool is_tty = (isatty(1) != 0);
+			bool is_tty(isatty(1) != 0);
 			if(percentage_tty) {
 				use_percentage = is_tty;
 			}
@@ -330,7 +329,6 @@ run_eix_update(int argc, char *argv[])
 
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, long_options);
-
 
 	/* Honour a wish for silence */
 	if(unlikely(quiet)) {
@@ -370,11 +368,11 @@ run_eix_update(int argc, char *argv[])
 	}
 
 	/* set the outputfile */
+	string outputfile(eix_cachefile);
+	bool override_umask(true);
 	if(unlikely(outputname != NULL)) {
 		outputfile = outputname;
-	}
-	else {
-		outputfile = eix_cachefile;
+		override_umask = false;
 	}
 
 	Statusline statusline(use_status, (use_status &&
@@ -521,7 +519,7 @@ run_eix_update(int argc, char *argv[])
 
 	/* Update the database from scratch */
 	try {
-		update(outputfile.c_str(), table, portage_settings,
+		update(outputfile.c_str(), table, portage_settings, override_umask,
 			repo_names, excluded_overlays, statusline);
 	} catch(const ExBasic &e) {
 		cerr << e << endl;
@@ -541,7 +539,7 @@ error_callback(const string &str)
 }
 
 static void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic)
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic)
 {
 	DBHeader dbheader;
 	vector<string> categories;
@@ -664,7 +662,14 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	/* And write database back to disk .. */
 	statusline.print(eix::format("Creating %s") % outputfile);
 	INFO(eix::format(_("Writing database file %s ..\n")) % outputfile);
+	mode_t old_umask;
+	if(override_umask) {
+		old_umask = umask(2);
+	}
 	FILE *database_stream(fopen(outputfile, "wb"));
+	if(override_umask) {
+		umask(old_umask);
+	}
 	if(unlikely(database_stream == NULL)) {
 		throw ExBasic(_("Can't open the database file %r for writing (mode = 'wb')"))
 			% outputfile;

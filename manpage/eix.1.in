@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-03-12 18:00:00 +0100 (Mon, 12 Mar 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-03-21 19:00:00 +0100 (Wed, 21 Mar 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -45,7 +45,7 @@ B<eix-diff> compares two binary caches and finds packages that were added, remov
 which the highest stable versions has changed.
 
 All of these programs and scripts read the configuration files described later.
-B<eix-sync> has an additional separate configuration file.
+B<eix-sync> has optionally an additional separate configuration file.
 
 B<eix-sync> can sync the portage/overlay trees and compare them with the old cache
 using B<eix-diff>.
@@ -81,8 +81,12 @@ want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
 with the corresponding I<ARGS>.
 
 B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
-It executes the command given as argument with permissions according to
+It executes the command given as argument with permissions dropped according to
 B<EIX_USER>, B<EIX_GROUP>, B<EIX_UID>, B<EIX_GID> (see later).
+Note that also the binaries B<eix>, B<eix-diff>, and B<eix-update> drop their
+permissions according to these variables as soon as possible, i.e., you might
+have to adjust these variables if you use B<eix> (in particular B<eix-update>)
+in a nonstandard setting.
 
 B<eix-installed> is a simple script which outputs all installed packages
 (in their exact version) and can check for packages installed with/without
@@ -836,8 +840,9 @@ or if TERM does not begin with a TERM_STATUSLINE word.
 .TP
 .BR  -o " " I<outputfile> ", " --output " " I<outputfile>
 With this option, B<eix-update> will write the eix database to I<outputfile>
-instead of B<@EIX_CACHEFILE@>, without testing or changing any permissions
-of that file.
+instead of B<@EIX_CACHEFILE@>.
+When this option is used, the current B<umask> will be honoured:
+otherwise, the B<umask> is forced to B<002> for creating the file.
 .TP
 .BR  -a " " I<overlay> ", " --add-overlay " " I<overlay>
 This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/make.conf
@@ -1942,11 +1947,15 @@ Otherwise, your current world file (if it is readable) overrides that informatio
 .BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
 B<eix>, B<eix-diff>, B<eix-update>, B<eix-drop-permissions>, and B<eix-remote>
 change to the permissions of B<EIX_USER>/B<EIX_GROUP>
-(using B<EIX_UID>/B<EIX_GID> if the former have no valid name)
+(using the ID-numbers B<EIX_UID>/B<EIX_GID> if the former have no valid name)
 as soon as possible.
-If B<EIX_USER> is a valid name and groups are changed, also the grouplist
-of B<EIX_USER> is used.
-(Use an empty B<EIX_USER> with correct B<EIX_UID> if you do not want the latter.)
+To avoid this change, use an invalid name (e.g. the empty name) and a
+non-positive ID-number.
+
+If B<EIX_GROUP> is valid or B<EIX_GID> is positive, then also the grouplist
+is changed according to the following rule:
+If B<EIX_USER> is a valid name, the full grouplist of that user
+is chosen; otherwise, the grouplist is shrinked to a singleton.
 
 .TP
 .BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
