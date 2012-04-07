@@ -13,6 +13,7 @@
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/utils.h>
@@ -32,7 +33,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <fnmatch.h>
@@ -53,7 +53,7 @@ PortageSettings::cstr(const std::string &var) const
 {
 	map<string,string>::const_iterator it(map<string,string>::find(var));
 	if(it == map<string,string>::end())
-		return NULL;
+		return NULLPTR;
 	return it->second.c_str();
 }
 
@@ -90,7 +90,7 @@ static const char *default_accumulating_keys[] = {
 	"CONFIG_*",
 	"FEATURES",
 	"ACCEPT_KEYWORDS",
-	NULL
+	NULLPTR
 };
 
 /** Environment variables which should take effect before reading profiles. */
@@ -98,7 +98,7 @@ static const char *test_in_env_early[] = {
 	"PORTAGE_PROFILE",
 	"PORTDIR",
 	"PORTDIR_OVERLAY",
-	NULL
+	NULLPTR
 };
 
 /** Environment variables which should add/override all other settings. */
@@ -109,14 +109,14 @@ static const char *test_in_env_late[] = {
 	"FEATURES",
 	"ARCH",
 	"ACCEPT_KEYWORDS",
-	NULL
+	NULLPTR
 };
 
 inline static bool
 is_accumulating(const char **accumulating, const char *key)
 {
 	const char *match;
-	while((match = *(accumulating++)) != NULL) {
+	while((match = *(accumulating++)) != NULLPTR) {
 		if(fnmatch(match, key, 0) == 0)
 			return true;
 	}
@@ -126,9 +126,9 @@ is_accumulating(const char **accumulating, const char *key)
 void
 PortageSettings::override_by_env(const char **vars)
 {
-	for(const char *var(*vars); likely(var != NULL); var = *(++vars)) {
+	for(const char *var(*vars); likely(var != NULLPTR); var = *(++vars)) {
 		const char *e(getenv(var));
-		if(e == NULL)
+		if(e == NULLPTR)
 			continue;
 		if(!is_accumulating(default_accumulating_keys, var)) {
 			(*this)[var] = e;
@@ -237,7 +237,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	}
 
 	profile = new CascadingProfile(this, init_world);
-	store_world_sets(NULL);
+	store_world_sets(NULLPTR);
 	bool read_world(false);
 	if(init_world) {
 		if(eixrc.getBool("SAVE_WORLD"))
@@ -256,11 +256,11 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	}
 
 	string &my_path((*this)["PORTDIR"]);
-	profile->listaddFile(my_path + PORTDIR_MASK_FILE, NULL);
+	profile->listaddFile(my_path + PORTDIR_MASK_FILE, NULLPTR);
 	profile->listaddProfile();
 	profile->readMakeDefaults();
 	profile->readremoveFiles();
-	CascadingProfile *local_profile(NULL);
+	CascadingProfile *local_profile(NULLPTR);
 	if(getlocal) {
 		local_profile = new CascadingProfile(*profile);
 	}
@@ -275,14 +275,14 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		}
 		else {
 			delete local_profile;
-			local_profile = NULL;
+			local_profile = NULLPTR;
 		}
 		profile->readremoveFiles();
 	}
 	else {
 		profile->readMakeDefaults();
 		profile->readremoveFiles();
-		user_config = NULL;
+		user_config = NULLPTR;
 	}
 	override_by_env(test_in_env_late);
 
@@ -299,7 +299,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		m_plain_accepted_keywords_set.clear();
 		for(set<string>::const_iterator it(m_accepted_keywords_set.begin());
 			unlikely(it != m_accepted_keywords_set.end()); ++it) {
-			if(strchr("-~", (*it)[0]) == NULL) {
+			if(strchr("-~", (*it)[0]) == NULLPTR) {
 				m_plain_accepted_keywords_set.insert(*it);
 			}
 			else {
@@ -322,7 +322,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		set<string> archset;
 		for(set<string>::const_iterator it(m_arch_set.begin());
 			unlikely(it != m_arch_set.end()); ++it) {
-			if(strchr("-~", (*it)[0]) == NULL) {
+			if(strchr("-~", (*it)[0]) == NULLPTR) {
 				archset.insert(string("~") + *it);
 			}
 		}
@@ -332,7 +332,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	// Finalize global and local cascading profile and create user_config
 	profile->finalize();
 	if(getlocal) {
-		if(local_profile != NULL) {
+		if(local_profile != NULLPTR) {
 			local_profile->finalize();
 		}
 		user_config = new PortageUserConfig(this, local_profile);
@@ -377,12 +377,8 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 
 PortageSettings::~PortageSettings()
 {
-	if(profile != NULL) {
-		delete profile;
-	}
-	if(user_config != NULL) {
-		delete user_config;
-	}
+	delete profile;
+	delete user_config;
 }
 
 void
@@ -505,7 +501,7 @@ PortageSettings::get_setnames(const Package *p, bool also_nonlocal) const
 }
 
 
-static const char *sets_exclude[] = { "..", "." , "system", "world", NULL };
+static const char *sets_exclude[] = { "..", "." , "system", "world", NULLPTR };
 
 void
 PortageSettings::read_local_sets(const vector<string> &dir_list)
@@ -672,12 +668,12 @@ PortageUserConfig::readKeywords() {
 	const string &path(m_settings->m_eprefixconf);
 	string file(path + USER_KEYWORDS_FILE1);
 	if(pushback_lines(file.c_str(), &lines, false, true)) {
-		added = pre_list.handle_file(lines, file, NULL, true);
+		added = pre_list.handle_file(lines, file, NULLPTR, true);
 		lines.clear();
 	}
 	file = (path + USER_KEYWORDS_FILE2);
 	if(pushback_lines(file.c_str(), &lines, false, true)) {
-		added |= pre_list.handle_file(lines, file, NULL,  true);
+		added |= pre_list.handle_file(lines, file, NULLPTR,  true);
 	}
 	if(!added) {
 		return false;
@@ -726,7 +722,7 @@ PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list, Keyw
 	bool rvalue(false);
 	map<Version*, char> counter;
 	MaskList<KeywordMask>::Get *keyword_masks(list->get(p));
-	if(keyword_masks != NULL) {
+	if(keyword_masks != NULLPTR) {
 		for(MaskList<KeywordMask>::Get::const_iterator it(keyword_masks->begin());
 			likely(it != keyword_masks->end()); ++it) {
 			rvalue = true;
@@ -750,7 +746,7 @@ PortageUserConfig::CheckList(Package *p, const MaskList<KeywordMask> *list, Keyw
 		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
 			MaskList<KeywordMask>::Get *key_masks(list->get_setname(m_settings->set_names[*it]));
-			if(key_masks == NULL) {
+			if(key_masks == NULLPTR) {
 				continue;
 			}
 			rvalue = true;
@@ -921,7 +917,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 	map<Version*, vector<string> > sorted_by_versions;
 
 	const MaskList<KeywordMask>::Get *keyword_masks(m_accept_keywords.get(p));
-	if(keyword_masks != NULL) {
+	if(keyword_masks != NULLPTR) {
 		for(MaskList<KeywordMask>::Get::const_iterator it(keyword_masks->begin());
 			likely(it != keyword_masks->end()); ++it) {
 			Mask::Matches matches;
@@ -976,8 +972,8 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 
 		// Were keywords added from /etc/portage/package.accept_keywords?
 		// In this case, the "default" accept_keywords are taken from kv_set_nofile.
-		// Otherwise, kv_set_nofile remains NULL.
-		set<string> *kv_set_nofile(NULL);
+		// Otherwise, kv_set_nofile remains NULLPTR.
+		set<string> *kv_set_nofile(NULLPTR);
 
 		vector<string> &kvfile(sorted_by_versions[*it]);
 		bool calc_lkw(rvalue);
@@ -1032,7 +1028,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			// The point is that we temporarily disable "check" so that
 			// ACCEPT_KEYWORDS does not trigger any -T alarm.
 			bool stable(false);
-			if(kv_set_nofile == NULL) {
+			if(kv_set_nofile == NULLPTR) {
 				// The case that nothing was added from /etc/portage/package.accept_keywords?
 				for(set<string>::const_iterator sit(kv_set.begin());
 					sit != kv_set.end(); ++sit) {
@@ -1132,7 +1128,7 @@ PortageUserConfig::pushback_set_accepted_keywords(vector<string> &result, const 
 	for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
 		unlikely(it != v->sets_indizes.end()); ++it) {
 		const MaskList<KeywordMask>::Get *keyword_masks(m_accept_keywords.get_setname(m_settings->set_names[*it]));
-		if(keyword_masks == NULL)
+		if(keyword_masks == NULLPTR)
 			continue;
 		for(MaskList<KeywordMask>::Get::const_iterator i(keyword_masks->begin());
 			i != keyword_masks->end(); ++i) {

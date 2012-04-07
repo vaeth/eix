@@ -11,6 +11,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 
 #include <iostream>
 #include <locale>
@@ -19,7 +20,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -98,8 +98,8 @@ ExplodeAtom::get_start_of_version(const char *str)
 {
 	// There must be at least one symbol before the version:
 	if(unlikely(*(str++) == '\0'))
-		return NULL;
-	const char *x(NULL);
+		return NULLPTR;
+	const char *x(NULLPTR);
 	while(likely((*str != '\0') && (*str != ':'))) {
 		if(unlikely((*str++ == '-') && (isdigit(*str, localeC))))
 			x = str;
@@ -111,28 +111,28 @@ char *
 ExplodeAtom::split_version(const char *str)
 {
 	const char *x(get_start_of_version(str));
-	if(likely(x != NULL))
+	if(likely(x != NULLPTR))
 		return strdup(x);
-	return NULL;
+	return NULLPTR;
 }
 
 char *
 ExplodeAtom::split_name(const char *str)
 {
 	const char *x(get_start_of_version(str));
-	if(likely(x != NULL))
+	if(likely(x != NULLPTR))
 		return strndup(str, ((x - 1) - str));
-	return NULL;
+	return NULLPTR;
 }
 
 char **
 ExplodeAtom::split(const char *str)
 {
-	static char* out[2] = { NULL, NULL };
+	static char* out[2] = { NULLPTR, NULLPTR };
 	const char *x(get_start_of_version(str));
 
-	if(unlikely(x == NULL))
-		return NULL;
+	if(unlikely(x == NULLPTR))
+		return NULLPTR;
 	out[0] = strndup(str, ((x - 1) - str));
 	out[1] = strdup(x);
 	return out;
@@ -190,7 +190,7 @@ erase_escapes(string &s, const char *at)
 			break;
 		}
 		char c(s[pos]);
-		if((c == '\\') || (strchr(at, c) != NULL))
+		if((c == '\\') || (strchr(at, c) != NULLPTR))
 			s.erase(pos - 1, 1);
 	}
 }
@@ -293,7 +293,7 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, const set<string> *w
 			if(s.erase(key)) {
 				continue;
 			}
-			if(warnignore != NULL) {
+			if(warnignore != NULLPTR) {
 				if(warnignore->find(key) == warnignore->end()) {
 					minuskeyword = true;
 				}
@@ -380,7 +380,7 @@ void
 StringHash::output(const set<string> *skip) const
 {
 	for(vector<string>::const_iterator i(begin()); likely(i != end()); ++i) {
-		if(skip != NULL) {
+		if(skip != NULLPTR) {
 			if(skip->find(*i) != skip->end()) {
 				continue;
 			}

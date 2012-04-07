@@ -16,6 +16,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/unused.h>
 #include <portage/depend.h>
@@ -30,7 +31,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 
 #include <sqlite3.h>
@@ -52,7 +52,7 @@ welldefine(const char *s) ATTRIBUTE_CONST;
 inline static const char *
 welldefine(const char *s)
 {
-	if(s != NULL)
+	if(s != NULLPTR)
 		return s;
 	return "";
 }
@@ -204,21 +204,21 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	// Does the catarg match category?
 	// Currently, we do not add non-matching categories with this method.
 	Category *dest_cat;
-	if(unlikely(packagetree == NULL)) {
+	if(unlikely(packagetree == NULLPTR)) {
 		if(cat_name != catarg)
 			return;
 		dest_cat = category;
 	}
 	else if(never_add_categories) {
 		dest_cat = packagetree->find(catarg);
-		if(unlikely(dest_cat == NULL))
+		if(unlikely(dest_cat == NULLPTR))
 			return;
 	}
 	else {
 		dest_cat =  &((*packagetree)[catarg]);
 	}
 	char **aux(ExplodeAtom::split(name_ver.c_str()));
-	if(unlikely(aux == NULL)) {
+	if(unlikely(aux == NULLPTR)) {
 		m_error_callback(eix::format(_("Can't split %r into package and version")) % name_ver);
 		return;
 	}
@@ -226,7 +226,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	Package *pkg(dest_cat->findPackage(aux[0]));
 
 	/* If none was found create one */
-	if(pkg == NULL)
+	if(pkg == NULLPTR)
 		pkg = dest_cat->addPackage(catarg, aux[0]);
 
 	/* Create a new version and add it to package */
@@ -258,7 +258,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 bool
 SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) throw(ExBasic)
 {
-	char *errormessage(NULL);
+	char *errormessage(NULLPTR);
 	string sqlitefile(m_prefix + PORTAGE_CACHE_PATH + m_scheme);
 	// Cut all trailing '/' and append ".sqlite" to the name
 	string::size_type pos(sqlitefile.find_last_not_of('/'));
@@ -283,7 +283,7 @@ SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category 
 	packagetree = pkgtree;
 	category = cat;
 	cat_name = catname;
-	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, 0, &errormessage);
+	rc = sqlite3_exec(db, "select * from portage_packages", sqlite_callback, NULLPTR, &errormessage);
 	sqlite3_close(db);
 	trueindex.clear();
 	if(rc != SQLITE_OK) {

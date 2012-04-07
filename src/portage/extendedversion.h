@@ -10,14 +10,13 @@
 #ifndef EIX__EXTENDEDVERSION_H__
 #define EIX__EXTENDEDVERSION_H__ 1
 
-#include <portage/basicversion.h>
-#include <portage/depend.h>
 #include <database/types.h>
 #include <eixTk/inttypes.h>
+#include <eixTk/null.h>
+#include <portage/basicversion.h>
+#include <portage/depend.h>
 
 #include <string>
-
-#include <cstddef>
 
 class Package;
 class PortageSettings;
@@ -72,7 +71,7 @@ class ExtendedVersion : public BasicVersion
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
 
-		ExtendedVersion(const char *str = NULL) :
+		ExtendedVersion(const char *str = NULLPTR) :
 			BasicVersion(str),
 			have_bin_pkg_m(HAVEBINPKG_UNKNOWN),
 			restrictFlags(RESTRICT_NONE),

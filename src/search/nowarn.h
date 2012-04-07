@@ -8,6 +8,7 @@
 #ifndef EIX__NOWARN_H__
 #define EIX__NOWARN_H__ 1
 
+#include <eixTk/null.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
@@ -15,8 +16,6 @@
 
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class Package;
 class PortageSettings;
@@ -72,7 +71,7 @@ class NowarnPreList : public PreList
 		NowarnPreList() : super()
 		{ }
 
-		NowarnPreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : super(lines, filename, NULL, only_add)
+		NowarnPreList(const std::vector<std::string> &lines, const std::string &filename, bool only_add) : super(lines, filename, NULLPTR, only_add)
 		{ }
 
 		void initialize(NowarnMaskList &l);

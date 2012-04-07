@@ -8,11 +8,11 @@
 #include <config.h>
 #include "filenames.h"
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
 #include <string>
 
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <fnmatch.h>
@@ -82,44 +82,44 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 	string name;
 	if(resolve)
 	{
-		char *normalized(NULL);
+		char *normalized(NULLPTR);
 #ifdef HAVE_CANONICALIZE_FILE_NAME
 		normalized = canonicalize_file_name(path);
-		if(likely(normalized != NULL)) {
+		if(likely(normalized != NULLPTR)) {
 			if(unlikely(*normalized == '\0')) {
 				free(normalized);
-				normalized = NULL;
+				normalized = NULLPTR;
 			}
 		}
 #endif
 #ifdef HAVE_REALPATH
-		if(unlikely(normalized == NULL)) {
+		if(unlikely(normalized == NULLPTR)) {
 #ifdef PATH_MAX
 			// Some implementations of realpath are vulnerable
 			// against internal buffer overflow, so better test:
 			if(likely(strlen(path) < PATH_MAX)) {
 				normalized = static_cast<char *>(malloc(PATH_MAX + 1));
-				if(likely(normalized != NULL)) {
-					if(unlikely(realpath(path, normalized) == 0)) {
+				if(likely(normalized != NULLPTR)) {
+					if(unlikely(realpath(path, normalized) == NULLPTR)) {
 						free(normalized);
-						normalized = NULL;
+						normalized = NULLPTR;
 					}
 				}
 			}
 #else
 			// We have no idea about the maximal pathlen
-			normalized = realpath(path, NULL);
+			normalized = realpath(path, NULLPTR);
 #endif
-			// Let normalized="" act as normalized=NULL:
-			if(likely(normalized != NULL)) {
+			// Let normalized="" act as normalized=NULLPTR:
+			if(likely(normalized != NULLPTR)) {
 				if(unlikely(*normalized == '\0')) {
 					free(normalized);
-					normalized = NULL;
+					normalized = NULLPTR;
 				}
 			}
 		}
 #endif
-		if(likely(normalized != NULL)) {
+		if(likely(normalized != NULLPTR)) {
 			name = normalized;
 			free(normalized);
 		}

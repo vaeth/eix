@@ -44,6 +44,7 @@ eixTk/formated.h \
 eixTk/i18n.h \
 eixTk/inttypes.h \
 eixTk/likely.h \
+eixTk/null.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \
 eixTk/stringutils.cc \

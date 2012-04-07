@@ -13,6 +13,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
@@ -29,7 +30,6 @@
 #include <vector>
 #include <map>
 
-#include <cstddef>
 #include <cstring>
 
 using namespace std;
@@ -45,8 +45,8 @@ class VersionVariables {
 
 		VersionVariables()
 		{
-			m_version = NULL;
-			m_instver = NULL;
+			m_version = NULLPTR;
+			m_instver = NULLPTR;
 			first = last = slotfirst = slotlast = oneslot = true;
 			isinst = false;
 		}
@@ -67,7 +67,7 @@ class VersionVariables {
 string
 PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 {
-	if((unlikely(vardb == NULL)) || !(vardb->readUse(package, i)))
+	if((unlikely(vardb == NULLPTR)) || !(vardb->readUse(package, i)))
 		return emptystring;
 	if(i.inst_iuse.empty())
 		return emptystring;
@@ -104,12 +104,12 @@ PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
 void
 PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 {
-	if(unlikely(vardb == NULL))
+	if(unlikely(vardb == NULLPTR))
 		return;
-	if(unlikely((unlikely(only_marked)) && (marked_list == NULL)))
+	if(unlikely((unlikely(only_marked)) && (marked_list == NULLPTR)))
 		return;
 	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-	if(vec == NULL)
+	if(vec == NULLPTR)
 		return;
 	bool have_prevversion(false);
 	for(vector<InstVersion>::iterator it(vec->begin());
@@ -138,7 +138,7 @@ PrintFormat::get_versions_versorted(Package *package, Node *root, vector<Version
 	bool have_prevversion(false);
 	for(Package::const_iterator vit(package->begin());
 		likely(vit != package->end()); ++vit) {
-		if(unlikely(versions != NULL)) {
+		if(unlikely(versions != NULLPTR)) {
 			if(likely(find(versions->begin(), versions->end(), *vit) == versions->end()))
 				continue;
 		}
@@ -161,7 +161,7 @@ PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Versio
 {
 	const SlotList *sl(&(package->slotlist()));
 	SlotList::size_type slotnum(0);
-	if(unlikely(versions != NULL)) {
+	if(unlikely(versions != NULLPTR)) {
 		for(SlotList::const_iterator it(sl->begin());
 			likely(it != sl->end()); ++it) {
 			const VersionList *vl(&(it->const_version_list()));
@@ -187,7 +187,7 @@ PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Versio
 		const VersionList *vl(&(it->const_version_list()));
 		for(VersionList::const_iterator vit(vl->begin());
 			likely(vit != vl->end()); ++vit) {
-			if(unlikely(versions != NULL)) {
+			if(unlikely(versions != NULLPTR)) {
 				if(likely(find(versions->begin(), versions->end(), *vit) == versions->end()))
 					continue;
 			}
@@ -531,7 +531,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		}
 		after_colon.assign(name, col + 1, string::npos);
 	}
-	if(unlikely((t == Scanner::VER) && (version_variables == NULL))) {
+	if(unlikely((t == Scanner::VER) && (version_variables == NULLPTR))) {
 		throw ExBasic(_("Property %r used outside version context")) % name;
 	}
 	bool a(false);
@@ -539,7 +539,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::COLON_VER_DATE:
 			if(version_variables->isinst) {
 				InstVersion *i(version_variables->instver());
-				if(likely(vardb != NULL)) {
+				if(likely(vardb != NULLPTR)) {
 					vardb->readInstDate(*package, *i);
 				}
 				return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
@@ -563,16 +563,16 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				VersionVariables *previous_variables(version_variables);
 				version_variables = &variables;
 				string varsortname;
-				string *parsed(NULL);
+				string *parsed(NULLPTR);
 				switch(prop) {
 					case Scanner::COLON_PKG_AVAILABLEVERSIONS:
 						a = true;
 					case Scanner::COLON_PKG_MARKEDVERSIONS:
 						{
-							vector<Version*> *versions(NULL);
+							vector<Version*> *versions(NULLPTR);
 							if(unlikely(!a)) {
 								versions = new vector<Version*>;
-								if(likely(marked_list != NULL)) {
+								if(likely(marked_list != NULLPTR)) {
 									for(Package::const_iterator it(package->begin());
 										likely(it != package->end()); ++it) {
 										if(unlikely(marked_list->is_marked(*package, &(**it)))) {
@@ -595,8 +595,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 									get_versions_slotsorted(package, parse_variable(varsortname), versions);
 								}
 							}
-							if(versions != NULL)
-								delete versions;
+							delete versions;
 						}
 						break;
 					case Scanner::COLON_PKG_BESTVERSIONS:
@@ -605,7 +604,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 						{
 							const Version *ver(package->best(a));
 							variables.setversion(ver);
-							if(likely(ver != NULL)) {
+							if(likely(ver != NULLPTR)) {
 								parsed = &after_colon;
 								recPrint(&(variables.result), package, get_package_property, parse_variable(after_colon));
 							}
@@ -655,7 +654,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::PKG_INSTALLED:
 			if(vardb) {
 				vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-				if((vec != NULL) && (likely(!(vec->empty()))))
+				if((vec != NULLPTR) && (likely(!(vec->empty()))))
 					return one;
 			}
 			break;
@@ -695,10 +694,10 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 					if(it->have_bin_pkg(portagesettings, package))
 						return one;
 				}
-				if(unlikely(vardb == NULL))
+				if(unlikely(vardb == NULLPTR))
 					break;
 				vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-				if(vec == NULL)
+				if(vec == NULLPTR)
 					break;
 				for(vector<InstVersion>::iterator it(vec->begin());
 					likely(it != vec->end()); ++it) {
@@ -774,7 +773,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 			}
 			break;
 		case Scanner::PKG_MARKED:
-			if(likely(marked_list != NULL)) {
+			if(likely(marked_list != NULLPTR)) {
 				if(unlikely(marked_list->is_marked(*package)))
 					return one;
 			}
@@ -829,7 +828,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 				const string *slot;
 				if(version_variables->isinst) {
 					InstVersion *i(version_variables->instver());
-					if(unlikely((vardb == NULL) || !(package->guess_slotname(*i, vardb))))
+					if(unlikely((vardb == NULLPTR) || !(package->guess_slotname(*i, vardb))))
 						i->slotname = "?";
 					slot = &(i->slotname);
 				}
@@ -853,8 +852,8 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::VER_OVERLAYVER:
 			if(version_variables->isinst) {
 				InstVersion *i(version_variables->instver());
-				if(unlikely((unlikely(vardb == NULL)) ||
-					(unlikely(header == NULL)) ||
+				if(unlikely((unlikely(vardb == NULLPTR)) ||
+					(unlikely(header == NULLPTR)) ||
 					(unlikely(!(vardb->readOverlay(*package, *i, *header)))))) {
 					if(a || no_color)
 						return "[?]";
@@ -898,7 +897,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::VER_ISBESTUPGRADES:
 			if(unlikely(version_variables->isinst))
 				break;
-			if(unlikely((likely(vardb != NULL)) && (likely(portagesettings != NULL)) &&
+			if(unlikely((likely(vardb != NULLPTR)) && (likely(portagesettings != NULLPTR)) &&
 				unlikely(package->is_best_upgrade(
 					a,
 					version_variables->version(),
@@ -910,14 +909,14 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::VER_MARKEDVERSION:
 			if(unlikely(version_variables->isinst))
 				break;
-			if(unlikely((likely(marked_list != NULL)) && (unlikely(marked_list->is_marked(*package,
+			if(unlikely((likely(marked_list != NULLPTR)) && (unlikely(marked_list->is_marked(*package,
 				version_variables->version())))))
 				return one;
 			break;
 		case Scanner::VER_INSTALLEDVERSION:
 			if(unlikely(version_variables->isinst))
 				return one;
-			if(unlikely((likely(vardb != NULL)) && (likely(header != NULL)) &&
+			if(unlikely((likely(vardb != NULLPTR)) && (likely(header != NULLPTR)) &&
 				(unlikely(vardb->isInstalledVersion(*package,
 					version_variables->version(), *header))))) {
 				return one;
@@ -926,7 +925,7 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		case Scanner::VER_HAVEUSE:
 			if(version_variables->isinst) {
 				InstVersion &i(*(version_variables->instver()));
-				if((likely(vardb != NULL)) &&
+				if((likely(vardb != NULLPTR)) &&
 					(likely(vardb->readUse(*package, i)))
 					&& !(i.inst_iuse.empty())) {
 					return one;

@@ -73,7 +73,7 @@ AS_VAR_SET([my_gcc_v], [])
 AS_VAR_IF([GXX], [yes],
 	[AC_MSG_CHECKING([gcc version])
 	AS_VAR_SET([my_gcc_v], [`"${CXX}" -dumpversion`])
-	MV_IF_EMPTY([my_gcc_v],
+	MV_IF_EMPTY([${my_gcc_v}],
 		[AS_VAR_SET([my_gcc_v], ["unknown"])])
 	MV_MSG_RESULT_VAR([my_gcc_v])
 	AC_DEFINE_UNQUOTED([GCC_VERSION],
@@ -89,6 +89,14 @@ AC_ARG_ENABLE([debugging],
 	AS_VAR_SET([cmt_debugging], ["on request"])],
 	[AS_VAR_SET([debugging], [false])
 	AS_VAR_SET([cmt_debugging], ["default"])])
+
+AC_ARG_ENABLE([new_dialect],
+	[AS_HELP_STRING([--disable-new-dialect],
+		[do not try to enable most current C++ dialect])],
+	[MV_ENABLE([new_dialect])
+	AS_VAR_SET([cmt_new_dialect], ["on request"])],
+	[AS_VAR_SET([new_dialect], [:])
+	AS_VAR_SET([cmt_new_dialect], ["default"])])
 
 AC_ARG_ENABLE([security],
 	[AS_HELP_STRING([--enable-security],
@@ -143,6 +151,9 @@ AC_ARG_ENABLE([quickcheck],
 
 AC_MSG_CHECKING([whether debugging options should be used])
 MV_MSG_RESULT_BIN([${debugging}], [${cmt_debugging}])
+
+AC_MSG_CHECKING([whether most current C++ dialect should be used])
+MV_MSG_RESULT_BIN([${new_dialect}], [${cmt_new_dialect}])
 
 AC_MSG_CHECKING([whether strong optimization options should be used])
 AS_IF([${debugging}],
@@ -201,19 +212,30 @@ AS_VAR_SET([my_cxxfatal], [])
 AS_VAR_SET([my_ldfatal], [])
 MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [COMPILE], [ \
 		-Werror \
-	], [], [], [${quicktrue}])
+	], [], [], [], [${quicktrue}])
 MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [LINK], [ \
 		-Wl,--fatal-warnings \
-	], [], [], [${quicktrue}])
+	], [], [], [], [${quicktrue}])
 
 # Now the actual testing:
 AS_VAR_SET([my_cxxadd], [])
 AS_VAR_SET([my_ldadd], [])
+
+AS_IF([${new_dialect}],
+	[AS_CASE([" ${CXXFLAGS} ${my_cxxadd}"],
+		[*" -std="*], [],
+		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+				-std=gnu++11 \
+				-std=c++11 \
+				-std=gnu++0x \
+				-std=c++0x \
+			], [${my_cxxfatal}], [], [break], [${quicktrue}])])])
+
 AS_IF([${debugging}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-g \
 			-ggdb3 \
-		], [${my_cxxfatal}], [], [${quicktrue}])])
+		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
 AS_IF([${optimization}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-O2 \
@@ -233,14 +255,14 @@ AS_IF([${optimization}],
 			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
-		], [${my_cxxfatal}], [], [${quicktrue}])
+		], [${my_cxxfatal}], [], [:], [${quicktrue}])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--as-needed \
 			-Wl,--sort-common \
 			-Wl,-z,combreloc \
-		], [${my_ldfatal}], [], [${quicktrue}])])
+		], [${my_ldfatal}], [], [:], [${quicktrue}])])
 AS_IF([${strong_optimization}],
 	AS_VAR_SET([flto], ["-flto -flto-partition=none"])
 	AS_CASE(["${my_gcc_v}"],
@@ -255,7 +277,7 @@ AS_IF([${strong_optimization}],
 			${flto} \
 			-fwhole-program \
 			-Wl,-z,noexecstack \
-		], [${my_ldfatal}], [], [${quicktrue}])
+		], [${my_ldfatal}], [], [:] [${quicktrue}])
 dnl The following is never tried, since the run can succeed but the result
 dnl may fail for some unknown reason on non-GNU systems, see
 dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
@@ -263,7 +285,7 @@ dnl			-Wl,--hash-style=gnu \
 dnl			-Wl,--enable-new-dtags \
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			${flto} \
-		], [${my_cxxfatal}], [], [${quicktrue}])])
+		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
 # If -flto is used during compilation, we can also use -fwhole-program during
 # compilation and should specify -flto during linking.
 # However, -Wl,--warn-common will then give lots of warnings, so we
@@ -290,10 +312,16 @@ AS_IF([${strong_optimization}],
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
-		], [${my_cxxfatal}], [${CPPFLAGS}], [${quicktrue}])])
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])])
 dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
 AS_IF([${warnings}],
+dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
+	AS_VAR_SET([zero_as_null_pointer], [-Wzero-as-null-pointer-constant])
+	AS_CASE([" ${CXXFLAGS} "],
+		[*" -std=c++11 "*], [],
+		[*" -std=gnu++11 "*], [],
+		[AS_VAR_SET([zero_as_null_pointer], [])])
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fno-common \
 			-fdirectives-only \
@@ -343,8 +371,8 @@ AS_IF([${warnings}],
 			-Wsuggest-attribute=const \
 			-Wsuggest-attribute=noreturn \
 			-Wdelete-non-virtual-dtor \
-			-Wzero-as-null-pointer-constant \
-		], [], [], [${quicktrue}])
+			${zero_as_null_pointer} \
+		], [], [], [:], [${quicktrue}])
 		dnl No [${my_cxxfatal}] for warning flags
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
@@ -360,14 +388,14 @@ dnl			-Wpointer-sign \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
 			${warn_common} \
-		], [], [], [${quicktrue}])])
+		], [], [], [:], [${quicktrue}])])
 		dnl No [${my_ldfatal}] for warning flags
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
-		], [${my_cxxfatal}], [], [${quicktrue}])])
+		], [], [], [:], [${quicktrue}])])
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wconversion \
 dnl			-Wswitch-enum \
@@ -385,11 +413,11 @@ AS_IF([${security}],
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
-		], [${my_ldfatal}], [], [${quicktrue}])
+		], [${my_ldfatal}], [], [:], [${quicktrue}])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
-		], [${my_cxxfatal}], [${CPPFLAGS}], [${quicktrue}])])
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])])
 
 # We are done with testing, the real flag mangling takes place:
 MV_PREPEND([CXXFLAGS], [${my_cxxadd}])
@@ -404,7 +432,7 @@ AS_VAR_COPY([my_ldflags], [LDFLAGS])
 # otherwise, the error messages may be too confusing for the user:
 AS_IF([${quickcheck}],
 	[AC_MSG_CHECKING([whether non-checking of options was appropriate])
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
 		[MV_MSG_RESULT([yes])],
 		[MV_MSG_RESULT([no])
 		AS_ECHO(["export CXXFLAGS='${CXXFLAGS}'"])
@@ -540,13 +568,13 @@ AS_IF([${bi_expect_works}],
 # The __attribute__ tests are special: They should even break on warnings:
 AS_VAR_COPY([CXXFLAGS], [oricxxflags])
 AS_VAR_COPY([LDFLAGS], [orildflags])
-MV_APPEND([CXXFLAGS], ["${my_cxxfatal}"])
-MV_APPEND([LDFLAGS], ["${my_ldfatal}"])
+MV_APPEND([CXXFLAGS], [${my_cxxfatal}])
+MV_APPEND([LDFLAGS], [${my_ldfatal}])
 
 # We even switch on explicitly -Wattribute although this should be default:
 MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [COMPILE], [ \
 		-Wattributes \
-	], [], [], [${quicktrue}])
+	], [], [], [], [${quicktrue}])
 
 # Check if __attribute__ ((__unused__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])
@@ -660,6 +688,18 @@ AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST_VIRTUAL],
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])
 AS_VAR_COPY([LDFLAGS], [my_ldflags])
 
+# Check if nullptr works
+AC_MSG_CHECKING([whether nullptr can be used])
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+static const char *a = nullptr;
+	]], [[
+const char *b(nullptr);
+return !((a == b) && (b == nullptr));
+		]])],
+		[MV_MSG_RESULT([yes])
+		AC_DEFINE([HAVE_NULLPTR], [1],
+			[Define if C++ dialect has nullptr type])],
+		[MV_MSG_RESULT([no])])
 
 # What about sqlite?
 AC_MSG_CHECKING([whether sqlite should be used])
@@ -843,7 +883,7 @@ AC_ARG_WITH([zsh-completion],
 	[AS_HELP_STRING([--with-zsh-completion=STR],
 		[install zsh-completion file in directory STR])],
 	[AS_CASE([${withval}],
-		['/'*], [AS_VAR_COPY([ZSH_COMPLETION], [withval])],
+		["/"*], [AS_VAR_COPY([ZSH_COMPLETION], [withval])],
 		[no], [AS_VAR_SET([ZSH_COMPLETION], [])])])
 MV_MSG_RESULT_VAR([ZSH_COMPLETION])
 AC_SUBST([ZSH_COMPLETION])

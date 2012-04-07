@@ -20,6 +20,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/utils.h>
 #include <eixrc/eixrc.h>
 #include <eixrc/global.h>
@@ -39,7 +40,6 @@
 #include <iostream>
 #include <string>
 
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
@@ -91,7 +91,7 @@ bool cli_show_help(false),
 	cli_care,
 	cli_quiet;
 
-const char *var_to_print(NULL);
+const char *var_to_print(NULLPTR);
 
 enum cli_options {
 	O_DUMP = 300,
@@ -117,7 +117,7 @@ static struct Option long_options[] = {
 	Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care),
 	Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet),
 
-	Option(0, 0)
+	Option(NULLPTR, 0)
 };
 
 static void
@@ -125,7 +125,7 @@ load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *
 {
 	FILE *fp(fopen(file, "rb"));
 
-	if(unlikely(fp == NULL)) {
+	if(unlikely(fp == NULLPTR)) {
 		throw ExBasic(_("Can't open the database file %r for reading (mode = 'rb')")) % file;
 	}
 
@@ -280,7 +280,7 @@ run_eix_diff(int argc, char *argv[])
 	ArgumentReader argreader(argc, argv, long_options);
 	ArgumentReader::iterator current_param(argreader.begin());
 
-	if(unlikely(var_to_print != NULL)) {
+	if(unlikely(var_to_print != NULLPTR)) {
 		if(rc.print_var(var_to_print)) {
 			return EXIT_SUCCESS;
 		}
@@ -372,7 +372,7 @@ run_eix_diff(int argc, char *argv[])
 	load_db(old_file.c_str(), &old_header, &old_tree, portagesettings);
 	set_stability_old->set_stability(old_tree);
 
-	format_for_new.set_overlay_translations(NULL);
+	format_for_new.set_overlay_translations(NULLPTR);
 
 	format_for_old = format_for_new;
 

@@ -10,18 +10,18 @@
 #ifndef EIX__OVERLAY_H__
 #define EIX__OVERLAY_H__ 1
 
-#include <string>
+#include <eixTk/null.h>
 
-#include <cstddef>
+#include <string>
 
 class OverlayIdent {
 	public:
 		bool know_path, know_label;
 		std::string path, label;
 
-		OverlayIdent(const char *Path, const char *Label = NULL);
+		OverlayIdent(const char *Path, const char *Label = NULLPTR);
 
-		void readLabel(const char *Path = NULL);
+		void readLabel(const char *Path = NULLPTR);
 
 		void setLabel(const std::string &Label)
 		{ label = Label; know_label = true; }

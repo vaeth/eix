@@ -11,6 +11,7 @@
 #include <database/header.h>
 #include <eixTk/argsreader.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixrc/eixrc.h>
 #include <output/formatstring.h>
@@ -24,7 +25,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 
 using namespace std;
@@ -32,7 +32,7 @@ using namespace std;
 #define FINISH_FORCE do { \
 	matchtree->parse_test(test, curr_pipe); \
 	force_test = curr_pipe = false; \
-	test = NULL; \
+	test = NULLPTR; \
 } while(0)
 
 #define FINISH_TEST do { \
@@ -46,7 +46,7 @@ using namespace std;
 } while(0)
 
 #define USE_TEST do { \
-	if(test == NULL) { \
+	if(test == NULLPTR) { \
 		NEW_TEST; \
 		force_test = true; \
 	} \
@@ -68,7 +68,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 	bool	use_pipe(false),   // A pipe is used somewhere
 		force_test(false), // There is a current test or a pipe
 		curr_pipe(false);  // There is a current pipe
-	PackageTest *test(NULL);   // The current test
+	PackageTest *test(NULLPTR);   // The current test
 
 	for(ArgumentReader::const_iterator arg(ar.begin());
 		likely(arg != ar.end()); ++arg) {
@@ -445,7 +445,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 	}
 	FINISH_TEST;
 	matchtree->end_parse();
-	*marked_list = NULL;
+	*marked_list = NULLPTR;
 
 	if(!use_pipe) {
 		return;
@@ -477,9 +477,9 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			}
 			else {
 				name = word->c_str();
-				ver  = NULL;
+				ver  = NULLPTR;
 			}
-			if(unlikely(*marked_list == NULL)) {
+			if(unlikely(*marked_list == NULLPTR)) {
 				*marked_list = new MarkedList();
 			}
 			(*marked_list)->add(name, ver);

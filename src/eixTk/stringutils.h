@@ -14,6 +14,7 @@
 
 #include <config.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 
 #include <locale>
 #include <map>
@@ -21,7 +22,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 
@@ -32,10 +32,10 @@ char *strndup(const char *s, size_t n);
 #endif
 
 #ifdef HAVE_STRTOUL
-#define my_atoi(a) strtoul(a, NULL, 10)
+#define my_atoi(a) strtoul(a, NULLPTR, 10)
 #else
 #ifdef HAVE_STRTOL
-#define my_atoi(a) strtol(a, NULL, 10)
+#define my_atoi(a) strtol(a, NULLPTR, 10)
 #else
 #define my_atoi(a) atoi(a)
 #endif
@@ -232,7 +232,7 @@ join_and_split(Td &vec, const Ts &s, const std::string &glue = space, const bool
  * @param warnignore       List of keywords for which -keywords might apply
  * @return true            if there was -keyword which did not apply for */
 bool
-resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULL);
+resolve_plus_minus(std::set<std::string> &s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULLPTR);
 
 /// Add items from s to the end of d.
 template<typename T>
@@ -295,7 +295,7 @@ class StringHash : public std::vector<std::string>
 
 		StringHash::size_type get_index(const std::string &s) const;
 
-		void output(const std::set<std::string> *s = NULL) const;
+		void output(const std::set<std::string> *s = NULLPTR) const;
 
 		const std::string& operator[](StringHash::size_type i) const;
 	private:

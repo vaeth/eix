@@ -11,12 +11,11 @@
 
 #include <database/types.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/package.h>
 
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 using namespace std;
 
@@ -66,7 +65,7 @@ PackageTree::find(const string &cat_name) const
 {
 	const_iterator f(Categories::find(cat_name));
 	if(unlikely(f == end())) {
-		return NULL;
+		return NULLPTR;
 	}
 	return f->second;
 }
@@ -74,7 +73,7 @@ PackageTree::find(const string &cat_name) const
 Category &
 PackageTree::insert(const string &cat_name)
 {
-	pair<Categories::iterator,bool> n(Categories::insert(Categories::value_type(cat_name, NULL)));
+	pair<Categories::iterator,bool> n(Categories::insert(Categories::value_type(cat_name, NULLPTR)));
 	Category *&catpoint = (n.first)->second;
 	if(n.second) {
 		return *(catpoint = new Category);
@@ -96,7 +95,7 @@ PackageTree::findPackage(const string &cat_name, const string &pkg_name) const
 {
 	const_iterator f(Categories::find(cat_name));
 	if(unlikely(f == end()))
-		return NULL;
+		return NULLPTR;
 	return f->second->findPackage(pkg_name);
 }
 

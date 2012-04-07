@@ -10,11 +10,11 @@
 #include <config.h>
 #include "sysutils.h"
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 
 #include <string>
 
 #include <clocale>
-#include <cstddef>
 #include <ctime>
 #include <grp.h>
 #include <pwd.h>
@@ -31,7 +31,7 @@ bool
 get_uid_of(const char *name, uid_t *u)
 {
 	struct passwd *pwd(getpwnam(name));
-	if(unlikely(pwd == NULL))
+	if(unlikely(pwd == NULLPTR))
 		return false;
 	*u = pwd->pw_uid;
 	return true;
@@ -45,7 +45,7 @@ bool
 get_gid_of(const char *name, gid_t *g)
 {
 	struct group *grp(getgrnam(name));
-	if(unlikely(grp == NULL))
+	if(unlikely(grp == NULLPTR))
 		return false;
 	*g = grp->gr_gid;
 	return true;
@@ -97,7 +97,7 @@ date_conv(const char *dateFormat, time_t mydate)
 {
 	const int max_datelen = 256;
 	static char buffer[max_datelen];
-	string old_lcall = setlocale(LC_ALL, NULL);
+	string old_lcall = setlocale(LC_ALL, NULLPTR);
 	setlocale(LC_ALL, "");
 	struct tm *loctime(localtime (&mydate));
 	strftime(buffer, max_datelen, dateFormat, loctime);

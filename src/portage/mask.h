@@ -11,6 +11,7 @@
 #define EIX__MASK_H__ 1
 
 #include <eixTk/exceptions.h>
+#include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <portage/basicversion.h>
 #include <portage/keywords.h>
@@ -19,8 +20,6 @@
 #include <search/packagetest.h>
 
 #include <string>
-
-#include <cstddef>
 
 class ExtendedVersion;
 class Package;
@@ -88,7 +87,7 @@ class Mask : public BasicVersion {
 		void apply(Version *ve, bool do_test, Keywords::Redundant check) const;
 
 		/** Parse mask-string. */
-		Mask(const char *str, Type type, const char *repo = NULL);
+		Mask(const char *str, Type type, const char *repo = NULLPTR);
 
 		void match(Matches &m, Package &pkg) const;
 
@@ -122,7 +121,7 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		KeywordMask(const char *str, const char *repo = NULL) : Mask(str, maskTypeNone, repo)
+		KeywordMask(const char *str, const char *repo = NULLPTR) : Mask(str, maskTypeNone, repo)
 		{ }
 
 		void applyItem(Package& pkg) const;
@@ -134,7 +133,7 @@ class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		PKeywordMask(const char *str, const char *repo = NULL) : Mask(str, maskTypeNone, repo)
+		PKeywordMask(const char *str, const char *repo = NULLPTR) : Mask(str, maskTypeNone, repo)
 		{ }
 
 		void applyItem(Package& pkg) const;
@@ -146,7 +145,7 @@ class SetMask : public Mask {
 	public:
 		SetsIndex m_set;
 
-		SetMask(const char *str, SetsIndex set_index, const char *repo = NULL) :
+		SetMask(const char *str, SetsIndex set_index, const char *repo = NULLPTR) :
 			Mask(str, maskTypeNone, repo), m_set(set_index)
 		{ }
 

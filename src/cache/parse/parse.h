@@ -13,12 +13,11 @@
 #include <config.h>
 #include <cache/base.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/null.h>
 #include <portage/extendedversion.h>
 
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class Category;
 class EbuildExec;
@@ -35,11 +34,11 @@ class ParseCache : public BasicCache {
 		std::vector<std::string> m_packages;
 		std::string m_catpath;
 
-		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULL);
+		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULLPTR);
 		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version);
 		void readPackage(Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
 	public:
-		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULL)
+		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR)
 		{ }
 
 		bool initialize(const std::string &name);

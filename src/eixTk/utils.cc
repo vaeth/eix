@@ -12,6 +12,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixrc/global.h>
 
@@ -21,7 +22,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
@@ -37,7 +37,7 @@ scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bo
 	if(!dirhandle)
 		return false;
 	const struct dirent *d;
-	while((d = readdir(dirhandle)) != NULL) {
+	while((d = readdir(dirhandle)) != NULLPTR) {
 		const char *name(d->d_name);
 		// Omit "." and ".." since we must not rely on their existence anyway
 		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d)))
@@ -55,7 +55,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 {
 	string line;
 	ifstream ifstr(file);
-	while(likely(getline(ifstr, line) != 0)) {
+	while(likely(getline(ifstr, line) != NULLPTR)) {
 		if(remove_comments) {
 			string::size_type x(line.find('#'));
 			if(unlikely(x != string::npos))
@@ -73,7 +73,7 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 /** push_back every line of file or dir into v. */
 bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, bool remove_comments)
 {
-	static const char *files_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULL };
+	static const char *files_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 	static int depth(0);
 	vector<string> files;
 	string dir(file);
@@ -122,7 +122,7 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
 	if(pushback_files_exclude)
 	{
 		// Look if it's in exclude
-		for(const char **p(pushback_files_exclude); likely(*p != NULL); ++p)
+		for(const char **p(pushback_files_exclude); likely(*p != NULLPTR); ++p)
 			if(unlikely(strcmp(*p, dir_entry->d_name) == 0))
 				return 0;
 	}
@@ -190,7 +190,7 @@ void dump_version()
 #if defined(GCC_VERSION) || defined(TARGET)
 		" ("
 #ifdef GCC_VERSION
-			"gcc-"GCC_VERSION
+			"gcc-" GCC_VERSION
 #ifdef TARGET
 				", "
 #endif

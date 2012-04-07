@@ -11,11 +11,10 @@
 #define EIX__BASICVERSION_H__ 1
 
 #include <config.h>
+#include <eixTk/null.h>
 
 #include <list>
 #include <string>
-
-#include <cstddef>
 
 class BasicPart
 {
@@ -65,9 +64,9 @@ public:
 class BasicVersion
 {
 public:
-	/// Parse the version-string pointed to by str. If str is NULL, no parsing is done.
-	BasicVersion(const char *str = NULL)
-	{ if(str != NULL) parseVersion(str); }
+	/// Parse the version-string pointed to by str. If str is NULLPTR, no parsing is done.
+	BasicVersion(const char *str = NULLPTR)
+	{ if(str != NULLPTR) parseVersion(str); }
 
 	virtual ~BasicVersion() { }
 

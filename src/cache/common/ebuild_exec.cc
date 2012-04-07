@@ -13,6 +13,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
 #include <eixrc/global.h>
@@ -23,7 +24,6 @@
 #include <vector>
 
 #include <csignal>
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <unistd.h>
@@ -60,9 +60,9 @@ EbuildExec::add_handler()
 	// On a signal, we should cleanup only the signals actually set.
 	got_exit_signal = false;
 #ifdef HAVE_SIGACTION
-	sigaction(SIGHUP, NULL, &handleHUP);
-	sigaction(SIGHUP, NULL, &handleINT);
-	sigaction(SIGHUP, NULL, &handleTERM);
+	sigaction(SIGHUP, NULLPTR, &handleHUP);
+	sigaction(SIGHUP, NULLPTR, &handleINT);
+	sigaction(SIGHUP, NULLPTR, &handleTERM);
 	have_set_signals = true;
 	m_handler.sa_handler = ebuild_sig_handler;
 	m_handler.sa_flags = 0;
@@ -72,19 +72,19 @@ EbuildExec::add_handler()
 		|| ((handleHUP.sa_flags & SA_SIGINFO) != 0)
 #endif
 	)
-		sigaction(SIGHUP, &m_handler, NULL);
+		sigaction(SIGHUP, &m_handler, NULLPTR);
 	if((handleINT.sa_handler != SIG_IGN)
 #ifdef SA_SIGINFO
 		|| ((handleINT.sa_flags & SA_SIGINFO) != 0)
 #endif
 	)
-		sigaction(SIGINT, &m_handler, NULL);
+		sigaction(SIGINT, &m_handler, NULLPTR);
 	if((handleTERM.sa_handler != SIG_IGN)
 #ifdef SA_SIGINFO
 		|| ((handleTERM.sa_flags & SA_SIGINFO) != 0)
 #endif
 	)
-		sigaction(SIGTERM, &m_handler, NULL);
+		sigaction(SIGTERM, &m_handler, NULLPTR);
 #else
 	// ifndef HAVE_SIGACTION
 	handleHUP  = signal(SIGHUP, SIG_IGN);
@@ -106,9 +106,9 @@ EbuildExec::remove_handler()
 	if(!have_set_signals)
 		return;
 #ifdef HAVE_SIGACTION
-	sigaction(SIGHUP,  &handleHUP,  NULL);
-	sigaction(SIGINT,  &handleHUP,  NULL);
-	sigaction(SIGTERM, &handleTERM, NULL);
+	sigaction(SIGHUP,  &handleHUP,  NULLPTR);
+	sigaction(SIGINT,  &handleHUP,  NULLPTR);
+	sigaction(SIGTERM, &handleTERM, NULLPTR);
 #else
 	signal(SIGHUP,  handleHUP);
 	signal(SIGINT,  handleINT);
@@ -121,8 +121,8 @@ EbuildExec::remove_handler()
 bool
 EbuildExec::make_tempfile()
 {
-	char *temp(static_cast<char *>(malloc(256 * sizeof(char))));
-	if(unlikely(temp == NULL))
+	char *temp(new char[256]);
+	if(unlikely(temp == NULLPTR))
 		return false;
 	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");
 	int fd(mkstemp(temp));
@@ -131,7 +131,7 @@ EbuildExec::make_tempfile()
 	calc_settings();
 	cachefile = temp;
 	cache_defined = true;
-	free(temp);
+	delete temp;
 	close(fd);
 	return true;
 }
@@ -160,7 +160,7 @@ EbuildExec::delete_cachefile()
 void
 EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
 {
-	c_env = NULL; envstrings = NULL;
+	c_env = NULLPTR; envstrings = NULLPTR;
 #ifdef HAVE_SETENV
 	if(!use_ebuild_sh)
 		return;
@@ -170,9 +170,9 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	if(!use_ebuild_sh) {
 		if(!(base->portagesettings->export_portdir_overlay))
 			return;
-		for(char **e(environ); likely(*e != NULL); ++e) {
+		for(char **e(environ); likely(*e != NULLPTR); ++e) {
 			const char *s(strchr(*e, '='));
-			if(likely(s != NULL))
+			if(likely(s != NULLPTR))
 				env[string(*e, s - (*e))] = s + 1;
 		}
 		env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
@@ -189,7 +189,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	}
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
-	c_env = static_cast<const char **>(malloc((env.size() + 1) * sizeof(const char *)));
+	c_env = new const char *[env.size() + 1];
 	vector<string>::size_type i(0);
 	if(!env.empty()) {
 		envstrings = new vector<string>(env.size());
@@ -200,7 +200,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 			++i;
 		}
 	}
-	c_env[i] = NULL;
+	c_env[i] = NULLPTR;
 }
 
 static const int EXECLE_FAILED=17;
@@ -218,7 +218,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		if(!make_tempfile()) {
 			base->m_error_callback(_("Creation of tempfile failed"));
 			remove_handler();
-			return NULL;
+			return NULLPTR;
 		}
 	}
 	else {
@@ -235,29 +235,27 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 #endif
 	if(child == -1) {
 		base->m_error_callback(_("Forking failed"));
-		return NULL;
+		return NULLPTR;
 	}
 	if(child == 0)
 	{
 		if(use_ebuild_sh)
-			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULL), c_env);
+			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULLPTR), c_env);
 		else {
 #ifndef HAVE_SETENV
-			if(c_env)
-				execle(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL), c_env);
+			if(c_env != NULLPTR)
+				execle(exec_name, exec_name, name, "depend", static_cast<const char *>(NULLPTR), c_env);
 			else
 #endif
-				execl(exec_name, exec_name, name, "depend", static_cast<const char *>(NULL));
+				execl(exec_name, exec_name, name, "depend", static_cast<const char *>(NULLPTR));
 		}
 		_exit(EXECLE_FAILED);
 	}
 	while(waitpid(-1, &exec_status, 0) != child ) { }
 
 	// Free memory needed only for the child process:
-	if(c_env)
-		free(c_env);
-	if(envstrings)
-		delete envstrings;
+	delete c_env;
+	delete envstrings;
 
 	// Only now we check for the child exit status or signals:
 	if(got_exit_signal)
@@ -270,7 +268,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	if(got_exit_signal) {
 		delete_cachefile();
 		raise(type_of_exit_signal);
-		return NULL;
+		return NULLPTR;
 	}
 	if(WIFEXITED(exec_status)) {
 		if(!(WEXITSTATUS(exec_status))) // the only good case:
@@ -283,7 +281,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	else
 		base->m_error_callback(_("Child aborted in a strange way"));
 	delete_cachefile();
-	return NULL;
+	return NULLPTR;
 }
 
 bool EbuildExec::know_settings = false;
@@ -296,7 +294,7 @@ EbuildExec::calc_settings()
 	if(likely(know_settings))
 		return;
 	know_settings = true;
-	EixRc &eix(get_eixrc(NULL));
+	EixRc &eix(get_eixrc(NULLPTR));
 	exec_ebuild = eix["EXEC_EBUILD"];
 	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];

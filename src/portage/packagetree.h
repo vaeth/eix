@@ -12,13 +12,12 @@
 
 #include <config.h>
 #include <database/types.h>
+#include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class Package;
 
@@ -37,7 +36,7 @@ class Category : public eix::ptr_list<Package> {
 		Package *findPackage(const std::string &pkg_name) const
 		{
 			const_iterator i(find(pkg_name));
-			return ((i == end()) ? NULL : (*i));
+			return ((i == end()) ? NULLPTR : (*i));
 		}
 
 		void addPackage(Package *pkg)

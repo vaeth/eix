@@ -12,11 +12,10 @@
 
 #include <database/types.h>
 #include <eixTk/inttypes.h>
+#include <eixTk/null.h>
 
 #include <set>
 #include <string>
-
-#include <cstddef>
 
 class MaskFlags {
 	public:
@@ -259,10 +258,10 @@ class KeywordSave {
 		MaskFlags     saved_maskflags;
 		bool have_data;
 	public:
-		KeywordSave(const Keywords *k = NULL)
+		KeywordSave(const Keywords *k = NULLPTR)
 		{ store(k); }
 
-		void store(const Keywords *k = NULL)
+		void store(const Keywords *k = NULLPTR)
 		{
 			if(!k) {
 				have_data = false;

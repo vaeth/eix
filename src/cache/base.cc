@@ -10,6 +10,7 @@
 #include "base.h"
 
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/conf/portagesettings.h>
@@ -17,7 +18,6 @@
 #include <map>
 #include <string>
 
-#include <cstddef>
 #include <cstdlib>
 
 using namespace std;
@@ -79,10 +79,10 @@ BasicCache::env_add_package(map<string,string> &env, const Package &package, con
 	// Set default variables
 
 	const char *envptr(getenv("PATH"));
-	if(likely(envptr != NULL))
+	if(likely(envptr != NULLPTR))
 		env["PATH"] = envptr;
 	envptr = getenv("ROOT");
-	if(unlikely(envptr != NULL)) {
+	if(unlikely(envptr != NULLPTR)) {
 		env["ROOT"] = envptr;
 		eroot = envptr + m_prefix;
 	}

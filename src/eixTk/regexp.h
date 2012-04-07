@@ -11,11 +11,11 @@
 #define EIX__REGEXCLASS_H__ 1
 
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 
 #include <iostream>
 #include <string>
 
-#include <cstddef>
 #include <cstdlib>
 #include <regex.h>
 
@@ -49,7 +49,7 @@ class Regex
 				regfree(&m_re);
 				m_compiled = false;
 			}
-			if((regex == NULL) || !(regex[0]))
+			if((regex == NULLPTR) || !(regex[0]))
 				return;
 
 			int retval(regcomp(&m_re, regex, eflags|REG_EXTENDED));
@@ -64,34 +64,34 @@ class Regex
 
 		/// Does the regular expression match s?
 		bool match(const char *s) const
-		{ return (!m_compiled) || (!regexec(get(), s, 0, NULL, 0)); }
+		{ return (!m_compiled) || (!regexec(get(), s, 0, NULLPTR, 0)); }
 
 		/// Does the regular expression match s? Get beginning/end
 		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const
 		{
 			regmatch_t pmatch[1];
 			if(!m_compiled) {
-				if(likely(b != NULL)) {
+				if(likely(b != NULLPTR)) {
 					*b = 0;
 				}
-				if(likely(e != NULL)) {
+				if(likely(e != NULLPTR)) {
 					*e = std::string::npos;
 				}
 				return true;
 			}
 			if(regexec(get(), s, 1, pmatch, 0)) {
-				if(likely(b != NULL)) {
+				if(likely(b != NULLPTR)) {
 					*b = std::string::npos;
 				}
-				if(likely(e != NULL)) {
+				if(likely(e != NULLPTR)) {
 					*e = std::string::npos;
 				}
 				return false;
 			}
-			if(likely(b != NULL)) {
+			if(likely(b != NULLPTR)) {
 				*b = pmatch[0].rm_so;
 			}
-			if(likely(e != NULL)) {
+			if(likely(e != NULLPTR)) {
 				*e = pmatch[0].rm_eo;
 			}
 			return true;

@@ -12,6 +12,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/varsreader.h>
 #include <portage/conf/portagesettings.h>
@@ -22,7 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -66,7 +66,7 @@ short
 EixRc::getBoolTextlist(const string &key, const char **text)
 {
 	const char *s((*this)[key].c_str());
-	for(int i(-1); likely(*text != NULL); ++text, --i) {
+	for(int i(-1); likely(*text != NULLPTR); ++text, --i) {
 		if(!strcasecmp(s, *text)) {
 			return i;
 		}
@@ -81,7 +81,7 @@ bool
 EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
 {
 	r.only &= ~type;
-	if(unlikely(s == NULL)) {
+	if(unlikely(s == NULLPTR)) {
 		r.red &= ~type;
 		return true;
 	}
@@ -159,7 +159,7 @@ EixRc::cstr(const string &key) const
 {
 	map<string,string>::const_iterator s(main_map.find(key));
 	if(s == main_map.end()) {
-		return NULL;
+		return NULLPTR;
 	}
 	return (s->second).c_str();
 }
@@ -168,15 +168,15 @@ const char *
 EixRc::prefix_cstr(const string &key) const
 {
 	const char *s(cstr(key));
-	if(unlikely(s == NULL)) {
-		return NULL;
+	if(unlikely(s == NULLPTR)) {
+		return NULLPTR;
 	}
 	if(s[0]) {
 		return s;
 	}
 	// Maybe later: Test whether some eprefix-variable is set,
-	// and return "" instead of NULL in this case.
-	return NULL;
+	// and return "" instead of NULLPTR in this case.
+	return NULLPTR;
 }
 
 void
@@ -231,7 +231,7 @@ void
 EixRc::add_later_variable(const string &key)
 {
 	set<string> has_delayed;
-	join_key(key, has_delayed, true, NULL);
+	join_key(key, has_delayed, true, NULLPTR);
 	resolve_delayed(key, has_delayed);
 }
 
@@ -242,7 +242,7 @@ EixRc::resolve_delayed(string key, set<string> &has_delayed)
 	const char *errtext;
 	string errvar;
 	if(unlikely(resolve_delayed_recurse(key, visited, has_delayed,
-		&errtext, &errvar) == NULL)) {
+		&errtext, &errvar) == NULLPTR)) {
 		cerr << eix::format(_(
 			"fatal config error: %s in delayed substitution of %s"))
 			% errtext % errvar << endl;
@@ -273,11 +273,11 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 			case DelayedFi:
 				*errtext = _("FI without IF");
 				*errvar = key;
-				return NULL;
+				return NULLPTR;
 			case DelayedElse:
 				*errtext = _("ELSE without IF");
 				*errvar = key;
-				return NULL;
+				return NULLPTR;
 			case DelayedQuote:
 				pos += length - 1 ;
 				value->erase(pos);
@@ -300,7 +300,7 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 		if(unlikely(visited.find(key) != visited.end())) {
 			*errtext = _("self-reference");
 			*errvar = key;
-			return NULL;
+			return NULLPTR;
 		}
 		visited.insert(key);
 		bool have_star(false);
@@ -324,15 +324,15 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 			--varlength;
 		}
 		if(unlikely(varlength < 1))
-			return NULL;
+			return NULLPTR;
 		string *s(resolve_delayed_recurse(
 			(have_star ?
 			(varprefix + value->substr(varpos, varlength)) :
 			value->substr(varpos, varlength)),
 			visited, has_delayed, errtext, errvar));
 		visited.erase(key);
-		if(unlikely(s == NULL))
-			return NULL;
+		if(unlikely(s == NULLPTR))
+			return NULLPTR;
 		string escaped;
 		if(unlikely(have_escape)) {
 			escaped = *s;
@@ -385,7 +385,7 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 					if(unlikely(gotelse)) {
 						*errtext = _("double ELSE");
 						*errvar = key;
-						return NULL;
+						return NULLPTR;
 					}
 					gotelse = true;
 					if(result) {
@@ -407,7 +407,7 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 				case DelayedNotFound:
 					*errtext = _("IF without FI");
 					*errvar = key;
-					return NULL;
+					return NULLPTR;
 				default:
 					continue;
 			}
@@ -421,7 +421,7 @@ override_by_env(map<string,string> &m)
 {
 	for(map<string,string>::iterator it(m.begin()); likely(it != m.end()); ++it) {
 		char *val(getenv((it->first).c_str()));
-		if(unlikely(val != NULL))
+		if(unlikely(val != NULLPTR))
 			it->second = string(val);
 	}
 }
@@ -447,7 +447,7 @@ EixRc::read_undelayed(set<string> &has_delayed)
 	rc.setPrefix("EIXRC_SOURCE");
 
 	const char *rc_file(getenv("EIXRC"));
-	if(unlikely(rc_file != NULL))
+	if(unlikely(rc_file != NULLPTR))
 		rc.read(rc_file);
 	else {
 		// override with EIX_SYSTEMRC
@@ -455,7 +455,7 @@ EixRc::read_undelayed(set<string> &has_delayed)
 
 		// override with EIX_USERRC
 		char *home(getenv("HOME"));
-		if(unlikely(home == NULL)) {
+		if(unlikely(home == NULLPTR)) {
 			cerr << _("No $HOME found in environment.") << endl;
 		}
 		else {
@@ -500,7 +500,7 @@ EixRc::join_key(const string &key, set<string> &has_delayed, bool add_top_to_def
 	else {
 	// If it was not defined in a file, it might be in ENV anyway:
 		char *envval(getenv(key.c_str()));
-		if(unlikely(envval != NULL))
+		if(unlikely(envval != NULLPTR))
 			val = string(envval);
 	}
 	// for the case that some day e.g. prefix_keys (variables with
@@ -732,7 +732,7 @@ EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair &p
 		++it;
 		if(it == a.end())
 		{
-			getRedundantFlagAtom(NULL, type, p.second);
+			getRedundantFlagAtom(NULLPTR, type, p.second);
 			return;
 		}
 		const char *s(it->c_str());
@@ -760,7 +760,7 @@ EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair &p
 		% key % value << endl;
 
 	getRedundantFlagAtom("all-installed", type, p.first);
-	getRedundantFlagAtom(NULL, type, p.second);
+	getRedundantFlagAtom(NULLPTR, type, p.second);
 }
 
 unsigned int
@@ -803,7 +803,7 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 				typestring = "INTEGER";
 				break;
 			case EixRcOption::LOCAL:
-				typestring = NULL;
+				typestring = NULLPTR;
 				break;
 			default:
 				break;
@@ -813,7 +813,7 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 		escape_string(value, doublequotes);
 		string deflt(defaults[i].value);
 		escape_string(deflt, doublequotes);
-		if(unlikely(typestring == NULL)) {
+		if(unlikely(typestring == NULLPTR)) {
 			fprintf(s, "# %s\n%s=\"%s\"\n\n",
 				_("locally added:"),
 				key, value.c_str());
@@ -871,14 +871,14 @@ EixRc::print_var(const string &key)
 	const char *s;
 	if(likely(key != "PORTDIR")) {
 		s = cstr(key);
-		if(likely(s != NULL)) {
+		if(likely(s != NULLPTR)) {
 			cout << s << print_append;
 			return true;
 		}
 	}
 	PortageSettings ps(*this, false, true);
 	s = ps.cstr(key);
-	if(likely(s != NULL)) {
+	if(likely(s != NULLPTR)) {
 		cout << s << print_append;
 		return true;
 	}

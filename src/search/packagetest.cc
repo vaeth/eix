@@ -14,6 +14,7 @@
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/regexp.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
@@ -32,8 +33,6 @@
 #include <set>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class DBHeader;
 class SetStability;
@@ -72,7 +71,7 @@ const PackageTest::TestStability
 		PackageTest::STABLE_NONMASKED,
 		PackageTest::STABLE_SYSTEM;
 
-NowarnMaskList *PackageTest::nowarn_list = NULL;
+NowarnMaskList *PackageTest::nowarn_list = NULLPTR;
 
 PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
 {
@@ -80,10 +79,10 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 	portagesettings = &p;
 	stability= &set_stability;
 	header   = &dbheader;
-	overlay_list = overlay_only_list = in_overlay_inst_list = NULL;
-	algorithm = NULL;
-	from_overlay_inst_list = NULL;
-	from_foreign_overlay_inst_list = NULL;
+	overlay_list = overlay_only_list = in_overlay_inst_list = NULLPTR;
+	algorithm = NULLPTR;
+	from_overlay_inst_list = NULLPTR;
+	from_foreign_overlay_inst_list = NULLPTR;
 
 	field    = NONE;
 	need     = PackageReader::NONE;
@@ -102,27 +101,12 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 }
 
 PackageTest::~PackageTest() {
-	setAlgorithm(NULL);
-	if(overlay_list != NULL) {
-		delete overlay_list;
-		overlay_list = NULL;
-	}
-	if(overlay_only_list != NULL) {
-		delete overlay_only_list;
-		overlay_only_list = NULL;
-	}
-	if(in_overlay_inst_list != NULL) {
-		delete in_overlay_inst_list;
-		in_overlay_inst_list = NULL;
-	}
-	if(from_overlay_inst_list != NULL) {
-		delete from_overlay_inst_list;
-		from_overlay_inst_list = NULL;
-	}
-	if(from_foreign_overlay_inst_list != NULL) {
-		delete from_foreign_overlay_inst_list;
-		from_foreign_overlay_inst_list = NULL;
-	}
+	setAlgorithm(NULLPTR);
+	delete overlay_list;
+	delete overlay_only_list;
+	delete in_overlay_inst_list;
+	delete from_overlay_inst_list;
+	delete from_foreign_overlay_inst_list;
 }
 
 void
@@ -151,10 +135,10 @@ PackageTest::calculateNeeds() {
 		dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete || binary ||
 		world || worldset ||
-		(from_overlay_inst_list != NULL) ||
-		(from_foreign_overlay_inst_list != NULL) ||
-		(overlay_list != NULL) || (overlay_only_list != NULL) ||
-		(in_overlay_inst_list != NULL) ||
+		(from_overlay_inst_list != NULLPTR) ||
+		(from_foreign_overlay_inst_list != NULLPTR) ||
+		(overlay_list != NULLPTR) || (overlay_only_list != NULLPTR) ||
+		(in_overlay_inst_list != NULLPTR) ||
 		(restrictions != ExtendedVersion::RESTRICT_NONE) ||
 		(properties != ExtendedVersion::PROPERTIES_NONE) ||
 		(test_instability != STABLE_NONE) ||
@@ -331,10 +315,10 @@ MatcherClassDefinition(MatcherAlgorithm, PackageTest::MatchAlgorithm, PackageTes
 PackageTest::MatchField
 PackageTest::get_matchfield(const char *p) throw(ExBasic)
 {
-	static auto_ptr<MatcherField> m;
-	if(!m.get()) {
-		EixRc &rc(get_eixrc(NULL));
-		m = auto_ptr<MatcherField>(new MatcherField(rc["DEFAULT_MATCH_FIELD"]));
+	static MatcherField *m(NULLPTR);
+	if(m == NULLPTR) {
+		EixRc &rc(get_eixrc(NULLPTR));
+		m = new MatcherField(rc["DEFAULT_MATCH_FIELD"]);
 	}
 	return m->parse(p);
 }
@@ -342,10 +326,10 @@ PackageTest::get_matchfield(const char *p) throw(ExBasic)
 PackageTest::MatchAlgorithm
 PackageTest::get_matchalgorithm(const char *p) throw(ExBasic)
 {
-	static auto_ptr<MatcherAlgorithm> m;
-	if(!m.get()) {
-		EixRc &rc(get_eixrc(NULL));
-		m = auto_ptr<MatcherAlgorithm>(new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]));
+	static MatcherAlgorithm *m(NULLPTR);
+	if(m == NULLPTR) {
+		EixRc &rc(get_eixrc(NULLPTR));
+		m = new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]);
 	}
 	return m->parse(p);
 }
@@ -374,7 +358,7 @@ PackageTest::setAlgorithm(MatchAlgorithm a)
 			break;
 		case ALGO_FUZZY:
 		default:
-			setAlgorithm(new FuzzyAlgorithm(get_eixrc(NULL).getInteger("LEVENSHTEIN_DISTANCE")));
+			setAlgorithm(new FuzzyAlgorithm(get_eixrc(NULLPTR).getInteger("LEVENSHTEIN_DISTANCE")));
 			break;
 	}
 }
@@ -383,7 +367,7 @@ void
 PackageTest::setPattern(const char *p)
 {
 	if(!know_pattern) {
-		if(algorithm == NULL) {
+		if(algorithm == NULLPTR) {
 			setAlgorithm(get_matchalgorithm(p));
 		}
 
@@ -438,7 +422,7 @@ PackageTest::stringMatch(Package *pkg) const
 		const set<IUse> &s(pkg->iuse.asSet());
 		for(set<IUse>::const_iterator it(s.begin());
 			it != s.end(); ++it) {
-			if((*algorithm)(it->name().c_str(), NULL))
+			if((*algorithm)(it->name().c_str(), NULLPTR))
 				return true;
 		}
 	}
@@ -470,9 +454,9 @@ PackageTest::stringMatch(Package *pkg) const
 		portagesettings->get_setnames(setnames, pkg);
 		for(set<string>::const_iterator it(setnames.begin());
 			likely(it != setnames.end()); ++it) {
-			if((*algorithm)(it->c_str(), NULL))
+			if((*algorithm)(it->c_str(), NULLPTR))
 				return true;
-			if((*algorithm)((string("@") + *it).c_str(), NULL))
+			if((*algorithm)((string("@") + *it).c_str(), NULLPTR))
 				return true;
 		}
 	}
@@ -481,7 +465,7 @@ PackageTest::stringMatch(Package *pkg) const
 		return false;
 
 	vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*pkg));
-	if(installed_versions == NULL)
+	if(installed_versions == NULLPTR)
 		return false;
 
 	if(field & INSTALLED_SLOT) {
@@ -502,14 +486,14 @@ PackageTest::stringMatch(Package *pkg) const
 			if(field & USE_ENABLED) {
 				for(set<string>::iterator uit((it->usedUse).begin());
 					likely(uit != (it->usedUse).end()); ++uit) {
-					if((*algorithm)(uit->c_str(), NULL))
+					if((*algorithm)(uit->c_str(), NULLPTR))
 						return true;
 				}
 			}
 			if(field & USE_DISABLED) {
 				for(vector<string>::iterator uit((it->inst_iuse).begin());
 					likely(uit != (it->inst_iuse).end()); ++uit) {
-					if(!(*algorithm)(uit->c_str(), NULL))
+					if(!(*algorithm)(uit->c_str(), NULLPTR))
 						continue;
 					if((it->usedUse).find(*uit) == (it->usedUse).end())
 						return true;
@@ -537,7 +521,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 	if(r & t.all)// test all, all-installed or all-uninstalled
 	{
 		bool rvalue(false);
-		BasicVersion *prev_ver(NULL);
+		BasicVersion *prev_ver(NULLPTR);
 		for(Package::const_reverse_iterator pi(p.rbegin());
 			likely(pi != p.rend());
 			prev_ver = *pi, ++pi)
@@ -651,7 +635,7 @@ PackageTest::instabilitytest(const Package *p, TestStability what) const
 inline void
 get_p(Package *&p, PackageReader *pkg)
 {
-	if(unlikely(p == NULL)) {
+	if(unlikely(p == NULLPTR)) {
 		p = pkg->get();
 	}
 }
@@ -659,7 +643,7 @@ get_p(Package *&p, PackageReader *pkg)
 bool
 PackageTest::match(PackageReader *pkg) const
 {
-	Package *p(NULL);
+	Package *p(NULLPTR);
 
 	pkg->read(need);
 
@@ -692,7 +676,7 @@ PackageTest::match(PackageReader *pkg) const
 	      ensure the versions really have been read for the package.
 	*/
 
-	if(unlikely(algorithm != NULL)) {
+	if(unlikely(algorithm != NULLPTR)) {
 		get_p(p, pkg);
 		if(!stringMatch(p))
 			return false;
@@ -713,7 +697,7 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 	}
 
-	if(unlikely(overlay_list != NULL)) { // --in-overlay
+	if(unlikely(overlay_list != NULLPTR)) { // --in-overlay
 		get_p(p, pkg);
 		bool have(false);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
@@ -726,7 +710,7 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 	}
 
-	if(unlikely(overlay_only_list != NULL)) { // --only-in-overlay
+	if(unlikely(overlay_only_list != NULLPTR)) { // --only-in-overlay
 		get_p(p, pkg);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end()))
@@ -745,12 +729,12 @@ PackageTest::match(PackageReader *pkg) const
 		}
 	}
 
-	if(unlikely(in_overlay_inst_list != NULL)) {
+	if(unlikely(in_overlay_inst_list != NULLPTR)) {
 		// --installed-in-[some-]overlay
 		get_p(p, pkg);
 		bool have(false);
 		bool get_installed(true);
-		vector<InstVersion> *installed_versions(NULL);
+		vector<InstVersion> *installed_versions(NULLPTR);
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(in_overlay_inst_list->find(it->overlay_key) == in_overlay_inst_list->end())
 				continue;
@@ -758,7 +742,7 @@ PackageTest::match(PackageReader *pkg) const
 				get_installed = false;
 				installed_versions = vardbpkg->getInstalledVector(*p);
 			}
-			if(installed_versions == NULL)
+			if(installed_versions == NULLPTR)
 				continue;
 			if(VarDbPkg::isInVec(installed_versions, *it)) {
 				have = true;
@@ -769,18 +753,18 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 	}
 
-	if(unlikely((from_overlay_inst_list != NULL) ||
-	   (from_foreign_overlay_inst_list != NULL))) {
+	if(unlikely((from_overlay_inst_list != NULLPTR) ||
+	   (from_foreign_overlay_inst_list != NULLPTR))) {
 	   // -J or --installed-from-overlay
 		get_p(p, pkg);
 		bool have(false);
 		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-		if(installed_versions == NULL)
+		if(installed_versions == NULLPTR)
 			return false;
 		for(vector<InstVersion>::iterator it(installed_versions->begin());
 			likely(it != installed_versions->end()); ++it) {
 			if(vardbpkg->readOverlay(*p, *it, *header)) {
-				if(from_overlay_inst_list == NULL)
+				if(from_overlay_inst_list == NULLPTR)
 					continue;
 				if(from_overlay_inst_list->find(it->overlay_key) == from_overlay_inst_list->end())
 					continue;
@@ -824,7 +808,7 @@ PackageTest::match(PackageReader *pkg) const
 		}
 		if(!found) {
 			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-			if(installed_versions == NULL)
+			if(installed_versions == NULLPTR)
 				return false;
 			for(vector<InstVersion>::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
@@ -851,7 +835,7 @@ PackageTest::match(PackageReader *pkg) const
 		}
 		if(!found) {
 			vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-			if(installed_versions == NULL)
+			if(installed_versions == NULLPTR)
 				return false;
 			for(vector<InstVersion>::iterator it(installed_versions->begin());
 				likely(it != installed_versions->end()); ++it) {
@@ -871,7 +855,7 @@ PackageTest::match(PackageReader *pkg) const
 			(redundant_flags == Keywords::RED_NOTHING))
 			return false;
 
-		if(nowarn_list == NULL) {
+		if(nowarn_list == NULLPTR) {
 			get_nowarn_list();
 		}
 		get_p(p, pkg);
@@ -959,7 +943,7 @@ PackageTest::match(PackageReader *pkg) const
 			return false;
 		}
 		vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*p));
-		if(installed_versions == NULL) {
+		if(installed_versions == NULLPTR) {
 			return false;
 		}
 		if(test_ins & INS_MASKED) {
@@ -1067,12 +1051,12 @@ PackageTest::get_nowarn_list()
 {
 	NowarnPreList prelist;
 	vector<string> name;
-	EixRc &rc(get_eixrc(NULL));
+	EixRc &rc(get_eixrc(NULLPTR));
 	split_string(name, rc["PACKAGE_NOWARN"], true);
 	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
 		vector<string> lines;
 		pushback_lines(it->c_str(), &lines, false, true);
-		prelist.handle_file(lines, *it, NULL, true);
+		prelist.handle_file(lines, *it, NULLPTR, true);
 	}
 	nowarn_list = new NowarnMaskList;
 	prelist.initialize(*nowarn_list);

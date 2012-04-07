@@ -10,6 +10,7 @@
 #include "mask_list.h"
 #include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 #include <portage/keywords.h>
@@ -19,8 +20,6 @@
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class Version;
 
@@ -55,7 +54,7 @@ bool
 MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
 {
 	Get *masks(get(p));
-	if(masks == NULL) {
+	if(masks == NULLPTR) {
 		return false;
 	}
 	bool had_mask(false);
@@ -104,7 +103,7 @@ void
 MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const
 {
 	Get *masks(get_setname(set_name));
-	if(masks == NULL) {
+	if(masks == NULLPTR) {
 		return;
 	}
 	for(Get::const_iterator it(masks->begin());
@@ -117,7 +116,7 @@ MaskList<Mask>::applySetMasks(Version *v, const string &set_name) const
 PreListFilename::PreListFilename(const string &n, const char *label)
 {
 	filename = n;
-	if(label == NULL) {
+	if(label == NULLPTR) {
 		know_repo = false;
 		return;
 	}
@@ -131,21 +130,21 @@ PreListFilename::repo() const
 	if(know_repo) {
 		return m_repo.c_str();
 	}
-	return NULL;
+	return NULLPTR;
 }
 
 bool
 PreList::handle_lines(const vector<string> &lines, FilenameIndex file, const bool only_add, LineNumber *num)
 {
 	bool changed(false);
-	LineNumber number((num == NULL) ? 1 : (*num));
+	LineNumber number((num == NULLPTR) ? 1 : (*num));
 	for(vector<string>::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++it) {
 		if(handle_line(*it, file, number++, only_add)) {
 			changed = true;
 		}
 	}
-	if(num != NULL) {
+	if(num != NULLPTR) {
 		*num = number;
 	}
 	return changed;

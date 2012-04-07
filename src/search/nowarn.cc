@@ -8,6 +8,7 @@
 #include "nowarn.h"
 #include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
@@ -19,8 +20,6 @@
 #include <set>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 using namespace std;
 
@@ -94,7 +93,7 @@ void
 NowarnMaskList::apply(Package *p, Keywords::Redundant &r, PackageTest::TestInstalled &i, PortageSettings *portagesettings) const
 {
 	super::Get *masks(get(p));
-	if(masks == NULL) {
+	if(masks == NULLPTR) {
 		return;
 	}
 	bool found(false);
@@ -125,7 +124,7 @@ NowarnMaskList::apply(Package *p, Keywords::Redundant &r, PackageTest::TestInsta
 		for(set<SetsIndex>::const_iterator sit(my_sets.begin());
 			unlikely(sit != my_sets.end()); ++sit) {
 			super::Get *setmasks(get_setname(portagesettings->set_names[*sit]));
-			if(setmasks == NULL) {
+			if(setmasks == NULLPTR) {
 				continue;
 			}
 			for(super::Get::const_iterator m(setmasks->begin());

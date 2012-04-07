@@ -12,15 +12,20 @@
 #include <database/io.h>
 #include <database/types.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/package.h>
 #include <portage/version.h>
 
-#include <cstddef>
 #include <cstdio>
 #include <sys/types.h>
 
 using namespace std;
+
+PackageReader::~PackageReader()
+{
+	delete m_pkg;
+}
 
 void
 PackageReader::read(Attributes need)
@@ -49,9 +54,9 @@ PackageReader::read(Attributes need)
 		case LICENSE:
 			for(io::Versize i(io::read<io::Versize>(m_fp)); likely(i); --i)
 				m_pkg->addVersion(io::read_version(m_fp, *header));
-			if(likely(m_portagesettings != NULL)) {
-				m_portagesettings->calc_local_sets(&(*m_pkg));
-				m_portagesettings->finalize(&(*m_pkg));
+			if(likely(m_portagesettings != NULLPTR)) {
+				m_portagesettings->calc_local_sets(m_pkg);
+				m_portagesettings->finalize(m_pkg);
 			}
 			else {
 				m_pkg->finalize_masks();
@@ -75,7 +80,17 @@ PackageReader::skip()
 		fseek(m_fp, m_next, SEEK_SET);
 #endif
 	}
-	m_pkg.reset();
+}
+
+/// Release the package.
+// Complete the current package, and release it.
+Package *
+PackageReader::release()
+{
+	read();
+	Package *r(m_pkg);
+	m_pkg = NULLPTR;
+	return r;
 }
 
 bool
@@ -99,7 +114,8 @@ PackageReader::next()
 	m_next = off_t(ftell(m_fp)) + len;
 #endif
 	m_have = NONE;
-	m_pkg.reset(new Package());
+	delete m_pkg;
+	m_pkg = new Package;
 	m_pkg->category = m_cat_name;
 
 	return true;
@@ -126,7 +142,8 @@ PackageReader::nextPackage()
 
 	io::read<io::OffsetType>(m_fp);
 	m_have = NONE;
-	m_pkg.reset(new Package());
+	delete m_pkg;
+	m_pkg = new Package;
 	m_pkg->category = m_cat_name;
 	read(ALL);
 	return true;

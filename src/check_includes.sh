@@ -63,6 +63,7 @@ Check 'eixTk/exceptions\.h' -e ExBasic
 Check 'eixTk/formated\.h' -e '::format'
 Check 'eixTk/i18n\.h' -e '_('
 Check 'eixTk/likely\.h' -e 'likely('
+Check 'eixTk/null\.h' -e 'NULLPTR'
 Check 'eixTk/ptr_list\.h' -e 'eix::ptr'
 Check 'eixTk/stringutils\.h' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e emptystring -e '[^a-zA-Z]one[^a-z.)\ ]' -e is_numeric -e tolower -e trim -e StringHash
 Check 'eixTk/unused\.h' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
@@ -73,7 +74,7 @@ Check 'set' -e '[^_]set<'
 Check 'string' -e '[^_]string[^>".,;a-z ]' -e 'std::string' -e '[^_]string [a-zA-Z_0-9]* *[;=(]' -e '[a-z]<string[,>]' -e 'const string '
 Check 'vector' -e '[^_]vector<'
 
-Check 'cstddef' -e NULL
+Check 'cstddef' -e '[^_]NULL\([^P]\|$\)'
 Check 'cstdio' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf(' -e fseek
 Check 'cstdlib' -e '[^_a-z]exit[^_]' -e '[^.>]free[^a-z]' -e malloc -e getenv -e strtol
 Check 'cstring' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strcase -e strerror -e memset -e memcpy

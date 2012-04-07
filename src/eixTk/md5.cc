@@ -8,10 +8,10 @@
 #include <config.h>
 #include "md5.h"
 #include <eixTk/inttypes.h>
+#include <eixTk/null.h>
 
 #include <string>
 
-#include <cstddef>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -264,7 +264,7 @@ verify_md5sum(const char *file, const string &md5sum)
 	if(md5sum.find_first_not_of("0123456789abcdefABCDEF") != string::npos) {
 		return false;
 	}
-	char *filebuffer(NULL);
+	char *filebuffer(NULLPTR);
 	int fd(open(file, O_RDONLY));
 	if(fd == -1) {
 		return false;
@@ -275,7 +275,7 @@ verify_md5sum(const char *file, const string &md5sum)
 		return false;
 	}
 	if(st.st_size != 0) {
-		filebuffer = static_cast<char *>(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+		filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 		close(fd);
 		if (filebuffer == MAP_FAILED) {
 			return false;
@@ -283,7 +283,7 @@ verify_md5sum(const char *file, const string &md5sum)
 	}
 	uint32_t resarr[4];
 	calc_md5sum(filebuffer, st.st_size, resarr);
-	if(filebuffer != NULL) {
+	if(filebuffer != NULLPTR) {
 		munmap(filebuffer, st.st_size);
 	}
 	string::size_type curr(0);

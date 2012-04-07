@@ -11,6 +11,7 @@
 #include <database/header.h>
 #include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/utils.h>
@@ -25,7 +26,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 #include <dirent.h>
 
@@ -41,7 +41,7 @@ sort_installed(map<string, vector<InstVersion> > *maping)
 }
 
 /** Find installed versions of packet "name" in category "category".
- * @return NULL if not found .. else pointer to vector of versions. */
+ * @return NULLPTR if not found .. else pointer to vector of versions. */
 vector<InstVersion> *
 VarDbPkg::getInstalledVector(const string &category, const string &name)
 {
@@ -54,27 +54,27 @@ VarDbPkg::getInstalledVector(const string &category, const string &name)
 
 	map<string, vector<InstVersion> >* installed_cat(map_it->second);
 	/* No such category in db-directory. */
-	if(installed_cat == NULL)
-		return NULL;
+	if(installed_cat == NULLPTR)
+		return NULLPTR;
 
 	/* Find packet */
 	map<string, vector<InstVersion> >::iterator cat_it(installed_cat->find(name));
 	if(cat_it == installed_cat->end())
-		return NULL; /* Not installed */
+		return NULLPTR; /* Not installed */
 	return &(cat_it->second);
 }
 
-/** Returns true if v is in vec. v=NULL is always in vec.
+/** Returns true if v is in vec. v=NULLPTR is always in vec.
     If a serious result is found and r is nonzero, r points to that result */
 bool
 VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion **r)
 {
-	if(likely(vec != NULL)) {
-		if(unlikely(v == NULL))
+	if(likely(vec != NULLPTR)) {
+		if(unlikely(v == NULLPTR))
 			return true;
 		for(vector<InstVersion>::size_type i(0); likely(i < vec->size()); ++i) {
 			if((*vec)[i] == *v) {
-				if(r != NULL)
+				if(r != NULLPTR)
 					*r = &((*vec)[i]);
 				return true;
 			}
@@ -86,7 +86,7 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 short
 VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header)
 {
-	InstVersion *inst(NULL);
+	InstVersion *inst(NULLPTR);
 	if(!isInstalled(p, v, &inst))
 		return 0;
 	if(!readOverlay(p, *inst, header))
@@ -102,7 +102,7 @@ vector<InstVersion>::size_type
 VarDbPkg::numInstalled(const Package &p)
 {
 	vector<InstVersion> *vec(getInstalledVector(p));
-	if(vec == NULL)
+	if(vec == NULLPTR)
 		return 0;
 	return vec->size();
 }
@@ -133,7 +133,7 @@ VarDbPkg::readOverlay(const Package &p, InstVersion &v, const DBHeader& header) 
 			}
 		}
 	}
-	else if(header.find_overlay(&v.overlay_key, v.reponame.c_str(), NULL, 0, DBHeader::OVTEST_LABEL))
+	else if(header.find_overlay(&v.overlay_key, v.reponame.c_str(), NULLPTR, 0, DBHeader::OVTEST_LABEL))
 		return true;
 	v.overlay_failed = true;
 	return false;
@@ -314,8 +314,8 @@ VarDbPkg::readCategory(const char *category)
 
 	/* Open category-directory */
 	string dir_category_name(m_directory + category);
-	if( (dir_category = opendir(dir_category_name.c_str())) == NULL) {
-		installed[category] = NULL;
+	if( (dir_category = opendir(dir_category_name.c_str())) == NULLPTR) {
+		installed[category] = NULLPTR;
 		return;
 	}
 	dir_category_name.append(1, '/');
@@ -323,12 +323,12 @@ VarDbPkg::readCategory(const char *category)
 	installed[category] = category_installed = new map<string, vector<InstVersion> >;
 
 	/* Cycle through this category */
-	while(likely( (package_entry = readdir(dir_category)) != NULL )) {
+	while(likely( (package_entry = readdir(dir_category)) != NULLPTR )) {
 		if(package_entry->d_name[0] == '.')
 			continue; /* Don't want dot-stuff */
 		char **aux(ExplodeAtom::split( package_entry->d_name));
-		InstVersion *instver(NULL);
-		if(aux == NULL)
+		InstVersion *instver(NULLPTR);
+		if(aux == NULLPTR)
 			continue;
 		try {
 			instver = new InstVersion(aux[1]);
@@ -336,7 +336,7 @@ VarDbPkg::readCategory(const char *category)
 		catch(const ExBasic &e) {
 			cerr << e << endl;
 		}
-		if(instver != NULL) {
+		if(instver != NULLPTR) {
 			(*category_installed)[aux[0]].push_back(*instver);
 			delete instver;
 		}

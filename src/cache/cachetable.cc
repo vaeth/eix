@@ -14,11 +14,10 @@
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 
 #include <map>
 #include <string>
-
-#include <cstddef>
 
 using namespace std;
 
@@ -30,7 +29,7 @@ CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const ch
 			return;
 	}
 	const char *cache_method(cache_name.c_str());
-	if(unlikely(override != NULL)) {
+	if(unlikely(override != NULLPTR)) {
 		// If we would look for identical names, we could use the much faster
 		// map<string, string>::const_iterator found = override->find(directory);
 		for(map<string, string>::const_reverse_iterator it(override->rbegin());
@@ -42,7 +41,7 @@ CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const ch
 		}
 	}
 	BasicCache *cache(get_cache(cache_method, m_appending));
-	if(unlikely(cache == NULL)) {
+	if(unlikely(cache == NULLPTR)) {
 		throw ExBasic(_("Unknown cache %r for directory %r"))
 			% cache_method % directory;
 	}

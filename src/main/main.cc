@@ -12,12 +12,12 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 
 #include <iostream>
 #include <string>
 
 #include <csignal>  /* signal handlers */
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #ifdef ENABLE_NLS
@@ -189,7 +189,7 @@ main(int argc, char** argv)
 	my_handler.sa_handler = sig_handler;
 	my_handler.sa_flags = 0;
 	sigemptyset(&(my_handler.sa_mask));
-	sigaction(SIGSEGV, &my_handler, NULL);
+	sigaction(SIGSEGV, &my_handler, NULLPTR);
 #else
 	signal(SIGSEGV, sig_handler);
 #endif

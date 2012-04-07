@@ -11,6 +11,7 @@
 #define EIX__FORMATSTRING_H__ 1
 
 #include <eixTk/exceptions.h>
+#include <eixTk/null.h>
 #include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/package.h>
@@ -21,8 +22,6 @@
 #include <stack>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 typedef signed char FullFlag;
 typedef unsigned char FormatTypeFlags;
@@ -40,7 +39,7 @@ class Node {
 		Node *next;
 		Node(Type t) {
 			type = t;
-			next = NULL;
+			next = NULLPTR;
 		}
 		~Node() {
 			if(next)
@@ -80,7 +79,7 @@ class ConditionBlock : public Node {
 
 		ConditionBlock() : Node(IF) {
 			final = false;
-			if_true = if_false = NULL;
+			if_true = if_false = NULLPTR;
 		}
 
 		~ConditionBlock() {
@@ -147,11 +146,11 @@ class MarkedList : public std::multimap<std::string, BasicVersion*>
 
 		void add(const char *pkg, const char *ver);
 		/** Return pointer to (newly allocated) sorted vector of marked versions,
-		    or NULL. With nonversion argument, its content will decide whether
+		    or NULLPTR. With nonversion argument, its content will decide whether
 		    the package was marked with a non-version argument */
-		std::set<BasicVersion> *get_marked_versions(const Package &pkg, bool *nonversion = NULL) const;
-		/** Return true if pkg is marked. If ver is non-NULL also *ver must match */
-		bool is_marked(const Package &pkg, const BasicVersion *ver = NULL) const;
+		std::set<BasicVersion> *get_marked_versions(const Package &pkg, bool *nonversion = NULLPTR) const;
+		/** Return true if pkg is marked. If ver is non-NULLPTR also *ver must match */
+		bool is_marked(const Package &pkg, const BasicVersion *ver = NULLPTR) const;
 		/** Return String of marked versions (sorted) */
 		std::string getMarkedString(const Package &pkg) const;
 	private:
@@ -244,18 +243,18 @@ class PrintFormat {
 			before_set_use, after_set_use,
 			before_unset_use, after_unset_use;
 
-		PrintFormat(GetProperty get_callback = NULL)
+		PrintFormat(GetProperty get_callback = NULLPTR)
 		{
 			m_get_property = get_callback;
-			virtuals = NULL;
-			overlay_translations = NULL;
-			overlay_used = NULL;
-			some_overlay_used = NULL;
-			marked_list = NULL;
-			eix_rc = NULL;
-			vardb = NULL;
-			portagesettings = NULL;
-			stability = NULL;
+			virtuals = NULLPTR;
+			overlay_translations = NULLPTR;
+			overlay_used = NULLPTR;
+			some_overlay_used = NULLPTR;
+			marked_list = NULLPTR;
+			eix_rc = NULLPTR;
+			vardb = NULLPTR;
+			portagesettings = NULLPTR;
+			stability = NULLPTR;
 		}
 
 		// Initialize those variables common to eix and eix-diff:

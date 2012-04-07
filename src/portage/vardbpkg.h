@@ -11,14 +11,13 @@
 #define EIX__PORTAGECONF_H__ 1
 
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/instversion.h>
 #include <portage/package.h>
 
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class PrintFormat;
 class DBHeader;
@@ -33,7 +32,7 @@ class VarDbPkg {
 		bool get_restrictions, care_of_restrictions, use_build_time;
 
 		/** Find installed versions of packet "name" in category "category".
-		 * @return NULL if not found .. else pointer to vector of versions. */
+		 * @return NULLPTR if not found .. else pointer to vector of versions. */
 		std::vector<InstVersion> *getInstalledVector(const std::string &category, const std::string &name);
 
 		/** Read category from db-directory.
@@ -73,20 +72,20 @@ class VarDbPkg {
 		short check_installed_overlays;
 
 		/** Find installed versions
-		 * @return NULL if not found .. else pointer to vector of versions. */
+		 * @return NULLPTR if not found .. else pointer to vector of versions. */
 		std::vector<InstVersion> *getInstalledVector(const Package &p) {
 			return getInstalledVector(p.category, p.name);
 		}
 
-		/** Returns true if v is in vec. v=NULL is always in vec.
+		/** Returns true if v is in vec. v=NULLPTR is always in vec.
 		    If a serious result is found and r is nonzero, r points to that result */
-		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULL, InstVersion **r = NULL);
+		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR);
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
-		 * @param v If not NULL, check for this BasicVersion.
+		 * @param v If not NULLPTR, check for this BasicVersion.
 		   If a particular version is found and r is nonzero, r points to that version */
-		bool isInstalled(const Package &p, const BasicVersion *v = NULL, InstVersion **r = NULL)
+		bool isInstalled(const Package &p, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR)
 		{ return isInVec(getInstalledVector(p), v, r); }
 
 		/** Test if a particular version is installed from the correct overlay.

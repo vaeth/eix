@@ -16,6 +16,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <portage/basicversion.h>
 #include <portage/depend.h>
@@ -30,7 +31,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdio>
 
 using namespace std;
@@ -57,7 +57,7 @@ read_string_plain(FILE *fp, char *s, string::size_type len)
 inline static void
 write_string_plain(FILE *fp, const string &str)
 {
-	if(fp != NULL) {
+	if(fp != NULLPTR) {
 		if(unlikely(fwrite(static_cast<const void *>(str.c_str()), sizeof(char), str.size(), fp) != str.size())) {
 			throw SysError(_("error while writing to database"));
 		}
@@ -211,7 +211,7 @@ io::write_version(FILE *fp, const Version *v, const DBHeader &hdr)
 	if(hdr.use_depend) {
 		io::OffsetType counter_save(counter);
 		counter = 0;
-		io::write_depend(NULL, v->depend, hdr);
+		io::write_depend(NULLPTR, v->depend, hdr);
 		io::OffsetType counter_diff(counter);
 		counter = counter_save;
 		io::write<io::OffsetType>(fp, counter_diff);
@@ -282,7 +282,7 @@ io::write_package(FILE *fp, const Package &pkg, const DBHeader &hdr)
 {
 	io::OffsetType counter_save(counter);
 	counter = 0;
-	write_package_pure(NULL, pkg, hdr);
+	write_package_pure(NULLPTR, pkg, hdr);
 	io::OffsetType counter_diff(counter);
 	counter = counter_save;
 	io::write<io::OffsetType>(fp, counter_diff);
@@ -376,7 +376,7 @@ io::write_header(FILE *fp, const DBHeader &hdr)
 		io::write<io::UNumber>(fp, 1);
 		io::OffsetType counter_save(counter);
 		counter = 0;
-		io::write_hash(NULL, hdr.depend_hash);
+		io::write_hash(NULLPTR, hdr.depend_hash);
 		io::OffsetType counter_diff(counter);
 		counter = counter_save;
 		io::write<io::OffsetType>(fp, counter_diff);

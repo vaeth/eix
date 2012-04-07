@@ -13,6 +13,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <eixTk/stringutils.h>
 #include <portage/conf/portagesettings.h>
@@ -23,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdio>
 #include <cstring>
 
@@ -123,7 +123,7 @@ EixCache::get_overlaydat(const DBHeader &header)
 {
 	if((!m_only_overlay) || (m_overlay.empty()))
 		return true;
-	const char *portdir(NULL);
+	const char *portdir(NULLPTR);
 	if(portagesettings)
 			portdir = (*portagesettings)["PORTDIR"].c_str();
 	if(m_overlay == "~") {
@@ -152,7 +152,7 @@ bool
 EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const string &pcat)
 {
 	if(likely(err_msg.empty())) {
-		if(unlikely(packagetree == NULL)) {
+		if(unlikely(packagetree == NULLPTR)) {
 			if(unlikely(cat_name == pcat)) {
 				dest_cat = category;
 				return true;
@@ -160,24 +160,24 @@ EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *
 		}
 		else if(never_add_categories) {
 			dest_cat = packagetree->find(pcat);
-			return (dest_cat != NULL);
+			return (dest_cat != NULLPTR);
 		}
 		else {
 			dest_cat = &((*packagetree)[pcat]);
 			return true;
 		}
 	}
-	dest_cat = NULL;
+	dest_cat = NULLPTR;
 	return false;
 }
 
 void
 EixCache::get_package(Package *p)
 {
-	if(dest_cat == NULL)
+	if(dest_cat == NULLPTR)
 		return;
 	bool have_onetime_info(false), have_pkg(false);
-	Package *pkg(NULL);
+	Package *pkg(NULLPTR);
 	for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 		if(m_only_overlay) {
 			if(likely(it->overlay_key != m_get_overlay))
@@ -191,9 +191,9 @@ EixCache::get_package(Package *p)
 		version->propertiesFlags = it->propertiesFlags;
 		version->iuse = it->iuse;
 		version->depend = it->depend;
-		if(pkg == NULL) {
+		if(pkg == NULLPTR) {
 			pkg = dest_cat->findPackage(p->name);
-			if(pkg != NULL) {
+			if(pkg != NULLPTR) {
 				have_onetime_info = have_pkg = true;
 			}
 			else {
@@ -241,7 +241,7 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		}
 	}
 	FILE *fp(fopen(m_full.c_str(), "rb"));
-	if(unlikely(fp == NULL)) {
+	if(unlikely(fp == NULLPTR)) {
 		allerrors(slaves, eix::format(_("Can't read cache file %s: %s")) %
 			m_full % strerror(errno));
 		m_error_callback(err_msg);
@@ -286,7 +286,7 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		if(!success) {
 			continue;
 		}
-		reader.read(PackageReader::VERSIONS);
+		reader.read();
 		p = reader.get();
 		for(vector<EixCache*>::const_iterator sl(slaves.begin());
 			unlikely(sl != slaves.end()); ++sl) {

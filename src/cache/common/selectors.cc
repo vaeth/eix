@@ -10,6 +10,7 @@
 #include "selectors.h"
 
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/regexp.h>
 #include <eixTk/utils.h>
 #include <eixrc/eixrc.h>
@@ -17,7 +18,6 @@
 
 #include <string>
 
-#include <cstddef>
 #include <cstring>
 #include <dirent.h>
 
@@ -49,7 +49,7 @@ string::size_type ebuild_pos(const std::string &str)
 		return false;
 	if(unlikely(!r.compiled())) {
 		string m("\\.ebuild-(");
-		EixRc eixrc(get_eixrc(NULL));
+		EixRc eixrc(get_eixrc(NULLPTR));
 		const string &s(eixrc["EAPI_REGEX"]);
 		if(s.empty()) {
 			is_empty = true;
@@ -60,7 +60,7 @@ string::size_type ebuild_pos(const std::string &str)
 		r.compile(m.c_str());
 	}
 	string::size_type b;
-	if(r.match(str.c_str(), &b, NULL)) {
+	if(r.match(str.c_str(), &b, NULLPTR)) {
 		return b;
 	}
 	return string::npos;

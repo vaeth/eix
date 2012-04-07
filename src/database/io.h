@@ -14,12 +14,12 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdio>
 
 class DBHeader;
@@ -49,7 +49,7 @@ namespace io {
 	inline void
 	writeUChar(FILE *fp, UChar c)
 	{
-		if(fp != NULL) {
+		if(fp != NULLPTR) {
 			if (fputc(c, fp) == EOF)
 				throw SysError(_("error while writing to database"));
 		}

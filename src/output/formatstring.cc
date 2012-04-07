@@ -14,6 +14,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixrc/eixrc.h>
 #include <portage/basicversion.h>
@@ -24,7 +25,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstring>
 
 class PortageSettings;
@@ -39,7 +39,7 @@ MarkedList::add(const char *pkg, const char *ver)
 	if(ver)
 		p.second = new BasicVersion(ver);
 	else
-		p.second = NULL;
+		p.second = NULLPTR;
 	insert(p);
 }
 
@@ -50,45 +50,45 @@ MarkedList::equal_range_pkg(const Package &pkg) const
 }
 
 /** Return pointer to (newly allocated) sorted vector of marked versions,
-    or NULL. With nonversion argument, its content will decide whether
+    or NULLPTR. With nonversion argument, its content will decide whether
     the package was marked with a non-version argument */
 set<BasicVersion> *
 MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
 {
 	CIPair beg_end(equal_range_pkg(pkg));
-	if(nonversion != NULL)
+	if(nonversion != NULLPTR)
 		*nonversion = false;
 	if(likely((beg_end.first == end()) || (beg_end.first == beg_end.second)))// no match
-		return NULL;
-	set<BasicVersion> *ret(NULL);
+		return NULLPTR;
+	set<BasicVersion> *ret(NULLPTR);
 	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it) {
 		BasicVersion *p(it->second);
-		if(p == NULL) {
-			if(nonversion != NULL)
+		if(p == NULLPTR) {
+			if(nonversion != NULLPTR)
 				*nonversion = true;
 			continue;
 		}
-		if(ret == NULL)
+		if(ret == NULLPTR)
 			ret = new set<BasicVersion>;
 		ret->insert(*p);
 	}
-	if(likely(ret == NULL))// No version was explicitly marked
-		return NULL;
+	if(likely(ret == NULLPTR))// No version was explicitly marked
+		return NULLPTR;
 	return ret;
 }
 
-/** Return true if pkg is marked. If ver is non-NULL also *ver must match */
+/** Return true if pkg is marked. If ver is non-NULLPTR also *ver must match */
 bool
 MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 {
 	CIPair beg_end = equal_range_pkg(pkg);
 	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
 		return false;
-	if(ver == NULL) // do not care about versions
+	if(ver == NULLPTR) // do not care about versions
 		return true;
 	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it ) {
 		BasicVersion *p(it->second);
-		if(p != NULL) {
+		if(p != NULLPTR) {
 			if(unlikely(*p == *ver))
 				return true;
 		}
@@ -102,7 +102,7 @@ MarkedList::getMarkedString(const Package &pkg) const
 {
 	bool nonversion;
 	set<BasicVersion> *marked(get_marked_versions(pkg, &nonversion));
-	if(marked == NULL)
+	if(marked == NULLPTR)
 		return nonversion ? "*" : "";
 	string ret;
 	if(nonversion)
@@ -118,7 +118,7 @@ MarkedList::getMarkedString(const Package &pkg) const
 }
 
 LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
-	PackageSave((fmt->recommend_mode) == LOCALMODE_DEFAULT ? NULL : pkg)
+	PackageSave((fmt->recommend_mode) == LOCALMODE_DEFAULT ? NULLPTR : pkg)
 {
 	if((fmt->recommend_mode) == LOCALMODE_DEFAULT)
 		return;
@@ -220,7 +220,7 @@ bool
 PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, Node *root) const
 {
 	bool printed(false);
-	for(; likely(root != NULL); root = root->next) {
+	for(; likely(root != NULLPTR); root = root->next) {
 		switch(root->type) {
 			case Node::TEXT: /* text!! */
 				{
@@ -331,12 +331,12 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBH
 {
 	// The four hackish variables
 	header = dbheader; vardb = vardbpkg; portagesettings = ps; stability = s;
-	version_variables = NULL;
+	version_variables = NULLPTR;
 	varcache.clear_use();
 	user_variables.clear();
-	bool r(recPrint(NULL, entity, get_property, root));
+	bool r(recPrint(NULLPTR, entity, get_property, root));
 	// Reset the four hackish variables
-	header = NULL; vardb = NULL; portagesettings = NULL; stability = NULL;
+	header = NULLPTR; vardb = NULLPTR; portagesettings = NULLPTR; stability = NULLPTR;
 	if(r && magic_newline)
 		fputc('\n', stdout);
 	return r;
@@ -348,7 +348,7 @@ parse_colors(const string &colorstring, bool colors)
 	string ret;
 	FormatParser parser;
 	for(Node *root = parser.start(colorstring.c_str(), colors, true);
-		root != NULL; root = root->next)
+		root != NULLPTR; root = root->next)
 	{
 		if(root->type != Node::TEXT)
 			throw ExBasic(_("Internal error: bad node for parse_colors."));
@@ -404,7 +404,7 @@ FormatParser::state_TEXT()
 	const char *end_of_text("<{(");
 	if(only_colors)
 		end_of_text = "(";
-	while(*band_position && (strchr(end_of_text, *band_position ) == NULL)) {
+	while(*band_position && (strchr(end_of_text, *band_position ) == NULLPTR)) {
 		if(*band_position == '\\') {
 			textbuffer.append(1, get_escape(*(++band_position)));
 		}
@@ -421,7 +421,7 @@ FormatParser::ParserState
 FormatParser::state_COLOR()
 {
 	const char *q(strchr(band_position, ')'));
-	if(q == NULL) {
+	if(q == NULLPTR) {
 		last_error = _("'(' without closing ')'");
 		return ERROR;
 	}
@@ -452,7 +452,7 @@ FormatParser::ParserState
 FormatParser::state_PROPERTY()
 {
 	const char *q(strchr(band_position, '>'));
-	if(q == NULL) {
+	if(q == NULLPTR) {
 		last_error = _("'<' without closing '>'");
 		return ERROR;
 	}
@@ -617,7 +617,7 @@ FormatParser::state_IF()
 FormatParser::ParserState
 FormatParser::state_ELSE()
 {
-	Node *p(NULL), *q(NULL);
+	Node *p(NULLPTR), *q(NULLPTR);
 	if(keller.empty()) {
 		return START;
 	}
@@ -633,7 +633,7 @@ FormatParser::state_ELSE()
 		p = keller.top();
 		keller.pop();
 	}
-	if(q == NULL) {
+	if(q == NULLPTR) {
 		q = new Text("");
 	}
 	(static_cast<ConditionBlock*>(p))->if_true = q;
@@ -644,7 +644,7 @@ FormatParser::state_ELSE()
 FormatParser::ParserState
 FormatParser::state_FI()
 {
-	Node *p = NULL, *q = NULL;
+	Node *p = NULLPTR, *q = NULLPTR;
 	if(keller.empty()) {
 		return START;
 	}
@@ -660,7 +660,7 @@ FormatParser::state_FI()
 		p = keller.top();
 		keller.pop();
 	}
-	if((static_cast<ConditionBlock*>(p))->if_true == NULL) {
+	if((static_cast<ConditionBlock*>(p))->if_true == NULLPTR) {
 		(static_cast<ConditionBlock*>(p))->if_true = q;
 	}
 	else {
@@ -708,7 +708,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 		throw ExBasic(_("Line %r, column %r: %s")) % line % column % last_error;
 	}
 	/* Pop elements and form a single linked list. */
-	Node *p(NULL), *q(NULL);
+	Node *p(NULLPTR), *q(NULLPTR);
 	while(!keller.empty()) {
 		p = keller.top();
 		keller.pop();

@@ -10,12 +10,11 @@
 #define EIX__PRINT_XML_H__ 1
 
 #include <database/types.h>
+#include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <portage/package.h>
 
 #include <string>
-
-#include <cstddef>
 
 class EixRc;
 class DBHeader;
@@ -55,8 +54,8 @@ class PrintXml {
 		PrintXml(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{ init(header, vardb, set_stability, eixrc, port_dir); }
 
-		PrintXml() : hdr(NULL), var_db_pkg(NULL), stability(NULL)
-		{ clear(NULL); }
+		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), stability(NULLPTR)
+		{ clear(NULLPTR); }
 
 		void start();
 		void package(Package *pkg);

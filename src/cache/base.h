@@ -12,6 +12,7 @@
 
 #include <config.h>
 #include <eixTk/exceptions.h>
+#include <eixTk/null.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/unused.h>
 #include <portage/extendedversion.h>
@@ -19,7 +20,6 @@
 #include <map>
 #include <string>
 
-#include <cstddef>
 #include <ctime>
 
 class Category;
@@ -35,7 +35,7 @@ class BasicCache {
 		typedef void (*ErrorCallback)(const std::string &str);
 
 		BasicCache()
-		{ portagesettings = NULL; }
+		{ portagesettings = NULLPTR; }
 
 		/// Virtual deconstructor
 		virtual ~BasicCache()
@@ -89,11 +89,11 @@ class BasicCache {
 		{ return false; }
 
 		/** If available, the function to read multiple categories.
-		    @param packagetree should point to packagetree. The other parameters are only used if packagetree is NULL:
-		    @param cat_name If packagetree is NULL, only packages with this category name are read.
-		    @param category If packagetree is NULL, the packages matching cat_name are added to this category.
+		    @param packagetree should point to packagetree. The other parameters are only used if packagetree is NULLPTR:
+		    @param cat_name If packagetree is NULLPTR, only packages with this category name are read.
+		    @param category If packagetree is NULLPTR, the packages matching cat_name are added to this category.
 		    @return false if some error caused incomplete read. */
-		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULL, Category *category ATTRIBUTE_UNUSED = NULL) throw(ExBasic)
+		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULLPTR, Category *category ATTRIBUTE_UNUSED = NULLPTR) throw(ExBasic)
 		{ UNUSED(packagetree); UNUSED(cat_name); UNUSED(category); return 1; }
 
 		/** Prepare reading Cache for an individual category.
@@ -110,7 +110,7 @@ class BasicCache {
 		    After calling this, readCategoryFinalize() must be called.
 		    @return false if some error caused incomplete read. */
 		virtual bool readCategory(Category &cat) throw(ExBasic)
-		{ return readCategories(NULL, m_catname.c_str(), &cat); }
+		{ return readCategories(NULLPTR, m_catname.c_str(), &cat); }
 
 		/** This must be called to release the data stored with readCategoryPrepare().
 		    After calling this, readCategory() must not be called without a new readCategoryPrepare(). */
@@ -121,7 +121,7 @@ class BasicCache {
 		{ UNUSED(pkg_name); UNUSED(ver_name); return 0; }
 
 		virtual const char *get_md5sum(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
-		{ UNUSED(pkg_name); UNUSED(ver_name); return NULL; }
+		{ UNUSED(pkg_name); UNUSED(ver_name); return NULLPTR; }
 
 		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const
 		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(version); }

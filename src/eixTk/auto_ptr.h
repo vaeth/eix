@@ -10,6 +10,8 @@
 #ifndef EIX__AUTO_PTR_H__
 #define EIX__AUTO_PTR_H__ 1
 
+#include <eixTk/null.h>
+
 namespace eix {
 
 	template<typename m_Type>
@@ -22,8 +24,9 @@ namespace eix {
 
 			~auto_list()
 			{
-				if(m_p)
+				if(m_p != NULLPTR) {
 					delete[] m_p;
+				}
 			}
 
 			m_Type* get() const

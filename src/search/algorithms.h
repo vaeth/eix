@@ -11,6 +11,7 @@
 #define EIX__ALGORITHMS_H__ 1
 
 #include <config.h>
+#include <eixTk/null.h>
 #include <eixTk/regexp.h>
 #include <eixTk/unused.h>
 #include <portage/package.h>
@@ -19,7 +20,6 @@
 #include <map>
 #include <string>
 
-#include <cstddef>
 #include <cstring>
 #include <fnmatch.h>
 
@@ -152,7 +152,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 			unsigned int d(get_levenshtein_distance(search_string.c_str(), s));
 			bool ok(d <= max_levenshteindistance);
 			if(ok) {
-				if(p != NULL)
+				if(p != NULLPTR)
 					levenshtein_map[p->category + "/" + p->name] = d;
 			}
 			return ok;

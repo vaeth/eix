@@ -10,6 +10,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <main/main.h>
 #include <portage/basicversion.h>
@@ -19,7 +20,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 
 using namespace std;
@@ -31,7 +31,7 @@ parse_version(const char *v)
 {
 	static string r;
 	char *s(ExplodeAtom::split_version(v));
-	if(likely(s != NULL)) {
+	if(likely(s != NULLPTR)) {
 		r = s;
 		free(s);
 		return r.c_str();

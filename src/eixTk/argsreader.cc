@@ -10,8 +10,8 @@
 #include "argsreader.h"
 #include <eixTk/likely.h>
 #include <eixTk/i18n.h>
+#include <eixTk/null.h>
 
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -92,14 +92,14 @@ ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 		}
 		++opt_table;
 	}
-	return NULL;
+	return NULLPTR;
 }
 
 unsigned int
 ArgumentReader::numargs(const int opt, struct Option *opt_table)
 {
 	Option *c(lookup_option(opt, opt_table));
-	if(c == NULL)
+	if(c == NULLPTR)
 		return 0;
 	switch(c->type)
 	{
@@ -169,7 +169,7 @@ ArgumentReader::foldAndRemove(struct Option *opt_table)
 		}
 
 		Option *c(lookup_option(it->m_option, opt_table));
-		if(unlikely(c == NULL)) {
+		if(unlikely(c == NULLPTR)) {
 			++it;
 			continue;
 		}

@@ -11,14 +11,13 @@
 #define EIX__CASCADINGPROFILE_H__ 1
 
 #include <eixTk/exceptions.h>
+#include <eixTk/null.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
 #include <portage/overlay.h>
 
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class Package;
 class PortageSettings;
@@ -29,7 +28,7 @@ class ProfileFile {
 	public:
 		OverlayIdent overlay;
 
-		ProfileFile(const std::string &s, const char *path = NULL) :
+		ProfileFile(const std::string &s, const char *path = NULLPTR) :
 			filename(s), overlay(path)
 		{ }
 
@@ -122,7 +121,7 @@ class CascadingProfile {
 
 		/** Cycle through profile and put path to files into
 		 * m_profile_files. */
-		void listaddProfile(const char *profile_dir = NULL) throw(ExBasic);
+		void listaddProfile(const char *profile_dir = NULLPTR) throw(ExBasic);
 
 		/** Put file into m_profile_files */
 		void listaddFile(const std::string &file, const char *path)

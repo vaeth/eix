@@ -12,13 +12,12 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <portage/extendedversion.h>
 
 #include <set>
 #include <string>
-
-#include <cstddef>
 
 using namespace std;
 
@@ -74,7 +73,7 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 	}
 	if(testmode & OVTEST_PATH) {
 		if(minimal == 0) {
-			if(portdir != NULL) {
+			if(portdir != NULLPTR) {
 				if(same_filenames(name, portdir, true)) {
 					*num = 0;
 					return true;

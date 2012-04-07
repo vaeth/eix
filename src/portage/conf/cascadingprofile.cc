@@ -16,6 +16,7 @@
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/utils.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/mask.h>
@@ -26,7 +27,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstring>
 
 /* Path to symlink to profile */
@@ -46,7 +46,7 @@ ProfileFile::have_repo()
 
 
 /** Exclude this files from listing of files in profile. */
-static const char *profile_exclude[] = { "parent", "..", "." , NULL };
+static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 
 /** Add all files from profile and its parents to m_profile_files. */
 bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
@@ -80,7 +80,7 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 	bool r(pushback_files(s, filenames, profile_exclude, 3));
 	for(vector<string>::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
-		listaddFile(*it, NULL);
+		listaddFile(*it, NULLPTR);
 	}
 	return r;
 }
@@ -100,7 +100,7 @@ public:
 		if(it != name_map.end()) {
 			return it->second;
 		}
-		return NULL;
+		return NULLPTR;
 	}
 
 	ProfileFilenames()
@@ -126,11 +126,11 @@ CascadingProfile::readremoveFiles()
 	for(vector<ProfileFile>::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
 		const char *filename(strrchr(file->c_str(), '/'));
-		if(filename == NULL)
+		if(filename == NULLPTR)
 			continue;
 		++filename;
 		CascadingProfile::Handler handler(profile_filenames[filename]);
-		if(handler == NULL) {
+		if(handler == NULLPTR) {
 			continue;
 		}
 
@@ -141,7 +141,7 @@ CascadingProfile::readremoveFiles()
 			repo = file->get_repo().c_str();
 		}
 		else {
-			repo = NULL;
+			repo = NULLPTR;
 		}
 		ret |= (this->*handler)(lines, file->name(), repo);
 	}
@@ -158,12 +158,12 @@ CascadingProfile::readPackages(const vector<string> &lines, const string &filena
 	PreList::LineNumber number(1);
 	for(vector<string>::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++number, ++it) {
+		if(it->empty()) {
+			continue;
+		}
 		/* lines beginning with '*' are m_system-packages
 		 * all others are masked by profile .. if they don't match :) */
 		const char *p(it->c_str());
-		if(p == 0) {
-			continue;
-		}
 		bool remove(*p == '-');
 		if(unlikely(remove)) {
 			++p;

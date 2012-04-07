@@ -12,12 +12,11 @@
 
 #include <config.h>
 #include <eixTk/inttypes.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
 #include <map>
 #include <string>
-
-#include <cstddef>
 
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
@@ -91,7 +90,7 @@ class VarsReader {
 		{
 			std::map<std::string,std::string>::const_iterator i(vars->find(key));
 			if(i == vars->end())
-				return NULL;
+				return NULLPTR;
 			return &(i->second);
 		}
 

@@ -13,6 +13,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
 #include <iostream>
@@ -20,7 +21,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstring>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -66,11 +66,11 @@ const VarsReader::Flags
 bool
 VarsReader::isIncremental(const char *key)
 {
-	if(incremental_keys == NULL)
+	if(incremental_keys == NULLPTR)
 		return false;
 
 	const char **it(incremental_keys);
-	while(likely(*it != NULL)) {
+	while(likely(*it != NULLPTR)) {
 		if(fnmatch(*it++, key, 0) == 0)
 			return true;
 	}
@@ -813,7 +813,7 @@ bool VarsReader::read(const char *filename)
 		close(fd);
 		return true;
 	}
-	filebuffer = static_cast<char *>(mmap(0, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+	filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 	close(fd);
 	if (filebuffer == MAP_FAILED) {
 		throw ExBasic(_("Can't map file %r")) % filename;
@@ -869,7 +869,7 @@ bool VarsReader::source(const string &filename)
 	includefile.setPrefix(source_prefix);
 	string currprefix(source_prefix);
 	if((parse_flags & ALLOW_SOURCE_VARNAME) == ALLOW_SOURCE_VARNAME) {
-		if(vars != NULL) {
+		if(vars != NULLPTR) {
 			// Be careful to not declare the variable...
 			map<string,string>::iterator it(vars->find(source_prefix));
 			if(it != vars->end())

@@ -14,6 +14,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/inttypes.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/package.h>
@@ -24,8 +25,6 @@
 #include <set>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class MatcherAlgorithm;
 class MatcherField;
@@ -92,7 +91,7 @@ class PackageTest {
 
 		void setAlgorithm(BaseAlgorithm *p)
 		{
-			if(algorithm != NULL) {
+			if(algorithm != NULLPTR) {
 				delete algorithm;
 			}
 			algorithm = p;
@@ -113,7 +112,7 @@ class PackageTest {
 		// choice (here --selected) must change the variable unconditionally,
 		// and so the default set in the constructor must have been opposite.
 		// We thus name the variables such that the less restrictive version
-		// corresponds to false/NULL and let the constructor set all to false/NULL.
+		// corresponds to false/NULLPTR and let the constructor set all to false/NULLPTR.
 
 		void Installed()
 		{ installed = true; }
@@ -183,35 +182,35 @@ class PackageTest {
 
 		std::set<ExtendedVersion::Overlay> *OverlayList()
 		{
-			if(likely(overlay_list == NULL))
+			if(likely(overlay_list == NULLPTR))
 				overlay_list = new std::set<ExtendedVersion::Overlay>;
 			return overlay_list;
 		}
 
 		std::set<ExtendedVersion::Overlay> *OverlayOnlyList()
 		{
-			if(likely(overlay_only_list == NULL))
+			if(likely(overlay_only_list == NULLPTR))
 				overlay_only_list = new std::set<ExtendedVersion::Overlay>;
 			return overlay_only_list;
 		}
 
 		std::set<ExtendedVersion::Overlay> *InOverlayInstList()
 		{
-			if(likely(in_overlay_inst_list == NULL))
+			if(likely(in_overlay_inst_list == NULLPTR))
 				in_overlay_inst_list = new std::set<ExtendedVersion::Overlay>;
 			return in_overlay_inst_list;
 		}
 
 		std::set<ExtendedVersion::Overlay> *FromOverlayInstList()
 		{
-			if(likely(from_overlay_inst_list == NULL))
+			if(likely(from_overlay_inst_list == NULLPTR))
 				from_overlay_inst_list = new std::set<ExtendedVersion::Overlay>;
 			return from_overlay_inst_list;
 		}
 
 		std::vector<std::string> *FromForeignOverlayInstList()
 		{
-			if(likely(from_foreign_overlay_inst_list == NULL))
+			if(likely(from_foreign_overlay_inst_list == NULLPTR))
 				from_foreign_overlay_inst_list = new std::vector<std::string>;
 			return from_foreign_overlay_inst_list;
 		}

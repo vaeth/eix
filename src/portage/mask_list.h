@@ -12,6 +12,7 @@
 
 #include <config.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <eixTk/stringutils.h>
 #include <portage/keywords.h>
@@ -23,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <fnmatch.h>
 
 class Package;
@@ -102,7 +102,7 @@ public:
 
 	inline static void push_result(Get *&l, const Masks<m_Type> &r)
 	{
-		if(l == NULL) {
+		if(l == NULLPTR) {
 			l = new Get;
 		}
 		for(m_const_iterator m(r.begin()); likely(m != r.end()); ++m) {
@@ -112,7 +112,7 @@ public:
 
 	Get *get_full(const std::string &full) const
 	{
-		Get *l(NULL);
+		Get *l(NULLPTR);
 		for(const_iterator it(begin()); likely(it != end()); ++it) {
 			if(unlikely(it->match_full(full.c_str()))) {
 				push_result(l, *it);
@@ -165,7 +165,7 @@ public:
 	void applyListItems(Package *p) const
 	{
 		Get *masks(get(p));
-		if(masks == NULL) {
+		if(masks == NULLPTR) {
 			return;
 		}
 		for(typename Get::const_iterator it(masks->begin());
@@ -178,7 +178,7 @@ public:
 	void applyListSetItems(Version *v, const std::string &set_name) const
 	{
 		Get *masks(get_setname(set_name));
-		if(masks == NULL) {
+		if(masks == NULLPTR) {
 			return;
 		}
 		for(typename Get::const_iterator it(masks->begin());
@@ -303,7 +303,7 @@ public:
 
 	/// return true if something was changed
 	bool handle_file(const std::vector<std::string> &lines, const std::string &filename, const char *reponame, bool only_add)
-	{ return handle_lines(lines, push_name(filename, reponame), only_add, NULL); }
+	{ return handle_lines(lines, push_name(filename, reponame), only_add, NULLPTR); }
 
 	/// return true if something was changed
 	bool handle_lines(const std::vector<std::string> &lines, FilenameIndex file, bool only_add, LineNumber *num);

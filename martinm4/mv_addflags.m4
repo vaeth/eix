@@ -6,7 +6,7 @@ dnl  Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 dnl
 dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [COMPILE|LINK|RUN],
 dnl     [sh-list of flags], [sh-list of fatal-flags],
-dnl     [sh-list of skip-flags, e.g. ${CPPFLAGS}], [mode])
+dnl     [sh-list of skip-flags, e.g. ${CPPFLAGS}], [action], [mode])
 dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [COMPILE|LINK|RUN]
 dnl succeeds with the corresponding [CFLAGS]. The flag is skipped if it is
 dnl already contained in [ADDCFLAGS] or in [CFLAGS] or in
@@ -20,6 +20,12 @@ dnl The [sh-list of fatal-flags] (if given) is added to CFLAGS during testing.
 dnl The idea of the latter is that [fatal-flags] should be something like
 dnl -Werror to make compile/link really fail on false flags and thus to
 dnl avoid things like http://bugs.gentoo.org/show_bug.cgi?id=209239
+dnl If [action] is nonempty then in case of a positive match the flag is
+dnl also prepended to CFLAGS, and [action] is executed. action=break means that
+dnl after a successful match no further tests are attempted.
+dnl Note that if [ADDFLAGS] = [CFLAGS] and [action] is nonempty then
+dnl the flag is appended and prepended, hence added twice; so better use
+dnl a dummy variable in [ADDFLAGS] in this case.
 AC_DEFUN([MV_ADDFLAGS],
 	[export $2
 	for mv_currflag in $4
@@ -29,7 +35,7 @@ AC_DEFUN([MV_ADDFLAGS],
 			[AS_CASE([" ${mv_s$2_cache} "],
 				[*" ${mv_currflag} "*], [mv_result=:],
 				[AC_MSG_CHECKING([whether $2=${mv_currflag} is known])
-				MV_IF_EMPTY([$7],
+				MV_IF_EMPTY([$8],
 					[AS_VAR_COPY([mv_saveflags], [$2])
 					MV_APPEND([$2], [$5])
 					MV_APPEND([$2], [${mv_currflag}])
@@ -52,7 +58,7 @@ return my_func();
 						[AC_MSG_RESULT([no])
 						AS_VAR_SET([mv_result], [false])])
 					AS_VAR_COPY([$2], [mv_saveflags])],
-					[AS_IF([$7],
+					[AS_IF([$8],
 						[MV_MSG_RESULT([yes], [on request])
 						AS_VAR_SET([mv_result], [:])],
 						[MV_MSG_RESULT([no], [on request])
@@ -63,5 +69,9 @@ return my_func();
 					[MV_APPEND([mv_f$2_cache],
 						[${mv_currflag}])])])
 			AS_IF([${mv_result}],
-				[MV_APPEND([$1], [${mv_currflag}])])])
+				MV_APPEND([$1], [${mv_currflag}])
+				[m4_ifval([$7],
+					[MV_PREPEND([$2], [${mv_currflag}])
+					$7
+					])])])
 	done])

@@ -11,6 +11,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
@@ -19,7 +20,6 @@
 
 #include <string>
 
-#include <cstddef>
 #include <cstring>
 #include <fnmatch.h>
 
@@ -48,7 +48,7 @@ Mask::Mask(const char *str, Type type, const char *repo)
 {
 	m_type = type;
 	parseMask(str);
-	if((!m_test_reponame) && (repo != NULL)) {
+	if((!m_test_reponame) && (repo != NULLPTR)) {
 		m_test_reponame = true;
 		m_reponame = repo;
 	}
@@ -96,13 +96,13 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	// and if :: occurs, mark the repository part.
 	// If [...] is appended (possibly after : or ::), remove it
 	const char *end(strchr(str, ':'));
-	if(end != NULL) {
+	if(end != NULLPTR) {
 		string *dest;
 		const char *source(end + 1);
 		if((*source) != ':') {
 			m_test_slot = true;
 			const char *slot_end(strchr(source, ':'));
-			if(unlikely(slot_end != NULL)) {
+			if(unlikely(slot_end != NULLPTR)) {
 				m_slotname.assign(source, slot_end - source);
 				if(unlikely(slot_end[1] != ':')) {
 					throw ExBasic(_("Repository name must be separated with :: (one : is missing)"));
@@ -122,7 +122,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 			dest = &m_reponame;
 		}
 		const char *usestart(strchr(source, '['));
-		if((usestart != NULL) && ! strchr(usestart + 1, ']')) {
+		if((usestart != NULLPTR) && ! strchr(usestart + 1, ']')) {
 			dest->assign(source, usestart - source);
 		}
 		else {
@@ -139,8 +139,8 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		m_slotname.clear();
 		m_reponame.clear();
 		end = strchr(str, '[');
-		if((end != NULL) && ! strchr(end + 1, ']'))
-			end = NULL;
+		if((end != NULLPTR) && ! strchr(end + 1, ']'))
+			end = NULLPTR;
 	}
 
 	// Get the rest (name-version|name)
@@ -149,7 +149,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		// There must be a version somewhere
 		p = ExplodeAtom::get_start_of_version(str);
 
-		if(unlikely((p == NULL) || ((end != NULL) && (p >= end)))) {
+		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
 			throw ExBasic(_("You have a operator but we can't find a version-part."));
 		}
 
@@ -158,10 +158,10 @@ Mask::parseMask(const char *str) throw(ExBasic)
 
 		// Check for wildcard-version
 		const char *wildcard(strchr(str, '*'));
-		if(unlikely((unlikely(wildcard != NULL)) &&
-			(likely((end == NULL) || (wildcard <= end))))) {
+		if(unlikely((unlikely(wildcard != NULLPTR)) &&
+			(likely((end == NULLPTR) || (wildcard <= end))))) {
 			if(unlikely((wildcard[1] != '\0') &&
-				// The following is also valid if end=NULL
+				// The following is also valid if end=NULLPTR
 				(wildcard + 1 != end))) {
 				throw ExBasic(_("A '*' is only valid at the end of a version-string."));
 			}
@@ -182,7 +182,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 			m_cached_full = string(str, wildcard);
 		}
 		else {
-			if(end != NULL)
+			if(end != NULLPTR)
 				parseVersion(string(str, end - str));
 			else
 				parseVersion(str);
@@ -191,7 +191,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	else
 	{
 		// Everything else is the package-name
-		if(end != NULL)
+		if(end != NULLPTR)
 			m_name = string(str, end - str);
 		else
 			m_name = str;

@@ -10,13 +10,12 @@
 #include "overlay.h"
 
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/utils.h>
 
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 using namespace std;
 
@@ -24,7 +23,7 @@ static map<string, string> path_label_hash;
 
 OverlayIdent::OverlayIdent(const char *Path, const char *Label)
 {
-	if(Path == NULL) {
+	if(Path == NULLPTR) {
 		path.clear();
 		know_path = false;
 	}
@@ -32,7 +31,7 @@ OverlayIdent::OverlayIdent(const char *Path, const char *Label)
 		path = Path;
 		know_path = true;
 	}
-	if(Label == NULL) {
+	if(Label == NULLPTR) {
 		label.clear();
 		know_label = false;
 		return;
@@ -50,7 +49,7 @@ OverlayIdent::readLabel(const char *Path)
 	know_label = true;
 	vector<string> lines;
 	string my_path;
-	if(Path == NULL) {
+	if(Path == NULLPTR) {
 		if(!know_path) {
 			label.clear();
 			return;

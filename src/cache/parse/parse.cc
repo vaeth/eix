@@ -23,6 +23,7 @@
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/md5.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/varsreader.h>
@@ -31,7 +32,6 @@
 #include <vector>
 #include <string>
 
-#include <cstddef>
 #include <cstdlib>
 #include <ctime>
 
@@ -94,7 +94,7 @@ ParseCache::getType() const
 			s = "parse";
 		}
 	}
-	if(ebuild_exec != NULL) {
+	if(ebuild_exec != NULLPTR) {
 		const char *t;
 		if(ebuild_exec->use_sh()) {
 			t = "ebuild*";
@@ -124,10 +124,10 @@ ParseCache::~ParseCache()
 		likely(it != further.end()); ++it) {
 		delete *it;
 	}
-	if(ebuild_exec != NULL) {
+	if(ebuild_exec != NULLPTR) {
 		ebuild_exec->delete_cachefile();
 		delete ebuild_exec;
-		ebuild_exec = NULL;
+		ebuild_exec = NULLPTR;
 	}
 }
 
@@ -174,9 +174,9 @@ ParseCache::setErrorCallback(ErrorCallback error_callback)
 void
 ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild, bool *ok)
 {
-	bool check((ebuild_exec != NULL) && (ok != NULL) && (*ok));
+	bool check((ebuild_exec != NULLPTR) && (ok != NULLPTR) && (*ok));
 	const string *s(ebuild.find(item));
-	if(s == NULL) {
+	if(s == NULLPTR) {
 		str.clear();
 		if(check) {
 			*ok = false;
@@ -224,7 +224,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
 		set_checking(version->slotname, "SLOT", ebuild, &ok);
 		// Empty SLOT is not ok:
-		if(ok && (ebuild_exec != NULL) && version->slotname.empty())
+		if(ok && (ebuild_exec != NULLPTR) && version->slotname.empty())
 			ok = false;
 		set_checking(restr, "RESTRICT", ebuild);
 		set_checking(props, "PROPERTIES", ebuild);
@@ -257,7 +257,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 	}
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version));
-		if(likely(cachefile != NULL)) {
+		if(likely(cachefile != NULLPTR)) {
 			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, version->depend, m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
@@ -279,7 +279,7 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 	bool have_onetime_info, have_pkg;
 
 	Package *pkg(cat.findPackage(pkg_name));
-	if(pkg != NULL) {
+	if(pkg != NULLPTR) {
 		have_onetime_info = have_pkg = true;
 	}
 	else {
@@ -295,7 +295,7 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 
 		/* Check if we can split it */
 		char *ver(ExplodeAtom::split_version(fileit->substr(0, pos).c_str()));
-		if(unlikely(ver == NULL)) {
+		if(unlikely(ver == NULLPTR)) {
 			m_error_callback(eix::format(_("Can't split filename of ebuild %s/%s")) %
 				directory_path % (*fileit));
 			continue;
@@ -318,7 +318,7 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 		vector<BasicCache*>::const_iterator it(further.begin());
 		for(; likely(it != further.end()); ++it) {
 			const char *s((*it)->get_md5sum(pkg_name.c_str(), ver));
-			if(s != NULL) {
+			if(s != NULLPTR) {
 				if(verify_md5sum(full_path.c_str(), s)) {
 					break;
 				}

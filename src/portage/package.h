@@ -13,6 +13,7 @@
 #include <config.h>
 #include <eixTk/inttypes.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <portage/extendedversion.h>
 #include <portage/instversion.h>
@@ -23,8 +24,6 @@
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 class VarDbPkg;
 class PortageSettings;
@@ -286,7 +285,7 @@ class Package
 		}
 
 		/** Compare best_slots() versions with that installed in v.
-		    if v is NULL, it is assumed that none is installed.
+		    if v is NULLPTR, it is assumed that none is installed.
 		    @return
 			-  0: All installed versions are best and
 			      (unless only_installed) one is installed
@@ -300,7 +299,7 @@ class Package
 		int check_best_slots(VarDbPkg *v, bool only_installed) const;
 
 		/** Compare best() version with that installed in v.
-		    if v is NULL, it is assumed that none is installed.
+		    if v is NULLPTR, it is assumed that none is installed.
 		    @return
 			-  0: All installed versions are best and
 			      (unless only_installed) one is installed
@@ -353,7 +352,7 @@ class Package
 		}
 
 		/** Get the name of a slot of a version.
-		    returns NULL if not found. */
+		    returns NULLPTR if not found. */
 		const char *slotname(const ExtendedVersion &v) const ATTRIBUTE_PURE;
 
 		/** Get the name of a slot of an installed version,
@@ -399,10 +398,10 @@ class PackageSave {
 		typedef std::map<const Version*, KeywordSave> DataType;
 		DataType data;
 	public:
-		PackageSave(const Package *p = NULL)
+		PackageSave(const Package *p = NULLPTR)
 		{ store(p); }
 
-		void store(const Package *p = NULL);
+		void store(const Package *p = NULLPTR);
 
 		void restore(Package *p) const;
 };

@@ -13,16 +13,16 @@
 #include <config.h>
 #include <database/types.h>
 #include <database/header.h>
-#include <portage/package.h>
+#include <eixTk/null.h>
 
 #include <memory>
 #include <string>
 
-#include <cstddef>
 #include <cstdio>
 #include <sys/types.h>
 
 class DBHeader;
+class Package;
 class PortageSettings;
 
 /// Forward-iterate for packages stored in the cachefile.
@@ -37,9 +37,11 @@ class PackageReader {
 
 		/** Initialize with file-stream and number of packages.
 		    @arg ps is used to define the local package sets while version reading */
-		PackageReader(FILE *fp, const DBHeader &hdr, PortageSettings *ps = NULL)
-			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), header(&hdr), m_portagesettings(ps)
+		PackageReader(FILE *fp, const DBHeader &hdr, PortageSettings *ps = NULLPTR)
+			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps)
 		{ }
+
+		~PackageReader();
 
 		/// Read attributes from the database into the current package.
 		void read(Attributes need = ALL);
@@ -48,23 +50,18 @@ class PackageReader {
 		// It's possible that some attributes of the package are not yet read
 		// from the database.
 		Package *get() const
-		{ return m_pkg.get(); }
+		{ return m_pkg; }
 
 		/// Skip the current package.
-		// The current package is deleted and the file pointer is moved to the
-		// next package.
+		// The file pointer is moved to the next package.
 		void skip();
 
 		/// Release the package.
 		// Complete the current package, and release it.
-		Package *release()
-		{
-			read();
-			return m_pkg.release();
-		}
+		Package *release();
 
 		/// Return true if there is a next package.
-		// Read the package-header.
+		// Read the package-header
 		bool next();
 
 		/// Go into the next (or first) category part.
@@ -88,11 +85,10 @@ class PackageReader {
 
 		off_t             m_next;
 		Attributes        m_have;
-		std::auto_ptr<Package> m_pkg;
+		Package          *m_pkg;
 
 		const DBHeader   *header;
 		PortageSettings  *m_portagesettings;
-	private:
 };
 
 #endif /* EIX__PACKAGE_READER_H__ */

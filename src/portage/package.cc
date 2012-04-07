@@ -9,6 +9,7 @@
 
 #include "package.h"
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/extendedversion.h>
@@ -20,7 +21,6 @@
 #include <set>
 #include <vector>
 
-#include <cstddef>
 #include <cstring>
 
 using namespace std;
@@ -52,7 +52,7 @@ VersionList::best(bool allow_unstable) const
 			(allow_unstable && (*ri)->keyflags.isUnstable()))
 			return *ri;
 	}
-	return NULL;
+	return NULLPTR;
 }
 
 void
@@ -75,7 +75,7 @@ SlotList::operator [] (const char *s) const
 		if(unlikely(strcmp(s, it->slotname()) == 0))
 			return &(it->const_version_list());
 	}
-	return NULL;
+	return NULLPTR;
 }
 
 bool
@@ -193,7 +193,7 @@ Package::best(bool allow_unstable) const
 			(allow_unstable && ri->keyflags.isUnstable()))
 			return *ri;
 	}
-	return NULL;
+	return NULLPTR;
 }
 
 void
@@ -210,8 +210,8 @@ Version *
 Package::best_slot(const char *slot_name, bool allow_unstable) const
 {
 	const VersionList *vl(slotlist()[slot_name]);
-	if(vl == NULL)
-		return NULL;
+	if(vl == NULLPTR)
+		return NULLPTR;
 	return vl->best(allow_unstable);
 }
 
@@ -222,7 +222,7 @@ Package::best_slots(vector<Version*> &l, bool allow_unstable) const
 	for(SlotList::const_iterator sit(slotlist().begin());
 		likely(sit != slotlist().end()); ++sit) {
 		Version *p((sit->const_version_list()).best(allow_unstable));
-		if(p != NULL) {
+		if(p != NULLPTR) {
 			l.push_back(p);
 		}
 	}
@@ -232,10 +232,10 @@ void
 Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
 	versions.clear();
-	if(unlikely(v == NULL))
+	if(unlikely(v == NULLPTR))
 		return;
 	vector<InstVersion> *ins(v->getInstalledVector(*this));
-	if((ins == NULL) || (ins->empty()))
+	if((ins == NULLPTR) || (ins->empty()))
 		return;
 	bool need_best(false);
 	set<Version*> versionset;
@@ -243,7 +243,7 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 		it != ins->end() ; ++it) {
 		if(guess_slotname(*it, v)) {
 			Version *bv(best_slot((it->slotname).c_str(), allow_unstable));
-			if((bv != NULL) && (*bv != *it))
+			if((bv != NULLPTR) && (*bv != *it))
 				versionset.insert(bv);
 		}
 		else // Perhaps the slot was removed:
@@ -255,7 +255,7 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 	}
 	if(need_best) {
 		Version *bv(best(allow_unstable));
-		if(bv != NULL)
+		if(bv != NULLPTR)
 			versionset.insert(bv);
 	}
 	if(versionset.empty())
@@ -279,10 +279,10 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 bool
 Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
-	if(unlikely(v == NULL))
+	if(unlikely(v == NULLPTR))
 		return false;
 	vector<InstVersion> *ins(v->getInstalledVector(*this));
-	if(ins == NULL)
+	if(ins == NULLPTR)
 		return false;
 	bool need_best(!check_slots);
 	if(check_slots) {
@@ -315,7 +315,7 @@ Package::slotname(const ExtendedVersion &v) const
 			return (i->slotname).c_str();
 		}
 	}
-	return NULL;
+	return NULLPTR;
 }
 
 bool
@@ -326,7 +326,7 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
 	if(likely(v.know_slot))
 		return true;
 	const char *s(slotname(v));
-	if(s != NULL) {
+	if(s != NULLPTR) {
 		v.slotname = s;
 		v.know_slot = true;
 	}
@@ -409,7 +409,7 @@ Package::compare_best(const Package &p, bool test_slot) const
 {
 	Version *t_best(best());
 	Version *p_best(p.best());
-	if((t_best != NULL) && (p_best != NULL)) {
+	if((t_best != NULLPTR) && (p_best != NULLPTR)) {
 		if(*t_best > *p_best)
 			return 1;
 		if(*t_best < *p_best)
@@ -420,15 +420,15 @@ Package::compare_best(const Package &p, bool test_slot) const
 			return 3;
 		return 0;
 	}
-	if(t_best != NULL)
+	if(t_best != NULLPTR)
 		return 1;
-	if(p_best != NULL)
+	if(p_best != NULLPTR)
 		return -1;
 	return 0;
 }
 
 /** Compare best_slots() versions with that installed in v.
-    if v is NULL, it is assumed that none is installed.
+    if v is NULLPTR, it is assumed that none is installed.
     @return
 	-  0: All installed versions are best and
 	      (unless only_installed) one is installed
@@ -442,10 +442,10 @@ Package::compare_best(const Package &p, bool test_slot) const
 int
 Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 {
-	vector<InstVersion> *ins(NULL);
-	if(likely(v != NULL))
+	vector<InstVersion> *ins(NULLPTR);
+	if(likely(v != NULLPTR))
 		ins = v->getInstalledVector(*this);
-	if((ins == NULL) || ins->empty()) {
+	if((ins == NULLPTR) || ins->empty()) {
 		if(!only_installed) {
 			if(best())
 				return 4;
@@ -490,7 +490,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 }
 
 /** Compare best() version with that installed in v.
-    if v is NULL, it is assumed that none is installed.
+    if v is NULLPTR, it is assumed that none is installed.
     @return
 	-  0: All installed versions are best and
 	      (unless only_installed) one is installed
@@ -506,10 +506,10 @@ int
 Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 {
 	ExtendedVersion *t_best(best());
-	vector<InstVersion> *ins(NULL);
-	if(likely(v != NULL))
+	vector<InstVersion> *ins(NULLPTR);
+	if(likely(v != NULLPTR))
 		ins = v->getInstalledVector(*this);
-	if((ins != NULL) && !ins->empty()) {
+	if((ins != NULLPTR) && !ins->empty()) {
 		if(!t_best)
 			return -1;
 		for(vector<InstVersion>::iterator it(ins->begin());
@@ -539,7 +539,7 @@ void
 PackageSave::store(const Package *p)
 {
 	data.clear();
-	if(p == NULL)
+	if(p == NULLPTR)
 		return;
 	for(Package::const_iterator it(p->begin());
 		likely(it != p->end()); ++it)

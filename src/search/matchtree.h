@@ -9,10 +9,9 @@
 #define EIX__MATCHTREE_H__ 1
 
 #include <config.h>
+#include <eixTk/null.h>
 
 #include <stack>
-
-#include <cstddef>
 
 class MatchAtomOperator;
 class MatchAtomTest;
@@ -38,10 +37,10 @@ public:
 	virtual bool match(PackageReader *p) ATTRIBUTE_PURE;
 
 	virtual MatchAtomOperator *as_operator()
-	{ return NULL; }
+	{ return NULLPTR; }
 
 	virtual MatchAtomTest *as_test()
-	{ return NULL; }
+	{ return NULLPTR; }
 };
 
 class MatchAtomOperator : public MatchAtom {
@@ -52,7 +51,7 @@ private:
 	MatchAtom *m_left, *m_right;
 public:
 	MatchAtomOperator(AtomOperator op) :
-		m_operator(op), m_left(NULL), m_right(NULL)
+		m_operator(op), m_left(NULLPTR), m_right(NULLPTR)
 	{ }
 
 	~MatchAtomOperator();
@@ -69,7 +68,7 @@ private:
 	PackageTest *m_test;
 	MatchAtom **m_pipe;
 public:
-	MatchAtomTest() : m_test(NULL), m_pipe(NULL)
+	MatchAtomTest() : m_test(NULLPTR), m_pipe(NULLPTR)
 	{ }
 
 	~MatchAtomTest();
@@ -84,15 +83,15 @@ public:
 
 class MatchParseData {
 public:
-	MatchAtom **parent; /// parent of the current subroot. Always Non-NULL.
+	MatchAtom **parent; /// parent of the current subroot. Always Non-NULLPTR.
 	                    /// Modified only when the current tree is finished.
-	MatchAtom *subroot; /// root of the current tree, possibly NULL.
+	MatchAtom *subroot; /// root of the current tree, possibly NULLPTR.
 	bool useright;      /// subroot is an operator and grow right leaf.
 	bool negatebrace;   /// Must the whole result be negated at the end?
 	                    /// This is only set after -! -(
 
 	MatchParseData(MatchAtom **p) : parent(p),
-		subroot(NULL), useright(false), negatebrace(false)
+		subroot(NULLPTR), useright(false), negatebrace(false)
 	{ }
 
 };
@@ -128,7 +127,7 @@ public:
 	~MatchTree();
 
 	bool match(PackageReader *p)
-	{ return ((root == NULL) || root->match(p)); }
+	{ return ((root == NULLPTR) || root->match(p)); }
 
 	void set_pipetest(PackageTest *gtest);
 

@@ -12,6 +12,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/depend.h>
 #include <portage/package.h>
 
@@ -88,7 +89,7 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 	skip_lines(5, is, filename, error_callback);
 	string linebuf;
 	// Read the rest
-	for(int linenr(5); likely(getline(is, linebuf) != 0); ++linenr) {
+	for(int linenr(5); likely(getline(is, linebuf) != NULLPTR); ++linenr) {
 		switch(linenr)
 		{
 			case 5:  pkg->homepage = linebuf;

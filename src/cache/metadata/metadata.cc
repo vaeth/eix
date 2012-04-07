@@ -14,6 +14,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 #include <portage/extendedversion.h>
@@ -23,7 +24,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
@@ -175,7 +175,7 @@ static int
 cachefiles_selector (SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
-			&& strchr(dent->d_name, '-') != 0);
+			&& strchr(dent->d_name, '-') != NULLPTR);
 }
 
 bool
@@ -300,7 +300,7 @@ const char *
 MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const
 {
 	if(!checkmd5) {
-		return NULL;
+		return NULLPTR;
 	}
 	return assign_get_md5sum(m_catpath + "/" + pkg_name + "-" + ver_name);
 }
@@ -311,12 +311,12 @@ MetadataCache::readCategory(Category &cat) throw(ExBasic)
 	for(vector<string>::const_iterator it(names.begin());
 		likely(it != names.end()); ) {
 		Version *version;
-		Version *newest(NULL);
+		Version *newest(NULLPTR);
 		string neweststring;
 
 		/* Split string into package and version, and catch any errors. */
 		char **aux(ExplodeAtom::split(it->c_str()));
-		if(unlikely(aux == NULL)) {
+		if(unlikely(aux == NULLPTR)) {
 			m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
 			++it;
 			continue;
@@ -326,7 +326,7 @@ MetadataCache::readCategory(Category &cat) throw(ExBasic)
 		Package *pkg(cat.findPackage(aux[0]));
 
 		/* If none was found create one */
-		if(pkg == NULL) {
+		if(pkg == NULLPTR) {
 			pkg = cat.addPackage(m_catname, aux[0]);
 		}
 
@@ -354,7 +354,7 @@ MetadataCache::readCategory(Category &cat) throw(ExBasic)
 
 			/* Split new filename into package and version, and catch any errors. */
 			aux = ExplodeAtom::split(it->c_str());
-			if(unlikely(aux == NULL)) {
+			if(unlikely(aux == NULLPTR)) {
 				m_error_callback(eix::format(_("Can't split %r into package and version")) % (*it));
 				++it;
 				break;

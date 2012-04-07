@@ -9,6 +9,7 @@
 #include "print-xml.h"
 #include <database/header.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
 #include <portage/depend.h>
@@ -25,8 +26,6 @@
 #include <vector>
 #include <iostream>
 
-#include <cstddef>
-
 using namespace std;
 
 const PrintXml::XmlVersion PrintXml::current;
@@ -42,7 +41,7 @@ PrintXml::runclear()
 void
 PrintXml::clear(EixRc *eixrc)
 {
-	if(unlikely(eixrc == NULL)) {
+	if(unlikely(eixrc == NULLPTR)) {
 		print_overlay = false;
 		keywords_mode = KW_NONE;
 		dateformat = "%s";
@@ -57,7 +56,7 @@ PrintXml::clear(EixRc *eixrc)
 			"effective*",
 			"full",
 			"full*",
-			NULL };
+			NULLPTR };
 		switch(eixrc->getBoolTextlist("XML_KEYWORDS", values)) {
 			case 0:
 			case -1: keywords_mode = KW_NONE;  break;
@@ -108,7 +107,7 @@ print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt)
 			continue;
 		}
 		have_found = true;
-		if(dflt != NULL)
+		if(dflt != NULLPTR)
 			cout << "\t\t\t\t<iuse default=\"" << dflt << "\">";
 		else
 			cout << "\t\t\t\t<iuse>";
@@ -137,10 +136,10 @@ PrintXml::package(Package *pkg)
 		"\t\t\t<licenses>" << escape_string(pkg->licenses) << "</licenses>\n";
 
 	set<const Version*> have_inst;
-	if((likely(var_db_pkg != NULL)) && var_db_pkg->isInstalled(*pkg)) {
+	if((likely(var_db_pkg != NULLPTR)) && var_db_pkg->isInstalled(*pkg)) {
 		set<BasicVersion> know_inst;
 		// First we check which versions are installed with correct overlays.
-		if(likely(hdr != NULL)) {
+		if(likely(hdr != NULLPTR)) {
 			// Package is a 'list' of Versions with added members ^^
 			for(Package::const_iterator ver(pkg->begin());
 				likely(ver != pkg->end()); ++ver) {
@@ -165,7 +164,7 @@ PrintXml::package(Package *pkg)
 
 	for(Package::const_iterator ver(pkg->begin()); likely(ver != pkg->end()); ++ver) {
 		bool versionInstalled(false);
-		InstVersion *installedVersion(NULL);
+		InstVersion *installedVersion(NULLPTR);
 		if(have_inst.find(*ver) != have_inst.end()) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
 				versionInstalled = true;
@@ -288,7 +287,7 @@ PrintXml::package(Package *pkg)
 		if (!(ver->iuse.empty())) {
 			//cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
 			const set<IUse> &s(ver->iuse.asSet());
-			print_iuse(s, IUse::USEFLAGS_NORMAL, NULL);
+			print_iuse(s, IUse::USEFLAGS_NORMAL, NULLPTR);
 			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
 			print_iuse(s, IUse::USEFLAGS_MINUS, "-1");
 		}
@@ -418,9 +417,9 @@ PrintXml::escape_string(const string &s)
 			case '>': replace = "&gt;"; break;
 			case '\'': replace = "&apos;"; break;
 			case '\"': replace = "&quot;"; break;
-			default: replace = NULL; break;
+			default: replace = NULLPTR; break;
 		}
-		if(unlikely(replace != NULL)) {
+		if(unlikely(replace != NULLPTR)) {
 			ret.append(s, prev, i - prev);
 			ret.append(replace);
 			prev = i + 1;

@@ -8,11 +8,11 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "assign_reader.h"
-
 #include <cache/base.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/depend.h>
 #include <portage/package.h>
 
@@ -20,7 +20,6 @@
 #include <map>
 #include <string>
 
-#include <cstddef>
 #include <cstring>
 
 using namespace std;
@@ -37,11 +36,12 @@ get_map_from_cache(const char *file)
 	cf.clear();
 
 	ifstream is(file);
-	if(!is.is_open())
-		return NULL;
+	if(!is.is_open()) {
+		return NULLPTR;
+	}
 
 	string lbuf;
-	while(likely(getline(is, lbuf) != 0)) {
+	while(likely(getline(is, lbuf) != NULLPTR)) {
 		string::size_type p(lbuf.find('='));
 		if(p == string::npos)
 			continue;
@@ -55,12 +55,12 @@ const char *
 assign_get_md5sum(const string &filename)
 {
 	map<string,string> *cf(get_map_from_cache(filename.c_str()));
-	if(unlikely(cf == NULL)) {
-		return NULL;
+	if(unlikely(cf == NULLPTR)) {
+		return NULLPTR;
 	}
 	map<string,string>::const_iterator md5(cf->find("_md5_"));
 	if(md5 == cf->end()) {
-		return NULL;
+		return NULLPTR;
 	}
 	return md5->second.c_str();
 }
@@ -71,7 +71,7 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 	Depend &dep, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> *cf(get_map_from_cache(filename.c_str()));
-	if(unlikely(cf == NULL)) {
+	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("Can't read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;
@@ -91,7 +91,7 @@ void
 assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
 {
 	map<string,string> *cf(get_map_from_cache(filename));
-	if(unlikely(cf == NULL)) {
+	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("Can't read cache file %s: %s"))
 			% filename % strerror(errno));
 		return;

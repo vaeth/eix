@@ -109,6 +109,9 @@
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
 
+/* Define if C++ dialect has nullptr type */
+#undef HAVE_NULLPTR
+
 /* Define to 1 if you have the `realpath' function. */
 #undef HAVE_REALPATH
 

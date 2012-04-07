@@ -11,12 +11,11 @@
 #define EIX__UTILS_H__ 1
 
 #include <config.h>
+#include <eixTk/null.h>
 
 #include <map>
 #include <string>
 #include <vector>
-
-#include <cstddef>
 
 /** scandir which even works on poor man's systems.
     We keep the original type for the callback function
@@ -41,7 +40,7 @@ bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_e
  * @param no_hidden ignore hidden files
  * @param full_path return full pathnames
  * @return true if everything is ok. Nonexisting directory is not ok. */
-bool pushback_files(const std::string &dir_path, std::vector<std::string> &into, const char *exclude[] = NULL, short only_files = 1, bool no_hidden = true, bool full_path = true);
+bool pushback_files(const std::string &dir_path, std::vector<std::string> &into, const char *exclude[] = NULLPTR, short only_files = 1, bool no_hidden = true, bool full_path = true);
 
 
 /** Cycle through map using it, until it is it_end, append all values from it

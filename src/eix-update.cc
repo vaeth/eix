@@ -17,6 +17,7 @@
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/percentage.h>
 #include <eixTk/ptr_list.h>
 #include <eixTk/statusline.h>
@@ -39,7 +40,6 @@
 #include <string>
 #include <vector>
 
-#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <fnmatch.h>
@@ -154,8 +154,8 @@ static bool use_percentage, use_status, verbose;
 
 static list<const char *> exclude_args, add_args;
 static list<ArgPair> method_args, repo_args;
-static const char *outputname(NULL);
-static const char *var_to_print(NULL);
+static const char *outputname(NULLPTR);
+static const char *var_to_print(NULLPTR);
 
 /** Arguments and shortopts. */
 static struct Option long_options[] = {
@@ -179,7 +179,7 @@ static struct Option long_options[] = {
 	 Option("repo-name",      'r',     Option::PAIRLIST,  &repo_args),
 	 Option("output",         'o',     Option::STRING,    &outputname),
 
-	 Option(0 ,                0)
+	 Option(NULLPTR, 0)
 };
 
 static PercentStatus *reading_percent_status;
@@ -230,7 +230,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<Repo
 {
 	static const string a("eix*::");
 	FILE *fp(fopen(cachefile.c_str(), "rb"));
-	if(fp == NULL) {
+	if(fp == NULLPTR) {
 		INFO(eix::format(_(
 			"KEEP_VIRTUALS is ignored: there is no previous %s\n"))
 			% cachefile);
@@ -344,7 +344,7 @@ run_eix_update(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	if(unlikely(var_to_print != NULL)) {
+	if(unlikely(var_to_print != NULLPTR)) {
 		if(eixrc.print_var(var_to_print)) {
 			return EXIT_SUCCESS;
 		}
@@ -370,7 +370,7 @@ run_eix_update(int argc, char *argv[])
 	/* set the outputfile */
 	string outputfile(eix_cachefile);
 	bool override_umask(true);
-	if(unlikely(outputname != NULL)) {
+	if(unlikely(outputname != NULLPTR)) {
 		outputfile = outputname;
 		override_umask = false;
 	}
@@ -484,11 +484,11 @@ run_eix_update(int argc, char *argv[])
 	/* Create CacheTable and fill with PORTDIR and PORTDIR_OVERLAY. */
 	CacheTable table(eixrc["CACHE_METHOD_PARSE"]);
 	{
-		map<string, string> *override_ptr(override.size() ? &override : NULL);
+		map<string, string> *override_ptr(override.size() ? &override : NULLPTR);
 		if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())) {
 			table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
-				NULL,
+				NULLPTR,
 				portage_settings["PORTDIR"].c_str(),
 				eixrc["PORTDIR_CACHE_METHOD"],
 				override_ptr);
@@ -670,7 +670,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	if(override_umask) {
 		umask(old_umask);
 	}
-	if(unlikely(database_stream == NULL)) {
+	if(unlikely(database_stream == NULLPTR)) {
 		throw ExBasic(_("Can't open the database file %r for writing (mode = 'wb')"))
 			% outputfile;
 	}
