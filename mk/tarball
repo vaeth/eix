@@ -33,7 +33,7 @@ Run() {
 }
 
 dist='dist'
-fakeroot=''
+fakeroot=
 [ -z "${fakeroot}" ] && command -v fakeroot >/dev/null 2>&1 && fakeroot='fakeroot'
 [ -z "${fakeroot}" ] && command -v fakeroot-ng >/dev/null 2>&1 && fakeroot='fakeroot-ng'
 
@@ -56,7 +56,7 @@ do	opt=${1#-}
 	f*)
 		fakeroot='fakeroot';;
 	F*|n*f*)
-		fakeroot='';;
+		fakeroot=;;
 	[hH?]*)
 		Usage 0;;
 	*)

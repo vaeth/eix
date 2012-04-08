@@ -4,9 +4,13 @@ export LC_ALL
 LC_ALL=C
 umask 022
 
+Echo() {
+	printf '%s\n' "${*}"
+}
+
 ExecWarn() {
-	printf '# %s\n' "${*}"
-	"${@}" || printf '%s\n' "warning: ${*} returned: ${?}"
+	Echo "# ${*}"
+	"${@}" || Echo "warning: ${*} returned ${?}"
 }
 
 ExecWarn git repack -a -d

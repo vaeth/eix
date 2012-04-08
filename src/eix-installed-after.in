@@ -69,14 +69,14 @@ The following options are available:
 
 full=false
 epoch=false
-logfile=''
+logfile=
 before=false
-date_output=''
+date_output=
 output='NAMESLOT'
 input='NAMESLOT'
 including=false
-addtime=''
-subtime=''
+addtime=
+subtime=
 OPTIND=1
 while getopts 'fblL:ea:A:dsv=SVitTh?' opt
 do	case ${opt} in
@@ -104,7 +104,7 @@ done
 # After the options there should be exactly one argument: ${match}
 
 if ${full}
-then	logfile=''
+then	logfile=
 	before=false
 	epoch=false
 # "found" is our flag in the loop whether we already found our package.
@@ -122,7 +122,7 @@ then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
 	epoch=`unset LC_ALL
 LC_COLLATE=C
 sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
-q}" "${logfile}"` || epoch=''
+q}" "${logfile}"` || epoch=
 	[ -n "${epoch}" ] || die "`eval_gettext \
 		'cannot find merge of ${match} in ${logfile}'`";;
 	match=${epoch};;
@@ -182,7 +182,7 @@ Output() {
 # VERSION_NEWLINE to output an optional newline (if NEWLINE=false).
 # We do not want such a newline: In fact, the only newline we want is the one
 # which should be output at the end of the LINE variable.
-# So we set VERSION_NEWLINE='' and (in case the user has changed the default)
+# So we set VERSION_NEWLINE= and (in case the user has changed the default)
 # also NEWLINE=false
 #
 # The name of the variables DATE_FORMAT, DATE_OUTPUT, NAME, and LINE
@@ -193,7 +193,7 @@ Output() {
 #
 # Note that all the following variables are automatically exported, since
 # they immediately preceed the command (the \ at the line-ends is crucial):
-VERSION_NEWLINE='' \
+VERSION_NEWLINE= \
 NEWLINE=false \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \

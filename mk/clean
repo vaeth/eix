@@ -3,8 +3,12 @@
 export LC_ALL
 LC_ALL=C
 
+Echo() {
+	printf '%s\n' "${*}"
+}
+
 Die() {
-	printf '%s\n' "${1}"
+	Echo "${1}"
 	exit ${2:-1}
 }
 
@@ -16,8 +20,8 @@ fi
 if test -e Makefile
 then	make maintainer-clean || Die "make maintainer-clean failed"
 fi
-(	cd po && \
-		make -f Rules-clean maintainer-clean-local
+(
+	cd po && make -f Rules-clean maintainer-clean-local
 )
 for i in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
 do	rm -vf -- eix-*."${i}"

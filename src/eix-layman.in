@@ -86,7 +86,7 @@ ENDLAYONE
 }
 
 CalcLaymanMake() {
-	l=`PrintLaymanMake "${@}"` || l=''
+	l=`PrintLaymanMake "${@}"` || l=
 	[ -n "${l}" ] && PushLaymanMake "${l}"
 }
 
@@ -95,7 +95,7 @@ ClearLaymanMake
 CalcLaymanMake || \
 	PushLaymanMake '/usr/local/portage/layman/make.conf' || \
 	PushLaymanMake "${local_portdir:-/}local/layman/make.conf"
-layman_overlays=''
+layman_overlays=
 
 set -f
 eval "Push -c opt `eix-update --print EIX_LAYMAN_OPTS`"
@@ -122,7 +122,9 @@ GetOverlays() {
 	eval "set -- ${layman_make}"
 	for i
 	do	[ -n "${i}" ] && test -r "${i}" || continue
-		j=`PORTDIR_OVERLAY=''; . "${i}"; printf '%s' "${PORTDIR_OVERLAY}x"`
+		j=`PORTDIR_OVERLAY=
+		. "${i}"
+		printf '%s' "${PORTDIR_OVERLAY}x"`
 		PushEscaped layman_overlays "${j%x}"
 	done
 }
@@ -156,7 +158,8 @@ add*)
 	Add "${@}";;
 rem*|del*|rm*|sub*)
 	Remove "${@}";;
-*)	Usage;;
+*)
+	Usage;;
 esac
 
 Exit 0

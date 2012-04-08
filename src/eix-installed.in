@@ -39,7 +39,7 @@ ARG can be abbreviated, e.g. instead of "no-repo" you can use "nr".'
 }
 
 forced=false
-equal=''
+equal=
 quiet=false
 OPTIND=1
 while getopts 'aq=h?' opt

@@ -18,17 +18,17 @@ ReadFunctions() {
 : ${read_var_prg:=eix-update}
 ReadVar() {
 	eval "if [ \"\${${2}+set}\" = set ]
-	then ${1}=\${${2}}
+	then	${1}=\${${2}}
 		return 0
 	fi"
 	eixf_read=`PRINT_APPEND='X' "${3:-${read_var_prg}}" --print "${2}"` || \
 		return 1
-	eval "${1}=\${eixf_read%X}"
+	eval ${1}=\${eixf_read%X}
 	return 0
 }
 
 ReadBoolean() {
-	case `PRINT_APPEND='' "${2:-${read_var_prg}}" --print "${1}"` in
+	case `PRINT_APPEND= "${2:-${read_var_prg}}" --print "${1}"` in
 	[yYtTsSaA1:+-]*|[oO][nN]) return;;
 	esac
 	return 1
@@ -57,7 +57,7 @@ StartInList() (
 )
 
 # Admissible statusline values are '' (check at first call), false or : (true)
-statusline=''
+statusline=
 eixf_statusline=false
 eixf_statusmode=EixfStatusmode
 EixfStatusmode() {
@@ -188,14 +188,14 @@ fi
 # $replace_count contains a string of length(number of replacements) x'en.
 # $replace_tail is the string after the last replacement (or the whole string)
 Replace() {
-	eixf_repla=''
+	eixf_repla=
 	eixf_replc='break'
 	case ${1} in
-	-*)	eixf_replc=''
+	-*)	eixf_replc=
 		shift;;
 	esac
-	replace_count=''
-	eval "replace_tail=\${${1}}"
+	replace_count=
+	eval replace_tail=\${${1}}
 	while {
 		eixf_replb=${replace_tail%%"${2}"*}
 		[ "${eixf_replb}" != "${replace_tail}" ]
@@ -205,7 +205,7 @@ Replace() {
 		replace_count=${replace_count}x
 		${eixf_replc}
 	done
-	eval "${1}=\${eixf_repla}\${replace_tail}"
+	eval ${1}=\${eixf_repla}\${replace_tail}
 	[ -n "${replace_count}" ]
 }
 
@@ -216,7 +216,7 @@ Replace() {
 Push() {
 	case ${1} in
 	-*)	shift
-		eval "${1}=''";;
+		eval ${1}=;;
 	esac
 	eixf_pusha=${1}
 	shift
@@ -235,21 +235,21 @@ Push() {
 PushEscaped() {
 	case ${1} in
 	-*)	shift
-		eval "${1}=''";;
+		eval ${1}=;;
 	esac
 	if [ ${#} -lt 3 ] || [ -z "${3}" ]
 	then	eixf_pes='IFS'
 	else	eixf_pes=${3}
 	fi
 	eixf_pea=${2}
-	eixf_pew=''
+	eixf_pew=
 	while [ -n "${eixf_pea}" ]
 	do	eval "eixf_pex=\${eixf_pea%%[\${${eixf_pes}}]*}"
 		if [ "${eixf_pex}" != "${eixf_pea}" ]
 		then	eixf_pec=${eixf_pea#"${eixf_pex}"}
 			eixf_pea=${eixf_pec#?}
 			eixf_pec=${eixf_pec%"${eixf_pea}"}
-		else	eixf_pea=''
+		else	eixf_pea=
 			eixf_pec='\'
 		fi
 		Replace -g eixf_pex '\\' '\'
@@ -259,7 +259,7 @@ PushEscaped() {
 		esac
 		eixf_pew=${eixf_pew}${eixf_pex}
 		[ -n "${eixf_pew}" ] && Push ${1} "${eixf_pew}"
-		eixf_pew=''
+		eixf_pew=
 	done
 	[ -n "${eixf_pew}" ] && Push ${1} "${eixf_pew}"
 }
@@ -301,7 +301,7 @@ AddExcludes() {
 }
 
 ClearUpdateArgs() {
-	update_args=''
+	update_args=
 }
 
 : ${die_on_update_failure=:}
@@ -347,12 +347,12 @@ AddLocalMethods() {
 # This is necessary as some shells won't take ${Var%"[newline]"}
 Chomp() {
 	for eixf_chompa
-	do	eval "eixf_chompb=\${${eixf_chompa}}"
+	do	eval eixf_chompb=\${${eixf_chompa}}
 		case ${eixf_chompb} in
 		*'
 ')
 			eixf_chompb=${eixf_chompb%?}
-			eval "${eixf_chompa}=\${eixf_chompb}";;
+			eval ${eixf_chompa}=\${eixf_chompb};;
 		esac
 	done
 }
@@ -362,13 +362,13 @@ Chomp() {
 
 Pathify() {
 	for eixf_pathc
-	do	eval "eixf_patha=\${${eixf_pathc}}"
+	do	eval eixf_patha=\${${eixf_pathc}}
 		eixf_pathb=`command -v "${eixf_patha}"; printf A` && \
 			eixf_pathb=${eixf_pathb%A} && Chomp eixf_pathb && \
 			[ -n "${eixf_pathb}" ] && test -x "${eixf_pathb}" || \
 			die "`eval_gettext \
 				'${eixf_patha} cannot be found in PATH'`"
-		eval "${eixf_pathc}=\${eixf_pathb}"
+		eval ${eixf_pathc}=\${eixf_pathb}
 	done
 }
 
@@ -389,9 +389,9 @@ CheckReadlink() {
 normalize_resolve=:
 NormalizeNames() {
 	eixf_normd=0
-	relative=''
+	relative=
 	for eixf_normc
-	do	eval "eixf_norma=\${${eixf_normc}}"
+	do	eval eixf_norma=\${${eixf_normc}}
 		if [ -z "${eixf_norma}" ]
 		then	eixf_normd=1
 			continue
@@ -409,7 +409,7 @@ NormalizeNames() {
 				&& printf '%sA' "${PWD}"` \
 				&& eixf_normb=${eixf_normb%A}
 		fi && [ -n "${eixf_normb}" ] && eixf_norma=${eixf_normb}
-		eval "${eixf_normc}=\${eixf_norma}"
+		eval ${eixf_normc}=\${eixf_norma}
 		while Replace -g "${eixf_normc}" '//' '/'
 		do :
 		done
@@ -467,7 +467,7 @@ AssignTempEmulate() {
 			[ "${eixf_assb}" = "${RANDOM}" ]
 		then	have_random=false
 			eixf_assb=`od -d -N2 /dev/random 2>/dev/null` \
-				|| eixf_assb=''
+				|| eixf_assb=
 			eixf_assb=`printf '%s' ${eixf_assb}`
 			if [ -z "${eixf_assb}" ]
 			then	eixf_assb=1
@@ -476,7 +476,7 @@ AssignTempEmulate() {
 			fi
 		else	have_random=:
 		fi
-		eixf_assc=''
+		eixf_assc=
 	fi
 	eixf_assa=0
 	while [ ${eixf_assa} -le 9999 ]
@@ -494,20 +494,20 @@ AssignTempEmulate() {
 			set -C
 			: >"${eixf_assc}"
 		)
-		fi && eval "${1}=\${eixf_assc}" && return
+		fi && eval ${1}=\${eixf_assc} && return
 		eixf_assa=`Expr "${eixf_assa}" + 1`
 	done
 	die "`gettext 'found no free temporary name after 10000 attempts'`"
 }
 
 AssignTemp() {
-	eval "${1}=''"
+	eval ${1}=
 	if [ -z "${have_mktemp}" ]
 	then	command -v mktemp >/dev/null 2>&1 \
 			&& have_mktemp=: || have_mktemp=false
 	fi
 	if ${have_mktemp}
-	then	eval "${1}=\`mktemp ${2} \"/tmp/\${0##*/}.XXXXXXXX\"\`"
+	then	eval ${1}'=`mktemp ${2} "/tmp/${0##*/}.XXXXXXXX"`'
 	else	AssignTempEmulate "${@}"
 	fi && return
 	[ "${2}" = '-d' ] && \

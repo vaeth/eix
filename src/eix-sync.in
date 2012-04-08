@@ -9,7 +9,7 @@
 # This script calls emerge --sync and shows the differences.
 # See the eix manpage for details. (@PACKAGE_STRING@).
 
-time_begin=`date '+%s' 2>/dev/null` || time_begin=''
+time_begin=`date '+%s' 2>/dev/null` || time_begin=
 
 . ./eix-functions.sh.in
 ReadFunctions
@@ -100,12 +100,12 @@ DoExecute() {
 ParseConfigLine() {
 	j=${2}
 	while :
-	do	case ${j} in
-		' '*|'	'*)
+	do	case ${j:-#} in
+		[ 	]*)
 			j=${j#?};;
-		*' '|*'	')
+		*[ 	])
 			j=${j%?};;
-		''|'#'*)
+		'#'*)
 			return;;
 		*)
 			break;;
@@ -171,11 +171,11 @@ ParseConfigLine() {
 test -r "${eixsyncconf}" && haveconf=: || haveconf=false
 ReadVar eix_sync_conf EIX_SYNC_CONF
 ExecuteConfig() {
-	after_sync=''
-	after_update=''
-	before_rsync=''
-	config_opts=''
-	rsync_opts=''
+	after_sync=
+	after_update=
+	before_rsync=
+	config_opts=
+	rsync_opts=
 	${haveconf} && while read confline
 	do	ParseConfigLine "${1}" "${confline}"
 	done <"${eixsyncconf}"
@@ -201,11 +201,11 @@ DefaultOpts() {
 	measure_time=:
 	metadata=false
 	skip_sync=false
-	server=''
-	client=''
+	server=
+	client=
 	doupdate=:
 	synchooks=:
-	FATAL_HOOKS=''
+	FATAL_HOOKS=
 }
 
 DefaultOpts
@@ -227,7 +227,7 @@ do	case ${opt} in
 	u)	nolayman=:
 		nohooks=:
 		skip_sync=:
-		server='';;
+		server=;;
 	F)	FATAL_HOOKS=':';;
 	l)	nolayman=:;;
 	'@')	nohooks=:;;
@@ -250,10 +250,10 @@ do	case ${opt} in
 	*)	Usage 0;;
 	esac
 done
-opt=''
+opt=
 [ -z "${server}" ] || skip_sync=:
 
-${measure_time} || time_begin=''
+${measure_time} || time_begin=
 measure_time=false
 
 IsNumber() (
@@ -280,7 +280,7 @@ MyRun() {
 			${measure_time} && endt=`date +%s 2>/dev/null` \
 				|| measure_time=false
 			${measure_time} && \
-				eval "${timevar}"'=`Expr "${endt}" - "${begt}"`'
+				eval ${timevar}'=`Expr "${endt}" - "${begt}"`'
 			return ${runstat}
 		fi
 		shift 2
@@ -325,12 +325,12 @@ MyVarCommand() {
 		|| die "`eval_gettext '${myvarcmd} failed'`"
 }
 
-time_iupdate=''
-time_sync=''
-time_client=''
-time_metadata=''
-time_update=''
-time_diff=''
+time_iupdate=
+time_sync=
+time_client=
+time_metadata=
+time_update=
+time_diff=
 PrintingTimes() {
 	[ -n "${1}" ] && [ "${1}" -gt 0 ] && \
 		printf "`gettext '%6d seconds for %s\n'`" "${1}" "${2}"
@@ -350,12 +350,12 @@ PrintTimes() {
 		printf "`gettext '%6d seconds total\n'`" "${ftime}"
 }
 
-tmpfile=''
+tmpfile=
 exitcode=0
 ExitAll() {
 	trap : EXIT HUP INT TERM
 	[ -z "${tmpfile}" ] || rm -f -- "${tmpfile}"
-	tmpfile=''
+	tmpfile=
 	trap - EXIT HUP INT TERM
 	PrintTimes
 	Exit ${exitcode}

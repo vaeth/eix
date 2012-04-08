@@ -51,7 +51,7 @@ The argument can be abbreviated, e.g. instead of "brief" you can just use "b".'
 }
 
 nodetails=false
-myarg=''
+myarg=
 # Once an option with paths as arguments is introduced, it is probably
 # necessary to turn the next command into eval "Push -c ..."
 # In the moment this seems not necessary, so we avoid that security risk:
@@ -86,7 +86,7 @@ Statusline 'eix -t'
 eix '-t*!'
 
 # sets is the list of all "*" for which there are set_* variables
-sets=''
+sets=
 
 # Defines a new set_* variable
 DefineSet() {
@@ -108,7 +108,7 @@ AllFalse() {
 FalseExcept() {
 	for s in ${sets}
 	do	[ "${s}" = "${1}" ] || eval "for c in \${set_${s}}
-		do	eval \"export \${c}=false\"
+		do	eval export \${c}=false
 		done"
 	done
 }
@@ -128,7 +128,7 @@ Output() {
 	for z
 	do	(
 			for j
-			do	[ "${z}" = "${j}" ] || eval "export ${j}=false"
+			do	[ "${z}" = "${j}" ] || eval export ${j}=false
 			done
 			Output '' "`eval_gettext '... considered as ${z}'`"
 		)
@@ -136,7 +136,7 @@ Output() {
 }
 
 Check() (
-	if eval "AllFalse \${set_${1}}"
+	if eval AllFalse \${set_${1}}
 	then	printf '%s\n' "${4}"
 		return
 	fi

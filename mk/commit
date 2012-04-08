@@ -4,14 +4,18 @@ export LC_ALL
 LC_ALL=C
 umask 022
 
+Echo() {
+	printf '%s\n' "${*}"
+}
+
 Die() {
-	s="${?}"
-	printf '%s\n' "${1}" >&2
+	s=${?}
+	Echo "${1}" >&2
 	exit ${2:-${s}}
 }
 
 ExecDie() {
-	printf '# %s\n' "${*}"
+	Echo "# ${*}"
 	"${@}" || Die "${*} returned ${?}"
 }
 

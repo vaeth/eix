@@ -22,7 +22,7 @@ distdir=`portageq distdir`
 [ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
 GetEdir() {
-	reverse=''
+	reverse=
 	for overlay in `portageq portdir_overlay`
 	do	reverse="${overlay} ${reverse}"
 	done
@@ -36,7 +36,7 @@ GetEdir() {
 			test -f "${jebuild}" || continue
 			test -r "${overlay}/profiles/repo_name" && \
 			repo_name=`cat -- "${overlay}"/profiles/repo_name` || \
-			repo_name=''
+			repo_name=
 			return 0
 		done
 	done
@@ -46,7 +46,7 @@ GetEdir || Die "cannot find ${category}/${project} in overlay"
 
 MoveEbuild() {
 	test -f "${1}" && return
-	latest=''
+	latest=
 	for find_latest in "${edir}/${project}-"*.ebuild
 	do	case ${find_latest##*/} in
 		"${project}-"*9999.ebuild)	continue;;

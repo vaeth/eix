@@ -60,7 +60,7 @@ KeyCheck() {
 	while :
 	do	t=`stty -g`
 		stty -icanon -echo
-		a=`dd count=1 bs=1 2>/dev/null` || a=''
+		a=`dd count=1 bs=1 2>/dev/null` || a=
 		stty ${t}
 		case ${a} in
 		[nN]*)	Echo 'No'

@@ -114,7 +114,7 @@ do	case ${opt} in
 	Y) dialect='disable';;
 	d) debugging=:;;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
-	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg='';;
+	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg=;;
 	*) Usage 0;;
 	esac
 done
@@ -130,7 +130,7 @@ ${separate_all} && configure_extra="${configure_extra} --enable-separate-binarie
 ${optimization} && configure_extra="${configure_extra} --enable-strong-optimization --enable-security"
 ${debugging} && configure_extra="${configure_extra} --enable-debugging"
 
-${quiet} && quietredirect='>/dev/null' || quietredirect=''
+${quiet} && quietredirect='>/dev/null' || quietredirect=
 
 if ${use_chown}
 then	ls /root >/dev/null 2>&1 && \
@@ -159,10 +159,10 @@ CPPFLAGS=${CPPFLAGS}"
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
 	then	Info "Running autotools..."
-		eval ./autogen.sh ${quietredirect} || Die "autogen failed"
+		eval "./autogen.sh ${quietredirect}" || Die "autogen failed"
 	fi
 	Info "Running configure" ${configure_extra}
-	eval ./configure ${configure_extra} ${quietredirect} || \
+	eval "./configure ${configure_extra} ${quietredirect}" || \
 		Die "configure failed"
 fi
 ${earlystop} && {

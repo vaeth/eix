@@ -113,9 +113,9 @@ SetLocalLayman() {
 
 InitLocalLayman() {
 	[ -n "${LOCAL_LAYMAN}" ] && return
-	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=''
+	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=
 	if [ -z "${LOCAL_LAYMAN}" ]
-	then	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=''
+	then	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=
 	fi
 	SetLocalLayman "${LOCAL_LAYMAN}" \
 		'/usr/local/portage/layman' \
@@ -155,14 +155,14 @@ CdDir() {
 	die "`eval_gettext 'cannot cd to ${a}'`"
 }
 
-tmpdir=''
+tmpdir=
 exitcode=0
 Cleanup() {
 	trap : EXIT HUP INT TERM
 	if [ -n "${tmpdir}" ]
 	then	test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
 	fi
-	tmpdir=''
+	tmpdir=
 	trap - EXIT HUP INT TERM
 	Exit ${exitcode}
 }
@@ -172,7 +172,7 @@ MakeTempDir() {
 	chmod -- a+rx "${tmpdir}"
 }
 
-tmpfile=''
+tmpfile=
 FetchTemp() {
 	eixcachesname=${addr##*/}
 	[ -z "${eixcachesname}" ] && die "`gettext
@@ -249,8 +249,7 @@ AddArchive() {
 			exitcode=1
 			continue
 		}
-		l=`EIX_CACHEFILE=${p} eix --print-overlay-label "${n}"` || \
-			l=''
+		l=`EIX_CACHEFILE=${p} eix --print-overlay-label "${n}"` || l=
 		name=${name##*/}
 		virtual="layman/${name}"
 		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
@@ -261,7 +260,7 @@ AddArchive() {
 		[ -n "${l}" ] && AddRepoName "${virtual}" "${l}"
 		AddExcludes "${LOCAL_LAYMAN}/${name}"
 	done
-	msg=''
+	msg=
 	[ ${exitcode} -ne 0 ] && \
 		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
 	die_on_update_failure=false

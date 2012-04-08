@@ -4,10 +4,11 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Set umask 002 in eix-update unless option -o is used, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=408509
-	- Rely on working delete 0; should speed up things
+	- Rely on working delete 0; should speed up things slightly
 	- Avoid std::auto_ptr
 	- Default to most current C++ dialect and use nullptr if possible
 	- configure.ac: Fix usage of MV_APPEND
+	- scripts: Simplify quoting slightly
 
 *eix-0.25.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
