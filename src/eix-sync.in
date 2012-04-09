@@ -100,12 +100,12 @@ DoExecute() {
 ParseConfigLine() {
 	j=${2}
 	while :
-	do	case ${j:-#} in
-		[ 	]*)
+	do	case ${j} in
+		' '*|'	'*)
 			j=${j#?};;
-		*[ 	])
+		*' '|*'	')
 			j=${j%?};;
-		'#'*)
+		''|'#'*)
 			return;;
 		*)
 			break;;
