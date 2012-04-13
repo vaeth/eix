@@ -176,6 +176,7 @@ dump_help()
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
 "\n"
 "  Search Fields:\n"
+"    -y, --any               any search field can match (same as -SACsHL...)\n"
 "    -S, --description       description\n"
 "    -A, --category-name     \"category/name\"\n"
 "    -C, --category          category\n"
@@ -370,6 +371,7 @@ static struct Option long_options[] = {
 	Option("end",           O_END_ALGO),
 
 	// What to match in this criterion
+	Option("any",           'y'),
 	Option("name",          's'),
 	Option("slot",          O_SEARCH_SLOT),
 	Option("installed-slot", O_INSTALLED_SLOT),

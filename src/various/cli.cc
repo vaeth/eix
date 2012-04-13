@@ -399,6 +399,9 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			case O_INSTALLED_SLOT: USE_TEST;
 				*test |= PackageTest::INSTALLED_SLOT;
 				break;
+			case 'y': USE_TEST;
+				*test |= PackageTest::ANY;
+				break;
 			// }}}
 
 			// Check for algorithms {{{

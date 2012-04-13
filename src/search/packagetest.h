@@ -40,23 +40,24 @@ class PackageTest {
 	public:
 		typedef uint16_t MatchField;
 		static const MatchField
-			NONE          =0x0000, /**< Search in name */
-			NAME          =0x0001, /**< Search in name */
-			DESCRIPTION   =0x0002, /**< Search in description */
-			LICENSE       =0x0004, /**< Search in license */
-			CATEGORY      =0x0008, /**< Search in category */
-			CATEGORY_NAME =0x0010, /**< Search in category/name */
-			HOMEPAGE      =0x0020, /**< Search in homepage */
-			IUSE          =0x0040, /**< Search in iuse */
-			USE_ENABLED   =0x0080, /**< Search in enabled  useflags of installed packages */
-			USE_DISABLED  =0x0100, /**< Search in disabled useflags of installed packages */
-			SLOT          =0x0200, /**< Search in slots */
-			INSTALLED_SLOT=0x0400, /**< Search in installed slots */
-			SET           =0x0800, /**< Search in sets */
-			DEPEND        =0x1000, /**< Search in DEPEND */
-			RDEPEND       =0x2000, /**< Search in RDEPEND */
-			PDEPEND       =0x4000, /**< Search in PDEPEND */
-			DEPS          =(DEPEND|RDEPEND|PDEPEND);
+			NONE          = 0x0000, /**< Search in name */
+			NAME          = 0x0001, /**< Search in name */
+			DESCRIPTION   = 0x0002, /**< Search in description */
+			LICENSE       = 0x0004, /**< Search in license */
+			CATEGORY      = 0x0008, /**< Search in category */
+			CATEGORY_NAME = 0x0010, /**< Search in category/name */
+			HOMEPAGE      = 0x0020, /**< Search in homepage */
+			IUSE          = 0x0040, /**< Search in iuse */
+			USE_ENABLED   = 0x0080, /**< Search in enabled  useflags of installed packages */
+			USE_DISABLED  = 0x0100, /**< Search in disabled useflags of installed packages */
+			SLOT          = 0x0200, /**< Search in slots */
+			INSTALLED_SLOT= 0x0400, /**< Search in installed slots */
+			SET           = 0x0800, /**< Search in sets */
+			DEPEND        = 0x1000, /**< Search in DEPEND */
+			RDEPEND       = 0x2000, /**< Search in RDEPEND */
+			PDEPEND       = 0x4000, /**< Search in PDEPEND */
+			DEPS          = (DEPEND|RDEPEND|PDEPEND),
+			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|INSTALLED_SLOT|SET|DEPS);
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,

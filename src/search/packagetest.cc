@@ -51,12 +51,13 @@ const PackageTest::MatchField
 		PackageTest::USE_ENABLED,
 		PackageTest::USE_DISABLED,
 		PackageTest::SLOT,
+		PackageTest::INSTALLED_SLOT,
 		PackageTest::SET,
 		PackageTest::DEPEND,
 		PackageTest::RDEPEND,
 		PackageTest::PDEPEND,
 		PackageTest::DEPS,
-		PackageTest::INSTALLED_SLOT;
+		PackageTest::ANY;
 
 const PackageTest::TestInstalled
 		PackageTest::INS_NONE,

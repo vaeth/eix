@@ -699,6 +699,12 @@ B<--category-name>, B<--set>, B<--description>, B<--homepage>, or B<--license>.
 Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
 configuration variable explained later.
 .TP
+.BR -y ", " --any
+Any search field can match. This is the same as specifying simultaneously
+all of B<--name>, B<--description>, <B--category>, ...
+Use this if you want to be sure to not miss any matches.
+(But usually the output list will be rather long.)
+.TP
 .BR -s ", " --name
 e.g. "eix"
 .TP

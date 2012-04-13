@@ -140,6 +140,7 @@ case $service in
 {'*--homepage','*-H'}'[match homepage]'
 {'*--license','*-L'}'[match license]'
 {'*--use','*-U'}'[match IUSE]'
+{'*--any','*-y'}'[match any field (same as -SACsHL...)]'
 '*--deps[match *DEPEND]'
 '*--depent[match DEPEND]'
 '*--rdepent[match RDEPEND]'

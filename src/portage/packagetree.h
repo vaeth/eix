@@ -30,8 +30,8 @@ class Category : public eix::ptr_list<Package> {
 		~Category()
 		{ delete_and_clear(); }
 
-		iterator find(const std::string &pkg_name);
-		const_iterator find(const std::string &pkg_name) const;
+		iterator find(const std::string &pkg_name) ATTRIBUTE_PURE;
+		const_iterator find(const std::string &pkg_name) const ATTRIBUTE_PURE;
 
 		Package *findPackage(const std::string &pkg_name) const
 		{
