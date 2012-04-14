@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-03-21 19:00:00 +0100 (Wed, 21 Mar 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-04-14 03:00:00 +0100 (Wed, 14 Apr 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -339,7 +339,7 @@ Use I<FILE> instead of B<@EIX_CACHEFILE@>.
 
 .\" {{{ -------- Options for EXPRESSION
 .SS Options for EXPRESSION
-A EXPRESSION is used to narrow which packages eix prints.
+EXPRESSION is used to narrow which packages eix prints.
 
 An EXPRESSION can contain Boolean operators and tests according to the following grammar:
 
@@ -385,7 +385,7 @@ depending on B<DEFAULT_IS_OR>.
 
 6. Observe that TEST_OPTIONS can consist of several options.
 All of these options are applied simultaneously, i.e. in a sense these options
-are logically braced and combined with B<and> (independently of B<DEFAULT_IS_OR>)
+are logically braced and combined with B<and> (independently of B<DEFAULT_IS_OR>).
 This is somehow ambiguous, since PATTERN can be omitted.
 This ambiguity is resolved by interpreting successive TEST_OPTIONS always as a
 part of one TEST_WITH_OPTIONS.
@@ -700,10 +700,17 @@ Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
 configuration variable explained later.
 .TP
 .BR -y ", " --any
-Any search field can match. This is the same as specifying simultaneously
-all of B<--name>, B<--description>, <B--category>, ...
-Use this if you want to be sure to not miss any matches.
-(But usually the output list will be rather long.)
+Any match field is searched. This is the same as specifying simultaneously
+all of B<--name>, B<--description>, B<--category>, ...
+Thus, you may want to use this if you want to be sure to not miss any matches.
+However, be warned that the output list will often be much longer than you might expect.
+(If you are curious, you can find with options B<-vl> and piping to grep
+the often unexpected reason why a match occurs with B<-y>.)
+To exclude at least the dependency strings from matches, you might want to
+combine this option with setting B<DEP=false>, e.g.
+
+B<DEP=false eix --any SIP>
+
 .TP
 .BR -s ", " --name
 e.g. "eix"
