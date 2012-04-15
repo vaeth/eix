@@ -1301,62 +1301,62 @@ AddOption(STRING, "TAG_BINARY",
 	"Tag for versions with *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_FETCH",
-	"!f", _(
+	"f", _(
 	"Tag for RESTRICT=fetch. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_MIRROR",
-	"!m", _(
+	"m", _(
 	"Tag for RESTRICT=mirror. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_PRIMARYURI",
-	"!p", _(
+	"p", _(
 	"Tag for RESTRICT=primaryuri. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_BINCHECKS",
-	"!b", _(
+	"b", _(
 	"Tag for RESTRICT=binchecks. This is only used for delayed substitution."));
 #endif
 
 #if (DEFAULT_PART == 4)
 
 AddOption(STRING, "TAG_RESTRICT_STRIP",
-	"!s", _(
+	"s", _(
 	"Tag for RESTRICT=strip. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_TEST",
-	"!t", _(
+	"t", _(
 	"Tag for RESTRICT=test. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_USERPRIV",
-	"!u", _(
+	"u", _(
 	"Tag for RESTRICT=userpriv. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_INSTALLSOURCES",
-	"!i", _(
+	"i", _(
 	"Tag for RESTRICT=installsources. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_BINDIST",
-	"!d", _(
+	"d", _(
 	"Tag for RESTRICT=bindist. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_RESTRICT_PARALLEL",
-	"!P", _(
+	"P", _(
 	"Tag for RESTRICT=parallel. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_INTERACTIVE",
-	"+i", _(
+	"i", _(
 	"Tag for PROPERTIES=interactive. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_LIVE",
-	"+l", _(
+	"l", _(
 	"Tag for PROPERTIES=live. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_VIRTUAL",
-	"+v", _(
+	"v", _(
 	"Tag for PROPERTIES=virtual. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_PROPERTIES_SET",
-	"+s", _(
+	"s", _(
 	"Tag for PROPERTIES=set. This is only used for delayed substitution."));
 
 AddOption(STRING, "TAG_FOR_PROFILE",
@@ -1639,8 +1639,18 @@ AddOption(STRING, "FORMAT_STABILITY",
 	"It outputs the stability tag, changing the color appropriately.\n"
 	"It sets the runtime variable $color depending on whether color was changed."));
 
+AddOption(STRING, "FORMAT_PROPERTIESSEPARATOR",
+	"{*color}(%{COLOR_PROPERTIES})*", _(
+	"This variable is only used for delayed substitution.\n"
+	"It sets the initial string and $color for PROPERTIES output."));
+
+AddOption(STRING, "FORMAT_RESTRICTSEPARATOR",
+	"{*color}(%{COLOR_RESTRICT})^", _(
+	"This variable is only used for delayed substitution.\n"
+	"It sets the initial string and $color for RESTRICT output."));
+
 AddOption(STRING, "FORMAT_PROPERTIES",
-	"{properties}{*color}(%{COLOR_PROPERTIES})"
+	"{properties}%{FORMAT_PROPERTIESSEPARATOR}"
 		"{propertiesinteractive}%{TAG_PROPERTIES_INTERACTIVE}{}"
 		"{propertieslive}%{TAG_PROPERTIES_LIVE}{}"
 		"{propertiesset}%{TAG_PROPERTIES_SET}{}"
@@ -1650,7 +1660,7 @@ AddOption(STRING, "FORMAT_PROPERTIES",
 	"It sets the runtime variable $color if color was changed."));
 
 AddOption(STRING, "FORMAT_RESTRICT",
-	"{restrict}{*color}(%{COLOR_RESTRICT})"
+	"{restrict}%{FORMAT_RESTRICTSEPARATOR}"
 		"{restrictfetch}%{TAG_RESTRICT_FETCH}{}"
 		"{restrictmirror}%{TAG_RESTRICT_MIRROR}{}"
 		"{restrictprimaryuri}%{TAG_RESTRICT_PRIMARYURI}{}"
