@@ -23,7 +23,7 @@ options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 }
 
 Die() {
-	printf '%s: %s\n' "${0##*/}" "${1}"
+	Echo "${0##*/}: ${1}"
 	exit ${2:-1}
 }
 
@@ -87,12 +87,11 @@ do	for i in "${PWD}/${project}"-*".${j}"
 	do	test -f "${i}" || continue
 		${found} || Echo "Available tarballs:"
 		found=:
-		printf '\t%s\n' "${i}"
+		Echo "	${i}"
 	done
 done
 ${found} || Die "For some reason no tarball was created"
-[ -n "${mkclean}" ] && Echo "The tarballs will be removed with ${mkclean}"
-[ -n "${mkemerge}" ] && Echo "To install with portage run as root ${mkemerge}"
-[ -n "${mkrelease}" ] && \
+[ -z "${mkclean}" ] || Echo "The tarballs will be removed with ${mkclean}"
+[ -z "${mkemerge}" ] || Echo "To install with portage run as root ${mkemerge}"
+[ -z "${mkrelease}" ] || \
 	Echo "To tag the release in git you should run ${mkrelease}"
-exit 0

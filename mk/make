@@ -82,6 +82,7 @@ separate_all=:
 use_chown=false
 jarg='-j3'
 use_ccache=:
+automake_extra=
 configure_extra='--prefix=/usr --sysconfdir=/etc'
 optimization=false
 quickcheck=false
@@ -149,8 +150,10 @@ then	CFLAGS=`portageq envvar CFLAGS`
 	if ${pedantic} || ${wnosign}
 	then	configure_extra="${configure_extra} --enable-strong-warnings"
 		${wnosign} && CXXFLAGS="${CXXFLAGS} -Wno-sign-conversion"
+		automake_extra="${automake_extra} -Wall"
 	else	configure_extra="${configure_extra} --enable-warnings"
 		#CXXFLAGS="${CXXFLAGS} -Werror"
+		automake_extra="${automake_extra} -Werror"
 	fi
 fi
 Info "CXXFLAGS=${CXXFLAGS}
@@ -159,7 +162,8 @@ CPPFLAGS=${CPPFLAGS}"
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
 	then	Info "Running autotools..."
-		eval "./autogen.sh ${quietredirect}" || Die "autogen failed"
+		eval "./autogen.sh ${automake_extra} ${quietredirect}" \
+			|| Die "autogen failed"
 	fi
 	Info "Running configure" ${configure_extra}
 	eval "./configure ${configure_extra} ${quietredirect}" || \

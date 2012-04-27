@@ -13,10 +13,10 @@
 # I would like to see in distributions only the "silent rules" default
 # (and also the .tar.xz format for the tarball, at least for the default).
 # Both of these are only available with automake-1.11, therefore the latter
-# is required by default. Moreover, only in automake-1.11.2 silent rules
+# is required by default. Moreover, only in >=automake-1.11.2 silent rules
 # work also without dependency tracking
 #AUTOMAKE_OPTIONS = foreign 1.4
-AUTOMAKE_OPTIONS = foreign 1.11.2 no-dist-gzip dist-xz
+AUTOMAKE_OPTIONS = foreign 1.11.2 no-dist-gzip dist-xz -Wobsolete -Wportability -Wextra-portability
 
 if EXTRA_DOC
 extra_doc_subdir = doc
