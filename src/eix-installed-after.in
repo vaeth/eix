@@ -124,8 +124,8 @@ LC_COLLATE=C
 sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
 q}" "${logfile}"` || epoch=
 	[ -n "${epoch}" ] || die "`eval_gettext \
-		'cannot find merge of ${match} in ${logfile}'`";;
-	match=${epoch};;
+		'cannot find merge of ${match} in ${logfile}'`"
+	match=${epoch}
 	epoch=:
 fi
 
