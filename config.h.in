@@ -21,6 +21,18 @@
 /* Define to __attribute__ ((__signal__)) if it can be used */
 #undef ATTRIBUTE_SIGNAL
 
+/* Define to 1 if setegid is broken */
+#undef BROKEN_SETEGID
+
+/* Define to 1 if seteuid is broken */
+#undef BROKEN_SETEUID
+
+/* Define to 1 if setgid is broken */
+#undef BROKEN_SETGID
+
+/* Define to 1 if setuid is broken */
+#undef BROKEN_SETUID
+
 /* Default DEP */
 #undef DEP_DEFAULT
 
@@ -201,6 +213,18 @@
 
 /* Default Levenshtein distance for matches (as string) */
 #undef LEVENSHTEIN_DISTANCE_DEFAULT
+
+/* Define to 1 if setegid needs a prototype */
+#undef NEED_SETEGID_PROTO
+
+/* Define to 1 if seteuid needs a prototype */
+#undef NEED_SETEUID_PROTO
+
+/* Define to 1 if setgid needs a prototype */
+#undef NEED_SETGID_PROTO
+
+/* Define to 1 if setuid needs a prototype */
+#undef NEED_SETUID_PROTO
 
 /* Name of package */
 #undef PACKAGE

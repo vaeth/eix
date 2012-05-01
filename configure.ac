@@ -529,6 +529,69 @@ AC_CHECK_FUNCS([strndup \
 	initgroups \
 	])
 
+AC_DEFUN([SETXPROGRAM], [AC_LANG_PROGRAM([[
+#include <unistd.h>
+#include <sys/types.h>
+
+#ifdef HAVE_INTERIX_SECURITY_H
+#include <interix/security.h>
+#endif
+
+#ifdef HAVE_GRP_H
+#include <grp.h>
+#endif
+$1
+]], [[
+$2
+]])])
+
+AC_DEFUN([PROTO_SETX],
+	[AC_MSG_CHECKING([whether $1 prototype works])
+	AC_LINK_IFELSE([SETXPROGRAM([], [$1(0);])],
+		[MV_MSG_RESULT([yes])],
+		[AC_LINK_IFELSE([SETXPROGRAM([$2], [$1(0);])],
+			[MV_MSG_RESULT([no, but can be provided])
+			$3],
+			[MV_MSG_RESULT([no and cannot be provided])
+			$4])])])
+
+PROTO_SETX([setuid], [
+int setuid(uid_t uid);
+	],
+	[AC_DEFINE([NEED_SETUID_PROTO],
+		[1],
+		[Define to 1 if setuid needs a prototype])],
+	[AC_DEFINE([BROKEN_SETUID],
+		[1],
+		[Define to 1 if setuid is broken])])
+PROTO_SETX([seteuid], [
+int seteuid(uid_t uid);
+	],
+	[AC_DEFINE([NEED_SETEUID_PROTO],
+		[1],
+		[Define to 1 if seteuid needs a prototype])],
+	[AC_DEFINE([BROKEN_SETEUID],
+		[1],
+		[Define to 1 if seteuid is broken])])
+PROTO_SETX([setgid], [
+int setgid(gid_t gid);
+	],
+	[AC_DEFINE([NEED_SETGID_PROTO],
+		[1],
+		[Define to 1 if setgid needs a prototype])],
+	[AC_DEFINE([BROKEN_SETGID],
+		[1],
+		[Define to 1 if setgid is broken])])
+PROTO_SETX([setegid], [
+int setegid(gid_t gid);
+	],
+	[AC_DEFINE([NEED_SETEGID_PROTO],
+		[1],
+		[Define to 1 if setegid needs a prototype])],
+	[AC_DEFINE([BROKEN_SETEGID],
+		[1],
+		[Define to 1 if setegid is broken])])
+
 # If climits exists, we need not check for limits.h
 AC_CHECK_HEADERS([climits limits.h],
 	[break])

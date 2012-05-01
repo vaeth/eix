@@ -24,6 +24,19 @@
 #include <grp.h>
 #endif
 
+#ifdef NEED_SETUID_PROTO
+int setuid(uid_t uid);
+#endif
+#ifdef NEED_SETEUID_PROTO
+int seteuid(uid_t uid);
+#endif
+#ifdef NEED_SETGID_PROTO
+int setgid(gid_t gid);
+#endif
+#ifdef NEED_SETEGID_PROTO
+int setegid(gid_t gid);
+#endif
+
 using namespace std;
 
 void
@@ -62,10 +75,14 @@ drop_permissions(EixRc &eix)
 #endif
 	if(set_gid) {
 #ifdef HAVE_SETGID
+#ifndef BROKEN_SETGID
 		setgid(gid);
 #endif
+#endif
 #ifdef HAVE_SETEGID
+#ifndef BROKEN_SETEGID
 		setegid(gid);
+#endif
 #endif
 #ifdef HAVE_SETGROUPS
 		setgroups(1, &gid);
@@ -78,10 +95,14 @@ drop_permissions(EixRc &eix)
 	}
 	if(set_uid) {
 #ifdef HAVE_SETUID
+#ifndef BROKEN_SETUID
 		setuid(uid);
 #endif
+#endif
 #ifdef HAVE_SETEUID
+#ifndef BROKEN_SETEUID
 		seteuid(uid);
+#endif
 #endif
 	}
 }
