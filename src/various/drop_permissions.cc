@@ -7,6 +7,7 @@
 
 #include <config.h>
 #include "drop_permissions.h"
+#include <eixTk/null.h>
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
 
@@ -14,6 +15,10 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+
+#ifdef HAVE_INTERIX_SECURITY_H
+#include <interix/security.h>
+#endif
 
 #ifdef HAVE_GRP_H
 #include <grp.h>
@@ -24,6 +29,20 @@ using namespace std;
 void
 drop_permissions(EixRc &eix)
 {
+	bool set_uid(true);
+	bool valid_user(true);
+	uid_t uid;
+	const string &user(eix["EIX_USER"]);
+	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
+		valid_user = false;
+		uid_t i(eix.getInteger("EIX_UID"));
+		if(i > 0) {
+			uid = i;
+		}
+		else {
+			set_uid = false;
+		}
+	}
 	bool set_gid(true);
 	gid_t gid;
 	const string &group(eix["EIX_GROUP"]);
@@ -36,6 +55,11 @@ drop_permissions(EixRc &eix)
 			set_gid = false;
 		}
 	}
+#ifdef HAVE_SETUSER
+	if(valid_user) {
+		setuser(user.c_str(), NULLPTR, SU_COMPLETE);
+	}
+#endif
 	if(set_gid) {
 #ifdef HAVE_SETGID
 		setgid(gid);
@@ -46,26 +70,12 @@ drop_permissions(EixRc &eix)
 #ifdef HAVE_SETGROUPS
 		setgroups(1, &gid);
 #endif
-	}
-	bool set_uid(true);
-	uid_t uid;
-	const string &user(eix["EIX_USER"]);
-	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
-		uid_t i(eix.getInteger("EIX_UID"));
-		if(i > 0) {
-			uid = i;
-		}
-		else {
-			set_uid = false;
-		}
-	}
 #ifdef HAVE_INITGROUPS
-	else {
-		if(set_gid) {
+		if(valid_user) {
 			initgroups(user.c_str(), gid);
 		}
-	}
 #endif
+	}
 	if(set_uid) {
 #ifdef HAVE_SETUID
 		setuid(uid);

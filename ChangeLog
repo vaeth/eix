@@ -7,6 +7,10 @@
 	- Fix eix-installed-after (regression introduced in eix-0.24.0)
 	- Set umask 002 in eix-update unless option -o is used, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=408509
+	- Try to fix permissions on interix, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=410205
+	  Thanks to Gordon Cowie <gcowie at live.com> and
+	  Fabian Groffen <grobian at gentoo.org>
 	- Rely on working delete 0; should speed up things slightly
 	- Avoid std::auto_ptr
 	- Default to most current C++ dialect and use nullptr if possible

@@ -97,6 +97,9 @@
 /* Define to 1 if you have the `initgroups' function. */
 #undef HAVE_INITGROUPS
 
+/* Define to 1 if you have the <interix/security.h> header file. */
+#undef HAVE_INTERIX_SECURITY_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -135,6 +138,9 @@
 
 /* Define to 1 if you have the `setuid' function. */
 #undef HAVE_SETUID
+
+/* Define to 1 if you have the `setuser' function. */
+#undef HAVE_SETUSER
 
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION

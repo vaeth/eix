@@ -506,14 +506,17 @@ AC_CHECK_FUNCS([strtoul strtol atoi],
 	[AC_MSG_ERROR([At least one of strtoul/strtoll/atoi is needed ..])])
 
 # Optional header files:
-AC_CHECK_HEADERS_ONCE([sys/param.h grp.h])
+AC_CHECK_HEADERS([sys/param.h \
+	grp.h \
+	interix/security.h \
+	])
 
 # We use these optionally:
 # Concerning strndup, we have a home-brewed replacement,
 # for the others some less convenient workarounds.
-AC_CHECK_FUNCS_ONCE([strndup \
+AC_CHECK_FUNCS([strndup \
 	sigaction \
-	canonicalize_file_name
+	canonicalize_file_name \
 	realpath \
 	vfork \
 	setenv \
@@ -521,6 +524,7 @@ AC_CHECK_FUNCS_ONCE([strndup \
 	setgid \
 	seteuid \
 	setegid \
+	setuser \
 	setgroups \
 	initgroups \
 	])
