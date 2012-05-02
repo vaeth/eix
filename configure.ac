@@ -212,7 +212,6 @@ AS_VAR_SET([my_cxxfatal], [])
 AS_VAR_SET([my_ldfatal], [])
 MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [COMPILE], [ \
 		-Werror \
-		-errwarn \
 	], [], [], [], [${quicktrue}])
 MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [LINK], [ \
 		-Wl,--fatal-warnings \
