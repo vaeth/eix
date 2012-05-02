@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce -y (--any) to select any match field: don't miss anything.
 	- Default format: new properties/restrictions separator: */^
+	  Also add $sep (a tab) after version with --versionlines
+	  Remove duplicate FORMAT_AFTER_IUSE (a long standing regression)
 	- Fix eix-installed-after (regression introduced in eix-0.24.0)
 	- Set umask 002 in eix-update unless option -o is used, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=408509

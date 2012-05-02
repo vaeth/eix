@@ -1146,6 +1146,14 @@ AddOption(STRING, "COLOR_PROPERTIES",
 	"cyan", _(
 	"Color for the properties tags. This is only used for delayed substitution."));
 
+AddOption(STRING, "COLOR_KEYWORDS",
+	"cyan", _(
+	"Color for keywords. This is only used for delayed substitution."));
+
+AddOption(STRING, "COLOR_KEYWORDSS",
+	"%{COLOR_KEYWORDS}", _(
+	"Color for keywords*. This is only used for delayed substitution."));
+
 AddOption(STRING, "MARK_INSTALLED",
 	"inverse", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1548,8 +1556,28 @@ AddOption(STRING, "FORMAT_PDEPEND_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PDEPEND output with --verbose."));
 
+AddOption(STRING, "FORMAT_VERSION_IUSE",
+	"(%{COLOR_VERSION_IUSE})<use>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is used for colored <use> in available versions; color is not reset."));
+
+AddOption(STRING, "FORMAT_COLLIUSE",
+	"(%{COLOR_VERSION_IUSE})<colliuse>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is used for colored <colliuse>; color is not reset."));
+
+AddOption(STRING, "FORMAT_KEYWORDS",
+	"(%{COLOR_KEYWORDS})<versionkeywords>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is used for printing colored <keywords>; color is not reset."));
+
+AddOption(STRING, "FORMAT_KEYWORDSS",
+	"(%{COLOR_KEYWORDSS})<versionkeywords*>", _(
+	"This variable is only used for delayed substitution.\n"
+	"It is used for printing colored <keywords*>; color is not reset."));
+
 AddOption(STRING, "FORMAT_KEYWORDS_EQUAL",
-	"{versionkeywords} $\\{KEYWORDS\\}{}", _(
+	"{versionkeywords} (%{COLOR_KEYWORDSS})$\\{KEYWORDS\\}(){}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines what to output for KEYWORDS* if they equal KEYWORDS."));
 
@@ -1640,12 +1668,12 @@ AddOption(STRING, "FORMAT_STABILITY",
 	"It sets the runtime variable $color depending on whether color was changed."));
 
 AddOption(STRING, "FORMAT_PROPERTIESSEPARATOR",
-	"{*color}(%{COLOR_PROPERTIES})*", _(
+	"<$sep>{!*sep}{*color}(%{COLOR_PROPERTIES})*", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the initial string and $color for PROPERTIES output."));
 
 AddOption(STRING, "FORMAT_RESTRICTSEPARATOR",
-	"{*color}(%{COLOR_RESTRICT})^", _(
+	"<$sep>{!*sep}{*color}(%{COLOR_RESTRICT})^", _(
 	"This variable is only used for delayed substitution.\n"
 	"It sets the initial string and $color for RESTRICT output."));
 
@@ -1688,7 +1716,7 @@ AddOption(STRING, "FORMAT_PROPRESTRICT",
 AddOption(STRING, "FORMAT_BINARY",
 	"%{!NO_BINARY}"
 		"{isbinary}"
-			"(%{COLOR_BINARY})%{TAG_BINARY}()"
+			"<$sep>{!*sep}(%{COLOR_BINARY})%{TAG_BINARY}()"
 		"{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1733,10 +1761,10 @@ AddOption(STRING, "FORMAT_VERSIONS_END",
 				"{$color}(){}"
 				"{*color}"
 				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
-				"%{else}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
+				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
 			"%{else}"
 				"%{?COLON_SLOTS}:<slot>"
-				"%{else}\\(<slot>\\)%{}"
+				"%{else}<$sep>{!*sep}\\(<slot>\\)%{}"
 			"%{}"
 		"{}"
 	"%{}"
@@ -1770,64 +1798,69 @@ AddOption(STRING, "IVERSIONS",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for printing an installed version with its slot."));
 
+AddOption(STRING, "OVERLAYVER",
+	"{overlayver}<$sep>{!*sep}<overlayver>{}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing the overlay in versions."));
+
 AddOption(STRING, "PVERSIONS_VERBOSE",
-	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"%{PVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with most data and slot."));
 
 AddOption(STRING, "AVERSIONS_VERBOSE",
-	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"%{AVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with most data and slot."));
 
 AddOption(STRING, "IVERSIONS_VERBOSE",
-	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"%{IVERSIONS}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with most data and slot."));
 
 AddOption(STRING, "PVERSION_VERBOSE",
-	"%{PVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"%{PVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with most data, no slot."));
 
 AddOption(STRING, "AVERSION_VERBOSE",
-	"%{AVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}<overlayver>", _(
+	"%{AVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with most data, no slot."));
 
 AddOption(STRING, "PVERSIONS_COMPACT",
-	"%{PVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
+	"%{PVERSIONS}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with important data and slot."));
 
 AddOption(STRING, "AVERSIONS_COMPACT",
-	"%{AVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
+	"%{AVERSIONS}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with important data and slot."));
 
 AddOption(STRING, "IVERSIONS_COMPACT",
-	"%{IVERSIONS}%{FORMAT_BINARY}<overlayver>", _(
+	"%{IVERSIONS}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with important data and slot."));
 
 AddOption(STRING, "PVERSION_COMPACT",
-	"%{PVERSION}%{FORMAT_BINARY}<overlayver>", _(
+	"%{PVERSION}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version with important data, no slot."));
 
 AddOption(STRING, "AVERSION_COMPACT",
-	"%{AVERSION}%{FORMAT_BINARY}<overlayver>", _(
+	"%{AVERSION}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version with important data, no slot."));
 
 AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
-	"\\t\"(cyan)", _(
+	"\\t\"", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before KEYWORDS string for a version is output\n"
 	"(with --versionlines and nonverbose)"));
 
 AddOption(STRING, "FORMAT_AFTER_KEYWORDS",
-	"()\"", _(
+	"\"", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed after KEYWORDS string for a version is output.\n"
 	"(with --versionlines and nonverbose)"));
@@ -1842,9 +1875,9 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_NORMAL",
 		"%{?VERSION_KEYWORDS_NORMAL}"
 			"%{FORMAT_BEFORE_KEYWORDS}"
 			"%{?USE_EFFECTIVE_KEYWORDS}"
-				"<versionkeywords*>"
+				"%{FORMAT_KEYWORDSS}"
 			"%{else}"
-				"<versionkeywords>"
+				"%{FORMAT_KEYWORDS}"
 			"%{}"
 			"%{FORMAT_AFTER_KEYWORDS}"
 		"%{}"
@@ -1855,7 +1888,11 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_NORMAL",
 AddOption(STRING, "FORMAT_IUSE_NORMAL",
 	"%{?PRINT_IUSE}"
 		"%{?VERSION_IUSE_NORMAL}"
-			"{haveuse}%{FORMAT_BEFORE_IUSE}<use>%{FORMAT_AFTER_IUSE}{}"
+			"{haveuse}"
+				"%{FORMAT_BEFORE_IUSE}"
+				"%{FORMAT_VERSION_IUSE}"
+				"%{FORMAT_AFTER_IUSE}"
+			"{}"
 		"%{}"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1888,7 +1925,7 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})KEYWORDS:()"
 				"%{?PRINT_ALWAYS}{versionkeywords}%{}"
-				"  <versionkeywords>"
+				"  %{FORMAT_KEYWORDS}()"
 			"{}"
 			"%{!PRINT_ALWAYS}{versionekeywords}%{}"
 				"%{FORMAT_VER_LINESKIP}"
@@ -1898,7 +1935,7 @@ AddOption(STRING, "FORMAT_VERSION_KEYWORDS_VERBOSE",
 						"%{FORMAT_KEYWORDS_EQUAL}"
 					"{else}"
 				"%{}"
-				" <versionkeywords*>"
+				" %{FORMAT_KEYWORDSS}()"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -1912,7 +1949,7 @@ AddOption(STRING, "FORMAT_IUSE_VERBOSE",
 				"%{FORMAT_VER_LINESKIP}"
 				"(%{COLOR_AVAILABLE_TITLE})IUSE:()"
 				"%{?PRINT_ALWAYS}{haveuse}%{}"
-				"      <use>"
+				"      %{FORMAT_VERSION_IUSE}()"
 			"{}"
 		"%{}"
 	"%{}", _(
@@ -1992,7 +2029,7 @@ AddOption(STRING, "FORMAT_INST_LINESKIP",
 #if (DEFAULT_PART == 5)
 
 AddOption(STRING, "VSORTL",
-	"%{FORMAT_VERSLINESKIP}%{PVERSIONS_VERBOSE}"
+	"%{FORMAT_VERSLINESKIP}{*sep=\\t}%{PVERSIONS_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=version}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; versionsorted with versionlines."));
@@ -2004,7 +2041,7 @@ AddOption(STRING, "VSORT",
 
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP_VERSIONLINES}{}"
-	"%{FORMAT_VERSLINESKIP}%{PVERSION_VERBOSE}"
+	"%{FORMAT_VERSLINESKIP}{*sep=\\t}%{PVERSION_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
@@ -2019,12 +2056,12 @@ AddOption(STRING, "SSORT",
 	"It defines the format for a version; slotsorted without versionlines."));
 
 AddOption(STRING, "FORMAT_COLL",
-	"%{FORMAT_BEFORE_COLL}<colliuse>%{FORMAT_AFTER_COLL}", _(
+	"%{FORMAT_BEFORE_COLL}%{FORMAT_COLLIUSE}%{FORMAT_AFTER_COLL}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for collected IUSE data in one line."));
 
 AddOption(STRING, "FORMAT_COLL_SEP",
-	"%{FORMAT_BEFORE_COLL_SEP}<colliuse>%{FORMAT_AFTER_COLL_SEP}", _(
+	"%{FORMAT_BEFORE_COLL_SEP}%{FORMAT_COLLIUSE}%{FORMAT_AFTER_COLL_SEP}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for collected IUSE data in a separate line."));
 
@@ -2032,7 +2069,7 @@ AddOption(STRING, "FORMAT_COLL_VERBOSE",
 	"%{!PRINT_ALWAYS}{havecolliuse}%{}"
 		"\\n     (%{COLOR_TITLE})IUSE \\(all versions\\):()"
 		"%{?PRINT_ALWAYS}{havecolliuse}%{}"
-		" <colliuse>"
+		" %{FORMAT_COLLIUSE}()"
 	"{}",  _(
 	"This variable is only used for delayed substitution.\n"
 	"It is the format for package IUSE in single-line verbose mode."));
@@ -2628,14 +2665,8 @@ AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
 	"()", _(
 	"This string is printed after each unset USE flag of an installed version."));
 
-AddOption(STRING, "FORMAT_AFTER_IUSE",
-	"()]", _(
-	"This variable is only used for delayed substitution.\n"
-	"This string is printed after IUSE data for a version is output.\n"
-	"(Normally, this is only used when --versionlines is active)"));
-
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
-	"\\t[(%{COLOR_VERSION_IUSE})", _(
+	"\\t[", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for a version is output.\n"
 	"(Normally, this is only used when --versionlines is active)"));
@@ -2647,7 +2678,7 @@ AddOption(STRING, "FORMAT_AFTER_IUSE",
 	"(Normally, this is only used when --versionlines is active)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL",
-	" (yellow,1)\\{\\{(%{COLOR_COLL_IUSE})", _(
+	" (yellow,1)\\{\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing after all versions in a line)"));
@@ -2659,7 +2690,7 @@ AddOption(STRING, "FORMAT_AFTER_COLL",
 	"(This is meant for printing after all versions in a line)"));
 
 AddOption(STRING, "FORMAT_BEFORE_COLL_SEP",
-	"\\n\\t(yellow,1)\\{\\{(%{COLOR_COLL_IUSE})", _(
+	"\\n\\t(yellow,1)\\{\\{", _(
 	"This variable is only used for delayed substitution.\n"
 	"This string is printed before IUSE data for all versions is output.\n"
 	"(This is meant for printing in a separate line)"));

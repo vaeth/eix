@@ -8,9 +8,8 @@ mkmake="./mk/make"
 mkmakeextra="UPDATEPOFILES="
 make_opts='-0eq'
 
-export LC_ALL XZ_OPT
-LC_ALL=C
-XZ_OPT='--extreme'
+export LC_ALL=C XZ_OPT=--extreme
+umask 022
 
 Echo() {
 	printf '%s\n' "${*}"
