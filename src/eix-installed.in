@@ -146,7 +146,7 @@ ParseArgs "${@}"
 
 ReadVar vardb EPREFIX_INSTALLED
 vardb="${vardb%/}/var/db/pkg"
-cd -- "${vardb}" >/dev/null 2>&1 \
+cd "${vardb}" >/dev/null 2>&1 \
 	|| die "`gettext 'cannot locate your database of installed packages'`"
 emulatemode=false
 ParseArgs "${@}"

@@ -215,17 +215,14 @@ Replace() {
 # With option -c, VAR is cleaned in advance.
 Push() {
 	case ${1} in
-	-*)	shift
+	-c)	shift
 		eval ${1}=;;
 	esac
 	eixf_pusha=${1}
 	shift
 	eval "for eixf_pushb
 	do	Replace -g eixf_pushb \"'\" \"'\\\\''\"
-		if [ -z \"\${${eixf_pusha}}\" ]
-		then	${eixf_pusha}=\"'\${eixf_pushb}'\"
-		else	${eixf_pusha}=\"\${${eixf_pusha}} '\${eixf_pushb}'\"
-		fi
+		${eixf_pusha}=\"\${${eixf_pusha}}\${${eixf_pusha}:+ }'\${eixf_pushb}'\"
 	done"
 }
 
@@ -405,13 +402,18 @@ NormalizeNames() {
 			eixf_normb=`readlink -f -- "${eixf_norma}"; printf A` \
 				&& eixf_normb=${eixf_normb%A} \
 				&& Chomp eixf_normb
-		else	eixf_normb=`cd -P -- "${eixf_norma}" >/dev/null 2>&1 \
+		elif test -d "${eixf_norma}"
+		then	eixf_normb=`case ${eixf_norma} in
+				/*)	cd -P "${eixf_norma}";;
+				*)	cd -P "./${eixf_norma}";;
+				esac >/dev/null 2>&1 \
 				&& printf '%sA' "${PWD}"` \
 				&& eixf_normb=${eixf_normb%A}
+		else	false
 		fi && [ -n "${eixf_normb}" ] && eixf_norma=${eixf_normb}
 		eval ${eixf_normc}=\${eixf_norma}
 		while Replace -g "${eixf_normc}" '//' '/'
-		do :
+		do	:
 		done
 		eval "[ \"\${${eixf_normc}}\" = '/' ] || \
 			${eixf_normc}=\${${eixf_normc}%/}"
@@ -489,7 +491,7 @@ AssignTempEmulate() {
 		fi
 		eixf_assc="/tmp/${0##*/}.${$}${eixf_assa}${eixf_assb}"
 		if [ "${2}" = '-d' ]
-		then	mkdir -- "${eixf_assc}"
+		then	mkdir -m 700 -- "${eixf_assc}"
 		else	(
 			set -C
 			: >"${eixf_assc}"

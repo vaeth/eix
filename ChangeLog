@@ -1,5 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.25.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- scripts: More compatible usage of cd/mkdir. Shorten Push
+
 *eix-0.25.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce -y (--any) to select any match field: don't miss anything.

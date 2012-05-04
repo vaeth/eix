@@ -150,7 +150,7 @@ done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 
 CdDir() {
-	cd -- "${1}" >/dev/null && return
+	cd "${1}" >/dev/null && return
 	a=${1}
 	die "`eval_gettext 'cannot cd to ${a}'`"
 }
@@ -318,10 +318,8 @@ Update() {
 	then	MakeTempDir
 		tmpsup=${tmpdir}
 	else	tmpsub="${tmpdir}/1"
-		(
-			umask 022
-			mkdir -- "${tmpsub}"
-		) || die "`eval_gettext 'mkdir ${tmpsub} failed'`"
+		mkdir -m 700 -- "${tmpsub}" \
+			|| die "`eval_gettext 'mkdir ${tmpsub} failed'`"
 	fi
 	AddArchive "${file}" "${tmpsub}"
 }

@@ -14,7 +14,7 @@ Run() {
 	"${@}" || Die 'failure'
 }
 
-Run mkdir -p config
+Run mkdir -p -m 755 config
 Run autopoint
 Run aclocal -I m4 -I martinm4
 Run autoconf
