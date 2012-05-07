@@ -117,13 +117,13 @@ fi
 
 # With options -l or -L, we also have to parse the logfile:
 
-if [ -n "${logfile}" ]
+if [ -n "${logfile:++}" ]
 then	test -r "${logfile}" || die "`eval_gettext 'cannot read ${logfile}'`"
 	epoch=`unset LC_ALL
 LC_COLLATE=C
 sed -ne "\\: Merging (${match}\\:\\:.*):{s/^\([0-9]*\).*/\\1/p
 q}" "${logfile}"` || epoch=
-	[ -n "${epoch}" ] || die "`eval_gettext \
+	[ -n "${epoch:++}" ] || die "`eval_gettext \
 		'cannot find merge of ${match} in ${logfile}'`"
 	match=${epoch}
 	epoch=:
@@ -149,8 +149,8 @@ Check() {
 	return 1
 }
 if ${epoch}
-then	[ -n "${addtime}" ] && match=`Expr "${match}" + "${addtime}"`
-	[ -n "${subtime}" ] && match=`Expr "${match}" - "${subtime}"`
+then	[ -z "${addtime:++}" ] || match=`Expr "${match}" + "${addtime}"`
+	[ -z "${subtime:++}" ] || match=`Expr "${match}" - "${subtime}"`
 # With option -e (or -l or -L), we need a different Check function:
 Check() {
 	[ ${#} -ne 0 ] && [ "${1}" -ge "${match}" ]

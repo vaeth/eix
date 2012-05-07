@@ -49,20 +49,20 @@ SetCcache() {
 	case ":${PATH}:" in
 	*":${dircc}:"*) return;;
 	esac
-	if [ -n "${PATH}" ]
+	if [ -n "${PATH:++}" ]
 	then	Info "PATH=${dircc}:\${PATH}"
 		PATH="${dircc}:${PATH}"
 		export PATH
 	fi
-	[ -n "${CCACHE_DIR}" ] && return
+	[ -n "${CCACHE_DIR:++}" ] && return
 	for dircc in "${HOME}/.ccache" ../ccache ../../ccache
-	do	[ -z "${dircc}" ] || ! test -d "${dircc}" && continue
+	do	[ -z "${dircc:++}" ] || ! test -d "${dircc}" && continue
 		testcc=`cd -P -- "${dircc}" >/dev/null 2>&1 && \
 				printf '%sA' "${PWD}"` && \
-			testcc=${testcc%A} && [ -n "${testcc}" ] \
+			testcc=${testcc%A} && [ -n "${testcc:++}" ] \
 			&& test -d "${testcc}" && break
 	done
-	[ -z "${testcc}" ] && return
+	[ -z "${testcc:++}" ] && return
 	Info "CCACHE_DIR=${testcc}"
 	export CCACHE_DIR CCACHE_COMPRESS
 	CCACHE_DIR=${testcc}
@@ -114,7 +114,7 @@ do	case ${opt} in
 	Y) dialect='disable';;
 	d) debugging=:;;
 	c) configure_extra="${configure_extra} ${OPTARG}";;
-	j) [ -n "${OPTARG}" ] && jarg='-j${OPTARG}' || jarg=;;
+	j) [ -n "${OPTARG:++}" ] && jarg='-j${OPTARG}' || jarg=;;
 	*) Usage 0;;
 	esac
 done
@@ -123,7 +123,7 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
-[ -n "${dialect}" ] && configure_extra="${configure_extra} --${dialect}-new-dialect"
+[ -n "${dialect:++}" ] && configure_extra="${configure_extra} --${dialect}-new-dialect"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 ${dep_default} && configure_extra="${configure_extra} --with-dep-default"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"

@@ -4,7 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Russian translation started by Artem Karimov <skybon at gmail.com>.
 	  Thanks a lot.
-	- scripts: More compatible usage of cd/mkdir. Shorten Push
+	- scripts: More compatible usage of cd/mkdir, shorten Push, fasten test
 
 *eix-0.25.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

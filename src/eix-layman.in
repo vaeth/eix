@@ -63,7 +63,7 @@ ClearLaymanMake() {
 PushLaymanMake() {
 	r=1
 	for m
-	do	[ -n "${m}" ] || continue
+	do	[ -n "${m:++}" ] || continue
 		test -r "${m}" || continue
 		Push layman_make "${m}"
 		r=0
@@ -87,7 +87,7 @@ ENDLAYONE
 
 CalcLaymanMake() {
 	l=`PrintLaymanMake "${@}"` || l=
-	[ -n "${l}" ] && PushLaymanMake "${l}"
+	[ -n "${l:++}" ] && PushLaymanMake "${l}"
 }
 
 GetPortdir
@@ -121,7 +121,7 @@ GetOverlays() {
 	set -f
 	eval "set -- ${layman_make}"
 	for i
-	do	[ -n "${i}" ] && test -r "${i}" || continue
+	do	[ -n "${i:++}" ] && test -r "${i}" || continue
 		j=`PORTDIR_OVERLAY=
 		. "${i}"
 		printf '%s' "${PORTDIR_OVERLAY}x"`

@@ -18,7 +18,7 @@ Die() {
 curr='.'
 
 distdir=`portageq distdir`
-[ -n "${distdir}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
+[ -n "${distdir:++}" ] && test -d "${distdir}" || Die "cannot determine DISTDIR"
 
 GetEdir() {
 	reverse=
@@ -52,7 +52,7 @@ MoveEbuild() {
 		esac
 		test -f "${find_latest}" && latest=${find_latest}
 	done
-	[ -n "${latest}" ] || return
+	[ -n "${latest:++}" ] || return
 	Echo "Moving ${latest} -> ${1##*/}"
 	mv -- "${latest}" "${1}" || Die "cannot mv ${latest} ${1}"
 }
@@ -74,7 +74,7 @@ InstallEbuildVersion() {
 		ebuild -- "${project}-${2}.ebuild" manifest \
 			|| Die "ebuild failed"
 	) || exit
-	if [ -n "${repo_name}" ] && command -v egencache >/dev/null 2>&1
+	if [ -n "${repo_name:++}" ] && command -v egencache >/dev/null 2>&1
 	then	Echo "egencache --repo=${repo_name} --update"
 		egencache --repo="${repo_name}" --update || \
 			Die "egencache failed"

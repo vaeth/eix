@@ -42,7 +42,7 @@ Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	f=${archive}
-	[ -n "${f}" ] || f=`gettext 'temporary file'`
+	[ -n "${f:+}" ] || f=`gettext 'temporary file'`
 	eval_gettext 'Usage: ${n} [options] command
 Get data from a remote database for ${p}.
 The following commands are provided:
@@ -94,7 +94,7 @@ The following options are available:
 SanitizeLocalLayman() {
 	normalize_resolve=false NormalizeNames LOCAL_LAYMAN \
 		|| die "`gettext '$LOCAL_LAYMAN must not be empty'`"
-	[ -z "${relative}" ] || \
+	[ -z "${relative:++}" ] || \
 		die "`gettext '$LOCAL_LAYMAN must start with /'`"
 }
 
@@ -105,16 +105,16 @@ PrintLaymanStorage() {
 
 SetLocalLayman() {
 	for i
-	do	[ -n "${i}" ] && test -d "${i}" && LOCAL_LAYMAN=${i} \
+	do	[ -n "${i:++}" ] && test -d "${i}" && LOCAL_LAYMAN=${i} \
 			&& return
 	done
 	return 1
 }
 
 InitLocalLayman() {
-	[ -n "${LOCAL_LAYMAN}" ] && return
+	[ -n "${LOCAL_LAYMAN:++}" ] && return
 	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=
-	if [ -z "${LOCAL_LAYMAN}" ]
+	if [ -z "${LOCAL_LAYMAN:++}" ]
 	then	LOCAL_LAYMAN=`PrintLaymanStorage` || LOCAL_LAYMAN=
 	fi
 	SetLocalLayman "${LOCAL_LAYMAN}" \
@@ -159,7 +159,7 @@ tmpdir=
 exitcode=0
 Cleanup() {
 	trap : EXIT HUP INT TERM
-	if [ -n "${tmpdir}" ]
+	if [ -n "${tmpdir:++}" ]
 	then	test -d "${tmpdir}" && rm -rf -- "${tmpdir}"
 	fi
 	tmpdir=
@@ -175,13 +175,13 @@ MakeTempDir() {
 tmpfile=
 FetchTemp() {
 	eixcachesname=${addr##*/}
-	[ -z "${eixcachesname}" ] && die "`gettext
+	[ -z "${eixcachesname:++}" ] && die "`gettext
 'remote address is not properly set.
 Please specify a valid remote file with option -a.
 The default should have been set with ./configure --remote-file'`"
 	MakeTempDir
 	tmpfile="${tmpdir}/${eixcachesname}"
-	[ -n "${archive}" ] && test -e "${archive}" \
+	[ -n "${archive:++}" ] && test -e "${archive}" \
 		&& cp -p -- "${archive}" "${tmpfile}" >/dev/null 2>&1
 	(
 		CdDir "${tmpdir}" && wget -N -- "${addr}" \
@@ -243,7 +243,7 @@ AddArchive() {
 		n="*/${n}"
 		p="${2}/${i}"
 		name=`EIX_CACHEFILE=${p} eix --print-overlay-path "${n}"` \
-			&& [ -n "${name}" ] || {
+			&& [ -n "${name:++}" ] || {
 			printf '%s\n' "`eval_gettext \
 				'problems arose with cachefile ${i}'`" >&2
 			exitcode=1
@@ -257,7 +257,7 @@ AddArchive() {
 		Replace -g p ':' '\:'
 		AddMethod "${virtual}" "eix*:${p}:${n}"
 		AddOverlays "${virtual}"
-		[ -n "${l}" ] && AddRepoName "${virtual}" "${l}"
+		[ -n "${l:++}" ] && AddRepoName "${virtual}" "${l}"
 		AddExcludes "${LOCAL_LAYMAN}/${name}"
 	done
 	msg=
@@ -268,22 +268,22 @@ AddArchive() {
 	CallUpdate || {
 		exitcode=${?}
 		msg=`gettext 'eix-update failed'; \
-			[ -n "${msg}" ] && printf '\n%s' "${msg}"`
+			[ -n "${msg:++}" ] && printf '\n%s' "${msg}"`
 	}
-	[ -z "${msg}" ] && return
+	[ -z "${msg:++}" ] && return
 	msg=${msg}`BugReport`
 	die "${msg}"
 }
 
 CheckTemp() {
-	[ -n "${archive}" ] || die "`gettext \
+	[ -n "${archive:++}" ] || die "`gettext \
 			'A temporary file makes only sense for update mode'`"
 }
 
 FetchFile() {
 	FetchTemp
 	file=${archive}
-	if [ -z "${file}" ]
+	if [ -z "${file:++}" ]
 	then	file=${tmpfile}
 		return
 	fi
@@ -314,7 +314,7 @@ Remove() {
 
 Update() {
 	FetchFile
-	if [ -z "${tmpdir}" ]
+	if [ -z "${tmpdir:++}" ]
 	then	MakeTempDir
 		tmpsup=${tmpdir}
 	else	tmpsub="${tmpdir}/1"
