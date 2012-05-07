@@ -25,7 +25,7 @@ ReadVar() {
 
 ReadBoolean() {
 	case `PRINT_APPEND= "${2:-${read_var_prg}}" --print "${1}"` in
-	[yYtTsSaA1:+-]*|[oO][nN]) return 0;;
+	[yYtTsSaA1:+-]*|[oO][nN])	return 0;;
 	esac
 	return 1
 }

@@ -227,8 +227,6 @@ AS_IF([${new_dialect}],
 		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 				-std=gnu++11 \
 				-std=c++11 \
-				-std=gnu++0x \
-				-std=c++0x \
 			], [${my_cxxfatal}], [], [break], [${quicktrue}])])])
 
 AS_IF([${debugging}],
