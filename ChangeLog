@@ -4,8 +4,9 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Russian translation started by Artem Karimov <skybon at gmail.com>.
 	  Thanks a lot.
-	- scripts: More compatible usage of cd/mkdir, shorten Push, speed up
-	  tests for -z/-n
+	- Depend on http://github.com/vaeth/push/ instead of implementing
+	  a poor substitute.
+	- scripts: More compatible usage of cd/mkdir, speed up tests for -z/-n
 	- No longer try gnu++0x or c++0x which breaks with gcc-4.4, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=414979
 

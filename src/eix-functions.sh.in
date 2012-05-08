@@ -206,21 +206,10 @@ Replace() {
 	[ -n "${replace_count:++}" ]
 }
 
-# Usage: Push [-c] VAR Args
-# Append all Args to VAR, quoted such that
-#    eval "${VAR}" is 'safe' (with set -f) and groups Args correctly.
-# With option -c, VAR is cleaned in advance.
 Push() {
-	case ${1} in
-	-c)	shift
-		eval ${1}=;;
-	esac
-	eixf_pusha=${1}
-	shift
-	eval "for eixf_pushb
-	do	Replace -g eixf_pushb \"'\" \"'\\\\''\"
-		${eixf_pusha}=\"\${${eixf_pusha}}\${${eixf_pusha}:+ }'\${eixf_pushb}'\"
-	done"
+# Rely on the existence of push.sh from http://github.com/vaeth/push/
+	. push.sh
+	Push "${@}"
 }
 
 # PushEscaped [-c] VAR Arg [name of IFS type variable]

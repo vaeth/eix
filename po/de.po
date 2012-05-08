@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-07 16:52+0200\n"
+"POT-Creation-Date: 2012-05-08 21:58+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -33,28 +33,28 @@ msgstr "Fehlschlag"
 msgid "Problems running ${eixf_cmd}"
 msgstr "Probleme mit ${eixf_cmd}"
 
-#: src/eix-functions.sh.in:311
+#: src/eix-functions.sh.in:300
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:312 src/eix-remote.sh:270
+#: src/eix-functions.sh.in:301 src/eix-remote.sh:270
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
-#: src/eix-functions.sh.in:364
+#: src/eix-functions.sh.in:353
 #, sh-format
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:492
+#: src/eix-functions.sh.in:481
 msgid "found no free temporary name after 10000 attempts"
 msgstr "Kein möglicher Temporärname nach 10000 Versuchen"
 
-#: src/eix-functions.sh.in:507
+#: src/eix-functions.sh.in:496
 msgid "cannot create temporary directory"
 msgstr "Temporärdirectory nicht erzeugbar"
 
-#: src/eix-functions.sh.in:508
+#: src/eix-functions.sh.in:497
 msgid "cannot create temporary file"
 msgstr "Temporärdatei nicht erzeugbar"
 
