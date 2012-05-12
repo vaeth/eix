@@ -13,6 +13,9 @@
 # This must happen in a function to enforce an empty argument list.
 ReadFunctions() {
 	ReadGettext
+ReadFunctions() {
+	:
+}
 }
 
 : ${read_var_prg:=eix-update}
@@ -407,19 +410,19 @@ NormalizeNames() {
 	return ${eixf_normd}
 }
 
-unset read_gettext_status
 ReadGettext() {
-	[ -n "${read_gettext_status++}" ] && return ${read_gettext_status}
 	case ${USE_NLS-@USE_NLS@} in
 	''|[nNfF0]*)
-		read_gettext_status=1;;
-	*)
+		false;;
+	esac && {
 		. gettext.sh
-		read_gettext_status=0
 		export TEXTDOMAIN='@TEXTDOMAIN@'
 		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
-		return;;
-	esac
+ReadGettext() {
+	:
+}
+		return 0
+	}
 gettext() {
 	printf '%s' "${*}"
 }
@@ -443,6 +446,15 @@ eval_gettext() {
 	done
 	printf '%s' "${eixf_gettextb}"
 	unset eixf_gettexta eixf_gettextb eixf_gettextc
+}
+ngettext() {
+	gettext "${1}"
+}
+eval_ngettext() {
+	eval_gettext "${1}"
+}
+ReadGettext() {
+	return 1
 }
 	return 1
 }

@@ -1,15 +1,16 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.25.5
+	Artem Karimov <skybon at gmail.com>:
+	- Russian translation
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Russian translation started by Artem Karimov <skybon at gmail.com>.
-	  Thanks a lot.
 	- Depend on http://github.com/vaeth/push/ instead of implementing
 	  a poor substitute.
 	- scripts: More compatible usage of cd/mkdir, speed up tests for -z/-n
 	- eix-functions.sh: Make eval_gettext safe
 	- Use waitpid() in a more compatible manner
-	- No longer try gnu++0x or c++0x which breaks with gcc-4.4, see
+	- No longer support gnu++0x or c++0x which breaks with gcc-4.4, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=414979
 
 *eix-0.25.4
