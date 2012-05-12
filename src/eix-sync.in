@@ -24,7 +24,7 @@ Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
 	eval_gettext 'Usage: ${n} [options]
-Call layman/emerge --sync/--metadata and/or show updates. (${p})
+Call layman/emerge --sync/--metadata and show updates. (${p})
 
 Unless the -t option is used, the old database will be saved to
     ${eixprevious}.

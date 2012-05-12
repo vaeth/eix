@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-08 21:58+0200\n"
+"POT-Creation-Date: 2012-05-12 08:31+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -46,15 +46,15 @@ msgstr "eix-update schlug fehl"
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} nicht gefunden (im PATH)"
 
-#: src/eix-functions.sh.in:481
+#: src/eix-functions.sh.in:488
 msgid "found no free temporary name after 10000 attempts"
 msgstr "Kein möglicher Temporärname nach 10000 Versuchen"
 
-#: src/eix-functions.sh.in:496
+#: src/eix-functions.sh.in:503
 msgid "cannot create temporary directory"
 msgstr "Temporärdirectory nicht erzeugbar"
 
-#: src/eix-functions.sh.in:497
+#: src/eix-functions.sh.in:504
 msgid "cannot create temporary file"
 msgstr "Temporärdatei nicht erzeugbar"
 
@@ -505,7 +505,7 @@ msgstr "${a} ist nicht entpackbar"
 
 #: src/eix-remote.sh:248
 #, sh-format
-msgid "problems arose with cachefile ${i}"
+msgid "problems occurred with cachefile ${i}"
 msgstr "Probleme mit Cachefile ${i}"
 
 #: src/eix-remote.sh:265
@@ -536,7 +536,7 @@ msgstr "Fehler bei mkdir ${tmpsub}"
 #, sh-format
 msgid ""
 "Usage: ${n} [options]\n"
-"Call layman/emerge --sync/--metadata and/or show updates. (${p})\n"
+"Call layman/emerge --sync/--metadata and show updates. (${p})\n"
 "\n"
 "Unless the -t option is used, the old database will be saved to\n"
 "    ${eixprevious}.\n"
@@ -600,7 +600,7 @@ msgid ""
 msgstr ""
 "Aufruf: ${n} [Optionen]\n"
 "Dieses Skript gehört zu ${p}.\n"
-"Es ruft layman/emerge --sync/--metadata auf und/oder zeigt updates.\n"
+"Es ruft layman/emerge --sync/--metadata auf und zeigt updates.\n"
 "\n"
 "Falls die Option -t nicht benutzt wird, wird die alte Datenbank als\n"
 "    ${eixprevious}\n"

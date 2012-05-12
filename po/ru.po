@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-09 17:55+0200\n"
+"POT-Creation-Date: 2012-05-12 09:12+0200\n"
 "PO-Revision-Date: 2012-05-12 05:49+0400\n"
 "Last-Translator: Artem Karimov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -49,15 +49,15 @@ msgstr "ошибка eix-update"
 msgid "${eixf_patha} cannot be found in PATH"
 msgstr "${eixf_patha} не найден в PATH"
 
-#: src/eix-functions.sh.in:481
+#: src/eix-functions.sh.in:488
 msgid "found no free temporary name after 10000 attempts"
 msgstr "не могу найти свободное временное имя после 10000 попыток"
 
-#: src/eix-functions.sh.in:496
+#: src/eix-functions.sh.in:503
 msgid "cannot create temporary directory"
 msgstr "не могу создать временный каталог"
 
-#: src/eix-functions.sh.in:497
+#: src/eix-functions.sh.in:504
 msgid "cannot create temporary file"
 msgstr "не могу создать временный каталог"
 
@@ -391,7 +391,7 @@ msgstr "не могу распаковать ${a}"
 
 #: src/eix-remote.sh:248
 #, sh-format
-msgid "problems arose with cachefile ${i}"
+msgid "problems occurred with cachefile ${i}"
 msgstr "возникли проблемы с файлом кэша ${i}"
 
 #: src/eix-remote.sh:265
@@ -419,10 +419,10 @@ msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка созданья каталога ${tmpsub}"
 
 #: src/eix-sync.sh:26
-#, fuzzy, sh-format
+#, sh-format
 msgid ""
 "Usage: ${n} [options]\n"
-"Call layman/emerge --sync/--metadata and/or show updates. (${p})\n"
+"Call layman/emerge --sync/--metadata and show updates. (${p})\n"
 "\n"
 "Unless the -t option is used, the old database will be saved to\n"
 "    ${eixprevious}.\n"
@@ -485,7 +485,7 @@ msgid ""
 "-h   Show this text and exit."
 msgstr ""
 "Использованье: ${n} [ключи]\n"
-"Вызвать layman/emerge --sync/--metadata и/или показать обновленья. (${p})\n"
+"Вызвать layman/emerge --sync/--metadata и показать обновленья. (${p})\n"
 "\n"
 "Без ключа -t старая база данных будет сохранена в\n"
 "    ${eixprevious}.\n"
@@ -621,7 +621,7 @@ msgstr "%6d секунд всего\\n"
 #: src/eix-sync.sh:394
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
-msgstr "${c} (ошибка вывода $curr_cmd})"
+msgstr "${c} (ошибка вывода ${curr_cmd})"
 
 #: src/eix-sync.sh:395
 #, sh-format

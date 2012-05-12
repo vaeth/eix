@@ -245,7 +245,7 @@ AddArchive() {
 		name=`EIX_CACHEFILE=${p} eix --print-overlay-path "${n}"` \
 			&& [ -n "${name:++}" ] || {
 			printf '%s\n' "`eval_gettext \
-				'problems arose with cachefile ${i}'`" >&2
+				'problems occurred with cachefile ${i}'`" >&2
 			exitcode=1
 			continue
 		}

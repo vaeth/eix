@@ -420,23 +420,30 @@ ReadGettext() {
 		export TEXTDOMAINDIR='@TEXTDOMAINDIR@'
 		return;;
 	esac
-	gettext() {
-		printf '%s' "${*}"
-	}
-	eval_gettext() {
-		eixf_gettext=${*}
-		Replace -g eixf_gettext '\' '\\'
-		Replace -g eixf_gettext '$(' '\$('
-		Replace -g eixf_gettext '`' '\`'
-		Replace -g eixf_gettext '"' '\"'
-		eval "printf '%s' \"${eixf_gettext}\""
-	}
-	ngettext() {
-		gettext "${@}"
-	}
-	eval_ngettext() {
-		eval_gettext "${@}"
-	}
+gettext() {
+	printf '%s' "${*}"
+}
+eixf_varopen='${'
+eixf_varclose='}'
+eval_gettext() {
+	eixf_gettexta=${*}
+	eixf_gettextb=
+	while eixf_gettextc=${eixf_gettexta%%"${eixf_varopen}"*}
+	do	eixf_gettextb=${eixf_gettextb}${eixf_gettextc}
+		[ "${eixf_gettextc}" = "${eixf_gettexta}" ] && break
+		eixf_gettexta=${eixf_gettexta#*"${eixf_varopen}"}
+		eixf_gettextc=${eixf_gettexta%%"${eixf_varclose}"*}
+		case ${eixf_gettextc} in
+		"${eixf_gettexta}"|*[!a-zA-Z0-9_]*)
+			eixf_gettextb=${eixf_gettextb}${eixf_varopen}
+			continue;;
+		esac
+		eval eixf_gettextb=\${eixf_gettextb}\${${eixf_gettextc}}
+		eixf_gettexta=${eixf_gettexta#*"${eixf_varclose}"}
+	done
+	printf '%s' "${eixf_gettextb}"
+	unset eixf_gettexta eixf_gettextb eixf_gettextc
+}
 	return 1
 }
 
