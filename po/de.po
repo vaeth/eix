@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-12 09:57+0200\n"
+"POT-Creation-Date: 2012-05-12 11:38+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5659,7 +5659,7 @@ msgid "Repository name must be separated with :: (one : is missing)"
 msgstr "Repository-Name muss mit :: abgetrennt werden (ein : fehlt)"
 
 #: src/portage/mask.cc:153
-msgid "You have a operator but we can't find a version-part."
+msgid "Operator without a version part."
 msgstr "Operator ohne Versionsspezifizierung."
 
 #: src/portage/mask.cc:166

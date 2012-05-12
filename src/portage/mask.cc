@@ -150,7 +150,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		p = ExplodeAtom::get_start_of_version(str);
 
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
-			throw ExBasic(_("You have a operator but we can't find a version-part."));
+			throw ExBasic(_("Operator without a version part."));
 		}
 
 		m_name = string(str, (p - 1) - str);
