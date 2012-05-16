@@ -10,6 +10,7 @@
 #include <config.h>
 #include "utils.h"
 #include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -51,10 +52,16 @@ scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bo
 
 /** push_back every line of file into v. */
 static bool
-pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments)
+pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments, string *errtext)
 {
 	string line;
 	ifstream ifstr(file);
+	if(!ifstr.is_open()) {
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Can't open %s: %s")) % file % strerror(errno);
+		}
+		return false;
+	}
 	while(likely(getline(ifstr, line) != NULLPTR)) {
 		if(remove_comments) {
 			string::size_type x(line.find('#'));
@@ -64,36 +71,44 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 
 		trim(line);
 
-		if((!remove_empty) || (!line.empty()))
+		if((!remove_empty) || (!line.empty())) {
 			v->push_back(line);
+		}
 	}
-	return ifstr.eof(); // if we have eof, everything went well
+	if(ifstr.eof()) { // if we have eof, everything went well
+		return true;
+	}
+	if(errtext != NULLPTR) {
+		*errtext = eix::format(_("Error reading %s: %s")) % file % strerror;
+	}
+	return false;
 }
 
 /** push_back every line of file or dir into v. */
-bool pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, bool remove_comments)
+bool
+pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recursive, bool remove_comments, string *errtext)
 {
 	static const char *files_exclude[] = { "..", ".", "CVS", "RCS", "SCCS", NULLPTR };
 	static int depth(0);
 	vector<string> files;
 	string dir(file);
 	dir += "/";
-	if(recursive && pushback_files(dir, files, files_exclude, 3))
-	{
+	if(recursive && pushback_files(dir, files, files_exclude, 3)) {
 		bool rvalue(true);
 		for(vector<string>::iterator it(files.begin());
 			likely(it != files.end()); ++it) {
 			++depth;
 			if (depth == 100)
 				throw ExBasic(_("Nesting level too deep in %r")) % dir;
-			if(unlikely(!pushback_lines(it->c_str(), v, remove_empty, true, remove_comments)))
+			if(unlikely(!pushback_lines(it->c_str(), v, remove_empty, true, remove_comments, errtext)))
 				rvalue = false;
 			--depth;
 		}
 		return rvalue;
 	}
-	else
-		return pushback_lines_file(file, v, remove_empty, remove_comments);
+	else {
+		return pushback_lines_file(file, v, remove_empty, remove_comments, errtext);
+	}
 }
 
 /** These variables and function are only supposed to be used from
@@ -152,7 +167,8 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
  * @param no_hidden ignore hidden files
  * @param full_path return full pathnames
  * @return true if everything is ok */
-bool pushback_files(const string &dir_path, vector<string> &into, const char *exclude[], short only_type, bool no_hidden, bool full_path)
+bool
+pushback_files(const string &dir_path, vector<string> &into, const char *exclude[], short only_type, bool no_hidden, bool full_path)
 {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;

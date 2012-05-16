@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-12 11:38+0200\n"
+"POT-Creation-Date: 2012-05-16 22:21+0200\n"
 "PO-Revision-Date: 2012-05-12 05:49+0400\n"
 "Last-Translator: Artem Karimov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -1647,6 +1647,7 @@ msgid "Child aborted in a strange way"
 msgstr ""
 
 #: src/cache/common/flat_reader.cc:48 src/cache/common/flat_reader.cc:86
+#: src/eixTk/utils.cc:61
 #, c-format
 msgid "Can't open %s: %s"
 msgstr ""
@@ -1815,7 +1816,12 @@ msgstr ""
 msgid "Database corrupt: Nonexistent hash required"
 msgstr ""
 
-#: src/eixTk/utils.cc:88
+#: src/eixTk/utils.cc:82
+#, c-format
+msgid "Error reading %s: %s"
+msgstr ""
+
+#: src/eixTk/utils.cc:102
 msgid "Nesting level too deep in %r"
 msgstr ""
 
@@ -4516,8 +4522,8 @@ msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 
-#: src/portage/conf/portagesettings.cc:1218
-#: src/portage/conf/portagesettings.cc:1247
+#: src/portage/conf/portagesettings.cc:1222
+#: src/portage/conf/portagesettings.cc:1251
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 

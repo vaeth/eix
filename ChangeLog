@@ -7,6 +7,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Depend on http://github.com/vaeth/push/ instead of implementing
 	  a poor substitute.
+	- Improve file error handling. Make some errors fatal.
 	- scripts: More compatible usage of cd/mkdir, speed up tests for -z/-n
 	- eix-functions.sh: Make eval_gettext safe
 	- Use waitpid() in a more compatible manner

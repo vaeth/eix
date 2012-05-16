@@ -614,12 +614,16 @@ PortageSettings::pushback_categories(vector<string> &vec)
 	 * portdir/profile/categories */
 	pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &vec);
 
-	pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &vec);
+	string errtext;
+	if(!pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &vec, true, false, true, &errtext)) {
+		throw ExBasic("%s") % errtext;
+	}
 	for(vector<string>::iterator i(overlays.begin());
 		likely(i != overlays.end()); ++i) {
 		pushback_lines((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
 			&vec);
 	}
+
 }
 
 void

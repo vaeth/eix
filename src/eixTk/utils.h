@@ -28,7 +28,7 @@ typedef int (*select_dirent)(SCANDIR_ARG3 dir_entry);
 bool scandir_cc(const std::string &dir, std::vector<std::string> &namelist, select_dirent select, bool sorted = true);
 
 /** push_back every line of file or dir into v. */
-bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_empty = true, bool recursive = false, bool remove_comments = true);
+bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_empty = true, bool recursive = false, bool remove_comments = true, std::string *errtext = NULLPTR);
 
 /** List of files in directory.
  * Pushed names of file in directory into string-vector if they don't match any

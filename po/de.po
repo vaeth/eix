@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-12 11:38+0200\n"
+"POT-Creation-Date: 2012-05-16 22:21+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1841,6 +1841,7 @@ msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
 #: src/cache/common/flat_reader.cc:48 src/cache/common/flat_reader.cc:86
+#: src/eixTk/utils.cc:61
 #, c-format
 msgid "Can't open %s: %s"
 msgstr "%s kann nicht geöffnet werden: %s"
@@ -2008,7 +2009,12 @@ msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 
-#: src/eixTk/utils.cc:88
+#: src/eixTk/utils.cc:82
+#, c-format
+msgid "Error reading %s: %s"
+msgstr "Lesefehler in %s: %s "
+
+#: src/eixTk/utils.cc:102
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
@@ -5645,8 +5651,8 @@ msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1218
-#: src/portage/conf/portagesettings.cc:1247
+#: src/portage/conf/portagesettings.cc:1222
+#: src/portage/conf/portagesettings.cc:1251
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
