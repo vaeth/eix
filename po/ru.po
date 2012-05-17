@@ -249,7 +249,7 @@ msgid "cannot find merge of ${match} in ${logfile}"
 msgstr "не могу найти установку ${match} в ${logfile}"
 
 #: src/eix-layman.sh:20
-#, fuzzy, sh-format
+#, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
 "Add or remove local layman overlays to the eix database (${p}).\n"
@@ -1632,7 +1632,7 @@ msgstr "Чтенье настроек Portage ..\n"
 #: src/eix-update.cc:497
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
-msgstr "Исключён PORTDIR: %S\n"
+msgstr "Исключён PORTDIR: %s\n"
 
 #: src/eix-update.cc:512
 #, c-format
@@ -4637,11 +4637,11 @@ msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "внутренняя ошибка: неизвестный PartType на (%r,%r)"
 
 #: src/portage/basicversion.cc:129
-msgid "malformed (first primary at %r) version string %r\n"
-msgstr "недосформированная (1 первичн. в %r) строка версии %r\n"
+msgid "malformed (first primary at %r) version string %r"
+msgstr "недосформированная (1 первичн. в %r) строка версии %r"
 
 #: src/portage/basicversion.cc:144
-msgid "malformed (primary at %r) version string %r\n"
+msgid "malformed (primary at %r) version string %r"
 msgstr "недосформированная (первичн. в %r) строка версии %r"
 
 #: src/portage/basicversion.cc:187

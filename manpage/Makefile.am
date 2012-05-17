@@ -3,6 +3,7 @@
 
 MAN_LINGUAS = \
 en \
+de \
 ru
 
 MAN_FILES = \
@@ -12,16 +13,19 @@ eix.1
 
 CLEANFILES = \
 en-eix.1 \
+de-eix.1 \
 ru-eix.1 \
 cppcomplete.tags \
 tags
 
 man_MANS = \
 en-eix.1 \
+de-eix.1 \
 ru-eix.1
 
 EXTRA_DIST = \
 en-eix.1.in \
+de-eix.1.in \
 ru-eix.1.in
 
 install-man1:

@@ -972,10 +972,7 @@ This version is "masked by missing keyword", stable on no architecture, but unst
 This means the version is "masked by missing keyword" for all architectures.
 .TP
 .B (**)3.4.3-r2
-That version originally had no keyword, but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
-.TP
-.B -*3.4.3-r2
-That version is "masked by -* keyword" for all architectures (soon obsolete).
+That version originally had no keyword, but this was locally changed (in /etc/portage/package.{accept_,}keywords or by ACCEPT_KEYWORDS).
 .TP
 .B -0.8.14
 Masked by -ARCH.
@@ -984,13 +981,13 @@ Masked by -ARCH.
 The version would be "masked by ~keyword".
 .TP
 .B (~)3.3.5.20050130
-The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
+The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.{accept_,}keywords or by ACCEPT_KEYWORDS).
 .TP
 .B [M]~1.0.9626
 The version is both, "masked by package.mask" and "masked by ~keyword".
 .TP
 .B [m](~)4.1.4-r1
-The version was originally only "masked by ~keyword", but this was locally changed (in /etc/portage/package.keywords or by ACCEPT_KEYWORDS).
+The version was originally only "masked by ~keyword", but this was locally changed (in /etc/portage/package.{accept_,}keywords or by ACCEPT_KEYWORDS).
 However, the version is locally masked (in /etc/portage/package.mask).
 .TP
 .B 3.3.1
@@ -1034,7 +1031,7 @@ and that the previously highest stable version B<1.1> of slot B<1> was removed o
 .TP
 .B "[UD]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
 The status of package B<foo/bar> has changed in the tree (for your settings):
-The symbols on the left mean the one slot you have installed can be upgraded (without modifying masks/keywords),
+The symbols on the left mean that a slot you have installed can be upgraded (without modifying masks/keywords),
 and that another slot you have installed was removed/masked.
 Looking at the versions on the right, it becomes clear that the installed version B<1.1> of Slot B<1>
 has been removed or masked, and that there is no other installed version of slot B<1>.
@@ -1086,12 +1083,13 @@ The else-part can be also be completely left out.
 .BR { [ ! ] I<PROPERTY> [ = I<RHS>] } I<TCODE> {}
 Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to I<RHS>.
 The B<!> would negate the behaviour.
-I<RHS> is either a property (if enclosed in <>) or a variable (if prefixed with $)
-or a string (otherwise or if quoted).
 .TP
 .BR { [ ! ] I<PROPERTY> [ = I<RHS>] } I<TCODE> {else} I<FCODE> {}
 Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to I<STRING>.
 If it's not, execute I<FCODE>.
+
+I<RHS> is either a property (if enclosed in <>) or a variable (if prefixed with $)
+or a string (otherwise or if quoted).
 
 I<PROPERTY> can be either one of the Package properties specified below,
 or it can be a variable access.
@@ -1483,7 +1481,7 @@ Here is a B<schematic> overview of the order of hooks/commands:
 
 .BR !! " hooks"
 
-.BR "cp @EIX_CACHEFILE@ @EIX_PREVIOUS@
+.BR "cp @EIX_CACHEFILE@ @EIX_PREVIOUS@"
 
 layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
 
@@ -2670,7 +2668,7 @@ If no other default match algorithm default is specified, then B<regex> is used.
 Defines whether empty entries in /etc/portage/package.* are shown with -t.
 .TP
 .BR TEST_KEYWORDS " " (true / false)
-Defines whether /etc/portage/package.keywords is tested with -t.
+Defines whether /etc/portage/package.{accept_,}keywords is tested with -t.
 .TP
 .BR TEST_MASK " " (true / false)
 Defines whether /etc/portage/package.mask is tested with -t.
@@ -2714,7 +2712,7 @@ if they come from a different overlay than the installed version.
 Defines whether masked versions are non-existent for TEST_FOR_NONEXISTENT.
 .TP
 .BR REDUNDANT_IF_DOUBLE " " (string)
-Applies if /etc/portage/package.keywords lists the same keyword twice
+Applies if /etc/portage/package.{accept_,}keywords lists the same keyword twice
 for some/all (un-/installed) versions.
 
 .RS
@@ -2757,7 +2755,7 @@ Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
 
 .TP
 .BR REDUNDANT_IF_DOUBLE_LINE " " (string)
-Applies if /etc/portage/package.keywords has two lines for identical targets,
+Applies if /etc/portage/package.{accept_,}keywords has two lines for identical targets,
 i.e. such that portage would drop the first of these lines.
 Note that lines with targets B<foo/bar> and B<=foo/bar-1> are considered as
 different in this context by portage (and thus also by eix)
@@ -2766,22 +2764,22 @@ The latter redundancy can be found implicitly with B<REDUNDANT_IF_DOUBLE_LINE>,
 B<REDUNDANT_IF_MIXED>, and B<REDUNDANT_IF_STRANGE>.
 .TP
 .BR REDUNDANT_IF_MIXED " " (string ", see above")
-Applies if /etc/portage/package.keywords lists two different keywords,
+Applies if /etc/portage/package.{accept_,}keywords lists two different keywords,
 e.g. ~ARCH and -*, for the versions in question.
 .TP
 .BR REDUNDANT_IF_WEAKER " " (string ", see above")
-Applies if /etc/portage/package.keywords lists a keywords which can
+Applies if /etc/portage/package.{accept_,}keywords lists a keywords which can
 be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH
 in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,
 for the versions in question.
 .TP
 .BR REDUNDANT_IF_STRANGE " " (string ", see above")
-Applies if /etc/portage/package.keywords lists a strange keyword,
+Applies if /etc/portage/package.{accept_,}keywords lists a strange keyword,
 e.g. UNKNOWNARCH (unknown to the .ebuild and ARCH) or -OTHERARCH,
 for the versions in question.
 .TP
 .BR REDUNDANT_IF_NO_CHANGE " " (string ", see above")
-Applies if /etc/portage/package.keywords provides keywords which do not
+Applies if /etc/portage/package.{accept_,}keywords provides keywords which do not
 change the availability keywords status for the versions in question.
 .TP
 .BR REDUNDANT_IF_MASK_NO_CHANGE " " (string ", see above")
@@ -2825,7 +2823,7 @@ in this case, all non-hidden files/subdirectories in this tree are read recursiv
 resolving all symbolic links.
 .TP
 .BR REDUNDANT_IF_IN_KEYWORDS " " (string ", see above")
-Applies if /etc/portage/package.keywords contains a nonempty entry matching the versions in question
+Applies if /etc/portage/package.{accept_,}keywords contains a nonempty entry matching the versions in question
 (to find empty entries use -t).
 Of course, one will certainly not consider all matches as a redundancy
 (although one might misuse this option to simply list all matches).
@@ -2862,7 +2860,7 @@ This is a list of filenames/dirnames which serve as /etc/portage/package.slot_up
 This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
 .BR KEYWORDS_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.accept_keywords.nonexistent
+This is a list of filenames/dirnames which serve as /etc/portage/package.{accept_,}keywords.nonexistent
 .TP
 .BR MASK_NONEXISTENT " " "(string list)"
 This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nonexistent
@@ -2895,7 +2893,7 @@ This is a list of filenames/dirnames which serves as /etc/portage/package.nowarn
 This is a directory analogous to B</etc/portage/sets> (see the portage manpage).
 Since portage has some ways to define package sets which are not available for eix,
 you can use this directory to store (static) sets which you want that eix knows anyway
-(e.g. so that set entries in /etc/portage/package.keywords can be treated properly).
+(e.g. so that set entries in /etc/portage/package.{accept_,}keywords can be treated properly).
 .\" }}}
 
 .\" {{{ /etc/portage/package.slot_upgrade*

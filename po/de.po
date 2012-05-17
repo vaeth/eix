@@ -5625,12 +5625,12 @@ msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "Interner Fehler: unknown PartType on (%r,%r)"
 
 #: src/portage/basicversion.cc:129
-msgid "malformed (first primary at %r) version string %r\n"
-msgstr "Versionsstring unerlaubt (erstes Primary bei %r): %r\n"
+msgid "malformed (first primary at %r) version string %r"
+msgstr "Versionsstring unerlaubt (erstes Primary bei %r): %r"
 
 #: src/portage/basicversion.cc:144
-msgid "malformed (primary at %r) version string %r\n"
-msgstr "Versionsstring unerlaubt (Primary bei %r): %r\n"
+msgid "malformed (primary at %r) version string %r"
+msgstr "Versionsstring unerlaubt (Primary bei %r): %r"
 
 #: src/portage/basicversion.cc:187
 msgid "malformed (suffix at %r) version string %r"

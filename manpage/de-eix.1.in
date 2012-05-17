@@ -1,20 +1,20 @@
-.TH "eix" "1" "$Date: 2012-04-15 17:45:00 +0200 (Sun, 15 Apr 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-04-17 09:00:00 +0200 (Thu, 17 May 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
-- a set of utilities for searching, diffing and updating a binary cache of your local portage-trees
+- Programme zum Durchsuchen, Vergleichen und Updaten eines Binärcaches der lokalen Portage-Baums
 .\" }}}
 
-.\" {{{ SYNOPSIS
-.SH "SYNOPSIS"
+.\" {{{ Übersicht
+.SH "UEBERSICHT"
 .B eix
-[I<common options>] [I<OPTIONS>] I<EXPRESSION>
+[I<gemeinsame Optionen>] [I<OPTIONEN>] I<AUSDRUCK>
 
 .B eix-update
-[I<common options>] [I<eix-update options>]
+[I<gemeinsame Optionen>] [I<eix-update-OPTIONEN>]
 
 .B eix-diff
-[I<common options>] [I<OLD-CACHE>] [I<NEW-CACHE>]
+[I<gemeinsame Optionen>] [I<ALTER-CACHE>] [I<NEUER-CACHE>]
 
 .B eix-sync
 
@@ -31,393 +31,403 @@
 .B eix-functions.sh
 
 .B eix-drop-permissions
-[B<-->] [I<command to execute>]
+[B<-->] [I<Befehl zum Ausführen>]
 
 .B versionsort
 .\" }}}
 
-.\" {{{ DESCRIPTION
-.SH "DESCRIPTION"
-B<eix-update> generates a binary cache from your local portage-tree and overlays.
-B<eix> searches this cache for packages that match the restricting criteria you specify in I<EXPRESSION>;
-if you specify no such restriction, all packages are output, of course.
-B<eix-diff> compares two binary caches and finds packages that were added, removed or for
-which the highest stable versions has changed.
+.\" {{{ BESCHREIBUNG
+.SH "BESCHREIBUG"
+B<eix-update> generiert einen Binärcache des lokalen Portage-Baums und von Overlays.
+B<eix> durchsucht diesen Cache nach Paketen, die Kriterien erfüllen, die durch I<AUSDRUCK> festgelegt werden;
+falls auf der Kommandozeile kein einschränkendes Kriterium angegeben wird, werden natürlich alle Pakete ausgegeben.
+B<eix-diff> vergleicht zwei solcher Binärcache und gibt Pakete aus, die hinzugefügt oder entfernt wurden, oder für
+die sich die höchste stabile Versionsnummer geändert hat.
 
-All of these programs and scripts read the configuration files described later.
-B<eix-sync> has optionally an additional separate configuration file.
+Alle zugehörigen Programme und Skripte lesen die später beschrieben Konfigurationsfiles.
+B<eix-sync> hat optional eine separate Konfigurations-Datei.
 
-B<eix-sync> can sync the portage/overlay trees and compare them with the old cache
-using B<eix-diff>.
-To get more help on B<eix-sync> call B<eix-sync -h> and see the documentation
-of I<@SYSCONFDIR@/eix-sync.conf> below.
-Note that the content of the latter can also be stored in the variable
-B<EIX_SYNC_CONF>.
+B<eix-sync> kann den Portage/Overlay-Baum syncen und vergleicht ihn mit dem alten Cache (vermöge B<eix-diff>).
+Mehr über B<eix-sync> erfahren Sie durch den Aufruf B<eix-sync -h> und in der untenstehenden
+Beschreibung von I<@SYSCONFDIR@/eix-sync.conf>.
+Beachten Sie, dass der Inhalt dieser Datei auch in der Variablen B<EIX_SYNC_CONF> gespeichert werden kann.
 
-B<eix-test-obsolete> is a script which calls B<eix> several times to display
-the output of B<eix -tTc> in a more organized manner.
+B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe von B<eix -tTc> besser organisiert auszugeben.
 
-B<eix-remote> can sync an eix database from an external server and
-add/remove it to the current database.
-Note that to keep such remote data across eix-update calls
-you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
-By default, this script drops its permissions using B<eix-drop-permissions>.
-To get more help on B<eix-remote> call B<eix-remote -h>.
+B<eix-remote> kann eine Eix-Datenbank von einem externen Server syncen und ihn zum
+lokalen Cache hinzufügen und wieder entfernen.
+Um solche Remote-Daten über B<eix-update>-Aufrufe zu erhalten, können Sie
+B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc setzen.
+Per Default wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
+Mehr zu B<eix-remote> erfahren Sie durch den Aufruf B<eix-remote -h>.
 
-B<eix-installed-after> is a simple script (with many comments) demonstrating some
-possibilities how a custom eix output format can be used.
-It outputs packages installed after (or before) the last (or first) emerge of a specific package/version.
-To get more help on this script call B<eix-installed-after -h>.
+B<eix-installed-after> ist ein einfaches Skript (mit vielen Kommentaren),
+das einige Möglichkeiten aufzeigt, wie eine vom Skript angepasste eix-Ausgabe genutzt werden kann:
+Das Skript gibt diejenigen Pakete aus, die nach (oder vor) dem letzten (oder ersten) Emerge eines
+spezifizierten Pakets/Version installiert wurden.
+Mehr zur Benutzung erfahren Sie durch den Aufruf B<eix-installed-after -h>.
 
-B<eix-layman> can add or remove local layman overlays to the current database.
-You might want to use this if you do not source layman's make.conf in your local I</etc/make.conf>.
-To get more help on B<eix-layman> call B<eix-layman -h>.
-B<eix-layman> is also meant as an example script how to use B<eix-functions.sh>:
+B<eix-layman> kann lokale Layman-Overlays zur aktuellen Datenbank hinzufügen.
+Dies kann hilfreich sein, wenn in der lokalen I</etc/make.conf> die von Layman erzeugte make.conf nicht gesourced wird.
+Mehr zu B<eix-lamyan> erfahren Sie durch den Aufruf B<eix-layman -h>.
+B<eix-layman> versteht sich auch als Beispielskript, wie B<eix-functions.sh>
+genutzt werden kann:
 
-B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
-You might want to use them for your own similar scripts.
-Note that immediately after sourcing B<eix-functions.sh> you will normally
-have to call B<ReadFunctions> for initialisation.
+B<eix-functions.sh> sind Hilfsfunktionen, die von B<eix-sync>, B<eix-remote>, und B<eix-layman>
+benutzt werden und die in ähnlichen Skripten benutzt werden können.
+Beachten Sie, dass unmittelbar nach dem Sourcen von B<eix-functions.sh> normalerweise
+zur Initialisierung B<ReadFunctions> aufgerufen werden muss.
 
-B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
-It executes the command given as argument with permissions dropped according to
-B<EIX_USER>, B<EIX_GROUP>, B<EIX_UID>, B<EIX_GID> (see later).
-Note that also the binaries B<eix>, B<eix-diff>, and B<eix-update> drop their
-permissions according to these variables as soon as possible, i.e., you might
-have to adjust these variables if you use B<eix> (in particular B<eix-update>)
-in a nonstandard setting.
+B<eix-drop-permissions> ist ein Hilfsprogramm für B<eix-remote> (und möglicherweise eigene Skripte).
+Es führt das im Argument angegebene Kommando mit eingeschränkten Rechten aus.
+Die Einschränkung wird durch B<EIX_USER>, B<EIX_GROUP>, B<EIX_UID>, B<EIX_GID> (siehe später) spezifiziert.
+Beachten Sie, dass auch die Binärprogramme B<eix>, B<eix-diff> und B<eix-update> ihre
+Rechte so früh wie möglich gemäß diesen Variablen einschränken, d.h. es kann nötig sein,
+diese Variablen anzupassen, falls B<eix> (insbesondere B<eix-update>)
+in einem Nichtstandard-Setting genutzt werden soll.
 
-B<eix-installed> is a simple script which outputs all installed packages
-(in their exact version) and can check for packages installed with/without
-repository or buildtime information
-(cf. the description of B<CHECK_INSTALLED_OVERLAYS> and B<USE_BUILD_TIME>).
-To get more help on B<eix-installed> call B<eix-installed -h>.
+B<eix-installed> ist ein einfaches Skript, das alle installierten Pakete (und ihre exakte Version)
+ausgibt, und das prüfen kann, welche Pakete mit/ohne Repository- oder Buildtime-Information gebaut wurden
+(vgl. die Beschreibung zu B<CHECK_INSTALLED_OVERLAYS> und B<USE_BUILD_TIME>).
+Mehr zu B<eix-installed> erfahren Sie durch den Aufruf B<eix-installed -h>.
 
-B<versionsort> is a helper tool for scripts which cuts the version strings from its arguments
-and outputs them sorted according to the portage rules of version sorting.
-Details can be found near the end of the manpage.
+B<versionsort> ist ein Hilfsprogramm für Skripte, das die Versionsnummer von
+den Argumenten abtrennt, und das die gefundenen Versionsnummern gemäß den
+Portage-Regeln sortiert.
+Details stehen nahe beim Ende dieser Manpage.
 .\" }}}
 
-.\" {{{ EXAMPLES
-.SH "EXAMPLES"
+.\" {{{ BEISPIELE
+.SH "BEISPIELE"
 
-The following examples are some useful but perhaps unusual applications of eix.
-They are listed here to give you an idea what unexpected things you can do with eix.
-Since the examples are meant to be copied from this manpage they are listed early.
-To understand how they work, you should read the full manpage, of course.
-For more examples see e.g. the script B<eix-installed-after> which contains many comments.
+Die folgenden Beispiele sind nützliche aber vielleicht untypische Anwendungen von eix.
+Sie werden hier aufgelistet, um eine Idee davon zu geben, welche unerwarteten Dinge mit eix mit möglich sind.
+Da diese Beispiele mit cut-and-paste von dieser Seite kopiert werden sollten, sind sie gleich
+zu Anfang aufgelistet.
+Um zu verstehen, wie sie funktionieren, ist es natürlich notwendig, die vollständige  Manpage zu lesen.
+Weitere Beispiele finden Sie beispielsweise im Skript B<eix-installed-after>, das viele Kommentare enthält.
 
 .TP
 .IB cmd " | eix '-|*' --format '<markedversions:NAMESLOT>'"
 
-Assuming I<cmd> creates a list of the form B<category/name-version> or B<=category/name-version>,
-the above prints the corresponding list B<category/name> or B<category/name:SLOT>
-(depending on whether B<SLOT>s need to be distinguished).
+Falls I<cmd> eine Liste der Gestalt B<Kategorie/Name-Version> or B<=Kategorie/Name-Version>
+ ausgibt, gibt das obige Kommando die entsprechende List B<Kategorie/Name> oder B<Kategorie/Name:SLOT> aus
+(je nachdem, ob die B<SLOT>s unterschieden werden müssen).
 
 .TP
 .IB cmd " | eix '-|*' --format '<markedversions:NAMEASLOT>'"
 
-Similar to the above, but print always B<category/name:SLOT> even if B<SLOT>
-may be redundant. (Mnemonic: B<A>lways).
+Ähnlich wie eben, aber es wird immer B<Kategorie/Name:SLOT> ausgeben,
+selbst wenn B<SLOT> redundant ist. (Mnemonic: B<A>lways).
 
 .TP
 .B eix '-I*' --format '<installedversions:NAMEVERSION>'
 
-Print out installed packages, using the format B<category/name-version>.
-Of course, you could replace B<NAMEVERSION> also by B<NAMESLOT> or B<NAMEASLOT> to get another format.
-The only purpose of the B<I> option in this context is to speed up the output slightly.
+Gibt die installierten Pakete im Format B<Kategorie/Name-Version> aus.
+Natürlich kann man B<NAMEVERSION> auch durch B<NAMESLOT> oder B<NAMEASLOT> ersetzen,
+um ein anderes Format zu erhalten.
+Der einzige Zweck der Option B<I> in diesem Zusammenhang ist eine geringfügige Beschleunigung der Ausgabe.
 
 .TP
 .B eix '-I*' --format '<installedversions:EQNAMEVERSION>'
 
-Similarly to the above but in the format B<=category/name-version> which you
-can pipe directly to portage.
+Ähnlich wie eben, aber im Format B<=Kategorie/Name-Version>,
+das direkt von Portage benutzt werden kann.
 
 .TP
 .B eix '-I*' --format '<installedversions:DATESORT>' | sort -n | cut -f2-3
 
-Print out installed packages (with slots if necessary), sorted by installation date.
-If you want the output in another format, you have to modify B<DATESORT> correspondingly
-(you can see the original definition in the output of B<eix --dump>).
+Gibt die installierten Pakete (falls notwendig mit Slots) aus, sortiert nach Installationsdatum.
+Zur Ausgabe in einem anderen Format kann B<DATESORT> entsprechend modifiziert werden
+(die ursprüngliche Definition steht in der Ausgabe von B<eix --dump>).
 
-This sorting trick works as follows: The B<DATESORT> variable outputs as
-the first column the seconds since epoch (B<eix --print DATESORT> will show you
-that this happens by the variable B<DATESORT_DATE> whose first entry is B<%s>),
-and B<sort> thus gets the correct order by sorting alphabetically.
-Finally the B<cut> command gets rid of this first column which was only needed for sorting.
+Das Sortieren funktioniert folgendermaßen: Die B<DATESORT>-Variable gibt als
+erste Spalte die Sekunden seit Epoch aus (Mit B<eix --print DATESORT> erfahren Sie,
+dass dies durch die Variable B<DATESORT_DATE> geschieht, deren erster Eintrag B<%s> lautet),
+und B<sort> erzeugt so durch einfaches alphabetisches Sortieren die korrekte Ordnung.
+Das B<cut>-Kommando verschluckt schließlich wieder die erste Spalte, die nur zum Sortieren benötigt wurde.
 
-In the above examples, things like B<NAMEVERSION> and B<DATESORT> are actually
-just names of variables which are predefined in eix (with B<eix --dump> you see them).
-You can as well define your own variables and use them.
-To understand how this works, please read the manpage, especially the description of the B<FORMAT> string.
+In diesem Beispiel sind Dinge wie B<NAMEVERSION> oder B<DATESORT> nur Variablennamen,
+die in eix vordefiniert wurden (B<eix --dump> listet sie auf).
+Genausogut können natürlich auch eigene Variablen definiert und benutzt werden.
+Genaueres dazu steht später in der Manpage, insbesonder die Beschreibung des B<FORMAT> Strings.
 .\" }}}
 
 
-.\" {{{ OPTIONS
-.SH "OPTIONS"
-.\" {{{ -------- Common options
-.SS Common options
-These options are common to B<eix>, B<eix-diff>, and B<eix-update>.
+.\" {{{ OPTIONEN
+.SH "OPTIONEN"
+.\" {{{ -------- gemeinsame Optionen
+.SS gemeinsame Optionen
+Die folgenden Optionen sind B<eix>, B<eix-diff> und B<eix-update> gemein:
 .TP
 .BR -h ", " --help
-Print a help screen and exit.
+Ausgabe eines Hilfstextes und Ende.
 .TP
-.BR -Q ", " --quick "   (toggle)    (not for B<eix-update>)"
-Do (not) read the slots of installed versions which cannot be guessed
-(i.e. installed versions of packages with at least two different slots
-for which the installed version is not in the database anymore).
-Note that with this option, eix and eix-diff might report false positives
-for up-/downgrade recommendations for these packages.
+.BR -Q ", " --quick "   (toggle)    (nicht für B<eix-update>)"
+Verhindert/Ermöglicht, dass Slots installierter Versionen gelesen werden,
+die nicht vermutet werden können (d.h. installierter Versionen von Paketen
+mit mindestens zwei verschiedene Slots, für die die installierte Version
+nicht mehr in der Datenbank ist).
+Beachten Sie, dass mit dieser Option eix und eix-diff falsche Posittreffer
+über Up-/Downgrade-Empfehlungen für diese Pakete ausgeben könnten.
 .TP
-.BR --care "    (not for B<eix-update>)"
-This deactivates --quick, and moreover, slots of installed version are
-always read instead of relying on the guess of the slot.
-This will in particular make sure that you get an up-/downgrade
-recommendation if a slot name of an installed version changes.
-Note that this will dramatically decrease the speed at the first call.
-(If your filesystem has a reasonable cache, later calls are almost not
-slower than without this option.)
+.BR --care "    (nicht für B<eix-update>)"
+Deaktiviert --quick, und darüberhinaus werden Slots installiertet Versionen
+immer gelesen, auch dann wenn der Slotname vermutet werden kann.
+Dies stellt insbesondere sicher, dass Up-/Downgrade-Empfehungen auch dann
+ausgegben werden, wenn sich der Slotname einer installierten Version ändert.
+Beachten Sie, dass diese Option die Geschwindigkeit beim ersten Aufruf
+dramatisch reduziert. (Wenn das Dateisystem einen vernünftigen Cache hat,
+werden spätere Aufrufe kaum langsamer sein als ohne diese Option).
 .TP
 .BR -q ", " --quiet "   (toggle)"
-Produce no output on stdout.
-For eix you can decrease execution time by combining this
-(depending on your needs) with either B<--brief> or B<--brief2>
-and by setting B<COUNT_ONLY_PRINTED=false>.
-See also B<NOFOUND_STATUS> and B<MOREFOUND_STATUS>
+Ausgaben auf stdout werden verhindert.
+Für eix kann ggf. die Ausführungszeit weiter reduziert werden, wenn diese
+Kombination mit (je nach Einsatzzweck) entweder B<--brief> oder B<--brief2>
+kombiniert wird, und durch Setzen von B<COUNT_ONLY_PRINTED=false>.
+Siehe auch B<NOFOUND_STATUS> und B<MOREFOUND_STATUS>
 .TP
 .B --dump
-Show the current eixrc-variables, and their defaults as comments; then exit.
+Ausgabe der aktuellen eixrc-Variablen und ihre Defaults als Kommentar; dann Ende.
 .TP
 .B --dump-defaults
-Show the defaults of the eixrc-variables, and their current values as comments; then exit.
+Ausgabe der Default-eixrc-Variablen und ihrer aktuellen Werte als Kommentar; dann Ende.
 .TP
 .BI "--print " VAR
-Print the specified variable I<VAR> of eixrc or of portage settings,
-completely expanded as it would be used internally by eix; then exit.
-The exit status is nonzero if I<VAR> is not known to eix (see B<--known-vars>)
-This is mainly intended for usage in scripts or for debugging purposes.
-If you use it in scripts you might want to specify B<PRINT_APPEND> to
-get trailing spaces (see description of B<PRINT_APPEND>).
+Ausgabe der spezifizierten Variablen I<VAR> aus eixrc oder der Portage-Konfiguration; dann Ende.
+Die Ausgabe erfolgt vollständig expandiert, so wie sie intern von eix benutzt würde.
+Der Exit-Status ist positiv, falls I<VAR> eix unbekannt ist (siehe B<--known-vars>).
+Diese Option ist hauptsächlich für Skripte nützlich oder zum Debuggen.
+Zur Benutzung in Skripts empfiehlt sich die Benutzung von B<PRINT_APPEND>.
+um das Abschneiden von Leerzeichen am Ende zu verhinden (siehe die Beschreibung zu B<PRINT_APPEND>).
 .TP
 .B --know-vars
-Print an alphabetical list of variables known to eix with B<--print>.
-After each variable name a newline is output.
+Ausgabe eine alphabetischen Liste aller Variablen, die eix für B<--print> bekannt sind.
+Nach jedem Variablennamen wird ein Zeilenumbruch ausgegeben.
 .TP
 .BR -V ", " --version
-Print version and exit.
+Ausgabe der Versionsnummer und Ende.
 .TP
 .BR -n ", " --nocolor
-Disables the use of ANSI color codes. This is useful for terminals that do not support ANSI colors.
-(This is automatically turned on if stdout is no tty, but can be overridden by using --force-color)
+Verhindert die Ausgabe von ANSI Farbcodes;
+nützlich für Terminals, die diese nicht kennen.
+(Dies wird automatisch aktiv, falls stdout nicht auf ein tty führt, kann aber mit --force-color überschrieben werden).
 .TP
 .BR -F ", " --force-color
-The opposite of --nocolor.
+Das Gegenteil von --nocolor.
 .\" }}}
 
-.\" {{{ -------- eix exclusive
-.SS Special information options
-The following special information options are only provided by the B<eix> binary.
-They are one-shot exclusive options, i.e. eix outputs only the required data and then exits.
+.\" {{{ -------- eix ausschließend
+.SS Spezielle Informations-Optionen
+Die folgenden speziellen Informations-Optionen versteht nur das eigentliche B<eix>-Programm.
+Sie sind einmalig und ausschließend, d.h. eix gibt nur die entsprechenden Daten aus und beendet sich dann.
 .TP
 .BI "--print-overlay-path " OVERLAY
-Print the path of the first overlay matching I<OVERLAY>.
-I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
+Gibt den Pfad des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
+I<OVERLAY> kann ein Overlay-Label sein, ein Overlay-Pfad (Maske) oder eine Zahl.
 .TP
 .BI "--print-overlay-label " OVERLAY
-Print the label of the first overlay matching I<OVERLAY>.
-I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
+Gibt das Lebel des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
+I<OVERLAY> kann ein Overlay-Label sein, ein Overlay-Pfad (Maske) oder eine Zahl.
 .TP
 .B --print-all-useflags
-print all IUSE words used in some version.
+Gibt alle IUSE-Worte aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-keywords
-print all KEYWORDS used in some version.
+Gibt alle KEYWORDS aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-slots
-print all SLOT strings used in some version.
+Gibt alle SLOT-Strings aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-licenses
-print all LICENSE strings used in some package.
+Gibt alle LICENSE-Strings aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-depends
-print all words occurring in some B<{,R,P}DEPEND>.
-This only works if B<DEP=true> is active (and was so when the cachefile was created).
+Gibt alle Worte aus, die in einem B<{,R,P}DEPEND> auftauchen.
+Die geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung des Cachefiles aktiv war).
 .TP
 .B --print-world-sets
-print the world sets.
+Gibt die world sets aus.
 .TP
 .B --is-current
-This checks only whether B<@EIX_CACHEFILE@> is available and valid
-(i.e. in a version supported by the B<eix> binary).
-If this is the case, eix returns successful without printing anything.
+Diese Option überprüft nur, ob B<@EIX_CACHEFILE@> vorhanden und zulässig ist
+(d.h. in einer Version, die von B<eix> gelesen werden kann).
+In diesem Fall kehrt eix erfolgreich zurück, ohne irgendetwas auszugeben.
 .\" }}}
 
-.\" {{{ -------- Output options
-.SS Output options
+.\" {{{ -------- Ausgabe-Optionen
+.SS Ausgabe-Optionen
 .TP
 .BR -x ", " --versionsort "    (toggle)"
-Prints available versions sorted by versions (slots).
-If sorted by slots, each new slot starts in a new line.
-This mode can be combined with B<--versionlines> (B<-l>)
-to start a new line even for every version.
+Gibt die vorhandenen Versionen sortiert nach Versionen (oder Slots) aus.
+Bei Slot-sortierter Ausgabe wird jeder Slot in einer neuen Zeile ausgegeben.
+Dieser Modus kann mit B<--versionlines> (B<-l>) kombiniert werden,
+um für jede neue Version eine neue Zeile auszugeben.
 .TP
 .BR -l ", " --versionlines "   (toggle)"
-Prints available versions in a (vertical) list.
-Only in this mode some additional information for each version is output.
-More precisely, depending on whether you have chosen B<--verbose> and
-depending on the state of the configuration variables
-B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>,
-this can be the B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND> data.
-Note that if B<IUSE> is not printed per version then it is only collected
-for the whole package which can give the wrong impression, since often
-B<IUSE> changes dramatically with versions.
+Gibt die vorhandenen Versionen in einer (vertikalen) Liste aus.
+Nur in diesem Modus werden gewisse Zusatzinformationen für jede Version ausgegeben.
+Genauer, je nachdem ob B<--verbose> benutzt wird und abhängig vom Status der
+Konfigurationsvariablen B<VERSION_{IUSE,KEYWORDS,DEPS}_{NORMAL,VERBOSE}>
+kann dies B<KEYWORDS>, B<IUSE>, B<DEPEND>, B<RDEPEND>, B<PDEPEND> sein.
+Beachten Sie: Falls B<IUSE> nicht für jede Version ausgegeben wird, so wird es
+nur gesammelt für das gesamte Paket ausgegeben, was einen falschen Eindruck geben kann,
+da sich B<IUSE> von Version zu Version zuweilen dramatisch ändert.
 .TP
 .BR -c ", " --compact "   (toggle)"
-Causes eix to use a compact layout for search results. Useful for obtaining a better
-overview in the case of a long list of results, and also to help speed up searching over
-slow connections such as a serial console.
+Wählt ein kompaktes Layout für die Ausgabe von Suchergebnissen.
+Nützlich, um einen besseren Überblick über eine lange Ergebnisliste zu erhalten,
+und es hilft auch, die Suche über eine lansame Verbindung (wie etwa eine serielle Konsole)
+zu beschleunigen.
 .TP
 .BR -v ", " --verbose "   (toggle)"
-Use a verbose layout with additional information about search results such as the license
-of a package.
+Benutzt ein ausführliches Layout mit zusätzlichen Informationen über Suchergebnisse
+(wie etwa die Lizenz eines Pakets).
 .TP
 .BR --xml "   (toggle)"
-Output in XML format.
-If you use this option from an external program you will probably want to
-combine this with B<--care> and export some variables like B<LOCAL_PORTAGE_CONFIG>
-to make sure that the preferred user output settings do not influence your output.
-If this option is active, B<OVERLAYS_LIST=none> and B<--pure-packages> are
-automatically active.
-The output format can be slightly influenced by the B<XML_*> variables.
-The XML format used is documented in human-readable form in the files eix-xml.html or eix-xml.txt
-and in less human-readable form (namely as an xml-schema) in the file eix-xml.xsd
+Ausgabe im XML format.
+Falls dies für ein externes Programm geschieht, empfiehlt sich zusätzlich
+die Benutzung von B<--care> und das Exportieren einiger Variablen wie B<LOCAL_PORTAGE_CONFIG>,
+so dass Benutzereinstellungen die Ausgabe nicht beeinflussen.
+Mit dieser option werden B<OVERLAYS_LIST=none> und B<--pure-packages>
+automatisch aktiviert.
+Das Ausgabeformat kann minimal mit den B<XML_*>-Variablen beeinflusst werden.
+Das benutzte XML-Format ist auf menschenlesbare Art in den Dateien eix-xml.html oder eix-xml.txt
+dokumentiert und auf weniger menschenlesbare Art (nämlich als XML-Schema) in der Datei eix-xml.xsd
+
 .TP
 .BR -* ", " --pure-packages "   (toggle)"
-(do not forget quoting if you use the short form from within a shell.)
-Omit printing of additional information (overlay names, number of found packages) after the packages.
-This might be useful for some shell scripts parsing the output
+(bei der Benutzung der Kurzform in einer Shell bitte das Quoten nicht vergessen!)
+Diese Option verhindert die Ausgabe zusätzlicher Informationen (Overlay-Namen, Zahl der gefundenen Pakete) am Ende.
+Dies kann für Shell-Skripte nützlich sein, die die Ausgabe parsen.
 .TP
 .BR --only-names "   (toggle)"
-As "-*", but additionally print only the category and name of the packages found.
+Wie "-*", aber zusätzlich werden nur Kategorie und Name der gefundenen Pakete ausgegeben.
 .TP
 .BR -0 ", " --brief "   (toggle)"
-Print at most one package then stop.
-This option is typically faster when used with B<COUNT_ONLY_PRINTED=false>.
-In the latter case, when you use fuzzy search, not necessarily the best match is output.
+Ausgabe von höchstens einem Paket.
+Diese Option ist normalerweise schneller, wenn sie mit B<COUNT_ONLY_PRINTED=false> kombiniert wird.
+In diesem Fall und zusammen mit Fuzzy-Suche wird nicht notwendigerweise der beste Treffer ausgegeben.
 .TP
 .BR --brief2 "   (toggle)"
-As B<--brief>, but print up to two packages.
+Wie B<--brief>, aber Ausgabe von bis zu zwei Paketen.
 .\" }}}
 
-.\" {{{ -------- Options for eix
-.SS Special options for B<eix>
+.\" {{{ -------- Optionen für eix
+.SS Spezielle Optionen für B<eix>
 .TP
 .BR -t ", " --test-non-matching
-Before other output, print entries of /etc/portage/package.* which do not
-match any existing version in the package database or which apparently have
-no meaning because they are empty (see B<TEST_FOR_EMPTY>).
+Vor anderer Ausgabe werden Einträge in /etc/portage/package.* ausgegeben,
+die kein passendes Pendant in der Paketdatenbank haben, oder die offensichtlich
+keine Bedeutung haben, weil sie leer sind (siehe B<TEST_FOR_EMPTY>).
 
-This option also lists all installed packages whose name is not in the database.
+Diese Option listet ebenfalls alle installierten Pakete, deren Name nicht
+in der Datenbank zu finden ist.
 
-Note that this is essentially different from B<-T> (see below).
-The latter only tests for packages B<in the database> whether redundant
-entries in /etc/portage/package.* exist or whether the installed versions
-are available, respectively.
+Dies ist etwas prinzipiell anderes als B<-T> (siehe unten).
+Das letztere überprüft nur für Pakete B<in der Datenbank>, ob redundante
+Einträge in /etc/portage/package.* existieren bzw. ob die installierten Versionen
+vorhanden sind.
 
-This option is best combined with B<-T> to clean up /etc/portage/package.*
+Am besten wird diese Option mit B<-T> kombiniert, um /etc/portage/package.* aufzuräumen.
 
-Or you can combine it with B<-e> to have no other output.
+Oder sie kann mit B<-e> kombiniert werden, um weitere Ausgaben zu verhindern.
 
-If you have a reason to exclude certain entries/packages from this test,
-you can write those entries into a file /etc/portage/package.*.nonexistent
-where *=keywords,mask,unmask,use,env,license,cflags,installed.
-These files (and how to modify their filenames) are described later.
+Falls es einen Grund gibt, bestimmte Einträge/Pakete von diesem Test auszuschließen,
+können diese Einträge in eine Datei /etc/portage/package.*.nonexistent eingefügt werden.
+Hier steht * für eines der Wort keywords, mask, unmask, use, env, license, cflags, installed.
+Diese Dateien (und wie ihre Namen geändert werden können) wird später beschrieben.
 .TP
 .BI "--cache-file " FILE
-Use I<FILE> instead of B<@EIX_CACHEFILE@>.
+Benutzt I<FILE> statt B<@EIX_CACHEFILE@>.
 
-.\" {{{ -------- Options for EXPRESSION
-.SS Options for EXPRESSION
-EXPRESSION is used to narrow which packages eix prints.
+.\" {{{ -------- Optionen für AUSDRUCK
+.SS Optionen für AUSDRUCK
+AUSDRUCK wird benutzt um die Suche zu spezifizieren.
 
-An EXPRESSION can contain Boolean operators and tests according to the following grammar:
+Ein AUSDRUCK kann Boolesche Operatoren und Tests gemäß der folgenden Grammatik enthalten:
 
-EXPRESSION ::= [ B<--not> | B<-!> ] BRACE_OR_TEST |
-               EXPRESSION [ B<--and>| B<-a> ] EXPRESSION |
-               EXPRESSION [ B<--or> | B<-o> ] EXPRESSION
+AUSDRUCK ::= [ B<--not> | B<-!> ] KLAMMER_ODER_TEST |
+               AUSDRUCK [ B<--and>| B<-a> ] AUSDRUCK |
+               AUSDRUCK [ B<--or> | B<-o> ] AUSDRUCK
 
-BRACE_OR_TEST ::= B<--open>|B<-(> EXPRESSION B<--close>|B<-)> |
-               TEST_WITH_OPTIONS
+KLAMMER_ODER_TEST ::= B<--open>|B<-(> AUSDRUCK B<--close>|B<-)> |
+               TEST_MIT_OPTIONEN
 
-TEST_WITH_OPTIONS ::= [TEST_OPTIONS] [PATTERN]
+TEST_MIT_OPTIONEN ::= [TEST_OPTIONEN] [SUCHMUSTER]
 
-Do not forget that B<!>, B<(>, B<)> have to be quoted in shells so that
-eix actually receives these as parts of arguments!
+Bitte vergessen Sie nicht, dass B<!>, B<(>, B<)> in Shells normalerweise gequotet werden müssen,
+damit eix sie als Teil des Arguments erhält!
 
-If you want that an EXPRESSION starts with B<->, precede it with two further B<--> symbols:
-This way, the EXPRESSION is not read as an option, and two additional B<--> symbols are ignored.
-For example, B<eix ---tool --or ---util> will output the packages containing B<-tool> or B<-util>.
+Falls ein AUSDRUCK mit B<-> beginnen soll, stellen Sie einfach zwei weiter B<--> Zeichen davor:
+Auf diese Weise wird der AUSDRUCK nicht als Option interpretiert und zwei zusätzliche B<--> Zeichen werden ignoriert.
+Beispielsweise wird B<eix ---tool --or ---util> diejenigen Pakete ausgeben die B<-tool> or B<-util> enthalten.
 
-The meaning of the logical operators should be obvious with perhaps some exceptions:
+Die Bedeutung der logischen Operatoren sollte mit folgenden Ausnahmen offensichtlich sein:
 
-1. If neither B<--and>|B<-a> nor B<--or>|B<-o> is between two EXPRESSIONs, then one of
-them is implicitly assumed; whether this is B<-a> or B<-o> depends on the setting
-of the configuration variable B<DEFAULT_IS_OR>.
+1. Falls weder B<--and>|B<-a> noch B<--or>|B<-o> zwischen zwei AUSDRÜCKEN auftauchen,
+so wird eines von beiden implizit angenommen.
+Ob dies B<-a> oder B<-o> ist, hängt vom Wert der Konfigurationsvariable B<DEFAULT_IS_OR> ab.
 
-2. The operators B<-a> and B<-o> have equal precedence and are left-associative.
-In particular, B<X -o Y -a Z> fails if B<Z> fails.
+2. Die Operatoren B<-a> und B<-o> haben gleiche Bindungskraft und sind linksassoziativ.
+Insbesondere liefert B<X -o Y -a Z> keinen Treffer, falls B<Z> keinen Treffer liefert.
 
-3. B<--not>|B<-!> negates only the result of the subsequent BRACE_OR_TEST.
+3. B<--not>|B<-!> negiert nur das Ergebnis des unmittelbar folgenden KLAMMER_ODER_TEST.
 
-4. If PATTERN is omitted, it defaults to the empty PATTERN.
-For instance, with the default settings, B<eix> without arguments will match
-all packages, since the empty string is contained in every name.
-On the other hand, B<eix -e> should (usually) output nothing,
-because no package name should I<exactly be> the empty string.
+4. Falls SUCHMUSTER weggelassen wird, ist der Default ein leeres SUCHMUSTER.
+Beispielsweise wird B<eix> mit den Default-Settings ohne Argument alle Pakete
+ausgeben, da der leere String in jedem Namen enthalten ist.
+Andererseits sollte B<eix -e> (normalerweise) nichts ausgeben,
+da kein Paketname (I<exakt>) leer sein sollte.
 
-5. Note that the syntax implies that PATTERN always ends an expression.
-TEST_OPTIONS after PATTERN always start a new expression
-(i.e. an implicit B<--and> or B<--or> is inserted, depending on B<DEFAULT_IS_OR>).
-In particular B<eix -e foo> has a different meaning than B<eix foo -e>.
-The latter means the same as B<eix foo --and -e> or B<eix foo --or -e>,
-depending on B<DEFAULT_IS_OR>.
+5. Beachten Sie, dass die Syntax bedeutet, dass das SUCHMUSTER stets einen Ausdruck beendet.
+TEST_OPTIONEN nach SUCHMUSTER beginnt immer einen neuen Ausdruck
+(d.h. ein implizites B<--and> oder B<--or> wird eingefügt, je nach B<DEFAULT_IS_OR>).
+Insbesondere hat B<eix -e foo> eine andere Bedeutung als B<eix foo -e>.
+Letzteres bedeutet das selbe wie B<eix foo --and -e> or B<eix foo --or -e>,
+je nach B<DEFAULT_IS_OR>.
 
-6. Observe that TEST_OPTIONS can consist of several options.
-All of these options are applied simultaneously, i.e. in a sense these options
-are logically braced and combined with B<and> (independently of B<DEFAULT_IS_OR>).
-This is somehow ambiguous, since PATTERN can be omitted.
-This ambiguity is resolved by interpreting successive TEST_OPTIONS always as a
-part of one TEST_WITH_OPTIONS.
-For instance, in B<eix -I -O -e foo> all options are considered as part of a common I<EXPRESSION>
-(not as four B<EXPRESSION> as would be the case for B<eix -I '' -O '' -e '' foo>).
-On the other hand, in B<eix -I --not -e> the B<--not> will cause the subsequent TEST_OPTION B<-e> to be considered as part of a new I<EXPRESSION>.
-Options other than TEST_OPTIONS or a logical option (like B<-!>, B<-(>, B<-)>, B<-a>, B<-o>) are ignored in this respect.
-For instance, B<eix -I -c -e> generates only one I<EXPRESSION>, since B<-c> is neither a TEST_OPTION nor a logical option
-and therefore plays no role for the interpretation of I<EXPRESSION>.
+6. Beachten Sie, dass TEST_OPTIONEN mehrere Optionen enthalten kann.
+Diese werden alle zugleich angewendet, d.h. in gewissem Sinne werden diese
+Optionen logisch geklammert und mit B<and> kombiniert (unabhängig von B<DEFAULT_IS_OR>).
+Dies ist etwas zweideutig, da SUCHMUSTER weggelassen werden kann.
+Diese Zweideutigkeit wird so aufgelöst, dass aufeinanderfolgende TEST_OPTIONEN stets als
+ein Teil eines einzige TEST_MIT_OPTIONEN aufgefasst werden.
+Beispielsweise werden in B<eix -I -O -e foo> alle Optionen als Teil eines einzigen I<AUSDRUCK> interpretiert
+(nicht als vier B<AUSDRUCK>-Argumente wie es etwas bei B<eix -I '' -O '' -e '' foo> der Fall wäre).
+Andererseits wird das B<--not> in B<eix -I --not -e> nicht dazu führen, dass die darauffolgende
+TEST_OPTION B<-e> als Teil eines neuen I<AUSDRUCK>s verstanden wird.
+Andere Optionen als TEST_OPTIONEN oder logische Optionen (wie B<-!>, B<-(>, B<-)>, B<-a>, B<-o>) werden diesbezüglich ignoriert.
+Beispielsweise wird B<eix -I -c -e> nur einen I<AUSDRUCK> erzeugen, da B<-c>
+weder eine TEST_OPTION noch eine logische Option ist und daher bei der
+Interpretation von I<AUSDRUCK> keine Rolle spielt.
 
-7. The TEST_OPTIONS can specify things like the B<match algorithm> and also B<operation selection>.
-All these specifications refer B<only> to the current TEST_WITH_OPTIONS, in particular, they are only active for the next B<PATTERN>.
+7. TEST_OPTIONEN kann Dinge wie den B<Match-Algorithmus> oder die B<Operandenwahl> festlegen.
+Alle diese Dinge beziehen sich B<only> auf den aktuellen TEST_MIT_OPTIONEN;
+insbesondere sind sie nur für das nächste B<SUCHMUSTER> aktiv.
 
-Note that besides using this expression syntax a different way of implicit
-(though slow) package selection on various other criteria is possible by
-defining B<FORMATSTRING> (see below) using conditionals such that it outputs
-an empty string for the undesired packages.
+Beachtne Sie ebenfalls, dass es neben dieser AUSDRUCK Syntax auch einen
+anderen Weg zur impliziten (allerdings langsamen) Paketwahl aufgrund
+anderer Kriterien gibt: Nämlich, indem man  B<FORMATSTRING> (siehe unten)
+mit entprechenden Konditionalen versieht, so dass es einen leeren String
+für ungewünschte Pakete ausgibt.
 
-Here are the admissible TEST_OPTIONS:
+Es folgen die zulässigen TEST_OPTIONEN:
 .TP
 .BR -I ", " --installed
-Only match installed packages.
-Please do not use this as a replacement for B<eix-installed -a>
-(or B<qlist -ICv> or B<equery>), it is not the same:
-Packages that are installed, but no longer in the portage tree (or an overlays) are not listed here.
-However, you should better not have such packages at all
-(better put these packages in overlays in case you need to reinstall them).
-To find such packages, you can use B<eix -te> (or B<eix -tI> to get listed both)
-but be aware that eix -t does not obey the usual B<FORMAT> rules for these packages.
-So you better do not use this in scripts unless you know what you are doing.
+Findet nur installierte Pakete.
+Benutzen Sie dies bitte nicht als Ersatz für B<eix-installed -a>
+(oder B<qlist -ICv> oder B<equery>), da es nicht das selbe ist:
+Pakete, die installiert aber nicht mehr im Portage Tree (oder einem Overlay) sind,
+werden auf diese Weise nicht gelistet.
+Andererseits sollten Sie solche Pakete ohnehin besser nicht haben
+(es ist besser, diese Pakete in einen Overlay zu kopieren, falls sie irgendwann einmal reinstalliert werden müssen).
+Um solche Pakete zu finden, kann B<eix -te> benutzt werden (oder B<eix -tI> um beides auszugeben),
+aber dabei ist zu beachten, dass eix -t nicht die üblichen B<FORMAT> rules auf diese Pakete anwendet.
+Dies sollte daher besser nicht in Skripten benutzt werden (falls Sie nicht genau wissen, was Sie da tun).
 
-If you really want to use this option as a substitute for equery in scripts,
-you might want to combine it with some of
+Falls Sie diese Option unbedingt als einen Ersatz für equery in Skripten benuzten wollen,
+dann werden Sie sie vermutlich mit einem der folgenden Optionen kombinieren wollen:
 
 .B --format --only-names
 
@@ -432,796 +442,804 @@ you might want to combine it with some of
 .B --format '<installedversions:DATESORT>' --pure-packages
 .TP
 .BR -i ", " --multi-installed
-Only match packages which are installed in at least two different versions.
-Usually, this means that these versions are slotted (at installation time).
+Findet nur Pakete, die in mindestens zwei verschiedenen Versionen installiert sind.
+Normalerweise bedeutet dies, dass die Versionen geslotted sind (zumindest zu dem Zeitpunkt, als sie installiert wurden).
 .TP
 .BR -d ", " --dup-packages
-Only match duplicated packages,
-for example, if sys-foo/bar exists both in the official portage tree and a local overlay.
-If B<DUP_PACKAGES_ONLY_OVERLAYS> is set (see below), the instances must be in two different local overlays.
+Findet nur doppelte Pakete,
+beispielsweise, falls sys-foo/bar im offiziellen Portage-Baum und im lokalen Overlay existiert.
+Falls B<DUP_PACKAGES_ONLY_OVERLAYS> gesetzt ist (siehe unten), müssen die Pakete in verschiedenen lokalen Overlays liegen.
 .TP
 .BR -D ", " --dup-versions
-Only match packages with duplicated versions,
-for example, if sys-foo/bar-0.2.1 exists both in the official portage tree and a local overlay.
-If B<DUP_VERSIONS_ONLY_OVERLAYS> is set (see below), both instances must be in overlays.
+Findet nur Pakete mit doppelten Versionen,
+beispielsweise, wenn sys-foo/bar-0.2.1 im offiziellen Portage-Baum und im lokalen Overlay existiert.
+Falls B<DUP_VERSIONS_ONLY_OVERLAYS> gesetzt ist (siehe unten), müssen die Ebuilds in verschiedenen lokalen Overlays liegen.
 .TP
 .BR -1 ", " --slotted
-Only match packages with a nontrivial slot, i.e. where SLOT is nonempty and different from "0".
+Findet nur Pakete mit einem nichttrivialen Slot, d.h. wenn Slot nichtleer ist und verschieden von "0".
 .TP
 .BR -2 ", " --slots
-Only match packages with at least two different slots.
-In contrast to -1, a package is not shown here, if only one slot is available with e.g. slot-name "4.3".
+Findet nur Pakete mit mindesten zwei verschiedenen Slots.
+Anders als bei -1 wird hierbei ein Paket nicht gezeigt, falls nur ein Slot vorhanden ist, der z.B. den Slot-Namen "4.3" trägt.
 .TP
 .BR -u ", " --upgrade ", " --upgrade+ ",  " --upgrade-
-Only match packages which have at least one slotted version installed which
-is not the best version within that slot.
-This means usually that you should either upgrade or downgrade that package.
+Findet nur Pakete, die zumindest eine Version aus einem Slot installiert haben,
+die nicht die beste innerhalb des Slots ist.
+Dies bedeutet normalerweise, dass ein Upgrade/Downgrade des Pakets notwendig ist.
 
-However, the test takes also B<UPGRADE_TO_HIGHEST_SLOT> (see below) into account.
+Dieser Test berücksichtigt auch B<UPGRADE_TO_HIGHEST_SLOT> (siehe unten).
 
-If you use B<--upgrade+> or B<--upgrade->, then the test acts as if B<LOCAL_PORTAGE_CONFIG> is B<true> or B<false>.
-Otherwise, this decision is based upon B<UPGRADE_LOCAL_MODE>.
+Für <--upgrade+> oder B<--upgrade-> verhält sich der Test, als wenn B<LOCAL_PORTAGE_CONFIG> B<true> bzw. B<false> ist.
+Undernfalls wird diese Entscheidung von B<UPGRADE_LOCAL_MODE> gefällt.
 
-If you want to see only packages with downgrade recommendations, you might make
-use of the B<FORMATSTRING> features described below.
+Falls Sie nur Pakete mit Downgrade-Empfehlung sehen wollen, können Sie
+die später beschriebenen B<FORMATSTRING>-Features benutzen.
 .TP
 .BR --stable ", " --testing ", " --non-masked ", " --system
-Only match packages which have at least one version which is stable (and non-masked),
-testing or stable (and non-masked), non-masked, or in system, respectively.
-If several of these options are combined in one test, it is the same version
-which must satisfy all.
+Findet nur Pakete, die zumindest eine Version haben, die stabil (und nicht-maskiert),
+testing oder stabil (und nicht maskiert), nicht-maskiert, bzw. in @system ist.
+Falls mehrere dieser Optionen in einem Test kombiniert werden, muss die selbe Version
+allen Kriterien genügen.
 .TP
 .BR --stable+ ", " --testing+ ", " --non-masked+ ", " --system+
-This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=true>.
+Wie eben, nur dass sich der Test so verhält, als wenn  B<LOCAL_PORTAGE_CONFIG=true> gesetzt wäre.
 .TP
 .BR --stable- ", " --testing- ", " --non-masked- ", " --system-
-This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=false>.
+Wie eben, nur dass sich der Test so verhält, als wenn  B<LOCAL_PORTAGE_CONFIG=false> gesetzt wäre.
 .TP
 .BR --installed-unstable ", " --installed-testing ", " --installed-masked
-Only match packages which have
-at least one non-stable, testing, or masked version installed
-(the test acts as if B<LOCAL_PORTAGE_CONFIG=false>).
-If several of these options are combined in one test, it is the same version
-which must satisfy all.
+Findet nur Pakete, die zumindest eine nicht-stabile, testing, oder maskierte
+Version installiert haben (der Test verhält sich, als wenn
+B<LOCAL_PORTAGE_CONFIG=false> gesetzt wäre).
+Falls mehrere dieser Optionen in einem Test kombiniert werden, muss die
+selbe Version alle Kriterien erfüllen.
 .TP
 .BR --world
-Only match @world packages.
-This is analogous to "emerge @world", i.e. it includes not only packages in
-the world file but also in world sets and the @system set.
-If you do not want to have all included, choose the appropriate alternative
-option.
+Findet nur Pakete aus @world.
+Dies ist analog zu "emerge @world", d.h. es enthält nicht nur die Pakete aus
+der world-Datei sondern auch aus world_set und das @system Set.
+Falls dies nicht alles enthalten sein soll, gibt es alternative Optionen.
 .TP
 .BR --world-file
-This only matches packages from the world file or from the @system set.
+Findet nur Pakete aus der world-Datei oder aus dem @system Set.
 .TP
 .BR --world-set
+Findet nur Pakete aus world_set oder den @system Set.
 This only matches packages from world_set or from the @system set.
 .TP
 .BR --selected
-Only match @selected packages.
-This is analogous to "emerge @selected", i.e. it includes not only packages in
-the world file but also in world_sets (if you have @system contained in the
-world_sets file, then the behaviour is of course identical to B<--world>).
-If you do not want to have both included, choose the appropriate alternative option.
+Findet nur @selected Pakete.
+Dies ist analog zu "emerge @selected", d.h. es enthält nicht nur Pakete im
+world-Datei sondern auch in world_sets (falls @system in world_set enthalten
+ist, ist das Verhalten natürlich identisch zu B<--world>).
+Falls dies nicht alles enthalten sein soll, gibt es alternative Optionen.
 .TP
 .BR --selected-file
-This only matches packages from the world file.
+Findet nur Pakete aus der world-Datei.
 .TP
 .BR --selected-set
-This only matches packages from world_set.
+Findet nur Pakete aus world_set.
 .TP
 .BR --binary
-Only match packages with a binary file (*.tbz2) in PKGDIR.
-The version of the binary file must either match the version of an available version or of an installed version.
-(However, note that if no version is available, the package cannot be found either).
-Just the existence of the corresponding *.tbz2 file is checked:
-Whether portage can actually use the file depends also on metadata within the *.tbz2 file (like USE settings) which is not considered by eix.
+Findet nur Pakete mit einem Binärfile (*.tbz2) in PKGDIR.
+Die Version des Binärfiles muss mit mindestens einer vorhandenen oder einer installierten Version übereinstimmen.
+(Falls keine Version vorhanden ist, kann das Paket ebenfalls nicht gefunden werden).
+Nur die reine Existenz eines entsprechenden *.tbz2-files wird überprüft:
+Ob Portage die Datei tatsächlich benutzen kann, hängt auch von Meta-Daten innerhalb der *.tbz2-Datei ab (wie etwa USE settings), was von eix nicht beachtet wird.
 .TP
 .BR -O ", " --overlay
-Only match packages with at least one version in an overlay.
+Findet nur Pakete mit mindestens einer Version in einem Overlay.
 .TP
 .BI "--in-overlay " overlay
-Only match packages with at least one version in an overlay matching I<overlay>.
+Findet nur Pakete mit mindestens einer Version in einem Overlay, der auf B<overlay> passt.
 
-If this option is repeated, the additional I<overlay> arguments are joined
-to the list of admissible overlays.
+Falls diese Option wiederholt wird, werden die zusätzlichen I<overlay>-Argumente
+zu einer Liste zulässiger Overlays zusammengefasst.
 
-I<overlay> may be either a wildcard pattern or a number.
-Note that if you use the default B<OVERLAYS_LIST=all-used-renumbered>
-you do not see the correct overlay numbers; to get a list of the correct
-overlay numbers you can e.g. call
+I<overlay> kann entweder ein Wildcard-Muster oder eine Zahl sein.
+Beachten Sie, dass sie mit der Default-Einstellung B<OVERLAYS_LIST=all-used-renumbered>
+nicht die korrekten Overlay-Nummern sehen; für eine Liste der korrekten Overlay-Nummern
+können Sie beispielsweise den Aufruf
 
 B<OVERLAYS_LIST=all eix --not>
 
-or in scripts better
+oder in Skripten besser
 
 B<OVERLAYS_LIST=all PRINT_COUNT_ALWAYS=never eix -!>
 
-The special values B<0> or B<$PORTDIR> match the "main" tree (which in
-this connection is considered as the 0'th overlay).
+benutzen.
+Die speziellen Werte B<0> oder B<$PORTDIR> passen auf den Hauptbaum (der
+in diesem Zusammenhang als der 0-te Overlay betrachtet wird).
 
-If I<overlay> is empty (or omitted if B<--in-overlay> is the last option)
-it matches all overlays except for the "main" tree
-(i.e. B<--in-overlay ''> is the same as B<-O>).
+Falls I<overlay> leer ist (or weggelassen wird, falls B<--in-overlay>
+die letzte Option war) dann passen alle Overlays außer dem Hauptbaum
+(d.h. B<--in-overlay ''> ist das selbe wie B<-O>).
 .TP
 .BI "--only-in-overlay " overlay
-Only match packages which have only versions in an overlay matching I<overlay>.
+Findet nur Pakete, die nur Versionen haben, die in einem Overlay liegen,
+der auf I<overlay> passt.
 
-If this option is repeated, the additional I<overlay> arguments are joined
-to the list of admissible overlays.
+Falls diese Option wiederholt wird, werden die zusätzlichen I<overlay>-Argumente
+zu einer Liste zulässiger Overlays zusammengefasst.
 
-I<overlay> may be either a wildcard pattern or a number, as in B<--in-overlay>.
-In particular, B<--only-in-overlay ''> matches all packages which are not in
-the official portage tree but only in some overlay.
+I<overlay> kann entweder ein Wildcard-Muster oder eine Zahl sein, analog wie in B<--in-overlay>.
+Insbesondere findet B<--only-in-overlay ''> alle Pakete, die nicht im Hauptbaum
+sondern nur in Overlays liegen.
 .TP
 .BR -J ", " --installed-overlay
-Only match packages which have been installed from some overlay.
-To get a completely reliable result you should set
-B<CHECK_INSTALLED_OVERLAYS> to true (which is not the default because
-it dramatically slows down the test).
-See B<CHECK_INSTALLED_OVERLAYS> for details.
+Findet nur Pakete, die aus einem Overlay installiert wurden.
+Für vollkommen zuverlässige Ergebnisse sollte B<CHECK_INSTALLED_OVERLAYS=true>
+gesetzt werden (was nicht der Default ist, weil es Tests massiv verlangsamt).
+Siehe B<CHECK_INSTALLED_OVERLAYS> für Details.
 .TP
 .BI "--installed-from-overlay " overlay
-This is analogous to B<--in-overlay> with the difference that only
-packages are matched which have at least one version installed
-from I<overlay>.
-For instance, B<--installed-from-overlay 0> will only match those packages
-which have at least one version which was installed from the regular
-portage tree.
-As for -J, you should set B<CHECK_INSTALLED_OVERLAYS> to true to get a
-completely reliable result.
+Dies ist analog zu B<--in-overlay> mit dem Unterschied, dass nur
+Pakete gefunden werden, die zumindest eine Version aus I<overlay> installiert haben.
+Beispielsweise wird B<--installed-from-overlay 0> nur die Pakete finden,
+bei denen zumindest eine Version aus dem regulären Portage-Baum installiert ist.
+Wie für -J sollte B<CHECK_INSTALLED_OVERLAYS=true> gesetzt werden, um
+vollständig zuverlässige Ergbnisse zu erhalten.
 .TP
 .B --installed-in-some-overlay
-Only match packages with at least one installed version number which is
-also in some overlay.
+Findet nur Pakete, die zumindest eine Version installiert haben, die
+auch in einem Overlay zu finden ist.
 .TP
 .BI "--installed-in-overlay " overlay
-This is analogous to B<--in-overlay> with the difference that only
-packages are matched which have at least one installed version in I<overlay>.
-For instance, B<--installed-in-overlay 0> will only match those packages
-which have at least one version which is also in the regular portage tree.
+Dies ist analog zu B<--in-overlay> mit dem Unterschied, dass nur Pakete gefunden
+werden, die zumindest eine installierte Version in I<overlay> haben.
+Beispielsweise wird B<--installed-in-overlay 0> nur Pakete finden, die mindestens
+eine Version installiert haben, die es im regulären Portage-Baum gibt.
 .TP
 .B --restrict-fetch
-Only match packages which have at least one version with RESTRICT=fetch.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=fetch haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-mirror
-Only match packages which have at least one version with RESTRICT=mirror.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=mirror haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-primaryuri
-Only match packages which have at least one version with RESTRICT=primaryuri.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=primaryuri haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-binchecks
-Only match packages which have at least one version with RESTRICT=binchecks.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=binchecks haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-strip
-Only match packages which have at least one version with RESTRICT=strip.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=strip haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-test
-Only match packages which have at least one version with RESTRICT=test.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=test haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-userpriv
-Only match packages which have at least one version with RESTRICT=userpriv.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=userpriv haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-installsources
-Only match packages which have at least one version with RESTRICT=installsources.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=installsources haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-bindist
-Only match packages which have at least one version with RESTRICT=bindist.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=bindist haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --restrict-parallel
-Only match packages which have at least one version with RESTRICT=parallel.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit RESTRICT=parallel haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --properties-interactive
-Only match packages which have at least one version with PROPERTIES=interactive.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit PROPERTIES=interactive haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --properties-live
-Only match packages which have at least one version with PROPERTIES=live.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit PROPERTIES=live haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --properties-virtual
-Only match packages which have at least one version with PROPERTIES=virtual.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit PROPERTIES=virtual haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .B --properties-set
-Only match packages which have at least one version with PROPERTIES=set.
-If used with other PROPERTIES/RESTRICT tests, the version must satisfy all simultaneously.
+Findet nur Pakete, die zumindest eine Version mit PROPERTIES=set haben.
+Falls dies mit anderen PROPERTIES/RESTRICT tests kombiniert wird, muss die selbe Version alles gleichzeitig erfüllen.
 .TP
 .BR -T ", " --test-obsolete
-Only match obsolete packages.
+Findet nur obsolete Pakete.
 
-Packages are obsolete if they have redundant entries in /etc/portage/package.*
-(if B<TEST_FOR_REDUNDANCY> is true) or if not all installed versions exist
-(if B<TEST_FOR_NONEXISTENT> is true).
+Pakete sind obsolete, wenn sie redundante Einträge in /etc/portage/package.*
+haben (falls B<TEST_FOR_REDUNDANCY> gesetzt ist), oder falls nicht alle
+installierten Versionen existieren (falls B<TEST_FOR_NONEXISTENT> gesetzt ist).
 
-What is considered as redundant is defined by the B<REDUNDANT_IF>-variables below,
-and what is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables.
-Note that the test for versions from obsolete overlays works only reliable if
-you set B<CHECK_INSTALLED_OVERLAYS> to true (which is not the default because
-it dramatically slows down the test).
-See B<CHECK_INSTALLED_OVERLAYS> for details.
+Was als redundant gilt, wird durch die unten beschriebenen <REDUNDANT_IF>-Variablen festgelegt,
+und was als nicht-existent betrachtet wird, wird durch die B<NONEXISTENT_IF>-Variablen festgelegt.
+Der Test für Versionen von obsoleten Overlays funktioniert nur dann zuverlässig,
+wenn B<CHECK_INSTALLED_OVERLAYS=true> gesetzt ist (was nicht der Default ist,
+weil es Tests dramatisch verlangsamt).
+Siehe B<CHECK_INSTALLED_OVERLAYS> für Details.
 
-Note that this options only tests packages in the database - in particular, you
-will not find entries for e.g. renamed or removed (from the portage tree) packages with this option.
-Use B<-t> to find the latter.
+Beachte, dass diese Option nur Pakete in der Datenbank test.
+Insbesondere werden keine Einträge für beispielsweise umbenannte oder aus dem Portage-Baum gelöschte Pakete
+mit dieser Option gefunden werden.
+Letzteres wird mit der Option B<-t> bedient.
 
-Therefore, this option is best combined with -t to find also other types of obsolete entries.
+Daher wird diese Option am Besten mit -t kombiniert, wenn auch andere Arten obsoleter Einträge gefunden werden sollen.
 
-If you have a reason to exclude certain packages from this test,
-you can write those entries into a file (or directory) /etc/portage/package.nowarn
-This file (and how to specify alternative/additional files) is described later.
+Falls es einen Grund gibt, bestimmte Pakete von diesem Test auszuschließen,
+so können diese Einträge in die Datei (oder Verzechnis) /etc/portage/package.nowarn geschrieben werden.
+Diese Datei (und wie alternative/zusätzliche Dateien angegeben werden können) wird später beschrieben.
 .TP
 .BR -| ", " --pipe
-(Recall that a shell will not pass an unquoted B<|> sign, so quote properly).
+(Beachten Sie, dass die Shell normalerweise kein B<|>-Zeichen übergibt, wenn es
+nicht gequotet ist).
 
-Only match packages from standard input; usually you will want to use this in a pipe,
-redirected e.g. from emerge -pv (similar to genlop -p).
-Actually, any input data is honored which contains words (space or newline separated) in the format
+Findet nur Pakete aus Standard-Input; normalerweise wird dies in einer Pipe benutzt,
+etwa als Ausgabe von emerge -pv (oder genlop -p).
+Tatsächlich werden im Input nur Worte (durch Leerzeichen oder Zeilenende separiert) beachtet,
+die im folgenden Format sind:
 
-I<category>B</>I<package>B<->I<version> or
+I<category>B</>I<package>B<->I<version> oder
 
 I<category>B</>I<package>
 
-In addition, all packages/versions passed this way will in the output be considered marked.
-For details on the latter, see the B<marked> and B<markedversions:*> formatstrings.
+Zusätzlich werden alle passenden Pakete/Versionen in der Ausgabe als markiert behandelt.
+Details zu Letzterem stehen in der Beschreibung der B<marked> und B<markedversions:*> Formatstrings.
 
-Even if B<--pipe> occurs more than once, the standard input is of course only read once,
-but interpreted repeatedly for each occurrence (i.e. if the first --pipe matches, all others will also match).
+Auchwenn B<--pipe> mehr als einmal auftaucht, wird die Standard-Eingabe natürlich nur einmalig gelesen,
+aber wiederholt für jedes Auftauchen interpretiert (d.h. falls der erste --pipe Ausdruck passt,
+werden auch alle anderen passen).
 
-If you want to use the standard input only for marking but not for selection, you can
-choose an expression like
+Falls der Standard-Input nur zum Markieren aber nicht zur Auswahl benutzt werden soll,
+kann etwa folgender Ausdruck benutzt werden:
 
-B<eix something -a "-(" --pipe -o "-)">
+B<eix irgendwas -a "-(" --pipe -o "-)">
 .\" }}}
 
-.\" {{{ -------- Match field selection
-.SS Match field selection
+.\" {{{ -------- Operandenwahl
+.SS Operandenwahl
 .TP
-The subsequent options define the fields that the pattern should be tested on.
-Multiple fields may be specified in one expression (the expression matches
-if the pattern matches at least one of the specified fields).
-If you do not specify some of these options, the default is chosen according
-to some heuristic depending on the form of your pattern.
-In most cases, the default match field will be B<--name>, but if your pattern
-looks "special" like e.g. "cat/n" or "@set", the default match field will change to
-B<--category-name>, B<--set>, B<--description>, B<--homepage>, or B<--license>.
-Details of the heuristic are specified by the B<DEFAULT_MATCH_FIELD>
-configuration variable explained later.
+Die nachfolgenden Optionen legen die Felder fest, auf die SUCHMUSTER passen soll.
+Mehrere Felder können in einem Ausdruck festgelegt werden (der Ausdruck passt,
+falls das Suchmuster auf mindestens eines der spezifierten Felder passt).
+Falls keine diese Optionen angegeben wird, wird der Default anhand einer
+Heuristik gewählt, die von der Form von SUCHMUSTER abhängt.
+In den meisten Fällen wird das Default-Feld B<--name> sein, aber wenn das
+SUCHMUSTER "speziell" aussieht, etwa "cat/n" oder "@set", so wird das Default-Feld
+auf B<--category-name>, B<--set>, B<--description>, B<--homepage> oder B<--license> geändert.
+Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_FIELD>-Konfigurationsvariable festgelegt.
 .TP
 .BR -y ", " --any
-Any match field is searched. This is the same as specifying simultaneously
-all of B<--name>, B<--description>, B<--category>, ...
-Thus, you may want to use this if you want to be sure to not miss any matches.
-However, be warned that the output list will often be much longer than you might expect.
-(If you are curious, you can find with options B<-vl> and piping to grep
-the often unexpected reason why a match occurs with B<-y>.)
-To exclude at least the dependency strings from matches, you might want to
-combine this option with setting B<DEP=false>, e.g.
+Jedes Feld wird durchsucht.
+Dies ist gleichbedeutend damit, gleichzeitig alle Optionen B<--name>, B<--description>, B<--category>, ... anzugeben.
+Man wird dies immer dann wählen, wenn man sicher sein möchte, keine Treffer zu übersehen.
+Man sollte allerdings damit rechnen, dass die Trefferliste viel länger als erwartet sein wird.
+(Wer neugierig ist, kann mit den Optionen B<-vl> and Weiterleitung nach grep
+den oft unerwarteten Grund herausfinden, weshalb ein Treffer bei B<-y> auftaucht).
+Um zumindest den Abhängigkeitsstring von der Suche auszunehmen, empfiehlt sich manchmal
+die Kombination mit B<DEP=false>, z.B.
 
 B<DEP=false eix --any SIP>
 
 .TP
 .BR -s ", " --name
-e.g. "eix"
+z.B. "eix"
 .TP
 .BR -S ", " --description
-e.g. "Small utility for searching .."
+z.B. "Small utility for searching .."
 .TP
 .BR -C ", " --category
-e.g. "app-portage"
+z.B. "app-portage"
 .TP
 .BR -A ", " --category-name
-e.g. "app-portage/eix"
+z.B. "app-portage/eix"
 .TP
 .BR -H ", " --homepage
-e.g. "@PACKAGE_URL@"
+z.B. "@PACKAGE_URL@"
 .TP
 .BR -L ", " --license
-e.g. "GPL-2"
+z.B. "GPL-2"
 .TP
 .BR --deps ", " --depend ", " --rdepend ", " --pdepend
-This test can only be successful if B<DEP=true> is used
-(and if B<DEP=true> was used when the cachefile was created).
-It matches against B<DEPEND>, B<RDEPEND>, or B<DEPEND>
-(or with B<--deps> any of those) of some version of the package.
-B<--deps> is the same as specifying all of
-B<--depend> B<--rdepend> B<--pdepend>.
-Note that it is matched against the string without any interpretation or
-modification of the latter; only word separators become single spaces.
-In particular, the string to match against can look like
+Dieser Test kann nur dann etwas finden, wenn B<DEP=true> benutzt wird
+(und B<DEP=true> bei der Erzeugung des Cachefiles benutzt wurde).
+Er tested gegen B<DEPEND>, B<RDEPEND> bzw. B<DEPEND>
+(oder mit B<--deps> gegen irgendeines davon) für irgendeine Version des Pakets.
+B<--deps> ist das gleiche wie B<--depend> B<--rdepend> B<--pdepend>.
+Beachten Sie, dass gegen den String ohne irgendwelche Interpretatino oder
+Modifikation getestet wird; nur Wort-Trenner werden einzelne Leerzeichen.
+Insbesondere kann der String, gegen den getestet wird, so aussehen:
 
 app-admin/fam nls? ( sys-devel/gettext ) =dev-libs/apr-1* !!dev-db/libpq
 
-Therefore, the match is not only against dependent packages but also against
-blockers and/or conditionals and various ways of specifying versions.
+Daher ist der Test tatsächlich nicht nur gegen abhängige Pakete, sondern
+auch gegen Blocker und/oder Konditionale und gegen verschiedene Möglichkeiten,
+Versionen zu spezifizieren.
 .TP
 .BR --set
-Name of a local package set of a version in the database
-(i.e. corresponding to a file in B</etc/portage/sets>, B</etc/portage/sets.eix>,
-or from another directory specified in B<EIX_LOCAL_SETS_ADD>;
-see the comments to B<EIX_LOCAL_SETS>).
-The "system" and "world" sets are intentionally excluded here, since the latter
-should be tested with B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-sets>.
+Name eine lokalen Paket-Sets oder Version in der Datenbank
+(d.h. entsprechend einer Datei aus B</etc/portage/sets>, B</etc/portage/sets.eix>,
+oder eines anderen Verzeichnisses ausB<EIX_LOCAL_SETS_ADD>; siehe die Kommentare zu B<EIX_LOCAL_SETS>).
+Die "system" und "world" sets sind hier bewusst ausgeshlossen, da Letzteres mit
+B<--system[+-]>, B<--world>, B<--world-all> oder B<--world-sets> getestet werden sollte.
 .TP
 .B --slot
-Slotname of a version in the database, e.g. "kde-4"
+Slotname einer Version in der Datenbank, z.B. "kde-4"
 .TP
 .B --installed-slot
-Slotname of an installed version.
-Recall that without option B<--care> (or B<CAREMODE=true>) the slotname might be guessed.
+Slotname einer installierten Version.
+Beachten Sie, dass ohne die Option B<--care> (oder B<CAREMODE=true>) der Slotname ev. nur vermutet wird.
 .TP
 .BR -U ", " --use
-A useflag defined by IUSE in some version by some of the ebuilds of the package.
-You will usually want to combine this option with -e
+Ein Useflag, das im IUSE mindestens eines Ebuilds von einer Version des Pakets festgelegt wird.
+Normalerweise wird diese Option mit -e kombiniert.
 .TP
 .B --installed-with-use
-A useflag enabled during installation of the package.
-Of course, this flag can only match if the package is installed.
-Note that the same restrictions hold as for B<-I>, i.e. only packages will be matched
-which are still in the database.
+Ein Useflag, das während der Installation eines Pakets aktiv ist.
+Natürlich kann dieser Test nur dann erfolgreich sein, wenn das Paket installiert ist.
+Es gelten die selben Einschränkungen wir für B<-I>, d.h. nur diejenigen Pakete werden gefunden,
+die es noch in der Datenbank gibt.
 .TP
 .B --installed-without-use
-A useflag disabled during installation of the package.
-Of course, this flag can only match if the package is installed.
-Note that the same restrictions hold as for B<-I>, i.e. only packages will be matched
-which are still in the database.
+Ein Useflag, das während der Installation eines Pakets inaktiv ist.
+Natürlich kann dieser Test nur dann erfolgreich sein, wenn das Paket installiert ist.
+Es gelten die selben Einschränkungen wir für B<-I>, d.h. nur diejenigen Pakete werden gefunden,
+die es noch in der Datenbank gibt.
 .\" }}}
 
-.\" {{{ -------- Match algorithm
-.SS "Match algorithm"
-The subsequent options define the algorithm by which the match field should be tested
-against the pattern.
-Only one algorithm can be chosen for an expression.
-If you do not specify some of these options, the default is chosen according
-to some heuristic depending on the form of your search pattern.
-In most cases, the default will be B<--regex> unless your pattern
-"looks" like a glob pattern or a substring (in which case the corresponding
-algorithm will be the default), or if the pattern has a particular content like
-"@set" or "cat/n" which most people would expect to match the whole string or
-the beginning of a string, respectively.
-Details of the heuristic are specified by the B<DEFAULT_MATCH_ALGORITHM>
-configuration variable explained later.
+.\" {{{ -------- Match-Algorithmus
+.SS "Match-Algorithmus"
+Die folgenden Optionen legen den Algorithmus fest, nach dem das Testfeld gegen das SUCHMUSTER
+getestet werden soll.
+Nur ein Algorithmus kann pro AUSDRUCK gewählt werden.
+Falls keine dieser Optionen benutzt wird, wird der Default anhand einer
+Heuristic ausgewählt, der von der Gestelt der Suchmusters abhängt.
+In den meisten Fällen, wird dieser Default B<--regex> sein, außer wenn das
+Suchmuster aussieht wie "typischerweise" ein glob-Muster or ein Teilstring
+(in diesem Fall wird der entsprechende Algorithmus der Default), oder falls
+das Suchmuster einen speziellen Inhalt wie "@set" oder "cat/n" hat, in welchem
+Fall die meisten Leute erwarten, dass gegen den gesamten String bzw, gegen
+den Stringanfang getestet wird.
+Details der Heuristik werden in der später erklärten B<DEFAULT_MATCH_ALGORITHM>-Konfigurationsvariable festgelegt.
 .TP
 .BR -e ", " --exact
-Pattern is an exact (full) string. For example, "eix -e gcc" will only show packages
-with the name "gcc".
+Das Suchmuster ist ein exakter (ganzer) String.
+Beispielsweise zeigt "eix -e gcc" nur Pakete des namens "gcc".
 .TP
 .BR -b ", " --begin
-Pattern is the beginning of the string. For example, "eix -b gcc" will show the package
-with the name "gcc" but also e.g. "gcc-config".
+Das Suchmuster ist ein Stringanfang.
+Beispielsweise zeigt "eix -b gcc" die Pakete mit dem Namen "gcc", aber
+beispielsweise auch "gcc-config".
 .TP
 .BR --end
-Pattern is the end of the string.
+Das Suchmuster ist ein Stringende.
 .TP
 .BR -z ", " --substring
-Pattern occurs somewhere within the string.
+Das Suchmuster taucht irgendwo im String auf.
 .TP
 .BR -f " [" I<N> "], " --fuzzy " [" I<N> "]"
-Do a fuzzy search with a maximal levenshtein-distance of I<N> (default @LEVENSHTEIN_DISTANCE@)
-for the full string.
-Note that this command slows down search speed.
+Fuzzy-Suche mit dem maximalen Levenshtein-Abstand I<N> (default @LEVENSHTEIN_DISTANCE@) für den ganzen String.
+Diese Option reduziert die Suchgeschwindigkeit.
 .TP
 .BR -p ", " --pattern
-pattern is a wildcard-pattern (for the full string). See
+Das Suchmuster ist ein Wildcard-pattern (gegen desn gesamten String. Siehe
 .BR fnmatch (3)
-and/or
+und/oder
 .BR glob (7)
-for further information. Be sure to use single quotes around patterns (to prevent the
-shell from intercepting any wildcards).
+für weitere Details.
+Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
 .TP
 .BR -r ", " --regex
-pattern is a regexp.
-Only a substring must be matched (unless ^ or $ are used);
-the empty pattern matches everything.
-For further information, please read
+Das Suchmuster ist ein regulärer Ausdruck.
+Nur ein Teilstring muss passen (außer wenn ^ oder $ benutzt werden).
+Das leere Suchmuster passt auf alles.
+Weitere Informationen finden sich in
 .BR regex (7).
-Again, be sure to use single quotes around patterns.
+Vorsicht bei der Übergabe des Suchmusters in einer Shell (Quoting!).
 .\" }}}
-.\" {{{ -------- Defining layouts
-.SS Defining layouts \fP(see B<FORMATSTRING> below)
+.\" {{{ -------- Layouts festlegen
+.SS Layouts festlegen \fP(siehe B<FORMATSTRING> weiter unten)
 .TP
 .BR --format " " I<FORMAT>
-Define the normal layout for results as I<FORMAT>
+Define das normale Layout zur Ausgabe als I<FORMAT>
 .TP
 .BR --format-compact " " I<FORMAT>
-Define the compact layout for results as I<FORMAT>
+Define das kompakte Layout zur Ausgabe als I<FORMAT>
 .TP
 .BR --format-verbose " " I<FORMAT>
-Define the verbose layout for results as I<FORMAT>
+Define das ausführliche Layout zur Ausgabe als I<FORMAT>
 .\" }}}
 .\" }}}
 .\" {{{ -------- Options for eix-update
-.SS Special options for B<eix-update>
+.SS Spezielle Optionen für B<eix-update>
 .TP
 .BR -H ", " --nostatus
-Do not update the status line.
+Kein Update der Statuszeile.
 .TP
 .BR --force-status
-Update the status line even if output is not a terminal
-or if TERM does not begin with a TERM_STATUSLINE word.
+Update der Statuszeile, selbst wenn die Ausgabe kein Terminal ist
+oder falls TERM nicht mit einem Wort aus TERM_STATUSLINE beginnt.
 .TP
-.BR  -o " " I<outputfile> ", " --output " " I<outputfile>
-With this option, B<eix-update> will write the eix database to I<outputfile>
-instead of B<@EIX_CACHEFILE@>.
-When this option is used, the current B<umask> will be honoured:
-otherwise, the B<umask> is forced to B<002> for creating the file.
+.BR  -o " " I<Ausgabedatei> ", " --output " " I<Ausgabedatei>
+Mit dieser Option schreibt B<eix-update> die eix-Datenbank nach I<Ausgabedatei>
+statt B<@EIX_CACHEFILE@>.
+Mit dieser Option wird die gesetzte B<umask> berücksichtigt.
+Andernfalls wird die B<umask> zwangsläufig auf B<002> zur Erzeugung der Datei gesetzt.
 .TP
-.BR  -a " " I<overlay> ", " --add-overlay " " I<overlay>
-This is similar to adding I<overlay> to B<PORTDIR_OVERLAY> in /etc/make.conf
-or to B<ADD_OVERLAY> but has the advantage that you need not modify some of those,
-and you can also use spaces in I<overlay>.
-Overlays added by this option come after overlays added by B<KEEP_VIRTUALS>.
-If I<overlay> is already contained in the list of overlays, this option has no effect.
-It is explicitly admissible to use this option repeatedly to add several overlays.
+.BR  -a " " I<Overlay> ", " --add-overlay " " I<Overlay>
+Dies ist ähnlich wie I<Overlay> to B<PORTDIR_OVERLAY> zu /etc/make.conf
+oder zu B<ADD_OVERLAY> hinzuzufügen, hat aber den Vorteil,
+dass Letztere nicht modifiziert werden müssen, und dass es problemlos
+möglich ist, Leerzeichen in I<Overlay> zu benutzen.
+Overlays mit dieser Option kommen nach Overlays aus B<KEEP_VIRTUALS>.
+Falls I<Overlay> bereits in der Liste der Overlays enthalten ist, so hat diese
+Option keine Auswirkingen.
+Es ist ausdrücklich zulässig, diese Option wiederholt zu benutzen,
+um mehrere Overlays hinzuzufügen.
 
 .TP
-.BR -x " " I<overlay> ", " --exclude-overlay " " I<overlay>
-This is similar to adding I<overlay> to B<EXCLUDE_OVERLAY>
-but has the advantage that you need not modify the latter,
-and you can also use spaces in I<overlay>.
-I<overlay> is considered as a mask. All matching overlays
-(even those added by later B<--add-overlay> options)
-are excluded from the list of overlays.
-The B<PORTDIR> directory is considered as any other overlay which can be excluded
-(in this case, the first I<overlay> in the list will be stored as B<PORTDIR>).
-It is explicitly admissible to use this option repeatedly to exclude several overlays.
+.BR -x " " I<Overlay> ", " --exclude-overlay " " I<Overlay>
+Dies ist ähnlich wie I<Overlay> to B<EXCLUSE_OVERLAY> hinzuzufügen,
+hat aber den Vorteil, dass Letzteres nicht modifiziert werden muss,
+und dass es problemlos möglich ist, Leerzeichen in I<Overlay> zu benutzen.
+I<Overlay> wird als Maske aufgefasst.
+Alle passenden Overlays (auch diejenigen, die später mit B<--add-overlay>
+hinzugefügt wurden), werden aus der Liste der Overlays ausgeschlossen.
+Das B<PORTDIR>-Verzeichnis wird als ein weitere Overlay betrachtet,
+der ausgeschlossen werden kann (in diesem Fall wird der erste I<Overlay>
+der Liste als B<PORTDIR> gespeichert).
+Es ist ausdrücklich zulässig, diese Option wiederholt zu benutzen,
+um mehrere Overlays auszuschließen.
 .TP
-.BR -m " " I<overlay> " " I<method> ", " --override-method " " I<overlay> " " I<method>
-Change the cache method of I<overlay>
-(the B<PORTDIR> directory is an allowed I<overlay>) to I<method>.
-I<overlay> is considered as a mask, i.e. it may contain wildcards.
-If I<overlay> does not match anything in the list of overlays,
-this option has no effect.
-This option is similar to adding the entry "I<overlay> I<method>" at the
-end of the B<OVERRIDE_CACHE_METHOD> variable.
-It is explicitly admissible to use this option repeatedly to
-override cache methods for several overlays.
-The last matching override takes precedence.
-In particular, the option overrides the content of B<OVERRIDE_CACHE_METHOD>.
+.BR -m " " I<Overlay> " " I<Methode> ", " --override-method " " I<Overlay> " " I<Methode>
+Änder die Cache-Methode von I<Overlay>
+(der B<PORTDIR>-Verzeichnis ist ein erlaubter I<Overlay>) auf I<Methode>.
+I<Overlay> wird als Maske betrachtet, d.h. es darf Wildcards enthalten.
+Falls I<Overlay> auf nichts in der Liste der Overlays passt, hat diese Option keine Auswirkungen.
+Diese Option ist ähnlich wie das Hinzufügen des Eintrags "I<Overlay> I<Methode>"
+am Ende der B<OVERRIDE_CACHE_METHOD>-Variablen.
+Es ist ausdrücklich zulässig, die Option wiederholt zu benutzen, um
+Cache-Methoden für verschiedene Overlays zu überschrieben.
+Die zuletzt passende Überschreibung gewinnt.
+Insbesondere kann man mit dieser Option den Inhalt von B<OVERRIDE_CACHE_METHOD> überschreiben.
 .TP
-.BR -r " " I<overlay-path> " " I<overlay-label> ", " --repo-name " " I<overlay-path> " " I<overlay-label>
-The overlay I<overlay-path> obtains the label I<overlay-label>, independent of any other settings.
-This may be overridden by B<REPO_NAMES>.
-In contrast to B<REPO_NAMES>, I<overlay-path> is not a pattern but the exact path.
+.BR -r " " I<Overlay-Path> " " I<Overlay-Label> ", " --repo-name " " I<Overlay-Path> " " I<Overlay-Label>
+Der Overlay I<Overlay-path> erhält das Lebel I<Overlay-Label>, unabhängig von anderen Settings.
+Dies kann mit B<REPO_NAMES> überschrieben werden.
+Im Gegensatz zu B<REPO_NAMES> ist I<Overlay-Path> kein Muster sondern ein genauer Pfad.
 .TP
 .BR -v " " --verbose
-Output the effectively used cache method for each ebuild.
-This produces a lot of output and is mainly useful for debugging
-if you are wondering why eix-update is faster/slower than expected.
+Gibt die effektiv benutzte Cache-Methode für jedes Ebuild aus.
+Dies erzeugt eine Menge an Ausgaben und ist hauptsächlich zum Debuggen nützlich,
+etwa wenn unklar ist, weshalb eix-update schneller/langsamer ist als erwartet.
 .\" }}}
 
-.\" {{{ OUTPUT
-.SH OUTPUT
+.\" {{{ AUSGABE
+.SH AUSGABE
 .SS Slots
-In contrast to usual output of versions in emerge, B<eix>
-can also print slot names if they are nonempty and different from "0".
-Whether this happens is determined by the content of the B<FORMATSTRING>.
+Anders als in der üblichen Ausgabe von Versionen in emerge kann <eix>
+auch Slot-Namen ausgeben, wenn sie nichttrivial (leer oder "0") sind.
+Ob dies geschieht, wird u.a. durch B<FORMATSTRING> festgelegt.
 
-If slots are printed, the slot name is separated from the version number
-either with a colon, or the slot names are written in braces.
-You can choose the preferred modes with the B<COLON_SLOTS> variable.
+Falls Slots ausgegeben werden, wird der Slot-Name entweder mit einem
+Doppelpunkt von der Versionsnummer abgetrennt, oder der Slotname wird
+in Klammern geschrieben.
+Der bevorzugte Modus wird in der Variable B<COLON_SLOTS> festgelegt.
 
-If B<PROPERTIES> or B<RESTRICT> are set in the ebuild, this is shown
-by default in the version string; details can be influenced by setting
-of configuration variables.
+Falls B<PROPERTIES> oder B<RESTRICT> im Ebuild gesetzt sind, wird dies
+per Default im Versionsstring angezeigt; Details können durch Setzen
+von Konfigurationsvariablen beeinflusst werden.
 
-Some Examples:
+Einige Beispiele:
 .TP
-.BR 4.1.1:4.1 "    or    " 4.1.1(4.1)
-This is version 4.1.1 which will be installed into the slot "4.1".
+.BR 4.1.1:4.1 "   oder   " 4.1.1(4.1)
+Dies ist Version 4.1.1, die in den Slot "4.1" installiert wird.
 .TP
-.BR 3.14p:GNAT-3.14p "    or    " 3.14p(GNAT-3.14p)
-This is version 3.14p which will be installed into the slot "GNAT-3.14p".
+.BR 3.14p:GNAT-3.14p "   oder   " 3.14p(GNAT-3.14p)
+Dies ist Version 3.14p, die in den Slot "GNAT-3.14p" installiert wird.
 .TP
 .B 2.0.0_rc1-r6
-This is version 2.0.0_rc1-r6, and SLOT is either empty or "0".
+Dies ist Version 2.0.0_rc1-r6, und der SLOT ist leer oder "0".
 .TP
 .B 1.0*ilvs^fmpbstuidP{tbz2}
-This is version 1.0 which is subject to
-PROPERTIES="interactive live virtual set" as well as
-RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel"
-Moreover, a *.tbz2 file (binary package) exists for that version in B<PKGDIR>.
+Dies ist Version 1.0, und gesetzt sind
+PROPERTIES="interactive live virtual set" sowie
+RESTRICT="fetch mirror primaryuri binchecks strip test userpriv installsources bindist parallel".
+Darüberhinaus existiert eine *.tbz2 Datei (Binärpaket) für diese Version in B<PKGDIR>.
 .TP
-.B 5.0-r3(5.0R3)^f "    or    " 5.0-r3:5.0R3^f
-This is version 5.0-r3 which will be installed into SLOT 5.0R3 and has
-fetch restrictions.
+.B 5.0-r3(5.0R3)^f "   oder   " 5.0-r3:5.0R3^f
+Dies ist Version 5.0-r3, die in Slot 5.0R3 installiert wird, und die RESTRICT="fetch" hat.
 
-.SS Masking
-If you used gentoo for more than a week you're probably going to immediately
-recognize the format of the masking in the version-strings.
-Nevertheless, we are going to explain it here by some examples.
-We describe here of course only the default setting; details can be
-influenced by setting of configuration variables.
+.SS Maskierung
+Wer Gentoo für mehr als eine Woche benutzt hat, wird vermutlich sofort
+das Format für die Maskierung von Versionen verstehen.
+Nichtsdestotrotz wird es hier anhand einiger Beispiele erklärt.
+Es wird natürlich nur die Default-Ausgabe beschrieben; Details können
+durch Konfigurationsvariablen beeinflusst werden.
 .TP
 .B [P]2.95.3-r8
-If a mask for the package was found in the packages-files from your profile, but this
-version does not match it, the version is determined to be "masked by profile".
+Eine Maske für das Paket wurde in der packages-Datei des Profiles gefunden,
+aber diese Version passt nicht.
+Portage nennt dies "masked by profile".
 .TP
 .B [M]4.0.0_alpha20050213
-The version matches a mask from /etc/portage/package.mask, $PORTDIR/profiles/package.mask
-or a package.mask from your profile. Portage calls this "masked by package.mask".
+Die Version passt auf einen Eintrag aus /etc/portage/package.mask, $PORTDIR/profiles/package.mask
+oder einer package.mask des Profiles.
+Portage nennt dies "masked by package.mask".
 .TP
 .B [m]4.1.4
-The version matches a local mask (from /etc/portage/package.mask), but it is
-neither "masked by profile" nor masked in $PORTDIR/profiles/package.mask.
+Die Version passt zu einer lokalen Maske (von /etc/portage/package.mask), aber sie ist
+weder "masked by profile" noch in $PORTDIR/profiles/package.mask maskiert.
 .TP
 .B {P}2.95.3-r8
-The version was originally "masked by profile", but this was locally changed in /etc/portage/profile/packages.
+Die Version war ursprünglich "masked by profile", aber dies wurde lokal durch /etc/portage/profile/packages geändert.
 .TP
 .B {M}4.0.0_alpha20050213
-The version was originally masked in $PORTDIR/profiles/package.mask, but this was locally changed in /etc/portage/package.unmask.
+Die Version war ursprünglich in $PORTDIR/profiles/package.mask, aber dies wurde lokal durch /etc/portage/package.unmask geändert.
 .TP
 .B *3.3.3
-This means the version is "masked by missing keyword" but stable for an alien architecture.
+Die Version ist "masked by missing keyword", aber stabil für eine fremde Architektur.
 .TP
 .B ~*3.3.3
-This version is "masked by missing keyword", stable on no architecture, but unstable on an alien architecture.
+Die Version ist "masked by missing keyword", auf keiner Architektur stabil, aber auf einer fremden Architektur instabil.
 .TP
 .B **3.3.3
-This means the version is "masked by missing keyword" for all architectures.
+Die Version ist "masked by missing keyword" für alle Architekturen.
 .TP
 .B (**)3.4.3-r2
-That version originally had no keyword, but this was locally changed (in /etc/portage/package.{accept_,}keywords or by ACCEPT_KEYWORDS).
+Die Version hatte ursprünglich kein Keyword, aber dies wurde lokal geändert (in /etc/portage/package.{accept_,}keywords oder durch ACCEPT_KEYWORDS).
 .TP
 .B -0.8.14
-Masked by -ARCH.
+Maskiert durch -ARCH.
 .TP
 .B ~3.3.5.20050130
-The version would be "masked by ~keyword".
+Die Version ist "masked by ~keyword".
 .TP
 .B (~)3.3.5.20050130
-The version was originally "masked by ~keyword", but this was locally changed (in /etc/portage/package.{accept_,}keywords or by ACCEPT_KEYWORDS).
+Die Verstion war ursprünglich "masked by ~keyword", aber dies wurde lokal geändert (in /etc/portage/package.{accept_,}keywords oder durch ACCEPT_KEYWORDS).
 .TP
 .B [M]~1.0.9626
-The version is both, "masked by package.mask" and "masked by ~keyword".
+Diese Version ist sowohl "masked by package.mask" als auch "masked by ~keyword".
 .TP
 .B [m](~)4.1.4-r1
-The version was originally only "masked by ~keyword", but this was locally changed (in /etc/portage/package.{accept_,}keywords or by ACCEPT_KEYWORDS).
-However, the version is locally masked (in /etc/portage/package.mask).
+Die Version was ursprünglich nur "masked by ~keyword", aber dies wurde lokale geändert (in /etc/portage/package.{accept_,}keywords oder durch ACCEPT_KEYWORDS).
+Darüberhinaus wurde die Version lokal maskiert (in /etc/portage/package.mask).
 .TP
 .B 3.3.1
-Finally, this would be a stable version (which would be stable also without the local settings).
+Dies schließlich ist eine stabile Version (die auch ohne lokale Settings stabil wäre).
 .SS eix-diff
-The output of B<eix-diff> is completely determined by configuration variables
-(B<DIFF_FORMAT_NEW>, B<DIFF_FORMAT_DELETE>, B<DIFF_FORMAT_CHANGED> and a
-lot of variables which - at least in their default setting - is used by them via delayed substitution, see below).
-The following explanation by means of examples therefore can only describe
-the behavior in the default setting of the current eix version.
-Although this default format was not changed for quite a while, no stability of
-the defaults is guaranteed for future eix versions.
+Die Ausgabe von B<eix-diff> wird vollständig durch Konfigurations-Variablen kontrolliert
+(B<DIFF_FORMAT_NEW>, B<DIFF_FORMAT_DELETE>, B<DIFF_FORMAT_CHANGED> und eine Menge
+Variablen die - zumindest im Default-Setting - durch diese über verzögerte Ersetzung benutzt werden, s. unten).
+Die folggende Erklärung anhand von Beispielen kann daher nur das Verhalten
+der Default-Settings der aktuellen eix-Versin beschreiben.
+Obwohl dieses Default-Format lange Zeit unverändert blieb, wird keine
+Stabilität der Defaults für zukünftige eix-Versionen garantiert.
 .TP
 .B "[N]   >> foo/bar (~1.0): description of foo/bar"
-The package B<foo/bar> has freshly appeared in the tree.
+Das Paket B<foo/bar> ist neu im Baum.
 .TP
 .B "[*N]  >> foo/bar (1.0): description of foo/bar"
-The package B<foo/bar> has freshly appeared in the tree.
-Moreover, it has a version (1.0) which could be installed without any sort of unmasking/keywording.
+Das Paket B<foo/bar> ist neu im Baum.
+Darüberhinaus hat as eine Version (1.0), die ohne Demaskieren/Keywording installiert werden könnte.
 .TP
 .B "      << foo/bar ({M}1.0): description of foo/bar"
-B<foo/bar> was removed from the tree; the previous version B<1.0>  was masked, but it is currently not masked anymore
-(probably, because the developer has cleaned up the package.mask file with the removal of the package).
+B<foo/bar> wurde aus dem Baum entfernt; die vorherhige Version B<1.0> war maskiert, aber sie ist derzeit nicht mehr maskiert.
+(wahrscheinlich, weil der Entwickler den entsprechenden Eintrag der package.mask-Datei zusammen mit der Löschung des Pakets entfernt hatte).
 .TP
 .B "[*>]   == foo/bar (1.0): description of foo/bar"
-The status of package B<foo/bar> has changed in the tree (for your settings): It has gained a version (1.0) which could be installed without any sort of unmasking/keywords
-while in the previous tree foo/bar had no such version. Moreover, the
+Der Status des Pakets B<foo/bar> im Baum hat sich geändert (für die lokalen Settings):
+es hat eine Version (1.0) erhalten, die ohne lokales Demaskieren/Keywording installiert werden könnte,
+währen der im vorherigen Baum foo/bar keine solche Version existierte. Darüberhinaus bedeutet das
 .B >
-means that one slot has gained a higher version. In this case, it is actually the
-same change which is responsible for both symbols
+dass ein Slot eine höhere Version erhielt. In diesem Fall ist tatsächlich die selbe Änderung für die beiden Symbole
 .B >
-and B<*>.
+und B<*> verantwortlich.
 .TP
 .B "[><]  == foo/bar (1.1(1) 2.0(2) -> 1.0(1) 2.1(2)): description"
-The status of package B<foo/bar> has changed in the tree (for your settings):
-The symbols on the left mean that one slot has gained a higher version which could be installed without modifying masks/keywords,
-another slot had such a highest version removed. If you consider the version strings, it becomes clear
-that slot B<2> has obtained a new version (the previous stable in this slot was B<2.0>, the new one is B<2.1>),
-and that the previously highest stable version B<1.1> of slot B<1> was removed or masked
-(the current stable version in this slot is now B<1.0>).
+Der Status des Pakets B<foo/bar> im Baum hat sich geändert (für die lokalen Settings):
+Die Symbole an der linken Seite bedeuten, dass ein Slot eine höhere Version erhielt (die ohne Äderung von Maske/Keywords installiert werden könnte),
+ein anderer Slot verlor eine solche "beste" Version.
+Durch Betrachten der Versionsstrings wird klar, dass Slot B<2> eine neue Version erhielt
+(die vorherige stabile dieses Slots war B<2.0>m die neue ist B<2.1>),
+und das die vorherige höchste stabile Version B<1.1> des Slots B<1> entfernt oder maskiert wurde
+(die aktuell stabile Version dieses Slots ist jetzt B<1.0>).
 .TP
 .B "[UD]  == foo/bar (1.1(1)@01.01.2009; 1.1(1) -> 2.0(2)): description"
-The status of package B<foo/bar> has changed in the tree (for your settings):
-The symbols on the left mean that a slot you have installed can be upgraded (without modifying masks/keywords),
-and that another slot you have installed was removed/masked.
-Looking at the versions on the right, it becomes clear that the installed version B<1.1> of Slot B<1>
-has been removed or masked, and that there is no other installed version of slot B<1>.
-However, a new stable version B<2.0> in slot B<2> has appeared (i.e. slot B<2> did previously not
-exist or had no stable version).
+Der Status des Pakets B<foo/bar> im Baum hat sich geändert (für die lokalen Settings):
+Die Symbole an der linken Seite bedeuten, dass für einen installierten Slot ein Upgrade möglich ist (ohne Veränderung von Maske/Keywords),
+und das ein anderer installierter Slot entfernt/maskiert wurde.
+Durch Betrachten der Versionsstrings wird klar, dass die installierte Version B<1.1> des Slots B<1>
+entfernt oder maskiert wurde, und dass es keine andere installierte Version des Slots B<1> gibt.
+Eine stabile Version B<2.0> erschien neu im Slot B<2> (d.h. Slot B<2> existiere vorher nicht oder hatte keine stabile Version).
 
-Since no version of slot B<2> was installed yet, eix cannot decide in this
-situation whether the symbol "B<U>" is really appropriate: Since eix does no
-dependency tracking, it does not know whether the new slot would be pulled
-in e.g. by your world file, or whether there is only some dependency to your
-old slot.
-Therefore, the symbol "B<U>" is only shown in this situation if
-B<UPGRADE_TO_HIGHEST_SLOT=true> or if the package is listed in
-B</etc/portage/package.slot_upgrade_allow>.
+Da keine Version des Slots B<2> installiert war, kann eix in dieser Situation
+nicht entscheiden, ob das Symbol "B<U>" wirklich angemessen ist:
+Da eix keine Abhängigkeiten berücksichtigt, weiß es nicht, ob der neue Slot
+beispielsweise von der world-Datei benutzt würde, oder ob es nur eine
+Abhängigkeit für den alten Slot gibt.
+Daher wird das Symbol "B<U>" in dieser Situation nur angezeigt, falls
+B<UPGRADE_TO_HIGHEST_SLOT=true> or falls das Paket in
+B</etc/portage/package.slot_upgrade_allow> gelistet ist.
 
-Actually, the output
+Tatsächlich wäre der output
 .B "[UD><] == foo/bar ..."
-would be more consistent, because in addition one slot has gained a
-higher stable version and the highest stable version of another slot was removed,
-but since typically this is implicitly implied by "B<U>" or "B<D>", respectively,
-it was a design decision of the default setting that if B<U> or B<D> is output
-then the symbols
+konsistenter, weil zusätzlich ein Slot eine höhere stabile Version erhielt
+und die höchste stabile Version eines anderen Slots entfernt wurde.
+Aber weil dies tyopischerweise von "B<U>" bzw. "B<D>" impliziert ist,
+war es bei den Default-Settings eine Design-Entscheidung, dass bei der
+Ausgabe von B<U> oder B<D> die Ausgabe der Symbole
 .B <
-and
+bzw.
 .B >
-will never output.
-You can of course build a different B<DIFF_FORMAT_HEADER_CHANGED> string
-which follows another policy.
+unterdrückt wird.
+Natürlich ist es möglich, einen anderen B<DIFF_FORMAT_HEADER_CHANGED>-String
+zu definieren, der einer anderen Politik folgt.
 .\" }}}
 
 .\" {{{ FORMATSTRING
 .SH FORMATSTRING
 .LP
-A formatstring can contain conditional blocks, package properties, colors and
-normal strings.
-If a formatstring expands to the empty string for a package, also the trailing
-newline is not printed.
-Thus you can put the whole formatstring into a conditional block to output
-only packages matching the conditional.
-An example of this wrapping is given below.
-.\" {{{ -------- Conditional blocks
-.SS Conditional blocks
-Conditions are very simple: A property is expanded and the resulting string is
-tested against another string. If they are the same, the condition is true and
-the block is executed. Conditions can be negated so that the else-part is
-executed if the condition is true, and the if-part if the condition is false.
-The else-part can be also be completely left out.
+Ein Formatstring kann konditionelle Blocks, Paketeigenschaften, Farben,
+und normale Strings enthalten.
+Wenn ein Formatstring zu einem Leerstring für ein Paket expandiert,
+so wird auch der folgende Zielenumbruch nicht ausgegeben.
+Daher kann man den gesamten Formatstring in einen konditionallen Block
+packen, um nur nur die Pakete auszugeben, die der Bedingung entsprechen.
+Ein Beispiel einer solchen "Umrahmung" wird weiter unten gegeben.
+.\" {{{ -------- konditionelle Blocks
+.SS konditionelle Blocks
+Bedingungen sind sehr einfach: Eine Eigenschaft wird expandiert, und der
+erhaltene String wird gegen einen anderen String getestet.
+Wenn sie übereinstimmen, ist die Bedingung wahr, und der Block wird ausgeführt.
+Bedingungen können negiert werden, so dass der else-Teil ausgeführt wird,
+falls die Bedingung wahr ist, und der if-Teil, falls die Bedingung falsch ist.
+Der else-Teil kann auch weggelassen werden.
 .TP
-.BR { [ ! ] I<PROPERTY> [ = I<RHS>] } I<TCODE> {}
-Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to I<RHS>.
-The B<!> would negate the behaviour.
+.BR { [ ! ] I<EIGENSCHAFT> [ = I<RHS>] } I<TCODE> {}
+Führt I<TCODE> aus, falls der String aus der Expansion von I<EIGENSCHAFT> gleich I<RHS> ist.
+Das B<!> würde das Verhalten negieren.
 .TP
-.BR { [ ! ] I<PROPERTY> [ = I<RHS>] } I<TCODE> {else} I<FCODE> {}
-Execute I<TCODE> if the string resulting from expanding I<PROPERTY> is equal to I<STRING>.
-If it's not, execute I<FCODE>.
+.BR { [ ! ] I<EIGENSCHAFT> [ = I<RHS>] } I<TCODE> {else} I<FCODE> {}
+Führt I<TCODE> aus, falls der string aus der Expansion von I<EIGENSCHAFT> gleich I<RHS> ist.
+Andernfalls wird I<FCODE> ausgeführt.
 
-I<RHS> is either a property (if enclosed in <>) or a variable (if prefixed with $)
-or a string (otherwise or if quoted).
+I<RHS> ist entweder eine Eigenschaft (falls in <> eingeschlossen), eine variable
+(falls ein $ vorgestellt ist), oder ein String (in allen anderen Fällen, oder falls in Anführungszeichen).
 
-I<PROPERTY> can be either one of the Package properties specified below,
-or it can be a variable access.
-A variable access has the form B<$>I<VARIABLE>.
-I<VARIABLE> need not be initialized; its content defaults to the empty string.
+I<EIGENSCHAFT> kann entweder eine der unten spezifierten Paketeigenschaften sein
+oder ein Variablenzugriff.
+Ein Variablenzugriff hat die Gestalt B<$>I<VARIABLE>.
+I<VARIABLE> muss nicht initialisiert werden; der Default-Inhalt ist der Leerstring.
 
-To change I<VARIABLE> during runtime use this syntax:
+Um I<VARIABLE> zur Laufzeit zu ändern, dient diese Syntax:
 .TP
 .BR { [ ! ] *I<VARIABLE> [ = I<RHS>] }
-This sets the runtime variable B<VARIABLE> to I<RHS>.
-With B<!>, the result is either 1 or empty, depending on whether I<RHS> is nonmpty.
-If the trailing part (including the B<=> sign) is omitted, there is a special meaning:
-B<{*>I<VARIABLE>B<}> sets I<VARIABLE> to 1, B<{!*>I<VARIABLE>B<}> sets I<VARIABLE> to the empty string.
+Dies sehr die Laufzeit-Variable B<VARIABLE> auf I<RHS>.
+Mit B<!> ist das Ergebnis 1 oder leer, je nachdem ob I<RHS> leer ist.
+Falls der zweite Teil (einschließlich des B<=>-Zeichens) weggelassen wird, gibt es eine spezielle Bedeutung:
+B<{*>I<VARIABLE>B<}> setzt die I<VARIABLE> auf 1, B<{!*>I<VARIABLE>B<}> setzt die I<VARIABLE> auf den Leerstring.
 .\" }}}
 
-.\" {{{ -------- Package properties
-.SS Package properties
-Names that refer to specific properties of the package that is currently
-printed. If used to print a property, the name B<must be enclosed in square brackets>
-(i.e. "<name>").
+.\" {{{ -------- Paketeigenschaften
+.SS Paketeigenschaften
+Namen, die sich auf spezielle Eigenschaften des Pakets beziehen, das gerade ausgegeben wird.
+Falls der Name benutzt werden soll, um eine Paketeigenschaft auszugeben, muss
+der name B<in spitzen Klammern> geschrieben werden (d.h. "<name>").
 .TP
 .BR name ", " category ", " homepage ", " licenses
-The name, category, homepage and licenses for the current package.
+Name, Kategorie, Homepage and Lizenz des aktuellen Pakets.
 .TP
 .BR "availableversions:I<VARIABLE>" ", " "availableversions:I<VARIABLE>:I<VARSLOTS>"
-For each version, print the content of the configuration/environment variable with name
-I<VARIABLE>, interpreting it as a format string.
-If the second form is used and at least one slot of the package is nontrivial,
-then I<VARSLOTS> is used instead of I<VARIABLE>, and the versions are sorted
-according to slots.
+Für jede Version wird der Inhalt der Konfigurations/Environment-Variablen B<VARIABLE>
+ausgegeben, wobei diese als Formatstring interpretiert wird.
+In der zweiten Form, und falls mindestens ein Slot des Pakets nichttrivial ist,
+wird I<VARSLOTS> statt I<VARIABLE> benutzt, und die versionen werden entsprechend der Slots sortiert.
 
-To avoid a misunderstanding: It is not possible to enter the required format directly after the colon.
-Instead, the required format must be stored in a new variable, and I<VARIABLE> and I<VARSLOTS>
-are only the names of these variables.
+Um Missverständnisse zu vermeiden: Es ist nicht möglich, das gewünschte Format direkt nach dem Doppelpunkt anzugeben.
+Statt dessen muss das gewünschte Format in einer neuen Variable gespeichert werden, und I<VARIABLE> und I<VARSLOTS>
+sind nur die Namen dieser Variablen.
 
-Useful examples for I<VARIABLE> are B<NAMEVERSION>, B<EQNAMEVERSION>,
-B<EQNAMEVERSION>, B<ANAMESLOT>, B<ANAMEASLOT>, B<NAMESLOT>, B<NAMEASLOT> or
+Nützliche Beispiele für I<VARIABLE> sind B<NAMEVERSION>, B<EQNAMEVERSION>,
+B<EQNAMEVERSION>, B<ANAMESLOT>, B<ANAMEASLOT>, B<NAMESLOT>, B<NAMEASLOT> oder
 B<DATESORT>.
-Here, B<ANAMESLOT> and B<ANAMEASLOT> are meant to be used in the second form,
-i.e. in B<availableversions:ANAMESLOT:ANAMESLOT> or B<availableversions:ANAMEASLOT:ANAMEASLOT>
-(Mnemonic: B<A>SLOT prints the slot B<a>lways).
-Moreover, B<NAMESLOT>, B<NAMEASLOT> and B<DATESORT> makes sense only for installed versions.
-See B<eix --dump> to see the variables in detail.
+Hierbei sind B<ANAMESLOT> und B<ANAMEASLOT> dazu gedacht, in der zweiten Form
+benutzt zu werden, d.h. in B<availableversions:ANAMESLOT:ANAMESLOT> oder
+B<availableversions:ANAMEASLOT:ANAMEASLOT> (Mnemonic: B<A>SLOT print slot B<a>lways).
+B<NAMESLOT>, B<NAMEASLOT> und B<DATESORT> ist nur für installierte Versionen sinnvoll.
+Siehe B<eix --dump> für die genaue Definition der Variablen.
 .TP
 .BR "markedversions:I<VARIABLE>" ", " "markedversions:I<VARIABLE>:I<VARSLOTS>"
-This is analogous to B<availableversions> with the difference that only
-marked versions are printed.
+Dies ist analog zu B<availableversions> mit dem Unterschied, dass nur
+markierte Versionen ausgegeben werden.
 .TP
 .BR "bestversion:I<VARIABLE>" ", " "bestversion*:I<VARIABLE>" ", " "bestslotversions:I<VARIABLE>" ", " "bestslotversions*:I<VARIABLE>" ", " "bestslotupgradeversions:I<VARIABLE>" ", " "bestslotupgradeversions*:I<VARIABLE>"
-This is analogous to B<availableversions> with the difference that only the best version
-resp. the best versions of each slot are printed.
-For the variants with B<*> also unstable versions are accepted.
-For the variants with B<upgrade> only those versions are selected which
-probably will appear after the upgrade.
+Dies ist analog zu B<availableversions> mit dem Unterschied, dass nur die
+beste Version bzw. die beste Version eines jeden Slots ausgegeben wird.
+Für die Varianten mit B<*> werden auch unstabile Versionen akzeptiert.
+Für die Varianten mit B<upgrade> werden nur diejenigen Versionen selektiert,
+die voraussichtlich nach dem Upgrade erscheinen.
 .TP
 .B "installedversions:I<VARIABLE>"
-This is analogous to B<availableversions> with the difference that only
-installed versions are printed.
+Dies ist analog zu B<availableversions> mit dem Unterschied, dass nur
+installierte Versionen ausgegeben werden.
 .TP
 .B "installedmarkedversions:I<VARIABLE>"
-This is analogous to B<installedversions> with the difference that only
-marked versions are printed.
+Dies ist analog zu B<installedversions> mit dem Unterschied, dass nur
+markierte Versionen ausgegeben werden.
 .TP
 .BR first ", " last ", " slotfirst ", " slotlast ", " oneslot
-This must occur only in I<VARIABLE> in the context of version printing.
-You can use these flags to test whether you are currently printing the first
-or last version of the package (usually to output some additional text in these cases).
-Similarly, when the printing is sorted according to slots you can test whether
-the current version is the first or last of the current slot or if there is
-only one slot at all.
-All these properties are empty if the condition is not satisfied, otherwise 1.
-To ease reusing code, when printing is not sorted according to slots, then
-B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Diese Flags können benutzt werden um zu testen, ob gerade die erste oder letzte Version
+eine Pakets ausgegeben wird (etwa um Zusatztext in diesen Fällen auszugeben).
+Analog, wenn die Ausgabe nach Slot sortiert wird, kann damit getestet werden,
+ob die aktuelle Version die erste oder letzte des aktuellen Slots ist,
+oder ob es gar überhaupt nur einen Slot gibt.
+Alle diese Eigenschaften sind leer, wenn die Bedingung nicht erfüllt ist, sonst 1.
+Um die Wiederbenutzung von Code zu erleichtern gilt:
+Wenn die Durckausgabe nicht Slot-sortiert ist, dann sind
+B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 .TP
 .BR slot ", " isslot ", " overlayver ", " overlaynum
-This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the current slot or the overlay of the current version.
-B<overlayver> is empty if the whole package is from only one overlay;
-you should use B<overlay> to print the overlay in such a case.
-B<overlaynum>, in contrast, contains the number of the overlay
-without colors unconditionally (or is empty if the package is not from an overlay).
-B<isslot> just tests whether the slot is trivial and outputs 1 in this case,
-otherwise nothing.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Es wird der aktuelle Slot bzw. der Overlay der aktuellen Version ausgegeben.
+B<overlayver> ist leer, falls das gesamte Paket aus nur einem Overlay stammt;
+für diesen Fall sollte B<overlay> zur Ausgabe des Overlays benutzt werden.
+Im Gegensatz dazu enthält B<overlaynum> stets die Nummer des Overlays
+(als Text ohne Farben) oder ist leer, falls das Paket keinem Overlay entstammt.
+B<isslot> tested nur, ob der Slot trivial ist und gibt in diesem Fall 1 aus
+(sonst nichts).
 .TP
 .BR versionkeywords ", " versionkeywords* ", " versionekeywords
-This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the full keywords of the current version.
-If the data is modified by the profile, the modified data is printed with
-B<versionkeywords*>. The special form B<versionekeywords> prints the latter
-if it differs from B<versionkeywords>; otherwise, it is empty.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Die vollen Keywords der aktuellen Version werden ausgegeben.
+Falls die Daten durch das Profile modifiziert wurden, werden die
+modifizierten Daten mit B<versionkeywords*> ausgegeben.
+Die spezielle Form B<versionekeywords> gibt Letzteres aus falls es sich von
+B<versionkeywords> unterscheidet; andernfalls ist es leer.
 .TP
 .BR isbestupgrade ", " isbestupgrade* ", " isbestupgradeslot ", " isbestupgradeslot*
-This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 if the current version is the best resp. best in the current slot for upgrading.
-For the variants with B<*> also unstable versions are considered.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies expandiert zu 1, falls die aktuelle Version die beste bzw. beste des aktuellen Slots zum Upgraden ist.
+Für die Varianten mit B<*> werden auch instabile Versionen berücksichtigt.
 .TP
 .BR installedversion ", " markedversion
-This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 or the empty string depending on whether the current version is
-installed or marked, respectively.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle Version installiert bzw. markiert ist.
 .TP
 .BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
-This must occur only in I<VARIABLE> in the context of version printing.
-This returns 1 or empty depending whether the version has the current stability
-property according to the local or default configuration, respectively.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle Version (gemäß der
+lokelen bzw. Default-Konfiguration) die entsprechend Stabilitätseigenschaft hat.
 .TP
 .B isbinary
-This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 or empty depending on whether there is a corresponding *.tbz2 file for the version.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies ist 1 oder leer, je nachdem ob eine entsprechende *.tbz2-Datei für die Version existiert.
 .TP
 .BR restrict ", " restrictfetch ", " restrictmirror ", " restrictprimaryuri ", " restrictbincheck ", " restrictstrip ", " restricttest ", " restrictuserpriv ", " restrictinstalledsources ", " restrictbindist ", " restrictparallel
-This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 or empty depending on whether some or the corresponding B<RESTRICT> attribute is set for the version.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies ist 1 oder leer, je nachdem ob eine entsprechendes B<RESTRICT>-Attribut für die Version gesetzt ist.
 .TP
 .BR properties ", " propertiesinteractive ", " propertieslive ", " propertiesvirtual ", " propertiesset
-This must occur only in I<VARIABLE> in the context of version printing.
-It returns 1 or empty depending on whether some or the corresponding B<PROPERTIES> attribute is set for the version.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Dies ist 1 oder leer, je nachdem ob eine entsprechendes B<PROPERTIES>-Attribut für die Version gesetzt ist.
 .TP
 .BR depend ", " rdepend ", " pdepend ", " depend* ", " rdepend* ", " pdepend*
-This must occur only in I<VARIABLE> in the context of version printing.
-It returns the respective B<DEPEND>, B<RDEPEND>, B<PDEPEND> string of an available package
-(the string is shortened if possible if the variant with B<*> is used).
-This is empty unless  B<DEP=true> is set (now and if the cachefile was created).
-When printing installed versions (in contrast to available versions),
-these properties are not available (i.e. they are empty).
-The latter might change in a future release of eix.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
+Die expandiert zum B<DEPEND>, B<RDEPEND>, bzw. B<PDEPEND> einer vorhandenen Version
+(der String wird nach Möglichkeit abgekürzt, falls die Variante mit B<*> benutzt wird).
+Die Expansion ist leer, falls B<DEP=true> nicht gesetzt ist (oder bei der Erzeugung der Datenbank nicht gesetzt war).
+Bei der Ausgabe installierter Versionen (im Gegensatz zu vorhandenen Versionen)
+ist diese Eigenschaft nicht verfügbar (d.h. sie ist leer).
+Letzteres kann sich möglicherweise in einer zukünftigen Version von eix ändern.
 .TP
 .BR havedepend ", " haverdepend ", " havepdepend ", " havedeps
-This is like the above with the difference that only 1 is returned if the
-value of the corresponding string (resp. of at least one of these) is nonempty.
+Wie oben mit dem Unterschied, dass nur 1 ausgegeben wird, wenn der
+Wert des entsprechenden String bzw. mindestens eines davon nichtleer ist.
 .TP
 .BR haveuse ", " use
-This must occur only in I<VARIABLE> in the context of version printing.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 It outputs information corresponding to the B<IUSE> (for available versions)
 or B<USE> (for installed versions) variables, respectively.
 B<haveuse> can be used to test whether an output would be nonempty
@@ -1232,12 +1250,12 @@ For installed versions, B<use> outputs the B<USE> flags and whether they are ins
 is printed at the appropriate places).
 .TP
 .BR "date:I<VAR>"
-This must occur only in I<VARIABLE> in the context of version printing.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 It outputs the installation date; the strftime() format for the date is read from
 the variable I<VAR>.
 .TP
 .BR version
-This must occur only in I<VARIABLE> in the context of version printing.
+Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 It outputs the plain version in text form.
 .TP
 .BR installed ", " best ", " best*
@@ -1260,7 +1278,7 @@ The name of all local sets to which the package belongs, separated by spaces.
 With B<allsetnames> also the "system" set name is included.
 .TP
 .B binary
-Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 file.
+Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 Datei.
 See the remarks for B<--binary>.
 .TP
 .B overlaykey
@@ -1270,7 +1288,7 @@ If all versions are in the same overlay, "[overlaykey]" is output with correspon
 expands to 1 if the package is in the system profile
 .TP
 .B world
-expands to 1 if the package is in the world file
+expands to 1 if the package is in the world Datei
 .TP
 .B world_sets
 expands to 1 if the package is in the world sets
@@ -1400,14 +1418,14 @@ B<FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I>
 .LP
 .\" {{{ -------- @SYSCONFDIR@/eix-sync.conf
 .SS @SYSCONFDIR@/eix-sync.conf
-This file stores commands and configurations to apply with B<eix-sync>.
+This Datei stores commands and configurations to apply with B<eix-sync>.
 Comments start with B<#> (all lines are cut at the first B<#>; it is not
 possible to mask B<#>). Lines can have the following forms and will be
 executed in the given order before B<emerge --sync> is executed.
 
-Note that the content of the variable B<EIX_SYNC_CONF> is appended to that file.
+Note that the content of the variable B<EIX_SYNC_CONF> is appended to that Datei.
 By default, the latter expands to B<EIX_SYNC_OPTS> so that also that variable is
-appended to that file. Both variables can be used to modify the defaults
+appended to that Datei. Both variables can be used to modify the defaults
 set in B<@SYSCONFDIR@/eix-sync.conf>. Be aware that a lot code of these lines is
 evaluated when B<eix-sync> is execute, so take care about security!
 .TP
@@ -1459,7 +1477,7 @@ If I<command> or the evaluation of its output are not successful,
 B<eix-sync> will print a warning (or error out if B<-F> is active,
 i.e. if B<FATAL_HOOKS> is nonempty).
 This can be used to execute e.g. B<keychain> and to return the content of
-the appropriate I<~/.keychain/*-sh> file or to return export-commands for
+the appropriate I<~/.keychain/*-sh> Datei or to return export-commands for
 the current B<SSH_AUTH_SOCK> and B<SSH_AGENT_PID>.
 It is also admissible that the output of I<command> is a command which
 modifies the variables B<PORTAGE_RSYNC_OPTS>, B<PORTAGE_RSYNC_EXTRA_OPTS>,
@@ -1533,7 +1551,7 @@ and if you want to use cache method B<metadata-flat> for that overlay
 although the metadata cache is broken or not contained in that repository.
 .TP
 .B !!exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
-Send the output to a logfile (with correct permissions).
+Send the output to a logDatei (with correct permissions).
 The "true" at the end is to force continuing even if the "chown" failed.
 If you do not want to redirect the output of the final B<eix-diff>, you might
 want to combine this with
@@ -1552,7 +1570,7 @@ will be colored even if you use redirection.
 .TP
 .B @@eix-remote update B<"`portageq portdir`/local/layman/eix-caches.tar.bz2">
 (The last argument can also be omitted if you do not want a local copy
-of the data in the /usr/portage/local/layman directory.)
+of the data in the /usr/portage/local/layman Verzeichnis.)
 .TP
 .B @eix-remote fetch /var/cache/remote-cache.tbz2
 .TP
@@ -1561,14 +1579,14 @@ of the data in the /usr/portage/local/layman directory.)
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc
 .SS @SYSCONFDIR@/eixrc
-Global configuration file. The variables in B<~/.eixrc> or from the environment
-can override the variables set in this file. See B<~/.eixrc>.
+Global configuration Datei. The variables in B<~/.eixrc> or from the environment
+can override the variables set in this Datei. See B<~/.eixrc>.
 .\" }}}
 
 .\" {{{ -------- EIXRC
 .SS EIXRC
-If this environment variable is set, its value is used instead of the filename
-@SYSCONFDIR@/eixrc to read the configuration data. In this case, the file
+If this environment variable is set, its value is used instead of the Dateiname
+@SYSCONFDIR@/eixrc to read the configuration data. In this case, the Datei
 ~/.eixrc is ignored (but you can of course source it if you want it).
 
 .SS EIX_SYNC_OPTS, EIX_SYNC_CONF, EIX_REMOTE_OPTS, EIX_LAYMAN_OPTS, EIX_TEST_OBSOLETE_OPTS
@@ -1582,10 +1600,10 @@ when you call these scripts with root permissions.
 
 .\" {{{ -------- ~/.eixrc
 .SS ~/.eixrc
-Per-user configuration file.
-The variables in this file can be overridden by environment variables.
+Per-user configuration Datei.
+The variables in this Datei can be overridden by environment variables.
 You can use a shell-like syntax to set the following variables.
-In particular, you can source other files and you can use auxiliary variables to set other variables.
+In particular, you can source other Dateis and you can use auxiliary variables to set other variables.
 
 However, if you use auxiliary variables as usual, you will only see
 the substituted values with --dump or --dump-defaults and you cannot
@@ -1593,7 +1611,7 @@ replace the inserted values e.g. by setting them in the environment.
 
 For this reason, you can refer to variables besides the usual shell-way also
 in the syntax B<%{>I<VARIABLE>B<}> (the braces here are not optional).
-This means that the substitution is delayed until all configuration files
+This means that the substitution is delayed until all configuration Dateis
 and environment variables are read, and the substitution will not show up
 with --dump or --dump-defaults.
 
@@ -1728,8 +1746,8 @@ so that they are printed with --dump or --dump-defaults.
 
 .TP
 .BR EIX_SYNC_OPTS ", " EIX_SYNC_CONF " " (string)
-The content of B<EIX_SYNC_CONF> is appended to the file B<@SYSCONFDIR/eix-sync.conf>
-See the description of that file for details.
+The content of B<EIX_SYNC_CONF> is appended to the Datei B<@SYSCONFDIR/eix-sync.conf>
+See the description of that Datei for details.
 By default, B<EIX_SYNC_CONF> is a delayed substitution of B<EIX_SYNC_OPTS> so
 that typically you can also use B<EIX_SYNC_OPTS> with the same purpose.
 Be aware that if one of these variables is compromised, almost anything can
@@ -1746,7 +1764,7 @@ So be sure to quote these variables correctly and be aware of security risks!
 .BR EIXRC_SOURCE " " (string)
 This path is prepended to source commands in @SYSCONFDIR@/eixrc.
 It is meant to be set in the environment but can also be set in @SYSCONFDIR@/eixrc.
-In the latter case, it will override the setting from the environment as soon as it is read until all files are sourced.
+In the latter case, it will override the setting from the environment as soon as it is read until all Dateis are sourced.
 Note that when this variable takes effect, no delayed substitution is performed yet.
 
 .TP
@@ -1810,7 +1828,7 @@ delayed substitution for the following variables analogously to B<EPREFIX>
 The purpose of B<ROOT> is to follow roughly portage's usage of this variable.
 Note that variables in /etc/make.conf do not influence eix configuration variables.
 In particular, a B<ROOT=>I<something> command in /etc/make.conf does not influence eix.
-You must set it instead in the environment or in an eix configuration file.
+You must set it instead in the environment or in an eix configuration Datei.
 
 You can easily customize to which paths the B<EPREFIX> or B<ROOT> variables apply:
 Simply use in the appropriate following variables either the delayed references
@@ -1823,7 +1841,7 @@ e.g. you might want to set
 
 .B EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
 
-if you feel that the eix cachefile should depend (only) on the profile root.
+if you feel that the eix cacheDatei should depend (only) on the profile root.
 .RE
 
 .TP
@@ -1836,7 +1854,7 @@ delayed substitution takes effect.)
 
 .TP
 .BR MAKE_GLOBALS " " (string)
-If this file exists, it is used instead of
+If this Datei exists, it is used instead of
 B<%{PORTAGE_CONFIGROOT}/etc/make.globals>
 The default value corresponds to >=portage-2.2* behavior.
 
@@ -1855,7 +1873,7 @@ This prefix is prepended to the portage cache.
 
 .TP
 .BR EPREFIX_ACCESS_OVERLAYS " " (prefix-string)
-This prefix is prepended to overlays when their files are accessed.
+This prefix is prepended to overlays when their Dateis are accessed.
 
 .TP
 .BR EPREFIX_PORTDIR " " (prefix-string)
@@ -1875,33 +1893,33 @@ This is prepended to overlays in the eix database to test whether they exist.
 
 .TP
 .BR EIX_CACHEFILE " " (string)
-The eix cachefile, usually B<%{EPREFIX}@EIX_CACHEFILE@>
+The eix cacheDatei, usually B<%{EPREFIX}@EIX_CACHEFILE@>
 
 .TP
 .BR EIX_PREVIOUS " " (string)
-The previous eix cachefile for eix-diff and eix-sync,
+The previous eix cacheDatei for eix-diff and eix-sync,
 usually B<%{EPREFIX}@EIX_PREVIOUS@>
 
 .TP
 .BR EIX_REMOTEARCHIVE " " (string)
 This is a local copy of the remote archive used by eix-remote.
-If it is empty, only temporary files are used.
+If it is empty, only temporary Dateis are used.
 
 .TP
 .BR EIX_WORLD " " (string)
-The file eix considers as the world file. Note that usually
-this file is only readable if you are a member of the portage group.
+The Datei eix considers as the world Datei. Note that usually
+this Datei is only readable if you are a member of the portage group.
 To avoid needing this permissions you can use B<SAVE_WORLD>.
 
 .TP
 .BR EIX_WORLD_SETS " " (string)
-The file eix considers as the world_sets file.
+The Datei eix considers as the world_sets Datei.
 The same remarks as for B<EIX_WORLD> hold true.
 
 .TP
 .BR EIX_LOCAL_SETS " " "(string list)" "(the meaning of string list is explained in the next paragraph)"
 This is a list of directories which contain locally defined sets.
-The directories are read in the given order; files with set-names which have
+The directories are read in the given order; Dateis with set-names which have
 been read earlier are ignored: In this sense earlier entries in
 B<EIX_LOCAL_SETS> take precedence over later entries.
 
@@ -1919,8 +1937,8 @@ as well as B<%{EIX_LOCAL_SETS_ADD}>.
 The reason for the latter is that you can just add additional directories
 to the variable B<%{EIX_LOCAL_SETS_ADD}> in B<@SYSCONFDIR@/eixrc>.
 Reasons why you might want to do this is e.g. if you defined another multiset
-directory (e.g. for some overlay or for treatment with "world-candidate = False") in
-/etc/portage/sets.conf or in the sets.conf file of some overlay.
+Verzeichnis (e.g. for some overlay or for treatment with "world-candidate = False") in
+/etc/portage/sets.conf or in the sets.conf Datei of some overlay.
 
 For all string list variables, the possible separators between different entries are [ \\t\\r\\n].
 If you want to use such a separator within an entry, you have to escape it by B<\\>.
@@ -1942,16 +1960,16 @@ ebuilds are ignored.
 
 .TP
 .BR SAVE_WORLD " " (true / false)
-If you set this to true, the information of your world file is stored in @EIX_CACHEFILE@.
-Note that this means that anybody who can read this file has the information about
-the content of your world file.
+If you set this to true, the information of your world Datei is stored in @EIX_CACHEFILE@.
+Note that this means that anybody who can read this Datei has the information about
+the content of your world Datei.
 Make sure that this is really what you want if you set this to true.
 
 .TP
 .BR CURRENT_WORLD " " (true / false)
-If false, then the world file information stored in @EIX_CACHEFILE@ is used,
-even if your current world file is readable.
-Otherwise, your current world file (if it is readable) overrides that information.
+If false, then the world Datei information stored in @EIX_CACHEFILE@ is used,
+even if your current world Datei is readable.
+Otherwise, your current world Datei (if it is readable) overrides that information.
 
 .TP
 .BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
@@ -1993,13 +2011,13 @@ If true, eix and eix-diff will use B<--care>.
 .TP
 .BR USE_BUILD_TIME " " (true / false)
 Whether to use the BUILD_TIME entry (if it exists) of the portage database
-instead of the directory timestamp (which usually is the installation time).
+instead of the Verzeichnis timestamp (which usually is the installation time).
 The difference is usually only important for packages installed from .tbz2,
 but in most cases the build time is more relevant (it is also more reliable).
 Unfortunately, the build time is available only for packages built and emerged
 with >=portage-2.2_rc63; you can use B<eix-installed [no-]buildtime> to check
 for which versions this is (not) the case.
-Reading the build time is always slower than using the directory timestamp
+Reading the build time is always slower than using the Verzeichnis timestamp
 (even if the build time is not available).
 Thus, you might want to set this variable to B<false> if speed of eix is
 more important to you than the buildtime information.
@@ -2243,7 +2261,7 @@ are excluded/added for cache methods eix and eix*.
 This string is appended to all cache methods using parse/parse*/ebuild/ebuild*.
 Its default contains B<#metadata-md5#metadata-flat>.
 Unless you have a very special setup this is always what you want:
-It means that if a current metadata (in a metadata/*cache subdirectory)
+It means that if a current metadata (in a metadata/*cache Unterverzeichnis)
 is available for the ebuild,
 this is used instead of parsing/executing the ebuild.
 The latter is in principle not completely reliable (parsing) or
@@ -2273,7 +2291,7 @@ This can be done with the following variables:
 These variables are string lists of the form "I<overlay> I<method> I<overlay> I<method> ...".
 The cache method of I<overlay> is set to the subsequent I<method>,
 thus overriding the default settings of B<OVERLAY_CACHE_METHOD>
-(or of B<PORTDIR_CACHE_METHOD> if I<overlay> is the B<PORTDIR> directory).
+(or of B<PORTDIR_CACHE_METHOD> if I<overlay> is the B<PORTDIR> Verzeichnis).
 I<overlay> is interpreted as a wildcard pattern which should match the I<path> (symbolic links resolved) of the overlay
 (it is not possible to refer to repository's name here - you must use the true I<path>).
 Later entries override earlier ones: The last matching entry takes precedence.
@@ -2304,20 +2322,20 @@ Use the metadata-cache located inside the portage-tree ($PORTDIR/metadata/cache)
 If you provide I<PATH>, it overrides the above path; in this case, it must be
 the full path (i.e. no prefix is used). You might want to provide I<PATH> if
 you use some package manager to generate the metadata in the corresponding
-directory.
+Verzeichnis.
 .RE
 .TP
 .BR metadata-md5 " or " metadata-md5:I<PATH>
-This is similar to B<metadata-flat> with the difference that the files within
+This is similar to B<metadata-flat> with the difference that the Dateis within
 ($PORTDIR/metadata/md5-cache) are used where an md5sum is used instead of the
 timestamp to check whether the metadata is up-to-date.
 This should be the preferred method for overlays if the overlay supports it,
-that is, if its B<metadata/layout.conf> file contains the line
+that is, if its B<metadata/layout.conf> Datei contains the line
 B<cache-format=md5-dict>.
 (Note that only portage reads B<metadata/layout.conf>; eix does not.)
 .TP
 .BR metadata-assign " or " metadata-assign:I<PATH>
-This is similar to B<metadata-flat> with the difference that the files within
+This is similar to B<metadata-flat> with the difference that the Dateis within
 the metadata cache are expected to be in an "assignment format"
 (TYPE=value) which is the case in some alt-gentoo trees.
 .TP
@@ -2356,11 +2374,11 @@ If you do not want this, use B<sqlite*> (see below).
 .B sqlite*
 This is analogous to the cache method B<eix> with the difference that
 all categories found in I<FILE> are added, even those categories which
-were not enabled by some profile/categories file.
+were not enabled by some profile/categories Datei.
 .TP
 .BR flat " or " flat:I<PATH>
 This is similar to B<metadata-flat> with the difference that the metadata is
-expected in the directory I<PATH>I<${PORTAGE_OR_OVERLAY_DIR}>.
+expected in the Verzeichnis I<PATH>I<${PORTAGE_OR_OVERLAY_DIR}>.
 If I<PATH> is omitted, it defaults to B</var/cache/edb/dep>.
 
 .RS
@@ -2368,7 +2386,7 @@ You can use this cache method with <portage-2.1 and the default backend.
 .RE
 .TP
 .BR assign " or " assign:I<PATH>
-This is analogous to B<flat> with the difference that the files are
+This is analogous to B<flat> with the difference that the Dateis are
 expected to be in an "assignment format" (TYPE=value).
 This is the case if you use portage-2.1 with the default backend.
 
@@ -2383,9 +2401,9 @@ You will probably want to use a corresponding option in eix-sync in this case.
 .TP
 .BR repo-flat " or " repo-flat:I<PATH> " or " repo-assign " or " repo-assign:I<PATH>
 This is analogous to B<flat>/B<assign> with the difference that the metadata is
-expected in the directory I<PATH>B</>I<${repo_name}>.
+expected in the Verzeichnis I<PATH>B</>I<${repo_name}>.
 If I<${repo_name}> is empty, the name B<x->I<XXX> is assumed where I<XXX>
-is the last nonzero path component of the portage/overlay directory.
+is the last nonzero path component of the portage/overlay Verzeichnis.
 This corresponds to the naming scheme of paludis.
 If this gives a wrong path for some overlay, you can still manually override
 this with e.g.
@@ -2487,7 +2505,7 @@ It has the same security risks as B<ebuild>/B<ebuild*>, of course.
 .RE
 .TP
 .BR eix "  or   "  eix:I<FILE> "  or  " eix:I<FILE>:I<overlay>
-Use the cachefile I<FILE> previously generated by B<eix-update>.
+Use the cacheDatei I<FILE> previously generated by B<eix-update>.
 If omitted or empty, I<FILE> defaults to @EIX_CACHEFILE@.
 
 .RS
@@ -2517,17 +2535,17 @@ this overlay structure will appear "flattened".
 .BR eix* "  or   "  eix*:I<FILE> "  or  " eix*:I<FILE>:I<overlay>
 This is analogous to the cache method B<eix> with the difference that
 all categories found in I<FILE> are added, even those categories which
-were not enabled by some profile/categories file.
+were not enabled by some profile/categories Datei.
 
 .RS
 This cache method is useful if I<FILE> contains information for some
-overlay directory for which the corresponding profile/categories on
+overlay Verzeichnis for which the corresponding profile/categories on
 the local machine is unknown or not necessarily up-to-date.
 
 This is used for B<eix-remote>.
 
 Note that in particular with B<PORTDIR_CACHE_METHOD="eix*::~">,
-the overlay data is by default just "copied" from the previous eix cachefile.
+the overlay data is by default just "copied" from the previous eix cacheDatei.
 .RE
 .RE
 
@@ -2544,9 +2562,9 @@ B<OVERRIDE_CACHE_METHOD>.
 .TP
 .BR REPO_NAMES
 This variables is a string list of the form "I<dir-pattern> I<overlay-label> I<dir-pattern> I<overlay-label> ...".
-When a new cachefile is created, the overlay matching I<dir-pattern> obtains the label I<overlay-label>,
-independent of the content of its profiles/repo_name file.
-This variable can also associate label names to virtual overlays which do not possess such a file.
+When a new cacheDatei is created, the overlay matching I<dir-pattern> obtains the label I<overlay-label>,
+independent of the content of its profiles/repo_name Datei.
+This variable can also associate label names to virtual overlays which do not possess such a Datei.
 In particular, this variable also overrides overlay labels set by KEEP_VIRTUALS.
 Later entries override earlier ones: The last matching entry takes precedence.
 .TP
@@ -2812,13 +2830,13 @@ for the versions in question.
 .BR REDUNDANT_IF_DOUBLE_CFLAGS " " (string ", see above")
 Applies if /etc/portage/package.cflags matches twice
 for the versions in question.
-Note that this file is not supported by portage, but you might e.g. have built some
-support for it in your personal /etc/portage/bashrc file.
+Note that this Datei is not supported by portage, but you might e.g. have built some
+support for it in your personal /etc/portage/bashrc Datei.
 Of course, this means that also no format for /etc/portage/package.cflags is defined.
 eix assumes that the format is analogous to /etc/portage/package.{keywords,use}
 (i.e. an entry is at most one line, with the matching version(s) at the beginning).
-As the other /etc/portage/package.* files, /etc/portage/package.cflags may also be a directory tree;
-in this case, all non-hidden files/subdirectories in this tree are read recursively,
+As the other /etc/portage/package.* Dateis, /etc/portage/package.cflags may also be a Verzeichnis tree;
+in this case, all non-hidden Dateien/Unterverzeichnisse in this tree are read recursively,
 resolving all symbolic links.
 .TP
 .BR REDUNDANT_IF_IN_KEYWORDS " " (string ", see above")
@@ -2844,67 +2862,67 @@ This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.e
 .TP
 .BR REDUNDANT_IF_IN_LICENSE " " (string ", see above")
 This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.license.
-See the above comments about this file.
+See the above comments about this Datei.
 .TP
 .BR REDUNDANT_IF_IN_CFLAGS " " (string ", see above")
 This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.cflags.
-See the above comments about this file.
+See the above comments about this Datei.
 .\" }}}
-.\" {{{ Various file lists:
+.\" {{{ Various Datei lists:
 .TP
 .BR SLOT_UPGRADE_FORBID " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
 .TP
 .BR SLOT_UPGRADE_ALLOW " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
 .BR KEYWORDS_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.{accept_,}keywords.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.{accept_,}keywords.nonexistent
 .TP
 .BR MASK_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.mask.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.mask.nonexistent
 .TP
 .BR UNMASK_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.unmask.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.unmask.nonexistent
 .TP
 .BR USE_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.use.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.use.nonexistent
 .TP
 .BR ENV_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.env.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.env.nonexistent
 .TP
 .BR LICENSE_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.license.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.license.nonexistent
 .TP
 .BR CFLAGS_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.cflags.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.cflags.nonexistent
 .TP
 .BR INSTALLED_NONEXISTENT " " "(string list)"
-This is a list of filenames/dirnames which serve as /etc/portage/package.installed.nonexistent
+This is a list of Dateinames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
 .BR PACKAGE_NOWARN " " "(string list)"
-This is a list of filenames/dirnames which serves as /etc/portage/package.nowarn
+This is a list of Dateinames/dirnames which serves as /etc/portage/package.nowarn
 .\" }}}
 .\" }}}
 
 .\" {{{ /etc/portage/sets.eix
 .SS /etc/portage/sets.eix
-This is a directory analogous to B</etc/portage/sets> (see the portage manpage).
+This is a Verzeichnis analogous to B</etc/portage/sets> (see the portage manpage).
 Since portage has some ways to define package sets which are not available for eix,
-you can use this directory to store (static) sets which you want that eix knows anyway
+you can use this Verzeichnis to store (static) sets which you want that eix knows anyway
 (e.g. so that set entries in /etc/portage/package.{accept_,}keywords can be treated properly).
 .\" }}}
 
 .\" {{{ /etc/portage/package.slot_upgrade*
 .SS /etc/portage/package.slot_upgrade_forbid
 .SS /etc/portage/package.slot_upgrade_allow
-Similarly as all other /etc/portage/package.*, this can be a file or directory.
-The entries of this file are of the form "category/name" (separated by newlines).
+Similarly as all other /etc/portage/package.*, this can be a Datei or Verzeichnis.
+The entries of this Datei are of the form "category/name" (separated by newlines).
 The corresponding packages are treated as exceptions for B<UPGRADE_TO_HIGHEST_SLOT>.
 .\" }}}
 
 .\" {{{ /etc/portage/package.*.nonexistent
-.SS /etc/portage/package.accept_keywords.nonexistent
+.SS /etc/portage/package.{accept_,}keywords.nonexistent
 .SS /etc/portage/package.keywords.nonexistent
 .SS /etc/portage/package.mask.nonexistent
 .SS /etc/portage/package.unmask.nonexistent
@@ -2912,25 +2930,25 @@ The corresponding packages are treated as exceptions for B<UPGRADE_TO_HIGHEST_SL
 .SS /etc/portage/package.env.nonexistent
 .SS /etc/portage/package.license.nonexistent
 .SS /etc/portage/package.cflags.nonexistent
-Similarly as /etc/portage/package.*, this can be a file or a directory.
+Similarly as /etc/portage/package.*, this can be a Datei or a Verzeichnis.
 If an entry (separated by space or newline) matches the first word of a line
-in the corresponding /etc/portage/package.* file,
+in the corresponding /etc/portage/package.* Datei,
 this line is excluded from the -t tests (for names not in the database).
 You can use this to eliminate certain warning from -t.
 
 .SS /etc/portage/package.installed.nonexistent
-This is similar to the other /etc/portage/package.*.nonexistent files/dirs
+This is similar to the other /etc/portage/package.*.nonexistent Dateis/dirs
 with the difference that it eliminates messages from -t about installed
 packages which had been removed from the database.
-The entries of this file are of the form "category/name", but you can also
+The entries of this Datei are of the form "category/name", but you can also
 omit the "category/" part (although this is not recommended).
 .\" }}}
 
 .\" {{{ /etc/portage/package.nowarn
 .SS /etc/portage/package.nowarn
-Similarly as /etc/portage/package.*, this can be a file or a directory.
-With this file/dir you can switch off test for -T for particular packages.
-The format of the file is similarly to /etc/portage/package.use with the
+Similarly as /etc/portage/package.*, this can be a Datei or a Verzeichnis.
+With this Datei/dir you can switch off test for -T for particular packages.
+The format of the Datei is similarly to /etc/portage/package.use with the
 difference that you can switch on/off tests.
 Exactly those lines apply for which at least one matching version is available.
 For example, the lines
@@ -2939,15 +2957,15 @@ For example, the lines
 
 .B >sys-kernel/hardened-sources-2.6.40 -weaker
 
-in this file will cause that -T does not find the package
+in this Datei will cause that -T does not find the package
 sys-kernel/*-sources if the only cause for it would be that
 B<REDUNDANT_IF_NO_CHANGE> or B<REDUNDANT_IF_WEAKER> is set.
 An exception to this rule is only made for B<REDUNDANT_IF_WEAKER> and for
 hardened-sources, if the latter is available at least in version 2.6.40.
-The order in the file plays no role: The "-" always takes precedence if it
+The order in the Datei plays no role: The "-" always takes precedence if it
 occurs somewhere.
 
-You can list a package several times in this file; the listed tests are
+You can list a package several times in this Datei; the listed tests are
 then cumulative for the corresponding package.
 
 Available tests are
@@ -3054,7 +3072,7 @@ packages in the tree will never be supported by eix (because eix would need
 full support for dependencies and useflags to handle these).
 As a workaround you can manually define such additional sets in
 B</etc/portage/sets.eix>.
-Moreover, eix does not and probably never will support reading of sets.conf files.
+Moreover, eix does not and probably never will support reading of sets.conf Dateis.
 If you specified additional B<sets/> directories e.g. in some overlay, you must
 add these additional directories manually to the B<EIX_LOCAL_SETS> variable
 in @SYSCONFDIR@/eixrc.
@@ -3178,16 +3196,16 @@ To see the effect of such an example try e.g.
 
 See also the comments for the B<-I> option.
 
-Since eix-0.20.0 the logical connectives for EXPRESSIONs have changed dramatically:
+Since eix-0.20.0 the logical connectives for AUSDRUCK have changed dramatically:
 Not only braces are now possible, also chains with B<-a> and B<-o> are now treated
 left-associative as most users would intuitively expect.
-The negation B<--not> is now treated as a logical operation starting a new BRACE_OR_TEST
-and no longer considered as part of TEST_OPTIONS (which was a source of confusion for many users).
-Now B<--pipe> is really handled as part of TEST_OPTIONS and does not implicitly introduce logical connectives.
+The negation B<--not> is now treated as a logical operation starting a new KLAMMER_ODER_TEST
+and no longer considered as part of TEST_OPTIONEN (which was a source of confusion for many users).
+Now B<--pipe> is really handled as part of TEST_OPTIONEN and does not implicitly introduce logical connectives.
 
-With eix-0.20.1 all the previously used files /etc/portage/package.*.nowarn
-are no longer supported by default: They were replaced by the single file/dir
-/etc/portage/package.nowarn. If you still want to use the previous files, set
+With eix-0.20.1 all the previously used Dateis /etc/portage/package.*.nowarn
+are no longer supported by default: They were replaced by the single Datei/dir
+/etc/portage/package.nowarn. If you still want to use the previous Dateis, set
 B<OBSOLETE_NOWARN=true> in the environment. See the description of the variable
 B<PACKAGE_NOWARN> (in the output of B<eix --dump>) to understand why this works.
 
@@ -3202,7 +3220,7 @@ Previously, the B<-F> option was automatic and could not be disabled.
 .SH "AUTHORS"
 .LP
 
-Martin V\(:ath <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
+Martin Väth <vaeth at mathematik.uni-wuerzburg.de> (developer, current maintainer)
 
 Emil Beinroth <emilbeinroth at gmx.net> (developer, previous maintainer)
 

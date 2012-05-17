@@ -126,7 +126,7 @@ BasicVersion::parseVersion(const string& str)
 	if(unlikely(len == pos || pos == str.size())) {
 		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 		throw ExBasic(_(
-			"malformed (first primary at %r) version string %r\n"))
+			"malformed (first primary at %r) version string %r"))
 			% pos % str;
 	}
 	m_parts.push_back(BasicPart(BasicPart::first, str, pos, len - pos));
@@ -141,7 +141,7 @@ BasicVersion::parseVersion(const string& str)
 		if(unlikely(len == pos || pos == str.size())) {
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 			throw ExBasic(_(
-				"malformed (primary at %r) version string %r\n"))
+				"malformed (primary at %r) version string %r"))
 				% pos % str;
 		}
 		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, len - pos));
