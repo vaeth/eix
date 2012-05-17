@@ -244,7 +244,7 @@ Gibt alle LICENSE-Strings aus, die in irgendeiner Version benutzt werden.
 .TP
 .B --print-all-depends
 Gibt alle Worte aus, die in einem B<{,R,P}DEPEND> auftauchen.
-Die geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung des Cachefiles aktiv war).
+Die geht nur, falls B<DEP=true> aktiv ist (und bei der Erzeugung der Cachedatei aktiv war).
 .TP
 .B --print-world-sets
 Gibt die world sets aus.
@@ -743,7 +743,7 @@ z.B. "GPL-2"
 .TP
 .BR --deps ", " --depend ", " --rdepend ", " --pdepend
 Dieser Test kann nur dann etwas finden, wenn B<DEP=true> benutzt wird
-(und B<DEP=true> bei der Erzeugung des Cachefiles benutzt wurde).
+(und B<DEP=true> bei der Erzeugung des Cachedatei benutzt wurde).
 Er tested gegen B<DEPEND>, B<RDEPEND> bzw. B<DEPEND>
 (oder mit B<--deps> gegen irgendeines davon) für irgendeine Version des Pakets.
 B<--deps> ist das gleiche wie B<--depend> B<--rdepend> B<--pdepend>.
@@ -1447,7 +1447,7 @@ zu entpacken oder um lokale Fixes auszuführen, nachdem B<layman> aufgerufen wur
 
 Im Gegensatz zu früheren eix-Versionen gibt, I<Kommando> nichts aus
 (mit einfo kann man Ausgabe erreichen), und I<Kommando> wird nicht in einer
-Subshell ausgeführt, d.h. man kann auch Environment-Variablen modifizieren
+Subshell ausgeführt, d.h. man kann auch Environmentvariablen modifizieren
 or eine Ausgabeumleitung starten/beenden.
 Der Nachtiel ist, dass man auch leicht versehentlich interne eix-sync-Variablen
 oder -Funktionen überschreiben kann; im Zweifelsfall ist es daher besser,
@@ -1457,7 +1457,7 @@ dass Kommando in runde Klammern zu packen (...) um es in einer Subshell auszufü
 Die ist ähnlich zu B<!> I<Kommando> mit dem Unterschied, dass
 I<Kommando> immer ausgeführt wird, d.h. selbst wenn die
 Optionen -d, -u oder -l benutzt wird.
-Es ist dazu gedacht, Environment-Variablen für andere Programme zu setzen.
+Es ist dazu gedacht, Environmentvariablen für andere Programme zu setzen.
 .TP
 .BI ~ Kommando
 Dies ist nur für die eix-sync-Optionen B<-s> oder B<-2> wichtig.
@@ -1490,7 +1490,7 @@ Es folgt ein B<schematischer> Überblick über die Reihenfolge der Hooks/Kommand
 
 .BR "cp @EIX_CACHEFILE@ @EIX_PREVIOUS@"
 
-layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
+layman-Aufrufe und B<!>-Hooks in der Reihenfolge von @SYSCONFDIR@/eix-sync.conf
 
 .BR ~ " hooks"
 
@@ -1567,72 +1567,76 @@ wird die eix-Ausgabe auch im Falle von Ausgabeumleitung farbig.
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc
 .SS @SYSCONFDIR@/eixrc
-Global configuration Datei. The variables in B<~/.eixrc> or from the environment
-can override the variables set in this Datei. See B<~/.eixrc>.
+Globale Konfigurations-Datei.
+Die variablen in B<~/.eixrc> oder von der Environment können
+die Variablen aus dieser Datei überschreiben, siehe B<~/.eixrc>.
 .\" }}}
 
 .\" {{{ -------- EIXRC
 .SS EIXRC
-If this environment variable is set, its value is used instead of the Dateiname
-@SYSCONFDIR@/eixrc to read the configuration data. In this case, the Datei
-~/.eixrc is ignored (but you can of course source it if you want it).
+Wenn diese Environmentvariable gesetzt ist, wird ihr Wert anstelle des Dateinamen
+@SYSCONFDIR@/eixrc benutzt, um die Konfigurationsdaten zu lesen.
+In diesem Fall wird die Datei ~/.eixrc ignoriert
+(aber sie kann natürlich ggf. gesourced werden).
 
 .SS EIX_SYNC_OPTS, EIX_SYNC_CONF, EIX_REMOTE_OPTS, EIX_LAYMAN_OPTS, EIX_TEST_OBSOLETE_OPTS
-Although these variables are usually set in ~/.eixrc (and are therefore
-described in the corresponding section), these variables are pointed out
-here because they are exceptionally security relevant:
-They (or at least part of them) are evaluated by the shell if you call the
-scripts with the corresponding name. Thus, be sure that they are not compromised
-when you call these scripts with root permissions.
+Obwohl diese Variablen typischerweise in ~/.eixrc gesetzt werden
+(und daher erst im nächsten Abschnitt beschrieben werden),
+werden diese Variablen hier hervogehoben, weil sie besonders sicherheitsrelevant sind:
+Sie (oder zumindest Teile von ihnen) werden durch die Shell ausgeführt, wenn die
+enstprechenden Skripte ausgeführt werden.
+Daher sollte man sicher gehen, dass diese Variablen nicht kompromittiert sind, wenn diese Skripte mit root-Rechten ausgeführt werden.
 .\" }}}
 
 .\" {{{ -------- ~/.eixrc
 .SS ~/.eixrc
-Per-user configuration Datei.
-The variables in this Datei can be overridden by environment variables.
-You can use a shell-like syntax to set the following variables.
-In particular, you can source other Dateis and you can use auxiliary variables to set other variables.
+User-spezifische Konfigurations-Datei.
+Die Variablen dieser Datei können durch Environmentvariablen überschrieben werden.
+In dieser Datei kann eine Shell-ähnliche Syntax benutzt werden, um die folgenden Variablen zu setzen.
+Insbesondere können andere Dateien gesourced werden und Hilfsvariablen benutzt werden
+um andere Variablen zu setzen.
 
-However, if you use auxiliary variables as usual, you will only see
-the substituted values with --dump or --dump-defaults and you cannot
-replace the inserted values e.g. by setting them in the environment.
+Dabei ist jedoch zu beachten, dass bei der überlichen Benutzung von Hilfsvariablen
+nur die Ergebnisse bei --dump oder --dump-defaults angezeigt werden,
+und man kann die eingesetzten Werte nicht durch Environmentvariablen abändern.
 
-For this reason, you can refer to variables besides the usual shell-way also
-in the syntax B<%{>I<VARIABLE>B<}> (the braces here are not optional).
-This means that the substitution is delayed until all configuration Dateis
-and environment variables are read, and the substitution will not show up
-with --dump or --dump-defaults.
+Aus diesem Grund gibt es neben der Shell-üblichen Derefenzierung von Variablen
+auch eine weitere Möglichkeit der Dereferenzierung mit der
+Syntax B<%{>I<VARIABLE>B<}> (the Klammern hier sind nicht-optional).
+Diese Syntax bedeutet, dass die Ersetzung so lange verzögert wird, bis
+alle Konfigurationsdateien und Environmentvariablen gelesen werden,
+und die Ersetzung wird bei --dump oder --dump-defaults nicht durchgeführt.
 
-This concept is called delayed substitution/reference, and provides also
-some additional features:
+Dieses Konzept wird verzögerte Ersetzung/Referenz genannt, und es
+bietet einige zusätzliche Features:
 
-.\" {{{ -------- Special symbols
+.\" {{{ -------- Spezielle Symbole
 .TP
-.B Special symbols for delayed substitution
+.B Specielle Symbole zur verzögerten Ersetzung
 .RS
 
 .TP
 .B " %{%"
-This must be used if you need B<%{> in a variable text
-(otherwise delayed substitution would take place).
+Dies muss benutzt werden, falls B<%{> im Variablentext stehen soll
+(sonst würde verzögerte Ersetzung aktiv).
 
 .TP
 .BI * VARIABLE
-If a delayed reference uses a variable name starting with B<*>,
-this B<*> is replaced by B<EIX_>, B<DIFF_>, B<UPDATE_>, or B<DROP_>,
-depending on whether it is used from B<eix>/B<eix-diff>/B<eix-diff>,
-or B<eix-drop-permissions>, respectively.
-This way you can have different defaults for these programs.
+Falls die verzögerte Referenz eine Variablennamen benutzt, der mit B<*> beginnt,
+so wird dieses B<*> durch B<EIX_>, B<DIFF_>, B<UPDATE_> oder B<DROP_> ersetzt,
+je nachdem ob es von B<eix>/B<eix-diff>/B<eix-diff> bzw. B<eix-drop-permissions> benutzt wird.
+Auf diese Weise kann man verschiedene Defaults für diese Programme festlegen.
 
-For example, the delayed reference B<%{*>I<VARIABLE>B<}> will insert
-the expansion of B<EIX_>I<VARIABLE>, B<DIFF_>I<VARIABLE>, B<UPDATE_>I<VARIABLE>,
-or B<DROP_VARIABLE>, respectively.
+Beispielsweise wird die verzögerte Referenz B<%{*>I<VARIABLE>B<}> die Expansion
+der Variablen B<EIX_>I<VARIABLE>, B<DIFF_>I<VARIABLE>, B<UPDATE_>I<VARIABLE>
+bzw. B<DROP_VARIABLE> einfügen.
 
-The B<\\> and B<*> attributes can be combined (order plays no role).
+Die B<\\>- und B<*>-Attribute können kombiniert werden (die Reihenfolge spielt keine Rolle).
 
-As a practical example, if you want that B<EIX_USER> has the value "nobody"
-when called from B<eix-drop-permissions> (e.g. from B<eix-remote>)
-but the default value "portage" otherwise, you can set:
+Ein praktisches Beispiel: Falls B<EIX_USER> den Wert "nobody" haben soll,
+falls es von B<eix-drop-permissions> (also etwa durch B<eix-remote>)
+aufgerufen wird, aber den Default-Wert "portage" in allen anderen Fällen,
+kann man folgendes Setzen:
 
 .B EIX_USER="%{*EIX_USER}"
 
@@ -1646,139 +1650,136 @@ but the default value "portage" otherwise, you can set:
 
 .TP
 B<\\>I<VARIABLE>
-If a delayed reference uses a variable name starting with B<\\>,
-all \\ or [\\n\\r\\t ] symbols of the (expanded)
-I<VARIABLE> content are considered as escaped.
+Falls eine verzögerte Referenz einen Variablennamen benutzt, der mit B<\\> beginnt,
+so werden alle \\ or [\\n\\r\\t ] Zeichen des (expandierten) Inhalts von
+I<VARIABLE> als escaped betrachtet.
 
-In particular, the delayed reference B<%{\\>I<VARIABLE>B<}> can be used in
-string list variables like B<CACHE_METHOD> or B<EIX_LOCAL_SETS>,
-ensuring that I<VARIABLE> produces at most one entry "as is", even if it
-should contain spaces or \\ characters.
+Insbesondere kann die verzögerte Referenz B<%{\\>I<VARIABLE>B<}> in
+Stiring-List-Variablen wie B<CACHE_METHOD> oder B<EIX_LOCAL_SETS> benutzt werden
+und stellt dabei sicher, dass I<VARIABLE> höchstens einen Eintrag "so wie er ist"
+erzeugt, selbst dann, wenn dieser Eintrag Leerzeichen oder des Zeichen \\ enthält.
 
-The B<\\> and B<*> attributes can be combined (order plays no role).
+Die B<\\>- und B<*>-Attribute können kombiniert werden (die Reihenfolge spielt keine Rolle).
 .RE
 .\" }}}
 
-.\" {{{ -------- Conditional blocks as delayed reference
+.\" {{{ -------- Konditionelle Blocks in verögerten Referenzen
 .TP
-.B Conditional blocks in delayed references
-If you want to substitute several variables completely differently,
-depending on the state of a (Boolean) variable, you can use
-conditional blocks.
+.B Konditionelle Blocks in verögerten Referenzen
+Falls einige Variableninhalte in Abhängigkeit einer (Booleschen) Variablen
+ganz anders aussehen sollen, können konditionelle Blocks benutzt werden.
 
-This is somewhat analogous to Conditional Blocks in FORMATSTRING:
-If the referenced variable expands finally to the Boolean value true
-(B<true>/B<1>/B<yes>/B<y>/B<on>) (resp. to something nonempty if you
-preceed I<VARIABLE> with an additional B<?>) the result is true
-and the corresponding block of the string is expanded.
-Conditions can be negated so that the else-part is expanded if the
-condition is true, and the if-part if the condition is false.
-The else-part can be also be completely left out.
-The special variable names B<*>I<VARIABLE> (instead of I<VARIABLE>)
-can also be used in these conditionals.
+Dies ist analog zu konditionellen Blocks im FORMATSTRING:
+Wenn die referenzierte Variable schließlich zum Booleschen Wert "true"
+expandiert (B<true>/B<1>/B<yes>/B<y>/B<on>) (bzw. zu etwas Nichtleerem,
+falls I<VARIABLE> ein zusätzliches B<?> vorangestellt wird), so ist
+das Ergebnis wahr, und der entsprechende Block des Strings wird expandiert.
+Konditionen können negiert werden, so dass  der else-Teil expandiert wird,
+wenn die Bedingung wahr ist und der if-Teil, wenn die Bedingung falsch ist.
+Der else-Teil kann auch vollständig weggelassen werden.
+Die speziellen Variablennamen B<*>I<VARIABLE> (statt I<VARIABLE>)
+können auch hier benutzt werden.
 
 .RS
 .TP
 .BI %{? VARIABLE } TCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to true.
+Expandiert zu I<TCODE>, falls I<VARIABLE> zu "true" expandiert.
 
 .TP
 .BI %{?? VARIABLE } TCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to a nonempty string.
+Expandiert zu I<TCODE>, falls I<VARIABLE> zu einem nichtleeren String expandiert.
 
 .TP
 .BI %{! VARIABLE } TCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to false.
+Expandiert zu I<TCODE>, falls I<VARIABLE> nicht zu "true" expandiert.
 
 .TP
 .BI %{!? VARIABLE } TCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to the empty string.
+Expandiert zu I<TCODE>, falls I<VARIABLE> zu einem leeren String expandiert.
 
 .TP
 .BI %{? VARIABLE } TCODE %{else} FCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to true, otherwise I<FCODE>.
+Expandiert zu I<TCODE> falls I<VARIABLE> zu "true" expandiert, sonst zu I<FCODE>.
 
 .TP
 .BI %{?? VARIABLE } TCODE %{else} FCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to a nonempty string,
-otherwise I<FCODE>.
+Expandiert zu I<TCODE>, falls I<VARIABLE> zu einem nichtleeren String expandiert, sonst zu I<FCODE>.
 
 .TP
 .BI %{! VARIABLE } TCODE %{else} FCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to false, otherwise I<FCODE>.
+Expandiert zu I<TCODE>, falls I<VARIABLE> nicht zu "true" expandiert, sonst zu I<FCODE>.
 
 .TP
 .BI %{!? VARIABLE } TCODE %{else} FCODE %{}
-Expand I<TCODE> if I<VARIABLE> expands to the empty string,
-otherwise I<FCODE>.
+Expandiert zu I<TCODE>, falls I<VARIABLE> zu einem leeren String exapndiert, sonst zu I<FCODE>.
 
-A conditional block must occur completely within one variable,
-i.e. it is not possible to e.g. substitute the B<%{}> symbol
-from another variable via delayed reference (but in I<TCODE>/I<FCODE>
-delayed references can be used).
+Ein konditioneller Block muss vollständig in einer einzigen Variable stehen,
+d.h. es ist nicht möglich, beispielsweise das B<%{}> Zeichen aus einer anderen Variable
+über verzögerte Ersetzung zu erhalten (aber in I<TCODE>/I<FCODE> können wiederum
+verzögerte Referenzen enthalten sein).
 .RE
 .\" }}}
 
-Note that any variables you add for delayed substitution are only output
-with --dump if they are actually used (i.e. referenced in some of the other variables).
-If you want to output them anyway, e.g. for comments or easier later change,
-you can collect references to them in the B<DUMMY> variable.
+Beachten Sie, dass Variablen, die zu verzögerten Ersetzung benutzt werden nur dann
+mit --dump ausgegeben werden, wenn sie tatsächlich benutzt werden (d.h. in einer anderen
+Variable dereferenziert werden).
+Falls sietrotzdem ausgegeben werden sollen, etwa für Kommentare oder leichtere spätere Änderungen,
+so können Referenzen auf sie in der B<DUMMY>-Variable gespeichert werden.
 
-The following variables do not contain those which are used only in delayed references.
-To get a full description of the latter (and of the defaults), please use B<eix --dump>.
+Die folgenden Variablenliste enthält nicht die Variablen, die in verspäteter Ersetzung benutzt werden.
+Um eine Beschreibung der Letzteren (und ihrer Defaults) zu erhalten, benutzen Sie bitte B<eix --dump>.
 .TP
 .B DUMMY " " (string)
-This variable has no direct influence on the programs, but the content of this
-variable can be used to collect delayed references to (otherwise unused) variables
-so that they are printed with --dump or --dump-defaults.
+Diese Variable hat keinen direkten Einfluss auf das Programm, aber ihr Inhalt
+kann benutzt werden, um verzögerte Ersetzungen zu (ansonsten unbenutzten) Variablen
+zu sammeln, so dass diese mit --dump oder --dump-defaults ausgegeben werden.
 
 .TP
 .BR EIX_SYNC_OPTS ", " EIX_SYNC_CONF " " (string)
-The content of B<EIX_SYNC_CONF> is appended to the Datei B<@SYSCONFDIR/eix-sync.conf>
-See the description of that Datei for details.
-By default, B<EIX_SYNC_CONF> is a delayed substitution of B<EIX_SYNC_OPTS> so
-that typically you can also use B<EIX_SYNC_OPTS> with the same purpose.
-Be aware that if one of these variables is compromised, almost anything can
-happen if you call B<eix-sync> with root permissions, so be aware of security
-risks! Quote these variables carefully if you use them!
+Der Inhalt von B<EIX_SYNC_CONF> wird an die Datei B<@SYSCONFDIR/eix-sync.conf> angehängt.
+Weitere Details finden sich in der Beschreibung jener Datei.
+Per default ist B<EIX_SYNC_CONF> eine verzögerte Ersetzung von B<EIX_SYNC_OPTS>,
+so dass typischerweise B<EIX_SYNC_OPTS> zum gleichen Zweck genutzt werden kann.
+Vorsicht: Wenn eine dieser Variablen kompromittiert ist, kann beim Aufruf von
+B<eix-sync> mit Root-Rechten nahezu alles passieren!
+Diese Variablen müssen im Falle einer Benutzung vorsichtig gequotet werden.
 
 .TP
 .BR EIX_REMOTE_OPTS ", " EIX_LAYMAN_OPTS ", " EIX_TEST_OBSOLETE_OPTS " " (string)
-The content of this variable is evaluated and used as arguments for the scripts
-B<eix-remote>, B<eix-layman>, and B<eix-test-obsolete>, respectively.
-So be sure to quote these variables correctly and be aware of security risks!
+Der Inhalt dieser Variablen wird einem "eval" unterzogen und als Argumente für die Skripte
+B<eix-remote>, B<eix-layman> bzw. B<eix-test-obsolete> benutzt.
+Diese Variablen sind also vorsichtig zu quoten. Vorsicht vor Sicherheitsrisiken!
 
 .TP
 .BR EIXRC_SOURCE " " (string)
-This path is prepended to source Kommandos in @SYSCONFDIR@/eixrc.
-It is meant to be set in the environment but can also be set in @SYSCONFDIR@/eixrc.
-In the latter case, it will override the setting from the environment as soon as it is read until all Dateis are sourced.
-Note that when this variable takes effect, no delayed substitution is performed yet.
+Dieser Pfad wird bei Source-Kommandos in @SYSCONFDIR@/eixrc vorangestellt.
+Er ist gedacht, in der Environment gesetzt zu werden, aber er kann auch in @SYSCONFDIR@/eixrc gesetzt werden.
+Im letzte Fall wird er alle Settings aus der Environment überschreiben, sobald er gelesen wird,
+so lange bis alle Dateien gesourced wurden.
+Beachten Sie, dass noch keine verzögerte Ersetzung stattfindet, wenn diese Variable aktiv wird.
 
 .TP
-.BR EIX_PREFIX " " (prefix-string) " (prefix-string means that this is a string, but if it has the value '/' it is changed to '')"
+.BR EIX_PREFIX " " (prefix-string) " (prefix-string heißt, dass dies ein String ist, aber wenn es den Wert '/' hat, wird dieser geändert zu '')"
 
-This is essentially meant to be set in the environment if you want to use a chroot:
-It is prefixed to the path where @SYSCONFDIR@/eixrc is searched.
-If it is unset, the value of the environment variable B<PORTAGE_CONFIGROOT>
-is prefixed.
-The default value (typically empty) of this variable is used, if neither is
-set in the environment.
+Dies ist i.W. dazu gedacht in der Environment gesetzt zu werden, falls eine chroot benutzt wird:
+Es wird dem Pfad vorangestellt, in dem @SYSCONFDIR@/eixrc gesucht wird.
+Falls es nicht gesetzt ist, wird der Wert der Environment-Variable B<PORTAGE_CONFIGROOT> vorangestellt.
+Der Default-Wert (typischerweise leer) dieser Variable wird benutzt, falls keines
+von beiden in der Environment gesetzt ist.
 
-Moreover, this variable is used for delayed substitution to determine
-the prefix of a lot of paths in the subsequent variables;
-see B<eix --dump> to see in detail in which other variables it occurs.
-In the current default, it influences all paths with the following exceptions:
+Darüberhinaus wird dieser Variable in der verzögerten Ersetzung benutzt,
+um den Präfix einer Menge von Pfaden der folgenden Variablen zu setzen;
+mit B<eix --dump> erfährt man im Detail, in welchen anderen Variablen sie vorkommt.
 
 .TP
 .BR EPREFIX " " (prefix-string)
-The default value of this variable stems from EIX_PREFIX, appended with
-a configure-specific default (for prefix-portage).
-This variable has no meaning on its own, but it is used for
-delayed substitution to determine the prefix of a lot of paths in the
-subsequent variables (if their default is not changed);
-see B<eix --dump> to see in detail in which other variables it occurs.
-In the current default, it influences all paths with the following exceptions:
+Der Defaultwert dieser Variable kommt von EIX_PREFIX, wobei ein
+configure-spezifischer Default (für prefix-portage) angehängt wird.
+Diese Variable hat alleine keine Bedeutung, aber sie wird
+mit verzögerte Ersetzung benutzt, um den Präfix einer Reihe von Pfaden
+in den folgen Variablen festzulegen (wenn ihr Default nicht geändert wird);
+mit B<eix --dump> erfährt man im Detail, in welchen anderen Variablen sie vorkommt.
+Im derzeitigne Default beeinflusst sie alle Pfade mit den folgenden Ausnahmen:
 
 .RS
 .RS
@@ -1787,19 +1788,18 @@ In the current default, it influences all paths with the following exceptions:
 
 .B ~/.eixrc
 
-.BR "cachefile path" "(s) passed in the commandline"
+.BR "Cachedateipfad" "(e) aus der Kommandozeile"
 
-.BR PORTAGE_PROFILE " (only the variable, not the link)"
+.BR PORTAGE_PROFILE " (nur die variable, nicht der Link)"
 
 .B PORTDIR
 
-.B Overlay paths
+.B Overlay-Pfade
 .RE
 
-The last three items can be modified by B<EPREFIX_TREE>.
+Die letzten drei Punkte können durch B<EPREFIX_TREE> modifiziert werden.
 
-The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
-Note that as a prefix-portage user you will want to use option B<-e> in eix-sync.
+Der Zweck von B<EPREFIX> ist es, eine quasi-chroot analog zu prefix-portage zu erlauben.
 .RS
 
 .BR ROOT " " (prefix-string)
@@ -1809,192 +1809,192 @@ Note that as a prefix-portage user you will want to use option B<-e> in eix-sync
 .BR EPREFIX_ROOT " " (prefix-string)
 .RE
 
-These are actually not internal variables of eix but they are just used for
-delayed substitution for the following variables analogously to B<EPREFIX>
-(see above).
+Dies sind tatsächlich nicht interne Variablen von eix, sondern sie werden nur
+zur verzögerten Ersetzung für die folgenden Variablen analog zu B<EPREFIX> benutzt (siehe oben).
 
-The purpose of B<ROOT> is to follow roughly portage's usage of this variable.
-Note that variables in /etc/make.conf do not influence eix configuration variables.
-In particular, a B<ROOT=>I<something> command in /etc/make.conf does not influence eix.
-You must set it instead in the environment or in an eix configuration Datei.
+Der Zweck von B<ROOT> ist es, ungefähr Portage's Nutzung dieser Variablen wiederzuspiegeln.
+Beachte, dass die Variablen in /etc/make.conf keinen Einfluss auf eixs Konfigurationsvariablen haben.
+Insbesondere wird ein Kommando B<ROOT=>I<something> in /etc/make.conf keinen Einfluss auf eix haben.
+Es muss statt dessen in der Environment oder eine Konfigurationsdatei von eix gesetzt werden.
 
-You can easily customize to which paths the B<EPREFIX> or B<ROOT> variables apply:
-Simply use in the appropriate following variables either the delayed references
-B<%{EPREFIX}>, B<%{ROOT}>, nothing, or B<%{EPREFIX_ROOT}> (which in turn is
-defined as a delayed reference so that you can easily change what to do if
-B<EPREFIX> and B<ROOT> are both nonempty: You might e.g. concatenate these
-paths or use only one of them).
-You can of course also use other variables as delayed references,
-e.g. you might want to set
+Man kann leicht konfigurieren, auf welche Pfade die Variablen B<EPREFIX> oder B<ROOT> Einfluss nehmen:
+Man muss in den entsprechenden folgenden Variablen nurr entsprechend die verzögerte Referenz
+B<%{EPREFIX}>, B<%{ROOT}>, nichts, oder B<%{EPREFIX_ROOT}> benutzen.
+(Letzteres ist seinerseits als verzögerte Referenz definiert ist, so dass
+man leicht ändern kann was geschehen soll, falls B<EPREFIX> und B<ROOT> beide
+nichtleer sind: Man kann sie aneinandersetzen oder nur eines davon benutzen).
+Man kann natürlich auch andere Variablen zur verzögerte Ersetzung benutzen;
+beispielsweise könnte man
 
 .B EIX_CACHEFILE="%{EPREFIX_PROFILE}@EIX_CACHEFILE@"
 
-if you feel that the eix cacheDatei should depend (only) on the profile root.
+setzen, wenn man will, dass die Cachedatei von eix (nur) vom PROFILE-Wurzelverzeichnis abhängen soll.
 .RE
 
 .TP
 .BR PORTAGE_CONFIGROOT " " (prefix-string)
-This path is prepended to the /etc paths.
-The purpose is to respect PORTAGE_CONFIGROOT in an analogous way portage does.
-If you set this variable in the environment it will also change the path
-where @SYSCONFDIR@/eixrc is searched. (Note that reading @SYSCONFDIR@/eixrc occurs before
-delayed substitution takes effect.)
+Dieser Pfad wir /etc-Pfaden vorangestellt.
+Der Zweck ist es, PORTAGE_CONFIGROOT auf analoge Weise wie portage zu berücksichtigen.
+Falls diese Variable in der Environment gesetzt wird, wird sie auch den Pfad ändern,
+in dem @SYSCONFDIR@/eixrc gesucht wird.
+(Beachte, dass das Lesen von @SYSCONFDIR@/eixrc geschieht, bevor verzögerte Ersetzung aktiv wird.)
 
 .TP
 .BR MAKE_GLOBALS " " (string)
-If this Datei exists, it is used instead of
+Falls diese Datei existiert, so wird sie anstelle von
 B<%{PORTAGE_CONFIGROOT}/etc/make.globals>
-The default value corresponds to >=portage-2.2* behavior.
+benutzt.
+Der Defaultwert entspricht dem Verhalten von >=portage-2.2*
 
 .TP
 .BR EPREFIX_SOURCE " " (prefix-string)
-This path is prepended to paths occurring as the argument of source commands
-in /etc/make.conf and /etc/make.globals.
+Dies Pfad wird allen Pfaden vorangestellt, die als Argumente von Source-Kommandos
+in /etc/make.conf und /etc/make.globals auftauchen.
 
 .TP
 .BR EPREFIX_INSTALLED " " (prefix-string)
-This is prepended to the path where eix expects information about installed packages.
+Die wird allen Pfaden vorangestellen, in den eix Informationen über installierte Pakete sucht.
 
 .TP
 .BR EPREFIX_PORTAGE_CACHE " " (prefix-string)
-This prefix is prepended to the portage cache.
+Dieser Präfix wird dem Portage Cache vorangestellt.
 
 .TP
 .BR EPREFIX_ACCESS_OVERLAYS " " (prefix-string)
-This prefix is prepended to overlays when their Dateis are accessed.
+Dieser Präfix wird Overlays vorangestellt, sobald auf ihre Dateien zugegriffen wird.
 
 .TP
 .BR EPREFIX_PORTDIR " " (prefix-string)
-This path is prepended to B<PORTDIR>.
+Dieser Pfad wird B<PORTDIR> vorangestellt.
 
 .TP
 .BR EPREFIX_OVERLAYS " " (prefix-string)
-This prefix is prepended to all entries of B<PORTAGE_OVERLAY>.
+Dieser Präfix wird allen Einträgen von B<PORTAGE_OVERLAY> vorangestellt.
 
 .TP
 .BR EPREFIX_PROFILE " " (prefix-string)
-This prefix is prepended to B<PORTAGE_PROFILE> (the variable, not the link).
+Dieser Präfix wird B<PORTAGE_PROFILE> (die Variable, nicht der Link) vorangestellt.
 
 .TP
 .BR EPREFIX_VIRTUAL " " (prefix-string)
-This is prepended to overlays in the eix database to test whether they exist.
+Dies wir Overlays in der eix Datenbank bei Tests, ob sie existieren, vorangestellt.
 
 .TP
 .BR EIX_CACHEFILE " " (string)
-The eix cacheDatei, usually B<%{EPREFIX}@EIX_CACHEFILE@>
+Die eix-Cachedatei, normalerweise B<%{EPREFIX}@EIX_CACHEFILE@>
 
 .TP
 .BR EIX_PREVIOUS " " (string)
-The previous eix cacheDatei for eix-diff and eix-sync,
-usually B<%{EPREFIX}@EIX_PREVIOUS@>
+Die alte eix-Cachedatei für eix-diff und eix-sync,
+normalerweise B<%{EPREFIX}@EIX_PREVIOUS@>
 
 .TP
 .BR EIX_REMOTEARCHIVE " " (string)
-This is a local copy of the remote archive used by eix-remote.
-If it is empty, only temporary Dateis are used.
+Eine lokale Kopie des Remote-Archivs, auf das eix-remote zugreift.
+Falls es leer ist, werden nur Temporärdateien benutzt.
 
 .TP
 .BR EIX_WORLD " " (string)
-The Datei eix considers as the world Datei. Note that usually
-this Datei is only readable if you are a member of the portage group.
-To avoid needing this permissions you can use B<SAVE_WORLD>.
+Die Datei, die eix als world-Datei betrachtet.
+Beachte, dass diese Datei normalerweise nur für Mitglieder der Gruppe portage lesbar ist.
+Um diese Privilegien zu vermeiden, kann B<SAVE_WORLD> benutzt werden.
 
 .TP
 .BR EIX_WORLD_SETS " " (string)
-The Datei eix considers as the world_sets Datei.
-The same remarks as for B<EIX_WORLD> hold true.
+Die Datei, die eix als world_sets benutzt.
+Es gilt dasselbe wie für B<EIX_WORLD>
 
 .TP
-.BR EIX_LOCAL_SETS " " "(string list)" "(the meaning of string list is explained in the next paragraph)"
-This is a list of directories which contain locally defined sets.
-The directories are read in the given order; Dateis with set-names which have
-been read earlier are ignored: In this sense earlier entries in
-B<EIX_LOCAL_SETS> take precedence over later entries.
+.BR EIX_LOCAL_SETS " " "(Stringliste)" "(die Bedeutung von Stringliste wird im nächsten Absatz erklärt)"
+Dies ist eine Liste von Verzeichnissen, die lokal definierte Sets enthalten.
+Die Verzeichnisse werden in der gegebenen Ordnung gelesen;
+Dateien mit Setnamen, die früher gelesen wurden, werden ignoriert:
+In diesem Sinne haben frühere Einträge inB<EIX_LOCAL_SETS> eine höhere Präzedenz.
 
-Relative directories (i.e. those not starting with B</>) are understood relative to B<$PORTDIR>.
-Entries in B<EIX_LOCAL_SETS> starting with the special symbol B<*> are interpreted in a special way:
-They are interpreted as several entries, the B<*> symbol being replaced successively by the paths
-to the overlays in reverse order (the latter in view of the fact that in a sense
-earlier entries of B<EIX_LOCAL_SETS> override later entries while for
-B<PORTDIR_OVERLAY> one expects the converse).
+Relative Verzeichnisse (d.h. solche, die nicht mit B</> beginnen) werden relativ zu B<$PORTDIR> aufgefasst.
+Einträge in B<EIX_LOCAL_SETS>, die mit dem speziellen Zeichen B<*> beginnen, werden auf spezielle Art interpretiert:
+Sie werden als mehrere Einträge interpretiert, wobei das B<*>-Zeichen die
+Pfade zu den Overlays in umgekehrter Ordnung durchläuft
+(umgekehrte Ordnung deswegen, weil in gewissem Sinne frühere Einträge
+in B<EIX_LOCAL_SETS> spätere überschreiben, während man für B<PORTDIR_OVERLAY>
+das Umgekehrte erwartet).
 
-The default of this variable contains B</etc/portage/sets>, B</etc/portage/sets.eix>, B<sets>
-(i.e. roughly B<${PORTDIR}/sets> according to the previous paragraph),
-B<*/sets> (i.e. roughly B<${PORTIDR_OVERLAY}/sets> according to the previous paragraph)
-as well as B<%{EIX_LOCAL_SETS_ADD}>.
-The reason for the latter is that you can just add additional directories
-to the variable B<%{EIX_LOCAL_SETS_ADD}> in B<@SYSCONFDIR@/eixrc>.
-Reasons why you might want to do this is e.g. if you defined another multiset
-Verzeichnis (e.g. for some overlay or for treatment with "world-candidate = False") in
-/etc/portage/sets.conf or in the sets.conf Datei of some overlay.
+Der Default dieser Variable enthält B</etc/portage/sets>, B</etc/portage/sets.eix>, B<sets>
+(d.h. ungefähr B<${PORTDIR}/sets> nach dem vorherigen Absatz),
+B<*/sets> (d.h. ungefähr B<${PORTIDR_OVERLAY}/sets> nach dem vorherigen Absatz)
+sowie B<%{EIX_LOCAL_SETS_ADD}>.
+Der Grund für Letzteres ist, dass man einfach zusätzliche Verzeichnisse
+zur Variablen B<%{EIX_LOCAL_SETS_ADD}> in B<@SYSCONFDIR@/eixrc> hinzufügen kann.
+Gründe dafür sind beispielsweise, wenn man in /etc/portage/sets.conf oder in der sets.conf Datei eines Overlays
+ein weiteres multiset-Verzeichnis definiert,
+z.B. für einen Overlay oder für die Behandlung mit "world-candidate = False".
 
-For all string list variables, the possible separators between different entries are [ \\t\\r\\n].
-If you want to use such a separator within an entry, you have to escape it by B<\\>.
-Moreover, all B<\\> symbols have to be escaped analogously, since the escapes of escapes
-and escapes of the separator symbols are removed.
-If you want to insert a variable "as-is", you can make use of delayed substitution:
-B<%{\\>I<VAR>B<}> will insert the value of I<VAR> with all symbols from [\\ \\t\\r\\n] being escaped.
-(See delayed substitution for more details).
+Für alle Stringlisten-Variablen sind die erlaubten Trenner zwischen verschiedenen Einträgen [ \\t\\r\\n].
+Falls solch ein Trenner innerhalb eines Eintrags benutzt werden soll, so kann man ihn durch Voranstellen von B<\\> escapen.
+Natürlich müssen alle B<\\>-Zeichen analog escaped werden, weil Escapes von Escapes oder Trennzeichen entfernt werden.
+Falls eine Variable so, wie sie ist, als einzelner Eintrag eingefügt werden soll, kann man verzögerte Ersetzung benutzen:
+B<%{\\>I<VAR>B<}> wird den Wert der Variablen I<VAR> einfügen, wobei alle Zeichen aus [\\ \\t\\r\\n] escaped werden
+(mehr Details stehen im Abschnitt zur verzögerten Ersetzung).
 
 .TP
 .BR EAPI_REGEX
-This regular expression matches the recognized EAPIs in .ebuild suffixes
-which will be recognized according to GLEP 55.
-You might need to modify this expression locally according to the installed
-portage version (in order to make sure that the installed portage can parse
-the corresponding EAPIs).
-An exceptional case is if that variable is empty: In this case all EAPI-suffixed
-ebuilds are ignored.
+Dieser reguläre Ausdruck soll auf bekannte EAPIs in .ebuild-Namensanhängen haben,
+die gemäß GLEP 55 bekannt sein sollen.
+Es kann notwendig sein, diesen Ausdruck lokal entsprechend der installierten Portage-Version zu modifizieren
+(um sicherzugehen, dass die installierte Portage-Version die entsprechenden EAPIs parsen kann).
+Ein Ausnahmefall ist, wenn diese Variable leer ist:
+In diesm Fall werden alle ebuilds mit EAPI-Anhängen ignoriert.
 
 .TP
 .BR SAVE_WORLD " " (true / false)
-If you set this to true, the information of your world Datei is stored in @EIX_CACHEFILE@.
-Note that this means that anybody who can read this Datei has the information about
-the content of your world Datei.
-Make sure that this is really what you want if you set this to true.
+Falls dies gesetzt ist, werden die Informationen der world-Datei in @EIX_CACHEFILE@ gespeichert.
+Vorsicht:
+Dies bedeutet, dass jeder, der diese Datei lesen kann auch Informationen über die world-Datei hat!
 
 .TP
 .BR CURRENT_WORLD " " (true / false)
-If false, then the world Datei information stored in @EIX_CACHEFILE@ is used,
-even if your current world Datei is readable.
-Otherwise, your current world Datei (if it is readable) overrides that information.
+Falls diese Variable falsch ist, wird die Information über die world-Datei aus @EIX_CACHEFILE@ benutzt,
+selbst dann, wenn die aktuelle world-Datei lesbar sein sollte.
+Andernfalls wird die aktuelle world-Datei (wenn sie lesbar ist), diese Information überschreiben.
 
 .TP
 .BR EIX_USER ", " EIX_GROUP ", " EIX_UID ", " EIX_GID
-B<eix>, B<eix-diff>, B<eix-update>, B<eix-drop-permissions>, and B<eix-remote>
-change to the permissions of B<EIX_USER>/B<EIX_GROUP>
-(using the ID-numbers B<EIX_UID>/B<EIX_GID> if the former have no valid name)
-as soon as possible.
-To avoid this change, use an invalid name (e.g. the empty name) and a
-non-positive ID-number.
+B<eix>, B<eix-diff>, B<eix-update>, B<eix-drop-permissions> und B<eix-remote>
+ändern so früh wie möglich ihre Rechte zu B<EIX_USER>/B<EIX_GROUP>
+(bzw. zu den ID-Zahlen B<EIX_UID>/B<EIX_GID>, falls die vorherigen Variablen
+keinen gültigen Namen enthalten).
+Um dies zu verhinden, kann ein ungültiger Namen (etwa der leere Name) und
+eine nicht-positive ID-NUmmer benutzt werden.
 
-If B<EIX_GROUP> is valid or B<EIX_GID> is positive, then also the grouplist
-is changed according to the following rule:
-If B<EIX_USER> is a valid name, the full grouplist of that user
-is chosen; otherwise, the grouplist is shrinked to a singleton.
+Falls B<EIX_GROUP> gültig und B<EIX_GID> positiv ist, dann wird auch die
+Gruppenlist nach der folgenden Regel geändert:
+Falls B<EIX_USER> ein gültiger Name ist, wird die volle Gruppenliste
+dieses Benutzers gewählt; andernfalls schrumpft die Gruppenliste auf
+einen einzelnen Eintrag zusammen.
 
 .TP
 .BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
-If nonempty, these variables are passed unchanged to ebuild.sh for cache method B<ebuild*>.
-Note that ebuild.sh uses these variables to calculate the PATH, so this may be a severe security issue.
+Falls nichtleer, werden diese Variablen unverändert an ebuild.sh für die Cache-Methode B<ebuild*> übergeben.
+Beachte, dass ebuild.sh diese Variablen benutzt, um den PATH zu ermitteln, so dass diese
+Werte extrem sicherheitsrelevant sind!
 
 .TP
 .BR NOFOUND_STATUS " " (integer)
-This value is used as exit status if there are 0 matches.
-The value of B<COUNT_ONLY_PRINTED> is honoured.
+Dieser Wert wird als Exit-Status benutzt, falls kein Paket passt.
+Der Wert von B<COUNT_ONLY_PRINTED> wird dabei berücksichtigt.
 
 .TP
 .BR MOREFOUND_STATUS " " (integer)
-This value is used as exit status if there are 2 or more matches.
-The value of B<COUNT_ONLY_PRINTED> is honoured.
+Dieser Wert wird als Exit-Status für 2 oder mehr Treffer benutzt.
+Der Wert von B<COUNT_ONLY_PRINTED> wird dabei berücksichtigt.
 
 .TP
 .BR QUICKMODE " " (true / false)
-If true, eix and eix-diff will use B<--quick> by default.
+Bestimmt, ob für eix und eix-diff die Option B<--quick> der Default ist.
 
 .TP
 .BR CAREMODE " " (true / false)
-If true, eix and eix-diff will use B<--care>.
+Bestimmt, ob für eix und eix-diff die Option B<--care> der Default ist.
 
 .TP
 .BR USE_BUILD_TIME " " (true / false)
@@ -2228,12 +2228,12 @@ Set default levenshtein-distance.
 Whether eix-update -v is on by default (output of cache method per version).
 
 .TP
-.BR EXCLUDE_OVERLAY " " "(string list)"
+.BR EXCLUDE_OVERLAY " " "(Stringliste)"
 Set a list of wildcard patterns for overlay paths that are excluded from the index.
 See the B<eix-update> option B<--exclude-overlay>.
 
 .TP
-.BR ADD_OVERLAY " " "(string list)"
+.BR ADD_OVERLAY " " "(Stringliste)"
 Set a list of overlays that are added to the index.
 See the B<eix-update> option B<--add-overlay>.
 
@@ -2275,8 +2275,8 @@ You might want to specify a different cache method only for some overlays.
 This can be done with the following variables:
 
 .TP
-.BR CACHE_METHOD ", " OVERRIDE_CACHE_METHOD " " "(string list)"
-These variables are string lists of the form "I<overlay> I<method> I<overlay> I<method> ...".
+.BR CACHE_METHOD ", " OVERRIDE_CACHE_METHOD " " "(Stringliste)"
+These variables are Stringlistes of the form "I<overlay> I<method> I<overlay> I<method> ...".
 The cache method of I<overlay> is set to the subsequent I<method>,
 thus overriding the default settings of B<OVERLAY_CACHE_METHOD>
 (or of B<PORTDIR_CACHE_METHOD> if I<overlay> is the B<PORTDIR> Verzeichnis).
@@ -2549,7 +2549,7 @@ B<CACHE_METHOD>, but it might be overridden by settings from
 B<OVERRIDE_CACHE_METHOD>.
 .TP
 .BR REPO_NAMES
-This variables is a string list of the form "I<dir-pattern> I<overlay-label> I<dir-pattern> I<overlay-label> ...".
+This variables is a Stringliste of the form "I<dir-pattern> I<overlay-label> I<dir-pattern> I<overlay-label> ...".
 When a new cacheDatei is created, the overlay matching I<dir-pattern> obtains the label I<overlay-label>,
 independent of the content of its profiles/repo_name Datei.
 This variable can also associate label names to virtual overlays which do not possess such a Datei.
@@ -2640,7 +2640,7 @@ This might be useful for certain scripts if you are only interested in the
 number of matches and use e.g. B<FORMAT=''> to speed things up.
 .TP
 .\" {{{ Default match fields and algorithms
-.BR DEFAULT_MATCH_FIELD " " "(string list)"
+.BR DEFAULT_MATCH_FIELD " " "(Stringliste)"
 This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_field>
 which is used to determine the default match field.
 The search pattern from the command line is matched against all the I<regular_expression>
@@ -2658,7 +2658,7 @@ B<without-use> (or B<installed-without-use>),
 B<deps>, B<depend>, B<rdepend>, B<pdepend>,
 corresponding to the analogous command line option for the match field.
 .TP
-.BR DEFAULT_MATCH_ALGORITHM " " "(string list)"
+.BR DEFAULT_MATCH_ALGORITHM " " "(Stringliste)"
 This is a list of strings of the form I<regular_expression>[\\n\\r\\t ]I<match_algorithm>
 which is used to determine the default match algorithm.
 This is analogous to B<DEFAULT_MATCH_FIELD> with the only difference that I<match_algorithm>
@@ -2858,37 +2858,37 @@ See the above comments about this Datei.
 .\" }}}
 .\" {{{ Various Datei lists:
 .TP
-.BR SLOT_UPGRADE_FORBID " " "(string list)"
+.BR SLOT_UPGRADE_FORBID " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.slot_upgrade_forbid
 .TP
-.BR SLOT_UPGRADE_ALLOW " " "(string list)"
+.BR SLOT_UPGRADE_ALLOW " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.slot_upgrade_allow
 .TP
-.BR KEYWORDS_NONEXISTENT " " "(string list)"
+.BR KEYWORDS_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.{accept_,}keywords.nonexistent
 .TP
-.BR MASK_NONEXISTENT " " "(string list)"
+.BR MASK_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.mask.nonexistent
 .TP
-.BR UNMASK_NONEXISTENT " " "(string list)"
+.BR UNMASK_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.unmask.nonexistent
 .TP
-.BR USE_NONEXISTENT " " "(string list)"
+.BR USE_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.use.nonexistent
 .TP
-.BR ENV_NONEXISTENT " " "(string list)"
+.BR ENV_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.env.nonexistent
 .TP
-.BR LICENSE_NONEXISTENT " " "(string list)"
+.BR LICENSE_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.license.nonexistent
 .TP
-.BR CFLAGS_NONEXISTENT " " "(string list)"
+.BR CFLAGS_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.cflags.nonexistent
 .TP
-.BR INSTALLED_NONEXISTENT " " "(string list)"
+.BR INSTALLED_NONEXISTENT " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serve as /etc/portage/package.installed.nonexistent
 .TP
-.BR PACKAGE_NOWARN " " "(string list)"
+.BR PACKAGE_NOWARN " " "(Stringliste)"
 This is a list of Dateinames/dirnames which serves as /etc/portage/package.nowarn
 .\" }}}
 .\" }}}

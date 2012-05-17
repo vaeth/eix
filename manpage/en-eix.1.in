@@ -1758,7 +1758,6 @@ set in the environment.
 Moreover, this variable is used for delayed substitution to determine
 the prefix of a lot of paths in the subsequent variables;
 see B<eix --dump> to see in detail in which other variables it occurs.
-In the current default, it influences all paths with the following exceptions:
 
 .TP
 .BR EPREFIX " " (prefix-string)
@@ -1789,7 +1788,6 @@ In the current default, it influences all paths with the following exceptions:
 The last three items can be modified by B<EPREFIX_TREE>.
 
 The purpose of B<EPREFIX> is to allow a quasi-chroot analogously to prefix-portage.
-Note that as a prefix-portage user you will want to use option B<-e> in eix-sync.
 .RS
 
 .BR ROOT " " (prefix-string)
