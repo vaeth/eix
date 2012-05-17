@@ -1223,14 +1223,12 @@ value of the corresponding string (resp. of at least one of these) is nonempty.
 .TP
 .BR haveuse ", " use
 This must occur only in I<VARIABLE> in the context of version printing.
-It outputs information corresponding to the B<IUSE> (for available versions)
-or B<USE> (for installed versions) variables, respectively.
-B<haveuse> can be used to test whether an output would be nonempty
-(in this case it is 1, otherwise empty).
 For available versions, B<use> outputs the B<IUSE> variable.
 For installed versions, B<use> outputs the B<USE> flags and whether they are installed or not
 (in the later case, the content of B<FORMAT_BEFORE_SET_USE>, B<FORMAT_AFTER_SET_USE>, B<FORMAT_BEFORE_UNSET_USE>, B<FORMAT_AFTER_UNSET_USE>
 is printed at the appropriate places).
+B<haveuse> can be used to test whether an output would be nonempty
+(in this case it is 1, otherwise empty).
 .TP
 .BR "date:I<VAR>"
 This must occur only in I<VARIABLE> in the context of version printing.
@@ -1402,15 +1400,15 @@ B<FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I>
 .\" {{{ -------- @SYSCONFDIR@/eix-sync.conf
 .SS @SYSCONFDIR@/eix-sync.conf
 This file stores commands and configurations to apply with B<eix-sync>.
-Comments start with B<#> (all lines are cut at the first B<#>; it is not
-possible to mask B<#>). Lines can have the following forms and will be
+Comment lines start with B<#>.
+Lines can have the following forms and will be
 executed in the given order before B<emerge --sync> is executed.
 
 Note that the content of the variable B<EIX_SYNC_CONF> is appended to that file.
 By default, the latter expands to B<EIX_SYNC_OPTS> so that also that variable is
 appended to that file. Both variables can be used to modify the defaults
 set in B<@SYSCONFDIR@/eix-sync.conf>. Be aware that a lot code of these lines is
-evaluated when B<eix-sync> is execute, so take care about security!
+evaluated when B<eix-sync> is executed, so take care about security!
 .TP
 .I option(s)
 Use I<option(s)> as default for eix-sync (in front of all other options).
@@ -1423,7 +1421,7 @@ Call B<layman -s> I<Name>.
 Note that B<layman> is provided by B<app-portage/layman> to sync overlays.
 .TP
 .BR *
-Call B<layman -S> (i.e. overlays are synced with layman).
+Call B<layman -S> (i.e. all overlays are synced with layman).
 .TP
 .BI ! command
 Evaluate I<command> within the B<eix-sync> shell script (in the same shell).
@@ -1513,7 +1511,7 @@ Use this if you use e.g. B<PORTDIR_CACHE_METHOD=assign>, and
 B<FEATURES=metadata-transfer> is inactive or disabled
 (the latter is the default in newer portage versions).
 Depending on your needs you might want to use also B<-r> or B<-M> alone or
-replace B<-M> by the line.
+replace B<-M> by the line
 .TP
 .B @emerge --regen
 to use B<emerge --regen> instead of B<emerge --metadata>.
@@ -1551,13 +1549,11 @@ will be colored even if you use redirection.
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"`hostname`-sh"
 .TP
-.B @@eix-remote update B<"`portageq portdir`/local/layman/eix-caches.tar.bz2">
-(The last argument can also be omitted if you do not want a local copy
-of the data in the /usr/portage/local/layman directory.)
+.B @@eix-remote update
 .TP
-.B @eix-remote fetch /var/cache/remote-cache.tbz2
+.B @eix-remote fetch
 .TP
-.B @@eix-remote add /var/cache/remote-cache.tbz2
+.B @@eix-remote add
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc

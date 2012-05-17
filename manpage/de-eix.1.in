@@ -6,7 +6,7 @@
 .\" }}}
 
 .\" {{{ Übersicht
-.SH "UEBERSICHT"
+.SH "ÜBERSICHT"
 .B eix
 [I<gemeinsame Optionen>] [I<OPTIONEN>] I<AUSDRUCK>
 
@@ -460,7 +460,7 @@ Findet nur Pakete mit einem nichttrivialen Slot, d.h. wenn Slot nichtleer ist un
 .TP
 .BR -2 ", " --slots
 Findet nur Pakete mit mindesten zwei verschiedenen Slots.
-Anders als bei -1 wird hierbei ein Paket nicht gezeigt, falls nur ein Slot vorhanden ist, der z.B. den Slot-Namen "4.3" trägt.
+Anders als bei -1 wird hierbei ein Paket nicht gezeigt, falls nur ein Slot vorhanden ist, der z.B. den Slotnamen "4.3" trägt.
 .TP
 .BR -u ", " --upgrade ", " --upgrade+ ",  " --upgrade-
 Findet nur Pakete, die zumindest eine Version aus einem Slot installiert haben,
@@ -919,10 +919,10 @@ etwa wenn unklar ist, weshalb eix-update schneller/langsamer ist als erwartet.
 .SH AUSGABE
 .SS Slots
 Anders als in der üblichen Ausgabe von Versionen in emerge kann <eix>
-auch Slot-Namen ausgeben, wenn sie nichttrivial (leer oder "0") sind.
+auch Slotnamen ausgeben, wenn sie nichttrivial (leer oder "0") sind.
 Ob dies geschieht, wird u.a. durch B<FORMATSTRING> festgelegt.
 
-Falls Slots ausgegeben werden, wird der Slot-Name entweder mit einem
+Falls Slots ausgegeben werden, wird der Slotname entweder mit einem
 Doppelpunkt von der Versionsnummer abgetrennt, oder der Slotname wird
 in Klammern geschrieben.
 Der bevorzugte Modus wird in der Variable B<COLON_SLOTS> festgelegt.
@@ -1240,261 +1240,251 @@ Wert des entsprechenden String bzw. mindestens eines davon nichtleer ist.
 .TP
 .BR haveuse ", " use
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-It outputs information corresponding to the B<IUSE> (for available versions)
-or B<USE> (for installed versions) variables, respectively.
-B<haveuse> can be used to test whether an output would be nonempty
-(in this case it is 1, otherwise empty).
-For available versions, B<use> outputs the B<IUSE> variable.
-For installed versions, B<use> outputs the B<USE> flags and whether they are installed or not
-(in the later case, the content of B<FORMAT_BEFORE_SET_USE>, B<FORMAT_AFTER_SET_USE>, B<FORMAT_BEFORE_UNSET_USE>, B<FORMAT_AFTER_UNSET_USE>
-is printed at the appropriate places).
+Für verfügbare Versionen gibt B<use> die B<IUSE> Variable aus.
+Für installierte Versionen gibt B<use> die B<USE>-Flags an, und ob sie installiert sind
+(der Inhalt von B<FORMAT_BEFORE_SET_USE>, B<FORMAT_AFTER_SET_USE>, B<FORMAT_BEFORE_UNSET_USE>, B<FORMAT_AFTER_UNSET_USE>
+wird an den entsprechenden Stellen ausgegeben).
+B<haveuse> kann benutzt werden, um zu testen, ob die Ausgabe nichtleer ist (in diesem Fall ist die Ausgabe 1, sonst leer).
 .TP
 .BR "date:I<VAR>"
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-It outputs the installation date; the strftime() format for the date is read from
-the variable I<VAR>.
+Es gibt die Installationszeit aus; das strftime()-Format für die Zeit wird aus der Variablen I<VAR> genommen.
 .TP
 .BR version
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-It outputs the plain version in text form.
+Es ist die reine Versionsnummer (als Text).
 .TP
 .BR installed ", " best ", " best*
-Is 1 or empty, depending on whether at least one version of the package is installed
-or has a best stable or best unstable version.
+Ist 1 oder leer, je nachdem of mindestens eine Version des Pakets installiert ist oder eine beste stabile bzw. instabile Version hat.
 .TP
 .B versionlines
-Is 1 or empty, depending on whether the --versionlines flag was passed.
+Ist 1 oder leer, je nachdem ob --versionlines aktiv ist.
 .TP
 .B slotsorted
-Is 1 or empty, depending on whether the --versionsort flag was passed.
+Ist 1 oder leer, je nachdem ob --versionsort aktiv ist.
 .TP
 .B color
-Is 1 or empty, depending on whether colors/markers are printed.
-For instance if the output is redirected to a terminal and no opposite
-option is used, this will be empty.
+Ist 1 oder leer, je nachdem, ob Farben/Markers ausgegeben werden.
+Falls beispielsweise die Ausgabe auf ein Terminal erfolgt und keine anderweitige
+Option angegeben wurde, ist die leer.
 .TP
 .BR setnames ", " allsetnames
-The name of all local sets to which the package belongs, separated by spaces.
-With B<allsetnames> also the "system" set name is included.
+Die Namen aller lokalen Sets, zu denen das Paket gehört, durch Leerzeichen separiert.
+Mit B<allsetnames> ist auch das @system-Set dabei.
 .TP
 .B binary
-Is 1 or empty, depending on whether at least one version (available or installed) has a corresponding *.tbz2 Datei.
-See the remarks for B<--binary>.
+Ist 1 oder leer, je nachdem, ob mindestens eine Version (verfügbar oder installiert) eine *.tbz2 Datei besitzt.
+Vgl. die Bemerkungen zu B<--binary>.
 .TP
 .B overlaykey
-If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
+Falls alle Versionen zum selben Overlay gehören, wird "[overlaykey]" mit entsprechcenden Farben ausgegeben.
 .TP
 .B system
-expands to 1 if the package is in the system profile
+1, falls das Paket zu @system gehört.
 .TP
 .B world
-expands to 1 if the package is in the world Datei
+1, falls das Paket zur world-Datei gehört.
 .TP
 .B world_sets
-expands to 1 if the package is in the world sets
+1. falls das Paket zu world_sets gehört.
 .TP
 .B marked
-expands to 1 if the package was passed with the B<--pipe> option.
-This is mainly only useful in tests.
+1, falls das Paket mit der B<--pipe>-Option übergeben wurde.
+Dies ist hauptsächlich für Tests sinnvoll.
 .TP
 .BR havemarkedversion
-Is 1 or empty, depending on whether at least one available version of the package is marked.
-Note that it is possible that a package is marked although none of its available versions is marked.
+1 oder leer, je nachdem ob mindestens eine verfügbare Version des Pakets markiert ist.
+Es ist möglich, dass ein Paket markiert wurde, obwohl keine der verfügbaren Versionen markiert wurden.
 .TP
 .BR slots ", " slotted
-expands to 1 if there are at least two slots resp. at least one nontrivial slot.
+1, falls es mindestens zwei Slots bzw. mindestens einen nichttrivialen Slotnamen gibt.
 .TP
 .BR colliuse ", " havecolliuse
-The collected IUSE flags (i.e. their union) of all available versions
-of the package, separated by spaces.
-havecolliuse expands to 1 if colliuse is nonempty; this is faster than colliuse.
+Die gesammelten IUSE-Flags (d.h. ihre Vereinigung) aller verfügbaren Versionen des Pakets, durch Leerzeichen separiert.
+havecolliuse ist 1, falls colliuse nichtleer ist; dies ist schneller als colliuse.
 .TP
 .BR havebest ", " havebest*
-Expands to 1 if the package has a best stable/unstable version.
+1, falls das Paket eine beste stabile/instabile Version hat.
 .TP
 .BR upgrade ", " upgradeorinstall ", " downgrade ", " recommend ", " recommendorinstall
-B<upgrade> expands to 1 if the package is installed and at least one slot can be upgraded
-(or the best stable version is a new slot and B<UPDATE_TO_HIGHEST_SLOT> is true).
-The other variables test similarly whether the package can be upgraded or newly installed,
-should be downgraded, can/should be upgraded/downgraded,
-or can/should be upgraded/downgraded/installed, respectively.
-The variable B<RECOMMEND_LOCAL_MODE> determines whether these tests obey B<LOCAL_PORTAGE_CONFIG>.
+B<upgrade> ist 1, falls das Paket installiert ist und mindestens ein Slot ein Upgrade ermöglicht
+(oder die beste stabile Version ist eine neuer Slot und B<UPDATE_TO_HIGHEST_SLOT> ist gesetzt).
+Die anderen Variablen testen analog, ob für das Paket ein Upgrade oder frische Installation möglich ist,
+ob ein Downgrade nötig ist, ob ein Up- oder Downgrade möglich/nötig ist,
+bzw. ob ein Up- oder Downgrade oder Frischinstallation nötig/mölich ist.
+Die Variable B<RECOMMEND_LOCAL_MODE> entscheidet, ob diese Tests B<LOCAL_PORTAGE_CONFIG> beachten.
 .TP
 .BR bestupgrade ", " bestupgradeorinstall ", " bestdowngrade ", " bestrecommend ", " bestrecommendorinstall
-as above with the difference that only the best stable version of the package
-is taken into account (and not all slots).
+Wie oben mit dem Unterschied, dass nur die beste stabile Version des Pakets beachtet wird (und nicht alle Slots).
 .TP
 .BR better ", " worse ", " differ ", " bestbetter ", " bestworse ", " bestdiffer
-this can only be used in conditionals in B<DIFF_FORMAT_CHANGED>.
-B<better> expands to 1 if the new package has a new slot or a better stable
-version (or the same best stable version but from a different overlay number)
-for some slot than the old package.
-B<worse> means analogously that the old package had at least one better slot
-or a slot which is not available in the new package.
-B<differ> means that not all best stable slots of the old and new package
-coincide.
-The corresponding B<best*> versions have an analogous meaning with the
-difference that only the best stable version is taken into account
-(and not all slots).
-The variable B<RECOMMEND_LOCAL_MODE> determines whether these tests obey B<LOCAL_PORTAGE_CONFIG>.
+Dies kann nur in Konditionaltests für B<DIFF_FORMAT_CHANGED> benutzt werden.
+B<better> ist 1, falls das neue Paket einen neuen Slot oder eine besssere stabile Version
+(or die gleiche beste stabile Version, aber von einem anderen Overlay) für einen Slot als das alte Paket hat.
+B<worse> bedeutet analog, dass das alte Paket mindestens einen besseren Slot hatte
+oder einen Slot, den es im neuen Paket nicht gibt.
+B<differ> bedeutet, dass nicht alle besten stabilen Slots des alten und neuen Pakets übereinstimmen.
+Die entsprechenden B<best*>-Versionen haben eine analoge Bedeutung mit dem Unterschied,
+dass nur die beste stabile Version berücksichtigt wird (und nicht alle Slots).
+Die Variable B<RECOMMEND_LOCAL_MODE> entscheidet, ob diese Tests B<LOCAL_PORTAGE_CONFIG> beachten.
 .TP
 .BR old... ", " new...
-this can only be used in B<DIFF_FORMAT_CHANGED>.
-You can prefix any property name with B<old> and B<new>, and the value
-corresponds to that property, taking the old resp. new data into account.
-If neither B<old> nor B<new> is specified, the new version is assumed.
-For example, B<oldavailableversions:VAR> will output the previous available
-versions (using the variable B<VAR> to determine the output format)
-while B<newavailableversions:VAR> and B<availableversions:VAR> both will print
-the available versions of the current (i.e. new) package.
+Dies kann nur in B<DIFF_FORMAT_CHANGED> benutzt werden.
+Jedem Eigenschaftsname kann ein B<old> oder B<new> vorangestellt werden,
+und der Wert entspricht dieser Eigenschaft, wobei die alten bzw. neuen Daten
+benutzt werden.
+Falls weder B<old> noch B<new> angegeben ist, wird die neue Version angenommen.
+Beispielsweise gibt B<oldavailableversions:VAR> die vorerigen verfügbaren Versionen aus
+(mit der Variablen B<VAR> als Ausgabeformat), während
+B<newavailableversions:VAR> und B<availableversions:VAR> jeweils die
+verfügbaren Versionen des aktuellen (d.h. neuen) Pakets ausgeben.
 .\" }}}
 
-.\" {{{ -------- Colors
-.SS Colors
+.\" {{{ -------- Farben
+.SS Farben
 .TP
-(I<NAME>,I<BRIGHTNESS>;I<MARKERS>)
-Each of the ",I<BRIGHTNESS>" and ";I<MARKERS>" parts may be omitted.
+(I<NAME>,I<HELLIGKEIT>;I<MARKER>)
+Jeder der ",I<HELLIGKEIT>" und ";I<MARKER>" Teile kann weggelassen werden.
 
-If I<BRIGHTNESS> is 1, eix prints the corresponding 'light' (bold) color for
-I<NAME>, or normal color if I<BRIGHTNESS> is 0.
+Falls I<HELLIGKEIT> 1 ist, gibt eix die entsprechende 'light' (bold) Farbe für
+I<NAME> aus, oder die normale Farbe, falls I<HELLIGKEIT> 0 ist.
 
-An empty I<NAME> means "default" and in contrast to "none" resets output to
-default color and no markers.
+Ein leerer I<NAME> bedeutet "default", und im Gegensatz zu "none" setzt er die
+Ausgabe auf die Default-Farben (und ohne Marker).
 
-An empty (or omitted) I<MARKERS> means "none", i.e. no attribute change.
-Several marker attributes can be specified simultaneously
-(separate them by ",").
+Ein leerer (oder weggelassener) I<MARKER> bedeutet "none", d.h. keine
+Attribut-Veränderung. Mehrere marker-Attributes können gleichzeitig
+spezifiziert werden (mit "," unterteilt).
 
-Available colors are:
+Verfügbare Farben:
 I<default none black red green yellow blue purple cyan gray>
 
-Available marker attributes are:
+Verfügbare Marker:
 I<none bold underline blink inverse>
 .\" }}}
 
-.\" {{{ -------- Example
-.SS Examples:
+.\" {{{ -------- Beispiele
+.SS Beispiele:
 
 \fBFORMAT='{installed}(yellow,1;underline){else}(yellow,0){}<name>()}\\n' eix ...\fR
 
-If the package B<...> is installed, print the name underlined in bright yellow,
-else in normal yellow.
+Falls das Paket B<...> installiert ist, wird der Name unterstrichen in Hellgelb ausgegeben,
+sonst in normalem Gelb.
 
 \fBFORMAT='<category>/<name><installedversions:INSTFORMAT>\\n' INSTFORMAT='{first}:{}<version><date:DATEFORMAT>{!last}\\n\\t{}' DATEFORMAT='%x' eix autom*\fR
 
-This will print for every B<autom*> package the category name, and if it is installed,
-it will also print the installed versions and the installation dates.
-One could have obtained the same result by omitting B<{!last}\\t\\n{}> and writing instead B<{first}:{else}\\t\\n{}>,
-since it is of course the same whether B<\\t\\n> is printed at the end of each version except the last
-or at the beginning of each version except the first.
+Gibt für jedes B<autom*>-Paket den Kategoriennamen aus sowie, wenn das Paket installiert ist,
+die installierten Versionen und die Installationszeit.
+Man hätte das selbe Ergebnis auch durch Ersetzen von B<{!last}\\t\\n{}> durch B<{first}:{else}\\t\\n{}>
+erreichen können, weil es natürlich auf dasselbe hinausläuft, ob B<\\t\\n> am Ende jeder Version
+mit Ausnahme der letzten oder am Anfang jeder Version mit Ausnahme der ersten ausgegeben wird.
 
 B<FORMAT='{downgrade}%{FORMAT_ALL}{}' eix -I>
 
-This will print all installed packages for which there are downgrade recommendations.
-Note that B<FORMAT='{downgrade}%{FORMAT}{}'> does not work, because this would be
-a self-referential definition in the delayed substitution:
-Of course, a variable cannot be defined by an expansion of itself.
-For this reason, the content of B<FORMAT> and similar variables has become
-very simple since eix-0.13.4: It is just B<%{FORMAT_ALL}>
-(and similarly for other variables).
-So one can easily insert the full definition of the original value of
-B<FORMAT> (which we have done in the above example).
+Ausgabe aller installierten Pakete, für die es Downgrade-Empfehlungen gibt.
+Beachte, dass B<FORMAT='{downgrade}%{FORMAT}{}'> nicht funktioniert, denn dies
+wäre eine selbstreferenzierende Definition bei der verspäteten Ersetzung:
+Natürlich kann eine Variable nicht durch eine Ersetzung durch sich selbst expandiert werden.
+Aus diesem Grund ist der Inhalt der Variablen B<FORMAT> und ähnlicher Variablen sei eix-0.13.4
+sehr einfach: Es ist einfach B<%{FORMAT_ALL}> (und analog für andere Variablen).
+Daher kann man einfach die vollständige Definition des ursprünglichen Werts von B<FORMAT> einfügen
+(was wir in obigem Beispiel getan haben).
 
-Note that if you want to have compact output in the above example, you cannot
-just append the option B<-c>, because appending this option just has the
-effect that for the format string the variable B<FORMAT_COMPACT> is used
-instead of B<FORMAT>. So, to have compact output, you should use either
+Für kompakte Ausgabe ist es in obigem Beipsiel nicht möglich, einfach die Option B<-c>
+zu benutzen, denn die Benutzung dieser Option hat nur den Effekt, dass
+für den Formatstring die Variable B<FORMAT_COMPACT> statt B<FORMAT> benutzt wird.
+Für kompakte Ausgabe, muss man also entweder
 
 B<FORMAT_COMPACT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -Ic>
 
-or even simpler and with the same effect:
+benutzen, oder einfacher und mit dem gleichen Effekt:
 
 B<FORMAT='{downgrade}%{FORMAT_ALL_COMPACT}{}' eix -I>
 .\" }}}
 .\" }}}
 
-.\" {{{ FILES
-.SH "FILES"
+.\" {{{ DATEIEN
+.SH "DATEIEN"
 .LP
 .\" {{{ -------- @SYSCONFDIR@/eix-sync.conf
 .SS @SYSCONFDIR@/eix-sync.conf
-This Datei stores commands and configurations to apply with B<eix-sync>.
-Comments start with B<#> (all lines are cut at the first B<#>; it is not
-possible to mask B<#>). Lines can have the following forms and will be
-executed in the given order before B<emerge --sync> is executed.
+Diese Datei enthält Kommandos und Konfigurationen für B<eix-sync>.
+Kommentarzeilen beginnen mit B<#>.
+Die Zeilen haben die folgende Gestalt und werden in der gegebenen Reihenfolge
+vor B<emerge --sync> ausgeführt.
 
-Note that the content of the variable B<EIX_SYNC_CONF> is appended to that Datei.
-By default, the latter expands to B<EIX_SYNC_OPTS> so that also that variable is
-appended to that Datei. Both variables can be used to modify the defaults
-set in B<@SYSCONFDIR@/eix-sync.conf>. Be aware that a lot code of these lines is
-evaluated when B<eix-sync> is execute, so take care about security!
+Beachten Sie, dass der Inhalt der Variablen B<EIX_SYNC_CONF> an diese Datei angehängt wird.
+Per Default expandiert die Variable zu B<EIX_SYNC_OPTS>, so dass effektiv auch diese Variable an die Datei angehängt wird.
+Beide Variablen können benutzt werden, ob die Defaults aus B<@SYSCONFDIR@/eix-sync.conf> zu modifizieren.
+Machen Sie sich bitte bewusst, dass der Code dieser Zeilen bei B<eix-sync> innerhalb einer Shell mit "eval" ausgeführt wird, also Vorsicht bzgl. Sicherheitsproblemen!
 .TP
-.I option(s)
-Use I<option(s)> as default for eix-sync (in front of all other options).
-As usual, I<option(s)> must start with "B<->". I<option(s)> will be evaluated
-by the shell in the B<eix-sync> script, so take care about security and be sure
-to quote shell command separators properly!
+.I Option(en)
+Die I<Option(en)> werden als Default für eix-sync ausgeführt (vor allen anderen Optionen).
+Wie üblich muss I<Option(en)> mit "B<->" beginnen. I<option(en)> wird von der Shell mit "eval" ermittelt:
+Daher also Vorsicht bzgl. Sicherheit! Quoten von Shell-Commando-Trennern ist ebenfalls geboten.
 .TP
 .I Name
-Call B<layman -s> I<Name>.
-Note that B<layman> is provided by B<app-portage/layman> to sync overlays.
+Ruft B<layman -s> I<Name> auf
+(<layman> ist Teil des Pakets B<app-portage/layman> und dient zum Syncen von Overlays).
 .TP
 .BR *
-Call B<layman -S> (i.e. overlays are synced with layman).
+Ruft B<layman -S> auf (d.h. alle Overlays werden mit layman gesynct).
 .TP
-.BI ! command
-Evaluate I<command> within the B<eix-sync> shell script (in the same shell).
-I<command> must exit successfully or B<eix-sync> will print a warning.
-(Thus, B<!layman> I<Name> is more or less equivalent to I<Name>.)
-Close e.g. the command with "; true" if you want that the exit status
-is ignored. The warning becomes even a fatal error with the option B<-F>.
-You can set B<FATAL_HOOKS> to a nonempty/empty value to force/cancel B<-F>
-for the currently and subsequently executed hooks. If you want only the
-current hook to exit with an error, you can call B<die> explicitly.
+.BI ! Kommando
+Ruft eval I<Kommando> innerhalb des B<eix-sync> Shellskripts auf (in der selben Shell).
+I<Kommando> muss erfolgreich beendet werden, sonst gibt B<eix-sync> eine Warnung aus.
+(Folglich ist B<!layman> I<Name> mehr oder weniger äquivalent zu I<Name>.)
+Es ist möglich das Kommando beispielsweise mit "; true" zu beenden, falls der
+Exit-Status ignoriert werdne soll.
+Mit der Option B<-F> wird aus der Warnung sogar ein fataler Fehler.
+Durch Setzen von B<FATAL_HOOKS> auf einen nichtleeren/leeren Wert kann der
+Effekt von B<-F> für alle anschließenden Hooks erzwungen/aufgehoben werden.
+Falls nur der aktuelle Hook mit einem Fehler beendet werden soll,
+kann man explizit B<die> aufrufen.
 
-You can use this feature to unpack e.g. an overlay before calling B<layman>
-or to apply local fixes after B<layman> was called.
+Man kann dieses Feature benutzen um z.B. einen Overlay vor dem Aufruf von B<layman>
+zu entpacken oder um lokale Fixes auszuführen, nachdem B<layman> aufgerufen wurde.
 
-In contrast to earlier eix versions, I<command> does not output anything
-(use einfo if you want that), and it is not evaluated within a subshell,
-i.e. you can also modify environment variables or begin/end redirection
-as you like.
-The disadvantage is that you can also easily override internal eix-sync
-variables or functions by accident; if in doubt, put your command in
-braces (...) to start it in a subshell.
+Im Gegensatz zu früheren eix-Versionen gibt, I<Kommando> nichts aus
+(mit einfo kann man Ausgabe erreichen), und I<Kommando> wird nicht in einer
+Subshell ausgeführt, d.h. man kann auch Environment-Variablen modifizieren
+or eine Ausgabeumleitung starten/beenden.
+Der Nachtiel ist, dass man auch leicht versehentlich interne eix-sync-Variablen
+oder -Funktionen überschreiben kann; im Zweifelsfall ist es daher besser,
+dass Kommando in runde Klammern zu packen (...) um es in einer Subshell auszuführen.
 .TP
-.BI !! command
-This is similar to B<!> I<command> with the difference that
-I<command> is unconditionally executed, i.e. even if
-options -d, -u, or -l are used.
-It is meant to set environment variables for the other programs.
+.BI !! Kommando
+Die ist ähnlich zu B<!> I<Kommando> mit dem Unterschied, dass
+I<Kommando> immer ausgeführt wird, d.h. selbst wenn die
+Optionen -d, -u oder -l benutzt wird.
+Es ist dazu gedacht, Environment-Variablen für andere Programme zu setzen.
 .TP
-.BI ~ command
-This is only important if eix-sync options B<-s> or B<-2> are used.
-In this case, I<command> will be executed before the first call of B<rsync>;
-the output of I<command> is evaluated within the B<eix-sync> shell.
-If I<command> or the evaluation of its output are not successful,
-B<eix-sync> will print a warning (or error out if B<-F> is active,
-i.e. if B<FATAL_HOOKS> is nonempty).
-This can be used to execute e.g. B<keychain> and to return the content of
-the appropriate I<~/.keychain/*-sh> Datei or to return export-commands for
-the current B<SSH_AUTH_SOCK> and B<SSH_AGENT_PID>.
-It is also admissible that the output of I<command> is a command which
-modifies the variables B<PORTAGE_RSYNC_OPTS>, B<PORTAGE_RSYNC_EXTRA_OPTS>,
-B<PORTDIR>, B<PORTDIR_SERVER>, B<PORTDIR_CLIENT>, B<SERVER>, or B<CLIENT>.
-These variables are filled with defaults when I<command> is called and
-will later be used for the B<rsync> command(s) with their obvious meaning.
+.BI ~ Kommando
+Dies ist nur für die eix-sync-Optionen B<-s> oder B<-2> wichtig.
+In diese Fall wird I<Kommando> vor dem ersten Aufruf von B<rsync> ausgeführt;
+die Ausgabe von I<Kommando> wird innerhalb der B<eix-sync> Shell mit "eval" ausgeführt.
+Falls I<Kommando> oder die das "eval" der Ausgabe nicht erfolgreich sind,
+wird B<eix-sync> eine Warnung ausgeben (oder einen Fehler, falls B<-F> aktiv ist,
+d.h. wenn B<FATAL_HOOKS> nichtleer ist).
+Dies kann benutzt werden um beispielsweise B<keychain> auszuführen oder
+den Inhalt einer I<~/.keychain/*-sh>-Datei oder export-Kommandos für die
+aktuellen B<SSH_AUTH_SOCK> und B<SSH_AGENT_PID> auszugeben.
+Es ist ebenfalls zulässig, dass die Ausgabe von I<Kommando> ein Kommando ist,
+das die Variablen B<PORTAGE_RSYNC_OPTS>, B<PORTAGE_RSYNC_EXTRA_OPTS>,
+B<PORTDIR>, B<PORTDIR_SERVER>, B<PORTDIR_CLIENT>, B<SERVER> oder B<CLIENT> modifiziert.
+Diese variables werden mit ihrem Default gefüllt, wenn I<Kommando> aufgerufen wird
+und werden später im B<rsync> Kommando mit ihrer offensichtlichen Bedeutung benutzt.
 .TP
-.BI @ command
-Adds a hook for I<command>; the actual execution of I<command> is postponed
-until B<emerge --sync> was (successfully) called.
+.BI @ Kommando
+Fügt einen Hook für I<Kommando> hinzu; die tatsächliche Ausführung von I<Kommando>
+wird zurückgestellt, bis B<emerge --sync> (erfolgreich) ausgeführt wurde.
 .TP
-.BI @@ command
-Adds a hook for I<command>; the actual execution of I<command> is postponed
-until B<emerge --sync> and the subsequent B<eix-update> was (successfully) called.
+.BI @@ Kommando
+Fügt einen Hook für I<Kommando> hinzu; die tatsächliche Ausführung von I<Kommando>
+wird zurückgestellt, bis B<emerge --sync> und das darauffolgende B<eix-update> (erfolgreich) ausgeführt wurde.
 
 .TP
-Here is a B<schematic> overview of the order of hooks/commands:
+Es folgt ein B<schematischer> Überblick über die Reihenfolge der Hooks/Kommandos:
 
 .BR !! " hooks"
 
@@ -1515,66 +1505,64 @@ layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
 .BR eix-diff
 
 .TP
-Some examples of useful lines in B<@SYSCONFDIR@/eix-sync.conf>:
+Einige Beispiele nützlicher Zeilen in B<@SYSCONFDIR@/eix-sync.conf>:
 .TP
 .B -F
-Always error out on layman/hook errors.
-This was always the case in earlier eix versions.
+Stets ein Fehlerabbruch, falls layman/hook fehlschlägt.
+Dies war bei früheren eix versionen stets der Fall.
 .TP
 .B -C --ignore-default-opts
-Use this line if you have --ask in EMERGE_DEFAULT_OPTS in /etc/make.conf
-but do not want to get asked for eix-sync.
+Diese Zeile sollte benutzt werden, falls --ask in EMERGE_DEFAULT_OPTS in
+/etc/make.conf steht, so dass keine Rückfrage für eix-sync erfolgt.
 .TP
 .B -r -M
-Use this if you use e.g. B<PORTDIR_CACHE_METHOD=assign>, and
-B<FEATURES=metadata-transfer> is inactive or disabled
-(the latter is the default in newer portage versions).
-Depending on your needs you might want to use also B<-r> or B<-M> alone or
-replace B<-M> by the line.
+Dies ist nüztlich bei B<PORTDIR_CACHE_METHOD=assign>, falls
+B<FEATURES=metadata-transfer> inaktiv oder ausgeschaltet ist
+(Letzteres ist bei neueren Portage-Versionen der Fall).
+Je nach Bedarf kann auch B<-r> oder B<-M> alleine angegeben werden.
+Oder man kann -M durch die Zeile
 .TP
 .B @emerge --regen
-to use B<emerge --regen> instead of B<emerge --metadata>.
+ersetzen, um B<emerge --regen> statt B<emerge --metadata> zu benutzen.
 .TP
 .B @egencache --repo=local --update
-Update the metadata cache of the overlay with repository name "local"
-before eix-update is called but after calling emerge --sync.
-This can make sense if you want to use cache method B<metadata-flat>
-for that overlay and want to make sure that this metadata cache is up-to-date.
-The disadvantage is that this B<egencache> command is executed even if
-"local" was not changed (which is usually the case for local repositories).
+Updated den Metadaten-Caches des Overlays mit dem Repository-Namen "local"
+bevor eix-update aufgerufen wird, aber nach dem Aufruf von emerge --sync.
+Dies kann bei Benuztung der Cache-Methode B<metadata-flat> für diesen Overlay
+sinnvoll sein, falls man sicher sein will, dass der Metadaten-Cache aktuell ist.
+Der Nachteil ist, dass dieses B<egencache>-Kommando auch dann ausgeführt wird,
+wenn "local" nicht verändert wurde (was für locale Repositories typisch ist).
 .TP
 .B !egencache --repo=foo --update
-Update the metadata cache of the overlay with repository name "foo";
-this makes sense if you had earlier a line B<foo> or a line B<!command to update foo>
-for updating this repository (by layman or by some other command)
-and if you want to use cache method B<metadata-flat> for that overlay
-although the metadata cache is broken or not contained in that repository.
+Updated den Metadaten-Cache des Overlays mit Repository-Namen "foo";
+dies kann sinnvoll sein, falls vorher eine Zeile B<foo> oder eine Zeile B<!Kommando zum Updaten von foo> steht,
+um diese Repository (durch layman oder ein anderes Kommando) zu updaten,
+und falls die Cache-Methode B<metadata-flat> für diesen Overlay benutzt werden soll,
+obwohl der Metadaten-Cache kaputt oder nicht im Repository enthalten ist.
 .TP
 .B !!exec >/var/log/eix-sync.log ; chown portage: /var/log/eix-sync.log || true
-Send the output to a logDatei (with correct permissions).
-The "true" at the end is to force continuing even if the "chown" failed.
-If you do not want to redirect the output of the final B<eix-diff>, you might
-want to combine this with
+Sendet die Ausgabe in eine log-Datei (mit korrekten Rechten).
+Das "true" am Ende sorgt für Weiterausführung selbst wenn "chown" fehlschlägt.
+Falls die Ausgabe des abschließenden B<eix-diff> nicht umgeleitet werden soll,
+kann man dies kombinieren mit
 .TP
 .B @@exec >/dev/tty
-Output the B<eix-diff> stat to the terminal, even if redirection occurred.
+Ausgabe von B<eix-diff> auf das Terminal, selbst im Falle von Ausgabeumleitung.
 .TP
 .B @@exit 0
-Do not execute B<eix-diff> at all.
+Keine Ausführung des abschließenden B<eix-diff>.
 .TP
 .B !!export FORCE_USECOLORS="${FORCE_USECOLORS:-true}"
-Unless FORCE_USECOLORS is set differently in your environment, eix output
-will be colored even if you use redirection.
+Falls FORCE_USECOLORS nicht in der Environment anders gesetzt wurde,
+wird die eix-Ausgabe auch im Falle von Ausgabeumleitung farbig.
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"`hostname`-sh"
 .TP
-.B @@eix-remote update B<"`portageq portdir`/local/layman/eix-caches.tar.bz2">
-(The last argument can also be omitted if you do not want a local copy
-of the data in the /usr/portage/local/layman Verzeichnis.)
+.B @@eix-remote update
 .TP
-.B @eix-remote fetch /var/cache/remote-cache.tbz2
+.B @eix-remote fetch
 .TP
-.B @@eix-remote add /var/cache/remote-cache.tbz2
+.B @@eix-remote add
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc
@@ -1762,7 +1750,7 @@ So be sure to quote these variables correctly and be aware of security risks!
 
 .TP
 .BR EIXRC_SOURCE " " (string)
-This path is prepended to source commands in @SYSCONFDIR@/eixrc.
+This path is prepended to source Kommandos in @SYSCONFDIR@/eixrc.
 It is meant to be set in the environment but can also be set in @SYSCONFDIR@/eixrc.
 In the latter case, it will override the setting from the environment as soon as it is read until all Dateis are sourced.
 Note that when this variable takes effect, no delayed substitution is performed yet.
