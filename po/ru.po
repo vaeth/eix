@@ -1,16 +1,13 @@
 # Russian translations for eix package
 # Russian messages for eix.
-# Copyright (C) 2009-2011 Martin Vaeth
 # This file is distributed under the same license as the eix package.
-#
+# Copyright (C)
 # Артем Каримов <skybon@gmail.com>, 2012.
-# Artem Karimov <skybon@gmail.com>, 2012.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-16 22:21+0200\n"
+"POT-Creation-Date: 2012-05-17 09:08+0400\n"
 "PO-Revision-Date: 2012-05-12 05:49+0400\n"
 "Last-Translator: Artem Karimov <skybon@gmail.com>\n"
 "Language-Team: русский <>\n"
@@ -19,7 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Poedit-Language: Russian\n"
 "X-Generator: Lokalize 1.4\n"
 
 #: src/eix-functions.sh.in:103 src/eix-update.cc:600 src/eix-update.cc:637
@@ -196,6 +192,51 @@ msgid ""
 "     independent of the value of USE_BUILD_TIME\n"
 "-T   Never use build time"
 msgstr ""
+"Использованье: ${n} [ключи] категория/пакет[:слот]\n"
+"Это хорошо задокументированный демо-сценарий для eix (${p}).\n"
+"Он показывает пакеты, установленные после (до) последней (первой) установки "
+"данного пакета/версии; формат вывода подходит на роль аргумента для \"emerge "
+"-1\".\n"
+"Не забудьте, что учитываются только пакеты в базе данных eix.\n"
+"\n"
+"Аргумент может использовать сопоставленья консоли (* и ?; не забудьте "
+"цитировать\n"
+"их, если вызываете сценарий из консоли); выбирается первое совпаденье.\n"
+"[:slot] можно опустить, если у пакета только один слот.\n"
+"(Ключи -l, -L и -e имеют разные правила).\n"
+"\n"
+"Следующие ключи доступны:\n"
+"\n"
+"-f   Вывести полный список всех пакетов (другие аргументы не нужны)\n"
+"-b   Вывести пакеты, установленные до (а не после) данного пакета\n"
+"-i   Включить данный пакет (в командной строке) в вывод\n"
+"-l   Использовать /var/log/emerge.log, чтобы использовать _первое_ (а не "
+"последнее) установочное\n"
+"     время данного пакета. В таком случае, аргумент должен быть\n"
+"     регулярным выраженьем формата категория/пакет-версия.\n"
+"     Примечанье: время в логе и время в базе данных обычно\n"
+"     немного отличаются, так что (не)использованье ключа -i не обязательно\n"
+"     даёт ожидаемый эффект: Пакет может быть как включён, так и нет.\n"
+"     Можно использовать -a/-A чтобы исправить время. Заметьте, что -t или -"
+"T\n"
+"     не имеют эффекта на данные в логе.\n"
+"-L ЛОГ Как -l, но используют ЛОГ вместо /var/log/emerge.log\n"
+"-e   Аргумент - не категория/пакет[:слот], а время в формате,\n"
+"     выведенном \"date +%s\" (т.е. число секунд с эпохи).\n"
+"-a СЕК При использованьи -l -L или -e увеличить реальное время совпаденья на "
+"СЕК секунд.\n"
+"-A СЕК При использованьи -l -L или -e уменьшить реальное время совпаденья на "
+"СЕК секунд.\n"
+"-S   При поиске стартового пакета, выбирать первый попавшийся слот\n"
+"-V   При поиске стартового пакета, искать по категории/пакету-версии\n"
+"     вместо категории/пакета:слота\n"
+"-d   Вывести дату установки после пакета\n"
+"-s   Вывести слот пакета даже если нет неоднозначности\n"
+"-v   Вывод как категория/пакет-версия  вместо категория/пакет[:слот]\n"
+"-=   Вывод как =категория/пакет-версия вместо категория/пакет[:слот]\n"
+"-t   Использовать время сборки (если доступно) вместо времени установки\n"
+"     независимо от значенья USE_BUILD_TIME\n"
+"-T   Никогда не использовать время сборки"
 
 #: src/eix-installed-after.sh:121
 #, sh-format
@@ -208,7 +249,7 @@ msgid "cannot find merge of ${match} in ${logfile}"
 msgstr "не могу найти установку ${match} в ${logfile}"
 
 #: src/eix-layman.sh:20
-#, sh-format
+#, fuzzy, sh-format
 msgid ""
 "Usage: ${n} [options] command\n"
 "Add or remove local layman overlays to the eix database (${p}).\n"
@@ -233,6 +274,27 @@ msgid ""
 "-A PATH       Add PATH to the sourced make.confs used to determine\n"
 "              the layman overlays. Current value:"
 msgstr ""
+"Использованье: ${n} [ключи] команда\n"
+"Добавить или удалить местные оверлеи layman в базе данных eix (${p}).\n"
+"\n"
+"Объясненье: Если в Вашем /etc/make.conf нет отсылки к layman/make.conf,\n"
+"то оверлеи layman не считаются частью Вашего PORTDIR_OVERLAY;\n"
+"в таком случае, они как правило не добавляются в базу данных eix и\n"
+"не могут быть найдены eix.\n"
+"Однако, может понадобиться временно добавить/удалить их в базу данных eix\n"
+"без измененья /etc/make.conf. Это назначенья этого сценария.\n"
+"Этот сценарий также пример использованья eix-functions.sh.\n"
+"\n"
+"Доступны следующие команды:\n"
+"\n"
+"add:    Добавить местные оверлеи layman в базу данных.\n"
+"remove: Удалить местные оверлеи layman из базы данных.\n"
+"\n"
+"Доступные ключи:\n"
+"\n"
+"-a ОВЕРЛЕЙ    Добавить оверлей в список оверлеев layman.\n"
+"-A ПУТЬ       Добавить ПУТЬ в make.conf-ы, используемые для определенья\n"
+"              оверлеев layman. Текущее значенье:"
 
 #: src/eix-layman.sh:44
 msgid "none (i.e. no readable layman make.conf specified)"
@@ -252,7 +314,7 @@ msgstr ""
 "-c LAYMAN_CFG Использовать файл layman.cfg для определенья записи в список "
 "выше\n"
 "-v            Подробно (по умолчанью)\n"
-"-H            Подавить обновление линьи статуса\n"
+"-H            Подавить обновленье линии статуса\n"
 "-q            Тихо"
 
 #: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:645
@@ -442,8 +504,7 @@ msgid ""
 "     USER defaults to current user and DIR defaults to PORTDIR.\n"
 "     An empty SERVER cancels this option. This option implies -0\n"
 "-0   No eix --sync\n"
-"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull "
-"syncing;\n"
+"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successful syncing;\n"
 "     you should later call eix-sync -u locally on CLIENT.\n"
 "     If you already have synced you might want to combine this option with -"
 "uU.\n"
@@ -495,58 +556,61 @@ msgstr ""
 "для каких оверлеев вызывается layman, какие ключи по умолчанью\n"
 "используются и они могут содержать крюки - подробно в \"man eix\".\n"
 "\n"
-"Будьте внимательны, что стандартные EIX_SYNC_OPTS оцениваются так,\n"
+"Учтите, что стандартные EIX_SYNC_OPTS оцениваются так,\n"
 "чтобы правильно истолковать и не допустить риски безопасности.\n"
 "Более того, \"--\" в ключах по умолчанью запретят ключи из командной "
 "строки.\n"
 "Доступны следующие ключи:\n"
 "\n"
-"-i   Ignore all previous options (useful to ignore ${eixsyncconf} options).\n"
-"-s [USER@]SERVER[:DIR] Sync via rsync from SERVER.\n"
-"     USER defaults to current user and DIR defaults to PORTDIR.\n"
-"     An empty SERVER cancels this option. This option implies -0\n"
-"-0   No eix --sync\n"
-"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull "
-"syncing;\n"
-"     you should later call eix-sync -u locally on CLIENT.\n"
-"     If you already have synced you might want to combine this option with -"
-"uU.\n"
-"-U   Do not touch the database and omit the hooks after eix-update (@ "
-"entries)\n"
-"     and do not show differences. This option implies -R\n"
-"-u   Update database only and show differences. This is equivalent to -0l@s "
+"-i   Игнорировать все предыдущие ключи (полезно для игнорирования "
+"${eixsyncconf}).\n"
+"-s [ПОЛЬЗОВАТЕЛЬ@]СЕРВЕР[:ДИР] Синхронизация через rsync с СЕРВЕРом.\n"
+"     ПОЛЬЗОВАТЕЛЬ и ДИР по умолчанью текущий пользователь и PORTDIR "
+"соответственно.\n"
+"     Пустое поле СЕРВЕР отменяет этот ключ. Этот ключ предполагает -0\n"
+"-0   Не делать eix --sync\n"
+"-2 [ПОЛЬЗОВАТЕЛЬ@]КЛИЕНТ[:ДИР] Синхронизация через rsync к КЛИЕНТу после "
+"успешной синхронизации;\n"
+"     потом нужно вызвать eix-sync -u на ПК КЛИЕНТа.\n"
+"     Если Вы уже провели синхронизацию, то стоит соединить этот ключ с -uU.\n"
+"-U   Не трогать базу данных и пропустить крюки после eix-update (@-записи)\n"
+"     и не показывать различья. Этот ключ предполагает -R\n"
+"-u   Обновить только базу данных и показать различья. Равнозначно -0l@s "
 "\"\"\n"
-"-F   Make layman or failed hooks (! !! ~ @ @@ entries) fatal. This can be\n"
-"     forced/overridden in hooks by (un)setting FATAL_HOOKS or calling die.\n"
-"-l   Do not call layman (and the !commands in ${eixsyncconf}).\n"
-"     However, the !! lines and postponed hooks (@ and @@ entries)\n"
-"     will be executed anyway.\n"
-"-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
-"-S   Do not execute the hooks after emerge --sync (@ entries).\n"
-"-M   Run emerge --metadata. You might need this when you use e.g.\n"
-"     PORTDIR_CACHE_METHOD=flat and a newer portage version when\n"
-"     FEATURES=metadata-transfer is inactive or disabled.\n"
-"-N   Cancel a previous -M.\n"
-"-t   Use temporary file to save the current database (-d will not be "
-"possible).\n"
-"-T   Do not measure time\n"
-"-q   Be quiet (close stdout)\n"
-"-w   Run emerge-webrsync instead of emerge --sync.\n"
-"-W   Run emerge-delta-webrsync instead of emerge --sync.\n"
-"-c CMD Run CMD instead of emerge --sync.\n"
-"-C OPT Add OPT to the emerge --sync command (or whatever is used instead).\n"
-"       This option can be used accumulatively.\n"
-"-o OPT Add OPT to each eix-update command.\n"
-"       This option can be used accumulatively.\n"
-"-L OPT Add OPT to each call of layman.\n"
-"       This option can be used accumulatively.\n"
-"-r   Clear /var/cache/edb/dep/* before syncing. This is only useful when "
-"you\n"
-"     use e.g. PORTDIR_CACHE_METHOD=flat and FEATURES=metadata-transfer\n"
-"     is active. (This option is not default anymore).\n"
-"-R   Cancel previous -r (e.g. if it was used in ${eixsyncconf}).\n"
-"-H   Suppress status line update.\n"
-"-h   Show this text and exit."
+"-F   Сделать layman или ошибочные крюки (записи ! !! ~ @ @@) смертельными.\n"
+"     Также можно настроить FATAL_HOOKS или вызвать die.\n"
+"-l   Не вызывать layman (а также !commands в ${eixsyncconf}).\n"
+"     Однако, строки !! и отложенные крюки (записи @ и @@)\n"
+"     всё равно будут исполнены.\n"
+"-@   Не исполнять крюки (записи @ и @@) файла ${eixsyncconf}.\n"
+"-S   Не исполнять крюки после emerge --sync (записи @).\n"
+"-M   Запустить emerge --metadata. Это может понадобиться когда Вы "
+"используете\n"
+"     PORTDIR_CACHE_METHOD=flat и более новую версию portage когда\n"
+"     FEATURES=metadata-transfer неактивно или отключено.\n"
+"-N   Отменить предыдущий -M.\n"
+"-t   Использовать временный файл для сохраненья текущей базы данных (-d "
+"будет невозможно).\n"
+"-T   Не измерять время\n"
+"-q   Тихо (закрыть stdout)\n"
+"-w   Запустить emerge-webrsync вместо emerge --sync.\n"
+"-W   Запустить emerge-delta-webrsync вместо emerge --sync.\n"
+"-c КМД Запустить КМД вместо emerge --sync.\n"
+"-C КЛЧ Добавить КЛЧ к команде emerge --sync (или тому, что вместо этого).\n"
+"       Возможно кумулятивное использованье этого ключа.\n"
+"-o КЛЧ Добавить КЛЧ к каждой команде eix-update.\n"
+"       Возможно кумулятивное использованье этого ключа.\n"
+"-L КЛЧ Добавить КЛЧ к каждому вызову layman.\n"
+"       Возможно кумулятивное использованье этого ключа.\n"
+"-r   Стереть /var/cache/edb/dep/* перед синхронизацией. Полезно только если "
+"Вы,\n"
+"     например, используете PORTDIR_CACHE_METHOD=flat и FEATURES=metadata-"
+"transfer\n"
+"     активно. (Этот ключ более не активирован по умолчанью).\n"
+"-R   Отменить предыдущий -r (например, если он использовался в "
+"${eixsyncconf}).\n"
+"-H   Подавить обнавленья строки статуса.\n"
+"-h   Показать этот текст и выйти."
 
 #: src/eix-sync.sh:96
 #, sh-format
@@ -810,147 +874,147 @@ msgstr "Нет лишних записей в ${rump}unmask"
 #: src/eix-test-obsolete.sh:212
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
-msgstr ""
+msgstr "Лишнее в ${rump}unmask:"
 
 #: src/eix-test-obsolete.sh:213
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
-msgstr ""
+msgstr "Пропускаю проверку:  лишние  записи в ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:215
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask"
-msgstr ""
+msgstr "Нет удалённых записей в ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:216
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
-msgstr ""
+msgstr "Не удалено, но в ${rump}unmask:"
 
 #: src/eix-test-obsolete.sh:217
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
-msgstr ""
+msgstr "Пропускаю проверку: удалённые записи в ${rump}unmask"
 
 #: src/eix-test-obsolete.sh:220
 #, sh-format
 msgid "No  redundant  entries in ${rump}use"
-msgstr ""
+msgstr "Нет  лишних  записей в ${rump}use"
 
 #: src/eix-test-obsolete.sh:221
 #, sh-format
 msgid "Redundant in ${rump}use:"
-msgstr ""
+msgstr "Лишнее в ${rump}use:"
 
 #: src/eix-test-obsolete.sh:222
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}use"
-msgstr ""
+msgstr "Пропускаю проверку:  лишние  записи в ${rump}use"
 
 #: src/eix-test-obsolete.sh:224
 #, sh-format
 msgid "No uninstalled entries in ${rump}use"
-msgstr ""
+msgstr "Нет удалённых записей в ${rump}use"
 
 #: src/eix-test-obsolete.sh:225
 #, sh-format
 msgid "Not installed but in ${rump}use:"
-msgstr ""
+msgstr "Не удалено, но в ${rump}use:"
 
 #: src/eix-test-obsolete.sh:226
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}use"
-msgstr ""
+msgstr "Пропускаю проверку: удалённые записи в ${rump}use"
 
 #: src/eix-test-obsolete.sh:229
 #, sh-format
 msgid "No  redundant  entries in ${rump}env"
-msgstr ""
+msgstr "Нет  лишних  записей в ${rump}env"
 
 #: src/eix-test-obsolete.sh:230
 #, sh-format
 msgid "Redundant in ${rump}env:"
-msgstr ""
+msgstr "Лишнее в ${rump}env:"
 
 #: src/eix-test-obsolete.sh:231
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}env"
-msgstr ""
+msgstr "Пропускаю проверку:  лишние  записи в ${rump}env"
 
 #: src/eix-test-obsolete.sh:233
 #, sh-format
 msgid "No uninstalled entries in ${rump}env"
-msgstr ""
+msgstr "Нет удалённых записей в ${rump}env"
 
 #: src/eix-test-obsolete.sh:234
 #, sh-format
 msgid "Not installed but in ${rump}env:"
-msgstr ""
+msgstr "Не удалено, но в ${rump}env:"
 
 #: src/eix-test-obsolete.sh:235
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}env"
-msgstr ""
+msgstr "Пропускаю проверку: удалённые записи в ${rump}env"
 
 #: src/eix-test-obsolete.sh:238
 #, sh-format
 msgid "No  redundant  entries in ${rump}license"
-msgstr ""
+msgstr "Нет  лишних  записей в ${rump}license"
 
 #: src/eix-test-obsolete.sh:239
 #, sh-format
 msgid "Redundant in ${rump}license:"
-msgstr ""
+msgstr "Лишнее в ${rump}license:"
 
 #: src/eix-test-obsolete.sh:240
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}license"
-msgstr ""
+msgstr "Пропускаю проверку:  лишние  записи в ${rump}license"
 
 #: src/eix-test-obsolete.sh:242
 #, sh-format
 msgid "No uninstalled entries in ${rump}license"
-msgstr ""
+msgstr "Нет удалённых записей в ${rump}license"
 
 #: src/eix-test-obsolete.sh:243
 #, sh-format
 msgid "Not installed but in ${rump}license:"
-msgstr ""
+msgstr "Не удалено, но в ${rump}license:"
 
 #: src/eix-test-obsolete.sh:244
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}license"
-msgstr ""
+msgstr "Пропускаю проверку: удалённые записи в ${rump}license"
 
 #: src/eix-test-obsolete.sh:247
 #, sh-format
 msgid "No  redundant  entries in ${rump}cflags"
-msgstr ""
+msgstr "Нет  лишних  записей в ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
-msgstr ""
+msgstr "Лишнее в ${rump}cflags:"
 
 #: src/eix-test-obsolete.sh:249
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
-msgstr ""
+msgstr "Пропускаю проверку:  лишние  записи в ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:251
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags"
-msgstr ""
+msgstr "Нет удалённых записей в ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:252
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
-msgstr ""
+msgstr "Не удалено, но в ${rump}cflags:"
 
 #: src/eix-test-obsolete.sh:253
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
-msgstr ""
+msgstr "Пропускаю проверку: удалённые записи в ${rump}cflags"
 
 #: src/eix-test-obsolete.sh:256
 msgid "All installed versions of packages are in the database."
@@ -958,7 +1022,7 @@ msgstr "Все установленные пакеты присутствуют 
 
 #: src/eix-test-obsolete.sh:258
 msgid "Installed packages with a version not in the database (or masked):"
-msgstr "Установленные пакеты с версьей не в базе данных (или замаскированной):"
+msgstr "Установленные пакеты с версией не в базе данных (или замаскированной):"
 
 #: src/eix-test-obsolete.sh:259
 msgid "Skipping check: installed but not in the database"
@@ -1135,17 +1199,17 @@ msgstr ""
 "Глобально:\n"
 "   Эксклюзивные ключи:\n"
 "     -h, --help            показать это сообщенье и выйти\n"
-"     -V, --version         показать версью и выйти\n"
+"     -V, --version         показать версию и выйти\n"
 "     --dump                сбросить переменные в stdout\n"
 "     --dump-defaults       сбросить стандартные значенья\n"
 "     --print               показать расширенное значенье переменной\n"
 "     --known-vars          показать все переменные, известные --print\n"
 "     --print-all-useflags  показать все IUSE-слова, используемые в какой-то "
-"версьи\n"
+"версии\n"
 "     --print-all-keywords  показать все KEYWORDS, используемые в какой-то "
-"версьи\n"
+"версии\n"
 "     --print-all-slots     показать все SLOT-строки, используемые в какой-то "
-"версьи\n"
+"версии\n"
 "     --print-all-licenses  показать все LICENSE-строки, используемые в каком-"
 "то пакете\n"
 "     --print-all-depends   показать все слова, встречающиеся в каком-то {,R,"
@@ -1193,26 +1257,26 @@ msgstr ""
 "    -I, --installed        Следующее выраженье совпадает только с "
 "установленными пакетами.\n"
 "    -i, --multi-installed Совпасть с пакетами установленными в нескольких "
-"версьях.\n"
+"версиях.\n"
 "    -d, --dup-packages    Совпасть с пакетами, имеющими дубликаты.\n"
 "    -D, --dup-versions    Совпасть с пакетами, имеющими дубликаты версий.\n"
 "    -1, --slotted         Совпасть с пакетами, имеющими нетривиальный слот.\n"
 "    -2, --slots           Совпасть с пакетами, имеющими два разных слота.\n"
-"    -u, --upgrade[+-]     Совпасть с пакетами без наилучшей версьи в слоте.\n"
+"    -u, --upgrade[+-]     Совпасть с пакетами без наилучшей версии в слоте.\n"
 "                          +: настройки из LOCAL_PORTAGE_CONFIG=true\n"
 "                          -: настройки из LOCAL_PORTAGE_CONFIG=false\n"
-"    --stable[+-]          Совпасть с пакетами, имеющими стабильную версью.\n"
+"    --stable[+-]          Совпасть с пакетами, имеющими стабильную версию.\n"
 "    --testing[+-]         Совпасть с пакетами, имеющими тестовую или "
-"стабильную версью.\n"
+"стабильную версию.\n"
 "    --non-masked[+-]  Совпасть с пакетами, имеющими не замаскированную "
-"версью.\n"
+"версию.\n"
 "    --system[+-]          Совпасть с пакетами из @system.\n"
 "    --installed-unstable  Совпасть с пакетами, имеющими установленную "
-"нестабильную версью.\n"
+"нестабильную версию.\n"
 "    --installed-testing   Совпасть с пакетами, имеющими установленную "
-"тестовую версью.\n"
+"тестовую версию.\n"
 "    --installed-masked    Совпасть с пакетами, имеющими установленную "
-"замаскированную версью.\n"
+"замаскированную версию.\n"
 "    --world-file          Совпасть с пакетами из файла world или @system.\n"
 "    --world-set           Совпасть с пакетами из набора world или @system.\n"
 "    --world               Совпасть с пакетами из @world (файл, набор или "
@@ -1267,8 +1331,8 @@ msgstr ""
 "    -y, --any               любое поле поиска может совпасть (то же самое, "
 "что -SACsHL...)\n"
 "    -S, --description       описанье\n"
-"    -A, --category-name     \"категорья/имя\"\n"
-"    -C, --category          категорья\n"
+"    -A, --category-name     \"категория/имя\"\n"
+"    -C, --category          категория\n"
 "    -s, --name              имя (по умолчанью)\n"
 "    -H, --homepage          домашняя страница\n"
 "    -L, --license           лицензия\n"
@@ -1278,7 +1342,7 @@ msgstr ""
 "    --pdepend               pdepend (требует DEP=true)\n"
 "    --set                   имя местного набора пакетов\n"
 "    --slot                  слот\n"
-"    --installed-slot        слот установленной версьи\n"
+"    --installed-slot        слот установленной версии\n"
 "    -U, --use               флаг use (ебилда)\n"
 "    --installed-with-use    включённый флаг use (установленного пакета)\n"
 "    --installed-without-use отключённый флаг use (установленного пакета)\n"
@@ -1406,6 +1470,25 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
+"Использованье: %s [ключи] старый-кэш [новый-кэш]\n"
+"\n"
+" -Q, --quick (флаг)      (не) читать неугадываемые слоты установленных "
+"пакетов\n"
+"     --care              всегда читать слота установленных пакетов\n"
+" -q, --quiet (флаг)      (без) вывод(а)\n"
+" -n, --nocolor           бесцветный вывод\n"
+" -F, --force-color       сделать то, что не в терминале, цветным\n"
+"     --dump              сделать дамп переменных в stdout\n"
+"     --dump-defaults     сделать дамп стандартных значений переменных\n"
+"     --print             напечатать расширенное значенье переменной\n"
+"     --known-vars        напечатать все переменные, известные --print\n"
+"\n"
+" -h, --help              показать короткий экран помощи\n"
+" -V, --version           показать строку с версией\n"
+"\n"
+"Эта программа лицензирована согласно GNU General Public License. См. COPYING "
+"для\n"
+"подробной информации.\n"
 
 #: src/eix-diff.cc:129
 msgid "Can't open the database file %r for reading (mode = 'rb')"
@@ -1436,6 +1519,13 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
+"Использованье: %s [--] команда [ключи]\n"
+"Выполняет 'команда [ключи]' с разрешеньями согласно переменным eix\n"
+"EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
+"\n"
+"Эта программа лицензирована согласно GNU General Public License. См. COPYING "
+"для\n"
+"подробной информации.\n"
 
 #: src/eix-drop-permissions.cc:51
 #, c-format
@@ -1476,54 +1566,88 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
+"Использованье: %s [ключи]\n"
+"\n"
+" -h, --help              показать короткий экран помощи\n"
+" -V, --version           показать строку версии\n"
+"     --dump              показать переменные eixrc\n"
+"     --dump-defaults     показать переменные eixrc по умолчанью\n"
+"     --print             напечатать расширенное значенье переменной\n"
+"     --known-vars        напечатать имена всех переменных, известных --"
+"print\n"
+" -H, --nostatus          не обновлять строку статуса\n"
+" -n, --nocolor           не использовать \"цвета\" (процент) в выводе\n"
+"     --force-status      всегда выводить строку статуса\n"
+" -F, --force-color       \"цвет\" даже если вывод - не терминал\n"
+" -v, --verbose           выводить использованный метод кэширования для "
+"каждого ebuild\n"
+"\n"
+" -q, --quiet             без вывода\n"
+"\n"
+" -o  --output            вывести в файл, отличный от %s\n"
+"                         В дополненье, все проверки разрешений будут "
+"отключены.\n"
+" -x  --exclude-overlay   exclude matching overlays from the update-process.\n"
+"                         Note that you can also exclude PORTDIR\n"
+"                         using this option.\n"
+"\n"
+" -a  --add-overlay       добавить оверлей к процессу обновленья.\n"
+"\n"
+" -m  --override-method   override cache method for matching overlays.\n"
+"\n"
+" -r  --repo-name         set label for matching overlay.\n"
+"\n"
+"Эта программа лицензирована согласно GNU General Public License. См. COPYING "
+"для\n"
+"подробной информации.\n"
 
 #: src/eix-update.cc:202
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD"
-msgstr ""
+msgstr "%s должен быть списком формы ДИРЕКТОРИЯ МЕТОД"
 
 #: src/eix-update.cc:218
 #, c-format
 msgid "%s must be a list of the form DIR-PATTERN OVERLAY-LABEL"
-msgstr ""
+msgstr "%s должен быть списком формы ДИР-ШАБЛОН МЕТКА-ОВЕРЛЕЯ"
 
 #: src/eix-update.cc:235
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
-msgstr ""
+msgstr "KEEP_VIRTUALS игнорируется: нет предыдущего %s\n"
 
 #: src/eix-update.cc:240
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
-msgstr ""
+msgstr "Добавленье виртуальных оверлеев из %s ..\n"
 
 #: src/eix-update.cc:245
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
-msgstr ""
+msgstr "Вниманье: KEEP_VIRTUALS игнорируется ибо формат базы данных изменился"
 
 #: src/eix-update.cc:383
 msgid "Reading Portage settings ..\n"
-msgstr ""
+msgstr "Чтенье настроек Portage ..\n"
 
 #: src/eix-update.cc:497
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
-msgstr ""
+msgstr "Исключён PORTDIR: %S\n"
 
 #: src/eix-update.cc:512
 #, c-format
 msgid "Excluded overlay %s\n"
-msgstr ""
+msgstr "Исключён оверлей %s\n"
 
 #: src/eix-update.cc:518
 #, c-format
 msgid "Building database (%s) ..\n"
-msgstr ""
+msgstr "Построенье базы данных (%s) ..\n"
 
 #: src/eix-update.cc:564
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
-msgstr ""
+msgstr "Исключая \"%s\" %s (кэш: %s)\n"
 
 #: src/eix-update.cc:586
 #, c-format
@@ -1537,7 +1661,7 @@ msgstr "[%s] %s"
 
 #: src/eix-update.cc:596
 msgid "     Reading Packages .. "
-msgstr ""
+msgstr "     Чтенье Пакетов .. "
 
 #: src/eix-update.cc:600 src/eix-update.cc:636
 msgid "ABORTED!"
@@ -1546,17 +1670,17 @@ msgstr "ОТМЕНЕНО!"
 #: src/eix-update.cc:605
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
-msgstr ""
+msgstr "     Чтенье категории %s|%s (%s%%)"
 
 #: src/eix-update.cc:610
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
-msgstr ""
+msgstr "     Чтенье до %s категорий пакетов .. "
 
 #: src/eix-update.cc:626
 #, c-format
 msgid ": %s .."
-msgstr ""
+msgstr ": %s .."
 
 #: src/eix-update.cc:635
 msgid "EMPTY!"
@@ -1564,78 +1688,78 @@ msgstr "ПУСТО!"
 
 #: src/eix-update.cc:648
 msgid "Applying masks ..\n"
-msgstr ""
+msgstr "Примененье масок ..\n"
 
 #: src/eix-update.cc:659
 msgid "Calculating hash tables ..\n"
-msgstr ""
+msgstr "Расчёт хэш-таблиц ..\n"
 
 #: src/eix-update.cc:664
 #, c-format
 msgid "Writing database file %s ..\n"
-msgstr ""
+msgstr "Запись файла базы данных %s ..\n"
 
 #: src/eix-update.cc:674
 msgid "Can't open the database file %r for writing (mode = 'wb')"
-msgstr ""
+msgstr "Не могу открыть файл базы данных %r для записи (режим = 'wb')"
 
 #: src/eix-update.cc:685
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
-msgstr ""
+msgstr "База данных содержит %s пакетов в %s категориях.\n"
 
 #: src/versionsort.cc:40
 #, c-format
 msgid "cannot determine version of %s"
-msgstr ""
+msgstr "Не могу определить версию %s"
 
 #: src/cache/cachetable.cc:45
 msgid "Unknown cache %r for directory %r"
-msgstr ""
+msgstr "Неизвестный кэш %r для каталога %r"
 
 #: src/cache/common/assign_reader.cc:75 src/cache/common/assign_reader.cc:95
 #: src/cache/common/flat_reader.cc:34 src/cache/eixcache/eixcache.cc:245
 #, c-format
 msgid "Can't read cache file %s: %s"
-msgstr ""
+msgstr "Не могу прочесть файл кэша %s: %s"
 
 #: src/cache/common/ebuild_exec.cc:147
 #, c-format
 msgid "Can't unlink tempfile %s"
-msgstr ""
+msgstr "Не могу разлинковать временный файл %s"
 
 #: src/cache/common/ebuild_exec.cc:149
 #, c-format
 msgid "Tempfile %s still there after unlink"
-msgstr ""
+msgstr "Временный файл %s всё ещё на месте после разлинковки"
 
 #: src/cache/common/ebuild_exec.cc:152
 #, c-format
 msgid "Tempfile %s is not a file"
-msgstr ""
+msgstr "Временный файл %s не является файлом"
 
 #: src/cache/common/ebuild_exec.cc:219
 msgid "Creation of tempfile failed"
-msgstr ""
+msgstr "Ошибка созданья временного файла"
 
 #: src/cache/common/ebuild_exec.cc:237
 msgid "Forking failed"
-msgstr ""
+msgstr "Ошибка форкинга"
 
 #: src/cache/common/ebuild_exec.cc:262
 #, c-format
 msgid "Got signal %s"
-msgstr ""
+msgstr "Получен сигнал %s"
 
 #: src/cache/common/ebuild_exec.cc:266
 #, c-format
 msgid "Ebuild got signal %s"
-msgstr ""
+msgstr "Ebuild получил сигнал %s"
 
 #: src/cache/common/ebuild_exec.cc:277
 #, c-format
 msgid "Could not start %s"
-msgstr ""
+msgstr "Не получилось запустить %s"
 
 #: src/cache/common/ebuild_exec.cc:279
 #, c-format
@@ -1644,65 +1768,65 @@ msgstr "Ошибка ebuild со статусом %s"
 
 #: src/cache/common/ebuild_exec.cc:282
 msgid "Child aborted in a strange way"
-msgstr ""
+msgstr "Дитя прервано в странной манере"
 
 #: src/cache/common/flat_reader.cc:48 src/cache/common/flat_reader.cc:86
 #: src/eixTk/utils.cc:61
 #, c-format
 msgid "Can't open %s: %s"
-msgstr ""
+msgstr "Не могу открыть %s: %s"
 
 #: src/cache/eixcache/eixcache.cc:138
 msgid "Cache file %s does not contain overlay %r [%s]"
-msgstr ""
+msgstr "Файл кэша %s не содержит оверлей %r [%s]"
 
 #: src/cache/eixcache/eixcache.cc:144
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
-msgstr ""
+msgstr "Файл кэша %s не содержит оверлей %s"
 
 #: src/cache/eixcache/eixcache.cc:257
 #, c-format
 msgid "Cache file %s uses newer format %s (current is %s)"
-msgstr ""
+msgstr "Файл кэша %s использует более новый формат %s (текущий - %s)"
 
 #: src/cache/eixcache/eixcache.cc:258
 #, c-format
 msgid "Cache file %s uses obsolete format %s (current is %s)"
-msgstr ""
+msgstr "Файл кэша %s использует устаревший формат %s (текущий - %s)"
 
 #: src/cache/metadata/metadata.cc:320 src/cache/metadata/metadata.cc:358
 #: src/cache/sqlite/sqlite.cc:222
 msgid "Can't split %r into package and version"
-msgstr ""
+msgstr "Не могу разделить %r на пакет и версию"
 
 #: src/cache/parse/parse.cc:221
 #, c-format
 msgid "Could not properly parse %s: %s"
-msgstr ""
+msgstr "Не получилось обработать %s: %s"
 
 #: src/cache/parse/parse.cc:266
 #, c-format
 msgid "Could not properly execute %s"
-msgstr ""
+msgstr "Не получилось исполнить %s"
 
 #: src/cache/parse/parse.cc:299
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
-msgstr ""
+msgstr "Не могу отделить имя файла ebuild %s/%s"
 
 #: src/cache/sqlite/sqlite.cc:187
 msgid "sqlite dataset does not contain a package name"
-msgstr ""
+msgstr "набор данных sqlite не содержит имя пакета"
 
 #: src/cache/sqlite/sqlite.cc:193
 #, c-format
 msgid "sqlite dataset for %s is too small"
-msgstr ""
+msgstr "набор данных sqlite для %s слишком мал"
 
 #: src/cache/sqlite/sqlite.cc:199
 msgid "%r not of the form package/category-version"
-msgstr ""
+msgstr "%r не в форме пакет/категория-версия"
 
 #: src/cache/sqlite/sqlite.cc:266
 msgid "Database path incorrect"
@@ -1716,7 +1840,7 @@ msgstr "Не могу открыть файл кэша %s"
 #: src/cache/sqlite/sqlite.cc:291
 #, c-format
 msgid "sqlite error: %s"
-msgstr ""
+msgstr "ошибка sqlite: %s"
 
 #: src/cache/sqlite/sqlite.cc:309
 msgid ""
@@ -1745,76 +1869,76 @@ msgstr "Незаконное имя маркера %r"
 
 #: src/eixTk/ansicolor.cc:149
 msgid "Invalid brightness value %r"
-msgstr ""
+msgstr "Неверное значенье яркости %r"
 
 #: src/eixTk/ansicolor.cc:170
 msgid "Illegal color name %r"
-msgstr ""
+msgstr "Неверное имя цвета %r"
 
 #: src/eixTk/argsreader.cc:138
 #, c-format
 msgid "Unknown option --%s\n"
-msgstr ""
+msgstr "Неизвестный ключ --%s\n"
 
 #: src/eixTk/argsreader.cc:155
 #, c-format
 msgid "Unknown option -%c\n"
-msgstr ""
+msgstr "Неизвестный ключ -%c\n"
 
 #: src/eixTk/argsreader.cc:227
 #, c-format
 msgid "Missing parameter to --%s\n"
-msgstr ""
+msgstr "Отсутствует параметр для --%s\n"
 
 #: src/eixTk/argsreader.cc:252
 #, c-format
 msgid "Missing second parameter to --%s\n"
-msgstr ""
+msgstr "Отсутствует второй параметр для --%s\n"
 
 #: src/eixTk/exceptions.cc:40
 msgid "-- Invalid line %s in %s: %r"
-msgstr ""
+msgstr "-- Неверная строка %s в %s: %r"
 
 #: src/eixTk/formated.h:98
 msgid "format specifier missing"
-msgstr ""
+msgstr "отсутствует указатель формата"
 
 #: src/eixTk/formated.h:104
 #, c-format
 msgid "unknown format specifier '%%%s'"
-msgstr ""
+msgstr "неизвестный указатель формата '%%%s'"
 
 #: src/eixTk/stringutils.cc:272
 #, c-format
 msgid "flags should not start with a '+': %s"
-msgstr ""
+msgstr "флаги не должны начинаться с '+': %s"
 
 #: src/eixTk/stringutils.cc:314
 #, c-format
 msgid "Internal error: Storing required after finalizing"
-msgstr ""
+msgstr "Внутренняя ошибка: Требуется храненье после финализации"
 
 #: src/eixTk/stringutils.cc:324
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
-msgstr ""
+msgstr "Внутренняя ошибка: Требуется хэширование после финализации"
 
 #: src/eixTk/stringutils.cc:328
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
-msgstr ""
+msgstr "Внутренняя ошибка: Требуется хэширование в нехэшевом режиме"
 
 #: src/eixTk/stringutils.cc:358
 msgid "Internal error: Index required before sorting."
-msgstr ""
+msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
 #: src/eixTk/stringutils.cc:363
 msgid "Internal error: Trying to shortcut non-hashed string."
-msgstr ""
+msgstr "Внутренняя ошибка: Попытка создать ярлык на нехэшированную строку."
 
 #: src/eixTk/stringutils.cc:373
 msgid "Database corrupt: Nonexistent hash required"
-msgstr ""
+msgstr "База данных испорчена: требуется несуществующий хэш"
 
 #: src/eixTk/utils.cc:82
 #, c-format
@@ -1823,19 +1947,19 @@ msgstr ""
 
 #: src/eixTk/utils.cc:102
 msgid "Nesting level too deep in %r"
-msgstr ""
+msgstr "Уровень гнездованья слишком глубок в %r"
 
 #: src/eixTk/varsreader.cc:111
 msgid "%r: failed to source %r"
-msgstr ""
+msgstr "%r: ошибка взятья %r в качестве источника"
 
 #: src/eixTk/varsreader.cc:819
 msgid "Can't map file %r"
-msgstr ""
+msgstr "Ошибка нанесенья файла %r на карту"
 
 #: src/eixTk/varsreader.cc:864
 msgid "Nesting level too deep when reading %r"
-msgstr ""
+msgstr "Уровень гнездованья слишком глубок при чтеньи %r"
 
 #: src/eixrc/defaults.cc:21
 msgid ""
@@ -4360,53 +4484,55 @@ msgstr ""
 #: src/eixrc/eixrc.cc:247
 #, c-format
 msgid "fatal config error: %s in delayed substitution of %s"
-msgstr ""
+msgstr "смертельная ошибка конфигурации: %s в отложенной замене %s"
 
 #: src/eixrc/eixrc.cc:274
 msgid "FI without IF"
-msgstr ""
+msgstr "FI без IF"
 
 #: src/eixrc/eixrc.cc:278
 msgid "ELSE without IF"
-msgstr ""
+msgstr "ELSE без IF"
 
 #: src/eixrc/eixrc.cc:301
 msgid "self-reference"
-msgstr ""
+msgstr "самоуказанье"
 
 #: src/eixrc/eixrc.cc:386
 msgid "double ELSE"
-msgstr ""
+msgstr "двойной ELSE"
 
 #: src/eixrc/eixrc.cc:408
 msgid "IF without FI"
-msgstr ""
+msgstr "IF без FI"
 
 #: src/eixrc/eixrc.cc:459
 msgid "No $HOME found in environment."
-msgstr ""
+msgstr "$HOME не найден в environment. "
 
 #: src/eixrc/eixrc.cc:742
 msgid "or"
-msgstr ""
+msgstr "или"
 
 #: src/eixrc/eixrc.cc:758
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
 msgstr ""
+"%s имеет неизвестное значенье %r\n"
+"\tвместо этого предполагаю значенье 'all-installed'."
 
 #: src/eixrc/eixrc.cc:788
 msgid "was locally changed to:"
-msgstr ""
+msgstr "было местно изменено на:"
 
 #: src/eixrc/eixrc.cc:789
 msgid "changed locally, default was:"
-msgstr ""
+msgstr "местно изменено, по умолчанью было:"
 
 #: src/eixrc/eixrc.cc:818
 msgid "locally added:"
-msgstr ""
+msgstr "местно добавлено:"
 
 #: src/main/main.cc:101
 #, c-format
@@ -4424,128 +4550,143 @@ msgid ""
 "\n"
 "Sorry for the inconvenience and thanks in advance!\n"
 msgstr ""
+"Получен SIGSEGV - вероятно, Вы нашли ошибку в eix.\n"
+"Пожалуйста, следуйте этим инструкциям и помогите нам отыскать ошибку:\n"
+" * установите gdb (sys-dev/gdb)\n"
+" * установите eix с FEATURES=\"nostrip\" USE=\"debug\"\n"
+"   или с FEATURES=\"nostrip\" CXXFLAGS=\"-g -ggdb3\" LDFLAGS=\"\"\n"
+" * войдите в gdb с \"gdb --args %s ваши_аргументы_для_%s\"\n"
+" * наберите \"run\" и ждите segfault\n"
+" * наберите \"bt\", чтобы получить бэктрэйс (нам очень поможет)\n"
+" * создайте отчёт об ошибке и не забудьте приложить вывод gdb ..\n"
+"\n"
+"Извините за неудобство и заранее спасибо!\n"
 
 #: src/output/formatstring-print.cc:530
 msgid "Unknown property %r"
-msgstr ""
+msgstr "Неизвестное свойство %r"
 
 #: src/output/formatstring-print.cc:535
 msgid "Property %r used outside version context"
-msgstr ""
+msgstr "Свойство %r использовано вне контекста версии"
 
 #: src/output/formatstring.cc:142
 msgid "Variable %r calls itself for printing"
-msgstr ""
+msgstr "Переменная %r вызывает себя для печати"
 
 #: src/output/formatstring.cc:354
 msgid "Internal error: bad node for parse_colors."
-msgstr ""
+msgstr "Внутренняя ошибка: плохой узел для parse_colors."
 
 #: src/output/formatstring.cc:425
 msgid "'(' without closing ')'"
-msgstr ""
+msgstr "'(' без закрывающего ')'"
 
 #: src/output/formatstring.cc:433
 #, c-format
 msgid "Error while parsing color: %s"
-msgstr ""
+msgstr "Ошибка при обработке цвета: %s"
 
 #: src/output/formatstring.cc:456
 msgid "'<' without closing '>'"
-msgstr ""
+msgstr "'<' без закрывающего '>'"
 
 #: src/output/formatstring.cc:525
 msgid "No name of property/variable found after '{'."
-msgstr ""
+msgstr "Не найдено имя свойства/переменной после '{'."
 
 #: src/output/formatstring.cc:529 src/output/formatstring.cc:550
 #: src/output/formatstring.cc:609
 msgid "Found '{' without closing '}'."
-msgstr ""
+msgstr "Найден '{' без закрывающего '}'."
 
 #: src/output/formatstring.cc:544
 msgid "Unexpected symbol %r found after '{'."
-msgstr ""
+msgstr "Неожиданный символ %r найден после '{'."
 
 #: src/output/formatstring.cc:630
 msgid "Found ELSE without IF."
-msgstr ""
+msgstr "Найден ELSE без IF"
 
 #: src/output/formatstring.cc:657
 msgid "Found FI without IF."
-msgstr ""
+msgstr "Найден FI без IF."
 
 #: src/output/formatstring.cc:680
 msgid "Check your syntax"
-msgstr ""
+msgstr "Проверьте Ваш синтаксис"
 
 #: src/output/formatstring.cc:694
 msgid "Bad state: ERROR"
-msgstr ""
+msgstr "Плохое состоянье: ОШИБКА"
 
 #: src/output/formatstring.cc:695
 msgid "Bad state: STOP"
-msgstr ""
+msgstr "Плохое состоянье: СТОП"
 
 #: src/output/formatstring.cc:696
 msgid "Bad state: undefined"
-msgstr ""
+msgstr "Плохое состоянье: не определено"
 
 #: src/output/formatstring.cc:708
 msgid "Line %r, column %r: %s"
-msgstr ""
+msgstr "Строка %r, столбец %r: %s"
 
 #: src/portage/basicversion.cc:107
 msgid "internal error: unknown PartType on (%r,%r)"
-msgstr ""
+msgstr "внутренняя ошибка: неизвестный PartType на (%r,%r)"
 
 #: src/portage/basicversion.cc:129
 msgid "malformed (first primary at %r) version string %r\n"
-msgstr ""
+msgstr "недосформированная (1 первичн. в %r) строка версии %r\n"
 
 #: src/portage/basicversion.cc:144
 msgid "malformed (primary at %r) version string %r\n"
-msgstr ""
+msgstr "недосформированная (первичн. в %r) строка версии %r"
 
 #: src/portage/basicversion.cc:187
 msgid "malformed (suffix at %r) version string %r"
-msgstr ""
+msgstr "недосформированная (суффикс в %r) строка версии %r"
 
 #: src/portage/basicversion.cc:222
 msgid ""
 "garbage (%s) at end of version %r\n"
 "accepting version anyway"
 msgstr ""
+"мусор (%s) в конце версии %r\n"
+"всё равно принимаю версию"
 
 #: src/portage/conf/cascadingprofile.cc:57
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
+"Превышен уровень рекурсии для каскадных профилей: прекращаю чтенье родителей"
 
 #: src/portage/conf/portagesettings.cc:1222
 #: src/portage/conf/portagesettings.cc:1251
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
+"внутренняя ошибка: Попытка восстановить нелокальную маску без сохраненья"
 
 #: src/portage/mask.cc:87
 msgid "Can't read category."
-msgstr "Не могу прочесть категорью."
+msgstr "Не могу прочесть категорию."
 
 #: src/portage/mask.cc:108
 msgid "Repository name must be separated with :: (one : is missing)"
-msgstr ""
+msgstr "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)"
 
 #: src/portage/mask.cc:153
 msgid "Operator without a version part."
-msgstr ""
+msgstr "Оператор без части с версией."
 
 #: src/portage/mask.cc:166
 msgid "A '*' is only valid at the end of a version-string."
-msgstr ""
+msgstr "'*' уместно только в конце версии-строки."
 
 #: src/portage/mask.cc:172
 msgid "A wildcard is only valid with the = operator."
-msgstr ""
+msgstr "Шаблон поиска имеет смысл только с оператором =."
 
 #: src/portage/mask.cc:176
 msgid ""
@@ -4553,19 +4694,22 @@ msgid ""
 "Portage would also accept something like ~app-shells/bash-3*,\n"
 "but behave just like ~app-shells/bash-3."
 msgstr ""
+"Шаблон поиска имеет смысл только с оператором =.\n"
+"Portage также бы принял что-то типа ~app-shells/bash-3*,\n"
+"но повёл себя как ~app-shells/bash-3."
 
 #: src/portage/set_stability.cc:97
 msgid "internal error: SetStability calculates wrong index"
-msgstr ""
+msgstr "внутренняя ошибка: SetStability рассчитывает неверный индекс"
 
 #: src/search/matchtree.cc:280
 msgid "warning: ignoring --close without --open"
-msgstr ""
+msgstr "вниманье: игнорирую --close без --open"
 
 #: src/search/packagetest.cc:246
 msgid "cannot find match field %r"
-msgstr ""
+msgstr "не могу сопоставить поле %r"
 
 #: src/search/packagetest.cc:258
 msgid "cannot find match algorithm %r"
-msgstr ""
+msgstr "не могу сопоставить алгоритм %r"

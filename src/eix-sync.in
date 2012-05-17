@@ -44,7 +44,7 @@ The following options are available:
      USER defaults to current user and DIR defaults to PORTDIR.
      An empty SERVER cancels this option. This option implies -0
 -0   No eix --sync
--2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successfull syncing;
+-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successful syncing;
      you should later call eix-sync -u locally on CLIENT.
      If you already have synced you might want to combine this option with -uU.
 -U   Do not touch the database and omit the hooks after eix-update (@ entries)
