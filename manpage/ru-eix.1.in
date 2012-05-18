@@ -2014,7 +2014,7 @@ be removed in the shell script anyway).
 Hence, in order to read variables from eix in a shell script without omitting
 trailing spaces, you should use a visible symbol for PRINT_APPEND and use
 for instance something like
-B<VAR="`PRINT_APPEND=x eix --print VAR`" ; VAR="${VAR%x}">
+B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 
 .TP
 .BR NEWLINE " " (true / false)
@@ -2349,8 +2349,8 @@ If you do not want this, use B<sqlite*> (see below).
 .RE
 .TP
 .B sqlite*
-This is analogous to the cache method B<eix> with the difference that
-all categories found in I<FILE> are added, even those categories which
+This is analogous to the cache method B<sqlite> with the difference that
+all categories found in the file are added, even those categories which
 were not enabled by some profile/categories file.
 .TP
 .BR flat " or " flat:I<PATH>
@@ -2686,7 +2686,7 @@ Defines whether /etc/portage/package.cflags is tested with -t.
 Defines whether removed packages are tested with -t.
 .TP
 .BR TEST_FOR_NONEXISTENT " " (true / false)
-Defines whether non-existing installed versions are positive for -T.
+Defines whether non-existent installed versions are positive for -T.
 What is considered as non-existent is defined by the B<NONEXISTENT_IF>-variables.
 .TP
 .BR TEST_FOR_REDUNDANCY " " (true / false)
@@ -2748,7 +2748,7 @@ Instead of "B<or>"  also the symbols "B<|>" or "B<||>" can be used.
 .RE
 
 .TP
-.BR REDUNDANT_IF_DOUBLE_LINE " " (string)
+.BR REDUNDANT_IF_DOUBLE_LINE " " (string ", see above")
 Applies if /etc/portage/package.{accept_,}keywords has two lines for identical targets,
 i.e. such that portage would drop the first of these lines.
 Note that lines with targets B<foo/bar> and B<=foo/bar-1> are considered as
@@ -2759,11 +2759,11 @@ B<REDUNDANT_IF_MIXED>, and B<REDUNDANT_IF_STRANGE>.
 .TP
 .BR REDUNDANT_IF_MIXED " " (string ", see above")
 Applies if /etc/portage/package.{accept_,}keywords lists two different keywords,
-e.g. ~ARCH and -*, for the versions in question.
+e.g. ~ARCH and *, for the versions in question.
 .TP
 .BR REDUNDANT_IF_WEAKER " " (string ", see above")
 Applies if /etc/portage/package.{accept_,}keywords lists a keywords which can
-be replaced by a weaker keyword, e.g. -* or ~OTHERARCH or OTHERARCH
+be replaced by a weaker keyword, e.g. ** or ~OTHERARCH or OTHERARCH
 in place of ~ARCH, or ~OTHERARCH in place of OTHERARCH,
 for the versions in question.
 .TP
@@ -2839,7 +2839,6 @@ This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.e
 .TP
 .BR REDUNDANT_IF_IN_LICENSE " " (string ", see above")
 This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.license.
-See the above comments about this file.
 .TP
 .BR REDUNDANT_IF_IN_CFLAGS " " (string ", see above")
 This is analogous to B<REDUNDANT_IF_IN_KEYWORDS>, but for /etc/portage/package.cflags.
@@ -3009,7 +3008,7 @@ will output
 .B 4.5
 .RE
 
-If you pass only one argument, eix is more sloppy about the version rules;
+If you pass only one argument, versionsort is more sloppy about the version rules;
 even if the version part is not completely correct, it is guaranteed
 in this case that the output is string-equal to the version part.
 Thus, you can use versionsort with one argument to split the package name
