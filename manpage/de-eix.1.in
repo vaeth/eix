@@ -37,7 +37,7 @@
 .\" }}}
 
 .\" {{{ BESCHREIBUNG
-.SH "BESCHREIBUG"
+.SH "BESCHREIBUNG"
 B<eix-update> generiert einen Binärcache des lokalen Portagebaums und von Overlays.
 B<eix> durchsucht diesen Cache nach Paketen, die Kriterien erfüllen, die durch I<AUSDRUCK> festgelegt werden;
 falls auf der Kommandozeile kein einschränkendes Kriterium angegeben wird, werden natürlich alle Pakete ausgegeben.
