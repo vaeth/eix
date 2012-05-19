@@ -1,15 +1,33 @@
 # Makefile.am for manpage of eix
 
-
-MAN_LINGUAS = \
-en \
-de \
-ru
-
 MAN_FILES = \
 eix.1
 
-# The following lists must contain all combinations of MAN_LINGUAS-MAN_FILES
+if USING_NLS
+foreign_man_linguas = \
+de \
+ru
+
+foreign_man_mans = \
+de-eix.1 \
+ru-eix.1
+else
+foreign_man_linguas =
+foreign_man_mans =
+endif
+
+MAN_LINGUAS = \
+$(foreign_man_linguas) \
+en
+
+man_MANS = \
+$(foreign_man_mans) \
+en-eix.1
+
+EXTRA_DIST = \
+en-eix.1.in \
+de-eix.1.in \
+ru-eix.1.in
 
 CLEANFILES = \
 en-eix.1 \
@@ -18,20 +36,10 @@ ru-eix.1 \
 cppcomplete.tags \
 tags
 
-man_MANS = \
-en-eix.1 \
-de-eix.1 \
-ru-eix.1
-
-EXTRA_DIST = \
-en-eix.1.in \
-de-eix.1.in \
-ru-eix.1.in
-
 install-man1:
 	@for file in $(MAN_FILES); do \
 	 for lang in $(MAN_LINGUAS); do \
-	  case ' $(LINGUAS) en' in *" $${lang}"*) \
+	  case ' $(INST_MAN_LINGUAS) en' in *" $${lang}"*|*"*"*) \
 		if [ "$${lang}" = en ]; \
 		then mansubdir=man1; \
 		else mansubdir="$${lang}/man1"; \
@@ -48,13 +56,15 @@ install-man1:
 uninstall-man1:
 	@for file in $(MAN_FILES); do \
 	 for lang in $(MAN_LINGUAS); do \
+	  case ' $(INST_MAN_LINGUAS) en' in *" $${lang}"*|*"*"*) \
 		if [ "$${lang}" = en ]; \
 		then mansubdir=man1; \
 		else mansubdir="$${lang}/man1"; \
 		fi; \
 		mandestdir='$(DESTDIR)$(mandir)/'"$${mansubdir}"; \
 		echo " $(RM) -f $${mandestdir}/$${file}"; \
-		$(RM) -f "$${mandestdir}/$${file}"; \
+		$(RM) -f "$${mandestdir}/$${file}";; \
+	  esac
 	 done; \
 	done
 

@@ -2,7 +2,7 @@
 
 *eix-0.25.5
 	Artem Karimov <skybon at gmail.com>:
-	- Russian translation
+	- Russian translation. (Missing yet: eix --dump and most of manpage)
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Depend on http://github.com/vaeth/push/ instead of implementing

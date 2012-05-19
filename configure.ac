@@ -446,6 +446,15 @@ AC_PROG_SED()
 dnl LT_INIT()
 AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
+AS_CASE([${USE_NLS}],
+	[yes],
+		[AS_VAR_SET([using_nls], [:])
+		AS_VAR_SET([INST_MAN_LINGUAS], [${LINGUAS-*}])],
+	[AS_VAR_SET([using_nls], [false])
+	AS_VAR_SET([INST_MAN_LINGUAS], [])])
+AM_CONDITIONAL([USING_NLS],
+	[${using_nls}])
+AC_SUBST([INST_MAN_LINGUAS])
 
 # This must be an early test, since we need the null device later in this file:
 AC_MSG_CHECKING([for null-device])

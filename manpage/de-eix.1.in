@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-04-18 23:45:00 +0200 (Fri, 18 May 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-05-19 19:00:00 +0200 (Sat, 19 May 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix

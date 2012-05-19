@@ -1,5 +1,8 @@
 
+- Finish Russian translation of manpage.
+
 Things to do perhaps:
+- Russian translation of --dump (src/eixrc/defaults.cc in ru.po)
 - Support DEPEND, RDEPEND, PDEPEND for installed packages.
   (See the comments to the depend, rdepend, pdepend properties in the manpage.)
   Once this is implemented:
