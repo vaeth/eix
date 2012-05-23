@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-05-19 19:00:00 +0200 (Sat, 19 May 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-05-23 21:30:00 +0200 (Wed, 23 May 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -34,6 +34,7 @@
 [B<-->] [I<Befehl zum Ausführen>]
 
 .B versionsort
+[B<-p>|B<-r>] [I<Paket->]I<Version> ...
 .\" }}}
 
 .\" {{{ BESCHREIBUNG
@@ -1250,9 +1251,12 @@ B<haveuse> kann benutzt werden, um zu testen, ob die Ausgabe nichtleer ist (in d
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Es gibt die Installationszeit aus; das strftime()-Format für die Zeit wird aus der Variablen I<VAR> genommen.
 .TP
-.BR version
+.BR version, plainversion, revision
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
-Es ist die reine Versionsnummer (als Text).
+Es ist die reine Versionsnummer (man 5 ebuild: $PVR) als Text.
+Bei plainversion with die Versionsnummer ohne Revisionsnummer ausgegeben ($PV),
+und bei revision nur die Revisionsnummer ($PR).
+Im Gegensatz zu Portage ist die Revision leer, wenn keine spezifiziert ist.
 .TP
 .BR installed ", " best ", " best*
 Ist 1 oder leer, je nachdem of mindestens eine Version des Pakets installiert ist oder eine beste stabile bzw. instabile Version hat.
@@ -3101,11 +3105,45 @@ das Argument mit einer Nicht-Ziffer (wie B<X> in obigem Beispiel)
 beginnen zu lassen, um sicherzustellen, dass versionsort tatsächlich
 die Version abtrennt und nicht fälschicherweise das gesamte Argument
 als eine einzige Version interpretiert.
+Seit eix-0.25.6 unterstützt versionsort auch zwei Optionen, wenn nur ein Argument
+benutzt wird: Mit
+.B -p
+bzw.
+.B -r
+kann man statt der vollen Versionsnummer auch die reine Versionsnummer ohne Revisionsnummer
+bzw. die Revisionsnummer ausgeben.
+Beispielsweise wird nach
+
+.RS
+B<split=1-font-adobe-75dpi-1.3-r1>
+
+B<plainversion=`versionsort -p "X${split}"`>
+.RE
+
+die Variable B<plainversion> als B<1.3> definiert sein, und ähnlich wird nach
+
+.RS
+B<split=1-font-adobe-75dpi-1.3-r1>
+
+B<revision=`versionsort -r "X${split}"`>
+.RE
+
+die B<revision> den Wert B<r1> haben.
+Wenn es keine Revisionsnummber gibt, wird nichts ausgegeben.
+Beispielsweise wird nach
+
+.RS
+B<split=1-font-adobe-75dpi-1.3>
+
+B<revision=`versionsort -r "X${split}"`>
+.RE
+
+die B<revision>-Variable leer sein.
 .\" }}}
 
 
 .\" {{{ FEHLER
-.SH "FEHLER (und eine Art FAQ)"
+.SH "FEHLER (und Antworten auf einige häufig gestellte Fragen)"
 .LP
 Für Fehlermeldungen benutzen Sie bitte I<@PACKAGE_BUGREPORT@> oder
 Gentoos Bugzilla I<http://bugs.gentoo.org/>

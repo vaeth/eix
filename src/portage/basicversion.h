@@ -88,6 +88,10 @@ public:
 
 	void rebuild() const;
 
+	std::string getPlain() const;
+
+	std::string getRevision() const;
+
 protected:
 	/// The full version-string. This is usually only used as a cache for the
 	/// result of rebuild. That's why this is mutable

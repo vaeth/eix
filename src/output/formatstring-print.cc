@@ -282,6 +282,8 @@ class Scanner {
 			VER_SLOT,
 			VER_ISSLOT,
 			VER_VERSION,
+			VER_PLAINVERSION,
+			VER_REVISION,
 			VER_OVERLAYNUM,
 			VER_OVERLAYVER,
 			VER_VERSIONKEYWORDSS,
@@ -424,6 +426,8 @@ class Scanner {
 			prop_ver("slot", VER_SLOT);
 			prop_ver("isslot", VER_ISSLOT);
 			prop_ver("version", VER_VERSION);
+			prop_ver("plainversion", VER_PLAINVERSION);
+			prop_ver("revision", VER_REVISION);
 			prop_ver("overlaynum", VER_OVERLAYNUM);
 			prop_ver("overlayver", VER_OVERLAYVER);
 			prop_ver("versionkeywords*", VER_VERSIONKEYWORDSS);
@@ -847,6 +851,14 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 			if(version_variables->isinst)
 				return version_variables->instver()->getFull();
 			return version_variables->version()->getFull();
+		case Scanner::VER_PLAINVERSION:
+			if(version_variables->isinst)
+				return version_variables->instver()->getPlain();
+			return version_variables->version()->getPlain();
+		case Scanner::VER_REVISION:
+			if(version_variables->isinst)
+				return version_variables->instver()->getRevision();
+			return version_variables->version()->getRevision();
 		case Scanner::VER_OVERLAYNUM:
 			a = true;
 		case Scanner::VER_OVERLAYVER:

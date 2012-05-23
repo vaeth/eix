@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-05-19 19:00:00 +0200 (Sat, 19 May 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-05-23 21:30:00 +0200 (Wed, 23 May 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -34,6 +34,7 @@
 [B<-->] [I<command to execute>]
 
 .B versionsort
+[B<-p>|B<-r>] [I<package->]I<version> ...
 .\" }}}
 
 .\" {{{ DESCRIPTION
@@ -1234,9 +1235,12 @@ This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the installation date; the strftime() format for the date is read from
 the variable I<VAR>.
 .TP
-.BR version
+.BR version, plainversion, revision
 This must occur only in I<VARIABLE> in the context of version printing.
-It outputs the plain version in text form.
+It outputs the version (man 5 ebuild: $PVR) in text form.
+plainversion outputs the version without revision ($PV),
+and revision only the revision ($PR).
+In contrast to portage, revision is empty if there was no revision specified.
 .TP
 .BR installed ", " best ", " best*
 Is 1 or empty, depending on whether at least one version of the package is installed
@@ -3024,6 +3028,41 @@ Although currently it makes no difference, it is safer in such a case
 to let the argument(s) start with a non-number (like B<X> in the above example)
 to make sure that versionsort will really cut the version from the argument
 and cannot misinterpret the whole argument as a version.
+
+Since eix-0.25.6, versionsort also supports two options if you use only one argument:
+With
+.B -p
+or
+.B -r
+not the full version but only the plain version without revision or the revision
+will be output, respectively.
+For example,
+
+.RS
+B<split=1-font-adobe-75dpi-1.3-r1>
+
+B<plainversion=`versionsort -p "X${split}"`>
+.RE
+
+will define B<plainversion> as B<1.3>, and similarly
+
+.RS
+B<split=1-font-adobe-75dpi-1.3-r1>
+
+B<revision=`versionsort -r "X${split}"`>
+.RE
+
+will define B<revision> as B<r1>.
+If there is no revision, nothing is output.
+For instance, after
+
+.RS
+B<split=1-font-adobe-75dpi-1.3>
+
+B<revision=`versionsort -r "X${split}"`>
+.RE
+
+you have an empty B<revision> variable.
 .\" }}}
 
 

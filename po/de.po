@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-16 22:21+0200\n"
+"POT-Creation-Date: 2012-05-23 20:55+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -556,8 +556,7 @@ msgid ""
 "     USER defaults to current user and DIR defaults to PORTDIR.\n"
 "     An empty SERVER cancels this option. This option implies -0\n"
 "-0   No eix --sync\n"
-"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successful "
-"syncing;\n"
+"-2 [USER@]CLIENT[:DIR] Sync via rsync *to* CLIENT after successful syncing;\n"
 "     you should later call eix-sync -u locally on CLIENT.\n"
 "     If you already have synced you might want to combine this option with -"
 "uU.\n"
@@ -5550,11 +5549,11 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:530
+#: src/output/formatstring-print.cc:534
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 
-#: src/output/formatstring-print.cc:535
+#: src/output/formatstring-print.cc:539
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 
@@ -5624,19 +5623,19 @@ msgstr "Zeile %r, Spalte %r: %s"
 msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "Interner Fehler: unknown PartType on (%r,%r)"
 
-#: src/portage/basicversion.cc:129
+#: src/portage/basicversion.cc:160
 msgid "malformed (first primary at %r) version string %r"
 msgstr "Versionsstring unerlaubt (erstes Primary bei %r): %r"
 
-#: src/portage/basicversion.cc:144
+#: src/portage/basicversion.cc:175
 msgid "malformed (primary at %r) version string %r"
 msgstr "Versionsstring unerlaubt (Primary bei %r): %r"
 
-#: src/portage/basicversion.cc:187
+#: src/portage/basicversion.cc:218
 msgid "malformed (suffix at %r) version string %r"
 msgstr "Versionsstring unerlaubt (Suffix bei %r): %r"
 
-#: src/portage/basicversion.cc:222
+#: src/portage/basicversion.cc:253
 msgid ""
 "garbage (%s) at end of version %r\n"
 "accepting version anyway"

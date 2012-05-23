@@ -116,6 +116,37 @@ BasicVersion::rebuild() const
 	m_cached_full.assign(ss.str(), 1, string::npos);
 }
 
+string
+BasicVersion::getPlain() const
+{
+	stringstream ss;
+	for(list<BasicPart>::const_iterator it(m_parts.begin());
+		it != m_parts.end(); ++it) {
+		if(it->parttype == BasicPart::revision) {
+			break;
+		}
+		ss << *it;
+	}
+	return ss.str();
+}
+
+string
+BasicVersion::getRevision() const
+{
+	stringstream ss;
+	bool started(false);
+	for(list<BasicPart>::const_iterator it(m_parts.begin());
+		it != m_parts.end(); ++it) {
+		if(it->parttype == BasicPart::revision) {
+			started = true;
+		}
+		if(started) {
+			ss << *it;
+		}
+	}
+	return ss.str();
+}
+
 void
 BasicVersion::parseVersion(const string& str)
 {

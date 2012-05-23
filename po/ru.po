@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-19 16:21+0200\n"
+"POT-Creation-Date: 2012-05-23 20:55+0200\n"
 "PO-Revision-Date: 2012-05-19 00:24+0400\n"
 "Last-Translator: Артем Каримов <skybon@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -4644,11 +4644,11 @@ msgstr ""
 "\n"
 "Извините за неудобство и заранее спасибо!\n"
 
-#: src/output/formatstring-print.cc:530
+#: src/output/formatstring-print.cc:534
 msgid "Unknown property %r"
 msgstr "Неизвестное свойство %r"
 
-#: src/output/formatstring-print.cc:535
+#: src/output/formatstring-print.cc:539
 msgid "Property %r used outside version context"
 msgstr "Свойство %r использовано вне контекста версии"
 
@@ -4718,19 +4718,19 @@ msgstr "Строка %r, столбец %r: %s"
 msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "внутренняя ошибка: неизвестный PartType на (%r,%r)"
 
-#: src/portage/basicversion.cc:129
+#: src/portage/basicversion.cc:160
 msgid "malformed (first primary at %r) version string %r"
 msgstr "недосформированная (1 первичн. в %r) строка версии %r"
 
-#: src/portage/basicversion.cc:144
+#: src/portage/basicversion.cc:175
 msgid "malformed (primary at %r) version string %r"
 msgstr "недосформированная (первичн. в %r) строка версии %r"
 
-#: src/portage/basicversion.cc:187
+#: src/portage/basicversion.cc:218
 msgid "malformed (suffix at %r) version string %r"
 msgstr "недосформированная (суффикс в %r) строка версии %r"
 
-#: src/portage/basicversion.cc:222
+#: src/portage/basicversion.cc:253
 msgid ""
 "garbage (%s) at end of version %r\n"
 "accepting version anyway"

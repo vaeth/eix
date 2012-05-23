@@ -52,6 +52,18 @@ run_versionsort(int argc, char *argv[])
 		cout << parse_version(argv[1]);
 		return EXIT_SUCCESS;
 	}
+	if((argc == 3) && (argv[1][0] == '-') && (argv[1][1]) && !argv[1][2]) {
+		switch(argv[1][1]) {
+			case 'p':
+				cout << BasicVersion(parse_version(argv[2])).getPlain();;
+				return EXIT_SUCCESS;
+			case 'r':
+				cout << BasicVersion(parse_version(argv[2])).getRevision();;
+				return EXIT_SUCCESS;
+			default:
+				break;
+		}
+	}
 	vector<BasicVersion> versions;
 	for(int i(1); likely(i < argc); ++i)
 		versions.push_back(BasicVersion(parse_version(argv[i])));
