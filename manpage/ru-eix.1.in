@@ -58,17 +58,17 @@ B<EIX_SYNC_CONF>.
 B<eix-test-obsolete> - сценарий, который вызвает B<eix> несколько раз, чтобы показать вывод
 B<eix -tTc> более организованно.
 
-B<eix-remote> can sync an eix database from an external server and
-add/remove it to the current database.
-Note that to keep such remote data across eix-update calls
-you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
-By default, this script drops its permissions using B<eix-drop-permissions>.
-To get more help on B<eix-remote> call B<eix-remote -h>.
+B<eix-remote> может синхронизировать базу данных eix с удалённого сервера и добавить/удалить
+её к текущей базе данных.
+Заметьте, что чтобы сохранять эти удалённые данные между вызовами eix-update, нужно установить
+B<KEEP_VIRTUALS=true> в @SYSCONFDIR@/eixrc.
+По умолчанью этот сценарий сбрасывает разрешенья используя B<eix-drop-permissions>.
+Для полученья дополнительной информации по B<eix-remote> вызовите B<eix-remote -h>.
 
-B<eix-layman> can add or remove local layman overlays to the current database.
-You might want to use this if you do not source layman's make.conf in your local I</etc/make.conf>.
-To get more help on B<eix-layman> call B<eix-layman -h>.
-B<eix-layman> is also meant as an example script how to use B<eix-functions.sh>:
+B<eix-layman> может добавлять или убирать местные оверлеи layman к/из текущей базы данных.
+Это нужно если Вы не указываете layman-овский make.conf в Вашем I</etc/make.conf>.
+Для полученья дополнительной информации по B<eix-layman> вызовите B<eix-layman -h>.
+B<eix-layman> также является примером использованья B<eix-functions.sh>:
 
 B<eix-installed-after> is a simple script (with many comments) demonstrating some
 possibilities how a custom eix output format can be used.
