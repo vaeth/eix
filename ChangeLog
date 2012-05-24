@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce plainversion and revision attributes
 	- Introduce versionsort -[pr]
+	- Extend varsreader.cc to allow VAR=\n and (for portage escapes)
+	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387
 
 *eix-0.25.5
 	Artem Karimov <skybon at gmail.com>:

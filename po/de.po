@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-23 20:55+0200\n"
+"POT-Creation-Date: 2012-05-24 20:58+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2017,15 +2017,15 @@ msgstr "Lesefehler in %s: %s "
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:111
+#: src/eixTk/varsreader.cc:112
 msgid "%r: failed to source %r"
 msgstr "%r: source %r ging nicht"
 
-#: src/eixTk/varsreader.cc:819
+#: src/eixTk/varsreader.cc:820
 msgid "Can't map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:864
+#: src/eixTk/varsreader.cc:865
 msgid "Nesting level too deep when reading %r"
 msgstr "Zu tiefe Verschachtelung beim Lesen von %r"
 

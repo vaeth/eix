@@ -32,6 +32,7 @@
 #define INPUT (*(x))
 /** Move to next input and check for end of buffer. */
 #define NEXT_INPUT do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(STOP); } while(0)
+#define SKIP_SPACE do { while((INPUT == '\t') || (INPUT == ' ')) { NEXT_INPUT; } } while(0)
 #define NEXT_INPUT_EVAL do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(EVAL_READ); } while(0)
 #define INPUT_EOF (unlikely((x) == filebuffer_end))
 #define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) ++(x); } while(0)
@@ -162,9 +163,7 @@ void
 VarsReader::JUMP_WHITESPACE()
 {
 	sourcecmd=false;
-	while(INPUT == '\t' || INPUT == ' ') {
-		NEXT_INPUT;
-	}
+	SKIP_SPACE;
 	switch(INPUT) {
 		case '#':
 			NEXT_INPUT;
@@ -217,6 +216,7 @@ VarsReader::FIND_ASSIGNMENT()
 {
 	key_len = 0;
 	while(likely(isValidKeyCharacter(INPUT))) { NEXT_INPUT; ++key_len;}
+	SKIP_SPACE;
 	switch(INPUT) {
 		case '=':  CHSTATE(EVAL_VALUE);
 		case '#':  NEXT_INPUT; CHSTATE(JUMP_COMMENT);
@@ -237,12 +237,12 @@ VarsReader::EVAL_VALUE()
 	NEXT_INPUT;
 	VALUE_CLEAR;
 	if(parse_flags & PORTAGE_ESCAPES) {
+		SKIP_SPACE;
 		switch(INPUT) {
 			case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
 			case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
-			case '\t':
-			case '\n':
-			case ' ':   CHSTATE(JUMP_NOISE);
+			case '\r':
+			case '\n':  CHSTATE(ASSIGN_KEY_VALUE);
 			case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
 			case '\\':  NEXT_INPUT; CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
 			default:    CHSTATE(VALUE_WHITESPACE_PORTAGE);
@@ -251,8 +251,9 @@ VarsReader::EVAL_VALUE()
 	switch(INPUT) {
 		case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE);
 		case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE);
+		case '\r':
+		case '\n':  CHSTATE(ASSIGN_KEY_VALUE);
 		case '\t':
-		case '\n':
 		case ' ':   CHSTATE(JUMP_NOISE);
 		case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
 		case '\\':  NEXT_INPUT; CHSTATE(WHITESPACE_ESCAPE);
