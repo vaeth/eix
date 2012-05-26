@@ -65,13 +65,13 @@ class BasicVersion
 {
 public:
 	/// Parse the version-string pointed to by str. If str is NULLPTR, no parsing is done.
-	BasicVersion(const char *str = NULLPTR)
-	{ if(str != NULLPTR) parseVersion(str); }
+	BasicVersion(const char *str = NULLPTR, bool garbage_fatal = false)
+	{ if(str != NULLPTR) parseVersion(str, garbage_fatal); }
 
 	virtual ~BasicVersion() { }
 
 	/// Parse the version-string pointed to by str.
-	void parseVersion(const std::string& str);
+	void parseVersion(const std::string& str, bool garbage_fatal = false);
 
 	/// Compare all except gentoo revisions
 	static short compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;

@@ -238,10 +238,6 @@ AddOption(STRING, "PRINT_APPEND",
 	"To read variables in a shell without omitting trailing spaces, use e.g.\n"
 	"VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}"));
 
-AddOption(BOOLEAN, "NEWLINE",
-	"false", _(
-	"Whether a newline is added magically at the end of a package."));
-
 AddOption(BOOLEAN, "DIFF_ONLY_INSTALLED",
 	"false", _(
 	"If true, eix-diff will only consider version changes for installed packages."));
@@ -1468,16 +1464,9 @@ AddOption(STRING, "TAG_FOR_EX_MISSING_KEYWORD",
 	"It is the tag for \"originally no keyword but now stable\" versions."));
 
 AddOption(STRING, "VERSION_NEWLINE",
-	"%{!NEWLINE}"
-		"\\n"
-	"%{else}"
-		"{!last}\\n{}"
-	"%{}", _(
+	"\\n", _(
 	"This variable is used by delayed substitution in version formatters.\n"
-	"It prints a newline if it appears appropriate. If the last version might\n"
-	"be skipped (by using conditionals in your version formatter) you should\n"
-	"set NEWLINE=false since you otherwise get an additional newline\n"
-	"after the last actually printed version."));
+	"It prints a newline at the end of a version."));
 
 AddOption(STRING, "NAMEVERSION",
 	"<category>/<name>-<version>"
@@ -2207,9 +2196,9 @@ AddOption(STRING, "DIFF_FORMATLINE_INSTALLEDVERSIONS",
 	"It defines the format for eix-diff for installed versions."));
 
 AddOption(STRING, "FORMAT_FINISH",
-	"%{!NEWLINE}\\n%{}", _(
+	"\\n", _(
 	"This variable is only used for delayed substitution.\n"
-	"It is used at the end of a package to output a newline unless NEWLINE=true."));
+	"It prints a newline at the end of a package."));
 
 AddOption(STRING, "FORMAT_NAME",
 	"{system}(%{COLOR_CATEGORY_SYSTEM})"

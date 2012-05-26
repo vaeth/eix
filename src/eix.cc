@@ -562,8 +562,7 @@ run_eix(int argc, char** argv)
 
 	if(unlikely(rc_options.only_names)) {
 		rc_options.pure_packages = true;
-		format.setFormat("<category>/<name>");
-		format.magic_newline = true;
+		format.setFormat("<category>/<name>\n");
 	}
 	else
 		set_format();

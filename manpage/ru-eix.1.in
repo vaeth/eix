@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-05-23 21:30:00 +0200 (Wed, 23 May 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-05-26 14:30:00 +0200 (Sat, 25 May 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНЬЕ
 .SH "НАЗВАНЬЕ"
 .B eix
@@ -34,7 +34,7 @@
 [B<-->] [I<команда для выполненья>]
 
 .B versionsort
-[B<-p>|B<-r>] [I<package->]I<version> ...
+[B<-n>|B<-p>|B<-v>|B<-r>] [I<package->]I<version> ...
 .\" }}}
 
 .\" {{{ ОПИСАНЬЕ
@@ -2021,27 +2021,6 @@ for instance something like
 B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 
 .TP
-.BR NEWLINE " " (true / false)
-If true, eix will print a newline after each version for which the formatstring outputs something.
-You will find B<true> convenient if you use trivial formatstrings which output only one line
-(unless you want to add the newline manually to the formatstring).
-However, if you use a formatstring which outputs versions in separate lines,
-and only those versions are output for which certain tests succeed,
-it might be rather cumbersome to keep track in the formatstring whether you must output a newline or
-whether this will happen automatically.
-In such cases you should should avoid the headache and put B<NEWLINE=false>.
-The default formatstrings of eix produce correct output for both settings
-(by checking the value of B<NEWLINE> and outputting the newline only if it is required).
-
-Unless you need to support formatstring which you had previously written,
-I recommend to leave the default B<NEWLINE=false> and to add manually a B<\\n>
-(or an explicit newline) at the end of your formatstring.
-Moreover, if you had written formatstrings, I recommend to upgrade them to
-output this newline instead of setting B<NEWLINE=true>; this option really
-just exists for backward compatibility and might be removed in future versions
-of eix.
-
-.TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Defines whether B<--compact> or B<--verbose> is on by default.
 
@@ -3030,40 +3009,30 @@ to let the argument(s) start with a non-number (like B<X> in the above example)
 to make sure that versionsort will really cut the version from the argument
 and cannot misinterpret the whole argument as a version.
 
-Since eix-0.25.6, versionsort also supports two options if you use only one argument:
-With
-.B -p
-or
-.B -r
-not the full version but only the plain version without revision or the revision
-will be output, respectively.
-For example,
+Since eix-0.25.6, versionsort supports some options if only one argument is used:
+With B<-n>, B<-p>, B<-v>, or <-r> only the name (without version appendix),
+name with version (without revision appendix), the pure version (without revision appendix)
+or only the revision will be output.
+For example, after
 
 .RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
-B<plainversion=`versionsort -p "X${split}"`>
+B<PN=`versionsort -n "${split}"`
+
+B<P=`versionsort -p "${split}"`
+
+B<PV=`versionsort -v "X${split}"`>
+
+B<PR=`versionsort -r "X${split}"`>
 .RE
 
-will define B<plainversion> as B<1.3>, and similarly
+the variables B<PN>, B<P>, B<PV>, and B<PR> have an analogous meaning as in ebuilds, namely
+B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1.3>, or B<r1>, respectively.
+(if B<-r1> would not have been specified, B<PR> would be empty: This differs from ebuilds).
 
-.RS
-B<split=1-font-adobe-75dpi-1.3-r1>
-
-B<revision=`versionsort -r "X${split}"`>
-.RE
-
-will define B<revision> as B<r1>.
-If there is no revision, nothing is output.
-For instance, after
-
-.RS
-B<split=1-font-adobe-75dpi-1.3>
-
-B<revision=`versionsort -r "X${split}"`>
-.RE
-
-you have an empty B<revision> variable.
+Be aware that B<versionsort> expects only for the options B<-n> and B<-p> that the argument contains a package name:
+For all other options (or without option), it is made clear by prepending of "X" that the argument is not a "pure" version number.
 .\" }}}
 
 
@@ -3229,6 +3198,9 @@ rather confusing for users and for maintaining, since their task has nothing in 
 
 The default error-behavior of B<eix-sync> has changed in eix-0.23.10:
 Previously, the B<-F> option was automatic and could not be disabled.
+
+In <eix-0.25.6 there was a B<NEWLINE> variable which could add a magic newline after a package output.
+This hack had been only introduced to deal with obsolete FORMAT strings and has finally been removed.
 .\" }}}
 
 .\" {{{ AUTHORS

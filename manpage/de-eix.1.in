@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-05-23 21:30:00 +0200 (Wed, 23 May 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-05-26 14:30:00 +0200 (Sat, 25 May 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -34,7 +34,7 @@
 [B<-->] [I<Befehl zum Ausführen>]
 
 .B versionsort
-[B<-p>|B<-r>] [I<Paket->]I<Version> ...
+[B<-n>|B<-p>|B<-v>|B<-r>] [I<Paket->]I<Version> ...
 .\" }}}
 
 .\" {{{ BESCHREIBUNG
@@ -2037,31 +2037,6 @@ Zeichen für PRINT_APPEND benutzen, beispielsweise so etwas wie
 B<VAR=`PRINT_APPEND=x eix --print VAR` ; VAR=${VAR%x}>
 
 .TP
-.BR NEWLINE " " (true / false)
-Falls dies gesetzt ist, wird eix einen Zeilenvorschub nach jeder Version ausgeben,
-für die der Formatstring etwas erzeugt.
-Der Wert B<true> ist für triviale Formatstrings bequem, die nur eine Zeile ausgeben
-(außer man fügt händisch einen Zeilenvorschub in den Formatsring ein).
-Andererseits ist dieser Wert unbequem für komplexere Formatstring,
-die Versionen in Extra-Zeilen ausgeben, und die nur bestimmte Versionen ausgeben
-(für die bestimmte Konditionale positiv ausfallen), denn es kann ziemlich
-umständlich sein, zu kontrollieren ob jetzt ein Zeilenvorschub ausgegeben werden muss,
-oder ob dies automatisch geschieht.
-In solchen Fällen kann man sich die Mühe sparen und B<NEWLINE=false> setzen.
-Die Default-Formatstrings von eix erzeugen in beiden Settings eine korrekte Ausgabe
-(indem sie den Wert der Variablen B<NEWLINE> testen und den Zeilenvorschub nur
-ausgeben, wenn er benötigt wird).
-
-Außer um Formastrings zu benutzen, die für frühere eix-Versionen erstellt wurden,
-ist die Empfehlung, den Defaultwert B<NEWLINE=false> beizubehalten und bei Bedard
-händisch ein B<\\n> (oder einen expliziten Zeilenvorschub) am Ende des
-Formatstrings einzufügen.
-Mehr noch, ich empfehle ältere Formatstrings entsprechend upzugraden (dass sie
-den Zeilenvorschub selbständig ausgeben) statt B<NEWLINE=true> zu setzen:
-Diese Option existiert wirklich nur zur Abwärtskompatibilität und wird
-in zukünftigen eix-Versionen möglicherweise entfernt.
-
-.TP
 .BR DEFAULT_FORMAT " " (normal / compact / verbose)
 Legt fest, ob B<--compact> oder B<--verbose> per Default gewählt wird.
 
@@ -3105,40 +3080,30 @@ das Argument mit einer Nicht-Ziffer (wie B<X> in obigem Beispiel)
 beginnen zu lassen, um sicherzustellen, dass versionsort tatsächlich
 die Version abtrennt und nicht fälschicherweise das gesamte Argument
 als eine einzige Version interpretiert.
-Seit eix-0.25.6 unterstützt versionsort auch zwei Optionen, wenn nur ein Argument
-benutzt wird: Mit
-.B -p
-bzw.
-.B -r
-kann man statt der vollen Versionsnummer auch die reine Versionsnummer ohne Revisionsnummer
-bzw. die Revisionsnummer ausgeben.
-Beispielsweise wird nach
+
+Seit eix-0.25.6 unterstützt versionsort auch einige Optionen, wenn nur ein Argument
+benutzt wird: Mit B<-n>, B<-p>, B<-v> bzw. <-r> wird nur der Name (ohne Versionsanhang),
+Name mit Version (ohne Revisionsanhang), die reine Version (ohne Revisionsanhang) bzw. nur die Revision ausgegeben.
+Beispielsweise wird
 
 .RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
-B<plainversion=`versionsort -p "X${split}"`>
+B<PN=`versionsort -n "${split}"`
+
+B<P=`versionsort -p "${split}"`
+
+B<PV=`versionsort -v "X${split}"`>
+
+B<PR=`versionsort -r "X${split}"`>
 .RE
 
-die Variable B<plainversion> als B<1.3> definiert sein, und ähnlich wird nach
+die Variablen B<PN>, B<P>, B<PV>, B<PR> analog wie in ebuilds definieren:
+Als B<1-font-adobe-75dpi>, B<1-font-adobe-75dpi-1.3>, B<1.3> bzw. B<r1>
+(falls B<-r1> nicht angegeben worden wäre, wäre B<PR> leer: Dies ist anders als in ebuilds).
 
-.RS
-B<split=1-font-adobe-75dpi-1.3-r1>
-
-B<revision=`versionsort -r "X${split}"`>
-.RE
-
-die B<revision> den Wert B<r1> haben.
-Wenn es keine Revisionsnummber gibt, wird nichts ausgegeben.
-Beispielsweise wird nach
-
-.RS
-B<split=1-font-adobe-75dpi-1.3>
-
-B<revision=`versionsort -r "X${split}"`>
-.RE
-
-die B<revision>-Variable leer sein.
+Beachte, dass B<versionsort> nur bei den Optionen B<-n> und B<-p> erwartet, dass das Argument einen Paketnamen enthält:
+Bei allen anderen Optionen (oder ohne Option) wird durch Vorstellen des "X" klargemacht, dass es sich nicht um eine "reine" Versionsnummer handelt.
 .\" }}}
 
 
@@ -3310,6 +3275,9 @@ da diese beiden Aufgabe nichts gemeinsam hatten.
 
 Das voreingestellt Fehlerverhalten von B<eix-sync> hat sich in eix-0.23.10 geändert:
 Früher war die Option B<-F> automatisch und konnte nicht abgestellt werden.
+
+Bei <eix-0.25.6 gab es eine B<NEWLINE>-Variable, die nach einem Paket einen automatischen Zeilenvorschub ausgeben konnte.
+Dieser Hack war nur für obsolete FORMAT-Strings eingeführt worden und wurde wieder entfernt.
 .\" }}}
 
 .\" {{{ AUTOREN

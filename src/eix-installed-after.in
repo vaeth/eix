@@ -179,11 +179,10 @@ Output() {
 #
 # As you can see with "eix --dump", the default definitions of
 # NAMESLOT, NAMEASLOT, NAMEVERSION, and EQNAMEVERSION make use of the variable
-# VERSION_NEWLINE to output an optional newline (if NEWLINE=false).
+# VERSION_NEWLINE to output an optional newline.
 # We do not want such a newline: In fact, the only newline we want is the one
 # which should be output at the end of the LINE variable.
-# So we set VERSION_NEWLINE= and (in case the user has changed the default)
-# also NEWLINE=false
+# So we set VERSION_NEWLINE=
 #
 # The name of the variables DATE_FORMAT, DATE_OUTPUT, NAME, and LINE
 # could also be any other unused name; it is only important that in LINE
@@ -194,7 +193,6 @@ Output() {
 # Note that all the following variables are automatically exported, since
 # they immediately preceed the command (the \ at the line-ends is crucial):
 VERSION_NEWLINE= \
-NEWLINE=false \
 DATE_FORMAT='%s' \
 DATE_OUTPUT='%x %X' \
 NAME='<category>/<package>' \

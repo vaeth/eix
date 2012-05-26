@@ -81,6 +81,8 @@ static ostream&
 operator<<(ostream& s, const BasicPart& part)
 {
 	switch (part.parttype) {
+		case BasicPart::first:
+		case BasicPart::character:
 		case BasicPart::garbage:
 			return s << part.partcontent;
 		case BasicPart::alpha:
@@ -91,18 +93,15 @@ operator<<(ostream& s, const BasicPart& part)
 			return s << "_pre" << part.partcontent;
 		case BasicPart::rc:
 			return s << "_rc" << part.partcontent;
+		case BasicPart::patch:
+			return s << "_p" << part.partcontent;
 		case BasicPart::revision:
 			return s << "-r" << part.partcontent;
 		case BasicPart::inter_rev:
-			return s << "." << part.partcontent;
-		case BasicPart::patch:
-			return s << "_p" << part.partcontent;
-		case BasicPart::character:
-			return s << part.partcontent;
 		case BasicPart::primary:
-		case BasicPart::first:
-		default:
 			return s << "." << part.partcontent;
+		default:
+			break;
 	}
 	throw ExBasic(_("internal error: unknown PartType on (%r,%r)"))
 		% int(part.parttype) % part.partcontent;
@@ -113,7 +112,7 @@ BasicVersion::rebuild() const
 {
 	stringstream ss;
 	copy(m_parts.begin(), m_parts.end(), ostream_iterator<BasicPart>(ss));
-	m_cached_full.assign(ss.str(), 1, string::npos);
+	m_cached_full = ss.str();
 }
 
 string
@@ -144,11 +143,11 @@ BasicVersion::getRevision() const
 			ss << *it;
 		}
 	}
-	return ss.str();
+	return (started ? ss.str().substr(1) : emptystring);
 }
 
 void
-BasicVersion::parseVersion(const string& str)
+BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 {
 	m_cached_full = str;
 
@@ -248,12 +247,18 @@ BasicVersion::parseVersion(const string& str)
 		}
 	}
 
-	// warn about garbage, but accept it
-	cerr << eix::format(_(
-		"garbage (%s) at end of version %r\n"
-		"accepting version anyway"))
-		% str.substr(pos) % str << endl;
 	m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
+	if(garbage_fatal) {
+		throw ExBasic(_("garbage (%s) at end of version %r"))
+			% str.substr(pos) % str;
+	}
+	else {
+		// warn about garbage, but accept it
+		cerr << eix::format(_(
+			"garbage (%s) at end of version %r\n"
+			"accepting version anyway"))
+			% str.substr(pos) % str << endl;
+	}
 }
 
 short

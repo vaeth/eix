@@ -198,8 +198,6 @@ PrintFormat::setupResources(EixRc &rc)
 	after_set_use    = rc["FORMAT_AFTER_SET_USE"];
 	before_unset_use = rc["FORMAT_BEFORE_UNSET_USE"];
 	after_unset_use  = rc["FORMAT_AFTER_UNSET_USE"];
-
-	magic_newline    = rc.getBool("NEWLINE");
 }
 
 void
@@ -337,8 +335,6 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBH
 	bool r(recPrint(NULLPTR, entity, get_property, root));
 	// Reset the four hackish variables
 	header = NULLPTR; vardb = NULLPTR; portagesettings = NULLPTR; stability = NULLPTR;
-	if(r && magic_newline)
-		fputc('\n', stdout);
 	return r;
 }
 

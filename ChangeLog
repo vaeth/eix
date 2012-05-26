@@ -2,8 +2,9 @@
 
 *eix-0.25.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce versionsort -[npvr]
 	- Introduce plainversion and revision attributes
-	- Introduce versionsort -[pr]
+	- Remove NEWLINE.
 	- Extend varsreader.cc to allow VAR=\n and (for portage escapes)
 	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387
 
