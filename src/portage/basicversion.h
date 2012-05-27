@@ -76,29 +76,18 @@ public:
 	/// Compare all except gentoo revisions
 	static short compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
-	/// Compare the m_cached_full version.
+	/// Compare the version.
 	static short compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
-	const std::string& getFull() const
-	{
-		if(this->m_cached_full.empty())
-			this->rebuild();
-		return this->m_cached_full;
-	}
-
-	void rebuild() const;
+	std::string getFull() const;
 
 	std::string getPlain() const;
 
 	std::string getRevision() const;
 
 protected:
-	/// The full version-string. This is usually only used as a cache for the
-	/// result of rebuild. That's why this is mutable
-	mutable std::string m_cached_full;
-
 	/// Splitted m_primsplit-version.
-	std::list< BasicPart > m_parts;
+	std::list<BasicPart> m_parts;
 };
 
 

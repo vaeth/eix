@@ -33,17 +33,18 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
 	// but I suppose this is not yet sanctioned by gentoo.
 	// We are going to follow the text from section 2.3 "Version Comparison" here.
-
 	short ret(eix::default_compare(left.parttype, right.parttype));
-	if (ret)
+	if(ret) {
 		return ret;
+	}
 
 	// We can short-circuit numeric_compare(..) and cutting of trailing 0
 	// by using string comparison if both parts have the same length.
 	if (left.partcontent.size() == right.partcontent.size()) {
+		left.partcontent.compare(right.partcontent);
 		return left.partcontent.compare(right.partcontent);
 	}
-	else if (left.parttype == BasicPart::primary) {
+	if (left.parttype == BasicPart::primary) {
 		// "[..] if a component has a leading zero, any trailing zeroes in that
 		//  component are stripped (if this makes the component empty, proceed
 		//  as if it were 0 instead), and the components are compared using a
@@ -107,12 +108,12 @@ operator<<(ostream& s, const BasicPart& part)
 		% int(part.parttype) % part.partcontent;
 }
 
-void
-BasicVersion::rebuild() const
+string
+BasicVersion::getFull() const
 {
 	stringstream ss;
 	copy(m_parts.begin(), m_parts.end(), ostream_iterator<BasicPart>(ss));
-	m_cached_full = ss.str();
+	return ss.str();
 }
 
 string
@@ -120,8 +121,8 @@ BasicVersion::getPlain() const
 {
 	stringstream ss;
 	for(list<BasicPart>::const_iterator it(m_parts.begin());
-		it != m_parts.end(); ++it) {
-		if(it->parttype == BasicPart::revision) {
+		likely(it != m_parts.end()); ++it) {
+		if(unlikely(it->parttype == BasicPart::revision)) {
 			break;
 		}
 		ss << *it;
@@ -133,24 +134,22 @@ string
 BasicVersion::getRevision() const
 {
 	stringstream ss;
-	bool started(false);
 	for(list<BasicPart>::const_iterator it(m_parts.begin());
-		it != m_parts.end(); ++it) {
-		if(it->parttype == BasicPart::revision) {
-			started = true;
-		}
-		if(started) {
-			ss << *it;
+		likely(it != m_parts.end()); ++it) {
+		if(unlikely(it->parttype == BasicPart::revision)) {
+			ss << "r" << it->partcontent;
+			if(unlikely(++it != m_parts.end())) {
+				copy(++it, m_parts.end(), ostream_iterator<BasicPart>(ss));
+				break;
+			}
 		}
 	}
-	return (started ? ss.str().substr(1) : emptystring);
+	return ss.str();
 }
 
 void
 BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 {
-	m_cached_full = str;
-
 	string::size_type pos(0);
 	string::size_type len(str.find_first_not_of("0123456789", pos));
 	if(unlikely(len == pos || pos == str.size())) {
@@ -291,23 +290,23 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 short
 BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
-	list<BasicPart>::const_iterator
+	for(list<BasicPart>::const_iterator
 		it_left(left.m_parts.begin()),
-		it_right(right.m_parts.begin());
-
-	for(short ret(0); ; ++it_left, ++it_right) {
-		bool left_end = (it_left == left.m_parts.end()
-				|| it_left->parttype == BasicPart::revision);
-		bool right_end = (it_right == right.m_parts.end()
-				|| it_right->parttype == BasicPart::revision);
-		if (left_end) {
-			return right_end ? 0 : -1;
+		it_right(right.m_parts.begin()); ; ++it_left, ++it_right) {
+		bool right_end((it_right == right.m_parts.end())
+				|| (it_right->parttype == BasicPart::revision));
+		if((it_left == left.m_parts.end())
+				|| (it_left->parttype == BasicPart::revision)) {
+			return (right_end ? 0 : -1);
 		}
-		else if (right_end) {
+		else if(right_end) {
 			return 1;
 		}
-		else if ((ret = BasicPart::compare(*it_left, *it_right)))
-			return ret;
+		else {
+			short ret(BasicPart::compare(*it_left, *it_right));
+			if(ret) {
+				return ret;
+			}
+		}
 	}
-	return 0;
 }

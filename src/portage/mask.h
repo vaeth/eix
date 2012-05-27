@@ -64,6 +64,7 @@ class Mask : public BasicVersion {
 		std::string m_name;     /**< package name */
 		std::string m_slotname;
 		std::string m_reponame;
+		std::string m_glob;     /**< the glob string for MaskOpGlob */
 		bool m_test_slot;       /**< must we match a slot? */
 		bool m_test_reponame;   /**< must we match a reponame? */
 
@@ -92,9 +93,6 @@ class Mask : public BasicVersion {
 		void match(Matches &m, Package &pkg) const;
 
 		bool have_match(Package &pkg) const;
-
-		const char *getVersion() const
-		{ return m_cached_full.c_str(); }
 
 		const char *getName() const
 		{ return m_name.c_str(); }

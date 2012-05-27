@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-26 17:02+0200\n"
+"POT-Creation-Date: 2012-05-27 10:06+0200\n"
 "PO-Revision-Date: 2012-05-19 00:24+0400\n"
 "Last-Translator: Артем Каримов <skybon@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -4707,27 +4707,27 @@ msgstr "Плохое состоянье: не определено"
 msgid "Line %r, column %r: %s"
 msgstr "Строка %r, столбец %r: %s"
 
-#: src/portage/basicversion.cc:106
+#: src/portage/basicversion.cc:107
 msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "внутренняя ошибка: неизвестный PartType на (%r,%r)"
 
-#: src/portage/basicversion.cc:159
+#: src/portage/basicversion.cc:158
 msgid "malformed (first primary at %r) version string %r"
 msgstr "недосформированная (1 первичн. в %r) строка версии %r"
 
-#: src/portage/basicversion.cc:174
+#: src/portage/basicversion.cc:173
 msgid "malformed (primary at %r) version string %r"
 msgstr "недосформированная (первичн. в %r) строка версии %r"
 
-#: src/portage/basicversion.cc:217
+#: src/portage/basicversion.cc:216
 msgid "malformed (suffix at %r) version string %r"
 msgstr "недосформированная (суффикс в %r) строка версии %r"
 
-#: src/portage/basicversion.cc:252
+#: src/portage/basicversion.cc:251
 msgid "garbage (%s) at end of version %r"
 msgstr "мусор (%s) в конце версии %r"
 
-#: src/portage/basicversion.cc:258
+#: src/portage/basicversion.cc:257
 msgid ""
 "garbage (%s) at end of version %r\n"
 "accepting version anyway"

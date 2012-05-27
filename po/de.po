@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-26 17:02+0200\n"
+"POT-Creation-Date: 2012-05-27 10:06+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5605,27 +5605,27 @@ msgstr "Unerlaubter Status: undefiniert"
 msgid "Line %r, column %r: %s"
 msgstr "Zeile %r, Spalte %r: %s"
 
-#: src/portage/basicversion.cc:106
+#: src/portage/basicversion.cc:107
 msgid "internal error: unknown PartType on (%r,%r)"
 msgstr "Interner Fehler: unknown PartType on (%r,%r)"
 
-#: src/portage/basicversion.cc:159
+#: src/portage/basicversion.cc:158
 msgid "malformed (first primary at %r) version string %r"
 msgstr "Versionsstring unerlaubt (erstes Primary bei %r): %r"
 
-#: src/portage/basicversion.cc:174
+#: src/portage/basicversion.cc:173
 msgid "malformed (primary at %r) version string %r"
 msgstr "Versionsstring unerlaubt (Primary bei %r): %r"
 
-#: src/portage/basicversion.cc:217
+#: src/portage/basicversion.cc:216
 msgid "malformed (suffix at %r) version string %r"
 msgstr "Versionsstring unerlaubt (Suffix bei %r): %r"
 
-#: src/portage/basicversion.cc:252
+#: src/portage/basicversion.cc:251
 msgid "garbage (%s) at end of version %r"
 msgstr "Zusatzsymbole (%s) nach Versionsnummer %r"
 
-#: src/portage/basicversion.cc:258
+#: src/portage/basicversion.cc:257
 msgid ""
 "garbage (%s) at end of version %r\n"
 "accepting version anyway"

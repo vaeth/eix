@@ -179,7 +179,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 				}
 			}
 			m_operator = maskOpGlob;
-			m_cached_full = string(str, wildcard);
+			m_glob = string(str, wildcard);
 		}
 		else {
 			if(end != NULLPTR)
@@ -219,13 +219,15 @@ Mask::test(const ExtendedVersion *ev) const
 			return true;
 
 		case maskOpGlob:
+			if(m_glob.empty()) {
+				return true;
+			}
 			{
 				// '=*' operator has to remove leading zeros
 				// see match_from_list in portage_dep.py
-				const std::string& my_string(getFull());
-				const std::string& version_string(ev->getFull());
+				const std::string version_string(ev->getFull());
 
-				std::string::size_type my_start(my_string.find_first_not_of('0'));
+				std::string::size_type my_start(m_glob.find_first_not_of('0'));
 				std::string::size_type version_start(version_string.find_first_not_of('0'));
 
 				/* Otherwise, if a component has a leading zero, any trailing
@@ -235,8 +237,8 @@ Mask::test(const ExtendedVersion *ev) const
 				 */
 
 				if (my_start == std::string::npos)
-					my_start = my_string.size() - 1;
-				else if(!isdigit(my_string[my_start], localeC))
+					my_start = m_glob.size() - 1;
+				else if(!isdigit(m_glob[my_start], localeC))
 					my_start -= 1;
 
 				if (version_start == std::string::npos)
@@ -244,8 +246,8 @@ Mask::test(const ExtendedVersion *ev) const
 				else if(!isdigit(version_string[version_start], localeC))
 					version_start -= 1;
 
-				const std::string::size_type total(my_string.size() - my_start);
-				return version_string.compare(version_start, total, my_string, my_start, total) == 0;
+				const std::string::size_type total(m_glob.size() - my_start);
+				return (version_string.compare(version_start, total, m_glob, my_start, total) == 0);
 			}
 
 		case maskOpLess:
@@ -266,7 +268,7 @@ Mask::test(const ExtendedVersion *ev) const
 		case maskOpRevisions:
 			return BasicVersion::compareTilde(*this, *ev) == 0;
 
-		case maskIsSet: // makes no sense
+		// case maskIsSet: // makes no sense
 		default:
 			break;
 	}
