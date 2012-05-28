@@ -1209,7 +1209,7 @@ Für die Varianten mit B<*> werden auch instabile Versionen berücksichtigt.
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle Version installiert bzw. markiert ist.
 .TP
-.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
+.BR ishardmasked ", " washardmasked ", " isprofilemasked ", " wasprofilemasked ", " ismasked ", " wasmasked ", " isstable ", " wasstable ", " isunstable ", " wasunstable ", " isalienstable ", " wasalienstable ", " isalienunstable ", " wasalienunstable ", " ismissingkeyword ", " wasmissingkeyword ", " isminuskeyword ", " wasminuskeyword ", " isminusunstable ", " wasminusunstable  ", " isminusasterisk ", " wasminusasterisk
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Expandiert zu 1 oder dem Leerstring, je nachdem ob die aktuelle Version (gemäß der
 lokelen bzw. Default-Konfiguration) die entsprechend Stabilitätseigenschaft hat.
