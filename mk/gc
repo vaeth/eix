@@ -12,7 +12,6 @@ ExecWarn() {
 	"${@}" || Echo "warning: ${*} returned ${?}"
 }
 
-ExecWarn git repack -a -d
 ExecWarn git prune
 ExecWarn git repack -a -d
 ExecWarn git gc --aggressive
