@@ -4,6 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Introduce versionsort -[npvr]
 	- Introduce plainversion and revision attributes
+	- Introduce --pipe-name and --pipe-version and parse version in --pipe
+	  without error messages more intelligent.
 	- Remove NEWLINE.
 	- Extend varsreader.cc to allow VAR=\n and (for portage escapes)
 	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387

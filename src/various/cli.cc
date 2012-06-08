@@ -15,6 +15,7 @@
 #include <eixTk/stringutils.h>
 #include <eixrc/eixrc.h>
 #include <output/formatstring.h>
+#include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/set_stability.h>
 #include <portage/vardbpkg.h>
@@ -68,6 +69,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 	bool	use_pipe(false),   // A pipe is used somewhere
 		force_test(false), // There is a current test or a pipe
 		curr_pipe(false);  // There is a current pipe
+	short	pipe_mode(0);      // Do we force pipes of a particular mode?
 	PackageTest *test(NULLPTR);   // The current test
 
 	for(ArgumentReader::const_iterator arg(ar.begin());
@@ -94,6 +96,9 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			// Check local options {{{
 			// --pipe is a "faked" local option but actually treated by matchtree...
 			// Note that we must *not* FINISH_TEST here!
+			case O_PIPE_NAME:
+			case O_PIPE_VERSION:
+				pipe_mode = ((**arg == O_PIPE_VERSION) ? 1 : -1);
 			case '|': force_test = curr_pipe = use_pipe = true;
 				break;
 			case 'I': USE_TEST;
@@ -472,28 +477,40 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			if((*word)[0] == '=') {
 				word->erase(0, 1);
 			}
-			char **name_ver(ExplodeAtom::split(word->c_str()));
+			bool success(false);
+			char **name_ver(NULLPTR);
 			const char *name, *ver;
-			if(name_ver) {
-				name = name_ver[0];
-				ver  = name_ver[1];
+			if(pipe_mode >= 0) {
+				if((name_ver = ExplodeAtom::split(word->c_str())) != NULLPTR) {
+					name = name_ver[0];
+					ver  = name_ver[1];
+					// parseVersion() to split only valid versions:
+					try {
+						BasicVersion b;
+						b.parseVersion(ver, true);
+						success = true;
+					}
+					catch(const ExBasic &e) { }
+				}
 			}
-			else {
+			if((pipe_mode <= 0) && (!success) && !word->empty()) {
 				name = word->c_str();
 				ver  = NULLPTR;
+				success = true;
 			}
-			if(unlikely(*marked_list == NULLPTR)) {
-				*marked_list = new MarkedList();
+			if(success) {
+				if(unlikely(*marked_list == NULLPTR)) {
+					*marked_list = new MarkedList();
+				}
+				(*marked_list)->add(name, ver);
+
+				NEW_TEST;
+				*test = PackageTest::CATEGORY_NAME;
+				test->setAlgorithm(new ExactAlgorithm());
+				test->setPattern(name);
+				matchtree->set_pipetest(test);
 			}
-			(*marked_list)->add(name, ver);
-
-			NEW_TEST;
-			*test = PackageTest::CATEGORY_NAME;
-			test->setAlgorithm(new ExactAlgorithm());
-			test->setPattern(name);
-			matchtree->set_pipetest(test);
-
-			if(name_ver) {
+			if(name_ver != NULLPTR) {
 				free(name_ver[0]);
 				free(name_ver[1]);
 			}

@@ -8,8 +8,7 @@ _eix__vars() {
 
 case $service in
 (*diff*)
-	:
-;;
+	:;;
 (*)
 	local_functions+=(_eix__overlay)
 _eix__overlay() {
@@ -18,8 +17,7 @@ _eix__overlay() {
 	o+=("$(PRINT_APPEND='' eix --print PORTDIR 2>/dev/null)")
 	o+=({0..$#o})
 	compadd "${@}" -- $o
-}
-;;
+};;
 esac
 
 service_opts=(
@@ -38,15 +36,13 @@ case $service in
 {'*--add-overlay','*-a+'}'[OVERLAY (add)]:add overlay:_files -/'
 {'*--override-method','*-m+'}'[OVERLAY_MASK METHOD (override method)]:overlay mask to change method:_eix__overlay:cache method: '
 {'*--repo-name','*-r+'}'[OVERLAY REPO_NAME (set REPO_NAME for OVERLAY)]:overlay to change name:_eix__overlay:repo-name: '
-)
-;;
+);;
 (*diff*)
 	excl_opt='(1 2 -)'
 	service_opts+=(
 '1:old_cache:_files'
 '2::new_cache:_files'
-)
-;;
+);;
 (*)
 	excl_opt='(* -)'
 	service_opts+=(
@@ -132,7 +128,9 @@ case $service in
 '*--properties-virtual[test for PROPERTIES=virtual packages]'
 '*--properties-set[test for PROPERTIES=set packages]'
 {'*--test-obsolete','*-T'}'[test for packages with obsolete /etc/portage/package.*]'
-{'*--pipe','*-\|'}'[test for packages matching stdin]'
+{'*--pipe','*-\|'}'[test for packages/versions matching stdin]'
+'*--pipe-name[test for packages matching stdin]'
+'*--pipe-version[test for versions matching stdin]'
 {'*--name','*-s'}'[match name]'
 {'*--description','*-S'}'[match description]'
 {'*--category','*-C'}'[match category]'
@@ -164,57 +162,42 @@ case $service in
 	then	local i c w is_or=false
 		case $(PRINT_APPEND='' eix --print DEFAULT_IS_OR 2>/dev/null) in
 		([yY1:tT]*|[oO][nN]*)
-			is_or=:
-		;;
+			is_or=:;;
 		esac
 		for (( i=2 ; i<CURRENT ; ++i))
 		do	case $words[$i] in
 			(--)
-				i=$CURRENT
-			;;
+				i=$CURRENT;;
 			(--print-overlay-(path|label)|--cache-file|--format(-compact|-verbose|)|--(only-|)in-overlay|--installed-(from|in)-overlay|--fuzzy|--print)
-				((++i))
-			;;
+				((++i));;
 			(--not|--open|--close|---*|[!-])
 				if $is_or
 				then	field=''
 					installed=''
-				fi
-			;;
+				fi;;
 			(--(multi-|)installed)
-				installed='installed'
-			;;
+				installed='installed';;
 			(--category|--name|--description|--homepage|--license)
-				field="${words[$i]#--}"
-			;;
+				field="${words[$i]#--}";;
 			(--category-name)
-				field='category/name'
-			;;
+				field='category/name';;
 			(--use|--installed-with(out|)-use)
-				field='useflag'
-			;;
+				field='useflag';;
 			(--depend)
-				field='depend'
-			;;
+				field='depend';;
 			(--rdepend)
-				field='rdepend'
-			;;
+				field='rdepend';;
 			(--pdepend)
-				field='pdepend'
-			;;
+				field='pdepend';;
 			(--deps)
-				field='deps'
-			;;
+				field='deps';;
 			(--set)
-				field='set'
-			;;
+				field='set';;
 			(--slot)
-				field='slot'
-			;;
+				field='slot';;
 			(--installed-slot)
 				installed='installed'
-				field='slot'
-			;;
+				field='slot';;
 			(-[!-]*)
 				w=$words[$i]
 				for (( c=2 ; c<=$#w ; ++c ))
@@ -223,38 +206,28 @@ case $service in
 						if [[ $c = $#w ]]
 						then	((++i))
 						else	c=$#w
-						fi
-					;;
+						fi;;
 					([\(\)!])
 						if $is_or
 						then	field=''
 							installed=''
-						fi
-					;;
+						fi;;
 					([iI])
-						installed='installed'
-					;;
+						installed='installed';;
 					(C)
-						field='category'
-					;;
+						field='category';;
 					(s)
-						field='name'
-					;;
+						field='name';;
 					(S)
-						field='description'
-					;;
+						field='description';;
 					(A)
-						field='category/name'
-					;;
+						field='category/name';;
 					(H)
-						field='homepage'
-					;;
+						field='homepage';;
 					(L)
-						field='license'
-					;;
+						field='license';;
 					esac
-				done
-			;;
+				done;;
 			esac
 		done
 	fi
@@ -278,40 +251,30 @@ _eix__arg() {
 		RESTRICT_INSTALLED=false USE_BUILD_TIME=false
 	case $1 in
 	(category)
-		compadd $addarg $(eix $eixopt --format '<category>\n' 2>/dev/null)
-	;;
+		compadd $addarg $(eix $eixopt --format '<category>\n' 2>/dev/null);;
 	(name)
-		compadd $addarg $(eix $eixopt --format '<name>\n' 2>/dev/null)
-	;;
+		compadd $addarg $(eix $eixopt --format '<name>\n' 2>/dev/null);;
 	(category/name)
-		compadd $addarg $(eix $eixopt --only-names 2>/dev/null)
-	;;
+		compadd $addarg $(eix $eixopt --only-names 2>/dev/null);;
 	(package)
 		case $PREFIX in
 		(*/*)
 			compset -P '*/'
-			compadd $addarg $(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n' 2>/dev/null)
-		;;
+			compadd $addarg $(eix $eixopt -PC "${IPREFIX%/}" --format '<name>\n' 2>/dev/null);;
 		(*)
 			local -a cat_name
 			cat_name=($(eix $eixopt --only-names 2>/dev/null))
 			compadd $addarg ${cat_name:t}
-			compadd $addarg[1,-2] -S '/' -- ${cat_name%%/*}
-		;;
-		esac
-	;;
+			compadd $addarg[1,-2] -S '/' -- ${cat_name%%/*};;
+		esac;;
 	(useflag)
-		compadd $addarg ${$(eix --print-all-useflags 2>/dev/null)##[()+-]#}
-	;;
+		compadd $addarg ${$(eix --print-all-useflags 2>/dev/null)##[()+-]#};;
 	(license)
-		compadd $addarg ${$(eix --print-all-licenses 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/}
-	;;
+		compadd $addarg ${$(eix --print-all-licenses 2>/dev/null)//([\(\)\|]|[![:space:]]#\?)/};;
 	(slot)
-		compadd $addarg $(eix --print-all-slots 2>/dev/null)
-	;;
+		compadd $addarg $(eix --print-all-slots 2>/dev/null);;
 	(homepage)
-		compadd $addarg $(eix $eixopt --format '<homepage>\n' 2>/dev/null)
-	;;
+		compadd $addarg $(eix $eixopt --format '<homepage>\n' 2>/dev/null);;
 	(set)
 		local -aU o
 		o=($(PRINT_APPEND='' eix --print PORTDIR_OVERLAY 2>/dev/null))
@@ -321,24 +284,19 @@ _eix__arg() {
 		for i in ${="$(PRINT_APPEND='' eix --print EIX_LOCAL_SETS 2>/dev/null)"}
 		do	case $i in
 			(/*)
-				[[ -d $i ]] && sets+=($i)
-			;;
+				[[ -d $i ]] && sets+=($i);;
 			('*'*)
 				k=${i#'*'}
 				for j in $o
 				do	[[ -d "$j$k" ]] && sets+=("$j$k")
-				done
-			;;
-			(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i")
-			;;
+				done;;
+			(*)	[[ -d "$portdir$i" ]] && sets+=("$portdir$i");;
 			esac
 		done
 		(( $#sets )) && \
-			compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t}
-	;;
+			compadd $addarg ${${(f)"$(find -L $sets -type f -name '[!.]*' -print 2>/dev/null)"}:t};;
 	esac
-}
-;;
+};;
 esac
 
 _arguments -s -S : \

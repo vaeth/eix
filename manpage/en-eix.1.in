@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-05-23 21:30:00 +0200 (Wed, 23 May 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-08 17:45:00 +0200 (Fri, 08 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -683,11 +683,32 @@ If you want to use the standard input only for marking but not for selection, yo
 choose an expression like
 
 B<eix something -a "-(" --pipe -o "-)">
+
+If the option B<--pipe-name> or B<--pipe-version> occurs after this option in the argument list,
+B<--pipe> acts as if it were B<--pipe-name> or B<--pipe-version>, respectively.
+.TP
+.B --pipe-name
+This is analogous to B<--pipe> with the difference that only lines of the form
+
+I<category>B</>I<package>
+
+are accepted.
+This avoids possible misinterpretation if a package name ends with a valid version number.
+If the option B<--pipe> or B<--pipe-version> occurs after this option in the argument list,
+B<--pipe-name> acts as if it were B<--pipe> or B<--pipe-version>, respectively.
+.TP
+.B --pipe-version
+This is analogous to B<--pipe> with the difference that only lines of the form
+
+I<category>B</>I<package>B<->I<version>
+
+are accepted; non-matching lines are ignored.
+If the option B<--pipe> or B<--pipe-name> occurs after this option in the argument list,
+B<--pipe-name> acts as if it were B<--pipe> or B<--pipe-name>, respectively.
 .\" }}}
 
 .\" {{{ -------- Match field selection
 .SS Match field selection
-.TP
 The subsequent options define the fields that the pattern should be tested on.
 Multiple fields may be specified in one expression (the expression matches
 if the pattern matches at least one of the specified fields).

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-05-27 10:06+0200\n"
+"POT-Creation-Date: 2012-06-08 16:06+0200\n"
 "PO-Revision-Date: 2012-05-19 00:24+0400\n"
 "Last-Translator: Артем Каримов <skybon@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -1120,7 +1120,7 @@ msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
 #: src/eix.cc:65
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
 "\n"
@@ -1241,6 +1241,8 @@ msgid ""
 "                          /etc/portage/package.* (see man eix).\n"
 "                          Use -t to check non-existing packages.\n"
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
+"    --pipe-name           As --pipe, but input is without version\n"
+"    --pipe-version        As --pipe, but input is with    version\n"
 "\n"
 "  Search Fields:\n"
 "    -y, --any               any search field can match (same as -SACsHL...)\n"
@@ -1409,6 +1411,8 @@ msgstr ""
 "                          Используйте -t чтобы проверить на наличье "
 "несуществующих пакетов.\n"
 "    -|, --pipe            Использовать вывод из pipe от emerge -pv\n"
+"    --pipe-name           As --pipe, but input is without version\n"
+"    --pipe-version        As --pipe, but input is with    version\n"
 "\n"
 "  Поля поиска:\n"
 "    -y, --any               любое поле поиска может совпасть (то же самое, "
@@ -1443,16 +1447,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:484 src/eix-diff.cc:344
+#: src/eix.cc:488 src/eix-diff.cc:344
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:548 src/eix-diff.cc:311 src/eix-update.cc:336
+#: src/eix.cc:552 src/eix-diff.cc:311 src/eix-update.cc:336
 msgid "cannot redirect to %r"
 msgstr "не могу перенаправить в %r"
 
-#: src/eix.cc:591 src/eix.cc:916
+#: src/eix.cc:595 src/eix.cc:920
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1461,7 +1465,7 @@ msgstr ""
 "Не могу открыть базу данных %s для чтенья (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:602
+#: src/eix.cc:606
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1472,31 +1476,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:875 src/eix.cc:894
+#: src/eix.cc:879 src/eix.cc:898
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "Нашёл %s совпадений.\n"
 
-#: src/eix.cc:879
+#: src/eix.cc:883
 msgid "No matches found.\n"
 msgstr "Совпадений не найдено.\n"
 
-#: src/eix.cc:887
+#: src/eix.cc:891
 #, c-format
 msgid "Found %s match.\n"
 msgstr "Нашёл %s совпаденье.\n"
 
-#: src/eix.cc:997
+#: src/eix.cc:1001
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет несовпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:998
+#: src/eix.cc:1002
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1003
+#: src/eix.cc:1007
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1505,7 +1509,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1004
+#: src/eix.cc:1008
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1514,7 +1518,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1061
+#: src/eix.cc:1065
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1522,7 +1526,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1064
+#: src/eix.cc:1068
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"

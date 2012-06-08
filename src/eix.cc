@@ -174,6 +174,8 @@ dump_help()
 "                          /etc/portage/package.* (see man eix).\n"
 "                          Use -t to check non-existing packages.\n"
 "    -|, --pipe            Use input from pipe of emerge -pv\n"
+"    --pipe-name           As --pipe, but input is without version\n"
+"    --pipe-version        As --pipe, but input is with    version\n"
 "\n"
 "  Search Fields:\n"
 "    -y, --any               any search field can match (same as -SACsHL...)\n"
@@ -360,6 +362,8 @@ static struct Option long_options[] = {
 	Option("dup-versions",  'D'),
 	Option("test-obsolete", 'T'),
 	Option("pipe",          '|'),
+	Option("pipe-name",     O_PIPE_NAME),
+	Option("pipe-version",  O_PIPE_VERSION),
 
 	// Algorithms for a criterion
 	Option("fuzzy",         'f'),
