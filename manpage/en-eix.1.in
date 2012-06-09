@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-08 17:45:00 +0200 (Fri, 08 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-09 23:10:00 +0200 (Sat, 09 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -802,11 +802,11 @@ which are still in the database.
 .\" {{{ -------- Match algorithm
 .SS "Match algorithm"
 The subsequent options define the algorithm by which the match field should be tested
-against the pattern.
+against the expression.
 Only one algorithm can be chosen for an expression.
 If you do not specify some of these options, the default is chosen according
 to some heuristic depending on the form of your search pattern.
-In most cases, the default will be B<--regex> unless your pattern
+In most cases, the default will be B<--regex> unless your expression
 "looks" like a glob pattern or a substring (in which case the corresponding
 algorithm will be the default), or if the pattern has a particular content like
 "@set" or "cat/n" which most people would expect to match the whole string or
@@ -3030,7 +3030,7 @@ to make sure that versionsort will really cut the version from the argument
 and cannot misinterpret the whole argument as a version.
 
 Since eix-0.25.6, versionsort supports some options if only one argument is used:
-With B<-n>, B<-p>, B<-v>, or <-r> only the name (without version appendix),
+With B<-n>, B<-p>, B<-v>, or B<-r> only the name (without version appendix),
 name with version (without revision appendix), the pure version (without revision appendix)
 or only the revision will be output.
 For example, after
@@ -3038,9 +3038,9 @@ For example, after
 .RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
-B<PN=`versionsort -n "${split}"`
+B<PN=`versionsort -n "${split}"`>
 
-B<P=`versionsort -p "${split}"`
+B<P=`versionsort -p "${split}"`>
 
 B<PV=`versionsort -v "X${split}"`>
 

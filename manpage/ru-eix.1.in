@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-08 17:45:00 +0200 (Fri, 08 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-09 23:10:00 +0200 (Sat, 09 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНЬЕ
 .SH "НАЗВАНЬЕ"
 .B eix
@@ -226,7 +226,7 @@ Print the path of the first overlay matching I<OVERLAY>.
 I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
 .TP
 .BI "--print-overlay-label " OVERLAY
-Print the path of the first overlay matching I<OVERLAY>.
+Print the label of the first overlay matching I<OVERLAY>.
 I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
 .TP
 .B --print-all-useflags
@@ -258,7 +258,7 @@ If this is the case, eix returns successful without printing anything.
 .SS Output options
 .TP
 .BR -x ", " --versionsort "    (toggle)"
-Prints available versions sorted by slots/versions.
+Prints available versions sorted by versions (slots).
 If sorted by slots, each new slot starts in a new line.
 This mode can be combined with B<--versionlines> (B<-l>)
 to start a new line even for every version.
@@ -480,7 +480,7 @@ This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=t
 This is as the above ones just that the test acts as if B<LOCAL_PORTAGE_CONFIG=false>.
 .TP
 .BR --installed-unstable ", " --installed-testing ", " --installed-masked
-Only match packages which have at least one version installed which has
+Only match packages which have
 at least one non-stable, testing, or masked version installed
 (the test acts as if B<LOCAL_PORTAGE_CONFIG=false>).
 If several of these options are combined in one test, it is the same version
@@ -553,7 +553,7 @@ If this option is repeated, the additional I<overlay> arguments are joined
 to the list of admissible overlays.
 
 I<overlay> may be either a wildcard pattern or a number, as in B<--in-overlay>.
-As particular, B<--only-in-overlay ''> matches all packages which are not in
+In particular, B<--only-in-overlay ''> matches all packages which are not in
 the official portage tree but only in some overlay.
 .TP
 .BR -J ", " --installed-overlay
@@ -2542,7 +2542,7 @@ B<CACHE_METHOD>, but it might be overridden by settings from
 B<OVERRIDE_CACHE_METHOD>.
 .TP
 .BR REPO_NAMES
-This variables is a string list of the form "I<dir-pattern> I<overlay-label> I<dir-pattern> I<overlay-label> ...".
+This variable is a string list of the form "I<dir-pattern> I<overlay-label> I<dir-pattern> I<overlay-label> ...".
 When a new cachefile is created, the overlay matching I<dir-pattern> obtains the label I<overlay-label>,
 independent of the content of its profiles/repo_name file.
 This variable can also associate label names to virtual overlays which do not possess such a file.
@@ -3031,7 +3031,7 @@ to make sure that versionsort will really cut the version from the argument
 and cannot misinterpret the whole argument as a version.
 
 Since eix-0.25.6, versionsort supports some options if only one argument is used:
-With B<-n>, B<-p>, B<-v>, or <-r> only the name (without version appendix),
+With B<-n>, B<-p>, B<-v>, or B<-r> only the name (without version appendix),
 name with version (without revision appendix), the pure version (without revision appendix)
 or only the revision will be output.
 For example, after
@@ -3039,9 +3039,9 @@ For example, after
 .RS
 B<split=1-font-adobe-75dpi-1.3-r1>
 
-B<PN=`versionsort -n "${split}"`
+B<PN=`versionsort -n "${split}"`>
 
-B<P=`versionsort -p "${split}"`
+B<P=`versionsort -p "${split}"`>
 
 B<PV=`versionsort -v "X${split}"`>
 
