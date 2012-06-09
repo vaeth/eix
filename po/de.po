@@ -1126,7 +1126,7 @@ msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
 #: src/eix.cc:65
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
 "\n"
