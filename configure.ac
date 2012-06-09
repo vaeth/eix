@@ -63,7 +63,7 @@ AM_INIT_AUTOMAKE([no-dependencies])
 # disable --disable-silent-rules to omit useless output with Gentoo's EAPI=5
 # (debugging is still possible with make V=1 and effective CXXFLAGS/LDFLAGS
 # are output by this configure script anyway)
-enable_silent_rules=yes
+AS_VAR_SET([enable_silent_rules], [yes])
 AM_SILENT_RULES([yes])
 
 AC_LANG([C++])
@@ -478,7 +478,7 @@ AC_SUBST([DEV_NULL])
 # Separate binaries?
 AC_ARG_ENABLE([separate_binaries],
 	[AS_HELP_STRING([--enable-separate-binaries],
-		[create a separate binary for each program])],
+		[create a separate binary for each of eix, eix-update, eix-diff])],
 	[MV_ENABLE([separate_binaries])],
 	[AS_VAR_SET([separate_binaries], [false])])
 AM_CONDITIONAL([SEPARATE_BINARIES],
@@ -498,7 +498,7 @@ AM_CONDITIONAL([SEPARATE_UPDATE],
 # Separate tools?
 AC_ARG_ENABLE([separate_tools],
 	[AS_HELP_STRING([--enable-separate-tools],
-		[create separate binaries for tools (versionsort)])],
+		[create separate binaries for versionsort, eix-drop-permissions])],
 	[MV_ENABLE([separate-tools])],
 	[AS_VAR_SET([separate_tools], [false])])
 AM_CONDITIONAL([SEPARATE_TOOLS],

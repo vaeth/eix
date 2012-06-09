@@ -74,6 +74,7 @@ src/eixTk/varsreader.cc
 src/eixTk/varsreader.h
 src/eixrc/defaults.cc
 src/eixrc/eixrc.cc
+src/eixrc/eixrc_portage.cc
 src/eixrc/eixrc.h
 src/eixrc/global.h
 src/eixrc/global1.cc
@@ -85,11 +86,12 @@ src/main/main.h
 src/main/main_all.cc
 src/main/main_all_tools.cc
 src/main/main_diff.cc
+src/main/main_drop_permissions.cc
 src/main/main_eix.cc
 src/main/main_output.cc
-src/main/main_tools.cc
 src/main/main_update.cc
 src/main/main_update_tools.cc
+src/main/main_versionsort.cc
 src/output/formatstring-print.cc
 src/output/formatstring-print.h
 src/output/formatstring.cc

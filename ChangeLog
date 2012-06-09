@@ -9,6 +9,7 @@
 	- Remove NEWLINE.
 	- Extend varsreader.cc to allow VAR=\n and (for portage escapes)
 	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387
+	- separate eix-drop-permissions binary with --enable-separate-tools
 	- Do not cache version strings to save memory.
 
 *eix-0.25.5

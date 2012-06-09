@@ -28,7 +28,25 @@ database/package_reader.h
 
 nodist_database_src =
 
+stringutils_src = \
+eixTk/stringutils.cc \
+eixTk/stringutils.h \
+eixTk/formated.cc \
+eixTk/formated.h \
+eixTk/i18n.h \
+eixTk/likely.h \
+eixTk/null.h
+
+sysutils_src = \
+eixTk/sysutils.cc \
+eixTk/sysutils.h
+
+varsreader_src = \
+eixTk/varsreader.cc \
+eixTk/varsreader.h
+
 eixtk_src = \
+$(stringutils_src) \
 eixTk/ansicolor.cc \
 eixTk/ansicolor.h \
 eixTk/argsreader.cc \
@@ -39,23 +57,14 @@ eixTk/exceptions.cc \
 eixTk/exceptions.h \
 eixTk/filenames.cc \
 eixTk/filenames.h \
-eixTk/formated.cc \
-eixTk/formated.h \
-eixTk/i18n.h \
 eixTk/inttypes.h \
-eixTk/likely.h \
-eixTk/null.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \
-eixTk/stringutils.cc \
-eixTk/stringutils.h \
-eixTk/sysutils.cc \
-eixTk/sysutils.h \
+$(sysutils_src) \
 eixTk/utils.cc \
 eixTk/utils.h \
 eixTk/unused.h \
-eixTk/varsreader.cc \
-eixTk/varsreader.h
+$(varsreader_src)
 
 nodist_eixtk_src =
 
@@ -196,7 +205,8 @@ $(drop_permissions_src) \
 $(eixtk_src) \
 $(database_src) \
 $(portage_src) \
-$(eixrc_src)
+$(eixrc_src) \
+eixrc/eixrc_portage.cc
 
 nodist_common_src = \
 $(nodist_drop_permissions_src) \
@@ -215,7 +225,8 @@ main/main_update_tools.cc \
 main/main_output.cc \
 main/main_all.cc \
 main/main_all_tools.cc \
-main/main_tools.cc
+main/main_versionsort.cc \
+main/main_drop_permissions.cc
 
 nodist_extra_common_src =
 
@@ -300,9 +311,9 @@ eixrc/eixrc.in \
 cache/generate_cachemap.sh
 
 if SEPARATE_TOOLS
-# Generate a separate tools binary (currently only versionsort)
+# Generate separate tools binaries
 use_separate_tools = true
-tool_programs = versionsort
+tool_programs = versionsort eix-drop-permissions
 tool_noinst =
 main_all_src  = main/main_all.cc
 main_output_src = main/main_output.cc
@@ -320,7 +331,7 @@ else
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
-noinst_tool = versionsort$(EXEEXT)
+noinst_tool = versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT)
 main_all_src = versionsort.cc main/main_all_tools.cc
 main_output_src = main/main_output.cc
 main_eix_src = main/main_eix.cc
@@ -426,20 +437,27 @@ if SEPARATE_TOOLS
 
 versionsort_LDADD = $(common_tools_ldadd)
 versionsort_SOURCES = \
+$(stringutils_src) \
 database/types.h \
 eixTk/inttypes.h \
-eixTk/stringutils.cc \
-eixTk/stringutils.h \
 eixTk/compare.h \
 eixTk/exceptions.h \
-eixTk/formated.cc \
-eixTk/formated.h \
-eixTk/i18n.h \
-eixTk/unused.h \
 portage/basicversion.cc \
 portage/basicversion.h \
 versionsort.cc \
-main/main_tools.cc \
+main/main_versionsort.cc \
+main/main.h
+
+eix_drop_permissions_LDADD = $(common_tools_ldadd)
+eix_drop_permissions_SOURCES = \
+$(stringutils_src) \
+$(eixrc_src) \
+$(drop_permissions_src) \
+$(sysutils_src) \
+$(varsreader_src) \
+eixTk/exceptions.h \
+eix-drop-permissions.cc \
+main/main_drop_permissions.cc \
 main/main.h
 
 else
@@ -449,11 +467,11 @@ versionsort$(EXEEXT): $(versionsort_link)
 	$(AM_V_at)test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) $(versionsort_link) versionsort$(EXEEXT)
 
-endif
-
 eix-drop-permissions$(EXEEXT): $(drop_permissions_link)
 	$(AM_V_at)test ! -e eix-drop-permissions$(EXEEXT) || rm eix-drop-permissions$(EXEEXT)
 	$(AM_V_GEN)$(LN_S) $(drop_permissions_link) eix-drop-permissions$(EXEEXT)
+
+endif
 
 uninstall-local:
 	$(AM_V_at)$(use_separate_tools) || \

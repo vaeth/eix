@@ -35,9 +35,7 @@ src/versionsort
 src/eix
 src/eix-*
 !src/eix-*.*
-!src/eix-*/*
 src/eix-*.sh
-!src/eix-*/*.sh
 src/functions-eix.sh
 
 src/eixrc/eixrc
@@ -58,3 +56,7 @@ zsh/_eix*
 *Makefile.in.in
 *tags
 *~
+*.tar
+*.tar.?
+*.tar.??
+*.tar.???
