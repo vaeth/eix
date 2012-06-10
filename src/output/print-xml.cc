@@ -127,13 +127,13 @@ PrintXml::package(Package *pkg)
 			cout << "\t</category>\n";
 		}
 		curcat = pkg->category;
-		cout << "\t<category name=\"" << escape_string(curcat) << "\">\n";
+		cout << "\t<category name=\"" << escape_xmlstring(curcat) << "\">\n";
 	}
 	// category, name, desc, homepage, licenses;
-	cout << "\t\t<package name=\"" << escape_string(pkg->name) << "\">\n"
-		"\t\t\t<description>" << escape_string(pkg->desc) << "</description>\n"
-		"\t\t\t<homepage>" << escape_string(pkg->homepage) << "</homepage>\n"
-		"\t\t\t<licenses>" << escape_string(pkg->licenses) << "</licenses>\n";
+	cout << "\t\t<package name=\"" << escape_xmlstring(pkg->name) << "\">\n"
+		"\t\t\t<description>" << escape_xmlstring(pkg->desc) << "</description>\n"
+		"\t\t\t<homepage>" << escape_xmlstring(pkg->homepage) << "</homepage>\n"
+		"\t\t\t<licenses>" << escape_xmlstring(pkg->licenses) << "</licenses>\n";
 
 	set<const Version*> have_inst;
 	if((likely(var_db_pkg != NULLPTR)) && var_db_pkg->isInstalled(*pkg)) {
@@ -172,23 +172,23 @@ PrintXml::package(Package *pkg)
 			}
 		}
 
-		cout << "\t\t\t<version id=\"" << escape_string(ver->getFull()) << "\"";
+		cout << "\t\t\t<version id=\"" << escape_xmlstring(ver->getFull()) << "\"";
 		ExtendedVersion::Overlay overlay_key(ver->overlay_key);
 		if(unlikely(overlay_key != 0)) {
 			const OverlayIdent &overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
-				cout << " overlay=\"" << escape_string(overlay.path) << "\"";
+				cout << " overlay=\"" << escape_xmlstring(overlay.path) << "\"";
 			}
 			if(!overlay.label.empty()) {
-				cout << " repository=\"" << escape_string(overlay.label) << "\"";
+				cout << " repository=\"" << escape_xmlstring(overlay.label) << "\"";
 			}
 		}
 		if (!ver->slotname.empty()) {
-			cout << " slot=\"" << escape_string(ver->slotname) << "\"";
+			cout << " slot=\"" << escape_xmlstring(ver->slotname) << "\"";
 		}
 		if (versionInstalled) {
 			cout << " installed=\"1\" installDate=\"" <<
-				escape_string(date_conv(dateformat.c_str(), installedVersion->instDate)) << "\"";
+				escape_xmlstring(date_conv(dateformat.c_str(), installedVersion->instDate)) << "\"";
 		}
 		cout << ">\n";
 
@@ -381,21 +381,21 @@ PrintXml::package(Package *pkg)
 				}
 			}
 			if(print_full)
-				cout << "\t\t\t\t<keywords>" << escape_string(full_kw) << "</keywords>\n";
+				cout << "\t\t\t\t<keywords>" << escape_xmlstring(full_kw) << "</keywords>\n";
 			if(print_effective)
-				cout << "\t\t\t\t<effective_keywords>" << escape_string(eff_kw) << "</effective_keywords>\n";
+				cout << "\t\t\t\t<effective_keywords>" << escape_xmlstring(eff_kw) << "</effective_keywords>\n";
 		}
 
 		if(Depend::use_depend) {
 			string s(ver->depend.get_depend());
 			if(!s.empty())
-				cout << "\t\t\t\t<depend>" << escape_string(s) << "</depend>\n";
+				cout << "\t\t\t\t<depend>" << escape_xmlstring(s) << "</depend>\n";
 			s = ver->depend.get_rdepend();
 			if(!s.empty())
-				cout << "\t\t\t\t<rdepend>" << escape_string(s) << "</rdepend>\n";
+				cout << "\t\t\t\t<rdepend>" << escape_xmlstring(s) << "</rdepend>\n";
 			s = ver->depend.get_pdepend();
 			if(!s.empty())
-				cout << "\t\t\t\t<pdepend>" << escape_string(s) << "</pdepend>\n";
+				cout << "\t\t\t\t<pdepend>" << escape_xmlstring(s) << "</pdepend>\n";
 		}
 		cout << "\t\t\t</version>\n";
 	}
@@ -404,7 +404,7 @@ PrintXml::package(Package *pkg)
 }
 
 string
-PrintXml::escape_string(const string &s)
+PrintXml::escape_xmlstring(const string &s)
 {
 	string ret;
 	string::size_type prev(0);

@@ -65,7 +65,7 @@ Check 'eixTk/i18n\.h' -e '_('
 Check 'eixTk/likely\.h' -e 'likely('
 Check 'eixTk/null\.h' -e 'NULLPTR'
 Check 'eixTk/ptr_list\.h' -e 'eix::ptr'
-Check 'eixTk/stringutils\.h' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e emptystring -e '[^a-zA-Z]one[^a-z.)\ ]' -e is_numeric -e tolower -e trim -e StringHash
+Check 'eixTk/stringutils\.h' -e 'split[^- ]' -e isdigit -e '[^a-z]isal[np]' -e isspace -e emptystring -e '[^a-zA-Z]one[^a-z.)\ ]' -e is_numeric -e tolower -e trim -e StringHash -e escape_string
 Check 'eixTk/unused\.h' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
 
 Check 'iostream' -e '[^a-z]cout[^a-z]' -e '[^a-z]cerr[^a-z]' -e '[^a-z]cin[^a-z]'

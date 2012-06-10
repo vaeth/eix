@@ -10,6 +10,7 @@
 #include "cli.h"
 #include <database/header.h>
 #include <eixTk/argsreader.h>
+#include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>

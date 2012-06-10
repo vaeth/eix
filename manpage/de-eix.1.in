@@ -1649,7 +1649,7 @@ Dies muss benutzt werden, falls B<%{> im Variablentext stehen soll
 .BI * VARIABLE
 Falls die verzögerte Referenz eine Variablennamen benutzt, der mit B<*> beginnt,
 so wird dieses B<*> durch B<EIX_>, B<DIFF_>, B<UPDATE_> oder B<DROP_> ersetzt,
-je nachdem ob es von B<eix>/B<eix-diff>/B<eix-diff> bzw. B<eix-drop-permissions> benutzt wird.
+je nachdem ob es von B<eix>/B<eix-diff>/B<eix-update> bzw. B<eix-drop-permissions> benutzt wird.
 Auf diese Weise kann man verschiedene Defaults für diese Programme festlegen.
 
 Beispielsweise wird die verzögerte Referenz B<%{*>I<VARIABLE>B<}> die Expansion
@@ -1663,15 +1663,15 @@ falls es von B<eix-drop-permissions> (also etwa durch B<eix-remote>)
 aufgerufen wird, aber den Defaultwert "portage" in allen anderen Fällen,
 kann man folgendes Setzen:
 
-.B EIX_USER="%{*EIX_USER}"
+B<EIX_USER="%{*EIX_USER}">
 
-.B EIX_EIX_USER="portage"
+B<EIX_EIX_USER="portage">
 
-.B DIFF_EIX_USER="portage"
+B<DIFF_EIX_USER="portage">
 
-.B UPDATE_EIX_USER="portage"
+B<UPDATE_EIX_USER="portage">
 
-.B DROP_EIX_USER="nobody"
+B<DROP_EIX_USER="nobody">
 
 .TP
 B<\\>I<VARIABLE>

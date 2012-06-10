@@ -65,21 +65,20 @@ B<KEEP_VIRTUALS=true> в @SYSCONFDIR@/eixrc.
 По умолчанью этот сценарий сбрасывает разрешенья используя B<eix-drop-permissions>.
 Для полученья дополнительной информации по B<eix-remote> вызовите B<eix-remote -h>.
 
-B<eix-layman> может добавлять или убирать местные оверлеи layman к/из текущей базы данных.
-Это нужно если Вы не указываете layman-овский make.conf в Вашем I</etc/make.conf>.
-Для полученья дополнительной информации по B<eix-layman> вызовите B<eix-layman -h>.
-B<eix-layman> также является примером использованья B<eix-functions.sh>:
-
 B<eix-installed-after> is a simple script (with many comments) demonstrating some
 possibilities how a custom eix output format can be used.
 It outputs packages installed after (or before) the last (or first) emerge of a specific package/version.
 To get more help on this script call B<eix-installed-after -h>.
 
+B<eix-layman> может добавлять или убирать местные оверлеи layman к/из текущей базы данных.
+Это нужно если Вы не указываете layman-овский make.conf в Вашем I</etc/make.conf>.
+Для полученья дополнительной информации по B<eix-layman> вызовите B<eix-layman -h>.
+B<eix-layman> также является примером использованья B<eix-functions.sh>:
+
 B<eix-functions.sh> are helper functions used by B<eix-sync>, B<eix-remote>, and B<eix-layman>.
 You might want to use them for your own similar scripts.
-Note that immediately after sourcing B<eix-functions.sh> you will probably
-want to call B<read_functions> [I<ARGS>] to source baselayout's functions.sh
-with the corresponding I<ARGS>.
+Note that immediately after sourcing B<eix-functions.sh> you will normally
+have to call B<ReadFunctions> for initialisation.
 
 B<eix-drop-permissions> is a helper program for B<eix-remote> (and possibly your own scripts).
 It executes the command given as argument with permissions dropped according to
@@ -1636,7 +1635,7 @@ This must be used if you need B<%{> in a variable text
 .BI * VARIABLE
 If a delayed reference uses a variable name starting with B<*>,
 this B<*> is replaced by B<EIX_>, B<DIFF_>, B<UPDATE_>, or B<DROP_>,
-depending on whether it is used from B<eix>/B<eix-diff>/B<eix-diff>,
+depending on whether it is used from B<eix>/B<eix-diff>/B<eix-update>,
 or B<eix-drop-permissions>, respectively.
 This way you can have different defaults for these programs.
 
@@ -1650,15 +1649,15 @@ As a practical example, if you want that B<EIX_USER> has the value "nobody"
 when called from B<eix-drop-permissions> (e.g. from B<eix-remote>)
 but the default value "portage" otherwise, you can set:
 
-.B EIX_USER="%{*EIX_USER}"
+B<EIX_USER="%{*EIX_USER}">
 
-.B EIX_EIX_USER="portage"
+B<EIX_EIX_USER="portage">
 
-.B DIFF_EIX_USER="portage"
+B<DIFF_EIX_USER="portage">
 
-.B UPDATE_EIX_USER="portage"
+B<UPDATE_EIX_USER="portage">
 
-.B DROP_EIX_USER="nobody"
+B<DROP_EIX_USER="nobody">
 
 .TP
 B<\\>I<VARIABLE>

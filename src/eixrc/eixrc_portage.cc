@@ -5,7 +5,6 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <config.h>
 #include "eixrc.h"
 #include <eixTk/likely.h>
 #include <eixTk/null.h>

@@ -60,7 +60,7 @@ class PrintXml {
 		void start();
 		void package(Package *pkg);
 		void finish();
-		static std::string escape_string(const std::string &s);
+		static std::string escape_xmlstring(const std::string &s);
 
 		~PrintXml()
 		{ finish(); }
