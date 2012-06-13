@@ -1,48 +1,48 @@
 
 # autotools directories:
-autom4te.cache/
-config/
-m4/
+/autom4te.cache/
+/config/
+/m4/
 
 # autotools/doxygen files:
-ABOUT-NLS
-aclocal.m4
-config.h
-config.log
-config.status
-configure
-doxygen.cfg
-stamp-h1
+/ABOUT-NLS
+/aclocal.m4
+/config.h
+/config.log
+/config.status
+/configure
+/doxygen.cfg
+/stamp-h1
 
 # Special directories:
 
-doc/eix-*.html
-doc/eix-*.txt
-doc/eix-*.xsd
+/doc/eix-*.html
+/doc/eix-*.txt
+/doc/eix-*.xsd
 
-manpage/*-eix.1
+/manpage/*-eix.1
 
-po/*
-!po/LINGUAS
-!po/Makevars
-!po/Rules-*
-po/Rules-quot
-!po/my-*
-!po/*.po
-po/en@*.po
+/po/*
+!/po/LINGUAS
+!/po/Makevars
+!/po/Rules-*
+/po/Rules-quot
+!/po/my-*
+!/po/*.po
+/po/en@*.po
 
-src/versionsort
-src/eix
-src/eix-*
-!src/eix-*.*
-src/eix-*.sh
-src/functions-eix.sh
+/src/versionsort
+/src/eix
+/src/eix-*
+!/src/eix-*.*
+/src/eix-*.sh
+/src/functions-eix.sh
 
-src/eixrc/eixrc
-src/cache/cache_map.cc
+/src/eixrc/eixrc
+/src/cache/cache_map.cc
 
-zsh/_eix*
-!zsh/_eix*.*
+/zsh/_eix*
+!/zsh/_eix*.*
 
 # General patterns are last:
 !*.in

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-06-09 21:38+0200\n"
+"POT-Creation-Date: 2012-06-13 09:28+0200\n"
 "PO-Revision-Date: 2012-05-19 00:24+0400\n"
 "Last-Translator: Артем Каримов <skybon@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Lokalize 1.4\n"
 
-#: src/eix-functions.sh.in:103 src/eix-update.cc:600 src/eix-update.cc:637
+#: src/eix-functions.sh.in:103 src/eix-update.cc:598 src/eix-update.cc:635
 #: src/eixTk/statusline.cc:57
 msgid "Finished"
 msgstr "Готово"
@@ -317,7 +317,7 @@ msgstr ""
 "-H            Подавить обновленье линии статуса\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:645
+#: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:643
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -1447,12 +1447,12 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:488 src/eix-diff.cc:344
+#: src/eix.cc:488 src/eix-diff.cc:342
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:552 src/eix-diff.cc:311 src/eix-update.cc:336
+#: src/eix.cc:552 src/eix-diff.cc:309 src/eix-update.cc:334
 msgid "cannot redirect to %r"
 msgstr "не могу перенаправить в %r"
 
@@ -1576,11 +1576,11 @@ msgstr ""
 "для\n"
 "подробной информации.\n"
 
-#: src/eix-diff.cc:129
+#: src/eix-diff.cc:127
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Не могу открыть базу данных %r для чтенья (режим = 'rb')"
 
-#: src/eix-diff.cc:135
+#: src/eix-diff.cc:133
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1589,7 +1589,7 @@ msgstr ""
 "%s был создан несовместимым eix-update:\n"
 "Используется формат базы данных %s (текущий ― %s)."
 
-#: src/eix-diff.cc:389
+#: src/eix-diff.cc:387
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Сравнение баз данных (%s -> %s пакетов)\n"
@@ -1687,109 +1687,109 @@ msgstr ""
 "для\n"
 "подробной информации.\n"
 
-#: src/eix-update.cc:202
+#: src/eix-update.cc:200
 #, c-format
 msgid "%s must be a list of the form DIRECTORY METHOD"
 msgstr "%s должен быть списком формы ДИРЕКТОРИЯ МЕТОД"
 
-#: src/eix-update.cc:218
+#: src/eix-update.cc:216
 #, c-format
 msgid "%s must be a list of the form DIR-PATTERN OVERLAY-LABEL"
 msgstr "%s должен быть списком формы ДИР-ШАБЛОН МЕТКА-ОВЕРЛЕЯ"
 
-#: src/eix-update.cc:235
+#: src/eix-update.cc:233
 #, c-format
 msgid "KEEP_VIRTUALS is ignored: there is no previous %s\n"
 msgstr "KEEP_VIRTUALS игнорируется: нет предыдущего %s\n"
 
-#: src/eix-update.cc:240
+#: src/eix-update.cc:238
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
 msgstr "Добавленье виртуальных оверлеев из %s ..\n"
 
-#: src/eix-update.cc:245
+#: src/eix-update.cc:243
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Вниманье: KEEP_VIRTUALS игнорируется ибо формат базы данных изменился"
 
-#: src/eix-update.cc:383
+#: src/eix-update.cc:381
 msgid "Reading Portage settings ..\n"
 msgstr "Чтенье настроек Portage ..\n"
 
-#: src/eix-update.cc:497
+#: src/eix-update.cc:495
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Исключён PORTDIR: %s\n"
 
-#: src/eix-update.cc:512
+#: src/eix-update.cc:510
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Исключён оверлей %s\n"
 
-#: src/eix-update.cc:518
+#: src/eix-update.cc:516
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Построенье базы данных (%s) ..\n"
 
-#: src/eix-update.cc:564
+#: src/eix-update.cc:562
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Исключая \"%s\" %s (кэш: %s)\n"
 
-#: src/eix-update.cc:586
+#: src/eix-update.cc:584
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (кэш: %s)\n"
 
-#: src/eix-update.cc:591
+#: src/eix-update.cc:589
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
-#: src/eix-update.cc:596
+#: src/eix-update.cc:594
 msgid "     Reading Packages .. "
 msgstr "     Чтенье Пакетов .. "
 
-#: src/eix-update.cc:600 src/eix-update.cc:636
+#: src/eix-update.cc:598 src/eix-update.cc:634
 msgid "ABORTED!"
 msgstr "ОТМЕНЕНО!"
 
-#: src/eix-update.cc:605
+#: src/eix-update.cc:603
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Чтенье категории %s|%s (%s%%)"
 
-#: src/eix-update.cc:610
+#: src/eix-update.cc:608
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Чтенье до %s категорий пакетов .. "
 
-#: src/eix-update.cc:626
+#: src/eix-update.cc:624
 #, c-format
 msgid ": %s .."
 msgstr ": %s .."
 
-#: src/eix-update.cc:635
+#: src/eix-update.cc:633
 msgid "EMPTY!"
 msgstr "ПУСТО!"
 
-#: src/eix-update.cc:648
+#: src/eix-update.cc:646
 msgid "Applying masks ..\n"
 msgstr "Примененье масок ..\n"
 
-#: src/eix-update.cc:659
+#: src/eix-update.cc:657
 msgid "Calculating hash tables ..\n"
 msgstr "Расчёт хэш-таблиц ..\n"
 
-#: src/eix-update.cc:664
+#: src/eix-update.cc:662
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Запись файла базы данных %s ..\n"
 
-#: src/eix-update.cc:674
+#: src/eix-update.cc:672
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Не могу открыть файл базы данных %r для записи (режим = 'wb')"
 
-#: src/eix-update.cc:685
+#: src/eix-update.cc:683
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "База данных содержит %s пакетов в %s категориях.\n"

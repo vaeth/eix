@@ -66,6 +66,22 @@ AM_INIT_AUTOMAKE([no-dependencies])
 AS_VAR_SET([enable_silent_rules], [yes])
 AM_SILENT_RULES([yes])
 
+# This must be an early test:
+AC_MSG_CHECKING([whether to assume GNU type compiler])
+AS_VAR_SET([assumegnu], [:])
+AC_ARG_WITH([nongnu-cxx],
+	[AS_HELP_STRING([--with-nongnu-cxx=STR],
+		[Assume CXX is not GNU; optionally set CXX=STR])],
+	[AS_CASE(["${withval:-yes}"],
+		[no], [MV_MSG_RESULT([yes], [on request])],
+		[yes], [MV_MSG_RESULT([no], [on request])
+			AS_VAR_SET([assumegnu], [false])],
+		[MV_MSG_RESULT([no: using ${withval}])
+			AS_VAR_COPY([CXX], [withval])
+			export CXX
+			AS_VAR_SET([assumegnu], [false])])],
+	[MV_MSG_RESULT([yes], [default])])
+
 AC_LANG([C++])
 AC_PROG_CXX()
 
@@ -239,24 +255,29 @@ AS_IF([${debugging}],
 			-ggdb3 \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
 AS_IF([${optimization}],
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+	[AS_IF([${assumegnu}],
+		[AS_VAR_SET([gnuflags], ["
+			-fnothrow-opt
+			-frename-registers
+			-funsafe-loop-optimizations
+			-fgcse-sm
+			-fgcse-las
+			-fgcse-after-reload
+			-fpredictive-commoning
+			-ftree-switch-conversion
+			-fno-ident
+			"])],
+		[AS_VAR_SET([gnuflags], [])])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
 			-O2 \
 			-fomit-frame-pointer \
 			-fno-common \
-			-fnothrow-opt \
-			-frename-registers \
 			-fstrict-aliasing \
 			-fmerge-all-constants \
-			-funsafe-loop-optimizations \
 			-finline-functions \
-			-fgcse-sm \
-			-fgcse-las \
-			-fgcse-after-reload \
-			-fpredictive-commoning \
-			-ftree-switch-conversion \
-			-fno-ident \
 			-fvisibility=hidden \
 			-fvisibility-inlines-hidden \
+			${gnuflags} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])
 	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O1 \
@@ -266,15 +287,17 @@ AS_IF([${optimization}],
 			-Wl,-z,combreloc \
 		], [${my_ldfatal}], [], [:], [${quicktrue}])])
 AS_IF([${strong_optimization}],
-	AS_VAR_SET([flto], ["-flto -flto-partition=none"])
-	AS_CASE(["${my_gcc_v}"],
-		["4.6.0"],
-			[AC_MSG_WARN([Not forcing -flto: It seems broken in gcc-${my_gcc_v}])
-			AS_VAR_SET([flto], [])])
+	[AS_IF([${assumegnu}],
+		[AS_VAR_SET([flto], ["-flto -flto-partition=none"])
+		AS_CASE(["${my_gcc_v}"],
+			["4.6.0"],
+				[AC_MSG_WARN([Not forcing -flto: It seems broken in gcc-${my_gcc_v}])
+				AS_VAR_SET([flto], [])])],
+		[AS_VAR_SET([flto], ["-flto"])])
 # We first modify the LDFLAGS: This is important because of -flto:
 # Without -flto in LDFLAGS, -flto in CXXFLAGS might not fail even if it
 # should produce broken code.
-	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
 			-Wl,-O9 \
 			${flto} \
 			-fwhole-program \
@@ -301,15 +324,20 @@ AS_CASE([" ${CXXFLAGS} ${my_cxxadd} "],
 			[],
 			[AS_VAR_SET([warn_common], [])])])
 AS_IF([${strong_optimization}],
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
-			-fweb \
-			-ftree-vectorize \
-			-fgraphite \
-			-fgraphite-identity \
-			-floop-interchange \
-			-floop-strip-mine \
-			-floop-block \
-			-fno-enforce-eh-specs \
+	[AS_IF([${assumegnu}],
+		[AS_VAR_SET([gnuflags], ["
+			-ftree-vectorize
+			-fweb
+			-fgraphite
+			-fgraphite-identity
+			-floop-interchange
+			-floop-strip-mine
+			-floop-block
+			-fno-enforce-eh-specs
+			"])],
+		[AS_VAR_SET([gnuflags], [])])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+			${gnuflags} \
 			${fwhole_program} \
 			-DNDEBUG \
 			-DNO_DEBUG \
@@ -324,16 +352,28 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 		[*" -std=c++11 "*], [],
 		[*" -std=gnu++11 "*], [],
 		[AS_VAR_SET([zero_as_null_pointer], [])])
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
+	[AS_IF([${assumegnu}],
+		[AS_VAR_SET([gnuflags], ["
+			-fdirectives-only
+			-ftracer
+			"])],
+		[AS_VAR_SET([gnuflags], [])])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fno-common \
-			-fdirectives-only \
 			-funsigned-char \
 			-fPIC \
-			-ftracer \
+			${gnuflags} \
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])]
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-pedantic \
 			-Wall \
 			-Wextra \
 			-Wformat=2 \
+			-Wno-unknown-warning-option \
+			-Wunused-variable \
+			-Wunused-parameter \
+			-Wstring-plus-int \
+			-WNSObject-attribute \
 			-Winit-self \
 			-Wmissing-include-dirs \
 			-Wswitch-default \
@@ -362,6 +402,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wabi \
 			-Wctor-dtor-privacy \
 			-Wstrict-null-sentinel \
+			-Wstring-plus-int \
 			-Woverloaded-virtual \
 			-Wsign-promo \
 			-Wnoexcept \

@@ -103,8 +103,7 @@ enum cli_options {
 };
 
 /** Arguments and shortopts. */
-static struct Option long_options[] = {
-
+static Option long_options[] = {
 	Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help), /* show a short help screen */
 	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
@@ -116,7 +115,6 @@ static struct Option long_options[] = {
 	Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick),
 	Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care),
 	Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet),
-
 	Option(NULLPTR, 0)
 };
 

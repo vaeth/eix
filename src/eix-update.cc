@@ -158,8 +158,7 @@ static const char *outputname(NULLPTR);
 static const char *var_to_print(NULLPTR);
 
 /** Arguments and shortopts. */
-static struct Option long_options[] = {
-
+static Option long_options[] = {
 	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet),
 	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
 	 Option("dump-defaults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
@@ -178,7 +177,6 @@ static struct Option long_options[] = {
 	 Option("method",         'm',     Option::PAIRLIST,  &method_args),
 	 Option("repo-name",      'r',     Option::PAIRLIST,  &repo_args),
 	 Option("output",         'o',     Option::STRING,    &outputname),
-
 	 Option(NULLPTR, 0)
 };
 

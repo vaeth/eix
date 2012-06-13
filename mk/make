@@ -18,6 +18,7 @@ Available options are
   -d  Do not use dep-default
   -p  Use pedantic warnings when modifying flags
   -P  Use pedantic warnings except -Wno-sign-conversion
+  -g  Use CLANG++
   -s  With sqlite
   -S  Without sqlite
   -C  Avoid CCACHE
@@ -88,9 +89,10 @@ quickcheck=false
 clear_ccache=false
 debugging=false
 wnosign=false
+clang=false
 dialect='enable'
 OPTIND=1
-while getopts 'q01234dnepPsSrOfCXyYdc:j:hH?' opt
+while getopts 'q01234gdnepPsSrOfCXyYdc:j:hH?' opt
 do	case ${opt} in
 	q) quiet=:;;
 	0) separate_all=false;;
@@ -98,6 +100,7 @@ do	case ${opt} in
 	2) configure_extra="${configure_extra} --enable-separate-update";;
 	3) configure_extra="${configure_extra} --enable-separate-binaries";;
 	4) configure_extra="${configure_extra} --enable-separate-tools";;
+	g) clang=:;;
 	d) dep_default=false;;
 	n) earlystop=:;;
 	e) keepenv=:;;
@@ -124,6 +127,7 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 fi
 
 [ -n "${dialect:++}" ] && configure_extra="${configure_extra} --${dialect}-new-dialect"
+${clang} && configure_extra="${configure_extra} --with-nongnu-cxx=clang++"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 ${dep_default} && configure_extra="${configure_extra} --with-dep-default"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
@@ -140,15 +144,58 @@ fi
 
 ${use_ccache} && SetCcache
 
+Filter() {
+	for currvar in \
+		CFLAGS \
+		CXXFLAGS \
+		LDFLAGS \
+		CPPFLAGS
+	do	eval oldflags=\${${currvar}}
+		newflags=
+		for currflag in ${oldflags}
+		do	case " ${*} " in
+			*" ${currflag} "*)	continue;;
+			esac
+			newflags=${newflags}${newflags:+ }${currflag}
+		done
+		eval ${currvar}=\${newflags}
+	done
+}
+
 if ! ${keepenv}
 then	CFLAGS=`portageq envvar CFLAGS`
 	CXXFLAGS=`portageq envvar CXXFLAGS`
 	LDFLAGS=`portageq envvar LDFLAGS`
 	CPPFLAGS=`portageq envvar CPPFLAGS`
+	${clang} && Filter \
+		-fnothrow-opt \
+		-frename-registers \
+		-funsafe-loop-optimizations \
+		-fgcse-sm \
+		-fgcse-las \
+		-fgcse-after-reload \
+		-fpredictive-commoning \
+		-ftree-switch-conversion \
+		-fno-ident \
+		-flto-partition=none \
+		-ftree-vectorize \
+		-fweb \
+		-fgraphite \
+		-fgraphite-identity \
+		-floop-interchange \
+		-floop-strip-mine \
+		-floop-block \
+		-fno-enforce-eh-specs \
+		-fdirectives-only \
+		-ftracer
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
 	if ${pedantic} || ${wnosign}
 	then	configure_extra="${configure_extra} --enable-strong-warnings"
-		${wnosign} && CXXFLAGS="${CXXFLAGS} -Wno-sign-conversion"
+		if ${wnosign}
+		then	CXXFLAGS="${CXXFLAGS} -Wno-sign-conversion"
+		elif ${clang}
+		then	CXXFLAGS="${CXXFLAGS} -Wno-sign-conversion"
+		fi
 		automake_extra="${automake_extra} -Wall"
 	else	configure_extra="${configure_extra} --enable-warnings"
 		#CXXFLAGS="${CXXFLAGS} -Werror"

@@ -259,7 +259,7 @@ static struct LocalOptions {
 } rc_options;
 
 /** Arguments and shortopts. */
-static struct Option long_options[] = {
+static Option long_options[] = {
 	// Global options
 	Option("quiet",        'q',     Option::BOOLEAN,       &rc_options.be_quiet),
 	Option("quick",        'Q',     Option::BOOLEAN,       &rc_options.quick),

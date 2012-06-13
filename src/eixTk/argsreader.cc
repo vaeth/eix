@@ -18,7 +18,7 @@
 
 using namespace std;
 
-ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
+ArgumentReader::ArgumentReader(int argc, char **argv, Option opt_table[])
 {
 	bool seen_escape(false);
 	name = argv[0];
@@ -84,7 +84,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, struct Option opt_table[])
 }
 
 Option *
-ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
+ArgumentReader::lookup_option(const int opt, Option *opt_table)
 {
 	while(likely((opt_table->longopt || opt_table->shortopt))) {
 		if(unlikely((opt_table->shortopt) && (opt_table->shortopt == opt))) {
@@ -96,7 +96,7 @@ ArgumentReader::lookup_option(const int opt, struct Option *opt_table)
 }
 
 unsigned int
-ArgumentReader::numargs(const int opt, struct Option *opt_table)
+ArgumentReader::numargs(const int opt, Option *opt_table)
 {
 	Option *c(lookup_option(opt, opt_table));
 	if(c == NULLPTR)
@@ -127,7 +127,7 @@ ArgumentReader::numargs(const int opt, struct Option *opt_table)
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
 int
-ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
+ArgumentReader::lookup_longopt(const char *long_opt, Option *opt_table)
 {
 	while(likely(opt_table->longopt || opt_table->shortopt)) {
 		if(unlikely((opt_table->longopt) && (strcmp(opt_table->longopt, long_opt) == 0))) {
@@ -144,7 +144,7 @@ ArgumentReader::lookup_longopt(const char *long_opt, struct Option *opt_table)
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
 int
-ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
+ArgumentReader::lookup_shortopt(const char short_opt, Option *opt_table)
 {
 	while( (opt_table->longopt || opt_table->shortopt) )
 	{
@@ -158,7 +158,7 @@ ArgumentReader::lookup_shortopt(const char short_opt, struct Option *opt_table)
 }
 
 void
-ArgumentReader::foldAndRemove(struct Option *opt_table)
+ArgumentReader::foldAndRemove(Option *opt_table)
 {
 	ArgumentReader::iterator it(begin());
 	while(it != end())
