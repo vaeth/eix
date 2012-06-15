@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-06-13 09:28+0200\n"
+"POT-Creation-Date: 2012-06-15 19:52+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1780,6 +1780,38 @@ msgstr "Datenbankfile %r nicht beschreibbar (mode = 'wb')"
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "Datenbank enthält %s Pakete in %s Kategorien.\n"
+
+#: src/masked-packages.cc:34
+#, c-format
+msgid ""
+"Usage: %s [options] category/name-version[:slot][::repo] ...\n"
+"Output all arguments matching a list of mask\n"
+"Options:\n"
+" -h, --help              show a short help screen\n"
+" -q, --quiet             Do not output matching arguments, but exit with\n"
+"                         success only if at least one argument matches.\n"
+" -m, --mask MASK         add MASK to the list of masks\n"
+" -f, --file FILE         add masks from FILE.\n"
+" -F, --read-file FILE    read args as words from FILE.\n"
+"Directories are read recursively.\n"
+"An empty/omitted filename means standard input.\n"
+"\n"
+"This program is covered by the GNU General Public License. See COPYING for\n"
+"further information.\n"
+msgstr ""
+"Aufruf: %s [Optionen] Kategorie/Name-Version[:Slot][::Repo] ...\n"
+"Ausgabe aller Argumente, die auf eine Maskeliste passt.Optionen:\n"
+" -h, --help              Ausgabe eines Hilfstexts\n"
+" -q, --quiet (Toggle)    keine Ausgabe, aber der Rückkehrstatus ist nur\n"
+"                         erfolgreich, falls mindestens ein Argument passt.\n"
+" -m, --mask MASKE        Fügt MASKE zur Maskenliste hinzu\n"
+" -f, --file DATEI        Für Masken aus DATEI hinzu.\n"
+" -F, --read-file DATEI   Nimmt die Worte aus DATEI als Argumente.\n"
+"Verzeichnisse werden rekursiv gelesen.\n"
+"Ein leerer/weggelassener Filename wird als Standard-Eingabe interpretiert.\n"
+"\n"
+"Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
+"weitere Informationen.\n"
 
 #: src/versionsort.cc:36
 #, c-format
@@ -5510,7 +5542,7 @@ msgstr "lokal geändert. Default war:"
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 
-#: src/main/main.cc:101
+#: src/main/main.cc:111
 #, c-format
 msgid ""
 "Received SIGSEGV - you probably found a bug in eix.\n"
@@ -5649,27 +5681,31 @@ msgstr ""
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
-#: src/portage/mask.cc:87
+#: src/portage/mask.cc:89
 msgid "Can't read category."
 msgstr "Category nicht lesbar."
 
-#: src/portage/mask.cc:108
+#: src/portage/mask.cc:110
 msgid "Repository name must be separated with :: (one : is missing)"
 msgstr "Repository-Name muss mit :: abgetrennt werden (ein : fehlt)"
 
-#: src/portage/mask.cc:153
+#: src/portage/mask.cc:156
 msgid "Operator without a version part."
 msgstr "Operator ohne Versionsspezifizierung."
 
-#: src/portage/mask.cc:166
+#: src/portage/mask.cc:157
+msgid "Version specification is missing"
+msgstr "Versionsangabe fehlt"
+
+#: src/portage/mask.cc:170
 msgid "A '*' is only valid at the end of a version-string."
 msgstr "Ein '*' ist nur am Ende der Version zulässig."
 
-#: src/portage/mask.cc:172
+#: src/portage/mask.cc:176
 msgid "A wildcard is only valid with the = operator."
 msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
 
-#: src/portage/mask.cc:176
+#: src/portage/mask.cc:180
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

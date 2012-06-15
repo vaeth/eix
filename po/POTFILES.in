@@ -12,6 +12,7 @@ src/eix.cc
 src/eix-diff.cc
 src/eix-drop-permissions.cc
 src/eix-update.cc
+src/masked-packages.cc
 src/versionsort.cc
 src/cache/base.cc
 src/cache/base.h
@@ -88,6 +89,7 @@ src/main/main_all_tools.cc
 src/main/main_diff.cc
 src/main/main_drop_permissions.cc
 src/main/main_eix.cc
+src/main/main_masked_packages.cc
 src/main/main_output.cc
 src/main/main_update.cc
 src/main/main_update_tools.cc
@@ -108,6 +110,7 @@ src/portage/depend.cc
 src/portage/depend.h
 src/portage/extendedversion.cc
 src/portage/extendedversion.h
+src/portage/extendedversion_bin.cc
 src/portage/instversion.h
 src/portage/keywords.cc
 src/portage/keywords.h
@@ -118,6 +121,7 @@ src/portage/overlay.cc
 src/portage/overlay.h
 src/portage/package.cc
 src/portage/package.h
+src/portage/package_best.cc
 src/portage/packagesets.h
 src/portage/packagetree.cc
 src/portage/packagetree.h

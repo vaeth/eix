@@ -2,6 +2,7 @@
 
 *eix-0.25.6
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Add masked-packages
 	- Introduce versionsort -[npvr]
 	- Introduce plainversion and revision attributes
 	- Introduce --pipe-name and --pipe-version and parse version in --pipe

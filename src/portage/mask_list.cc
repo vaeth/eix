@@ -75,21 +75,20 @@ MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
 		}
 	}
 	delete masks;
-	if(!(check & Keywords::RED_MASK))
+	if(!(check & Keywords::RED_MASK)) {
 		had_mask = false;
-	if(!(check & Keywords::RED_UNMASK))
+	}
+	if(!(check & Keywords::RED_UNMASK)) {
 		had_unmask = false;
-	if(had_mask || had_unmask)
-	{
+	}
+	if(had_mask || had_unmask) {
 		for(Package::iterator i(p->begin());
 			likely(i != p->end()); ++i) {
-			if(had_mask)
-			{
+			if(had_mask) {
 				if(!i->was_masked())
 					i->set_redundant(Keywords::RED_MASK);
 			}
-			if(had_unmask)
-			{
+			if(had_unmask) {
 				if(!i->was_unmasked())
 					i->set_redundant(Keywords::RED_UNMASK);
 			}

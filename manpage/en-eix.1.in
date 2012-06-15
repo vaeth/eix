@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-09 23:10:00 +0200 (Sat, 09 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-15 18:00:00 +0200 (Fri, 15 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -32,6 +32,9 @@
 
 .B eix-drop-permissions
 [B<-->] [I<command to execute>]
+
+.B masked-packages
+[I<options>] I<category>B</>I<name>B<->I<version>[B<:>I<slot>][B<::>I<repo>] ...
 
 .B versionsort
 [B<-n>|B<-p>|B<-v>|B<-r>] [I<package->]I<version> ...
@@ -93,6 +96,9 @@ B<eix-installed> is a simple script which outputs all installed packages
 repository or buildtime information
 (cf. the description of B<CHECK_INSTALLED_OVERLAYS> and B<USE_BUILD_TIME>).
 To get more help on B<eix-installed> call B<eix-installed -h>.
+
+B<masked-packages> is a helper tool which matches the arguments against a list of masks.
+Details can be found near the end of the manpage.
 
 B<versionsort> is a helper tool for scripts which cuts the version strings from its arguments
 and outputs them sorted according to the portage rules of version sorting.
@@ -2982,6 +2988,43 @@ This is a local copy of the remote archive, used by eix-remote.
 The path can be changed with the B<EIX_REMOTEARCHIVE> variable
 (which by default honours B<EPREFIX> via delayed reference).
 .\" }}}
+.\" }}}
+
+.\" {{{ masked-packages
+.SH masked-packages
+B<masked-packages> is a helper tool for scripts which can match the arguments
+against a list of masked packages or versions.
+
+The masks are specified by the options and expected to be in the
+same format as in /etc/portage/package.mask
+
+The arguments must be in the form
+I<category>B</>I<name>B<->I<version>[B<:>I<slot>][B<::>I<repo>]
+
+By default, the arguments matching a mask are printed.
+
+.SS Options
+.TP
+.BR -h ", " --help
+Print a help screen and exit.
+.TP
+.BR -q ", " --quiet "   (toggle)"
+Do not print the arguments matching a mask, but instead show by the exit status
+whether an argument was matching.
+More precisely, the exit status is only successful if at least one argument is matching.
+.TP
+.BR -m ", " --mask I<MASK>
+Add I<MASK> to the list of masks.
+.TP
+.BR -f ", " --file I<FILE>
+Add the content of I<FILE> to the list of masks.
+I<FILE> can be empty or a directory: An empty filename means that standard input is used;
+a directory is read recursively.
+.TP
+.BR -F ", " --read-file I<FILE>
+Add words from I<FILE> to the list of arguments.
+I<FILE> can be empty or a directory: An empty filename means that standard input is used;
+a directory is read recursively.
 .\" }}}
 
 .\" {{{ versionsort

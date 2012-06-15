@@ -45,6 +45,12 @@ varsreader_src = \
 eixTk/varsreader.cc \
 eixTk/varsreader.h
 
+masklist_src = \
+portage/mask.cc \
+portage/mask.h \
+portage/mask_list.cc \
+portage/mask_list.h
+
 eixtk_src = \
 $(stringutils_src) \
 eixTk/ansicolor.cc \
@@ -85,16 +91,17 @@ portage/conf/portagesettings.cc \
 portage/conf/portagesettings.h \
 portage/conf/cascadingprofile.cc \
 portage/conf/cascadingprofile.h \
+$(masklist_src) \
 portage/basicversion.cc \
 portage/basicversion.h \
 portage/depend.cc \
 portage/depend.h \
 portage/extendedversion.cc \
+portage/extendedversion_bin.cc \
 portage/extendedversion.h \
 portage/instversion.h \
-portage/mask.cc \
-portage/mask.h \
 portage/package.cc \
+portage/package_best.cc \
 portage/package.h \
 portage/packagesets.h \
 portage/vardbpkg.cc \
@@ -103,8 +110,6 @@ portage/packagetree.cc \
 portage/packagetree.h \
 portage/keywords.cc \
 portage/keywords.h \
-portage/mask_list.cc \
-portage/mask_list.h \
 portage/overlay.cc \
 portage/overlay.h \
 portage/set_stability.cc \
@@ -225,6 +230,7 @@ main/main_update_tools.cc \
 main/main_output.cc \
 main/main_all.cc \
 main/main_all_tools.cc \
+main/main_masked_packages.cc \
 main/main_versionsort.cc \
 main/main_drop_permissions.cc
 
@@ -287,6 +293,7 @@ $(nodist_extra_common_src) \
 eix-diff$(EXEEXT) \
 eix-update$(EXEEXT) \
 eix-drop-permissions$(EXEEXT) \
+masked-packages$(EXEEXT) \
 versionsort$(EXEEXT) \
 eix-functions.sh \
 eix-installed.sh \
@@ -313,7 +320,11 @@ cache/generate_cachemap.sh
 if SEPARATE_TOOLS
 # Generate separate tools binaries
 use_separate_tools = true
-tool_programs = versionsort eix-drop-permissions
+tool_programs = \
+masked-packages$(EXEEXT) \
+versionsort$(EXEEXT) \
+eix-drop-permissions$(EXEEXT)
+
 tool_noinst =
 main_all_src  = main/main_all.cc
 main_output_src = main/main_output.cc
@@ -331,7 +342,11 @@ else
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
-noinst_tool = versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT)
+noinst_tool = \
+masked-packages$(EXEEXT) \
+versionsort$(EXEEXT) \
+eix-drop-permissions$(EXEEXT)
+
 main_all_src = versionsort.cc main/main_all_tools.cc
 main_output_src = main/main_output.cc
 main_eix_src = main/main_eix.cc
@@ -349,6 +364,7 @@ if SEPARATE_UPDATE
 
 # We have a separate eix-update, so we link versionsort to it
 use_separate_update = true
+masked_link = eix-update$(EXEEXT)
 versionsort_link = eix-update$(EXEEXT)
 drop_permissions_link = eix-update$(EXEEXT)
 
@@ -405,8 +421,9 @@ endif
 else
 # !SEPARATE_UPDATE
 
-# We do not have a separate eix-update, so we link versionsort to eix
+# We do not have a separate eix-update, so we link tools to eix
 use_separate_update = false
+masked_link = eix$(EXEEXT)
 versionsort_link = eix$(EXEEXT)
 drop_permissions_link = eix$(EXEEXT)
 
@@ -435,18 +452,28 @@ endif
 
 if SEPARATE_TOOLS
 
+masked_packages_LDADD = $(common_tools_ldadd)
+masked_packages_SOURCES = \
+eixTk/exceptions.cc \
+eixTk/exceptions.h \
+$(stringutils_src) \
+eixTk/utils.cc \
+portage/basicversion.cc \
+portage/extendedversion.cc \
+portage/keywords.cc \
+portage/version.cc \
+portage/package.cc \
+$(masklist_src) \
+eixTk/argsreader.cc \
+masked-packages.cc \
+main/main_masked_packages.cc
+
 versionsort_LDADD = $(common_tools_ldadd)
 versionsort_SOURCES = \
 $(stringutils_src) \
-database/types.h \
-eixTk/inttypes.h \
-eixTk/compare.h \
-eixTk/exceptions.h \
 portage/basicversion.cc \
-portage/basicversion.h \
 versionsort.cc \
-main/main_versionsort.cc \
-main/main.h
+main/main_versionsort.cc
 
 eix_drop_permissions_LDADD = $(common_tools_ldadd)
 eix_drop_permissions_SOURCES = \
@@ -455,13 +482,15 @@ $(eixrc_src) \
 $(drop_permissions_src) \
 $(sysutils_src) \
 $(varsreader_src) \
-eixTk/exceptions.h \
 eix-drop-permissions.cc \
-main/main_drop_permissions.cc \
-main/main.h
+main/main_drop_permissions.cc
 
 else
 # !SEPARATE_TOOLS
+
+masked-packages$(EXEEXT): $(masked_link)
+	$(AM_V_at)test ! -e masked-packages$(EXEEXT) || rm masked-packages$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) $(masked_link) masked_packages$(EXEEXT)
 
 versionsort$(EXEEXT): $(versionsort_link)
 	$(AM_V_at)test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
@@ -475,9 +504,13 @@ endif
 
 uninstall-local:
 	$(AM_V_at)$(use_separate_tools) || \
+		test ! -e "$(DESTDIR)$(bindir)/masked-packages$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/masked-packages$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
-	$(AM_V_at)test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
+	$(AM_V_at)$(use_separate_tools) || \
+		test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
 	$(AM_V_at)$(use_separate_update) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
@@ -488,13 +521,20 @@ uninstall-local:
 
 install-exec-hook:
 	$(AM_V_at)$(use_separate_tools) || \
+		test ! -e "$(DESTDIR)$(bindir)/masked-packages$(EXEEXT)" || \
+		rm -- "$(DESTDIR)$(bindir)/masked-packages$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
+		$(LN_S) "$(masked_link)" "$(DESTDIR)$(bindir)/masked-packages$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
 		test ! -e "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
 	$(AM_V_at)$(use_separate_tools) || \
 		$(LN_S) "$(versionsort_link)" "$(DESTDIR)$(bindir)/versionsort$(EXEEXT)"
-	$(AM_V_at)test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
+	$(AM_V_at)$(use_separate_tools) || \
+		test ! -e "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
-	$(AM_V_at)$(LN_S) "$(drop_permissions_link)" "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
+	$(AM_V_at)$(use_separate_tools) || \
+		$(LN_S) "$(drop_permissions_link)" "$(DESTDIR)$(bindir)/eix-drop-permissions$(EXEEXT)"
 	$(AM_V_at)$(use_separate_update) || \
 		test ! -e "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)" || \
 		rm -- "$(DESTDIR)$(bindir)/eix-update$(EXEEXT)"

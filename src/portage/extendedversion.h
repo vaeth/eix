@@ -88,6 +88,9 @@ class ExtendedVersion : public BasicVersion
 		void set_properties(const std::string& str)
 		{ propertiesFlags = calcProperties(str); }
 
+		void assign_basic_version(const BasicVersion &b)
+		{ *dynamic_cast<BasicVersion *>(this) = b; }
+
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 };
 

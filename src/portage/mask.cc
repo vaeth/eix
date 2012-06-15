@@ -59,23 +59,25 @@ void
 Mask::parseMask(const char *str) throw(ExBasic)
 {
 	// determine comparison operator
-	for(unsigned int i(0); ; ++i) {
-		unsigned char len = operators[i].len;
-		if(unlikely(len == 0)) {
-			// no operator
-			m_operator = operators[i].op;
-			break;
-		}
-		if(unlikely(strncmp(str, operators[i].str, len) == 0)) {
-			m_operator = operators[i].op;
-			// Skip the operator-part
-			str += strlen(operators[i].str);
-			if(unlikely(m_operator == maskIsSet)) {
-				m_category = SET_CATEGORY;
-				m_name = str;
-				return;
+	if(m_type != maskPseudomask) {
+		for(unsigned int i(0); ; ++i) {
+			unsigned char len = operators[i].len;
+			if(unlikely(len == 0)) {
+				// no operator
+				m_operator = operators[i].op;
+				break;
 			}
-			break;
+			if(unlikely(strncmp(str, operators[i].str, len) == 0)) {
+				m_operator = operators[i].op;
+				// Skip the operator-part
+				str += strlen(operators[i].str);
+				if(unlikely(m_operator == maskIsSet)) {
+					m_category = SET_CATEGORY;
+					m_name = str;
+					return;
+				}
+				break;
+			}
 		}
 	}
 
@@ -144,20 +146,22 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	}
 
 	// Get the rest (name-version|name)
-	if(m_operator != maskOpAll)
+	if((m_operator != maskOpAll) || (m_type == maskPseudomask))
 	{
 		// There must be a version somewhere
 		p = ExplodeAtom::get_start_of_version(str);
 
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
-			throw ExBasic(_("Operator without a version part."));
+			throw ExBasic((m_type != maskPseudomask) ?
+				_("Operator without a version part.") :
+				_("Version specification is missing"));
 		}
 
 		m_name = string(str, (p - 1) - str);
 		str = p;
 
 		// Check for wildcard-version
-		const char *wildcard(strchr(str, '*'));
+		const char *wildcard((m_type != maskPseudomask) ? strchr(str, '*') : NULLPTR);
 		if(unlikely((unlikely(wildcard != NULLPTR)) &&
 			(likely((end == NULLPTR) || (wildcard <= end))))) {
 			if(unlikely((wildcard[1] != '\0') &&
@@ -196,6 +200,17 @@ Mask::parseMask(const char *str) throw(ExBasic)
 		else
 			m_name = str;
 	}
+}
+
+void
+Mask::to_package(Package *p) const
+{
+	p->category = m_category;
+	p->name = m_name;
+	Version *v(new Version);
+	v->assign_basic_version(*this);
+	v->slotname = m_slotname;
+	p->addVersion(v);
 }
 
 /** Tests if the mask applies to a Version.
@@ -356,7 +371,8 @@ Mask::ismatch(Package& pkg) const
  * @param ve         Version instance to be set
  * @param do_test    set conditionally or unconditionally
  * @param check      check these for changes */
-void Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
+void
+Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 {
 	switch(m_type) {
 		case maskUnmask:

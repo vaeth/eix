@@ -44,7 +44,8 @@ class Mask : public BasicVersion {
 		typedef enum {
 			maskTypeNone, maskAllowedByProfile,
 			maskInSystem, maskInWorld,
-			maskMask, maskUnmask
+			maskMask, maskUnmask,
+			maskPseudomask
 		} Type;
 
 		/** Describes the comparison operator before the mask. */
@@ -93,6 +94,8 @@ class Mask : public BasicVersion {
 		void match(Matches &m, Package &pkg) const;
 
 		bool have_match(Package &pkg) const;
+
+		void to_package(Package *p) const;
 
 		const char *getName() const
 		{ return m_name.c_str(); }

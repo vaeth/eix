@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-09 23:10:00 +0200 (Sat, 09 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-15 18:00:00 +0200 (Fri, 15 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -32,6 +32,9 @@
 
 .B eix-drop-permissions
 [B<-->] [I<Befehl zum Ausführen>]
+
+.B masked-packages
+I<Kategorie>B</>I<Name>B<->I<Version>[B<:>I<Slot>][B<::>I<Repo>]
 
 .B versionsort
 [B<-n>|B<-p>|B<-v>|B<-r>] [I<Paket->]I<Version> ...
@@ -92,10 +95,14 @@ ausgibt, und das prüfen kann, welche Pakete mit/ohne Repository- oder Buildtime
 (vgl. die Beschreibung zu B<CHECK_INSTALLED_OVERLAYS> und B<USE_BUILD_TIME>).
 Mehr zu B<eix-installed> erfahren Sie durch den Aufruf B<eix-installed -h>.
 
+B<masked-packages> ist ein Hilfsprogramm für Skripte, das die Argumente gegen
+eine Maskenliste testet.
+Details stehen nahe am Ende dieser Manpage.
+
 B<versionsort> ist ein Hilfsprogramm für Skripte, das die Versionsnummer von
 den Argumenten abtrennt, und das die gefundenen Versionsnummern gemäß den
 Portage-Regeln sortiert.
-Details stehen nahe beim Ende dieser Manpage.
+Details stehen nahe am Ende dieser Manpage.
 .\" }}}
 
 .\" {{{ BEISPIELE
@@ -3053,6 +3060,43 @@ Dies ist eine lokale Kopie des Remote-Archivs, das von eix-remote benutzt wird.
 Der Pfad kann mit der Variablen B<EIX_REMOTEARCHIVE> geändert werden
 (deren Default B<EPREFIX> über verzögerte Ersetzung berücksichtigt).
 .\" }}}
+.\" }}}
+
+.\" {{{ masked-packages
+.SH masked-packages
+B<masked-packages> ist ein Hilfsprogramm für Skripte, das die Argumente gegen
+eine Liste von Paketmasken testet.
+
+Dies Masken werden durch die Optionen angegeben; sie sollten im selben Format
+sein wie /etc/portage/package.mask
+
+Die Argumente müssen die folgende Gestalt haben:
+I<Kategorie>B</>I<Name>B<->I<Version>[B<:>I<Slot>][B<::>I<Repo>]
+
+Per Default werden die Argumente ausgegeben, die auf eine Maske passen.
+
+.SS Options
+.TP
+.BR -h ", " --help
+Ausgabe eines Hilfstextes und Ende.
+.TP
+.BR -q ", " --quiet "   (toggle)"
+Anstelle der Ausgabe der Argument wird nur anhand des Rückgabewerts gezeigt,
+ob ein Argument gepasst hat.
+Genauer ist der Rückgabewert nur dann erfolgreich, wenn mindestens ein Argument passt.
+.TP
+.BR -m ", " --mask I<MASKE>
+Für I<MASKE> der Maskenliste hinzu.
+.TP
+.BR -f ", " --file I<DATEI>
+Fügt den Inhalt von I<DATEI> der Maskenliste hinzu.
+I<DATEI> kann leer sein oder ein Directory: Ein leerer Filename wird als Standardeingabe interpretiert,
+ein Directory wird rekursiv gelesen.
+.TP
+.BR -F ", " --read-file I<FILE>
+Für all Worte aus I<DATEI> der Liste von Argumenten hinzu.
+I<DATEI> kann leer sein oder ein Directory: Ein leerer Filename wird als Standardeingabe interpretiert,
+ein Directory wird rekursiv gelesen.
 .\" }}}
 
 .\" {{{ versionsort

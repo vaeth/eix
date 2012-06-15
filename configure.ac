@@ -415,8 +415,7 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 			-Wsuggest-attribute=noreturn \
 			-Wdelete-non-virtual-dtor \
 			${zero_as_null_pointer} \
-		], [], [], [:], [${quicktrue}])
-		dnl No [${my_cxxfatal}] for warning flags
+		], [${my_cxxfatal}], [], [:], [${quicktrue}])
 dnl We do not use (since it gives too many useless warnings or is only for C):
 dnl			-Wtraditional \
 dnl			-Wc++-compat \
@@ -431,8 +430,7 @@ dnl			-Wpointer-sign \
 			-Wl,--no-allow-shlib-undefined \
 			-Wl,--no-undefined-version \
 			${warn_common} \
-		], [], [], [:], [${quicktrue}])])
-		dnl No [${my_ldfatal}] for warning flags
+		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
 AS_IF([${strong_warnings}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-Wsign-conversion \

@@ -32,6 +32,7 @@
 /po/en@*.po
 
 /src/versionsort
+/src/masked-packages
 /src/eix
 /src/eix-*
 !/src/eix-*.*

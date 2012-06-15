@@ -30,6 +30,7 @@
 //   DIFF_BINARY
 //   UPDATE_BINARY
 //   VERSIONSORT_BINARY
+//   MASKED_BINARY
 //   DROP_PERMISSIONS_BINARY
 // to build the corresponding functionality into the generated binary.
 // If several are selected, main() will select depending on the call name.
@@ -64,6 +65,15 @@
 #define BINARY_COLLECTION 1
 #else
 #define USE_BINARY run_versionsort
+#endif
+#endif
+
+#ifdef MASKED_BINARY
+#ifdef USE_BINARY
+#undef BINARY_COLLECTION
+#define BINARY_COLLECTION 1
+#else
+#define USE_BINARY run_masked_packages
 #endif
 #endif
 
@@ -144,20 +154,27 @@ run_program(int argc, char *argv[])
 		return run_eix_diff(argc, argv);
 #endif
 #ifdef UPDATE_BINARY
-#if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(DROP_PERMISSIONS_BINARY)
+#if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY) || defined(DROP_PERMISSIONS_BINARY)
 	if(unlikely((program_name.find("update") != string::npos) ||
 		(program_name.find("UPDATE") != string::npos)))
 #endif
 		return run_eix_update(argc, argv);
 #endif
 #ifdef DROP_PERMISSIONS_BINARY
-#if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
+#if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY)
 	if(likely((program_name.find("drop") != string::npos) ||
 		(program_name.find("perm") != string::npos) ||
 		(program_name.find("DROP") != string::npos) ||
 		(program_name.find("PERM") != string::npos)))
 #endif
 		return run_eix_drop_permissions(argc, argv);
+#endif
+#ifdef DROP_MASKED_BINARY
+#if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
+	if(likely((program_name.find("mask") != string::npos) ||
+		(program_name.find("MASK") != string::npos)))
+#endif
+		return run_masked_packages(argc, argv);
 #endif
 #ifdef VERSIONSORT_BINARY
 #if defined(EIX_BINARY)

@@ -11,8 +11,6 @@
 #include <config.h>
 #include <eixTk/likely.h>
 #include <eixTk/stringutils.h>
-#include <eixTk/sysutils.h>
-#include <portage/conf/portagesettings.h>
 #include <portage/package.h>
 
 #include <map>
@@ -120,27 +118,4 @@ ExtendedVersion::calcProperties(const string &str)
 		p |= properties_map.getProperties(*it);
 	}
 	return p;
-}
-
-bool
-ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const
-{
-	switch(have_bin_pkg_m) {
-		case HAVEBINPKG_UNKNOWN:
-			{
-				const string &s((*ps)["PKGDIR"]);
-				if((s.empty()) || !is_file((s + "/" + pkg ->category + "/" + pkg->name + "-" + getFull() + ".tbz2").c_str())) {
-					have_bin_pkg_m = HAVEBINPKG_NO;
-					return false;
-				}
-				have_bin_pkg_m = HAVEBINPKG_YES;
-			}
-			break;
-		case HAVEBINPKG_NO:
-			return false;
-		default:
-		// case HAVEBINPKG_YES;
-			break;
-	}
-	return true;
 }
