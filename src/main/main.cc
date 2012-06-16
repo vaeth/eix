@@ -169,7 +169,7 @@ run_program(int argc, char *argv[])
 #endif
 		return run_eix_drop_permissions(argc, argv);
 #endif
-#ifdef DROP_MASKED_BINARY
+#ifdef MASKED_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
 	if(likely((program_name.find("mask") != string::npos) ||
 		(program_name.find("MASK") != string::npos)))

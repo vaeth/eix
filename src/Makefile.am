@@ -259,7 +259,7 @@ nodist_extra_output_only_src =
 
 # The update-tool for our database
 update_only_ldadd = $(SQLITE_LIBS)
-update_only_src = eix-update.cc eix-drop-permissions.cc $(percentage_src) $(cache_src)
+update_only_src = eix-update.cc $(percentage_src) $(cache_src)
 nodist_update_only_src = $(nodist_percentage_src) $(nodist_cache_src)
 extra_update_only_src =
 nodist_extra_update_only_src =
@@ -319,12 +319,8 @@ cache/generate_cachemap.sh
 
 if SEPARATE_TOOLS
 # Generate separate tools binaries
-use_separate_tools = true
-tool_programs = \
-masked-packages$(EXEEXT) \
-versionsort$(EXEEXT) \
-eix-drop-permissions$(EXEEXT)
-
+use_separate_tools = :
+tool_programs = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT)
 tool_noinst =
 main_all_src  = main/main_all.cc
 main_output_src = main/main_output.cc
@@ -342,17 +338,14 @@ else
 # main/main.cc should then react on this to a modified argv[0] filename).
 use_separate_tools = false
 tool_programs =
-noinst_tool = \
-masked-packages$(EXEEXT) \
-versionsort$(EXEEXT) \
-eix-drop-permissions$(EXEEXT)
-
-main_all_src = versionsort.cc main/main_all_tools.cc
+noinst_tool = masked-packages$(EXEEXT) versionsort$(EXEEXT) eix-drop-permissions$(EXEEXT)
+main_all_src = masked-packages.cc versionsort.cc eix-drop-permissions.cc main/main_all_tools.cc
 main_output_src = main/main_output.cc
 main_eix_src = main/main_eix.cc
 main_diff_src = main/main_diff.cc
-main_update_src = versionsort.cc main/main_update_tools.cc
+main_update_src = masked-packages.cc versionsort.cc eix-drop-permissions.cc main/main_update_tools.cc
 endif
+
 noinst_main_all_src =
 noinst_main_output_src =
 noinst_main_eix_src =
@@ -363,14 +356,14 @@ noinst_main_update_src =
 if SEPARATE_UPDATE
 
 # We have a separate eix-update, so we link versionsort to it
-use_separate_update = true
+use_separate_update = :
 masked_link = eix-update$(EXEEXT)
 versionsort_link = eix-update$(EXEEXT)
 drop_permissions_link = eix-update$(EXEEXT)
 
 if SEPARATE_BINARIES
 
-use_separate_diff = true
+use_separate_diff = :
 
 # Generate all three binaries separately:
 bin_PROGRAMS = eix-update eix eix-diff $(tool_programs)
