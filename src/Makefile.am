@@ -490,7 +490,7 @@ else
 
 masked-packages$(EXEEXT): $(masked_link)
 	$(AM_V_at)test ! -e masked-packages$(EXEEXT) || rm masked-packages$(EXEEXT)
-	$(AM_V_GEN)$(LN_S) $(masked_link) masked_packages$(EXEEXT)
+	$(AM_V_GEN)$(LN_S) $(masked_link) masked-packages$(EXEEXT)
 
 versionsort$(EXEEXT): $(versionsort_link)
 	$(AM_V_at)test ! -e versionsort$(EXEEXT) || rm versionsort$(EXEEXT)
