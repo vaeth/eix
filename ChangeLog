@@ -15,7 +15,7 @@
 	- Do not cache version strings to save memory.
 
 *eix-0.25.5
-	Artem Karimov <skybon at gmail.com>:
+	Артём Воротников <vorot93 at yandex.ru>:
 	- Russian translation. (Missing yet: eix --dump and most of manpage)
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

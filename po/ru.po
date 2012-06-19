@@ -2,20 +2,21 @@
 # Russian messages for eix.
 # This file is distributed under the same license as the eix package.
 # Copyright (C)
-# Артем Каримов <skybon@gmail.com>, 2012.
+# Артём Воротников <vorot93@yandex.ru>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
 "POT-Creation-Date: 2012-06-15 19:52+0200\n"
-"PO-Revision-Date: 2012-05-19 00:24+0400\n"
-"Last-Translator: Артем Каримов <skybon@gmail.com>\n"
+"PO-Revision-Date: 2012-06-19 03:15+0300\n"
+"Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
 "Language: Russian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n%"
+"10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Lokalize 1.4\n"
 
 #: src/eix-functions.sh.in:103 src/eix-update.cc:598 src/eix-update.cc:635
@@ -47,15 +48,15 @@ msgstr "${eixf_patha} не найден в PATH"
 
 #: src/eix-functions.sh.in:500
 msgid "found no free temporary name after 10000 attempts"
-msgstr "не могу найти свободное временное имя после 10000 попыток"
+msgstr "невозможно найти свободное временное имя после 10000 попыток"
 
 #: src/eix-functions.sh.in:515
 msgid "cannot create temporary directory"
-msgstr "не могу создать временный каталог"
+msgstr "невозможно создать временный каталог"
 
 #: src/eix-functions.sh.in:516
 msgid "cannot create temporary file"
-msgstr "не могу создать временный каталог"
+msgstr "невозможно создать временный каталог"
 
 #: src/eix-installed.sh:15
 #, sh-format
@@ -140,7 +141,7 @@ msgstr "Следующие версии пакетов установлены б
 
 #: src/eix-installed.sh:150
 msgid "cannot locate your database of installed packages"
-msgstr "не могу найти базу данных установленных пакетов"
+msgstr "невозможно найти базу данных установленных пакетов"
 
 #: src/eix-installed-after.sh:22
 #, sh-format
@@ -241,12 +242,12 @@ msgstr ""
 #: src/eix-installed-after.sh:121
 #, sh-format
 msgid "cannot read ${logfile}"
-msgstr "не могу прочесть ${logfile}"
+msgstr "невозможно прочесть ${logfile}"
 
 #: src/eix-installed-after.sh:127
 #, sh-format
 msgid "cannot find merge of ${match} in ${logfile}"
-msgstr "не могу найти установку ${match} в ${logfile}"
+msgstr "невозможно найти установку ${match} в ${logfile}"
 
 #: src/eix-layman.sh:20
 #, sh-format
@@ -450,7 +451,7 @@ msgstr "$LOCAL_LAYMAN должен начинаться с /"
 #: src/eix-remote.sh:155
 #, sh-format
 msgid "cannot cd to ${a}"
-msgstr "не могу перейти в ${a}"
+msgstr "невозможно перейти в ${a}"
 
 #: src/eix-remote.sh:188
 #, sh-format
@@ -503,7 +504,7 @@ msgstr "Распаковка данных"
 #: src/eix-remote.sh:221
 #, sh-format
 msgid "cannot unpack ${a}"
-msgstr "не могу распаковать ${a}"
+msgstr "невозможно распаковать ${a}"
 
 #: src/eix-remote.sh:248
 #, sh-format
@@ -513,7 +514,7 @@ msgstr "возникли проблемы с файлом кэша ${i}"
 #: src/eix-remote.sh:265
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
-msgstr "не могу прочесть все файлы кэша eix от ${a}"
+msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
 #: src/eix-remote.sh:280
 msgid "A temporary file makes only sense for update mode"
@@ -522,12 +523,12 @@ msgstr "Временный файл имеет смысл только для р
 #: src/eix-remote.sh:291
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
-msgstr "не могу сделать копию ${file} временного файла"
+msgstr "невозможно сделать копию ${file} временного файла"
 
 #: src/eix-remote.sh:303
 #, sh-format
 msgid "cannot read ${archive}"
-msgstr "не могу прочесть ${archive}"
+msgstr "невозможно прочесть ${archive}"
 
 #: src/eix-remote.sh:322
 #, sh-format
@@ -759,7 +760,7 @@ msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
 #: src/eix-sync.sh:425
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
-msgstr "Не могу выполнить rsync из ${hostdir}"
+msgstr "Невозможно выполнить rsync из ${hostdir}"
 
 #: src/eix-sync.sh:435
 #, sh-format
@@ -769,7 +770,7 @@ msgstr "Выполняю rsync в ${hostdir}"
 #: src/eix-sync.sh:437
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
-msgstr "Не могу выполнить rsync в ${hostdir}"
+msgstr "Невозможно выполнить rsync в ${hostdir}"
 
 #: src/eix-sync.sh:447
 msgid "eix-cache does not exist."
@@ -787,7 +788,7 @@ msgstr "Копирую старый кэш ${eixcache} во временный �
 #: src/eix-sync.sh:463
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
-msgstr "Не могу скопировать базу данных во временный файл ${tmpfile}"
+msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
 
 #: src/eix-sync.sh:467
 #, sh-format
@@ -797,7 +798,7 @@ msgstr "Копирую старую базу данных в ${eixprevious}"
 #: src/eix-sync.sh:469
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
-msgstr "Не могу скопировать базу данных в ${eixprevious}"
+msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
 #: src/eix-sync.sh:488
 msgid "eix-update was apparently already called in a hook"
@@ -1120,7 +1121,7 @@ msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
 #: src/eix.cc:65
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
 "\n"
@@ -1347,65 +1348,64 @@ msgstr ""
 "\n"
 "TEST_OPTIONS:\n"
 "  Разное:\n"
-"    -I, --installed        Следующее выраженье совпадает только с "
-"установленными пакетами.\n"
-"    -i, --multi-installed Совпасть с пакетами установленными в нескольких "
+"    -I, --installed        Найти только установленные пакеты.\n"
+"    -i, --multi-installed Найти пакеты, установленные в нескольких "
 "версиях.\n"
-"    -d, --dup-packages    Совпасть с пакетами, имеющими дубликаты.\n"
-"    -D, --dup-versions    Совпасть с пакетами, имеющими дубликаты версий.\n"
-"    -1, --slotted         Совпасть с пакетами, имеющими нетривиальный слот.\n"
-"    -2, --slots           Совпасть с пакетами, имеющими два разных слота.\n"
-"    -u, --upgrade[+-]     Совпасть с пакетами без наилучшей версии в слоте.\n"
+"    -d, --dup-packages    Найти пакеты, имеющие дубликаты.\n"
+"    -D, --dup-versions    Найти пакеты, имеющие дубликаты версий.\n"
+"    -1, --slotted         Найти пакеты, имеющие нетривиальный слот.\n"
+"    -2, --slots           Найти пакеты, имеющие два разных слота.\n"
+"    -u, --upgrade[+-]     Найти пакеты без наилучшей версии в слоте.\n"
 "                          +: настройки из LOCAL_PORTAGE_CONFIG=true\n"
 "                          -: настройки из LOCAL_PORTAGE_CONFIG=false\n"
-"    --stable[+-]          Совпасть с пакетами, имеющими стабильную версию.\n"
-"    --testing[+-]         Совпасть с пакетами, имеющими тестовую или "
+"    --stable[+-]          Найти пакеты, имеющие стабильную версию.\n"
+"    --testing[+-]         Найти пакеты, имеющие тестовую или "
 "стабильную версию.\n"
-"    --non-masked[+-]  Совпасть с пакетами, имеющими не замаскированную "
+"    --non-masked[+-]  Найти пакеты, имеющие не замаскированную "
 "версию.\n"
-"    --system[+-]          Совпасть с пакетами из @system.\n"
-"    --installed-unstable  Совпасть с пакетами, имеющими установленную "
+"    --system[+-]          Найти пакеты из @system.\n"
+"    --installed-unstable  Найти пакеты, имеющие установленную "
 "нестабильную версию.\n"
-"    --installed-testing   Совпасть с пакетами, имеющими установленную "
+"    --installed-testing   Найти пакеты, имеющие установленную "
 "тестовую версию.\n"
-"    --installed-masked    Совпасть с пакетами, имеющими установленную "
+"    --installed-masked    Найти пакеты, имеющие установленную "
 "замаскированную версию.\n"
-"    --world-file          Совпасть с пакетами из файла world или @system.\n"
-"    --world-set           Совпасть с пакетами из набора world или @system.\n"
-"    --world               Совпасть с пакетами из @world (файл, набор или "
+"    --world-file          Найти пакеты из файла world или @system.\n"
+"    --world-set           Найти пакеты из набора world или @system.\n"
+"    --world               Найти пакеты из @world (файл, набор или "
 "@system).\n"
-"    --selected-file       Совпасть с пакетами из файла world.\n"
-"    --selected-set        Совпасть с пакетами из набора world.\n"
-"    --selected            Совпасть с пакетами из @selected (файл или набор "
+"    --selected-file       Найти пакеты из файла world.\n"
+"    --selected-set        Найти пакеты из набора world.\n"
+"    --selected            Найти пакеты из @selected (файл или набор "
 "world).\n"
-"    --binary              Совпасть с пакетами в формате *.tbz2.\n"
-"    -O, --overlay                        Совпасть с пакетами из оверлеев.\n"
-"    --in-overlay ОВЕРЛЕЙ                 Совпасть с пакетами из ОВЕРЛЕЙ.\n"
-"    --only-in-overlay ОВЕРЛЕЙ            Совпасть с пакетами только в "
-"ОВЕРЛЕЙ.\n"
-"    -J, --installed-overlay Совпасть с пакетами, установленными из "
+"    --binary              Найти пакеты в формате *.tbz2.\n"
+"    -O, --overlay                        Найти пакеты из оверлеев.\n"
+"    --in-overlay ОВЕРЛЕЙ                 Найти пакеты из ОВЕРЛЕЯ.\n"
+"    --only-in-overlay ОВЕРЛЕЙ            Найти пакеты только в "
+"ОВЕРЛЕЕ.\n"
+"    -J, --installed-overlay Найти пакеты, установленные из "
 "оверлеев.\n"
-"    --installed-from-overlay ОВЕРЛЕЙ     Пакеты, установленные из ОВЕРЛЕЙ.\n"
+"    --installed-from-overlay ОВЕРЛЕЙ     Пакеты, установленные из ОВЕРЛЕЯ.\n"
 "    --installed-in-some-overlay          Пакеты с установленной версией из "
 "какого-то оверлея.\n"
 "    --installed-in-overlay ОВЕРЛЕЙ       Пакеты с установленной версией из "
 "ОВЕРЛЕЙ.\n"
-"    --restrict-fetch          Показать пакеты, имеющие RESTRICT=fetch.\n"
-"    --restrict-mirror         Показать пакеты, имеющие RESTRICT=mirror.\n"
-"    --restrict-primaryuri     Показать пакеты, имеющие RESTRICT=primaryuri.\n"
-"    --restrict-binchecks      Показать пакеты, имеющие RESTRICT=binchecks.\n"
-"    --restrict-strip          Показать пакеты, имеющие RESTRICT=strip.\n"
-"    --restrict-test           Показать пакеты, имеющие RESTRICT=test.\n"
-"    --restrict-userpriv       Показать пакеты, имеющие RESTRICT=userpriv.\n"
-"    --restrict-installsources Показать пакеты, имеющие "
+"    --restrict-fetch          Найти пакеты, имеющие RESTRICT=fetch.\n"
+"    --restrict-mirror         Найти пакеты, имеющие RESTRICT=mirror.\n"
+"    --restrict-primaryuri     Найти пакеты, имеющие RESTRICT=primaryuri.\n"
+"    --restrict-binchecks      Найти пакеты, имеющие RESTRICT=binchecks.\n"
+"    --restrict-strip          Найти пакеты, имеющие RESTRICT=strip.\n"
+"    --restrict-test           Найти пакеты, имеющие RESTRICT=test.\n"
+"    --restrict-userpriv       Найти пакеты, имеющие RESTRICT=userpriv.\n"
+"    --restrict-installsources Найти пакеты, имеющие "
 "RESTRICT=installsources.\n"
-"    --restrict-bindist        Показать пакеты, имеющие RESTRICT=bindist.\n"
-"    --restrict-parallel       Показать пакеты, имеющие RESTRICT=parallel.\n"
-"    --properties-interactive  Показать пакеты, имеющие "
+"    --restrict-bindist        Найти пакеты, имеющие RESTRICT=bindist.\n"
+"    --restrict-parallel       Найти пакеты, имеющие RESTRICT=parallel.\n"
+"    --properties-interactive  Найти пакеты, имеющие "
 "PROPERTIES=interactive.\n"
-"    --properties-live         Показать пакеты, имеющие PROPERTIES=live.\n"
-"    --properties-virtual      Показать пакеты, имеющие PROPERTIES=virtual.\n"
-"    --properties-set          Показать пакеты, имеющие PROPERTIES=set.\n"
+"    --properties-live         Найти пакеты, имеющие PROPERTIES=live.\n"
+"    --properties-virtual      Найти пакеты, имеющие PROPERTIES=virtual.\n"
+"    --properties-set          Найти пакеты, имеющие PROPERTIES=set.\n"
 "    -T, --test-obsolete   Показать пакеты, имеющие устаревшие записи в\n"
 "                          /etc/portage/package.* (см. man eix).\n"
 "                          Используйте -t чтобы проверить на наличье "
@@ -1441,8 +1441,8 @@ msgstr ""
 "    -b, --begin           Схема - начало строки\n"
 "        --end             Схема - конец строки\n"
 "    -p, --pattern         Схема - wildcards-схема\n"
-"    -f [m], --fuzzy [m]   Использовать fuzzy-поиск с макс. левенштайн-"
-"дистанцией m.\n"
+"    -f [m], --fuzzy [m]   Использовать fuzzy-поиск с макс. расстоянием "
+"Левенштейна m.\n"
 "\n"
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
@@ -1454,7 +1454,7 @@ msgstr "Проблема при обработке %s: %s\n"
 
 #: src/eix.cc:552 src/eix-diff.cc:309 src/eix-update.cc:334
 msgid "cannot redirect to %r"
-msgstr "не могу перенаправить в %r"
+msgstr "невозможно перенаправить в %r"
 
 #: src/eix.cc:595 src/eix.cc:920
 #, c-format
@@ -1462,7 +1462,7 @@ msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
 "Did you forget to create it with 'eix-update'?"
 msgstr ""
-"Не могу открыть базу данных %s для чтенья (режим = 'rb')\n"
+"Невозможно открыть базу данных %s для чтенья (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
 #: src/eix.cc:606
@@ -1578,7 +1578,7 @@ msgstr ""
 
 #: src/eix-diff.cc:127
 msgid "Can't open the database file %r for reading (mode = 'rb')"
-msgstr "Не могу открыть базу данных %r для чтенья (режим = 'rb')"
+msgstr "Невозможно открыть базу данных %r для чтенья (режим = 'rb')"
 
 #: src/eix-diff.cc:133
 #, c-format
@@ -1787,7 +1787,7 @@ msgstr "Запись файла базы данных %s ..\n"
 
 #: src/eix-update.cc:672
 msgid "Can't open the database file %r for writing (mode = 'wb')"
-msgstr "Не могу открыть файл базы данных %r для записи (режим = 'wb')"
+msgstr "Невозможно открыть файл базы данных %r для записи (режим = 'wb')"
 
 #: src/eix-update.cc:683
 #, c-format
@@ -1816,7 +1816,7 @@ msgstr ""
 #: src/versionsort.cc:36
 #, c-format
 msgid "cannot determine version of %s"
-msgstr "Не могу определить версию %s"
+msgstr "Невозможно определить версию %s"
 
 #: src/cache/cachetable.cc:45
 msgid "Unknown cache %r for directory %r"
@@ -1826,12 +1826,12 @@ msgstr "Неизвестный кэш %r для каталога %r"
 #: src/cache/common/flat_reader.cc:34 src/cache/eixcache/eixcache.cc:245
 #, c-format
 msgid "Can't read cache file %s: %s"
-msgstr "Не могу прочесть файл кэша %s: %s"
+msgstr "Невозможно прочесть файл кэша %s: %s"
 
 #: src/cache/common/ebuild_exec.cc:147
 #, c-format
 msgid "Can't unlink tempfile %s"
-msgstr "Не могу разлинковать временный файл %s"
+msgstr "Невозможно разлинковать временный файл %s"
 
 #: src/cache/common/ebuild_exec.cc:149
 #, c-format
@@ -1879,7 +1879,7 @@ msgstr "Дитя прервано в странной манере"
 #: src/eixTk/utils.cc:61
 #, c-format
 msgid "Can't open %s: %s"
-msgstr "Не могу открыть %s: %s"
+msgstr "Невозможно открыть %s: %s"
 
 #: src/cache/eixcache/eixcache.cc:138
 msgid "Cache file %s does not contain overlay %r [%s]"
@@ -1903,7 +1903,7 @@ msgstr "Файл кэша %s использует устаревший форм�
 #: src/cache/metadata/metadata.cc:320 src/cache/metadata/metadata.cc:358
 #: src/cache/sqlite/sqlite.cc:222
 msgid "Can't split %r into package and version"
-msgstr "Не могу разделить %r на пакет и версию"
+msgstr "Невозможно разделить %r на пакет и версию"
 
 #: src/cache/parse/parse.cc:221
 #, c-format
@@ -1918,7 +1918,7 @@ msgstr "Не получилось исполнить %s"
 #: src/cache/parse/parse.cc:299
 #, c-format
 msgid "Can't split filename of ebuild %s/%s"
-msgstr "Не могу отделить имя файла ebuild %s/%s"
+msgstr "Невозможно отделить имя файла ebuild %s/%s"
 
 #: src/cache/sqlite/sqlite.cc:187
 msgid "sqlite dataset does not contain a package name"
@@ -1940,7 +1940,7 @@ msgstr "Неверный путь к базе данных"
 #: src/cache/sqlite/sqlite.cc:277
 #, c-format
 msgid "Can't open cache file %s"
-msgstr "Не могу открыть файл кэша %s"
+msgstr "Невозможно открыть файл кэша %s"
 
 #: src/cache/sqlite/sqlite.cc:291
 #, c-format
@@ -4772,7 +4772,7 @@ msgstr ""
 
 #: src/portage/mask.cc:89
 msgid "Can't read category."
-msgstr "Не могу прочесть категорию."
+msgstr "Невозможно прочесть категорию."
 
 #: src/portage/mask.cc:110
 msgid "Repository name must be separated with :: (one : is missing)"
@@ -4815,8 +4815,10 @@ msgstr "вниманье: игнорирую --close без --open"
 
 #: src/search/packagetest.cc:246
 msgid "cannot find match field %r"
-msgstr "не могу сопоставить поле %r"
+msgstr "невозможно сопоставить поле %r"
 
 #: src/search/packagetest.cc:258
 msgid "cannot find match algorithm %r"
-msgstr "не могу сопоставить алгоритм %r"
+msgstr "невозможно сопоставить алгоритм %r"
+
+
