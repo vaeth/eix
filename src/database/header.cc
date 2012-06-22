@@ -9,7 +9,6 @@
 
 #include "header.h"
 
-#include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -95,16 +94,11 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 	ExtendedVersion::Overlay number;
 	if(!is_numeric(name))
 		return false;
-	try {
-		number = my_atoi(name);
-		if(number >= countOverlays())
-			return false;
-		if(number < minimal)
-			return false;
-	}
-	catch(const ExBasic &e) {
+	number = my_atoi(name);
+	if(number >= countOverlays())
 		return false;
-	}
+	if(number < minimal)
+		return false;
 	*num = number;
 	return true;
 }

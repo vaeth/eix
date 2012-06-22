@@ -10,7 +10,6 @@
 #ifndef EIX__CASCADINGPROFILE_H__
 #define EIX__CASCADINGPROFILE_H__ 1
 
-#include <eixTk/exceptions.h>
 #include <eixTk/null.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
@@ -121,7 +120,7 @@ class CascadingProfile {
 
 		/** Cycle through profile and put path to files into
 		 * m_profile_files. */
-		void listaddProfile(const char *profile_dir = NULLPTR) throw(ExBasic);
+		void listaddProfile(const char *profile_dir = NULLPTR);
 
 		/** Put file into m_profile_files */
 		void listaddFile(const std::string &file, const char *path)

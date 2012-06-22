@@ -50,10 +50,6 @@ class InstVersion : public ExtendedVersion, public Keywords {
 
 		InstVersion()
 		{ init(); }
-
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		InstVersion(const char* str) : ExtendedVersion(str)
-		{ init(); }
 };
 
 /** The equality operator does not test the additional data */

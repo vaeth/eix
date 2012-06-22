@@ -8,7 +8,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "mask.h"
-#include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -44,10 +43,9 @@ static const struct OperatorTable {
 };
 
 /** Constructor. */
-Mask::Mask(const char *str, Type type, const char *repo)
+Mask::Mask(Type type, const char *repo)
 {
 	m_type = type;
-	parseMask(str);
 	if((!m_test_reponame) && (repo != NULLPTR)) {
 		m_test_reponame = true;
 		m_reponame = repo;
@@ -55,13 +53,13 @@ Mask::Mask(const char *str, Type type, const char *repo)
 }
 
 /** split a "mask string" into its components */
-void
-Mask::parseMask(const char *str) throw(ExBasic)
+bool
+Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
 {
 	// determine comparison operator
 	if(m_type != maskPseudomask) {
 		for(unsigned int i(0); ; ++i) {
-			unsigned char len = operators[i].len;
+			unsigned char len(operators[i].len);
 			if(unlikely(len == 0)) {
 				// no operator
 				m_operator = operators[i].op;
@@ -74,7 +72,7 @@ Mask::parseMask(const char *str) throw(ExBasic)
 				if(unlikely(m_operator == maskIsSet)) {
 					m_category = SET_CATEGORY;
 					m_name = str;
-					return;
+					return true;
 				}
 				break;
 			}
@@ -86,7 +84,8 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	string::size_type l(0);
 	for(; likely(*p != '/'); ++l, ++p) {
 		if(unlikely(*p == '\0')) {
-			throw ExBasic(_("Can't read category."));
+			*errtext = (_("Can't read category."));
+			return false;
 		}
 	}
 	m_category = string(str, l);
@@ -107,7 +106,8 @@ Mask::parseMask(const char *str) throw(ExBasic)
 			if(unlikely(slot_end != NULLPTR)) {
 				m_slotname.assign(source, slot_end - source);
 				if(unlikely(slot_end[1] != ':')) {
-					throw ExBasic(_("Repository name must be separated with :: (one : is missing)"));
+					*errtext = _("Repository name must be separated with :: (one : is missing)");
+					return false;
 				}
 				source = slot_end + 2;
 				dest = &m_reponame;
@@ -146,15 +146,15 @@ Mask::parseMask(const char *str) throw(ExBasic)
 	}
 
 	// Get the rest (name-version|name)
-	if((m_operator != maskOpAll) || (m_type == maskPseudomask))
-	{
+	if((m_operator != maskOpAll) || (m_type == maskPseudomask)) {
 		// There must be a version somewhere
 		p = ExplodeAtom::get_start_of_version(str);
 
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
-			throw ExBasic((m_type != maskPseudomask) ?
+			*errtext = ((m_type != maskPseudomask) ?
 				_("Operator without a version part.") :
 				_("Version specification is missing"));
+			return false;
 		}
 
 		m_name = string(str, (p - 1) - str);
@@ -167,39 +167,38 @@ Mask::parseMask(const char *str) throw(ExBasic)
 			if(unlikely((wildcard[1] != '\0') &&
 				// The following is also valid if end=NULLPTR
 				(wildcard + 1 != end))) {
-				throw ExBasic(_("A '*' is only valid at the end of a version-string."));
+				*errtext = _("A '*' is only valid at the end of a version-string.");
+				return false;
 			}
 			// Only the = operator can have a wildcard-version
 			if(unlikely(m_operator != maskOpEqual)) {
 				// A finer error-reporting
 				if(m_operator != maskOpRevisions) {
-					throw ExBasic(_("A wildcard is only valid with the = operator."));
+					*errtext = _("A wildcard is only valid with the = operator.");
+					return false;
 				}
 				else {
-					throw ExBasic(_(
+					*errtext = _(
 						"A wildcard is only valid with the = operator.\n"
 						"Portage would also accept something like ~app-shells/bash-3*,\n"
-						"but behave just like ~app-shells/bash-3."));
+						"but behave just like ~app-shells/bash-3.");
+					return false;
 				}
 			}
 			m_operator = maskOpGlob;
 			m_glob = string(str, wildcard);
 		}
 		else {
-			if(end != NULLPTR)
-				parseVersion(string(str, end - str));
-			else
-				parseVersion(str);
+			if(unlikely(!parseVersion(((end != NULLPTR) ? string(str, end - str) : str), garbage_fatal, errtext))) {
+				return false;
+			}
 		}
 	}
-	else
-	{
+	else {
 		// Everything else is the package-name
-		if(end != NULLPTR)
-			m_name = string(str, end - str);
-		else
-			m_name = str;
+		m_name = ((end != NULLPTR) ? string(str, end - str) : str);
 	}
+	return true;
 }
 
 void

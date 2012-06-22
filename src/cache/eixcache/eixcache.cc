@@ -9,7 +9,6 @@
 #include "eixcache.h"
 #include <database/header.h>
 #include <database/package_reader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -183,7 +182,13 @@ EixCache::get_package(Package *p)
 			if(likely(it->overlay_key != m_get_overlay))
 				continue;
 		}
-		Version *version(new Version(it->getFull().c_str()));
+		Version *version(new Version);
+		string errtext;
+		if(unlikely(!version->parseVersion(it->getFull().c_str(), true, &errtext))) {
+			delete version;
+			m_error_callback(errtext);
+			continue;
+		}
 		version->overlay_key = m_overlay_key;
 		version->set_full_keywords(it->get_full_keywords());
 		version->slotname = it->slotname;
@@ -221,7 +226,7 @@ EixCache::get_package(Package *p)
 }
 
 bool
-EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category) throw(ExBasic)
+EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Category *category)
 {
 	if(slavemode) {
 		if(err_msg.empty())
@@ -250,13 +255,10 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 
 	DBHeader header;
 
-	if(!io::read_header(fp, header)) {
+	string errtext;
+	if(unlikely(!io::read_header(header, fp, &errtext))) {
 		fclose(fp);
-		allerrors(slaves, eix::format(
-			(header.version > DBHeader::current) ?
-			_("Cache file %s uses newer format %s (current is %s)") :
-			_("Cache file %s uses obsolete format %s (current is %s)"))
-			% m_full % header.version % DBHeader::current);
+		allerrors(slaves, eix::format(_("error in file %s: %s")) % m_full % errtext);
 		m_error_callback(err_msg);
 		return false;
 	}
@@ -271,9 +273,11 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		return false;
 	}
 
-	for(PackageReader reader(fp, header); reader.next(); reader.skip())
-	{
-		reader.read(PackageReader::NAME);
+	PackageReader reader(fp, header);
+	for(; reader.next(); reader.skip()) {
+		if(unlikely(!reader.read(PackageReader::NAME))) {
+			break;
+		}
 		Package *p(reader.get());
 
 		success = false;
@@ -286,7 +290,9 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		if(!success) {
 			continue;
 		}
-		reader.read();
+		if(unlikely(!reader.read())) {
+			break;
+		}
 		p = reader.get();
 		for(vector<EixCache*>::const_iterator sl(slaves.begin());
 			unlikely(sl != slaves.end()); ++sl) {
@@ -294,5 +300,11 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		}
 	}
 	fclose(fp);
+	const char *err_cstr(reader.get_errtext());
+	if(unlikely(err_cstr != NULLPTR)) {
+		allerrors(slaves, eix::format(_("error in file %s: %s")) % m_full % err_cstr);
+		m_error_callback(err_msg);
+		return false;
+	}
 	return true;
 }

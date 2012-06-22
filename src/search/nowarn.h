@@ -51,7 +51,7 @@ class NowarnMask : public Mask
 	public:
 		NowarnFlags set_flags, clear_flags;
 
-		NowarnMask(const char *str) : Mask(str, maskTypeNone)
+		NowarnMask() : Mask(maskTypeNone)
 		{ }
 
 		void init_nowarn(const std::vector<std::string> &flagstrings);

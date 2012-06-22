@@ -13,7 +13,6 @@
 #include <config.h>
 
 #include <cache/base.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/sysutils.h>
 
 #include <string>
@@ -53,8 +52,8 @@ class MetadataCache : public BasicCache {
 	public:
 		bool initialize(const std::string &name);
 
-		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
-		bool readCategory(Category &cat) throw(ExBasic);
+		bool readCategoryPrepare(const char *cat_name);
+		bool readCategory(Category &cat);
 		void readCategoryFinalize();
 
 		const char *get_md5sum(const char *pkg_name, const char *ver_name) const;

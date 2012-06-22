@@ -10,7 +10,6 @@
 #ifndef EIX__MASK_H__
 #define EIX__MASK_H__ 1
 
-#include <eixTk/exceptions.h>
 #include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <portage/basicversion.h>
@@ -69,10 +68,6 @@ class Mask : public BasicVersion {
 		bool m_test_slot;       /**< must we match a slot? */
 		bool m_test_reponame;   /**< must we match a reponame? */
 
-		/** split a "mask string" into its components
-		 * @param str_mask the string to be dissected
-		 * @throw ExBasic on errors */
-		void parseMask(const char *str) throw(ExBasic);
 
 		/** Tests if the mask applies to a Version.
 		 * @param ev test this version
@@ -89,7 +84,11 @@ class Mask : public BasicVersion {
 		void apply(Version *ve, bool do_test, Keywords::Redundant check) const;
 
 		/** Parse mask-string. */
-		Mask(const char *str, Type type, const char *repo = NULLPTR);
+		Mask(Type type, const char *repo = NULLPTR);
+
+		/** split a "mask string" into its components
+		 * @param str_mask the string to be dissected */
+		bool parseMask(const char *str, bool garbage_fatal, std::string *errtext);
 
 		void match(Matches &m, Package &pkg) const;
 
@@ -122,7 +121,7 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		KeywordMask(const char *str, const char *repo = NULLPTR) : Mask(str, maskTypeNone, repo)
+		KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
 		{ }
 
 		void applyItem(Package& pkg) const;
@@ -134,7 +133,7 @@ class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		PKeywordMask(const char *str, const char *repo = NULLPTR) : Mask(str, maskTypeNone, repo)
+		PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
 		{ }
 
 		void applyItem(Package& pkg) const;
@@ -146,8 +145,8 @@ class SetMask : public Mask {
 	public:
 		SetsIndex m_set;
 
-		SetMask(const char *str, SetsIndex set_index, const char *repo = NULLPTR) :
-			Mask(str, maskTypeNone, repo), m_set(set_index)
+		SetMask(SetsIndex set_index, const char *repo = NULLPTR) :
+			Mask(maskTypeNone, repo), m_set(set_index)
 		{ }
 
 		void applyItem(Package& pkg) const;

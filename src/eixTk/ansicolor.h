@@ -11,7 +11,6 @@
 #define EIX__ANSICOLOR_H__ 1
 
 #include <config.h>
-#include <eixTk/exceptions.h>
 
 #include <ostream>
 #include <string>
@@ -64,10 +63,7 @@ class AnsiMarker {
 			return "";
 		}
 
-		void initmarker(const std::string &markers_string) throw (ExBasic);
-
-		AnsiMarker(const std::string &markers_string)
-		{ initmarker(markers_string); }
+		bool initmarker(const std::string &markers_string, std::string *errtext);
 };
 
 inline std::ostream&
@@ -125,7 +121,7 @@ class AnsiColor {
 		const std::string &asString() const
 		{ return string_begin; }
 
-		AnsiColor(const std::string &color_name) throw (ExBasic);
+		bool initcolor(const std::string &color_name, std::string *errtext);
 };
 
 inline std::ostream&

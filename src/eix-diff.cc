@@ -15,7 +15,6 @@
 #include <database/header.h>
 #include <database/io.h>
 #include <eixTk/argsreader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
@@ -119,27 +118,26 @@ static Option long_options[] = {
 };
 
 static void
-load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) throw(ExBasic)
+load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
 {
 	FILE *fp(fopen(file, "rb"));
 
-	if(unlikely(fp == NULLPTR)) {
-		throw ExBasic(_("Can't open the database file %r for reading (mode = 'rb')")) % file;
-	}
-
-	if(unlikely(!io::read_header(fp, *header))) {
+	if(likely(fp != NULLPTR)) {
+		string errtext;
+		if(likely(io::read_header(*header, fp, &errtext))) {
+			ps->store_world_sets(&(header->world_sets));
+			if(likely(io::read_packagetree(*body, *header, ps, fp, &errtext))) {
+				fclose(fp);
+				return;
+			}
+		}
 		fclose(fp);
-		cerr << eix::format(_(
-			"%s was created with an incompatible eix-update:\n"
-			"It uses database format %s (current is %s)."))
-			% file % (header->version) % DBHeader::current
-			<< endl;
-		exit(EXIT_FAILURE);
+		cerr << eix::format(_("error in database file %r: %s")) % file % errtext << endl;
 	}
-	ps->store_world_sets(&(header->world_sets));
-
-	io::read_packagetree(fp, *body, *header, ps);
-	fclose(fp);
+	else {
+		cerr << eix::format(_("Can't open the database file %r for reading (mode = 'rb')")) % file << endl;
+	}
+	exit(EXIT_FAILURE);
 }
 
 static void
@@ -257,6 +255,18 @@ print_lost_package(Package *p)
 	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings, set_stability_old);
 }
 
+static void
+parseFormat(Node *&format, const char *varname, EixRc &rc)
+{
+	string errtext;
+	if(likely((format_for_new.parseFormat(format, rc[varname].c_str(), &errtext)))) {
+		return;
+	}
+	cerr << eix::format(_("Problems while parsing %s: %s\n"))
+			% varname % errtext << endl;
+	exit(EXIT_FAILURE);
+}
+
 int
 run_eix_diff(int argc, char *argv[])
 {
@@ -327,22 +337,9 @@ run_eix_diff(int argc, char *argv[])
 		new_file = rc["EIX_CACHEFILE"];
 	}
 
-	const char *varname;
-	try {
-		varname = "DIFF_FORMAT_NEW";
-		format_new = format_for_new.parseFormat(rc[varname].c_str());
-
-		varname = "DIFF_FORMAT_DELETE";
-		format_delete = format_for_new.parseFormat(rc[varname].c_str());
-
-		varname = "DIFF_FORMAT_CHANGED";
-		format_changed = format_for_new.parseFormat(rc[varname].c_str());
-	}
-	catch(const ExBasic &e) {
-		cerr << eix::format(_("Problems while parsing %s: %s\n"))
-			% varname % e << endl;
-		exit(EXIT_FAILURE);
-	}
+	parseFormat(format_new, "DIFF_FORMAT_NEW", rc);
+	parseFormat(format_delete, "DIFF_FORMAT_DELETE", rc);
+	parseFormat(format_changed, "DIFF_FORMAT_CHANGED", rc);
 
 	format_for_new.setupResources(rc);
 	format_for_new.slot_sorted = false;

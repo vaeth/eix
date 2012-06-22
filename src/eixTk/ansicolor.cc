@@ -8,10 +8,10 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include "ansicolor.h"
-
-#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
 #include <map>
@@ -78,8 +78,8 @@ name_to_color(const string &name)
 	return AnsiColor::acIllegal;
 }
 
-void
-AnsiMarker::initmarker(const string &markers_string) throw (ExBasic)
+bool
+AnsiMarker::initmarker(const string &markers_string, string *errtext)
 {
 	markers.clear(); have_something = false;
 	vector<string> v;
@@ -91,11 +91,15 @@ AnsiMarker::initmarker(const string &markers_string) throw (ExBasic)
 		Marker mk(name_to_marker(*it));
 		if(mk == amIllegal) {
 			mk = amNone;
-			throw ExBasic(_("Illegal marker name %r")) % *it;
+			if(errtext != NULLPTR) {
+				*errtext = eix::format(_("Illegal marker name %r")) % *it;
+			}
+			return false;
 		}
 		markers[i++] = mk;
 	}
 	calc_string();
+	return true;
 }
 
 void
@@ -115,7 +119,8 @@ AnsiMarker::calc_string()
 	}
 }
 
-void AnsiColor::calc_string()
+void
+AnsiColor::calc_string()
 {
 	have_something = mk.have_something;
 	if(fg == acNone) {
@@ -133,7 +138,8 @@ void AnsiColor::calc_string()
 	string_begin.append(mk.asString());
 }
 
-AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
+bool
+AnsiColor::initcolor(const string &color_name, string *errtext)
 {
 	have_something = false;
 	// look for brightness attribute
@@ -146,15 +152,21 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 		else if(color_name[curr] == '0')
 			light = false;
 		else {
-			throw ExBasic(_("Invalid brightness value %r")) % color_name[curr];
+			if(errtext != NULLPTR) {
+				*errtext = eix::format(_("Invalid brightness value %r")) % color_name[curr];
+			}
+			return false;
 		}
 		curr = color_name.find(';', curr);
 	}
 	else {
 		light = false;
 	}
-	if(curr != string::npos)
-		mk.initmarker(color_name.substr(curr + 1));
+	if(curr != string::npos) {
+		if(!mk.initmarker(color_name.substr(curr + 1), errtext)) {
+			return false;
+		}
+	}
 	const string *pure_color;
 	string pure_color_save;
 	if(resize != string::npos) {
@@ -167,7 +179,11 @@ AnsiColor::AnsiColor(const string &color_name) throw (ExBasic)
 	fg = name_to_color(*pure_color);
 	if(fg == acIllegal) {
 		fg = acNone;
-		throw ExBasic(_("Illegal color name %r")) % (*pure_color);
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Illegal color name %r")) % (*pure_color);
+		}
+		return false;
 	}
 	calc_string();
+	return true;
 }

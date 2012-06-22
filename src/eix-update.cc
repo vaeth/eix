@@ -12,7 +12,6 @@
 #include <database/header.h>
 #include <database/io.h>
 #include <eixTk/argsreader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
@@ -96,7 +95,7 @@ class RepoName {
 		{ }
 };
 
-static void update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic);
+static bool update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline, string *errtext);
 static void print_help();
 
 static void
@@ -237,7 +236,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<Repo
 
 	INFO(eix::format(_("Adding virtual overlays from %s ..\n")) % cachefile);
 	DBHeader header;
-	bool is_current(io::read_header(fp, header));
+	bool is_current(io::read_header(header, fp, NULLPTR));
 	fclose(fp);
 	if(unlikely(!is_current)) {
 		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
@@ -332,7 +331,7 @@ run_eix_update(int argc, char *argv[])
 	if(unlikely(quiet)) {
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 
@@ -485,11 +484,15 @@ run_eix_update(int argc, char *argv[])
 		map<string, string> *override_ptr(override.size() ? &override : NULLPTR);
 		if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				portage_settings["PORTDIR"].c_str(), true) == excluded_overlays.end())) {
-			table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
+			string errtext;
+			if(unlikely(!table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 				NULLPTR,
 				portage_settings["PORTDIR"].c_str(),
 				eixrc["PORTDIR_CACHE_METHOD"],
-				override_ptr);
+				override_ptr,
+				&errtext))) {
+				cerr << errtext << endl;
+			}
 		}
 		else {
 			INFO(eix::format(_("Excluded PORTDIR: %s\n"))
@@ -501,10 +504,13 @@ run_eix_update(int argc, char *argv[])
 		for(vector<string>::size_type i(0); likely(i < portage_settings.overlays.size()); ++i) {
 			if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 					portage_settings.overlays[i].c_str(), true, false) == excluded_overlays.end())) {
-				table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
+				string errtext;
+				if(unlikely(!table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 					eixrc.prefix_cstr("EPREFIX_ACCESS_OVERLAYS"),
 					portage_settings.overlays[i].c_str(),
-					eixrc["OVERLAY_CACHE_METHOD"], override_ptr);
+					eixrc["OVERLAY_CACHE_METHOD"], override_ptr, &errtext))) {
+					cerr << errtext << endl;
+				}
 			}
 			else {
 				INFO(eix::format(_("Excluded overlay %s\n"))
@@ -516,11 +522,10 @@ run_eix_update(int argc, char *argv[])
 	INFO(eix::format(_("Building database (%s) ..\n")) % outputfile);
 
 	/* Update the database from scratch */
-	try {
-		update(outputfile.c_str(), table, portage_settings, override_umask,
-			repo_names, excluded_overlays, statusline);
-	} catch(const ExBasic &e) {
-		cerr << e << endl;
+	string errtext;
+	if(unlikely(!update(outputfile.c_str(), table, portage_settings, override_umask,
+			repo_names, excluded_overlays, statusline, &errtext))) {
+		cerr << errtext << endl;
 		statusline.failure();
 		return EXIT_FAILURE;
 	}
@@ -536,8 +541,8 @@ error_callback(const string &str)
 	reading_percent_status->interprint_end();
 }
 
-static void
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline) throw(ExBasic)
+static bool
+update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline, string *errtext)
 {
 	DBHeader dbheader;
 	vector<string> categories;
@@ -669,18 +674,25 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		umask(old_umask);
 	}
 	if(unlikely(database_stream == NULLPTR)) {
-		throw ExBasic(_("Can't open the database file %r for writing (mode = 'wb')"))
-			% outputfile;
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Can't open the database file %r for writing (mode = 'wb')")) % outputfile;
+		}
+		return false;
 	}
 
 	dbheader.size = package_tree.countCategories();
 
-	io::write_header(database_stream, dbheader);
-	io::write_packagetree(database_stream, package_tree, dbheader);
-
-	fclose(database_stream);
+	if(likely(io::write_header(dbheader, database_stream, errtext)) &&
+		likely(io::write_packagetree(package_tree, dbheader, database_stream, errtext))) {
+		fclose(database_stream);
+	}
+	else {
+		fclose(database_stream);
+		return false;
+	}
 
 	INFO(eix::format(_("Database contains %s packages in %s categories.\n"))
 		% package_tree.countPackages() % dbheader.size);
+	return true;
 }
 

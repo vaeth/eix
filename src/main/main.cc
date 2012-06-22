@@ -9,12 +9,10 @@
 
 #include <config.h>
 #include "main.h"
-#include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 
-#include <iostream>
 #include <string>
 
 #include <csignal>  /* signal handlers */
@@ -211,16 +209,8 @@ main(int argc, char** argv)
 	signal(SIGSEGV, sig_handler);
 #endif
 
-	int ret(0);
-	try {
-		program_name = argv[0];
-		sanitize_filename(program_name);
-		ret = USE_BINARY(argc, argv);
-	}
-	catch(const ExBasic &e) {
-		cout << e << endl;
-		return 1;
-	}
-	return ret;
+	program_name = argv[0];
+	sanitize_filename(program_name);
+	return USE_BINARY(argc, argv);
 }
 

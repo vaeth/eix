@@ -10,7 +10,7 @@
 #ifndef EIX__FORMATSTRING_H__
 #define EIX__FORMATSTRING_H__ 1
 
-#include <eixTk/exceptions.h>
+#include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <portage/basicversion.h>
 #include <portage/extendedversion.h>
@@ -90,10 +90,10 @@ class ConditionBlock : public Node {
 		}
 };
 
-std::string parse_colors(const std::string &colorstring, bool colors);
+bool parse_colors(std::string &res, const std::string &colorstring, bool colors, std::string *errtext);
 
 class FormatParser {
-		friend std::string parse_colors(const std::string &colorstring, bool colors);
+		friend bool parse_colors(std::string &res, const std::string &colorstring, bool colors, std::string *errtext);
 	private:
 		enum ParserState {
 			ERROR, STOP, START,
@@ -122,7 +122,7 @@ class FormatParser {
 		ParserState state_FI();
 
 	public:
-		Node *start(const char *fmt, bool colors = true, bool parse_only_colors = false) throw(ExBasic);
+		bool start(const char *fmt, bool colors, bool parse_only_colors, std::string *errtext);
 
 		Node *rootnode()
 		{ return root_node; }
@@ -164,10 +164,14 @@ class VarParserCacheNode {
 		FormatParser m_parser;
 		bool in_use;
 
-		Node *init(const char *fmt, bool colors, bool use) throw(ExBasic)
+		bool init(Node *&rootnode, const char *fmt, bool colors, bool use, std::string *errtext)
 		{
 			in_use = use;
-			return m_parser.start(fmt, colors);
+			if(likely(m_parser.start(fmt, colors, false, errtext))) {
+				rootnode = m_parser.rootnode();
+				return true;
+			}
+			return false;
 		}
 };
 
@@ -221,13 +225,14 @@ class PrintFormat {
 		/* return true if something was actually printed */
 		bool recPrint(std::string *result, void *entity, GetProperty get_property, Node *root) const;
 
-		Node *parse_variable(const std::string &varname) const throw(ExBasic);
+		bool parse_variable(Node *&rootnode, const std::string &varname, std::string *errtext) const;
+		Node *parse_variable(const std::string &varname) const;
 
 		std::string get_inst_use(const Package &package, InstVersion &i) const;
 		void get_installed(Package *package, Node *root, bool mark) const;
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const;
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const;
-		std::string get_pkg_property(Package *package, const std::string &name) const throw(ExBasic);
+		std::string get_pkg_property(Package *package, const std::string &name) const;
 	public:
 		bool	no_color,            /**< Shall we use colors? */
 			style_version_lines, /**< Shall we show versions linewise? */
@@ -306,11 +311,17 @@ class PrintFormat {
 		bool print(void *entity, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
 		{ return print(entity, m_parser.rootnode(), dbheader, vardbpkg, ps, s); }
 
-		Node *parseFormat(const char *fmt) throw(ExBasic)
-		{ return m_parser.start(fmt, !no_color); }
+		bool parseFormat(const char *fmt, std::string *errtext)
+		{ return m_parser.start(fmt, !no_color, false, errtext); }
 
-		void setFormat(const char *fmt) throw(ExBasic)
-		{ parseFormat(fmt); }
+		bool parseFormat(Node *&rootnode, const char *fmt, std::string *errtext)
+		{
+			if(likely(m_parser.start(fmt, !no_color, false, errtext))) {
+				rootnode = m_parser.rootnode();
+				return true;
+			}
+			return false;
+		}
 
 		void StabilityLocal(Package &p) const
 		{ stability->set_stability(true, p); }

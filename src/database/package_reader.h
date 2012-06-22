@@ -38,13 +38,13 @@ class PackageReader {
 		/** Initialize with file-stream and number of packages.
 		    @arg ps is used to define the local package sets while version reading */
 		PackageReader(FILE *fp, const DBHeader &hdr, PortageSettings *ps = NULLPTR)
-			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps)
+			: m_fp(fp), m_frames(hdr.size), m_cat_size(0), m_pkg(NULLPTR), header(&hdr), m_portagesettings(ps), m_error(false)
 		{ }
 
 		~PackageReader();
 
 		/// Read attributes from the database into the current package.
-		void read(Attributes need = ALL);
+		bool read(Attributes need = ALL);
 
 		/// Get pointer to the package.
 		// It's possible that some attributes of the package are not yet read
@@ -54,7 +54,7 @@ class PackageReader {
 
 		/// Skip the current package.
 		// The file pointer is moved to the next package.
-		void skip();
+		bool skip();
 
 		/// Release the package.
 		// Complete the current package, and release it.
@@ -76,6 +76,9 @@ class PackageReader {
 		const std::string& category() const
 		{ return m_cat_name; }
 
+		const char *get_errtext() const
+		{ return (m_error ? m_errtext.c_str() : NULLPTR); }
+
 	protected:
 		FILE             *m_fp;
 
@@ -89,6 +92,9 @@ class PackageReader {
 
 		const DBHeader   *header;
 		PortageSettings  *m_portagesettings;
+
+		std::string m_errtext;
+		bool m_error;
 };
 
 #endif /* EIX__PACKAGE_READER_H__ */

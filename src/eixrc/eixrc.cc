@@ -446,11 +446,19 @@ EixRc::read_undelayed(set<string> &has_delayed)
 	rc.setPrefix("EIXRC_SOURCE");
 
 	const char *rc_file(getenv("EIXRC"));
-	if(unlikely(rc_file != NULLPTR))
-		rc.read(rc_file);
+	string errtext;
+	if(unlikely(rc_file != NULLPTR)) {
+		if(unlikely(!rc.read(rc_file, &errtext, true))) {
+			cerr << errtext << endl;
+			exit(EXIT_FAILURE);
+		}
+	}
 	else {
 		// override with EIX_SYSTEMRC
-		rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str());
+		if(unlikely(!rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str(), &errtext, true))) {
+			cerr << errtext << endl;
+			exit(EXIT_FAILURE);
+		}
 
 		// override with EIX_USERRC
 		char *home(getenv("HOME"));
@@ -460,7 +468,10 @@ EixRc::read_undelayed(set<string> &has_delayed)
 		else {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);
-			rc.read(eixrc.c_str());
+			if(unlikely(!rc.read(eixrc.c_str(), &errtext, true))) {
+				cerr << errtext << endl;
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 

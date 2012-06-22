@@ -10,7 +10,6 @@
 #include <config.h>
 #include "formatstring.h"
 #include <eixTk/ansicolor.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -25,6 +24,7 @@
 #include <string>
 #include <vector>
 
+#include <cstdlib>
 #include <cstring>
 
 class PortageSettings;
@@ -36,8 +36,13 @@ MarkedList::add(const char *pkg, const char *ver)
 {
 	pair<string, BasicVersion*> p;
 	p.first = string(pkg);
-	if(ver)
-		p.second = new BasicVersion(ver);
+	if(ver) {
+		p.second = new BasicVersion;
+		if(unlikely(p.second->parseVersion(ver, true, NULLPTR))) {
+			delete p.second;
+			p.second = NULLPTR;
+		}
+	}
 	else
 		p.second = NULLPTR;
 	insert(p);
@@ -130,20 +135,35 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	fmt->StabilityNonlocal(*pkg);
 }
 
-Node *
-PrintFormat::parse_variable(const string &varname) const throw(ExBasic)
+bool
+PrintFormat::parse_variable(Node *&rootnode, const string &varname, string *errtext) const
 {
 	VarParserCache::iterator f(varcache.find(varname));
 	if(f == varcache.end()) {
-		return varcache[varname].init((*eix_rc)[varname].c_str(), !no_color, true);
+		return varcache[varname].init(rootnode, (*eix_rc)[varname].c_str(), !no_color, true, errtext);
 	}
 	VarParserCacheNode &v(f->second);
 	if(unlikely(v.in_use)) {
-		throw ExBasic(_("Variable %r calls itself for printing"))
-			% varname;
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Variable %r calls itself for printing")) % varname;
+		}
+		return false;
 	}
 	v.in_use = true;
-	return v.m_parser.rootnode();
+	rootnode = v.m_parser.rootnode();
+	return true;
+}
+
+Node *
+PrintFormat::parse_variable(const string &varname) const
+{
+	string errtext;
+	Node *rootnode;
+	if(unlikely(!parse_variable(rootnode, varname, &errtext))) {
+		cerr << errtext << endl;
+		exit(EXIT_FAILURE);
+	}
+	return rootnode;
 }
 
 string
@@ -200,18 +220,40 @@ PrintFormat::setupResources(EixRc &rc)
 	after_unset_use  = rc["FORMAT_AFTER_UNSET_USE"];
 }
 
+inline static void
+parse_color(string &color, bool use_color)
+{
+	string errtext;
+	if(unlikely(!parse_colors(color, color, use_color, &errtext))) {
+		cerr << errtext << endl;
+	}
+}
+
+inline static void
+colorstring(string &color)
+{
+	string errtext;
+	AnsiColor ac;
+	if(likely(ac.initcolor(color, &errtext))) {
+		color = ac.asString();
+	}
+	else {
+		cerr << errtext << endl;
+	}
+}
+
 void
 PrintFormat::setupColors()
 {
 	bool use_color(!no_color);
 	if(use_color) {
-		color_overlaykey = AnsiColor(color_overlaykey).asString();
-		color_virtualkey = AnsiColor(color_virtualkey).asString();
+		colorstring(color_overlaykey);
+		colorstring(color_virtualkey);
 	}
-	before_set_use     = parse_colors(before_set_use, use_color);
-	after_set_use      = parse_colors(after_set_use, use_color);
-	before_unset_use   = parse_colors(before_unset_use, use_color);
-	after_unset_use    = parse_colors(after_unset_use, use_color);
+	parse_color(before_set_use, use_color);
+	parse_color(after_set_use, use_color);
+	parse_color(before_unset_use, use_color);
+	parse_color(after_unset_use, use_color);
 }
 
 bool
@@ -233,19 +275,13 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 				}
 				break;
 			case Node::OUTPUT:
-				try {
+				{
 					Property *p(static_cast<Property*>(root));
 					string s;
 					if(p->user_variable)
 						s = user_variables[p->name];
 					else {
-						try {
-							s = get_property(this, entity, p->name);
-						}
-						catch(const ExBasic &e) {
-							cerr << e << endl;
-							s.clear();
-						}
+						s = get_property(this, entity, p->name);
 					}
 					if(!s.empty()) {
 						printed = true;
@@ -254,9 +290,6 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 						else
 							cout << s;
 					}
-				}
-				catch(const ExBasic &e) {
-					cerr << e << endl;
 				}
 				break;
 			default:
@@ -270,13 +303,7 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 							rhs = user_variables[ief->text.text];
 							break;
 						case ConditionBlock::RHS_PROPERTY:
-							try {
-								rhs = get_property(this, entity, ief->text.text);
-							}
-							catch(const ExBasic &e) {
-								cerr << e << endl;
-								rhs.clear();
-							}
+							rhs = get_property(this, entity, ief->text.text);
 							break;
 						default:
 						//case ConditionBlock::RHS_STRING:
@@ -300,13 +327,7 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 						ok = (user_variables[ief->variable.name] == rhs);
 					}
 					else {
-						try {
-							ok = (get_property(this, entity, ief->variable.name) == rhs);
-						}
-						catch(const ExBasic &e) {
-							cerr << e << endl;
-							ok = rhs.empty();
-						}
+						ok = (get_property(this, entity, ief->variable.name) == rhs);
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
@@ -338,19 +359,28 @@ PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBH
 	return r;
 }
 
-string
-parse_colors(const string &colorstring, bool colors)
+bool
+parse_colors(string &ret, const string &colorstring, bool colors, string *errtext)
 {
-	string ret;
 	FormatParser parser;
-	for(Node *root = parser.start(colorstring.c_str(), colors, true);
-		root != NULLPTR; root = root->next)
-	{
-		if(root->type != Node::TEXT)
-			throw ExBasic(_("Internal error: bad node for parse_colors."));
-		ret.append((static_cast<Text*>(root))->text);
+	if(unlikely(!parser.start(colorstring.c_str(), colors, true, errtext))) {
+		return false;
 	}
-	return ret;
+	ret.clear();
+	Node *root(parser.rootnode());
+	if(root == NULLPTR) {
+		return true;
+	}
+	while(likely(root->type == Node::TEXT)) {
+		ret.append((static_cast<Text*>(root))->text);
+		if((root = root->next) == NULLPTR) {
+			return true;
+		}
+	}
+	if(errtext != NULLPTR) {
+		*errtext = _("Internal error: bad node for parse_colors.");
+	}
+	return false;
 }
 
 int
@@ -422,13 +452,13 @@ FormatParser::state_COLOR()
 		return ERROR;
 	}
 	if(enable_colors) {
-		try {
-			keller.push(new Text(AnsiColor(string(band_position, q - band_position)).asString()));
-		}
-		catch(const ExBasic &e) {
-			last_error = eix::format(_("Error while parsing color: %s")) % e;
+		AnsiColor ac;
+		string errtext;
+		if(unlikely(!ac.initcolor(string(band_position, q - band_position), &errtext))) {
+			last_error = eix::format(_("Error while parsing color: %s")) % errtext;
 			return ERROR;
 		}
+		keller.push(new Text(ac.asString()));
 	}
 	band_position = q + 1;
 	return START;
@@ -667,8 +697,8 @@ FormatParser::state_FI()
 	return START;
 }
 
-Node *
-FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(ExBasic)
+bool
+FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, string *errtext)
 {
 	/* Initialize machine */
 	enable_colors = colors;
@@ -687,9 +717,10 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 			case IF:       state = state_IF(); break;
 			case ELSE:     state = state_ELSE(); break;
 			case FI:       state = state_FI(); break;
-			case ERROR:    throw ExBasic(_("Bad state: ERROR"));
-			case STOP:     throw ExBasic(_("Bad state: STOP"));
-			default:       throw ExBasic(_("Bad state: undefined"));
+			case ERROR:    break;
+			case STOP:     break;
+			default:       last_error = _("Bad state: undefined");
+				       state = ERROR;
 		}
 	}
 	/* Check if the machine went into ERROR-state. */
@@ -699,9 +730,12 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 			delete keller.top();
 			keller.pop();
 		}
-		int line(0), column(0);
-		getPosition(&line, &column);
-		throw ExBasic(_("Line %r, column %r: %s")) % line % column % last_error;
+		if(errtext != NULLPTR) {
+			int line(0), column(0);
+			getPosition(&line, &column);
+			*errtext = eix::format(_("Line %s, column %s: %s")) % line % column % last_error;
+		}
+		return false;
 	}
 	/* Pop elements and form a single linked list. */
 	Node *p(NULLPTR), *q(NULLPTR);
@@ -712,6 +746,5 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors) throw(
 		q = p;
 	}
 	root_node = p;
-	/* Return root-node. */
-	return root_node;
+	return true;
 }

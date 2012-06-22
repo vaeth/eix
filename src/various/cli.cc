@@ -10,7 +10,6 @@
 #include "cli.h"
 #include <database/header.h>
 #include <eixTk/argsreader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
@@ -486,12 +485,8 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 					name = name_ver[0];
 					ver  = name_ver[1];
 					// parseVersion() to split only valid versions:
-					try {
-						BasicVersion b;
-						b.parseVersion(ver, true);
-						success = true;
-					}
-					catch(const ExBasic &e) { }
+					BasicVersion b;
+					success = b.parseVersion(ver, true, NULLPTR);
 				}
 			}
 			if((pipe_mode <= 0) && (!success) && !word->empty()) {

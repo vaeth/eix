@@ -10,7 +10,6 @@
 #include "metadata.h"
 #include <cache/common/assign_reader.h>
 #include <cache/common/flat_reader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -179,7 +178,7 @@ cachefiles_selector (SCANDIR_ARG3 dent)
 }
 
 bool
-MetadataCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
+MetadataCache::readCategoryPrepare(const char *cat_name)
 {
 	string alt;
 	m_catname = cat_name;
@@ -306,11 +305,10 @@ MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const
 }
 
 bool
-MetadataCache::readCategory(Category &cat) throw(ExBasic)
+MetadataCache::readCategory(Category &cat)
 {
 	for(vector<string>::const_iterator it(names.begin());
 		likely(it != names.end()); ) {
-		Version *version;
 		Version *newest(NULLPTR);
 		string neweststring;
 
@@ -332,14 +330,20 @@ MetadataCache::readCategory(Category &cat) throw(ExBasic)
 
 		for(;;) {
 			/* Make version and add it to package. */
-			version = new Version(aux[1]);
+			Version *version(new Version);
+			string errtext;
+			if(unlikely(!version->parseVersion(aux[1], true, &errtext))) {
+				delete version;
+				m_error_callback(errtext);
+			}
+			else {
+				get_version_info(aux[0], aux[1], version);
 
-			get_version_info(aux[0], aux[1], version);
-
-			pkg->addVersion(version);
-			if(*(pkg->latest()) == *version) {
-				newest = version;
-				neweststring = aux[1];
+				pkg->addVersion(version);
+				if(*(pkg->latest()) == *version) {
+					newest = version;
+					neweststring = aux[1];
+				}
 			}
 
 			/* Free old split */

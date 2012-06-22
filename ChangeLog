@@ -1,11 +1,9 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.25.6
+*eix-0.26.0
 	Артём Воротников <vorot93 at yandex.ru>:
-	- Continued Russian translation
-
-	Stanislav Cymbalov <dummyunit@gmail.com>:
-	- Fixes to the Russian translation
+	- Continued Russian translation and add fixes suggested by
+	  Stanislav Cymbalov <dummyunit at gmail.com>.
 
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add masked-packages
@@ -19,6 +17,7 @@
 	- support --with-nongnu-cxx=clang++
 	- separate eix-drop-permissions binary with --enable-separate-tools
 	- Do not cache version strings to save memory.
+	- Do not use C++ exceptions. This is a major internal change.
 
 *eix-0.25.5
 	Артём Воротников <vorot93 at yandex.ru>:

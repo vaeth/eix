@@ -11,7 +11,6 @@
 #define EIX__BASICVERSION_H__ 1
 
 #include <config.h>
-#include <eixTk/null.h>
 
 #include <list>
 #include <string>
@@ -37,6 +36,9 @@ public:
 	static const std::string::size_type max_type = 32;
 	PartType parttype;
 	std::string partcontent;
+
+	BasicPart()
+	{ }
 
 	BasicPart(PartType p) : parttype(p), partcontent()
 	{ }
@@ -64,14 +66,10 @@ public:
 class BasicVersion
 {
 public:
-	/// Parse the version-string pointed to by str. If str is NULLPTR, no parsing is done.
-	BasicVersion(const char *str = NULLPTR, bool garbage_fatal = false)
-	{ if(str != NULLPTR) parseVersion(str, garbage_fatal); }
-
 	virtual ~BasicVersion() { }
 
 	/// Parse the version-string pointed to by str.
-	void parseVersion(const std::string& str, bool garbage_fatal = false);
+	bool parseVersion(const std::string& str, bool garbage_fatal, std::string *errtext);
 
 	/// Compare all except gentoo revisions
 	static short compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;

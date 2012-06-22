@@ -18,7 +18,6 @@
 #include <portage/package.h>
 #include <portage/packagetree.h>
 #include <portage/version.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -214,11 +213,9 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		if(flags & VarsReader::INTO_MAP) {
 			ebuild.useMap(&env);
 		}
-		try {
-			ebuild.read(fullpath);
-		}
-		catch(const ExBasic &e) {
-			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % fullpath % e.getMessage());
+		string errtext;
+		if(!ebuild.read(fullpath, &errtext, false)) {
+			m_error_callback(eix::format(_("Could not properly parse %s: %s")) % fullpath % errtext);
 		}
 
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
@@ -274,7 +271,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 }
 
 void
-ParseCache::readPackage(Category &cat, const string &pkg_name, const string &directory_path, const vector<string> &files) throw(ExBasic)
+ParseCache::readPackage(Category &cat, const string &pkg_name, const string &directory_path, const vector<string> &files)
 {
 	bool have_onetime_info, have_pkg;
 
@@ -302,7 +299,13 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 		}
 
 		/* Make version and add it to package. */
-		Version *version(new Version(ver));
+		Version *version(new Version);
+		string errtext;
+		if(unlikely(!version->parseVersion(ver, true, &errtext))) {
+			delete version;
+			m_error_callback(errtext);
+			continue;
+		}
 		pkg->addVersionStart(version);
 
 		string full_path(directory_path + '/' + (*fileit));
@@ -364,7 +367,7 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 }
 
 bool
-ParseCache::readCategoryPrepare(const char *cat_name) throw(ExBasic)
+ParseCache::readCategoryPrepare(const char *cat_name)
 {
 	m_catname = cat_name;
 	further_works.clear();
@@ -388,7 +391,7 @@ ParseCache::readCategoryFinalize()
 }
 
 bool
-ParseCache::readCategory(Category &cat) throw(ExBasic)
+ParseCache::readCategory(Category &cat)
 {
 	for(vector<string>::const_iterator pit(m_packages.begin());
 		likely(pit != m_packages.end()); ++pit) {

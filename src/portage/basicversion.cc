@@ -9,10 +9,10 @@
 
 #include "basicversion.h"
 #include <eixTk/compare.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
 #include <algorithm>
@@ -104,7 +104,7 @@ operator<<(ostream& s, const BasicPart& part)
 		default:
 			break;
 	}
-	throw ExBasic(_("internal error: unknown PartType on (%r,%r)"))
+	cerr << eix::format(_("internal error: unknown PartType on (%r,%r)"))
 		% int(part.parttype) % part.partcontent;
 }
 
@@ -147,21 +147,25 @@ BasicVersion::getRevision() const
 	return ss.str();
 }
 
-void
-BasicVersion::parseVersion(const string& str, bool garbage_fatal)
+bool
+BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtext)
 {
+	m_parts.clear();
 	string::size_type pos(0);
 	string::size_type len(str.find_first_not_of("0123456789", pos));
 	if(unlikely(len == pos || pos == str.size())) {
 		m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
-		throw ExBasic(_(
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_(
 			"malformed (first primary at %r) version string %r"))
 			% pos % str;
+		}
+		return false;
 	}
 	m_parts.push_back(BasicPart(BasicPart::first, str, pos, len - pos));
 
 	if (len == string::npos)
-		return;
+		return true;
 
 	pos += len;
 
@@ -169,14 +173,17 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 		len = str.find_first_not_of("0123456789", ++pos);
 		if(unlikely(len == pos || pos == str.size())) {
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
-			throw ExBasic(_(
+			if(errtext != NULLPTR) {
+				*errtext = eix::format(_(
 				"malformed (primary at %r) version string %r"))
 				% pos % str;
+			}
+			return false;
 		}
 		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, len - pos));
 
 		if (len == string::npos)
-			return;
+			return true;
 
 		pos = len;
 	}
@@ -185,7 +192,7 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 		m_parts.push_back(BasicPart(BasicPart::character, str[pos++]));
 
 	if (pos == str.size())
-		return;
+		return true;
 
 	while (str[pos] == '_') {
 		BasicPart::PartType suffix;
@@ -212,16 +219,19 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 		}
 		else {
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos-1));
-			throw ExBasic(_(
+			if(errtext != NULLPTR) {
+				*errtext = eix::format(_(
 				"malformed (suffix at %r) version string %r"))
 				% pos % str;
+			}
+			return false;
 		}
 
 		len = str.find_first_not_of("0123456789", pos);
 		m_parts.push_back(BasicPart(suffix, str, pos, len - pos));
 
 		if (len == string::npos)
-			return;
+			return true;
 
 		pos = len;
 	}
@@ -232,7 +242,7 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 		m_parts.push_back(BasicPart(BasicPart::revision, str, pos, len-pos));
 
 		if (len == string::npos)
-			return;
+			return true;
 		pos = len;
 
 		if (str[pos] == '.') {
@@ -241,23 +251,25 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal)
 			len = str.find_first_not_of("0123456789", ++pos);
 			m_parts.push_back(BasicPart(BasicPart::inter_rev, str, pos, len-pos));
 			if (len == string::npos)
-				return;
+				return true;
 			pos = len;
 		}
 	}
 
 	m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
 	if(garbage_fatal) {
-		throw ExBasic(_("garbage (%s) at end of version %r"))
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("garbage (%s) at end of version %r"))
 			% str.substr(pos) % str;
+		}
+		return false;
 	}
-	else {
-		// warn about garbage, but accept it
-		cerr << eix::format(_(
+	// warn about garbage, but accept it
+	cerr << eix::format(_(
 			"garbage (%s) at end of version %r\n"
 			"accepting version anyway"))
 			% str.substr(pos) % str << endl;
-	}
+	return true;
 }
 
 short

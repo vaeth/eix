@@ -10,7 +10,7 @@
 #include "cachetable.h"
 #include <cache/base.h>
 #include <cache/cache_map.h>
-#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -21,12 +21,12 @@
 
 using namespace std;
 
-void
-CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string &cache_name, const map<string, string> *override)
+bool
+CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string &cache_name, const map<string, string> *override, string *errtext)
 {
 	for(CacheTable::iterator it(begin()); likely(it != end()); ++it) {
 		if(same_filenames(directory, (it->getPath()).c_str()))
-			return;
+			return true;
 	}
 	const char *cache_method(cache_name.c_str());
 	if(unlikely(override != NULLPTR)) {
@@ -42,10 +42,14 @@ CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const ch
 	}
 	BasicCache *cache(get_cache(cache_method, m_appending));
 	if(unlikely(cache == NULLPTR)) {
-		throw ExBasic(_("Unknown cache %r for directory %r"))
-			% cache_method % directory;
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Unknown cache %r for directory %r"))
+				% cache_method % directory;
+			return false;
+		}
 	}
 
 	cache->setScheme(eprefixcache, eprefixport, directory);
 	push_back(cache);
+	return true;
 }

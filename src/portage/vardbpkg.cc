@@ -9,7 +9,6 @@
 
 #include "vardbpkg.h"
 #include <database/header.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
@@ -162,28 +161,19 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 		return false;
 	if(v.read_failed)
 		return false;
-	try {
-		vector<string> lines;
-		if(unlikely(!pushback_lines(
-			(m_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
-			&lines, true, false, false))) {
-			v.read_failed = true;
-			return false;
-		}
-		if(lines.empty())
-			v.slotname = emptystring;
-		else if(lines[0] == "0")
-			v.slotname = emptystring;
-		else
-			v.slotname = lines[0];
-		v.know_slot = true;
-		return true;
+	vector<string> lines;
+	if(unlikely(!pushback_lines(
+		(m_directory + p.category + "/" + p.name + "-" + v.getFull() + "/SLOT").c_str(),
+		&lines, true, false, false, NULLPTR))) {
+		return (v.read_failed = true);
 	}
-	catch(const ExBasic &e) {
-		cerr << e << endl;
-		v.read_failed = true;
-		return false;
-	}
+	if(lines.empty())
+		v.slotname = emptystring;
+	else if(lines[0] == "0")
+		v.slotname = emptystring;
+	else
+		v.slotname = lines[0];
+	return (v.know_slot = true);
 }
 
 bool
@@ -196,24 +186,18 @@ VarDbPkg::readUse(const Package &p, InstVersion &v) const
 	v.usedUse.clear();
 	set<string> iuse_set;
 	vector<string> alluse;
-	try {
-		string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
-		vector<string> lines;
-		if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
-			&lines, true, false, false)))
-			return false;
-		join_and_split(v.inst_iuse, lines);
-
-		lines.clear();
-		if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
-			&lines, true, false, false)))
-			return false;
-		join_and_split(alluse, lines);
-	}
-	catch(const ExBasic &e) {
-		cerr << e << endl;
+	string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
+	vector<string> lines;
+	if(unlikely(!pushback_lines((dirname + "/IUSE").c_str(),
+		&lines, true, false, false)))
 		return false;
-	}
+	join_and_split(v.inst_iuse, lines);
+
+	lines.clear();
+	if(unlikely(!pushback_lines((dirname + "/USE").c_str(),
+		&lines, true, false, false)))
+		return false;
+	join_and_split(alluse, lines);
 	for(vector<string>::iterator it(v.inst_iuse.begin());
 		it != v.inst_iuse.end(); ++it) {
 		while(((*it)[0] == '+') || ((*it)[0] == '-'))
@@ -262,25 +246,19 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 	}
 	if(!care_of_restrictions)
 		return true;
-	try {
-		string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
-		vector<string> lines;
-		if(unlikely(!pushback_lines((dirname + "/RESTRICT").c_str(),
-			&lines, true, false, false))) {
-			// It is OK that this file does not exist:
-			// Portage does this if RESTRICT is not set.
-			v.restrictFlags = ExtendedVersion::RESTRICT_NONE;
-			return true;
-		}
-		if(lines.size() == 1)
-			v.set_restrict(lines[0]);
-		else
-			v.set_restrict(join_to_string(lines));
+	string dirname(m_directory + p.category + "/" + p.name + "-" + v.getFull());
+	vector<string> lines;
+	if(unlikely(!pushback_lines((dirname + "/RESTRICT").c_str(),
+		&lines, true, false, false))) {
+		// It is OK that this file does not exist:
+		// Portage does this if RESTRICT is not set.
+		v.restrictFlags = ExtendedVersion::RESTRICT_NONE;
+		return true;
 	}
-	catch(const ExBasic &e) {
-		cerr << e << endl;
-		return false;
-	}
+	if(lines.size() == 1)
+		v.set_restrict(lines[0]);
+	else
+		v.set_restrict(join_to_string(lines));
 	return true;
 }
 
@@ -323,22 +301,19 @@ VarDbPkg::readCategory(const char *category)
 	installed[category] = category_installed = new map<string, vector<InstVersion> >;
 
 	/* Cycle through this category */
-	while(likely( (package_entry = readdir(dir_category)) != NULLPTR )) {
+	while(likely((package_entry = readdir(dir_category)) != NULLPTR)) {
 		if(package_entry->d_name[0] == '.')
 			continue; /* Don't want dot-stuff */
 		char **aux(ExplodeAtom::split( package_entry->d_name));
-		InstVersion *instver(NULLPTR);
 		if(aux == NULLPTR)
 			continue;
-		try {
-			instver = new InstVersion(aux[1]);
+		string errtext;
+		InstVersion instver;
+		if(likely(instver.parseVersion(aux[1], false, &errtext))) {
+			(*category_installed)[aux[0]].push_back(instver);
 		}
-		catch(const ExBasic &e) {
-			cerr << e << endl;
-		}
-		if(instver != NULLPTR) {
-			(*category_installed)[aux[0]].push_back(*instver);
-			delete instver;
+		else {
+			cerr << errtext << endl;
 		}
 		free(aux[0]);
 		free(aux[1]);

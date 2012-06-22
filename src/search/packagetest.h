@@ -11,7 +11,6 @@
 #define EIX__PACKAGETEST_H__ 1
 
 #include <database/package_reader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/inttypes.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -285,10 +284,10 @@ class PackageTest {
 			test_stability_local, test_stability_nonlocal;
 		TestStability test_instability;
 
-		static MatchField     name2field(const std::string &p) throw(ExBasic);
-		static MatchAlgorithm name2algorithm(const std::string &p) throw(ExBasic);
-		static MatchField     get_matchfield(const char *p) throw(ExBasic);
-		static MatchAlgorithm get_matchalgorithm(const char *p) throw(ExBasic);
+		static MatchField     name2field(const std::string &p);
+		static MatchAlgorithm name2algorithm(const std::string &p);
+		static MatchField     get_matchfield(const char *p);
+		static MatchAlgorithm get_matchalgorithm(const char *p);
 
 		bool stringMatch(Package *pkg) const;
 

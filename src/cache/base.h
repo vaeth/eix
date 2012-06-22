@@ -11,7 +11,6 @@
 #define EIX__BASICCACHE_H__ 1
 
 #include <config.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/null.h>
 #include <eixTk/sysutils.h>
 #include <eixTk/unused.h>
@@ -93,7 +92,7 @@ class BasicCache {
 		    @param cat_name If packagetree is NULLPTR, only packages with this category name are read.
 		    @param category If packagetree is NULLPTR, the packages matching cat_name are added to this category.
 		    @return false if some error caused incomplete read. */
-		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULLPTR, Category *category ATTRIBUTE_UNUSED = NULLPTR) throw(ExBasic)
+		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULLPTR, Category *category ATTRIBUTE_UNUSED = NULLPTR)
 		{ UNUSED(packagetree); UNUSED(cat_name); UNUSED(category); return 1; }
 
 		/** Prepare reading Cache for an individual category.
@@ -102,14 +101,14 @@ class BasicCache {
 		    This is used in eix-update to avoid unnecessary updates of the percentage bar.
 		    In case of a false return value, readCategory() must not be called,
 		    but readCategoryFinalize() must be called anyway. */
-		virtual bool readCategoryPrepare(const char *cat_name) throw(ExBasic)
+		virtual bool readCategoryPrepare(const char *cat_name)
 		{ m_catname = cat_name; return true; }
 
 		/** Read Cache for an individual category, defined before with readCategoryPrepare().
 		    If not overloaded, then readCategories() must be overloaded.
 		    After calling this, readCategoryFinalize() must be called.
 		    @return false if some error caused incomplete read. */
-		virtual bool readCategory(Category &cat) throw(ExBasic)
+		virtual bool readCategory(Category &cat)
 		{ return readCategories(NULLPTR, m_catname.c_str(), &cat); }
 
 		/** This must be called to release the data stored with readCategoryPrepare().

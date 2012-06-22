@@ -12,7 +12,6 @@
 
 #include <config.h>
 #include <cache/base.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/null.h>
 #include <portage/extendedversion.h>
 
@@ -36,7 +35,7 @@ class ParseCache : public BasicCache {
 
 		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULLPTR);
 		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version);
-		void readPackage(Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files) throw(ExBasic);
+		void readPackage(Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files);
 	public:
 		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR)
 		{ }
@@ -52,8 +51,8 @@ class ParseCache : public BasicCache {
 		void setVerbose()
 		{ verbose = true; }
 
-		bool readCategoryPrepare(const char *cat_name) throw(ExBasic);
-		bool readCategory(Category &cat) throw(ExBasic);
+		bool readCategoryPrepare(const char *cat_name);
+		bool readCategory(Category &cat);
 		void readCategoryFinalize();
 
 		bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL

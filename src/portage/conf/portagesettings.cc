@@ -28,6 +28,7 @@
 #include <portage/version.h>
 
 #include <algorithm>
+#include <iostream>
 #include <map>
 #include <set>
 #include <string>
@@ -68,8 +69,9 @@ grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector
 		if(it->empty()) {
 			continue;
 		}
-		try {
-			SetMask m(it->c_str(), i);
+		string errtext;
+		SetMask m(i);
+		if(likely(m.parseMask(it->c_str(), false, &errtext))) {
 			if(m.is_set()) {
 				contains_set.push_back(m.getName());
 			}
@@ -77,8 +79,8 @@ grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector
 				masklist->add(m);
 			}
 		}
-		catch(const ExBasic &e) {
-			portage_parse_error(file, lines.begin(), it, e);
+		else {
+			portage_parse_error(file, lines.begin(), it, errtext);
 		}
 	}
 	return true;
@@ -150,7 +152,10 @@ PortageSettings::read_config(const string &name, const string &prefix)
 	configfile.accumulatingKeys(default_accumulating_keys);
 	configfile.useMap(this);
 	configfile.setPrefix(prefix);
-	configfile.read(name.c_str());
+	string errtext;
+	if(unlikely(!configfile.read(name.c_str(), &errtext, true))) {
+		cerr << errtext << endl;
+	}
 }
 
 string
@@ -616,7 +621,8 @@ PortageSettings::pushback_categories(vector<string> &vec)
 
 	string errtext;
 	if(!pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &vec, true, false, true, &errtext)) {
-		throw ExBasic("%s") % errtext;
+		cerr << errtext << endl;
+		exit(EXIT_FAILURE);
 	}
 	for(vector<string>::iterator i(overlays.begin());
 		likely(i != overlays.end()); ++i) {
@@ -687,7 +693,7 @@ PortageUserConfig::readKeywords() {
 }
 
 void
-PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *list)
+PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list)
 {
 	vector<string> lines;
 	pushback_lines(file, &lines, false, true);
@@ -695,19 +701,19 @@ PortageUserConfig::ReadVersionFile (const char *file, MaskList<KeywordMask> *lis
 		likely(i != lines.end()); ++i) {
 		if(i->empty())
 			continue;
-		try {
-			string::size_type n(i->find_first_of("\t "));
-			if(n == string::npos) {
-				list->add(KeywordMask(i->c_str()));
+		KeywordMask m;
+		string::size_type n(i->find_first_of("\t "));
+		if(n == string::npos) {
+			if(likely(m.parseVersion(i->c_str(), false, NULLPTR))) {
+				list->add(m);
 			}
-			else {
-				KeywordMask m(i->substr(0, n).c_str());
+		}
+		else {
+			if(likely(m.parseVersion(i->substr(0, n).c_str(), false, NULLPTR))) {
 				m.keywords = "1"; //i->substr(n + 1);
 				list->add(m);
 			}
 		}
-		catch(const ExBasic &e)
-		{ }
 	}
 }
 
@@ -1219,7 +1225,8 @@ PortageUserConfig::setMasks(Package *p, Keywords::Redundant check, bool file_mas
 	}
 	if(file_mask_is_profile) {
 		if(unlikely(!(p->restore_maskflags(Version::SAVEMASK_FILE)))) {
-			throw ExBasic(_("internal error: Tried to restore nonlocal mask without saving"));
+			cerr << _("internal error: Tried to restore nonlocal mask without saving") << endl;
+			exit(EXIT_FAILURE);
 		}
 	}
 	else {
@@ -1248,7 +1255,8 @@ PortageSettings::setMasks(Package *p, bool filemask_is_profile) const
 {
 	if(filemask_is_profile) {
 		if(!(p->restore_maskflags(Version::SAVEMASK_FILE))) {
-			throw ExBasic(_("internal error: Tried to restore nonlocal mask without saving"));
+			cerr << _("internal error: Tried to restore nonlocal mask without saving");
+			exit(EXIT_FAILURE);
 		}
 		return;
 	}

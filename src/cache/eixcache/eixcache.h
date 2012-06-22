@@ -10,7 +10,6 @@
 
 #include <config.h>
 #include <cache/base.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/ptr_list.h>
 #include <portage/extendedversion.h>
 
@@ -48,7 +47,7 @@ class EixCache : public BasicCache {
 		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
 		{ return true; }
 
-		bool readCategories(PackageTree *packagetree, const char *name, Category *category) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, const char *name, Category *category);
 
 		const char *getType() const
 		{ return m_name.c_str(); }

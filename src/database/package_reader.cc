@@ -11,6 +11,7 @@
 #include "package_reader.h"
 #include <database/io.h>
 #include <database/types.h>
+#include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <portage/conf/portagesettings.h>
@@ -27,33 +28,58 @@ PackageReader::~PackageReader()
 	delete m_pkg;
 }
 
-void
+bool
 PackageReader::read(Attributes need)
 {
 	if(likely(m_have >= need)) // Already got this one.
-		return;
+		return true;
 
 	switch(m_have)
 	{
 		case NONE:
-			m_pkg->name = io::read_string(m_fp);
+			if(unlikely(!io::read_string(m_pkg->name, m_fp, &m_errtext))) {
+				m_error = true;
+				return false;
+			}
 			if(unlikely(need == NAME))
 				break;
 		case NAME:
-			m_pkg->desc = io::read_string(m_fp);
+			if(unlikely(!io::read_string(m_pkg->desc, m_fp, &m_errtext))) {
+				m_error = true;
+				return false;
+			}
 			if(unlikely(need == DESCRIPTION))
 				break;
 		case DESCRIPTION:
-			m_pkg->homepage = io::read_string(m_fp);
+			if(unlikely(!io::read_string(m_pkg->homepage, m_fp, &m_errtext))) {
+				m_error = true;
+				return false;
+			}
 			if(unlikely(need == HOMEPAGE))
 				break;
 		case HOMEPAGE:
-			m_pkg->licenses = io::read_hash_string(m_fp, header->license_hash);
+			if(unlikely(!io::read_hash_string(header->license_hash, m_pkg->licenses, m_fp, &m_errtext))) {
+				m_error = true;
+				return false;
+			}
 			if(unlikely(need == LICENSE))
 				break;
 		case LICENSE:
-			for(io::Versize i(io::read<io::Versize>(m_fp)); likely(i); --i)
-				m_pkg->addVersion(io::read_version(m_fp, *header));
+			{
+				io::Versize i;
+				if(unlikely(!io::read_num(i, m_fp, &m_errtext))) {
+					m_error = true;
+					return false;
+				}
+				for(; likely(i != 0); --i) {
+					Version *v;
+					if(unlikely(!io::read_version(v, *header, m_fp, &m_errtext))) {
+						m_error = true;
+						return false;
+					}
+					m_pkg->addVersion(v);
+				}
+			}
 			if(likely(m_portagesettings != NULLPTR)) {
 				m_portagesettings->calc_local_sets(m_pkg);
 				m_portagesettings->finalize(m_pkg);
@@ -67,19 +93,26 @@ PackageReader::read(Attributes need)
 			break;
 	}
 	m_have = need;
+	return true;
 }
 
-void
+bool
 PackageReader::skip()
 {
 	// only seek if needed
 	if (m_have != ALL) {
 #ifdef HAVE_FSEEKO
-		fseeko(m_fp, m_next, SEEK_SET);
+		if(unlikely(fseeko(m_fp, m_next, SEEK_SET) != 0))
 #else
-		fseek(m_fp, m_next, SEEK_SET);
+		if(unlikely(fseek(m_fp, m_next, SEEK_SET) != 0))
 #endif
+		{
+			m_errtext = _("fseek failed");
+			m_error = true;
+			return false;
+		}
 	}
+	return true;
 }
 
 /// Release the package.
@@ -87,7 +120,9 @@ PackageReader::skip()
 Package *
 PackageReader::release()
 {
-	read();
+	if(unlikely(!read())) {
+		return NULLPTR;
+	}
 	Package *r(m_pkg);
 	m_pkg = NULLPTR;
 	return r;
@@ -100,11 +135,18 @@ PackageReader::next()
 		if(unlikely(m_frames-- == 0)) {
 			return false;
 		}
-		m_cat_size = io::read_category_header(m_fp, m_cat_name);
+		if(unlikely(!io::read_category_header(m_cat_name, m_cat_size, m_fp, &m_errtext))) {
+			m_error = true;
+			return false;
+		}
 		return next();
 	}
 
-	io::OffsetType len(io::read<io::OffsetType>(m_fp));
+	io::OffsetType len;
+	if(unlikely(!io::read_num(len, m_fp, &m_errtext))) {
+		m_error = true;
+		return false;
+	}
 #ifdef HAVE_FSEEKO
 	// We rely on autoconf whose documentation states:
 	// All system with fseeko() also supply ftello()
@@ -124,11 +166,15 @@ PackageReader::next()
 bool
 PackageReader::nextCategory()
 {
-	if(unlikely(m_frames-- == 0))
+	if(unlikely(m_frames-- == 0)) {
 		return false;
+	}
 
-	m_cat_size = io::read_category_header(m_fp, m_cat_name);
-	return true;
+	if(likely(io::read_category_header(m_cat_name, m_cat_size, m_fp, &m_errtext))) {
+		return true;
+	}
+	m_error = true;
+	return false;
 }
 
 bool
@@ -140,11 +186,14 @@ PackageReader::nextPackage()
 	/* Ignore the offset and read the whole package at once.
 	 */
 
-	io::read<io::OffsetType>(m_fp);
+	io::OffsetType dummy;
+	if(unlikely(!io::read_num(dummy, m_fp, &m_errtext))) {
+		m_error = true;
+		return false;
+	}
 	m_have = NONE;
 	delete m_pkg;
 	m_pkg = new Package;
 	m_pkg->category = m_cat_name;
-	read(ALL);
-	return true;
+	return read(ALL);
 }

@@ -90,8 +90,8 @@ class IUseSet {
  */
 class Version : public ExtendedVersion, public Keywords {
 	public:
-		friend void     io::write_version(FILE *fp, const Version *v, const DBHeader &hdr);
-		friend Version *io::read_version(FILE *fp, const DBHeader &hdr);
+		friend bool io::write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext);
+		friend bool io::read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 		typedef enum {
 			SAVEKEY_USER, SAVEKEY_ACCEPT, SAVEKEY_ARCH, SAVEKEY_SIZE
@@ -127,18 +127,6 @@ class Version : public ExtendedVersion, public Keywords {
 		IUseSet iuse;
 
 		Version() :
-			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
-			have_saved_keywords(SAVEKEY_SIZE, false),
-			saved_masks(SAVEMASK_SIZE, MaskFlags()),
-			have_saved_masks(SAVEMASK_SIZE, false),
-			saved_effective(SAVEEFFECTIVE_SIZE, ""),
-			saved_accepted(SAVEEFFECTIVE_SIZE, ""),
-			states_effective(SAVEEFFECTIVE_SIZE, EFFECTIVE_UNSAVED),
-			effective_state(EFFECTIVE_UNUSED)
-		{ }
-
-		/** Constructor, calls BasicVersion::parseVersion( str ) */
-		Version(const char* str) : ExtendedVersion(str),
 			saved_keywords(SAVEKEY_SIZE, KeywordsFlags()),
 			have_saved_keywords(SAVEKEY_SIZE, false),
 			saved_masks(SAVEMASK_SIZE, MaskFlags()),

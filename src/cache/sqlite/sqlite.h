@@ -12,7 +12,6 @@
 
 #include <config.h>
 #include <cache/base.h>
-#include <eixTk/exceptions.h>
 
 #include <vector>
 
@@ -45,7 +44,7 @@ class SqliteCache : public BasicCache {
 		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
 		{ return true; }
 
-		bool readCategories(PackageTree *packagetree, const char *catname, Category *cat) throw(ExBasic);
+		bool readCategories(PackageTree *packagetree, const char *catname, Category *cat);
 
 		const char *getType() const
 		{

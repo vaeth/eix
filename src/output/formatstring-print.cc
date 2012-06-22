@@ -10,7 +10,7 @@
 #include <config.h>
 #include "formatstring-print.h"
 #include <eixTk/ansicolor.h>
-#include <eixTk/exceptions.h>
+#include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -26,10 +26,12 @@
 #include <portage/vardbpkg.h>
 #include <portage/version.h>
 
+#include <iostream>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
+#include <cstdlib>
 #include <cstring>
 
 using namespace std;
@@ -521,7 +523,7 @@ class Scanner {
 static Scanner scanner;
 
 string
-PrintFormat::get_pkg_property(Package *package, const string &name) const throw(ExBasic)
+PrintFormat::get_pkg_property(Package *package, const string &name) const
 {
 	Scanner::PropType t(Scanner::PKG);
 	Scanner::Prop prop(scanner.get_prop(name, &t));
@@ -531,12 +533,14 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const throw(
 		if(likely(col != string::npos))
 			prop = scanner.get_colon(name.substr(0, col), &t);
 		if(unlikely(prop == Scanner::PROP_NONE)) {
-			throw ExBasic(_("Unknown property %r")) % name;
+			cerr << eix::format(_("Unknown property %r")) % name << endl;
+			exit(EXIT_FAILURE);
 		}
 		after_colon.assign(name, col + 1, string::npos);
 	}
 	if(unlikely((t == Scanner::VER) && (version_variables == NULLPTR))) {
-		throw ExBasic(_("Property %r used outside version context")) % name;
+		cerr << eix::format(_("Property %r used outside version context")) % name << endl;
+		exit(EXIT_FAILURE);
 	}
 	bool a(false);
 	switch(prop) {

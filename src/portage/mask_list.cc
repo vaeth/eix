@@ -37,12 +37,13 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive)
 		if(it->empty()) {
 			continue;
 		}
-		try {
-			add(Mask(it->c_str(), mask_type));
+		Mask m(mask_type);
+		string errtext;
+		if(likely(m.parseMask(it->c_str(), false, &errtext))) {
 			added = true;
 		}
-		catch(const ExBasic &e) {
-			portage_parse_error(file, lines.begin(), it, e);
+		else {
+			portage_parse_error(file, lines.begin(), it, errtext);
 		}
 	}
 	return added;
@@ -270,12 +271,14 @@ PreList::initialize(MaskList<Mask> &l, Mask::Type t)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		try {
-			l.add(Mask(it->name.c_str(), t, repo(it->filename_index)));
+		Mask m(t, repo(it->filename_index));
+		string errtext;
+		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
+			l.add(m);
 		}
-		catch(const ExBasic &e) {
+		else {
 			portage_parse_error(file_name(it->filename_index),
-				it->linenumber, it->name + " ...", e);
+				it->linenumber, it->name + " ...", errtext);
 		}
 	}
 	l.finalize();
@@ -287,8 +290,9 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		try {
-			KeywordMask m(it->name.c_str(), repo(it->filename_index));
+		KeywordMask m(repo(it->filename_index));
+		string errtext;
+		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
 			if(it->args.empty()) {
 				m.keywords = raised_arch;
 			}
@@ -298,9 +302,9 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 			m.locally_double = it->locally_double;
 			l.add(m);
 		}
-		catch(const ExBasic &e) {
+		else {
 			portage_parse_error(file_name(it->filename_index),
-				it->linenumber, it->name + " ...", e);
+				it->linenumber, it->name + " ...", errtext);
 		}
 	}
 	l.finalize();
@@ -312,14 +316,15 @@ PreList::initialize(MaskList<PKeywordMask> &l)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		try {
-			PKeywordMask m(it->name.c_str(), repo(it->filename_index));
+		PKeywordMask m(repo(it->filename_index));
+		string errtext;
+		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
 			join_to_string(m.keywords, it->args);
 			l.add(m);
 		}
-		catch(const ExBasic &e) {
+		else {
 			portage_parse_error(file_name(it->filename_index),
-				it->linenumber, it->name + " ...", e);
+				it->linenumber, it->name + " ...", errtext);
 		}
 	}
 	l.finalize();

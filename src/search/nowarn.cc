@@ -149,14 +149,15 @@ NowarnPreList::initialize(NowarnMaskList &l)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		try {
-			NowarnMask m(it->name.c_str());
+		string errtext;
+		NowarnMask m;
+		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
 			m.init_nowarn(it->args);
 			l.add(m);
 		}
-		catch(const ExBasic &e) {
+		else {
 			portage_parse_error(file_name(it->filename_index),
-				it->linenumber, it->name + " ...", e);
+				it->linenumber, it->name + " ...", errtext);
 		}
 	}
 	l.finalize();

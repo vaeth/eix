@@ -9,7 +9,6 @@
 
 #include <config.h>
 #include "utils.h"
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -98,8 +97,12 @@ pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recu
 		for(vector<string>::iterator it(files.begin());
 			likely(it != files.end()); ++it) {
 			++depth;
-			if (depth == 100)
-				throw ExBasic(_("Nesting level too deep in %r")) % dir;
+			if (depth == 100) {
+				if(errtext != NULLPTR) {
+					*errtext = eix::format(_("Nesting level too deep in %r")) % dir;
+				}
+				return false;
+			}
 			if(unlikely(!pushback_lines(it->c_str(), v, remove_empty, true, remove_comments, errtext)))
 				rvalue = false;
 			--depth;

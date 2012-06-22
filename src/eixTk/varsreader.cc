@@ -9,14 +9,12 @@
 
 #include <config.h>
 #include "varsreader.h"
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
@@ -108,9 +106,10 @@ VarsReader::ASSIGN_KEY_VALUE()
 {
 	if(unlikely(sourcecmd)) {
 		sourcecmd=false;
-		if(unlikely(!source(value))) {
-			cerr << eix::format(_("%r: failed to source %r")) % file_name % value
-				<< endl;
+		string errtext;
+		if(unlikely(!source(value, &errtext))) {
+			m_errtext = eix::format(_("%s: failed to source %r (%s)")) % file_name % value % errtext;
+			CHSTATE(ERROR);
 		}
 		if((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ) {
 			CHSTATE(STOP);
@@ -420,7 +419,7 @@ VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
  * '"' -> VALUE_DOUBLE_QUOTE */
 void VarsReader::VALUE_WHITESPACE()
 {
-	while(true) {
+	for(;;) {
 		switch(INPUT) {
 			case '#':
 			case ' ':
@@ -463,7 +462,7 @@ void VarsReader::VALUE_WHITESPACE()
 void
 VarsReader::VALUE_WHITESPACE_PORTAGE()
 {
-	while(true) {
+	for(;;) {
 		switch(INPUT) {
 			case '#':
 			case ' ':
@@ -754,7 +753,8 @@ void VarsReader::resolveReference()
 /** Manages the mess around it.
  * Nothing to say .. it calls functions acording to the current state and returns if the state is
  * STOP. */
-void VarsReader::runFsm()
+bool
+VarsReader::runFsm()
 {
 	for(;;) {
 		switch(STATE) {
@@ -768,7 +768,8 @@ void VarsReader::runFsm()
 			case state_NOISE_DOUBLE_QUOTE: NOISE_DOUBLE_QUOTE(); break;
 			case state_NOISE_ESCAPE: NOISE_ESCAPE(); break;
 			case state_NOISE_SINGLE_QUOTE: NOISE_SINGLE_QUOTE(); break;
-			case state_STOP: return;
+			case state_STOP: return true;
+			case state_ERROR: return false;
 			case state_VALUE_SINGLE_QUOTE: VALUE_SINGLE_QUOTE(); break;
 			case state_VALUE_SINGLE_QUOTE_PORTAGE: VALUE_SINGLE_QUOTE_PORTAGE(); break;
 			case state_VALUE_DOUBLE_QUOTE: VALUE_DOUBLE_QUOTE(); break;
@@ -784,14 +785,15 @@ void VarsReader::runFsm()
 			default: break;
 		}
 	}
-	return;
+	return true;
 }
 
 /** Init the FSM to parse a file.
  * New's buffer for file and reads it into this buffer.
  * @param filename This you want to read.
  * @warn You need to call deinit() if you called this function. */
-void VarsReader::initFsm()
+void
+VarsReader::initFsm()
 {
 	STATE = state_JUMP_WHITESPACE;
 	sourcecmd = false;
@@ -799,15 +801,25 @@ void VarsReader::initFsm()
 	key_len = 0;
 }
 
-bool VarsReader::read(const char *filename)
+bool
+VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 {
 	int fd(open(filename, O_RDONLY));
 	if(fd == -1) {
+		if(noexist_ok) {
+			return true;
+		}
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Can't read file %r")) % filename;
+		}
 		return false;
 	}
 	struct stat st;
 	if(fstat(fd, &st)) {
 		close(fd);
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Can't stat file %r")) % filename;
+		}
 		return false;
 	}
 	if(st.st_size == 0) {
@@ -817,12 +829,16 @@ bool VarsReader::read(const char *filename)
 	filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
 	close(fd);
 	if (filebuffer == MAP_FAILED) {
-		throw ExBasic(_("Can't map file %r")) % filename;
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Can't map file %r")) % filename;
+		}
+		return false;
 	}
 	file_name = filename;
 	filebuffer_end = filebuffer + st.st_size;
 
 	initFsm();
+	bool ret;
 	if(parse_flags & APPEND_VALUES) {
 		vector<pair<string,string> > incremental;
 		// Save and clear incremental keys
@@ -834,7 +850,7 @@ bool VarsReader::read(const char *filename)
 				i->second.clear();
 			}
 		}
-		runFsm();
+		ret = runFsm();
 		// Prepend previous content for incremental keys
 		for(vector<pair<string,string> >::const_iterator it(incremental.begin());
 			it != incremental.end(); ++it) {
@@ -848,21 +864,31 @@ bool VarsReader::read(const char *filename)
 		}
 	}
 	else {
-		runFsm();
+		ret = runFsm();
 	}
 	munmap(filebuffer, st.st_size);
-	return true;
+	if(likely(ret)) {
+		return true;
+	}
+	if(errtext != NULLPTR) {
+		*errtext = m_errtext;
+	}
+	return false;
 }
 
 /** Read file using a new instance of VarsReader with the same
     settings (except for APPEND_VALUES),
     adding variables and changed HAVE_READ to current instance. */
-bool VarsReader::source(const string &filename)
+bool
+VarsReader::source(const string &filename, string *errtext)
 {
 	static int depth(0);
 	++depth;
 	if (depth == 100) {
-		throw ExBasic(_("Nesting level too deep when reading %r")) % filename;
+		if(errtext != NULLPTR) {
+			*errtext = eix::format(_("Nesting level too deep when reading %r")) % filename;
+		}
+		return false;
 	}
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
@@ -877,7 +903,7 @@ bool VarsReader::source(const string &filename)
 				currprefix = it->second;
 		}
 	}
-	int rvalue(includefile.read((currprefix + filename).c_str()));
+	int rvalue(includefile.read((currprefix + filename).c_str(), errtext, false));
 	parse_flags |= (includefile.parse_flags & HAVE_READ);
 	--depth;
 	return rvalue;

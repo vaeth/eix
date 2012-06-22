@@ -10,8 +10,8 @@
 #include <config.h>
 #include "packagetest.h"
 #include <database/package_reader.h>
-#include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
+#include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -29,6 +29,7 @@
 #include <portage/vardbpkg.h>
 #include <search/nowarn.h>
 
+#include <iostream>
 #include <map>
 #include <set>
 #include <string>
@@ -238,24 +239,24 @@ static_match_algorithm_map()
 }
 
 PackageTest::MatchField
-PackageTest::name2field(const string &p) throw(ExBasic)
+PackageTest::name2field(const string &p)
 {
 	const static map<string,MatchField>& match_field_map(static_match_field_map());
 	map<string,MatchField>::const_iterator it(match_field_map.find(p));
 	if(unlikely(it == match_field_map.end())) {
-		throw ExBasic(_("cannot find match field %r")) % p;
+		cerr << eix::format(_("cannot find match field %r")) % p << endl;
 		return NAME;
 	}
 	return it->second;
 }
 
 PackageTest::MatchAlgorithm
-PackageTest::name2algorithm(const string &p) throw(ExBasic)
+PackageTest::name2algorithm(const string &p)
 {
 	const static map<string,MatchAlgorithm>& match_algorithm_map(static_match_algorithm_map());
 	map<string,MatchAlgorithm>::const_iterator it(match_algorithm_map.find(p));
 	if(unlikely(it == match_algorithm_map.end())) {
-		throw ExBasic(_("cannot find match algorithm %r")) % p;
+		cerr << eix::format(_("cannot find match algorithm %r")) % p << endl;
 		return ALGO_REGEX;
 	}
 	return it->second;
@@ -273,7 +274,7 @@ class n \
 	t default_value; \
  \
 	public: \
-	n(const string &s) throw(ExBasic) \
+	n(const string &s) \
 	{ \
 		vector<string> pairs; \
 		split_string(pairs, s, true); \
@@ -314,7 +315,7 @@ MatcherClassDefinition(MatcherField, PackageTest::MatchField, PackageTest::name2
 MatcherClassDefinition(MatcherAlgorithm, PackageTest::MatchAlgorithm, PackageTest::name2algorithm, PackageTest::ALGO_REGEX);
 
 PackageTest::MatchField
-PackageTest::get_matchfield(const char *p) throw(ExBasic)
+PackageTest::get_matchfield(const char *p)
 {
 	static MatcherField *m(NULLPTR);
 	if(m == NULLPTR) {
@@ -325,7 +326,7 @@ PackageTest::get_matchfield(const char *p) throw(ExBasic)
 }
 
 PackageTest::MatchAlgorithm
-PackageTest::get_matchalgorithm(const char *p) throw(ExBasic)
+PackageTest::get_matchalgorithm(const char *p)
 {
 	static MatcherAlgorithm *m(NULLPTR);
 	if(m == NULLPTR) {

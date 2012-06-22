@@ -17,11 +17,18 @@
 #include <portage/packagetree.h>
 #include <portage/version.h>
 
+#include <iostream>
+
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
-#include <eixTk/exceptions.h>
 #include <eixTk/i18n.h>
+#include <cstdlib>
 #endif
+#endif
+
+using namespace std;
+
+#ifndef ALWAYS_RECALCULATE_STABILITY
 
 /* Calculating the index manually makes it sometimes unnecessary
  * to recalculate the stability setting of the whole package.
@@ -93,8 +100,10 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 	 * So we test at least at run-time that for the current version
 	 * the correct index with the correct result was set. */
 	if(!(v->have_saved_masks[mi]) || !(v->have_saved_keywords[ki]) ||
-		((v->saved_masks[mi]) != maskflags) || ((v->saved_keywords[ki]) != keyflags))
-		throw ExBasic(_("internal error: SetStability calculates wrong index"));
+		((v->saved_masks[mi]) != maskflags) || ((v->saved_keywords[ki]) != keyflags)) {
+		cerr << _("internal error: SetStability calculates wrong index") << endl;
+		exit(EXIT_FAILURE);
+	}
 #endif
 #endif
 }

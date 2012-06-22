@@ -467,27 +467,29 @@ print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_us
 }
 
 static void
+parseFormat(const char *varname, const char *varcontent)
+{
+	string errtext;
+	if(likely(format.parseFormat(varcontent, &errtext))) {
+		return;
+	}
+	cerr << eix::format(_("Problems while parsing %s: %s\n"))
+			% varname % errtext << endl;
+	exit(EXIT_FAILURE);
+}
+
+
+static void
 set_format()
 {
-	string varname;
-	try {
-		if(unlikely(rc_options.verbose_output)) {
-			varname = "FORMAT_VERBOSE";
-			format.setFormat(format_verbose);
-		}
-		else if(unlikely(rc_options.compact_output)) {
-			varname = "FORMAT_COMPACT";
-			format.setFormat(format_compact);
-		}
-		else {
-			varname = "FORMAT";
-			format.setFormat(format_normal);
-		}
+	if(unlikely(rc_options.verbose_output)) {
+		parseFormat("FORMAT_VERBOSE", format_verbose);
 	}
-	catch(const ExBasic &e) {
-		cerr << eix::format(_("Problems while parsing %s: %s\n"))
-			% varname % e << endl;
-		exit(EXIT_FAILURE);
+	else if(unlikely(rc_options.compact_output)) {
+		parseFormat("FORMAT_COMPACT", format_compact);
+	}
+	else {
+		parseFormat("FORMAT", format_normal);
 	}
 }
 
@@ -550,7 +552,7 @@ run_eix(int argc, char** argv)
 		rc_options.pure_packages = true;
 		if(!freopen(DEV_NULL, "w", stdout)) {
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 
@@ -566,7 +568,7 @@ run_eix(int argc, char** argv)
 
 	if(unlikely(rc_options.only_names)) {
 		rc_options.pure_packages = true;
-		format.setFormat("<category>/<name>\n");
+		format.parseFormat("<category>/<name>\n", NULLPTR);
 	}
 	else
 		set_format();
@@ -595,12 +597,12 @@ run_eix(int argc, char** argv)
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
 			% cachefile << endl;
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
 	DBHeader header;
 
-	if(unlikely(!io::read_header(fp, header))) {
+	if(unlikely(!io::read_header(header, fp, NULLPTR))) {
 		fclose(fp);
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
@@ -608,7 +610,7 @@ run_eix(int argc, char** argv)
 			"Please run 'eix-update' and try again."))
 			% cachefile % header.version % DBHeader::current
 			<< endl;
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	portagesettings.store_world_sets(&(header.world_sets));
 
@@ -697,6 +699,9 @@ run_eix(int argc, char** argv)
 			}
 			else if(unlikely(matchtree->match(&reader))) {
 				Package *release(reader.release());
+				if(unlikely(release == NULLPTR)) {
+					break;
+				}
 				matches.push_back(release);
 				if(unlikely(only_printed &&
 					(rc_options.brief ||
@@ -714,15 +719,24 @@ run_eix(int argc, char** argv)
 			}
 			else {
 				if(unlikely(rc_options.test_unused)) {
-					all_packages.push_back(reader.release());
+					Package *release(reader.release());
+					if(unlikely(release == NULLPTR)) {
+						break;
+					}
+					all_packages.push_back(release);
 				}
-				else {
-					reader.skip();
+				else if(unlikely(!reader.skip())) {
+					break;
 				}
 			}
 		}
+		fclose(fp);
+		const char *err_cstr(reader.get_errtext());
+		if(unlikely(err_cstr != NULLPTR)) {
+			cerr << err_cstr << endl;
+			return EXIT_FAILURE;
+		}
 	}
-	fclose(fp);
 
 	// Delete old matchtree
 	delete matchtree;
@@ -920,12 +934,12 @@ is_current_dbversion(const char *filename) {
 			"Can't open the database file %s for reading (mode = 'rb')\n"
 			"Did you forget to create it with 'eix-update'?"))
 			% filename << endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
-	bool is_current(io::read_header(fp, header));
+	bool is_current(io::read_header(header, fp, NULLPTR));
 	fclose(fp);
 
-	return (is_current ? 0 : 1);
+	return (is_current ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 static void
@@ -960,38 +974,33 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 			}
 		}
 
-		KeywordMask *m(NULLPTR);
-
-		try {
-			string::size_type n(i->find_first_of("\t "));
-			if(n == string::npos) {
-				if(unlikely(excludes.find(*i) != excludes.end()))
-					continue;
-				if(unlikely(test_empty)) {
-					unused.push_back(*i);
-					continue;
-				}
-				m = new KeywordMask(i->c_str());
+		string::size_type n(i->find_first_of("\t "));
+		bool success;
+		string errtext;
+		KeywordMask m;
+		if(n == string::npos) {
+			if(unlikely(excludes.find(*i) != excludes.end()))
+				continue;
+			if(unlikely(test_empty)) {
+				unused.push_back(*i);
+				continue;
 			}
-			else {
-				string it(*i, 0, n);
-				if(excludes.find(it) != excludes.end())
-					continue;
-				m = new KeywordMask(it.c_str());
-			}
+			success = m.parseMask(i->c_str(), false, &errtext);
 		}
-		catch(const ExBasic &e) {
-			portage_parse_error(filename, lines.begin(), i, e);
+		else {
+			string it(*i, 0, n);
+			if(excludes.find(it) != excludes.end())
+				continue;
+			success = m.parseMask(it.c_str(), false, &errtext);
 		}
-		if(m == NULLPTR)
-			continue;
-
+		if(!success) {
+			portage_parse_error(filename, lines.begin(), i, errtext);
+		}
 		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());
 		for( ; likely(pi != packagelist.end()); ++pi) {
-			if(m->ismatch(**pi))
+			if(m.ismatch(**pi))
 				break;
 		}
-		delete m;
 		if(pi != packagelist.end())
 			continue;
 		unused.push_back(*i);

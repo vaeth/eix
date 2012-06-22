@@ -12,7 +12,6 @@
 #ifdef DEBUG_PROFILE_PATHS
 #include <eixTk/formated.h>
 #endif
-#include <eixTk/exceptions.h>
 #include <eixTk/filenames.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -241,7 +240,7 @@ CascadingProfile::finalize()
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
 void
-CascadingProfile::listaddProfile(const char *profile_dir) throw(ExBasic)
+CascadingProfile::listaddProfile(const char *profile_dir)
 {
 	if(profile_dir) {
 		addProfile(profile_dir);

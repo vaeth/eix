@@ -60,7 +60,7 @@ class VarsReader {
 
 		/** Read file.
 		 * @return true if the file was successfully read. */
-		bool read(const char *filename);
+		bool read(const char *filename, std::string *errtext, bool noexist_ok);
 
 		/** Use a supplied map for variables. */
 		void useMap(std::map<std::string,std::string> *vars_map)
@@ -98,6 +98,7 @@ class VarsReader {
 		/** Kepper of the holy state. */
 		enum States {
 			state_STOP,
+			state_ERROR,
 			state_JUMP_NOISE,
 			state_JUMP_COMMENT,
 			state_JUMP_WHITESPACE,
@@ -274,7 +275,7 @@ class VarsReader {
 		/** Read file using a new instance of VarsReader with the same
 		    settings (except for APPEND_VALUES),
 		    adding variables and changed HAVE_READ to current instance. */
-		bool source(const std::string &filename);
+		bool source(const std::string &filename, std::string *errtext);
 
 		unsigned int key_len; /**< Length of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
@@ -287,6 +288,8 @@ class VarsReader {
 		Flags parse_flags; /**< Flags for configuration of parser. */
 
 	protected:
+		std::string m_errtext;
+
 		char *filebuffer,     /**< The filebuffer everyone is taking about. */
 		     *filebuffer_end; /**< Marks the end of the filebuffer. */
 		const char **incremental_keys; /**< c-array of pattern for keys which values
@@ -315,7 +318,7 @@ class VarsReader {
 		/** Manages the mess around it.
 		 * Nothing to say .. it calls functions acording to the current state
 		 * and returns if the state is STOP. */
-		void runFsm();
+		bool runFsm();
 
 		bool isIncremental(const char *key);
 

@@ -185,7 +185,12 @@ run_masked_packages(int argc, char *argv[])
 
 	for(vector<string>::const_iterator it(args.begin());
 		likely(it != args.end()); ++it) {
-		Mask m(it->c_str(), Mask::maskPseudomask);
+		Mask m(Mask::maskPseudomask);
+		string errtext;
+		if(unlikely(!m.parseMask(it->c_str(), false, &errtext))) {
+			cerr << errtext << endl;
+			continue;
+		}
 		Package p;
 		m.to_package(&p);
 		if(!mask_list.applyMasks(&p)) {

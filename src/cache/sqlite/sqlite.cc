@@ -12,7 +12,6 @@
 
 #ifdef WITH_SQLITE
 
-#include <eixTk/exceptions.h>
 #include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
@@ -230,25 +229,32 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		pkg = dest_cat->addPackage(catarg, aux[0]);
 
 	/* Create a new version and add it to package */
-	Version *version(new Version(aux[1]));
-	// reading slots and stability
-	version->slotname = TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT);
-	version->set_restrict(TrueIndex::c_str(argv, trueindex, TrueIndex::RESTRICT));
-	version->set_properties(TrueIndex::c_str(argv, trueindex, TrueIndex::PROPERTIES));
-	version->set_full_keywords(TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS));
-	version->set_iuse(TrueIndex::c_str(argv, trueindex, TrueIndex::IUSE));
-	version->depend.set(TrueIndex::c_str(argv, trueindex, TrueIndex::DEPEND),
-		TrueIndex::c_str(argv, trueindex, TrueIndex::RDEPEND),
-		TrueIndex::c_str(argv, trueindex, TrueIndex::PDEPEND),
-		false);
-	pkg->addVersion(version);
+	Version *version(new Version);
+	string errtext;
+	if(unlikely(!version->parseVersion(aux[1], true, &errtext))) {
+		delete version;
+		m_error_callback(errtext);
+	}
+	else {
+		// reading slots and stability
+		version->slotname = TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT);
+		version->set_restrict(TrueIndex::c_str(argv, trueindex, TrueIndex::RESTRICT));
+		version->set_properties(TrueIndex::c_str(argv, trueindex, TrueIndex::PROPERTIES));
+		version->set_full_keywords(TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS));
+		version->set_iuse(TrueIndex::c_str(argv, trueindex, TrueIndex::IUSE));
+		version->depend.set(TrueIndex::c_str(argv, trueindex, TrueIndex::DEPEND),
+			TrueIndex::c_str(argv, trueindex, TrueIndex::RDEPEND),
+			TrueIndex::c_str(argv, trueindex, TrueIndex::PDEPEND),
+			false);
+		pkg->addVersion(version);
 
-	/* For the newest version, add all remaining data */
-	if(*(pkg->latest()) == *version)
-	{
-		pkg->homepage = TrueIndex::c_str(argv, trueindex, TrueIndex::HOMEPAGE);
-		pkg->licenses = TrueIndex::c_str(argv, trueindex, TrueIndex::LICENSE);
-		pkg->desc     = TrueIndex::c_str(argv, trueindex, TrueIndex::DESCRIPTION);
+		/* For the newest version, add all remaining data */
+		if(*(pkg->latest()) == *version)
+		{
+			pkg->homepage = TrueIndex::c_str(argv, trueindex, TrueIndex::HOMEPAGE);
+			pkg->licenses = TrueIndex::c_str(argv, trueindex, TrueIndex::LICENSE);
+			pkg->desc     = TrueIndex::c_str(argv, trueindex, TrueIndex::DESCRIPTION);
+		}
 	}
 	/* Free old split */
 	free(aux[0]);
@@ -256,7 +262,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 }
 
 bool
-SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat) throw(ExBasic)
+SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category *cat)
 {
 	char *errormessage(NULLPTR);
 	string sqlitefile(m_prefix + PORTAGE_CACHE_PATH + m_scheme);
@@ -301,7 +307,7 @@ SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category 
 using namespace std;
 
 bool
-SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED) throw(ExBasic)
+SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED)
 {
 	UNUSED(pkgtree);
 	UNUSED(catname);
