@@ -347,29 +347,31 @@ dnl We do not use (although we could, but it would change nothing):
 dnl			-ffast-math \
 AS_IF([${warnings}],
 dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
-	AS_VAR_SET([zero_as_null_pointer], [-Wzero-as-null-pointer-constant])
+	[AS_VAR_SET([zero_as_null_pointer], [-Wzero-as-null-pointer-constant])
 	AS_CASE([" ${CXXFLAGS} "],
 		[*" -std=c++11 "*], [],
 		[*" -std=gnu++11 "*], [],
 		[AS_VAR_SET([zero_as_null_pointer], [])])
-	[AS_IF([${assumegnu}],
+	AS_IF([${assumegnu}],
 		[AS_VAR_SET([gnuflags], ["
 			-fdirectives-only
 			-ftracer
 			"])],
-		[AS_VAR_SET([gnuflags], [])])
+		[AS_VAR_SET([gnuflags], ["
+			-Wno-unknown-warning-option \
+			"])])
 	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-fno-common \
 			-funsigned-char \
 			-fPIC \
 			${gnuflags} \
-		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])]
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
 			-pedantic \
 			-Wall \
 			-Wextra \
 			-Wformat=2 \
-			-Wno-unknown-warning-option \
+			${gnuflags} \
 			-Wunused-variable \
 			-Wunused-parameter \
 			-Wstring-plus-int \
