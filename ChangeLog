@@ -1,6 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
 *eix-0.25.6
+	Артём Воротников <vorot93 at yandex.ru>:
+	- Continued Russian translation
+
+	Stanislav Cymbalov <dummyunit@gmail.com>:
+	- Fixes to the Russian translation
+
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Add masked-packages
 	- Introduce versionsort -[npvr]
