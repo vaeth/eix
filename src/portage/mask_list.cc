@@ -40,6 +40,7 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive)
 		Mask m(mask_type);
 		string errtext;
 		if(likely(m.parseMask(it->c_str(), false, &errtext))) {
+			add(m);
 			added = true;
 		}
 		else {

@@ -703,16 +703,21 @@ PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list
 			continue;
 		KeywordMask m;
 		string::size_type n(i->find_first_of("\t "));
+		bool success;
+		string errtext;
 		if(n == string::npos) {
-			if(likely(m.parseVersion(i->c_str(), false, NULLPTR))) {
-				list->add(m);
-			}
+			success = m.parseMask(i->c_str(), false, &errtext);
 		}
 		else {
-			if(likely(m.parseVersion(i->substr(0, n).c_str(), false, NULLPTR))) {
+			if(likely((success = m.parseMask(i->substr(0, n).c_str(), false, &errtext)))) {
 				m.keywords = "1"; //i->substr(n + 1);
-				list->add(m);
 			}
+		}
+		if(likely(success)) {
+			list->add(m);
+		}
+		else {
+			portage_parse_error(file, lines.begin(), i, errtext);
 		}
 	}
 }
