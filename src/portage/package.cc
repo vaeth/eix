@@ -15,8 +15,6 @@
 #include <portage/keywords.h>
 #include <portage/version.h>
 
-#include <cstring>
-
 using namespace std;
 
 Package::~Package()

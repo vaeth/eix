@@ -21,6 +21,8 @@
 #include <set>
 #include <vector>
 
+#include <cstring>
+
 using namespace std;
 
 Version *
