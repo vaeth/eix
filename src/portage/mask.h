@@ -87,8 +87,11 @@ class Mask : public BasicVersion {
 		Mask(Type type, const char *repo = NULLPTR);
 
 		/** split a "mask string" into its components
-		 * @param str_mask the string to be dissected */
-		bool parseMask(const char *str, bool garbage_fatal, std::string *errtext);
+		 * @return whether/which error occurred
+		 * @param str_mask the string to be dissected
+		 * @param errtext contains error message if not 0 and not parseOK
+		 * @param accept_garbage passed to parseVersion if appropriate */
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true);
 
 		void match(Matches &m, Package &pkg) const;
 

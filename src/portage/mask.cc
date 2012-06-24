@@ -12,6 +12,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
+#include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/package.h>
@@ -52,9 +53,13 @@ Mask::Mask(Type type, const char *repo)
 	}
 }
 
-/** split a "mask string" into its components */
-bool
-Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
+/** split a "mask string" into its components
+ * @return whether/which error occurred
+ * @param str_mask the string to be dissected
+ * @param errtext contains error message if not 0 and not parseOK
+ * @param accept_garbage passed to parseVersion if appropriate */
+BasicVersion::ParseResult
+Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 {
 	// determine comparison operator
 	if(m_type != maskPseudomask) {
@@ -72,7 +77,7 @@ Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
 				if(unlikely(m_operator == maskIsSet)) {
 					m_category = SET_CATEGORY;
 					m_name = str;
-					return true;
+					return parsedOK;
 				}
 				break;
 			}
@@ -85,7 +90,7 @@ Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
 	for(; likely(*p != '/'); ++l, ++p) {
 		if(unlikely(*p == '\0')) {
 			*errtext = (_("Can't read category."));
-			return false;
+			return parsedError;
 		}
 	}
 	m_category = string(str, l);
@@ -107,7 +112,7 @@ Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
 				m_slotname.assign(source, slot_end - source);
 				if(unlikely(slot_end[1] != ':')) {
 					*errtext = _("Repository name must be separated with :: (one : is missing)");
-					return false;
+					return parsedError;
 				}
 				source = slot_end + 2;
 				dest = &m_reponame;
@@ -154,7 +159,7 @@ Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
 			*errtext = ((m_type != maskPseudomask) ?
 				_("Operator without a version part.") :
 				_("Version specification is missing"));
-			return false;
+			return parsedError;
 		}
 
 		m_name = string(str, (p - 1) - str);
@@ -168,37 +173,32 @@ Mask::parseMask(const char *str, bool garbage_fatal, string *errtext)
 				// The following is also valid if end=NULLPTR
 				(wildcard + 1 != end))) {
 				*errtext = _("A '*' is only valid at the end of a version-string.");
-				return false;
+				return parsedError;
 			}
 			// Only the = operator can have a wildcard-version
 			if(unlikely(m_operator != maskOpEqual)) {
 				// A finer error-reporting
 				if(m_operator != maskOpRevisions) {
 					*errtext = _("A wildcard is only valid with the = operator.");
-					return false;
+					return parsedError;
 				}
 				else {
 					*errtext = _(
 						"A wildcard is only valid with the = operator.\n"
 						"Portage would also accept something like ~app-shells/bash-3*,\n"
 						"but behave just like ~app-shells/bash-3.");
-					return false;
+					return parsedError;
 				}
 			}
 			m_operator = maskOpGlob;
 			m_glob = string(str, wildcard);
+			return parsedOK;
 		}
-		else {
-			if(unlikely(!parseVersion(((end != NULLPTR) ? string(str, end - str) : str), garbage_fatal, errtext))) {
-				return false;
-			}
-		}
+		return parseVersion(((end != NULLPTR) ? string(str, end - str) : str), errtext, accept_garbage);
 	}
-	else {
-		// Everything else is the package-name
-		m_name = ((end != NULLPTR) ? string(str, end - str) : str);
-	}
-	return true;
+	// Everything else is the package-name
+	m_name = ((end != NULLPTR) ? string(str, end - str) : str);
+	return parsedOK;
 }
 
 void

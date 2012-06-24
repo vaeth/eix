@@ -19,6 +19,7 @@
 #include <eixTk/utils.h>
 #include <eixTk/varsreader.h>
 #include <eixrc/eixrc.h>
+#include <portage/basicversion.h>
 #include <portage/conf/cascadingprofile.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
@@ -71,16 +72,17 @@ grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector
 		}
 		string errtext;
 		SetMask m(i);
-		if(likely(m.parseMask(it->c_str(), false, &errtext))) {
+		BasicVersion::ParseResult r(m.parseMask(it->c_str(), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
+			portage_parse_error(file, lines.begin(), it, errtext);
+		}
+		if(likely(r != BasicVersion::parsedError)) {
 			if(m.is_set()) {
 				contains_set.push_back(m.getName());
 			}
 			else {
 				masklist->add(m);
 			}
-		}
-		else {
-			portage_parse_error(file, lines.begin(), it, errtext);
 		}
 	}
 	return true;
@@ -703,21 +705,16 @@ PortageUserConfig::ReadVersionFile(const char *file, MaskList<KeywordMask> *list
 			continue;
 		KeywordMask m;
 		string::size_type n(i->find_first_of("\t "));
-		bool success;
 		string errtext;
-		if(n == string::npos) {
-			success = m.parseMask(i->c_str(), false, &errtext);
+		BasicVersion::ParseResult r(m.parseMask(((n == string::npos) ? i->c_str() : i->substr(0, n).c_str()), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
+			portage_parse_error(file, lines.begin(), i, errtext);
 		}
-		else {
-			if(likely((success = m.parseMask(i->substr(0, n).c_str(), false, &errtext)))) {
+		if(likely(r != BasicVersion::parsedError)) {
+			if(n != string::npos) {
 				m.keywords = "1"; //i->substr(n + 1);
 			}
-		}
-		if(likely(success)) {
 			list->add(m);
-		}
-		else {
-			portage_parse_error(file, lines.begin(), i, errtext);
 		}
 	}
 }

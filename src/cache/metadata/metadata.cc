@@ -16,6 +16,7 @@
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
+#include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -332,9 +333,12 @@ MetadataCache::readCategory(Category &cat)
 			/* Make version and add it to package. */
 			Version *version(new Version);
 			string errtext;
-			if(unlikely(!version->parseVersion(aux[1], true, &errtext))) {
-				delete version;
+			BasicVersion::ParseResult r(version->parseVersion(aux[1], &errtext));
+			if(unlikely(r != BasicVersion::parsedOK)) {
 				m_error_callback(errtext);
+			}
+			if(unlikely(r == BasicVersion::parsedError)) {
+				delete version;
 			}
 			else {
 				get_version_info(aux[0], aux[1], version);

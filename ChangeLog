@@ -9,15 +9,15 @@
 	- Add masked-packages
 	- Introduce versionsort -[npvr]
 	- Introduce plainversion and revision attributes
-	- Introduce --pipe-name and --pipe-version and parse version in --pipe
-	  without error messages more intelligent.
-	- Remove NEWLINE.
+	- Introduce --pipe-name and --pipe-version
+	- Do not use C++ exceptions. This is a major internal change.
+	- Improve error handling of version parsing
+	- Remove NEWLINE
 	- Extend varsreader.cc to allow VAR=\n and (for portage escapes)
 	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387
 	- support --with-nongnu-cxx=clang++
 	- separate eix-drop-permissions binary with --enable-separate-tools
-	- Do not cache version strings to save memory.
-	- Do not use C++ exceptions. This is a major internal change.
+	- Do not cache version strings to save memory
 
 *eix-0.25.5
 	Артём Воротников <vorot93 at yandex.ru>:

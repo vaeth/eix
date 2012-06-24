@@ -147,8 +147,8 @@ BasicVersion::getRevision() const
 	return ss.str();
 }
 
-bool
-BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtext)
+BasicVersion::ParseResult
+BasicVersion::parseVersion(const string& str, string *errtext, bool accept_garbage)
 {
 	m_parts.clear();
 	string::size_type pos(0);
@@ -160,12 +160,12 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtex
 			"malformed (first primary at %r) version string %r"))
 			% pos % str;
 		}
-		return false;
+		return parsedError;
 	}
 	m_parts.push_back(BasicPart(BasicPart::first, str, pos, len - pos));
 
 	if (len == string::npos)
-		return true;
+		return parsedOK;
 
 	pos += len;
 
@@ -178,12 +178,12 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtex
 				"malformed (primary at %r) version string %r"))
 				% pos % str;
 			}
-			return false;
+			return parsedError;
 		}
 		m_parts.push_back(BasicPart(BasicPart::primary, str, pos, len - pos));
 
 		if (len == string::npos)
-			return true;
+			return parsedOK;
 
 		pos = len;
 	}
@@ -192,7 +192,7 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtex
 		m_parts.push_back(BasicPart(BasicPart::character, str[pos++]));
 
 	if (pos == str.size())
-		return true;
+		return parsedOK;
 
 	while (str[pos] == '_') {
 		BasicPart::PartType suffix;
@@ -224,14 +224,14 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtex
 				"malformed (suffix at %r) version string %r"))
 				% pos % str;
 			}
-			return false;
+			return parsedError;
 		}
 
 		len = str.find_first_not_of("0123456789", pos);
 		m_parts.push_back(BasicPart(suffix, str, pos, len - pos));
 
 		if (len == string::npos)
-			return true;
+			return parsedOK;
 
 		pos = len;
 	}
@@ -242,7 +242,7 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtex
 		m_parts.push_back(BasicPart(BasicPart::revision, str, pos, len-pos));
 
 		if (len == string::npos)
-			return true;
+			return parsedOK;
 		pos = len;
 
 		if (str[pos] == '.') {
@@ -251,25 +251,20 @@ BasicVersion::parseVersion(const string& str, bool garbage_fatal, string *errtex
 			len = str.find_first_not_of("0123456789", ++pos);
 			m_parts.push_back(BasicPart(BasicPart::inter_rev, str, pos, len-pos));
 			if (len == string::npos)
-				return true;
+				return parsedOK;
 			pos = len;
 		}
 	}
 
 	m_parts.push_back(BasicPart(BasicPart::garbage, str, pos));
-	if(garbage_fatal) {
-		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("garbage (%s) at end of version %r"))
-			% str.substr(pos) % str;
-		}
-		return false;
+	if(errtext != NULLPTR) {
+		*errtext = eix::format(accept_garbage ?
+			_("garbage (%s) at end of version %r\n"
+				"accepting version anyway") :
+			_("garbage (%s) at end of version %r"))
+				% str.substr(pos) % str;
 	}
-	// warn about garbage, but accept it
-	cerr << eix::format(_(
-			"garbage (%s) at end of version %r\n"
-			"accepting version anyway"))
-			% str.substr(pos) % str << endl;
-	return true;
+	return parsedGarbage;
 }
 
 short

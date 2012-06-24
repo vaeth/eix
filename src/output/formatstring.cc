@@ -36,15 +36,17 @@ MarkedList::add(const char *pkg, const char *ver)
 {
 	pair<string, BasicVersion*> p;
 	p.first = string(pkg);
-	if(ver) {
-		p.second = new BasicVersion;
-		if(unlikely(p.second->parseVersion(ver, true, NULLPTR))) {
-			delete p.second;
-			p.second = NULLPTR;
+	BasicVersion *&basic_version(p.second);
+	if(ver != NULLPTR) {
+		basic_version = new BasicVersion;
+		if(unlikely(basic_version->parseVersion(ver, NULLPTR) != BasicVersion::parsedError)) {
+			delete basic_version;
+			basic_version = NULLPTR;
 		}
 	}
-	else
-		p.second = NULLPTR;
+	else {
+		basic_version = NULLPTR;
+	}
 	insert(p);
 }
 

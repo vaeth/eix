@@ -12,6 +12,7 @@
 
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
+#include <portage/basicversion.h>
 #include <portage/instversion.h>
 #include <portage/package.h>
 

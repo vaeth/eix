@@ -9,6 +9,7 @@
 #include <eixTk/exceptions.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
+#include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
@@ -151,13 +152,14 @@ NowarnPreList::initialize(NowarnMaskList &l)
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		string errtext;
 		NowarnMask m;
-		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
-			m.init_nowarn(it->args);
-			l.add(m);
-		}
-		else {
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
+		}
+		if(likely(r != BasicVersion::parsedError)) {
+			m.init_nowarn(it->args);
+			l.add(m);
 		}
 	}
 	l.finalize();

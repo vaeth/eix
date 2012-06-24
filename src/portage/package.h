@@ -15,6 +15,7 @@
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
+#include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/instversion.h>
 #include <portage/keywords.h>

@@ -15,6 +15,7 @@
 #include <eixTk/null.h>
 #include <eixTk/ptr_list.h>
 #include <eixTk/stringutils.h>
+#include <portage/basicversion.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -183,12 +184,7 @@ EixCache::get_package(Package *p)
 				continue;
 		}
 		Version *version(new Version);
-		string errtext;
-		if(unlikely(!version->parseVersion(it->getFull().c_str(), true, &errtext))) {
-			delete version;
-			m_error_callback(errtext);
-			continue;
-		}
+		*dynamic_cast<BasicVersion *>(version) = *dynamic_cast<BasicVersion *>(*it);
 		version->overlay_key = m_overlay_key;
 		version->set_full_keywords(it->get_full_keywords());
 		version->slotname = it->slotname;

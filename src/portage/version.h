@@ -12,6 +12,7 @@
 
 #include <config.h>
 #include <database/io.h>
+#include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/packagesets.h>

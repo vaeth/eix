@@ -15,6 +15,8 @@
 #include <list>
 #include <string>
 
+// include <portage/basicversion.h> make check_includes happy
+
 class BasicPart
 {
 public:
@@ -66,10 +68,17 @@ public:
 class BasicVersion
 {
 public:
+	enum ParseResult
+	{
+		parsedOK,
+		parsedError,
+		parsedGarbage
+	};
+
 	virtual ~BasicVersion() { }
 
 	/// Parse the version-string pointed to by str.
-	bool parseVersion(const std::string& str, bool garbage_fatal, std::string *errtext);
+	BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, bool accept_garbage = true);
 
 	/// Compare all except gentoo revisions
 	static short compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;

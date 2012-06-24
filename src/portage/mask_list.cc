@@ -13,6 +13,7 @@
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
+#include <portage/basicversion.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
 #include <portage/package.h>
@@ -39,12 +40,13 @@ MaskList<Mask>::add_file(const char *file, Mask::Type mask_type, bool recursive)
 		}
 		Mask m(mask_type);
 		string errtext;
-		if(likely(m.parseMask(it->c_str(), false, &errtext))) {
+		BasicVersion::ParseResult r(m.parseMask(it->c_str(), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
+			portage_parse_error(file, lines.begin(), it, errtext);
+		}
+		if(likely(r != BasicVersion::parsedError)) {
 			add(m);
 			added = true;
-		}
-		else {
-			portage_parse_error(file, lines.begin(), it, errtext);
 		}
 	}
 	return added;
@@ -274,12 +276,13 @@ PreList::initialize(MaskList<Mask> &l, Mask::Type t)
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		Mask m(t, repo(it->filename_index));
 		string errtext;
-		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
-			l.add(m);
-		}
-		else {
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
+		}
+		if(likely(r != BasicVersion::parsedError)) {
+			l.add(m);
 		}
 	}
 	l.finalize();
@@ -293,7 +296,12 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		KeywordMask m(repo(it->filename_index));
 		string errtext;
-		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
+			portage_parse_error(file_name(it->filename_index),
+				it->linenumber, it->name + " ...", errtext);
+		}
+		if(likely(r != BasicVersion::parsedError)) {
 			if(it->args.empty()) {
 				m.keywords = raised_arch;
 			}
@@ -302,10 +310,6 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 			}
 			m.locally_double = it->locally_double;
 			l.add(m);
-		}
-		else {
-			portage_parse_error(file_name(it->filename_index),
-				it->linenumber, it->name + " ...", errtext);
 		}
 	}
 	l.finalize();
@@ -319,13 +323,14 @@ PreList::initialize(MaskList<PKeywordMask> &l)
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		PKeywordMask m(repo(it->filename_index));
 		string errtext;
-		if(likely(m.parseMask(it->name.c_str(), false, &errtext))) {
-			join_to_string(m.keywords, it->args);
-			l.add(m);
-		}
-		else {
+		BasicVersion::ParseResult r(m.parseMask(it->name.c_str(), &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
 			portage_parse_error(file_name(it->filename_index),
 				it->linenumber, it->name + " ...", errtext);
+		}
+		if(likely(r != BasicVersion::parsedError)) {
+			join_to_string(m.keywords, it->args);
+			l.add(m);
 		}
 	}
 	l.finalize();

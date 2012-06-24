@@ -11,6 +11,7 @@
 #define EIX__INSTVERSION_H__ 1
 
 #include <config.h>
+#include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/version.h>
 

@@ -484,9 +484,9 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				if((name_ver = ExplodeAtom::split(word->c_str())) != NULLPTR) {
 					name = name_ver[0];
 					ver  = name_ver[1];
-					// parseVersion() to split only valid versions:
+					// split version only if it is valid:
 					BasicVersion b;
-					success = b.parseVersion(ver, true, NULLPTR);
+					success = (b.parseVersion(ver, NULLPTR) != BasicVersion::parsedError);
 				}
 			}
 			if((pipe_mode <= 0) && (!success) && !word->empty()) {

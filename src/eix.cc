@@ -27,6 +27,7 @@
 #include <output/formatstring.h>
 #include <output/print-xml.h>
 #include <portage/conf/portagesettings.h>
+#include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>
 #include <portage/mask.h>
@@ -975,7 +976,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 		}
 
 		string::size_type n(i->find_first_of("\t "));
-		bool success;
+		BasicVersion::ParseResult r;
 		string errtext;
 		KeywordMask m;
 		if(n == string::npos) {
@@ -985,16 +986,17 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 				unused.push_back(*i);
 				continue;
 			}
-			success = m.parseMask(i->c_str(), false, &errtext);
+			r = m.parseMask(i->c_str(), &errtext, false);
 		}
 		else {
 			string it(*i, 0, n);
 			if(excludes.find(it) != excludes.end())
 				continue;
-			success = m.parseMask(it.c_str(), false, &errtext);
+			r = m.parseMask(it.c_str(), &errtext, false);
 		}
-		if(!success) {
+		if(r != BasicVersion::parsedOK) {
 			portage_parse_error(filename, lines.begin(), i, errtext);
+			continue;
 		}
 		eix::ptr_list<Package>::const_iterator pi(packagelist.begin());
 		for( ; likely(pi != packagelist.end()); ++pi) {

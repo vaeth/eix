@@ -18,6 +18,7 @@
 #include <eixTk/null.h>
 #include <eixTk/stringutils.h>
 #include <eixTk/unused.h>
+#include <portage/basicversion.h>
 #include <portage/depend.h>
 #include <portage/package.h>
 #include <portage/packagetree.h>
@@ -231,9 +232,12 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	/* Create a new version and add it to package */
 	Version *version(new Version);
 	string errtext;
-	if(unlikely(!version->parseVersion(aux[1], true, &errtext))) {
-		delete version;
+	BasicVersion::ParseResult r(version->parseVersion(aux[1], &errtext));
+	if(unlikely(r != BasicVersion::parsedOK)) {
 		m_error_callback(errtext);
+	}
+	if(unlikely(r == BasicVersion::parsedError)) {
+		delete version;
 	}
 	else {
 		// reading slots and stability

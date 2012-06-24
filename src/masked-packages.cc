@@ -13,6 +13,7 @@
 #include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 #include <main/main.h>
+#include <portage/basicversion.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
 #include <portage/package.h>
@@ -187,7 +188,7 @@ run_masked_packages(int argc, char *argv[])
 		likely(it != args.end()); ++it) {
 		Mask m(Mask::maskPseudomask);
 		string errtext;
-		if(unlikely(!m.parseMask(it->c_str(), false, &errtext))) {
+		if(unlikely(m.parseMask(it->c_str(), &errtext) == BasicVersion::parsedError)) {
 			cerr << errtext << endl;
 			continue;
 		}

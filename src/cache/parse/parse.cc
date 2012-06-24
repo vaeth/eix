@@ -13,6 +13,7 @@
 #include <cache/common/flat_reader.h>
 #include <cache/metadata/metadata.h>
 #include <cache/common/ebuild_exec.h>
+#include <portage/basicversion.h>
 #include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/package.h>
@@ -301,9 +302,12 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 		/* Make version and add it to package. */
 		Version *version(new Version);
 		string errtext;
-		if(unlikely(!version->parseVersion(ver, true, &errtext))) {
-			delete version;
+		BasicVersion::ParseResult r(version->parseVersion(ver, &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
 			m_error_callback(errtext);
+		}
+		if(unlikely(r == BasicVersion::parsedError)) {
+			delete version;
 			continue;
 		}
 		pkg->addVersionStart(version);

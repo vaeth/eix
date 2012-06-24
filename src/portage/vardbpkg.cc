@@ -309,11 +309,12 @@ VarDbPkg::readCategory(const char *category)
 			continue;
 		string errtext;
 		InstVersion instver;
-		if(likely(instver.parseVersion(aux[1], false, &errtext))) {
-			(*category_installed)[aux[0]].push_back(instver);
-		}
-		else {
+		BasicVersion::ParseResult r(instver.parseVersion(aux[1], &errtext));
+		if(unlikely(r != BasicVersion::parsedOK)) {
 			cerr << errtext << endl;
+		}
+		if(likely(r != BasicVersion::parsedError)) {
+			(*category_installed)[aux[0]].push_back(instver);
 		}
 		free(aux[0]);
 		free(aux[1]);

@@ -12,6 +12,7 @@
 #include <eixTk/null.h>
 #include <eixTk/sysutils.h>
 #include <eixrc/eixrc.h>
+#include <portage/basicversion.h>
 #include <portage/depend.h>
 #include <portage/extendedversion.h>
 #include <portage/instversion.h>

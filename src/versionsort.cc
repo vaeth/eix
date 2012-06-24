@@ -42,7 +42,7 @@ get_version(const char *v)
 {
 	static string r;
 	BasicVersion b;
-	if(likely(b.parseVersion(v, true, NULLPTR))) {
+	if(b.parseVersion(v, NULLPTR, false) == BasicVersion::parsedOK) {
 		r = v;
 		return r.c_str();
 	}
@@ -77,9 +77,12 @@ get_version(const char *&name, const char *v)
 static void
 parse_version(BasicVersion &b, const char *v) {
 	string errtext;
-	if(unlikely(!b.parseVersion(v, false, &errtext))) {
+	BasicVersion::ParseResult r(b.parseVersion(v, &errtext, true));
+	if(unlikely(r != BasicVersion::parsedOK)) {
 		cerr << errtext << endl;
-		exit(EXIT_FAILURE);
+		if(r != BasicVersion::parsedGarbage) {
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
