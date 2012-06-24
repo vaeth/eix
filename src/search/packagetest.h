@@ -37,26 +37,28 @@ class PackageTest {
 		friend class MatcherAlgorithm;
 
 	public:
-		typedef uint16_t MatchField;
+		typedef uint32_t MatchField;
 		static const MatchField
-			NONE          = 0x0000, /**< Search in name */
-			NAME          = 0x0001, /**< Search in name */
-			DESCRIPTION   = 0x0002, /**< Search in description */
-			LICENSE       = 0x0004, /**< Search in license */
-			CATEGORY      = 0x0008, /**< Search in category */
-			CATEGORY_NAME = 0x0010, /**< Search in category/name */
-			HOMEPAGE      = 0x0020, /**< Search in homepage */
-			IUSE          = 0x0040, /**< Search in iuse */
-			USE_ENABLED   = 0x0080, /**< Search in enabled  useflags of installed packages */
-			USE_DISABLED  = 0x0100, /**< Search in disabled useflags of installed packages */
-			SLOT          = 0x0200, /**< Search in slots */
-			INSTALLED_SLOT= 0x0400, /**< Search in installed slots */
-			SET           = 0x0800, /**< Search in sets */
-			DEPEND        = 0x1000, /**< Search in DEPEND */
-			RDEPEND       = 0x2000, /**< Search in RDEPEND */
-			PDEPEND       = 0x4000, /**< Search in PDEPEND */
+			NONE          = 0x00000, /**< Search in name */
+			NAME          = 0x00001, /**< Search in name */
+			DESCRIPTION   = 0x00002, /**< Search in description */
+			LICENSE       = 0x00004, /**< Search in license */
+			CATEGORY      = 0x00008, /**< Search in category */
+			CATEGORY_NAME = 0x00010, /**< Search in category/name */
+			HOMEPAGE      = 0x00020, /**< Search in homepage */
+			IUSE          = 0x00040, /**< Search in iuse */
+			USE_ENABLED   = 0x00080, /**< Search in enabled  useflags of installed packages */
+			USE_DISABLED  = 0x00100, /**< Search in disabled useflags of installed packages */
+			SLOT          = 0x00200, /**< Search in slots */
+			FULLSLOT      = 0x00400, /**< Search in full slots */
+			INST_SLOT     = 0x00800, /**< Search in installed slots */
+			INST_FULLSLOT = 0x01000, /**< Search in installed full slots */
+			SET           = 0x02000, /**< Search in sets */
+			DEPEND        = 0x04000, /**< Search in DEPEND */
+			RDEPEND       = 0x08000, /**< Search in RDEPEND */
+			PDEPEND       = 0x10000, /**< Search in PDEPEND */
 			DEPS          = (DEPEND|RDEPEND|PDEPEND),
-			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|INSTALLED_SLOT|SET|DEPS);
+			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
 
 		enum MatchAlgorithm {
 			ALGO_REGEX,

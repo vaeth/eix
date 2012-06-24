@@ -198,7 +198,7 @@ void
 ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version)
 {
 	version->overlay_key = m_overlay_key;
-	string keywords, restr, props, iuse;
+	string keywords, restr, props, iuse, slot;
 	bool ok(try_parse);
 	if(ok) {
 		VarsReader::Flags flags(VarsReader::NONE);
@@ -220,10 +220,11 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		}
 
 		set_checking(keywords, "KEYWORDS", ebuild, &ok);
-		set_checking(version->slotname, "SLOT", ebuild, &ok);
+		set_checking(slot, "SLOT", ebuild, &ok);
 		// Empty SLOT is not ok:
-		if(ok && (ebuild_exec != NULLPTR) && version->slotname.empty())
+		if(ok && (ebuild_exec != NULLPTR) && slot.empty()) {
 			ok = false;
+		}
 		set_checking(restr, "RESTRICT", ebuild);
 		set_checking(props, "PROPERTIES", ebuild);
 		set_checking(iuse, "IUSE", ebuild, &ok);
@@ -256,7 +257,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 	if(!ok) {
 		string *cachefile(ebuild_exec->make_cachefile(fullpath, dirpath, *pkg, *version));
 		if(likely(cachefile != NULLPTR)) {
-			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, version->slotname, iuse, restr, props, version->depend, m_error_callback);
+			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, slot, iuse, restr, props, version->depend, m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
 		}
@@ -264,6 +265,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 			m_error_callback(eix::format(_("Could not properly execute %s")) % fullpath);
 		}
 	}
+	version->set_slotname(slot);
 	version->set_full_keywords(keywords);
 	version->set_restrict(restr);
 	version->set_properties(props);

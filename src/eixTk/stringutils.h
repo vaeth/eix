@@ -47,7 +47,7 @@ extern const char *spaces;
 /** Necessary escapes for shell-like strings in "..." */
 extern const char *doublequotes;
 
-extern const std::string emptystring, one, space;
+extern const std::string emptystring, zerostring, one, space;
 
 extern std::locale localeC;
 
@@ -152,6 +152,14 @@ void escape_string(std::string &str, const char *at = spaces);
  *                      removing escapes for \\ or "at" symbols from result. */
 void split_string(std::vector<std::string> &vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
 void split_string(std::set<std::string> &vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
+
+/** Check if slot contains a subslot and if yes, split it away.
+    Also turn slot "0" into nothing */
+bool slot_subslot(std::string &slot, std::string &subslot);
+
+/** Split full to slot and subslot. Also turn slot "0" into nothing
+ * @return true if subslot exists */
+bool slot_subslot(const std::string &full, std::string &slot, std::string &subslot);
 
 /** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.

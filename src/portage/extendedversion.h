@@ -11,6 +11,7 @@
 #define EIX__EXTENDEDVERSION_H__ 1
 
 #include <database/types.h>
+#include <eixTk/stringutils.h>
 #include <eixTk/inttypes.h>
 #include <portage/basicversion.h>
 #include <portage/depend.h>
@@ -59,6 +60,7 @@ class ExtendedVersion : public BasicVersion
 		/** The slot, the version represents.
 		    For saving space, the default "0" is always stored as "" */
 		std::string slotname;
+		std::string subslotname;
 
 		/** The repository name */
 		std::string reponame;
@@ -85,6 +87,17 @@ class ExtendedVersion : public BasicVersion
 
 		void set_properties(const std::string& str)
 		{ propertiesFlags = calcProperties(str); }
+
+		void set_slotname(const std::string& str)
+		{ slot_subslot(str, slotname, subslotname); }
+
+		std::string get_shortfullslot() const
+		{ return (subslotname.empty() ? slotname : (slotname + "/" + subslotname)); }
+
+		std::string get_longfullslot() const;
+
+		std::string get_longslot() const
+		{ return (slotname.empty() ? zerostring : slotname); }
 
 		void assign_basic_version(const BasicVersion &b)
 		{ *dynamic_cast<BasicVersion *>(this) = b; }

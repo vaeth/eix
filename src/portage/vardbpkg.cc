@@ -167,12 +167,14 @@ VarDbPkg::readSlot(const Package &p, InstVersion &v) const
 		&lines, true, false, false, NULLPTR))) {
 		return (v.read_failed = true);
 	}
+	const string *slot;
 	if(lines.empty())
-		v.slotname = emptystring;
+		slot = &emptystring;
 	else if(lines[0] == "0")
-		v.slotname = emptystring;
+		slot = &emptystring;
 	else
-		v.slotname = lines[0];
+		slot = &(lines[0]);
+	v.set_slotname(*slot);
 	return (v.know_slot = true);
 }
 
@@ -233,8 +235,9 @@ VarDbPkg::readRestricted(const Package &p, InstVersion &v, const DBHeader& heade
 		if(BasicVersion::compare(**it, v) != 0)
 			continue;
 		if(readSlot(p, v)) {
-			if(unlikely(it->slotname != v.slotname))
+			if(unlikely(it->slotname != v.slotname) || unlikely(it->subslotname != v.subslotname)) {
 				continue;
+			}
 		}
 		if(readOverlay(p, v, header)) {
 			if(unlikely(it->overlay_key != v.overlay_key))

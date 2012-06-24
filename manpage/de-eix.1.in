@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-15 18:00:00 +0200 (Fri, 15 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-24 18:30:00 +0200 (Sun, 24 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -796,8 +796,15 @@ B<--system[+-]>, B<--world>, B<--world-all> oder B<--world-sets> getestet werden
 .B --slot
 Slotname einer Version in der Datenbank, z.B. "kde-4"
 .TP
+.B --fullslot
+Slotname einer Version in der Datenbank ggf. mit Subslot, z.B. "3/1.4"
+.TP
 .B --installed-slot
 Slotname einer installierten Version.
+Beachten Sie, dass ohne die Option B<--care> (oder B<CAREMODE=true>) der Slotname ev. nur vermutet wird.
+.TP
+.B --installed-fullslot
+Slotname einer installierten Version ggf. mit Subslot.
 Beachten Sie, dass ohne die Option B<--care> (oder B<CAREMODE=true>) der Slotname ev. nur vermutet wird.
 .TP
 .BR -U ", " --use
@@ -1210,15 +1217,15 @@ Um die Wiederbenutzung von Code zu erleichtern gilt:
 Wenn die Durckausgabe nicht Slot-sortiert ist, dann sind
 B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 .TP
-.BR slot ", " isslot ", " overlayver ", " overlaynum
+.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Es wird der aktuelle Slot bzw. der Overlay der aktuellen Version ausgegeben.
 B<overlayver> ist leer, falls das gesamte Paket aus nur einem Overlay stammt;
 für diesen Fall sollte B<overlay> zur Ausgabe des Overlays benutzt werden.
 Im Gegensatz dazu enthält B<overlaynum> stets die Nummer des Overlays
 (als Text ohne Farben) oder ist leer, falls das Paket keinem Overlay entstammt.
-B<isslot> tested nur, ob der Slot trivial ist und gibt in diesem Fall 1 aus
-(sonst nichts).
+B<isslot>, B<isfullslot> und B<issubslot> testen nur of Slot, voller Slot bzw. Subslot
+trivial sind und geben in diesem Fall 1 aus (sonst nichts).
 .TP
 .BR versionkeywords ", " versionkeywords* ", " versionekeywords
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.

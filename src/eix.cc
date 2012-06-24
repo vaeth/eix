@@ -192,7 +192,9 @@ dump_help()
 "    --pdepend               pdepend (needs DEP=true)\n"
 "    --set                   local package set name\n"
 "    --slot                  slot\n"
+"    --fullslot              slot with subslot\n"
 "    --installed-slot        slot of installed version\n"
+"    --installed-fullslot    slot with subslot of installed version\n"
 "    -U, --use               useflag (of the ebuild)\n"
 "    --installed-with-use    enabled useflag (of installed package)\n"
 "    --installed-without-use disabled useflag (of installed package)\n"
@@ -379,7 +381,9 @@ static Option long_options[] = {
 	Option("any",           'y'),
 	Option("name",          's'),
 	Option("slot",          O_SEARCH_SLOT),
+	Option("fullslot",      O_SEARCH_FULLSLOT),
 	Option("installed-slot", O_INSTALLED_SLOT),
+	Option("installed-fullslot", O_SEARCH_INST_FULLSLOT),
 	Option("category",      'C'),
 	Option("category-name", 'A'),
 	Option("description",   'S'),

@@ -184,8 +184,8 @@ PrintXml::package(Package *pkg)
 				cout << " repository=\"" << escape_xmlstring(overlay.label) << "\"";
 			}
 		}
-		if (!ver->slotname.empty()) {
-			cout << " slot=\"" << escape_xmlstring(ver->slotname) << "\"";
+		if (!ver->get_shortfullslot().empty()) {
+			cout << " slot=\"" << escape_xmlstring(ver->get_longfullslot()) << "\"";
 		}
 		if (versionInstalled) {
 			cout << " installed=\"1\" installDate=\"" <<

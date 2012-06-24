@@ -23,6 +23,42 @@
 
 using namespace std;
 
+Version *
+VersionList::best(bool allow_unstable) const
+{
+	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
+		if((*ri)->maskflags.isHardMasked())
+			continue;
+		if((*ri)->keyflags.isStable() ||
+			(allow_unstable && (*ri)->keyflags.isUnstable()))
+			return *ri;
+	}
+	return NULLPTR;
+}
+
+void
+SlotList::push_back_largest(Version *version)
+{
+	const char *name((version->slotname).c_str());
+	for(iterator it(begin()); likely(it != end()); ++it) {
+		if(unlikely(strcmp(name, it->slotname()) == 0)) {
+			(it->version_list()).push_back(version);
+			return;
+		}
+	}
+	push_back(SlotVersions(name, version));
+}
+
+const VersionList *
+SlotList::operator [] (const char *s) const
+{
+	for(const_iterator it(begin()); likely(it != end()); ++it) {
+		if(unlikely(strcmp(s, it->slotname()) == 0))
+			return &(it->const_version_list());
+	}
+	return NULLPTR;
+}
+
 bool
 Package::calc_allow_upgrade_slots(const PortageSettings *ps) const
 {
@@ -46,7 +82,7 @@ Package::best(bool allow_unstable) const
 }
 
 void
-Package::build_slotslit() const
+Package::build_slotlist() const
 {
 	m_slotlist.clear();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
@@ -168,27 +204,64 @@ Package::slotname(const ExtendedVersion &v) const
 }
 
 bool
-Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const
+Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *force) const
 {
-	if(vardbpkg->care_slots())
-		return vardbpkg->readSlot(*this, v);
-	if(likely(v.know_slot))
-		return true;
-	const char *s(slotname(v));
-	if(s != NULLPTR) {
-		v.slotname = s;
-		v.know_slot = true;
+	if(vardbpkg != NULLPTR) {
+		if(vardbpkg->care_slots()) {
+			if(vardbpkg->readSlot(*this, v)) {
+				return true;
+			}
+			if(force != NULLPTR) {
+				v.set_slotname(force);
+			}
+			return false;
+		}
+		if(likely(v.know_slot))
+			return true;
+		const char *s(slotname(v));
+		if(s != NULLPTR) {
+			v.slotname = s;
+			v.know_slot = true;
+		}
+		if(vardbpkg->readSlot(*this, v))
+			return true;
 	}
-	if(vardbpkg->readSlot(*this, v))
-		return true;
-	if(slotlist().size() == 1)
-	{
+	else {
+		if(v.know_slot) {
+			return true;
+		}
+	}
+	if(slotlist().size() == 1) {
 		// There is only one slot, so the choice seems clear.
 		// However, perhaps our package is from an old database
 		// (e.g. in eix-diff) and so there might be new slots elsewhere
 		// Therefore we better don't modify v.know_slot.
 		v.slotname = slotlist().begin()->slotname();
+		if(!m_has_cached_subslots) {
+			m_has_cached_subslots = m_unique_subslot = true;
+			const_iterator it(begin());
+			if(it != end()) {
+				m_subslot = (it->subslotname);
+				while(++it != end()) {
+					if(it->subslotname != m_subslot) {
+						m_unique_subslot = false;
+						m_subslot.clear();
+					}
+				}
+			}
+			else { // a package without a version...
+				m_unique_subslot = false;
+			}
+		}
+		if(m_unique_subslot) {
+			v.subslotname = m_subslot;
+			return true;
+		}
+		v.subslotname.clear();
 		return true;
+	}
+	if(force != NULLPTR) {
+		v.set_slotname(force);
 	}
 	return false;
 }

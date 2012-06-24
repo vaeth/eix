@@ -136,14 +136,14 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 			dest->assign(source);
 		}
 		m_test_reponame = !(m_reponame.empty());
-		// Interpret Slot "0" as empty slot (as internally always)
-		if(m_slotname == "0") {
-			m_slotname.clear();
+		if(slot_subslot(m_slotname, m_subslotname)) {
+			m_test_subslot = m_test_slot;
 		}
 	}
 	else {
 		m_test_slot = m_test_reponame = false;
 		m_slotname.clear();
+		m_subslotname.clear();
 		m_reponame.clear();
 		end = strchr(str, '[');
 		if((end != NULLPTR) && ! strchr(end + 1, ']'))
@@ -209,6 +209,7 @@ Mask::to_package(Package *p) const
 	Version *v(new Version);
 	v->assign_basic_version(*this);
 	v->slotname = m_slotname;
+	v->subslotname = m_subslotname;
 	p->addVersion(v);
 }
 
@@ -220,6 +221,11 @@ Mask::test(const ExtendedVersion *ev) const
 	if(m_test_slot) {
 		if(m_slotname != ev->slotname) {
 			return false;
+		}
+		if(m_test_subslot) {
+			if(m_subslotname != ev->subslotname) {
+				return false;
+			}
 		}
 	}
 	if(!m_reponame.empty()) {

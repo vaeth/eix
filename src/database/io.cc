@@ -237,9 +237,11 @@ io::read_version(Version *&v, const DBHeader &hdr, FILE *fp, string *errtext)
 		v->m_parts.push_back(b);
 	}
 
-	if(unlikely(!io::read_hash_string(hdr.slot_hash, v->slotname, fp, errtext))) {
+	string fullslot;
+	if(unlikely(!io::read_hash_string(hdr.slot_hash, fullslot, fp, errtext))) {
 		return false;
 	}
+	v->set_slotname(fullslot);
 	if(unlikely(!io::read_num(v->overlay_key, fp, errtext))) {
 		return false;
 	}
@@ -305,7 +307,7 @@ io::write_version(const Version *v, const DBHeader &hdr, FILE *fp, string *errte
 		}
 	}
 
-	if(unlikely(!io::write_hash_string(hdr.slot_hash, v->slotname, fp, errtext))) {
+	if(unlikely(!io::write_hash_string(hdr.slot_hash, v->get_shortfullslot(), fp, errtext))) {
 		return false;
 	}
 	if(unlikely(!io::write_num(v->overlay_key, fp, errtext))) {
@@ -476,7 +478,7 @@ io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree)
 			for(Package::iterator v(p->begin()); likely(v != p->end()); ++v) {
 				hdr.keywords_hash.hash_words(v->get_full_keywords());
 				hdr.iuse_hash.hash_words(v->iuse.asVector());
-				hdr.slot_hash.hash_string(v->slotname);
+				hdr.slot_hash.hash_string(v->get_shortfullslot());
 				if(use_dep) {
 					const Depend &dep(v->depend);
 					hdr.depend_hash.hash_words(dep.m_depend);

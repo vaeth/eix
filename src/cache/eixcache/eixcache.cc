@@ -188,6 +188,7 @@ EixCache::get_package(Package *p)
 		version->overlay_key = m_overlay_key;
 		version->set_full_keywords(it->get_full_keywords());
 		version->slotname = it->slotname;
+		version->subslotname = it->subslotname;
 		version->restrictFlags = it->restrictFlags;
 		version->propertiesFlags = it->propertiesFlags;
 		version->iuse = it->iuse;

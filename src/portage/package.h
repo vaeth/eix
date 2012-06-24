@@ -116,7 +116,7 @@ class Package
 		const SlotList& slotlist() const
 		{
 			if (! m_has_cached_slotlist) {
-				build_slotslit();
+				build_slotlist();
 				m_has_cached_slotlist = true;
 			}
 			return m_slotlist;
@@ -360,7 +360,7 @@ class Package
 		    possibly reading it from disk.
 		    Returns true if a reasonable choice seems to be found
 		    (v.know_slot determines whether we had full success). */
-		bool guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg) const;
+		bool guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const;
 
 		Version *latest() const
 		{ return *rbegin(); }
@@ -373,9 +373,13 @@ class Package
 		mutable SlotList m_slotlist;
 		mutable bool m_has_cached_slotlist;
 
+		/// This is for caching in guess_slotname
+		mutable bool m_has_cached_subslots, m_unique_subslot;
+		mutable std::string m_subslot;
+
 		/// Create new slotlist. Const because we operate on mutable cache
 		/// types.
-		void build_slotslit() const;
+		void build_slotlist() const;
 
 		/** This is called by addVersionFinalize() to calculate
 		    collected iuse and to save memory by freeing version iuse */
@@ -388,7 +392,8 @@ class Package
 
 		void defaults()
 		{
-			know_upgrade_slots = m_has_cached_slotlist = false;
+			know_upgrade_slots = m_has_cached_slotlist =
+				m_has_cached_subslots = false;
 			have_duplicate_versions = DUP_NONE;
 			version_collects = COLLECT_DEFAULT;
 			local_collects.set(MaskFlags::MASK_NONE);

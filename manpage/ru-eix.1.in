@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-15 18:00:00 +0200 (Fri, 15 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-06-24 18:30:00 +0200 (Sun, 24 Jun 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНЬЕ
 .SH "НАЗВАНЬЕ"
 .B eix
@@ -784,8 +784,15 @@ should be tested with B<--system[+-]>, B<--world>, B<--world-all>, or B<--world-
 .B --slot
 Slotname of a version in the database, e.g. "kde-4"
 .TP
+.B --fullslot
+Slotname of a version in the database, possibly with its subslot, e.g. "3/1.4"
+.TP
 .B --installed-slot
 Slotname of an installed version.
+Recall that without option B<--care> (or B<CAREMODE=true>) the slotname might be guessed.
+.TP
+.B --installed-fullslot
+Slotname of an installed version, possibly with its subslot.
 Recall that without option B<--care> (or B<CAREMODE=true>) the slotname might be guessed.
 .TP
 .BR -U ", " --use
@@ -1191,14 +1198,14 @@ All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
-.BR slot ", " isslot ", " overlayver ", " overlaynum
+.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the current slot or the overlay of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
 B<overlaynum>, in contrast, contains the number of the overlay
 without colors unconditionally (or is empty if the package is not from an overlay).
-B<isslot> just tests whether the slot is trivial and outputs 1 in this case,
+B<isslot>, B<isfullslot>, B<issubslot> just test whether the slot, fullslot, or subslot are trivial and outputs 1 in this case,
 otherwise nothing.
 .TP
 .BR versionkeywords ", " versionkeywords* ", " versionekeywords

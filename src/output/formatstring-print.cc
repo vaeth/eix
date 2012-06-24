@@ -281,8 +281,12 @@ class Scanner {
 			VER_SLOTFIRST,
 			VER_SLOTLAST,
 			VER_ONESLOT,
+			VER_FULLSLOT,
+			VER_ISFULLSLOT,
 			VER_SLOT,
 			VER_ISSLOT,
+			VER_SUBSLOT,
+			VER_ISSUBSLOT,
 			VER_VERSION,
 			VER_PLAINVERSION,
 			VER_REVISION,
@@ -425,8 +429,12 @@ class Scanner {
 			prop_ver("slotfirst", VER_SLOTFIRST);
 			prop_ver("slotlast", VER_SLOTLAST);
 			prop_ver("oneslot", VER_ONESLOT);
+			prop_ver("fullslot", VER_FULLSLOT);
+			prop_ver("isfullslot", VER_ISFULLSLOT);
 			prop_ver("slot", VER_SLOT);
 			prop_ver("isslot", VER_ISSLOT);
+			prop_ver("subslot", VER_SUBSLOT);
+			prop_ver("issubslot", VER_ISSUBSLOT);
 			prop_ver("version", VER_VERSION);
 			prop_ver("plainversion", VER_PLAINVERSION);
 			prop_ver("revision", VER_REVISION);
@@ -829,6 +837,27 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const
 			if(version_variables->oneslot)
 				return one;
 			break;
+		case Scanner::VER_FULLSLOT:
+			a = true;
+		case Scanner::VER_ISFULLSLOT:
+			{
+				const ExtendedVersion *e;
+				if(version_variables->isinst) {
+					InstVersion *i(version_variables->instver());
+					package->guess_slotname(*i, vardb, "?");
+					e = i;
+				}
+				else {
+					e = version_variables->version();
+				}
+				if(a) {
+					return e->get_longfullslot();
+				}
+				if(!e->get_shortfullslot().empty()) {
+					return one;
+				}
+			}
+			break;
 		case Scanner::VER_SLOT:
 			a = true;
 		case Scanner::VER_ISSLOT:
@@ -836,19 +865,38 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const
 				const string *slot;
 				if(version_variables->isinst) {
 					InstVersion *i(version_variables->instver());
-					if(unlikely((vardb == NULLPTR) || !(package->guess_slotname(*i, vardb))))
-						i->slotname = "?";
+					package->guess_slotname(*i, vardb, "?");
 					slot = &(i->slotname);
 				}
-				else
+				else {
 					slot = &(version_variables->version()->slotname);
+				}
 				if(a) {
-					if(slot->empty())
-						return "0";
-					return *slot;
+					return (slot->empty() ? zerostring : *slot);
 				}
 				if((!(slot->empty())) && (*slot != "0"))
 					return one;
+			}
+			break;
+		case Scanner::VER_SUBSLOT:
+			a = true;
+		case Scanner::VER_ISSUBSLOT:
+			{
+				const string *subslot;
+				if(version_variables->isinst) {
+					InstVersion *i(version_variables->instver());
+					package->guess_slotname(*i, vardb, "?");
+					subslot = &(i->subslotname);
+				}
+				else {
+					subslot = &(version_variables->version()->subslotname);
+				}
+				if(a) {
+					return *subslot;
+				}
+				if(!subslot->empty()) {
+					return one;
+				}
 			}
 			break;
 		case Scanner::VER_VERSION:

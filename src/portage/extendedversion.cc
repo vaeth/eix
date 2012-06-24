@@ -119,3 +119,11 @@ ExtendedVersion::calcProperties(const string &str)
 	}
 	return p;
 }
+
+string
+ExtendedVersion::get_longfullslot() const
+{
+	static string zerodash("0/");
+	return (subslotname.empty() ? (slotname.empty() ? zerostring : slotname) :
+		(slotname.empty() ? (zerodash + subslotname) : (slotname + "/" + subslotname)));
+}

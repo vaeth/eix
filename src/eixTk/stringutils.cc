@@ -32,7 +32,7 @@ using namespace std;
 const char *spaces(" \t\r\n");
 const char *doublequotes("\"$\\");
 
-const string emptystring(""), one("1"), space(" ");
+const string emptystring(""), zerostring("0"), one("1"), space(" ");
 
 locale localeC("C");
 
@@ -91,6 +91,49 @@ trimall(std::string &str, const char *delims, char c)
 		}
 		str.erase(pos, end - pos);
 	}
+}
+
+/** Check if slot contains a subslot and if yes, split it away.
+    Also turn slot "0" into nothing */
+bool slot_subslot(string &slot, string &subslot)
+{
+	string::size_type sep(slot.find('/'));
+	if(sep == string::npos) {
+		subslot.clear();
+		if(slot == "0") {
+			slot.clear();
+		}
+		return false;
+	}
+	subslot.assign(slot, sep + 1, string::npos);
+	slot.resize(sep);
+	if(slot == "0") {
+		slot.clear();
+	}
+	return true;
+}
+
+/** Split full to slot and subslot. Also turn slot "0" into nothing
+ * @return true if subslot exists */
+bool slot_subslot(const string &full, string &slot, string &subslot)
+{
+	string::size_type sep(full.find('/'));
+	if(sep == string::npos) {
+		if(full != "0") {
+			slot = full;
+		}
+		else {
+			slot.clear();
+		}
+		subslot.clear();
+		return false;
+	}
+	subslot.assign(full, sep + 1, string::npos);
+	slot.assign(full, 0, sep);
+	if(slot == "0") {
+		slot.clear();
+	}
+	return true;
 }
 
 const char *

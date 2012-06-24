@@ -1743,17 +1743,36 @@ AddOption(STRING, "FORMAT_VERSION_END",
 	"This variable is only used for delayed substitution.\n"
 	"It resets all colors/markers if the runtime variable $color was set."));
 
-AddOption(STRING, "FORMAT_VERSIONS_END",
+AddOption(STRING, "FORMAT_VERSIONO_END",
 	"%{?PRINT_SLOTS}"
-		"{isslot}"
+		"{issubslot}"
 			"%{?COLORED_SLOTS}"
 				"{$color}(){}"
 				"{*color}"
-				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<slot>"
-				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<slot>\\)%{}"
+				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
+				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
 			"%{else}"
-				"%{?COLON_SLOTS}:<slot>"
-				"%{else}<$sep>{!*sep}\\(<slot>\\)%{}"
+				"%{?COLON_SLOTS}:<fullslot>"
+				"%{else}<$sep>{!*sep}\\(<fullslot>\\)%{}"
+			"%{}"
+		"{}"
+	"%{}"
+	"%{FORMAT_VERSION_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It outputs an optional subslot, caring about the runtime variable $color,\n"
+	"and then invokes FORMAT_VERSION_END."));
+
+AddOption(STRING, "FORMAT_VERSIONS_END",
+	"%{?PRINT_SLOTS}"
+		"{isfullslot}"
+			"%{?COLORED_SLOTS}"
+				"{$color}(){}"
+				"{*color}"
+				"%{?COLON_SLOTS}:(%{COLOR_SLOTS})<fullslot>"
+				"%{else}<$sep>{!*sep}(%{COLOR_SLOTS})\\(<fullslot>\\)%{}"
+			"%{else}"
+				"%{?COLON_SLOTS}:<fullslot>"
+				"%{else}<$sep>{!*sep}\\(<fullslot>\\)%{}"
 			"%{}"
 		"{}"
 	"%{}"
@@ -1767,6 +1786,11 @@ AddOption(STRING, "PVERSION",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a plain version without slot."));
 
+AddOption(STRING, "PVERSIONO",
+	"%{FORMAT_PVERSION}%{FORMAT_VERSIONO_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing a plain version with its slot."));
+
 AddOption(STRING, "PVERSIONS",
 	"%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1776,6 +1800,12 @@ AddOption(STRING, "AVERSION",
 	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSION_END}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an available version without slot."));
+
+AddOption(STRING, "AVERSIONO",
+	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSIONO_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for printing an available version\n"
+	"with its optional subslot."));
 
 AddOption(STRING, "AVERSIONS",
 	"%{FORMAT_STABILITY}%{FORMAT_PVERSION}%{FORMAT_VERSIONS_END}", _(
@@ -1807,6 +1837,17 @@ AddOption(STRING, "IVERSIONS_VERBOSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with most data and slot."));
 
+AddOption(STRING, "PVERSIONO_VERBOSE",
+	"%{PVERSIONO}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for a plain version with most data, optional subslot."));
+
+AddOption(STRING, "AVERSIONO_VERBOSE",
+	"%{AVERSIONO}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the format for an available version with most data,\n"
+	"optional subslot."));
+
 AddOption(STRING, "PVERSION_VERBOSE",
 	"%{PVERSION}%{FORMAT_PROPRESTRICT}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
@@ -1831,16 +1872,6 @@ AddOption(STRING, "IVERSIONS_COMPACT",
 	"%{IVERSIONS}%{FORMAT_BINARY}%{OVERLAYVER}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for an installed version with important data and slot."));
-
-AddOption(STRING, "PVERSION_COMPACT",
-	"%{PVERSION}%{FORMAT_BINARY}%{OVERLAYVER}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for a plain version with important data, no slot."));
-
-AddOption(STRING, "AVERSION_COMPACT",
-	"%{AVERSION}%{FORMAT_BINARY}%{OVERLAYVER}", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the format for an available version with important data, no slot."));
 
 AddOption(STRING, "FORMAT_BEFORE_KEYWORDS",
 	"\\t\"", _(
@@ -1997,7 +2028,7 @@ AddOption(STRING, "FORMAT_VERSION_APPENDIX",
 AddOption(STRING, "FORMAT_SLOTLINESKIP_VERSIONLINES",
 	"\\n      %{FORMAT_SLOT}", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines lineskip + slot if slotsorted versionlines used."));
+	"It defines lineskip + slot if slotsorted versionlines are used."));
 
 AddOption(STRING, "FORMAT_SLOTLINESKIP",
 	"\\n\\t%{FORMAT_SLOT}\\t", _(
@@ -2030,7 +2061,7 @@ AddOption(STRING, "VSORT",
 
 AddOption(STRING, "SSORTL",
 	"{slotfirst}%{FORMAT_SLOTLINESKIP_VERSIONLINES}{}"
-	"%{FORMAT_VERSLINESKIP}{*sep=\\t}%{PVERSION_VERBOSE}{!*sep}"
+	"%{FORMAT_VERSLINESKIP}{*sep=\\t}%{PVERSIONO_VERBOSE}{!*sep}"
 	"%{FORMAT_VERSION_APPENDIX}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted with versionlines."));
@@ -2040,7 +2071,7 @@ AddOption(STRING, "SSORT",
 		"{oneslot}%{FORMAT_SLOT} "
 		"{else}%{FORMAT_SLOTLINESKIP}{}"
 	"{else} {}"
-	"%{AVERSION_VERBOSE}{last}{*sorted=slot}{}", _(
+	"%{AVERSIONO_VERBOSE}{last}{*sorted=slot}{}", _(
 	"This variable is used as a version formatter.\n"
 	"It defines the format for a version; slotsorted without versionlines."));
 

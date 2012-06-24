@@ -10,6 +10,7 @@
 	- Introduce versionsort -[npvr]
 	- Introduce plainversion and revision attributes
 	- Introduce --pipe-name and --pipe-version
+	- Support for subslots
 	- Do not use C++ exceptions. This is a major internal change.
 	- Improve error handling of version parsing
 	- Remove NEWLINE
@@ -17,6 +18,7 @@
 	  VAR[\t ]*=[\t ]*value http://bugs.gentoo.org/show_bug.cgi?id=417387
 	- support --with-nongnu-cxx=clang++
 	- separate eix-drop-permissions binary with --enable-separate-tools
+	- Improve slot finding
 	- Do not cache version strings to save memory
 
 *eix-0.25.5

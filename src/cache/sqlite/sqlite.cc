@@ -241,7 +241,7 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	}
 	else {
 		// reading slots and stability
-		version->slotname = TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT);
+		version->set_slotname(TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT));
 		version->set_restrict(TrueIndex::c_str(argv, trueindex, TrueIndex::RESTRICT));
 		version->set_properties(TrueIndex::c_str(argv, trueindex, TrueIndex::PROPERTIES));
 		version->set_full_keywords(TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS));

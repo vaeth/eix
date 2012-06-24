@@ -52,7 +52,9 @@ const PackageTest::MatchField
 		PackageTest::USE_ENABLED,
 		PackageTest::USE_DISABLED,
 		PackageTest::SLOT,
-		PackageTest::INSTALLED_SLOT,
+		PackageTest::FULLSLOT,
+		PackageTest::INST_SLOT,
+		PackageTest::INST_FULLSLOT,
 		PackageTest::SET,
 		PackageTest::DEPEND,
 		PackageTest::RDEPEND,
@@ -114,7 +116,7 @@ PackageTest::~PackageTest() {
 void
 PackageTest::calculateNeeds() {
 	need = PackageReader::NONE;
-	if(field & (SLOT | SET))
+	if(field & (SLOT | FULLSLOT | SET))
 		setNeeds(PackageReader::VERSIONS);
 	if(field & HOMEPAGE)
 		setNeeds(PackageReader::HOMEPAGE);
@@ -126,7 +128,7 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::NONE);
 	if(field & (NAME | CATEGORY_NAME))
 		setNeeds(PackageReader::NAME);
-	if(field & (USE_ENABLED | USE_DISABLED | INSTALLED_SLOT))
+	if(field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT))
 		setNeeds(PackageReader::NAME);
 	if(installed)
 		setNeeds(PackageReader::NAME);
@@ -194,12 +196,20 @@ static_match_field_map()
 	match_field_map["set"]            = PackageTest::SET;
 	match_field_map["SLOT"]           = PackageTest::SLOT;
 	match_field_map["slot"]           = PackageTest::SLOT;
-	match_field_map["INSTALLED_SLOT"] = PackageTest::INSTALLED_SLOT;
-	match_field_map["INSTALLED-SLOT"] = PackageTest::INSTALLED_SLOT;
-	match_field_map["INSTALLEDSLOT"]  = PackageTest::INSTALLED_SLOT;
-	match_field_map["installed_slot"] = PackageTest::INSTALLED_SLOT;
-	match_field_map["installed-slot"] = PackageTest::INSTALLED_SLOT;
-	match_field_map["installedslot"]  = PackageTest::INSTALLED_SLOT;
+	match_field_map["FULLSLOT"]       = PackageTest::FULLSLOT;
+	match_field_map["fullslot"]       = PackageTest::FULLSLOT;
+	match_field_map["INSTALLED_SLOT"] = PackageTest::INST_SLOT;
+	match_field_map["INSTALLED-SLOT"] = PackageTest::INST_SLOT;
+	match_field_map["INSTALLEDSLOT"]  = PackageTest::INST_SLOT;
+	match_field_map["installed_slot"] = PackageTest::INST_SLOT;
+	match_field_map["installed-slot"] = PackageTest::INST_SLOT;
+	match_field_map["installedslot"]  = PackageTest::INST_SLOT;
+	match_field_map["INSTALLED_FULLSLOT"] = PackageTest::INST_FULLSLOT;
+	match_field_map["INSTALLED-FULLSLOT"] = PackageTest::INST_FULLSLOT;
+	match_field_map["INSTALLEDFULLSLOT"]  = PackageTest::INST_FULLSLOT;
+	match_field_map["installed_fullslot"] = PackageTest::INST_FULLSLOT;
+	match_field_map["installed-fullslot"] = PackageTest::INST_FULLSLOT;
+	match_field_map["installedfullslot"]  = PackageTest::INST_FULLSLOT;
 	match_field_map["DEP"]            = PackageTest::DEPS;
 	match_field_map["DEPS"]           = PackageTest::DEPS;
 	match_field_map["DEPENDENCIES"]   = PackageTest::DEPS;
@@ -415,7 +425,15 @@ PackageTest::stringMatch(Package *pkg) const
 	if(field & SLOT) {
 		for(Package::iterator it(pkg->begin());
 			likely(it != pkg->end()); ++it) {
-			if((*algorithm)(it->slotname.c_str(), pkg))
+			if((*algorithm)(it->get_longslot().c_str(), pkg))
+				return true;
+		}
+	}
+
+	if(field & FULLSLOT) {
+		for(Package::iterator it(pkg->begin());
+			likely(it != pkg->end()); ++it) {
+			if((*algorithm)(it->get_longfullslot().c_str(), pkg))
 				return true;
 		}
 	}
@@ -463,20 +481,28 @@ PackageTest::stringMatch(Package *pkg) const
 		}
 	}
 
-	if(! (field & (USE_ENABLED | USE_DISABLED | INSTALLED_SLOT)))
+	if(! (field & (USE_ENABLED | USE_DISABLED | INST_SLOT | INST_FULLSLOT)))
 		return false;
 
 	vector<InstVersion> *installed_versions(vardbpkg->getInstalledVector(*pkg));
 	if(installed_versions == NULLPTR)
 		return false;
 
-	if(field & INSTALLED_SLOT) {
+	if(field & (INST_SLOT | INST_FULLSLOT)) {
 		for(vector<InstVersion>::iterator it(installed_versions->begin());
 			likely(it != installed_versions->end()); ++it) {
 			if(!vardbpkg->readSlot(*pkg, *it))
 				continue;
-			if((*algorithm)(it->slotname.c_str(), pkg))
-				return true;
+			if(field & INST_SLOT) {
+				if((*algorithm)(it->get_longslot().c_str(), pkg)) {
+					return true;
+				}
+			}
+			if(field & INST_FULLSLOT) {
+				if((*algorithm)(it->get_longfullslot().c_str(), pkg)) {
+					return true;
+				}
+			}
 		}
 	}
 

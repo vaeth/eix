@@ -36,42 +36,6 @@ const Package::Versioncollects
 	Package::COLLECT_AT_LEAST_TWO_OVERLAYS,
 	Package::COLLECT_DEFAULT;
 
-Version *
-VersionList::best(bool allow_unstable) const
-{
-	for(const_reverse_iterator ri(rbegin()); likely(ri != rend()); ++ri) {
-		if((*ri)->maskflags.isHardMasked())
-			continue;
-		if((*ri)->keyflags.isStable() ||
-			(allow_unstable && (*ri)->keyflags.isUnstable()))
-			return *ri;
-	}
-	return NULLPTR;
-}
-
-void
-SlotList::push_back_largest(Version *version)
-{
-	const char *name((version->slotname).c_str());
-	for(iterator it(begin()); likely(it != end()); ++it) {
-		if(unlikely(strcmp(name, it->slotname()) == 0)) {
-			(it->version_list()).push_back(version);
-			return;
-		}
-	}
-	push_back(SlotVersions(name, version));
-}
-
-const VersionList *
-SlotList::operator [] (const char *s) const
-{
-	for(const_iterator it(begin()); likely(it != end()); ++it) {
-		if(unlikely(strcmp(s, it->slotname()) == 0))
-			return &(it->const_version_list());
-	}
-	return NULLPTR;
-}
-
 /** Check if a package has duplicated versions. */
 void
 Package::checkDuplicates(const Version *version)
@@ -125,9 +89,6 @@ Package::addVersionFinalize(Version *version)
 {
 	ExtendedVersion::Overlay key(version->overlay_key);
 
-	if(version->slotname == "0")
-		version->slotname.clear();
-
 	/* This guarantees that we pushed our first version */
 	if(size() != 1) {
 		if(largest_overlay != key)
@@ -155,7 +116,7 @@ Package::addVersionFinalize(Version *version)
 	// a push_back might move the whole list.
 
 	// Mark current slotlist as invalid.
-	m_has_cached_slotlist = false;
+	m_has_cached_slotlist = m_has_cached_subslots = false;
 }
 
 /** Call this after modifying system or world state of versions */
