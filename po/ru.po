@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
 "POT-Creation-Date: 2012-06-24 20:12+0200\n"
-"PO-Revision-Date: 2012-06-23 06:29+0300\n"
+"PO-Revision-Date: 2012-06-27 09:38+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
 "Language: Russian\n"
@@ -86,7 +86,7 @@ msgid ""
 "\n"
 "ARG can be abbreviated, e.g. instead of \"no-repo\" you can use \"nr\"."
 msgstr ""
-"Использованье: ${n} [опции] АРГ [АРГ АРГ ...]\n"
+"Использование: ${n} [опции] АРГ [АРГ АРГ ...]\n"
 "Этот скрипт - часть ${p}.\n"
 "Он показывает все установленные пакеты или пакеты с/без\n"
 "информации о репозитории или сборке.\n"
@@ -194,7 +194,7 @@ msgid ""
 "     independent of the value of USE_BUILD_TIME\n"
 "-T   Never use build time"
 msgstr ""
-"Использованье: ${n} [ключи] категория/пакет[:слот]\n"
+"Использование: ${n} [ключи] категория/пакет[:слот]\n"
 "Это хорошо задокументированный демо-сценарий для eix (${p}).\n"
 "Он показывает пакеты, установленные после (до) последней (первой) установки "
 "данного пакета/версии; формат вывода подходит на роль аргумента для \"emerge "
@@ -203,7 +203,7 @@ msgstr ""
 "\n"
 "Аргумент может использовать сопоставленья консоли (* и ?; не забудьте "
 "цитировать\n"
-"их, если вызываете сценарий из консоли); выбирается первое совпаденье.\n"
+"их, если вызываете сценарий из консоли); выбирается первое совпадение.\n"
 "[:slot] можно опустить, если у пакета только один слот.\n"
 "(Ключи -l, -L и -e имеют разные правила).\n"
 "\n"
@@ -215,9 +215,9 @@ msgstr ""
 "-l   Использовать /var/log/emerge.log, чтобы использовать _первое_ (а не "
 "последнее) установочное\n"
 "     время данного пакета. В таком случае, аргумент должен быть\n"
-"     регулярным выраженьем формата категория/пакет-версия.\n"
-"     Примечанье: время в логе и время в базе данных обычно\n"
-"     немного отличаются, так что (не)использованье ключа -i не обязательно\n"
+"     регулярным выражением формата категория/пакет-версия.\n"
+"     Примечание: время в логе и время в базе данных обычно\n"
+"     немного отличаются, так что (не)использование ключа -i не обязательно\n"
 "     даёт ожидаемый эффект: Пакет может быть как включён, так и нет.\n"
 "     Можно использовать -a/-A чтобы исправить время. Заметьте, что -t или -"
 "T\n"
@@ -276,10 +276,10 @@ msgid ""
 "-A PATH       Add PATH to the sourced make.confs used to determine\n"
 "              the layman overlays. Current value:"
 msgstr ""
-"Использованье: ${n} [ключи] команда\n"
+"Использование: ${n} [ключи] команда\n"
 "Добавить или удалить местные оверлеи layman в базе данных eix (${p}).\n"
 "\n"
-"Объясненье: Если в Вашем /etc/make.conf нет отсылки к layman/make.conf,\n"
+"Объяснение: Если в Вашем /etc/make.conf нет отсылки к layman/make.conf,\n"
 "то оверлеи layman не считаются частью Вашего PORTDIR_OVERLAY;\n"
 "в таком случае, они как правило не добавляются в базу данных eix и\n"
 "не могут быть найдены eix.\n"
@@ -296,7 +296,7 @@ msgstr ""
 "\n"
 "-a ОВЕРЛЕЙ    Добавить оверлей в список оверлеев layman.\n"
 "-A ПУТЬ       Добавить ПУТЬ в make.conf-ы, используемые для определенья\n"
-"              оверлеев layman. Текущее значенье:"
+"              оверлеев layman. Текущее значение:"
 
 #: src/eix-layman.sh:44
 msgid "none (i.e. no readable layman make.conf specified)"
@@ -316,7 +316,7 @@ msgstr ""
 "-c LAYMAN_CFG Использовать файл layman.cfg для определенья записи в список "
 "выше\n"
 "-v            Подробно (по умолчанью)\n"
-"-H            Подавить обновленье линии статуса\n"
+"-H            Подавить обновление линии статуса\n"
 "-q            Тихо"
 
 #: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:648
@@ -384,7 +384,7 @@ msgid ""
 "-H      Suppress status line update\n"
 "-q      Quiet"
 msgstr ""
-"Использованье: ${n} [ключи] команда\n"
+"Использование: ${n} [ключи] команда\n"
 "Получить данные из удалённой базы данных для ${p}.\n"
 "Доступны следующие команды:\n"
 "\n"
@@ -414,13 +414,13 @@ msgstr ""
 "исключены из обновленья текущей базы данных чтобы избежать путаницы.\n"
 "Эти местные пути определяются префиксированием пути\n"
 "\t${LOCAL_LAYMAN}\n"
-"Это значенье можно изменить с помощью ключа -l или установки переменной "
+"Это значение можно изменить с помощью ключа -l или установки переменной "
 "окруженья\n"
 "LOCAL_LAYMAN. Если эта функция не нужна (т.е. если Вы хотите\n"
 "видеть местные и удалённые оверлеи layman),\n"
 "используйте путь, не содержащий оверлеев (\"/\" достаточно).\n"
 "\n"
-"Ключи можно указать в переменной eix (или окруженья) под названьем "
+"Ключи можно указать в переменной eix (или окруженья) под названием "
 "EIX_REMOTE_OPTS.\n"
 "Эти данные evalue-ируются, помните о рисках безопасности.\n"
 "Более того, \"--\" в этой переменной исключит дальнейшие ключи в командной "
@@ -432,11 +432,11 @@ msgstr ""
 "-K      То же, что и -k, но без возможности сброса с помощью -i\n"
 "-l ПУТЬ Использовать ПУТЬ как LOCAL_LAYMAN\n"
 "-a АДРС Использовать АДРС как адрес удалённой базы данных. Текущее "
-"значенье:\n"
+"значение:\n"
 "        ${addr}\n"
 "-i      Игнорировать все предыдущие ключи (например, EIX_REMOTE_OPTS).\n"
 "-v      Подробно (по умолчанью)\n"
-"-H      Подавить обновленье линии статуса\n"
+"-H      Подавить обновление линии статуса\n"
 "-q      Тихо"
 
 #: src/eix-remote.sh:96
@@ -487,7 +487,7 @@ msgstr ""
 "EIX_REMOTEARCHIVE правильным *.tar.bz2 архивом, содержащим файлы кэша eix\n"
 "(его можно скачать используя fetch).\n"
 "Если это не так (но он был недавно скачан), пожалуйста сообщите об ошибке.\n"
-"Примечанье: архив *не является* битым если просто различаются версии "
+"Примечание: архив *не является* битым если просто различаются версии "
 "формата\n"
 "файлов кэша: В том случае сообщайте об ошибке только если версии формата\n"
 "файлов кэша eix в скачанном файле *старее* чем самая последняя ~x86-версия "
@@ -601,7 +601,7 @@ msgid ""
 "-H   Suppress status line update.\n"
 "-h   Show this text and exit."
 msgstr ""
-"Использованье: ${n} [ключи]\n"
+"Использование: ${n} [ключи]\n"
 "Вызвать layman/emerge --sync/--metadata и показать обновленья. (${p})\n"
 "\n"
 "Без ключа -t старая база данных будет сохранена в\n"
@@ -653,11 +653,11 @@ msgstr ""
 "-W   Запустить emerge-delta-webrsync вместо emerge --sync.\n"
 "-c КМД Запустить КМД вместо emerge --sync.\n"
 "-C КЛЧ Добавить КЛЧ к команде emerge --sync (или тому, что вместо этого).\n"
-"       Возможно кумулятивное использованье этого ключа.\n"
+"       Возможно кумулятивное использование этого ключа.\n"
 "-o КЛЧ Добавить КЛЧ к каждой команде eix-update.\n"
-"       Возможно кумулятивное использованье этого ключа.\n"
+"       Возможно кумулятивное использование этого ключа.\n"
 "-L КЛЧ Добавить КЛЧ к каждому вызову layman.\n"
-"       Возможно кумулятивное использованье этого ключа.\n"
+"       Возможно кумулятивное использование этого ключа.\n"
 "-r   Стереть /var/cache/edb/dep/* перед синхронизацией. Полезно только если "
 "Вы,\n"
 "     например, используете PORTDIR_CACHE_METHOD=flat и FEATURES=metadata-"
@@ -724,7 +724,7 @@ msgstr "синхронизация клиента"
 
 #: src/eix-sync.sh:345
 msgid "metadata update"
-msgstr "обновленье метаданных"
+msgstr "обновление метаданных"
 
 #: src/eix-sync.sh:346
 msgid "eix-update"
@@ -751,7 +751,7 @@ msgstr "Ошибка ${curr_cmd}"
 #: src/eix-sync.sh:415
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
-msgstr "Удаленье старого кэша portage в ${local_varcache}/var/cache/edb/dep"
+msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
 
 #: src/eix-sync.sh:417
 #, sh-format
@@ -856,7 +856,7 @@ msgid ""
 "The argument can be abbreviated, e.g. instead of \"brief\" you can just use "
 "\"b\"."
 msgstr ""
-"Использованье: ${n} [ключи] detail|brief\n"
+"Использование: ${n} [ключи] detail|brief\n"
 "Это сценарий-обёртка для eix (${p}).\n"
 "\n"
 "Вызывает eix -tTc несколько раз с различными настройками переменных, чтобы\n"
@@ -884,7 +884,7 @@ msgstr ""
 "поведенья по умолчанью.\n"
 "\n"
 "Если не используются ни -c, ни -C, то CHECK_INSTALLED_OVERLAYS не меняется.\n"
-"Рекомендуемое умолчанье для CHECK_INSTALLED_OVERLAYS - \\\"repository\\\", "
+"Рекомендуемое умолчание для CHECK_INSTALLED_OVERLAYS - \\\"repository\\\", "
 "которое\n"
 "намного быстрее чем CHECK_INSTALLED_OVERLAYS=true, но надёжно работает "
 "только для\n"
@@ -1122,7 +1122,7 @@ msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
 #: src/eix.cc:66
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
 "\n"
@@ -1280,26 +1280,26 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Использованье: %s [ключи] ВЫРАЖЕНЬЕ\n"
+"Использование: %s [ключи] ВЫРАЖЕНие\n"
 "\n"
 "Искать пакеты в индексе, созданном eix-update.\n"
-"ВЫРАЖЕНЬЕ - истина или ложь. Пакеты, для которых ВЫРАЖЕНЬЕ - истина,\n"
+"ВЫРАЖЕНие - истина или ложь. Пакеты, для которых ВЫРАЖЕНие - истина,\n"
 "включаются в конечный отчёт.\n"
 "\n"
-"ВЫРАЖЕНЬЕ ::= [ --not | -! ] BRACE_OR_TEST |\n"
-"               ВЫРАЖЕНЬЕ [ --and | -a ] ВЫРАЖЕНЬЕ |\n"
-"               ВЫРАЖЕНЬЕ [ --or  | -o ] ВЫРАЖЕНЬЕ |\n"
-"BRACE_OR_TEST ::= --open | -( ВЫРАЖЕНЬЕ --close | -) |\n"
+"ВЫРАЖЕНие ::= [ --not | -! ] BRACE_OR_TEST |\n"
+"               ВЫРАЖЕНие [ --and | -a ] ВЫРАЖЕНие |\n"
+"               ВЫРАЖЕНие [ --or  | -o ] ВЫРАЖЕНие |\n"
+"BRACE_OR_TEST ::= --open | -( ВЫРАЖЕНие --close | -) |\n"
 "               TEST_WITH_OPTIONS\n"
 "TEST_WITH_OPTIONS ::= TEST_OPTIONS [СХЕМА]\n"
 "\n"
 "Глобально:\n"
 "   Эксклюзивные ключи:\n"
-"     -h, --help            показать это сообщенье и выйти\n"
+"     -h, --help            показать это сообщение и выйти\n"
 "     -V, --version         показать версию и выйти\n"
 "     --dump                сбросить переменные в stdout\n"
 "     --dump-defaults       сбросить стандартные значенья\n"
-"     --print               показать расширенное значенье переменной\n"
+"     --print               показать расширенное значение переменной\n"
 "     --known-vars          показать все переменные, известные --print\n"
 "     --print-all-useflags  показать все IUSE-слова, используемые в какой-то "
 "версии\n"
@@ -1404,7 +1404,7 @@ msgstr ""
 "    --properties-set          Найти пакеты, имеющие PROPERTIES=set.\n"
 "    -T, --test-obsolete   Показать пакеты, имеющие устаревшие записи в\n"
 "                          /etc/portage/package.* (см. man eix).\n"
-"                          Используйте -t чтобы проверить на наличье "
+"                          Используйте -t чтобы проверить на наличие "
 "несуществующих пакетов.\n"
 "    -|, --pipe            Использовать вывод из pipe от emerge -pv\n"
 "    --pipe-name           As --pipe, but input is without version\n"
@@ -1413,7 +1413,7 @@ msgstr ""
 "  Поля поиска:\n"
 "    -y, --any               любое поле поиска может совпасть (то же самое, "
 "что -SACsHL...)\n"
-"    -S, --description       описанье\n"
+"    -S, --description       описание\n"
 "    -A, --category-name     \"категория/имя\"\n"
 "    -C, --category          категория\n"
 "    -s, --name              имя (по умолчанью)\n"
@@ -1433,7 +1433,7 @@ msgstr ""
 "    --installed-without-use отключённый флаг use (установленного пакета)\n"
 "\n"
 "  Тип схемы :\n"
-"    -r, --regex           Схема - регулярное выраженье (по умолчанью)\n"
+"    -r, --regex           Схема - регулярное выражение (по умолчанью)\n"
 "    -e, --exact           Схема - точная строка\n"
 "    -z, --substring       Схема - подстрока\n"
 "    -b, --begin           Схема - начало строки\n"
@@ -1554,7 +1554,7 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Использованье: %s [ключи] старый-кэш [новый-кэш]\n"
+"Использование: %s [ключи] старый-кэш [новый-кэш]\n"
 "\n"
 " -Q, --quick (флаг)      (не) читать неугадываемые слоты установленных "
 "пакетов\n"
@@ -1564,7 +1564,7 @@ msgstr ""
 " -F, --force-color       сделать то, что не в терминале, цветным\n"
 "     --dump              сделать дамп переменных в stdout\n"
 "     --dump-defaults     сделать дамп стандартных значений переменных\n"
-"     --print             напечатать расширенное значенье переменной\n"
+"     --print             напечатать расширенное значение переменной\n"
 "     --known-vars        напечатать все переменные, известные --print\n"
 "\n"
 " -h, --help              показать короткий экран помощи\n"
@@ -1575,7 +1575,6 @@ msgstr ""
 "подробной информации.\n"
 
 #: src/eix-diff.cc:135
-#, fuzzy
 msgid "error in database file %r: %s"
 msgstr "Запись файла базы данных %r: %s .."
 
@@ -1599,7 +1598,7 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Использованье: %s [--] команда [ключи]\n"
+"Использование: %s [--] команда [ключи]\n"
 "Выполняет 'команда [ключи]' с разрешеньями согласно переменным eix\n"
 "EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
 "\n"
@@ -1646,13 +1645,13 @@ msgid ""
 "This program is covered by the GNU General Public License. See COPYING for\n"
 "further information.\n"
 msgstr ""
-"Использованье: %s [ключи]\n"
+"Использование: %s [ключи]\n"
 "\n"
 " -h, --help              показать короткий экран помощи\n"
 " -V, --version           показать строку версии\n"
 "     --dump              показать переменные eixrc\n"
 "     --dump-defaults     показать переменные eixrc по умолчанью\n"
-"     --print             напечатать расширенное значенье переменной\n"
+"     --print             напечатать расширенное значение переменной\n"
 "     --known-vars        напечатать имена всех переменных, известных --"
 "print\n"
 " -H, --nostatus          не обновлять строку статуса\n"
@@ -1665,10 +1664,10 @@ msgstr ""
 " -q, --quiet             без вывода\n"
 "\n"
 " -o  --output            вывести в файл, отличный от %s\n"
-"                         В дополненье, все проверки разрешений будут "
+"                         В дополнение, все проверки разрешений будут "
 "отключены.\n"
 " -x  --exclude-overlay   не обновлять указанные оверлеи.\n"
-"                         Примечанье: используя этот ключ можно также\n"
+"                         Примечание: используя этот ключ можно также\n"
 "                         исключить из обновленья PORTDIR.\n"
 "\n"
 " -a  --add-overlay       добавить оверлей к процессу обновленья.\n"
@@ -1699,15 +1698,15 @@ msgstr "KEEP_VIRTUALS игнорируется: нет предыдущего %s
 #: src/eix-update.cc:237
 #, c-format
 msgid "Adding virtual overlays from %s ..\n"
-msgstr "Добавленье виртуальных оверлеев из %s ..\n"
+msgstr "Добавление виртуальных оверлеев из %s ..\n"
 
 #: src/eix-update.cc:242
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
-msgstr "Вниманье: KEEP_VIRTUALS игнорируется ибо формат базы данных изменился"
+msgstr "Внимание: KEEP_VIRTUALS игнорируется ибо формат базы данных изменился"
 
 #: src/eix-update.cc:380
 msgid "Reading Portage settings ..\n"
-msgstr "Чтенье настроек Portage ..\n"
+msgstr "Чтение настроек Portage ..\n"
 
 #: src/eix-update.cc:498
 #, c-format
@@ -1722,7 +1721,7 @@ msgstr "Исключён оверлей %s\n"
 #: src/eix-update.cc:522
 #, c-format
 msgid "Building database (%s) ..\n"
-msgstr "Построенье базы данных (%s) ..\n"
+msgstr "Построение базы данных (%s) ..\n"
 
 #: src/eix-update.cc:567
 #, c-format
@@ -1741,7 +1740,7 @@ msgstr "[%s] %s"
 
 #: src/eix-update.cc:599
 msgid "     Reading Packages .. "
-msgstr "     Чтенье Пакетов .. "
+msgstr "     Чтение Пакетов .. "
 
 #: src/eix-update.cc:603 src/eix-update.cc:639
 msgid "ABORTED!"
@@ -1750,12 +1749,12 @@ msgstr "ОТМЕНЕНО!"
 #: src/eix-update.cc:608
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
-msgstr "     Чтенье категории %s|%s (%s%%)"
+msgstr "     Чтение категории %s|%s (%s%%)"
 
 #: src/eix-update.cc:613
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
-msgstr "     Чтенье до %s категорий пакетов .. "
+msgstr "     Чтение до %s категорий пакетов .. "
 
 #: src/eix-update.cc:629
 #, c-format
@@ -1768,7 +1767,7 @@ msgstr "ПУСТО!"
 
 #: src/eix-update.cc:651
 msgid "Applying masks ..\n"
-msgstr "Примененье масок ..\n"
+msgstr "Применение масок ..\n"
 
 #: src/eix-update.cc:662
 msgid "Calculating hash tables ..\n"
@@ -1885,7 +1884,7 @@ msgid "Cache file %s does not contain overlay %s"
 msgstr "Файл кэша %s не содержит оверлей %s"
 
 #: src/cache/eixcache/eixcache.cc:258 src/cache/eixcache/eixcache.cc:302
-#, fuzzy, c-format
+#, c-format
 msgid "error in file %s: %s"
 msgstr "Ошибка чтенья %s: %s"
 
@@ -1958,17 +1957,16 @@ msgid "error while writing to database"
 msgstr "ошибка записи в базу данных"
 
 #: src/database/io.cc:585
-#, fuzzy, c-format
+#, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Файл кэша использует более новый формат %s (текущий - %s)"
 
 #: src/database/io.cc:586
-#, fuzzy, c-format
+#, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
 
 #: src/database/io.cc:659 src/database/package_reader.cc:110
-#, fuzzy
 msgid "fseek failed"
 msgstr "ошибка eix-update"
 
@@ -1978,7 +1976,7 @@ msgstr "Незаконное имя маркера %r"
 
 #: src/eixTk/ansicolor.cc:156
 msgid "Invalid brightness value %r"
-msgstr "Неверное значенье яркости %r"
+msgstr "Неверное значение яркости %r"
 
 #: src/eixTk/ansicolor.cc:183
 msgid "Illegal color name %r"
@@ -2025,7 +2023,7 @@ msgstr "флаги не должны начинаться с '+': %s"
 #: src/eixTk/stringutils.cc:357
 #, c-format
 msgid "Internal error: Storing required after finalizing"
-msgstr "Внутренняя ошибка: Требуется храненье после финализации"
+msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
 #: src/eixTk/stringutils.cc:367
 #, c-format
@@ -2059,17 +2057,14 @@ msgid "Nesting level too deep in %r"
 msgstr "Уровень гнездованья слишком глубок в %r"
 
 #: src/eixTk/varsreader.cc:111
-#, fuzzy
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: ошибка взятья %r в качестве источника (%s)"
 
 #: src/eixTk/varsreader.cc:813
-#, fuzzy
 msgid "Can't read file %r"
 msgstr "Ошибка нанесенья файла %r на карту"
 
 #: src/eixTk/varsreader.cc:821
-#, fuzzy
 msgid "Can't stat file %r"
 msgstr "Ошибка нанесенья файла %r на карту"
 
@@ -4624,7 +4619,7 @@ msgstr "ELSE без IF"
 
 #: src/eixrc/eixrc.cc:300
 msgid "self-reference"
-msgstr "самоуказанье"
+msgstr "самоуказание"
 
 #: src/eixrc/eixrc.cc:385
 msgid "double ELSE"
@@ -4647,8 +4642,8 @@ msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
 msgstr ""
-"%s имеет неизвестное значенье %r\n"
-"\tвместо этого предполагаю значенье 'all-installed'."
+"%s имеет неизвестное значение %r\n"
+"\tвместо этого предполагаю значение 'all-installed'."
 
 #: src/eixrc/eixrc.cc:798
 msgid "was locally changed to:"
@@ -4746,10 +4741,10 @@ msgstr "Проверьте Ваш синтаксис"
 
 #: src/output/formatstring.cc:724
 msgid "Bad state: undefined"
-msgstr "Плохое состоянье: не определено"
+msgstr "Плохое состояние: не определено"
 
 #: src/output/formatstring.cc:738
-#, fuzzy, c-format
+#, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
 
@@ -4785,7 +4780,7 @@ msgstr "мусор (%s) в конце версии %r"
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
-"Превышен уровень рекурсии для каскадных профилей: прекращаю чтенье родителей"
+"Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
 
 #: src/portage/conf/portagesettings.cc:1230
 #: src/portage/conf/portagesettings.cc:1260
@@ -4833,7 +4828,7 @@ msgstr "внутренняя ошибка: SetStability рассчитывает
 
 #: src/search/matchtree.cc:280
 msgid "warning: ignoring --close without --open"
-msgstr "вниманье: игнорирую --close без --open"
+msgstr "внимание: игнорирую --close без --open"
 
 #: src/search/packagetest.cc:257
 msgid "cannot find match field %r"
