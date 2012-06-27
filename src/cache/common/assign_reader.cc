@@ -20,6 +20,7 @@
 #include <map>
 #include <string>
 
+#include <cerrno>
 #include <cstring>
 
 using namespace std;

@@ -80,6 +80,7 @@ Check 'cstdio' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf('
 Check 'cstdlib' -e '[^_a-z]exit[^_]' -e '[^.>]free[^a-z]' -e malloc -e getenv -e strtol
 Check 'cstring' -e strdup -e strlen -e strndup -e strcmp -e strncmp -e strncpy -e strchr -e strrchr -e strcase -e strerror -e memset -e memcpy
 Check 'csignal' -e signal -e sigaction
+Check 'cerrno' -e '[^c]errno'
 Check 'ctime' -e time_t
 Check 'fcntl\.h' -e '[^a-z_.]open(' -e '[^a-z_.]close(' -e '[^a-z_.]open (' -e '[^a-z_.]close ('
 Check 'unistd\.h' -e '[^a-z]_exit' -e '[^a-z]exec[lv]' -e setuid -e getuid -e chown -e '[^a-z_.]close(' -e isatty

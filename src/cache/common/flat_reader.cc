@@ -20,6 +20,7 @@
 #include <limits>
 #include <string>
 
+#include <cerrno>
 #include <cstring>
 
 using namespace std;

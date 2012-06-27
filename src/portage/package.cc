@@ -9,7 +9,6 @@
 
 #include "package.h"
 #include <eixTk/likely.h>
-#include <eixTk/null.h>
 #include <portage/basicversion.h>
 #include <portage/extendedversion.h>
 #include <portage/keywords.h>

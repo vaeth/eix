@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+#include <cerrno>
 #include <cstdio>
 #include <cstring>
 

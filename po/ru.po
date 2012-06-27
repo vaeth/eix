@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-06-24 20:12+0200\n"
+"POT-Creation-Date: 2012-06-28 00:02+0200\n"
 "PO-Revision-Date: 2012-06-27 09:38+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -1815,8 +1815,8 @@ msgstr "Невозможно определить версию %s"
 msgid "Unknown cache %r for directory %r"
 msgstr "Неизвестный кэш %r для каталога %r"
 
-#: src/cache/common/assign_reader.cc:75 src/cache/common/assign_reader.cc:95
-#: src/cache/common/flat_reader.cc:34 src/cache/eixcache/eixcache.cc:247
+#: src/cache/common/assign_reader.cc:76 src/cache/common/assign_reader.cc:96
+#: src/cache/common/flat_reader.cc:35 src/cache/eixcache/eixcache.cc:248
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Невозможно прочесть файл кэша %s: %s"
@@ -1868,22 +1868,22 @@ msgstr "Ошибка ebuild со статусом %s"
 msgid "Child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 
-#: src/cache/common/flat_reader.cc:48 src/cache/common/flat_reader.cc:86
-#: src/eixTk/utils.cc:60
+#: src/cache/common/flat_reader.cc:49 src/cache/common/flat_reader.cc:87
+#: src/eixTk/utils.cc:61
 #, c-format
 msgid "Can't open %s: %s"
 msgstr "Невозможно открыть %s: %s"
 
-#: src/cache/eixcache/eixcache.cc:138
+#: src/cache/eixcache/eixcache.cc:139
 msgid "Cache file %s does not contain overlay %r [%s]"
 msgstr "Файл кэша %s не содержит оверлей %r [%s]"
 
-#: src/cache/eixcache/eixcache.cc:144
+#: src/cache/eixcache/eixcache.cc:145
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Файл кэша %s не содержит оверлей %s"
 
-#: src/cache/eixcache/eixcache.cc:258 src/cache/eixcache/eixcache.cc:302
+#: src/cache/eixcache/eixcache.cc:259 src/cache/eixcache/eixcache.cc:303
 #, c-format
 msgid "error in file %s: %s"
 msgstr "Ошибка чтенья %s: %s"
@@ -2047,12 +2047,12 @@ msgstr "Внутренняя ошибка: Попытка создать ярл�
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
-#: src/eixTk/utils.cc:81
+#: src/eixTk/utils.cc:82
 #, c-format
 msgid "Error reading %s: %s"
 msgstr "Ошибка чтенья %s: %s"
 
-#: src/eixTk/utils.cc:102
+#: src/eixTk/utils.cc:103
 msgid "Nesting level too deep in %r"
 msgstr "Уровень гнездованья слишком глубок в %r"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-06-24 20:12+0200\n"
+"POT-Creation-Date: 2012-06-28 00:02+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1821,8 +1821,8 @@ msgstr "kann Version von '%s' nicht bestimmen"
 msgid "Unknown cache %r for directory %r"
 msgstr "Unbekannter Cache %r für Ordner %r"
 
-#: src/cache/common/assign_reader.cc:75 src/cache/common/assign_reader.cc:95
-#: src/cache/common/flat_reader.cc:34 src/cache/eixcache/eixcache.cc:247
+#: src/cache/common/assign_reader.cc:76 src/cache/common/assign_reader.cc:96
+#: src/cache/common/flat_reader.cc:35 src/cache/eixcache/eixcache.cc:248
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Cachefile %s nicht lesbar: %s"
@@ -1874,22 +1874,22 @@ msgstr "Ebuild schlug fehl mit Status %s"
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
-#: src/cache/common/flat_reader.cc:48 src/cache/common/flat_reader.cc:86
-#: src/eixTk/utils.cc:60
+#: src/cache/common/flat_reader.cc:49 src/cache/common/flat_reader.cc:87
+#: src/eixTk/utils.cc:61
 #, c-format
 msgid "Can't open %s: %s"
 msgstr "%s kann nicht geöffnet werden: %s"
 
-#: src/cache/eixcache/eixcache.cc:138
+#: src/cache/eixcache/eixcache.cc:139
 msgid "Cache file %s does not contain overlay %r [%s]"
 msgstr "Cachefile %s enthält nicht Overlay %r [%s]"
 
-#: src/cache/eixcache/eixcache.cc:144
+#: src/cache/eixcache/eixcache.cc:145
 #, c-format
 msgid "Cache file %s does not contain overlay %s"
 msgstr "Cachefile %s enthält nicht Overlay %s"
 
-#: src/cache/eixcache/eixcache.cc:258 src/cache/eixcache/eixcache.cc:302
+#: src/cache/eixcache/eixcache.cc:259 src/cache/eixcache/eixcache.cc:303
 #, c-format
 msgid "error in file %s: %s"
 msgstr "Fehler in Datei %s: %s"
@@ -2052,12 +2052,12 @@ msgstr "Interner Fehler: Trying to shortcut non-hashed string."
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "Datenbank defekt: Nichtexistierender Hash angefordert"
 
-#: src/eixTk/utils.cc:81
+#: src/eixTk/utils.cc:82
 #, c-format
 msgid "Error reading %s: %s"
 msgstr "Lesefehler in %s: %s "
 
-#: src/eixTk/utils.cc:102
+#: src/eixTk/utils.cc:103
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
