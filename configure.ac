@@ -1051,6 +1051,9 @@ AS_ECHO(["
 ${PACKAGE}-${VERSION} configured successfully.
 
 "])
+MV_IF_NONEMPTY([${CXX}],
+	[AS_ECHO(["CXX: ${CXX}
+"])])
 AS_ECHO(["CXXFLAGS: ${oricxxflags}"])
 MV_IF_NONEMPTY([${my_cxxadd}],
 	[AS_ECHO(["PREPEND_CXXFLAGS: ${my_cxxadd}
