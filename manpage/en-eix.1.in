@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-24 18:30:00 +0200 (Sun, 24 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-07-01 12:10:00 +0200 (Sun, 01 Jul 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2102,6 +2102,13 @@ variables B<FORMAT_ALL>, B<FORMAT_ALL_COMPACT>, or B<FORMAT_ALL_VERBOSE>,
 respectively.
 The intention of this simple definition is that it is very easy to refer
 to the default definition when you change the definition of B<FORMAT>.
+
+.TP
+.B FORMAT_TEST_OBSOLETE (string)
+The format used by the B<eix-test-obsolete> script;
+the default value is the delayed substitution of B<FORMAT_ALL_COMPACT>.
+It is not admissible to use delayed substitution of B<FORMAT> here;
+if you want this use instead delayed substitution of B<FORMAT_ALL>.
 
 .TP
 .BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (string)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-06-28 00:02+0200\n"
+"POT-Creation-Date: 2012-07-01 12:20+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -817,33 +817,40 @@ msgstr "Konnte nicht gegen aktuellen Cache vergleichen."
 #: src/eix-test-obsolete.sh:17
 #, sh-format
 msgid ""
-"Usage: ${n} [options] detail|brief\n"
+"Usage: ${n} [options] detail|brief|quick\n"
 "This is a wrapper script for eix (${p}).\n"
 "\n"
 "It calls eix -tTc several times with various variable settings in order to\n"
 "display missing packages or packages with obsolete entries in\n"
 "/etc/portage/package.* in a more organized manner than eix -tTc would do "
 "alone.\n"
+"\n"
 "The speed and displayed details depend on whether you use the argument\n"
-"\"detail\" or \"brief\". Note that the result depends on your settings of "
-"the\n"
-"REDUNDANT_IF_* and NONEXISTENT_IF_* variables. In particular, the variables\n"
+"\"detail\", \"brief\", or \"quick\". On all three cases the same checks are "
+"done,\n"
+"the difference in output is only the amount of details for the matches.\n"
+"For displaying matching packages the format specified in the variable\n"
+"FORMAT_TEST_OBSOLETE is used (which defaults to %{FORMAT_ALL_COMPACT}).\n"
+"\n"
+"Note that the result depends on your settings of the TEST_FOR_*,\n"
+"REDUNDANT_IF_*, and NONEXISTENT_IF_* variables. In particular, the "
+"variables\n"
 "REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are\n"
 "false by default. Thus, e.g. to activate the two possible tests for\n"
-"/etc/portage/package.use you should set something like\n"
-"REDUNDANT_IF_IN_USE=\"-some\" REDUNDANT_IF_DOUBLE_USE=\"some\".\n"
+"/etc/portage/package.use you should set (e.g. in /etc/eixrc) something like\n"
+"REDUNDANT_IF_IN_USE=\"-some\" REDUNDANT_IF_DOUBLE_USE=\"some\"\n"
 "\n"
 "The following options are available:\n"
 "\t-c  use CHECK_INSTALLED_OVERLAYS=true\n"
 "\t-C  use CHECK_INSTALLED_OVERLAYS=repository\n"
 "\t-d  This can be used instead of the argument \"detail\"\n"
 "\t-b  This can be used instead of the argument \"brief\"\n"
+"\t-q  This can be used instead of the argument \"quick\"\n"
 "\t-H  Suppress status line update\n"
 "\t-h  Show this help text\n"
 "\n"
-"Options -b and -d are meant as to be used in EIX_TEST_OBSOLETE_OPTS to "
-"specify\n"
-"the default behavior.\n"
+"Options -b, -d, and -q are meant to be used in EIX_TEST_OBSOLETE_OPTS to\n"
+"specify the default behavior.\n"
 "\n"
 "If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not "
 "modified.\n"
@@ -857,20 +864,24 @@ msgid ""
 "The argument can be abbreviated, e.g. instead of \"brief\" you can just use "
 "\"b\"."
 msgstr ""
-"Aufruf: ${n} [Optionen] detail|brief\n"
+"Aufruf: ${n} [Optionen] detail|brief|quick\n"
 "oder:   ${n} repo|no-repo|buildtime|no-buildtime\n"
 "Dies ist ein Wrapper-Skript für eix (${p}).\n"
 "\n"
 "Es ruft eix -tTc mehrfach mit verschiedenen Variablen auf, um fehlende\n"
 "Pakete oder Pakete mit obsoleten Einträgen in /etc/portage/package.*\n"
 "etwas organisierter anzuzeigen als nur eix -tTc.\n"
+"\n"
 "Geschwindigkeit und angezeigte Details des Skripts hängen davon ab, ob das\n"
-"Argument \"detail\" oder \"brief\" benutzt wird. Beachte, dass in jedem "
-"Fall\n"
-"das Ergebnis von den Werten der Variablen REDUNDANT_IF_* und "
-"NONEXISTENT_IF_*\n"
-"abhängt. Insbesondere sind per Default die Variablen\n"
-"REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} und REDUNDANT_IF_MIXED\n"
+"Argument \"detail\", \"brief\", oder \"quick\" benutzt wird. In allen drei\n"
+"Fällen werden die selben Tests gemacht; der Unterschied in der Ausgabe\n"
+"betrifft nur die Details für Treffer.\n"
+"Zur Ausgabe der Pakete wird das Format der Variablen FORMAT_TEST_OBSOLETE\n"
+"benutzt (deren Default %{FORMAT_ALL_COMPACT} ist).\n"
+"\n"
+"In jedem Fall hängt des Ergebnis von den Werten der Variablen TEST_FOR_*,\n"
+"REDUNDANT_IF_* und NONEXISTENT_IF_* ab. Insbesondere sind per Default die\n"
+"Variablen REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} und REDUNDANT_IF_MIXED\n"
 "auf \"false\" gesetzt.\n"
 "Um also beispielsweise die beiden Tests für /etc/portage/package.use zu\n"
 "aktivieren, sollte so etwas wie REDUNDANT_IF_IN_USE=\"-some\" und\n"
@@ -881,10 +892,11 @@ msgstr ""
 "\t-C  Benutze CHECK_INSTALLED_OVERLAYS=repository\n"
 "\t-d  Dies ersetzt das Argument \"detail\"\n"
 "\t-b  Dies ersetzt das Argument \"brief\"\n"
+"\t-q  Dies ersetzt das Argument \"quick\"\n"
 "\t-H  Keine Ausgabe der Statuszeile\n"
 "\t-h  Zeigt diesen Hilfetext an\n"
 "\n"
-"Optionen -b und -d sind dafür gedacht, in EIX_TEST_OBSOLETE_OPTS zum\n"
+"Optionen -d, -b und -q sind dafür gedacht, in EIX_TEST_OBSOLETE_OPTS zum\n"
 "Festlegen des Defaults benutzt zu werden.\n"
 "\n"
 "Ohne -c oder -C wird CHECK_INSTALLED_OVERLAYS nicht modifiziert.\n"
@@ -898,230 +910,245 @@ msgstr ""
 "Die Argumente können abgekürzt werden; beispielsweise kann \"b\" statt\n"
 "\"brief\" benutzt werden."
 
-#: src/eix-test-obsolete.sh:133
+#: src/eix-test-obsolete.sh:145
 #, sh-format
 msgid "... considered as ${z}"
 msgstr "... wegen ${z}"
 
-#: src/eix-test-obsolete.sh:191
+#: src/eix-test-obsolete.sh:207
+#, sh-format
+msgid "Skipping check of entries in ${rump}*"
+msgstr "Übergehe Check:  Redundanz von Einträgen in ${rump}*"
+
+#: src/eix-test-obsolete.sh:212
+#, sh-format
+msgid "No redundant entries in any ${rump}*"
+msgstr "Keine Redundanz in ${rump}*"
+
+#: src/eix-test-obsolete.sh:213
+#, sh-format
+msgid "Redundant in some ${rump}*:"
+msgstr "Redundanz in ${rump}*:"
+
+#: src/eix-test-obsolete.sh:217
 #, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Keine   Redundanz   in    ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:192
+#: src/eix-test-obsolete.sh:218
 #, sh-format
 msgid "Redundant in ${rump}{,accept_}keywords:"
 msgstr "Redundant in ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:194
+#: src/eix-test-obsolete.sh:220
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:196
+#: src/eix-test-obsolete.sh:222
 #, sh-format
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Nichts Uninstalliertes in ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:197
+#: src/eix-test-obsolete.sh:223
 #, sh-format
 msgid "Not installed but in ${rump}{,accept_}keywords:"
 msgstr "Uninstalliert, aber in ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:199
+#: src/eix-test-obsolete.sh:225
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:202
+#: src/eix-test-obsolete.sh:228
 #, sh-format
 msgid "No  redundant  entries in ${rump}mask"
 msgstr "Keine   Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:203
+#: src/eix-test-obsolete.sh:229
 #, sh-format
 msgid "Redundant in ${rump}mask:"
 msgstr "Redundant in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:204
+#: src/eix-test-obsolete.sh:230
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}mask"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}mask"
 
-#: src/eix-test-obsolete.sh:206
+#: src/eix-test-obsolete.sh:232
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask"
 msgstr "Nichts Uninstalliertes in ${rump}mask"
 
-#: src/eix-test-obsolete.sh:207
+#: src/eix-test-obsolete.sh:233
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Uninstalliert, aber in ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:208
+#: src/eix-test-obsolete.sh:234
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}mask"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}mask"
 
-#: src/eix-test-obsolete.sh:211
+#: src/eix-test-obsolete.sh:237
 #, sh-format
 msgid "No  redundant  entries in ${rump}unmask"
 msgstr "Keine   Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:212
+#: src/eix-test-obsolete.sh:238
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
 msgstr "Redundant in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:213
+#: src/eix-test-obsolete.sh:239
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:215
+#: src/eix-test-obsolete.sh:241
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask"
 msgstr "Nichts Uninstalliertes in ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:216
+#: src/eix-test-obsolete.sh:242
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Uninstalliert, aber in ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:217
+#: src/eix-test-obsolete.sh:243
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:220
+#: src/eix-test-obsolete.sh:246
 #, sh-format
 msgid "No  redundant  entries in ${rump}use"
 msgstr "Keine   Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:221
+#: src/eix-test-obsolete.sh:247
 #, sh-format
 msgid "Redundant in ${rump}use:"
 msgstr "Redundant in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:222
+#: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}use"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}use"
 
-#: src/eix-test-obsolete.sh:224
+#: src/eix-test-obsolete.sh:250
 #, sh-format
 msgid "No uninstalled entries in ${rump}use"
 msgstr "Nichts Uninstalliertes in ${rump}use"
 
-#: src/eix-test-obsolete.sh:225
+#: src/eix-test-obsolete.sh:251
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Uninstalliert, aber in ${rump}use:"
 
-#: src/eix-test-obsolete.sh:226
+#: src/eix-test-obsolete.sh:252
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}use"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}use"
 
-#: src/eix-test-obsolete.sh:229
+#: src/eix-test-obsolete.sh:255
 #, sh-format
 msgid "No  redundant  entries in ${rump}env"
 msgstr "Keine   Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:230
+#: src/eix-test-obsolete.sh:256
 #, sh-format
 msgid "Redundant in ${rump}env:"
 msgstr "Redundant in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:231
+#: src/eix-test-obsolete.sh:257
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}env"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}env"
 
-#: src/eix-test-obsolete.sh:233
+#: src/eix-test-obsolete.sh:259
 #, sh-format
 msgid "No uninstalled entries in ${rump}env"
 msgstr "Nichts Uninstalliertes in ${rump}env"
 
-#: src/eix-test-obsolete.sh:234
+#: src/eix-test-obsolete.sh:260
 #, sh-format
 msgid "Not installed but in ${rump}env:"
 msgstr "Uninstalliert, aber in ${rump}env:"
 
-#: src/eix-test-obsolete.sh:235
+#: src/eix-test-obsolete.sh:261
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}env"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}env"
 
-#: src/eix-test-obsolete.sh:238
+#: src/eix-test-obsolete.sh:264
 #, sh-format
 msgid "No  redundant  entries in ${rump}license"
 msgstr "Keine   Redundanz   in    ${rump}license"
 
-#: src/eix-test-obsolete.sh:239
+#: src/eix-test-obsolete.sh:265
 #, sh-format
 msgid "Redundant in ${rump}license:"
 msgstr "Redundant in ${rump}license:"
 
-#: src/eix-test-obsolete.sh:240
+#: src/eix-test-obsolete.sh:266
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}license"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}license"
 
-#: src/eix-test-obsolete.sh:242
+#: src/eix-test-obsolete.sh:268
 #, sh-format
 msgid "No uninstalled entries in ${rump}license"
 msgstr "Nichts Uninstalliertes in ${rump}license"
 
-#: src/eix-test-obsolete.sh:243
+#: src/eix-test-obsolete.sh:269
 #, sh-format
 msgid "Not installed but in ${rump}license:"
 msgstr "Uninstalliert, aber in ${rump}license:"
 
-#: src/eix-test-obsolete.sh:244
+#: src/eix-test-obsolete.sh:270
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}license"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}license"
 
-#: src/eix-test-obsolete.sh:247
+#: src/eix-test-obsolete.sh:273
 #, sh-format
 msgid "No  redundant  entries in ${rump}cflags"
 msgstr "Keine   Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:248
+#: src/eix-test-obsolete.sh:274
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
 msgstr "Redundant in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:249
+#: src/eix-test-obsolete.sh:275
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
 msgstr "Übergehe Check:  Redundanz   in    ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:251
+#: src/eix-test-obsolete.sh:277
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags"
 msgstr "Nichts Uninstalliertes in ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:252
+#: src/eix-test-obsolete.sh:278
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Uninstalliert, aber in ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:253
+#: src/eix-test-obsolete.sh:279
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
 msgstr "Übergehe Check: Uninstalliertes in ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:256
+#: src/eix-test-obsolete.sh:283
 msgid "All installed versions of packages are in the database."
 msgstr "Alle installierten Paketversionen sind in der Datenbank."
 
-#: src/eix-test-obsolete.sh:258
+#: src/eix-test-obsolete.sh:285
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 
-#: src/eix-test-obsolete.sh:259
+#: src/eix-test-obsolete.sh:286
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
@@ -5297,7 +5324,15 @@ msgstr ""
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen FORMAT_ALL_VERBOSE."
 
-#: src/eixrc/defaults.cc:2616
+#: src/eixrc/defaults.cc:2614
+msgid ""
+"The format used for output by the eix-test-obsolete script.\n"
+"The value %{FORMAT} is not allowed here; use %{FORMAT_ALL} instead."
+msgstr ""
+"Das Format für die ausführliche Ausgabe durch das Script eix-test-obsolete.\n"
+"Der Wert %{FORMAT} ist hier verboten; benutze statt dessen %{FORMAT_ALL}."
+
+#: src/eixrc/defaults.cc:2621
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_NEW.\n"
 "It defines the format used for new packages (eix-diff)."
@@ -5305,7 +5340,7 @@ msgstr ""
 "Dieses Format dient nur zur verzögerten Ersetzung in DIFF_FORMAT_NEW.\n"
 "Es ist das Format für neue Pakete (eix-diff)."
 
-#: src/eixrc/defaults.cc:2623
+#: src/eixrc/defaults.cc:2628
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_DELETE.\n"
 "It defines the format used for packages that were deleted (eix-diff)."
@@ -5313,7 +5348,7 @@ msgstr ""
 "Dieses Format dient nur zur verzögerten Ersetzung in DIFF_FORMAT_DELETE.\n"
 "Es ist das Format für gelöschte Pakete (eix-diff)."
 
-#: src/eixrc/defaults.cc:2630
+#: src/eixrc/defaults.cc:2635
 msgid ""
 "This format is only used for delayed substitution in DIFF_FORMAT_CHANGED.\n"
 "It defines the format used for packages that were changed (eix-diff)."
@@ -5321,7 +5356,7 @@ msgstr ""
 "Dieses Format dient nur zur verzögerten Ersetzung in DIFF_FORMAT_CHANGED.\n"
 "Es ist das Format für geänderte Pakete (eix-diff)."
 
-#: src/eixrc/defaults.cc:2635
+#: src/eixrc/defaults.cc:2640
 msgid ""
 "The format used for new packages (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_NEW instead."
@@ -5330,7 +5365,7 @@ msgstr ""
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_NEW."
 
-#: src/eixrc/defaults.cc:2640
+#: src/eixrc/defaults.cc:2645
 msgid ""
 "The format used for packages that were deleted (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_DELETE instead."
@@ -5339,7 +5374,7 @@ msgstr ""
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_DELETE."
 
-#: src/eixrc/defaults.cc:2645
+#: src/eixrc/defaults.cc:2650
 msgid ""
 "The format used for packages that were changed (eix-diff).\n"
 "Do not modify it in a config file; modify DIFF_FORMAT_ALL_CHANGED instead."
@@ -5348,15 +5383,15 @@ msgstr ""
 "In einem Konfigurationsfile sollte dies nicht verändert werden, sondern\n"
 "statt dessen DIFF_FORMAT_ALL_CHANGED."
 
-#: src/eixrc/defaults.cc:2650
+#: src/eixrc/defaults.cc:2655
 msgid "strftime() format for printing the installation date in long form"
 msgstr "strftime()-Format für das Installationsdatum in langer Form"
 
-#: src/eixrc/defaults.cc:2654
+#: src/eixrc/defaults.cc:2659
 msgid "strftime() format for printing the installation date in short form"
 msgstr "strftime()-Format für das Installationsdatum in kurzer Form"
 
-#: src/eixrc/defaults.cc:2658
+#: src/eixrc/defaults.cc:2663
 msgid ""
 "Can be full/effective/both/full*/effective*/none.\n"
 "Depending on the value, with --xml the full/effective (or both types)\n"
@@ -5369,7 +5404,7 @@ msgstr ""
 "Mit full*/effective* werden auch beide Typen ausgegeben, wenn sich ihre\n"
 "Werte unterscheiden."
 
-#: src/eixrc/defaults.cc:2665
+#: src/eixrc/defaults.cc:2670
 msgid ""
 "If false, the overlay is not output with --xml.\n"
 "For overlays without label (repository name) the overlay is output anyway."
@@ -5377,38 +5412,38 @@ msgstr ""
 "Soll der Overlay (d.h. sein Pfad) bei --xml ausgegeben werden?\n"
 "Für Overlays ohne Label (repository name) geschieht dies trotzdem."
 
-#: src/eixrc/defaults.cc:2670
+#: src/eixrc/defaults.cc:2675
 msgid "strftime() format for printing the installation date with --xml."
 msgstr "strftime()-Format für das Installationsdatum bei --xml."
 
-#: src/eixrc/defaults.cc:2674
+#: src/eixrc/defaults.cc:2679
 msgid ""
 "This string is printed before each set USE flag of an installed version."
 msgstr ""
 "Dieser String wird vor jedem gesetzten USE-Flag einer installierten\n"
 "Version ausgegeben."
 
-#: src/eixrc/defaults.cc:2678
+#: src/eixrc/defaults.cc:2683
 msgid "This string is printed after each set USE flag of an installed version."
 msgstr ""
 "Dieser String wird nach jedem gesetzten USE-Flag einer installierten\n"
 "Version ausgegeben."
 
-#: src/eixrc/defaults.cc:2682
+#: src/eixrc/defaults.cc:2687
 msgid ""
 "This string is printed before each unset USE flag of an installed version."
 msgstr ""
 "Dieser String wird vor jedem ungesetzten USE-Flag einer installierten\n"
 "Version ausgegeben."
 
-#: src/eixrc/defaults.cc:2686
+#: src/eixrc/defaults.cc:2691
 msgid ""
 "This string is printed after each unset USE flag of an installed version."
 msgstr ""
 "Dieser String wird nach jedem ungesetzten USE-Flag einer installierten\n"
 "Version ausgegeben."
 
-#: src/eixrc/defaults.cc:2690
+#: src/eixrc/defaults.cc:2695
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before IUSE data for a version is output.\n"
@@ -5418,7 +5453,7 @@ msgstr ""
 "Dieser String wird vor den IUSE-Daten einer Version ausgegeben.\n"
 "(Normalerweise wird dies nur benutzt, wenn --versionlines aktiv ist)."
 
-#: src/eixrc/defaults.cc:2696
+#: src/eixrc/defaults.cc:2701
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after IUSE data for a version is output.\n"
@@ -5428,7 +5463,7 @@ msgstr ""
 "Dieser String wird nach den IUSE-Daten einer Version ausgegeben.\n"
 "(Normalerweise wird dies nur benutzt, wenn --versionlines aktiv ist)."
 
-#: src/eixrc/defaults.cc:2702
+#: src/eixrc/defaults.cc:2707
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before IUSE data for all versions is output.\n"
@@ -5438,7 +5473,7 @@ msgstr ""
 "Dieser String wird vor den IUSE-Daten aller Versionen ausgegeben.\n"
 "(Beabsichtigt ist hier Ausgabe nach allen Versionen in der Zeile)."
 
-#: src/eixrc/defaults.cc:2708
+#: src/eixrc/defaults.cc:2713
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after IUSE data for all versions is output.\n"
@@ -5448,7 +5483,7 @@ msgstr ""
 "Dieser String wird nach den IUSE-Daten aller Versionen ausgegeben.\n"
 "(Beabsichtigt ist hier Ausgabe nach allen Versionen in der Zeile)."
 
-#: src/eixrc/defaults.cc:2714
+#: src/eixrc/defaults.cc:2719
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed before IUSE data for all versions is output.\n"
@@ -5458,7 +5493,7 @@ msgstr ""
 "Dieser String wird vor den IUSE-Daten aller Versionen ausgegeben.\n"
 "(Beabsichtigt ist hier Ausgabe in separater Zeile)."
 
-#: src/eixrc/defaults.cc:2720
+#: src/eixrc/defaults.cc:2725
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "This string is printed after IUSE data for all versions is output.\n"
@@ -5468,7 +5503,7 @@ msgstr ""
 "Dieser String wird nach den IUSE-Daten aller Versionen ausgegeben.\n"
 "(Beabsichtigt ist hier Ausgabe in separater Zeile)."
 
-#: src/eixrc/defaults.cc:2726
+#: src/eixrc/defaults.cc:2731
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color for masked versions."
@@ -5476,7 +5511,7 @@ msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie bestimmt die Farbe für maskierte Versionen."
 
-#: src/eixrc/defaults.cc:2731
+#: src/eixrc/defaults.cc:2736
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color for unstable versions."
@@ -5484,7 +5519,7 @@ msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie bestimmt die Farbe für instabile Versionen."
 
-#: src/eixrc/defaults.cc:2736
+#: src/eixrc/defaults.cc:2741
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the color for stable versions."
@@ -5492,7 +5527,7 @@ msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie bestimmt die Farbe für stabile Versionen."
 
-#: src/eixrc/defaults.cc:2741
+#: src/eixrc/defaults.cc:2746
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format to change the color for masked versions."
@@ -5500,7 +5535,7 @@ msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie bestimmt das Format zum Farbwechsel für maskierte Versionen."
 
-#: src/eixrc/defaults.cc:2746
+#: src/eixrc/defaults.cc:2751
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format to change the color for unstable versions."
@@ -5508,7 +5543,7 @@ msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie bestimmt das Format zum Farbwechsel für instabile Versionen."
 
-#: src/eixrc/defaults.cc:2751
+#: src/eixrc/defaults.cc:2756
 msgid ""
 "This variable is only used for delayed substitution.\n"
 "It defines the format to change the color for stable versions."
@@ -5516,7 +5551,7 @@ msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
 "Sie bestimmt das Format zum Farbwechsel für stabile Versionen."
 
-#: src/eixrc/defaults.cc:2756
+#: src/eixrc/defaults.cc:2761
 msgid ""
 "This variable is ignored. You can use it to collect delayed references to\n"
 "locally added (unused) variables so that they are printed with --dump."
@@ -5759,20 +5794,3 @@ msgstr "unbekanntes Suchfeld %r"
 #: src/search/packagetest.cc:269
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
-
-#~ msgid ""
-#~ "This variable is only used for delayed substitution.\n"
-#~ "It defines the format for a plain version with important data, no slot."
-#~ msgstr ""
-#~ "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-#~ "Sie legt das Format einer blanken Version mit den wichtigsten Daten\n"
-#~ "ohne Slot fest."
-
-#~ msgid ""
-#~ "This variable is only used for delayed substitution.\n"
-#~ "It defines the format for an available version with important data, no "
-#~ "slot."
-#~ msgstr ""
-#~ "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-#~ "Sie legt das Format einer verfügbare Version mit den wichtigsten Daten\n"
-#~ "ohne Slot fest."

@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-06-24 18:30:00 +0200 (Sun, 24 Jun 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-07-01 12:10:00 +0200 (Sun, 01 Jul 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2126,6 +2126,14 @@ zu den Variablen B<FORMAT_ALL>, B<FORMAT_ALL_COMPACT> bzw. B<FORMAT_ALL_VERBOSE>
 Der Zweck dieser einfachen Definition ist, dass es leicht ist, auf die
 Default-Definition mit verzögerter Ersetzung zu verweisen,
 wenn die Definition von B<FORMAT> geändert werden soll.
+
+.TP
+.B FORMAT_TEST_OBSOLETE (string)
+Das Format, das vom Script B<eix-test-obsolete> benutzt wird;
+der Defaultwert ist die verzögerte Ersetzung von B<FORMAT_ALL_COMPACT>.
+Es ist nicht erlaubt here verzögerte Ersetzung von B<FORMAT> zu benutzen;
+falls dies gewünscht ist, sollte man statt dessen die verzögerte Ersetzung
+von B<FORMAT_ALL> benutzen.
 
 .TP
 .BR DIFF_FORMAT_NEW ", " DIFF_FORMAT_DELETE ", " DIFF_FORMAT_CHANGED " " (string)

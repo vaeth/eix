@@ -14,30 +14,37 @@ ReadGettext
 Usage() {
 	n=${0##*/}
 	p='@PACKAGE_STRING@'
-	eval_gettext 'Usage: ${n} [options] detail|brief
+	eval_gettext 'Usage: ${n} [options] detail|brief|quick
 This is a wrapper script for eix (${p}).
 
 It calls eix -tTc several times with various variable settings in order to
 display missing packages or packages with obsolete entries in
 /etc/portage/package.* in a more organized manner than eix -tTc would do alone.
+
 The speed and displayed details depend on whether you use the argument
-"detail" or "brief". Note that the result depends on your settings of the
-REDUNDANT_IF_* and NONEXISTENT_IF_* variables. In particular, the variables
+"detail", "brief", or "quick". On all three cases the same checks are done,
+the difference in output is only the amount of details for the matches.
+For displaying matching packages the format specified in the variable
+FORMAT_TEST_OBSOLETE is used (which defaults to %{FORMAT_ALL_COMPACT}).
+
+Note that the result depends on your settings of the TEST_FOR_*,
+REDUNDANT_IF_*, and NONEXISTENT_IF_* variables. In particular, the variables
 REDUNDANT_IF_{IN,DOUBLE}_{USE,ENV,CFLAGS} and REDUNDANT_IF_MIXED are
 false by default. Thus, e.g. to activate the two possible tests for
-/etc/portage/package.use you should set something like
-REDUNDANT_IF_IN_USE="-some" REDUNDANT_IF_DOUBLE_USE="some".
+/etc/portage/package.use you should set (e.g. in /etc/eixrc) something like
+REDUNDANT_IF_IN_USE="-some" REDUNDANT_IF_DOUBLE_USE="some"
 
 The following options are available:
 	-c  use CHECK_INSTALLED_OVERLAYS=true
 	-C  use CHECK_INSTALLED_OVERLAYS=repository
 	-d  This can be used instead of the argument "detail"
 	-b  This can be used instead of the argument "brief"
+	-q  This can be used instead of the argument "quick"
 	-H  Suppress status line update
 	-h  Show this help text
 
-Options -b and -d are meant as to be used in EIX_TEST_OBSOLETE_OPTS to specify
-the default behavior.
+Options -b, -d, and -q are meant to be used in EIX_TEST_OBSOLETE_OPTS to
+specify the default behavior.
 
 If neither -c nor -C is used, then CHECK_INSTALLED_OVERLAYS is not modified.
 The (recommended) default for CHECK_INSTALLED_OVERLAYS is \"repository\" which
@@ -50,7 +57,6 @@ The argument can be abbreviated, e.g. instead of "brief" you can just use "b".'
 	Exit ${1:-1}
 }
 
-nodetails=false
 myarg=
 # Once an option with paths as arguments is introduced, it is probably
 # necessary to turn the next command into eval "Push -c ..."
@@ -60,12 +66,13 @@ Push opt "${@}"
 set -f
 eval "set -- ${opt}"
 OPTIND=1
-while getopts 'cCdbHh?' opt
+while getopts 'cCdbqHh?' opt
 do	case ${opt} in
 	c) export CHECK_INSTALLED_OVERLAYS=true;;
 	C) export CHECK_INSTALLED_OVERLAYS=repository;;
 	d) myarg='detail';;
 	b) myarg='brief';;
+	q) myarg='quick';;
 	H) statusline=false;;
 	*) Usage 0;;
 	esac
@@ -73,14 +80,19 @@ done
 [ ${OPTIND} -le 1 ] || shift `Expr ${OPTIND} - 1`
 [ ${#} -gt 1 ] && Usage
 [ ${#} -eq 1 ] && myarg=${1#-}
+quickmode=false
 case ${myarg#-} in
 [dD]*)	nodetails=false;;
 [bB]*)	nodetails=:;;
+[qQ]*)	quickmode=:
+	nodetails=:;;
 [hH]*)	Usage 0;;
 *)	Usage;;
 esac
 
-export DEFAULT_FORMAT=compact
+DEFAULT_FORMAT=normal
+FORMAT='%{FORMAT_TEST_OBSOLETE}'
+export DEFAULT_FORMAT FORMAT
 
 Statusline 'eix -t'
 eix '-t*!'
@@ -135,9 +147,13 @@ Output() {
 	done
 }
 
+EchoSkip() {
+	printf '%s\n' "${*}"
+}
+
 Check() (
 	if eval AllFalse \${set_${1}}
-	then	printf '%s\n' "${4}"
+	then	EchoSkip "${4}"
 		return
 	fi
 	FalseExcept ${1}
@@ -186,6 +202,16 @@ DefineSet in_license \
 DefineSet in_cflags \
 	REDUNDANT_IF_IN_CFLAGS
 
+if AllFalse TEST_FOR_REDUNDANCY
+then
+EchoSkip  "`eval_gettext 'Skipping check of entries in ${rump}*'`"
+elif ${quickmode}
+then
+Statusline 'package.*'
+Output \
+	"`eval_gettext 'No redundant entries in any ${rump}*'`" \
+	"`eval_gettext 'Redundant in some ${rump}*:'`"
+else
 Statusline 'accept_keywords'
 Check keywords "`eval_gettext \
 	'No  redundant  entries in ${rump}{,accept_}keywords'`" \
@@ -251,6 +277,7 @@ Check in_cflags "`eval_gettext \
 	'No uninstalled entries in ${rump}cflags'`" \
 	"`eval_gettext 'Not installed but in ${rump}cflags:'`" \
 	"`eval_gettext 'Skipping check: uninstalled entries in ${rump}cflags'`"
+fi
 Statusline 'installed'
 Check nonexistent "`gettext \
 	'All installed versions of packages are in the database.'`" \

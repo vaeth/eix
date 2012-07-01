@@ -2609,6 +2609,11 @@ AddOption(STRING, "FORMAT_VERBOSE",
 	"The format of the verbose output of eix (option -v).\n"
 	"Do not modify it in a config file; modify FORMAT_ALL_VERBOSE instead."));
 
+AddOption(STRING, "FORMAT_TEST_OBSOLETE",
+	"%{FORMAT_ALL_COMPACT}", _(
+	"The format used for output by the eix-test-obsolete script.\n"
+	"The value %{FORMAT} is not allowed here; use %{FORMAT_ALL} instead."));
+
 AddOption(STRING, "DIFF_FORMAT_ALL_NEW",
 	"%{DIFF_FORMATLINE_NAME_NEW}"
 	"%{DIFF_FORMATLINE_BEST}"
