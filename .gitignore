@@ -51,6 +51,7 @@
 *.dirstamp
 *.exe
 *.o
+*.o-*
 *.obj
 *Makefile
 *Makefile.in
