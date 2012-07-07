@@ -116,7 +116,7 @@ static const char *test_in_env_late[] = {
 	NULLPTR
 };
 
-inline static bool
+static bool
 is_accumulating(const char **accumulating, const char *key)
 {
 	const char *match;
@@ -812,7 +812,7 @@ static const ArchUsed
 	ARCH_EVERYTHING     = 5,
 	ARCH_MINUSASTERISK  = 6; // -* always matches -T WEAKER because it is higher than arch_needed default
 
-inline static ArchUsed
+static ArchUsed
 apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
 	const set<string> *arch_set,
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut)
@@ -822,7 +822,9 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 		redundant |= (check & Keywords::RED_STRANGE);
 		return ARCH_NOTHING;
 	}
-	if(keywords_set.find(key) == keywords_set.end()) {
+	if((keywords_set.find(key) == keywords_set.end()) &&
+		((key[0] == '*') || (keywords_set.find("*") == keywords_set.end())) &&
+		((key[0] != '~') || (keywords_set.find("~*") == keywords_set.end()))) {
 		// Not found:
 		if(key == "**")
 			return ARCH_EVERYTHING;

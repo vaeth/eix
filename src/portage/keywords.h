@@ -96,7 +96,7 @@ class KeywordsFlags {
 			KEY_MINUSASTERISK  = 0x80, /**<  -*    */
 			KEY_SOMESTABLE     = KEY_ARCHSTABLE|KEY_ALIENSTABLE,
 			KEY_SOMEUNSTABLE   = KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE,
-			KEY_TILDESTARMATCH = KEY_SOMESTABLE|KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE;
+			KEY_TILDESTARMATCH = KEY_SOMESTABLE|KEY_SOMEUNSTABLE;
 
 		static KeyType get_keyflags(const std::set<std::string> &accepted_keywords, const std::string &keywords);
 

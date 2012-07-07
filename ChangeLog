@@ -4,6 +4,7 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-test-obsolete: Add -q, "quick", use FORMAT_TEST_OBSOLETE,
 	  support TEST_FOR_REDUNDANCY better.
+	- Allow KEYWORDS='*' and KEYWORDS='~*' in ebuilds
 
 *eix-0.26.0
 	Артём Воротников <vorot93 at yandex.ru>:

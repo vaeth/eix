@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-01 12:20+0200\n"
+"POT-Creation-Date: 2012-07-07 23:03+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -897,7 +897,8 @@ msgstr ""
 "пакетов, установленных с информацией о репозитории (что имеет место быть\n"
 "со всеми последними версиями portage).\n"
 "\n"
-"Вместо аргумента можно использовать аббревиатуру, например, вместо \"brief\"\n"
+"Вместо аргумента можно использовать аббревиатуру, например, вместо \"brief"
+"\"\n"
 "можно просто использовать \"b\"."
 
 #: src/eix-test-obsolete.sh:145
@@ -4825,8 +4826,8 @@ msgid ""
 msgstr ""
 "Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
 
-#: src/portage/conf/portagesettings.cc:1230
-#: src/portage/conf/portagesettings.cc:1260
+#: src/portage/conf/portagesettings.cc:1232
+#: src/portage/conf/portagesettings.cc:1262
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"

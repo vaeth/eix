@@ -60,15 +60,36 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 				m |= KEY_MINUSKEYWORD;
 			continue;
 		}
+		if(*it == "*") {
+			for(std::set<string>::const_iterator ait(accepted_keywords.begin());
+				ait != accepted_keywords.end(); ++ait) {
+				if((*ait)[0] != '~') {
+					found = true;
+					m |= KEY_STABLE;
+					break;
+				}
+			}
+			continue;
+		}
 		if(accepted_keywords.find(*it) != accepted_keywords.end()) {
 			found = true;
-			m |= KEY_STABLE;
+			m |= (KEY_STABLE | KEY_SOMESTABLE);
 		}
 		if((*it)[0] == '~') {
 			if(found)
 				m |= KEY_ARCHUNSTABLE;
 			else {
-				if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end())
+				if(*it == "~*") {
+					m |= KEY_ALIENUNSTABLE;
+					for(std::set<string>::const_iterator ait(accepted_keywords.begin());
+						ait != accepted_keywords.end(); ++ait) {
+						if((*ait)[0] == '~') {
+							m |= (KEY_STABLE | KEY_ARCHUNSTABLE);
+							break;
+						}
+					}
+				}
+				else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end())
 					m |= KEY_ARCHUNSTABLE;
 				else
 					m |= KEY_ALIENUNSTABLE;
