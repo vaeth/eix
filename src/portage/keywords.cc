@@ -42,6 +42,19 @@ const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_SOMEUNSTABLE,
 	KeywordsFlags::KEY_TILDESTARMATCH;
 
+inline static bool
+is_not_testing(const string &s)
+{
+	char c(s[0]);
+	return ((c != '~') && (c != '-'));
+}
+
+inline static bool
+is_testing(const string &s)
+{
+	return (s[0] == '~');
+}
+
 KeywordsFlags::KeyType
 KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const string &keywords)
 {
@@ -50,7 +63,6 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 	make_set<string>(keywords_set, split_string(keywords));
 	for(std::set<string>::const_iterator it(keywords_set.begin());
 		likely(it != keywords_set.end()); ++it) {
-		bool found(false);
 		if((*it)[0] == '-') {
 			if(*it == "-*")
 				m |= KEY_MINUSASTERISK;
@@ -61,43 +73,38 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 			continue;
 		}
 		if(*it == "*") {
-			for(std::set<string>::const_iterator ait(accepted_keywords.begin());
-				ait != accepted_keywords.end(); ++ait) {
-				if((*ait)[0] != '~') {
-					found = true;
-					m |= KEY_STABLE;
-					break;
-				}
+			m |= KEY_SOMESTABLE;
+			if(find_if(accepted_keywords.begin(), accepted_keywords.end(), is_not_testing)
+				!= accepted_keywords.end()) {
+				m |= KEY_STABLE;
 			}
 			continue;
 		}
+		bool found(false);
 		if(accepted_keywords.find(*it) != accepted_keywords.end()) {
 			found = true;
 			m |= (KEY_STABLE | KEY_SOMESTABLE);
 		}
 		if((*it)[0] == '~') {
-			if(found)
+			if(found) {
 				m |= KEY_ARCHUNSTABLE;
-			else {
-				if(*it == "~*") {
-					m |= KEY_ALIENUNSTABLE;
-					for(std::set<string>::const_iterator ait(accepted_keywords.begin());
-						ait != accepted_keywords.end(); ++ait) {
-						if((*ait)[0] == '~') {
-							m |= (KEY_STABLE | KEY_ARCHUNSTABLE);
-							break;
-						}
-					}
+			}
+			else if(*it == "~*") {
+				m |= KEY_SOMEUNSTABLE;
+				if(find_if(accepted_keywords.begin(), accepted_keywords.end(), is_testing)
+					!= accepted_keywords.end()) {
+					m |= KEY_STABLE;
 				}
-				else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end())
-					m |= KEY_ARCHUNSTABLE;
-				else
-					m |= KEY_ALIENUNSTABLE;
+			}
+			else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end()) {
+				m |= KEY_ARCHUNSTABLE;
+			}
+			else {
+				m |= KEY_ALIENUNSTABLE;
 			}
 		}
-		else {
-			if((*it)[0] != '-')
-				m |= found ? KEY_ARCHSTABLE : KEY_ALIENSTABLE;
+		else if((*it)[0] != '-') {
+			m |= (found ? KEY_ARCHSTABLE : KEY_ALIENSTABLE);
 		}
 	}
 	if(m & KEY_STABLE)
