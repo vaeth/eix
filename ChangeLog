@@ -6,6 +6,8 @@
 	  support TEST_FOR_REDUNDANCY better
 	- Fix masked-packages: Treat repository name in arguments correctly.
 	- masked-packages: Treat - as standard input.
+	- Fix USE=tools linking error (regression of eix-0.26.0), see
+	  http://bugs.gentoo.org/show_bug.cgi?id=425512
 	- Allow KEYWORDS='*' and KEYWORDS='~*' in ebuilds
 	- manpage: improve description of masked-packages
 
