@@ -3110,14 +3110,16 @@ Genauer ist der Rückgabewert nur dann erfolgreich, wenn mindestens ein Argument
 Fügt I<MASKE> der Maskenliste hinzu.
 .TP
 .BR -f ", " --file " " I<DATEI>
-Fügt den Inhalt von I<DATEI> der Maskenliste hinzu.
-I<DATEI> kann leer sein oder ein Directory: Ein leerer Filename wird als Standardeingabe interpretiert,
-ein Directory wird rekursiv gelesen.
+Fügt die Zeilen von I<DATEI> der Maskenliste hinzu.
+I<DATEI> kann auch leer sein oder B<-> oder ein Verzeichnis:
+Ein leerer Filename oder B<-> wird als Standardeingabe interpretiert,
+ein Verzeichnis wird rekursiv gelesen.
 .TP
 .BR -F ", " --read-file " " I<DATEI>
-Fügt all Worte aus I<DATEI> der Liste von Argumenten hinzu.
-I<DATEI> kann leer sein oder ein Directory: Ein leerer Filename wird als Standardeingabe interpretiert,
-ein Directory wird rekursiv gelesen.
+Fügt alle Worte aus I<DATEI> der Liste von Argumenten hinzu.
+I<DATEI> kann auch leer sein oder B<-> oder ein Verzeichnis:
+Ein leerer Filename oder B<-> wird als Standardeingabe interpretiert,
+ein Verzeichnis wird rekursiv gelesen.
 .\" }}}
 
 .\" {{{ versionsort

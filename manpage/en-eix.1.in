@@ -3038,13 +3038,15 @@ More precisely, the exit status is only successful if at least one argument is m
 Add I<MASK> to the list of masks.
 .TP
 .BR -f ", " --file " " I<FILE>
-Add the content of I<FILE> to the list of masks.
-I<FILE> can be empty or a directory: An empty filename means that standard input is used;
+Add the lines of I<FILE> to the list of masks.
+I<FILE> can also be empty, B<-> or a directory:
+An empty filename or B<-> means that standard input is used;
 a directory is read recursively.
 .TP
 .BR -F ", " --read-file " " I<FILE>
 Add words from I<FILE> to the list of arguments.
-I<FILE> can be empty or a directory: An empty filename means that standard input is used;
+I<FILE> can also be empty, B<-> or a directory:
+An empty filename or B<-> means that standard input is used;
 a directory is read recursively.
 .\" }}}
 

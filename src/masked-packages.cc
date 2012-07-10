@@ -97,7 +97,7 @@ read_stdin(vector<string> &lines, string *name)
 static void
 add_file(vector<string> &lines, const string &name, string *new_name)
 {
-	if(name.empty()) {
+	if(name.empty() || (name == "-")) {
 		read_stdin(lines, new_name);
 	}
 	else {
@@ -189,7 +189,7 @@ run_masked_packages(int argc, char *argv[])
 		Mask m(Mask::maskPseudomask);
 		string errtext;
 		if(unlikely(m.parseMask(it->c_str(), &errtext) == BasicVersion::parsedError)) {
-			cerr << errtext << endl;
+			cerr << eix::format(_("warning: ignoring %r: %s")) % *it % errtext << endl;
 			continue;
 		}
 		Package p;

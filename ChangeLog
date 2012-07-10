@@ -4,7 +4,8 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-test-obsolete: Add -q, "quick", use FORMAT_TEST_OBSOLETE,
 	  support TEST_FOR_REDUNDANCY better
-	- Fix masked-packages: Treat repository name in arguments correctly
+	- Fix masked-packages: Treat repository name in arguments correctly.
+	- masked-packages: Treat - as standard input.
 	- Allow KEYWORDS='*' and KEYWORDS='~*' in ebuilds
 	- manpage: improve description of masked-packages
 

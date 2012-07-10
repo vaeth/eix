@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-07 23:03+0200\n"
+"POT-Creation-Date: 2012-07-10 02:44+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -1843,6 +1843,10 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для\n"
 "подробной информации.\n"
+
+#: src/masked-packages.cc:192
+msgid "warning: ignoring %r: %s"
+msgstr ""
 
 #: src/versionsort.cc:36
 #, c-format
@@ -4837,16 +4841,16 @@ msgid "Can't read category."
 msgstr "Невозможно прочесть категорию."
 
 #: src/portage/mask.cc:114
-msgid "Repository name must be separated with :: (one : is missing)"
-msgstr "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)"
+msgid "Repository name must be separated with :: (one : is missing)."
+msgstr "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)."
 
 #: src/portage/mask.cc:160
 msgid "Operator without a version part."
 msgstr "Оператор без части с версией."
 
 #: src/portage/mask.cc:161
-msgid "Version specification is missing"
-msgstr "отсутствует указатель формата"
+msgid "Version specification is missing."
+msgstr "отсутствует указатель формата."
 
 #: src/portage/mask.cc:175
 msgid "A '*' is only valid at the end of a version-string."

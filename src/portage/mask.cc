@@ -111,7 +111,7 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 			if(unlikely(slot_end != NULLPTR)) {
 				m_slotname.assign(source, slot_end - source);
 				if(unlikely(slot_end[1] != ':')) {
-					*errtext = _("Repository name must be separated with :: (one : is missing)");
+					*errtext = _("Repository name must be separated with :: (one : is missing).");
 					return parsedError;
 				}
 				source = slot_end + 2;
@@ -158,7 +158,7 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 		if(unlikely((p == NULLPTR) || ((end != NULLPTR) && (p >= end)))) {
 			*errtext = ((m_type != maskPseudomask) ?
 				_("Operator without a version part.") :
-				_("Version specification is missing"));
+				_("Version specification is missing."));
 			return parsedError;
 		}
 
