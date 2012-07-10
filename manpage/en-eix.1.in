@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-07-01 12:10:00 +0200 (Sun, 01 Jul 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-07-10 02:00:00 +0200 (Tue, 10 Jul 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -3008,14 +3008,21 @@ The path can be changed with the B<EIX_REMOTEARCHIVE> variable
 .SH masked-packages
 B<masked-packages> is a helper tool for scripts which can match the arguments
 against a list of masked packages or versions.
-
 The masks are specified by the options and expected to be in the
 same format as in /etc/portage/package.mask
-
 The arguments must be in the form
-I<category>B</>I<name>B<->I<version>[B<:>I<slot>][B<::>I<repo>]
-
+I<category>B</>I<name>B<->I<version>[B<:>I<slot>][B<::>I<repo>].
 By default, the arguments matching a mask are printed.
+
+.SS Examples:
+.TP
+.B masked-packages -q --file /etc/portage/package.accept_keywords app-portage/eix-99999999::mv
+Returns successfully if an entry from B</etc/portage/package.accept_keywords>
+matches for the version B<app-portage/eix-99999999::mv>.
+.TP
+.B masked-packages -m '=a/b-1*:1' -m '=c/d-1' a/b-0:1 a/b-1.1:1 a/b-1.2 c/d-1:2
+Outputs only B<a/b-1.1:1> and B<c/d-1:2> since the other arguments do not
+match in version or slot, respectively.
 
 .SS Options
 .TP
@@ -3027,15 +3034,15 @@ Do not print the arguments matching a mask, but instead show by the exit status
 whether an argument was matching.
 More precisely, the exit status is only successful if at least one argument is matching.
 .TP
-.BR -m ", " --mask I<MASK>
+.BR -m ", " --mask " " I<MASK>
 Add I<MASK> to the list of masks.
 .TP
-.BR -f ", " --file I<FILE>
+.BR -f ", " --file " " I<FILE>
 Add the content of I<FILE> to the list of masks.
 I<FILE> can be empty or a directory: An empty filename means that standard input is used;
 a directory is read recursively.
 .TP
-.BR -F ", " --read-file I<FILE>
+.BR -F ", " --read-file " " I<FILE>
 Add words from I<FILE> to the list of arguments.
 I<FILE> can be empty or a directory: An empty filename means that standard input is used;
 a directory is read recursively.

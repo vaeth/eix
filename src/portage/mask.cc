@@ -210,6 +210,7 @@ Mask::to_package(Package *p) const
 	v->assign_basic_version(*this);
 	v->slotname = m_slotname;
 	v->subslotname = m_subslotname;
+	v->reponame = m_reponame;
 	p->addVersion(v);
 }
 

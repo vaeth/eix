@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-07-01 12:10:00 +0200 (Sun, 01 Jul 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-07-10 02:00:00 +0200 (Tue, 10 Jul 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -3081,16 +3081,22 @@ Der Pfad kann mit der Variablen B<EIX_REMOTEARCHIVE> geändert werden
 .SH masked-packages
 B<masked-packages> ist ein Hilfsprogramm für Skripte, das die Argumente gegen
 eine Liste von Paketmasken testet.
-
-Dies Masken werden durch die Optionen angegeben; sie sollten im selben Format
+Die Masken werden durch die Optionen spezifiert; sie sollten im selben Format
 sein wie /etc/portage/package.mask
-
-Die Argumente müssen die folgende Gestalt haben:
-I<Kategorie>B</>I<Name>B<->I<Version>[B<:>I<Slot>][B<::>I<Repo>]
-
+Die Argumente werden in der Form I<Kategorie>B</>I<Name>B<->I<Version>[B<:>I<Slot>][B<::>I<Repo>] erwartet.
 Per Default werden die Argumente ausgegeben, die auf eine Maske passen.
 
-.SS Options
+.SS Beispiele:
+.TP
+.B masked-packages -q --file /etc/portage/package.accept_keywords app-portage/eix-99999999::mv
+Kehrt erfolgreich zurück, falls ein Eintrag aus B</etc/portage/package.accept_keywords> auf
+die Version B<app-portage/eix-99999999::mv> passt.
+.TP
+.B masked-packages -m '=a/b-1*:1' -m '=c/d-1' a/b-0:1 a/b-1.1:1 a/b-1.2 c/d-1:2
+Gibt nur B<a/b-1.1:1> und B<c/d-1:2> aus, da bei den anderen Argumenten
+Version bzw. Slot nicht auf die Maske passen.
+
+.SS Optionen
 .TP
 .BR -h ", " --help
 Ausgabe eines Hilfstextes und Ende.
@@ -3100,16 +3106,16 @@ Anstelle der Ausgabe der Argument wird nur anhand des Rückgabewerts gezeigt,
 ob ein Argument gepasst hat.
 Genauer ist der Rückgabewert nur dann erfolgreich, wenn mindestens ein Argument passt.
 .TP
-.BR -m ", " --mask I<MASKE>
-Für I<MASKE> der Maskenliste hinzu.
+.BR -m ", " --mask " " I<MASKE>
+Fügt I<MASKE> der Maskenliste hinzu.
 .TP
-.BR -f ", " --file I<DATEI>
+.BR -f ", " --file " " I<DATEI>
 Fügt den Inhalt von I<DATEI> der Maskenliste hinzu.
 I<DATEI> kann leer sein oder ein Directory: Ein leerer Filename wird als Standardeingabe interpretiert,
 ein Directory wird rekursiv gelesen.
 .TP
-.BR -F ", " --read-file I<FILE>
-Für all Worte aus I<DATEI> der Liste von Argumenten hinzu.
+.BR -F ", " --read-file " " I<DATEI>
+Fügt all Worte aus I<DATEI> der Liste von Argumenten hinzu.
 I<DATEI> kann leer sein oder ein Directory: Ein leerer Filename wird als Standardeingabe interpretiert,
 ein Directory wird rekursiv gelesen.
 .\" }}}
