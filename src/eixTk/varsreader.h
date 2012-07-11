@@ -162,8 +162,8 @@ class VarsReader {
 		void EVAL_VALUE();
 
 		/** Looks if the following input is a valid secondary value-part.
-		 * ['"\^#\n\t ] is allowed.
-		 * [\n\t# ] -> ASSIGN_KEY_VALUE
+		 * ['"\^#\n\r\t ] is allowed.
+		 * [\n\r\t# ] -> ASSIGN_KEY_VALUE
 		 * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
 		 * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
 		 * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE} */

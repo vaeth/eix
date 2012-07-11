@@ -261,8 +261,8 @@ VarsReader::EVAL_VALUE()
 }
 
 /** Looks if the following input is a valid secondary value-part.
- * ['"\^#\n\t ] is allowed.
- * [\n\t# ] -> ASSIGN_KEY_VALUE
+ * ['"\^#\n\r\t ] is allowed.
+ * [\n\r\t# ] -> ASSIGN_KEY_VALUE
  * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
  * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
  * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE} */
@@ -277,6 +277,7 @@ VarsReader::EVAL_READ()
 			case '"':   NEXT_INPUT_EVAL; CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
 			case '\'':  NEXT_INPUT_EVAL; CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
 			case '\t':
+			case '\r':
 			case '\n':
 			case ' ':
 			case '#':   CHSTATE(ASSIGN_KEY_VALUE);
@@ -288,6 +289,7 @@ VarsReader::EVAL_READ()
 		case '"':   NEXT_INPUT_EVAL; CHSTATE(VALUE_DOUBLE_QUOTE);
 		case '\'':  NEXT_INPUT_EVAL; CHSTATE(VALUE_SINGLE_QUOTE);
 		case '\t':
+		case '\r':
 		case '\n':
 		case ' ':
 		case '#':   CHSTATE(ASSIGN_KEY_VALUE);

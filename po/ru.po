@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-10 02:44+0200\n"
+"POT-Creation-Date: 2012-07-11 20:29+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -2102,19 +2102,19 @@ msgstr "Уровень гнездования слишком глубок в %r"
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: ошибка взятия %r в качестве источника (%s)"
 
-#: src/eixTk/varsreader.cc:813
+#: src/eixTk/varsreader.cc:815
 msgid "Can't read file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:821
+#: src/eixTk/varsreader.cc:823
 msgid "Can't stat file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:833
+#: src/eixTk/varsreader.cc:835
 msgid "Can't map file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:889
+#: src/eixTk/varsreader.cc:891
 msgid "Nesting level too deep when reading %r"
 msgstr "Уровень гнездования слишком глубок при чтении %r"
 
@@ -4842,7 +4842,8 @@ msgstr "Невозможно прочесть категорию."
 
 #: src/portage/mask.cc:114
 msgid "Repository name must be separated with :: (one : is missing)."
-msgstr "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)."
+msgstr ""
+"Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)."
 
 #: src/portage/mask.cc:160
 msgid "Operator without a version part."
