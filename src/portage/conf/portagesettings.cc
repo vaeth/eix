@@ -210,6 +210,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	m_eprefixportdir  = eixrc["EPREFIX_PORTDIR"];
 	m_eprefixoverlays = eixrc["EPREFIX_OVERLAYS"];
 	m_eprefixaccessoverlays = eixrc["EPREFIX_ACCESS_OVERLAYS"];
+	(*this)["ARCH"]   = eixrc["DEFAULT_ARCH"];
 
 	const string &eprefixsource(eixrc["EPREFIX_SOURCE"]);
 	const string &make_globals(eixrc["MAKE_GLOBALS"]);

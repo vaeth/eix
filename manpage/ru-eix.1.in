@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-07-10 02:00:00 +0200 (Tue, 10 Jul 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-07-13 22:00:00 +0200 (Tue, 13 Jul 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -1999,6 +1999,10 @@ is chosen; otherwise, the grouplist is shrinked to a singleton.
 .BR PORTAGE_ROOTPATH ", " PORTAGE_BIN_PATH
 If nonempty, these variables are passed unchanged to ebuild.sh for cache method B<ebuild*>.
 Note that ebuild.sh uses these variables to calculate the PATH, so this may be a severe security issue.
+
+.TP
+.BR DEFAULT_ARCH
+The default ARCH if none is specified by the profile.
 
 .TP
 .BR NOFOUND_STATUS " " (integer)

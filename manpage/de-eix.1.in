@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-07-10 02:00:00 +0200 (Tue, 10 Jul 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-07-13 22:00:00 +0200 (Tue, 13 Jul 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -2016,6 +2016,10 @@ einen einzelnen Eintrag zusammen.
 Falls nichtleer, werden diese Variablen unverändert an ebuild.sh für die Cachemethode B<ebuild*> übergeben.
 Beachte, dass ebuild.sh diese Variablen benutzt, um den PATH zu ermitteln, so dass diese
 Werte extrem sicherheitsrelevant sind!
+
+.TP
+.BR DEFAULT_ARCH
+Der Default-Wert für ARCH, falls keiner im Profile spezifiert ist.
 
 .TP
 .BR NOFOUND_STATUS " " (integer)

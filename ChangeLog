@@ -12,6 +12,8 @@
 	- manpage: improve description of masked-packages
 	- varsreader: Fix hang for DOS line ends, see
 	  http://forums.gentoo.org/viewtopic-t-929536.html
+	- Introduce DEFAULT_ARCH and ./configure --with-default-arch,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=426256
 
 *eix-0.26.0
 	Артём Воротников <vorot93 at yandex.ru>:

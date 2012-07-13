@@ -204,6 +204,10 @@ AddOption(STRING, "PORTAGE_BIN_PATH",
 	"This variable is passed unchanged to ebuild.sh\n"
 	"Usually ebuild.sh uses it to calculate the PATH."));
 
+AddOption(STRING, "DEFAULT_ARCH",
+	ARCH_DEFAULT, _(
+	"The default ARCH if none is specified by the profile."));
+
 AddOption(INTEGER, "NOFOUND_STATUS",
 	EXPAND_STRINGIFY(EXIT_FAILURE), _(
 	"This value is used as exit status if there are 0 matches.\n"

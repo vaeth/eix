@@ -6,6 +6,9 @@
 /* Default ALWAYS_ACCEPT_KEYWORDS */
 #undef ALWAYS_ACCEPT_KEYWORDS_DEFAULT
 
+/* Default DEFAULT_ARCH */
+#undef ARCH_DEFAULT
+
 /* Define to __attribute__ ((__const__)) if it can be used */
 #undef ATTRIBUTE_CONST
 
