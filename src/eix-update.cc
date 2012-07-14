@@ -499,22 +499,22 @@ run_eix_update(int argc, char *argv[])
 				% portage_settings["PORTDIR"]);
 		}
 
-		portage_settings.add_overlay_vector(add_overlays, false);
+		portage_settings.add_repo_vector(add_overlays, false);
 
-		for(vector<string>::size_type i(0); likely(i < portage_settings.overlays.size()); ++i) {
+		for(vector<string>::size_type i(1); likely(i < portage_settings.repos.size()); ++i) {
 			if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-					portage_settings.overlays[i].c_str(), true, false) == excluded_overlays.end())) {
+					portage_settings.repos[i].path.c_str(), true, false) == excluded_overlays.end())) {
 				string errtext;
 				if(unlikely(!table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 					eixrc.prefix_cstr("EPREFIX_ACCESS_OVERLAYS"),
-					portage_settings.overlays[i].c_str(),
+					portage_settings.repos[i].path.c_str(),
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr, &errtext))) {
 					cerr << errtext << endl;
 				}
 			}
 			else {
 				INFO(eix::format(_("Excluded overlay %s\n"))
-					% portage_settings.overlays[i]);
+					% portage_settings.repos[i].human_readable());
 			}
 		}
 	}

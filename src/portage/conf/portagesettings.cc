@@ -24,6 +24,7 @@
 #include <portage/keywords.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
+#include <portage/overlay.h>
 #include <portage/package.h>
 #include <portage/packagesets.h>
 #include <portage/version.h>
@@ -172,26 +173,28 @@ PortageSettings::resolve_overlay_name(const string &path, bool resolve)
 }
 
 void
-PortageSettings::add_overlay(string &path, bool resolve, bool modify)
+PortageSettings::add_repo(string &path, bool resolve, bool modify)
 {
 	string name(resolve_overlay_name(path, resolve));
 	if(modify)
 		path = name;
 	/* If the overlay exists, don't add it */
-	if(find_filenames(overlays.begin(), overlays.end(),
-			name.c_str(), false, false) != overlays.end())
-			return;
-	/* If the overlay is PORTDIR, don't add it */
-	if(same_filenames((*this)["PORTDIR"].c_str(), name.c_str(), false, false))
-		return;
-	overlays.push_back(name);
+	for(vector<OverlayIdent>::const_iterator ov(repos.begin());
+		likely(ov != repos.end()); ++ov) {
+		if(likely(ov->know_path)) {
+			if(unlikely(same_filenames(ov->path.c_str(), name.c_str(), false, false))) {
+				return;
+			}
+		}
+	}
+	repos.push_back(OverlayIdent(name.c_str()));
 }
 
 void
-PortageSettings::add_overlay_vector(vector<string> &v, bool resolve, bool modify)
+PortageSettings::add_repo_vector(vector<string> &v, bool resolve, bool modify)
 {
 	for(vector<string>::iterator it(v.begin()); likely(it != v.end()); ++it) {
-		add_overlay(*it, resolve, modify);
+		add_repo(*it, resolve, modify);
 	}
 }
 
@@ -233,13 +236,14 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 		else
 			full.append(ref);
 		ref = normalize_path(full.c_str(), true, true);
+		add_repo(ref, false, false);
 	}
 	/* Normalize overlays and erase duplicates */
 	{
 		string &ref((*this)["PORTDIR_OVERLAY"]);
 		vector<string> overlayvec;
 		split_string(overlayvec, ref, true);
-		add_overlay_vector(overlayvec, true, true);
+		add_repo_vector(overlayvec, true, true);
 		ref.clear();
 		ref = join_to_string(overlayvec);
 	}
@@ -264,7 +268,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 	}
 
 	string &my_path((*this)["PORTDIR"]);
-	profile->listaddFile(my_path + PORTDIR_MASK_FILE, NULLPTR);
+	profile->listaddFile(my_path + PORTDIR_MASK_FILE, 0);
 	profile->listaddProfile();
 	profile->readMakeDefaults();
 	profile->readremoveFiles();
@@ -354,21 +358,19 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 			case '/': // absolute path: Nothing special
 				break;
 			case '*': // the magic "*"
-				if(overlays.empty())
+				{
 					sets_dirs.erase(sets_dirs.begin() + i);
-				else {
 					string app;
-					if(sets_dirs[i].size() > 1)
+					if(sets_dirs[i].size() > 1) {
 						app.assign(sets_dirs[i], 1, string::npos);
-					vector<string>::size_type s(overlays.size());
-					if(s > 1)
-						sets_dirs.insert(sets_dirs.begin() + i, s - 1, emptystring);
-					// The following should actually be const_reverse_iterator,
-					// but some compilers would then need a cast of rend(),
-					// see http://bugs.gentoo.org/show_bug.cgi?id=255711
-					for(vector<string>::reverse_iterator it(overlays.rbegin());
-						likely(it != overlays.rend()); ++it) {
-						sets_dirs[i++] = (*it) + app;
+					}
+					vector<string>::size_type j(i);
+					vector<OverlayIdent>::const_iterator it(repos.begin());
+					for(++it; likely(it != repos.end()); ++it) {
+						if(it->know_path) {
+							sets_dirs.insert(sets_dirs.begin() + j, 1, (it->path) + app);
+							++i;
+						}
 					}
 				}
 				// skip ++i:
@@ -622,29 +624,34 @@ PortageSettings::pushback_categories(vector<string> &vec)
 	 * portdir/profile/categories */
 	pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &vec);
 
-	string errtext;
-	if(!pushback_lines(((*this)["PORTDIR"] + PORTDIR_CATEGORIES_FILE).c_str(), &vec, true, false, true, &errtext)) {
-		cerr << errtext << endl;
-		exit(EXIT_FAILURE);
+	for(vector<OverlayIdent>::iterator i(repos.begin());
+		likely(i != repos.end()); ++i) {
+		string errtext;
+		if(!i->know_path) {
+			continue;
+		}
+		if(!pushback_lines((m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
+			&vec, true, false, true, &errtext)) {
+			if(i == repos.begin()) {
+				cerr << errtext << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
 	}
-	for(vector<string>::iterator i(overlays.begin());
-		likely(i != overlays.end()); ++i) {
-		pushback_lines((m_eprefixaccessoverlays + (*i) + "/" + PORTDIR_CATEGORIES_FILE).c_str(),
-			&vec);
-	}
-
 }
 
 void
 PortageSettings::addOverlayProfiles(CascadingProfile *p) const
 {
-	for(vector<string>::const_iterator i(overlays.begin());
-		likely(i != overlays.end()); ++i) {
-		string my_path(m_eprefixaccessoverlays + (*i));
-		p->listaddFile(my_path + "/" + PORTDIR_MASK_FILE, my_path.c_str());
+	vector<OverlayIdent>::const_iterator i(repos.begin() + 1);
+	for(vector<OverlayIdent>::size_type j(1); likely(i != repos.end()); ++i, ++j) {
+		if(!i->know_path) {
+			continue;
+		}
+		string my_path(m_eprefixaccessoverlays + (i->path));
+		p->listaddFile(my_path + "/" + PORTDIR_MASK_FILE, j);
 	}
 }
-
 
 PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile)
 {
@@ -657,9 +664,7 @@ PortageUserConfig::PortageUserConfig(PortageSettings *psettings, CascadingProfil
 
 PortageUserConfig::~PortageUserConfig()
 {
-	if(profile) {
-		delete profile;
-	}
+	delete profile;
 }
 
 bool

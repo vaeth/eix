@@ -1,5 +1,6 @@
 
 # autotools directories:
+/tmp*
 /autom4te.cache/
 /config/
 /m4/

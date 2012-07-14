@@ -14,6 +14,7 @@
 #include <portage/keywords.h>
 #include <portage/mask.h>
 #include <portage/mask_list.h>
+#include <portage/overlay.h>
 #include <portage/package.h>
 
 #include <map>
@@ -167,7 +168,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		PortageUserConfig *user_config;
 
-		std::vector<std::string> overlays; /**< Location of the portage overlays */
+		std::vector<OverlayIdent> repos;
 		std::vector<std::string> set_names;
 
 #ifndef HAVE_SETENV
@@ -184,8 +185,8 @@ class PortageSettings : public std::map<std::string,std::string> {
 		~PortageSettings();
 
 		std::string resolve_overlay_name(const std::string &path, bool resolve);
-		void add_overlay(std::string &path, bool resolve, bool modify_path = false);
-		void add_overlay_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
+		void add_repo(std::string &path, bool resolve, bool modify_path = false);
+		void add_repo_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
 
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
 		void get_setnames(std::set<std::string> &names, const Package *p, bool also_nonlocal = false) const;

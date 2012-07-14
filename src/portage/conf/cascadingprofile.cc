@@ -34,14 +34,6 @@
 
 using namespace std;
 
-bool
-ProfileFile::have_repo()
-{
-	if(!overlay.know_path)
-		return false;
-	overlay.readLabel();
-	return !overlay.label.empty();
-}
 
 
 /** Exclude this files from listing of files in profile. */
@@ -69,17 +61,41 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 			likely(it != parents.end()); ++it) {
 			if(it->empty())
 				continue;
-			if((*it)[0] == '/')
+			if((*it)[0] == '/') {
 				addProfile(it->c_str(), depth + 1);
-			else
+				continue;
+			}
+			string::size_type colon(it->find(':'));
+			if(colon == string::npos) {
 				addProfile((s + (*it)).c_str(), depth + 1);
+			}
+			string repo(it->substr(0, colon));
+			vector<OverlayIdent> &repos(m_portagesettings->repos);
+			vector<OverlayIdent>::iterator r(repos.begin());
+			if(!repo.empty()) {
+				for(vector<OverlayIdent>::iterator ov(r);
+					ov != repos.end(); ++ov) {
+					if(!ov->know_path) {
+						continue;
+					}
+					ov->readLabel();
+					if(!ov->know_label) {
+						continue;
+					}
+					if(ov->label == repo) {
+						r = ov;
+						break;
+					}
+				}
+			}
+			addProfile((r->path + "/profiles/" + it->substr(colon + 1)).c_str(), depth + 1);
 		}
 	}
 	vector<string> filenames;
 	bool r(pushback_files(s, filenames, profile_exclude, 3));
 	for(vector<string>::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
-		listaddFile(*it, NULLPTR);
+		listaddFile(*it, 0);
 	}
 	return r;
 }
@@ -136,13 +152,17 @@ CascadingProfile::readremoveFiles()
 		vector<string> lines;
 		pushback_lines(file->c_str(), &lines, false, true, true);
 		const char *repo;
-		if(file->have_repo()) {
-			repo = file->get_repo().c_str();
+		OverlayIdent &overlay(m_portagesettings->repos[file->reponum]);
+		if(overlay.know_path) {
+			overlay.readLabel();
+			repo = ((overlay.label.empty()) ? NULLPTR : overlay.label.c_str());
 		}
 		else {
 			repo = NULLPTR;
 		}
-		ret |= (this->*handler)(lines, file->name(), repo);
+		if((this->*handler)(lines, file->name(), repo)) {
+			ret = true;
+		}
 	}
 	m_profile_files.clear();
 	return ret;

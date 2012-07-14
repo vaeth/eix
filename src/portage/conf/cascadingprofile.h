@@ -25,10 +25,10 @@ class ProfileFilenames;
 class ProfileFile {
 		std::string filename;
 	public:
-		OverlayIdent overlay;
+		std::vector<OverlayIdent>::size_type reponum;
 
-		ProfileFile(const std::string &s, const char *path = NULLPTR) :
-			filename(s), overlay(path)
+		ProfileFile(const std::string &s, std::vector<OverlayIdent>::size_type repo_num) :
+			filename(s), reponum(repo_num)
 		{ }
 
 		const std::string &name() const
@@ -36,13 +36,6 @@ class ProfileFile {
 
 		const char *c_str() const
 		{ return filename.c_str(); }
-
-		/// This has a side effect of reading the repository
-		bool have_repo();
-
-		/// Must call have_repo() (with return true) before
-		const std::string &get_repo() const
-		{ return overlay.label; }
 };
 
 /** Access to the cascading profile pointed to by /etc/make.profile. */
@@ -123,8 +116,8 @@ class CascadingProfile {
 		void listaddProfile(const char *profile_dir = NULLPTR);
 
 		/** Put file into m_profile_files */
-		void listaddFile(const std::string &file, const char *path)
-		{ m_profile_files.push_back(ProfileFile(file, path)); }
+		void listaddFile(const std::string &file, std::vector<OverlayIdent>::size_type i)
+		{ m_profile_files.push_back(ProfileFile(file, i)); }
 
 		/** Clear m_profile_files */
 		void listclear()

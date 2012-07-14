@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-13 22:05+0200\n"
+"POT-Creation-Date: 2012-07-14 12:53+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5741,15 +5741,15 @@ msgstr ""
 msgid "garbage (%s) at end of version %r"
 msgstr "Zusatzsymbole (%s) nach Versionsnummer %r"
 
-#: src/portage/conf/cascadingprofile.cc:56
+#: src/portage/conf/cascadingprofile.cc:48
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/portagesettings.cc:1233
-#: src/portage/conf/portagesettings.cc:1263
+#: src/portage/conf/portagesettings.cc:1238
+#: src/portage/conf/portagesettings.cc:1268
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
