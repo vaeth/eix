@@ -179,15 +179,10 @@ PortageSettings::add_repo(string &path, bool resolve, bool modify)
 	if(modify)
 		path = name;
 	/* If the overlay exists, don't add it */
-	for(vector<OverlayIdent>::const_iterator ov(repos.begin());
-		likely(ov != repos.end()); ++ov) {
-		if(likely(ov->know_path)) {
-			if(unlikely(same_filenames(ov->path.c_str(), name.c_str(), false, false))) {
-				return;
-			}
-		}
+	if(repos.find_filenames(name.c_str()) != repos.end()) {
+		return;
 	}
-	repos.push_back(OverlayIdent(name.c_str()));
+	repos.push_back(name.c_str());
 }
 
 void
@@ -365,8 +360,7 @@ PortageSettings::PortageSettings(EixRc &eixrc, bool getlocal, bool init_world)
 						app.assign(sets_dirs[i], 1, string::npos);
 					}
 					vector<string>::size_type j(i);
-					vector<OverlayIdent>::const_iterator it(repos.begin());
-					for(++it; likely(it != repos.end()); ++it) {
+					for(RepoList::const_iterator it(repos.second()); likely(it != repos.end()); ++it) {
 						if(it->know_path) {
 							sets_dirs.insert(sets_dirs.begin() + j, 1, (it->path) + app);
 							++i;
@@ -624,8 +618,7 @@ PortageSettings::pushback_categories(vector<string> &vec)
 	 * portdir/profile/categories */
 	pushback_lines((m_eprefixconf + USER_CATEGORIES_FILE).c_str(), &vec);
 
-	for(vector<OverlayIdent>::iterator i(repos.begin());
-		likely(i != repos.end()); ++i) {
+	for(RepoList::const_iterator i(repos.begin()); likely(i != repos.end()); ++i) {
 		string errtext;
 		if(!i->know_path) {
 			continue;
@@ -643,13 +636,12 @@ PortageSettings::pushback_categories(vector<string> &vec)
 void
 PortageSettings::addOverlayProfiles(CascadingProfile *p) const
 {
-	vector<OverlayIdent>::const_iterator i(repos.begin() + 1);
-	for(vector<OverlayIdent>::size_type j(1); likely(i != repos.end()); ++i, ++j) {
+	RepoList::size_type j(1);
+	for(RepoList::const_iterator i(repos.second()); likely(i != repos.end()); ++i, ++j) {
 		if(!i->know_path) {
 			continue;
 		}
-		string my_path(m_eprefixaccessoverlays + (i->path));
-		p->listaddFile(my_path + "/" + PORTDIR_MASK_FILE, j);
+		p->listaddFile(m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_MASK_FILE, j);
 	}
 }
 

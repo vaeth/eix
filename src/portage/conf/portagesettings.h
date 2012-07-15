@@ -168,7 +168,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		PortageUserConfig *user_config;
 
-		std::vector<OverlayIdent> repos;
+		RepoList repos;
 		std::vector<std::string> set_names;
 
 #ifndef HAVE_SETENV

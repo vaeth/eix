@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-14 12:53+0200\n"
+"POT-Creation-Date: 2012-07-15 09:48+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: src/eix-functions.sh.in:103 src/eix-update.cc:603 src/eix-update.cc:640
+#: src/eix-functions.sh.in:103 src/eix-update.cc:605 src/eix-update.cc:642
 #: src/eixTk/statusline.cc:57
 msgid "Finished"
 msgstr "Готово"
@@ -318,7 +318,7 @@ msgstr ""
 "-H            Подавить обновление линии статуса\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:648
+#: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:650
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -1735,76 +1735,76 @@ msgstr "Чтение настроек Portage ..\n"
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Исключён PORTDIR: %s\n"
 
-#: src/eix-update.cc:516
+#: src/eix-update.cc:518
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Исключён оверлей %s\n"
 
-#: src/eix-update.cc:522
+#: src/eix-update.cc:524
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Построение базы данных (%s) ..\n"
 
-#: src/eix-update.cc:567
+#: src/eix-update.cc:569
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Исключая \"%s\" %s (кэш: %s)\n"
 
-#: src/eix-update.cc:589
+#: src/eix-update.cc:591
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (кэш: %s)\n"
 
-#: src/eix-update.cc:594
+#: src/eix-update.cc:596
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
-#: src/eix-update.cc:599
+#: src/eix-update.cc:601
 msgid "     Reading Packages .. "
 msgstr "     Чтение Пакетов .. "
 
-#: src/eix-update.cc:603 src/eix-update.cc:639
+#: src/eix-update.cc:605 src/eix-update.cc:641
 msgid "ABORTED!"
 msgstr "ОТМЕНЕНО!"
 
-#: src/eix-update.cc:608
+#: src/eix-update.cc:610
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Чтение категории %s|%s (%s%%)"
 
-#: src/eix-update.cc:613
+#: src/eix-update.cc:615
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Чтение до %s категорий пакетов .. "
 
-#: src/eix-update.cc:629
+#: src/eix-update.cc:631
 #, c-format
 msgid ": %s .."
 msgstr ": %s .."
 
-#: src/eix-update.cc:638
+#: src/eix-update.cc:640
 msgid "EMPTY!"
 msgstr "ПУСТО!"
 
-#: src/eix-update.cc:651
+#: src/eix-update.cc:653
 msgid "Applying masks ..\n"
 msgstr "Применение масок ..\n"
 
-#: src/eix-update.cc:662
+#: src/eix-update.cc:664
 msgid "Calculating hash tables ..\n"
 msgstr "Расчёт хеш-таблиц ..\n"
 
-#: src/eix-update.cc:667
+#: src/eix-update.cc:669
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Запись файла базы данных %s ..\n"
 
-#: src/eix-update.cc:678
+#: src/eix-update.cc:680
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Невозможно открыть файл базы данных %r для записи (режим = 'wb')"
 
-#: src/eix-update.cc:694
+#: src/eix-update.cc:696
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "База данных содержит %s пакетов в %s категориях.\n"
@@ -4834,8 +4834,8 @@ msgid ""
 msgstr ""
 "Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
 
-#: src/portage/conf/portagesettings.cc:1238
-#: src/portage/conf/portagesettings.cc:1268
+#: src/portage/conf/portagesettings.cc:1230
+#: src/portage/conf/portagesettings.cc:1260
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"

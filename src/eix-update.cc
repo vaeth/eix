@@ -501,20 +501,22 @@ run_eix_update(int argc, char *argv[])
 
 		portage_settings.add_repo_vector(add_overlays, false);
 
-		for(vector<string>::size_type i(1); likely(i < portage_settings.repos.size()); ++i) {
+		RepoList repos(portage_settings.repos);
+		for(RepoList::const_iterator it(repos.second()); likely(it != repos.end()); ++it) {
+			const char *path(it->path.c_str());
 			if(likely(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
-					portage_settings.repos[i].path.c_str(), true, false) == excluded_overlays.end())) {
+					path, true, false) == excluded_overlays.end())) {
 				string errtext;
 				if(unlikely(!table.addCache(eixrc.prefix_cstr("EPREFIX_PORTAGE_CACHE"),
 					eixrc.prefix_cstr("EPREFIX_ACCESS_OVERLAYS"),
-					portage_settings.repos[i].path.c_str(),
+					path,
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr, &errtext))) {
 					cerr << errtext << endl;
 				}
 			}
 			else {
 				INFO(eix::format(_("Excluded overlay %s\n"))
-					% portage_settings.repos[i].human_readable());
+					% it->human_readable());
 			}
 		}
 	}

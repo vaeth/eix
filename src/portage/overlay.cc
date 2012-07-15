@@ -9,8 +9,10 @@
 
 #include "overlay.h"
 
+#include <eixTk/filenames.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
+#include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 
 #include <map>
@@ -41,11 +43,8 @@ OverlayIdent::OverlayIdent(const char *Path, const char *Label)
 }
 
 void
-OverlayIdent::readLabel(const char *Path)
+OverlayIdent::readLabel_internal(const char *Path)
 {
-	if(know_label) {
-		return;
-	}
 	know_label = true;
 	vector<string> lines;
 	string my_path;
@@ -82,4 +81,52 @@ OverlayIdent::human_readable() const
 	if(label.empty())
 		return path;
 	return string("\"") + label + "\" " + path;
+}
+
+const char *
+RepoList::get_path(const string &label)
+{
+	map<string, string>::iterator f(cache.find(label));
+	if(likely(f != cache.end())) {
+		return f->second.c_str();
+	}
+	if(trust_cache) {
+		return NULLPTR;
+	}
+	for(iterator it(begin()); likely(it != end()); ++it) {
+		if(unlikely(!it->know_path)) {
+			continue;
+		}
+		it->readLabel();
+		if(unlikely(!it->know_label)) {
+			continue;
+		}
+		const string &l(it->label);
+		const string &p(it->path);
+		cache[l] = p;
+		if(unlikely(l == label)) {
+			return p.c_str();
+		}
+		if(unlikely(it == begin())) {
+			cache[emptystring] = p;
+			if(label.empty()) { // The empty label matches the main tree
+				return p.c_str();
+			}
+		}
+	}
+	trust_cache = true;
+	return NULLPTR;
+}
+
+RepoList::iterator
+RepoList::find_filenames(const char *search, bool list_of_patterns, bool resolve_list)
+{
+	for(iterator ov(begin()); likely(ov != end()); ++ov) {
+		if(likely(ov->know_path)) {
+			if(unlikely(same_filenames(ov->path.c_str(), search, list_of_patterns, resolve_list))) {
+				return ov;
+			}
+		}
+	}
+	return end();
 }
