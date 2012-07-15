@@ -9,10 +9,8 @@
 
 #include <config.h>
 #include "cascadingprofile.h"
-#ifdef DEBUG_PROFILE_PATHS
-#include <eixTk/formated.h>
-#endif
 #include <eixTk/filenames.h>
+#include <eixTk/formated.h>
 #include <eixTk/i18n.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
@@ -34,7 +32,7 @@
 
 using namespace std;
 
-
+//#define DEBUG_PROFILE_PATHS
 
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
@@ -50,13 +48,14 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 	}
 	string s(normalize_path(profile, true, true));
 #ifdef DEBUG_PROFILE_PATHS
-	cout << eix::format("Adding to Profile:\n\t(%s) -> %r\n") % profile % s;
+	cout << eix::format("Adding to Profile:\n\t%r -> %r\n") % profile % s;
 #endif
 	if(s.empty()) {
 		return false;
 	}
 	vector<string> parents;
-	if(pushback_lines((s + "parent").c_str(), &parents)) {
+	string currfile(s + "parent");
+	if(pushback_lines(currfile.c_str(), &parents)) {
 		for(vector<string>::const_iterator it(parents.begin());
 			likely(it != parents.end()); ++it) {
 			if(it->empty())
@@ -68,9 +67,23 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 			string::size_type colon(it->find(':'));
 			if(colon == string::npos) {
 				addProfile((s + (*it)).c_str(), depth + 1);
+				continue;
 			}
-			const char *path(m_portagesettings->repos.get_path(it->substr(0, colon)));
-			if(path != NULLPTR)
+			const char *path;
+			RepoList repos(m_portagesettings->repos);
+			if(colon == 0) {
+				RepoList::iterator f(repos.find_filename(s.c_str(), true));
+				path = ((f != repos.end()) ? f->path.c_str() : NULLPTR);
+			}
+			else {
+				string repo(it->substr(0, colon));
+				path = repos.get_path(repo);
+			}
+			if(path == NULLPTR) {
+				cerr << eix::format(_("warning: ignoring parent %r of file %r"))
+					% (*it) % currfile << endl;
+				continue;
+			}
 			addProfile((string(path) + "/profiles/" + it->substr(colon + 1)).c_str(), depth + 1);
 		}
 	}

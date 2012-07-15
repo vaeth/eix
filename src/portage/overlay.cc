@@ -107,26 +107,36 @@ RepoList::get_path(const string &label)
 		if(unlikely(l == label)) {
 			return p.c_str();
 		}
-		if(unlikely(it == begin())) {
-			cache[emptystring] = p;
-			if(label.empty()) { // The empty label matches the main tree
-				return p.c_str();
-			}
-		}
 	}
 	trust_cache = true;
 	return NULLPTR;
 }
 
 RepoList::iterator
-RepoList::find_filenames(const char *search, bool list_of_patterns, bool resolve_list)
+RepoList::find_filename(const char *search, bool parent_ok, bool resolve_mask)
 {
+	string mask;
+	const char *s(search);
+	if(resolve_mask) {
+		mask = normalize_path(search, true, parent_ok);
+		s = mask.c_str();
+	}
+	RepoList::iterator ret(end());
 	for(iterator ov(begin()); likely(ov != end()); ++ov) {
 		if(likely(ov->know_path)) {
-			if(unlikely(same_filenames(ov->path.c_str(), search, list_of_patterns, resolve_list))) {
+			if(parent_ok) {
+				if(unlikely(filename_starts_with(ov->path.c_str(), s, false))) {
+					// Do as portage: The longest path is the return value
+					if((ret == end()) || (ov->path.size() >= ret->path.size())) {
+						ret = ov;
+					}
+				}
+				continue;
+			}
+			if(unlikely(same_filenames(ov->path.c_str(), s, false, false))) {
 				return ov;
 			}
 		}
 	}
-	return end();
+	return ret;
 }

@@ -179,7 +179,7 @@ PortageSettings::add_repo(string &path, bool resolve, bool modify)
 	if(modify)
 		path = name;
 	/* If the overlay exists, don't add it */
-	if(repos.find_filenames(name.c_str()) != repos.end()) {
+	if(repos.find_filename(name.c_str()) != repos.end()) {
 		return;
 	}
 	repos.push_back(name.c_str());

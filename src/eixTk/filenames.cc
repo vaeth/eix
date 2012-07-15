@@ -159,11 +159,24 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 }
 
 /** Compare whether two (normalized) filenames are identical */
-bool same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask)
+bool
+same_filenames(const char *mask, const char *name, bool glob, bool resolve_mask)
 {
 	string m(normalize_path(mask, resolve_mask, false));
 	string n(normalize_path(name, false, false));
 	if(!glob)
 		return (m == n);
 	return (!fnmatch(m.c_str(), n.c_str(), 0));
+}
+
+/** Compare whether (normalized) filename starts with mask */
+bool
+filename_starts_with(const char *mask, const char *name, bool resolve_mask)
+{
+	string m(normalize_path(mask, resolve_mask, true));
+	string n(normalize_path(name, false, true));
+	if(m == n) {
+		return true;
+	}
+	return (n.compare(0, m.size(), m) == 0);
 }

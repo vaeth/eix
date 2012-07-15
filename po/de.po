@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-15 09:48+0200\n"
+"POT-Creation-Date: 2012-07-15 12:20+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5741,12 +5741,16 @@ msgstr ""
 msgid "garbage (%s) at end of version %r"
 msgstr "Zusatzsymbole (%s) nach Versionsnummer %r"
 
-#: src/portage/conf/cascadingprofile.cc:48
+#: src/portage/conf/cascadingprofile.cc:46
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
+
+#: src/portage/conf/cascadingprofile.cc:83
+msgid "warning: ignoring parent %r of file %r"
+msgstr "Warnung: Ignoriere Parent %r der Datei %r"
 
 #: src/portage/conf/portagesettings.cc:1230
 #: src/portage/conf/portagesettings.cc:1260

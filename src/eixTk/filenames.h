@@ -20,6 +20,9 @@ std::string normalize_path(const char *path, bool resolve = true, bool want_slas
 /** Compare whether two (normalized) filenames are identical */
 bool same_filenames(const char *mask, const char *name, bool glob = false, bool resolve_mask = true);
 
+/** Compare whether (normalized) filename starts with mask */
+bool filename_starts_with(const char *mask, const char *name, bool resolve_mask);
+
 /** Return first match in a list of filenames/patterns. */
 inline std::vector<std::string>::const_iterator
 find_filenames(const std::vector<std::string>::const_iterator start,

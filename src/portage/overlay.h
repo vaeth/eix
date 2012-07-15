@@ -46,7 +46,7 @@ class RepoList : public std::vector<OverlayIdent> {
 
 		const char *get_path(const std::string &label);
 
-		RepoList::iterator find_filenames(const char *search, bool list_of_patterns = false, bool resolve_list = false);
+		RepoList::iterator find_filename(const char *search, bool parent_ok = false, bool resolve_mask = true);
 
 		RepoList::const_iterator second() const
 		{
