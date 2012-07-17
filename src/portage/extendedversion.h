@@ -44,7 +44,8 @@ class ExtendedVersion : public BasicVersion
 			RESTRICT_MIRROR         = 0x0040,
 			RESTRICT_PRIMARYURI     = 0x0080,
 			RESTRICT_BINDIST        = 0x0100,
-			RESTRICT_PARALLEL       = 0x0200;
+			RESTRICT_PARALLEL       = 0x0200,
+			RESTRICT_ALL            = 0x03FF;
 
 		typedef io::UChar Properties;
 		static const Properties // order according to frequency...
@@ -52,7 +53,8 @@ class ExtendedVersion : public BasicVersion
 			PROPERTIES_INTERACTIVE = 0x01,
 			PROPERTIES_LIVE        = 0x02,
 			PROPERTIES_VIRTUAL     = 0x04,
-			PROPERTIES_SET         = 0x08;
+			PROPERTIES_SET         = 0x08,
+			PROPERTIES_ALL         = 0x0F;
 
 		Restrict restrictFlags;
 		Properties propertiesFlags;

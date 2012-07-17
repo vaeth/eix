@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-15 12:20+0200\n"
+"POT-Creation-Date: 2012-07-17 20:00+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -5650,11 +5650,11 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:544
+#: src/output/formatstring-print.cc:446
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 
-#: src/output/formatstring-print.cc:550
+#: src/output/formatstring-print.cc:452
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 

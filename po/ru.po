@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-15 12:20+0200\n"
+"POT-Creation-Date: 2012-07-17 20:00+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -4737,11 +4737,11 @@ msgstr ""
 "\n"
 "Извините за неудобство и заранее спасибо!\n"
 
-#: src/output/formatstring-print.cc:544
+#: src/output/formatstring-print.cc:446
 msgid "Unknown property %r"
 msgstr "Неизвестное свойство %r"
 
-#: src/output/formatstring-print.cc:550
+#: src/output/formatstring-print.cc:452
 msgid "Property %r used outside version context"
 msgstr "Свойство %r использовано вне контекста версии"
 

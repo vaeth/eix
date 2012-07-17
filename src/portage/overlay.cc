@@ -12,7 +12,6 @@
 #include <eixTk/filenames.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
-#include <eixTk/stringutils.h>
 #include <eixTk/utils.h>
 
 #include <map>

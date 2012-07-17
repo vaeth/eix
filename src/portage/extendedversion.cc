@@ -30,14 +30,16 @@ const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_MIRROR,
 	ExtendedVersion::RESTRICT_PRIMARYURI,
 	ExtendedVersion::RESTRICT_BINDIST,
-	ExtendedVersion::RESTRICT_PARALLEL;
+	ExtendedVersion::RESTRICT_PARALLEL,
+	ExtendedVersion::RESTRICT_ALL;
 
 const ExtendedVersion::Properties
 	ExtendedVersion::PROPERTIES_NONE,
 	ExtendedVersion::PROPERTIES_INTERACTIVE,
 	ExtendedVersion::PROPERTIES_LIVE,
 	ExtendedVersion::PROPERTIES_VIRTUAL,
-	ExtendedVersion::PROPERTIES_SET;
+	ExtendedVersion::PROPERTIES_SET,
+	ExtendedVersion::PROPERTIES_ALL;
 
 const ExtendedVersion::HaveBinPkg
 	ExtendedVersion::HAVEBINPKG_UNKNOWN,
