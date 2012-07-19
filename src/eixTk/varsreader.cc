@@ -28,16 +28,17 @@
 
 /** Current input for FSM */
 #define INPUT (*(x))
+/** Switch to different state */
+#define CHSTATE(z) do { STATE = &VarsReader::z; return; } while(0)
+#define STOP do { STATE = NULLPTR; return; } while(0)
+#define ERROR do { retstate = false; STATE = NULLPTR; return; } while(0)
 /** Move to next input and check for end of buffer. */
-#define NEXT_INPUT do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(STOP); } while(0)
+#define NEXT_INPUT do { if(unlikely(++(x) == filebuffer_end)) STOP; } while(0)
 #define SKIP_SPACE do { while((INPUT == '\t') || (INPUT == ' ')) { NEXT_INPUT; } } while(0)
 #define NEXT_INPUT_EVAL do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(EVAL_READ); } while(0)
 #define INPUT_EOF (unlikely((x) == filebuffer_end))
 #define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) ++(x); } while(0)
 #define PREV_INPUT (--(x))
-/** Switch to different state */
-#define CHSTATE(z) do { \
-	STATE = (state_ ## z); return; } while(0)
 /** Check value-buffer for overrun and push c into the current value-buffer . */
 #define VALUE_APPEND(c) do { value.append(&(c), 1); } while(0)
 /** Reset value pointer */
@@ -109,10 +110,10 @@ VarsReader::ASSIGN_KEY_VALUE()
 		string errtext;
 		if(unlikely(!source(value, &errtext))) {
 			m_errtext = eix::format(_("%s: failed to source %r (%s)")) % file_name % value % errtext;
-			CHSTATE(ERROR);
+			ERROR;
 		}
 		if((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ) {
-			CHSTATE(STOP);
+			STOP;
 		}
 	}
 	else if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
@@ -121,7 +122,7 @@ VarsReader::ASSIGN_KEY_VALUE()
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= KEYWORDS_READ;
 			if(parse_flags & SLOT_READ) {
-				CHSTATE(STOP);
+				STOP;
 			}
 		}
 		else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0))
@@ -129,7 +130,7 @@ VarsReader::ASSIGN_KEY_VALUE()
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= SLOT_READ;
 			if(parse_flags & KEYWORDS_READ) {
-				CHSTATE(STOP);
+				STOP;
 			}
 		}
 	}
@@ -137,7 +138,7 @@ VarsReader::ASSIGN_KEY_VALUE()
 		(*vars)[string(key_begin, key_len)] = value;
 	}
 	if(INPUT_EOF) {
-		CHSTATE(STOP);
+		STOP;
 	}
 	CHSTATE(JUMP_NOISE);
 }
@@ -758,36 +759,10 @@ void VarsReader::resolveReference()
 bool
 VarsReader::runFsm()
 {
-	for(;;) {
-		switch(STATE) {
-			case state_JUMP_WHITESPACE: JUMP_WHITESPACE(); break;
-			case state_JUMP_NOISE: JUMP_NOISE(); break;
-			case state_JUMP_COMMENT: JUMP_COMMENT(); break;
-			case state_FIND_ASSIGNMENT: FIND_ASSIGNMENT(); break;
-			case state_EVAL_VALUE: EVAL_VALUE(); break;
-			case state_EVAL_READ: EVAL_READ(); break;
-			case state_ASSIGN_KEY_VALUE: ASSIGN_KEY_VALUE(); break;
-			case state_NOISE_DOUBLE_QUOTE: NOISE_DOUBLE_QUOTE(); break;
-			case state_NOISE_ESCAPE: NOISE_ESCAPE(); break;
-			case state_NOISE_SINGLE_QUOTE: NOISE_SINGLE_QUOTE(); break;
-			case state_STOP: return true;
-			case state_ERROR: return false;
-			case state_VALUE_SINGLE_QUOTE: VALUE_SINGLE_QUOTE(); break;
-			case state_VALUE_SINGLE_QUOTE_PORTAGE: VALUE_SINGLE_QUOTE_PORTAGE(); break;
-			case state_VALUE_DOUBLE_QUOTE: VALUE_DOUBLE_QUOTE(); break;
-			case state_VALUE_DOUBLE_QUOTE_PORTAGE: VALUE_DOUBLE_QUOTE_PORTAGE(); break;
-			case state_VALUE_WHITESPACE: VALUE_WHITESPACE(); break;
-			case state_VALUE_WHITESPACE_PORTAGE: VALUE_WHITESPACE_PORTAGE(); break;
-			case state_SINGLE_QUOTE_ESCAPE: SINGLE_QUOTE_ESCAPE(); break;
-			case state_SINGLE_QUOTE_ESCAPE_PORTAGE: SINGLE_QUOTE_ESCAPE_PORTAGE(); break;
-			case state_DOUBLE_QUOTE_ESCAPE: DOUBLE_QUOTE_ESCAPE(); break;
-			case state_DOUBLE_QUOTE_ESCAPE_PORTAGE: DOUBLE_QUOTE_ESCAPE_PORTAGE(); break;
-			case state_WHITESPACE_ESCAPE: WHITESPACE_ESCAPE(); break;
-			case state_WHITESPACE_ESCAPE_PORTAGE: WHITESPACE_ESCAPE_PORTAGE(); break;
-			default: break;
-		}
+	while(STATE != NULLPTR) {
+		(this->*STATE)();
 	}
-	return true;
+	return retstate;
 }
 
 /** Init the FSM to parse a file.
@@ -797,7 +772,8 @@ VarsReader::runFsm()
 void
 VarsReader::initFsm()
 {
-	STATE = state_JUMP_WHITESPACE;
+	STATE = &VarsReader::JUMP_WHITESPACE;
+	retstate = true;
 	sourcecmd = false;
 	x = filebuffer;
 	key_len = 0;

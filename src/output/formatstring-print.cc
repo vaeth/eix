@@ -606,7 +606,7 @@ void
 PrintFormat::colon_pkg_installedversions(Package *package, const string &after_colon, bool only_marked) const
 {
 	version_variables->isinst = true;
-	get_installed(package, parse_variable(after_colon), true);
+	get_installed(package, parse_variable(after_colon), only_marked);
 	varcache[after_colon].in_use = false;
 }
 

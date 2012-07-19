@@ -10,6 +10,7 @@
 #ifndef EIX__FORMATSTRING_H__
 #define EIX__FORMATSTRING_H__ 1
 
+#include <config.h>
 #include <eixTk/likely.h>
 #include <eixTk/null.h>
 #include <portage/basicversion.h>
@@ -294,7 +295,7 @@ class PrintFormat {
 		std::string PKG_SLOTTED(Package *package) const;
 		std::string PKG_HAVECOLLIUSE(Package *package) const;
 		std::string PKG_COLLIUSE(Package *package) const;
-		const ExtendedVersion *ver_version() const;
+		const ExtendedVersion *ver_version() const ATTRIBUTE_PURE;
 		std::string VER_FIRST(Package *package) const;
 		std::string VER_LAST(Package *package) const;
 		std::string VER_SLOTFIRST(Package *package) const;
@@ -355,11 +356,11 @@ class PrintFormat {
 		std::string VER_RDEPEND(Package *package) const;
 		std::string VER_PDEPENDS(Package *package) const;
 		std::string VER_PDEPEND(Package *package) const;
-		const MaskFlags *ver_maskflags() const;
+		const MaskFlags *ver_maskflags() const ATTRIBUTE_PURE;
 		std::string VER_ISHARDMASKED(Package *package) const;
 		std::string VER_ISPROFILEMASKED(Package *package) const;
 		std::string VER_ISMASKED(Package *package) const;
-		const KeywordsFlags *ver_keywordsflags() const;
+		const KeywordsFlags *ver_keywordsflags() const ATTRIBUTE_PURE;
 		std::string VER_ISSTABLE(Package *package) const;
 		std::string VER_ISUNSTABLE(Package *package) const;
 		std::string VER_ISALIENSTABLE(Package *package) const;

@@ -12,7 +12,8 @@
 	- Support profile-format=portage-2, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=426256
 	- Introduce DEFAULT_ARCH and ./configure --with-default-arch
-	- Use function pointers instead of case cascade for FORMAT execution.
+	- Use function pointers instead of case cascades
+	  for FORMAT execution and for file parsing.
 	  This is cleaner and might speed up things.
 	- manpage: improve description of masked-packages
 	- varsreader: Fix hang for DOS line ends, see

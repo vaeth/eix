@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-19 20:40+0200\n"
+"POT-Creation-Date: 2012-07-19 21:15+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -2098,23 +2098,23 @@ msgstr "Ошибка чтения %s: %s"
 msgid "Nesting level too deep in %r"
 msgstr "Уровень гнездования слишком глубок в %r"
 
-#: src/eixTk/varsreader.cc:111
+#: src/eixTk/varsreader.cc:112
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: ошибка взятия %r в качестве источника (%s)"
 
-#: src/eixTk/varsreader.cc:815
+#: src/eixTk/varsreader.cc:791
 msgid "Can't read file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:823
+#: src/eixTk/varsreader.cc:799
 msgid "Can't stat file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:835
+#: src/eixTk/varsreader.cc:811
 msgid "Can't map file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:891
+#: src/eixTk/varsreader.cc:867
 msgid "Nesting level too deep when reading %r"
 msgstr "Уровень гнездования слишком глубок при чтении %r"
 

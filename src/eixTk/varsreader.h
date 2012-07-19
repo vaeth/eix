@@ -96,32 +96,8 @@ class VarsReader {
 
 	private:
 		/** Kepper of the holy state. */
-		enum States {
-			state_STOP,
-			state_ERROR,
-			state_JUMP_NOISE,
-			state_JUMP_COMMENT,
-			state_JUMP_WHITESPACE,
-			state_FIND_ASSIGNMENT,
-			state_EVAL_VALUE,
-			state_EVAL_READ,
-			state_ASSIGN_KEY_VALUE,
-			state_VALUE_SINGLE_QUOTE,
-			state_VALUE_SINGLE_QUOTE_PORTAGE,
-			state_VALUE_DOUBLE_QUOTE,
-			state_VALUE_DOUBLE_QUOTE_PORTAGE,
-			state_VALUE_WHITESPACE,
-			state_VALUE_WHITESPACE_PORTAGE,
-			state_SINGLE_QUOTE_ESCAPE,
-			state_SINGLE_QUOTE_ESCAPE_PORTAGE,
-			state_DOUBLE_QUOTE_ESCAPE,
-			state_DOUBLE_QUOTE_ESCAPE_PORTAGE,
-			state_WHITESPACE_ESCAPE,
-			state_WHITESPACE_ESCAPE_PORTAGE,
-			state_NOISE_ESCAPE,
-			state_NOISE_SINGLE_QUOTE,
-			state_NOISE_DOUBLE_QUOTE
-		} STATE;
+		void (VarsReader::*STATE)();
+		bool retstate;
 
 		/** Eats most of the noise between declarations.
 		 * Read until '\n' '#' '\\' '\'' '"'
