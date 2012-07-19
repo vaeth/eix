@@ -480,6 +480,7 @@ PrintFormat::COLON_VER_DATE(Package *package, const string &after_colon) const
 		}
 		return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
 	}
+	return emptystring;
 }
 
 void
