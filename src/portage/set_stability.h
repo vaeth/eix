@@ -61,7 +61,7 @@ class SetStability {
 		void set_stability(Package &package) const
 		{ set_stability(m_local, package); }
 
-		void calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsFlags &keyflags, const Version *v, Package *p) const;
+		void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const;
 
 		void set_stability(Category &category) const;
 

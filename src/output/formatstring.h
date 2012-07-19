@@ -28,6 +28,8 @@ typedef unsigned char FormatTypeFlags;
 
 class DBHeader;
 class EixRc;
+class MaskFlags;
+class KeywordsFlags;
 class Package;
 class PortageSettings;
 class VarDbPkg;
@@ -235,22 +237,26 @@ class PrintFormat {
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const;
 		std::string get_pkg_property(Package *package, const std::string &name) const;
 
-		// It follows a list of indirect functions called in get_pkg_property()
+		// It follows a list of indirect functions called in get_pkg_property():
+		// Functions with capital letters are parser destinations; other functions
+		// here are sort of "macros" used by several other "capital letter" functions.
+
 		std::string COLON_VER_DATE(Package *package, const std::string &after_colon) const;
-		void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string &after_colon, bool only_marked) const;
+		void colon_pkg_availableversions(Package *package, const std::string &after_colon, bool only_marked) const;
 		void COLON_PKG_AVAILABLEVERSIONS(Package *package, const std::string &after_colon) const;
 		void COLON_PKG_MARKEDVERSIONS(Package *package, const std::string &after_colon) const;
-		void COLON_PKG_BESTVERSION(Package *package, const std::string &after_colon, bool allow_unstable) const;
+		void colon_pkg_bestversion(Package *package, const std::string &after_colon, bool allow_unstable) const;
 		void COLON_PKG_BESTVERSION(Package *package, const std::string &after_colon) const;
 		void COLON_PKG_BESTVERSIONS(Package *package, const std::string &after_colon) const;
-		void COLON_PKG_BESTSLOTVERSIONS(Package *package, const std::string &after_colon, bool allow_unstable) const;
+		void colon_pkg_bestslotversions(Package *package, const std::string &after_colon, bool allow_unstable) const;
 		void COLON_PKG_BESTSLOTVERSIONS(Package *package, const std::string &after_colon) const;
 		void COLON_PKG_BESTSLOTVERSIONSS(Package *package, const std::string &after_colon) const;
-		void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string &after_colon, bool allow_unstable) const;
+		void colon_pkg_bestslotupgradeversions(Package *package, const std::string &after_colon, bool allow_unstable) const;
 		void COLON_PKG_BESTSLOTUPGRADEVERSIONS(Package *package, const std::string &after_colon) const;
 		void COLON_PKG_BESTSLOTUPGRADEVERSIONSS(Package *package, const std::string &after_colon) const;
-		void COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const std::string &after_colon) const;
+		void colon_pkg_installedversions(Package *package, const std::string &after_colon, bool only_marked) const;
 		void COLON_PKG_INSTALLEDVERSIONS(Package *package, const std::string &after_colon) const;
+		void COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const std::string &after_colon) const;
 		std::string PKG_INSTALLED(Package *package) const;
 		std::string PKG_VERSIONLINES(Package *package) const;
 		std::string PKG_SLOTSORTED(Package *package) const;
@@ -269,12 +275,15 @@ class PrintFormat {
 		std::string PKG_WORLD_SETS(Package *package) const;
 		std::string PKG_SETNAMES(Package *package) const;
 		std::string PKG_ALLSETNAMES(Package *package) const;
+		std::string pkg_upgrade(Package *package, bool only_installed, bool test_slots) const;
 		std::string PKG_UPGRADE(Package *package) const;
 		std::string PKG_UPGRADEORINSTALL(Package *package) const;
 		std::string PKG_BESTUPGRADE(Package *package) const;
 		std::string PKG_BESTUPGRADEORINSTALL(Package *package) const;
+		std::string pkg_downgrade(Package *package, bool test_slots) const;
 		std::string PKG_DOWNGRADE(Package *package) const;
 		std::string PKG_BESTDOWNGRADE(Package *package) const;
+		std::string pkg_recommend(Package *package, bool only_installed, bool test_slots) const;
 		std::string PKG_RECOMMEND(Package *package) const;
 		std::string PKG_RECOMMENDORINSTALL(Package *package) const;
 		std::string PKG_BESTRECOMMEND(Package *package) const;
@@ -285,29 +294,29 @@ class PrintFormat {
 		std::string PKG_SLOTTED(Package *package) const;
 		std::string PKG_HAVECOLLIUSE(Package *package) const;
 		std::string PKG_COLLIUSE(Package *package) const;
+		const ExtendedVersion *ver_version() const;
 		std::string VER_FIRST(Package *package) const;
 		std::string VER_LAST(Package *package) const;
 		std::string VER_SLOTFIRST(Package *package) const;
 		std::string VER_SLOTLAST(Package *package) const;
 		std::string VER_ONESLOT(Package *package) const;
-		std::string VER_FULLSLOT(Package *package, bool checkonly) const;
+		const ExtendedVersion *ver_versionslot(Package *package) const;
 		std::string VER_FULLSLOT(Package *package) const;
 		std::string VER_ISFULLSLOT(Package *package) const;
-		std::string VER_SLOT(Package *package, bool checkonly) const;
 		std::string VER_SLOT(Package *package) const;
 		std::string VER_ISSLOT(Package *package) const;
-		std::string VER_SUBSLOT(Package *package, bool checkonly) const;
 		std::string VER_SUBSLOT(Package *package) const;
 		std::string VER_ISSUBSLOT(Package *package) const;
 		std::string VER_VERSION(Package *package) const;
 		std::string VER_PLAINVERSION(Package *package) const;
 		std::string VER_REVISION(Package *package) const;
-		std::string VER_OVERLAYNUM(Package *package, bool getnum) const;
+		std::string ver_overlay(Package *package, bool getnum) const;
 		std::string VER_OVERLAYNUM(Package *package) const;
 		std::string VER_OVERLAYVER(Package *package) const;
 		std::string VER_VERSIONKEYWORDSS(Package *package) const;
 		std::string VER_VERSIONKEYWORDS(Package *package) const;
 		std::string VER_VERSIONEKEYWORDS(Package *package) const;
+		std::string ver_isbestupgrade(Package *package, bool check_slots, bool allow_unstable) const;
 		std::string VER_ISBESTUPGRADESLOT(Package *package) const;
 		std::string VER_ISBESTUPGRADESLOTS(Package *package) const;
 		std::string VER_ISBESTUPGRADE(Package *package) const;
@@ -317,7 +326,8 @@ class PrintFormat {
 		std::string VER_HAVEUSE(Package *package) const;
 		std::string VER_USE(Package *package) const;
 		std::string VER_ISBINARY(Package *package) const;
-		std::string VER_RESTRICT(Package *package, ExtendedVersion::Restrict r, ExtendedVersion::Properties p) const;
+		const ExtendedVersion *ver_restrict(Package *package) const;
+		std::string ver_restrict(Package *package, ExtendedVersion::Restrict r) const;
 		std::string VER_RESTRICT(Package *package) const;
 		std::string VER_RESTRICTFETCH(Package *package) const;
 		std::string VER_RESTRICTMIRROR(Package *package) const;
@@ -329,6 +339,7 @@ class PrintFormat {
 		std::string VER_RESTRICTINSTALLSOURCES(Package *package) const;
 		std::string VER_RESTRICTBINDIST(Package *package) const;
 		std::string VER_RESTRICTPARALLEL(Package *package) const;
+		std::string ver_properties(Package *package, ExtendedVersion::Properties p) const;
 		std::string VER_PROPERTIES(Package *package) const;
 		std::string VER_PROPERTIESINTERACTIVE(Package *package) const;
 		std::string VER_PROPERTIESLIVE(Package *package) const;
@@ -344,9 +355,11 @@ class PrintFormat {
 		std::string VER_RDEPEND(Package *package) const;
 		std::string VER_PDEPENDS(Package *package) const;
 		std::string VER_PDEPEND(Package *package) const;
+		const MaskFlags *ver_maskflags() const;
 		std::string VER_ISHARDMASKED(Package *package) const;
 		std::string VER_ISPROFILEMASKED(Package *package) const;
 		std::string VER_ISMASKED(Package *package) const;
+		const KeywordsFlags *ver_keywordsflags() const;
 		std::string VER_ISSTABLE(Package *package) const;
 		std::string VER_ISUNSTABLE(Package *package) const;
 		std::string VER_ISALIENSTABLE(Package *package) const;
@@ -355,6 +368,7 @@ class PrintFormat {
 		std::string VER_ISMINUSKEYWORD(Package *package) const;
 		std::string VER_ISMINUSUNSTABLE(Package *package) const;
 		std::string VER_ISMINUSASTERISK(Package *package) const;
+		bool ver_wasflags(Package *package, MaskFlags *maskflags, KeywordsFlags *keyflags) const;
 		std::string VER_WASHARDMASKED(Package *package) const;
 		std::string VER_WASPROFILEMASKED(Package *package) const;
 		std::string VER_WASMASKED(Package *package) const;

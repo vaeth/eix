@@ -10,6 +10,7 @@
 #include <config.h>
 #include "set_stability.h"
 #include <eixTk/likely.h>
+#include <eixTk/null.h>
 #include <portage/conf/cascadingprofile.h>
 #include <portage/conf/portagesettings.h>
 #include <portage/keywords.h>
@@ -72,23 +73,31 @@ SetStability::set_stability(bool get_local, Package &package) const
 }
 
 void
-SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsFlags &keyflags, const Version *v, Package *p) const
+SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const
 {
 #ifndef ALWAYS_RECALCULATE_STABILITY
 	// Can we avoid the calculation by getting the saved flags?
 	Version::SavedMaskIndex mi(mask_index(get_local));
 	Version::SavedKeyIndex ki(keyword_index(get_local));
 	if(likely(v->have_saved_masks[mi] && v->have_saved_keywords[ki])) {
-		maskflags = v->saved_masks[mi];
-		keyflags  = v->saved_keywords[ki];
+		if(maskflags != NULLPTR) {
+			*maskflags = v->saved_masks[mi];
+		}
+		if(keyflags != NULLPTR) {
+			*keyflags = v->saved_keywords[ki];
+		}
 		return;
 	}
 	// No, the flags are not saved yet, we must calculate them:
 #endif
 	PackageSave saved(p);
 	set_stability(get_local, *p);
-	maskflags = v->maskflags;
-	keyflags  = v->keyflags;
+	if(maskflags != NULLPTR) {
+		*maskflags = v->maskflags;
+	}
+	if(keyflags != NULLPTR) {
+		*keyflags = v->keyflags;
+	}
 	saved.restore(p);
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
@@ -100,7 +109,8 @@ SetStability::calc_version_flags(bool get_local, MaskFlags &maskflags, KeywordsF
 	 * So we test at least at run-time that for the current version
 	 * the correct index with the correct result was set. */
 	if(!(v->have_saved_masks[mi]) || !(v->have_saved_keywords[ki]) ||
-		((v->saved_masks[mi]) != maskflags) || ((v->saved_keywords[ki]) != keyflags)) {
+		((maskflags != NULLPTR) && (v->saved_masks[mi]) != *maskflags) ||
+		((keyflags != NULLPTR) && ((v->saved_keywords[ki]) != *keyflags))) {
 		cerr << _("internal error: SetStability calculates wrong index") << endl;
 		exit(EXIT_FAILURE);
 	}

@@ -197,7 +197,7 @@ PrintXml::package(Package *pkg)
 		KeywordsFlags currkey(ver->keyflags);
 		MaskFlags wasmask;
 		KeywordsFlags waskey;
-		stability->calc_version_flags(false, wasmask, waskey, *ver, pkg);
+		stability->calc_version_flags(false, &wasmask, &waskey, *ver, pkg);
 
 		vector<string> mask_text, unmask_text;
 		if(wasmask.isHardMasked()) {
