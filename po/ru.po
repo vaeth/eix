@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-07-19 21:15+0200\n"
+"POT-Creation-Date: 2012-07-20 13:51+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -901,245 +901,245 @@ msgstr ""
 "\"\n"
 "можно просто использовать \"b\"."
 
-#: src/eix-test-obsolete.sh:145
+#: src/eix-test-obsolete.sh:149
 #, sh-format
 msgid "... considered as ${z}"
 msgstr "... считается как ${z} "
 
-#: src/eix-test-obsolete.sh:207
+#: src/eix-test-obsolete.sh:217
 #, fuzzy, sh-format
 msgid "Skipping check of entries in ${rump}*"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}*"
 
-#: src/eix-test-obsolete.sh:212
+#: src/eix-test-obsolete.sh:222
 #, fuzzy, sh-format
 msgid "No redundant entries in any ${rump}*"
 msgstr "Нет  лишних  записей в ${rump}*"
 
-#: src/eix-test-obsolete.sh:213
+#: src/eix-test-obsolete.sh:223
 #, fuzzy, sh-format
 msgid "Redundant in some ${rump}*:"
 msgstr "Лишнее в ${rump}*:"
 
-#: src/eix-test-obsolete.sh:217
+#: src/eix-test-obsolete.sh:227
 #, sh-format
 msgid "No  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Нет лишних записей в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:218
+#: src/eix-test-obsolete.sh:228
 #, sh-format
 msgid "Redundant in ${rump}{,accept_}keywords:"
 msgstr "Лишнее в ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:220
+#: src/eix-test-obsolete.sh:230
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}{,accept_}keywords"
 msgstr "Пропускаю проверку: лишние записи в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:222
+#: src/eix-test-obsolete.sh:232
 #, sh-format
 msgid "No uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Нет удалённых записей в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:223
+#: src/eix-test-obsolete.sh:233
 #, sh-format
 msgid "Not installed but in ${rump}{,accept_}keywords:"
 msgstr "Не установлено, но в ${rump}{,accept_}keywords:"
 
-#: src/eix-test-obsolete.sh:225
+#: src/eix-test-obsolete.sh:235
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}{,accept_}keywords"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}{,accept_}keywords"
 
-#: src/eix-test-obsolete.sh:228
+#: src/eix-test-obsolete.sh:238
 #, sh-format
 msgid "No  redundant  entries in ${rump}mask"
 msgstr "Нет лишних записей в ${rump}mask"
 
-#: src/eix-test-obsolete.sh:229
+#: src/eix-test-obsolete.sh:239
 #, sh-format
 msgid "Redundant in ${rump}mask:"
 msgstr "Лишнее в ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:230
+#: src/eix-test-obsolete.sh:240
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}mask"
 msgstr "Пропускаю проверку: лишние записи в ${rump}mask"
 
-#: src/eix-test-obsolete.sh:232
+#: src/eix-test-obsolete.sh:242
 #, sh-format
 msgid "No uninstalled entries in ${rump}mask"
 msgstr "Нет удалённых записей в ${rump}mask"
 
-#: src/eix-test-obsolete.sh:233
+#: src/eix-test-obsolete.sh:243
 #, sh-format
 msgid "Not installed but in ${rump}mask:"
 msgstr "Не установлено, но в ${rump}mask:"
 
-#: src/eix-test-obsolete.sh:234
+#: src/eix-test-obsolete.sh:244
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}mask"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}mask"
 
-#: src/eix-test-obsolete.sh:237
+#: src/eix-test-obsolete.sh:247
 #, sh-format
 msgid "No  redundant  entries in ${rump}unmask"
 msgstr "Нет лишних записей в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:238
+#: src/eix-test-obsolete.sh:248
 #, sh-format
 msgid "Redundant in ${rump}unmask:"
 msgstr "Лишнее в ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:239
+#: src/eix-test-obsolete.sh:249
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}unmask"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:241
+#: src/eix-test-obsolete.sh:251
 #, sh-format
 msgid "No uninstalled entries in ${rump}unmask"
 msgstr "Нет удалённых записей в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:242
+#: src/eix-test-obsolete.sh:252
 #, sh-format
 msgid "Not installed but in ${rump}unmask:"
 msgstr "Не удалено, но в ${rump}unmask:"
 
-#: src/eix-test-obsolete.sh:243
+#: src/eix-test-obsolete.sh:253
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}unmask"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}unmask"
 
-#: src/eix-test-obsolete.sh:246
+#: src/eix-test-obsolete.sh:256
 #, sh-format
 msgid "No  redundant  entries in ${rump}use"
 msgstr "Нет  лишних  записей в ${rump}use"
 
-#: src/eix-test-obsolete.sh:247
+#: src/eix-test-obsolete.sh:257
 #, sh-format
 msgid "Redundant in ${rump}use:"
 msgstr "Лишнее в ${rump}use:"
 
-#: src/eix-test-obsolete.sh:248
+#: src/eix-test-obsolete.sh:258
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}use"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}use"
 
-#: src/eix-test-obsolete.sh:250
+#: src/eix-test-obsolete.sh:260
 #, sh-format
 msgid "No uninstalled entries in ${rump}use"
 msgstr "Нет удалённых записей в ${rump}use"
 
-#: src/eix-test-obsolete.sh:251
+#: src/eix-test-obsolete.sh:261
 #, sh-format
 msgid "Not installed but in ${rump}use:"
 msgstr "Не удалено, но в ${rump}use:"
 
-#: src/eix-test-obsolete.sh:252
+#: src/eix-test-obsolete.sh:262
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}use"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}use"
 
-#: src/eix-test-obsolete.sh:255
+#: src/eix-test-obsolete.sh:265
 #, sh-format
 msgid "No  redundant  entries in ${rump}env"
 msgstr "Нет  лишних  записей в ${rump}env"
 
-#: src/eix-test-obsolete.sh:256
+#: src/eix-test-obsolete.sh:266
 #, sh-format
 msgid "Redundant in ${rump}env:"
 msgstr "Лишнее в ${rump}env:"
 
-#: src/eix-test-obsolete.sh:257
+#: src/eix-test-obsolete.sh:267
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}env"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}env"
 
-#: src/eix-test-obsolete.sh:259
+#: src/eix-test-obsolete.sh:269
 #, sh-format
 msgid "No uninstalled entries in ${rump}env"
 msgstr "Нет удалённых записей в ${rump}env"
 
-#: src/eix-test-obsolete.sh:260
+#: src/eix-test-obsolete.sh:270
 #, sh-format
 msgid "Not installed but in ${rump}env:"
 msgstr "Не удалено, но в ${rump}env:"
 
-#: src/eix-test-obsolete.sh:261
+#: src/eix-test-obsolete.sh:271
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}env"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}env"
 
-#: src/eix-test-obsolete.sh:264
+#: src/eix-test-obsolete.sh:274
 #, sh-format
 msgid "No  redundant  entries in ${rump}license"
 msgstr "Нет  лишних  записей в ${rump}license"
 
-#: src/eix-test-obsolete.sh:265
+#: src/eix-test-obsolete.sh:275
 #, sh-format
 msgid "Redundant in ${rump}license:"
 msgstr "Лишнее в ${rump}license:"
 
-#: src/eix-test-obsolete.sh:266
+#: src/eix-test-obsolete.sh:276
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}license"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}license"
 
-#: src/eix-test-obsolete.sh:268
+#: src/eix-test-obsolete.sh:278
 #, sh-format
 msgid "No uninstalled entries in ${rump}license"
 msgstr "Нет удалённых записей в ${rump}license"
 
-#: src/eix-test-obsolete.sh:269
+#: src/eix-test-obsolete.sh:279
 #, sh-format
 msgid "Not installed but in ${rump}license:"
 msgstr "Не удалено, но в ${rump}license:"
 
-#: src/eix-test-obsolete.sh:270
+#: src/eix-test-obsolete.sh:280
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}license"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}license"
 
-#: src/eix-test-obsolete.sh:273
+#: src/eix-test-obsolete.sh:283
 #, sh-format
 msgid "No  redundant  entries in ${rump}cflags"
 msgstr "Нет  лишних  записей в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:274
+#: src/eix-test-obsolete.sh:284
 #, sh-format
 msgid "Redundant in ${rump}cflags:"
 msgstr "Лишнее в ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:275
+#: src/eix-test-obsolete.sh:285
 #, sh-format
 msgid "Skipping check:  redundant  entries in ${rump}cflags"
 msgstr "Пропускаю проверку:  лишние  записи в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:277
+#: src/eix-test-obsolete.sh:287
 #, sh-format
 msgid "No uninstalled entries in ${rump}cflags"
 msgstr "Нет удалённых записей в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:278
+#: src/eix-test-obsolete.sh:288
 #, sh-format
 msgid "Not installed but in ${rump}cflags:"
 msgstr "Не удалено, но в ${rump}cflags:"
 
-#: src/eix-test-obsolete.sh:279
+#: src/eix-test-obsolete.sh:289
 #, sh-format
 msgid "Skipping check: uninstalled entries in ${rump}cflags"
 msgstr "Пропускаю проверку: удалённые записи в ${rump}cflags"
 
-#: src/eix-test-obsolete.sh:283
+#: src/eix-test-obsolete.sh:293
 msgid "All installed versions of packages are in the database."
 msgstr "Все установленные пакеты присутствуют в базе данных."
 
-#: src/eix-test-obsolete.sh:285
+#: src/eix-test-obsolete.sh:295
 msgid "Installed packages with a version not in the database (or masked):"
 msgstr "Установленные пакеты с версией не в базе данных (или замаскированной):"
 
-#: src/eix-test-obsolete.sh:286
+#: src/eix-test-obsolete.sh:296
 msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 

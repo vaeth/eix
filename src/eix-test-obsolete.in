@@ -115,13 +115,17 @@ AllFalse() {
 	return 0
 }
 
+# Set all variables listed in set_${1} to "false"
+SetFalse() {
+	eval "for c in \${set_${1}}
+	do	eval export \${c}=false
+	done"
+}
 
 # Set all variables listed in set_* to "false" except for those in set_${1}
 FalseExcept() {
 	for s in ${sets}
-	do	[ "${s}" = "${1}" ] || eval "for c in \${set_${s}}
-		do	eval export \${c}=false
-		done"
+	do	[ "${s}" = "${1}" ] || SetFalse ${s}
 	done
 }
 
@@ -159,6 +163,12 @@ Check() (
 	FalseExcept ${1}
 	eval "shift
 	Output \"\${1}\" \"\${2}\" \${set_${1}}"
+)
+
+OutputExcept() (
+	SetFalse ${1}
+	shift
+	Output "${@}"
 )
 
 ReadVar rump PORTAGE_CONFIGROOT
@@ -208,7 +218,7 @@ EchoSkip  "`eval_gettext 'Skipping check of entries in ${rump}*'`"
 elif ${quickmode}
 then
 Statusline 'package.*'
-Output \
+OutputExcept nonexistent \
 	"`eval_gettext 'No redundant entries in any ${rump}*'`" \
 	"`eval_gettext 'Redundant in some ${rump}*:'`"
 else

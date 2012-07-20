@@ -627,7 +627,7 @@ PrintFormat::COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const string &a
 string
 PrintFormat::PKG_INSTALLED(Package *package) const
 {
-	if(vardb) {
+	if(likely(vardb != NULLPTR)) {
 		vector<InstVersion> *vec(vardb->getInstalledVector(*package));
 		if((vec != NULLPTR) && (likely(!(vec->empty())))) {
 			return one;
@@ -660,13 +660,13 @@ PrintFormat::PKG_COLOR(Package *package ATTRIBUTE_UNUSED) const
 string
 PrintFormat::PKG_HAVEBEST(Package *package) const
 {
-	return (package->best(false) ? emptystring : one);
+	return ((package->best(false) == NULLPTR) ? emptystring : one);
 }
 
 string
 PrintFormat::PKG_HAVEBESTS(Package *package) const
 {
-	return (package->best(true) ? emptystring : one);
+	return ((package->best(true) == NULLPTR) ? emptystring : one);
 }
 
 string
@@ -707,7 +707,7 @@ PrintFormat::PKG_BINARY(Package *package) const
 			return one;
 		}
 	}
-	if(unlikely(vardb != NULLPTR)) {
+	if(likely(vardb != NULLPTR)) {
 		vector<InstVersion> *vec(vardb->getInstalledVector(*package));
 		if(vec != NULLPTR) {
 			for(vector<InstVersion>::iterator it(vec->begin());
