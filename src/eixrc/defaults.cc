@@ -631,7 +631,7 @@ AddOption(STRING, "MATCH_FIELD_LICENSE",
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for license."));
 
 AddOption(STRING, "MATCH_FIELD_DEPS",
-	"[<>=!()]", _(
+	"[<>=!]", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is a regular expression used in DEFAULT_MATCH_FIELD for license."));
 

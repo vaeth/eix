@@ -18,6 +18,8 @@
 	- manpage: improve description of masked-packages
 	- varsreader: Fix hang for DOS line ends, see
 	  http://forums.gentoo.org/viewtopic-t-929536.html
+	- Do not let (...) automagically choose the dep search, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=427644
 
 *eix-0.26.0
 	Артём Воротников <vorot93 at yandex.ru>:
