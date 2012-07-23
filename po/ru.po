@@ -909,17 +909,17 @@ msgstr "... считается как ${z} "
 #: src/eix-test-obsolete.sh:217
 #, fuzzy, sh-format
 msgid "Skipping check of entries in ${rump}*"
-msgstr "Пропускаю проверку:  лишние  записи в ${rump}*"
+msgstr "Пропускаю проверку: записи в ${rump}*"
 
 #: src/eix-test-obsolete.sh:222
 #, fuzzy, sh-format
 msgid "No redundant entries in any ${rump}*"
-msgstr "Нет  лишних  записей в ${rump}*"
+msgstr "Нет  лишних  записей в любой ${rump}*"
 
 #: src/eix-test-obsolete.sh:223
 #, fuzzy, sh-format
 msgid "Redundant in some ${rump}*:"
-msgstr "Лишнее в ${rump}*:"
+msgstr "Лишнее в некотором ${rump}*:"
 
 #: src/eix-test-obsolete.sh:227
 #, sh-format
