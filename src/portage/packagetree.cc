@@ -7,36 +7,40 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "packagetree.h"
-
-#include <database/types.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/package.h>
-
 #include <string>
+#include <utility>
 #include <vector>
 
-using namespace std;
+#include "database/types.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
+
+using std::pair;
+using std::string;
+using std::vector;
 
 Category::iterator
 Category::find(const std::string &pkg_name)
 {
-	for(iterator i(begin()); likely(i != end()); ++i) {
+	iterator i(begin());
+	for(; likely(i != end()); ++i) {
 		if(unlikely(i->name == pkg_name))
 			return i;
 	}
-	return end();
+	return i;
 }
 
 Category::const_iterator
 Category::find(const std::string &pkg_name) const
 {
-	for(const_iterator i(begin()); likely(i != end()); ++i) {
+	const_iterator i(begin());
+	for(; likely(i != end()); ++i) {
 		if(unlikely(i->name == pkg_name))
 			return i;
 	}
-	return end();
+	return i;
 }
 
 #if 0
@@ -73,8 +77,8 @@ PackageTree::find(const string &cat_name) const
 Category &
 PackageTree::insert(const string &cat_name)
 {
-	pair<Categories::iterator,bool> n(Categories::insert(Categories::value_type(cat_name, NULLPTR)));
-	Category *&catpoint = (n.first)->second;
+	pair<Categories::iterator, bool> n(Categories::insert(Categories::value_type(cat_name, NULLPTR)));
+	Category *&catpoint((n.first)->second);
 	if(n.second) {
 		return *(catpoint = new Category);
 	}

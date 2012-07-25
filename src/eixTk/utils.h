@@ -7,15 +7,16 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__UTILS_H__
-#define EIX__UTILS_H__ 1
+#ifndef SRC_EIXTK_UTILS_H_
+#define SRC_EIXTK_UTILS_H_ 1
 
 #include <config.h>
-#include <eixTk/null.h>
 
 #include <map>
 #include <string>
 #include <vector>
+
+#include "eixTk/null.h"
 
 /** scandir which even works on poor man's systems.
     We keep the original type for the callback function
@@ -40,16 +41,14 @@ bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_e
  * @param no_hidden ignore hidden files
  * @param full_path return full pathnames
  * @return true if everything is ok. Nonexisting directory is not ok. */
-bool pushback_files(const std::string &dir_path, std::vector<std::string> &into, const char *exclude[] = NULLPTR, short only_files = 1, bool no_hidden = true, bool full_path = true);
+bool pushback_files(const std::string &dir_path, std::vector<std::string> &into, const char *exclude[] = NULLPTR, unsigned char only_files = 1, bool no_hidden = true, bool full_path = true);
 
 
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
-void join_map(std::map<std::string,std::string> *append_to, std::map<std::string,std::string>::iterator it, std::map<std::string,std::string>::iterator it_end);
+void join_map(std::map<std::string, std::string> *append_to, std::map<std::string, std::string>::iterator it, std::map<std::string, std::string>::iterator it_end);
 
 /* Print version of eix to stdout. */
 void dump_version() ATTRIBUTE_NORETURN;
 
-
-
-#endif /* EIX__UTILS_H__ */
+#endif  // SRC_EIXTK_UTILS_H_

@@ -7,16 +7,16 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__CASCADINGPROFILE_H__
-#define EIX__CASCADINGPROFILE_H__ 1
-
-#include <eixTk/null.h>
-#include <portage/mask.h>
-#include <portage/mask_list.h>
-#include <portage/overlay.h>
+#ifndef SRC_PORTAGE_CONF_CASCADINGPROFILE_H_
+#define SRC_PORTAGE_CONF_CASCADINGPROFILE_H_ 1
 
 #include <string>
 #include <vector>
+
+#include "eixTk/null.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
+#include "portage/overlay.h"
 
 class Package;
 class PortageSettings;
@@ -60,7 +60,6 @@ class CascadingProfile {
 			p_package_keywords, p_package_accept_keywords;
 
 	private:
-
 		/** Add all files from profile and its parents to m_profile_files. */
 		bool addProfile(const char *profile, unsigned int depth = 0);
 
@@ -91,6 +90,7 @@ class CascadingProfile {
 		 * Populate p_package_accept_keywords.
 		 * @return true if data was changed */
 		bool readPackageAcceptKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+
 	public:
 		CascadingProfile(PortageSettings *portagesettings, bool init_world) :
 			use_world(false), finalized(false),
@@ -128,4 +128,4 @@ class CascadingProfile {
 };
 
 
-#endif /* EIX__CASCADINGPROFILE_H__ */
+#endif  // SRC_PORTAGE_CONF_CASCADINGPROFILE_H_

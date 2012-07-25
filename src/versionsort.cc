@@ -8,27 +8,33 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <main/main.h>
-#include <portage/basicversion.h>
+
+#include <cstdlib>
 
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <cstdlib>
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "main/main.h"
+#include "portage/basicversion.h"
 
-using namespace std;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 static void failparse(const char *v) ATTRIBUTE_NORETURN;
 static const char *get_version(const char *v);
 static const char *get_version(const char *&name, const char *v);
-static void parse_version(BasicVersion &b, const char *v);
+static void parse_version(BasicVersion *b, const char *v);
 
 static void
 failparse(const char *v)
@@ -75,9 +81,9 @@ get_version(const char *&name, const char *v)
 }
 
 static void
-parse_version(BasicVersion &b, const char *v) {
+parse_version(BasicVersion *b, const char *v) {
 	string errtext;
-	BasicVersion::ParseResult r(b.parseVersion(v, &errtext, true));
+	BasicVersion::ParseResult r(b->parseVersion(v, &errtext, true));
 	if(unlikely(r != BasicVersion::parsedOK)) {
 		cerr << errtext << endl;
 		if(r != BasicVersion::parsedGarbage) {
@@ -108,7 +114,7 @@ run_versionsort(int argc, char *argv[])
 					if(c != 'n') {
 						r.append("-");
 						BasicVersion b;
-						parse_version(b, v);
+						parse_version(&b, v);
 						r.append(b.getPlain());
 					}
 					cout << r;
@@ -118,7 +124,7 @@ run_versionsort(int argc, char *argv[])
 			case 'r':
 				{
 					BasicVersion b;
-					parse_version(b, get_version(s));
+					parse_version(&b, get_version(s));
 					cout << ((c == 'v') ? b.getPlain() : b.getRevision());
 				}
 				return EXIT_SUCCESS;
@@ -129,7 +135,7 @@ run_versionsort(int argc, char *argv[])
 	vector<BasicVersion> versions;
 	for(int i(1); likely(i < argc); ++i) {
 		BasicVersion b;
-		parse_version(b, get_version(argv[i]));
+		parse_version(&b, get_version(argv[i]));
 		versions.push_back(b);
 	}
 	sort(versions.begin(), versions.end());

@@ -8,13 +8,14 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "global.h"
-#include <eixrc/eixrc.h>
-#include <eixTk/i18n.h>
+
+#include <cassert>
 
 #include <string>
 
-#include <cassert>
+#include "eixTk/i18n.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
 
 #define DO_STRINGIFY(a) #a
 #define EXPAND_STRINGIFY(a) DO_STRINGIFY(a)
@@ -25,16 +26,15 @@
 #define EXIT_FAILURE 1
 #endif
 
+using std::string;
 
 #define DEFAULT_PART 1
 
-void fill_defaults_part_1(EixRc &eixrc)
+void fill_defaults_part_1(EixRc *eixrc)
 {
-#include <eixrc/defaults.cc>
+#include "eixrc/defaults.cc"
 // _( SYSCONFDIR This comment  satisfies check_includes script
 }
-
-using namespace std;
 
 /** Create a static EixRc and fill with defaults.
  * This should only be called once! */
@@ -46,11 +46,11 @@ get_eixrc_once(const char *varprefix)
 	assert(varprefix);
 	eixrc.varprefix = string(varprefix);
 
-	fill_defaults_part_1(eixrc);
-	fill_defaults_part_2(eixrc);
-	fill_defaults_part_3(eixrc);
-	fill_defaults_part_4(eixrc);
-	fill_defaults_part_5(eixrc);
+	fill_defaults_part_1(&eixrc);
+	fill_defaults_part_2(&eixrc);
+	fill_defaults_part_3(&eixrc);
+	fill_defaults_part_4(&eixrc);
+	fill_defaults_part_5(&eixrc);
 
 	eixrc.read();
 	return eixrc;

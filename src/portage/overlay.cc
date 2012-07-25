@@ -7,18 +7,19 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "overlay.h"
-
-#include <eixTk/filenames.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/utils.h>
-
 #include <map>
 #include <string>
 #include <vector>
 
-using namespace std;
+#include "eixTk/filenames.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/utils.h"
+#include "portage/overlay.h"
+
+using std::map;
+using std::string;
+using std::vector;
 
 static map<string, string> path_label_hash;
 
@@ -27,8 +28,7 @@ OverlayIdent::OverlayIdent(const char *Path, const char *Label)
 	if(Path == NULLPTR) {
 		path.clear();
 		know_path = false;
-	}
-	else {
+	} else {
 		path = Path;
 		know_path = true;
 	}
@@ -53,8 +53,7 @@ OverlayIdent::readLabel_internal(const char *Path)
 			return;
 		}
 		my_path = path;
-	}
-	else {
+	} else {
 		my_path = Path;
 	}
 	map<string, string>::const_iterator f(path_label_hash.find(my_path));

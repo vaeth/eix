@@ -7,26 +7,28 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__ALGORITHMS_H__
-#define EIX__ALGORITHMS_H__ 1
+#ifndef SRC_SEARCH_ALGORITHMS_H_
+#define SRC_SEARCH_ALGORITHMS_H_ 1
 
 #include <config.h>
-#include <eixTk/null.h>
-#include <eixTk/regexp.h>
-#include <eixTk/unused.h>
-#include <portage/package.h>
-#include <search/levenshtein.h>
+
+#include <fnmatch.h>
+
+#include <cstring>
 
 #include <map>
 #include <string>
 
-#include <cstring>
-#include <fnmatch.h>
+#include "eixTk/null.h"
+#include "eixTk/regexp.h"
+#include "eixTk/unused.h"
+#include "portage/package.h"
+#include "search/levenshtein.h"
 
 /* Check if we have FNM_CASEFOLD ..
  * fnmatch(3) tells that this is a GNU extension.
  * However, we do not #define _GNU_SOURCE but instead make sure to
- * #include <config.h> */
+ * #include "config.h" */
 #ifdef FNM_CASEFOLD
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else
@@ -57,7 +59,6 @@ class BaseAlgorithm {
 
 /** Use regex to test strings for a match. */
 class RegexAlgorithm : public BaseAlgorithm {
-
 	protected:
 		Regex re;
 
@@ -83,7 +84,6 @@ class RegexAlgorithm : public BaseAlgorithm {
 
 /** exact string matching */
 class ExactAlgorithm : public BaseAlgorithm {
-
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
 		{
@@ -94,7 +94,6 @@ class ExactAlgorithm : public BaseAlgorithm {
 
 /** substring matching */
 class SubstringAlgorithm : public BaseAlgorithm {
-
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
 		{
@@ -105,7 +104,6 @@ class SubstringAlgorithm : public BaseAlgorithm {
 
 /** begin-of-string matching */
 class BeginAlgorithm : public BaseAlgorithm {
-
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
 		{
@@ -116,7 +114,6 @@ class BeginAlgorithm : public BaseAlgorithm {
 
 /** end-of-string matching */
 class EndAlgorithm : public BaseAlgorithm {
-
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
 		{
@@ -132,7 +129,6 @@ class EndAlgorithm : public BaseAlgorithm {
 /** Store distance to searchstring in Package and sort out packages with a
  * higher distance than max_levenshteindistance. */
 class FuzzyAlgorithm : public BaseAlgorithm {
-
 	protected:
 		unsigned int max_levenshteindistance;
 
@@ -142,7 +138,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		static std::map<std::string, unsigned int> levenshtein_map;
 
 	public:
-		FuzzyAlgorithm(unsigned int max)
+		explicit FuzzyAlgorithm(unsigned int max)
 		{
 			max_levenshteindistance = max;
 		}
@@ -172,7 +168,6 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 
 /** Use fnmatch to test if the package matches. */
 class PatternAlgorithm : public BaseAlgorithm {
-
 	public:
 		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
 		{
@@ -181,4 +176,4 @@ class PatternAlgorithm : public BaseAlgorithm {
 		}
 };
 
-#endif /* EIX__ALGORITHMS_H__ */
+#endif  // SRC_SEARCH_ALGORITHMS_H_

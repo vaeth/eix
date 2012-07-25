@@ -7,16 +7,17 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__VARSREADER_H__
-#define EIX__VARSREADER_H__ 1
+#ifndef SRC_EIXTK_VARSREADER_H_
+#define SRC_EIXTK_VARSREADER_H_ 1
 
 #include <config.h>
-#include <eixTk/inttypes.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
 
 #include <map>
 #include <string>
+
+#include "eixTk/inttypes.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
 
 /** A wrapper to FSM that can read shell-style key=value declarations.
  * The constructor inits, starts the FSM. Then you can access them .. The deconstructor deinits it. */
@@ -24,37 +25,33 @@ class VarsReader {
 	public:
 		typedef uint16_t Flags;
 		static const Flags
-			NONE                 = 0x0000, /**< Flag: No flags set; normal behavior. */
-			ONLY_KEYWORDS_SLOT   = 0x0001, /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
-			KEYWORDS_READ        = 0x0002, /**< Flag: Have already read "KEYWORDS" once. */
-			SLOT_READ            = 0x0004, /**< Flag: Have already read "SLOT" once. */
-			SUBST_VARS           = 0x0008, /**< Flag: Allow references to variable in declarations
-			                                  of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP             = 0x0010, /**< Flag: Init but don't parse .. you must first supply
-			                                  a pointer to map<string,string> with useMap(...) */
-			APPEND_VALUES        = 0x0020, /**< Flag: Respect IncrementalKeys */
-			ALLOW_SOURCE         = 0x0040, /**< Flag: Allow "source"/"." command. */
-			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE, /**< Flag: Allow "source"/"." but
-			                                  Prefix is only a varname which
-			                                  might be modified during sourcing. */
-			PORTAGE_ESCAPES      = 0x0100, /**< Flag: Treat escapes like portage does. */
-			HAVE_READ            = KEYWORDS_READ|SLOT_READ,     /**< Combination of previous "*_READ" */
-			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;/**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
+			NONE                 = 0x0000,  /**< Flag: No flags set; normal behavior. */
+			ONLY_KEYWORDS_SLOT   = 0x0001,  /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
+			KEYWORDS_READ        = 0x0002,  /**< Flag: Have already read "KEYWORDS" once. */
+			SLOT_READ            = 0x0004,  /**< Flag: Have already read "SLOT" once. */
+			SUBST_VARS           = 0x0008,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="${USE} -kde" */
+			INTO_MAP             = 0x0010,  /**< Flag: Init but don't parse .. you must first supply a pointer to map<string, string> with useMap(...) */
+			APPEND_VALUES        = 0x0020,  /**< Flag: Respect IncrementalKeys */
+			ALLOW_SOURCE         = 0x0040,  /**< Flag: Allow "source"/"." command. */
+			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE, /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
+			PORTAGE_ESCAPES      = 0x0100,  /**< Flag: Treat escapes like portage does. */
+			HAVE_READ            = KEYWORDS_READ|SLOT_READ,       /**< Combination of previous "*_READ" */
+			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;  /**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 
 
 		/** Init and parse the FSM depending on supplied flags. */
-		VarsReader(Flags flags)
+		explicit VarsReader(Flags flags)
 		{
 			parse_flags = flags;
-			if( ! (parse_flags & INTO_MAP) ) {
-				vars = new std::map<std::string,std::string>;
+			if((parse_flags & INTO_MAP) == NONE) {
+				vars = new std::map<std::string, std::string>;
 			}
 		}
 
 		/** Free memory. */
 		~VarsReader()
 		{
-			if( !(parse_flags & INTO_MAP) )
+			if((parse_flags & INTO_MAP) == NONE)
 				delete vars;
 		}
 
@@ -63,7 +60,7 @@ class VarsReader {
 		bool read(const char *filename, std::string *errtext, bool noexist_ok);
 
 		/** Use a supplied map for variables. */
-		void useMap(std::map<std::string,std::string> *vars_map)
+		void useMap(std::map<std::string, std::string> *vars_map)
 		{
 			vars = vars_map;
 		}
@@ -88,7 +85,7 @@ class VarsReader {
 
 		const std::string *find(std::string key) const ATTRIBUTE_PURE
 		{
-			std::map<std::string,std::string>::const_iterator i(vars->find(key));
+			std::map<std::string, std::string>::const_iterator i(vars->find(key));
 			if(i == vars->end())
 				return NULLPTR;
 			return &(i->second);
@@ -268,10 +265,9 @@ class VarsReader {
 
 		char *filebuffer,     /**< The filebuffer everyone is taking about. */
 		     *filebuffer_end; /**< Marks the end of the filebuffer. */
-		const char **incremental_keys; /**< c-array of pattern for keys which values
-										 should be prepended to the new value. */
+		const char **incremental_keys;  /**< c-array of pattern for keys which values should be prepended to the new value. */
 		/** Mapping of key to value. */
-		std::map<std::string,std::string> *vars;
+		std::map<std::string, std::string> *vars;
 
 		/** Prefix resp. varname used for sourcing */
 		std::string source_prefix;
@@ -297,7 +293,6 @@ class VarsReader {
 		bool runFsm();
 
 		bool isIncremental(const char *key);
-
 };
 
-#endif /* EIX__VARSREADER_H__ */
+#endif  // SRC_EIXTK_VARSREADER_H_

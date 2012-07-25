@@ -7,16 +7,16 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__EXTENDEDVERSION_H__
-#define EIX__EXTENDEDVERSION_H__ 1
-
-#include <database/types.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/inttypes.h>
-#include <portage/basicversion.h>
-#include <portage/depend.h>
+#ifndef SRC_PORTAGE_EXTENDEDVERSION_H_
+#define SRC_PORTAGE_EXTENDEDVERSION_H_ 1
 
 #include <string>
+
+#include "database/types.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/inttypes.h"
+#include "portage/basicversion.h"
+#include "portage/depend.h"
 
 class Package;
 class PortageSettings;
@@ -29,11 +29,11 @@ class ExtendedVersion : public BasicVersion
 			HAVEBINPKG_UNKNOWN = 0x00,
 			HAVEBINPKG_NO      = 0x01,
 			HAVEBINPKG_YES     = 0x02;
-		mutable HaveBinPkg have_bin_pkg_m; // mutable: it is just a cache
+		mutable HaveBinPkg have_bin_pkg_m;  // mutable: it is just a cache
 
 	public:
 		typedef uint16_t Restrict;
-		static const Restrict // order according to frequency...
+		static const Restrict  // order according to frequency...
 			RESTRICT_NONE           = 0x0000,
 			RESTRICT_BINCHECKS      = 0x0001,
 			RESTRICT_STRIP          = 0x0002,
@@ -48,7 +48,7 @@ class ExtendedVersion : public BasicVersion
 			RESTRICT_ALL            = 0x03FF;
 
 		typedef io::UChar Properties;
-		static const Properties // order according to frequency...
+		static const Properties  // order according to frequency...
 			PROPERTIES_NONE        = 0x00,
 			PROPERTIES_INTERACTIVE = 0x01,
 			PROPERTIES_LIVE        = 0x02,
@@ -91,7 +91,7 @@ class ExtendedVersion : public BasicVersion
 		{ propertiesFlags = calcProperties(str); }
 
 		void set_slotname(const std::string& str)
-		{ slot_subslot(str, slotname, subslotname); }
+		{ slot_subslot(str, &slotname, &subslotname); }
 
 		std::string get_shortfullslot() const
 		{ return (subslotname.empty() ? slotname : (slotname + "/" + subslotname)); }
@@ -102,9 +102,9 @@ class ExtendedVersion : public BasicVersion
 		{ return (slotname.empty() ? zerostring : slotname); }
 
 		void assign_basic_version(const BasicVersion &b)
-		{ *dynamic_cast<BasicVersion *>(this) = b; }
+		{ *static_cast<BasicVersion *>(this) = b; }
 
 		bool have_bin_pkg(const PortageSettings *ps, const Package *pkg) const;
 };
 
-#endif /* EIX__EXTENDEDVERSION_H__ */
+#endif  // SRC_PORTAGE_EXTENDEDVERSION_H_

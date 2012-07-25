@@ -7,24 +7,25 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PACKAGE_H__
-#define EIX__PACKAGE_H__ 1
+#ifndef SRC_PORTAGE_PACKAGE_H_
+#define SRC_PORTAGE_PACKAGE_H_ 1
 
 #include <config.h>
-#include <eixTk/inttypes.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/instversion.h>
-#include <portage/keywords.h>
-#include <portage/version.h>
 
 #include <list>
 #include <map>
 #include <string>
 #include <vector>
+
+#include "eixTk/inttypes.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/instversion.h"
+#include "portage/keywords.h"
+#include "portage/version.h"
 
 class VarDbPkg;
 class PortageSettings;
@@ -34,7 +35,7 @@ class PortageSettings;
 class VersionList : public std::list<Version*>
 {
 	public:
-		VersionList(Version *v) : std::list<Version*>(1, v)
+		explicit VersionList(Version *v) : std::list<Version*>(1, v)
 		{ }
 
 		Version* best(bool allow_unstable = false) const ATTRIBUTE_PURE;
@@ -115,7 +116,7 @@ class Package
 
 		const SlotList& slotlist() const
 		{
-			if (! m_has_cached_slotlist) {
+			if (!m_has_cached_slotlist) {
 				build_slotlist();
 				m_has_cached_slotlist = true;
 			}
@@ -148,12 +149,12 @@ class Package
 
 		/// Preset with defaults
 		Package() :
-			saved_collects(Version::SAVEMASK_SIZE, MaskFlags::MASK_NONE)
+			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE))
 		{ defaults(); }
 
 		/// Fill in name and category and preset with defaults
 		Package(const std::string& c, const std::string& n) :
-			saved_collects(Version::SAVEMASK_SIZE, MaskFlags::MASK_NONE),
+			saved_collects(Version::SAVEMASK_SIZE, MaskFlags(MaskFlags::MASK_NONE)),
 			category(c), name(n)
 		{ defaults(); }
 
@@ -165,7 +166,10 @@ class Package
 		    You must call addVersionFinalize() after filling
 		    the remaining data */
 		void addVersionStart(Version *version)
-		{ checkDuplicates(version); sortedPushBack(version); }
+		{
+			checkDuplicates(version);
+			sortedPushBack(version);
+		}
 
 		/** Finishes addVersion() after the remaining data
 		    have been filled */
@@ -173,7 +177,10 @@ class Package
 
 		/** Adds a version to "the versions" list. */
 		void addVersion(Version *version)
-		{ addVersionStart(version); addVersionFinalize(version); }
+		{
+			addVersionStart(version);
+			addVersionFinalize(version);
+		}
 
 		/** Call this after modifying system or world state of versions. */
 		void finalize_masks();
@@ -235,13 +242,13 @@ class Package
 
 		Version *best_slot(const char *slot_name, bool allow_unstable = false) const;
 
-		void best_slots(std::vector<Version*> &l, bool allow_unstable = false) const;
+		void best_slots(std::vector<Version*> *l, bool allow_unstable = false) const;
 
 		/** Calculate list of uninstalled upgrade candidates */
-		void best_slots_upgrade(std::vector<Version*> &versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
+		void best_slots_upgrade(std::vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
 
 		/** Is version an (installed or uninstalled) upgrade candidate? */
-		bool is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
+		bool is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
 
 		/** Test whether p has a worse best_slot().
 		    @return
@@ -360,7 +367,7 @@ class Package
 		    possibly reading it from disk.
 		    Returns true if a reasonable choice seems to be found
 		    (v.know_slot determines whether we had full success). */
-		bool guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const;
+		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const;
 
 		Version *latest() const
 		{ return *rbegin(); }
@@ -403,8 +410,9 @@ class Package
 class PackageSave {
 		typedef std::map<const Version*, KeywordSave> DataType;
 		DataType data;
+
 	public:
-		PackageSave(const Package *p = NULLPTR)
+		explicit PackageSave(const Package *p = NULLPTR)
 		{ store(p); }
 
 		void store(const Package *p = NULLPTR);
@@ -413,4 +421,4 @@ class PackageSave {
 };
 
 
-#endif /* EIX__PACKAGE_H__ */
+#endif  // SRC_PORTAGE_PACKAGE_H_

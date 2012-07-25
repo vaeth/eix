@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__LEVENSHTEIN_H__
-#define EIX__LEVENSHTEIN_H__ 1
+#ifndef SRC_SEARCH_LEVENSHTEIN_H_
+#define SRC_SEARCH_LEVENSHTEIN_H_ 1
 
 #include <config.h>
 
@@ -20,4 +20,4 @@ typedef unsigned int Levenshtein;
  * @return unsigned int Levenshtein distance of str_a <> str_b */
 Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) ATTRIBUTE_PURE;
 
-#endif /* EIX__LEVENSHTEIN_H__ */
+#endif  // SRC_SEARCH_LEVENSHTEIN_H_

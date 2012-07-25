@@ -5,10 +5,10 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__I18B_H__
-#define EIX__I18N_H__ 1
+#ifndef SRC_EIXTK_I18N_H_
+#define SRC_EIXTK_I18N_H_ 1
 
-// include <eixTk/i18n.h> This comment satisfies check_include script
+// include "eixTk/i18n.h" This comment satisfies check_include script
 
 #include <config.h>
 
@@ -23,4 +23,4 @@
 #define N_(a) a
 #endif
 
-#endif /* EIX__I18N_H__ */
+#endif  // SRC_EIXTK_I18N_H_

@@ -7,14 +7,6 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "basicversion.h"
-#include <eixTk/compare.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -23,39 +15,53 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
+#include "eixTk/compare.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "portage/basicversion.h"
+
+using std::list;
+using std::string;
+
+using std::cerr;
+using std::endl;
+using std::ostream;
+using std::stringstream;
 
 const string::size_type BasicPart::max_type;
 
-short
+BasicPart::SignedBool
 BasicPart::compare(const BasicPart& left, const BasicPart& right)
 {
 	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
 	// but I suppose this is not yet sanctioned by gentoo.
 	// We are going to follow the text from section 2.3 "Version Comparison" here.
-	short ret(eix::default_compare(left.parttype, right.parttype));
-	if(ret) {
+	SignedBool ret(eix::default_compare(left.parttype, right.parttype));
+	if(ret != 0) {
 		return ret;
 	}
 
 	// We can short-circuit numeric_compare(..) and cutting of trailing 0
 	// by using string comparison if both parts have the same length.
-	if (left.partcontent.size() == right.partcontent.size()) {
+	if(left.partcontent.size() == right.partcontent.size()) {
 		left.partcontent.compare(right.partcontent);
 		return left.partcontent.compare(right.partcontent);
 	}
-	if (left.parttype == BasicPart::primary) {
+	if(left.parttype == BasicPart::primary) {
 		// "[..] if a component has a leading zero, any trailing zeroes in that
 		//  component are stripped (if this makes the component empty, proceed
 		//  as if it were 0 instead), and the components are compared using a
 		//  stringwise comparison."
 
-		if ((left.partcontent)[0] == '0' || (right.partcontent)[0] == '0') {
+		if((left.partcontent)[0] == '0' || (right.partcontent)[0] == '0') {
 			string l1(left.partcontent);
 			string l2(right.partcontent);
 
-			rtrim(l1, "0");
-			rtrim(l2, "0");
+			rtrim(&l1, "0");
+			rtrim(&l2, "0");
 
 			/* No need to check if stripping zeros makes the component empty,
 			 * since that only happens for components that _only_ contain zeros
@@ -67,8 +73,7 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 		}
 		// "If neither component has a leading zero, components are compared
 		//  using strict integer comparison."
-	}
-	else if (left.parttype == BasicPart::garbage) {
+	} else if(left.parttype == BasicPart::garbage) {
 		// garbage gets string comparison.
 		return left.partcontent.compare(left.partcontent);
 	}
@@ -105,14 +110,14 @@ operator<<(ostream& s, const BasicPart& part)
 			break;
 	}
 	cerr << eix::format(_("internal error: unknown PartType on (%r,%r)"))
-		% int(part.parttype) % part.partcontent;
+		% static_cast<int>(part.parttype) % part.partcontent << endl;
 }
 
 string
 BasicVersion::getFull() const
 {
 	stringstream ss;
-	copy(m_parts.begin(), m_parts.end(), ostream_iterator<BasicPart>(ss));
+	copy(m_parts.begin(), m_parts.end(), std::ostream_iterator<BasicPart>(ss));
 	return ss.str();
 }
 
@@ -139,7 +144,7 @@ BasicVersion::getRevision() const
 		if(unlikely(it->parttype == BasicPart::revision)) {
 			ss << "r" << it->partcontent;
 			if(unlikely(++it != m_parts.end())) {
-				copy(++it, m_parts.end(), ostream_iterator<BasicPart>(ss));
+				copy(++it, m_parts.end(), std::ostream_iterator<BasicPart>(ss));
 				break;
 			}
 		}
@@ -200,24 +205,19 @@ BasicVersion::parseVersion(const string& str, string *errtext, bool accept_garba
 		if (str.compare(pos, 5, "alpha") == 0) {
 			pos += 5;
 			suffix = BasicPart::alpha;
-		}
-		else if (str.compare(pos, 4, "beta") == 0) {
+		} else if (str.compare(pos, 4, "beta") == 0) {
 			pos += 4;
 			suffix = BasicPart::beta;
-		}
-		else if (str.compare(pos, 3, "pre") == 0) {
+		} else if (str.compare(pos, 3, "pre") == 0) {
 			pos += 3;
 			suffix = BasicPart::pre;
-		}
-		else if (str.compare(pos, 2, "rc") == 0) {
+		} else if (str.compare(pos, 2, "rc") == 0) {
 			pos += 2;
 			suffix = BasicPart::rc;
-		}
-		else if (str.compare(pos, 1, "p") == 0) {
+		} else if (str.compare(pos, 1, "p") == 0) {
 			++pos;
 			suffix = BasicPart::patch;
-		}
-		else {
+		} else {
 			m_parts.push_back(BasicPart(BasicPart::garbage, str, pos-1));
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_(
@@ -267,51 +267,48 @@ BasicVersion::parseVersion(const string& str, string *errtext, bool accept_garba
 	return parsedGarbage;
 }
 
-short
+BasicPart::SignedBool
 BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
 	list<BasicPart>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
-	for(short ret(0); ; ++it_left, ++it_right) {
+	for(BasicPart::SignedBool ret(0); ; ++it_left, ++it_right) {
 		if (it_left == left.m_parts.end()) {
-			if (it_right == right.m_parts.end())
+			if (it_right == right.m_parts.end()) {
 				return 0;
-			else if (it_right->parttype < BasicPart::revision)
+			} else if (it_right->parttype < BasicPart::revision) {
 				return 1;
+			}
 			return -1;
-		}
-		else if (it_right == right.m_parts.end()) {
-			if (it_left->parttype < BasicPart::revision)
+		} else if (it_right == right.m_parts.end()) {
+			if (it_left->parttype < BasicPart::revision) {
 				return -1;
+			}
 			return 1;
-		}
-		else if ((ret = BasicPart::compare(*it_left, *it_right)))
+		} else if ((ret = BasicPart::compare(*it_left, *it_right))) {
 			return ret;
-
+		}
 	}
 	return 0;
 }
 
-short
+BasicPart::SignedBool
 BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
-	for(list<BasicPart>::const_iterator
-		it_left(left.m_parts.begin()),
+	for(list<BasicPart>::const_iterator it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin()); ; ++it_left, ++it_right) {
 		bool right_end((it_right == right.m_parts.end())
 				|| (it_right->parttype == BasicPart::revision));
 		if((it_left == left.m_parts.end())
 				|| (it_left->parttype == BasicPart::revision)) {
 			return (right_end ? 0 : -1);
-		}
-		else if(right_end) {
+		} else if(right_end) {
 			return 1;
-		}
-		else {
-			short ret(BasicPart::compare(*it_left, *it_right));
-			if(ret) {
+		} else {
+			BasicPart::SignedBool ret(BasicPart::compare(*it_left, *it_right));
+			if(ret != 0) {
 				return ret;
 			}
 		}

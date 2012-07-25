@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__BASICVERSION_H__
-#define EIX__BASICVERSION_H__ 1
+#ifndef SRC_PORTAGE_BASICVERSION_H_
+#define SRC_PORTAGE_BASICVERSION_H_ 1
 
 #include <config.h>
 
@@ -20,6 +20,7 @@
 class BasicPart
 {
 public:
+	typedef signed char SignedBool;
 	enum PartType
 	{
 		garbage,
@@ -42,7 +43,7 @@ public:
 	BasicPart()
 	{ }
 
-	BasicPart(PartType p) : parttype(p), partcontent()
+	explicit BasicPart(PartType p) : parttype(p), partcontent()
 	{ }
 
 	BasicPart(PartType p, std::string s) : parttype(p), partcontent(s)
@@ -60,7 +61,7 @@ public:
 	BasicPart(PartType p, const char *s) : parttype(p), partcontent(s)
 	{ }
 
-	static short compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
+	static BasicPart::SignedBool compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;
 };
 
 
@@ -81,10 +82,10 @@ public:
 	BasicVersion::ParseResult parseVersion(const std::string& str, std::string *errtext, bool accept_garbage = true);
 
 	/// Compare all except gentoo revisions
-	static short compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
+	static BasicPart::SignedBool compareTilde(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
 	/// Compare the version.
-	static short compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
+	static BasicPart::SignedBool compare(const BasicVersion& right, const BasicVersion& left) ATTRIBUTE_PURE;
 
 	std::string getFull() const;
 
@@ -129,4 +130,4 @@ inline bool
 operator <= (const BasicVersion& left, const BasicVersion& right)
 { return BasicVersion::compare(left, right) <= 0; }
 
-#endif /* EIX__BASICVERSION_H__ */
+#endif  // SRC_PORTAGE_BASICVERSION_H_

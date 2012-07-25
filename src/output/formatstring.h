@@ -7,25 +7,24 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__FORMATSTRING_H__
-#define EIX__FORMATSTRING_H__ 1
+#ifndef SRC_OUTPUT_FORMATSTRING_H_
+#define SRC_OUTPUT_FORMATSTRING_H_ 1
 
 #include <config.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/package.h>
-#include <portage/set_stability.h>
 
 #include <map>
 #include <set>
 #include <stack>
 #include <string>
+#include <utility>
 #include <vector>
 
-typedef signed char FullFlag;
-typedef unsigned char FormatTypeFlags;
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/package.h"
+#include "portage/set_stability.h"
 
 class DBHeader;
 class EixRc;
@@ -40,7 +39,7 @@ class Node {
 	public:
 		enum Type { TEXT, OUTPUT, SET, IF } type;
 		Node *next;
-		Node(Type t) {
+		explicit Node(Type t) {
 			type = t;
 			next = NULLPTR;
 		}
@@ -54,7 +53,7 @@ class Text : public Node {
 	public:
 		std::string text;
 
-		Text(std::string t = "") : Node(TEXT) {
+		explicit Text(std::string t = "") : Node(TEXT) {
 			text = t;
 		}
 };
@@ -93,10 +92,11 @@ class ConditionBlock : public Node {
 		}
 };
 
-bool parse_colors(std::string &res, const std::string &colorstring, bool colors, std::string *errtext);
+bool parse_colors(std::string *res, const std::string &colorstring, bool colors, std::string *errtext);
 
 class FormatParser {
 		friend bool parse_colors(std::string &res, const std::string &colorstring, bool colors, std::string *errtext);
+
 	private:
 		enum ParserState {
 			ERROR, STOP, START,
@@ -178,12 +178,12 @@ class VarParserCacheNode {
 		}
 };
 
-class VarParserCache : public std::map<std::string,VarParserCacheNode>
+class VarParserCache : public std::map<std::string, VarParserCacheNode>
 {
 	public:
 		void clear_use()
 		{
-			for(std::map<std::string,VarParserCacheNode>::iterator it = begin();
+			for(std::map<std::string, VarParserCacheNode>::iterator it = begin();
 				it != end(); ++it)
 				it->second.in_use = false;
 		}
@@ -201,7 +201,7 @@ class PrintFormat {
 		typedef std::string (*GetProperty)(const PrintFormat *fmt, void *entity, const std::string &property);
 
 	protected:
-		mutable std::map<std::string,std::string> user_variables;
+		mutable std::map<std::string, std::string> user_variables;
 		/* Looping over variables is a bit tricky:
 		   We store the parsed thing in VarParserCache.
 		   Additionally, we store there whether we currently loop
@@ -229,10 +229,10 @@ class PrintFormat {
 		/* return true if something was actually printed */
 		bool recPrint(std::string *result, void *entity, GetProperty get_property, Node *root) const;
 
-		bool parse_variable(Node *&rootnode, const std::string &varname, std::string *errtext) const;
+		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const;
 		Node *parse_variable(const std::string &varname) const;
 
-		std::string get_inst_use(const Package &package, InstVersion &i) const;
+		std::string get_inst_use(const Package &package, InstVersion *i) const;
 		void get_installed(Package *package, Node *root, bool mark) const;
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const;
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const;
@@ -381,6 +381,7 @@ class PrintFormat {
 		std::string VER_WASMINUSKEYWORD(Package *package) const;
 		std::string VER_WASMINUSUNSTABLE(Package *package) const;
 		std::string VER_WASMINUSASTERISK(Package *package) const;
+
 	public:
 		bool	no_color,            /**< Shall we use colors? */
 			style_version_lines, /**< Shall we show versions linewise? */
@@ -395,7 +396,7 @@ class PrintFormat {
 			before_set_use, after_set_use,
 			before_unset_use, after_unset_use;
 
-		PrintFormat(GetProperty get_callback = NULLPTR)
+		explicit PrintFormat(GetProperty get_callback = NULLPTR)
 		{
 			m_get_property = get_callback;
 			virtuals = NULLPTR;
@@ -410,7 +411,7 @@ class PrintFormat {
 		}
 
 		// Initialize those variables common to eix and eix-diff:
-		void setupResources(EixRc &eixrc);
+		void setupResources(EixRc *eixrc);
 
 		void setupColors();
 
@@ -441,7 +442,10 @@ class PrintFormat {
 		{ overlay_translations = translations; }
 
 		void set_overlay_used(std::vector<bool> *used, bool *some)
-		{ overlay_used = used; some_overlay_used = some; }
+		{
+			overlay_used = used;
+			some_overlay_used = some;
+		}
 
 		void set_marked_list(MarkedList *m_list)
 		{ marked_list = m_list; }
@@ -462,19 +466,19 @@ class PrintFormat {
 		bool parseFormat(const char *fmt, std::string *errtext)
 		{ return m_parser.start(fmt, !no_color, false, errtext); }
 
-		bool parseFormat(Node *&rootnode, const char *fmt, std::string *errtext)
+		bool parseFormat(Node **rootnode, const char *fmt, std::string *errtext)
 		{
 			if(likely(m_parser.start(fmt, !no_color, false, errtext))) {
-				rootnode = m_parser.rootnode();
+				*rootnode = m_parser.rootnode();
 				return true;
 			}
 			return false;
 		}
 
-		void StabilityLocal(Package &p) const
+		void StabilityLocal(Package *p) const
 		{ stability->set_stability(true, p); }
 
-		void StabilityNonlocal(Package &p) const
+		void StabilityNonlocal(Package *p) const
 		{ stability->set_stability(false, p); }
 
 	private:
@@ -488,4 +492,4 @@ class LocalCopy : public PackageSave
 
 
 
-#endif /* EIX__FORMATSTRING_H__ */
+#endif  // SRC_OUTPUT_FORMATSTRING_H_

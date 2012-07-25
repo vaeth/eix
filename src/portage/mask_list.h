@@ -7,24 +7,26 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__MASK_LIST_H__
-#define EIX__MASK_LIST_H__ 1
+#ifndef SRC_PORTAGE_MASK_LIST_H_
+#define SRC_PORTAGE_MASK_LIST_H_ 1
 
 #include <config.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
-#include <eixTk/stringutils.h>
-#include <portage/keywords.h>
-#include <portage/mask.h>
-#include <portage/package.h>
+
+#include <fnmatch.h>
 
 #include <list>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <fnmatch.h>
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+#include "eixTk/stringutils.h"
+#include "portage/keywords.h"
+#include "portage/mask.h"
+#include "portage/package.h"
 
 class Package;
 class Version;
@@ -79,10 +81,14 @@ public:
 	typedef typename eix::ptr_list<const m_Type> Get;
 
 	bool empty() const
-	{ return exact_name.empty() && super::empty(); }
+	{ return (exact_name.empty() && super::empty()); }
 
 	void clear()
-	{ super::clear(); exact_name.clear(); full_index.clear(); }
+	{
+		super::clear();
+		exact_name.clear();
+		full_index.clear();
+	}
 
 	bool match_full(const std::string &full) const
 	{
@@ -170,7 +176,7 @@ public:
 		}
 		for(typename Get::const_iterator it(masks->begin());
 			likely(it != masks->end()); ++it) {
-			it->applyItem(*p);
+			it->applyItem(p);
 		}
 		delete masks;
 	}
@@ -245,7 +251,7 @@ public:
 /* The PreList is needed to Prepare a MaskList:
  *
  * Until we call finalize() or initialize(), one can insert and delete lines.
- * (A line is a vector<string>). Duplicate lines are recognized, too.
+ * (A line is a std::vector<std::string>). Duplicate lines are recognized, too.
  * However, the original order is preserved.
  * Moreover, after finalize() the entries are collected: For the lines
  *   foo/bar 1
@@ -280,7 +286,11 @@ private:
 	bool finalized;
 public:
 	void clear()
-	{ finalize(); filenames.clear(); super::clear(); }
+	{
+		finalize();
+		filenames.clear();
+		super::clear();
+	}
 
 	const std::string &file_name(FilenameIndex file) const
 	{ return filenames[file].name(); }
@@ -325,11 +335,11 @@ public:
 
 	void finalize();
 
-	void initialize(MaskList<Mask> &l, Mask::Type t);
+	void initialize(MaskList<Mask> *l, Mask::Type t);
 
-	void initialize(MaskList<KeywordMask> &l, std::string raised_arch);
+	void initialize(MaskList<KeywordMask> *l, std::string raised_arch);
 
-	void initialize(MaskList<PKeywordMask> &l);
+	void initialize(MaskList<PKeywordMask> *l);
 };
 
-#endif /* EIX__MASK_LIST_H__ */
+#endif  // SRC_PORTAGE_MASK_LIST_H_

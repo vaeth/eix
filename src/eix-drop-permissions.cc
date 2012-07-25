@@ -5,18 +5,17 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <eixTk/i18n.h>
-#include <eixrc/eixrc.h>
-#include <eixrc/global.h>
-#include <main/main.h>
-#include <various/drop_permissions.h>
+#include <unistd.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <unistd.h>
 
-using namespace std;
+#include "eixTk/i18n.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
+#include "main/main.h"
+#include "various/drop_permissions.h"
 
 static void
 print_help()
@@ -33,7 +32,7 @@ int
 run_eix_drop_permissions(int argc, char *argv[])
 {
 	EixRc &eixrc(get_eixrc(DROP_VARS_PREFIX));
-	drop_permissions(eixrc);
+	drop_permissions(&eixrc);
 	bool parsing(true);
 	for(++argv; (argc > 0) && parsing; --argc, ++argv) {
 		if(strcmp("--", argv[0]) == 0) {
@@ -49,5 +48,5 @@ run_eix_drop_permissions(int argc, char *argv[])
 	}
 	execv(argv[0], argv);
 	fprintf(stderr, _("failed to execute %s\n"), argv[0]);
-	return EXIT_FAILURE;// exit(EXIT_FAILURE); // make check_includes happy
+	return EXIT_FAILURE;  // exit(EXIT_FAILURE); // make check_includes happy
 }

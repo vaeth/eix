@@ -7,11 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__SETSTABILITY_H__
-#define EIX__SETSTABILITY_H__ 1
+#ifndef SRC_PORTAGE_SET_STABILITY_H_
+#define SRC_PORTAGE_SET_STABILITY_H_ 1
 
 #include <config.h>
-#include <portage/version.h>
+
+#include "portage/version.h"
 
 class Category;
 class KeywordFlags;
@@ -47,7 +48,6 @@ class SetStability {
 #endif
 
 	public:
-
 		SetStability(const PortageSettings *psettings, bool localsettings, bool filemask_is_profile, bool always_accept_keywords)
 		{
 			portagesettings = psettings;
@@ -56,16 +56,16 @@ class SetStability {
 			m_always_accept_keywords = always_accept_keywords;
 		}
 
-		void set_stability(bool get_local, Package &package) const;
+		void set_stability(bool get_local, Package *package) const;
 
-		void set_stability(Package &package) const
+		void set_stability(Package *package) const
 		{ set_stability(m_local, package); }
 
 		void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const;
 
-		void set_stability(Category &category) const;
+		void set_stability(Category *category) const;
 
-		void set_stability(PackageTree &tree) const;
+		void set_stability(PackageTree *tree) const;
 };
 
-#endif /* EIX__SETSTABILITY_H_ */
+#endif  // SRC_PORTAGE_SET_STABILITY_H_

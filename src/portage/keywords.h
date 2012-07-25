@@ -7,15 +7,15 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__STABILITY_H__
-#define EIX__STABILITY_H__ 1
-
-#include <database/types.h>
-#include <eixTk/inttypes.h>
-#include <eixTk/null.h>
+#ifndef SRC_PORTAGE_KEYWORDS_H_
+#define SRC_PORTAGE_KEYWORDS_H_ 1
 
 #include <set>
 #include <string>
+
+#include "database/types.h"
+#include "eixTk/inttypes.h"
+#include "eixTk/null.h"
 
 class MaskFlags {
 	public:
@@ -29,7 +29,7 @@ class MaskFlags {
 			MASK_WORLD              = 0x08,
 			MASK_WORLD_SETS         = 0x10;
 
-		MaskFlags(MaskType t = MASK_NONE)
+		explicit MaskFlags(MaskType t = MASK_NONE)
 		{ m_mask = t; }
 
 		void set(MaskType t)
@@ -100,7 +100,7 @@ class KeywordsFlags {
 
 		static KeyType get_keyflags(const std::set<std::string> &accepted_keywords, const std::string &keywords);
 
-		KeywordsFlags(KeyType t = KEY_EMPTY)
+		explicit KeywordsFlags(KeyType t = KEY_EMPTY)
 		{ m_keyword = t; }
 
 		void set(KeyType t)
@@ -224,41 +224,61 @@ class Keywords
 		{ return redundant; }
 
 		void set_was_masked(bool value = true)
-		{ if(value) red_mask |= 0x01; else red_mask &= ~0x01; }
+		{
+			if(value)
+				red_mask |= 0x01;
+			else
+				red_mask &= ~0x01;
+		}
 
 		bool was_masked () const
 		{ return (red_mask & 0x01); }
 
 		void set_was_unmasked(bool value = true)
-		{ if(value) red_mask |= 0x02; else red_mask &= ~0x02; }
+		{
+			if(value)
+				red_mask |= 0x02;
+			else
+				red_mask &= ~0x02;
+		}
 
 		bool was_unmasked () const
 		{ return (red_mask & 0x02); }
 
 		void set_wanted_masked(bool value = true)
-		{ if(value) red_mask |= 0x04; else red_mask &= ~0x04; }
+		{
+			if(value)
+				red_mask |= 0x04;
+			else
+				red_mask &= ~0x04;
+		}
 
 		bool wanted_masked () const
 		{ return (red_mask & 0x04); }
 
 		void set_wanted_unmasked(bool value = true)
-		{ if(value) red_mask |= 0x08; else red_mask &= ~0x08; }
+		{
+			if(value)
+				red_mask |= 0x08;
+			else
+				red_mask &= ~0x08;
+		}
 
 		bool wanted_unmasked () const
 		{ return (red_mask & 0x08); }
 
 	protected:
 		Redundant redundant;
-		char red_mask; ///< temporary redundant-related stuff during mask testing
-
+		char red_mask;  /**< temporary redundant-related stuff during mask testing */
 };
 
 class KeywordSave {
 		KeywordsFlags saved_keyflags;
 		MaskFlags     saved_maskflags;
 		bool have_data;
+
 	public:
-		KeywordSave(const Keywords *k = NULLPTR)
+		explicit KeywordSave(const Keywords *k = NULLPTR)
 		{ store(k); }
 
 		void store(const Keywords *k = NULLPTR)
@@ -281,7 +301,10 @@ class KeywordSave {
 		}
 };
 
+enum LocalMode {
+	LOCALMODE_DEFAULT = 0,
+	LOCALMODE_LOCAL,
+	LOCALMODE_NONLOCAL
+};
 
-enum LocalMode { LOCALMODE_DEFAULT=0, LOCALMODE_LOCAL, LOCALMODE_NONLOCAL };
-
-#endif /* EIX__STABILITY_H__ */
+#endif  // SRC_PORTAGE_KEYWORDS_H_

@@ -5,8 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__STATUSLINE_H__
-#define EIX__STATUSLINE_H__ 1
+#ifndef SRC_EIXTK_STATUSLINE_H_
+#define SRC_EIXTK_STATUSLINE_H_ 1
 
 #include <string>
 
@@ -30,4 +30,4 @@ class Statusline {
 };
 
 
-#endif /* EIX__STATUSLINE_H__ */
+#endif  // SRC_EIXTK_STATUSLINE_H_

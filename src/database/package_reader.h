@@ -7,19 +7,21 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PACKAGE_READER_H__
-#define EIX__PACKAGE_READER_H__ 1
+#ifndef SRC_DATABASE_PACKAGE_READER_H_
+#define SRC_DATABASE_PACKAGE_READER_H_ 1
 
 #include <config.h>
-#include <database/types.h>
-#include <database/header.h>
-#include <eixTk/null.h>
+
+#include <sys/types.h>
+
+#include <cstdio>
 
 #include <memory>
 #include <string>
 
-#include <cstdio>
-#include <sys/types.h>
+#include "database/types.h"
+#include "database/header.h"
+#include "eixTk/null.h"
 
 class DBHeader;
 class Package;
@@ -27,7 +29,6 @@ class PortageSettings;
 
 /// Forward-iterate for packages stored in the cachefile.
 class PackageReader {
-
 	public:
 		enum Attributes {
 			NONE = 0,
@@ -97,4 +98,4 @@ class PackageReader {
 		bool m_error;
 };
 
-#endif /* EIX__PACKAGE_READER_H__ */
+#endif  // SRC_DATABASE_PACKAGE_READER_H_

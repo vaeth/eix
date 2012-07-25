@@ -7,27 +7,29 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "ansicolor.h"
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
+#include <cstdio>
 
 #include <map>
 #include <string>
 #include <vector>
 
-#include <cstdio>
+#include "eixTk/ansicolor.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 const char *AnsiMarker::reset_string("\x1B[0m");
 
-inline static const map<string,AnsiMarker::Marker>&
+inline static const map<string, AnsiMarker::Marker>&
 static_marker_map()
 {
-	static map<string,AnsiMarker::Marker> marker_map;
+	static map<string, AnsiMarker::Marker> marker_map;
 	marker_map[""]           = AnsiMarker::amNone;
 	marker_map["none"]       = AnsiMarker::amNone;
 	marker_map["bold"]       = AnsiMarker::amBold;
@@ -42,17 +44,17 @@ static_marker_map()
 inline static AnsiMarker::Marker
 name_to_marker(const string &name)
 {
-	static const map<string,AnsiMarker::Marker> &marker_map(static_marker_map());
-	map<string,AnsiMarker::Marker>::const_iterator f(marker_map.find(name));
+	static const map<string, AnsiMarker::Marker> &marker_map(static_marker_map());
+	map<string, AnsiMarker::Marker>::const_iterator f(marker_map.find(name));
 	if(f != marker_map.end())
 		return f->second;
 	return AnsiMarker::amIllegal;
 }
 
-inline static const map<string,AnsiColor::Color>&
+inline static const map<string, AnsiColor::Color>&
 static_color_map()
 {
-	static map<string,AnsiColor::Color> color_map;
+	static map<string, AnsiColor::Color> color_map;
 	color_map["default"] = AnsiColor::acDefault;
 	color_map[""]        = AnsiColor::acDefault;
 	color_map["none"]    = AnsiColor::acNone;
@@ -70,8 +72,8 @@ static_color_map()
 inline static AnsiColor::Color
 name_to_color(const string &name)
 {
-	static const map<string,AnsiColor::Color> &color_map(static_color_map());
-	map<string,AnsiColor::Color>::const_iterator f(color_map.find(name));
+	static const map<string, AnsiColor::Color> &color_map(static_color_map());
+	map<string, AnsiColor::Color>::const_iterator f(color_map.find(name));
 	if(f != color_map.end()) {
 		return f->second;
 	}
@@ -81,9 +83,10 @@ name_to_color(const string &name)
 bool
 AnsiMarker::initmarker(const string &markers_string, string *errtext)
 {
-	markers.clear(); have_something = false;
+	markers.clear();
+	have_something = false;
 	vector<string> v;
-	split_string(v, markers_string, false, ",;:- \t\r\n");
+	split_string(&v, markers_string, false, ",;:- \t\r\n");
 	markers.assign(v.size(), amNone);
 	vector<Marker>::size_type i(0);
 	for(vector<string>::const_iterator it(v.begin());
@@ -111,9 +114,9 @@ AnsiMarker::calc_string()
 		if(*it == amNone) {
 			continue;
 		}
-		static const int len(20);
-		char buf[len];
-		snprintf(buf, len, "\x1B[%dm", int(*it));
+		static const int kLen(20);
+		char buf[kLen];
+		snprintf(buf, kLen, "\x1B[%dm", static_cast<int>(*it));
 		string_begin.append(buf);
 		have_something = true;
 	}
@@ -128,12 +131,12 @@ AnsiColor::calc_string()
 		return;
 	}
 	have_something = true;
-	static const int len(20);
-	char buf[len];
+	static const int kLen(20);
+	char buf[kLen];
 	if(fg == acDefault)
-		snprintf(buf, len, "\x1B[0m\x1B[%dm", int(light));
+		snprintf(buf, kLen, "\x1B[0m\x1B[%dm", static_cast<int>(light));
 	else
-		snprintf(buf, len, "\x1B[%d;%dm", int(light), int(fg));
+		snprintf(buf, kLen, "\x1B[%d;%dm", static_cast<int>(light), static_cast<int>(fg));
 	string_begin = buf;
 	string_begin.append(mk.asString());
 }
@@ -147,19 +150,18 @@ AnsiColor::initcolor(const string &color_name, string *errtext)
 	string::size_type resize(curr);
 	if((curr != string::npos) && (color_name[curr] == ',')) {
 		++curr;
-		if(color_name[curr] == '1')
+		if(color_name[curr] == '1') {
 			light = true;
-		else if(color_name[curr] == '0')
+		} else if(color_name[curr] == '0') {
 			light = false;
-		else {
+		} else {
 			if(errtext != NULLPTR) {
 				*errtext = eix::format(_("Invalid brightness value %r")) % color_name[curr];
 			}
 			return false;
 		}
 		curr = color_name.find(';', curr);
-	}
-	else {
+	} else {
 		light = false;
 	}
 	if(curr != string::npos) {
@@ -172,8 +174,7 @@ AnsiColor::initcolor(const string &color_name, string *errtext)
 	if(resize != string::npos) {
 		pure_color_save.assign(color_name, 0, resize);
 		pure_color = &pure_color_save;
-	}
-	else {
+	} else {
 		pure_color = &color_name;
 	}
 	fg = name_to_color(*pure_color);

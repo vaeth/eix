@@ -307,6 +307,7 @@ functions-eix.sh
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
 check_includes.sh \
+cpplint.sh \
 eix-functions.sh.in \
 eix-installed.in \
 eix-installed-after.in \

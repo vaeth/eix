@@ -7,12 +7,13 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__EBUILD_EXEC_H__
-#define EIX__EBUILD_EXEC_H__ 1
+#ifndef SRC_CACHE_COMMON_EBUILD_EXEC_H_
+#define SRC_CACHE_COMMON_EBUILD_EXEC_H_ 1
 
 #include <config.h>
 
 #include <csignal>
+
 #include <string>
 #include <vector>
 
@@ -24,6 +25,7 @@ void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
 
 class EbuildExec {
 		friend void ebuild_sig_handler(int sig) ATTRIBUTE_SIGNAL;
+
 	private:
 		const BasicCache *base;
 		static EbuildExec *handler_arg;
@@ -53,6 +55,7 @@ class EbuildExec {
 		void remove_handler();
 		bool make_tempfile();
 		static void calc_settings();
+
 	public:
 		std::string *make_cachefile(const char *name, const std::string &dir, const Package &package, const Version &version);
 		void delete_cachefile();
@@ -71,4 +74,4 @@ class EbuildExec {
 		{ return use_ebuild_sh; }
 };
 
-#endif /* EIX__EBUILD_EXEC_H__ */
+#endif  // SRC_CACHE_COMMON_EBUILD_EXEC_H_

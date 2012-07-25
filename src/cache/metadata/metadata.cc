@@ -7,28 +7,30 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "metadata.h"
-#include <cache/common/assign_reader.h>
-#include <cache/common/flat_reader.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/utils.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
+#include <dirent.h>
+
+#include <cstdlib>
+#include <cstring>
 
 #include <string>
 #include <vector>
 
-#include <cstdlib>
-#include <cstring>
-#include <dirent.h>
+#include "cache/common/assign_reader.h"
+#include "cache/common/flat_reader.h"
+#include "cache/metadata/metadata.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/utils.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 /* Subpath to metadata cache */
 #define METADATA_PATH		"metadata/cache"
@@ -62,8 +64,7 @@ MetadataCache::initialize(const string &name)
 		pure_name.erase(i);
 		have_override_path = true;
 		override_path.assign(name, i + 1, string::npos);
-	}
-	else {
+	} else {
 		have_override_path = false;
 	}
 	if(strcasecmp(pure_name.c_str(), "metadata-md5") == 0) {
@@ -75,8 +76,7 @@ MetadataCache::initialize(const string &name)
 	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-flat") == 0) {
 		if(have_override_path) {
 			setType(PATH_METADATAMD5, false);
-		}
-		else {
+		} else {
 			setType(PATH_METADATAMD5OR, true);
 		}
 		return true;
@@ -84,8 +84,7 @@ MetadataCache::initialize(const string &name)
 	if(strcasecmp(pure_name.c_str(), "metadata-md5-or-assign") == 0) {
 		if(have_override_path) {
 			setType(PATH_METADATAMD5, false);
-		}
-		else {
+		} else {
 			setType(PATH_METADATAMD5OR, false);
 		}
 		return true;
@@ -164,8 +163,7 @@ MetadataCache::setFlat(bool set_flat)
 	if(set_flat) {
 		x_get_keywords_slot_iuse_restrict = flat_get_keywords_slot_iuse_restrict;
 		x_read_file = flat_read_file;
-	}
-	else {
+	} else {
 		x_get_keywords_slot_iuse_restrict = assign_get_keywords_slot_iuse_restrict;
 		x_read_file = assign_read_file;
 	}
@@ -185,8 +183,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 	m_catname = cat_name;
 	if(have_override_path) {
 		m_catpath = override_path;
-	}
-	else {
+	} else {
 		m_catpath = m_prefix;
 		switch(path_type) {
 			case PATH_METADATA:
@@ -194,14 +191,12 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 			case PATH_METADATAMD5OR:
 				// m_scheme is actually the portdir
 				m_catpath.append(m_scheme);
-				optional_append(m_catpath, '/');
+				optional_append(&m_catpath, '/');
 				if(path_type == PATH_METADATA) {
 					m_catpath.append(METADATA_PATH);
-				}
-				else if(path_type == PATH_METADATAMD5) {
+				} else if(path_type == PATH_METADATAMD5) {
 					m_catpath.append(METADATAMD5_PATH);
-				}
-				else {
+				} else {
 					alt = m_catpath;
 					m_catpath.append(METADATAMD5_PATH);
 					alt.append(METADATA_PATH);
@@ -213,7 +208,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 */
 			default:
 				m_catpath = m_prefix;
-				optional_append(m_catpath, '/');
+				optional_append(&m_catpath, '/');
 				m_catpath.append(PORTAGE_CACHE_PATH);
 				break;
 		}
@@ -223,7 +218,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 			m_catpath.append(m_scheme);
 			break;
 		case PATH_REPOSITORY:
-			optional_append(m_catpath, '/');
+			optional_append(&m_catpath, '/');
 			if(m_overlay_name.empty()) {
 				// Paludis' way of resolving missing repo_name:
 				m_catpath.append("x-");
@@ -231,7 +226,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 				while(p) {
 					string::size_type c(m_scheme.rfind('/', p));
 					if(c == string::npos) {
-						m_catpath.append(m_scheme, 0,p);
+						m_catpath.append(m_scheme, 0, p);
 						break;
 					}
 					if(c == --p)
@@ -239,8 +234,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 					m_catpath.append(m_scheme, c + 1, p - c);
 					break;
 				}
-			}
-			else {
+			} else {
 				m_catpath.append(m_overlay_name);
 			}
 			break;
@@ -252,7 +246,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 		default:
 			break;
 	}
-	optional_append(m_catpath, '/');
+	optional_append(&m_catpath, '/');
 	m_catpath.append(cat_name);
 
 	bool r(scandir_cc(m_catpath, names, cachefiles_selector));
@@ -260,17 +254,17 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 		return r;
 	}
 	// PATH_METADATAMD5OR:
-	if(r) { // We had found category in METADATAMD5_PATH
-		if(flat) { // We "jump" to non-flat PATH_METADATAMD5 mode:
+	if(r) {  // We had found category in METADATAMD5_PATH
+		if(flat) {  // We "jump" to non-flat PATH_METADATAMD5 mode:
 			setFlat(false);
 		}
 		return true;
 	}
 	// We choose metadata-flat or metadata-assign:
 	m_catpath = alt;
-	optional_append(m_catpath, '/');
+	optional_append(&m_catpath, '/');
 	m_catpath.append(cat_name);
-	if(flat) { // We "jump" to flat PATH_METADATA mode:
+	if(flat) {  // We "jump" to flat PATH_METADATA mode:
 		setFlat(true);
 	}
 	return scandir_cc(m_catpath, names, cachefiles_selector);
@@ -307,7 +301,7 @@ MetadataCache::get_md5sum(const char *pkg_name, const char *ver_name) const
 }
 
 bool
-MetadataCache::readCategory(Category &cat)
+MetadataCache::readCategory(Category *cat)
 {
 	for(vector<string>::const_iterator it(names.begin());
 		likely(it != names.end()); ) {
@@ -323,11 +317,11 @@ MetadataCache::readCategory(Category &cat)
 		}
 
 		/* Search for existing package */
-		Package *pkg(cat.findPackage(aux[0]));
+		Package *pkg(cat->findPackage(aux[0]));
 
 		/* If none was found create one */
 		if(pkg == NULLPTR) {
-			pkg = cat.addPackage(m_catname, aux[0]);
+			pkg = cat->addPackage(m_catname, aux[0]);
 		}
 
 		for(;;) {
@@ -340,8 +334,7 @@ MetadataCache::readCategory(Category &cat)
 			}
 			if(unlikely(r == BasicVersion::parsedError)) {
 				delete version;
-			}
-			else {
+			} else {
 				get_version_info(aux[0], aux[1], version);
 
 				pkg->addVersion(version);
@@ -376,7 +369,7 @@ MetadataCache::readCategory(Category &cat)
 		}
 
 		/* Read the cache file of the last version completely */
-		if(newest) // provided we have read the "last" version
+		if(newest)  // provided we have read the "last" version
 			get_common_info((pkg->name).c_str(), neweststring.c_str(), pkg);
 	}
 	return true;

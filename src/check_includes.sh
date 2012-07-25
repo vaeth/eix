@@ -18,11 +18,21 @@ GrepAll() {
 		-exec grep -l "${@}" -- '{}' '+'
 }
 
-GrepWithout() {
-	local g ga
+SetG='case ${1} in
+*:*)	shift
+	colon=false
+	g="using std::${1}[^<]"
+	ga=${g};;
+*)	colon=:
 	g="include <${1}>"
-	ga="include \"${1#*/}\""
-	shift
+	ga="include \"${1}\"";;
+esac
+shift
+${colon}'
+
+GrepWithout() {
+	local g ga colon
+	eval "${SetG}" || return 0
 	printf "%s\n" "Files with ${*} but not ${g}:"
 	GrepAll "${@}" | GREP_OPTIONS='--color=always' \
 		xargs -- grep -L -e "${g}" -e "${ga}" --
@@ -30,10 +40,8 @@ GrepWithout() {
 }
 
 GrepWith() {
-	local g
-	g="include <${1}>"
-	ga="include \"${1#*/}\""
-	shift
+	local g ga colon
+	eval "${SetG}"
 	printf "%s\n" "Files with ${g} but not ${*}:"
 	GrepAll -e "${g}" -e "${ga}" | GREP_OPTIONS='--color=always' \
 		xargs -- grep -L "${@}" --
@@ -70,10 +78,23 @@ Check 'eixTk/unused\.h' -e '[^_]UNUSED' -e 'ATTRIBUTE_UNUSED'
 Check 'portage/basicversion\.h' -e 'BasicVersion' -e 'BasicPart'
 
 Check 'iostream' -e '[^a-z]cout[^a-z]' -e '[^a-z]cerr[^a-z]' -e '[^a-z]cin[^a-z]'
+Check 'list' -e '[^_]list<' -e '^list<'
 Check 'map' -e '[^_]map<' -e '^map<'
-Check 'set' -e '[^_]set<'
+Check 'set' -e '[^_]set<' -e '^set<'
 Check 'string' -e '[^_]string[^>".,;a-z ]' -e 'std::string' -e '[^_]string [a-zA-Z_0-9]* *[;=(]' -e '[a-z]<string[,>]' -e 'const string '
-Check 'vector' -e '[^_]vector<'
+Check 'vector' -e '[^_]vector<' -e '^vector<'
+Check 'utility' -e '[^_]pair<' -e '^pair<'
+
+Check : 'list' -e '[^:]list<' -e '^list<'
+Check : 'map' -e '[^:]map<' -e '^map<'
+Check : 'pair' -e '[^:]pair<' -e '^pair<'
+Check : 'set' -e '[^:]set<' -e '^set<'
+Check : 'string' -e '[^:]string[^a-zA-Z_0-9]*'
+Check : 'vector' -e '[^:]vector<' -e '^vector<'
+
+Check : 'cerr' -e '[^:]cerr[^a-z]'
+Check : 'cout' -e '[^:]cout[^a-z]'
+Check : 'endl' -e '[^:]endl[^a-z]'
 
 Check 'cstddef' -e '[^_]NULL\([^P]\|$\)'
 Check 'cstdio' -e fopen -e fclose -e fflush -e '[^A-Z_]FILE[^A-Z_]' -e 'printf(' -e fseek

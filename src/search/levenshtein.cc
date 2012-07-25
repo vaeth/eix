@@ -7,17 +7,21 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "levenshtein.h"
-#include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
+
+#include <sys/types.h>
+
+#include <cstring>
 
 #include <algorithm>
 #include <vector>
 
-#include <cstring>
-#include <sys/types.h>
+#include "eixTk/likely.h"
+#include "eixTk/stringutils.h"
+#include "search/levenshtein.h"
 
-using namespace std;
+using std::vector;
+
+using std::min;
 
 /**
  * Calculates the Levenshtein distance of two strings
@@ -28,7 +32,7 @@ using namespace std;
 Levenshtein
 get_levenshtein_distance(const char *str_a, const char *str_b)
 {
-	size_t n,m;
+	size_t n, m;
 	vector< vector<Levenshtein> > matrix;
 
 	n = strlen(str_a);

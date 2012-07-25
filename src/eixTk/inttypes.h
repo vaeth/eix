@@ -6,8 +6,8 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef EIX__INTTYPES_H__
-#define EIX__INTTYPES_H__ 1
+#ifndef SRC_EIXTK_INTTYPES_H_
+#define SRC_EIXTK_INTTYPES_H_ 1
 
 #include <config.h>
 
@@ -23,4 +23,4 @@
 #endif
 #endif
 
-#endif /* EIX__INTTYPES_H__ */
+#endif  // SRC_EIXTK_INTTYPES_H_

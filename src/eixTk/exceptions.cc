@@ -7,17 +7,21 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "exceptions.h"
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
-
 #include <iostream>
 #include <string>
 #include <vector>
 
-using namespace std;
+#include "eixTk/exceptions.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/stringutils.h"
+
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::endl;
 
 /// Provide a common look for error-messages for parse-errors in
 /// portage.{mask,keywords,..}.
@@ -29,7 +33,7 @@ portage_parse_error(const string &file, const vector<string>::size_type line_nr,
 
 	// Indent the message correctly
 	vector<string> lines;
-	split_string(lines, errtext, false, "\n", false);
+	split_string(&lines, errtext, false, "\n", false);
 	for(vector<string>::iterator i(lines.begin()); likely(i != lines.end()); ++i) {
 		cerr << "    " << *i << endl;
 	}

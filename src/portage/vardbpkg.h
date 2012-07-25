@@ -7,18 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PORTAGECONF_H__
-#define EIX__PORTAGECONF_H__ 1
-
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/basicversion.h>
-#include <portage/instversion.h>
-#include <portage/package.h>
+#ifndef SRC_PORTAGE_VARDBPKG_H_
+#define SRC_PORTAGE_VARDBPKG_H_ 1
 
 #include <map>
 #include <string>
 #include <vector>
+
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/basicversion.h"
+#include "portage/instversion.h"
+#include "portage/package.h"
 
 class PrintFormat;
 class DBHeader;
@@ -62,15 +62,15 @@ class VarDbPkg {
 		bool care_slots() const
 		{ return care_of_slots; }
 
-		bool readSlot(const Package &p, InstVersion &v) const;
-		bool readUse(const Package &p, InstVersion &v) const;
-		bool readRestricted(const Package &p, InstVersion &v, const DBHeader& header) const;
-		void readInstDate(const Package &p, InstVersion &v) const;
+		bool readSlot(const Package &p, InstVersion *v) const;
+		bool readUse(const Package &p, InstVersion *v) const;
+		bool readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const;
+		void readInstDate(const Package &p, InstVersion *v) const;
 
-		bool readOverlay(const Package &p, InstVersion &v, const DBHeader &header) const;
+		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;
 		std::string readOverlayPath(const Package *p, const BasicVersion *v) const;
-		short check_installed_overlays;
+		signed int check_installed_overlays;
 
 		/** Find installed versions
 		 * @return NULLPTR if not found .. else pointer to vector of versions. */
@@ -91,11 +91,11 @@ class VarDbPkg {
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		short isInstalledVersion(const Package &p, const Version *v, const DBHeader& header);
+		signed int isInstalledVersion(const Package &p, const Version *v, const DBHeader& header);
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */
 		std::vector<InstVersion>::size_type numInstalled(const Package &p);
 };
 
-#endif /* EIX__PORTAGECONF_H__ */
+#endif  // SRC_PORTAGE_VARDBPKG_H_

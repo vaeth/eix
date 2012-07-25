@@ -7,14 +7,14 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "extendedversion.h"
-#include <eixTk/sysutils.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/package.h>
-
 #include <string>
 
-using namespace std;
+#include "eixTk/sysutils.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/extendedversion.h"
+#include "portage/package.h"
+
+using std::string;
 
 bool
 ExtendedVersion::have_bin_pkg(const PortageSettings *ps, const Package *pkg) const

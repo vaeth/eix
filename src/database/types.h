@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__DATABASE_TYPES_H__
-#define EIX__DATABASE_TYPES_H__ 1
+#ifndef SRC_DATABASE_TYPES_H_
+#define SRC_DATABASE_TYPES_H_ 1
 
 // include <database/types.h> This comment satisfies check_include script
 
@@ -31,4 +31,4 @@ namespace io {
 	extern OffsetType counter;
 }
 
-#endif /* EIX__DATABASE_TYPES_H__ */
+#endif  // SRC_DATABASE_TYPES_H_

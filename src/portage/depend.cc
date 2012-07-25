@@ -5,12 +5,12 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "depend.h"
-#include <eixTk/stringutils.h>
-
 #include <string>
 
-using namespace std;
+#include "eixTk/stringutils.h"
+#include "portage/depend.h"
+
+using std::string;
 
 bool Depend::use_depend;
 
@@ -60,9 +60,9 @@ Depend::set(const string &depend, const string &rdepend, const string &pdepend, 
 	m_rdepend = rdepend;
 	m_pdepend = pdepend;
 	if(normspace) {
-		trimall(m_depend);
-		trimall(m_rdepend);
-		trimall(m_pdepend);
+		trimall(&m_depend);
+		trimall(&m_rdepend);
+		trimall(&m_pdepend);
 	}
 	subst_the_same(m_depend, m_rdepend) || \
 		subst_the_same(m_rdepend, m_depend);
@@ -81,11 +81,9 @@ Depend::subst(const string &in, const string &text)
 		if(pos > 0) {
 			ret.insert(++pos, 1, ' ');
 		}
-	}
-	else if(pos > 0) {
+	} else if(pos > 0) {
 		ret[pos++] = ' ';
-	}
-	else {
+	} else {
 		ret.erase(pos);
 	}
 	ret.insert(pos, text);

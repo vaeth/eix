@@ -7,14 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "package.h"
-#include <eixTk/likely.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/keywords.h>
-#include <portage/version.h>
-
-using namespace std;
+#include "eixTk/likely.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/keywords.h"
+#include "portage/package.h"
+#include "portage/version.h"
 
 Package::~Package()
 {
@@ -97,13 +95,12 @@ Package::addVersionFinalize(Version *version)
 				largest_overlay = key;
 		}
 		local_collects.setbits(version->maskflags.get());
-	}
-	else {
+	} else {
 		largest_overlay       = key;
 		version_collects      = COLLECT_DEFAULT;
 		local_collects        = version->maskflags;
 	}
-	if(! (version->slotname).empty())
+	if(!(version->slotname).empty())
 		version_collects |= COLLECT_HAVE_NONTRIVIAL_SLOTS;
 
 	collect_iuse(version);
@@ -125,4 +122,3 @@ Package::finalize_masks()
 		local_collects.setbits(i->maskflags.get());
 	}
 }
-

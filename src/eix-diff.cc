@@ -12,40 +12,46 @@
  */
 
 #include <config.h>
-#include <database/header.h>
-#include <database/io.h>
-#include <eixTk/argsreader.h>
-#include <eixTk/filenames.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/utils.h>
-#include <eixrc/eixrc.h>
-#include <eixrc/global.h>
-#include <main/main.h>
-#include <output/formatstring-print.h>
-#include <output/formatstring.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/depend.h>
-#include <portage/extendedversion.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
-#include <portage/set_stability.h>
-#include <portage/vardbpkg.h>
-#include <various/drop_permissions.h>
+
+#include <unistd.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 #include <algorithm>
 #include <iostream>
 #include <string>
 
-#include <cstdio>
-#include <cstdlib>
-#include <unistd.h>
+#include "database/header.h"
+#include "database/io.h"
+#include "eixTk/argsreader.h"
+#include "eixTk/filenames.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/utils.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
+#include "main/main.h"
+#include "output/formatstring-print.h"
+#include "output/formatstring.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/depend.h"
+#include "portage/extendedversion.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
+#include "portage/set_stability.h"
+#include "portage/vardbpkg.h"
+#include "various/drop_permissions.h"
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
-using namespace std;
+using std::string;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 inline void
 INFO(const string &s)
@@ -106,8 +112,8 @@ static Option long_options[] = {
 	Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help), /* show a short help screen */
 	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
 	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
-	Option("dump-deafults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults),
-	Option("print",        O_PRINT_VAR, Option::STRING,&var_to_print),
+	Option("dump-deafults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults),
+	Option("print",        O_PRINT_VAR, Option::STRING, &var_to_print),
 	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &cli_known_vars),
 	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
 	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
@@ -118,23 +124,21 @@ static Option long_options[] = {
 };
 
 static void
-load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
-{
+load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) {
 	FILE *fp(fopen(file, "rb"));
 
 	if(likely(fp != NULLPTR)) {
 		string errtext;
-		if(likely(io::read_header(*header, fp, &errtext))) {
+		if(likely(io::read_header(header, fp, &errtext))) {
 			ps->store_world_sets(&(header->world_sets));
-			if(likely(io::read_packagetree(*body, *header, ps, fp, &errtext))) {
+			if(likely(io::read_packagetree(body, *header, ps, fp, &errtext))) {
 				fclose(fp);
 				return;
 			}
 		}
 		fclose(fp);
 		cerr << eix::format(_("error in database file %r: %s")) % file % errtext << endl;
-	}
-	else {
+	} else {
 		cerr << eix::format(_("Can't open the database file %r for reading (mode = 'rb')")) % file << endl;
 	}
 	exit(EXIT_FAILURE);
@@ -150,8 +154,7 @@ set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virt
 		fmt->set_as_virtual(i, is_virtual((eprefix_virtual + header.getOverlay(i).path).c_str()));
 }
 
-class DiffTrees
-{
+class DiffTrees {
 	public:
 		typedef void (*lost_func) (Package *p);
 		typedef void (*found_func) (Package *p);
@@ -167,28 +170,29 @@ class DiffTrees
 		{ }
 
 		/// Diff the trees and run callbacks
-		void diff(PackageTree &old_tree, PackageTree &new_tree)
+		void diff(PackageTree *old_tree, PackageTree *new_tree)
 		{
 			// Diff every category from the old tree with the category from the new tree
-			for(PackageTree::iterator old_cat(old_tree.begin());
-				old_cat != old_tree.end(); ++old_cat) {
-				diff_category(*(old_cat->second), new_tree[old_cat->first]);
+			for(PackageTree::iterator old_cat(old_tree->begin());
+				likely(old_cat != old_tree->end()); ++old_cat) {
+				diff_category(old_cat->second, &(*new_tree)[old_cat->first]);
 			}
 
 			// Now we've only new package in the new_tree
 			// and lost packages in the old_tree
 
 			if(m_separate_deleted) {
-				for(PackageTree::iterator old_cat(old_tree.begin());
-					old_cat != old_tree.end(); ++old_cat) {
+				for(PackageTree::iterator old_cat(old_tree->begin());
+					likely(old_cat != old_tree->end()); ++old_cat) {
 					for_each(old_cat->second->begin(), old_cat->second->end(), lost_package);
 				}
 			}
-			for(PackageTree::iterator new_cat = new_tree.begin();
-				new_cat != new_tree.end(); ++new_cat) {
+			for(PackageTree::iterator new_cat(new_tree->begin());
+				likely(new_cat != new_tree->end()); ++new_cat) {
 				for_each(new_cat->second->begin(), new_cat->second->end(), found_package);
 			}
 		}
+
 	private:
 		VarDbPkg *m_vardbpkg;
 		PortageSettings *m_portage_settings;
@@ -199,34 +203,33 @@ class DiffTrees
 
 		/// Diff two categories and run callbacks.
 		/// Remove already diffed packages from both categories.
-		void diff_category(Category &old_cat, Category &new_cat)
+		void diff_category(Category *old_cat, Category *new_cat)
 		{
-			Category::iterator old_pkg(old_cat.begin());
+			Category::iterator old_pkg(old_cat->begin());
 
-			while(likely(old_pkg != old_cat.end())) {
-				Category::iterator new_pkg(new_cat.find(old_pkg->name));
+			while(likely(old_pkg != old_cat->end())) {
+				Category::iterator new_pkg(new_cat->find(old_pkg->name));
 
-				if(unlikely(new_pkg == new_cat.end())) {
+				if(unlikely(new_pkg == new_cat->end())) {
 					// Lost a package
 					if(m_separate_deleted) {
 						++old_pkg;
 						continue;
 					}
 					lost_package(*old_pkg);
-				}
-				else {
+				} else {
 					// Best version differs
 					if(unlikely(best_differs(*new_pkg, *old_pkg)))
 						changed_package(*old_pkg, *new_pkg);
 
 					// Remove the new package
 					delete *new_pkg;
-					new_cat.erase(new_pkg);
+					new_cat->erase(new_pkg);
 				}
 
 				// Remove the old packages
 				delete *old_pkg;
-				old_pkg = old_cat.erase(old_pkg);
+				old_pkg = old_cat->erase(old_pkg);
 			}
 		}
 };
@@ -256,10 +259,10 @@ print_lost_package(Package *p)
 }
 
 static void
-parseFormat(Node *&format, const char *varname, EixRc &rc)
+parseFormat(Node **format, const char *varname, EixRc *rc)
 {
 	string errtext;
-	if(likely((format_for_new.parseFormat(format, rc[varname].c_str(), &errtext)))) {
+	if(likely((format_for_new.parseFormat(format, (*rc)[varname].c_str(), &errtext)))) {
 		return;
 	}
 	cerr << eix::format(_("Problems while parsing %s: %s\n"))
@@ -273,7 +276,7 @@ run_eix_diff(int argc, char *argv[])
 	string old_file, new_file;
 
 	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
-	drop_permissions(rc);
+	drop_permissions(&rc);
 
 	Depend::use_depend = rc.getBool("DEP");
 
@@ -329,24 +332,23 @@ run_eix_diff(int argc, char *argv[])
 			new_file = current_param->m_argument;
 			have_new = true;
 		}
-	}
-	else {
+	} else {
 		old_file = rc["EIX_PREVIOUS"];
 	}
 	if(!have_new) {
 		new_file = rc["EIX_CACHEFILE"];
 	}
 
-	parseFormat(format_new, "DIFF_FORMAT_NEW", rc);
-	parseFormat(format_delete, "DIFF_FORMAT_DELETE", rc);
-	parseFormat(format_changed, "DIFF_FORMAT_CHANGED", rc);
+	parseFormat(&format_new, "DIFF_FORMAT_NEW", &rc);
+	parseFormat(&format_delete, "DIFF_FORMAT_DELETE", &rc);
+	parseFormat(&format_changed, "DIFF_FORMAT_CHANGED", &rc);
 
-	format_for_new.setupResources(rc);
+	format_for_new.setupResources(&rc);
 	format_for_new.slot_sorted = false;
 	format_for_new.style_version_lines = false;
 	format_for_new.setupColors();
 
-	portagesettings = new PortageSettings(rc, true, false);
+	portagesettings = new PortageSettings(&rc, true, false);
 
 	varpkg_db = new VarDbPkg(rc["EPREFIX_INSTALLED"] + VAR_DB_PKG, !cli_quick, cli_care,
 		rc.getBool("RESTRICT_INSTALLED"), rc.getBool("CARE_RESTRICT_INSTALLED"),
@@ -361,11 +363,11 @@ run_eix_diff(int argc, char *argv[])
 
 	PackageTree new_tree;
 	load_db(new_file.c_str(), &new_header, &new_tree, portagesettings);
-	set_stability_new->set_stability(new_tree);
+	set_stability_new->set_stability(&new_tree);
 
 	PackageTree old_tree;
 	load_db(old_file.c_str(), &old_header, &old_tree, portagesettings);
-	set_stability_old->set_stability(old_tree);
+	set_stability_old->set_stability(&old_tree);
 
 	format_for_new.set_overlay_translations(NULLPTR);
 
@@ -390,7 +392,7 @@ run_eix_diff(int argc, char *argv[])
 	differ.found_package   = print_found_package;
 	differ.changed_package = print_changed_package;
 
-	differ.diff(old_tree, new_tree);
+	differ.diff(&old_tree, &new_tree);
 
 	delete varpkg_db;
 	delete portagesettings;

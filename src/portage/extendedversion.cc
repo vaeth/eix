@@ -7,17 +7,20 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "extendedversion.h"
 #include <config.h>
-#include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
-#include <portage/package.h>
 
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
-using namespace std;
+#include "eixTk/likely.h"
+#include "eixTk/stringutils.h"
+#include "portage/extendedversion.h"
+#include "portage/package.h"
+
+using std::map;
+using std::string;
+using std::vector;
 
 const ExtendedVersion::Restrict
 	ExtendedVersion::RESTRICT_NONE,
@@ -46,7 +49,7 @@ const ExtendedVersion::HaveBinPkg
 	ExtendedVersion::HAVEBINPKG_NO,
 	ExtendedVersion::HAVEBINPKG_YES;
 
-static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
+static class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 	private:
 		void mapinit(const char *s, ExtendedVersion::Restrict r)
 		{ (*this)[s] = r; }
@@ -74,7 +77,7 @@ static class RestrictMap : public map<string,ExtendedVersion::Restrict> {
 		}
 } restrict_map;
 
-static class PropertiesMap : public map<string,ExtendedVersion::Properties> {
+static class PropertiesMap : public map<string, ExtendedVersion::Properties> {
 	private:
 		void mapinit(const char *s, ExtendedVersion::Properties p)
 		{ (*this)[s] = p; }
@@ -101,7 +104,7 @@ ExtendedVersion::calcRestrict(const string &str)
 {
 	Restrict r(RESTRICT_NONE);
 	vector<string> restrict_words;
-	split_string(restrict_words, str);
+	split_string(&restrict_words, str);
 	for(vector<string>::const_iterator it(restrict_words.begin());
 		likely(it != restrict_words.end()); ++it) {
 		r |= restrict_map.getRestrict(*it);
@@ -114,7 +117,7 @@ ExtendedVersion::calcProperties(const string &str)
 {
 	Properties p(PROPERTIES_NONE);
 	vector<string> properties_words;
-	split_string(properties_words, str);
+	split_string(&properties_words, str);
 	for(vector<string>::const_iterator it(properties_words.begin());
 		it != properties_words.end(); ++it) {
 		p |= properties_map.getProperties(*it);

@@ -8,21 +8,11 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "sqlite.h"
+
+#include <sqlite3.h>
 
 #ifdef WITH_SQLITE
-
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/unused.h>
-#include <portage/basicversion.h>
-#include <portage/depend.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
-#include <portage/version.h>
+#include <cstdlib>
 
 #ifdef SQLITE_ONLY_DEBUG
 #include <iostream>
@@ -31,11 +21,26 @@
 #include <string>
 #include <vector>
 
-#include <cstdlib>
+#include "cache/sqlite/sqlite.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/unused.h"
+#include "portage/basicversion.h"
+#include "portage/depend.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
+#include "portage/version.h"
 
-#include <sqlite3.h>
+using std::map;
+using std::string;
+using std::vector;
 
-using namespace std;
+#ifdef SQLITE_ONLY_DEBUG
+using std::cout;
+#endif
 
 /* Path to portage cache */
 #define PORTAGE_CACHE_PATH "/var/cache/edb/dep"
@@ -94,7 +99,7 @@ sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **az
     the constructor, all functions should be const or static.
 */
 
-static class TrueIndex : public map<string,vector<int>::size_type> {
+static class TrueIndex : public map<string, vector<int>::size_type> {
 	public:
 		typedef enum {
 			NAME,
@@ -137,23 +142,23 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 			mapinit(17, SLOT,        "SLOT");
 		}
 
-		int calc(int argc, const char **azColName, vector<int> &trueindex) const
+		int calc(int argc, const char **azColName, vector<int> *trueindex) const
 		{
-			trueindex = default_trueindex;
+			*trueindex = default_trueindex;
 			for(int i(0); i < argc; ++i) {
-				map<string,vector<int>::size_type>::const_iterator it(find(azColName[i]));
+				map<string, vector<int>::size_type>::const_iterator it(find(azColName[i]));
 				if(it != end())
-					trueindex[it->second] = i;
+					(*trueindex)[it->second] = i;
 			}
 			int maxindex(-1);
 			for(vector<int>::size_type i(0); likely(i < TrueIndex::LAST); ++i) {
-				int curr(trueindex[i]);
+				int curr((*trueindex)[i]);
 				// Shortcut if we have not reached the maximum
 				if(maxindex >= curr)
 					continue;
 				// Is the true index out of range?
 				if(argc <= curr) {
-					trueindex[i] = -1;
+					(*trueindex)[i] = -1;
 					// PROPERTIES is not mandatory
 					if(i == TrueIndex::PROPERTIES)
 						continue;
@@ -163,9 +168,9 @@ static class TrueIndex : public map<string,vector<int>::size_type> {
 			return maxindex;
 		}
 
-		static const char *c_str(const char **argv, vector<int> &trueindex, const vector<int>::size_type i)
+		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i)
 		{
-			int t(trueindex[i]);
+			int t((*trueindex)[i]);
 			if(t < 0)
 				return "";
 			return welldefine(argv[t]);
@@ -180,14 +185,14 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		return;
 
 	if(!maxindex)
-		maxindex = handle_trueindex.calc(argc, azColName, trueindex);
+		maxindex = handle_trueindex.calc(argc, azColName, &trueindex);
 
 	if(argc <= trueindex[TrueIndex::NAME]) {
 		sqlite_callback_error = true;
 		m_error_callback(_("sqlite dataset does not contain a package name"));
 		return;
 	}
-	string catarg(TrueIndex::c_str(argv, trueindex, TrueIndex::NAME));
+	string catarg(TrueIndex::c_str(argv, &trueindex, TrueIndex::NAME));
 	if(argc <= maxindex) {
 		sqlite_callback_error = true;
 		m_error_callback(eix::format(_("sqlite dataset for %s is too small")) % catarg);
@@ -208,13 +213,11 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 		if(cat_name != catarg)
 			return;
 		dest_cat = category;
-	}
-	else if(never_add_categories) {
+	} else if(never_add_categories) {
 		dest_cat = packagetree->find(catarg);
 		if(unlikely(dest_cat == NULLPTR))
 			return;
-	}
-	else {
+	} else {
 		dest_cat =  &((*packagetree)[catarg]);
 	}
 	char **aux(ExplodeAtom::split(name_ver.c_str()));
@@ -238,26 +241,25 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	}
 	if(unlikely(r == BasicVersion::parsedError)) {
 		delete version;
-	}
-	else {
+	} else {
 		// reading slots and stability
-		version->set_slotname(TrueIndex::c_str(argv, trueindex, TrueIndex::SLOT));
-		version->set_restrict(TrueIndex::c_str(argv, trueindex, TrueIndex::RESTRICT));
-		version->set_properties(TrueIndex::c_str(argv, trueindex, TrueIndex::PROPERTIES));
-		version->set_full_keywords(TrueIndex::c_str(argv, trueindex, TrueIndex::KEYWORDS));
-		version->set_iuse(TrueIndex::c_str(argv, trueindex, TrueIndex::IUSE));
-		version->depend.set(TrueIndex::c_str(argv, trueindex, TrueIndex::DEPEND),
-			TrueIndex::c_str(argv, trueindex, TrueIndex::RDEPEND),
-			TrueIndex::c_str(argv, trueindex, TrueIndex::PDEPEND),
+		version->set_slotname(TrueIndex::c_str(argv, &trueindex, TrueIndex::SLOT));
+		version->set_restrict(TrueIndex::c_str(argv, &trueindex, TrueIndex::RESTRICT));
+		version->set_properties(TrueIndex::c_str(argv, &trueindex, TrueIndex::PROPERTIES));
+		version->set_full_keywords(TrueIndex::c_str(argv, &trueindex, TrueIndex::KEYWORDS));
+		version->set_iuse(TrueIndex::c_str(argv, &trueindex, TrueIndex::IUSE));
+		version->depend.set(TrueIndex::c_str(argv, &trueindex, TrueIndex::DEPEND),
+			TrueIndex::c_str(argv, &trueindex, TrueIndex::RDEPEND),
+			TrueIndex::c_str(argv, &trueindex, TrueIndex::PDEPEND),
 			false);
 		pkg->addVersion(version);
 
 		/* For the newest version, add all remaining data */
 		if(*(pkg->latest()) == *version)
 		{
-			pkg->homepage = TrueIndex::c_str(argv, trueindex, TrueIndex::HOMEPAGE);
-			pkg->licenses = TrueIndex::c_str(argv, trueindex, TrueIndex::LICENSE);
-			pkg->desc     = TrueIndex::c_str(argv, trueindex, TrueIndex::DESCRIPTION);
+			pkg->homepage = TrueIndex::c_str(argv, &trueindex, TrueIndex::HOMEPAGE);
+			pkg->licenses = TrueIndex::c_str(argv, &trueindex, TrueIndex::LICENSE);
+			pkg->desc     = TrueIndex::c_str(argv, &trueindex, TrueIndex::DESCRIPTION);
 		}
 	}
 	/* Free old split */
@@ -305,10 +307,9 @@ SqliteCache::readCategories(PackageTree *pkgtree, const char *catname, Category 
 
 #else /* Not WITH_SQLITE */
 
-#include <eixTk/i18n.h>
-#include <eixTk/unused.h>
-
-using namespace std;
+#include "cache/sqlite/sqlite.h"  // NOLINT(build/include)
+#include "eixTk/i18n.h"  // NOLINT(build/include)
+#include "eixTk/unused.h"  // NOLINT(build/include)
 
 bool
 SqliteCache::readCategories(PackageTree *pkgtree ATTRIBUTE_UNUSED, const char *catname ATTRIBUTE_UNUSED, Category *cat ATTRIBUTE_UNUSED)

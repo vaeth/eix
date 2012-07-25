@@ -5,13 +5,14 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__MATCHTREE_H__
-#define EIX__MATCHTREE_H__ 1
+#ifndef SRC_SEARCH_MATCHTREE_H_
+#define SRC_SEARCH_MATCHTREE_H_ 1
 
 #include <config.h>
-#include <eixTk/null.h>
 
 #include <stack>
+
+#include "eixTk/null.h"
 
 class MatchAtomOperator;
 class MatchAtomTest;
@@ -24,7 +25,7 @@ class MatchAtom {
 protected:
 	bool m_negate;
 public:
-	MatchAtom(bool negate = false) : m_negate(negate)
+	explicit MatchAtom(bool negate = false) : m_negate(negate)
 	{ }
 
 	/// Virtual deconstructor
@@ -50,7 +51,7 @@ private:
 	AtomOperator m_operator;
 	MatchAtom *m_left, *m_right;
 public:
-	MatchAtomOperator(AtomOperator op) :
+	explicit MatchAtomOperator(AtomOperator op) :
 		m_operator(op), m_left(NULLPTR), m_right(NULLPTR)
 	{ }
 
@@ -83,17 +84,16 @@ public:
 
 class MatchParseData {
 public:
-	MatchAtom **parent; /// parent of the current subroot. Always Non-NULLPTR.
-	                    /// Modified only when the current tree is finished.
-	MatchAtom *subroot; /// root of the current tree, possibly NULLPTR.
-	bool useright;      /// subroot is an operator and grow right leaf.
-	bool negatebrace;   /// Must the whole result be negated at the end?
-	                    /// This is only set after -! -(
+	MatchAtom **parent;  /// parent of the current subroot. Always Non-NULLPTR.
+	                     /// Modified only when the current tree is finished.
+	MatchAtom *subroot;  /// root of the current tree, possibly NULLPTR.
+	bool useright;       /// subroot is an operator and grow right leaf.
+	bool negatebrace;    /// Must the whole result be negated at the end?
+	                     /// This is only set after -! -(
 
-	MatchParseData(MatchAtom **p) : parent(p),
+	explicit MatchParseData(MatchAtom **p) : parent(p),
 		subroot(NULLPTR), useright(false), negatebrace(false)
 	{ }
-
 };
 
 class MatchTree {
@@ -104,8 +104,8 @@ private:
 	// The following flags must be carefully honoured and updated
 	// in every public parse_* function
 	// (the private function sometimes ignore these flags):
-	bool local_negate;  /// Is currently some -! active?
-	bool local_finished;/// Will -( -! or a test cast a binary operator?
+	bool local_negate;    /// Is currently some -! active?
+	bool local_finished;  /// Will -( -! or a test cast a binary operator?
 	std::stack<MatchParseData> parser_stack;
 
 	MatchAtomTest *parse_new_leaf();
@@ -121,8 +121,9 @@ private:
 	/// Internal form of parse_close() which can also clear the
 	/// first (root) element on parser_stack() and ignores local_negate.
 	void parse_closeforce();
+
 public:
-	MatchTree(bool default_is_or);
+	explicit MatchTree(bool default_is_or);
 
 	~MatchTree();
 
@@ -146,4 +147,4 @@ public:
 	void end_parse();
 };
 
-#endif /* EIX__MATCHTREE_H__ */
+#endif  // SRC_SEARCH_MATCHTREE_H_

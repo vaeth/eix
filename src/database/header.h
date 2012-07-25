@@ -7,23 +7,22 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__DBHEADER_H__
-#define EIX__DBHEADER_H__ 1
-
-#include <database/types.h>
-#include <eixTk/stringutils.h>
-#include <portage/extendedversion.h>
-#include <portage/overlay.h>
+#ifndef SRC_DATABASE_HEADER_H_
+#define SRC_DATABASE_HEADER_H_ 1
 
 #include <set>
 #include <string>
 #include <vector>
 
+#include "database/types.h"
+#include "eixTk/stringutils.h"
+#include "portage/extendedversion.h"
+#include "portage/overlay.h"
+
 /** Representation of a database-header.
  * Contains your arch, the version of the db, the number of packages/categories
  * and a table of key->directory mappings. */
 class DBHeader {
-
 	private:
 		/** The mapping from key->directory. */
 		std::vector<OverlayIdent> overlays;
@@ -82,4 +81,4 @@ class DBHeader {
 		bool isCurrent() const
 		{ return version == DBHeader::current; }
 };
-#endif /* EIX__DBHEADER_H__ */
+#endif  // SRC_DATABASE_HEADER_H_

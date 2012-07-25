@@ -7,18 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__IO_H__
-#define EIX__IO_H__ 1
+#ifndef SRC_DATABASE_IO_H_
+#define SRC_DATABASE_IO_H_ 1
 
-#include <database/types.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
+#include <cstdio>
 
 #include <string>
 #include <vector>
 
-#include <cstdio>
+#include "database/types.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
 
 class DBHeader;
 class IUseSet;
@@ -37,11 +37,11 @@ namespace io {
 	void writeError(std::string *errtext);
 
 	inline bool
-	readUChar(io::UChar &c, FILE *fp, std::string *errtext)
+	readUChar(io::UChar *c, FILE *fp, std::string *errtext)
 	{
 		int ch(fgetc(fp));
 		if(likely(ch != EOF)) {
-			c = io::UChar(ch);
+			*c = io::UChar(ch);
 			return true;
 		}
 		io::readError(fp, errtext);
@@ -56,8 +56,7 @@ namespace io {
 				writeError(errtext);
 				return false;
 			}
-		}
-		else {
+		} else {
 			++io::counter;
 		}
 		return true;
@@ -65,14 +64,14 @@ namespace io {
 
 	/// Read a nonnegative number from fp (m_Tp must be big enough)
 	template<typename m_Tp> bool
-	read_num(m_Tp &ret, FILE *fp, std::string *errtext)
+	read_num(m_Tp *ret, FILE *fp, std::string *errtext)
 	{
 		int ch(fgetc(fp));
 		if(likely(ch != EOF)) {
 			io::UChar c = io::UChar(ch);
 			// The one-byte case is exceptional w.r.t. to leading 0:
 			if(c != MAGICNUMCHAR) {
-				ret = m_Tp(c);
+				*ret = m_Tp(c);
 				return true;
 			}
 			unsigned int toget(1);
@@ -82,10 +81,9 @@ namespace io {
 					continue;
 				}
 				if(c != 0) {
-					ret = m_Tp(c);
-				}
-				else { // leading 0 after MAGICNUMCHAR:
-					ret = m_Tp(MAGICNUMCHAR);
+					*ret = m_Tp(c);
+				} else {  // leading 0 after MAGICNUMCHAR:
+					*ret = m_Tp(MAGICNUMCHAR);
 					--toget;
 				}
 				for(;;) {
@@ -95,7 +93,7 @@ namespace io {
 					if(unlikely((ch = fgetc(fp)) == EOF)) {
 						break;
 					}
-					ret = (ret << 8) | m_Tp(io::UChar(ch));
+					*ret = ((*ret) << 8) | m_Tp(io::UChar(ch));
 					--toget;
 				}
 				break;
@@ -115,8 +113,7 @@ namespace io {
 			if(fp == NULLPTR) {
 				if(unlikely(c == MAGICNUMCHAR)) {
 					io::counter += 2;
-				}
-				else {
+				} else {
 					++io::counter;
 				}
 				return true;
@@ -130,8 +127,7 @@ namespace io {
 					return true;
 				}
 			}
-		}
-		else {
+		} else {
 			m_Tp mask(0xFF);
 			unsigned int count(0);
 			do {
@@ -180,7 +176,7 @@ namespace io {
 	}
 
 	/// Read a string
-	bool read_string(std::string &s, FILE *fp, std::string *errtext);
+	bool read_string(std::string *s, FILE *fp, std::string *errtext);
 
 	/// Write a string
 	bool write_string(const std::string &str, FILE *fp, std::string *errtext);
@@ -188,11 +184,11 @@ namespace io {
 	inline bool write_hash_string(const StringHash& hash, const std::string &s, FILE *fp, std::string *errtext)
 	{ return io::write_num(hash.get_index(s), fp, errtext); }
 
-	inline bool read_hash_string(const StringHash& hash, std::string &s, FILE *fp, std::string *errtext)
+	inline bool read_hash_string(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext)
 	{
 		StringHash::size_type i;
-		if(likely(io::read_num(i, fp, errtext))) {
-			s = hash[i];
+		if(likely(io::read_num(&i, fp, errtext))) {
+			*s = hash[i];
 			return true;
 		}
 		return false;
@@ -202,10 +198,10 @@ namespace io {
 	inline bool write_hash_words(const StringHash& hash, const std::string& words, FILE *fp, std::string *errtext)
 	{ return write_hash_words(hash, split_string(words), fp, errtext); }
 
-	bool read_hash_words(const StringHash& hash, std::vector<std::string> &s, FILE *fp, std::string *errtext);
-	bool read_hash_words(const StringHash& hash, std::string &s, FILE *fp, std::string *errtext);
+	bool read_hash_words(const StringHash& hash, std::vector<std::string> *s, FILE *fp, std::string *errtext);
+	bool read_hash_words(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext);
 
-	bool read_iuse(const StringHash& hash, IUseSet &iuse, FILE *fp, std::string *errtext);
+	bool read_iuse(const StringHash& hash, IUseSet *iuse, FILE *fp, std::string *errtext);
 
 	/// Read a version from fp
 	bool read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext);
@@ -214,13 +210,13 @@ namespace io {
 	bool write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	// Write dependency information to fp
-	bool read_depend(Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
+	bool read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	// Write dependency information to fp
 	bool write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	// Read a category-header from fp
-	bool read_category_header(std::string &name, io::Treesize &h, FILE *fp, std::string *errtext);
+	bool read_category_header(std::string *name, io::Treesize *h, FILE *fp, std::string *errtext);
 
 	// Write a category-header to fp
 	bool write_category_header(const std::string &name, io::Treesize size, FILE *fp, std::string *errtext);
@@ -230,14 +226,14 @@ namespace io {
 	bool write_package_pure(const Package &pkg, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	bool write_hash(const StringHash& hash, FILE *fp, std::string *errtext);
-	bool read_hash(StringHash& hash, FILE *fp, std::string *errtext);
-	void prep_header_hashs(DBHeader &hdr, const PackageTree &tree);
+	bool read_hash(StringHash *hash, FILE *fp, std::string *errtext);
+	void prep_header_hashs(DBHeader *hdr, const PackageTree& tree);
 	bool write_header(const DBHeader &hdr, FILE *fp, std::string *errtext);
 	// return false if version does not match. However, fp is not closed.
-	bool read_header(DBHeader &hdr, FILE *fp, std::string *errtext);
+	bool read_header(DBHeader *hdr, FILE *fp, std::string *errtext);
 
 	bool write_packagetree(const PackageTree &pkg, const DBHeader &hdr, FILE *fp, std::string *errtext);
-	bool read_packagetree(PackageTree &tree, const DBHeader &hdr, PortageSettings *ps, FILE *fp, std::string *errtext);
+	bool read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, FILE *fp, std::string *errtext);
 }
 
-#endif /* EIX__IO_H__ */
+#endif  // SRC_DATABASE_IO_H_

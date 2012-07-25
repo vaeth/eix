@@ -6,25 +6,23 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__FORMATED_H__
-#define EIX__FORMATED_H__ 1
-
-// include <eixTk/formated.h> This comment satisfies check_include script
+#ifndef SRC_EIXTK_FORMATED_H_
+#define SRC_EIXTK_FORMATED_H_ 1
 
 #include <config.h>
 
+#include <cassert>
+#ifndef NDEBUG
+#include <cstdlib>
+
+#include <iostream>
+#endif
 #include <ostream>
 #include <sstream>
 #include <string>
 
-#include <cassert>
-
 #ifndef NDEBUG
-#include <eixTk/i18n.h>
-
-#include <iostream>
-
-#include <cstdlib>
+#include "eixTk/i18n.h"
 #endif
 
 
@@ -46,6 +44,7 @@ Recognized specifiers are:
 Example usage:
 
 \code
+  include "eixTk/formated.h"
   std::string file("/etc/make.conf"), message("something bad happend");
   std::cout << eix::format(_("problems while parsing %r -- %s")) % file % message << std::endl;
   // problems while parsing "/etc/make.conf" -- something bad happend
@@ -131,15 +130,15 @@ class format
 		void goto_next_spec();
 
 		/// Write string t enclosed in single quotes into stream s.
-		std::ostream& write_representation(std::ostream& s, const char *t)
+		std::ostream& write_representation(std::ostream& s, const char *t)  // NOLINT(runtime/references)
 		{ return s << "'" << t << "'"; }
 
 		/// Write string t enclosed in single quotes into stream s.
-		std::ostream& write_representation(std::ostream& s, const std::string &t)
+		std::ostream& write_representation(std::ostream& s, const std::string &t)  // NOLINT(runtime/references)
 		{ return s << "'" << t << "'"; }
 
 		/// Write size_type or "<string::npos>" to stream.
-		std::ostream& write_representation(std::ostream& s, const std::string::size_type &t)
+		std::ostream& write_representation(std::ostream& s, const std::string::size_type &t)  // NOLINT(runtime/references)
 		{
 			if(t == std::string::npos)
 				return s << "<string::npos>";
@@ -148,10 +147,10 @@ class format
 
 		/// Write t into stream s.
 		template<typename T>
-		std::ostream& write_representation(std::ostream& s, const T& t)
+		std::ostream& write_representation(std::ostream& s, const T& t)  // NOLINT(runtime/references)
 		{ return s << t; }
 };
 
 }/* namespace eix */
 
-#endif /* EIX__FORMATED_H__ */
+#endif  // SRC_EIXTK_FORMATED_H_

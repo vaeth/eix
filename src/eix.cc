@@ -8,36 +8,12 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include <database/header.h>
-#include <database/package_reader.h>
-#include <eixTk/argsreader.h>
-#include <eixTk/exceptions.h>
-#include <eixTk/filenames.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/utils.h>
-#include <eixrc/eixrc.h>
-#include <eixrc/global.h>
-#include <main/main.h>
-#include <output/formatstring-print.h>
-#include <output/formatstring.h>
-#include <output/print-xml.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/keywords.h>
-#include <portage/mask.h>
-#include <portage/package.h>
-#include <portage/set_stability.h>
-#include <portage/vardbpkg.h>
-#include <search/algorithms.h>
-#include <search/matchtree.h>
-#include <various/drop_permissions.h>
-#include <various/cli.h>
+
+#include <unistd.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include <iostream>
 #include <map>
@@ -45,14 +21,47 @@
 #include <string>
 #include <vector>
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <unistd.h>
+#include "database/header.h"
+#include "database/package_reader.h"
+#include "eixTk/argsreader.h"
+#include "eixTk/exceptions.h"
+#include "eixTk/filenames.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/utils.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
+#include "main/main.h"
+#include "output/formatstring-print.h"
+#include "output/formatstring.h"
+#include "output/print-xml.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/keywords.h"
+#include "portage/mask.h"
+#include "portage/package.h"
+#include "portage/set_stability.h"
+#include "portage/vardbpkg.h"
+#include "search/algorithms.h"
+#include "search/matchtree.h"
+#include "various/drop_permissions.h"
+#include "various/cli.h"
 
 #define VAR_DB_PKG "/var/db/pkg/"
 
-using namespace std;
+using std::map;
+using std::set;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 static int  is_current_dbversion(const char *filename);
 static void print_vector(const vector<string> &vec);
@@ -264,29 +273,29 @@ static struct LocalOptions {
 /** Arguments and shortopts. */
 static Option long_options[] = {
 	// Global options
-	Option("quiet",        'q',     Option::BOOLEAN,       &rc_options.be_quiet),
-	Option("quick",        'Q',     Option::BOOLEAN,       &rc_options.quick),
-	Option("care",         O_CARE,  Option::BOOLEAN_T,     &rc_options.care),
+	Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet),
+	Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick),
+	Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care),
 
-	Option("nocolor",      'n',     Option::BOOLEAN_T,     &format.no_color),
-	Option("force-color",  'F',     Option::BOOLEAN_F,     &format.no_color),
-	Option("versionlines", 'l',     Option::BOOLEAN,       &format.style_version_lines),
-	Option("versionsort",  'x',     Option::BOOLEAN,       &format.slot_sorted),
-	Option("pure-packages",'*',     Option::BOOLEAN,       &rc_options.pure_packages),
-	Option("only-names",O_ONLY_NAMES,Option::BOOLEAN,      &rc_options.only_names),
-	Option("brief",        '0',     Option::BOOLEAN,       &rc_options.brief),
-	Option("brief2",       O_BRIEF2,Option::BOOLEAN,       &rc_options.brief2),
+	Option("nocolor",       'n',     Option::BOOLEAN_T,     &format.no_color),
+	Option("force-color",   'F',     Option::BOOLEAN_F,     &format.no_color),
+	Option("versionlines",  'l',     Option::BOOLEAN,       &format.style_version_lines),
+	Option("versionsort",   'x',     Option::BOOLEAN,       &format.slot_sorted),
+	Option("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages),
+	Option("only-names", O_ONLY_NAMES, Option::BOOLEAN,      &rc_options.only_names),
+	Option("brief",        '0',      Option::BOOLEAN,       &rc_options.brief),
+	Option("brief2",        O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2),
 
-	Option("verbose",      'v',     Option::BOOLEAN,       &rc_options.verbose_output),
-	Option("compact",      'c',     Option::BOOLEAN,       &rc_options.compact_output),
-	Option("xml",          O_XML,   Option::BOOLEAN,       &rc_options.xml),
-	Option("help",         'h',     Option::BOOLEAN_T,     &rc_options.show_help),
-	Option("version",      'V',     Option::BOOLEAN_T,     &rc_options.show_version),
-	Option("dump",         O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
-	Option("dump-defaults",O_DUMP_DEFAULTS,Option::BOOLEAN_T,&rc_options.dump_defaults),
-	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T,&rc_options.known_vars),
-	Option("test-non-matching",'t', Option::BOOLEAN_T,     &rc_options.test_unused),
-	Option("debug",        O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
+	Option("verbose",       'v',     Option::BOOLEAN,       &rc_options.verbose_output),
+	Option("compact",       'c',     Option::BOOLEAN,       &rc_options.compact_output),
+	Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml),
+	Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help),
+	Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version),
+	Option("dump",          O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
+	Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &rc_options.dump_defaults),
+	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &rc_options.known_vars),
+	Option("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused),
+	Option("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
 
 	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
 
@@ -308,11 +317,11 @@ static Option long_options[] = {
 	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
 	Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact),
 
-	Option("cache-file",     O_EIX_CACHEFILE,Option::STRING,  &eix_cachefile),
+	Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile),
 
 	// Options for criteria
 	Option("installed",     'I'),
-	Option("multi-installed",'i'),
+	Option("multi-installed", 'i'),
 	Option("slotted",       '1'),
 	Option("slots",         '2'),
 	Option("upgrade",       'u'),
@@ -342,7 +351,7 @@ static Option long_options[] = {
 	Option("installed-masked",   O_INSTALLED_MASKED),
 	Option("overlay",              'O'),
 	Option("installed-overlay",    'J'),
-	Option("installed-from-overlay",O_FROM_OVERLAY,     Option::KEEP_STRING_OPTIONAL),
+	Option("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL),
 	Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL),
 	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
 	Option("installed-in-some-overlay", O_INSTALLED_SOME),
@@ -354,7 +363,7 @@ static Option long_options[] = {
 	Option("restrict-strip",         O_RESTRICT_STRIP),
 	Option("restrict-test",          O_RESTRICT_TEST),
 	Option("restrict-userpriv",      O_RESTRICT_USERPRIV),
-	Option("restrict-installsources",O_RESTRICT_INSTALLSOURCES),
+	Option("restrict-installsources", O_RESTRICT_INSTALLSOURCES),
 	Option("restrict-bindist",       O_RESTRICT_BINDIST),
 	Option("restrict-parallel",      O_RESTRICT_PARALLEL),
 	Option("properties-interactive", O_PROPERTIES_INTERACTIVE),
@@ -410,37 +419,36 @@ static Option long_options[] = {
 
 /** Setup default values for all global variables. */
 static void
-setup_defaults(EixRc &rc)
+setup_defaults(EixRc *rc)
 {
 	// Setup defaults
 	memset(&rc_options, 0, sizeof(rc_options));
 
-	Depend::use_depend         = rc.getBool("DEP");
+	Depend::use_depend         = rc->getBool("DEP");
 
-	rc_options.quick           = rc.getBool("QUICKMODE");
-	rc_options.be_quiet        = rc.getBool("QUIETMODE");
-	rc_options.care            = rc.getBool("CAREMODE");
+	rc_options.quick           = rc->getBool("QUICKMODE");
+	rc_options.be_quiet        = rc->getBool("QUIETMODE");
+	rc_options.care            = rc->getBool("CAREMODE");
 
-	format_verbose             = rc["FORMAT_VERBOSE"].c_str();
-	format_compact             = rc["FORMAT_COMPACT"].c_str();
-	format_normal              = rc["FORMAT"].c_str();
-	string s(rc["DEFAULT_FORMAT"]);
+	format_verbose             = (*rc)["FORMAT_VERBOSE"].c_str();
+	format_compact             = (*rc)["FORMAT_COMPACT"].c_str();
+	format_normal              = (*rc)["FORMAT"].c_str();
+	string s((*rc)["DEFAULT_FORMAT"]);
 	if(unlikely(strcasecmp(s.c_str(), "FORMAT_VERBOSE") == 0) ||
 		unlikely(strcasecmp(s.c_str(), "verbose") == 0)) {
 		rc_options.verbose_output = true;
-	}
-	else if(unlikely(strcasecmp(s.c_str(), "FORMAT_COMPACT") == 0) ||
+	} else if(unlikely(strcasecmp(s.c_str(), "FORMAT_COMPACT") == 0) ||
 		unlikely(strcasecmp(s.c_str(), "compact") == 0)) {
 		rc_options.compact_output = true;
 	}
 	format.setupResources(rc);
-	format.no_color            = (rc.getBool("NOCOLORS") ? true :
-		(rc.getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
-	format.style_version_lines = rc.getBool("STYLE_VERSION_LINES");
-	format.slot_sorted         = !rc.getBool("STYLE_VERSION_SORTED");
-	format.recommend_mode      = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
+	format.no_color            = (rc->getBool("NOCOLORS") ? true :
+		(rc->getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
+	format.style_version_lines = rc->getBool("STYLE_VERSION_LINES");
+	format.slot_sorted         = !rc->getBool("STYLE_VERSION_SORTED");
+	format.recommend_mode      = rc->getLocalMode("RECOMMEND_LOCAL_MODE");
 
-	string overlay(rc["OVERLAYS_LIST"]);
+	string overlay((*rc)["OVERLAYS_LIST"]);
 	if(overlay.find("if") != string::npos)
 		overlay_mode = mode_list_all_if_any;
 	else if(likely(overlay.find("number") != string::npos))
@@ -455,17 +463,17 @@ setup_defaults(EixRc &rc)
 }
 
 static bool
-print_overlay_table(PrintFormat &fmt, DBHeader &header, vector<bool> *overlay_used)
+print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used)
 {
 	bool printed_overlay(false);
 	for(ExtendedVersion::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
-		likely(i != header.countOverlays()); ++i) {
+		likely(i != header->countOverlays()); ++i) {
 		if(i && overlay_used) {
 			if(!((*overlay_used)[i-1]))
 				continue;
 		}
-		cout << fmt.overlay_keytext(i) << " ";
-		cout << header.getOverlay(i).human_readable() << "\n";
+		cout << fmt->overlay_keytext(i) << " ";
+		cout << header->getOverlay(i).human_readable() << "\n";
 		printed_overlay = true;
 	}
 	return printed_overlay;
@@ -489,11 +497,9 @@ set_format()
 {
 	if(unlikely(rc_options.verbose_output)) {
 		parseFormat("FORMAT_VERBOSE", format_verbose);
-	}
-	else if(unlikely(rc_options.compact_output)) {
+	} else if(unlikely(rc_options.compact_output)) {
 		parseFormat("FORMAT_COMPACT", format_compact);
-	}
-	else {
+	} else {
 		parseFormat("FORMAT", format_normal);
 	}
 }
@@ -502,10 +508,10 @@ int
 run_eix(int argc, char** argv)
 {
 	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
-	drop_permissions(eixrc);
+	drop_permissions(&eixrc);
 
 	// Setup defaults for all global variables like rc_options
-	setup_defaults(eixrc);
+	setup_defaults(&eixrc);
 
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, long_options);
@@ -537,8 +543,7 @@ run_eix(int argc, char** argv)
 	string cachefile;
 	if(unlikely(eix_cachefile != NULLPTR)) {
 		cachefile = eix_cachefile;
-	}
-	else {
+	} else {
 		cachefile = eixrc["EIX_CACHEFILE"];
 	}
 
@@ -566,17 +571,16 @@ run_eix(int argc, char** argv)
 	if(unlikely(rc_options.xml)) {
 		rc_options.pure_packages = true;
 		only_printed = false;
-	}
-	else {
+	} else {
 		only_printed = eixrc.getBool("COUNT_ONLY_PRINTED");
 	}
 
 	if(unlikely(rc_options.only_names)) {
 		rc_options.pure_packages = true;
 		format.parseFormat("<category>/<name>\n", NULLPTR);
-	}
-	else
+	} else {
 		set_format();
+	}
 
 	format.setupColors();
 
@@ -584,7 +588,7 @@ run_eix(int argc, char** argv)
 		overlay_mode = mode_list_none;
 	}
 
-	PortageSettings portagesettings(eixrc, true, false);
+	PortageSettings portagesettings(&eixrc, true, false);
 
 	string var_db_pkg(eixrc["EPREFIX_INSTALLED"] + VAR_DB_PKG);
 	VarDbPkg varpkg_db(var_db_pkg, !rc_options.quick, rc_options.care,
@@ -607,7 +611,7 @@ run_eix(int argc, char** argv)
 
 	DBHeader header;
 
-	if(unlikely(!io::read_header(header, fp, NULLPTR))) {
+	if(unlikely(!io::read_header(&header, fp, NULLPTR))) {
 		fclose(fp);
 		cerr << eix::format(_(
 			"%s was created with an incompatible eix-update:\n"
@@ -659,8 +663,7 @@ run_eix(int argc, char** argv)
 	if(unlikely(!eixrc.getBool("LOCAL_PORTAGE_CONFIG"))) {
 		rc_options.ignore_etc_portage = true;
 		local_mode = LOCALMODE_NONLOCAL;
-	}
-	else if(!rc_options.ignore_etc_portage) {
+	} else if(!rc_options.ignore_etc_portage) {
 		local_mode = LOCALMODE_LOCAL;
 	}
 	// Save lot of time: avoid redundant remasking
@@ -691,8 +694,7 @@ run_eix(int argc, char** argv)
 			const OverlayIdent& overlay(header.getOverlay(num));
 			if(print_path) {
 				cout << overlay.path;
-			}
-			else {
+			} else {
 				cout << overlay.label;
 			}
 			return EXIT_SUCCESS;
@@ -701,8 +703,7 @@ run_eix(int argc, char** argv)
 		while(likely(reader.next())) {
 			if(unlikely(add_rest)) {
 				all_packages.push_back(reader.release());
-			}
-			else if(unlikely(matchtree->match(&reader))) {
+			} else if(unlikely(matchtree->match(&reader))) {
 				Package *release(reader.release());
 				if(unlikely(release == NULLPTR)) {
 					break;
@@ -713,24 +714,21 @@ run_eix(int argc, char** argv)
 						(rc_options.brief2 && (matches.size() > 1))))) {
 					if(unlikely(rc_options.test_unused)) {
 						add_rest = true;
-					}
-					else {
+					} else {
 						break;
 					}
 				}
 				if(unlikely(rc_options.test_unused)) {
 					all_packages.push_back(release);
 				}
-			}
-			else {
+			} else {
 				if(unlikely(rc_options.test_unused)) {
 					Package *release(reader.release());
 					if(unlikely(release == NULLPTR)) {
 						break;
 					}
 					all_packages.push_back(release);
-				}
-				else if(unlikely(!reader.skip())) {
+				} else if(unlikely(!reader.skip())) {
 					break;
 				}
 			}
@@ -821,8 +819,7 @@ run_eix(int argc, char** argv)
 	}
 	for(eix::ptr_list<Package>::iterator it(matches.begin());
 		likely(it != matches.end()); ++it) {
-
-		stability.set_stability(**it);
+		stability.set_stability(*it);
 
 		if(unlikely(rc_options.xml)) {
 			print_xml->package(*it);
@@ -877,9 +874,8 @@ run_eix(int argc, char** argv)
 		}
 	}
 	bool printed_overlay(false);
-	if(need_overlay_table)
-	{
-		printed_overlay = print_overlay_table(format, header,
+	if(need_overlay_table) {
+		printed_overlay = print_overlay_table(&format, &header,
 			(overlay_mode <= mode_list_used)? &overlay_used : NULLPTR);
 	}
 	if(unlikely(print_xml != NULLPTR)) {
@@ -890,19 +886,17 @@ run_eix(int argc, char** argv)
 	if(!only_printed) {
 		count = matches.size();
 	}
-	short print_count_always(rc_options.pure_packages ? -1 :
+	signed int print_count_always(rc_options.pure_packages ? -1 :
 		eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
 	if(likely(print_count_always >= 0)) {
 		if(unlikely(count == 0)) {
 			if(print_count_always) {
 				cout << eix::format(_("Found %s matches.\n"))
 					% eix::ptr_list<Package>::size_type(0);
-			}
-			else {
+			} else {
 				cout << _("No matches found.\n");
 			}
-		}
-		else if(unlikely(count == 1)) {
+		} else if(unlikely(count == 1)) {
 			if(print_count_always) {
 				if(printed_overlay) {
 					cout << "\n";
@@ -910,8 +904,7 @@ run_eix(int argc, char** argv)
 				cout << eix::format(_("Found %s match.\n"))
 					% eix::ptr_list<Package>::size_type(1);
 			}
-		}
-		else {
+		} else {
 			if(printed_overlay)
 				cout << "\n";
 			cout <<  eix::format(_("Found %s matches.\n")) % count;
@@ -941,7 +934,7 @@ is_current_dbversion(const char *filename) {
 			% filename << endl;
 		return EXIT_FAILURE;
 	}
-	bool is_current(io::read_header(header, fp, NULLPTR));
+	bool is_current(io::read_header(&header, fp, NULLPTR));
 	fclose(fp);
 
 	return (is_current ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -970,12 +963,12 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 		if(unlikely(!know_excludes)) {
 			know_excludes = true;
 			vector<string> excludelist;
-			split_string(excludelist, excludefiles, true);
+			split_string(&excludelist, excludefiles, true);
 			for(vector<string>::const_iterator it(excludelist.begin());
 				likely(it != excludelist.end()); ++it) {
 				vector<string> excl;
 				pushback_lines(it->c_str(), &excl, false, true);
-				join_and_split(excludes, excl);
+				join_and_split(&excludes, excl);
 			}
 		}
 
@@ -991,8 +984,7 @@ print_unused(const string &filename, const string &excludefiles, const eix::ptr_
 				continue;
 			}
 			r = m.parseMask(i->c_str(), &errtext, false);
-		}
-		else {
+		} else {
 			string it(*i, 0, n);
 			if(excludes.find(it) != excludes.end())
 				continue;
@@ -1059,12 +1051,12 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 				if(unlikely(!know_excludes)) {
 					know_excludes = true;
 					vector<string> excludelist;
-					split_string(excludelist, excludefiles, true);
+					split_string(&excludelist, excludefiles, true);
 					for(vector<string>::const_iterator it(excludelist.begin());
 						likely(it != excludelist.end()); ++it) {
 						vector<string> excl;
 						pushback_lines(it->c_str(), &excl, false, true);
-						join_and_split(excludes, excl);
+						join_and_split(&excludes, excl);
 					}
 				}
 				if(likely(excludes.find(name) == excludes.end())) {

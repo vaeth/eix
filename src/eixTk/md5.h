@@ -5,6 +5,11 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#ifndef SRC_EIXTK_MD5_H_
+#define SRC_EIXTK_MD5_H_ 1
+
 #include <string>
 
 bool verify_md5sum(const char *file, const std::string &md5sum);
+
+#endif  // SRC_EIXTK_MD5_H_

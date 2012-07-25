@@ -7,10 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__REDUNDANCY_H__
-#define EIX__REDUNDANCY_H__ 1
+#ifndef SRC_SEARCH_REDUNDANCY_H_
+#define SRC_SEARCH_REDUNDANCY_H_ 1
 
-#include <portage/keywords.h>
+#include "portage/keywords.h"
 
 class RedAtom {
 	public:
@@ -33,4 +33,4 @@ class RedAtom {
 
 
 
-#endif /* EIX__REDUNDANCY_H__ */
+#endif  // SRC_SEARCH_REDUNDANCY_H_

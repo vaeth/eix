@@ -7,18 +7,17 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__AUTO_PTR_H__
-#define EIX__AUTO_PTR_H__ 1
+#ifndef SRC_EIXTK_AUTO_PTR_H_
+#define SRC_EIXTK_AUTO_PTR_H_ 1
 
-#include <eixTk/null.h>
+#include "eixTk/null.h"
 
 namespace eix {
-
 	template<typename m_Type>
 	class auto_list
 	{
 		public:
-			auto_list(m_Type *p)
+			explicit auto_list(m_Type *p)
 				: m_p(p)
 			{ }
 
@@ -35,7 +34,6 @@ namespace eix {
 		protected:
 			m_Type* m_p;
 	};
-
 }
 
-#endif /* EIX__AUTO_PTR_H__ */
+#endif  // SRC_EIXTK_AUTO_PTR_H_

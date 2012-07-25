@@ -7,28 +7,29 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "cli.h"
-#include <database/header.h>
-#include <eixTk/argsreader.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixrc/eixrc.h>
-#include <output/formatstring.h>
-#include <portage/basicversion.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/set_stability.h>
-#include <portage/vardbpkg.h>
-#include <search/matchtree.h>
-#include <search/packagetest.h>
+#include <cstdlib>
 
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include <cstdlib>
+#include "database/header.h"
+#include "eixTk/argsreader.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixrc/eixrc.h"
+#include "output/formatstring.h"
+#include "portage/basicversion.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/set_stability.h"
+#include "portage/vardbpkg.h"
+#include "search/matchtree.h"
+#include "search/packagetest.h"
+#include "various/cli.h"
 
-using namespace std;
+using std::string;
+using std::vector;
 
 #define FINISH_FORCE do { \
 	matchtree->parse_test(test, curr_pipe); \
@@ -66,10 +67,10 @@ optional_increase(ArgumentReader::const_iterator &arg, const ArgumentReader &ar)
 void
 parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, const ArgumentReader& ar)
 {
-	bool	use_pipe(false),   // A pipe is used somewhere
-		force_test(false), // There is a current test or a pipe
-		curr_pipe(false);  // There is a current pipe
-	short	pipe_mode(0);      // Do we force pipes of a particular mode?
+	bool	use_pipe(false),      // A pipe is used somewhere
+		force_test(false),    // There is a current test or a pipe
+		curr_pipe(false);     // There is a current pipe
+	signed char pipe_mode(0);     // Do we force pipes of a particular mode?
 	PackageTest *test(NULLPTR);   // The current test
 
 	for(ArgumentReader::const_iterator arg(ar.begin());
@@ -299,47 +300,47 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				red.first = red.second = RedAtom();
 				if(likely(eixrc.getBool("TEST_FOR_REDUNDANCY"))) {
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
-						Keywords::RED_DOUBLE, red);
+						Keywords::RED_DOUBLE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LINE",
-						Keywords::RED_DOUBLE_LINE, red);
+						Keywords::RED_DOUBLE_LINE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
-						Keywords::RED_MIXED, red);
+						Keywords::RED_MIXED, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",
-						Keywords::RED_WEAKER, red);
+						Keywords::RED_WEAKER, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_STRANGE",
-						Keywords::RED_STRANGE, red);
+						Keywords::RED_STRANGE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
-						Keywords::RED_NO_CHANGE, red);
+						Keywords::RED_NO_CHANGE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
-						Keywords::RED_MASK, red);
+						Keywords::RED_MASK, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
-						Keywords::RED_UNMASK, red);
+						Keywords::RED_UNMASK, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
-						Keywords::RED_DOUBLE_MASK, red);
+						Keywords::RED_DOUBLE_MASK, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
-						Keywords::RED_DOUBLE_UNMASK, red);
+						Keywords::RED_DOUBLE_UNMASK, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_USE",
-						Keywords::RED_DOUBLE_USE, red);
+						Keywords::RED_DOUBLE_USE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_ENV",
-						Keywords::RED_DOUBLE_ENV, red);
+						Keywords::RED_DOUBLE_ENV, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LICENSE",
-						Keywords::RED_DOUBLE_LICENSE, red);
+						Keywords::RED_DOUBLE_LICENSE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_CFLAGS",
-						Keywords::RED_DOUBLE_CFLAGS, red);
+						Keywords::RED_DOUBLE_CFLAGS, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_KEYWORDS",
-						Keywords::RED_IN_KEYWORDS, red);
+						Keywords::RED_IN_KEYWORDS, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_MASK",
-						Keywords::RED_IN_MASK, red);
+						Keywords::RED_IN_MASK, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_UNMASK",
-						Keywords::RED_IN_UNMASK, red);
+						Keywords::RED_IN_UNMASK, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_USE",
-						Keywords::RED_IN_USE, red);
+						Keywords::RED_IN_USE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_ENV",
-						Keywords::RED_IN_ENV, red);
+						Keywords::RED_IN_ENV, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_LICENSE",
-						Keywords::RED_IN_LICENSE, red);
+						Keywords::RED_IN_LICENSE, &red);
 					eixrc.getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
-						Keywords::RED_IN_CFLAGS, red);
+						Keywords::RED_IN_CFLAGS, &red);
 				}
 				PackageTest::TestInstalled test_installed = PackageTest::INS_NONE;
 				if(likely(eixrc.getBool("TEST_FOR_NONEXISTENT"))) {
@@ -421,8 +422,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 					&& (arg->type == Parameter::ARGUMENT)
 					&& is_numeric(arg->m_argument))) {
 					test->setAlgorithm(new FuzzyAlgorithm(my_atoi(arg->m_argument)));
-				}
-				else {
+				} else {
 					test->setAlgorithm(PackageTest::ALGO_FUZZY);
 					--arg;
 				}
@@ -467,12 +467,12 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 
 	// If we have a pipe, we must call matchtree->set_pipetest()
 	// and also fill the marked_list;
-	while(likely(!cin.eof())) {
+	while(likely(!std::cin.eof())) {
 		string line;
-		getline(cin, line);
-		trim(line);
+		getline(std::cin, line);
+		trim(&line);
 		vector<string> wordlist;
-		split_string(wordlist, line);
+		split_string(&wordlist, line);
 		for(vector<string>::iterator word(wordlist.begin());
 			likely(word != wordlist.end()); ++word) {
 			string::size_type i(word->find("/"));

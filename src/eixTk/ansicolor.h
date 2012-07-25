@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__ANSICOLOR_H__
-#define EIX__ANSICOLOR_H__ 1
+#ifndef SRC_EIXTK_ANSICOLOR_H_
+#define SRC_EIXTK_ANSICOLOR_H_ 1
 
 #include <config.h>
 
@@ -24,7 +24,7 @@ class AnsiColor;
  * Example:
  * @code
  * AnsiMarker m_inverse(AnsiMarker::amInverse);
- * cout << m_inverse << "inverse text" << m_inverse.end() << "normal text";
+ * std::cout << m_inverse << "inverse text" << m_inverse.end() << "normal text";
  * @endcode
  */
 class AnsiMarker {
@@ -32,9 +32,10 @@ class AnsiMarker {
 		friend class AnsiColor;
 		static const char *reset_string;
 		void calc_string();
+
 	public:
 		/** The various markers, amNone is no marker */
-		enum Marker { amNone=0, amBold=1, amUnderlined=4, amBlink=5, amInverse=7, amIllegal };
+		enum Marker { amNone = 0, amBold = 1, amUnderlined = 4, amBlink = 5, amInverse = 7, amIllegal };
 		std::vector<Marker> markers;
 		bool have_something;
 		std::string string_begin;
@@ -42,7 +43,7 @@ class AnsiMarker {
 		AnsiMarker() : have_something(false)
 		{ }
 
-		AnsiMarker(const Marker m) : have_something(false)
+		explicit AnsiMarker(const Marker m) : have_something(false)
 		{
 			if(m != amNone) {
 				markers.assign(1, m);
@@ -78,14 +79,13 @@ operator<< (std::ostream& os, AnsiMarker am)
  * Example:
  * @code
  * AnsiColor c_red(AnsiColor::acRed, false);
- * cout << "Normal text, " << c_red << "red text" << AnsiColor(AnsiColor::acDefault) << "normal text" << endl;
+ * std::cout << "Normal text, " << c_red << "red text" << AnsiColor(AnsiColor::acDefault) << "normal text";
  * @endcode
  */
 class AnsiColor {
-
 	public:
 		/** The various colors; acDefault is the default color, acNone is no color change */
-		enum Color { acDefault=0, acBlack=30, acRed, acGreen, acYellow, acBlue, acPurple, acCyan, acGray, acNone, acIllegal };
+		enum Color { acDefault = 0, acBlack = 30, acRed, acGreen, acYellow, acBlue, acPurple, acCyan, acGray, acNone, acIllegal };
 
 		/** The current color */
 		Color fg;
@@ -131,4 +131,4 @@ operator<< (std::ostream& os, AnsiColor ac)
 	return os;
 }
 
-#endif /* EIX__ANSICOLOR_H__ */
+#endif  // SRC_EIXTK_ANSICOLOR_H_

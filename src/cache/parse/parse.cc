@@ -7,65 +7,68 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "parse.h"
-#include <cache/base.h>
-#include <cache/common/selectors.h>
-#include <cache/common/flat_reader.h>
-#include <cache/metadata/metadata.h>
-#include <cache/common/ebuild_exec.h>
-#include <portage/basicversion.h>
-#include <portage/depend.h>
-#include <portage/extendedversion.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
-#include <portage/version.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/md5.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/sysutils.h>
-#include <eixTk/varsreader.h>
-
-#include <map>
-#include <vector>
-#include <string>
-
 #include <cstdlib>
 #include <ctime>
 
-using namespace std;
+#include <map>
+#include <string>
+#include <vector>
+
+#include "cache/base.h"
+#include "cache/common/ebuild_exec.h"
+#include "cache/common/flat_reader.h"
+#include "cache/common/selectors.h"
+#include "cache/metadata/metadata.h"
+#include "cache/parse/parse.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/md5.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/sysutils.h"
+#include "eixTk/varsreader.h"
+#include "portage/basicversion.h"
+#include "portage/depend.h"
+#include "portage/extendedversion.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
+#include "portage/version.h"
+
+using std::map;
+using std::string;
+using std::vector;
 
 bool
 ParseCache::initialize(const string &name)
 {
 	vector<string> names;
-	split_string(names, name, true, "#");
+	split_string(&names, name, true, "#");
 	vector<string>::const_iterator it_name(names.begin());
 	if(unlikely(it_name == names.end()))
 		return false;
 	vector<string> s;
-	split_string(s, *it_name, false, "|");
+	split_string(&s, *it_name, false, "|");
 	if(unlikely(s.empty()))
 		return false;
 	try_parse = nosubst = false;
 	bool try_ebuild(false), use_sh(false);
 	for(vector<string>::const_iterator it(s.begin()); likely(it != s.end()); ++it) {
 		if(*it == "parse") {
-			try_parse = true; nosubst = false;
-		}
-		else if(*it == "parse*") {
-			try_parse = true; nosubst = true;
-		}
-		else if(*it == "ebuild") {
-			try_ebuild = true; use_sh = false;
-		}
-		else if(*it == "ebuild*") {
-			try_ebuild = true; use_sh = true;
-		}
-		else
+			try_parse = true;
+			nosubst = false;
+		} else if(*it == "parse*") {
+			try_parse = true;
+			nosubst = true;
+		} else if(*it == "ebuild") {
+			try_ebuild = true;
+			use_sh = false;
+		} else if(*it == "ebuild*") {
+			try_ebuild = true;
+			use_sh = true;
+		} else {
 			return false;
+		}
 	}
 	if(try_ebuild) {
 		ebuild_exec = new EbuildExec(use_sh, this);
@@ -89,8 +92,7 @@ ParseCache::getType() const
 	if(try_parse) {
 		if(nosubst) {
 			s = "parse*";
-		}
-		else {
+		} else {
 			s = "parse";
 		}
 	}
@@ -98,14 +100,12 @@ ParseCache::getType() const
 		const char *t;
 		if(ebuild_exec->use_sh()) {
 			t = "ebuild*";
-		}
-		else {
+		} else {
 			t = "ebuild";
 		}
 		if(s.empty()) {
 			s = t;
-		}
-		else {
+		} else {
 			s.append(1, '|');
 			s.append(t);
 		}
@@ -184,7 +184,7 @@ ParseCache::set_checking(string &str, const char *item, const VarsReader &ebuild
 		return;
 	}
 	str.clear();
-	split_and_join(str, *s);
+	split_and_join(&str, *s);
 	if(!check) {
 		return;
 	}
@@ -246,8 +246,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 		const char *used_type;
 		if(ok) {
 			used_type = ( nosubst ? "parse*" : "parse" );
-		}
-		else {
+		} else {
 			used_type = ((ebuild_exec->use_sh()) ? "ebuild*" : "ebuild");
 		}
 		m_error_callback(eix::format("%s/%s-%s: %s") %
@@ -260,8 +259,7 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 			flat_get_keywords_slot_iuse_restrict(cachefile->c_str(), keywords, slot, iuse, restr, props, version->depend, m_error_callback);
 			flat_read_file(cachefile->c_str(), pkg, m_error_callback);
 			ebuild_exec->delete_cachefile();
-		}
-		else {
+		} else {
 			m_error_callback(eix::format(_("Could not properly execute %s")) % fullpath);
 		}
 	}
@@ -274,15 +272,14 @@ ParseCache::parse_exec(const char *fullpath, const string &dirpath, bool read_on
 }
 
 void
-ParseCache::readPackage(Category &cat, const string &pkg_name, const string &directory_path, const vector<string> &files)
+ParseCache::readPackage(Category *cat, const string &pkg_name, const string &directory_path, const vector<string> &files)
 {
 	bool have_onetime_info, have_pkg;
 
-	Package *pkg(cat.findPackage(pkg_name));
+	Package *pkg(cat->findPackage(pkg_name));
 	if(pkg != NULLPTR) {
 		have_onetime_info = have_pkg = true;
-	}
-	else {
+	} else {
 		have_onetime_info = have_pkg = false;
 		pkg = new Package(m_catname, pkg_name);
 	}
@@ -345,8 +342,7 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 		}
 		if(it == further.end()) {
 			parse_exec(full_path.c_str(), directory_path, read_onetime_info, have_onetime_info, pkg, version);
-		}
-		else {
+		} else {
 			if(verbose) {
 				m_error_callback(eix::format("%s/%s-%s: %s") %
 					m_catname % pkg_name % version->getFull() %
@@ -364,10 +360,9 @@ ParseCache::readPackage(Category &cat, const string &pkg_name, const string &dir
 
 	if(have_onetime_info) {
 		if(!have_pkg) {
-			cat.addPackage(pkg);
+			cat->addPackage(pkg);
 		}
-	}
-	else {
+	} else {
 		delete pkg;
 	}
 }
@@ -397,12 +392,12 @@ ParseCache::readCategoryFinalize()
 }
 
 bool
-ParseCache::readCategory(Category &cat)
+ParseCache::readCategory(Category *cat)
 {
 	for(vector<string>::const_iterator pit(m_packages.begin());
 		likely(pit != m_packages.end()); ++pit) {
 		vector<string> files;
-		string pkg_path = m_catpath + '/' + (*pit);
+		string pkg_path(m_catpath + '/' + (*pit));
 
 		if(scandir_cc(pkg_path, files, ebuild_selector))
 			readPackage(cat, *pit, pkg_path, files);

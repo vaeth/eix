@@ -7,22 +7,22 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PACKAGETREE_H__
-#define EIX__PACKAGETREE_H__ 1
+#ifndef SRC_PORTAGE_PACKAGETREE_H_
+#define SRC_PORTAGE_PACKAGETREE_H_ 1
 
 #include <config.h>
-#include <database/types.h>
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
 
 #include <map>
 #include <string>
 #include <vector>
 
+#include "database/types.h"
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+
 class Package;
 
 class Category : public eix::ptr_list<Package> {
-
 	public:
 		Category()
 		{ }
@@ -54,7 +54,7 @@ class PackageTree : public std::map<std::string, Category*> {
 		PackageTree()
 		{ }
 
-		PackageTree(const std::vector<std::string> &cat_vec)
+		explicit PackageTree(const std::vector<std::string> &cat_vec)
 		{ insert(cat_vec); }
 
 		~PackageTree();
@@ -73,4 +73,4 @@ class PackageTree : public std::map<std::string, Category*> {
 		{ return size(); }
 };
 
-#endif /* EIX__PACKAGETREE_H__ */
+#endif  // SRC_PORTAGE_PACKAGETREE_H_

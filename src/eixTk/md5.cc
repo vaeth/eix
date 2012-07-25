@@ -6,11 +6,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "md5.h"
-#include <eixTk/inttypes.h>
-#include <eixTk/null.h>
-
-#include <string>
 
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -18,7 +13,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-using namespace std;
+#include <string>
+
+#ifdef DEBUG_MD5
+#include <iostream>
+#endif
+
+#include "eixTk/inttypes.h"
+#include "eixTk/md5.h"
+#include "eixTk/null.h"
+
+using std::string;
 
 inline static uint32_t
 md5F(uint32_t x, uint32_t y, uint32_t z)
@@ -124,31 +129,47 @@ md5chunk(const uint32_t *mybuf, uint32_t *resarr)
 
 	int i(0);
 	while(i < 16) {
-		md5call(md5F, a, b, c, d,  7, sinlistF[i], mybuf[i]); ++i;
-		md5call(md5F, d, a, b, c, 12, sinlistF[i], mybuf[i]); ++i;
-		md5call(md5F, c, d, a, b, 17, sinlistF[i], mybuf[i]); ++i;
-		md5call(md5F, b, c, d, a, 22, sinlistF[i], mybuf[i]); ++i;
+		md5call(md5F, a, b, c, d,  7, sinlistF[i], mybuf[i]);
+		++i;
+		md5call(md5F, d, a, b, c, 12, sinlistF[i], mybuf[i]);
+		++i;
+		md5call(md5F, c, d, a, b, 17, sinlistF[i], mybuf[i]);
+		++i;
+		md5call(md5F, b, c, d, a, 22, sinlistF[i], mybuf[i]);
+		++i;
 	}
 	i = 0;
 	while(i < 16) {
-		md5call(md5G, a, b, c, d,  5, sinlistG[i], mybuf[permutG[i]]); ++i;
-		md5call(md5G, d, a, b, c,  9, sinlistG[i], mybuf[permutG[i]]); ++i;
-		md5call(md5G, c, d, a, b, 14, sinlistG[i], mybuf[permutG[i]]); ++i;
-		md5call(md5G, b, c, d, a, 20, sinlistG[i], mybuf[permutG[i]]); ++i;
+		md5call(md5G, a, b, c, d,  5, sinlistG[i], mybuf[permutG[i]]);
+		++i;
+		md5call(md5G, d, a, b, c,  9, sinlistG[i], mybuf[permutG[i]]);
+		++i;
+		md5call(md5G, c, d, a, b, 14, sinlistG[i], mybuf[permutG[i]]);
+		++i;
+		md5call(md5G, b, c, d, a, 20, sinlistG[i], mybuf[permutG[i]]);
+		++i;
 	}
 	i = 0;
 	while(i < 16) {
-		md5call(md5H, a, b, c, d,  4, sinlistH[i], mybuf[permutH[i]]); ++i;
-		md5call(md5H, d, a, b, c, 11, sinlistH[i], mybuf[permutH[i]]); ++i;
-		md5call(md5H, c, d, a, b, 16, sinlistH[i], mybuf[permutH[i]]); ++i;
-		md5call(md5H, b, c, d, a, 23, sinlistH[i], mybuf[permutH[i]]); ++i;
+		md5call(md5H, a, b, c, d,  4, sinlistH[i], mybuf[permutH[i]]);
+		++i;
+		md5call(md5H, d, a, b, c, 11, sinlistH[i], mybuf[permutH[i]]);
+		++i;
+		md5call(md5H, c, d, a, b, 16, sinlistH[i], mybuf[permutH[i]]);
+		++i;
+		md5call(md5H, b, c, d, a, 23, sinlistH[i], mybuf[permutH[i]]);
+		++i;
 	}
 	i = 0;
 	while(i < 16) {
-		md5call(md5I, a, b, c, d,  6, sinlistI[i], mybuf[permutI[i]]); ++i;
-		md5call(md5I, d, a, b, c, 10, sinlistI[i], mybuf[permutI[i]]); ++i;
-		md5call(md5I, c, d, a, b, 15, sinlistI[i], mybuf[permutI[i]]); ++i;
-		md5call(md5I, b, c, d, a, 21, sinlistI[i], mybuf[permutI[i]]); ++i;
+		md5call(md5I, a, b, c, d,  6, sinlistI[i], mybuf[permutI[i]]);
+		++i;
+		md5call(md5I, d, a, b, c, 10, sinlistI[i], mybuf[permutI[i]]);
+		++i;
+		md5call(md5I, c, d, a, b, 15, sinlistI[i], mybuf[permutI[i]]);
+		++i;
+		md5call(md5I, b, c, d, a, 21, sinlistI[i], mybuf[permutI[i]]);
+		++i;
 	}
 
 	resarr[0] = (resarr[0] + a) & 0xFFFFFFFFUL;
@@ -214,8 +235,11 @@ calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr)
 }
 
 #ifdef DEBUG_MD5
-#include <eixTk/unused.h>
-#include <iostream>
+#include "eixTk/unused.h"
+
+using std::cout;
+using std::endl;
+
 static void
 debug_md5(const uint32_t *resarr)
 {
@@ -225,18 +249,16 @@ debug_md5(const uint32_t *resarr)
 		for(int j(0); j < 8; ++j) {
 			char c;
 			if((j & 1) == 0) {
-				c = char((res / 16) % 16);
-			}
-			else {
-				c = char(res % 16);
+				c = ((res / 16) % 16);
+			} else {
+				c = (res % 16);
 				res /= 256;
 			}
 			if(c < 10) {
-				cout << char('0' + c);
-			}
-			else {
+				cout << static_cast<char>('0' + c);
+			} else {
 				c -= 10;
-				cout << char('a' + c);
+				cout << static_cast<char>('a' + c);
 			}
 		}
 	}
@@ -246,7 +268,8 @@ debug_md5(const uint32_t *resarr)
 bool
 verify_md5sum(const char *file ATTRIBUTE_UNUSED, const char *md5sum ATTRIBUTE_UNUSED)
 {
-	UNUSED(file); UNUSED(md5sum);
+	UNUSED(file);
+	UNUSED(md5sum);
 	const char buffer[] = "";
 	uint32_t resarr[4];
 	calc_md5sum(buffer, 0, resarr);
@@ -292,18 +315,16 @@ verify_md5sum(const char *file, const string &md5sum)
 		for(int j(0); j < 8; ++j) {
 			char c;
 			if((j & 1) == 0) {
-				c = char((res / 16) % 16);
-			}
-			else {
-				c = char(res % 16);
+				c = ((res / 16) % 16);
+			} else {
+				c = (res % 16);
 				res /= 256;
 			}
 			if(c < 10) {
 				if(md5sum[curr] != ('0' + c)) {
 					return false;
 				}
-			}
-			else {
+			} else {
 				c -= 10;
 				if(	(md5sum[curr] != ('a' + c)) &&
 					(md5sum[curr] != ('A' + c)) ) {

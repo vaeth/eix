@@ -7,38 +7,47 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "stringutils.h"
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
+#ifndef HAVE_STRNDUP
+#include <sys/types.h>
+#endif
+
+#include <locale>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include <iostream>
-#include <locale>
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#ifndef HAVE_STRNDUP
-#include <sys/types.h>
-#endif
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
 
-using namespace std;
+using std::map;
+using std::set;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 const char *spaces(" \t\r\n");
 const char *doublequotes("\"$\\");
 
-const string emptystring(""), zerostring("0"), one("1"), space(" ");
+const string emptystring(""), zerostring("0"), one("1"), space(" ");  // NOLINT(runtime/string)
 
-locale localeC("C");
+std::locale localeC("C");
 
 /* strndup() is a GNU extension
  * However, we do not #define _GNU_SOURCE but instead make sure to
- * #include <config.h> (at least implicitly) */
+ * #include "config.h" (at least implicitly) */
 
 #ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
@@ -64,7 +73,7 @@ strndup(const char *s, size_t n)
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
 void
-trim(std::string &str, const char *delims)
+trim(string *str, const char *delims)
 {
 	ltrim(str, delims);
 	rtrim(str, delims);
@@ -74,64 +83,63 @@ trim(std::string &str, const char *delims)
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
 void
-trimall(std::string &str, const char *delims, char c)
+trimall(string *str, const char *delims, char c)
 {
 	string::size_type pos(0);
-	while(unlikely((pos = str.find_first_of(delims, pos)) != string::npos)) {
-		string::size_type end(str.find_first_not_of(spaces, pos + 1));
+	while(unlikely((pos = str->find_first_of(delims, pos)) != string::npos)) {
+		string::size_type end(str->find_first_not_of(spaces, pos + 1));
 		if(end == string::npos) {
-			str.erase(pos);
+			str->erase(pos);
 			return;
 		}
 		if(pos != 0) {
-			str[pos] = c;
+			(*str)[pos] = c;
 			if(++pos == end) {
 				continue;
 			}
 		}
-		str.erase(pos, end - pos);
+		str->erase(pos, end - pos);
 	}
 }
 
 /** Check if slot contains a subslot and if yes, split it away.
     Also turn slot "0" into nothing */
-bool slot_subslot(string &slot, string &subslot)
+bool slot_subslot(string *slot, string *subslot)
 {
-	string::size_type sep(slot.find('/'));
+	string::size_type sep(slot->find('/'));
 	if(sep == string::npos) {
-		subslot.clear();
-		if(slot == "0") {
-			slot.clear();
+		subslot->clear();
+		if((*slot) == "0") {
+			slot->clear();
 		}
 		return false;
 	}
-	subslot.assign(slot, sep + 1, string::npos);
-	slot.resize(sep);
-	if(slot == "0") {
-		slot.clear();
+	subslot->assign(*slot, sep + 1, string::npos);
+	slot->resize(sep);
+	if(*slot == "0") {
+		slot->clear();
 	}
 	return true;
 }
 
 /** Split full to slot and subslot. Also turn slot "0" into nothing
  * @return true if subslot exists */
-bool slot_subslot(const string &full, string &slot, string &subslot)
+bool slot_subslot(const string &full, string *slot, string *subslot)
 {
 	string::size_type sep(full.find('/'));
 	if(sep == string::npos) {
 		if(full != "0") {
-			slot = full;
+			*slot = full;
+		} else {
+			slot->clear();
 		}
-		else {
-			slot.clear();
-		}
-		subslot.clear();
+		subslot->clear();
 		return false;
 	}
-	subslot.assign(full, sep + 1, string::npos);
-	slot.assign(full, 0, sep);
-	if(slot == "0") {
-		slot.clear();
+	subslot->assign(full, sep + 1, string::npos);
+	slot->assign(full, 0, sep);
+	if((*slot) == "0") {
+		slot->clear();
 	}
 	return true;
 }
@@ -199,48 +207,48 @@ get_escape(char c)
 }
 
 void
-unescape_string(string &str)
+unescape_string(string *str)
 {
 	string::size_type pos(0);
-	while(unlikely((pos = str.find('\\', pos)) != string::npos)) {
+	while(unlikely((pos = str->find('\\', pos)) != string::npos)) {
 		string::size_type p(pos + 1);
-		if(p == str.size())
+		if(p == str->size())
 			return;
-		str.replace(pos, 2, 1, get_escape(str[p]));
+		str->replace(pos, 2, 1, get_escape((*str)[p]));
 	}
 }
 
 void
-escape_string(string &str, const char *at)
+escape_string(string *str, const char *at)
 {
 	string my_at(at);
 	my_at.append("\\");
 	string::size_type pos(0);
-	while(unlikely((pos = str.find_first_of(my_at, pos)) != string::npos)) {
-		str.insert(pos, 1, '\\');
+	while(unlikely((pos = str->find_first_of(my_at, pos)) != string::npos)) {
+		str->insert(pos, 1, '\\');
 		pos += 2;
 	}
 }
 
 inline static void
-erase_escapes(string &s, const char *at)
+erase_escapes(string *s, const char *at)
 {
 	string::size_type pos(0);
-	while((pos = s.find('\\', pos)) != string::npos) {
+	while((pos = s->find('\\', pos)) != string::npos) {
 		++pos;
-		if(pos == s.size()) {
-			s.erase(pos - 1, 1);
+		if(pos == s->size()) {
+			s->erase(pos - 1, 1);
 			break;
 		}
-		char c(s[pos]);
+		char c((*s)[pos]);
 		if((c == '\\') || (strchr(at, c) != NULLPTR))
-			s.erase(pos - 1, 1);
+			s->erase(pos - 1, 1);
 	}
 }
 
 template <typename T>
 void
-split_string_template(T &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 {
 	string::size_type last_pos(0), pos(0);
 	while((pos = str.find_first_of(at, pos)) != string::npos) {
@@ -257,54 +265,54 @@ split_string_template(T &vec, const string &str, const bool handle_escape, const
 				continue;
 			}
 			string r(str, last_pos, pos - last_pos);
-			erase_escapes(r, at);
+			erase_escapes(&r, at);
 			if(likely((!r.empty()) || !ignore_empty))
 				push_back(vec, r);
-		}
-		else if(likely((pos > last_pos) || !ignore_empty))
+		} else if(likely((pos > last_pos) || !ignore_empty)) {
 			push_back(vec, str.substr(last_pos, pos - last_pos));
+		}
 		last_pos = ++pos;
 	}
 	if(unlikely(handle_escape)) {
 		string r(str, last_pos);
-		erase_escapes(r, at);
+		erase_escapes(&r, at);
 		if(likely((!r.empty()) || !ignore_empty))
 			push_back(vec, r);
-	}
-	else if(likely((str.size() > last_pos) || !ignore_empty))
+	} else if(likely((str.size() > last_pos) || !ignore_empty)) {
 		push_back(vec, str.substr(last_pos));
+	}
 }
 
 void
-split_string(vector<string> &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+split_string(vector<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 { split_string_template< vector<string> >(vec, str, handle_escape, at, ignore_empty); }
 
 void
-split_string(set<string> &vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+split_string(set<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 { split_string_template< set<string> >(vec, str, handle_escape, at, ignore_empty); }
 
 template <typename T>
 void
-join_to_string_template(string &s, const T &vec, const string &glue)
+join_to_string_template(string *s, const T &vec, const string &glue)
 {
 	for(typename T::const_iterator it(vec.begin()); likely(it != vec.end()); ++it) {
-		if(likely(!s.empty())) {
-			s.append(glue);
+		if(likely(!s->empty())) {
+			s->append(glue);
 		}
-		s.append(*it);
+		s->append(*it);
 	}
 }
 
 void
-join_to_string(string &s, const vector<string> &vec, const string &glue)
+join_to_string(string *s, const vector<string> &vec, const string &glue)
 { join_to_string_template< vector<string> >(s, vec, glue); }
 
 void
-join_to_string(string &s, const set<string> &vec, const string &glue)
+join_to_string(string *s, const set<string> &vec, const string &glue)
 { join_to_string_template< set<string> >(s, vec, glue); }
 
 bool
-resolve_plus_minus(set<string> &s, const vector<string> &l, const set<string> *warnignore)
+resolve_plus_minus(set<string> *s, const vector<string> &l, const set<string> *warnignore)
 {
 	bool minuskeyword(false);
 	for(vector<string>::const_iterator it(l.begin()); likely(it != l.end()); ++it) {
@@ -314,38 +322,37 @@ resolve_plus_minus(set<string> &s, const vector<string> &l, const set<string> *w
 		if(unlikely((*it)[0] == '+')) {
 			cerr << eix::format(_("flags should not start with a '+': %s")) % *it
 				<< endl;
-			s.insert(it->substr(1));
+			s->insert(it->substr(1));
 			continue;
 		}
 		if(unlikely((*it)[0] == '-')) {
 			if(*it == "-*") {
-				s.clear();
+				s->clear();
 				continue;
 			}
 			if(*it == "-~*") {
 				vector<string> v;
-				make_vector(v, s);
+				make_vector(&v, *s);
 				for(vector<string>::iterator i(v.begin());
 					unlikely(i != v.end()); ++i) {
 					if((i->size() >=2) && ((*i)[0] == '~')) {
-						s.erase(*i);
+						s->erase(*i);
 					}
 				}
 			}
 			string key(*it, 1);
-			if(s.erase(key)) {
+			if(s->erase(key)) {
 				continue;
 			}
 			if(warnignore != NULLPTR) {
 				if(warnignore->find(key) == warnignore->end()) {
 					minuskeyword = true;
 				}
-			}
-			else {
+			} else {
 				minuskeyword = true;
 			}
 		}
-		s.insert(*it);
+		s->insert(*it);
 	}
 	return minuskeyword;
 }
@@ -375,8 +382,8 @@ StringHash::hash_string(const string &s)
 	if(i != str_map.end())
 		return;
 	// For the moment, use str_map only as a set: Wait for finalize()
-	str_map[s] = 0;//size();
-	//store_string(s);
+	str_map[s] = 0;  // size();
+	// store_string(s);
 }
 
 void
@@ -401,7 +408,7 @@ StringHash::get_index(const string &s) const
 		cerr << _("Internal error: Index required before sorting.") << endl;
 		exit(EXIT_FAILURE);
 	}
-	map<string, StringHash::size_type>::const_iterator i = str_map.find(s);
+	map<string, StringHash::size_type>::const_iterator i(str_map.find(s));
 	if(i == str_map.end()) {
 		cerr << _("Internal error: Trying to shortcut non-hashed string.") << endl;
 		exit(EXIT_FAILURE);

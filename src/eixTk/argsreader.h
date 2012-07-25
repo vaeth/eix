@@ -7,36 +7,38 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__ARGSREADER_H__
-#define EIX__ARGSREADER_H__ 1
+#ifndef SRC_EIXTK_ARGSREADER_H_
+#define SRC_EIXTK_ARGSREADER_H_ 1
 
 #include <config.h>
-#include <list>
 
-typedef std::pair<const char *,const char *> ArgPair;
+#include <list>
+#include <utility>
+
+typedef std::pair<const char *, const char *> ArgPair;
 
 /// Maps longopt->shortopt.
 class Option
 {
 	public:
 	enum Type {
-		BOOLEAN_T,     ///< Boolean. Will be set to true if found.
-		BOOLEAN_F,     ///< Boolean. Will be set to false if found.
-		BOOLEAN,       ///< Boolean. Will be flipped if found.
-		INTEGER,       ///< Int. Increase value if found.
-		STRING,        ///< String. Barf if not found.
-		STRING_OPTIONAL,///< String. Empty if not found.
-		PAIR,          ///< Pair of strings. Barf if not found.
-		PAIR_OPTIONAL, ///< Pair of strings. Empty if not found.
-		STRINGLIST,    ///< Accumulative strings.
-		STRINGLIST_OPTIONAL,///< Accumulative strings. Empty if not found.
-		PAIRLIST,      ///< Accumulative pairs of strings.
-		PAIRLIST_OPTIONAL,///< Accumulative pairs of strings.
-		KEEP,          ///< Do not remove. No arg.
-		KEEP_STRING,   ///< Do not remove. String arg.
-		KEEP_STRING_OPTIONAL,///< Do not remove. String arg.
-		KEEP_PAIR,     ///< Do not remove. Pair of strings arg.
-		KEEP_PAIR_OPTIONAL ///< Do not remove. Pair of strings arg.
+		BOOLEAN_T,             /**< Boolean. Will be set to true if found. */
+		BOOLEAN_F,             /**< Boolean. Will be set to false if found. */
+		BOOLEAN,               /**< Boolean. Will be flipped if found. */
+		INTEGER,               /**< Int. Increase value if found. */
+		STRING,                /**< String. Barf if not found. */
+		STRING_OPTIONAL,       /**< String. Empty if not found. */
+		PAIR,                  /**< Pair of strings. Barf if not found. */
+		PAIR_OPTIONAL,         /**< Pair of strings. Empty if not found. */
+		STRINGLIST,            /**< Accumulative strings. */
+		STRINGLIST_OPTIONAL,   /**< Accumulative strings. Empty if not found. */
+		PAIRLIST,              /**< Accumulative pairs of strings. */
+		PAIRLIST_OPTIONAL,     /**< Accumulative pairs of strings. */
+		KEEP,                  /**< Do not remove. No arg. */
+		KEEP_STRING,           /**< Do not remove. String arg. */
+		KEEP_STRING_OPTIONAL,  /**< Do not remove. String arg. */
+		KEEP_PAIR,             /**< Do not remove. Pair of strings arg. */
+		KEEP_PAIR_OPTIONAL     /**< Do not remove. Pair of strings arg. */
 	} type;
 
 	Option(const char *l, int s, enum Type t, int *i)
@@ -53,7 +55,10 @@ class Option
 
 	Option(const char *l, int s, enum Type t, const char **c1, const char **c2)
 		: type(t), longopt(l), shortopt(s)
-	{ u.pr.first = c1; u.pr.second = c2; }
+	{
+		u.pr.first = c1;
+		u.pr.second = c2;
+	}
 
 	Option(const char *l, int s, enum Type t, std::list<const char*> *c)
 		: type(t), longopt(l), shortopt(s)
@@ -67,14 +72,17 @@ class Option
 		: type(t), longopt(l), shortopt(s)
 	{ }
 
-	const char *longopt; ///< longopt of this pair.
-	int  shortopt;       ///< shortopt of this pair.
+	const char *longopt;  /**< longopt of this pair. */
+	int  shortopt;        /**< shortopt of this pair. */
 
-	union { ///< Pointer to variable of argument.
+	union {  /**< Pointer to variable of argument. */
 		int   *integer;
 		bool  *boolean;
 		const char **str;
-		struct { const char **first; const char **second; } pr;
+		struct {
+			const char **first;
+			const char **second;
+		} pr;
 		std::list<const char *> *strlist;
 		std::list<ArgPair> *prlist;
 	} u;
@@ -96,11 +104,11 @@ class Parameter
 		/// If type is OPTION this holds the option-key.
 		int m_option;
 
-		Parameter(int option)
+		explicit Parameter(int option)
 			: type(Parameter::OPTION), m_option(option)
 		{ }
 
-		Parameter(const char *argument)
+		explicit Parameter(const char *argument)
 			: type(Parameter::ARGUMENT), m_argument(argument)
 		{ }
 
@@ -113,7 +121,7 @@ class ArgumentReader
 	: public std::list<Parameter>
 {
 	public:
-		char *name; ///< Name of called program.
+		char *name;  /**< Name of called program. */
 
 		/// Reads arguments into std::list of TParameters.
 		ArgumentReader(int argc, char **argv, Option opt_table[]);
@@ -140,4 +148,4 @@ class ArgumentReader
 		void foldAndRemove(Option *opt_table);
 };
 
-#endif /* EIX__ARGSREADER_H__ */
+#endif  // SRC_EIXTK_ARGSREADER_H_

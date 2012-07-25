@@ -7,11 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "algorithms.h"
-
 #include <map>
 #include <string>
 
-using namespace std;
+#include "search/algorithms.h"
+
+using std::map;
+using std::string;
 
 map<string, unsigned int> FuzzyAlgorithm::levenshtein_map;

@@ -8,28 +8,37 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "formatstring.h"
-#include <eixTk/ansicolor.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixrc/eixrc.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-
-#include <iostream>
-#include <set>
-#include <string>
-#include <vector>
 
 #include <cstdlib>
 #include <cstring>
 
+#include <iostream>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "eixTk/ansicolor.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixrc/eixrc.h"
+#include "output/formatstring.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+
 class PortageSettings;
 
-using namespace std;
+using std::pair;
+using std::set;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 void
 MarkedList::add(const char *pkg, const char *ver)
@@ -43,8 +52,7 @@ MarkedList::add(const char *pkg, const char *ver)
 			delete basic_version;
 			basic_version = NULLPTR;
 		}
-	}
-	else {
+	} else {
 		basic_version = NULLPTR;
 	}
 	insert(p);
@@ -65,8 +73,10 @@ MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
 	CIPair beg_end(equal_range_pkg(pkg));
 	if(nonversion != NULLPTR)
 		*nonversion = false;
-	if(likely((beg_end.first == end()) || (beg_end.first == beg_end.second)))// no match
+	if(likely((beg_end.first == end()) || (beg_end.first == beg_end.second))) {
+		// no match
 		return NULLPTR;
+	}
 	set<BasicVersion> *ret(NULLPTR);
 	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it) {
 		BasicVersion *p(it->second);
@@ -79,7 +89,7 @@ MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
 			ret = new set<BasicVersion>;
 		ret->insert(*p);
 	}
-	if(likely(ret == NULLPTR))// No version was explicitly marked
+	if(likely(ret == NULLPTR))  // No version was explicitly marked
 		return NULLPTR;
 	return ret;
 }
@@ -89,9 +99,11 @@ bool
 MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 {
 	CIPair beg_end = equal_range_pkg(pkg);
-	if((beg_end.first == end()) || (beg_end.first == beg_end.second))// no match
+	if((beg_end.first == end()) || (beg_end.first == beg_end.second)) {
+		// no match
 		return false;
-	if(ver == NULLPTR) // do not care about versions
+	}
+	if(ver == NULLPTR)  // do not care about versions
 		return true;
 	for(const_iterator it(beg_end.first); likely(it != beg_end.second); ++it ) {
 		BasicVersion *p(it->second);
@@ -130,19 +142,19 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	if((fmt->recommend_mode) == LOCALMODE_DEFAULT)
 		return;
 	if(fmt->recommend_mode == LOCALMODE_LOCAL) {
-		fmt->StabilityLocal(*pkg);
+		fmt->StabilityLocal(pkg);
 		return;
 	}
-	//(fmt->recommend_mode == LOCALMODE_NONLOCAL)
-	fmt->StabilityNonlocal(*pkg);
+	// (fmt->recommend_mode == LOCALMODE_NONLOCAL)
+	fmt->StabilityNonlocal(pkg);
 }
 
 bool
-PrintFormat::parse_variable(Node *&rootnode, const string &varname, string *errtext) const
+PrintFormat::parse_variable(Node **rootnode, const string &varname, string *errtext) const
 {
 	VarParserCache::iterator f(varcache.find(varname));
 	if(f == varcache.end()) {
-		return varcache[varname].init(rootnode, (*eix_rc)[varname].c_str(), !no_color, true, errtext);
+		return varcache[varname].init(*rootnode, (*eix_rc)[varname].c_str(), !no_color, true, errtext);
 	}
 	VarParserCacheNode &v(f->second);
 	if(unlikely(v.in_use)) {
@@ -152,7 +164,7 @@ PrintFormat::parse_variable(Node *&rootnode, const string &varname, string *errt
 		return false;
 	}
 	v.in_use = true;
-	rootnode = v.m_parser.rootnode();
+	*rootnode = v.m_parser.rootnode();
 	return true;
 }
 
@@ -161,7 +173,7 @@ PrintFormat::parse_variable(const string &varname) const
 {
 	string errtext;
 	Node *rootnode;
-	if(unlikely(!parse_variable(rootnode, varname, &errtext))) {
+	if(unlikely(!parse_variable(&rootnode, varname, &errtext))) {
 		cerr << errtext << endl;
 		exit(EXIT_FAILURE);
 	}
@@ -209,37 +221,36 @@ PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
 }
 
 void
-PrintFormat::setupResources(EixRc &rc)
+PrintFormat::setupResources(EixRc *rc)
 {
-	eix_rc = &rc;
-	color_overlaykey = rc["COLOR_OVERLAYKEY"];
-	color_virtualkey = rc["COLOR_VIRTUALKEY"];
+	eix_rc = rc;
+	color_overlaykey = (*rc)["COLOR_OVERLAYKEY"];
+	color_virtualkey = (*rc)["COLOR_VIRTUALKEY"];
 
-	alpha_use        = rc.getBool("SORT_INST_USE_ALPHA");
-	before_set_use   = rc["FORMAT_BEFORE_SET_USE"];
-	after_set_use    = rc["FORMAT_AFTER_SET_USE"];
-	before_unset_use = rc["FORMAT_BEFORE_UNSET_USE"];
-	after_unset_use  = rc["FORMAT_AFTER_UNSET_USE"];
+	alpha_use        = rc->getBool("SORT_INST_USE_ALPHA");
+	before_set_use   = (*rc)["FORMAT_BEFORE_SET_USE"];
+	after_set_use    = (*rc)["FORMAT_AFTER_SET_USE"];
+	before_unset_use = (*rc)["FORMAT_BEFORE_UNSET_USE"];
+	after_unset_use  = (*rc)["FORMAT_AFTER_UNSET_USE"];
 }
 
-inline static void
-parse_color(string &color, bool use_color)
+static void
+parse_color(string *color, bool use_color)
 {
 	string errtext;
-	if(unlikely(!parse_colors(color, color, use_color, &errtext))) {
+	if(unlikely(!parse_colors(color, *color, use_color, &errtext))) {
 		cerr << errtext << endl;
 	}
 }
 
-inline static void
-colorstring(string &color)
+static void
+colorstring(string *color)
 {
 	string errtext;
 	AnsiColor ac;
-	if(likely(ac.initcolor(color, &errtext))) {
-		color = ac.asString();
-	}
-	else {
+	if(likely(ac.initcolor(*color, &errtext))) {
+		*color = ac.asString();
+	} else {
 		cerr << errtext << endl;
 	}
 }
@@ -249,13 +260,13 @@ PrintFormat::setupColors()
 {
 	bool use_color(!no_color);
 	if(use_color) {
-		colorstring(color_overlaykey);
-		colorstring(color_virtualkey);
+		colorstring(&color_overlaykey);
+		colorstring(&color_virtualkey);
 	}
-	parse_color(before_set_use, use_color);
-	parse_color(after_set_use, use_color);
-	parse_color(before_unset_use, use_color);
-	parse_color(after_unset_use, use_color);
+	parse_color(&before_set_use, use_color);
+	parse_color(&after_set_use, use_color);
+	parse_color(&before_unset_use, use_color);
+	parse_color(&after_unset_use, use_color);
 }
 
 bool
@@ -280,9 +291,9 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 				{
 					Property *p(static_cast<Property*>(root));
 					string s;
-					if(p->user_variable)
+					if(p->user_variable) {
 						s = user_variables[p->name];
-					else {
+					} else {
 						s = get_property(this, entity, p->name);
 					}
 					if(!s.empty()) {
@@ -295,8 +306,8 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 				}
 				break;
 			default:
-			//case Node::IF:
-			//case Node::SET:
+			// case Node::IF:
+			// case Node::SET:
 				{
 					ConditionBlock *ief(static_cast<ConditionBlock*>(root));
 					string rhs;
@@ -308,7 +319,7 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 							rhs = get_property(this, entity, ief->text.text);
 							break;
 						default:
-						//case ConditionBlock::RHS_STRING:
+						// case ConditionBlock::RHS_STRING:
 							rhs = ief->text.text;
 							break;
 					}
@@ -318,25 +329,23 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 								user_variables[ief->variable.name] = "1";
 							else
 								user_variables[ief->variable.name].clear();
-						}
-						else
+						} else {
 							user_variables[ief->variable.name] = rhs;
+						}
 						break;
 					}
 					// Node::IF:
 					bool ok(false);
 					if(ief->user_variable) {
 						ok = (user_variables[ief->variable.name] == rhs);
-					}
-					else {
+					} else {
 						ok = (get_property(this, entity, ief->variable.name) == rhs);
 					}
 					ok = ief->negation ? !ok : ok;
 					if(ok && ief->if_true) {
 						if(recPrint(result, entity, get_property, ief->if_true))
 							printed = true;
-					}
-					else if(!ok && ief->if_false) {
+					} else if(!ok && ief->if_false) {
 						if(recPrint(result, entity, get_property, ief->if_false))
 							printed = true;
 					}
@@ -351,30 +360,36 @@ bool
 PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
 {
 	// The four hackish variables
-	header = dbheader; vardb = vardbpkg; portagesettings = ps; stability = s;
+	header = dbheader;
+	vardb = vardbpkg;
+	portagesettings = ps;
+	stability = s;
 	version_variables = NULLPTR;
 	varcache.clear_use();
 	user_variables.clear();
 	bool r(recPrint(NULLPTR, entity, get_property, root));
 	// Reset the four hackish variables
-	header = NULLPTR; vardb = NULLPTR; portagesettings = NULLPTR; stability = NULLPTR;
+	header = NULLPTR;
+	vardb = NULLPTR;
+	portagesettings = NULLPTR;
+	stability = NULLPTR;
 	return r;
 }
 
 bool
-parse_colors(string &ret, const string &colorstring, bool colors, string *errtext)
+parse_colors(string *ret, const string &colorstring, bool colors, string *errtext)
 {
 	FormatParser parser;
 	if(unlikely(!parser.start(colorstring.c_str(), colors, true, errtext))) {
 		return false;
 	}
-	ret.clear();
+	ret->clear();
 	Node *root(parser.rootnode());
 	if(root == NULLPTR) {
 		return true;
 	}
 	while(likely(root->type == Node::TEXT)) {
-		ret.append((static_cast<Text*>(root))->text);
+		ret->append((static_cast<Text*>(root))->text);
 		if((root = root->next) == NULLPTR) {
 			return true;
 		}
@@ -435,8 +450,7 @@ FormatParser::state_TEXT()
 	while(*band_position && (strchr(end_of_text, *band_position ) == NULLPTR)) {
 		if(*band_position == '\\') {
 			textbuffer.append(1, get_escape(*(++band_position)));
-		}
-		else {
+		} else {
 			textbuffer.append(band_position, 1);
 		}
 		++band_position;
@@ -523,8 +537,7 @@ FormatParser::state_IF()
 	if(*band_position == '!') {
 		n->negation = true;
 		band_position = seek_character(band_position + 1);
-	}
-	else {
+	} else {
 		n->negation = false;
 	}
 
@@ -615,15 +628,14 @@ FormatParser::state_IF()
 		if(parse_modus != plain) {
 			if(c == parse_modus)
 				break;
-		}
-		else if((c == '}') || isspace(c))
+		} else if((c == '}') || isspace(c)) {
 			break;
+		}
 		if((c == '\\') && (parse_modus != single_quote)) {
 			textbuffer.append(1, get_escape(*(++band_position)));
 			if(!*band_position)
 				break;
-		}
-		else {
+		} else {
 			textbuffer.append(1, c);
 		}
 	}
@@ -690,8 +702,7 @@ FormatParser::state_FI()
 	}
 	if((static_cast<ConditionBlock*>(p))->if_true == NULLPTR) {
 		(static_cast<ConditionBlock*>(p))->if_true = q;
-	}
-	else {
+	} else {
 		(static_cast<ConditionBlock*>(p))->if_false = q;
 	}
 	(static_cast<ConditionBlock*>(p))->final = true;
@@ -712,17 +723,24 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, string
 	/* Run machine */
 	while(state != STOP && state != ERROR) {
 		switch(state) {
-			case START:    state = state_START(); break;
-			case TEXT:     state = state_TEXT(); break;
-			case COLOR:    state = state_COLOR(); break;
-			case PROPERTY: state = state_PROPERTY(); break;
-			case IF:       state = state_IF(); break;
-			case ELSE:     state = state_ELSE(); break;
-			case FI:       state = state_FI(); break;
-			case ERROR:    break;
+			case START:    state = state_START();
+			               break;
+			case TEXT:     state = state_TEXT();
+			               break;
+			case COLOR:    state = state_COLOR();
+			               break;
+			case PROPERTY: state = state_PROPERTY();
+			               break;
+			case IF:       state = state_IF();
+			               break;
+			case ELSE:     state = state_ELSE();
+			               break;
+			case FI:       state = state_FI();
+			//             break;
+			case ERROR:    // break;
 			case STOP:     break;
 			default:       last_error = _("Bad state: undefined");
-				       state = ERROR;
+			               state = ERROR;
 		}
 	}
 	/* Check if the machine went into ERROR-state. */

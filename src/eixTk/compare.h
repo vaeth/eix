@@ -6,8 +6,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__COMPARE_H__
-#define EIX__COMPARE_H__ 1
+#ifndef SRC_EIXTK_COMPARE_H_
+#define SRC_EIXTK_COMPARE_H_ 1
 
 #include <config.h>
 
@@ -16,12 +16,14 @@
 /// eix namespace
 namespace eix
 {
+	typedef signed char SignedBool;
+
 	/// compare two objects.
 	/// @return 0 if equal, 1 if left > right or -1 if left < right.
 	template<typename T>
-	short default_compare(const T& left, const T& right)
+	eix::SignedBool default_compare(const T& left, const T& right)
 	{
-		if (left == right)
+		if(left == right)
 			return 0;
 		if(left < right)
 			return -1;
@@ -30,9 +32,10 @@ namespace eix
 
 	/// numeric comparison.
 	/// @note empty strings count a "0"
-	inline short
+	inline eix::SignedBool
 	numeric_compare(const std::string& left, const std::string& right) ATTRIBUTE_PURE;
-	inline short
+
+	inline eix::SignedBool
 	numeric_compare(const std::string& left, const std::string& right)
 	{
 		// strip leading 0's
@@ -48,7 +51,7 @@ namespace eix
 			return 1;
 
 		// check if one is longer, that one would be bigger
-		short size_result(default_compare(left.size() - lstart, right.size() - rstart));
+		eix::SignedBool size_result(default_compare(left.size() - lstart, right.size() - rstart));
 		if (size_result)
 			return size_result;
 		// both strings have the same length, do string comparison
@@ -56,4 +59,4 @@ namespace eix
 	}
 }
 
-#endif /* EIX__COMPARE_H__ */
+#endif  // SRC_EIXTK_COMPARE_H_

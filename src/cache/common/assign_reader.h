@@ -7,12 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__ASSIGNREADER_H__
-#define EIX__ASSIGNREADER_H__ 1
-
-#include <cache/base.h>
+#ifndef SRC_CACHE_COMMON_ASSIGN_READER_H_
+#define SRC_CACHE_COMMON_ASSIGN_READER_H_ 1
 
 #include <string>
+
+#include "cache/base.h"
 
 class Package;
 class Depend;
@@ -21,4 +21,4 @@ const char *assign_get_md5sum(const std::string &filename);
 void assign_get_keywords_slot_iuse_restrict(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, Depend &dep, BasicCache::ErrorCallback error_callback);
 void assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
 
-#endif /* EIX__ASSIGNREADER_H__ */
+#endif  // SRC_CACHE_COMMON_ASSIGN_READER_H_

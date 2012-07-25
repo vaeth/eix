@@ -8,20 +8,22 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "sysutils.h"
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
 
-#include <string>
-
-#include <clocale>
-#include <ctime>
 #include <grp.h>
 #include <pwd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
-using namespace std;
+#include <clocale>
+#include <ctime>
+
+#include <string>
+
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/sysutils.h"
+
+using std::string;
 
 /** Get uid of a user.
  * @param u pointer to uid_t .. uid is stored there.
@@ -30,9 +32,11 @@ using namespace std;
 bool
 get_uid_of(const char *name, uid_t *u)
 {
-	struct passwd *pwd(getpwnam(name));
-	if(unlikely(pwd == NULLPTR))
+	struct passwd ps, *pwd;
+	char c[5000];
+	if((getpwnam_r(name, &ps, c, 4999, &pwd) != 0) || (pwd == NULLPTR)) {
 		return false;
+	}
 	*u = pwd->pw_uid;
 	return true;
 }
@@ -44,9 +48,11 @@ get_uid_of(const char *name, uid_t *u)
 bool
 get_gid_of(const char *name, gid_t *g)
 {
-	struct group *grp(getgrnam(name));
-	if(unlikely(grp == NULLPTR))
+	struct group gs, *grp;
+	char c[5000];
+	if((getgrnam_r(name, &gs, c, 4999, &grp) != 0) || (grp == NULLPTR)) {
 		return false;
+	}
 	*g = grp->gr_gid;
 	return true;
 }

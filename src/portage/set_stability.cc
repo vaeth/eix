@@ -8,28 +8,32 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "set_stability.h"
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/conf/cascadingprofile.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/keywords.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
-#include <portage/version.h>
-
-#include <iostream>
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
-#include <eixTk/i18n.h>
 #include <cstdlib>
+
+#include <iostream>
+
+#include "eixTk/i18n.h"
 #endif
 #endif
 
-using namespace std;
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/conf/cascadingprofile.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/keywords.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
+#include "portage/set_stability.h"
+#include "portage/version.h"
 
 #ifndef ALWAYS_RECALCULATE_STABILITY
+#ifndef NDEBUG
+using std::cerr;
+using std::endl;
+#endif
 
 /* Calculating the index manually makes it sometimes unnecessary
  * to recalculate the stability setting of the whole package.
@@ -60,15 +64,14 @@ SetStability::mask_index(bool get_local) const
 #endif
 
 void
-SetStability::set_stability(bool get_local, Package &package) const
+SetStability::set_stability(bool get_local, Package *package) const
 {
 	if(get_local) {
-		portagesettings->user_config->setMasks(&package, m_filemask_is_profile);
-		portagesettings->user_config->setKeyflags(&package);
-	}
-	else {
-		portagesettings->setMasks(&package, m_filemask_is_profile);
-		portagesettings->setKeyflags(&package, m_always_accept_keywords);
+		portagesettings->user_config->setMasks(package, m_filemask_is_profile);
+		portagesettings->user_config->setKeyflags(package);
+	} else {
+		portagesettings->setMasks(package, m_filemask_is_profile);
+		portagesettings->setKeyflags(package, m_always_accept_keywords);
 	}
 }
 
@@ -91,7 +94,7 @@ SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsF
 	// No, the flags are not saved yet, we must calculate them:
 #endif
 	PackageSave saved(p);
-	set_stability(get_local, *p);
+	set_stability(get_local, p);
 	if(maskflags != NULLPTR) {
 		*maskflags = v->maskflags;
 	}
@@ -119,17 +122,17 @@ SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsF
 }
 
 void
-SetStability::set_stability(Category &category) const
+SetStability::set_stability(Category *category) const
 {
-	for(Category::iterator it(category.begin());
-		likely(it != category.end()); ++it)
-		set_stability(**it);
+	for(Category::iterator it(category->begin());
+		likely(it != category->end()); ++it)
+		set_stability(*it);
 }
 
 void
-SetStability::set_stability(PackageTree &tree) const
+SetStability::set_stability(PackageTree *tree) const
 {
-	for(PackageTree::iterator it(tree.begin());
-		likely(it != tree.end()); ++it)
-		set_stability(*(it->second));
+	for(PackageTree::iterator it(tree->begin());
+		likely(it != tree->end()); ++it)
+		set_stability(it->second);
 }

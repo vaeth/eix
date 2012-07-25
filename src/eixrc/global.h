@@ -7,18 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__EIXRC_GLOBALS_H__
-#define EIX__EIXRC_GLOBALS_H__ 1
+#ifndef SRC_EIXRC_GLOBAL_H_
+#define SRC_EIXRC_GLOBAL_H_ 1
 
 class EixRc;
 
 /** Return a static eixrc. */
 EixRc &get_eixrc(const char *varprefix);
 
-void fill_defaults_part_1(EixRc &eixrc);
-void fill_defaults_part_2(EixRc &eixrc);
-void fill_defaults_part_3(EixRc &eixrc);
-void fill_defaults_part_4(EixRc &eixrc);
-void fill_defaults_part_5(EixRc &eixrc);
+void fill_defaults_part_1(EixRc *eixrc);
+void fill_defaults_part_2(EixRc *eixrc);
+void fill_defaults_part_3(EixRc *eixrc);
+void fill_defaults_part_4(EixRc *eixrc);
+void fill_defaults_part_5(EixRc *eixrc);
 
-#endif /* EIX__EIXRC_GLOBALS_H__ */
+#endif  // SRC_EIXRC_GLOBAL_H_

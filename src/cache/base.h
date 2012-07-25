@@ -7,19 +7,20 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__BASICCACHE_H__
-#define EIX__BASICCACHE_H__ 1
+#ifndef SRC_CACHE_BASE_H_
+#define SRC_CACHE_BASE_H_ 1
 
 #include <config.h>
-#include <eixTk/null.h>
-#include <eixTk/sysutils.h>
-#include <eixTk/unused.h>
-#include <portage/extendedversion.h>
+
+#include <ctime>
 
 #include <map>
 #include <string>
 
-#include <ctime>
+#include "eixTk/null.h"
+#include "eixTk/sysutils.h"
+#include "eixTk/unused.h"
+#include "portage/extendedversion.h"
 
 class Category;
 class Package;
@@ -93,7 +94,12 @@ class BasicCache {
 		    @param category If packagetree is NULLPTR, the packages matching cat_name are added to this category.
 		    @return false if some error caused incomplete read. */
 		virtual bool readCategories(PackageTree *packagetree ATTRIBUTE_UNUSED, const char *cat_name ATTRIBUTE_UNUSED = NULLPTR, Category *category ATTRIBUTE_UNUSED = NULLPTR)
-		{ UNUSED(packagetree); UNUSED(cat_name); UNUSED(category); return 1; }
+		{
+			UNUSED(packagetree);
+			UNUSED(cat_name);
+			UNUSED(category);
+			return 1;
+		}
 
 		/** Prepare reading Cache for an individual category.
 		    If not overloaded, then readCategories() must be overloaded.
@@ -102,14 +108,17 @@ class BasicCache {
 		    In case of a false return value, readCategory() must not be called,
 		    but readCategoryFinalize() must be called anyway. */
 		virtual bool readCategoryPrepare(const char *cat_name)
-		{ m_catname = cat_name; return true; }
+		{
+			m_catname = cat_name;
+			return true;
+		}
 
 		/** Read Cache for an individual category, defined before with readCategoryPrepare().
 		    If not overloaded, then readCategories() must be overloaded.
 		    After calling this, readCategoryFinalize() must be called.
 		    @return false if some error caused incomplete read. */
-		virtual bool readCategory(Category &cat)
-		{ return readCategories(NULLPTR, m_catname.c_str(), &cat); }
+		virtual bool readCategory(Category *cat)
+		{ return readCategories(NULLPTR, m_catname.c_str(), cat); }
 
 		/** This must be called to release the data stored with readCategoryPrepare().
 		    After calling this, readCategory() must not be called without a new readCategoryPrepare(). */
@@ -117,16 +126,32 @@ class BasicCache {
 		{ m_catname.clear(); }
 
 		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
-		{ UNUSED(pkg_name); UNUSED(ver_name); return 0; }
+		{
+			UNUSED(pkg_name);
+			UNUSED(ver_name);
+			return 0;
+		}
 
 		virtual const char *get_md5sum(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
-		{ UNUSED(pkg_name); UNUSED(ver_name); return NULLPTR; }
+		{
+			UNUSED(pkg_name);
+			UNUSED(ver_name);
+			return NULLPTR;
+		}
 
 		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const
-		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(version); }
+		{
+			UNUSED(pkg_name);
+			UNUSED(ver_name);
+			UNUSED(version);
+		}
 
 		virtual void get_common_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const
-		{ UNUSED(pkg_name); UNUSED(ver_name); UNUSED(pkg); }
+		{
+			UNUSED(pkg_name);
+			UNUSED(ver_name);
+			UNUSED(pkg);
+		}
 
 	protected:
 		virtual void setSchemeFinish()
@@ -137,9 +162,10 @@ class BasicCache {
 		bool have_prefix;
 		ExtendedVersion::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
-		void env_add_package(std::map<std::string,std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
+		void env_add_package(std::map<std::string, std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
+
 	public:
 		PortageSettings *portagesettings;
 };
 
-#endif /* EIX__BASICCACHE_H__ */
+#endif  // SRC_CACHE_BASE_H_

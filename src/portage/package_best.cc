@@ -7,23 +7,24 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "package.h"
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/basicversion.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/extendedversion.h>
-#include <portage/instversion.h>
-#include <portage/keywords.h>
-#include <portage/vardbpkg.h>
-#include <portage/version.h>
+#include <cstring>
 
 #include <set>
 #include <vector>
 
-#include <cstring>
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/basicversion.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/extendedversion.h"
+#include "portage/instversion.h"
+#include "portage/keywords.h"
+#include "portage/package.h"
+#include "portage/vardbpkg.h"
+#include "portage/version.h"
 
-using namespace std;
+using std::set;
+using std::vector;
 
 Version *
 VersionList::best(bool allow_unstable) const
@@ -103,22 +104,22 @@ Package::best_slot(const char *slot_name, bool allow_unstable) const
 }
 
 void
-Package::best_slots(vector<Version*> &l, bool allow_unstable) const
+Package::best_slots(vector<Version*> *l, bool allow_unstable) const
 {
-	l.clear();
+	l->clear();
 	for(SlotList::const_iterator sit(slotlist().begin());
 		likely(sit != slotlist().end()); ++sit) {
 		Version *p((sit->const_version_list()).best(allow_unstable));
 		if(p != NULLPTR) {
-			l.push_back(p);
+			l->push_back(p);
 		}
 	}
 }
 
 void
-Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
+Package::best_slots_upgrade(vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
-	versions.clear();
+	versions->clear();
 	if(unlikely(v == NULLPTR))
 		return;
 	vector<InstVersion> *ins(v->getInstalledVector(*this));
@@ -128,13 +129,14 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 	set<Version*> versionset;
 	for(vector<InstVersion>::iterator it(ins->begin());
 		it != ins->end() ; ++it) {
-		if(guess_slotname(*it, v)) {
+		if(guess_slotname(&(*it), v)) {
 			Version *bv(best_slot((it->slotname).c_str(), allow_unstable));
 			if((bv != NULLPTR) && (*bv != *it))
 				versionset.insert(bv);
+		} else {
+			// Perhaps the slot was removed:
+			need_best = true;
 		}
-		else // Perhaps the slot was removed:
-			need_best=true;
 	}
 	if(!need_best) {
 		if(calc_allow_upgrade_slots(ps))
@@ -159,12 +161,12 @@ Package::best_slots_upgrade(vector<Version*> &versions, VarDbPkg *v, const Porta
 			}
 		}
 		if(!found)
-			versions.push_back(*it);
+			versions->push_back(*it);
 	}
 }
 
 bool
-Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
+Package::is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const
 {
 	if(unlikely(v == NULLPTR))
 		return false;
@@ -175,12 +177,13 @@ Package::is_best_upgrade(bool check_slots, const Version* version, VarDbPkg *v, 
 	if(check_slots) {
 		for(vector<InstVersion>::iterator it(ins->begin());
 			likely(it != ins->end()); ++it) {
-			if(guess_slotname(*it, v)) {
+			if(guess_slotname(&(*it), v)) {
 				if(version == best_slot((it->slotname).c_str(), allow_unstable))
 					return true;
-			}
-			else // Perhaps the slot was removed:
+			} else {
+				// Perhaps the slot was removed:
 				need_best = true;
+			}
 		}
 		if(!need_best) {
 			if(calc_allow_upgrade_slots(ps))
@@ -206,7 +209,7 @@ Package::slotname(const ExtendedVersion &v) const
 }
 
 bool
-Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *force) const
+Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force) const
 {
 	if(vardbpkg != NULLPTR) {
 		if(vardbpkg->care_slots()) {
@@ -214,22 +217,21 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *fo
 				return true;
 			}
 			if(force != NULLPTR) {
-				v.set_slotname(force);
+				v->set_slotname(force);
 			}
 			return false;
 		}
-		if(likely(v.know_slot))
+		if(likely(v->know_slot))
 			return true;
-		const char *s(slotname(v));
+		const char *s(slotname(*v));
 		if(s != NULLPTR) {
-			v.slotname = s;
-			v.know_slot = true;
+			v->slotname = s;
+			v->know_slot = true;
 		}
 		if(vardbpkg->readSlot(*this, v))
 			return true;
-	}
-	else {
-		if(v.know_slot) {
+	} else {
+		if(v->know_slot) {
 			return true;
 		}
 	}
@@ -238,7 +240,7 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *fo
 		// However, perhaps our package is from an old database
 		// (e.g. in eix-diff) and so there might be new slots elsewhere
 		// Therefore we better don't modify v.know_slot.
-		v.slotname = slotlist().begin()->slotname();
+		v->slotname = slotlist().begin()->slotname();
 		if(!m_has_cached_subslots) {
 			m_has_cached_subslots = m_unique_subslot = true;
 			const_iterator it(begin());
@@ -250,20 +252,19 @@ Package::guess_slotname(InstVersion &v, const VarDbPkg *vardbpkg, const char *fo
 						m_subslot.clear();
 					}
 				}
-			}
-			else { // a package without a version...
+			} else {  // a package without a version...
 				m_unique_subslot = false;
 			}
 		}
 		if(m_unique_subslot) {
-			v.subslotname = m_subslot;
+			v->subslotname = m_subslot;
 			return true;
 		}
-		v.subslotname.clear();
+		v->subslotname.clear();
 		return true;
 	}
 	if(force != NULLPTR) {
-		v.set_slotname(force);
+		v->set_slotname(force);
 	}
 	return false;
 }
@@ -380,7 +381,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	bool upgrade(false);
 	for(vector<InstVersion>::iterator it(ins->begin());
 		likely(it != ins->end()); ++it) {
-		if(!guess_slotname(*it, v)) {
+		if(!guess_slotname(&(*it), v)) {
 			// Perhaps the slot was removed:
 			downgrade = true;
 			Version *t_best(best());
@@ -438,15 +439,14 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 			return -1;
 		for(vector<InstVersion>::iterator it(ins->begin());
 			likely(it != ins->end()); ++it) {
-			short vgl(BasicVersion::compare(*t_best, *it));
+			BasicPart::SignedBool vgl(BasicVersion::compare(*t_best, *it));
 			if(vgl > 0)
 				continue;
 			if(vgl < 0)
 				return -1;
 			if(!test_slot)
 				return 0;
-			if(guess_slotname(*it, v))
-			{
+			if(guess_slotname(&(*it), v)) {
 				if(t_best->slotname == it->slotname)
 					return 0;
 			}

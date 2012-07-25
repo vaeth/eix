@@ -7,18 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "header.h"
-
-#include <eixTk/filenames.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <portage/extendedversion.h>
-
 #include <set>
 #include <string>
 
-using namespace std;
+#include "database/header.h"
+#include "eixTk/filenames.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "portage/extendedversion.h"
+
+using std::set;
+using std::string;
 
 const DBHeader::OverlayTest
 	DBHeader::OVTEST_NONE,
@@ -31,7 +31,7 @@ const DBHeader::OverlayTest
 	DBHeader::OVTEST_ALL;
 const DBHeader::DBVersion DBHeader::current;
 
-const string DBHeader::magic("eix\n");
+const string DBHeader::magic("eix\n");  // NOLINT(runtime/string)
 
 /** Get overlay for key from table. */
 const OverlayIdent &
@@ -81,14 +81,14 @@ bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, con
 		}
 		for(ExtendedVersion::Overlay i(minimal); i != countOverlays(); ++i) {
 			if(same_filenames(name, getOverlay(i).path.c_str(), true)) {
-				if((i == 0) && ! (testmode & OVTEST_SAVED_PORTDIR))
+				if((i == 0) && ((testmode & OVTEST_SAVED_PORTDIR) == OVTEST_NONE))
 					continue;
 				*num = i;
 				return true;
 			}
 		}
 	}
-	if( ! (testmode & OVTEST_NUMBER))
+	if((testmode & OVTEST_NUMBER) == OVTEST_NONE)
 		return false;
 	// Is name a number?
 	ExtendedVersion::Overlay number;

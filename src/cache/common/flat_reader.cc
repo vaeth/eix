@@ -7,29 +7,31 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "flat_reader.h"
-#include <cache/base.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/depend.h>
-#include <portage/package.h>
+#include <cerrno>
+#include <cstring>
 
 #include <fstream>
 #include <limits>
 #include <string>
 
-#include <cerrno>
-#include <cstring>
+#include "cache/base.h"
+#include "cache/common/flat_reader.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/depend.h"
+#include "portage/package.h"
 
-using namespace std;
+using std::string;
+
+using std::ifstream;
 
 inline bool
 skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
 {
 	for(int i(nr); likely(i > 0); --i) {
-		is.ignore(numeric_limits<int>::max(), '\n');
+		is.ignore(std::numeric_limits<int>::max(), '\n');
 		if(is.fail())
 		{
 			error_callback(eix::format(_("Can't read cache file %s: %s"))
@@ -54,8 +56,7 @@ flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, s
 	if(use_dep) {
 		getline(is, depend);
 		getline(is, rdepend);
-	}
-	else {
+	} else {
 		skip_lines(2, is, filename, error_callback);
 	}
 	getline(is, slotname);
@@ -70,8 +71,7 @@ flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, s
 		getline(is, pdepend);
 		dep.set(depend, rdepend, pdepend, false);
 		skip_lines(2, is, filename, error_callback);
-	}
-	else {
+	} else {
 		skip_lines(4, is, filename, error_callback);
 	}
 	getline(is, props);
@@ -98,7 +98,8 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 			case 6:  pkg->licenses = linebuf;
 			         break;
 			case 7:  pkg->desc     = linebuf;
-			         is.close(); return;
+			         is.close();
+			         return;
 			default:
 				break;
 		}

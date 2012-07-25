@@ -5,14 +5,14 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__DEPEND_H__
-#define EIX__DEPEND_H__ 1
+#ifndef SRC_PORTAGE_DEPEND_H_
+#define SRC_PORTAGE_DEPEND_H_ 1
 
-#include <database/io.h>
+#include <cstdio>
 
 #include <string>
 
-#include <cstdio>
+#include "database/io.h"
 
 class DBHeader;
 class Version;
@@ -20,9 +20,9 @@ class PackageTree;
 
 class Depend
 {
-	friend bool io::read_depend(Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
+	friend bool io::read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
 	friend bool io::write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
-	friend void io::prep_header_hashs(DBHeader &hdr, const PackageTree &tree);
+	friend void io::prep_header_hashs(DBHeader *hdr, const PackageTree& tree);
 
 	private:
 		std::string m_depend, m_rdepend, m_pdepend;
@@ -67,7 +67,11 @@ class Depend
 		{ return (m_depend.empty() && m_rdepend.empty() && m_pdepend.empty()); }
 
 		void clear()
-		{ m_depend.clear(); m_rdepend.clear(); m_pdepend.clear(); }
+		{
+			m_depend.clear();
+			m_rdepend.clear();
+			m_pdepend.clear();
+		}
 };
 
-#endif /* EIX__DEPEND_H__ */
+#endif  // SRC_PORTAGE_DEPEND_H_

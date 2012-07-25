@@ -7,16 +7,14 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "argsreader.h"
-#include <eixTk/likely.h>
-#include <eixTk/i18n.h>
-#include <eixTk/null.h>
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-using namespace std;
+#include "eixTk/argsreader.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
 
 ArgumentReader::ArgumentReader(int argc, char **argv, Option opt_table[])
 {
@@ -137,7 +135,7 @@ ArgumentReader::lookup_longopt(const char *long_opt, Option *opt_table)
 	}
 	fprintf(stderr, _("Unknown option --%s\n"), long_opt);
 	exit(EXIT_FAILURE);
-	return 0;// never reached, but might avoid compiler warning
+	return 0;  // never reached, but might avoid compiler warning
 }
 
 /** Check if short_opt is a known option.
@@ -154,7 +152,7 @@ ArgumentReader::lookup_shortopt(const char short_opt, Option *opt_table)
 	}
 	fprintf(stderr, _("Unknown option -%c\n"), short_opt);
 	exit(EXIT_FAILURE);
-	return 0;// never reached, but might avoid compiler warning
+	return 0;  // never reached, but might avoid compiler warning
 }
 
 void
@@ -188,7 +186,7 @@ ArgumentReader::foldAndRemove(Option *opt_table)
 					else if(c->type == Option::BOOLEAN_F)
 						*(c->u.boolean) = false;
 					else
-						*(c->u.boolean) = ! *(c->u.boolean);
+						*(c->u.boolean) = (!(*(c->u.boolean)));
 					it = erase(it);
 					break;
 			case Option::INTEGER:
@@ -227,8 +225,7 @@ ArgumentReader::foldAndRemove(Option *opt_table)
 							fprintf(stderr, _("Missing parameter to --%s\n"), c->longopt);
 							exit(EXIT_FAILURE);
 						}
-					}
-					else {
+					} else {
 						remember = it->m_argument;
 						if(keep)
 							++it;
@@ -252,8 +249,7 @@ ArgumentReader::foldAndRemove(Option *opt_table)
 							fprintf(stderr, _("Missing second parameter to --%s\n"), c->longopt);
 							exit(EXIT_FAILURE);
 						}
-					}
-					else {
+					} else {
 						second = it->m_argument;
 						if(keep)
 							++it;
@@ -261,7 +257,7 @@ ArgumentReader::foldAndRemove(Option *opt_table)
 							it = erase(it);
 					}
 					if(keep)
-					//((c->type == Option::KEEP_PAIR) || (c->type == Option::KEEP_PAIR_OPTIONAL))
+					// ((c->type == Option::KEEP_PAIR) || (c->type == Option::KEEP_PAIR_OPTIONAL))
 						break;
 					if((c->type == Option::PAIR) || (c->type == Option::PAIR_OPTIONAL))
 					{
@@ -269,10 +265,10 @@ ArgumentReader::foldAndRemove(Option *opt_table)
 						*((c->u.pr).second) = second;
 						break;
 					}
-					//if((c->type == Option::PAIRLIST) || (c->type == Option::PAIRLIST_OPTIONAL))
+					// if((c->type == Option::PAIRLIST) || (c->type == Option::PAIRLIST_OPTIONAL))
 						c->u.prlist->push_back(ArgPair(remember, second));
 					break;
-			default: // KEEP
+			default:  // KEEP
 					++it;
 		}
 	}

@@ -6,38 +6,35 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "filenames.h"
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
 
-#include <string>
-
-#include <cstdlib>
-#include <cstring>
 #include <fnmatch.h>
-
-#ifdef DEBUG_NORMALIZE_PATH
-#include <iostream>
-#endif
 
 // Try to read PATH_MAX from climits/limits:
 
-#ifdef HAVE_CLIMITS
-#include <climits>
-#else
+#ifndef HAVE_CLIMITS
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
 #endif
+#else
+#include <climits>
 #endif
+
+#include <cstdlib>
+#include <cstring>
 
 // On some systems PATH_MAX is only contained in sys/param.h:
 
 #ifndef PATH_MAX
 #ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
+#include <sys/param.h>  // NOLINT(build/include_order)
 #endif
 #endif
+
+#ifdef DEBUG_NORMALIZE_PATH
+#include <iostream>
+#endif
+
+#include <string>
 
 // If we still don't have PATH_MAX, try to use MAXPATHLEN:
 
@@ -47,7 +44,16 @@
 #endif
 #endif
 
-using namespace std;
+#include "eixTk/filenames.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+
+using std::string;
+
+#ifdef DEBUG_NORMALIZE_PATH
+using std::cerr;
+#endif
 
 #ifdef DEBUG_NORMALIZE_PATH
 string original_normalize_path(const char *path, bool resolve);
@@ -68,11 +74,11 @@ string normalize_path(const char *path, bool resolve)
 	cerr << "out PATH_MAX";
 #endif
 	cerr << ")\n";
-	string s(original_normalize_path(path,resolve));
+	string s(original_normalize_path(path, resolve));
 	cerr << "Debug: ... returned with: \"" << s << "\"\n";
 	return s;
 }
-#define normalize_path(a,b) original_normalize_path(a,b)
+#define normalize_path(a, b) original_normalize_path(a, b)
 #endif
 
 string normalize_path(const char *path, bool resolve, bool want_slash)
@@ -122,14 +128,13 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 		if(likely(normalized != NULLPTR)) {
 			name = normalized;
 			free(normalized);
-		}
-		else
+		} else {
 			name = path;
-	}
-	else
+		}
+	} else {
 		name = path;
-	for(string::size_type i(0); likely(i < name.size()); ++i)
-	{
+	}
+	for(string::size_type i(0); likely(i < name.size()); ++i) {
 		// Erase all / following one /
 		if(name[i] == '/') {
 			string::size_type n(0);
@@ -152,9 +157,9 @@ string normalize_path(const char *path, bool resolve, bool want_slash)
 	if(name[--s] == '/') {
 		if((s != 0) && (!want_slash))
 			name.erase(s);
-	}
-	else if(want_slash)
+	} else if(want_slash) {
 		return name + '/';
+	}
 	return name;
 }
 

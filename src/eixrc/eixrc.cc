@@ -8,13 +8,10 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "eixrc.h"
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/varsreader.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include <iostream>
 #include <map>
@@ -22,9 +19,13 @@
 #include <string>
 #include <vector>
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/varsreader.h"
+#include "eixrc/eixrc.h"
 
 #ifndef SYSCONFDIR
 #define SYSCONFDIR "/etc"
@@ -34,21 +35,26 @@
 
 #define EIX_USERRC   "/.eixrc"
 
-using namespace std;
+using std::map;
+using std::set;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::endl;
 
 EixRcOption::EixRcOption(OptionType t, string name, string val, string desc) {
 	type = t;
 	key = name;
 	if(type == LOCAL) {
 		local_value = val;
-	}
-	else {
+	} else {
 		value = val;
 		description = desc;
 	}
 }
 
-short
+signed int
 EixRc::getBoolText(const string &key, const char *text)
 {
 	const char *s((*this)[key].c_str());
@@ -61,11 +67,11 @@ EixRc::getBoolText(const string &key, const char *text)
 	return 0;
 }
 
-short
+signed int
 EixRc::getBoolTextlist(const string &key, const char **text)
 {
 	const char *s((*this)[key].c_str());
-	for(int i(-1); likely(*text != NULLPTR); ++text, --i) {
+	for(signed int i(-1); likely(*text != NULLPTR); ++text, --i) {
 		if(!strcasecmp(s, *text)) {
 			return i;
 		}
@@ -77,63 +83,56 @@ EixRc::getBoolTextlist(const string &key, const char **text)
 }
 
 bool
-EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom &r)
+EixRc::getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom *r)
 {
-	r.only &= ~type;
+	r->only &= ~type;
 	if(unlikely(s == NULLPTR)) {
-		r.red &= ~type;
+		r->red &= ~type;
 		return true;
 	}
 	if(*s == '+') {
 		++s;
-		r.only |= type;
-		r.oins |= type;
-	}
-	else if(*s == '-') {
+		r->only |= type;
+		r->oins |= type;
+	} else if(*s == '-') {
 		++s;
-		r.only |= type;
-		r.oins &= ~type;
+		r->only |= type;
+		r->oins &= ~type;
 	}
 	if((strcasecmp(s, "no") == 0) ||
 	   (strcasecmp(s, "false") == 0)) {
-		r.red &= ~type;
-	}
-	else if(strcasecmp(s, "some") == 0) {
-		r.red |= type;
-		r.all &= ~type;
-		r.spc &= ~type;
-	}
-	else if(strcasecmp(s, "some-installed") == 0) {
-		r.red |= type;
-		r.all &= ~type;
-		r.spc |= type;
-		r.ins |= type;
-	}
-	else if(strcasecmp(s, "some-uninstalled") == 0) {
-		r.red |= type;
-		r.all &= ~type;
-		r.spc |= type;
-		r.ins &= ~type;
-	}
-	else if(strcasecmp(s, "all") == 0) {
-		r.red |= type;
-		r.all |= type;
-		r.spc &= ~type;
-	}
-	else if(strcasecmp(s, "all-installed") == 0) {
-		r.red |= type;
-		r.all |= type;
-		r.spc |= type;
-		r.ins |= type;
-	}
-	else if(strcasecmp(s, "all-uninstalled") == 0) {
-		r.red |= type;
-		r.all |= type;
-		r.spc |= type;
-		r.ins &= ~type;
-	}
-	else
+		r->red &= ~type;
+	} else if(strcasecmp(s, "some") == 0) {
+		r->red |= type;
+		r->all &= ~type;
+		r->spc &= ~type;
+	} else if(strcasecmp(s, "some-installed") == 0) {
+		r->red |= type;
+		r->all &= ~type;
+		r->spc |= type;
+		r->ins |= type;
+	} else if(strcasecmp(s, "some-uninstalled") == 0) {
+		r->red |= type;
+		r->all &= ~type;
+		r->spc |= type;
+		r->ins &= ~type;
+	} else if(strcasecmp(s, "all") == 0) {
+		r->red |= type;
+		r->all |= type;
+		r->spc &= ~type;
+	} else if(strcasecmp(s, "all-installed") == 0) {
+		r->red |= type;
+		r->all |= type;
+		r->spc |= type;
+		r->ins |= type;
+	} else if(strcasecmp(s, "all-uninstalled") == 0) {
+		r->red |= type;
+		r->all |= type;
+		r->spc |= type;
+		r->ins &= ~type;
+	} else {
 		return false;
+	}
 	return true;
 }
 
@@ -156,7 +155,7 @@ EixRc::getLocalMode(const string &key)
 const char *
 EixRc::cstr(const string &key) const
 {
-	map<string,string>::const_iterator s(main_map.find(key));
+	map<string, string>::const_iterator s(main_map.find(key));
 	if(s == main_map.end()) {
 		return NULLPTR;
 	}
@@ -183,14 +182,14 @@ EixRc::read()
 {
 	const char *name("EIX_PREFIX");
 	const char *eixrc_prefix(getenv(name));
-	if(eixrc_prefix)
+	if(eixrc_prefix) {
 		m_eprefixconf = eixrc_prefix;
-	else {
+	} else {
 		name = "PORTAGE_CONFIGROOT";
 		eixrc_prefix = getenv(name);
-		if(eixrc_prefix)
+		if(eixrc_prefix) {
 			m_eprefixconf = eixrc_prefix;
-		else {
+		} else {
 			name = "EIX_PREFIX";
 			m_eprefixconf = EIX_PREFIX_DEFAULT;
 		}
@@ -201,11 +200,11 @@ EixRc::read()
 
 	// First, we create defaults and main_map with all variables
 	// (including all values required by delayed references).
-	read_undelayed(has_delayed);
+	read_undelayed(&has_delayed);
 
 	// Resolve delayed references recursively.
 	for(default_index i(0); i < defaults.size(); ++i)
-		resolve_delayed(defaults[i].key, has_delayed);
+		resolve_delayed(defaults[i].key, &has_delayed);
 
 	// set m_eprefixconf to possibly new settings:
 	m_eprefixconf = (*this)["PORTAGE_CONFIGROOT"];
@@ -214,7 +213,7 @@ EixRc::read()
 const string &
 EixRc::operator[](const string &key)
 {
-	map<string,string>::const_iterator it(main_map.find(key));
+	map<string, string>::const_iterator it(main_map.find(key));
 	if(it != main_map.end())
 		return it->second;
 	add_later_variable(key);
@@ -230,17 +229,17 @@ void
 EixRc::add_later_variable(const string &key)
 {
 	set<string> has_delayed;
-	join_key(key, has_delayed, true, NULLPTR);
-	resolve_delayed(key, has_delayed);
+	join_key(key, &has_delayed, true, NULLPTR);
+	resolve_delayed(key, &has_delayed);
 }
 
 void
-EixRc::resolve_delayed(string key, set<string> &has_delayed)
+EixRc::resolve_delayed(const string &key, set<string> *has_delayed)
 {
 	set<string> visited;
 	const char *errtext;
 	string errvar;
-	if(unlikely(resolve_delayed_recurse(key, visited, has_delayed,
+	if(unlikely(resolve_delayed_recurse(key, &visited, has_delayed,
 		&errtext, &errvar) == NULLPTR)) {
 		cerr << eix::format(_(
 			"fatal config error: %s in delayed substitution of %s"))
@@ -250,10 +249,10 @@ EixRc::resolve_delayed(string key, set<string> &has_delayed)
 }
 
 string *
-EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &has_delayed, const char **errtext, string *errvar)
+EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<string> *has_delayed, const char **errtext, string *errvar)
 {
 	string *value(&(main_map[key]));
-	if(has_delayed.find(key) == has_delayed.end()) {
+	if(has_delayed->find(key) == has_delayed->end()) {
 		modify_value(*value, key);
 		return value;
 	}
@@ -266,7 +265,7 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 		string::size_type varlength(length - 3);
 		switch(type) {
 			case DelayedNotFound:
-				has_delayed.erase(key);
+				has_delayed->erase(key);
 				modify_value(*value, key);
 				return value;
 			case DelayedFi:
@@ -278,7 +277,7 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 				*errvar = key;
 				return NULLPTR;
 			case DelayedQuote:
-				pos += length - 1 ;
+				pos += length - 1;
 				value->erase(pos);
 				continue;
 			case DelayedIfTrue:
@@ -296,12 +295,12 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 			default:
 				break;
 		}
-		if(unlikely(visited.find(key) != visited.end())) {
+		if(unlikely(visited->find(key) != visited->end())) {
 			*errtext = _("self-reference");
 			*errvar = key;
 			return NULLPTR;
 		}
-		visited.insert(key);
+		visited->insert(key);
 		bool have_star(false);
 		bool have_escape(false);
 		while(likely(varlength >= 1)) {
@@ -329,13 +328,13 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 			(varprefix + value->substr(varpos, varlength)) :
 			value->substr(varpos, varlength)),
 			visited, has_delayed, errtext, errvar));
-		visited.erase(key);
+		visited->erase(key);
 		if(unlikely(s == NULLPTR))
 			return NULLPTR;
 		string escaped;
 		if(unlikely(have_escape)) {
 			escaped = *s;
-			escape_string(escaped);
+			escape_string(&escaped);
 			s = &escaped;
 		}
 		if(likely(!will_test)) {
@@ -351,16 +350,15 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 			result = istrue(s->c_str());
 			if(type == DelayedIfFalse)
 				result = !result;
-		}
-		else { // ((type == DelayedIfEmpty) || (type == DelayedIfNonempty))
+		} else {  // ((type == DelayedIfEmpty) || (type == DelayedIfNonempty))
 			result = s->empty();
 			if(type == DelayedIfNonempty)
 				result = !result;
 		}
 		string::size_type delpos(string::npos);
-		if(result)
+		if(result) {
 			value->erase(skippos, length);
-		else {
+		} else {
 			delpos = skippos;
 			skippos += length;
 		}
@@ -415,10 +413,10 @@ EixRc::resolve_delayed_recurse(string key, set<string> &visited, set<string> &ha
 	}
 }
 
-inline static void
-override_by_env(map<string,string> &m)
+static void
+override_by_env(map<string, string> *m)
 {
-	for(map<string,string>::iterator it(m.begin()); likely(it != m.end()); ++it) {
+	for(map<string, string>::iterator it(m->begin()); likely(it != m->end()); ++it) {
 		char *val(getenv((it->first).c_str()));
 		if(unlikely(val != NULLPTR))
 			it->second = string(val);
@@ -429,16 +427,16 @@ override_by_env(map<string,string> &m)
    (including all values required by delayed references).
    @arg has_delayed is initialized to corresponding keys */
 void
-EixRc::read_undelayed(set<string> &has_delayed)
+EixRc::read_undelayed(set<string> *has_delayed)
 {
 	// Initialize with the default variables
 	for(default_index i(0); likely(i < defaults.size()); ++i)
 		filevarmap[defaults[i].key] = defaults[i].value;
 
 	// override with ENV
-	override_by_env(filevarmap);
+	override_by_env(&filevarmap);
 
-	VarsReader rc(//VarsReader::NONE
+	VarsReader rc(  // VarsReader::NONE
 			VarsReader::SUBST_VARS
 			|VarsReader::ALLOW_SOURCE_VARNAME
 			|VarsReader::INTO_MAP);
@@ -452,8 +450,7 @@ EixRc::read_undelayed(set<string> &has_delayed)
 			cerr << errtext << endl;
 			exit(EXIT_FAILURE);
 		}
-	}
-	else {
+	} else {
 		// override with EIX_SYSTEMRC
 		if(unlikely(!rc.read((m_eprefixconf + EIX_SYSTEMRC).c_str(), &errtext, true))) {
 			cerr << errtext << endl;
@@ -464,8 +461,7 @@ EixRc::read_undelayed(set<string> &has_delayed)
 		char *home(getenv("HOME"));
 		if(unlikely(home == NULLPTR)) {
 			cerr << _("No $HOME found in environment.") << endl;
-		}
-		else {
+		} else {
 			string eixrc(home);
 			eixrc.append(EIX_USERRC);
 			if(unlikely(!rc.read(eixrc.c_str(), &errtext, true))) {
@@ -476,7 +472,7 @@ EixRc::read_undelayed(set<string> &has_delayed)
 	}
 
 	// override with ENV
-	override_by_env(filevarmap);
+	override_by_env(&filevarmap);
 
 	// Set new values as default and for printing with --dump.
 	set<string> original_defaults;
@@ -498,16 +494,15 @@ EixRc::read_undelayed(set<string> &has_delayed)
 /** Recursively eval and join key and its delayed references to
     main_map and default; set has_delayed if appropriate */
 void
-EixRc::join_key(const string &key, set<string> &has_delayed, bool add_top_to_defaults, const set<string> *exclude_defaults)
+EixRc::join_key(const string &key, set<string> *has_delayed, bool add_top_to_defaults, const set<string> *exclude_defaults)
 {
 	string &val(main_map[key]);
-	map<string,string>::const_iterator f(filevarmap.find(key));
+	map<string, string>::const_iterator f(filevarmap.find(key));
 	if(unlikely(f != filevarmap.end())) {
 	// Note that if a variable is defined in a file and in ENV,
 	// its value was already overridden from ENV.
 		val = f->second;
-	}
-	else {
+	} else {
 	// If it was not defined in a file, it might be in ENV anyway:
 		char *envval(getenv(key.c_str()));
 		if(unlikely(envval != NULLPTR))
@@ -526,7 +521,7 @@ EixRc::join_key(const string &key, set<string> &has_delayed, bool add_top_to_def
 }
 
 void
-EixRc::join_key_rec(const string &key, const string &val, set<string> &has_delayed, const set<string> *exclude_defaults)
+EixRc::join_key_rec(const string &key, const string &val, set<string> *has_delayed, const set<string> *exclude_defaults)
 {
 	string::size_type pos(0);
 	string::size_type length(0);
@@ -544,10 +539,10 @@ EixRc::join_key_rec(const string &key, const string &val, set<string> &has_delay
 				length -= 3;
 				break;
 			default:
-				has_delayed.insert(key);
+				has_delayed->insert(key);
 				continue;
 		}
-		has_delayed.insert(key);
+		has_delayed->insert(key);
 		bool have_star(false);
 		while(likely(length > 1)) {
 			bool check_next;
@@ -575,14 +570,14 @@ EixRc::join_key_rec(const string &key, const string &val, set<string> &has_delay
 				has_delayed, exclude_defaults);
 			join_key_if_new(string(DIFF_VARS_PREFIX) + s,
 				has_delayed, exclude_defaults);
-		}
-		else
+		} else {
 			join_key_if_new(s, has_delayed, exclude_defaults);
+		}
 	}
 }
 
 void
-EixRc::join_key_if_new(const string &key, set<string> &has_delayed, const set<string> *exclude_defaults)
+EixRc::join_key_if_new(const string &key, set<string> *has_delayed, const set<string> *exclude_defaults)
 {
 	if(unlikely(main_map.find(key) == main_map.end()))
 		join_key(key, has_delayed, true, exclude_defaults);
@@ -620,9 +615,9 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 						return DelayedNotFound;
 					c = str[i++];
 					type = DelayedIfNonempty;
-				}
-				else
+				} else {
 					type = DelayedIfTrue;
+				}
 				break;
 			case '!':
 				if(i >= str.length())
@@ -633,9 +628,9 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 						return DelayedNotFound;
 					c = str[i++];
 					type = DelayedIfEmpty;
-				}
-				else
+				} else {
 					type = DelayedIfFalse;
+				}
 				break;
 			default:
 				type = DelayedVariable;
@@ -728,21 +723,21 @@ EixRc::istrue(const char *s)
 }
 
 void
-EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair &p)
+EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair *p)
 {
 	const string &value((*this)[key]);
 	vector<string> a;
-	split_string(a, value);
+	split_string(&a, value);
 
 	for(vector<string>::iterator it(a.begin()); likely(it != a.end()); )
 	// a dummy loop for break on errors
 	{
-		if(unlikely(!getRedundantFlagAtom(it->c_str(), type, p.first)))
+		if(unlikely(!getRedundantFlagAtom(it->c_str(), type, &(p->first))))
 			break;
 		++it;
 		if(it == a.end())
 		{
-			getRedundantFlagAtom(NULLPTR, type, p.second);
+			getRedundantFlagAtom(NULLPTR, type, &(p->second));
 			return;
 		}
 		const char *s(it->c_str());
@@ -756,7 +751,7 @@ EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair &p
 				break;
 			s = it->c_str();
 		}
-		if(unlikely(!getRedundantFlagAtom(s, type, p.first)))
+		if(unlikely(!getRedundantFlagAtom(s, type, &(p->first))))
 			break;
 		++it;
 		if(likely(it == a.end()))
@@ -769,8 +764,8 @@ EixRc::getRedundantFlags(const string &key, Keywords::Redundant type, RedPair &p
 		"\tassuming value 'all-installed' instead."))
 		% key % value << endl;
 
-	getRedundantFlagAtom("all-installed", type, p.first);
-	getRedundantFlagAtom(NULLPTR, type, p.second);
+	getRedundantFlagAtom("all-installed", type, &(p->first));
+	getRedundantFlagAtom(NULLPTR, type, &(p->second));
 }
 
 unsigned int
@@ -820,9 +815,9 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 		}
 		const char *key(defaults[i].key.c_str());
 		string value(defaults[i].local_value);
-		escape_string(value, doublequotes);
+		escape_string(&value, doublequotes);
 		string deflt(defaults[i].value);
-		escape_string(deflt, doublequotes);
+		escape_string(&deflt, doublequotes);
 		if(unlikely(typestring == NULLPTR)) {
 			fprintf(s, "# %s\n%s=\"%s\"\n\n",
 				_("locally added:"),
@@ -842,8 +837,7 @@ EixRc::dumpDefaults(FILE *s, bool use_defaults)
 				output.c_str());
 		if(deflt == value) {
 			fprintf(s, "\n");
-		}
-		else {
+		} else {
 			fprintf(s,
 				"# %s\n"
 				"# %s=\"%s\"\n\n",

@@ -6,13 +6,13 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "formated.h"
-// ::format This comment satisfies check_include script
-
 #include <string>
 
-using namespace std;
-using namespace eix;
+#include "eixTk/formated.h"
+
+using std::string;
+
+using eix::format;
 
 /// Copy current state of formater.
 format&
@@ -45,14 +45,12 @@ format::goto_next_spec()
 		// our stream.
 		m_stream << m_format;
 		m_format.clear();
-	}
-	else if (m_format[next + 1] == '%') {
+	} else if (m_format[next + 1] == '%') {
 		// %% gives a single %
 		m_stream << m_format.substr(0, next + 1);
 		m_format.erase(0, next + 2);
 		goto_next_spec();
-	}
-	else {
+	} else {
 		// remember the specifier so we can use it in the next call to
 		// the %-operator.
 		m_spec = m_format[next + 1];

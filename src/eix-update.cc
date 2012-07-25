@@ -8,30 +8,13 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include <cache/cachetable.h>
-#include <database/header.h>
-#include <database/io.h>
-#include <eixTk/argsreader.h>
-#include <eixTk/filenames.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/percentage.h>
-#include <eixTk/ptr_list.h>
-#include <eixTk/statusline.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/sysutils.h>
-#include <eixTk/utils.h>
-#include <eixrc/eixrc.h>
-#include <eixrc/global.h>
-#include <main/main.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/depend.h>
-#include <portage/extendedversion.h>
-#include <portage/overlay.h>
-#include <portage/packagetree.h>
-#include <various/drop_permissions.h>
+
+#include <fnmatch.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 #include <iostream>
 #include <list>
@@ -39,13 +22,39 @@
 #include <string>
 #include <vector>
 
-#include <cstdio>
-#include <cstdlib>
-#include <fnmatch.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "cache/cachetable.h"
+#include "database/header.h"
+#include "database/io.h"
+#include "eixTk/argsreader.h"
+#include "eixTk/filenames.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/percentage.h"
+#include "eixTk/ptr_list.h"
+#include "eixTk/statusline.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/sysutils.h"
+#include "eixTk/utils.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
+#include "main/main.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/depend.h"
+#include "portage/extendedversion.h"
+#include "portage/overlay.h"
+#include "portage/packagetree.h"
+#include "various/drop_permissions.h"
 
-using namespace std;
+using std::list;
+using std::map;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 inline static void
 INFO(const string &s)
@@ -64,8 +73,8 @@ class Pathname {
 			return s == name;
 		}
 
-		string resolve(PortageSettings &portage_settings)
-		{ return portage_settings.resolve_overlay_name(name, must_resolve); }
+		string resolve(PortageSettings *portage_settings)
+		{ return portage_settings->resolve_overlay_name(name, must_resolve); }
 
 		Pathname(string n, bool r) : name(n), must_resolve(r)
 		{ }
@@ -76,7 +85,7 @@ class Override {
 		Pathname name;
 		string method;
 
-		Override(Pathname n) : name(n)
+		explicit Override(Pathname n) : name(n)
 		{ }
 
 		Override(Pathname n, string m) : name(n), method(m)
@@ -88,7 +97,7 @@ class RepoName {
 		Pathname name;
 		string repo_name;
 
-		RepoName(Pathname n) : name(n)
+		explicit RepoName(Pathname n) : name(n)
 		{ }
 
 		RepoName(Pathname n, string r) : name(n), repo_name(r)
@@ -158,24 +167,24 @@ static const char *var_to_print(NULLPTR);
 
 /** Arguments and shortopts. */
 static Option long_options[] = {
-	 Option("quiet",          'q',     Option::BOOLEAN,   &quiet),
-	 Option("dump",            O_DUMP, Option::BOOLEAN_T, &dump_eixrc),
-	 Option("dump-defaults",O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
-	 Option("print",        O_PRINT_VAR, Option::STRING,  &var_to_print),
-	 Option("known-vars",   O_KNOWN_VARS,Option::BOOLEAN_T,&known_vars),
-	 Option("help",           'h',     Option::BOOLEAN_T, &show_help),
-	 Option("version",        'V',     Option::BOOLEAN_T, &show_version),
-	 Option("nostatus",       'H',     Option::BOOLEAN_F, &use_status),
-	 Option("nocolor",        'n',     Option::BOOLEAN_F, &use_percentage),
-	 Option("force-color",    'F',     Option::BOOLEAN_T, &use_percentage),
+	 Option("quiet",          'q',     Option::BOOLEAN,    &quiet),
+	 Option("dump",            O_DUMP, Option::BOOLEAN_T,  &dump_eixrc),
+	 Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
+	 Option("print",        O_PRINT_VAR,  Option::STRING,    &var_to_print),
+	 Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &known_vars),
+	 Option("help",           'h',     Option::BOOLEAN_T,  &show_help),
+	 Option("version",        'V',     Option::BOOLEAN_T,  &show_version),
+	 Option("nostatus",       'H',     Option::BOOLEAN_F,  &use_status),
+	 Option("nocolor",        'n',     Option::BOOLEAN_F,  &use_percentage),
+	 Option("force-color",    'F',     Option::BOOLEAN_T,  &use_percentage),
 	 Option("force-status", O_FORCE_STATUS, Option::BOOLEAN_T, &use_status),
-	 Option("verbose",        'v',     Option::BOOLEAN_T, &verbose),
+	 Option("verbose",        'v',     Option::BOOLEAN_T,  &verbose),
 
-	 Option("exclude-overlay",'x',     Option::STRINGLIST,&exclude_args),
-	 Option("add-overlay",    'a',     Option::STRINGLIST,&add_args),
-	 Option("method",         'm',     Option::PAIRLIST,  &method_args),
-	 Option("repo-name",      'r',     Option::PAIRLIST,  &repo_args),
-	 Option("output",         'o',     Option::STRING,    &outputname),
+	 Option("exclude-overlay", 'x',    Option::STRINGLIST, &exclude_args),
+	 Option("add-overlay",    'a',     Option::STRINGLIST, &add_args),
+	 Option("method",         'm',     Option::PAIRLIST,   &method_args),
+	 Option("repo-name",      'r',     Option::PAIRLIST,   &repo_args),
+	 Option("output",         'o',     Option::STRING,     &outputname),
 	 Option(NULLPTR, 0)
 };
 
@@ -183,18 +192,18 @@ static PercentStatus *reading_percent_status;
 
 
 static void
-add_pathnames(vector<Pathname> &add_list, const vector<string> to_add, bool must_resolve)
+add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve)
 {
 	for(vector<string>::const_iterator it(to_add.begin());
 		unlikely(it != to_add.end()); ++it)
-		add_list.push_back(Pathname(*it, must_resolve));
+		add_list->push_back(Pathname(*it, must_resolve));
 }
 
 static void
-add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
+add_override(vector<Override> *override_list, EixRc *eixrc, const char *s)
 {
 	vector<string> v;
-	split_string(v, eixrc[s], true);
+	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
 		cerr << eix::format(_("%s must be a list of the form DIRECTORY METHOD")) % s << endl;
 		exit(EXIT_FAILURE);
@@ -202,15 +211,15 @@ add_override(vector<Override> &override_list, EixRc &eixrc, const char *s)
 	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		Override o(Pathname(*it, true));
 		o.method = *(++it);
-		override_list.push_back(o);
+		override_list->push_back(o);
 	}
 }
 
 static void
-add_reponames(vector<RepoName> &repo_names, EixRc &eixrc, const char *s)
+add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s)
 {
 	vector<string> v;
-	split_string(v, eixrc[s], true);
+	split_string(&v, (*eixrc)[s], true);
 	if(unlikely(v.size() & 1)) {
 		cerr << eix::format(_("%s must be a list of the form DIR-PATTERN OVERLAY-LABEL")) % s << endl;
 		exit(EXIT_FAILURE);
@@ -218,12 +227,12 @@ add_reponames(vector<RepoName> &repo_names, EixRc &eixrc, const char *s)
 	for(vector<string>::iterator it(v.begin()); unlikely(it != v.end()); ++it) {
 		RepoName r(Pathname(*it, true));
 		r.repo_name = *(++it);
-		repo_names.push_back(r);
+		repo_names->push_back(r);
 	}
 }
 
 static void
-add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<RepoName> &repo_names, string cachefile, string eprefix_virtual)
+add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual)
 {
 	static const string a("eix*::");
 	FILE *fp(fopen(cachefile.c_str(), "rb"));
@@ -236,7 +245,7 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<Repo
 
 	INFO(eix::format(_("Adding virtual overlays from %s ..\n")) % cachefile);
 	DBHeader header;
-	bool is_current(io::read_header(header, fp, NULLPTR));
+	bool is_current(io::read_header(&header, fp, NULLPTR));
 	fclose(fp);
 	if(unlikely(!is_current)) {
 		cerr << _("Warning: KEEP_VIRTUALS ignored because database format has changed");
@@ -248,20 +257,20 @@ add_virtuals(vector<Override> &override_list, vector<Pathname> &add, vector<Repo
 		if(!is_virtual(overlay.c_str()))
 			continue;
 		Pathname name(overlay, false);
-		add.push_back(name);
-		escape_string(overlay, ":");
-		override_list.push_back(Override(name, a + overlay));
-		repo_names.push_back(RepoName(name, ov.label));
+		add->push_back(name);
+		escape_string(&overlay, ":");
+		override_list->push_back(Override(name, a + overlay));
+		repo_names->push_back(RepoName(name, ov.label));
 	}
 }
 
 static void
-override_label(OverlayIdent &overlay, const vector<RepoName> &repo_names)
+override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names)
 {
 	for(vector<RepoName>::const_iterator it(repo_names.begin());
 		it != repo_names.end(); ++it) {
-		if(it->name.is_a_match(overlay.path)) {
-			overlay.setLabel(it->repo_name);
+		if(it->name.is_a_match(overlay->path)) {
+			overlay->setLabel(it->repo_name);
 		}
 	}
 }
@@ -283,7 +292,7 @@ run_eix_update(int argc, char *argv[])
 {
 	/* Setup eixrc. */
 	EixRc &eixrc(get_eixrc(UPDATE_VARS_PREFIX));
-	drop_permissions(eixrc);
+	drop_permissions(&eixrc);
 	Depend::use_depend = eixrc.getBool("DEP");
 	string eix_cachefile(eixrc["EIX_CACHEFILE"]);
 
@@ -291,21 +300,17 @@ run_eix_update(int argc, char *argv[])
 		bool percentage_tty(false);
 		if(eixrc.getBool("NOPERCENTAGE")) {
 			use_percentage = false;
-		}
-		else if(eixrc.getBool("FORCE_PERCENTAGE")) {
+		} else if(eixrc.getBool("FORCE_PERCENTAGE")) {
 			use_percentage = true;
-		}
-		else {
+		} else {
 			percentage_tty = true;
 		}
 		bool status_tty(false);
 		if(eixrc.getBool("NOSTATUSLINE")) {
 			use_status = false;
-		}
-		else if(eixrc.getBool("FORCE_STATUSLINE")) {
+		} else if(eixrc.getBool("FORCE_STATUSLINE")) {
 			use_status = true;
-		}
-		else {
+		} else {
 			status_tty = true;
 		}
 		if(percentage_tty || status_tty) {
@@ -378,23 +383,23 @@ run_eix_update(int argc, char *argv[])
 		program_name, eixrc["EXIT_STATUSLINE"]);
 
 	INFO(_("Reading Portage settings ..\n"));
-	PortageSettings portage_settings(eixrc, false, true);
+	PortageSettings portage_settings(&eixrc, false, true);
 
 	/* Build default (overlay/method/...) lists, using environment vars */
 	vector<Override> override_list;
-	add_override(override_list, eixrc, "CACHE_METHOD");
+	add_override(&override_list, &eixrc, "CACHE_METHOD");
 	vector<Pathname> excluded_list;
-	add_pathnames(excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
+	add_pathnames(&excluded_list, split_string(eixrc["EXCLUDE_OVERLAY"], true), true);
 	vector<Pathname> add_list;
-	add_pathnames(add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
+	add_pathnames(&add_list, split_string(eixrc["ADD_OVERLAY"], true), true);
 
 	vector<RepoName> repo_names;
 
 	if(unlikely(eixrc.getBool("KEEP_VIRTUALS"))) {
-		add_virtuals(override_list, add_list, repo_names, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
+		add_virtuals(&override_list, &add_list, &repo_names, eix_cachefile, eixrc["EPREFIX_VIRTUAL"]);
 	}
 
-	add_override(override_list, eixrc, "OVERRIDE_CACHE_METHOD");
+	add_override(&override_list, &eixrc, "OVERRIDE_CACHE_METHOD");
 
 	/* Modify default (overlay/method/...) lists, using command line args */
 	for(list<const char*>::iterator it(exclude_args.begin());
@@ -413,20 +418,20 @@ run_eix_update(int argc, char *argv[])
 		unlikely(it != repo_args.end()); ++it)
 		repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
 
-	add_reponames(repo_names, eixrc, "REPO_NAMES");
+	add_reponames(&repo_names, &eixrc, "REPO_NAMES");
 
 	/* Normalize names: */
 
 	vector<string> excluded_overlays;
 	for(vector<Pathname>::iterator it(excluded_list.begin());
 		unlikely(it != excluded_list.end()); ++it)
-		excluded_overlays.push_back(it->resolve(portage_settings));
+		excluded_overlays.push_back(it->resolve(&portage_settings));
 	excluded_list.clear();
 
 	vector<string> add_overlays;
 	for(vector<Pathname>::iterator it(add_list.begin());
 		unlikely(it != add_list.end()); ++it) {
-		string add_name(it->resolve(portage_settings));
+		string add_name(it->resolve(&portage_settings));
 		// Let exclude override added names
 		if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 			add_name.c_str(), true) == excluded_overlays.end())
@@ -437,7 +442,7 @@ run_eix_update(int argc, char *argv[])
 	map<string, string> override;
 	for(vector<Override>::iterator it(override_list.begin());
 		unlikely(it != override_list.end()); ++it) {
-		override[(it->name).resolve(portage_settings)] = it->method;
+		override[(it->name).resolve(&portage_settings)] = it->method;
 	}
 	override_list.clear();
 
@@ -447,7 +452,7 @@ run_eix_update(int argc, char *argv[])
 		bool modified(false);
 		string &ref(portage_settings["PORTDIR_OVERLAY"]);
 		vector<string> overlayvec;
-		split_string(overlayvec, ref, true);
+		split_string(&overlayvec, ref, true);
 		for(vector<string>::const_iterator it(add_overlays.begin());
 			unlikely(it != add_overlays.end()); ++it) {
 			if(find_filenames(overlayvec.begin(), overlayvec.end(),
@@ -461,15 +466,14 @@ run_eix_update(int argc, char *argv[])
 			if(find_filenames(excluded_overlays.begin(), excluded_overlays.end(),
 				it->c_str(), true) == excluded_overlays.end()) {
 				++it;
-			}
-			else {
+			} else {
 				it = overlayvec.erase(it);
 				modified = true;
 			}
 		}
 		if(unlikely(modified)) {
 			ref.clear();
-			join_to_string(ref, overlayvec);
+			join_to_string(&ref, overlayvec);
 #ifdef HAVE_SETENV
 			setenv("PORTDIR_OVERLAY", ref.c_str(), 1);
 #else
@@ -493,13 +497,12 @@ run_eix_update(int argc, char *argv[])
 				&errtext))) {
 				cerr << errtext << endl;
 			}
-		}
-		else {
+		} else {
 			INFO(eix::format(_("Excluded PORTDIR: %s\n"))
 				% portage_settings["PORTDIR"]);
 		}
 
-		portage_settings.add_repo_vector(add_overlays, false);
+		portage_settings.add_repo_vector(&add_overlays, false);
 
 		RepoList repos(portage_settings.repos);
 		for(RepoList::const_iterator it(repos.second()); likely(it != repos.end()); ++it) {
@@ -513,8 +516,7 @@ run_eix_update(int argc, char *argv[])
 					eixrc["OVERLAY_CACHE_METHOD"], override_ptr, &errtext))) {
 					cerr << errtext << endl;
 				}
-			}
-			else {
+			} else {
 				INFO(eix::format(_("Excluded overlay %s\n"))
 					% it->human_readable());
 			}
@@ -548,7 +550,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 {
 	DBHeader dbheader;
 	vector<string> categories;
-	portage_settings.pushback_categories(categories);
+	portage_settings.pushback_categories(&categories);
 	PackageTree package_tree(categories);
 
 	dbheader.world_sets = *(portage_settings.get_world_sets());
@@ -563,7 +565,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 
 		/* Build database from scratch. */
 		OverlayIdent overlay(cache->getPath().c_str());
-		override_label(overlay, repo_names);
+		override_label(&overlay, repo_names);
 		overlay.readLabel(cache->getPrefixedPath().c_str());
 		if(unlikely(find(exclude_labels.begin(), exclude_labels.end(), overlay.label) != exclude_labels.end())) {
 			INFO(eix::format(_("Excluding \"%s\" %s (cache: %s)\n"))
@@ -576,7 +578,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		ExtendedVersion::Overlay key(dbheader.addOverlay(overlay));
 		cache->setKey(key);
 		cache->setOverlayName(overlay.label);
-		//cache->setArch(portage_settings["ARCH"]);
+		// cache->setArch(portage_settings["ARCH"]);
 		cache->setErrorCallback(error_callback);
 		if(verbose) {
 			cache->setVerbose();
@@ -603,14 +605,12 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 			reading_percent_status->finish(
 				likely(cache->readCategories(&package_tree)) ?
 				_("Finished") : _("ABORTED!"));
-		}
-		else {
+		} else {
 			if(use_percentage) {
 				reading_percent_status->init(
 					_("     Reading category %s|%s (%s%%)"),
 					package_tree.size());
-			}
-			else {
+			} else {
 				reading_percent_status->init(eix::format(
 					_("     Reading up to %s categories of packages .. ")) %
 					package_tree.size());
@@ -625,13 +625,12 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 					if(use_percentage) {
 						reading_percent_status->next();
 					}
-				}
-				else {
+				} else {
 					if(use_percentage) {
 						reading_percent_status->next(eix::format(_(": %s ..")) % ci->first);
 					}
 					is_empty = false;
-					if(!cache->readCategory(*(ci->second))) {
+					if(!cache->readCategory(ci->second)) {
 						aborted = true;
 					}
 				}
@@ -662,7 +661,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	}
 
 	INFO(_("Calculating hash tables ..\n"));
-	io::prep_header_hashs(dbheader, package_tree);
+	io::prep_header_hashs(&dbheader, package_tree);
 
 	/* And write database back to disk .. */
 	statusline.print(eix::format("Creating %s") % outputfile);
@@ -687,8 +686,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	if(likely(io::write_header(dbheader, database_stream, errtext)) &&
 		likely(io::write_packagetree(package_tree, dbheader, database_stream, errtext))) {
 		fclose(database_stream);
-	}
-	else {
+	} else {
 		fclose(database_stream);
 		return false;
 	}

@@ -7,18 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__METADATA_H__
-#define EIX__METADATA_H__ 1
+#ifndef SRC_CACHE_METADATA_METADATA_H_
+#define SRC_CACHE_METADATA_METADATA_H_ 1
 
 #include <config.h>
 
-#include <cache/base.h>
-#include <eixTk/sysutils.h>
+#include <ctime>
 
 #include <string>
 #include <vector>
 
-#include <ctime>
+#include "cache/base.h"
+#include "eixTk/sysutils.h"
 
 class Category;
 class Depend;
@@ -26,7 +26,6 @@ class Package;
 class Version;
 
 class MetadataCache : public BasicCache {
-
 	private:
 		typedef enum {
 			PATH_METADATA,
@@ -49,11 +48,12 @@ class MetadataCache : public BasicCache {
 
 		void setType(PathType set_path_type, bool set_flat);
 		void setFlat(bool set_flat);
+
 	public:
 		bool initialize(const std::string &name);
 
 		bool readCategoryPrepare(const char *cat_name);
-		bool readCategory(Category &cat);
+		bool readCategory(Category *cat);
 		void readCategoryFinalize();
 
 		const char *get_md5sum(const char *pkg_name, const char *ver_name) const;
@@ -70,4 +70,4 @@ class MetadataCache : public BasicCache {
 		{ return m_type.c_str(); }
 };
 
-#endif /* EIX__METADATA_H__ */
+#endif  // SRC_CACHE_METADATA_METADATA_H_

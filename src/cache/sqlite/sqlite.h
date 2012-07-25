@@ -7,13 +7,14 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__SQLITECACHE_H__
-#define EIX__SQLITECACHE_H__ 1
+#ifndef SRC_CACHE_SQLITE_SQLITE_H_
+#define SRC_CACHE_SQLITE_SQLITE_H_ 1
 
 #include <config.h>
-#include <cache/base.h>
 
 #include <vector>
+
+#include "cache/base.h"
 
 class Category;
 class PackageTree;
@@ -38,7 +39,7 @@ class SqliteCache : public BasicCache {
 		const char *cat_name;
 
 	public:
-		SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories)
+		explicit SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories)
 		{ }
 
 		bool can_read_multiple_categories() const ATTRIBUTE_CONST_VIRTUAL
@@ -54,4 +55,4 @@ class SqliteCache : public BasicCache {
 		}
 };
 
-#endif /* EIX__SQLITECACHE_H__ */
+#endif  // SRC_CACHE_SQLITE_SQLITE_H_

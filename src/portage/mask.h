@@ -7,18 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__MASK_H__
-#define EIX__MASK_H__ 1
-
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
-#include <portage/basicversion.h>
-#include <portage/keywords.h>
-#include <portage/packagesets.h>
-#include <portage/version.h>
-#include <search/packagetest.h>
+#ifndef SRC_PORTAGE_MASK_H_
+#define SRC_PORTAGE_MASK_H_ 1
 
 #include <string>
+
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+#include "portage/basicversion.h"
+#include "portage/keywords.h"
+#include "portage/packagesets.h"
+#include "portage/version.h"
+#include "search/packagetest.h"
 
 class ExtendedVersion;
 class Package;
@@ -35,7 +35,6 @@ class Package;
  * like those in the profile and /etc/portage/package.(un)mask */
 class Mask : public BasicVersion {
 	public:
-
 		/** Describes the type of a mask.
 		 * Nothing specific, entry in "packages"-file but not in
 		 * system-profile, entry in packages-file and in system-profile,
@@ -95,9 +94,9 @@ class Mask : public BasicVersion {
 		 * @param accept_garbage passed to parseVersion if appropriate */
 		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true);
 
-		void match(Matches &m, Package &pkg) const;
+		void match(Matches *m, Package *pkg) const;
 
-		bool have_match(Package &pkg) const;
+		bool have_match(const Package &pkg) const;
 
 		void to_package(Package *p) const;
 
@@ -113,9 +112,9 @@ class Mask : public BasicVersion {
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
 		 * @param check          Redundancy checks which should apply */
-		void checkMask(Package& pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		void checkMask(Package *pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const;
 
-		bool ismatch(Package& pkg) const;
+		bool ismatch(const Package& pkg) const;
 
 		bool is_set() const
 		{ return (m_operator == maskIsSet); }
@@ -126,10 +125,11 @@ class KeywordMask : public Mask {
 		std::string keywords;
 		bool locally_double;
 
-		KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
+		explicit KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
 		{ }
 
-		void applyItem(Package& pkg) const;
+		void applyItem(Package *pkg) const;
+
 		void applyItem(Version *ver) const
 		{ ver->add_accepted_keywords(keywords); }
 };
@@ -138,10 +138,11 @@ class PKeywordMask : public Mask {
 	public:
 		std::string keywords;
 
-		PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
+		explicit PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
 		{ }
 
-		void applyItem(Package& pkg) const;
+		void applyItem(Package *pkg) const;
+
 		void applyItem(Version *ver) const
 		{ ver->modify_effective_keywords(keywords); }
 };
@@ -154,8 +155,8 @@ class SetMask : public Mask {
 			Mask(maskTypeNone, repo), m_set(set_index)
 		{ }
 
-		void applyItem(Package& pkg) const;
+		void applyItem(Package *pkg) const;
 };
 
 
-#endif /* EIX__MASK_H__ */
+#endif  // SRC_PORTAGE_MASK_H_

@@ -7,20 +7,21 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PORTAGESETTINGS_H
-#define EIX__PORTAGESETTINGS_H 1
+#ifndef SRC_PORTAGE_CONF_PORTAGESETTINGS_H_
+#define SRC_PORTAGE_CONF_PORTAGESETTINGS_H_ 1
 
 #include <config.h>
-#include <portage/keywords.h>
-#include <portage/mask.h>
-#include <portage/mask_list.h>
-#include <portage/overlay.h>
-#include <portage/package.h>
 
 #include <map>
 #include <set>
 #include <string>
 #include <vector>
+
+#include "portage/keywords.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
+#include "portage/overlay.h"
+#include "portage/package.h"
 
 class CascadingProfile;
 class EixRc;
@@ -65,7 +66,8 @@ class PortageUserConfig {
 		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
 		static void ReadVersionFile (const char *file, MaskList<KeywordMask> *list);
 
-		void pushback_set_accepted_keywords(std::vector<std::string> &result, const Version *v) const;
+		void pushback_set_accepted_keywords(std::vector<std::string> *result, const Version *v) const;
+
 	public:
 		PortageUserConfig(PortageSettings *psettings, CascadingProfile *local_profile);
 
@@ -110,8 +112,7 @@ class PortageUserConfig {
 
 /** Holds Portage's settings, e.g. masks, categories, overlay paths.
  * Reads needed files if content is requested .. so don't worry about initialization :) */
-class PortageSettings : public std::map<std::string,std::string> {
-
+class PortageSettings : public std::map<std::string, std::string> {
 	private:
 		friend class CascadingProfile;
 		friend class PortageUserConfig;
@@ -156,6 +157,7 @@ class PortageSettings : public std::map<std::string,std::string> {
 
 		const MaskList<SetMask> *getPackageSets() const
 		{ return &m_package_sets; }
+
 	public:
 		bool m_recurse_sets;
 		std::string m_eprefix;
@@ -174,51 +176,59 @@ class PortageSettings : public std::map<std::string,std::string> {
 #ifndef HAVE_SETENV
 		bool export_portdir_overlay;
 #endif
-		using std::map<std::string,std::string>::operator[];
+		using std::map<std::string, std::string>::operator[];
+
 		const std::string &operator[](const std::string &var) const ATTRIBUTE_PURE;
+
 		const char *cstr(const std::string &var) const ATTRIBUTE_PURE;
 
 		/** Read make.globals and make.conf. */
-		PortageSettings(EixRc &eixrc, bool getlocal, bool init_world);
+		PortageSettings(EixRc *eixrc, bool getlocal, bool init_world);
 
 		/** Free memory. */
 		~PortageSettings();
 
 		std::string resolve_overlay_name(const std::string &path, bool resolve);
-		void add_repo(std::string &path, bool resolve, bool modify_path = false);
-		void add_repo_vector(std::vector<std::string> &v, bool resolve, bool modify_v = false);
+
+		void add_repo(std::string *path, bool resolve, bool modify_path = false);
+
+		void add_repo_vector(std::vector<std::string> *v, bool resolve, bool modify_v = false);
 
 		void store_world_sets(const std::vector<std::string> *s_world_sets, bool override = false);
-		void get_setnames(std::set<std::string> &names, const Package *p, bool also_nonlocal = false) const;
+
+		void get_setnames(std::set<std::string> *names, const Package *p, bool also_nonlocal = false) const;
+
 		std::string get_setnames(const Package *p, bool also_nonlocal = false) const;
+
 		void read_local_sets(const std::vector<std::string> &dir_list);
+
 		const std::vector<std::string> *get_world_sets() const
 		{ return &world_sets; }
 
-		bool readKeywordsFile(const char *filename, MaskList<KeywordMask> &keywords) const;
-
 		/** pushback categories from profiles to vec. Categories may be duplicate.
 		    Result is not cashed, i.e. this should be called only once. */
-		void pushback_categories(std::vector<std::string> &vec);
+		void pushback_categories(std::vector<std::string> *vec);
 
 		void setMasks(Package *p, bool filemask_is_profile = false) const;
 
 		/// Set stability according to arch or local ACCEPTED_KEYWORDS
 		void setKeyflags(Package *pkg, bool use_accepted_keywords) const;
 
-		void add_name(SetsList &l, const std::string &s, bool recurse) const;
+		void add_name(SetsList *l, const std::string &s, bool recurse) const;
 
 		bool calc_allow_upgrade_slots(const Package *p) const;
 
 		void calc_local_sets(Package *p) const;
 
 		void finalize(Package *p)
-		{ calc_world_sets(p); p->finalize_masks(); }
+		{
+			calc_world_sets(p);
+			p->finalize_masks();
+		}
 
 		void get_effective_keywords_profile(Package *p) const;
 
 		void get_effective_keywords_userprofile(Package *p) const;
 };
 
-#endif
-
+#endif  // SRC_PORTAGE_CONF_PORTAGESETTINGS_H_

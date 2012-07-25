@@ -5,24 +5,29 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "nowarn.h"
-#include <eixTk/exceptions.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/basicversion.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/keywords.h>
-#include <portage/mask.h>
-#include <portage/mask_list.h>
-#include <portage/packagesets.h>
-#include <search/packagetest.h>
-
 #include <map>
 #include <set>
 #include <string>
+#include <utility>
 #include <vector>
 
-using namespace std;
+#include "eixTk/exceptions.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/basicversion.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/keywords.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
+#include "portage/packagesets.h"
+#include "search/nowarn.h"
+#include "search/packagetest.h"
+
+using std::map;
+using std::pair;
+using std::set;
+using std::string;
+using std::vector;
 
 class NowarnKeywords
 {
@@ -91,7 +96,7 @@ NowarnMask::init_nowarn(const vector<string> &flagstrings)
 }
 
 void
-NowarnMaskList::apply(Package *p, Keywords::Redundant &r, PackageTest::TestInstalled &i, PortageSettings *portagesettings) const
+NowarnMaskList::apply(Package *p, Keywords::Redundant *r, PackageTest::TestInstalled *i, PortageSettings *portagesettings) const
 {
 	super::Get *masks(get(p));
 	if(masks == NULLPTR) {
@@ -146,7 +151,7 @@ NowarnMaskList::apply(Package *p, Keywords::Redundant &r, PackageTest::TestInsta
 }
 
 void
-NowarnPreList::initialize(NowarnMaskList &l)
+NowarnPreList::initialize(NowarnMaskList *l)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
@@ -159,10 +164,10 @@ NowarnPreList::initialize(NowarnMaskList &l)
 		}
 		if(likely(r != BasicVersion::parsedError)) {
 			m.init_nowarn(it->args);
-			l.add(m);
+			l->add(m);
 		}
 	}
-	l.finalize();
+	l->finalize();
 	clear();
 }
 

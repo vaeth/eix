@@ -6,15 +6,15 @@
 //   Bob Shaffer II <bob.shaffer.2 at gmail.com>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PRINT_XML_H__
-#define EIX__PRINT_XML_H__ 1
-
-#include <database/types.h>
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
-#include <portage/package.h>
+#ifndef SRC_OUTPUT_PRINT_XML_H_
+#define SRC_OUTPUT_PRINT_XML_H_ 1
 
 #include <string>
+
+#include "database/types.h"
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+#include "portage/package.h"
 
 class EixRc;
 class DBHeader;
@@ -38,6 +38,7 @@ class PrintXml {
 
 		void clear(EixRc *eixrc);
 		void runclear();
+
 	public:
 		typedef io::UNumber XmlVersion;
 		static const XmlVersion current = 8;
@@ -66,4 +67,4 @@ class PrintXml {
 		{ finish(); }
 };
 
-#endif /* EIX__PRINT_XML_H__ */
+#endif  // SRC_OUTPUT_PRINT_XML_H_

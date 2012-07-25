@@ -5,29 +5,37 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <eixTk/argsreader.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/utils.h>
-#include <main/main.h>
-#include <portage/basicversion.h>
-#include <portage/mask.h>
-#include <portage/mask_list.h>
-#include <portage/package.h>
+#include <config.h>
 
-#include <iostream>
-#include <list>
-#include <string>
-#include <vector>
+#include <sys/types.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-using namespace std;
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include "eixTk/argsreader.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/utils.h"
+#include "main/main.h"
+#include "portage/basicversion.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
+#include "portage/package.h"
+
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::cout;
+using std::endl;
 
 static void
 print_help()
@@ -65,43 +73,41 @@ static Option long_options[] = {
 	Option(NULLPTR, 0)
 };
 
-static void read_stdin(vector<string> &lines, string *name);
-static void add_file(vector<string> &lines, const string &name, string *new_name = NULLPTR);
-static void add_file(PreList &pre_list, const string &name);
-static void add_words(vector<string> &lines, const string &name);
-static void read_args(MaskList<Mask> &mask_list, vector<string> &args, const ArgumentReader &ar);
-static const char *opt_arg(ArgumentReader::const_iterator &arg, const ArgumentReader &ar);
+static void read_stdin(vector<string> *lines, string *name);
+static void add_file(vector<string> *lines, const string &name, string *new_name = NULLPTR);
+static void add_file(PreList *pre_list, const string &name);
+static void add_words(vector<string> *lines, const string &name);
+static void read_args(MaskList<Mask> *mask_list, vector<string> &args, const ArgumentReader &ar);
+static const char *opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar);
 
 static void
-read_stdin(vector<string> &lines, string *name)
+read_stdin(vector<string> *lines, string *name)
 {
-	static unsigned short stdin_count = 0;
-	while(likely(!cin.eof())) {
+	static size_t stdin_count(0);
+	while(likely(!std::cin.eof())) {
 		string line;
-		getline(cin, line);
-		trim(line);
+		getline(std::cin, line);
+		trim(&line);
 		if((!line.empty()) && (line[0] != '#')) {
-			lines.push_back(line);
+			lines->push_back(line);
 		}
 	}
-	if(!stdin_count++) {
+	if(stdin_count++ == 0) {
 		if(name != NULLPTR) {
 			*name = "(stdin)";
 		}
-	}
-	else if(name != NULLPTR) {
+	} else if(name != NULLPTR) {
 		*name = eix::format("(stdin%s)") % stdin_count;
 	}
 }
 
 static void
-add_file(vector<string> &lines, const string &name, string *new_name)
+add_file(vector<string> *lines, const string &name, string *new_name)
 {
 	if(name.empty() || (name == "-")) {
 		read_stdin(lines, new_name);
-	}
-	else {
-		pushback_lines(name.c_str(), &lines, true, true);
+	} else {
+		pushback_lines(name.c_str(), lines, true, true);
 		if(new_name != NULLPTR) {
 			*new_name = name;
 		}
@@ -109,19 +115,19 @@ add_file(vector<string> &lines, const string &name, string *new_name)
 }
 
 static void
-add_file(PreList &pre_list, const string &name)
+add_file(PreList *pre_list, const string &name)
 {
 	vector<string> lines;
 	string new_name;
-	add_file(lines, name, &new_name);
-	pre_list.handle_file(lines, new_name, NULLPTR, false);
+	add_file(&lines, name, &new_name);
+	pre_list->handle_file(lines, new_name, NULLPTR, false);
 }
 
 static void
-add_words(vector<string> &words, const string &name)
+add_words(vector<string> *words, const string &name)
 {
 	vector<string> lines;
-	add_file(lines, name);
+	add_file(&lines, name);
 	for(vector<string>::const_iterator it(lines.begin());
 		likely(it != lines.end()); ++it) {
 		split_string(words, *it);
@@ -129,17 +135,17 @@ add_words(vector<string> &words, const string &name)
 }
 
 static const char *
-opt_arg(ArgumentReader::const_iterator &arg, const ArgumentReader &ar)
+opt_arg(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
 {
-	if(unlikely(++arg == ar.end())) {
-		--arg;
+	if(unlikely(++(*arg) == ar.end())) {
+		--(*arg);
 		return "";
 	}
-	return arg->m_argument;
+	return (*arg)->m_argument;
 }
 
 static void
-read_args(MaskList<Mask> &mask_list, vector<string> &args, const ArgumentReader &ar)
+read_args(MaskList<Mask> *mask_list, vector<string> &args, const ArgumentReader &ar)
 {
 	PreList::LineNumber linenr(0);
 	PreList pre_list;
@@ -149,17 +155,17 @@ read_args(MaskList<Mask> &mask_list, vector<string> &args, const ArgumentReader 
 		likely(arg != ar.end()); ++arg) {
 		switch(**arg) {
 			case 'f':
-				add_file(pre_list, opt_arg(arg, ar));
+				add_file(&pre_list, opt_arg(&arg, ar));
 				break;
 			case 'm':
 				if(need_argindex) {
 					need_argindex = false;
 					argindex =  pre_list.push_name("(arg)", NULLPTR);
 				}
-				pre_list.handle_line(opt_arg(arg, ar), argindex, ++linenr, false);
+				pre_list.handle_line(opt_arg(&arg, ar), argindex, ++linenr, false);
 				break;
 			case 'F':
-				add_words(args, opt_arg(arg, ar));
+				add_words(&args, opt_arg(&arg, ar));
 				break;
 			default:
 				args.push_back(arg->m_argument);
@@ -182,7 +188,7 @@ run_masked_packages(int argc, char *argv[])
 
 	MaskList<Mask> mask_list;
 	vector<string> args;
-	read_args(mask_list, args, argreader);
+	read_args(&mask_list, args, argreader);
 
 	for(vector<string>::const_iterator it(args.begin());
 		likely(it != args.end()); ++it) {

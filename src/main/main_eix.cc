@@ -8,4 +8,4 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #define EIX_BINARY 1
-#include "main.cc"
+#include "main/main.cc"

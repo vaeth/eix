@@ -7,32 +7,44 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+// #define DEBUG_PROFILE_PATHS
+
 #include <config.h>
-#include "cascadingprofile.h"
-#include <eixTk/filenames.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/utils.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/mask.h>
-#include <portage/mask_list.h>
+
+#include <cstring>
 
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include <cstring>
+#include "eixTk/filenames.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/utils.h"
+#include "portage/conf/cascadingprofile.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
 
 /* Path to symlink to profile */
 #define PROFILE_LINK1 "/etc/make.profile"
 #define PROFILE_LINK2 "/etc/portage/make.profile"
 
-using namespace std;
+using std::map;
+using std::pair;
+using std::string;
+using std::vector;
 
-//#define DEBUG_PROFILE_PATHS
+using std::cerr;
+#ifdef DEBUG_PROFILE_PATHS
+using std::cout;
+#endif
+using std::endl;
+
 
 /** Exclude this files from listing of files in profile. */
 static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
@@ -74,8 +86,7 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 			if(colon == 0) {
 				RepoList::iterator f(repos.find_filename(s.c_str(), true));
 				path = ((f != repos.end()) ? f->path.c_str() : NULLPTR);
-			}
-			else {
+			} else {
 				string repo(it->substr(0, colon));
 				path = repos.get_path(repo);
 			}
@@ -180,15 +191,12 @@ CascadingProfile::readPackages(const vector<string> &lines, const string &filena
 		if(*p == '*') {
 			if(unlikely(remove)) {
 				ret |= p_system.remove_line(p);
-			}
-			else {
+			} else {
 				ret |= p_system.add_line(p, file_system, number);
 			}
-		}
-		else if(unlikely(remove)) {
+		} else if(unlikely(remove)) {
 			ret |= p_system_allowed.remove_line(p);
-		}
-		else {
+		} else {
 			ret |= p_system_allowed.add_line(p, file_system_allowed, number);
 		}
 	}
@@ -240,12 +248,12 @@ CascadingProfile::finalize()
 		return;
 	}
 	finalized = true;
-	p_system.initialize(m_system, Mask::maskInSystem);
-	p_system_allowed.initialize(m_system_allowed, Mask::maskAllowedByProfile);
-	p_package_masks.initialize(m_package_masks, Mask::maskMask);
-	p_package_unmasks.initialize(m_package_unmasks, Mask::maskUnmask);
-	p_package_keywords.initialize(m_package_keywords);
-	p_package_accept_keywords.initialize(m_package_accept_keywords, m_portagesettings->m_raised_arch);
+	p_system.initialize(&m_system, Mask::maskInSystem);
+	p_system_allowed.initialize(&m_system_allowed, Mask::maskAllowedByProfile);
+	p_package_masks.initialize(&m_package_masks, Mask::maskMask);
+	p_package_unmasks.initialize(&m_package_unmasks, Mask::maskUnmask);
+	p_package_keywords.initialize(&m_package_keywords);
+	p_package_accept_keywords.initialize(&m_package_accept_keywords, m_portagesettings->m_raised_arch);
 }
 
 /** Cycle through profile and put path to files into this->m_profile_files. */
@@ -275,8 +283,7 @@ CascadingProfile::applyMasks(Package *p) const
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			(*it)->maskflags.set(MaskFlags::MASK_NONE);
 		}
-	}
-	else {
+	} else {
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			(*it)->maskflags.clearbits(~MaskFlags::MASK_WORLD);
 		}

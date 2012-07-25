@@ -5,10 +5,10 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__NULL_H__
-#define EIX__NULL_H__ 1
+#ifndef SRC_EIXTK_NULL_H_
+#define SRC_EIXTK_NULL_H_ 1
 
-// include <eixTk/null.h> This comment satisfies check_include script
+// include "eixTk/null.h" This comment satisfies check_include script
 
 #include <config.h>
 
@@ -19,4 +19,4 @@
 #define NULLPTR NULL
 #endif
 
-#endif /* EIX__NULL_H__ */
+#endif  // SRC_EIXTK_NULL_H_

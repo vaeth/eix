@@ -7,17 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "keywords.h"
-
-#include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
-
 #include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
 
-using namespace std;
+#include "eixTk/likely.h"
+#include "eixTk/stringutils.h"
+#include "portage/keywords.h"
+
+using std::set;
+using std::string;
+using std::vector;
 
 const MaskFlags::MaskType
 	MaskFlags::MASK_NONE,
@@ -60,7 +61,7 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 {
 	KeyType m(KEY_EMPTY);
 	std::set<string> keywords_set;
-	make_set<string>(keywords_set, split_string(keywords));
+	make_set<string>(&keywords_set, split_string(keywords));
 	for(std::set<string>::const_iterator it(keywords_set.begin());
 		likely(it != keywords_set.end()); ++it) {
 		if((*it)[0] == '-') {
@@ -88,22 +89,18 @@ KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const str
 		if((*it)[0] == '~') {
 			if(found) {
 				m |= KEY_ARCHUNSTABLE;
-			}
-			else if(*it == "~*") {
+			} else if(*it == "~*") {
 				m |= KEY_SOMEUNSTABLE;
 				if(find_if(accepted_keywords.begin(), accepted_keywords.end(), is_testing)
 					!= accepted_keywords.end()) {
 					m |= KEY_STABLE;
 				}
-			}
-			else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end()) {
+			} else if(accepted_keywords.find(it->substr(1)) != accepted_keywords.end()) {
 				m |= KEY_ARCHUNSTABLE;
-			}
-			else {
+			} else {
 				m |= KEY_ALIENUNSTABLE;
 			}
-		}
-		else if((*it)[0] != '-') {
+		} else if((*it)[0] != '-') {
 			m |= (found ? KEY_ARCHSTABLE : KEY_ALIENSTABLE);
 		}
 	}
@@ -159,11 +156,11 @@ Keywords::modify_keywords(string &result, const string &original, const string &
 {
 	bool modified(false);
 	vector<string> modify;
-	split_string(modify, modify_keys);
+	split_string(&modify, modify_keys);
 	if(modify.empty())
 		return false;
 	vector<string> words;
-	split_string(words, original);
+	split_string(&words, original);
 	for(vector<string>::const_iterator it(modify.begin());
 		it != modify.end(); ++it) {
 		if(it->empty())
@@ -174,8 +171,7 @@ Keywords::modify_keywords(string &result, const string &original, const string &
 				modified = true;
 				words.erase(f);
 			}
-		}
-		else {
+		} else {
 			if(find(words.begin(), words.end(), *it) == words.end()) {
 				modified = true;
 				words.push_back(*it);
@@ -185,6 +181,6 @@ Keywords::modify_keywords(string &result, const string &original, const string &
 	if(likely(!modified))
 		return false;
 	result.clear();
-	join_to_string(result, words);
+	join_to_string(&result, words);
 	return true;
 }

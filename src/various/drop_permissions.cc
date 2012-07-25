@@ -6,12 +6,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "drop_permissions.h"
-#include <eixTk/null.h>
-#include <eixTk/sysutils.h>
-#include <eixrc/eixrc.h>
-
-#include <string>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -23,6 +17,15 @@
 #ifdef HAVE_GRP_H
 #include <grp.h>
 #endif
+
+#include <string>
+
+#include "eixTk/null.h"
+#include "eixTk/sysutils.h"
+#include "eixrc/eixrc.h"
+#include "various/drop_permissions.h"
+
+using std::string;
 
 #ifdef NEED_SETUID_PROTO
 int setuid(uid_t uid);
@@ -37,34 +40,30 @@ int setgid(gid_t gid);
 int setegid(gid_t gid);
 #endif
 
-using namespace std;
-
 void
-drop_permissions(EixRc &eix)
+drop_permissions(EixRc *eix)
 {
 	bool set_uid(true);
 	bool valid_user(true);
 	uid_t uid;
-	const string &user(eix["EIX_USER"]);
+	const string &user((*eix)["EIX_USER"]);
 	if(user.empty() || !get_uid_of(user.c_str(), &uid)) {
 		valid_user = false;
-		uid_t i(eix.getInteger("EIX_UID"));
+		uid_t i(eix->getInteger("EIX_UID"));
 		if(i > 0) {
 			uid = i;
-		}
-		else {
+		} else {
 			set_uid = false;
 		}
 	}
 	bool set_gid(true);
 	gid_t gid;
-	const string &group(eix["EIX_GROUP"]);
+	const string &group((*eix)["EIX_GROUP"]);
 	if(group.empty() || (get_uid_of(group.c_str(), &gid) == 0)) {
-		gid_t i(eix.getInteger("EIX_GID"));
+		gid_t i(eix->getInteger("EIX_GID"));
 		if(i > 0) {
 			gid = i;
-		}
-		else {
+		} else {
 			set_gid = false;
 		}
 	}

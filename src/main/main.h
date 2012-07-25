@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__MAIN_H__
-#define EIX__MAIN_H__ 1
+#ifndef SRC_MAIN_MAIN_H_
+#define SRC_MAIN_MAIN_H_ 1
 
 #include <string>
 extern std::string program_name;
@@ -20,4 +20,4 @@ int run_eix_drop_permissions(int argc, char *argv[]);
 int run_masked_packages(int argc, char *argv[]);
 int run_versionsort(int argc, char *argv[]);
 
-#endif /* EIX__MAIN_H__ */
+#endif  // SRC_MAIN_MAIN_H_

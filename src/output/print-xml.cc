@@ -6,28 +6,32 @@
 //   Bob Shaffer II <bob.shaffer.2 at gmail.com>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "print-xml.h"
-#include <database/header.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/sysutils.h>
-#include <eixrc/eixrc.h>
-#include <portage/basicversion.h>
-#include <portage/depend.h>
-#include <portage/extendedversion.h>
-#include <portage/instversion.h>
-#include <portage/keywords.h>
-#include <portage/overlay.h>
-#include <portage/package.h>
-#include <portage/set_stability.h>
-#include <portage/vardbpkg.h>
-
 #include <set>
 #include <string>
 #include <vector>
 #include <iostream>
 
-using namespace std;
+#include "database/header.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/sysutils.h"
+#include "eixrc/eixrc.h"
+#include "output/print-xml.h"
+#include "portage/basicversion.h"
+#include "portage/depend.h"
+#include "portage/extendedversion.h"
+#include "portage/instversion.h"
+#include "portage/keywords.h"
+#include "portage/overlay.h"
+#include "portage/package.h"
+#include "portage/set_stability.h"
+#include "portage/vardbpkg.h"
+
+using std::set;
+using std::string;
+using std::vector;
+
+using std::cout;
 
 const PrintXml::XmlVersion PrintXml::current;
 
@@ -46,8 +50,7 @@ PrintXml::clear(EixRc *eixrc)
 		print_overlay = false;
 		keywords_mode = KW_NONE;
 		dateformat = "%s";
-	}
-	else {
+	} else {
 		dateformat = (*eixrc)["XML_DATE"];
 		print_overlay = eixrc->getBool("XML_OVERLAY");
 		static const char *values[] = {
@@ -169,7 +172,7 @@ PrintXml::package(Package *pkg)
 		if(have_inst.find(*ver) != have_inst.end()) {
 			if(var_db_pkg->isInstalled(*pkg, *ver, &installedVersion)) {
 				versionInstalled = true;
-				var_db_pkg->readInstDate(*pkg, *installedVersion);
+				var_db_pkg->readInstDate(*pkg, installedVersion);
 			}
 		}
 
@@ -203,75 +206,57 @@ PrintXml::package(Package *pkg)
 		if(wasmask.isHardMasked()) {
 			if(currmask.isProfileMask()) {
 				mask_text.push_back("profile");
-			}
-			else if(currmask.isPackageMask()) {
+			} else if(currmask.isPackageMask()) {
 				mask_text.push_back("hard");
-			}
-			else if(wasmask.isProfileMask()) {
+			} else if(wasmask.isProfileMask()) {
 				mask_text.push_back("profile");
 				unmask_text.push_back("package_unmask");
-			}
-			else {
+			} else {
 				mask_text.push_back("hard");
 				unmask_text.push_back("package_unmask");
 			}
-		}
-		else if(currmask.isHardMasked()) {
+		} else if(currmask.isHardMasked()) {
 			mask_text.push_back("package_mask");
 		}
 
 		if(currkey.isStable()) {
 			if (waskey.isStable()) {
 				//
-			}
-			else if (waskey.isUnstable()) {
+			} else if (waskey.isUnstable()) {
 				mask_text.push_back("keyword");
 				unmask_text.push_back("package_keywords");
-			}
-			else if (waskey.isMinusKeyword()) {
+			} else if (waskey.isMinusKeyword()) {
 				mask_text.push_back("minus_keyword");
 				unmask_text.push_back("package_keywords");
-			}
-			else if (waskey.isAlienStable()) {
+			} else if (waskey.isAlienStable()) {
 				mask_text.push_back("alien_stable");
 				unmask_text.push_back("package_keywords");
-			}
-			else if (waskey.isAlienUnstable()) {
+			} else if (waskey.isAlienUnstable()) {
 				mask_text.push_back("alien_unstable");
 				unmask_text.push_back("package_keywords");
-			}
-			else if (waskey.isMinusUnstable()) {
+			} else if (waskey.isMinusUnstable()) {
 				mask_text.push_back("minus_unstable");
 				unmask_text.push_back("package_keywords");
-			}
-			else if (waskey.isMinusAsterisk()) {
+			} else if (waskey.isMinusAsterisk()) {
 				mask_text.push_back("minus_asterisk");
 				unmask_text.push_back("package_keywords");
-			}
-			else {
+			} else {
 				mask_text.push_back("missing_keyword");
 				unmask_text.push_back("package_keywords");
 			}
-		}
-		else if (currkey.isUnstable()) {
+		} else if (currkey.isUnstable()) {
 			mask_text.push_back("keyword");
-		}
-		else if (currkey.isMinusKeyword()) {
+		} else if (currkey.isMinusKeyword()) {
 			mask_text.push_back("minus_keyword");
-		}
-		else if (currkey.isAlienStable()) {
+		} else if (currkey.isAlienStable()) {
 			mask_text.push_back("alien_stable");
-		}
-		else if (currkey.isAlienUnstable()) {
+		} else if (currkey.isAlienUnstable()) {
 			mask_text.push_back("alien_unstable");
-		}
-		else if (currkey.isMinusUnstable()) {
+		} else if (currkey.isMinusUnstable()) {
 			mask_text.push_back("minus_unstable");
-		}
-		else if (currkey.isMinusAsterisk()) {
+		} else if (currkey.isMinusAsterisk()) {
 			mask_text.push_back("minus_asterisk");
-		}
-		else {
+		} else {
 			mask_text.push_back("missing_keyword");
 		}
 
@@ -286,7 +271,7 @@ PrintXml::package(Package *pkg)
 		}
 
 		if (!(ver->iuse.empty())) {
-			//cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
+			// cout << "\t\t\t\t<iuse>" << ver->iuse.asString() << "</iuse>\n";
 			const set<IUse> &s(ver->iuse.asSet());
 			print_iuse(s, IUse::USEFLAGS_NORMAL, NULLPTR);
 			print_iuse(s, IUse::USEFLAGS_PLUS, "1");
@@ -294,9 +279,9 @@ PrintXml::package(Package *pkg)
 		}
 		if (versionInstalled) {
 			string iuse_disabled, iuse_enabled;
-			var_db_pkg->readUse(*pkg, *installedVersion);
-			vector<string> inst_iuse = installedVersion->inst_iuse;
-			set<string> usedUse = installedVersion->usedUse;
+			var_db_pkg->readUse(*pkg, installedVersion);
+			vector<string> inst_iuse(installedVersion->inst_iuse);
+			set<string> usedUse(installedVersion->usedUse);
 			for (vector<string>::iterator iu = inst_iuse.begin(); iu != inst_iuse.end(); iu++) {
 				if (usedUse.find(*iu) == usedUse.end()) {
 					if (!iuse_disabled.empty())

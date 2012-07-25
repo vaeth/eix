@@ -9,4 +9,4 @@
 
 #define EIX_BINARY 1
 #define DIFF_BINARY 1
-#include "main.cc"
+#include "main/main.cc"

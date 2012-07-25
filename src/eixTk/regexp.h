@@ -7,17 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__REGEXCLASS_H__
-#define EIX__REGEXCLASS_H__ 1
+#ifndef SRC_EIXTK_REGEXP_H_
+#define SRC_EIXTK_REGEXP_H_ 1
 
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
+#include <regex.h>
+
+#include <cstdlib>
 
 #include <iostream>
 #include <string>
 
-#include <cstdlib>
-#include <regex.h>
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
 
 /// Handles regular expressions.
 // It is normally used within global scope so that a regular expression doesn't
@@ -112,4 +113,4 @@ class Regex
 		bool m_compiled;
 };
 
-#endif
+#endif  // SRC_EIXTK_REGEXP_H_

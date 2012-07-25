@@ -6,4 +6,4 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #define MASKED_BINARY 1
-#include "main.cc"
+#include "main/main.cc"

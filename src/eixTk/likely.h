@@ -5,19 +5,19 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__LIKELY_H__
-#define EIX__LIKELY_H__ 1
+#ifndef SRC_EIXTK_LIKELY_H_
+#define SRC_EIXTK_LIKELY_H_ 1
 
-// include <eixTk/likely.h> This comment satisfies check_include script
+// include "eixTk/likely.h" This comment satisfies check_include script
 
 #include <config.h>
 
 #ifdef HAVE___BUILTIN_EXPECT
-#define likely(x)	__builtin_expect((x),1)
-#define unlikely(x)	__builtin_expect((x),0)
+#define likely(x)	__builtin_expect((x), 1)
+#define unlikely(x)	__builtin_expect((x), 0)
 #else
 #define likely(x)	(x)
 #define unlikely(x)	(x)
 #endif
 
-#endif /* EIX__LIKELY_H__ */
+#endif  // SRC_EIXTK_LIKELY_H_

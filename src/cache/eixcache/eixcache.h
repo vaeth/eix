@@ -5,16 +5,17 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__EIXCACHE_H__
-#define EIX__EIXCACHE_H__ 1
+#ifndef SRC_CACHE_EIXCACHE_EIXCACHE_H_
+#define SRC_CACHE_EIXCACHE_EIXCACHE_H_ 1
 
 #include <config.h>
-#include <cache/base.h>
-#include <eixTk/ptr_list.h>
-#include <portage/extendedversion.h>
 
 #include <string>
 #include <vector>
+
+#include "cache/base.h"
+#include "eixTk/ptr_list.h"
+#include "portage/extendedversion.h"
 
 class Category;
 class DBHeader;
@@ -38,6 +39,7 @@ class EixCache : public BasicCache {
 		bool get_overlaydat(const DBHeader &header);
 		bool get_destcat(PackageTree *packagetree, const char *cat_name, Category *category, const std::string &pcat);
 		void get_package(Package *p);
+
 	public:
 		~EixCache();
 
@@ -53,4 +55,4 @@ class EixCache : public BasicCache {
 		{ return m_name.c_str(); }
 };
 
-#endif /* EIX__EIXCACHE_H__ */
+#endif  // SRC_CACHE_EIXCACHE_EIXCACHE_H_

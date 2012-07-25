@@ -7,17 +7,18 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__SELECTORS_H__
-#define EIX__SELECTORS_H__ 1
+#ifndef SRC_CACHE_COMMON_SELECTORS_H_
+#define SRC_CACHE_COMMON_SELECTORS_H_ 1
 
 #include <config.h>
-#include <eixTk/utils.h>
 
 #include <string>
+
+#include "eixTk/utils.h"
 
 int package_selector (SCANDIR_ARG3 dent) ATTRIBUTE_PURE;
 int ebuild_selector (SCANDIR_ARG3 dent) ATTRIBUTE_PURE;
 
 std::string::size_type ebuild_pos(const std::string &str);
 
-#endif /* EIX__SELECTORS_H__ */
+#endif  // SRC_CACHE_COMMON_SELECTORS_H_

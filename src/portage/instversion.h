@@ -7,23 +7,23 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__INSTVERSION_H__
-#define EIX__INSTVERSION_H__ 1
+#ifndef SRC_PORTAGE_INSTVERSION_H_
+#define SRC_PORTAGE_INSTVERSION_H_ 1
 
 #include <config.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/version.h>
+
+#include <ctime>
 
 #include <string>
 #include <vector>
 #include <set>
 
-#include <ctime>
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/version.h"
 
 /** InstVersion expands the BasicVersion class by data relevant for vardbpkg */
 class InstVersion : public ExtendedVersion, public Keywords {
-
 	public:
 		/** For versions in vardbpkg we might not yet know the slot.
 		    For caching, we mark this here: */
@@ -63,4 +63,4 @@ inline bool operator != (const InstVersion& left, const InstVersion &right) ATTR
 inline bool operator != (const InstVersion& left, const InstVersion &right)
 { return BasicVersion::compare(left, right) != 0; }
 
-#endif /* EIX__INSTVERSION_H__ */
+#endif  // SRC_PORTAGE_INSTVERSION_H_

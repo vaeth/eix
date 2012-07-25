@@ -7,21 +7,21 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "selectors.h"
+#include <dirent.h>
 
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/regexp.h>
-#include <eixTk/utils.h>
-#include <eixrc/eixrc.h>
-#include <eixrc/global.h>
+#include <cstring>
 
 #include <string>
 
-#include <cstring>
-#include <dirent.h>
+#include "cache/common/selectors.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/regexp.h"
+#include "eixTk/utils.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
 
-using namespace std;
+using std::string;
 
 int package_selector (SCANDIR_ARG3 dent)
 {

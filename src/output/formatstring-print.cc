@@ -8,39 +8,48 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "formatstring-print.h"
-#include <eixTk/ansicolor.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/sysutils.h>
-#include <eixTk/unused.h>
-#include <eixrc/eixrc.h>
-#include <output/formatstring.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/extendedversion.h>
-#include <portage/instversion.h>
-#include <portage/keywords.h>
-#include <portage/package.h>
-#include <portage/vardbpkg.h>
-#include <portage/version.h>
-
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
 
 #include <cstdlib>
 #include <cstring>
 
-using namespace std;
+#include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "eixTk/ansicolor.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/sysutils.h"
+#include "eixTk/unused.h"
+#include "eixrc/eixrc.h"
+#include "output/formatstring-print.h"
+#include "output/formatstring.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/extendedversion.h"
+#include "portage/instversion.h"
+#include "portage/keywords.h"
+#include "portage/package.h"
+#include "portage/vardbpkg.h"
+#include "portage/version.h"
+
+using std::map;
+using std::pair;
+using std::string;
+using std::vector;
+
+using std::cerr;
+using std::endl;
 
 class VersionVariables {
 	private:
 		const Version *m_version;
 		InstVersion *m_instver;
+
 	public:
 		bool first, last, slotfirst, slotlast, oneslot, isinst;
 		bool know_restrict;
@@ -55,7 +64,10 @@ class VersionVariables {
 		}
 
 		void setinst(InstVersion *inst)
-		{ know_restrict = false; m_instver = inst; }
+		{
+			know_restrict = false;
+			m_instver = inst;
+		}
 
 		void setversion(const Version *ver)
 		{ m_version = ver; }
@@ -68,18 +80,18 @@ class VersionVariables {
 };
 
 string
-PrintFormat::get_inst_use(const Package &package, InstVersion &i) const
+PrintFormat::get_inst_use(const Package &package, InstVersion *i) const
 {
 	if((unlikely(vardb == NULLPTR)) || !(vardb->readUse(package, i)))
 		return emptystring;
-	if(i.inst_iuse.empty())
+	if(i->inst_iuse.empty())
 		return emptystring;
 	string ret, add;
-	for(vector<string>::iterator it(i.inst_iuse.begin());
-		likely(it != i.inst_iuse.end()); ++it) {
+	for(vector<string>::iterator it(i->inst_iuse.begin());
+		likely(it != i->inst_iuse.end()); ++it) {
 		bool is_unset(false);
 		string *curr(&ret);
-		if(i.usedUse.find(*it) == i.usedUse.end()) {
+		if(i->usedUse.find(*it) == i->usedUse.end()) {
 			is_unset = true;
 			if(!alpha_use)
 				curr = &add;
@@ -176,9 +188,9 @@ PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Versio
 				}
 			}
 		}
-	}
-	else
+	} else {
 		slotnum = sl->size();
+	}
 	if(unlikely(slotnum == 0))
 		return;
 	version_variables->oneslot = (slotnum == 1);
@@ -231,7 +243,7 @@ class Scanner {
 
 	protected:
 		map<string, Diff> diff;
-		map<string, pair<Plain,Prop> > plain;
+		map<string, pair<Plain, Prop> > plain;
 		map<string, ColonVar> colon_var;
 		map<string, ColonOther> colon_other;
 
@@ -245,10 +257,10 @@ class Scanner {
 		{ colon_other[s] = colfunc; }
 
 		void prop_pkg(const char *s, Plain plainfunc)
-		{ plain[s] = pair<Plain,Prop>(plainfunc, PKG); }
+		{ plain[s] = pair<Plain, Prop>(plainfunc, PKG); }
 
 		void prop_ver(const char *s, Plain plainfunc)
-		{ plain[s] = pair<Plain,Prop>(plainfunc, VER); }
+		{ plain[s] = pair<Plain, Prop>(plainfunc, VER); }
 
 	public:
 		Scanner()
@@ -410,7 +422,7 @@ class Scanner {
 
 		Plain get_plain(const string& s, Prop *p) const
 		{
-			map<string, pair<Plain,Prop> >::const_iterator it(plain.find(s));
+			map<string, pair<Plain, Prop> >::const_iterator it(plain.find(s));
 			if(it == plain.end()) {
 				return NULLPTR;
 			}
@@ -476,7 +488,7 @@ PrintFormat::COLON_VER_DATE(Package *package, const string &after_colon) const
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		if(likely(vardb != NULLPTR)) {
-			vardb->readInstDate(*package, *i);
+			vardb->readInstDate(*package, i);
 		}
 		return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
 	}
@@ -504,14 +516,12 @@ PrintFormat::colon_pkg_availableversions(Package *package, const string &after_c
 			string parsed;
 			if(col != string::npos) {
 				parsed.assign(after_colon, 0, col);
-			}
-			else {
+			} else {
 				parsed = col;
 			}
 			get_versions_versorted(package, parse_variable(parsed), versions);
 			varcache[parsed].in_use = false;
-		}
-		else {
+		} else {
 			string parsed(after_colon, col + 1, string::npos);
 			get_versions_slotsorted(package, parse_variable(parsed), versions);
 			varcache[parsed].in_use = false;
@@ -561,7 +571,7 @@ PrintFormat::colon_pkg_bestslotversions(Package *package, const string &after_co
 	const Version *ver(package->best(allow_unstable));
 	version_variables->setversion(ver);
 	vector<Version*> versions;
-	package->best_slots(versions, allow_unstable);
+	package->best_slots(&versions, allow_unstable);
 	if(!versions.empty()) {
 		get_versions_versorted(package, parse_variable(after_colon), &versions);
 		varcache[after_colon].in_use = false;
@@ -584,7 +594,7 @@ void
 PrintFormat::colon_pkg_bestslotupgradeversions(Package *package, const string &after_colon, bool allow_unstable) const
 {
 	vector<Version*> versions;
-	package->best_slots_upgrade(versions, vardb, portagesettings, allow_unstable);
+	package->best_slots_upgrade(&versions, vardb, portagesettings, allow_unstable);
 	if(!versions.empty()) {
 		get_versions_versorted(package, parse_variable(after_colon), &versions);
 		varcache[after_colon].in_use = false;
@@ -764,9 +774,9 @@ PrintFormat::PKG_ALLSETNAMES(Package *package) const
 string
 PrintFormat::pkg_upgrade(Package *package, bool only_installed, bool test_slots) const
 {
-	LocalCopy copy(this, package);
+	LocalCopy localcopy(this, package);
 	bool result(package->can_upgrade(vardb, portagesettings, only_installed, test_slots));
-	copy.restore(package);
+	localcopy.restore(package);
 	return (result ? one : emptystring);
 }
 
@@ -797,9 +807,9 @@ PrintFormat::PKG_BESTUPGRADEORINSTALL(Package *package) const
 string
 PrintFormat::pkg_downgrade(Package *package, bool test_slots) const
 {
-	LocalCopy copy(this, package);
+	LocalCopy locallocalcopy(this, package);
 	bool result(package->must_downgrade(vardb, test_slots));
-	copy.restore(package);
+	locallocalcopy.restore(package);
 	return (result ? one : emptystring);
 }
 
@@ -818,9 +828,9 @@ PrintFormat::PKG_BESTDOWNGRADE(Package *package) const
 string
 PrintFormat::pkg_recommend(Package *package, bool only_installed, bool test_slots) const
 {
-	LocalCopy copy(this, package);
+	LocalCopy locallocalcopy(this, package);
 	bool result(package->recommend(vardb, portagesettings, only_installed, test_slots));
-	copy.restore(package);
+	locallocalcopy.restore(package);
 	return (result ? one : emptystring);
 }
 
@@ -946,10 +956,9 @@ PrintFormat::ver_versionslot(Package *package) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		package->guess_slotname(*i, vardb, "?");
+		package->guess_slotname(i, vardb, "?");
 		return i;
-	}
-	else {
+	} else {
 		return version_variables->version();
 	}
 }
@@ -1025,7 +1034,7 @@ PrintFormat::ver_overlay(Package *package, bool getnum) const
 		InstVersion *i(version_variables->instver());
 		if(unlikely((unlikely(vardb == NULLPTR)) ||
 			(unlikely(header == NULLPTR)) ||
-			(unlikely(!(vardb->readOverlay(*package, *i, *header)))))) {
+			(unlikely(!(vardb->readOverlay(*package, i, *header)))))) {
 				if(getnum || no_color) {
 					return "[?]";
 				}
@@ -1036,8 +1045,7 @@ PrintFormat::ver_overlay(Package *package, bool getnum) const
 				return overlay_keytext(i->overlay_key, getnum);
 			}
 		}
-	}
-	else if(getnum || (!package->have_same_overlay_key())) {
+	} else if(getnum || (!package->have_same_overlay_key())) {
 		if(version_variables->version()->overlay_key) {
 			return overlay_keytext(version_variables->version()->overlay_key, getnum);
 		}
@@ -1159,10 +1167,10 @@ string
 PrintFormat::VER_HAVEUSE(Package *package) const
 {
 	if(version_variables->isinst) {
-		InstVersion &i(*(version_variables->instver()));
+		InstVersion *i(version_variables->instver());
 		if((likely(vardb != NULLPTR)) &&
 			(likely(vardb->readUse(*package, i)))
-			&& !(i.inst_iuse.empty())) {
+			&& !(i->inst_iuse.empty())) {
 			return one;
 		}
 		return emptystring;
@@ -1174,7 +1182,7 @@ string
 PrintFormat::VER_USE(Package *package) const
 {
 	if(version_variables->isinst) {
-		return get_inst_use(*package, *(version_variables->instver()));
+		return get_inst_use(*package, version_variables->instver());
 	}
 	return version_variables->version()->iuse.asString();
 }
@@ -1192,10 +1200,9 @@ PrintFormat::ver_restrict(Package *package) const
 		InstVersion *i(version_variables->instver());
 		if(!version_variables->know_restrict) {
 			if(likely((vardb != NULLPTR) && (header != NULLPTR)) &&
-				vardb->readRestricted(*package, *i, *header)) {
+				vardb->readRestricted(*package, i, *header)) {
 					version_variables->know_restrict = true;
-			}
-			else {
+			} else {
 				return NULLPTR;
 			}
 		}
@@ -1640,7 +1647,7 @@ get_diff_package_property(const PrintFormat *fmt, void *entity, const string &na
 				result = newer->differ(*older, true);
 				break;
 			default:
-			//case Scanner::DIFF_BESTDIFFER:
+			// case Scanner::DIFF_BESTDIFFER:
 				result = newer->differ(*older, false);
 				break;
 		}

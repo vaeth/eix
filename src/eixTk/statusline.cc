@@ -5,13 +5,15 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "statusline.h"
-#include <eixTk/i18n.h>
-
-#include <string>
 #include <iostream>
+#include <string>
 
-using namespace std;
+#include "eixTk/i18n.h"
+#include "eixTk/statusline.h"
+
+using std::string;
+
+using std::cout;
 
 void
 Statusline::print_force(const string &str)
@@ -41,8 +43,7 @@ Statusline::user_statusline()
 	header.clear();
 	if(m_exit[0] == ' ') {
 		print_force(m_exit.substr(1));
-	}
-	else {
+	} else {
 		print_force(m_exit);
 	}
 }
@@ -55,8 +56,7 @@ Statusline::success()
 	}
 	if(m_exit.empty()) {
 		print_force(_("Finished"));
-	}
-	else {
+	} else {
 		user_statusline();
 	}
 }
@@ -69,8 +69,7 @@ Statusline::failure()
 	}
 	if(m_exit.empty()) {
 		print_force(_("Failure"));
-	}
-	else {
+	} else {
 		user_statusline();
 	}
 }

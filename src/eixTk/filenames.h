@@ -5,14 +5,14 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__FILENAMES_H__
-#define EIX__FILENAMES_H__ 1
-
-#include <eixTk/likely.h>
-#include <eixTk/sysutils.h>
+#ifndef SRC_EIXTK_FILENAMES_H_
+#define SRC_EIXTK_FILENAMES_H_ 1
 
 #include <string>
 #include <vector>
+
+#include "eixTk/likely.h"
+#include "eixTk/sysutils.h"
 
 /** canonicalize_file_name() if possible or some substitute */
 std::string normalize_path(const char *path, bool resolve = true, bool want_slash = false);
@@ -46,4 +46,4 @@ is_virtual(const char *name)
 	return !is_dir(name);
 }
 
-#endif /* EIX__FILENAMES_H__ */
+#endif  // SRC_EIXTK_FILENAMES_H_

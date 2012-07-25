@@ -6,36 +6,38 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "eixcache.h"
-#include <database/header.h>
-#include <database/package_reader.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/ptr_list.h>
-#include <eixTk/stringutils.h>
-#include <portage/basicversion.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
-
-#include <algorithm>
-#include <string>
-#include <vector>
 
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
 
-using namespace std;
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "cache/eixcache/eixcache.h"
+#include "database/header.h"
+#include "database/package_reader.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/ptr_list.h"
+#include "eixTk/stringutils.h"
+#include "portage/basicversion.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
+
+using std::string;
+using std::vector;
 
 eix::ptr_list<EixCache> EixCache::all_eixcaches;
 
 EixCache::~EixCache()
 {
-	eix::ptr_list<EixCache>::iterator it = find(all_eixcaches.begin(),
-		all_eixcaches.end(), this);
+	eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches.begin(),
+		all_eixcaches.end(), this));
 	if(it != all_eixcaches.end()) {
 		all_eixcaches.erase(it);
 	}
@@ -44,24 +46,21 @@ EixCache::~EixCache()
 bool EixCache::initialize(const string &name)
 {
 	vector<string> args;
-	split_string(args, name, true, ":", false);
-	if(strcasecmp(args[0].c_str(), "eix") == 0)
-	{
+	split_string(&args, name, true, ":", false);
+	if(strcasecmp(args[0].c_str(), "eix") == 0) {
 		m_name = "eix";
 		never_add_categories = true;
-	}
-	else if((strcasecmp(args[0].c_str(), "eix*") == 0) ||
-		(strcasecmp(args[0].c_str(), "*eix") == 0))
-	{
+	} else if((strcasecmp(args[0].c_str(), "eix*") == 0) ||
+		(strcasecmp(args[0].c_str(), "*eix") == 0)) {
 		m_name = "eix*";
 		never_add_categories = false;
-	}
-	else
+	} else {
 		return false;
+	}
 
 	m_file.clear();
 	if(args.size() >= 2) {
-		if(! args[1].empty()) {
+		if(!(args[1].empty())) {
 			m_name.append(1, ' ');
 			m_name.append(args[1]);
 			m_file = args[1];
@@ -72,15 +71,15 @@ bool EixCache::initialize(const string &name)
 	m_overlay.clear();
 	m_get_overlay = 0;
 	if(args.size() >= 3) {
-		if(! args[2].empty()) {
+		if(!(args[2].empty())) {
 			m_name.append(" [");
 			m_name.append(args[2]);
 			m_name.append("]");
 			if(args[2] == "*") {
 				m_only_overlay = false;
-			}
-			else
+			} else {
 				m_overlay = args[2];
+			}
 		}
 	}
 	slavemode = false;
@@ -91,7 +90,7 @@ bool EixCache::initialize(const string &name)
 void
 EixCache::setSchemeFinish()
 {
-	if(! m_file.empty())
+	if(!m_file.empty())
 		m_full = m_prefix + m_file;
 	else
 		m_full = m_prefix + EIX_CACHEFILE;
@@ -140,8 +139,7 @@ EixCache::get_overlaydat(const DBHeader &header)
 				m_overlay_name % m_scheme);
 			return false;
 		}
-	}
-	else if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALL)) {
+	} else if(!header.find_overlay(&m_get_overlay, m_overlay.c_str(), portdir, 0, DBHeader::OVTEST_ALL)) {
 		thiserror(eix::format(_("Cache file %s does not contain overlay %s")) %
 			m_full % m_overlay);
 		return false;
@@ -158,12 +156,10 @@ EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *
 				dest_cat = category;
 				return true;
 			}
-		}
-		else if(never_add_categories) {
+		} else if(never_add_categories) {
 			dest_cat = packagetree->find(pcat);
 			return (dest_cat != NULLPTR);
-		}
-		else {
+		} else {
 			dest_cat = &((*packagetree)[pcat]);
 			return true;
 		}
@@ -185,7 +181,7 @@ EixCache::get_package(Package *p)
 				continue;
 		}
 		Version *version(new Version);
-		*dynamic_cast<BasicVersion *>(version) = *dynamic_cast<BasicVersion *>(*it);
+		*static_cast<BasicVersion *>(version) = *static_cast<BasicVersion *>(*it);
 		version->overlay_key = m_overlay_key;
 		version->set_full_keywords(it->get_full_keywords());
 		version->slotname = it->slotname;
@@ -198,8 +194,7 @@ EixCache::get_package(Package *p)
 			pkg = dest_cat->findPackage(p->name);
 			if(pkg != NULLPTR) {
 				have_onetime_info = have_pkg = true;
-			}
-			else {
+			} else {
 				pkg = new Package(p->category, p->name);
 			}
 		}
@@ -211,14 +206,13 @@ EixCache::get_package(Package *p)
 			have_onetime_info = true;
 		}
 	}
-	if(have_onetime_info) { // if the package exists:
+	if(have_onetime_info) {  // if the package exists:
 		// add collected iuse from the saved data
 		pkg->iuse.insert(p->iuse);
 		if(!have_pkg) {
 			dest_cat->addPackage(pkg);
 		}
-	}
-	else {
+	} else {
 		delete pkg;
 	}
 }
@@ -233,7 +227,7 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		return false;
 	}
 	vector<EixCache*> slaves;
-	for(eix::ptr_list<EixCache>::iterator sl = all_eixcaches.begin();
+	for(eix::ptr_list<EixCache>::iterator sl(all_eixcaches.begin());
 		unlikely(sl != all_eixcaches.end()); ++sl) {
 		if(sl->m_full == m_full) {
 			if(*sl != this) {
@@ -254,7 +248,7 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 	DBHeader header;
 
 	string errtext;
-	if(unlikely(!io::read_header(header, fp, &errtext))) {
+	if(unlikely(!io::read_header(&header, fp, &errtext))) {
 		fclose(fp);
 		allerrors(slaves, eix::format(_("error in file %s: %s")) % m_full % errtext);
 		m_error_callback(err_msg);

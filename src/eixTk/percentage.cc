@@ -7,23 +7,26 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "percentage.h"
-#include <eixTk/formated.h>
-#include <eixTk/likely.h>
+#include <cstdio>
 
 #include <iostream>
 #include <ostream>
 #include <sstream>
 #include <string>
 
-#include <cstdio>
+#include "eixTk/formated.h"
+#include "eixTk/likely.h"
+#include "eixTk/percentage.h"
 
-using namespace std;
+using std::string;
+
+using std::cout;
+using std::endl;
 
 inline static string
 percent_to_string(PercentStatus::Percentage i)
 {
-	ostringstream o;
+	std::ostringstream o;
 	o << i;
 	return o.str();
 }
@@ -117,8 +120,7 @@ PercentStatus::reprint()
 				% m_total_s
 				% m_total_s
 				% "100";
-		}
-		else {
+		} else {
 			Percentage p(0);
 			if(likely(m_total != 0)) {
 				p = (m_current * 100) / m_total;
@@ -128,23 +130,20 @@ PercentStatus::reprint()
 				% m_total_s
 				% percent_to_string(p, 3);
 		}
-	}
-	else {
+	} else {
 		out = m_format;
 	}
 	out.append(m_append);
 	if(m_size == 0) {
 		cout << out;
 		m_size = out.size();
-	}
-	else {
+	} else {
 		if(out.size() < m_size) {
 			string::size_type difference = m_size - out.size();
 			m_size = out.size();
 			out.append(difference, ' ');
 			out.append(difference, '\b');
-		}
-		else {
+		} else {
 			m_size = out.size();
 		}
 		cout << '\r' << out;

@@ -7,23 +7,23 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PACKAGETEST_H__
-#define EIX__PACKAGETEST_H__ 1
-
-#include <database/package_reader.h>
-#include <eixTk/inttypes.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/extendedversion.h>
-#include <portage/keywords.h>
-#include <portage/package.h>
-#include <portage/set_stability.h>
-#include <search/algorithms.h>
-#include <search/redundancy.h>
+#ifndef SRC_SEARCH_PACKAGETEST_H_
+#define SRC_SEARCH_PACKAGETEST_H_ 1
 
 #include <set>
 #include <string>
 #include <vector>
+
+#include "database/package_reader.h"
+#include "eixTk/inttypes.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/extendedversion.h"
+#include "portage/keywords.h"
+#include "portage/package.h"
+#include "portage/set_stability.h"
+#include "search/algorithms.h"
+#include "search/redundancy.h"
 
 class MatcherAlgorithm;
 class MatcherField;
@@ -129,7 +129,10 @@ class PackageTest {
 		{ slotted = multi_slot = true; }
 
 		void Upgrade(LocalMode local_mode)
-		{  upgrade = true; upgrade_local_mode = local_mode; }
+		{
+			upgrade = true;
+			upgrade_local_mode = local_mode;
+		}
 
 		void SetStabilityDefault(TestStability require)
 		{  test_stability_default |= require; }
@@ -174,13 +177,13 @@ class PackageTest {
 		{ worldset = worldset_only_selected = true; }
 
 		void StabilityDefault(Package *p) const
-		{ stability->set_stability(*p); }
+		{ stability->set_stability(p); }
 
 		void StabilityLocal(Package *p) const
-		{ stability->set_stability(true, *p); }
+		{ stability->set_stability(true, p); }
 
 		void StabilityNonlocal(Package *p) const
-		{ stability->set_stability(false, *p); }
+		{ stability->set_stability(false, p); }
 
 		std::set<ExtendedVersion::Overlay> *OverlayList()
 		{
@@ -218,10 +221,16 @@ class PackageTest {
 		}
 
 		void DuplVersions(bool only_overlay)
-		{ dup_versions = true ; dup_versions_overlay = only_overlay; }
+		{
+			dup_versions = true;
+			dup_versions_overlay = only_overlay;
+		}
 
 		void DuplPackages(bool only_overlay)
-		{ dup_packages = true; dup_packages_overlay = only_overlay; }
+		{
+			dup_packages = true;
+			dup_packages_overlay = only_overlay;
+		}
 
 		void ObsoleteCfg(const RedAtom &first, const RedAtom &second, TestInstalled test_ins)
 		{
@@ -314,4 +323,4 @@ class PackageTest {
 		static TestInstalled nowarn_installed(const Package &p);
 };
 
-#endif /* EIX__PACKAGETEST_H__ */
+#endif  // SRC_SEARCH_PACKAGETEST_H_

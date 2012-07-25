@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PTR_ITERATOR_H__
-#define EIX__PTR_ITERATOR_H__ 1
+#ifndef SRC_EIXTK_PTR_LIST_H_
+#define SRC_EIXTK_PTR_LIST_H_ 1
 
 #include <list>
 
@@ -33,7 +33,7 @@ namespace eix {
 				: base_iterator()
 			{ }
 
-			ptr_iterator(const base_iterator& iter)
+			explicit ptr_iterator(const base_iterator& iter)
 				: base_iterator(iter)
 			{ }
 
@@ -80,7 +80,6 @@ namespace eix {
 				clear();
 			}
 	};
-
 }
 
-#endif /* EIX__PTR_ITERATOR_H__ */
+#endif  // SRC_EIXTK_PTR_LIST_H_

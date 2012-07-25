@@ -7,16 +7,17 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PARSECACHE_H__
-#define EIX__PARSECACHE_H__ 1
+#ifndef SRC_CACHE_PARSE_PARSE_H_
+#define SRC_CACHE_PARSE_PARSE_H_ 1
 
 #include <config.h>
-#include <cache/base.h>
-#include <eixTk/null.h>
-#include <portage/extendedversion.h>
 
 #include <string>
 #include <vector>
+
+#include "cache/base.h"
+#include "eixTk/null.h"
+#include "portage/extendedversion.h"
 
 class Category;
 class EbuildExec;
@@ -35,7 +36,8 @@ class ParseCache : public BasicCache {
 
 		void set_checking(std::string &str, const char *item, const VarsReader &ebuild, bool *ok = NULLPTR);
 		void parse_exec(const char *fullpath, const std::string &dirpath, bool read_onetime_info, bool &have_onetime_info, Package *pkg, Version *version);
-		void readPackage(Category &cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files);
+		void readPackage(Category *cat, const std::string &pkg_name, const std::string &directory_path, const std::vector<std::string> &files);
+
 	public:
 		ParseCache() : BasicCache(), verbose(false), ebuild_exec(NULLPTR)
 		{ }
@@ -52,7 +54,7 @@ class ParseCache : public BasicCache {
 		{ verbose = true; }
 
 		bool readCategoryPrepare(const char *cat_name);
-		bool readCategory(Category &cat);
+		bool readCategory(Category *cat);
 		void readCategoryFinalize();
 
 		bool use_prefixport() const ATTRIBUTE_CONST_VIRTUAL
@@ -61,4 +63,4 @@ class ParseCache : public BasicCache {
 		const char *getType() const;
 };
 
-#endif /* EIX__PARSECACHE_H__ */
+#endif  // SRC_CACHE_PARSE_PARSE_H_

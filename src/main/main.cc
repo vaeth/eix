@@ -8,12 +8,6 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "main.h"
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-
-#include <string>
 
 #include <csignal>  /* signal handlers */
 #include <cstdio>
@@ -21,6 +15,13 @@
 #ifdef ENABLE_NLS
 #include <clocale>
 #endif
+
+#include <string>
+
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "main/main.h"
 
 // You must define - in config.h, by -D... or by a wrapper file -
 // one or several of
@@ -93,10 +94,10 @@
 #error "You must #define one of the *BINARY switches, see comments in main.cc"
 #endif
 
-using namespace std;
+using std::string;
 
 /** The name under which we have been called. */
-string program_name;
+string program_name;  // NOLINT(runtime/string)
 
 static void sig_handler(int sig) ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN;
 
@@ -123,22 +124,22 @@ sig_handler(int sig)
 
 /** Cut program path (if there is one) to get only the program name. */
 static void
-sanitize_filename(string &s)
+sanitize_filename(string *s)
 {
 	for(;;) {
-		string::size_type i(s.find_last_of('/'));
+		string::size_type i(s->find_last_of('/'));
 		if(unlikely(i == string::npos)) {
-			return;// There was no path
+			return;  // There was no path
 		}
-		if(likely(++i != s.size())) {
-			s.erase(0, i);
+		if(likely(++i != s->size())) {
+			s->erase(0, i);
 		}
 		// Trailing '/'. Should not happen, but exec can pass anything.
-		i = s.find_last_not_of('/');
+		i = s->find_last_not_of('/');
 		if(unlikely(i == string::npos))
-			return;// Name consists only of '/' - better not touch.
+			return;  // Name consists only of '/' - better not touch.
 		// Otherwise, cut all trailing / and repeat business
-		s.erase(i + 1);
+		s->erase(i + 1);
 	}
 }
 
@@ -190,7 +191,6 @@ run_program(int argc, char *argv[])
 int
 main(int argc, char** argv)
 {
-
 #ifdef ENABLE_NLS
 	/* Initialize GNU gettext support */
 	setlocale (LC_ALL, "");
@@ -210,7 +210,7 @@ main(int argc, char** argv)
 #endif
 
 	program_name = argv[0];
-	sanitize_filename(program_name);
+	sanitize_filename(&program_name);
 	return USE_BINARY(argc, argv);
 }
 

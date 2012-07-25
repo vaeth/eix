@@ -7,8 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PACKAGESETS_H__
-#define EIX__PACKAGESETS_H__ 1
+#ifndef SRC_PORTAGE_PACKAGESETS_H_
+#define SRC_PORTAGE_PACKAGESETS_H_ 1
 
 #include <vector>
 #include <string>
@@ -20,8 +20,9 @@ class SetsList : public std::vector<SetsIndex>
 {
 	private:
 		bool have_system;
+
 	public:
-		SetsList(bool with_system = false)
+		explicit SetsList(bool with_system = false)
 		{ have_system = with_system; }
 
 		bool has_system() const
@@ -65,7 +66,10 @@ class SetsList : public std::vector<SetsIndex>
 		}
 
 		void clear()
-		{ std::vector<SetsIndex>::clear(); have_system = false; }
+		{
+			std::vector<SetsIndex>::clear();
+			have_system = false;
+		}
 };
 
-#endif /* EIX__PACKAGESETS_H__ */
+#endif  // SRC_PORTAGE_PACKAGESETS_H_

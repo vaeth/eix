@@ -7,14 +7,14 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__OVERLAY_H__
-#define EIX__OVERLAY_H__ 1
-
-#include <eixTk/null.h>
+#ifndef SRC_PORTAGE_OVERLAY_H_
+#define SRC_PORTAGE_OVERLAY_H_ 1
 
 #include <map>
 #include <string>
 #include <vector>
+
+#include "eixTk/null.h"
 
 class OverlayIdent {
 	private:
@@ -26,10 +26,17 @@ class OverlayIdent {
 		OverlayIdent(const char *Path, const char *Label = NULLPTR);
 
 		void readLabel(const char *Path = NULLPTR)
-		{ if(!know_label) readLabel_internal(Path); }
+		{
+			if(!know_label) {
+				readLabel_internal(Path);
+			}
+		}
 
 		void setLabel(const std::string &Label)
-		{ label = Label; know_label = true; }
+		{
+			label = Label;
+			know_label = true;
+		}
 
 		std::string human_readable() const;
 };
@@ -38,6 +45,7 @@ class RepoList : public std::vector<OverlayIdent> {
 	private:
 		bool trust_cache;
 		std::map<std::string, std::string> cache;
+
 	public:
 		typedef std::vector<OverlayIdent> super;
 
@@ -58,10 +66,17 @@ class RepoList : public std::vector<OverlayIdent> {
 		}
 
 		void clear()
-		{ trust_cache = true; super::clear(); cache.clear(); }
+		{
+			trust_cache = true;
+			super::clear();
+			cache.clear();
+		}
 
 		void push_back(const char *s)
-		{ trust_cache = false; super::push_back(OverlayIdent(s)); }
+		{
+			trust_cache = false;
+			super::push_back(OverlayIdent(s));
+		}
 };
 
-#endif /* EIX__OVERLAY_H__ */
+#endif  // SRC_PORTAGE_OVERLAY_H_

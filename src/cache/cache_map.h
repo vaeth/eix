@@ -6,8 +6,8 @@
 //   Wolfgang Frisch <xororand@users.sourceforge.net>
 //   Emil Beinroth <emilbeinroth@gmx.net>
 
-#ifndef EIX__GET_H__
-#define EIX__GET_H__ 1
+#ifndef SRC_CACHE_CACHE_MAP_H_
+#define SRC_CACHE_CACHE_MAP_H_ 1
 
 #include <string>
 
@@ -15,4 +15,4 @@ class BasicCache;
 
 BasicCache *get_cache(const std::string &name, const std::string &appending);
 
-#endif /* EIX__GET_H__ */
+#endif  // SRC_CACHE_CACHE_MAP_H_

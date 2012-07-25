@@ -7,13 +7,14 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__SYSUTILS_H__
-#define EIX__SYSUTILS_H__ 1
+#ifndef SRC_EIXTK_SYSUTILS_H_
+#define SRC_EIXTK_SYSUTILS_H_ 1
 
 #include <config.h>
 
-#include <ctime>
 #include <sys/types.h>
+
+#include <ctime>
 
 /** Get uid of a user.
  * @param u pointer to uid_t .. uid is stored there.
@@ -42,4 +43,4 @@ time_t get_mtime(const char *file);
 /** @return mydate formatted according to locales and dateFormat */
 const char *date_conv(const char *dateFormat, time_t mydate);
 
-#endif /* EIX__SYSUTILS_H__ */
+#endif  // SRC_EIXTK_SYSUTILS_H_

@@ -7,29 +7,32 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "assign_reader.h"
-#include <cache/base.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/depend.h>
-#include <portage/package.h>
+#include <cerrno>
+#include <cstring>
 
 #include <fstream>
 #include <map>
 #include <string>
 
-#include <cerrno>
-#include <cstring>
+#include "cache/base.h"
+#include "cache/common/assign_reader.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/depend.h"
+#include "portage/package.h"
 
-using namespace std;
+using std::map;
+using std::string;
 
-static map<string,string> *
+using std::ifstream;
+
+static map<string, string> *
 get_map_from_cache(const char *file)
 {
 	static string oldfile;
-	static map<string,string> cf;
+	static map<string, string> cf;
 	if(oldfile == file) {
 		return &cf;
 	}
@@ -55,11 +58,11 @@ get_map_from_cache(const char *file)
 const char *
 assign_get_md5sum(const string &filename)
 {
-	map<string,string> *cf(get_map_from_cache(filename.c_str()));
+	map<string, string> *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
 		return NULLPTR;
 	}
-	map<string,string>::const_iterator md5(cf->find("_md5_"));
+	map<string, string>::const_iterator md5(cf->find("_md5_"));
 	if(md5 == cf->end()) {
 		return NULLPTR;
 	}
@@ -71,7 +74,7 @@ void
 assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props,
 	Depend &dep, BasicCache::ErrorCallback error_callback)
 {
-	map<string,string> *cf(get_map_from_cache(filename.c_str()));
+	map<string, string> *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("Can't read cache file %s: %s"))
 			% filename % strerror(errno));
@@ -91,7 +94,7 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 void
 assign_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback)
 {
-	map<string,string> *cf(get_map_from_cache(filename));
+	map<string, string> *cf(get_map_from_cache(filename));
 	if(unlikely(cf == NULLPTR)) {
 		error_callback(eix::format(_("Can't read cache file %s: %s"))
 			% filename % strerror(errno));

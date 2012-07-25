@@ -11,7 +11,7 @@
 // include <config.h> include <eixTk/i18n.h> include <cstdlib>
 
 #define AddOption(opt_type, opt_name, opt_default, opt_description) \
-	eixrc.addDefault(EixRcOption(EixRcOption::opt_type, opt_name, \
+	eixrc->addDefault(EixRcOption(EixRcOption::opt_type, opt_name, \
 		opt_default, opt_description))
 
 #if (DEFAULT_PART == 1)
@@ -1624,7 +1624,7 @@ AddOption(STRING, "FORMAT_STABILITY_TAG",
 		"{else}{wasminusunstable}"
 			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
 			"{*stable=\"%{TAG_FOR_EX_MINUS_UNSTABLE}\"}"
-		"{else}"//{wasminusasterisk}
+		"{else}"  // {wasminusasterisk}
 			"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
 			"{*stable=\"%{TAG_FOR_EX_MINUS_ASTERISK}\"}"
 		"{}{}{}{}{}{}{}"
@@ -1646,7 +1646,7 @@ AddOption(STRING, "FORMAT_STABILITY_TAG",
 	"{else}{isminusunstable}"
 		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
 		"{*stable=\"%{TAG_FOR_MINUS_UNSTABLE}\"}"
-	"{else}"//{isminusasterisk}
+	"{else}"  // {isminusasterisk}
 		"{!$color}{*color}%{FORMAT_COLOR_MASKED}{}"
 		"{*stable=\"%{TAG_FOR_MINUS_ASTERISK}\"}"
 	"{}{}{}{}{}{}{}", _(

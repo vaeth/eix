@@ -8,20 +8,20 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "package_reader.h"
-#include <database/io.h>
-#include <database/types.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/conf/portagesettings.h>
-#include <portage/package.h>
-#include <portage/version.h>
 
-#include <cstdio>
 #include <sys/types.h>
 
-using namespace std;
+#include <cstdio>
+
+#include "database/io.h"
+#include "database/package_reader.h"
+#include "database/types.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/package.h"
+#include "portage/version.h"
 
 PackageReader::~PackageReader()
 {
@@ -31,34 +31,34 @@ PackageReader::~PackageReader()
 bool
 PackageReader::read(Attributes need)
 {
-	if(likely(m_have >= need)) // Already got this one.
+	if(likely(m_have >= need))  // Already got this one
 		return true;
 
 	switch(m_have)
 	{
 		case NONE:
-			if(unlikely(!io::read_string(m_pkg->name, m_fp, &m_errtext))) {
+			if(unlikely(!io::read_string(&(m_pkg->name), m_fp, &m_errtext))) {
 				m_error = true;
 				return false;
 			}
 			if(unlikely(need == NAME))
 				break;
 		case NAME:
-			if(unlikely(!io::read_string(m_pkg->desc, m_fp, &m_errtext))) {
+			if(unlikely(!io::read_string(&(m_pkg->desc), m_fp, &m_errtext))) {
 				m_error = true;
 				return false;
 			}
 			if(unlikely(need == DESCRIPTION))
 				break;
 		case DESCRIPTION:
-			if(unlikely(!io::read_string(m_pkg->homepage, m_fp, &m_errtext))) {
+			if(unlikely(!io::read_string(&(m_pkg->homepage), m_fp, &m_errtext))) {
 				m_error = true;
 				return false;
 			}
 			if(unlikely(need == HOMEPAGE))
 				break;
 		case HOMEPAGE:
-			if(unlikely(!io::read_hash_string(header->license_hash, m_pkg->licenses, m_fp, &m_errtext))) {
+			if(unlikely(!io::read_hash_string(header->license_hash, &(m_pkg->licenses), m_fp, &m_errtext))) {
 				m_error = true;
 				return false;
 			}
@@ -67,7 +67,7 @@ PackageReader::read(Attributes need)
 		case LICENSE:
 			{
 				io::Versize i;
-				if(unlikely(!io::read_num(i, m_fp, &m_errtext))) {
+				if(unlikely(!io::read_num(&i, m_fp, &m_errtext))) {
 					m_error = true;
 					return false;
 				}
@@ -83,13 +83,12 @@ PackageReader::read(Attributes need)
 			if(likely(m_portagesettings != NULLPTR)) {
 				m_portagesettings->calc_local_sets(m_pkg);
 				m_portagesettings->finalize(m_pkg);
-			}
-			else {
+			} else {
 				m_pkg->finalize_masks();
 			}
 			m_pkg->save_maskflags(Version::SAVEMASK_FILE);
 		default:
-		//case ALL:
+		// case ALL:
 			break;
 	}
 	m_have = need;
@@ -135,7 +134,7 @@ PackageReader::next()
 		if(unlikely(m_frames-- == 0)) {
 			return false;
 		}
-		if(unlikely(!io::read_category_header(m_cat_name, m_cat_size, m_fp, &m_errtext))) {
+		if(unlikely(!io::read_category_header(&m_cat_name, &m_cat_size, m_fp, &m_errtext))) {
 			m_error = true;
 			return false;
 		}
@@ -143,7 +142,7 @@ PackageReader::next()
 	}
 
 	io::OffsetType len;
-	if(unlikely(!io::read_num(len, m_fp, &m_errtext))) {
+	if(unlikely(!io::read_num(&len, m_fp, &m_errtext))) {
 		m_error = true;
 		return false;
 	}
@@ -170,7 +169,7 @@ PackageReader::nextCategory()
 		return false;
 	}
 
-	if(likely(io::read_category_header(m_cat_name, m_cat_size, m_fp, &m_errtext))) {
+	if(likely(io::read_category_header(&m_cat_name, &m_cat_size, m_fp, &m_errtext))) {
 		return true;
 	}
 	m_error = true;
@@ -187,7 +186,7 @@ PackageReader::nextPackage()
 	 */
 
 	io::OffsetType dummy;
-	if(unlikely(!io::read_num(dummy, m_fp, &m_errtext))) {
+	if(unlikely(!io::read_num(&dummy, m_fp, &m_errtext))) {
 		m_error = true;
 		return false;
 	}

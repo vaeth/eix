@@ -5,10 +5,10 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__UNUSED_H__
-#define EIX__UNUSED_H__ 1
+#ifndef SRC_EIXTK_UNUSED_H_
+#define SRC_EIXTK_UNUSED_H_ 1
 
-// include <eixTk/unused.h> This comment satisfies check_include script
+// include "eixTk/unused.h" This comment satisfies check_include script
 
 #include <config.h>
 
@@ -30,4 +30,4 @@
 #endif /* HAVE_ATTRIBUTE_UNUSED */
 #endif /* ATTRIBUTE_UNUSED */
 
-#endif /* EIX__UNUSED_H__ */
+#endif  // SRC_EIXTK_UNUSED_H_

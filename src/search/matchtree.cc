@@ -5,24 +5,29 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <config.h>
-#include "matchtree.h"
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/unused.h>
-#include <search/packagetest.h>
-
-#include <iostream>
-#include <stack>
-
 // #define DEBUG_MATCHTREE 1
+
+#include <config.h>
 
 #ifdef DEBUG_MATCHTREE
 #include <cstdlib>
 #endif
 
-using namespace std;
+#include <iostream>
+#include <stack>
+
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/unused.h"
+#include "search/matchtree.h"
+#include "search/packagetest.h"
+
+using std::cerr;
+#ifdef DEBUG_MATCHTREE
+using std::cout;
+#endif
+using std::endl;
 
 bool
 MatchAtom::match(PackageReader *p ATTRIBUTE_UNUSED)
@@ -46,9 +51,15 @@ MatchAtomOperator::match(PackageReader *p)
 {
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " !(" : " (");
-	if(m_left == NULLPTR) cout << " NULLPTR "; else m_left->match(p);
+	if(m_left == NULLPTR)
+		cout << " NULLPTR ";
+	else
+		m_left->match(p);
 	cout << ((m_operator == AtomAnd) ? '&' : '|');
-	if(m_right == NULLPTR) cout << " NULLPTR "; else m_right->match(p);
+	if(m_right == NULLPTR)
+		cout << " NULLPTR ";
+	else
+		m_right->match(p);
 	cout << ") ";
 	return false;
 #endif
@@ -57,8 +68,7 @@ MatchAtomOperator::match(PackageReader *p)
 		if((m_operator == AtomAnd) && ((likely(m_right != NULLPTR)) && !m_right->match(p))) {
 			is_match = false;
 		}
-	}
-	else {
+	} else {
 		if((m_operator == AtomOr) && ((likely(m_right == NULLPTR)) || m_right->match(p))) {
 			is_match = true;
 		}
@@ -82,7 +92,10 @@ MatchAtomTest::match(PackageReader *p)
 #ifdef DEBUG_MATCHTREE
 	cout << (m_negate ? " [!" : " [");
 	if(m_pipe != NULLPTR) cout << "|";
-	if(m_test == NULLPTR) cout << "NULLPTR"; else cout << *reinterpret_cast<int*>(m_test);
+	if(m_test == NULLPTR)
+		cout << "NULLPTR";
+	else
+		cout << *reinterpret_cast<int*>(m_test);
 	cout << "] ";
 	return false;
 #else
@@ -232,8 +245,7 @@ MatchTree::parse_negate()
 	if(local_negate) {
 		parse_new_operator(default_operator);
 		local_finished = false;
-	}
-	else {
+	} else {
 		local_negate = true;
 	}
 }
@@ -246,9 +258,9 @@ MatchTree::parse_open()
 		local_finished = false;
 	}
 	MatchParseData &top(parser_stack.top());
-	parser_stack.push(top.useright ?
+	parser_stack.push(MatchParseData(top.useright ?
 		&(top.subroot->as_operator()->m_right) :
-		&(top.subroot));
+		&(top.subroot)));
 	if(local_negate) {
 		local_negate = false;
 		parser_stack.top().negatebrace = true;
@@ -264,8 +276,7 @@ MatchTree::parse_closeforce()
 	if(top.negatebrace) {
 		if(top.subroot != NULLPTR) {
 			top.subroot->m_negate = !(top.subroot->m_negate);
-		}
-		else {
+		} else {
 			top.subroot = new MatchAtom(true);
 		}
 	}
@@ -298,8 +309,7 @@ MatchTree::end_parse()
 #ifdef DEBUG_MATCHTREE
 	if(root == NULLPTR) {
 		cout << "root=NULLPTR\n";
-	}
-	else {
+	} else {
 		root->match(NULLPTR);
 		cout << "\n";
 	}

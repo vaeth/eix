@@ -7,20 +7,20 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "base.h"
-
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <portage/package.h>
-#include <portage/packagetree.h>
-#include <portage/conf/portagesettings.h>
+#include <cstdlib>
 
 #include <map>
 #include <string>
 
-#include <cstdlib>
+#include "cache/base.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "portage/conf/portagesettings.h"
+#include "portage/package.h"
+#include "portage/packagetree.h"
 
-using namespace std;
+using std::map;
+using std::string;
 
 inline static string::size_type
 revision_index(const string &ver)
@@ -42,8 +42,7 @@ BasicCache::setScheme(const char *prefix, const char *prefixport, const std::str
 	if(prefix) {
 		have_prefix = true;
 		m_prefix = prefix;
-	}
-	else {
+	} else {
 		have_prefix = false;
 		m_prefix = "";
 	}
@@ -71,7 +70,7 @@ BasicCache::getPathHumanReadable() const
 }
 
 void
-BasicCache::env_add_package(map<string,string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const
+BasicCache::env_add_package(map<string, string> &env, const Package &package, const Version &version, const string &ebuild_dir, const char *ebuild_full) const
 {
 	string full(version.getFull());
 	string eroot;
@@ -85,8 +84,7 @@ BasicCache::env_add_package(map<string,string> &env, const Package &package, con
 	if(unlikely(envptr != NULLPTR)) {
 		env["ROOT"] = envptr;
 		eroot = envptr + m_prefix;
-	}
-	else {
+	} else {
 		env["ROOT"] = "/";
 		eroot = m_prefix;
 	}
@@ -120,8 +118,7 @@ BasicCache::env_add_package(map<string,string> &env, const Package &package, con
 	if(ind == string::npos) {
 		env["PR"]   = "r0";
 		mainversion = full;
-	}
-	else {
+	} else {
 		env["PR"].assign(full, ind + 1, string::npos);
 		mainversion.assign(full, 0, ind);
 	}

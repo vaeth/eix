@@ -7,15 +7,17 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "version.h"
-#include <eixTk/likely.h>
-#include <eixTk/stringutils.h>
-
 #include <set>
 #include <string>
 #include <vector>
 
-using namespace std;
+#include "eixTk/likely.h"
+#include "eixTk/stringutils.h"
+#include "portage/version.h"
+
+using std::set;
+using std::string;
+using std::vector;
 
 const IUse::Flags
 	IUse::USEFLAGS_NIL,
@@ -24,12 +26,12 @@ const IUse::Flags
 	IUse::USEFLAGS_MINUS;
 
 IUse::Flags
-IUse::parse(string &s)
+IUse::parse(string *s)
 {
 	Flags ret(USEFLAGS_NIL);
 	string::size_type c(0);
-	for( ; likely(c < s.length()); ++c) {
-		switch(s[c]) {
+	for( ; likely(c < s->length()); ++c) {
+		switch((*s)[c]) {
 			case '+':
 				ret |= USEFLAGS_PLUS;
 				continue;
@@ -52,7 +54,7 @@ IUse::parse(string &s)
 	}
 	if(c == 0)
 		return USEFLAGS_NORMAL;
-	s.erase(0, c);
+	s->erase(0, c);
 	if(ret == USEFLAGS_NIL)
 		return USEFLAGS_NORMAL;
 	return ret;
@@ -92,8 +94,8 @@ IUse::asString() const
 			prefix = "(+-)";
 			break;
 		default:
-		//case USEFLAGS_NIL:
-		//case USEFLAGS_NORMAL:
+		// case USEFLAGS_NIL:
+		// case USEFLAGS_NORMAL:
 			return name();
 	}
 	return prefix + name();
@@ -135,7 +137,7 @@ void
 IUseSet::insert(const string &iuse)
 {
 	vector<string> vec;
-	split_string(vec, iuse);
+	split_string(&vec, iuse);
 	for(vector<string>::const_iterator it(vec.begin());
 		likely(it != vec.end()); ++it) {
 		insert_fast(*it);
@@ -169,15 +171,15 @@ Version::modify_effective_keywords(const string &modify_keys)
 	if(effective_state == EFFECTIVE_UNUSED) {
 		if(!modify_keywords(effective_keywords, full_keywords, modify_keys))
 			return;
-	}
-	else if(!modify_keywords(effective_keywords, effective_keywords, modify_keys))
+	} else if(!modify_keywords(effective_keywords, effective_keywords, modify_keys)) {
 		return;
+	}
 	if(likely(effective_keywords == full_keywords)) {
 		effective_state = EFFECTIVE_UNUSED;
 		effective_keywords.clear();
-	}
-	else
+	} else {
 		effective_state = EFFECTIVE_USED;
+	}
 }
 
 void

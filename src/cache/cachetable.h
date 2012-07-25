@@ -7,21 +7,21 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__CACHETABLE_H__
-#define EIX__CACHETABLE_H__ 1
-
-#include <cache/base.h>
-#include <eixTk/ptr_list.h>
+#ifndef SRC_CACHE_CACHETABLE_H_
+#define SRC_CACHE_CACHETABLE_H_ 1
 
 #include <map>
 #include <string>
+
+#include "cache/base.h"
+#include "eixTk/ptr_list.h"
 
 class CacheTable : public eix::ptr_list<BasicCache>
 {
 	private:
 		std::string m_appending;
 	public:
-		CacheTable(const std::string &appending) : m_appending(appending)
+		explicit CacheTable(const std::string &appending) : m_appending(appending)
 		{ }
 
 		~CacheTable()
@@ -30,4 +30,4 @@ class CacheTable : public eix::ptr_list<BasicCache>
 		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override, std::string *errtext);
 };
 
-#endif /* EIX__CACHETABLE_H__ */
+#endif  // SRC_CACHE_CACHETABLE_H_

@@ -7,12 +7,12 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__PERCENTAGE_H__
-#define EIX__PERCENTAGE_H__ 1
-
-#include <database/types.h>
+#ifndef SRC_EIXTK_PERCENTAGE_H_
+#define SRC_EIXTK_PERCENTAGE_H_ 1
 
 #include <string>
+
+#include "database/types.h"
 
 class PercentStatus {
 public:
@@ -35,6 +35,7 @@ public:
 
 	void interprint_end()
 	{ reprint(); }
+
 private:
 	void init();
 	void reprint();
@@ -47,4 +48,4 @@ private:
 
 
 
-#endif /* EIX__PERCENTAGE_H__ */
+#endif  // SRC_EIXTK_PERCENTAGE_H_

@@ -7,19 +7,20 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "cachetable.h"
-#include <cache/base.h>
-#include <cache/cache_map.h>
-#include <eixTk/formated.h>
-#include <eixTk/filenames.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-
 #include <map>
 #include <string>
 
-using namespace std;
+#include "cache/base.h"
+#include "cache/cache_map.h"
+#include "cache/cachetable.h"
+#include "eixTk/formated.h"
+#include "eixTk/filenames.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+
+using std::map;
+using std::string;
 
 bool
 CacheTable::addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const string &cache_name, const map<string, string> *override, string *errtext)

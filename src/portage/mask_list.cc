@@ -7,24 +7,26 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "mask_list.h"
-#include <eixTk/exceptions.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixTk/utils.h>
-#include <portage/basicversion.h>
-#include <portage/keywords.h>
-#include <portage/mask.h>
-#include <portage/package.h>
-
 #include <map>
 #include <string>
 #include <vector>
 
+#include "eixTk/exceptions.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/utils.h"
+#include "portage/basicversion.h"
+#include "portage/keywords.h"
+#include "portage/mask.h"
+#include "portage/mask_list.h"
+#include "portage/package.h"
+
 class Version;
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 template <>
 bool
@@ -65,7 +67,7 @@ MaskList<Mask>::applyMasks(Package *p, Keywords::Redundant check) const
 	bool had_unmask(false);
 	for(Get::const_iterator it(masks->begin());
 		likely(it != masks->end()); ++it) {
-		it->checkMask(*p, check);
+		it->checkMask(p, check);
 		switch(it->get_type())
 		{
 			case Mask::maskMask:
@@ -160,7 +162,7 @@ PreList::handle_line(const std::string &line, FilenameIndex file, LineNumber num
 		return false;
 	}
 	if(only_add || (line[0] != '-')) {
-		return add_line(line,file, number);
+		return add_line(line, file, number);
 	}
 	return remove_line(line.c_str() + 1);
 }
@@ -169,7 +171,7 @@ bool
 PreList::add_line(const std::string &line, FilenameIndex file, LineNumber number)
 {
 	vector<string> l;
-	split_string(l, line);
+	split_string(&l, line);
 	return add_splitted(l, file, number);
 }
 
@@ -177,7 +179,7 @@ bool
 PreList::remove_line(const std::string &line)
 {
 	vector<string> l;
-	split_string(l, line);
+	split_string(&l, line);
 	return remove_splitted(l);
 }
 
@@ -199,8 +201,7 @@ PreList::add_splitted(const std::vector<std::string> &line, FilenameIndex file, 
 	if(e.removed) {
 		e.removed = false;
 		return true;
-	}
-	else {
+	} else {
 		e.locally_double = true;
 		return false;
 	}
@@ -233,7 +234,7 @@ PreList::finalize()
 
 	// We first build a map of the result and
 	// set the duplicate names to removed.
-	map<string,PreListEntry> result;
+	map<string, PreListEntry> result;
 	for(vector<PreListOrderEntry>::const_iterator it(order.begin());
 		likely(it != order.end()); ++it) {
 		if(unlikely(it->removed)) {
@@ -244,8 +245,7 @@ PreList::finalize()
 		map<string, PreListEntry>::iterator r(result.find(*curr));
 		if(likely(r == result.end())) {
 			e = &(result[*curr]);
-		}
-		else {
+		} else {
 			e = &(r->second);
 		}
 		e->filename_index = it->filename_index;
@@ -270,7 +270,7 @@ PreList::finalize()
 }
 
 void
-PreList::initialize(MaskList<Mask> &l, Mask::Type t)
+PreList::initialize(MaskList<Mask> *l, Mask::Type t)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
@@ -282,15 +282,15 @@ PreList::initialize(MaskList<Mask> &l, Mask::Type t)
 				it->linenumber, it->name + " ...", errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {
-			l.add(m);
+			l->add(m);
 		}
 	}
-	l.finalize();
+	l->finalize();
 	clear();
 }
 
 void
-PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
+PreList::initialize(MaskList<KeywordMask> *l, string raised_arch)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
@@ -304,20 +304,19 @@ PreList::initialize(MaskList<KeywordMask> &l, string raised_arch)
 		if(likely(r != BasicVersion::parsedError)) {
 			if(it->args.empty()) {
 				m.keywords = raised_arch;
-			}
-			else {
-				join_to_string(m.keywords, it->args);
+			} else {
+				join_to_string(&(m.keywords), it->args);
 			}
 			m.locally_double = it->locally_double;
-			l.add(m);
+			l->add(m);
 		}
 	}
-	l.finalize();
+	l->finalize();
 	clear();
 }
 
 void
-PreList::initialize(MaskList<PKeywordMask> &l)
+PreList::initialize(MaskList<PKeywordMask> *l)
 {
 	finalize();
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
@@ -329,10 +328,10 @@ PreList::initialize(MaskList<PKeywordMask> &l)
 				it->linenumber, it->name + " ...", errtext);
 		}
 		if(likely(r != BasicVersion::parsedError)) {
-			join_to_string(m.keywords, it->args);
-			l.add(m);
+			join_to_string(&(m.keywords), it->args);
+			l->add(m);
 		}
 	}
-	l.finalize();
+	l->finalize();
 	clear();
 }

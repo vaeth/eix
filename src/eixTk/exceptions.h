@@ -7,10 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__EXCEPTIONS_H__
-#define EIX__EXCEPTIONS_H__ 1
+#ifndef SRC_EIXTK_EXCEPTIONS_H_
+#define SRC_EIXTK_EXCEPTIONS_H_ 1
 
-// include <eixTk/exceptions.h> This comment satisfies check_include script
+// include "eixTk/exceptions.h" This comment satisfies check_include script
 #include <string>
 #include <vector>
 
@@ -25,4 +25,4 @@ portage_parse_error(const std::string &file, const Iterator &begin, const Iterat
 	portage_parse_error(file, std::distance(begin, line) + 1, *line, errtext);
 }
 
-#endif /* EIX__EXCEPTIONS_H__ */
+#endif  // SRC_EIXTK_EXCEPTIONS_H_

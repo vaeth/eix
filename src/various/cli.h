@@ -7,10 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__CLI_H__
-#define EIX__CLI_H__ 1
+#ifndef SRC_VARIOUS_CLI_H_
+#define SRC_VARIOUS_CLI_H_ 1
 
-#include <eixTk/argsreader.h>
+#include "eixTk/argsreader.h"
 
 class DBHeader;
 class EixRc;
@@ -112,4 +112,4 @@ enum cli_options {
 };
 
 
-#endif /* EIX__CLI_H__ */
+#endif  // SRC_VARIOUS_CLI_H_

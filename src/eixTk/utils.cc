@@ -8,13 +8,14 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "utils.h"
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <eixrc/global.h>
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
 
 #include <algorithm>
 #include <fstream>
@@ -22,13 +23,17 @@
 #include <string>
 #include <vector>
 
-#include <cerrno>
-#include <cstdlib>
-#include <cstring>
-#include <dirent.h>
-#include <sys/stat.h>
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/utils.h"
+#include "eixrc/global.h"
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 bool
 scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bool sorted)
@@ -37,8 +42,8 @@ scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bo
 	DIR *dirhandle(opendir(dir.c_str()));
 	if(!dirhandle)
 		return false;
-	const struct dirent *d;
-	while((d = readdir(dirhandle)) != NULLPTR) {
+	struct dirent res, *d;
+	while(likely((readdir_r(dirhandle, &res, &d) == 0) && (d != NULLPTR))) {
 		const char *name(d->d_name);
 		// Omit "." and ".." since we must not rely on their existence anyway
 		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d)))
@@ -55,7 +60,7 @@ static bool
 pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments, string *errtext)
 {
 	string line;
-	ifstream ifstr(file);
+	std::ifstream ifstr(file);
 	if(!ifstr.is_open()) {
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("Can't open %s: %s")) % file % strerror(errno);
@@ -69,13 +74,13 @@ pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool
 				line.erase(x);
 		}
 
-		trim(line);
+		trim(&line);
 
 		if((!remove_empty) || (!line.empty())) {
 			v->push_back(line);
 		}
 	}
-	if(ifstr.eof()) { // if we have eof, everything went well
+	if(ifstr.eof()) {  // if we have eof, everything went well
 		return true;
 	}
 	if(errtext != NULLPTR) {
@@ -109,8 +114,7 @@ pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recu
 			--depth;
 		}
 		return rvalue;
-	}
-	else {
+	} else {
 		return pushback_lines_file(file, v, remove_empty, remove_comments, errtext);
 	}
 }
@@ -120,8 +124,8 @@ pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recu
  *  "blank" selector-function */
 static const char **pushback_files_exclude;
 static bool pushback_files_no_hidden;
-static short pushback_files_only_type;
-static const string *pushback_files_dir_path; // defined if pushback_files_only_type is nonzero
+static size_t pushback_files_only_type;
+static const string *pushback_files_dir_path;  // defined if pushback_files_only_type is nonzero
 static int
 pushback_files_selector(SCANDIR_ARG3 dir_entry)
 {
@@ -172,7 +176,7 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
  * @param full_path return full pathnames
  * @return true if everything is ok */
 bool
-pushback_files(const string &dir_path, vector<string> &into, const char *exclude[], short only_type, bool no_hidden, bool full_path)
+pushback_files(const string &dir_path, vector<string> &into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path)
 {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;
@@ -194,7 +198,7 @@ pushback_files(const string &dir_path, vector<string> &into, const char *exclude
 
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
-void join_map(map<string,string> *append_to, map<string,string>::iterator it, map<string,string>::iterator it_end)
+void join_map(map<string, string> *append_to, map<string, string>::iterator it, map<string, string>::iterator it_end)
 {
 	while(likely(it != it_end)) {
 		(*append_to)[it->first] =

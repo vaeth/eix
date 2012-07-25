@@ -8,32 +8,36 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "ebuild_exec.h"
-#include <cache/base.h>
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/sysutils.h>
-#include <eixrc/eixrc.h>
-#include <eixrc/global.h>
-#include <portage/conf/portagesettings.h>
 
-#include <map>
-#include <string>
-#include <vector>
-
-#include <csignal>
-#include <cstdlib>
-#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+#include <csignal>
+#include <cstdlib>
+#include <cstring>
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include "cache/base.h"
+#include "cache/common/ebuild_exec.h"
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/sysutils.h"
+#include "eixrc/eixrc.h"
+#include "eixrc/global.h"
+#include "portage/conf/portagesettings.h"
+
 extern char **environ;
 
-using namespace std;
+using std::map;
+using std::string;
+using std::vector;
 
 EbuildExec *EbuildExec::handler_arg;
 
@@ -124,7 +128,7 @@ EbuildExec::make_tempfile()
 	char *temp(new char[256]);
 	if(unlikely(temp == NULLPTR))
 		return false;
-	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");
+	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");  // NOLINT(runtime/printf)
 	int fd(mkstemp(temp));
 	if(fd == -1)
 		return false;
@@ -147,9 +151,9 @@ EbuildExec::delete_cachefile()
 			base->m_error_callback(eix::format(_("Can't unlink tempfile %s")) % c);
 		else if(is_file(c))
 			base->m_error_callback(eix::format(_("Tempfile %s still there after unlink")) % c);
-	}
-	else
+	} else {
 		base->m_error_callback(eix::format(_("Tempfile %s is not a file")) % c);
+	}
 	remove_handler();
 	cache_defined = false;
 	cachefile.clear();
@@ -160,7 +164,8 @@ EbuildExec::delete_cachefile()
 void
 EbuildExec::calc_environment(const char *name, const string &dir, const Package &package, const Version &version)
 {
-	c_env = NULLPTR; envstrings = NULLPTR;
+	c_env = NULLPTR;
+	envstrings = NULLPTR;
 #ifdef HAVE_SETENV
 	if(!use_ebuild_sh)
 		return;
@@ -176,8 +181,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 				env[string(*e, s - (*e))] = s + 1;
 		}
 		env["PORTDIR_OVERLAY"] = (*(base->portagesettings))["PORTDIR_OVERLAY"].c_str();
-	}
-	else
+	} else  // NOLINT(readability/braces)
 #endif
 	{
 		base->env_add_package(env, package, version, dir, name);
@@ -203,7 +207,7 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	c_env[i] = NULLPTR;
 }
 
-static const int EXECLE_FAILED=17;
+static const int EXECLE_FAILED = 17;
 
 string *
 EbuildExec::make_cachefile(const char *name, const string &dir, const Package &package, const Version &version)
@@ -220,8 +224,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 			remove_handler();
 			return NULLPTR;
 		}
-	}
-	else {
+	} else {
 		exec_name = exec_ebuild.c_str();
 		cachefile = ebuild_depend_temp;
 		cache_defined = true;
@@ -239,9 +242,9 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	}
 	if(child == 0)
 	{
-		if(use_ebuild_sh)
+		if(use_ebuild_sh) {
 			execle(exec_name, exec_name, "depend", static_cast<const char *>(NULLPTR), c_env);
-		else {
+		} else {
 #ifndef HAVE_SETENV
 			if(c_env != NULLPTR)
 				execle(exec_name, exec_name, name, "depend", static_cast<const char *>(NULLPTR), c_env);
@@ -258,9 +261,9 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	delete envstrings;
 
 	// Only now we check for the child exit status or signals:
-	if(got_exit_signal)
+	if(got_exit_signal) {
 		base->m_error_callback(eix::format(_("Got signal %s")) % type_of_exit_signal);
-	else if(WIFSIGNALED(exec_status)) {
+	} else if(WIFSIGNALED(exec_status)) {
 		got_exit_signal = true;
 		type_of_exit_signal = WTERMSIG(exec_status);
 		base->m_error_callback(eix::format(_("Ebuild got signal %s")) % type_of_exit_signal);
@@ -271,22 +274,22 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 		return NULLPTR;
 	}
 	if(WIFEXITED(exec_status)) {
-		if(!(WEXITSTATUS(exec_status))) // the only good case:
+		if(!(WEXITSTATUS(exec_status)))  // the only good case:
 			return &cachefile;
 		if((WEXITSTATUS(exec_status)) == EXECLE_FAILED)
 			base->m_error_callback(eix::format(_("Could not start %s")) % exec_name);
 		else
 			base->m_error_callback(eix::format(_("Ebuild failed with status %s")) % WEXITSTATUS(exec_status));
-	}
-	else
+	} else {
 		base->m_error_callback(_("Child aborted in a strange way"));
+	}
 	delete_cachefile();
 	return NULLPTR;
 }
 
 bool EbuildExec::know_settings = false;
-string EbuildExec::exec_ebuild, EbuildExec::exec_ebuild_sh, EbuildExec::ebuild_depend_temp;
-string EbuildExec::portage_rootpath, EbuildExec::portage_bin_path;
+string EbuildExec::exec_ebuild, EbuildExec::exec_ebuild_sh, EbuildExec::ebuild_depend_temp;  // NOLINT(runtime/string)
+string EbuildExec::portage_rootpath, EbuildExec::portage_bin_path;  // NOLINT(runtime/string)
 
 void
 EbuildExec::calc_settings()

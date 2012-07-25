@@ -7,23 +7,24 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include "mask.h"
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/keywords.h>
-#include <portage/package.h>
-#include <portage/version.h>
+#include <fnmatch.h>
+
+#include <cstring>
 
 #include <string>
 
-#include <cstring>
-#include <fnmatch.h>
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/keywords.h"
+#include "portage/mask.h"
+#include "portage/package.h"
+#include "portage/version.h"
 
-using namespace std;
+using std::string;
 
 /** Data-driven programming is nice :).
  * Must be in order .. no previous operator is allowed to be a prefix of a
@@ -116,37 +117,33 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 				}
 				source = slot_end + 2;
 				dest = &m_reponame;
-			}
-			else {
+			} else {
 				m_reponame.clear();
 				dest = &m_slotname;
 			}
-		}
-		else {
+		} else {
 			++source;
 			m_test_slot = false;
 			m_slotname.clear();
 			dest = &m_reponame;
 		}
 		const char *usestart(strchr(source, '['));
-		if((usestart != NULLPTR) && ! strchr(usestart + 1, ']')) {
+		if((usestart != NULLPTR) && (strchr(usestart + 1, ']') == NULLPTR)) {
 			dest->assign(source, usestart - source);
-		}
-		else {
+		} else {
 			dest->assign(source);
 		}
 		m_test_reponame = !(m_reponame.empty());
-		if(slot_subslot(m_slotname, m_subslotname)) {
+		if(slot_subslot(&m_slotname, &m_subslotname)) {
 			m_test_subslot = m_test_slot;
 		}
-	}
-	else {
+	} else {
 		m_test_slot = m_test_reponame = false;
 		m_slotname.clear();
 		m_subslotname.clear();
 		m_reponame.clear();
 		end = strchr(str, '[');
-		if((end != NULLPTR) && ! strchr(end + 1, ']'))
+		if((end != NULLPTR) && (strchr(end + 1, ']') == NULLPTR))
 			end = NULLPTR;
 	}
 
@@ -181,8 +178,7 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 				if(m_operator != maskOpRevisions) {
 					*errtext = _("A wildcard is only valid with the = operator.");
 					return parsedError;
-				}
-				else {
+				} else {
 					*errtext = _(
 						"A wildcard is only valid with the = operator.\n"
 						"Portage would also accept something like ~app-shells/bash-3*,\n"
@@ -297,19 +293,19 @@ Mask::test(const ExtendedVersion *ev) const
 }
 
 void
-Mask::match(Matches &m, Package &pkg) const
+Mask::match(Matches *m, Package *pkg) const
 {
-	for(Package::iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
+	for(Package::iterator it(pkg->begin()); likely(it != pkg->end()); ++it) {
 		if(test(*it)) {
-			m.push_back(*it);
+			m->push_back(*it);
 		}
 	}
 }
 
 bool
-Mask::have_match(Package &pkg) const
+Mask::have_match(const Package &pkg) const
 {
-	for(Package::iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
+	for(Package::const_iterator it(pkg.begin()); likely(it != pkg.end()); ++it) {
 		if(test(*it)) {
 			return true;
 		}
@@ -321,17 +317,17 @@ Mask::have_match(Package &pkg) const
  * @param pkg            package you want tested
  * @param check          Redundancy checks which should apply */
 void
-Mask::checkMask(Package& pkg, Keywords::Redundant check) const
+Mask::checkMask(Package *pkg, Keywords::Redundant check) const
 {
-	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
+	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		apply(*i, true, check);
 	}
 }
 
 void
-KeywordMask::applyItem(Package &pkg) const
+KeywordMask::applyItem(Package *pkg) const
 {
-	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
+	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		if(test(*i)) {
 			applyItem(*i);
 		}
@@ -339,9 +335,9 @@ KeywordMask::applyItem(Package &pkg) const
 }
 
 void
-PKeywordMask::applyItem(Package &pkg) const
+PKeywordMask::applyItem(Package *pkg) const
 {
-	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
+	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
 		if(test(*i)) {
 			applyItem(*i);
 		}
@@ -349,10 +345,10 @@ PKeywordMask::applyItem(Package &pkg) const
 }
 
 void
-SetMask::applyItem(Package& pkg) const
+SetMask::applyItem(Package *pkg) const
 {
-	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
-		if(i->is_in_set(m_set)) // No need to check: Already in set
+	for(Package::iterator i(pkg->begin()); likely(i != pkg->end()); ++i) {
+		if(i->is_in_set(m_set))  // No need to check: Already in set
 			continue;
 		if(!test(*i))
 			continue;
@@ -361,12 +357,12 @@ SetMask::applyItem(Package& pkg) const
 }
 
 bool
-Mask::ismatch(Package& pkg) const
+Mask::ismatch(const Package &pkg) const
 {
 	if (fnmatch(m_name.c_str(), pkg.name.c_str(), 0) ||
 		fnmatch(m_category.c_str(), pkg.category.c_str(), 0))
 		return false;
-	for(Package::iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
+	for(Package::const_iterator i(pkg.begin()); likely(i != pkg.end()); ++i) {
 		if(test(*i))
 			return true;
 	}
@@ -422,8 +418,7 @@ Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 				break;
 			if((!do_test) || test(ve)) {
 				ve->maskflags.setbits(MaskFlags::MASK_SYSTEM);
-			}
-			else {
+			} else {
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
 			}
 			break;
@@ -440,7 +435,7 @@ Mask::apply(Version *ve, bool do_test, Keywords::Redundant check) const
 				break;
 			if(do_test && (!test(ve)))
 				ve->maskflags.setbits(MaskFlags::MASK_PROFILE);
-		//	break;
+			// break;
 		// case maskTypeNone:
 		default:
 			break;

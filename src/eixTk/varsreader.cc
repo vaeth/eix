@@ -8,45 +8,84 @@
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
 #include <config.h>
-#include "varsreader.h"
-#include <eixTk/formated.h>
-#include <eixTk/i18n.h>
-#include <eixTk/likely.h>
-#include <eixTk/null.h>
-#include <eixTk/stringutils.h>
 
-#include <map>
-#include <string>
-#include <vector>
-
-#include <cstring>
 #include <fcntl.h>
+#include <fnmatch.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <cstring>
+
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "eixTk/formated.h"
+#include "eixTk/i18n.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
+#include "eixTk/stringutils.h"
+#include "eixTk/varsreader.h"
+
 /** Current input for FSM */
 #define INPUT (*(x))
+
 /** Switch to different state */
-#define CHSTATE(z) do { STATE = &VarsReader::z; return; } while(0)
-#define STOP do { STATE = NULLPTR; return; } while(0)
-#define ERROR do { retstate = false; STATE = NULLPTR; return; } while(0)
+#define CHSTATE(z) do { \
+		STATE = &VarsReader::z; \
+		return; \
+	} while(0)
+
+#define STOP do { \
+		STATE = NULLPTR; \
+		return; \
+	} while(0)
+
+#define ERROR do { \
+		retstate = false; \
+		STATE = NULLPTR; \
+		return; \
+	} while(0)
+
 /** Move to next input and check for end of buffer. */
-#define NEXT_INPUT do { if(unlikely(++(x) == filebuffer_end)) STOP; } while(0)
-#define SKIP_SPACE do { while((INPUT == '\t') || (INPUT == ' ')) { NEXT_INPUT; } } while(0)
-#define NEXT_INPUT_EVAL do { if(unlikely(++(x) == filebuffer_end)) CHSTATE(EVAL_READ); } while(0)
+#define NEXT_INPUT do { \
+		if(unlikely(++(x) == filebuffer_end)) \
+			STOP; \
+	} while(0)
+
+#define SKIP_SPACE do { \
+		while((INPUT == '\t') || (INPUT == ' ')) NEXT_INPUT; \
+	} while(0)
+
+#define NEXT_INPUT_EVAL do { \
+	if(unlikely(++(x) == filebuffer_end)) \
+		CHSTATE(EVAL_READ); \
+	} while(0)
+
 #define INPUT_EOF (unlikely((x) == filebuffer_end))
-#define NEXT_INPUT_OR_EOF do { if(!INPUT_EOF) ++(x); } while(0)
+
+#define NEXT_INPUT_OR_EOF do { \
+		if(!INPUT_EOF) \
+			++(x); \
+	} while(0)
+
 #define PREV_INPUT (--(x))
+
 /** Check value-buffer for overrun and push c into the current value-buffer . */
-#define VALUE_APPEND(c) do { value.append(&(c), 1); } while(0)
+#define VALUE_APPEND(c) do { \
+		value.append(&(c), 1); \
+	} while(0)
+
 /** Reset value pointer */
 #define VALUE_CLEAR value.clear()
 
-#include <fnmatch.h>
-
-using namespace std;
+using std::map;
+using std::pair;
+using std::string;
+using std::vector;
 
 const VarsReader::Flags
 	VarsReader::NONE,
@@ -89,10 +128,14 @@ VarsReader::JUMP_NOISE()
 {
 	while(likely(INPUT != '#' && INPUT != '\n' && INPUT != '\'' && INPUT != '"' && INPUT != '\\')) NEXT_INPUT;
 	switch(INPUT) {
-		case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
-		case '\\':  NEXT_INPUT; CHSTATE(NOISE_ESCAPE);
-		case '"':   NEXT_INPUT; CHSTATE(NOISE_DOUBLE_QUOTE);
-		case '\'':  NEXT_INPUT; CHSTATE(NOISE_SINGLE_QUOTE);
+		case '#':   NEXT_INPUT;
+		            CHSTATE(JUMP_COMMENT);
+		case '\\':  NEXT_INPUT;
+		            CHSTATE(NOISE_ESCAPE);
+		case '"':   NEXT_INPUT;
+		            CHSTATE(NOISE_DOUBLE_QUOTE);
+		case '\'':  NEXT_INPUT;
+		            CHSTATE(NOISE_SINGLE_QUOTE);
 		default:    break;
 	}
 	NEXT_INPUT;
@@ -106,7 +149,7 @@ void
 VarsReader::ASSIGN_KEY_VALUE()
 {
 	if(unlikely(sourcecmd)) {
-		sourcecmd=false;
+		sourcecmd = false;
 		string errtext;
 		if(unlikely(!source(value, &errtext))) {
 			m_errtext = eix::format(_("%s: failed to source %r (%s)")) % file_name % value % errtext;
@@ -115,8 +158,7 @@ VarsReader::ASSIGN_KEY_VALUE()
 		if((parse_flags & ONLY_HAVE_READ) == ONLY_HAVE_READ) {
 			STOP;
 		}
-	}
-	else if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
+	} else if(unlikely( (parse_flags & ONLY_KEYWORDS_SLOT) )) {
 		if(unlikely(strncmp("KEYWORDS=", key_begin, 9) == 0))
 		{
 			(*vars)[string(key_begin, key_len)] = value;
@@ -124,17 +166,14 @@ VarsReader::ASSIGN_KEY_VALUE()
 			if(parse_flags & SLOT_READ) {
 				STOP;
 			}
-		}
-		else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0))
-		{
+		} else if(unlikely(strncmp("SLOT=", key_begin, 5) == 0)) {
 			(*vars)[string(key_begin, key_len)] = value;
 			parse_flags |= SLOT_READ;
 			if(parse_flags & KEYWORDS_READ) {
 				STOP;
 			}
 		}
-	}
-	else {
+	} else {
 		(*vars)[string(key_begin, key_len)] = value;
 	}
 	if(INPUT_EOF) {
@@ -162,7 +201,7 @@ VarsReader::JUMP_COMMENT()
 void
 VarsReader::JUMP_WHITESPACE()
 {
-	sourcecmd=false;
+	sourcecmd = false;
 	SKIP_SPACE;
 	switch(INPUT) {
 		case '#':
@@ -177,9 +216,10 @@ VarsReader::JUMP_WHITESPACE()
 				int i(0);
 				const char *begin(x);
 				while(likely(isalpha(INPUT, localeC))) {
-					NEXT_INPUT; ++i;
+					NEXT_INPUT;
+					++i;
 				}
-				if(unlikely((i!=6) || strncmp("source", begin, 6) != 0)) {
+				if(unlikely((i != 6) || strncmp("source", begin, 6) != 0)) {
 					CHSTATE(JUMP_NOISE);
 					break;
 				}
@@ -189,11 +229,11 @@ VarsReader::JUMP_WHITESPACE()
 			NEXT_INPUT;
 			if((parse_flags & ALLOW_SOURCE) &&
 				(INPUT == '\t' || INPUT == ' ')) {
-				sourcecmd=true;
+				sourcecmd = true;
 				CHSTATE(EVAL_VALUE);
-			}
-			else
+			} else {
 				CHSTATE(JUMP_NOISE);
+			}
 			break;
 		default:
 			if(isValidKeyCharacterStart(INPUT)) {
@@ -215,11 +255,15 @@ void
 VarsReader::FIND_ASSIGNMENT()
 {
 	key_len = 0;
-	while(likely(isValidKeyCharacter(INPUT))) { NEXT_INPUT; ++key_len;}
+	while(likely(isValidKeyCharacter(INPUT))) {
+		NEXT_INPUT;
+		++key_len;
+	}
 	SKIP_SPACE;
 	switch(INPUT) {
 		case '=':  CHSTATE(EVAL_VALUE);
-		case '#':  NEXT_INPUT; CHSTATE(JUMP_COMMENT);
+		case '#':  NEXT_INPUT;
+		           CHSTATE(JUMP_COMMENT);
 		default:   CHSTATE(JUMP_NOISE);
 	}
 }
@@ -239,24 +283,32 @@ VarsReader::EVAL_VALUE()
 	if(parse_flags & PORTAGE_ESCAPES) {
 		SKIP_SPACE;
 		switch(INPUT) {
-			case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
-			case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
+			case '"':   NEXT_INPUT;
+			            CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
+			case '\'':  NEXT_INPUT;
+			            CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
 			case '\r':
 			case '\n':  CHSTATE(ASSIGN_KEY_VALUE);
-			case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
-			case '\\':  NEXT_INPUT; CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
+			case '#':   NEXT_INPUT;
+			            CHSTATE(JUMP_COMMENT);
+			case '\\':  NEXT_INPUT;
+			            CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
 			default:    CHSTATE(VALUE_WHITESPACE_PORTAGE);
 		}
 	}
 	switch(INPUT) {
-		case '"':   NEXT_INPUT; CHSTATE(VALUE_DOUBLE_QUOTE);
-		case '\'':  NEXT_INPUT; CHSTATE(VALUE_SINGLE_QUOTE);
+		case '"':   NEXT_INPUT;
+		            CHSTATE(VALUE_DOUBLE_QUOTE);
+		case '\'':  NEXT_INPUT;
+		            CHSTATE(VALUE_SINGLE_QUOTE);
 		case '\r':
 		case '\n':  CHSTATE(ASSIGN_KEY_VALUE);
 		case '\t':
 		case ' ':   CHSTATE(JUMP_NOISE);
-		case '#':   NEXT_INPUT; CHSTATE(JUMP_COMMENT);
-		case '\\':  NEXT_INPUT; CHSTATE(WHITESPACE_ESCAPE);
+		case '#':   NEXT_INPUT;
+		            CHSTATE(JUMP_COMMENT);
+		case '\\':  NEXT_INPUT;
+		            CHSTATE(WHITESPACE_ESCAPE);
 		default:    CHSTATE(VALUE_WHITESPACE);
 	}
 }
@@ -275,26 +327,32 @@ VarsReader::EVAL_READ()
 	}
 	if(parse_flags & PORTAGE_ESCAPES) {
 		switch(INPUT) {
-			case '"':   NEXT_INPUT_EVAL; CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
-			case '\'':  NEXT_INPUT_EVAL; CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
+			case '"':   NEXT_INPUT_EVAL;
+			            CHSTATE(VALUE_DOUBLE_QUOTE_PORTAGE);
+			case '\'':  NEXT_INPUT_EVAL;
+			            CHSTATE(VALUE_SINGLE_QUOTE_PORTAGE);
 			case '\t':
 			case '\r':
 			case '\n':
 			case ' ':
 			case '#':   CHSTATE(ASSIGN_KEY_VALUE);
-			case '\\':  NEXT_INPUT_EVAL; CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
+			case '\\':  NEXT_INPUT_EVAL;
+			            CHSTATE(WHITESPACE_ESCAPE_PORTAGE);
 			default:    CHSTATE(VALUE_WHITESPACE_PORTAGE);
 		}
 	}
 	switch(INPUT) {
-		case '"':   NEXT_INPUT_EVAL; CHSTATE(VALUE_DOUBLE_QUOTE);
-		case '\'':  NEXT_INPUT_EVAL; CHSTATE(VALUE_SINGLE_QUOTE);
+		case '"':   NEXT_INPUT_EVAL;
+		            CHSTATE(VALUE_DOUBLE_QUOTE);
+		case '\'':  NEXT_INPUT_EVAL;
+		            CHSTATE(VALUE_SINGLE_QUOTE);
 		case '\t':
 		case '\r':
 		case '\n':
 		case ' ':
 		case '#':   CHSTATE(ASSIGN_KEY_VALUE);
-		case '\\':  NEXT_INPUT_EVAL; CHSTATE(WHITESPACE_ESCAPE);
+		case '\\':  NEXT_INPUT_EVAL;
+		            CHSTATE(WHITESPACE_ESCAPE);
 		default:    CHSTATE(VALUE_WHITESPACE);
 	}
 }
@@ -323,8 +381,10 @@ VarsReader::VALUE_SINGLE_QUOTE()
 		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '\'':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
-		default:    NEXT_INPUT_EVAL; CHSTATE(SINGLE_QUOTE_ESCAPE);
+		case '\'':  NEXT_INPUT_EVAL;
+		            CHSTATE(EVAL_READ);
+		default:    NEXT_INPUT_EVAL;
+		            CHSTATE(SINGLE_QUOTE_ESCAPE);
 	}
 }
 
@@ -346,15 +406,16 @@ VarsReader::VALUE_SINGLE_QUOTE_PORTAGE ()
 		}
 		if(unlikely(INPUT == '\n')) {
 			VALUE_APPEND(ESC_SP);
-		}
-		else {
+		} else {
 			VALUE_APPEND(INPUT);
 		}
 		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '\'':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
-		default:    NEXT_INPUT_EVAL; CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
+		case '\'':  NEXT_INPUT_EVAL;
+		            CHSTATE(EVAL_READ);
+		default:    NEXT_INPUT_EVAL;
+		            CHSTATE(SINGLE_QUOTE_ESCAPE_PORTAGE);
 	}
 }
 
@@ -378,8 +439,10 @@ VarsReader::VALUE_DOUBLE_QUOTE()
 		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '"':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
-		default:   NEXT_INPUT_EVAL; CHSTATE(DOUBLE_QUOTE_ESCAPE);
+		case '"':  NEXT_INPUT_EVAL;
+		           CHSTATE(EVAL_READ);
+		default:   NEXT_INPUT_EVAL;
+		           CHSTATE(DOUBLE_QUOTE_ESCAPE);
 	}
 }
 
@@ -401,15 +464,16 @@ VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 		}
 		if(unlikely(INPUT == '\n')) {
 			VALUE_APPEND(ESC_SP);
-		}
-		else {
+		} else {
 			VALUE_APPEND(INPUT);
 		}
 		NEXT_INPUT_EVAL;
 	}
 	switch(INPUT) {
-		case '"':  NEXT_INPUT_EVAL; CHSTATE(EVAL_READ);
-		default:   NEXT_INPUT_EVAL; CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
+		case '"':  NEXT_INPUT_EVAL;
+		           CHSTATE(EVAL_READ);
+		default:   NEXT_INPUT_EVAL;
+		           CHSTATE(DOUBLE_QUOTE_ESCAPE_PORTAGE);
 	}
 }
 
@@ -636,8 +700,7 @@ VarsReader::WHITESPACE_ESCAPE_PORTAGE()
 			NEXT_INPUT_EVAL;
 			if(INPUT == '\\') {
 				NEXT_INPUT_EVAL;
-			}
-			else if(INPUT == '\n') {
+			} else if(INPUT == '\n') {
 				VALUE_APPEND(ESC_BS);
 			}
 			switch(INPUT) {
@@ -681,8 +744,10 @@ void VarsReader::NOISE_SINGLE_QUOTE()
 		NEXT_INPUT;
 	}
 	switch(INPUT) {
-		case '\'':  NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:    NEXT_INPUT; NEXT_INPUT;
+		case '\'':  NEXT_INPUT;
+		            CHSTATE(JUMP_NOISE);
+		default:    NEXT_INPUT;
+		            NEXT_INPUT;
 	}
 }
 
@@ -695,18 +760,20 @@ void VarsReader::NOISE_DOUBLE_QUOTE()
 		NEXT_INPUT;
 	}
 	switch(INPUT) {
-		case '"':   NEXT_INPUT; CHSTATE(JUMP_NOISE);
-		default:    NEXT_INPUT; NEXT_INPUT;
+		case '"':   NEXT_INPUT;
+		            CHSTATE(JUMP_NOISE);
+		default:    NEXT_INPUT;
+		            NEXT_INPUT;
 	}
 }
 
 static void
-var_append(std::string &value, const map<string,string>& vars, char *begin, size_t ref_key_length)
+var_append(std::string &value, const map<string, string>& vars, char *begin, size_t ref_key_length)
 {
 	if(unlikely(!ref_key_length)) {
 		return;
 	}
-	map<string,string>::const_iterator it(vars.find(string(begin, ref_key_length)));
+	map<string, string>::const_iterator it(vars.find(string(begin, ref_key_length)));
 	if(it == vars.end())
 		return;
 	value.append(it->second);
@@ -744,8 +811,7 @@ void VarsReader::resolveReference()
 			var_append(value, *vars, begin, ref_key_length);
 			NEXT_INPUT_OR_EOF;
 		}
-	}
-	else {
+	} else {
 		var_append(value, *vars, begin, ref_key_length);
 	}
 }
@@ -817,10 +883,10 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 
 	initFsm();
 	bool ret;
-	if(parse_flags & APPEND_VALUES) {
-		vector<pair<string,string> > incremental;
+	if((parse_flags & APPEND_VALUES) != NONE) {
+		vector<pair<string, string> > incremental;
 		// Save and clear incremental keys
-		for(map<string,string>::iterator i(vars->begin());
+		for(map<string, string>::iterator i(vars->begin());
 			i != vars->end(); ++i) {
 			if((!i->second.empty()) &&
 				isIncremental(i->first.c_str())) {
@@ -830,18 +896,16 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 		}
 		ret = runFsm();
 		// Prepend previous content for incremental keys
-		for(vector<pair<string,string> >::const_iterator it(incremental.begin());
+		for(vector<pair<string, string> >::const_iterator it(incremental.begin());
 			it != incremental.end(); ++it) {
-			map<string,string>::iterator f(vars->find(it->first));
+			map<string, string>::iterator f(vars->find(it->first));
 			if(f->second.empty()) {
 				f->second = it->second;
-			}
-			else {
+			} else {
 				f->second = (it->second) + ' ' + (f->second);
 			}
 		}
-	}
-	else {
+	} else {
 		ret = runFsm();
 	}
 	munmap(filebuffer, st.st_size);
@@ -876,7 +940,7 @@ VarsReader::source(const string &filename, string *errtext)
 	if((parse_flags & ALLOW_SOURCE_VARNAME) == ALLOW_SOURCE_VARNAME) {
 		if(vars != NULLPTR) {
 			// Be careful to not declare the variable...
-			map<string,string>::iterator it(vars->find(source_prefix));
+			map<string, string>::iterator it(vars->find(source_prefix));
 			if(it != vars->end())
 				currprefix = it->second;
 		}

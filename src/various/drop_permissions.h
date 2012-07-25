@@ -5,10 +5,10 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__DROP_PERMISSIONS_H__
-#define EIX__DROP_PERMISSIONS_H__ 1
+#ifndef SRC_VARIOUS_DROP_PERMISSIONS_H_
+#define SRC_VARIOUS_DROP_PERMISSIONS_H_ 1
 
 class EixRc;
-void drop_permissions(EixRc &eix);
+void drop_permissions(EixRc *eix);
 
-#endif /* EIX__DROP_PERMISSIONS_H__ */
+#endif  // SRC_VARIOUS_DROP_PERMISSIONS_H_

@@ -7,28 +7,30 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef EIX__VERSION_H__
-#define EIX__VERSION_H__ 1
+#ifndef SRC_PORTAGE_VERSION_H_
+#define SRC_PORTAGE_VERSION_H_ 1
 
 #include <config.h>
-#include <database/io.h>
-#include <portage/basicversion.h>
-#include <portage/extendedversion.h>
-#include <portage/keywords.h>
-#include <portage/packagesets.h>
+
+#include <cstdio>
 
 #include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
 
-#include <cstdio>
+#include "database/io.h"
+#include "database/types.h"
+#include "portage/basicversion.h"
+#include "portage/extendedversion.h"
+#include "portage/keywords.h"
+#include "portage/packagesets.h"
 
 class DBHeader;
 
 class IUse : public std::string {
 	public:
-		typedef unsigned char Flags;
+		typedef io::UChar Flags;
 		static const Flags
 			USEFLAGS_NIL    = 0,
 			USEFLAGS_NORMAL = 1,
@@ -36,7 +38,7 @@ class IUse : public std::string {
 			USEFLAGS_MINUS  = 4;
 		Flags flags;
 
-		static Flags parse(std::string &s);
+		static Flags parse(std::string *s);
 
 		std::string &name()
 		{ return *static_cast<std::string *>(this); }
@@ -44,8 +46,8 @@ class IUse : public std::string {
 		const std::string &name() const
 		{ return *static_cast<const std::string *>(this); }
 
-		IUse(const std::string &s) : std::string(s)
-		{ flags = parse(name()); }
+		explicit IUse(const std::string &s) : std::string(s)
+		{ flags = parse(&name()); }
 
 		IUse(const std::string &s, Flags f) : std::string(s), flags(f)
 		{ }
@@ -107,7 +109,7 @@ class Version : public ExtendedVersion, public Keywords {
 			SAVEEFFECTIVE_USERPROFILE, SAVEEFFECTIVE_PROFILE, SAVEEFFECTIVE_SIZE
 		} SavedEffectiveIndex;
 
-		typedef unsigned char EffectiveState;
+		typedef io::UChar EffectiveState;
 		static const EffectiveState
 			EFFECTIVE_UNSAVED = 0,
 			EFFECTIVE_USED    = 1,
@@ -139,10 +141,16 @@ class Version : public ExtendedVersion, public Keywords {
 		{ }
 
 		void save_keyflags(SavedKeyIndex i)
-		{ have_saved_keywords[i] = true; saved_keywords[i] = keyflags; }
+		{
+			have_saved_keywords[i] = true;
+			saved_keywords[i] = keyflags;
+		}
 
 		void save_maskflags(SavedMaskIndex i)
-		{ have_saved_masks[i] = true; saved_masks[i] = maskflags; }
+		{
+			have_saved_masks[i] = true;
+			saved_masks[i] = maskflags;
+		}
 
 		void save_accepted_effective(SavedEffectiveIndex i)
 		{
@@ -170,7 +178,10 @@ class Version : public ExtendedVersion, public Keywords {
 		}
 
 		void set_iuse(const std::string &s)
-		{ iuse.clear(); iuse.insert(s); }
+		{
+			iuse.clear();
+			iuse.insert(s);
+		}
 
 		bool restore_accepted_effective(SavedEffectiveIndex i)
 		{
@@ -246,4 +257,4 @@ inline bool
 operator != (const Version& left, const Version &right)
 { return (!BasicVersion::compare(left, right)) || (left.overlay_key != right.overlay_key); }
 
-#endif /* EIX__VERSION_H__ */
+#endif  // SRC_PORTAGE_VERSION_H_
