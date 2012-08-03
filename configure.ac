@@ -60,10 +60,8 @@ AC_CANONICAL_TARGET()
 
 AM_MAINTAINER_MODE()
 AM_INIT_AUTOMAKE([no-dependencies])
-# disable --disable-silent-rules to omit useless output with Gentoo's EAPI=5
-# (debugging is still possible with make V=1 and effective CXXFLAGS/LDFLAGS
-# are output by this configure script anyway)
-AS_VAR_SET([enable_silent_rules], [yes])
+# disable --disable-silent-rules to omit useless output with Gentoo's EAPI=5:
+# AS_VAR_SET([enable_silent_rules], [yes])
 AM_SILENT_RULES([yes])
 
 # This must be an early test:
