@@ -294,7 +294,9 @@ stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist)
 int
 run_eix_update(int argc, char *argv[])
 {
-	// Initialize static classes, part 1
+	// Initialize static classes
+	ExtendedVersion::init_static();
+	PortageSettings::init_static();
 	exclude_args = new list<const char *>;
 	add_args = new list<const char *>;
 	method_args = new list<ArgPair>;
@@ -378,10 +380,6 @@ run_eix_update(int argc, char *argv[])
 			return EXIT_FAILURE;
 		}
 	}
-
-	// Initialize static classes, part 2
-	ExtendedVersion::init_static();
-	PortageSettings::init_static();
 
 	/* set the outputfile */
 	string outputfile(eix_cachefile);

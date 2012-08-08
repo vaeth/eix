@@ -511,7 +511,10 @@ set_format()
 int
 run_eix(int argc, char** argv)
 {
-	// Initialize static classes part 1
+	// Initialize static classes
+	ExtendedVersion::init_static();
+	PackageTest::init_static();
+	PortageSettings::init_static();
 	PrintFormat::init_static();
 	format = new PrintFormat(get_package_property);
 
@@ -573,11 +576,6 @@ run_eix(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 	}
-
-	// Initialize static classes, part 2
-	ExtendedVersion::init_static();
-	PackageTest::init_static();
-	PortageSettings::init_static();
 
 	bool only_printed;
 

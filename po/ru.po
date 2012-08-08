@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-08-08 22:17+0200\n"
+"POT-Creation-Date: 2012-08-08 22:58+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: src/eix-functions.sh.in:103 src/eix-update.cc:621 src/eix-update.cc:655
+#: src/eix-functions.sh.in:103 src/eix-update.cc:619 src/eix-update.cc:653
 #: src/eixTk/statusline.cc:58
 msgid "Finished"
 msgstr "Готово"
@@ -318,7 +318,7 @@ msgstr ""
 "-H            Подавить обновление линии статуса\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:663
+#: src/eix-layman.sh:133 src/eix-remote.sh:227 src/eix-update.cc:661
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -1472,11 +1472,11 @@ msgstr ""
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:572 src/eix-diff.cc:330 src/eix-update.cc:377
+#: src/eix.cc:575 src/eix-diff.cc:332 src/eix-update.cc:379
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:619 src/eix.cc:945
+#: src/eix.cc:617 src/eix.cc:943
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1485,7 +1485,7 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:630
+#: src/eix.cc:628
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1496,31 +1496,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:907 src/eix.cc:923
+#: src/eix.cc:905 src/eix.cc:921
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:910
+#: src/eix.cc:908
 msgid "No matches found.\n"
 msgstr "Совпадений не найдено.\n"
 
-#: src/eix.cc:917
+#: src/eix.cc:915
 #, c-format
 msgid "Found %s match.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:1021
+#: src/eix.cc:1019
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1022
+#: src/eix.cc:1020
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1027
+#: src/eix.cc:1025
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1529,7 +1529,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1028
+#: src/eix.cc:1026
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1538,7 +1538,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1085
+#: src/eix.cc:1083
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1546,7 +1546,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1088
+#: src/eix.cc:1086
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1604,7 +1604,7 @@ msgstr "Запись файла базы данных %r: %s .."
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Невозможно открыть базу данных %r для чтения (режим = 'rb')"
 
-#: src/eix-diff.cc:400
+#: src/eix-diff.cc:398
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Сравнение баз данных (%s -> %s пакетов)\n"
@@ -1726,85 +1726,85 @@ msgstr "Добавление виртуальных оверлеев из %s ..\
 msgid "Warning: KEEP_VIRTUALS ignored because database format has changed"
 msgstr "Внимание: KEEP_VIRTUALS игнорируется ибо формат базы данных изменился"
 
-#: src/eix-update.cc:399
+#: src/eix-update.cc:397
 msgid "Reading Portage settings ..\n"
 msgstr "Чтение настроек Portage ..\n"
 
-#: src/eix-update.cc:515
+#: src/eix-update.cc:513
 #, c-format
 msgid "Excluded PORTDIR: %s\n"
 msgstr "Исключён PORTDIR: %s\n"
 
-#: src/eix-update.cc:534
+#: src/eix-update.cc:532
 #, c-format
 msgid "Excluded overlay %s\n"
 msgstr "Исключён оверлей %s\n"
 
-#: src/eix-update.cc:540
+#: src/eix-update.cc:538
 #, c-format
 msgid "Building database (%s) ..\n"
 msgstr "Построение базы данных (%s) ..\n"
 
-#: src/eix-update.cc:585
+#: src/eix-update.cc:583
 #, c-format
 msgid "Excluding \"%s\" %s (cache: %s)\n"
 msgstr "Исключая \"%s\" %s (кэш: %s)\n"
 
-#: src/eix-update.cc:607
+#: src/eix-update.cc:605
 #, c-format
 msgid "[%s] \"%s\" %s (cache: %s)\n"
 msgstr "[%s] \"%s\" %s (кэш: %s)\n"
 
-#: src/eix-update.cc:612
+#: src/eix-update.cc:610
 #, c-format
 msgid "[%s] %s"
 msgstr "[%s] %s"
 
-#: src/eix-update.cc:617
+#: src/eix-update.cc:615
 msgid "     Reading Packages .. "
 msgstr "     Чтение Пакетов .. "
 
-#: src/eix-update.cc:621 src/eix-update.cc:654
+#: src/eix-update.cc:619 src/eix-update.cc:652
 msgid "ABORTED!"
 msgstr "ОТМЕНЕНО!"
 
-#: src/eix-update.cc:625
+#: src/eix-update.cc:623
 #, c-format
 msgid "     Reading category %s|%s (%s%%)"
 msgstr "     Чтение категории %s|%s (%s%%)"
 
-#: src/eix-update.cc:629
+#: src/eix-update.cc:627
 #, c-format
 msgid "     Reading up to %s categories of packages .. "
 msgstr "     Чтение до %s категорий пакетов .. "
 
-#: src/eix-update.cc:644
+#: src/eix-update.cc:642
 #, c-format
 msgid ": %s .."
 msgstr ": %s .."
 
-#: src/eix-update.cc:653
+#: src/eix-update.cc:651
 msgid "EMPTY!"
 msgstr "ПУСТО!"
 
-#: src/eix-update.cc:666
+#: src/eix-update.cc:664
 msgid "Applying masks ..\n"
 msgstr "Применение масок ..\n"
 
-#: src/eix-update.cc:677
+#: src/eix-update.cc:675
 msgid "Calculating hash tables ..\n"
 msgstr "Расчёт хеш-таблиц ..\n"
 
-#: src/eix-update.cc:682
+#: src/eix-update.cc:680
 #, c-format
 msgid "Writing database file %s ..\n"
 msgstr "Запись файла базы данных %s ..\n"
 
-#: src/eix-update.cc:693
+#: src/eix-update.cc:691
 msgid "Can't open the database file %r for writing (mode = 'wb')"
 msgstr "Невозможно открыть файл базы данных %r для записи (режим = 'wb')"
 
-#: src/eix-update.cc:708
+#: src/eix-update.cc:706
 #, c-format
 msgid "Database contains %s packages in %s categories.\n"
 msgstr "База данных содержит %s пакетов в %s категориях.\n"

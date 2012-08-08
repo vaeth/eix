@@ -277,7 +277,9 @@ parseFormat(Node **format, const char *varname, EixRc *rc)
 int
 run_eix_diff(int argc, char *argv[])
 {
-	// Initialize static classes part 1
+	// Initialize static classes
+	ExtendedVersion::init_static();
+	PortageSettings::init_static();
 	PrintFormat::init_static();
 	format_for_new = new PrintFormat(get_package_property);
 
@@ -331,10 +333,6 @@ run_eix_diff(int argc, char *argv[])
 			exit(EXIT_FAILURE);
 		}
 	}
-
-	// Initialize static classes, part 2
-	ExtendedVersion::init_static();
-	PortageSettings::init_static();
 
 	bool have_new(false);
 	if(unlikely((current_param != argreader.end()) && (current_param->type == Parameter::ARGUMENT))) {
