@@ -17,6 +17,7 @@
 #include <string>
 #include <vector>
 
+class EbuildExecSettings;
 class BasicCache;
 class Package;
 class Version;
@@ -47,9 +48,7 @@ class EbuildExec {
 		std::vector<std::string> *envstrings;
 		void calc_environment(const char *name, const std::string &dir, const Package &package, const Version &version);
 
-		static std::string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
-		static std::string portage_rootpath, portage_bin_path;
-		static bool know_settings;
+		static EbuildExecSettings *settings;
 
 		void add_handler();
 		void remove_handler();

@@ -11,6 +11,7 @@
 
 #include <config.h>
 
+#include <cassert>
 #include <cstring>
 
 #include <iostream>
@@ -139,11 +140,20 @@ public:
 		initstring("package.accept_keywords.d", &CascadingProfile::readPackageAcceptKeywords);
 	}
 };
-static ProfileFilenames profile_filenames;
+
+static ProfileFilenames *profile_filenames = NULLPTR;
+
+void
+CascadingProfile::init_static()
+{
+	assert(profile_filenames == NULLPTR);  // must be called only once
+	profile_filenames = new ProfileFilenames;
+}
 
 bool
 CascadingProfile::readremoveFiles()
 {
+	assert(profile_filenames != NULLPTR);  // has init_static() been called?
 	bool ret(false);
 	for(vector<ProfileFile>::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
@@ -151,7 +161,7 @@ CascadingProfile::readremoveFiles()
 		if(filename == NULLPTR)
 			continue;
 		++filename;
-		CascadingProfile::Handler handler(profile_filenames[filename]);
+		CascadingProfile::Handler handler((*profile_filenames)[filename]);
 		if(handler == NULLPTR) {
 			continue;
 		}

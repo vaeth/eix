@@ -25,7 +25,7 @@ print_help()
 "EIX_USER, EIX_GROUP, EIX_UID, and EIX_GID.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name.c_str());
+"further information.\n"), program_name);
 }
 
 int

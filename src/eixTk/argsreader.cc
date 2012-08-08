@@ -16,7 +16,7 @@
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 
-ArgumentReader::ArgumentReader(int argc, char **argv, Option opt_table[])
+ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList &opt_table)
 {
 	bool seen_escape(false);
 	name = argv[0];
@@ -81,22 +81,22 @@ ArgumentReader::ArgumentReader(int argc, char **argv, Option opt_table[])
 	foldAndRemove(opt_table);
 }
 
-Option *
-ArgumentReader::lookup_option(const int opt, Option *opt_table)
+const Option *
+ArgumentReader::lookup_option(const int opt, const OptionList &opt_table)
 {
-	while(likely((opt_table->longopt || opt_table->shortopt))) {
-		if(unlikely((opt_table->shortopt) && (opt_table->shortopt == opt))) {
-			return opt_table;
+	for(OptionList::const_iterator it(opt_table.begin());
+		likely(it != opt_table.end()); ++it) {
+		if(unlikely(it->shortopt == opt)) {
+			return &(*it);
 		}
-		++opt_table;
 	}
 	return NULLPTR;
 }
 
 unsigned int
-ArgumentReader::numargs(const int opt, Option *opt_table)
+ArgumentReader::numargs(const int opt, const OptionList &opt_table)
 {
-	Option *c(lookup_option(opt, opt_table));
+	const Option *c(lookup_option(opt, opt_table));
 	if(c == NULLPTR)
 		return 0;
 	switch(c->type)
@@ -125,13 +125,13 @@ ArgumentReader::numargs(const int opt, Option *opt_table)
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
 int
-ArgumentReader::lookup_longopt(const char *long_opt, Option *opt_table)
+ArgumentReader::lookup_longopt(const char *long_opt, const OptionList &opt_table)
 {
-	while(likely(opt_table->longopt || opt_table->shortopt)) {
-		if(unlikely((opt_table->longopt) && (strcmp(opt_table->longopt, long_opt) == 0))) {
-			return opt_table->shortopt;
+	for(OptionList::const_iterator it(opt_table.begin());
+		likely(it != opt_table.end()); ++it) {
+		if(unlikely((it->longopt != NULLPTR) && (strcmp(it->longopt, long_opt) == 0))) {
+			return it->shortopt;
 		}
-		++opt_table;
 	}
 	fprintf(stderr, _("Unknown option --%s\n"), long_opt);
 	exit(EXIT_FAILURE);
@@ -142,13 +142,12 @@ ArgumentReader::lookup_longopt(const char *long_opt, Option *opt_table)
  * @param long_opt longopt that should be resolved.
  * @return shortopt for given longopt */
 int
-ArgumentReader::lookup_shortopt(const char short_opt, Option *opt_table)
+ArgumentReader::lookup_shortopt(const char short_opt, const OptionList &opt_table)
 {
-	while( (opt_table->longopt || opt_table->shortopt) )
-	{
-		if( (opt_table->shortopt) && (opt_table->shortopt == short_opt) )
+	for(OptionList::const_iterator it(opt_table.begin());
+		likely(it != opt_table.end()); ++it) {
+		if(unlikely(it->shortopt == short_opt))
 			return short_opt;
-		++opt_table;
 	}
 	fprintf(stderr, _("Unknown option -%c\n"), short_opt);
 	exit(EXIT_FAILURE);
@@ -156,7 +155,7 @@ ArgumentReader::lookup_shortopt(const char short_opt, Option *opt_table)
 }
 
 void
-ArgumentReader::foldAndRemove(Option *opt_table)
+ArgumentReader::foldAndRemove(const OptionList &opt_table)
 {
 	ArgumentReader::iterator it(begin());
 	while(it != end())
@@ -166,7 +165,7 @@ ArgumentReader::foldAndRemove(Option *opt_table)
 			continue;
 		}
 
-		Option *c(lookup_option(it->m_option, opt_table));
+		const Option *c(lookup_option(it->m_option, opt_table));
 		if(unlikely(c == NULLPTR)) {
 			++it;
 			continue;

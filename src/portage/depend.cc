@@ -14,12 +14,10 @@ using std::string;
 
 bool Depend::use_depend;
 
-const string
-	Depend::c_depend("${DEPEND}"),
-	Depend::c_rdepend("${RDEPEND}");
+const char Depend::c_depend[] = "${DEPEND}";
+const char Depend::c_rdepend[] = "${RDEPEND}";
 
 static const char the_same = '"';
-
 
 static bool
 subst_the_same(std::string &in, const std::string &from) {

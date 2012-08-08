@@ -32,14 +32,14 @@
 using std::string;
 using std::vector;
 
-eix::ptr_list<EixCache> EixCache::all_eixcaches;
+eix::ptr_list<EixCache> *EixCache::all_eixcaches = NULLPTR;
 
 EixCache::~EixCache()
 {
-	eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches.begin(),
-		all_eixcaches.end(), this));
-	if(it != all_eixcaches.end()) {
-		all_eixcaches.erase(it);
+	eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches->begin(),
+		all_eixcaches->end(), this));
+	if(it != all_eixcaches->end()) {
+		all_eixcaches->erase(it);
 	}
 }
 
@@ -83,7 +83,10 @@ bool EixCache::initialize(const string &name)
 		}
 	}
 	slavemode = false;
-	all_eixcaches.push_back(this);
+	if(all_eixcaches == NULLPTR) {
+		all_eixcaches = new eix::ptr_list<EixCache>;
+	}
+	all_eixcaches->push_back(this);
 	return (args.size() <= 3);
 }
 
@@ -227,14 +230,16 @@ EixCache::readCategories(PackageTree *packagetree, const char *cat_name, Categor
 		return false;
 	}
 	vector<EixCache*> slaves;
-	for(eix::ptr_list<EixCache>::iterator sl(all_eixcaches.begin());
-		unlikely(sl != all_eixcaches.end()); ++sl) {
-		if(sl->m_full == m_full) {
-			if(*sl != this) {
-				sl->slavemode = true;
+	if(all_eixcaches != NULLPTR) {
+		for(eix::ptr_list<EixCache>::iterator sl(all_eixcaches->begin());
+			unlikely(sl != all_eixcaches->end()); ++sl) {
+			if(sl->m_full == m_full) {
+				if(*sl != this) {
+					sl->slavemode = true;
+				}
+				sl->err_msg.clear();
+				slaves.push_back(*sl);
 			}
-			sl->err_msg.clear();
-			slaves.push_back(*sl);
 		}
 	}
 	FILE *fp(fopen(m_full.c_str(), "rb"));

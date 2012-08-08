@@ -41,8 +41,6 @@ using std::endl;
 const char *spaces(" \t\r\n");
 const char *doublequotes("\"$\\");
 
-const string emptystring(""), zerostring("0"), one("1"), space(" ");  // NOLINT(runtime/string)
-
 std::locale localeC("C");
 
 /* strndup() is a GNU extension

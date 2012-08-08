@@ -52,7 +52,7 @@ class DBHeader {
 			OVTEST_NOT_SAVED_PORTDIR = OVTEST_PATH|OVTEST_LABEL|OVTEST_NUMBER,
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 
-		static const std::string magic;
+		static const char *magic;
 
 		/** Current version of database-format. */
 		static const DBVersion current = 31;

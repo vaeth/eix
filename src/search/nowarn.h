@@ -17,6 +17,7 @@
 #include "portage/mask_list.h"
 #include "search/packagetest.h"
 
+class NowarnKeywords;
 class Package;
 class PortageSettings;
 
@@ -54,6 +55,7 @@ public:
 	}
 };
 
+
 class NowarnMask : public Mask
 {
 		friend class NowarnMaskList;
@@ -64,6 +66,10 @@ class NowarnMask : public Mask
 		{ }
 
 		void init_nowarn(const std::vector<std::string> &flagstrings);
+
+		static void init_static();
+	private:
+		static NowarnKeywords *nowarn_keywords;
 };
 
 class NowarnMaskList : public MaskList<NowarnMask>

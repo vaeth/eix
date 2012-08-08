@@ -88,12 +88,17 @@ ParseCache::initialize(const string &name)
 const char *
 ParseCache::getType() const
 {
-	static string s;
+	static string *s = NULLPTR;
+	if(s == NULLPTR) {
+		s = new string;
+	} else {
+		s->clear();
+	}
 	if(try_parse) {
 		if(nosubst) {
-			s = "parse*";
+			s->assign("parse*");
 		} else {
-			s = "parse";
+			s->assign("parse");
 		}
 	}
 	if(ebuild_exec != NULLPTR) {
@@ -103,19 +108,19 @@ ParseCache::getType() const
 		} else {
 			t = "ebuild";
 		}
-		if(s.empty()) {
-			s = t;
+		if(s->empty()) {
+			s->assign(t);
 		} else {
-			s.append(1, '|');
-			s.append(t);
+			s->append(1, '|');
+			s->append(t);
 		}
 	}
 	for(vector<BasicCache*>::const_iterator it(further.begin());
 		likely(it != further.end()); ++it) {
-		s.append(1, '#');
-		s.append((*it)->getType());
+		s->append(1, '#');
+		s->append((*it)->getType());
 	}
-	return s.c_str();
+	return s->c_str();
 }
 
 ParseCache::~ParseCache()

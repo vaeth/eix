@@ -99,7 +99,7 @@ sqlite_callback(void *NotUsed ATTRIBUTE_UNUSED, int argc, char **argv, char **az
     the constructor, all functions should be const or static.
 */
 
-static class TrueIndex : public map<string, vector<int>::size_type> {
+class TrueIndex : public map<string, vector<int>::size_type> {
 	public:
 		typedef enum {
 			NAME,
@@ -175,7 +175,9 @@ static class TrueIndex : public map<string, vector<int>::size_type> {
 				return "";
 			return welldefine(argv[t]);
 		}
-} handle_trueindex;
+};
+
+TrueIndex *SqliteCache::true_index = NULLPTR;
 
 void
 SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azColName)
@@ -184,8 +186,12 @@ SqliteCache::sqlite_callback_cpp(int argc, const char **argv, const char **azCol
 	if(unlikely(sqlite_callback_error))
 		return;
 
-	if(!maxindex)
-		maxindex = handle_trueindex.calc(argc, azColName, &trueindex);
+	if(maxindex == 0) {
+		if(unlikely(true_index == NULLPTR)) {
+			true_index = new TrueIndex;
+		}
+		maxindex = true_index->calc(argc, azColName, &trueindex);
+	}
 
 	if(argc <= trueindex[TrueIndex::NAME]) {
 		sqlite_callback_error = true;

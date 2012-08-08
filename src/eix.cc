@@ -218,7 +218,7 @@ dump_help()
 "    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name.c_str(), EIX_CACHEFILE);
+"further information.\n"), program_name, EIX_CACHEFILE);
 }
 
 static const char *format_normal, *format_verbose, *format_compact;
@@ -238,7 +238,7 @@ enum OverlayMode
 
 static OverlayMode overlay_mode;
 
-static PrintFormat format(get_package_property);
+static PrintFormat *format;
 
 /** Local options for argument reading. */
 static struct LocalOptions {
@@ -270,152 +270,156 @@ static struct LocalOptions {
 		world_sets;
 } rc_options;
 
-/** Arguments and shortopts. */
-static Option long_options[] = {
+/** Arguments and options. */
+class EixOptionList : public OptionList {
+	public:
+		EixOptionList();
+};
+
+EixOptionList::EixOptionList()
+{
 	// Global options
-	Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet),
-	Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick),
-	Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care),
+	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
+	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
+	push_back(Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care));
 
-	Option("nocolor",       'n',     Option::BOOLEAN_T,     &format.no_color),
-	Option("force-color",   'F',     Option::BOOLEAN_F,     &format.no_color),
-	Option("versionlines",  'l',     Option::BOOLEAN,       &format.style_version_lines),
-	Option("versionsort",   'x',     Option::BOOLEAN,       &format.slot_sorted),
-	Option("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages),
-	Option("only-names", O_ONLY_NAMES, Option::BOOLEAN,      &rc_options.only_names),
-	Option("brief",        '0',      Option::BOOLEAN,       &rc_options.brief),
-	Option("brief2",        O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2),
+	push_back(Option("nocolor",       'n',     Option::BOOLEAN_T,     &format->no_color));
+	push_back(Option("force-color",   'F',     Option::BOOLEAN_F,     &format->no_color));
+	push_back(Option("versionlines",  'l',     Option::BOOLEAN,       &format->style_version_lines));
+	push_back(Option("versionsort",   'x',     Option::BOOLEAN,       &format->slot_sorted));
+	push_back(Option("pure-packages", '*',     Option::BOOLEAN,       &rc_options.pure_packages));
+	push_back(Option("only-names", O_ONLY_NAMES, Option::BOOLEAN,      &rc_options.only_names));
+	push_back(Option("brief",        '0',      Option::BOOLEAN,       &rc_options.brief));
+	push_back(Option("brief2",        O_BRIEF2, Option::BOOLEAN,       &rc_options.brief2));
 
-	Option("verbose",       'v',     Option::BOOLEAN,       &rc_options.verbose_output),
-	Option("compact",       'c',     Option::BOOLEAN,       &rc_options.compact_output),
-	Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml),
-	Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help),
-	Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version),
-	Option("dump",          O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc),
-	Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &rc_options.dump_defaults),
-	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &rc_options.known_vars),
-	Option("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused),
-	Option("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug),
+	push_back(Option("verbose",       'v',     Option::BOOLEAN,       &rc_options.verbose_output));
+	push_back(Option("compact",       'c',     Option::BOOLEAN,       &rc_options.compact_output));
+	push_back(Option("xml",           O_XML,   Option::BOOLEAN,       &rc_options.xml));
+	push_back(Option("help",          'h',     Option::BOOLEAN_T,     &rc_options.show_help));
+	push_back(Option("version",       'V',     Option::BOOLEAN_T,     &rc_options.show_version));
+	push_back(Option("dump",          O_DUMP,  Option::BOOLEAN_T,     &rc_options.dump_eixrc));
+	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &rc_options.dump_defaults));
+	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &rc_options.known_vars));
+	push_back(Option("test-non-matching", 't', Option::BOOLEAN_T,     &rc_options.test_unused));
+	push_back(Option("debug",         O_DEBUG, Option::BOOLEAN_T,     &rc_options.do_debug));
 
-	Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current),
+	push_back(Option("is-current",   O_CURRENT, Option::BOOLEAN_T,   &rc_options.is_current));
 
-	Option("print-all-useflags", O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse),
-	Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords),
-	Option("print-all-slots",    O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot),
-	Option("print-all-licenses", O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license),
-	Option("print-all-depends",  O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend),
-	Option("print-world-sets",   O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets),
+	push_back(Option("print-all-useflags", O_HASH_IUSE,     Option::BOOLEAN_T, &rc_options.hash_iuse));
+	push_back(Option("print-all-keywords", O_HASH_KEYWORDS, Option::BOOLEAN_T, &rc_options.hash_keywords));
+	push_back(Option("print-all-slots",    O_HASH_SLOT,     Option::BOOLEAN_T, &rc_options.hash_slot));
+	push_back(Option("print-all-licenses", O_HASH_LICENSE,  Option::BOOLEAN_T, &rc_options.hash_license));
+	push_back(Option("print-all-depends",  O_HASH_DEPEND,   Option::BOOLEAN_T, &rc_options.hash_depend));
+	push_back(Option("print-world-sets",   O_WORLD_SETS,    Option::BOOLEAN_T, &rc_options.world_sets));
 
-	Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage),
+	push_back(Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage));
 
-	Option("print",        O_PRINT_VAR,     Option::STRING,    &var_to_print),
+	push_back(Option("print",        O_PRINT_VAR,     Option::STRING,    &var_to_print));
 
-	Option("print-overlay-path",   O_PRINT_OPATH, Option::STRING, &overlaypath_to_print),
-	Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING, &overlaylabel_to_print),
+	push_back(Option("print-overlay-path",   O_PRINT_OPATH, Option::STRING, &overlaypath_to_print));
+	push_back(Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING, &overlaylabel_to_print));
 
-	Option("format",         O_FMT,         Option::STRING,   &format_normal),
-	Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose),
-	Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact),
+	push_back(Option("format",         O_FMT,         Option::STRING,   &format_normal));
+	push_back(Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose));
+	push_back(Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact));
 
-	Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile),
+	push_back(Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile));
 
 	// Options for criteria
-	Option("installed",     'I'),
-	Option("multi-installed", 'i'),
-	Option("slotted",       '1'),
-	Option("slots",         '2'),
-	Option("upgrade",       'u'),
-	Option("upgrade+",      O_UPGRADE_LOCAL),
-	Option("upgrade-",      O_UPGRADE_NONLOCAL),
-	Option("stable",        O_STABLE_DEFAULT),
-	Option("testing",       O_TESTING_DEFAULT),
-	Option("non-masked",    O_NONMASKED_DEFAULT),
-	Option("binary",        O_BINARY),
-	Option("world-file",    O_WORLD_FILE),
-	Option("world-set",     O_WORLD_SET),
-	Option("world",         O_WORLD_ALL),
-	Option("selected-file", O_SELECTED_FILE),
-	Option("selected-set",  O_SELECTED_SET),
-	Option("selected",      O_SELECTED_ALL),
-	Option("system",        O_SYSTEM_DEFAULT),
-	Option("stable+",       O_STABLE_LOCAL),
-	Option("testing+",      O_TESTING_LOCAL),
-	Option("non-masked+",   O_NONMASKED_LOCAL),
-	Option("system+",       O_SYSTEM_LOCAL),
-	Option("stable-",       O_STABLE_NONLOCAL),
-	Option("testing-",      O_TESTING_NONLOCAL),
-	Option("non-masked-",   O_NONMASKED_NONLOCAL),
-	Option("system-",       O_SYSTEM_NONLOCAL),
-	Option("installed-unstable", O_INSTALLED_UNSTABLE),
-	Option("installed-testing",  O_INSTALLED_TESTING),
-	Option("installed-masked",   O_INSTALLED_MASKED),
-	Option("overlay",              'O'),
-	Option("installed-overlay",    'J'),
-	Option("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL),
-	Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL),
-	Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL),
-	Option("installed-in-some-overlay", O_INSTALLED_SOME),
-	Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL),
-	Option("restrict-fetch",         O_RESTRICT_FETCH),
-	Option("restrict-mirror",        O_RESTRICT_MIRROR),
-	Option("restrict-primaryuri",    O_RESTRICT_PRIMARYURI),
-	Option("restrict-binchecks",     O_RESTRICT_BINCHECKS),
-	Option("restrict-strip",         O_RESTRICT_STRIP),
-	Option("restrict-test",          O_RESTRICT_TEST),
-	Option("restrict-userpriv",      O_RESTRICT_USERPRIV),
-	Option("restrict-installsources", O_RESTRICT_INSTALLSOURCES),
-	Option("restrict-bindist",       O_RESTRICT_BINDIST),
-	Option("restrict-parallel",      O_RESTRICT_PARALLEL),
-	Option("properties-interactive", O_PROPERTIES_INTERACTIVE),
-	Option("properties-live",        O_PROPERTIES_LIVE),
-	Option("properties-virtual",     O_PROPERTIES_VIRTUAL),
-	Option("properties-set",         O_PROPERTIES_SET),
-	Option("dup-packages",  'd'),
-	Option("dup-versions",  'D'),
-	Option("test-obsolete", 'T'),
-	Option("pipe",          '|'),
-	Option("pipe-name",     O_PIPE_NAME),
-	Option("pipe-version",  O_PIPE_VERSION),
+	push_back(Option("installed",     'I'));
+	push_back(Option("multi-installed", 'i'));
+	push_back(Option("slotted",       '1'));
+	push_back(Option("slots",         '2'));
+	push_back(Option("upgrade",       'u'));
+	push_back(Option("upgrade+",      O_UPGRADE_LOCAL));
+	push_back(Option("upgrade-",      O_UPGRADE_NONLOCAL));
+	push_back(Option("stable",        O_STABLE_DEFAULT));
+	push_back(Option("testing",       O_TESTING_DEFAULT));
+	push_back(Option("non-masked",    O_NONMASKED_DEFAULT));
+	push_back(Option("binary",        O_BINARY));
+	push_back(Option("world-file",    O_WORLD_FILE));
+	push_back(Option("world-set",     O_WORLD_SET));
+	push_back(Option("world",         O_WORLD_ALL));
+	push_back(Option("selected-file", O_SELECTED_FILE));
+	push_back(Option("selected-set",  O_SELECTED_SET));
+	push_back(Option("selected",      O_SELECTED_ALL));
+	push_back(Option("system",        O_SYSTEM_DEFAULT));
+	push_back(Option("stable+",       O_STABLE_LOCAL));
+	push_back(Option("testing+",      O_TESTING_LOCAL));
+	push_back(Option("non-masked+",   O_NONMASKED_LOCAL));
+	push_back(Option("system+",       O_SYSTEM_LOCAL));
+	push_back(Option("stable-",       O_STABLE_NONLOCAL));
+	push_back(Option("testing-",      O_TESTING_NONLOCAL));
+	push_back(Option("non-masked-",   O_NONMASKED_NONLOCAL));
+	push_back(Option("system-",       O_SYSTEM_NONLOCAL));
+	push_back(Option("installed-unstable", O_INSTALLED_UNSTABLE));
+	push_back(Option("installed-testing",  O_INSTALLED_TESTING));
+	push_back(Option("installed-masked",   O_INSTALLED_MASKED));
+	push_back(Option("overlay",              'O'));
+	push_back(Option("installed-overlay",    'J'));
+	push_back(Option("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("installed-in-some-overlay", O_INSTALLED_SOME));
+	push_back(Option("installed-in-overlay", O_INSTALLED_OVERLAY, Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("restrict-fetch",         O_RESTRICT_FETCH));
+	push_back(Option("restrict-mirror",        O_RESTRICT_MIRROR));
+	push_back(Option("restrict-primaryuri",    O_RESTRICT_PRIMARYURI));
+	push_back(Option("restrict-binchecks",     O_RESTRICT_BINCHECKS));
+	push_back(Option("restrict-strip",         O_RESTRICT_STRIP));
+	push_back(Option("restrict-test",          O_RESTRICT_TEST));
+	push_back(Option("restrict-userpriv",      O_RESTRICT_USERPRIV));
+	push_back(Option("restrict-installsources", O_RESTRICT_INSTALLSOURCES));
+	push_back(Option("restrict-bindist",       O_RESTRICT_BINDIST));
+	push_back(Option("restrict-parallel",      O_RESTRICT_PARALLEL));
+	push_back(Option("properties-interactive", O_PROPERTIES_INTERACTIVE));
+	push_back(Option("properties-live",        O_PROPERTIES_LIVE));
+	push_back(Option("properties-virtual",     O_PROPERTIES_VIRTUAL));
+	push_back(Option("properties-set",         O_PROPERTIES_SET));
+	push_back(Option("dup-packages",  'd'));
+	push_back(Option("dup-versions",  'D'));
+	push_back(Option("test-obsolete", 'T'));
+	push_back(Option("pipe",          '|'));
+	push_back(Option("pipe-name",     O_PIPE_NAME));
+	push_back(Option("pipe-version",  O_PIPE_VERSION));
 
 	// Algorithms for a criterion
-	Option("fuzzy",         'f'),
-	Option("regex",         'r'),
-	Option("exact",         'e'),
-	Option("pattern",       'p'),
-	Option("begin",         'b'),
-	Option("substring",     'z'),
-	Option("end",           O_END_ALGO),
+	push_back(Option("fuzzy",         'f'));
+	push_back(Option("regex",         'r'));
+	push_back(Option("exact",         'e'));
+	push_back(Option("pattern",       'p'));
+	push_back(Option("begin",         'b'));
+	push_back(Option("substring",     'z'));
+	push_back(Option("end",           O_END_ALGO));
 
 	// What to match in this criterion
-	Option("any",           'y'),
-	Option("name",          's'),
-	Option("slot",          O_SEARCH_SLOT),
-	Option("fullslot",      O_SEARCH_FULLSLOT),
-	Option("installed-slot", O_INSTALLED_SLOT),
-	Option("installed-fullslot", O_SEARCH_INST_FULLSLOT),
-	Option("category",      'C'),
-	Option("category-name", 'A'),
-	Option("description",   'S'),
-	Option("license",       'L'),
-	Option("homepage",      'H'),
-	Option("deps",          O_DEPS),
-	Option("depend",        O_DEPEND),
-	Option("rdepend",       O_RDEPEND),
-	Option("pdepend",       O_PDEPEND),
-	Option("set",           O_SEARCH_SET),
-	Option("use",           'U'),
-	Option("installed-with-use",    O_INSTALLED_WITH_USE),
-	Option("installed-without-use", O_INSTALLED_WITHOUT_USE),
+	push_back(Option("any",           'y'));
+	push_back(Option("name",          's'));
+	push_back(Option("slot",          O_SEARCH_SLOT));
+	push_back(Option("fullslot",      O_SEARCH_FULLSLOT));
+	push_back(Option("installed-slot", O_INSTALLED_SLOT));
+	push_back(Option("installed-fullslot", O_SEARCH_INST_FULLSLOT));
+	push_back(Option("category",      'C'));
+	push_back(Option("category-name", 'A'));
+	push_back(Option("description",   'S'));
+	push_back(Option("license",       'L'));
+	push_back(Option("homepage",      'H'));
+	push_back(Option("deps",          O_DEPS));
+	push_back(Option("depend",        O_DEPEND));
+	push_back(Option("rdepend",       O_RDEPEND));
+	push_back(Option("pdepend",       O_PDEPEND));
+	push_back(Option("set",           O_SEARCH_SET));
+	push_back(Option("use",           'U'));
+	push_back(Option("installed-with-use",    O_INSTALLED_WITH_USE));
+	push_back(Option("installed-without-use", O_INSTALLED_WITHOUT_USE));
 
 	// What to do with the next one
-	Option("not",           '!'),
-	Option("or",            'o'),
-	Option("and",           'a'),
-	Option("open",          '('),
-	Option("close",         ')'),
-
-	Option(NULLPTR, 0)
-};
+	push_back(Option("not",           '!'));
+	push_back(Option("or",            'o'));
+	push_back(Option("and",           'a'));
+	push_back(Option("open",          '('));
+	push_back(Option("close",         ')'));
+}
 
 /** Setup default values for all global variables. */
 static void
@@ -441,12 +445,12 @@ setup_defaults(EixRc *rc)
 		unlikely(strcasecmp(s.c_str(), "compact") == 0)) {
 		rc_options.compact_output = true;
 	}
-	format.setupResources(rc);
-	format.no_color            = (rc->getBool("NOCOLORS") ? true :
+	format->setupResources(rc);
+	format->no_color            = (rc->getBool("NOCOLORS") ? true :
 		(rc->getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
-	format.style_version_lines = rc->getBool("STYLE_VERSION_LINES");
-	format.slot_sorted         = !rc->getBool("STYLE_VERSION_SORTED");
-	format.recommend_mode      = rc->getLocalMode("RECOMMEND_LOCAL_MODE");
+	format->style_version_lines = rc->getBool("STYLE_VERSION_LINES");
+	format->slot_sorted         = !rc->getBool("STYLE_VERSION_SORTED");
+	format->recommend_mode      = rc->getLocalMode("RECOMMEND_LOCAL_MODE");
 
 	string overlay((*rc)["OVERLAYS_LIST"]);
 	if(overlay.find("if") != string::npos)
@@ -483,7 +487,7 @@ static void
 parseFormat(const char *varname, const char *varcontent)
 {
 	string errtext;
-	if(likely(format.parseFormat(varcontent, &errtext))) {
+	if(likely(format->parseFormat(varcontent, &errtext))) {
 		return;
 	}
 	cerr << eix::format(_("Problems while parsing %s: %s\n"))
@@ -507,6 +511,10 @@ set_format()
 int
 run_eix(int argc, char** argv)
 {
+	// Initialize static classes part 1
+	PrintFormat::init_static();
+	format = new PrintFormat(get_package_property);
+
 	EixRc &eixrc(get_eixrc(EIX_VARS_PREFIX));
 	drop_permissions(&eixrc);
 
@@ -514,7 +522,7 @@ run_eix(int argc, char** argv)
 	setup_defaults(&eixrc);
 
 	// Read our options from the commandline.
-	ArgumentReader argreader(argc, argv, long_options);
+	ArgumentReader argreader(argc, argv, EixOptionList());
 
 	if(unlikely(var_to_print != NULLPTR)) {
 		if(eixrc.print_var(var_to_print)) {
@@ -566,6 +574,11 @@ run_eix(int argc, char** argv)
 		}
 	}
 
+	// Initialize static classes, part 2
+	ExtendedVersion::init_static();
+	PackageTest::init_static();
+	PortageSettings::init_static();
+
 	bool only_printed;
 
 	if(unlikely(rc_options.xml)) {
@@ -577,12 +590,12 @@ run_eix(int argc, char** argv)
 
 	if(unlikely(rc_options.only_names)) {
 		rc_options.pure_packages = true;
-		format.parseFormat("<category>/<name>\n", NULLPTR);
+		format->parseFormat("<category>/<name>\n", NULLPTR);
 	} else {
 		set_format();
 	}
 
-	format.setupColors();
+	format->setupColors();
 
 	if(unlikely(rc_options.pure_packages)) {
 		overlay_mode = mode_list_none;
@@ -667,8 +680,8 @@ run_eix(int argc, char** argv)
 		local_mode = LOCALMODE_LOCAL;
 	}
 	// Save lot of time: avoid redundant remasking
-	if(format.recommend_mode == local_mode)
-		format.recommend_mode = LOCALMODE_DEFAULT;
+	if(format->recommend_mode == local_mode)
+		format->recommend_mode = LOCALMODE_DEFAULT;
 
 	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
@@ -795,17 +808,17 @@ run_eix(int argc, char** argv)
 		matches.sort(FuzzyAlgorithm::compare);
 	}
 
-	format.set_marked_list(marked_list);
+	format->set_marked_list(marked_list);
 	if(overlay_mode != mode_list_used_renumbered)
-		format.set_overlay_translations(NULLPTR);
+		format->set_overlay_translations(NULLPTR);
 	if(header.countOverlays() != 0) {
-		format.clear_virtual(header.countOverlays());
+		format->clear_virtual(header.countOverlays());
 		for(ExtendedVersion::Overlay i(1); likely(i != header.countOverlays()); ++i)
-			format.set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
+			format->set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
 	}
 	bool need_overlay_table(false);
 	vector<bool> overlay_used(header.countOverlays(), false);
-	format.set_overlay_used(&overlay_used, &need_overlay_table);
+	format->set_overlay_used(&overlay_used, &need_overlay_table);
 	eix::ptr_list<Package>::size_type count(0);
 	PrintXml *print_xml(NULLPTR);
 	if(rc_options.xml || rc_options.be_quiet) {
@@ -839,7 +852,7 @@ run_eix(int argc, char** argv)
 			}
 		}
 		if(overlay_mode != mode_list_used_renumbered) {
-			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				++count;
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
@@ -862,10 +875,10 @@ run_eix(int argc, char** argv)
 				*nit = i++;
 			}
 		}
-		format.set_overlay_translations(&overlay_num);
+		format->set_overlay_translations(&overlay_num);
 		for(eix::ptr_list<Package>::iterator it(matches.begin());
 			likely(it != matches.end()); ++it) {
-			if(format.print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
+			if(format->print(*it, &header, &varpkg_db, &portagesettings, &stability)) {
 				++count;
 				if(unlikely(rc_options.brief || (rc_options.brief2 && count > 1))) {
 					break;
@@ -875,7 +888,7 @@ run_eix(int argc, char** argv)
 	}
 	bool printed_overlay(false);
 	if(need_overlay_table) {
-		printed_overlay = print_overlay_table(&format, &header,
+		printed_overlay = print_overlay_table(format, &header,
 			(overlay_mode <= mode_list_used)? &overlay_used : NULLPTR);
 	}
 	if(unlikely(print_xml != NULLPTR)) {

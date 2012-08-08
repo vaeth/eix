@@ -14,6 +14,7 @@
 
 #include <list>
 #include <utility>
+#include <vector>
 
 typedef std::pair<const char *, const char *> ArgPair;
 
@@ -88,6 +89,10 @@ class Option
 	} u;
 };
 
+class OptionList : public std::vector<Option>
+{
+};
+
 /// Represents a parameter.
 class Parameter
 {
@@ -124,28 +129,28 @@ class ArgumentReader
 		char *name;  /**< Name of called program. */
 
 		/// Reads arguments into std::list of TParameters.
-		ArgumentReader(int argc, char **argv, Option opt_table[]);
+		ArgumentReader(int argc, char **argv, const OptionList &opt_table);
 
 	private:
 		/// Return shortopt for longopt stored in opt.
 		// @return shortopt
-		static int lookup_longopt(const char *long_opt, Option *opt_table);
+		static int lookup_longopt(const char *long_opt, const OptionList &opt_table);
 
 		/// Check if short_opt is a known option.
 		// @return shortopt
-		static int lookup_shortopt(const char short_opt, Option *opt_table);
+		static int lookup_shortopt(const char short_opt, const OptionList &opt_table);
 
 		/// Return Option from internal table.
-		static Option *lookup_option(const int opt, Option *opt_table) ATTRIBUTE_PURE;
+		static const Option *lookup_option(const int opt, const OptionList &opt_table) ATTRIBUTE_PURE;
 
 		/// Return number of args for opt
-		static unsigned int numargs(const int opt, Option *opt_table) ATTRIBUTE_PURE;
+		static unsigned int numargs(const int opt, const OptionList &opt_table) ATTRIBUTE_PURE;
 
 		/// Fold parameter-list so that a option with an arguments has its argument set
 		// internal rather than lying around after it in the list.
 		// Options which are booleans and integers will be removed and their
 		// values increased, flipped, set true or whatever.
-		void foldAndRemove(Option *opt_table);
+		void foldAndRemove(const OptionList &opt_table);
 };
 
 #endif  // SRC_EIXTK_ARGSREADER_H_

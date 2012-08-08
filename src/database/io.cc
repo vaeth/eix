@@ -9,7 +9,10 @@
 
 #include <config.h>
 
+#include <sys/types.h>
+
 #include <cstdio>
+#include <cstring>
 
 #include <list>
 #include <string>
@@ -566,13 +569,13 @@ io::write_header(const DBHeader &hdr, FILE *fp, string *errtext)
 bool
 io::read_header(DBHeader *hdr, FILE *fp, string *errtext)
 {
-	string::size_type magic_len(DBHeader::magic.size());
+	size_t magic_len(strlen(DBHeader::magic));
 	eix::auto_list<char> buf(new char[magic_len + 1]);
 	buf.get()[magic_len] = 0;
 	if(unlikely(!io::read_string_plain(buf.get(), magic_len, fp, errtext))) {
 		return false;
 	}
-	if(unlikely(DBHeader::magic != buf.get())) {
+	if(unlikely(strcmp(DBHeader::magic, buf.get()) != 0)) {
 		char c(buf.get()[0]);
 		// Until version 30 the first char is the version:
 		hdr->version = (((c > 0) && (c <= 30)) ? c : 0);

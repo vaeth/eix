@@ -9,6 +9,8 @@
 
 #include <config.h>
 
+#include <cassert>
+
 #include <iostream>
 #include <map>
 #include <set>
@@ -33,6 +35,7 @@
 #include "portage/extendedversion.h"
 #include "portage/package.h"
 #include "portage/vardbpkg.h"
+#include "search/algorithms.h"
 #include "search/nowarn.h"
 #include "search/packagetest.h"
 
@@ -159,10 +162,14 @@ PackageTest::calculateNeeds() {
 		setNeeds(PackageReader::VERSIONS);
 }
 
-inline static const map<string, PackageTest::MatchField>&
-static_match_field_map()
+static map<string, PackageTest::MatchField> *static_match_field_map = NULLPTR;
+
+static void
+init_match_field_map()
 {
-	static map<string, PackageTest::MatchField> match_field_map;
+	assert(static_match_field_map == NULLPTR);  // must be called only once
+	static_match_field_map = new map<string, PackageTest::MatchField>;
+	map<string, PackageTest::MatchField> &match_field_map(*static_match_field_map);
 	match_field_map["NAME"]           = PackageTest::NAME;
 	match_field_map["name"]           = PackageTest::NAME;
 	match_field_map["DESCRIPTION"]    = PackageTest::DESCRIPTION;
@@ -229,13 +236,16 @@ static_match_field_map()
 	match_field_map["rdepend"]        = PackageTest::RDEPEND;
 	match_field_map["PDEPEND"]        = PackageTest::PDEPEND;
 	match_field_map["pdepend"]        = PackageTest::PDEPEND;
-	return match_field_map;
 }
 
-inline static const map<string, PackageTest::MatchAlgorithm>&
-static_match_algorithm_map()
+static map<string, PackageTest::MatchAlgorithm> *static_match_algorithm_map = NULLPTR;
+
+static void
+init_match_algorithm_map()
 {
-	static map<string, PackageTest::MatchAlgorithm> match_algorithm_map;
+	assert(static_match_algorithm_map == NULLPTR);  // must be called only once
+	static_match_algorithm_map = new map<string, PackageTest::MatchAlgorithm>;
+	map<string, PackageTest::MatchAlgorithm> &match_algorithm_map(*static_match_algorithm_map);
 	match_algorithm_map["REGEX"]      = PackageTest::ALGO_REGEX;
 	match_algorithm_map["REGEXP"]     = PackageTest::ALGO_REGEX;
 	match_algorithm_map["regex"]      = PackageTest::ALGO_REGEX;
@@ -252,15 +262,14 @@ static_match_algorithm_map()
 	match_algorithm_map["pattern"]    = PackageTest::ALGO_PATTERN;
 	match_algorithm_map["FUZZY"]      = PackageTest::ALGO_FUZZY;
 	match_algorithm_map["fuzzy"]      = PackageTest::ALGO_FUZZY;
-	return match_algorithm_map;
 }
 
 PackageTest::MatchField
 PackageTest::name2field(const string &p)
 {
-	static const map<string, MatchField>& match_field_map(static_match_field_map());
-	map<string, MatchField>::const_iterator it(match_field_map.find(p));
-	if(unlikely(it == match_field_map.end())) {
+	assert(static_match_field_map != NULLPTR);  // has init_static() been called?
+	map<string, MatchField>::const_iterator it(static_match_field_map->find(p));
+	if(unlikely(it == static_match_field_map->end())) {
 		cerr << eix::format(_("cannot find match field %r")) % p << endl;
 		return NAME;
 	}
@@ -270,9 +279,9 @@ PackageTest::name2field(const string &p)
 PackageTest::MatchAlgorithm
 PackageTest::name2algorithm(const string &p)
 {
-	static const map<string, MatchAlgorithm>& match_algorithm_map(static_match_algorithm_map());
-	map<string, MatchAlgorithm>::const_iterator it(match_algorithm_map.find(p));
-	if(unlikely(it == match_algorithm_map.end())) {
+	assert(static_match_algorithm_map != NULLPTR);  // has init_static() been called?
+	map<string, MatchAlgorithm>::const_iterator it(static_match_algorithm_map->find(p));
+	if(unlikely(it == static_match_algorithm_map->end())) {
 		cerr << eix::format(_("cannot find match algorithm %r")) % p << endl;
 		return ALGO_REGEX;
 	}
@@ -334,9 +343,9 @@ MatcherClassDefinition(MatcherAlgorithm, PackageTest::MatchAlgorithm, PackageTes
 PackageTest::MatchField
 PackageTest::get_matchfield(const char *p)
 {
-	static MatcherField *m(NULLPTR);
+	static MatcherField *m = NULLPTR;
 	if(m == NULLPTR) {
-		EixRc &rc(get_eixrc(NULLPTR));
+		EixRc &rc(get_eixrc());
 		m = new MatcherField(rc["DEFAULT_MATCH_FIELD"]);
 	}
 	return m->parse(p);
@@ -345,9 +354,9 @@ PackageTest::get_matchfield(const char *p)
 PackageTest::MatchAlgorithm
 PackageTest::get_matchalgorithm(const char *p)
 {
-	static MatcherAlgorithm *m(NULLPTR);
+	static MatcherAlgorithm *m = NULLPTR;
 	if(m == NULLPTR) {
-		EixRc &rc(get_eixrc(NULLPTR));
+		EixRc &rc(get_eixrc());
 		m = new MatcherAlgorithm(rc["DEFAULT_MATCH_ALGORITHM"]);
 	}
 	return m->parse(p);
@@ -377,7 +386,7 @@ PackageTest::setAlgorithm(MatchAlgorithm a)
 			break;
 		case ALGO_FUZZY:
 		default:
-			setAlgorithm(new FuzzyAlgorithm(get_eixrc(NULLPTR).getInteger("LEVENSHTEIN_DISTANCE")));
+			setAlgorithm(new FuzzyAlgorithm(get_eixrc().getInteger("LEVENSHTEIN_DISTANCE")));
 			break;
 	}
 }
@@ -1091,7 +1100,7 @@ PackageTest::get_nowarn_list()
 {
 	NowarnPreList prelist;
 	vector<string> name;
-	EixRc &rc(get_eixrc(NULLPTR));
+	EixRc &rc(get_eixrc());
 	split_string(&name, rc["PACKAGE_NOWARN"], true);
 	for(vector<string>::const_iterator it(name.begin()); it != name.end(); ++it) {
 		vector<string> lines;
@@ -1100,4 +1109,13 @@ PackageTest::get_nowarn_list()
 	}
 	nowarn_list = new NowarnMaskList;
 	prelist.initialize(nowarn_list);
+}
+
+void
+PackageTest::init_static()
+{
+	NowarnMask::init_static();
+	FuzzyAlgorithm::init_static();
+	init_match_field_map();
+	init_match_algorithm_map();
 }

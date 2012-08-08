@@ -53,7 +53,7 @@ print_help()
 "An empty/omitted filename means standard input.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name.c_str());
+"further information.\n"), program_name);
 }
 
 /** Local options for argument reading. */
@@ -63,15 +63,20 @@ static struct LocalOptions {
 		help;
 } rc_options;
 
-/** Arguments and shortopts. */
-static Option long_options[] = {
-	Option("help",      'h', Option::BOOLEAN, &rc_options.help),
-	Option("quiet",     'q', Option::BOOLEAN, &rc_options.be_quiet),
-	Option("file",      'f', Option::KEEP_STRING_OPTIONAL),
-	Option("read-file", 'F', Option::KEEP_STRING_OPTIONAL),
-	Option("mask",      'm', Option::KEEP_STRING),
-	Option(NULLPTR, 0)
+/** Arguments and options. */
+class MaskedOptionList : public OptionList {
+	public:
+		MaskedOptionList();
 };
+
+MaskedOptionList::MaskedOptionList()
+{
+	push_back(Option("help",      'h', Option::BOOLEAN, &rc_options.help));
+	push_back(Option("quiet",     'q', Option::BOOLEAN, &rc_options.be_quiet));
+	push_back(Option("file",      'f', Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("read-file", 'F', Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("mask",      'm', Option::KEEP_STRING));
+}
 
 static void read_stdin(vector<string> *lines, string *name);
 static void add_file(vector<string> *lines, const string &name, string *new_name = NULLPTR);
@@ -179,7 +184,7 @@ int
 run_masked_packages(int argc, char *argv[])
 {
 	memset(&rc_options, 0, sizeof(rc_options));
-	ArgumentReader argreader(argc, argv, long_options);
+	ArgumentReader argreader(argc, argv, MaskedOptionList());
 
 	if(rc_options.help) {
 		print_help();

@@ -49,8 +49,6 @@ extern const char *spaces;
 /** Necessary escapes for shell-like strings in "..." */
 extern const char *doublequotes;
 
-extern const std::string emptystring, zerostring, one, space;
-
 extern std::locale localeC;
 
 /** Split names of Atoms in different ways. */
@@ -186,17 +184,17 @@ void push_back(std::set<T> *s, const T &e)
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
-void join_to_string(std::string *s, const std::vector<std::string> &vec, const std::string &glue = space);
+void join_to_string(std::string *s, const std::vector<std::string> &vec, const std::string &glue = " ");
 
 /** Join a string-set
  * @param glue glue between the elements. */
-void join_to_string(std::string *s, const std::set<std::string> &vec, const std::string &glue = space);
+void join_to_string(std::string *s, const std::set<std::string> &vec, const std::string &glue = " ");
 
 /** Join a string-vector or string-set
  * @param glue glue between the elements. */
 template<typename T>
 inline std::string
-join_to_string(T vec, const std::string &glue = space)
+join_to_string(T vec, const std::string &glue = " ")
 {
 	std::string ret;
 	join_to_string(&ret, vec, glue);
@@ -207,7 +205,7 @@ join_to_string(T vec, const std::string &glue = space)
  * @param source string to split
  * @param dest   result. May be identical to source. */
 inline void
-split_and_join(std::string *dest, const std::string &source, const std::string &glue = space, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+split_and_join(std::string *dest, const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::vector<std::string> vec;
 	split_string(&vec, source, handle_escape, at, ignore_empty);
@@ -218,7 +216,7 @@ split_and_join(std::string *dest, const std::string &source, const std::string &
  * @param source string to split
  * @return result. */
 inline std::string
-split_and_join_string(const std::string &source, const std::string &glue = space, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+split_and_join_string(const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::string r;
 	split_and_join(&r, source, glue, handle_escape, at, ignore_empty);
@@ -228,7 +226,7 @@ split_and_join_string(const std::string &source, const std::string &glue = space
 /** Calls join_to_string() and then split_string() */
 template<typename Td, typename Ts>
 void
-join_and_split(Td vec, const Ts &s, const std::string &glue = space, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::string t;
 	join_to_string(&t, s, glue);

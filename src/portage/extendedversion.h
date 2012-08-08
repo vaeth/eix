@@ -13,7 +13,6 @@
 #include <string>
 
 #include "database/types.h"
-#include "eixTk/stringutils.h"
 #include "eixTk/inttypes.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
@@ -82,7 +81,10 @@ class ExtendedVersion : public BasicVersion
 		{ }
 
 		static Restrict calcRestrict(const std::string& str);
+
 		static Properties calcProperties(const std::string& str);
+
+		static void init_static();
 
 		void set_restrict(const std::string& str)
 		{ restrictFlags = calcRestrict(str); }
@@ -99,7 +101,7 @@ class ExtendedVersion : public BasicVersion
 		std::string get_longfullslot() const;
 
 		std::string get_longslot() const
-		{ return (slotname.empty() ? zerostring : slotname); }
+		{ return (slotname.empty() ? "0" : slotname); }
 
 		void assign_basic_version(const BasicVersion &b)
 		{ *static_cast<BasicVersion *>(this) = b; }

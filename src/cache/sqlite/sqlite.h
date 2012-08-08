@@ -18,6 +18,7 @@
 
 class Category;
 class PackageTree;
+class TrueIndex;
 
 class SqliteCache : public BasicCache {
 	friend int sqlite_callback(void *NotUsed, int argc, char **argv, char **azColName);
@@ -37,6 +38,7 @@ class SqliteCache : public BasicCache {
 		PackageTree *packagetree;
 		Category *category;
 		const char *cat_name;
+		static TrueIndex *true_index;
 
 	public:
 		explicit SqliteCache(bool add_categories = false) : BasicCache(), never_add_categories(!add_categories)

@@ -19,7 +19,6 @@
 #include <map>
 #include <string>
 
-#include "eixTk/null.h"
 #include "eixTk/regexp.h"
 #include "eixTk/unused.h"
 #include "portage/package.h"
@@ -135,35 +134,26 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 		/** FIXME: We need to have a package->levenshtein mapping that we can
 		 * access from the static FuzzyAlgorithm::compare.
 		 * I really don't know how to do this .. */
-		static std::map<std::string, unsigned int> levenshtein_map;
+		static std::map<std::string, unsigned int> *levenshtein_map;
 
 	public:
-		explicit FuzzyAlgorithm(unsigned int max)
-		{
-			max_levenshteindistance = max;
-		}
+		explicit FuzzyAlgorithm(unsigned int max) : max_levenshteindistance(max)
+		{ }
 
-		bool operator()(const char *s, Package *p)
-		{
-			unsigned int d(get_levenshtein_distance(search_string.c_str(), s));
-			bool ok(d <= max_levenshteindistance);
-			if(ok) {
-				if(p != NULLPTR)
-					levenshtein_map[p->category + "/" + p->name] = d;
-			}
-			return ok;
-		}
+		bool operator()(const char *s, Package *p);
 
 		static bool compare(Package *p1, Package *p2)
 		{
-			return (levenshtein_map[p1->category + "/" + p1->name]
-					< levenshtein_map[p2->category + "/" + p2->name]);
+			return ((*levenshtein_map)[p1->category + "/" + p1->name]
+					< (*levenshtein_map)[p2->category + "/" + p2->name]);
 		}
 
 		static bool sort_by_levenshtein()
 		{
-			return levenshtein_map.size() > 0;
+			return (levenshtein_map->size() > 0);
 		}
+
+		static void init_static();
 };
 
 /** Use fnmatch to test if the package matches. */

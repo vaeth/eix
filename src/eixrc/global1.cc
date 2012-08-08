@@ -11,9 +11,8 @@
 
 #include <cassert>
 
-#include <string>
-
 #include "eixTk/i18n.h"
+#include "eixTk/null.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
 
@@ -26,9 +25,9 @@
 #define EXIT_FAILURE 1
 #endif
 
-using std::string;
-
 #define DEFAULT_PART 1
+
+static EixRc *static_eixrc = NULLPTR;
 
 void fill_defaults_part_1(EixRc *eixrc)
 {
@@ -36,32 +35,28 @@ void fill_defaults_part_1(EixRc *eixrc)
 // _( SYSCONFDIR This comment  satisfies check_includes script
 }
 
-/** Create a static EixRc and fill with defaults.
- * This should only be called once! */
-static
+/** Must be called exactly once before get_eixrc() can be used */
 EixRc &
-get_eixrc_once(const char *varprefix)
+get_eixrc(const char *varprefix)
 {
-	static EixRc eixrc;
-	assert(varprefix);
-	eixrc.varprefix = string(varprefix);
+	assert(static_eixrc == NULLPTR);  // must be called only once
+	static_eixrc = new EixRc(varprefix);
 
-	fill_defaults_part_1(&eixrc);
-	fill_defaults_part_2(&eixrc);
-	fill_defaults_part_3(&eixrc);
-	fill_defaults_part_4(&eixrc);
-	fill_defaults_part_5(&eixrc);
+	fill_defaults_part_1(static_eixrc);
+	fill_defaults_part_2(static_eixrc);
+	fill_defaults_part_3(static_eixrc);
+	fill_defaults_part_4(static_eixrc);
+	fill_defaults_part_5(static_eixrc);
 
-	eixrc.read();
-	return eixrc;
+	static_eixrc->read();
+	return *static_eixrc;
 }
-
 
 /** Return reference to internal static EixRc.
  * This can be called everywhere! */
 EixRc &
-get_eixrc(const char *varprefix)
+get_eixrc()
 {
-	static EixRc &rc(get_eixrc_once(varprefix));
-	return rc;
+	assert(static_eixrc != NULLPTR);  // has get_eix(varprefix) been called?
+	return *static_eixrc;
 }

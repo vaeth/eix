@@ -46,38 +46,41 @@ failparse(const char *v)
 static const char *
 get_version(const char *v)
 {
-	static string r;
+	static string *r = NULLPTR;
+	delete r;
 	BasicVersion b;
 	if(b.parseVersion(v, NULLPTR, false) == BasicVersion::parsedOK) {
-		r = v;
-		return r.c_str();
+		r = new string(v);
+		return r->c_str();
 	}
 	char *s(ExplodeAtom::split_version(v));
 	if(unlikely(s == NULLPTR)) {
 		failparse(v);
 	}
-	r = s;
+	r = new string(s);
 	free(s);
-	return r.c_str();
+	return r->c_str();
 }
 
 static const char *
 get_version(const char *&name, const char *v)
 {
-	static string r;
-	static string n;
+	static string *r = NULLPTR;
+	static string *n = NULLPTR;
+	delete r;
+	delete n;
 	char **s(ExplodeAtom::split(v));
 	if(unlikely(s == NULLPTR)) {
 		failparse(v);
 	}
 	if(name != NULLPTR) {
-		n = s[0];
-		name = n.c_str();
+		n = new string(s[0]);
+		name = n->c_str();
 	}
 	free(s[0]);
-	r = s[1];
+	r = new string(s[1]);
 	free(s[1]);
-	return r.c_str();
+	return r->c_str();
 }
 
 static void

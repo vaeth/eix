@@ -101,7 +101,7 @@ get_mtime(const char *file)
 const char *
 date_conv(const char *dateFormat, time_t mydate)
 {
-	const int max_datelen = 256;
+	static const int max_datelen = 256;
 	static char buffer[max_datelen];
 	string old_lcall = setlocale(LC_ALL, NULLPTR);
 	setlocale(LC_ALL, "");

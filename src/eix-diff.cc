@@ -59,10 +59,9 @@ INFO(const string &s)
 
 static PortageSettings *portagesettings;
 static SetStability   *set_stability_old, *set_stability_new;
-static PrintFormat     format_for_new(get_package_property);
-static PrintFormat     format_for_old;
+static PrintFormat    *format_for_new, *format_for_old;
 static VarDbPkg       *varpkg_db;
-static DBHeader        old_header, new_header;
+static DBHeader       *old_header, *new_header;
 static Node           *format_new, *format_delete, *format_changed;
 
 static void
@@ -84,7 +83,7 @@ print_help()
 " -V, --version           show version-string\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name.c_str());
+"further information.\n"), program_name);
 }
 
 bool cli_show_help(false),
@@ -107,21 +106,26 @@ enum cli_options {
 	O_FORCE_COLOR
 };
 
-/** Arguments and shortopts. */
-static Option long_options[] = {
-	Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help), /* show a short help screen */
-	Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version),
-	Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc),
-	Option("dump-deafults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults),
-	Option("print",        O_PRINT_VAR, Option::STRING, &var_to_print),
-	Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &cli_known_vars),
-	Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new.no_color)),
-	Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new.no_color)),
-	Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick),
-	Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care),
-	Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet),
-	Option(NULLPTR, 0)
+/** Arguments and options. */
+class EixDiffOptionList : public OptionList {
+	public:
+		EixDiffOptionList();
 };
+
+EixDiffOptionList::EixDiffOptionList()
+{
+	push_back(Option("help",         'h',    Option::BOOLEAN_T, &cli_show_help)); /* show a short help screen */
+	push_back(Option("version",      'V',    Option::BOOLEAN_T, &cli_show_version));
+	push_back(Option("dump",         O_DUMP, Option::BOOLEAN_T, &cli_dump_eixrc));
+	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &cli_dump_defaults));
+	push_back(Option("print",        O_PRINT_VAR, Option::STRING, &var_to_print));
+	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &cli_known_vars));
+	push_back(Option("nocolor",      'n',    Option::BOOLEAN_T, &(format_for_new->no_color)));
+	push_back(Option("force-color",  'F',    Option::BOOLEAN_F, &(format_for_new->no_color)));
+	push_back(Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick));
+	push_back(Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care));
+	push_back(Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet));
+}
 
 static void
 load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) {
@@ -243,26 +247,26 @@ static void
 print_changed_package(Package *op, Package *np)
 {
 	Package *p[2] = { op, np };
-	format_for_new.print(p, get_diff_package_property, format_changed, &new_header, varpkg_db, portagesettings, set_stability_new);
+	format_for_new->print(p, get_diff_package_property, format_changed, new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
 static void
 print_found_package(Package *p)
 {
-	format_for_new.print(p, format_new, &new_header, varpkg_db, portagesettings, set_stability_new);
+	format_for_new->print(p, format_new, new_header, varpkg_db, portagesettings, set_stability_new);
 }
 
 static void
 print_lost_package(Package *p)
 {
-	format_for_old.print(p, format_delete, &old_header, varpkg_db, portagesettings, set_stability_old);
+	format_for_old->print(p, format_delete, old_header, varpkg_db, portagesettings, set_stability_old);
 }
 
 static void
 parseFormat(Node **format, const char *varname, EixRc *rc)
 {
 	string errtext;
-	if(likely((format_for_new.parseFormat(format, (*rc)[varname].c_str(), &errtext)))) {
+	if(likely((format_for_new->parseFormat(format, (*rc)[varname].c_str(), &errtext)))) {
 		return;
 	}
 	cerr << eix::format(_("Problems while parsing %s: %s\n"))
@@ -273,6 +277,10 @@ parseFormat(Node **format, const char *varname, EixRc *rc)
 int
 run_eix_diff(int argc, char *argv[])
 {
+	// Initialize static classes part 1
+	PrintFormat::init_static();
+	format_for_new = new PrintFormat(get_package_property);
+
 	string old_file, new_file;
 
 	EixRc &rc(get_eixrc(DIFF_VARS_PREFIX));
@@ -284,11 +292,11 @@ run_eix_diff(int argc, char *argv[])
 	cli_care  = rc.getBool("CAREMODE");
 	cli_quiet = rc.getBool("QUIETMODE");
 
-	format_for_new.no_color = (rc.getBool("NOCOLORS") ? true :
+	format_for_new->no_color = (rc.getBool("NOCOLORS") ? true :
 		(rc.getBool("FORCE_COLORS") ? false : (isatty(1) == 0)));
 
 	/* Setup ArgumentReader. */
-	ArgumentReader argreader(argc, argv, long_options);
+	ArgumentReader argreader(argc, argv, EixDiffOptionList());
 	ArgumentReader::iterator current_param(argreader.begin());
 
 	if(unlikely(var_to_print != NULLPTR)) {
@@ -324,6 +332,10 @@ run_eix_diff(int argc, char *argv[])
 		}
 	}
 
+	// Initialize static classes, part 2
+	ExtendedVersion::init_static();
+	PortageSettings::init_static();
+
 	bool have_new(false);
 	if(unlikely((current_param != argreader.end()) && (current_param->type == Parameter::ARGUMENT))) {
 		old_file = current_param->m_argument;
@@ -343,10 +355,10 @@ run_eix_diff(int argc, char *argv[])
 	parseFormat(&format_delete, "DIFF_FORMAT_DELETE", &rc);
 	parseFormat(&format_changed, "DIFF_FORMAT_CHANGED", &rc);
 
-	format_for_new.setupResources(&rc);
-	format_for_new.slot_sorted = false;
-	format_for_new.style_version_lines = false;
-	format_for_new.setupColors();
+	format_for_new->setupResources(&rc);
+	format_for_new->slot_sorted = false;
+	format_for_new->style_version_lines = false;
+	format_for_new->setupColors();
 
 	portagesettings = new PortageSettings(&rc, true, false);
 
@@ -359,23 +371,25 @@ run_eix_diff(int argc, char *argv[])
 	bool always_accept_keywords(rc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 	set_stability_old = new SetStability(portagesettings, local_settings, true, always_accept_keywords);
 	set_stability_new = new SetStability(portagesettings, local_settings, false, always_accept_keywords);
-	format_for_new.recommend_mode = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
+	format_for_new->recommend_mode = rc.getLocalMode("RECOMMEND_LOCAL_MODE");
 
 	PackageTree new_tree;
-	load_db(new_file.c_str(), &new_header, &new_tree, portagesettings);
+	new_header = new DBHeader;
+	load_db(new_file.c_str(), new_header, &new_tree, portagesettings);
 	set_stability_new->set_stability(&new_tree);
 
 	PackageTree old_tree;
-	load_db(old_file.c_str(), &old_header, &old_tree, portagesettings);
+	old_header = new DBHeader;
+	load_db(old_file.c_str(), old_header, &old_tree, portagesettings);
 	set_stability_old->set_stability(&old_tree);
 
-	format_for_new.set_overlay_translations(NULLPTR);
+	format_for_new->set_overlay_translations(NULLPTR);
 
-	format_for_old = format_for_new;
+	format_for_old = new PrintFormat(*format_for_new);
 
 	string eprefix_virtual(rc["EPREFIX_VIRTUAL"]);
-	set_virtual(&format_for_old, old_header, eprefix_virtual);
-	set_virtual(&format_for_new, new_header, eprefix_virtual);
+	set_virtual(format_for_old, *old_header, eprefix_virtual);
+	set_virtual(format_for_new, *new_header, eprefix_virtual);
 
 	DiffTrees differ(varpkg_db, portagesettings,
 		rc.getBool("DIFF_ONLY_INSTALLED"),

@@ -247,6 +247,8 @@ class PackageTest {
 		MatchField operator = (const MatchField m)
 		{ return field = m; }
 
+		static void init_static();
+
 	private:
 		static NowarnMaskList *nowarn_list;
 		static void get_nowarn_list();

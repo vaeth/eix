@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <cassert>
+
 #include <map>
 #include <string>
 #include <vector>
@@ -21,7 +23,14 @@ using std::map;
 using std::string;
 using std::vector;
 
-static map<string, string> path_label_hash;
+static map<string, string> *path_label_hash = NULLPTR;
+
+void
+OverlayIdent::init_static()
+{
+	assert(path_label_hash == NULLPTR);  // must be called only once
+	path_label_hash = new map<string, string>;
+}
 
 OverlayIdent::OverlayIdent(const char *Path, const char *Label)
 {
@@ -56,8 +65,9 @@ OverlayIdent::readLabel_internal(const char *Path)
 	} else {
 		my_path = Path;
 	}
-	map<string, string>::const_iterator f(path_label_hash.find(my_path));
-	if(f != path_label_hash.end()) {
+	assert(path_label_hash != NULLPTR);  // has init_static() been called?
+	map<string, string>::const_iterator f(path_label_hash->find(my_path));
+	if(f != path_label_hash->end()) {
 		label = f->second;
 		return;
 	}
@@ -70,7 +80,7 @@ OverlayIdent::readLabel_internal(const char *Path)
 		label = *i;
 		break;
 	}
-	path_label_hash[my_path] = label;
+	(*path_label_hash)[my_path] = label;
 }
 
 string

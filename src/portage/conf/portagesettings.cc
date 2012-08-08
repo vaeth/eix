@@ -11,6 +11,7 @@
 
 #include <fnmatch.h>
 
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
@@ -50,12 +51,15 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
+static string *emptystring = NULLPTR;
+
 const std::string &
 PortageSettings::operator[](const std::string &var) const
 {
 	map<string, string>::const_iterator it(map<string, string>::find(var));
-	if(it == map<string, string>::end())
-		return emptystring;
+	if(it == map<string, string>::end()) {
+		return *emptystring;
+	}
 	return it->second;
 }
 
@@ -816,7 +820,6 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 	const set<string> *arch_set,
 	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut)
 {
-	static string tilde("~"), minus("-");
 	if(key[0] == '-') {
 		redundant |= (check & Keywords::RED_STRANGE);
 		return ARCH_NOTHING;
@@ -860,9 +863,9 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 		// Is the "blank" keyword in arch_set (possibly with -/~)?
 		if(arch_set->find(*s) != arch_set->end())
 			return ARCH_NOTHING;
-		if(arch_set->find(tilde + *s) != arch_set->end())
+		if(arch_set->find(string("~") + *s) != arch_set->end())
 			return ARCH_NOTHING;
-		if(arch_set->find(minus + *s) != arch_set->end())
+		if(arch_set->find(string("-") + *s) != arch_set->end())
 			return ARCH_NOTHING;
 
 		// Is the "blank" keyword in KEYWORDS (possibly with -/~)?
@@ -872,11 +875,11 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 				return ARCH_NOTHING;
 		}
 		if(have_searched != '~') {
-			if(keywords_set.find(tilde + *s) != keywords_set.end())
+			if(keywords_set.find(string("~") + *s) != keywords_set.end())
 				return ARCH_NOTHING;
 		}
 		if(have_searched != '-') {
-			if(keywords_set.find(minus + *s) != keywords_set.end())
+			if(keywords_set.find(string("-") + *s) != keywords_set.end())
 				return ARCH_NOTHING;
 		}
 
@@ -912,7 +915,7 @@ apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags 
 	// We have an ARCH_STABLE if key is in arch (with or without ~)
 	if(arch_set->find(key) != arch_set->end())
 		return ARCH_STABLE;
-	if(arch_set->find(tilde + key) != arch_set->end())
+	if(arch_set->find(string("~") + key) != arch_set->end())
 		return ARCH_STABLE;
 	return ARCH_ALIENSTABLE;
 }
@@ -1270,3 +1273,13 @@ PortageSettings::calc_local_sets(Package *p) const
 		calc_recursive_sets(p);
 	}
 }
+
+void
+PortageSettings::init_static()
+{
+	assert(emptystring == NULLPTR);  // must be called only once
+	emptystring = new string;
+	OverlayIdent::init_static();
+	CascadingProfile::init_static();
+}
+

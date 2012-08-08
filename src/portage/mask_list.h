@@ -148,7 +148,7 @@ public:
 				l->second.add(m);
 				return;
 			}
-			exact_name.insert(std::pair<std::string, Masks<m_Type> >(full, Masks<m_Type>(emptystring, m)));
+			exact_name.insert(std::pair<std::string, Masks<m_Type> >(full, Masks<m_Type>("", m)));
 			return;
 		}
 		map_const_iterator f(full_index.find(full));

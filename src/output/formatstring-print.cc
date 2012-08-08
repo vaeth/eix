@@ -9,6 +9,7 @@
 
 #include <config.h>
 
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
@@ -23,7 +24,6 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/stringutils.h"
 #include "eixTk/sysutils.h"
 #include "eixTk/unused.h"
 #include "eixrc/eixrc.h"
@@ -83,9 +83,9 @@ string
 PrintFormat::get_inst_use(const Package &package, InstVersion *i) const
 {
 	if((unlikely(vardb == NULLPTR)) || !(vardb->readUse(package, i)))
-		return emptystring;
+		return "";
 	if(i->inst_iuse.empty())
-		return emptystring;
+		return "";
 	string ret, add;
 	for(vector<string>::iterator it(i->inst_iuse.begin());
 		likely(it != i->inst_iuse.end()); ++it) {
@@ -430,13 +430,23 @@ class Scanner {
 			return it->second.first;
 		}
 };
-static Scanner scanner;
+
+static Scanner *scanner = NULLPTR;
+
+void
+PrintFormat::init_static()
+{
+	assert(scanner == NULLPTR);  // must be called only once
+	scanner = new Scanner;
+	AnsiColor::init_static();
+}
 
 string
 PrintFormat::get_pkg_property(Package *package, const string &name) const
 {
+	assert(scanner != NULLPTR);  // has init_static() been called?
 	Scanner::Prop t;
-	Scanner::Plain plain(scanner.get_plain(name, &t));
+	Scanner::Plain plain(scanner->get_plain(name, &t));
 	Scanner::ColonVar colon_var;
 	Scanner::ColonOther colon_other;
 	string after_colon;
@@ -445,9 +455,9 @@ PrintFormat::get_pkg_property(Package *package, const string &name) const
 		if(likely(col != string::npos)) {
 			// we misuse here "after_colon" to mean "before_colon"
 			after_colon.assign(name.substr(0, col));
-			colon_var = scanner.get_colon_var(after_colon, &t);
+			colon_var = scanner->get_colon_var(after_colon, &t);
 			if(unlikely(colon_var == NULLPTR)) {
-				colon_other = scanner.get_colon_other(after_colon, &t);
+				colon_other = scanner->get_colon_other(after_colon, &t);
 				if(unlikely(colon_other == NULLPTR)) {
 					// flag that we failed
 					col = string::npos;
@@ -492,7 +502,7 @@ PrintFormat::COLON_VER_DATE(Package *package, const string &after_colon) const
 		}
 		return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
 	}
-	return emptystring;
+	return "";
 }
 
 void
@@ -640,43 +650,43 @@ PrintFormat::PKG_INSTALLED(Package *package) const
 	if(likely(vardb != NULLPTR)) {
 		vector<InstVersion> *vec(vardb->getInstalledVector(*package));
 		if((vec != NULLPTR) && (likely(!(vec->empty())))) {
-			return one;
+			return "1";
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
 PrintFormat::PKG_VERSIONLINES(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (style_version_lines ? one : emptystring);
+	return (style_version_lines ? "1" : "");
 }
 
 string
 PrintFormat::PKG_SLOTSORTED(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (slot_sorted ? one : emptystring);
+	return (slot_sorted ? "1" : "");
 }
 
 string
 PrintFormat::PKG_COLOR(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (no_color ? emptystring : one);
+	return (no_color ? "" : "1");
 }
 
 string
 PrintFormat::PKG_HAVEBEST(Package *package) const
 {
-	return ((package->best(false) == NULLPTR) ? emptystring : one);
+	return ((package->best(false) == NULLPTR) ? "" : "1");
 }
 
 string
 PrintFormat::PKG_HAVEBESTS(Package *package) const
 {
-	return ((package->best(true) == NULLPTR) ? emptystring : one);
+	return ((package->best(true) == NULLPTR) ? "" : "1");
 }
 
 string
@@ -714,7 +724,7 @@ PrintFormat::PKG_BINARY(Package *package) const
 {
 	for(Package::const_iterator it(package->begin()); likely(it != package->end()); ++it) {
 		if(it->have_bin_pkg(portagesettings, package)) {
-			return one;
+			return "1";
 		}
 	}
 	if(likely(vardb != NULLPTR)) {
@@ -723,12 +733,12 @@ PrintFormat::PKG_BINARY(Package *package) const
 			for(vector<InstVersion>::iterator it(vec->begin());
 				likely(it != vec->end()); ++it) {
 				if(it->have_bin_pkg(portagesettings, package)) {
-					return one;
+					return "1";
 				}
 			}
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
@@ -738,25 +748,25 @@ PrintFormat::PKG_OVERLAYKEY(Package *package) const
 	if(ov_key && package->have_same_overlay_key()) {
 		return overlay_keytext(ov_key, false);
 	}
-	return emptystring;
+	return "";
 }
 
 string
 PrintFormat::PKG_SYSTEM(Package *package) const
 {
-	return ((package->is_system_package()) ? one : emptystring);
+	return ((package->is_system_package()) ? "1" : "");
 }
 
 string
 PrintFormat::PKG_WORLD(Package *package) const
 {
-	return ((package->is_world_package()) ? one : emptystring);
+	return ((package->is_world_package()) ? "1" : "");
 }
 
 string
 PrintFormat::PKG_WORLD_SETS(Package *package) const
 {
-	return ((package->is_world_sets_package()) ? one : emptystring);
+	return ((package->is_world_sets_package()) ? "1" : "");
 }
 
 string
@@ -777,7 +787,7 @@ PrintFormat::pkg_upgrade(Package *package, bool only_installed, bool test_slots)
 	LocalCopy localcopy(this, package);
 	bool result(package->can_upgrade(vardb, portagesettings, only_installed, test_slots));
 	localcopy.restore(package);
-	return (result ? one : emptystring);
+	return (result ? "1" : "");
 }
 
 string
@@ -810,7 +820,7 @@ PrintFormat::pkg_downgrade(Package *package, bool test_slots) const
 	LocalCopy locallocalcopy(this, package);
 	bool result(package->must_downgrade(vardb, test_slots));
 	locallocalcopy.restore(package);
-	return (result ? one : emptystring);
+	return (result ? "1" : "");
 }
 
 string
@@ -831,7 +841,7 @@ PrintFormat::pkg_recommend(Package *package, bool only_installed, bool test_slot
 	LocalCopy locallocalcopy(this, package);
 	bool result(package->recommend(vardb, portagesettings, only_installed, test_slots));
 	locallocalcopy.restore(package);
-	return (result ? one : emptystring);
+	return (result ? "1" : "");
 }
 
 string
@@ -863,10 +873,10 @@ PrintFormat::PKG_MARKED(Package *package) const
 {
 	if(likely(marked_list != NULLPTR)) {
 		if(unlikely(marked_list->is_marked(*package))) {
-			return one;
+			return "1";
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
@@ -876,29 +886,29 @@ PrintFormat::PKG_HAVEMARKEDVERSION(Package *package) const
 		for(Package::const_iterator it(package->begin());
 			likely(it != package->end()); ++it) {
 			if(marked_list->is_marked(*package, &(**it))) {
-				return one;
+				return "1";
 			}
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
 PrintFormat::PKG_SLOTS(Package *package) const
 {
-	return (((package->slotlist()).size() > 1) ? one : emptystring);
+	return (((package->slotlist()).size() > 1) ? "1" : "");
 }
 
 string
 PrintFormat::PKG_SLOTTED(Package *package) const
 {
-	return ((package->have_nontrivial_slots()) ? one : emptystring);
+	return ((package->have_nontrivial_slots()) ? "1" : "");
 }
 
 string
 PrintFormat::PKG_HAVECOLLIUSE(Package *package) const
 {
-	return ((package->iuse.empty()) ? emptystring : one);
+	return ((package->iuse.empty()) ? "" : "1");
 }
 
 string
@@ -920,35 +930,35 @@ string
 PrintFormat::VER_FIRST(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ((version_variables->first) ? one : emptystring);
+	return ((version_variables->first) ? "1" : "");
 }
 
 string
 PrintFormat::VER_LAST(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ((version_variables->last) ? one : emptystring);
+	return ((version_variables->last) ? "1" : "");
 }
 
 string
 PrintFormat::VER_SLOTFIRST(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ((version_variables->slotfirst) ? one : emptystring);
+	return ((version_variables->slotfirst) ? "1" : "");
 }
 
 string
 PrintFormat::VER_SLOTLAST(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ((version_variables->slotlast) ? one : emptystring);
+	return ((version_variables->slotlast) ? "1" : "");
 }
 
 string
 PrintFormat::VER_ONESLOT(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return ((version_variables->oneslot) ? one : emptystring);
+	return ((version_variables->oneslot) ? "1" : "");
 }
 
 const ExtendedVersion *
@@ -972,21 +982,21 @@ PrintFormat::VER_FULLSLOT(Package *package) const
 string
 PrintFormat::VER_ISFULLSLOT(Package *package) const
 {
-	return ((ver_versionslot(package)->get_shortfullslot().empty()) ? emptystring : one);
+	return ((ver_versionslot(package)->get_shortfullslot().empty()) ? "" : "1");
 }
 
 string
 PrintFormat::VER_SLOT(Package *package) const
 {
 	const string &slot(ver_versionslot(package)->slotname);
-	return ((slot.empty()) ? zerostring : slot);
+	return ((slot.empty()) ? "0" : slot);
 }
 
 string
 PrintFormat::VER_ISSLOT(Package *package) const
 {
 	const string &slot(ver_versionslot(package)->slotname);
-	return ((slot.empty() || (slot == zerostring)) ? emptystring : one);
+	return ((slot.empty() || (slot == "0")) ? "" : "1");
 }
 
 string
@@ -995,7 +1005,7 @@ PrintFormat::VER_SUBSLOT(Package *package) const
 
 string
 PrintFormat::VER_ISSUBSLOT(Package *package) const
-{ return ((ver_versionslot(package)->subslotname.empty()) ? emptystring : one); }
+{ return ((ver_versionslot(package)->subslotname.empty()) ? "" : "1"); }
 
 string
 PrintFormat::VER_VERSION(Package *package ATTRIBUTE_UNUSED) const
@@ -1050,7 +1060,7 @@ PrintFormat::ver_overlay(Package *package, bool getnum) const
 			return overlay_keytext(version_variables->version()->overlay_key, getnum);
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
@@ -1069,7 +1079,7 @@ string
 PrintFormat::VER_VERSIONKEYWORDSS(Package *package) const
 {
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	portagesettings->get_effective_keywords_userprofile(package);
 	return version_variables->version()->get_effective_keywords();
@@ -1080,7 +1090,7 @@ PrintFormat::VER_VERSIONKEYWORDS(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->get_full_keywords();
 }
@@ -1096,7 +1106,7 @@ PrintFormat::VER_VERSIONEKEYWORDS(Package *package) const
 			return s;
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
@@ -1107,10 +1117,10 @@ PrintFormat::ver_isbestupgrade(Package *package, bool check_slots, bool allow_un
 			unlikely(package->is_best_upgrade(check_slots,
 					version_variables->version(),
 					vardb, portagesettings, allow_unstable)))) {
-			return one;
+			return "1";
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
@@ -1143,24 +1153,24 @@ PrintFormat::VER_MARKEDVERSION(Package *package) const
 	if(likely(!version_variables->isinst)) {
 		if(unlikely((likely(marked_list != NULLPTR)) && (unlikely(marked_list->is_marked(*package,
 			version_variables->version()))))) {
-			return one;
+			return "1";
 		}
 	}
-	return emptystring;
+	return "";
 }
 
 string
 PrintFormat::VER_INSTALLEDVERSION(Package *package) const
 {
 	if(unlikely(version_variables->isinst)) {
-		return one;
+		return "1";
 	}
 	if(unlikely((likely(vardb != NULLPTR)) && (likely(header != NULLPTR)) &&
 		(unlikely(vardb->isInstalledVersion(*package,
 			version_variables->version(), *header))))) {
-		return one;
+		return "1";
 	}
-	return emptystring;
+	return "";
 }
 
 string
@@ -1171,11 +1181,11 @@ PrintFormat::VER_HAVEUSE(Package *package) const
 		if((likely(vardb != NULLPTR)) &&
 			(likely(vardb->readUse(*package, i)))
 			&& !(i->inst_iuse.empty())) {
-			return one;
+			return "1";
 		}
-		return emptystring;
+		return "";
 	}
-	return ((version_variables->version()->iuse.empty()) ? emptystring : one);
+	return ((version_variables->version()->iuse.empty()) ? "" : "1");
 }
 
 string
@@ -1190,7 +1200,7 @@ PrintFormat::VER_USE(Package *package) const
 string
 PrintFormat::VER_ISBINARY(Package *package) const
 {
-	return ((ver_version()->have_bin_pkg(portagesettings, package)) ? one : emptystring);
+	return ((ver_version()->have_bin_pkg(portagesettings, package)) ? "1" : "");
 }
 
 const ExtendedVersion *
@@ -1216,7 +1226,7 @@ PrintFormat::ver_restrict(Package *package, ExtendedVersion::Restrict r) const
 {
 	const ExtendedVersion *e(ver_restrict(package));
 	return (((e != NULLPTR) && (((e->restrictFlags) & r) != ExtendedVersion::RESTRICT_NONE))
-		? one : emptystring);
+		? "1" : "");
 }
 
 string
@@ -1289,7 +1299,7 @@ PrintFormat::ver_properties(Package *package, ExtendedVersion::Properties p) con
 {
 	const ExtendedVersion *e(ver_restrict(package));
 	return (((e != NULLPTR) && (((e->propertiesFlags) & p) != ExtendedVersion::RESTRICT_NONE))
-		? one : emptystring);
+		? "1" : "");
 }
 
 string
@@ -1326,28 +1336,28 @@ string
 PrintFormat::VER_HAVEDEPEND(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.depend_empty()) ? emptystring : one);
+	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.depend_empty()) ? "" : "1");
 }
 
 string
 PrintFormat::VER_HAVERDEPEND(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.rdepend_empty()) ? emptystring : one);
+	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.rdepend_empty()) ? "" : "1");
 }
 
 string
 PrintFormat::VER_HAVEPDEPEND(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.pdepend_empty()) ? emptystring : one);
+	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.pdepend_empty()) ? "" : "1");
 }
 
 string
 PrintFormat::VER_HAVEDEPS(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
-	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.empty()) ? emptystring : one);
+	return (((unlikely(version_variables->isinst)) || version_variables->version()->depend.empty()) ? "" : "1");
 }
 
 string
@@ -1355,7 +1365,7 @@ PrintFormat::VER_DEPENDS(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->depend.get_depend_brief();
 }
@@ -1365,7 +1375,7 @@ PrintFormat::VER_DEPEND(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->depend.get_depend();
 }
@@ -1375,7 +1385,7 @@ PrintFormat::VER_RDEPENDS(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->depend.get_rdepend_brief();
 }
@@ -1386,7 +1396,7 @@ PrintFormat::VER_RDEPEND(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->depend.get_rdepend();
 }
@@ -1396,7 +1406,7 @@ PrintFormat::VER_PDEPENDS(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->depend.get_pdepend_brief();
 }
@@ -1406,7 +1416,7 @@ PrintFormat::VER_PDEPEND(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	if(unlikely(version_variables->isinst)) {
-		return emptystring;
+		return "";
 	}
 	return version_variables->version()->depend.get_pdepend();
 }
@@ -1422,7 +1432,7 @@ PrintFormat::VER_ISHARDMASKED(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const MaskFlags *maskflags(ver_maskflags());
-	return (((maskflags != NULLPTR) && (maskflags->isHardMasked())) ? one : emptystring);
+	return (((maskflags != NULLPTR) && (maskflags->isHardMasked())) ? "1" : "");
 }
 
 string
@@ -1430,7 +1440,7 @@ PrintFormat::VER_ISPROFILEMASKED(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const MaskFlags *maskflags(ver_maskflags());
-	return (((maskflags != NULLPTR) && (maskflags->isProfileMask())) ? one : emptystring);
+	return (((maskflags != NULLPTR) && (maskflags->isProfileMask())) ? "1" : "");
 }
 
 string
@@ -1438,7 +1448,7 @@ PrintFormat::VER_ISMASKED(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const MaskFlags *maskflags(ver_maskflags());
-	return (((maskflags != NULLPTR) && (maskflags->isPackageMask())) ? one : emptystring);
+	return (((maskflags != NULLPTR) && (maskflags->isPackageMask())) ? "1" : "");
 }
 
 const KeywordsFlags *
@@ -1452,7 +1462,7 @@ PrintFormat::VER_ISSTABLE(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isStable())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isStable())) ? "1" : "");
 }
 
 string
@@ -1460,7 +1470,7 @@ PrintFormat::VER_ISUNSTABLE(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isUnstable())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isUnstable())) ? "1" : "");
 }
 
 string
@@ -1468,7 +1478,7 @@ PrintFormat::VER_ISALIENSTABLE(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isAlienStable())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isAlienStable())) ? "1" : "");
 }
 
 string
@@ -1476,7 +1486,7 @@ PrintFormat::VER_ISALIENUNSTABLE(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isAlienUnstable())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isAlienUnstable())) ? "1" : "");
 }
 
 string
@@ -1484,7 +1494,7 @@ PrintFormat::VER_ISMISSINGKEYWORD(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isMissingKeyword())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isMissingKeyword())) ? "1" : "");
 }
 
 string
@@ -1492,7 +1502,7 @@ PrintFormat::VER_ISMINUSKEYWORD(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isMinusKeyword())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isMinusKeyword())) ? "1" : "");
 }
 
 string
@@ -1500,7 +1510,7 @@ PrintFormat::VER_ISMINUSUNSTABLE(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isMinusUnstable())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isMinusUnstable())) ? "1" : "");
 }
 
 string
@@ -1508,7 +1518,7 @@ PrintFormat::VER_ISMINUSASTERISK(Package *package ATTRIBUTE_UNUSED) const
 {
 	UNUSED(package);
 	const KeywordsFlags *keywordsflags(ver_keywordsflags());
-	return (((keywordsflags != NULLPTR) && (keywordsflags->isMinusAsterisk())) ? one : emptystring);
+	return (((keywordsflags != NULLPTR) && (keywordsflags->isMinusAsterisk())) ? "1" : "");
 }
 
 bool
@@ -1525,77 +1535,77 @@ string
 PrintFormat::VER_WASHARDMASKED(Package *package) const
 {
 	MaskFlags maskflags;
-	return ((ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isHardMasked()) ? one : emptystring);
+	return ((ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isHardMasked()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASPROFILEMASKED(Package *package) const
 {
 	MaskFlags maskflags;
-	return ((ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isProfileMask()) ? one : emptystring);
+	return ((ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isProfileMask()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASMASKED(Package *package) const
 {
 	MaskFlags maskflags;
-	return ((ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isPackageMask()) ? one : emptystring);
+	return ((ver_wasflags(package, &maskflags, NULLPTR) && maskflags.isPackageMask()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASSTABLE(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isStable()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isStable()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASUNSTABLE(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isUnstable()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isUnstable()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASALIENSTABLE(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienStable()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienStable()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASALIENUNSTABLE(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienUnstable()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isAlienUnstable()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASMISSINGKEYWORD(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMissingKeyword()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMissingKeyword()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASMINUSKEYWORD(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusKeyword()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusKeyword()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASMINUSUNSTABLE(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusUnstable()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusUnstable()) ? "1" : "");
 }
 
 string
 PrintFormat::VER_WASMINUSASTERISK(Package *package) const
 {
 	KeywordsFlags keywordsflags;
-	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusAsterisk()) ? one : emptystring);
+	return ((ver_wasflags(package, NULLPTR, &keywordsflags) && keywordsflags.isMinusAsterisk()) ? "1" : "");
 }
 
 static Package *
@@ -1625,7 +1635,7 @@ get_diff_package_property(const PrintFormat *fmt, void *entity, const string &na
 {
 	Package *older((static_cast<Package**>(entity))[0]);
 	Package *newer((static_cast<Package**>(entity))[1]);
-	Scanner::Diff diff(scanner.get_diff(name));
+	Scanner::Diff diff(scanner->get_diff(name));
 	if(unlikely(diff != Scanner::DIFF_NONE)) {
 		LocalCopy copynewer(fmt, newer);
 		LocalCopy copyolder(fmt, older);
@@ -1654,8 +1664,8 @@ get_diff_package_property(const PrintFormat *fmt, void *entity, const string &na
 		copyolder.restore(older);
 		copynewer.restore(newer);
 		if(result)
-			return one;
-		return emptystring;
+			return "1";
+		return "";
 	}
 	string new_name;
 	Package *package(old_or_new(&new_name, older, newer, name));

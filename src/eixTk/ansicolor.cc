@@ -7,6 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <cassert>
 #include <cstdio>
 
 #include <map>
@@ -26,10 +27,14 @@ using std::vector;
 
 const char *AnsiMarker::reset_string("\x1B[0m");
 
-inline static const map<string, AnsiMarker::Marker>&
-static_marker_map()
+static map<string, AnsiMarker::Marker> *static_marker_map = NULLPTR;
+
+static void
+init_marker_map()
 {
-	static map<string, AnsiMarker::Marker> marker_map;
+	assert(static_marker_map == NULLPTR);  // must be called only once
+	static_marker_map = new map<string, AnsiMarker::Marker>;
+	map<string, AnsiMarker::Marker> &marker_map(*static_marker_map);
 	marker_map[""]           = AnsiMarker::amNone;
 	marker_map["none"]       = AnsiMarker::amNone;
 	marker_map["bold"]       = AnsiMarker::amBold;
@@ -38,23 +43,26 @@ static_marker_map()
 	marker_map["blink"]      = AnsiMarker::amBlink;
 	marker_map["inverse"]    = AnsiMarker::amInverse;
 	marker_map["invert"]     = AnsiMarker::amInverse;
-	return marker_map;
 }
 
 inline static AnsiMarker::Marker
 name_to_marker(const string &name)
 {
-	static const map<string, AnsiMarker::Marker> &marker_map(static_marker_map());
-	map<string, AnsiMarker::Marker>::const_iterator f(marker_map.find(name));
-	if(f != marker_map.end())
+	assert(static_marker_map != NULLPTR);  // has init_static() been called?
+	map<string, AnsiMarker::Marker>::const_iterator f(static_marker_map->find(name));
+	if(f != static_marker_map->end())
 		return f->second;
 	return AnsiMarker::amIllegal;
 }
 
-inline static const map<string, AnsiColor::Color>&
-static_color_map()
+static map<string, AnsiColor::Color> *static_color_map = NULLPTR;
+
+static void
+init_color_map()
 {
-	static map<string, AnsiColor::Color> color_map;
+	assert(static_color_map == NULLPTR);  // must be called only once
+	static_color_map = new map<string, AnsiColor::Color>;
+	map<string, AnsiColor::Color> &color_map(*static_color_map);
 	color_map["default"] = AnsiColor::acDefault;
 	color_map[""]        = AnsiColor::acDefault;
 	color_map["none"]    = AnsiColor::acNone;
@@ -66,15 +74,14 @@ static_color_map()
 	color_map["purple"]  = AnsiColor::acPurple;
 	color_map["cyan"]    = AnsiColor::acCyan;
 	color_map["gray"]    = AnsiColor::acGray;
-	return color_map;
 }
 
 inline static AnsiColor::Color
 name_to_color(const string &name)
 {
-	static const map<string, AnsiColor::Color> &color_map(static_color_map());
-	map<string, AnsiColor::Color>::const_iterator f(color_map.find(name));
-	if(f != color_map.end()) {
+	assert(static_color_map != NULLPTR);  // has init_static() been called?
+	map<string, AnsiColor::Color>::const_iterator f(static_color_map->find(name));
+	if(f != static_color_map->end()) {
 		return f->second;
 	}
 	return AnsiColor::acIllegal;
@@ -187,4 +194,11 @@ AnsiColor::initcolor(const string &color_name, string *errtext)
 	}
 	calc_string();
 	return true;
+}
+
+void
+AnsiColor::init_static()
+{
+	init_marker_map();
+	init_color_map();
 }

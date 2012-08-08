@@ -39,6 +39,14 @@ using std::map;
 using std::string;
 using std::vector;
 
+class EbuildExecSettings {
+public:
+	string exec_ebuild, exec_ebuild_sh, ebuild_depend_temp;
+	string portage_rootpath, portage_bin_path;
+
+	void init();
+};
+
 EbuildExec *EbuildExec::handler_arg;
 
 void
@@ -186,10 +194,14 @@ EbuildExec::calc_environment(const char *name, const string &dir, const Package 
 	{
 		base->env_add_package(env, package, version, dir, name);
 		env["dbkey"] = cachefile;
-		if(likely(!portage_rootpath.empty()))
+		const string &portage_rootpath(settings->portage_rootpath);
+		if(likely(!portage_rootpath.empty())) {
 			env["PORTAGE_ROOTPATH"] = portage_rootpath;
-		if(likely(!portage_bin_path.empty()))
+		}
+		const string &portage_bin_path(settings->portage_bin_path);
+		if(likely(!portage_bin_path.empty())) {
 			env["PORTAGE_BIN_PATH"] = portage_bin_path;
+		}
 	}
 
 	// transform env into c_env (pointing to envstrings[i].c_str())
@@ -218,15 +230,15 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 
 	add_handler();
 	if(use_ebuild_sh) {
-		exec_name = exec_ebuild_sh.c_str();
+		exec_name = settings->exec_ebuild_sh.c_str();
 		if(!make_tempfile()) {
 			base->m_error_callback(_("Creation of tempfile failed"));
 			remove_handler();
 			return NULLPTR;
 		}
 	} else {
-		exec_name = exec_ebuild.c_str();
-		cachefile = ebuild_depend_temp;
+		exec_name = settings->exec_ebuild.c_str();
+		cachefile = settings->ebuild_depend_temp;
 		cache_defined = true;
 	}
 	calc_environment(name, dir, package, version);
@@ -287,20 +299,24 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	return NULLPTR;
 }
 
-bool EbuildExec::know_settings = false;
-string EbuildExec::exec_ebuild, EbuildExec::exec_ebuild_sh, EbuildExec::ebuild_depend_temp;  // NOLINT(runtime/string)
-string EbuildExec::portage_rootpath, EbuildExec::portage_bin_path;  // NOLINT(runtime/string)
-
 void
-EbuildExec::calc_settings()
+EbuildExecSettings::init()
 {
-	if(likely(know_settings))
-		return;
-	know_settings = true;
-	EixRc &eix(get_eixrc(NULLPTR));
+	EixRc &eix(get_eixrc());
 	exec_ebuild = eix["EXEC_EBUILD"];
 	exec_ebuild_sh = eix["EXEC_EBUILD_SH"];
 	ebuild_depend_temp = eix["EBUILD_DEPEND_TEMP"];
 	portage_rootpath = eix["PORTAGE_ROOTPATH"];
 	portage_bin_path = eix["PORTAGE_BIN_PATH"];
+}
+
+EbuildExecSettings *EbuildExec::settings = NULLPTR;
+
+void
+EbuildExec::calc_settings()
+{
+	if(unlikely(settings == NULLPTR)) {
+		settings = new EbuildExecSettings;
+		settings->init();
+	}
 }

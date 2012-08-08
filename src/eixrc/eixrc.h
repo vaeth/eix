@@ -39,8 +39,10 @@ class EixRcOption {
 
 class EixRc {
 	public:
-		std::string varprefix;
 		std::string m_eprefixconf;
+
+		explicit EixRc(const char *prefix) : varprefix(prefix)
+		{ }
 
 		typedef std::vector<EixRcOption>::size_type default_index;
 		typedef std::pair<RedAtom, RedAtom> RedPair;
@@ -78,6 +80,7 @@ class EixRc {
 		const std::string &operator[](const std::string &key);
 
 	private:
+		std::string varprefix;
 		std::map<std::string, std::string> main_map;
 		std::map<std::string, std::string> filevarmap;
 		std::vector<EixRcOption> defaults;

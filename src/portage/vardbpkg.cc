@@ -155,7 +155,7 @@ VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 	pushback_lines((dirname + "/REPOSITORY").c_str(),
 		&lines, true, false, false);
 	if(lines.empty())
-		return emptystring;
+		return "";
 	return lines[0];
 }
 
@@ -174,14 +174,11 @@ VarDbPkg::readSlot(const Package &p, InstVersion *v) const
 		&lines, true, false, false, NULLPTR))) {
 		return (v->read_failed = true);
 	}
-	const string *slot;
-	if(lines.empty())
-		slot = &emptystring;
-	else if(lines[0] == "0")
-		slot = &emptystring;
-	else
-		slot = &(lines[0]);
-	v->set_slotname(*slot);
+	if((lines.empty()) || (lines[0] == "0")) {
+		v->set_slotname("");
+	} else {
+		v->set_slotname(lines[0]);
+	}
 	return (v->know_slot = true);
 }
 

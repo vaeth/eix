@@ -5,6 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <cassert>
+
 #include <map>
 #include <set>
 #include <string>
@@ -76,11 +78,20 @@ public:
 		init_ins("other_overlay",    PackageTest::INS_OVERLAY);
 	}
 };
-static NowarnKeywords nowarn_keywords;
+
+NowarnKeywords *NowarnMask::nowarn_keywords = NULLPTR;
+
+void
+NowarnMask::init_static()
+{
+	assert(nowarn_keywords == NULLPTR);  // must be called only once
+	nowarn_keywords = new NowarnKeywords;
+}
 
 void
 NowarnMask::init_nowarn(const vector<string> &flagstrings)
 {
+	assert(nowarn_keywords != NULLPTR);  // has init_static() been called?
 	set_flags.clear();
 	clear_flags.clear();
 	for(vector<string>::const_iterator it(flagstrings.begin());
@@ -89,9 +100,9 @@ NowarnMask::init_nowarn(const vector<string> &flagstrings)
 			continue;
 		}
 		if((*it)[0] == '-') {
-			nowarn_keywords.apply(it->substr(1), clear_flags);
+			nowarn_keywords->apply(it->substr(1), clear_flags);
 		}
-		nowarn_keywords.apply(*it, set_flags);
+		nowarn_keywords->apply(*it, set_flags);
 	}
 }
 

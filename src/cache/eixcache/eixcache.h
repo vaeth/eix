@@ -24,7 +24,7 @@ class PackageTree;
 
 class EixCache : public BasicCache {
 	private:
-		static eix::ptr_list<EixCache> all_eixcaches;
+		static eix::ptr_list<EixCache> *all_eixcaches;
 		bool slavemode;
 		std::string err_msg;
 		std::string m_name, m_file, m_overlay, m_full;

@@ -31,15 +31,18 @@ const DBHeader::OverlayTest
 	DBHeader::OVTEST_ALL;
 const DBHeader::DBVersion DBHeader::current;
 
-const string DBHeader::magic("eix\n");  // NOLINT(runtime/string)
+const char *DBHeader::magic = "eix\n";
 
 /** Get overlay for key from table. */
 const OverlayIdent &
 DBHeader::getOverlay(ExtendedVersion::Overlay key) const
 {
+	static const OverlayIdent *not_found = NULLPTR;
 	if(key > countOverlays()) {
-		static const OverlayIdent not_found("", "");
-		return not_found;
+		if(unlikely(not_found == NULLPTR)) {
+			not_found = new OverlayIdent("", "");
+		}
+		return *not_found;
 	}
 	return overlays[key];
 }

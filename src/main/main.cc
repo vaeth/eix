@@ -15,6 +15,7 @@
 #ifdef ENABLE_NLS
 #include <clocale>
 #endif
+#include <cstring>
 
 #include <string>
 
@@ -97,7 +98,7 @@
 using std::string;
 
 /** The name under which we have been called. */
-string program_name;  // NOLINT(runtime/string)
+const char *program_name;
 
 static void sig_handler(int sig) ATTRIBUTE_SIGNAL ATTRIBUTE_NORETURN;
 
@@ -118,7 +119,7 @@ sig_handler(int sig)
 				" * post a bugreport and be sure to include the output from gdb ..\n"
 				"\n"
 				"Sorry for the inconvenience and thanks in advance!\n"),
-				program_name.c_str(), program_name.c_str());
+				program_name, program_name);
 	exit(EXIT_FAILURE);
 }
 
@@ -148,37 +149,31 @@ inline static int
 run_program(int argc, char *argv[])
 {
 #ifdef DIFF_BINARY
-	if(unlikely((program_name.find("diff") != string::npos) ||
-		(program_name.find("DIFF") != string::npos)))
+	if(unlikely(strcasestr(program_name, "diff") != NULLPTR))
 		return run_eix_diff(argc, argv);
 #endif
 #ifdef UPDATE_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY) || defined(DROP_PERMISSIONS_BINARY)
-	if(unlikely((program_name.find("update") != string::npos) ||
-		(program_name.find("UPDATE") != string::npos)))
+	if(unlikely(strcasestr(program_name, "update") != NULLPTR))
 #endif
 		return run_eix_update(argc, argv);
 #endif
 #ifdef DROP_PERMISSIONS_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY) || defined(MASKED_BINARY)
-	if(likely((program_name.find("drop") != string::npos) ||
-		(program_name.find("perm") != string::npos) ||
-		(program_name.find("DROP") != string::npos) ||
-		(program_name.find("PERM") != string::npos)))
+	if(likely((strcasestr(program_name, "drop") != NULLPTR) ||
+		(strcasestr(program_name, "perm") != NULLPTR)))
 #endif
 		return run_eix_drop_permissions(argc, argv);
 #endif
 #ifdef MASKED_BINARY
 #if defined(EIX_BINARY) || defined(VERSIONSORT_BINARY)
-	if(likely((program_name.find("mask") != string::npos) ||
-		(program_name.find("MASK") != string::npos)))
+	if(likely(strcasestr(program_name, "mask") != NULLPTR))
 #endif
 		return run_masked_packages(argc, argv);
 #endif
 #ifdef VERSIONSORT_BINARY
 #if defined(EIX_BINARY)
-	if(likely((program_name.find("vers") != string::npos) ||
-		(program_name.find("VERS") != string::npos)))
+	if(likely(strcasestr(program_name, "vers") != NULLPTR))
 #endif
 		return run_versionsort(argc, argv);
 #endif
@@ -209,8 +204,9 @@ main(int argc, char** argv)
 	signal(SIGSEGV, sig_handler);
 #endif
 
-	program_name = argv[0];
-	sanitize_filename(&program_name);
+	string my_program_name(argv[0]);
+	sanitize_filename(&my_program_name);
+	program_name = my_program_name.c_str();
 	return USE_BINARY(argc, argv);
 }
 

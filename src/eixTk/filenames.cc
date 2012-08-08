@@ -47,7 +47,6 @@
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
-#include "eixTk/stringutils.h"
 
 using std::string;
 
@@ -84,7 +83,7 @@ string normalize_path(const char *path, bool resolve)
 string normalize_path(const char *path, bool resolve, bool want_slash)
 {
 	if(!*path)
-		return emptystring;
+		return "";
 	string name;
 	if(resolve)
 	{

@@ -19,6 +19,7 @@
 class OverlayIdent {
 	private:
 		void readLabel_internal(const char *Path);
+
 	public:
 		bool know_path, know_label;
 		std::string path, label;
@@ -39,6 +40,8 @@ class OverlayIdent {
 		}
 
 		std::string human_readable() const;
+
+		static void init_static();
 };
 
 class RepoList : public std::vector<OverlayIdent> {

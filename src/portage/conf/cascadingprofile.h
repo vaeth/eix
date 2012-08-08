@@ -125,6 +125,8 @@ class CascadingProfile {
 
 		void applyMasks(Package *p) const;
 		void applyKeywords(Package *p) const;
+
+		static void init_static();
 };
 
 

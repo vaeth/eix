@@ -10,8 +10,7 @@
 #ifndef SRC_MAIN_MAIN_H_
 #define SRC_MAIN_MAIN_H_ 1
 
-#include <string>
-extern std::string program_name;
+extern const char *program_name;
 
 int run_eix(int argc, char *argv[]);
 int run_eix_update(int argc, char *argv[]);

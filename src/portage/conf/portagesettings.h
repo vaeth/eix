@@ -64,7 +64,7 @@ class PortageUserConfig {
 
 		bool CheckList(Package *p, const MaskList<KeywordMask> *list, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
 		bool CheckFile(Package *p, const char *file, MaskList<KeywordMask> *list, bool *readfile, Keywords::Redundant flag_double, Keywords::Redundant flag_in) const;
-		static void ReadVersionFile (const char *file, MaskList<KeywordMask> *list);
+		static void ReadVersionFile(const char *file, MaskList<KeywordMask> *list);
 
 		void pushback_set_accepted_keywords(std::vector<std::string> *result, const Version *v) const;
 
@@ -229,6 +229,8 @@ class PortageSettings : public std::map<std::string, std::string> {
 		void get_effective_keywords_profile(Package *p) const;
 
 		void get_effective_keywords_userprofile(Package *p) const;
+
+		static void init_static();
 };
 
 #endif  // SRC_PORTAGE_CONF_PORTAGESETTINGS_H_

@@ -16,8 +16,8 @@
 
 #include "eixTk/utils.h"
 
-int package_selector (SCANDIR_ARG3 dent) ATTRIBUTE_PURE;
-int ebuild_selector (SCANDIR_ARG3 dent) ATTRIBUTE_PURE;
+int package_selector(SCANDIR_ARG3 dent) ATTRIBUTE_PURE;
+int ebuild_selector(SCANDIR_ARG3 dent) ATTRIBUTE_PURE;
 
 std::string::size_type ebuild_pos(const std::string &str);
 

@@ -139,7 +139,7 @@ print_help()
 " -r  --repo-name         set label for matching overlay.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name.c_str(), EIX_CACHEFILE);
+"further information.\n"), program_name, EIX_CACHEFILE);
 }
 
 enum cli_options {
@@ -160,33 +160,38 @@ static bool
 
 static bool use_percentage, use_status, verbose;
 
-static list<const char *> exclude_args, add_args;
-static list<ArgPair> method_args, repo_args;
-static const char *outputname(NULLPTR);
-static const char *var_to_print(NULLPTR);
+static list<const char *> *exclude_args, *add_args;
+static list<ArgPair> *method_args, *repo_args;
+static const char *outputname = NULLPTR;
+static const char *var_to_print = NULLPTR;
 
-/** Arguments and shortopts. */
-static Option long_options[] = {
-	 Option("quiet",          'q',     Option::BOOLEAN,    &quiet),
-	 Option("dump",            O_DUMP, Option::BOOLEAN_T,  &dump_eixrc),
-	 Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults),
-	 Option("print",        O_PRINT_VAR,  Option::STRING,    &var_to_print),
-	 Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &known_vars),
-	 Option("help",           'h',     Option::BOOLEAN_T,  &show_help),
-	 Option("version",        'V',     Option::BOOLEAN_T,  &show_version),
-	 Option("nostatus",       'H',     Option::BOOLEAN_F,  &use_status),
-	 Option("nocolor",        'n',     Option::BOOLEAN_F,  &use_percentage),
-	 Option("force-color",    'F',     Option::BOOLEAN_T,  &use_percentage),
-	 Option("force-status", O_FORCE_STATUS, Option::BOOLEAN_T, &use_status),
-	 Option("verbose",        'v',     Option::BOOLEAN_T,  &verbose),
-
-	 Option("exclude-overlay", 'x',    Option::STRINGLIST, &exclude_args),
-	 Option("add-overlay",    'a',     Option::STRINGLIST, &add_args),
-	 Option("method",         'm',     Option::PAIRLIST,   &method_args),
-	 Option("repo-name",      'r',     Option::PAIRLIST,   &repo_args),
-	 Option("output",         'o',     Option::STRING,     &outputname),
-	 Option(NULLPTR, 0)
+/** Arguments and options. */
+class EixUpdateOptionList : public OptionList {
+	public:
+		EixUpdateOptionList();
 };
+
+EixUpdateOptionList::EixUpdateOptionList()
+{
+	push_back(Option("quiet",          'q',     Option::BOOLEAN,    &quiet));
+	push_back(Option("dump",            O_DUMP, Option::BOOLEAN_T,  &dump_eixrc));
+	push_back(Option("dump-defaults", O_DUMP_DEFAULTS, Option::BOOLEAN_T, &dump_defaults));
+	push_back(Option("print",        O_PRINT_VAR,  Option::STRING,    &var_to_print));
+	push_back(Option("known-vars",   O_KNOWN_VARS, Option::BOOLEAN_T, &known_vars));
+	push_back(Option("help",           'h',     Option::BOOLEAN_T,  &show_help));
+	push_back(Option("version",        'V',     Option::BOOLEAN_T,  &show_version));
+	push_back(Option("nostatus",       'H',     Option::BOOLEAN_F,  &use_status));
+	push_back(Option("nocolor",        'n',     Option::BOOLEAN_F,  &use_percentage));
+	push_back(Option("force-color",    'F',     Option::BOOLEAN_T,  &use_percentage));
+	push_back(Option("force-status", O_FORCE_STATUS, Option::BOOLEAN_T, &use_status));
+	push_back(Option("verbose",        'v',     Option::BOOLEAN_T,  &verbose));
+
+	push_back(Option("exclude-overlay", 'x',    Option::STRINGLIST, exclude_args));
+	push_back(Option("add-overlay",    'a',     Option::STRINGLIST, add_args));
+	push_back(Option("method",         'm',     Option::PAIRLIST,   method_args));
+	push_back(Option("repo-name",      'r',     Option::PAIRLIST,   repo_args));
+	push_back(Option("output",         'o',     Option::STRING,     &outputname));
+}
 
 static PercentStatus *reading_percent_status;
 
@@ -234,7 +239,6 @@ add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s)
 static void
 add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual)
 {
-	static const string a("eix*::");
 	FILE *fp(fopen(cachefile.c_str(), "rb"));
 	if(fp == NULLPTR) {
 		INFO(eix::format(_(
@@ -252,14 +256,14 @@ add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<Repo
 		return;
 	}
 	for(ExtendedVersion::Overlay i(0); likely(i != header.countOverlays()); ++i) {
-		const OverlayIdent &ov = header.getOverlay(i);
+		const OverlayIdent &ov(header.getOverlay(i));
 		string overlay(eprefix_virtual + ov.path);
 		if(!is_virtual(overlay.c_str()))
 			continue;
 		Pathname name(overlay, false);
 		add->push_back(name);
 		escape_string(&overlay, ":");
-		override_list->push_back(Override(name, a + overlay));
+		override_list->push_back(Override(name, string("eix*::") + overlay));
 		repo_names->push_back(RepoName(name, ov.label));
 	}
 }
@@ -290,6 +294,12 @@ stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist)
 int
 run_eix_update(int argc, char *argv[])
 {
+	// Initialize static classes, part 1
+	exclude_args = new list<const char *>;
+	add_args = new list<const char *>;
+	method_args = new list<ArgPair>;
+	repo_args = new list<ArgPair>;
+
 	/* Setup eixrc. */
 	EixRc &eixrc(get_eixrc(UPDATE_VARS_PREFIX));
 	drop_permissions(&eixrc);
@@ -330,15 +340,7 @@ run_eix_update(int argc, char *argv[])
 	verbose = eixrc.getBool("UPDATE_VERBOSE");
 
 	/* Setup ArgumentReader. */
-	ArgumentReader argreader(argc, argv, long_options);
-
-	/* Honour a wish for silence */
-	if(unlikely(quiet)) {
-		if(!freopen(DEV_NULL, "w", stdout)) {
-			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
-			return EXIT_FAILURE;
-		}
-	}
+	ArgumentReader argreader(argc, argv, EixUpdateOptionList());
 
 	/* We do not want any arguments except options */
 	if(unlikely(argreader.begin() != argreader.end())) {
@@ -368,6 +370,18 @@ run_eix_update(int argc, char *argv[])
 		eixrc.dumpDefaults(stdout, dump_defaults);
 		return EXIT_SUCCESS;
 	}
+
+	/* Honour a wish for silence */
+	if(unlikely(quiet)) {
+		if(!freopen(DEV_NULL, "w", stdout)) {
+			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
+			return EXIT_FAILURE;
+		}
+	}
+
+	// Initialize static classes, part 2
+	ExtendedVersion::init_static();
+	PortageSettings::init_static();
 
 	/* set the outputfile */
 	string outputfile(eix_cachefile);
@@ -402,20 +416,20 @@ run_eix_update(int argc, char *argv[])
 	add_override(&override_list, &eixrc, "OVERRIDE_CACHE_METHOD");
 
 	/* Modify default (overlay/method/...) lists, using command line args */
-	for(list<const char*>::iterator it(exclude_args.begin());
-		unlikely(it != exclude_args.end()); ++it)
+	for(list<const char*>::iterator it(exclude_args->begin());
+		unlikely(it != exclude_args->end()); ++it)
 		excluded_list.push_back(Pathname(*it, true));
-	for(list<const char*>::iterator it(add_args.begin());
-		unlikely(it != add_args.end()); ++it)
+	for(list<const char*>::iterator it(add_args->begin());
+		unlikely(it != add_args->end()); ++it)
 		add_list.push_back(Pathname(*it, true));
-	for(list<ArgPair>::iterator it(method_args.begin());
-		unlikely(it != method_args.end()); ++it)
+	for(list<ArgPair>::iterator it(method_args->begin());
+		unlikely(it != method_args->end()); ++it)
 		override_list.push_back(Override(Pathname(it->first, true), it->second));
 
 	/* For REPO_NAMES it is quite the opposite: */
 
-	for(list<ArgPair>::iterator it(repo_args.begin());
-		unlikely(it != repo_args.end()); ++it)
+	for(list<ArgPair>::iterator it(repo_args->begin());
+		unlikely(it != repo_args->end()); ++it)
 		repo_names.push_back(RepoName(Pathname(it->first, false), it->second));
 
 	add_reponames(&repo_names, &eixrc, "REPO_NAMES");

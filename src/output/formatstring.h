@@ -481,7 +481,7 @@ class PrintFormat {
 		void StabilityNonlocal(Package *p) const
 		{ stability->set_stability(false, p); }
 
-	private:
+		static void init_static();
 };
 
 class LocalCopy : public PackageSave

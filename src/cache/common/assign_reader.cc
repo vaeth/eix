@@ -31,13 +31,18 @@ using std::ifstream;
 static map<string, string> *
 get_map_from_cache(const char *file)
 {
-	static string oldfile;
-	static map<string, string> cf;
-	if(oldfile == file) {
-		return &cf;
+	static string *oldfile = NULLPTR;
+	static map<string, string> *cf;
+	if(unlikely(oldfile == NULLPTR)) {
+		oldfile = new string(file);
+		cf = new map<string, string>;
+	} else {
+		if(*oldfile == file) {
+			return cf;
+		}
+		oldfile->assign(file);
+		cf->clear();
 	}
-	oldfile = file;
-	cf.clear();
 
 	ifstream is(file);
 	if(!is.is_open()) {
@@ -49,10 +54,10 @@ get_map_from_cache(const char *file)
 		string::size_type p(lbuf.find('='));
 		if(p == string::npos)
 			continue;
-		cf[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
+		(*cf)[lbuf.substr(0, p)].assign(lbuf, p + 1, string::npos);
 	}
 	is.close();
-	return &cf;
+	return cf;
 }
 
 const char *

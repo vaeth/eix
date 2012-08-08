@@ -27,7 +27,8 @@ class Depend
 	private:
 		std::string m_depend, m_rdepend, m_pdepend;
 
-		static const std::string c_depend, c_rdepend;
+		static const char c_depend[];
+		static const char c_rdepend[];
 
 		static std::string subst(const std::string &in, const std::string &text);
 

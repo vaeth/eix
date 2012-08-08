@@ -122,6 +122,8 @@ class AnsiColor {
 		{ return string_begin; }
 
 		bool initcolor(const std::string &color_name, std::string *errtext);
+
+		static void init_static();
 };
 
 inline std::ostream&
