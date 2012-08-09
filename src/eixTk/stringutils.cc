@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #ifndef HAVE_STRNDUP
 #include <sys/types.h>
 #endif
@@ -42,10 +44,6 @@ const char *spaces(" \t\r\n");
 const char *doublequotes("\"$\\");
 
 std::locale localeC("C");
-
-/* strndup() is a GNU extension
- * However, we do not #define _GNU_SOURCE but instead make sure to
- * #include "config.h" (at least implicitly) */
 
 #ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..

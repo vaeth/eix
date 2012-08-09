@@ -15,7 +15,7 @@
 #include <list>
 #include <string>
 
-// include <portage/basicversion.h> make check_includes happy
+// include "portage/basicversion.h" make check_includes happy
 
 class BasicPart
 {

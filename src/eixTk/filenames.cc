@@ -5,36 +5,41 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+// #define DEBUG_NORMALIZE_PATH
 #include <config.h>
 
 #include <fnmatch.h>
 
-// Try to read PATH_MAX from climits/limits:
+// For unknown reason, cstdlib must be included before sys/param.h and climits:
+// Otherwise gcc-4.7.1 -flto -D_FORTIFY_SOURCE=2 linking warns about PATH_MAX
+#include <cstdlib>
 
+// Try to read PATH_MAX from climits/limits:
 #ifndef HAVE_CLIMITS
 #ifdef HAVE_LIMITS_H
-#include <limits.h>
+#include <limits.h>  // NOLINT(build/include_order)
 #endif
 #else
 #include <climits>
 #endif
 
-#include <cstdlib>
-#include <cstring>
-
 // On some systems PATH_MAX is only contained in sys/param.h:
-
 #ifndef PATH_MAX
 #ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>  // NOLINT(build/include_order)
 #endif
 #endif
 
+#include <cstring>
+
 #ifdef DEBUG_NORMALIZE_PATH
 #include <iostream>
 #endif
-
 #include <string>
+
+#include "eixTk/filenames.h"
+#include "eixTk/likely.h"
+#include "eixTk/null.h"
 
 // If we still don't have PATH_MAX, try to use MAXPATHLEN:
 
@@ -44,19 +49,18 @@
 #endif
 #endif
 
-#include "eixTk/filenames.h"
-#include "eixTk/likely.h"
-#include "eixTk/null.h"
-
 using std::string;
 
 #ifdef DEBUG_NORMALIZE_PATH
 using std::cerr;
-#endif
 
-#ifdef DEBUG_NORMALIZE_PATH
-string original_normalize_path(const char *path, bool resolve);
-string normalize_path(const char *path, bool resolve)
+#define NORMALIZE_PATH_EXPORT static
+#define NORMALIZE_PATH original_normalize_path
+
+static string NORMALIZE_PATH(const char *path, bool resolve, bool want_slash);
+
+string
+normalize_path(const char *path, bool resolve, bool want_slash)
 {
 	cerr << "Debug: Calling normalize_path(\"" << path << "\", " << resolve << ")...\nDebug: (with";
 #ifndef HAVE_CANONICALIZE_FILE_NAME
@@ -73,20 +77,23 @@ string normalize_path(const char *path, bool resolve)
 	cerr << "out PATH_MAX";
 #endif
 	cerr << ")\n";
-	string s(original_normalize_path(path, resolve));
+	string s(NORMALIZE_PATH(path, resolve, want_slash));
 	cerr << "Debug: ... returned with: \"" << s << "\"\n";
 	return s;
 }
-#define normalize_path(a, b) original_normalize_path(a, b)
+#else
+#define NORMALIZE_PATH_EXPORT
+#define NORMALIZE_PATH normalize_path
 #endif
 
-string normalize_path(const char *path, bool resolve, bool want_slash)
+NORMALIZE_PATH_EXPORT string
+NORMALIZE_PATH(const char *path, bool resolve, bool want_slash)
 {
-	if(!*path)
+	if(*path == 0) {
 		return "";
+	}
 	string name;
-	if(resolve)
-	{
+	if(resolve) {
 		char *normalized(NULLPTR);
 #ifdef HAVE_CANONICALIZE_FILE_NAME
 		normalized = canonicalize_file_name(path);

@@ -2,13 +2,13 @@
 
 *eix-0.26.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Allow --disable-silent-rules to follow Gentoo's policy, although
-	  personally, I dislike it, and it is not necessary for eix.
 	- Follow most of Google's C++ style guidelines:
 	  eix now passes src/cpplint.sh (i.e. cpplint.py up to minor
 	  whitespace conventions). Exceptions (essentially false positives)
 	  are marked with NOLINT.
 	  This is actually a major rewrite which makes many things cleaner.
+	- Allow --disable-silent-rules to follow Gentoo's policy, although
+	  personally, I dislike it, and it is not necessary for eix.
 
 *eix-0.26.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

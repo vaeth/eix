@@ -36,10 +36,12 @@ eix::ptr_list<EixCache> *EixCache::all_eixcaches = NULLPTR;
 
 EixCache::~EixCache()
 {
-	eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches->begin(),
-		all_eixcaches->end(), this));
-	if(it != all_eixcaches->end()) {
-		all_eixcaches->erase(it);
+	if(all_eixcaches != NULLPTR) {
+		eix::ptr_list<EixCache>::iterator it(std::find(all_eixcaches->begin(),
+			all_eixcaches->end(), this));
+		if(it != all_eixcaches->end()) {
+			all_eixcaches->erase(it);
+		}
 	}
 }
 

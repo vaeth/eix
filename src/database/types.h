@@ -10,7 +10,7 @@
 #ifndef SRC_DATABASE_TYPES_H_
 #define SRC_DATABASE_TYPES_H_ 1
 
-// include <database/types.h> This comment satisfies check_include script
+// include "database/types.h" make check_includes happy
 
 #include <config.h>
 
