@@ -121,7 +121,7 @@ AnsiMarker::calc_string()
 		if(*it == amNone) {
 			continue;
 		}
-		static const int kLen(20);
+		static const unsigned int kLen = 20;
 		char buf[kLen];
 		snprintf(buf, kLen, "\x1B[%dm", static_cast<int>(*it));
 		string_begin.append(buf);
@@ -138,7 +138,7 @@ AnsiColor::calc_string()
 		return;
 	}
 	have_something = true;
-	static const int kLen(20);
+	static const unsigned int kLen = 20;
 	char buf[kLen];
 	if(fg == acDefault)
 		snprintf(buf, kLen, "\x1B[0m\x1B[%dm", static_cast<int>(light));

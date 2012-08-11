@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "eixTk/eixint.h"
 #include "portage/keywords.h"
 #include "search/redundancy.h"
 
@@ -56,9 +57,9 @@ class EixRc {
 		bool getBool(const std::string &key)
 		{ return istrue((*this)[key].c_str()); }
 
-		signed int getBoolText(const std::string &key, const char *text);
+		eix::SignedBool getBoolText(const std::string &key, const char *text);
 
-		signed int getBoolTextlist(const std::string &key, const char **text);
+		eix::TinySigned getTinyTextlist(const std::string &key, const char **text);
 
 		LocalMode getLocalMode(const std::string &key);
 

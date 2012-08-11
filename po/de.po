@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-08-09 19:56+0200\n"
+"POT-Creation-Date: 2012-08-11 18:11+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1152,7 +1152,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
-#: src/eix.cc:75
+#: src/eix.cc:76
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1472,16 +1472,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:493 src/eix-diff.cc:272
+#: src/eix.cc:494 src/eix-diff.cc:268
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:575 src/eix-diff.cc:332 src/eix-update.cc:379
+#: src/eix.cc:576 src/eix-diff.cc:328 src/eix-update.cc:379
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:617 src/eix.cc:943
+#: src/eix.cc:618 src/eix.cc:944
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1490,7 +1490,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:628
+#: src/eix.cc:629
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1501,16 +1501,16 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:905 src/eix.cc:921
+#: src/eix.cc:906 src/eix.cc:922
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:908
+#: src/eix.cc:909
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:915
+#: src/eix.cc:916
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
@@ -1559,7 +1559,7 @@ msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
 
-#: src/eix-diff.cc:70
+#: src/eix-diff.cc:66
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
@@ -1599,15 +1599,15 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:144
+#: src/eix-diff.cc:140
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbankfile %r: %s"
 
-#: src/eix-diff.cc:146
+#: src/eix-diff.cc:142
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:398
+#: src/eix-diff.cc:394
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
@@ -1853,7 +1853,7 @@ msgid "Unknown cache %r for directory %r"
 msgstr "Unbekannter Cache %r für Ordner %r"
 
 #: src/cache/common/assign_reader.cc:84 src/cache/common/assign_reader.cc:104
-#: src/cache/common/flat_reader.cc:37 src/cache/eixcache/eixcache.cc:249
+#: src/cache/common/flat_reader.cc:38 src/cache/eixcache/eixcache.cc:249
 #, c-format
 msgid "Can't read cache file %s: %s"
 msgstr "Cachefile %s nicht lesbar: %s"
@@ -1905,7 +1905,7 @@ msgstr "Ebuild schlug fehl mit Status %s"
 msgid "Child aborted in a strange way"
 msgstr "Kindprozess wurde auf seltsame Art beendet"
 
-#: src/cache/common/flat_reader.cc:51 src/cache/common/flat_reader.cc:87
+#: src/cache/common/flat_reader.cc:52 src/cache/common/flat_reader.cc:88
 #: src/eixTk/utils.cc:66
 #, c-format
 msgid "Can't open %s: %s"
@@ -2018,22 +2018,22 @@ msgstr "Unbekannter Helligkeitswert %r"
 msgid "Illegal color name %r"
 msgstr "Unbekannter Farbname %r"
 
-#: src/eixTk/argsreader.cc:136
+#: src/eixTk/argsreader.cc:137
 #, c-format
 msgid "Unknown option --%s\n"
 msgstr "Unbekannte Option --%s\n"
 
-#: src/eixTk/argsreader.cc:152
+#: src/eixTk/argsreader.cc:153
 #, c-format
 msgid "Unknown option -%c\n"
 msgstr "Unbekannte Option -%c\n"
 
-#: src/eixTk/argsreader.cc:224
+#: src/eixTk/argsreader.cc:225
 #, c-format
 msgid "Missing parameter to --%s\n"
 msgstr "Parameter zu --%s fehlt\n"
 
-#: src/eixTk/argsreader.cc:248
+#: src/eixTk/argsreader.cc:249
 #, c-format
 msgid "Missing second parameter to --%s\n"
 msgstr "Zweiter Parameter zu --%s fehlt\n"
@@ -2092,25 +2092,25 @@ msgstr "Lesefehler in %s: %s "
 msgid "Nesting level too deep in %r"
 msgstr "Zu tiefe Verschachtelung in %r"
 
-#: src/eixTk/varsreader.cc:155
+#: src/eixTk/varsreader.cc:157
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: source %r ging nicht (%s)"
 
-#: src/eixTk/varsreader.cc:857
-msgid "Can't read file %r"
+#: src/eixTk/varsreader.cc:859
+msgid "cannot read file %r"
 msgstr "Datei %r kann nicht gelesen werden"
 
-#: src/eixTk/varsreader.cc:865
-msgid "Can't stat file %r"
+#: src/eixTk/varsreader.cc:867
+msgid "cannot stat file %r"
 msgstr "Status der Datei %r kann nicht ermiitelt werden"
 
-#: src/eixTk/varsreader.cc:877
-msgid "Can't map file %r"
+#: src/eixTk/varsreader.cc:879
+msgid "cannot map file %r"
 msgstr "Datei %r kann nicht gemapped werden"
 
-#: src/eixTk/varsreader.cc:931
-msgid "Nesting level too deep when reading %r"
-msgstr "Zu tiefe Verschachtelung beim Lesen von %r"
+#: src/eixTk/varsreader.cc:894
+msgid "recursively sourced file %r"
+msgstr "File %r wird rekursiv gesourced"
 
 #: src/eixrc/defaults.cc:21
 msgid ""
@@ -5568,40 +5568,40 @@ msgstr ""
 "um verzögerten Referenzen auf lokal hinzugefügte (unbenutzte) Variablen\n"
 "hinzuzufügen, so dass diese per --dump ausgegeben werden können."
 
-#: src/eixrc/eixrc.cc:245
+#: src/eixrc/eixrc.cc:240
 #, c-format
 msgid "fatal config error: %s in delayed substitution of %s"
 msgstr "Fataler Konfigurationsfehler: %s in verzögerter Ersetzung von %s"
 
-#: src/eixrc/eixrc.cc:272
+#: src/eixrc/eixrc.cc:267
 msgid "FI without IF"
 msgstr "FI ohne IF"
 
-#: src/eixrc/eixrc.cc:276
+#: src/eixrc/eixrc.cc:271
 msgid "ELSE without IF"
 msgstr "ELSE ohne IF"
 
-#: src/eixrc/eixrc.cc:299
+#: src/eixrc/eixrc.cc:294
 msgid "self-reference"
 msgstr "Selbstreferenzierung"
 
-#: src/eixrc/eixrc.cc:383
+#: src/eixrc/eixrc.cc:381
 msgid "double ELSE"
 msgstr "doppeltes ELSE"
 
-#: src/eixrc/eixrc.cc:405
+#: src/eixrc/eixrc.cc:403
 msgid "IF without FI"
 msgstr "IF ohne FI"
 
-#: src/eixrc/eixrc.cc:463
+#: src/eixrc/eixrc.cc:461
 msgid "No $HOME found in environment."
 msgstr "Kein $HOME in der Environment."
 
-#: src/eixrc/eixrc.cc:747
+#: src/eixrc/eixrc.cc:745
 msgid "or"
 msgstr "oder"
 
-#: src/eixrc/eixrc.cc:763
+#: src/eixrc/eixrc.cc:761
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
@@ -5609,15 +5609,15 @@ msgstr ""
 "%s hat unbekannten Wert %r\n"
 "\tAls Ersatz wird 'all-installed' benutzt."
 
-#: src/eixrc/eixrc.cc:793
+#: src/eixrc/eixrc.cc:791
 msgid "was locally changed to:"
 msgstr "lokal geändert auf:"
 
-#: src/eixrc/eixrc.cc:794
+#: src/eixrc/eixrc.cc:792
 msgid "changed locally, default was:"
 msgstr "lokal geändert. Default war:"
 
-#: src/eixrc/eixrc.cc:823
+#: src/eixrc/eixrc.cc:821
 msgid "locally added:"
 msgstr "lokal hinzugefügt:"
 
@@ -5658,57 +5658,57 @@ msgstr "Unbekannte Property %r"
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 
-#: src/output/formatstring.cc:162
+#: src/output/formatstring.cc:164
 msgid "Variable %r calls itself for printing"
 msgstr "Die Variable %r ruft sich selbst zum Drucken auf"
 
-#: src/output/formatstring.cc:398
+#: src/output/formatstring.cc:400
 msgid "Internal error: bad node for parse_colors."
 msgstr "Interner Fehler: bad node for parse_colors."
 
-#: src/output/formatstring.cc:467
+#: src/output/formatstring.cc:468
 msgid "'(' without closing ')'"
 msgstr "'(' ohne schließendes ')'"
 
-#: src/output/formatstring.cc:474
+#: src/output/formatstring.cc:475
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Fehler beim Parsen der Farbe: %s"
 
-#: src/output/formatstring.cc:498
+#: src/output/formatstring.cc:499
 msgid "'<' without closing '>'"
 msgstr "'<' ohne schließendes '>'"
 
-#: src/output/formatstring.cc:566
+#: src/output/formatstring.cc:567
 msgid "No name of property/variable found after '{'."
 msgstr "Kein Name einer Property/Variablen nach '{' gefunden."
 
-#: src/output/formatstring.cc:570 src/output/formatstring.cc:591
-#: src/output/formatstring.cc:649
+#: src/output/formatstring.cc:571 src/output/formatstring.cc:592
+#: src/output/formatstring.cc:650
 msgid "Found '{' without closing '}'."
 msgstr " '{' ohne schließendes '}' gefunden."
 
-#: src/output/formatstring.cc:585
+#: src/output/formatstring.cc:586
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Unerwartetes Symbol %r nach '{'."
 
-#: src/output/formatstring.cc:670
+#: src/output/formatstring.cc:671
 msgid "Found ELSE without IF."
 msgstr "ELSE ohne IF gefunden."
 
-#: src/output/formatstring.cc:697
+#: src/output/formatstring.cc:698
 msgid "Found FI without IF."
 msgstr "FI ohne IF gefunden."
 
-#: src/output/formatstring.cc:719
+#: src/output/formatstring.cc:720
 msgid "Check your syntax"
 msgstr "Bitte überprüfen Sie die Syntax"
 
-#: src/output/formatstring.cc:742
+#: src/output/formatstring.cc:743
 msgid "Bad state: undefined"
 msgstr "Unerlaubter Status: undefiniert"
 
-#: src/output/formatstring.cc:756
+#: src/output/formatstring.cc:757
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Zeile %s, Spalte %s: %s"
@@ -5741,47 +5741,47 @@ msgstr ""
 msgid "garbage (%s) at end of version %r"
 msgstr "Zusatzsymbole (%s) nach Versionsnummer %r"
 
-#: src/portage/conf/cascadingprofile.cc:59
+#: src/portage/conf/cascadingprofile.cc:69
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 "Rekursionslevel für kaskadierende Profile überschritten;\n"
 "weitere Parent-Directories werden ignoriert."
 
-#: src/portage/conf/cascadingprofile.cc:95
+#: src/portage/conf/cascadingprofile.cc:102
 msgid "warning: ignoring parent %r of file %r"
 msgstr "Warnung: Ignoriere Parent %r der Datei %r"
 
-#: src/portage/conf/portagesettings.cc:1228
-#: src/portage/conf/portagesettings.cc:1257
+#: src/portage/conf/portagesettings.cc:1229
+#: src/portage/conf/portagesettings.cc:1258
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr "Interner Fehler: Tried to restore nonlocal mask without saving"
 
-#: src/portage/mask.cc:93
+#: src/portage/mask.cc:94
 msgid "Can't read category."
 msgstr "Category nicht lesbar."
 
-#: src/portage/mask.cc:115
+#: src/portage/mask.cc:116
 msgid "Repository name must be separated with :: (one : is missing)."
 msgstr "Repository-Name muss mit :: abgetrennt werden (ein : fehlt)."
 
-#: src/portage/mask.cc:157
+#: src/portage/mask.cc:158
 msgid "Operator without a version part."
 msgstr "Operator ohne Versionsspezifizierung."
 
-#: src/portage/mask.cc:158
+#: src/portage/mask.cc:159
 msgid "Version specification is missing."
 msgstr "Versionsangabe fehlt."
 
-#: src/portage/mask.cc:172
+#: src/portage/mask.cc:173
 msgid "A '*' is only valid at the end of a version-string."
 msgstr "Ein '*' ist nur am Ende der Version zulässig."
 
-#: src/portage/mask.cc:179
+#: src/portage/mask.cc:180
 msgid "A wildcard is only valid with the = operator."
 msgstr "Ein Wildcard ist nur mit dem = Operator zulässig."
 
-#: src/portage/mask.cc:183
+#: src/portage/mask.cc:184
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"
@@ -5799,10 +5799,13 @@ msgstr "Interner Fehler: SetStability calculates wrong index"
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:273
+#: src/search/packagetest.cc:274
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:285
+#: src/search/packagetest.cc:286
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
+
+#~ msgid "recursively sourced profile directory %r"
+#~ msgstr "Profile-Verzeichnis %r wird rekursiv gesourced"

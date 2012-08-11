@@ -24,7 +24,7 @@ bool same_filenames(const char *mask, const char *name, bool glob = false, bool 
 bool filename_starts_with(const char *mask, const char *name, bool resolve_mask);
 
 /** Return first match in a list of filenames/patterns. */
-inline std::vector<std::string>::const_iterator
+inline static std::vector<std::string>::const_iterator
 find_filenames(const std::vector<std::string>::const_iterator start,
 		const std::vector<std::string>::const_iterator end, const char *search,
 		bool list_of_patterns = false, bool resolve_list = false)
@@ -38,7 +38,7 @@ find_filenames(const std::vector<std::string>::const_iterator start,
 }
 
 /** Test whether filename appears to be a "virtual" overlay */
-inline bool
+inline static bool
 is_virtual(const char *name)
 {
 	if(*name != '/')

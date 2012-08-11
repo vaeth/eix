@@ -53,10 +53,6 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-inline void
-INFO(const string &s)
-{ cout << s; }
-
 static PortageSettings *portagesettings;
 static SetStability   *set_stability_old, *set_stability_new;
 static PrintFormat    *format_for_new, *format_for_old;
@@ -395,9 +391,9 @@ run_eix_diff(int argc, char *argv[])
 		rc.getBool("DIFF_SEPARATE_DELETED"));
 
 	if(likely(rc.getBool("DIFF_PRINT_HEADER"))) {
-		INFO(eix::format(_("Diffing databases (%s -> %s packages)\n"))
+		cout << eix::format(_("Diffing databases (%s -> %s packages)\n"))
 			% old_tree.countPackages()
-			% new_tree.countPackages());
+			% new_tree.countPackages();
 	}
 
 	differ.lost_package    = print_lost_package;

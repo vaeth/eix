@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
@@ -23,7 +23,7 @@ class PortageSettings;
 class ExtendedVersion : public BasicVersion
 {
 	private:
-		typedef io::UChar HaveBinPkg;
+		typedef eix::UChar HaveBinPkg;
 		static const HaveBinPkg
 			HAVEBINPKG_UNKNOWN = 0x00,
 			HAVEBINPKG_NO      = 0x01,
@@ -46,7 +46,7 @@ class ExtendedVersion : public BasicVersion
 			RESTRICT_PARALLEL       = 0x0200,
 			RESTRICT_ALL            = 0x03FF;
 
-		typedef io::UChar Properties;
+		typedef eix::UChar Properties;
 		static const Properties  // order according to frequency...
 			PROPERTIES_NONE        = 0x00,
 			PROPERTIES_INTERACTIVE = 0x01,
@@ -69,7 +69,7 @@ class ExtendedVersion : public BasicVersion
 		/** The dependencies */
 		Depend depend;
 
-		typedef io::UNumber Overlay;
+		typedef eix::UNumber Overlay;
 		/** Key for Portagedb.overlays/overlaylist from header. */
 		Overlay overlay_key;
 

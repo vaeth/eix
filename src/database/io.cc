@@ -21,8 +21,8 @@
 #include "database/header.h"
 #include "database/io.h"
 #include "database/package_reader.h"
-#include "database/types.h"
 #include "eixTk/auto_ptr.h"
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -41,7 +41,7 @@ using std::list;
 using std::string;
 using std::vector;
 
-io::OffsetType io::counter;
+eix::OffsetType io::counter;
 
 namespace io {
 /// Read a number with leading zero's
@@ -195,7 +195,7 @@ bool
 io::read_iuse(const StringHash& hash, IUseSet *iuse, FILE *fp, string *errtext)
 {
 	iuse->clear();
-	io::UNumber e;
+	eix::UNumber e;
 	if(unlikely(!io::read_num(&e, fp, errtext))) {
 		return false;
 	}
@@ -323,10 +323,10 @@ io::write_version(const Version *v, const DBHeader &hdr, FILE *fp, string *errte
 		return false;
 	}
 	if(hdr.use_depend) {
-		io::OffsetType counter_save(io::counter);
+		eix::OffsetType counter_save(io::counter);
 		io::counter = 0;
 		io::write_depend(v->depend, hdr, NULLPTR, NULLPTR);
-		io::OffsetType counter_diff(io::counter);
+		eix::OffsetType counter_diff(io::counter);
 		io::counter = counter_save;
 		if(unlikely(!io::write_num(counter_diff, fp, errtext))) {
 			return false;
@@ -375,14 +375,14 @@ io::write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, string *errte
 }
 
 bool
-io::read_category_header(string *name, io::Treesize *h, FILE *fp, string *errtext)
+io::read_category_header(string *name, eix::Treesize *h, FILE *fp, string *errtext)
 {
 	return (likely(io::read_string(name, fp, errtext)) &&
 		likely(io::read_num(h, fp, errtext)));
 }
 
 bool
-io::write_category_header(const string &name, io::Treesize size, FILE *fp, string *errtext)
+io::write_category_header(const string &name, eix::Treesize size, FILE *fp, string *errtext)
 {
 	return (likely(io::write_string(name, fp, errtext)) &&
 		likely(io::write_num(size, fp, errtext)));
@@ -421,10 +421,10 @@ io::write_package_pure(const Package &pkg, const DBHeader &hdr, FILE *fp, string
 bool
 io::write_package(const Package &pkg, const DBHeader &hdr, FILE *fp, string *errtext)
 {
-	io::OffsetType counter_save(io::counter);
+	eix::OffsetType counter_save(io::counter);
 	io::counter = 0;
 	io::write_package_pure(pkg, hdr, NULLPTR, NULLPTR);
-	io::OffsetType counter_diff(io::counter);
+	eix::OffsetType counter_diff(io::counter);
 	io::counter = counter_save;
 	return (likely(io::write_num(counter_diff, fp, errtext)) &&
 		likely(io::write_package_pure(pkg, hdr, fp, errtext)));
@@ -554,10 +554,10 @@ io::write_header(const DBHeader &hdr, FILE *fp, string *errtext)
 		if(unlikely(!io::write_num(1, fp, errtext))) {
 			return false;
 		}
-		io::OffsetType counter_save(io::counter);
+		eix::OffsetType counter_save(io::counter);
 		io::counter = 0;
 		io::write_hash(hdr.depend_hash, NULLPTR, NULLPTR);
-		io::OffsetType counter_diff(io::counter);
+		eix::OffsetType counter_diff(io::counter);
 		io::counter = counter_save;
 		return (likely(io::write_num(counter_diff, fp, errtext)) &&
 			likely(io::write_hash(hdr.depend_hash, fp, errtext)));
@@ -637,12 +637,12 @@ io::read_header(DBHeader *hdr, FILE *fp, string *errtext)
 		hdr->world_sets.push_back(s);
 	}
 
-	io::UNumber use_dep_num;
+	eix::UNumber use_dep_num;
 	if(unlikely(!io::read_num(&use_dep_num, fp, errtext))) {
 		return false;
 	}
 	if((hdr->use_depend = (use_dep_num != 0))) {
-		io::OffsetType len;
+		eix::OffsetType len;
 		if(unlikely(!io::read_num(&len, fp, errtext))) {
 			return false;
 		}
@@ -673,7 +673,7 @@ io::write_packagetree(const PackageTree &tree, const DBHeader &hdr, FILE *fp, st
 	for(PackageTree::const_iterator c(tree.begin()); likely(c != tree.end()); ++c) {
 		Category *ci(c->second);
 		// Write category-header followed by a list of the packages.
-		if(unlikely(!io::write_category_header(c->first, io::Treesize(ci->size()), fp, errtext))) {
+		if(unlikely(!io::write_category_header(c->first, eix::Treesize(ci->size()), fp, errtext))) {
 			return false;
 		}
 

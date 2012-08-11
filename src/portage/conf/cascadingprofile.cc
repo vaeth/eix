@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
@@ -37,6 +38,7 @@
 
 using std::map;
 using std::pair;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -51,41 +53,46 @@ using std::endl;
 static const char *profile_exclude[] = { "parent", "..", "." , NULLPTR };
 
 /** Add all files from profile and its parents to m_profile_files. */
-bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
+bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_files)
 {
-	// Use pushback_lines to avoid keeping file descriptor open:
-	// Who know what's our limit of open file descriptors.
-	if(unlikely(depth >= 255)) {
+	string truename(normalize_path(profile, true, true));
+#ifdef DEBUG_PROFILE_PATHS
+	cout << eix::format("Adding to Profile:\n\t%r -> %r\n") % profile % truename;
+#endif
+	if(truename.empty()) {
+		return false;
+	}
+	bool topcall(sourced_files == NULLPTR);
+	if(unlikely(topcall)) {
+		sourced_files = new set<string>;
+	} else if(sourced_files->find(truename) != sourced_files->end()) {
 		cerr << _("Recursion level for cascading profiles exceeded; stopping reading parents") << endl;
 		return false;
 	}
-	string s(normalize_path(profile, true, true));
-#ifdef DEBUG_PROFILE_PATHS
-	cout << eix::format("Adding to Profile:\n\t%r -> %r\n") % profile % s;
-#endif
-	if(s.empty()) {
-		return false;
-	}
+	sourced_files->insert(truename);
 	vector<string> parents;
-	string currfile(s + "parent");
+	string currfile(truename);
+	currfile.append("parent");
+	// Use pushback_lines to avoid keeping file descriptor open:
+	// Who know what's our limit of open file descriptors.
 	if(pushback_lines(currfile.c_str(), &parents)) {
 		for(vector<string>::const_iterator it(parents.begin());
 			likely(it != parents.end()); ++it) {
 			if(it->empty())
 				continue;
 			if((*it)[0] == '/') {
-				addProfile(it->c_str(), depth + 1);
+				addProfile(it->c_str(), sourced_files);
 				continue;
 			}
 			string::size_type colon(it->find(':'));
 			if(colon == string::npos) {
-				addProfile((s + (*it)).c_str(), depth + 1);
+				addProfile((truename + (*it)).c_str(), sourced_files);
 				continue;
 			}
 			const char *path;
 			RepoList repos(m_portagesettings->repos);
 			if(colon == 0) {
-				RepoList::iterator f(repos.find_filename(s.c_str(), true));
+				RepoList::iterator f(repos.find_filename(truename.c_str(), true));
 				path = ((f != repos.end()) ? f->path.c_str() : NULLPTR);
 			} else {
 				string repo(it->substr(0, colon));
@@ -96,11 +103,16 @@ bool CascadingProfile::addProfile(const char *profile, unsigned int depth)
 					% (*it) % currfile << endl;
 				continue;
 			}
-			addProfile((string(path) + "/profiles/" + it->substr(colon + 1)).c_str(), depth + 1);
+			addProfile((string(path) + "/profiles/" + it->substr(colon + 1)).c_str(), sourced_files);
 		}
 	}
+	if(unlikely(topcall)) {
+		delete sourced_files;
+	} else {
+		sourced_files->erase(truename);
+	}
 	vector<string> filenames;
-	bool r(pushback_files(s, filenames, profile_exclude, 3));
+	bool r(pushback_files(truename, filenames, profile_exclude, 3));
 	for(vector<string>::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
 		listaddFile(*it, 0);

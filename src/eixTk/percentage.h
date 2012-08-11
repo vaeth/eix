@@ -12,11 +12,11 @@
 
 #include <string>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 
 class PercentStatus {
 public:
-	typedef io::Treesize Percentage;
+	typedef eix::Treesize Percentage;
 
 	PercentStatus()
 	{ init(); }

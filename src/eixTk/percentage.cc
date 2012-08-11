@@ -31,7 +31,7 @@ percent_to_string(PercentStatus::Percentage i)
 	return o.str();
 }
 
-inline void
+inline static void
 flush_total()
 {
 	cout.flush();

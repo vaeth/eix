@@ -24,6 +24,7 @@
 #include "database/header.h"
 #include "database/package_reader.h"
 #include "eixTk/argsreader.h"
+#include "eixTk/eixint.h"
 #include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
@@ -63,7 +64,7 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static int  is_current_dbversion(const char *filename);
+static bool is_current_dbversion(const char *filename);
 static void print_vector(const vector<string> &vec);
 static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
 static void print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist);
@@ -560,7 +561,7 @@ run_eix(int argc, char** argv)
 
 	// Only check if the versions uses the current layout
 	if(unlikely(rc_options.is_current)) {
-		return is_current_dbversion(cachefile.c_str());
+		return (is_current_dbversion(cachefile.c_str()) ? EXIT_SUCCESS : EXIT_FAILURE);
 	}
 
 	// Show version
@@ -897,7 +898,7 @@ run_eix(int argc, char** argv)
 	if(!only_printed) {
 		count = matches.size();
 	}
-	signed int print_count_always(rc_options.pure_packages ? -1 :
+	eix::SignedBool print_count_always(rc_options.pure_packages ? -1 :
 		eixrc.getBoolText("PRINT_COUNT_ALWAYS", "never"));
 	if(likely(print_count_always >= 0)) {
 		if(unlikely(count == 0)) {
@@ -934,7 +935,7 @@ run_eix(int argc, char** argv)
 	return EXIT_SUCCESS;
 }
 
-static int
+static bool
 is_current_dbversion(const char *filename) {
 	DBHeader header;
 	FILE *fp(fopen(filename, "rb"));
@@ -947,8 +948,7 @@ is_current_dbversion(const char *filename) {
 	}
 	bool is_current(io::read_header(&header, fp, NULLPTR));
 	fclose(fp);
-
-	return (is_current ? EXIT_SUCCESS : EXIT_FAILURE);
+	return is_current;
 }
 
 static void

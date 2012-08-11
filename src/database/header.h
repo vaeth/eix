@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/stringutils.h"
 #include "portage/extendedversion.h"
 #include "portage/overlay.h"
@@ -39,9 +39,9 @@ class DBHeader {
 
 		std::vector<std::string> world_sets;
 
-		typedef  io::UNumber DBVersion;
+		typedef  eix::UNumber DBVersion;
 
-		typedef  io::UChar OverlayTest;
+		typedef  eix::UChar OverlayTest;
 		static const OverlayTest
 			OVTEST_NONE              = 0x00,
 			OVTEST_SAVED_PORTDIR     = 0x01,
@@ -58,7 +58,7 @@ class DBHeader {
 		static const DBVersion current = 31;
 
 		DBVersion version; /**< Version of the db. */
-		io::Catsize  size; /**< Number of categories. */
+		eix::Catsize  size; /**< Number of categories. */
 
 		/** Get overlay for key from table. */
 		const OverlayIdent& getOverlay(ExtendedVersion::Overlay key) const;

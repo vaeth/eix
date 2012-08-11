@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "portage/basicversion.h"
@@ -70,7 +71,7 @@ class VarDbPkg {
 		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;
 		std::string readOverlayPath(const Package *p, const BasicVersion *v) const;
-		signed int check_installed_overlays;
+		eix::SignedBool check_installed_overlays;
 
 		/** Find installed versions
 		 * @return NULLPTR if not found .. else pointer to vector of versions. */
@@ -91,7 +92,7 @@ class VarDbPkg {
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		signed int isInstalledVersion(const Package &p, const Version *v, const DBHeader& header);
+		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header);
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */

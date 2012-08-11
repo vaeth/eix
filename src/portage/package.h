@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "eixTk/inttypes.h"
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
@@ -256,7 +256,7 @@ class Package
 			-  3: p has no worse/missing best_slot, but an
 			      identical from a different overlay
 			-  0: else */
-		int worse_best_slots(const Package &p) const;
+		eix::TinySigned worse_best_slots(const Package &p) const;
 
 		/** Compare best_slots() versions with that of p.
 		    @return
@@ -265,7 +265,7 @@ class Package
 			- -1: *this has a worse/missing best_slot, and p has not
 			-  2: p and *this both have a worse/missing best_slot
 			-  3: all matches, but at least one overlay differs */
-		int compare_best_slots(const Package &p) const;
+		eix::TinySigned compare_best_slots(const Package &p) const;
 
 		/** Compare best() version with that of p.
 		    @return
@@ -274,7 +274,7 @@ class Package
 			- -1: p is larger
 			-  3: same, but overlays (or slots if test_slot)
 			      are different */
-		int compare_best(const Package &p, bool test_slot) const ATTRIBUTE_PURE;
+		eix::TinySigned compare_best(const Package &p, bool test_slot) const ATTRIBUTE_PURE;
 
 		/** has p a worse/missing best/best_slot/different overlay? */
 		bool have_worse(const Package &p, bool test_slots) const
@@ -304,7 +304,7 @@ class Package
 			-  2: upgrade and downgrade necessary
 			-  4: (if only_installed) nothing is installed,
 			      but one can be installed */
-		int check_best_slots(VarDbPkg *v, bool only_installed) const;
+		eix::TinySigned check_best_slots(VarDbPkg *v, bool only_installed) const;
 
 		/** Compare best() version with that installed in v.
 		    if v is NULLPTR, it is assumed that none is installed.
@@ -319,7 +319,7 @@ class Package
 			      but slots are different.
 			-  4: (if only_installed) nothing is installed,
 			      but one can be installed */
-		int check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
+		eix::TinySigned check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
 
 		/** can we upgrade v or has v different slots? */
 		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const
@@ -336,7 +336,7 @@ class Package
 		/** must we downgrade v or has v different categories/slots? */
 		bool must_downgrade(VarDbPkg *v, bool test_slots) const
 		{
-			int c(check_best(v, true, test_slots));
+			eix::TinySigned c(check_best(v, true, test_slots));
 			if((c < 0) || (c == 3))
 				return true;
 			if(!test_slots)

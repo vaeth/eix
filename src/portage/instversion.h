@@ -54,13 +54,16 @@ class InstVersion : public ExtendedVersion, public Keywords {
 };
 
 /** The equality operator does not test the additional data */
-inline bool operator == (const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
-inline bool
-operator == (const InstVersion& left, const InstVersion &right)
+inline static bool
+operator==(const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
+inline static bool
+operator==(const InstVersion& left, const InstVersion &right)
 { return BasicVersion::compare(left, right) == 0; }
 
-inline bool operator != (const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
-inline bool operator != (const InstVersion& left, const InstVersion &right)
+inline static bool
+operator!=(const InstVersion& left, const InstVersion &right) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const InstVersion& left, const InstVersion &right)
 { return BasicVersion::compare(left, right) != 0; }
 
 #endif  // SRC_PORTAGE_INSTVERSION_H_

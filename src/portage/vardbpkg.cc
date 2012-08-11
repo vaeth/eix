@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "database/header.h"
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
@@ -89,7 +90,7 @@ VarDbPkg::isInVec(vector<InstVersion> *vec, const BasicVersion *v, InstVersion *
 	return false;
 }
 
-int
+eix::SignedBool
 VarDbPkg::isInstalledVersion(const Package &p, const Version *v, const DBHeader& header)
 {
 	InstVersion *inst(NULLPTR);

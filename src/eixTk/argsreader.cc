@@ -12,6 +12,7 @@
 #include <cstring>
 
 #include "eixTk/argsreader.h"
+#include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -20,7 +21,7 @@ ArgumentReader::ArgumentReader(int argc, char **argv, const OptionList &opt_tabl
 {
 	bool seen_escape(false);
 	name = argv[0];
-	unsigned int paramarg_remain(0);
+	eix::TinyUnsigned paramarg_remain(0);
 	for(int i(1); likely(i < argc) ; ++i) {
 		if(seen_escape || paramarg_remain)
 		{
@@ -93,7 +94,7 @@ ArgumentReader::lookup_option(const int opt, const OptionList &opt_table)
 	return NULLPTR;
 }
 
-unsigned int
+eix::TinyUnsigned
 ArgumentReader::numargs(const int opt, const OptionList &opt_table)
 {
 	const Option *c(lookup_option(opt, opt_table));

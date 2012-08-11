@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
 #include "portage/package.h"
@@ -40,7 +40,7 @@ class PrintXml {
 		void runclear();
 
 	public:
-		typedef io::UNumber XmlVersion;
+		typedef eix::UNumber XmlVersion;
 		static const XmlVersion current = 8;
 
 		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)

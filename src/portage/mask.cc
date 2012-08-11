@@ -13,6 +13,7 @@
 
 #include <string>
 
+#include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -31,7 +32,7 @@ using std::string;
  * following operator. */
 static const struct OperatorTable {
 	const char *str;
-	unsigned char len;
+	eix::TinyUnsigned len;
 	Mask::Operator op;
 } operators[] = {
 	{ "<=", 2, Mask::maskOpLessEqual },
@@ -64,8 +65,8 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 {
 	// determine comparison operator
 	if(m_type != maskPseudomask) {
-		for(unsigned int i(0); ; ++i) {
-			unsigned char len(operators[i].len);
+		for(eix::TinyUnsigned i(0); ; ++i) {
+			eix::TinyUnsigned len(operators[i].len);
 			if(unlikely(len == 0)) {
 				// no operator
 				m_operator = operators[i].op;

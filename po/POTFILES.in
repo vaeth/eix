@@ -41,13 +41,14 @@ src/database/io.cc
 src/database/io.h
 src/database/package_reader.cc
 src/database/package_reader.h
-src/database/types.h
 src/eixTk/ansicolor.cc
 src/eixTk/ansicolor.h
 src/eixTk/argsreader.cc
 src/eixTk/argsreader.h
 src/eixTk/auto_ptr.h
+src/eixTk/compare.cc
 src/eixTk/compare.h
+src/eixTk/eixint.h
 src/eixTk/exceptions.cc
 src/eixTk/exceptions.h
 src/eixTk/filenames.cc

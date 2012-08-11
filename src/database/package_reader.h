@@ -19,8 +19,8 @@
 #include <memory>
 #include <string>
 
-#include "database/types.h"
 #include "database/header.h"
+#include "eixTk/eixint.h"
 #include "eixTk/null.h"
 
 class DBHeader;
@@ -83,8 +83,8 @@ class PackageReader {
 	protected:
 		FILE             *m_fp;
 
-		io::Treesize      m_frames;
-		io::Treesize      m_cat_size;
+		eix::Treesize      m_frames;
+		eix::Treesize      m_cat_size;
 		std::string       m_cat_name;
 
 		off_t             m_next;

@@ -12,6 +12,8 @@
 
 #include <config.h>
 
+#include <sys/types.h>
+
 #include <map>
 #include <set>
 #include <stack>
@@ -131,7 +133,7 @@ class FormatParser {
 		{ return root_node; }
 
 		/** Calculate line and column of current position. */
-		int getPosition(int *line, int *column);
+		void getPosition(size_t *line, size_t *column);
 };
 
 class MarkedList : public std::multimap<std::string, BasicVersion*>

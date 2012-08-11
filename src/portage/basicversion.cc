@@ -16,6 +16,7 @@
 #include <string>
 
 #include "eixTk/compare.h"
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -33,13 +34,13 @@ using std::stringstream;
 
 const string::size_type BasicPart::max_type;
 
-BasicPart::SignedBool
+eix::SignedBool
 BasicPart::compare(const BasicPart& left, const BasicPart& right)
 {
 	// There is some documentation online at http://dev.gentoo.org/~spb/pms.pdf,
 	// but I suppose this is not yet sanctioned by gentoo.
 	// We are going to follow the text from section 2.3 "Version Comparison" here.
-	SignedBool ret(eix::default_compare(left.parttype, right.parttype));
+	eix::SignedBool ret(eix::default_compare(left.parttype, right.parttype));
 	if(ret != 0) {
 		return ret;
 	}
@@ -47,8 +48,7 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 	// We can short-circuit numeric_compare(..) and cutting of trailing 0
 	// by using string comparison if both parts have the same length.
 	if(left.partcontent.size() == right.partcontent.size()) {
-		left.partcontent.compare(right.partcontent);
-		return left.partcontent.compare(right.partcontent);
+		return eix::toSignedBool(left.partcontent.compare(right.partcontent));
 	}
 	if(left.parttype == BasicPart::primary) {
 		// "[..] if a component has a leading zero, any trailing zeroes in that
@@ -69,13 +69,13 @@ BasicPart::compare(const BasicPart& left, const BasicPart& right)
 			 * other possible value is bigger.
 			 */
 
-			return l1.compare(l2);
+			return eix::toSignedBool(l1.compare(l2));
 		}
 		// "If neither component has a leading zero, components are compared
 		//  using strict integer comparison."
 	} else if(left.parttype == BasicPart::garbage) {
 		// garbage gets string comparison.
-		return left.partcontent.compare(left.partcontent);
+		return eix::toSignedBool(left.partcontent.compare(left.partcontent));
 	}
 
 	// "The first component of the number part is compared using strict integer
@@ -267,14 +267,14 @@ BasicVersion::parseVersion(const string& str, string *errtext, bool accept_garba
 	return parsedGarbage;
 }
 
-BasicPart::SignedBool
+eix::SignedBool
 BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 {
 	list<BasicPart>::const_iterator
 		it_left(left.m_parts.begin()),
 		it_right(right.m_parts.begin());
 
-	for(BasicPart::SignedBool ret(0); ; ++it_left, ++it_right) {
+	for(eix::SignedBool ret(0); ; ++it_left, ++it_right) {
 		if (it_left == left.m_parts.end()) {
 			if (it_right == right.m_parts.end()) {
 				return 0;
@@ -294,7 +294,7 @@ BasicVersion::compare(const BasicVersion& left, const BasicVersion &right)
 	return 0;
 }
 
-BasicPart::SignedBool
+eix::SignedBool
 BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 {
 	for(list<BasicPart>::const_iterator it_left(left.m_parts.begin()),
@@ -307,7 +307,7 @@ BasicVersion::compareTilde(const BasicVersion& left, const BasicVersion &right)
 		} else if(right_end) {
 			return 1;
 		} else {
-			BasicPart::SignedBool ret(BasicPart::compare(*it_left, *it_right));
+			eix::SignedBool ret(BasicPart::compare(*it_left, *it_right));
 			if(ret != 0) {
 				return ret;
 			}

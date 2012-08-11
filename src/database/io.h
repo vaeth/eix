@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
@@ -31,25 +31,25 @@ class Version;
 #define MAGICNUMCHAR 0xFF
 
 namespace io {
-	extern io::OffsetType counter;
+	extern eix::OffsetType counter;
 
 	void readError(FILE *fp, std::string *errtext);
 	void writeError(std::string *errtext);
 
-	inline bool
-	readUChar(io::UChar *c, FILE *fp, std::string *errtext)
+	inline static bool
+	readUChar(eix::UChar *c, FILE *fp, std::string *errtext)
 	{
 		int ch(fgetc(fp));
 		if(likely(ch != EOF)) {
-			*c = io::UChar(ch);
+			*c = eix::UChar(ch);
 			return true;
 		}
 		io::readError(fp, errtext);
 		return false;
 	}
 
-	inline bool
-	writeUChar(io::UChar c, FILE *fp, std::string *errtext)
+	inline static bool
+	writeUChar(eix::UChar c, FILE *fp, std::string *errtext)
 	{
 		if(fp != NULLPTR) {
 			if(unlikely(fputc(c, fp) == EOF)) {
@@ -68,7 +68,7 @@ namespace io {
 	{
 		int ch(fgetc(fp));
 		if(likely(ch != EOF)) {
-			io::UChar c = io::UChar(ch);
+			eix::UChar c = eix::UChar(ch);
 			// The one-byte case is exceptional w.r.t. to leading 0:
 			if(c != MAGICNUMCHAR) {
 				*ret = m_Tp(c);
@@ -76,7 +76,7 @@ namespace io {
 			}
 			unsigned int toget(1);
 			while(likely((ch = fgetc(fp)) != EOF)) {
-				if((c = io::UChar(ch)) == MAGICNUMCHAR) {
+				if((c = eix::UChar(ch)) == MAGICNUMCHAR) {
 					++toget;
 					continue;
 				}
@@ -93,7 +93,7 @@ namespace io {
 					if(unlikely((ch = fgetc(fp)) == EOF)) {
 						break;
 					}
-					*ret = ((*ret) << 8) | m_Tp(io::UChar(ch));
+					*ret = ((*ret) << 8) | m_Tp(eix::UChar(ch));
 					--toget;
 				}
 				break;
@@ -107,7 +107,7 @@ namespace io {
 	template<typename m_Tp> bool
 	write_num(m_Tp t, FILE *fp, std::string *errtext)
 	{
-		io::UChar c(t & 0xFF);
+		eix::UChar c(t & 0xFF);
 		// Test the most common case explicitly to speed up:
 		if(t == m_Tp(c)) {
 			if(fp == NULLPTR) {
@@ -137,7 +137,7 @@ namespace io {
 			} while((t & mask) != t);
 			// We have count > 0 here
 			if(fp == NULLPTR) {
-				io::UChar d((t >> (8*count)) & 0xFF);
+				eix::UChar d((t >> (8*count)) & 0xFF);
 				io::counter += ((unlikely(d == MAGICNUMCHAR)) ? 2 : 1) + (2 * count);
 				return true;
 			}
@@ -146,7 +146,7 @@ namespace io {
 					break;
 				}
 				if(--r == 0) {
-					io::UChar d((t >> (8*count)) & 0xFF);
+					eix::UChar d((t >> (8*count)) & 0xFF);
 					if(unlikely(fputc(d, fp) == EOF)) {
 						break;
 					}
@@ -181,10 +181,10 @@ namespace io {
 	/// Write a string
 	bool write_string(const std::string &str, FILE *fp, std::string *errtext);
 
-	inline bool write_hash_string(const StringHash& hash, const std::string &s, FILE *fp, std::string *errtext)
+	inline static bool write_hash_string(const StringHash& hash, const std::string &s, FILE *fp, std::string *errtext)
 	{ return io::write_num(hash.get_index(s), fp, errtext); }
 
-	inline bool read_hash_string(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext)
+	inline static bool read_hash_string(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext)
 	{
 		StringHash::size_type i;
 		if(likely(io::read_num(&i, fp, errtext))) {
@@ -195,7 +195,7 @@ namespace io {
 	}
 
 	bool write_hash_words(const StringHash& hash, const std::vector<std::string>& words, FILE *fp, std::string *errtext);
-	inline bool write_hash_words(const StringHash& hash, const std::string& words, FILE *fp, std::string *errtext)
+	inline static bool write_hash_words(const StringHash& hash, const std::string& words, FILE *fp, std::string *errtext)
 	{ return write_hash_words(hash, split_string(words), fp, errtext); }
 
 	bool read_hash_words(const StringHash& hash, std::vector<std::string> *s, FILE *fp, std::string *errtext);
@@ -216,10 +216,10 @@ namespace io {
 	bool write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	// Read a category-header from fp
-	bool read_category_header(std::string *name, io::Treesize *h, FILE *fp, std::string *errtext);
+	bool read_category_header(std::string *name, eix::Treesize *h, FILE *fp, std::string *errtext);
 
 	// Write a category-header to fp
-	bool write_category_header(const std::string &name, io::Treesize size, FILE *fp, std::string *errtext);
+	bool write_category_header(const std::string &name, eix::Treesize size, FILE *fp, std::string *errtext);
 
 	// Write package to stream
 	bool write_package(const Package &pkg, const DBHeader &hdr, FILE *fp, std::string *errtext);

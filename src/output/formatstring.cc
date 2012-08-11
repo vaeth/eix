@@ -9,6 +9,8 @@
 
 #include <config.h>
 
+#include <sys/types.h>
+
 #include <cstdlib>
 #include <cstring>
 
@@ -400,20 +402,19 @@ parse_colors(string *ret, const string &colorstring, bool colors, string *errtex
 	return false;
 }
 
-int
-FormatParser::getPosition(int *line, int *column)
+void
+FormatParser::getPosition(size_t *line, size_t *column)
 {
 	const char *x(band), *y(band);
-	while(x <= band_position && x) {
+	while((x != NULLPTR) && (x <= band_position)) {
 		y = x;
 		x = strchr(x, '\n');
-		if(x) {
+		if(x != NULLPTR) {
 			++x;
 			++*line;
 			*column = band_position - y;
 		}
 	}
-	return band_position - band;
 }
 
 
@@ -556,7 +557,7 @@ FormatParser::state_IF()
 			n->user_variable = false;
 	}
 
-	unsigned int i(0);
+	size_t i(0);
 	const char *name_start(band_position);
 	for(char c(*band_position);
 		c && (c != '}') && (c != '=') && !(isspace(c));
@@ -751,7 +752,7 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, string
 			keller.pop();
 		}
 		if(errtext != NULLPTR) {
-			int line(0), column(0);
+			size_t line(0), column(0);
 			getPosition(&line, &column);
 			*errtext = eix::format(_("Line %s, column %s: %s")) % line % column % last_error;
 		}

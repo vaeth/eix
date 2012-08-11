@@ -42,15 +42,14 @@ Package::checkDuplicates(const Version *version)
 		return;
 	for(iterator i(begin()); likely(i != end()); ++i) {
 		if(unlikely(BasicVersion::compare(**i, *version) == 0)) {
-			if(no_overlay) {
-				have_duplicate_versions = DUP_SOME;
-				return;
-			}
 			if(i->overlay_key) {
 				have_duplicate_versions = DUP_OVERLAYS;
 				return;
 			}
 			have_duplicate_versions = DUP_SOME;
+			if(no_overlay) {
+				return;
+			}
 		}
 	}
 }

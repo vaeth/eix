@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "database/package_reader.h"
+#include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -575,7 +576,7 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r, const RedAt
 			// and no failure:
 				if(test_unrestricted)
 					return false;
-				signed int is_installed(vardbpkg->isInstalledVersion(p, *pi, *header));
+				eix::SignedBool is_installed(vardbpkg->isInstalledVersion(p, *pi, *header));
 				// If in doubt about the overlay only consider as installed
 				// if the current version was not treated yet, i.e. (since we use reverse_iterator)
 				// if it is the highest version (and so usually from the last overlay)
@@ -673,7 +674,7 @@ PackageTest::instabilitytest(const Package *p, TestStability what) const
 	return false;
 }
 
-inline void
+inline static void
 get_p(Package *&p, PackageReader *pkg)
 {
 	if(unlikely(p == NULLPTR)) {

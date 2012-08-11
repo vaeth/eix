@@ -12,6 +12,9 @@
 
 #include <config.h>
 
+#include <sys/types.h>
+
+#include <set>
 #include <map>
 #include <string>
 
@@ -57,7 +60,7 @@ class VarsReader {
 
 		/** Read file.
 		 * @return true if the file was successfully read. */
-		bool read(const char *filename, std::string *errtext, bool noexist_ok);
+		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR);
 
 		/** Use a supplied map for variables. */
 		void useMap(std::map<std::string, std::string> *vars_map)
@@ -250,7 +253,7 @@ class VarsReader {
 		    adding variables and changed HAVE_READ to current instance. */
 		bool source(const std::string &filename, std::string *errtext);
 
-		unsigned int key_len; /**< Length of the key. */
+		size_t key_len; /**< Length of the key. */
 		char *key_begin;      /**< Pointer to first character of key. */
 
 		char *x;        /**< Pointer to current position in filebuffer. */
@@ -261,6 +264,8 @@ class VarsReader {
 		Flags parse_flags; /**< Flags for configuration of parser. */
 
 	protected:
+		std::set<std::string> *sourced_files;
+
 		std::string m_errtext;
 
 		char *filebuffer,     /**< The filebuffer everyone is taking about. */

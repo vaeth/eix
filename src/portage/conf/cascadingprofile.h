@@ -10,6 +10,7 @@
 #ifndef SRC_PORTAGE_CONF_CASCADINGPROFILE_H_
 #define SRC_PORTAGE_CONF_CASCADINGPROFILE_H_ 1
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -61,7 +62,7 @@ class CascadingProfile {
 
 	private:
 		/** Add all files from profile and its parents to m_profile_files. */
-		bool addProfile(const char *profile, unsigned int depth = 0);
+		bool addProfile(const char *profile, std::set<std::string> *sourced_files = NULLPTR);
 
 		/** Handler functions follow for reading a file */
 		typedef bool (CascadingProfile::*Handler)(const std::vector<std::string> &lines, const std::string &filename, const char *repo);

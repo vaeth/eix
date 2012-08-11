@@ -19,10 +19,12 @@
 #include <cstring>
 
 #include <map>
+#include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -84,6 +86,7 @@
 
 using std::map;
 using std::pair;
+using std::set;
 using std::string;
 using std::vector;
 
@@ -100,7 +103,6 @@ const VarsReader::Flags
 	VarsReader::PORTAGE_ESCAPES,
 	VarsReader::HAVE_READ,
 	VarsReader::ONLY_HAVE_READ;
-
 
 bool
 VarsReader::isIncremental(const char *key)
@@ -213,7 +215,7 @@ VarsReader::JUMP_WHITESPACE()
 			break;
 		case 's':
 			{
-				int i(0);
+				size_t i(0);
 				const char *begin(x);
 				while(likely(isalpha(INPUT, localeC))) {
 					NEXT_INPUT;
@@ -793,7 +795,7 @@ void VarsReader::resolveReference()
 		}
 		begin = x;
 	}
-	unsigned int ref_key_length(0);
+	size_t ref_key_length(0);
 
 	while(isValidKeyCharacter(INPUT)) {
 		++ref_key_length;
@@ -846,7 +848,7 @@ VarsReader::initFsm()
 }
 
 bool
-VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
+VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<string> *sourced)
 {
 	int fd(open(filename, O_RDONLY));
 	if(fd == -1) {
@@ -854,7 +856,7 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 			return true;
 		}
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Can't read file %r")) % filename;
+			*errtext = eix::format(_("cannot read file %r")) % filename;
 		}
 		return false;
 	}
@@ -862,7 +864,7 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 	if(fstat(fd, &st)) {
 		close(fd);
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Can't stat file %r")) % filename;
+			*errtext = eix::format(_("cannot stat file %r")) % filename;
 		}
 		return false;
 	}
@@ -874,13 +876,28 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 	close(fd);
 	if (filebuffer == MAP_FAILED) {
 		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Can't map file %r")) % filename;
+			*errtext = eix::format(_("cannot map file %r")) % filename;
 		}
 		return false;
 	}
 	file_name = filename;
 	filebuffer_end = filebuffer + st.st_size;
 
+	string truename(normalize_path(filename));
+	bool topcall(sourced == NULLPTR);
+	if(likely(topcall)) {
+		sourced_files = new set<string>;
+	} else {
+		sourced_files = sourced;
+		if(sourced->find(truename) != sourced->end()) {
+			if(errtext != NULLPTR) {
+				*errtext = eix::format(_("recursively sourced file %r")) % truename;
+			}
+			return false;
+		}
+	}
+
+	sourced_files->insert(truename);
 	initFsm();
 	bool ret;
 	if((parse_flags & APPEND_VALUES) != NONE) {
@@ -909,6 +926,13 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 		ret = runFsm();
 	}
 	munmap(filebuffer, st.st_size);
+	if(likely(topcall)) {
+		delete sourced_files;
+		sourced_files = NULLPTR;
+	} else {
+		sourced_files->erase(truename);
+	}
+
 	if(likely(ret)) {
 		return true;
 	}
@@ -924,14 +948,6 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok)
 bool
 VarsReader::source(const string &filename, string *errtext)
 {
-	static int depth(0);
-	++depth;
-	if (depth == 100) {
-		if(errtext != NULLPTR) {
-			*errtext = eix::format(_("Nesting level too deep when reading %r")) % filename;
-		}
-		return false;
-	}
 	VarsReader includefile((parse_flags & (~APPEND_VALUES)) | INTO_MAP);
 	includefile.accumulatingKeys(incremental_keys);
 	includefile.useMap(vars);
@@ -945,9 +961,8 @@ VarsReader::source(const string &filename, string *errtext)
 				currprefix = it->second;
 		}
 	}
-	int rvalue(includefile.read((currprefix + filename).c_str(), errtext, false));
+	bool rvalue(includefile.read((currprefix + filename).c_str(), errtext, false, sourced_files));
 	parse_flags |= (includefile.parse_flags & HAVE_READ);
-	--depth;
 	return rvalue;
 }
 

@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "portage/basicversion.h"
@@ -275,10 +276,10 @@ Package::guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *fo
 	-  3: p has no worse best_slot, but an identical
 	      from a different overlay
 	-  0: else */
-int
+eix::TinySigned
 Package::worse_best_slots(const Package &p) const
 {
-	int ret(0);
+	eix::TinySigned ret(0);
 	for(SlotList::const_iterator it(slotlist().begin());
 		it != slotlist().end(); ++it) {
 		Version *t_best((it->const_version_list()).best());
@@ -304,11 +305,11 @@ Package::worse_best_slots(const Package &p) const
 	- -1: *this has a worse/missing best_slot, and p has not
 	-  2: p and *this both have a worse/missing best_slot
 	-  3: all matches, but at least one overlay differs */
-int
+eix::TinySigned
 Package::compare_best_slots(const Package &p) const
 {
-	int worse(worse_best_slots(p));
-	int better(p.worse_best_slots(*this));
+	eix::TinySigned worse(worse_best_slots(p));
+	eix::TinySigned better(p.worse_best_slots(*this));
 	if(worse == 1)
 	{
 		if(better == 1)
@@ -329,7 +330,7 @@ Package::compare_best_slots(const Package &p) const
 	- -1: p is larger
 	-  3: same, but overlays (or slots if test_slot)
 	      are different */
-int
+eix::TinySigned
 Package::compare_best(const Package &p, bool test_slot) const
 {
 	Version *t_best(best());
@@ -364,7 +365,7 @@ Package::compare_best(const Package &p, bool test_slot) const
 	-  2: upgrade and downgrade necessary
 	-  4: (if only_installed) nothing is installed,
 	      but one can be installed */
-int
+eix::TinySigned
 Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 {
 	vector<InstVersion> *ins(NULLPTR);
@@ -427,7 +428,7 @@ Package::check_best_slots(VarDbPkg *v, bool only_installed) const
 	      but slots are different.
 	-  4: (if only_installed) nothing is installed,
 	      but one can be installed */
-int
+eix::TinySigned
 Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 {
 	ExtendedVersion *t_best(best());
@@ -439,7 +440,7 @@ Package::check_best(VarDbPkg *v, bool only_installed, bool test_slot) const
 			return -1;
 		for(vector<InstVersion>::iterator it(ins->begin());
 			likely(it != ins->end()); ++it) {
-			BasicPart::SignedBool vgl(BasicVersion::compare(*t_best, *it));
+			eix::SignedBool vgl(BasicVersion::compare(*t_best, *it));
 			if(vgl > 0)
 				continue;
 			if(vgl < 0)

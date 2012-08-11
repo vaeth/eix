@@ -54,13 +54,13 @@ using std::vector;
 	} \
 } while(0)
 
-inline bool
-optional_increase(ArgumentReader::const_iterator &arg, const ArgumentReader &ar)
+inline static bool
+optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
 {
-	ArgumentReader::const_iterator next(arg);
+	ArgumentReader::const_iterator next(*arg);
 	if(unlikely(++next == ar.end()))
 		return false;
-	arg = next;
+	*arg = next;
 	return true;
 }
 
@@ -190,7 +190,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				test->SetInstability(PackageTest::STABLE_NONMASKED);
 				break;
 			case O_OVERLAY: USE_TEST;
-				if(optional_increase(arg, ar)) {
+				if(optional_increase(&arg, ar)) {
 					header.get_overlay_vector(
 						test->OverlayList(),
 						arg->m_argument,
@@ -202,7 +202,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				test->Overlay();
 				break;
 			case O_ONLY_OVERLAY: USE_TEST;
-				if(optional_increase(arg, ar)) {
+				if(optional_increase(&arg, ar)) {
 					header.get_overlay_vector(
 						test->OverlayOnlyList(),
 						arg->m_argument,
@@ -215,7 +215,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 					portagesettings["PORTDIR"].c_str());
 				break;
 			case O_INSTALLED_OVERLAY: USE_TEST;
-				if(optional_increase(arg, ar)) {
+				if(optional_increase(&arg, ar)) {
 					header.get_overlay_vector(
 						test->InOverlayInstList(),
 						arg->m_argument,
@@ -230,7 +230,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 					portagesettings["PORTDIR"].c_str());
 				break;
 			case O_FROM_OVERLAY: USE_TEST;
-				if(optional_increase(arg, ar)) {
+				if(optional_increase(&arg, ar)) {
 					header.get_overlay_vector(
 						test->FromOverlayInstList(),
 						arg->m_argument,

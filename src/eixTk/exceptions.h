@@ -19,7 +19,7 @@
 void portage_parse_error(const std::string &file, std::vector<std::string>::size_type line_nr, const std::string& line, const std::string &errtext);
 
 template<class Iterator>
-inline void
+inline static void
 portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext)
 {
 	portage_parse_error(file, std::distance(begin, line) + 1, *line, errtext);

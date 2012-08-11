@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"
 
@@ -68,8 +68,8 @@ class PackageTree : public std::map<std::string, Category*> {
 
 		Package *findPackage(const std::string &cat_name, const std::string &pkg_name) const ATTRIBUTE_PURE;
 
-		io::Treesize countPackages() const ATTRIBUTE_PURE;
-		io::Catsize countCategories() const
+		eix::Treesize countPackages() const ATTRIBUTE_PURE;
+		eix::Catsize countCategories() const
 		{ return size(); }
 };
 

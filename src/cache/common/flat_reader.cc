@@ -16,6 +16,7 @@
 
 #include "cache/base.h"
 #include "cache/common/flat_reader.h"
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -27,10 +28,10 @@ using std::string;
 
 using std::ifstream;
 
-inline bool
-skip_lines(const int nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
+inline static bool
+skip_lines(const eix::TinyUnsigned nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
 {
-	for(int i(nr); likely(i > 0); --i) {
+	for(eix::TinyUnsigned i(nr); likely(i != 0); --i) {
 		is.ignore(std::numeric_limits<int>::max(), '\n');
 		if(is.fail())
 		{
@@ -90,9 +91,8 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 	skip_lines(5, is, filename, error_callback);
 	string linebuf;
 	// Read the rest
-	for(int linenr(5); likely(getline(is, linebuf) != NULLPTR); ++linenr) {
-		switch(linenr)
-		{
+	for(eix::TinyUnsigned linenr(5); likely(getline(is, linebuf) != NULLPTR); ++linenr) {
+		switch(linenr) {
 			case 5:  pkg->homepage = linebuf;
 			         break;
 			case 6:  pkg->licenses = linebuf;

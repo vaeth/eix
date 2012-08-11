@@ -68,8 +68,8 @@ class ExplodeAtom {
 };
 
 /** Check string if it only contains digits. */
-inline bool is_numeric(const char *str) ATTRIBUTE_PURE;
-inline bool
+inline static bool is_numeric(const char *str) ATTRIBUTE_PURE;
+inline static bool
 is_numeric(const char *str)
 {
 	for(char c(*str); likely(c != '\0'); c = *(++str)) {
@@ -80,7 +80,7 @@ is_numeric(const char *str)
 }
 
 /** Add symbol if it is not already the last one */
-inline void
+inline static void
 optional_append(std::string *s, char symbol)
 {
 	if(s->empty() || ((*(s->rbegin()) != symbol)))
@@ -90,7 +90,7 @@ optional_append(std::string *s, char symbol)
 /** Trim characters on left side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-inline void
+inline static void
 ltrim(std::string *str, const char *delims = spaces)
 {
 	// trim leading whitespace
@@ -104,7 +104,7 @@ ltrim(std::string *str, const char *delims = spaces)
 /** Trim characters on right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-inline void
+inline static void
 rtrim(std::string *str, const char *delims = spaces)
 {
 	// trim trailing whitespace
@@ -166,7 +166,7 @@ bool slot_subslot(const std::string &full, std::string *slot, std::string *subsl
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result.
  * @return the resulting vector */
-inline std::vector<std::string>
+inline static std::vector<std::string>
 split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::vector<std::string> vec;
@@ -193,7 +193,7 @@ void join_to_string(std::string *s, const std::set<std::string> &vec, const std:
 /** Join a string-vector or string-set
  * @param glue glue between the elements. */
 template<typename T>
-inline std::string
+inline static std::string
 join_to_string(T vec, const std::string &glue = " ")
 {
 	std::string ret;
@@ -204,7 +204,7 @@ join_to_string(T vec, const std::string &glue = " ")
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @param dest   result. May be identical to source. */
-inline void
+inline static void
 split_and_join(std::string *dest, const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::vector<std::string> vec;
@@ -215,7 +215,7 @@ split_and_join(std::string *dest, const std::string &source, const std::string &
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @return result. */
-inline std::string
+inline static std::string
 split_and_join_string(const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::string r;
@@ -225,7 +225,7 @@ split_and_join_string(const std::string &source, const std::string &glue = " ", 
 
 /** Calls join_to_string() and then split_string() */
 template<typename Td, typename Ts>
-void
+inline static void
 join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
 {
 	std::string t;
@@ -242,21 +242,24 @@ resolve_plus_minus(std::set<std::string> *s, const std::vector<std::string> &l, 
 
 /// Add items from s to the end of d.
 template<typename T>
-void push_backs(std::vector<T> *d, const std::vector<T> &s)
+inline static void
+push_backs(std::vector<T> *d, const std::vector<T> &s)
 {
 	d->insert(d->end(), s.begin(), s.end());
 }
 
 /// Insert a whole vector to a set.
 template<typename T>
-void insert_list(std::set<T> *the_set, const std::vector<T> &the_list)
+inline static void
+insert_list(std::set<T> *the_set, const std::vector<T> &the_list)
 {
 	the_set->insert(the_list.begin(), the_list.end());
 }
 
 /// Make a set from a vector.
 template<typename T>
-void make_set(std::set<T> *the_set, const std::vector<T> &the_list)
+inline static void
+make_set(std::set<T> *the_set, const std::vector<T> &the_list)
 {
 	the_set->clear();
 	insert_list(the_set, the_list);

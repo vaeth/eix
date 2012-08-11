@@ -13,13 +13,13 @@
 #include <set>
 #include <string>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/inttypes.h"
 #include "eixTk/null.h"
 
 class MaskFlags {
 	public:
-		typedef io::UChar MaskType;
+		typedef eix::UChar MaskType;
 		static const MaskType
 			MASK_NONE               = 0x00,
 			MASK_PACKAGE            = 0x01,
@@ -75,15 +75,17 @@ class MaskFlags {
 		MaskType m_mask;
 };
 
-inline bool operator == (MaskFlags const& left, MaskFlags const& right)
+inline static bool
+operator==(MaskFlags const& left, MaskFlags const& right)
 { return (left.get() == right.get()); }
 
-inline bool operator != (MaskFlags const& left, MaskFlags const& right)
+inline static bool
+operator!=(MaskFlags const& left, MaskFlags const& right)
 { return (left.get() != right.get()); }
 
 class KeywordsFlags {
 	public:
-		typedef io::UChar KeyType;
+		typedef eix::UChar KeyType;
 		static const KeyType
 			KEY_EMPTY          = 0x00,
 			KEY_STABLE         = 0x01, /**< stabilized */
@@ -160,10 +162,12 @@ class KeywordsFlags {
 		KeyType m_keyword;
 };
 
-inline bool operator == (const KeywordsFlags& left, const KeywordsFlags& right)
+inline static bool
+operator==(const KeywordsFlags& left, const KeywordsFlags& right)
 { return (left.get() == right.get()); }
 
-inline bool operator != (const KeywordsFlags& left, const KeywordsFlags& right)
+inline static bool
+operator!=(const KeywordsFlags& left, const KeywordsFlags& right)
 { return (left.get() != right.get()); }
 
 class Keywords

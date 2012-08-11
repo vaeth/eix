@@ -64,10 +64,11 @@ Check() {
 fi
 
 Check '<config\.h>' -e '^#if.*HAVE' -e '^#if.*USE' -e '^#if.*WITH' -e '^#if.*[^E]TEST'  -e '^#if.*DEBUG' -e '#if.*ENABLE' -e '[^\"_]EIX_CACHEFILE' -e '#if.*BIGENDIAN' -e '#if.*[^_]TARGET' -e '#if.*CASEFOLD' -e SYSCONFDIR -e ALWAYS_RECALCULATE -e 'ATTRIBUTE_NORETURN' -e 'ATTRIBUTE_SIGNAL' -e 'ATTRIBUTE_CONST' -e 'ATTRIBUTE_PURE' -e '[^a-e_g-z_.]open(' -e '[^a-e_g-z_.]close(' -e 'seek(' -e 'stat(' -e "sys/stat" -e "sys/type" -e "sys/mman" -e "size_t[^y]" -e "off_t" -e "fcntl"
-Check '"database/types\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize
+Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
 Check '"eixTk/exceptions\.h"' -e portage_parse_error
 Check '"eixTk/formated\.h"' -e '::format'
 Check '"eixTk/i18n\.h"' -e '_('
+Check '"eixTk/inttypes\.h"' -e uint16 -e uint32 -e uint64
 Check '"eixTk/likely\.h"' -e 'likely('
 Check '"eixTk/null\.h"' -e 'NULLPTR'
 Check '"eixTk/ptr_list\.h"' -e 'eix::ptr'

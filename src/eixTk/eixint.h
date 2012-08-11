@@ -7,20 +7,22 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#ifndef SRC_DATABASE_TYPES_H_
-#define SRC_DATABASE_TYPES_H_ 1
-
-// include "database/types.h" make check_includes happy
+#ifndef SRC_EIXTK_EIXINT_H_
+#define SRC_EIXTK_EIXINT_H_ 1
 
 #include <config.h>
 
 #include <sys/types.h>
 
-class DBHeader;
-class PackageReader;
+// include "eixTk/eixint.h" make check_includes happy
 
-namespace io {
+namespace eix {
 	typedef unsigned char UChar;
+	typedef signed char TinySigned;
+
+	typedef UChar TinyUnsigned;
+	typedef TinySigned SignedBool;
+
 	typedef size_t UNumber;
 
 	typedef UNumber Catsize;
@@ -28,7 +30,16 @@ namespace io {
 	typedef UNumber Treesize;
 
 	typedef off_t OffsetType;
-	extern OffsetType counter;
+
+	inline static eix::SignedBool
+	toSignedBool(int a)
+	{
+		if(a == 0) {
+			return 0;
+		} else {
+			return ((a < 0) ? -1 : 1);
+		}
+	}
 }
 
-#endif  // SRC_DATABASE_TYPES_H_
+#endif  // SRC_EIXTK_EIXINT_H_

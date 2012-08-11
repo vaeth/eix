@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "database/io.h"
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"
 #include "portage/keywords.h"
@@ -30,7 +30,7 @@ class DBHeader;
 
 class IUse : public std::string {
 	public:
-		typedef io::UChar Flags;
+		typedef eix::UChar Flags;
 		static const Flags
 			USEFLAGS_NIL    = 0,
 			USEFLAGS_NORMAL = 1,
@@ -109,7 +109,7 @@ class Version : public ExtendedVersion, public Keywords {
 			SAVEEFFECTIVE_USERPROFILE, SAVEEFFECTIVE_PROFILE, SAVEEFFECTIVE_SIZE
 		} SavedEffectiveIndex;
 
-		typedef io::UChar EffectiveState;
+		typedef eix::UChar EffectiveState;
 		static const EffectiveState
 			EFFECTIVE_UNSAVED = 0,
 			EFFECTIVE_USED    = 1,
@@ -247,14 +247,16 @@ class Version : public ExtendedVersion, public Keywords {
 };
 
 /** The equality operator does *not* test the slots */
-inline bool operator == (const Version& left, const Version &right) ATTRIBUTE_PURE;
-inline bool
-operator == (const Version& left, const Version &right)
+inline static bool
+operator==(const Version& left, const Version &right) ATTRIBUTE_PURE;
+inline static bool
+operator==(const Version& left, const Version &right)
 { return (!BasicVersion::compare(left, right)) && (left.overlay_key == right.overlay_key); }
 
-inline bool operator != (const Version& left, const Version &right) ATTRIBUTE_PURE;
-inline bool
-operator != (const Version& left, const Version &right)
+inline static bool
+operator!=(const Version& left, const Version &right) ATTRIBUTE_PURE;
+inline static bool
+operator!=(const Version& left, const Version &right)
 { return (!BasicVersion::compare(left, right)) || (left.overlay_key != right.overlay_key); }
 
 #endif  // SRC_PORTAGE_VERSION_H_

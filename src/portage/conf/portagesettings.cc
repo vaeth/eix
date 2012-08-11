@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/eixint.h"
 #include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
 #include "eixTk/i18n.h"
@@ -308,8 +309,8 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 	m_accepted_keywords_set = m_arch_set;
 	resolve_plus_minus(&m_accepted_keywords_set, m_accepted_keywords);
 	make_vector<string>(&m_accepted_keywords, m_accepted_keywords_set);
-	signed int as_arch(eixrc->getBoolText("ACCEPT_KEYWORDS_AS_ARCH", "full"));
-	if(as_arch) {
+	eix::SignedBool as_arch(eixrc->getBoolText("ACCEPT_KEYWORDS_AS_ARCH", "full"));
+	if(as_arch != 0) {
 		m_plain_accepted_keywords_set.clear();
 		for(set<string>::const_iterator it(m_accepted_keywords_set.begin());
 			unlikely(it != m_accepted_keywords_set.end()); ++it) {

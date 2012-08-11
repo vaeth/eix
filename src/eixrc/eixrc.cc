@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -54,32 +55,26 @@ EixRcOption::EixRcOption(OptionType t, string name, string val, string desc) {
 	}
 }
 
-signed int
+eix::SignedBool
 EixRc::getBoolText(const string &key, const char *text)
 {
 	const char *s((*this)[key].c_str());
 	if(!strcasecmp(s, text)) {
 		return -1;
 	}
-	if(istrue(s)) {
-		return 1;
-	}
-	return 0;
+	return (istrue(s) ? 1 : 0);
 }
 
-signed int
-EixRc::getBoolTextlist(const string &key, const char **text)
+eix::TinySigned
+EixRc::getTinyTextlist(const string &key, const char **text)
 {
 	const char *s((*this)[key].c_str());
-	for(signed int i(-1); likely(*text != NULLPTR); ++text, --i) {
+	for(eix::TinySigned i(-1); likely(*text != NULLPTR); ++text, --i) {
 		if(!strcasecmp(s, *text)) {
 			return i;
 		}
 	}
-	if(istrue(s)) {
-		return 1;
-	}
-	return 0;
+	return (istrue(s) ? 1 : 0);
 }
 
 bool
@@ -368,13 +363,16 @@ EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<stri
 			type = find_next_delayed(*value, &skippos, &length);
 			switch(type) {
 				case DelayedFi:
-					if(curr_count --)
+					if(curr_count != 0) {
+						--curr_count;
 						continue;
-					if(delpos == string::npos)
+					}
+					if(delpos == string::npos) {
 						value->erase(skippos, length);
-					else
+					} else {
 						value->erase(delpos,
 							(skippos + length) - delpos);
+					}
 					break;
 				case DelayedElse:
 					if(curr_count != 0)

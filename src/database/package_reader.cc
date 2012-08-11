@@ -15,7 +15,7 @@
 
 #include "database/io.h"
 #include "database/package_reader.h"
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -66,7 +66,7 @@ PackageReader::read(Attributes need)
 				break;
 		case LICENSE:
 			{
-				io::Versize i;
+				eix::Versize i;
 				if(unlikely(!io::read_num(&i, m_fp, &m_errtext))) {
 					m_error = true;
 					return false;
@@ -141,7 +141,7 @@ PackageReader::next()
 		return next();
 	}
 
-	io::OffsetType len;
+	eix::OffsetType len;
 	if(unlikely(!io::read_num(&len, m_fp, &m_errtext))) {
 		m_error = true;
 		return false;
@@ -185,7 +185,7 @@ PackageReader::nextPackage()
 	/* Ignore the offset and read the whole package at once.
 	 */
 
-	io::OffsetType dummy;
+	eix::OffsetType dummy;
 	if(unlikely(!io::read_num(&dummy, m_fp, &m_errtext))) {
 		m_error = true;
 		return false;

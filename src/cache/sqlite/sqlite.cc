@@ -150,11 +150,11 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 				if(it != end())
 					(*trueindex)[it->second] = i;
 			}
-			int maxindex(-1);
+			int max_index(-1);
 			for(vector<int>::size_type i(0); likely(i < TrueIndex::LAST); ++i) {
 				int curr((*trueindex)[i]);
 				// Shortcut if we have not reached the maximum
-				if(maxindex >= curr)
+				if(max_index >= curr)
 					continue;
 				// Is the true index out of range?
 				if(argc <= curr) {
@@ -163,9 +163,9 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 					if(i == TrueIndex::PROPERTIES)
 						continue;
 				}
-				maxindex = curr;
+				max_index = curr;
 			}
-			return maxindex;
+			return max_index;
 		}
 
 		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i)

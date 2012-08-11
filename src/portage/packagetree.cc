@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-#include "database/types.h"
+#include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "portage/package.h"
@@ -121,10 +121,10 @@ PackageTree::deletePackage(const string &cat_name, const string &pkg_name)
 }
 #endif
 
-io::Treesize
+eix::Treesize
 PackageTree::countPackages() const
 {
-	io::Treesize ret(0);
+	eix::Treesize ret(0);
 	for(const_iterator i(begin()); likely(i != end()); ++i) {
 		ret += i->second->size();
 	}

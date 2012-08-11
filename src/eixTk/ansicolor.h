@@ -67,8 +67,8 @@ class AnsiMarker {
 		bool initmarker(const std::string &markers_string, std::string *errtext);
 };
 
-inline std::ostream&
-operator<< (std::ostream& os, AnsiMarker am)
+inline static std::ostream&
+operator<<(std::ostream& os, AnsiMarker am)
 {
 	os << am.asString();
 	return os;
@@ -126,8 +126,8 @@ class AnsiColor {
 		static void init_static();
 };
 
-inline std::ostream&
-operator<< (std::ostream& os, AnsiColor ac)
+inline static std::ostream&
+operator<<(std::ostream& os, AnsiColor ac)
 {
 	os << ac.asString();
 	return os;

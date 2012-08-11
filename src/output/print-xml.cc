@@ -61,7 +61,7 @@ PrintXml::clear(EixRc *eixrc)
 			"full",
 			"full*",
 			NULLPTR };
-		switch(eixrc->getBoolTextlist("XML_KEYWORDS", values)) {
+		switch(eixrc->getTinyTextlist("XML_KEYWORDS", values)) {
 			case 0:
 			case -1: keywords_mode = KW_NONE;  break;
 			case -2: keywords_mode = KW_BOTH;  break;

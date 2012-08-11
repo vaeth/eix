@@ -20,7 +20,6 @@ eixrc/eixrc
 database_src = \
 database/io.cc \
 database/io.h \
-database/types.h \
 database/header.cc \
 database/header.h \
 database/package_reader.cc \
@@ -29,19 +28,24 @@ database/package_reader.h
 nodist_database_src =
 
 stringutils_src = \
-eixTk/stringutils.cc \
-eixTk/stringutils.h \
+eixTk/compare.cc \
+eixTk/compare.h \
+eixTk/eixint.h \
 eixTk/formated.cc \
 eixTk/formated.h \
 eixTk/i18n.h \
 eixTk/likely.h \
-eixTk/null.h
+eixTk/null.h \
+eixTk/stringutils.cc \
+eixTk/stringutils.h
 
 sysutils_src = \
 eixTk/sysutils.cc \
 eixTk/sysutils.h
 
 varsreader_src = \
+eixTk/filenames.cc \
+eixTk/filenames.h \
 eixTk/varsreader.cc \
 eixTk/varsreader.h
 
@@ -58,11 +62,8 @@ eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_ptr.h \
-eixTk/compare.h \
 eixTk/exceptions.cc \
 eixTk/exceptions.h \
-eixTk/filenames.cc \
-eixTk/filenames.h \
 eixTk/inttypes.h \
 eixTk/ptr_list.h \
 eixTk/regexp.h \

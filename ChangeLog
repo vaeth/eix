@@ -3,10 +3,15 @@
 *eix-0.26.2
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Follow most of Google's C++ style guidelines:
-	  eix now passes src/cpplint.sh (i.e. cpplint.py up to minor
-	  whitespace conventions). Exceptions (essentially false positives)
-	  are marked with NOLINT.
+	  eix now avoids using static or global classes. It should at least
+	  pass src/cpplint.sh (i.e. cpplint.py up to minor whitespace
+	  conventions). Exceptions (false positives) are marked with NOLINT.
 	  This is actually a major rewrite which makes many things cleaner.
+	  Thanks a lot to Michał Bartoszkiewicz <mbartoszkiewicz at gmail.com>
+	  for analyzing a hard to find bug introduced by changing types.
+	- Fix regression from eix-0.26.1 of wrong <availableversions:VAR>
+	  (used e.g. with --versionlines in default format).
+	- Use cache of true filenames instead of heuristic recursion bounds.
 	- Allow --disable-silent-rules to follow Gentoo's policy, although
 	  personally, I dislike it, and it is not necessary for eix.
 
