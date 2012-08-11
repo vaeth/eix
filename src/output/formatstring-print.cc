@@ -522,19 +522,17 @@ PrintFormat::colon_pkg_availableversions(Package *package, const string &after_c
 	}
 	if(likely((!only_marked) || !(versions->empty()))) {
 		string::size_type col(after_colon.find(':'));
-		if((col == string::npos) || !(package->have_nontrivial_slots())) {
-			string parsed;
-			if(col != string::npos) {
-				parsed.assign(after_colon, 0, col);
-			} else {
-				parsed = col;
-			}
-			get_versions_versorted(package, parse_variable(parsed), versions);
-			varcache[parsed].in_use = false;
+		if(col == string::npos) {
+			get_versions_versorted(package, parse_variable(after_colon), versions);
+			varcache[after_colon].in_use = false;
+		} else if(!(package->have_nontrivial_slots())) {
+			string var(after_colon, 0, col);
+			get_versions_versorted(package, parse_variable(var), versions);
+			varcache[var].in_use = false;
 		} else {
-			string parsed(after_colon, col + 1, string::npos);
-			get_versions_slotsorted(package, parse_variable(parsed), versions);
-			varcache[parsed].in_use = false;
+			string var(after_colon, col + 1, string::npos);
+			get_versions_slotsorted(package, parse_variable(var), versions);
+			varcache[var].in_use = false;
 		}
 	}
 	delete versions;
