@@ -360,7 +360,10 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 				break;
 			case '*':  // the magic "*"
 				{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 					sets_dirs.erase(sets_dirs.begin() + i);
+#pragma GCC diagnostic pop
 					string app;
 					if(sets_dirs[i].size() > 1) {
 						app.assign(sets_dirs[i], 1, string::npos);
@@ -368,7 +371,10 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 					vector<string>::size_type j(i);
 					for(RepoList::const_iterator it(repos.second()); likely(it != repos.end()); ++it) {
 						if(it->know_path) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 							sets_dirs.insert(sets_dirs.begin() + j, 1, (it->path) + app);
+#pragma GCC diagnostic pop
 							++i;
 						}
 					}

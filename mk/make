@@ -16,8 +16,8 @@ Available options are
   -1/2/3 Generate 1/2/3 binaries for eix-{,diff,update}
   -4  Enable separate tools
   -d  Do not use dep-default
-  -p  Use pedantic warnings when modifying flags
-  -P  Use pedantic warnings except -Wno-sign-conversion
+  -w  Use -werror
+  -W  Do not use --enable-strong-warnings
   -g  Use CLANG++
   -s  With sqlite
   -S  Without sqlite
@@ -77,7 +77,8 @@ quiet=false
 dep_default=:
 earlystop=false
 keepenv=false
-pedantic=false
+warnings=:
+werror=false
 separate_all=:
 use_chown=false
 jarg='-j3'
@@ -88,37 +89,36 @@ optimization=false
 quickcheck=false
 clear_ccache=false
 debugging=false
-wnosign=false
 clang=false
 dialect='enable'
 OPTIND=1
-while getopts 'q01234gdnepPsSrOfCXyYdc:j:hH?' opt
+while getopts 'q01234gdnewWsSrOfCXyYdc:j:hH?' opt
 do	case ${opt} in
-	q) quiet=:;;
-	0) separate_all=false;;
-	1) configure_extra="${configure_extra} --disable-separate-binaries";;
-	2) configure_extra="${configure_extra} --enable-separate-update";;
-	3) configure_extra="${configure_extra} --enable-separate-binaries";;
-	4) configure_extra="${configure_extra} --enable-separate-tools";;
-	g) clang=:;;
-	d) dep_default=false;;
-	n) earlystop=:;;
-	e) keepenv=:;;
-	p) pedantic=:;;
-	P) wnosign=:;;
-	s) configure_extra="${configure_extra} --with-sqlite";;
-	S) configure_extra="${configure_extra} --without-sqlite";;
-	r) use_chown=:;;
-	O) optimization=:;;
-	f) quickcheck=:;;
-	C) use_ccache=false;;
-	X) clear_ccache=:;;
-	y) dialect='enable';;
-	Y) dialect='disable';;
-	d) debugging=:;;
-	c) configure_extra="${configure_extra} ${OPTARG}";;
-	j) [ -n "${OPTARG:++}" ] && jarg='-j${OPTARG}' || jarg=;;
-	*) Usage 0;;
+	q)	quiet=:;;
+	0)	separate_all=false;;
+	1)	configure_extra="${configure_extra} --disable-separate-binaries";;
+	2)	configure_extra="${configure_extra} --enable-separate-update";;
+	3)	configure_extra="${configure_extra} --enable-separate-binaries";;
+	4)	configure_extra="${configure_extra} --enable-separate-tools";;
+	g)	clang=:;;
+	d)	dep_default=false;;
+	n)	earlystop=:;;
+	e)	keepenv=:;;
+	w)	werror=:;;
+	W)	warnings=false;;
+	s)	configure_extra="${configure_extra} --with-sqlite";;
+	S)	configure_extra="${configure_extra} --without-sqlite";;
+	r)	use_chown=:;;
+	O)	optimization=:;;
+	f)	quickcheck=:;;
+	C)	use_ccache=false;;
+	X)	clear_ccache=:;;
+	y)	dialect='enable';;
+	Y)	dialect='disable';;
+	d)	debugging=:;;
+	c)	configure_extra="${configure_extra} ${OPTARG}";;
+	j)	[ -n "${OPTARG:++}" ] && jarg='-j${OPTARG}' || jarg=;;
+	*)	Usage 0;;
 	esac
 done
 if [ ${OPTIND} -gt 1 ]
@@ -189,16 +189,12 @@ then	CFLAGS=`portageq envvar CFLAGS`
 		-fdirectives-only \
 		-ftracer
 	export CFLAGS CXXFLAGS LDFLAGS CPPFLAGS
-	if ${pedantic} || ${wnosign}
+	if ${warnings}
 	then	configure_extra="${configure_extra} --enable-strong-warnings"
-		if ${wnosign}
-		then	CXXFLAGS="${CXXFLAGS} -Wno-sign-conversion"
-		elif ${clang}
-		then	CXXFLAGS="${CXXFLAGS} -Wno-sign-conversion"
-		fi
 		automake_extra="${automake_extra} -Wall"
-	else	configure_extra="${configure_extra} --enable-warnings"
-		#CXXFLAGS="${CXXFLAGS} -Werror"
+	fi
+	if ${werror}
+	then	CXXFLAGS="${CXXFLAGS} -Werror"
 		automake_extra="${automake_extra} -Werror"
 	fi
 fi

@@ -21,13 +21,13 @@ class MaskFlags {
 	public:
 		typedef eix::UChar MaskType;
 		static const MaskType
-			MASK_NONE               = 0x00,
-			MASK_PACKAGE            = 0x01,
-			MASK_PROFILE            = 0x02,
+			MASK_NONE               = 0x00U,
+			MASK_PACKAGE            = 0x01U,
+			MASK_PROFILE            = 0x02U,
 			MASK_HARD               = MASK_PACKAGE|MASK_PROFILE,
-			MASK_SYSTEM             = 0x04,
-			MASK_WORLD              = 0x08,
-			MASK_WORLD_SETS         = 0x10;
+			MASK_SYSTEM             = 0x04U,
+			MASK_WORLD              = 0x08U,
+			MASK_WORLD_SETS         = 0x10U;
 
 		explicit MaskFlags(MaskType t = MASK_NONE)
 		{ m_mask = t; }
@@ -87,15 +87,15 @@ class KeywordsFlags {
 	public:
 		typedef eix::UChar KeyType;
 		static const KeyType
-			KEY_EMPTY          = 0x00,
-			KEY_STABLE         = 0x01, /**< stabilized */
-			KEY_ARCHSTABLE     = 0x02, /**<  ARCH  */
-			KEY_ARCHUNSTABLE   = 0x04, /**< ~ARCH  */
-			KEY_ALIENSTABLE    = 0x08, /**<  ALIEN */
-			KEY_ALIENUNSTABLE  = 0x10, /**< ~ALIEN */
-			KEY_MINUSKEYWORD   = 0x20, /**< -ARCH  */
-			KEY_MINUSUNSTABLE  = 0x40, /**< -~*    */
-			KEY_MINUSASTERISK  = 0x80, /**<  -*    */
+			KEY_EMPTY          = 0x00U,
+			KEY_STABLE         = 0x01U,  /**< stabilized */
+			KEY_ARCHSTABLE     = 0x02U,  /**<  ARCH  */
+			KEY_ARCHUNSTABLE   = 0x04U,  /**< ~ARCH  */
+			KEY_ALIENSTABLE    = 0x08U,  /**<  ALIEN */
+			KEY_ALIENUNSTABLE  = 0x10U,  /**< ~ALIEN */
+			KEY_MINUSKEYWORD   = 0x20U,  /**< -ARCH  */
+			KEY_MINUSUNSTABLE  = 0x40U,  /**< -~*    */
+			KEY_MINUSASTERISK  = 0x80U,  /**<  -*    */
 			KEY_SOMESTABLE     = KEY_ARCHSTABLE|KEY_ALIENSTABLE,
 			KEY_SOMEUNSTABLE   = KEY_ARCHUNSTABLE|KEY_ALIENUNSTABLE,
 			KEY_TILDESTARMATCH = KEY_SOMESTABLE|KEY_SOMEUNSTABLE;
@@ -175,35 +175,35 @@ class Keywords
 	public:
 		typedef uint32_t Redundant;
 		static const Redundant
-			RED_NOTHING       = 0x000000, /**< None of the following           */
-			RED_DOUBLE        = 0x000001, /**< Same keyword twice              */
-			RED_DOUBLE_LINE   = 0x000002, /**< Same keyword line twice         */
-			RED_MIXED         = 0x000004, /**< Weaker and stronger keyword     */
-			RED_WEAKER        = 0x000008, /**< Unnecessarily strong keyword    */
-			RED_STRANGE       = 0x000010, /**< Unrecognized OTHERARCH or -OTHERARCH */
-			RED_NO_CHANGE     = 0x000020, /**< No change in keyword status     */
-			RED_IN_KEYWORDS   = 0x000040, /**< Some entry in package.keywords  */
+			RED_NOTHING       = 0x000000U,  /**< None of the following           */
+			RED_DOUBLE        = 0x000001U,  /**< Same keyword twice              */
+			RED_DOUBLE_LINE   = 0x000002U,  /**< Same keyword line twice         */
+			RED_MIXED         = 0x000004U,  /**< Weaker and stronger keyword     */
+			RED_WEAKER        = 0x000008U,  /**< Unnecessarily strong keyword    */
+			RED_STRANGE       = 0x000010U,  /**< Unrecognized OTHERARCH or -OTHERARCH */
+			RED_NO_CHANGE     = 0x000020U,  /**< No change in keyword status     */
+			RED_IN_KEYWORDS   = 0x000040U,  /**< Some entry in package.keywords  */
 			RED_ALL_KEYWORDS  = RED_DOUBLE|RED_DOUBLE_LINE|RED_MIXED|RED_WEAKER|RED_STRANGE|RED_NO_CHANGE|RED_IN_KEYWORDS,
-			RED_MASK          = 0x000080, /**< No change in mask status        */
-			RED_DOUBLE_MASK   = 0x000100, /**< Double mask entry               */
-			RED_IN_MASK       = 0x000200, /**< Some entry in package.mask      */
-			RED_UNMASK        = 0x000400, /**< No change in unmask status      */
-			RED_DOUBLE_UNMASK = 0x000800, /**< Double unmask entry             */
-			RED_IN_UNMASK     = 0x001000, /**< Some entry in package.umask     */
+			RED_MASK          = 0x000080U,  /**< No change in mask status        */
+			RED_DOUBLE_MASK   = 0x000100U,  /**< Double mask entry               */
+			RED_IN_MASK       = 0x000200U,  /**< Some entry in package.mask      */
+			RED_UNMASK        = 0x000400U,  /**< No change in unmask status      */
+			RED_DOUBLE_UNMASK = 0x000800U,  /**< Double unmask entry             */
+			RED_IN_UNMASK     = 0x001000U,  /**< Some entry in package.umask     */
 			RED_ALL_MASK      = RED_MASK|RED_DOUBLE_MASK|RED_IN_MASK,
 			RED_ALL_UNMASK    = RED_UNMASK|RED_DOUBLE_UNMASK|RED_IN_UNMASK,
 			RED_ALL_MASKSTUFF = RED_ALL_MASK|RED_ALL_UNMASK,
-			RED_DOUBLE_USE    = 0x002000, /**< Double entry in package.use     */
-			RED_IN_USE        = 0x004000, /**< Some entry in package.use       */
+			RED_DOUBLE_USE    = 0x002000U,  /**< Double entry in package.use     */
+			RED_IN_USE        = 0x004000U,  /**< Some entry in package.use       */
 			RED_ALL_USE       = RED_DOUBLE_USE|RED_IN_USE,
-			RED_DOUBLE_ENV    = 0x008000, /**< Double entry in package.env     */
-			RED_IN_ENV        = 0x010000, /**< Some entry in package.env       */
+			RED_DOUBLE_ENV    = 0x008000U,  /**< Double entry in package.env     */
+			RED_IN_ENV        = 0x010000U,  /**< Some entry in package.env       */
 			RED_ALL_ENV       = RED_DOUBLE_ENV|RED_IN_ENV,
-			RED_DOUBLE_LICENSE= 0x020000, /**< Some entry in package.license   */
-			RED_IN_LICENSE    = 0x040000, /**< Double entry in package.license */
+			RED_DOUBLE_LICENSE= 0x020000U,  /**< Some entry in package.license   */
+			RED_IN_LICENSE    = 0x040000U,  /**< Double entry in package.license */
 			RED_ALL_LICENSE   = RED_DOUBLE_LICENSE|RED_IN_LICENSE,
-			RED_DOUBLE_CFLAGS = 0x080000, /**< Some entry in package.cflags    */
-			RED_IN_CFLAGS     = 0x100000, /**< Double entry in package.cflags  */
+			RED_DOUBLE_CFLAGS = 0x080000U,  /**< Some entry in package.cflags    */
+			RED_IN_CFLAGS     = 0x100000U,  /**< Double entry in package.cflags  */
 			RED_ALL_CFLAGS    = RED_DOUBLE_CFLAGS|RED_IN_CFLAGS;
 
 		KeywordsFlags keyflags;
@@ -213,7 +213,7 @@ class Keywords
 			keyflags(k), maskflags(m)
 		{
 			redundant = RED_NOTHING;
-			red_mask = 0x00;
+			red_mask = 0x00U;
 		}
 
 		/** Add/substract modify keys to/from original to obtain result.
@@ -230,46 +230,46 @@ class Keywords
 		void set_was_masked(bool value = true)
 		{
 			if(value)
-				red_mask |= 0x01;
+				red_mask |= 0x01U;
 			else
-				red_mask &= ~0x01;
+				red_mask &= ~0x01U;
 		}
 
 		bool was_masked () const
-		{ return (red_mask & 0x01); }
+		{ return (red_mask & 0x01U); }
 
 		void set_was_unmasked(bool value = true)
 		{
 			if(value)
-				red_mask |= 0x02;
+				red_mask |= 0x02U;
 			else
-				red_mask &= ~0x02;
+				red_mask &= ~0x02U;
 		}
 
 		bool was_unmasked () const
-		{ return (red_mask & 0x02); }
+		{ return (red_mask & 0x02U); }
 
 		void set_wanted_masked(bool value = true)
 		{
 			if(value)
-				red_mask |= 0x04;
+				red_mask |= 0x04U;
 			else
-				red_mask &= ~0x04;
+				red_mask &= ~0x04U;
 		}
 
 		bool wanted_masked () const
-		{ return (red_mask & 0x04); }
+		{ return (red_mask & 0x04U); }
 
 		void set_wanted_unmasked(bool value = true)
 		{
 			if(value)
-				red_mask |= 0x08;
+				red_mask |= 0x08U;
 			else
-				red_mask &= ~0x08;
+				red_mask &= ~0x08U;
 		}
 
 		bool wanted_unmasked () const
-		{ return (red_mask & 0x08); }
+		{ return (red_mask & 0x08U); }
 
 	protected:
 		Redundant redundant;

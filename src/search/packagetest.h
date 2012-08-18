@@ -39,24 +39,24 @@ class PackageTest {
 	public:
 		typedef uint32_t MatchField;
 		static const MatchField
-			NONE          = 0x00000, /**< Search in name */
-			NAME          = 0x00001, /**< Search in name */
-			DESCRIPTION   = 0x00002, /**< Search in description */
-			LICENSE       = 0x00004, /**< Search in license */
-			CATEGORY      = 0x00008, /**< Search in category */
-			CATEGORY_NAME = 0x00010, /**< Search in category/name */
-			HOMEPAGE      = 0x00020, /**< Search in homepage */
-			IUSE          = 0x00040, /**< Search in iuse */
-			USE_ENABLED   = 0x00080, /**< Search in enabled  useflags of installed packages */
-			USE_DISABLED  = 0x00100, /**< Search in disabled useflags of installed packages */
-			SLOT          = 0x00200, /**< Search in slots */
-			FULLSLOT      = 0x00400, /**< Search in full slots */
-			INST_SLOT     = 0x00800, /**< Search in installed slots */
-			INST_FULLSLOT = 0x01000, /**< Search in installed full slots */
-			SET           = 0x02000, /**< Search in sets */
-			DEPEND        = 0x04000, /**< Search in DEPEND */
-			RDEPEND       = 0x08000, /**< Search in RDEPEND */
-			PDEPEND       = 0x10000, /**< Search in PDEPEND */
+			NONE          = 0x00000U,  /**< Search in name */
+			NAME          = 0x00001U,  /**< Search in name */
+			DESCRIPTION   = 0x00002U,  /**< Search in description */
+			LICENSE       = 0x00004U,  /**< Search in license */
+			CATEGORY      = 0x00008U,  /**< Search in category */
+			CATEGORY_NAME = 0x00010U,  /**< Search in category/name */
+			HOMEPAGE      = 0x00020U,  /**< Search in homepage */
+			IUSE          = 0x00040U,  /**< Search in iuse */
+			USE_ENABLED   = 0x00080U,  /**< Search in enabled  useflags of installed packages */
+			USE_DISABLED  = 0x00100U,  /**< Search in disabled useflags of installed packages */
+			SLOT          = 0x00200U,  /**< Search in slots */
+			FULLSLOT      = 0x00400U,  /**< Search in full slots */
+			INST_SLOT     = 0x00800U,  /**< Search in installed slots */
+			INST_FULLSLOT = 0x01000U,  /**< Search in installed full slots */
+			SET           = 0x02000U,  /**< Search in sets */
+			DEPEND        = 0x04000U,  /**< Search in DEPEND */
+			RDEPEND       = 0x08000U,  /**< Search in RDEPEND */
+			PDEPEND       = 0x10000U,  /**< Search in PDEPEND */
 			DEPS          = (DEPEND|RDEPEND|PDEPEND),
 			ANY           = (NAME|DESCRIPTION|LICENSE|CATEGORY|CATEGORY_NAME|HOMEPAGE|IUSE|USE_ENABLED|USE_DISABLED|SLOT|FULLSLOT|INST_SLOT|INST_FULLSLOT|SET|DEPS);
 
@@ -72,19 +72,19 @@ class PackageTest {
 
 		typedef uint8_t TestInstalled;
 		static const TestInstalled
-			INS_NONE        = 0x00,
-			INS_NONEXISTENT = 0x01, /**< Test for nonexistent installed packages */
-			INS_OVERLAY     = 0x02, /**< Test for nonexistent overlays of installed packages */
-			INS_MASKED      = 0x04, /**< Test for masked installed packages */
+			INS_NONE        = 0x00U,
+			INS_NONEXISTENT = 0x01U,  /**< Test for nonexistent installed packages */
+			INS_OVERLAY     = 0x02U,  /**< Test for nonexistent overlays of installed packages */
+			INS_MASKED      = 0x04U,  /**< Test for masked installed packages */
 			INS_SOME        = INS_NONEXISTENT|INS_OVERLAY|INS_MASKED;
 
 		typedef uint8_t TestStability;
 		static const TestStability
-			STABLE_NONE         = 0x00,
-			STABLE_FULL         = 0x01, /**< Test for stable keyword */
-			STABLE_TESTING      = 0x02, /**< Test for testing keyword */
-			STABLE_NONMASKED    = 0x04, /**< Test for non-masked packages */
-			STABLE_SYSTEM       = 0x08; /**< Test for system packages */
+			STABLE_NONE         = 0x00U,
+			STABLE_FULL         = 0x01U,  /**< Test for stable keyword */
+			STABLE_TESTING      = 0x02U,  /**< Test for testing keyword */
+			STABLE_NONMASKED    = 0x04U,  /**< Test for non-masked packages */
+			STABLE_SYSTEM       = 0x08U;  /**< Test for system packages */
 
 		/** Set default values. */
 		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);

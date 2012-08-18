@@ -412,7 +412,10 @@ FormatParser::getPosition(size_t *line, size_t *column)
 		if(x != NULLPTR) {
 			++x;
 			++*line;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 			*column = band_position - y;
+#pragma GCC diagnostic pop
 		}
 	}
 }
@@ -471,7 +474,10 @@ FormatParser::state_COLOR()
 	if(enable_colors) {
 		AnsiColor ac;
 		string errtext;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		if(unlikely(!ac.initcolor(string(band_position, q - band_position), &errtext))) {
+#pragma GCC diagnostic pop
 			last_error = eix::format(_("Error while parsing color: %s")) % errtext;
 			return ERROR;
 		}
@@ -513,7 +519,10 @@ FormatParser::state_PROPERTY()
 	   "parse_colors(·, enable_colors)".
 	   With the currently available attribute this is not necessary.
 	*/
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 	keller.push(new Property(string(band_position, q - band_position), user_variable));
+#pragma GCC diagnostic pop
 	band_position = q + 1;
 	return START;
 }

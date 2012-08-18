@@ -282,7 +282,10 @@ VarDbPkg::readInstDate(const Package &p, InstVersion *v) const
 		pushback_lines((dirname + "/BUILD_TIME").c_str(), &datelines)) {
 		for(vector<string>::const_iterator it(datelines.begin());
 			it != datelines.end(); ++it) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 			if((v->instDate = my_atoi(it->c_str())) != 0) {
+#pragma GCC diagnostic pop
 				return;
 			}
 		}

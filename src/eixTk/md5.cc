@@ -298,16 +298,25 @@ verify_md5sum(const char *file, const string &md5sum)
 		return false;
 	}
 	if(st.st_size != 0) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+#pragma GCC diagnostic pop
 		close(fd);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 		if (filebuffer == MAP_FAILED) {
+#pragma GCC diagnostic pop
 			return false;
 		}
 	}
 	uint32_t resarr[4];
 	calc_md5sum(filebuffer, st.st_size, resarr);
 	if(filebuffer != NULLPTR) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		munmap(filebuffer, st.st_size);
+#pragma GCC diagnostic pop
 	}
 	string::size_type curr(0);
 	for(int i(0); i < 4; ++i) {

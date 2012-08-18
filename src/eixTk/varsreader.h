@@ -28,16 +28,16 @@ class VarsReader {
 	public:
 		typedef uint16_t Flags;
 		static const Flags
-			NONE                 = 0x0000,  /**< Flag: No flags set; normal behavior. */
-			ONLY_KEYWORDS_SLOT   = 0x0001,  /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
-			KEYWORDS_READ        = 0x0002,  /**< Flag: Have already read "KEYWORDS" once. */
-			SLOT_READ            = 0x0004,  /**< Flag: Have already read "SLOT" once. */
-			SUBST_VARS           = 0x0008,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP             = 0x0010,  /**< Flag: Init but don't parse .. you must first supply a pointer to map<string, string> with useMap(...) */
-			APPEND_VALUES        = 0x0020,  /**< Flag: Respect IncrementalKeys */
-			ALLOW_SOURCE         = 0x0040,  /**< Flag: Allow "source"/"." command. */
-			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE, /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
-			PORTAGE_ESCAPES      = 0x0100,  /**< Flag: Treat escapes like portage does. */
+			NONE                 = 0x0000U,  /**< Flag: No flags set; normal behavior. */
+			ONLY_KEYWORDS_SLOT   = 0x0001U,  /**< Flag: Only read "KEYWORDS" and "SLOT" once, then stop the parser. */
+			KEYWORDS_READ        = 0x0002U,  /**< Flag: Have already read "KEYWORDS" once. */
+			SLOT_READ            = 0x0004U,  /**< Flag: Have already read "SLOT" once. */
+			SUBST_VARS           = 0x0008U,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="${USE} -kde" */
+			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to map<string, string> with useMap(...) */
+			APPEND_VALUES        = 0x0020U,  /**< Flag: Respect IncrementalKeys */
+			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */
+			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
+			PORTAGE_ESCAPES      = 0x0100U,  /**< Flag: Treat escapes like portage does. */
 			HAVE_READ            = KEYWORDS_READ|SLOT_READ,       /**< Combination of previous "*_READ" */
 			ONLY_HAVE_READ       = ONLY_KEYWORDS_SLOT|HAVE_READ;  /**< Combination of HAVE_READ and ONLY_KEYWORDS_SLOT */
 

@@ -307,7 +307,10 @@ CascadingProfile::applyMasks(Package *p) const
 		}
 	} else {
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 			(*it)->maskflags.clearbits(~MaskFlags::MASK_WORLD);
+#pragma GCC diagnostic pop
 		}
 	}
 	m_system_allowed.applyMasks(p);

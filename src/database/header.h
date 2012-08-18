@@ -43,12 +43,12 @@ class DBHeader {
 
 		typedef  eix::UChar OverlayTest;
 		static const OverlayTest
-			OVTEST_NONE              = 0x00,
-			OVTEST_SAVED_PORTDIR     = 0x01,
-			OVTEST_PATH              = 0x02,
+			OVTEST_NONE              = 0x00U,
+			OVTEST_SAVED_PORTDIR     = 0x01U,
+			OVTEST_PATH              = 0x02U,
 			OVTEST_ALLPATH           = OVTEST_SAVED_PORTDIR|OVTEST_PATH,
-			OVTEST_LABEL             = 0x04,
-			OVTEST_NUMBER            = 0x08,
+			OVTEST_LABEL             = 0x04U,
+			OVTEST_NUMBER            = 0x08U,
 			OVTEST_NOT_SAVED_PORTDIR = OVTEST_PATH|OVTEST_LABEL|OVTEST_NUMBER,
 			OVTEST_ALL               = OVTEST_ALLPATH|OVTEST_LABEL|OVTEST_NUMBER;
 

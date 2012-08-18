@@ -167,8 +167,12 @@ char *
 ExplodeAtom::split_name(const char *str)
 {
 	const char *x(get_start_of_version(str));
-	if(likely(x != NULLPTR))
+	if(likely(x != NULLPTR)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		return strndup(str, ((x - 1) - str));
+#pragma GCC diagnostic pop
+	}
 	return NULLPTR;
 }
 
@@ -180,7 +184,10 @@ ExplodeAtom::split(const char *str)
 
 	if(unlikely(x == NULLPTR))
 		return NULLPTR;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 	out[0] = strndup(str, ((x - 1) - str));
+#pragma GCC diagnostic pop
 	out[1] = strdup(x);
 	return out;
 }

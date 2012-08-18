@@ -22,7 +22,10 @@ template<class Iterator>
 inline static void
 portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 	portage_parse_error(file, std::distance(begin, line) + 1, *line, errtext);
+#pragma GCC diagnostic pop
 }
 
 #endif  // SRC_EIXTK_EXCEPTIONS_H_

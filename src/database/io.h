@@ -28,7 +28,7 @@ class PortageSettings;
 class Depend;
 class Version;
 
-#define MAGICNUMCHAR 0xFF
+#define MAGICNUMCHAR 0xFFU
 
 namespace io {
 	extern eix::OffsetType counter;
@@ -107,7 +107,10 @@ namespace io {
 	template<typename m_Tp> bool
 	write_num(m_Tp t, FILE *fp, std::string *errtext)
 	{
-		eix::UChar c(t & 0xFF);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+		eix::UChar c(t & 0xFFU);
+#pragma GCC diagnostic pop
 		// Test the most common case explicitly to speed up:
 		if(t == m_Tp(c)) {
 			if(fp == NULLPTR) {
@@ -128,16 +131,22 @@ namespace io {
 				}
 			}
 		} else {
-			m_Tp mask(0xFF);
+			m_Tp mask(0xFFU);
 			unsigned int count(0);
 			do {
 				mask <<= 8;
-				mask |= 0xFF;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+				mask |= 0xFFU;
+#pragma GCC diagnostic pop
 				++count;
 			} while((t & mask) != t);
 			// We have count > 0 here
 			if(fp == NULLPTR) {
-				eix::UChar d((t >> (8*count)) & 0xFF);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+				eix::UChar d((t >> (8*count)) & 0xFFU);
+#pragma GCC diagnostic pop
 				io::counter += ((unlikely(d == MAGICNUMCHAR)) ? 2 : 1) + (2 * count);
 				return true;
 			}
@@ -146,7 +155,10 @@ namespace io {
 					break;
 				}
 				if(--r == 0) {
-					eix::UChar d((t >> (8*count)) & 0xFF);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+					eix::UChar d((t >> (8*count)) & 0xFFU);
+#pragma GCC diagnostic pop
 					if(unlikely(fputc(d, fp) == EOF)) {
 						break;
 					}
@@ -158,7 +170,10 @@ namespace io {
 					}
 					// neither rely on (t>>0)==t nor use count-- when count==0:
 					while(--count != 0) {
-						if(unlikely(fputc((t >> (8*count)) & 0xFF, fp) == EOF)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+						if(unlikely(fputc((t >> (8*count)) & 0xFFU, fp) == EOF)) {
+#pragma GCC diagnostic pop
 							break;
 						}
 					}

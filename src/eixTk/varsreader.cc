@@ -872,9 +872,15 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<str
 		close(fd);
 		return true;
 	}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 	filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
+#pragma GCC diagnostic pop
 	close(fd);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 	if (filebuffer == MAP_FAILED) {
+#pragma GCC diagnostic pop
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("cannot map file %r")) % filename;
 		}
@@ -925,7 +931,10 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<str
 	} else {
 		ret = runFsm();
 	}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 	munmap(filebuffer, st.st_size);
+#pragma GCC diagnostic pop
 	if(likely(topcall)) {
 		delete sourced_files;
 		sourced_files = NULLPTR;

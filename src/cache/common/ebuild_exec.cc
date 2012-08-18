@@ -67,6 +67,8 @@ ebuild_sig_handler(int sig)
 void
 EbuildExec::add_handler()
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 	handler_arg = this;
 	// Set the signals "empty" to avoid a race condition:
 	// On a signal, we should cleanup only the signals actually set.
@@ -110,6 +112,7 @@ EbuildExec::add_handler()
 	if(handleTERM != SIG_IGN)
 		signal(SIGTERM, ebuild_sig_handler);
 #endif
+#pragma GCC diagnostic pop
 }
 
 void
@@ -136,10 +139,12 @@ EbuildExec::make_tempfile()
 	char *temp(new char[256]);
 	if(unlikely(temp == NULLPTR))
 		return false;
-	strcpy(temp, "/tmp/ebuild-cache.XXXXXX");  // NOLINT(runtime/printf)
+	strcpy(temp, "/tmp/ebuild-cache.XXXXXXXX");  // NOLINT(runtime/printf)
 	int fd(mkstemp(temp));
-	if(fd == -1)
+	if(fd == -1) {
+		delete temp;
 		return false;
+	}
 	calc_settings();
 	cachefile = temp;
 	cache_defined = true;
@@ -272,6 +277,8 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	delete c_env;
 	delete envstrings;
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
 	// Only now we check for the child exit status or signals:
 	if(got_exit_signal) {
 		base->m_error_callback(eix::format(_("Got signal %s")) % type_of_exit_signal);
@@ -295,6 +302,7 @@ EbuildExec::make_cachefile(const char *name, const string &dir, const Package &p
 	} else {
 		base->m_error_callback(_("Child aborted in a strange way"));
 	}
+#pragma GCC diagnostic pop
 	delete_cachefile();
 	return NULLPTR;
 }

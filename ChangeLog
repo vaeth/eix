@@ -12,6 +12,8 @@
 	- Fix regression from eix-0.26.1 of wrong <availableversions:VAR>
 	  (used e.g. with --versionlines in default format).
 	- Use cache of true filenames instead of heuristic recursion bounds.
+	- Fix frequent warnings (mainly with pragmas).
+	- Fix mkstemp name and a possible memory leak.
 	- Allow --disable-silent-rules to follow Gentoo's policy, although
 	  personally, I dislike it, and it is not necessary for eix.
 

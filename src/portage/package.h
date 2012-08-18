@@ -82,9 +82,9 @@ class Package
 		 * That means e.g. that version 0.2 is found in two overlays. */
 		typedef uint8_t Duplicates;
 		static const Duplicates
-			DUP_NONE     = 0x00,
-			DUP_SOME     = 0x01, /* Duplicate versions are somewhere */
-			DUP_OVERLAYS = 0x03; /* Duplicate versions are both in overlays */
+			DUP_NONE     = 0x00U,
+			DUP_SOME     = 0x01U,  /* Duplicate versions are somewhere */
+			DUP_OVERLAYS = 0x03U;  /* Duplicate versions are both in overlays */
 
 		Duplicates have_duplicate_versions;
 
@@ -93,10 +93,10 @@ class Package
 
 		typedef uint8_t Versioncollects;
 		static const Versioncollects
-			COLLECT_NONE                  = 0x00,
-			COLLECT_HAVE_NONTRIVIAL_SLOTS = 0x01,
-			COLLECT_HAVE_SAME_OVERLAY_KEY = 0x02,
-			COLLECT_AT_LEAST_TWO_OVERLAYS = 0x04,
+			COLLECT_NONE                  = 0x00U,
+			COLLECT_HAVE_NONTRIVIAL_SLOTS = 0x01U,
+			COLLECT_HAVE_SAME_OVERLAY_KEY = 0x02U,
+			COLLECT_AT_LEAST_TWO_OVERLAYS = 0x04U,
 			COLLECT_DEFAULT               = COLLECT_HAVE_SAME_OVERLAY_KEY;
 		Versioncollects version_collects;
 

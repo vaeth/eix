@@ -90,10 +90,16 @@ class Regex
 				return false;
 			}
 			if(likely(b != NULLPTR)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 				*b = pmatch[0].rm_so;
+#pragma GCC diagnostic pop
 			}
 			if(likely(e != NULLPTR)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 				*e = pmatch[0].rm_eo;
+#pragma GCC diagnostic pop
 			}
 			return true;
 		}

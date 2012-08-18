@@ -25,35 +25,35 @@ class ExtendedVersion : public BasicVersion
 	private:
 		typedef eix::UChar HaveBinPkg;
 		static const HaveBinPkg
-			HAVEBINPKG_UNKNOWN = 0x00,
-			HAVEBINPKG_NO      = 0x01,
-			HAVEBINPKG_YES     = 0x02;
+			HAVEBINPKG_UNKNOWN = 0x00U,
+			HAVEBINPKG_NO      = 0x01U,
+			HAVEBINPKG_YES     = 0x02U;
 		mutable HaveBinPkg have_bin_pkg_m;  // mutable: it is just a cache
 
 	public:
 		typedef uint16_t Restrict;
 		static const Restrict  // order according to frequency...
-			RESTRICT_NONE           = 0x0000,
-			RESTRICT_BINCHECKS      = 0x0001,
-			RESTRICT_STRIP          = 0x0002,
-			RESTRICT_TEST           = 0x0004,
-			RESTRICT_USERPRIV       = 0x0008,
-			RESTRICT_INSTALLSOURCES = 0x0010,
-			RESTRICT_FETCH          = 0x0020,
-			RESTRICT_MIRROR         = 0x0040,
-			RESTRICT_PRIMARYURI     = 0x0080,
-			RESTRICT_BINDIST        = 0x0100,
-			RESTRICT_PARALLEL       = 0x0200,
-			RESTRICT_ALL            = 0x03FF;
+			RESTRICT_NONE           = 0x0000U,
+			RESTRICT_BINCHECKS      = 0x0001U,
+			RESTRICT_STRIP          = 0x0002U,
+			RESTRICT_TEST           = 0x0004U,
+			RESTRICT_USERPRIV       = 0x0008U,
+			RESTRICT_INSTALLSOURCES = 0x0010U,
+			RESTRICT_FETCH          = 0x0020U,
+			RESTRICT_MIRROR         = 0x0040U,
+			RESTRICT_PRIMARYURI     = 0x0080U,
+			RESTRICT_BINDIST        = 0x0100U,
+			RESTRICT_PARALLEL       = 0x0200U,
+			RESTRICT_ALL            = 0x03FFU;
 
 		typedef eix::UChar Properties;
 		static const Properties  // order according to frequency...
-			PROPERTIES_NONE        = 0x00,
-			PROPERTIES_INTERACTIVE = 0x01,
-			PROPERTIES_LIVE        = 0x02,
-			PROPERTIES_VIRTUAL     = 0x04,
-			PROPERTIES_SET         = 0x08,
-			PROPERTIES_ALL         = 0x0F;
+			PROPERTIES_NONE        = 0x00U,
+			PROPERTIES_INTERACTIVE = 0x01U,
+			PROPERTIES_LIVE        = 0x02U,
+			PROPERTIES_VIRTUAL     = 0x04U,
+			PROPERTIES_SET         = 0x08U,
+			PROPERTIES_ALL         = 0x0FU;
 
 		Restrict restrictFlags;
 		Properties propertiesFlags;

@@ -111,7 +111,10 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 			m_test_slot = true;
 			const char *slot_end(strchr(source, ':'));
 			if(unlikely(slot_end != NULLPTR)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 				m_slotname.assign(source, slot_end - source);
+#pragma GCC diagnostic pop
 				if(unlikely(slot_end[1] != ':')) {
 					*errtext = _("Repository name must be separated with :: (one : is missing).");
 					return parsedError;
@@ -130,7 +133,10 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 		}
 		const char *usestart(strchr(source, '['));
 		if((usestart != NULLPTR) && (strchr(usestart + 1, ']') == NULLPTR)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 			dest->assign(source, usestart - source);
+#pragma GCC diagnostic pop
 		} else {
 			dest->assign(source);
 		}
@@ -160,7 +166,10 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 			return parsedError;
 		}
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		m_name = string(str, (p - 1) - str);
+#pragma GCC diagnostic pop
 		str = p;
 
 		// Check for wildcard-version
@@ -191,10 +200,16 @@ Mask::parseMask(const char *str, string *errtext, bool accept_garbage)
 			m_glob = string(str, wildcard);
 			return parsedOK;
 		}
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		return parseVersion(((end != NULLPTR) ? string(str, end - str) : str), errtext, accept_garbage);
+#pragma GCC diagnostic pop
 	}
 	// Everything else is the package-name
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 	m_name = ((end != NULLPTR) ? string(str, end - str) : str);
+#pragma GCC diagnostic pop
 	return parsedOK;
 }
 

@@ -927,10 +927,16 @@ run_eix(int argc, char** argv)
 	matches.delete_and_clear();
 
 	if(unlikely(!count)) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		return eixrc.getInteger("NOFOUND_STATUS");
+#pragma GCC diagnostic pop
 	}
 	if(count > 1) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 		return eixrc.getInteger("MOREFOUND_STATUS");
+#pragma GCC diagnostic pop
 	}
 	return EXIT_SUCCESS;
 }
