@@ -23,7 +23,7 @@ fi
 (
 	cd po && make -f Rules-clean maintainer-clean-local
 )
-for i in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+for i in tar.xz tar.bz2 tar.gz zip tar.Z shar.gz shar
 do	rm -vf -- eix-*."${i}"
 done
 find . '(' -type f '(' \

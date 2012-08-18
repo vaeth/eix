@@ -16,7 +16,7 @@ Echo() {
 }
 
 Usage() {
-	Echo "Usage: ${0##*/} [options] [xz|lzma|bzip2|gzip|default]
+	Echo "Usage: ${0##*/} [options] [xz|bzip2|gzip|default]
 options: -fakeroot, -fakeroot-ng, -no-fakeroot (default is -${fakeroot})"
 	exit ${1:-1}
 }
@@ -42,8 +42,6 @@ do	opt=${1#-}
 	case ${opt#dist-} in
 	[xX]*)
 		dist='dist-xz';;
-	[lL]*)
-		dist='dist-lzma';;
 	[bB]*)
 		dist='dist-bzip2';;
 	[gG]*)
@@ -81,7 +79,7 @@ do	Run ${docmd} ${mkmakeextra} "${i}"
 done
 
 found=false
-for j in tar.xz tar.lzma tar.bz2 tar.gz zip tar.Z shar.gz shar
+for j in tar.xz tar.bz2 tar.gz zip tar.Z shar.gz shar
 do	for i in "${PWD}/${project}"-*".${j}"
 	do	test -f "${i}" || continue
 		${found} || Echo "Available tarballs:"
