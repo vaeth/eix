@@ -317,7 +317,7 @@ VarsReader::EVAL_VALUE()
 
 /** Looks if the following input is a valid secondary value-part.
  * ['"\^#\n\r\t ] is allowed.
- * [\n\r\t# ] -> ASSIGN_KEY_VALUE
+ * [\n\r\t# ] (or [\n\r\t;|&)# ]) -> ASSIGN_KEY_VALUE
  * '\'' -> [RV] VALUE_SINGLE_QUOTE{_PORTAGE}
  * '"' -> [RV] VALUE_DOUBLE_QUOTE{_PORTAGE}
  * '\\' -> [RV] WHITESPACE_ESCAPE{_PORTAGE} | -> VALUE_WHITESPACE{_PORTAGE} */
@@ -352,7 +352,11 @@ VarsReader::EVAL_READ()
 		case '\r':
 		case '\n':
 		case ' ':
-		case '#':   CHSTATE(ASSIGN_KEY_VALUE);
+		case '#':
+		case ';':
+		case '|':
+		case '&':
+		case ')':   CHSTATE(ASSIGN_KEY_VALUE);
 		case '\\':  NEXT_INPUT_EVAL;
 		            CHSTATE(WHITESPACE_ESCAPE);
 		default:    CHSTATE(VALUE_WHITESPACE);
@@ -481,7 +485,7 @@ VarsReader::VALUE_DOUBLE_QUOTE_PORTAGE()
 
 /** Read value not enclosed in any quotes.
  * Thus there are no spaces and tabs allowed. Everything must be escaped.
- * Move INPUT into buffer while it's not in [ \t\n\r\\'"#].
+ * Move INPUT into buffer while it's not in [ \t\n\r\\'"#;|&)].
  * If the value ends we call EVAL_READ.
  * [# \t\r\n] -> EVAL_READ |
  * '\\' -> WHITESCAPE_ESCAPE | \' -> VALUE_SINGLE_QUOTE |
@@ -490,11 +494,15 @@ void VarsReader::VALUE_WHITESPACE()
 {
 	for(;;) {
 		switch(INPUT) {
-			case '#':
 			case ' ':
 			case '\t':
 			case '\r':
 			case '\n':
+			case '#':
+			case ';':
+			case '|':
+			case '&':
+			case ')':
 				CHSTATE(EVAL_READ);
 			case '\\':
 				NEXT_INPUT_EVAL;
