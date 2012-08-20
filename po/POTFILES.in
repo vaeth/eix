@@ -48,6 +48,7 @@ src/eixTk/argsreader.h
 src/eixTk/auto_ptr.h
 src/eixTk/compare.cc
 src/eixTk/compare.h
+src/eixTk/diagnostics.h
 src/eixTk/eixint.h
 src/eixTk/exceptions.cc
 src/eixTk/exceptions.h
@@ -58,6 +59,8 @@ src/eixTk/formated.h
 src/eixTk/i18n.h
 src/eixTk/inttypes.h
 src/eixTk/likely.h
+src/eixTk/md5.cc
+src/eixTk/md5.h
 src/eixTk/null.h
 src/eixTk/percentage.cc
 src/eixTk/percentage.h
@@ -83,6 +86,7 @@ src/eixrc/global1.cc
 src/eixrc/global2.cc
 src/eixrc/global3.cc
 src/eixrc/global4.cc
+src/eixrc/global5.cc
 src/main/main.cc
 src/main/main.h
 src/main/main_all.cc
@@ -117,6 +121,7 @@ src/portage/keywords.cc
 src/portage/keywords.h
 src/portage/mask.cc
 src/portage/mask.h
+src/portage/mask_list.cc
 src/portage/mask_list.h
 src/portage/overlay.cc
 src/portage/overlay.h
@@ -138,6 +143,8 @@ src/search/levenshtein.cc
 src/search/levenshtein.h
 src/search/matchtree.cc
 src/search/matchtree.h
+src/search/nowarn.cc
+src/search/nowarn.h
 src/search/packagetest.cc
 src/search/packagetest.h
 src/search/redundancy.h

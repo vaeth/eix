@@ -22,6 +22,7 @@
 #include "database/io.h"
 #include "database/package_reader.h"
 #include "eixTk/auto_ptr.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -62,10 +63,9 @@ inline static bool
 write_string_plain(const string &str, FILE *fp, string *errtext)
 {
 	if(fp == NULLPTR) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 		io::counter += str.size();
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 		return true;
 	}
 	if(likely(fwrite(static_cast<const void *>(str.c_str()), sizeof(*(str.c_str())), str.size(), fp) == str.size())) {
@@ -360,14 +360,13 @@ io::read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, string *errtext)
 		}
 	} else {
 		dep->clear();
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 #ifdef HAVE_FSEEKO
 		fseeko(fp, len, SEEK_CUR);
 #else
 		fseek(fp, len, SEEK_CUR);
 #endif
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	}
 	return true;
 }
@@ -584,10 +583,9 @@ io::read_header(DBHeader *hdr, FILE *fp, string *errtext)
 	if(unlikely(strcmp(DBHeader::magic, buf.get()) != 0)) {
 		char c(buf.get()[0]);
 		// Until version 30 the first char is the version:
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 		hdr->version = (((c > 0) && (c <= 30)) ? c : 0);
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	} else if(unlikely(!io::read_num(&(hdr->version), fp, errtext))) {
 		return false;
 	}

@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -107,10 +108,9 @@ namespace io {
 	template<typename m_Tp> bool
 	write_num(m_Tp t, FILE *fp, std::string *errtext)
 	{
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 		eix::UChar c(t & 0xFFU);
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 		// Test the most common case explicitly to speed up:
 		if(t == m_Tp(c)) {
 			if(fp == NULLPTR) {
@@ -135,18 +135,16 @@ namespace io {
 			unsigned int count(0);
 			do {
 				mask <<= 8;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 				mask |= 0xFFU;
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 				++count;
 			} while((t & mask) != t);
 			// We have count > 0 here
 			if(fp == NULLPTR) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 				eix::UChar d((t >> (8*count)) & 0xFFU);
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 				io::counter += ((unlikely(d == MAGICNUMCHAR)) ? 2 : 1) + (2 * count);
 				return true;
 			}
@@ -155,10 +153,9 @@ namespace io {
 					break;
 				}
 				if(--r == 0) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 					eix::UChar d((t >> (8*count)) & 0xFFU);
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 					if(unlikely(fputc(d, fp) == EOF)) {
 						break;
 					}
@@ -170,10 +167,9 @@ namespace io {
 					}
 					// neither rely on (t>>0)==t nor use count-- when count==0:
 					while(--count != 0) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 						if(unlikely(fputc((t >> (8*count)) & 0xFFU, fp) == EOF)) {
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 							break;
 						}
 					}

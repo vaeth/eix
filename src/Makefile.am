@@ -62,6 +62,7 @@ eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_ptr.h \
+eixTk/diagnostics.h \
 eixTk/exceptions.cc \
 eixTk/exceptions.h \
 eixTk/inttypes.h \

@@ -1,6 +1,6 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.26.2
+*eix-0.26.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Follow most of Google's C++ style guidelines:
 	  eix now avoids using static or global classes. It should at least

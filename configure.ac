@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.26.2], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.26.3], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -692,6 +692,35 @@ MV_APPEND([LDFLAGS], [${my_ldfatal}])
 MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [COMPILE], [ \
 		-Wattributes \
 	], [], [], [], [${quicktrue}])
+
+# Check if _Pragma("GCC diagnostic ...") can be used inside functions
+AC_MSG_CHECKING([whether pragma GCC diagnostic can be used everywhere])
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+#define GCC_DIAG_STR(s) #s
+#define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
+#define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
+#define GCC_DIAG_PRAGMA(x) GCC_DIAG_DO_PRAGMA(GCC diagnostic x)
+#define GCC_DIAG_OFF(x) GCC_DIAG_PRAGMA(push) \
+	GCC_DIAG_PRAGMA(ignored GCC_DIAG_JOINSTR(-W, x))
+#define GCC_DIAG_ON(x) GCC_DIAG_PRAGMA(pop)
+		]], [[
+signed char j(0);
+unsigned char i;
+GCC_DIAG_OFF(sign-conversion)
+i = j;
+GCC_DIAG_ON(sign-conversion)
+GCC_DIAG_OFF(old-style-cast)
+return ((int)i);
+GCC_DIAG_ON(old-style-cast)
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([gcc_diag_pragma], [:])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([gcc_diag_pragma], [false])])
+AS_IF([${gcc_diag_pragma}],
+	[AC_DEFINE([FULL_GCC_DIAG_PRAGMA],
+		[1],
+		[Define to 1 if _Pragma GCC diagnostic can be used everywhere])])
 
 # Check if __attribute__ ((__unused__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])

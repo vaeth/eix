@@ -24,6 +24,7 @@
 #include <utility>
 #include <vector>
 
+#include "eixTk/diagnostics.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -880,15 +881,13 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<str
 		close(fd);
 		return true;
 	}
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 	filebuffer = static_cast<char *>(mmap(NULLPTR, st.st_size, PROT_READ, MAP_SHARED, fd, 0));
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	close(fd);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
+GCC_DIAG_OFF(old-style-cast)
 	if (filebuffer == MAP_FAILED) {
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(old-style-cast)
 		if(errtext != NULLPTR) {
 			*errtext = eix::format(_("cannot map file %r")) % filename;
 		}
@@ -939,10 +938,9 @@ VarsReader::read(const char *filename, string *errtext, bool noexist_ok, set<str
 	} else {
 		ret = runFsm();
 	}
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 	munmap(filebuffer, st.st_size);
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	if(likely(topcall)) {
 		delete sourced_files;
 		sourced_files = NULLPTR;

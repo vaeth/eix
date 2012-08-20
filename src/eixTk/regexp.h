@@ -17,6 +17,7 @@
 #include <iostream>
 #include <string>
 
+#include "eixTk/diagnostics.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 
@@ -90,16 +91,14 @@ class Regex
 				return false;
 			}
 			if(likely(b != NULLPTR)) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 				*b = pmatch[0].rm_so;
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 			}
 			if(likely(e != NULLPTR)) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 				*e = pmatch[0].rm_eo;
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 			}
 			return true;
 		}

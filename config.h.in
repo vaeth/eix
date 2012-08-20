@@ -64,6 +64,9 @@
 /* Default EPREFIX */
 #undef EPREFIX_DEFAULT
 
+/* Define to 1 if _Pragma GCC diagnostic can be used everywhere */
+#undef FULL_GCC_DIAG_PRAGMA
+
 /* Version of gcc */
 #undef GCC_VERSION
 

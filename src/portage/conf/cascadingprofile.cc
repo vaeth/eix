@@ -21,6 +21,7 @@
 #include <utility>
 #include <vector>
 
+#include "eixTk/diagnostics.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
@@ -307,10 +308,9 @@ CascadingProfile::applyMasks(Package *p) const
 		}
 	} else {
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 			(*it)->maskflags.clearbits(~MaskFlags::MASK_WORLD);
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 		}
 	}
 	m_system_allowed.applyMasks(p);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-08-19 10:59+0200\n"
+"POT-Creation-Date: 2012-08-20 20:23+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -1143,7 +1143,7 @@ msgstr "Установленные пакеты с версией не в баз
 msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
-#: src/eix.cc:76
+#: src/eix.cc:77
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1467,16 +1467,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:494 src/eix-diff.cc:268
+#: src/eix.cc:495 src/eix-diff.cc:268
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:576 src/eix-diff.cc:328 src/eix-update.cc:379
+#: src/eix.cc:577 src/eix-diff.cc:328 src/eix-update.cc:379
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:618 src/eix.cc:950
+#: src/eix.cc:619 src/eix.cc:949
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1485,7 +1485,7 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:629
+#: src/eix.cc:630
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1496,31 +1496,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:906 src/eix.cc:922
+#: src/eix.cc:907 src/eix.cc:923
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:909
+#: src/eix.cc:910
 msgid "No matches found.\n"
 msgstr "Совпадений не найдено.\n"
 
-#: src/eix.cc:916
+#: src/eix.cc:917
 #, c-format
 msgid "Found %s match.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:1025
+#: src/eix.cc:1024
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1026
+#: src/eix.cc:1025
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1031
+#: src/eix.cc:1030
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1529,7 +1529,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1032
+#: src/eix.cc:1031
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1538,7 +1538,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1089
+#: src/eix.cc:1088
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1546,7 +1546,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1092
+#: src/eix.cc:1091
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1886,27 +1886,27 @@ msgstr "Ошибка создания временного файла"
 msgid "Forking failed"
 msgstr "Ошибка форкинга"
 
-#: src/cache/common/ebuild_exec.cc:284
+#: src/cache/common/ebuild_exec.cc:283
 #, c-format
 msgid "Got signal %s"
 msgstr "Получен сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:288
+#: src/cache/common/ebuild_exec.cc:287
 #, c-format
 msgid "Ebuild got signal %s"
 msgstr "Ebuild получил сигнал %s"
 
-#: src/cache/common/ebuild_exec.cc:299
+#: src/cache/common/ebuild_exec.cc:298
 #, c-format
 msgid "Could not start %s"
 msgstr "Не получилось запустить %s"
 
-#: src/cache/common/ebuild_exec.cc:301
+#: src/cache/common/ebuild_exec.cc:300
 #, c-format
 msgid "Ebuild failed with status %s"
 msgstr "Ошибка ebuild со статусом %s"
 
-#: src/cache/common/ebuild_exec.cc:303
+#: src/cache/common/ebuild_exec.cc:302
 msgid "Child aborted in a strange way"
 msgstr "Дитя прервано в странной манере"
 
@@ -1998,17 +1998,17 @@ msgstr "ошибка чтения базы данных"
 msgid "error while writing to database"
 msgstr "ошибка записи в базу данных"
 
-#: src/database/io.cc:597
+#: src/database/io.cc:595
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Файл кэша использует более новый формат %s (текущий - %s)"
 
-#: src/database/io.cc:598
+#: src/database/io.cc:596
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Файл кэша использует устаревший формат %s (текущий - %s)"
 
-#: src/database/io.cc:670 src/database/package_reader.cc:109
+#: src/database/io.cc:668 src/database/package_reader.cc:109
 msgid "fseek failed"
 msgstr "ошибка eix-update"
 
@@ -2057,35 +2057,35 @@ msgstr "отсутствует указатель формата"
 msgid "unknown format specifier '%%%s'"
 msgstr "неизвестный указатель формата '%%%s'"
 
-#: src/eixTk/stringutils.cc:326
+#: src/eixTk/stringutils.cc:325
 #, c-format
 msgid "flags should not start with a '+': %s"
 msgstr "флаги не должны начинаться с '+': %s"
 
-#: src/eixTk/stringutils.cc:367
+#: src/eixTk/stringutils.cc:366
 #, c-format
 msgid "Internal error: Storing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хранение после финализации"
 
-#: src/eixTk/stringutils.cc:377
+#: src/eixTk/stringutils.cc:376
 #, c-format
 msgid "Internal error: Hashing required after finalizing"
 msgstr "Внутренняя ошибка: Требуется хеширование после финализации"
 
-#: src/eixTk/stringutils.cc:381
+#: src/eixTk/stringutils.cc:380
 #, c-format
 msgid "Internal error: Hashing required in non-hash mode"
 msgstr "Внутренняя ошибка: Требуется хеширование в нехешевом режиме"
 
-#: src/eixTk/stringutils.cc:411
+#: src/eixTk/stringutils.cc:410
 msgid "Internal error: Index required before sorting."
 msgstr "Внутренняя ошибка: Требуется индекс перед сортировкой."
 
-#: src/eixTk/stringutils.cc:416
+#: src/eixTk/stringutils.cc:415
 msgid "Internal error: Trying to shortcut non-hashed string."
 msgstr "Внутренняя ошибка: Попытка создать ярлык на нехешированную строку."
 
-#: src/eixTk/stringutils.cc:426
+#: src/eixTk/stringutils.cc:425
 msgid "Database corrupt: Nonexistent hash required"
 msgstr "База данных испорчена: требуется несуществующий хеш"
 
@@ -2098,23 +2098,23 @@ msgstr "Ошибка чтения %s: %s"
 msgid "Nesting level too deep in %r"
 msgstr "Уровень гнездования слишком глубок в %r"
 
-#: src/eixTk/varsreader.cc:157
+#: src/eixTk/varsreader.cc:158
 msgid "%s: failed to source %r (%s)"
 msgstr "%s: ошибка взятия %r в качестве источника (%s)"
 
-#: src/eixTk/varsreader.cc:867
+#: src/eixTk/varsreader.cc:868
 msgid "cannot read file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:875
+#: src/eixTk/varsreader.cc:876
 msgid "cannot stat file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:893
+#: src/eixTk/varsreader.cc:892
 msgid "cannot map file %r"
 msgstr "Ошибка нанесения файла %r на карту"
 
-#: src/eixTk/varsreader.cc:908
+#: src/eixTk/varsreader.cc:907
 msgid "recursively sourced file %r"
 msgstr ""
 
@@ -4745,11 +4745,11 @@ msgstr "Неизвестное свойство %r"
 msgid "Property %r used outside version context"
 msgstr "Свойство %r использовано вне контекста версии"
 
-#: src/output/formatstring.cc:164
+#: src/output/formatstring.cc:165
 msgid "Variable %r calls itself for printing"
 msgstr "Переменная %r вызывает себя для печати"
 
-#: src/output/formatstring.cc:400
+#: src/output/formatstring.cc:401
 msgid "Internal error: bad node for parse_colors."
 msgstr "Внутренняя ошибка: плохой узел для parse_colors."
 
@@ -4757,45 +4757,45 @@ msgstr "Внутренняя ошибка: плохой узел для parse_co
 msgid "'(' without closing ')'"
 msgstr "'(' без закрывающего ')'"
 
-#: src/output/formatstring.cc:481
+#: src/output/formatstring.cc:480
 #, c-format
 msgid "Error while parsing color: %s"
 msgstr "Ошибка при обработке цвета: %s"
 
-#: src/output/formatstring.cc:505
+#: src/output/formatstring.cc:504
 msgid "'<' without closing '>'"
 msgstr "'<' без закрывающего '>'"
 
-#: src/output/formatstring.cc:576
+#: src/output/formatstring.cc:574
 msgid "No name of property/variable found after '{'."
 msgstr "Не найдено имя свойства/переменной после '{'."
 
-#: src/output/formatstring.cc:580 src/output/formatstring.cc:601
-#: src/output/formatstring.cc:659
+#: src/output/formatstring.cc:578 src/output/formatstring.cc:599
+#: src/output/formatstring.cc:657
 msgid "Found '{' without closing '}'."
 msgstr "Найден '{' без закрывающего '}'."
 
-#: src/output/formatstring.cc:595
+#: src/output/formatstring.cc:593
 msgid "Unexpected symbol %r found after '{'."
 msgstr "Неожиданный символ %r найден после '{'."
 
-#: src/output/formatstring.cc:680
+#: src/output/formatstring.cc:678
 msgid "Found ELSE without IF."
 msgstr "Найден ELSE без IF"
 
-#: src/output/formatstring.cc:707
+#: src/output/formatstring.cc:705
 msgid "Found FI without IF."
 msgstr "Найден FI без IF."
 
-#: src/output/formatstring.cc:729
+#: src/output/formatstring.cc:727
 msgid "Check your syntax"
 msgstr "Проверьте Ваш синтаксис"
 
-#: src/output/formatstring.cc:752
+#: src/output/formatstring.cc:750
 msgid "Bad state: undefined"
 msgstr "Плохое состояние: не определено"
 
-#: src/output/formatstring.cc:766
+#: src/output/formatstring.cc:764
 #, c-format
 msgid "Line %s, column %s: %s"
 msgstr "Строка %s, столбец %s: %s"
@@ -4828,23 +4828,23 @@ msgstr ""
 msgid "garbage (%s) at end of version %r"
 msgstr "мусор (%s) в конце версии %r"
 
-#: src/portage/conf/cascadingprofile.cc:69
+#: src/portage/conf/cascadingprofile.cc:70
 msgid ""
 "Recursion level for cascading profiles exceeded; stopping reading parents"
 msgstr ""
 "Превышен уровень рекурсии для каскадных профилей: прекращаю чтение родителей"
 
-#: src/portage/conf/cascadingprofile.cc:102
+#: src/portage/conf/cascadingprofile.cc:103
 msgid "warning: ignoring parent %r of file %r"
 msgstr ""
 
-#: src/portage/conf/portagesettings.cc:1235
-#: src/portage/conf/portagesettings.cc:1264
+#: src/portage/conf/portagesettings.cc:1234
+#: src/portage/conf/portagesettings.cc:1263
 msgid "internal error: Tried to restore nonlocal mask without saving"
 msgstr ""
 "внутренняя ошибка: Попытка восстановить нелокальную маску без сохранения"
 
-#: src/portage/mask.cc:94
+#: src/portage/mask.cc:95
 msgid "Can't read category."
 msgstr "Невозможно прочесть категорию."
 
@@ -4853,23 +4853,23 @@ msgid "Repository name must be separated with :: (one : is missing)."
 msgstr ""
 "Имя репозитория должно быть отделено с помощью :: (одно : отсутствует)."
 
-#: src/portage/mask.cc:164
+#: src/portage/mask.cc:163
 msgid "Operator without a version part."
 msgstr "Оператор без части с версией."
 
-#: src/portage/mask.cc:165
+#: src/portage/mask.cc:164
 msgid "Version specification is missing."
 msgstr "отсутствует указатель формата."
 
-#: src/portage/mask.cc:182
+#: src/portage/mask.cc:180
 msgid "A '*' is only valid at the end of a version-string."
 msgstr "'*' уместно только в конце строки-версии."
 
-#: src/portage/mask.cc:189
+#: src/portage/mask.cc:187
 msgid "A wildcard is only valid with the = operator."
 msgstr "Шаблон поиска имеет смысл только с оператором =."
 
-#: src/portage/mask.cc:193
+#: src/portage/mask.cc:191
 msgid ""
 "A wildcard is only valid with the = operator.\n"
 "Portage would also accept something like ~app-shells/bash-3*,\n"

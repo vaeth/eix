@@ -24,6 +24,7 @@
 #include "database/header.h"
 #include "database/package_reader.h"
 #include "eixTk/argsreader.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/exceptions.h"
 #include "eixTk/filenames.h"
@@ -927,16 +928,14 @@ run_eix(int argc, char** argv)
 	matches.delete_and_clear();
 
 	if(unlikely(!count)) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 		return eixrc.getInteger("NOFOUND_STATUS");
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	}
 	if(count > 1) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 		return eixrc.getInteger("MOREFOUND_STATUS");
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	}
 	return EXIT_SUCCESS;
 }

@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "database/header.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -282,10 +283,9 @@ VarDbPkg::readInstDate(const Package &p, InstVersion *v) const
 		pushback_lines((dirname + "/BUILD_TIME").c_str(), &datelines)) {
 		for(vector<string>::const_iterator it(datelines.begin());
 			it != datelines.end(); ++it) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 			if((v->instDate = my_atoi(it->c_str())) != 0) {
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 				return;
 			}
 		}

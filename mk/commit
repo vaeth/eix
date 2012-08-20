@@ -19,4 +19,4 @@ ExecDie() {
 }
 
 ExecDie git add .
-ExecDie git commit -a
+ExecDie git commit -a "${@}"

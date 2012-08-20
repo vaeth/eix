@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "eixTk/ansicolor.h"
+#include "eixTk/diagnostics.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -412,10 +413,9 @@ FormatParser::getPosition(size_t *line, size_t *column)
 		if(x != NULLPTR) {
 			++x;
 			++*line;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 			*column = band_position - y;
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 		}
 	}
 }
@@ -474,10 +474,9 @@ FormatParser::state_COLOR()
 	if(enable_colors) {
 		AnsiColor ac;
 		string errtext;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 		if(unlikely(!ac.initcolor(string(band_position, q - band_position), &errtext))) {
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 			last_error = eix::format(_("Error while parsing color: %s")) % errtext;
 			return ERROR;
 		}
@@ -519,10 +518,9 @@ FormatParser::state_PROPERTY()
 	   "parse_colors(·, enable_colors)".
 	   With the currently available attribute this is not necessary.
 	*/
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+GCC_DIAG_OFF(sign-conversion)
 	keller.push(new Property(string(band_position, q - band_position), user_variable));
-#pragma GCC diagnostic pop
+GCC_DIAG_ON(sign-conversion)
 	band_position = q + 1;
 	return START;
 }
