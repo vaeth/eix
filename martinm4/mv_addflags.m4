@@ -4,10 +4,10 @@ dnl
 dnl Copyright (c)
 dnl  Martin V\"ath <vaeth@mathematik.uni-wuerzburg.de>
 dnl
-dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [COMPILE|LINK|RUN],
+dnl MV_ADDFLAGS([ADDCFLAGS], [CFLAGS], [AC_LINK_IFELSE],
 dnl     [sh-list of flags], [sh-list of fatal-flags],
 dnl     [sh-list of skip-flags, e.g. ${CPPFLAGS}], [action], [mode])
-dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [COMPILE|LINK|RUN]
+dnl adds each flag of [sh-list of flags] to [ADDCFLAGS] if [AC_LINK_IFELSE]
 dnl succeeds with the corresponding [CFLAGS]. The flag is skipped if it is
 dnl already contained in [ADDCFLAGS] or in [CFLAGS] or in
 dnl [sh-list of skip-flags] or if it was already tested earlier
@@ -39,7 +39,7 @@ AC_DEFUN([MV_ADDFLAGS],
 					[AS_VAR_COPY([mv_saveflags], [$2])
 					MV_APPEND([$2], [$5])
 					MV_APPEND([$2], [${mv_currflag}])
-					m4_indir([AC_$3_IFELSE],
+					m4_indir([$3],
 dnl The program should use STL and C libraries and "stress" the linker with
 dnl constant and dynamic variables, but also be standard, short and quick...
 dnl It should also use a larger local array to test the stack.

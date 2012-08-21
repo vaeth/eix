@@ -1,5 +1,10 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.26.4
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Make configure cross-compile friendly, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=432122
+
 *eix-0.26.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Follow most of Google's C++ style guidelines:

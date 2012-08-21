@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.26.3], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.26.4], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -228,10 +228,10 @@ AS_IF([${quickcheck}],
 
 AS_VAR_SET([my_cxxfatal], [])
 AS_VAR_SET([my_ldfatal], [])
-MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [COMPILE], [ \
+MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 		-Werror \
 	], [], [], [], [${quicktrue}])
-MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [LINK], [ \
+MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [AC_LINK_IFELSE], [ \
 		-Wl,--fatal-warnings \
 	], [], [], [], [${quicktrue}])
 
@@ -242,13 +242,13 @@ AS_VAR_SET([my_ldadd], [])
 AS_IF([${new_dialect}],
 	[AS_CASE([" ${CXXFLAGS} ${my_cxxadd}"],
 		[*" -std="*], [],
-		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+		[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 				-std=gnu++11 \
 				-std=c++11 \
 			], [${my_cxxfatal}], [], [break], [${quicktrue}])])])
 
 AS_IF([${debugging}],
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-g \
 			-ggdb3 \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
@@ -266,7 +266,7 @@ AS_IF([${optimization}],
 			-fno-ident
 			"])],
 		[AS_VAR_SET([gnuflags], [])])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-O2 \
 			-fomit-frame-pointer \
 			-fno-common \
@@ -277,7 +277,7 @@ AS_IF([${optimization}],
 			-fvisibility-inlines-hidden \
 			${gnuflags} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])
-	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-O1 \
 			-Wl,--relax \
 			-Wl,--as-needed \
@@ -295,7 +295,7 @@ AS_IF([${strong_optimization}],
 # We first modify the LDFLAGS: This is important because of -flto:
 # Without -flto in LDFLAGS, -flto in CXXFLAGS might not fail even if it
 # should produce broken code.
-	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-O9 \
 			${flto} \
 			-fwhole-program \
@@ -306,7 +306,7 @@ dnl may fail for some unknown reason on non-GNU systems, see
 dnl http://bugs.gentoo.org/show_bug.cgi?id=293263
 dnl			-Wl,--hash-style=gnu \
 dnl			-Wl,--enable-new-dtags \
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			${flto} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
 # If -flto is used during compilation, we can also use -fwhole-program during
@@ -334,9 +334,11 @@ AS_IF([${strong_optimization}],
 			-fno-enforce-eh-specs
 			"])],
 		[AS_VAR_SET([gnuflags], [])])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			${gnuflags} \
 			${fwhole_program} \
+		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-DNDEBUG \
 			-DNO_DEBUG \
 			-DG_DISABLE_ASSERT \
@@ -358,13 +360,13 @@ dnl -Wzero-as-null-pointer-constant makes sense only with new dialects
 		[AS_VAR_SET([gnuflags], ["
 			-Wno-unknown-warning-option \
 			"])])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-fno-common \
 			-funsigned-char \
 			-fPIC \
 			${gnuflags} \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-pedantic \
 			-Wall \
 			-Wextra \
@@ -424,7 +426,7 @@ dnl			-Wold-style-definition \
 dnl			-Wmissing-prototypes \
 dnl			-Wnested-externs \
 dnl			-Wpointer-sign \
-	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_FALSE], [ \
 			-Wl,-z,defs \
 			-Wl,--no-undefined \
 			-Wl,--no-allow-shlib-undefined \
@@ -432,7 +434,7 @@ dnl			-Wpointer-sign \
 			${warn_common} \
 		], [${my_cxxfatal}], [], [:], [${quicktrue}])])
 AS_IF([${strong_warnings}],
-	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [COMPILE], [ \
+	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 			-Wsign-conversion \
 			-Wold-style-cast \
 			-Wmissing-noreturn \
@@ -449,13 +451,13 @@ dnl			-Weffc++ \
 AS_IF([${security}],
 	# We try to add -fstack-protector to LDFLAGS before adding to CXXFLAGS
 	# since on some systems it requires also linking with a library.
-	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [RUN], [ \
+	[MV_ADDFLAGS([my_ldadd], [LDFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-fstack-protector \
 			-Wl,-z,now \
 			-Wl,-z,relro \
 			-Wl,-z,noexecstack \
 		], [${my_ldfatal}], [], [:], [${quicktrue}])
-	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [RUN], [ \
+	MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-D_FORTIFY_SOURCE=2 \
 			-fstack-protector \
 		], [${my_cxxfatal}], [${CPPFLAGS}], [:], [${quicktrue}])])
@@ -662,21 +664,15 @@ AM_CONDITIONAL([EXTRA_DOC], [${extra_doc}])
 
 # Check if __builtin_expect works
 AC_MSG_CHECKING([whether __builtin_expect can be used])
-AC_DEFUN([BUILTIN_EXPECT_PROGRAM], [AC_LANG_PROGRAM([[]], [[
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[]], [[
 if(!((__builtin_expect(1, 0)) && (__builtin_expect(1, 1)) &&
 	(!__builtin_expect(0, 0)) && (!__builtin_expect(0, 1))))
 	return 1;
-		]])])
-AC_RUN_IFELSE([BUILTIN_EXPECT_PROGRAM],
+		]])],
 	[MV_MSG_RESULT([yes])
 	AS_VAR_SET([bi_expect_works], [:])],
 	[MV_MSG_RESULT([no])
-	AS_VAR_SET([bi_expect_works], [false])],
-	[AC_LINK_IFELSE([BUILTIN_EXPECT_PROGRAM],
-		[MV_MSG_RESULT([yes], [crosscompile guess])
-		AS_VAR_SET([bi_expect_works], [:])],
-		[MV_MSG_RESULT([no], [crosscompile guess])
-		AS_VAR_SET([bi_expect_works], [false])])])
+	AS_VAR_SET([bi_expect_works], [false])])
 AS_IF([${bi_expect_works}],
 	[AC_DEFINE([HAVE___BUILTIN_EXPECT],
 		[1],
@@ -689,13 +685,13 @@ MV_APPEND([CXXFLAGS], [${my_cxxfatal}])
 MV_APPEND([LDFLAGS], [${my_ldfatal}])
 
 # We even switch on explicitly -Wattribute although this should be default:
-MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [COMPILE], [ \
+MV_ADDFLAGS([CXXFLAGS], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 		-Wattributes \
 	], [], [], [], [${quicktrue}])
 
 # Check if _Pragma("GCC diagnostic ...") can be used inside functions
 AC_MSG_CHECKING([whether pragma GCC diagnostic can be used everywhere])
-AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 #define GCC_DIAG_STR(s) #s
 #define GCC_DIAG_JOINSTR(x, y) GCC_DIAG_STR(x ## y)
 #define GCC_DIAG_DO_PRAGMA(x) _Pragma (#x)
@@ -786,7 +782,7 @@ AC_DEFINE_UNQUOTED([ATTRIBUTE_SIGNAL],
 
 # Check if __attribute__ ((__const__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__const__)) can be used])
-AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 class b {
 public:
 	static int c(int i) __attribute__ ((__const__)) { return i; }
@@ -806,7 +802,7 @@ AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST],
 
 # Check if __attribute__ ((__pure__)) works
 AC_MSG_CHECKING([whether __attribute__ ((__pure__)) can be used])
-AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 class b {
 public:
 	static int c(int *i) __attribute__ ((__pure__)) { return *i; }
@@ -836,7 +832,7 @@ AS_VAR_COPY([LDFLAGS], [my_ldflags])
 
 # Check if nullptr works
 AC_MSG_CHECKING([whether nullptr can be used])
-AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 static const char *a = nullptr;
 	]], [[
 const char *b(nullptr);
