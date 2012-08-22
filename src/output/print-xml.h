@@ -19,6 +19,8 @@
 class EixRc;
 class DBHeader;
 class VarDbPkg;
+class FormbPkg;
+class PrintFormat;
 class SetStability;
 
 class PrintXml {
@@ -29,6 +31,7 @@ class PrintXml {
 
 		const DBHeader *hdr;
 		VarDbPkg *var_db_pkg;
+		const PrintFormat *print_format;
 		const SetStability *stability;
 		std::string portdir;
 		std::string dateformat;
@@ -41,21 +44,22 @@ class PrintXml {
 
 	public:
 		typedef eix::UNumber XmlVersion;
-		static const XmlVersion current = 8;
+		static const XmlVersion current = 9;
 
-		void init(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
+		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
 		{
 			hdr = header;
 			var_db_pkg = vardb;
+			print_format = printformat;
 			stability = set_stability;
 			portdir = port_dir;
 			clear(eixrc);
 		}
 
-		PrintXml(const DBHeader *header, VarDbPkg *vardb, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
-		{ init(header, vardb, set_stability, eixrc, port_dir); }
+		PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
+		{ init(header, vardb, printformat, set_stability, eixrc, port_dir); }
 
-		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), stability(NULLPTR)
+		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR)
 		{ clear(NULLPTR); }
 
 		void start();

@@ -4,6 +4,10 @@
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Make configure cross-compile friendly, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=432122
+	- Fix --without-sqlite compile regression, see
+	  http://bugs.gentoo.org/show_bug.cgi?id=432238
+	- Introduce search options -N --nonvirtual, --virtual and attributes
+	  {virtual} {havevirtual} {havenonvirtual} and in xml: virtual="1"
 
 *eix-0.26.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

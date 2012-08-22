@@ -225,6 +225,46 @@ PrintFormat::get_versions_slotsorted(Package *package, Node *root, vector<Versio
 	}
 }
 
+void
+PrintFormat::clear_virtual(ExtendedVersion::Overlay count)
+{
+	delete virtuals;
+	virtuals = new std::vector<bool>(count, false);
+}
+
+void
+PrintFormat::set_as_virtual(const ExtendedVersion::Overlay overlay, bool on)
+{
+	if(overlay == 0) {
+		return;
+	}
+	(*virtuals)[overlay-1] = on;
+}
+
+bool
+PrintFormat::is_virtual(const ExtendedVersion::Overlay overlay) const
+{
+	if(virtuals == NULLPTR) {
+		return false;
+	}
+	if((overlay == 0) || (overlay >= virtuals->size())) {
+		return false;
+	}
+	return (*virtuals)[overlay - 1];
+}
+
+bool
+PrintFormat::have_virtual(const Package *p, bool nonvirtual) const
+{
+	for(Package::const_iterator vit(p->begin());
+		likely(vit != p->end()); ++vit) {
+		if(is_virtual(vit->overlay_key) ^ nonvirtual) {
+			return true;
+		}
+	}
+	return false;
+}
+
 class Scanner {
 	public:
 		enum Diff {
@@ -314,6 +354,8 @@ class Scanner {
 			prop_pkg("havemarkedversion", &PrintFormat::PKG_HAVEMARKEDVERSION);
 			prop_pkg("slots", &PrintFormat::PKG_SLOTS);
 			prop_pkg("slotted", &PrintFormat::PKG_SLOTTED);
+			prop_pkg("havevirtual", &PrintFormat::PKG_HAVEVIRTUAL);
+			prop_pkg("havenonvirtual", &PrintFormat::PKG_HAVENONVIRTUAL);
 			prop_pkg("havecolliuse", &PrintFormat::PKG_HAVECOLLIUSE);
 			prop_pkg("colliuse", &PrintFormat::PKG_COLLIUSE);
 			prop_ver("first", &PrintFormat::VER_FIRST);
@@ -343,6 +385,7 @@ class Scanner {
 			prop_ver("installedversion", &PrintFormat::VER_INSTALLEDVERSION);
 			prop_ver("haveuse", &PrintFormat::VER_HAVEUSE);
 			prop_ver("use", &PrintFormat::VER_USE);
+			prop_ver("virtual", &PrintFormat::VER_VIRTUAL);
 			prop_ver("isbinary", &PrintFormat::VER_ISBINARY);
 			prop_ver("restrict", &PrintFormat::VER_RESTRICT);
 			prop_ver("restrictfetch", &PrintFormat::VER_RESTRICTFETCH);
@@ -904,6 +947,18 @@ PrintFormat::PKG_SLOTTED(Package *package) const
 }
 
 string
+PrintFormat::PKG_HAVEVIRTUAL(Package *package) const
+{
+	return ((have_virtual(package, false)) ? "1" : "");
+}
+
+string
+PrintFormat::PKG_HAVENONVIRTUAL(Package *package) const
+{
+	return ((have_virtual(package, true)) ? "1" : "");
+}
+
+string
 PrintFormat::PKG_HAVECOLLIUSE(Package *package) const
 {
 	return ((package->iuse.empty()) ? "" : "1");
@@ -1193,6 +1248,24 @@ PrintFormat::VER_USE(Package *package) const
 		return get_inst_use(*package, version_variables->instver());
 	}
 	return version_variables->version()->iuse.asString();
+}
+
+string
+PrintFormat::VER_VIRTUAL(Package *package) const
+{
+	ExtendedVersion::Overlay key;
+	if(version_variables->isinst) {
+		InstVersion *i(version_variables->instver());
+		if(unlikely((unlikely(vardb == NULLPTR)) ||
+			(unlikely(header == NULLPTR)) ||
+			(unlikely(!(vardb->readOverlay(*package, i, *header)))))) {
+			return "";
+		}
+		key = i->overlay_key;
+	} else {
+		key = version_variables->version()->overlay_key;
+	}
+	return ((is_virtual(key)) ? "1" : "");
 }
 
 string

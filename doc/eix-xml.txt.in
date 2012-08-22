@@ -91,6 +91,10 @@ Except for id, all of them are optional.
   version can occur in several overlays.
   Hence, only the triple id/overlay/repository is unique.
 
+- **virtual="1"**
+
+  This is only output if the version is from a virtual overlay.
+
 - **overlay="** [..] **"**
 
   The overlay is usually a path.

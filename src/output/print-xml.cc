@@ -16,6 +16,7 @@
 #include "eixTk/null.h"
 #include "eixTk/sysutils.h"
 #include "eixrc/eixrc.h"
+#include "output/formatstring.h"
 #include "output/print-xml.h"
 #include "portage/basicversion.h"
 #include "portage/depend.h"
@@ -179,6 +180,9 @@ PrintXml::package(Package *pkg)
 		cout << "\t\t\t<version id=\"" << escape_xmlstring(ver->getFull()) << "\"";
 		ExtendedVersion::Overlay overlay_key(ver->overlay_key);
 		if(unlikely(overlay_key != 0)) {
+			if(print_format->is_virtual(overlay_key)) {
+				cout << " virtual=\"1\"";
+			}
 			const OverlayIdent &overlay(hdr->getOverlay(overlay_key));
 			if((print_overlay || overlay.label.empty()) && !(overlay.path.empty())) {
 				cout << " overlay=\"" << escape_xmlstring(overlay.path) << "\"";

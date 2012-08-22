@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-07-13 22:00:00 +0200 (Tue, 13 Jul 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-22 20:50:00 +0200 (Wen, 22 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -534,6 +534,12 @@ Die Version des Binärfiles muss mit mindestens einer vorhandenen oder einer ins
 (Falls keine Version vorhanden ist, kann das Paket ebenfalls nicht gefunden werden).
 Nur die reine Existenz eines entsprechenden *.tbz2-files wird überprüft:
 Ob Portage die Datei tatsächlich benutzen kann, hängt auch von Meta-Daten innerhalb der *.tbz2-Datei ab (wie etwa USE settings), was von eix nicht beachtet wird.
+.TP
+.BR -N ", " --nonvirtual
+Findet nur Pakete mit mindestens einer Version aus dem Hauptbaum oder einem nicht-virtuellen Overlay.
+.TP
+.BR --virtual
+Findet nur Pakete mit mindestens einem nicht-virtuellen Overlay.
 .TP
 .BR -O ", " --overlay
 Findet nur Pakete mit mindestens einer Version in einem Overlay.
@@ -1217,13 +1223,14 @@ Um die Wiederbenutzung von Code zu erleichtern gilt:
 Wenn die Durckausgabe nicht Slot-sortiert ist, dann sind
 B<slotfirst>/B<slotlast> äquivalent zu B<first>/B<last>, und B<oneslot> ist 1.
 .TP
-.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum
+.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum ", "  virtual
 Dies darf nur in I<VARIABLE> im Zusammenhang von Versionsausgaben benutzt werden.
 Es wird der aktuelle Slot bzw. der Overlay der aktuellen Version ausgegeben.
 B<overlayver> ist leer, falls das gesamte Paket aus nur einem Overlay stammt;
 für diesen Fall sollte B<overlay> zur Ausgabe des Overlays benutzt werden.
 Im Gegensatz dazu enthält B<overlaynum> stets die Nummer des Overlays
-(als Text ohne Farben) oder ist leer, falls das Paket keinem Overlay entstammt.
+(als Text ohne Farben) oder ist leer, falls die Version keinem Overlay entstammt.
+B<virtual> ist genau dann nichtleer, wenn die Version aus einem virtuellen Overlay kommt.
 B<isslot>, B<isfullslot> und B<issubslot> testen nur of Slot, voller Slot bzw. Subslot
 trivial sind und geben in diesem Fall 1 aus (sonst nichts).
 .TP
@@ -1317,6 +1324,9 @@ Vgl. die Bemerkungen zu B<--binary>.
 .TP
 .B overlaykey
 Falls alle Versionen zum selben Overlay gehören, wird "[overlaykey]" mit entsprechcenden Farben ausgegeben.
+.TP
+.BR havevirtual ", " havenonvirtual
+Ist 1 or leer, je nachdem ob mindestens eine verfügbare Version aus einem (nicht)virtuellen Overlay stammt.
 .TP
 .B system
 1, falls das Paket zu @system gehört.

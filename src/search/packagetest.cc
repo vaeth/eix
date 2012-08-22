@@ -29,6 +29,7 @@
 #include "eixTk/utils.h"
 #include "eixrc/eixrc.h"
 #include "eixrc/global.h"
+#include "output/formatstring.h"
 #include "portage/basicversion.h"
 #include "portage/conf/cascadingprofile.h"
 #include "portage/conf/portagesettings.h"
@@ -88,12 +89,13 @@ const PackageTest::TestStability
 
 NowarnMaskList *PackageTest::nowarn_list = NULLPTR;
 
-PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &set_stability, const DBHeader &dbheader)
+PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *set_stability, const DBHeader *dbheader)
 {
-	vardbpkg = &vdb;
-	portagesettings = &p;
-	stability= &set_stability;
-	header   = &dbheader;
+	vardbpkg = vdb;
+	portagesettings = p;
+	print_format = f;
+	stability= set_stability;
+	header   = dbheader;
 	overlay_list = overlay_only_list = in_overlay_inst_list = NULLPTR;
 	algorithm = NULLPTR;
 	from_overlay_inst_list = NULLPTR;
@@ -107,6 +109,7 @@ PackageTest::PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &
 		world = world_only_selected = world_only_file =
 		worldset = worldset_only_selected =
 		dup_versions = dup_packages =
+		have_virtual = have_nonvirtual =
 		know_pattern = false;
 	restrictions = ExtendedVersion::RESTRICT_NONE;
 	properties = ExtendedVersion::PROPERTIES_NONE;
@@ -150,6 +153,7 @@ PackageTest::calculateNeeds() {
 		dup_packages || dup_versions || slotted ||
 		upgrade || overlay || obsolete || binary ||
 		world || worldset ||
+		have_virtual || have_nonvirtual ||
 		(from_overlay_inst_list != NULLPTR) ||
 		(from_foreign_overlay_inst_list != NULLPTR) ||
 		(overlay_list != NULLPTR) || (overlay_only_list != NULLPTR) ||
@@ -761,6 +765,22 @@ PackageTest::match(PackageReader *pkg) const
 		for(Package::iterator it(p->begin()); likely(it != p->end()); ++it) {
 			if(likely(overlay_only_list->find(it->overlay_key) == overlay_only_list->end()))
 				return false;
+		}
+	}
+
+	if(unlikely(have_virtual)) {
+		// --virtual
+		get_p(p, pkg);
+		if(!print_format->have_virtual(p, false)) {
+			return false;
+		}
+	}
+
+	if(unlikely(have_nonvirtual)) {
+		// --nonvirtual
+		get_p(p, pkg);
+		if(!print_format->have_virtual(p, true)) {
+			return false;
 		}
 	}
 

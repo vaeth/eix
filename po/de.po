@@ -1,14 +1,14 @@
 # German translations for eix package
 # German messages for eix.
-# Copyright (C) 2009-2011 Martin Vaeth
+# Copyright (C) 2009-2012 Martin Vaeth
 # This file is distributed under the same license as the eix package.
-#  <vaeth@mathematik.uni-wuerzburg.de>, 2009-2011.
+#  <vaeth@mathematik.uni-wuerzburg.de>, 2009-2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-08-20 20:23+0200\n"
+"POT-Creation-Date: 2012-08-22 21:50+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1247,15 +1247,18 @@ msgid ""
 "    --selected-set        Match packages of a world set.\n"
 "    --selected            Match packages of @selected (world file or set).\n"
 "    --binary              Match packages with *.tbz2 files.\n"
-"    -O, --overlay                        Match packages from overlays.\n"
-"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
-"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
+"    -N, --nonvirtual                 Match packages from nonvirtual "
+"overlays.\n"
+"    --virtual                        Match packages from virtual overlays.\n"
+"    -O, --overlay                    Match packages from overlays.\n"
+"    --in-overlay OVERLAY             Match packages from OVERLAY.\n"
+"    --only-in-overlay OVERLAY        Match packages only in OVERLAY.\n"
 "    -J, --installed-overlay Match packages installed from overlays.\n"
-"    --installed-from-overlay OVERLAY     Packages installed from OVERLAY.\n"
-"    --installed-in-some-overlay          Packages with an installed version\n"
-"                                         provided by some overlay.\n"
-"    --installed-in-overlay OVERLAY       Packages with an installed version\n"
-"                                         provided from OVERLAY.\n"
+"    --installed-from-overlay OVERLAY Packages installed from OVERLAY.\n"
+"    --installed-in-some-overlay      Packages with an installed version\n"
+"                                     provided by some overlay.\n"
+"    --installed-in-overlay OVERLAY   Packages with an installed version\n"
+"                                     provided from OVERLAY.\n"
 "    --restrict-fetch          Match packages with RESTRICT=fetch.\n"
 "    --restrict-mirror         Match packages with RESTRICT=mirror.\n"
 "    --restrict-primaryuri     Match packages with RESTRICT=primaryuri.\n"
@@ -1408,15 +1411,17 @@ msgstr ""
 "    --selected            Pakete aus @selected (world-Datei oder "
 "world_sets).\n"
 "    --binary              Pakete mit *.tbz2-Dateien.\n"
-"    -O, --overlay                        Pakete aus Overlays\n"
-"    --in-overlay OVERLAY                 Pakete aus OVERLAY.\n"
-"    --only-in-overlay OVERLAY            Pakete nur aus OVERLAY.\n"
+"    -N, --nonvirtual                 Pakete aus nicht-virtuellen Overlays.\n"
+"    --virtual                        Pakete aus virtuellen Overlays.\n"
+"    -O, --overlay                    Pakete aus Overlays\n"
+"    --in-overlay OVERLAY             Pakete aus OVERLAY.\n"
+"    --only-in-overlay OVERLAY        Pakete nur aus OVERLAY.\n"
 "    -J, --installed-overlay Match packages Installiert aus Overlays.\n"
-"    --installed-from-overlay OVERLAY     Pakete installiert aus OVERLAY.\n"
-"    --installed-in-some-overlay          Pakete mit einer installierten\n"
-"                                         Version aus einem Overlay.\n"
-"    --installed-in-overlay OVERLAY       Pakete mit einer installierten\n"
-"                                         Version aus OVERLAY.\n"
+"    --installed-from-overlay OVERLAY Pakete installiert aus OVERLAY.\n"
+"    --installed-in-some-overlay      Pakete mit einer installierten\n"
+"                                     Version aus einem Overlay.\n"
+"    --installed-in-overlay OVERLAY   Pakete mit einer installierten\n"
+"                                     Version aus OVERLAY.\n"
 "    --restrict-fetch          Paket hat RESTRICT=fetch.\n"
 "    --restrict-mirror         Paket hat RESTRICT=mirror.\n"
 "    --restrict-primaryuri     Paket hat RESTRICT=primaryuri.\n"
@@ -1472,16 +1477,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:495 src/eix-diff.cc:268
+#: src/eix.cc:499 src/eix-diff.cc:268
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:577 src/eix-diff.cc:328 src/eix-update.cc:379
+#: src/eix.cc:581 src/eix-diff.cc:328 src/eix-update.cc:379
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:619 src/eix.cc:949
+#: src/eix.cc:623 src/eix.cc:954
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1490,7 +1495,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:630
+#: src/eix.cc:634
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1501,31 +1506,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:907 src/eix.cc:923
+#: src/eix.cc:912 src/eix.cc:928
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:910
+#: src/eix.cc:915
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:917
+#: src/eix.cc:922
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:1024
+#: src/eix.cc:1029
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1025
+#: src/eix.cc:1030
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1030
+#: src/eix.cc:1035
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1534,7 +1539,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1031
+#: src/eix.cc:1036
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1543,7 +1548,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1088
+#: src/eix.cc:1093
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1551,7 +1556,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1091
+#: src/eix.cc:1096
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -5650,11 +5655,11 @@ msgstr ""
 "\n"
 "Vielen Dank für Ihre Mühe!\n"
 
-#: src/output/formatstring-print.cc:468
+#: src/output/formatstring-print.cc:511
 msgid "Unknown property %r"
 msgstr "Unbekannte Property %r"
 
-#: src/output/formatstring-print.cc:474
+#: src/output/formatstring-print.cc:517
 msgid "Property %r used outside version context"
 msgstr "Property %r wurde außerhalb eines Versionen-Zusammenhangs benutzt"
 
@@ -5799,11 +5804,11 @@ msgstr "Interner Fehler: SetStability calculates wrong index"
 msgid "warning: ignoring --close without --open"
 msgstr "Warnung: --close ohne --open wird ignoriert"
 
-#: src/search/packagetest.cc:274
+#: src/search/packagetest.cc:278
 msgid "cannot find match field %r"
 msgstr "unbekanntes Suchfeld %r"
 
-#: src/search/packagetest.cc:286
+#: src/search/packagetest.cc:290
 msgid "cannot find match algorithm %r"
 msgstr "unbekannter Matchalgorithmus %r"
 

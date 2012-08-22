@@ -9,9 +9,9 @@
 
 #include <config.h>
 
+#ifdef WITH_SQLITE
 #include <sqlite3.h>
 
-#ifdef WITH_SQLITE
 #include <cstdlib>
 
 #ifdef SQLITE_ONLY_DEBUG

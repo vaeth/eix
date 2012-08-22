@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-07-13 22:00:00 +0200 (Tue, 13 Jul 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-22 20:50:00 +0200 (Wen, 22 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -523,6 +523,12 @@ The version of the binary file must either match the version of an available ver
 (However, note that if no version is available, the package cannot be found either).
 Just the existence of the corresponding *.tbz2 file is checked:
 Whether portage can actually use the file depends also on metadata within the *.tbz2 file (like USE settings) which is not considered by eix.
+.TP
+.BR -N ", " --nonvirtual
+Only match packages with at least one version from the main tree or a non-virtual overlay.
+.TP
+.BR --virtual
+Only match packages with at least one version in a virtual overlay.
 .TP
 .BR -O ", " --overlay
 Only match packages with at least one version in an overlay.
@@ -1198,13 +1204,14 @@ All these properties are empty if the condition is not satisfied, otherwise 1.
 To ease reusing code, when printing is not sorted according to slots, then
 B<slotfirst>/B<slotlast> is equivalent to B<first>/B<last> and B<oneslot> is 1.
 .TP
-.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum
+.BR slot ", " isslot ", " fullslot ", " isfullslot ", " subslot ", " issubslot ", "overlayver ", " overlaynum ", " virtual
 This must occur only in I<VARIABLE> in the context of version printing.
 It outputs the current slot or the overlay of the current version.
 B<overlayver> is empty if the whole package is from only one overlay;
 you should use B<overlay> to print the overlay in such a case.
 B<overlaynum>, in contrast, contains the number of the overlay
-without colors unconditionally (or is empty if the package is not from an overlay).
+without colors unconditionally (or is empty if the version is not from an overlay).
+B<virtual> is nonempty if and only if the version is from a virtual overlay.
 B<isslot>, B<isfullslot>, B<issubslot> just test whether the slot, fullslot, or subslot are trivial and outputs 1 in this case,
 otherwise nothing.
 .TP
@@ -1301,6 +1308,9 @@ See the remarks for B<--binary>.
 .TP
 .B overlaykey
 If all versions are in the same overlay, "[overlaykey]" is output with corresponding colors.
+.TP
+.BR havevirtual ", " havenonvirtual
+Is 1 or empty, depending on whether at least one available version is from a (non)virtual overlay.
 .TP
 .B system
 expands to 1 if the package is in the system profile

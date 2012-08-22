@@ -16,10 +16,11 @@ class DBHeader;
 class EixRc;
 class MarkedList;
 class MatchTree;
+class PackageTest;
 class PortageSettings;
 class SetStability;
 class VarDbPkg;
-void parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, const ArgumentReader &ar);
+void parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MarkedList **marked_list, const ArgumentReader &ar);
 
 /*	If you want to add a new parameter to eix just insert a line into
  *	long_options. If you only want a longopt, add a new define.
@@ -84,6 +85,7 @@ enum cli_options {
 	O_INSTALLED_SLOT,
 	O_FROM_OVERLAY,
 	O_EIX_CACHEFILE,
+	O_VIRTUAL,
 	O_DEBUG,
 	O_SEARCH_SLOT,
 	O_SEARCH_FULLSLOT,

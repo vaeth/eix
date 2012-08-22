@@ -44,7 +44,7 @@ using std::vector;
 } while(0)
 
 #define NEW_TEST do { \
-	test = new PackageTest(varpkg_db, portagesettings, stability, header); \
+	test = new PackageTest(varpkg_db, portagesettings, print_format, stability, header); \
 } while(0)
 
 #define USE_TEST do { \
@@ -65,7 +65,7 @@ optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
 }
 
 void
-parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettings &portagesettings, const SetStability &stability, const DBHeader &header, MarkedList **marked_list, const ArgumentReader& ar)
+parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MarkedList **marked_list, const ArgumentReader& ar)
 {
 	bool	use_pipe(false),      // A pipe is used somewhere
 		force_test(false),    // There is a current test or a pipe
@@ -115,7 +115,7 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				test->MultiSlotted();
 				break;
 			case 'u': USE_TEST;
-				test->Upgrade(eixrc.getLocalMode("UPGRADE_LOCAL_MODE"));
+				test->Upgrade(eixrc->getLocalMode("UPGRADE_LOCAL_MODE"));
 				break;
 			case O_UPGRADE_LOCAL: USE_TEST;
 				test->Upgrade(LOCALMODE_LOCAL);
@@ -191,66 +191,72 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 				break;
 			case O_OVERLAY: USE_TEST;
 				if(optional_increase(&arg, ar)) {
-					header.get_overlay_vector(
+					header->get_overlay_vector(
 						test->OverlayList(),
 						arg->m_argument,
-						portagesettings["PORTDIR"].c_str());
+						(*portagesettings)["PORTDIR"].c_str());
 					break;
 				}
 				// No break here...
+			case 'N': USE_TEST;
+				test->Nonvirtual();
+				break;
+			case O_VIRTUAL: USE_TEST;
+				test->Virtual();
+				break;
 			case 'O': USE_TEST;
 				test->Overlay();
 				break;
 			case O_ONLY_OVERLAY: USE_TEST;
 				if(optional_increase(&arg, ar)) {
-					header.get_overlay_vector(
+					header->get_overlay_vector(
 						test->OverlayOnlyList(),
 						arg->m_argument,
-						portagesettings["PORTDIR"].c_str());
+						(*portagesettings)["PORTDIR"].c_str());
 					break;
 				}
-				header.get_overlay_vector(
+				header->get_overlay_vector(
 					test->OverlayOnlyList(),
 					"",
-					portagesettings["PORTDIR"].c_str());
+					(*portagesettings)["PORTDIR"].c_str());
 				break;
 			case O_INSTALLED_OVERLAY: USE_TEST;
 				if(optional_increase(&arg, ar)) {
-					header.get_overlay_vector(
+					header->get_overlay_vector(
 						test->InOverlayInstList(),
 						arg->m_argument,
-						portagesettings["PORTDIR"].c_str());
+						(*portagesettings)["PORTDIR"].c_str());
 					break;
 				}
 				// No break here...
 			case O_INSTALLED_SOME: USE_TEST;
-				header.get_overlay_vector(
+				header->get_overlay_vector(
 					test->InOverlayInstList(),
 					"",
-					portagesettings["PORTDIR"].c_str());
+					(*portagesettings)["PORTDIR"].c_str());
 				break;
 			case O_FROM_OVERLAY: USE_TEST;
 				if(optional_increase(&arg, ar)) {
-					header.get_overlay_vector(
+					header->get_overlay_vector(
 						test->FromOverlayInstList(),
 						arg->m_argument,
-						portagesettings["PORTDIR"].c_str());
+						(*portagesettings)["PORTDIR"].c_str());
 					test->FromForeignOverlayInstList()->push_back(arg->m_argument);
 					break;
 				}
 				// No break here...
 			case 'J': USE_TEST;
-				header.get_overlay_vector(
+				header->get_overlay_vector(
 					test->FromOverlayInstList(),
 					"",
-					portagesettings["PORTDIR"].c_str());
+					(*portagesettings)["PORTDIR"].c_str());
 				test->FromForeignOverlayInstList()->push_back("");
 				break;
 			case 'd': USE_TEST;
-				test->DuplPackages(eixrc.getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
+				test->DuplPackages(eixrc->getBool("DUP_PACKAGES_ONLY_OVERLAYS"));
 				break;
 			case 'D': USE_TEST;
-				test->DuplVersions(eixrc.getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
+				test->DuplVersions(eixrc->getBool("DUP_VERSIONS_ONLY_OVERLAYS"));
 				break;
 			case O_RESTRICT_FETCH: USE_TEST;
 				test->Restrictions(ExtendedVersion::RESTRICT_FETCH);
@@ -298,56 +304,56 @@ parse_cli(MatchTree *matchtree, EixRc &eixrc, VarDbPkg &varpkg_db, PortageSettin
 			{
 				EixRc::RedPair red;
 				red.first = red.second = RedAtom();
-				if(likely(eixrc.getBool("TEST_FOR_REDUNDANCY"))) {
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE",
+				if(likely(eixrc->getBool("TEST_FOR_REDUNDANCY"))) {
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE",
 						Keywords::RED_DOUBLE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LINE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_LINE",
 						Keywords::RED_DOUBLE_LINE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_MIXED",
+					eixrc->getRedundantFlags("REDUNDANT_IF_MIXED",
 						Keywords::RED_MIXED, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_WEAKER",
+					eixrc->getRedundantFlags("REDUNDANT_IF_WEAKER",
 						Keywords::RED_WEAKER, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_STRANGE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_STRANGE",
 						Keywords::RED_STRANGE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_NO_CHANGE",
 						Keywords::RED_NO_CHANGE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_MASK_NO_CHANGE",
 						Keywords::RED_MASK, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_UNMASK_NO_CHANGE",
 						Keywords::RED_UNMASK, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_MASKED",
 						Keywords::RED_DOUBLE_MASK, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_UNMASKED",
 						Keywords::RED_DOUBLE_UNMASK, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_USE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_USE",
 						Keywords::RED_DOUBLE_USE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_ENV",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_ENV",
 						Keywords::RED_DOUBLE_ENV, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_LICENSE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_LICENSE",
 						Keywords::RED_DOUBLE_LICENSE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_DOUBLE_CFLAGS",
+					eixrc->getRedundantFlags("REDUNDANT_IF_DOUBLE_CFLAGS",
 						Keywords::RED_DOUBLE_CFLAGS, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_KEYWORDS",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_KEYWORDS",
 						Keywords::RED_IN_KEYWORDS, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_MASK",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_MASK",
 						Keywords::RED_IN_MASK, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_UNMASK",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_UNMASK",
 						Keywords::RED_IN_UNMASK, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_USE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_USE",
 						Keywords::RED_IN_USE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_ENV",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_ENV",
 						Keywords::RED_IN_ENV, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_LICENSE",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_LICENSE",
 						Keywords::RED_IN_LICENSE, &red);
-					eixrc.getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
+					eixrc->getRedundantFlags("REDUNDANT_IF_IN_CFLAGS",
 						Keywords::RED_IN_CFLAGS, &red);
 				}
 				PackageTest::TestInstalled test_installed = PackageTest::INS_NONE;
-				if(likely(eixrc.getBool("TEST_FOR_NONEXISTENT"))) {
+				if(likely(eixrc->getBool("TEST_FOR_NONEXISTENT"))) {
 					test_installed |= PackageTest::INS_NONEXISTENT;
-					if(eixrc.getBool("NONEXISTENT_IF_MASKED"))
+					if(eixrc->getBool("NONEXISTENT_IF_MASKED"))
 						test_installed |= PackageTest::INS_MASKED;
-					if(eixrc.getBool("NONEXISTENT_IF_OTHER_OVERLAY")) {
+					if(eixrc->getBool("NONEXISTENT_IF_OTHER_OVERLAY")) {
 						test_installed |= PackageTest::INS_OVERLAY;
 					}
 				}

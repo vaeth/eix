@@ -29,6 +29,7 @@ class MatcherAlgorithm;
 class MatcherField;
 class NowarnMaskList;
 class PortageSettings;
+class PrintFormat;
 class VarDbPkg;
 
 /** Test a package if it matches some criteria. */
@@ -87,15 +88,13 @@ class PackageTest {
 			STABLE_SYSTEM       = 0x08U;  /**< Test for system packages */
 
 		/** Set default values. */
-		PackageTest(VarDbPkg &vdb, PortageSettings &p, const SetStability &stability, const DBHeader &dbheader);
+		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader);
 
 		~PackageTest();
 
 		void setAlgorithm(BaseAlgorithm *p)
 		{
-			if(algorithm != NULLPTR) {
-				delete algorithm;
-			}
+			delete algorithm;
 			algorithm = p;
 		}
 
@@ -145,6 +144,12 @@ class PackageTest {
 
 		void SetInstability(TestStability avoid)
 		{  test_instability |= avoid; }
+
+		void Virtual()
+		{ have_virtual = true; }
+
+		void Nonvirtual()
+		{ have_nonvirtual = true; }
 
 		void Overlay()
 		{ overlay = true; }
@@ -257,6 +262,8 @@ class PackageTest {
 		MatchField field;
 		/** Lookup stuff about installed packages here. */
 		VarDbPkg *vardbpkg;
+		/** Check virtual overlays with the aid of this */
+		const PrintFormat *print_format;
 		/** When reading overlay information use this: */
 		const DBHeader *header;
 
@@ -271,6 +278,7 @@ class PackageTest {
 			slotted, multi_slot,
 			world, world_only_file, world_only_selected,
 			worldset, worldset_only_selected,
+			have_virtual, have_nonvirtual,
 			know_pattern;
 		LocalMode upgrade_local_mode;
 		bool dup_versions, dup_versions_overlay;

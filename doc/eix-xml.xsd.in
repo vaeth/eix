@@ -209,6 +209,13 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:attribute>
+	<xsd:attribute name="virtual" type="xsd:string" fixed="1">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				This attribute is only output if the version is from a virtual overlay.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
 	<xsd:attribute name="overlay" type="xsd:string">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="en">

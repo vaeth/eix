@@ -295,6 +295,8 @@ class PrintFormat {
 		std::string PKG_HAVEMARKEDVERSION(Package *package) const;
 		std::string PKG_SLOTS(Package *package) const;
 		std::string PKG_SLOTTED(Package *package) const;
+		std::string PKG_HAVEVIRTUAL(Package *package) const;
+		std::string PKG_HAVENONVIRTUAL(Package *package) const;
 		std::string PKG_HAVECOLLIUSE(Package *package) const;
 		std::string PKG_COLLIUSE(Package *package) const;
 		const ExtendedVersion *ver_version() const ATTRIBUTE_PURE;
@@ -328,6 +330,7 @@ class PrintFormat {
 		std::string VER_INSTALLEDVERSION(Package *package) const;
 		std::string VER_HAVEUSE(Package *package) const;
 		std::string VER_USE(Package *package) const;
+		std::string VER_VIRTUAL(Package *package) const;
 		std::string VER_ISBINARY(Package *package) const;
 		const ExtendedVersion *ver_restrict(Package *package) const;
 		std::string ver_restrict(Package *package, ExtendedVersion::Restrict r) const;
@@ -417,28 +420,13 @@ class PrintFormat {
 
 		void setupColors();
 
-		void clear_virtual(ExtendedVersion::Overlay count)
-		{
-			if(virtuals)
-				delete virtuals;
-			virtuals = new std::vector<bool>(count, false);
-		}
+		void clear_virtual(ExtendedVersion::Overlay count);
 
-		void set_as_virtual(const ExtendedVersion::Overlay overlay, bool on = true)
-		{
-			if(!overlay)
-				return;
-			(*virtuals)[overlay-1] = on;
-		}
+		void set_as_virtual(const ExtendedVersion::Overlay overlay, bool on = true);
 
-		bool is_virtual(const ExtendedVersion::Overlay overlay) const
-		{
-			if(!virtuals)
-				return false;
-			if((!overlay) || (overlay >= virtuals->size()))
-				return false;
-			return (*virtuals)[overlay - 1];
-		}
+		bool is_virtual(const ExtendedVersion::Overlay overlay) const ATTRIBUTE_PURE;
+
+		bool have_virtual(const Package *p, bool nonvirtual) const ATTRIBUTE_PURE;
 
 		void set_overlay_translations(std::vector<ExtendedVersion::Overlay> *translations)
 		{ overlay_translations = translations; }

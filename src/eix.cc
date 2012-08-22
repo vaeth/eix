@@ -159,15 +159,17 @@ dump_help()
 "    --selected-set        Match packages of a world set.\n"
 "    --selected            Match packages of @selected (world file or set).\n"
 "    --binary              Match packages with *.tbz2 files.\n"
-"    -O, --overlay                        Match packages from overlays.\n"
-"    --in-overlay OVERLAY                 Match packages from OVERLAY.\n"
-"    --only-in-overlay OVERLAY            Match packages only in OVERLAY.\n"
+"    -N, --nonvirtual                 Match packages from nonvirtual overlays.\n"
+"    --virtual                        Match packages from virtual overlays.\n"
+"    -O, --overlay                    Match packages from overlays.\n"
+"    --in-overlay OVERLAY             Match packages from OVERLAY.\n"
+"    --only-in-overlay OVERLAY        Match packages only in OVERLAY.\n"
 "    -J, --installed-overlay Match packages installed from overlays.\n"
-"    --installed-from-overlay OVERLAY     Packages installed from OVERLAY.\n"
-"    --installed-in-some-overlay          Packages with an installed version\n"
-"                                         provided by some overlay.\n"
-"    --installed-in-overlay OVERLAY       Packages with an installed version\n"
-"                                         provided from OVERLAY.\n"
+"    --installed-from-overlay OVERLAY Packages installed from OVERLAY.\n"
+"    --installed-in-some-overlay      Packages with an installed version\n"
+"                                     provided by some overlay.\n"
+"    --installed-in-overlay OVERLAY   Packages with an installed version\n"
+"                                     provided from OVERLAY.\n"
 "    --restrict-fetch          Match packages with RESTRICT=fetch.\n"
 "    --restrict-mirror         Match packages with RESTRICT=mirror.\n"
 "    --restrict-primaryuri     Match packages with RESTRICT=primaryuri.\n"
@@ -360,6 +362,8 @@ EixOptionList::EixOptionList()
 	push_back(Option("overlay",              'O'));
 	push_back(Option("installed-overlay",    'J'));
 	push_back(Option("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL));
+	push_back(Option("nonvirtual",           'N'));
+	push_back(Option("virtual",              O_VIRTUAL));
 	push_back(Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL));
 	push_back(Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL));
 	push_back(Option("installed-in-some-overlay", O_INSTALLED_SOME));
@@ -672,6 +676,12 @@ run_eix(int argc, char** argv)
 		return EXIT_SUCCESS;
 	}
 
+	if(header.countOverlays() != 0) {
+		format->clear_virtual(header.countOverlays());
+		for(ExtendedVersion::Overlay i(1); likely(i != header.countOverlays()); ++i)
+			format->set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
+	}
+
 	LocalMode local_mode(LOCALMODE_DEFAULT);
 	if(unlikely(!eixrc.getBool("LOCAL_PORTAGE_CONFIG"))) {
 		rc_options.ignore_etc_portage = true;
@@ -686,7 +696,7 @@ run_eix(int argc, char** argv)
 	SetStability stability(&portagesettings, !rc_options.ignore_etc_portage, false, eixrc.getBool("ALWAYS_ACCEPT_KEYWORDS"));
 
 	MatchTree *matchtree = new MatchTree(eixrc.getBool("DEFAULT_IS_OR"));
-	parse_cli(matchtree, eixrc, varpkg_db, portagesettings, stability, header, &marked_list, argreader);
+	parse_cli(matchtree, &eixrc, &varpkg_db, &portagesettings, format, &stability, &header, &marked_list, argreader);
 
 	eix::ptr_list<Package> matches;
 	eix::ptr_list<Package> all_packages;
@@ -811,11 +821,6 @@ run_eix(int argc, char** argv)
 	format->set_marked_list(marked_list);
 	if(overlay_mode != mode_list_used_renumbered)
 		format->set_overlay_translations(NULLPTR);
-	if(header.countOverlays() != 0) {
-		format->clear_virtual(header.countOverlays());
-		for(ExtendedVersion::Overlay i(1); likely(i != header.countOverlays()); ++i)
-			format->set_as_virtual(i, is_virtual((eixrc["EPREFIX_VIRTUAL"] + header.getOverlay(i).path).c_str()));
-	}
 	bool need_overlay_table(false);
 	vector<bool> overlay_used(header.countOverlays(), false);
 	format->set_overlay_used(&overlay_used, &need_overlay_table);
@@ -826,7 +831,7 @@ run_eix(int argc, char** argv)
 		rc_options.pure_packages = true;
 	}
 	if(rc_options.xml && !matches.empty()) {
-		print_xml = new PrintXml(&header, &varpkg_db, &stability, &eixrc,
+		print_xml = new PrintXml(&header, &varpkg_db, format, &stability, &eixrc,
 			portagesettings["PORTDIR"]);
 		print_xml->start();
 	}
