@@ -1067,6 +1067,12 @@ AC_DEFINE_UNQUOTED([EIX_PREVIOUS],
 	[Location of the previous cachefile])
 AC_SUBST([EIX_PREVIOUS])
 
+EIX_REMOTECACHEFILE="/var/cache/eix/remote.eix"
+AC_DEFINE_UNQUOTED([EIX_REMOTECACHEFILE],
+	["${EIX_REMOTECACHEFILE}"],
+	[Location of the remote cachefile])
+AC_SUBST([EIX_REMOTECACHEFILE])
+
 EIX_REMOTEARCHIVE="/var/cache/eix/remote.tar.bz2"
 AC_DEFINE_UNQUOTED([EIX_REMOTEARCHIVE],
 	["${EIX_REMOTEARCHIVE}"],

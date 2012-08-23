@@ -50,8 +50,12 @@ The following commands are provided:
 update: Fetch the eix-caches of some layman overlays, store them locally in
         EIX_REMOTEARCHIVE (${f})
         and add them to the eix database.
-        To keep this data across eix-update calls, you might want to set
-        KEEP_VIRTUALS=true in /etc/eixrc (or in ~/.eixrc)
+        If EIX_REMOTE is nonempty the output goes to that separate database.
+        You can use eix -R or set REMOTE_DEFAULT=true to access this
+        alternative database.
+        If EIX_REMOTE is empty the output is added to EIX_CACHEFILE.
+        In this case, to keep the remote data across eix-update calls
+        you might want to set KEEP_VIRTUALS=true in /etc/eixrc
 fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
 add:    Only do the second task (add EIX_REMOTEARCHIVE without fetching).
 remove: Remove all temporarily added virtual overlays from the eix database;
@@ -264,8 +268,18 @@ AddArchive() {
 	[ ${exitcode} -ne 0 ] && \
 		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`
 	die_on_update_failure=false
-	export KEEP_VIRTUALS=true
-	CallUpdate || {
+	ReadVar EIX_REMOTE EIX_REMOTE
+	(
+		if [ -n "${EIX_REMOTE:++}" ]
+		then	einfo "`eval_gettext \
+				'Output to remote database ${EIX_REMOTE}'`"
+			AddUpdateArgs '-o' "${EIX_REMOTE}"
+			umask 002
+		fi
+		KEEP_VIRTUALS=true
+		export KEEP_VIRTUALS
+		CallUpdate
+	) || {
 		exitcode=${?}
 		msg=`gettext 'eix-update failed'; \
 			[ -n "${msg:++}" ] && printf '\n%s' "${msg}"`

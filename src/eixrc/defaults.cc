@@ -142,6 +142,15 @@ AddOption(STRING, "EIX_PREVIOUS",
 	"%{EPREFIX}" EIX_PREVIOUS, _(
 	"This file is the previous eix cache (used by eix-diff and eix-sync)."));
 
+AddOption(STRING, "EIX_REMOTE",
+	"%{EPREFIX}" EIX_REMOTECACHEFILE, _(
+	"This is the eix cache used when -R is in effect. If the string is nonempty,\n"
+	"eix-remote uses this file for the output."));
+
+AddOption(BOOLEAN, "REMOTE_DEFAULT",
+	"false", _(
+	"Whether eix option -R should be on by default."));
+
 AddOption(STRING, "EIX_REMOTEARCHIVE",
 	"%{EPREFIX}" EIX_REMOTEARCHIVE, _(
 	"This is a local copy of the remote archive used by eix-remote.\n"

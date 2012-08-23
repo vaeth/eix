@@ -79,8 +79,8 @@ InstallEbuildVersion() {
 		egencache --repo="${repo_name}" --update || \
 			Die "egencache failed"
 	fi
-	Echo "emerge -1 =${category}/${project}-${2}"
-	exec emerge -1 -- "=${category}/${project}-${2}"
+	Echo "emerge -1O =${category}/${project}-${2}"
+	exec emerge -1O -- "=${category}/${project}-${2}"
 	Die "cannot execute emerge"
 }
 

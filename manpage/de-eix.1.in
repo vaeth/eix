@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-22 20:50:00 +0200 (Wen, 22 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-23 20:45:00 +0200 (Thu, 23 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -60,8 +60,9 @@ B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe
 
 B<eix-remote> kann eine Eix-Datenbank von einem externen Server syncen und ihn zum
 lokalen Cache hinzufügen und wieder entfernen.
-Um solche Remote-Daten über B<eix-update>-Aufrufe zu erhalten, können Sie
-B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc setzen.
+Per default benutzt es ein separates Datenbankfile.
+Falls das selbe Datenbankfile benutzt wird, können dennoch solche Remote-Daten über
+B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc setzt.
 Per Default wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
 Mehr zu B<eix-remote> erfahren Sie durch den Aufruf B<eix-remote -h>.
 
@@ -345,6 +346,13 @@ Falls es einen Grund gibt, bestimmte Einträge/Pakete von diesem Test auszuschli
 können diese Einträge in eine Datei /etc/portage/package.*.nonexistent eingefügt werden.
 Hier steht * für eines der Wort keywords, mask, unmask, use, env, license, cflags, installed.
 Diese Dateien (und wie ihre Namen geändert werden können) wird später beschrieben.
+
+.TP
+.BR -R ", " --remote
+Benutzt den Wert von EIX_REMOTE als Namen für das Cachefile.
+Diese Option sollten Sie benutzen, wenn Sie das Ergebnis von <eix-remote> sehen wollen.
+Sie können diese Option per Default aktivieren, indem Sie B<REMOTE_DEFAULT=true> setzen.
+
 .TP
 .BI "--cache-file " FILE
 Benutzt I<FILE> statt B<@EIX_CACHEFILE@>.
@@ -1936,6 +1944,16 @@ Die eix-Cachedatei, normalerweise B<%{EPREFIX}@EIX_CACHEFILE@>
 .BR EIX_PREVIOUS " " (string)
 Die alte eix-Cachedatei für eix-diff und eix-sync,
 normalerweise B<%{EPREFIX}@EIX_PREVIOUS@>
+
+.TP
+.BR EIX_REMOTE " " (string)
+Die eix-Cachedatei, die bei -R benutzt wird.
+Falls der String nichtleer ist, benutzt eix-remote diese Datanbank zur Ausgabe.
+Der Default-Wert ist B<%{EPREFIX}@EIX_REMOTECACHEFILE@>
+
+.TP
+.BR REMOTE_DEFAULT " " (bool)
+Ob die eix-Option -R per Default an sein soll.
 
 .TP
 .BR EIX_REMOTEARCHIVE " " (string)

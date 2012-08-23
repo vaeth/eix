@@ -114,6 +114,7 @@ dump_help()
 "     -Q, --quick (toggle)  don't read unguessable slots of installed packages\n"
 "         --care            always read slots of installed packages\n"
 "         --cache-file      use another cache-file instead of %s\n"
+"     -R  --remote (toggle) use remote cache-file %s\n"
 "\n"
 "   Output:\n"
 "     -q, --quiet (toggle)   no output. Typically combined with -0\n"
@@ -222,7 +223,7 @@ dump_help()
 "    -f [m], --fuzzy [m]   Use fuzzy-search with a max. levenshtein-distance m.\n"
 "\n"
 "This program is covered by the GNU General Public License. See COPYING for\n"
-"further information.\n"), program_name, EIX_CACHEFILE);
+"further information.\n"), program_name, EIX_CACHEFILE, EIX_REMOTECACHEFILE);
 }
 
 static const char *format_normal, *format_verbose, *format_compact;
@@ -266,6 +267,7 @@ static struct LocalOptions {
 		do_debug,
 		ignore_etc_portage,
 		is_current,
+		remote,
 		hash_iuse,
 		hash_keywords,
 		hash_slot,
@@ -328,6 +330,7 @@ EixOptionList::EixOptionList()
 	push_back(Option("format-compact", O_FMT_COMPACT, Option::STRING,   &format_compact));
 
 	push_back(Option("cache-file",     O_EIX_CACHEFILE, Option::STRING, &eix_cachefile));
+	push_back(Option("remote",         'R', Option::BOOLEAN, &rc_options.remote));
 
 	// Options for criteria
 	push_back(Option("installed",     'I'));
@@ -439,6 +442,7 @@ setup_defaults(EixRc *rc)
 	rc_options.quick           = rc->getBool("QUICKMODE");
 	rc_options.be_quiet        = rc->getBool("QUIETMODE");
 	rc_options.care            = rc->getBool("CAREMODE");
+	rc_options.remote          = rc->getBool("REMOTE_DEFAULT");
 
 	format_verbose             = (*rc)["FORMAT_VERBOSE"].c_str();
 	format_compact             = (*rc)["FORMAT_COMPACT"].c_str();
@@ -561,7 +565,12 @@ run_eix(int argc, char** argv)
 	if(unlikely(eix_cachefile != NULLPTR)) {
 		cachefile = eix_cachefile;
 	} else {
-		cachefile = eixrc["EIX_CACHEFILE"];
+		if(rc_options.remote) {
+			cachefile = eixrc["EIX_REMOTE"];
+		}
+		if(cachefile.empty()) {
+			cachefile = eixrc["EIX_CACHEFILE"];
+		}
 	}
 
 	// Only check if the versions uses the current layout

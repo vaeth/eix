@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-22 20:50:00 +0200 (Wen, 22 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-23 20:45:00 +0200 (Thu, 23 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -62,9 +62,9 @@ B<eix-test-obsolete> is a script which calls B<eix> several times to display
 the output of B<eix -tTc> in a more organized manner.
 
 B<eix-remote> can sync an eix database from an external server and
-add/remove it to the current database.
-Note that to keep such remote data across eix-update calls
-you might want to set B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
+add/remove it to the current database. By default it uses a separate cachefile.
+If you use the same cachefile you can keep such remote data across eix-update
+calls by setting B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
 By default, this script drops its permissions using B<eix-drop-permissions>.
 To get more help on B<eix-remote> call B<eix-remote -h>.
 
@@ -339,6 +339,13 @@ If you have a reason to exclude certain entries/packages from this test,
 you can write those entries into a file /etc/portage/package.*.nonexistent
 where *=keywords,mask,unmask,use,env,license,cflags,installed.
 These files (and how to modify their filenames) are described later.
+
+.TP
+.BR -R ", " --remote
+Uses the value of B<EIX_REMOTE> as cache file name.
+Use this option if you want to see what B<eix-remote> produced.
+You can make this option the default by setting B<REMOTE_DEFAULT=true>.
+
 .TP
 .BI "--cache-file " FILE
 Use I<FILE> instead of B<@EIX_CACHEFILE@>.
@@ -1923,6 +1930,16 @@ The eix cachefile, usually B<%{EPREFIX}@EIX_CACHEFILE@>
 .BR EIX_PREVIOUS " " (string)
 The previous eix cachefile for eix-diff and eix-sync,
 usually B<%{EPREFIX}@EIX_PREVIOUS@>
+
+.TP
+.BR EIX_REMOTE " " (string)
+The eix cache used when -R is in effect.
+If the string is nonempty, eix-remote uses this file for the output.
+The default value is B<%{EPREFIX}@EIX_REMOTECACHEFILE@>
+
+.TP
+.BR REMOTE_DEFAULT " " (bool)
+Whether eix option -R should be on by default.
 
 .TP
 .BR EIX_REMOTEARCHIVE " " (string)
