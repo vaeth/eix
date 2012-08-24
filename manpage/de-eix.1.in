@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-23 20:45:00 +0200 (Thu, 23 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-24 20:30:00 +0200 (Fri, 24 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -543,10 +543,10 @@ Die Version des Binärfiles muss mit mindestens einer vorhandenen oder einer ins
 Nur die reine Existenz eines entsprechenden *.tbz2-files wird überprüft:
 Ob Portage die Datei tatsächlich benutzen kann, hängt auch von Meta-Daten innerhalb der *.tbz2-Datei ab (wie etwa USE settings), was von eix nicht beachtet wird.
 .TP
-.BR -N ", " --nonvirtual
+.B --nonvirtual
 Findet nur Pakete mit mindestens einer Version aus dem Hauptbaum oder einem nicht-virtuellen Overlay.
 .TP
-.BR --virtual
+.B --virtual
 Findet nur Pakete mit mindestens einem nicht-virtuellen Overlay.
 .TP
 .BR -O ", " --overlay

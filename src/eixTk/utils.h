@@ -10,8 +10,6 @@
 #ifndef SRC_EIXTK_UTILS_H_
 #define SRC_EIXTK_UTILS_H_ 1
 
-#include <config.h>
-
 #include <map>
 #include <string>
 #include <vector>
@@ -26,7 +24,7 @@
 struct dirent;
 #define SCANDIR_ARG3 const struct dirent *
 typedef int (*select_dirent)(SCANDIR_ARG3 dir_entry);
-bool scandir_cc(const std::string &dir, std::vector<std::string> &namelist, select_dirent select, bool sorted = true);
+bool scandir_cc(const std::string &dir, std::vector<std::string> *namelist, select_dirent select, bool sorted = true);
 
 /** push_back every line of file or dir into v. */
 bool pushback_lines(const char *file, std::vector<std::string> *v, bool remove_empty = true, bool recursive = false, bool remove_comments = true, std::string *errtext = NULLPTR);

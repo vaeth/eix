@@ -5,6 +5,8 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include <cassert>
 
 #include <map>

@@ -6,12 +6,14 @@
 	  To access this database, the new eix option -R has been included.
 	  You can make -R the default by setting REMOTE_DEFAULT=true.
 	  Set EIX_REMOTE="" to keep the old behavior with only one database.
-	- Introduce search options -N --nonvirtual, --virtual and attributes
+	- Introduce search options --nonvirtual, --virtual and attributes
 	  {virtual} {havevirtual} {havenonvirtual} and in xml: virtual="1"
 	- Make configure cross-compile friendly, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=432122
 	- Fix --without-sqlite compile regression, see
 	  http://bugs.gentoo.org/show_bug.cgi?id=432238
+	- include config.h in all non-headers, and only there.
+	  This should fix https://bugs.gentoo.org/show_bug.cgi?id=432478
 
 *eix-0.26.3
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

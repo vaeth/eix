@@ -10,8 +10,6 @@
 #ifndef SRC_CACHE_COMMON_EBUILD_EXEC_H_
 #define SRC_CACHE_COMMON_EBUILD_EXEC_H_ 1
 
-#include <config.h>
-
 #include <csignal>
 
 #include <string>

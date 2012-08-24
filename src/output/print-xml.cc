@@ -6,6 +6,8 @@
 //   Bob Shaffer II <bob.shaffer.2 at gmail.com>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include <set>
 #include <string>
 #include <vector>

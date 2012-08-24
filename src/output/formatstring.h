@@ -10,8 +10,6 @@
 #ifndef SRC_OUTPUT_FORMATSTRING_H_
 #define SRC_OUTPUT_FORMATSTRING_H_ 1
 
-#include <config.h>
-
 #include <sys/types.h>
 
 #include <map>

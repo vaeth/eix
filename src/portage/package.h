@@ -10,8 +10,6 @@
 #ifndef SRC_PORTAGE_PACKAGE_H_
 #define SRC_PORTAGE_PACKAGE_H_ 1
 
-#include <config.h>
-
 #include <list>
 #include <map>
 #include <string>

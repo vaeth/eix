@@ -7,8 +7,10 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-// The following comment satisfies check_includes script:
-// include <config.h> include "eixTk/i18n.h" include <cstdlib>
+// This file is supposed to be included by a wrapper which should contain
+// #include <config.h>
+// #include "eixTk/i18n.h"
+// #include <cstdlib>
 
 #define AddOption(opt_type, opt_name, opt_default, opt_description) \
 	eixrc->addDefault(EixRcOption(EixRcOption::opt_type, opt_name, \

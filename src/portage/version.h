@@ -10,8 +10,6 @@
 #ifndef SRC_PORTAGE_VERSION_H_
 #define SRC_PORTAGE_VERSION_H_ 1
 
-#include <config.h>
-
 #include <cstdio>
 
 #include <algorithm>

@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include "eixTk/likely.h"
 #include "portage/basicversion.h"
 #include "portage/extendedversion.h"

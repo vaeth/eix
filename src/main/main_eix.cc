@@ -7,5 +7,7 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #define EIX_BINARY 1
 #include "main/main.cc"

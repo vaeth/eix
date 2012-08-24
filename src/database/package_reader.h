@@ -10,8 +10,6 @@
 #ifndef SRC_DATABASE_PACKAGE_READER_H_
 #define SRC_DATABASE_PACKAGE_READER_H_ 1
 
-#include <config.h>
-
 #include <sys/types.h>
 
 #include <cstdio>

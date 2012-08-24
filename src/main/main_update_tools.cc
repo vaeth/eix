@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #define UPDATE_BINARY 1
 #define DROP_PERMISSIONS_BINARY 1
 #define VERSIONSORT_BINARY 1

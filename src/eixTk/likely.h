@@ -10,8 +10,6 @@
 
 // include "eixTk/likely.h" This comment satisfies check_include script
 
-#include <config.h>
-
 #ifdef HAVE___BUILTIN_EXPECT
 #define likely(x)	__builtin_expect((x), 1)
 #define unlikely(x)	__builtin_expect((x), 0)

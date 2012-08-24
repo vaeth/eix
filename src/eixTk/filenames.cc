@@ -5,8 +5,9 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-// #define DEBUG_NORMALIZE_PATH
 #include <config.h>
+
+// #define DEBUG_NORMALIZE_PATH
 
 #include <fnmatch.h>
 

@@ -10,8 +10,6 @@
 
 // include "eixTk/i18n.h" This comment satisfies check_include script
 
-#include <config.h>
-
 #ifdef ENABLE_NLS
 
 #include <libintl.h>

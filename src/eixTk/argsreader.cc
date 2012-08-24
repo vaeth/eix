@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

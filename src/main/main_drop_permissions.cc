@@ -5,5 +5,7 @@
 // Copyright (c)
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #define DROP_PERMISSIONS_BINARY 1
 #include "main/main.cc"

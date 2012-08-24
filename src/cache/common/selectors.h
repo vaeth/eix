@@ -10,8 +10,6 @@
 #ifndef SRC_CACHE_COMMON_SELECTORS_H_
 #define SRC_CACHE_COMMON_SELECTORS_H_ 1
 
-#include <config.h>
-
 #include <string>
 
 #include "eixTk/utils.h"

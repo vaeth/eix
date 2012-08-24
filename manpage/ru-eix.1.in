@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-23 20:45:00 +0200 (Thu, 23 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-24 20:30:00 +0200 (Fri, 24 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -527,10 +527,10 @@ The version of the binary file must either match the version of an available ver
 Just the existence of the corresponding *.tbz2 file is checked:
 Whether portage can actually use the file depends also on metadata within the *.tbz2 file (like USE settings) which is not considered by eix.
 .TP
-.BR -N ", " --nonvirtual
+.B --nonvirtual
 Only match packages with at least one version from the main tree or a non-virtual overlay.
 .TP
-.BR --virtual
+.B --virtual
 Only match packages with at least one version in a virtual overlay.
 .TP
 .BR -O ", " --overlay

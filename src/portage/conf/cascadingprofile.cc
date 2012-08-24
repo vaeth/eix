@@ -7,9 +7,9 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-// #define DEBUG_PROFILE_PATHS
-
 #include <config.h>
+
+// #define DEBUG_PROFILE_PATHS
 
 #include <cassert>
 #include <cstring>

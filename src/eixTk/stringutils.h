@@ -12,8 +12,6 @@
 
 // include "eixTk/stringutils.h" This comment satisfies check_include script
 
-#include <config.h>
-
 #ifndef HAVE_STRNDUP
 #include <sys/types.h>
 /** strndup in case we don't have one. */

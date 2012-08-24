@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include <dirent.h>
 
 #include <cstdlib>
@@ -170,10 +172,10 @@ MetadataCache::setFlat(bool set_flat)
 }
 
 static int
-cachefiles_selector (SCANDIR_ARG3 dent)
+cachefiles_selector(SCANDIR_ARG3 dent)
 {
-	return (dent->d_name[0] != '.'
-			&& strchr(dent->d_name, '-') != NULLPTR);
+	return ((dent->d_name[0] != '.')
+			&& (strchr(dent->d_name, '-') != NULLPTR));
 }
 
 bool
@@ -249,7 +251,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 	optional_append(&m_catpath, '/');
 	m_catpath.append(cat_name);
 
-	bool r(scandir_cc(m_catpath, names, cachefiles_selector));
+	bool r(scandir_cc(m_catpath, &names, cachefiles_selector));
 	if(path_type != PATH_METADATAMD5OR) {
 		return r;
 	}
@@ -267,7 +269,7 @@ MetadataCache::readCategoryPrepare(const char *cat_name)
 	if(flat) {  // We "jump" to flat PATH_METADATA mode:
 		setFlat(true);
 	}
-	return scandir_cc(m_catpath, names, cachefiles_selector);
+	return scandir_cc(m_catpath, &names, cachefiles_selector);
 }
 
 void

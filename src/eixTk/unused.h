@@ -10,8 +10,6 @@
 
 // include "eixTk/unused.h" This comment satisfies check_include script
 
-#include <config.h>
-
 #ifdef ATTRIBUTE_UNUSED
 #define UNUSED(p)
 

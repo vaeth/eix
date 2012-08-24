@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include <cstdlib>
 #include <ctime>
 
@@ -381,7 +383,7 @@ ParseCache::readCategoryPrepare(const char *cat_name)
 		likely(it != further.end()); ++it)
 		further_works.push_back((*it)->readCategoryPrepare(cat_name));
 	m_catpath = m_prefix + m_scheme + '/' + cat_name;
-	return scandir_cc(m_catpath, m_packages, package_selector);
+	return scandir_cc(m_catpath, &m_packages, package_selector);
 }
 
 void
@@ -404,7 +406,7 @@ ParseCache::readCategory(Category *cat)
 		vector<string> files;
 		string pkg_path(m_catpath + '/' + (*pit));
 
-		if(scandir_cc(pkg_path, files, ebuild_selector))
+		if(scandir_cc(pkg_path, &files, ebuild_selector))
 			readPackage(cat, *pit, pkg_path, files);
 	}
 	return true;

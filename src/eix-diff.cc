@@ -7,11 +7,11 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 /*
  * Everyone wanted something like esync from esearch .. so here it is!
  */
-
-#include <config.h>
 
 #include <unistd.h>
 

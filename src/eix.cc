@@ -160,7 +160,7 @@ dump_help()
 "    --selected-set        Match packages of a world set.\n"
 "    --selected            Match packages of @selected (world file or set).\n"
 "    --binary              Match packages with *.tbz2 files.\n"
-"    -N, --nonvirtual                 Match packages from nonvirtual overlays.\n"
+"    --nonvirtual                     Match packages from nonvirtual overlays.\n"
 "    --virtual                        Match packages from virtual overlays.\n"
 "    -O, --overlay                    Match packages from overlays.\n"
 "    --in-overlay OVERLAY             Match packages from OVERLAY.\n"
@@ -365,7 +365,7 @@ EixOptionList::EixOptionList()
 	push_back(Option("overlay",              'O'));
 	push_back(Option("installed-overlay",    'J'));
 	push_back(Option("installed-from-overlay", O_FROM_OVERLAY,    Option::KEEP_STRING_OPTIONAL));
-	push_back(Option("nonvirtual",           'N'));
+	push_back(Option("nonvirtual",           O_NONVIRTUAL));
 	push_back(Option("virtual",              O_VIRTUAL));
 	push_back(Option("in-overlay",           O_OVERLAY,           Option::KEEP_STRING_OPTIONAL));
 	push_back(Option("only-in-overlay",      O_ONLY_OVERLAY,      Option::KEEP_STRING_OPTIONAL));

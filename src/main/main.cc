@@ -7,7 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
-#include <config.h>
+// This file is meant to be included from a wrapper which should start with:
+// #include <config.h>
 
 #include <csignal>  /* signal handlers */
 #include <cstdio>
@@ -24,8 +25,7 @@
 #include "eixTk/null.h"
 #include "main/main.h"
 
-// You must define - in config.h, by -D... or by a wrapper file -
-// one or several of
+// You must define by a wrapper file - one or several of
 //   EIX_BINARY
 //   DIFF_BINARY
 //   UPDATE_BINARY

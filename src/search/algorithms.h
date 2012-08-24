@@ -10,8 +10,6 @@
 #ifndef SRC_SEARCH_ALGORITHMS_H_
 #define SRC_SEARCH_ALGORITHMS_H_ 1
 
-#include <config.h>
-
 #include <fnmatch.h>
 
 #include <cstring>
@@ -25,9 +23,7 @@
 #include "search/levenshtein.h"
 
 /* Check if we have FNM_CASEFOLD ..
- * fnmatch(3) tells that this is a GNU extension.
- * However, we do not #define _GNU_SOURCE but instead make sure to
- * #include "config.h" */
+ * fnmatch(3) tells that this is a GNU extension. */
 #ifdef FNM_CASEFOLD
 #define FNMATCH_FLAGS FNM_CASEFOLD
 #else

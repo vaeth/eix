@@ -10,8 +10,6 @@
 #ifndef SRC_CACHE_BASE_H_
 #define SRC_CACHE_BASE_H_ 1
 
-#include <config.h>
-
 #include <ctime>
 
 #include <map>

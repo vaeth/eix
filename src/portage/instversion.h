@@ -10,8 +10,6 @@
 #ifndef SRC_PORTAGE_INSTVERSION_H_
 #define SRC_PORTAGE_INSTVERSION_H_ 1
 
-#include <config.h>
-
 #include <ctime>
 
 #include <string>

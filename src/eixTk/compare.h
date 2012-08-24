@@ -9,8 +9,6 @@
 #ifndef SRC_EIXTK_COMPARE_H_
 #define SRC_EIXTK_COMPARE_H_ 1
 
-#include <config.h>
-
 #include <string>
 
 #include "eixTk/eixint.h"

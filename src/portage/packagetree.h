@@ -10,8 +10,6 @@
 #ifndef SRC_PORTAGE_PACKAGETREE_H_
 #define SRC_PORTAGE_PACKAGETREE_H_ 1
 
-#include <config.h>
-
 #include <map>
 #include <string>
 #include <vector>

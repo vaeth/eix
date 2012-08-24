@@ -10,8 +10,6 @@
 
 // include "eixTk/null.h" This comment satisfies check_include script
 
-#include <config.h>
-
 #ifdef HAVE_NULLPTR
 #define NULLPTR nullptr
 #else

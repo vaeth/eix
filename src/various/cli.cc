@@ -7,6 +7,8 @@
 //   Emil Beinroth <emilbeinroth@gmx.net>
 //   Martin Väth <vaeth@mathematik.uni-wuerzburg.de>
 
+#include <config.h>
+
 #include <cstdlib>
 
 #include <iostream>
@@ -198,7 +200,7 @@ parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettin
 					break;
 				}
 				// No break here...
-			case 'N': USE_TEST;
+			case O_NONVIRTUAL: USE_TEST;
 				test->Nonvirtual();
 				break;
 			case O_VIRTUAL: USE_TEST;

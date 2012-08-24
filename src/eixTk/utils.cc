@@ -36,22 +36,25 @@ using std::string;
 using std::vector;
 
 bool
-scandir_cc(const string &dir, vector<string> &namelist, select_dirent select, bool sorted)
+scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bool sorted)
 {
-	namelist.clear();
+	namelist->clear();
 	DIR *dirhandle(opendir(dir.c_str()));
-	if(!dirhandle)
+	if(dirhandle == NULLPTR) {
 		return false;
+	}
 	struct dirent res, *d;
 	while(likely((readdir_r(dirhandle, &res, &d) == 0) && (d != NULLPTR))) {
 		const char *name(d->d_name);
 		// Omit "." and ".." since we must not rely on their existence anyway
-		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d)))
-			namelist.push_back(name);
+		if(likely(strcmp(name, ".") && strcmp(name, "..") && (*select)(d))) {
+			namelist->push_back(name);
+		}
 	}
 	closedir(dirhandle);
-	if(sorted)
-		sort(namelist.begin(), namelist.end());
+	if(sorted) {
+		sort(namelist->begin(), namelist->end());
+	}
 	return true;
 }
 
@@ -184,7 +187,7 @@ pushback_files(const string &dir_path, vector<string> &into, const char *exclude
 	if(only_type)
 		pushback_files_dir_path = &dir_path;
 	vector<string> namelist;
-	if(!scandir_cc(dir_path, namelist, pushback_files_selector))
+	if(!scandir_cc(dir_path, &namelist, pushback_files_selector))
 		return false;
 	for(vector<string>::const_iterator it(namelist.begin());
 		likely(it != namelist.end()); ++it) {

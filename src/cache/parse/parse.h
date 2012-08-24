@@ -10,8 +10,6 @@
 #ifndef SRC_CACHE_PARSE_PARSE_H_
 #define SRC_CACHE_PARSE_PARSE_H_ 1
 
-#include <config.h>
-
 #include <string>
 #include <vector>
 

@@ -13,9 +13,28 @@
 export LC_ALL="C"
 unset GREP_OPTIONS GREP_COLORS GREP_COLOR
 
+Echo() {
+	printf '%s\n' "${*}"
+}
+
 GrepAll() {
 	find . '(' -name "generate*.sh" -o -name "*.cc" -o -name "*.h" ')' \
 		-exec grep -l "${@}" -- '{}' '+'
+}
+
+GrepHWith() {
+	Echo "*.h files with ${*}:"
+	GREP_OPTIONS='--color=always' find . -name "*.h" \
+		-exec grep -l -e "${@}" -- '{}' '+'
+	echo
+}
+
+
+GrepCCWithout() {
+	Echo "*.cc files without ${*}:"
+	GREP_OPTIONS='--color=always' find . '(' -name "generate*.sh" -o -name "*.cc" ')' \
+		-exec grep -L -e "${@}" -- '{}' '+'
+	echo
 }
 
 SetG='case ${1} in
@@ -31,7 +50,7 @@ ${colon}'
 GrepWithout() {
 	local g colon
 	eval "${SetG}" || return 0
-	printf "%s\n" "Files with ${*} but not ${g}:"
+	Echo "Files with ${*} but not ${g}:"
 	GrepAll "${@}" | GREP_OPTIONS='--color=always' \
 		xargs -- grep -L -e "${g}" --
 	echo
@@ -40,7 +59,7 @@ GrepWithout() {
 GrepWith() {
 	local g colon
 	eval "${SetG}"
-	printf "%s\n" "Files with ${g} but not ${*}:"
+	Echo "Files with ${g} but not ${*}:"
 	GrepAll -e "${g}" | GREP_OPTIONS='--color=always' \
 		xargs -- grep -L "${@}" --
 	echo
@@ -63,7 +82,9 @@ Check() {
 }
 fi
 
-Check '<config\.h>' -e '^#if.*HAVE' -e '^#if.*USE' -e '^#if.*WITH' -e '^#if.*[^E]TEST'  -e '^#if.*DEBUG' -e '#if.*ENABLE' -e '[^\"_]EIX_CACHEFILE' -e '#if.*BIGENDIAN' -e '#if.*[^_]TARGET' -e '#if.*CASEFOLD' -e SYSCONFDIR -e ALWAYS_RECALCULATE -e 'ATTRIBUTE_NORETURN' -e 'ATTRIBUTE_SIGNAL' -e 'ATTRIBUTE_CONST' -e 'ATTRIBUTE_PURE' -e '[^a-e_g-z_.]open(' -e '[^a-e_g-z_.]close(' -e 'seek(' -e 'stat(' -e "sys/stat" -e "sys/type" -e "sys/mman" -e "size_t[^y]" -e "off_t" -e "fcntl"
+GrepHWith 'include .config'
+GrepCCWithout '#include <config\.h>'
+#Check '<config\.h>' -e '^#if.*HAVE' -e '^#if.*USE' -e '^#if.*WITH' -e '^#if.*[^E]TEST'  -e '^#if.*DEBUG' -e '#if.*ENABLE' -e '[^\"_]EIX_CACHEFILE' -e '#if.*BIGENDIAN' -e '#if.*[^_]TARGET' -e '#if.*CASEFOLD' -e SYSCONFDIR -e ALWAYS_RECALCULATE -e 'ATTRIBUTE_NORETURN' -e 'ATTRIBUTE_SIGNAL' -e 'ATTRIBUTE_CONST' -e 'ATTRIBUTE_PURE' -e '[^a-e_g-z_.]open(' -e '[^a-e_g-z_.]close(' -e 'seek(' -e 'stat(' -e "sys/stat" -e "sys/type" -e "sys/mman" -e "size_t[^y]" -e "off_t" -e "fcntl" -e 'FULL_GCC_DIAG_PRAGMA'
 Check '"eixTk/diagnostics\.h"' -e DIAG_OFF -e DIAG_ON
 Check '"eixTk/eixint\.h"' -e OffsetType -e UChar -e UNumber -e Treesize -e Catsize -e Versize -e SignedBool -e TinySigned -e TinyUnsigned
 Check '"eixTk/exceptions\.h"' -e portage_parse_error

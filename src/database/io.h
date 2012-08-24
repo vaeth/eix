@@ -144,8 +144,8 @@ GCC_DIAG_ON(sign-conversion)
 			if(fp == NULLPTR) {
 GCC_DIAG_OFF(sign-conversion)
 				eix::UChar d((t >> (8*count)) & 0xFFU);
-GCC_DIAG_ON(sign-conversion)
 				io::counter += ((unlikely(d == MAGICNUMCHAR)) ? 2 : 1) + (2 * count);
+GCC_DIAG_ON(sign-conversion)
 				return true;
 			}
 			for(unsigned int r(count); ;) {

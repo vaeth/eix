@@ -10,8 +10,6 @@
 #ifndef SRC_PORTAGE_CONF_PORTAGESETTINGS_H_
 #define SRC_PORTAGE_CONF_PORTAGESETTINGS_H_ 1
 
-#include <config.h>
-
 #include <map>
 #include <set>
 #include <string>

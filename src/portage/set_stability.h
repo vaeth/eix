@@ -10,8 +10,6 @@
 #ifndef SRC_PORTAGE_SET_STABILITY_H_
 #define SRC_PORTAGE_SET_STABILITY_H_ 1
 
-#include <config.h>
-
 #include "portage/version.h"
 
 class Category;
