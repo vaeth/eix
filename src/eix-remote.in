@@ -56,10 +56,18 @@ update: Fetch the eix-caches of some layman overlays, store them locally in
         If EIX_REMOTE is empty the output is added to EIX_CACHEFILE.
         In this case, to keep the remote data across eix-update calls
         you might want to set KEEP_VIRTUALS=true in /etc/eixrc
-fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
 add:    Only do the second task (add EIX_REMOTEARCHIVE without fetching).
-remove: Remove all temporarily added virtual overlays from the eix database;
-        this is similar to
+        If EIX_REMOTE is nonempty, it makes sense to call this regularly
+        after eix-update so that eix -R will show synchronized data.
+        It makes sense in this case to put this into your eix-sync.conf:
+        @@eix-remote add
+fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).
+        If you want to download the most current remote data at every call of
+        eix-sync put the following lines to your eix-sync.conf:
+        @eix-remote fetch
+        @@eix-remote add
+remove: Remove all temporarily added virtual overlays from the eix database.
+        This makes only sense if EIX_REMOTE is empty. The effect is similar to
         	KEEP_VIRTUALS=false eix-update
         but faster (using previous cachefile where possible).
 

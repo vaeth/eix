@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-08-24 20:13+0200\n"
+"POT-Creation-Date: 2012-08-25 08:11+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -37,7 +37,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:304 src/eix-remote.sh:284
+#: src/eix-functions.sh.in:304 src/eix-remote.sh:292
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -322,7 +322,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:231 src/eix-update.cc:661
+#: src/eix-layman.sh:133 src/eix-remote.sh:239 src/eix-update.cc:661
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -352,11 +352,21 @@ msgid ""
 "        If EIX_REMOTE is empty the output is added to EIX_CACHEFILE.\n"
 "        In this case, to keep the remote data across eix-update calls\n"
 "        you might want to set KEEP_VIRTUALS=true in /etc/eixrc\n"
-"fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).\n"
 "add:    Only do the second task (add EIX_REMOTEARCHIVE without fetching).\n"
+"        If EIX_REMOTE is nonempty, it makes sense to call this regularly\n"
+"        after eix-update so that eix -R will show synchronized data.\n"
+"        It makes sense in this case to put this into your eix-sync.conf:\n"
+"        @@eix-remote add\n"
+"fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).\n"
+"        If you want to download the most current remote data at every call "
+"of\n"
+"        eix-sync put the following lines to your eix-sync.conf:\n"
+"        @eix-remote fetch\n"
+"        @@eix-remote add\n"
 "remove: Remove all temporarily added virtual overlays from the eix "
-"database;\n"
-"        this is similar to\n"
+"database.\n"
+"        This makes only sense if EIX_REMOTE is empty. The effect is similar "
+"to\n"
 "        \tKEEP_VIRTUALS=false eix-update\n"
 "        but faster (using previous cachefile where possible).\n"
 "\n"
@@ -408,10 +418,21 @@ msgstr ""
 "        Um die Information in diesem Fall über eix-update-Aufrufe hinweg zu\n"
 "        retten, kann es sinnvoll sein, KEEP_VIRTUALS=true in /etc/eixrc\n"
 "        zu setzen.\n"
-"fetch:  Holt nur die Overlay-Daten nach EIX_REMOTEARCHIVE\n"
 "add:    Fügt nur die Overlay-Daten aus EIX_REMOTEARCHIVE zur Eix-Datenbank.\n"
+"        Wenn EIX_REMOTE nichtleer ist, ist es sinnvoll, dies immer nach\n"
+"        eix-update auszuführen, so dass eix -R synchronisierte Daten zeigt.\n"
+"        Es ist in diesem Fall sinnvoll, die folgende Zeile zu eix-sync.conf\n"
+"        hinzuzufügen:\n"
+"        @@eix-remote add\n"
+"fetch:  Holt nur die Overlay-Daten nach EIX_REMOTEARCHIVE\n"
+"        Falls die aktuellsten Daten bei jedem Aufruf von eix-sync\n"
+"        heruntergeladen werden sollen, fügen Sie die folgenden Zeilen\n"
+"        Ihrem eix-sync.conf hinzu:\n"
+"        @eix-remote fetch\n"
+"        @@eix-remote add\n"
 "remove: Entfernt alle temporär hinzugefügten virtuellen Overlays aus der\n"
-"        Eix-Datenbank. Dies ist in etwa das selbe wie\n"
+"        Eix-Datenbank. Die ist nur dann sinnvoll, wenn EIX_REMOTE leer ist.\n"
+"        Es ist in etwa das selbe wie\n"
 "        \tKEEP_VIRTUALS=false eix-update\n"
 "        aber schneller (da möglichst das alte Cachefile benutzt wird).\n"
 "\n"
@@ -442,27 +463,27 @@ msgstr ""
 "-H      Keine Ausgabe der Statuszeile\n"
 "-q      Keine Ausgabe"
 
-#: src/eix-remote.sh:100
+#: src/eix-remote.sh:108
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN darf nicht leer sein"
 
-#: src/eix-remote.sh:102
+#: src/eix-remote.sh:110
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN muss mit / beginnen"
 
-#: src/eix-remote.sh:159
+#: src/eix-remote.sh:167
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "Wechseln ins Directory ${a} nicht möglich"
 
-#: src/eix-remote.sh:192
+#: src/eix-remote.sh:200
 #, sh-format
 msgid "failed: wget -N -- ${addr}"
 msgstr "Fehler bei: wget -N -- ${addr}"
 
-#: src/eix-remote.sh:203
+#: src/eix-remote.sh:211
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -505,45 +526,45 @@ msgstr ""
 "eix-remote benutzen zu können. Dies ist unbequem, kann aber leider nicht\n"
 "vermieden werden und ist kein Bug!"
 
-#: src/eix-remote.sh:224
+#: src/eix-remote.sh:232
 msgid "Unpacking data"
 msgstr "Entpacken der Daten"
 
-#: src/eix-remote.sh:225
+#: src/eix-remote.sh:233
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:252
+#: src/eix-remote.sh:260
 #, sh-format
 msgid "problems occurred with cachefile ${i}"
 msgstr "Probleme mit Cachefile ${i}"
 
-#: src/eix-remote.sh:269
+#: src/eix-remote.sh:277
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:275
+#: src/eix-remote.sh:283
 #, sh-format
 msgid "Output to remote database ${EIX_REMOTE}"
 msgstr "Ausgabe auf Remote-Datenbank ${EIX_REMOTE}"
 
-#: src/eix-remote.sh:294
+#: src/eix-remote.sh:302
 msgid "A temporary file makes only sense for update mode"
 msgstr "Eine Temporärdate ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:305
+#: src/eix-remote.sh:313
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "Temporärdatei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:317
+#: src/eix-remote.sh:325
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:336
+#: src/eix-remote.sh:344
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"

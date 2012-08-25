@@ -55,6 +55,7 @@
 *.exe
 *.o
 *.o-*
+*.o.*
 *.obj
 *Makefile
 *Makefile.in

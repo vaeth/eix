@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-24 20:30:00 +0200 (Fri, 24 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-25 07:45:00 +0200 (Sat, 25 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -63,6 +63,9 @@ the output of B<eix -tTc> in a more organized manner.
 
 B<eix-remote> can sync an eix database from an external server and
 add/remove it to the current database. By default it uses a separate cachefile.
+With this default you should regularly call B<eix-remote add> after <eix-update>
+so that the separate cachefile is synchronized with your main database.
+(E.g. it is useful to put B<@@eix-remote add> to your /etc/eix-sync.conf in this case.)
 If you use the same cachefile you can keep such remote data across eix-update
 calls by setting B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc.
 By default, this script drops its permissions using B<eix-drop-permissions>.
@@ -1552,6 +1555,14 @@ layman calls and B<!> hooks in order of @SYSCONFDIR@/eix-sync.conf
 .TP
 Some examples of useful lines in B<@SYSCONFDIR@/eix-sync.conf>:
 .TP
+.B @@eix-remote add
+This should be put into the file if you use the default (a nonempty B<EIX_REMOTE>)
+so that your B<EIX_REMOTE> database is synchronized with your main eix database at the end of B<eix-sync>.
+.TP
+.B @eix-remote fetch
+Use this in addition to the above line if you want that the most current
+remote data is downloaded with every call of B<eix-sync>.
+.TP
 .B -F
 Always error out on layman/hook errors.
 This was always the case in earlier eix versions.
@@ -1573,9 +1584,9 @@ to use B<emerge --regen> instead of B<emerge --metadata>.
 .B @egencache --repo=local --update
 Update the metadata cache of the overlay with repository name "local"
 before eix-update is called but after calling emerge --sync.
-This can make sense if you want to use cache method B<metadata-flat>
+This can make sense if you want to use cache method B<metadata-md5> or B<metadata-flat>
 for that overlay and want to make sure that this metadata cache is up-to-date.
-The disadvantage is that this B<egencache> command is executed even if
+The disadvantage in case of B<metadata-flat> is that this B<egencache> command is executed even if
 "local" was not changed (which is usually the case for local repositories).
 .TP
 .B !egencache --repo=foo --update
@@ -1602,12 +1613,6 @@ Unless FORCE_USECOLORS is set differently in your environment, eix output
 will be colored even if you use redirection.
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"`hostname`-sh"
-.TP
-.B @@eix-remote update
-.TP
-.B @eix-remote fetch
-.TP
-.B @@eix-remote add
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc

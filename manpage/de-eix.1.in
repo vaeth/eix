@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-24 20:30:00 +0200 (Fri, 24 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-25 07:45:00 +0200 (Sat, 25 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -61,6 +61,10 @@ B<eix-test-obsolete> ist ein Skript, das B<eix> mehrmals aufruft, um die Ausgabe
 B<eix-remote> kann eine Eix-Datenbank von einem externen Server syncen und ihn zum
 lokalen Cache hinzufügen und wieder entfernen.
 Per default benutzt es ein separates Datenbankfile.
+Bei diesem Default sollten Sie regelmäig B<eix-remote add> nach <eix-update>
+aufrufen, so dass das separate Cachefile mit der Hauptdatenbank synchron ist.
+(Beispielsweise ist es in diesem Fall sinnvoll, B<@@eix-remote add> zu
+/etc/eix-sync.conf hinzuzufügen.)
 Falls das selbe Datenbankfile benutzt wird, können dennoch solche Remote-Daten über
 B<eix-update>-Aufrufe hinweg erhalten werden, indem man B<KEEP_VIRTUALS=true> in @SYSCONFDIR@/eixrc setzt.
 Per Default wird dieses Skript seine Rechte durch B<eix-drop-permissions> fallenlassen.
@@ -1564,6 +1568,15 @@ layman-Aufrufe und B<!>-Hooks in der Reihenfolge von @SYSCONFDIR@/eix-sync.conf
 .TP
 Einige Beispiele nützlicher Zeilen in B<@SYSCONFDIR@/eix-sync.conf>:
 .TP
+.B @@eix-remote add
+Diese Zeile sollte bei Benutzung des Defaults (nichtleeres B<EIX_REMOTE>)
+im File stehen, so dass die B<EIX_REMOTE> Datenbank mit der Hauptdatenbank von
+eix am Ende von B<eix-sync> synchronisiert wird.
+.TP
+.B @eix-remote fetch
+Dies empfiehlt sich zusätzlich zur obigen Zeile, falls gewünscht ist, dass die
+aktuellsten Remote-Daten regelmäßig bei jedem Aufruf von B<eix-sync> heruntergeladen werden.
+.TP
 .B -F
 Stets ein Fehlerabbruch, falls layman/hook fehlschlägt.
 Dies war bei früheren eix versionen stets der Fall.
@@ -1585,9 +1598,9 @@ ersetzen, um B<emerge --regen> statt B<emerge --metadata> zu benutzen.
 .B @egencache --repo=local --update
 Updated den Metadaten-Caches des Overlays mit dem Repository-Namen "local"
 bevor eix-update aufgerufen wird, aber nach dem Aufruf von emerge --sync.
-Dies kann bei Benuztung der Cachemethode B<metadata-flat> für diesen Overlay
+Dies kann bei Benutzung der Cachemethode B<metadata-md5> oder B<metadata-flat> für diesen Overlay
 sinnvoll sein, falls man sicher sein will, dass der Metadaten-Cache aktuell ist.
-Der Nachteil ist, dass dieses B<egencache>-Kommando auch dann ausgeführt wird,
+Der Nachteil im Falle von B<metadata-flat> ist, dass dieses B<egencache>-Kommando auch dann ausgeführt wird,
 wenn "local" nicht verändert wurde (was für locale Repositories typisch ist).
 .TP
 .B !egencache --repo=foo --update
@@ -1614,12 +1627,6 @@ Falls FORCE_USECOLORS nicht in der Environment anders gesetzt wurde,
 wird die eix-Ausgabe auch im Falle von Ausgabeumleitung farbig.
 .TP
 .B ~keychain --quiet ~/.ssh/id_rsa ; cat ~/.keychain/"`hostname`-sh"
-.TP
-.B @@eix-remote update
-.TP
-.B @eix-remote fetch
-.TP
-.B @@eix-remote add
 .\" }}}
 
 .\" {{{ -------- @SYSCONFDIR@/eixrc

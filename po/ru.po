@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-08-24 20:13+0200\n"
+"POT-Creation-Date: 2012-08-25 08:11+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -37,7 +37,7 @@ msgstr "Проблема при запуске ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Запускаю eix-update"
 
-#: src/eix-functions.sh.in:304 src/eix-remote.sh:284
+#: src/eix-functions.sh.in:304 src/eix-remote.sh:292
 msgid "eix-update failed"
 msgstr "ошибка eix-update"
 
@@ -318,7 +318,7 @@ msgstr ""
 "-H            Подавить обновление линии статуса\n"
 "-q            Тихо"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:231 src/eix-update.cc:661
+#: src/eix-layman.sh:133 src/eix-remote.sh:239 src/eix-update.cc:661
 msgid "Analyzing"
 msgstr "Анализ"
 
@@ -348,11 +348,21 @@ msgid ""
 "        If EIX_REMOTE is empty the output is added to EIX_CACHEFILE.\n"
 "        In this case, to keep the remote data across eix-update calls\n"
 "        you might want to set KEEP_VIRTUALS=true in /etc/eixrc\n"
-"fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).\n"
 "add:    Only do the second task (add EIX_REMOTEARCHIVE without fetching).\n"
+"        If EIX_REMOTE is nonempty, it makes sense to call this regularly\n"
+"        after eix-update so that eix -R will show synchronized data.\n"
+"        It makes sense in this case to put this into your eix-sync.conf:\n"
+"        @@eix-remote add\n"
+"fetch:  Only do the first task (fetch eix-caches to EIX_REMOTEARCHIVE).\n"
+"        If you want to download the most current remote data at every call "
+"of\n"
+"        eix-sync put the following lines to your eix-sync.conf:\n"
+"        @eix-remote fetch\n"
+"        @@eix-remote add\n"
 "remove: Remove all temporarily added virtual overlays from the eix "
-"database;\n"
-"        this is similar to\n"
+"database.\n"
+"        This makes only sense if EIX_REMOTE is empty. The effect is similar "
+"to\n"
 "        \tKEEP_VIRTUALS=false eix-update\n"
 "        but faster (using previous cachefile where possible).\n"
 "\n"
@@ -403,13 +413,22 @@ msgstr ""
 "        In this case:\n"
 "        Чтобы хранить эти данные между вызовами eix-update,\n"
 "        выставьте KEEP_VIRTUALS=true в /etc/eixrc (или в ~/.eixrc)\n"
-"fetch:  Выполнить только первую задачу (получить кэши eix в "
-"EIX_REMOTEARCHIVE).\n"
 "add:    Выполнить только вторую задачу (добавить EIX_REMOTEARCHIVE без "
 "получения).\n"
+"        If EIX_REMOTE is nonempty, it makes sense to call this regularly\n"
+"        after eix-update so that eix -R will show synchronized data.\n"
+"        It makes sense in this case to put this into your eix-sync.conf:\n"
+"        @@eix-remote add\n"
+"fetch:  Выполнить только первую задачу (получить кэши eix в "
+"EIX_REMOTEARCHIVE).\n"
+"        If you want to download the most current remote data at every call "
+"of\n"
+"        eix-sync put the following lines to your eix-sync.conf:\n"
+"        @eix-remote fetch\n"
+"        @@eix-remote add\n"
 "remove: Удалить все временно добавленные виртуальные оверлеи из базы данных "
-"eix;\n"
-"        это похоже на\n"
+"eix.\n"
+"        This makes only sense if EIX_REMOTE is empty. это похоже на\n"
 "        \tKEEP_VIRTUALS=false eix-update\n"
 "        но быстрее (использовать предыдущий файл кэша там, где возможно).\n"
 "\n"
@@ -449,27 +468,27 @@ msgstr ""
 "-H      Подавить обновление линии статуса\n"
 "-q      Тихо"
 
-#: src/eix-remote.sh:100
+#: src/eix-remote.sh:108
 #, sh-format
 msgid "$LOCAL_LAYMAN must not be empty"
 msgstr "$LOCAL_LAYMAN не должен быть пустым"
 
-#: src/eix-remote.sh:102
+#: src/eix-remote.sh:110
 #, sh-format
 msgid "$LOCAL_LAYMAN must start with /"
 msgstr "$LOCAL_LAYMAN должен начинаться с /"
 
-#: src/eix-remote.sh:159
+#: src/eix-remote.sh:167
 #, sh-format
 msgid "cannot cd to ${a}"
 msgstr "невозможно перейти в ${a}"
 
-#: src/eix-remote.sh:192
+#: src/eix-remote.sh:200
 #, sh-format
 msgid "failed: wget -N -- ${addr}"
 msgstr "ошибка: wget -N -- ${addr}"
 
-#: src/eix-remote.sh:203
+#: src/eix-remote.sh:211
 #, sh-format
 msgid ""
 "Probably your eix cachefile was *not* updated successfully.\n"
@@ -508,45 +527,45 @@ msgstr ""
 "чтобы использовать eix-remote:\n"
 "Это неудобство неизбежно и ошибкой не является!"
 
-#: src/eix-remote.sh:224
+#: src/eix-remote.sh:232
 msgid "Unpacking data"
 msgstr "Распаковка данных"
 
-#: src/eix-remote.sh:225
+#: src/eix-remote.sh:233
 #, sh-format
 msgid "cannot unpack ${a}"
 msgstr "невозможно распаковать ${a}"
 
-#: src/eix-remote.sh:252
+#: src/eix-remote.sh:260
 #, sh-format
 msgid "problems occurred with cachefile ${i}"
 msgstr "возникли проблемы с файлом кэша ${i}"
 
-#: src/eix-remote.sh:269
+#: src/eix-remote.sh:277
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "невозможно прочесть все файлы кэша eix от ${a}"
 
-#: src/eix-remote.sh:275
+#: src/eix-remote.sh:283
 #, sh-format
 msgid "Output to remote database ${EIX_REMOTE}"
 msgstr ""
 
-#: src/eix-remote.sh:294
+#: src/eix-remote.sh:302
 msgid "A temporary file makes only sense for update mode"
 msgstr "Временный файл имеет смысл только для режима обновления"
 
-#: src/eix-remote.sh:305
+#: src/eix-remote.sh:313
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "невозможно сделать копию ${file} временного файла"
 
-#: src/eix-remote.sh:317
+#: src/eix-remote.sh:325
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "невозможно прочесть ${archive}"
 
-#: src/eix-remote.sh:336
+#: src/eix-remote.sh:344
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"

@@ -5,6 +5,8 @@
 	- eix-remote now generates an alternative database by default.
 	  To access this database, the new eix option -R has been included.
 	  You can make -R the default by setting REMOTE_DEFAULT=true.
+	  With the new default, it is a good idea to put the line
+	  "@@eix-sync add" to your /etc/eix-sync.conf
 	  Set EIX_REMOTE="" to keep the old behavior with only one database.
 	- Introduce search options --nonvirtual, --virtual and attributes
 	  {virtual} {havevirtual} {havenonvirtual} and in xml: virtual="1"
