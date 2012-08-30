@@ -279,6 +279,11 @@ AddOption(BOOLEAN, "NO_BINARY",
 	"This variable is only used for delayed substitution.\n"
 	"If false, tags are output for packages/versions with *.tbz2 files."));
 
+AddOption(BOOLEAN, "EIX_USE_EXPAND",
+	"true", _(
+	"This variable is only used for delayed substitution.\n"
+	"If true, USE_EXPAND variables are output separately."));
+
 AddOption(BOOLEAN, "RESTRICT_INSTALLED",
 	"true", _(
 	"If true, calculate RESTRICT/PROPERTIES for installed versions."));
@@ -1561,12 +1566,12 @@ AddOption(STRING, "FORMAT_PDEPEND_VERBOSE",
 	"It defines the format of the PDEPEND output with --verbose."));
 
 AddOption(STRING, "FORMAT_VERSION_IUSE",
-	"(%{COLOR_VERSION_IUSE})<use>", _(
+	"(%{COLOR_VERSION_IUSE})%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for colored <use> in available versions; color is not reset."));
 
 AddOption(STRING, "FORMAT_COLLIUSE",
-	"(%{COLOR_VERSION_IUSE})<colliuse>", _(
+	"(%{COLOR_VERSION_IUSE})%{?EIX_USE_EXPAND}<colliuse*>%{else}<colliuse>%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for colored <colliuse>; color is not reset."));
 
@@ -2173,7 +2178,7 @@ AddOption(STRING, "IVERBOSE",
 	"{haveuse}"
 		"%{FORMAT_INST_LINESKIP}"
 		"(%{COLOR_INST_TITLE})USE:()       "
-		"<use>"
+		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
 	"{}"
 	"{!last}%{FORMAT_INST_LINESKIP}{}", _(
 	"This variable is used as a version formatter.\n"
@@ -2194,7 +2199,9 @@ AddOption(STRING, "FORMAT_AVAILABLEVERSIONS",
 
 AddOption(STRING, "FORMAT_INST_USEFLAGS",
 	"{haveuse}"
-		"\\(<use>\\)"
+		"\\("
+		"%{?EIX_USE_EXPAND}<use*>%{else}<use>%{}"
+		"\\)"
 	"{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for useflags in installed versions."));
@@ -2704,6 +2711,30 @@ AddOption(STRING, "FORMAT_BEFORE_UNSET_USE",
 AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
 	"()", _(
 	"This string is printed after each unset USE flag of an installed version."));
+
+AddOption(STRING, "FORMAT_BEFORE_USE_EXPAND_START",
+	"()", _(
+	"This string is printed before the variable name of an USE_EXPAND use value."));
+
+AddOption(STRING, "FORMAT_BEFORE_USE_EXPAND_END",
+	"=\"", _(
+	"This string is printed after the variable name of an USE_EXPAND use value."));
+
+AddOption(STRING, "FORMAT_AFTER_USE_EXPAND",
+	"\"", _(
+	"This string is printed at the end of a USE_EXPAND use value."));
+
+AddOption(STRING, "FORMAT_BEFORE_IUSE_EXPAND_START",
+	"()", _(
+	"This string is printed before the variable name of an USE_EXPAND iuse value."));
+
+AddOption(STRING, "FORMAT_BEFORE_IUSE_EXPAND_END",
+	"=\"(%{COLOR_VERSION_IUSE})", _(
+	"This string is printed after the variable name of an USE_EXPAND iuse value."));
+
+AddOption(STRING, "FORMAT_AFTER_IUSE_EXPAND",
+	"()\"", _(
+	"This string is printed at the end of a USE_EXPAND iuse value."));
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE",
 	"\\t[", _(

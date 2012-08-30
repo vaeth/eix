@@ -127,6 +127,10 @@ trim(std::string *str, const char *delims = spaces);
 void
 trimall(std::string *str, const char *delims = spaces, char c = ' ');
 
+/** return the lowercase version of str */
+std::string
+to_lower(const std::string &str);
+
 /** return the character corresponding to an escaped symbol.
     For instance, n -> \n, \ -> \, \0 -> \ */
 char get_escape(char c) ATTRIBUTE_CONST;
@@ -237,6 +241,17 @@ join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool ha
  * @return true            if there was -keyword which did not apply for */
 bool
 resolve_plus_minus(std::set<std::string> *s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULLPTR);
+
+/** Resolve a string of -/+ keywords to a set of actually set keywords */
+inline static
+bool
+resolve_plus_minus(std::set<std::string> *s, const std::string &str, const std::set<std::string> *warnignore = NULLPTR)
+{
+	std::vector<std::string> l;
+	split_string(&l, str);
+	return resolve_plus_minus(s, l, warnignore);
+}
+
 
 /// Add items from s to the end of d.
 template<typename T>

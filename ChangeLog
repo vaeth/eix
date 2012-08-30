@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.26.5
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Support USE_EXPAND. Set EIX_USE_EXPAND=false if you do not like it.
+	  <{coll,}use*> and FORMAT_{BEFORE,AFTER}_IUSE_EXPAND{,_START,_END}
+	- Improve handling of local cascading profiles; add local make.defaults
+	- Make USE_EXPAND an accumulating variable
+
 *eix-0.26.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- eix-remote now generates an alternative database by default.

@@ -41,6 +41,7 @@ class Version;
 #define USER_PROFILE_DIR        "/etc/portage/profile"
 #define PORTDIR_CATEGORIES_FILE "profiles/categories"
 #define PORTDIR_MASK_FILE       "profiles/package.mask"
+#define PORTDIR_MAKE_DEFAULTS   "profiles/make.defaults"
 
 class PortageSettings;
 
@@ -132,6 +133,9 @@ class PortageSettings : public std::map<std::string, std::string> {
 		/ * is only a cache, but it makes things simpler if we say so */
 		mutable bool know_upgrade_policy, upgrade_policy;
 		mutable MaskList<Mask> upgrade_policy_exceptions;
+
+		mutable bool know_expands;
+		mutable std::map<std::string, std::string> expand_vars;
 
 		bool know_world_sets;
 		std::vector<std::string> world_sets;
@@ -227,6 +231,8 @@ class PortageSettings : public std::map<std::string, std::string> {
 		void get_effective_keywords_profile(Package *p) const;
 
 		void get_effective_keywords_userprofile(Package *p) const;
+
+		bool split_expandable(std::string *var, std::string *expvar, const std::string &value) const;
 
 		static void init_static();
 };

@@ -231,6 +231,12 @@ PrintFormat::setupResources(EixRc *rc)
 	color_virtualkey = (*rc)["COLOR_VIRTUALKEY"];
 
 	alpha_use        = rc->getBool("SORT_INST_USE_ALPHA");
+	before_use_start = (*rc)["FORMAT_BEFORE_USE_EXPAND_START"];
+	before_use_end   = (*rc)["FORMAT_BEFORE_USE_EXPAND_END"];
+	after_use        = (*rc)["FORMAT_AFTER_USE_EXPAND"];
+	before_iuse_start = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_START"];
+	before_iuse_end  = (*rc)["FORMAT_BEFORE_IUSE_EXPAND_END"];
+	after_iuse       = (*rc)["FORMAT_AFTER_IUSE_EXPAND"];
 	before_set_use   = (*rc)["FORMAT_BEFORE_SET_USE"];
 	after_set_use    = (*rc)["FORMAT_AFTER_SET_USE"];
 	before_unset_use = (*rc)["FORMAT_BEFORE_UNSET_USE"];
@@ -266,6 +272,12 @@ PrintFormat::setupColors()
 		colorstring(&color_overlaykey);
 		colorstring(&color_virtualkey);
 	}
+	parse_color(&before_use_start, use_color);
+	parse_color(&before_use_end, use_color);
+	parse_color(&after_use, use_color);
+	parse_color(&before_iuse_start, use_color);
+	parse_color(&before_iuse_end, use_color);
+	parse_color(&after_iuse, use_color);
 	parse_color(&before_set_use, use_color);
 	parse_color(&after_set_use, use_color);
 	parse_color(&before_unset_use, use_color);

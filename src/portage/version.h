@@ -50,6 +50,8 @@ class IUse : public std::string {
 		IUse(const std::string &s, Flags f) : std::string(s), flags(f)
 		{ }
 
+		const char *prefix() const ATTRIBUTE_PURE;
+
 		std::string asString() const;
 
 		bool operator=(const IUse& c) const

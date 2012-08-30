@@ -105,6 +105,7 @@ grab_setmasks(const char *file, MaskList<SetMask> *masklist, SetsIndex i, vector
 /** Keys that should accumulate their content rathern then replace. */
 static const char *default_accumulating_keys[] = {
 	"USE",
+	"USE_EXPAND*",
 	"CONFIG_*",
 	"FEATURES",
 	"ACCEPT_KEYWORDS",
@@ -122,6 +123,8 @@ static const char *test_in_env_early[] = {
 /** Environment variables which should add/override all other settings. */
 static const char *test_in_env_late[] = {
 	"USE",
+	"USE_EXPAND",
+	"USE_EXPAND_HIDDEN",
 	"CONFIG_PROTECT",
 	"CONFIG_PROTECT_MASK",
 	"FEATURES",
@@ -213,7 +216,7 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 #ifndef HAVE_SETENV
 	export_portdir_overlay = false;
 #endif
-	know_upgrade_policy = false;
+	know_upgrade_policy = know_expands = false;
 	m_recurse_sets    = eixrc->getBool("RECURSIVE_SETS");
 	m_eprefixconf     = eixrc->m_eprefixconf;
 	m_eprefix         = (*eixrc)["EPREFIX"];
@@ -285,12 +288,10 @@ PortageSettings::PortageSettings(EixRc *eixrc, bool getlocal, bool init_world)
 	addOverlayProfiles(profile);
 	if(getlocal) {
 		local_profile->listaddProfile((m_eprefixconf + USER_PROFILE_DIR).c_str());
+		addOverlayProfiles(local_profile);
 		local_profile->readMakeDefaults();
-		if(local_profile->readremoveFiles()) {
-			addOverlayProfiles(local_profile);
-			local_profile->readMakeDefaults();
-			local_profile->readremoveFiles();
-		} else {
+		if(!local_profile->readremoveFiles()) {
+			// local_profile does not differ; we do not need it
 			delete local_profile;
 			local_profile = NULLPTR;
 		}
@@ -652,7 +653,11 @@ PortageSettings::addOverlayProfiles(CascadingProfile *p) const
 		if(!i->know_path) {
 			continue;
 		}
-		p->listaddFile(m_eprefixaccessoverlays + (i->path) + "/" + PORTDIR_MASK_FILE, j);
+		string path(m_eprefixaccessoverlays);
+		path.append(i->path);
+		path.append(1, '/');
+		p->listaddFile(path + PORTDIR_MASK_FILE, j);
+		p->listaddFile(path + PORTDIR_MAKE_DEFAULTS, j);
 	}
 }
 
@@ -1278,6 +1283,32 @@ PortageSettings::calc_local_sets(Package *p) const
 	if(m_recurse_sets) {
 		calc_recursive_sets(p);
 	}
+}
+
+bool
+PortageSettings::split_expandable(string *var, string *expvar, const string &value) const
+{
+	string::size_type s(value.size());
+	for(string::size_type pos(0);
+		((pos = value.find('_', pos)) != string::npos) &&
+		(pos != 0) && (pos + 1 < s); ++pos) {
+		if(!know_expands) {
+			know_expands = true;
+			set<string> use_expands;
+			resolve_plus_minus(&use_expands, (*this)["USE_EXPAND"]);
+			for(set<string>::const_iterator it(use_expands.begin());
+				it != use_expands.end(); ++it) {
+				expand_vars[to_lower(*it)] = *it;
+			}
+		}
+		map<string, string>::const_iterator it(expand_vars.find(value.substr(0, pos)));
+		if(it != expand_vars.end()) {
+			*var = it->second;
+			*expvar = value.substr(pos + 1);
+			return true;
+		}
+	}
+	return false;
 }
 
 void

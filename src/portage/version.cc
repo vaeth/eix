@@ -62,8 +62,8 @@ IUse::parse(string *s)
 	return ret;
 }
 
-string
-IUse::asString() const
+const char *
+IUse::prefix() const
 {
 /*
 	For the case that you want to make prefixes/postfixes(?) customizable,
@@ -75,32 +75,36 @@ IUse::asString() const
 	sloppy about the syntax; so certain minor changes of the prefixes to
 	the cachefile format do not harm.
 */
-	string prefix;
 	switch(flags) {
 		case USEFLAGS_PLUS:
-			prefix = "+";
-			break;
+			return "+";
 		case USEFLAGS_MINUS:
-			prefix = "-";
-			break;
+			return "-";
 		case USEFLAGS_NORMAL|USEFLAGS_PLUS:
-			prefix = "(+)";
-			break;
+			return "(+)";
 		case USEFLAGS_NORMAL|USEFLAGS_MINUS:
-			prefix = "(-)";
-			break;
+			return "(-)";
 		case USEFLAGS_PLUS|USEFLAGS_MINUS:
-			prefix = "+-";
-			break;
+			return "+-";
 		case USEFLAGS_NORMAL|USEFLAGS_PLUS|USEFLAGS_MINUS:
-			prefix = "(+-)";
-			break;
+			return "(+-)";
 		default:
 		// case USEFLAGS_NIL:
 		// case USEFLAGS_NORMAL:
-			return name();
+			return NULLPTR;
 	}
-	return prefix + name();
+}
+
+string
+IUse::asString() const
+{
+	const char *p(prefix());
+	if(p == NULLPTR) {
+		return name();
+	}
+	string ret(p);
+	ret.append(name());
+	return ret;
 }
 
 string

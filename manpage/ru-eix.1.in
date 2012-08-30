@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-25 07:45:00 +0200 (Sat, 25 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-08-30 18:00:00 +0200 (Thu, 30 Aug 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -1270,12 +1270,17 @@ The latter might change in a future release of eix.
 This is like the above with the difference that only 1 is returned if the
 value of the corresponding string (resp. of at least one of these) is nonempty.
 .TP
-.BR haveuse ", " use
+.BR haveuse ", " use ", " use*
 This must occur only in I<VARIABLE> in the context of version printing.
 For available versions, B<use> outputs the B<IUSE> variable.
-For installed versions, B<use> outputs the B<USE> flags and whether they are installed or not
+For installed versions, B<use> outputs the B<USE> flags and whether they are set
 (in the later case, the content of B<FORMAT_BEFORE_SET_USE>, B<FORMAT_AFTER_SET_USE>, B<FORMAT_BEFORE_UNSET_USE>, B<FORMAT_AFTER_UNSET_USE>
 is printed at the appropriate places).
+The B<use*> variant treats B<USE_EXPAND> variables separately and outputs them,
+using the content of B<FORMAT_BEFORE_USE_EXPAND_START>, B<FORMAT_BEFORE_USE_EXPAND_END>,
+B<FORMAT_AFTER_USE_EXPAND>, B<FORMAT_BEFORE_IUSE_EXPAND_START>,
+B<FORMAT_BEFORE_IUSE_EXPAND_END> and B<FORMAT_AFTER_IUSE_EXPAND>
+at the appropriate places.
 B<haveuse> can be used to test whether an output would be nonempty
 (in this case it is 1, otherwise empty).
 .TP
@@ -1340,9 +1345,13 @@ Note that it is possible that a package is marked although none of its available
 .BR slots ", " slotted
 expands to 1 if there are at least two slots resp. at least one nontrivial slot.
 .TP
-.BR colliuse ", " havecolliuse
+.BR colliuse ", "  colliuse* ", " havecolliuse
 The collected IUSE flags (i.e. their union) of all available versions
 of the package, separated by spaces.
+The B<colliuse*> variant outputs USE_EXPAND variables separately, using
+B<FORMAT_BEFORE_IUSE_EXPAND_START>,
+B<FORMAT_BEFORE_IUSE_EXPAND_END> and B<FORMAT_AFTER_IUSE_EXPAND>
+at the appropriate places.
 havecolliuse expands to 1 if colliuse is nonempty; this is faster than colliuse.
 .TP
 .BR havebest ", " havebest*
@@ -2165,6 +2174,11 @@ If this string is empty, the processing is slightly faster since then these data
 .TP
 .BR FORMAT_BEFORE_SET_USE ", " FORMAT_AFTER_SET_USE ", " FORMAT_BEFORE_UNSET_USE ", " FORMAT_AFTER_UNSET_USE
 These strings are printed before/after the set/unset USE flags of installed versions are printed.
+
+.TP
+.BR FORMAT_BEFORE_USE_EXPAND_START ", " FORMAT_BEFORE_USE_EXPAND_END ", " FORMAT_AFTER_USE_EXPAND ", " FORMAT_BEFORE_IUSE_EXPAND_START ", " FORMAT_BEFORE_IUSE_EXPAND_END ", " FORMAT_AFTER_IUSE_EXPAND
+These strings are printed at the start/end or after B<USE_EXPAND> variables
+are output with B<use*> for installed or available versions, respectively.
 
 .TP
 .BR NOCOLORS " " (true / false)

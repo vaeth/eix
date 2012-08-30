@@ -28,8 +28,9 @@
 
 class DBHeader;
 class EixRc;
-class MaskFlags;
+class IUseSet;
 class KeywordsFlags;
+class MaskFlags;
 class Package;
 class PortageSettings;
 class VarDbPkg;
@@ -232,7 +233,8 @@ class PrintFormat {
 		bool parse_variable(Node **rootnode, const std::string &varname, std::string *errtext) const;
 		Node *parse_variable(const std::string &varname) const;
 
-		std::string get_inst_use(const Package &package, InstVersion *i) const;
+		std::string iuse_expand(const IUseSet &iuse) const;
+		std::string get_inst_use(const Package &package, InstVersion *i, bool expand) const;
 		void get_installed(Package *package, Node *root, bool mark) const;
 		void get_versions_versorted(Package *package, Node *root, std::vector<Version*> *versions) const;
 		void get_versions_slotsorted(Package *package, Node *root, std::vector<Version*> *versions) const;
@@ -296,6 +298,7 @@ class PrintFormat {
 		std::string PKG_HAVEVIRTUAL(Package *package) const;
 		std::string PKG_HAVENONVIRTUAL(Package *package) const;
 		std::string PKG_HAVECOLLIUSE(Package *package) const;
+		std::string PKG_COLLIUSES(Package *package) const;
 		std::string PKG_COLLIUSE(Package *package) const;
 		const ExtendedVersion *ver_version() const ATTRIBUTE_PURE;
 		std::string VER_FIRST(Package *package) const;
@@ -328,6 +331,7 @@ class PrintFormat {
 		std::string VER_INSTALLEDVERSION(Package *package) const;
 		std::string VER_HAVEUSE(Package *package) const;
 		std::string VER_USE(Package *package) const;
+		std::string VER_USES(Package *package) const;
 		std::string VER_VIRTUAL(Package *package) const;
 		std::string VER_ISBINARY(Package *package) const;
 		const ExtendedVersion *ver_restrict(Package *package) const;
@@ -396,6 +400,8 @@ class PrintFormat {
 		std::string
 			color_overlaykey,  /**< Color for the overlay key */
 			color_virtualkey,  /**< Color for the virtual key */
+			before_use_start, before_use_end, after_use,
+			before_iuse_start, before_iuse_end, after_iuse,
 			before_set_use, after_set_use,
 			before_unset_use, after_unset_use;
 

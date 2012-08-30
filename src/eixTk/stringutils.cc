@@ -191,6 +191,17 @@ GCC_DIAG_ON(sign-conversion)
 	return out;
 }
 
+string
+to_lower(const string &str)
+{
+	string::size_type s(str.size());
+	string res;
+	for(string::size_type c(0); c != s; ++c) {
+		res.append(1, tolower(str[c], localeC));
+	}
+	return res;
+}
+
 char
 get_escape(char c)
 {
