@@ -42,34 +42,34 @@ class Option
 		KEEP_PAIR_OPTIONAL     /**< Do not remove. Pair of strings arg. */
 	} type;
 
-	Option(const char *l, int s, enum Type t, int *i)
+	explicit Option(const char *l, int s, enum Type t, int *i) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.integer = i; }
 
-	Option(const char *l, int s, enum Type t, bool *b)
+	explicit Option(const char *l, int s, enum Type t, bool *b) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.boolean = b; }
 
-	Option(const char *l, int s, enum Type t, const char **c)
+	explicit Option(const char *l, int s, enum Type t, const char **c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.str = c; }
 
-	Option(const char *l, int s, enum Type t, const char **c1, const char **c2)
+	explicit Option(const char *l, int s, enum Type t, const char **c1, const char **c2) ATTRIBUTE_NONNULL((2, 5, 6))
 		: type(t), longopt(l), shortopt(s)
 	{
 		u.pr.first = c1;
 		u.pr.second = c2;
 	}
 
-	Option(const char *l, int s, enum Type t, std::list<const char*> *c)
+	explicit Option(const char *l, int s, enum Type t, std::list<const char*> *c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.strlist = c; }
 
-	Option(const char *l, int s, enum Type t, std::list<ArgPair> *c)
+	explicit Option(const char *l, int s, enum Type t, std::list<ArgPair> *c) ATTRIBUTE_NONNULL((2, 5))
 		: type(t), longopt(l), shortopt(s)
 	{ u.prlist = c; }
 
-	Option(const char *l, int s, enum Type t = KEEP)
+	explicit Option(const char *l, int s, enum Type t = KEEP) ATTRIBUTE_NONNULL((2))
 		: type(t), longopt(l), shortopt(s)
 	{ }
 
@@ -113,11 +113,11 @@ class Parameter
 			: type(Parameter::OPTION), m_option(option)
 		{ }
 
-		explicit Parameter(const char *argument)
+		explicit Parameter(const char *argument) ATTRIBUTE_NONNULL((2))
 			: type(Parameter::ARGUMENT), m_argument(argument)
 		{ }
 
-		int operator * () const
+		int operator*() const
 		{ return (type == OPTION) ? m_option : -1; }
 };
 
@@ -129,22 +129,22 @@ class ArgumentReader
 		char *name;  /**< Name of called program. */
 
 		/// Reads arguments into std::list of TParameters.
-		ArgumentReader(int argc, char **argv, const OptionList &opt_table);
+		ArgumentReader(int argc, char **argv, const OptionList &opt_table) ATTRIBUTE_NONNULL_;
 
 	private:
 		/// Return shortopt for longopt stored in opt.
 		// @return shortopt
-		static int lookup_longopt(const char *long_opt, const OptionList &opt_table);
+		static int lookup_longopt(const char *long_opt, const OptionList &opt_table) ATTRIBUTE_NONNULL_;
 
 		/// Check if short_opt is a known option.
 		// @return shortopt
 		static int lookup_shortopt(const char short_opt, const OptionList &opt_table);
 
 		/// Return Option from internal table.
-		static const Option *lookup_option(const int opt, const OptionList &opt_table) ATTRIBUTE_PURE;
+		static const Option *lookup_option(const int opt, const OptionList &opt_table) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
 		/// Return number of args for opt
-		static eix::TinyUnsigned numargs(const int opt, const OptionList &opt_table) ATTRIBUTE_PURE;
+		static eix::TinyUnsigned numargs(const int opt, const OptionList &opt_table) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
 		/// Fold parameter-list so that a option with an arguments has its argument set
 		// internal rather than lying around after it in the list.

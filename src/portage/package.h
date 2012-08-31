@@ -33,7 +33,8 @@ class PortageSettings;
 class VersionList : public std::list<Version*>
 {
 	public:
-		explicit VersionList(Version *v) : std::list<Version*>(1, v)
+		explicit VersionList(Version *v) ATTRIBUTE_NONNULL_ :
+			std::list<Version*>(1, v)
 		{ }
 
 		Version* best(bool allow_unstable = false) const ATTRIBUTE_PURE;
@@ -55,7 +56,7 @@ class SlotVersions
 		VersionList &version_list()
 		{ return m_version_list; }
 
-		SlotVersions(const char *s, Version *v) :
+		explicit SlotVersions(const char *s, Version *v)  ATTRIBUTE_NONNULL((2, 3)):
 			m_slotname(s), m_version_list(v)
 		{ }
 };
@@ -65,7 +66,7 @@ class SlotList : public std::vector<SlotVersions>
 {
 	public:
 		void push_back_largest(Version *version);
-		const VersionList *operator [] (const char *s) const ATTRIBUTE_PURE;
+		const VersionList *operator[] (const char *s) const  ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 };
 
 /** A class to represent a package in portage It contains various information
@@ -110,7 +111,7 @@ class Package
 		/** Our calc_allow_upgrade_slots(this) cache;
 		    mutable since it is just a cache. */
 		mutable bool allow_upgrade_slots, know_upgrade_slots;
-		bool calc_allow_upgrade_slots(const PortageSettings *ps) const;
+		bool calc_allow_upgrade_slots(const PortageSettings *ps) const ATTRIBUTE_NONNULL_;
 
 		const SlotList& slotlist() const
 		{
@@ -171,10 +172,10 @@ class Package
 
 		/** Finishes addVersion() after the remaining data
 		    have been filled */
-		void addVersionFinalize(Version *version);
+		void addVersionFinalize(Version *version) ATTRIBUTE_NONNULL_;
 
 		/** Adds a version to "the versions" list. */
-		void addVersion(Version *version)
+		void addVersion(Version *version) ATTRIBUTE_NONNULL_
 		{
 			addVersionStart(version);
 			addVersionFinalize(version);
@@ -238,15 +239,15 @@ class Package
 
 		Version *best(bool allow_unstable = false) const ATTRIBUTE_PURE;
 
-		Version *best_slot(const char *slot_name, bool allow_unstable = false) const;
+		Version *best_slot(const char *slot_name, bool allow_unstable = false) const ATTRIBUTE_NONNULL_;
 
-		void best_slots(std::vector<Version*> *l, bool allow_unstable = false) const;
+		void best_slots(std::vector<Version*> *l, bool allow_unstable = false) const ATTRIBUTE_NONNULL_;
 
 		/** Calculate list of uninstalled upgrade candidates */
-		void best_slots_upgrade(std::vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
+		void best_slots_upgrade(std::vector<Version*> *versions, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL_;
 
 		/** Is version an (installed or uninstalled) upgrade candidate? */
-		bool is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const;
+		bool is_best_upgrade(bool check_slots, const Version *version, VarDbPkg *v, const PortageSettings *ps, bool allow_unstable) const ATTRIBUTE_NONNULL_;
 
 		/** Test whether p has a worse best_slot().
 		    @return
@@ -302,7 +303,7 @@ class Package
 			-  2: upgrade and downgrade necessary
 			-  4: (if only_installed) nothing is installed,
 			      but one can be installed */
-		eix::TinySigned check_best_slots(VarDbPkg *v, bool only_installed) const;
+		eix::TinySigned check_best_slots(VarDbPkg *v, bool only_installed) const ATTRIBUTE_NONNULL_;
 
 		/** Compare best() version with that installed in v.
 		    if v is NULLPTR, it is assumed that none is installed.
@@ -317,10 +318,10 @@ class Package
 			      but slots are different.
 			-  4: (if only_installed) nothing is installed,
 			      but one can be installed */
-		eix::TinySigned check_best(VarDbPkg *v, bool only_installed, bool test_slot) const;
+		eix::TinySigned check_best(VarDbPkg *v, bool only_installed, bool test_slot) const ATTRIBUTE_NONNULL_;
 
 		/** can we upgrade v or has v different slots? */
-		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const
+		bool can_upgrade(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_
 		{
 			if(!test_slots)
 				return (check_best(v, only_installed, false) > 0);
@@ -332,7 +333,7 @@ class Package
 		}
 
 		/** must we downgrade v or has v different categories/slots? */
-		bool must_downgrade(VarDbPkg *v, bool test_slots) const
+		bool must_downgrade(VarDbPkg *v, bool test_slots) const ATTRIBUTE_NONNULL_
 		{
 			eix::TinySigned c(check_best(v, true, test_slots));
 			if((c < 0) || (c == 3))
@@ -344,13 +345,13 @@ class Package
 		}
 
 		/** do we have an upgrade/downgrade recommendation? */
-		bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const
+		bool recommend(VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool test_slots) const ATTRIBUTE_NONNULL_
 		{
 			return can_upgrade(v, ps, only_installed, test_slots) ||
 				must_downgrade(v, test_slots);
 		}
 
-		bool differ(const Package &p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const
+		bool differ(const Package &p, VarDbPkg *v, const PortageSettings *ps, bool only_installed, bool testvardb, bool test_slots) const ATTRIBUTE_NONNULL_
 		{
 			if(testvardb)
 				return recommend(v, ps, only_installed, test_slots);
@@ -365,7 +366,7 @@ class Package
 		    possibly reading it from disk.
 		    Returns true if a reasonable choice seems to be found
 		    (v.know_slot determines whether we had full success). */
-		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const;
+		bool guess_slotname(InstVersion *v, const VarDbPkg *vardbpkg, const char *force = NULLPTR) const ATTRIBUTE_NONNULL((2, 3));
 
 		Version *latest() const
 		{ return *rbegin(); }
@@ -388,12 +389,12 @@ class Package
 
 		/** This is called by addVersionFinalize() to calculate
 		    collected iuse and to save memory by freeing version iuse */
-		void collect_iuse(Version *version);
+		void collect_iuse(Version *version) ATTRIBUTE_NONNULL_;
 
 		/** Check if a package has duplicated vsions. */
-		void checkDuplicates(const Version *version);
+		void checkDuplicates(const Version *version) ATTRIBUTE_NONNULL_;
 
-		void sortedPushBack(Version *version);
+		void sortedPushBack(Version *version) ATTRIBUTE_NONNULL_;
 
 		void defaults()
 		{
@@ -415,7 +416,7 @@ class PackageSave {
 
 		void store(const Package *p = NULLPTR);
 
-		void restore(Package *p) const;
+		void restore(Package *p) const ATTRIBUTE_NONNULL_;
 };
 
 

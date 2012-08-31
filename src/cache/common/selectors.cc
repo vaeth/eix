@@ -25,18 +25,21 @@
 
 using std::string;
 
-int package_selector (SCANDIR_ARG3 dent)
+int
+package_selector(SCANDIR_ARG3 dent)
 {
 	return (dent->d_name[0] != '.'
 			&& strcmp(dent->d_name, "CVS") != 0);
 }
 
-int ebuild_selector (SCANDIR_ARG3 dent)
+int
+ebuild_selector(SCANDIR_ARG3 dent)
 {
 	return package_selector(dent);
 }
 
-string::size_type ebuild_pos(const std::string &str)
+string::size_type
+ebuild_pos(const std::string &str)
 {
 	string::size_type pos(str.length());
 	static const string::size_type append_size = 7;

@@ -31,10 +31,10 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static void failparse(const char *v) ATTRIBUTE_NORETURN;
-static const char *get_version(const char *v);
-static const char *get_version(const char *&name, const char *v);
-static void parse_version(BasicVersion *b, const char *v);
+static void failparse(const char *v) ATTRIBUTE_NONNULL_ ATTRIBUTE_NORETURN;
+static const char *get_version(const char *v) ATTRIBUTE_NONNULL_;
+static const char *get_version(const char *&name, const char *v) ATTRIBUTE_NONNULL_;
+static void parse_version(BasicVersion *b, const char *v) ATTRIBUTE_NONNULL_;
 
 static void
 failparse(const char *v)
@@ -84,7 +84,8 @@ get_version(const char *&name, const char *v)
 }
 
 static void
-parse_version(BasicVersion *b, const char *v) {
+parse_version(BasicVersion *b, const char *v)
+{
 	string errtext;
 	BasicVersion::ParseResult r(b->parseVersion(v, &errtext, true));
 	if(unlikely(r != BasicVersion::parsedOK)) {

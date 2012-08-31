@@ -9,7 +9,6 @@
 
 #include <config.h>
 
-#include <cassert>
 #include <cstdio>
 
 #include <map>
@@ -17,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/ansicolor.h"
+#include "eixTk/assert.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -31,10 +31,15 @@ const char *AnsiMarker::reset_string("\x1B[0m");
 
 static map<string, AnsiMarker::Marker> *static_marker_map = NULLPTR;
 
+static void init_marker_map();
+static AnsiMarker::Marker name_to_marker(const string &name);
+static void init_color_map();
+static AnsiColor::Color name_to_color(const string &name);
+
 static void
 init_marker_map()
 {
-	assert(static_marker_map == NULLPTR);  // must be called only once
+	eix_assert_static(static_marker_map == NULLPTR);
 	static_marker_map = new map<string, AnsiMarker::Marker>;
 	map<string, AnsiMarker::Marker> &marker_map(*static_marker_map);
 	marker_map[""]           = AnsiMarker::amNone;
@@ -47,10 +52,10 @@ init_marker_map()
 	marker_map["invert"]     = AnsiMarker::amInverse;
 }
 
-inline static AnsiMarker::Marker
+static AnsiMarker::Marker
 name_to_marker(const string &name)
 {
-	assert(static_marker_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(static_marker_map != NULLPTR);
 	map<string, AnsiMarker::Marker>::const_iterator f(static_marker_map->find(name));
 	if(f != static_marker_map->end())
 		return f->second;
@@ -62,7 +67,7 @@ static map<string, AnsiColor::Color> *static_color_map = NULLPTR;
 static void
 init_color_map()
 {
-	assert(static_color_map == NULLPTR);  // must be called only once
+	eix_assert_static(static_color_map == NULLPTR);
 	static_color_map = new map<string, AnsiColor::Color>;
 	map<string, AnsiColor::Color> &color_map(*static_color_map);
 	color_map["default"] = AnsiColor::acDefault;
@@ -78,10 +83,10 @@ init_color_map()
 	color_map["gray"]    = AnsiColor::acGray;
 }
 
-inline static AnsiColor::Color
+static AnsiColor::Color
 name_to_color(const string &name)
 {
-	assert(static_color_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(static_color_map != NULLPTR);
 	map<string, AnsiColor::Color>::const_iterator f(static_color_map->find(name));
 	if(f != static_color_map->end()) {
 		return f->second;

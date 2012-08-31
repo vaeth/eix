@@ -9,8 +9,6 @@
 
 #include <config.h>
 
-#include <cassert>
-
 #include <iostream>
 #include <map>
 #include <set>
@@ -18,6 +16,7 @@
 #include <vector>
 
 #include "database/package_reader.h"
+#include "eixTk/assert.h"
 #include "eixTk/eixint.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
@@ -88,6 +87,11 @@ const PackageTest::TestStability
 		PackageTest::STABLE_SYSTEM;
 
 NowarnMaskList *PackageTest::nowarn_list = NULLPTR;
+
+static void init_match_field_map();
+static void init_match_algorithm_map();
+static bool stabilitytest(const Package *p, PackageTest::TestStability what) ATTRIBUTE_PURE;
+inline static void get_p(Package *&p, PackageReader *pkg) ATTRIBUTE_NONNULL_;
 
 PackageTest::PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *set_stability, const DBHeader *dbheader)
 {
@@ -172,7 +176,7 @@ static map<string, PackageTest::MatchField> *static_match_field_map = NULLPTR;
 static void
 init_match_field_map()
 {
-	assert(static_match_field_map == NULLPTR);  // must be called only once
+	eix_assert_static(static_match_field_map == NULLPTR);
 	static_match_field_map = new map<string, PackageTest::MatchField>;
 	map<string, PackageTest::MatchField> &match_field_map(*static_match_field_map);
 	match_field_map["NAME"]           = PackageTest::NAME;
@@ -248,7 +252,7 @@ static map<string, PackageTest::MatchAlgorithm> *static_match_algorithm_map = NU
 static void
 init_match_algorithm_map()
 {
-	assert(static_match_algorithm_map == NULLPTR);  // must be called only once
+	eix_assert_static(static_match_algorithm_map == NULLPTR);
 	static_match_algorithm_map = new map<string, PackageTest::MatchAlgorithm>;
 	map<string, PackageTest::MatchAlgorithm> &match_algorithm_map(*static_match_algorithm_map);
 	match_algorithm_map["REGEX"]      = PackageTest::ALGO_REGEX;
@@ -272,7 +276,7 @@ init_match_algorithm_map()
 PackageTest::MatchField
 PackageTest::name2field(const string &p)
 {
-	assert(static_match_field_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(static_match_field_map != NULLPTR);
 	map<string, MatchField>::const_iterator it(static_match_field_map->find(p));
 	if(unlikely(it == static_match_field_map->end())) {
 		cerr << eix::format(_("cannot find match field %r")) % p << endl;
@@ -284,7 +288,7 @@ PackageTest::name2field(const string &p)
 PackageTest::MatchAlgorithm
 PackageTest::name2algorithm(const string &p)
 {
-	assert(static_match_algorithm_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(static_match_algorithm_map != NULLPTR);
 	map<string, MatchAlgorithm>::const_iterator it(static_match_algorithm_map->find(p));
 	if(unlikely(it == static_match_algorithm_map->end())) {
 		cerr << eix::format(_("cannot find match algorithm %r")) % p << endl;
@@ -624,8 +628,6 @@ PackageTest::have_redundant(const Package &p, Keywords::Redundant r) const
 	return false;
 }
 
-static bool
-stabilitytest(const Package *p, PackageTest::TestStability what) ATTRIBUTE_PURE;
 static bool
 stabilitytest(const Package *p, PackageTest::TestStability what)
 {

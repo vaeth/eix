@@ -41,7 +41,7 @@ BasicCache::setScheme(const char *prefix, const char *prefixport, const std::str
 	m_scheme = scheme;
 	if(use_prefixport())
 		prefix = prefixport;
-	if(prefix) {
+	if(prefix != NULLPTR) {
 		have_prefix = true;
 		m_prefix = prefix;
 	} else {

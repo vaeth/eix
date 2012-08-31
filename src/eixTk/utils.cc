@@ -35,6 +35,9 @@ using std::map;
 using std::string;
 using std::vector;
 
+static bool pushback_lines_file(const char *file, vector<string> *v, bool remove_empty, bool remove_comments, string *errtext) ATTRIBUTE_NONNULL((1, 2));
+static int pushback_files_selector(SCANDIR_ARG3 dir_entry);
+
 bool
 scandir_cc(const string &dir, vector<string> *namelist, select_dirent select, bool sorted)
 {
@@ -101,7 +104,7 @@ pushback_lines(const char *file, vector<string> *v, bool remove_empty, bool recu
 	vector<string> files;
 	string dir(file);
 	dir += "/";
-	if(recursive && pushback_files(dir, files, files_exclude, 3)) {
+	if(recursive && pushback_files(dir, &files, files_exclude, 3)) {
 		bool rvalue(true);
 		for(vector<string>::iterator it(files.begin());
 			likely(it != files.end()); ++it) {
@@ -179,7 +182,7 @@ pushback_files_selector(SCANDIR_ARG3 dir_entry)
  * @param full_path return full pathnames
  * @return true if everything is ok */
 bool
-pushback_files(const string &dir_path, vector<string> &into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path)
+pushback_files(const string &dir_path, vector<string> *into, const char *exclude[], unsigned char only_type, bool no_hidden, bool full_path)
 {
 	pushback_files_exclude = exclude;
 	pushback_files_no_hidden = no_hidden;
@@ -192,9 +195,9 @@ pushback_files(const string &dir_path, vector<string> &into, const char *exclude
 	for(vector<string>::const_iterator it(namelist.begin());
 		likely(it != namelist.end()); ++it) {
 		if(full_path)
-			into.push_back(dir_path + (*it));
+			into->push_back(dir_path + (*it));
 		else
-			into.push_back(*it);
+			into->push_back(*it);
 	}
 	return true;
 }

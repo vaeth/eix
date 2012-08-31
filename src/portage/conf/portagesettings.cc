@@ -11,7 +11,6 @@
 
 #include <fnmatch.h>
 
-#include <cassert>
 #include <cstdlib>
 #include <cstring>
 
@@ -22,6 +21,7 @@
 #include <string>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
 #include "eixTk/exceptions.h"
@@ -54,6 +54,15 @@ using std::cerr;
 using std::endl;
 
 static string *emptystring = NULLPTR;
+
+typedef char ArchUsed;
+
+static ArchUsed apply_keyword(const string &key, const set<string> &keywords_set, KeywordsFlags kf,
+	const set<string> *arch_set,
+	Keywords::Redundant &redundant, Keywords::Redundant check, bool shortcut) ATTRIBUTE_NONNULL_;
+static bool is_accumulating(const char **accumulating, const char *key) ATTRIBUTE_NONNULL_;
+inline static void increase(char *s) ATTRIBUTE_NONNULL_;
+
 
 const std::string &
 PortageSettings::operator[](const std::string &var) const
@@ -531,7 +540,7 @@ PortageSettings::read_local_sets(const vector<string> &dir_list)
 	set<string> all_set_names;
 	for(vector<string>::size_type i(0); likely(i != dir_list.size()); ++i) {
 		vector<string> temporary_set_names;
-		pushback_files(dir_list[i], temporary_set_names, sets_exclude, 0, true, false);
+		pushback_files(dir_list[i], &temporary_set_names, sets_exclude, 0, true, false);
 		vector<string>::size_type s(set_names.size());
 		// Avoid duplicate sets
 		for(vector<string>::const_iterator it(temporary_set_names.begin());
@@ -816,7 +825,6 @@ PortageUserConfig::CheckFile(Package *p, const char *file, MaskList<KeywordMask>
 	return CheckList(p, list, flag_double, flag_in);
 }
 
-typedef char ArchUsed;
 static const ArchUsed
 	ARCH_NOTHING        = 0,
 	ARCH_STABLE         = 1,
@@ -982,7 +990,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 		}
 		if(kv.size() == kvsize) {
 			// Nothing has changed. In this case, we take defaults:
-			kf.set(it->get_keyflags(m_settings->m_accepted_keywords_set));
+			kf.set_keyflags(it->get_keyflags(m_settings->m_accepted_keywords_set));
 			it->keyflags = kf;
 			it->save_keyflags(Version::SAVEKEY_ACCEPT);
 		} else {
@@ -990,7 +998,7 @@ PortageUserConfig::setKeyflags(Package *p, Keywords::Redundant check) const
 			set<string> s;
 			resolve_plus_minus(&s, kv);
 			make_vector(&kv, s);
-			kf.set(it->get_keyflags(s));
+			kf.set_keyflags(it->get_keyflags(s));
 			kvsize = kv.size();
 		}
 		bool ori_is_stable(kf.havesome(KeywordsFlags::KEY_STABLE));
@@ -1286,7 +1294,7 @@ PortageSettings::calc_local_sets(Package *p) const
 }
 
 bool
-PortageSettings::split_expandable(string *var, string *expvar, const string &value) const
+PortageSettings::use_expand(string *var, string *expvar, const string &value) const
 {
 	string::size_type s(value.size());
 	for(string::size_type pos(0);
@@ -1314,7 +1322,7 @@ PortageSettings::split_expandable(string *var, string *expvar, const string &val
 void
 PortageSettings::init_static()
 {
-	assert(emptystring == NULLPTR);  // must be called only once
+	eix_assert_static(emptystring == NULLPTR);
 	emptystring = new string;
 	OverlayIdent::init_static();
 	CascadingProfile::init_static();

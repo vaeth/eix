@@ -40,6 +40,8 @@ using std::vector;
 /* Path to portage-2.0 cache */
 #define PORTAGE_CACHE_PATH	"var/cache/edb/dep"
 
+static int cachefiles_selector(SCANDIR_ARG3 dent);
+
 bool
 MetadataCache::use_prefixport() const
 {
@@ -284,7 +286,12 @@ void
 MetadataCache::get_version_info(const char *pkg_name, const char *ver_name, Version *version) const
 {
 	string keywords, iuse, restr, props, slot;
-	(*x_get_keywords_slot_iuse_restrict)(m_catpath + "/" + pkg_name + "-" + ver_name, keywords, slot, iuse, restr, props, version->depend, m_error_callback);
+	string path(m_catpath);
+	path.append(1, '/');
+	path.append(pkg_name);
+	path.append(1, '-');
+	path.append(ver_name);
+	(*x_get_keywords_slot_iuse_restrict)(path, &keywords, &slot, &iuse, &restr, &props, &(version->depend), m_error_callback);
 	version->set_slotname(slot);
 	version->set_full_keywords(keywords);
 	version->set_iuse(iuse);

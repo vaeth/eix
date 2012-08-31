@@ -9,6 +9,7 @@
 #define SRC_VARIOUS_DROP_PERMISSIONS_H_ 1
 
 class EixRc;
-void drop_permissions(EixRc *eix);
+
+void drop_permissions(EixRc *eix) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_VARIOUS_DROP_PERMISSIONS_H_

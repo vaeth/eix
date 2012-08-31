@@ -33,6 +33,18 @@
 using std::string;
 using std::vector;
 
+static bool optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar) ATTRIBUTE_NONNULL_;
+
+static bool
+optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
+{
+	ArgumentReader::const_iterator next(*arg);
+	if(unlikely(++next == ar.end()))
+		return false;
+	*arg = next;
+	return true;
+}
+
 #define FINISH_FORCE do { \
 	matchtree->parse_test(test, curr_pipe); \
 	force_test = curr_pipe = false; \
@@ -55,16 +67,6 @@ using std::vector;
 		force_test = true; \
 	} \
 } while(0)
-
-inline static bool
-optional_increase(ArgumentReader::const_iterator *arg, const ArgumentReader &ar)
-{
-	ArgumentReader::const_iterator next(*arg);
-	if(unlikely(++next == ar.end()))
-		return false;
-	*arg = next;
-	return true;
-}
 
 void
 parse_cli(MatchTree *matchtree, EixRc *eixrc, VarDbPkg *varpkg_db, PortageSettings *portagesettings, const PrintFormat *print_format, const SetStability *stability, const DBHeader *header, MarkedList **marked_list, const ArgumentReader& ar)

@@ -39,7 +39,7 @@ class VarDbPkg {
 
 		/** Read category from db-directory.
 		 * @param category read this category. */
-		void readCategory(const char *category);
+		void readCategory(const char *category) ATTRIBUTE_NONNULL_;
 
 	public:
 		/** Default constructor. */
@@ -63,14 +63,14 @@ class VarDbPkg {
 		bool care_slots() const
 		{ return care_of_slots; }
 
-		bool readSlot(const Package &p, InstVersion *v) const;
-		bool readUse(const Package &p, InstVersion *v) const;
-		bool readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const;
-		void readInstDate(const Package &p, InstVersion *v) const;
+		bool readSlot(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
+		bool readUse(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
+		bool readRestricted(const Package &p, InstVersion *v, const DBHeader& header) const ATTRIBUTE_NONNULL_;
+		void readInstDate(const Package &p, InstVersion *v) const ATTRIBUTE_NONNULL_;
 
-		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const;
-		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const;
-		std::string readOverlayPath(const Package *p, const BasicVersion *v) const;
+		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const ATTRIBUTE_NONNULL_;
+		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
+		std::string readOverlayPath(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
 		eix::SignedBool check_installed_overlays;
 
 		/** Find installed versions
@@ -81,7 +81,7 @@ class VarDbPkg {
 
 		/** Returns true if v is in vec. v=NULLPTR is always in vec.
 		    If a serious result is found and r is nonzero, r points to that result */
-		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR);
+		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR) ATTRIBUTE_NONNULL((1));
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.
@@ -92,7 +92,7 @@ class VarDbPkg {
 
 		/** Test if a particular version is installed from the correct overlay.
 		 * @return 1 (yes) or 0 (no) or -1 (might be - overlay unclear) */
-		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header);
+		eix::SignedBool isInstalledVersion(const Package &p, const Version *v, const DBHeader& header) ATTRIBUTE_NONNULL_;
 
 		/** Returns number of installed versions of this package
 		 * @param p Check for this Package. */

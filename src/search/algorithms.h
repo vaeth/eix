@@ -10,26 +10,13 @@
 #ifndef SRC_SEARCH_ALGORITHMS_H_
 #define SRC_SEARCH_ALGORITHMS_H_ 1
 
-#include <fnmatch.h>
-
-#include <cstring>
-
 #include <map>
 #include <string>
 
 #include "eixTk/regexp.h"
 #include "eixTk/unused.h"
-#include "portage/package.h"
-#include "search/levenshtein.h"
 
-/* Check if we have FNM_CASEFOLD ..
- * fnmatch(3) tells that this is a GNU extension. */
-#ifdef FNM_CASEFOLD
-#define FNMATCH_FLAGS FNM_CASEFOLD
-#else
-#define FNMATCH_FLAGS 0
-#endif
-
+class Package;
 class matchtree;
 
 /** That's how every Algorithm will look like. */
@@ -39,7 +26,7 @@ class BaseAlgorithm {
 		std::string search_string;
 
 	public:
-		virtual void setString(std::string s)
+		virtual void setString(const std::string &s)
 		{
 			search_string = s;
 		}
@@ -49,7 +36,7 @@ class BaseAlgorithm {
 			// Nothin' to see here, please move along
 		}
 
-		virtual bool operator()(const char *s, Package *p) = 0;
+		virtual bool operator()(const char *s, Package *p) ATTRIBUTE_NONNULL((2)) = 0;
 };
 
 /** Use regex to test strings for a match. */
@@ -64,13 +51,13 @@ class RegexAlgorithm : public BaseAlgorithm {
 		~RegexAlgorithm()
 		{ re.free(); }
 
-		void setString(std::string s)
+		void setString(const std::string &s)
 		{
 			search_string = s;
 			re.compile(search_string.c_str(), REG_ICASE);
 		}
 
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2))
 		{
 			UNUSED(p);
 			return re.match(s);
@@ -80,17 +67,13 @@ class RegexAlgorithm : public BaseAlgorithm {
 /** exact string matching */
 class ExactAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-		{
-			UNUSED(p);
-			return !strcmp(search_string.c_str(), s);
-		}
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
 /** substring matching */
 class SubstringAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2))
 		{
 			UNUSED(p);
 			return (std::string(s).find(search_string) != std::string::npos);
@@ -100,25 +83,13 @@ class SubstringAlgorithm : public BaseAlgorithm {
 /** begin-of-string matching */
 class BeginAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-		{
-			UNUSED(p);
-			return !strncmp(search_string.c_str(), s, search_string.size());
-		}
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
 /** end-of-string matching */
 class EndAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-		{
-			UNUSED(p);
-			std::string::size_type l(strlen(s));
-			std::string::size_type sl(search_string.size());
-			if(l < sl)
-				return false;
-			return !strcmp(search_string.c_str(), s + (l - sl));
-		}
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2)) ATTRIBUTE_PURE;
 };
 
 /** Store distance to searchstring in Package and sort out packages with a
@@ -138,15 +109,11 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 
 		bool operator()(const char *s, Package *p);
 
-		static bool compare(Package *p1, Package *p2)
-		{
-			return ((*levenshtein_map)[p1->category + "/" + p1->name]
-					< (*levenshtein_map)[p2->category + "/" + p2->name]);
-		}
+		static bool compare(Package *p1, Package *p2) ATTRIBUTE_NONNULL_;
 
 		static bool sort_by_levenshtein()
 		{
-			return (levenshtein_map->size() > 0);
+			return (!levenshtein_map->empty());
 		}
 
 		static void init_static();
@@ -155,11 +122,7 @@ class FuzzyAlgorithm : public BaseAlgorithm {
 /** Use fnmatch to test if the package matches. */
 class PatternAlgorithm : public BaseAlgorithm {
 	public:
-		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
-		{
-			UNUSED(p);
-			return !fnmatch(search_string.c_str(), s, FNMATCH_FLAGS);
-		}
+		bool operator()(const char *s, Package *p ATTRIBUTE_UNUSED) ATTRIBUTE_NONNULL((2));
 };
 
 #endif  // SRC_SEARCH_ALGORITHMS_H_

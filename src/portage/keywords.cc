@@ -45,6 +45,9 @@ const KeywordsFlags::KeyType
 	KeywordsFlags::KEY_SOMEUNSTABLE,
 	KeywordsFlags::KEY_TILDESTARMATCH;
 
+inline static bool is_not_testing(const string &s);
+inline static bool is_testing(const string &s);
+
 inline static bool
 is_not_testing(const string &s)
 {
@@ -59,12 +62,12 @@ is_testing(const string &s)
 }
 
 KeywordsFlags::KeyType
-KeywordsFlags::get_keyflags(const std::set<string> &accepted_keywords, const string &keywords)
+KeywordsFlags::get_keyflags(const set<string> &accepted_keywords, const string &keywords)
 {
 	KeyType m(KEY_EMPTY);
-	std::set<string> keywords_set;
+	set<string> keywords_set;
 	make_set<string>(&keywords_set, split_string(keywords));
-	for(std::set<string>::const_iterator it(keywords_set.begin());
+	for(set<string>::const_iterator it(keywords_set.begin());
 		likely(it != keywords_set.end()); ++it) {
 		if((*it)[0] == '-') {
 			if(*it == "-*")

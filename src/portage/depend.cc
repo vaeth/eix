@@ -21,8 +21,10 @@ const char Depend::c_rdepend[] = "${RDEPEND}";
 
 static const char the_same = '"';
 
+static bool subst_the_same(string &in, const string &from);
+
 static bool
-subst_the_same(std::string &in, const std::string &from) {
+subst_the_same(string &in, const string &from) {
 	if(from.empty()) {
 		return false;
 	}

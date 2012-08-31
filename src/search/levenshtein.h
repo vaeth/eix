@@ -16,6 +16,6 @@ typedef unsigned int Levenshtein;
  * @param str_a string a
  * @param str_b string b
  * @return unsigned int Levenshtein distance of str_a <> str_b */
-Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) ATTRIBUTE_PURE;
+Levenshtein get_levenshtein_distance(const char *str_a, const char *str_b) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
 #endif  // SRC_SEARCH_LEVENSHTEIN_H_

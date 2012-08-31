@@ -37,6 +37,11 @@ namespace io {
 	void readError(FILE *fp, std::string *errtext);
 	void writeError(std::string *errtext);
 
+	inline static bool readUChar(eix::UChar *c, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));
+	inline static bool writeUChar(eix::UChar c, FILE *fp, std::string *errtext);
+	inline static bool write_hash_string(const StringHash& hash, const std::string &s, FILE *fp, std::string *errtext);
+	inline static bool read_hash_string(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
+
 	inline static bool
 	readUChar(eix::UChar *c, FILE *fp, std::string *errtext)
 	{
@@ -64,7 +69,8 @@ namespace io {
 	}
 
 	/// Read a nonnegative number from fp (m_Tp must be big enough)
-	template<typename m_Tp> bool
+	template<typename m_Tp>
+	inline static bool
 	read_num(m_Tp *ret, FILE *fp, std::string *errtext)
 	{
 		int ch(fgetc(fp));
@@ -105,7 +111,8 @@ namespace io {
 	}
 
 	/// Write nonnegative number t to fp (undefined behaviour if t < 0)
-	template<typename m_Tp> bool
+	template<typename m_Tp>
+	inline static bool
 	write_num(m_Tp t, FILE *fp, std::string *errtext)
 	{
 GCC_DIAG_OFF(sign-conversion)
@@ -187,7 +194,7 @@ GCC_DIAG_ON(sign-conversion)
 	}
 
 	/// Read a string
-	bool read_string(std::string *s, FILE *fp, std::string *errtext);
+	bool read_string(std::string *s, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));
 
 	/// Write a string
 	bool write_string(const std::string &str, FILE *fp, std::string *errtext);
@@ -209,25 +216,25 @@ GCC_DIAG_ON(sign-conversion)
 	inline static bool write_hash_words(const StringHash& hash, const std::string& words, FILE *fp, std::string *errtext)
 	{ return write_hash_words(hash, split_string(words), fp, errtext); }
 
-	bool read_hash_words(const StringHash& hash, std::vector<std::string> *s, FILE *fp, std::string *errtext);
-	bool read_hash_words(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext);
+	bool read_hash_words(const StringHash& hash, std::vector<std::string> *s, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
+	bool read_hash_words(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
 
-	bool read_iuse(const StringHash& hash, IUseSet *iuse, FILE *fp, std::string *errtext);
+	bool read_iuse(const StringHash& hash, IUseSet *iuse, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
 
 	/// Read a version from fp
-	bool read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext);
+	bool read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((3));
 
 	// Write a version to fp
-	bool write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext);
+	bool write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1));
 
 	// Write dependency information to fp
-	bool read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
+	bool read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3));
 
 	// Write dependency information to fp
 	bool write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	// Read a category-header from fp
-	bool read_category_header(std::string *name, eix::Treesize *h, FILE *fp, std::string *errtext);
+	bool read_category_header(std::string *name, eix::Treesize *h, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2, 3));
 
 	// Write a category-header to fp
 	bool write_category_header(const std::string &name, eix::Treesize size, FILE *fp, std::string *errtext);
@@ -237,14 +244,14 @@ GCC_DIAG_ON(sign-conversion)
 	bool write_package_pure(const Package &pkg, const DBHeader &hdr, FILE *fp, std::string *errtext);
 
 	bool write_hash(const StringHash& hash, FILE *fp, std::string *errtext);
-	bool read_hash(StringHash *hash, FILE *fp, std::string *errtext);
-	void prep_header_hashs(DBHeader *hdr, const PackageTree& tree);
+	bool read_hash(StringHash *hash, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));
+	void prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL((1));
 	bool write_header(const DBHeader &hdr, FILE *fp, std::string *errtext);
 	// return false if version does not match. However, fp is not closed.
-	bool read_header(DBHeader *hdr, FILE *fp, std::string *errtext);
+	bool read_header(DBHeader *hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));
 
 	bool write_packagetree(const PackageTree &pkg, const DBHeader &hdr, FILE *fp, std::string *errtext);
-	bool read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, FILE *fp, std::string *errtext);
+	bool read_packagetree(PackageTree *tree, const DBHeader &hdr, PortageSettings *ps, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3, 4));
 }
 
 #endif  // SRC_DATABASE_IO_H_

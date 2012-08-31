@@ -31,7 +31,7 @@ class VarsReader {
 			KEYWORDS_READ        = 0x0002U,  /**< Flag: Have already read "KEYWORDS" once. */
 			SLOT_READ            = 0x0004U,  /**< Flag: Have already read "SLOT" once. */
 			SUBST_VARS           = 0x0008U,  /**< Flag: Allow references to variable in declarations of a variable. i.e.  USE="${USE} -kde" */
-			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to map<string, string> with useMap(...) */
+			INTO_MAP             = 0x0010U,  /**< Flag: Init but don't parse .. you must first supply a pointer to std::map<string, string> with useMap (...) */
 			APPEND_VALUES        = 0x0020U,  /**< Flag: Respect IncrementalKeys */
 			ALLOW_SOURCE         = 0x0040U,  /**< Flag: Allow "source"/"." command. */
 			ALLOW_SOURCE_VARNAME = 0x0080|ALLOW_SOURCE,  /**< Flag: Allow "source"/"." but Prefix is only a varname which might be modified during sourcing. */
@@ -58,16 +58,16 @@ class VarsReader {
 
 		/** Read file.
 		 * @return true if the file was successfully read. */
-		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR);
+		bool read(const char *filename, std::string *errtext, bool noexist_ok, std::set<std::string> *sourced = NULLPTR) ATTRIBUTE_NONNULL((2));
 
 		/** Use a supplied map for variables. */
-		void useMap(std::map<std::string, std::string> *vars_map)
+		void useMap(std::map<std::string, std::string> *vars_map) ATTRIBUTE_NONNULL_
 		{
 			vars = vars_map;
 		}
 
 		/** Prefix (path resp. varname) used for sourcing */
-		void setPrefix(std::string prefix)
+		void setPrefix(const std::string &prefix)
 		{
 			source_prefix = prefix;
 		}
@@ -79,12 +79,12 @@ class VarsReader {
 		}
 
 		/** Operator that helps us to be used like a map. */
-		std::string& operator[] (std::string key)
+		std::string& operator[](const std::string& key)
 		{
 			return (*vars)[key];
 		}
 
-		const std::string *find(std::string key) const ATTRIBUTE_PURE
+		const std::string *find(const std::string& key) const ATTRIBUTE_PURE
 		{
 			std::map<std::string, std::string>::const_iterator i(vars->find(key));
 			if(i == vars->end())

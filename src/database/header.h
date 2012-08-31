@@ -70,10 +70,10 @@ class DBHeader {
 		    Name might be either a label, a filename, or a number string.
 		    The special name portdir (if defined) matches 0 (if OVTEST_PATH)
 		    The special name '' matches everything but 0. */
-		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
+		bool find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const ATTRIBUTE_NONNULL((2, 3));
 
 		/** Add all overlay-numbers >=minimal for name to vec (name might be a number string). */
-		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlays, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const;
+		void get_overlay_vector(std::set<ExtendedVersion::Overlay> *overlays, const char *name, const char *portdir, ExtendedVersion::Overlay minimal = 0, OverlayTest testmode = OVTEST_NOT_SAVED_PORTDIR) const ATTRIBUTE_NONNULL_;
 
 		ExtendedVersion::Overlay countOverlays() const
 		{ return ExtendedVersion::Overlay(overlays.size()); }

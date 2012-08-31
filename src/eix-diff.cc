@@ -53,6 +53,13 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
+static void load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) ATTRIBUTE_NONNULL_;
+static void set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virtual) ATTRIBUTE_NONNULL_;
+static void print_changed_package(Package *op, Package *np) ATTRIBUTE_NONNULL_;
+static void print_found_package(Package *p) ATTRIBUTE_NONNULL_;
+static void print_lost_package(Package *p) ATTRIBUTE_NONNULL_;
+static void parseFormat(Node **format, const char *varname, EixRc *rc) ATTRIBUTE_NONNULL_;
+
 static PortageSettings *portagesettings;
 static SetStability   *set_stability_old, *set_stability_new;
 static PrintFormat    *format_for_new, *format_for_old;
@@ -102,6 +109,7 @@ enum cli_options {
 	O_FORCE_COLOR
 };
 
+
 /** Arguments and options. */
 class EixDiffOptionList : public OptionList {
 	public:
@@ -124,9 +132,9 @@ EixDiffOptionList::EixDiffOptionList()
 }
 
 static void
-load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps) {
+load_db(const char *file, DBHeader *header, PackageTree *body, PortageSettings *ps)
+{
 	FILE *fp(fopen(file, "rb"));
-
 	if(likely(fp != NULLPTR)) {
 		string errtext;
 		if(likely(io::read_header(header, fp, &errtext))) {
@@ -156,21 +164,21 @@ set_virtual(PrintFormat *fmt, const DBHeader &header, const string &eprefix_virt
 
 class DiffTrees {
 	public:
-		typedef void (*lost_func) (Package *p);
-		typedef void (*found_func) (Package *p);
-		typedef void (*changed_func) (Package *p1, Package *p2);
+		typedef void (*lost_func) (Package *p) ATTRIBUTE_NONNULL_;
+		typedef void (*found_func) (Package *p) ATTRIBUTE_NONNULL_;
+		typedef void (*changed_func) (Package *p1, Package *p2) ATTRIBUTE_NONNULL_;
 
 		lost_func lost_package;
 		found_func found_package;
 		changed_func changed_package;
 
-		DiffTrees(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) :
+		DiffTrees(VarDbPkg *vardbpkg, PortageSettings *portage_settings, bool only_installed, bool compare_slots, bool separate_deleted) ATTRIBUTE_NONNULL_ :
 			m_vardbpkg(vardbpkg), m_portage_settings(portage_settings), m_only_installed(only_installed),
 			m_slots(compare_slots), m_separate_deleted(separate_deleted)
 		{ }
 
 		/// Diff the trees and run callbacks
-		void diff(PackageTree *old_tree, PackageTree *new_tree)
+		void diff(PackageTree *old_tree, PackageTree *new_tree) ATTRIBUTE_NONNULL_
 		{
 			// Diff every category from the old tree with the category from the new tree
 			for(PackageTree::iterator old_cat(old_tree->begin());
@@ -198,12 +206,12 @@ class DiffTrees {
 		PortageSettings *m_portage_settings;
 		bool m_only_installed, m_slots, m_separate_deleted;
 
-		bool best_differs(const Package *new_pkg, const Package *old_pkg)
+		bool best_differs(const Package *new_pkg, const Package *old_pkg) ATTRIBUTE_NONNULL_
 		{ return new_pkg->differ(*old_pkg, m_vardbpkg, m_portage_settings, true, m_only_installed, m_slots); }
 
 		/// Diff two categories and run callbacks.
 		/// Remove already diffed packages from both categories.
-		void diff_category(Category *old_cat, Category *new_cat)
+		void diff_category(Category *old_cat, Category *new_cat) ATTRIBUTE_NONNULL_
 		{
 			Category::iterator old_pkg(old_cat->begin());
 

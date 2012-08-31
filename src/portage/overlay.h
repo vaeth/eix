@@ -24,7 +24,7 @@ class OverlayIdent {
 		bool know_path, know_label;
 		std::string path, label;
 
-		OverlayIdent(const char *Path, const char *Label = NULLPTR);
+		OverlayIdent(const char *Path, const char *Label = NULLPTR) ATTRIBUTE_NONNULL((2));
 
 		void readLabel(const char *Path = NULLPTR)
 		{
@@ -57,7 +57,7 @@ class RepoList : public std::vector<OverlayIdent> {
 
 		const char *get_path(const std::string &label);
 
-		RepoList::iterator find_filename(const char *search, bool parent_ok = false, bool resolve_mask = true);
+		RepoList::iterator find_filename(const char *search, bool parent_ok = false, bool resolve_mask = true) ATTRIBUTE_NONNULL_;
 
 		RepoList::const_iterator second() const
 		{
@@ -75,7 +75,7 @@ class RepoList : public std::vector<OverlayIdent> {
 			cache.clear();
 		}
 
-		void push_back(const char *s)
+		void push_back(const char *s) ATTRIBUTE_NONNULL_
 		{
 			trust_cache = false;
 			super::push_back(OverlayIdent(s));

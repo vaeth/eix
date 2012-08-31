@@ -119,7 +119,6 @@ MatchAtomTest::set_test(PackageTest *gtest)
 	delete gtest;
 	int *a(new int(++t_count));
 	m_test = reinterpret_cast<PackageTest *>(a);
-	return;
 #else
 	delete m_test;
 	m_test = gtest;
@@ -142,6 +141,12 @@ MatchTree::~MatchTree()
 	end_parse();
 	delete root;
 	delete piperoot;
+}
+
+bool
+MatchTree::match(PackageReader *p)
+{
+	return ((root == NULLPTR) || root->match(p));
 }
 
 void

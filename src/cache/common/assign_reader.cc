@@ -30,6 +30,8 @@ using std::string;
 
 using std::ifstream;
 
+static map<string, string> *get_map_from_cache(const char *file) ATTRIBUTE_NONNULL_;
+
 static map<string, string> *
 get_map_from_cache(const char *file)
 {
@@ -78,8 +80,8 @@ assign_get_md5sum(const string &filename)
 
 /** Read stability and other data from an "assign type" cache file. */
 void
-assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props,
-	Depend &dep, BasicCache::ErrorCallback error_callback)
+assign_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, string *slotname, string *iuse, string *restr, string *props,
+	Depend *dep, BasicCache::ErrorCallback error_callback)
 {
 	map<string, string> *cf(get_map_from_cache(filename.c_str()));
 	if(unlikely(cf == NULLPTR)) {
@@ -87,13 +89,13 @@ assign_get_keywords_slot_iuse_restrict(const string &filename, string &keywords,
 			% filename % strerror(errno));
 		return;
 	}
-	keywords = (*cf)["KEYWORDS"];
-	slotname = (*cf)["SLOT"];
-	iuse     = (*cf)["IUSE"];
-	restr    = (*cf)["RESTRICT"];
-	props    = (*cf)["PROPERTIES"];
+	(*keywords) = (*cf)["KEYWORDS"];
+	(*slotname) = (*cf)["SLOT"];
+	(*iuse)     = (*cf)["IUSE"];
+	(*restr)    = (*cf)["RESTRICT"];
+	(*props)    = (*cf)["PROPERTIES"];
 	if(Depend::use_depend) {
-		dep.set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], false);
+		dep->set((*cf)["DEPEND"], (*cf)["RDEPEND"], (*cf)["PDEPEND"], false);
 	}
 }
 

@@ -46,6 +46,8 @@ const char *doublequotes("\"$\\");
 
 std::locale localeC("C");
 
+static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
+
 #ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
  * darwin (macos) doesn't have strndup, it's a GNU extension
@@ -65,6 +67,53 @@ strndup(const char *s, size_t n)
 	return r;
 }
 #endif /* HAVE_STRNDUP */
+
+/** Check string if it only contains digits. */
+bool
+is_numeric(const char *str)
+{
+	for(char c(*str); likely(c != '\0'); c = *(++str)) {
+		if(!isdigit(c, localeC))
+			return false;
+	}
+	return true;
+}
+
+/** Add symbol if it is not already the last one */
+void
+optional_append(std::string *s, char symbol)
+{
+	if(s->empty() || ((*(s->rbegin()) != symbol)))
+		s->append(1, symbol);
+}
+
+/** Trim characters on left side of string.
+ * @param str String that should be trimmed
+ * @param delims characters that should me removed */
+void
+ltrim(std::string *str, const char *delims)
+{
+	// trim leading whitespace
+	std::string::size_type notwhite(str->find_first_not_of(delims));
+	if(notwhite != std::string::npos)
+		str->erase(0, notwhite);
+	else
+		str->clear();
+}
+
+/** Trim characters on right side of string.
+ * @param str String that should be trimmed
+ * @param delims characters that should me removed */
+void
+rtrim(std::string *str, const char *delims)
+{
+	// trim trailing whitespace
+	std::string::size_type notwhite(str->find_last_not_of(delims));
+	if(notwhite != std::string::npos)
+		str->erase(notwhite+1);
+	else
+		str->clear();
+}
 
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
@@ -101,7 +150,8 @@ trimall(string *str, const char *delims, char c)
 
 /** Check if slot contains a subslot and if yes, split it away.
     Also turn slot "0" into nothing */
-bool slot_subslot(string *slot, string *subslot)
+bool
+slot_subslot(string *slot, string *subslot)
 {
 	string::size_type sep(slot->find('/'));
 	if(sep == string::npos) {
@@ -121,7 +171,8 @@ bool slot_subslot(string *slot, string *subslot)
 
 /** Split full to slot and subslot. Also turn slot "0" into nothing
  * @return true if subslot exists */
-bool slot_subslot(const string &full, string *slot, string *subslot)
+bool
+slot_subslot(const string &full, string *slot, string *subslot)
 {
 	string::size_type sep(full.find('/'));
 	if(sep == string::npos) {
@@ -243,7 +294,7 @@ escape_string(string *str, const char *at)
 	}
 }
 
-inline static void
+static void
 erase_escapes(string *s, const char *at)
 {
 	string::size_type pos(0);
@@ -304,8 +355,47 @@ void
 split_string(set<string> *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 { split_string_template< set<string> >(vec, str, handle_escape, at, ignore_empty); }
 
-template <typename T>
+vector<string>
+split_string(const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
+{
+	std::vector<std::string> vec;
+	split_string(&vec, str, handle_escape, at, ignore_empty);
+	return vec;
+}
+
+/** Calls split_string() with a vector and then join_to_string().
+ * @param source string to split
+ * @param dest   result. May be identical to source. */
 void
+split_and_join(string *dest, const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty)
+{
+	vector<string> vec;
+	split_string(&vec, source, handle_escape, at, ignore_empty);
+	join_to_string(dest, vec, glue);
+}
+
+/** Calls split_string() with a vector and then join_to_string().
+ * @param source string to split
+ * @return result. */
+string
+split_and_join_string(const string &source, const string &glue, const bool handle_escape, const char *at, const bool ignore_empty)
+{
+	string r;
+	split_and_join(&r, source, glue, handle_escape, at, ignore_empty);
+	return r;
+}
+
+/** Resolve a string of -/+ keywords to a set of actually set keywords */
+bool
+resolve_plus_minus(set<string> *s, const string &str, const set<string> *warnignore)
+{
+	vector<string> l;
+	split_string(&l, str);
+	return resolve_plus_minus(s, l, warnignore);
+}
+
+template <typename T>
+inline static void
 join_to_string_template(string *s, const T &vec, const string &glue)
 {
 	for(typename T::const_iterator it(vec.begin()); likely(it != vec.end()); ++it) {

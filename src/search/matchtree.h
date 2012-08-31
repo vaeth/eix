@@ -33,7 +33,7 @@ public:
 	/** Check (recursively if necessary) whether the atom matches.
 	 * @param p Package to match
 	 * @return true if match; else false */
-	virtual bool match(PackageReader *p) ATTRIBUTE_PURE;
+	virtual bool match(PackageReader *p) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
 	virtual MatchAtomOperator *as_operator()
 	{ return NULLPTR; }
@@ -55,7 +55,7 @@ public:
 
 	~MatchAtomOperator();
 
-	bool match(PackageReader *p);
+	bool match(PackageReader *p) ATTRIBUTE_NONNULL_;
 
 	MatchAtomOperator *as_operator()
 	{ return this; }
@@ -72,7 +72,7 @@ public:
 
 	~MatchAtomTest();
 
-	bool match(PackageReader *p);
+	bool match(PackageReader *p) ATTRIBUTE_NONNULL_;
 
 	void set_test(PackageTest *gtest);
 
@@ -89,8 +89,8 @@ public:
 	bool negatebrace;    /// Must the whole result be negated at the end?
 	                     /// This is only set after -! -(
 
-	explicit MatchParseData(MatchAtom **p) : parent(p),
-		subroot(NULLPTR), useright(false), negatebrace(false)
+	explicit MatchParseData(MatchAtom **p) ATTRIBUTE_NONNULL((2)) :
+		parent(p), subroot(NULLPTR), useright(false), negatebrace(false)
 	{ }
 };
 
@@ -125,12 +125,11 @@ public:
 
 	~MatchTree();
 
-	bool match(PackageReader *p)
-	{ return ((root == NULLPTR) || root->match(p)); }
+	bool match(PackageReader *p) ATTRIBUTE_NONNULL_;
 
-	void set_pipetest(PackageTest *gtest);
+	void set_pipetest(PackageTest *gtest) ATTRIBUTE_NONNULL_;
 
-	void parse_test(PackageTest *gtest, bool with_pipe);
+	void parse_test(PackageTest *gtest, bool with_pipe) ATTRIBUTE_NONNULL_;
 
 	void parse_and();
 

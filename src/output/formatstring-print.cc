@@ -9,7 +9,8 @@
 
 #include <config.h>
 
-#include <cassert>
+// #define EIX_PARANOIC_ASSERT
+
 #include <cstdlib>
 #include <cstring>
 
@@ -21,6 +22,7 @@
 #include <vector>
 
 #include "eixTk/ansicolor.h"
+#include "eixTk/assert.h"
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
@@ -50,6 +52,10 @@ using std::endl;
 #define STRING_TRUE "1"
 #define STRING_FALSE ""
 #define STRING_EMPTY ""
+
+inline static const char *IS_TRUE(bool a);
+inline static const char *IS_FALSE(bool a);
+static Package *old_or_new(string *new_name, Package *older, Package *newer, const string &name) ATTRIBUTE_NONNULL_;
 
 inline static
 const char *IS_TRUE(bool a)
@@ -107,7 +113,7 @@ PrintFormat::iuse_expand(const IUseSet &iuse) const
 		it != iuse_set.end(); ++it) {
 		string var, expval;
 		const string &name(it->name());
-		if(portagesettings->split_expandable(&var, &expval, name)) {
+		if(portagesettings->use_expand(&var, &expval, name)) {
 			string &r(expvars[var]);
 			if(!r.empty()) {
 				r.append(1, ' ');
@@ -141,10 +147,9 @@ PrintFormat::iuse_expand(const IUseSet &iuse) const
 string
 PrintFormat::get_inst_use(const Package &package, InstVersion *i, bool expand) const
 {
-	if((unlikely(vardb == NULLPTR)) || !(vardb->readUse(package, i)))
+	if((!(vardb->readUse(package, i))) || i->inst_iuse.empty()) {
 		return STRING_EMPTY;
-	if(i->inst_iuse.empty())
-		return STRING_EMPTY;
+	}
 	string ret, add, expval;
 	map<string, pair<string, string> > expvars;
 	for(vector<string>::iterator it(i->inst_iuse.begin());
@@ -159,7 +164,7 @@ PrintFormat::get_inst_use(const Package &package, InstVersion *i, bool expand) c
 		}
 		if(expand) {
 			string var;
-			if(portagesettings->split_expandable(&var, &expval, *value)) {
+			if(portagesettings->use_expand(&var, &expval, *value)) {
 				value = &expval;
 				pair<string, string> &r(expvars[var]);
 				curr = (unset_list ? &(r.second) : &(r.first));
@@ -207,8 +212,7 @@ PrintFormat::get_inst_use(const Package &package, InstVersion *i, bool expand) c
 void
 PrintFormat::get_installed(Package *package, Node *root, bool only_marked) const
 {
-	if(unlikely(vardb == NULLPTR))
-		return;
+	eix_assert_paranoic(vardb != NULLPTR);
 	if(unlikely((unlikely(only_marked)) && (marked_list == NULLPTR)))
 		return;
 	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
@@ -242,8 +246,9 @@ PrintFormat::get_versions_versorted(Package *package, Node *root, vector<Version
 	for(Package::const_iterator vit(package->begin());
 		likely(vit != package->end()); ++vit) {
 		if(unlikely(versions != NULLPTR)) {
-			if(likely(find(versions->begin(), versions->end(), *vit) == versions->end()))
+			if(likely(find(versions->begin(), versions->end(), *vit) == versions->end())) {
 				continue;
+			}
 		}
 		if(have_prevversion) {
 			version_variables->last = version_variables->slotlast = false;
@@ -317,7 +322,7 @@ void
 PrintFormat::clear_virtual(ExtendedVersion::Overlay count)
 {
 	delete virtuals;
-	virtuals = new std::vector<bool>(count, false);
+	virtuals = new vector<bool>(count, false);
 }
 
 void
@@ -375,19 +380,19 @@ class Scanner {
 		map<string, ColonVar> colon_var;
 		map<string, ColonOther> colon_other;
 
-		void prop_diff(const char *s, Diff diffprop)
+		void prop_diff(const char *s, Diff diffprop) ATTRIBUTE_NONNULL_
 		{ diff[s] = diffprop; }
 
-		void prop_colon_pkg(const char *s, ColonVar colfunc)
+		void prop_colon_pkg(const char *s, ColonVar colfunc) ATTRIBUTE_NONNULL_
 		{ colon_var[s] = colfunc; }
 
-		void prop_colon_ver(const char *s, ColonOther colfunc)
+		void prop_colon_ver(const char *s, ColonOther colfunc) ATTRIBUTE_NONNULL_
 		{ colon_other[s] = colfunc; }
 
-		void prop_pkg(const char *s, Plain plainfunc)
+		void prop_pkg(const char *s, Plain plainfunc) ATTRIBUTE_NONNULL_
 		{ plain[s] = pair<Plain, Prop>(plainfunc, PKG); }
 
-		void prop_ver(const char *s, Plain plainfunc)
+		void prop_ver(const char *s, Plain plainfunc) ATTRIBUTE_NONNULL_
 		{ plain[s] = pair<Plain, Prop>(plainfunc, VER); }
 
 	public:
@@ -533,7 +538,7 @@ class Scanner {
 			return ((it == diff.end()) ? DIFF_NONE : it->second);
 		}
 
-		ColonVar get_colon_var(const string& s, Prop *p) const
+		ColonVar get_colon_var(const string& s, Prop *p) const ATTRIBUTE_NONNULL_
 		{
 			map<string, ColonVar>::const_iterator it(colon_var.find(s));
 			if(it == colon_var.end()) {
@@ -543,7 +548,7 @@ class Scanner {
 			return it->second;
 		}
 
-		ColonOther get_colon_other(const string& s, Prop *p) const
+		ColonOther get_colon_other(const string& s, Prop *p) const ATTRIBUTE_NONNULL_
 		{
 			map<string, ColonOther>::const_iterator it(colon_other.find(s));
 			if(it == colon_other.end()) {
@@ -553,7 +558,7 @@ class Scanner {
 			return it->second;
 		}
 
-		Plain get_plain(const string& s, Prop *p) const
+		Plain get_plain(const string& s, Prop *p) const ATTRIBUTE_NONNULL_
 		{
 			map<string, pair<Plain, Prop> >::const_iterator it(plain.find(s));
 			if(it == plain.end()) {
@@ -569,7 +574,7 @@ static Scanner *scanner = NULLPTR;
 void
 PrintFormat::init_static()
 {
-	assert(scanner == NULLPTR);  // must be called only once
+	eix_assert_static(scanner == NULLPTR);
 	scanner = new Scanner;
 	AnsiColor::init_static();
 }
@@ -577,7 +582,7 @@ PrintFormat::init_static()
 string
 PrintFormat::get_pkg_property(Package *package, const string &name) const
 {
-	assert(scanner != NULLPTR);  // has init_static() been called?
+	eix_assert_static(scanner != NULLPTR);
 	Scanner::Prop t;
 	Scanner::Plain plain(scanner->get_plain(name, &t));
 	Scanner::ColonVar colon_var;
@@ -630,9 +635,7 @@ PrintFormat::COLON_VER_DATE(Package *package, const string &after_colon) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		if(likely(vardb != NULLPTR)) {
-			vardb->readInstDate(*package, i);
-		}
+		vardb->readInstDate(*package, i);
 		return date_conv((*eix_rc)[after_colon].c_str(), i->instDate);
 	}
 	return STRING_EMPTY;
@@ -778,13 +781,9 @@ PrintFormat::COLON_PKG_INSTALLEDMARKEDVERSIONS(Package *package, const string &a
 string
 PrintFormat::PKG_INSTALLED(Package *package) const
 {
-	if(likely(vardb != NULLPTR)) {
-		vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-		if((vec != NULLPTR) && (likely(!(vec->empty())))) {
-			return STRING_TRUE;
-		}
-	}
-	return STRING_FALSE;
+	eix_assert_paranoic(vardb != NULLPTR);
+	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
+	return IS_TRUE((vec != NULLPTR) && (likely(!(vec->empty()))));
 }
 
 string
@@ -811,13 +810,13 @@ PrintFormat::PKG_COLOR(Package *package ATTRIBUTE_UNUSED) const
 string
 PrintFormat::PKG_HAVEBEST(Package *package) const
 {
-	return IS_FALSE(package->best(false) == NULLPTR);
+	return IS_TRUE(package->best(false) != NULLPTR);
 }
 
 string
 PrintFormat::PKG_HAVEBESTS(Package *package) const
 {
-	return IS_FALSE(package->best(true) == NULLPTR);
+	return IS_TRUE(package->best(true) != NULLPTR);
 }
 
 string
@@ -858,14 +857,13 @@ PrintFormat::PKG_BINARY(Package *package) const
 			return STRING_TRUE;
 		}
 	}
-	if(likely(vardb != NULLPTR)) {
-		vector<InstVersion> *vec(vardb->getInstalledVector(*package));
-		if(vec != NULLPTR) {
-			for(vector<InstVersion>::iterator it(vec->begin());
-				likely(it != vec->end()); ++it) {
-				if(it->have_bin_pkg(portagesettings, package)) {
-					return STRING_TRUE;
-				}
+	eix_assert_paranoic(vardb != NULLPTR);
+	vector<InstVersion> *vec(vardb->getInstalledVector(*package));
+	if(vec != NULLPTR) {
+		for(vector<InstVersion>::iterator it(vec->begin());
+			likely(it != vec->end()); ++it) {
+			if(it->have_bin_pkg(portagesettings, package)) {
+				return STRING_TRUE;
 			}
 		}
 	}
@@ -1195,14 +1193,13 @@ PrintFormat::ver_overlay(Package *package, bool getnum) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		if(unlikely((unlikely(vardb == NULLPTR)) ||
-			(unlikely(header == NULLPTR)) ||
-			(unlikely(!(vardb->readOverlay(*package, i, *header)))))) {
-				if(getnum || no_color) {
-					return "[?]";
-				}
-				return color_overlaykey + "[?]" + AnsiColor(AnsiColor::acDefault).asString();
+		eix_assert_paranoic(header != NULLPTR);
+		if(unlikely(!(vardb->readOverlay(*package, i, *header)))) {
+			if(getnum || no_color) {
+				return "[?]";
 			}
+			return color_overlaykey + "[?]" + AnsiColor(AnsiColor::acDefault).asString();
+		}
 		if(i->overlay_key > 0) {
 			if(getnum || (!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key)) {
 				return overlay_keytext(i->overlay_key, getnum);
@@ -1265,15 +1262,10 @@ PrintFormat::VER_VERSIONEKEYWORDS(Package *package) const
 string
 PrintFormat::ver_isbestupgrade(Package *package, bool check_slots, bool allow_unstable) const
 {
-	if(likely(!version_variables->isinst)) {
-		if(unlikely((likely(vardb != NULLPTR)) &&
-			unlikely(package->is_best_upgrade(check_slots,
-					version_variables->version(),
-					vardb, portagesettings, allow_unstable)))) {
-			return STRING_TRUE;
-		}
-	}
-	return STRING_FALSE;
+	return IS_TRUE(likely(!version_variables->isinst) &&
+		unlikely(package->is_best_upgrade(check_slots,
+				version_variables->version(),
+				vardb, portagesettings, allow_unstable)));
 }
 
 string
@@ -1318,12 +1310,8 @@ PrintFormat::VER_INSTALLEDVERSION(Package *package) const
 	if(unlikely(version_variables->isinst)) {
 		return STRING_TRUE;
 	}
-	if(unlikely((likely(vardb != NULLPTR)) && (likely(header != NULLPTR)) &&
-		(unlikely(vardb->isInstalledVersion(*package,
-			version_variables->version(), *header))))) {
-		return STRING_TRUE;
-	}
-	return STRING_FALSE;
+	eix_assert_paranoic(header != NULLPTR);
+	return IS_TRUE(vardb->isInstalledVersion(*package, version_variables->version(), *header));
 }
 
 string
@@ -1331,12 +1319,8 @@ PrintFormat::VER_HAVEUSE(Package *package) const
 {
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		if((likely(vardb != NULLPTR)) &&
-			(likely(vardb->readUse(*package, i)))
-			&& !(i->inst_iuse.empty())) {
-			return STRING_TRUE;
-		}
-		return STRING_FALSE;
+		return IS_TRUE(likely(vardb->readUse(*package, i))
+			&& !(i->inst_iuse.empty()));
 	}
 	return IS_FALSE(version_variables->version()->iuse.empty());
 }
@@ -1365,9 +1349,8 @@ PrintFormat::VER_VIRTUAL(Package *package) const
 	ExtendedVersion::Overlay key;
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
-		if(unlikely((unlikely(vardb == NULLPTR)) ||
-			(unlikely(header == NULLPTR)) ||
-			(unlikely(!(vardb->readOverlay(*package, i, *header)))))) {
+		eix_assert_paranoic(header != NULLPTR);
+		if(!(vardb->readOverlay(*package, i, *header))) {
 			return STRING_FALSE;
 		}
 		key = i->overlay_key;
@@ -1389,8 +1372,8 @@ PrintFormat::ver_restrict(Package *package) const
 	if(version_variables->isinst) {
 		InstVersion *i(version_variables->instver());
 		if(!version_variables->know_restrict) {
-			if(likely((vardb != NULLPTR) && (header != NULLPTR)) &&
-				vardb->readRestricted(*package, i, *header)) {
+			eix_assert_paranoic(header != NULLPTR);
+			if(vardb->readRestricted(*package, i, *header)) {
 					version_variables->know_restrict = true;
 			} else {
 				return NULLPTR;

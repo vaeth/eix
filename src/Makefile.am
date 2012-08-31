@@ -28,8 +28,10 @@ database/package_reader.h
 nodist_database_src =
 
 stringutils_src = \
+eixTk/assert.h \
 eixTk/compare.cc \
 eixTk/compare.h \
+eixTk/diagnostics.h \
 eixTk/eixint.h \
 eixTk/formated.cc \
 eixTk/formated.h \
@@ -62,7 +64,6 @@ eixTk/ansicolor.h \
 eixTk/argsreader.cc \
 eixTk/argsreader.h \
 eixTk/auto_ptr.h \
-eixTk/diagnostics.h \
 eixTk/exceptions.cc \
 eixTk/exceptions.h \
 eixTk/inttypes.h \

@@ -25,7 +25,11 @@ using std::string;
 using std::cout;
 using std::endl;
 
-inline static string
+static string percent_to_string(PercentStatus::Percentage i);
+static string percent_to_string(PercentStatus::Percentage i, string::size_type wanted);
+static void flush_total();
+
+static string
 percent_to_string(PercentStatus::Percentage i)
 {
 	std::ostringstream o;
@@ -33,7 +37,7 @@ percent_to_string(PercentStatus::Percentage i)
 	return o.str();
 }
 
-inline static void
+static void
 flush_total()
 {
 	cout.flush();

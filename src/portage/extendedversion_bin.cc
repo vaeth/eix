@@ -9,12 +9,11 @@
 
 #include <config.h>
 
-#include <cassert>
-
 #include <map>
 #include <string>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/stringutils.h"
@@ -29,7 +28,7 @@ using std::vector;
 
 class RestrictMap : public map<string, ExtendedVersion::Restrict> {
 	private:
-		void mapinit(const char *s, ExtendedVersion::Restrict r)
+		void mapinit(const char *s, ExtendedVersion::Restrict r) ATTRIBUTE_NONNULL_
 		{ (*this)[s] = r; }
 
 	public:
@@ -60,7 +59,7 @@ static RestrictMap *restrict_map = NULLPTR;
 
 class PropertiesMap : public map<string, ExtendedVersion::Properties> {
 	private:
-		void mapinit(const char *s, ExtendedVersion::Properties p)
+		void mapinit(const char *s, ExtendedVersion::Properties p) ATTRIBUTE_NONNULL_
 		{ (*this)[s] = p; }
 	public:
 		PropertiesMap()
@@ -94,7 +93,7 @@ ExtendedVersion::init_static()
 ExtendedVersion::Restrict
 ExtendedVersion::calcRestrict(const string &str)
 {
-	assert(restrict_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(restrict_map != NULLPTR);
 	Restrict r(RESTRICT_NONE);
 	vector<string> restrict_words;
 	split_string(&restrict_words, str);
@@ -108,7 +107,7 @@ ExtendedVersion::calcRestrict(const string &str)
 ExtendedVersion::Properties
 ExtendedVersion::calcProperties(const string &str)
 {
-	assert(properties_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(properties_map != NULLPTR);
 	Properties p(PROPERTIES_NONE);
 	vector<string> properties_words;
 	split_string(&properties_words, str);

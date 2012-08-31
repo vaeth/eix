@@ -104,6 +104,7 @@ SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsF
 	saved.restore(p);
 #ifndef ALWAYS_RECALCULATE_STABILITY
 #ifndef NDEBUG
+#ifdef EIX_PARANOIC_ASSERT
 	/* The next test should actually be unnecessary.
 	 * But in the above calculation of keyword_index or mask_index
 	 * there might easily be a forgotten case (in particular, since
@@ -117,6 +118,7 @@ SetStability::calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsF
 		cerr << _("internal error: SetStability calculates wrong index") << endl;
 		exit(EXIT_FAILURE);
 	}
+#endif
 #endif
 #endif
 }

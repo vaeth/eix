@@ -46,7 +46,7 @@ class PrintXml {
 		typedef eix::UNumber XmlVersion;
 		static const XmlVersion current = 9;
 
-		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
+		void init(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
 		{
 			hdr = header;
 			var_db_pkg = vardb;
@@ -56,14 +56,14 @@ class PrintXml {
 			clear(eixrc);
 		}
 
-		PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir)
+		explicit PrintXml(const DBHeader *header, VarDbPkg *vardb, const PrintFormat *printformat, const SetStability *set_stability, EixRc *eixrc, const std::string &port_dir) ATTRIBUTE_NONNULL_
 		{ init(header, vardb, printformat, set_stability, eixrc, port_dir); }
 
 		PrintXml() : hdr(NULLPTR), var_db_pkg(NULLPTR), print_format(NULLPTR), stability(NULLPTR)
 		{ clear(NULLPTR); }
 
 		void start();
-		void package(Package *pkg);
+		void package(Package *pkg) ATTRIBUTE_NONNULL_;
 		void finish();
 		static std::string escape_xmlstring(const std::string &s);
 

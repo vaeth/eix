@@ -11,7 +11,6 @@
 
 // #define DEBUG_PROFILE_PATHS
 
-#include <cassert>
 #include <cstring>
 
 #include <iostream>
@@ -21,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
@@ -113,7 +113,7 @@ bool CascadingProfile::addProfile(const char *profile, set<string> *sourced_file
 		sourced_files->erase(truename);
 	}
 	vector<string> filenames;
-	bool r(pushback_files(truename, filenames, profile_exclude, 3));
+	bool r(pushback_files(truename, &filenames, profile_exclude, 3));
 	for(vector<string>::const_iterator it(filenames.begin());
 		likely(it != filenames.end()); ++it) {
 		listaddFile(*it, 0);
@@ -159,14 +159,14 @@ static ProfileFilenames *profile_filenames = NULLPTR;
 void
 CascadingProfile::init_static()
 {
-	assert(profile_filenames == NULLPTR);  // must be called only once
+	eix_assert_static(profile_filenames == NULLPTR);
 	profile_filenames = new ProfileFilenames;
 }
 
 bool
 CascadingProfile::readremoveFiles()
 {
-	assert(profile_filenames != NULLPTR);  // has init_static() been called?
+	eix_assert_static(profile_filenames != NULLPTR);
 	bool ret(false);
 	for(vector<ProfileFile>::iterator file(m_profile_files.begin());
 		likely(file != m_profile_files.end()); ++file) {
@@ -328,7 +328,7 @@ GCC_DIAG_ON(sign-conversion)
 		}
 		for(vector<SetsIndex>::const_iterator it(v->sets_indizes.begin());
 			unlikely(it != v->sets_indizes.end()); ++it) {
-			const std::string &set_name(m_portagesettings->set_names[*it]);
+			const string &set_name(m_portagesettings->set_names[*it]);
 			m_system_allowed.applySetMasks(*v, set_name);
 			m_system.applySetMasks(*v, set_name);
 			m_package_masks.applySetMasks(*v, set_name);

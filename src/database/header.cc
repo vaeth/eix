@@ -57,7 +57,8 @@ DBHeader::addOverlay(const OverlayIdent& overlay)
 	return countOverlays() - 1;
 }
 
-bool DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const
+bool
+DBHeader::find_overlay(ExtendedVersion::Overlay *num, const char *name, const char *portdir, ExtendedVersion::Overlay minimal, OverlayTest testmode) const
 {
 	if(unlikely(minimal > countOverlays()))
 		return false;

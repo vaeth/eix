@@ -57,7 +57,7 @@ public:
 	BasicPart(PartType p, char c) : parttype(p), partcontent(1, c)
 	{ }
 
-	BasicPart(PartType p, const char *s) : parttype(p), partcontent(s)
+	BasicPart(PartType p, const char *s)  ATTRIBUTE_NONNULL_ : parttype(p), partcontent(s)
 	{ }
 
 	static eix::SignedBool compare(const BasicPart& left, const BasicPart& right) ATTRIBUTE_PURE;

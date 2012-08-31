@@ -1,11 +1,14 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
-*eix-0.26.5
+*eix-0.27.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support USE_EXPAND. Set EIX_USE_EXPAND=false if you do not like it.
 	  <{coll,}use*> and FORMAT_{BEFORE,AFTER}_IUSE_EXPAND{,_START,_END}
 	- Improve handling of local cascading profiles; add local make.defaults
 	- Make USE_EXPAND an accumulating variable
+	- Introduce paranoic/static asserts and use them only for debugging
+	- Use __attribute__ ((nonnull)) excessively. This is dangerous;
+	  a bug here will typically lead to segfaults.
 
 *eix-0.26.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

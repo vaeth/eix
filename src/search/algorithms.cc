@@ -9,13 +9,27 @@
 
 #include <config.h>
 
-#include <cassert>
+#include <fnmatch.h>
+
+#include <cstring>
 
 #include <map>
 #include <string>
 
+#include "eixTk/assert.h"
 #include "eixTk/null.h"
+#include "eixTk/unused.h"
+#include "portage/package.h"
 #include "search/algorithms.h"
+#include "search/levenshtein.h"
+
+/* Check if we have FNM_CASEFOLD ..
+ * fnmatch(3) tells that this is a GNU extension. */
+#ifdef FNM_CASEFOLD
+#define FNMATCH_FLAGS FNM_CASEFOLD
+#else
+#define FNMATCH_FLAGS 0
+#endif
 
 using std::map;
 using std::string;
@@ -25,14 +39,22 @@ map<string, unsigned int> *FuzzyAlgorithm::levenshtein_map = NULLPTR;
 void
 FuzzyAlgorithm::init_static()
 {
-	assert(levenshtein_map == NULLPTR);  // must be called only once
+	eix_assert_static(levenshtein_map == NULLPTR);
 	levenshtein_map = new map<string, unsigned int>;
 }
 
 bool
+FuzzyAlgorithm::compare(Package *p1, Package *p2)
+{
+	return ((*levenshtein_map)[p1->category + "/" + p1->name]
+			< (*levenshtein_map)[p2->category + "/" + p2->name]);
+}
+
+
+bool
 FuzzyAlgorithm::operator()(const char *s, Package *p)
 {
-	assert(levenshtein_map != NULLPTR);  // has init_static() been called?
+	eix_assert_static(levenshtein_map != NULLPTR);
 	unsigned int d(get_levenshtein_distance(search_string.c_str(), s));
 	bool ok(d <= max_levenshteindistance);
 	if(ok) {
@@ -41,4 +63,37 @@ FuzzyAlgorithm::operator()(const char *s, Package *p)
 		}
 	}
 	return ok;
+}
+
+bool
+ExactAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+{
+	UNUSED(p);
+	return !strcmp(search_string.c_str(), s);
+}
+
+bool
+BeginAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+{
+	UNUSED(p);
+	return !strncmp(search_string.c_str(), s, search_string.size());
+}
+
+bool
+EndAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+{
+	UNUSED(p);
+	string::size_type l(strlen(s));
+	string::size_type sl(search_string.size());
+	if(l < sl) {
+		return false;
+	}
+	return !strcmp(search_string.c_str(), s + (l - sl));
+}
+
+bool
+PatternAlgorithm::operator()(const char *s, Package *p ATTRIBUTE_UNUSED)
+{
+	UNUSED(p);
+	return !fnmatch(search_string.c_str(), s, FNMATCH_FLAGS);
 }

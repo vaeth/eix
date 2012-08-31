@@ -26,6 +26,17 @@
 
 using std::string;
 
+typedef off_t Md5DataLen;
+
+inline static uint32_t md5F(uint32_t x, uint32_t y, uint32_t z);
+inline static uint32_t md5G(uint32_t x, uint32_t y, uint32_t z);
+inline static uint32_t md5H(uint32_t x, uint32_t y, uint32_t z);
+inline static uint32_t md5I(uint32_t x, uint32_t y, uint32_t z);
+inline static uint32_t md5rotate(uint32_t x, unsigned int c);
+static void md5fill(const char *buffer, uint32_t *mybuf, unsigned int len) ATTRIBUTE_NONNULL_;
+static void md5chunk(const uint32_t *mybuf, uint32_t *resarr) ATTRIBUTE_NONNULL_;
+static void calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr) ATTRIBUTE_NONNULL_;
+
 inline static uint32_t
 md5F(uint32_t x, uint32_t y, uint32_t z)
 {
@@ -179,8 +190,6 @@ md5chunk(const uint32_t *mybuf, uint32_t *resarr)
 	resarr[3] = (resarr[3] + d) & 0xFFFFFFFFUL;
 }
 
-typedef off_t Md5DataLen;
-
 static void
 calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr)
 {
@@ -241,6 +250,8 @@ calc_md5sum(const char *buffer, Md5DataLen totalsize, uint32_t *resarr)
 using std::cout;
 using std::endl;
 
+static void debug_md5(const uint32_t *resarr) ATTRIBUTE_NONNULL_;
+
 static void
 debug_md5(const uint32_t *resarr)
 {
@@ -277,7 +288,7 @@ verify_md5sum(const char *file ATTRIBUTE_UNUSED, const char *md5sum ATTRIBUTE_UN
 	debug_md5(resarr);
 	return false;
 }
-#endif
+#else
 
 bool
 verify_md5sum(const char *file, const string &md5sum)
@@ -343,3 +354,5 @@ GCC_DIAG_ON(sign-conversion)
 	}
 	return true;
 }
+
+#endif

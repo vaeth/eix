@@ -73,7 +73,7 @@ class Pathname {
 			return s == name;
 		}
 
-		string resolve(PortageSettings *portage_settings)
+		string resolve(PortageSettings *portage_settings) ATTRIBUTE_NONNULL_
 		{ return portage_settings->resolve_overlay_name(name, must_resolve); }
 
 		Pathname(string n, bool r) : name(n), must_resolve(r)
@@ -104,7 +104,14 @@ class RepoName {
 		{ }
 };
 
-static bool update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline, string *errtext);
+static bool update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline, string *errtext) ATTRIBUTE_NONNULL_;
+static void error_callback(const string &str);
+static void add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve) ATTRIBUTE_NONNULL_;
+static void add_override(vector<Override> *override_list, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
+static void add_reponames(vector<RepoName> *repo_names, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
+static void add_virtuals(vector<Override> *override_list, vector<Pathname> *add, vector<RepoName> *repo_names, const string &cachefile, const string &eprefix_virtual) ATTRIBUTE_NONNULL_;
+static void override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names) ATTRIBUTE_NONNULL_;
+static bool stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist);
 static void print_help();
 
 static void
@@ -279,7 +286,7 @@ override_label(OverlayIdent *overlay, const vector<RepoName> &repo_names)
 	}
 }
 
-inline static bool
+static bool
 stringstart_in_wordlist(const string &to_check, const vector<string> &wordlist)
 {
 	for(vector<string>::const_iterator it(wordlist.begin());

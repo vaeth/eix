@@ -88,7 +88,7 @@ class PackageTest {
 			STABLE_SYSTEM       = 0x08U;  /**< Test for system packages */
 
 		/** Set default values. */
-		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader);
+		PackageTest(VarDbPkg *vdb, PortageSettings *p, const PrintFormat *f, const SetStability *stability, const DBHeader *dbheader) ATTRIBUTE_NONNULL_;
 
 		~PackageTest();
 
@@ -100,7 +100,7 @@ class PackageTest {
 
 		void setAlgorithm(MatchAlgorithm a);
 
-		void setPattern(const char *p);
+		void setPattern(const char *p) ATTRIBUTE_NONNULL_;
 
 		bool match(PackageReader *pkg) const;
 
@@ -181,13 +181,13 @@ class PackageTest {
 		void SelectedSet()
 		{ worldset = worldset_only_selected = true; }
 
-		void StabilityDefault(Package *p) const
+		void StabilityDefault(Package *p) const ATTRIBUTE_NONNULL_
 		{ stability->set_stability(p); }
 
-		void StabilityLocal(Package *p) const
+		void StabilityLocal(Package *p) const ATTRIBUTE_NONNULL_
 		{ stability->set_stability(true, p); }
 
-		void StabilityNonlocal(Package *p) const
+		void StabilityNonlocal(Package *p) const ATTRIBUTE_NONNULL_
 		{ stability->set_stability(false, p); }
 
 		std::set<ExtendedVersion::Overlay> *OverlayList()
@@ -310,7 +310,7 @@ class PackageTest {
 		static MatchField     get_matchfield(const char *p);
 		static MatchAlgorithm get_matchalgorithm(const char *p);
 
-		bool stringMatch(Package *pkg) const;
+		bool stringMatch(Package *pkg) const ATTRIBUTE_NONNULL_;
 
 		void setNeeds(const PackageReader::Attributes i)
 		{
@@ -323,7 +323,7 @@ class PackageTest {
 
 		bool have_redundant(const Package &p, Keywords::Redundant r, const RedAtom &t) const;
 		bool have_redundant(const Package &p, Keywords::Redundant r) const;
-		bool instabilitytest(const Package *p, TestStability what) const;
+		bool instabilitytest(const Package *p, TestStability what) const ATTRIBUTE_NONNULL_;
 
 		static Keywords::Redundant nowarn_keywords(const Package &p);
 		static Keywords::Redundant nowarn_mask(const Package &p);

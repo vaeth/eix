@@ -44,6 +44,8 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
+static void override_by_env(map<string, string> *m) ATTRIBUTE_NONNULL_;
+
 EixRcOption::EixRcOption(OptionType t, string name, string val, string desc) {
 	type = t;
 	key = name;

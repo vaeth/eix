@@ -45,6 +45,7 @@ src/eixTk/ansicolor.cc
 src/eixTk/ansicolor.h
 src/eixTk/argsreader.cc
 src/eixTk/argsreader.h
+src/eixTk/assert.h
 src/eixTk/auto_ptr.h
 src/eixTk/compare.cc
 src/eixTk/compare.h

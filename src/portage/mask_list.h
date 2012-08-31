@@ -47,7 +47,7 @@ public:
 	void add(const m_Type &m)
 	{ push_back(m); }
 
-	bool match_full(const char *cat_name) const
+	bool match_full(const char *cat_name) const ATTRIBUTE_NONNULL_
 	{ return !fnmatch(full.c_str(), cat_name, FNM_PATHNAME); }
 };
 
@@ -101,7 +101,7 @@ public:
 		return false;
 	}
 
-	bool match_name(const Package *p) const
+	bool match_name(const Package *p) const ATTRIBUTE_NONNULL_
 	{ return match_full(p->category + "/" + p->name); }
 
 	inline static void push_result(Get *&l, const Masks<m_Type> &r)
@@ -132,7 +132,7 @@ public:
 	Get *get_setname(const std::string &setname) const
 	{ return get_full(std::string(SET_CATEGORY) + "/" + setname); }
 
-	Get *get(const Package *p) const
+	Get *get(const Package *p) const ATTRIBUTE_NONNULL_
 	{ return get_full(p->category + "/" + p->name); }
 
 	void add(const m_Type &m)
@@ -159,14 +159,14 @@ public:
 	}
 
 	/* return true if something was added */
-	bool add_file(const char *file, Mask::Type mask_type, bool recursive);
+	bool add_file(const char *file, Mask::Type mask_type, bool recursive) ATTRIBUTE_NONNULL_;
 
 	/** This can be optionally called after the last add():
 	 *  It will release memory. */
 	void finalize()
 	{ full_index.clear(); }
 
-	void applyListItems(Package *p) const
+	void applyListItems(Package *p) const ATTRIBUTE_NONNULL_
 	{
 		Get *masks(get(p));
 		if(masks == NULLPTR) {
@@ -179,7 +179,7 @@ public:
 		delete masks;
 	}
 
-	void applyListSetItems(Version *v, const std::string &set_name) const
+	void applyListSetItems(Version *v, const std::string &set_name) const ATTRIBUTE_NONNULL_
 	{
 		Get *masks(get_setname(set_name));
 		if(masks == NULLPTR) {
@@ -193,9 +193,9 @@ public:
 	}
 
 	// return true if some masks applied
-	bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+	bool applyMasks(Package *p, Keywords::Redundant check = Keywords::RED_NOTHING) const ATTRIBUTE_NONNULL_;
 
-	void applySetMasks(Version *v, const std::string &set_name) const;
+	void applySetMasks(Version *v, const std::string &set_name) const ATTRIBUTE_NONNULL_;
 };
 
 // This is only needed for PreList
@@ -333,11 +333,11 @@ public:
 
 	void finalize();
 
-	void initialize(MaskList<Mask> *l, Mask::Type t);
+	void initialize(MaskList<Mask> *l, Mask::Type t) ATTRIBUTE_NONNULL_;
 
-	void initialize(MaskList<KeywordMask> *l, std::string raised_arch);
+	void initialize(MaskList<KeywordMask> *l, std::string raised_arch) ATTRIBUTE_NONNULL_;
 
-	void initialize(MaskList<PKeywordMask> *l);
+	void initialize(MaskList<PKeywordMask> *l) ATTRIBUTE_NONNULL_;
 };
 
 #endif  // SRC_PORTAGE_MASK_LIST_H_

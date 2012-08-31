@@ -27,7 +27,7 @@ class CacheTable : public eix::ptr_list<BasicCache>
 		~CacheTable()
 		{ delete_and_clear(); }
 
-		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override, std::string *errtext);
+		bool addCache(const char *eprefixcache, const char *eprefixport, const char *directory, const std::string &cache_name, const std::map<std::string, std::string> *override, std::string *errtext) ATTRIBUTE_NONNULL((4));
 };
 
 #endif  // SRC_CACHE_CACHETABLE_H_

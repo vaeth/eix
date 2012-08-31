@@ -9,12 +9,11 @@
 
 #include <config.h>
 
-#include <cassert>
-
 #include <map>
 #include <string>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/filenames.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -30,7 +29,7 @@ static map<string, string> *path_label_hash = NULLPTR;
 void
 OverlayIdent::init_static()
 {
-	assert(path_label_hash == NULLPTR);  // must be called only once
+	eix_assert_static(path_label_hash == NULLPTR);
 	path_label_hash = new map<string, string>;
 }
 
@@ -67,7 +66,7 @@ OverlayIdent::readLabel_internal(const char *Path)
 	} else {
 		my_path = Path;
 	}
-	assert(path_label_hash != NULLPTR);  // has init_static() been called?
+	eix_assert_static(path_label_hash != NULLPTR);
 	map<string, string>::const_iterator f(path_label_hash->find(my_path));
 	if(f != path_label_hash->end()) {
 		label = f->second;

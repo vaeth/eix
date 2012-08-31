@@ -23,7 +23,7 @@ class SqliteCache : public BasicCache {
 
 	private:
 		bool never_add_categories;
-		void sqlite_callback_cpp(int argc, const char **argv, const char **azColName);
+		void sqlite_callback_cpp(int argc, const char **argv, const char **azColName) ATTRIBUTE_NONNULL_;
 		std::vector<int> trueindex;
 		int maxindex;
 

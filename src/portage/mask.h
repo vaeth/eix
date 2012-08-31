@@ -73,7 +73,7 @@ class Mask : public BasicVersion {
 		/** Tests if the mask applies to a Version.
 		 * @param ev test this version
 		 * @return true if applies. */
-		bool test(const ExtendedVersion *ev) const;
+		bool test(const ExtendedVersion *ev) const ATTRIBUTE_NONNULL_;
 
 	public:
 		typedef eix::ptr_list<Version> Matches;
@@ -82,7 +82,7 @@ class Mask : public BasicVersion {
 		 * @param ve         Version instance to be set
 		 * @param do_test    set conditionally or unconditionally
 		 * @param check      check these for changes */
-		void apply(Version *ve, bool do_test, Keywords::Redundant check) const;
+		void apply(Version *ve, bool do_test, Keywords::Redundant check) const ATTRIBUTE_NONNULL_;
 
 		/** Parse mask-string. */
 		Mask(Type type, const char *repo = NULLPTR);
@@ -92,13 +92,13 @@ class Mask : public BasicVersion {
 		 * @param str_mask the string to be dissected
 		 * @param errtext contains error message if not 0 and not parseOK
 		 * @param accept_garbage passed to parseVersion if appropriate */
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true);
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true) ATTRIBUTE_NONNULL((2));
 
-		void match(Matches *m, Package *pkg) const;
+		void match(Matches *m, Package *pkg) const ATTRIBUTE_NONNULL_;
 
 		bool have_match(const Package &pkg) const;
 
-		void to_package(Package *p) const;
+		void to_package(Package *p) const ATTRIBUTE_NONNULL_;
 
 		const char *getName() const
 		{ return m_name.c_str(); }
@@ -112,7 +112,7 @@ class Mask : public BasicVersion {
 		/** Sets the stability members of all version in package according to the mask.
 		 * @param pkg            package you want tested
 		 * @param check          Redundancy checks which should apply */
-		void checkMask(Package *pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const;
+		void checkMask(Package *pkg, Keywords::Redundant check = Keywords::RED_NOTHING) const ATTRIBUTE_NONNULL_;
 
 		bool ismatch(const Package& pkg) const;
 
@@ -128,9 +128,9 @@ class KeywordMask : public Mask {
 		explicit KeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
 		{ }
 
-		void applyItem(Package *pkg) const;
+		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 
-		void applyItem(Version *ver) const
+		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_
 		{ ver->add_accepted_keywords(keywords); }
 };
 
@@ -141,9 +141,9 @@ class PKeywordMask : public Mask {
 		explicit PKeywordMask(const char *repo = NULLPTR) : Mask(maskTypeNone, repo)
 		{ }
 
-		void applyItem(Package *pkg) const;
+		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 
-		void applyItem(Version *ver) const
+		void applyItem(Version *ver) const ATTRIBUTE_NONNULL_
 		{ ver->modify_effective_keywords(keywords); }
 };
 
@@ -155,7 +155,7 @@ class SetMask : public Mask {
 			Mask(maskTypeNone, repo), m_set(set_index)
 		{ }
 
-		void applyItem(Package *pkg) const;
+		void applyItem(Package *pkg) const ATTRIBUTE_NONNULL_;
 };
 
 

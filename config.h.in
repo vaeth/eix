@@ -9,19 +9,25 @@
 /* Default DEFAULT_ARCH */
 #undef ARCH_DEFAULT
 
-/* Define to __attribute__ ((__const__)) if it can be used */
+/* Define to __attribute__ ((const)) if it can be used */
 #undef ATTRIBUTE_CONST
 
-/* Define to __attribute__ ((__pure__)) or ((__const__)) or empty */
+/* Define to __attribute__ ((pure)) or ((const)) or empty */
 #undef ATTRIBUTE_CONST_VIRTUAL
 
-/* Define to __attribute__ ((__noreturn__)) if it can be used */
+/* Define to __attribute__ ((nonnull a)) if it can be used */
+#undef ATTRIBUTE_NONNULL
+
+/* Define to __attribute__ ((nonnull)) if it can be used */
+#undef ATTRIBUTE_NONNULL_
+
+/* Define to __attribute__ ((noreturn)) if it can be used */
 #undef ATTRIBUTE_NORETURN
 
-/* Define to __attribute__ ((__pure__)) if it can be used */
+/* Define to __attribute__ ((pure)) if it can be used */
 #undef ATTRIBUTE_PURE
 
-/* Define to __attribute__ ((__signal__)) if it can be used */
+/* Define to __attribute__ ((signal)) if it can be used */
 #undef ATTRIBUTE_SIGNAL
 
 /* Define to 1 if setegid is broken */
@@ -48,6 +54,9 @@
 /* Location of the cachefile */
 #undef EIX_CACHEFILE
 
+/* Define to 1 if paranoic asserts should be used */
+#undef EIX_PARANOIC_ASSERT
+
 /* Default EIX_PREFIX */
 #undef EIX_PREFIX_DEFAULT
 
@@ -59,6 +68,9 @@
 
 /* Location of the remote cachefile */
 #undef EIX_REMOTECACHEFILE
+
+/* Define to 1 if asserts for static initializers should be used */
+#undef EIX_STATIC_ASSERT
 
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
@@ -76,7 +88,7 @@
 /* Define to 1 if you have the `atoi' function. */
 #undef HAVE_ATOI
 
-/* Define to 1 if __attribute__ ((__unused__)) can be used */
+/* Define to 1 if __attribute__ ((unused)) can be used */
 #undef HAVE_ATTRIBUTE_UNUSED
 
 /* Define to 1 if you have the `canonicalize_file_name' function. */

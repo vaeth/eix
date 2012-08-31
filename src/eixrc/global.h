@@ -13,15 +13,15 @@
 class EixRc;
 
 /** Must be called exactly once before get_eixrc() can be used */
-EixRc &get_eixrc(const char *varprefix);
+EixRc &get_eixrc(const char *varprefix) ATTRIBUTE_NONNULL_;
 
 /** Return a static eixrc. */
 EixRc &get_eixrc() ATTRIBUTE_PURE;
 
-void fill_defaults_part_1(EixRc *eixrc);
-void fill_defaults_part_2(EixRc *eixrc);
-void fill_defaults_part_3(EixRc *eixrc);
-void fill_defaults_part_4(EixRc *eixrc);
-void fill_defaults_part_5(EixRc *eixrc);
+void fill_defaults_part_1(EixRc *eixrc) ATTRIBUTE_NONNULL_;
+void fill_defaults_part_2(EixRc *eixrc) ATTRIBUTE_NONNULL_;
+void fill_defaults_part_3(EixRc *eixrc) ATTRIBUTE_NONNULL_;
+void fill_defaults_part_4(EixRc *eixrc) ATTRIBUTE_NONNULL_;
+void fill_defaults_part_5(EixRc *eixrc) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_EIXRC_GLOBAL_H_

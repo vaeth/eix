@@ -39,8 +39,8 @@ class MetadataCache : public BasicCache {
 		std::string m_catpath;
 		std::vector<std::string> names;
 
-		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string &filename, std::string &keywords, std::string &slotname, std::string &iuse, std::string &restr, std::string &props, Depend &dep, BasicCache::ErrorCallback error_callback);
-		typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback);
+		typedef void (*x_get_keywords_slot_iuse_restrict_t)(const std::string &filename, std::string *keywords, std::string *slotname, std::string *iuse, std::string *restr, std::string *props, Depend *dep, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
+		typedef void (*x_read_file_t)(const char *filename, Package *pkg, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
 		x_get_keywords_slot_iuse_restrict_t x_get_keywords_slot_iuse_restrict;
 		x_read_file_t x_read_file;
 
@@ -50,16 +50,16 @@ class MetadataCache : public BasicCache {
 	public:
 		bool initialize(const std::string &name);
 
-		bool readCategoryPrepare(const char *cat_name);
-		bool readCategory(Category *cat);
+		bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_;
+		bool readCategory(Category *cat) ATTRIBUTE_NONNULL_;
 		void readCategoryFinalize();
 
-		const char *get_md5sum(const char *pkg_name, const char *ver_name) const;
-		time_t get_time(const char *pkg_name, const char *ver_name) const
+		const char *get_md5sum(const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_;
+		time_t get_time(const char *pkg_name, const char *ver_name) const ATTRIBUTE_NONNULL_
 		{ return get_mtime((m_catpath + "/" + pkg_name + "-" + ver_name).c_str()); }
 
-		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const;
-		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const
+		void get_version_info(const char *pkg_name, const char *ver_name, Version *version) const ATTRIBUTE_NONNULL_;
+		void get_common_info(const char *pkg_name, const char *ver_name, Package *pkg) const ATTRIBUTE_NONNULL_
 		{ (*x_read_file)((m_catpath + "/" + pkg_name + "-" + ver_name).c_str(), pkg, m_error_callback); }
 
 		bool use_prefixport() const ATTRIBUTE_PURE;

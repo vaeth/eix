@@ -9,8 +9,7 @@
 
 #include <config.h>
 
-#include <cassert>
-
+#include "eixTk/assert.h"
 #include "eixTk/i18n.h"
 #include "eixTk/null.h"
 #include "eixrc/eixrc.h"
@@ -39,7 +38,7 @@ void fill_defaults_part_1(EixRc *eixrc)
 EixRc &
 get_eixrc(const char *varprefix)
 {
-	assert(static_eixrc == NULLPTR);  // must be called only once
+	eix_assert_static(static_eixrc == NULLPTR);
 	static_eixrc = new EixRc(varprefix);
 
 	fill_defaults_part_1(static_eixrc);
@@ -57,6 +56,6 @@ get_eixrc(const char *varprefix)
 EixRc &
 get_eixrc()
 {
-	assert(static_eixrc != NULLPTR);  // has get_eix(varprefix) been called?
+	eix_assert_static(static_eixrc != NULLPTR);
 	return *static_eixrc;
 }

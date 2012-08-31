@@ -46,11 +46,17 @@ eix::OffsetType io::counter;
 
 namespace io {
 /// Read a number with leading zero's
-static bool
-read_Part(BasicPart *b, FILE *fp, string *errtext);
+static bool read_Part(BasicPart *b, FILE *fp, string *errtext) ATTRIBUTE_NONNULL_;
 
-inline static bool
-read_string_plain(char *s, string::size_type len, FILE *fp, string *errtext)
+/// Write a number with leading zero's
+static bool write_Part(const BasicPart &n, FILE *fp, string *errtext);
+
+static bool read_string_plain(char *s, string::size_type len, FILE *fp, string *errtext) ATTRIBUTE_NONNULL((1, 3));
+static bool write_string_plain(const string &str, FILE *fp, string *errtext);
+}
+
+static bool
+io::read_string_plain(char *s, string::size_type len, FILE *fp, string *errtext)
 {
 	if(likely(fread(s, sizeof(*s), len, fp) == len)) {
 		return true;
@@ -59,8 +65,8 @@ read_string_plain(char *s, string::size_type len, FILE *fp, string *errtext)
 	return false;
 }
 
-inline static bool
-write_string_plain(const string &str, FILE *fp, string *errtext)
+static bool
+io::write_string_plain(const string &str, FILE *fp, string *errtext)
 {
 	if(fp == NULLPTR) {
 GCC_DIAG_OFF(sign-conversion)
@@ -73,10 +79,6 @@ GCC_DIAG_ON(sign-conversion)
 	}
 	writeError(errtext);
 	return false;
-}
-
-/// Write a number with leading zero's
-static bool write_Part(const BasicPart &n, FILE *fp, string *errtext);
 }
 
 void

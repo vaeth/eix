@@ -38,6 +38,8 @@ using std::cout;
 
 const PrintXml::XmlVersion PrintXml::current;
 
+static void print_iuse(const set<IUse> &s, IUse::Flags wanted, const char *dflt);
+
 void
 PrintXml::runclear()
 {

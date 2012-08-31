@@ -62,7 +62,7 @@ class CascadingProfile {
 
 	private:
 		/** Add all files from profile and its parents to m_profile_files. */
-		bool addProfile(const char *profile, std::set<std::string> *sourced_files = NULLPTR);
+		bool addProfile(const char *profile, std::set<std::string> *sourced_files = NULLPTR) ATTRIBUTE_NONNULL((2));
 
 		/** Handler functions follow for reading a file */
 		typedef bool (CascadingProfile::*Handler)(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
@@ -70,30 +70,30 @@ class CascadingProfile {
 		/** Read all "packages" files found in profile.
 		 * Populate p_system and p_system_allowed.
 		 * @return true if data was changed */
-		bool readPackages(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackages(const std::vector<std::string> &lines, const std::string &filename, const char *repo) ATTRIBUTE_NONNULL_;
 
 		/** Read all "package.mask" files found in profile.
 		 * Populate p_package_masks.
 		 * @return true if data was changed */
-		bool readPackageMasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageMasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo) ATTRIBUTE_NONNULL_;
 
 		/** Read all "package.unmask" files found in profile.
 		 * Populate p_package_unmasks.
 		 * @return true if data was changed */
-		bool readPackageUnmasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageUnmasks(const std::vector<std::string> &lines, const std::string &filename, const char *repo) ATTRIBUTE_NONNULL_;
 
 		/** Read all "package.keywords" files found in profile.
 		 * Populate p_package_keywords.
 		 * @return true if data was changed */
-		bool readPackageKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo) ATTRIBUTE_NONNULL_;
 
 		/** Read all "package.accept_keywords" files found in profile.
 		 * Populate p_package_accept_keywords.
 		 * @return true if data was changed */
-		bool readPackageAcceptKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo);
+		bool readPackageAcceptKeywords(const std::vector<std::string> &lines, const std::string &filename, const char *repo) ATTRIBUTE_NONNULL_;
 
 	public:
-		CascadingProfile(PortageSettings *portagesettings, bool init_world) :
+		CascadingProfile(PortageSettings *portagesettings, bool init_world)  ATTRIBUTE_NONNULL_ :
 			use_world(false), finalized(false),
 			m_init_world(init_world),
 			m_portagesettings(portagesettings)
@@ -124,8 +124,8 @@ class CascadingProfile {
 		void listclear()
 		{ m_profile_files.clear(); }
 
-		void applyMasks(Package *p) const;
-		void applyKeywords(Package *p) const;
+		void applyMasks(Package *p) const ATTRIBUTE_NONNULL_;
+		void applyKeywords(Package *p) const ATTRIBUTE_NONNULL_;
 
 		static void init_static();
 };

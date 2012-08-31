@@ -65,11 +65,11 @@ class Regex
 		}
 
 		/// Does the regular expression match s?
-		bool match(const char *s) const
+		bool match(const char *s) const ATTRIBUTE_NONNULL_
 		{ return (!m_compiled) || (!regexec(get(), s, 0, NULLPTR, 0)); }
 
 		/// Does the regular expression match s? Get beginning/end
-		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const
+		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const ATTRIBUTE_NONNULL((2))
 		{
 			regmatch_t pmatch[1];
 			if(!m_compiled) {

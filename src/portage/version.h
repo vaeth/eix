@@ -36,7 +36,7 @@ class IUse : public std::string {
 			USEFLAGS_MINUS  = 4;
 		Flags flags;
 
-		static Flags parse(std::string *s);
+		static Flags parse(std::string *s) ATTRIBUTE_NONNULL_;
 
 		std::string &name()
 		{ return *static_cast<std::string *>(this); }
@@ -93,8 +93,8 @@ class IUseSet {
  */
 class Version : public ExtendedVersion, public Keywords {
 	public:
-		friend bool io::write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext);
-		friend bool io::read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext);
+		friend bool io::write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1));
+		friend bool io::read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL_;
 
 		typedef enum {
 			SAVEKEY_USER, SAVEKEY_ACCEPT, SAVEKEY_ARCH, SAVEKEY_SIZE
@@ -239,7 +239,7 @@ class Version : public ExtendedVersion, public Keywords {
 		}
 
 		void set_keyflags(const std::set<std::string> &accepted_keywords)
-		{ keyflags.set(get_keyflags(accepted_keywords)); }
+		{ keyflags.set_keyflags(get_keyflags(accepted_keywords)); }
 
 	protected:
 		std::string full_keywords, effective_keywords;

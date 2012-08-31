@@ -15,6 +15,7 @@
 #include <cstring>
 
 #include <iostream>
+#include <map>
 #include <set>
 #include <string>
 #include <utility>
@@ -34,6 +35,7 @@
 
 class PortageSettings;
 
+using std::map;
 using std::pair;
 using std::set;
 using std::string;
@@ -42,6 +44,10 @@ using std::vector;
 using std::cerr;
 using std::cout;
 using std::endl;
+
+static void parse_color(string *color, bool use_color) ATTRIBUTE_NONNULL_;
+static void colorstring(string *color) ATTRIBUTE_NONNULL_;
+static bool parse_colors(string *ret, const string &colorstring, bool colors, string *errtext) ATTRIBUTE_NONNULL_;
 
 void
 MarkedList::add(const char *pkg, const char *ver)
@@ -150,6 +156,39 @@ LocalCopy::LocalCopy(const PrintFormat *fmt, Package *pkg) :
 	}
 	// (fmt->recommend_mode == LOCALMODE_NONLOCAL)
 	fmt->StabilityNonlocal(pkg);
+}
+
+bool
+VarParserCacheNode::init(Node *&rootnode, const char *fmt, bool colors, bool use, string *errtext)
+{
+	in_use = use;
+	if(likely(m_parser.start(fmt, colors, false, errtext))) {
+		rootnode = m_parser.rootnode();
+		return true;
+	}
+	return false;
+}
+
+void
+VarParserCache::clear_use()
+{
+	for(map<string, VarParserCacheNode>::iterator it = begin();
+		it != end(); ++it)
+		it->second.in_use = false;
+}
+
+PrintFormat::PrintFormat(GetProperty get_callback)
+{
+	m_get_property = get_callback;
+	virtuals = NULLPTR;
+	overlay_translations = NULLPTR;
+	overlay_used = NULLPTR;
+	some_overlay_used = NULLPTR;
+	marked_list = NULLPTR;
+	eix_rc = NULLPTR;
+	vardb = NULLPTR;
+	portagesettings = NULLPTR;
+	stability = NULLPTR;
 }
 
 bool
@@ -371,27 +410,7 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 	return printed;
 }
 
-bool
-PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
-{
-	// The four hackish variables
-	header = dbheader;
-	vardb = vardbpkg;
-	portagesettings = ps;
-	stability = s;
-	version_variables = NULLPTR;
-	varcache.clear_use();
-	user_variables.clear();
-	bool r(recPrint(NULLPTR, entity, get_property, root));
-	// Reset the four hackish variables
-	header = NULLPTR;
-	vardb = NULLPTR;
-	portagesettings = NULLPTR;
-	stability = NULLPTR;
-	return r;
-}
-
-bool
+static bool
 parse_colors(string *ret, const string &colorstring, bool colors, string *errtext)
 {
 	FormatParser parser;
@@ -787,4 +806,35 @@ FormatParser::start(const char *fmt, bool colors, bool parse_only_colors, string
 	}
 	root_node = p;
 	return true;
+}
+
+/* return true if something was actually printed */
+bool
+PrintFormat::print(void *entity, GetProperty get_property, Node *root, const DBHeader *dbheader, VarDbPkg *vardbpkg, const PortageSettings *ps, const SetStability *s)
+{
+	// The four hackish variables
+	header = dbheader;
+	vardb = vardbpkg;
+	portagesettings = ps;
+	stability = s;
+	version_variables = NULLPTR;
+	varcache.clear_use();
+	user_variables.clear();
+	bool r(recPrint(NULLPTR, entity, get_property, root));
+	// Reset the four hackish variables
+	header = NULLPTR;
+	vardb = NULLPTR;
+	portagesettings = NULLPTR;
+	stability = NULLPTR;
+	return r;
+}
+
+bool
+PrintFormat::parseFormat(Node **rootnode, const char *fmt, std::string *errtext)
+{
+	if(likely(m_parser.start(fmt, !no_color, false, errtext))) {
+		*rootnode = m_parser.rootnode();
+		return true;
+	}
+	return false;
 }

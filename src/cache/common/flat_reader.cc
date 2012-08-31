@@ -22,7 +22,6 @@
 #include "eixTk/formated.h"
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
-#include "eixTk/null.h"
 #include "portage/depend.h"
 #include "portage/package.h"
 
@@ -30,13 +29,14 @@ using std::string;
 
 using std::ifstream;
 
-inline static bool
-skip_lines(const eix::TinyUnsigned nr, ifstream &is, const string &filename, BasicCache::ErrorCallback error_callback)
+static bool skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string &filename, BasicCache::ErrorCallback error_callback) ATTRIBUTE_NONNULL_;
+
+static bool
+skip_lines(const eix::TinyUnsigned nr, ifstream *is, const string &filename, BasicCache::ErrorCallback error_callback)
 {
 	for(eix::TinyUnsigned i(nr); likely(i != 0); --i) {
-		is.ignore(std::numeric_limits<int>::max(), '\n');
-		if(is.fail())
-		{
+		is->ignore(std::numeric_limits<int>::max(), '\n');
+		if(is->fail()) {
 			error_callback(eix::format(_("Can't read cache file %s: %s"))
 				% filename % strerror(errno));
 			return false;
@@ -47,7 +47,7 @@ skip_lines(const eix::TinyUnsigned nr, ifstream &is, const string &filename, Bas
 
 /** Read the keywords and slot from a flat cache file. */
 void
-flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, string &slotname, string &iuse, string &restr, string &props, Depend &dep, BasicCache::ErrorCallback error_callback)
+flat_get_keywords_slot_iuse_restrict(const string &filename, string *keywords, string *slotname, string *iuse, string *restr, string *props, Depend *dep, BasicCache::ErrorCallback error_callback)
 {
 	ifstream is(filename.c_str());
 	if(!is.is_open()) {
@@ -60,24 +60,24 @@ flat_get_keywords_slot_iuse_restrict(const string &filename, string &keywords, s
 		getline(is, depend);
 		getline(is, rdepend);
 	} else {
-		skip_lines(2, is, filename, error_callback);
+		skip_lines(2, &is, filename, error_callback);
 	}
-	getline(is, slotname);
-	skip_lines(1, is, filename, error_callback);
-	getline(is, restr);
-	skip_lines(3, is, filename, error_callback);
-	getline(is, keywords);
-	skip_lines(1, is, filename, error_callback);
-	getline(is, iuse);
+	getline(is, *slotname);
+	skip_lines(1, &is, filename, error_callback);
+	getline(is, *restr);
+	skip_lines(3, &is, filename, error_callback);
+	getline(is, *keywords);
+	skip_lines(1, &is, filename, error_callback);
+	getline(is, *iuse);
 	if(use_dep) {
-		skip_lines(1, is, filename, error_callback);
+		skip_lines(1, &is, filename, error_callback);
 		getline(is, pdepend);
-		dep.set(depend, rdepend, pdepend, false);
-		skip_lines(2, is, filename, error_callback);
+		dep->set(depend, rdepend, pdepend, false);
+		skip_lines(2, &is, filename, error_callback);
 	} else {
-		skip_lines(4, is, filename, error_callback);
+		skip_lines(4, &is, filename, error_callback);
 	}
-	getline(is, props);
+	getline(is, *props);
 	is.close();
 }
 
@@ -90,10 +90,10 @@ flat_read_file(const char *filename, Package *pkg, BasicCache::ErrorCallback err
 		error_callback(eix::format(_("Can't open %s: %s"))
 			% filename % strerror(errno));
 	}
-	skip_lines(5, is, filename, error_callback);
+	skip_lines(5, &is, filename, error_callback);
 	string linebuf;
 	// Read the rest
-	for(eix::TinyUnsigned linenr(5); likely(getline(is, linebuf) != NULLPTR); ++linenr) {
+	for(eix::TinyUnsigned linenr(5); getline(is, linebuf); ++linenr) {
 		switch(linenr) {
 			case 5:  pkg->homepage = linebuf;
 			         break;

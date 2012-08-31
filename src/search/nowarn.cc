@@ -7,14 +7,13 @@
 
 #include <config.h>
 
-#include <cassert>
-
 #include <map>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "eixTk/assert.h"
 #include "eixTk/exceptions.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
@@ -35,10 +34,11 @@ using std::vector;
 
 class NowarnKeywords
 {
+private:
 	typedef map<string, NowarnFlags> NameMap;
 	NameMap name_map;
 public:
-	void init_red(const char *s, Keywords::Redundant red)
+	void init_red(const char *s, Keywords::Redundant red) ATTRIBUTE_NONNULL_
 	{ name_map.insert(pair<string, NowarnFlags>(s, NowarnFlags(red))); }
 
 	void init_ins(const std::string &s, PackageTest::TestInstalled ins)
@@ -86,14 +86,14 @@ NowarnKeywords *NowarnMask::nowarn_keywords = NULLPTR;
 void
 NowarnMask::init_static()
 {
-	assert(nowarn_keywords == NULLPTR);  // must be called only once
+	eix_assert_static(nowarn_keywords == NULLPTR);
 	nowarn_keywords = new NowarnKeywords;
 }
 
 void
 NowarnMask::init_nowarn(const vector<string> &flagstrings)
 {
-	assert(nowarn_keywords != NULLPTR);  // has init_static() been called?
+	eix_assert_static(nowarn_keywords != NULLPTR);
 	set_flags.clear();
 	clear_flags.clear();
 	for(vector<string>::const_iterator it(flagstrings.begin());

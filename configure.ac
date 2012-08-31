@@ -43,7 +43,7 @@ dnl    each item is listed in a separate line with indent level increased;
 dnl    in such a case the opening/closing braces are isolated.
 dnl 2. The AC_INIT macro must be in one line since it is parsed by
 dnl    primitive scripts.
-AC_INIT([eix], [0.26.5], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
+AC_INIT([eix], [0.27.0], [http://developer.berlios.de/projects/eix/], [eix], [http://eix.berlios.de/])
 AC_PREREQ([2.64])
 
 AC_CONFIG_AUX_DIR([config])
@@ -102,11 +102,19 @@ AS_VAR_IF([GXX], [yes],
 
 AC_ARG_ENABLE([debugging],
 	[AS_HELP_STRING([--enable-debugging],
-		[set flags appropriate for debugging])],
+		[activate paranoic asserts and flags for debugging])],
 	[MV_ENABLE([debugging])
 	AS_VAR_SET([cmt_debugging], ["on request"])],
 	[AS_VAR_SET([debugging], [false])
 	AS_VAR_SET([cmt_debugging], ["default"])])
+
+AC_ARG_ENABLE([paranoicasserts],
+	[AS_HELP_STRING([--enable-paranoic-asserts],
+		[activate paranoic asserts])],
+	[MV_ENABLE([paranoicasserts])],
+	[AS_VAR_SET([paranoicassert], [false])])
+AS_IF([${debugging}],
+	[AS_VAR_SET([paranoicassert], [true])])
 
 AC_ARG_ENABLE([new_dialect],
 	[AS_HELP_STRING([--disable-new-dialect],
@@ -167,16 +175,16 @@ AC_ARG_ENABLE([quickcheck],
 # Some implicit dependencies of these options.
 # We do this here explicitly and output the results
 
-AC_MSG_CHECKING([whether debugging options should be used])
+AC_MSG_CHECKING([whether debugging asserts/flags should be used])
 MV_MSG_RESULT_BIN([${debugging}], [${cmt_debugging}])
 
 AC_MSG_CHECKING([whether most current C++ dialect should be used])
 MV_MSG_RESULT_BIN([${new_dialect}], [${cmt_new_dialect}])
 
 AC_MSG_CHECKING([whether strong optimization options should be used])
-AS_IF([${debugging}],
+AS_IF([${paranoicasserts}],
 	[AS_VAR_SET([strong_optimization], [false])
-	AS_VAR_SET([cmt_strong_optimization], ["disabled by debugging"])])
+	AS_VAR_SET([cmt_strong_optimization], ["disabled by paranoic asserts"])])
 MV_MSG_RESULT_BIN([${strong_optimization}], [${cmt_strong_optimization}])
 
 AC_MSG_CHECKING([whether optimization options should be used])
@@ -662,6 +670,18 @@ AC_ARG_WITH([extra-doc],
 	[AS_VAR_SET([extra_doc], [false])])
 AM_CONDITIONAL([EXTRA_DOC], [${extra_doc}])
 
+# Use paranoic asserts?
+AC_MSG_CHECKING([whether paranoic asserts are used])
+AS_IF([${paranoicassert}],
+	[MV_MSG_RESULT([yes])
+	AC_DEFINE([EIX_PARANOIC_ASSERT],
+		[1],
+		[Define to 1 if paranoic asserts should be used])
+	AC_DEFINE([EIX_STATIC_ASSERT],
+		[1],
+		[Define to 1 if asserts for static initializers should be used])],
+	[MV_MSG_RESULT([no])])
+
 # Check if __builtin_expect works
 AC_MSG_CHECKING([whether __builtin_expect can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[]], [[
@@ -718,12 +738,12 @@ AS_IF([${gcc_diag_pragma}],
 		[1],
 		[Define to 1 if _Pragma GCC diagnostic can be used everywhere])])
 
-# Check if __attribute__ ((__unused__)) works
-AC_MSG_CHECKING([whether __attribute__ ((__unused__)) can be used])
+# Check if __attribute__ ((unused)) works
+AC_MSG_CHECKING([whether __attribute__ ((unused)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 static int dummy(int i);
 static int
-dummy(int i __attribute__ ((__unused__)))
+dummy(int i __attribute__ ((unused)))
 { return 0; }
 		]], [[
 return dummy(1);
@@ -735,13 +755,13 @@ return dummy(1);
 AS_IF([${attribute_unused}],
 	[AC_DEFINE([HAVE_ATTRIBUTE_UNUSED],
 		[1],
-		[Define to 1 if __attribute__ ((__unused__)) can be used])])
+		[Define to 1 if __attribute__ ((unused)) can be used])])
 
-# Check if __attribute__ ((__noreturn__)) works
-AC_MSG_CHECKING([whether __attribute__ ((__noreturn__)) can be used])
+# Check if __attribute__ ((noreturn)) works
+AC_MSG_CHECKING([whether __attribute__ ((noreturn)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <cstdlib>
-static void dummy() __attribute__ ((__noreturn__));
+static void dummy() __attribute__ ((noreturn));
 static void
 dummy()
 { exit(0); }
@@ -749,20 +769,20 @@ dummy()
 dummy()
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_noreturn], ["__attribute__ ((__noreturn__))"])],
+		AS_VAR_SET([attribute_noreturn], ["__attribute__ ((noreturn))"])],
 		[MV_MSG_RESULT([no])
 		AS_VAR_SET([attribute_noreturn], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_NORETURN],
 	[${attribute_noreturn}],
-	[Define to __attribute__ ((__noreturn__)) if it can be used])
+	[Define to __attribute__ ((noreturn)) if it can be used])
 
-# Check if __attribute__ ((__signal__)) works
-AC_MSG_CHECKING([whether __attribute__ ((__signal__)) can be used])
+# Check if __attribute__ ((signal)) works
+AC_MSG_CHECKING([whether __attribute__ ((signal)) can be used])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <csignal>
-void my_sig_handler(int sig) __attribute__ ((__signal__));
+void my_sig_handler(int sig) __attribute__ ((signal));
 class my_int {
-friend void my_sig_handler(int sig) __attribute__ ((__signal__));
+friend void my_sig_handler(int sig) __attribute__ ((signal));
 private:	static int i;
 		static void set(int s) { i=s; }
 };
@@ -773,58 +793,104 @@ void my_sig_handler(int sig)
 	signal(SIGTERM, my_sig_handler);
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_signal], ["__attribute__ ((__signal__))"])],
+		AS_VAR_SET([attribute_signal], ["__attribute__ ((signal))"])],
 		[MV_MSG_RESULT([no])
 		AS_VAR_SET([attribute_signal], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_SIGNAL],
 	[${attribute_signal}],
-	[Define to  __attribute__ ((__signal__)) if it can be used])
+	[Define to  __attribute__ ((signal)) if it can be used])
 
-# Check if __attribute__ ((__const__)) works
-AC_MSG_CHECKING([whether __attribute__ ((__const__)) can be used])
+# Check if __attribute__ ((const)) works
+AC_MSG_CHECKING([whether __attribute__ ((const)) can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 class b {
 public:
-	static int c(int i) __attribute__ ((__const__)) { return i; }
+	static int c(int i) __attribute__ ((const)) { return i; }
 };
-int a(int i) __attribute__ ((__const__));
+int a(int i) __attribute__ ((const));
 int a(int i) { b x; return x.c(i); }
 		]], [[
 return !((a(4) == 4) && (a(5) == 5));
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_const], ["__attribute__ ((__const__))"])],
+		AS_VAR_SET([attribute_const], ["__attribute__ ((const))"])],
 		[MV_MSG_RESULT([no])
 		AS_VAR_SET([attribute_const], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST],
 	[${attribute_const}],
-	[Define to  __attribute__ ((__const__)) if it can be used])
+	[Define to  __attribute__ ((const)) if it can be used])
 
-# Check if __attribute__ ((__pure__)) works
-AC_MSG_CHECKING([whether __attribute__ ((__pure__)) can be used])
+# Check if __attribute__ ((pure)) works
+AC_MSG_CHECKING([whether __attribute__ ((pure)) can be used])
 MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
 class b {
 public:
-	static int c(int *i) __attribute__ ((__pure__)) { return *i; }
+	static int c(int *i) __attribute__ ((pure)) { return *i; }
 };
-int a(int i) __attribute__ ((__pure__));
+int a(int i) __attribute__ ((pure));
 int a(int i) { b x; return x.c(&i); }
 		]], [[
 return !((a(4) == 4) && (a(5) == 5));
 		]])],
 		[MV_MSG_RESULT([yes])
-		AS_VAR_SET([attribute_pure], ["__attribute__ ((__pure__))"])],
+		AS_VAR_SET([attribute_pure], ["__attribute__ ((pure))"])],
 		[MV_MSG_RESULT([no])
 		AS_VAR_SET([attribute_pure], [])])
 AC_DEFINE_UNQUOTED([ATTRIBUTE_PURE],
 	[${attribute_pure}],
-	[Define to  __attribute__ ((__pure__)) if it can be used])
+	[Define to  __attribute__ ((pure)) if it can be used])
 
-# I know no reliable way to check whether __attribute__ ((__const__))
-# can be used for const virtuals. So better use __attribute__ ((__pure__)).
+# I do not know a reliable way to check whether __attribute__ ((const))
+# can be used for const virtuals. So better use __attribute__ ((pure)).
 AC_DEFINE_UNQUOTED([ATTRIBUTE_CONST_VIRTUAL],
 	[${attribute_pure}],
-	[Define to  __attribute__ ((__pure__)) or ((__const__)) or empty])
+	[Define to  __attribute__ ((pure)) or ((const)) or empty])
+
+# Check if __attribute__ ((nonnull)) works
+AC_MSG_CHECKING([whether __attribute__ ((nonnull)) can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+class b {
+public:
+	int c(int *i) __attribute__ ((nonnull)) { return *i; }
+};
+int a(int *i) __attribute__ ((nonnull));
+int a(int *i) { b x; return x.c(i); }
+		]], [[
+int i = 4, j = 5;
+return !((a(&i) == 4) && (a(&j) == 5));
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attribute_nonnull_], ["__attribute__ ((nonnull))"])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attribute_nonnull_], [])])
+AC_DEFINE_UNQUOTED([ATTRIBUTE_NONNULL_],
+	[${attribute_nonnull_}],
+	[Define to  __attribute__ ((nonnull)) if it can be used])
+
+# Check if __attribute__ ((nonnull (x, y))) works
+AC_MSG_CHECKING([whether __attribute__ ((nonnull (x, y))) can be used])
+MV_RUN_IFELSE_LINK([AC_LANG_PROGRAM([[
+class b {
+public:
+	static int c(int *i, int *j, int *k) __attribute__ ((nonnull (1, 3)))
+	{ return (j ? ((*i) - (*k)) : ((*i) + (*k))); }
+	int d(int *i, int *j, int *k) __attribute__ ((nonnull (2, 4)))
+	{ return c(i,j,k); }
+};
+int a(int *i, int *j, int *k) __attribute__ ((nonnull (1, 3)));
+int a(int *i, int *j, int *k) { b x; return x.d(i, j, k) + x.d(i, 0, k); }
+		]], [[
+int i = 1;
+b x;
+return !((x.d(&i, 0, &i) == 2) && (x.d(&i, 0, &i) == 2) && (a(&i, 0, &i) == 4));
+		]])],
+		[MV_MSG_RESULT([yes])
+		AS_VAR_SET([attribute_nonnull], ["__attribute__ ((nonnull a))"])],
+		[MV_MSG_RESULT([no])
+		AS_VAR_SET([attribute_nonnull], [])])
+AC_DEFINE_UNQUOTED([ATTRIBUTE_NONNULL(a)],
+	[${attribute_nonnull}],
+	[Define to  __attribute__ ((nonnull a)) if it can be used])
 
 # reset the CXXFLAGS, LDFLAGS for the normal tests
 AS_VAR_COPY([CXXFLAGS], [my_cxxflags])

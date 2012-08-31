@@ -105,7 +105,7 @@ class BasicCache {
 		    This is used in eix-update to avoid unnecessary updates of the percentage bar.
 		    In case of a false return value, readCategory() must not be called,
 		    but readCategoryFinalize() must be called anyway. */
-		virtual bool readCategoryPrepare(const char *cat_name)
+		virtual bool readCategoryPrepare(const char *cat_name) ATTRIBUTE_NONNULL_
 		{
 			m_catname = cat_name;
 			return true;
@@ -115,7 +115,7 @@ class BasicCache {
 		    If not overloaded, then readCategories() must be overloaded.
 		    After calling this, readCategoryFinalize() must be called.
 		    @return false if some error caused incomplete read. */
-		virtual bool readCategory(Category *cat)
+		virtual bool readCategory(Category *cat) ATTRIBUTE_NONNULL_
 		{ return readCategories(NULLPTR, m_catname.c_str(), cat); }
 
 		/** This must be called to release the data stored with readCategoryPrepare().
@@ -123,28 +123,28 @@ class BasicCache {
 		virtual void readCategoryFinalize()
 		{ m_catname.clear(); }
 
-		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
+		virtual time_t get_time(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_
 		{
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return 0;
 		}
 
-		virtual const char *get_md5sum(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const
+		virtual const char *get_md5sum(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_
 		{
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			return NULLPTR;
 		}
 
-		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const
+		virtual void get_version_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Version *version ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_
 		{
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
 			UNUSED(version);
 		}
 
-		virtual void get_common_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const
+		virtual void get_common_info(const char *pkg_name ATTRIBUTE_UNUSED, const char *ver_name ATTRIBUTE_UNUSED, Package *pkg ATTRIBUTE_UNUSED) const ATTRIBUTE_NONNULL_
 		{
 			UNUSED(pkg_name);
 			UNUSED(ver_name);
@@ -160,7 +160,7 @@ class BasicCache {
 		bool have_prefix;
 		ExtendedVersion::Overlay m_overlay_key;
 		ErrorCallback m_error_callback;
-		void env_add_package(std::map<std::string, std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const;
+		void env_add_package(std::map<std::string, std::string> &env, const Package &package, const Version &version, const std::string &ebuild_dir, const char *ebuild_full) const ATTRIBUTE_NONNULL_;
 
 	public:
 		PortageSettings *portagesettings;

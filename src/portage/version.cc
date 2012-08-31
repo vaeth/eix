@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "eixTk/likely.h"
+#include "eixTk/null.h"
 #include "eixTk/stringutils.h"
 #include "portage/version.h"
 
@@ -72,7 +73,7 @@ IUse::prefix() const
 	so each change modifies the cachefile format.
 	The corresponding function for reading the cachefile (or the string
 	passed from the ebuild) is parse() which is intentionally a bit more
-	sloppy about the syntax; so certain minor changes of the prefixes to
+	sloppy about the syntax; so certain minor changes of the prefixes of
 	the cachefile format do not harm.
 */
 	switch(flags) {

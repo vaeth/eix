@@ -46,7 +46,7 @@ class SetStability {
 #endif
 
 	public:
-		SetStability(const PortageSettings *psettings, bool localsettings, bool filemask_is_profile, bool always_accept_keywords)
+		SetStability(const PortageSettings *psettings, bool localsettings, bool filemask_is_profile, bool always_accept_keywords) ATTRIBUTE_NONNULL_
 		{
 			portagesettings = psettings;
 			m_local = localsettings;
@@ -54,16 +54,16 @@ class SetStability {
 			m_always_accept_keywords = always_accept_keywords;
 		}
 
-		void set_stability(bool get_local, Package *package) const;
+		void set_stability(bool get_local, Package *package) const ATTRIBUTE_NONNULL_;
 
-		void set_stability(Package *package) const
+		void set_stability(Package *package) const ATTRIBUTE_NONNULL_
 		{ set_stability(m_local, package); }
 
-		void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const;
+		void calc_version_flags(bool get_local, MaskFlags *maskflags, KeywordsFlags *keyflags, const Version *v, Package *p) const ATTRIBUTE_NONNULL((5, 6));
 
-		void set_stability(Category *category) const;
+		void set_stability(Category *category) const ATTRIBUTE_NONNULL_;
 
-		void set_stability(PackageTree *tree) const;
+		void set_stability(PackageTree *tree) const ATTRIBUTE_NONNULL_;
 };
 
 #endif  // SRC_PORTAGE_SET_STABILITY_H_

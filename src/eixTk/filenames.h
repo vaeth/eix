@@ -11,39 +11,22 @@
 #include <string>
 #include <vector>
 
-#include "eixTk/likely.h"
-#include "eixTk/sysutils.h"
-
 /** canonicalize_file_name() if possible or some substitute */
-std::string normalize_path(const char *path, bool resolve = true, bool want_slash = false);
+std::string normalize_path(const char *path, bool resolve = true, bool want_slash = false) ATTRIBUTE_NONNULL_;
 
 /** Compare whether two (normalized) filenames are identical */
-bool same_filenames(const char *mask, const char *name, bool glob = false, bool resolve_mask = true);
+bool same_filenames(const char *mask, const char *name, bool glob = false, bool resolve_mask = true) ATTRIBUTE_NONNULL_;
 
 /** Compare whether (normalized) filename starts with mask */
-bool filename_starts_with(const char *mask, const char *name, bool resolve_mask);
+bool filename_starts_with(const char *mask, const char *name, bool resolve_mask) ATTRIBUTE_NONNULL_;
 
 /** Return first match in a list of filenames/patterns. */
-inline static std::vector<std::string>::const_iterator
+std::vector<std::string>::const_iterator
 find_filenames(const std::vector<std::string>::const_iterator start,
 		const std::vector<std::string>::const_iterator end, const char *search,
-		bool list_of_patterns = false, bool resolve_list = false)
-{
-	for(std::vector<std::string>::const_iterator i(start); likely(i != end); ++i) {
-		if(unlikely(same_filenames(i->c_str(), search, list_of_patterns, resolve_list))) {
-			return i;
-		}
-	}
-	return end;
-}
+		bool list_of_patterns = false, bool resolve_list = false) ATTRIBUTE_NONNULL_;
 
 /** Test whether filename appears to be a "virtual" overlay */
-inline static bool
-is_virtual(const char *name)
-{
-	if(*name != '/')
-		return true;
-	return !is_dir(name);
-}
+bool is_virtual(const char *name) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_EIXTK_FILENAMES_H_

@@ -9,7 +9,6 @@
 #ifndef SRC_EIXTK_FORMATED_H_
 #define SRC_EIXTK_FORMATED_H_ 1
 
-#include <cassert>
 #ifndef NDEBUG
 #include <cstdlib>
 
@@ -19,6 +18,7 @@
 #include <sstream>
 #include <string>
 
+#include "eixTk/assert.h"
 #ifndef NDEBUG
 #include "eixTk/i18n.h"
 #endif
@@ -111,7 +111,7 @@ class format
 		/// Return the formated string.
 		std::string str() const
 		{
-			assert(m_spec == 0);
+			eix_assert_paranoic(m_spec == 0);
 			return m_stream.str();
 		}
 

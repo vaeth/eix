@@ -10,6 +10,6 @@
 
 #include <string>
 
-bool verify_md5sum(const char *file, const std::string &md5sum);
+bool verify_md5sum(const char *file, const std::string &md5sum) ATTRIBUTE_NONNULL_;
 
 #endif  // SRC_EIXTK_MD5_H_

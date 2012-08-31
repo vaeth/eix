@@ -65,7 +65,11 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-static bool is_current_dbversion(const char *filename);
+static bool print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_used) ATTRIBUTE_NONNULL((1, 2));
+static void parseFormat(const char *varname, const char *varcontent) ATTRIBUTE_NONNULL_;
+static void set_format();
+static void setup_defaults(EixRc *rc) ATTRIBUTE_NONNULL_;
+static bool is_current_dbversion(const char *filename) ATTRIBUTE_NONNULL_;
 static void print_vector(const vector<string> &vec);
 static void print_unused(const string &filename, const string &excludefiles, const eix::ptr_list<Package> &packagelist, bool test_empty = false);
 static void print_removed(const string &dirname, const string &excludefiles, const eix::ptr_list<Package> &packagelist);
@@ -1064,12 +1068,13 @@ print_removed(const string &dirname, const string &excludefiles, const eix::ptr_
 	set<string> excludes;
 	bool know_excludes(false);
 	vector<string> categories;
-	pushback_files(dirname, categories, NULLPTR, 2, true, false);
+	pushback_files(dirname, &categories, NULLPTR, 2, true, false);
 	for(vector<string>::const_iterator cit(categories.begin());
 		likely(cit != categories.end()); ++cit) {
 		vector<string> names;
-		string cat_slash(*cit + "/");
-		pushback_files(dirname + cat_slash, names, NULLPTR, 2, true, false);
+		string cat_slash(*cit);
+		cat_slash.append(1, '/');
+		pushback_files(dirname + cat_slash, &names, NULLPTR, 2, true, false);
 		map<string, set<string> >::const_iterator cat(cat_name.find(*cit));
 		const set<string> *ns( (cat == cat_name.end()) ? NULLPTR : &(cat->second) );
 		for(vector<string>::const_iterator nit(names.begin());

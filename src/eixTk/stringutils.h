@@ -15,7 +15,7 @@
 #ifndef HAVE_STRNDUP
 #include <sys/types.h>
 /** strndup in case we don't have one. */
-char *strndup(const char *s, size_t n);
+char *strndup(const char *s, size_t n) ATTRIBUTE_NONNULL_;
 #endif
 
 #include <locale>
@@ -52,94 +52,59 @@ extern std::locale localeC;
 /** Split names of Atoms in different ways. */
 class ExplodeAtom {
 	public:
-		static const char *get_start_of_version(const char* str);
+		static const char *get_start_of_version(const char* str) ATTRIBUTE_NONNULL_;
 
 		/** Get the version-string of a Atom (e.g. get 1.2.3 from foobar-1.2.3).  */
-		static char *split_version(const char* str);
+		static char *split_version(const char* str) ATTRIBUTE_NONNULL_;
 
 		/** Get the name-string of a Atom (e.g. get foobar from foobar-1.2.3).  */
-		static char *split_name(const char* str);
+		static char *split_name(const char* str) ATTRIBUTE_NONNULL_;
 
 		/** Get name and version from a Atom (e.g. foobar and 1.2.3 from foobar-1.2.3).
 		 * @warn You'll get a pointer to a static array of 2 pointer to char. */
-		static char **split(const char* str);
+		static char **split(const char* str) ATTRIBUTE_NONNULL_;
 };
 
 /** Check string if it only contains digits. */
-inline static bool is_numeric(const char *str) ATTRIBUTE_PURE;
-inline static bool
-is_numeric(const char *str)
-{
-	for(char c(*str); likely(c != '\0'); c = *(++str)) {
-		if(!isdigit(c, localeC))
-			return false;
-	}
-	return true;
-}
+bool is_numeric(const char *str) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
 
 /** Add symbol if it is not already the last one */
-inline static void
-optional_append(std::string *s, char symbol)
-{
-	if(s->empty() || ((*(s->rbegin()) != symbol)))
-		s->append(1, symbol);
-}
+void optional_append(std::string *s, char symbol) ATTRIBUTE_NONNULL_;
 
 /** Trim characters on left side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-inline static void
-ltrim(std::string *str, const char *delims = spaces)
-{
-	// trim leading whitespace
-	std::string::size_type notwhite(str->find_first_not_of(delims));
-	if(notwhite != std::string::npos)
-		str->erase(0, notwhite);
-	else
-		str->clear();
-}
+void ltrim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
 
 /** Trim characters on right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-inline static void
-rtrim(std::string *str, const char *delims = spaces)
-{
-	// trim trailing whitespace
-	std::string::size_type notwhite(str->find_last_not_of(delims));
-	if(notwhite != std::string::npos)
-		str->erase(notwhite+1);
-	else
-		str->clear();
-}
+void rtrim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
 
 /** Trim characters on left and right side of string.
  * @param str String that should be trimmed
  * @param delims characters that should me removed */
-void
-trim(std::string *str, const char *delims = spaces);
+void trim(std::string *str, const char *delims = spaces) ATTRIBUTE_NONNULL_;
 
 /** Replaces all characters of delims by c (counting several delims as one).
  * delims on the beginning of end of the strig are removed.
  * @param str String that should be trimmed
  * @param delims characters that should me removed
  * @param c character that should be inserted */
-void
-trimall(std::string *str, const char *delims = spaces, char c = ' ');
+void trimall(std::string *str, const char *delims = spaces, char c = ' ') ATTRIBUTE_NONNULL_;
 
 /** return the lowercase version of str */
-std::string
-to_lower(const std::string &str);
+std::string to_lower(const std::string &str);
 
 /** return the character corresponding to an escaped symbol.
     For instance, n -> \n, \ -> \, \0 -> \ */
 char get_escape(char c) ATTRIBUTE_CONST;
 
 /** Resolve all escapes in a string (a safe printf) */
-void unescape_string(std::string *str);
+void unescape_string(std::string *str) ATTRIBUTE_NONNULL_;
 
 /** Escape all "at" and "\" characters in string. */
-void escape_string(std::string *str, const char *at = spaces);
+void escape_string(std::string *str, const char *at = spaces) ATTRIBUTE_NONNULL_;
 
 /** Split a string into multiple strings.
  * @param vec Will contain the result. Actually the result is pushed_back
@@ -150,16 +115,16 @@ void escape_string(std::string *str, const char *at = spaces);
  * @param ignore_empty  Remove empty strings from the result.
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result. */
-void split_string(std::vector<std::string> *vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
-void split_string(std::set<std::string> *vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
+void split_string(std::vector<std::string> *vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
+void split_string(std::set<std::string> *vec, const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
 
 /** Check if slot contains a subslot and if yes, split it away.
     Also turn slot "0" into nothing */
-bool slot_subslot(std::string *slot, std::string *subslot);
+bool slot_subslot(std::string *slot, std::string *subslot) ATTRIBUTE_NONNULL_;
 
 /** Split full to slot and subslot. Also turn slot "0" into nothing
  * @return true if subslot exists */
-bool slot_subslot(const std::string &full, std::string *slot, std::string *subslot);
+bool slot_subslot(const std::string &full, std::string *slot, std::string *subslot) ATTRIBUTE_NONNULL_;
 
 /** Split a string into multiple strings.
  * @param str Reference to the string that should be splitted.
@@ -168,29 +133,26 @@ bool slot_subslot(const std::string &full, std::string *slot, std::string *subsl
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result.
  * @return the resulting vector */
-inline static std::vector<std::string>
-split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
-{
-	std::vector<std::string> vec;
-	split_string(&vec, str, handle_escape, at, ignore_empty);
-	return vec;
-}
+std::vector<std::string>
+split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
 
 template<typename T>
-void push_back(std::vector<T> *v, const T &e)
+inline static void
+push_back(std::vector<T> *v, const T &e)
 { v->push_back(e); }
 
 template<typename T>
-void push_back(std::set<T> *s, const T &e)
+inline static void
+push_back(std::set<T> *s, const T &e)
 { s->insert(e); }
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
-void join_to_string(std::string *s, const std::vector<std::string> &vec, const std::string &glue = " ");
+void join_to_string(std::string *s, const std::vector<std::string> &vec, const std::string &glue = " ") ATTRIBUTE_NONNULL_;
 
 /** Join a string-set
  * @param glue glue between the elements. */
-void join_to_string(std::string *s, const std::set<std::string> &vec, const std::string &glue = " ");
+void join_to_string(std::string *s, const std::set<std::string> &vec, const std::string &glue = " ") ATTRIBUTE_NONNULL_;
 
 /** Join a string-vector or string-set
  * @param glue glue between the elements. */
@@ -206,24 +168,12 @@ join_to_string(T vec, const std::string &glue = " ")
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @param dest   result. May be identical to source. */
-inline static void
-split_and_join(std::string *dest, const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
-{
-	std::vector<std::string> vec;
-	split_string(&vec, source, handle_escape, at, ignore_empty);
-	join_to_string(dest, vec, glue);
-}
+void split_and_join(std::string *dest, const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
 
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
  * @return result. */
-inline static std::string
-split_and_join_string(const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
-{
-	std::string r;
-	split_and_join(&r, source, glue, handle_escape, at, ignore_empty);
-	return r;
-}
+std::string split_and_join_string(const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
 
 /** Calls join_to_string() and then split_string() */
 template<typename Td, typename Ts>
@@ -239,19 +189,10 @@ join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool ha
  * @param s will get influenced by the string; it is not cleared in advance!
  * @param warnignore       List of keywords for which -keywords might apply
  * @return true            if there was -keyword which did not apply for */
-bool
-resolve_plus_minus(std::set<std::string> *s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULLPTR);
+bool resolve_plus_minus(std::set<std::string> *s, const std::vector<std::string> &l, const std::set<std::string> *warnignore = NULLPTR) ATTRIBUTE_NONNULL((1));
 
 /** Resolve a string of -/+ keywords to a set of actually set keywords */
-inline static
-bool
-resolve_plus_minus(std::set<std::string> *s, const std::string &str, const std::set<std::string> *warnignore = NULLPTR)
-{
-	std::vector<std::string> l;
-	split_string(&l, str);
-	return resolve_plus_minus(s, l, warnignore);
-}
-
+bool resolve_plus_minus(std::set<std::string> *s, const std::string &str, const std::set<std::string> *warnignore = NULLPTR) ATTRIBUTE_NONNULL((1));
 
 /// Add items from s to the end of d.
 template<typename T>

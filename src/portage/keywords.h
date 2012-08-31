@@ -105,7 +105,7 @@ class KeywordsFlags {
 		explicit KeywordsFlags(KeyType t = KEY_EMPTY)
 		{ m_keyword = t; }
 
-		void set(KeyType t)
+		void set_keyflags(KeyType t)
 		{ m_keyword = t; }
 
 		KeyType get() const
@@ -287,7 +287,7 @@ class KeywordSave {
 
 		void store(const Keywords *k = NULLPTR)
 		{
-			if(!k) {
+			if(k == NULLPTR) {
 				have_data = false;
 				return;
 			}

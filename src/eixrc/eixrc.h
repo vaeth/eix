@@ -40,7 +40,8 @@ class EixRc {
 	public:
 		std::string m_eprefixconf;
 
-		explicit EixRc(const char *prefix) : varprefix(prefix)
+		explicit EixRc(const char *prefix)  ATTRIBUTE_NONNULL_ :
+			varprefix(prefix)
 		{ }
 
 		typedef std::vector<EixRcOption>::size_type default_index;
@@ -55,19 +56,19 @@ class EixRc {
 		bool getBool(const std::string &key)
 		{ return istrue((*this)[key].c_str()); }
 
-		eix::SignedBool getBoolText(const std::string &key, const char *text);
+		eix::SignedBool getBoolText(const std::string &key, const char *text) ATTRIBUTE_NONNULL_;
 
-		eix::TinySigned getTinyTextlist(const std::string &key, const char **text);
+		eix::TinySigned getTinyTextlist(const std::string &key, const char **text) ATTRIBUTE_NONNULL_;
 
 		LocalMode getLocalMode(const std::string &key);
 
 		void getRedundantFlags(const std::string &key,
 			Keywords::Redundant type,
-			RedPair *p);
+			RedPair *p) ATTRIBUTE_NONNULL_;
 
 		unsigned int getInteger(const std::string &key);
 
-		void dumpDefaults(FILE *s, bool use_defaults);
+		void dumpDefaults(FILE *s, bool use_defaults) ATTRIBUTE_NONNULL_;
 
 		const char *cstr(const std::string &key) const ATTRIBUTE_PURE;
 
@@ -88,7 +89,7 @@ class EixRc {
 		enum DelayedType { DelayedNotFound, DelayedVariable, DelayedIfTrue, DelayedIfFalse, DelayedIfNonempty, DelayedIfEmpty, DelayedElse, DelayedFi, DelayedQuote };
 
 		static bool istrue(const char *s) ATTRIBUTE_PURE;
-		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom *r);
+		static bool getRedundantFlagAtom(const char *s, Keywords::Redundant type, RedAtom *r) ATTRIBUTE_NONNULL((3));
 
 		void modify_value(std::string &value, const std::string &key);
 
@@ -99,20 +100,20 @@ class EixRc {
 		    and delayed references are also be added similarly. */
 		void add_later_variable(const std::string &key);
 
-		void resolve_delayed(const std::string& key, std::set<std::string> *has_delayed);
-		std::string *resolve_delayed_recurse(const std::string& key, std::set<std::string> *visited, std::set<std::string> *has_delayed, const char **errtext, std::string *errvar);
+		void resolve_delayed(const std::string& key, std::set<std::string> *has_delayed) ATTRIBUTE_NONNULL_;
+		std::string *resolve_delayed_recurse(const std::string& key, std::set<std::string> *visited, std::set<std::string> *has_delayed, const char **errtext, std::string *errvar) ATTRIBUTE_NONNULL_;
 
 		/** Create defaults and main_map with all variables
 		   (including all values required by delayed references).
 		   @arg has_delayed is initialized to corresponding keys */
-		void read_undelayed(std::set<std::string> *has_delayed);
+		void read_undelayed(std::set<std::string> *has_delayed) ATTRIBUTE_NONNULL_;
 		/** Recursively join key and its delayed references to
 		    main_map and default; set has_delayed if appropriate */
-		void join_key(const std::string &key, std::set<std::string> *has_delayed, bool add_top_to_defaults, const std::set<std::string> *exclude_defaults);
-		void join_key_rec(const std::string &key, const std::string &val, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults);
-		void join_key_if_new(const std::string &key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults);
+		void join_key(const std::string &key, std::set<std::string> *has_delayed, bool add_top_to_defaults, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));
+		void join_key_rec(const std::string &key, const std::string &val, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((4));
+		void join_key_if_new(const std::string &key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));
 
-		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length);
+		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length) ATTRIBUTE_NONNULL_;
 		static std::string as_comment(const std::string &s);
 };
 

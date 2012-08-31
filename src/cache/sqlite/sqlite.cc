@@ -119,7 +119,7 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 		vector<int> default_trueindex;
 
 	private:
-		void mapinit(int true_index, vector<int>::size_type my_index, const char *s)
+		void mapinit(int true_index, vector<int>::size_type my_index, const char *s) ATTRIBUTE_NONNULL_
 		{
 			(*this)[s] = my_index;
 			default_trueindex[my_index] = true_index;
@@ -142,7 +142,7 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			mapinit(17, SLOT,        "SLOT");
 		}
 
-		int calc(int argc, const char **azColName, vector<int> *trueindex) const
+		int calc(int argc, const char **azColName, vector<int> *trueindex) const ATTRIBUTE_NONNULL_
 		{
 			*trueindex = default_trueindex;
 			for(int i(0); i < argc; ++i) {
@@ -168,7 +168,7 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			return max_index;
 		}
 
-		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i)
+		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i) ATTRIBUTE_NONNULL_
 		{
 			int t((*trueindex)[i]);
 			if(t < 0)

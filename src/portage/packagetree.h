@@ -37,7 +37,7 @@ class Category : public eix::ptr_list<Package> {
 			return ((i == end()) ? NULLPTR : (*i));
 		}
 
-		void addPackage(Package *pkg)
+		void addPackage(Package *pkg) ATTRIBUTE_NONNULL_
 		{ push_back(pkg); }
 
 		Package *addPackage(const std::string cat_name, const std::string &pkg_name);

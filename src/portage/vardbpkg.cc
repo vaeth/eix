@@ -41,6 +41,9 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
+inline static void sort_installed(map<string, vector<InstVersion> > *maping) ATTRIBUTE_NONNULL_;
+
+
 inline static void
 sort_installed(map<string, vector<InstVersion> > *maping)
 {
