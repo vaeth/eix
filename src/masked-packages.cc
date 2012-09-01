@@ -78,7 +78,7 @@ MaskedOptionList::MaskedOptionList()
 	push_back(Option("mask",      'm', Option::KEEP_STRING));
 }
 
-static void read_stdin(vector<string> *lines, string *name) ATTRIBUTE_NONNULL_;
+static void read_stdin(vector<string> *lines, string *name) ATTRIBUTE_NONNULL((1));
 static void add_file(vector<string> *lines, const string &name, string *new_name = NULLPTR) ATTRIBUTE_NONNULL((1));
 static void add_file(PreList *pre_list, const string &name) ATTRIBUTE_NONNULL_;
 static void add_words(vector<string> *lines, const string &name) ATTRIBUTE_NONNULL_;

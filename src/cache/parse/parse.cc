@@ -183,14 +183,13 @@ ParseCache::set_checking(string *str, const char *item, const VarsReader &ebuild
 {
 	bool check((ebuild_exec != NULLPTR) && (ok != NULLPTR) && (*ok));
 	const string *s(ebuild.find(item));
+	str->clear();
 	if(s == NULLPTR) {
-		str->clear();
 		if(check) {
 			*ok = false;
 		}
 		return;
 	}
-	str->clear();
 	split_and_join(str, *s);
 	if(!check) {
 		return;

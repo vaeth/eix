@@ -14,8 +14,11 @@
 
 namespace eix {
 
+	template<typename m_Iterator> inline static void delete_all(m_Iterator b, m_Iterator e);
+
 	template<typename m_Iterator>
-	void delete_all(m_Iterator b, m_Iterator e)
+	inline static void
+	delete_all(m_Iterator b, m_Iterator e)
 	{
 		for(; b != e; ++b)
 			delete *b;

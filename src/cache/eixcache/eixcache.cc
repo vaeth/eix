@@ -157,7 +157,7 @@ EixCache::get_destcat(PackageTree *packagetree, const char *cat_name, Category *
 {
 	if(likely(err_msg.empty())) {
 		if(unlikely(packagetree == NULLPTR)) {
-			if(unlikely(cat_name == pcat)) {
+			if(unlikely(pcat == cat_name)) {
 				dest_cat = category;
 				return true;
 			}

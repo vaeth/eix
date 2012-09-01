@@ -47,6 +47,8 @@ const char *doublequotes("\"$\\");
 std::locale localeC("C");
 
 static void erase_escapes(string *s, const char *at) ATTRIBUTE_NONNULL_;
+template <typename T> inline static void split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty) ATTRIBUTE_NONNULL_;
+template <typename T> inline static void join_to_string_template(string *s, const T &vec, const string &glue) ATTRIBUTE_NONNULL_;
 
 #ifndef HAVE_STRNDUP
 /* If we don't have strndup, we use our own ..
@@ -311,7 +313,7 @@ erase_escapes(string *s, const char *at)
 }
 
 template <typename T>
-void
+inline static void
 split_string_template(T *vec, const string &str, const bool handle_escape, const char *at, const bool ignore_empty)
 {
 	string::size_type last_pos(0), pos(0);

@@ -20,6 +20,8 @@
 /// portage.{mask,keywords,..}.
 void portage_parse_error(const std::string &file, std::vector<std::string>::size_type line_nr, const std::string& line, const std::string &errtext);
 
+template<class Iterator> inline static void portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext);
+
 template<class Iterator>
 inline static void
 portage_parse_error(const std::string &file, const Iterator &begin, const Iterator &line, const std::string &errtext)

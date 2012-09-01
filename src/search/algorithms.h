@@ -15,6 +15,7 @@
 
 #include "eixTk/regexp.h"
 #include "eixTk/unused.h"
+#include "search/levenshtein.h"
 
 class Package;
 class matchtree;
@@ -96,15 +97,15 @@ class EndAlgorithm : public BaseAlgorithm {
  * higher distance than max_levenshteindistance. */
 class FuzzyAlgorithm : public BaseAlgorithm {
 	protected:
-		unsigned int max_levenshteindistance;
+		Levenshtein max_levenshteindistance;
 
 		/** FIXME: We need to have a package->levenshtein mapping that we can
 		 * access from the static FuzzyAlgorithm::compare.
 		 * I really don't know how to do this .. */
-		static std::map<std::string, unsigned int> *levenshtein_map;
+		static std::map<std::string, Levenshtein> *levenshtein_map;
 
 	public:
-		explicit FuzzyAlgorithm(unsigned int max) : max_levenshteindistance(max)
+		explicit FuzzyAlgorithm(Levenshtein max) : max_levenshteindistance(max)
 		{ }
 
 		bool operator()(const char *s, Package *p);

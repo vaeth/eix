@@ -43,7 +43,7 @@ bool pushback_files(const std::string &dir_path, std::vector<std::string> *into,
 
 /** Cycle through map using it, until it is it_end, append all values from it
  * to the value with the same key in append_to. */
-void join_map(std::map<std::string, std::string> *append_to, std::map<std::string, std::string>::iterator it, std::map<std::string, std::string>::iterator it_end);
+void join_map(std::map<std::string, std::string> *append_to, std::map<std::string, std::string>::iterator it, std::map<std::string, std::string>::iterator it_end) ATTRIBUTE_NONNULL_;
 
 /* Print version of eix to stdout. */
 void dump_version() ATTRIBUTE_NORETURN;

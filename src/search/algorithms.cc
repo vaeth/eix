@@ -34,13 +34,13 @@
 using std::map;
 using std::string;
 
-map<string, unsigned int> *FuzzyAlgorithm::levenshtein_map = NULLPTR;
+map<string, Levenshtein> *FuzzyAlgorithm::levenshtein_map = NULLPTR;
 
 void
 FuzzyAlgorithm::init_static()
 {
 	eix_assert_static(levenshtein_map == NULLPTR);
-	levenshtein_map = new map<string, unsigned int>;
+	levenshtein_map = new map<string, Levenshtein>;
 }
 
 bool
@@ -55,7 +55,7 @@ bool
 FuzzyAlgorithm::operator()(const char *s, Package *p)
 {
 	eix_assert_static(levenshtein_map != NULLPTR);
-	unsigned int d(get_levenshtein_distance(search_string.c_str(), s));
+	Levenshtein d(get_levenshtein_distance(search_string.c_str(), s));
 	bool ok(d <= max_levenshteindistance);
 	if(ok) {
 		if(p != NULLPTR) {

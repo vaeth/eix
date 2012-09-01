@@ -40,7 +40,7 @@ class EixRc {
 	public:
 		std::string m_eprefixconf;
 
-		explicit EixRc(const char *prefix)  ATTRIBUTE_NONNULL_ :
+		explicit EixRc(const char *prefix) ATTRIBUTE_NONNULL_ :
 			varprefix(prefix)
 		{ }
 
@@ -113,7 +113,7 @@ class EixRc {
 		void join_key_rec(const std::string &key, const std::string &val, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((4));
 		void join_key_if_new(const std::string &key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));
 
-		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length) ATTRIBUTE_NONNULL_;
+		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length) ATTRIBUTE_NONNULL((2));
 		static std::string as_comment(const std::string &s);
 };
 

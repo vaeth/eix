@@ -46,7 +46,7 @@ eix::OffsetType io::counter;
 
 namespace io {
 /// Read a number with leading zero's
-static bool read_Part(BasicPart *b, FILE *fp, string *errtext) ATTRIBUTE_NONNULL_;
+static bool read_Part(BasicPart *b, FILE *fp, string *errtext) ATTRIBUTE_NONNULL((1, 2));
 
 /// Write a number with leading zero's
 static bool write_Part(const BasicPart &n, FILE *fp, string *errtext);

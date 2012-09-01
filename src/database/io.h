@@ -41,6 +41,8 @@ namespace io {
 	inline static bool writeUChar(eix::UChar c, FILE *fp, std::string *errtext);
 	inline static bool write_hash_string(const StringHash& hash, const std::string &s, FILE *fp, std::string *errtext);
 	inline static bool read_hash_string(const StringHash& hash, std::string *s, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
+	template<typename m_Tp> inline static bool read_num(m_Tp *ret, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));
+	template<typename m_Tp> inline static bool write_num(m_Tp t, FILE *fp, std::string *errtext);
 
 	inline static bool
 	readUChar(eix::UChar *c, FILE *fp, std::string *errtext)
@@ -245,7 +247,7 @@ GCC_DIAG_ON(sign-conversion)
 
 	bool write_hash(const StringHash& hash, FILE *fp, std::string *errtext);
 	bool read_hash(StringHash *hash, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));
-	void prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL((1));
+	void prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL_;
 	bool write_header(const DBHeader &hdr, FILE *fp, std::string *errtext);
 	// return false if version does not match. However, fp is not closed.
 	bool read_header(DBHeader *hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 2));

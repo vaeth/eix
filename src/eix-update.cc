@@ -104,7 +104,7 @@ class RepoName {
 		{ }
 };
 
-static bool update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline, string *errtext) ATTRIBUTE_NONNULL_;
+static bool update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext) ATTRIBUTE_NONNULL_;
 static void error_callback(const string &str);
 static void add_pathnames(vector<Pathname> *add_list, const vector<string> &to_add, bool must_resolve) ATTRIBUTE_NONNULL_;
 static void add_override(vector<Override> *override_list, EixRc *eixrc, const char *s) ATTRIBUTE_NONNULL_;
@@ -546,8 +546,8 @@ run_eix_update(int argc, char *argv[])
 
 	/* Update the database from scratch */
 	string errtext;
-	if(unlikely(!update(outputfile.c_str(), table, portage_settings, override_umask,
-			repo_names, excluded_overlays, statusline, &errtext))) {
+	if(unlikely(!update(outputfile.c_str(), &table, &portage_settings, override_umask,
+			repo_names, excluded_overlays, &statusline, &errtext))) {
 		cerr << errtext << endl;
 		statusline.failure();
 		return EXIT_FAILURE;
@@ -565,22 +565,22 @@ error_callback(const string &str)
 }
 
 static bool
-update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline &statusline, string *errtext)
+update(const char *outputfile, CacheTable *cache_table, PortageSettings *portage_settings, bool override_umask, const vector<RepoName> &repo_names, const vector<string> &exclude_labels, Statusline *statusline, string *errtext)
 {
 	DBHeader dbheader;
 	vector<string> categories;
-	portage_settings.pushback_categories(&categories);
+	portage_settings->pushback_categories(&categories);
 	PackageTree package_tree(categories);
 
-	dbheader.world_sets = *(portage_settings.get_world_sets());
+	dbheader.world_sets = *(portage_settings->get_world_sets());
 
 	/* We must first initialize all caches and erase unneeded ones,
 	   because some cache methods like eixcache know about each other
 	   and call each other before we can call them in a loop afterwards. */
-	for(eix::ptr_list<BasicCache>::iterator it(cache_table.begin());
-		likely(it != cache_table.end()); ) {
+	for(eix::ptr_list<BasicCache>::iterator it(cache_table->begin());
+		likely(it != cache_table->end()); ) {
 		BasicCache *cache(*it);
-		cache->portagesettings = &portage_settings;
+		cache->portagesettings = portage_settings;
 
 		/* Build database from scratch. */
 		OverlayIdent overlay(cache->getPath().c_str());
@@ -591,13 +591,13 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 				% overlay.label
 				% cache->getPathHumanReadable()
 				% cache->getType());
-			it = cache_table.erase(it);
+			it = cache_table->erase(it);
 			continue;
 		}
 		ExtendedVersion::Overlay key(dbheader.addOverlay(overlay));
 		cache->setKey(key);
 		cache->setOverlayName(overlay.label);
-		// cache->setArch(portage_settings["ARCH"]);
+		// cache->setArch((*portage_settings)["ARCH"]);
 		cache->setErrorCallback(error_callback);
 		if(verbose) {
 			cache->setVerbose();
@@ -606,15 +606,15 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	}
 
 	/* Build database from scratch. */
-	for(eix::ptr_list<BasicCache>::iterator it(cache_table.begin());
-		likely(it != cache_table.end()); ++it) {
+	for(eix::ptr_list<BasicCache>::iterator it(cache_table->begin());
+		likely(it != cache_table->end()); ++it) {
 		BasicCache *cache(*it);
 		INFO(eix::format(_("[%s] \"%s\" %s (cache: %s)\n"))
 			% cache->getKey()
 			% cache->getOverlayName()
 			% cache->getPathHumanReadable()
 			% cache->getType());
-		statusline.print(eix::format(_("[%s] %s"))
+		statusline->print(eix::format(_("[%s] %s"))
 				% cache->getKey()
 				% cache->getOverlayName());
 		reading_percent_status = new PercentStatus;
@@ -665,7 +665,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		}
 		delete reading_percent_status;
 	}
-	statusline.print(eix::format(_("Analyzing")));
+	statusline->print(eix::format(_("Analyzing")));
 
 	/* Now apply all masks .. */
 	INFO(_("Applying masks ..\n"));
@@ -674,7 +674,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 		Category *ci = c->second;
 		for(Category::iterator p(ci->begin());
 			likely(p != ci->end()); ++p) {
-			portage_settings.setMasks(*p);
+			portage_settings->setMasks(*p);
 			p->save_maskflags(Version::SAVEMASK_FILE);
 		}
 	}
@@ -683,7 +683,7 @@ update(const char *outputfile, CacheTable &cache_table, PortageSettings &portage
 	io::prep_header_hashs(&dbheader, package_tree);
 
 	/* And write database back to disk .. */
-	statusline.print(eix::format("Creating %s") % outputfile);
+	statusline->print(eix::format("Creating %s") % outputfile);
 	INFO(eix::format(_("Writing database file %s ..\n")) % outputfile);
 	mode_t old_umask;
 	if(override_umask) {

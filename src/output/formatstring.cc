@@ -334,7 +334,7 @@ PrintFormat::recPrint(string *result, void *entity, GetProperty get_property, No
 					const string &t(static_cast<Text*>(root)->text);
 					if(!t.empty()) {
 						printed = true;
-						if(result)
+						if(result != NULLPTR)
 							result->append(t);
 						else
 							cout << t;

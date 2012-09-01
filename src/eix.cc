@@ -486,7 +486,7 @@ print_overlay_table(PrintFormat *fmt, DBHeader *header, vector<bool> *overlay_us
 	bool printed_overlay(false);
 	for(ExtendedVersion::Overlay i((overlay_mode == mode_list_all) ? 0 : 1);
 		likely(i != header->countOverlays()); ++i) {
-		if(i && overlay_used) {
+		if((i != 0) && (overlay_used != NULLPTR)) {
 			if(!((*overlay_used)[i-1]))
 				continue;
 		}

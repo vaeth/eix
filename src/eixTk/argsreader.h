@@ -141,10 +141,10 @@ class ArgumentReader
 		static int lookup_shortopt(const char short_opt, const OptionList &opt_table);
 
 		/// Return Option from internal table.
-		static const Option *lookup_option(const int opt, const OptionList &opt_table) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
+		static const Option *lookup_option(const int opt, const OptionList &opt_table) ATTRIBUTE_PURE;
 
 		/// Return number of args for opt
-		static eix::TinyUnsigned numargs(const int opt, const OptionList &opt_table) ATTRIBUTE_NONNULL_ ATTRIBUTE_PURE;
+		static eix::TinyUnsigned numargs(const int opt, const OptionList &opt_table) ATTRIBUTE_PURE;
 
 		/// Fold parameter-list so that a option with an arguments has its argument set
 		// internal rather than lying around after it in the list.

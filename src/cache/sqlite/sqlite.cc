@@ -168,7 +168,7 @@ class TrueIndex : public map<string, vector<int>::size_type> {
 			return max_index;
 		}
 
-		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i) ATTRIBUTE_NONNULL_
+		static const char *c_str(const char **argv, vector<int> *trueindex, const vector<int>::size_type i) ATTRIBUTE_NONNULL((2))
 		{
 			int t((*trueindex)[i]);
 			if(t < 0)

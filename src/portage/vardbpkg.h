@@ -81,7 +81,7 @@ class VarDbPkg {
 
 		/** Returns true if v is in vec. v=NULLPTR is always in vec.
 		    If a serious result is found and r is nonzero, r points to that result */
-		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR) ATTRIBUTE_NONNULL((1));
+		static bool isInVec(std::vector<InstVersion> *vec, const BasicVersion *v = NULLPTR, InstVersion **r = NULLPTR);
 
 		/** Returns true if a Package installed.
 		 * @param p Check for this Package.

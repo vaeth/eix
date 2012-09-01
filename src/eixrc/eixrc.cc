@@ -514,7 +514,7 @@ EixRc::join_key(const string &key, set<string> *has_delayed, bool add_top_to_def
 	modify_value(val, key);
 
 	if(unlikely(add_top_to_defaults)) {
-		if(unlikely((!exclude_defaults) || (exclude_defaults->find(key) == exclude_defaults->end())))
+		if(unlikely((exclude_defaults == NULLPTR) || (exclude_defaults->find(key) == exclude_defaults->end())))
 			defaults.push_back(EixRcOption(EixRcOption::LOCAL, key, val, ""));
 	}
 	join_key_rec(key, val, has_delayed, exclude_defaults);
@@ -663,7 +663,7 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 				type = DelayedElse;
 		}
 		*posref = pos;
-		if(length)
+		if(length != NULLPTR)
 			*length = i - pos;
 		return type;
 	}

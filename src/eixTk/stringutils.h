@@ -133,18 +133,20 @@ bool slot_subslot(const std::string &full, std::string *slot, std::string *subsl
  * @param handle_escape Do not split at escaped characters from "at" symbols,
  *                      removing escapes for \\ or "at" symbols from result.
  * @return the resulting vector */
-std::vector<std::string>
-split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
+std::vector<std::string> split_string(const std::string &str, const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
 
-template<typename T>
-inline static void
-push_back(std::vector<T> *v, const T &e)
-{ v->push_back(e); }
+/** Push back to a vector */
+template<typename T> inline static void push_back(std::vector<T> *v, const T &e) ATTRIBUTE_NONNULL_;
 
-template<typename T>
-inline static void
-push_back(std::set<T> *s, const T &e)
-{ s->insert(e); }
+/** Push back (=insert) to a set */
+template<typename T> inline static void push_back(std::set<T> *s, const T &e) ATTRIBUTE_NONNULL_;
+
+/** Join a string-vector or string-set
+ * @param glue glue between the elements. */
+template<typename T> inline static std::string join_to_string(T vec, const std::string &glue = " ");
+
+/** Add items from s to the end of d. */
+template<typename T> inline static void push_backs(std::vector<T> *d, const std::vector<T> &s) ATTRIBUTE_NONNULL_;
 
 /** Join a string-vector.
  * @param glue glue between the elements. */
@@ -153,17 +155,6 @@ void join_to_string(std::string *s, const std::vector<std::string> &vec, const s
 /** Join a string-set
  * @param glue glue between the elements. */
 void join_to_string(std::string *s, const std::set<std::string> &vec, const std::string &glue = " ") ATTRIBUTE_NONNULL_;
-
-/** Join a string-vector or string-set
- * @param glue glue between the elements. */
-template<typename T>
-inline static std::string
-join_to_string(T vec, const std::string &glue = " ")
-{
-	std::string ret;
-	join_to_string(&ret, vec, glue);
-	return ret;
-}
 
 /** Calls split_string() with a vector and then join_to_string().
  * @param source string to split
@@ -176,14 +167,7 @@ void split_and_join(std::string *dest, const std::string &source, const std::str
 std::string split_and_join_string(const std::string &source, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true) ATTRIBUTE_NONNULL_;
 
 /** Calls join_to_string() and then split_string() */
-template<typename Td, typename Ts>
-inline static void
-join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
-{
-	std::string t;
-	join_to_string(&t, s, glue);
-	split_string(vec, t, handle_escape, at, ignore_empty);
-}
+template<typename Td, typename Ts> inline static void join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true);
 
 /** Resolve a vector of -/+ keywords to a set of actually set keywords.
  * @param s will get influenced by the string; it is not cleared in advance!
@@ -194,43 +178,14 @@ bool resolve_plus_minus(std::set<std::string> *s, const std::vector<std::string>
 /** Resolve a string of -/+ keywords to a set of actually set keywords */
 bool resolve_plus_minus(std::set<std::string> *s, const std::string &str, const std::set<std::string> *warnignore = NULLPTR) ATTRIBUTE_NONNULL((1));
 
-/// Add items from s to the end of d.
-template<typename T>
-inline static void
-push_backs(std::vector<T> *d, const std::vector<T> &s)
-{
-	d->insert(d->end(), s.begin(), s.end());
-}
+/** Insert a whole vector to a set. */
+template<typename T> inline static void insert_list(std::set<T> *the_set, const std::vector<T> &the_list) ATTRIBUTE_NONNULL_;
 
-/// Insert a whole vector to a set.
-template<typename T>
-inline static void
-insert_list(std::set<T> *the_set, const std::vector<T> &the_list)
-{
-	the_set->insert(the_list.begin(), the_list.end());
-}
-
-/// Make a set from a vector.
-template<typename T>
-inline static void
-make_set(std::set<T> *the_set, const std::vector<T> &the_list)
-{
-	the_set->clear();
-	insert_list(the_set, the_list);
-}
-
+/** Make a set from a vector. */
+template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T> &the_list) ATTRIBUTE_NONNULL_;
 
 /** Make a vector from a set. */
-template<typename T>
-void make_vector(std::vector<T> *the_list, const std::set<T> &the_set)
-{
-	the_list->clear();
-	for(typename std::set<T>::const_iterator it(the_set.begin()),
-			it_end(the_set.end());
-		likely(it != it_end); ++it) {
-		the_list->push_back(*it);
-	}
-}
+template<typename T> void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) ATTRIBUTE_NONNULL_;
 
 class StringHash : public std::vector<std::string>
 {
@@ -267,5 +222,79 @@ class StringHash : public std::vector<std::string>
 		bool hashing, finalized;
 		std::map<std::string, StringHash::size_type> str_map;
 };
+
+// Implementation of the templates:
+
+/** Push back to a vector */
+
+template<typename T>
+inline static void
+push_back(std::vector<T> *v, const T &e)
+{ v->push_back(e); }
+
+/** Push back (=insert) to a set */
+template<typename T>
+inline static void
+push_back(std::set<T> *s, const T &e)
+{ s->insert(e); }
+
+/** Join a string-vector or string-set
+ * @param glue glue between the elements. */
+template<typename T>
+inline static std::string
+join_to_string(T vec, const std::string &glue = " ")
+{
+	std::string ret;
+	join_to_string(&ret, vec, glue);
+	return ret;
+}
+
+/** Calls join_to_string() and then split_string() */
+template<typename Td, typename Ts>
+inline static void
+join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+{
+	std::string t;
+	join_to_string(&t, s, glue);
+	split_string(vec, t, handle_escape, at, ignore_empty);
+}
+
+/** Add items from s to the end of d. */
+template<typename T>
+inline static void
+push_backs(std::vector<T> *d, const std::vector<T> &s)
+{
+	d->insert(d->end(), s.begin(), s.end());
+}
+
+/** Insert a whole vector to a set. */
+template<typename T>
+inline static void
+insert_list(std::set<T> *the_set, const std::vector<T> &the_list)
+{
+	the_set->insert(the_list.begin(), the_list.end());
+}
+
+/** Make a set from a vector. */
+template<typename T>
+inline static void
+make_set(std::set<T> *the_set, const std::vector<T> &the_list)
+{
+	the_set->clear();
+	insert_list(the_set, the_list);
+}
+
+/** Make a vector from a set. */
+template<typename T>
+inline static void
+make_vector(std::vector<T> *the_list, const std::set<T> &the_set)
+{
+	the_list->clear();
+	for(typename std::set<T>::const_iterator it(the_set.begin()),
+			it_end(the_set.end());
+		likely(it != it_end); ++it) {
+		the_list->push_back(*it);
+	}
+}
 
 #endif  // SRC_EIXTK_STRINGUTILS_H_
