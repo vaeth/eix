@@ -92,7 +92,7 @@ class Mask : public BasicVersion {
 		 * @param str_mask the string to be dissected
 		 * @param errtext contains error message if not 0 and not parseOK
 		 * @param accept_garbage passed to parseVersion if appropriate */
-		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true) ATTRIBUTE_NONNULL((2));
+		BasicVersion::ParseResult parseMask(const char *str, std::string *errtext, bool accept_garbage = true) ATTRIBUTE_NONNULL_;
 
 		void match(Matches *m, Package *pkg) const ATTRIBUTE_NONNULL_;
 

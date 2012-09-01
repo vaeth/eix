@@ -94,7 +94,7 @@ class IUseSet {
 class Version : public ExtendedVersion, public Keywords {
 	public:
 		friend bool io::write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1));
-		friend bool io::read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL_;
+		friend bool io::read_version(Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3));
 
 		typedef enum {
 			SAVEKEY_USER, SAVEKEY_ACCEPT, SAVEKEY_ARCH, SAVEKEY_SIZE

@@ -156,7 +156,12 @@ string
 VarDbPkg::readOverlayLabel(const Package *p, const BasicVersion *v) const
 {
 	vector<string> lines;
-	string dirname(m_directory + p->category + "/" + p->name + "-" + v->getFull());
+	string dirname(m_directory);
+	dirname.append(p->category);
+	dirname.append(1, '/');
+	dirname.append(p->name);
+	dirname.append(1, '-');
+	dirname.append(v->getFull());
 	pushback_lines((dirname + "/repository").c_str(),
 		&lines, true, false, false);
 	pushback_lines((dirname + "/REPOSITORY").c_str(),
@@ -306,7 +311,8 @@ VarDbPkg::readCategory(const char *category)
 	DIR *dir_category;
 
 	/* Open category-directory */
-	string dir_category_name(m_directory + category);
+	string dir_category_name(m_directory);
+	dir_category_name.append(category);
 	if((dir_category = opendir(dir_category_name.c_str())) == NULLPTR) {
 		installed[category] = NULLPTR;
 		return;

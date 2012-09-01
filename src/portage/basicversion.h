@@ -45,13 +45,13 @@ public:
 	explicit BasicPart(PartType p) : parttype(p), partcontent()
 	{ }
 
-	BasicPart(PartType p, std::string s) : parttype(p), partcontent(s)
+	BasicPart(PartType p, const std::string &s) : parttype(p), partcontent(s)
 	{ }
 
-	BasicPart(PartType p, std::string s, std::string::size_type start) : parttype(p), partcontent(s, start)
+	BasicPart(PartType p, const std::string &s, std::string::size_type start) : parttype(p), partcontent(s, start)
 	{ }
 
-	BasicPart(PartType p, std::string s, std::string::size_type start, std::string::size_type end) : parttype(p), partcontent(s, start, end)
+	BasicPart(PartType p, const std::string &s, std::string::size_type start, std::string::size_type end) : parttype(p), partcontent(s, start, end)
 	{ }
 
 	BasicPart(PartType p, char c) : parttype(p), partcontent(1, c)

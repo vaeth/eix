@@ -224,7 +224,7 @@ GCC_DIAG_ON(sign-conversion)
 	bool read_iuse(const StringHash& hash, IUseSet *iuse, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((2, 3));
 
 	/// Read a version from fp
-	bool read_version(Version *&v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((3));
+	bool read_version(Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3));
 
 	// Write a version to fp
 	bool write_version(const Version *v, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1));

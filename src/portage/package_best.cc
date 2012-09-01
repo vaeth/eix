@@ -56,7 +56,7 @@ SlotList::push_back_largest(Version *version)
 }
 
 const VersionList *
-SlotList::operator [] (const char *s) const
+SlotList::operator[](const char *s) const
 {
 	for(const_iterator it(begin()); likely(it != end()); ++it) {
 		if(unlikely(strcmp(s, it->slotname()) == 0))

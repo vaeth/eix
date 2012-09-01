@@ -70,7 +70,6 @@ class VarDbPkg {
 
 		bool readOverlay(const Package &p, InstVersion *v, const DBHeader &header) const ATTRIBUTE_NONNULL_;
 		std::string readOverlayLabel(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
-		std::string readOverlayPath(const Package *p, const BasicVersion *v) const ATTRIBUTE_NONNULL_;
 		eix::SignedBool check_installed_overlays;
 
 		/** Find installed versions

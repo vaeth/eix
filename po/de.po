@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-01 00:59+0200\n"
+"POT-Creation-Date: 2012-09-01 10:02+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -2036,17 +2036,17 @@ msgstr "Fehler beim Lesen der Datenbank"
 msgid "error while writing to database"
 msgstr "Fehler beim Schreiben der Datenbank"
 
-#: src/database/io.cc:597
+#: src/database/io.cc:595
 #, c-format
 msgid "cachefile uses newer format %s (current is %s)"
 msgstr "Cachefile benutzt neueres Format %s (aktuell ist %s)"
 
-#: src/database/io.cc:598
+#: src/database/io.cc:596
 #, c-format
 msgid "cachefile uses obsolete format %s (current is %s)"
 msgstr "Cachefile benutzt veraltetes Format %s (aktuell ist %s)"
 
-#: src/database/io.cc:670 src/database/package_reader.cc:109
+#: src/database/io.cc:668 src/database/package_reader.cc:109
 msgid "fseek failed"
 msgstr "fseek schlug fehl"
 

@@ -72,7 +72,7 @@ PackageReader::read(Attributes need)
 					return false;
 				}
 				for(; likely(i != 0); --i) {
-					Version *v;
+					Version *v(new Version());
 					if(unlikely(!io::read_version(v, *header, m_fp, &m_errtext))) {
 						m_error = true;
 						return false;

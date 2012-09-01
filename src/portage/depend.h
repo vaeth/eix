@@ -20,7 +20,7 @@ class PackageTree;
 
 class Depend
 {
-	friend bool io::read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1));
+	friend bool io::read_depend(Depend *dep, const DBHeader &hdr, FILE *fp, std::string *errtext) ATTRIBUTE_NONNULL((1, 3));
 	friend bool io::write_depend(const Depend &dep, const DBHeader &hdr, FILE *fp, std::string *errtext);
 	friend void io::prep_header_hashs(DBHeader *hdr, const PackageTree& tree) ATTRIBUTE_NONNULL_;
 

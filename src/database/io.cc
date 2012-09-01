@@ -215,10 +215,8 @@ io::read_iuse(const StringHash& hash, IUseSet *iuse, FILE *fp, string *errtext)
 }
 
 bool
-io::read_version(Version *&v, const DBHeader &hdr, FILE *fp, string *errtext)
+io::read_version(Version *v, const DBHeader &hdr, FILE *fp, string *errtext)
 {
-	v = new Version();
-
 	// read masking
 	MaskFlags::MaskType mask;
 	if(unlikely(!io::read_num(&mask, fp, errtext))) {
