@@ -185,7 +185,7 @@ template<typename T> inline static void insert_list(std::set<T> *the_set, const 
 template<typename T> inline static void make_set(std::set<T> *the_set, const std::vector<T> &the_list) ATTRIBUTE_NONNULL_;
 
 /** Make a vector from a set. */
-template<typename T> void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) ATTRIBUTE_NONNULL_;
+template<typename T> inline static void make_vector(std::vector<T> *the_list, const std::set<T> &the_set) ATTRIBUTE_NONNULL_;
 
 class StringHash : public std::vector<std::string>
 {
@@ -226,7 +226,6 @@ class StringHash : public std::vector<std::string>
 // Implementation of the templates:
 
 /** Push back to a vector */
-
 template<typename T>
 inline static void
 push_back(std::vector<T> *v, const T &e)
@@ -242,7 +241,7 @@ push_back(std::set<T> *s, const T &e)
  * @param glue glue between the elements. */
 template<typename T>
 inline static std::string
-join_to_string(T vec, const std::string &glue = " ")
+join_to_string(T vec, const std::string &glue)
 {
 	std::string ret;
 	join_to_string(&ret, vec, glue);
@@ -252,7 +251,7 @@ join_to_string(T vec, const std::string &glue = " ")
 /** Calls join_to_string() and then split_string() */
 template<typename Td, typename Ts>
 inline static void
-join_and_split(Td vec, const Ts &s, const std::string &glue = " ", const bool handle_escape = false, const char *at = spaces, const bool ignore_empty = true)
+join_and_split(Td vec, const Ts &s, const std::string &glue, const bool handle_escape, const char *at, const bool ignore_empty)
 {
 	std::string t;
 	join_to_string(&t, s, glue);
