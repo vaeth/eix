@@ -35,14 +35,13 @@ run_eix_drop_permissions(int argc, char *argv[])
 {
 	EixRc &eixrc(get_eixrc(DROP_VARS_PREFIX));
 	drop_permissions(&eixrc);
-	bool parsing(true);
-	for(++argv; (argc > 0) && parsing; --argc, ++argv) {
-		if(strcmp("--", argv[0]) == 0) {
-			parsing = false;
-			continue;
-		}
-		// parse other options here ...
-		break;
+	if(argc > 0) {
+		++argv;
+		--argc;
+	}
+	if((argc > 0) && (strcmp("--", argv[0]) == 0)) {
+		++argv;
+		--argc;
 	}
 	if(argc == 0) {
 		print_help();
