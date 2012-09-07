@@ -6,7 +6,7 @@ mkemerge="./mk/emerge"
 mkrelease="./mk/release"
 mkmake="./mk/make"
 mkmakeextra="UPDATEPOFILES="
-make_opts='-0eq'
+make_opts='-0Geq'
 
 export LC_ALL=C XZ_OPT=--extreme
 umask 022

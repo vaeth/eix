@@ -68,6 +68,7 @@ eixTk/exceptions.cc \
 eixTk/exceptions.h \
 eixTk/inttypes.h \
 eixTk/ptr_list.h \
+eixTk/regexp.cc \
 eixTk/regexp.h \
 $(sysutils_src) \
 eixTk/utils.cc \

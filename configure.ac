@@ -255,6 +255,22 @@ AS_IF([${new_dialect}],
 				-std=c++11 \
 			], [${my_cxxfatal}], [], [break], [${quicktrue}])])])
 
+m4_if([dnl The following turned out not to be useful currently, so it is
+dnl commented out. Note that this needs a second part at the end of this file
+dnl (also commented out) which modifies the CXXFLAGS correspodingly.
+# Use -include config.h if possible to get more hits with ccache
+AS_VAR_SET([add_incopt], ["-include config.h"])
+AC_MSG_CHECKING([whether CXXFLAGS=${add_incopt} can be used])
+AS_VAR_COPY([my_cxxflags], [CXXFLAGS])
+MV_APPEND([CXXFLAGS], [${my_cxxfatal}])
+MV_APPEND([CXXFLAGS], [${add_incopt}.in])
+export CXXFLAGS
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no])
+	AS_VAR_SET([add_incopt], [])])
+AS_VAR_COPY([CXXFLAGS], [my_cxxflags])])
+
 AS_IF([${debugging}],
 	[MV_ADDFLAGS([my_cxxadd], [CXXFLAGS], [MV_RUN_IFELSE_LINK], [ \
 			-g \
@@ -1149,6 +1165,13 @@ AC_DEFINE_UNQUOTED([LEVENSHTEIN_DISTANCE_DEFAULT],
 	["2"],
 	[Default Levenshtein distance for matches (as string)])
 AC_SUBST([LEVENSHTEIN_DISTANCE])
+
+m4_if([dnl This is the second part of the check near the top of this file.
+dnl To use it you must also uncomment the above check
+# Use -include config.h if possible to get more hits with ccache
+MV_IF_NONEMPTY([${add_incopt}],
+	[AS_VAR_SET([CXXFLAGS], ["${add_incopt} ${CXXFLAGS}"])
+	AS_VAR_SET([my_cxxadd], ["${add_incopt} ${my_cxxadd}"])])])
 
 # Done!
 AC_OUTPUT()

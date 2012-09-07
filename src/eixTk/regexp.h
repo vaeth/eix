@@ -12,14 +12,10 @@
 
 #include <regex.h>
 
-#include <cstdlib>
+// include <cstdlib> make check_includes happy
 
-#include <iostream>
 #include <string>
 
-#include "eixTk/diagnostics.h"
-#include "eixTk/likely.h"
-#include "eixTk/null.h"
 
 /// Handles regular expressions.
 // It is normally used within global scope so that a regular expression doesn't
@@ -39,69 +35,20 @@ class Regex
 		{ compile(regex, eflags); }
 
 		/// Free the regular expression.
-		void free() {
-			if(m_compiled)
-				regfree(&m_re);
+		void free();
+
+		~Regex() {
+			free();
 		}
 
 		/// Compile a regular expression.
-		void compile(const char *regex, int eflags = REG_EXTENDED)
-		{
-			if(unlikely(m_compiled)) {
-				regfree(&m_re);
-				m_compiled = false;
-			}
-			if((regex == NULLPTR) || !(regex[0]))
-				return;
-
-			int retval(regcomp(&m_re, regex, eflags|REG_EXTENDED));
-			if(unlikely(retval != 0)) {
-				char buf[512];
-				regerror(retval, &m_re, buf, 511);
-				std::cerr << "regcomp(" << regex << "): " << buf << std::endl;
-				exit(EXIT_FAILURE);
-			}
-			m_compiled = true;
-		}
+		void compile(const char *regex, int eflags = REG_EXTENDED);
 
 		/// Does the regular expression match s?
-		bool match(const char *s) const ATTRIBUTE_NONNULL_
-		{ return (!m_compiled) || (!regexec(get(), s, 0, NULLPTR, 0)); }
+		bool match(const char *s) const ATTRIBUTE_NONNULL_;
 
 		/// Does the regular expression match s? Get beginning/end
-		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const ATTRIBUTE_NONNULL((2))
-		{
-			regmatch_t pmatch[1];
-			if(!m_compiled) {
-				if(likely(b != NULLPTR)) {
-					*b = 0;
-				}
-				if(likely(e != NULLPTR)) {
-					*e = std::string::npos;
-				}
-				return true;
-			}
-			if(regexec(get(), s, 1, pmatch, 0)) {
-				if(likely(b != NULLPTR)) {
-					*b = std::string::npos;
-				}
-				if(likely(e != NULLPTR)) {
-					*e = std::string::npos;
-				}
-				return false;
-			}
-			if(likely(b != NULLPTR)) {
-GCC_DIAG_OFF(sign-conversion)
-				*b = pmatch[0].rm_so;
-GCC_DIAG_ON(sign-conversion)
-			}
-			if(likely(e != NULLPTR)) {
-GCC_DIAG_OFF(sign-conversion)
-				*e = pmatch[0].rm_eo;
-GCC_DIAG_ON(sign-conversion)
-			}
-			return true;
-		}
+		bool match(const char *s, std::string::size_type *b, std::string::size_type *e) const ATTRIBUTE_NONNULL((2));
 
 		bool compiled() const
 		{ return m_compiled; }

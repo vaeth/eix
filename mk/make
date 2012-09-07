@@ -18,7 +18,8 @@ Available options are
   -d  Do not use dep-default
   -w  Use -werror
   -W  Do not use --enable-strong-warnings
-  -g  Use CLANG++
+  -g  Use clang++ (default if in path)
+  -G  Use GNU C++
   -s  With sqlite
   -S  Without sqlite
   -C  Avoid CCACHE
@@ -35,41 +36,59 @@ Available options are
 }
 
 Info() {
-	${quiet} && return
-	Echo "${*}"
+	${quiet} || printf '\033[01;32m%s\033[0m\n' "${*}"
+}
+
+InfoVerbose() {
+	${quiet} || printf '\n\033[01;33m%s\033[0m\n\n' "${*}"
 }
 
 Die() {
-	Echo "${0##*/}: ${1}"
+	Echo "${0##*/}: error: ${1}" >&2
 	exit ${2:-1}
 }
 
 SetCcache() {
 	dircc='/usr/lib/ccache/bin'
-	test -d "${dircc}" || return
-	case ":${PATH}:" in
-	*":${dircc}:"*) return;;
-	esac
-	if [ -n "${PATH:++}" ]
-	then	Info "PATH=${dircc}:\${PATH}"
+	ccache_path=false
+	if ${clang}
+	then	test -r "${dircc}/clang++"
+	else	test -d "${dircc}"
+	fi && [ -n "${PATH:++}" ] && ccache_path=:
+	if ${ccache_path} && \
+		case ":${PATH}:" in
+		*":${dircc}:"*)
+			false;;
+		esac
+	then	Info "export PATH=${dircc}:\${PATH}"
 		PATH="${dircc}:${PATH}"
 		export PATH
 	fi
-	[ -n "${CCACHE_DIR:++}" ] && return
-	for dircc in "${HOME}/.ccache" ../ccache ../../ccache
+	testcc=
+	for dircc in \
+		"${HOME}/.ccache" \
+		../.ccache \
+		../ccache \
+		../../.ccache \
+		../../ccache
 	do	[ -z "${dircc:++}" ] || ! test -d "${dircc}" && continue
 		testcc=`cd -P -- "${dircc}" >/dev/null 2>&1 && \
 				printf '%sA' "${PWD}"` && \
 			testcc=${testcc%A} && [ -n "${testcc:++}" ] \
 			&& test -d "${testcc}" && break
 	done
+	if ${clang}
+	then	Info 'export CCACHE_CPP2=true'
+		export CCACHE_CPP2=true
+	fi
 	[ -z "${testcc:++}" ] && return
-	Info "CCACHE_DIR=${testcc}"
-	export CCACHE_DIR CCACHE_COMPRESS
+	Info "export CCACHE_DIR=${testcc}"
+	Info 'export CCACHE_COMPRESS=true'
 	CCACHE_DIR=${testcc}
-	CCACHE_COMPRESS='true'
+	export CCACHE_DIR
+	export CCACHE_COMPRESS=true
 	${clear_ccache} || return 0
-	Info "Clearing CCACHE"
+	Info 'ccache -C'
 	ccache -C
 }
 
@@ -89,10 +108,10 @@ optimization=false
 quickcheck=false
 clear_ccache=false
 debugging=false
-clang=false
+command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
 OPTIND=1
-while getopts 'q01234gdnewWsSrOfCXyYdc:j:hH?' opt
+while getopts 'q01234gGdnewWsSrOfCXyYdc:j:hH?' opt
 do	case ${opt} in
 	q)	quiet=:;;
 	0)	separate_all=false;;
@@ -101,6 +120,7 @@ do	case ${opt} in
 	3)	configure_extra="${configure_extra} --enable-separate-binaries";;
 	4)	configure_extra="${configure_extra} --enable-separate-tools";;
 	g)	clang=:;;
+	G)	clang=false;;
 	d)	dep_default=false;;
 	n)	earlystop=:;;
 	e)	keepenv=:;;
@@ -126,8 +146,21 @@ then	( eval '[ "$(( 0 + 1 ))" = 1 ]' ) >/dev/null 2>&1 && \
 	eval 'shift "$(( ${OPTIND} - 1 ))"' || shift "`expr ${OPTIND} - 1`"
 fi
 
+clang_cc="'clang++'"
+if ${use_ccache}
+then	SetCcache
+	if ! ${ccache_path}
+	then	if ${clang}
+		then	clang_cc="'ccache clang++'"
+		else	CC="ccache ${CC:-g++}"
+			export CC
+			Info "export CC='${CC}'"
+		fi
+	fi
+fi
+
 [ -n "${dialect:++}" ] && configure_extra="${configure_extra} --${dialect}-new-dialect"
-${clang} && configure_extra="${configure_extra} --with-nongnu-cxx=clang++"
+${clang} && configure_extra="${configure_extra} --with-nongnu-cxx=${clang_cc}"
 ${quickcheck} && configure_extra="${configure_extra} --enable-quickcheck"
 ${dep_default} && configure_extra="${configure_extra} --with-dep-default"
 ${separate_all} && configure_extra="${configure_extra} --enable-separate-binaries --enable-separate-tools"
@@ -138,11 +171,9 @@ ${quiet} && quietredirect='>/dev/null' || quietredirect=
 
 if ${use_chown}
 then	ls /root >/dev/null 2>&1 && \
-		Die "You should not really be root when you use -r" 2
+		Die "you should not really be root when you use -r" 2
 	chown -R root:root .
 fi
-
-${use_ccache} && SetCcache
 
 Filter() {
 	for currvar in \
@@ -198,25 +229,26 @@ then	CFLAGS=`portageq envvar CFLAGS`
 		automake_extra="${automake_extra} -Werror"
 	fi
 fi
-Info "CXXFLAGS=${CXXFLAGS}
-LDFLAGS=${LDFLAGS}
-CPPFLAGS=${CPPFLAGS}"
+Info "export CXXFLAGS=${CXXFLAGS}"
+Info "export LDFLAGS=${LDFLAGS}"
+Info "export CPPFLAGS=${CPPFLAGS}"
 if ! test -e Makefile
 then	if ! test -e configure || ! test -e Makefile.in
-	then	Info "Running autotools..."
+	then	InfoVerbose './autogen.sh' ${automake_extra}
 		eval "./autogen.sh ${automake_extra} ${quietredirect}" \
-			|| Die "autogen failed"
+			|| Die 'autogen failed'
 	fi
-	Info "Running configure" ${configure_extra}
+	InfoVerbose './configure' ${configure_extra}
 	eval "./configure ${configure_extra} ${quietredirect}" || \
-		Die "configure failed"
+		Die 'configure failed'
 fi
 ${earlystop} && {
+	InfoVerbose 'make' ${jarg} config.h
 	exec make ${jarg} config.h
-	Die "cannot exec make"
+	Die 'cannot exec make'
 }
-Info "Making ${*}..."
-command -v make >/dev/null 2>&1 || Die "cannot find make"
+InfoVerbose 'make' ${jarg} ${*}
+command -v make >/dev/null 2>&1 || Die 'cannot find make'
 if ${quiet}
 then	exec make ${jarg} "${@}" >/dev/null
 else	exec make ${jarg} "${@}"
