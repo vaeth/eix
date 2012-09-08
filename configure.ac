@@ -76,9 +76,15 @@ AC_ARG_WITH([nongnu-cxx],
 			AS_VAR_SET([assumegnu], [false])],
 		[MV_MSG_RESULT([no: using ${withval}])
 			AS_VAR_COPY([CXX], [withval])
-			export CXX
 			AS_VAR_SET([assumegnu], [false])])],
 	[MV_MSG_RESULT([yes], [default])])
+
+# For non-GNU export CCACHE_CPP2=true for the subsequent tests:
+AS_IF([${assumegnu}],
+	[],
+	[MV_IF_NONEMPTY([${CXX}],
+		[AS_VAR_SET([CCACHE_CPP2], [true])
+		export CCACHE_CPP2])])
 
 AC_LANG([C++])
 AC_PROG_CXX()
@@ -112,9 +118,9 @@ AC_ARG_ENABLE([paranoicasserts],
 	[AS_HELP_STRING([--enable-paranoic-asserts],
 		[activate paranoic asserts])],
 	[MV_ENABLE([paranoicasserts])],
-	[AS_VAR_SET([paranoicassert], [false])])
+	[AS_VAR_SET([paranoicasserts], [false])])
 AS_IF([${debugging}],
-	[AS_VAR_SET([paranoicassert], [true])])
+	[AS_VAR_SET([paranoicasserts], [true])])
 
 AC_ARG_ENABLE([new_dialect],
 	[AS_HELP_STRING([--disable-new-dialect],
@@ -240,6 +246,7 @@ MV_ADDFLAGS([my_cxxfatal], [CXXFLAGS], [AC_COMPILE_IFELSE], [ \
 		-Werror \
 	], [], [], [], [${quicktrue}])
 MV_ADDFLAGS([my_ldfatal], [LDFLAGS], [AC_LINK_IFELSE], [ \
+		${my_cxxfatal} \
 		-Wl,--fatal-warnings \
 	], [], [], [], [${quicktrue}])
 
@@ -1172,6 +1179,13 @@ dnl To use it you must also uncomment the above check
 MV_IF_NONEMPTY([${add_incopt}],
 	[AS_VAR_SET([CXXFLAGS], ["${add_incopt} ${CXXFLAGS}"])
 	AS_VAR_SET([my_cxxadd], ["${add_incopt} ${my_cxxadd}"])])])
+
+# For non-GNU, append CCACHE_CPP2=true to CXX in Makefiles
+AS_IF([${assumegnu}],
+	[],
+	[MV_IF_NONEMPTY([${CXX}],
+		[AS_VAR_SET([CXX], ["CCACHE_CPP2=true ${CXX}"])
+		export CXX])])
 
 # Done!
 AC_OUTPUT()

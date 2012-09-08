@@ -23,6 +23,7 @@ Available options are
   -s  With sqlite
   -S  Without sqlite
   -C  Avoid CCACHE
+  -x  Recache (i.e. ignore broken ccache)
   -X  Clear CCACHE
   -y  Use new c++ dialect
   -Y  Do not use new c++ dialect
@@ -64,6 +65,13 @@ SetCcache() {
 		PATH="${dircc}:${PATH}"
 		export PATH
 	fi
+	if ${recache}
+	then	Info "export CCACHE_RECACHE=true"
+		export CCACHE_RECACHE=true
+	fi
+	CCACHE_SLOPPINESS='file_macro,time_macros,include_file_mtime'
+	Info "export CCACHE_SLOPPINESS='${CCACHE_SLOPPINESS}'"
+	export CCACHE_SLOPPINESS
 	testcc=
 	for dircc in \
 		"${HOME}/.ccache" \
@@ -77,10 +85,6 @@ SetCcache() {
 			testcc=${testcc%A} && [ -n "${testcc:++}" ] \
 			&& test -d "${testcc}" && break
 	done
-	if ${clang}
-	then	Info 'export CCACHE_CPP2=true'
-		export CCACHE_CPP2=true
-	fi
 	[ -z "${testcc:++}" ] && return
 	Info "export CCACHE_DIR=${testcc}"
 	Info 'export CCACHE_COMPRESS=true'
@@ -106,12 +110,13 @@ automake_extra=
 configure_extra='--prefix=/usr --sysconfdir=/etc'
 optimization=false
 quickcheck=false
+recache=false
 clear_ccache=false
 debugging=false
 command -v clang++ >/dev/null 2>&1 && clang=: || clang=false
 dialect='enable'
 OPTIND=1
-while getopts 'q01234gGdnewWsSrOfCXyYdc:j:hH?' opt
+while getopts 'q01234gGdnewWsSrOfCxXyYdc:j:hH?' opt
 do	case ${opt} in
 	q)	quiet=:;;
 	0)	separate_all=false;;
@@ -132,6 +137,7 @@ do	case ${opt} in
 	O)	optimization=:;;
 	f)	quickcheck=:;;
 	C)	use_ccache=false;;
+	x)	recache=:;;
 	X)	clear_ccache=:;;
 	y)	dialect='enable';;
 	Y)	dialect='disable';;
