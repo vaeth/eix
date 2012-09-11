@@ -11,6 +11,7 @@
 	- Introduce paranoic/static asserts and use them only for debugging
 	- Use __attribute__ ((nonnull)) excessively. Dangerous optimization:
 	  a bug here will often lead to segfaults; therefore a major release.
+	- Fix Makefile.am for top_builddir != top_srcdir
 
 *eix-0.26.4
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

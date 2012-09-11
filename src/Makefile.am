@@ -299,14 +299,12 @@ eix-update$(EXEEXT) \
 eix-drop-permissions$(EXEEXT) \
 masked-packages$(EXEEXT) \
 versionsort$(EXEEXT) \
-eix-functions.sh \
-eix-installed.sh \
-eix-installed-after.sh \
-eix-layman.sh \
-eix-remote.sh \
-eix-sync.sh \
-eix-test-obsolete.sh \
-functions-eix.sh
+$(srcdir)/eix-installed.sh \
+$(srcdir)/eix-installed-after.sh \
+$(srcdir)/eix-layman.sh \
+$(srcdir)/eix-remote.sh \
+$(srcdir)/eix-sync.sh \
+$(srcdir)/eix-test-obsolete.sh
 
 # Files we need for generation in the tarball which are not canonical
 EXTRA_DIST = \
@@ -544,26 +542,26 @@ install-exec-hook:
 	$(AM_V_at)$(use_separate_diff) || \
 		$(LN_S) "eix$(EXEEXT)" "$(DESTDIR)$(bindir)/eix-diff$(EXEEXT)"
 
-cache/cache_map.cc: cache/generate_cachemap.sh
-	$(AM_V_GEN)"cache/generate_cachemap.sh" > "$@"
+cache/cache_map.cc: $(srcdir)/cache/generate_cachemap.sh
+	$(AM_V_GEN)"$(srcdir)/cache/generate_cachemap.sh" > "$@"
 
 eix-sync.sh:
-	$(AM_V_GEN)$(LN_S) eix-sync.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-sync.in "$(srcdir)/$@"
 
 eix-test-obsolete.sh:
-	$(AM_V_GEN)$(LN_S) eix-test-obsolete.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-test-obsolete.in "$(srcdir)/$@"
 
 eix-layman.sh:
-	$(AM_V_GEN)$(LN_S) eix-layman.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-layman.in "$(srcdir)/$@"
 
 eix-installed.sh:
-	$(AM_V_GEN)$(LN_S) eix-installed.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-installed.in "$(srcdir)/$@"
 
 eix-installed-after.sh:
-	$(AM_V_GEN)$(LN_S) eix-installed-after.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-installed-after.in "$(srcdir)/$@"
 
 eix-remote.sh:
-	$(AM_V_GEN)$(LN_S) eix-remote.in "$@"
+	$(AM_V_GEN)$(LN_S) eix-remote.in "$(srcdir)/$@"
 
 SUFFIXES = .in
 .in:
