@@ -24,7 +24,8 @@ GrepAllSub() {
 
 GrepAllWith() {
 	Echo "Files with ${*}:"
-	GREP_OPTIONS='--color=always' GrepAllSub -e "${@}"
+	GREP_OPTIONS='--color=always' GrepAllSub "${@}"
+	echo
 }
 
 GrepHWith() {
