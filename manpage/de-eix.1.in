@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-30 18:00:00 +0200 (Thu, 30 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-15 10:00:00 +0200 (Thu, 15 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -236,11 +236,15 @@ Die folgenden speziellen Informations-Optionen versteht nur das eigentliche B<ei
 Sie sind einmalig und ausschließend, d.h. eix gibt nur die entsprechenden Daten aus und beendet sich dann.
 .TP
 .BI "--print-overlay-path " OVERLAY
-Gibt den Pfad des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
+Gibt den Pfad (gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
 I<OVERLAY> kann ein Overlaylabel sein, ein Overlay-Pfad (Maske) oder eine Zahl.
 .TP
 .BI "--print-overlay-label " OVERLAY
-Gibt das Lebel des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
+Gibt das Label (gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
+I<OVERLAY> kann ein Overlaylabel sein, ein Overlay-Pfad (Maske) oder eine Zahl.
+.TP
+.BI "--print-overlay-data " OVERLAY
+Gibt Label und Path (getrennt und gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.
 I<OVERLAY> kann ein Overlaylabel sein, ein Overlay-Pfad (Maske) oder eine Zahl.
 .TP
 .B --print-all-useflags
@@ -2107,7 +2111,7 @@ Bestimmt, ob für eix und eix-diff die Option B<--quiet> der Default ist.
 
 .TP
 .BR PRINT_APPEND " " (string)
-Dieser String wir an die Ausgabe von --print angehängt.
+Dieser String wir an die Ausgabe von B<--print>, B<--print-overlay-path> und B<--print-overlay-label> angehängt.
 Standard Escape-Sequences wie \\n in diesem String werden interpretiert.
 Der default ist ein Zeilenvorschub, um in interaktiven Shells eine
 vernünftige Ausgabe zu erzeugen.

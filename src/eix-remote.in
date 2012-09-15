@@ -236,6 +236,7 @@ AddArchive() {
 	}
 	ClearUpdateArgs
 	AddLocalMethods
+	export PRINT_APPEND=mAgIcsEp
 	Statusline "`gettext 'Analyzing'`"
 	set +f
 	chmod a+r *
@@ -254,14 +255,16 @@ AddArchive() {
 		Replace -g n '_' '?'
 		n="*/${n}"
 		p="${2}/${i}"
-		name=`EIX_CACHEFILE=${p} eix --print-overlay-path "${n}"` \
-			&& [ -n "${name:++}" ] || {
+		l=`EIX_CACHEFILE=${p} eix --print-overlay-data "${n}"` \
+			&& [ -n "${l:++}" ] || {
 			printf '%s\n' "`eval_gettext \
 				'problems occurred with cachefile ${i}'`" >&2
 			exitcode=1
 			continue
 		}
-		l=`EIX_CACHEFILE=${p} eix --print-overlay-label "${n}"` || l=
+		l=${l%${PRINT_APPEND}}
+		name=${l#*${PRINT_APPEND}}
+		l=${l%%${PRINT_APPEND}*}
 		name=${name##*/}
 		virtual="layman/${name}"
 		printf '%s -> %s\n' "${virtual}" "${l:-no repo-name}"
@@ -272,6 +275,7 @@ AddArchive() {
 		[ -n "${l:++}" ] && AddRepoName "${virtual}" "${l}"
 		AddExcludes "${LOCAL_LAYMAN}/${name}"
 	done
+	unset PRINT_APPEND
 	msg=
 	[ ${exitcode} -ne 0 ] && \
 		msg=`eval_gettext 'could not read all eix cachefiles of ${a}'`

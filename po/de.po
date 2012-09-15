@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-04 19:28+0200\n"
+"POT-Creation-Date: 2012-09-15 09:53+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -37,7 +37,7 @@ msgstr "Probleme mit ${eixf_cmd}"
 msgid "Calling eix-update"
 msgstr "Starte eix-update"
 
-#: src/eix-functions.sh.in:304 src/eix-remote.sh:292
+#: src/eix-functions.sh.in:304 src/eix-remote.sh:296
 msgid "eix-update failed"
 msgstr "eix-update schlug fehl"
 
@@ -322,7 +322,7 @@ msgstr ""
 "-H            Keine Ausgabe der Statuszeile\n"
 "-q            Keine Ausgabe"
 
-#: src/eix-layman.sh:133 src/eix-remote.sh:239 src/eix-update.cc:668
+#: src/eix-layman.sh:133 src/eix-remote.sh:240 src/eix-update.cc:668
 msgid "Analyzing"
 msgstr "Analyse"
 
@@ -535,36 +535,36 @@ msgstr "Entpacken der Daten"
 msgid "cannot unpack ${a}"
 msgstr "${a} ist nicht entpackbar"
 
-#: src/eix-remote.sh:260
+#: src/eix-remote.sh:261
 #, sh-format
 msgid "problems occurred with cachefile ${i}"
 msgstr "Probleme mit Cachefile ${i}"
 
-#: src/eix-remote.sh:277
+#: src/eix-remote.sh:281
 #, sh-format
 msgid "could not read all eix cachefiles of ${a}"
 msgstr "Fehler beim Lesen einiger eix-Cachefiles von ${a}"
 
-#: src/eix-remote.sh:283
+#: src/eix-remote.sh:287
 #, sh-format
 msgid "Output to remote database ${EIX_REMOTE}"
 msgstr "Ausgabe auf Remote-Datenbank ${EIX_REMOTE}"
 
-#: src/eix-remote.sh:302
+#: src/eix-remote.sh:306
 msgid "A temporary file makes only sense for update mode"
 msgstr "Eine Temporärdate ergibt nur im Update-Modus Sinn"
 
-#: src/eix-remote.sh:313
+#: src/eix-remote.sh:317
 #, sh-format
 msgid "cannot copy temporary file to ${file}"
 msgstr "Temporärdatei kann nicht nach ${file} kopiert werden"
 
-#: src/eix-remote.sh:325
+#: src/eix-remote.sh:329
 #, sh-format
 msgid "cannot read ${archive}"
 msgstr "Datei ${archive} nicht lesbar"
 
-#: src/eix-remote.sh:344
+#: src/eix-remote.sh:348
 #, sh-format
 msgid "mkdir ${tmpsub} failed"
 msgstr "Fehler bei mkdir ${tmpsub}"
@@ -1222,6 +1222,7 @@ msgid ""
 "     --print-world-sets    print the world sets\n"
 "     --print-overlay-path  print the path of specified overlay\n"
 "     --print-overlay-label print label of specified overlay\n"
+"     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
 "\n"
 "   Special:\n"
@@ -1383,6 +1384,7 @@ msgstr ""
 "     --print-world-sets    Ausgabe aller Sets in world\n"
 "     --print-overlay-path  Ausgabe des Pfads des angegebenen Overlays\n"
 "     --print-overlay-label Ausgabe des Labels des angegebenen Overlays\n"
+"     --print-overlay-data  Ausgabe von Label und Pfad des Overlays\n"
 "     --is-current          Test auf gültiges cache-file\n"
 "\n"
 "   Speziell:\n"
@@ -1516,16 +1518,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:507 src/eix-diff.cc:276
+#: src/eix.cc:509 src/eix-diff.cc:276
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:594 src/eix-diff.cc:336 src/eix-update.cc:386
+#: src/eix.cc:596 src/eix-diff.cc:336 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:636 src/eix.cc:967
+#: src/eix.cc:638 src/eix.cc:998
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1534,7 +1536,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:647
+#: src/eix.cc:649
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1545,31 +1547,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:925 src/eix.cc:941
+#: src/eix.cc:956 src/eix.cc:972
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:928
+#: src/eix.cc:959
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:935
+#: src/eix.cc:966
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:1042
+#: src/eix.cc:1073
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1043
+#: src/eix.cc:1074
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1048
+#: src/eix.cc:1079
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1578,7 +1580,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1049
+#: src/eix.cc:1080
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1587,7 +1589,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1107
+#: src/eix.cc:1138
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1595,7 +1597,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1110
+#: src/eix.cc:1141
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"

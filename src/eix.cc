@@ -108,6 +108,7 @@ dump_help()
 "     --print-world-sets    print the world sets\n"
 "     --print-overlay-path  print the path of specified overlay\n"
 "     --print-overlay-label print label of specified overlay\n"
+"     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
 "\n"
 "   Special:\n"
@@ -235,6 +236,7 @@ static const char *eix_cachefile(NULLPTR);
 static const char *var_to_print(NULLPTR);
 static const char *overlaypath_to_print(NULLPTR);
 static const char *overlaylabel_to_print(NULLPTR);
+static const char *overlaylabelpath_to_print(NULLPTR);
 
 enum OverlayMode
 {
@@ -324,10 +326,10 @@ EixOptionList::EixOptionList()
 
 	push_back(Option("ignore-etc-portage",  O_IGNORE_ETC_PORTAGE, Option::BOOLEAN_T,  &rc_options.ignore_etc_portage));
 
-	push_back(Option("print",        O_PRINT_VAR,     Option::STRING,    &var_to_print));
-
-	push_back(Option("print-overlay-path",   O_PRINT_OPATH, Option::STRING, &overlaypath_to_print));
-	push_back(Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING, &overlaylabel_to_print));
+	push_back(Option("print",               O_PRINT_VAR,    Option::STRING,     &var_to_print));
+	push_back(Option("print-overlay-path",  O_PRINT_OPATH,  Option::STRING,     &overlaypath_to_print));
+	push_back(Option("print-overlay-label", O_PRINT_OLABEL, Option::STRING,     &overlaylabel_to_print));
+	push_back(Option("print-overlay-data",  O_PRINT_OLABELPATH, Option::STRING, &overlaylabelpath_to_print));
 
 	push_back(Option("format",         O_FMT,         Option::STRING,   &format_normal));
 	push_back(Option("format-verbose", O_FMT_VERBOSE, Option::STRING,   &format_verbose));
@@ -651,7 +653,6 @@ run_eix(int argc, char** argv)
 			<< endl;
 		return EXIT_FAILURE;
 	}
-	portagesettings.store_world_sets(&(header.world_sets));
 
 	if(unlikely(rc_options.hash_iuse)) {
 		fclose(fp);
@@ -689,6 +690,55 @@ run_eix(int argc, char** argv)
 		return EXIT_SUCCESS;
 	}
 
+	{
+		typedef eix::TinyUnsigned PrintOverlayMode;
+		const PrintOverlayMode
+			PRINT_OVERLAY_NONE  = 0x00,
+			PRINT_OVERLAY_LABEL = 0x01,
+			PRINT_OVERLAY_PATH  = 0x02,
+			PRINT_OVERLAY_LABEL_PATH = (PRINT_OVERLAY_LABEL | PRINT_OVERLAY_PATH);
+		PrintOverlayMode print_overlay_mode;
+		const char *osearch;
+		if(unlikely(overlaylabelpath_to_print != NULLPTR)) {
+			print_overlay_mode = PRINT_OVERLAY_LABEL_PATH;
+			osearch = overlaylabelpath_to_print;
+		}
+		else if(unlikely(overlaylabel_to_print != NULLPTR)) {
+			print_overlay_mode = PRINT_OVERLAY_LABEL;
+			osearch = overlaylabel_to_print;
+		}
+		else if(unlikely(overlaypath_to_print != NULLPTR)) {
+			print_overlay_mode = PRINT_OVERLAY_PATH;
+			osearch = overlaypath_to_print;
+		}
+		else {
+			print_overlay_mode = PRINT_OVERLAY_NONE;
+		}
+		if(unlikely(print_overlay_mode != PRINT_OVERLAY_NONE)) {
+			fclose(fp);
+			ExtendedVersion::Overlay num;
+			if(unlikely(!header.find_overlay(&num, osearch, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
+				return EXIT_FAILURE;
+			}
+			const OverlayIdent& overlay(header.getOverlay(num));
+			string print_append(eixrc["PRINT_APPEND"]);
+			unescape_string(&print_append);
+			string result;
+			if((print_overlay_mode & PRINT_OVERLAY_LABEL) != PRINT_OVERLAY_NONE) {
+				result.assign(overlay.label);
+				result.append(print_append);
+			}
+			if((print_overlay_mode & PRINT_OVERLAY_PATH) != PRINT_OVERLAY_NONE) {
+				result.append(overlay.path);
+				result.append(print_append);
+			}
+			cout << result;
+			return EXIT_SUCCESS;
+		}
+	}
+
+	portagesettings.store_world_sets(&(header.world_sets));
+
 	if(header.countOverlays() != 0) {
 		format->clear_virtual(header.countOverlays());
 		for(ExtendedVersion::Overlay i(1); likely(i != header.countOverlays()); ++i)
@@ -716,25 +766,6 @@ run_eix(int argc, char** argv)
 
 	{
 		PackageReader reader(fp, header, &portagesettings);
-		if(unlikely((overlaypath_to_print != NULLPTR) || (overlaylabel_to_print != NULLPTR))) {
-			fclose(fp);
-			ExtendedVersion::Overlay num;
-			const char *osearch(overlaypath_to_print);
-			bool print_path(osearch != NULLPTR);
-			if(!print_path) {
-				osearch = overlaylabel_to_print;
-			}
-			if(unlikely(!header.find_overlay(&num, osearch, NULLPTR, 0, DBHeader::OVTEST_ALL))) {
-				return EXIT_FAILURE;
-			}
-			const OverlayIdent& overlay(header.getOverlay(num));
-			if(print_path) {
-				cout << overlay.path;
-			} else {
-				cout << overlay.label;
-			}
-			return EXIT_SUCCESS;
-		}
 		bool add_rest(false);
 		while(likely(reader.next())) {
 			if(unlikely(add_rest)) {

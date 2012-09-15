@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-08-30 18:00:00 +0200 (Thu, 30 Aug 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-15 10:00:00 +0200 (Thu, 15 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -230,11 +230,15 @@ The following special information options are only provided by the B<eix> binary
 They are one-shot exclusive options, i.e. eix outputs only the required data and then exits.
 .TP
 .BI "--print-overlay-path " OVERLAY
-Print the path of the first overlay matching I<OVERLAY>.
+Print the path of the first overlay matching I<OVERLAY>, followed by B<PRINT_APPEND>.
 I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
 .TP
 .BI "--print-overlay-label " OVERLAY
-Print the label of the first overlay matching I<OVERLAY>.
+Print the label of the first overlay matching I<OVERLAY>, followed by B<PRINT_APPEND>.
+I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
+.TP
+.BI "--print-overlay-data " OVERLAY
+Print label and path of the first overlay matching I<OVERLAY>, separated and followed by B<PRINT_APPEND>.
 I<OVERLAY> may be an overlay label, an overlay path (mask) or a number.
 .TP
 .B --print-all-useflags
@@ -2087,7 +2091,7 @@ If true, eix and eix-diff will use B<--quiet> by default.
 
 .TP
 .BR PRINT_APPEND " " (string)
-This string is appended to the output of --print.
+This string is appended to the output of B<--print>, B<--print-overlay-path>, and B<--print-overlay-label>.
 Standard escape sequences in this string like \\n are interpreted.
 The default is a newline for reasonable output in an interactive shell.
 Note that command substitution in shell scripts removes all trailing spaces

@@ -6,6 +6,9 @@
 	  <{coll,}use*> and FORMAT_{BEFORE,AFTER}_IUSE_EXPAND{,_START,_END}
 	- Improve handling of local cascading profiles; add local make.defaults
 	- Make USE_EXPAND an accumulating variable
+	- Speed up eix-remote add
+	- New eix --print-overlay-data
+	- Let eix --print-overlay-* honor PRINT_APPEND
 	- Fix --with-nongnu-cxx=clang if ccache is used: sets CCACHE_CPP2=true
 	- Add -Werror also for LDFLAGS checks. Fixes indirectly CXXFLAGS checks
 	- Introduce paranoic/static asserts and use them only for debugging

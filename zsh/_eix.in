@@ -48,6 +48,7 @@ case $service in
 	service_opts+=(
 "$excl_opt"'--print-overlay-path[OVERLAY (print path for OVERLAY)]:overlay for printing path:_eix__overlay'
 "$excl_opt"'--print-overlay-label[OVERLAY (print label for OVERLAY)]:overlay for printing label:_eix__overlay'
+"$excl_opt"'--print-overlay-data[OVERLAY (print label and path for OVERLAY)]:overlay for printing label and path:_eix__overlay'
 "$excl_opt"'--print-all-useflags[print all IUSE words]'
 "$excl_opt"'--print-all-keywords[print all KEYWORDS words]'
 "$excl_opt"'--print-all-slots[print all SLOT strings]'
