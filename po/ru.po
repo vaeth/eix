@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-15 09:53+0200\n"
+"POT-Creation-Date: 2012-09-15 16:17+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -571,7 +571,7 @@ msgid "mkdir ${tmpsub} failed"
 msgstr "ошибка создания каталога ${tmpsub}"
 
 #: src/eix-sync.sh:26
-#, sh-format
+#, fuzzy, sh-format
 msgid ""
 "Usage: ${n} [options]\n"
 "Call layman/emerge --sync/--metadata and show updates. (${p})\n"
@@ -610,12 +610,14 @@ msgid ""
 "     will be executed anyway.\n"
 "-@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.\n"
 "-S   Do not execute the hooks after emerge --sync (@ entries).\n"
-"-M   Run emerge --metadata. You might need this when you use e.g.\n"
-"     PORTDIR_CACHE_METHOD=flat and a newer portage version when\n"
-"     FEATURES=metadata-transfer is inactive or disabled.\n"
-"-N   Cancel a previous -M.\n"
-"-t   Use temporary file to save the current database (-d will not be "
-"possible).\n"
+"-M   Run emerge --metadata.  You might need this when you use the cache "
+"method\n"
+"     \"sqlite\", \"sqlite*\", or \"flat\" for PORTDIR or in a synced "
+"overlay.\n"
+"     This option is the default if PORTDIR_CACHE_METHOD is one of these.\n"
+"-N   Do not run emerge --metadata. Usually, this is the default, see -M.\n"
+"-t   Use temporary file to save the current database (excluding eix-diff "
+"later)\n"
 "-T   Do not measure time\n"
 "-q   Be quiet (close stdout)\n"
 "-w   Run emerge-webrsync instead of emerge --sync.\n"
@@ -674,13 +676,14 @@ msgstr ""
 "     всё равно будут исполнены.\n"
 "-@   Не исполнять крюки (записи @ и @@) файла ${eixsyncconf}.\n"
 "-S   Не исполнять крюки после emerge --sync (записи @).\n"
-"-M   Запустить emerge --metadata. Это может понадобиться когда Вы "
-"используете\n"
-"     PORTDIR_CACHE_METHOD=flat и более новую версию portage когда\n"
-"     FEATURES=metadata-transfer неактивно или отключено.\n"
-"-N   Отменить предыдущий -M.\n"
-"-t   Использовать временный файл для сохранения текущей базы данных (-d "
-"будет невозможно).\n"
+"-M   Запустить emerge --metadata.\n"
+"     You might need this when you use the cache method\n"
+"     \"sqlite\", \"sqlite*\", or \"flat\" for PORTDIR or in a synced "
+"overlay.\n"
+"     This option is the default if PORTDIR_CACHE_METHOD is one of these.\n"
+"-N   Do not run emerge --metadata. Usually, this is the default, see -M.\n"
+"-t   Использовать временный файл для сохранения текущей базы данных\n"
+"     (excluding eix-diff later)\n"
 "-T   Не измерять время\n"
 "-q   Тихо (закрыть stdout)\n"
 "-w   Запустить emerge-webrsync вместо emerge --sync.\n"
@@ -726,124 +729,124 @@ msgstr "Синхронизация оверлея ${j}"
 msgid "${mycmd} -s ${j} failed"
 msgstr "ошибка ${mycmd} -s ${j}"
 
-#: src/eix-sync.sh:323
+#: src/eix-sync.sh:332
 #, sh-format
 msgid "Running ${myvarcmd}"
 msgstr "Запуск ${myvarcmd}"
 
-#: src/eix-sync.sh:325
+#: src/eix-sync.sh:334
 #, sh-format
 msgid "${myvarcmd} failed"
 msgstr "ошибка ${myvarcmd}"
 
-#: src/eix-sync.sh:336
+#: src/eix-sync.sh:345
 msgid "%6d seconds for %s\\n"
 msgstr "%6d секунд для %s\\n"
 
-#: src/eix-sync.sh:341
+#: src/eix-sync.sh:350
 msgid "Time statistics:"
 msgstr "Статистика времени:"
 
-#: src/eix-sync.sh:342
+#: src/eix-sync.sh:351
 msgid "initial eix-update"
 msgstr "начальный eix-update"
 
-#: src/eix-sync.sh:343
+#: src/eix-sync.sh:352
 msgid "syncing"
 msgstr "синхронизация"
 
-#: src/eix-sync.sh:344
+#: src/eix-sync.sh:353
 msgid "client syncing"
 msgstr "синхронизация клиента"
 
-#: src/eix-sync.sh:345
+#: src/eix-sync.sh:354
 msgid "metadata update"
 msgstr "обновление метаданных"
 
-#: src/eix-sync.sh:346
+#: src/eix-sync.sh:355
 msgid "eix-update"
 msgstr "eix-update"
 
-#: src/eix-sync.sh:347
+#: src/eix-sync.sh:356
 msgid "eix-diff"
 msgstr "eix-diff"
 
-#: src/eix-sync.sh:350
+#: src/eix-sync.sh:359
 msgid "%6d seconds total\\n"
 msgstr "%6d секунд всего\\n"
 
-#: src/eix-sync.sh:394
+#: src/eix-sync.sh:403
 #, sh-format
 msgid "${c} (output of ${curr_cmd}) failed"
 msgstr "${c} (ошибка вывода ${curr_cmd})"
 
-#: src/eix-sync.sh:395
+#: src/eix-sync.sh:404
 #, sh-format
 msgid "${curr_cmd} failed"
 msgstr "Ошибка ${curr_cmd}"
 
-#: src/eix-sync.sh:415
+#: src/eix-sync.sh:424
 #, sh-format
 msgid "Removing old portage-cache in ${local_varcache}/var/cache/edb/dep"
 msgstr "Удаление старого кэша portage в ${local_varcache}/var/cache/edb/dep"
 
-#: src/eix-sync.sh:417
+#: src/eix-sync.sh:426
 #, sh-format
 msgid "rm -rf ${local_varcache}/var/cache/edb/dep/* failed"
 msgstr "Ошибка rm -rf ${local_varcache}/var/cache/edb/dep/*"
 
-#: src/eix-sync.sh:425
+#: src/eix-sync.sh:434
 #, sh-format
 msgid "Could not rsync from ${hostdir}"
 msgstr "Невозможно выполнить rsync из ${hostdir}"
 
-#: src/eix-sync.sh:435
+#: src/eix-sync.sh:444
 #, sh-format
 msgid "rsyncing to ${hostdir}"
 msgstr "Выполняю rsync в ${hostdir}"
 
-#: src/eix-sync.sh:437
+#: src/eix-sync.sh:446
 #, sh-format
 msgid "Could not rsync to ${hostdir}"
 msgstr "Невозможно выполнить rsync в ${hostdir}"
 
-#: src/eix-sync.sh:447
+#: src/eix-sync.sh:456
 msgid "eix-cache does not exist."
 msgstr "eix-cache не существует."
 
-#: src/eix-sync.sh:452
+#: src/eix-sync.sh:461
 msgid "eix-cache format has changed."
 msgstr "Формат eix-cache изменился"
 
-#: src/eix-sync.sh:459
+#: src/eix-sync.sh:468
 #, sh-format
 msgid "Copying old ${eixcache} cache to temporary file"
 msgstr "Копирую старый кэш ${eixcache} во временный файл"
 
-#: src/eix-sync.sh:463
+#: src/eix-sync.sh:472
 #, sh-format
 msgid "Could not copy database to temporary file ${tmpfile}"
 msgstr "Невозможно скопировать базу данных во временный файл ${tmpfile}"
 
-#: src/eix-sync.sh:467
+#: src/eix-sync.sh:476
 #, sh-format
 msgid "Copying old database to ${eixprevious}"
 msgstr "Копирую старую базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:469
+#: src/eix-sync.sh:478
 #, sh-format
 msgid "Could not copy database to ${eixprevious}"
 msgstr "Невозможно скопировать базу данных в ${eixprevious}"
 
-#: src/eix-sync.sh:488
+#: src/eix-sync.sh:497
 msgid "eix-update was apparently already called in a hook"
 msgstr "Вероятно, eix-update уже вызван крюком"
 
-#: src/eix-sync.sh:492
+#: src/eix-sync.sh:501
 msgid "Calling eix-diff"
 msgstr "Вызов eix-diff"
 
-#: src/eix-sync.sh:494
+#: src/eix-sync.sh:503
 msgid "Failed to diff against current cache"
 msgstr "Ошибка сравнения с текущим кэшем"
 

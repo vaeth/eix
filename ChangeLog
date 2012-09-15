@@ -9,6 +9,8 @@
 	- Speed up eix-remote add
 	- New eix --print-overlay-data
 	- Let eix --print-overlay-* honor PRINT_APPEND
+	- Default to eix-sync -M if PORTDIR_CACHE_METHOD is sqlite{,*} or flat,
+	  see http://bugs.gentoo.org/show_bug.cgi?id=434616
 	- Fix --with-nongnu-cxx=clang if ccache is used: sets CCACHE_CPP2=true
 	- Add -Werror also for LDFLAGS checks. Fixes indirectly CXXFLAGS checks
 	- Introduce paranoic/static asserts and use them only for debugging

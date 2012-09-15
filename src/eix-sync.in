@@ -57,11 +57,11 @@ The following options are available:
      will be executed anyway.
 -@   Do not execute the hooks (@ and @@ entries) of ${eixsyncconf}.
 -S   Do not execute the hooks after emerge --sync (@ entries).
--M   Run emerge --metadata. You might need this when you use e.g.
-     PORTDIR_CACHE_METHOD=flat and a newer portage version when
-     FEATURES=metadata-transfer is inactive or disabled.
--N   Cancel a previous -M.
--t   Use temporary file to save the current database (-d will not be possible).
+-M   Run emerge --metadata.  You might need this when you use the cache method
+     "sqlite", "sqlite*", or "flat" for PORTDIR or in a synced overlay.
+     This option is the default if PORTDIR_CACHE_METHOD is one of these.
+-N   Do not run emerge --metadata. Usually, this is the default, see -M.
+-t   Use temporary file to save the current database (excluding eix-diff later)
 -T   Do not measure time
 -q   Be quiet (close stdout)
 -w   Run emerge-webrsync instead of emerge --sync.
@@ -199,7 +199,7 @@ DefaultOpts() {
 	quiet=false
 	usetemp=false
 	measure_time=:
-	metadata=false
+	metadata=
 	skip_sync=false
 	server=
 	client=
@@ -252,6 +252,15 @@ do	case ${opt} in
 done
 opt=
 [ -z "${server:++}" ] || skip_sync=:
+
+if [ -z "${metadata:++}" ]
+then	metadata=false
+	ReadVar cache_method PORTDIR_CACHE_METHOD || cache_method=
+	case ${cache_method} in
+	sqlite*|flat)
+		metadata=:
+	esac
+fi
 
 ${measure_time} || time_begin=
 measure_time=false
