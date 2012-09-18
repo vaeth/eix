@@ -702,16 +702,13 @@ run_eix(int argc, char** argv)
 		if(unlikely(overlaylabelpath_to_print != NULLPTR)) {
 			print_overlay_mode = PRINT_OVERLAY_LABEL_PATH;
 			osearch = overlaylabelpath_to_print;
-		}
-		else if(unlikely(overlaylabel_to_print != NULLPTR)) {
+		} else if(unlikely(overlaylabel_to_print != NULLPTR)) {
 			print_overlay_mode = PRINT_OVERLAY_LABEL;
 			osearch = overlaylabel_to_print;
-		}
-		else if(unlikely(overlaypath_to_print != NULLPTR)) {
+		} else if(unlikely(overlaypath_to_print != NULLPTR)) {
 			print_overlay_mode = PRINT_OVERLAY_PATH;
 			osearch = overlaypath_to_print;
-		}
-		else {
+		} else {
 			print_overlay_mode = PRINT_OVERLAY_NONE;
 		}
 		if(unlikely(print_overlay_mode != PRINT_OVERLAY_NONE)) {

@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "eixTk/eixint.h"
+#include "eixTk/inttypes.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
 #include "eixTk/ptr_list.h"

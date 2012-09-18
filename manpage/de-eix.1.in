@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-15 10:00:00 +0200 (Thu, 15 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-17 22:30:00 +0200 (Mon, 17 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1418,24 +1418,31 @@ verfügbaren Versionen des aktuellen (d.h. neuen) Pakets ausgeben.
 .\" {{{ -------- Farben
 .SS Farben
 .TP
-(I<NAME>,I<HELLIGKEIT>;I<MARKER>)
-Jeder der ",I<HELLIGKEIT>" und ";I<MARKER>" Teile kann weggelassen werden.
+.BI ( COLORSTRING | COLORSTRING | ... )
+Der tatsächlich ausgewählte I<COLORSTRING> hängt von B<COLORSCHEME> ab.
+Er sollte die folgende Gestalt haben:
 
-Falls I<HELLIGKEIT> 1 ist, gibt eix die entsprechende 'light' (bold) Farbe für
-I<NAME> aus, oder die normale Farbe, falls I<HELLIGKEIT> 0 ist.
+.TP
+.IB MARKER_ODER_COLOR ; MARKER_ODER_COLOR ; ...
+B<MARKER_ODER_COLOR> ist entweder ein Markername oder ein Farbname,
+optional gefolgt von B<,1> (oder B<,0>) für (nicht-)helle Farbwahl.
 
-Ein leerer I<NAME> bedeutet "default", und im Gegensatz zu "none" setzt er die
-Ausgabe auf die Default-Farben (und ohne Marker).
-
-Ein leerer (oder weggelassener) I<MARKER> bedeutet "none", d.h. keine
-Attribut-Veränderung. Mehrere marker-Attributes können gleichzeitig
-spezifiziert werden (mit "," unterteilt).
-
-Verfügbare Farben:
-I<default none black red green yellow blue purple cyan gray>
-
-Verfügbare Marker:
+Verfügbare Markernamen:
 I<none bold underline blink inverse>
+
+Verfügbare Farbnamen:
+I<default black red green yellow blue purple cyan gray 0 ... 255>
+
+Die Farbnamen I<0> ... I<255> werden nur auf einem 256-Farben-Terminal sinnvoll ausgegeben.
+
+Die erste Farbe in I<COLORSTRING> legt die Vordergrund-, die zweite die
+Hintergrundfarbe fest.
+
+Wenn eine Vordergrundfarbe festgelegt wird, werden alle Farben und Marker zurückgesetzt.
+Der Leerstring ist als die Farbe "default" definiert.
+Insbesondere bewirkt B<()>, dass alle Farben und Marker zurückgesetzt werden.
+
+Falls weder Ausgabe noch ein Reset gewünscht ist, kann man den Markennamen B<(none)> wählen.
 .\" }}}
 
 .\" {{{ -------- Beispiele
@@ -2323,6 +2330,20 @@ ausgegeben; diese wird beispielsweise von screen aber nicht von tmux benutzt.
 .BR EXIT_STATUSLINE " " (string)
 Falls dieser String nichtleer ist, wird er als Ende-Statuszeile benutzt.
 Ein optionales führendes Leerzeichen in diesem String wird ignoriert.
+
+.TP
+.BR TERM_ALT " " (string list)
+Dies ist eine Liste regulärer Ausdrücke.
+Falls einer von ihnen auf B<TERM> passt, wird B<COLORSCHEME_ALT> statt
+B<COLORSCHEME> benutzt.
+
+.TP
+.BR COLORSCHEME ", " COLORSCHEME_ALT " " (integer)
+Das benutzte Farbschema:
+Wenn es 0 ist, wird jeweils der erste I<COLORSTRING> von Farbspezifikationen benutzt;
+für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt
+Falls die Zahl zu hoch ist, wird der letzte mögliche I<COLORSTRING> benutzt.
+Falls B<TERM_ALT> passt, wird stattdessen B<COLORSCHEME_ALT> benutzt.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)

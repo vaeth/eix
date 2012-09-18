@@ -608,6 +608,21 @@ AddOption(STRING, "EXIT_STATUSLINE",
 	"If this is nonempty, it is used as the exit statusline.\n"
 	"An optional leading space in this string is ignored."));
 
+AddOption(STRING, "TERM_ALT",
+	"256 xterm", _(
+	"This is a list of regular expressions; if one of it matches TERM, then\n"
+	"COLORSCHEME_ALT is used instead of COLORSCHEME."));
+
+AddOption(STRING, "COLORSCHEME",
+	"0", _(
+	"If TERM_ALT does not match, this chooses the corresponding color of\n"
+	"color specifications (starting from 0)."));
+
+AddOption(STRING, "COLORSCHEME_ALT",
+	"1", _(
+	"If TERM_ALT matches, this chooses the corresponding color of\n"
+	"color specifications (starting from 0)."));
+
 AddOption(BOOLEAN, "SORT_INST_USE_ALPHA",
 	"false", _(
 	"If false, sort installed useflags by whether they are set."));
@@ -972,7 +987,7 @@ AddOption(STRING, "EAPI_REGEX",
 	"Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."));
 
 AddOption(STRING, "COLOR_NAME",
-	"default,1", _(
+	"default,1|250,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of packages."));
 
@@ -982,7 +997,7 @@ AddOption(STRING, "COLOR_WORLD",
 	"It defines the color used for the name of world packages."));
 
 AddOption(STRING, "COLOR_WORLD_SETS",
-	"yellow,1", _(
+	"yellow,1|214,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of world sets packages."));
 
@@ -992,7 +1007,7 @@ AddOption(STRING, "COLOR_CATEGORY",
 	"It defines the color used for the category of packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
-	"yellow", _(
+	"yellow|82,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of system packages."));
 
@@ -1007,7 +1022,7 @@ AddOption(STRING, "COLOR_CATEGORY_WORLD_SETS",
 	"It defines the color used for printing the category of world sets packages."));
 
 AddOption(STRING, "COLOR_UPGRADE_TEXT",
-	"cyan,1", _(
+	"cyan,1|87,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing upgrade recommendation texts."));
 
@@ -1054,7 +1069,7 @@ AddOption(STRING, "DIFF_COLOR_NEW_TAG",
 	"It defines the color used for \"new package\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_NEW",
-	"%{COLOR_TITLE},1", _(
+	"%{COLOR_TITLE_PLAIN},1|%{COLOR_TITLE_ALT},1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
@@ -1069,7 +1084,7 @@ AddOption(STRING, "DIFF_COLOR_CHANGED",
 	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
 AddOption(STRING, "COLOR_INST_TAG",
-	"%{COLOR_TITLE},1;inverse", _(
+	"%{COLOR_TITLE_PLAIN},1;inverse|%{COLOR_TITLE_ALT},1;inverse", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for tagging installed packages."));
 
@@ -1079,22 +1094,42 @@ AddOption(STRING, "COLOR_UNINST_TAG",
 	"It defines the color used for tagging uninstalled packages."));
 
 AddOption(STRING, "COLOR_DATE",
-	"purple,1", _(
+	"purple,1|166", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the date."));
 
+AddOption(STRING, "COLOR_DEPEND",
+	"none|248", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color of the DEPEND output."));
+
+AddOption(STRING, "COLOR_DEPEND_END",
+	"none|", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the end of color of the DEPEND output."));
+
+AddOption(STRING, "COLOR_NORMAL",
+	"|252", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing normal texts."));
+
+AddOption(STRING, "COLOR_NORMAL_END",
+	"none|", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing end of normal texts."));
+
 AddOption(STRING, "COLOR_SET_USE",
-	"red,1", _(
+	"red,1|125,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the set useflags."));
 
 AddOption(STRING, "COLOR_UNSET_USE",
-	"blue,1", _(
+	"blue,1|33", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the unset useflags."));
 
 AddOption(STRING, "COLOR_VERSION_IUSE",
-	"black,1", _(
+	"black,1|168", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available versions."));
 
@@ -1103,23 +1138,43 @@ AddOption(STRING, "COLOR_COLL_IUSE",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing IUSE for available packages."));
 
+AddOption(STRING, "COLOR_USE_EXPAND_START",
+	"%{COLOR_NORMAL}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing USE_EXPAND variables."));
+
+AddOption(STRING, "COLOR_USE_EXPAND_END",
+	"%{COLOR_NORMAL_END}", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for printing end of USE_EXPAND variables."));
+
 AddOption(STRING, "COLOR_INST_VERSION",
-	"blue,1;%{MARK_INSTALLED}", _(
+	"yellow,1;blue", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the version of installed packages."));
 
-AddOption(STRING, "COLOR_TITLE",
+AddOption(STRING, "COLOR_TITLE_PLAIN",
 	"green", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the title texts for packages in plain scheme."));
+
+AddOption(STRING, "COLOR_TITLE_ALT",
+	"34", _(
+	"This variable is only used for delayed substitution.\n"
+	"It defines the color used for the title texts for packages in alt scheme."));
+
+AddOption(STRING, "COLOR_TITLE",
+	"%{COLOR_TITLE_PLAIN}|%{COLOR_TITLE_ALT}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for packages."));
 
 AddOption(STRING, "COLOR_INST_TITLE",
-	"cyan", _(
+	"cyan|67", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for installed versions."));
 
 AddOption(STRING, "COLOR_AVAILABLE_TITLE",
-	"purple", _(
+	"purple|70", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for available versions."));
 
@@ -1129,12 +1184,12 @@ AddOption(STRING, "COLOR_MARKED_VERSION",
 	"It defines the color used for printing a marked version of a packages."));
 
 AddOption(STRING, "COLOR_PACKAGESETS",
-	"yellow,1", _(
+	"%{COLOR_WORLD_SETS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the package sets."));
 
 AddOption(STRING, "COLOR_MARKED_NAME",
-	"red,1;%{MARK_VERSIONS}", _(
+	"red,1;%{MARK_VERSIONS}|207,1;%{MARK_VERSIONS}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing a marked package name."));
 
@@ -1147,23 +1202,23 @@ AddOption(STRING, "COLOR_VIRTUALKEY",
 	"Color for the overlaykey for virtual overlays in version listings."));
 
 AddOption(STRING, "COLOR_SLOTS",
-	"red,1", _(
+	"red,1|166,1", _(
 	"Color for slots. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_BINARY",
-	"blue,1", _(
+	"blue,1|39,1", _(
 	"Color for versions with *.tbz2. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_RESTRICT",
-	"red", _(
+	"red|99", _(
 	"Color for the restriction tags. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_PROPERTIES",
-	"cyan", _(
+	"cyan|143", _(
 	"Color for the properties tags. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_KEYWORDS",
-	"cyan", _(
+	"cyan|73", _(
 	"Color for keywords. This is only used for delayed substitution."));
 
 AddOption(STRING, "COLOR_KEYWORDSS",
@@ -1536,17 +1591,17 @@ AddOption(STRING, "DATESORT",
 	"eix -'*I' --format '<installedversions:DATESORT>' | sort | cut -f2-3"));
 
 AddOption(STRING, "FORMAT_DEPEND",
-	"<depend*>", _(
+	"(%{COLOR_DEPEND})<depend*>(%{COLOR_DEPEND_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the DEPEND output."));
 
 AddOption(STRING, "FORMAT_RDEPEND",
-	"<rdepend*>", _(
+	"(%{COLOR_DEPEND})<rdepend*>(%{COLOR_DEPEND_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the RDEPEND output."));
 
 AddOption(STRING, "FORMAT_PDEPEND",
-	"<pdepend*>", _(
+	"(%{COLOR_DEPEND})<pdepend*>(%{COLOR_DEPEND_END})", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format of the PDEPEND output."));
 
@@ -1748,9 +1803,9 @@ AddOption(STRING, "FORMAT_PVERSION",
 		"{installedversion}"
 			"{*color}(none;%{MARK_INSTALLED})"
 		"{else}"
-			"{isbestupgradeslot}{*color}(none;%{MARK_UPGRADE}){}"
+			"{isbestupgradeslot}{*color}(%{MARK_UPGRADE}){}"
 		"{}"
-		"{markedversion}{*color}(none;%{MARK_VERSIONS}){}"
+		"{markedversion}{*color}(%{MARK_VERSIONS}){}"
 	"{}"
 	"<version>", _(
 	"This variable is only used for delayed substitution.\n"
@@ -2506,7 +2561,9 @@ AddOption(STRING, "FORMATLINE_HOMEPAGE",
 		"     (%{COLOR_TITLE})Homepage:()"
 		"%{?PRINT_ALWAYS}{homepage}%{}"
 		"            "
+		"(%{COLOR_NORMAL})"
 		"<homepage>"
+		"(%{COLOR_NORMAL_END})"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package homepage."));
@@ -2515,8 +2572,10 @@ AddOption(STRING, "FORMATLINE_BUGS",
 	"%{?PRINT_BUGS}"
 		"     (%{COLOR_TITLE})Find open bugs:()"
 		"      "
+		"(%{COLOR_NORMAL})"
 		"http://bugs.gentoo.org/buglist.cgi?quicksearch="
 		"<category>%2F<name>\\n"
+		"(%{COLOR_NORMAL_END})"
 	"%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package bug-reference."));
@@ -2526,7 +2585,9 @@ AddOption(STRING, "FORMATLINE_DESCRIPTION",
 		"     (%{COLOR_TITLE})Description:()"
 		"%{?PRINT_ALWAYS}{description}%{}"
 		"         "
+		"(%{COLOR_NORMAL})"
 		"<description>"
+		"(%{COLOR_NORMAL_END})"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package description."));
@@ -2560,7 +2621,9 @@ AddOption(STRING, "FORMATLINE_LICENSES",
 		"     (%{COLOR_TITLE})License:()"
 		"%{?PRINT_ALWAYS}{licenses}%{}"
 		"             "
+		"(%{COLOR_NORMAL})"
 		"<licenses>"
+		"(%{COLOR_NORMAL_END})"
 	"%{?PRINT_ALWAYS}{}\\n%{else}\\n{}%{}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the format for a line with the package licenses."));
@@ -2713,7 +2776,7 @@ AddOption(STRING, "FORMAT_AFTER_UNSET_USE",
 	"This string is printed after each unset USE flag of an installed version."));
 
 AddOption(STRING, "FORMAT_BEFORE_USE_EXPAND_START",
-	"()", _(
+	"(%{COLOR_USE_EXPAND_START})", _(
 	"This string is printed before the variable name of an USE_EXPAND use value."));
 
 AddOption(STRING, "FORMAT_BEFORE_USE_EXPAND_END",
@@ -2721,11 +2784,11 @@ AddOption(STRING, "FORMAT_BEFORE_USE_EXPAND_END",
 	"This string is printed after the variable name of an USE_EXPAND use value."));
 
 AddOption(STRING, "FORMAT_AFTER_USE_EXPAND",
-	"\"", _(
+	"(%{COLOR_USE_EXPAND_START})\"(%{COLOR_USE_EXPAND_END})", _(
 	"This string is printed at the end of a USE_EXPAND use value."));
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE_EXPAND_START",
-	"()", _(
+	"(%{COLOR_USE_EXPAND_START})", _(
 	"This string is printed before the variable name of an USE_EXPAND iuse value."));
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE_EXPAND_END",
@@ -2733,7 +2796,7 @@ AddOption(STRING, "FORMAT_BEFORE_IUSE_EXPAND_END",
 	"This string is printed after the variable name of an USE_EXPAND iuse value."));
 
 AddOption(STRING, "FORMAT_AFTER_IUSE_EXPAND",
-	"()\"", _(
+	"(%{COLOR_USE_EXPAND_START})\"(%{COLOR_USE_EXPAND_END})", _(
 	"This string is printed at the end of a USE_EXPAND iuse value."));
 
 AddOption(STRING, "FORMAT_BEFORE_IUSE",

@@ -27,6 +27,7 @@
 #include "eixTk/i18n.h"
 #include "eixTk/likely.h"
 #include "eixTk/null.h"
+#include "eixTk/regexp.h"
 #include "eixTk/stringutils.h"
 #include "eixrc/eixrc.h"
 #include "output/formatstring.h"
@@ -57,7 +58,7 @@ MarkedList::add(const char *pkg, const char *ver)
 	BasicVersion *&basic_version(p.second);
 	if(ver != NULLPTR) {
 		basic_version = new BasicVersion;
-		if(unlikely(basic_version->parseVersion(ver, NULLPTR) != BasicVersion::parsedError)) {
+		if(unlikely(basic_version->parseVersion(ver, NULLPTR) == BasicVersion::parsedError)) {
 			delete basic_version;
 			basic_version = NULLPTR;
 		}
@@ -107,7 +108,7 @@ MarkedList::get_marked_versions(const Package &pkg, bool *nonversion) const
 bool
 MarkedList::is_marked(const Package &pkg, const BasicVersion *ver) const
 {
-	CIPair beg_end = equal_range_pkg(pkg);
+	CIPair beg_end(equal_range_pkg(pkg));
 	if((beg_end.first == end()) || (beg_end.first == beg_end.second)) {
 		// no match
 		return false;
@@ -235,7 +236,7 @@ PrintFormat::overlay_keytext(ExtendedVersion::Overlay overlay, bool plain) const
 			start = color_virtualkey + start;
 		else
 			start = color_overlaykey + start;
-		end += AnsiColor(AnsiColor::acDefault).asString();
+		end.append(AnsiColor::reset());
 	}
 	if(overlay) {
 		vector<ExtendedVersion::Overlay>::size_type index(overlay - 1);
@@ -280,6 +281,18 @@ PrintFormat::setupResources(EixRc *rc)
 	after_set_use    = (*rc)["FORMAT_AFTER_SET_USE"];
 	before_unset_use = (*rc)["FORMAT_BEFORE_UNSET_USE"];
 	after_unset_use  = (*rc)["FORMAT_AFTER_UNSET_USE"];
+
+	vector<string> term_alt;
+	split_string(&term_alt, (*rc)["TERM_ALT"], true);
+	const char *term((*rc)["TERM"].c_str());
+	for(vector<string>::const_iterator it(term_alt.begin());
+		it != term_alt.end(); ++it) {
+		if(Regex(it->c_str()).match(term)) {
+			AnsiColor::colorscheme = rc->getInteger("COLORSCHEME_ALT");
+			return;
+		}
+	}
+	AnsiColor::colorscheme = rc->getInteger("COLORSCHEME");
 }
 
 static void

@@ -1198,7 +1198,7 @@ PrintFormat::ver_overlay(Package *package, bool getnum) const
 			if(getnum || no_color) {
 				return "[?]";
 			}
-			return color_overlaykey + "[?]" + AnsiColor(AnsiColor::acDefault).asString();
+			return color_overlaykey + "[?]" + AnsiColor::reset();
 		}
 		if(i->overlay_key > 0) {
 			if(getnum || (!package->have_same_overlay_key()) || (package->largest_overlay != i->overlay_key)) {

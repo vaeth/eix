@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-15 10:00:00 +0200 (Thu, 15 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-17 22:30:00 +0200 (Mon, 17 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1403,24 +1403,30 @@ the available versions of the current (i.e. new) package.
 .\" {{{ -------- Colors
 .SS Colors
 .TP
-(I<NAME>,I<BRIGHTNESS>;I<MARKERS>)
-Each of the ",I<BRIGHTNESS>" and ";I<MARKERS>" parts may be omitted.
+.BI ( COLORSTRING | COLORSTRING | ... )
+The effective I<COLORSTRING> chosen depends on B<COLORSCHEME>.
+It should have the following form:
 
-If I<BRIGHTNESS> is 1, eix prints the corresponding 'light' (bold) color for
-I<NAME>, or normal color if I<BRIGHTNESS> is 0.
-
-An empty I<NAME> means "default" and in contrast to "none" resets output to
-default color and no markers.
-
-An empty (or omitted) I<MARKERS> means "none", i.e. no attribute change.
-Several marker attributes can be specified simultaneously
-(separate them by ",").
-
-Available colors are:
-I<default none black red green yellow blue purple cyan gray>
+.TP
+.IB MARKER_OR_COLOR ; MARKER_OR_COLOR ; ...
+B<MARKER_OR_COLOR> is either a marker attribute or a color name, optionally
+followed by B<,1> (or B<,0>) to specify that bright color should (not) be used.
 
 Available marker attributes are:
 I<none bold underline blink inverse>
+
+Available colors are:
+I<default black red green yellow blue purple cyan gray 0 ... 255>
+
+The first color in I<COLORSTRING> specifies the foreground color,
+the second the background color.
+
+If a foreground color is specified, all colors and attributes are reset.
+The empty string is defined as the color "default".
+In particular, B<()> means that all colors and attributes are reset.
+
+If you want that nothing is actually output or reset,
+specify the attribute B<(none)>.
 .\" }}}
 
 .\" {{{ -------- Example
@@ -2284,6 +2290,19 @@ the beginning of TERM, and if the statusline is active, also a soft status line
 .BR EXIT_STATUSLINE " " (string)
 If this is nonempty, it is used as the exit statusline.
 An optional leading space in this string is ignored.
+
+.TP
+.BR TERM_ALT " " (string list)
+This is a list of regular expressions; if one of it matches B<TERM>, then
+B<COLORSCHEME_ALT> is used instead of B<COLORSCHEME>.
+
+.TP
+.BR COLORSCHEME ", " COLORSCHEME_ALT " " (integer)
+The color scheme to be used:
+If it is 0, then the first I<COLORSTRING> of each color specification is used;
+for higher numbers a correspondingly later I<COLORSTRING> is used.
+If the number is too high, the last available I<COLORSTRING> is used.
+If B<TERM_ALT> matches, B<COLORSCHEME_ALT> is used instead.
 
 .TP
 .BR LEVENSHTEIN_DISTANCE " " (integer)
