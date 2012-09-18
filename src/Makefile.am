@@ -242,8 +242,8 @@ nodist_extra_common_src =
 
 # The search-tool for our database
 eix_only_ldadd =
-eix_only_src = eix.cc ${cli_src} $(printxml_src) $(search_src)
-nodist_eix_only_src = ${nodist_cli_src} $(nodist_printxml_src) $(nodist_search_src)
+eix_only_src = eix.cc $(cli_src) $(printxml_src) $(search_src) eixTk/ansicolor_print.cc
+nodist_eix_only_src = $(nodist_cli_src) $(nodist_printxml_src) $(nodist_search_src)
 extra_eix_only_src =
 nodist_extra_eix_only_src =
 

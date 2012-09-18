@@ -30,6 +30,7 @@ class AnsiColor {
 		std::string code;
 
 		static const char *reset_string;
+
 	public:
 		static unsigned int colorscheme;
 
@@ -48,6 +49,16 @@ class AnsiColor {
 		bool initcolor(const std::string &str, std::string *errtext);
 
 		static void init_static();
+
+		static void AnsiPalette();
+
+		enum WhichPalette {
+			PALETTE_NONE = 0,
+			PALETTE_F    = 1,
+			PALETTE_B    = 2,
+			PALETTE_ALL  = 3
+		};
+		static void PrintPalette(enum WhichPalette which);
 };
 
 inline static std::ostream&

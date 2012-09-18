@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-18 03:23+0200\n"
+"POT-Creation-Date: 2012-09-18 23:12+0200\n"
 "PO-Revision-Date: 2009-05-07 20:00+0200\n"
 "Last-Translator: Martin Vaeth <vaeth@mathematik.uni-wuerzburg.de>\n"
 "Language-Team: German\n"
@@ -1192,7 +1192,7 @@ msgstr "Folgende installierte Pakete sind nicht in der Datenbank:"
 msgid "Skipping check: installed but not in the database"
 msgstr "Übergehe Check für installierte Pakete nicht in der Datenbank"
 
-#: src/eix.cc:81
+#: src/eix.cc:82
 #, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1212,6 +1212,7 @@ msgid ""
 "   Exclusive options:\n"
 "     -h, --help            show this screen and exit\n"
 "     -V, --version         show version and exit\n"
+"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                dump variables to stdout\n"
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
@@ -1227,6 +1228,9 @@ msgid ""
 "     --print-overlay-label print label of specified overlay\n"
 "     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
+"     --256                 Print ansi color palette, fore- and background\n"
+"     --256f                Print ansi color palette, only foreground\n"
+"     --256b                Print ansi color palette, only background\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching "
@@ -1374,6 +1378,7 @@ msgstr ""
 "   Ausschließende Optionen:\n"
 "     -h, --help            Zeige diesen Text und stoppe dann\n"
 "     -V, --version         Zeige die Version und stoppe dann\n"
+"     --ansi                Rücksetzen aus Ansi 256-Farbpalette\n"
 "     --dump                Ausgabe aller internen Variablen auf stdout\n"
 "     --dump-defaults       Ausgabe der Default-Werte der internen Variables\n"
 "     --print               Ausgabe eines expandierten Variablenwerts\n"
@@ -1389,6 +1394,10 @@ msgstr ""
 "     --print-overlay-label Ausgabe des Labels des angegebenen Overlays\n"
 "     --print-overlay-data  Ausgabe von Label und Pfad des Overlays\n"
 "     --is-current          Test auf gültiges cache-file\n"
+"     --256                 Ausgabe der Ansi Farbpalette, Vor- und "
+"Hintergrund\n"
+"     --256f                Ausgabe der Ansi Farbpalette, nur Vordergrund\n"
+"     --256b                Ausgabe der Ansi Farbpalette, nur Hintergrund\n"
 "\n"
 "   Speziell:\n"
 "     -t  --test-non-matching Gib vor anderen Ausgaben nicht-passende "
@@ -1521,16 +1530,16 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix.cc:509 src/eix-diff.cc:276
+#: src/eix.cc:522 src/eix-diff.cc:281
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Probleme beim Parsen von %s: %s\n"
 
-#: src/eix.cc:596 src/eix-diff.cc:336 src/eix-update.cc:386
+#: src/eix.cc:613 src/eix-diff.cc:345 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "Fehler bei Umleitung nach %r"
 
-#: src/eix.cc:638 src/eix.cc:995
+#: src/eix.cc:661 src/eix.cc:1018
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1539,7 +1548,7 @@ msgstr ""
 "Datenbankfile %s kann nicht geöffnet werden (mode = 'rb')\n"
 "Wurde es denn mit 'eix-update' erzeugt?"
 
-#: src/eix.cc:649
+#: src/eix.cc:672
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1550,31 +1559,31 @@ msgstr ""
 "Es benutzt Datenbank-Format %s (aktuell ist %s).\n"
 "Bitte mit 'eix-update' neu erzeugen."
 
-#: src/eix.cc:953 src/eix.cc:969
+#: src/eix.cc:976 src/eix.cc:992
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:956
+#: src/eix.cc:979
 msgid "No matches found.\n"
 msgstr "Kein Treffer.\n"
 
-#: src/eix.cc:963
+#: src/eix.cc:986
 #, c-format
 msgid "Found %s match.\n"
 msgstr "%s Treffer.\n"
 
-#: src/eix.cc:1070
+#: src/eix.cc:1093
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Einträge in %s passen und sind nicht leer.\n"
 
-#: src/eix.cc:1071
+#: src/eix.cc:1094
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Alle Einträge in %s passen.\n"
 
-#: src/eix.cc:1076
+#: src/eix.cc:1099
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1583,7 +1592,7 @@ msgstr ""
 "Unpassende oder leere Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1077
+#: src/eix.cc:1100
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1592,7 +1601,7 @@ msgstr ""
 "Unpassende Einträge in %s:\n"
 "\n"
 
-#: src/eix.cc:1135
+#: src/eix.cc:1158
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1600,7 +1609,7 @@ msgstr ""
 "Die Namen aller installierten Pakete sind in der Datenbank.\n"
 "\n"
 
-#: src/eix.cc:1138
+#: src/eix.cc:1161
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1608,11 +1617,12 @@ msgstr ""
 "Folgende installierte Pakete sind nicht in der Datenbank:\n"
 "\n"
 
-#: src/eix-diff.cc:73
+#: src/eix-diff.cc:74
 #, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
 "\n"
+"     --ansi              Reset the ansi 256 color palette\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed "
 "packages\n"
 "     --care              always read slots of installed packages\n"
@@ -1632,6 +1642,7 @@ msgid ""
 msgstr ""
 "Aufruf: %s [options] old-cache [new-cache]\n"
 "\n"
+"     --ansi              Rücksetzen aus Ansi 256-Farbpalette\n"
 " -Q, --quick (toggle)    Ignoriere unbekannte Slots installierter Pakete\n"
 "     --care              Lese immer die Slots installierter Pakete\n"
 " -q, --quiet (toggle)    keine Ausgabe\n"
@@ -1648,15 +1659,15 @@ msgstr ""
 "Dieses Programm unterliegt der GNU General Public License. COPYING enthält\n"
 "weitere Informationen.\n"
 
-#: src/eix-diff.cc:148
+#: src/eix-diff.cc:153
 msgid "error in database file %r: %s"
 msgstr "Fehler in Datenbankfile %r: %s"
 
-#: src/eix-diff.cc:150
+#: src/eix-diff.cc:155
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Datenbankfile %r kann nicht zum Lesen geöffnet werden (mode = 'rb')"
 
-#: src/eix-diff.cc:402
+#: src/eix-diff.cc:411
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Vergleiche Datenbanken (%s -> %s Pakete)\n"
@@ -2055,17 +2066,53 @@ msgstr "Cachefile benutzt veraltetes Format %s (aktuell ist %s)"
 msgid "fseek failed"
 msgstr "fseek schlug fehl"
 
-#: src/eixTk/ansicolor.cc:133
+#: src/eixTk/ansicolor.cc:136
 msgid "Illegal color name %r in %r"
 msgstr "Unbekannter Farbname %r in %r"
 
-#: src/eixTk/ansicolor.cc:160
+#: src/eixTk/ansicolor.cc:163
 msgid "More than two colors specified in %r"
 msgstr "%r enthält mehr als zwei Farben"
 
-#: src/eixTk/ansicolor.cc:179
+#: src/eixTk/ansicolor.cc:182
 msgid "Invalid brightness value %r"
 msgstr "Unbekannter Helligkeitswert %r"
+
+#: src/eixTk/ansicolor_print.cc:132
+msgid "System Colors (normal):"
+msgstr "Systemfarben (normal):"
+
+#: src/eixTk/ansicolor_print.cc:134
+msgid "6x6x6 Color Cube (normal):"
+msgstr "6x6x6 Farbwürfel (normal):"
+
+#: src/eixTk/ansicolor_print.cc:136
+msgid "Grayscale Ramp (normal):"
+msgstr "Grauskalen-Rampe (normal):"
+
+#: src/eixTk/ansicolor_print.cc:140
+msgid "System Colors (bright):"
+msgstr "Systemfarben (hell):"
+
+#: src/eixTk/ansicolor_print.cc:142
+msgid "6x6x6 Color Cube (bright):"
+msgstr "6x6x6 Farbwürfel (hell):"
+
+#: src/eixTk/ansicolor_print.cc:144
+msgid "Grayscale Ramp (bright):"
+msgstr "Grauskalen-Rampe (hell):"
+
+#: src/eixTk/ansicolor_print.cc:153
+msgid "System Colors (background):"
+msgstr "Systemfarben (Hintergrund):"
+
+#: src/eixTk/ansicolor_print.cc:155
+msgid "6x6x6 Color Cube (background):"
+msgstr "6x6x6 Farbwürfel (Hintergrund):"
+
+#: src/eixTk/ansicolor_print.cc:157
+msgid "Grayscale Ramp (background):"
+msgstr "Grauskalen-Rampe (Hintergrund):"
 
 #: src/eixTk/argsreader.cc:139
 #, c-format
@@ -3853,10 +3900,10 @@ msgstr ""
 #: src/eixrc/defaults.cc:1163
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for the title texts for packages in alt scheme."
+"It defines the color used for the title texts for packages in dark scheme."
 msgstr ""
 "Diese Variable wird nur zur verzögerten Ersetzung benutzt.\n"
-"Sie definiert die Farbe des Titeltextes für Pakete im alternativen Schema."
+"Sie definiert die Farbe des Titeltextes für Pakete im dunklen Schema."
 
 #: src/eixrc/defaults.cc:1168
 msgid ""

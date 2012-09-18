@@ -1069,7 +1069,7 @@ AddOption(STRING, "DIFF_COLOR_NEW_TAG",
 	"It defines the color used for \"new package\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_NEW",
-	"%{COLOR_TITLE_PLAIN},1|%{COLOR_TITLE_ALT},1", _(
+	"%{COLOR_TITLE_PLAIN},1|%{COLOR_TITLE_DARK},1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
@@ -1084,7 +1084,7 @@ AddOption(STRING, "DIFF_COLOR_CHANGED",
 	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
 AddOption(STRING, "COLOR_INST_TAG",
-	"%{COLOR_TITLE_PLAIN},1;inverse|%{COLOR_TITLE_ALT},1;inverse", _(
+	"%{COLOR_TITLE_PLAIN},1;inverse|%{COLOR_TITLE_DARK},1;inverse", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for tagging installed packages."));
 
@@ -1158,13 +1158,13 @@ AddOption(STRING, "COLOR_TITLE_PLAIN",
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for packages in plain scheme."));
 
-AddOption(STRING, "COLOR_TITLE_ALT",
+AddOption(STRING, "COLOR_TITLE_DARK",
 	"34", _(
 	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the title texts for packages in alt scheme."));
+	"It defines the color used for the title texts for packages in dark scheme."));
 
 AddOption(STRING, "COLOR_TITLE",
-	"%{COLOR_TITLE_PLAIN}|%{COLOR_TITLE_ALT}", _(
+	"%{COLOR_TITLE_PLAIN}|%{COLOR_TITLE_DARK}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for packages."));
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-18 03:23+0200\n"
+"POT-Creation-Date: 2012-09-18 23:12+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -1181,7 +1181,7 @@ msgstr "Установленные пакеты с версией не в баз
 msgid "Skipping check: installed but not in the database"
 msgstr "Пропускаю проверку: установлено, но не в базе данных"
 
-#: src/eix.cc:81
+#: src/eix.cc:82
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] EXPRESSION\n"
@@ -1201,6 +1201,7 @@ msgid ""
 "   Exclusive options:\n"
 "     -h, --help            show this screen and exit\n"
 "     -V, --version         show version and exit\n"
+"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                dump variables to stdout\n"
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
@@ -1216,6 +1217,9 @@ msgid ""
 "     --print-overlay-label print label of specified overlay\n"
 "     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
+"     --256                 Print ansi color palette, fore- and background\n"
+"     --256f                Print ansi color palette, only foreground\n"
+"     --256b                Print ansi color palette, only background\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching "
@@ -1362,6 +1366,7 @@ msgstr ""
 "   Эксклюзивные ключи:\n"
 "     -h, --help            показать это сообщение и выйти\n"
 "     -V, --version         показать версию и выйти\n"
+"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                сбросить переменные в stdout\n"
 "     --dump-defaults       сбросить стандартные значения\n"
 "     --print               показать расширенное значение переменной\n"
@@ -1382,6 +1387,9 @@ msgstr ""
 "     --print-overlay-label показать надпись указанного оверлея\n"
 "     --print-overlay-data  показать надпись и путь указанного оверлея\n"
 "     --is-current          проверить на наличие правильного файла кэша\n"
+"     --256                 Print ansi color palette, fore- and background\n"
+"     --256f                Print ansi color palette, only foreground\n"
+"     --256b                Print ansi color palette, only background\n"
 "\n"
 "   Специальное:\n"
 "     -t  --test-non-matching Перед другим выводом показать не совпадающие "
@@ -1515,16 +1523,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:509 src/eix-diff.cc:276
+#: src/eix.cc:522 src/eix-diff.cc:281
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:596 src/eix-diff.cc:336 src/eix-update.cc:386
+#: src/eix.cc:613 src/eix-diff.cc:345 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:638 src/eix.cc:995
+#: src/eix.cc:661 src/eix.cc:1018
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1533,7 +1541,7 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:649
+#: src/eix.cc:672
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1544,31 +1552,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:953 src/eix.cc:969
+#: src/eix.cc:976 src/eix.cc:992
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:956
+#: src/eix.cc:979
 msgid "No matches found.\n"
 msgstr "Совпадений не найдено.\n"
 
-#: src/eix.cc:963
+#: src/eix.cc:986
 #, c-format
 msgid "Found %s match.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:1070
+#: src/eix.cc:1093
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1071
+#: src/eix.cc:1094
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1076
+#: src/eix.cc:1099
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1577,7 +1585,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1077
+#: src/eix.cc:1100
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1586,7 +1594,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1135
+#: src/eix.cc:1158
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1594,7 +1602,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1138
+#: src/eix.cc:1161
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1602,11 +1610,12 @@ msgstr ""
 "Следующие установленные пакеты отсутствуют в базе данных:\n"
 "\n"
 
-#: src/eix-diff.cc:73
-#, c-format
+#: src/eix-diff.cc:74
+#, fuzzy, c-format
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
 "\n"
+"     --ansi              Reset the ansi 256 color palette\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed "
 "packages\n"
 "     --care              always read slots of installed packages\n"
@@ -1626,6 +1635,7 @@ msgid ""
 msgstr ""
 "Использование: %s [ключи] старый-кэш [новый-кэш]\n"
 "\n"
+"     --ansi              Reset the ansi 256 color palette\n"
 " -Q, --quick (флаг)      (не) читать неугадываемые слоты установленных "
 "пакетов\n"
 "     --care              всегда читать слота установленных пакетов\n"
@@ -1644,15 +1654,15 @@ msgstr ""
 "для\n"
 "подробной информации.\n"
 
-#: src/eix-diff.cc:148
+#: src/eix-diff.cc:153
 msgid "error in database file %r: %s"
 msgstr "Запись файла базы данных %r: %s .."
 
-#: src/eix-diff.cc:150
+#: src/eix-diff.cc:155
 msgid "Can't open the database file %r for reading (mode = 'rb')"
 msgstr "Невозможно открыть базу данных %r для чтения (режим = 'rb')"
 
-#: src/eix-diff.cc:402
+#: src/eix-diff.cc:411
 #, c-format
 msgid "Diffing databases (%s -> %s packages)\n"
 msgstr "Сравнение баз данных (%s -> %s пакетов)\n"
@@ -2060,18 +2070,54 @@ msgstr "Файл кэша использует устаревший формат
 msgid "fseek failed"
 msgstr "ошибка eix-update"
 
-#: src/eixTk/ansicolor.cc:133
+#: src/eixTk/ansicolor.cc:136
 #, fuzzy
 msgid "Illegal color name %r in %r"
 msgstr "Неверное имя цвета %r"
 
-#: src/eixTk/ansicolor.cc:160
+#: src/eixTk/ansicolor.cc:163
 msgid "More than two colors specified in %r"
 msgstr ""
 
-#: src/eixTk/ansicolor.cc:179
+#: src/eixTk/ansicolor.cc:182
 msgid "Invalid brightness value %r"
 msgstr "Неверное значение яркости %r"
+
+#: src/eixTk/ansicolor_print.cc:132
+msgid "System Colors (normal):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:134
+msgid "6x6x6 Color Cube (normal):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:136
+msgid "Grayscale Ramp (normal):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:140
+msgid "System Colors (bright):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:142
+msgid "6x6x6 Color Cube (bright):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:144
+msgid "Grayscale Ramp (bright):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:153
+msgid "System Colors (background):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:155
+msgid "6x6x6 Color Cube (background):"
+msgstr ""
+
+#: src/eixTk/ansicolor_print.cc:157
+msgid "Grayscale Ramp (background):"
+msgstr ""
 
 #: src/eixTk/argsreader.cc:139
 #, c-format
@@ -3422,7 +3468,7 @@ msgstr ""
 #: src/eixrc/defaults.cc:1163
 msgid ""
 "This variable is only used for delayed substitution.\n"
-"It defines the color used for the title texts for packages in alt scheme."
+"It defines the color used for the title texts for packages in dark scheme."
 msgstr ""
 
 #: src/eixrc/defaults.cc:1168

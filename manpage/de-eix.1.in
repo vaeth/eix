@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-17 22:30:00 +0200 (Mon, 17 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-18 20:15:00 +0200 (Tue, 18 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -234,6 +234,14 @@ Das Gegenteil von --nocolor.
 .SS Spezielle Informations-Optionen
 Die folgenden speziellen Informations-Optionen versteht nur das eigentliche B<eix>-Programm.
 Sie sind einmalig und ausschließend, d.h. eix gibt nur die entsprechenden Daten aus und beendet sich dann.
+.TP
+.BR --ansi " (auch für eix-diff)"
+Legt die 256-Farbpalette von Todd Larason fest (dem Author des 256-Farbsupports für xterm).
+Benutzen Sie diese Option, wenn ein Tool die Default-Palette umdefiniert hat.
+.TP
+.BR "--256" ", " "--256f" ", " "256b"
+Ausgabe der 256-Farben-Palette unter der Annahme, dass sie dem Ansi-Farbschema folgt; danach Programmende.
+Mit B<--256f> bzw. B<--256b> werden nur die Vordergrund/Hintergrundfarben ausgegeben.
 .TP
 .BI "--print-overlay-path " OVERLAY
 Gibt den Pfad (gefolgt von B<PRINT_APPEND>) des ersten Overlays aus, der auf I<OVERLAY> zutrifft.

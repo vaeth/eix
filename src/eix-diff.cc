@@ -24,6 +24,7 @@
 
 #include "database/header.h"
 #include "database/io.h"
+#include "eixTk/ansicolor.h"
 #include "eixTk/argsreader.h"
 #include "eixTk/filenames.h"
 #include "eixTk/formated.h"
@@ -72,6 +73,7 @@ print_help()
 {
 	printf(_("Usage: %s [options] old-cache [new-cache]\n"
 "\n"
+"     --ansi              Reset the ansi 256 color palette\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
 "     --care              always read slots of installed packages\n"
 " -q, --quiet (toggle)    (no) output\n"
@@ -94,6 +96,7 @@ bool cli_show_help(false),
 	cli_dump_eixrc(false),
 	cli_dump_defaults(false),
 	cli_known_vars(false),
+	cli_ansi(false),
 	cli_quick,
 	cli_care,
 	cli_quiet;
@@ -106,6 +109,7 @@ enum cli_options {
 	O_KNOWN_VARS,
 	O_PRINT_VAR,
 	O_CARE,
+	O_ANSI,
 	O_FORCE_COLOR
 };
 
@@ -129,6 +133,7 @@ EixDiffOptionList::EixDiffOptionList()
 	push_back(Option("quick",        'Q',    Option::BOOLEAN,   &cli_quick));
 	push_back(Option("care",         O_CARE, Option::BOOLEAN_T, &cli_care));
 	push_back(Option("quiet",        'q',    Option::BOOLEAN,   &cli_quiet));
+	push_back(Option("ansi",         O_ANSI, Option::BOOLEAN_T, &cli_ansi));
 }
 
 static void
@@ -304,6 +309,10 @@ run_eix_diff(int argc, char *argv[])
 	/* Setup ArgumentReader. */
 	ArgumentReader argreader(argc, argv, EixDiffOptionList());
 	ArgumentReader::iterator current_param(argreader.begin());
+
+	if(unlikely(cli_ansi)) {
+		AnsiColor::AnsiPalette();
+	}
 
 	if(unlikely(var_to_print != NULLPTR)) {
 		if(rc.print_var(var_to_print)) {

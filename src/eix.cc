@@ -23,6 +23,7 @@
 
 #include "database/header.h"
 #include "database/package_reader.h"
+#include "eixTk/ansicolor.h"
 #include "eixTk/argsreader.h"
 #include "eixTk/diagnostics.h"
 #include "eixTk/eixint.h"
@@ -95,6 +96,7 @@ dump_help()
 "   Exclusive options:\n"
 "     -h, --help            show this screen and exit\n"
 "     -V, --version         show version and exit\n"
+"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                dump variables to stdout\n"
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
@@ -110,6 +112,9 @@ dump_help()
 "     --print-overlay-label print label of specified overlay\n"
 "     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
+"     --256                 Print ansi color palette, fore- and background\n"
+"     --256f                Print ansi color palette, only foreground\n"
+"     --256b                Print ansi color palette, only background\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -254,6 +259,10 @@ static PrintFormat *format;
 /** Local options for argument reading. */
 static struct LocalOptions {
 	bool
+		ansi,
+		palette256,
+		palette256b,
+		palette256f,
 		be_quiet,
 		quick,
 		care,
@@ -291,6 +300,10 @@ class EixOptionList : public OptionList {
 EixOptionList::EixOptionList()
 {
 	// Global options
+	push_back(Option("ansi",          O_ANSI,  Option::BOOLEAN_T,     &rc_options.ansi));
+	push_back(Option("256",           O_P256,  Option::BOOLEAN_T,     &rc_options.palette256));
+	push_back(Option("256f",          O_P256F, Option::BOOLEAN_T,     &rc_options.palette256f));
+	push_back(Option("256b",          O_P256B, Option::BOOLEAN_T,     &rc_options.palette256b));
 	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
 	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
 	push_back(Option("care",          O_CARE,  Option::BOOLEAN_T,     &rc_options.care));
@@ -543,6 +556,10 @@ run_eix(int argc, char** argv)
 	// Read our options from the commandline.
 	ArgumentReader argreader(argc, argv, EixOptionList());
 
+	if(unlikely(rc_options.ansi)) {
+		AnsiColor::AnsiPalette();
+	}
+
 	if(unlikely(var_to_print != NULLPTR)) {
 		if(eixrc.print_var(var_to_print)) {
 			return EXIT_SUCCESS;
@@ -596,6 +613,12 @@ run_eix(int argc, char** argv)
 			cerr << eix::format(_("cannot redirect to %r")) % DEV_NULL << endl;
 			return EXIT_FAILURE;
 		}
+	}
+
+	if(unlikely(rc_options.palette256 || rc_options.palette256f || rc_options.palette256b)) {
+		AnsiColor::PrintPalette(likely(rc_options.palette256) ? AnsiColor::PALETTE_ALL :
+			(likely(rc_options.palette256f) ? AnsiColor::PALETTE_F : AnsiColor::PALETTE_B));
+		return EXIT_SUCCESS;
 	}
 
 	bool only_printed;

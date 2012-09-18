@@ -2,13 +2,17 @@
 
 *eix-0.27.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
-	- Support 256 color terminals: COLORSCHEME, COLORSCHEME_ALT, TERM_ALT
-	  Put TERM_ALT=${TERM} into /etc/eixrc or ~/.eixrc if your terminal is
-	  not properly recognized.
-	  Currently, only a dark scheme can be used on 256 color terminals.
-	  Put COLORSCHEME_ALT=0 if you never want to use it.
+	- Support 256 color terminals: COLORSCHEME, COLORSCHEME_ALT, TERM_ALT.
+	  If you want to use it with screen or tmux use TERM=screen-256colors
+	  Currently, only a dark scheme is available on 256 color terminals.
 	  Volunteers for a light or solarized color scheme are welcome!
-	- Fix --pipe with versions (regression since some releases)
+	  If you do not get the dark scheme, although your terminal should
+	  support 256 colors or you do not get the standard scheme on a
+	  non-256 color terminal, set TERM_ALT in /etc/eixrc correspondingly.
+	  If you always want the standard scheme, put COLORSCHEME_ALT=0 there.
+	- --ansi will define a rather standard 256 color palette if supported.
+	- Introduce --256{,f,b} to print a 256 color ansi palette.
+	- Fix --pipe with versions (regression in 0.26.3)
 
 *eix-0.27.0
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:

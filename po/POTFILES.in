@@ -43,6 +43,7 @@ src/database/package_reader.cc
 src/database/package_reader.h
 src/eixTk/ansicolor.cc
 src/eixTk/ansicolor.h
+src/eixTk/ansicolor_print.cc
 src/eixTk/argsreader.cc
 src/eixTk/argsreader.h
 src/eixTk/assert.h

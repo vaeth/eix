@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-17 22:30:00 +0200 (Mon, 17 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-18 20:15:00 +0200 (Tue, 18 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -228,6 +228,14 @@ The opposite of --nocolor.
 .SS Special information options
 The following special information options are only provided by the B<eix> binary.
 They are one-shot exclusive options, i.e. eix outputs only the required data and then exits.
+.TP
+.BR --ansi " (also for eix-diff)"
+Define the 256 color palette suggested by Todd Larason (the author of the 256 color support for xterm).
+Use this if something some tool has redefined the default palette.
+.TP
+.BR "--256" ", " "--256f" ", " "256b"
+Print the 256 color palette (assuming it follows ansi color scheme) and exit.
+With B<--256f> or B<--256b> only the foreground/background colors are printed.
 .TP
 .BI "--print-overlay-path " OVERLAY
 Print the path of the first overlay matching I<OVERLAY>, followed by B<PRINT_APPEND>.
