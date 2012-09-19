@@ -43,6 +43,8 @@ enum cli_options {
 	O_ANSI,
 	O_P256,
 	O_P256F,
+	O_P256F0,
+	O_P256F1,
 	O_P256B,
 	O_DUMP,
 	O_DUMP_DEFAULTS,

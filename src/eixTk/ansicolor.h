@@ -54,9 +54,11 @@ class AnsiColor {
 
 		enum WhichPalette {
 			PALETTE_NONE = 0,
-			PALETTE_F    = 1,
-			PALETTE_B    = 2,
-			PALETTE_ALL  = 3
+			PALETTE_F0   = 1,
+			PALETTE_F1   = 2,
+			PALETTE_F    = 3,
+			PALETTE_B    = 4,
+			PALETTE_ALL  = 7
 		};
 		static void PrintPalette(enum WhichPalette which);
 };

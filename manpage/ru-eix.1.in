@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-18 20:15:00 +0200 (Tue, 18 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-19 18:15:00 +0200 (Wed, 19 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -231,9 +231,11 @@ They are one-shot exclusive options, i.e. eix outputs only the required data and
 Define the 256 color palette suggested by Todd Larason (the author of the 256 color support for xterm).
 Use this if something some tool has redefined the default palette.
 .TP
-.BR "--256" ", " "--256f" ", " "256b"
-Print the 256 color palette (assuming it follows ansi color scheme) and exit.
-With B<--256f> or B<--256b> only the foreground/background colors are printed.
+.BR "--256" ", " "--256f" ", " "--256f0" ", " "--256f1" ", " "256b"
+Print the 256 color palettes (assuming it follows ansi color scheme) and exit.
+With B<--256f> (B<--256f0>, B<--256f1>) only the foreground palettes
+(resp. only the normal or bright palette) is printed.
+With B<--256b> only the background palette is printed.
 .TP
 .BI "--print-overlay-path " OVERLAY
 Print the path of the first overlay matching I<OVERLAY>, followed by B<PRINT_APPEND>.

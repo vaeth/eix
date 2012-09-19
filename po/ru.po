@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-18 23:12+0200\n"
+"POT-Creation-Date: 2012-09-19 19:30+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -1201,7 +1201,6 @@ msgid ""
 "   Exclusive options:\n"
 "     -h, --help            show this screen and exit\n"
 "     -V, --version         show version and exit\n"
-"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                dump variables to stdout\n"
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
@@ -1217,9 +1216,11 @@ msgid ""
 "     --print-overlay-label print label of specified overlay\n"
 "     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
-"     --256                 Print ansi color palette, fore- and background\n"
-"     --256f                Print ansi color palette, only foreground\n"
-"     --256b                Print ansi color palette, only background\n"
+"     --256                 Print all ansi color palettes\n"
+"     --256f                Print ansi color palettes for foreground\n"
+"     --256f0               Print ansi color palette (normal)\n"
+"     --256f1               Print ansi color palette (bright)\n"
+"     --256b                Print ansi color palette for background\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching "
@@ -1236,6 +1237,7 @@ msgid ""
 "\n"
 "   Output:\n"
 "     -q, --quiet (toggle)   no output. Typically combined with -0\n"
+"         --ansi             reset the ansi 256 color palette\n"
 "     -n, --nocolor          do not use ANSI color codes\n"
 "     -F, --force-color      force colorful output\n"
 "     -*, --pure-packages    Omit printing of overlay names and package "
@@ -1366,7 +1368,6 @@ msgstr ""
 "   Эксклюзивные ключи:\n"
 "     -h, --help            показать это сообщение и выйти\n"
 "     -V, --version         показать версию и выйти\n"
-"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                сбросить переменные в stdout\n"
 "     --dump-defaults       сбросить стандартные значения\n"
 "     --print               показать расширенное значение переменной\n"
@@ -1387,9 +1388,11 @@ msgstr ""
 "     --print-overlay-label показать надпись указанного оверлея\n"
 "     --print-overlay-data  показать надпись и путь указанного оверлея\n"
 "     --is-current          проверить на наличие правильного файла кэша\n"
-"     --256                 Print ansi color palette, fore- and background\n"
-"     --256f                Print ansi color palette, only foreground\n"
-"     --256b                Print ansi color palette, only background\n"
+"     --256                 Print all ansi color palettes\n"
+"     --256f                Print ansi color palettes for foreground\n"
+"     --256f0               Print ansi color palette (normal)\n"
+"     --256f1               Print ansi color palette (bright)\n"
+"     --256b                Print ansi color palette for background\n"
 "\n"
 "   Специальное:\n"
 "     -t  --test-non-matching Перед другим выводом показать не совпадающие "
@@ -1406,23 +1409,24 @@ msgstr ""
 "         --cache-file      использовать другой файл кэша вместо %s\n"
 "\n"
 "   Вывод:\n"
-"     -q, --quiet (вкл.)   без вывода. Обычно используется с -0\n"
-"     -n, --nocolor          не использовать коды цветов ANSI\n"
-"     -F, --force-color      заставить выводить в цвете\n"
-"     -*, --pure-packages    Опустить показ имён оверлеев и номера пакета\n"
-"     --only-names           -* с форматом <категория>/<имя>\n"
-"     -0  --brief (вкл.)   Показать не более одного пакета и выйти. См. -q\n"
-"                            Обычно быстрее с COUNT_ONLY_PRINTED=false\n"
-"         --brief2 (вкл.)  Показать не более двух пакетов и выйти.\n"
-"     --xml (вкл.)         вывод в формате XML\n"
-"     -c, --compact (вкл.) компактные результаты поиска\n"
-"     -v, --verbose (вкл.) подробные результаты поиска\n"
+"     -q, --quiet (вкл.)    без вывода. Обычно используется с -0\n"
+"         --ansi            reset the ansi 256 color palette\n"
+"     -n, --nocolor         не использовать коды цветов ANSI\n"
+"     -F, --force-color     заставить выводить в цвете\n"
+"     -*, --pure-packages   Опустить показ имён оверлеев и номера пакета\n"
+"     --only-names          -* с форматом <категория>/<имя>\n"
+"     -0  --brief (вкл.)    Показать не более одного пакета и выйти. См. -q\n"
+"                           Обычно быстрее с COUNT_ONLY_PRINTED=false\n"
+"         --brief2 (вкл.)   Показать не более двух пакетов и выйти.\n"
+"     --xml (вкл.)          вывод в формате XML\n"
+"     -c, --compact (вкл.)  компактные результаты поиска\n"
+"     -v, --verbose (вкл.)  подробные результаты поиска\n"
 "     -x, --versionsort  (вкл.) сортировать вывод по слотам/версиям\n"
 "     -l, --versionlines (вкл.) показывать доступные версии линия за линией\n"
-"                            (а также дополнительные данные о каждой версии)\n"
-"         --format           форматировать строку под нормальный вывод\n"
-"         --format-compact   форматировать строку под компактный вывод\n"
-"         --format-verbose   форматировать строку под подробный вывод\n"
+"                           (а также дополнительные данные о каждой версии)\n"
+"         --format          форматировать строку под нормальный вывод\n"
+"         --format-compact  форматировать строку под компактный вывод\n"
+"         --format-verbose  форматировать строку под подробный вывод\n"
 "\n"
 "TEST_OPTIONS:\n"
 "  Разное:\n"
@@ -1523,16 +1527,16 @@ msgstr ""
 "Эта программа лицензирована согласно GNU General Public License. См. COPYING "
 "для подробной информации.\n"
 
-#: src/eix.cc:522 src/eix-diff.cc:281
+#: src/eix.cc:528 src/eix-diff.cc:281
 #, c-format
 msgid "Problems while parsing %s: %s\n"
 msgstr "Проблема при обработке %s: %s\n"
 
-#: src/eix.cc:613 src/eix-diff.cc:345 src/eix-update.cc:386
+#: src/eix.cc:619 src/eix-diff.cc:345 src/eix-update.cc:386
 msgid "cannot redirect to %r"
 msgstr "невозможно перенаправить в %r"
 
-#: src/eix.cc:661 src/eix.cc:1018
+#: src/eix.cc:672 src/eix.cc:1029
 #, c-format
 msgid ""
 "Can't open the database file %s for reading (mode = 'rb')\n"
@@ -1541,7 +1545,7 @@ msgstr ""
 "Невозможно открыть базу данных %s для чтения (режим = 'rb')\n"
 "Вы не забыли её создать с помощью 'eix-update'?"
 
-#: src/eix.cc:672
+#: src/eix.cc:683
 #, c-format
 msgid ""
 "%s was created with an incompatible eix-update:\n"
@@ -1552,31 +1556,31 @@ msgstr ""
 "Используется формат базы данных %s (текущий ― %s).\n"
 "Запустите 'eix-update' и попробуйте ещё раз."
 
-#: src/eix.cc:976 src/eix.cc:992
+#: src/eix.cc:987 src/eix.cc:1003
 #, c-format
 msgid "Found %s matches.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:979
+#: src/eix.cc:990
 msgid "No matches found.\n"
 msgstr "Совпадений не найдено.\n"
 
-#: src/eix.cc:986
+#: src/eix.cc:997
 #, c-format
 msgid "Found %s match.\n"
 msgstr "Найдено %s совпадений.\n"
 
-#: src/eix.cc:1093
+#: src/eix.cc:1104
 #, c-format
 msgid "No non-matching or empty entries in %s.\n"
 msgstr "Нет не совпадающих или пустых записей в %s.\n"
 
-#: src/eix.cc:1094
+#: src/eix.cc:1105
 #, c-format
 msgid "No non-matching entries in %s.\n"
 msgstr "Нет не совпадающих записей в %s.\n"
 
-#: src/eix.cc:1099
+#: src/eix.cc:1110
 #, c-format
 msgid ""
 "Non-matching or empty entries in %s:\n"
@@ -1585,7 +1589,7 @@ msgstr ""
 "Не совпадающие или пустые записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1100
+#: src/eix.cc:1111
 #, c-format
 msgid ""
 "Non-matching entries in %s:\n"
@@ -1594,7 +1598,7 @@ msgstr ""
 "Не совпадающие записи в %s:\n"
 "\n"
 
-#: src/eix.cc:1158
+#: src/eix.cc:1169
 msgid ""
 "The names of all installed packages are in the database.\n"
 "\n"
@@ -1602,7 +1606,7 @@ msgstr ""
 "Имена всех установленных пакетов находятся в базе данных.\n"
 "\n"
 
-#: src/eix.cc:1161
+#: src/eix.cc:1172
 msgid ""
 "The following installed packages are not in the database:\n"
 "\n"
@@ -1615,11 +1619,11 @@ msgstr ""
 msgid ""
 "Usage: %s [options] old-cache [new-cache]\n"
 "\n"
-"     --ansi              Reset the ansi 256 color palette\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed "
 "packages\n"
 "     --care              always read slots of installed packages\n"
 " -q, --quiet (toggle)    (no) output\n"
+"     --ansi              reset the ansi 256 color palette\n"
 " -n, --nocolor           don't use colors in output\n"
 " -F, --force-color       force colors on things that are not a terminal\n"
 "     --dump              dump variables to stdout\n"
@@ -2083,40 +2087,31 @@ msgstr ""
 msgid "Invalid brightness value %r"
 msgstr "Неверное значение яркости %r"
 
-#: src/eixTk/ansicolor_print.cc:132
-msgid "System Colors (normal):"
+#: src/eixTk/ansicolor_print.cc:133
+#, c-format
+msgid "System Colors (%s):\n"
 msgstr ""
 
-#: src/eixTk/ansicolor_print.cc:134
-msgid "6x6x6 Color Cube (normal):"
+#: src/eixTk/ansicolor_print.cc:135
+#, c-format
+msgid "6x6x6 Color Cube (%s):\n"
 msgstr ""
 
-#: src/eixTk/ansicolor_print.cc:136
-msgid "Grayscale Ramp (normal):"
+#: src/eixTk/ansicolor_print.cc:137
+#, c-format
+msgid "Grayscale Ramp (%s):\n"
 msgstr ""
 
-#: src/eixTk/ansicolor_print.cc:140
-msgid "System Colors (bright):"
+#: src/eixTk/ansicolor_print.cc:146
+msgid "foreground, normal"
 msgstr ""
 
-#: src/eixTk/ansicolor_print.cc:142
-msgid "6x6x6 Color Cube (bright):"
+#: src/eixTk/ansicolor_print.cc:149
+msgid "foreground, bright"
 msgstr ""
 
-#: src/eixTk/ansicolor_print.cc:144
-msgid "Grayscale Ramp (bright):"
-msgstr ""
-
-#: src/eixTk/ansicolor_print.cc:153
-msgid "System Colors (background):"
-msgstr ""
-
-#: src/eixTk/ansicolor_print.cc:155
-msgid "6x6x6 Color Cube (background):"
-msgstr ""
-
-#: src/eixTk/ansicolor_print.cc:157
-msgid "Grayscale Ramp (background):"
+#: src/eixTk/ansicolor_print.cc:152
+msgid "background"
 msgstr ""
 
 #: src/eixTk/argsreader.cc:139

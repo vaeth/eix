@@ -10,8 +10,8 @@
 	  support 256 colors or you do not get the standard scheme on a
 	  non-256 color terminal, set TERM_ALT in /etc/eixrc correspondingly.
 	  If you always want the standard scheme, put COLORSCHEME_ALT=0 there.
-	- --ansi will define a rather standard 256 color palette if supported.
-	- Introduce --256{,f,b} to print a 256 color ansi palette.
+	- Introduce --ansi: reset a rather standard ansi 256 color palette.
+	- Introduce --256{,f{,0,1},b}: print a 256 color ansi palette.
 	- Fix --pipe with versions (regression in 0.26.3)
 
 *eix-0.27.0

@@ -73,10 +73,10 @@ print_help()
 {
 	printf(_("Usage: %s [options] old-cache [new-cache]\n"
 "\n"
-"     --ansi              Reset the ansi 256 color palette\n"
 " -Q, --quick (toggle)    do (not) read unguessable slots of installed packages\n"
 "     --care              always read slots of installed packages\n"
 " -q, --quiet (toggle)    (no) output\n"
+"     --ansi              reset the ansi 256 color palette\n"
 " -n, --nocolor           don't use colors in output\n"
 " -F, --force-color       force colors on things that are not a terminal\n"
 "     --dump              dump variables to stdout\n"

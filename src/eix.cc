@@ -96,7 +96,6 @@ dump_help()
 "   Exclusive options:\n"
 "     -h, --help            show this screen and exit\n"
 "     -V, --version         show version and exit\n"
-"     --ansi                Reset the ansi 256 color palette\n"
 "     --dump                dump variables to stdout\n"
 "     --dump-defaults       dump default values of variables\n"
 "     --print               print the expanded value of a variable\n"
@@ -112,9 +111,11 @@ dump_help()
 "     --print-overlay-label print label of specified overlay\n"
 "     --print-overlay-data  print label and path of specified overlay\n"
 "     --is-current          check for valid cache-file\n"
-"     --256                 Print ansi color palette, fore- and background\n"
-"     --256f                Print ansi color palette, only foreground\n"
-"     --256b                Print ansi color palette, only background\n"
+"     --256                 Print all ansi color palettes\n"
+"     --256f                Print ansi color palettes for foreground\n"
+"     --256f0               Print ansi color palette (normal)\n"
+"     --256f1               Print ansi color palette (bright)\n"
+"     --256b                Print ansi color palette for background\n"
 "\n"
 "   Special:\n"
 "     -t  --test-non-matching Before other output, print non-matching entries\n"
@@ -128,6 +129,7 @@ dump_help()
 "\n"
 "   Output:\n"
 "     -q, --quiet (toggle)   no output. Typically combined with -0\n"
+"         --ansi             reset the ansi 256 color palette\n"
 "     -n, --nocolor          do not use ANSI color codes\n"
 "     -F, --force-color      force colorful output\n"
 "     -*, --pure-packages    Omit printing of overlay names and package number\n"
@@ -263,6 +265,8 @@ static struct LocalOptions {
 		palette256,
 		palette256b,
 		palette256f,
+		palette256f0,
+		palette256f1,
 		be_quiet,
 		quick,
 		care,
@@ -303,6 +307,8 @@ EixOptionList::EixOptionList()
 	push_back(Option("ansi",          O_ANSI,  Option::BOOLEAN_T,     &rc_options.ansi));
 	push_back(Option("256",           O_P256,  Option::BOOLEAN_T,     &rc_options.palette256));
 	push_back(Option("256f",          O_P256F, Option::BOOLEAN_T,     &rc_options.palette256f));
+	push_back(Option("256f0",         O_P256F0, Option::BOOLEAN_T,    &rc_options.palette256f0));
+	push_back(Option("256f1",         O_P256F1, Option::BOOLEAN_T,    &rc_options.palette256f1));
 	push_back(Option("256b",          O_P256B, Option::BOOLEAN_T,     &rc_options.palette256b));
 	push_back(Option("quiet",         'q',     Option::BOOLEAN,       &rc_options.be_quiet));
 	push_back(Option("quick",         'Q',     Option::BOOLEAN,       &rc_options.quick));
@@ -615,9 +621,14 @@ run_eix(int argc, char** argv)
 		}
 	}
 
-	if(unlikely(rc_options.palette256 || rc_options.palette256f || rc_options.palette256b)) {
+	if(unlikely(rc_options.palette256
+		|| rc_options.palette256f ||  rc_options.palette256b
+		|| rc_options.palette256f0 || rc_options.palette256f1)) {
 		AnsiColor::PrintPalette(likely(rc_options.palette256) ? AnsiColor::PALETTE_ALL :
-			(likely(rc_options.palette256f) ? AnsiColor::PALETTE_F : AnsiColor::PALETTE_B));
+			(likely(rc_options.palette256f) ? AnsiColor::PALETTE_F :
+			(likely(rc_options.palette256b) ? AnsiColor::PALETTE_B :
+			(likely(rc_options.palette256f0) ? AnsiColor::PALETTE_F0 :
+			AnsiColor::PALETTE_F1))));
 		return EXIT_SUCCESS;
 	}
 

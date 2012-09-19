@@ -20,9 +20,11 @@ _eix__overlay() {
 };;
 esac
 
+# Options common to diff-eix and eix
 service_opts=(
 {'(--quick)-Q','(-Q)--quick'}'[do not try to read unguessable slots]'
 '--care[always read slots of installed packages]'
+'--ansi[reset the ansi 256 color palette]'
 )
 
 case $service in
@@ -57,6 +59,11 @@ case $service in
 "$excl_opt"'--print-all-print-world-sets[print the world sets]'
 "$excl_opt"'--print-all-print-world-sets[print the world sets]'
 "$excl_opt"'--is-current[is @EIX_CACHEFILE@ readable?]'
+"$excl_opt"'--256[print all ansi color palettes]'
+"$excl_opt"'--256f[print ansi color palettes for foreground]'
+"$excl_opt"'--256f0[print ansi color palette (normal)]'
+"$excl_opt"'--256f1[print ansi color palette (bright)]'
+"$excl_opt"'--256b[print ansi color palette for background]'
 {'(--versionsort)-x','(-x)--versionsort'}'[sort output by slots/versions]'
 {'(--versionlines)-l','(-l)--versionlines'}'[output versions line by line]'
 {'(--compact)-c','(-c)--compact'}'[use \$FORMAT_COMPACT]'
