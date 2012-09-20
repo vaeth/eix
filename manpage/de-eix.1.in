@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-19 18:15:00 +0200 (Wed, 19 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-20 21:00:00 +0200 (Thu, 20 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1726,7 +1726,8 @@ Beispielsweise wird die verzögerte Referenz B<%{*>I<VARIABLE>B<}> die Expansion
 der Variablen B<EIX_>I<VARIABLE>, B<DIFF_>I<VARIABLE>, B<UPDATE_>I<VARIABLE>
 bzw. B<DROP_VARIABLE> einfügen.
 
-Die B<\\>- und B<*>-Attribute können kombiniert werden (die Reihenfolge spielt keine Rolle).
+Die B<\\>- und B<*>-Attribute können kombiniert werden (die Reihenfolge spielt keine Rolle),
+und sie können auch mit einem I<APPENDIX> kombiniert werden.
 
 Ein praktisches Beispiel: Falls B<EIX_USER> den Wert "nobody" haben soll,
 falls es von B<eix-drop-permissions> (also etwa durch B<eix-remote>)
@@ -1754,7 +1755,33 @@ Stiring-List-Variablen wie B<CACHE_METHOD> oder B<EIX_LOCAL_SETS> benutzt werden
 und stellt dabei sicher, dass I<VARIABLE> höchstens einen Eintrag "so wie er ist"
 erzeugt, selbst dann, wenn dieser Eintrag Leerzeichen oder des Zeichen \\ enthält.
 
-Die B<\\>- und B<*>-Attribute können kombiniert werden (die Reihenfolge spielt keine Rolle).
+Die B<\\>- und B<*>-Attribute können kombiniert werden (die Reihenfolge spielt keine Rolle),
+und sie können auch mit einem I<APPENDIX> kombiniert werden.
+
+.TP
+.BI * VARIABLE " " APPENDIX
+Dies wird nur dann erkann, wenn I<APPENDIX> mit einem der Zeichen B<,> oder B<;> beginnt.
+In diesem Fall wird B<APPENDIX> and den Inhalt von B<VARIABLE> angehängt sowie vor jedes B<|>-Zeichen dieses Inhalts.
+(Der B<APPENDIX> kann mit den B<\\>- und B<*>-Attributen kombiniert werden.)
+B<APPENDIX> wird unverändert übernommne, und er darf nicht das Zeichen B<}> enthalten.
+Der Zweck ist es, das Schreiben von Farben zu vereinfachen.
+Beispiel:
+
+B<COLOR_DEFAULT="blue|27">
+
+B<FORMAT="(%{COLOR_DEFAULT,1)A (%{COLOR_DEFAULT;invert})B">
+
+B<BAD_FORMAT="(%{COLOR_DEFAULT},1;invert)A">
+
+In diesem Beispiel wird B<FORMAT> zu
+
+.B (blue,1|27,1)A (blue;invert|27;invert)B
+
+expandieren, B<BAD_FORMAT> hingegen zu
+
+.B (blue|27,1;invert)A
+
+Letzteres führt wahrscheinlich nicht zum beabsichtigten Ergebnis, falls B<COLORSCHEME=0> ist.
 .RE
 .\" }}}
 
@@ -2352,7 +2379,7 @@ B<COLORSCHEME> benutzt.
 Das benutzte Farbschema:
 Wenn es 0 ist, wird jeweils der erste I<COLORSTRING> von Farbspezifikationen benutzt;
 für höhere Zahlen wird ein entsprechend späterer I<COLORSTRING> benutzt
-Falls die Zahl zu hoch ist, wird der letzte mögliche I<COLORSTRING> benutzt.
+Falls die Zahl zu hoch ist, wird der erste I<COLORSTRING> benutzt.
 Falls B<TERM_ALT> passt, wird stattdessen B<COLORSCHEME_ALT> benutzt.
 
 .TP

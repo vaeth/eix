@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-19 18:15:00 +0200 (Wed, 19 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-20 21:00:00 +0200 (Thu, 20 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ NAME
 .SH "NAME"
 .B eix
@@ -1707,7 +1707,8 @@ For example, the delayed reference B<%{*>I<VARIABLE>B<}> will insert
 the expansion of B<EIX_>I<VARIABLE>, B<DIFF_>I<VARIABLE>, B<UPDATE_>I<VARIABLE>,
 or B<DROP_VARIABLE>, respectively.
 
-The B<\\> and B<*> attributes can be combined (order plays no role).
+The B<\\> and B<*> attributes can be combined (order plays no role),
+and you can also combine it with an I<APPENDIX>.
 
 As a practical example, if you want that B<EIX_USER> has the value "nobody"
 when called from B<eix-drop-permissions> (e.g. from B<eix-remote>)
@@ -1734,7 +1735,33 @@ string list variables like B<CACHE_METHOD> or B<EIX_LOCAL_SETS>,
 ensuring that I<VARIABLE> produces at most one entry "as is", even if it
 should contain spaces or \\ characters.
 
-The B<\\> and B<*> attributes can be combined (order plays no role).
+The B<\\> and B<*> attributes can be combined (order plays no role),
+and you can also combine it with an I<APPENDIX>.
+
+.TP
+.BI * VARIABLE " " APPENDIX
+This is only recognized if I<APPENDIX> starts with one of the symbols B<,> or B<;>.
+In this case, B<APPENDIX> is appended to the content of B<VARIABLE> and in addition in front of all B<|> symbols within that content.
+(The B<APPENDIX> can be combined with the B<\\> and B<*> attributes.)
+B<APPENDIX> is taken as-is, and it may not contain the symbol B<}>.
+The purpose of B<APPENDIX> is to make writing colors simpler.
+Example:
+
+B<COLOR_DEFAULT="blue|27">
+
+B<FORMAT="(%{COLOR_DEFAULT,1)A (%{COLOR_DEFAULT;invert})B">
+
+B<BAD_FORMAT="(%{COLOR_DEFAULT},1;invert)A">
+
+In this example, B<FORMAT> will expand to
+
+.B (blue,1|27,1)A (blue;invert|27;invert)B
+
+while B<BAD_FORMAT> will expand to
+
+.B (blue|27,1;invert)A
+
+The latter is probably not what was intended if B<COLORSCHEME=0>.
 .RE
 .\" }}}
 
@@ -2311,7 +2338,7 @@ B<COLORSCHEME_ALT> is used instead of B<COLORSCHEME>.
 The color scheme to be used:
 If it is 0, then the first I<COLORSTRING> of each color specification is used;
 for higher numbers a correspondingly later I<COLORSTRING> is used.
-If the number is too high, the last available I<COLORSTRING> is used.
+If the number is too high, the first I<COLORSTRING> is used.
 If B<TERM_ALT> matches, B<COLORSCHEME_ALT> is used instead.
 
 .TP

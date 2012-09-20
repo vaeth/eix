@@ -1,5 +1,12 @@
 # ChangeLog for eix - Ebuild IndeX for portage
 
+*eix-0.27.2
+	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
+	- Introduce APPENDIX for delayed substitution to simplify colors.
+	- Choose scheme 0 if COLORSCHEME{,_ALT} is too high.
+	- Fix/improve colorschemes
+	- Internal cleanup: remove code duplication in delayed substitution.
+
 *eix-0.27.1
 	Martin Väth <vaeth at mathematik.uni-wuerzburg.de>:
 	- Support 256 color terminals: COLORSCHEME, COLORSCHEME_ALT, TERM_ALT.

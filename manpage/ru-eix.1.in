@@ -1,4 +1,4 @@
-.TH "eix" "1" "$Date: 2012-09-19 18:15:00 +0200 (Wed, 19 Sep 2012)$" "@PACKAGE_STRING@" ""
+.TH "eix" "1" "$Date: 2012-09-20 21:00:00 +0200 (Thu, 20 Sep 2012)$" "@PACKAGE_STRING@" ""
 .\" {{{ НАЗВАНИЕ
 .SH "НАЗВАНИЕ"
 .B eix
@@ -2309,7 +2309,7 @@ B<COLORSCHEME_ALT> is used instead of B<COLORSCHEME>.
 The color scheme to be used:
 If it is 0, then the first I<COLORSTRING> of each color specification is used;
 for higher numbers a correspondingly later I<COLORSTRING> is used.
-If the number is too high, the last available I<COLORSTRING> is used.
+If the number is too high, the first I<COLORSTRING> is used.
 If B<TERM_ALT> matches, B<COLORSCHEME_ALT> is used instead.
 
 .TP

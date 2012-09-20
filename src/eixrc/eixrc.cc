@@ -256,10 +256,10 @@ EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<stri
 	string::size_type pos(0);
 	for(;;) {
 		string::size_type length;
-		DelayedType type(find_next_delayed(*value, &pos, &length));
+		bool have_star, have_escape;
+		string varname, *append;
+		DelayedType type(find_next_delayed(*value, &pos, &length, &varname, &have_star, &have_escape, &append));
 		bool will_test(false);
-		string::size_type varpos(pos + 2);
-		string::size_type varlength(length - 3);
 		switch(type) {
 			case DelayedNotFound:
 				has_delayed->erase(key);
@@ -279,16 +279,9 @@ EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<stri
 				continue;
 			case DelayedIfTrue:
 			case DelayedIfFalse:
-				will_test = true;
-				++varpos;
-				--varlength;
-				break;
 			case DelayedIfEmpty:
 			case DelayedIfNonempty:
 				will_test = true;
-				varpos += 2;
-				varlength -= 2;
-				break;
 			default:
 				break;
 		}
@@ -298,41 +291,32 @@ EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<stri
 			return NULLPTR;
 		}
 		visited->insert(key);
-		bool have_star(false);
-		bool have_escape(false);
-		while(likely(varlength >= 1)) {
-			bool check_next;
-			switch((*value)[varpos]) {
-				case '*':
-					have_star = check_next = true;
-					break;
-				case '\\':
-					have_escape = check_next = true;
-					break;
-				default:
-					check_next = false;
-					break;
-			}
-			if(likely(!check_next))
-				break;
-			++varpos;
-			--varlength;
-		}
-		if(unlikely(varlength < 1))
-			return NULLPTR;
 		string *s(resolve_delayed_recurse(
-			(have_star ?
-			(varprefix + value->substr(varpos, varlength)) :
-			value->substr(varpos, varlength)),
+			(have_star ? (varprefix + varname) : varname),
 			visited, has_delayed, errtext, errvar));
 		visited->erase(key);
-		if(unlikely(s == NULLPTR))
+		if(unlikely(s == NULLPTR)) {
 			return NULLPTR;
-		string escaped;
+		}
+		string local_string;
 		if(unlikely(have_escape)) {
-			escaped = *s;
-			escape_string(&escaped);
-			s = &escaped;
+			local_string = *s;
+			s = &local_string;
+			escape_string(&local_string);
+		}
+		if(unlikely(append != NULLPTR)) {
+			if(s != &local_string) {
+				local_string = *s;
+				s = &local_string;
+			}
+			string::size_type add(append->size() + 1);
+			for(string::size_type curr(0);
+				(curr = (s->find('|', curr))) != string::npos;
+				curr += add) {
+				s->insert(curr, *append);
+			}
+			s->append(*append);
+			delete append;
 		}
 		if(likely(!will_test)) {
 			value->replace(pos, length, *s);
@@ -524,54 +508,37 @@ void
 EixRc::join_key_rec(const string &key, const string &val, set<string> *has_delayed, const set<string> *exclude_defaults)
 {
 	string::size_type pos(0);
-	string::size_type length(0);
+	string::size_type length;
 	for(;; pos += length) {
-		switch(find_next_delayed(val, &pos, &length)) {
+		bool have_star;
+		string varname;
+		switch(find_next_delayed(val, &pos, &length, &varname, &have_star)) {
 			case DelayedNotFound:
 				return;
 			case DelayedVariable:
-				pos += 2;
-				length -= 2;
-				break;
 			case DelayedIfTrue:
 			case DelayedIfFalse:
-				pos += 3;
-				length -= 3;
 				break;
 			default:
 				has_delayed->insert(key);
 				continue;
 		}
 		has_delayed->insert(key);
-		bool have_star(false);
-		while(likely(length > 1)) {
-			bool check_next;
-			switch(val[pos]) {
-				case '*':
-					have_star = check_next = true;
-					break;
-				case '\\':
-					check_next = true;
-					break;
-				default:
-					check_next = false;
-					break;
-			}
-			if(likely(!check_next))
-				break;
-			++pos;
-			--length;
-		}
-		if(unlikely(length <= 1))
-			continue;
-		string s(val, pos, length - 1);
 		if(unlikely(have_star)) {
-			join_key_if_new(string(EIX_VARS_PREFIX) + s,
+			static const char *prefixlist[] = {
+				EIX_VARS_PREFIX,
+				DIFF_VARS_PREFIX,
+				UPDATE_VARS_PREFIX,
+				DROP_VARS_PREFIX,
+				NULLPTR
+			};
+			for(const char **prefix(prefixlist);
+				*prefix != NULLPTR; ++prefix) {
+				join_key_if_new(string(*prefix) + varname,
 				has_delayed, exclude_defaults);
-			join_key_if_new(string(DIFF_VARS_PREFIX) + s,
-				has_delayed, exclude_defaults);
+			}
 		} else {
-			join_key_if_new(s, has_delayed, exclude_defaults);
+			join_key_if_new(varname, has_delayed, exclude_defaults);
 		}
 	}
 }
@@ -584,7 +551,7 @@ EixRc::join_key_if_new(const string &key, set<string> *has_delayed, const set<st
 }
 
 EixRc::DelayedType
-EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length)
+EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length, string *varname, bool *have_star, bool *have_escape, string **append)
 {
 	string::size_type pos(*posref);
 	for(;; pos += 2) {
@@ -596,15 +563,15 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 			return DelayedNotFound;
 		DelayedType type;
 		char c(str[i++]);
-		bool findend(true);
+		bool findvar(true);
 		switch(c) {
 			case '}':
 				type = DelayedFi;
-				findend = false;
+				findvar = false;
 				break;
 			case '%':
 				type = DelayedQuote;
-				findend = false;
+				findvar = false;
 				break;
 			case '?':
 				if(i >= str.length())
@@ -635,36 +602,79 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 			default:
 				type = DelayedVariable;
 		}
-		if(findend) {
+		if(findvar) {
 			bool headsymbols(true);
-			for(;;)
-			{
-				if(i >= str.length())
-					return DelayedNotFound;
-				c = str[i++];
+			bool withstar(false), withquote(false);
+			string::size_type varstart(i - 1);
+			for(;; c = str[i++]) {
 				if(headsymbols) {
 					switch(c) {
 						case '*':
+							withstar = true;
+							varstart = i;
+							continue;
 						case '\\':
+							withquote = true;
+							varstart = i;
 							continue;
 						default:
 							headsymbols = false;
 							break;
 					}
 				}
-				if((!isalnum(c, localeC)) && (c != '_'))
+				if((!isalnum(c, localeC)) && (c != '_')) {
 					break;
+				}
+				if(i >= str.length()) {
+					return DelayedNotFound;
+				}
 			}
-			if(c != '}')
-				continue;
+			string::size_type appendstart, appendlen, varlen;
+			if(unlikely((type == DelayedVariable) &&
+				((c == ',') || (c == ';')))) {
+				string::size_type j(str.find('}', i));
+				if(j == string::npos) {
+					continue;
+				}
+				appendstart = --i;
+				varlen = i - varstart;
+				appendlen = j - appendstart;
+				i = j + 1;
+			} else {
+				if(unlikely(c != '}')) {
+					continue;
+				}
+				appendstart = string::npos;
+				varlen = i - varstart - 1;
+			}
 			if(strcasecmp(
 				(str.substr(pos + 2, i - pos - 3)).c_str(),
-				"else") == 0)
+				"else") == 0) {
 				type = DelayedElse;
+			} else {
+				if(varlen == 0) {
+					continue;
+				}
+				if(varname != NULLPTR) {
+					varname->assign(str, varstart, varlen);
+				}
+				if(have_star != NULLPTR) {
+					*have_star = withstar;
+				}
+				if(unlikely(have_escape != NULLPTR)) {
+					*have_escape = withquote;
+				}
+				if(unlikely(append != NULLPTR)) {
+					if(unlikely(appendstart != string::npos)) {
+						*append = new string(str, appendstart, appendlen);
+					} else {
+						*append = NULLPTR;
+					}
+				}
+			}
 		}
 		*posref = pos;
-		if(length != NULLPTR)
-			*length = i - pos;
+		*length = i - pos;
 		return type;
 	}
 }

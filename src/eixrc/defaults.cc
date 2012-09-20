@@ -1007,7 +1007,7 @@ AddOption(STRING, "COLOR_CATEGORY",
 	"It defines the color used for the category of packages."));
 
 AddOption(STRING, "COLOR_CATEGORY_SYSTEM",
-	"yellow|82,1", _(
+	"yellow|154,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the category of system packages."));
 
@@ -1027,28 +1027,28 @@ AddOption(STRING, "COLOR_UPGRADE_TEXT",
 	"It defines the color used for printing upgrade recommendation texts."));
 
 AddOption(STRING, "COLOR_DOWNGRADE_TEXT",
-	"blue,1", _(
+	"blue,1|99,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing downgrade recommendation texts."));
 
 AddOption(STRING, "COLOR_UPGRADE",
-	"%{COLOR_UPGRADE_TEXT};inverse", _(
+	"%{COLOR_UPGRADE_TEXT;inverse}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing upgrade recommendation tags."));
 
 AddOption(STRING, "COLOR_DOWNGRADE",
-	"%{COLOR_DOWNGRADE_TEXT};inverse", _(
+	"%{COLOR_DOWNGRADE_TEXT;inverse}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing downgrade recommendation tags."));
 
 AddOption(STRING, "DIFF_COLOR_UNINST_STABILIZE",
-	"%{COLOR_STABLE},1", _(
+	"%{COLOR_STABLE,1}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing tags for uninstalled packages\n"
 	"which have gained a stable version."));
 
 AddOption(STRING, "DIFF_COLOR_INST_STABILIZE",
-	"%{DIFF_COLOR_UNINST_STABILIZE},1;inverse", _(
+	"%{DIFF_COLOR_UNINST_STABILIZE;inverse}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing tags for installed packages\n"
 	"which have gained a stable version."));
@@ -1069,7 +1069,7 @@ AddOption(STRING, "DIFF_COLOR_NEW_TAG",
 	"It defines the color used for \"new package\" tags (eix-diff)."));
 
 AddOption(STRING, "DIFF_COLOR_NEW",
-	"%{COLOR_TITLE_PLAIN},1|%{COLOR_TITLE_DARK},1", _(
+	"%{COLOR_TITLE,1}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for \"new package\" separators (eix-diff)."));
 
@@ -1084,7 +1084,7 @@ AddOption(STRING, "DIFF_COLOR_CHANGED",
 	"It defines the color used for \"changed package\" separators (eix-diff)."));
 
 AddOption(STRING, "COLOR_INST_TAG",
-	"%{COLOR_TITLE_PLAIN},1;inverse|%{COLOR_TITLE_DARK},1;inverse", _(
+	"%{COLOR_TITLE,1;inverse}", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for tagging installed packages."));
 
@@ -1149,22 +1149,12 @@ AddOption(STRING, "COLOR_USE_EXPAND_END",
 	"It defines the color used for printing end of USE_EXPAND variables."));
 
 AddOption(STRING, "COLOR_INST_VERSION",
-	"yellow,1;blue", _(
+	"green,1;blue|40,1;21", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for printing the version of installed packages."));
 
-AddOption(STRING, "COLOR_TITLE_PLAIN",
-	"green", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the title texts for packages in plain scheme."));
-
-AddOption(STRING, "COLOR_TITLE_DARK",
-	"34", _(
-	"This variable is only used for delayed substitution.\n"
-	"It defines the color used for the title texts for packages in dark scheme."));
-
 AddOption(STRING, "COLOR_TITLE",
-	"%{COLOR_TITLE_PLAIN}|%{COLOR_TITLE_DARK}", _(
+	"green|34", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the title texts for packages."));
 
@@ -1631,12 +1621,12 @@ AddOption(STRING, "FORMAT_COLLIUSE",
 	"It is used for colored <colliuse>; color is not reset."));
 
 AddOption(STRING, "FORMAT_KEYWORDS",
-	"(%{COLOR_KEYWORDS})<versionkeywords>", _(
+	"(%{COLOR_KEYWORDS})<versionkeywords>()", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for printing colored <keywords>; color is not reset."));
 
 AddOption(STRING, "FORMAT_KEYWORDSS",
-	"(%{COLOR_KEYWORDSS})<versionkeywords*>", _(
+	"(%{COLOR_KEYWORDSS})<versionkeywords*>()", _(
 	"This variable is only used for delayed substitution.\n"
 	"It is used for printing colored <keywords*>; color is not reset."));
 
@@ -2836,17 +2826,17 @@ AddOption(STRING, "FORMAT_AFTER_COLL_SEP",
 	"(This is meant for printing in a separate line)"));
 
 AddOption(STRING, "COLOR_MASKED",
-	"red", _(
+	"red|196", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for masked versions."));
 
 AddOption(STRING, "COLOR_UNSTABLE",
-	"yellow", _(
+	"yellow|190", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for unstable versions."));
 
 AddOption(STRING, "COLOR_STABLE",
-	"green", _(
+	"green|46", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color for stable versions."));
 

@@ -98,11 +98,19 @@ AnsiColor::initcolor(const string &str, string *errtext)
 	bool bold(false);
 	bool havecol(false);
 	string::size_type currpos(0);
-	string::size_type endpos;
+	string::size_type endpos, first_endpos(string::npos);
 	for(unsigned int i(colorscheme); ; --i) {
-		endpos = str.find_first_of(":|/", currpos);
-		if((endpos == string::npos) || (i == 0)) {
+		endpos = str.find_first_of("|", currpos);
+		if(i == 0) {
 			break;
+		}
+		if(endpos == string::npos) {  // colorscheme is too high
+			currpos = 0;
+			endpos = first_endpos;
+			break;
+		}
+		if(first_endpos == string::npos) {
+			first_endpos = endpos;
 		}
 		currpos = endpos + 1;
 	}
@@ -112,7 +120,7 @@ AnsiColor::initcolor(const string &str, string *errtext)
 	}
 	for(;;) {
 		eix::SignedBool iscol(0);
-		string::size_type nextpos(str.find_first_of(",;:|/", currpos));
+		string::size_type nextpos(str.find_first_of(",;|", currpos));
 		string curr(str, currpos, (nextpos == string::npos) ? string::npos : (nextpos - currpos));
 		ColorType col;
 		map<string, ColorType>::const_iterator f(static_color_map->find(curr));
@@ -171,7 +179,7 @@ AnsiColor::initcolor(const string &str, string *errtext)
 		}
 		currpos = nextpos + 1;
 		if(str[nextpos] == ',') {
-			nextpos = str.find_first_of(";:|/", currpos);
+			nextpos = str.find_first_of(";|", currpos);
 			curr.assign(str, currpos,  (nextpos == string::npos) ? string::npos : (nextpos - currpos));
 			if(likely(curr == "1")) {
 				bold = true;
