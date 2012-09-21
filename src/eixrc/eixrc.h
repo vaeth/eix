@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "eixTk/eixint.h"
+#include "eixTk/inttypes.h"
 #include "eixTk/null.h"
 #include "portage/keywords.h"
 #include "search/redundancy.h"
@@ -114,7 +115,14 @@ class EixRc {
 		void join_key_rec(const std::string &key, const std::string &val, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((4));
 		void join_key_if_new(const std::string &key, std::set<std::string> *has_delayed, const std::set<std::string> *exclude_defaults) ATTRIBUTE_NONNULL((3));
 
-		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length, std::string *varname = NULLPTR, bool *have_star = NULLPTR, bool *have_escape = NULLPTR, std::string **append = NULLPTR) ATTRIBUTE_NONNULL((2, 3));
+		typedef uint8_t DelayvarFlags;
+		static const DelayvarFlags
+			DELAYVAR_NONE   = 0x00,
+			DELAYVAR_STAR   = 0x01,
+			DELAYVAR_ESCAPE = 0x02,
+			DELAYVAR_APPEND = 0x04;
+
+		static DelayedType find_next_delayed(const std::string &str, std::string::size_type *pos, std::string::size_type *length, std::string *varname = NULLPTR, DelayvarFlags *varflags = NULLPTR, std::string *append = NULLPTR) ATTRIBUTE_NONNULL((2, 3));
 		static std::string as_comment(const std::string &s);
 };
 

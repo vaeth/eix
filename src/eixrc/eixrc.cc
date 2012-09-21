@@ -44,6 +44,12 @@ using std::vector;
 using std::cerr;
 using std::endl;
 
+const EixRc::DelayvarFlags
+	EixRc::DELAYVAR_NONE,
+	EixRc::DELAYVAR_STAR,
+	EixRc::DELAYVAR_ESCAPE,
+	EixRc::DELAYVAR_APPEND;
+
 static void override_by_env(map<string, string> *m) ATTRIBUTE_NONNULL_;
 
 EixRcOption::EixRcOption(OptionType t, string name, string val, string desc) {
@@ -256,9 +262,9 @@ EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<stri
 	string::size_type pos(0);
 	for(;;) {
 		string::size_type length;
-		bool have_star, have_escape;
-		string varname, *append;
-		DelayedType type(find_next_delayed(*value, &pos, &length, &varname, &have_star, &have_escape, &append));
+		DelayvarFlags varflags;
+		string varname, append;
+		DelayedType type(find_next_delayed(*value, &pos, &length, &varname, &varflags, &append));
 		bool will_test(false);
 		switch(type) {
 			case DelayedNotFound:
@@ -291,32 +297,32 @@ EixRc::resolve_delayed_recurse(const string &key, set<string> *visited, set<stri
 			return NULLPTR;
 		}
 		visited->insert(key);
-		string *s(resolve_delayed_recurse(
-			(have_star ? (varprefix + varname) : varname),
+		const string *s(resolve_delayed_recurse(
+			(((varflags & DELAYVAR_STAR) != DELAYVAR_NONE) ?
+				(varprefix + varname) : varname),
 			visited, has_delayed, errtext, errvar));
 		visited->erase(key);
 		if(unlikely(s == NULLPTR)) {
 			return NULLPTR;
 		}
-		string local_string;
-		if(unlikely(have_escape)) {
-			local_string = *s;
-			s = &local_string;
-			escape_string(&local_string);
+		string local_copy;
+		if(unlikely((varflags & DELAYVAR_ESCAPE) != DELAYVAR_NONE)) {
+			local_copy = *s;
+			s = &local_copy;
+			escape_string(&local_copy);
 		}
-		if(unlikely(append != NULLPTR)) {
-			if(s != &local_string) {
-				local_string = *s;
-				s = &local_string;
+		if(unlikely((varflags & DELAYVAR_APPEND) != DELAYVAR_NONE)) {
+			if(s != &local_copy) {
+				local_copy = *s;
+				s = &local_copy;
 			}
-			string::size_type add(append->size() + 1);
+			string::size_type add(append.size() + 1);
 			for(string::size_type curr(0);
-				(curr = (s->find('|', curr))) != string::npos;
+				(curr = (local_copy.find('|', curr))) != string::npos;
 				curr += add) {
-				s->insert(curr, *append);
+				local_copy.insert(curr, append);
 			}
-			s->append(*append);
-			delete append;
+			local_copy.append(append);
 		}
 		if(likely(!will_test)) {
 			value->replace(pos, length, *s);
@@ -510,9 +516,9 @@ EixRc::join_key_rec(const string &key, const string &val, set<string> *has_delay
 	string::size_type pos(0);
 	string::size_type length;
 	for(;; pos += length) {
-		bool have_star;
+		DelayvarFlags varflags;
 		string varname;
-		switch(find_next_delayed(val, &pos, &length, &varname, &have_star)) {
+		switch(find_next_delayed(val, &pos, &length, &varname, &varflags)) {
 			case DelayedNotFound:
 				return;
 			case DelayedVariable:
@@ -524,7 +530,7 @@ EixRc::join_key_rec(const string &key, const string &val, set<string> *has_delay
 				continue;
 		}
 		has_delayed->insert(key);
-		if(unlikely(have_star)) {
+		if(unlikely((varflags & DELAYVAR_STAR) != DELAYVAR_NONE)) {
 			static const char *prefixlist[] = {
 				EIX_VARS_PREFIX,
 				DIFF_VARS_PREFIX,
@@ -551,7 +557,7 @@ EixRc::join_key_if_new(const string &key, set<string> *has_delayed, const set<st
 }
 
 EixRc::DelayedType
-EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length, string *varname, bool *have_star, bool *have_escape, string **append)
+EixRc::find_next_delayed(const string &str, string::size_type *posref, string::size_type *length, string *varname, DelayvarFlags *varflags, string *append)
 {
 	string::size_type pos(*posref);
 	for(;; pos += 2) {
@@ -604,17 +610,17 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 		}
 		if(findvar) {
 			bool headsymbols(true);
-			bool withstar(false), withquote(false);
+			DelayvarFlags flags(DELAYVAR_NONE);
 			string::size_type varstart(i - 1);
 			for(;; c = str[i++]) {
 				if(headsymbols) {
 					switch(c) {
 						case '*':
-							withstar = true;
+							flags |= DELAYVAR_STAR;
 							varstart = i;
 							continue;
 						case '\\':
-							withquote = true;
+							flags |= DELAYVAR_ESCAPE;
 							varstart = i;
 							continue;
 						default:
@@ -636,6 +642,7 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 				if(j == string::npos) {
 					continue;
 				}
+				flags |= DELAYVAR_APPEND;
 				appendstart = --i;
 				varlen = i - varstart;
 				appendlen = j - appendstart;
@@ -644,7 +651,6 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 				if(unlikely(c != '}')) {
 					continue;
 				}
-				appendstart = string::npos;
 				varlen = i - varstart - 1;
 			}
 			if(strcasecmp(
@@ -658,17 +664,12 @@ EixRc::find_next_delayed(const string &str, string::size_type *posref, string::s
 				if(varname != NULLPTR) {
 					varname->assign(str, varstart, varlen);
 				}
-				if(have_star != NULLPTR) {
-					*have_star = withstar;
-				}
-				if(unlikely(have_escape != NULLPTR)) {
-					*have_escape = withquote;
+				if(varflags != NULLPTR) {
+					*varflags = flags;
 				}
 				if(unlikely(append != NULLPTR)) {
-					if(unlikely(appendstart != string::npos)) {
-						*append = new string(str, appendstart, appendlen);
-					} else {
-						*append = NULLPTR;
+					if(unlikely((flags & DELAYVAR_APPEND) != DELAYVAR_NONE)) {
+						append->assign(str, appendstart, appendlen);
 					}
 				}
 			}

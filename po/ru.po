@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eix\n"
 "Report-Msgid-Bugs-To: http://developer.berlios.de/projects/eix/\n"
-"POT-Creation-Date: 2012-09-20 23:27+0200\n"
+"POT-Creation-Date: 2012-09-21 17:41+0200\n"
 "PO-Revision-Date: 2012-06-28 21:10+0300\n"
 "Last-Translator: Артём Воротников <vorot93@yandex.ru>\n"
 "Language-Team: русский <vorot93@yandex.ru>\n"
@@ -4844,40 +4844,40 @@ msgid ""
 "locally added (unused) variables so that they are printed with --dump."
 msgstr ""
 
-#: src/eixrc/eixrc.cc:242
+#: src/eixrc/eixrc.cc:248
 #, c-format
 msgid "fatal config error: %s in delayed substitution of %s"
 msgstr "смертельная ошибка конфигурации: %s в отложенной замене %s"
 
-#: src/eixrc/eixrc.cc:269
+#: src/eixrc/eixrc.cc:275
 msgid "FI without IF"
 msgstr "FI без IF"
 
-#: src/eixrc/eixrc.cc:273
+#: src/eixrc/eixrc.cc:279
 msgid "ELSE without IF"
 msgstr "ELSE без IF"
 
-#: src/eixrc/eixrc.cc:289
+#: src/eixrc/eixrc.cc:295
 msgid "self-reference"
 msgstr "самоуказание"
 
-#: src/eixrc/eixrc.cc:367
+#: src/eixrc/eixrc.cc:373
 msgid "double ELSE"
 msgstr "двойной ELSE"
 
-#: src/eixrc/eixrc.cc:389
+#: src/eixrc/eixrc.cc:395
 msgid "IF without FI"
 msgstr "IF без FI"
 
-#: src/eixrc/eixrc.cc:447
+#: src/eixrc/eixrc.cc:453
 msgid "No $HOME found in environment."
 msgstr "$HOME не найден в environment. "
 
-#: src/eixrc/eixrc.cc:757
+#: src/eixrc/eixrc.cc:758
 msgid "or"
 msgstr "или"
 
-#: src/eixrc/eixrc.cc:773
+#: src/eixrc/eixrc.cc:774
 msgid ""
 "%s has unknown value %r\n"
 "\tassuming value 'all-installed' instead."
@@ -4885,15 +4885,15 @@ msgstr ""
 "%s имеет неизвестное значение %r\n"
 "\tвместо этого предполагаю значение 'all-installed'."
 
-#: src/eixrc/eixrc.cc:803
+#: src/eixrc/eixrc.cc:804
 msgid "was locally changed to:"
 msgstr "было местно изменено на:"
 
-#: src/eixrc/eixrc.cc:804
+#: src/eixrc/eixrc.cc:805
 msgid "changed locally, default was:"
 msgstr "местно изменено, по умолчанию было:"
 
-#: src/eixrc/eixrc.cc:833
+#: src/eixrc/eixrc.cc:834
 msgid "locally added:"
 msgstr "местно добавлено:"
 
