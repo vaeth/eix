@@ -987,7 +987,7 @@ AddOption(STRING, "EAPI_REGEX",
 	"Leave it empty if EAPI-suffixed ebuilds (GLEP 55) should be ignored."));
 
 AddOption(STRING, "COLOR_NAME",
-	"default,1|250,1", _(
+	"default,1|253,1", _(
 	"This variable is only used for delayed substitution.\n"
 	"It defines the color used for the name of packages."));
 
